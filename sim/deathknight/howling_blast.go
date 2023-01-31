@@ -5,7 +5,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 var HowlingBlastActionID = core.ActionID{SpellID: 51411}
@@ -16,35 +15,26 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 	}
 
 	rpBonus := 2.5 * float64(dk.Talents.ChillOfTheGrave)
-	baseCost := float64(core.NewRuneCost(15, 0, 1, 1, 0))
-
 	hasGlyph := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfHowlingBlast)
 
-	howlingBlast := &RuneSpell{
-		Refundable: true,
-	}
-	dk.HowlingBlast = dk.RegisterSpell(howlingBlast, core.SpellConfig{
-		ActionID:     HowlingBlastActionID,
-		SpellSchool:  core.SpellSchoolFrost,
-		ProcMask:     core.ProcMaskSpellDamage,
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
+	dk.HowlingBlast = dk.RegisterSpell(core.SpellConfig{
+		ActionID:    HowlingBlastActionID,
+		SpellSchool: core.SpellSchoolFrost,
+		ProcMask:    core.ProcMaskSpellDamage,
 
+		RuneCost: core.RuneCostOptions{
+			FrostRuneCost:  1,
+			UnholyRuneCost: 1,
+			RunicPowerGain: 15,
+			Refundable:     true,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:  core.GCDDefault,
-				Cost: baseCost,
-			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.GetModifiedGCD()
-				if dk.RimeAura.IsActive() {
-					cast.Cost = 0 // no runes, no regen
-					dk.RimeAura.Deactivate(sim)
-				}
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    dk.NewTimer(),
-				Duration: 8.0 * time.Second,
+				Duration: 8 * time.Second,
 			},
 		},
 
@@ -65,10 +55,10 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 				result := spell.CalcDamage(sim, aoeUnit, baseDamage, spell.OutcomeMagicHitAndCrit)
 
 				if aoeUnit == dk.CurrentTarget {
-					howlingBlast.OnResult(sim, result)
+					spell.SpendRefundableCost(sim, result)
 					dk.LastOutcome = result.Outcome
 				}
-				if dk.Talents.ChillOfTheGrave > 0 && result.Landed() {
+				if rpBonus > 0 && result.Landed() {
 					dk.AddRunicPower(sim, rpBonus, spell.RunicPowerMetrics())
 				}
 
@@ -78,15 +68,13 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 
 				spell.DealDamage(sim, result)
 			}
+
+			if dk.RimeAura.IsActive() {
+				dk.RimeAura.Deactivate(sim)
+			}
+			if dk.KillingMachineAura.IsActive() {
+				dk.KillingMachineAura.Deactivate(sim)
+			}
 		},
-	}, func(sim *core.Simulation) bool {
-		if dk.RimeAura.IsActive() {
-			return dk.HowlingBlast.IsReady(sim)
-		}
-		return dk.CastCostPossible(sim, 0.0, 0, 1, 1) && dk.HowlingBlast.IsReady(sim)
-	}, func(sim *core.Simulation) {
-		if dk.KillingMachineAura.IsActive() {
-			dk.KillingMachineAura.Deactivate(sim)
-		}
 	})
 }

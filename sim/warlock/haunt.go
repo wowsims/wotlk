@@ -5,12 +5,10 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warlock *Warlock) registerHauntSpell() {
 	actionID := core.ActionID{SpellID: 59164}
-	baseCost := 0.12 * warlock.BaseMana
 
 	debuffMultiplier := 1.2
 	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfHaunt) {
@@ -35,12 +33,12 @@ func (warlock *Warlock) registerHauntSpell() {
 		ProcMask:     core.ProcMaskSpellDamage,
 		MissileSpeed: 20,
 
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
-
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.12,
+			Multiplier: 1 - 0.02*float64(warlock.Talents.Suppression),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost * (1 - 0.02*float64(warlock.Talents.Suppression)),
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond * 1500,
 			},

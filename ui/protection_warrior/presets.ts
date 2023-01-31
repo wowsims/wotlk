@@ -78,11 +78,7 @@ export const DefaultRotation = ProtectionWarriorRotation.create({
 
 export const DefaultOptions = ProtectionWarriorOptions.create({
 	shout: WarriorShout.WarriorShoutCommanding,
-	precastShout: true,
-	precastShoutSapphire: false,
-	precastShoutT2: false,
   useShatteringThrow: false,
-
 	startingRage: 0,
 });
 
@@ -293,4 +289,121 @@ export const P1_BALANCED_PRESET = {
 			]
 		}
   ]}`),
+};
+
+export const P2_SURVIVAL_PRESET = {
+	name: 'P2 Survival Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`{
+      "items": [
+        {
+          "id": 46166,
+          "enchant": 3818,
+          "gems": [
+            41380,
+            40008
+          ]
+        },
+        {
+          "id": 45485,
+          "gems": [
+            40008
+          ]
+        },
+        {
+          "id": 46167,
+          "enchant": 3852,
+          "gems": [
+            40008
+          ]
+        },
+        {
+          "id": 45496,
+          "enchant": 3605,
+          "gems": [
+            40023
+          ]
+        },
+        {
+          "id": 46162,
+          "enchant": 3832,
+          "gems": [
+            40008,
+            40008
+          ]
+        },
+        {
+          "id": 45111,
+          "enchant": 3850,
+          "gems": [
+            0
+          ]
+        },
+        {
+          "id": 45487,
+          "enchant": 3860,
+          "gems": [
+            40008,
+            40008,
+            0
+          ]
+        },
+        {
+          "id": 45139,
+          "enchant": 3601,
+          "gems": [
+            40008
+          ]
+        },
+        {
+          "id": 46169,
+          "enchant": 3822,
+          "gems": [
+            40088,
+            40008
+          ]
+        },
+        {
+          "id": 45988,
+          "enchant": 3232,
+          "gems": [
+            36767,
+            36767
+          ]
+        },
+        {
+          "id": 45471,
+          "gems": [
+            45880
+          ]
+        },
+        {
+          "id": 45247
+        },
+        {
+          "id": 45158
+        },
+        {
+          "id": 46021
+        },
+        {
+          "id": 45442,
+          "enchant": 3788,
+          "gems": [
+            40034
+          ]
+        },
+        {
+          "id": 45587,
+          "enchant": 3849,
+          "gems": [
+            36767
+          ]
+        },
+        {
+          "id": 45137,
+          "enchant": 3608
+        }
+      ]
+    }`),
 };

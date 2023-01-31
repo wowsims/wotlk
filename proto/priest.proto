@@ -151,8 +151,6 @@ message ShadowPriest {
 		double latency = 3; // Latency between actions
 	}
 	Rotation rotation = 1;
-
-	PriestTalents talents = 2;
 	
 	message Options {
 		enum Armor {
@@ -164,6 +162,7 @@ message ShadowPriest {
 		Armor armor = 2;
 		bool use_mind_blast = 4;
 		bool use_shadow_word_death = 5;
+		RaidTarget power_infusion_target = 6;
 	}
 	Options options = 3;
 }
@@ -177,8 +176,6 @@ message SmitePriest {
 		double allowed_holy_fire_delay_ms = 6;
 	}
 	Rotation rotation = 1;
-
-	PriestTalents talents = 2;
 	
 	message Options {
 		bool use_inner_fire = 3;
@@ -212,8 +209,6 @@ message HealingPriest {
 		CustomRotation custom_rotation = 2;
 	}
 	Rotation rotation = 1;
-
-	PriestTalents talents = 2;
 	
 	message Options {
 		bool use_inner_fire = 3;

@@ -1,0 +1,48 @@
+name: Scheduled Release
+
+on:
+  workflow_dispatch:
+  schedule:
+      - cron: '0 10 * * 1'
+
+jobs:
+  schedule:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: 'Get Previous tag'
+        id: previoustag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          
+      - name: 'Get Commit Hashes'
+        id: getcommithashes
+        run: |
+          git rev-parse HEAD
+          git rev-parse ${{ steps.previoustag.outputs.tag }}
+          echo "current=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+          echo "last=$(git rev-parse ${{ steps.previoustag.outputs.tag }})" >> $GITHUB_OUTPUT
+          
+      - name: 'Get next version'
+        if: steps.getcommithashes.outputs.current != steps.getcommithashes.outputs.last
+        id: semvers
+        uses: "WyriHaximus/github-action-next-semvers@v1"
+        with:
+          version: ${{ steps.previoustag.outputs.tag }}
+          
+      - name: 'Print version'
+        if: steps.getcommithashes.outputs.current != steps.getcommithashes.outputs.last
+        id: printversion
+        run: echo ${{ steps.semvers.outputs.v_patch }}
+        
+      - name: Trigger Release
+        if: steps.getcommithashes.outputs.current != steps.getcommithashes.outputs.last
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: Release
+          inputs: '{ "ref": "master", "tag": "${{ steps.semvers.outputs.v_patch }}" }'

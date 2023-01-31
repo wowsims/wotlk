@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (dk *Deathknight) registerDeathPactSpell() {
@@ -14,47 +13,39 @@ func (dk *Deathknight) registerDeathPactSpell() {
 
 	hpMetrics := dk.NewHealthMetrics(actionID)
 
-	rs := &RuneSpell{}
-	baseCost := float64(core.NewRuneCost(40.0, 0, 0, 0, 0))
-	dk.DeathPact = dk.RegisterSpell(rs, core.SpellConfig{
+	dk.DeathPact = dk.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
-
+		RuneCost: core.RuneCostOptions{
+			RunicPowerCost: 40,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:  core.GCDDefault,
-				Cost: baseCost,
-			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.GetModifiedGCD()
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    cdTimer,
 				Duration: cd,
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return dk.Ghoul.Pet.IsEnabled()
+		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			healthGain := 0.4 * dk.Ghoul.MaxHealth()
 			dk.GainHealth(sim, healthGain, hpMetrics)
 			dk.Ghoul.Pet.Disable(sim)
-
-			rs.DoCost(sim)
 		},
-	}, func(sim *core.Simulation) bool {
-		return dk.Ghoul.Pet.IsEnabled() && dk.DeathPact.IsReady(sim)
-	}, nil)
+	})
 
 	if !dk.Inputs.IsDps {
-		dk.AddMajorCooldown(core.MajorCooldown{
-			Spell:    dk.DeathPact.Spell,
-			Type:     core.CooldownTypeDPS,
-			Priority: core.CooldownPriorityLow,
-			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-				return dk.DeathPact.CanCast(sim)
-			},
-		})
+		// dk.AddMajorCooldown(core.MajorCooldown{
+		// 	Spell: dk.DeathPact,
+		// 	Type:  core.CooldownTypeSurvival,
+		// 	CanActivate: func(sim *core.Simulation, character *core.Character) bool {
+		// 		return dk.DeathPact.CanCast(sim, nil)
+		// 	},
+		// })
 	}
 }

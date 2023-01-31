@@ -1,11 +1,8 @@
 package warrior
 
 import (
-	"time"
-
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warrior *Warrior) registerDevastateSpell() {
@@ -13,34 +10,6 @@ func (warrior *Warrior) registerDevastateSpell() {
 		return
 	}
 
-	if warrior.Talents.SwordAndBoard > 0 {
-		warrior.SwordAndBoardAura = warrior.GetOrRegisterAura(core.Aura{
-			Label:    "Sword And Board",
-			ActionID: core.ActionID{SpellID: 46953},
-			Duration: 5 * time.Second,
-		})
-
-		core.MakePermanent(warrior.GetOrRegisterAura(core.Aura{
-			Label: "Sword And Board Trigger",
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if !result.Landed() {
-					return
-				}
-
-				if !(spell == warrior.Revenge || spell == warrior.Devastate) {
-					return
-				}
-
-				if sim.RandomFloat("Sword And Board") <= 0.1*float64(warrior.Talents.SwordAndBoard) {
-					warrior.SwordAndBoardAura.Activate(sim)
-					warrior.ShieldSlam.CD.Reset()
-				}
-			},
-		}))
-	}
-
-	cost := 15.0 - float64(warrior.Talents.FocusedRage) - float64(warrior.Talents.Puncture)
-	refundAmount := cost * 0.8
 	hasGlyph := warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfDevastate)
 	flatThreatBonus := core.TernaryFloat64(hasGlyph, 630, 315)
 	dynaThreatBonus := core.TernaryFloat64(hasGlyph, 0.1, 0.05)
@@ -54,13 +23,13 @@ func (warrior *Warrior) registerDevastateSpell() {
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics,
 
-		ResourceType: stats.Rage,
-		BaseCost:     cost,
-
+		RageCost: core.RageCostOptions{
+			Cost:   15 - float64(warrior.Talents.FocusedRage) - float64(warrior.Talents.Puncture),
+			Refund: 0.8,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: cost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 		},
@@ -92,7 +61,7 @@ func (warrior *Warrior) registerDevastateSpell() {
 					warrior.SunderArmorDevastate.Cast(sim, target)
 				}
 			} else {
-				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
+				spell.IssueRefund(sim)
 			}
 		},
 	})

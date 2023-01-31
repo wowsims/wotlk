@@ -7,6 +7,21 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+// T6 Sunwell
+var ItemSetTempestRegalia = core.NewItemSet(core.ItemSet{
+	Name: "Tempest Regalia",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Increases the duration of your Evocation ability by 2 sec.
+			// Implemented in evocation.go.
+		},
+		4: func(agent core.Agent) {
+			// Increases the damage of your Fireball, Frostbolt, and Arcane Missles abilities by 5%.
+			// Implemented in the files for those spells.
+		},
+	},
+})
+
 // T7 Naxx
 var ItemSetFrostfireGarb = core.NewItemSet(core.ItemSet{
 	Name: "Frostfire Garb",
@@ -23,19 +38,22 @@ var ItemSetFrostfireGarb = core.NewItemSet(core.ItemSet{
 
 // T8 Ulduar
 var ItemSetKirinTorGarb = core.NewItemSet(core.ItemSet{
-	Name: "Kirin Tor Garb",
+	Name:            "Kirin Tor Garb",
+	AlternativeName: "Kirin'dor Garb", // Wowhead spells this incorrectly
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 			mage := agent.(MageAgent).GetMage()
-			procAura := mage.NewTemporaryStatsAura("Kiron Tor 2pc", core.ActionID{SpellID: 64867}, stats.Stats{stats.SpellPower: 350}, 15*time.Second)
+			procAura := mage.NewTemporaryStatsAura("Kirin Tor 2pc", core.ActionID{SpellID: 64868}, stats.Stats{stats.SpellPower: 350}, 15*time.Second)
 			core.MakeProcTriggerAura(&mage.Unit, core.ProcTrigger{
 				Name:       "Mage2pT8",
 				Callback:   core.CallbackOnSpellHitDealt,
+				Outcome:    core.OutcomeLanded,
 				ProcChance: 0.25,
 				ICD:        time.Second * 45,
-				SpellFlags: BarrageSpells,
-				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
-					procAura.Activate(sim)
+				Handler: func(sim *core.Simulation, spell *core.Spell, _ *core.SpellResult) {
+					if spell == mage.ArcaneBlast || spell == mage.Fireball || spell == mage.FrostfireBolt || spell == mage.Frostbolt {
+						procAura.Activate(sim)
+					}
 				},
 			})
 		},

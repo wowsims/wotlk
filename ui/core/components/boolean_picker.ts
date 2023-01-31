@@ -6,6 +6,7 @@ import { Input, InputConfig } from './input.js';
  * Data for creating a boolean picker (checkbox).
  */
 export interface BooleanPickerConfig<ModObject> extends InputConfig<ModObject, boolean> {
+	cssScheme?: string;
 }
 
 // UI element for picking an arbitrary number field.

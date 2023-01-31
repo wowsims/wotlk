@@ -9,6 +9,8 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+var TalentTreeSizes = [3]int{26, 27, 28}
+
 const ThoridalTheStarsFuryItemID = 34334
 
 func RegisterHunter() {
@@ -74,11 +76,7 @@ type Hunter struct {
 	// Fake spells to encapsulate weaving logic.
 	TrapWeaveSpell *core.Spell
 
-	BlackArrowDot      *core.Dot
-	ExplosiveTrapDot   *core.Dot
-	ExplosiveShotR4Dot *core.Dot
-	ExplosiveShotR3Dot *core.Dot
-	SerpentStingDot    *core.Dot
+	ExplosiveTrapDot *core.Dot
 
 	AspectOfTheDragonhawkAura *core.Aura
 	AspectOfTheViperAura      *core.Aura
@@ -174,10 +172,11 @@ func NewHunter(character core.Character, options *proto.Player) *Hunter {
 
 	hunter := &Hunter{
 		Character: character,
-		Talents:   hunterOptions.Talents,
+		Talents:   &proto.HunterTalents{},
 		Options:   hunterOptions.Options,
 		Rotation:  hunterOptions.Rotation,
 	}
+	core.FillTalentsProto(hunter.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
 	hunter.EnableManaBar()
 
 	hunter.PseudoStats.CanParry = true

@@ -4,27 +4,32 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (rogue *Rogue) registerBackstabSpell() {
-	baseCost := rogue.costModifier(60 - 4*float64(rogue.Talents.SlaughterFromTheShadows))
-	refundAmount := baseCost * 0.8
+	// FIXME: Require a dagger MH
+	//daggerMH := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
 
 	rogue.Backstab = rogue.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 26863},
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBuilder,
-		ResourceType: stats.Energy,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 26863},
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBuilder,
 
+		EnergyCost: core.EnergyCostOptions{
+			Cost:   rogue.costModifier(60 - 4*float64(rogue.Talents.SlaughterFromTheShadows)),
+			Refund: 0.8,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  time.Second,
+				GCD: time.Second,
 			},
 			IgnoreHaste: true,
+		},
+
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return rogue.GetMHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger
 		},
 
 		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +
@@ -43,7 +48,7 @@ func (rogue *Rogue) registerBackstabSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := 330 +
+			baseDamage := 310 +
 				spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
 				spell.BonusWeaponDamage()
 
@@ -51,8 +56,14 @@ func (rogue *Rogue) registerBackstabSpell() {
 
 			if result.Landed() {
 				rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())
+				// FIXME: Extension of a Rupture Dot can occur up to 3 times
+				if rogue.HasGlyph(42956) && rogue.Rupture[0].Dot(rogue.CurrentTarget).IsActive() {
+					rogue.Rupture[0].Dot(rogue.CurrentTarget).NumberOfTicks += 1
+					rogue.Rupture[0].Dot(rogue.CurrentTarget).RecomputeAuraDuration()
+					rogue.Rupture[0].Dot(rogue.CurrentTarget).UpdateExpires(rogue.Rupture[0].Dot(rogue.CurrentTarget).ExpiresAt() + rogue.Rupture[0].Dot(rogue.CurrentTarget).TickLength)
+				}
 			} else {
-				rogue.AddEnergy(sim, refundAmount, rogue.EnergyRefundMetrics)
+				spell.IssueRefund(sim)
 			}
 		},
 	})

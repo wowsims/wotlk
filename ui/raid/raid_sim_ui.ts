@@ -1,38 +1,27 @@
-import { BooleanPicker } from "../core/components/boolean_picker.js";
-import { DetailedResults } from "../core/components/detailed_results.js";
-import { EncounterPicker } from "../core/components/encounter_picker.js";
-import { IconPicker } from "../core/components/icon_picker.js";
+import { EmbeddedDetailedResults } from "../core/components/detailed_results.js";
 import { LogRunner } from "../core/components/log_runner.js";
 import { addRaidSimAction, RaidSimResultsManager, ReferenceData } from "../core/components/raid_sim_action.js";
-import { SavedDataManager } from "../core/components/saved_data_manager.js";
-import { SettingsMenu } from "../core/components/settings_menu.js";
 
-import * as Tooltips from "../core/constants/tooltips.js";
-import { Encounter } from "../core/encounter.js";
 import { Player } from "../core/player.js";
 import { Raid as RaidProto } from "../core/proto/api.js";
-import { Class, Encounter as EncounterProto, Faction, RaidBuffs, Stat, TristateEffect } from "../core/proto/common.js";
+import { Class, Encounter as EncounterProto, RaidBuffs, TristateEffect } from "../core/proto/common.js";
 import { Blessings } from "../core/proto/paladin.js";
-import { BlessingsAssignments, BuffBot as BuffBotProto, RaidSimSettings, SavedEncounter, SavedRaid } from "../core/proto/ui.js";
-import { ActionId } from '../core/proto_utils/action_id.js';
+import { BlessingsAssignments, RaidSimSettings, SavedEncounter } from "../core/proto/ui.js";
 import { playerToSpec } from "../core/proto_utils/utils.js";
-import { Raid } from "../core/raid.js";
 import { Sim } from "../core/sim.js";
 import { SimUI } from "../core/sim_ui.js";
-import { LaunchStatus, raidSimLaunched } from '../core/launched_sims.js';
+import { raidSimStatus } from '../core/launched_sims.js';
 import { EventID, TypedEvent } from "../core/typed_event.js";
 
-import { AssignmentsPicker } from "./assignments_picker.js";
+import { RaidTab } from "./raid_tab.js";
+import { SettingsTab } from "./settings_tab.js";
+
 import { BlessingsPicker } from "./blessings_picker.js";
-import { BuffBot } from "./buff_bot.js";
 import { implementedSpecs } from "./presets.js";
 import { RaidPicker } from "./raid_picker.js";
-import { TanksPicker } from "./tanks_picker.js";
 
 import * as ImportExport from "./import_export.js";
 
-declare var Muuri: any;
-declare var tippy: any;
 declare var pako: any;
 
 export interface RaidSimConfig {
@@ -47,7 +36,7 @@ export class RaidSimUI extends SimUI {
 	private readonly config: RaidSimConfig;
 	private raidSimResultsManager: RaidSimResultsManager | null = null;
 	public raidPicker: RaidPicker | null = null;
-	private blessingsPicker: BlessingsPicker | null = null;
+	public blessingsPicker: BlessingsPicker | null = null;
 
 	// Emits when the raid comp changes. Includes changes to buff bots.
 	readonly compChangeEmitter = new TypedEvent<void>();
@@ -55,28 +44,25 @@ export class RaidSimUI extends SimUI {
 
 	readonly referenceChangeEmitter = new TypedEvent<void>();
 
-	private settingsMuuri: any;
-
 	constructor(parentElem: HTMLElement, config: RaidSimConfig) {
 		super(parentElem, new Sim(), {
+			cssClass: 'raid-sim-ui',
 			cssScheme: 'raid',
 			spec: null,
-			launchStatus: raidSimLaunched ? LaunchStatus.Launched : LaunchStatus.Unlaunched,
+			launchStatus: raidSimStatus,
 			knownIssues: (config.knownIssues || []).concat(extraKnownIssues),
 		});
-		this.rootElem.classList.add('raid-sim-ui');
 
 		this.config = config;
-		this.settingsMuuri = null;
 
 		this.sim.raid.compChangeEmitter.on(eventID => this.compChangeEmitter.emit(eventID));
-		this.sim.setModifyRaidProto(raidProto => this.modifyRaidProto(raidProto));
-
 		[
 			this.compChangeEmitter,
 			this.sim.changeEmitter,
 		].forEach(emitter => emitter.on(eventID => this.changeEmitter.emit(eventID)));
+		this.changeEmitter.on(() => this.recomputeSettingsLayout());
 
+		this.sim.setModifyRaidProto(raidProto => this.modifyRaidProto(raidProto));
 		this.sim.waitForInit().then(() => this.loadSettings());
 
 		this.addSidebarComponents();
@@ -85,8 +71,6 @@ export class RaidSimUI extends SimUI {
 		this.addSettingsTab();
 		this.addDetailedResultsTab();
 		this.addLogTab();
-
-		this.changeEmitter.on(() => this.recomputeSettingsLayout());
 	}
 
 	private loadSettings() {
@@ -123,156 +107,18 @@ export class RaidSimUI extends SimUI {
 	}
 
 	private addTopbarComponents() {
-		this.simHeader.addImportLink('JSON', parent => new ImportExport.RaidJsonImporter(parent, this));
-		this.simHeader.addImportLink('WCL', parent => new ImportExport.RaidWCLImporter(parent, this));
+		this.simHeader.addImportLink('JSON', (parent) => new ImportExport.RaidJsonImporter(this.rootElem, this));
+		this.simHeader.addImportLink('WCL', (parent) => new ImportExport.RaidWCLImporter(this.rootElem, this));
 
-		this.simHeader.addExportLink('JSON', parent => new ImportExport.RaidJsonExporter(parent, this));
+		this.simHeader.addExportLink('JSON', (parent) => new ImportExport.RaidJsonExporter(this.rootElem, this));
 	}
 
 	private addRaidTab() {
-		this.addTab('Raid', 'raid-tab', `
-			<div class="raid-picker">
-			</div>
-			<div class="saved-raids-div">
-				<div class="saved-raids-manager">
-				</div>
-			</div>
-		`);
-
-		this.raidPicker = new RaidPicker(this.rootElem.getElementsByClassName('raid-picker')[0] as HTMLElement, this);
-
-		const savedRaidManager = new SavedDataManager<RaidSimUI, SavedRaid>(
-			this.rootElem.getElementsByClassName('saved-raids-manager')[0] as HTMLElement, this, this, {
-				label: 'Raid',
-				storageKey: this.getSavedRaidStorageKey(),
-				getData: (raidSimUI: RaidSimUI) => SavedRaid.create({
-					raid: this.sim.raid.toProto(),
-					buffBots: this.getBuffBots().map(b => b.toProto()),
-					blessings: this.blessingsPicker!.getAssignments(),
-					faction: this.sim.getFaction(),
-					phase: this.sim.getPhase(),
-				}),
-				setData: (eventID: EventID, raidSimUI: RaidSimUI, newRaid: SavedRaid) => {
-					TypedEvent.freezeAllAndDo(() => {
-						this.sim.raid.fromProto(eventID, newRaid.raid || RaidProto.create());
-						this.raidPicker!.setBuffBots(eventID, newRaid.buffBots);
-						this.blessingsPicker!.setAssignments(eventID, newRaid.blessings || BlessingsAssignments.create());
-						if (newRaid.faction) this.sim.setFaction(eventID, newRaid.faction);
-						if (newRaid.phase) this.sim.setPhase(eventID, newRaid.phase);
-					});
-				},
-				changeEmitters: [this.changeEmitter, this.sim.changeEmitter],
-				equals: (a: SavedRaid, b: SavedRaid) => {
-					return SavedRaid.equals(a, b);
-				},
-				toJson: (a: SavedRaid) => SavedRaid.toJson(a),
-				fromJson: (obj: any) => SavedRaid.fromJson(obj),
-			}
-		);
-		this.sim.waitForInit().then(() => {
-			savedRaidManager.loadUserData();
-		});
+		new RaidTab(this.simTabContentsContainer, this);
 	}
 
 	private addSettingsTab() {
-		this.addTab('Settings', 'raid-settings-tab', `
-			<div class="raid-settings-sections">
-				<div class="settings-section-container raid-settings-section-container">
-					<fieldset class="settings-section raid-encounter-section">
-						<legend>Encounter</legend>
-					</fieldset>
-				</div>
-				<div class="settings-section-container blessings-section-container">
-					<fieldset class="settings-section blessings-section">
-						<legend>Blessings</legend>
-					</fieldset>
-				</div>
-				<div class="settings-section-container assignments-section-container">
-				</div>
-				<div class="settings-section-container tanks-section-container">
-				</div>
-				<div class="settings-section-container raid-settings-section-container">
-					<fieldset class="settings-section consumes-section">
-						<legend>Consumes</legend>
-					</fieldset>
-					<fieldset class="settings-section other-options-section">
-						<legend>Other Options</legend>
-					</fieldset>
-				</div>
-			</div>
-			<div class="settings-bottom-bar">
-				<div class="saved-encounter-manager">
-				</div>
-			</div>
-		`);
-
-		const encounterSectionElem = this.rootElem.getElementsByClassName('raid-encounter-section')[0] as HTMLElement;
-		new EncounterPicker(encounterSectionElem, this.sim.encounter, {
-			showExecuteProportion: true,
-		}, this);
-		const savedEncounterManager = new SavedDataManager<Encounter, SavedEncounter>(
-			this.rootElem.getElementsByClassName('saved-encounter-manager')[0] as HTMLElement, this, this.sim.encounter, {
-				label: 'Encounter',
-				storageKey: this.getSavedEncounterStorageKey(),
-				getData: (encounter: Encounter) => SavedEncounter.create({ encounter: encounter.toProto() }),
-				setData: (eventID: EventID, encounter: Encounter, newEncounter: SavedEncounter) => encounter.fromProto(eventID, newEncounter.encounter!),
-				changeEmitters: [this.sim.encounter.changeEmitter],
-				equals: (a: SavedEncounter, b: SavedEncounter) => SavedEncounter.equals(a, b),
-				toJson: (a: SavedEncounter) => SavedEncounter.toJson(a),
-				fromJson: (obj: any) => SavedEncounter.fromJson(obj),
-			}
-		);
-		this.sim.waitForInit().then(() => {
-			savedEncounterManager.loadUserData();
-		});
-
-		const blessingsSection = this.rootElem.getElementsByClassName('blessings-section')[0] as HTMLElement;
-		this.blessingsPicker = new BlessingsPicker(blessingsSection, this);
-		this.blessingsPicker.changeEmitter.on(eventID => this.changeEmitter.emit(eventID));
-		tippy(blessingsSection, {
-			content: Tooltips.BLESSINGS_SECTION,
-			allowHTML: true,
-			placement: 'left',
-		});
-
-		const assignmentsPicker = new AssignmentsPicker(this.rootElem.getElementsByClassName('assignments-section-container')[0] as HTMLElement, this);
-		const tanksPicker = new TanksPicker(this.rootElem.getElementsByClassName('tanks-section-container')[0] as HTMLElement, this);
-
-		const consumesSectionElem = this.rootElem.getElementsByClassName('consumes-section')[0] as HTMLElement;
-		makeBooleanRaidIconBuffInput(consumesSectionElem, this.sim.raid, ActionId.fromItemId(37094), 'scrollOfStamina'),
-		makeBooleanRaidIconBuffInput(consumesSectionElem, this.sim.raid, ActionId.fromItemId(43466), 'scrollOfStrength'),
-		makeBooleanRaidIconBuffInput(consumesSectionElem, this.sim.raid, ActionId.fromItemId(43464), 'scrollOfAgility'),
-		makeBooleanRaidIconBuffInput(consumesSectionElem, this.sim.raid, ActionId.fromItemId(37092), 'scrollOfIntellect'),
-		makeBooleanRaidIconBuffInput(consumesSectionElem, this.sim.raid, ActionId.fromItemId(37098), 'scrollOfSpirit'),
-		makeBooleanRaidIconBuffInput(consumesSectionElem, this.sim.raid, ActionId.fromItemId(43468), 'scrollOfProtection'),
-		makeBooleanRaidIconBuffInput(consumesSectionElem, this.sim.raid, ActionId.fromItemId(49633), 'drumsOfForgottenKings'),
-		makeBooleanRaidIconBuffInput(consumesSectionElem, this.sim.raid, ActionId.fromItemId(49634), 'drumsOfTheWild');
-
-		const otherOptionsSectionElem = this.rootElem.getElementsByClassName('other-options-section')[0] as HTMLElement;
-		otherOptionsSectionElem.classList.add('hide');
-		//new BooleanPicker(otherOptionsSectionElem, this.sim.raid, {
-		//	label: 'Stagger Stormstrikes',
-		//	labelTooltip: 'When there are multiple Enhancement Shaman in the raid, causes them to coordinate their Stormstrike casts for optimal SS charge usage.',
-		//	changedEvent: (raid: Raid) => raid.staggerStormstrikesChangeEmitter,
-		//	getValue: (raid: Raid) => raid.getStaggerStormstrikes(),
-		//	setValue: (eventID: EventID, raid: Raid, newValue: boolean) => {
-		//		raid.setStaggerStormstrikes(eventID, newValue);
-		//	},
-		//});
-
-		// Init Muuri layout only when settings tab is clicked, because it needs the elements
-		// to be shown so it can calculate sizes.
-		(this.rootElem.getElementsByClassName('raid-settings-tab-tab')[0] as HTMLElement)!.addEventListener('click', event => {
-			if (this.settingsMuuri == null) {
-				setTimeout(() => {
-					this.settingsMuuri = new Muuri('.raid-settings-sections');
-				}, 200); // Magic amount of time before Muuri init seems to work
-			}
-
-			setTimeout(() => {
-				this.recomputeSettingsLayout();
-			}, 200);
-		});
+		new SettingsTab(this.simTabContentsContainer, this);
 	}
 
 	private addDetailedResultsTab() {
@@ -281,7 +127,7 @@ export class RaidSimUI extends SimUI {
 			</div>
 		`);
 
-		const detailedResults = new DetailedResults(this.rootElem.getElementsByClassName('detailed-results')[0] as HTMLElement, this, this.raidSimResultsManager!);
+		const detailedResults = new EmbeddedDetailedResults(this.rootElem.getElementsByClassName('detailed-results')[0] as HTMLElement, this, this.raidSimResultsManager!);
 	}
 
 	private addLogTab() {
@@ -294,22 +140,10 @@ export class RaidSimUI extends SimUI {
 	}
 
 	private recomputeSettingsLayout() {
-		if (this.settingsMuuri) {
-			//this.settingsMuuri.refreshItems();
-		}
 		window.dispatchEvent(new Event('resize'));
 	}
 
 	private modifyRaidProto(raidProto: RaidProto) {
-		// Invoke all the buff bot callbacks.
-		this.getBuffBots().forEach(buffBot => {
-			const partyProto = raidProto.parties[buffBot.getPartyIndex()];
-			if (!partyProto) {
-				throw new Error('No party proto for party index: ' + buffBot.getPartyIndex());
-			}
-			buffBot.settings.modifyRaidProto(buffBot, raidProto, partyProto);
-		});
-
 		// Apply blessings.
 		const numPaladins = this.getClassCount(Class.ClassPaladin);
 		const blessingsAssignments = this.blessingsPicker!.getAssignments();
@@ -352,39 +186,20 @@ export class RaidSimUI extends SimUI {
 		}
 	}
 
+	getActivePlayers(): Array<Player<any>> {
+		return this.sim.raid.getActivePlayers();
+	}
+
 	getClassCount(playerClass: Class): number {
-		return this.sim.raid.getClassCount(playerClass)
-			+ this.getBuffBots()
-				.filter(buffBot => buffBot.getClass() == playerClass).length;
-	}
-
-	getBuffBots(): Array<BuffBot> {
-		return this.raidPicker!.getBuffBots();
-	}
-
-	setBuffBots(eventID: EventID, buffBotProtos: BuffBotProto[]): void {
-		this.raidPicker!.setBuffBots(eventID, buffBotProtos);
-	}
-
-	clearBuffBots(eventID: EventID): void {
-		this.raidPicker!.setBuffBots(eventID, []);
-	}
-
-	getPlayersAndBuffBots(): Array<Player<any> | BuffBot | null> {
-		const players = this.sim.raid.getPlayers();
-		const buffBots = this.getBuffBots();
-
-		const playersAndBuffBots: Array<Player<any> | BuffBot | null> = players.slice();
-		buffBots.forEach(buffBot => {
-			playersAndBuffBots[buffBot.getRaidIndex()] = buffBot;
-		});
-
-		return playersAndBuffBots;
+		return this.getActivePlayers().filter(player => player.isClass(playerClass)).length;
 	}
 
 	applyDefaults(eventID: EventID) {
 		TypedEvent.freezeAllAndDo(() => {
-			this.sim.raid.fromProto(eventID, RaidProto.create());
+			this.sim.raid.fromProto(eventID, RaidProto.create({
+				numActiveParties: 5,
+			}));
+			this.sim.setPhase(eventID, 1);
 			this.sim.encounter.applyDefaults(eventID);
 			this.sim.applyDefaults(eventID, true, true);
 			this.sim.setShowDamageMetrics(eventID, true);
@@ -395,7 +210,6 @@ export class RaidSimUI extends SimUI {
 		return RaidSimSettings.create({
 			settings: this.sim.toProto(),
 			raid: this.sim.raid.toProto(true),
-			buffBots: this.getBuffBots().map(b => b.toProto()),
 			blessings: this.blessingsPicker!.getAssignments(),
 			encounter: this.sim.encounter.toProto(),
 		});
@@ -422,14 +236,12 @@ export class RaidSimUI extends SimUI {
 			}
 			this.sim.raid.fromProto(eventID, settings.raid || RaidProto.create());
 			this.sim.encounter.fromProto(eventID, settings.encounter || EncounterProto.create());
-			this.raidPicker!.setBuffBots(eventID, settings.buffBots);
 			this.blessingsPicker!.setAssignments(eventID, settings.blessings || BlessingsAssignments.create());
 		});
 	}
 
 	clearRaid(eventID: EventID) {
 		this.sim.raid.clear(eventID);
-		this.clearBuffBots(eventID);
 	}
 
 	// Returns the actual key to use for local storage, based on the given key part and the site context.
@@ -440,18 +252,4 @@ export class RaidSimUI extends SimUI {
 	getSavedRaidStorageKey(): string {
 		return this.getStorageKey('__savedRaid__');
 	}
-}
-
-function makeBooleanRaidIconBuffInput(parent: HTMLElement, raid: Raid, id: ActionId, field: keyof RaidBuffs): IconPicker<Raid, boolean> {
-	return new IconPicker<Raid, boolean>(parent, raid, {
-		id: id,
-		states: 2,
-		changedEvent: (raid: Raid) => raid.buffsChangeEmitter,
-		getValue: (raid: Raid) => raid.getBuffs()[field] as unknown as boolean,
-		setValue: (eventID: EventID, raid: Raid, newValue: boolean) => {
-			const newBuffs = raid.getBuffs();
-			(newBuffs[field] as unknown as boolean) = newValue;
-			raid.setBuffs(eventID, newBuffs);
-		},
-	});
 }

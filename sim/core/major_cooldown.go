@@ -97,6 +97,15 @@ func (mcd *MajorCooldown) TimeToReady(sim *Simulation) time.Duration {
 	return mcd.Spell.TimeToReady(sim)
 }
 
+// Roughly how long until the next cast will happen, accounting for both spell CD and user-specified timings.
+func (mcd *MajorCooldown) TimeToNextCast(sim *Simulation) time.Duration {
+	timeToReady := mcd.TimeToReady(sim)
+	if mcd.numUsages < len(mcd.timings) {
+		timeToReady = MaxDuration(timeToReady, mcd.timings[mcd.numUsages]-sim.CurrentTime)
+	}
+	return timeToReady
+}
+
 func (mcd *MajorCooldown) IsEnabled() bool {
 	return !mcd.disabled
 }
@@ -134,12 +143,7 @@ func (mcd *MajorCooldown) tryActivateInternal(sim *Simulation, character *Charac
 // Activates this MCD, if all the conditions pass.
 // Returns whether the MCD was activated.
 func (mcd *MajorCooldown) tryActivateHelper(sim *Simulation, character *Character) bool {
-	if mcd.Spell.DefaultCast.GCD > 0 && !character.GCD.IsReady(sim) {
-		return false
-	}
-
-	// while casting or channeling, no other action is possible
-	if character.Hardcast.Expires > sim.CurrentTime {
+	if !mcd.Spell.CanCast(sim, character.CurrentTarget) {
 		return false
 	}
 
@@ -345,6 +349,14 @@ func (mcdm *majorCooldownManager) GetInitialMajorCooldown(actionID ActionID) Maj
 func (mcdm *majorCooldownManager) GetMajorCooldown(actionID ActionID) *MajorCooldown {
 	for _, mcd := range mcdm.majorCooldowns {
 		if mcd.Spell.SameAction(actionID) {
+			return mcd
+		}
+	}
+	return nil
+}
+func (mcdm *majorCooldownManager) GetMajorCooldownIgnoreTag(actionID ActionID) *MajorCooldown {
+	for _, mcd := range mcdm.majorCooldowns {
+		if mcd.Spell.SameActionIgnoreTag(actionID) {
 			return mcd
 		}
 	}

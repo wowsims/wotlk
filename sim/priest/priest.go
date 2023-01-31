@@ -8,6 +8,8 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+var TalentTreeSizes = [3]int{28, 27, 27}
+
 type Priest struct {
 	core.Character
 	SelfBuffs
@@ -56,19 +58,12 @@ type Priest struct {
 	VampiricTouch   *core.Spell
 	Dispersion      *core.Spell
 
-	ShadowWordPainDot  *core.Dot
-	DevouringPlagueDot *core.Dot
-	HolyFireDot        *core.Dot
-	MindFlayDot        []*core.Dot
-	MindSearDot        []*core.Dot
-	StarshardsDot      *core.Dot
-	VampiricTouchDot   *core.Dot
-
-	RenewHots     []*core.Dot
 	PWSShields    []*core.Shield
 	WeakenedSouls []*core.Aura
 
 	ProcPrayerOfMending core.ApplySpellResults
+
+	DpInitMultiplier float64
 
 	// set bonus cache
 	// The mana cost of your Mind Blast is reduced by 10%.
@@ -109,6 +104,7 @@ func (priest *Priest) HasMinorGlyph(glyph proto.PriestMinorGlyph) bool {
 
 func (priest *Priest) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	raidBuffs.ShadowProtection = true
+	raidBuffs.DivineSpirit = true
 
 	raidBuffs.PowerWordFortitude = core.MaxTristate(raidBuffs.PowerWordFortitude, core.MakeTristateValue(
 		true,
@@ -146,12 +142,6 @@ func (priest *Priest) Initialize() {
 		priest.newMindFlaySpell(2),
 		priest.newMindFlaySpell(3),
 	}
-	priest.MindFlayDot = []*core.Dot{
-		nil, // So we can use # of ticks as the index
-		priest.newMindFlayDot(1),
-		priest.newMindFlayDot(2),
-		priest.newMindFlayDot(3),
-	}
 	priest.MindSear = []*core.Spell{
 		nil, // So we can use # of ticks as the index
 		priest.newMindSearSpell(1),
@@ -159,14 +149,6 @@ func (priest *Priest) Initialize() {
 		priest.newMindSearSpell(3),
 		priest.newMindSearSpell(4),
 		priest.newMindSearSpell(5),
-	}
-	priest.MindSearDot = []*core.Dot{
-		nil, // So we can use # of ticks as the index
-		priest.newMindSearDot(1),
-		priest.newMindSearDot(2),
-		priest.newMindSearDot(3),
-		priest.newMindSearDot(4),
-		priest.newMindSearDot(5),
 	}
 }
 
@@ -183,14 +165,7 @@ func (priest *Priest) RegisterHealingSpells() {
 }
 
 func (priest *Priest) AddShadowWeavingStack(sim *core.Simulation) {
-	if priest.Talents.ShadowWeaving == 0 {
-		return
-	}
-
-	if priest.ShadowWeavingAura.IsActive() {
-		priest.ShadowWeavingAura.AddStack(sim)
-		priest.ShadowWeavingAura.Refresh(sim)
-	} else {
+	if priest.ShadowWeavingAura != nil {
 		priest.ShadowWeavingAura.Activate(sim)
 		priest.ShadowWeavingAura.AddStack(sim)
 	}
@@ -199,12 +174,14 @@ func (priest *Priest) AddShadowWeavingStack(sim *core.Simulation) {
 func (priest *Priest) Reset(_ *core.Simulation) {
 }
 
-func New(char core.Character, selfBuffs SelfBuffs, talents *proto.PriestTalents) *Priest {
+func New(char core.Character, selfBuffs SelfBuffs, talents string) *Priest {
 	priest := &Priest{
 		Character: char,
 		SelfBuffs: selfBuffs,
-		Talents:   talents,
+		Talents:   &proto.PriestTalents{},
 	}
+	core.FillTalentsProto(priest.Talents.ProtoReflect(), talents, TalentTreeSizes)
+
 	priest.EnableManaBar()
 	priest.ShadowfiendPet = priest.NewShadowfiend()
 
@@ -222,72 +199,72 @@ func New(char core.Character, selfBuffs SelfBuffs, talents *proto.PriestTalents)
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassPriest}] = stats.Stats{
 		stats.Health:    6960,
+		stats.Mana:      3863,
 		stats.Strength:  39,
 		stats.Agility:   45,
 		stats.Stamina:   58,
 		stats.Intellect: 145,
 		stats.Spirit:    166,
-		stats.Mana:      3863,
 		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarf, Class: proto.Class_ClassPriest}] = stats.Stats{
 		stats.Health:    6960,
+		stats.Mana:      3863,
 		stats.Strength:  41,
 		stats.Agility:   41,
 		stats.Stamina:   61,
 		stats.Intellect: 144,
 		stats.Spirit:    150,
-		stats.Mana:      3863,
 		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassPriest}] = stats.Stats{
 		stats.Health:    6960,
+		stats.Mana:      3863,
 		stats.Strength:  36,
 		stats.Agility:   50,
 		stats.Stamina:   57,
 		stats.Intellect: 145,
 		stats.Spirit:    151,
-		stats.Mana:      3863,
 		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassPriest}] = stats.Stats{
 		stats.Health:    6960,
+		stats.Mana:      3863,
 		stats.Strength:  40,
 		stats.Agility:   42,
 		stats.Stamina:   57,
 		stats.Intellect: 146,
 		stats.Spirit:    153,
-		stats.Mana:      3863,
 		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassPriest}] = stats.Stats{
 		stats.Health:    6960,
+		stats.Mana:      3863,
 		stats.Strength:  38,
 		stats.Agility:   43,
 		stats.Stamina:   59,
 		stats.Intellect: 143,
 		stats.Spirit:    156,
-		stats.Mana:      3863,
 		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassPriest}] = stats.Stats{
 		stats.Health:    6960,
+		stats.Mana:      3863,
 		stats.Strength:  40,
 		stats.Agility:   47,
 		stats.Stamina:   59,
 		stats.Intellect: 141,
 		stats.Spirit:    152,
-		stats.Mana:      3863,
 		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassPriest}] = stats.Stats{
 		stats.Health:    6960,
+		stats.Mana:      3863,
 		stats.Strength:  36,
 		stats.Agility:   47,
 		stats.Stamina:   57,
 		stats.Intellect: 149,
 		stats.Spirit:    150,
-		stats.Mana:      3863,
 		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
 	}
 }

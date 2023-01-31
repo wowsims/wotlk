@@ -1,7 +1,6 @@
 package wotlk
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -50,23 +49,20 @@ func applyShardOfTheGodsDamageProc(character *core.Character, isHeroic bool) {
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
-	})
 
-	target := character.CurrentTarget
-	dot := core.NewDot(core.Dot{
-		Spell: dotSpell,
-		Aura: target.RegisterAura(core.Aura{
-			Label:    name + "-" + strconv.Itoa(int(character.Index)),
-			ActionID: actionID,
-		}),
-		NumberOfTicks: 6,
-		TickLength:    time.Second * 2,
-		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-			dot.SnapshotBaseDamage = tickAmount
-			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
-		},
-		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+		Dot: core.DotConfig{
+			Aura: core.Aura{
+				Label: name,
+			},
+			NumberOfTicks: 6,
+			TickLength:    time.Second * 2,
+			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+				dot.SnapshotBaseDamage = tickAmount
+				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+			},
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+			},
 		},
 	})
 
@@ -77,8 +73,8 @@ func applyShardOfTheGodsDamageProc(character *core.Character, isHeroic bool) {
 		Outcome:    core.OutcomeLanded,
 		ProcChance: 0.25,
 		ICD:        time.Second * 50,
-		Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
-			dot.Apply(sim)
+		Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
+			dotSpell.Dot(result.Target).Apply(sim)
 		},
 	})
 }

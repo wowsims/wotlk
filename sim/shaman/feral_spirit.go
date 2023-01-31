@@ -4,15 +4,12 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (shaman *Shaman) registerFeralSpirit() {
 	if !shaman.Talents.FeralSpirit {
 		return
 	}
-
-	manaCost := 0.12 * shaman.BaseMana
 
 	spiritWolvesActiveAura := shaman.RegisterAura(core.Aura{
 		Label:    "Feral Spirit",
@@ -23,13 +20,12 @@ func (shaman *Shaman) registerFeralSpirit() {
 	shaman.FeralSpirit = shaman.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 51533},
 
-		ResourceType: stats.Mana,
-		BaseCost:     manaCost,
-
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.12,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: manaCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
@@ -44,6 +40,10 @@ func (shaman *Shaman) registerFeralSpirit() {
 
 			// Add a dummy aura to show in metrics
 			spiritWolvesActiveAura.Activate(sim)
+
+			// https://github.com/JamminL/wotlk-classic-bugs/issues/280
+			// instant casts (e.g. shocks) usually don't reset a shaman's swing timer
+			shaman.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime, false)
 		},
 	})
 
@@ -51,14 +51,5 @@ func (shaman *Shaman) registerFeralSpirit() {
 		Spell:    shaman.FeralSpirit,
 		Priority: core.CooldownPriorityDrums + 1, // Always prefer to use wolves before bloodlust/drums so wolves gain haste buff
 		Type:     core.CooldownTypeDPS,
-		ActivationFactory: func(sim *core.Simulation) core.CooldownActivation {
-			return func(sim *core.Simulation, unit *core.Character) {
-				if shaman.FeralSpirit.Cast(sim, unit.CurrentTarget) {
-					// https://github.com/JamminL/wotlk-classic-bugs/issues/280
-					// instant casts (e.g. shocks) usually don't reset a shaman's swing timer
-					shaman.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime, false)
-				}
-			}
-		},
 	})
 }

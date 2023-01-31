@@ -130,8 +130,6 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
-					//Not Ready to enable yet, No backend support.
-					//ShamanInputs.EnhancmentItemSwapInputs,
 					ShamanInputs.SyncTypeInput,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
@@ -154,6 +152,8 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				gear: [
 					Presets.PreRaid_PRESET,
 					Presets.P1_PRESET,
+					Presets.P2_PRESET_FT,
+					Presets.P2_PRESET_WF,
 				],
 			},
 		});

@@ -19,19 +19,13 @@ import {
 
 import * as Tooltips from '../core/constants/tooltips.js';
 
-// Preset options for this spec.
-// Eventually we will import these values for the raid sim too, so its good to
-// keep them in a separate file.
-
-// Default talents. Uses the wowhead calculator format, make the talents on
-// https://wotlk.wowhead.com/talent-calc and copy the numbers in the url.
 export const BloodTalents = {
-	name: 'Balanced',
+	name: 'Blood',
 	data: SavedTalents.create({
-		talentsString: '005510153330330220102013-3050505100023101-002',
+		talentsString: '005512153330030320102013-3050505000023-005',
 		glyphs: Glyphs.create({
 			major1: DeathknightMajorGlyph.GlyphOfDisease,
-			major2: DeathknightMajorGlyph.GlyphOfVampiricBlood,
+			major2: DeathknightMajorGlyph.GlyphOfRuneStrike,
 			major3: DeathknightMajorGlyph.GlyphOfDarkCommand,
 			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
 			minor2: DeathknightMinorGlyph.GlyphOfBloodTap,
@@ -40,6 +34,50 @@ export const BloodTalents = {
 	}),
 };
 
+export const DoubleBuffBloodTalents = {
+	name: '2B Blood',
+	data: SavedTalents.create({
+		talentsString: '005512153330030320102013-3050505000023201-002',
+		glyphs: Glyphs.create({
+			major1: DeathknightMajorGlyph.GlyphOfDisease,
+			major2: DeathknightMajorGlyph.GlyphOfRuneStrike,
+			major3: DeathknightMajorGlyph.GlyphOfDarkCommand,
+			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
+			minor2: DeathknightMinorGlyph.GlyphOfBloodTap,
+			minor3: DeathknightMinorGlyph.GlyphOfRaiseDead,
+		}),
+	}),
+};
+
+export const FrostTalents = {
+	name: 'Frost',
+	data: SavedTalents.create({
+		talentsString: '005510003-3050535000223301030023310035-005',
+		glyphs: Glyphs.create({
+			major1: DeathknightMajorGlyph.GlyphOfDisease,
+			major2: DeathknightMajorGlyph.GlyphOfRuneStrike,
+			major3: DeathknightMajorGlyph.GlyphOfDarkCommand,
+			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
+			minor2: DeathknightMinorGlyph.GlyphOfBloodTap,
+			minor3: DeathknightMinorGlyph.GlyphOfRaiseDead,
+		}),
+	}),
+};
+
+export const DoubleBuffFrostTalents = {
+	name: '2B Frost',
+	data: SavedTalents.create({
+		talentsString: '00551005303003002-305053510022330100002301-005',
+		glyphs: Glyphs.create({
+			major1: DeathknightMajorGlyph.GlyphOfDisease,
+			major2: DeathknightMajorGlyph.GlyphOfRuneStrike,
+			major3: DeathknightMajorGlyph.GlyphOfDarkCommand,
+			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
+			minor2: DeathknightMinorGlyph.GlyphOfBloodTap,
+			minor3: DeathknightMinorGlyph.GlyphOfRaiseDead,
+		}),
+	}),
+};
 
 export const DefaultRotation = TankDeathKnightRotation.create({
   opener: Opener.Threat,
@@ -59,8 +97,8 @@ export const DefaultConsumes = Consumes.create({
 	prepopPotion: Potions.IndestructiblePotion,
 });
 
-export const P1_BLOOD_BIS_PRESET = {
-	name: 'P1 BiS Blood',
+export const P1_BLOOD_PRESET = {
+	name: 'P1 Blood',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{ "items": [
 		{
@@ -155,5 +193,322 @@ export const P1_BLOOD_BIS_PRESET = {
 		{
 			"id": 40207
 		}
+  ]}`),
+};
+
+export const P2_BLOOD_PRESET = {
+	name: 'P2 Blood',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`{ "items": [
+		{
+			"id": 46120,
+			"enchant": 3878,
+			"gems": [
+			  41380,
+			  36767
+			]
+		  },
+		  {
+			"id": 45485,
+			"gems": [
+			  40008
+			]
+		  },
+		  {
+			"id": 46122,
+			"enchant": 3852,
+			"gems": [
+			  40008
+			]
+		  },
+		  {
+			"id": 45496,
+			"enchant": 3605,
+			"gems": [
+			  40022
+			]
+		  },
+		  {
+			"id": 46118,
+			"gems": [
+			  36767,
+			  36767
+			]
+		  },
+		  {
+			"id": 45111,
+			"enchant": 3850,
+			"gems": [
+			  0
+			]
+		  },
+		  {
+			"id": 46119,
+			"enchant": 3860,
+			"gems": [
+			  40008,
+			  0
+			]
+		  },
+		  {
+			"id": 45551,
+			"gems": [
+			  40008,
+			  40008,
+			  40008
+			]
+		  },
+		  {
+			"id": 45594,
+			"enchant": 3822,
+			"gems": [
+			  40008,
+			  40008,
+			  40008
+			]
+		  },
+		  {
+			"id": 45988,
+			"enchant": 3232,
+			"gems": [
+			  40008,
+			  40008
+			]
+		  },
+		  {
+			"id": 45471,
+			"gems": [
+			  40008
+			]
+		  },
+		  {
+			"id": 45326
+		  },
+		  {
+			"id": 45158
+		  },
+		  {
+			"id": 46021
+		  },
+		  {
+			"id": 45533,
+			"enchant": 3370,
+			"gems": [
+			  40008,
+			  40008
+			]
+		  },
+		  {},
+		  {
+			"id": 45144
+		  }
+  ]}`),
+};
+
+export const P1_FROST_PRESET = {
+	name: 'P1 Frost',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`{ "items": [
+		{
+			"id": 40565,
+			"enchant": 3878,
+			"gems": [
+			  41380,
+			  36767
+			]
+		  },
+		  {
+			"id": 40387
+		  },
+		  {
+			"id": 40568,
+			"enchant": 3852,
+			"gems": [
+			  40008
+			]
+		  },
+		  {
+			"id": 40252,
+			"enchant": 3605
+		  },
+		  {
+			"id": 40559,
+			"gems": [
+			  40008,
+			  40022
+			]
+		  },
+		  {
+			"id": 40306,
+			"enchant": 3850,
+			"gems": [
+			  40008,
+			  0
+			]
+		  },
+		  {
+			"id": 40563,
+			"enchant": 3860,
+			"gems": [
+			  40008,
+			  0
+			]
+		  },
+		  {
+			"id": 39759,
+			"gems": [
+			  40008,
+			  40008
+			]
+		  },
+		  {
+			"id": 40589,
+			"enchant": 3822
+		  },
+		  {
+			"id": 40297,
+			"enchant": 3232
+		  },
+		  {
+			"id": 40718
+		  },
+		  {
+			"id": 40107
+		  },
+		  {
+			"id": 44063,
+			"gems": [
+			  36767,
+			  36767
+			]
+		  },
+		  {
+			"id": 40257
+		  },
+		  {
+			"id": 40345,
+			"enchant": 3370
+		  },
+		  {
+			"id": 40345,
+			"enchant": 3368
+		  },
+		  {
+			"id": 40714
+		  }
+  ]}`),
+};
+
+export const P2_FROST_PRESET = {
+	name: 'P2 Frost',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`{ "items": [
+		{
+			"id": 46120,
+			"enchant": 3878,
+			"gems": [
+			  41380,
+			  36767
+			]
+		  },
+		  {
+			"id": 45485,
+			"gems": [
+			  40008
+			]
+		  },
+		  {
+			"id": 46122,
+			"enchant": 3852,
+			"gems": [
+			  40008
+			]
+		  },
+		  {
+			"id": 45496,
+			"enchant": 3605,
+			"gems": [
+			  40022
+			]
+		  },
+		  {
+			"id": 46118,
+			"gems": [
+			  36767,
+			  36767
+			]
+		  },
+		  {
+			"id": 45111,
+			"enchant": 3850,
+			"gems": [
+			  0
+			]
+		  },
+		  {
+			"id": 46119,
+			"enchant": 3860,
+			"gems": [
+			  40008,
+			  0
+			]
+		  },
+		  {
+			"id": 45551,
+			"gems": [
+			  40008,
+			  40008,
+			  40008
+			]
+		  },
+		  {
+			"id": 45594,
+			"enchant": 3822,
+			"gems": [
+			  40008,
+			  40008,
+			  40008
+			]
+		  },
+		  {
+			"id": 45988,
+			"enchant": 3232,
+			"gems": [
+			  40008,
+			  40008
+			]
+		  },
+		  {
+			"id": 45471,
+			"gems": [
+			  40008
+			]
+		  },
+		  {
+			"id": 45326
+		  },
+		  {
+			"id": 45158
+		  },
+		  {
+			"id": 46021
+		  },
+		  {
+			"id": 46097,
+			"enchant": 3370,
+			"gems": [
+			  40008
+			]
+		  },
+		  {
+			"id": 46097,
+			"enchant": 3368,
+			"gems": [
+			  40008
+			]
+		  },
+		  {
+			"id": 45144
+		  }
   ]}`),
 };

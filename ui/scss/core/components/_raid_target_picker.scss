@@ -1,27 +1,20 @@
 .raid-target-picker-root {
-	border: 1px solid white;
-	margin: 2px;
-	color: white;
-	text-shadow:
-		0 0 3px black,
-		0 0 3px black,
-		0 0 3px black;
-}
+	width: unset;
+	margin-bottom: 0;
 
-.raid-target-picker-dropdown {
-	grid-template-columns: repeat(2, 1fr);
-}
+	.player {
+		width: 8rem;
+	}
 
-.raid-target-picker-option {
-	height: 30px;
-}
+	.raid-target-picker-button {
+		width: 100%;
+	}
 
-.raid-target-picker-icon {
-	margin: 2px;
-	height: 25px;
-}
+	.dropdown-menu {
+		grid-template-columns: repeat(2, 1fr);
 
-.raid-target-picker-label {
-	font-size: 14px;
-	margin: 2px;
+		&.show {
+			display: grid;
+		}
+	}
 }

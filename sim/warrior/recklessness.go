@@ -16,7 +16,7 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 		Duration:  time.Second * 12,
 		MaxStacks: 3,
 		OnInit: func(aura *core.Aura, sim *core.Simulation) {
-			affectedSpells = []*core.Spell{
+			affectedSpells = core.FilterSlice([]*core.Spell{
 				warrior.HeroicStrikeOrCleave,
 				warrior.Bloodthirst,
 				warrior.Devastate,
@@ -33,22 +33,18 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 				warrior.ConcussionBlow,
 				warrior.Bladestorm,
 				warrior.BladestormOH,
-			}
+			}, func(spell *core.Spell) bool { return spell != nil })
 		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			warrior.PseudoStats.DamageTakenMultiplier *= 1.2
 			for _, spell := range affectedSpells {
-				if spell != nil {
-					spell.BonusCritRating += 100 * core.CritRatingPerCritChance
-				}
+				spell.BonusCritRating += 100 * core.CritRatingPerCritChance
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			warrior.PseudoStats.DamageTakenMultiplier /= 1.2
 			for _, spell := range affectedSpells {
-				if spell != nil {
-					spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
-				}
+				spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
 			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
@@ -72,8 +68,15 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 				Duration: warrior.intensifyRageCooldown(time.Minute * 5),
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return warrior.StanceMatches(BerserkerStance) || warrior.BerserkerStance.IsReady(sim)
+		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
+			if !warrior.StanceMatches(BerserkerStance) {
+				warrior.BerserkerStance.Cast(sim, nil)
+			}
+
 			reckAura.Activate(sim)
 			reckAura.SetStacks(sim, 3)
 		},
@@ -82,19 +85,5 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 	warrior.AddMajorCooldown(core.MajorCooldown{
 		Spell: reckSpell,
 		Type:  core.CooldownTypeDPS,
-		ActivationFactory: func(sim *core.Simulation) core.CooldownActivation {
-			return func(sim *core.Simulation, character *core.Character) {
-				if !warrior.StanceMatches(BerserkerStance) {
-					if !warrior.BerserkerStance.IsReady(sim) {
-						return
-					}
-					warrior.BerserkerStance.Cast(sim, nil)
-				}
-				reckSpell.Cast(sim, character.CurrentTarget)
-			}
-		},
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return true
-		},
 	})
 }

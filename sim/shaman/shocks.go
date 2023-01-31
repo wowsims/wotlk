@@ -6,7 +6,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (shaman *Shaman) ShockCD() time.Duration {
@@ -16,27 +15,24 @@ func (shaman *Shaman) ShockCD() time.Duration {
 // Shared logic for all shocks.
 func (shaman *Shaman) newShockSpellConfig(spellID int32, spellSchool core.SpellSchool, baseCost float64, shockTimer *core.Timer) core.SpellConfig {
 	actionID := core.ActionID{SpellID: spellID}
-	cost := baseCost
 
 	return core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  spellSchool,
-		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagShock,
-		ResourceType: stats.Mana,
-		BaseCost:     cost,
+		ActionID:    actionID,
+		SpellSchool: spellSchool,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       SpellFlagShock,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost: baseCost,
+			Multiplier: 1 -
+				core.TernaryFloat64(shaman.Talents.ShamanisticFocus, 0.45, 0) -
+				0.02*float64(shaman.Talents.Convection) -
+				0.02*float64(shaman.Talents.MentalQuickness) -
+				core.TernaryFloat64(shaman.HasSetBonus(ItemSetSkyshatterHarness, 2), 0.1, 0),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: cost -
-					baseCost*(core.TernaryFloat64(shaman.Talents.ShamanisticFocus, 0.45, 0)+
-						float64(shaman.Talents.Convection)*0.02+
-						float64(shaman.Talents.MentalQuickness)*0.02+
-						core.TernaryFloat64(shaman.HasSetBonus(ItemSetSkyshatterHarness, 2), 0.1, 0)),
 				GCD: core.GCDDefault,
-			},
-			ModifyCast: func(_ *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				shaman.modifyCastClearcasting(spell, cast)
 			},
 			CD: core.Cooldown{
 				Timer:    shockTimer,
@@ -54,7 +50,7 @@ func (shaman *Shaman) newShockSpellConfig(spellID int32, spellSchool core.SpellS
 }
 
 func (shaman *Shaman) registerEarthShockSpell(shockTimer *core.Timer) {
-	config := shaman.newShockSpellConfig(49231, core.SpellSchoolNature, baseMana*0.18, shockTimer)
+	config := shaman.newShockSpellConfig(49231, core.SpellSchoolNature, 0.18, shockTimer)
 	config.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 		baseDamage := sim.Roll(854, 900) + 0.386*spell.SpellPower()
 		spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
@@ -67,7 +63,7 @@ const FlameshockID = 49233
 
 func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 	actionID := core.ActionID{SpellID: FlameshockID}
-	config := shaman.newShockSpellConfig(FlameshockID, core.SpellSchoolFire, baseMana*0.17, shockTimer)
+	config := shaman.newShockSpellConfig(FlameshockID, core.SpellSchoolFire, 0.17, shockTimer)
 
 	config.Cast.CD.Duration -= time.Duration(shaman.Talents.BoomingEchoes) * time.Second
 	config.CritMultiplier = shaman.ElementalCritMultiplier(core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfFlameShock), 0.6, 0))
@@ -124,7 +120,7 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 }
 
 func (shaman *Shaman) registerFrostShockSpell(shockTimer *core.Timer) {
-	config := shaman.newShockSpellConfig(49236, core.SpellSchoolFrost, baseMana*0.18, shockTimer)
+	config := shaman.newShockSpellConfig(49236, core.SpellSchoolFrost, 0.18, shockTimer)
 	config.Cast.CD.Duration -= time.Duration(shaman.Talents.BoomingEchoes) * time.Second
 	config.DamageMultiplier += 0.1 * float64(shaman.Talents.BoomingEchoes)
 	config.ThreatMultiplier *= 2

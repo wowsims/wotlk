@@ -1,156 +1,25 @@
 @import "../../core/sim_ui";
-@import "./dps_histogram";
-@import "./player_damage";
-@import "./resource_metrics";
-@import "./results_filter";
-@import "./source_chart";
-@import "./timeline";
-@import "./topline_results";
+@import "../../core/components/detailed_results";
+@import "../../sims/index";
 
 body {
 	background-color: transparent;
 	overflow: auto;
 	max-height: 100vh;
-	color: var(--main-text-color);
+	color: white;
 }
+
 body.new-tab {
 	background-image:
-		linear-gradient(rgba(var(--theme-color-background-raw), var(--theme-background-opacity)), rgba(var(--theme-color-background-raw), var(--theme-background-opacity))),
+		linear-gradient(
+			rgba(var(--theme-background-color), var(--theme-background-opacity)),
+			rgba(var(--theme-background-color), var(--theme-background-opacity))
+		),
 		var(--theme-background-image);
-}
+	background-repeat: no-repeat;
+	background-size: cover;
 
-.all-players .single-player-only {
-	display: none;
-}
-
-.single-player .all-players-only {
-	display: none;
-}
-
-.individual-sim .single-player-only {
-	display: initial;
-}
-.individual-sim .all-players-only {
-	display: none;
-}
-
-.dr-root {
-	display: flex;
-	height: 100%;
-	flex-direction: column;
-}
-
-.dr-row {
-	padding-right: 10px
-}
-
-.dr-root > .dr-toolbar {
-	border-bottom: 1px solid $border-color;
-}
-
-.dr-root > .tab-content {
-	height: 100%;
-	padding-top: 1rem;
-	flex-grow: 1;
-	overflow: auto;
-}
-
-.table-container {
-	border: 1px solid white;
-}
-
-.dr-toolbar {
-	display: flex;
-
-	.nav-tabs {
-		border-bottom: 0;
+	.dr-root {
+		padding: $gap-width var(--container-padding);
 	}
-}
-
-.results-filter {
-	display: flex !important;
-	align-items: center;
-}
-
-.individual-sim .player-filter-root {
-	display: none !important;
-}
-
-.tabs-filler {
-	flex-grow: 1;
-}
-
-.other-metrics {
-	display: flex;
-	width: 100%;
-}
-
-.metrics-table {
-  color: var(--main-text-color);
-	width: 100%;
-	font-size: 16px;
-}
-
-.melee-metrics-root .metrics-table {
-	font-size: 12px;
-}
-
-.hide-in-front-of-target.melee-metrics-root .metrics-table, .hide-threat-metrics .melee-metrics-root .metrics-table {
-	font-size: 14px;
-}
-
-.hide-threat-metrics .hide-in-front-of-target.melee-metrics-root .metrics-table {
-	font-size: 16px;
-}
-
-.metrics-table-header-row {
-	border-bottom: 2px solid white;
-}
-
-.metrics-table-header-cell {
-	padding: .25rem;
-	cursor: pointer;
-}
-
-.metrics-table-body tr {
-	border-bottom: 1px solid $border-color;
-}
-
-.metrics-table-body tr:hover {
-	background-color: rgba(0,0,0,0.5);
-}
-
-.metrics-table-body td {
-	padding: .25rem;
-}
-
-.metrics-table-header-cell:first-child, .metrics-table-body td:first-child {
-	text-align: left;
-}
-.metrics-table-header-cell:not(:first-child), .metrics-table-body td:not(:first-child) {
-	text-align: right;
-}
-
-.metrics-action-icon {
-  @include wowhead-background-icon;
-	height: 30px;
-	width: 30px;
-	vertical-align: middle;
-}
-
-.parent-metric {
-	cursor: pointer;
-}
-.child-metric>*:first-child {
-	padding-left: 20px;
-}
-
-tr:not(.parent-metric) .expand-toggle {
-	display: none;
-}
-.parent-metric.expand .fa-caret-down {
-	display: none;
-}
-.parent-metric:not(.expand) .fa-caret-right {
-	display: none;
 }

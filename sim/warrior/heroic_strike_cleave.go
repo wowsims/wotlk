@@ -3,13 +3,9 @@ package warrior
 import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warrior *Warrior) registerHeroicStrikeSpell() {
-	cost := 15.0 - float64(warrior.Talents.ImprovedHeroicStrike) - float64(warrior.Talents.FocusedRage)
-	refundAmount := cost * 0.8
-
 	hasGlyph := warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfHeroicStrike)
 	var rageMetrics *core.ResourceMetrics
 	if hasGlyph {
@@ -19,23 +15,12 @@ func (warrior *Warrior) registerHeroicStrikeSpell() {
 	warrior.HeroicStrikeOrCleave = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47450},
 		SpellSchool: core.SpellSchoolPhysical,
-		ProcMask:    core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete | SpellFlagBloodsurge,
 
-		ResourceType: stats.Rage,
-		BaseCost:     cost,
-
-		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost: cost,
-			},
-
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				if warrior.glyphOfRevengeProcAura.IsActive() {
-					cast.Cost = 0
-					warrior.glyphOfRevengeProcAura.Deactivate(sim)
-				}
-			},
+		RageCost: core.RageCostOptions{
+			Cost:   15 - float64(warrior.Talents.ImprovedHeroicStrike) - float64(warrior.Talents.FocusedRage),
+			Refund: 0.8,
 		},
 
 		BonusCritRating:  (5*float64(warrior.Talents.Incite) + core.TernaryFloat64(warrior.HasSetBonus(ItemSetWrynnsBattlegear, 4), 5, 0)) * core.CritRatingPerCritChance,
@@ -51,11 +36,10 @@ func (warrior *Warrior) registerHeroicStrikeSpell() {
 
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 
-			if !result.Landed() {
-				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
-			}
 			if result.DidCrit() && hasGlyph {
 				warrior.AddRage(sim, 10, rageMetrics)
+			} else if !result.Landed() {
+				spell.IssueRefund(sim)
 			}
 
 			spell.DealDamage(sim, result)
@@ -64,7 +48,6 @@ func (warrior *Warrior) registerHeroicStrikeSpell() {
 }
 
 func (warrior *Warrior) registerCleaveSpell() {
-	cost := 20.0 - float64(warrior.Talents.FocusedRage)
 	flatDamageBonus := 222 * (1 + 0.4*float64(warrior.Talents.ImprovedCleave))
 
 	targets := core.TernaryInt32(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfCleaving), 3, 2)
@@ -74,16 +57,11 @@ func (warrior *Warrior) registerCleaveSpell() {
 	warrior.HeroicStrikeOrCleave = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47520},
 		SpellSchool: core.SpellSchoolPhysical,
-		ProcMask:    core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
-		ResourceType: stats.Rage,
-		BaseCost:     cost,
-
-		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost: cost,
-			},
+		RageCost: core.RageCostOptions{
+			Cost: 20 - float64(warrior.Talents.FocusedRage),
 		},
 
 		BonusCritRating:  float64(warrior.Talents.Incite) * 5 * core.CritRatingPerCritChance,

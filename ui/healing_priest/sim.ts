@@ -80,7 +80,7 @@ export class HealingPriestSimUI extends IndividualSimUI<Spec.SpecHealingPriest> 
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,
 				// Default rotation settings.
-				rotation: Presets.DefaultRotation,
+				rotation: Presets.DiscDefaultRotation,
 				// Default talents.
 				talents: Presets.DiscTalents.data,
 				// Default spec-specific settings.
@@ -126,8 +126,10 @@ export class HealingPriestSimUI extends IndividualSimUI<Spec.SpecHealingPriest> 
 				gear: [
 					Presets.DISC_PRERAID_PRESET,
 					Presets.DISC_P1_PRESET,
+					Presets.DISC_P2_PRESET,
 					Presets.HOLY_PRERAID_PRESET,
 					Presets.HOLY_P1_PRESET,
+					Presets.HOLY_P2_PRESET,
 				],
 			},
 		});

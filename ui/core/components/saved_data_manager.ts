@@ -108,13 +108,21 @@ export class SavedDataManager<ModObject, T> extends Component {
 		if (!config.isPreset) {
 			let deleteFragment = document.createElement('fragment');
 			deleteFragment.innerHTML = `
-				<a href="javascript:void(0)" class="saved-data-set-delete" role="button">
+				<a
+					href="javascript:void(0)"
+					class="saved-data-set-delete"
+					role="button"
+					data-bs-toggle="tooltip"
+					data-bs-title="Delete saved ${this.config.label}"
+				>
 					<i class="fa fa-times fa-lg"></i>
 				</a>
 			`;
 
 			const deleteButton = deleteFragment.children[0] as HTMLElement;
 			dataElem.appendChild(deleteButton);
+
+			Tooltip.getOrCreateInstance(deleteButton);
 
 			deleteButton.addEventListener('click', event => {
 				event.stopPropagation();
@@ -132,7 +140,6 @@ export class SavedDataManager<ModObject, T> extends Component {
 		if (config.tooltip) {
 			dataElem.setAttribute('data-bs-toggle', 'tooltip');
 			dataElem.setAttribute('data-bs-title', config.tooltip);
-			dataElem.setAttribute('data-bs-trigger', 'hover');
 			dataElem.setAttribute('data-bs-placement', 'bottom');
 			dataElem.setAttribute('data-bs-html', 'true');
 			Tooltip.getOrCreateInstance(dataElem);
@@ -213,7 +220,7 @@ export class SavedDataManager<ModObject, T> extends Component {
 			<div class="saved-data-create-container">
 				<label class="form-label">${this.config.label} Name</label>
 				<input class="saved-data-save-input form-control" type="text" placeholder="Name">
-				<button class="saved-data-save-button btn btn-${this.simUI.cssScheme}">Save ${this.config.label}</button>
+				<button class="saved-data-save-button btn btn-primary">Save ${this.config.label}</button>
 			</div>
 		`;
 

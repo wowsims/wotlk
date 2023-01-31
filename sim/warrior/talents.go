@@ -59,6 +59,7 @@ func (warrior *Warrior) ApplyTalents() {
 	warrior.RegisterBladestormCD()
 	warrior.applyDamageShield()
 	warrior.applyCriticalBlock()
+	warrior.applySwordAndBoard()
 }
 
 // Multiplicative with all other modifiers and only applies to the block damage event
@@ -196,6 +197,11 @@ func (warrior *Warrior) applyTrauma() {
 			if !result.Outcome.Matches(core.OutcomeCrit) {
 				return
 			}
+
+			if !spell.SpellSchool.Matches(core.SpellSchoolPhysical) || !spell.ProcMask.Matches(core.ProcMaskMelee) {
+				return
+			}
+
 			proc := warrior.TraumaAuras[result.Target.Index]
 			proc.Duration = time.Minute * 1
 			proc.Activate(sim)
@@ -688,17 +694,15 @@ func (warrior *Warrior) registerDeathWishCD() {
 		},
 	})
 
-	cost := 10.0
 	deathWishSpell := warrior.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 
-		ResourceType: stats.Rage,
-		BaseCost:     cost,
-
+		RageCost: core.RageCostOptions{
+			Cost: 10,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: cost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
@@ -716,7 +720,7 @@ func (warrior *Warrior) registerDeathWishCD() {
 		Spell: deathWishSpell,
 		Type:  core.CooldownTypeDPS,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return warrior.CurrentRage() >= cost
+			return warrior.CurrentRage() >= deathWishSpell.DefaultCast.Cost
 		},
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 			return true
@@ -779,9 +783,7 @@ func (warrior *Warrior) RegisterBladestormCD() {
 		return
 	}
 
-	var bladestormDot *core.Dot
 	actionID := core.ActionID{SpellID: 46924}
-	cost := 25.0 - float64(warrior.Talents.FocusedRage)
 	numHits := core.MinInt32(4, warrior.Env.GetNumTargets())
 	results := make([]*core.SpellResult, numHits)
 
@@ -804,12 +806,11 @@ func (warrior *Warrior) RegisterBladestormCD() {
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagChanneled | core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
-		ResourceType: stats.Rage,
-		BaseCost:     cost,
-
+		RageCost: core.RageCostOptions{
+			Cost: 25 - float64(warrior.Talents.FocusedRage),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:        cost,
 				ChannelTime: time.Second * 6,
 				GCD:         core.GCDDefault,
 			},
@@ -824,57 +825,57 @@ func (warrior *Warrior) RegisterBladestormCD() {
 		CritMultiplier:   warrior.critMultiplier(mh),
 		ThreatMultiplier: 1.25,
 
-		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			bladestormDot.Apply(sim)
-			bladestormDot.TickOnce(sim)
-		},
-	})
+		Dot: core.DotConfig{
+			IsAOE: true,
+			Aura: core.Aura{
+				Label: "Bladestorm",
+			},
+			NumberOfTicks: 6,
+			TickLength:    time.Second * 1,
+			OnTick: func(sim *core.Simulation, _ *core.Unit, dot *core.Dot) {
+				target := warrior.CurrentTarget
+				spell := dot.Spell
 
-	bladestormDot = core.NewDot(core.Dot{
-		Spell: warrior.Bladestorm,
-		Aura: warrior.RegisterAura(core.Aura{
-			Label:    "Bladestorm",
-			ActionID: actionID,
-		}),
-		NumberOfTicks: 6,
-		TickLength:    time.Second * 1,
-		OnTick: func(sim *core.Simulation, _ *core.Unit, dot *core.Dot) {
-			target := warrior.CurrentTarget
-			spell := dot.Spell
-
-			curTarget := target
-			for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
-				baseDamage := 0 +
-					spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
-					spell.BonusWeaponDamage()
-				results[hitIndex] = spell.CalcDamage(sim, curTarget, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
-
-				curTarget = sim.Environment.NextTargetUnit(curTarget)
-			}
-
-			curTarget = target
-			for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
-				spell.DealDamage(sim, results[hitIndex])
-				curTarget = sim.Environment.NextTargetUnit(curTarget)
-			}
-
-			if warrior.BladestormOH != nil {
-				curTarget = target
+				curTarget := target
 				for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
 					baseDamage := 0 +
-						spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+						spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
 						spell.BonusWeaponDamage()
-					results[hitIndex] = warrior.BladestormOH.CalcDamage(sim, curTarget, baseDamage, warrior.BladestormOH.OutcomeMeleeWeaponSpecialHitAndCrit)
+					results[hitIndex] = spell.CalcDamage(sim, curTarget, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 
 					curTarget = sim.Environment.NextTargetUnit(curTarget)
 				}
 
 				curTarget = target
 				for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
-					warrior.BladestormOH.DealDamage(sim, results[hitIndex])
+					spell.DealDamage(sim, results[hitIndex])
 					curTarget = sim.Environment.NextTargetUnit(curTarget)
 				}
-			}
+
+				if warrior.BladestormOH != nil {
+					curTarget = target
+					for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+						baseDamage := 0 +
+							spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+							spell.BonusWeaponDamage()
+						results[hitIndex] = warrior.BladestormOH.CalcDamage(sim, curTarget, baseDamage, warrior.BladestormOH.OutcomeMeleeWeaponSpecialHitAndCrit)
+
+						curTarget = sim.Environment.NextTargetUnit(curTarget)
+					}
+
+					curTarget = target
+					for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+						warrior.BladestormOH.DealDamage(sim, results[hitIndex])
+						curTarget = sim.Environment.NextTargetUnit(curTarget)
+					}
+				}
+			},
+		},
+
+		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
+			dot := spell.AOEDot()
+			dot.Apply(sim)
+			dot.TickOnce(sim)
 		},
 	})
 
@@ -882,10 +883,52 @@ func (warrior *Warrior) RegisterBladestormCD() {
 		Spell: warrior.Bladestorm,
 		Type:  core.CooldownTypeDPS,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return warrior.CurrentRage() >= cost
+			return warrior.CurrentRage() >= warrior.Bladestorm.DefaultCast.Cost
 		},
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 			return true
 		},
 	})
+}
+
+func (warrior *Warrior) applySwordAndBoard() {
+	if warrior.Talents.SwordAndBoard == 0 {
+		return
+	}
+
+	sabAura := warrior.GetOrRegisterAura(core.Aura{
+		Label:    "Sword And Board",
+		ActionID: core.ActionID{SpellID: 46953},
+		Duration: 5 * time.Second,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			warrior.ShieldSlam.CostMultiplier -= 1
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			warrior.ShieldSlam.CostMultiplier += 1
+		},
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if spell == warrior.ShieldSlam {
+				aura.Deactivate(sim)
+			}
+		},
+	})
+
+	procChance := 0.1 * float64(warrior.Talents.SwordAndBoard)
+	core.MakePermanent(warrior.GetOrRegisterAura(core.Aura{
+		Label: "Sword And Board Trigger",
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() {
+				return
+			}
+
+			if !(spell == warrior.Revenge || spell == warrior.Devastate) {
+				return
+			}
+
+			if sim.RandomFloat("Sword And Board") < procChance {
+				sabAura.Activate(sim)
+				warrior.ShieldSlam.CD.Reset()
+			}
+		},
+	}))
 }

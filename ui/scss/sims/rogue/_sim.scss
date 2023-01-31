@@ -1,10 +1,8 @@
-$theme: 'rogue';
-
 // Set color variables which control the site theme.
 .rogue-sim-ui {
-	--theme-color-background: #19190c;
-	--theme-color-background-raw: 25, 25, 12;
-	--theme-background-image: url('/wotlk/assets/img/rogue_background.jpg');
-	--theme-background-opacity: 0.95;
-	--main-text-color: White;
+	@include theme-color(
+		$rogue,
+		.95,
+		'/wotlk/assets/img/rogue_background.jpg'
+	);
 }

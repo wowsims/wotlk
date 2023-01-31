@@ -5,11 +5,10 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
-	actionID := core.ActionID{SpellID: 30357}
+	actionID := core.ActionID{SpellID: 57823}
 
 	warrior.revengeProcAura = warrior.RegisterAura(core.Aura{
 		Label:    "Revenge",
@@ -17,12 +16,27 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 		ActionID: actionID,
 	})
 
-	hasGlyph := warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfRevenge)
-	if hasGlyph {
-		warrior.glyphOfRevengeProcAura = warrior.RegisterAura(core.Aura{
+	var glyphOfRevengeProcAura *core.Aura
+	if warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfRevenge) {
+		glyphOfRevengeProcAura = warrior.RegisterAura(core.Aura{
 			Label:    "Glyph of Revenge",
 			Duration: core.NeverExpires,
 			ActionID: core.ActionID{SpellID: 58398},
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				if warrior.HeroicStrikeOrCleave.SpellID == 47450 {
+					warrior.HeroicStrikeOrCleave.CostMultiplier -= 1
+				}
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				if warrior.HeroicStrikeOrCleave.SpellID == 47450 {
+					warrior.HeroicStrikeOrCleave.CostMultiplier += 1
+				}
+			},
+			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+				if spell == warrior.HeroicStrikeOrCleave && warrior.HeroicStrikeOrCleave.SpellID == 47450 {
+					aura.Deactivate(sim)
+				}
+			},
 		})
 	}
 
@@ -38,9 +52,6 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 			}
 		},
 	})
-
-	cost := 5.0 - float64(warrior.Talents.FocusedRage)
-	refundAmount := cost * 0.8
 
 	cooldownDur := time.Second * 5
 	gcdDur := core.GCDDefault
@@ -60,13 +71,13 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
-		ResourceType: stats.Rage,
-		BaseCost:     cost,
-
+		RageCost: core.RageCostOptions{
+			Cost:   5 - float64(warrior.Talents.FocusedRage),
+			Refund: 0.8,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: cost,
-				GCD:  gcdDur,
+				GCD: gcdDur,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
@@ -84,7 +95,7 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 			baseDamage := sim.Roll(1636, 1998) + 0.31*spell.MeleeAttackPower()
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 			if !result.Landed() {
-				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
+				spell.IssueRefund(sim)
 			}
 
 			if extraHit {
@@ -97,8 +108,8 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 
 			warrior.revengeProcAura.Deactivate(sim)
 
-			if warrior.glyphOfRevengeProcAura != nil {
-				warrior.glyphOfRevengeProcAura.Activate(sim)
+			if glyphOfRevengeProcAura != nil {
+				glyphOfRevengeProcAura.Activate(sim)
 			}
 		},
 	})

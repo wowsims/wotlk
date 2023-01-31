@@ -1,4 +1,3 @@
-import { Popup } from './popup';
 import { IndividualSimUI } from '../individual_sim_ui';
 import { SimUI } from '../sim_ui';
 import {
@@ -7,30 +6,37 @@ import {
 	Stat
 } from '../proto/common';
 import { IndividualSimSettings } from '../proto/ui';
-import { classNames } from '../proto_utils/names';
+import { classNames, raceNames } from '../proto_utils/names';
 import { UnitStat } from '../proto_utils/stats';
 import { specNames } from '../proto_utils/utils';
 import { downloadString } from '../utils';
+import { BaseModal } from './base_modal';
+import { IndividualWowheadGearPlannerImporter } from './importers';
 
-export abstract class Exporter extends Popup {
+import * as Mechanics from '../constants/mechanics';
+
+export abstract class Exporter extends BaseModal {
 	private readonly textElem: HTMLElement;
 
 	constructor(parent: HTMLElement, simUI: SimUI, title: string, allowDownload: boolean) {
-		super(parent);
+		super(parent, 'exporter', {title: title, footer: true});
 
-		this.rootElem.classList.add('exporter');
-		this.rootElem.innerHTML = `
-			<span class="exporter-title">${title}</span>
-			<div class="export-content">
-				<textarea class="exporter-textarea form-control" readonly></textarea>
-			</div>
-			<div class="actions-row">
-				<button class="exporter-button btn btn-${simUI.cssScheme} clipboard-button">COPY TO CLIPBOARD</button>
-				<button class="exporter-button btn btn-${simUI.cssScheme} download-button">DOWNLOAD</button>
-			</div>
+		this.body.innerHTML = `
+			<textarea class="exporter-textarea form-control"></textarea>
 		`;
-
-		this.addCloseButton();
+		this.footer!.innerHTML = `
+			<button class="exporter-button btn btn-primary clipboard-button me-2">
+				<i class="fas fa-clipboard"></i>
+				Copy to Clipboard
+			</button>
+			${allowDownload ? `
+				<button class="exporter-button btn btn-primary download-button">
+					<i class="fa fa-download"></i>
+					Download
+				</button>
+			` : ''
+			}
+		`;
 
 		this.textElem = this.rootElem.getElementsByClassName('exporter-textarea')[0] as HTMLElement;
 
@@ -41,17 +47,21 @@ export abstract class Exporter extends Popup {
 				alert(data);
 			} else {
 				navigator.clipboard.writeText(data);
+				const originalContent = clipboardButton.innerHTML;
+				clipboardButton.style.width = `${clipboardButton.getBoundingClientRect().width.toFixed(3)}px`;
+				clipboardButton.innerHTML = `<i class="fas fa-check"></i>&nbsp;Copied`;
+				setTimeout(() => {
+					clipboardButton.innerHTML = originalContent;
+				}, 1500);
 			}
 		});
 
-		const downloadButton = this.rootElem.getElementsByClassName('download-button')[0] as HTMLElement;
 		if (allowDownload) {
+			const downloadButton = this.rootElem.getElementsByClassName('download-button')[0] as HTMLElement;
 			downloadButton.addEventListener('click', event => {
 				const data = this.textElem.textContent!;
 				downloadString(data, 'wowsims.json');
 			});
-		} else {
-			downloadButton.remove();
 		}
 	}
 
@@ -87,6 +97,115 @@ export class IndividualJsonExporter<SpecType extends Spec> extends Exporter {
 
 	getData(): string {
 		return JSON.stringify(IndividualSimSettings.toJson(this.simUI.toProto()), null, 2);
+	}
+}
+
+export class IndividualWowheadGearPlannerExporter<SpecType extends Spec> extends Exporter {
+	private readonly simUI: IndividualSimUI<SpecType>;
+
+	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
+		super(parent, simUI, 'Wowhead Export', true);
+		this.simUI = simUI;
+		this.init();
+	}
+
+	getData(): string {
+		const player = this.simUI.player;
+
+		const classStr = classNames[player.getClass()].replaceAll(' ', '-').toLowerCase();
+		const raceStr = raceNames[player.getRace()].replaceAll(' ', '-').toLowerCase();
+		let url = `https://www.wowhead.com/wotlk/gear-planner/${classStr}/${raceStr}/`;
+
+		// See comments on the importer for how the binary formatting is structured.
+		let bytes: Array<number> = [];
+		bytes.push(6);
+		bytes.push(0);
+		bytes.push(Mechanics.CHARACTER_LEVEL);
+
+		let talentsStr = player.getTalentsString().replaceAll('-', 'f') + 'f';
+		if (talentsStr.length % 2 == 1) {
+			talentsStr += '0';
+		}
+		//console.log('Talents str: ' + talentsStr);
+		bytes.push(talentsStr.length / 2);
+		for (let i = 0; i < talentsStr.length; i += 2) {
+			bytes.push(parseInt(talentsStr.substring(i, i + 2), 16));
+		}
+
+		let glyphBytes: Array<number> = [];
+		let glyphStr = '';
+		const glyphs = player.getGlyphs();
+		const d = "0123456789abcdefghjkmnpqrstvwxyz";
+		const addGlyph = (glyphItemId: number, glyphPosition: number) => {
+			const spellId = this.simUI.sim.db.glyphItemToSpellId(glyphItemId);
+			if (!spellId) {
+				return;
+			}
+			glyphStr += d[glyphPosition];
+			glyphStr += d[(spellId >> 15) & 0b00011111];
+			glyphStr += d[(spellId >> 10) & 0b00011111];
+			glyphStr += d[(spellId >>  5) & 0b00011111];
+			glyphStr += d[(spellId >>  0) & 0b00011111];
+		};
+		addGlyph(glyphs.major1, 0);
+		addGlyph(glyphs.major2, 1);
+		addGlyph(glyphs.major3, 2);
+		addGlyph(glyphs.minor1, 3);
+		addGlyph(glyphs.minor2, 4);
+		addGlyph(glyphs.minor3, 5);
+		if (glyphStr) {
+			glyphBytes.push(0x30);
+			for (let i = 0; i < glyphStr.length; i++) {
+				glyphBytes.push(glyphStr.charCodeAt(i));
+			}
+		}
+		bytes.push(glyphBytes.length);
+		bytes = bytes.concat(glyphBytes)
+
+		const to2Bytes = (val: number): Array<number> => {
+			return [
+				(val & 0xff00) >> 8,
+				val & 0x00ff,
+			];
+		};
+
+		const gear = player.getGear();
+		const isBlacksmithing = player.isBlacksmithing();
+		gear.getItemSlots()
+				.sort((slot1, slot2) => IndividualWowheadGearPlannerImporter.slotIDs[slot1] - IndividualWowheadGearPlannerImporter.slotIDs[slot2])
+				.forEach(itemSlot => {
+			const item = gear.getEquippedItem(itemSlot);
+			if (!item) {
+				return;
+			}
+
+			let slotId = IndividualWowheadGearPlannerImporter.slotIDs[itemSlot];
+			if (item.enchant) {
+				slotId = slotId | 0b10000000;
+			}
+			bytes.push(slotId);
+			bytes.push(item.curGems(isBlacksmithing).length << 5);
+			bytes = bytes.concat(to2Bytes(item.item.id));
+
+			if (item.enchant) {
+				bytes.push(0);
+				bytes = bytes.concat(to2Bytes(item.enchant.spellId));
+			}
+
+			item.gems.slice(0, item.numSockets(isBlacksmithing)).forEach((gem, i) => {
+				if (gem) {
+					bytes.push(i << 5);
+					bytes = bytes.concat(to2Bytes(gem.id));
+				}
+			});
+		});
+
+		//console.log('Hex: ' + buf2hex(new Uint8Array(bytes)));
+		const binaryString = String.fromCharCode(...bytes);
+		const b64encoded = btoa(binaryString);
+		const b64converted = b64encoded.replaceAll('/', '_').replaceAll('+', '-').replace(/=+$/, '');
+
+		return url + b64converted;
 	}
 }
 

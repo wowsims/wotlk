@@ -51,15 +51,13 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 	staminaMult := 1.0 + 0.04*float64(dk.Talents.ImprovedFrostPresence)
 	damageTakenMult := 1.0 - 0.01*float64(dk.Talents.ImprovedFrostPresence)
 
-	baseCost := float64(core.NewRuneCost(0, 1, 0, 0, 0))
-	dk.BloodPresence = dk.RegisterSpell(nil, core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 50689},
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
+	dk.BloodPresence = dk.RegisterSpell(core.SpellConfig{
+		ActionID: core.ActionID{SpellID: 50689},
+
+		RuneCost: core.RuneCostOptions{
+			BloodRuneCost: 1,
+		},
 		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost: baseCost,
-			},
 			CD: core.Cooldown{
 				Timer:    timer,
 				Duration: time.Second,
@@ -68,12 +66,7 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			dk.ChangePresence(sim, BloodPresence)
 		},
-	}, func(sim *core.Simulation) bool {
-		return dk.CastCostPossible(sim, 0.0, 1, 0, 0) && dk.BloodPresence.IsReady(sim)
-	}, nil)
-
-	// TODO: Probably improve this
-	isDps := dk.Talents.HowlingBlast || dk.Talents.SummonGargoyle
+	})
 
 	actionID := core.ActionID{SpellID: 50689}
 	healthMetrics := dk.NewHealthMetrics(actionID)
@@ -101,7 +94,7 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 		},
 	}
 
-	if !isDps {
+	if !dk.Inputs.IsDps {
 		aura.OnSpellHitDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if result.Damage > 0 {
 				healthGain := (0.04 * result.Damage) * (1.0 + core.TernaryFloat64(dk.VampiricBloodAura.IsActive(), 0.35, 0.0))
@@ -116,15 +109,13 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 
 func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 
-	baseCost := float64(core.NewRuneCost(0, 0, 1, 0, 0))
-	dk.FrostPresence = dk.RegisterSpell(nil, core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 48263},
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
+	dk.FrostPresence = dk.RegisterSpell(core.SpellConfig{
+		ActionID: core.ActionID{SpellID: 48263},
+
+		RuneCost: core.RuneCostOptions{
+			FrostRuneCost: 1,
+		},
 		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost: baseCost,
-			},
 			CD: core.Cooldown{
 				Timer:    timer,
 				Duration: time.Second,
@@ -133,11 +124,10 @@ func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			dk.ChangePresence(sim, FrostPresence)
 		},
-	}, func(sim *core.Simulation) bool {
-		return dk.CastCostPossible(sim, 0.0, 0, 1, 0) && dk.FrostPresence.IsReady(sim)
-	}, nil)
+	})
 
 	threatMult := 2.0735
+	dmgMitigation := 1.0 - (0.01 * float64(dk.Talents.ImprovedFrostPresence))
 	stamDep := dk.NewDynamicMultiplyStat(stats.Stamina, 1.08)
 	armorDep := dk.NewDynamicMultiplyStat(stats.Armor, 1.6)
 	dk.FrostPresenceAura = dk.GetOrRegisterAura(core.Aura{
@@ -146,6 +136,7 @@ func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier *= threatMult
+			aura.Unit.PseudoStats.DamageTakenMultiplier *= dmgMitigation
 
 			aura.Unit.EnableDynamicStatDep(sim, stamDep)
 			aura.Unit.EnableDynamicStatDep(sim, armorDep)
@@ -154,6 +145,7 @@ func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier /= threatMult
+			aura.Unit.PseudoStats.DamageTakenMultiplier /= dmgMitigation
 
 			aura.Unit.DisableDynamicStatDep(sim, stamDep)
 			aura.Unit.DisableDynamicStatDep(sim, armorDep)
@@ -162,20 +154,29 @@ func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 		},
 	})
 	dk.FrostPresenceAura.NewExclusiveEffect(presenceEffectCategory, true, core.ExclusiveEffect{})
+
+	if !dk.Inputs.IsDps && dk.Talents.ImprovedBloodPresence > 0 {
+		healFactor := 0.02 * float64(dk.Talents.ImprovedBloodPresence)
+		healthMetrics := dk.NewHealthMetrics(core.ActionID{SpellID: 50689})
+		dk.FrostPresenceAura.OnSpellHitDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Damage > 0 {
+				healthGain := (healFactor * result.Damage) * (1.0 + core.TernaryFloat64(dk.VampiricBloodAura.IsActive(), 0.35, 0.0))
+				dk.GainHealth(sim, healthGain, healthMetrics)
+			}
+		}
+	}
 }
 
 func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 	threatMultSubversion := 1.0 - dk.subversionThreatBonus()
 
-	baseCost := float64(core.NewRuneCost(0, 0, 0, 1, 0))
-	dk.UnholyPresence = dk.RegisterSpell(nil, core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 48265},
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
+	dk.UnholyPresence = dk.RegisterSpell(core.SpellConfig{
+		ActionID: core.ActionID{SpellID: 48265},
+
+		RuneCost: core.RuneCostOptions{
+			UnholyRuneCost: 1,
+		},
 		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost: baseCost,
-			},
 			CD: core.Cooldown{
 				Timer:    timer,
 				Duration: time.Second,
@@ -184,18 +185,46 @@ func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			dk.ChangePresence(sim, UnholyPresence)
 		},
-	}, func(sim *core.Simulation) bool {
-		return dk.CastCostPossible(sim, 0.0, 0, 0, 1) && dk.UnholyPresence.IsReady(sim)
-	}, nil)
+	})
 
 	runeCd := 10 * time.Second
 	impUp := 500 * time.Millisecond * time.Duration(dk.Talents.ImprovedUnholyPresence)
 	stamDep := dk.NewDynamicMultiplyStat(stats.Stamina, 1.0+0.04*float64(dk.Talents.ImprovedFrostPresence))
+	var gcdAffectedSpells []*core.Spell
 	dk.UnholyPresenceAura = dk.GetOrRegisterAura(core.Aura{
 		Label:    "Unholy Presence",
 		ActionID: core.ActionID{SpellID: 48265},
 		Duration: core.NeverExpires,
+		OnInit: func(aura *core.Aura, sim *core.Simulation) {
+			gcdAffectedSpells = core.FilterSlice([]*core.Spell{
+				dk.HowlingBlast,
+				dk.ScourgeStrike,
+				dk.Obliterate,
+				dk.Pestilence,
+				dk.HornOfWinter,
+				dk.DancingRuneWeapon,
+				dk.IcyTouch,
+				dk.BloodBoil,
+				dk.MarkOfBlood,
+				dk.PlagueStrike,
+				dk.HeartStrike,
+				dk.DeathStrike,
+				dk.BoneShield,
+				dk.RaiseDead,
+				dk.GhoulFrenzy,
+				dk.DeathPact,
+				dk.FrostStrike,
+				dk.BloodStrike,
+				dk.DeathAndDecay,
+				dk.DeathCoil,
+				dk.ArmyOfTheDead,
+				dk.SummonGargoyle,
+			}, func(spell *core.Spell) bool { return spell != nil })
+		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			for _, spell := range gcdAffectedSpells {
+				spell.DefaultCast.GCD = time.Second
+			}
 			if dk.Talents.ImprovedUnholyPresence > 0 {
 				aura.Unit.SetRuneCd(runeCd - impUp)
 			}
@@ -204,6 +233,9 @@ func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 			dk.MultiplyMeleeSpeed(sim, 1.15)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			for _, spell := range gcdAffectedSpells {
+				spell.DefaultCast.GCD = core.GCDDefault
+			}
 			if dk.Talents.ImprovedUnholyPresence > 0 {
 				aura.Unit.SetRuneCd(runeCd)
 			}
@@ -213,13 +245,16 @@ func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 		},
 	})
 	dk.UnholyPresenceAura.NewExclusiveEffect(presenceEffectCategory, true, core.ExclusiveEffect{})
-}
 
-func (dk *Deathknight) GetModifiedGCD() time.Duration {
-	if dk.UnholyPresenceAura.IsActive() {
-		return time.Second
-	} else {
-		return core.GCDDefault
+	if !dk.Inputs.IsDps && dk.Talents.ImprovedBloodPresence > 0 {
+		healFactor := 0.02 * float64(dk.Talents.ImprovedBloodPresence)
+		healthMetrics := dk.NewHealthMetrics(core.ActionID{SpellID: 50689})
+		dk.UnholyPresenceAura.OnSpellHitDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Damage > 0 {
+				healthGain := (healFactor * result.Damage) * (1.0 + core.TernaryFloat64(dk.VampiricBloodAura.IsActive(), 0.35, 0.0))
+				dk.GainHealth(sim, healthGain, healthMetrics)
+			}
+		}
 	}
 }
 

@@ -12,6 +12,7 @@
         "outDir": "dist/wotlk",
         "pretty": false,
         "allowJs": true,
+        "resolveJsonModule": true,
         "esModuleInterop": true,
         "baseUrl": "."
     }

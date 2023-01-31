@@ -4,26 +4,25 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (druid *Druid) registerFerociousBiteSpell() {
-	baseCost := 35.0
-	refundPercent := 0.4 * float64(druid.Talents.PrimalPrecision)
 	dmgPerComboPoint := 290.0 + core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == 25667, 14, 0)
 
 	druid.FerociousBite = druid.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 48577},
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
-		ResourceType: stats.Energy,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 48577},
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
+		EnergyCost: core.EnergyCostOptions{
+			Cost:          35,
+			Refund:        0.4 * float64(druid.Talents.PrimalPrecision),
+			RefundMetrics: druid.PrimalPrecisionRecoveryMetrics,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  time.Second,
+				GCD: time.Second,
 			},
 			IgnoreHaste: true,
 		},
@@ -50,10 +49,10 @@ func (druid *Druid) registerFerociousBiteSpell() {
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 
 			if result.Landed() {
-				druid.SpendEnergy(sim, excessEnergy, spell.ResourceMetrics)
+				druid.SpendEnergy(sim, excessEnergy, spell.Cost.(*core.EnergyCost).ResourceMetrics)
 				druid.SpendComboPoints(sim, spell.ComboPointMetrics())
-			} else if refundPercent > 0 {
-				druid.AddEnergy(sim, spell.CurCast.Cost*refundPercent, druid.PrimalPrecisionRecoveryMetrics)
+			} else {
+				spell.IssueRefund(sim)
 			}
 		},
 	})

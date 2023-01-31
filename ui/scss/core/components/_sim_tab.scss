@@ -5,23 +5,23 @@
     display: flex;
 
     .tab-panel-left {
-      margin-right: $gap-width * 2;
       display: flex;
       flex: 3;
-
-      .tab-panel-col {
-        flex: 1;
-
-        &:not(:last-child) {
-          margin-right: 2 * map.get($spacers, 3);
-        }
-      }
     }
 
     .tab-panel-right {
+      margin-left: var(--container-padding);
       display: flex;
       flex-direction: column;
       flex: 1.25;
+    }
+
+    .tab-panel-col {
+      flex: 1;
+
+      &:not(:last-child) {
+        margin-right: 2 * map.get($spacers, 3);
+      }
     }
   }
 }

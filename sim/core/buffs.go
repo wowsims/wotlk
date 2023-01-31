@@ -537,8 +537,9 @@ func registerExternalConsecutiveCDApproximation(agent Agent, config externalCons
 	})
 }
 
-const BloodlustAuraTag = "Bloodlust"
+var BloodlustActionID = ActionID{SpellID: 2825}
 
+const BloodlustAuraTag = "Bloodlust"
 const BloodlustDuration = time.Second * 40
 const BloodlustCD = time.Minute * 10
 
@@ -574,7 +575,7 @@ func registerBloodlustCD(agent Agent) {
 }
 
 func BloodlustAura(character *Character, actionTag int32) *Aura {
-	actionID := ActionID{SpellID: 2825, Tag: actionTag}
+	actionID := BloodlustActionID.WithTag(actionTag)
 	aura := character.GetOrRegisterAura(Aura{
 		Label:    "Bloodlust-" + actionID.String(),
 		Tag:      BloodlustAuraTag,
@@ -640,13 +641,12 @@ func PowerInfusionAura(character *Character, actionTag int32) *Aura {
 		Duration: PowerInfusionDuration,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			if character.HasManaBar() {
-				// TODO: Double-check this is how the calculation works.
-				character.PseudoStats.CostMultiplier *= 0.8
+				character.PseudoStats.CostMultiplier -= 0.2
 			}
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			if character.HasManaBar() {
-				character.PseudoStats.CostMultiplier /= 0.8
+				character.PseudoStats.CostMultiplier += 0.2
 			}
 		},
 	})
@@ -1008,16 +1008,11 @@ func InnervateAura(character *Character, expectedBonusManaReduction float64, act
 	})
 }
 
+var ManaTideTotemActionID = ActionID{SpellID: 16190}
 var ManaTideTotemAuraTag = "ManaTideTotem"
 
 const ManaTideTotemDuration = time.Second * 12
 const ManaTideTotemCD = time.Minute * 5
-
-func ManaTideTotemAmount(character *Character) float64 {
-	// Subtract 120 mana to simulate the loss of mana spring while MTT is active.
-	// This isn't correct for multi-resto shaman groups, but that isnt a common case.
-	return character.MaxMana()*0.24 - 120
-}
 
 func registerManaTideTotemCD(agent Agent, numManaTideTotems int32) {
 	if numManaTideTotems == 0 {
@@ -1034,7 +1029,7 @@ func registerManaTideTotemCD(agent Agent, numManaTideTotems int32) {
 		// Use first MTT at 60s, or halfway through the fight, whichever comes first.
 		initialDelay = MinDuration(character.Env.BaseDuration/2, time.Second*60)
 
-		expectedManaPerManaTideTotem = ManaTideTotemAmount(character)
+		expectedManaPerManaTideTotem = 0.24 * character.MaxMana()
 		remainingManaTideTotemUsages = int(1 + MaxDuration(0, character.Env.BaseDuration-initialDelay)/ManaTideTotemCD)
 		character.ExpectedBonusMana += expectedManaPerManaTideTotem * float64(remainingManaTideTotemUsages)
 		mttAura = ManaTideTotemAura(character, -1)
@@ -1043,7 +1038,7 @@ func registerManaTideTotemCD(agent Agent, numManaTideTotems int32) {
 	registerExternalConsecutiveCDApproximation(
 		agent,
 		externalConsecutiveCDApproximation{
-			ActionID:         ActionID{SpellID: 16190, Tag: -1},
+			ActionID:         ManaTideTotemActionID.WithTag(-1),
 			AuraTag:          ManaTideTotemAuraTag,
 			CooldownPriority: CooldownPriorityDefault,
 			AuraDuration:     ManaTideTotemDuration,
@@ -1066,11 +1061,14 @@ func registerManaTideTotemCD(agent Agent, numManaTideTotems int32) {
 }
 
 func ManaTideTotemAura(character *Character, actionTag int32) *Aura {
-	actionID := ActionID{SpellID: 16190, Tag: actionTag}
+	actionID := ManaTideTotemActionID.WithTag(actionTag)
 
-	var metrics *ResourceMetrics
-	if character.HasManaBar() {
-		metrics = character.NewManaMetrics(actionID)
+	metrics := make([]*ResourceMetrics, len(character.Party.Players))
+	for i, player := range character.Party.Players {
+		char := player.GetCharacter()
+		if char.HasManaBar() {
+			metrics[i] = char.NewManaMetrics(actionID)
+		}
 	}
 
 	return character.GetOrRegisterAura(Aura{
@@ -1079,19 +1077,20 @@ func ManaTideTotemAura(character *Character, actionTag int32) *Aura {
 		ActionID: actionID,
 		Duration: ManaTideTotemDuration,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			if character.HasManaBar() {
-				manaPerTick := ManaTideTotemAmount(character) / 4
-				StartPeriodicAction(sim, PeriodicActionOptions{
-					Period:   ManaTideTotemDuration / 4,
-					NumTicks: 4,
-					OnAction: func(sim *Simulation) {
-						if metrics != nil {
-							character.AddMana(sim, manaPerTick, metrics, true)
-							character.ExpectedBonusMana -= manaPerTick
+			StartPeriodicAction(sim, PeriodicActionOptions{
+				Period:   ManaTideTotemDuration / 4,
+				NumTicks: 4,
+				OnAction: func(sim *Simulation) {
+					for i, player := range character.Party.Players {
+						if metrics[i] != nil {
+							char := player.GetCharacter()
+							manaGain := 0.06 * char.MaxMana()
+							char.AddMana(sim, manaGain, metrics[i], true)
+							char.ExpectedBonusMana -= manaGain
 						}
-					},
-				})
-			}
+					}
+				},
+			})
 		},
 	})
 }

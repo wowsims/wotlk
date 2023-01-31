@@ -1,7 +1,6 @@
 package warlock
 
 import (
-	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -23,20 +22,6 @@ type WarlockPet struct {
 const PetExpertiseScale = 1.53
 
 func (warlock *Warlock) NewWarlockPet() *WarlockPet {
-
-	summonChoice := warlock.Options.Summon
-	preset := warlock.Rotation.Preset
-
-	if preset == proto.Warlock_Rotation_Automatic {
-		if warlock.Talents.Haunt {
-			summonChoice = proto.Warlock_Options_Felhunter
-		} else if warlock.Talents.Metamorphosis {
-			summonChoice = proto.Warlock_Options_Felguard
-		} else if warlock.Talents.ChaosBolt {
-			summonChoice = proto.Warlock_Options_Imp
-		}
-	}
-
 	var cfg struct {
 		Name          string
 		PowerModifier float64
@@ -44,7 +29,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		AutoAttacks   core.AutoAttackOptions
 	}
 
-	switch summonChoice {
+	switch warlock.Options.Summon {
 	// TODO: revisit base damage once blizzard fixes JamminL/wotlk-classic-bugs#328
 	case proto.Warlock_Options_Felguard:
 		cfg.Name = "Felguard"
@@ -131,14 +116,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 	}
 
 	wp := &WarlockPet{
-		Pet: core.NewPet(
-			cfg.Name,
-			&warlock.Character,
-			cfg.Stats,
-			warlock.makeStatInheritance(),
-			true,
-			false,
-		),
+		Pet:   core.NewPet(cfg.Name, &warlock.Character, cfg.Stats, warlock.makeStatInheritance(), nil, true, false),
 		owner: warlock,
 	}
 
@@ -148,7 +126,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 	wp.AddStatDependency(stats.Strength, stats.AttackPower, 2)
 	wp.AddStat(stats.AttackPower, -20)
 
-	if summonChoice == proto.Warlock_Options_Imp {
+	if warlock.Options.Summon == proto.Warlock_Options_Imp {
 		// imp has a slightly different agi crit scaling coef for some reason
 		wp.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance*1/51.0204)
 	} else {
@@ -167,11 +145,11 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 
 	wp.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.04*float64(warlock.Talents.UnholyPower)
 
-	if summonChoice != proto.Warlock_Options_Imp { // imps generally don't meele
+	if warlock.Options.Summon != proto.Warlock_Options_Imp { // imps generally don't meele
 		wp.EnableAutoAttacks(wp, cfg.AutoAttacks)
 	}
 
-	if summonChoice == proto.Warlock_Options_Felguard {
+	if warlock.Options.Summon == proto.Warlock_Options_Felguard {
 		if wp.owner.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfFelguard) {
 			wp.MultiplyStat(stats.AttackPower, 1.2)
 		}
@@ -309,7 +287,10 @@ func (warlock *Warlock) makeStatInheritance() core.PetStatInheritance {
 	improvedDemonicTactics := float64(warlock.Talents.ImprovedDemonicTactics)
 
 	return func(ownerStats stats.Stats) stats.Stats {
-		ownerHitChance := math.Floor(ownerStats[stats.SpellHit] / core.SpellHitRatingPerHitChance)
+		// EJ posts claim this value is passed through math.Floor, but in-game testing
+		// shows pets benefit from each point of owner hit rating in WotLK Classic.
+		// https://web.archive.org/web/20120112003252/http://elitistjerks.com/f80/t100099-demonology_releasing_demon_you
+		ownerHitChance := ownerStats[stats.SpellHit] / core.SpellHitRatingPerHitChance
 
 		// TODO: Account for sunfire/soulfrost
 		return stats.Stats{

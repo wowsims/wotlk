@@ -29,13 +29,13 @@
 								<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#homepageHeaderCollapse" aria-controls="homepageHeaderCollapse" aria-expanded="false" aria-label="Toggle navigation">
 									<i class="fas fa-times fa-2x"></i>
 								</button>
-								<a href="https://discord.gg/p3DgvmnDCS" target="_blank" class="nav-link">
+								<a href="https://discord.gg/p3DgvmnDCS" target="_blank" class="nav-link link-alt">
 									<p class="m-0"><i class="discord-link fab fa-discord fa-2x"></i>&nbsp;</p>
 								</a>
-								<a href="https://github.com/wowsims/wotlk" target="_blank" class="nav-link">
+								<a href="https://github.com/wowsims/wotlk" target="_blank" class="nav-link link-alt">
 									<p class="m-0"><i class="github-link fab fa-github fa-2x"></i>&nbsp;</p>
 								</a>
-								<a href="https://patreon.com/wowsims" target="_blank" class="nav-link">
+								<a href="https://patreon.com/wowsims" target="_blank" class="nav-link link-alt">
 									<i class="patreon-link fab fa-patreon fa-2x me-2"></i>
 									<span class="fs-4 d-md-none d-lg-block">Support our devs</span>
 								</a>
@@ -54,21 +54,48 @@
 					</div>
 					<div class="sim-links-container">
 						<div class="sim-links">
-							<!-- <a href="/wotlk/raid/" class="sim-link raid-sim-link text-white">
+							<a href="/wotlk/raid/" class="sim-link raid-sim-link text-white">
 								<div class="sim-link-content">
 									<img src="/wotlk/assets/img/raid_icon.png" class="sim-link-icon">
 									<span class="sim-link-label">Full Raid Sim</span>
 								</div>
-							</a> -->
+							</a>
 						</div>
 
 						<div class="sim-links">
-							<a href="/wotlk/deathknight/" class="sim-link text-death-knight">
-								<div class="sim-link-content">
-									<img src="/wotlk/assets/img/death_knight_icon.png" class="sim-link-icon">
-									<span class="sim-link-title">Death Knight</span>
-								</div>
-							</a>
+
+							<div class="dropend sim-link-dropdown">
+								<a href="javascript:void(0)" class="sim-link text-death-knight" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+									<div class="sim-link-content">
+										<img src="/wotlk/assets/img/death_knight_icon.png" class="sim-link-icon">
+										<span class="sim-link-title">Death Knight</span>
+									</div>
+								</a>
+								<ul class="dropdown-menu w-100">
+									<li>
+										<a href="/wotlk/deathknight/" class="sim-link text-death-knight">
+											<div class="sim-link-content">
+												<img src="/wotlk/assets/img/death_knight_icon.png" class="sim-link-icon">
+												<div class="d-flex flex-column">
+													<span class="sim-link-label">Death Knight</span>
+													<span class="sim-link-title">DPS</span>
+												</div>
+											</div>
+										</a>
+									</li>
+									<li>
+										<a href="/wotlk/tank_deathknight/" class="sim-link text-death-knight">
+											<div class="sim-link-content">
+												<img src="/wotlk/assets/img/death_knight_icon.png" class="sim-link-icon">
+												<div class="d-flex flex-column">
+													<span class="sim-link-label">Death Knight</span>
+													<span class="sim-link-title">Tank</span>
+												</div>
+											</div>
+										</a>
+									</li>
+								</ul>
+							</div>
 
 							<div class="dropend sim-link-dropdown">
 								<a href="javascript:void(0)" class="sim-link text-priest" role="button" data-bs-toggle="dropdown" aria-expanded="false">

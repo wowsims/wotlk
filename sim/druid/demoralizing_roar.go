@@ -4,28 +4,25 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (druid *Druid) registerDemoralizingRoarSpell() {
-	cost := 10.0
-
 	druid.DemoralizingRoarAuras = make([]*core.Aura, druid.Env.GetNumTargets())
 	for _, target := range druid.Env.Encounter.Targets {
 		druid.DemoralizingRoarAuras[target.Index] = core.DemoralizingRoarAura(&target.Unit, druid.Talents.FeralAggression)
 	}
 
 	druid.DemoralizingRoar = druid.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 48560},
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskEmpty,
-		ResourceType: stats.Rage,
-		BaseCost:     cost,
+		ActionID:    core.ActionID{SpellID: 48560},
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskEmpty,
 
+		RageCost: core.RageCostOptions{
+			Cost: 10,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: cost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 		},

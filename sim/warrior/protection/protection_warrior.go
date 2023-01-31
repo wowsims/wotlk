@@ -37,12 +37,9 @@ func NewProtectionWarrior(character core.Character, options *proto.Player) *Prot
 	warOptions := options.GetProtectionWarrior()
 
 	war := &ProtectionWarrior{
-		Warrior: warrior.NewWarrior(character, warOptions.Talents, warrior.WarriorInputs{
-			ShoutType:            warOptions.Options.Shout,
-			PrecastShout:         warOptions.Options.PrecastShout,
-			PrecastShoutSapphire: warOptions.Options.PrecastShoutSapphire,
-			PrecastShoutT2:       warOptions.Options.PrecastShoutT2,
-			Munch:                warOptions.Options.Munch,
+		Warrior: warrior.NewWarrior(character, options.TalentsString, warrior.WarriorInputs{
+			ShoutType: warOptions.Options.Shout,
+			Munch:     warOptions.Options.Munch,
 		}),
 		Rotation: warOptions.Rotation,
 		Options:  warOptions.Options,

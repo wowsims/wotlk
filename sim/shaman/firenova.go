@@ -5,35 +5,29 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (shaman *Shaman) registerFireNovaSpell() {
-	manaCost := 0.22 * shaman.BaseMana
-
 	fireNovaGlyphCDReduction := core.TernaryInt32(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfFireNova), 3, 0)
 	impFireNovaCDReduction := shaman.Talents.ImprovedFireNova * 2
 	fireNovaCooldown := 10 - fireNovaGlyphCDReduction - impFireNovaCDReduction
 
 	shaman.FireNova = shaman.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 61657},
-		SpellSchool:  core.SpellSchoolFire,
-		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagFocusable,
-		ResourceType: stats.Mana,
-		BaseCost:     manaCost,
+		ActionID:    core.ActionID{SpellID: 61657},
+		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       SpellFlagFocusable,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.22,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: manaCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    shaman.NewTimer(),
 				Duration: time.Second * time.Duration(fireNovaCooldown),
-			},
-			ModifyCast: func(_ *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				shaman.modifyCastClearcasting(spell, cast)
 			},
 		},
 

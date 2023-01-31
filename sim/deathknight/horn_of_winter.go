@@ -37,15 +37,12 @@ func (dk *Deathknight) registerHornOfWinterSpell() {
 		},
 	})
 
-	dk.HornOfWinter = dk.RegisterSpell(nil, core.SpellConfig{
+	dk.HornOfWinter = dk.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
-			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.GCD = dk.GetModifiedGCD()
 			},
 			CD: core.Cooldown{
 				Timer:    dk.NewTimer(),
@@ -56,11 +53,9 @@ func (dk *Deathknight) registerHornOfWinterSpell() {
 			if dk.Inputs.RefreshHornOfWinter {
 				dk.HornOfWinterAura.Activate(sim)
 			}
-			dk.AddRunicPower(sim, 10.0, dk.HornOfWinter.RunicPowerMetrics())
+			dk.AddRunicPower(sim, 10, dk.HornOfWinter.RunicPowerMetrics())
 		},
-	}, func(sim *core.Simulation) bool {
-		return dk.HornOfWinter.IsReady(sim)
-	}, nil)
+	})
 }
 
 func (dk *Deathknight) ShouldHornOfWinter(sim *core.Simulation) bool {

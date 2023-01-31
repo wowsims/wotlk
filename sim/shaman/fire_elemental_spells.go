@@ -1,27 +1,23 @@
 package shaman
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (fireElemental *FireElemental) registerFireBlast() {
-	var manaCost float64 = 276
-
 	fireElemental.FireBlast = fireElemental.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 13339},
-		SpellSchool:  core.SpellSchoolFire,
-		ProcMask:     core.ProcMaskSpellDamage,
-		ResourceType: stats.Mana,
-		BaseCost:     manaCost,
+		ActionID:    core.ActionID{SpellID: 13339},
+		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskSpellDamage,
 
+		ManaCost: core.ManaCostOptions{
+			FlatCost: 276,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: manaCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
@@ -40,22 +36,19 @@ func (fireElemental *FireElemental) registerFireBlast() {
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 		},
 	})
-
 }
 
 func (fireElemental *FireElemental) registerFireNova() {
-	var manaCost float64 = 207
-
 	fireElemental.FireNova = fireElemental.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 12470},
-		SpellSchool:  core.SpellSchoolFire,
-		ProcMask:     core.ProcMaskSpellDamage,
-		ResourceType: stats.Mana,
-		BaseCost:     manaCost,
+		ActionID:    core.ActionID{SpellID: 12470},
+		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskSpellDamage,
 
+		ManaCost: core.ManaCostOptions{
+			FlatCost: 207,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     manaCost,
 				GCD:      core.GCDDefault,
 				CastTime: time.Second * 2,
 			},
@@ -81,7 +74,6 @@ func (fireElemental *FireElemental) registerFireNova() {
 			}
 		},
 	})
-
 }
 
 func (fireElemental *FireElemental) registerFireShieldAura() {
@@ -93,37 +85,28 @@ func (fireElemental *FireElemental) registerFireShieldAura() {
 		SpellSchool: core.SpellSchoolFire,
 		ProcMask:    core.ProcMaskEmpty,
 
-		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				GCD: 0,
-			},
-		},
-
 		DamageMultiplier: 1,
 		CritMultiplier:   fireElemental.DefaultSpellCritMultiplier(),
 		ThreatMultiplier: 1,
-	})
 
-	target := fireElemental.CurrentTarget
+		Dot: core.DotConfig{
+			IsAOE: true,
+			Aura: core.Aura{
+				Label: "FireShield",
+			},
+			NumberOfTicks: 40,
+			TickLength:    time.Second * 3,
 
-	fireShieldDot := core.NewDot(core.Dot{
-		Spell: spell,
-		Aura: target.RegisterAura(core.Aura{
-			Label:    "FireShield-" + strconv.Itoa(int(fireElemental.Index)),
-			ActionID: actionID,
-		}),
-		NumberOfTicks: 40,
-		TickLength:    time.Second * 3,
-
-		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			// TODO is this the right affect should it be Capped?
-			// TODO these are approximation, from base SP
-			dmgFromSP := 0.032 * dot.Spell.SpellPower()
-			for _, aoeTarget := range sim.Encounter.Targets {
-				baseDamage := sim.Roll(68, 70) + dmgFromSP
-				//baseDamage *= sim.Encounter.AOECapMultiplier()
-				dot.Spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeMagicCrit)
-			}
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				// TODO is this the right affect should it be Capped?
+				// TODO these are approximation, from base SP
+				dmgFromSP := 0.032 * dot.Spell.SpellPower()
+				for _, aoeTarget := range sim.Encounter.Targets {
+					baseDamage := sim.Roll(68, 70) + dmgFromSP
+					//baseDamage *= sim.Encounter.AOECapMultiplier()
+					dot.Spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, dot.Spell.OutcomeMagicCrit)
+				}
+			},
 		},
 	})
 
@@ -132,7 +115,7 @@ func (fireElemental *FireElemental) registerFireShieldAura() {
 		ActionID: actionID,
 		Duration: time.Minute * 2,
 		OnGain: func(_ *core.Aura, sim *core.Simulation) {
-			fireShieldDot.Apply(sim)
+			spell.AOEDot().Apply(sim)
 		},
 	})
 }

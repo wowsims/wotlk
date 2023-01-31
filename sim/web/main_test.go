@@ -19,19 +19,6 @@ var basicSpec = &proto.Player_ElementalShaman{
 		Rotation: &proto.ElementalShaman_Rotation{
 			Type: proto.ElementalShaman_Rotation_Adaptive,
 		},
-		Talents: &proto.ShamanTalents{
-			// ElementalDevastation
-			ElementalFury:      5,
-			Convection:         5,
-			Concussion:         5,
-			ElementalFocus:     true,
-			CallOfThunder:      true,
-			UnrelentingStorm:   3,
-			ElementalPrecision: 3,
-			LightningMastery:   5,
-			ElementalMastery:   true,
-			LightningOverload:  5,
-		},
 		Options: &proto.ElementalShaman_Options{
 			Shield: proto.ShamanShield_WaterShield,
 		},

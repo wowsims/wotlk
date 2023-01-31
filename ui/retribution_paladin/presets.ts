@@ -102,7 +102,6 @@ export const DefaultRotation = RetributionPaladinRotation.create({
 export const DefaultOptions = RetributionPaladinOptions.create({
 	aura: PaladinAura.RetributionAura,
 	judgement: PaladinJudgement.JudgementOfWisdom,
-	damageTakenPerSecond: 0,
 });
 
 export const DefaultConsumes = Consumes.create({
@@ -304,16 +303,16 @@ export const P1_PRESET = {
 };
 
 export const P2_PRESET = {
-	name: 'P2 Preset (Placeholder)',
+	name: 'P2 Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecRetributionPaladin>) => true,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
-			"id": 46156,
+			"id": 45472,
 			"enchant": 3817,
 			"gems": [
 				41398,
-				40003
+				42702
 			]
 		},
 		{
@@ -323,10 +322,11 @@ export const P2_PRESET = {
 			]
 		},
 		{
-			"id": 46152,
+			"id": 45245,
 			"enchant": 3808,
 			"gems": [
-				40059
+				39996,
+				39996
 			]
 		},
 		{
@@ -337,15 +337,16 @@ export const P2_PRESET = {
 			]
 		},
 		{
-			"id": 46154,
+			"id": 45473,
 			"enchant": 3832,
 			"gems": [
+				39996,
 				39996,
 				39996
 			]
 		},
 		{
-			"id": 45611,
+			"id": 45663,
 			"enchant": 3845,
 			"gems": [
 				39996,
@@ -353,24 +354,16 @@ export const P2_PRESET = {
 			]
 		},
 		{
-			"id": 46155,
+			"id": 45444,
 			"enchant": 3604,
 			"gems": [
 				39996,
+				0,
 				0
 			]
 		},
 		{
 			"id": 46095,
-			"gems": [
-				39996,
-				39996,
-				39996
-			]
-		},
-		{
-			"id": 45134,
-			"enchant": 3823,
 			"gems": [
 				42142,
 				42142,
@@ -378,30 +371,42 @@ export const P2_PRESET = {
 			]
 		},
 		{
-			"id": 45599,
-			"enchant": 3606,
+			"id": 45134,
+			"enchant": 3823,
 			"gems": [
-				40003,
-				49110
+				39996,
+				39996,
+				39996
 			]
 		},
 		{
-			"id": 45456,
+			"id": 45599,
+			"enchant": 3606,
+			"gems": [
+				39996,
+				39996
+			]
+		},
+		{
+			"id": 45608,
+			"gems": [
+				0
+			]
+		},
+		{
+			"id": 45534,
 			"gems": [
 				39996
 			]
 		},
 		{
-			"id": 45525
-		},
-		{
 			"id": 45609
 		},
 		{
-			"id": 45522
+			"id": 42987
 		},
 		{
-			"id": 45533,
+			"id": 45516,
 			"enchant": 3789,
 			"gems": [
 				39996,
@@ -410,7 +415,7 @@ export const P2_PRESET = {
 		},
 		{},
 		{
-			"id": 42852
+			"id": 42853
 		}
 	]}`),
 };

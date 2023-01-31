@@ -205,6 +205,9 @@ export class ActionId {
 			case 'Pyroblast':
 				if (this.tag) name += ' (DoT)';
 				break;
+			case 'Living Bomb':
+				if (this.spellId == 55362) name += ' (Explosion)';
+				break;
 			case 'Mind Flay':
 				if (this.tag == 1) {
 					name += ' (1 Tick)';
@@ -255,20 +258,6 @@ export class ActionId {
 					name += ` (${this.tag} MW)`;
 				}
 				break;
-			case 'Holy Vengeance':
-				if (this.tag == 1) {
-					name += ' (Swing Roll)'
-				} else if (this.tag == 2) {
-					name += ' (DoT)'
-				}
-				break;
-			case 'Righteous Vengeance':
-				if (this.tag == 1) {
-					name += ' (Application)'
-				} else if (this.tag == 2) {
-					name += ' (DoT)'
-				}
-				break;
 			case 'Holy Shield':
 				if (this.tag == 1) {
 					name += ' (Proc)';
@@ -303,6 +292,14 @@ export class ActionId {
 					name += ' (Shadow)';
 				}
 				break;
+			case 'Heart Strike':
+				/*if (this.tag == 1) {
+					name += ' (Physical)';
+				} else */if (this.tag == 2) {
+					name += ' (Off-target)';
+				}
+				break;
+			case 'Rune Strike':
 			case 'Frost Strike':
 			case 'Plague Strike':
 			case 'Blood Strike':

@@ -1,15 +1,42 @@
 import { Exporter } from '../core/components/exporters';
 import { Importer } from '../core/components/importers';
 import { MAX_PARTY_SIZE } from '../core/party';
-import { BuffBot, RaidSimSettings } from '../core/proto/ui';
-import { TypedEvent } from '../core/typed_event';
+import { RaidSimSettings } from '../core/proto/ui';
+import { EventID, TypedEvent } from '../core/typed_event';
 import { Party as PartyProto, Player as PlayerProto, Raid as RaidProto } from '../core/proto/api';
-import { Encounter as EncounterProto, EquipmentSpec, ItemSpec, MobType, Spec, Target as TargetProto, RaidTarget, Faction } from '../core/proto/common';
-import { nameToClass } from '../core/proto_utils/names';
-import { makeDefaultBlessings, specTypeFunctions, withSpecProto, isTankSpec, playerToSpec } from '../core/proto_utils/utils';
+import {
+	Class,
+	Encounter as EncounterProto,
+	EquipmentSpec,
+	Faction,
+	ItemSpec,
+	MobType,
+	Profession,
+	Race,
+	RaidTarget,
+	Spec,
+	Target as TargetProto,
+} from '../core/proto/common';
+import { nameToClass, professionNames, raceNames } from '../core/proto_utils/names';
+import {
+	DruidSpecs,
+	DeathknightSpecs,
+	MageSpecs,
+	PriestSpecs,
+	RogueSpecs,
+	SpecOptions,
+	getTalentTreePoints,
+	makeDefaultBlessings,
+	raceToFaction,
+	specTypeFunctions,
+	withSpecProto,
+	isTankSpec,
+	playerToSpec,
+} from '../core/proto_utils/utils';
 import { MAX_NUM_PARTIES } from '../core/raid';
 import { Player } from '../core/player';
 import { Target } from '../core/target';
+import { bucket, distinct, sortByProperty } from '../core/utils';
 
 import { playerPresets, PresetSpecSettings } from './presets';
 import { RaidSimUI } from './raid_sim_ui';
@@ -62,38 +89,64 @@ export class RaidWCLImporter extends Importer {
 	constructor(parent: HTMLElement, simUI: RaidSimUI) {
 		super(parent, simUI, 'WCL Import', false);
 		this.simUI = simUI;
+		this.textElem.classList.add('small-textarea');
 		this.descriptionElem.innerHTML = `
 			<p>
-				Import entire raid from a WCL report.<br>
-				Parties are a best guess based on buffs.<br>
-				Double check innervate/PI and paladin buffs in the settings after import.<br>
-				Does not support fight=last currently (will default any non-numeric fight ID to be 0)<br>
+				Imports the entire raid from a WCL report.<br>
 			</p>
 			<p>
 				To import, paste the WCL report and fight link (https://classic.warcraftlogs.com/reports/REPORTID#fight=FIGHTID).<br>
-				Include the fight ID or else first found fight will be used.<br>
+				Include the fight ID or else the first fight in the report will be used.<br>
+			</p>
+			<p>
+				The following are imported directly from the report:
+				<ul>
+					<li>Player Name</li>
+					<li>Equipment (items, enchants, and gems)</li>
+					<li>Faction (Alliance / Horde)</li>
+					<li>Encounter: If the import link has a fight ID we try to match with a preset Encounter. Note that many Encounters are still unimplemented.</li>
+				</ul>
+
+				The following are not available directly from the report data, but we try to infer them:
+				<ul>
+					<li>Talents: Log data only gives us the tree summary (e.g. '51/20/0') so we match this with the closest preset talent build.</li>
+					<li>Glyphs: Glyphs are absent from log data, but we pair them with the inferred Talents.</li>
+					<li>Race: Inferred from Race-specific abilties used in any fight if possible, or defaults to Spec-specific Race.</li>
+					<li>Professions: Inferred from profession-locked items/enchants/gems.</li>
+					<li>Buff assignments (Innervate, Unholy Frenzy, etc): Inferred from casts.</li>
+					<li>Party Composition: Inferred from party-only effects, such as Heroic Presence, Prayer of Healing, or Vampiric Touch.</li>
+				</ul>
+
+				The following are not imported, and instead use spec-specific defaults:
+				<ul>
+					<li>Rotation / Spec-specific options</li>
+					<li>Consumes</li>
+					<li>Paladin Blessings</li>
+				</ul>
 			</p>
 		`;
 	}
 
-	private getWCLBearerToken(): Promise<string> {
-
-		return fetch('https://classic.warcraftlogs.com/oauth/token', {
-			'method': 'POST',
-			'headers': {
-				'Authorization': 'Basic ' + btoa('963d31c8-7efa-4dde-87cf-1b254a8a2f8c:lRJVhujEEnF96xfUoxVHSpnqKN9v8bTqGEjutsO3'),
-			},
-			body: new URLSearchParams({
-				'grant_type': 'client_credentials',
-			}),
-		}).then(response => response.json())
-			.then(res => res.access_token)
-			.catch(err => { // TODO: handle error
-				console.error(err);
-			});
+	private token: string = '';
+	private async getWCLBearerToken(): Promise<string> {
+		if (this.token == '') {
+			const response = await fetch('https://classic.warcraftlogs.com/oauth/token', {
+				'method': 'POST',
+				'headers': {
+					'Authorization': 'Basic ' + btoa('963d31c8-7efa-4dde-87cf-1b254a8a2f8c:lRJVhujEEnF96xfUoxVHSpnqKN9v8bTqGEjutsO3'),
+				},
+				body: new URLSearchParams({
+					'grant_type': 'client_credentials',
+				}),
+			})
+			const json = await response.json();
+			this.token = json.access_token;
+		}
+		return this.token;
 	}
 
-	private queryWCL(query: string, token: string): Promise<any> {
+	private async queryWCL(query: string): Promise<any> {
+		const token = await this.getWCLBearerToken();
 		const headers = {
 			'Content-Type': 'application/json',
 			'Authorization': `Bearer ${token}`,
@@ -101,173 +154,340 @@ export class RaidWCLImporter extends Importer {
 		};
 
 		const queryURL = `https://classic.warcraftlogs.com/api/v2/client?query=${query}`;
-
 		this.queryCounter++;
 
 		// Query WCL
-		return fetch(encodeURI(queryURL), {
+		const res = await fetch(encodeURI(queryURL), {
 			'method': 'GET',
 			'headers': headers,
-		}).then(res => res.json());
-	}
+		});
 
-	private getURLInfo(url: string): { reportID: string; fightID: string } {
-
-		let urlInfo = { reportID: '', fightID: '0' };
-
-		if (!url.includes('warcraftlogs.com')) {
-			console.error('Invalid WCL URL', url, 'must be from warcraftlogs.com');
-			return urlInfo;
-		}
-
-		let fightIDIndex = url.indexOf('fight=');
-		let reportIDIndex = url.indexOf('/reports/');
-
-		if (reportIDIndex === -1) {
-			console.error('Could not find report ID in URL', url);
-			return urlInfo;
-		}
-
-		reportIDIndex += 9; // 9 = length of '/reports/'
-		const reportIDLength = 16;
-
-		if (fightIDIndex !== -1) {
-			fightIDIndex += 6; // 6 = length of 'fight='
-
-			let fightID = parseInt(url.substring(fightIDIndex), 10);
-
-			if (isNaN(fightID)) {
-				fightID = 0;
-			}
-
-			urlInfo.fightID = fightID.toString();
+		const result = await res.json();
+		if (result?.errors?.length) {
+			const errorStr = result.errors.map((e: any) => e.message).join('\n');
+			throw new Error(`GraphQL error: ${errorStr}\n\nQuery: ${query}`);
 		} else {
-			console.warn('Could not find fight ID in URL', url, 'defaulting to fight 0');
+			console.debug(`WCL query: ${query}\n\nResult: ${JSON.stringify(result)}`);
 		}
-
-		urlInfo.reportID = url.substring(reportIDIndex, reportIDIndex + reportIDLength) ?? '';
-
-		return urlInfo
+		return result;
 	}
 
-	private getRateLimit(token: string): Promise<wclRateLimitData> {
-		const query = `
-	  {
+	private async parseURL(url: string): Promise<wclUrlData> {
+		const match = url.match(/classic\.warcraftlogs\.com\/reports\/([a-zA-Z0-9:]+)\/?(#.*fight=((\d+)|(last)))?/);
+		if (!match) {
+			throw new Error(`Invalid WCL URL ${url}, must look like "classic.warcraftlogs.com/reports/XXXX"`);
+		}
+
+		const urlData = {
+			reportID: match[1],
+			fightID: '',
+		}
+
+		// If the URL has a Fight ID in it, use it
+		if (match[2] && match[3] && match[3] != 'last') {
+			urlData.fightID = match[3];
+		} else {
+			// Make a separate query to get the corresponding ReportFights
+			const fightDataQuery = `{
+				reportData {
+					report(code: "${urlData.reportID}") {
+						fights(killType: Kills, translate: true) {
+							id, name
+						}
+					}
+				}
+			}`;
+
+			const fightData = await this.queryWCL(fightDataQuery);
+			const fights = fightData.data.reportData.report.fights;
+
+			if (match[3] == 'last') {
+				urlData.fightID = String(fights[fights.length - 1].id)
+			} else {
+				// Default to using the first Fight
+				urlData.fightID = String(fights[0].id);
+			}
+		}
+
+		console.debug(`Importing WCL report: ${JSON.stringify(urlData)}`);
+		return urlData;
+	}
+
+	private async getRateLimit(): Promise<wclRateLimitData> {
+		const query = `{
 	    rateLimitData {
 	      limitPerHour, pointsSpentThisHour, pointsResetIn
 	    }
 	  }`;
-		return this.queryWCL(query, token)
-			.then((res) => res['data']['rateLimitData'] as wclRateLimitData);
+		const result = await this.queryWCL(query);
+		const data = result['data']['rateLimitData'] as wclRateLimitData;
+		return data;
 	}
 
 	async onImport(importLink: string) {
 		this.importButton.disabled = true;
 		this.rootElem.style.cursor = 'wait';
-		this.doImport(importLink).then(() => {
-			this.importButton.disabled = false
-			this.rootElem.style.removeProperty('cursor');
-		})
+		try {
+			await this.doImport(importLink);
+		} catch (error) {
+			alert('Failed import from WCL: ' + error);
+		}
+		this.importButton.disabled = false
+		this.rootElem.style.removeProperty('cursor');
 	}
 
 	async doImport(importLink: string) {
 		if (!importLink.length) {
-			console.error('No import link provided!');
-			return;
+			throw new Error('No import link provided!');
 		}
 
-		let urlInfo = this.getURLInfo(importLink);
+		const urlData = await this.parseURL(importLink);
+		const rateLimit = await this.getRateLimit();
 
-		const reportID = urlInfo.reportID;
-		const fightID = urlInfo.fightID;
+		// Schema for WCL API here: https://www.warcraftlogs.com/v2-api-docs/warcraft/
+		// WCL charges us 1 'point' for each subquery we issue within the request. So
+		// by using filter expressions we can combine our queries together, to spend
+		// fewer points.
+		const reportDataQuery = `{
+			reportData {
+				report(code: "${urlData.reportID}") {
+					guild {
+						name faction {id}
+					}
+					playerDetails: table(fightIDs: [${urlData.fightID}], dataType: Casts, killType: All, viewBy: Default)
+					combatantInfoEvents: events(fightIDs: [${urlData.fightID}], dataType:CombatantInfo, limit: 50) { data }
+					fights(fightIDs: [${urlData.fightID}]) {
+						startTime, endTime, id, name
+					}
 
-		if (!reportID.length) {
-			console.error('Could not find report ID in URL', importLink);
-			return;
-		}
+					reportCastEvents: events(dataType:Casts, endTime: 99999999, filterExpression: "${
+						[racialSpells, professionSpells].flat().map(spell => spell.id).map(id => `ability.id = ${id}`).join(' OR ')
+					}", limit: 10000) { data }
 
-		// Clear the raid out to avoid any taint issues.
-		this.simUI.clearRaid(TypedEvent.nextEventID());
+					fightCastEvents: events(fightIDs: [${urlData.fightID}], dataType:Casts, filterExpression: "${
+						[externalCDSpells].flat().map(spell => spell.id).map(id => `ability.id = ${id}`).join(' OR ')
+					}", limit: 10000) { data }
 
-		const token = await this.getWCLBearerToken();
+					fightHealEvents: events(fightIDs: [${urlData.fightID}], dataType:Healing, filterExpression: "${
+						[samePartyHealingSpells, otherPartyHealingSpells].flat().map(spell => spell.id).map(id => `ability.id = ${id}`).join(' OR ')
+					}", limit: 10000) { data }
 
-		const rateLimitBuffer = 30; // WCL Query point buffer
-		const rateLimitStart: wclRateLimitData = await this.getRateLimit(token);
+					manaTideTotem: events(fightIDs: [${urlData.fightID}], dataType:Resources, filterExpression: "ability.id = 39609", limit: 100) { data }
+				}
+			}
+		}`;
+		const reportData = await this.queryWCL(reportDataQuery);
 
-		// Slower but more accurate way to generate the raid sim.
-		// Generates players into the groups that they were in during the fight.
-		// If the rate limit is close to max, then it will create the raid parties 'randomly'.
-		let experimentalGenerateParties: boolean = rateLimitStart.pointsSpentThisHour + rateLimitBuffer < rateLimitStart.limitPerHour;
+		// Process the report data.
+		const wclData = reportData.data.reportData.report; // TODO: Typings?
+		const playerData: wclPlayer[] = wclData.playerDetails.data.entries;
 
-		console.info('Importing WCL report', reportID, 'fight', fightID, 'Generate Parties:', experimentalGenerateParties);
+		TypedEvent.freezeAllAndDo(() => {
+			const eventID = TypedEvent.nextEventID();
+			const wclPlayers = playerData.map(wclPlayer => new WCLSimPlayer(wclPlayer, this.simUI, eventID));
+			this.inferRace(eventID, wclData, wclPlayers);
+			this.inferProfessions(eventID, wclData, wclPlayers);
+			this.inferAssignments(eventID, wclData, wclPlayers);
+			this.inferPartyComposition(eventID, wclData, wclPlayers);
+			const numPaladins = wclPlayers.filter(player => player.player.getClass() == Class.ClassPaladin).length;
+			const settings = RaidSimSettings.create({
+				encounter: this.getEncounterProto(wclData),
+				raid: this.getRaidProto(wclPlayers),
+				blessings: makeDefaultBlessings(numPaladins),
+			});
 
-		const reportDataQuery = `
-				{
-					reportData {
-						report(code: "${reportID}") {
-							guild {
-								name faction {id}
-							}
-							playerDetails: table(fightIDs: [${fightID}], endTime: 99999999, dataType: Casts, killType: All, viewBy: Default)
-							fights(fightIDs: [${fightID}]) {
-								startTime, endTime, id, name
-							}
-							innervates: table(fightIDs: [${fightID}], dataType:Casts, endTime: 99999999, sourceClass: "Druid", abilityID: 29166),
-							powerInfusion: table(fightIDs: [${fightID}], dataType:Casts, endTime: 99999999, sourceClass: "Priest", abilityID: 10060)
-							tricksOfTheTrade: table(fightIDs: [${fightID}], dataType:Casts, endTime: 99999999, sourceClass: "Rogue", abilityID: 57933)
+			// Clear the raid out to avoid any taint issues.
+			this.simUI.clearRaid(eventID);
+			this.simUI.fromProto(eventID, settings);
+		});
+
+		this.close();
+	}
+
+	private inferRace(eventID: EventID, wclData: any, wclPlayers: WCLSimPlayer[]) {
+		wclPlayers.forEach(p => p.player.setRace(eventID, Race.RaceUnknown));
+
+		// If defined in log, use that faction. Otherwise default to UI setting.
+		let faction = (wclData.guild?.faction?.id || this.simUI.raidPicker?.getCurrentFaction() || Faction.Horde) as Faction;
+
+		wclData.combatantInfoEvents.data.forEach((combatantInfo: wclCombatantInfoEvent) => {
+			combatantInfo.auras
+				.filter(aura => aura.ability == 28878)
+				.forEach(aura => {
+					const sourcePlayer = wclPlayers.find(player => player.id == aura.source);
+					if (sourcePlayer && sourcePlayer.player.getRace() != Race.RaceDraenei) {
+						console.log(`Inferring player ${sourcePlayer.name} has race ${raceNames[Race.RaceDraenei]} from Heroic Presence aura event`);
+						sourcePlayer.player.setRace(eventID, Race.RaceDraenei);
+						faction = Faction.Alliance;
+					}
+				});
+		});
+
+		const castEventsBySpellId = bucket(wclData.reportCastEvents.data as Array<wclCastEvent>, event => String(event.abilityGameID));
+		racialSpells.forEach(spell => {
+			const spellEvents: Array<wclCastEvent> = castEventsBySpellId[spell.id] || [];
+			spellEvents.forEach(event => {
+				const sourcePlayer = wclPlayers.find(player => player.id == event.sourceID);
+				if (sourcePlayer) {
+					console.log(`Inferring player ${sourcePlayer.name} has race ${raceNames[spell.race]} from ${spell.name} event`);
+					sourcePlayer.player.setRace(eventID, spell.race);
+					faction = raceToFaction[spell.race];
+				}
+			});
+		});
+
+		wclPlayers.forEach(p => {
+			if (p.player.getRace() == Race.RaceUnknown) {
+				p.player.setRace(eventID, p.preset.defaultFactionRaces[faction]);
+			}
+		});
+	}
+
+	private inferProfessions(eventID: EventID, wclData: any, wclPlayers: WCLSimPlayer[]) {
+		const castEventsBySpellId = bucket(wclData.reportCastEvents.data as Array<wclCastEvent>, event => String(event.abilityGameID));
+		professionSpells.forEach(spell => {
+			const spellEvents: Array<wclCastEvent> = castEventsBySpellId[spell.id] || [];
+			spellEvents.forEach(event => {
+				const sourcePlayer = wclPlayers.find(player => player.id == event.sourceID);
+				if (sourcePlayer && !sourcePlayer.inferredProfessions.includes(spell.profession)) {
+					console.log(`Inferring player ${sourcePlayer.name} has profession ${professionNames[spell.profession]} from ${spell.name} event`);
+					sourcePlayer.inferredProfessions.push(spell.profession);
+				}
+			});
+		});
+
+		wclPlayers.forEach(player => {
+			let professions = distinct(player.inferredProfessions.concat(player.player.getGear().getProfessionRequirements()));
+			if (professions.length == 0) {
+				professions = [Profession.Engineering, Profession.Jewelcrafting];
+			} else if (professions.length == 1) {
+				if (professions[0] != Profession.Engineering) {
+					professions.push(Profession.Engineering);
+				} else {
+					professions.push(Profession.Jewelcrafting);
+				}
+			}
+			player.player.setProfessions(eventID, professions);
+		});
+	}
+
+	private inferAssignments(eventID: EventID, wclData: any, wclPlayers: WCLSimPlayer[]) {
+		const castEventsBySpellId = bucket(wclData.fightCastEvents.data as Array<wclCastEvent>, event => String(event.abilityGameID));
+		externalCDSpells.forEach(spell => {
+			const spellEvents: Array<wclCastEvent> = castEventsBySpellId[spell.id] || [];
+			spellEvents.forEach(event => {
+				const sourcePlayer = wclPlayers.find(player => player.id == event.sourceID);
+				const targetPlayer = wclPlayers.find(player => player.id == event.targetID);
+				if (sourcePlayer && targetPlayer && sourcePlayer.player.getClass() == spell.class) {
+					const specOptions = spell.applyFunc(sourcePlayer.player, targetPlayer.toRaidTarget());
+					sourcePlayer.player.setSpecOptions(eventID, specOptions);
+					console.log(`Inferring player ${sourcePlayer.name} is targeting ${targetPlayer.name} with ${spell.name} from cast event`);
+				}
+			});
+		});
+	}
+
+	// Assigns the raidIndex field for all players.
+	private inferPartyComposition(eventID: EventID, wclData: any, wclPlayers: WCLSimPlayer[]) {
+		const setPlayersInParty = (player1: WCLSimPlayer, player2: WCLSimPlayer, reason: string) => {
+			if (player1.addPlayerInParty(player2) || player2.addPlayerInParty(player1)) {
+				console.log(`Inferring players ${player1.name} and ${player2.name} in same party from ${reason} event`);
+			}
+		};
+
+		const healEventsBySpellId = bucket(wclData.fightHealEvents.data as Array<wclHealEvent>, event => String(event.abilityGameID));
+
+		// These spells only affect players in the same party as the caster.
+		samePartyHealingSpells.forEach(spell => {
+			const spellEvents: Array<wclHealEvent> = healEventsBySpellId[spell.id] || [];
+			spellEvents.forEach(event => {
+				const sourcePlayer = wclPlayers.find(player => player.id == event.sourceID);
+				const targetPlayer = wclPlayers.find(player => player.id == event.targetID);
+				if (sourcePlayer && targetPlayer) {
+					setPlayersInParty(sourcePlayer, targetPlayer, spell.name);
+				}
+			});
+		});
+
+		// Prayer of Healing is a bit different, we can infer that players who are targeted at the same time are in a group.
+		otherPartyHealingSpells.forEach(spell => {
+			const spellEvents: Array<wclHealEvent> = healEventsBySpellId[spell.id] || [];
+			const spellEventsByTimestamp = bucket(spellEvents, event => String(event.timestamp) + String(event.sourceID));
+			for (const [timestamp, eventsAtTime] of Object.entries(spellEventsByTimestamp)) {
+				const spellTargets = eventsAtTime.map(event => wclPlayers.find(player => player.id == event.targetID));
+				for (let i = 0; i < spellTargets.length; i++) {
+					for (let j = 0; j < spellTargets.length; j++) {
+						if (i != j && spellTargets[i] && spellTargets[j]) {
+							setPlayersInParty(spellTargets[i]!, spellTargets[j]!, spell.name);
 						}
 					}
 				}
-				`;
+			}
+		});
 
-		const reportData = await this.queryWCL(reportDataQuery, token);
-		if (reportData.errors != undefined && reportData.errors != null && reportData.errors.length) {
-			const errorData = reportData.errors.reduce((accumulator: string, error: any) => {
-				return accumulator + error.message;
-			}, "");
-			alert("Failed to import: " + errorData);
-			return;
+		wclData.combatantInfoEvents.data.forEach((combatantInfo: wclCombatantInfoEvent) => {
+			const targetPlayer = wclPlayers.find(player => player.id == combatantInfo.sourceID);
+			combatantInfo.auras
+				.filter(aura => aura.ability == 28878)
+				.forEach(aura => {
+					const sourcePlayer = wclPlayers.find(player => player.id == aura.source);
+					if (sourcePlayer && targetPlayer) {
+						setPlayersInParty(sourcePlayer, targetPlayer, 'Heroic Presence');
+					}
+				});
+		});
+
+		// Assign players with same-group inferences.
+		let inferredPlayers = wclPlayers.filter(player => player.playersInParty.length > 0);
+		let nextEmptyPartyIdx = 0;
+		while (inferredPlayers.length > 0) {
+			// Find all the players in the same party as the first player.
+			let partyMembers = [inferredPlayers[0]].concat(inferredPlayers[0].playersInParty);
+			let numMembers = 0;
+			while (partyMembers.length != numMembers) {
+				numMembers = partyMembers.length;
+				partyMembers = distinct(partyMembers.map(member => [member].concat(member.playersInParty)).flat());
+			}
+
+			// Assign these members to an empty party.
+			const partyIdx = nextEmptyPartyIdx;
+			nextEmptyPartyIdx++;
+			partyMembers.forEach((member, i) => {
+				member.raidIndex = partyIdx * 5 + i;
+			});
+
+			inferredPlayers = inferredPlayers.filter(player => !partyMembers.includes(player));
 		}
-		// Process the report data.
-		const wclData = reportData.data.reportData.report; // TODO: Typings?
 
-		const guildData = wclData.guild;
-		const playerData: wclPlayer[] = wclData.playerDetails.data.entries;
-		const innervateData: wclBuffCastsData[] = wclData.innervates.data.entries;
-		const powerInfusionData: wclBuffCastsData[] = wclData.powerInfusion.data.entries;
-		const tricksOfTheTradeData: wclBuffCastsData[] = wclData.tricksOfTheTrade.data.entries;
+		// Assign remaining players into open slots.
+		const allRaidIndexes = [...Array(40).keys()];
+		const nextFreeIndex = () => allRaidIndexes.find(idx => !wclPlayers.some(p => p.raidIndex == idx)) ?? -1;
+		wclPlayers
+			.filter(player => player.raidIndex == -1)
+			.forEach(player => {
+				const nextIdx = nextFreeIndex();
+				if (nextIdx == -1) {
+					throw new Error('Invalid next idx');
+				}
+				player.raidIndex = nextIdx;
+			});
+	}
 
-		// Set up the general variables we need for import to be successful.
+	private getEncounterProto(wclData: any): EncounterProto {
 		const fight: { startTime: number, endTime: number, id: number, name: string } = wclData.fights[0];
-		const startTime: number = fight.startTime;
-		const endTime: number = fight.endTime;
 
-		// Default to UI setting
-		let faction = this.simUI.raidPicker?.getCurrentFaction();
-
-		// If defined in log, use that faction.
-		if (guildData != null) {
-			faction = guildData.faction.id as Faction;
-		}
-
-		// Fallback if UI is broken and log has no faction.
-		if (faction == undefined) {
-			faction = Faction.Horde;
-		}
-
-		const encounter = EncounterProto.create();
-		encounter.duration = (endTime - startTime) / 1000;
-
-		encounter.targets = new Array<TargetProto>();
-
-		let closestEncounterPreset = this.simUI.sim.db.getAllPresetEncounters().find((enc) => enc.path.includes(fight.name));
+		const encounter = EncounterProto.create({
+			duration: (fight.endTime - fight.startTime) / 1000,
+			targets: [],
+		});
 
 		// Use the preset encounter if it exists.
+		let closestEncounterPreset = this.simUI.sim.db.getAllPresetEncounters().find(enc => enc.path.includes(fight.name));
 		if (closestEncounterPreset && closestEncounterPreset.targets.length) {
 			closestEncounterPreset.targets
-				.map((mob) => mob.target as TargetProto)
-				.filter((target) => target !== undefined)
-				.forEach((target) => encounter.targets.push(target));
+				.map(mob => mob.target as TargetProto)
+				.filter(target => target !== undefined)
+				.forEach(target => encounter.targets.push(target));
 		}
 
 		// Build a manual target list if no preset encounter exists.
@@ -275,547 +495,109 @@ export class RaidWCLImporter extends Importer {
 			encounter.targets.push(Target.defaultProto());
 		}
 
-		const settings = RaidSimSettings.create();
-		settings.encounter = encounter;
-
-		const raid = RaidProto.create();
-		raid.parties = new Array<PartyProto>();
-		settings.raid = raid;
-
-		const buffBots = new Array<BuffBot>();
-
-		// Raid index of players that received innervates
-		const wclIDtoRaidIndex = new Map<number, number>();
-
-		const numPaladins = playerData.filter((player) => player.type === 'Paladin').length;
-
-		// Generate an empty set of 3 dimensional arrays for each party. [ party ][ player or buffBot ][ player ]
-		let tempParties: WCLSimPlayer[][] = Array.from({ length: MAX_NUM_PARTIES }).map(() => []);
-
-		// Generate the default 5 raid parties & temp parties.
-		tempParties.forEach(() => raid.parties.push(PartyProto.create()));
-
-		// Sorts an objectArray by a property. Returns a new array.
-		// Can be called recursively.
-		const sortByProperty = (objArray: any[], prop: string) => {
-			if (!Array.isArray(objArray)) throw new Error('FIRST ARGUMENT NOT AN ARRAY');
-			const clone = objArray.slice(0);
-			const direct = arguments.length > 2 ? arguments[2] : 1; //Default to ascending
-			const propPath = (prop.constructor === Array) ? prop : prop.split('.');
-			clone.sort(function(a, b) {
-				for (let p in propPath) {
-					if (a[propPath[p]] && b[propPath[p]]) {
-						a = a[propPath[p]];
-						b = b[propPath[p]];
-					}
-				}
-				// convert numeric strings to integers
-				a = a.toString().match(/^\d+$/) ? +a : a;
-				b = b.toString().match(/^\d+$/) ? +b : b;
-				return ((a < b) ? -1 * direct : ((a > b) ? 1 * direct : 0));
-			});
-			return clone;
-		}
-
-		const mappedPlayers = playerData
-			.map((wclPlayer) => new WCLSimPlayer(wclPlayer, this.simUI, faction));
-
-		const processBuffCastData = (buffCastData: wclBuffCastsData[]): { player: WCLSimPlayer, target: string }[] => {
-			const playerCasts: { player: WCLSimPlayer, target: string }[] = [];
-			if (buffCastData.length) {
-				buffCastData.forEach((cast) => {
-					const sourcePlayer = mappedPlayers.find((player) => player.name === cast.name);
-					const targetPlayer = mappedPlayers.find((player) => player.name === cast.targets[0].name);
-
-					// Buff bots do not get PI/Innervates.
-					if (sourcePlayer && targetPlayer && !targetPlayer.isBuffBot) {
-						playerCasts.push({ player: sourcePlayer, target: targetPlayer.name });
-					}
-				});
-			}
-			return playerCasts;
-		}
-
-		processBuffCastData(innervateData).forEach((cast) => cast.player.innervateTarget = cast.target);
-		processBuffCastData(powerInfusionData).forEach((cast) => cast.player.powerInfusionTarget = cast.target);
-		processBuffCastData(tricksOfTheTradeData).forEach((cast) => cast.player.tricksOfTheTradeTarget = cast.target);
-
-		const wclPlayers: WCLSimPlayer[] = sortByProperty(sortByProperty(mappedPlayers, 'type'), 'sortPriority');
-
-		let raidIndex = 0;
-
-		// Sorts buff bots to the end of the array to prevent overwriting them later on.
-		const sortBuffBotsLast = (a: WCLSimPlayer, b: WCLSimPlayer) => a.isBuffBot ? 1 : b.isBuffBot ? 1 : 0;
-
-		// Reusable function to add a player to the raid.parties[raidIndex] array.
-		const assignPlayerToParty = (player: WCLSimPlayer, raidParty: PartyProto, missing = false) => {
-
-			if (!player) {
-				console.error('Cannot assign player to party because player is undefined!');
-				return;
-			}
-
-			if (!raidParty) {
-				console.error('Cannot assign player to party because party is undefined!');
-				return;
-			}
-
-			if (raidParty.players.length === MAX_PARTY_SIZE) {
-				console.error('Cannot assign player to party because party is full!', player, raidParty.players);
-				return;
-			}
-
-			if (missing) {
-				console.warn(`Could not locate a group for ${player.name}, assigning them to an open group.`);
-			}
-
-			let buffBot = player.getBuffBot();
-			let simPlayer = player.getPlayer();
-
-			if (!buffBot && !simPlayer) {
-				console.error('Cannot assign player to party because player data is undefined!', player);
-				return;
-			}
-
-			wclIDtoRaidIndex.set(player.id, raidIndex);
-
-			if (buffBot) {
-				buffBot.raidIndex = raidIndex;
-				buffBots.push(buffBot);
-				raidParty.players.push(PlayerProto.create());
-			} else if (simPlayer) {
-				raidParty.players.push(simPlayer);
-				if (isTankSpec(playerToSpec(simPlayer))) {
-					let rt = RaidTarget.create();
-					rt.targetIndex = wclIDtoRaidIndex.get(player.id)!;
-					settings.raid!.tanks.push(rt);
-				}
-			}
-
-			// Just in case this did not get set previously.
-			player.partyAssigned = true;
-
-			raidIndex++;
-		}
-
-		// if experimental_generate_parties is true, we will generate parties based on the party buffers
-		if (experimentalGenerateParties) {
-
-			// We only care about the players who can provide party buffs on logs.
-			const partyBuffPlayers = wclPlayers.filter((player) => player.isPartyBuffer);
-
-			// Can't be a forEach because we need to wait for the query to finish on each iteration later on.
-			for (const player of partyBuffPlayers) {
-
-				const partyFull = player.partyMembers.length >= MAX_PARTY_SIZE;
-
-				// Skip players that have already been assigned to a party.
-				// player.partyAssigned || player.partyFound || player.partyMembers.length > 0
-				if (partyFull) {
-					continue;
-				}
-
-				const auraIDs: number[] = player.getPartyAuraIds();
-
-				if (!auraIDs.length) {
-					console.warn('No party aura ids found for partyBuff player ' + player.name);
-					continue;
-				}
-
-				let auraBuffQueries = auraIDs.map((auraID) => `
-				{
-					reportData {
-						report(code: "${reportID}") {
-					table(startTime: ${startTime}, endTime: ${endTime}, sourceID: ${player.id}, abilityID: ${auraID}, fightIDs: [${fightID}],dataType:Buffs,viewBy:Target,hostilityType:Friendlies)
-						}
-					}
-				}`);
-
-				let auraTargets: wclAura[] = [];
-
-				// Can't be a forEach because we need to await each query.
-				for (let i = 0; i < auraBuffQueries.length; i++) {
-
-					if (auraTargets.length >= MAX_PARTY_SIZE || partyFull) {
-						break;
-					}
-
-					let auraQueryRes = await this.queryWCL(auraBuffQueries[i], token);
-					if (auraQueryRes) {
-						let playerAuras: wclAura[] = auraQueryRes.data?.reportData?.report?.table?.data?.auras ?? [];
-						if (playerAuras.length) {
-
-							playerAuras = playerAuras.filter((auraTarget) => auraTarget.type !== 'Pet')
-								.sort((a, b) => a.bands[0].startTime - b.bands[0].startTime)
-								.filter((auraTarget, index) => index < 5);
-
-							const uniqueAuraTargets = playerAuras.filter((auraTarget) => !auraTargets.some((target) => target.name === auraTarget.name));
-							auraTargets.push(...uniqueAuraTargets);
-						}
-					}
-				}
-
-				if (auraTargets.length === 0) {
-					continue;
-				}
-
-				player.partyFound = true;
-
-				// Only need the member names at this point.
-				player.partyMembers = auraTargets.map((auraTarget) => auraTarget.name);
-
-				let partyMembers = wclPlayers
-					.filter((raidMember) => player.partyMembers.includes(raidMember.name))
-					.filter((raidMember) => !raidMember.partyAssigned);
-
-				const totalPartyMembers = partyMembers.length;
-
-				// Find an empty temp party to assign the members to.
-				let partyIndex: number = tempParties.findIndex((party) => party.length < MAX_PARTY_SIZE && party.length < totalPartyMembers);
-
-				// Try and see if any of the parties have your party members in it without you.
-				if (partyIndex === -1) {
-					console.warn('No empty temp party found for player ' + player.name);
-					partyIndex = tempParties
-						.filter((party) => party.length < MAX_PARTY_SIZE)
-						.findIndex((party) => party.some((member) => player.partyMembers.includes(member.name)));
-					console.info('Found party with members in it: ' + partyIndex);
-				}
-
-				let party: WCLSimPlayer[] = tempParties[partyIndex];
-
-				partyMembers.forEach((partyMember) => {
-
-					const isUndefined = party === undefined;
-					const isFull = party.length === MAX_PARTY_SIZE;
-
-					if (isUndefined || isFull) {
-						return;
-					}
-
-					partyMember.partyAssigned = true;
-					partyMember.partyMembers = player.partyMembers;
-
-					party.push(partyMember);
-				});
-			}
-
-			// Process the temp groups into the sim raid groups.
-			tempParties.forEach((party, partyIndex) => {
-
-				let raidParty = raid.parties[partyIndex];
-
-				party
-					.sort(sortBuffBotsLast)
-					.forEach((player) => assignPlayerToParty(player, raidParty));
-			});
-		}
-
-		// Process the players who didn't get assigned a group yet.
-		wclPlayers
-			.filter((player) => !player.partyAssigned)
-			.sort(sortBuffBotsLast)
-			.map((player) => {
-				let raidParty = raid.parties.filter((party) => party.players.length < MAX_PARTY_SIZE)[0];
-				assignPlayerToParty(player, raidParty, true);
-			});
-
-		// Insert the innervate / PI buffs into the options for the raid.
-		wclPlayers
-			.filter((player) => player.innervateTarget || player.powerInfusionTarget || player.tricksOfTheTradeTarget)
-			.forEach((player) => {
-
-				const target: wclSimPlayer | undefined = wclPlayers.find((wclPlayer) => wclPlayer.name === player.innervateTarget || player.name === player.powerInfusionTarget || player.name === player.tricksOfTheTradeTarget);
-
-				if (!target) {
-					console.warn('Could not find target assignment player');
-					return;
-				}
-
-				const targetID: number = target.id;
-				const targetRaidIndex: number | undefined = wclIDtoRaidIndex.get(targetID);
-
-				if (!targetRaidIndex) {
-					console.warn(`Could not find ${target.name} raid index!`);
-					return;
-				}
-
-				if (player.isBuffBot) {
-					const playerID: number = player.id;
-					const playerRaidIndex: number | undefined = wclIDtoRaidIndex.get(playerID);
-					const buffBot = buffBots.find((buffBot) => buffBot.raidIndex === playerRaidIndex);
-					if (buffBot) {
-						if (player.innervateTarget) {
-							buffBot.innervateAssignment = RaidTarget.create();
-							buffBot.innervateAssignment.targetIndex = targetRaidIndex
-						} else if (player.powerInfusionTarget) {
-							buffBot.powerInfusionAssignment = RaidTarget.create();
-							buffBot.powerInfusionAssignment.targetIndex = targetRaidIndex
-						} else if (player.tricksOfTheTradeTarget) {
-							buffBot.tricksOfTheTradeAssignment = RaidTarget.create();
-							buffBot.tricksOfTheTradeAssignment.targetIndex = targetRaidIndex
-						}
-					}
-					return;
-				}
-
-				// Regular players.
-
-				const raidParty = raid.parties.filter((party) => party.players.some((raidPlayer) => raidPlayer.name === player.name))[0];
-
-				if (!raidParty) {
-					console.warn('Could not find raiding party for player ' + player.name);
-					return;
-				}
-
-				const raidPlayer = raidParty.players.find((raidPlayer) => raidPlayer.name === player.name);
-
-				if (!raidPlayer) {
-					console.warn('Could not find raid player ' + player.name + ' in raid party ' + raidParty);
-					return;
-				}
-
-				if (player.innervateTarget) {
-					if (raidPlayer.spec.oneofKind == 'balanceDruid') {
-						raidPlayer.spec.balanceDruid.options!.innervateTarget = RaidTarget.create();
-						raidPlayer.spec.balanceDruid.options!.innervateTarget.targetIndex = targetRaidIndex;
-					} else if (raidPlayer.spec.oneofKind == 'feralDruid') {
-						raidPlayer.spec.feralDruid.options!.innervateTarget = RaidTarget.create();
-						raidPlayer.spec.feralDruid.options!.innervateTarget.targetIndex = targetRaidIndex;
-					} else if (raidPlayer.spec.oneofKind == 'feralTankDruid') {
-						raidPlayer.spec.feralTankDruid.options!.innervateTarget = RaidTarget.create();
-						raidPlayer.spec.feralTankDruid.options!.innervateTarget.targetIndex = targetRaidIndex;
-					}
-				} else if (player.powerInfusionTarget) {
-					// Pretty sure there is no shadow priest that has PI
-				} else if (player.tricksOfTheTradeTarget) {
-					// TODO: I'm not sure what I'm supposed to do here
-				}
-			});
+		return encounter;
+	}
+
+	private getRaidProto(wclPlayers: WCLSimPlayer[]): RaidProto {
+		const raid = RaidProto.create({
+			parties: [...new Array(MAX_NUM_PARTIES).keys()].map(p => PartyProto.create({
+				players: [...new Array(5).keys()].map(p => PlayerProto.create()),
+			})),
+		});
 
 		wclPlayers
-			.filter((player) => !player.partyAssigned)
-			.forEach((player) => {
-				console.error(`${player.name} is not in a party!`, player);
+			.forEach(player => {
+				const positionInParty = player.raidIndex % 5;
+				const partyIdx = (player.raidIndex - positionInParty) / 5;
+				const playerProto = player.player.toProto();
+				raid.parties[partyIdx].players[positionInParty] = playerProto;
+
+				if (isTankSpec(playerToSpec(playerProto))) {
+					raid.tanks.push(player.toRaidTarget());
+				}
 			});
 
-		settings.blessings = makeDefaultBlessings(numPaladins);
-
-		this.simUI.fromProto(TypedEvent.nextEventID(), settings);
-		this.simUI.setBuffBots(TypedEvent.nextEventID(), buffBots);
-
-		if (!experimentalGenerateParties) {
-			const rateLimitEnd: wclRateLimitData = await this.getRateLimit(token);
-			console.debug(`Rate Limit resets in ${rateLimitEnd.pointsResetIn} seconds.`);
-		}
-
-		this.close();
+		return raid;
 	}
 }
 
-class WCLSimPlayer implements wclSimPlayer {
-	public gear: wclGear[];
-	public icon: string;
-	public id: number;
-	public name: string;
-	public type: string;
-	public talents: wclTalents[];
-	public wclSpec: string;
+class WCLSimPlayer {
+	public readonly data: wclPlayer;
+	public readonly id: number;
+	public readonly name: string;
+	public readonly type: string;
+	public raidIndex: number = -1;
 
-	public partyAssigned: boolean = false;
-	public partyFound: boolean = false;
-	public partyMembers: string[] = [];
+	private readonly simUI: RaidSimUI;
+	private readonly fullType: string;
+	private readonly spec: Spec|null;
 
-	public isPartyBuffer: boolean = false;
-	public isBuffBot: boolean = false;
-	public sortPriority: number = 99;
+	readonly player: Player<any>;
+	readonly preset: PresetSpecSettings<any>;
 
-	public innervateTarget: string | undefined;
-	public powerInfusionTarget: string | undefined;
-	public tricksOfTheTradeTarget: string | undefined;
+	inferredProfessions: Array<Profession> = [];
 
-	private simUI: RaidSimUI;
-	private spec: Spec;
-	private specType: string;
-	private faction: Faction;
+	readonly playersInParty: Array<WCLSimPlayer> = [];
 
-	constructor(data: wclPlayer, simUI: RaidSimUI, faction: Faction = Faction.Unknown) {
+	constructor(data: wclPlayer, simUI: RaidSimUI, eventID: EventID) {
 		this.simUI = simUI;
+		this.data = data;
 
 		this.name = data.name;
-		this.gear = data.gear;
-		this.icon = data.icon;
 		this.id = data.id;
 		this.type = data.type;
-		this.talents = data.talents;
-		this.wclSpec = data.icon.split('-')[1];
-		this.faction = faction;
 
-		// Prot Paladin's occasionally have a specType of 'Protection' instead of 'Justicar'?
-		if (this.type === 'Paladin' && this.wclSpec === 'Protection') {
-			this.wclSpec = 'Justicar';
+		const wclSpec = data.icon.split('-')[1];
+		this.fullType = this.type + wclSpec;
+		console.log(`WCL spec: ${this.fullType}`);
+
+		const foundSpec = fullTypeToSpec[this.fullType] ?? null;
+		if (foundSpec == null) {
+			throw new Error('Player type not implemented: ' + this.fullType);
 		}
+		this.spec = foundSpec;
+		this.player = new Player(this.spec, simUI.sim);
 
-		this.spec = specNames[this.wclSpec];
-		this.specType = this.wclSpec + this.type;
-
-		this.isBuffBot = this.spec === undefined;
-
-		this.isPartyBuffer = this.getPartyAuraIds().length > 1;
-
-		this.sortPriority = specSortPriority[this.wclSpec] ?? 99;
-	}
-
-	public getPlayer(): PlayerProto | undefined {
-
-		if (this.isBuffBot) {
-			return;
-		}
-
-		let player = PlayerProto.create();
-
-		const specFuncs = specTypeFunctions[this.spec];
-
-		const matchingPreset = this.getMatchingPreset();
-
-		if (matchingPreset === undefined) {
-			console.error('Could not find matching preset for non buff bot', {
+		this.preset = WCLSimPlayer.getMatchingPreset(foundSpec, data.talents);
+		if (this.preset === undefined) {
+			throw new Error('Could not find matching preset: ' + JSON.stringify({
 				'name': this.name,
-				'spec': this.spec,
-				'type': this.type,
-				'talents': this.talents,
-			});
-			return;
+				'type': this.fullType,
+				'talents': data.talents,
+			}).toString());
 		}
 
-		player = withSpecProto(this.spec, player, matchingPreset.rotation, specFuncs.talentsCreate(), matchingPreset.specOptions);
+		// Apply preset defaults.
+		this.player.applySharedDefaults(eventID);
+		this.player.setTalentsString(eventID, this.preset.talents.talentsString);
+		this.player.setGlyphs(eventID, this.preset.talents.glyphs!);
+		this.player.setConsumes(eventID, this.preset.consumes);
+		this.player.setRotation(eventID, this.preset.rotation);
+		this.player.setSpecOptions(eventID, this.preset.specOptions);
+		this.player.setProfessions(eventID, [Profession.Engineering, Profession.Jewelcrafting]);
 
-		player.talentsString = matchingPreset.talents.talentsString;
-		player.glyphs = matchingPreset.talents.glyphs;
-		player.consumes = matchingPreset.consumes;
-
-		player.name = this.name;
-		player.class = nameToClass(this.type);
-		player.equipment = this.getEquipment();
-		player.race = matchingPreset.defaultFactionRaces[this.faction];
-
-		Player.applySharedDefaultsToProto(player);
-
-		return player;
+		// Apply settings from report data.
+		this.player.setName(eventID, data.name);
+		this.player.setGear(eventID, simUI.sim.db.lookupEquipmentSpec(EquipmentSpec.create({
+			items: data.gear.map(gear => ItemSpec.create({
+				id: gear.id,
+				enchant: gear.permanentEnchant,
+				gems: gear.gems ? gear.gems.map(gemInfo => gemInfo.id) : [],
+			})),
+		})));
 	}
 
-	public getBuffBot(): BuffBot | undefined {
-
-		if (!this.isBuffBot) {
-			return;
-		}
-
-		const botID = buffBotNames[this.specType];
-
-		if (botID == null) {
-			console.error('Buff Bot Spec not implemented: ', this.specType);
-			return;
-		}
-
-		const bot = BuffBot.create();
-		bot.id = botID;
-		bot.raidIndex = -1; // Default it for now. // numPlayers
-
-		return bot;
-	}
-
-	public getPartyAuraIds() {
-
-		const allSpecClassAuras: any = {
-			'Paladin': [
-				19746, // Concentration Aura
-				27149, // Devotion Aura,
-				27150, // Retribution Aura
-			],
-			'Warrior': [
-				2048,  // Battle Shout
-				469, // Commanding Shout
-			],
-			'Warlock': [
-				27268, // Pet Imp: Blood Pact
-				18696, // Improved Imp: Blood Pact
-			],
-		};
-
-		// Reused for the plethora of Feral specs.
-		const feralDruidSpecAuras = [
-			24932, // Improved Leader of the Pack // at least 0,32,0
-			// 17007, // Leader of the Pack // at least 0,31,0
-		];
-
-		// TODO: Could additionally filter out buff IDs based on minimum req talent strings?
-		const specSpecificAuras: any = {
-			'RetributionPaladin': [
-				20092, // Improved Retribution Aura // at least 0,0,16
-				20218, // Sanctity Aura // at least 0,0,21
-				31870, // Improved Sanctity Aura // at least 0,0,22
-			],
-			'GuardianDruid': [...feralDruidSpecAuras],
-			'WardenDruid': [...feralDruidSpecAuras],
-			'FeralDruid': [...feralDruidSpecAuras],
-			'BalanceDruid': [
-				24907, // Moonkin Aura // at least 31,0,0
-			],
-			'RestorationDruid': [
-				34123, // Tree of Life // at least 0,0,41
-			],
-			'MarksmanHunter': [
-				27066, // Trueshot Aura // at least 0,32,0
-			],
-			'EnhancementShaman': [
-				30811, // Unleashed Rage // at least 0,36,0
-			],
-			// 'ElementalShaman': [] // Totem buffs do not show up in logs. Leaving for future reference.
-		};
-
-		const consumableAuras = [
-			351355, // Greater Drums of Battle
-		];
-
-		const classAuras = allSpecClassAuras[this.type] ?? [];
-		const specAuras = specSpecificAuras[this.specType] ?? [];
-
-		const reliableAuras = [
-			...specAuras, ...classAuras, ...consumableAuras,
-		];
-
-		if (this.type === 'Shaman') {
-			// Shamans get moved around a lot, so Heroism isn't a good reference for what group they are in.
-			return [
-				...reliableAuras,
-				32182, // Heroism
-			];
-		}
-		return reliableAuras;
-	}
-
-	private getMatchingPreset(): PresetSpecSettings<Spec> {
-		const matchingPresets = playerPresets.filter((preset) => preset.spec === this.spec);
+	private static getMatchingPreset(spec: Spec, talents: wclTalents[]): PresetSpecSettings<Spec> {
+		const matchingPresets = playerPresets.filter((preset) => preset.spec == spec);
 		let presetIdx = 0;
 
 		if (matchingPresets && matchingPresets.length > 1) {
-			let distance = 100;
+			let distance = 999;
 			// Search talents and find the preset that the players talents most closely match.
 			matchingPresets.forEach((preset, i) => {
-				let presetTalents = [0, 0, 0];
-				let talentIdx = 0;
-				// First sum up the number of talents per tree for preset.
-				Array.from(preset.talents.talentsString).forEach((v) => {
-					if (v == '-') {
-						talentIdx++;
-						return;
-					}
-					presetTalents[talentIdx] += parseInt(v);
-				});
-
+				const presetTalents = getTalentTreePoints(preset.talents.talentsString);
 				// Diff the distance to the preset.
-
-				const newDistance = presetTalents.reduce((acc, v, i) => acc += Math.abs(this.talents[i]?.guid - presetTalents[i]), 0);
+				const newDistance = presetTalents.reduce((acc, v, i) => acc += Math.abs(talents[i]?.guid - presetTalents[i]), 0);
 
 				// If this is the best distance, assign this preset.
 				if (newDistance < distance) {
@@ -827,90 +609,158 @@ class WCLSimPlayer implements wclSimPlayer {
 		return matchingPresets[presetIdx];
 	}
 
-	private getEquipment(): EquipmentSpec {
-		let equipment = EquipmentSpec.create();
-		equipment.items = new Array<ItemSpec>();
-
-		this.gear.forEach((gear) => {
-			const item = ItemSpec.create();
-			item.id = gear.id;
-			item.enchant = gear.permanentEnchant;
-			if (gear.gems) {
-				item.gems = new Array<number>();
-				gear.gems.forEach((gemInfo) => item.gems.push(gemInfo.id));
-			}
-			equipment!.items.push(item);
+	public toRaidTarget(): RaidTarget {
+		return RaidTarget.create({
+			targetIndex: this.raidIndex,
 		});
-		return equipment;
 	}
 
+	public addPlayerInParty(other: WCLSimPlayer): boolean {
+		if (other != this && !this.playersInParty.includes(other)) {
+			this.playersInParty.push(other);
+			return true;
+		}
+		return false;
+	}
 }
 
-
-// Maps WCL spec to sorting priority for party makeup checks. Lower the number, the more likely the query will be successful.
-const specSortPriority: Record<string, number> = {
-	'Warden': 0,
-	'Guardian': 1,
-	'Feral': 2,
-	'Balance': 3,
-	'Justicar': 4,
-	'Retribution': 5,
-	'Fury': 6,
-	'Arms': 7,
-	'Protection': 8,
-	'Enhancement': 9,
-	'Destruction': 10,
-	'Affliction': 11,
-	'Demonology': 12,
-	'Marksman': 13,
+const fullTypeToSpec: Record<string, Spec> = {
+	'DeathKnightBlood': Spec.SpecTankDeathknight,
+	'DeathKnightLichborne': Spec.SpecTankDeathknight,
+	'DeathKnightRuneblade': Spec.SpecDeathknight,
+	'DeathKnightFrost': Spec.SpecDeathknight,
+	'DeathKnightUnholy': Spec.SpecDeathknight,
+	'DruidBalance': Spec.SpecBalanceDruid,
+	'DruidFeral': Spec.SpecFeralDruid,
+	'DruidWarden': Spec.SpecFeralTankDruid,
+	'DruidGuardian': Spec.SpecFeralTankDruid,
+	'DruidRestoration': Spec.SpecRestorationDruid,
+	'HunterBeastMastery': Spec.SpecHunter,
+	'HunterSurvival': Spec.SpecHunter,
+	'HunterMarksmanship': Spec.SpecHunter,
+	'MageArcane': Spec.SpecMage,
+	'MageFire': Spec.SpecMage,
+	'MageFrost': Spec.SpecMage,
+	'PaladinHoly': Spec.SpecHolyPaladin,
+	'PaladinJusticar': Spec.SpecProtectionPaladin,
+	'PaladinProtection': Spec.SpecProtectionPaladin,
+	'PaladinRetribution': Spec.SpecRetributionPaladin,
+	'PriestHoly': Spec.SpecHealingPriest,
+	'PriestDiscipline': Spec.SpecHealingPriest,
+	'PriestShadow': Spec.SpecShadowPriest,
+	'PriestSmite': Spec.SpecSmitePriest,
+	'RogueAssassination': Spec.SpecRogue,
+	'RogueCombat': Spec.SpecRogue,
+	'RogueSubtlety': Spec.SpecRogue,
+	'ShamanElemental': Spec.SpecElementalShaman,
+	'ShamanEnhancement': Spec.SpecEnhancementShaman,
+	'ShamanRestoration': Spec.SpecRestorationShaman,
+	'WarlockDestruction': Spec.SpecWarlock,
+	'WarlockAffliction': Spec.SpecWarlock,
+	'WarlockDemonology': Spec.SpecWarlock,
+	'WarriorArms': Spec.SpecWarrior,
+	'WarriorFury': Spec.SpecWarrior,
+	'WarriorChampion': Spec.SpecWarrior,
+	'WarriorWarrior': Spec.SpecWarrior,
+	'WarriorGladiator': Spec.SpecWarrior,
+	'WarriorProtection': Spec.SpecProtectionWarrior,
 };
 
-// Maps WCL spec names to internal Spec enum.
-const specNames: Record<string, Spec> = {
-	'Balance': Spec.SpecBalanceDruid,
-	'Elemental': Spec.SpecElementalShaman,
-	'Enhancement': Spec.SpecEnhancementShaman,
-	'Feral': Spec.SpecFeralDruid,
-	'Warden': Spec.SpecFeralTankDruid,
-	'Guardian': Spec.SpecFeralTankDruid,
-	'Survival': Spec.SpecHunter,
-	'BeastMastery': Spec.SpecHunter,
-	'Arcane': Spec.SpecMage,
-	'Fire': Spec.SpecMage,
-	'Frost': Spec.SpecMage,
-	'Assassination': Spec.SpecRogue,
-	'Combat': Spec.SpecRogue,
-	'Retribution': Spec.SpecRetributionPaladin,
-	'Justicar': Spec.SpecProtectionPaladin,
-	'Shadow': Spec.SpecShadowPriest,
-	'Smite': Spec.SpecSmitePriest,
-	'Destruction': Spec.SpecWarlock,
-	'Affliction': Spec.SpecWarlock,
-	'Demonology': Spec.SpecWarlock,
-	'Arms': Spec.SpecWarrior,
-	'Fury': Spec.SpecWarrior,
-	'Champion': Spec.SpecWarrior,
-	'Warrior': Spec.SpecWarrior,
-	'Gladiator': Spec.SpecWarrior,
-	'Protection': Spec.SpecProtectionWarrior,
-};
+interface QuerySpell {
+	id: number,
+	name: string,
+}
 
-// Maps WCL spec+type to internal buff bot IDs.
-const buffBotNames: Record<string, string> = {
-	// Healers
-	'HolyPaladin': 'Paladin',
-	'HolyPriest': 'Holy Priest',
-	'DisciplinePriest': 'Divine Spirit Priest',
-	'RestorationDruid': 'Resto Druid',
-	'DreamstateDruid': 'Resto Druid',
-	'RestorationShaman': 'Resto Shaman',
-};
+// Spells which imply a specific Race.
+const racialSpells: Array<{id: number, name: string, race: Race}> = [
+	{id: 25046, name: 'Arcane Torrent (Energy)', race: Race.RaceBloodElf},
+	{id: 28730, name: 'Arcane Torrent (Mana)', race: Race.RaceBloodElf},
+	{id: 50613, name: 'Arcane Torrent (Runic Power)', race: Race.RaceBloodElf},
+	{id: 26297, name: 'Berserking', race: Race.RaceTroll},
+	{id: 20572, name: 'Blood Fury (AP)', race: Race.RaceOrc},
+	{id: 33697, name: 'Blood Fury (AP+SP)', race: Race.RaceOrc},
+	{id: 33702, name: 'Blood Fury (SP)', race: Race.RaceOrc},
+	{id: 20589, name: 'Escape Artist', race: Race.RaceGnome},
+	{id: 20594, name: 'Stoneform', race: Race.RaceDwarf},
+	{id: 20549, name: 'War Stomp', race: Race.RaceTauren},
+	{id: 7744, name: 'Will of the Forsaken', race: Race.RaceUndead},
+	{id: 59752, name: 'Will to Survive', race: Race.RaceHuman},
+];
 
-interface wclBuffCastsData {
-	name: string;
-	targets: {
+// Spells which imply a specific Profession.
+const professionSpells: Array<{id: number, name: string, profession: Profession}> = [
+	{id: 55503, name: 'Lifeblood', profession: Profession.Herbalism},
+	{id: 50305, name: 'Skinning', profession: Profession.Skinning},
+];
+
+const externalCDSpells: Array<{id: number, name: string, class: Class, applyFunc: (player: Player<any>, raidTarget: RaidTarget) => SpecOptions<any>}> = [
+	{id: 29166, name: 'Innervate', class: Class.ClassDruid, applyFunc: (player: Player<any>, raidTarget: RaidTarget) => {
+		const options = player.getSpecOptions() as SpecOptions<DruidSpecs>;
+		options.innervateTarget = raidTarget;
+		return options;
+	}},
+	{id: 10060, name: 'Power Infusion', class: Class.ClassPriest, applyFunc: (player: Player<any>, raidTarget: RaidTarget) => {
+		const options = player.getSpecOptions() as SpecOptions<PriestSpecs>;
+		options.powerInfusionTarget = raidTarget;
+		return options;
+	}},
+	{id: 57933, name: 'Tricks of the Trade', class: Class.ClassRogue, applyFunc: (player: Player<any>, raidTarget: RaidTarget) => {
+		const options = player.getSpecOptions() as SpecOptions<RogueSpecs>;
+		options.tricksOfTheTradeTarget = raidTarget;
+		return options;
+	}},
+	{id: 49016, name: 'Unholy Frenzy', class: Class.ClassDeathknight, applyFunc: (player: Player<any>, raidTarget: RaidTarget) => {
+		const options = player.getSpecOptions() as SpecOptions<DeathknightSpecs>;
+		options.unholyFrenzyTarget = raidTarget;
+		return options;
+	}},
+];
+
+// Healing spells which only affect the caster's party.
+const samePartyHealingSpells: Array<{id: number, name: string}> = [
+	{id: 54172, name: 'Divine Storm'},
+	{id: 52042, name: 'Healing Stream Totem'},
+	{id: 48076, name: 'Holy Nova'},
+	{id: 48445, name: 'Tranquility'},
+	{id: 15290, name: 'Vampiric Embrace'},
+];
+
+// Healing spells which only affect a single party, but not necessarily the caster's party.
+const otherPartyHealingSpells: Array<{id: number, name: string}> = [
+	{id: 48072, name: 'Prayer of Healing'},
+];
+
+interface wclUrlData {
+	reportID: string,
+	fightID: string,
+}
+
+interface wclCastEvent {
+	type: 'cast',
+	timestamp: number;
+	sourceID: number;
+	targetID: number;
+	abilityGameID: number;
+	fight: number;
+}
+
+interface wclHealEvent {
+	type: 'heal',
+	timestamp: number;
+	sourceID: number;
+	targetID: number;
+	abilityGameID: number;
+	fight: number;
+	amount: number;
+}
+
+interface wclCombatantInfoEvent {
+	type: 'combatantinfo';
+	sourceID: number;
+	auras: {
+		source: number;
+		ability: number;
 		name: string;
-		type: string;
 	}[];
 }
 
@@ -965,15 +815,6 @@ interface wclPlayer {
 	targets?: unknown[];
 	talents: wclTalents[];
 	gear: wclGear[];
-}
-
-// Typed interface for WoWSimPlayer class
-interface wclSimPlayer extends wclPlayer {
-	wclSpec: string;
-	partyAssigned: boolean;
-	isPartyBuffer: boolean;
-	partyMembers: string[];
-	isBuffBot: boolean;
 }
 
 interface wclAura {

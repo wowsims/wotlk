@@ -25,6 +25,9 @@ export abstract class SimTab extends Component {
     this.rootElem.id = this.config.identifier;
     this.rootElem.classList.add('tab-pane', 'fade');
 
+    if (parentElem.childNodes.length == 0)
+      this.rootElem.classList.add('active', 'show');
+
     this.navItem = this.buildNavItem();
     this.navLink = this.navItem.children[0] as HTMLElement;
     this.contentContainer = document.createElement('div');
@@ -53,4 +56,10 @@ export abstract class SimTab extends Component {
   }
 
   protected abstract buildTabContent(): void;
+
+  protected buildColumn(index: number, customCssClass: string): HTMLElement {
+		let column = document.createElement('div');
+		column.classList.add('tab-panel-col', `${customCssClass}-${index}`)
+		return column;
+	}
 }

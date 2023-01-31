@@ -73,7 +73,7 @@ func init() {
 		mhAura := character.NewTemporaryStatsAura("Crusader Enchant MH", core.ActionID{SpellID: 20007, Tag: 1}, stats.Stats{stats.Strength: strBonus}, time.Second*15)
 		ohAura := character.NewTemporaryStatsAura("Crusader Enchant OH", core.ActionID{SpellID: 20007, Tag: 2}, stats.Stats{stats.Strength: strBonus}, time.Second*15)
 
-		character.GetOrRegisterAura(core.Aura{
+		aura := character.GetOrRegisterAura(core.Aura{
 			Label:    "Crusader Enchant",
 			Duration: core.NeverExpires,
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
@@ -93,6 +93,8 @@ func init() {
 				}
 			},
 		})
+
+		character.ItemSwap.RegisterOnSwapItemForEffectWithPPMManager(1900, 1.0, &ppmm, aura)
 	})
 
 	core.NewEnchantEffect(2929, func(agent core.Agent) {
@@ -106,16 +108,13 @@ func init() {
 		character := agent.GetCharacter()
 		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 2673
 		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 2673
-		if !mh && !oh {
-			return
-		}
 		procMask := core.GetMeleeProcMaskForHands(mh, oh)
 		ppmm := character.AutoAttacks.NewPPMManager(0.73, procMask)
 
 		mhAura := character.NewTemporaryStatsAura("Lightning Speed MH", core.ActionID{SpellID: 28093, Tag: 1}, stats.Stats{stats.MeleeHaste: 30.0, stats.Agility: 120}, time.Second*15)
 		ohAura := character.NewTemporaryStatsAura("Lightning Speed OH", core.ActionID{SpellID: 28093, Tag: 2}, stats.Stats{stats.MeleeHaste: 30.0, stats.Agility: 120}, time.Second*15)
 
-		character.GetOrRegisterAura(core.Aura{
+		aura := character.GetOrRegisterAura(core.Aura{
 			Label:    "Mongoose Enchant",
 			Duration: core.NeverExpires,
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
@@ -135,6 +134,8 @@ func init() {
 				}
 			},
 		})
+
+		character.ItemSwap.RegisterOnSwapItemForEffectWithPPMManager(2673, 0.73, &ppmm, aura)
 	})
 
 	core.AddWeaponEffect(2723, func(agent core.Agent, _ proto.ItemSlot) {
@@ -164,7 +165,7 @@ func init() {
 
 		procAura := character.NewTemporaryStatsAura("Executioner Proc", core.ActionID{SpellID: 42976}, stats.Stats{stats.ArmorPenetration: 120}, time.Second*15)
 
-		character.GetOrRegisterAura(core.Aura{
+		aura := character.GetOrRegisterAura(core.Aura{
 			Label:    "Executioner",
 			Duration: core.NeverExpires,
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
@@ -180,6 +181,8 @@ func init() {
 				}
 			},
 		})
+
+		character.ItemSwap.RegisterOnSwapItemForEffectWithPPMManager(3225, 1.0, &ppmm, aura)
 	})
 
 	// https://web.archive.org/web/20100702102132/http://elitistjerks.com/f15/t27347-deathfrost_its_mechanics/p2/#post789470
@@ -197,7 +200,7 @@ func init() {
 		}
 		ppmm := character.AutoAttacks.NewPPMManager(2.15, core.ProcMaskMelee)
 
-		character.GetOrRegisterAura(core.Aura{
+		aura := character.GetOrRegisterAura(core.Aura{
 			Label:    label,
 			Duration: core.NeverExpires,
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
@@ -222,6 +225,8 @@ func init() {
 				}
 			},
 		})
+
+		character.ItemSwap.RegisterOnSwapItemForEffectWithPPMManager(3273, 2.15, &ppmm, aura)
 	}
 	core.NewEnchantEffect(3273, func(agent core.Agent) {
 		character := agent.GetCharacter()

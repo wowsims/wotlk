@@ -19,7 +19,7 @@ func (shaman *Shaman) registerChainLightningSpell() {
 func (shaman *Shaman) newChainLightningSpell(isLightningOverload bool) *core.Spell {
 	spellConfig := shaman.newElectricSpellConfig(
 		core.ActionID{SpellID: 49271},
-		baseMana*0.26,
+		0.26,
 		time.Millisecond*2000,
 		isLightningOverload)
 
@@ -27,15 +27,6 @@ func (shaman *Shaman) newChainLightningSpell(isLightningOverload bool) *core.Spe
 		spellConfig.Cast.CD = core.Cooldown{
 			Timer:    shaman.NewTimer(),
 			Duration: time.Second*6 - []time.Duration{0, 750 * time.Millisecond, 1500 * time.Millisecond, 2500 * time.Millisecond}[shaman.Talents.StormEarthAndFire],
-		}
-	}
-
-	spellConfig.Cast.ModifyCast = func(_ *core.Simulation, spell *core.Spell, cast *core.Cast) {
-		shaman.applyElectricSpellCastInitModifiers(spell, cast)
-		if shaman.NaturesSwiftnessAura.IsActive() {
-			cast.CastTime = 0
-		} else {
-			shaman.modifyCastMaelstrom(spell, cast)
 		}
 	}
 

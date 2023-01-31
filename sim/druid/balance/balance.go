@@ -28,14 +28,14 @@ func NewBalanceDruid(character core.Character, options *proto.Player) *BalanceDr
 	balanceOptions := options.GetBalanceDruid()
 	selfBuffs := druid.SelfBuffs{}
 
-	selfBuffs.InnervateTarget = &proto.RaidTarget{TargetIndex: -1}
-	if balanceOptions.Options.InnervateTarget != nil {
-		selfBuffs.InnervateTarget = balanceOptions.Options.InnervateTarget
+	moonkin := &BalanceDruid{
+		Druid:    druid.New(character, druid.Moonkin, selfBuffs, options.TalentsString),
+		Rotation: balanceOptions.Rotation,
 	}
 
-	moonkin := &BalanceDruid{
-		Druid:    druid.New(character, druid.Moonkin, selfBuffs, balanceOptions.Talents),
-		Rotation: balanceOptions.Rotation,
+	moonkin.SelfBuffs.InnervateTarget = &proto.RaidTarget{TargetIndex: -1}
+	if balanceOptions.Options.InnervateTarget != nil {
+		moonkin.SelfBuffs.InnervateTarget = balanceOptions.Options.InnervateTarget
 	}
 
 	moonkin.EnableResumeAfterManaWait(moonkin.tryUseGCD)

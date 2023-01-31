@@ -5,12 +5,9 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (paladin *Paladin) registerHolyWrathSpell() {
-	// From the perspective of max rank.
-	baseCost := paladin.BaseMana * 0.20
 	results := make([]*core.SpellResult, len(paladin.Env.Encounter.Targets))
 
 	paladin.HolyWrath = paladin.RegisterSpell(core.SpellConfig{
@@ -19,13 +16,13 @@ func (paladin *Paladin) registerHolyWrathSpell() {
 		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       core.SpellFlagMeleeMetrics,
 
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
-
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.20,
+			Multiplier: 1 - 0.02*float64(paladin.Talents.Benediction),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.02*float64(paladin.Talents.Benediction)),
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    paladin.NewTimer(),

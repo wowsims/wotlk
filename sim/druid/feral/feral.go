@@ -29,14 +29,14 @@ func NewFeralDruid(character core.Character, options *proto.Player) *FeralDruid 
 	feralOptions := options.GetFeralDruid()
 	selfBuffs := druid.SelfBuffs{}
 
-	selfBuffs.InnervateTarget = &proto.RaidTarget{TargetIndex: -1}
-	if feralOptions.Options.InnervateTarget != nil {
-		selfBuffs.InnervateTarget = feralOptions.Options.InnervateTarget
+	cat := &FeralDruid{
+		Druid:   druid.New(character, druid.Cat, selfBuffs, options.TalentsString),
+		latency: time.Duration(core.MaxInt32(feralOptions.Options.LatencyMs, 1)) * time.Millisecond,
 	}
 
-	cat := &FeralDruid{
-		Druid:   druid.New(character, druid.Cat, selfBuffs, feralOptions.Talents),
-		latency: time.Duration(core.MaxInt32(feralOptions.Options.LatencyMs, 1)) * time.Millisecond,
+	cat.SelfBuffs.InnervateTarget = &proto.RaidTarget{TargetIndex: -1}
+	if feralOptions.Options.InnervateTarget != nil {
+		cat.SelfBuffs.InnervateTarget = feralOptions.Options.InnervateTarget
 	}
 
 	cat.AssumeBleedActive = feralOptions.Options.AssumeBleedActive
@@ -93,7 +93,8 @@ func (cat *FeralDruid) MissChance() float64 {
 
 func (cat *FeralDruid) Prepull(sim *core.Simulation) {
 	if cat.prepopOoc && cat.Talents.OmenOfClarity {
-		cat.ClearcastingAura.Activate(sim)
+		cat.ProcOoc(sim)
+		cat.ClearcastingAura.UpdateExpires(cat.ClearcastingAura.Duration - cat.SpellGCD())
 	}
 	if cat.PrePopBerserk && cat.Talents.Berserk {
 		cat.Berserk.CD.UsePrePull(sim, time.Second)

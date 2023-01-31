@@ -1,0 +1,8 @@
+// Set color variables which control the site theme.
+.holy-paladin-sim-ui {
+	@include theme-color(
+		$paladin,
+		.95,
+		'/wotlk/assets/img/holy_paladin_background.jpg'
+	);
+}

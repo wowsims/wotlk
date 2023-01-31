@@ -1,0 +1,8 @@
+// Set color variables which control the site theme.
+.restoration-shaman-sim-ui {
+	@include theme-color(
+		$shaman,
+		.95,
+		'/wotlk/assets/img/resto_shaman_background.jpg'
+	);
+}

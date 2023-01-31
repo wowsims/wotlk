@@ -44,17 +44,16 @@ func NewHealingPriest(character core.Character, options *proto.Player) *HealingP
 		UseShadowfiend: healingOptions.Options.UseShadowfiend,
 	}
 
-	selfBuffs.PowerInfusionTarget = &proto.RaidTarget{TargetIndex: -1}
-	if healingOptions.Talents.PowerInfusion && healingOptions.Options.PowerInfusionTarget != nil {
-		selfBuffs.PowerInfusionTarget = healingOptions.Options.PowerInfusionTarget
-	}
-
-	basePriest := priest.New(character, selfBuffs, healingOptions.Talents)
-
+	basePriest := priest.New(character, selfBuffs, options.TalentsString)
 	hpriest := &HealingPriest{
 		Priest:   basePriest,
 		rotation: healingOptions.Rotation,
 		Options:  healingOptions.Options,
+	}
+
+	hpriest.SelfBuffs.PowerInfusionTarget = &proto.RaidTarget{TargetIndex: -1}
+	if hpriest.Talents.PowerInfusion && hpriest.Options.PowerInfusionTarget != nil {
+		hpriest.SelfBuffs.PowerInfusionTarget = hpriest.Options.PowerInfusionTarget
 	}
 
 	hpriest.EnableResumeAfterManaWait(hpriest.tryUseGCD)

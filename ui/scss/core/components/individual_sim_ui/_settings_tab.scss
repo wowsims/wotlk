@@ -45,9 +45,12 @@
       flex-wrap: wrap;
 
       &> * {
-        margin-bottom: $block-spacer !important;
-        margin-right: $block-spacer !important;
+        margin-bottom: $block-spacer;
         flex: 0;
+
+        &:not(:last-child) {
+          margin-right: $block-spacer;
+        }
       }
     }
   }
@@ -56,13 +59,14 @@
   .other-settings {
     .input-root {
       label {
-        max-width: 60%;
+        width: 60%;
         padding-right: .5rem;
       }
 
-      input:not(.form-check-input), select {
+      input:not(.form-check-input),
+      select,
+      .picker-group {
         min-width: 40%;
-        width: 40%;
       }
     }
   }

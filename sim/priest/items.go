@@ -1,7 +1,6 @@
 package priest
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -73,7 +72,7 @@ var ItemSetConquerorSanct = core.NewItemSet(core.ItemSet{
 					aura.Activate(sim)
 				},
 				// TODO: Does this affect the spell that procs it?
-				OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 					if spell == priest.MindBlast {
 						procAura.Activate(sim)
 					}
@@ -152,7 +151,8 @@ var ItemSetCrimsonAcolytesRaiment = core.NewItemSet(core.ItemSet{
 		2: func(agent core.Agent) {
 			priest := agent.(PriestAgent).GetPriest()
 
-			spell := priest.RegisterSpell(core.SpellConfig{
+			var curAmount float64
+			procSpell := priest.RegisterSpell(core.SpellConfig{
 				ActionID:    core.ActionID{SpellID: 70770},
 				SpellSchool: core.SpellSchoolHoly,
 				ProcMask:    core.ProcMaskEmpty,
@@ -160,13 +160,11 @@ var ItemSetCrimsonAcolytesRaiment = core.NewItemSet(core.ItemSet{
 
 				DamageMultiplier: 1,
 				ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
-			})
 
-			var curAmount float64
-			hots := core.NewAllyHotArray(
-				&priest.Unit,
-				core.Dot{
-					Spell:         spell,
+				Hot: core.DotConfig{
+					Aura: core.Aura{
+						Label: "CrimsonAcolyteRaiment2pc",
+					},
 					NumberOfTicks: 3,
 					TickLength:    time.Second * 3,
 					OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
@@ -177,10 +175,7 @@ var ItemSetCrimsonAcolytesRaiment = core.NewItemSet(core.ItemSet{
 						dot.CalcAndDealPeriodicSnapshotHealing(sim, target, dot.OutcomeTick)
 					},
 				},
-				core.Aura{
-					Label:    "CrimsonAcolyteRaiment2pc" + strconv.Itoa(int(priest.Index)),
-					ActionID: spell.ActionID,
-				})
+			})
 
 			priest.RegisterAura(core.Aura{
 				Label:    "Crimson Acolytes Raiment 2pc",
@@ -194,7 +189,7 @@ var ItemSetCrimsonAcolytesRaiment = core.NewItemSet(core.ItemSet{
 					}
 
 					curAmount = result.Damage
-					hot := hots[result.Target.UnitIndex]
+					hot := procSpell.Hot(result.Target)
 					hot.Apply(sim)
 				},
 			})

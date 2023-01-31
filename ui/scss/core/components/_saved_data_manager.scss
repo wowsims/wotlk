@@ -6,43 +6,6 @@
   .saved-data-container {
     display: flex;
     flex-wrap: wrap;
-
-    .saved-data-set-chip {
-      padding: 0;
-      margin-bottom: $block-spacer;
-      margin-right: $block-spacer;
-      border: 1px solid $primary;
-      display: flex;
-      font-size: $content-font-size;
-      transition: $btn-transition;
-
-      &.active {
-        @extend .text-bg-primary;
-
-        .saved-data-set-name, .saved-data-set-delete {
-          color: color-contrast($primary);
-        }
-      }
-
-      &.disabled {
-        display: none;
-      }
-
-      &:hover:not(.active) {
-        background: rgba($primary, .2);
-      }
-
-      .saved-data-set-name {
-        padding: map.get($spacers, 2);
-        color: $body-color;
-      }
-
-      .saved-data-set-delete {
-        padding: map.get($spacers, 2) 0;
-        margin-right: map.get($spacers, 2);
-        color: $body-color;
-      }
-    }
   }
 
   .saved-data-create-container {
@@ -56,6 +19,45 @@
     .saved-data-save-input {
       margin-bottom: $block-spacer;
     }
+  }
+}
+
+.saved-data-set-chip {
+  padding: 0;
+  margin-bottom: $block-spacer;
+  margin-right: $block-spacer;
+  border: 1px solid var(--bs-primary);
+  display: flex;
+  font-size: $content-font-size;
+  font-weight: normal;
+  transition: $btn-transition;
+
+  &.active {
+    background-color: var(--bs-primary);
+
+    .saved-data-set-name,
+    .saved-data-set-delete {
+      color: var(--theme-component-text-color);
+    }
+  }
+
+  &:hover:not(.active) {
+    background: var(--bs-primary-dampened);
+  }
+
+  &.disabled {
+    display: none;
+  }
+
+  .saved-data-set-name {
+    padding: map.get($spacers, 2);
+    color: $body-color;
+  }
+
+  .saved-data-set-delete {
+    padding: map.get($spacers, 2) 0;
+    margin-right: map.get($spacers, 2);
+    color: $body-color;
   }
 }
 

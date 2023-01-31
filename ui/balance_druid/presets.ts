@@ -49,14 +49,15 @@ export const StandardTalents = {
 };
 
 export const DefaultRotation = BalanceDruidRotation.create({
-    type: RotationType.Adaptive,
-	useSmartCooldowns : true,
-	mfUsage : BalanceDruid_Rotation_MfUsage.NoMf,
-	isUsage : BalanceDruid_Rotation_IsUsage.MaximizeIs,
+	type: RotationType.Adaptive,
+	maintainFaerieFire: true,
+	useSmartCooldowns: true,
+	mfUsage: BalanceDruid_Rotation_MfUsage.NoMf,
+	isUsage: BalanceDruid_Rotation_IsUsage.MaximizeIs,
 	useStarfire:       true,
 	useWrath:          true,
-    useBattleRes: false,
-	playerLatency : 200,
+	useBattleRes: false,
+	playerLatency: 200,
 });
 
 export const DefaultOptions = BalanceDruidOptions.create({
@@ -112,6 +113,124 @@ export const DefaultDebuffs = Debuffs.create({
 
 export const OtherDefaults = {
 	distanceFromTarget: 18,
+};
+
+export const P2_PRESET = {
+	name: 'P2 Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(` {
+      "items": [
+        {
+          "id": 45497,
+          "enchant": 3820,
+          "gems": [
+            41285,
+            42144
+          ]
+        },
+        {
+          "id": 45133,
+          "gems": [
+            40048
+          ]
+        },
+        {
+          "id": 46196,
+          "enchant": 3810,
+          "gems": [
+            39998
+          ]
+        },
+        {
+          "id": 45242,
+          "enchant": 3859,
+          "gems": [
+            40048
+          ]
+        },
+        {
+          "id": 45519,
+          "enchant": 3832,
+          "gems": [
+            40051,
+            42144,
+            40026
+          ]
+        },
+        {
+          "id": 45446,
+          "enchant": 2332,
+          "gems": [
+            42144,
+            0
+          ]
+        },
+        {
+          "id": 45665,
+          "enchant": 3604,
+          "gems": [
+            39998,
+            39998,
+            0
+          ]
+        },
+        {
+          "id": 45619,
+          "gems": [
+            39998,
+            39998,
+            39998
+          ]
+        },
+        {
+          "id": 46192,
+          "enchant": 3719,
+          "gems": [
+            39998,
+            39998
+          ]
+        },
+        {
+          "id": 45537,
+          "enchant": 3606,
+          "gems": [
+            39998,
+            40026
+          ]
+        },
+        {
+          "id": 46046,
+          "gems": [
+            39998
+          ]
+        },
+        {
+          "id": 45495,
+          "gems": [
+            39998
+          ]
+        },
+        {
+          "id": 45466
+        },
+        {
+          "id": 45518
+        },
+        {
+          "id": 45620,
+          "enchant": 3834,
+          "gems": [
+            39998
+          ]
+        },
+        {
+          "id": 45617
+        },
+        {
+          "id": 40321
+        }
+      ]
+    }`),
 };
 
 export const P1_PRESET = {

@@ -3,33 +3,23 @@ package deathknight
 import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 var DeathCoilActionID = core.ActionID{SpellID: 49895}
 
 func (dk *Deathknight) registerDeathCoilSpell() {
 	bonusFlatDamage := 443 + dk.sigilOfTheWildBuckBonus() + dk.sigilOfTheVengefulHeartDeathCoil()
-	baseCost := float64(core.NewRuneCost(40, 0, 0, 0, 0))
-	dk.DeathCoil = dk.RegisterSpell(nil, core.SpellConfig{
-		ActionID:     DeathCoilActionID,
-		SpellSchool:  core.SpellSchoolShadow,
-		ProcMask:     core.ProcMaskSpellDamage,
-		ResourceType: stats.RunicPower,
-		BaseCost:     baseCost,
+	dk.DeathCoil = dk.RegisterSpell(core.SpellConfig{
+		ActionID:    DeathCoilActionID,
+		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskSpellDamage,
 
+		RuneCost: core.RuneCostOptions{
+			RunicPowerCost: 40,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:  core.GCDDefault,
-				Cost: baseCost,
-			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				if dk.SuddenDoomAura.IsActive() {
-					cast.GCD = 0
-					cast.Cost = 0
-				} else {
-					cast.GCD = dk.GetModifiedGCD()
-				}
+				GCD: core.GCDDefault,
 			},
 		},
 
@@ -47,9 +37,7 @@ func (dk *Deathknight) registerDeathCoilSpell() {
 			}
 			spell.DealDamage(sim, result)
 		},
-	}, func(sim *core.Simulation) bool {
-		return dk.CastCostPossible(sim, 40.0, 0, 0, 0) && dk.DeathCoil.IsReady(sim)
-	}, nil)
+	})
 }
 
 func (dk *Deathknight) registerDrwDeathCoilSpell() {
@@ -59,9 +47,10 @@ func (dk *Deathknight) registerDrwDeathCoilSpell() {
 		ActionID:    DeathCoilActionID,
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       core.SpellFlagIgnoreAttackerModifiers,
 
 		BonusCritRating: dk.darkrunedBattlegearCritBonus() * core.CritRatingPerCritChance,
-		DamageMultiplier: 1 *
+		DamageMultiplier: 0.5 *
 			(1.0 + float64(dk.Talents.Morbidity)*0.05) *
 			core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDarkDeath), 1.15, 1.0),
 		CritMultiplier:   dk.RuneWeapon.DefaultMeleeCritMultiplier(),

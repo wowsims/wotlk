@@ -7,13 +7,16 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-var mbIdb = 0
-var dpIdx = 1
-var vtIdx = 2
-var swdIdx = 3
+const (
+	mbIdx int = iota
+	dpIdx
+	vtIdx
+	swdIdx
+	mfIdx
+	swpIdx
+)
 
 func (spriest *ShadowPriest) OnGCDReady(sim *core.Simulation) {
 	spriest.tryUseGCD(sim)
@@ -25,6 +28,99 @@ func (spriest *ShadowPriest) OnManaTick(sim *core.Simulation) {
 	}
 }
 func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
+	// grab all of the shadow priest spell CDs remaining durations to use in the dps calculation
+	spriest.VTCastTime = spriest.ApplyCastSpeed(time.Millisecond * 1500)
+	spriest.AllCDs = []time.Duration{
+		core.MaxDuration(0, spriest.MindBlast.TimeToReady(sim)),
+		core.MaxDuration(0, spriest.DevouringPlague.CurDot().RemainingDuration(sim)),
+		core.MaxDuration(0, spriest.VampiricTouch.CurDot().RemainingDuration(sim)-spriest.VTCastTime),
+		core.MaxDuration(0, spriest.ShadowWordDeath.TimeToReady(sim)),
+		0,
+	}
+
+	var spell *core.Spell
+	var waitTime time.Duration
+	target := spriest.CurrentTarget
+
+	switch spriest.rotation.RotationType {
+	case proto.ShadowPriest_Rotation_Ideal:
+		spell, waitTime = spriest.chooseSpellIdeal(sim)
+	case proto.ShadowPriest_Rotation_Basic:
+		spell = spriest.chooseSpellBasicOrClipping(sim, false)
+	case proto.ShadowPriest_Rotation_Clipping:
+		spell = spriest.chooseSpellBasicOrClipping(sim, true)
+	case proto.ShadowPriest_Rotation_AoE:
+		spell, target = spriest.chooseSpellAOE(sim)
+	default:
+		spell, waitTime = spriest.chooseSpellIdeal(sim)
+	}
+
+	if spell != nil {
+		if spell == spriest.MindFlay[3] && spriest.InnerFocus != nil && spriest.InnerFocus.IsReady(sim) {
+			spriest.InnerFocus.Cast(sim, nil)
+		}
+
+		if success := spell.Cast(sim, target); !success {
+			spriest.WaitForMana(sim, spell.CurCast.Cost)
+		}
+	} else if waitTime != 0 {
+		spriest.WaitUntil(sim, sim.CurrentTime+waitTime)
+	} else {
+		spriest.WaitUntil(sim, sim.CurrentTime+time.Millisecond*500)
+	}
+}
+
+func (spriest *ShadowPriest) chooseSpellAOE(sim *core.Simulation) (*core.Spell, *core.Unit) {
+	if len(sim.Encounter.Targets) >= 4 {
+		return spriest.MindSear[5], spriest.CurrentTarget
+	}
+
+	for _, t := range sim.Encounter.TargetUnits {
+		if !spriest.VampiricTouch.Dot(t).IsActive() && sim.GetRemainingDuration().Seconds() > 5 {
+			return spriest.VampiricTouch, t
+		}
+	}
+
+	for _, t := range sim.Encounter.TargetUnits {
+		if !spriest.ShadowWordPain.Dot(t).IsActive() && sim.GetRemainingDuration().Seconds() > 12 {
+			return spriest.ShadowWordPain, t
+		}
+		if spriest.ShadowWordPain.Dot(t).RemainingDuration(sim).Seconds() < 2 {
+			return spriest.MindFlay[2], t
+		}
+	}
+
+	spell, _ := spriest.chooseSpellIdeal(sim)
+	return spell, spriest.CurrentTarget
+}
+
+func (spriest *ShadowPriest) chooseSpellBasicOrClipping(sim *core.Simulation, isClipping bool) *core.Spell {
+	if spriest.DevouringPlague.CurDot().RemainingDuration(sim) <= 0 {
+		return spriest.DevouringPlague
+	} else if spriest.Talents.VampiricTouch && spriest.VampiricTouch.CurDot().RemainingDuration(sim) <= spriest.VTCastTime {
+		return spriest.VampiricTouch
+	} else if !spriest.ShadowWordPain.CurDot().IsActive() && spriest.ShadowWeavingAura.GetStacks() >= 5 {
+		return spriest.ShadowWordPain
+	} else if spriest.MindBlast.TimeToReady(sim) == 0 {
+		return spriest.MindBlast
+	} else if spriest.ShadowWordDeath.TimeToReady(sim) == 0 {
+		return spriest.ShadowWordDeath
+	} else {
+		var numTicks int
+		gcd := spriest.SpellGCD()
+		tickLength := spriest.MindFlayTickDuration()
+		if isClipping {
+			numTicks = spriest.ClippingMindflayRotation(sim, gcd, tickLength)
+		} else {
+			//numTicks = spriest.BasicMindflayRotation(sim, gcd, tickLength)
+			numTicks = 3
+		}
+		return spriest.MindFlay[numTicks]
+	}
+}
+
+// Returns (spellToCast, waitTime). waitTime should be nonzero only if spellToCast is nil.
+func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell, time.Duration) {
 	// TODO: probably do something different instead of making it global?
 	// some global variables used throughout the code
 	var currentWait time.Duration
@@ -37,16 +133,12 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 
 	var currDotTickSpeed float64
 
-	//var remain_fight float64
-
 	//if sim.CurrentTime == 0 && spriest.rotation.PrecastVt {
 	//spriest.SpendMana(sim, spriest.VampiricTouch.DefaultCast.Cost, spriest.VampiricTouch.ResourceMetrics)
 	//spriest.VampiricTouch.SkipCastAndApplyEffects(sim, spriest.CurrentTarget)
 	//}
 
 	// initialize function specific variables
-	var spell *core.Spell
-	var TFmod float64
 	var swStacks float64
 	var numswptickstime float64
 	var cdDpso float64
@@ -60,696 +152,518 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 	var wait3 time.Duration
 
 	// initialize helpful variables for calculations later
-	vtCastTime := spriest.ApplyCastSpeed(time.Millisecond * 1500)
 	gcd := spriest.SpellGCD()
 	tickLength := spriest.MindFlayTickDuration()
 
 	dotTickSpeed := float64(spriest.ApplyCastSpeed(time.Second * 3))
-	critChance := (spriest.GetStat(stats.SpellCrit) + spriest.CurrentTarget.PseudoStats.BonusCritRatingTaken + spriest.CurrentTarget.PseudoStats.BonusSpellCritRatingTaken) / (core.CritRatingPerCritChance * 100)
 	remain_fight := float64(sim.GetRemainingDuration())
 	castMf2 := 0 // if SW stacks = 3, and we want to get SWP up at 5 stacks exactly, then we want to hard code a MF2
 	bestIdx := -1
 
-	// grab all of the major CD timing windows, and save off info related to blood lust timing
-	bigCDs := spriest.GetMajorCooldowns() // all of our major CD's, things like pots, racials, metamorphing power rangers, you name it.
-	BLusedat := core.NeverExpires         // just setting the highest possible value for convenience in declaration
-	for _, cd := range bigCDs {           //a loop that iterates over all possible CD's, and orders them based on their time to get ready.
-		if cd == nil {
-			continue // not on cooldown right now.
-		}
-		cdName := cd.Spell.SpellID //Cooldown spell id.
-		cdTime := cd.GetTimings()  //Cooldown spell id.
-		if cdName == 2825 {
-			if len(cdTime) > 0 {
-				if sim.CurrentTime < cdTime[0] {
-					BLusedat = time.Duration(cdTime[0].Seconds())
-				}
-				if BLusedat > 5000 {
-					BLusedat = time.Duration(0)
-				}
-			}
-		}
-	}
 	// How much time until lust is used?
-	deltaTimeBL := float64(BLusedat) - sim.CurrentTime.Seconds()
-	if deltaTimeBL < 0 {
-		deltaTimeBL = 0
+	timeUntilBLStarts := float64(spriest.BLUsedAt) - sim.CurrentTime.Seconds()
+	if timeUntilBLStarts < 0 {
+		timeUntilBLStarts = 0
 	}
 	// How many VT ticks before lust is used?
-	numVTbeforeBL := math.Floor(deltaTimeBL / (dotTickSpeed * 1e-9))
+	numVTbeforeBL := math.Floor(timeUntilBLStarts / (dotTickSpeed * 1e-9))
 	if numVTbeforeBL < 0 {
 		numVTbeforeBL = 0
 	}
 
 	// Decide if precast MB or VT is more dps
 	if sim.CurrentTime == 0 && spriest.rotation.PrecastVt && spriest.CurrentMana() == spriest.MaxMana() {
-		if deltaTimeBL >= gcd.Seconds() && numVTbeforeBL < 1 && sim.CurrentTime.Seconds() < float64(BLusedat) {
+		if timeUntilBLStarts >= gcd.Seconds() && numVTbeforeBL < 1 && sim.CurrentTime.Seconds() < float64(spriest.BLUsedAt) {
 			spriest.SpendMana(sim, spriest.MindBlast.DefaultCast.Cost, spriest.MindBlast.ResourceMetrics)
 			spriest.MindBlast.SkipCastAndApplyEffects(sim, spriest.CurrentTarget)
 			spriest.MindBlast.CD.UsePrePull(sim, sim.CurrentTime)
 		} else {
-			spriest.SpendMana(sim, spriest.VampiricTouch.DefaultCast.Cost, spriest.VampiricTouch.ResourceMetrics)
+			spriest.SpendMana(sim, spriest.VampiricTouch.DefaultCast.Cost, spriest.VampiricTouch.Cost.(*core.ManaCost).ResourceMetrics)
 			spriest.VampiricTouch.SkipCastAndApplyEffects(sim, spriest.CurrentTarget)
 		}
 	}
 
-	// grab all of the shadow priest spell CDs remaining durations to use in the dps calculation
-	allCDs := []time.Duration{
-		core.MaxDuration(0, spriest.MindBlast.TimeToReady(sim)),
-		core.MaxDuration(0, spriest.DevouringPlagueDot.RemainingDuration(sim)),
-		core.MaxDuration(0, spriest.VampiricTouchDot.RemainingDuration(sim)-vtCastTime),
-		core.MaxDuration(0, spriest.ShadowWordDeath.TimeToReady(sim)),
-		0,
+	swStacks = float64(spriest.ShadowWeavingAura.GetStacks())
+
+	// Reduce number of DP/VT ticks based on remaining duration
+	num_DP_ticks = core.MinFloat(float64(spriest.DevouringPlague.CurDot().NumberOfTicks), math.Floor(remain_fight/dotTickSpeed))
+	num_VT_ticks = core.MinFloat(float64(spriest.VampiricTouch.CurDot().NumberOfTicks), math.Floor(remain_fight/dotTickSpeed))
+
+	// Spell damage numbers that are updated before each cast in order to determine the most optimal next cast based on dps over a finite window
+	// This is needed throughout the code to determine the optimal spell(s) to cast next
+	// MB dmg
+	mbDamage = 0
+	impDamage := 0
+	if spriest.options.UseMindBlast {
+		if spriest.T8FourSetBonus { //include benefit of 240 haste rating for 4 seconds. This isnt perfect because 1.6 dps per haste is an average and varies throughout the fight
+			impDamage = 1.6 * 240 * 4
+		}
+		mbDamage = spriest.MindBlast.ExpectedDamage(sim, spriest.CurrentTarget) + float64(impDamage)
+	}
+	if sim.Log != nil {
+		spriest.Log(sim, "MBoption [%d]", spriest.options.UseMindBlast)
+		spriest.Log(sim, "MB dmg [%d]", mbDamage)
+		//spriest.Log(sim, "dpRemainTicks[%d]", dpRemainTicks)
+	}
+	// DP dmg
+	dpTickDamage := spriest.DevouringPlague.ExpectedDamage(sim, spriest.CurrentTarget)
+	dpInit := dpTickDamage * spriest.DpInitMultiplier
+	dpDot := dpTickDamage * num_DP_ticks
+	dpDamage = dpInit + dpTickDamage*num_DP_ticks
+
+	// Determine number of DP ticks before BL. If there is at least 1 then it's worth using
+	numDPbeforeBL := math.Floor(timeUntilBLStarts / (dotTickSpeed * 1e-9))
+	if numDPbeforeBL < 0 {
+		numDPbeforeBL = 0
+	}
+	if (timeUntilBLStarts > gcd.Seconds() && numDPbeforeBL < 1 && sim.CurrentTime.Seconds() < float64(spriest.BLUsedAt)) || (timeUntilBLStarts <= gcd.Seconds() && timeUntilBLStarts > 0.01) {
+		dpDamage = 0
 	}
 
-	rotType := spriest.rotation.RotationType
+	vtDamage = spriest.VampiricTouch.ExpectedDamage(sim, spriest.CurrentTarget) * num_VT_ticks
 
-	if spriest.ShadowWeavingAura.IsActive() {
-		swStacks = float64(spriest.ShadowWeavingAura.GetStacks())
+	// If there is at least 2 VT ticks then it's worth using
+	if timeUntilBLStarts > gcd.Seconds() && numVTbeforeBL < 2 && sim.CurrentTime.Seconds() < float64(spriest.BLUsedAt) {
+		vtDamage = 0
 	}
 
-	if rotType == proto.ShadowPriest_Rotation_AoE {
-		numTicks := 5
-		spell = spriest.MindSear[numTicks]
-		if success := spell.Cast(sim, spriest.CurrentTarget); !success {
-			spriest.WaitForMana(sim, spell.CurCast.Cost)
-		}
-		return
+	// SWD dmg
+	swdDamage = 0
+	if spriest.options.UseShadowWordDeath {
+		swdDamage = spriest.ShadowWordDeath.ExpectedDamage(sim, spriest.CurrentTarget)
+	}
 
-	} else if rotType == proto.ShadowPriest_Rotation_Basic || rotType == proto.ShadowPriest_Rotation_Clipping {
+	mfDamage = spriest.MindFlay[3].ExpectedDamage(sim, spriest.CurrentTarget)
+	swpTickDamage := spriest.ShadowWordPain.ExpectedDamage(sim, spriest.CurrentTarget)
 
-		if spriest.DevouringPlagueDot.RemainingDuration(sim) <= 0 {
-			bestIdx = 1
-		} else if spriest.Talents.VampiricTouch && spriest.VampiricTouchDot.RemainingDuration(sim) <= vtCastTime {
-			bestIdx = 2
-		} else if !spriest.ShadowWordPainDot.IsActive() && swStacks >= 5 {
-			bestIdx = 5
-		} else if spriest.Talents.MindFlay {
-			bestIdx = 4
-		}
-	} else {
-
-		// if shadow word pain is active on the target, then increase damage of MB/MF by 10%
-		if spriest.ShadowWordPainDot.IsActive() {
-			TFmod = float64(spriest.Talents.TwistedFaith) * 0.02
+	// this should be cleaned up, but essentially we want to cast SWP either 3rd or 5th in the rotation which is fight length dependent
+	castSwpNow := 0 // if SW stacks = 3, and we want to get SWP up immediately becaues fight length is low enough, then this flag gets set to 1
+	if swStacks > 2 && swStacks < 5 && !spriest.ShadowWordPain.CurDot().IsActive() {
+		addedDmg := mbDamage*0.12 + mfDamage*0.22*2/3 + swpTickDamage*2*gcd.Seconds()/3
+		numswptickstime = addedDmg / (swpTickDamage * 0.06) * 3 //if the fight lenght is < numswptickstime then use swp 3rd.. if > then use at weaving = 5
+		//
+		if remain_fight*math.Pow(10, -9) < numswptickstime {
+			castSwpNow = 1
 		} else {
-			TFmod = 0
-		}
-
-		mfglyphMod := 0.0
-		if spriest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfMindFlay)) {
-			mfglyphMod = 0.1
-		}
-
-		swdmfglyphMod := 1.0
-		if spriest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadowWordDeath)) && sim.IsExecutePhase35() {
-			swdmfglyphMod = 1.1
-		}
-
-		// Reduce number of DP/VT ticks based on remaining duration
-		num_DP_ticks = math.Floor(remain_fight / dotTickSpeed)
-		if num_DP_ticks > 8 {
-			num_DP_ticks = 8
-		}
-
-		num_VT_ticks = math.Floor(remain_fight / dotTickSpeed)
-		if num_VT_ticks > 5 {
-			num_VT_ticks = 5
-			if spriest.T9TwoSetBonus {
-				num_VT_ticks = 7
-			}
-		}
-
-		var duration time.Duration
-		aura := spriest.GetActiveAuraWithTag(core.BloodlustAuraTag)
-		if aura != nil {
-			duration = aura.RemainingDuration(sim)
-		}
-
-		// Spell damage numbers that are updated before each cast in order to determine the most optimal next cast based on dps over a finite window
-		// This is needed throughout the code to determine the optimal spell(s) to cast next
-		// MB dmg
-		mbDamage = (1025 + spriest.GetStat(stats.SpellPower)*(0.428*(1+float64(spriest.Talents.Misery)*0.05))) * (1 + float64(spriest.Talents.Darkness)*0.02) * (1 + TFmod) *
-			core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1 + 0.5*(critChance+float64(spriest.Talents.MindMelt)*0.02)*float64(spriest.Talents.ShadowPower)*0.2)
-		if !spriest.options.UseMindBlast {
-			mbDamage = 0
-		}
-
-		// DP dmg
-		dpInit := ((172 + spriest.GetStat(stats.SpellPower)*0.1849) * 8.0 * float64(spriest.Talents.ImprovedDevouringPlague) * 0.1 * (1.0 + (float64(spriest.Talents.Darkness)*0.02 +
-			float64(spriest.Talents.TwinDisciplines)*0.01 + float64(spriest.Talents.ImprovedDevouringPlague)*0.05)) * core.TernaryFloat64(spriest.T8TwoSetBonus, 1.15, 1) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1 + 0.5*(critChance+core.TernaryFloat64(spriest.T10TwoSetBonus, 0.05, 0))))
-		dpDot := ((172 + spriest.GetStat(stats.SpellPower)*0.1849) * num_DP_ticks *
-			(1.0 + (float64(spriest.Talents.Darkness)*0.02 + float64(spriest.Talents.TwinDisciplines)*0.01 + float64(spriest.Talents.ImprovedDevouringPlague)*0.05 + core.TernaryFloat64(spriest.T8TwoSetBonus, 0.15, 0))) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) *
-			(1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03) + core.TernaryFloat64(spriest.T10TwoSetBonus, 0.05, 0)))
-		dpDamage = dpInit + dpDot
-
-		// Determine number of DP ticks before BL. If there is at least 1 then it's worth using
-		numDPbeforeBL := math.Floor(deltaTimeBL / (dotTickSpeed * 1e-9))
-		if numDPbeforeBL < 0 {
-			numDPbeforeBL = 0
-		}
-		if (deltaTimeBL > gcd.Seconds() && numDPbeforeBL < 1 && sim.CurrentTime.Seconds() < float64(BLusedat)) || (deltaTimeBL <= gcd.Seconds() && deltaTimeBL > 0.01) {
-			dpDamage = 0
-		}
-
-		// VT dmg
-		vtDamage = (170 + spriest.GetStat(stats.SpellPower)*0.4) * num_VT_ticks *
-			(1.0 + float64(spriest.Talents.Darkness)*0.02) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03+core.TernaryFloat64(spriest.T10TwoSetBonus, 0.05, 0)))
-
-		//newVtDamage := spriest.VampiricTouch.ExpectedDamage(sim, spriest.CurrentTarget)
-		//if newVtDamage != vtDamage {
-		//panic(fmt.Sprintf("Old vt: %0.01f, new vt: %0.01f", vtDamage, newVtDamage))
-		//}
-
-		// If there is at least 2 VT ticks then it's worth using
-		if deltaTimeBL > gcd.Seconds() && numVTbeforeBL < 2 && sim.CurrentTime.Seconds() < float64(BLusedat) {
-			vtDamage = 0
-		}
-		//newHasteRating := spriest.GetStat(stats.SpellHaste)
-		//if sim.Log != nil {
-		//	spriest.Log(sim, "newHasteRating[%d]", float64(newHasteRating))
-		//}
-
-		// SWD dmg
-		swdDamage = (618 + spriest.GetStat(stats.SpellPower)*0.429) * (1 + 0.5*(critChance+float64(spriest.Talents.MindMelt)*0.02+core.TernaryFloat64(spriest.T7FourSetBonus, 0.1, 0))*float64(spriest.Talents.ShadowPower)*0.2) *
-			(1.0 + (float64(spriest.Talents.Darkness)*0.02 + float64(spriest.Talents.TwinDisciplines)*0.01)) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * swdmfglyphMod
-		if !spriest.options.UseShadowWordDeath {
-			swdDamage = 0
-		}
-
-		// MF dmg 3 ticks
-		mfDamage = (588 + spriest.GetStat(stats.SpellPower)*(0.2570*3*(1+float64(spriest.Talents.Misery)*0.05))) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1.0 + (float64(spriest.Talents.Darkness)*0.02 +
-			float64(spriest.Talents.TwinDisciplines)*0.01)) * (1 + TFmod + mfglyphMod) * (1 + 0.5*(critChance+float64(spriest.Talents.MindMelt)*0.02+core.TernaryFloat64(spriest.T9FourSetBonus, 0.05, 0))*float64(spriest.Talents.ShadowPower)*0.2)
-
-		// SWP is seperate because it doesnt follow the same logic for casting as the other spells
-		swpTickDamage := ((230 + spriest.GetStat(stats.SpellPower)*0.1829) *
-			(1.0 + float64(spriest.Talents.Darkness)*0.02 + float64(spriest.Talents.TwinDisciplines)*0.01) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) *
-			(1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03)))
-
-		// this should be cleaned up, but essentially we want to cast SWP either 3rd or 5th in the rotation which is fight length dependent
-		castSwpNow := 0 // if SW stacks = 3, and we want to get SWP up immediately becaues fight length is low enough, then this flag gets set to 1
-		if swStacks > 2 && swStacks < 5 && !spriest.ShadowWordPainDot.IsActive() {
-			addedDmg := mbDamage*0.12 + mfDamage*0.22*2/3 + swpTickDamage*2*gcd.Seconds()/3
-			numswptickstime = addedDmg / (swpTickDamage * 0.06) * 3 //if the fight lenght is < numswptickstime then use swp 3rd.. if > then use at weaving = 5
-			//
-			if remain_fight*math.Pow(10, -9) < numswptickstime { //
-				castSwpNow = 1
-			} else {
-				castMf2 = 1
-			}
-		}
-
-		var currDPS float64
-		var nextTickWait time.Duration
-
-		if spriest.DevouringPlagueDot.IsActive() {
-			newPsuedoHaste := spriest.PseudoStats.CastSpeedMultiplier
-			newHasteRating := spriest.GetStat(stats.SpellHaste)
-
-			currDotTickSpeed = 3 / (spriest.DPstatpH * (1 + spriest.DPstatH/32.79/100))
-			dotTickSpeednew := 3 / (newPsuedoHaste * (1 + newHasteRating/32.79/100))
-
-			dpRemainTicks := allCDs[dpIdx].Seconds() / currDotTickSpeed
-			nextTick := dpRemainTicks - math.Floor(dpRemainTicks)
-			nextTickWait = time.Duration(nextTick * currDotTickSpeed * 1e9)
-
-			//potmfdps := math.Floor(nextTick * currDotTickSpeed / float64(tickLength.Seconds()))
-
-			dpInitCurr := ((172 + spriest.DPstatSp*0.1849) * 8.0 * float64(spriest.Talents.ImprovedDevouringPlague) * 0.1 * (1.0 + (float64(spriest.Talents.Darkness)*0.02 +
-				float64(spriest.Talents.TwinDisciplines)*0.01 + float64(spriest.Talents.ImprovedDevouringPlague)*0.05)) * core.TernaryFloat64(spriest.T8TwoSetBonus, 1.15, 1) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1 + 0.5*(critChance+core.TernaryFloat64(spriest.T10TwoSetBonus, 0.05, 0))))
-			dpDotCurr := ((172 + spriest.DPstatSp*0.1849) *
-				(1.0 + (float64(spriest.Talents.Darkness)*0.02 + float64(spriest.Talents.TwinDisciplines)*0.01 + float64(spriest.Talents.ImprovedDevouringPlague)*0.05 + core.TernaryFloat64(spriest.T8TwoSetBonus, 0.15, 0))) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) *
-				(1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03) + core.TernaryFloat64(spriest.T10TwoSetBonus, 0.05, 0)))
-
-			cdDamage := mbDamage
-			if spriest.T10FourSetBonus || cdDamage == 0 {
-				cdDamage = mfDamage / 3 * 2
-			}
-
-			currDPS = (dpInitCurr + dpDotCurr*8 + cdDamage) / (currDotTickSpeed * 8)
-			overwriteDPS = (dpInitCurr + dpInit + dpDotCurr*1 + dpDot) / (dotTickSpeednew*8 + currDotTickSpeed*1)
-		}
-		var currDPS2 float64
-		var overwriteDPS2 float64
-		//var nextTickWait2 time.Duration
-		if spriest.DevouringPlagueDot.IsActive() && duration.Seconds() < 3 && duration.Seconds() > 0.1 {
-
-			newPsuedoHaste := spriest.PseudoStats.CastSpeedMultiplier
-			newHasteRating := spriest.GetStat(stats.SpellHaste)
-
-			currDotTickSpeed = 3 / (spriest.DPstatpH * (1 + spriest.DPstatH/32.79/100))
-			dpRemainTicks := 8 - allCDs[dpIdx].Seconds()/currDotTickSpeed
-			//nextTick := (dpRemainTicks) - math.Floor(dpRemainTicks)
-			//nextTickWait2 = time.Duration(nextTick * currDotTickSpeed * 1e9)
-
-			dpInitCurr := ((172 + spriest.DPstatSp*0.1849) * 8.0 * float64(spriest.Talents.ImprovedDevouringPlague) * 0.1 * (1.0 + (float64(spriest.Talents.Darkness)*0.02 +
-				float64(spriest.Talents.TwinDisciplines)*0.01 + float64(spriest.Talents.ImprovedDevouringPlague)*0.05)) * core.TernaryFloat64(spriest.T8TwoSetBonus, 1.15, 1) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) * (1 + 0.5*(critChance+core.TernaryFloat64(spriest.T10TwoSetBonus, 0.05, 0))))
-			dpDotNext := ((172 + spriest.DPstatSp*0.1849) *
-				(1.0 + (float64(spriest.Talents.Darkness)*0.02 + float64(spriest.Talents.TwinDisciplines)*0.01 + float64(spriest.Talents.ImprovedDevouringPlague)*0.05 + core.TernaryFloat64(spriest.T8TwoSetBonus, 0.15, 0))) * core.TernaryFloat64(spriest.Talents.Shadowform, 1.15, 1) *
-				(1 + 1*(critChance+float64(spriest.Talents.MindMelt)*0.03) + core.TernaryFloat64(spriest.T10TwoSetBonus, 0.05, 0)))
-
-			overwriteDPS2 = dpInitCurr + dpRemainTicks*(dpDotNext-dpDotNext/(newPsuedoHaste*(1+newHasteRating/32.79/100)))
-			cdDamage := mbDamage
-			if spriest.T10FourSetBonus || cdDamage == 0 {
-				cdDamage = mfDamage / 3 * 2
-			}
-			currDPS2 = cdDamage
-
-			// if sim.Log != nil {
-			// 	spriest.Log(sim, "currDPS2[%d]", currDPS2)
-			// 	spriest.Log(sim, "overwriteDPS2[%d]", overwriteDPS2)
-			// 	spriest.Log(sim, "dpRemainTicks[%d]", dpRemainTicks)
-			// }
-		}
-
-		// Make an array of DPCT per spell that will be used to find the optimal spell to cast
-		spellDPCT := []float64{
-			// MB dps
-			mbDamage / (gcd + allCDs[mbIdb]).Seconds(),
-			// DP dps
-			dpDamage / (gcd + allCDs[dpIdx]).Seconds(),
-			// VT dps
-			vtDamage / (gcd + allCDs[vtIdx]).Seconds(),
-			// SWD dps
-			swdDamage / (gcd + allCDs[swdIdx]).Seconds(),
-			// MF dps 3 ticks
-			mfDamage / (tickLength * 3).Seconds(),
-		}
-
-		//if sim.Log != nil {
-		//spriest.Log(sim, "mbDamage[%d]", mbDamage)
-		//spriest.Log(sim, "mb time[%d]", allCDs[mbIdb])
-		//spriest.Log(sim, "mftime[%d]", float64((tickLength * 3).Seconds()))
-		//spriest.Log(sim, "gcd[%d]", gcd.Seconds())
-		//spriest.Log(sim, "CastSpeedMultiplier[%d]", spriest.PseudoStats.CastSpeedMultiplier)
-		//spriest.Log(sim, "critChance[%d]", critChance)
-		//}
-
-		// Find the maximum DPCT spell
-		bestDmg := 0.0
-		for i, v := range spellDPCT {
-			if sim.Log != nil {
-				spriest.Log(sim, "\tspellDPCT[%d]: %01.f", i, v)
-				spriest.Log(sim, "\tcdDiffs[%d]: %0.1f", i, allCDs[i].Seconds())
-			}
-			if v > bestDmg {
-				bestIdx = i
-				bestDmg = v
-			}
-		}
-		// Find the minimum CD ability to make sure that shouldnt be cast first
-		nextCD := core.NeverExpires
-		nextIdx := -1
-		for i, v := range allCDs[1 : len(allCDs)-1] {
-			//	if sim.Log != nil {
-			// spriest.Log(sim, "\tallCDs[%d]: %01.f", i, v)
-			// 	 spriest.Log(sim, "\tcdDiffs[%d]: %0.1f", i, cdDiffs[i].Seconds())
-			//}
-			if v < nextCD {
-				nextCD = v
-				nextIdx = i + 1
-			}
-		}
-		waitmin := nextCD
-
-		// Now it's possible that the wait time for the chosen spell is long, if that's the case, then it might be better to investigate the dps over a 2 spell window to see if casting something else will benefit
-		if bestIdx < 4 {
-			currentWait = allCDs[bestIdx]
-		}
-
-		if allCDs[0] < gcd && bestIdx == 4 && allCDs[3] == 0 {
-			totalDps__poss := (mbDamage + swdDamage) / (gcd + gcd).Seconds()
-			totalDps__poss3 := (mbDamage + mfDamage*2/3) / (2*tickLength + gcd).Seconds()
-
-			if totalDps__poss > totalDps__poss3 {
-				bestIdx = 3
-				currentWait = allCDs[bestIdx]
-			}
-		}
-
-		if nextIdx != 4 && bestIdx != 4 && bestIdx != 5 && currentWait > waitmin && currentWait.Seconds() < 3 { // right now 3 might not be correct number, but we can study this to optimize
-
-			if bestIdx == 2 { // MB VT DP SWD
-				cdDpso = vtDamage / (gcd + currentWait).Seconds()
-			} else if bestIdx == 0 {
-				cdDpso = mbDamage / (gcd + currentWait).Seconds()
-			} else if bestIdx == 3 {
-				cdDpso = swdDamage / (gcd + currentWait).Seconds()
-			} else if bestIdx == 1 {
-				cdDpso = dpDamage / (gcd + currentWait).Seconds()
-			}
-
-			if nextIdx == 2 {
-				cdDps = vtDamage / (gcd + waitmin).Seconds()
-			} else if nextIdx == 0 {
-				cdDps = mbDamage / (gcd + waitmin).Seconds()
-			} else if nextIdx == 3 {
-				cdDps = swdDamage / (gcd + waitmin).Seconds()
-			} else if nextIdx == 1 {
-				cdDps = dpDamage / (gcd + waitmin).Seconds()
-			}
-
-			residualWait := currentWait - gcd
-			if residualWait < 0 {
-				residualWait = 0
-			}
-			totalDps__poss0 := (cdDpso * (currentWait + gcd).Seconds()) / (gcd + currentWait).Seconds()
-			totalDps__poss1 := (cdDpso*(currentWait+gcd).Seconds() + cdDps*(waitmin+gcd).Seconds()) / (waitmin + gcd + gcd + residualWait).Seconds()
-
-			totalDps__poss2 := float64(0)
-			totalDps__poss3 := float64(0)
-
-			residualMF := currentWait - 2*tickLength
-			if residualMF < 0 {
-				residualMF = 0
-			}
-			totalDps__poss2 = (cdDpso*(currentWait+gcd).Seconds() + mfDamage*2/3) / (2*tickLength + gcd + residualMF).Seconds()
-			residualMF = currentWait - 3*tickLength
-			if residualMF < 0 {
-				residualMF = 0
-			}
-			totalDps__poss3 = (cdDpso*(currentWait+gcd).Seconds() + mfDamage) / (3*tickLength + gcd + residualMF).Seconds()
-
-			//if sim.Log != nil {
-			//spriest.Log(sim, "nextIdx[%d]", nextIdx)
-			//spriest.Log(sim, "bestIdx[%d]", bestIdx)
-			//spriest.Log(sim, "currentWait[%d]", currentWait.Seconds())
-			//spriest.Log(sim, "total_dps__poss0[%d]", totalDps__poss0)
-			//spriest.Log(sim, "total_dps__poss1[%d]", totalDps__poss1)
-			//spriest.Log(sim, "total_dps__poss2[%d]", totalDps__poss2)
-			//spriest.Log(sim, "total_dps__poss3[%d]", totalDps__poss3)
-			//}
-
-			// TODO looks fishy, repeated bestIdx = 4
-			if (totalDps__poss1 > totalDps__poss0) || (totalDps__poss2 > totalDps__poss0) || (totalDps__poss3 > totalDps__poss0) {
-				if totalDps__poss1 > totalDps__poss0 && totalDps__poss1 > totalDps__poss2 && totalDps__poss1 > totalDps__poss3 {
-					bestIdx = nextIdx // if choosing the minimum wait time spell first is highest dps, then change the index and current wait
-					currentWait = waitmin
-				} else if totalDps__poss2 > totalDps__poss0 && totalDps__poss2 > totalDps__poss1 && totalDps__poss2 > totalDps__poss3 {
-					//bestIdx = bestIdx // if choosing the minimum wait time spell first is highest dps, then change the index and current wait
-					//currentWait = currentWait
-					bestIdx = 4
-				} else if totalDps__poss3 > totalDps__poss0 && totalDps__poss3 > totalDps__poss1 && totalDps__poss3 > totalDps__poss2 {
-					//bestIdx = bestIdx // if choosing the minimum wait time spell first is highest dps, then change the index and current wait
-					//currentWait = currentWait
-					bestIdx = 4
-				} else {
-					bestIdx = 4
-				}
-			}
-
-		}
-
-		// If VT isnt chosen, and reapplying DP is more dps, then overwrite it next
-		if overwriteDPS-currDPS > 200 && bestIdx != 2 {
-			bestIdx = 1
-			currentWait = nextTickWait
-		} else {
-			overwriteDPS = 0
-		}
-
-		// Now it's possible that the wait time is > 1 gcd and is the minimum wait time. this is unlikely in wrath given how good MF is, but still might be worth to check
-		// if chosen wait time is > 0.3*GCD (this was optimized in private sim, but might want to reoptimize with procs/ect) then check if it's more dps to add a mf sequence
-		if bestIdx != 4 && currentWait.Seconds() > 0.3*gcd.Seconds() {
-
-			if bestIdx == 2 { // MB VT DP SWD
-				cdDpso = vtDamage
-			} else if bestIdx == 0 {
-				cdDpso = mbDamage
-			} else if bestIdx == 3 {
-				cdDpso = swdDamage
-			} else if bestIdx == 1 {
-				cdDpso = dpDamage
-			}
-
-			addedgcd := core.MaxDuration(gcd, time.Duration(2)*tickLength)
-			addedgcdtime := addedgcd - time.Duration(2)*tickLength
-
-			deltaMf1 := currentWait - gcd
-			if deltaMf1 < 0 {
-				deltaMf1 = 0
-			}
-			deltaMf2 := currentWait - (tickLength*2 + addedgcdtime)
-			if deltaMf2 < 0 {
-				deltaMf2 = 0
-			}
-			deltaMf3 := currentWait - tickLength*3
-			if deltaMf3 < 0 {
-				deltaMf3 = 0
-			}
-
-			dpsPossibleshort := []float64{
-				(cdDpso) / (gcd + currentWait).Seconds(),
-				(cdDpso + mfDamage/3) / (deltaMf1 + gcd + gcd).Seconds(),
-				(cdDpso + mfDamage/3*2) / (deltaMf2 + tickLength*2 + addedgcdtime + gcd).Seconds(),
-				(cdDpso + mfDamage) / (deltaMf3 + tickLength*3 + gcd).Seconds(),
-			}
-
-			// Find the highest possible dps and its index
-			highestPossibleIdx := 0
-			highestPossibleDmg := 0.0
-			for i, v := range dpsPossibleshort {
-				if v >= highestPossibleDmg {
-					//if sim.Log != nil {
-					//	spriest.Log(sim, "\thighestPossibleDmg[%d]: %01.f", i, v)
-					//}
-					highestPossibleIdx = i
-					highestPossibleDmg = v
-				}
-			}
-			mfAddIdx := highestPossibleIdx
-
-			if mfAddIdx == 0 {
-				chosenMfs = 0
-			} else if mfAddIdx == 1 {
-				chosenMfs = 1
-			} else if mfAddIdx == 2 {
-				chosenMfs = 2
-			} else if mfAddIdx == 3 {
-				chosenMfs = 3
-			}
-			if chosenMfs > 0 {
-				if allCDs[mbIdb].Seconds() < currentWait.Seconds() && allCDs[mbIdb].Seconds() == 0 && (mfAddIdx == 2 && spellDPCT[0] > spellDPCT[4]/3*2) || (mfAddIdx == 3 && spellDPCT[0] > spellDPCT[4]) {
-					bestIdx = 0
-					currentWait = allCDs[mbIdb]
-				} else if tickLength*3 <= gcd {
-					bestIdx = 4 // TODO looks fishy, repeated bestIdx = 4
-				} else {
-					bestIdx = 4
-				}
-			}
-		}
-
-		if bestIdx == 2 && allCDs[mbIdb].Seconds() < currentWait.Seconds() && currentWait.Seconds() > 0.4 {
-			bestIdx = 0
-			currentWait = allCDs[mbIdb]
-		}
-
-		// if current spell is SWD and mf2 is less than GCD, and is more dps than SWD then use instead
-		if bestIdx == 3 && tickLength*2 <= gcd {
-			if spellDPCT[3] < spellDPCT[4]*2/3 {
-				bestIdx = 4
-			}
-		}
-
-		// if MF1 is chosen, and SWD is off CD and isn't 0 dmg, then use SWD unless mf2 is < gcd
-		if chosenMfs == 1 && allCDs[swdIdx] == 0 && swdDamage != 0 {
-			if tickLength*2 <= gcd {
-				bestIdx = 4
-			} else {
-				bestIdx = 3
-				currentWait = 0
-			}
-		}
-
-		if (overwriteDPS-currDPS > 200 && (currentWait < gcd/2 || float64(currentWait) >= currDotTickSpeed*0.9)) && bestIdx != 2 {
-			bestIdx = 1
-			currentWait = 0
-		}
-
-		if overwriteDPS-currDPS > 200 && currentWait <= gcd && currentWait >= gcd/2 && allCDs[swdIdx] == 0 {
-			if tickLength*2 <= gcd {
-				bestIdx = 4
-			} else {
-				bestIdx = 3
-				currentWait = 0
-			}
-		}
-
-		// if MF2 is chosen in order to get to 5 weaving stacks, then make sure that VT/DP are already up first
-		if castMf2 > 0 {
-			if !spriest.DevouringPlagueDot.IsActive() && swStacks >= 4 && dpDamage != 0 {
-				bestIdx = 1
-			} else if !spriest.VampiricTouchDot.IsActive() && swStacks >= 4 && spriest.DevouringPlagueDot.IsActive() && vtDamage != 0 {
-				bestIdx = 2
-			} else {
-				bestIdx = 4
-			}
-		}
-		// if at 5 SW stacks and SWP is not up, then cast unless VT/DP are down
-		if swStacks == 5 && !spriest.ShadowWordPainDot.IsActive() {
-			if !spriest.DevouringPlagueDot.IsActive() && swStacks >= 4 && dpDamage != 0 {
-				bestIdx = 1
-			} else if !spriest.VampiricTouchDot.IsActive() && swStacks >= 4 && spriest.DevouringPlagueDot.IsActive() && vtDamage != 0 {
-				bestIdx = 2
-			} else {
-				bestIdx = 5
-			}
-		}
-		// cast SWP 3rd for short fights
-		if castSwpNow > 0 {
-			bestIdx = 5
-		}
-		// Snap shot BL on DP
-		if overwriteDPS2-currDPS2 > 200 && bestIdx != 2 { //Seems to be a dps loss to overwrite a DP to snap shot
-			bestIdx = 1
-			currentWait = 0
-		}
-
-		//if deltaTimeBL < float64((time.Duration(3)*tickLength).Seconds()) && deltaTimeBL > 0.2 && bestIdx != 5 {
-		//	bestIdx = 4
-		//	castMf2 = 1
-		//}
-		// If BL is almost up and VT is not active, then use VT
-		if deltaTimeBL <= gcd.Seconds() && !spriest.VampiricTouchDot.IsActive() && deltaTimeBL > 0 {
-			bestIdx = 2
-		}
-		// If BL is up in <0.3 seconds and greater than 10ms, then wait for it to be active
-		if deltaTimeBL <= 0.3 && deltaTimeBL > 0.01 {
-			bestIdx = 1
-			currentWait = time.Millisecond * time.Duration(math.Round(deltaTimeBL*1010))
-		}
-
-		//if sim.Log != nil {
-		//spriest.Log(sim, "BLusedat %d", currentWait)
-		//spriest.Log(sim, "dpDamage %d", dpDamage)
-		//spriest.Log(sim, "currentWait %d", currentWait)
-		//}
-		if spriest.PrevTicks == 4 {
 			castMf2 = 1
-			bestIdx = 4
-			spriest.PrevTicks = 0
+		}
+	}
+
+	var currDPS float64
+	var nextTickWait time.Duration
+	var currDPS2 float64
+	var overwriteDPS2 float64
+
+	if spriest.DevouringPlague.CurDot().IsActive() {
+		currDotTickSpeed = spriest.DevouringPlague.CurDot().TickPeriod().Seconds()
+		nextTickWait = spriest.DevouringPlague.CurDot().TimeUntilNextTick(sim)
+
+		dpDotCurr := spriest.DevouringPlague.ExpectedDamageFromCurrentSnapshot(sim, spriest.CurrentTarget)
+		dpInitCurr := dpDotCurr * spriest.DpInitMultiplier
+
+		cdDamage := mbDamage
+		if spriest.T10FourSetBonus || cdDamage == 0 {
+			cdDamage = mfDamage / 3 * 2
 		}
 
-		if castMf2 == 1 && allCDs[mbIdb].Seconds() == 0 {
-			bestIdx = 0
+		dotTickSpeednew := 3 * spriest.CastSpeed
+		currDPS = (dpInitCurr + dpDotCurr*8 + cdDamage) / (currDotTickSpeed * 8)
+		overwriteDPS = (dpInitCurr + dpInit + dpDotCurr*1 + dpDot) / (dotTickSpeednew*8 + currDotTickSpeed*1)
+
+		if blAura := spriest.GetActiveAuraWithTag(core.BloodlustAuraTag); blAura != nil {
+			blRemainingDur := blAura.RemainingDuration(sim)
+			if blRemainingDur < time.Second*2 && blRemainingDur > time.Millisecond*100 {
+				dpRemainTicks := 8 - float64(spriest.DevouringPlague.CurDot().NumTicksRemaining(sim))
+				overwriteDPS2 = dpInitCurr + dpRemainTicks*dpDotCurr*(1-spriest.CastSpeed)
+				currDPS2 = cdDamage
+
+				//if sim.Log != nil {
+				//spriest.Log(sim, "currDPS2[%d]", currDPS2)
+				//spriest.Log(sim, "overwriteDPS2[%d]", overwriteDPS2)
+				//spriest.Log(sim, "dpRemainTicks[%d]", dpRemainTicks)
+				//}
+			}
+		}
+	}
+
+	// Make an array of DPCT per spell that will be used to find the optimal spell to cast
+	spellDPCT := []float64{
+		// MB dps
+		mbDamage / (gcd + spriest.AllCDs[mbIdx]).Seconds(),
+		// DP dps
+		dpDamage / (gcd + spriest.AllCDs[dpIdx]).Seconds(),
+		// VT dps
+		vtDamage / (gcd + spriest.AllCDs[vtIdx]).Seconds(),
+		// SWD dps
+		swdDamage / (gcd + spriest.AllCDs[swdIdx]).Seconds(),
+		// MF dps 3 ticks
+		mfDamage / (tickLength * 3).Seconds(),
+	}
+
+	//if sim.Log != nil {
+	//spriest.Log(sim, "mbDamage[%d]", mbDamage)
+	//spriest.Log(sim, "mb time[%d]", spriest.AllCDs[mbIdx])
+	//spriest.Log(sim, "mftime[%d]", float64((tickLength * 3).Seconds()))
+	//spriest.Log(sim, "gcd[%d]", gcd.Seconds())
+	//spriest.Log(sim, "CastSpeedMultiplier[%d]", spriest.PseudoStats.CastSpeedMultiplier)
+	//spriest.Log(sim, "critChance[%d]", critChance)
+	//}
+
+	// Find the maximum DPCT spell
+	bestDmg := 0.0
+	for i, v := range spellDPCT {
+		if sim.Log != nil {
+			spriest.Log(sim, "\tspellDPCT[%d]: %01.f", i, v)
+			spriest.Log(sim, "\tcdDiffs[%d]: %0.1f", i, spriest.AllCDs[i].Seconds())
+		}
+		if v > bestDmg {
+			bestIdx = i
+			bestDmg = v
+		}
+	}
+	// Find the minimum CD ability to make sure that shouldnt be cast first
+	nextCD := core.NeverExpires
+	nextIdx := -1
+	for i, v := range spriest.AllCDs[1 : len(spriest.AllCDs)-1] {
+		//	if sim.Log != nil {
+		// spriest.Log(sim, "\tspriest.AllCDs[%d]: %01.f", i, v)
+		// 	 spriest.Log(sim, "\tcdDiffs[%d]: %0.1f", i, cdDiffs[i].Seconds())
+		//}
+		if v < nextCD {
+			nextCD = v
+			nextIdx = i + 1
+		}
+	}
+	waitmin := nextCD
+
+	// Now it's possible that the wait time for the chosen spell is long, if that's the case, then it might be better to investigate the dps over a 2 spell window to see if casting something else will benefit
+	if bestIdx < mfIdx {
+		currentWait = spriest.AllCDs[bestIdx]
+	}
+
+	if spriest.AllCDs[mbIdx] < gcd && bestIdx == mfIdx && spriest.AllCDs[swdIdx] == 0 {
+		totalDps__poss := (mbDamage + swdDamage) / (gcd + gcd).Seconds()
+		totalDps__poss3 := (mbDamage + mfDamage*2/3) / (2*tickLength + gcd).Seconds()
+
+		if totalDps__poss > totalDps__poss3 {
+			bestIdx = swdIdx
+			currentWait = spriest.AllCDs[bestIdx]
+		}
+	}
+
+	if nextIdx != mfIdx && bestIdx != mfIdx && bestIdx != swpIdx && currentWait > waitmin && currentWait.Seconds() < 3 { // right now 3 might not be correct number, but we can study this to optimize
+
+		if bestIdx == vtIdx {
+			cdDpso = vtDamage / (gcd + currentWait).Seconds()
+		} else if bestIdx == mbIdx {
+			cdDpso = mbDamage / (gcd + currentWait).Seconds()
+		} else if bestIdx == swdIdx {
+			cdDpso = swdDamage / (gcd + currentWait).Seconds()
+		} else if bestIdx == dpIdx {
+			cdDpso = dpDamage / (gcd + currentWait).Seconds()
 		}
 
-		if currentWait > 0 && bestIdx != 5 && bestIdx != 4 {
-			spriest.WaitUntil(sim, sim.CurrentTime+currentWait)
-			return
+		if nextIdx == vtIdx {
+			cdDps = vtDamage / (gcd + waitmin).Seconds()
+		} else if nextIdx == mbIdx {
+			cdDps = mbDamage / (gcd + waitmin).Seconds()
+		} else if nextIdx == swdIdx {
+			cdDps = swdDamage / (gcd + waitmin).Seconds()
+		} else if nextIdx == dpIdx {
+			cdDps = dpDamage / (gcd + waitmin).Seconds()
+		}
+
+		residualWait := currentWait - gcd
+		if residualWait < 0 {
+			residualWait = 0
+		}
+		totalDps__poss0 := (cdDpso * (currentWait + gcd).Seconds()) / (gcd + currentWait).Seconds()
+		totalDps__poss1 := (cdDpso*(currentWait+gcd).Seconds() + cdDps*(waitmin+gcd).Seconds()) / (waitmin + gcd + gcd + residualWait).Seconds()
+
+		totalDps__poss2 := float64(0)
+		totalDps__poss3 := float64(0)
+
+		residualMF := currentWait - 2*tickLength
+		if residualMF < 0 {
+			residualMF = 0
+		}
+		totalDps__poss2 = (cdDpso*(currentWait+gcd).Seconds() + mfDamage*2/3) / (2*tickLength + gcd + residualMF).Seconds()
+		residualMF = currentWait - 3*tickLength
+		if residualMF < 0 {
+			residualMF = 0
+		}
+		totalDps__poss3 = (cdDpso*(currentWait+gcd).Seconds() + mfDamage) / (3*tickLength + gcd + residualMF).Seconds()
+
+		//if sim.Log != nil {
+		//spriest.Log(sim, "nextIdx[%d]", nextIdx)
+		//spriest.Log(sim, "bestIdx[%d]", bestIdx)
+		//spriest.Log(sim, "currentWait[%d]", currentWait.Seconds())
+		//spriest.Log(sim, "total_dps__poss0[%d]", totalDps__poss0)
+		//spriest.Log(sim, "total_dps__poss1[%d]", totalDps__poss1)
+		//spriest.Log(sim, "total_dps__poss2[%d]", totalDps__poss2)
+		//spriest.Log(sim, "total_dps__poss3[%d]", totalDps__poss3)
+		//}
+
+		// TODO looks fishy, repeated bestIdx = mfIdx
+		if (totalDps__poss1 > totalDps__poss0) || (totalDps__poss2 > totalDps__poss0) || (totalDps__poss3 > totalDps__poss0) {
+			if totalDps__poss1 > totalDps__poss0 && totalDps__poss1 > totalDps__poss2 && totalDps__poss1 > totalDps__poss3 {
+				bestIdx = nextIdx // if choosing the minimum wait time spell first is highest dps, then change the index and current wait
+				currentWait = waitmin
+			} else if totalDps__poss2 > totalDps__poss0 && totalDps__poss2 > totalDps__poss1 && totalDps__poss2 > totalDps__poss3 {
+				//bestIdx = bestIdx // if choosing the minimum wait time spell first is highest dps, then change the index and current wait
+				//currentWait = currentWait
+				bestIdx = mfIdx
+			} else if totalDps__poss3 > totalDps__poss0 && totalDps__poss3 > totalDps__poss1 && totalDps__poss3 > totalDps__poss2 {
+				//bestIdx = bestIdx // if choosing the minimum wait time spell first is highest dps, then change the index and current wait
+				//currentWait = currentWait
+				bestIdx = mfIdx
+			} else {
+				bestIdx = mfIdx
+			}
 		}
 
 	}
 
-	if bestIdx == 0 {
-		spell = spriest.MindBlast
-	} else if bestIdx == 1 {
-		spell = spriest.DevouringPlague
-	} else if bestIdx == 2 {
-		spell = spriest.VampiricTouch
-	} else if bestIdx == 3 {
-		spell = spriest.ShadowWordDeath
-	} else if bestIdx == 5 {
-		spell = spriest.ShadowWordPain // once swp is cast need a way for talents to refresh the duration
-	} else if bestIdx == 4 {
+	// If VT isnt chosen, and reapplying DP is more dps, then overwrite it next
+	if overwriteDPS-currDPS > 200 && bestIdx != vtIdx {
+		bestIdx = dpIdx
+		currentWait = nextTickWait
+	} else {
+		overwriteDPS = 0
+	}
 
-		if castMf2 == 0 {
-			if spriest.InnerFocus != nil && spriest.InnerFocus.IsReady(sim) {
-				spriest.InnerFocus.Cast(sim, nil)
-			}
+	// Now it's possible that the wait time is > 1 gcd and is the minimum wait time. this is unlikely in wrath given how good MF is, but still might be worth to check
+	// if chosen wait time is > 0.3*GCD (this was optimized in private sim, but might want to reoptimize with procs/ect) then check if it's more dps to add a mf sequence
+	if bestIdx != mfIdx && currentWait.Seconds() > 0.3*gcd.Seconds() {
+
+		if bestIdx == vtIdx {
+			cdDpso = vtDamage
+		} else if bestIdx == mbIdx {
+			cdDpso = mbDamage
+		} else if bestIdx == swdIdx {
+			cdDpso = swdDamage
+		} else if bestIdx == dpIdx {
+			cdDpso = dpDamage
 		}
 
+		addedgcd := core.MaxDuration(gcd, time.Duration(2)*tickLength)
+		addedgcdtime := addedgcd - time.Duration(2)*tickLength
+
+		deltaMf1 := currentWait - gcd
+		if deltaMf1 < 0 {
+			deltaMf1 = 0
+		}
+		deltaMf2 := currentWait - (tickLength*2 + addedgcdtime)
+		if deltaMf2 < 0 {
+			deltaMf2 = 0
+		}
+		deltaMf3 := currentWait - tickLength*3
+		if deltaMf3 < 0 {
+			deltaMf3 = 0
+		}
+
+		dpsPossibleshort := []float64{
+			(cdDpso) / (gcd + currentWait).Seconds(),
+			(cdDpso + mfDamage/3) / (deltaMf1 + gcd + gcd).Seconds(),
+			(cdDpso + mfDamage/3*2) / (deltaMf2 + tickLength*2 + addedgcdtime + gcd).Seconds(),
+			(cdDpso + mfDamage) / (deltaMf3 + tickLength*3 + gcd).Seconds(),
+		}
+
+		// Find the highest possible dps and its index
+		highestPossibleIdx := 0
+		highestPossibleDmg := 0.0
+		for i, v := range dpsPossibleshort {
+			if v >= highestPossibleDmg {
+				//if sim.Log != nil {
+				//	spriest.Log(sim, "\thighestPossibleDmg[%d]: %01.f", i, v)
+				//}
+				highestPossibleIdx = i
+				highestPossibleDmg = v
+			}
+		}
+		mfAddIdx := highestPossibleIdx
+
+		if mfAddIdx == 0 {
+			chosenMfs = 0
+		} else if mfAddIdx == 1 {
+			chosenMfs = 1
+		} else if mfAddIdx == 2 {
+			chosenMfs = 2
+		} else if mfAddIdx == 3 {
+			chosenMfs = 3
+		}
+		if chosenMfs > 0 {
+			if spriest.AllCDs[mbIdx].Seconds() < currentWait.Seconds() && spriest.AllCDs[mbIdx].Seconds() == 0 && (mfAddIdx == 2 && spellDPCT[mbIdx] > spellDPCT[mfIdx]/3*2) || (mfAddIdx == 3 && spellDPCT[mbIdx] > spellDPCT[mfIdx]) {
+				bestIdx = mbIdx
+				currentWait = spriest.AllCDs[mbIdx]
+			} else if tickLength*3 <= gcd {
+				bestIdx = mfIdx // TODO looks fishy, repeated bestIdx = mfIdx
+			} else {
+				bestIdx = mfIdx
+			}
+		}
+	}
+
+	if bestIdx == vtIdx && spriest.AllCDs[mbIdx].Seconds() < currentWait.Seconds() && currentWait.Seconds() > 0.4 && spriest.options.UseMindBlast {
+		bestIdx = mbIdx
+		currentWait = spriest.AllCDs[mbIdx]
+	}
+
+	// if current spell is SWD and mf2 is less than GCD, and is more dps than SWD then use instead
+	if bestIdx == swdIdx && tickLength*2 <= gcd {
+		if spellDPCT[swdIdx] < spellDPCT[mfIdx]*2/3 {
+			bestIdx = mfIdx
+		}
+	}
+
+	// if MF1 is chosen, and SWD is off CD and isn't 0 dmg, then use SWD unless mf2 is < gcd
+	if chosenMfs == 1 && spriest.AllCDs[swdIdx] == 0 && swdDamage != 0 {
+		if tickLength*2 <= gcd {
+			bestIdx = mfIdx
+		} else {
+			bestIdx = swdIdx
+			currentWait = 0
+		}
+	}
+
+	if (overwriteDPS-currDPS > 200 && (currentWait < gcd/2 || float64(currentWait) >= currDotTickSpeed*0.9)) && bestIdx != vtIdx {
+		bestIdx = dpIdx
+		currentWait = 0
+	}
+
+	if overwriteDPS-currDPS > 200 && currentWait <= gcd && currentWait >= gcd/2 && spriest.AllCDs[swdIdx] == 0 {
+		if tickLength*2 <= gcd {
+			bestIdx = mfIdx
+		} else {
+			bestIdx = swdIdx
+			currentWait = 0
+		}
+	}
+
+	// if MF2 is chosen in order to get to 5 weaving stacks, then make sure that VT/DP are already up first
+	if castMf2 > 0 {
+		if !spriest.DevouringPlague.CurDot().IsActive() && swStacks >= 4 && dpDamage != 0 {
+			bestIdx = dpIdx
+		} else if !spriest.VampiricTouch.CurDot().IsActive() && swStacks >= 4 && spriest.DevouringPlague.CurDot().IsActive() && vtDamage != 0 {
+			bestIdx = vtIdx
+		} else {
+			bestIdx = mfIdx
+		}
+	}
+	// if at 5 SW stacks and SWP is not up, then cast unless VT/DP are down
+	if swStacks == 5 && !spriest.ShadowWordPain.CurDot().IsActive() {
+		if !spriest.DevouringPlague.CurDot().IsActive() && swStacks >= 4 && dpDamage != 0 {
+			bestIdx = dpIdx
+		} else if !spriest.VampiricTouch.CurDot().IsActive() && swStacks >= 4 && spriest.DevouringPlague.CurDot().IsActive() && vtDamage != 0 {
+			bestIdx = vtIdx
+		} else {
+			bestIdx = swpIdx
+		}
+	}
+	// cast SWP 3rd for short fights
+	if castSwpNow > 0 {
+		bestIdx = swpIdx
+	}
+	// Snap shot BL on DP
+	if overwriteDPS2-currDPS2 > 200 && bestIdx != vtIdx { //Seems to be a dps loss to overwrite a DP to snap shot
+		bestIdx = dpIdx
+		currentWait = 0
+	}
+
+	//if timeUntilBLStarts < float64((time.Duration(3)*tickLength).Seconds()) && timeUntilBLStarts > 0.2 && bestIdx != swpIdx {
+	//	bestIdx = mfIdx
+	//	castMf2 = 1
+	//}
+	// If BL is almost up and VT is not active, then use VT
+	if timeUntilBLStarts <= gcd.Seconds() && !spriest.VampiricTouch.CurDot().IsActive() && timeUntilBLStarts > 0 {
+		bestIdx = vtIdx
+	}
+	// If BL is up in <0.3 seconds and greater than 10ms, then wait for it to be active
+	if timeUntilBLStarts <= 0.3 && timeUntilBLStarts > 0.01 {
+		bestIdx = dpIdx
+		currentWait = time.Millisecond * time.Duration(math.Round(timeUntilBLStarts*1010))
+	}
+
+	//if sim.Log != nil {
+	//spriest.Log(sim, "spriest.BLUsedAt %d", currentWait)
+	//spriest.Log(sim, "dpDamage %d", dpDamage)
+	//spriest.Log(sim, "currentWait %d", currentWait)
+	//}
+	if spriest.PrevTicks == 4 {
+		castMf2 = 1
+		bestIdx = mfIdx
+		spriest.PrevTicks = 0
+	}
+
+	if castMf2 == 1 && spriest.AllCDs[mbIdx].Seconds() == 0 && spriest.options.UseMindBlast {
+		return spriest.MindBlast, 0
+	}
+
+	if currentWait > 0 && bestIdx != swpIdx && bestIdx != mfIdx {
+		return nil, currentWait
+	}
+
+	if bestIdx == mbIdx {
+		return spriest.MindBlast, 0
+	} else if bestIdx == dpIdx {
+		return spriest.DevouringPlague, 0
+	} else if bestIdx == vtIdx {
+		return spriest.VampiricTouch, 0
+	} else if bestIdx == swdIdx {
+		return spriest.ShadowWordDeath, 0
+	} else if bestIdx == swpIdx {
+		return spriest.ShadowWordPain, 0 // once swp is cast need a way for talents to refresh the duration
+	} else if bestIdx == mfIdx {
 		var numTicks int
 
-		if rotType == proto.ShadowPriest_Rotation_Basic || rotType == proto.ShadowPriest_Rotation_Clipping {
-
-			if spriest.MindBlast.TimeToReady(sim) == 0 {
-				spell = spriest.MindBlast
-				if success := spell.Cast(sim, spriest.CurrentTarget); !success {
-					spriest.WaitForMana(sim, spell.CurCast.Cost)
-				}
-				return
-			} else if spriest.ShadowWordDeath.TimeToReady(sim) == 0 {
-				spell = spriest.ShadowWordDeath
-				if success := spell.Cast(sim, spriest.CurrentTarget); !success {
-					spriest.WaitForMana(sim, spell.CurCast.Cost)
-				}
-				return
+		if chosenMfs == 1 {
+			numTicks = 1 // determiend above that it's more dps to add MF1, need if it's not better to enter ideal rotation instead
+		} else if (castMf2 == 1 && spriest.DevouringPlague.CurDot().IsActive() && spriest.VampiricTouch.CurDot().IsActive()) || (timeUntilBLStarts < (time.Duration(3)*tickLength).Seconds() && timeUntilBLStarts > 0.2) {
+			if spriest.MindFlayTickDuration()*3 < gcd {
+				numTicks = 3
 			} else {
-				if rotType == proto.ShadowPriest_Rotation_Basic {
-					//numTicks = spriest.BasicMindflayRotation(sim, allCDs, gcd, tickLength)
-					numTicks = 3
-				} else if rotType == proto.ShadowPriest_Rotation_Clipping {
-					numTicks = spriest.ClippingMindflayRotation(sim, allCDs, gcd, tickLength)
-				}
+				numTicks = 2
 			}
 		} else {
-			if chosenMfs == 1 {
-				numTicks = 1 // determiend above that it's more dps to add MF1, need if it's not better to enter ideal rotation instead
-			} else if (castMf2 == 1 && spriest.DevouringPlagueDot.IsActive() && spriest.VampiricTouchDot.IsActive()) || (deltaTimeBL < (time.Duration(3)*tickLength).Seconds() && deltaTimeBL > 0.2) {
-				if spriest.MindFlayTickDuration()*3 < gcd {
-					numTicks = 3
-				} else {
-					numTicks = 2
-				}
-			} else {
-				numTicks = spriest.IdealMindflayRotation(sim, allCDs, gcd, tickLength, currentWait, mfDamage, mbDamage, dpDamage, vtDamage, swdDamage, overwriteDPS) //enter the mf optimizaiton routine to optimze mf clips and for next optimal spell
-			}
+			numTicks = spriest.IdealMindflayRotation(sim, gcd, tickLength, currentWait, mfDamage, mbDamage, dpDamage, vtDamage, swdDamage, overwriteDPS) //enter the mf optimizaiton routine to optimze mf clips and for next optimal spell
 		}
 
 		if numTicks == 0 {
 			// Means we'd rather wait for next CD (swp, vt, etc) than start a MF cast.
 			nextCD := core.NeverExpires
-			for _, v := range allCDs[1 : len(allCDs)-1] {
+			for _, v := range spriest.AllCDs[1 : len(spriest.AllCDs)-1] {
 				if v < nextCD {
 					nextCD = v
 				}
 			}
-			spriest.WaitUntil(sim, sim.CurrentTime+nextCD)
-			return
-		}
-		if numTicks == 2 && allCDs[mbIdb].Seconds() == 0 {
-			spell = spriest.MindBlast
+			return nil, nextCD
+		} else if numTicks == 2 && spriest.AllCDs[mbIdx].Seconds() == 0 && spriest.options.UseMindBlast {
+			return spriest.MindBlast, 0
 		} else {
-			spell = spriest.MindFlay[numTicks]
+			return spriest.MindFlay[numTicks], 0
 		}
 	} else {
-
 		mbcd := spriest.MindBlast.TimeToReady(sim)
 		swdcd := spriest.ShadowWordDeath.TimeToReady(sim)
-		vtidx := spriest.VampiricTouchDot.RemainingDuration(sim) - vtCastTime
-		swpidx := spriest.ShadowWordPainDot.RemainingDuration(sim)
-		dpidx := spriest.DevouringPlagueDot.RemainingDuration(sim)
+		vtidx := spriest.VampiricTouch.CurDot().RemainingDuration(sim) - spriest.VTCastTime
+		swpidx := spriest.ShadowWordPain.CurDot().RemainingDuration(sim)
+		dpidx := spriest.DevouringPlague.CurDot().RemainingDuration(sim)
 		wait1 = core.MinDuration(mbcd, swdcd)
 		wait2 = core.MinDuration(dpidx, wait1)
 		wait3 = core.MinDuration(vtidx, swpidx)
 		wait = core.MinDuration(wait3, wait2)
 		if wait <= 0 {
-			spriest.WaitUntil(sim, sim.CurrentTime+time.Millisecond*500)
-		} else {
-			spriest.WaitUntil(sim, sim.CurrentTime+wait)
+			wait = time.Millisecond * 500
 		}
-		return
-	}
-	if success := spell.Cast(sim, spriest.CurrentTarget); !success {
-		spriest.WaitForMana(sim, spell.CurCast.Cost)
-	} else if spell == spriest.VampiricTouch {
-		spriest.VTstatpH = spriest.PseudoStats.CastSpeedMultiplier
-		spriest.VTstatH = spriest.GetStat(stats.SpellHaste)
-		spriest.VTstatSp = spriest.GetStat(stats.SpellPower)
-	} else if spell == spriest.DevouringPlague {
-		spriest.DPstatpH = spriest.PseudoStats.CastSpeedMultiplier
-		spriest.DPstatH = spriest.GetStat(stats.SpellHaste)
-		spriest.DPstatSp = spriest.GetStat(stats.SpellPower)
+		return nil, wait
 	}
 }
 
 // Returns the number of MF ticks to use, or 0 to wait for next CD.
-func (spriest *ShadowPriest) BasicMindflayRotation(sim *core.Simulation, allCDs []time.Duration, gcd time.Duration, tickLength time.Duration) int {
+func (spriest *ShadowPriest) BasicMindflayRotation(sim *core.Simulation, gcd time.Duration, tickLength time.Duration) int {
 	// just do MF3, never clipping
 	nextCD := core.NeverExpires
-	for _, v := range allCDs {
+	for _, v := range spriest.AllCDs {
 		if v < nextCD {
 			nextCD = v
 		}
@@ -763,15 +677,15 @@ func (spriest *ShadowPriest) BasicMindflayRotation(sim *core.Simulation, allCDs 
 }
 
 // Returns the number of MF ticks to use, or 0 to wait for next CD.
-func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs []time.Duration, gcd time.Duration, tickLength time.Duration,
+func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, gcd time.Duration, tickLength time.Duration,
 	currentWait time.Duration, mfDamage, mbDamage, dpDamage, vtDamage, swdDamage, overwriteDPS float64) int {
 	nextCD := core.NeverExpires
 	nextIdx := -1
 
 	newCDs := []time.Duration{
-		core.MaxDuration(0, allCDs[0]),
-		core.MaxDuration(0, allCDs[1]),
-		core.MaxDuration(0, allCDs[2]),
+		core.MaxDuration(0, spriest.AllCDs[0]),
+		core.MaxDuration(0, spriest.AllCDs[1]),
+		core.MaxDuration(0, spriest.AllCDs[2]),
 	}
 
 	for i, v := range newCDs {
@@ -828,16 +742,16 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 
 		if sim.Log != nil {
 			//spriest.Log(sim, "mfTime %d", mfTime.Seconds())
-			//spriest.Log(sim, "allCDs %d", allCDs[0].Seconds())
+			//spriest.Log(sim, "spriest.AllCDs %d", spriest.AllCDs[0].Seconds())
 			//spriest.Log(sim, "mf3Time %d", float64(time.Duration(3*tickLength).Seconds()))
 		}
 		// Amount of gap time after casting mind flay, but before each CD is available.
 
 		cdDiffs := []time.Duration{
-			core.MaxDuration(0, allCDs[0]-mfTime),
-			core.MaxDuration(0, allCDs[1]-mfTime),
-			core.MaxDuration(0, allCDs[2]-mfTime),
-			core.MaxDuration(0, allCDs[3]-mfTime),
+			core.MaxDuration(0, spriest.AllCDs[0]-mfTime),
+			core.MaxDuration(0, spriest.AllCDs[1]-mfTime),
+			core.MaxDuration(0, spriest.AllCDs[2]-mfTime),
+			core.MaxDuration(0, spriest.AllCDs[3]-mfTime),
 			0,
 		}
 
@@ -852,7 +766,7 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 		}
 		spellDamages := []float64{
 			// MB dps
-			mbDamage / (gcd + cdDiffs[mbIdb]).Seconds(),
+			mbDamage / (gcd + cdDiffs[mbIdx]).Seconds(),
 			// DP dps
 			dpDamage / (gcd + cdDiffs[dpIdx]).Seconds(),
 			// VT dps
@@ -889,8 +803,8 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 		}
 
 		if bestIdx != nextIdx && spellDamages[nextIdx] < spellDamages[bestIdx] && bestIdx != 4 {
-			numTicks_Base = allCDs[bestIdx].Seconds() / tickLength.Seconds()
-			numTicks_floored = math.Floor(allCDs[bestIdx].Seconds() / tickLength.Seconds())
+			numTicks_Base = spriest.AllCDs[bestIdx].Seconds() / tickLength.Seconds()
+			numTicks_floored = math.Floor(spriest.AllCDs[bestIdx].Seconds() / tickLength.Seconds())
 			numTicks = int(numTicks_Base)
 			if sim.Log != nil {
 				spriest.Log(sim, "numTicks2 %d", numTicks)
@@ -907,12 +821,12 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 				addedgcdtime := addedgcd - time.Duration(2)*tickLength
 				mfTime = core.MaxDuration(gcd, time.Duration(numTicks)*tickLength+2*addedgcdtime)
 			}
-			deltaTime := allCDs[bestIdx] - mfTime
+			deltaTime := spriest.AllCDs[bestIdx] - mfTime
 			cdDiffs = []time.Duration{
-				core.MaxDuration(0, allCDs[0]-mfTime),
-				core.MaxDuration(0, allCDs[1]-mfTime),
-				core.MaxDuration(0, allCDs[2]-mfTime),
-				core.MaxDuration(0, allCDs[3]-mfTime),
+				core.MaxDuration(0, spriest.AllCDs[0]-mfTime),
+				core.MaxDuration(0, spriest.AllCDs[1]-mfTime),
+				core.MaxDuration(0, spriest.AllCDs[2]-mfTime),
+				core.MaxDuration(0, spriest.AllCDs[3]-mfTime),
 				0,
 			}
 			if deltaTime.Seconds() < -0.33 {
@@ -1039,9 +953,9 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 		}
 
 		if numTicks > 3 {
-			if (allCDs[bestIdx] - time.Duration(numTicks-1)*tickLength - gcd) >= 0 {
-				//if (allCDs[3]-time.Duration(numTicks-1)*tickLength <= 0) || (allCDs[0]-time.Duration(numTicks-1)*tickLength <= 0) { \\might need to readd this for later phases
-				if allCDs[3]-time.Duration(numTicks-1)*tickLength <= 0 {
+			if (spriest.AllCDs[bestIdx] - time.Duration(numTicks-1)*tickLength - gcd) >= 0 {
+				//if (spriest.AllCDs[3]-time.Duration(numTicks-1)*tickLength <= 0) || (spriest.AllCDs[0]-time.Duration(numTicks-1)*tickLength <= 0) { \\might need to readd this for later phases
+				if spriest.AllCDs[3]-time.Duration(numTicks-1)*tickLength <= 0 {
 					numTicks = 3
 					return numTicks
 				}
@@ -1179,9 +1093,9 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, allCDs 
 	return numTicks
 }
 
-func (spriest *ShadowPriest) ClippingMindflayRotation(sim *core.Simulation, allCDs []time.Duration, gcd time.Duration, tickLength time.Duration) int {
+func (spriest *ShadowPriest) ClippingMindflayRotation(sim *core.Simulation, gcd time.Duration, tickLength time.Duration) int {
 	nextCD := core.NeverExpires
-	for _, v := range allCDs[1 : len(allCDs)-1] {
+	for _, v := range spriest.AllCDs[1 : len(spriest.AllCDs)-1] {
 		if v < nextCD {
 			nextCD = v
 		}

@@ -28,8 +28,12 @@ func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
 	if dk.nervesOfColdSteelActive() {
 		nocsHit = float64(dk.Talents.NervesOfColdSteel)
 	}
+	if dk.HasDraeneiHitAura {
+		nocsHit = nocsHit + 1.0
+	}
 
 	armyGhoulPetBaseStats := stats.Stats{
+		stats.Stamina:     159,
 		stats.Agility:     856,
 		stats.Strength:    0,
 		stats.AttackPower: -20,
@@ -41,25 +45,19 @@ func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
 	}
 
 	ghoulPet := &GhoulPet{
-		Pet: core.NewPet(
-			"Army of the Dead", //+strconv.Itoa(index),
-			&dk.Character,
-			armyGhoulPetBaseStats,
-			dk.armyGhoulStatInheritance(),
-			false,
-			true,
-		),
+		Pet:     core.NewPet("Army of the Dead", &dk.Character, armyGhoulPetBaseStats, dk.armyGhoulStatInheritance(), nil, false, true),
 		dkOwner: dk,
 	}
 
 	ghoulPet.PseudoStats.DamageTakenMultiplier *= 0.1
+	ghoulPet.PseudoStats.MeleeHasteRatingPerHastePercent = dk.PseudoStats.MeleeHasteRatingPerHastePercent
 
 	dk.SetupGhoul(ghoulPet)
 
 	ghoulPet.EnableAutoAttacks(ghoulPet, core.AutoAttackOptions{
 		MainHand: core.Weapon{
-			BaseDamageMin:              70,
-			BaseDamageMax:              110,
+			BaseDamageMin:              30,
+			BaseDamageMax:              74,
 			SwingSpeed:                 2,
 			SwingDuration:              time.Second * 2,
 			CritMultiplier:             2,
@@ -72,6 +70,11 @@ func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
 	ghoulPet.AddStatDependency(stats.Agility, stats.AttackPower, 1)
 	ghoulPet.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/83.3)
 
+	// command doesn't apply to army ghoul
+	if dk.Race == proto.Race_RaceOrc {
+		ghoulPet.PseudoStats.DamageDealtMultiplier /= 1.05
+	}
+
 	return ghoulPet
 }
 
@@ -80,6 +83,9 @@ func (dk *Deathknight) NewGhoulPet(permanent bool) *GhoulPet {
 	nocsHit := 0.0
 	if dk.nervesOfColdSteelActive() {
 		nocsHit = float64(dk.Talents.NervesOfColdSteel)
+	}
+	if dk.HasDraeneiHitAura {
+		nocsHit = nocsHit + 1.0
 	}
 
 	ghoulPetBaseStats := stats.Stats{
@@ -94,14 +100,7 @@ func (dk *Deathknight) NewGhoulPet(permanent bool) *GhoulPet {
 	}
 
 	ghoulPet := &GhoulPet{
-		Pet: core.NewPet(
-			"Ghoul",
-			&dk.Character,
-			ghoulPetBaseStats,
-			dk.ghoulStatInheritance(),
-			permanent,
-			!permanent,
-		),
+		Pet:     core.NewPet("Ghoul", &dk.Character, ghoulPetBaseStats, dk.ghoulStatInheritance(), nil, permanent, !permanent),
 		dkOwner: dk,
 	}
 
@@ -112,6 +111,7 @@ func (dk *Deathknight) NewGhoulPet(permanent bool) *GhoulPet {
 
 	// NightOfTheDead
 	ghoulPet.PseudoStats.DamageTakenMultiplier *= (1.0 - float64(dk.Talents.NightOfTheDead)*0.45)
+	ghoulPet.PseudoStats.MeleeHasteRatingPerHastePercent = dk.PseudoStats.MeleeHasteRatingPerHastePercent
 
 	dk.SetupGhoul(ghoulPet)
 
@@ -253,18 +253,12 @@ func (dk *Deathknight) ghoulStatInheritance() core.PetStatInheritance {
 }
 
 func (dk *Deathknight) armyGhoulStatInheritance() core.PetStatInheritance {
-	ravenousDead := 1.0 + 0.2*float64(dk.Talents.RavenousDead)
-	glyphBonus := 0.0
-	if dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfTheGhoul) {
-		glyphBonus = 0.4
-	}
-
 	return func(ownerStats stats.Stats) stats.Stats {
 		ownerHitChance := ownerStats[stats.MeleeHit] / core.MeleeHitRatingPerHitChance
 
 		return stats.Stats{
-			stats.Stamina:  ownerStats[stats.Stamina] * (glyphBonus + 0.7*ravenousDead),
-			stats.Strength: ownerStats[stats.Strength] * (glyphBonus + 0.7*ravenousDead) * 0.05,
+			stats.Stamina:     ownerStats[stats.Stamina] * 0.2,
+			stats.AttackPower: ownerStats[stats.AttackPower] * 0.065,
 
 			stats.MeleeHit:  ownerHitChance * core.MeleeHitRatingPerHitChance,
 			stats.Expertise: ownerHitChance * PetExpertiseScale * core.ExpertisePerQuarterPercentReduction,

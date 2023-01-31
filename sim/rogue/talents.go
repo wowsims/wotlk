@@ -11,10 +11,12 @@ import (
 
 func (rogue *Rogue) ApplyTalents() {
 	rogue.applyMurder()
+	rogue.applySlaughterFromTheShadows()
 	rogue.applySealFate()
 	rogue.applyWeaponSpecializations()
 	rogue.applyCombatPotency()
 	rogue.applyFocusedAttacks()
+	rogue.applyInitiative()
 
 	rogue.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*2*float64(rogue.Talents.LightningReflexes))
 	rogue.PseudoStats.MeleeSpeedMultiplier *= []float64{1, 1.03, 1.06, 1.10}[rogue.Talents.LightningReflexes]
@@ -44,6 +46,13 @@ func (rogue *Rogue) ApplyTalents() {
 	rogue.registerBladeFlurryCD()
 	rogue.registerAdrenalineRushCD()
 	rogue.registerKillingSpreeCD()
+	rogue.registerShadowstepCD()
+	rogue.registerShadowDanceCD()
+	rogue.registerMasterOfSubtletyCD()
+	rogue.registerPreparationCD()
+	rogue.registerPremeditation()
+	rogue.registerGhostlyStrikeSpell()
+	rogue.registerHonorAmongThieves()
 }
 
 // dwsMultiplier returns the offhand damage multiplier
@@ -95,6 +104,14 @@ func (rogue *Rogue) murderMultiplier() float64 {
 	return 1.0 + 0.02*float64(rogue.Talents.Murder)
 }
 
+func (rogue *Rogue) applySlaughterFromTheShadows() {
+	rogue.PseudoStats.DamageDealtMultiplier *= rogue.slaughterFromTheShadowsMultiplier()
+}
+
+func (rogue *Rogue) slaughterFromTheShadowsMultiplier() float64 {
+	return 1.0 + 0.01*float64(rogue.Talents.SlaughterFromTheShadows)
+}
+
 func (rogue *Rogue) registerHungerForBlood() {
 	if !rogue.Talents.HungerForBlood {
 		return
@@ -117,13 +134,14 @@ func (rogue *Rogue) registerHungerForBlood() {
 	})
 
 	rogue.HungerForBlood = rogue.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		ResourceType: stats.Energy,
-		BaseCost:     15,
+		ActionID: actionID,
+
+		EnergyCost: core.EnergyCostOptions{
+			Cost: 15,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: 15,
-				GCD:  time.Second,
+				GCD: time.Second,
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
@@ -139,6 +157,44 @@ func (rogue *Rogue) preyOnTheWeakMultiplier(_ *core.Unit) float64 {
 	//rogue.CurrentTarget.HasHealthBar() &&
 	//rogue.CurrentTarget.CurrentHealthPercent() < rogue.CurrentHealthPercent()
 	return 1 + 0.04*float64(rogue.Talents.PreyOnTheWeak)
+}
+
+func (rogue *Rogue) applyDirtyDeeds(target *core.Unit) {
+	if rogue.Talents.DirtyDeeds == 0 {
+		return
+	}
+	// Special abilities cause 20% more damage against targets below 35% health
+	if target.CurrentHealthPercent() < 0.35 {
+		// Apply Dirty Deeds damage increase
+	}
+}
+
+func (rogue *Rogue) registerDirtyDeeds() {
+	if rogue.Talents.DirtyDeeds == 0 {
+		return
+	}
+
+	actionID := core.ActionID{SpellID: 14083}
+
+	rogue.DirtyDeedsAura = rogue.RegisterAura(core.Aura{
+		Label:    "Dirty Deeds",
+		ActionID: actionID,
+		Duration: core.NeverExpires,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			rogue.PseudoStats.DamageDealtMultiplier *= rogue.DirtyDeedsMultiplier()
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			rogue.PseudoStats.DamageDealtMultiplier *= 1 / rogue.DirtyDeedsMultiplier()
+		},
+	})
+}
+
+func (rogue *Rogue) DirtyDeedsMultiplier() float64 {
+	if rogue.Talents.DirtyDeeds == 0 {
+		return 1
+	}
+
+	return 1 + 0.1*float64(rogue.Talents.DirtyDeeds)
 }
 
 func (rogue *Rogue) registerColdBloodCD() {
@@ -179,7 +235,7 @@ func (rogue *Rogue) registerColdBloodCD() {
 		},
 	})
 
-	coldBloodSpell := rogue.RegisterSpell(core.SpellConfig{
+	rogue.ColdBlood = rogue.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 
 		Cast: core.CastConfig{
@@ -195,7 +251,7 @@ func (rogue *Rogue) registerColdBloodCD() {
 	})
 
 	rogue.AddMajorCooldown(core.MajorCooldown{
-		Spell: coldBloodSpell,
+		Spell: rogue.ColdBlood,
 		Type:  core.CooldownTypeDPS,
 	})
 }
@@ -225,6 +281,39 @@ func (rogue *Rogue) applySealFate() {
 
 			if sim.Proc(procChance, "Seal Fate") {
 				rogue.AddComboPoints(sim, 1, cpMetrics)
+			}
+		},
+	})
+}
+
+func (rogue *Rogue) applyInitiative() {
+	if rogue.Talents.Initiative == 0 {
+		return
+	}
+
+	procChance := []float64{0, 0.33, 0.66, 1.0}[rogue.Talents.Initiative]
+	cpMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 13980})
+	var affectedSpells []*core.Spell
+
+	rogue.RegisterAura(core.Aura{
+		Label:    "Initiative",
+		Duration: core.NeverExpires,
+		OnInit: func(aura *core.Aura, sim *core.Simulation) {
+			affectedSpells = append(affectedSpells, rogue.Ambush)
+			affectedSpells = append(affectedSpells, rogue.Garrote)
+		},
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			for _, affectedSpell := range affectedSpells {
+				if spell == affectedSpell {
+					if result.Landed() {
+						if sim.Proc(procChance, "Initiative") {
+							rogue.AddComboPoints(sim, 1, cpMetrics)
+						}
+					}
+				}
 			}
 		},
 	})
@@ -367,7 +456,6 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 
 	const hasteBonus = 1.2
 	const inverseHasteBonus = 1 / 1.2
-	const energyCost = 25.0
 
 	dur := time.Second * 15
 
@@ -405,23 +493,17 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 	rogue.BladeFlurry = rogue.RegisterSpell(core.SpellConfig{
 		ActionID: BladeFlurryActionID,
 
-		ResourceType: stats.Energy,
-		BaseCost:     energyCost,
-
+		EnergyCost: core.EnergyCostOptions{
+			Cost: core.TernaryFloat64(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfBladeFlurry), 0, 25),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: energyCost,
-				GCD:  time.Second,
+				GCD: time.Second,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    rogue.NewTimer(),
 				Duration: cooldownDur,
-			},
-			ModifyCast: func(s1 *core.Simulation, s2 *core.Spell, c *core.Cast) {
-				if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfBladeFlurry) {
-					c.Cost = 0
-				}
 			},
 		},
 
@@ -435,7 +517,7 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 		Type:     core.CooldownTypeDPS,
 		Priority: core.CooldownPriorityDefault,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return rogue.CurrentEnergy() >= energyCost
+			return rogue.CurrentEnergy() >= rogue.BladeFlurry.DefaultCast.Cost
 		},
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 			if sim.GetRemainingDuration() > cooldownDur+dur {
@@ -509,4 +591,35 @@ func (rogue *Rogue) registerKillingSpreeCD() {
 		return
 	}
 	rogue.registerKillingSpreeSpell()
+}
+
+func (rogue *Rogue) registerHonorAmongThieves() {
+	// When anyone in your group critically hits with a damage or healing spell or ability, you have a [33%/66%/100%] cahnce to gain a combo point on your current target. This effect cannot occur more than once per second.
+	if rogue.Talents.HonorAmongThieves == 0 {
+		return
+	}
+
+	// FIXME: Implement a flow of combo points that simulates the party/raid crit procs
+	procChance := []float64{0, 0.33, 0.66, 1}[rogue.Talents.HonorAmongThieves]
+	comboMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 51701})
+	honorAmongThievesID := core.ActionID{SpellID: 51701}
+
+	rogue.HonorAmongThieves = rogue.RegisterAura(core.Aura{
+		Label:    "Honor Among Thieves",
+		ActionID: honorAmongThievesID,
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
+				Period: time.Second,
+				OnAction: func(s *core.Simulation) {
+					if sim.Proc(procChance, "Honor Among Thieves") {
+						rogue.AddComboPoints(sim, 1, comboMetrics)
+					}
+				},
+			})
+		},
+	})
 }

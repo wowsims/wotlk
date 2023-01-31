@@ -1,17 +1,172 @@
-.detailed-results {
-	height: 100%;
-}
+@import "./detailed_results/dps_histogram";
+@import "./detailed_results/player_damage";
+@import "./detailed_results/resource_metrics";
+@import "./detailed_results/results_filter";
+@import "./detailed_results/source_chart";
+@import "./detailed_results/timeline";
+@import "./detailed_results/topline_results";
 
 .detailed-results-manager-root {
-	height: 100%;
 	display: flex;
 	flex-direction: column;
+	& > * {
+		min-height: 0;
+}
 }
 
 .detailed-results-controls-div {
-	margin-bottom: calc(var(--bs-gap) / 2);
+	padding-bottom: calc(var(--bs-gap) / 2);
 }
 
-.detailed-results-iframe {
+.all-players .single-player-only {
+	display: none;
+}
+
+.single-player .all-players-only {
+	display: none;
+}
+
+.individual-sim .single-player-only {
+	display: initial;
+}
+.individual-sim .all-players-only {
+	display: none;
+}
+
+.dr-row {
+	padding-right: 10px
+}
+
+.dr-root > .dr-toolbar {
+	border-bottom: 1px solid $border-color;
+}
+
+.dr-root {
+	display: flex;
+	flex-direction: column;
+
+	> {
+		.tab-content {
+			flex-basis: calc(100vh - 17em);
+			padding-top: 1rem;
+			overflow: auto;
+		}
+
+		.tab-content > .tab-pane.dr-tab-content {
+			padding-top: 0;
+			padding-bottom: 0;
+		}
+	}
+}
+
+.new-tab {
+	.dr-root {
+		.tab-content {
+			flex-basis: calc(100vh - 8em);
+		}
+	}
+}
+
+
+.dr-toolbar {
+	display: flex;
+
+	& > * {
+		min-height: 0;
+	}
+
+	.nav-tabs {
+		border-bottom: 0;
+	}
+
+	.input-root {
+		margin-bottom: 0;
+	}
+}
+
+.results-filter {
+	display: flex !important;
+	align-items: center;
+}
+
+.individual-sim .player-filter-root {
+	display: none !important;
+}
+
+.tabs-filler {
 	flex-grow: 1;
+}
+
+.other-metrics {
+	display: flex;
+	width: 100%;
+}
+
+.metrics-table {
+	width: 100%;
+	font-size: 16px;
+}
+
+.melee-metrics-root .metrics-table {
+	font-size: 12px;
+}
+
+.hide-in-front-of-target.melee-metrics-root .metrics-table, .hide-threat-metrics .melee-metrics-root .metrics-table {
+	font-size: 14px;
+}
+
+.hide-threat-metrics .hide-in-front-of-target.melee-metrics-root .metrics-table {
+	font-size: 16px;
+}
+
+.metrics-table-header-row {
+	border-bottom: 2px solid white;
+}
+
+.metrics-table-header-cell {
+	padding: .25rem;
+	cursor: pointer;
+}
+
+.metrics-table-body tr {
+	border-bottom: 1px solid $border-color;
+}
+
+.metrics-table-body tr:hover {
+	background-color: rgba(0,0,0,0.5);
+}
+
+.metrics-table-body td {
+	padding: .25rem;
+}
+
+.metrics-table-header-cell:first-child, .metrics-table-body td:first-child {
+	text-align: left;
+}
+.metrics-table-header-cell:not(:first-child), .metrics-table-body td:not(:first-child) {
+	text-align: right;
+}
+
+.metrics-action-icon {
+  @include wowhead-background-icon;
+	height: 30px;
+	width: 30px;
+	vertical-align: middle;
+}
+
+.parent-metric {
+	cursor: pointer;
+}
+.child-metric>*:first-child {
+	padding-left: 20px;
+}
+
+tr:not(.parent-metric) .expand-toggle {
+	display: none;
+}
+.parent-metric.expand .fa-caret-down {
+	display: none;
+}
+.parent-metric:not(.expand) .fa-caret-right {
+	display: none;
 }

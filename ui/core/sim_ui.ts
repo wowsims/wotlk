@@ -15,11 +15,8 @@ import { EventID, TypedEvent } from './typed_event.js';
 import { Tooltip } from 'bootstrap';
 import { SimTab } from './components/sim_tab.js';
 
-declare var tippy: any;
-declare var pako: any;
-
 const URLMAXLEN = 2048;
-const noticeText = '';
+const noticeText = "We're currently aware of an issue where Wowhead tooltips do not correctly reflect Tier 8 set bonuses.";
 
 // Config for displaying a warning to the user whenever a condition is met.
 export interface SimWarning {
@@ -29,6 +26,8 @@ export interface SimWarning {
 
 export interface SimUIConfig {
 	// Additional css class to add to the root element.
+	cssClass: string;
+	// Scheme used for themeing on a per-class Basis or for other sims
 	cssScheme: string;
 	// The spec, if an individual sim, or null if the raid sim.
 	spec: Spec | null,
@@ -39,6 +38,7 @@ export interface SimUIConfig {
 // Shared UI for all individual sims and the raid sim.
 export abstract class SimUI extends Component {
 	readonly sim: Sim;
+	readonly cssClass: string;
 	readonly cssScheme: string;
 	readonly isWithinRaidSim: boolean;
 
@@ -54,19 +54,20 @@ export abstract class SimUI extends Component {
 	readonly iterationsPicker: HTMLElement;
 	readonly simTabContentsContainer: HTMLElement;
 
-	private warningsTippy: any;
-
 	constructor(parentElem: HTMLElement, sim: Sim, config: SimUIConfig) {
 		super(parentElem, 'sim-ui');
 		this.sim = sim;
+		this.cssClass = config.cssClass;
 		this.cssScheme = config.cssScheme;
+		this.isWithinRaidSim = this.rootElem.closest('.within-raid-sim') != null;
 		this.rootElem.innerHTML = simHTML;
 		this.simContentContainer = this.rootElem.querySelector('.sim-content') as HTMLElement;
 		this.simHeader = new SimHeader(this.simContentContainer, this);
 		this.simMain = document.createElement('main');
 		this.simMain.classList.add('sim-main', 'tab-content');
 		this.simContentContainer.appendChild(this.simMain);
-		this.isWithinRaidSim = this.rootElem.closest('.within-raid-sim') != null;
+
+		this.rootElem.classList.add(this.cssClass);
 
 		if (!this.isWithinRaidSim) {
 			this.rootElem.classList.add('not-within-raid-sim');
@@ -114,11 +115,10 @@ export abstract class SimUI extends Component {
 		updateShowExperimental();
 		this.sim.showExperimentalChangeEmitter.on(updateShowExperimental);
 
-		this.addNoticeBanner();
 		this.addKnownIssues(config);
 
 		const titleElem = this.rootElem.querySelector('.sim-title') as HTMLElement;
-		new SimTitleDropdown(titleElem, config.spec);
+		new SimTitleDropdown(titleElem, config.spec, {noDropdown: this.isWithinRaidSim});
 
 		const resultsViewerElem = this.rootElem.getElementsByClassName('sim-sidebar-results')[0] as HTMLElement;
 		this.resultsViewer = new ResultsViewer(resultsViewerElem);
@@ -152,7 +152,7 @@ export abstract class SimUI extends Component {
 
 	addAction(name: string, cssClass: string, actFn: () => void) {
 		const button = document.createElement('button');
-		button.classList.add('btn', `btn-${this.cssScheme}`, 'w-100', cssClass);
+		button.classList.add('btn', 'btn-primary', 'w-100', cssClass);
 		button.textContent = name;
 		button.addEventListener('click', actFn);
 		this.simActionsContainer.appendChild(button);
@@ -180,14 +180,6 @@ export abstract class SimUI extends Component {
 
 	addWarning(warning: SimWarning) {
 		this.simHeader.addWarning(warning);
-	}
-
-	private addNoticeBanner() {
-		const noticesElem = document.querySelector('.notices-banner') as HTMLElement;
-
-		if (!noticeText) {
-			noticesElem.remove();
-		}
 	}
 
 	private addKnownIssues(config: SimUIConfig) {
@@ -295,7 +287,7 @@ export abstract class SimUI extends Component {
 const simHTML = `
 <div class="sim-root">
 	<div class="sim-bg"></div>
-	<div class="notices-banner alert border-bottom mb-0 text-center">${noticeText}</div>
+	${noticeText ? `<div class="notices-banner alert border-bottom mb-0 text-center">${noticeText}</div>` : ''}
   <aside class="sim-sidebar">
     <div class="sim-title"></div>
 		<div class="sim-sidebar-content">

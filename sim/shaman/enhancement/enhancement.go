@@ -42,7 +42,7 @@ func NewEnhancementShaman(character core.Character, options *proto.Player) *Enha
 	}
 
 	enh := &EnhancementShaman{
-		Shaman: shaman.NewShaman(character, enhOptions.Talents, totems, selfBuffs, true),
+		Shaman: shaman.NewShaman(character, options.TalentsString, totems, selfBuffs, true),
 	}
 
 	enh.EnableResumeAfterManaWait(enh.OnGCDReady)
@@ -56,30 +56,35 @@ func NewEnhancementShaman(character core.Character, options *proto.Player) *Enha
 		SyncType:       int32(enhOptions.Options.SyncType),
 	})
 
+	if enh.Totems.UseFireElemental && enhOptions.Rotation.EnableItemSwap {
+		enh.EnableItemSwap(enhOptions.Rotation.ItemSwap, enh.DefaultMeleeCritMultiplier(), enh.DefaultMeleeCritMultiplier(), 0)
+	}
+
+	if enhOptions.Rotation.LightningboltWeave {
+		enh.maelstromweaponMinStack = enhOptions.Rotation.MaelstromweaponMinStack
+	} else {
+		enh.maelstromweaponMinStack = 5
+	}
+
 	if !enh.HasMHWeapon() {
 		enh.SelfBuffs.ImbueMH = proto.ShamanImbue_NoImbue
 	}
 	if !enh.HasOHWeapon() {
 		enh.SelfBuffs.ImbueOH = proto.ShamanImbue_NoImbue
 	}
-	enh.ApplyWindfuryImbue(
-		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_WindfuryWeapon,
-		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_WindfuryWeapon)
-	enh.ApplyFlametongueImbue(
+
+	enh.RegisterFlametongueImbue(
 		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FlametongueWeapon,
 		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_FlametongueWeapon)
-	enh.ApplyFlametongueDownrankImbue(
+	enh.RegisterFlametongueDownrankImbue(
 		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FlametongueWeaponDownrank,
 		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_FlametongueWeaponDownrank)
-	enh.ApplyFrostbrandImbue(
+	enh.RegisterWindfuryImbue(
+		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_WindfuryWeapon,
+		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_WindfuryWeapon)
+	enh.RegisterFrostbrandImbue(
 		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FrostbrandWeapon,
 		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_FrostbrandWeapon)
-
-	if enh.SelfBuffs.ImbueMH == proto.ShamanImbue_WindfuryWeapon ||
-		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FlametongueWeapon ||
-		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FlametongueWeaponDownrank ||
-		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FrostbrandWeapon {
-	}
 
 	enh.SpiritWolves = &shaman.SpiritWolves{
 		SpiritWolf1: enh.NewSpiritWolf(1),
@@ -94,7 +99,8 @@ func NewEnhancementShaman(character core.Character, options *proto.Player) *Enha
 type EnhancementShaman struct {
 	*shaman.Shaman
 
-	rotation Rotation
+	rotation                Rotation
+	maelstromweaponMinStack int32
 
 	scheduler common.GCDScheduler
 }
@@ -105,11 +111,30 @@ func (enh *EnhancementShaman) GetShaman() *shaman.Shaman {
 
 func (enh *EnhancementShaman) Initialize() {
 	enh.Shaman.Initialize()
+
+	if enh.ItemSwap.IsEnabled() {
+		mh := enh.ItemSwap.GetItem(proto.ItemSlot_ItemSlotMainHand)
+		enh.ApplyFlametongueImbueToItem(mh, true)
+		oh := enh.ItemSwap.GetItem(proto.ItemSlot_ItemSlotOffHand)
+		enh.ApplyFlametongueImbueToItem(oh, false)
+		enh.RegisterOnItemSwap(func(s *core.Simulation) {
+			mh := enh.GetMHWeapon()
+			oh := enh.GetOHWeapon()
+
+			if mh == nil || oh == nil || mh.SwingSpeed != oh.SwingSpeed {
+				enh.AutoAttacks.SyncType = int32(proto.ShamanSyncType_NoSync)
+			} else {
+				enh.AutoAttacks.SyncType = int32(proto.ShamanSyncType_SyncMainhandOffhandSwings)
+			}
+		})
+	}
 	enh.DelayDPSCooldowns(3 * time.Second)
+
 }
 
 func (enh *EnhancementShaman) Reset(sim *core.Simulation) {
 	enh.Shaman.Reset(sim)
+	enh.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand, proto.ItemSlot_ItemSlotOffHand}, false)
 }
 
 func (enh *EnhancementShaman) CastLightningBoltWeave(sim *core.Simulation, reactionTime time.Duration) bool {

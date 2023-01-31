@@ -5,18 +5,10 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warrior *Warrior) registerExecuteSpell() {
 	const maxRage = 30
-
-	cost := 15 - float64(warrior.Talents.FocusedRage) - []float64{0, 2, 5}[warrior.Talents.ImprovedExecute]
-	if warrior.HasSetBonus(ItemSetOnslaughtBattlegear, 2) {
-		cost -= 3
-	}
-
-	refundAmount := 0.8 * cost
 
 	gcd := core.GCDDefault
 	if warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4) {
@@ -28,19 +20,23 @@ func (warrior *Warrior) registerExecuteSpell() {
 		extraRageBonus = 10
 	}
 
+	var rageMetrics *core.ResourceMetrics
 	warrior.Execute = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47471},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
-		ResourceType: stats.Rage,
-		BaseCost:     cost,
-
+		RageCost: core.RageCostOptions{
+			Cost: 15 -
+				float64(warrior.Talents.FocusedRage) -
+				[]float64{0, 2, 5}[warrior.Talents.ImprovedExecute] -
+				core.TernaryFloat64(warrior.HasSetBonus(ItemSetOnslaughtBattlegear, 2), 3, 0),
+			Refund: 0.8,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: cost,
-				GCD:  gcd,
+				GCD: gcd,
 			},
 			IgnoreHaste: true,
 		},
@@ -54,17 +50,18 @@ func (warrior *Warrior) registerExecuteSpell() {
 			if extraRage > maxRage-spell.CurCast.Cost {
 				extraRage = maxRage - spell.CurCast.Cost
 			}
-			warrior.SpendRage(sim, extraRage, spell.ResourceMetrics)
-			spell.ResourceMetrics.Events--
+			warrior.SpendRage(sim, extraRage, rageMetrics)
+			rageMetrics.Events--
 
 			baseDamage := 1456 + 0.2*spell.MeleeAttackPower() + 38*(extraRage+extraRageBonus)
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 
 			if !result.Landed() {
-				warrior.AddRage(sim, refundAmount, warrior.RageRefundMetrics)
+				spell.IssueRefund(sim)
 			}
 		},
 	})
+	rageMetrics = warrior.Execute.Cost.(*core.RageCost).ResourceMetrics
 }
 
 func (warrior *Warrior) SpamExecute(spam bool) bool {

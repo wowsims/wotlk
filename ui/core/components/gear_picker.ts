@@ -2,12 +2,11 @@ import { EquippedItem } from '../proto_utils/equipped_item.js';
 import { getEmptyGemSocketIconUrl, gemMatchesSocket } from '../proto_utils/gems.js';
 import { setGemSocketCssClass } from '../proto_utils/gems.js';
 import { Stats } from '../proto_utils/stats.js';
-import { Class, Spec, GemColor, ItemSpec } from '../proto/common.js';
+import { Class, Spec, GemColor, ItemSwap, ItemSpec } from '../proto/common.js';
 import { ItemQuality } from '../proto/common.js';
 import { ItemSlot } from '../proto/common.js';
 import { ItemType } from '../proto/common.js';
 import { getEnchantDescription, getUniqueEnchantString } from '../proto_utils/enchants.js';
-import { ItemSwapGear } from '../proto_utils/item_swap_gear.js';
 import { ActionId } from '../proto_utils/action_id.js';
 import { slotNames } from '../proto_utils/names.js';
 import { setItemQualityCssClass } from '../css_utils.js';
@@ -22,12 +21,12 @@ import {
 
 import { Component } from './component.js';
 import { FiltersMenu } from './filters_menu.js';
-import { Popup } from './popup.js';
 import { makePhaseSelector } from './other_inputs.js';
 import { makeShow1hWeaponsSelector } from './other_inputs.js';
 import { makeShow2hWeaponsSelector } from './other_inputs.js';
 import { makeShowMatchingGemsSelector } from './other_inputs.js';
 import { Input, InputConfig } from './input.js';
+import {ItemSwapGear } from '../proto_utils/gear.js'
 import { SimUI } from '../sim_ui.js';
 import { BaseModal } from './base_modal.js';
 
@@ -288,13 +287,13 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 	private _items: Array<Item> = [];
 	private _enchants: Array<Enchant> = [];
 
-	constructor(parent: HTMLElement, simUI: SimUI, player: Player<SpecType>, slot: ItemSlot, gear: ItemSwapGear, config: InputConfig<Player<SpecType>, ValueType>) {
+	constructor(parent: HTMLElement, simUI: SimUI, player: Player<SpecType>, slot: ItemSlot, config: InputConfig<Player<SpecType>, ValueType>) {
 		super(parent, 'icon-picker-root', player, config)
 		this.rootElem.classList.add('icon-picker');
 		this.player = player;
 		this.config = config;
 		this.slot = slot;
-		this.gear = gear;
+		this.gear = this.player.getItemSwapGear();
 
 		this.iconAnchor = document.createElement('a');
 		this.iconAnchor.classList.add('icon-picker-button');
@@ -311,11 +310,11 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 			this.addItemSpecToGear();
 			const gearData = {
 				equipItem: (eventID: EventID, equippedItem: EquippedItem | null) => {
-					this.gear.equipItem(this.slot, equippedItem);
+					this.gear.equipItem(this.slot, equippedItem, player.canDualWield2H());
 					this.inputChanged(eventID);
 				},
 				getEquippedItem: () => this.gear.getEquippedItem(this.slot),
-				changeEvent: player.specOptionsChangeEmitter,
+				changeEvent: config.changedEvent(player),
 			}
 
 			const onClickStart = (event: Event) => {
@@ -346,23 +345,43 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 
 	}
 
-	addItemSpecToGear() {
-		const itemSpec = this.config.getValue(this.player) as unknown as ItemSpec
+	private addItemSpecToGear() {
+		const itemSwap = this.config.getValue(this.player) as unknown as ItemSwap
+		const fieldName = this.getFieldNameFromItemSlot(this.slot) 
+
+		if (!fieldName)
+			return;
+
+		const itemSpec = itemSwap[fieldName] as unknown as ItemSpec
+		
 		if (!itemSpec)
 			return;
 
 		const equippedItem = this.player.sim.db.lookupItemSpec(itemSpec);
 
 		if (equippedItem) {
-			this.gear.equipItem(this.slot, equippedItem);
+			this.gear.equipItem(this.slot, equippedItem, this.player.canDualWield2H());
 		}
+	}
+
+	private getFieldNameFromItemSlot(slot: ItemSlot): keyof ItemSwap | undefined {
+		switch (slot) {
+			case ItemSlot.ItemSlotMainHand:
+				return 'mhItem';
+			case ItemSlot.ItemSlotOffHand:
+				return 'ohItem';
+			case ItemSlot.ItemSlotRanged:
+				return 'rangedItem';
+		}
+
+		return undefined;
 	}
 
 	getInputElem(): HTMLElement {
 		return this.iconAnchor;
 	}
 	getInputValue(): ValueType {
-		return this.gear.getEquippedItem(this.slot)?.asSpec() as unknown as ValueType;
+		return this.gear.toProto() as unknown as ValueType
 	}
 
 	setInputValue(newValue: ValueType): void {
@@ -390,18 +409,6 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 					});
 				}
 				this.socketsContainerElem.appendChild(gemIconElem);
-
-				if (gemIdx == equippedItem!.numPossibleSockets - 1 && [ItemType.ItemTypeWrist, ItemType.ItemTypeHands].includes(equippedItem!.item.type)) {
-					const updateProfession = () => {
-						if (this.player.isBlacksmithing()) {
-							gemIconElem.style.removeProperty('display');
-						} else {
-							gemIconElem.style.display = 'none';
-						}
-					};
-					this.player.professionChangeEmitter.on(updateProfession);
-					updateProfession();
-				}
 			});
 
 		} else {
@@ -443,20 +450,19 @@ class SelectorModal extends BaseModal {
 	private readonly contentElem: HTMLElement;
 
 	constructor(parent: HTMLElement, simUI: SimUI, player: Player<any>, config: SelectorModalConfig) {
-		super('selector-modal');
+		super(parent, 'selector-modal');
+
 		this.simUI = simUI;
 		this.player = player;
 		this.config = config;
 
 		window.scrollTo({top: 0});
 
-		this.header.innerHTML = `<ul class="nav nav-tabs selector-modal-tabs"></ul>`
+		this.header!.insertAdjacentHTML('afterbegin', `<ul class="nav nav-tabs selector-modal-tabs"></ul>`);
 		this.body.innerHTML = `<div class="tab-content selector-modal-tab-content"></div>`
 
-		this.addCloseButton();
-
-		this.tabsElem = this.rootElem.getElementsByClassName('selector-modal-tabs')[0] as HTMLElement;
-		this.contentElem = this.rootElem.getElementsByClassName('selector-modal-tab-content')[0] as HTMLElement;
+		this.tabsElem = this.rootElem.querySelector('.selector-modal-tabs') as HTMLElement;
+		this.contentElem = this.rootElem.querySelector('.selector-modal-tab-content') as HTMLElement;
 
 		this.setData();
 	}
@@ -683,6 +689,7 @@ class SelectorModal extends BaseModal {
 			>
 				<div class="selector-modal-tab-content-header">
 					<input class="selector-modal-search form-control" type="text" placeholder="Search...">
+					${label == 'Items' ? '<button class="selector-modal-filters-button btn btn-primary">Filters</button>' : ''}
 					<div class="selector-modal-phase-selector"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-1h-weapons"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-2h-weapons"></div>
@@ -718,11 +725,14 @@ class SelectorModal extends BaseModal {
 
 		const phaseSelector = makePhaseSelector(tabContent.getElementsByClassName('selector-modal-phase-selector')[0] as HTMLElement, this.player.sim);
 
-		const filtersButton = tabContent.getElementsByClassName('selector-modal-filters-button')[0] as HTMLElement;
-		if (FiltersMenu.anyFiltersForSlot(slot)) {
-			filtersButton.addEventListener('click', () => new FiltersMenu(this.rootElem, this.player, slot));
-		} else {
-			filtersButton.style.display = 'none';
+		// TODO: Refactor
+		if (label == 'Gear') {
+			const filtersButton = tabContent.getElementsByClassName('selector-modal-filters-button')[0] as HTMLElement;
+			if (FiltersMenu.anyFiltersForSlot(slot)) {
+				filtersButton.addEventListener('click', () => new FiltersMenu(this.simUI.rootElem, this.player, slot));
+			} else {
+				filtersButton.style.display = 'none';
+			}
 		}
 
 		const listElem = tabContent.getElementsByClassName('selector-modal-list')[0] as HTMLElement;
@@ -948,8 +958,8 @@ class SelectorModal extends BaseModal {
 				}
 
 				if (searchInput.value.length > 0) {
-					const searchQuery = searchInput.value.toLowerCase().split(" ");
-					const name = listItemData.name.toLowerCase();
+					const searchQuery = searchInput.value.toLowerCase().replaceAll(/[^a-zA-Z0-9\s]/g, '').split(" ");
+					const name = listItemData.name.toLowerCase().replaceAll(/[^a-zA-Z0-9\s]/g, '');
 
 					var include = true;
 					searchQuery.forEach(v => {
@@ -1034,23 +1044,23 @@ interface ItemData<T> {
 }
 
 const emptySlotIcons: Record<ItemSlot, string> = {
-	[ItemSlot.ItemSlotHead]: 'https://cdn.seventyupgrades.com/item-slots/Head.jpg',
-	[ItemSlot.ItemSlotNeck]: 'https://cdn.seventyupgrades.com/item-slots/Neck.jpg',
-	[ItemSlot.ItemSlotShoulder]: 'https://cdn.seventyupgrades.com/item-slots/Shoulders.jpg',
-	[ItemSlot.ItemSlotBack]: 'https://cdn.seventyupgrades.com/item-slots/Back.jpg',
-	[ItemSlot.ItemSlotChest]: 'https://cdn.seventyupgrades.com/item-slots/Chest.jpg',
-	[ItemSlot.ItemSlotWrist]: 'https://cdn.seventyupgrades.com/item-slots/Wrists.jpg',
-	[ItemSlot.ItemSlotHands]: 'https://cdn.seventyupgrades.com/item-slots/Hands.jpg',
-	[ItemSlot.ItemSlotWaist]: 'https://cdn.seventyupgrades.com/item-slots/Waist.jpg',
-	[ItemSlot.ItemSlotLegs]: 'https://cdn.seventyupgrades.com/item-slots/Legs.jpg',
-	[ItemSlot.ItemSlotFeet]: 'https://cdn.seventyupgrades.com/item-slots/Feet.jpg',
-	[ItemSlot.ItemSlotFinger1]: 'https://cdn.seventyupgrades.com/item-slots/Finger.jpg',
-	[ItemSlot.ItemSlotFinger2]: 'https://cdn.seventyupgrades.com/item-slots/Finger.jpg',
-	[ItemSlot.ItemSlotTrinket1]: 'https://cdn.seventyupgrades.com/item-slots/Trinket.jpg',
-	[ItemSlot.ItemSlotTrinket2]: 'https://cdn.seventyupgrades.com/item-slots/Trinket.jpg',
-	[ItemSlot.ItemSlotMainHand]: 'https://cdn.seventyupgrades.com/item-slots/MainHand.jpg',
-	[ItemSlot.ItemSlotOffHand]: 'https://cdn.seventyupgrades.com/item-slots/OffHand.jpg',
-	[ItemSlot.ItemSlotRanged]: 'https://cdn.seventyupgrades.com/item-slots/Ranged.jpg',
+	[ItemSlot.ItemSlotHead]: '/wotlk/assets/item_slots/head.jpg',
+	[ItemSlot.ItemSlotNeck]: '/wotlk/assets/item_slots/neck.jpg',
+	[ItemSlot.ItemSlotShoulder]: '/wotlk/assets/item_slots/shoulders.jpg',
+	[ItemSlot.ItemSlotBack]: '/wotlk/assets/item_slots/shirt.jpg',
+	[ItemSlot.ItemSlotChest]: '/wotlk/assets/item_slots/chest.jpg',
+	[ItemSlot.ItemSlotWrist]: '/wotlk/assets/item_slots/wrists.jpg',
+	[ItemSlot.ItemSlotHands]: '/wotlk/assets/item_slots/hands.jpg',
+	[ItemSlot.ItemSlotWaist]: '/wotlk/assets/item_slots/waist.jpg',
+	[ItemSlot.ItemSlotLegs]: '/wotlk/assets/item_slots/legs.jpg',
+	[ItemSlot.ItemSlotFeet]: '/wotlk/assets/item_slots/feet.jpg',
+	[ItemSlot.ItemSlotFinger1]: '/wotlk/assets/item_slots/finger.jpg',
+	[ItemSlot.ItemSlotFinger2]: '/wotlk/assets/item_slots/finger.jpg',
+	[ItemSlot.ItemSlotTrinket1]: '/wotlk/assets/item_slots/trinket.jpg',
+	[ItemSlot.ItemSlotTrinket2]: '/wotlk/assets/item_slots/trinket.jpg',
+	[ItemSlot.ItemSlotMainHand]: '/wotlk/assets/item_slots/mainhand.jpg',
+	[ItemSlot.ItemSlotOffHand]: '/wotlk/assets/item_slots/offhand.jpg',
+	[ItemSlot.ItemSlotRanged]: '/wotlk/assets/item_slots/ranged.jpg',
 };
 export function getEmptySlotIconUrl(slot: ItemSlot): string {
 	return emptySlotIcons[slot];

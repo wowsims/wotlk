@@ -4,39 +4,29 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 	apRatio := 0.09 * float64(comboPoints)
-
 	chanceToRetainStacks := []float64{0, 0.33, 0.66, 1}[rogue.Talents.MasterPoisoner]
-
-	baseCost := 35.0
-	refundAmount := 0.4 * float64(rogue.Talents.QuickRecovery)
 
 	// TODO Envenom can only be cast if the target is afflicted by Deadly Poison
 	//  The current rotation code doesn't handle cast failures gracefully, so this is hard to
 	//  work around at the moment
 	return rogue.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 57993, Tag: comboPoints},
-		SpellSchool:  core.SpellSchoolNature,
-		ProcMask:     core.ProcMaskMeleeMHSpecial, // not core.ProcMaskSpellDamage
-		Flags:        core.SpellFlagMeleeMetrics | rogue.finisherFlags(),
-		ResourceType: stats.Energy,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 57993, Tag: comboPoints},
+		SpellSchool: core.SpellSchoolNature,
+		ProcMask:    core.ProcMaskMeleeMHSpecial, // not core.ProcMaskSpellDamage
+		Flags:       core.SpellFlagMeleeMetrics | rogue.finisherFlags(),
 
+		EnergyCost: core.EnergyCostOptions{
+			Cost:          35,
+			Refund:        0.4 * float64(rogue.Talents.QuickRecovery),
+			RefundMetrics: rogue.QuickRecoveryMetrics,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  time.Second,
-			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				// - the aura is active even if the attack fails to land
-				// - the aura is applied before the hit effect
-				// See: https://github.com/where-fore/rogue-wotlk/issues/32
-				rogue.EnvenomAura.Duration = time.Second * time.Duration(1+comboPoints)
-				rogue.EnvenomAura.Activate(sim)
+				GCD: time.Second,
 			},
 			IgnoreHaste: true,
 		},
@@ -48,7 +38,13 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			dp := rogue.deadlyPoisonDots[target.Index]
+			// - the aura is active even if the attack fails to land
+			// - the aura is applied before the hit effect
+			// See: https://github.com/where-fore/rogue-wotlk/issues/32
+			rogue.EnvenomAura.Duration = time.Second * time.Duration(1+comboPoints)
+			rogue.EnvenomAura.Activate(sim)
+
+			dp := rogue.DeadlyPoison.Dot(target)
 			// - 215 base is scaled by consumed doses (<= comboPoints)
 			// - apRatio is independent of consumed doses (== comboPoints)
 			consumed := core.MinInt32(dp.GetStacks(), comboPoints)
@@ -67,9 +63,7 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 					}
 				}
 			} else {
-				if refundAmount > 0 {
-					rogue.AddEnergy(sim, spell.CurCast.Cost*refundAmount, rogue.QuickRecoveryMetrics)
-				}
+				spell.IssueRefund(sim)
 			}
 
 			spell.DealDamage(sim, result)

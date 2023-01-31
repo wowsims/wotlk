@@ -138,6 +138,7 @@ enum EarthTotem {
 	NoEarthTotem = 0;
 	StrengthOfEarthTotem = 1;
 	TremorTotem = 2;
+	StoneskinTotem = 3;
 }
 
 enum AirTotem {
@@ -234,76 +235,87 @@ message ElementalShaman {
 	}
 
 	Rotation rotation = 1;
-	ShamanTalents talents = 2;
 	Options options = 3;
 }
 
 message EnhancementShaman {
-    message Rotation {
-        ShamanTotems totems = 1;
-        
-        enum RotationType {
-            Unknown = 0;
-            Priority = 1;
-            Custom = 2;
-        }
-        RotationType rotation_type = 2;
+	message Rotation {
+		ShamanTotems totems = 1;
+		
+		enum RotationType {
+			Unknown = 0;
+			Priority = 1;
+			Custom = 2;
+		}
+		RotationType rotation_type = 2;
 
-        //TODO: add spells here for custom rotation (if nessecary?)
-        enum CustomRotationSpell {
-            NoSpell = 0;
-            Stormstrike = 1;
-            StormstrikeDebuffMissing = 2; //find a way to differentiate tooltips for this, lightning bolt weaves, and downranked flametongue
-            LightningBolt = 3;
-            LightningBoltWeave = 4;
-            FlameShock = 5;
-            EarthShock = 6;
-            LavaLash = 7;
-            LavaBurst = 8;
-            LightningShield = 9;
-            FireNova = 10;
-            ChainLightning = 11;
+		//TODO: add spells here for custom rotation (if nessecary?)
+		enum CustomRotationSpell {
+			NoSpell = 0;
+			Stormstrike = 1;
+			StormstrikeDebuffMissing = 2; //find a way to differentiate tooltips for this, lightning bolt weaves, and downranked flametongue
+			LightningBolt = 3;
+			LightningBoltWeave = 4;
+			FlameShock = 5;
+			EarthShock = 6;
+			LavaLash = 7;
+			LavaBurst = 8;
+			LightningShield = 9;
+			FireNova = 10;
+			ChainLightning = 11;
 			FrostShock = 12;
 			MagmaTotem = 13;
 			LightningBoltDelayedWeave = 14;
-        }
-
+		}
 		CustomRotation custom_rotation = 3;
 
-        //weaving options
-        bool lavaburst_weave = 4;
-        bool lightningbolt_weave = 5;
-        int32 maelstromweapon_min_stack = 6;
+		//weaving options
+		bool lavaburst_weave = 4;
+		bool lightningbolt_weave = 5;
+		int32 maelstromweapon_min_stack = 6;
 		double auto_weave_delay = 7;
 
-        //other general rotation config options
-        double firenova_mana_threshold = 8;
-        double shamanistic_rage_mana_threshold = 9;
+		//other general rotation config options
+		double firenova_mana_threshold = 8;
+		double shamanistic_rage_mana_threshold = 9;
 
 		enum PrimaryShock {
 			None = 0;
 			Earth = 1;
 			Frost = 2;
-    	}
+		}
 
 		bool weave_flame_shock = 10;
 		PrimaryShock primary_shock = 11;
-        int32 flame_shock_clip_ticks = 12;
+		int32 flame_shock_clip_ticks = 12;
 		double delay_gcd_weave = 13;
+		ItemSwap item_swap = 14;
+		bool enable_item_swap = 15;
+	}
 
-    }
+	message Options {
+		ShamanShield shield = 1;
+		bool bloodlust = 2;
+		ShamanSyncType sync_type = 3;
+		ShamanImbue imbue_mh = 4;
+		ShamanImbue imbue_oh = 5;
+	}
 
-    message Options {
-        ShamanShield shield = 1;
-	    bool bloodlust = 2;
-        ShamanSyncType sync_type = 3;
-        ShamanImbue imbue_mh = 4;
-        ShamanImbue imbue_oh = 5;
-		ItemSwap item_swap = 6;
-    }
+	Rotation rotation = 1;
+	Options options = 3;
+}
 
-    Rotation rotation = 1;
-    ShamanTalents talents = 2;
-    Options options = 3;
+message RestorationShaman {
+	message Rotation {
+		ShamanTotems totems = 1;
+	}
 
+	message Options {
+		ShamanShield shield = 1;
+		bool bloodlust = 2;
+		ShamanImbue imbue_mh = 4;
+	}
+
+	Rotation rotation = 1;
+	Options options = 3;
 }

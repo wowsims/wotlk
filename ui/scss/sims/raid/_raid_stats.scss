@@ -1,0 +1,84 @@
+@use "sass:map";
+
+.raid-stats {
+	.raid-stats-section {
+		margin-bottom: $block-spacer * 2;
+
+		.raid-stats-section-label {
+			font-weight: bold;
+		}
+
+		.raid-stats-section-content {
+			padding: map.get($spacers, 2);
+			border: 1px solid $border-color;
+			display: grid;
+			grid-template-columns: repeat(4, 1fr);
+			background-color: rgba(50,50,50,.5);
+
+			.raid-stats-category-root {
+				&:not(:nth-last-child(-n+4)) {
+					margin-bottom: $block-spacer;
+				}
+
+				.raid-stats-category {
+					display: inline-flex;
+					color: white;
+
+					.raid-stats-category-label {
+						filter: brightness(.4);
+					}
+
+					.raid-stats-category-counter,
+					&:hover .raid-stats-category-label {
+						filter: brightness(.6);
+					}
+
+					&.active .raid-stats-category-label {
+						filter: brightness(.8);
+					}
+
+					&.active .raid-stats-category-counter,
+					&.active:hover .raid-stats-category-label {
+						filter: brightness(1);
+					}
+
+					.raid-stats-category-counter {
+						min-width: 16px;
+						text-align: center;
+					}
+				}
+			}
+		}
+	}
+}
+
+.raid-stats-category-tooltip {
+	.tooltip-inner {
+		max-width: unset;
+		text-align: left;
+		font-weight: bold;
+	}
+
+	.raid-stats-effect {
+		display: flex;
+		align-items: center;
+
+		&:not(:last-child) {
+			margin-bottom: map.get($spacers, 1);
+		}
+
+		&> :not(:last-child) {
+			margin-right: map.get($spacers, 1);
+		}
+
+		.raid-stats-effect-counter {
+			min-width: 16px;
+			text-align: center;
+		}
+
+		.raid-stats-effect-icon {
+			width: 1rem;
+			height: 1rem;
+		}
+	}
+}

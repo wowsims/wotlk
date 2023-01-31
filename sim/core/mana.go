@@ -24,7 +24,6 @@ type manaBar struct {
 	JowManaMetrics        *ResourceMetrics
 	VtManaMetrics         *ResourceMetrics
 	JowiseManaMetrics     *ResourceMetrics
-	PleaManaMetrics       *ResourceMetrics
 
 	ReplenishmentAura *Aura
 }
@@ -292,4 +291,41 @@ func (mb *manaBar) reset() {
 	}
 
 	mb.currentMana = mb.unit.MaxMana()
+}
+
+type ManaCostOptions struct {
+	BaseCost   float64
+	FlatCost   float64 // Alternative to BaseCost for giving a flat value.
+	Multiplier float64 // It's OK to leave this at 0, will default to 1.
+}
+type ManaCost struct {
+	ResourceMetrics *ResourceMetrics
+}
+
+func newManaCost(spell *Spell, options ManaCostOptions) *ManaCost {
+	spell.ResourceType = stats.Mana
+	spell.BaseCost = TernaryFloat64(options.FlatCost > 0, options.FlatCost, options.BaseCost*spell.Unit.BaseMana)
+	spell.DefaultCast.Cost = spell.BaseCost * TernaryFloat64(options.Multiplier == 0, 1, options.Multiplier)
+
+	return &ManaCost{
+		ResourceMetrics: spell.Unit.NewManaMetrics(spell.ActionID),
+	}
+}
+
+func (mc *ManaCost) MeetsRequirement(spell *Spell) bool {
+	spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
+	return spell.Unit.CurrentMana() >= spell.CurCast.Cost
+}
+func (mc *ManaCost) LogCostFailure(sim *Simulation, spell *Spell) {
+	spell.Unit.Log(sim,
+		"Failed casting %s, not enough mana. (Current Mana = %0.03f, Mana Cost = %0.03f)",
+		spell.ActionID, spell.Unit.CurrentMana(), spell.CurCast.Cost)
+}
+func (mc *ManaCost) SpendCost(sim *Simulation, spell *Spell) {
+	if spell.CurCast.Cost > 0 {
+		spell.Unit.SpendMana(sim, spell.CurCast.Cost, mc.ResourceMetrics)
+		spell.Unit.PseudoStats.FiveSecondRuleRefreshTime = sim.CurrentTime + time.Second*5
+	}
+}
+func (mc *ManaCost) IssueRefund(sim *Simulation, spell *Spell) {
 }

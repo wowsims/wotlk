@@ -157,6 +157,7 @@ enum PaladinSeal {
 enum PaladinJudgement {
 	JudgementOfWisdom = 0;
 	JudgementOfLight = 1;
+	NoJudgement = 2;
 }
 
 message RetributionPaladin {
@@ -190,25 +191,15 @@ message RetributionPaladin {
 		RotationType type = 9;
 
 		bool use_divine_plea = 11;
-
 		bool avoid_clipping_consecration = 12;
-
 		bool hold_last_avenging_wrath_until_execution = 13;
 	}
-
 	Rotation rotation = 1;
-
-	PaladinTalents talents = 2;
 	
 	message Options {
 		PaladinJudgement judgement = 1;
-		
 		PaladinSeal seal = 2;
-
 		PaladinAura aura = 3;
-
-		double damage_taken_per_second = 4;
-
 		bool use_avenging_wrath = 5;
 	}
 	Options options = 3;
@@ -237,18 +228,23 @@ message ProtectionPaladin {
 	}
 	Rotation rotation = 1;
 
-	PaladinTalents talents = 2;
+	message Options {
+		PaladinJudgement judgement = 1;
+		PaladinSeal seal = 2;
+		PaladinAura aura = 3;
+		bool use_avenging_wrath = 5;
+	}
+	Options options = 3;
+}
+
+message HolyPaladin {
+	message Rotation {
+	}
+	Rotation rotation = 1;
 
 	message Options {
 		PaladinJudgement judgement = 1;
-
-		PaladinSeal seal = 2;
-
-		PaladinAura aura = 3;
-
-		double damage_taken_per_second = 4;
-
-		bool use_avenging_wrath = 5;
+		PaladinAura aura = 2;
 	}
 	Options options = 3;
 }

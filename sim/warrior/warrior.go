@@ -8,6 +8,8 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+var TalentTreeSizes = [3]int{31, 27, 27}
+
 type WarriorInputs struct {
 	ShoutType            proto.WarriorShout
 	PrecastShout         bool
@@ -32,14 +34,13 @@ type Warrior struct {
 	WarriorInputs
 
 	// Current state
-	Stance                 Stance
-	overpowerValidUntil    time.Duration
-	rendValidUntil         time.Duration
-	shoutExpiresAt         time.Duration
-	revengeProcAura        *core.Aura
-	glyphOfRevengeProcAura *core.Aura
-	lastTasteForBloodProc  time.Duration
-	Ymirjar4pcProcAura     *core.Aura
+	Stance                Stance
+	overpowerValidUntil   time.Duration
+	rendValidUntil        time.Duration
+	shoutExpiresAt        time.Duration
+	revengeProcAura       *core.Aura
+	lastTasteForBloodProc time.Duration
+	Ymirjar4pcProcAura    *core.Aura
 
 	munchedDeepWoundsProcs []*core.PendingAction
 
@@ -78,9 +79,6 @@ type Warrior struct {
 	Bladestorm           *core.Spell
 	BladestormOH         *core.Spell
 
-	RendDots       *core.Dot
-	DeepWoundsDots []*core.Dot
-
 	HeroicStrikeOrCleave     *core.Spell
 	HSOrCleaveQueueAura      *core.Aura
 	HSRageThreshold          float64
@@ -91,10 +89,9 @@ type Warrior struct {
 	DefensiveStanceAura *core.Aura
 	BerserkerStanceAura *core.Aura
 
-	BloodsurgeAura    *core.Aura
-	SuddenDeathAura   *core.Aura
-	SwordAndBoardAura *core.Aura
-	ShieldBlockAura   *core.Aura
+	BloodsurgeAura  *core.Aura
+	SuddenDeathAura *core.Aura
+	ShieldBlockAura *core.Aura
 
 	DemoralizingShoutAuras []*core.Aura
 	BloodFrenzyAuras       []*core.Aura
@@ -162,10 +159,6 @@ func (warrior *Warrior) Initialize() {
 
 	warrior.registerBloodrageCD()
 
-	warrior.DeepWoundsDots = make([]*core.Dot, warrior.Env.GetNumTargets())
-	for i := range warrior.DeepWoundsDots {
-		warrior.DeepWoundsDots[i] = warrior.newDeepWoundsDot(warrior.Env.GetTargetUnit(int32(i)))
-	}
 	warrior.munchedDeepWoundsProcs = make([]*core.PendingAction, warrior.Env.GetNumTargets())
 }
 
@@ -182,12 +175,13 @@ func (warrior *Warrior) Reset(_ *core.Simulation) {
 	}
 }
 
-func NewWarrior(character core.Character, talents *proto.WarriorTalents, inputs WarriorInputs) *Warrior {
+func NewWarrior(character core.Character, talents string, inputs WarriorInputs) *Warrior {
 	warrior := &Warrior{
 		Character:     character,
-		Talents:       talents,
+		Talents:       &proto.WarriorTalents{},
 		WarriorInputs: inputs,
 	}
+	core.FillTalentsProto(warrior.Talents.ProtoReflect(), talents, TalentTreeSizes)
 
 	warrior.PseudoStats.CanParry = true
 
@@ -250,7 +244,7 @@ func init() {
 		stats.Health:      9611,
 		stats.Strength:    175,
 		stats.Agility:     110,
-		stats.Stamina:     167,
+		stats.Stamina:     159,
 		stats.Intellect:   37,
 		stats.Spirit:      61,
 		stats.AttackPower: 220,
@@ -260,7 +254,7 @@ func init() {
 		stats.Health:      9651,
 		stats.Strength:    179,
 		stats.Agility:     109,
-		stats.Stamina:     171,
+		stats.Stamina:     160,
 		stats.Intellect:   35,
 		stats.Spirit:      58,
 		stats.AttackPower: 220,
@@ -270,7 +264,7 @@ func init() {
 		stats.Health:      9581,
 		stats.Strength:    169,
 		stats.Agility:     116,
-		stats.Stamina:     164,
+		stats.Stamina:     159,
 		stats.Intellect:   42,
 		stats.Spirit:      59,
 		stats.AttackPower: 220,
@@ -280,7 +274,7 @@ func init() {
 		stats.Health:      9621,
 		stats.Strength:    174,
 		stats.Agility:     113,
-		stats.Stamina:     168,
+		stats.Stamina:     159,
 		stats.Intellect:   36,
 		stats.Spirit:      63,
 		stats.AttackPower: 220,
@@ -290,7 +284,7 @@ func init() {
 		stats.Health:      9611,
 		stats.Strength:    179,
 		stats.Agility:     118,
-		stats.Stamina:     167,
+		stats.Stamina:     159,
 		stats.Intellect:   36,
 		stats.Spirit:      59,
 		stats.AttackPower: 220,
@@ -300,7 +294,7 @@ func init() {
 		stats.Health:      9641,
 		stats.Strength:    177,
 		stats.Agility:     110,
-		stats.Stamina:     170,
+		stats.Stamina:     160,
 		stats.Intellect:   33,
 		stats.Spirit:      62,
 		stats.AttackPower: 220,
@@ -310,7 +304,7 @@ func init() {
 		stats.Health:      10047,
 		stats.Strength:    179,
 		stats.Agility:     108,
-		stats.Stamina:     170,
+		stats.Stamina:     160,
 		stats.Intellect:   31,
 		stats.Spirit:      61,
 		stats.AttackPower: 220,
@@ -320,7 +314,7 @@ func init() {
 		stats.Health:      9631,
 		stats.Strength:    175,
 		stats.Agility:     115,
-		stats.Stamina:     169,
+		stats.Stamina:     159,
 		stats.Intellect:   32,
 		stats.Spirit:      60,
 		stats.AttackPower: 220,
@@ -330,7 +324,7 @@ func init() {
 		stats.Health:      9541,
 		stats.Strength:    173,
 		stats.Agility:     111,
-		stats.Stamina:     160,
+		stats.Stamina:     159,
 		stats.Intellect:   34,
 		stats.Spirit:      64,
 		stats.AttackPower: 220,

@@ -1,222 +1,90 @@
+@use "sass:map";
+
 .raid-picker-root {
 	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	max-height: 95%;
-}
+	flex-direction: column;
 
-.parties-container {
-	display: flex;
-	flex-wrap: wrap;
-	max-height: 100%;
-	overflow-y: auto;
+	.raid-controls,
+	.new-player-picker-root,
+	.parties-container {
+		margin-bottom: $block-spacer * 2;
+		display: grid;
+		grid-gap: $block-spacer;
+	}
+
+	.raid-controls {
+		grid-template-columns: repeat(5, 1fr);
+
+		&> * {
+			margin-bottom: 0;
+		}
+	}
+
+	.new-player-picker-root {
+		max-width: 960px;
+		margin-bottom: $block-spacer * 2;
+		grid-template-columns: repeat(5, 1fr);
+	
+		.class-presets-container {
+			padding: map.get($spacers, 1) 0;
+			border-radius: map.get($spacers, 1);
+			display: flex;
+			justify-content: space-evenly;
+		}
+	}
+
+	.parties-container {
+		grid-template-columns: repeat(4, 1fr);
+		grid-row-gap: $block-spacer * 2;
+	}
 }
 
 .party-picker-root {
-	margin-right: var(--bs-gap);
-	margin-bottom: var(--bs-gap);
-}
+	&:not(.active) {
+		opacity: .5;
+	}
 
-.party-header, .player-picker-root {
-	margin: 3px 0;
-}
+	.party-header {
+		display: flex;
+		justify-content: space-between;
 
-.party-header {
-	height: 20px;
+		.party-label {
+			font-weight: bold;
+			cursor: pointer;
+		}
+	}
+
+	.players-container {
+		display: grid;
+		grid-gap: map.get($spacers, 1);
+	}
 }
 
 .player-picker-root {
+	.player-options {
+		display: flex;
+		align-items: center;
+
+		&> :not(:last-child) {
+			margin-right: map.get($spacers, 1);
+		}
+	}
+}
+
+.party-results {
+	margin-bottom: map.get($spacers, 1);
+	line-height: 1rem;
+}
+
+.party-results,
+.player-results {
 	display: flex;
-	height: 30px;
-	width: 370px;
-	border-width: 1px;
-	border-style: solid;
-	color: var(--main-text-color);
+	align-items: flex-end;
 }
 
-.player-picker-root.empty {
-	border-color: gray;
-}
-
-.player-picker-root.dragfrom {
-	box-shadow:
-		0 0 5px blue,
-		0 0 5px blue,
-		0 0 5px blue,
-		0 0 5px blue;
-}
-
-.player-picker-root.dragto:not(.dragfrom) {
-	box-shadow:
-		0 0 5px red,
-		0 0 5px red,
-		0 0 5px red,
-		0 0 5px red;
-}
-
-.player-label {
-	height: 100%;
-	display: inline-flex;
-	align-items: center;
-	cursor: pointer;
-	overflow: hidden;
-}
-
-.player-icon {
-	margin: 2px;
-	height: 90%;
-}
-
-.player-picker-root.empty .player-label, .player-picker-root.empty .player-options {
-	display: none;
-}
-
-.player-name {
-	margin: 2px;
-	text-shadow:
-		0 0 3px black,
-		0 0 3px black,
-		0 0 3px black;
-}
-
-.player-spacer {
-	flex-grow: 1;
-}
-
-.player-options {
-	height: 100%;
-	vertical-align: top;
-	display: inline-flex;
-	align-items: center;
-}
-
-.player-options span {
-	margin: 4px;
-	cursor: pointer;
-	text-shadow:
-		0 0 3px black,
-		0 0 3px black,
-		0 0 3px black;
-}
-
-.player-options span:hover {
-	text-shadow:
-		0 0 3px red,
-		0 0 3px red,
-		0 0 3px red;
-}
-
-.player-edit {
-	color: blue;
-}
-
-.player-copy {
-	color: yellow;
-}
-
-.player-delete {
-	color: red;
-}
-
-.party-results, .player-results {
-	height: 100%;
-	vertical-align: top;
-	display: inline-flex;
-	align-items: center;
-
-	font-size: 16px;
-	text-shadow:
-		0 0 3px black,
-		0 0 3px black,
-		0 0 3px black;
-}
-
-.player-results[draggable="true"] {
-	cursor: pointer;
-}
-
-.party-results-dps, .party-results-reference-delta, .player-results-dps, .player-results-reference-delta {
-	width: 60px;
-	text-align: right;
-	margin: 5px;
-}
-
-.buff-bot .player-edit {
-	display: none;
-}
-
-.new-player-picker {
-	padding: calc(var(--bs-gap) / 2) var(--bs-gap);
-	margin-top: calc(var(--bs-gap) / -2);
-	margin-right: calc(-1 * var(--bs-gap));
-	background: var(--sidebar-bg-color);
-}
-
-.new-player-picker-controls {
-	text-align: center;
-	margin-bottom: 15px;
-}
-
-.faction-selector .input-root, .phase-selector .input-root {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	white-space: nowrap;
-}
-
-.class-presets-container {
-	display: flex;
-	flex-direction: row;
-	justify-content: space-around;
-	align-items: center;
-
-	margin: 5px;
-	padding: 5px;
-	border-radius: 10px;
-}
-
-.preset-picker-icon {
-	height: 30px;
-	cursor: pointer;
-	margin: 0 3px;
-}
-
-.buff-bots-container {
-	border-top: 1px solid white;
-	margin-top: 10px;
-}
-
-.buff-bots-title {
-	font-size: 16px;
-	font-weight: 700;
-	margin: 5px;
-	text-align: center;
-}
-
-.player-editor-modal {
-	display: none;
-	height: 95vh;
-	width: 95vw;
-	@include vertical-horizontal-center;
-}
-
-.player-editor-modal .modal-dialog {
-	width: initial;
-	@include vertical-horizontal-center;
-}
-
-.player-editor-modal .modal-content {
-	height: 95vh;
-	width: 95vw;
-	margin: auto;
-}
-
-.player-editor-modal .modal-body {
-	height: 100%;
-	padding: 5px;
-}
-
-.player-editor-modal .player-editor {
-	height: 100%;
-	width: 100%;
+.party-results-reference-delta,
+.player-results-reference-delta {
+	margin-left: map.get($spacers, 1);
+	font-size: .75rem;
+	line-height: .875rem;
 }

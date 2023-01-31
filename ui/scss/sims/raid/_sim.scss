@@ -1,7 +1,8 @@
 // Set color variables which control the site theme.
 .raid-sim-ui {
-	--theme-color-background: #000000;
-	--theme-color-background-raw: 0, 0, 0;
-	--main-text-color: White;
-	--sidebar-bg-color: #222;
+	@include theme-color(
+		$primary,
+		.9,
+		'/wotlk/assets/img/ulduar.jpg'
+	);
 }

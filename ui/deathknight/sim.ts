@@ -30,9 +30,6 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 			cssScheme: 'death-knight',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"Blood dps is not implemented.",
-				"Frost Rotation logic is not fully tuned yet.",
-				"Army of the Dead scaling needs to be fine-tuned."
 			],
 
 			// All stats for which EP should be calculated.
@@ -73,7 +70,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 			],
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P1_UNHOLY_DW_BIS_PRESET.gear,
+				gear: Presets.P2_UNHOLY_DW_BIS_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatStrength]: 3.22,
@@ -154,6 +151,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
+					DeathKnightInputs.DrwPestiApply,
 					DeathKnightInputs.SelfUnholyFrenzy,
 					DeathKnightInputs.StartingRunicPower,
 					DeathKnightInputs.PetUptime,
@@ -173,6 +171,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 			presets: {
 				// Preset talents that the user can quickly select.
 				talents: [
+					Presets.BloodTalents,
 					Presets.FrostTalents,
 					Presets.FrostUnholyTalents,
 					Presets.UnholyDualWieldTalents,
@@ -180,13 +179,17 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
+					Presets.P1_BLOOD_BIS_PRESET,
+					Presets.P2_BLOOD_BIS_PRESET,
 					Presets.P1_FROST_PRE_BIS_PRESET,
 					Presets.P1_FROST_BIS_PRESET,
 					Presets.P1_FROSTSUBUNH_BIS_PRESET,
+					Presets.P2_FROST_BIS_PRESET,
 					Presets.P1_UNHOLY_DW_PRERAID_PRESET,
 					Presets.P1_UNHOLY_2H_PRERAID_PRESET,
 					Presets.P1_UNHOLY_DW_BIS_PRESET,
 					Presets.P1_UNHOLY_2H_BIS_PRESET,
+					Presets.P2_UNHOLY_DW_BIS_PRESET,
 				],
 			},
 		});

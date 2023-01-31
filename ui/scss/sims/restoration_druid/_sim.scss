@@ -1,0 +1,8 @@
+// Set color variables which control the site theme.
+.restoration-druid-sim-ui {
+	@include theme-color(
+		$druid,
+		.95,
+		'/wotlk/assets/img/resto_druid_background.jpg'
+	);
+}

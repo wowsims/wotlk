@@ -1,10 +1,8 @@
-$theme: 'warlock';
-
 // Set color variables which control the site theme.
 .warlock-sim-ui {
-	--theme-color-background: rgb(24, 18, 27);
-	--theme-color-background-raw: 24, 18, 27;
-	--theme-background-image: url('/wotlk/assets/img/warlock_background.jpg');
-	--theme-background-opacity: 0.87;
-	--main-text-color: White;
+	@include theme-color(
+		$warlock,
+		.95,
+		'/wotlk/assets/img/warlock_background.jpg'
+	);
 }

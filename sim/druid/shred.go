@@ -9,8 +9,6 @@ import (
 )
 
 func (druid *Druid) registerShredSpell() {
-	baseCost := 60.0 - 9*float64(druid.Talents.ShreddingAttacks)
-
 	flatDamageBonus := (666 +
 		core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == 29390, 88, 0) +
 		core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == 40713, 203, 0)) / 2.25
@@ -20,17 +18,18 @@ func (druid *Druid) registerShredSpell() {
 	bleedCategory := druid.CurrentTarget.GetExclusiveEffectCategory(core.BleedEffectCategory)
 
 	druid.Shred = druid.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 48572},
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
-		ResourceType: stats.Energy,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 48572},
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
+		EnergyCost: core.EnergyCostOptions{
+			Cost:   60 - 9*float64(druid.Talents.ShreddingAttacks),
+			Refund: 0.8,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  time.Second,
+				GCD: time.Second,
 			},
 			IgnoreHaste: true,
 		},
@@ -48,7 +47,9 @@ func (druid *Druid) registerShredSpell() {
 			if bleedCategory.AnyActive() {
 				modifier += .3
 			}
-			if druid.AssumeBleedActive || druid.RipDot.IsActive() || druid.RakeDot.IsActive() || druid.LacerateDot.IsActive() {
+
+			ripDot := druid.Rip.Dot(target)
+			if druid.AssumeBleedActive || ripDot.IsActive() || druid.Rake.Dot(target).IsActive() || druid.Lacerate.Dot(target).IsActive() {
 				modifier *= 1.0 + (0.04 * float64(druid.Talents.RendAndTear))
 			}
 			baseDamage *= modifier
@@ -58,25 +59,25 @@ func (druid *Druid) registerShredSpell() {
 			if result.Landed() {
 				druid.AddComboPoints(sim, 1, spell.ComboPointMetrics())
 
-				if hasGlyphofShred && druid.RipDot.IsActive() {
-					if druid.RipDot.NumberOfTicks < maxRipTicks {
-						druid.RipDot.NumberOfTicks += 1
-						druid.RipDot.RecomputeAuraDuration()
-						druid.RipDot.UpdateExpires(druid.RipDot.ExpiresAt() + time.Second*2)
+				if hasGlyphofShred && ripDot.IsActive() {
+					if ripDot.NumberOfTicks < maxRipTicks {
+						ripDot.NumberOfTicks += 1
+						ripDot.RecomputeAuraDuration()
+						ripDot.UpdateExpires(ripDot.ExpiresAt() + time.Second*2)
 					}
 				}
 			} else {
-				druid.AddEnergy(sim, spell.CurCast.Cost*0.8, druid.EnergyRefundMetrics)
+				spell.IssueRefund(sim)
 			}
 		},
-		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) *core.SpellResult {
+		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
 			baseDamage := flatDamageBonus + spell.Unit.AutoAttacks.MH.CalculateAverageWeaponDamage(spell.MeleeAttackPower()) + spell.BonusWeaponDamage()
 
 			modifier := 1.0
 			if bleedCategory.AnyActive() {
 				modifier += .3
 			}
-			if druid.AssumeBleedActive || druid.RipDot.IsActive() || druid.RakeDot.IsActive() || druid.LacerateDot.IsActive() {
+			if druid.AssumeBleedActive || druid.Rip.Dot(target).IsActive() || druid.Rake.Dot(target).IsActive() || druid.Lacerate.Dot(target).IsActive() {
 				modifier *= 1.0 + (0.04 * float64(druid.Talents.RendAndTear))
 			}
 			baseDamage *= modifier

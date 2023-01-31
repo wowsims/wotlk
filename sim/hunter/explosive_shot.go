@@ -6,7 +6,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
@@ -14,13 +13,11 @@ func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
 		return
 	}
 
-	hunter.ExplosiveShotR4, hunter.ExplosiveShotR4Dot = hunter.makeExplosiveShotSpell(timer, false)
-	hunter.ExplosiveShotR3, hunter.ExplosiveShotR3Dot = hunter.makeExplosiveShotSpell(timer, true)
+	hunter.ExplosiveShotR4 = hunter.makeExplosiveShotSpell(timer, false)
+	hunter.ExplosiveShotR3 = hunter.makeExplosiveShotSpell(timer, true)
 }
 
-func (hunter *Hunter) makeExplosiveShotSpell(timer *core.Timer, downrank bool) (*core.Spell, *core.Dot) {
-	baseCost := 0.07 * hunter.BaseMana
-
+func (hunter *Hunter) makeExplosiveShotSpell(timer *core.Timer, downrank bool) *core.Spell {
 	actionID := core.ActionID{SpellID: 60053}
 	minFlatDamage := 386.0
 	maxFlatDamage := 464.0
@@ -30,19 +27,19 @@ func (hunter *Hunter) makeExplosiveShotSpell(timer *core.Timer, downrank bool) (
 		maxFlatDamage = 391.0
 	}
 
-	var esDot *core.Dot
-	esSpell := hunter.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolFire,
-		ProcMask:     core.ProcMaskRangedSpecial,
-		Flags:        core.SpellFlagMeleeMetrics,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+	return hunter.RegisterSpell(core.SpellConfig{
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskRangedSpecial,
+		Flags:       core.SpellFlagMeleeMetrics,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.07,
+			Multiplier: 1 - 0.03*float64(hunter.Talents.Efficiency),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.03*float64(hunter.Talents.Efficiency)),
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
@@ -60,36 +57,32 @@ func (hunter *Hunter) makeExplosiveShotSpell(timer *core.Timer, downrank bool) (
 		CritMultiplier:   hunter.critMultiplier(true, false),
 		ThreatMultiplier: 1,
 
+		Dot: core.DotConfig{
+			Aura: core.Aura{
+				Label: fmt.Sprintf("ExplosiveShot-%d", actionID.SpellID),
+			},
+			NumberOfTicks: 2,
+			TickLength:    time.Second * 1,
+			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+				dot.SnapshotBaseDamage = sim.Roll(minFlatDamage, maxFlatDamage) + 0.14*dot.Spell.RangedAttackPower(target)
+				attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
+				dot.SnapshotCritChance = dot.Spell.PhysicalCritChance(target, attackTable)
+				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
+			},
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeRangedHitAndCritSnapshot)
+			},
+		},
+
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeRangedHit)
 
 			if result.Landed() {
 				spell.SpellMetrics[target.UnitIndex].Hits--
-				esDot.Apply(sim)
-				esDot.TickOnce(sim)
+				dot := spell.Dot(target)
+				dot.Apply(sim)
+				dot.TickOnce(sim)
 			}
 		},
 	})
-
-	target := hunter.CurrentTarget
-	esDot = core.NewDot(core.Dot{
-		Spell: esSpell,
-		Aura: target.RegisterAura(core.Aura{
-			Label:    fmt.Sprintf("ExplosiveShot-%d-%d", actionID.SpellID, hunter.Index),
-			ActionID: actionID,
-		}),
-		NumberOfTicks: 2,
-		TickLength:    time.Second * 1,
-		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-			dot.SnapshotBaseDamage = sim.Roll(minFlatDamage, maxFlatDamage) + 0.14*dot.Spell.RangedAttackPower(target)
-			attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
-			dot.SnapshotCritChance = dot.Spell.PhysicalCritChance(target, attackTable)
-			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
-		},
-		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeRangedHitAndCritSnapshot)
-		},
-	})
-
-	return esSpell, esDot
 }

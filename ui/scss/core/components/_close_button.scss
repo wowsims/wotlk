@@ -2,9 +2,20 @@
 
 .close-button {
 	white-space: nowrap;
+	z-index: 1;
 
 	&> i {
 		vertical-align: middle;
+	}
+
+	&.position-absolute {
+		top: $modal-inner-padding * 1.5;
+		right: $modal-inner-padding;
+	}
+
+	&.position-sticky {
+		top: calc(var(--bs-modal-margin) + 1rem);
+		right: calc(2.5vw + 1px + 1rem);
 	}
 }
 

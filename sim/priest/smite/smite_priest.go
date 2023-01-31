@@ -33,18 +33,17 @@ func NewSmitePriest(character core.Character, options *proto.Player) *SmitePries
 		UseShadowfiend: smiteOptions.Options.UseShadowfiend,
 	}
 
-	selfBuffs.PowerInfusionTarget = &proto.RaidTarget{TargetIndex: -1}
-	if smiteOptions.Options.PowerInfusionTarget != nil {
-		selfBuffs.PowerInfusionTarget = smiteOptions.Options.PowerInfusionTarget
-	}
-
-	basePriest := priest.New(character, selfBuffs, smiteOptions.Talents)
-
+	basePriest := priest.New(character, selfBuffs, options.TalentsString)
 	spriest := &SmitePriest{
 		Priest:   basePriest,
 		rotation: smiteOptions.Rotation,
 
 		allowedHFDelay: time.Millisecond * time.Duration(smiteOptions.Rotation.AllowedHolyFireDelayMs),
+	}
+
+	spriest.SelfBuffs.PowerInfusionTarget = &proto.RaidTarget{TargetIndex: -1}
+	if spriest.Talents.PowerInfusion && smiteOptions.Options.PowerInfusionTarget != nil {
+		spriest.SelfBuffs.PowerInfusionTarget = smiteOptions.Options.PowerInfusionTarget
 	}
 
 	spriest.EnableResumeAfterManaWait(spriest.tryUseGCD)

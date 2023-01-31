@@ -5,7 +5,7 @@ import { EventID, TypedEvent } from './typed_event';
 
 import { CharacterStats, StatMods } from './components/character_stats';
 import { ContentBlock } from './components/content_block';
-import { DetailedResults } from './components/detailed_results';
+import { EmbeddedDetailedResults } from './components/detailed_results';
 import { EncounterPickerConfig } from './components/encounter_picker';
 import { EnumPicker } from './components/enum_picker';
 import { IconEnumPicker } from './components/icon_enum_picker';
@@ -175,12 +175,13 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 	constructor(parentElem: HTMLElement, player: Player<SpecType>, config: IndividualSimUIConfig<SpecType>) {
 		super(parentElem, player.sim, {
+			cssClass: config.cssClass,
 			cssScheme: config.cssScheme,
 			spec: player.spec,
 			knownIssues: config.knownIssues,
 			launchStatus: simLaunchStatuses[player.spec],
 		});
-		this.rootElem.classList.add('individual-sim-ui', config.cssClass);
+		this.rootElem.classList.add('individual-sim-ui');
 		this.player = player;
 		this.individualConfig = config;
 		this.raidSimResultsManager = null;
@@ -438,7 +439,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			</div>
 		`);
 
-		const detailedResults = new DetailedResults(this.rootElem.getElementsByClassName('detailed-results')[0] as HTMLElement, this, this.raidSimResultsManager!);
+		const detailedResults = new EmbeddedDetailedResults(this.rootElem.getElementsByClassName('detailed-results')[0] as HTMLElement, this, this.raidSimResultsManager!);
 	}
 
 	private addLogTab() {
@@ -451,14 +452,16 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 	}
 
 	private addTopbarComponents() {
-		this.simHeader.addImportLink('JSON', parent => new Importers.IndividualJsonImporter(parent, this), true);
-		this.simHeader.addImportLink('80U', parent => new Importers.Individual80UImporter(parent, this), true);
-		this.simHeader.addImportLink('Addon', parent => new Importers.IndividualAddonImporter(parent, this), true);
+		this.simHeader.addImportLink('JSON', _parent => new Importers.IndividualJsonImporter(this.rootElem, this), true);
+		this.simHeader.addImportLink('80U', _parent => new Importers.Individual80UImporter(this.rootElem, this), true);
+		this.simHeader.addImportLink('WoWHead', _parent => new Importers.IndividualWowheadGearPlannerImporter(this.rootElem, this), false);
+		this.simHeader.addImportLink('Addon', _parent => new Importers.IndividualAddonImporter(this.rootElem, this), true);
 
-		this.simHeader.addExportLink('Link', parent => new Exporters.IndividualLinkExporter(parent, this), false);
-		this.simHeader.addExportLink('JSON', parent => new Exporters.IndividualJsonExporter(parent, this), true);
-		this.simHeader.addExportLink('80U EP', parent => new Exporters.Individual80UEPExporter(parent, this), false);
-		this.simHeader.addExportLink('Pawn EP', parent => new Exporters.IndividualPawnEPExporter(parent, this), false);
+		this.simHeader.addExportLink('Link', _parent => new Exporters.IndividualLinkExporter(this.rootElem, this), false);
+		this.simHeader.addExportLink('JSON', _parent => new Exporters.IndividualJsonExporter(this.rootElem, this), true);
+		this.simHeader.addExportLink('WoWHead', _parent => new Exporters.IndividualWowheadGearPlannerExporter(this.rootElem, this), false);
+		this.simHeader.addExportLink('80U EP', _parent => new Exporters.Individual80UEPExporter(this.rootElem, this), false);
+		this.simHeader.addExportLink('Pawn EP', _parent => new Exporters.IndividualPawnEPExporter(this.rootElem, this), false);
 	}
 
 	applyDefaults(eventID: EventID) {

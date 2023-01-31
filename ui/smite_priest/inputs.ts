@@ -60,6 +60,7 @@ export const SmitePriestRotationConfig = {
 			fieldName: 'memeDream',
 			label: 'Meme Dream',
 			labelTooltip: 'Assumes 2nd Smite Priest in raid, so just spams HF + Smite with permanent HF uptime.',
+			extraCssClasses: ['within-raid-sim-hide'],
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecSmitePriest>({
 			fieldName: 'allowedHolyFireDelayMs',

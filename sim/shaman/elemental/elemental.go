@@ -41,25 +41,27 @@ func NewElementalShaman(character core.Character, options *proto.Player) *Elemen
 
 	switch eleShamOptions.Rotation.Type {
 	case proto.ElementalShaman_Rotation_Adaptive:
-		rotation = NewAdaptiveRotation(eleShamOptions.Talents, eleShamOptions.Rotation)
+		rotation = NewAdaptiveRotation(eleShamOptions.Rotation)
 	case proto.ElementalShaman_Rotation_Manual:
-		rotation = NewManualRotation(eleShamOptions.Talents, eleShamOptions.Rotation)
+		rotation = NewManualRotation(eleShamOptions.Rotation)
 	}
 
 	ele := &ElementalShaman{
-		Shaman:   shaman.NewShaman(character, eleShamOptions.Talents, totems, selfBuffs, eleShamOptions.Rotation.InThunderstormRange),
+		Shaman:   shaman.NewShaman(character, options.TalentsString, totems, selfBuffs, eleShamOptions.Rotation.InThunderstormRange),
 		rotation: rotation,
 		has4pT6:  character.HasSetBonus(shaman.ItemSetSkyshatterRegalia, 4),
 	}
 	ele.EnableResumeAfterManaWait(ele.tryUseGCD)
 
-	hasOffhandWeapon := ele.Equip[proto.ItemSlot_ItemSlotOffHand].WeaponType != proto.WeaponType_WeaponTypeUnknown &&
-		ele.Equip[proto.ItemSlot_ItemSlotOffHand].WeaponType != proto.WeaponType_WeaponTypeShield &&
-		ele.Equip[proto.ItemSlot_ItemSlotOffHand].WeaponType != proto.WeaponType_WeaponTypeOffHand
-	ele.ApplyFlametongueImbue(true, hasOffhandWeapon)
+	if ele.HasMHWeapon() {
+		ele.ApplyFlametongueImbueToItem(ele.GetMHWeapon(), false)
+	}
+
+	if ele.HasOHWeapon() {
+		ele.ApplyFlametongueImbueToItem(ele.GetOHWeapon(), false)
+	}
 
 	if ele.Talents.FeralSpirit {
-
 		// Enable Auto Attacks but don't enable auto swinging
 		ele.EnableAutoAttacks(ele, core.AutoAttackOptions{
 			MainHand: ele.WeaponFromMainHand(ele.DefaultMeleeCritMultiplier()),
@@ -69,7 +71,6 @@ func NewElementalShaman(character core.Character, options *proto.Player) *Elemen
 			SpiritWolf1: ele.NewSpiritWolf(1),
 			SpiritWolf2: ele.NewSpiritWolf(2),
 		}
-
 	}
 
 	return ele

@@ -10,7 +10,10 @@ import (
 
 const (
 	SpellFlagNaturesGrace = core.SpellFlagAgentReserved1
+	SpellFlagOmenTrigger  = core.SpellFlagAgentReserved2
 )
+
+var TalentTreeSizes = [3]int{28, 30, 27}
 
 type Druid struct {
 	core.Character
@@ -63,13 +66,7 @@ type Druid struct {
 	CatForm  *core.Spell
 	BearForm *core.Spell
 
-	InsectSwarmDot    *core.Dot
-	LacerateDot       *core.Dot
-	MoonfireDot       *core.Dot
-	RakeDot           *core.Dot
-	RipDot            *core.Dot
-	StarfallDot       *core.Dot
-	StarfallDotSplash *core.Dot
+	MoonfireDot *core.Dot
 
 	BarkskinAura             *core.Aura
 	BearFormAura             *core.Aura
@@ -94,6 +91,8 @@ type Druid struct {
 
 	PrimalPrecisionRecoveryMetrics *core.ResourceMetrics
 	SavageRoarDurationTable        [6]time.Duration
+
+	ProcOoc func(sim *core.Simulation)
 
 	LunarICD core.Cooldown
 	SolarICD core.Cooldown
@@ -253,14 +252,15 @@ func (druid *Druid) Reset(_ *core.Simulation) {
 	druid.SolarICD.Timer.Reset()
 }
 
-func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents *proto.DruidTalents) *Druid {
+func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents string) *Druid {
 	druid := &Druid{
 		Character:    char,
 		SelfBuffs:    selfBuffs,
-		Talents:      talents,
+		Talents:      &proto.DruidTalents{},
 		StartingForm: form,
 		form:         form,
 	}
+	core.FillTalentsProto(druid.Talents.ProtoReflect(), talents, TalentTreeSizes)
 	druid.EnableManaBar()
 
 	druid.AddStatDependency(stats.Strength, stats.AttackPower, 2)

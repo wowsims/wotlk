@@ -15,6 +15,7 @@ const (
 	Bear
 	Cat
 	Moonkin
+	Tree
 )
 
 // Converts from 0.009327 to 0.0085
@@ -89,7 +90,6 @@ func (druid *Druid) GetFormShiftStats() stats.Stats {
 
 func (druid *Druid) registerCatFormSpell() {
 	actionID := core.ActionID{SpellID: 768}
-	baseCost := druid.BaseMana * 0.35
 
 	srm := druid.getSavageRoarMultiplier()
 
@@ -140,9 +140,6 @@ func (druid *Druid) registerCatFormSpell() {
 				if druid.SavageRoarAura.IsActive() {
 					druid.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= srm
 				}
-				if druid.BerserkAura.IsActive() {
-					druid.PseudoStats.CostMultiplier /= 2.0
-				}
 
 				if druid.PredatoryInstinctsAura != nil {
 					druid.PredatoryInstinctsAura.Activate(sim)
@@ -174,9 +171,6 @@ func (druid *Druid) registerCatFormSpell() {
 				if druid.SavageRoarAura.IsActive() {
 					druid.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] /= srm
 				}
-				if druid.BerserkAura.IsActive() {
-					druid.PseudoStats.CostMultiplier *= 2.0
-				}
 
 				if druid.PredatoryInstinctsAura != nil {
 					druid.PredatoryInstinctsAura.Deactivate(sim)
@@ -191,13 +185,13 @@ func (druid *Druid) registerCatFormSpell() {
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
-
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.35,
+			Multiplier: (1 - 0.2*float64(druid.Talents.KingOfTheJungle)) * (1 - 0.1*float64(druid.Talents.NaturalShapeshifter)),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.2*float64(druid.Talents.KingOfTheJungle)) * (1 - 0.1*float64(druid.Talents.NaturalShapeshifter)),
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 		},
@@ -225,7 +219,6 @@ func (druid *Druid) calcArmorBonus() float64 {
 
 func (druid *Druid) registerBearFormSpell() {
 	actionID := core.ActionID{SpellID: 9634}
-	baseCost := druid.BaseMana * 0.35
 	healthMetrics := druid.NewHealthMetrics(actionID)
 
 	statBonus := druid.GetFormShiftStats().Add(stats.Stats{
@@ -329,13 +322,13 @@ func (druid *Druid) registerBearFormSpell() {
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
-
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.35,
+			Multiplier: (1 - 0.2*float64(druid.Talents.KingOfTheJungle)) * (1 - 0.1*float64(druid.Talents.NaturalShapeshifter)),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - 0.2*float64(druid.Talents.KingOfTheJungle)) * (1 - 0.1*float64(druid.Talents.NaturalShapeshifter)),
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 		},

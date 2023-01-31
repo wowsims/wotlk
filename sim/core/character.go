@@ -8,6 +8,8 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
+	"google.golang.org/protobuf/encoding/protowire"
+	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
 type CharacterBuildPhase uint8
@@ -39,6 +41,8 @@ type Character struct {
 
 	// Current gear.
 	Equip Equipment
+	//Item Swap Handler
+	ItemSwap ItemSwap
 
 	// Consumables this Character will be using.
 	Consumes *proto.Consumes
@@ -241,6 +245,19 @@ func (character *Character) applyItemEffects(agent Agent) {
 			applyWeaponEffect(agent, proto.ItemSlot(slot))
 		}
 	}
+
+	if character.ItemSwap.IsEnabled() {
+		offset := int(proto.ItemSlot_ItemSlotMainHand)
+		for i, item := range character.ItemSwap.unEquippedItems {
+			if applyEnchantEffect, ok := enchantEffects[item.Enchant.EffectID]; ok {
+				applyEnchantEffect(agent)
+			}
+
+			if applyWeaponEffect, ok := weaponEffects[item.Enchant.EffectID]; ok {
+				applyWeaponEffect(agent, proto.ItemSlot(offset+i))
+			}
+		}
+	}
 }
 
 func (character *Character) AddPet(pet PetAgent) {
@@ -386,6 +403,7 @@ func (character *Character) Finalize(playerStats *proto.PlayerStats) {
 	character.Unit.finalize()
 
 	character.majorCooldownManager.finalize()
+	character.ItemSwap.finalize()
 
 	if playerStats != nil {
 		character.applyBuildPhaseAuras(CharacterBuildPhaseAll)
@@ -409,6 +427,7 @@ func (character *Character) reset(sim *Simulation, agent Agent) {
 	character.ExpectedBonusMana = 0
 	character.majorCooldownManager.reset(sim)
 	character.Unit.reset(sim, agent)
+	character.ItemSwap.reset(sim)
 	character.CurrentTarget = character.defaultTarget
 
 	if character.Type == PlayerUnit {
@@ -545,6 +564,10 @@ func (character *Character) GetPseudoStatsProto() []float64 {
 	vals[proto.PseudoStat_PseudoStatOffHandDps] = character.WeaponFromOffHand(0).DPS()
 	vals[proto.PseudoStat_PseudoStatRangedDps] = character.WeaponFromRanged(0).DPS()
 	vals[proto.PseudoStat_PseudoStatBlockValueMultiplier] = character.PseudoStats.BlockValueMultiplier
+	// Base values are modified by Enemy attackTables, but we display for LVL 80 enemy as paperdoll default
+	vals[proto.PseudoStat_PseudoStatDodge] = character.PseudoStats.BaseDodge + character.GetDiminishedDodgeChance()
+	vals[proto.PseudoStat_PseudoStatParry] = character.PseudoStats.BaseParry + character.GetDiminishedParryChance()
+	//vals[proto.PseudoStat_PseudoStatMiss] = 0.05 + character.GetDiminishedMissChance() + character.PseudoStats.ReducedPhysicalHitTakenChance
 	return vals
 }
 
@@ -615,4 +638,28 @@ func GetPrimaryTalentTreeIndex(talentStr string) uint8 {
 	}
 
 	return uint8(bestTree)
+}
+
+// Uses proto reflection to set fields in a talents proto (e.g. MageTalents,
+// WarriorTalents) based on a talentsStr. treeSizes should contain the number
+// of talents in each tree, usually around 30. This is needed because talent
+// strings truncate 0's at the end of each tree so we can't infer the start index
+// of the tree from the string.
+func FillTalentsProto(data protoreflect.Message, talentsStr string, treeSizes [3]int) {
+	treeStrs := strings.Split(talentsStr, "-")
+	fieldDescriptors := data.Descriptor().Fields()
+
+	var offset int
+	for treeIdx, treeStr := range treeStrs {
+		for talentIdx, talentValStr := range treeStr {
+			talentVal, _ := strconv.Atoi(string(talentValStr))
+			fd := fieldDescriptors.ByNumber(protowire.Number(offset + talentIdx + 1))
+			if fd.Kind() == protoreflect.BoolKind {
+				data.Set(fd, protoreflect.ValueOfBool(talentVal == 1))
+			} else { // Int32Kind
+				data.Set(fd, protoreflect.ValueOfInt32(int32(talentVal)))
+			}
+		}
+		offset += treeSizes[treeIdx]
+	}
 }

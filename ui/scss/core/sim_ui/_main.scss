@@ -2,9 +2,6 @@
   min-width: calc(275px + 1vw);
   display: flex;
   flex-flow: column;
-	background-size: cover;
-	background-position: center center;
-  color: var(--main-text-color);
 
   .sim-main {
     height: 80%;
@@ -12,6 +9,7 @@
     flex-grow: 1;
 
     .tab-pane {
+      max-width: 100%;
       flex-grow: 1;
       padding-top: $gap-width;
       padding-bottom: $gap-width;

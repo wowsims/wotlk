@@ -15,9 +15,7 @@ func init() {
 		character := agent.GetCharacter()
 		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3251
 		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3251
-		if !mh && !oh {
-			return
-		}
+
 		procMask := core.GetMeleeProcMaskForHands(mh, oh)
 		ppmm := character.AutoAttacks.NewPPMManager(4.0, procMask)
 
@@ -35,7 +33,7 @@ func init() {
 			},
 		})
 
-		character.GetOrRegisterAura(core.Aura{
+		aura := character.GetOrRegisterAura(core.Aura{
 			Label:    "Giant Slayer",
 			Duration: core.NeverExpires,
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
@@ -55,15 +53,14 @@ func init() {
 				}
 			},
 		})
+
+		character.ItemSwap.RegisterOnSwapItemForEffectWithPPMManager(3251, 4.0, &ppmm, aura)
 	})
 
 	core.NewEnchantEffect(3239, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3239
 		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3239
-		if !mh && !oh {
-			return
-		}
 		procMask := core.GetMeleeProcMaskForHands(mh, oh)
 		ppmm := character.AutoAttacks.NewPPMManager(4.0, procMask)
 
@@ -81,7 +78,7 @@ func init() {
 			},
 		})
 
-		character.GetOrRegisterAura(core.Aura{
+		aura := character.GetOrRegisterAura(core.Aura{
 			Label:    "Icebreaker",
 			Duration: core.NeverExpires,
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
@@ -97,6 +94,8 @@ func init() {
 				}
 			},
 		})
+
+		character.ItemSwap.RegisterOnSwapItemForEffectWithPPMManager(3239, 4.0, &ppmm, aura)
 	})
 
 	core.NewEnchantEffect(3607, func(agent core.Agent) {
@@ -130,7 +129,7 @@ func init() {
 			},
 		})
 
-		character.RegisterAura(core.Aura{
+		aura := character.RegisterAura(core.Aura{
 			Label:    "Titanium Shield Spike",
 			ActionID: actionID,
 			Duration: core.NeverExpires,
@@ -143,6 +142,8 @@ func init() {
 				}
 			},
 		})
+
+		character.ItemSwap.ReigsterOnSwapItemForEffect(3748, aura)
 	})
 
 	core.NewEnchantEffect(3247, func(agent core.Agent) {
@@ -166,9 +167,7 @@ func init() {
 		character := agent.GetCharacter()
 		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3789
 		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3789
-		if !mh && !oh {
-			return
-		}
+
 		procMask := core.GetMeleeProcMaskForHands(mh, oh)
 		ppmm := character.AutoAttacks.NewPPMManager(1.0, procMask)
 
@@ -177,7 +176,7 @@ func init() {
 		procAuraMH := character.NewTemporaryStatsAura("Berserking MH Proc", core.ActionID{SpellID: 59620, Tag: 1}, stats.Stats{stats.AttackPower: 400, stats.RangedAttackPower: 400, stats.Armor: -fivePercentOfArmor}, time.Second*15)
 		procAuraOH := character.NewTemporaryStatsAura("Berserking OH Proc", core.ActionID{SpellID: 59620, Tag: 2}, stats.Stats{stats.AttackPower: 400, stats.RangedAttackPower: 400, stats.Armor: -fivePercentOfArmor}, time.Second*15)
 
-		character.GetOrRegisterAura(core.Aura{
+		aura := character.GetOrRegisterAura(core.Aura{
 			Label:    "Berserking (Enchant)",
 			Duration: core.NeverExpires,
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
@@ -197,6 +196,8 @@ func init() {
 				}
 			},
 		})
+
+		character.ItemSwap.RegisterOnSwapItemForEffectWithPPMManager(3789, 1.0, &ppmm, aura)
 	})
 
 	// TODO: These are stand-in values without any real reference.
@@ -204,15 +205,12 @@ func init() {
 		character := agent.GetCharacter()
 		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3241
 		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3241
-		if !mh && !oh {
-			return
-		}
 		procMask := core.GetMeleeProcMaskForHands(mh, oh)
 		ppmm := character.AutoAttacks.NewPPMManager(3.0, procMask)
 
 		healthMetrics := character.NewHealthMetrics(core.ActionID{ItemID: 44494})
 
-		character.GetOrRegisterAura(core.Aura{
+		aura := character.GetOrRegisterAura(core.Aura{
 			Label:    "Lifeward",
 			Duration: core.NeverExpires,
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
@@ -228,6 +226,8 @@ func init() {
 				}
 			},
 		})
+
+		character.ItemSwap.RegisterOnSwapItemForEffectWithPPMManager(3241, 3.0, &ppmm, aura)
 	})
 
 	core.NewEnchantEffect(3790, func(agent core.Agent) {
@@ -239,14 +239,15 @@ func init() {
 			Duration: time.Second * 35,
 		}
 
-		character.GetOrRegisterAura(core.Aura{
+		aura := character.GetOrRegisterAura(core.Aura{
 			Label:    "Black Magic",
 			Duration: core.NeverExpires,
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskSpellDamage) && spell.ActionID.SpellID != 47465 && spell.ActionID.SpellID != 12867 {
+				isSpell := spell.ActionID.SpellID == 47465 || spell.ActionID.SpellID == 12867 || spell.ActionID.SpellID == 58790 || spell.ActionID.SpellID == 58789
+				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskSpellDamage) && !isSpell {
 					return
 				}
 
@@ -256,6 +257,8 @@ func init() {
 				}
 			},
 		})
+
+		character.ItemSwap.ReigsterOnSwapItemForEffect(3790, aura)
 	})
 
 	core.AddWeaponEffect(3843, func(agent core.Agent, _ proto.ItemSlot) {
@@ -337,182 +340,6 @@ func init() {
 			Priority: core.CooldownPriorityLow, // Use low prio so other actives get used first.
 			Type:     core.CooldownTypeDPS,
 		})
-	})
-
-	newRazoriceHitSpell := func(character *core.Character, isMH bool) *core.Spell {
-		dmg := 0.0
-
-		if weapon := character.GetMHWeapon(); isMH && weapon != nil {
-			dmg = 0.5 * (weapon.WeaponDamageMin + weapon.WeaponDamageMax) * 0.02
-		} else if weapon := character.GetOHWeapon(); !isMH && weapon != nil {
-			dmg = 0.5 * (weapon.WeaponDamageMin + weapon.WeaponDamageMax) * 0.02
-		} else {
-			return nil
-		}
-
-		return character.RegisterSpell(core.SpellConfig{
-			ActionID:    core.ActionID{SpellID: 50401},
-			SpellSchool: core.SpellSchoolFrost,
-			ProcMask:    core.ProcMaskSpellDamage,
-
-			DamageMultiplier: 1,
-			ThreatMultiplier: 1,
-
-			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				spell.CalcAndDealDamage(sim, target, dmg, spell.OutcomeAlwaysHit)
-			},
-		})
-	}
-
-	core.NewEnchantEffect(3370, func(agent core.Agent) {
-		character := agent.GetCharacter()
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3370
-		oh := character.HasOHWeapon() && character.Equip[proto.ItemSlot_ItemSlotOffHand].HandType != proto.HandType_HandTypeTwoHand && character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3370
-		if !mh && !oh {
-			return
-		}
-
-		actionID := core.ActionID{SpellID: 50401}
-		if spell := character.GetSpell(actionID); spell != nil {
-			// This function gets called twice when dual wielding this enchant, but we
-			// handle both in one call.
-			return
-		}
-
-		target := character.CurrentTarget
-
-		vulnAura := core.RuneOfRazoriceVulnerabilityAura(target)
-		mhRazoriceSpell := newRazoriceHitSpell(character, true)
-		ohRazoriceSpell := newRazoriceHitSpell(character, false)
-		character.GetOrRegisterAura(core.Aura{
-			Label:    "Razor Frost",
-			ActionID: core.ActionID{SpellID: 50401},
-			Duration: core.NeverExpires,
-			OnReset: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Activate(sim)
-			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if !result.Landed() {
-					return
-				}
-
-				if mh && !oh {
-					if !spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
-						return
-					}
-				} else if oh && !mh {
-					if !spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
-						return
-					}
-				} else if mh && oh {
-					if !spell.ProcMask.Matches(core.ProcMaskMelee) {
-						return
-					}
-				}
-
-				vulnAura.Activate(sim)
-				isMH := spell.ProcMask.Matches(core.ProcMaskMeleeMH)
-				isOH := spell.ProcMask.Matches(core.ProcMaskMeleeOH)
-				if isMH {
-					mhRazoriceSpell.Cast(sim, target)
-					vulnAura.AddStack(sim)
-				} else if isOH {
-					ohRazoriceSpell.Cast(sim, target)
-					vulnAura.AddStack(sim)
-				}
-			},
-		})
-	})
-
-	// TODO: Verify all of this
-	newRuneOfTheFallenCrusaderAura := func(character *core.Character, auraLabel string, actionID core.ActionID) *core.Aura {
-		return character.NewTemporaryStatsAuraWrapped(auraLabel, actionID, stats.Stats{}, time.Second*15, func(aura *core.Aura) {
-			statDep := character.NewDynamicMultiplyStat(stats.Strength, 1.15)
-
-			aura.ApplyOnGain(func(aura *core.Aura, sim *core.Simulation) {
-				aura.Unit.EnableDynamicStatDep(sim, statDep)
-			})
-
-			aura.ApplyOnExpire(func(aura *core.Aura, sim *core.Simulation) {
-				aura.Unit.DisableDynamicStatDep(sim, statDep)
-			})
-		})
-	}
-
-	// ApplyRuneOfTheFallenCrusader will be applied twice if there is two weapons with this enchant.
-	//   However it will automatically overwrite one of them so it should be ok.
-	//   A single application of the aura will handle both mh and oh procs.
-	core.NewEnchantEffect(3368, func(agent core.Agent) {
-		character := agent.GetCharacter()
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3368
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3368
-		if !mh && !oh {
-			return
-		}
-
-		procMask := core.GetMeleeProcMaskForHands(mh, oh)
-		ppmm := character.AutoAttacks.NewPPMManager(2.0, procMask)
-
-		rfcAura := newRuneOfTheFallenCrusaderAura(character, "Rune Of The Fallen Crusader Proc", core.ActionID{SpellID: 53344})
-
-		character.GetOrRegisterAura(core.Aura{
-			Label:    "Rune Of The Fallen Crusader",
-			Duration: core.NeverExpires,
-			OnReset: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Activate(sim)
-			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if !result.Landed() {
-					return
-				}
-
-				if mh && !oh {
-					if !spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
-						return
-					}
-				} else if oh && !mh {
-					if !spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
-						return
-					}
-				} else if mh && oh {
-					if !spell.ProcMask.Matches(core.ProcMaskMelee) {
-						return
-					}
-				}
-
-				if ppmm.Proc(sim, spell.ProcMask, "rune of the fallen crusader") {
-					rfcAura.Activate(sim)
-				}
-			},
-		})
-	})
-
-	core.NewEnchantEffect(3883, func(agent core.Agent) {
-		character := agent.GetCharacter()
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3883
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3883
-		if !mh && !oh {
-			return
-		}
-
-		character.AddStat(stats.Defense, 13*core.DefenseRatingPerDefense)
-		character.MultiplyStat(stats.Stamina, 1.01)
-	})
-
-	core.NewEnchantEffect(3847, func(agent core.Agent) {
-		character := agent.GetCharacter()
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3847
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3847
-		if !mh {
-			return
-		}
-
-		if oh {
-			return
-		}
-
-		character.AddStat(stats.Defense, 25*core.DefenseRatingPerDefense)
-		character.MultiplyStat(stats.Stamina, 1.02)
 	})
 
 	core.NewEnchantEffect(3722, func(agent core.Agent) {

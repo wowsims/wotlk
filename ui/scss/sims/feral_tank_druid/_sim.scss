@@ -1,9 +1,8 @@
-$theme: 'druid';
-
 // Set color variables which control the site theme.
 .feral-tank-druid-sim-ui {
-	--theme-color-background: #1d1510;
-	--theme-color-background-raw: 29, 21, 16;
-	--theme-background-image: url('/wotlk/assets/img/feral_druid_tank_background.jpg');
-	--main-text-color: White;
+	@include theme-color(
+		$druid,
+		.95,
+		'/wotlk/assets/img/feral_druid_tank_background.jpg'
+	);
 }

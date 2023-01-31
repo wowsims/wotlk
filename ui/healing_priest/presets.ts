@@ -62,7 +62,7 @@ export const HolyTalents = {
 	}),
 };
 
-export const DefaultRotation = Rotation.create({
+export const DiscDefaultRotation = Rotation.create({
 	type: RotationType.Cycle,
 	customRotation: CustomRotation.create({
 		spells: [
@@ -70,6 +70,18 @@ export const DefaultRotation = Rotation.create({
 			CustomSpell.create({ spell: SpellOption.Penance, castsPerMinute: 4 }),
 			CustomSpell.create({ spell: SpellOption.PrayerOfMending, castsPerMinute: 2 }),
 			CustomSpell.create({ spell: SpellOption.GreaterHeal, castsPerMinute: 1 }),
+		],
+	}),
+});
+
+export const HolyDefaultRotation = Rotation.create({
+	type: RotationType.Cycle,
+	customRotation: CustomRotation.create({
+		spells: [
+			CustomSpell.create({ spell: SpellOption.GreaterHeal, castsPerMinute: 10 }),
+			CustomSpell.create({ spell: SpellOption.CircleOfHealing, castsPerMinute: 5 }),
+			CustomSpell.create({ spell: SpellOption.Renew, castsPerMinute: 10 }),
+			CustomSpell.create({ spell: SpellOption.PrayerOfMending, castsPerMinute: 2 }),
 		],
 	}),
 });
@@ -504,6 +516,240 @@ export const HOLY_P1_PRESET = {
 		},
 		{
 			"id": 40245
+		}
+	]}`),
+};
+
+export const DISC_P2_PRESET = {
+	name: 'Disc P2 Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<any>) => player.getTalentTree() == 0,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 46197,
+			"enchant": 3819,
+			"gems": [
+				41401,
+				45883
+			]
+		},
+		{
+			"id": 45933,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 45390,
+			"enchant": 3809,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 45486,
+			"enchant": 3859,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 46193,
+			"enchant": 3832,
+			"gems": [
+				39998,
+				39998
+			]
+		},
+		{
+			"id": 45146,
+			"enchant": 3758,
+			"gems": [
+				0
+			]
+		},
+		{
+			"id": 45520,
+			"enchant": 3246,
+			"gems": [
+				39998,
+				39998,
+				0
+			]
+		},
+		{
+			"id": 45558,
+			"gems": [
+				39998,
+				40047,
+				39998
+			]
+		},
+		{
+			"id": 45388,
+			"enchant": 3721,
+			"gems": [
+				39998,
+				39998
+			]
+		},
+		{
+			"id": 46050,
+			"enchant": 3606,
+			"gems": [
+				39998,
+				39998
+			]
+		},
+		{
+			"id": 45946,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 46096,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 40432
+		},
+		{
+			"id": 45535
+		},
+		{
+			"id": 45612,
+			"enchant": 3834,
+			"gems": [
+				40027
+			]
+		},
+		{
+			"id": 45314
+		},
+		{
+			"id": 45294,
+			"gems": [
+				39998
+			]
+		}
+	]}`),
+};
+
+export const HOLY_P2_PRESET = {
+	name: 'Holy P2 Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<any>) => player.getTalentTree() != 0,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 46197,
+			"enchant": 3819,
+			"gems": [
+				41401,
+				45883
+			]
+		},
+		{
+			"id": 45447,
+			"gems": [
+				40017
+			]
+		},
+		{
+			"id": 45390,
+			"enchant": 3809,
+			"gems": [
+				40051
+			]
+		},
+		{
+			"id": 45486,
+			"enchant": 3859,
+			"gems": [
+				40017
+			]
+		},
+		{
+			"id": 46193,
+			"enchant": 3832,
+			"gems": [
+				40051,
+				40017
+			]
+		},
+		{
+			"id": 44008,
+			"enchant": 3758,
+			"gems": [
+				40051,
+				0
+			]
+		},
+		{
+			"id": 45520,
+			"enchant": 3246,
+			"gems": [
+				40017,
+				40017,
+				0
+			]
+		},
+		{
+			"id": 45558,
+			"gems": [
+				40051,
+				40017,
+				40017
+			]
+		},
+		{
+			"id": 45388,
+			"enchant": 3721,
+			"gems": [
+				40026,
+				40017
+			]
+		},
+		{
+			"id": 46050,
+			"enchant": 3606,
+			"gems": [
+				40026,
+				40017
+			]
+		},
+		{
+			"id": 45946,
+			"gems": [
+				40017
+			]
+		},
+		{
+			"id": 46323,
+			"gems": [
+				40017
+			]
+		},
+		{
+			"id": 46051
+		},
+		{
+			"id": 45535
+		},
+		{
+			"id": 46035,
+			"enchant": 3834,
+			"gems": [
+				40017
+			]
+		},
+		{
+			"id": 45271
+		},
+		{
+			"id": 45511
 		}
 	]}`),
 };

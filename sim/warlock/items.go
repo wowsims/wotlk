@@ -41,6 +41,11 @@ var ItemSetPlagueheartGarb = core.NewItemSet(core.ItemSet{
 					warlock.ShadowBolt.BonusCritRating -= bonusCrit
 					warlock.Incinerate.BonusCritRating -= bonusCrit
 				},
+				OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+					if spell == warlock.ShadowBolt || spell == warlock.Incinerate {
+						warlock.DemonicSoulAura.Deactivate(sim)
+					}
+				},
 			})
 
 			warlock.RegisterAura(core.Aura{
@@ -82,11 +87,7 @@ var ItemSetPlagueheartGarb = core.NewItemSet(core.ItemSet{
 				},
 				OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 					if spell == warlock.LifeTap {
-						if warlock.SpiritsoftheDamnedAura.IsActive() {
-							warlock.SpiritsoftheDamnedAura.Refresh(sim)
-						} else {
-							warlock.SpiritsoftheDamnedAura.Activate(sim)
-						}
+						warlock.SpiritsoftheDamnedAura.Activate(sim)
 					}
 				},
 			})
@@ -109,7 +110,8 @@ var ItemSetDeathbringerGarb = core.NewItemSet(core.ItemSet{
 
 // T9
 var ItemSetGuldansRegalia = core.NewItemSet(core.ItemSet{
-	Name: "Gul'dan's Regalia",
+	Name:            "Gul'dan's Regalia",
+	AlternativeName: "Kel'Thuzad's Regalia",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 			// TODO: probably doesn't apply to infernal

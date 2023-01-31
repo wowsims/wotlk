@@ -1,20 +1,13 @@
 import { Component } from '../core/components/component.js';
-import { Input, InputConfig } from '../core/components/input.js';
 import { RaidTargetPicker } from '../core/components/raid_target_picker.js';
+
 import { Player } from '../core/player.js';
-import { Raid } from '../core/raid.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
-import { Class } from '../core/proto/common.js';
-import { RaidTarget } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { getEnumValues } from '../core/utils.js';
-import { wait } from '../core/utils.js';
+
+import { Class, RaidTarget, Spec } from '../core/proto/common.js';
 import { emptyRaidTarget } from '../core/proto_utils/utils.js';
 
-import { BuffBot } from './buff_bot.js';
 import { RaidSimUI } from './raid_sim_ui.js';
-
-declare var tippy: any;
 
 export class AssignmentsPicker extends Component {
 	readonly raidSimUI: RaidSimUI;
@@ -29,6 +22,7 @@ export class AssignmentsPicker extends Component {
 	constructor(parentElem: HTMLElement, raidSimUI: RaidSimUI) {
 		super(parentElem, 'assignments-picker-root');
 		this.raidSimUI = raidSimUI;
+
 		this.innervatesPicker = new InnervatesPicker(this.rootElem, raidSimUI);
 		this.powerInfusionsPicker = new PowerInfusionsPicker(this.rootElem, raidSimUI);
 		this.tricksOfTheTradesPicker = new TricksOfTheTradesPicker(this.rootElem, raidSimUI);
@@ -38,8 +32,8 @@ export class AssignmentsPicker extends Component {
 }
 
 interface AssignmentTargetPicker {
-	playerOrBot: Player<any> | BuffBot,
-	targetPicker: RaidTargetPicker<Player<any>> | RaidTargetPicker<BuffBot>,
+	player: Player<any>,
+	targetPicker: RaidTargetPicker<Player<any>>,
 	targetPlayer: Player<any> | null;
 };
 
@@ -56,75 +50,53 @@ abstract class AssignedBuffPicker extends Component {
 		this.raidSimUI = raidSimUI;
 		this.targetPickers = [];
 
-		this.playersContainer = document.createElement('fieldset');
-		this.playersContainer.classList.add('assigned-buff-players-container', 'settings-section');
+		this.playersContainer = document.createElement('div');
+		this.playersContainer.classList.add('assigned-buff-container');
 		this.rootElem.appendChild(this.playersContainer);
 
+		this.raidSimUI.changeEmitter.on(eventID => this.update());
 		this.update();
-		this.raidSimUI.changeEmitter.on(eventID => {
-			this.update();
-		});
 	}
 
 	private update() {
 		this.playersContainer.innerHTML = `
-			<legend>${this.getTitle()}</legend>
-		`;
+			<label class="assignmented-buff-label form-label">${this.getTitle()}</label>
+		`
 
 		const sourcePlayers = this.getSourcePlayers();
-		if (sourcePlayers.length == 0) {
-			this.rootElem.style.display = 'none';
-		} else {
-			this.rootElem.style.display = 'initial';
-		}
+		if (sourcePlayers.length == 0)
+			this.rootElem.classList.add('hide');
+		else
+		this.rootElem.classList.remove('hide');
 
 		this.targetPickers = sourcePlayers.map((sourcePlayer, sourcePlayerIndex) => {
 			const row = document.createElement('div');
-			row.classList.add('assigned-buff-player');
+			row.classList.add('assigned-buff-player', 'input-inline');
 			this.playersContainer.appendChild(row);
 
-			const sourceElem = RaidTargetPicker.makeOptionElem({
-				iconUrl: sourcePlayer instanceof Player ? sourcePlayer.getTalentTreeIcon() : sourcePlayer.settings.iconUrl,
-				text: sourcePlayer.getLabel(),
-				color: sourcePlayer.getClassColor(),
-				isDropdown: false,
-			});
+			let sourceElem = document.createElement('div');
 			sourceElem.classList.add('raid-target-picker-root');
+			sourceElem.appendChild(
+				RaidTargetPicker.makeOptionElem({player: sourcePlayer, isDropdown: false})
+			);
 			row.appendChild(sourceElem);
 
-			const arrow = document.createElement('span');
+			const arrow = document.createElement('i');
 			arrow.classList.add('assigned-buff-arrow', 'fa', 'fa-arrow-right');
 			row.appendChild(arrow);
 
-			let raidTargetPicker: RaidTargetPicker<Player<any>> | RaidTargetPicker<BuffBot> | null = null;
-			if (sourcePlayer instanceof Player) {
-				raidTargetPicker = new RaidTargetPicker<Player<any>>(row, this.raidSimUI.sim.raid, sourcePlayer, {
-					extraCssClasses: [
-						'assigned-buff-target-picker',
-					],
-					noTargetLabel: 'Unassigned',
-					compChangeEmitter: this.raidSimUI.sim.raid.compChangeEmitter,
+			const raidTargetPicker: RaidTargetPicker<Player<any>> | null = new RaidTargetPicker<Player<any>>(row, this.raidSimUI.sim.raid, sourcePlayer, {
+				extraCssClasses: ['assigned-buff-target-picker'],
+				noTargetLabel: 'Unassigned',
+				compChangeEmitter: this.raidSimUI.sim.raid.compChangeEmitter,
 
-					changedEvent: (player: Player<any>) => player.specOptionsChangeEmitter,
-					getValue: (player: Player<any>) => this.getPlayerValue(player),
-					setValue: (eventID: EventID, player: Player<any>, newValue: RaidTarget) => this.setPlayerValue(eventID, player, newValue),
-				});
-			} else {
-				raidTargetPicker = new RaidTargetPicker<BuffBot>(row, this.raidSimUI.sim.raid, sourcePlayer, {
-					extraCssClasses: [
-						'assigned-buff-target-picker',
-					],
-					noTargetLabel: 'Unassigned',
-					compChangeEmitter: this.raidSimUI.sim.raid.compChangeEmitter,
-
-					changedEvent: (buffBot: BuffBot) => buffBot.changeEmitter,
-					getValue: (buffBot: BuffBot) => this.getBuffBotValue(buffBot),
-					setValue: (eventID: EventID, buffBot: BuffBot, newValue: RaidTarget) => this.setBuffBotValue(eventID, buffBot, newValue),
-				});
-			}
+				changedEvent: (player: Player<any>) => player.specOptionsChangeEmitter,
+				getValue: (player: Player<any>) => this.getPlayerValue(player),
+				setValue: (eventID: EventID, player: Player<any>, newValue: RaidTarget) => this.setPlayerValue(eventID, player, newValue),
+			});
 
 			const targetPickerData = {
-				playerOrBot: sourcePlayer,
+				player: sourcePlayer,
 				targetPicker: raidTargetPicker!,
 				targetPlayer: this.raidSimUI.sim.raid.getPlayerFromRaidTarget(raidTargetPicker!.getInputValue()),
 			};
@@ -138,13 +110,10 @@ abstract class AssignedBuffPicker extends Component {
 	}
 
 	abstract getTitle(): string;
-	abstract getSourcePlayers(): Array<Player<any> | BuffBot>;
+	abstract getSourcePlayers(): Array<Player<any>>;
 
 	abstract getPlayerValue(player: Player<any>): RaidTarget;
 	abstract setPlayerValue(eventID: EventID, player: Player<any>, newValue: RaidTarget): void;
-
-	abstract getBuffBotValue(buffBot: BuffBot): RaidTarget;
-	abstract setBuffBotValue(eventID: EventID, buffBot: BuffBot, newValue: RaidTarget): void;
 }
 
 class InnervatesPicker extends AssignedBuffPicker {
@@ -152,8 +121,8 @@ class InnervatesPicker extends AssignedBuffPicker {
 		return 'Innervate';
 	}
 
-	getSourcePlayers(): Array<Player<any> | BuffBot> {
-		return this.raidSimUI.getPlayersAndBuffBots().filter(playerOrBot => playerOrBot?.getClass() == Class.ClassDruid) as Array<Player<any> | BuffBot>;
+	getSourcePlayers(): Array<Player<any>> {
+		return this.raidSimUI.getActivePlayers().filter(player => player.isClass(Class.ClassDruid));
 	}
 
 	getPlayerValue(player: Player<any>): RaidTarget {
@@ -165,14 +134,6 @@ class InnervatesPicker extends AssignedBuffPicker {
 		newOptions.innervateTarget = newValue;
 		player.setSpecOptions(eventID, newOptions);
 	}
-
-	getBuffBotValue(buffBot: BuffBot): RaidTarget {
-		return buffBot.getInnervateAssignment();
-	}
-
-	setBuffBotValue(eventID: EventID, buffBot: BuffBot, newValue: RaidTarget) {
-		buffBot.setInnervateAssignment(eventID, newValue);
-	}
 }
 
 class PowerInfusionsPicker extends AssignedBuffPicker {
@@ -180,22 +141,8 @@ class PowerInfusionsPicker extends AssignedBuffPicker {
 		return 'Power Infusion';
 	}
 
-	getSourcePlayers(): Array<Player<any> | BuffBot> {
-		return this.raidSimUI.getPlayersAndBuffBots()
-			.filter(playerOrBot => playerOrBot?.getClass() == Class.ClassPriest)
-			.filter(playerOrBot => {
-				if (playerOrBot instanceof BuffBot) {
-					return playerOrBot.settings.buffBotId == 'Divine Spirit Priest';
-				} else {
-					const player = playerOrBot as Player<any>;
-					if (!(player as Player<Spec.SpecSmitePriest>).getTalents().powerInfusion) {
-						return false;
-					}
-					// Don't include shadow priests even if they have the talent, because they
-					// don't have a raid target option for this.
-					return player.spec != Spec.SpecShadowPriest;
-				}
-			}) as Array<Player<any> | BuffBot>;
+	getSourcePlayers(): Array<Player<any>> {
+		return this.raidSimUI.getActivePlayers().filter(player => player.isClass(Class.ClassPriest) && player.getTalents().powerInfusion);
 	}
 
 	getPlayerValue(player: Player<any>): RaidTarget {
@@ -207,14 +154,6 @@ class PowerInfusionsPicker extends AssignedBuffPicker {
 		newOptions.powerInfusionTarget = newValue;
 		player.setSpecOptions(eventID, newOptions);
 	}
-
-	getBuffBotValue(buffBot: BuffBot): RaidTarget {
-		return buffBot.getPowerInfusionAssignment();
-	}
-
-	setBuffBotValue(eventID: EventID, buffBot: BuffBot, newValue: RaidTarget) {
-		buffBot.setPowerInfusionAssignment(eventID, newValue);
-	}
 }
 
 class TricksOfTheTradesPicker extends AssignedBuffPicker {
@@ -222,8 +161,8 @@ class TricksOfTheTradesPicker extends AssignedBuffPicker {
 		return 'Tricks of the Trade';
 	}
 
-	getSourcePlayers(): Array<Player<any> | BuffBot> {
-		return this.raidSimUI.getPlayersAndBuffBots().filter(playerOrBot => playerOrBot?.getClass() == Class.ClassRogue) as Array<Player<any> | BuffBot>;
+	getSourcePlayers(): Array<Player<any>> {
+		return this.raidSimUI.getActivePlayers().filter(player => player.isClass(Class.ClassRogue));
 	}
 
 	getPlayerValue(player: Player<any>): RaidTarget {
@@ -235,14 +174,6 @@ class TricksOfTheTradesPicker extends AssignedBuffPicker {
 		newOptions.tricksOfTheTradeTarget = newValue;
 		player.setSpecOptions(eventID, newOptions);
 	}
-
-	getBuffBotValue(buffBot: BuffBot): RaidTarget {
-		return buffBot.getTricksOfTheTradeAssignment();
-	}
-
-	setBuffBotValue(eventID: EventID, buffBot: BuffBot, newValue: RaidTarget) {
-		buffBot.setTricksOfTheTradeAssignment(eventID, newValue);
-	}
 }
 
 class UnholyFrenzyPicker extends AssignedBuffPicker {
@@ -250,17 +181,8 @@ class UnholyFrenzyPicker extends AssignedBuffPicker {
 		return 'Unholy Frenzy';
 	}
 
-	getSourcePlayers(): Array<Player<any> | BuffBot> {
-		return this.raidSimUI.getPlayersAndBuffBots()
-			.filter(playerOrBot => playerOrBot?.getClass() == Class.ClassDeathknight)
-			.filter(playerOrBot => {
-				if (playerOrBot instanceof BuffBot) {
-					return playerOrBot.settings.buffBotId == 'Unholy Frenzy Dk';
-				} else {
-					const player = playerOrBot as Player<Spec.SpecDeathknight>;
-					return player.getTalents().hysteria;
-				}
-			}) as Array<Player<any> | BuffBot>;
+	getSourcePlayers(): Array<Player<any>> {
+		return this.raidSimUI.getActivePlayers().filter(player => player.isClass(Class.ClassDeathknight) && player.getTalents().hysteria);
 	}
 
 	getPlayerValue(player: Player<any>): RaidTarget {
@@ -272,14 +194,6 @@ class UnholyFrenzyPicker extends AssignedBuffPicker {
 		newOptions.unholyFrenzyTarget = newValue;
 		player.setSpecOptions(eventID, newOptions);
 	}
-
-	getBuffBotValue(buffBot: BuffBot): RaidTarget {
-		return buffBot.getUnholyFrenzyAssignment();
-	}
-
-	setBuffBotValue(eventID: EventID, buffBot: BuffBot, newValue: RaidTarget) {
-		buffBot.setUnholyFrenzyAssignment(eventID, newValue);
-	}
 }
 
 class FocusMagicsPicker extends AssignedBuffPicker {
@@ -287,8 +201,8 @@ class FocusMagicsPicker extends AssignedBuffPicker {
 		return 'Focus Magic';
 	}
 
-	getSourcePlayers(): Array<Player<any> | BuffBot> {
-		return this.raidSimUI.getPlayersAndBuffBots().filter(playerOrBot => playerOrBot?.getClass() == Class.ClassMage) as Array<Player<any> | BuffBot>;
+	getSourcePlayers(): Array<Player<any>> {
+		return this.raidSimUI.getActivePlayers().filter(player => player.isClass(Class.ClassMage));
 	}
 
 	getPlayerValue(player: Player<any>): RaidTarget {
@@ -299,13 +213,5 @@ class FocusMagicsPicker extends AssignedBuffPicker {
 		const newOptions = (player as Player<Spec.SpecMage>).getSpecOptions();
 		newOptions.focusMagicTarget = newValue;
 		player.setSpecOptions(eventID, newOptions);
-	}
-
-	getBuffBotValue(buffBot: BuffBot): RaidTarget {
-		throw new Error('Unimplemented focus magic buff bot');
-	}
-
-	setBuffBotValue(eventID: EventID, buffBot: BuffBot, newValue: RaidTarget) {
-		throw new Error('Unimplemented focus magic buff bot');
 	}
 }

@@ -68,7 +68,6 @@ export const DefaultRotation = ProtectionPaladinRotation.create({
 export const DefaultOptions = ProtectionPaladinOptions.create({
 	aura: PaladinAura.RetributionAura,
 	judgement: PaladinJudgement.JudgementOfWisdom,
-	damageTakenPerSecond: 0,
 });
 
 export const DefaultConsumes = Consumes.create({
@@ -276,3 +275,123 @@ export const P1_PRESET = {
 	]}`),
 };
 
+export const P2_PRESET = {
+	name: 'P2 Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecProtectionPaladin>) => true,
+	gear: EquipmentSpec.fromJsonString(`{
+      "items": [
+        {
+          "id": 46175,
+          "enchant": 3818,
+          "gems": [
+            41380,
+            40088
+          ]
+        },
+        {
+          "id": 45485,
+          "gems": [
+            40088
+          ]
+        },
+        {
+          "id": 46177,
+          "enchant": 3852,
+          "gems": [
+            40034
+          ]
+        },
+        {
+          "id": 45496,
+          "enchant": 3605,
+          "gems": [
+            40034
+          ]
+        },
+        {
+          "id": 46039,
+          "enchant": 3832,
+          "gems": [
+            36767,
+            36767
+          ]
+        },
+        {
+          "id": 45111,
+          "enchant": 3850,
+          "gems": [
+            0
+          ]
+        },
+        {
+          "id": 45487,
+          "enchant": 3860,
+          "gems": [
+            40008,
+            40008,
+            0
+          ]
+        },
+        {
+          "id": 45825,
+          "enchant": 3601,
+          "gems": [
+            40008
+          ]
+        },
+        {
+          "id": 45594,
+          "enchant": 3822,
+          "gems": [
+            40034,
+            45880,
+            40088
+          ]
+        },
+        {
+          "id": 45988,
+          "enchant": 3606,
+          "gems": [
+            40008,
+            40008
+          ]
+        },
+        {
+          "id": 45471,
+          "gems": [
+            40088
+          ]
+        },
+        {
+          "id": 45326
+        },
+        {
+          "id": 45158
+        },
+        {
+          "id": 46021
+        },
+        {
+          "id": 45947,
+          "enchant": 3788,
+          "gems": [
+            40088
+          ]
+        },
+        {
+          "id": 45587,
+          "enchant": 3849,
+          "gems": [
+            36767
+          ]
+        },
+        {
+          "id": 45145
+        }
+      ]
+    }`),
+};
+
+
+	

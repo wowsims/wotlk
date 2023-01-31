@@ -5,17 +5,16 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (warlock *Warlock) registerShadowBoltSpell() {
-	baseCost := 0.17 * warlock.BaseMana
 	spellCoeff := 0.857 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
 	ISBProcChance := 0.2 * float64(warlock.Talents.ImprovedShadowBolt)
 
 	var shadowMasteryAura *core.Aura
 	if ISBProcChance > 0 {
 		shadowMasteryAura = core.ShadowMasteryAura(warlock.CurrentTarget)
+		warlock.CritDebuffCategory = shadowMasteryAura.ExclusiveEffects[0].Category
 	}
 
 	warlock.ShadowBolt = warlock.RegisterSpell(core.SpellConfig{
@@ -23,21 +22,17 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 		SpellSchool:  core.SpellSchoolShadow,
 		ProcMask:     core.ProcMaskSpellDamage,
 		MissileSpeed: 20,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.17,
+			Multiplier: 1 -
+				[]float64{0, .04, .07, .10}[warlock.Talents.Cataclysm] -
+				core.TernaryFloat64(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfShadowBolt), 0.1, 0),
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost:     baseCost * (1 - []float64{0, .04, .07, .10}[warlock.Talents.Cataclysm] - core.TernaryFloat64(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfShadowBolt), 0.1, 0)),
 				GCD:      core.GCDDefault,
 				CastTime: time.Millisecond * (3000 - 100*time.Duration(warlock.Talents.Bane)),
-			},
-			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
-				cast.GCD = time.Duration(float64(cast.GCD) * warlock.backdraftModifier())
-				cast.CastTime = time.Duration(float64(cast.CastTime) * warlock.backdraftModifier())
-				if warlock.Talents.Nightfall > 0 {
-					warlock.applyNightfall(cast)
-				}
 			},
 		},
 
@@ -66,9 +61,6 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 					}
 				}
 			})
-			if warlock.DemonicSoulAura.IsActive() {
-				warlock.DemonicSoulAura.Deactivate(sim)
-			}
 		},
 	})
 }

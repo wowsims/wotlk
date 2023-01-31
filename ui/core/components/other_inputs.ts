@@ -50,10 +50,9 @@ export function makeShow2hWeaponsSelector(parent: HTMLElement, sim: Sim): Boolea
 
 export function makeShowMatchingGemsSelector(parent: HTMLElement, sim: Sim): BooleanPicker<Sim> {
 	return new BooleanPicker<Sim>(parent, sim, {
-		extraCssClasses: [
-			'show-matching-gems-selector',
-		],
+		extraCssClasses: ['show-matching-gems-selector', 'mb-0'],
 		label: 'Match Socket',
+		inline: true,
 		changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
 		getValue: (sim: Sim) => sim.getFilters().matchingGemsOnly,
 		setValue: (eventID: EventID, sim: Sim, newValue: boolean) => {
@@ -83,39 +82,6 @@ export function makePhaseSelector(parent: HTMLElement, sim: Sim): EnumPicker<Sim
 		},
 	});
 }
-
-export const StartingConjured = {
-	type: 'enum' as const,
-	label: 'Starting Conjured',
-	labelTooltip: 'If set, this conjured will be used instead of the default conjured for the first few uses.',
-	values: [
-		{ name: 'None', value: Conjured.ConjuredUnknown },
-		{ name: 'Dark Rune', value: Conjured.ConjuredDarkRune },
-		{ name: 'Flame Cap', value: Conjured.ConjuredFlameCap },
-		{ name: 'Thistle Tea', value: Conjured.ConjuredRogueThistleTea },
-	],
-	changedEvent: (player: Player<any>) => player.consumesChangeEmitter,
-	getValue: (player: Player<any>) => player.getConsumes().startingConjured,
-	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
-		const newConsumes = player.getConsumes();
-		newConsumes.startingConjured = newValue;
-		player.setConsumes(eventID, newConsumes);
-	},
-};
-
-export const NumStartingConjured = {
-	type: 'number' as const,
-	label: '# to use',
-	labelTooltip: 'The number of starting conjured items to use before going back to the default conjured.',
-	changedEvent: (player: Player<any>) => player.consumesChangeEmitter,
-	getValue: (player: Player<any>) => player.getConsumes().numStartingConjured,
-	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
-		const newConsumes = player.getConsumes();
-		newConsumes.numStartingConjured = newValue;
-		player.setConsumes(eventID, newConsumes);
-	},
-	enableWhen: (player: Player<any>) => player.getConsumes().startingConjured != Conjured.ConjuredUnknown,
-};
 
 export const InFrontOfTarget = {
 	type: 'boolean' as const,
@@ -156,7 +122,7 @@ export const TankAssignment = {
 		{ name: 'Tank 4', value: 3 },
 	],
 	changedEvent: (player: Player<any>) => player.getRaid()!.tanksChangeEmitter,
-	getValue: (player: Player<any>) => player.getRaid()!.getTanks().findIndex(tank => RaidTarget.equals(tank, player.makeRaidTarget())),
+	getValue: (player: Player<any>) => (player.getRaid()?.getTanks() || []).findIndex(tank => RaidTarget.equals(tank, player.makeRaidTarget())),
 	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
 		const newTanks = [];
 		if (newValue != -1) {
@@ -183,7 +149,7 @@ export const IncomingHps = {
 		healingModel.hps = newValue;
 		player.setHealingModel(eventID, healingModel);
 	},
-	enableWhen: (player: Player<any>) => player.getRaid()!.getTanks().find(tank => RaidTarget.equals(tank, player.makeRaidTarget())) != null,
+	enableWhen: (player: Player<any>) => (player.getRaid()?.getTanks() || []).find(tank => RaidTarget.equals(tank, player.makeRaidTarget())) != null,
 };
 
 export const HealingCadence = {
@@ -202,7 +168,7 @@ export const HealingCadence = {
 		healingModel.cadenceSeconds = newValue;
 		player.setHealingModel(eventID, healingModel);
 	},
-	enableWhen: (player: Player<any>) => player.getRaid()!.getTanks().find(tank => RaidTarget.equals(tank, player.makeRaidTarget())) != null,
+	enableWhen: (player: Player<any>) => (player.getRaid()?.getTanks() || []).find(tank => RaidTarget.equals(tank, player.makeRaidTarget())) != null,
 };
 
 export const BurstWindow = {
@@ -220,7 +186,7 @@ export const BurstWindow = {
 		healingModel.burstWindow = newValue;
 		player.setHealingModel(eventID, healingModel);
 	},
-	enableWhen: (player: Player<any>) => player.getRaid()!.getTanks().find(tank => RaidTarget.equals(tank, player.makeRaidTarget())) != null,
+	enableWhen: (player: Player<any>) => (player.getRaid()?.getTanks() || []).find(tank => RaidTarget.equals(tank, player.makeRaidTarget())) != null,
 };
 
 export const HpPercentForDefensives = {

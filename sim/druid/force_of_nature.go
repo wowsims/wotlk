@@ -17,17 +17,16 @@ func (druid *Druid) registerForceOfNatureCD() {
 		ActionID: core.ActionID{SpellID: 65861},
 		Duration: time.Second * 30,
 	})
-	baseCost := druid.BaseMana * 0.12
 	druid.ForceOfNature = druid.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 65861},
 
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
-
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.12,
+			Multiplier: 1,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:  core.GCDDefault,
-				Cost: baseCost,
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    druid.NewTimer(),
@@ -36,7 +35,6 @@ func (druid *Druid) registerForceOfNatureCD() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-
 			druid.Treant1.EnableWithTimeout(sim, druid.Treant1, time.Second*30)
 			druid.Treant2.EnableWithTimeout(sim, druid.Treant2, time.Second*30)
 			druid.Treant3.EnableWithTimeout(sim, druid.Treant3, time.Second*30)
@@ -69,16 +67,9 @@ type TreantPet struct {
 
 func (druid *Druid) NewTreant() *TreantPet {
 	treant := &TreantPet{
-		Pet: core.NewPet(
-			"Treant",
-			&druid.Character,
-			treantBaseStats,
-			func(ownerStats stats.Stats) stats.Stats {
-				return stats.Stats{}
-			},
-			false,
-			false,
-		),
+		Pet: core.NewPet("Treant", &druid.Character, treantBaseStats, func(ownerStats stats.Stats) stats.Stats {
+			return stats.Stats{}
+		}, nil, false, false),
 		druidOwner: druid,
 	}
 	treant.AddStatDependency(stats.Strength, stats.AttackPower, 2)

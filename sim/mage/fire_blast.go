@@ -4,24 +4,21 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (mage *Mage) registerFireBlastSpell() {
-	baseCost := 0.21 * mage.BaseMana
-
 	mage.FireBlast = mage.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 42873},
-		SpellSchool:  core.SpellSchoolFire,
-		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagMage | HotStreakSpells,
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
+		ActionID:    core.ActionID{SpellID: 42873},
+		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       SpellFlagMage | HotStreakSpells,
 
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.21,
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost,
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    mage.NewTimer(),
@@ -31,7 +28,9 @@ func (mage *Mage) registerFireBlastSpell() {
 
 		BonusCritRating: 0 +
 			float64(mage.Talents.CriticalMass+mage.Talents.Incineration)*2*core.CritRatingPerCritChance,
-		DamageMultiplier: mage.spellDamageMultiplier * (1 + 0.02*float64(mage.Talents.SpellImpact)),
+		DamageMultiplierAdditive: 1 +
+			.02*float64(mage.Talents.SpellImpact) +
+			.02*float64(mage.Talents.FirePower),
 		CritMultiplier:   mage.SpellCritMultiplier(1, mage.bonusCritDamage),
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),
 

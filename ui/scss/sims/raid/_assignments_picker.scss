@@ -1,16 +1,17 @@
-.assigned-buff-player {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	margin: 3px 3px 3px 0;
-}
+.assigned-buff-picker-root {
+	&:not(:last-child) {
+		margin-bottom: $block-spacer * 2;
+	}
 
-.assigned-buff-player > * {
-	margin: 3px 3px 3px 0;
-}
+	.assigned-buff-player {
+		display: flex;
 
-.assigned-buff-player .raid-target-picker-option {
-	display: flex;
-	align-items: center;
-	min-width: 200px;
+		&:not(:last-child) {
+			margin-bottom: $block-spacer;
+		}
+	}
+
+	.assigned-buff-arrow {
+		margin: 0 $block-spacer;
+	}
 }

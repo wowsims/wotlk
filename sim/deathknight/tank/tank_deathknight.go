@@ -27,34 +27,38 @@ type TankDeathknight struct {
 	*deathknight.Deathknight
 
 	switchIT   bool
-	BloodSpell *deathknight.RuneSpell
+	BloodSpell *core.Spell
 
-	Rotation *proto.TankDeathknight_Rotation
+	Rotation               *proto.TankDeathknight_Rotation
+	HpPercentForDefensives float64
 }
 
 func NewTankDeathknight(character core.Character, options *proto.Player) *TankDeathknight {
 	dkOptions := options.GetTankDeathknight()
 
 	tankDk := &TankDeathknight{
-		Deathknight: deathknight.NewDeathknight(character, dkOptions.Talents, deathknight.DeathknightInputs{
+		Deathknight: deathknight.NewDeathknight(character, deathknight.DeathknightInputs{
 			IsDps:              false,
 			StartingRunicPower: dkOptions.Options.StartingRunicPower,
-		}),
-		Rotation: dkOptions.Rotation,
+		}, options.TalentsString),
+		Rotation:               dkOptions.Rotation,
+		HpPercentForDefensives: 0.35,
 	}
 
-	dkOptions.Options.UnholyFrenzyTarget = &proto.RaidTarget{TargetIndex: -1}
-	if dkOptions.Options.UnholyFrenzyTarget != nil {
-		tankDk.Inputs.UnholyFrenzyTarget = dkOptions.Options.UnholyFrenzyTarget
+	if options.GetCooldowns() != nil {
+		tankDk.HpPercentForDefensives = options.GetCooldowns().HpPercentForDefensives
 	}
+
+	tankDk.Inputs.UnholyFrenzyTarget = dkOptions.Options.UnholyFrenzyTarget
 
 	tankDk.EnableAutoAttacks(tankDk, core.AutoAttackOptions{
 		MainHand:       tankDk.WeaponFromMainHand(tankDk.DefaultMeleeCritMultiplier()),
 		OffHand:        tankDk.WeaponFromOffHand(tankDk.DefaultMeleeCritMultiplier()),
 		AutoSwingMelee: true,
 		ReplaceMHSwing: func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
-			if tankDk.RuneStrike.CanCast(sim) {
-				return tankDk.RuneStrike.Spell
+			// Save up RP for defensives
+			if tankDk.CurrentRunicPower() > 40 && tankDk.RuneStrike.CanCast(sim, nil) {
+				return tankDk.RuneStrike
 			} else {
 				return nil
 			}
@@ -85,8 +89,6 @@ func (dk *TankDeathknight) SetupRotations() {
 		dk.RotationSequence.NewAction(dk.TankRA_Hps)
 	} else if dk.Rotation.OptimizationSetting == proto.TankDeathknight_Rotation_Tps {
 		dk.RotationSequence.NewAction(dk.TankRA_Tps)
-	} else if dk.Rotation.OptimizationSetting == proto.TankDeathknight_Rotation_Dps {
-		dk.RotationSequence.NewAction(dk.TankRA_Hps)
 	}
 
 	if dk.Rotation.BloodSpell == proto.TankDeathknight_Rotation_BloodStrike {

@@ -1,17 +1,14 @@
 package priest
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (priest *Priest) registerRenewSpell() {
 	actionID := core.ActionID{SpellID: 48068}
-	baseCost := 0.17 * priest.BaseMana
 	spellCoeff := (1.88 + .05*float64(priest.Talents.EmpoweredRenew)) / 5
 
 	if priest.Talents.EmpoweredRenew > 0 {
@@ -43,33 +40,23 @@ func (priest *Priest) registerRenewSpell() {
 		ProcMask:    core.ProcMaskSpellHealing,
 		Flags:       core.SpellFlagHelpful,
 
-		ResourceType: stats.Mana,
-		BaseCost:     baseCost,
-
+		ManaCost: core.ManaCostOptions{
+			BaseCost:   0.17,
+			Multiplier: 1 - []float64{0, .04, .07, .10}[priest.Talents.MentalAgility],
+		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				Cost: baseCost * (1 - []float64{0, .04, .07, .10}[priest.Talents.MentalAgility]),
-				GCD:  core.GCDDefault,
+				GCD: core.GCDDefault,
 			},
 		},
 
 		DamageMultiplier: priest.renewHealingMultiplier(),
 		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
-		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			spell.SpellMetrics[target.UnitIndex].Hits++
-			priest.RenewHots[target.UnitIndex].Apply(sim)
-
-			if priest.EmpoweredRenew != nil {
-				priest.EmpoweredRenew.Cast(sim, target)
-			}
-		},
-	})
-
-	priest.RenewHots = core.NewAllyHotArray(
-		&priest.Unit,
-		core.Dot{
-			Spell:         priest.Renew,
+		Hot: core.DotConfig{
+			Aura: core.Aura{
+				Label: "Renew",
+			},
 			NumberOfTicks: priest.renewTicks(),
 			TickLength:    time.Second * 3,
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
@@ -80,10 +67,16 @@ func (priest *Priest) registerRenewSpell() {
 				dot.CalcAndDealPeriodicSnapshotHealing(sim, target, dot.OutcomeTick)
 			},
 		},
-		core.Aura{
-			Label:    "Renew" + strconv.Itoa(int(priest.Index)),
-			ActionID: priest.Renew.ActionID,
-		})
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			spell.SpellMetrics[target.UnitIndex].Hits++
+			spell.Hot(target).Apply(sim)
+
+			if priest.EmpoweredRenew != nil {
+				priest.EmpoweredRenew.Cast(sim, target)
+			}
+		},
+	})
 }
 
 func (priest *Priest) renewTicks() int32 {
@@ -92,7 +85,10 @@ func (priest *Priest) renewTicks() int32 {
 
 func (priest *Priest) renewHealingMultiplier() float64 {
 	return 1 *
-		(1 + 0.01*float64(priest.Talents.TwinDisciplines)) *
-		(1 + 0.05*float64(priest.Talents.ImprovedRenew)) *
+		(1 + .02*float64(priest.Talents.SpiritualHealing)) *
+		(1 + .01*float64(priest.Talents.BlessedResilience)) *
+		(1 + .02*float64(priest.Talents.FocusedPower)) *
+		(1 + .01*float64(priest.Talents.TwinDisciplines)) *
+		(1 + .05*float64(priest.Talents.ImprovedRenew)) *
 		core.TernaryFloat64(priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfRenew), 1.25, 1)
 }

@@ -1,21 +1,37 @@
-.blessings-table-header-cell {
-	padding: 2px 10px 2px 0;
-}
+@use "sass:map";
 
-.blessings-table-header-cell img {
-	height: 50px;
-	margin: 1px;
-}
+.blessings-picker-root {
+	.blessings-picker-row {
+		display: flex;
+		justify-content: space-between;
 
-.blessings-table-body {
-}
+		&:not(:last-child) {
+			margin-bottom: map.get($spacers, 1);
+		}
 
-.blessings-table-cell {
-	padding: 2px 10px;
-}
+		.blessings-picker-spec {
+			margin-right: $block-spacer * 2;
 
-// Filters create their own stacking contexts which messes with z-ordering,
-// so we have to apply this to the individual elements rather than the row.
-.blessings-table-cell:not(.paladin-active) .icon-picker-button {
-	filter: grayscale(1);
+			.blessings-spec-icon {
+				width: 2.5rem;
+				height: 2.5rem;
+			}
+		}
+
+		.blessings-picker-container {
+			display: grid;
+			grid-template-columns: repeat(4, 1fr);
+			grid-column-gap: map.get($spacers, 1);
+
+			.blessing-picker {
+				&:not(.disabled) .icon-picker-button {
+					filter: none !important;
+				}
+
+				&> .icon-picker-button:not(.active) {
+					filter: grayscale(1);
+				}
+			}
+		}
+	}
 }

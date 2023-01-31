@@ -37,7 +37,7 @@ import { ConsumesPicker } from "./consumes_picker";
 
 import * as IconInputs from '../icon_inputs.js';
 import * as Tooltips from '../../constants/tooltips.js';
-import { ItemSwapPicker } from "../item_swap";
+import { ItemSwapPicker } from "../item_swap_picker";
 
 export class SettingsTab extends SimTab {
   protected simUI: IndividualSimUI<Spec>;
@@ -45,9 +45,10 @@ export class SettingsTab extends SimTab {
   readonly leftPanel: HTMLElement;
   readonly rightPanel: HTMLElement;
 
-	readonly column1: HTMLElement = this.buildColumn(1);
-	readonly column2: HTMLElement = this.buildColumn(2);
-	readonly column3: HTMLElement = this.buildColumn(3);
+	readonly column1: HTMLElement = this.buildColumn(1, 'settings-left-col');
+	readonly column2: HTMLElement = this.buildColumn(2, 'settings-left-col');
+	readonly column3: HTMLElement = this.buildColumn(3, 'settings-left-col');
+	readonly column4?: HTMLElement;
 
   constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>) {
     super(parentElem, simUI, {identifier: 'settings-tab', title: 'Settings'});
@@ -60,8 +61,14 @@ export class SettingsTab extends SimTab {
 		this.leftPanel.appendChild(this.column2);
 		this.leftPanel.appendChild(this.column3);
 
-    this.rightPanel = document.createElement('div');
-    this.rightPanel.classList.add('settings-tab-right', 'tab-panel-right');
+		// The 4th column is only used in the raid sim player editor to spread out player settings
+		if (this.simUI.isWithinRaidSim) {
+			this.column4 = this.buildColumn(4, 'settings-left-col');
+			this.leftPanel.appendChild(this.column4);
+		}
+
+		this.rightPanel = document.createElement('div');
+    this.rightPanel.classList.add('settings-tab-right', 'tab-panel-right', 'within-raid-sim-hide');
 
     this.contentContainer.appendChild(this.leftPanel);
     this.contentContainer.appendChild(this.rightPanel);
@@ -69,14 +76,11 @@ export class SettingsTab extends SimTab {
     this.buildTabContent();
   }
 
-	private buildColumn(index: number): HTMLElement {
-		let column = document.createElement('div');
-		column.classList.add('tab-panel-col', `settings-left-col-${index}`)
-		return column;
-	}
-
   protected buildTabContent() {
-    this.buildEncounterSettings();
+		if (!this.simUI.isWithinRaidSim) {
+    	this.buildEncounterSettings();
+		}
+
 		this.buildRotationSettings();
 
 		this.buildPlayerSettings();
@@ -85,10 +89,14 @@ export class SettingsTab extends SimTab {
 		this.buildCooldownSettings();
 		this.buildOtherSettings();
 
-		this.buildBuffsSettings();
-		this.buildDebuffsSettings();
+		if (!this.simUI.isWithinRaidSim) {
+			this.buildBuffsSettings();
+			this.buildDebuffsSettings();
+		}
 
-    this.buildSavedDataPickers();
+		if (!this.simUI.isWithinRaidSim) {
+    	this.buildSavedDataPickers();
+		}
   }
 
   private buildEncounterSettings() {
@@ -195,7 +203,8 @@ export class SettingsTab extends SimTab {
 	}
 
 	private buildConsumesSection() {
-		const contentBlock = new ContentBlock(this.column2, 'consumes-settings', {
+		const column = this.simUI.isWithinRaidSim ? this.column3 : this.column2;
+		const contentBlock = new ContentBlock(column, 'consumes-settings', {
 			header: {title: 'Consumables'}
 		});
 
@@ -203,7 +212,8 @@ export class SettingsTab extends SimTab {
 	}
 
 	private buildCooldownSettings() {
-		const contentBlock = new ContentBlock(this.column2, 'cooldown-settings', {
+		const column = (this.simUI.isWithinRaidSim ? this.column4 : this.column2) as HTMLElement;
+		const contentBlock = new ContentBlock(column, 'cooldown-settings', {
 			header: {title: 'Cooldowns', tooltip: Tooltips.COOLDOWNS_SECTION}
 		});
 
@@ -211,7 +221,8 @@ export class SettingsTab extends SimTab {
 	}
 
 	private buildOtherSettings() {
-		let settings = this.simUI.individualConfig.otherInputs?.inputs.filter(inputs =>
+		const column = this.simUI.isWithinRaidSim ? this.column4 : this.column2;
+		const settings = this.simUI.individualConfig.otherInputs?.inputs.filter(inputs =>
 			!inputs.extraCssClasses?.includes('within-raid-sim-hide') || true
 		)
 
@@ -421,7 +432,7 @@ export class SettingsTab extends SimTab {
 			if (inputConfig.type == 'number') {
 				new NumberPicker(sectionElem, this.simUI.player, inputConfig);
 			} else if (inputConfig.type == 'boolean') {
-				new BooleanPicker(sectionElem, this.simUI.player, inputConfig);
+				new BooleanPicker(sectionElem, this.simUI.player, {...inputConfig, ...{cssScheme: this.simUI.cssScheme}});
 			} else if (inputConfig.type == 'enum') {
 				new EnumPicker(sectionElem, this.simUI.player, inputConfig);
 			} else if (inputConfig.type == 'customRotation') {

@@ -67,8 +67,9 @@ func (bear *FeralTankDruid) doRotation(sim *core.Simulation) {
 }
 
 func (bear *FeralTankDruid) shouldSaveLacerateStacks(sim *core.Simulation) bool {
-	return bear.LacerateDot.GetStacks() == 5 &&
-		bear.LacerateDot.RemainingDuration(sim) <= time.Millisecond*1500
+	lacerateDot := bear.Lacerate.CurDot()
+	return lacerateDot.GetStacks() == 5 &&
+		lacerateDot.RemainingDuration(sim) <= time.Millisecond*1500
 }
 
 func (bear *FeralTankDruid) shouldSwipe(sim *core.Simulation) bool {
@@ -92,5 +93,6 @@ func (bear *FeralTankDruid) shouldFaerieFire(sim *core.Simulation) bool {
 }
 
 func (bear *FeralTankDruid) shouldLacerate(sim *core.Simulation) bool {
-	return bear.CanLacerate(sim) && ((bear.MangleBear == nil) || (bear.MangleBear.ReadyAt() >= sim.CurrentTime+core.GCDDefault)) && ((bear.LacerateDot.GetStacks() < 5) || (bear.LacerateDot.RemainingDuration(sim) <= time.Duration(bear.Rotation.LacerateTime*float64(time.Second))))
+	lacerateDot := bear.Lacerate.CurDot()
+	return bear.CanLacerate(sim) && ((bear.MangleBear == nil) || (bear.MangleBear.ReadyAt() >= sim.CurrentTime+core.GCDDefault)) && ((lacerateDot.GetStacks() < 5) || (lacerateDot.RemainingDuration(sim) <= time.Duration(bear.Rotation.LacerateTime*float64(time.Second))))
 }

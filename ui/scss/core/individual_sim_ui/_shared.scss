@@ -1,9 +1,9 @@
 .within-raid-sim .within-raid-sim-hide {
-	display: none;
+	display: none !important;
 }
 
 .not-within-raid-sim .not-within-raid-sim-hide {
-	display: none;
+  display: none !important;
 }
 
 .character-stats-header {
@@ -22,7 +22,7 @@
 .left-gear-panel {
   min-width: calc(550px + 2vw);
   flex: 3;
-  margin-right: $gap-width * 2;
+  margin-right: var(--container-padding);
 }
 
 @include media-breakpoint-down(xl) {
@@ -56,129 +56,6 @@
     min-width: 275px;
   }
 }
-
-// .settings-tab {
-// 	overflow-y: auto;
-// }
-// .settings-inputs {
-//   position: relative;
-// }
-// .settings-section-container {
-//   position: absolute;
-// }
-
-// .settings-section {
-//   border: 2px solid var(--main-text-color);
-//   padding: 4px;
-//   margin: 5px;
-// 	display: grid;
-// 	transform: none !important;
-// }
-
-// .settings-section>legend {
-//   padding: 0 10px;
-// 	margin: 0 3px;
-//   font-weight: 900;
-// 	color: var(--main-text-color);
-//   font-size: 18px;
-// 	white-space: nowrap;
-// 	border: none;
-// 	width: auto;
-// }
-
-// .settings-section .icon-enum-picker-root {
-// 	margin: 1px;
-// }
-
-// .settings-section .icon-enum-picker-root a {
-// 	height: 46px;
-// 	width: 46px;
-// }
-
-// .settings-bottom-bar {
-//   margin: 20px;
-//   display: flex;
-//   justify-content: space-around;
-//   align-items: flex-end;
-// }
-
-// .race-section {
-//   text-align: center;
-// }
-// .race-section > legend {
-//   text-align: left;
-// }
-
-// .race-section > div:not(.settings-section-iconrow), .rotation-section > div:not(.settings-section-iconrow), .other-settings-section > div:not(.settings-section-iconrow) {
-// 	display: flex;
-// 	justify-content: space-between;
-// 	align-items: center;
-// }
-
-// .settings-section-iconrow {
-// 	display: flex;
-// 	grid-template-columns: repeat(5, 1fr);
-// 	justify-content: space-evenly;
-// 	flex-wrap: wrap;
-// 	align-items: center;
-// }
-// .settings-section-iconrow>div {
-// 	margin: auto !important;
-// }
-
-// .buffs-section>div {
-//   display: grid;
-// }
-// .buffs-section {
-//   grid-template-columns: repeat(3, 1fr);
-// }
-
-// .consumes-section>div {
-//   display: grid;
-// }
-
-// .consumes-row {
-// 	display: flex;
-// 	align-items: center;
-// }
-// .consumes-row > span {
-// 	margin: 5px;
-// }
-// .consumes-row-inputs {
-// 	display: flex;
-// 	align-items: center;
-// 	justify-content: space-around;
-// 	flex-grow: 1;
-// }
-// .consumes-row-inputs > * {
-// 	margin: 2px;
-// }
-
-// .debuffs-section>div {
-//   display: grid;
-// }
-// .debuffs-section {
-//   grid-template-columns: repeat(3, 1fr);
-// }
-
-// .cooldowns-section-container {
-// 	z-index: 1000;
-// }
-
-// .saved-encounter-manager {
-//   display: inline-block;
-//   text-align: left;
-// }
-
-// .saved-rotation-manager {
-//   display: inline-block;
-//   text-align: center;
-// }
-
-// .saved-settings-manager {
-//   display: inline-block;
-//   text-align: right;
-// }
 
 .talents-tab-content {
 	display: flex;

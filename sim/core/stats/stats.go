@@ -293,9 +293,10 @@ type PseudoStats struct {
 	// Effects that apply when this unit is the attacker.
 	///////////////////////////////////////////////////
 
-	NoCost         bool    // If set, spells cost no mana/energy/rage.
 	CostMultiplier float64 // Multiplies spell cost.
 	CostReduction  float64 // Reduces spell cost.
+
+	GracefulCastCDFailures bool
 
 	CastSpeedMultiplier   float64
 	MeleeSpeedMultiplier  float64
@@ -334,8 +335,6 @@ type PseudoStats struct {
 	// Treat melee haste as a pseudostat so that shamans, death knights, paladins, and druids can get the correct scaling
 	MeleeHasteRatingPerHastePercent float64
 
-	HealingDealtMultiplier float64
-
 	// Important when unit is attacker or target
 	BlockValueMultiplier float64
 
@@ -359,7 +358,7 @@ type PseudoStats struct {
 	BonusRangedAttackPowerTaken float64 // Hunters mark
 	BonusSpellCritRatingTaken   float64 // Imp Shadow Bolt / Imp Scorch / Winter's Chill debuff
 	BonusCritRatingTaken        float64 // Totem of Wrath / Master Poisoner / Heart of the Crusader
-	BonusMeleeHitRatingTaken    float64 // Formerly Imp FF and SW Radiance; still used by Frigid Dreadplate
+	BonusMeleeHitRatingTaken    float64 // Formerly Imp FF and SW Radiance;
 	BonusSpellHitRatingTaken    float64 // Imp FF
 
 	BonusPhysicalDamageTaken float64 // Hemo, Gift of Arthas, etc
@@ -399,8 +398,7 @@ func NewPseudoStats() PseudoStats {
 
 		MeleeHasteRatingPerHastePercent: 32.79,
 
-		HealingDealtMultiplier: 1,
-		BlockValueMultiplier:   1,
+		BlockValueMultiplier: 1,
 
 		// Target effects.
 		DamageTakenMultiplier:       1,

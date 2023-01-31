@@ -1,7 +1,6 @@
 package hunter
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -254,11 +253,8 @@ func (hunter *Hunter) applyPiercingShots() {
 		return
 	}
 
-	actionID := core.ActionID{SpellID: 53238}
-
-	var psDot *core.Dot
 	psSpell := hunter.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
+		ActionID:    core.ActionID{SpellID: 53238},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskEmpty,
 		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers,
@@ -266,26 +262,23 @@ func (hunter *Hunter) applyPiercingShots() {
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
-		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			psDot.ApplyOrReset(sim)
-			spell.CalcAndDealOutcome(sim, target, spell.OutcomeAlwaysHit)
+		Dot: core.DotConfig{
+			Aura: core.Aura{
+				Label:    "PiercingShots",
+				Duration: time.Second * 8,
+			},
+			NumberOfTicks: 8,
+			TickLength:    time.Second * 1,
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				// Specifically account for bleed modifiers, since it still affects the spell, but we're ignoring all modifiers.
+				dot.SnapshotAttackerMultiplier = target.PseudoStats.PeriodicPhysicalDamageTakenMultiplier
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+			},
 		},
-	})
 
-	target := hunter.CurrentTarget
-	psDot = core.NewDot(core.Dot{
-		Spell: psSpell,
-		Aura: target.GetOrRegisterAura(core.Aura{
-			Label:    "PiercingShots-" + strconv.Itoa(int(hunter.Index)),
-			ActionID: actionID,
-			Duration: time.Second * 8,
-		}),
-		NumberOfTicks: 8,
-		TickLength:    time.Second * 1,
-		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			// Specifically account for bleed modifiers, since it still affects the spell, but we're ignoring all modifiers.
-			dot.SnapshotAttackerMultiplier = target.PseudoStats.PeriodicPhysicalDamageTakenMultiplier
-			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			spell.Dot(target).ApplyOrReset(sim)
+			spell.CalcAndDealOutcome(sim, target, spell.OutcomeAlwaysHit)
 		},
 	})
 
@@ -303,14 +296,11 @@ func (hunter *Hunter) applyPiercingShots() {
 				return
 			}
 
-			var outstandingDamage float64
-			if psDot.IsActive() {
-				outstandingDamage = psDot.SnapshotBaseDamage * float64(psDot.NumberOfTicks-psDot.TickCount)
-			}
-
+			dot := psSpell.Dot(result.Target)
+			outstandingDamage := core.TernaryFloat64(dot.IsActive(), dot.SnapshotBaseDamage*float64(dot.NumberOfTicks-dot.TickCount), 0)
 			newDamage := result.Damage * 0.1 * float64(hunter.Talents.PiercingShots)
 
-			psDot.SnapshotBaseDamage = (outstandingDamage + newDamage) / float64(psDot.NumberOfTicks)
+			dot.SnapshotBaseDamage = (outstandingDamage + newDamage) / float64(dot.NumberOfTicks)
 			psSpell.Cast(sim, result.Target)
 		},
 	})
@@ -435,26 +425,21 @@ func (hunter *Hunter) registerBestialWrathCD() {
 		Duration: time.Second * 10,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.DamageDealtMultiplier *= 1.1
-			aura.Unit.PseudoStats.CostMultiplier *= 0.5
+			aura.Unit.PseudoStats.CostMultiplier -= 0.5
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.DamageDealtMultiplier /= 1.1
-			aura.Unit.PseudoStats.CostMultiplier /= 0.5
+			aura.Unit.PseudoStats.CostMultiplier += 0.5
 		},
 	})
-
-	manaCost := hunter.BaseMana * 0.1
 
 	bwSpell := hunter.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 
-		ResourceType: stats.Mana,
-		BaseCost:     manaCost,
-
+		ManaCost: core.ManaCostOptions{
+			BaseCost: 0.1,
+		},
 		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				Cost: manaCost,
-			},
 			CD: core.Cooldown{
 				Timer:    hunter.NewTimer(),
 				Duration: hunter.applyLongevity(time.Minute*2 - core.TernaryDuration(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfBestialWrath), time.Second*20, 0)),
@@ -474,7 +459,7 @@ func (hunter *Hunter) registerBestialWrathCD() {
 		Spell: bwSpell,
 		Type:  core.CooldownTypeDPS,
 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return hunter.CurrentMana() >= manaCost
+			return hunter.CurrentMana() >= bwSpell.DefaultCast.Cost
 		},
 	})
 }

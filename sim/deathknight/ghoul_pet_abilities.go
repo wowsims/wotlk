@@ -32,9 +32,7 @@ func (ability *PetAbility) TryCast(sim *core.Simulation, target *core.Unit, ghou
 		return false
 	}
 
-	if !ghoul.PseudoStats.NoCost {
-		ghoul.SpendFocus(sim, ability.Cost, ability.ActionID)
-	}
+	ghoul.SpendFocus(sim, ability.Cost, ability.ActionID)
 	ability.Cast(sim, target)
 	return true
 }
