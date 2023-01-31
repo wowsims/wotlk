@@ -737,8 +737,10 @@ class SelectorModal extends BaseModal {
 
 		const phaseSelector = makePhaseSelector(tabContent.getElementsByClassName('selector-modal-phase-selector')[0] as HTMLElement, this.player.sim);
 
-		// TODO: Refactor
-		if (label == 'Gear') {
+		if (label == 'Items') {
+			tabElem.classList.add('active', 'in');
+			tabContent.classList.add('active', 'in');
+
 			const filtersButton = tabContent.getElementsByClassName('selector-modal-filters-button')[0] as HTMLElement;
 			if (FiltersMenu.anyFiltersForSlot(slot)) {
 				filtersButton.addEventListener('click', () => new FiltersMenu(this.simUI.rootElem, this.player, slot));
