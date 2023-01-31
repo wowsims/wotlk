@@ -16,8 +16,8 @@ export class GearTab extends SimTab {
   readonly leftPanel: HTMLElement;
   readonly rightPanel: HTMLElement;
 
-	readonly column1: HTMLElement = this.buildColumn(1);
-	readonly column2: HTMLElement = this.buildColumn(2);
+	readonly column1: HTMLElement = this.buildColumn(1, 'gear-left-col');
+	readonly column2: HTMLElement = this.buildColumn(2, 'gear-left-col');
 
   constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>) {
     super(parentElem, simUI, {identifier: 'gear-tab', title: 'Gear'});
@@ -26,8 +26,8 @@ export class GearTab extends SimTab {
     this.leftPanel = document.createElement('div');
     this.leftPanel.classList.add('gear-tab-left', 'tab-panel-left');
 
-		// this.leftPanel.appendChild(this.column1);
-		// this.leftPanel.appendChild(this.column2);
+		this.leftPanel.appendChild(this.column1);
+		this.leftPanel.appendChild(this.column2);
 
     this.rightPanel = document.createElement('div');
     this.rightPanel.classList.add('gear-tab-right', 'tab-panel-right');
@@ -37,12 +37,6 @@ export class GearTab extends SimTab {
 
     this.buildTabContent();
   }
-
-	private buildColumn(index: number): HTMLElement {
-		let column = document.createElement('div');
-		column.classList.add('tab-panel-col', `gear-left-col-${index}`)
-		return column;
-	}
 
   protected buildTabContent() {
     this.buildGearPickers();

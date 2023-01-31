@@ -16,9 +16,7 @@ import { emptyRaidTarget } from '../proto_utils/utils.js';
 
 export function makeShow1hWeaponsSelector(parent: HTMLElement, sim: Sim): BooleanPicker<Sim> {
 	return new BooleanPicker<Sim>(parent, sim, {
-		extraCssClasses: [
-			'show-1h-weapons-selector', 'mb-0'
-		],
+		extraCssClasses: ['show-1h-weapons-selector', 'mb-0'],
 		label: '1H',
 		inline: true,
 		changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
@@ -33,9 +31,7 @@ export function makeShow1hWeaponsSelector(parent: HTMLElement, sim: Sim): Boolea
 
 export function makeShow2hWeaponsSelector(parent: HTMLElement, sim: Sim): BooleanPicker<Sim> {
 	return new BooleanPicker<Sim>(parent, sim, {
-		extraCssClasses: [
-			'show-2h-weapons-selector', 'mb-0'
-		],
+		extraCssClasses: ['show-2h-weapons-selector', 'mb-0'],
 		label: '2H',
 		inline: true,
 		changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
@@ -50,7 +46,7 @@ export function makeShow2hWeaponsSelector(parent: HTMLElement, sim: Sim): Boolea
 
 export function makeShowMatchingGemsSelector(parent: HTMLElement, sim: Sim): BooleanPicker<Sim> {
 	return new BooleanPicker<Sim>(parent, sim, {
-		extraCssClasses: ['show-matching-gems-selector', 'mb-0'],
+		extraCssClasses: ['show-matching-gems-selector', 'input-inline', 'mb-0'],
 		label: 'Match Socket',
 		inline: true,
 		changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
@@ -65,9 +61,7 @@ export function makeShowMatchingGemsSelector(parent: HTMLElement, sim: Sim): Boo
 
 export function makePhaseSelector(parent: HTMLElement, sim: Sim): EnumPicker<Sim> {
 	return new EnumPicker<Sim>(parent, sim, {
-		extraCssClasses: [
-			'phase-selector',
-		],
+		extraCssClasses: ['phase-selector'],
 		values: [
 			{ name: 'Phase 1', value: 1 },
 			{ name: 'Phase 2', value: 2 },

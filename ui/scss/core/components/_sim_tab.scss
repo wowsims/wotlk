@@ -23,6 +23,14 @@
         margin-right: 2 * map.get($spacers, 3);
       }
     }
+
+    .tab-panel-col {
+      flex: 1;
+
+      &:not(:last-child) {
+        margin-right: 2 * map.get($spacers, 3);
+      }
+    }
   }
 }
 

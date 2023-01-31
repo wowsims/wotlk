@@ -52,7 +52,6 @@
   }
 }
 
-<<<<<<< HEAD
 .selector-modal {
   .modal-header {
     padding-bottom: 0;
@@ -83,13 +82,6 @@
       }
     }
   }
-=======
-.item-picker-icon {
-  @include wowhead-background-icon;
-  width: 4rem;
-  height: 4rem;
-  border: 2px solid dimgray;
->>>>>>> master
 }
 
 @include media-breakpoint-down(xl) {
@@ -153,6 +145,21 @@
         &> *:not(:last-child) {
           margin-right: map.get($spacers, 2);
         }
+      }
+
+      .selector-modal-tab-gem {
+        height: 100%;
+        padding: 0;
+        margin-left: 1rem;
+        margin-right: -.25rem;
+        display: flex;
+        align-items: center;
+        opacity: .7;
+        transition: opacity .15s ease-in-out;
+
+        &:hover, &.active {
+          opacity: 1;
+        }
 
         input, select {
           padding-top: $btn-padding-y;
@@ -164,13 +171,70 @@
   }
 }
 
-.selector-modal-search {
-	max-width: 12rem;
+.selector-modal-tab-gem-icon {
+  @include wowhead-background-icon;
+  width: 35px;
+  height: 35px;
+  background-size: 35px !important;
 }
 
-.selector-modal-boolean-option {
-  display: flex;
-  align-items: center;
+@include media-breakpoint-down(md) {
+  .gear-picker-root {
+    .gear-picker-left {
+      .item-picker-root:last-child {
+        margin-bottom: map.get($spacers, 5);
+      }
+    }
+
+    .gear-picker-right {
+      .item-picker-root {
+        flex-direction: row;
+        text-align: left;
+      }
+    }
+  }
+}
+
+.item-picker-labels-container {
+  padding: map.get($spacers, 2);
+  flex: 1;
+
+  .item-picker-name {
+    color: white;
+    font-size: map.get($font-sizes, 6);
+    letter-spacing: normal;
+  }
+  
+  .item-picker-enchant {
+    color: $item-quality-uncommon;
+    font-size: $content-font-size;
+    letter-spacing: normal;
+  }
+}
+
+.selector-modal-tab-content {
+  .selector-modal-tab-pane {
+    padding: 0;
+  
+    .selector-modal-filters {
+      margin-bottom: map.get($spacers, 3);
+      display: flex;
+      align-items: center;
+
+      &> *:not(:last-child) {
+        margin-right: map.get($spacers, 2);
+      }
+
+      input:not([type="checkbox"], [type="radio"]), select {
+        padding-top: $btn-padding-y;
+        padding-bottom: $btn-padding-y;
+      }
+    }
+  }
+}
+
+.selector-modal-search {
+	max-width: 12rem;
 }
 
 .selector-modal-phase-selector {

@@ -1,34 +1,43 @@
-import { EquippedItem } from '../proto_utils/equipped_item.js';
-import { getEmptyGemSocketIconUrl, gemMatchesSocket } from '../proto_utils/gems.js';
-import { setGemSocketCssClass } from '../proto_utils/gems.js';
-import { Stats } from '../proto_utils/stats.js';
-import { Class, Spec, GemColor, ItemSwap, ItemSpec } from '../proto/common.js';
-import { ItemQuality } from '../proto/common.js';
-import { ItemSlot } from '../proto/common.js';
-import { ItemType } from '../proto/common.js';
-import { getEnchantDescription, getUniqueEnchantString } from '../proto_utils/enchants.js';
-import { ActionId } from '../proto_utils/action_id.js';
-import { slotNames } from '../proto_utils/names.js';
-import { setItemQualityCssClass } from '../css_utils.js';
-import { Player } from '../player.js';
-import { EventID, TypedEvent } from '../typed_event.js';
-import { formatDeltaTextElem } from '../utils.js';
+import { BaseModal } from './base_modal';
+import { Component } from './component';
+import { FiltersMenu } from './filters_menu';
+import { Input, InputConfig } from './input';
+import {
+	makePhaseSelector,
+	makeShow1hWeaponsSelector,
+	makeShow2hWeaponsSelector,
+	makeShowMatchingGemsSelector,
+} from './other_inputs';
+
+import { setItemQualityCssClass } from '../css_utils';
+import { Player } from '../player';
+import { SimUI } from '../sim_ui';
+import { EventID, TypedEvent } from '../typed_event';
+import { formatDeltaTextElem } from '../utils';
+
+import { ActionId } from '../proto_utils/action_id';
+import { getEnchantDescription, getUniqueEnchantString } from '../proto_utils/enchants';
+import { EquippedItem } from '../proto_utils/equipped_item';
+import { ItemSwapGear } from '../proto_utils/gear'
+import { getEmptyGemSocketIconUrl, gemMatchesSocket, setGemSocketCssClass } from '../proto_utils/gems';
+import { slotNames } from '../proto_utils/names';
+import { Stats } from '../proto_utils/stats';
+
+import {
+	Class,
+	Spec,
+	GemColor,
+	ItemQuality,
+	ItemSlot,
+	ItemSpec,
+	ItemSwap,
+	ItemType,
+} from '../proto/common';
 import {
 	UIEnchant as Enchant,
 	UIGem as Gem,
 	UIItem as Item,
 } from '../proto/ui.js';
-
-import { Component } from './component.js';
-import { FiltersMenu } from './filters_menu.js';
-import { makePhaseSelector } from './other_inputs.js';
-import { makeShow1hWeaponsSelector } from './other_inputs.js';
-import { makeShow2hWeaponsSelector } from './other_inputs.js';
-import { makeShowMatchingGemsSelector } from './other_inputs.js';
-import { Input, InputConfig } from './input.js';
-import {ItemSwapGear } from '../proto_utils/gear.js'
-import { SimUI } from '../sim_ui.js';
-import { BaseModal } from './base_modal.js';
 
 declare var tippy: any;
 declare var WowSim: any;
@@ -232,11 +241,12 @@ class ItemPicker extends Component {
 				`;
 
 				const gemContainer = gemFragment.children[0] as HTMLElement;
-				const gemIconElem = gemContainer.querySelector('.item-picker-gem-icon') as HTMLImageElement;
-				const socketIconElem = gemContainer.querySelector('.item-picker-socket-icon') as HTMLImageElement;
+				const gemIconElem = gemContainer.querySelector('.gem-icon') as HTMLImageElement;
+				const socketIconElem = gemContainer.querySelector('.socket-icon') as HTMLImageElement;
 				socketIconElem.src = getEmptyGemSocketIconUrl(socketColor);
 
-				setGemSocketCssClass(gemIconElem, socketColor);
+				setGemSocketCssClass(socketIconElem, socketColor);
+
 				if (newItem.gems[gemIdx] == null) {
 					gemIconElem.classList.add('hide');
 				} else {
@@ -245,6 +255,7 @@ class ItemPicker extends Component {
 						gemIconElem.src = filledId.iconUrl;
 					});
 				}
+
 				this.socketsContainerElem.appendChild(gemContainer);
 
 				if (gemIdx == newItem.numPossibleSockets - 1 && [ItemType.ItemTypeWrist, ItemType.ItemTypeHands].includes(newItem.item.type)) {
@@ -459,6 +470,7 @@ class SelectorModal extends BaseModal {
 		window.scrollTo({top: 0});
 
 		this.header!.insertAdjacentHTML('afterbegin', `<ul class="nav nav-tabs selector-modal-tabs"></ul>`);
+
 		this.body.innerHTML = `<div class="tab-content selector-modal-tab-content"></div>`
 
 		this.tabsElem = this.rootElem.querySelector('.selector-modal-tabs') as HTMLElement;
@@ -687,7 +699,7 @@ class SelectorModal extends BaseModal {
 				id="${tabContentId}"
 				class="selector-modal-tab-pane tab-pane fade ${selected ? 'active show' : ''}"
 			>
-				<div class="selector-modal-tab-content-header">
+				<div class="selector-modal-filters">
 					<input class="selector-modal-search form-control" type="text" placeholder="Search...">
 					${label == 'Items' ? '<button class="selector-modal-filters-button btn btn-primary">Filters</button>' : ''}
 					<div class="selector-modal-phase-selector"></div>

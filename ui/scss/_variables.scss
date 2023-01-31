@@ -32,12 +32,17 @@ $class-colors: (
 
 $theme-colors: map-merge($theme-colors, $class-colors);
 
-$brand: #e0a335;
+$primary: #e0a335;
 $success: #1eff00;
+$quality-uncommon: $success;
+$quality-rare: #0070dd;
+$quality-epic: #a335ee;
 
 $custom-colors: (
-  "brand": $brand-color,
   "primary": $primary,
+  "quality-epic": $quality-epic,
+  "quality-rare": $quality-rare,
+  "quality-uncommon": $quality-uncommon,
   "success": $success,
 );
 
@@ -58,7 +63,6 @@ $grid-breakpoints: map-merge($grid-breakpoints, $custom-breakpoints);
 
 // Spacers
 $block-spacer: .75rem;
-$table-cell-padding: .5rem;
 $content-font-size: .75rem;
 $gap-width: 1.5rem;
 $gap-width-sm: .5rem;
@@ -71,15 +75,6 @@ $item-quality-rare:      #0070dd;
 $item-quality-epic:      #a335ee;
 $item-quality-legendary: #ff8000;
 
-$item-qualities: (
-  junk:      $item-quality-junk,
-  common:    $item-quality-common,
-  uncommon:  $item-quality-uncommon,
-  rare:      $item-quality-rare,
-  epic:      $item-quality-epic,
-  legendary: $item-quality-legendary
-);
-
 $link-danger-color:  #ef9eaa;
 $link-warning-color: #faf07f;
 
@@ -88,9 +83,6 @@ $socket-color-blue:     #0070dd;
 $socket-color-yellow:   #d8cc60;
 $socket-color-meta:     #9d9ea0;
 $socket-color-prismatic: linear-gradient(to bottom right, #b827fc 0%, #2c90fc 25%, #b8fd33 50%, #fec837 75%, #fd1892 100%);
-
-$table-row-even-bg: #202128;
-$table-row-odd-bg: #2d2f35;
 
 $wrath-blue: #7FCBD8;
 
@@ -102,7 +94,6 @@ $body-bg: #15171e;
 $body-color: white;
 $border-color: dimgrey;
 $font-size-root: 16px;
-$grid-gutter-width: .75rem;
 
 // This option doesn't seem to be working for some reason. Carets hidden manually instead
 // $enable-caret: false;
@@ -162,10 +153,7 @@ $input-font-size: $content-font-size;
 
 $modal-content-bg: $body-bg;
 $modal-content-border-color: $link-color;
-$modal-footer-margin-between: 0px;
 $modal-header-border-color: $border-color;
-$modal-header-padding: 1.25rem;
-$modal-inner-padding: 1.25rem;
 
 $navbar-dark-color: white;
 $navbar-dark-hover-color: $primary;
@@ -175,8 +163,6 @@ $navbar-padding-y: 0;
 $nav-link-font-size: .875rem;
 $nav-link-padding-y: map.get($spacers, 3);
 $nav-link-transition: $link-transition;
-
-$nav-tabs-border-color: $border-color;
 $nav-tabs-link-active-bg: transparent;
 $nav-tabs-link-active-color: white;
 
