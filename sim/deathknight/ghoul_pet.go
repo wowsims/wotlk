@@ -131,7 +131,9 @@ func (dk *Deathknight) NewGhoulPet(permanent bool) *GhoulPet {
 	ghoulPet.AddStatDependency(stats.Agility, stats.AttackPower, 1)
 	ghoulPet.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/83.3)
 
-	core.ApplyPetConsumeEffects(&ghoulPet.Character, dk.Consumes)
+	if permanent {
+		core.ApplyPetConsumeEffects(&ghoulPet.Character, dk.Consumes)
+	}
 
 	return ghoulPet
 }
