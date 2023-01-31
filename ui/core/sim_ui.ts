@@ -17,6 +17,9 @@ import { SimTab } from './components/sim_tab.js';
 
 const URLMAXLEN = 2048;
 const noticeText = '';
+const globalKnownIssues = [
+	'Wowhead tooltips may not correctly display Tier 8 set bonuses when combining 10 and 25 player tier pieces.'
+]
 
 // Config for displaying a warning to the user whenever a condition is met.
 export interface SimWarning {
@@ -197,6 +200,7 @@ export abstract class SimUI extends Component {
 		if (config.knownIssues && config.knownIssues.length) {
 			config.knownIssues.forEach(issue => this.simHeader.addKnownIssue(issue));
 		}
+		globalKnownIssues.forEach(issue => this.simHeader.addKnownIssue(issue));
 	}
 
 	// Returns a key suitable for the browser's localStorage feature.
