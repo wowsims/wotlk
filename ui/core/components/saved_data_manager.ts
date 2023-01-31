@@ -122,13 +122,15 @@ export class SavedDataManager<ModObject, T> extends Component {
 			const deleteButton = deleteFragment.children[0] as HTMLElement;
 			dataElem.appendChild(deleteButton);
 
-			Tooltip.getOrCreateInstance(deleteButton);
+			const tooltip = Tooltip.getOrCreateInstance(deleteButton);
 
 			deleteButton.addEventListener('click', event => {
 				event.stopPropagation();
 				const shouldDelete = confirm(`Delete saved ${this.config.label} '${config.name}'?`);
 				if (!shouldDelete)
 					return;
+
+				tooltip.dispose();
 
 				const idx = this.userData.findIndex(data => data.name == config.name);
 				this.userData[idx].elem.remove();
@@ -177,7 +179,7 @@ export class SavedDataManager<ModObject, T> extends Component {
 			userData[savedData.name] = this.config.toJson(savedData.data);
 		});
 
-		if (this.userData.length == 0)
+		if (this.userData.length == 0 && this.presets.length == 0)
 			this.savedDataDiv.classList.add('hide');
 
 		window.localStorage.setItem(this.config.storageKey, JSON.stringify(userData));
