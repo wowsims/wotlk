@@ -61,6 +61,7 @@ export const AssumeBleedActive = InputHelpers.makeSpecOptionsBooleanInput<Spec.S
 	fieldName: 'assumeBleedActive',
 	label: 'Assume Bleed Always Active',
 	labelTooltip: 'Assume bleed always exists for \'Rend and Tear\' calculations. Otherwise will only calculate based on own rip/rake/lacerate.',
+	extraCssClasses: ['within-raid-sim-hide'],
 })
 
 export const FeralDruidRotationConfig = {

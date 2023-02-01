@@ -1,22 +1,6 @@
 @use "sass:map";
 
 @import "./filters_menu";
-@import "./popup";
-
-.item-swap-picker-root {
-  .picker-group {
-    align-items: center;
-    justify-content: flex-end;
-
-    &> * {
-      margin-bottom: 0 !important;
-    }
-
-    &> :last-child {
-      margin-right: 0;
-    }
-  }  
-}
 
 .gear-picker-root {
   display: flex;
@@ -64,8 +48,8 @@
 
 .item-picker-icon {
   @include wowhead-background-icon;
-  width: 64px;
-  height: 64px;
+  width: 4rem;
+  height: 4rem;
   border: 2px solid dimgray;
 }
 
@@ -107,17 +91,33 @@
   cursor: pointer;
 }
 
-.selector-modal-tab-content {
-  .selector-modal-tab-pane {
-    padding: 0;
-  
-    .selector-modal-tab-content-header {
-      margin: map.get($spacers, 3) 0;
-      display: flex;
-      align-items: center;
+.selector-modal {
+  .modal-header {
+    padding-bottom: 0;
+    border-bottom: none;
 
-      &> *:not(:last-child) {
-        margin-right: map.get($spacers, 2);
+    .nav-tabs {
+      width: 100%;
+    }
+  }
+
+  .selector-modal-tab-content {
+    .selector-modal-tab-pane {
+      padding: 0;
+    
+      .selector-modal-tab-content-header {
+        margin-bottom: map.get($spacers, 3);
+        display: flex;
+  
+        &> *:not(:last-child) {
+          margin-right: map.get($spacers, 2);
+        }
+
+        input, select {
+          padding-top: $btn-padding-y;
+          padding-bottom: $btn-padding-y;
+          font-size: $btn-font-size;
+        }
       }
     }
   }
@@ -142,14 +142,8 @@
 }
 
 .selector-modal-boolean-option {
-	margin: 5px;
-}
-.selector-modal-boolean-option .input-label {
-	font-weight: bold;
-	margin: 0;
-}
-.selector-modal-boolean-option .boolean-picker-input {
-	width: 10px;
+  display: flex;
+  align-items: center;
 }
 
 .selector-modal-phase-selector {

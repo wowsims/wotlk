@@ -58,7 +58,7 @@ export class Timeline extends ResultComponent {
 		<div class="timeline-disclaimer">
 			<span class="timeline-warning fa fa-exclamation-triangle"></span>
 			<span class="timeline-warning-description">Timeline data visualizes only 1 sim iteration.</span>
-			<div class="timeline-run-again-button btn btn-${config.cssScheme || 'primary'}">Sim 1 Iteration</div>
+			<div class="timeline-run-again-button btn btn-primary">Sim 1 Iteration</div>
 			<select class="timeline-chart-picker">
 				<option class="rotation-option" value="rotation">Rotation</option>
 				<option class="dps-option" value="dps">DPS</option>

@@ -4,42 +4,28 @@ import {
 } from '../proto/common.js';
 import {
 	armorTypeNames,
+	rangedWeaponTypeNames,
 	weaponTypeNames,
 } from '../proto_utils/names.js';
 import {
+	classToEligibleRangedWeaponTypes,
 	classToEligibleWeaponTypes,
 	classToMaxArmorType,
 	isDualWieldSpec,
 } from '../proto_utils/utils.js';
 import { Player } from '../player.js';
 import { Sim } from '../sim.js';
-import { EventID, TypedEvent } from '../typed_event.js';
+import { EventID } from '../typed_event.js';
 import { getEnumValues } from '../utils.js';
 
 import { BooleanPicker } from './boolean_picker.js';
 import { NumberPicker } from './number_picker.js';
-import { Popup } from './popup.js';
+import { BaseModal } from './base_modal.js';
 import { Input } from './input.js';
 
-declare var tippy: any;
-
-export class FiltersMenu extends Popup {
-	private readonly contentElem: HTMLElement;
-
+export class FiltersMenu extends BaseModal {
 	constructor(rootElem: HTMLElement, player: Player<any>, slot: ItemSlot) {
-		super(rootElem);
-
-		this.rootElem.classList.add('filters-menu');
-		this.rootElem.innerHTML = `
-			<div class="menu-title">
-				<span>FILTERS</span>
-			</div>
-			<div class="menu-content">
-			</div>
-		`;
-		this.addCloseButton();
-
-		this.contentElem = this.rootElem.getElementsByClassName('menu-content')[0] as HTMLElement;
+		super(rootElem, 'filters-menu', {size: 'md', title: 'Filters'});
 
 		if (Player.ARMOR_SLOTS.includes(slot)) {
 			const maxArmorType = classToMaxArmorType[player.getClass()];
@@ -72,11 +58,9 @@ export class FiltersMenu extends Popup {
 			const weaponTypeSection = this.newSection('Weapon Type');
 			weaponTypeSection.classList.add('filters-menu-section-bool-list');
 			const weaponTypes = classToEligibleWeaponTypes[player.getClass()].map(ewt => ewt.weaponType);
-			const weaponTypesGroup = Input.newGroupContainer();
-			weaponTypeSection.appendChild(weaponTypesGroup);
 
 			weaponTypes.forEach(weaponType => {
-				new BooleanPicker<Sim>(weaponTypesGroup, player.sim, {
+				new BooleanPicker<Sim>(weaponTypeSection, player.sim, {
 					label: weaponTypeNames[weaponType],
 					inline: true,
 					changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
@@ -149,24 +133,81 @@ export class FiltersMenu extends Popup {
 					},
 				});
 			}
+		} else if (slot == ItemSlot.ItemSlotRanged) {
+			const rangedWeaponTypes = classToEligibleRangedWeaponTypes[player.getClass()];
+			if (rangedWeaponTypes.length <= 1) {
+				return;
+			}
+			const rangedWeaponTypeSection = this.newSection('Ranged Weapon Type');
+			rangedWeaponTypeSection.classList.add('filters-menu-section-bool-list');
+
+			rangedWeaponTypes.forEach(rangedWeaponType => {
+				new BooleanPicker<Sim>(rangedWeaponTypeSection, player.sim, {
+					label: rangedWeaponTypeNames[rangedWeaponType],
+					inline: true,
+					changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
+					getValue: (sim: Sim) => sim.getFilters().rangedWeaponTypes.includes(rangedWeaponType),
+					setValue: (eventID: EventID, sim: Sim, newValue: boolean) => {
+						const filters = sim.getFilters();
+						if (newValue) {
+							filters.rangedWeaponTypes.push(rangedWeaponType);
+						} else {
+							filters.rangedWeaponTypes = filters.rangedWeaponTypes.filter(at => at != rangedWeaponType);
+						}
+						sim.setFilters(eventID, filters);
+					},
+				});
+			});
+
+			const rangedWeaponSpeedSection = this.newSection('Ranged Weapon Speed');
+			rangedWeaponSpeedSection.classList.add('filters-menu-section-number-list');
+			new NumberPicker<Sim>(rangedWeaponSpeedSection, player.sim, {
+				label: 'Min Ranged Speed',
+				//labelTooltip: 'Maximum speed for the ranged weapon. If 0, no maximum value is applied.',
+				float: true,
+				positive: true,
+				changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
+				getValue: (sim: Sim) => sim.getFilters().minRangedWeaponSpeed,
+				setValue: (eventID: EventID, sim: Sim, newValue: number) => {
+					const filters = sim.getFilters();
+					filters.minRangedWeaponSpeed = newValue;
+					sim.setFilters(eventID, filters);
+				},
+			});
+			new NumberPicker<Sim>(rangedWeaponSpeedSection, player.sim, {
+				label: 'Max Ranged Speed',
+				//labelTooltip: 'Maximum speed for the ranged weapon. If 0, no maximum value is applied.',
+				float: true,
+				positive: true,
+				changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
+				getValue: (sim: Sim) => sim.getFilters().maxRangedWeaponSpeed,
+				setValue: (eventID: EventID, sim: Sim, newValue: number) => {
+					const filters = sim.getFilters();
+					filters.maxRangedWeaponSpeed = newValue;
+					sim.setFilters(eventID, filters);
+				},
+			});
 		}
 	}
 
 	private newSection(name: string): HTMLElement {
 		const section = document.createElement('div');
 		section.classList.add('menu-section');
-		this.contentElem.appendChild(section);
+		this.body.appendChild(section);
 		section.innerHTML = `
 			<div class="menu-section-header">
-				<span class="menu-section-title">${name}</span>
+				<h6 class="menu-section-title">${name}</h6>
 			</div>
-			<div class="menu-section-content">
-			</div>
+			<div class="menu-section-content"></div>
 		`;
 		return section.getElementsByClassName('menu-section-content')[0] as HTMLElement;
 	}
 
 	static anyFiltersForSlot(slot: ItemSlot) {
-		return Player.ARMOR_SLOTS.includes(slot) || Player.WEAPON_SLOTS.includes(slot);
+		return [
+			Player.ARMOR_SLOTS,
+			Player.WEAPON_SLOTS,
+			ItemSlot.ItemSlotRanged,
+		].flat().includes(slot);
 	}
 }

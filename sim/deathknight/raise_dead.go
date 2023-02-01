@@ -42,14 +42,15 @@ func (dk *Deathknight) registerRaiseDeadCD() {
 		},
 	})
 
-	if !dk.Inputs.IsDps {
-		dk.AddMajorCooldown(core.MajorCooldown{
-			Spell:    dk.RaiseDead,
-			Type:     core.CooldownTypeSurvival,
-			Priority: core.CooldownPriorityLow,
-			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-				return dk.RaiseDead.CanCast(sim, nil) && dk.CurrentHealthPercent() < 0.5 && sim.GetRemainingDurationPercent() > 0.15
-			},
-		})
-	}
+	// TODO: Raise Dead should be used from the rotation in a smart way
+	// adding it as a survival MCD with GCDs messes with rotation more then it helps
+	// if !dk.Inputs.IsDps {
+	// 	dk.AddMajorCooldown(core.MajorCooldown{
+	// 		Spell: dk.RaiseDead,
+	// 		Type:  core.CooldownTypeSurvival,
+	// 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
+	// 			return dk.RaiseDead.CanCast(sim, nil) && dk.CurrentHealthPercent() < 0.5 && sim.GetRemainingDuration() > 5*time.Second
+	// 		},
+	// 	})
+	// }
 }

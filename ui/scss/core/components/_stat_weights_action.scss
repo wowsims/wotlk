@@ -1,32 +1,55 @@
 @use "sass:map";
 
-.ep-weights-header {
-	display: flex;
-}
+.ep-weights-menu {
+	.ep-weights-options {
+		margin-bottom: $block-spacer;
+	}
 
-.ep-weights-actions {
-	display: flex;
-	flex-direction: column;
-	justify-content: space-around;
-	width: 50%;
-}
-.ep-weights-actions > * {
-	margin: 10px 20px;
-}
+	.results-ep-table-container {
+		.results-ep-table {
+			width: 100%;
+			
+			&.stats-type-ep .type-weight,
+			&.stats-type-weight .type-ep {
+				display: none;
+			}
 
-.ep-weights-results {
-	position: relative;
-	width: 50%;
-	min-height: 150px;
-}
-.ep-weights-results .results-viewer {
-	@include vertical-horizontal-center;
-}
+			th, td {
+				&[class*="type-"] {
+					text-align: right;
+				}
+			}
 
-.stats-controls-row {
-	display: flex;
-	justify-content: space-around;
-	margin: 10px;
+			th {
+				padding-top: map.get($spacers, 2);
+				padding-bottom: map.get($spacers, 2);
+				padding-right: map.get($spacers, 2);
+				text-align: left;
+			}
+
+			tbody {
+				tr:nth-child(even) {
+					background-color: $table-row-even-bg;	
+				}
+
+				tr:nth-child(odd) {
+					background-color: $table-row-odd-bg;	
+				}
+
+				td {
+					padding: $table-cell-padding;
+				}
+			}
+
+			.input-root {
+				margin-bottom: 0;
+			}
+
+			.results-stdev {
+				font-size: .625rem;
+			}
+		}
+	}
 }
 
 .show-all-stats-container .boolean-picker-root {
@@ -37,63 +60,6 @@
 	}
 }
 
-.ep-weights-table {
-	max-height: 50vh;
-	overflow-y: auto;
-}
-
-.results-ep-table {
-  margin: auto;
-	color: white;
-}
-
-.ep-weights-table:not(.show-all-stats) .non-ep-stat {
-	display: none;
-}
-
 .results-ep-table .col-action {
 	margin-left: map.get($spacers, 1);
-}
-
-.results-ep-table td, .results-ep-table th {
-  padding: 2px 20px;
-	white-space: nowrap;
-}
-
-.results-ep-table td {
-  text-align: right;
-  font-size: 14px;
-}
-.results-ep-table td input {
-  text-align: right;
-}
-
-.results-ep-table th {
-  text-align: center;
-  font-size: 16px;
-  font-weight: 700;
-	white-space: nowrap;
-}
-
-.results-ep-table td:nth-child(1) {
-  text-align: left;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.stdev-cell span:nth-child(2) {
-  text-align: left;
-  font-size: 12px;
-  font-weight: 700;
-}
-.stdev-cell span:nth-child(2):before {
-  content: " \00b1";
-  padding: 1px;
-}
-
-.stats-type-ep .type-weight {
-  display: none;
-}
-.stats-type-weight .type-ep {
-  display: none;
 }

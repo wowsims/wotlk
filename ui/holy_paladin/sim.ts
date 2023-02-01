@@ -150,6 +150,7 @@ export class HolyPaladinSimUI extends IndividualSimUI<Spec.SpecHolyPaladin> {
 				gear: [
 					Presets.PRERAID_PRESET,
 					Presets.P1_PRESET,
+					Presets.P2_PRESET,
 				],
 			},
 		});

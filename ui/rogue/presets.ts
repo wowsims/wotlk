@@ -40,7 +40,7 @@ export const CombatTalents = {
 export const AssassinationTalents = {
 	name: 'Assassination',
 	data: SavedTalents.create({
-		talentsString: '005303005352100520103331051-005005003-502',
+		talentsString: '005303104352100520103331051-005005003-502',
 		glyphs: Glyphs.create({
 			major1: RogueMajorGlyph.GlyphOfMutilate,
 			major2: RogueMajorGlyph.GlyphOfTricksOfTheTrade,
@@ -55,7 +55,7 @@ export const SubtletyTalents = {
 		talentsString: '30522300014--5020032030321121350115031151',
 		glyphs: Glyphs.create({
 			major1: RogueMajorGlyph.GlyphOfBackstab,
-			major2: RogueMajorGlyph.GlyphOfGarrote,
+			major2: RogueMajorGlyph.GlyphOfEviscerate,
 			major3: RogueMajorGlyph.GlyphOfShadowDance,
 		})
 	}),
@@ -64,7 +64,7 @@ export const SubtletyTalents = {
 export const HemoSubtletyTalents = {
 	name: 'Hemo Sub',
 	data: SavedTalents.create({
-		talentsString: '30532000224--502003203032112135011503115',
+		talentsString: '30532000235--502003203032112135011503113',
 		glyphs: Glyphs.create({
 			major1: RogueMajorGlyph.GlyphOfHemorrhage,
 			major2: RogueMajorGlyph.GlyphOfEviscerate,
@@ -74,7 +74,7 @@ export const HemoSubtletyTalents = {
 }
 
 export const DefaultRotation = RogueRotation.create({
-	exposeArmorFrequency: Rogue_Rotation_Frequency.Never,
+	exposeArmorFrequency: Rogue_Rotation_Frequency.Maintain,
 	minimumComboPointsExposeArmor: 4,
 	tricksOfTheTradeFrequency: Rogue_Rotation_Frequency.Maintain,
 	assassinationFinisherPriority: Rogue_Rotation_AssassinationPriority.EnvenomRupture,
@@ -82,14 +82,16 @@ export const DefaultRotation = RogueRotation.create({
 	subtletyFinisherPriority: Rogue_Rotation_SubtletyPriority.Rupture,
 	minimumComboPointsPrimaryFinisher: 3,
 	minimumComboPointsSecondaryFinisher: 2,
-	envenomEnergyThreshold: 60,
+	envenomEnergyThreshold: 80,
+	envenomEnergyThresholdMin: 60,
 	hemoWithDagger: false,
 });
 
 export const DefaultOptions = RogueOptions.create({
 	mhImbue: Poison.DeadlyPoison,
 	ohImbue: Poison.InstantPoison,
-  applyPoisonsManually: false,
+	applyPoisonsManually: false,
+	startingOverkillDuration: 10,
 });
 
 export const DefaultConsumes = Consumes.create({

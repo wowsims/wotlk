@@ -22,8 +22,10 @@
     }
 
     .sim-sidebar-actions {
-      padding-left: $gap-width * 2;
-      padding-right: $gap-width * 2;
+      padding-left: var(--container-padding);
+      padding-right: var(--container-padding);
+      margin-left: $gap-width * -1;
+      margin-right: $gap-width * -1;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -60,6 +62,7 @@
 
       .sim-sidebar-actions {
         padding: 0;
+        margin: 0;
       }
     }
   }

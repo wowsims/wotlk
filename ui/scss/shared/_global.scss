@@ -1,0 +1,113 @@
+@use "sass:map";
+
+:root {
+  --container-padding: 3rem;
+}
+
+@include media-breakpoint-up(xxl) {
+  :root {
+    --container-padding: 4rem;
+  }
+}
+
+@include media-breakpoint-up(1080p) {
+  :root {
+    --bs-body-font-size: 16px !important;
+  }
+}
+
+// // We want to apply only to 1440p monitors, NOT 1080p Ultrawide
+// @media (min-width: map.get($grid-breakpoints, 1440p)) and (max-aspect-ratio: 16/9) {
+//   :root {
+//     --bs-body-font-size: 20px !important;
+//   }
+// }
+
+// @include media-breakpoint-up(4k) {
+//   :root {
+//     --bs-body-font-size: 32px !important;
+//   }
+// }
+
+// Use larger padding on 1080p+ ultrawide monitors
+@media (min-width: map.get($grid-breakpoints, 1080p)) and (min-aspect-ratio: 17/9) {
+  :root {
+    --container-padding: 6rem;
+  }
+}
+
+* {
+  letter-spacing: 1px;
+}
+
+html {
+  height: 100%;
+  color-scheme: dark;
+  font-size: var(--bs-body-font-size);
+}
+
+body {
+  height: 100%;
+  // Bootstrap adds padding-right when Modals open for some reason, causing popping
+  padding-right: 0 !important;
+  // Prevent browser scrollbars from adjusting page contents
+  margin-right: calc(-1 * (100vw - 100%));
+  overflow-x: hidden;
+  opacity: 0;
+  transition: opacity .25s linear;
+
+  &.ready {
+    opacity: 1;
+  }
+}
+
+a {
+  outline: none;
+  transition: color .15s ease-in-out;
+
+  &.link-alt {
+    color: white;
+
+    &:hover, &:focus, &.active {
+      color: $brand;
+    }
+  }
+}
+
+hr {
+  border-top: 1px solid;
+  border-bottom: 1px solid;
+}
+
+label {
+  font-weight: bold;
+}
+
+p {
+  margin-bottom: $block-spacer;
+}
+
+.dragto:not(.dragfrom) {
+  filter: brightness(.75);
+}
+
+.hide {
+  display: none !important;
+}
+
+.warnings {
+  text-shadow:
+    0 0 10px $danger,
+    0 0 10px $danger,
+    0 0 10px $danger;
+}
+
+[contenteditable="true"]:active,
+[contenteditable="true"]:focus {
+  border:none;
+  outline:none;
+}
+
+[draggable="true"] {
+  cursor: pointer;
+}

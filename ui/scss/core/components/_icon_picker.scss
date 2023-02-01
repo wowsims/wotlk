@@ -69,6 +69,7 @@
   .dropdown-menu {
     min-width: unset;
     background: grey;
+    border: none;
 
     &.show {
       display: grid;

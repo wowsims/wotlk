@@ -21,7 +21,6 @@ import {
 
 import { Component } from './component.js';
 import { FiltersMenu } from './filters_menu.js';
-import { Popup } from './popup.js';
 import { makePhaseSelector } from './other_inputs.js';
 import { makeShow1hWeaponsSelector } from './other_inputs.js';
 import { makeShow2hWeaponsSelector } from './other_inputs.js';
@@ -29,8 +28,8 @@ import { makeShowMatchingGemsSelector } from './other_inputs.js';
 import { Input, InputConfig } from './input.js';
 import {ItemSwapGear } from '../proto_utils/gear.js'
 import { SimUI } from '../sim_ui.js';
+import { BaseModal } from './base_modal.js';
 
-declare var $: any;
 declare var tippy: any;
 declare var WowSim: any;
 
@@ -99,8 +98,7 @@ class ItemPicker extends Component {
 
 		this.rootElem.innerHTML = `
       <a class="item-picker-icon">
-        <div class="item-picker-sockets-container">
-        </div>
+        <div class="item-picker-sockets-container"></div>
       </a>
       <div class="item-picker-labels-container">
         <a class="item-picker-name"></a><br>
@@ -401,30 +399,24 @@ interface GearData {
 	changeEvent: TypedEvent<any>,
 }
 
-class SelectorModal extends Popup {
+class SelectorModal extends BaseModal {
 	private readonly simUI: SimUI;
 	private player: Player<any>;
 	private readonly tabsElem: HTMLElement;
 	private readonly contentElem: HTMLElement;
 
 	constructor(parent: HTMLElement, simUI: SimUI, player: Player<any>, slot: ItemSlot, equippedItem: EquippedItem | null, eligibleItems: Array<Item>, eligibleEnchants: Array<Enchant>, gearData: GearData) {
-		super(parent);
+		super(parent, 'selector-modal');
 		this.simUI = simUI;
 		this.player = player;
 
 		window.scrollTo({top: 0});
 
-		this.rootElem.classList.add('selector-modal');
-		this.rootElem.innerHTML = `
-			<ul class="nav nav-tabs selector-modal-tabs">
-			</ul>
-			<div class="tab-content selector-modal-tab-content">
-			</div>
-		`;
+		this.header!.insertAdjacentHTML('afterbegin', `<ul class="nav nav-tabs selector-modal-tabs"></ul>`);
+		this.body.innerHTML = `<div class="tab-content selector-modal-tab-content"></div>`
 
-		this.addCloseButton();
-		this.tabsElem = this.rootElem.getElementsByClassName('selector-modal-tabs')[0] as HTMLElement;
-		this.contentElem = this.rootElem.getElementsByClassName('selector-modal-tab-content')[0] as HTMLElement;
+		this.tabsElem = this.rootElem.querySelector('.selector-modal-tabs') as HTMLElement;
+		this.contentElem = this.rootElem.querySelector('.selector-modal-tab-content') as HTMLElement;
 
 		this.setData(slot, equippedItem, eligibleItems, eligibleEnchants, gearData);
 	}
@@ -644,7 +636,7 @@ class SelectorModal extends Popup {
 			>
 				<div class="selector-modal-tab-content-header">
 					<input class="selector-modal-search form-control" type="text" placeholder="Search...">
-					<button class="selector-modal-filters-button btn btn-${this.simUI.cssScheme}">Filters</button>
+					${label == 'Items' ? '<button class="selector-modal-filters-button btn btn-primary">Filters</button>' : ''}
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-1h-weapons"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-2h-weapons"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-matching-gems"></div>
@@ -679,16 +671,16 @@ class SelectorModal extends Popup {
 
 		const phaseSelector = makePhaseSelector(tabContent.getElementsByClassName('selector-modal-phase-selector')[0] as HTMLElement, this.player.sim);
 
-		const filtersButton = tabContent.getElementsByClassName('selector-modal-filters-button')[0] as HTMLElement;
-		if (FiltersMenu.anyFiltersForSlot(slot)) {
-			filtersButton.addEventListener('click', () => new FiltersMenu(this.rootElem, this.player, slot));
-		} else {
-			filtersButton.style.display = 'none';
-		}
-
 		if (label == 'Items') {
 			tabElem.classList.add('active', 'in');
 			tabContent.classList.add('active', 'in');
+
+			const filtersButton = tabContent.getElementsByClassName('selector-modal-filters-button')[0] as HTMLElement;
+			if (FiltersMenu.anyFiltersForSlot(slot)) {
+				filtersButton.addEventListener('click', () => new FiltersMenu(this.simUI.rootElem, this.player, slot));
+			} else {
+				filtersButton.style.display = 'none';
+			}
 		}
 
 		const listElem = tabContent.getElementsByClassName('selector-modal-list')[0] as HTMLElement;

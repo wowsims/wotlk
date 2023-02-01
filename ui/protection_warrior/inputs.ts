@@ -51,12 +51,6 @@ export const ShatteringThrow = InputHelpers.makeSpecOptionsBooleanIconInput<Spec
 	id: ActionId.fromSpellId(64382),
 });
 
-export const PrecastShout = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecProtectionWarrior>({
-	fieldName: 'precastShout',
-	label: 'Precast Shout',
-	labelTooltip: 'Selected shout is cast 10 seconds before combat starts.',
-});
-
 export const Munch = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecProtectionWarrior>({
 	fieldName: 'munch',
 	label: 'Munching',

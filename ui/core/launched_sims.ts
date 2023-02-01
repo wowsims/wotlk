@@ -11,7 +11,7 @@ export enum LaunchStatus {
 	Launched,
 }
 
-export const raidSimStatus: LaunchStatus = LaunchStatus.Unlaunched;
+export const raidSimStatus: LaunchStatus = LaunchStatus.Alpha;
 
 // This list controls which links are shown in the top-left dropdown menu.
 export const simLaunchStatuses: Record<Spec, LaunchStatus> = {
@@ -35,7 +35,7 @@ export const simLaunchStatuses: Record<Spec, LaunchStatus> = {
 	[Spec.SpecWarrior]: LaunchStatus.Beta,
 	[Spec.SpecProtectionWarrior]: LaunchStatus.Beta,
 	[Spec.SpecDeathknight]: LaunchStatus.Beta,
-	[Spec.SpecTankDeathknight]: LaunchStatus.Unlaunched,
+	[Spec.SpecTankDeathknight]: LaunchStatus.Alpha,
 };
 
 // Meme specs are excluded from title drop-down menu.

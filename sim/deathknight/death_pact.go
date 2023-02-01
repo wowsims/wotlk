@@ -40,13 +40,12 @@ func (dk *Deathknight) registerDeathPactSpell() {
 	})
 
 	if !dk.Inputs.IsDps {
-		dk.AddMajorCooldown(core.MajorCooldown{
-			Spell:    dk.DeathPact,
-			Type:     core.CooldownTypeDPS,
-			Priority: core.CooldownPriorityLow,
-			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-				return dk.DeathPact.CanCast(sim, nil)
-			},
-		})
+		// dk.AddMajorCooldown(core.MajorCooldown{
+		// 	Spell: dk.DeathPact,
+		// 	Type:  core.CooldownTypeSurvival,
+		// 	CanActivate: func(sim *core.Simulation, character *core.Character) bool {
+		// 		return dk.DeathPact.CanCast(sim, nil)
+		// 	},
+		// })
 	}
 }

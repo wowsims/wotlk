@@ -14,6 +14,7 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 	var shadowMasteryAura *core.Aura
 	if ISBProcChance > 0 {
 		shadowMasteryAura = core.ShadowMasteryAura(warlock.CurrentTarget)
+		warlock.CritDebuffCategory = shadowMasteryAura.ExclusiveEffects[0].Category
 	}
 
 	warlock.ShadowBolt = warlock.RegisterSpell(core.SpellConfig{

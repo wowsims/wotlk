@@ -30,7 +30,6 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 			cssScheme: 'death-knight',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"Blood DPS is a work in progress.",
 			],
 
 			// All stats for which EP should be calculated.
@@ -184,8 +183,8 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 					Presets.P2_BLOOD_BIS_PRESET,
 					Presets.P1_FROST_PRE_BIS_PRESET,
 					Presets.P1_FROST_BIS_PRESET,
-					Presets.P2_FROST_BIS_PRESET,
 					Presets.P1_FROSTSUBUNH_BIS_PRESET,
+					Presets.P2_FROST_BIS_PRESET,
 					Presets.P1_UNHOLY_DW_PRERAID_PRESET,
 					Presets.P1_UNHOLY_2H_PRERAID_PRESET,
 					Presets.P1_UNHOLY_DW_BIS_PRESET,

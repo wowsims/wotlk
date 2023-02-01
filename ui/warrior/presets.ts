@@ -67,7 +67,7 @@ export const DefaultRotation = WarriorRotation.create({
 	useCleave: false,
 
 	prioritizeWw: true,
-	sunderArmor: SunderArmor.SunderArmorNone,
+	sunderArmor: SunderArmor.SunderArmorMaintain,
 
 	msRageThreshold: 35,
 	hsRageThreshold: 30,
@@ -87,7 +87,7 @@ export const ArmsRotation = WarriorRotation.create({
 	useRend: true,
 	useMs: true,
 	useCleave: false,
-	sunderArmor: SunderArmor.SunderArmorNone,
+	sunderArmor: SunderArmor.SunderArmorMaintain,
 	msRageThreshold: 355,
 	slamRageThreshold: 25,
 	hsRageThreshold: 50,
@@ -336,7 +336,11 @@ export const P2_FURY_PRESET = {
 		},
 		{
 			"id": 46032,
-			"enchant": 3605
+			"enchant": 3605,
+			"gems": [
+				39996,
+				40037
+			]
 		},
 		{
 			"id": 46146,
@@ -389,7 +393,10 @@ export const P2_FURY_PRESET = {
 			]
 		},
 		{
-			"id": 45534
+			"id": 45534,
+			"gems": [
+				39996
+			]
 		},
 		{
 			"id": 42987
@@ -627,7 +634,7 @@ export const P2_ARMS_PRESET = {
 			"enchant": 3817,
 			"gems": [
 			  41398,
-			  42153
+			  42142
 			]
 		  },
 		  {
@@ -680,7 +687,7 @@ export const P2_ARMS_PRESET = {
 			"gems": [
 			  49110,
 			  40037,
-			  40002
+			  39996
 			]
 		  },
 		  {
@@ -703,13 +710,13 @@ export const P2_ARMS_PRESET = {
 		  {
 			"id": 45608,
 			"gems": [
-			  40002
+			  39996
 			]
 		  },
 		  {
 			"id": 46322,
 			"gems": [
-			  40002
+			  39996
 			]
 		  },
 		  {
@@ -730,7 +737,7 @@ export const P2_ARMS_PRESET = {
 		  {
 			"id": 45296,
 			"gems": [
-			  40002
+			  39996
 			]
 		  }
 	]}`),

@@ -8,6 +8,7 @@ import { SimResultData } from './detailed_results/result_component';
 import { ResultsFilter } from './detailed_results/results_filter';
 import { CastMetricsTable } from './detailed_results/cast_metrics';
 import { DtpsMeleeMetricsTable } from './detailed_results/dtps_melee_metrics';
+import { DtpsSpellMetricsTable } from './detailed_results/dtps_spell_metrics';
 import { HealingMetricsTable } from './detailed_results/healing_metrics';
 import { MeleeMetricsTable } from './detailed_results/melee_metrics';
 import { SpellMetricsTable } from './detailed_results/spell_metrics';
@@ -210,49 +211,40 @@ export abstract class DetailedResults extends Component {
 
 		this.simUI?.sim.settingsChangeEmitter.on(async () => await this.updateSettings());
 
-		const computedStyles = window.getComputedStyle(this.rootElem);
-
-		const colorSettings = {
-			mainTextColor: computedStyles.getPropertyValue('--main-text-color'),
-		};
-		
-		Chart.defaults.color = colorSettings.mainTextColor;
+		Chart.defaults.color = 'white';
 
 		this.resultsFilter = new ResultsFilter({
 			parent: this.rootElem.getElementsByClassName('results-filter')[0] as HTMLElement,
 			resultsEmitter: this.resultsEmitter,
-			colorSettings: colorSettings,
 		});
 
 		(Array.from(this.rootElem.getElementsByClassName('topline-results')) as Array<HTMLElement>).forEach(toplineResultsDiv => {
-			new ToplineResults({ parent: toplineResultsDiv, resultsEmitter: this.resultsEmitter, colorSettings: colorSettings });
+			new ToplineResults({ parent: toplineResultsDiv, resultsEmitter: this.resultsEmitter });
 		});
 
-		const castMetrics = new CastMetricsTable({ parent: this.rootElem.getElementsByClassName('cast-metrics')[0] as HTMLElement, resultsEmitter: this.resultsEmitter, colorSettings: colorSettings });
-		const meleeMetrics = new MeleeMetricsTable({ parent: this.rootElem.getElementsByClassName('melee-metrics')[0] as HTMLElement, resultsEmitter: this.resultsEmitter, colorSettings: colorSettings });
-		const spellMetrics = new SpellMetricsTable({ parent: this.rootElem.getElementsByClassName('spell-metrics')[0] as HTMLElement, resultsEmitter: this.resultsEmitter, colorSettings: colorSettings });
-		const healingMetrics = new HealingMetricsTable({ parent: this.rootElem.getElementsByClassName('healing-spell-metrics')[0] as HTMLElement, resultsEmitter: this.resultsEmitter, colorSettings: colorSettings });
-		const resourceMetrics = new ResourceMetricsTable({ parent: this.rootElem.getElementsByClassName('resource-metrics')[0] as HTMLElement, resultsEmitter: this.resultsEmitter, colorSettings: colorSettings });
-		const playerDamageMetrics = new PlayerDamageMetricsTable({ parent: this.rootElem.getElementsByClassName('player-damage-metrics')[0] as HTMLElement, resultsEmitter: this.resultsEmitter, colorSettings: colorSettings }, this.resultsFilter);
+		const castMetrics = new CastMetricsTable({ parent: this.rootElem.getElementsByClassName('cast-metrics')[0] as HTMLElement, resultsEmitter: this.resultsEmitter });
+		const meleeMetrics = new MeleeMetricsTable({ parent: this.rootElem.getElementsByClassName('melee-metrics')[0] as HTMLElement, resultsEmitter: this.resultsEmitter });
+		const spellMetrics = new SpellMetricsTable({ parent: this.rootElem.getElementsByClassName('spell-metrics')[0] as HTMLElement, resultsEmitter: this.resultsEmitter });
+		const healingMetrics = new HealingMetricsTable({ parent: this.rootElem.getElementsByClassName('healing-spell-metrics')[0] as HTMLElement, resultsEmitter: this.resultsEmitter });
+		const resourceMetrics = new ResourceMetricsTable({ parent: this.rootElem.getElementsByClassName('resource-metrics')[0] as HTMLElement, resultsEmitter: this.resultsEmitter });
+		const playerDamageMetrics = new PlayerDamageMetricsTable({ parent: this.rootElem.getElementsByClassName('player-damage-metrics')[0] as HTMLElement, resultsEmitter: this.resultsEmitter }, this.resultsFilter);
 		const buffAuraMetrics = new AuraMetricsTable({
 			parent: this.rootElem.getElementsByClassName('buff-aura-metrics')[0] as HTMLElement,
 			resultsEmitter: this.resultsEmitter,
-			colorSettings: colorSettings,
 		}, false);
 		const debuffAuraMetrics = new AuraMetricsTable({
 			parent: this.rootElem.getElementsByClassName('debuff-aura-metrics')[0] as HTMLElement,
 			resultsEmitter: this.resultsEmitter,
-			colorSettings: colorSettings,
 		}, true);
-		const dpsHistogram = new DpsHistogram({ parent: this.rootElem.getElementsByClassName('dps-histogram')[0] as HTMLElement, resultsEmitter: this.resultsEmitter, colorSettings: colorSettings });
+		const dpsHistogram = new DpsHistogram({ parent: this.rootElem.getElementsByClassName('dps-histogram')[0] as HTMLElement, resultsEmitter: this.resultsEmitter });
 
-		const dtpsMeleeMetrics = new DtpsMeleeMetricsTable({ parent: this.rootElem.getElementsByClassName('dtps-melee-metrics')[0] as HTMLElement, resultsEmitter: this.resultsEmitter, colorSettings: colorSettings });
+		const dtpsMeleeMetrics = new DtpsMeleeMetricsTable({ parent: this.rootElem.getElementsByClassName('dtps-melee-metrics')[0] as HTMLElement, resultsEmitter: this.resultsEmitter });
+		const dtpsSpellMetrics = new DtpsSpellMetricsTable({ parent: this.rootElem.getElementsByClassName('dtps-spell-metrics')[0] as HTMLElement, resultsEmitter: this.resultsEmitter });
 
 		const timeline = new Timeline({
 			parent: this.rootElem.getElementsByClassName('timeline')[0] as HTMLElement,
 			cssScheme: cssScheme,
 			resultsEmitter: this.resultsEmitter,
-			colorSettings: colorSettings,
 		});
 		document.getElementById('timelineTabTab')?.addEventListener('click', event => timeline.render());
 
@@ -374,19 +366,15 @@ export class EmbeddedDetailedResults extends DetailedResults {
 
 		const newTabBtn = document.createElement('div');
 		newTabBtn.classList.add('detailed-results-controls-div');
-		newTabBtn.innerHTML = `<button class="detailed-results-new-tab-button btn btn-${this.simUI?.cssScheme}">View in Separate Tab</button>`;
+		newTabBtn.innerHTML = `<button class="detailed-results-new-tab-button btn btn-primary">View in Separate Tab</button>`;
 
 		this.rootElem.prepend(newTabBtn);
 
 		const computedStyles = window.getComputedStyle(this.rootElem);
 
 		const url = new URL(`${window.location.protocol}//${window.location.host}/${REPO_NAME}/detailed_results/index.html`);
-		url.searchParams.append('cssScheme', simUI.cssScheme);
-		url.searchParams.append('mainTextColor', computedStyles.getPropertyValue('--main-text-color').trim());
-		url.searchParams.append('themeColorBackground', computedStyles.getPropertyValue('--theme-color-background').trim());
-		url.searchParams.append('themeColorBackgroundRaw', computedStyles.getPropertyValue('--theme-color-background-raw').trim());
-		url.searchParams.append('themeBackgroundImage', computedStyles.getPropertyValue('--theme-background-image').trim());
-		url.searchParams.append('themeBackgroundOpacity', computedStyles.getPropertyValue('--theme-background-opacity').trim());
+		url.searchParams.append('cssClass', simUI.cssClass);
+
 		if (simUI.isIndividualSim()) {
 			url.searchParams.append('isIndividualSim', '');
 			this.rootElem.classList.add('individual-sim');

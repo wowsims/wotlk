@@ -299,6 +299,7 @@ export class ActionId {
 					name += ' (Off-target)';
 				}
 				break;
+			case 'Rune Strike':
 			case 'Frost Strike':
 			case 'Plague Strike':
 			case 'Blood Strike':

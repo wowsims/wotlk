@@ -1,7 +1,3 @@
-export type ColorSettings = {
-	mainTextColor: string,
-};
-
 export const actionColors: Array<string> = [
 	'#dd9933',
 	'#67074e',

@@ -29,10 +29,9 @@ func TestRetribution(t *testing.T) {
 				SpecOptions: &proto.Player_RetributionPaladin{
 					RetributionPaladin: &proto.RetributionPaladin{
 						Options: &proto.RetributionPaladin_Options{
-							Judgement:            proto.PaladinJudgement_JudgementOfWisdom,
-							Seal:                 proto.PaladinSeal_Command,
-							Aura:                 proto.PaladinAura_RetributionAura,
-							DamageTakenPerSecond: 0,
+							Judgement: proto.PaladinJudgement_JudgementOfWisdom,
+							Seal:      proto.PaladinSeal_Command,
+							Aura:      proto.PaladinAura_RetributionAura,
 						},
 						Rotation: defaultRetRotation,
 					},
@@ -43,10 +42,9 @@ func TestRetribution(t *testing.T) {
 				SpecOptions: &proto.Player_RetributionPaladin{
 					RetributionPaladin: &proto.RetributionPaladin{
 						Options: &proto.RetributionPaladin_Options{
-							Judgement:            proto.PaladinJudgement_JudgementOfWisdom,
-							Seal:                 proto.PaladinSeal_Righteousness,
-							Aura:                 proto.PaladinAura_RetributionAura,
-							DamageTakenPerSecond: 0,
+							Judgement: proto.PaladinJudgement_JudgementOfWisdom,
+							Seal:      proto.PaladinSeal_Righteousness,
+							Aura:      proto.PaladinAura_RetributionAura,
 						},
 						Rotation: defaultRetRotation,
 					},
@@ -57,10 +55,9 @@ func TestRetribution(t *testing.T) {
 				SpecOptions: &proto.Player_RetributionPaladin{
 					RetributionPaladin: &proto.RetributionPaladin{
 						Options: &proto.RetributionPaladin_Options{
-							Judgement:            proto.PaladinJudgement_JudgementOfWisdom,
-							Seal:                 proto.PaladinSeal_Vengeance,
-							Aura:                 proto.PaladinAura_RetributionAura,
-							DamageTakenPerSecond: 0,
+							Judgement: proto.PaladinJudgement_JudgementOfWisdom,
+							Seal:      proto.PaladinSeal_Vengeance,
+							Aura:      proto.PaladinAura_RetributionAura,
 						},
 						Rotation: &proto.RetributionPaladin_Rotation{
 							ConsSlack:            500,
@@ -137,10 +134,9 @@ var defaultRetRotation = &proto.RetributionPaladin_Rotation{
 }
 
 var defaultRetOptions = &proto.RetributionPaladin_Options{
-	Judgement:            proto.PaladinJudgement_JudgementOfWisdom,
-	Seal:                 proto.PaladinSeal_Vengeance,
-	Aura:                 proto.PaladinAura_RetributionAura,
-	DamageTakenPerSecond: 0,
+	Judgement: proto.PaladinJudgement_JudgementOfWisdom,
+	Seal:      proto.PaladinSeal_Vengeance,
+	Aura:      proto.PaladinAura_RetributionAura,
 }
 
 var DefaultOptions = &proto.Player_RetributionPaladin{

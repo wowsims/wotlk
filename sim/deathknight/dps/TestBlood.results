@@ -627,7 +627,21 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBlood-AllItems-SigilofDeflection-45144"
+ value: {
+  dps: 6901.55785
+  tps: 3545.30175
+ }
+}
+dps_results: {
  key: "TestBlood-AllItems-SigilofHauntedDreams-40715"
+ value: {
+  dps: 6932.7059
+  tps: 3561.95344
+ }
+}
+dps_results: {
+ key: "TestBlood-AllItems-SigilofInsolence-47672"
  value: {
   dps: 6901.55785
   tps: 3545.30175
@@ -641,10 +655,24 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBlood-AllItems-SigiloftheBoneGryphon-50462"
+ value: {
+  dps: 6901.55785
+  tps: 3545.30175
+ }
+}
+dps_results: {
  key: "TestBlood-AllItems-SigiloftheHangedMan-50459"
  value: {
   dps: 7207.25386
   tps: 3710.4828
+ }
+}
+dps_results: {
+ key: "TestBlood-AllItems-SigiloftheUnfalteringKnight-40714"
+ value: {
+  dps: 6901.55785
+  tps: 3545.30175
  }
 }
 dps_results: {

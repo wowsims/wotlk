@@ -58,6 +58,7 @@ var bloodTankRotation = &proto.TankDeathknight_Rotation{
 	Opener:              proto.TankDeathknight_Rotation_Threat,
 	OptimizationSetting: proto.TankDeathknight_Rotation_Hps,
 	BloodSpell:          proto.TankDeathknight_Rotation_BloodStrike,
+	BloodTapPrio:        proto.TankDeathknight_Rotation_Defensive,
 }
 
 var deathKnightOptions = &proto.TankDeathknight_Options{

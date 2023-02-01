@@ -1,4 +1,5 @@
 @import "../../core/individual_sim_ui/index";
+@import "./sim";
 
 @import "../balance_druid/sim";
 @import "../elemental_shaman/sim";
@@ -17,4 +18,3 @@
 @import "../warrior/sim";
 
 @import "./raid_sim_ui";
-@import "./sim";

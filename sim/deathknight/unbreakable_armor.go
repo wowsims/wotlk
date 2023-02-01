@@ -18,7 +18,7 @@ func (dk *Deathknight) registerUnbreakableArmorSpell() {
 	cd := time.Minute*1 - dk.thassariansPlateCooldownReduction(dk.UnbreakableArmor)
 
 	strDep := dk.NewDynamicMultiplyStat(stats.Strength, 1.2)
-	armorDep := dk.NewDynamicMultiplyStat(stats.Armor, 1.25+core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfUnbreakableArmor), 0.3, 0.0))
+	armorDep := dk.NewDynamicMultiplyStat(stats.Armor, core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfUnbreakableArmor), 1.3, 1.25))
 
 	dk.UnbreakableArmorAura = dk.RegisterAura(core.Aura{
 		Label:    "Unbreakable Armor",
@@ -57,13 +57,17 @@ func (dk *Deathknight) registerUnbreakableArmorSpell() {
 	})
 
 	if !dk.Inputs.IsDps {
-		dk.AddMajorCooldown(core.MajorCooldown{
-			Spell:    dk.UnbreakableArmor,
-			Type:     core.CooldownTypeSurvival,
-			Priority: core.CooldownPriorityDefault,
-			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-				return dk.UnbreakableArmor.CanCast(sim, nil)
-			},
-		})
+		// dk.AddMajorCooldown(core.MajorCooldown{
+		// 	Spell: dk.UnbreakableArmor,
+		// 	Type:  core.CooldownTypeSurvival,
+		// 	CanActivate: func(sim *core.Simulation, character *core.Character) bool {
+		// 		success := dk.UnbreakableArmor.CanCast(sim, nil)
+		// 		if !success && dk.BloodTap.IsReady(sim) {
+		// 			dk.BloodTap.Cast(sim, nil)
+		// 			success = dk.UnbreakableArmor.CanCast(sim, nil)
+		// 		}
+		// 		return success
+		// 	},
+		// })
 	}
 }

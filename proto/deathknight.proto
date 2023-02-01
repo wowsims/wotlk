@@ -288,7 +288,6 @@ message TankDeathknight {
 		enum OptimizationSetting {
 			Hps = 0;
 			Tps = 1;
-			Dps = 2;
 		}
 
 		enum BloodSpell {
@@ -297,22 +296,29 @@ message TankDeathknight {
 			HeartStrike = 2;
 		}
 
+		enum BloodTapPrio {
+			Defensive = 0;
+			Offensive = 1;
+		}
+
 		enum Presence {
 			Blood = 0;
 			Frost = 1;
 			Unholy = 2;
 		}
-		Presence presence = 4;
 
 		Opener opener = 1;
 		OptimizationSetting optimization_setting = 2;
 		BloodSpell blood_spell = 3;
+		Presence presence = 4;
+		BloodTapPrio blood_tap_prio = 5;
 	}
 	Rotation rotation = 1;
 	
 	message Options {
 		double starting_runic_power = 1;
 		RaidTarget unholy_frenzy_target = 2;
+		double defensive_delay = 3;
 	}
 	Options options = 3;
 }

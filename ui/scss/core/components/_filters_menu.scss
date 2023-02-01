@@ -1,42 +1,11 @@
 .filters-menu {
-	.menu-title,
 	.menu-section:not(:last-child) {
 		margin-bottom: map.get($spacers, 3);
 	}
-}
 
-.filters-menu .menu-section {
-	width: 100%;
-	border: 1px solid white;
-	border-radius: 10px;
-	padding: 5px;
-}
-
-.filters-menu .menu-section-header {
-	margin-left: 10px;
-	font-size: 16px;
-	font-weight: bold;
-}
-
-.filters-menu-section-bool-list {
-	display: flex;
-	justify-content: space-evenly;
-	align-items: center;
-	flex-wrap: wrap;
-}
-.filters-menu-section-bool-list > * {
-	margin: 5px 20px;
-}
-.filters-menu-section-bool-list .boolean-picker-input {
-	width: 15px;
-}
-
-.filters-menu-section-number-list {
-	display: flex;
-	justify-content: space-evenly;
-	align-items: center;
-	flex-wrap: wrap;
-}
-.filters-menu-section-number-list > * {
-	margin: 5px 20px;
+	[class*="filters-menu-section-"] {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		grid-column-gap: $modal-inner-padding;
+	}
 }

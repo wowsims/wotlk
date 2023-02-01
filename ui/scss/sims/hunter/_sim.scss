@@ -1,10 +1,8 @@
-$theme: 'hunter';
-
 // Set color variables which control the site theme.
 .hunter-sim-ui {
-	--theme-color-background: #0c190f;
-	--theme-color-background-raw: 12, 25, 15;
-	--theme-background-image: url('/wotlk/assets/img/hunter_background.jpg');
-	--theme-background-opacity: 0.9;
-	--main-text-color: White;
+	@include theme-color(
+		$hunter,
+		.9,
+		'/wotlk/assets/img/hunter_background.jpg'
+	);
 }

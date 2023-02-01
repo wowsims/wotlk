@@ -75,7 +75,7 @@ func (ability *PetAbility) TryCast(sim *core.Simulation, target *core.Unit, hp *
 		return false
 	}
 
-	hp.SpendFocus(sim, ability.Cost * hp.PseudoStats.CostMultiplier, ability.ActionID)
+	hp.SpendFocus(sim, ability.Cost*hp.PseudoStats.CostMultiplier, ability.ActionID)
 	ability.Cast(sim, target)
 	return true
 }

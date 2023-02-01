@@ -32,7 +32,7 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 			cssScheme: 'death-knight',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"<p>Completely unfinished.</p>"
+				"<p>Defensive CDs use is very basic and wip.</p>"
 			],
 
 			// All stats for which EP should be calculated.
@@ -45,6 +45,10 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 				Stat.StatMeleeHit,
 				Stat.StatMeleeCrit,
 				Stat.StatMeleeHaste,
+				Stat.StatSpellHit,
+				Stat.StatSpellCrit,
+				Stat.StatSpellHaste,
+				Stat.StatHealth,
 				Stat.StatArmor,
 				Stat.StatArmorPenetration,
 				Stat.StatDefense,
@@ -68,8 +72,9 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 				Stat.StatAgility,
 				Stat.StatAttackPower,
 				Stat.StatExpertise,
-				Stat.StatMeleeHit,
 				Stat.StatSpellHit,
+				Stat.StatSpellCrit,
+				Stat.StatMeleeHit,
 				Stat.StatMeleeCrit,
 				Stat.StatMeleeHaste,
 				Stat.StatArmorPenetration,
@@ -80,7 +85,7 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 			],
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P1_BLOOD_BIS_PRESET.gear,
+				gear: Presets.P2_BLOOD_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatArmor]: 0.05,
@@ -165,7 +170,9 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 					OtherInputs.IncomingHps,
 					OtherInputs.HealingCadence,
 					OtherInputs.BurstWindow,
-					OtherInputs.HpPercentForDefensives,
+					OtherInputs.InspirationUptime,
+					//OtherInputs.HpPercentForDefensives,
+					//DeathKnightInputs.DefensiveCdDelay,
 					OtherInputs.InFrontOfTarget,
 					DeathKnightInputs.StartingRunicPower,
 				],
@@ -179,10 +186,16 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 				// Preset talents that the user can quickly select.
 				talents: [
 					Presets.BloodTalents,
+					Presets.DoubleBuffBloodTalents,
+					Presets.FrostTalents,
+					Presets.DoubleBuffFrostTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.P1_BLOOD_BIS_PRESET,
+					Presets.P1_BLOOD_PRESET,
+					Presets.P1_FROST_PRESET,
+					Presets.P2_BLOOD_PRESET,
+					Presets.P2_FROST_PRESET,
 				],
 			},
 		});

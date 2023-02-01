@@ -1,10 +1,14 @@
-import { ArmorType } from '../proto/common.js';
-import { Class } from '../proto/common.js';
-import { ItemSlot } from '../proto/common.js';
-import { Profession } from '../proto/common.js';
-import { Race } from '../proto/common.js';
-import { Stat, PseudoStat } from '../proto/common.js';
-import { WeaponType } from '../proto/common.js';
+import {
+	ArmorType,
+	Class,
+	ItemSlot,
+	Profession,
+	PseudoStat,
+	Race,
+	RangedWeaponType,
+	Stat,
+	WeaponType,
+} from '../proto/common.js';
 import { ResourceType } from '../proto/api.js';
 
 export const armorTypeNames: Record<ArmorType, string> = {
@@ -26,6 +30,19 @@ export const weaponTypeNames: Record<WeaponType, string> = {
 	[WeaponType.WeaponTypeShield]: 'Shield',
 	[WeaponType.WeaponTypeStaff]: 'Staff',
 	[WeaponType.WeaponTypeSword]: 'Sword',
+};
+
+export const rangedWeaponTypeNames: Record<RangedWeaponType, string> = {
+	[RangedWeaponType.RangedWeaponTypeUnknown]: 'Unknown',
+	[RangedWeaponType.RangedWeaponTypeBow]: 'Bow',
+	[RangedWeaponType.RangedWeaponTypeCrossbow]: 'Crossbow',
+	[RangedWeaponType.RangedWeaponTypeGun]: 'Gun',
+	[RangedWeaponType.RangedWeaponTypeIdol]: 'Idol',
+	[RangedWeaponType.RangedWeaponTypeLibram]: 'Libram',
+	[RangedWeaponType.RangedWeaponTypeSigil]: 'Sigil',
+	[RangedWeaponType.RangedWeaponTypeThrown]: 'Thrown',
+	[RangedWeaponType.RangedWeaponTypeTotem]: 'Totem',
+	[RangedWeaponType.RangedWeaponTypeWand]: 'Wand',
 };
 
 export const raceNames: Record<Race, string> = {

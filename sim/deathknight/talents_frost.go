@@ -55,7 +55,7 @@ func (dk *Deathknight) ApplyFrostTalents() {
 
 	// Frigid Dreadplate
 	if dk.Talents.FrigidDreadplate > 0 {
-		dk.PseudoStats.BonusMeleeHitRatingTaken -= core.MeleeHitRatingPerHitChance * float64(dk.Talents.FrigidDreadplate)
+		dk.PseudoStats.ReducedPhysicalHitTakenChance += float64(dk.Talents.FrigidDreadplate) * 0.01
 	}
 
 	// Glacier rot

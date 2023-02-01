@@ -92,7 +92,7 @@ export class SavedDataManager<ModObject, T> extends Component {
 	private makeSavedData(config: SavedDataConfig<ModObject, T>): SavedData<ModObject, T> {
 		const dataElemFragment = document.createElement('fragment');
 		dataElemFragment.innerHTML = `
-			<div class="saved-data-set-chip-${this.simUI.cssScheme} badge rounded-pill">
+			<div class="saved-data-set-chip badge rounded-pill">
 				<a href="javascript:void(0)" class="saved-data-set-name" role="button">${config.name}</a>
 			</div>
 		`;
@@ -108,7 +108,13 @@ export class SavedDataManager<ModObject, T> extends Component {
 		if (!config.isPreset) {
 			let deleteFragment = document.createElement('fragment');
 			deleteFragment.innerHTML = `
-				<a href="javascript:void(0)" class="saved-data-set-delete" role="button">
+				<a
+					href="javascript:void(0)"
+					class="saved-data-set-delete"
+					role="button"
+					data-bs-toggle="tooltip"
+					data-bs-title="Delete saved ${this.config.label}"
+				>
 					<i class="fa fa-times fa-lg"></i>
 				</a>
 			`;
@@ -116,11 +122,15 @@ export class SavedDataManager<ModObject, T> extends Component {
 			const deleteButton = deleteFragment.children[0] as HTMLElement;
 			dataElem.appendChild(deleteButton);
 
+			const tooltip = Tooltip.getOrCreateInstance(deleteButton);
+
 			deleteButton.addEventListener('click', event => {
 				event.stopPropagation();
 				const shouldDelete = confirm(`Delete saved ${this.config.label} '${config.name}'?`);
 				if (!shouldDelete)
 					return;
+
+				tooltip.dispose();
 
 				const idx = this.userData.findIndex(data => data.name == config.name);
 				this.userData[idx].elem.remove();
@@ -169,7 +179,7 @@ export class SavedDataManager<ModObject, T> extends Component {
 			userData[savedData.name] = this.config.toJson(savedData.data);
 		});
 
-		if (this.userData.length == 0)
+		if (this.userData.length == 0 && this.presets.length == 0)
 			this.savedDataDiv.classList.add('hide');
 
 		window.localStorage.setItem(this.config.storageKey, JSON.stringify(userData));
@@ -212,7 +222,7 @@ export class SavedDataManager<ModObject, T> extends Component {
 			<div class="saved-data-create-container">
 				<label class="form-label">${this.config.label} Name</label>
 				<input class="saved-data-save-input form-control" type="text" placeholder="Name">
-				<button class="saved-data-save-button btn btn-${this.simUI.cssScheme}">Save ${this.config.label}</button>
+				<button class="saved-data-save-button btn btn-primary">Save ${this.config.label}</button>
 			</div>
 		`;
 
