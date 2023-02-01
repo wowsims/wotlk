@@ -93,9 +93,21 @@ export const RogueRotationConfig = {
 			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
+			fieldName: 'envenomEnergyThresholdOverkill',
+			label: 'Energy Threshold (4cp Envenom w/ Overkill)',
+			labelTooltip: 'Amount of total energy to pool before casting a 4 point Envenom.',
+			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
 			fieldName: 'envenomEnergyThresholdMin',
 			label: 'Energy Threshold (5cp Envenom)',
 			labelTooltip: 'Amount of total energy to pool before casting a 5 point Envenom.',
+			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
+			fieldName: 'envenomEnergyThresholdOverkillMin',
+			label: 'Energy Threshold (5cp Envenom w/ Overkill)',
+			labelTooltip: 'Amount of total energy to pool before casting a 4 point Envenom.',
 			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
 		}),
 		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, Frequency>({
