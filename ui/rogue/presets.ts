@@ -82,7 +82,8 @@ export const DefaultRotation = RogueRotation.create({
 	subtletyFinisherPriority: Rogue_Rotation_SubtletyPriority.Rupture,
 	minimumComboPointsPrimaryFinisher: 3,
 	minimumComboPointsSecondaryFinisher: 2,
-	envenomEnergyThreshold: 60,
+	envenomEnergyThreshold: 80,
+	envenomEnergyThresholdMin: 60,
 	hemoWithDagger: false,
 });
 
