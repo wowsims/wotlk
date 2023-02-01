@@ -71,7 +71,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 					[Stat.StatArmorPenetration]: 2.08,
 					[Stat.StatExpertise]: 2.44,
 				}, {
-					[PseudoStat.PseudoStatMainHandDps]: 0.0,
+					[PseudoStat.PseudoStatMainHandDps]: 16.5,
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,
