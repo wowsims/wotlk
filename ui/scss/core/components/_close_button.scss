@@ -11,7 +11,7 @@
 		right: $modal-inner-padding;
 	}
 
-	&.position-sticky {
+	&.position-fixed {
 		top: calc(var(--bs-modal-margin) + 1rem);
 		right: calc(2.5vw + 1px + 1rem);
 	}
