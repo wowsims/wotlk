@@ -21,16 +21,11 @@ func (dk *TankDeathknight) TankRA_Hps(sim *core.Simulation, target *core.Unit, s
 		return -1
 	}
 
-	t := sim.CurrentTime
-	recast := 3 * time.Second // 2 GCDs for miss
-	ff := dk.FrostFeverSpell.Dot(target).ExpiresAt() - t
-	bp := dk.BloodPlagueSpell.Dot(target).ExpiresAt() - t
 	fd := dk.CurrentFrostRunes() + dk.CurrentDeathRunes()
 	ud := dk.CurrentUnholyRunes() + dk.CurrentDeathRunes()
-	b, _, _ := dk.NormalCurrentRunes()
 
-	if fd > 0 && ud > 0 && dk.DeathStrike.CanCast(sim, target) && dk.CurrentHealthPercent() < 0.75 {
-		dk.DeathStrike.Cast(sim, target)
+	if fd > 0 && ud > 0 && dk.FuSpell.CanCast(sim, target) && (dk.CurrentHealthPercent() < 0.75 || dk.FuSpell == dk.Obliterate) {
+		dk.FuSpell.Cast(sim, target)
 		return -1
 	}
 
@@ -43,15 +38,12 @@ func (dk *TankDeathknight) TankRA_Hps(sim *core.Simulation, target *core.Unit, s
 		}
 	}
 
-	if dk.Talents.FrostStrike && dk.CurrentRunicPower() > 60 && dk.FrostStrike.CanCast(sim, target) {
-		dk.FrostStrike.Cast(sim, target)
+	if dk.DoFrostCast(sim, target, s) {
 		return -1
 	}
 
-	if b >= 1 {
-		if dk.NormalSpentBloodRuneReadyAt(sim)-t < ff-recast && dk.NormalSpentBloodRuneReadyAt(sim)-t < bp-recast {
-			dk.BloodSpell.Cast(sim, target)
-		}
+	if dk.DoBloodCast(sim, target, s) {
+		return -1
 	}
 
 	return -1
