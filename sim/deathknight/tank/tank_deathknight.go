@@ -65,6 +65,13 @@ func NewTankDeathknight(character core.Character, options *proto.Player) *TankDe
 		},
 	})
 
+	healingModel := options.HealingModel
+	if healingModel != nil {
+		if healingModel.InspirationUptime > 0.0 {
+			core.ApplyInspiration(tankDk.GetCharacter(), healingModel.InspirationUptime)
+		}
+	}
+
 	return tankDk
 }
 
