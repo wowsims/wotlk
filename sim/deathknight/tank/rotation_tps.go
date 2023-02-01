@@ -20,7 +20,6 @@ func (dk *TankDeathknight) TankRA_Tps(sim *core.Simulation, target *core.Unit, s
 	t := sim.CurrentTime
 	ff := dk.FrostFeverSpell.Dot(target).ExpiresAt() - t
 	bp := dk.BloodPlagueSpell.Dot(target).ExpiresAt() - t
-	b, _, _ := dk.NormalCurrentRunes()
 
 	if ff <= 0 && dk.IcyTouch.CanCast(sim, target) {
 		dk.IcyTouch.Cast(sim, target)
@@ -47,8 +46,8 @@ func (dk *TankDeathknight) TankRA_Tps(sim *core.Simulation, target *core.Unit, s
 		return -1
 	}
 
-	if !dk.switchIT && dk.DeathStrike.CanCast(sim, target) {
-		dk.DeathStrike.Cast(sim, target)
+	if !dk.switchIT && dk.FuSpell.CanCast(sim, target) {
+		dk.FuSpell.Cast(sim, target)
 
 		if dk.DeathRunesInFU() == 4 {
 			dk.switchIT = true
@@ -66,20 +65,12 @@ func (dk *TankDeathknight) TankRA_Tps(sim *core.Simulation, target *core.Unit, s
 		}
 	}
 
-	if dk.Talents.FrostStrike && dk.CurrentRunicPower() > 60 && dk.FrostStrike.CanCast(sim, target) {
-		dk.FrostStrike.Cast(sim, target)
+	if dk.DoFrostCast(sim, target, s) {
 		return -1
 	}
 
-	if dk.Talents.HowlingBlast && dk.RimeAura.IsActive() && dk.HowlingBlast.CanCast(sim, target) {
-		dk.HowlingBlast.Cast(sim, target)
+	if dk.DoBloodCast(sim, target, s) {
 		return -1
-	}
-
-	if b >= 1 {
-		if dk.NormalSpentBloodRuneReadyAt(sim)-t < ff-2*time.Second && dk.NormalSpentBloodRuneReadyAt(sim)-t < bp-2*time.Second {
-			dk.BloodSpell.Cast(sim, target)
-		}
 	}
 
 	return -1

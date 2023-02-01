@@ -28,6 +28,7 @@ type TankDeathknight struct {
 
 	switchIT   bool
 	BloodSpell *core.Spell
+	FuSpell    *core.Spell
 
 	Rotation               *proto.TankDeathknight_Rotation
 	HpPercentForDefensives float64
@@ -56,8 +57,7 @@ func NewTankDeathknight(character core.Character, options *proto.Player) *TankDe
 		OffHand:        tankDk.WeaponFromOffHand(tankDk.DefaultMeleeCritMultiplier()),
 		AutoSwingMelee: true,
 		ReplaceMHSwing: func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
-			// Save up RP for defensives
-			if tankDk.CurrentRunicPower() > 40 && tankDk.RuneStrike.CanCast(sim, nil) {
+			if tankDk.RuneStrike.CanCast(sim, nil) {
 				return tankDk.RuneStrike
 			} else {
 				return nil
@@ -108,6 +108,12 @@ func (dk *TankDeathknight) SetupRotations() {
 		} else {
 			dk.BloodSpell = dk.BloodStrike
 		}
+	}
+
+	if dk.Talents.Annihilation == 3 {
+		dk.FuSpell = dk.Obliterate
+	} else {
+		dk.FuSpell = dk.DeathStrike
 	}
 }
 
