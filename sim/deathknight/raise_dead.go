@@ -48,8 +48,8 @@ func (dk *Deathknight) registerRaiseDeadCD() {
 	// 	dk.AddMajorCooldown(core.MajorCooldown{
 	// 		Spell: dk.RaiseDead,
 	// 		Type:  core.CooldownTypeSurvival,
-	// 		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-	// 			return dk.RaiseDead.CanCast(sim, nil) && dk.CurrentHealthPercent() < 0.5 && sim.GetRemainingDuration() > 5*time.Second
+	// 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
+	// 			return dk.CurrentHealthPercent() < 0.5 && sim.GetRemainingDuration() > 5*time.Second
 	// 		},
 	// 	})
 	// }
