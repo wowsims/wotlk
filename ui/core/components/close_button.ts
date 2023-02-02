@@ -15,7 +15,9 @@ export class CloseButton extends Component {
 		super(parent, 'close-button', document.createElement('a'));
 		this.config = {...DEFAULT_CONFIG, ...config};
 
-		this.rootElem.classList.add(this.config.fixed ? 'position-fixed' : 'position-absolute');
+		if (this.config.fixed)
+			this.rootElem.classList.add('position-fixed');
+
 		this.rootElem.setAttribute('href', 'javascript:void(0)');
 		this.rootElem.setAttribute('role', 'button');
 		this.rootElem.addEventListener('click', () => onClick());

@@ -9,7 +9,7 @@ import { getClassStatName } from '../proto_utils/names.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { Player } from '../player.js';
-import { stDevToConf90 } from '../utils.js';
+import { formatDeltaTextElem, stDevToConf90 } from '../utils.js';
 import { BooleanPicker } from '../components/boolean_picker.js';
 import { NumberPicker } from '../components/number_picker.js';
 import { combinationsWithDups, permutations, sum } from '../utils.js';
@@ -247,7 +247,7 @@ class EpWeightsMenu extends BaseModal {
 			},
 		});
 
-		this.updateTable(this.simUI.prevEpIterations || 1, this.getPrevSimResult());
+		this.updateTable(this.simUI.prevEpIterations || 1, this.getPrevSimResult(), true);
 	}
 
 	private setSimProgress(progress: ProgressMetrics) {
@@ -261,7 +261,7 @@ class EpWeightsMenu extends BaseModal {
 		`);
 	}
 
-	private updateTable(iterations: number, result: StatWeightsResult) {
+	private updateTable(iterations: number, result: StatWeightsResult, skipFormatting: boolean = false) {
 		this.tableBody.innerHTML = ``;
 
 		EpWeightsMenu.epUnitStats.forEach(stat => {
@@ -272,28 +272,45 @@ class EpWeightsMenu extends BaseModal {
 			)) {
 				return;
 			}
-			const row = this.makeTableRow(stat, iterations, result);
+			const row = this.makeTableRow(stat, iterations, result, skipFormatting);
 			this.tableBody.appendChild(row);
 		});
 	}
-	private makeTableRow(stat: UnitStat, iterations: number, result: StatWeightsResult): HTMLElement {
+	private makeTableRow(stat: UnitStat, iterations: number, result: StatWeightsResult, skipFormatting: boolean): HTMLElement {
 		const row = document.createElement('tr');
 		const makeWeightAndEpCellHtml = (statWeights: StatWeightValues, className: string): string => {
-			return `
+			const epCurrent = this.simUI.player.getEpWeights().getUnitStat(stat);
+			const epAvg = stat.getProtoValue(statWeights.epValues!);
+
+			let template = document.createElement('template');
+			template.innerHTML = `
 				<td class="stdev-cell ${className} type-weight">
-					<span>${stat.getProtoValue(statWeights.weights!).toFixed(2)}</span>
+					<span class="results-avg">${stat.getProtoValue(statWeights.weights!).toFixed(2)}</span>
 					<span class="results-stdev">
 						(<i class="fas fa-plus-minus fa-xs"></i>${stDevToConf90(stat.getProtoValue(statWeights.weightsStdev!), iterations).toFixed(2)})
 					</span>
 				</td>
 				<td class="stdev-cell ${className} type-ep">
-					<span>${stat.getProtoValue(statWeights.epValues!).toFixed(2)}</span>
+					<span class="results-avg">${epAvg.toFixed(2)}</span>
 					<span class="results-stdev">
 						(<i class="fas fa-plus-minus fa-xs"></i>${stDevToConf90(stat.getProtoValue(statWeights.epValuesStdev!), iterations).toFixed(2)})
 					</span>
 				</td>
 			`;
+
+			const epAvgElem = template.content.querySelector('.type-ep .results-avg') as HTMLElement;
+			const epDelta = epAvg - epCurrent;
+
+			if (skipFormatting || epDelta.toFixed(2) == "0.00")
+				epAvgElem // no-op
+			else if (epDelta > 0)
+				epAvgElem.classList.add('positive');
+			else if (epDelta < 0)
+				epAvgElem.classList.add('negative');
+
+			return template.innerHTML;
 		};
+
 		row.innerHTML = `
 			<td>${stat.getName(this.simUI.player.getClass())}</td>
 			${makeWeightAndEpCellHtml(result.dps!, 'damage-metrics')}
@@ -307,7 +324,7 @@ class EpWeightsMenu extends BaseModal {
 		new NumberPicker(currentEpCell, this.simUI.player, {
 			float: true,
 			changedEvent: (player: Player<any>) => player.epWeightsChangeEmitter,
-			getValue: (player: Player<any>) => player.getEpWeights().getUnitStat(stat),
+			getValue: (player: Player<any>) => this.simUI.player.getEpWeights().getUnitStat(stat),
 			setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
 				const epWeights = player.getEpWeights().withUnitStat(stat, newValue);
 				player.setEpWeights(eventID, epWeights);
