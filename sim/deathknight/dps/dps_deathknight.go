@@ -159,6 +159,7 @@ func (dk *DpsDeathknight) SetupRotations() {
 
 	dk.CustomRotation = dk.makeCustomRotation()
 	if dk.CustomRotation == nil || dk.Rotation.FrostRotationType == proto.Deathknight_Rotation_SingleTarget {
+
 		dk.Rotation.FrostRotationType = proto.Deathknight_Rotation_SingleTarget
 		if (dk.Talents.BloodOfTheNorth == 3) && (dk.Talents.Epidemic == 0) {
 			if dk.Rotation.DesyncRotation {
@@ -179,7 +180,7 @@ func (dk *DpsDeathknight) SetupRotations() {
 			}
 		} else if dk.Talents.SummonGargoyle {
 			dk.setupUnholyRotations()
-		} else if dk.Talents.DancingRuneWeapon {
+		} else if dk.Talents.BloodGorged > 0 {
 			if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_AsMajorCd {
 				dk.Inputs.ArmyOfTheDeadType = proto.Deathknight_Rotation_PreCast
 				dk.Rotation.HoldErwArmy = false
