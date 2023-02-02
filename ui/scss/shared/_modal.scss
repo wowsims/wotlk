@@ -16,8 +16,6 @@
   .modal-scroll-table {
     flex: 1;
 		overflow-y: auto;
-    // This seems to be the default scrollbar width
-    margin-right: 1rem;
 
     th {
       position: sticky;
