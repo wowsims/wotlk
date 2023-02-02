@@ -10,6 +10,7 @@
 
 		&.pending {
 			overflow: hidden;
+			margin: 0;
 			
 			.results-ep-table {
 				filter: blur(2px);
@@ -22,9 +23,7 @@
 
 		.results-pending-overlay {
 			position: absolute;
-			left: var(--bs-modal-padding);
-			right: var(--bs-modal-padding);
-			height: 100%;
+			inset: 0;
 			display: none;
 			align-items: center;
 			justify-content: center;
