@@ -181,12 +181,16 @@ func (dk *DpsDeathknight) RotationActionCallback_DRW_Snapshot(sim *core.Simulati
 }
 
 func (dk *DpsDeathknight) RotationActionCallback_DRW_Custom(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	casted := dk.DancingRuneWeapon.Cast(sim, target)
-	if casted {
-		dk.br.drwSnapshot.ResetProcTrackers()
-		dk.br.drwMaxDelay = -1
+	if dk.Talents.DancingRuneWeapon {
+		casted := dk.DancingRuneWeapon.Cast(sim, target)
+		if casted {
+			dk.br.drwSnapshot.ResetProcTrackers()
+			dk.br.drwMaxDelay = -1
+		}
+		s.ConditionalAdvance(casted)
+	} else {
+		s.Advance()
 	}
-	s.ConditionalAdvance(casted)
 	return -1
 }
 

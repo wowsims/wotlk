@@ -111,7 +111,7 @@ func (dk *DpsDeathknight) blSpreadDiseases(sim *core.Simulation, target *core.Un
 
 // Save up Runic Power for DRW - Allow casts above 100 RP when DRW is ready or above 85 (for death strike glyph) when not
 func (dk *DpsDeathknight) blDeathCoilCheck(sim *core.Simulation) bool {
-	canCastDrw := dk.DancingRuneWeapon != nil && dk.DancingRuneWeapon.IsReady(sim) || dk.DancingRuneWeapon.CD.TimeToReady(sim) < 5*time.Second
+	canCastDrw := dk.Talents.DancingRuneWeapon && dk.DancingRuneWeapon != nil && (dk.DancingRuneWeapon.IsReady(sim) || dk.DancingRuneWeapon.CD.TimeToReady(sim) < 5*time.Second)
 	currentRP := dk.CurrentRunicPower()
 	return (!canCastDrw && currentRP >= 65) || (canCastDrw && dk.CurrentRunicPower() >= 100)
 }
@@ -147,6 +147,9 @@ func (dk *DpsDeathknight) blDrwCheck(sim *core.Simulation, target *core.Unit, ca
 }
 
 func (dk *DpsDeathknight) blDrwCanCast(sim *core.Simulation, castTime time.Duration) bool {
+	if !dk.Talents.DancingRuneWeapon {
+		return false
+	}
 	if !dk.DancingRuneWeapon.IsReady(sim) {
 		return false
 	}

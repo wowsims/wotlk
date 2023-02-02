@@ -43,9 +43,6 @@ func (priest *Priest) registerPowerInfusionCD() {
 		Spell:    piSpell,
 		Priority: core.CooldownPriorityBloodlust,
 		Type:     core.CooldownTypeMana,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return character.CurrentMana() >= piSpell.DefaultCast.Cost
-		},
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 			// How can we determine the target will be able to continue casting
 			// 	for the next 15s at 20% reduced mana cost? Arbitrary value until then.

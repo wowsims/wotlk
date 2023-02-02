@@ -82,8 +82,10 @@ export const DefaultRotation = RogueRotation.create({
 	subtletyFinisherPriority: Rogue_Rotation_SubtletyPriority.Rupture,
 	minimumComboPointsPrimaryFinisher: 3,
 	minimumComboPointsSecondaryFinisher: 2,
-	envenomEnergyThreshold: 80,
+	envenomEnergyThreshold: 85,
+	envenomEnergyThresholdOverkill: 75,
 	envenomEnergyThresholdMin: 60,
+	envenomEnergyThresholdOverkillMin: 40,
 	hemoWithDagger: false,
 });
 
@@ -91,11 +93,12 @@ export const DefaultOptions = RogueOptions.create({
 	mhImbue: Poison.DeadlyPoison,
 	ohImbue: Poison.InstantPoison,
 	applyPoisonsManually: false,
-	startingOverkillDuration: 10,
+	startingOverkillDuration: 18,
 });
 
 export const DefaultConsumes = Consumes.create({
 	defaultPotion: Potions.PotionOfSpeed,
+	prepopPotion: Potions.PotionOfSpeed,
 	defaultConjured: Conjured.ConjuredRogueThistleTea,
 	flask: Flask.FlaskOfEndlessRage,
 	food: Food.FoodMegaMammothMeal,

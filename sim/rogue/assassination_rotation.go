@@ -257,21 +257,22 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 	// Envenom
 	rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
 		func(s *core.Simulation, r *Rogue) PriorityAction {
-			energyNeeded := core.MinFloat(r.maxEnergy, float64(rogue.Rotation.EnvenomEnergyThreshold))
-			if r.ComboPoints() == 5 {
-				energyNeeded = core.MinFloat(energyNeeded, float64(rogue.Rotation.EnvenomEnergyThresholdMin))
-			}
-			// Don't pool when fight is about to end
-			if s.GetRemainingDuration() <= time.Second*4 {
-				energyNeeded = r.Envenom[1].DefaultCast.Cost
-			}
-			energyNeeded = core.MaxFloat(r.Envenom[1].DefaultCast.Cost, energyNeeded)
 			minimumCP := int32(4)
-			if r.ComboPoints() >= minimumCP && r.CurrentEnergy() >= energyNeeded {
-				if r.EnvenomAura.IsActive() && r.CurrentEnergy() < (r.maxEnergy-16) {
-					return Wait
+			if r.ComboPoints() >= minimumCP {
+				// Don't pool when fight is about to end
+				fightEndsSoon := false
+				energyNeeded := r.Envenom[1].DefaultCast.Cost
+				if s.GetRemainingDuration() <= time.Second*6 {
+					fightEndsSoon = true
+				} else {
+					energyNeeded = r.getEnvenomThreshold(s)
 				}
-				return Cast
+				if r.CurrentEnergy() >= energyNeeded {
+					if !fightEndsSoon && r.EnvenomAura.IsActive() && r.CurrentEnergy() < (r.maxEnergy-16) {
+						return Wait
+					}
+					return Cast
+				}
 			}
 			if r.ComboPoints() < 4 && r.CurrentEnergy() >= r.Builder.DefaultCast.Cost {
 				return Build
@@ -283,6 +284,22 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 		},
 		rogue.Envenom[1].DefaultCast.Cost,
 	})
+}
+
+func (r *Rogue) getEnvenomThreshold(s *core.Simulation) float64 {
+	hasOverkill := r.OverkillAura.RemainingDuration(s) > time.Duration(3)*time.Second
+	energyNeeded := core.MinFloat(r.maxEnergy, float64(r.Rotation.EnvenomEnergyThreshold))
+	if r.ComboPoints() == 5 {
+		if hasOverkill {
+			energyNeeded = core.MinFloat(energyNeeded, float64(r.Rotation.EnvenomEnergyThresholdOverkillMin))
+		} else {
+			energyNeeded = core.MinFloat(energyNeeded, float64(r.Rotation.EnvenomEnergyThresholdMin))
+		}
+	} else if hasOverkill {
+		energyNeeded = core.MinFloat(r.maxEnergy, float64(r.Rotation.EnvenomEnergyThresholdOverkill))
+	}
+	energyNeeded = core.MaxFloat(r.Envenom[1].DefaultCast.Cost, energyNeeded)
+	return energyNeeded
 }
 
 func (rogue *Rogue) doAssassinationRotation(sim *core.Simulation) {

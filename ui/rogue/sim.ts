@@ -272,7 +272,18 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					rotation.subtletyFinisherPriority = Presets.DefaultRotation.subtletyFinisherPriority;
 				}
 			}
-
+			if (rotation.envenomEnergyThreshold == 0) {
+				rotation.envenomEnergyThreshold == Presets.DefaultRotation.envenomEnergyThreshold
+			}
+			if (rotation.envenomEnergyThresholdOverkill == 0) {
+				rotation.envenomEnergyThresholdOverkill == Presets.DefaultRotation.envenomEnergyThresholdOverkill
+			}
+			if (rotation.envenomEnergyThresholdMin == 0) {
+				rotation.envenomEnergyThresholdMin == Presets.DefaultRotation.envenomEnergyThresholdMin
+			}
+			if (rotation.envenomEnergyThresholdOverkillMin == 0) {
+				rotation.envenomEnergyThresholdOverkillMin == Presets.DefaultRotation.envenomEnergyThresholdOverkillMin
+			}
 			this.player.setRotation(c, rotation)
 			if (!options.applyPoisonsManually) {
 				const mhWeaponSpeed = this.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponSpeed;

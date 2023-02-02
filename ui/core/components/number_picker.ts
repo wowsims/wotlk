@@ -28,9 +28,9 @@ export class NumberPicker<ModObject> extends Input<ModObject, number> {
 		if (this.positive) {
 			this.inputElem.onchange = e => {
 				if (this.float) {
-					this.inputElem.value = Math.abs(parseFloat(this.inputElem.value)).toString()
+					this.inputElem.value = Math.abs(parseFloat(this.inputElem.value)).toFixed(2);
 				} else {
-					this.inputElem.value = Math.abs(parseInt(this.inputElem.value)).toString()
+					this.inputElem.value = Math.abs(parseInt(this.inputElem.value)).toString();
 				}
 			}
 		}
@@ -56,6 +56,9 @@ export class NumberPicker<ModObject> extends Input<ModObject, number> {
 	}
 
 	setInputValue(newValue: number) {
-		this.inputElem.value = String(newValue);
+		if (this.float)
+			this.inputElem.value = newValue.toFixed(2);
+		else
+			this.inputElem.value = String(newValue);
 	}
 }
