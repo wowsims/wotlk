@@ -129,7 +129,7 @@ class EpWeightsMenu extends BaseModal {
 		`;
 		this.footer!.innerHTML = `
 			<button
-				class="btn btn-primary optimize-gems me-2"
+				class="btn btn-primary optimize-gems experimental me-2"
 				data-bs-toggle="tooltip"
 				data-bs-title="
 					<p><span class='warnings link-warning'><i class='fa fa-exclamation-triangle'></i> WARNING</span> This feature is experimental, and will not always produce the most optimal gems especially when interacting with soft/hard stat caps.</p>
