@@ -1,14 +1,11 @@
 .close-button {
 	white-space: nowrap;
+	line-height: 1.5;
 	z-index: 1;
+	order: 1;
 
 	&> i {
 		vertical-align: middle;
-	}
-
-	&.position-absolute {
-		top: $modal-inner-padding * 1.5;
-		right: $modal-inner-padding;
 	}
 
 	&.position-fixed {
