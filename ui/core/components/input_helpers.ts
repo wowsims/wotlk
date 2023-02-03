@@ -9,7 +9,7 @@ import { Sim } from '../sim.js';
 import { Target } from '../target.js';
 import { Encounter } from '../encounter.js';
 import { EventID, TypedEvent } from '../typed_event.js';
-import { ShouldShowExperimentalRotationField, SpecOptions, SpecRotation } from '../proto_utils/utils.js';
+import { shouldShowExperimentalRotationField, SpecOptions, SpecRotation } from '../proto_utils/utils.js';
 import { ItemSwapPickerConfig } from './item_swap_picker.js'
 import { CustomRotationPickerConfig } from './individual_sim_ui/custom_rotation_picker.js';
 import { InputConfig } from './input.js'
@@ -98,7 +98,7 @@ export function makeRotationBooleanInput<SpecType extends Spec>(config: PlayerBo
 		}),
 		changedEvent: config.changeEmitter || ((player: Player<SpecType>) => player.rotationChangeEmitter),
 		enableWhen: config.enableWhen,
-		showWhen: (player: Player<SpecType>) => ShouldShowExperimentalRotationField(player.sim.getShowExperimental(), config.fieldName as string) && (config.showWhen ? config.showWhen(player) : true),
+		showWhen: (player: Player<SpecType>) => shouldShowExperimentalRotationField(player.sim.getShowExperimental(), config.fieldName as string) && (config.showWhen ? config.showWhen(player) : true),
 		extraCssClasses: config.extraCssClasses,
 	});
 }
@@ -180,7 +180,7 @@ export function makeRotationNumberInput<SpecType extends Spec>(config: PlayerNum
 		}),
 		changedEvent: config.changeEmitter || ((player: Player<SpecType>) => player.rotationChangeEmitter),
 		enableWhen: config.enableWhen,
-		showWhen: (player: Player<SpecType>) => ShouldShowExperimentalRotationField(player.sim.getShowExperimental(), config.fieldName as string) && (config.showWhen ? config.showWhen(player) : true),
+		showWhen: (player: Player<SpecType>) => shouldShowExperimentalRotationField(player.sim.getShowExperimental(), config.fieldName as string) && (config.showWhen ? config.showWhen(player) : true),
 		extraCssClasses: config.extraCssClasses,
 	};
 	if (config.percent) {
@@ -262,7 +262,7 @@ export function makeRotationEnumInput<SpecType extends Spec, T>(config: PlayerEn
 		}),
 		changedEvent: config.changeEmitter || ((player: Player<SpecType>) => player.rotationChangeEmitter),
 		enableWhen: config.enableWhen,
-		showWhen: (player: Player<SpecType>) => ShouldShowExperimentalRotationField(player.sim.getShowExperimental(), config.fieldName as string) && (config.showWhen ? config.showWhen(player) : true),
+		showWhen: (player: Player<SpecType>) => shouldShowExperimentalRotationField(player.sim.getShowExperimental(), config.fieldName as string) && (config.showWhen ? config.showWhen(player) : true),
 	});
 }
 
@@ -440,7 +440,7 @@ export function makeRotationEnumIconInput<SpecType extends Spec, T>(config: Play
 		numColumns: config.numColumns || 1,
 		values: config.values,
 		equals: (a: T, b: T) => a == b,
-		showWhen: (player: Player<SpecType>) => ShouldShowExperimentalRotationField(player.sim.getShowExperimental(), config.fieldName as string) && (config.showWhen ? config.showWhen(player) : true),
+		showWhen: (player: Player<SpecType>) => shouldShowExperimentalRotationField(player.sim.getShowExperimental(), config.fieldName as string) && (config.showWhen ? config.showWhen(player) : true),
 		zeroValue: 0 as unknown as T,
 		getModObject: (player: Player<SpecType>) => player,
 		getValue: config.getValue || ((player: Player<SpecType>) => player.getRotation()[config.fieldName] as unknown as T),
@@ -478,7 +478,7 @@ export function makeCustomRotationInput<SpecType extends Spec, T>(config: Wrappe
 			(rotation[config.fieldName] as unknown as CustomRotation) = newValue;
 			player.setRotation(eventID, rotation);
 		}),
-		showWhen: (player: Player<SpecType>) => ShouldShowExperimentalRotationField(player.sim.getShowExperimental(), config.fieldName as string) && (config.showWhen ? config.showWhen(player) : true),
+		showWhen: (player: Player<SpecType>) => shouldShowExperimentalRotationField(player.sim.getShowExperimental(), config.fieldName as string) && (config.showWhen ? config.showWhen(player) : true),
 		numColumns: config.numColumns,
 		showCastsPerMinute: config.showCastsPerMinute || false,
 		values: config.values,

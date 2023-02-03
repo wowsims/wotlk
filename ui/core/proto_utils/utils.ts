@@ -160,11 +160,11 @@ export const naturalClassOrder: Array<Class> = [
 ]
 
 const experimentalRotationSettings: Set<string> = new Set()
-export const MakeExperimentalRotationSetting = (settingName: string) => {
+export const makeExperimentalRotationSetting = (settingName: string) => {
 	experimentalRotationSettings.add(settingName)
 }
 
-export const ShouldShowExperimentalRotationField = (isExperimental: boolean, fieldName: string) => {
+export const shouldShowExperimentalRotationField = (isExperimental: boolean, fieldName: string) => {
 	if (experimentalRotationSettings.has(fieldName)) {
 		return isExperimental
 	}

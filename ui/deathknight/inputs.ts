@@ -21,7 +21,7 @@ import {
 import * as InputHelpers from '../core/components/input_helpers.js';
 import { Player } from '../core/player';
 import { EventID, TypedEvent } from '../core/typed_event';
-import { MakeExperimentalRotationSetting, NO_TARGET } from '../core/proto_utils/utils.js';
+import { makeExperimentalRotationSetting, NO_TARGET } from '../core/proto_utils/utils.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
@@ -232,7 +232,7 @@ export const PreNerfedGargoyleInput = InputHelpers.makeRotationBooleanInput<Spec
 	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && !player.getRotation().autoRotation,
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 })
-MakeExperimentalRotationSetting('preNerfedGargoyle')
+makeExperimentalRotationSetting('preNerfedGargoyle')
 
 export const BloodTapInput = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, BloodTap>({
 	fieldName: 'bloodTap',
@@ -295,7 +295,7 @@ export const DesyncRotation = InputHelpers.makeRotationBooleanInput<Spec.SpecDea
 	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast && !player.getRotation().autoRotation,
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
-MakeExperimentalRotationSetting('desyncRotation')
+makeExperimentalRotationSetting('desyncRotation')
 
 export const Presence = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, StartingPresence>({
 	fieldName: 'presence',
