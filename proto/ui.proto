@@ -56,6 +56,36 @@ message UIItem {
 
 	// Name of the item set to which this item belongs, if any.
 	string set_name = 22;
+
+	repeated UIItemSource sources = 23;
+}
+
+message UIItemSource {
+	oneof source {
+		CraftedSource crafted = 1;
+		DropSource drop = 2;
+		QuestSource quest = 3;
+		SoldBySource sold_by = 4;
+	}
+}
+message CraftedSource {
+	Profession profession = 1;
+	int32 spell_id = 2;
+	string spell_name = 3;
+}
+message DropSource {
+	int32 npc_id = 1;
+	string npc_name = 2;
+	int32 zone_id = 3;
+}
+message QuestSource {
+	int32 id = 1;
+	string name = 2;
+}
+message SoldBySource {
+	int32 npc_id = 1;
+	string npc_name = 2;
+	int32 zone_id = 3;
 }
 
 message UIEnchant {

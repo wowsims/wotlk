@@ -27,6 +27,13 @@ import (
 
 var readWebThreads = flag.Int("readWebThreads", 8, "number of parallel workers to fetch web pages")
 
+func ReadFile(filePath string) string {
+	bytes, err := os.ReadFile(filePath)
+	if err != nil {
+		log.Fatalf("Failed to open %s: %s", filePath, err)
+	}
+	return string(bytes)
+}
 func ReadFileLines(filePath string) []string {
 	return readFileLinesInternal(filePath, true)
 }
@@ -70,6 +77,13 @@ func readMapInternal(filePath string, throwIfMissing bool) map[string]string {
 		}
 	}
 	return res
+}
+
+func WriteFile(filePath string, content string) {
+	err := os.WriteFile(filePath, []byte(content), 0666)
+	if err != nil {
+		log.Fatalf("Failed to write file %s: %s", filePath, err)
+	}
 }
 
 func WriteFileLines(filePath string, lines []string) {
@@ -198,6 +212,24 @@ func InterfaceSlice(slice interface{}) []interface{} {
 	return ret
 }
 
+// Fetches web results a single url, and returns the page contents as a string.
+func ReadWeb(url string) (string, error) {
+	client := http.Client{}
+	resp, err := client.Get(url)
+	if err != nil {
+		return "", err
+	}
+	body, _ := io.ReadAll(resp.Body)
+	return string(body), nil
+}
+func ReadWebRequired(url string) string {
+	body, err := ReadWeb(url)
+	if err != nil {
+		panic(err)
+	}
+	return body
+}
+
 // Fetches web results from all the given urls, and returns a parallel array of page contents.
 func ReadWebMulti(urls []string) []string {
 	threads := *readWebThreads
@@ -218,17 +250,14 @@ func ReadWebMulti(urls []string) []string {
 		wg.Add(1)
 		go func(min, max int) {
 			fmt.Printf("ReadWebMulti Starting worker for URL block %d to %d\n", min, max-1)
-			client := http.Client{}
 			for i := min; i < max; i++ {
 				url := urls[i]
-				resp, err := client.Get(url)
+				body, err := ReadWeb(url)
 				if err != nil {
 					fmt.Printf("ReadWebMulti Error fetching %s: %s\n", url, err)
 					continue
 				}
-				body, _ := io.ReadAll(resp.Body)
-				bstr := string(body)
-				webResults <- WebResult{urlIdx: i, body: bstr}
+				webResults <- WebResult{urlIdx: i, body: body}
 			}
 			wg.Done()
 		}(startIdx, endIdx)
