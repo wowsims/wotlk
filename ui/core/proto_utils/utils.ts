@@ -159,20 +159,20 @@ export const naturalClassOrder: Array<Class> = [
 	Class.ClassWarrior,
 ]
 
-export const ExperimentalRotationSettings = new Set([
-	'preNerfedGargoyle',
-	'desyncRotation',
-])
+const experimentalRotationSettings: Set<string> = new Set()
+export const MakeExperimentalRotationSetting = (settingName: string) => {
+	experimentalRotationSettings.add(settingName)
+}
 
 export const ShouldShowExperimentalRotationField = (isExperimental: boolean, fieldName: string) => {
-	if (ExperimentalRotationSettings.has(fieldName)) {
+	if (experimentalRotationSettings.has(fieldName)) {
 		return isExperimental
 	}
 	return true
 }
 
 export const resetExperimentalRotationSettings = (rotation: any, defaultRotation: any) => {
-	ExperimentalRotationSettings.forEach(k => {
+	experimentalRotationSettings.forEach(k => {
 		if (k in rotation) {
 			rotation[k] = defaultRotation[k]
 		}
