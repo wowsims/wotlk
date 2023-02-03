@@ -119,7 +119,9 @@ export class BaseModal extends Component {
 
 		this.rootElem.addEventListener('hidden.bs.modal', (event) => {
 			// Prevent the event from bubbling up to parent modals
-			event.stopImmediatePropagation();
+			// Do not use stopImmediatePropagation here. It prevents Bootstrap from removing the modal,
+			// leading to other issues
+			event.stopPropagation();
 		})
 
 		this.modal.show();
