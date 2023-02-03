@@ -47,8 +47,7 @@ export class BaseModal extends Component {
 		this.rootElem.classList.add('fade');
 		this.rootElem.innerHTML = `
 			<div class="modal-dialog ${cssClass} ${modalSizeKlass}">
-				<div class="modal-content">
-				</div>
+				<div class="modal-content"></div>
 			</div>
 		`;
 
@@ -96,19 +95,32 @@ export class BaseModal extends Component {
 
 	open() {
 		// Hacks for better looking multi modals
-		this.rootElem.addEventListener('show.bs.modal', () => {
-			const modals = this.rootElem.parentElement?.querySelectorAll('.modal') as NodeListOf<HTMLElement>;
-			const siblingModals = Array.from(modals).filter((e) => e != this.rootElem);
-			siblingModals.forEach((element, index) => element.style.zIndex = '1049');
+		this.rootElem.addEventListener('show.bs.modal', async event => {
+			// Prevent the event from bubbling up to parent modals
+			event.stopImmediatePropagation();
+
+			// Wait for the backdrop to be injected into the DOM
+			const backdrop = await new Promise((resolve) => {
+				setTimeout(() => {
+					// @ts-ignore
+					if (this.modal._backdrop._element)
+						// @ts-ignore
+						resolve(this.modal._backdrop._element)
+				}, 100);
+			}) as HTMLElement;
+			// Then move it from <body> to the parent element
+			this.rootElem.insertAdjacentElement('afterend', backdrop);
 		});
 
-		this.rootElem.addEventListener('hide.bs.modal', () => {
-			const modals = this.rootElem.parentElement?.querySelectorAll('.modal') as NodeListOf<HTMLElement>;
-			const siblingModals = Array.from(modals).filter((e) => e != this.rootElem);
-
-			if (siblingModals.length)
-				siblingModals[siblingModals.length - 1].style.zIndex = '1055';
+		this.rootElem.addEventListener('hide.bs.modal', (event) => {
+			// Prevent the event from bubbling up to parent modals
+			event.stopImmediatePropagation();
 		});
+
+		this.rootElem.addEventListener('hidden.bs.modal', (event) => {
+			// Prevent the event from bubbling up to parent modals
+			event.stopImmediatePropagation();
+		})
 
 		this.modal.show();
 	}
