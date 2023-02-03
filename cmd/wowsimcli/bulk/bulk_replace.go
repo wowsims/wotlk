@@ -30,12 +30,12 @@ func Sim(input *proto.RaidSimRequest, replaceFile string, verbose bool) string {
 	// 1. Load up all the sim data we need
 	replaceData, err := os.ReadFile(replaceFile)
 	if err != nil {
-		log.Fatalf("failed to load input json file: %s", err)
+		log.Fatalf("failed to load replace json file: %s", err)
 	}
 	replaceInput := &ItemReplacementInput{}
 	err = json.Unmarshal(replaceData, replaceInput)
 	if err != nil {
-		log.Fatalf("failed to load input json file: %s", err)
+		log.Fatalf("failed to parse replace json file: %s", err)
 	}
 	replaceInput.replaceSlots = make([]core.ItemSlot, len(replaceInput.Items))
 

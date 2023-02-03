@@ -45,9 +45,6 @@ func (dk *Deathknight) registerMarkOfBloodSpell() {
 		dk.AddMajorCooldown(core.MajorCooldown{
 			Spell: dk.MarkOfBlood,
 			Type:  core.CooldownTypeSurvival,
-			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-				return dk.MarkOfBlood.CanCast(sim, nil)
-			},
 		})
 	}
 }

@@ -6,6 +6,31 @@
 	}
 
 	.results-ep-table-container {
+		position: relative;
+
+		&.pending {
+			overflow: hidden;
+			margin: 0;
+			
+			.results-ep-table {
+				filter: blur(2px);
+			}
+
+			.results-pending-overlay {
+				display: flex;
+			}
+		}
+
+		.results-pending-overlay {
+			position: absolute;
+			inset: 0;
+			display: none;
+			align-items: center;
+			justify-content: center;
+			z-index: 1;
+			background: rgba(0,0,0,0.5);
+		}
+
 		.results-ep-table {
 			width: 100%;
 			
@@ -48,18 +73,10 @@
 			.results-stdev {
 				font-size: .625rem;
 			}
+
+			.col-action {
+				margin-left: map.get($spacers, 1);
+			}
 		}
 	}
-}
-
-.show-all-stats-container .boolean-picker-root {
-	margin-bottom: 0 !important;
-
-	label {
-		margin-right: $block-spacer;
-	}
-}
-
-.results-ep-table .col-action {
-	margin-left: map.get($spacers, 1);
 }

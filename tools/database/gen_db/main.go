@@ -12,6 +12,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	_ "github.com/wowsims/wotlk/sim/encounters" // Needed for preset encounters.
+	"github.com/wowsims/wotlk/tools"
 	"github.com/wowsims/wotlk/tools/database"
 )
 
@@ -30,6 +31,7 @@ func main() {
 
 	itemTooltips := database.NewWowheadItemTooltipManager(fmt.Sprintf("%s/wowhead_item_tooltips.csv", inputsDir)).Read()
 	spellTooltips := database.NewWowheadSpellTooltipManager(fmt.Sprintf("%s/wowhead_spell_tooltips.csv", inputsDir)).Read()
+	wowheadDB := database.ParseWowheadDB(tools.ReadFile(fmt.Sprintf("%s/wowhead_gearplannerdb.txt", inputsDir)))
 
 	db := database.NewWowDatabase()
 	db.Encounters = core.PresetEncounters
@@ -40,6 +42,13 @@ func main() {
 			db.MergeItem(response.ToItemProto())
 		} else if response.IsGem() {
 			db.MergeGem(response.ToGemProto())
+		}
+	}
+
+	for _, wowheadItem := range wowheadDB.Items {
+		item := wowheadItem.ToProto()
+		if _, ok := db.Items[item.Id]; ok {
+			db.MergeItem(item)
 		}
 	}
 

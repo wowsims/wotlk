@@ -7,7 +7,6 @@ import (
 )
 
 func (paladin *Paladin) registerDivineProtectionSpell() {
-
 	duration := time.Second*12 + core.TernaryDuration(paladin.HasSetBonus(ItemSetRedemptionPlate, 4), time.Second*3, 0)
 
 	actionID := core.ActionID{SpellID: 498}
@@ -31,10 +30,6 @@ func (paladin *Paladin) registerDivineProtectionSpell() {
 		ActionID: actionID,
 
 		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				GCD: 0,
-			},
-			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    paladin.NewTimer(),
 				Duration: cooldownDur,
@@ -43,6 +38,14 @@ func (paladin *Paladin) registerDivineProtectionSpell() {
 				Timer:    paladin.GetMutualLockoutDPAW(),
 				Duration: 30 * time.Second,
 			},
+		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			usable := !paladin.ForbearanceAura.IsActive()
+			// Prevent Ret from screwing up their rotation by using this. TODO better logic
+			if usable && paladin.Talents.TheArtOfWar > 0 {
+				usable = false
+			}
+			return usable
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
@@ -54,19 +57,10 @@ func (paladin *Paladin) registerDivineProtectionSpell() {
 	paladin.AddMajorCooldown(core.MajorCooldown{
 		Spell: paladin.DivineProtection,
 		Type:  core.CooldownTypeSurvival,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			usable := !paladin.ForbearanceAura.IsActive()
-			// Prevent Ret from screwing up their rotation by using this. TODO better logic
-			if usable && paladin.Talents.TheArtOfWar > 0 {
-				usable = false
-			}
-			return usable
-		},
 	})
 }
 
 func (paladin *Paladin) registerForbearanceDebuff() {
-
 	actionID := core.ActionID{SpellID: 25771}
 	duration := core.TernaryDuration(paladin.HasSetBonus(ItemSetTuralyonsPlate, 4), 90*time.Second, 120*time.Second)
 	paladin.ForbearanceAura = paladin.RegisterAura(core.Aura{
@@ -74,5 +68,4 @@ func (paladin *Paladin) registerForbearanceDebuff() {
 		ActionID: actionID,
 		Duration: duration,
 	})
-
 }

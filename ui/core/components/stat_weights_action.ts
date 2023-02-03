@@ -9,7 +9,7 @@ import { getClassStatName } from '../proto_utils/names.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { Player } from '../player.js';
-import { stDevToConf90 } from '../utils.js';
+import { formatDeltaTextElem, stDevToConf90 } from '../utils.js';
 import { BooleanPicker } from '../components/boolean_picker.js';
 import { NumberPicker } from '../components/number_picker.js';
 import { combinationsWithDups, permutations, sum } from '../utils.js';
@@ -19,6 +19,7 @@ import * as Gems from '../proto_utils/gems.js';
 
 import { BaseModal } from './base_modal.js';
 import { Tooltip } from 'bootstrap';
+import { ResultsViewer } from './results_viewer.js';
 
 export function addStatWeightsAction(simUI: IndividualSimUI<any>, epStats: Array<Stat>, epPseudoStats: Array<PseudoStat>|undefined, epReferenceStat: Stat) {
 	simUI.addAction('Stat Weights', 'ep-weights-action', () => {
@@ -28,8 +29,10 @@ export function addStatWeightsAction(simUI: IndividualSimUI<any>, epStats: Array
 
 class EpWeightsMenu extends BaseModal {
 	private readonly simUI: IndividualSimUI<any>;
+	private readonly container: HTMLElement;
 	private readonly table: HTMLElement;
 	private readonly tableBody: HTMLElement;
+	private readonly resultsViewer: ResultsViewer;
 
 	private statsType: string;
 	private epStats: Array<Stat>;
@@ -59,6 +62,7 @@ class EpWeightsMenu extends BaseModal {
 			<p>The 'Current EP' column displays the values currently used by the item pickers to sort items.</br>
 			Use the <a href='javascript:void(0)' class="fa fa-copy"></a> icon above the EPs to use newly calculated EPs.</p>
 			<div class="results-ep-table-container modal-scroll-table">
+				<div class="results-pending-overlay"></div>
 				<table class="results-ep-table">
 					<thead>
 						<tr>
@@ -114,19 +118,18 @@ class EpWeightsMenu extends BaseModal {
 							<th>
 								<span>Current EP</span>
 								<a href="javascript:void(0)" role="button" class="col-action">
-									<i class="fa fa-recycl</i>
-								e"ap
-							an></th>
+									<i class="fas fa-arrows-rotate"></i>
+								</a>
+							</th>
 						</tr>
 					</thead>
-					<tbody>
-					</tbody>
+					<tbody></tbody>
 				</table>
 			</div>
 		`;
 		this.footer!.innerHTML = `
 			<button
-				class="btn btn-primary optimize-gems me-2"
+				class="btn btn-primary optimize-gems experimental me-2"
 				data-bs-toggle="tooltip"
 				data-bs-title="
 					<p><span class='warnings link-warning'><i class='fa fa-exclamation-triangle'></i> WARNING</span> This feature is experimental, and will not always produce the most optimal gems especially when interacting with soft/hard stat caps.</p>
@@ -143,8 +146,12 @@ class EpWeightsMenu extends BaseModal {
 			</button>
 		`;
 
+		this.container = this.rootElem.querySelector('.results-ep-table-container') as HTMLElement;
 		this.table = this.rootElem.querySelector('.results-ep-table') as HTMLElement;
 		this.tableBody = this.rootElem.querySelector('.results-ep-table tbody') as HTMLElement;
+
+		const resultsElem = this.rootElem.querySelector('.results-pending-overlay') as HTMLElement;
+		this.resultsViewer = new ResultsViewer(resultsElem);
 
 		const updateType = () => {
 			if (this.statsType == 'ep') {
@@ -182,8 +189,15 @@ class EpWeightsMenu extends BaseModal {
 			calcButton.classList.add('disabled');
 			calcButton.style.width = `${calcButton.getBoundingClientRect().width.toFixed(3)}px`;
 			calcButton.innerHTML = `<i class="fa fa-spinner fa-spin"></i>&nbsp;Running`;
+			this.container.scrollTo({top: 0});
+			this.container.classList.add('pending');
+			this.resultsViewer.setPending();
 			const iterations = this.simUI.sim.getIterations();
-			const result = await this.simUI.player.computeStatWeights(TypedEvent.nextEventID(), this.epStats, this.epPseudoStats, this.epReferenceStat, (progress: ProgressMetrics) => {});
+			const result = await this.simUI.player.computeStatWeights(TypedEvent.nextEventID(), this.epStats, this.epPseudoStats, this.epReferenceStat, (progress: ProgressMetrics) => {
+				this.setSimProgress(progress);
+			});
+			this.container.classList.remove('pending');
+			this.resultsViewer.hideAll();
 			calcButton.innerHTML = previousContents;
 			calcButton.classList.remove('disabled');
 			this.simUI.prevEpIterations = iterations;
@@ -233,10 +247,21 @@ class EpWeightsMenu extends BaseModal {
 			},
 		});
 
-		this.updateTable(this.simUI.prevEpIterations || 1, this.getPrevSimResult());
+		this.updateTable(this.simUI.prevEpIterations || 1, this.getPrevSimResult(), true);
 	}
 
-	private updateTable(iterations: number, result: StatWeightsResult) {
+	private setSimProgress(progress: ProgressMetrics) {
+		this.resultsViewer.setContent(`
+			<div class="results-sim">
+				<div class=""> ${progress.completedSims} / ${progress.totalSims}<br>simulations complete</div>
+				<div class="">
+					${progress.completedIterations} / ${progress.totalIterations}<br>iterations complete
+				</div>
+			</div>
+		`);
+	}
+
+	private updateTable(iterations: number, result: StatWeightsResult, skipFormatting: boolean = false) {
 		this.tableBody.innerHTML = ``;
 
 		EpWeightsMenu.epUnitStats.forEach(stat => {
@@ -247,28 +272,45 @@ class EpWeightsMenu extends BaseModal {
 			)) {
 				return;
 			}
-			const row = this.makeTableRow(stat, iterations, result);
+			const row = this.makeTableRow(stat, iterations, result, skipFormatting);
 			this.tableBody.appendChild(row);
 		});
 	}
-	private makeTableRow(stat: UnitStat, iterations: number, result: StatWeightsResult): HTMLElement {
+	private makeTableRow(stat: UnitStat, iterations: number, result: StatWeightsResult, skipFormatting: boolean): HTMLElement {
 		const row = document.createElement('tr');
 		const makeWeightAndEpCellHtml = (statWeights: StatWeightValues, className: string): string => {
-			return `
+			const epCurrent = this.simUI.player.getEpWeights().getUnitStat(stat);
+			const epAvg = stat.getProtoValue(statWeights.epValues!);
+
+			let template = document.createElement('template');
+			template.innerHTML = `
 				<td class="stdev-cell ${className} type-weight">
-					<span>${stat.getProtoValue(statWeights.weights!).toFixed(2)}</span>
+					<span class="results-avg">${stat.getProtoValue(statWeights.weights!).toFixed(2)}</span>
 					<span class="results-stdev">
 						(<i class="fas fa-plus-minus fa-xs"></i>${stDevToConf90(stat.getProtoValue(statWeights.weightsStdev!), iterations).toFixed(2)})
 					</span>
 				</td>
 				<td class="stdev-cell ${className} type-ep">
-					<span>${stat.getProtoValue(statWeights.epValues!).toFixed(2)}</span>
+					<span class="results-avg">${epAvg.toFixed(2)}</span>
 					<span class="results-stdev">
 						(<i class="fas fa-plus-minus fa-xs"></i>${stDevToConf90(stat.getProtoValue(statWeights.epValuesStdev!), iterations).toFixed(2)})
 					</span>
 				</td>
 			`;
+
+			const epAvgElem = template.content.querySelector('.type-ep .results-avg') as HTMLElement;
+			const epDelta = epAvg - epCurrent;
+
+			if (skipFormatting || epDelta.toFixed(2) == "0.00")
+				epAvgElem // no-op
+			else if (epDelta > 0)
+				epAvgElem.classList.add('positive');
+			else if (epDelta < 0)
+				epAvgElem.classList.add('negative');
+
+			return template.innerHTML;
 		};
+
 		row.innerHTML = `
 			<td>${stat.getName(this.simUI.player.getClass())}</td>
 			${makeWeightAndEpCellHtml(result.dps!, 'damage-metrics')}
@@ -282,7 +324,7 @@ class EpWeightsMenu extends BaseModal {
 		new NumberPicker(currentEpCell, this.simUI.player, {
 			float: true,
 			changedEvent: (player: Player<any>) => player.epWeightsChangeEmitter,
-			getValue: (player: Player<any>) => player.getEpWeights().getUnitStat(stat),
+			getValue: (player: Player<any>) => this.simUI.player.getEpWeights().getUnitStat(stat),
 			setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
 				const epWeights = player.getEpWeights().withUnitStat(stat, newValue);
 				player.setEpWeights(eventID, epWeights);

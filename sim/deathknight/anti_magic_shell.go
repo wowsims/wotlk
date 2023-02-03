@@ -109,18 +109,12 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 		// dk.AddMajorCooldown(core.MajorCooldown{
 		// 	Spell: dk.AntiMagicShell,
 		// 	Type:  core.CooldownTypeSurvival,
-		// 	CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-		// 		return dk.AntiMagicShell.CanCast(sim, nil)
-		// 	},
 		// })
 	} else if dk.Inputs.UseAMS {
 		dk.AddMajorCooldown(core.MajorCooldown{
 			Spell:    dk.AntiMagicShell,
 			Type:     core.CooldownTypeDPS,
 			Priority: core.CooldownPriorityLow,
-			CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-				return dk.AntiMagicShell.CanCast(sim, nil)
-			},
 		})
 	}
 }

@@ -40,7 +40,7 @@ export const CombatTalents = {
 export const AssassinationTalents = {
 	name: 'Assassination',
 	data: SavedTalents.create({
-		talentsString: '005303005352100520103331051-005005003-502',
+		talentsString: '005303104352100520103331051-005005003-502',
 		glyphs: Glyphs.create({
 			major1: RogueMajorGlyph.GlyphOfMutilate,
 			major2: RogueMajorGlyph.GlyphOfTricksOfTheTrade,
@@ -82,18 +82,23 @@ export const DefaultRotation = RogueRotation.create({
 	subtletyFinisherPriority: Rogue_Rotation_SubtletyPriority.Rupture,
 	minimumComboPointsPrimaryFinisher: 3,
 	minimumComboPointsSecondaryFinisher: 2,
-	envenomEnergyThreshold: 60,
+	envenomEnergyThreshold: 85,
+	envenomEnergyThresholdOverkill: 75,
+	envenomEnergyThresholdMin: 60,
+	envenomEnergyThresholdOverkillMin: 40,
 	hemoWithDagger: false,
 });
 
 export const DefaultOptions = RogueOptions.create({
 	mhImbue: Poison.DeadlyPoison,
 	ohImbue: Poison.InstantPoison,
-  applyPoisonsManually: false,
+	applyPoisonsManually: false,
+	startingOverkillDuration: 18,
 });
 
 export const DefaultConsumes = Consumes.create({
 	defaultPotion: Potions.PotionOfSpeed,
+	prepopPotion: Potions.PotionOfSpeed,
 	defaultConjured: Conjured.ConjuredRogueThistleTea,
 	flask: Flask.FlaskOfEndlessRage,
 	food: Food.FoodMegaMammothMeal,

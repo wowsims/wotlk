@@ -743,7 +743,7 @@ class SelectorModal extends BaseModal {
 
 			const filtersButton = tabContent.getElementsByClassName('selector-modal-filters-button')[0] as HTMLElement;
 			if (FiltersMenu.anyFiltersForSlot(slot)) {
-				filtersButton.addEventListener('click', () => new FiltersMenu(this.simUI.rootElem, this.player, slot));
+				filtersButton.addEventListener('click', () => new FiltersMenu(this.body, this.player, slot));
 			} else {
 				filtersButton.style.display = 'none';
 			}
