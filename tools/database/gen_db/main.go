@@ -128,6 +128,10 @@ func main() {
 		}
 	}
 
+	atlasDBProto := atlaslootDB.ToUIProto()
+	db.MergeZones(atlasDBProto.Zones)
+	db.MergeNpcs(atlasDBProto.Npcs)
+
 	db.WriteBinaryAndJson(fmt.Sprintf("%s/db.bin", dbDir), fmt.Sprintf("%s/db.json", dbDir))
 }
 
