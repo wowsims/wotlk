@@ -205,7 +205,9 @@ func (dk *Deathknight) RotationActionCallback_UP(sim *core.Simulation, target *c
 }
 
 func (dk *Deathknight) RotationActionCallback_RD(sim *core.Simulation, target *core.Unit, s *Sequence) time.Duration {
-	dk.RaiseDead.Cast(sim, target)
+	if !dk.Talents.MasterOfGhouls {
+		dk.RaiseDead.Cast(sim, target)
+	}
 
 	s.Advance()
 	return -1
