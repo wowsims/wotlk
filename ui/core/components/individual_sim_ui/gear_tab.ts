@@ -16,18 +16,12 @@ export class GearTab extends SimTab {
   readonly leftPanel: HTMLElement;
   readonly rightPanel: HTMLElement;
 
-	readonly column1: HTMLElement = this.buildColumn(1, 'gear-left-col');
-	readonly column2: HTMLElement = this.buildColumn(2, 'gear-left-col');
-
   constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>) {
     super(parentElem, simUI, {identifier: 'gear-tab', title: 'Gear'});
     this.simUI = simUI;
 
     this.leftPanel = document.createElement('div');
     this.leftPanel.classList.add('gear-tab-left', 'tab-panel-left');
-
-		this.leftPanel.appendChild(this.column1);
-		this.leftPanel.appendChild(this.column2);
 
     this.rightPanel = document.createElement('div');
     this.rightPanel.classList.add('gear-tab-right', 'tab-panel-right');

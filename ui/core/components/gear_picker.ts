@@ -19,7 +19,7 @@ import { ActionId } from '../proto_utils/action_id';
 import { getEnchantDescription, getUniqueEnchantString } from '../proto_utils/enchants';
 import { EquippedItem } from '../proto_utils/equipped_item';
 import { ItemSwapGear } from '../proto_utils/gear'
-import { getEmptyGemSocketIconUrl, gemMatchesSocket, setGemSocketCssClass } from '../proto_utils/gems';
+import { getEmptyGemSocketIconUrl, gemMatchesSocket } from '../proto_utils/gems';
 import { slotNames } from '../proto_utils/names';
 import { Stats } from '../proto_utils/stats';
 
@@ -245,8 +245,6 @@ class ItemPicker extends Component {
 				const socketIconElem = gemContainer.querySelector('.socket-icon') as HTMLImageElement;
 				socketIconElem.src = getEmptyGemSocketIconUrl(socketColor);
 
-				setGemSocketCssClass(socketIconElem, socketColor);
-
 				if (newItem.gems[gemIdx] == null) {
 					gemIconElem.classList.add('hide');
 				} else {
@@ -411,7 +409,7 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 			equippedItem.allSocketColors().forEach((socketColor, gemIdx) => {
 				const gemIconElem = document.createElement('img');
 				gemIconElem.classList.add('item-picker-gem-icon');
-				setGemSocketCssClass(gemIconElem, socketColor);
+
 				if (equippedItem!.gems[gemIdx] == null) {
 					gemIconElem.src = getEmptyGemSocketIconUrl(socketColor);
 				} else {
@@ -552,14 +550,6 @@ class SelectorModal extends BaseModal {
 		this.addGemTabs(slot, equippedItem, gearData);
 	}
 
-	private addGearTab() {
-
-	}
-
-	private addEnchantTab() {
-
-	}
-
 	private addGemTabs(slot: ItemSlot, equippedItem: EquippedItem | null, gearData: GearData) {
 		if (equippedItem == undefined) {
 			return;
@@ -603,10 +593,16 @@ class SelectorModal extends BaseModal {
 				},
 				tabAnchor => {
 					tabAnchor.classList.add('selector-modal-tab-gem');
-					let gemImg = document.createElement('img');
-					gemImg.classList.add('selector-modal-tab-gem-icon');
-					setGemSocketCssClass(gemImg, socketColor);
-					tabAnchor.appendChild(gemImg);
+					tabAnchor.innerHTML = `
+						<div class="gem-socket-container">
+							<img class="gem-icon" />
+							<img class="socket-icon" />
+						</div>
+					`;
+
+					const gemElem = tabAnchor.querySelector('.gem-icon') as HTMLElement;
+					const socketElem = tabAnchor.querySelector('.socket-icon') as HTMLElement;
+					socketElem.setAttribute('src', getEmptyGemSocketIconUrl(socketColor));
 
 					const updateGemIcon = () => {
 						const equippedItem = gearData.getEquippedItem();
@@ -614,11 +610,8 @@ class SelectorModal extends BaseModal {
 
 						if (gem) {
 							ActionId.fromItemId(gem.id).fill().then(filledId => {
-								gemImg.setAttribute('src', filledId.iconUrl);
+								gemElem.setAttribute('src', filledId.iconUrl);
 							});
-						} else {
-							const url = getEmptyGemSocketIconUrl(socketColor);
-							gemImg.setAttribute('src', url);
 						}
 					};
 
@@ -664,7 +657,7 @@ class SelectorModal extends BaseModal {
 		}
 
 		const tabContentId = (label + '-tab').split(' ').join('');
-		const selected = label === 'Items';
+		const selected = label === this.config.selectedTab;
 
 		const tabFragment = document.createElement('fragment');
 		tabFragment.innerHTML = `
@@ -706,7 +699,6 @@ class SelectorModal extends BaseModal {
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-1h-weapons"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-2h-weapons"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-matching-gems"></div>
-					<button class="selector-modal-filters-button btn btn-${this.simUI.cssScheme}">Filters</button>
 					<button class="selector-modal-remove-button btn btn-danger">Unequip Item</button>
 				</div>
 				<div style="width: 100%;height: 30px;font-size: 18px;">
@@ -738,9 +730,6 @@ class SelectorModal extends BaseModal {
 		const phaseSelector = makePhaseSelector(tabContent.getElementsByClassName('selector-modal-phase-selector')[0] as HTMLElement, this.player.sim);
 
 		if (label == 'Items') {
-			tabElem.classList.add('active', 'in');
-			tabContent.classList.add('active', 'in');
-
 			const filtersButton = tabContent.getElementsByClassName('selector-modal-filters-button')[0] as HTMLElement;
 			if (FiltersMenu.anyFiltersForSlot(slot)) {
 				filtersButton.addEventListener('click', () => new FiltersMenu(this.body, this.player, slot));

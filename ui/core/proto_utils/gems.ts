@@ -192,24 +192,6 @@ export const ENIGMATIC_SKYFIRE_DIAMOND = MetaGemCondition.fromCompareColors(2589
 export const MYSTICAL_SKYFIRE_DIAMOND = MetaGemCondition.fromCompareColors(25893, 'Requires more Blue Gems than Yellow Gems.', GemColor.GemColorBlue, GemColor.GemColorYellow);
 export const POTENT_UNSTABLE_DIAMOND = MetaGemCondition.fromCompareColors(32640, 'Requires more Blue Gems than Yellow Gems.', GemColor.GemColorBlue, GemColor.GemColorYellow);
 
-const gemSocketCssClasses: Partial<Record<GemColor, string>> = {
-	[GemColor.GemColorBlue]: 'socket-color-blue',
-	[GemColor.GemColorMeta]: 'socket-color-meta',
-	[GemColor.GemColorRed]: 'socket-color-red',
-	[GemColor.GemColorYellow]: 'socket-color-yellow',
-	[GemColor.GemColorPrismatic]: 'socket-color-prismatic',
-};
-export function setGemSocketCssClass(elem: HTMLElement, color: GemColor) {
-	Object.values(gemSocketCssClasses).forEach(cssClass => elem.classList.remove(cssClass));
-
-	if (gemSocketCssClasses[color]) {
-		elem.classList.add(gemSocketCssClasses[color] as string);
-		return;
-	}
-
-	throw new Error('No css class for gem socket color: ' + color);
-}
-
 const emptyGemSocketIcons: Partial<Record<GemColor, string>> = {
 	[GemColor.GemColorBlue]: 'https://wow.zamimg.com/images/icons/socket-blue.gif',
 	[GemColor.GemColorMeta]: 'https://wow.zamimg.com/images/icons/socket-meta.gif',

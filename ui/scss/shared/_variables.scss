@@ -36,7 +36,7 @@ $brand: #e0a335;
 $success: #1eff00;
 
 $custom-colors: (
-  "brand": $brand-color,
+  "brand": $brand,
   "primary": $primary,
   "success": $success,
 );
@@ -82,12 +82,6 @@ $item-qualities: (
 
 $link-danger-color:  #ef9eaa;
 $link-warning-color: #faf07f;
-
-$socket-color-red:      #d0394a;
-$socket-color-blue:     #0070dd;
-$socket-color-yellow:   #d8cc60;
-$socket-color-meta:     #9d9ea0;
-$socket-color-prismatic: linear-gradient(to bottom right, #b827fc 0%, #2c90fc 25%, #b8fd33 50%, #fec837 75%, #fd1892 100%);
 
 $table-row-even-bg: #202128;
 $table-row-odd-bg: #2d2f35;

@@ -15,9 +15,3 @@
 		right: calc(2.5vw + 1px + 1rem);
 	}
 }
-
-.modal {
-	.close-button {
-		margin: map.get($spacers, 3) 0;
-	}
-}

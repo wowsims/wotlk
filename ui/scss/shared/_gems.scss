@@ -1,7 +1,9 @@
 .gem-socket-container {
+  --gem-width: 1.25rem;
+
   position: relative;
-  width: 1.25rem;
-  height: 1.25rem;
+  width: var(--gem-width);
+  height: var(--gem-width);
   
   &:not(:last-child) {
     margin-right: 1px;
@@ -10,9 +12,9 @@
   .gem-icon {
     @include wowhead-background-icon;
     position: absolute;
-    width: 1rem;
-    height: 1rem;
-    inset: .125rem;
+    width: calc(4 * var(--gem-width) / 5);
+    height: calc(4 * var(--gem-width) / 5);
+    inset: calc(var(--gem-width) / 10);
     border-radius: 100%;
     z-index: 1;
   }
@@ -24,26 +26,4 @@
     height: 100%;
     inset: 0;
   }
-}
-
-.socket-color-blue {
-  border: 1px solid $socket-color-blue;
-}
-
-.socket-color-red {
-  border: 1px solid $socket-color-red;
-}
-
-.socket-color-yellow {
-  border: 1px solid $socket-color-yellow;
-}
-
-.socket-color-meta {
-  border: 1px solid $socket-color-meta;
-}
-
-.socket-color-prismatic {
-  border: 1px solid transparent;
-  border-image: $socket-color-prismatic;
-  border-image-slice: 1;
 }

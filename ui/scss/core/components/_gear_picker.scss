@@ -14,7 +14,10 @@
 
   .item-picker-root {
     display: flex;
-    margin-bottom: $block-spacer;
+
+    &:not(:last-child) {
+      margin-bottom: $block-spacer;
+    }
 
     .item-picker-icon {
       @include wowhead-background-icon;
@@ -62,8 +65,9 @@
       .selector-modal-tab-gem {
         height: 100%;
         padding: 0;
-        margin-left: 1rem;
-        margin-right: -.25rem;
+        padding: calc(var(--bs-nav-link-padding-y) / 2) calc(var(--bs-nav-link-padding-x) / 2);
+        margin-left: calc(var(--bs-nav-link-padding-x) / 2);
+        margin-right: calc(var(--bs-nav-link-padding-x) / -2);
         display: flex;
         align-items: center;
         opacity: .7;
@@ -73,11 +77,8 @@
           opacity: 1;
         }
 
-        .selector-modal-tab-gem-icon {
-          @include wowhead-background-icon;
-          width: 28px;
-          height: 28px;
-          background-size: cover !important;
+        .gem-socket-container {
+          --gem-width: 2rem;
         }
       }
     }
@@ -122,59 +123,6 @@
     font-size: $content-font-size;
     letter-spacing: normal;
   }
-}
-
-.selector-modal {
-  .modal-header {
-    padding-bottom: 0;
-
-    .selector-modal-tabs {
-      border-bottom: 0;
-    }
-  }
-
-  .selector-modal-tab-content {
-    .selector-modal-tab-pane {
-      padding: 0;
-    
-      .selector-modal-tab-content-header {
-        margin-bottom: map.get($spacers, 3);
-        display: flex;
-  
-        &> *:not(:last-child) {
-          margin-right: map.get($spacers, 2);
-        }
-      }
-
-      .selector-modal-tab-gem {
-        height: 100%;
-        padding: 0;
-        margin-left: 1rem;
-        margin-right: -.25rem;
-        display: flex;
-        align-items: center;
-        opacity: .7;
-        transition: opacity .15s ease-in-out;
-
-        &:hover, &.active {
-          opacity: 1;
-        }
-
-        input, select {
-          padding-top: $btn-padding-y;
-          padding-bottom: $btn-padding-y;
-          font-size: $btn-font-size;
-        }
-      }
-    }
-  }
-}
-
-.selector-modal-tab-gem-icon {
-  @include wowhead-background-icon;
-  width: 35px;
-  height: 35px;
-  background-size: 35px !important;
 }
 
 @include media-breakpoint-down(md) {
@@ -224,9 +172,10 @@
         margin-right: map.get($spacers, 2);
       }
 
-      input:not([type="checkbox"], [type="radio"]), select {
+      input, select {
         padding-top: $btn-padding-y;
         padding-bottom: $btn-padding-y;
+        font-size: $btn-font-size;
       }
     }
   }
