@@ -608,8 +608,8 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-SiegebreakerBattlegear"
  value: {
-  dps: 6470.76736
-  tps: 4794.57257
+  dps: 6424.59064
+  tps: 4760.68887
  }
 }
 dps_results: {

@@ -200,6 +200,9 @@ var ItemSetSiegebreakerBattlegear = core.NewItemSet(core.ItemSet{
 					if spell.ActionID.SpellID != 47450 && spell != warrior.Slam {
 						return
 					}
+					if !result.Outcome.Matches(core.OutcomeCrit) {
+						return
+					}
 					if result.Landed() && sim.RandomFloat("Siegebreaker Battlegear 2pc") < 0.4 {
 						procAura.Activate(sim)
 					}
