@@ -100,9 +100,9 @@ func (dk *DpsDeathknight) FrostPointsInUnholy() int32 {
 }
 
 func (dk *DpsDeathknight) SetupRotations() {
-	if dk.Rotation.AutoRotation {
-		bl, fr, uh := deathknight.PointsInTalents(dk.Talents)
+	bl, fr, uh := deathknight.PointsInTalents(dk.Talents)
 
+	if dk.Rotation.AutoRotation {
 		if uh > fr && uh > bl {
 			// Unholy
 			dk.Rotation.BtGhoulFrenzy = false
@@ -159,28 +159,34 @@ func (dk *DpsDeathknight) SetupRotations() {
 
 	dk.CustomRotation = dk.makeCustomRotation()
 	if dk.CustomRotation == nil || dk.Rotation.FrostRotationType == proto.Deathknight_Rotation_SingleTarget {
-
 		dk.Rotation.FrostRotationType = proto.Deathknight_Rotation_SingleTarget
-		if (dk.Talents.BloodOfTheNorth == 3) && (dk.Talents.Epidemic == 0) {
-			if dk.Rotation.DesyncRotation {
-				dk.setupFrostSubBloodDesyncOpener()
-			} else if dk.Rotation.UseEmpowerRuneWeapon {
-				dk.setupFrostSubBloodERWOpener()
-			} else {
-				dk.setupFrostSubBloodNoERWOpener()
+		if fr > uh && fr > bl {
+			// AotD as major CD doesnt work well with frost
+			if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_AsMajorCd {
+				dk.Inputs.ArmyOfTheDeadType = proto.Deathknight_Rotation_PreCast
+				dk.Rotation.HoldErwArmy = false
 			}
-		} else if (dk.Talents.BloodOfTheNorth == 3) && (dk.Talents.Epidemic == 2) {
-			dk.Rotation.FrostRotationType = proto.Deathknight_Rotation_SingleTarget
-			if dk.Rotation.UseEmpowerRuneWeapon {
-				dk.setupFrostSubUnholyERWOpener()
+			if bl > uh {
+				if dk.Rotation.DesyncRotation {
+					dk.setupFrostSubBloodDesyncOpener()
+				} else if dk.Rotation.UseEmpowerRuneWeapon {
+					dk.setupFrostSubBloodERWOpener()
+				} else {
+					dk.setupFrostSubBloodNoERWOpener()
+				}
 			} else {
-				// TODO you can't unh sub without ERW in the opener...yet
-				dk.Rotation.UseEmpowerRuneWeapon = true
-				dk.setupFrostSubUnholyERWOpener()
+				dk.Rotation.FrostRotationType = proto.Deathknight_Rotation_SingleTarget
+				if dk.Rotation.UseEmpowerRuneWeapon {
+					dk.setupFrostSubUnholyERWOpener()
+				} else {
+					// TODO you can't unh sub without ERW in the opener...yet
+					dk.Rotation.UseEmpowerRuneWeapon = true
+					dk.setupFrostSubUnholyERWOpener()
+				}
 			}
-		} else if dk.Talents.SummonGargoyle {
+		} else if uh > fr && uh > bl {
 			dk.setupUnholyRotations()
-		} else if dk.Talents.BloodGorged > 0 {
+		} else if bl > fr && bl > uh {
 			if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_AsMajorCd {
 				dk.Inputs.ArmyOfTheDeadType = proto.Deathknight_Rotation_PreCast
 				dk.Rotation.HoldErwArmy = false
