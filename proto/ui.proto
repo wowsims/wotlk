@@ -14,11 +14,23 @@ message UIDatabase {
 	repeated UIGem gems = 3;
 	repeated PresetEncounter encounters = 6;
 
+	repeated UIZone zones = 8;
+	repeated UINPC npcs = 9;
+
 	// Entities for which we just need a name/icon.
 	repeated IconData item_icons = 4;
 	repeated IconData spell_icons = 5;
 
 	repeated GlyphID glyph_ids = 7;
+}
+
+message UIZone {
+	int32 id = 1;
+	string name = 2;
+}
+message UINPC {
+	int32 id = 1;
+	string name = 2;
 }
 
 // Contains all information about an Item needed by the UI.
@@ -68,6 +80,16 @@ enum Expansion {
 	ExpansionWotlk = 3;
 }
 
+enum DungeonDifficulty {
+	DifficultyUnknown = 0;
+	DifficultyNormal = 1;
+	DifficultyHeroic = 2;
+	DifficultyRaid10 = 3;
+	DifficultyRaid10H = 4;
+	DifficultyRaid25 = 5;
+	DifficultyRaid25H = 6;
+}
+
 message UIItemSource {
 	oneof source {
 		CraftedSource crafted = 1;
@@ -81,9 +103,9 @@ message CraftedSource {
 	int32 spell_id = 2;
 }
 message DropSource {
-	int32 npc_id = 1;
-	string npc_name = 2;
-	int32 zone_id = 3;
+	DungeonDifficulty difficulty = 1;
+	int32 npc_id = 2;
+	int32 zone_id = 4;
 }
 message QuestSource {
 	int32 id = 1;

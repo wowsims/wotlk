@@ -32,18 +32,7 @@ func (tm *TooltipManager) Read() map[int32]string {
 	return db
 }
 
-func (tm *TooltipManager) Fetch(minId, maxId int32) {
-	strDB := tools.ReadMapOrNil(tm.FilePath)
-
-	var idsToFetch []string
-	for i := minId; i <= maxId; i++ {
-		id := strconv.Itoa(int(i))
-		// Don't fetch tooltips already in the DB.
-		if _, ok := strDB[id]; !ok {
-			idsToFetch = append(idsToFetch, id)
-		}
-	}
-
+func (tm *TooltipManager) FetchFromWeb(idsToFetch []string) map[string]string {
 	newTooltips := tools.ReadWebMultiMap(idsToFetch, func(id string) string {
 		return fmt.Sprintf(tm.UrlPattern, id)
 	})
@@ -59,6 +48,23 @@ func (tm *TooltipManager) Fetch(minId, maxId int32) {
 		}
 		return true
 	})
+
+	return newTooltips
+}
+
+func (tm *TooltipManager) Fetch(minId, maxId int32) {
+	strDB := tools.ReadMapOrNil(tm.FilePath)
+
+	var idsToFetch []string
+	for i := minId; i <= maxId; i++ {
+		id := strconv.Itoa(int(i))
+		// Don't fetch tooltips already in the DB.
+		if _, ok := strDB[id]; !ok {
+			idsToFetch = append(idsToFetch, id)
+		}
+	}
+
+	newTooltips := tm.FetchFromWeb(idsToFetch)
 
 	for k, v := range newTooltips {
 		strDB[k] = v

@@ -32,6 +32,9 @@ type WowDatabase struct {
 	Enchants map[EnchantDBKey]*proto.UIEnchant
 	Gems     map[int32]*proto.UIGem
 
+	Zones map[int32]*proto.UIZone
+	Npcs  map[int32]*proto.UINPC
+
 	ItemIcons  map[int32]*proto.IconData
 	SpellIcons map[int32]*proto.IconData
 
@@ -44,6 +47,8 @@ func NewWowDatabase() *WowDatabase {
 		Items:    make(map[int32]*proto.UIItem),
 		Enchants: make(map[EnchantDBKey]*proto.UIEnchant),
 		Gems:     make(map[int32]*proto.UIGem),
+		Zones:    make(map[int32]*proto.UIZone),
+		Npcs:     make(map[int32]*proto.UINPC),
 
 		ItemIcons:  make(map[int32]*proto.IconData),
 		SpellIcons: make(map[int32]*proto.IconData),
@@ -61,6 +66,12 @@ func (db *WowDatabase) Clone() *WowDatabase {
 	}
 	for k, v := range db.Gems {
 		other.Gems[k] = v
+	}
+	for k, v := range db.Zones {
+		other.Zones[k] = v
+	}
+	for k, v := range db.Npcs {
+		other.Npcs[k] = v
 	}
 	for k, v := range db.ItemIcons {
 		other.ItemIcons[k] = v
@@ -131,6 +142,32 @@ func (db *WowDatabase) MergeGem(src *proto.UIGem) {
 	}
 }
 
+func (db *WowDatabase) MergeZones(arr []*proto.UIZone) {
+	for _, zone := range arr {
+		db.MergeZone(zone)
+	}
+}
+func (db *WowDatabase) MergeZone(src *proto.UIZone) {
+	if dst, ok := db.Zones[src.Id]; ok {
+		googleProto.Merge(dst, src)
+	} else {
+		db.Zones[src.Id] = src
+	}
+}
+
+func (db *WowDatabase) MergeNpcs(arr []*proto.UINPC) {
+	for _, npc := range arr {
+		db.MergeNpc(npc)
+	}
+}
+func (db *WowDatabase) MergeNpc(src *proto.UINPC) {
+	if dst, ok := db.Npcs[src.Id]; ok {
+		googleProto.Merge(dst, src)
+	} else {
+		db.Npcs[src.Id] = src
+	}
+}
+
 func (db *WowDatabase) AddItemIcon(id int32, tooltips map[int32]WowheadItemResponse) {
 	if tooltip, ok := tooltips[id]; ok {
 		db.ItemIcons[id] = &proto.IconData{Id: id, Name: tooltip.GetName(), Icon: tooltip.GetIcon()}
@@ -151,6 +188,8 @@ func (db *WowDatabase) MergeUIProto(dbProto *proto.UIDatabase) {
 	db.MergeItems(dbProto.Items)
 	db.MergeEnchants(dbProto.Enchants)
 	db.MergeGems(dbProto.Gems)
+	db.MergeZones(dbProto.Zones)
+	db.MergeNpcs(dbProto.Npcs)
 	for _, icon := range dbProto.ItemIcons {
 		db.ItemIcons[icon.Id] = icon
 	}
@@ -159,7 +198,7 @@ func (db *WowDatabase) MergeUIProto(dbProto *proto.UIDatabase) {
 	}
 }
 
-func (db *WowDatabase) toUIProto() *proto.UIDatabase {
+func (db *WowDatabase) ToUIProto() *proto.UIDatabase {
 	uidb := &proto.UIDatabase{
 		Encounters: db.Encounters,
 		GlyphIds:   db.GlyphIDs,
@@ -168,11 +207,17 @@ func (db *WowDatabase) toUIProto() *proto.UIDatabase {
 	for _, v := range db.Items {
 		uidb.Items = append(uidb.Items, v)
 	}
+	for _, v := range db.Enchants {
+		uidb.Enchants = append(uidb.Enchants, v)
+	}
 	for _, v := range db.Gems {
 		uidb.Gems = append(uidb.Gems, v)
 	}
-	for _, v := range db.Enchants {
-		uidb.Enchants = append(uidb.Enchants, v)
+	for _, v := range db.Zones {
+		uidb.Zones = append(uidb.Zones, v)
+	}
+	for _, v := range db.Npcs {
+		uidb.Npcs = append(uidb.Npcs, v)
 	}
 	for _, v := range db.ItemIcons {
 		uidb.ItemIcons = append(uidb.ItemIcons, v)
@@ -188,6 +233,12 @@ func (db *WowDatabase) toUIProto() *proto.UIDatabase {
 		return v1.EffectId < v2.EffectId || v1.EffectId == v2.EffectId && v1.Type < v2.Type
 	})
 	slices.SortStableFunc(uidb.Gems, func(v1, v2 *proto.UIGem) bool {
+		return v1.Id < v2.Id
+	})
+	slices.SortStableFunc(uidb.Zones, func(v1, v2 *proto.UIZone) bool {
+		return v1.Id < v2.Id
+	})
+	slices.SortStableFunc(uidb.Npcs, func(v1, v2 *proto.UINPC) bool {
 		return v1.Id < v2.Id
 	})
 	slices.SortStableFunc(uidb.ItemIcons, func(v1, v2 *proto.IconData) bool {
@@ -217,7 +268,7 @@ func (db *WowDatabase) WriteBinaryAndJson(binFilePath, jsonFilePath string) {
 }
 
 func (db *WowDatabase) WriteBinary(binFilePath string) {
-	uidb := db.toUIProto()
+	uidb := db.ToUIProto()
 
 	// Write database as a binary file.
 	outbytes, err := googleProto.Marshal(uidb)
@@ -230,7 +281,7 @@ func (db *WowDatabase) WriteBinary(binFilePath string) {
 func (db *WowDatabase) WriteJson(jsonFilePath string) {
 	// Also write in JSON format so we can manually inspect the contents.
 	// Write it out line-by-line so we can have 1 line / item, making it more human-readable.
-	uidb := db.toUIProto()
+	uidb := db.ToUIProto()
 	builder := &strings.Builder{}
 	builder.WriteString("{\n")
 
@@ -239,6 +290,10 @@ func (db *WowDatabase) WriteJson(jsonFilePath string) {
 	tools.WriteProtoArrayToBuilder(uidb.Enchants, builder, "enchants")
 	builder.WriteString(",\n")
 	tools.WriteProtoArrayToBuilder(uidb.Gems, builder, "gems")
+	builder.WriteString(",\n")
+	tools.WriteProtoArrayToBuilder(uidb.Zones, builder, "zones")
+	builder.WriteString(",\n")
+	tools.WriteProtoArrayToBuilder(uidb.Npcs, builder, "npcs")
 	builder.WriteString(",\n")
 	tools.WriteProtoArrayToBuilder(uidb.ItemIcons, builder, "itemIcons")
 	builder.WriteString(",\n")
