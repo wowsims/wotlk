@@ -646,8 +646,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-SiegebreakerBattlegear"
  value: {
-  dps: 2153.09612
-  tps: 6171.98845
+  dps: 2159.29849
+  tps: 6188.28261
  }
 }
 dps_results: {
