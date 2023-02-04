@@ -63,7 +63,7 @@ var ItemSetConquerorSanct = core.NewItemSet(core.ItemSet{
 		},
 		4: func(agent core.Agent) {
 			priest := agent.(PriestAgent).GetPriest()
-			procAura := priest.NewTemporaryStatsAura("Devious Mind", core.ActionID{ItemID: 64907}, stats.Stats{stats.SpellHaste: 240}, time.Second*4)
+			procAura := priest.NewTemporaryStatsAura("Devious Mind", core.ActionID{SpellID: 64907}, stats.Stats{stats.SpellHaste: 240}, time.Second*4)
 
 			priest.RegisterAura(core.Aura{
 				Label:    "Devious Mind Proc",
