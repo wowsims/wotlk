@@ -34,15 +34,10 @@ $theme-colors: map-merge($theme-colors, $class-colors);
 
 $brand: #e0a335;
 $success: #1eff00;
-$quality-uncommon: $success;
-$quality-rare: #0070dd;
-$quality-epic: #a335ee;
 
 $custom-colors: (
   "brand": $brand,
-  "quality-epic": $quality-epic,
-  "quality-rare": $quality-rare,
-  "quality-uncommon": $quality-uncommon,
+  "primary": $primary,
   "success": $success,
 );
 
@@ -57,19 +52,46 @@ $custom-breakpoints: (
 
 $grid-breakpoints: map-merge($grid-breakpoints, $custom-breakpoints);
 
-// Custom variables
+//////////////////////////
+//// Custom variables ////
+//////////////////////////
+
+// Spacers
 $block-spacer: .75rem;
 $table-cell-padding: .5rem;
 $content-font-size: .75rem;
 $gap-width: 1.5rem;
 $gap-width-sm: .5rem;
-$link-danger-color: #ef9eaa;
+
+// Colors
+$item-quality-junk:      #9d9d9d;
+$item-quality-common:    #ffffff;
+$item-quality-uncommon:  #1eff00;
+$item-quality-rare:      #0070dd;
+$item-quality-epic:      #a335ee;
+$item-quality-legendary: #ff8000;
+
+$item-qualities: (
+  junk:      $item-quality-junk,
+  common:    $item-quality-common,
+  uncommon:  $item-quality-uncommon,
+  rare:      $item-quality-rare,
+  epic:      $item-quality-epic,
+  legendary: $item-quality-legendary
+);
+
+$link-danger-color:  #ef9eaa;
 $link-warning-color: #faf07f;
+
 $table-row-even-bg: #202128;
 $table-row-odd-bg: #2d2f35;
+
 $wrath-blue: #7FCBD8;
 
-// Global Bootstrap variable overrides
+/////////////////////////////////////////////
+//// Global Bootstrap variable overrides ////
+/////////////////////////////////////////////
+
 $body-bg: #15171e;
 $body-color: white;
 $border-color: dimgrey;

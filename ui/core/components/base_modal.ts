@@ -30,7 +30,7 @@ const DEFAULT_CONFIG = {
 }
 
 export class BaseModal extends Component {
-	readonly config: BaseModalConfig;
+	readonly modalConfig: BaseModalConfig;
 
 	readonly modal: Modal;
 	readonly dialog: HTMLElement;
@@ -40,9 +40,9 @@ export class BaseModal extends Component {
 
 	constructor(parent: HTMLElement, cssClass: string, config: BaseModalConfig = {}) {
 		super(parent, 'modal');
-		this.config = {...DEFAULT_CONFIG, ...config};
+		this.modalConfig = {...DEFAULT_CONFIG, ...config};
 
-		const modalSizeKlass = this.config.size && this.config.size != 'md' ? `modal-${this.config.size}` : '';
+		const modalSizeKlass = this.modalConfig.size && this.modalConfig.size != 'md' ? `modal-${this.modalConfig.size}` : '';
 
 		this.rootElem.classList.add('fade');
 		this.rootElem.innerHTML = `
@@ -53,19 +53,19 @@ export class BaseModal extends Component {
 
 		this.dialog = this.rootElem.querySelector('.modal-dialog') as HTMLElement;
 
-		if (this.config.scrollContents) {
+		if (this.modalConfig.scrollContents) {
 			this.dialog.classList.add('modal-overflow-scroll');
 		}
 
 		const container = this.rootElem.querySelector('.modal-content') as HTMLElement;
 
-		if (this.config.header) {
+		if (this.modalConfig.header) {
 			this.header = document.createElement('div');
 			this.header.classList.add('modal-header');
 			container.appendChild(this.header);
 
-			if (this.config.title) {
-				this.header.insertAdjacentHTML('afterbegin', `<h5 class="modal-title">${this.config.title}</h5>`);
+			if (this.modalConfig.title) {
+				this.header.insertAdjacentHTML('afterbegin', `<h5 class="modal-title">${this.modalConfig.title}</h5>`);
 			}
 		}
 
@@ -75,7 +75,7 @@ export class BaseModal extends Component {
 
 		this.addCloseButton();
 
-		if (this.config.footer) {
+		if (this.modalConfig.footer) {
 			this.footer = document.createElement('div');
 			this.footer.classList.add('modal-footer');
 			container.appendChild(this.footer);
@@ -90,7 +90,7 @@ export class BaseModal extends Component {
 	}
 
 	private addCloseButton() {
-		new CloseButton(this.header ? this.header : this.body, () => this.close(), this.config.closeButton);
+		new CloseButton(this.header ? this.header : this.body, () => this.close(), this.modalConfig.closeButton);
 	}
 
 	open() {

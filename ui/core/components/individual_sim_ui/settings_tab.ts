@@ -223,7 +223,7 @@ export class SettingsTab extends SimTab {
 	private buildOtherSettings() {
 		const column = this.simUI.isWithinRaidSim ? this.column4 : this.column2;
 		const settings = this.simUI.individualConfig.otherInputs?.inputs.filter(inputs =>
-			!inputs.extraCssClasses?.includes('within-raid-sim-hide') || false
+			!inputs.extraCssClasses?.includes('within-raid-sim-hide') || true
 		)
 
 		if (settings.length > 0) {
