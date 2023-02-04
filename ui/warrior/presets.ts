@@ -20,6 +20,7 @@ import {
 	WarriorMajorGlyph,
 	WarriorMinorGlyph,
 	Warrior_Rotation_StanceOption as StanceOption,
+	Warrior_Rotation_MainGcd as MainGcd,
 } from '../core/proto/warrior.js';
 
 import * as Gems from '../core/proto_utils/gems.js';
@@ -62,11 +63,12 @@ export const FuryTalents = {
 };
 
 export const DefaultRotation = WarriorRotation.create({
-	useRend: false,
+	useRend: true,
 	useMs: true,
 	useCleave: false,
 
-	prioritizeWw: true,
+	mainGcd: MainGcd.Slam,
+
 	sunderArmor: SunderArmor.SunderArmorMaintain,
 
 	msRageThreshold: 35,

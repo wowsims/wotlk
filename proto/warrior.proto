@@ -151,7 +151,13 @@ message Warrior {
 		bool use_rend = 2;
 		bool use_ms = 18;
 		bool use_slam = 3;
-		bool prioritize_ww = 4;
+
+		enum MainGcd {
+			Slam = 0;
+			Bloodthirst = 1;
+			Whirlwind = 2;
+		}
+		MainGcd main_gcd = 4;
 
 		enum SunderArmor {
 			SunderArmorNone = 0;

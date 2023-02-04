@@ -15,7 +15,8 @@ import {
 	Warrior_Rotation as WarriorRotation,
 	Warrior_Rotation_SunderArmor as SunderArmor,
 	Warrior_Options as WarriorOptions,
-	Warrior_Rotation_StanceOption as StanceOption
+	Warrior_Rotation_StanceOption as StanceOption,
+	Warrior_Rotation_MainGcd as MainGcd
 } from '../core/proto/warrior.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
@@ -75,12 +76,15 @@ export const WarriorRotationConfig = {
 			labelTooltip: 'Use Rend when rage threshold is met and the debuff duration is less than refresh time.',
 			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecWarrior>({
-			fieldName: 'prioritizeWw',
-			label: 'Prioritize WW',
-			labelTooltip: 'Prioritize Whirlwind over Bloodthirst.',
-			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().bloodthirst,
+		InputHelpers.makeRotationEnumInput<Spec.SpecWarrior, MainGcd>({
+			fieldName: 'mainGcd',
+			label: 'Main GCD',
+			labelTooltip: 'Main GCD ability that will be prioritized above other abilities.',
+			values: [
+				{ name: 'Slam', value: MainGcd.Slam },
+				{ name: 'Bloodthirst', value: MainGcd.Bloodthirst },
+				{ name: 'Whirlwind', value: MainGcd.Whirlwind },
+			],
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecWarrior>({
 			fieldName: 'msRageThreshold',
