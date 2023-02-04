@@ -24,9 +24,15 @@ export function getLanguageCode(): string {
 	return cachedLanguageCode_;
 }
 
+export function getWowheadLanguagePrefix(): string {
+	return cachedWowheadLanguagePrefix_;
+}
+
 export function setLanguageCode(newLang: string) {
 	// Use '' instead of 'en' because wowhead doesn't like having the en/ prefix.
 	cachedLanguageCode_ = newLang == 'en' ? '' : newLang;
+	cachedWowheadLanguagePrefix_ = cachedLanguageCode_ ? cachedLanguageCode_ + '/' : '';
 }
 
 let cachedLanguageCode_: string = '';
+let cachedWowheadLanguagePrefix_: string = '';

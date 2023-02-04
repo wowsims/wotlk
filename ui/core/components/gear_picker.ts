@@ -8,9 +8,10 @@ import { ItemSlot } from '../proto/common.js';
 import { ItemType } from '../proto/common.js';
 import { getEnchantDescription, getUniqueEnchantString } from '../proto_utils/enchants.js';
 import { ActionId } from '../proto_utils/action_id.js';
-import { slotNames } from '../proto_utils/names.js';
+import { difficultyNames, professionNames, slotNames } from '../proto_utils/names.js';
 import { setItemQualityCssClass } from '../css_utils.js';
 import { Player } from '../player.js';
+import { Sim } from '../sim.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { formatDeltaTextElem } from '../utils.js';
 import {
@@ -676,11 +677,7 @@ class SelectorModal extends BaseModal {
 			tabContent.classList.add('active', 'in');
 
 			const filtersButton = tabContent.getElementsByClassName('selector-modal-filters-button')[0] as HTMLElement;
-			if (FiltersMenu.anyFiltersForSlot(slot)) {
-				filtersButton.addEventListener('click', () => new FiltersMenu(this.body, this.player, slot));
-			} else {
-				filtersButton.style.display = 'none';
-			}
+			filtersButton.addEventListener('click', () => new FiltersMenu(this.body, this.player, slot));
 		}
 
 		const listElem = tabContent.getElementsByClassName('selector-modal-list')[0] as HTMLElement;
@@ -701,6 +698,8 @@ class SelectorModal extends BaseModal {
 				<div class="selector-modal-list-label-cell">
 					<a class="selector-modal-list-item-icon"></a>
 					<a class="selector-modal-list-item-name">${itemData.heroic ? itemData.name + "<span style=\"color:green\">[H]</span>" : itemData.name}</a>
+				</div>
+				<div class="selector-modal-list-item-source-container">
 				</div>
 				<div>
 					<span class="selector-modal-list-item-favorite fa-star"></span>
@@ -727,6 +726,13 @@ class SelectorModal extends BaseModal {
 			});
 
 			setItemQualityCssClass(nameElem, itemData.quality);
+
+			const sourceElem = listItemElem.getElementsByClassName('selector-modal-list-item-source-container')[0] as HTMLDivElement;
+			if (label == 'Items') {
+				this.fillSourceInfo(item as unknown as Item, sourceElem, this.player.sim);
+			} else {
+				sourceElem.remove();
+			}
 
 			const onclick = (event: Event) => {
 				event.preventDefault();
@@ -963,6 +969,60 @@ class SelectorModal extends BaseModal {
 		});
 
 		applyFilters();
+	}
+
+	private fillSourceInfo(item: Item, container: HTMLDivElement, sim: Sim) {
+		if (!item.sources || item.sources.length == 0) {
+			return;
+		}
+
+		const source = item.sources[0];
+		if (source.source.oneofKind == 'crafted') {
+			const src = source.source.crafted;
+			container.innerHTML = `
+				<a href="${ActionId.makeSpellUrl(src.spellId)}">${professionNames[src.profession]}</a>
+			`;
+		} else if (source.source.oneofKind == 'drop') {
+			const src = source.source.drop;
+			const zone = sim.db.getZone(src.zoneId);
+			const npc = sim.db.getNpc(src.npcId);
+			if (!zone) {
+				throw new Error('No zone found for item: ' + item);
+			}
+
+			let innerHTML = `
+				<a href="${ActionId.makeZoneUrl(zone.id)}">${zone.name} (${difficultyNames[src.difficulty]})</a>
+			`;
+
+			const category = src.category ? ` - ${src.category}` : '';
+			if (npc) {
+				innerHTML += `
+					<br>
+					<a href="${ActionId.makeNpcUrl(npc.id)}">${npc.name + category}</a>
+				`;
+			} else if (src.otherName) {
+				innerHTML += `
+					<br>
+					<a href="${ActionId.makeZoneUrl(zone.id)}>${src.otherName + category}</a>
+				`;
+			} else if (category) {
+				innerHTML += `
+					<br>
+					<a href="${ActionId.makeZoneUrl(zone.id)}>${category}</a>
+				`;
+			}
+			container.innerHTML = innerHTML;
+		} else if (source.source.oneofKind == 'quest') {
+			const src = source.source.quest;
+			container.innerHTML = `
+				<a href="${ActionId.makeQuestUrl(src.id)}">${src.name}</a>
+			`;
+		} else if (source.source.oneofKind == 'soldBy') {
+			const src = source.source.soldBy;
+			container.innerHTML = `
+				<a href="${ActionId.makeNpcUrl(src.npcId)}">${src.npcName}</a>
+			`;
+		}
 	}
 
 	private removeTabs(labelSubstring: string) {

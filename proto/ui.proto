@@ -27,10 +27,12 @@ message UIDatabase {
 message UIZone {
 	int32 id = 1;
 	string name = 2;
+	Expansion expansion = 3;
 }
 message UINPC {
 	int32 id = 1;
 	string name = 2;
+	int32 zone_id = 3;
 }
 
 // Contains all information about an Item needed by the UI.
@@ -105,7 +107,9 @@ message CraftedSource {
 message DropSource {
 	DungeonDifficulty difficulty = 1;
 	int32 npc_id = 2;
-	int32 zone_id = 4;
+	int32 zone_id = 3;
+	string other_name = 4; // For drops in zones from things other than NPCs, e.g. "Trash"
+	string category = 5;   // For conditions/categories of drops, e.g. 'Hard Mode' or 'Titan Rune'
 }
 message QuestSource {
 	int32 id = 1;
@@ -168,15 +172,39 @@ message GlyphID {
 	int32 spell_id = 2;
 }
 
-message DatabaseFilters {
-	// TODO:
-	// Source
-	// Raid
-	// Req. Profession
+enum SourceFilterOption {
+	SourceUnknown = 0;
+	SourceCrafting = 1;
+	SourceQuest = 2;
+	SourceDungeon = 3;
+	SourceDungeonH = 4;
+	SourceRaid10 = 5;
+	SourceRaid10H = 6;
+	SourceRaid25 = 7;
+	SourceRaid25H = 8;
+}
 
+enum RaidFilterOption {
+	RaidUnknown = 0;
+	RaidVanilla = 1;
+	RaidTbc = 2;
+	RaidNaxxramas = 3;
+	RaidEyeOfEternity = 4;
+	RaidObsidianSanctum = 5;
+	RaidVaultOfArchavon = 6;
+	RaidUlduar = 7;
+	RaidTrialOfTheCrusader = 8;
+	RaidOnyxiasLair = 9;
+	RaidIcecrownCitadel = 10;
+	RaidRubySanctum = 11;
+}
+
+message DatabaseFilters {
 	repeated ArmorType armor_types = 1;
 	repeated WeaponType weapon_types = 2;
 	repeated RangedWeaponType ranged_weapon_types = 16;
+	repeated SourceFilterOption sources = 17;
+	repeated RaidFilterOption raids = 18;
 
 	double min_mh_weapon_speed = 4;
 	double max_mh_weapon_speed = 5;

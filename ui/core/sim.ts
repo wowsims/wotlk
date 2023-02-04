@@ -22,6 +22,8 @@ import { StatWeightsRequest, StatWeightsResult } from './proto/api.js';
 import {
 	DatabaseFilters,
 	SimSettings as SimSettingsProto,
+	SourceFilterOption,
+	RaidFilterOption,
 } from './proto/ui.js';
 import {
 	UIEnchant as Enchant,
@@ -439,9 +441,11 @@ export class Sim {
 		}
 	}
 
-	private static readonly ALL_ARMOR_TYPES = (getEnumValues(ArmorType) as Array<ArmorType>).filter(v => v != 0);
-	private static readonly ALL_WEAPON_TYPES = (getEnumValues(WeaponType) as Array<WeaponType>).filter(v => v != 0);
-	private static readonly ALL_RANGED_WEAPON_TYPES = (getEnumValues(RangedWeaponType) as Array<RangedWeaponType>).filter(v => v != 0);
+	static readonly ALL_ARMOR_TYPES = (getEnumValues(ArmorType) as Array<ArmorType>).filter(v => v != 0);
+	static readonly ALL_WEAPON_TYPES = (getEnumValues(WeaponType) as Array<WeaponType>).filter(v => v != 0);
+	static readonly ALL_RANGED_WEAPON_TYPES = (getEnumValues(RangedWeaponType) as Array<RangedWeaponType>).filter(v => v != 0);
+	static readonly ALL_SOURCES = (getEnumValues(SourceFilterOption) as Array<SourceFilterOption>).filter(v => v != 0);
+	static readonly ALL_RAIDS = (getEnumValues(RaidFilterOption) as Array<RaidFilterOption>).filter(v => v != 0);
 
 	toProto(): SimSettingsProto {
 		const filters = this.getFilters();
@@ -453,6 +457,12 @@ export class Sim {
 		}
 		if (filters.rangedWeaponTypes.length == Sim.ALL_RANGED_WEAPON_TYPES.length) {
 			filters.rangedWeaponTypes = [];
+		}
+		if (filters.sources.length == Sim.ALL_SOURCES.length) {
+			filters.sources = [];
+		}
+		if (filters.raids.length == Sim.ALL_RAIDS.length) {
+			filters.raids = [];
 		}
 
 		return SimSettingsProto.create({
@@ -490,6 +500,12 @@ export class Sim {
 			}
 			if (filters.rangedWeaponTypes.length == 0) {
 				filters.rangedWeaponTypes = Sim.ALL_RANGED_WEAPON_TYPES.slice();
+			}
+			if (filters.sources.length == 0) {
+				filters.sources = Sim.ALL_SOURCES.slice();
+			}
+			if (filters.raids.length == 0) {
+				filters.raids = Sim.ALL_RAIDS.slice();
 			}
 			this.setFilters(eventID, filters);
 		});

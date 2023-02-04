@@ -13,6 +13,8 @@ import {
 	UIEnchant as Enchant,
 	UIGem as Gem,
 	UIItem as Item,
+	UINPC as Npc,
+	UIZone as Zone,
 } from '../proto/ui.js';
 
 import {
@@ -77,6 +79,8 @@ export class Database {
 	private readonly items: Record<number, Item> = {};
 	private readonly enchantsBySlot: Partial<Record<ItemSlot, Enchant[]>> = {};
 	private readonly gems: Record<number, Gem> = {};
+	private readonly npcs: Record<number, Npc> = {};
+	private readonly zones: Record<number, Zone> = {};
 	private readonly presetEncounters: Record<string, PresetEncounter> = {};
 	private readonly presetTargets: Record<string, PresetTarget> = {};
 	private readonly itemIcons: Record<number, Promise<IconData>> = {};
@@ -102,6 +106,8 @@ export class Database {
 		});
 		db.gems.forEach(gem => this.gems[gem.id] = gem);
 
+		db.npcs.forEach(npc => this.npcs[npc.id] = npc);
+		db.zones.forEach(zone => this.zones[zone.id] = zone);
 		db.encounters.forEach(encounter => this.presetEncounters[encounter.path] = encounter);
 		db.encounters.map(e => e.targets).flat().forEach(target => this.presetTargets[target.path] = target);
 
@@ -136,6 +142,13 @@ export class Database {
 			gems = gems.filter(gem => gemEligibleForSocket(gem, socketColor));
 		}
 		return gems;
+	}
+
+	getNpc(npcId: number): Npc|null {
+		return this.npcs[npcId] || null;
+	}
+	getZone(zoneId: number): Zone|null {
+		return this.zones[zoneId] || null;
 	}
 
 	getMatchingGems(socketColor: GemColor): Array<Gem> {
