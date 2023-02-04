@@ -57,7 +57,15 @@ message UIItem {
 	// Name of the item set to which this item belongs, if any.
 	string set_name = 22;
 
+	Expansion expansion = 24;
 	repeated UIItemSource sources = 23;
+}
+
+enum Expansion {
+	ExpansionUnknown = 0;
+	ExpansionVanilla = 1;
+	ExpansionTbc = 2;
+	ExpansionWotlk = 3;
 }
 
 message UIItemSource {
@@ -71,7 +79,6 @@ message UIItemSource {
 message CraftedSource {
 	Profession profession = 1;
 	int32 spell_id = 2;
-	string spell_name = 3;
 }
 message DropSource {
 	int32 npc_id = 1;
