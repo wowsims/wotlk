@@ -87,14 +87,14 @@ func (wi WowheadItem) ToProto() *proto.UIItem {
 	for i, details := range wi.SourceDetails {
 		switch wi.SourceTypes[i] {
 		case 1: // Crafted
-			sources = append(sources, &proto.UIItemSource{
-				Source: &proto.UIItemSource_Crafted{
-					Crafted: &proto.CraftedSource{
-						SpellId:   details.EntityID,
-						SpellName: details.Name,
-					},
-				},
-			})
+			// We'll get this from AtlasLoot instead because it can also tell us the profession.
+			//sources = append(sources, &proto.UIItemSource{
+			//	Source: &proto.UIItemSource_Crafted{
+			//		Crafted: &proto.CraftedSource{
+			//			SpellId: details.EntityID,
+			//		},
+			//	},
+			//})
 		case 2: // Dropped by
 			// Do nothing, we'll get this from AtlasLoot.
 		case 3: // Sold by zone vendor? barely used

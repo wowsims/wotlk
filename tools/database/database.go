@@ -9,6 +9,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/tools"
 	"golang.org/x/exp/slices"
+	"google.golang.org/protobuf/encoding/protojson"
 	googleProto "google.golang.org/protobuf/proto"
 )
 
@@ -146,6 +147,18 @@ func (db *WowDatabase) AddSpellIcon(id int32, tooltips map[int32]WowheadItemResp
 	}
 }
 
+func (db *WowDatabase) MergeUIProto(dbProto *proto.UIDatabase) {
+	db.MergeItems(dbProto.Items)
+	db.MergeEnchants(dbProto.Enchants)
+	db.MergeGems(dbProto.Gems)
+	for _, icon := range dbProto.ItemIcons {
+		db.ItemIcons[icon.Id] = icon
+	}
+	for _, icon := range dbProto.SpellIcons {
+		db.SpellIcons[icon.Id] = icon
+	}
+}
+
 func (db *WowDatabase) toUIProto() *proto.UIDatabase {
 	uidb := &proto.UIDatabase{
 		Encounters: db.Encounters,
@@ -187,7 +200,23 @@ func (db *WowDatabase) toUIProto() *proto.UIDatabase {
 	return uidb
 }
 
+func ReadDatabaseFromJson(jsonStr string) *WowDatabase {
+	dbProto := &proto.UIDatabase{}
+	if err := protojson.Unmarshal([]byte(jsonStr), dbProto); err != nil {
+		panic(err)
+	}
+
+	db := NewWowDatabase()
+	db.MergeUIProto(dbProto)
+	return db
+}
+
 func (db *WowDatabase) WriteBinaryAndJson(binFilePath, jsonFilePath string) {
+	db.WriteBinary(binFilePath)
+	db.WriteJson(jsonFilePath)
+}
+
+func (db *WowDatabase) WriteBinary(binFilePath string) {
 	uidb := db.toUIProto()
 
 	// Write database as a binary file.
@@ -196,9 +225,12 @@ func (db *WowDatabase) WriteBinaryAndJson(binFilePath, jsonFilePath string) {
 		log.Fatalf("[ERROR] Failed to marshal db: %s", err.Error())
 	}
 	os.WriteFile(binFilePath, outbytes, 0666)
+}
 
+func (db *WowDatabase) WriteJson(jsonFilePath string) {
 	// Also write in JSON format so we can manually inspect the contents.
 	// Write it out line-by-line so we can have 1 line / item, making it more human-readable.
+	uidb := db.toUIProto()
 	builder := &strings.Builder{}
 	builder.WriteString("{\n")
 
