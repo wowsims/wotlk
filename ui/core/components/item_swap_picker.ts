@@ -31,9 +31,9 @@ export class ItemSwapPicker<SpecType extends Spec, T> extends Component {
 			});
 		}
 
-		let itemSwapContianer = Input.newGroupContainer();
-		itemSwapContianer.classList.add('icon-group');
-		this.rootElem.appendChild(itemSwapContianer);
+		let itemSwapContainer = Input.newGroupContainer();
+		itemSwapContainer.classList.add('icon-group');
+		this.rootElem.appendChild(itemSwapContainer);
 
 		let swapButtonFragment = document.createElement('fragment');
 		swapButtonFragment.innerHTML = `
@@ -49,7 +49,7 @@ export class ItemSwapPicker<SpecType extends Spec, T> extends Component {
 		`
 
 		const swapButton = swapButtonFragment.children[0] as HTMLElement;
-		itemSwapContianer.appendChild(swapButton)
+		itemSwapContainer.appendChild(swapButton)
 
 		swapButton.addEventListener('click', event => { this.swapWithGear(player, config) });
 
@@ -63,7 +63,7 @@ export class ItemSwapPicker<SpecType extends Spec, T> extends Component {
 		});
 
 		config.itemSlots.forEach(itemSlot => {
-			new IconItemSwapPicker(itemSwapContianer, simUI, player,itemSlot, config);
+			new IconItemSwapPicker(itemSwapContainer, simUI, player,itemSlot, config);
 		});
 	}
 
