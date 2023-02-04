@@ -8,6 +8,20 @@ td, th {
 
 .sim-ui {
 	overflow: auto;
+	scrollbar-color: var(--bs-primary) $body-bg;
+	scrollbar-width: thin;
+
+	&::-webkit-scrollbar {
+		width: 1rem;
+	}
+
+	&::-webkit-scrollbar-track  {
+    background-color: $body-bg;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background-color: var(--bs-primary);
+	}
 
 	.sim-root {
 		height: 100%;

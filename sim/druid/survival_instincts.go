@@ -38,13 +38,16 @@ func (druid *Druid) registerSurvivalInstinctsCD() {
 
 	druid.SurvivalInstincts = druid.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
+		Flags: SpellFlagOmenTrigger,
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    cdTimer,
 				Duration: cd,
 			},
 		},
-		Flags: SpellFlagOmenTrigger,
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return druid.InForm(Cat | Bear)
+		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			druid.SurvivalInstinctsAura.Activate(sim)
 		},
@@ -53,8 +56,5 @@ func (druid *Druid) registerSurvivalInstinctsCD() {
 	druid.AddMajorCooldown(core.MajorCooldown{
 		Spell: druid.SurvivalInstincts,
 		Type:  core.CooldownTypeSurvival,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return druid.InForm(Cat | Bear)
-		},
 	})
 }

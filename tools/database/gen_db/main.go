@@ -12,12 +12,22 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	_ "github.com/wowsims/wotlk/sim/encounters" // Needed for preset encounters.
+	"github.com/wowsims/wotlk/tools"
 	"github.com/wowsims/wotlk/tools/database"
 )
 
-// go run ./tools/database/gen_db
+// To do a full re-scrape, delete the previous output file first.
+// go run ./tools/database/gen_db -outDir=assets -gen=atlasloot
+// go run ./tools/database/gen_db -outDir=assets -gen=wowhead-items
+// go run ./tools/database/gen_db -outDir=assets -gen=wowhead-spells
+// go run ./tools/database/gen_db -outDir=assets -gen=wowhead-gearplannerdb
+// go run ./tools/database/gen_db -outDir=assets -gen=wotlk-items
+// go run ./tools/database/gen_db -outDir=assets -gen=db
 
+var minId = flag.Int("minid", 1, "Minimum ID to scan for")
+var maxId = flag.Int("maxid", 57000, "Maximum ID to scan for")
 var outDir = flag.String("outDir", "assets", "Path to output directory for writing generated .go files.")
+var genAsset = flag.String("gen", "", "Asset to generate. Valid values are 'db', 'atlasloot', 'wowhead-items', 'wowhead-spells', 'wowhead-itemdb', and 'wotlk-items'")
 
 func main() {
 	flag.Parse()
@@ -28,8 +38,30 @@ func main() {
 	dbDir := fmt.Sprintf("%s/database", *outDir)
 	inputsDir := fmt.Sprintf("%s/db_inputs", *outDir)
 
+	if *genAsset == "atlasloot" {
+		db := database.ReadAtlasLootData()
+		db.WriteJson(fmt.Sprintf("%s/atlasloot_db.json", inputsDir))
+		return
+	} else if *genAsset == "wowhead-items" {
+		database.NewWowheadItemTooltipManager(fmt.Sprintf("%s/wowhead_item_tooltips.csv", inputsDir)).Fetch(int32(*minId), int32(*maxId))
+		return
+	} else if *genAsset == "wowhead-spells" {
+		database.NewWowheadSpellTooltipManager(fmt.Sprintf("%s/wowhead_spell_tooltips.csv", inputsDir)).Fetch(int32(*minId), int32(*maxId))
+		return
+	} else if *genAsset == "wowhead-gearplannerdb" {
+		tools.WriteFile(fmt.Sprintf("%s/wowhead_gearplannerdb.txt", inputsDir), tools.ReadWebRequired("https://nether.wowhead.com/wotlk/data/gear-planner?dv=100"))
+		return
+	} else if *genAsset == "wotlk-items" {
+		database.NewWotlkItemTooltipManager(fmt.Sprintf("%s/wotlk_items_tooltips.csv", inputsDir)).Fetch(int32(*minId), int32(*maxId))
+		return
+	} else if *genAsset != "db" {
+		panic("Invalid gen value")
+	}
+
 	itemTooltips := database.NewWowheadItemTooltipManager(fmt.Sprintf("%s/wowhead_item_tooltips.csv", inputsDir)).Read()
 	spellTooltips := database.NewWowheadSpellTooltipManager(fmt.Sprintf("%s/wowhead_spell_tooltips.csv", inputsDir)).Read()
+	wowheadDB := database.ParseWowheadDB(tools.ReadFile(fmt.Sprintf("%s/wowhead_gearplannerdb.txt", inputsDir)))
+	atlaslootDB := database.ReadDatabaseFromJson(tools.ReadFile(fmt.Sprintf("%s/atlasloot_db.json", inputsDir)))
 
 	db := database.NewWowDatabase()
 	db.Encounters = core.PresetEncounters
@@ -40,6 +72,18 @@ func main() {
 			db.MergeItem(response.ToItemProto())
 		} else if response.IsGem() {
 			db.MergeGem(response.ToGemProto())
+		}
+	}
+
+	for _, wowheadItem := range wowheadDB.Items {
+		item := wowheadItem.ToProto()
+		if _, ok := db.Items[item.Id]; ok {
+			db.MergeItem(item)
+		}
+	}
+	for _, item := range atlaslootDB.Items {
+		if _, ok := db.Items[item.Id]; ok {
+			db.MergeItem(item)
 		}
 	}
 
@@ -66,6 +110,14 @@ func main() {
 		db.AddItemIcon(itemID, itemTooltips)
 	}
 
+	for _, item := range db.Items {
+		for _, source := range item.Sources {
+			if crafted := source.GetCrafted(); crafted != nil {
+				db.AddSpellIcon(crafted.SpellId, spellTooltips)
+			}
+		}
+	}
+
 	for _, spellId := range database.SharedSpellsIcons {
 		db.AddSpellIcon(spellId, spellTooltips)
 	}
@@ -75,6 +127,10 @@ func main() {
 			db.AddSpellIcon(spellId, spellTooltips)
 		}
 	}
+
+	atlasDBProto := atlaslootDB.ToUIProto()
+	db.MergeZones(atlasDBProto.Zones)
+	db.MergeNpcs(atlasDBProto.Npcs)
 
 	db.WriteBinaryAndJson(fmt.Sprintf("%s/db.bin", dbDir), fmt.Sprintf("%s/db.json", dbDir))
 }

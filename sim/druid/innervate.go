@@ -60,6 +60,20 @@ func (druid *Druid) registerInnervateCD() {
 			},
 		},
 
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			// Technically this shouldn't be allowed in bear form either, but bear
+			// doesn't have shifting implemented in its rotation.
+			if druid.InForm(Cat) {
+				return false
+			}
+			// If target already has another innervate, don't cast.
+			if innervateTarget.HasActiveAuraWithTag(core.InnervateAuraTag) {
+				return false
+			}
+
+			return true
+		},
+
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			// Update expected bonus mana
 			newRemainingUsages := int(sim.GetRemainingDuration() / innervateCD)
@@ -73,22 +87,6 @@ func (druid *Druid) registerInnervateCD() {
 	druid.AddMajorCooldown(core.MajorCooldown{
 		Spell: innervateSpell,
 		Type:  core.CooldownTypeMana,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			if character.CurrentMana() < innervateSpell.DefaultCast.Cost {
-				return false
-			}
-			// Technically this shouldn't be allowed in bear form either, but bear
-			// doesn't have shifting implemented in its rotation.
-			if druid.InForm(Cat) {
-				return false
-			}
-			// If target already has another innervate, don't cast.
-			if innervateTarget.HasActiveAuraWithTag(core.InnervateAuraTag) {
-				return false
-			}
-
-			return true
-		},
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 			// Innervate needs to be activated as late as possible to maximize DPS. The issue is that
 			// innervate gives so much mana that it can cause Super Mana Potion or Dark Rune usages

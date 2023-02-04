@@ -53,9 +53,6 @@ func (paladin *Paladin) RegisterAvengingWrathCD() {
 	paladin.AddMajorCooldown(core.MajorCooldown{
 		Spell: paladin.AvengingWrath,
 		Type:  core.CooldownTypeDPS,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return character.CurrentMana() >= paladin.AvengingWrath.DefaultCast.Cost
-		},
 		// modify this logic if it should ever not be spammed on CD / maybe should synced with other CDs
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 			if paladin.HoldLastAvengingWrathUntilExecution && float64(sim.CurrentTime+paladin.AvengingWrath.CD.Duration) >= float64(sim.Duration) {

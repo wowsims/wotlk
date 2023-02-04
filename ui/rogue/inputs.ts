@@ -88,8 +88,26 @@ export const RogueRotationConfig = {
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
 			fieldName: 'envenomEnergyThreshold',
-			label: 'Energy Threshold (Envenom)',
-			labelTooltip: 'Amount of total energy to pool before casting Envenom.',
+			label: 'Energy Threshold (4cp Envenom)',
+			labelTooltip: 'Amount of total energy to pool before casting a 4 point Envenom.',
+			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
+			fieldName: 'envenomEnergyThresholdOverkill',
+			label: 'Energy Threshold (4cp Envenom w/ Overkill)',
+			labelTooltip: 'Amount of total energy to pool before casting a 4 point Envenom.',
+			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
+			fieldName: 'envenomEnergyThresholdMin',
+			label: 'Energy Threshold (5cp Envenom)',
+			labelTooltip: 'Amount of total energy to pool before casting a 5 point Envenom.',
+			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
+			fieldName: 'envenomEnergyThresholdOverkillMin',
+			label: 'Energy Threshold (5cp Envenom w/ Overkill)',
+			labelTooltip: 'Amount of total energy to pool before casting a 4 point Envenom.',
 			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
 		}),
 		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, Frequency>({
@@ -136,18 +154,6 @@ export const RogueRotationConfig = {
 			fieldName: 'useFeint',
 			label: 'Use Feint',
 			labelTooltip: 'Cast Feint on cooldown. Mainly useful when using the associate glyph.'
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
-			fieldName: 'allowCpUndercap',
-			label: 'Undercap CP',
-			labelTooltip: 'Cast Envenom at 3 cp if the Envenom buff is missing.',
-			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
-			fieldName: 'allowCpOvercap',
-			label: 'Overcap CP',
-			labelTooltip: 'Cast Mutilate at 4 cp if the Envenom buff will last long enough.',
-			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
 			fieldName: 'ruptureForBleed',

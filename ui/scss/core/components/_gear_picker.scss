@@ -94,10 +94,9 @@
 .selector-modal {
   .modal-header {
     padding-bottom: 0;
-    border-bottom: none;
 
-    .nav-tabs {
-      width: 100%;
+    .selector-modal-tabs {
+      border-bottom: 0;
     }
   }
 

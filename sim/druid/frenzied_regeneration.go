@@ -41,6 +41,9 @@ func (druid *Druid) registerFrenziedRegenerationCD() {
 			},
 			IgnoreHaste: true,
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return druid.InForm(Bear)
+		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
 				NumTicks: 10,
@@ -63,8 +66,5 @@ func (druid *Druid) registerFrenziedRegenerationCD() {
 	druid.AddMajorCooldown(core.MajorCooldown{
 		Spell: druid.FrenziedRegeneration,
 		Type:  core.CooldownTypeSurvival,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return druid.InForm(Bear)
-		},
 	})
 }
