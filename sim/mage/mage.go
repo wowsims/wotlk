@@ -138,6 +138,14 @@ func (mage *Mage) Initialize() {
 	mage.registerEvocationCD()
 	mage.registerManaGemsCD()
 	mage.registerMirrorImageCD()
+
+	if mirrorImageMCD := mage.GetMajorCooldownIgnoreTag(mage.MirrorImage.ActionID); mirrorImageMCD != nil {
+		if len(mirrorImageMCD.GetTimings()) == 0 {
+			mage.RegisterPrepullAction(-1500*time.Millisecond, func(sim *core.Simulation) {
+				mage.MirrorImage.Cast(sim, nil)
+			})
+		}
+	}
 }
 
 func (mage *Mage) Reset(sim *core.Simulation) {

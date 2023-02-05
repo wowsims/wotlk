@@ -516,9 +516,6 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 		Spell:    rogue.BladeFlurry,
 		Type:     core.CooldownTypeDPS,
 		Priority: core.CooldownPriorityDefault,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return rogue.CurrentEnergy() >= rogue.BladeFlurry.DefaultCast.Cost
-		},
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 			if sim.GetRemainingDuration() > cooldownDur+dur {
 				// We'll have enough time to cast another BF, so use it immediately to make sure we get the 2nd one.

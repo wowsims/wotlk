@@ -27,7 +27,6 @@ func (rogue *Rogue) registerBackstabSpell() {
 			},
 			IgnoreHaste: true,
 		},
-
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
 			return rogue.GetMHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger
 		},
