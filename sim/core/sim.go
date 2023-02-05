@@ -206,9 +206,6 @@ func (sim *Simulation) reset() {
 		sim.Log("----------------------")
 	}
 
-	// Reset primary targets damage taken for tracking health fights.
-	sim.Encounter.DamageTaken = 0
-
 	if sim.Encounter.DurationIsEstimate && sim.CurrentTime != 0 {
 		sim.BaseDuration = sim.CurrentTime
 		sim.Encounter.DurationIsEstimate = false
@@ -222,8 +219,6 @@ func (sim *Simulation) reset() {
 	sim.executePhase25Begins = time.Duration(float64(sim.Duration) * (1.0 - sim.Encounter.ExecuteProportion_25))
 	sim.executePhase35Begins = time.Duration(float64(sim.Duration) * (1.0 - sim.Encounter.ExecuteProportion_35))
 
-	sim.CurrentTime = 0.0
-
 	sim.pendingActions = make([]*PendingAction, 0, 64)
 
 	sim.executePhase20 = false
@@ -231,13 +226,9 @@ func (sim *Simulation) reset() {
 	sim.executePhase35 = false
 	sim.executePhaseCallbacks = []func(*Simulation, int){}
 
-	// Targets need to be reset before the raid, so that players can check for
-	// the presence of permanent target auras in their Reset handlers.
-	for _, target := range sim.Encounter.Targets {
-		target.Reset(sim)
-	}
+	sim.CurrentTime = 0
 
-	sim.Raid.reset(sim)
+	sim.Environment.reset(sim)
 
 	sim.initManaTickAction()
 }
@@ -325,7 +316,24 @@ func (sim *Simulation) run() *proto.RaidSimResult {
 func (sim *Simulation) runOnce() {
 	sim.reset()
 
-	sim.Raid.Prepull(sim)
+	if len(sim.Environment.prepullActions) > 0 {
+		sim.CurrentTime = sim.Environment.prepullActions[0].DoAt
+
+		for _, prepullAction := range sim.Environment.prepullActions {
+			if prepullAction.DoAt > sim.CurrentTime {
+				sim.advance(prepullAction.DoAt - sim.CurrentTime)
+			}
+			prepullAction.Action(sim)
+		}
+
+		if sim.CurrentTime < 0 {
+			sim.advance(0 - sim.CurrentTime)
+		}
+	}
+
+	for _, unit := range sim.Environment.AllUnits {
+		unit.startPull(sim)
+	}
 
 	for {
 		last := len(sim.pendingActions) - 1

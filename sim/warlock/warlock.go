@@ -137,6 +137,20 @@ func (warlock *Warlock) Initialize() {
 	warlock.registerInfernoSpell()
 
 	warlock.defineRotation()
+
+	precastSpell := warlock.ShadowBolt
+	if warlock.Rotation.Type == proto.Warlock_Rotation_Destruction {
+		precastSpell = warlock.SoulFire
+	}
+	precastSpellAt := -precastSpell.DefaultCast.CastTime
+	warlock.RegisterPrepullAction(precastSpellAt, func(sim *core.Simulation) {
+		precastSpell.Cast(sim, warlock.CurrentTarget)
+	})
+	if warlock.GlyphOfLifeTapAura != nil || warlock.SpiritsoftheDamnedAura != nil {
+		warlock.RegisterPrepullAction(precastSpellAt-core.GCDDefault, func(sim *core.Simulation) {
+			warlock.LifeTap.Cast(sim, nil)
+		})
+	}
 }
 
 func (warlock *Warlock) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
@@ -149,28 +163,6 @@ func (warlock *Warlock) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 		warlock.Options.Summon == proto.Warlock_Options_Felhunter,
 		warlock.Talents.ImprovedFelhunter == 2,
 	))
-}
-
-func (warlock *Warlock) Prepull(sim *core.Simulation) {
-	spellChoice := warlock.ShadowBolt
-	if warlock.Rotation.Type == proto.Warlock_Rotation_Destruction {
-		spellChoice = warlock.SoulFire
-	}
-
-	delay := (warlock.ApplyCastSpeed(core.GCDDefault) + warlock.ApplyCastSpeed(spellChoice.DefaultCast.CastTime))
-	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap) {
-		warlock.GlyphOfLifeTapAura.Activate(sim)
-		warlock.GlyphOfLifeTapAura.UpdateExpires(warlock.GlyphOfLifeTapAura.Duration - delay)
-	}
-
-	if warlock.SpiritsoftheDamnedAura != nil {
-		warlock.SpiritsoftheDamnedAura.Activate(sim)
-		warlock.SpiritsoftheDamnedAura.UpdateExpires(warlock.SpiritsoftheDamnedAura.Duration - delay)
-	}
-
-	warlock.SpendMana(sim, spellChoice.DefaultCast.Cost, spellChoice.Cost.(*core.ManaCost).ResourceMetrics)
-	spellChoice.CD.UsePrePull(sim, warlock.ApplyCastSpeed(spellChoice.DefaultCast.CastTime))
-	spellChoice.SkipCastAndApplyEffects(sim, warlock.CurrentTarget)
 }
 
 func (warlock *Warlock) Reset(sim *core.Simulation) {

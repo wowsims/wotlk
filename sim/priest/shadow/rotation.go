@@ -171,18 +171,6 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 		numVTbeforeBL = 0
 	}
 
-	// Decide if precast MB or VT is more dps
-	if sim.CurrentTime == 0 && spriest.rotation.PrecastVt && spriest.CurrentMana() == spriest.MaxMana() {
-		if timeUntilBLStarts >= gcd.Seconds() && numVTbeforeBL < 1 && sim.CurrentTime.Seconds() < float64(spriest.BLUsedAt) {
-			spriest.SpendMana(sim, spriest.MindBlast.DefaultCast.Cost, spriest.MindBlast.ResourceMetrics)
-			spriest.MindBlast.SkipCastAndApplyEffects(sim, spriest.CurrentTarget)
-			spriest.MindBlast.CD.UsePrePull(sim, sim.CurrentTime)
-		} else {
-			spriest.SpendMana(sim, spriest.VampiricTouch.DefaultCast.Cost, spriest.VampiricTouch.Cost.(*core.ManaCost).ResourceMetrics)
-			spriest.VampiricTouch.SkipCastAndApplyEffects(sim, spriest.CurrentTarget)
-		}
-	}
-
 	swStacks = float64(spriest.ShadowWeavingAura.GetStacks())
 
 	// Reduce number of DP/VT ticks based on remaining duration
