@@ -386,8 +386,13 @@ func (aa *AutoAttacks) reset(sim *Simulation) {
 
 	aa.autoSwingAction = nil
 	aa.autoSwingCancelled = false
-	aa.resetAutoSwing(sim)
+}
 
+func (aa *AutoAttacks) startPull(sim *Simulation) {
+	if !aa.IsEnabled() {
+		return
+	}
+	aa.resetAutoSwing(sim)
 }
 
 func (aa *AutoAttacks) resetAutoSwing(sim *Simulation) {

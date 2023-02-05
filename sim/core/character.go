@@ -430,10 +430,6 @@ func (character *Character) reset(sim *Simulation, agent Agent) {
 	character.ItemSwap.reset(sim)
 	character.CurrentTarget = character.defaultTarget
 
-	if character.Type == PlayerUnit {
-		character.SetGCDTimer(sim, 0)
-	}
-
 	agent.Reset(sim)
 
 	for _, petAgent := range character.Pets {

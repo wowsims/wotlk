@@ -426,6 +426,14 @@ func (unit *Unit) reset(sim *Simulation, agent Agent) {
 	unit.AutoAttacks.reset(sim)
 }
 
+func (unit *Unit) startPull(sim *Simulation) {
+	unit.AutoAttacks.startPull(sim)
+
+	if unit.Type == PlayerUnit {
+		unit.SetGCDTimer(sim, 0)
+	}
+}
+
 // Advance moves time forward counting down auras, CDs, mana regen, etc
 func (unit *Unit) advance(sim *Simulation, elapsedTime time.Duration) {
 	unit.auraTracker.advance(sim)
