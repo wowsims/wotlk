@@ -28,14 +28,30 @@ func (dk *DpsDeathknight) setupUnholyRotations() {
 		NewAction(dk.getSecondDiseaseAction()).
 		NewAction(dk.getBloodRuneAction(true))
 
-	if dk.Rotation.UseDeathAndDecay || (!dk.Talents.ScourgeStrike && dk.Talents.Annihilation == 0) {
-		if dk.Rotation.DeathAndDecayPrio == proto.Deathknight_Rotation_MaxRuneDowntime {
+	if dk.Talents.ScourgeStrike {
+		if dk.ur.sigil == Sigil_Virulence {
 			dk.RotationSequence.
-				NewAction(dk.RotationActionCallback_DND).
-				NewAction(dk.RotationActionCallback_UnholyDndRotation)
-		} else {
-			dk.dndExperimentalOpener()
+				NewAction(dk.RotationActionCallback_SS).
+				NewAction(dk.RotationActionCallback_BS)
+		} else if dk.ur.sigil == Sigil_HangedMan {
+			dk.RotationSequence.
+				NewAction(dk.RotationActionCallback_SS).
+				NewAction(dk.RotationActionCallback_BS).
+				NewAction(dk.RotationActionCallback_ERW).
+				NewAction(dk.RotationActionCallback_SS).
+				NewAction(dk.RotationActionCallback_BS).
+				NewAction(dk.RotationActionCallback_SS).
+				NewAction(dk.RotationActionCallback_BS)
 		}
+	}
+
+	if dk.Rotation.UseDeathAndDecay || (!dk.Talents.ScourgeStrike && dk.Talents.Annihilation == 0) {
+		if !dk.Talents.ScourgeStrike || dk.ur.sigil == Sigil_Other {
+			dk.RotationSequence.
+				NewAction(dk.RotationActionCallback_DND)
+		}
+		dk.RotationSequence.
+			NewAction(dk.RotationActionCallback_UnholyDndRotation)
 	} else {
 		dk.RotationSequence.NewAction(dk.RotationActionCallback_UnholySsRotation)
 	}
@@ -48,25 +64,25 @@ func (dk *DpsDeathknight) setupWeaponSwap() {
 
 	if mh := dk.ItemSwap.GetItem(proto.ItemSlot_ItemSlotMainHand); mh != nil {
 		if mh.Enchant.EffectID == 3790 {
-			dk.ur.mhSwap = BlackMagic
+			dk.ur.mhSwap = WeaponSwap_BlackMagic
 		} else if mh.Enchant.EffectID == 3789 {
-			dk.ur.mhSwap = Berserking
+			dk.ur.mhSwap = WeaponSwap_Berserking
 		} else if mh.Enchant.EffectID == 3368 {
-			dk.ur.mhSwap = FallenCrusader
+			dk.ur.mhSwap = WeaponSwap_FallenCrusader
 		}
 	}
 
 	if oh := dk.ItemSwap.GetItem(proto.ItemSlot_ItemSlotOffHand); oh != nil {
 		if oh.Enchant.EffectID == 3790 {
-			dk.ur.ohSwap = BlackMagic
+			dk.ur.ohSwap = WeaponSwap_BlackMagic
 		} else if oh.Enchant.EffectID == 3789 {
-			dk.ur.ohSwap = Berserking
+			dk.ur.ohSwap = WeaponSwap_Berserking
 		} else if oh.Enchant.EffectID == 3368 {
-			dk.ur.ohSwap = FallenCrusader
+			dk.ur.ohSwap = WeaponSwap_FallenCrusader
 		}
 	}
 
-	if dk.ur.mhSwap != None || dk.ur.ohSwap != None {
+	if dk.ur.mhSwap != WeaponSwap_None || dk.ur.ohSwap != WeaponSwap_None {
 		core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 			Label: "Weapon Swap Check",
 			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
@@ -105,17 +121,25 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 		return sim.CurrentTime
 	}
 
-	// What follows is a simple priority where every cast is checked against current diseases
-	// And if the cast would leave the DK with not enough runes to cast disease before falloff
-	// the cast is canceled and a disease recast is queued. Priority is as follows:
-	// Death and Decay -> Scourge Strike -> Blood Strike (or Pesti/BB on Aoe) -> Death Coil -> Horn of Winter
-	var casted bool
+	cast := false
+	prioSs, prioBs := dk.bonusProcRotationChecks(sim)
+
 	if dk.uhDiseaseCheck(sim, target, dk.DeathAndDecay, true, 1) {
-		if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
+		if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()*2+250*time.Millisecond) {
 			dk.uhAfterGargoyleSequence(sim)
 			return sim.CurrentTime
 		}
-		casted = dk.DeathAndDecay.Cast(sim, target)
+
+		if prioSs {
+			cast = dk.ScourgeStrike.Cast(sim, target)
+			if cast {
+				dk.RotationSequence.Clear().
+					NewAction(dk.RotationActionCallback_BS).
+					NewAction(dk.RotationActionCallback_UnholyDndRotation)
+			}
+		} else {
+			cast = dk.DeathAndDecay.Cast(sim, target)
+		}
 	} else {
 		if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()*2+250*time.Millisecond) {
 			dk.uhAfterGargoyleSequence(sim)
@@ -124,7 +148,8 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 		dk.uhRecastDiseasesSequence(sim)
 		return sim.CurrentTime
 	}
-	if !casted {
+
+	if !cast {
 		if dk.uhDiseaseCheck(sim, target, dk.ScourgeStrike, true, 1) {
 			if !dk.uhShouldWaitForDnD(sim, false, true, true) {
 				if dk.Talents.ScourgeStrike && dk.ScourgeStrike.IsReady(sim) {
@@ -132,7 +157,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 						dk.uhAfterGargoyleSequence(sim)
 						return sim.CurrentTime
 					}
-					casted = dk.ScourgeStrike.Cast(sim, target)
+					cast = dk.ScourgeStrike.Cast(sim, target)
 				} else if dk.IcyTouch.CanCast(sim, nil) && dk.PlagueStrike.CanCast(sim, nil) {
 					if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()*2+50*time.Millisecond) {
 						dk.uhAfterGargoyleSequence(sim)
@@ -146,14 +171,14 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 			dk.uhRecastDiseasesSequence(sim)
 			return sim.CurrentTime
 		}
-		if !casted {
+		if !cast {
 			if dk.shShouldSpreadDisease(sim) {
 				if !dk.uhShouldWaitForDnD(sim, true, false, false) {
 					if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
 						dk.uhAfterGargoyleSequence(sim)
 						return sim.CurrentTime
 					}
-					casted = dk.uhSpreadDiseases(sim, target, s)
+					cast = dk.uhSpreadDiseases(sim, target, s)
 				}
 			} else {
 				if !dk.uhShouldWaitForDnD(sim, true, false, false) {
@@ -161,22 +186,22 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 						dk.uhAfterGargoyleSequence(sim)
 						return sim.CurrentTime
 					}
-					if dk.desolationAuraCheck(sim) {
-						casted = dk.BloodStrike.Cast(sim, target)
+					if dk.desolationAuraCheck(sim) || prioBs {
+						cast = dk.BloodStrike.Cast(sim, target)
 					} else {
-						casted = dk.BloodBoil.Cast(sim, target)
+						cast = dk.BloodBoil.Cast(sim, target)
 					}
 				}
 			}
-			if !casted {
+			if !cast {
 				if dk.uhDeathCoilCheck(sim) {
 					if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
 						dk.uhAfterGargoyleSequence(sim)
 						return sim.CurrentTime
 					}
-					casted = dk.DeathCoil.Cast(sim, target)
+					cast = dk.DeathCoil.Cast(sim, target)
 				}
-				if !casted {
+				if !cast {
 					if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
 						dk.uhAfterGargoyleSequence(sim)
 						return sim.CurrentTime
@@ -222,11 +247,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 		return sim.CurrentTime
 	}
 
-	// What follows is a simple priority where every cast is checked against current diseses
-	// And if the cast would leave the DK with not enough runes to cast disease before falloff
-	// the cast is canceled and a disease recast is queued. Priority is as follows:
-	// Scourge Strike -> Blood Strike (or Pesti/BB on Aoe) -> Death Coil -> Horn of Winter
-	var casted bool
+	casted := false
 	fuStrike := dk.ScourgeStrike
 	if dk.Inputs.FuStrike == deathknight.FuStrike_Obliterate {
 		fuStrike = dk.Obliterate

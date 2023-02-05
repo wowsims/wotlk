@@ -247,6 +247,11 @@ func (dk *DpsDeathknight) setupGargProcTrackers() {
 		}
 	}
 
+	if dk.Talents.ScourgeStrike {
+		snapshotManager.AddProc(47673, "Sigil of Virulence Proc", false)
+	}
+	//snapshotManager.AddProc(67117, "Unholy Might Proc", false)
+
 	snapshotManager.AddProc(42987, "DMC Greatness Strength Proc", false)
 
 	snapshotManager.AddProc(47115, "Deaths Verdict Strength Proc", false)
