@@ -47,6 +47,10 @@ func (ai *DefaultAI) Initialize(target *core.Target) {
 	}
 }
 
+func (ai *DefaultAI) Reset(sim *core.Simulation) {
+
+}
+
 func (ai *DefaultAI) DoAction(sim *core.Simulation) {
 	for _, ability := range ai.Abilities {
 		if sim.CurrentTime < ability.InitialCD {

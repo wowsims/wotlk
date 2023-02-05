@@ -51,6 +51,9 @@ func (ai *KelThuzad25AI) Initialize(target *core.Target) {
 	ai.Target = target
 }
 
+func (ai *KelThuzad25AI) Reset(*core.Simulation) {
+}
+
 func (ai *KelThuzad25AI) DoAction(sim *core.Simulation) {
 	ai.Target.DoNothing()
 }

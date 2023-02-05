@@ -59,6 +59,9 @@ func (ai *Patchwerk10AI) Initialize(target *core.Target) {
 	ai.registerFrenzySpell(target)
 }
 
+func (ai *Patchwerk10AI) Reset(*core.Simulation) {
+}
+
 func (ai *Patchwerk10AI) registerHatefulStrikeSpell(target *core.Target) {
 	actionID := core.ActionID{SpellID: 59192}
 
@@ -119,6 +122,11 @@ func (ai *Patchwerk10AI) registerFrenzySpell(target *core.Target) {
 }
 
 func (ai *Patchwerk10AI) DoAction(sim *core.Simulation) {
+	if ai.Target.CurrentTarget == nil {
+		ai.Target.DoNothing()
+		return
+	}
+
 	if ai.Frenzy.IsReady(sim) && sim.GetRemainingDurationPercent() < 0.05 {
 		ai.Frenzy.Cast(sim, ai.Target.CurrentTarget)
 	}

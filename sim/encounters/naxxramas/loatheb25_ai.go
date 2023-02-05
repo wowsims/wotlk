@@ -51,6 +51,9 @@ func (ai *Loatheb25AI) Initialize(target *core.Target) {
 	ai.Target = target
 }
 
+func (ai *Loatheb25AI) Reset(*core.Simulation) {
+}
+
 func (ai *Loatheb25AI) DoAction(sim *core.Simulation) {
 	ai.Target.DoNothing()
 }
