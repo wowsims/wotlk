@@ -15,13 +15,15 @@ import (
 func ReadAtlasLootData() *WowDatabase {
 	db := NewWowDatabase()
 
-	readAtlasLootSourceData(db, proto.Expansion_ExpansionVanilla, "https://raw.githubusercontent.com/Hoizame/AtlasLootClassic/master/AtlasLootClassic_Data/source.lua")
-	readAtlasLootSourceData(db, proto.Expansion_ExpansionTbc, "https://raw.githubusercontent.com/Hoizame/AtlasLootClassic/master/AtlasLootClassic_Data/source-tbc.lua")
+	// Read these in reverse order, because some items are listed in multiple expansions
+	// and we want to overwrite with the earliest value.
 	readAtlasLootSourceData(db, proto.Expansion_ExpansionWotlk, "https://raw.githubusercontent.com/Hoizame/AtlasLootClassic/master/AtlasLootClassic_Data/source-wrath.lua")
+	readAtlasLootSourceData(db, proto.Expansion_ExpansionTbc, "https://raw.githubusercontent.com/Hoizame/AtlasLootClassic/master/AtlasLootClassic_Data/source-tbc.lua")
+	readAtlasLootSourceData(db, proto.Expansion_ExpansionVanilla, "https://raw.githubusercontent.com/Hoizame/AtlasLootClassic/master/AtlasLootClassic_Data/source.lua")
 
-	readAtlasLootDungeonData(db, "https://raw.githubusercontent.com/Hoizame/AtlasLootClassic/master/AtlasLootClassic_DungeonsAndRaids/data.lua")
-	readAtlasLootDungeonData(db, "https://raw.githubusercontent.com/Hoizame/AtlasLootClassic/master/AtlasLootClassic_DungeonsAndRaids/data-tbc.lua")
-	readAtlasLootDungeonData(db, "https://raw.githubusercontent.com/Hoizame/AtlasLootClassic/master/AtlasLootClassic_DungeonsAndRaids/data-wrath.lua")
+	readAtlasLootDungeonData(db, proto.Expansion_ExpansionVanilla, "https://raw.githubusercontent.com/Hoizame/AtlasLootClassic/master/AtlasLootClassic_DungeonsAndRaids/data.lua")
+	readAtlasLootDungeonData(db, proto.Expansion_ExpansionTbc, "https://raw.githubusercontent.com/Hoizame/AtlasLootClassic/master/AtlasLootClassic_DungeonsAndRaids/data-tbc.lua")
+	readAtlasLootDungeonData(db, proto.Expansion_ExpansionWotlk, "https://raw.githubusercontent.com/Hoizame/AtlasLootClassic/master/AtlasLootClassic_DungeonsAndRaids/data-wrath.lua")
 
 	readZoneData(db)
 
@@ -69,7 +71,7 @@ func readAtlasLootSourceData(db *WowDatabase, expansion proto.Expansion, srcUrl 
 	}
 }
 
-func readAtlasLootDungeonData(db *WowDatabase, srcUrl string) {
+func readAtlasLootDungeonData(db *WowDatabase, expansion proto.Expansion, srcUrl string) {
 	srcTxt, err := tools.ReadWeb(srcUrl)
 	if err != nil {
 		log.Fatalf("Error reading atlasloot file %s", err)
@@ -82,11 +84,13 @@ func readAtlasLootDungeonData(db *WowDatabase, srcUrl string) {
 	npcNameAndIDPattern := regexp.MustCompile(`^[^@]*?AL\["(.*?)"\]\)?,(.*?(@@@\s*npcID = {?(\d+),))?`)
 	diffItemsPattern := regexp.MustCompile(`\[([A-Z0-9]+_DIFF)\] = {.*?@@@\s*},?@@@`)
 	itemsPattern := regexp.MustCompile(`@@@\s+{(.*?)},`)
+	itemParamPattern := regexp.MustCompile(`AL\["(.*?)"\]`)
 	for _, dungeonMatch := range dungeonPattern.FindAllStringSubmatch(srcTxt, -1) {
 		fmt.Printf("Zone: %s\n", dungeonMatch[1])
 		zoneID, _ := strconv.Atoi(dungeonMatch[2])
 		db.MergeZone(&proto.UIZone{
-			Id: int32(zoneID),
+			Id:        int32(zoneID),
+			Expansion: expansion,
 		})
 
 		npcSplits := strings.Split(dungeonMatch[3], "name = ")[1:]
@@ -101,11 +105,15 @@ func readAtlasLootDungeonData(db *WowDatabase, srcUrl string) {
 			if len(npcMatch) > 3 {
 				npcID, _ = strconv.Atoi(npcMatch[4])
 			}
+			if npcName == "Onyxia" { // AtlasLoot uses 15956 for some reason, which is the ID for Anub'Rekan.
+				npcID = 10184
+			}
 			fmt.Printf("NPC: %s/%d\n", npcName, npcID)
 			if npcID != 0 {
 				db.MergeNpc(&proto.UINPC{
-					Id:   int32(npcID),
-					Name: npcName,
+					Id:     int32(npcID),
+					ZoneId: int32(zoneID),
+					Name:   npcName,
 				})
 			}
 
@@ -114,22 +122,49 @@ func readAtlasLootDungeonData(db *WowDatabase, srcUrl string) {
 				if !ok {
 					log.Fatalf("Invalid difficulty: %s", difficultyMatch[1])
 				}
+
+				curCategory := ""
+				curLocation := 0
+
 				for _, itemMatch := range itemsPattern.FindAllStringSubmatch(difficultyMatch[0], -1) {
 					itemParams := core.MapSlice(strings.Split(itemMatch[1], ","), func(s string) string { return strings.TrimSpace(s) })
+					location, _ := strconv.Atoi(itemParams[0]) // Location within AtlasLoot's menu.
 
 					idStr := itemParams[1]
-					if idStr[0] == 'n' { // nil
-					} else if idStr[0] == '"' { // "xxx"
+					if idStr[0] == 'n' || idStr[0] == '"' { // nil or "xxx"
+						if len(itemParams) > 3 {
+							if paramMatch := itemParamPattern.FindStringSubmatch(itemParams[3]); paramMatch != nil {
+								curCategory = paramMatch[1]
+								curLocation = location
+							}
+						}
+						if len(itemParams) > 4 {
+							if paramMatch := itemParamPattern.FindStringSubmatch(itemParams[4]); paramMatch != nil {
+								curCategory = paramMatch[1]
+								curLocation = location
+							}
+						}
 					} else { // item ID
 						itemID, _ := strconv.Atoi(idStr)
 						//fmt.Printf("Item: %d\n", itemID)
+						dropSource := &proto.DropSource{
+							Difficulty: difficulty,
+							ZoneId:     int32(zoneID),
+						}
+						if npcID == 0 {
+							dropSource.OtherName = npcName
+						} else {
+							dropSource.NpcId = int32(npcID)
+						}
+
+						if curCategory != "" && location == curLocation+1 {
+							curLocation = location
+							dropSource.Category = curCategory
+						}
+
 						item := &proto.UIItem{Id: int32(itemID), Sources: []*proto.UIItemSource{&proto.UIItemSource{
 							Source: &proto.UIItemSource_Drop{
-								Drop: &proto.DropSource{
-									Difficulty: difficulty,
-									NpcId:      int32(npcID),
-									ZoneId:     int32(zoneID),
-								},
+								Drop: dropSource,
 							},
 						}}}
 						db.MergeItem(item)

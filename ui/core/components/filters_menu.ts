@@ -3,8 +3,14 @@ import {
 	ItemSlot,
 } from '../proto/common.js';
 import {
+	RaidFilterOption,
+	SourceFilterOption,
+} from '../proto/ui.js';
+import {
 	armorTypeNames,
+	raidNames,
 	rangedWeaponTypeNames,
+	sourceNames,
 	weaponTypeNames,
 } from '../proto_utils/names.js';
 import {
@@ -26,6 +32,48 @@ import { Input } from './input.js';
 export class FiltersMenu extends BaseModal {
 	constructor(rootElem: HTMLElement, player: Player<any>, slot: ItemSlot) {
 		super(rootElem, 'filters-menu', {size: 'md', title: 'Filters'});
+
+		let section = this.newSection('Source');
+		section.classList.add('filters-menu-section-bool-list');
+		const sources = Sim.ALL_SOURCES.filter(s => s != SourceFilterOption.SourceUnknown);
+		sources.forEach(source => {
+			new BooleanPicker<Sim>(section, player.sim, {
+				label: sourceNames[source],
+				inline: true,
+				changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
+				getValue: (sim: Sim) => sim.getFilters().sources.includes(source),
+				setValue: (eventID: EventID, sim: Sim, newValue: boolean) => {
+					const filters = sim.getFilters();
+					if (newValue) {
+						filters.sources.push(source);
+					} else {
+						filters.sources = filters.sources.filter(v => v != source);
+					}
+					sim.setFilters(eventID, filters);
+				},
+			});
+		});
+
+		section = this.newSection('Raids');
+		section.classList.add('filters-menu-section-bool-list');
+		const raids = Sim.ALL_RAIDS.filter(s => s != RaidFilterOption.RaidUnknown);
+		raids.forEach(raid => {
+			new BooleanPicker<Sim>(section, player.sim, {
+				label: raidNames[raid],
+				inline: true,
+				changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
+				getValue: (sim: Sim) => sim.getFilters().raids.includes(raid),
+				setValue: (eventID: EventID, sim: Sim, newValue: boolean) => {
+					const filters = sim.getFilters();
+					if (newValue) {
+						filters.raids.push(raid);
+					} else {
+						filters.raids = filters.raids.filter(v => v != raid);
+					}
+					sim.setFilters(eventID, filters);
+				},
+			});
+		});
 
 		if (Player.ARMOR_SLOTS.includes(slot)) {
 			const maxArmorType = classToMaxArmorType[player.getClass()];
@@ -201,13 +249,5 @@ export class FiltersMenu extends BaseModal {
 			<div class="menu-section-content"></div>
 		`;
 		return section.getElementsByClassName('menu-section-content')[0] as HTMLElement;
-	}
-
-	static anyFiltersForSlot(slot: ItemSlot) {
-		return [
-			Player.ARMOR_SLOTS,
-			Player.WEAPON_SLOTS,
-			ItemSlot.ItemSlotRanged,
-		].flat().includes(slot);
 	}
 }

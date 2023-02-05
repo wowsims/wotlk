@@ -22,6 +22,10 @@ import {
 	WeaponType,
 } from './proto/common.js';
 import {
+	DungeonDifficulty,
+	Expansion,
+	RaidFilterOption,
+	SourceFilterOption,
 	UIEnchant as Enchant,
 	UIGem as Gem,
 	UIItem as Item,
@@ -42,6 +46,7 @@ import {
 import { Stats } from './proto_utils/stats.js';
 
 import {
+	AL_CATEGORY_HARD_MODE,
 	ClassSpecs,
 	SpecRotation,
 	SpecTalents,
@@ -726,13 +731,80 @@ export class Player<SpecType extends Spec> {
 		ItemSlot.ItemSlotOffHand,
 	];
 
+	static readonly DIFFICULTY_SRCS: Partial<Record<SourceFilterOption, DungeonDifficulty>> = {
+		[SourceFilterOption.SourceDungeon ]: DungeonDifficulty.DifficultyNormal,
+		[SourceFilterOption.SourceDungeonH]: DungeonDifficulty.DifficultyHeroic,
+		[SourceFilterOption.SourceRaid10  ]: DungeonDifficulty.DifficultyRaid10,
+		[SourceFilterOption.SourceRaid10H ]: DungeonDifficulty.DifficultyRaid10H,
+		[SourceFilterOption.SourceRaid25  ]: DungeonDifficulty.DifficultyRaid25,
+		[SourceFilterOption.SourceRaid25H ]: DungeonDifficulty.DifficultyRaid25H,
+	};
+
+	static readonly HEROIC_TO_NORMAL: Partial<Record<DungeonDifficulty, DungeonDifficulty>> = {
+		[DungeonDifficulty.DifficultyHeroic]: DungeonDifficulty.DifficultyNormal,
+		[DungeonDifficulty.DifficultyRaid10H]: DungeonDifficulty.DifficultyRaid10,
+		[DungeonDifficulty.DifficultyRaid25H]: DungeonDifficulty.DifficultyRaid25,
+	};
+
+	static readonly RAID_IDS: Partial<Record<RaidFilterOption, number>> = {
+		[RaidFilterOption.RaidNaxxramas]: 3456,
+		[RaidFilterOption.RaidEyeOfEternity]: 4500,
+		[RaidFilterOption.RaidObsidianSanctum]: 4493,
+		[RaidFilterOption.RaidVaultOfArchavon]: 4603,
+		[RaidFilterOption.RaidUlduar]: 4273,
+		[RaidFilterOption.RaidTrialOfTheCrusader]: 4722,
+		[RaidFilterOption.RaidOnyxiasLair]: 2159,
+		[RaidFilterOption.RaidIcecrownCitadel]: 4812,
+		[RaidFilterOption.RaidRubySanctum]: 4987,
+	};
+
 	filterItemData<T>(itemData: Array<T>, getItemFunc: (val: T) => Item, slot: ItemSlot): Array<T> {
 		const filters = this.sim.getFilters();
 
-		if (Player.ARMOR_SLOTS.includes(slot)) {
-			return itemData.filter(itemElem => {
-				const item = getItemFunc(itemElem);
+		const filterItems = (itemData: Array<T>, filterFunc: (item: Item) => boolean) => {
+			return itemData.filter(itemElem => filterFunc(getItemFunc(itemElem)));
+		};
 
+		if (!filters.sources.includes(SourceFilterOption.SourceCrafting)) {
+			itemData = filterItems(itemData, item => !item.sources.some(itemSrc => itemSrc.source.oneofKind == 'crafted'));
+		}
+		if (!filters.sources.includes(SourceFilterOption.SourceQuest)) {
+			itemData = filterItems(itemData, item => !item.sources.some(itemSrc => itemSrc.source.oneofKind == 'quest'));
+		}
+
+		for (const [srcOptionStr, difficulty] of Object.entries(Player.DIFFICULTY_SRCS)) {
+			const srcOption = parseInt(srcOptionStr) as SourceFilterOption;
+			if (!filters.sources.includes(srcOption)) {
+				itemData = filterItems(itemData, item =>
+						!item.sources.some(itemSrc =>
+								itemSrc.source.oneofKind == 'drop' && itemSrc.source.drop.difficulty == difficulty));
+
+				if (difficulty == DungeonDifficulty.DifficultyRaid10H || difficulty == DungeonDifficulty.DifficultyRaid25H) {
+					const normalDifficulty = Player.HEROIC_TO_NORMAL[difficulty];
+					itemData = filterItems(itemData, item =>
+							!item.sources.some(itemSrc =>
+									itemSrc.source.oneofKind == 'drop' && itemSrc.source.drop.difficulty == normalDifficulty && itemSrc.source.drop.category == AL_CATEGORY_HARD_MODE));
+				}
+			}
+		}
+
+		if (!filters.raids.includes(RaidFilterOption.RaidVanilla)) {
+			itemData = filterItems(itemData, item => item.expansion != Expansion.ExpansionVanilla);
+		}
+		if (!filters.raids.includes(RaidFilterOption.RaidTbc)) {
+			itemData = filterItems(itemData, item => item.expansion != Expansion.ExpansionTbc);
+		}
+		for (const [raidOptionStr, zoneId] of Object.entries(Player.RAID_IDS)) {
+			const raidOption = parseInt(raidOptionStr) as RaidFilterOption;
+			if (!filters.raids.includes(raidOption)) {
+				itemData = filterItems(itemData, item =>
+						!item.sources.some(itemSrc =>
+								itemSrc.source.oneofKind == 'drop' && itemSrc.source.drop.zoneId == zoneId));
+			}
+		}
+
+		if (Player.ARMOR_SLOTS.includes(slot)) {
+			itemData = filterItems(itemData, item => {
 				if (!filters.armorTypes.includes(item.armorType)) {
 					return false;
 				}
@@ -740,9 +812,7 @@ export class Player<SpecType extends Spec> {
 				return true;
 			});
 		} else if (Player.WEAPON_SLOTS.includes(slot)) {
-			return itemData.filter(itemElem => {
-				const item = getItemFunc(itemElem);
-
+			itemData = filterItems(itemData, item => {
 				if (!filters.weaponTypes.includes(item.weaponType)) {
 					return false;
 				}
@@ -765,9 +835,7 @@ export class Player<SpecType extends Spec> {
 				return true;
 			});
 		} else if (slot == ItemSlot.ItemSlotRanged) {
-			return itemData.filter(itemElem => {
-				const item = getItemFunc(itemElem);
-
+			itemData = filterItems(itemData, item => {
 				if (!filters.rangedWeaponTypes.includes(item.rangedWeaponType)) {
 					return false;
 				}
@@ -783,9 +851,8 @@ export class Player<SpecType extends Spec> {
 
 				return true;
 			});
-		} else {
-			return itemData;
 		}
+		return itemData;
 	}
 
 	filterEnchantData<T>(enchantData: Array<T>, getEnchantFunc: (val: T) => Enchant, slot: ItemSlot, currentEquippedItem: EquippedItem|null): Array<T> {

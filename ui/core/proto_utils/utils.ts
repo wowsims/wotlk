@@ -1951,3 +1951,6 @@ export const orderedResourceTypes: Array<ResourceType> = [
 	ResourceType.ResourceTypeUnholyRune,
 	ResourceType.ResourceTypeDeathRune,
 ];
+
+export const AL_CATEGORY_HARD_MODE = 'Hard Mode';
+export const AL_CATEGORY_TITAN_RUNE = 'Titan Rune';

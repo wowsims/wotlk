@@ -1,4 +1,4 @@
-import { getLanguageCode } from '../constants/lang.js';
+import { getWowheadLanguagePrefix } from '../constants/lang.js';
 import { ActionID as ActionIdProto } from '../proto/common.js';
 import { ResourceType } from '../proto/api.js';
 import { OtherAction } from '../proto/common.js';
@@ -133,8 +133,7 @@ export class ActionId {
 	}
 
 	static makeItemUrl(id: number): string {
-		const lang = getLanguageCode();
-		const langPrefix = lang ? lang + '/' : '';
+		const langPrefix = getWowheadLanguagePrefix();
 		if (USE_WOTLK_DB) {
 			return 'https://wotlkdb.com/?item=' + id;
 		} else {
@@ -142,12 +141,35 @@ export class ActionId {
 		}
 	}
 	static makeSpellUrl(id: number): string {
-		const lang = getLanguageCode();
-		const langPrefix = lang ? lang + '/' : '';
+		const langPrefix = getWowheadLanguagePrefix();
 		if (USE_WOTLK_DB) {
 			return 'https://wotlkdb.com/?spell=' + id;
 		} else {
 			return `https://wowhead.com/wotlk/${langPrefix}spell=${id}`;
+		}
+	}
+	static makeQuestUrl(id: number): string {
+		const langPrefix = getWowheadLanguagePrefix();
+		if (USE_WOTLK_DB) {
+			return 'https://wotlkdb.com/?quest=' + id;
+		} else {
+			return `https://wowhead.com/wotlk/${langPrefix}quest=${id}`;
+		}
+	}
+	static makeNpcUrl(id: number): string {
+		const langPrefix = getWowheadLanguagePrefix();
+		if (USE_WOTLK_DB) {
+			return 'https://wotlkdb.com/?npc=' + id;
+		} else {
+			return `https://wowhead.com/wotlk/${langPrefix}npc=${id}`;
+		}
+	}
+	static makeZoneUrl(id: number): string {
+		const langPrefix = getWowheadLanguagePrefix();
+		if (USE_WOTLK_DB) {
+			return 'https://wotlkdb.com/?zone=' + id;
+		} else {
+			return `https://wowhead.com/wotlk/${langPrefix}zone=${id}`;
 		}
 	}
 

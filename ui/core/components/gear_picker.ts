@@ -1,3 +1,4 @@
+import { difficultyNames, professionNames, slotNames } from '../proto_utils/names.js';
 import { BaseModal } from './base_modal';
 import { Component } from './component';
 import { FiltersMenu } from './filters_menu';
@@ -11,6 +12,7 @@ import {
 
 import { setItemQualityCssClass } from '../css_utils';
 import { Player } from '../player';
+import { Sim } from '../sim.js';
 import { SimUI } from '../sim_ui';
 import { EventID, TypedEvent } from '../typed_event';
 import { formatDeltaTextElem } from '../utils';
@@ -20,7 +22,6 @@ import { getEnchantDescription, getUniqueEnchantString } from '../proto_utils/en
 import { EquippedItem } from '../proto_utils/equipped_item';
 import { ItemSwapGear } from '../proto_utils/gear'
 import { getEmptyGemSocketIconUrl, gemMatchesSocket } from '../proto_utils/gems';
-import { slotNames } from '../proto_utils/names';
 import { Stats } from '../proto_utils/stats';
 
 import {
@@ -731,11 +732,7 @@ class SelectorModal extends BaseModal {
 
 		if (label == 'Items') {
 			const filtersButton = tabContent.getElementsByClassName('selector-modal-filters-button')[0] as HTMLElement;
-			if (FiltersMenu.anyFiltersForSlot(slot)) {
-				filtersButton.addEventListener('click', () => new FiltersMenu(this.body, this.player, slot));
-			} else {
-				filtersButton.style.display = 'none';
-			}
+			filtersButton.addEventListener('click', () => new FiltersMenu(this.body, this.player, slot));
 		}
 
 		const listElem = tabContent.getElementsByClassName('selector-modal-list')[0] as HTMLElement;
@@ -756,6 +753,8 @@ class SelectorModal extends BaseModal {
 				<div class="selector-modal-list-label-cell">
 					<a class="selector-modal-list-item-icon"></a>
 					<a class="selector-modal-list-item-name">${itemData.heroic ? itemData.name + "<span style=\"color:green\">[H]</span>" : itemData.name}</a>
+				</div>
+				<div class="selector-modal-list-item-source-container">
 				</div>
 				<div>
 					<span class="selector-modal-list-item-favorite fa-star"></span>
@@ -782,6 +781,13 @@ class SelectorModal extends BaseModal {
 			});
 
 			setItemQualityCssClass(nameElem, itemData.quality);
+
+			const sourceElem = listItemElem.getElementsByClassName('selector-modal-list-item-source-container')[0] as HTMLDivElement;
+			if (label == 'Items') {
+				this.fillSourceInfo(item as unknown as Item, sourceElem, this.player.sim);
+			} else {
+				sourceElem.remove();
+			}
 
 			const onclick = (event: Event) => {
 				event.preventDefault();
@@ -1018,6 +1024,60 @@ class SelectorModal extends BaseModal {
 		});
 
 		applyFilters();
+	}
+
+	private fillSourceInfo(item: Item, container: HTMLDivElement, sim: Sim) {
+		if (!item.sources || item.sources.length == 0) {
+			return;
+		}
+
+		const source = item.sources[0];
+		if (source.source.oneofKind == 'crafted') {
+			const src = source.source.crafted;
+			container.innerHTML = `
+				<a href="${ActionId.makeSpellUrl(src.spellId)}">${professionNames[src.profession]}</a>
+			`;
+		} else if (source.source.oneofKind == 'drop') {
+			const src = source.source.drop;
+			const zone = sim.db.getZone(src.zoneId);
+			const npc = sim.db.getNpc(src.npcId);
+			if (!zone) {
+				throw new Error('No zone found for item: ' + item);
+			}
+
+			let innerHTML = `
+				<a href="${ActionId.makeZoneUrl(zone.id)}">${zone.name} (${difficultyNames[src.difficulty]})</a>
+			`;
+
+			const category = src.category ? ` - ${src.category}` : '';
+			if (npc) {
+				innerHTML += `
+					<br>
+					<a href="${ActionId.makeNpcUrl(npc.id)}">${npc.name + category}</a>
+				`;
+			} else if (src.otherName) {
+				innerHTML += `
+					<br>
+					<a href="${ActionId.makeZoneUrl(zone.id)}>${src.otherName + category}</a>
+				`;
+			} else if (category) {
+				innerHTML += `
+					<br>
+					<a href="${ActionId.makeZoneUrl(zone.id)}>${category}</a>
+				`;
+			}
+			container.innerHTML = innerHTML;
+		} else if (source.source.oneofKind == 'quest') {
+			const src = source.source.quest;
+			container.innerHTML = `
+				<a href="${ActionId.makeQuestUrl(src.id)}">${src.name}</a>
+			`;
+		} else if (source.source.oneofKind == 'soldBy') {
+			const src = source.source.soldBy;
+			container.innerHTML = `
+				<a href="${ActionId.makeNpcUrl(src.npcId)}">${src.npcName}</a>
+			`;
+		}
 	}
 
 	private removeTabs(labelSubstring: string) {
