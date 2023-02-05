@@ -57,6 +57,9 @@ type Unit struct {
 	// construction phase.
 	Env *Environment
 
+	// Whether this unit is able to perform actions.
+	enabled bool
+
 	// Stats this Unit will have at the very start of each Sim iteration.
 	// Includes all equipment / buffs / permanent effects but not temporary
 	// effects from items / abilities.
@@ -139,6 +142,14 @@ type Unit struct {
 
 	CurrentTarget *Unit
 	defaultTarget *Unit
+}
+
+// Units can be disabled for several reasons:
+//  1. Downtime for temporary pets (e.g. Water Elemental)
+//  2. Enemy units in various phases (not yet implemented)
+//  3. Dead units (not yet implemented)
+func (unit *Unit) IsEnabled() bool {
+	return unit.enabled
 }
 
 // DoNothing will explicitly declare that the character is intentionally doing nothing.
@@ -425,6 +436,9 @@ func (unit *Unit) init(sim *Simulation) {
 }
 
 func (unit *Unit) reset(sim *Simulation, agent Agent) {
+	unit.enabled = true
+	unit.resetCDs(sim)
+	unit.Hardcast.Expires = startingCDTime
 	unit.Metrics.reset()
 	unit.ResetStatDeps()
 	unit.statsWithoutDeps = unit.initialStatsWithoutDeps
@@ -447,12 +461,20 @@ func (unit *Unit) reset(sim *Simulation, agent Agent) {
 	unit.AutoAttacks.reset(sim)
 }
 
+func (unit *Unit) startPull(sim *Simulation) {
+	unit.AutoAttacks.startPull(sim)
+
+	if unit.Type == PlayerUnit {
+		unit.SetGCDTimer(sim, MaxDuration(0, unit.GCD.ReadyAt()))
+	}
+}
+
 // Advance moves time forward counting down auras, CDs, mana regen, etc
 func (unit *Unit) advance(sim *Simulation, elapsedTime time.Duration) {
 	unit.auraTracker.advance(sim)
 
-	if hc := &unit.Hardcast; hc.Expires != 0 && hc.Expires <= sim.CurrentTime {
-		hc.Expires = 0
+	if hc := &unit.Hardcast; hc.Expires != startingCDTime && hc.Expires <= sim.CurrentTime {
+		hc.Expires = startingCDTime
 		if hc.OnComplete != nil {
 			hc.OnComplete(sim, hc.Target)
 		}
@@ -470,7 +492,6 @@ func (unit *Unit) doneIteration(sim *Simulation) {
 	for _, spell := range unit.Spellbook {
 		spell.doneIteration()
 	}
-	unit.resetCDs(sim)
 }
 
 func (unit *Unit) GetSpellsMatchingSchool(school SpellSchool) []*Spell {

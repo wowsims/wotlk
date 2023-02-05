@@ -2,7 +2,6 @@ package warlock
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -10,7 +9,6 @@ func (warlock *Warlock) registerLifeTapSpell() {
 	actionID := core.ActionID{SpellID: 57946}
 	baseRestore := 2000.0 * (1.0 + 0.1*float64(warlock.Talents.ImprovedLifeTap))
 	manaMetrics := warlock.NewManaMetrics(actionID)
-	hasGlyph := warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap)
 
 	petRestore := core.TernaryFloat64(warlock.Talents.ManaFeed, 1, 0)
 	var petManaMetrics []*core.ResourceMetrics
@@ -43,7 +41,7 @@ func (warlock *Warlock) registerLifeTapSpell() {
 					pet.GetPet().AddMana(sim, restore*petRestore, petManaMetrics[i], true)
 				}
 			}
-			if hasGlyph {
+			if warlock.GlyphOfLifeTapAura != nil {
 				warlock.GlyphOfLifeTapAura.Activate(sim)
 			}
 		},

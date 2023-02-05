@@ -413,14 +413,6 @@ func (raid *Raid) GetPlayerFromUnitIndex(unitIndex int32) Agent {
 	return nil
 }
 
-func (raid *Raid) Prepull(sim *Simulation) {
-	for _, party := range raid.Parties {
-		for _, agent := range party.Players {
-			agent.Prepull(sim)
-		}
-	}
-}
-
 func (raid *Raid) reset(sim *Simulation) {
 	raid.resetReplenishment(sim)
 	for _, party := range raid.Parties {

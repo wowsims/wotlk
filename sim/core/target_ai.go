@@ -67,7 +67,6 @@ func (target *Target) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {}
 func (target *Target) ApplyTalents()                              {}
 func (target *Target) GetCharacter() *Character                   { return nil }
 func (target *Target) Initialize()                                {}
-func (target *Target) Prepull(sim *Simulation)                    {}
 
 func (target *Target) DoNothing() {
 	target.doNothing = true

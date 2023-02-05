@@ -35,6 +35,9 @@ func (warrior *Warrior) RegisterShieldBlockCD() {
 				Duration: time.Second*60 - time.Second*10*time.Duration(warrior.Talents.ShieldMastery),
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return warrior.PseudoStats.CanBlock && warrior.StanceMatches(DefensiveStance)
+		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			warrior.ShieldBlockAura.Activate(sim)
@@ -44,8 +47,5 @@ func (warrior *Warrior) RegisterShieldBlockCD() {
 	warrior.AddMajorCooldown(core.MajorCooldown{
 		Spell: warrior.ShieldBlock,
 		Type:  core.CooldownTypeDPS,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return warrior.PseudoStats.CanBlock && warrior.StanceMatches(DefensiveStance)
-		},
 	})
 }

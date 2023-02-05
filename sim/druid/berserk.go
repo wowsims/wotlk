@@ -41,12 +41,6 @@ func (druid *Druid) registerBerserkCD() {
 				spell.CostMultiplier += 0.5
 			}
 		},
-		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-			if druid.PrePopBerserk {
-				aura.Activate(sim)
-				aura.UpdateExpires(aura.Duration - time.Second)
-			}
-		},
 	})
 
 	druid.Berserk = druid.RegisterSpell(core.SpellConfig{
@@ -57,7 +51,7 @@ func (druid *Druid) registerBerserkCD() {
 			},
 			CD: core.Cooldown{
 				Timer:    druid.NewTimer(),
-				Duration: time.Second * 180.0,
+				Duration: time.Minute * 3,
 			},
 			IgnoreHaste: true,
 		},
@@ -65,5 +59,4 @@ func (druid *Druid) registerBerserkCD() {
 			druid.BerserkAura.Activate(sim)
 		},
 	})
-
 }
