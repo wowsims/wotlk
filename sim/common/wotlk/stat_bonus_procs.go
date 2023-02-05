@@ -308,7 +308,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Blood of the Old God",
 		ID:         45522,
-		Bonus:      stats.Stats{stats.AttackPower: 1284, stats.RangedAttackPower: 1284},
+		Bonus:      stats.Stats{stats.AttackPower: 1358, stats.RangedAttackPower: 1358},
 		Duration:   time.Second * 10,
 		Callback:   core.CallbackOnSpellHitDealt,
 		ProcMask:   core.ProcMaskMeleeOrRanged,
