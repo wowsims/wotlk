@@ -40,6 +40,18 @@ func (shaman *Shaman) registerBloodlustCD() {
 				Duration: core.BloodlustCD,
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			// Need to check if any raid member has lust, not just self, because of
+			// major CD ordering issues with the shared bloodlust.
+			for _, party := range shaman.Env.Raid.Parties {
+				for _, partyMember := range party.Players {
+					if partyMember.GetCharacter().HasActiveAuraWithTag(core.BloodlustAuraTag) {
+						return false
+					}
+				}
+			}
+			return true
+		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			for _, blAura := range blAuras {
@@ -52,21 +64,5 @@ func (shaman *Shaman) registerBloodlustCD() {
 		Spell:    bloodlustSpell,
 		Priority: core.CooldownPriorityBloodlust,
 		Type:     core.CooldownTypeDPS,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			if character.CurrentMana() < bloodlustSpell.DefaultCast.Cost {
-				return false
-			}
-
-			// Need to check if any raid member has lust, not just self, because of
-			// major CD ordering issues with the shared bloodlust.
-			for _, party := range character.Env.Raid.Parties {
-				for _, partyMember := range party.Players {
-					if partyMember.GetCharacter().HasActiveAuraWithTag(core.BloodlustAuraTag) {
-						return false
-					}
-				}
-			}
-			return true
-		},
 	})
 }

@@ -37,6 +37,9 @@ func (mage *Mage) registerSummonWaterElementalCD() {
 					core.TernaryDuration(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfWaterElemental), time.Second*30, 0),
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return !mage.waterElemental.IsEnabled()
+		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			mage.waterElemental.EnableWithTimeout(sim, mage.waterElemental, summonDuration)
@@ -47,15 +50,6 @@ func (mage *Mage) registerSummonWaterElementalCD() {
 		Spell:    mage.SummonWaterElemental,
 		Priority: core.CooldownPriorityDrums + 1, // Always prefer to cast before drums or lust so the ele gets their benefits.
 		Type:     core.CooldownTypeDPS,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			if mage.waterElemental.IsEnabled() {
-				return false
-			}
-			if character.CurrentMana() < mage.SummonWaterElemental.DefaultCast.Cost {
-				return false
-			}
-			return true
-		},
 	})
 }
 

@@ -11,8 +11,6 @@ import (
 // The numbers in this file are VERY rough approximations based on logs.
 
 func (mage *Mage) registerMirrorImageCD() {
-	summonDuration := time.Second * 30
-
 	var t10Aura *core.Aura
 	if mage.HasSetBonus(ItemSetBloodmagesRegalia, 4) {
 		t10Aura = mage.RegisterAura(core.Aura{
@@ -42,16 +40,10 @@ func (mage *Mage) registerMirrorImageCD() {
 				Timer:    mage.NewTimer(),
 				Duration: time.Minute * 3,
 			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				if sim.CurrentTime == 0 {
-					// Assume this is a pre-cast, so disable the GCD.
-					cast.GCD = 0
-				}
-			},
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			mage.mirrorImage.EnableWithTimeout(sim, mage.mirrorImage, summonDuration)
+			mage.mirrorImage.EnableWithTimeout(sim, mage.mirrorImage, time.Second*30)
 			if t10Aura != nil {
 				t10Aura.Activate(sim)
 			}
@@ -62,9 +54,6 @@ func (mage *Mage) registerMirrorImageCD() {
 		Spell:    mage.MirrorImage,
 		Priority: core.CooldownPriorityDrums + 1, // Always prefer to cast before drums or lust so the ele gets their benefits.
 		Type:     core.CooldownTypeDPS,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return character.CurrentMana() >= mage.MirrorImage.DefaultCast.Cost
-		},
 	})
 }
 

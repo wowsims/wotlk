@@ -719,12 +719,6 @@ func (warrior *Warrior) registerDeathWishCD() {
 	warrior.AddMajorCooldown(core.MajorCooldown{
 		Spell: deathWishSpell,
 		Type:  core.CooldownTypeDPS,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return warrior.CurrentRage() >= deathWishSpell.DefaultCast.Cost
-		},
-		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return true
-		},
 	})
 }
 
@@ -755,13 +749,13 @@ func (warrior *Warrior) registerLastStandCD() {
 		ActionID: actionID,
 
 		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				GCD: 0,
-			},
 			CD: core.Cooldown{
 				Timer:    warrior.NewTimer(),
 				Duration: core.TernaryDuration(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfLastStand), time.Minute*3, time.Minute*2),
 			},
+		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return warrior.StanceMatches(DefensiveStance)
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
@@ -772,9 +766,6 @@ func (warrior *Warrior) registerLastStandCD() {
 	warrior.AddMajorCooldown(core.MajorCooldown{
 		Spell: lastStandSpell,
 		Type:  core.CooldownTypeSurvival,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return warrior.StanceMatches(DefensiveStance)
-		},
 	})
 }
 
@@ -882,12 +873,6 @@ func (warrior *Warrior) RegisterBladestormCD() {
 	warrior.AddMajorCooldown(core.MajorCooldown{
 		Spell: warrior.Bladestorm,
 		Type:  core.CooldownTypeDPS,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return warrior.CurrentRage() >= warrior.Bladestorm.DefaultCast.Cost
-		},
-		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return true
-		},
 	})
 }
 

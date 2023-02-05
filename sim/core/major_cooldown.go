@@ -38,12 +38,6 @@ type CooldownActivationCondition func(*Simulation, *Character) bool
 // Returns whether the activation was successful.
 type CooldownActivation func(*Simulation, *Character)
 
-// Function for making a CooldownActivation.
-//
-// We need a function that returns a CooldownActivation rather than a
-// CooldownActivation, so captured local variables can be reset on Sim reset.
-type CooldownActivationFactory func(*Simulation) CooldownActivation
-
 type MajorCooldown struct {
 	// Spell that is cast when this MCD is activated.
 	Spell *Spell
@@ -68,18 +62,12 @@ type MajorCooldown struct {
 	// automatic timing.
 	ShouldActivate CooldownActivationCondition
 
-	// Factory for creating the activate function on every Sim reset.
-	ActivationFactory CooldownActivationFactory
-
 	// Fixed timings at which to use this cooldown. If these are specified, they
 	// are used instead of ShouldActivate.
 	timings []time.Duration
 
 	// Number of times this MCD was used so far in the current iteration.
 	numUsages int
-
-	// Internal lambda function to use the cooldown.
-	activate CooldownActivation
 
 	// Whether this MCD is currently disabled.
 	disabled bool
@@ -159,7 +147,7 @@ func (mcd *MajorCooldown) tryActivateHelper(sim *Simulation, character *Characte
 	}
 
 	if shouldActivate {
-		mcd.activate(sim, character)
+		mcd.Spell.Cast(sim, character.CurrentTarget)
 		mcd.numUsages++
 		if sim.Log != nil {
 			character.Log(sim, "Major cooldown used: %s", mcd.Spell.ActionID)
@@ -274,19 +262,10 @@ func (mcdm *majorCooldownManager) DelayDPSCooldowns(delay time.Duration) {
 }
 
 func (mcdm *majorCooldownManager) reset(sim *Simulation) {
-	// Need to create all cooldowns before calling ActivationFactory on any of them,
-	// so that any cooldown can do lookups on other cooldowns.
 	for i := range mcdm.majorCooldowns {
 		newMCD := &MajorCooldown{}
 		*newMCD = mcdm.initialMajorCooldowns[i]
 		mcdm.majorCooldowns[i] = newMCD
-	}
-
-	for i := range mcdm.majorCooldowns {
-		mcdm.majorCooldowns[i].activate = mcdm.majorCooldowns[i].ActivationFactory(sim)
-		if mcdm.majorCooldowns[i].activate == nil {
-			panic("Nil cooldown activation returned!")
-		}
 	}
 
 	// For initial sorting.
@@ -301,15 +280,6 @@ func (mcdm *majorCooldownManager) AddMajorCooldown(mcd MajorCooldown) {
 	}
 	if mcd.Spell == nil {
 		panic("Major cooldown must have a Spell!")
-	}
-
-	spell := mcd.Spell
-	if mcd.ActivationFactory == nil {
-		mcd.ActivationFactory = func(sim *Simulation) CooldownActivation {
-			return func(sim *Simulation, character *Character) {
-				spell.Cast(sim, character.CurrentTarget)
-			}
-		}
 	}
 
 	if mcd.Type.Matches(CooldownTypeSurvival) && mcdm.cooldownConfigs.HpPercentForDefensives != 0 {

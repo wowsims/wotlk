@@ -162,6 +162,9 @@ func (hp *HunterPet) registerRoarOfRecoveryCD() {
 				Duration: hunter.applyLongevity(time.Minute * 3),
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return hp.IsEnabled() && hunter.CurrentManaPercent() < 0.6
+		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
@@ -177,9 +180,6 @@ func (hp *HunterPet) registerRoarOfRecoveryCD() {
 	hunter.AddMajorCooldown(core.MajorCooldown{
 		Spell: rorSpell,
 		Type:  core.CooldownTypeMana,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return hp.IsEnabled() && hunter.CurrentManaPercent() < 0.6
-		},
 	})
 }
 
@@ -244,6 +244,9 @@ func (hp *HunterPet) registerRabidCD() {
 				Duration: hunter.applyLongevity(time.Second * 45),
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return hp.IsEnabled()
+		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			buffAura.Activate(sim)
@@ -253,9 +256,6 @@ func (hp *HunterPet) registerRabidCD() {
 	hunter.AddMajorCooldown(core.MajorCooldown{
 		Spell: rabidSpell,
 		Type:  core.CooldownTypeDPS,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return hp.IsEnabled()
-		},
 	})
 }
 
@@ -301,6 +301,9 @@ func (hp *HunterPet) registerCallOfTheWildCD() {
 				Duration: hunter.applyLongevity(time.Minute * 5),
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return hp.IsEnabled()
+		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			petAura.Activate(sim)
@@ -311,9 +314,6 @@ func (hp *HunterPet) registerCallOfTheWildCD() {
 	hunter.AddMajorCooldown(core.MajorCooldown{
 		Spell: cotwSpell,
 		Type:  core.CooldownTypeDPS,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return hp.IsEnabled()
-		},
 	})
 }
 
@@ -356,6 +356,9 @@ func (hp *HunterPet) registerWolverineBite() {
 				Duration: hunter.applyLongevity(time.Second * 10),
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return hp.IsEnabled() && wbValidUntil > sim.CurrentTime
+		},
 
 		DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
 		CritMultiplier:   2,
@@ -373,8 +376,5 @@ func (hp *HunterPet) registerWolverineBite() {
 	hp.AddMajorCooldown(core.MajorCooldown{
 		Spell: wbSpell,
 		Type:  core.CooldownTypeDPS,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return hp.IsEnabled() && wbSpell.IsReady(sim) && wbValidUntil > sim.CurrentTime
-		},
 	})
 }
