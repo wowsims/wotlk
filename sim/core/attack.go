@@ -389,10 +389,7 @@ func (aa *AutoAttacks) reset(sim *Simulation) {
 }
 
 func (aa *AutoAttacks) startPull(sim *Simulation) {
-	if !aa.IsEnabled() {
-		return
-	}
-	if aa.unit.IsEnabled() {
+	if aa.IsEnabled() && aa.unit.IsEnabled() {
 		aa.resetAutoSwing(sim)
 	}
 }
