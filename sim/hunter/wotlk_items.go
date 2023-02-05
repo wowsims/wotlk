@@ -85,7 +85,8 @@ var ItemSetScourgestalkerBattlegear = core.NewItemSet(core.ItemSet{
 })
 
 var ItemSetWindrunnersPursuit = core.NewItemSet(core.ItemSet{
-	Name: "Windrunner's Pursuit",
+	Name:            "Windrunner's Pursuit",
+	AlternativeName: "Windrunner's Battlegear",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 		},

@@ -858,6 +858,10 @@ func (hunter *Hunter) registerReadinessCD() {
 			return !hunter.RapidFire.IsReady(sim)
 		},
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
+			// If RF is about to become ready naturally, wait so we can get 2x usages.
+			if !hunter.RapidFire.IsReady(sim) && hunter.RapidFire.TimeToReady(sim) < time.Second*10 {
+				return false
+			}
 			return !hunter.RapidFireAura.IsActive() || hunter.RapidFireAura.RemainingDuration(sim) < time.Second*10
 		},
 	})
