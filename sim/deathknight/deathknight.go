@@ -310,6 +310,17 @@ func (dk *Deathknight) Initialize() {
 			}
 		},
 	})
+
+	if dk.Inputs.PrecastHornOfWinter {
+		dk.RegisterPrepullAction(-1500*time.Millisecond, func(sim *core.Simulation) {
+			dk.HornOfWinter.Cast(sim, nil)
+		})
+	}
+	if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_PreCast {
+		dk.RegisterPrepullAction(-10*time.Second, func(sim *core.Simulation) {
+			dk.ArmyOfTheDead.Cast(sim, nil)
+		})
+	}
 }
 
 func (dk *Deathknight) registerMindFreeze() {
@@ -351,16 +362,6 @@ func (dk *Deathknight) ResetBonusCoeffs() {
 
 		wanderingPlagueMultiplier:     1,
 		scourgeStrikeShadowMultiplier: 1,
-	}
-}
-
-func (dk *Deathknight) Prepull(sim *core.Simulation) {
-	if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_PreCast {
-		dk.PrecastArmyOfTheDead(sim)
-	}
-
-	if dk.Inputs.PrecastHornOfWinter {
-		dk.HornOfWinter.CD.UsePrePull(sim, 1500*time.Millisecond)
 	}
 }
 

@@ -74,15 +74,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 4901.55606
-  tps: 10296.00289
+  dps: 4899.52908
+  tps: 10088.80928
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 4901.55606
-  tps: 10296.00289
+  dps: 4899.52908
+  tps: 10088.80928
  }
 }
 dps_results: {

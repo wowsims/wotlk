@@ -316,11 +316,24 @@ func (sim *Simulation) run() *proto.RaidSimResult {
 func (sim *Simulation) runOnce() {
 	sim.reset()
 
+	if len(sim.Environment.prepullActions) > 0 {
+		sim.CurrentTime = sim.Environment.prepullActions[0].DoAt
+
+		for _, prepullAction := range sim.Environment.prepullActions {
+			if prepullAction.DoAt > sim.CurrentTime {
+				sim.advance(prepullAction.DoAt - sim.CurrentTime)
+			}
+			prepullAction.Action(sim)
+		}
+
+		if sim.CurrentTime < 0 {
+			sim.advance(0 - sim.CurrentTime)
+		}
+	}
+
 	for _, unit := range sim.Environment.AllUnits {
 		unit.startPull(sim)
 	}
-
-	sim.Raid.Prepull(sim)
 
 	for {
 		last := len(sim.pendingActions) - 1

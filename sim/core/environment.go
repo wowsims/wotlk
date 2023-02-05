@@ -223,9 +223,10 @@ func (env *Environment) RegisterPostFinalizeEffect(postFinalizeEffect PostFinali
 	env.postFinalizeEffects = append(env.postFinalizeEffects, postFinalizeEffect)
 }
 
-// Registers a callback to this Character which will be invoked after all Units
-// are finalized.
-func (env *Environment) RegisterPrepullAction(doAt time.Duration, action func(*Simulation)) {
+// Registers a callback to this Unit which will be invoked on the prepull at the specified
+// negative time.
+func (unit *Unit) RegisterPrepullAction(doAt time.Duration, action func(*Simulation)) {
+	env := unit.Env
 	if env.IsFinalized() {
 		panic("Prepull actions may not be added once finalized!")
 	}
