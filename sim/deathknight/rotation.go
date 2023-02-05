@@ -63,7 +63,12 @@ func (dk *Deathknight) RotationActionCallback_DS(sim *core.Simulation, target *c
 }
 
 func (dk *Deathknight) RotationActionCallback_HS(sim *core.Simulation, target *core.Unit, s *Sequence) time.Duration {
-	casted := dk.HeartStrike.Cast(sim, target)
+	casted := false
+	if dk.Talents.HeartStrike {
+		casted = dk.HeartStrike.Cast(sim, target)
+	} else {
+		casted = dk.BloodStrike.Cast(sim, target)
+	}
 	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
 
 	s.ConditionalAdvance(casted && advance)
