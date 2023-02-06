@@ -125,12 +125,11 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 	prioSs, prioBs := dk.bonusProcRotationChecks(sim)
 
 	if dk.uhDiseaseCheck(sim, target, dk.DeathAndDecay, true, 1) {
-		if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()*2+250*time.Millisecond) {
-			dk.uhAfterGargoyleSequence(sim)
-			return sim.CurrentTime
-		}
-
 		if prioSs {
+			if dk.uhGargoyleCheck(sim, target, core.GCDDefault*2+50*time.Millisecond) {
+				dk.uhAfterGargoyleSequence(sim)
+				return sim.CurrentTime
+			}
 			cast = dk.ScourgeStrike.Cast(sim, target)
 			if cast {
 				dk.RotationSequence.Clear().
@@ -138,10 +137,14 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 					NewAction(dk.RotationActionCallback_UnholyDndRotation)
 			}
 		} else {
+			if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
+				dk.uhAfterGargoyleSequence(sim)
+				return sim.CurrentTime
+			}
 			cast = dk.DeathAndDecay.Cast(sim, target)
 		}
 	} else {
-		if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()*2+250*time.Millisecond) {
+		if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+core.GCDDefault+50*time.Millisecond) {
 			dk.uhAfterGargoyleSequence(sim)
 			return sim.CurrentTime
 		}
@@ -153,13 +156,13 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 		if dk.uhDiseaseCheck(sim, target, dk.ScourgeStrike, true, 1) {
 			if !dk.uhShouldWaitForDnD(sim, false, true, true) {
 				if dk.Talents.ScourgeStrike && dk.ScourgeStrike.IsReady(sim) {
-					if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
+					if dk.uhGargoyleCheck(sim, target, core.GCDDefault+50*time.Millisecond) {
 						dk.uhAfterGargoyleSequence(sim)
 						return sim.CurrentTime
 					}
 					cast = dk.ScourgeStrike.Cast(sim, target)
 				} else if dk.IcyTouch.CanCast(sim, nil) && dk.PlagueStrike.CanCast(sim, nil) {
-					if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()*2+50*time.Millisecond) {
+					if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+core.GCDDefault+50*time.Millisecond) {
 						dk.uhAfterGargoyleSequence(sim)
 						return sim.CurrentTime
 					}
@@ -182,7 +185,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 				}
 			} else {
 				if !dk.uhShouldWaitForDnD(sim, true, false, false) {
-					if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
+					if dk.uhGargoyleCheck(sim, target, core.GCDDefault+50*time.Millisecond) {
 						dk.uhAfterGargoyleSequence(sim)
 						return sim.CurrentTime
 					}

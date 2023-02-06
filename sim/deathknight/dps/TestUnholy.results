@@ -230,17 +230,17 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-Deathbringer'sWill-50362"
  value: {
-  dps: 7810.67304
-  tps: 5122.4269
-  hps: 270.03956
+  dps: 7802.69357
+  tps: 5119.42767
+  hps: 271.30735
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-Deathbringer'sWill-50363"
  value: {
-  dps: 7854.40574
-  tps: 5173.22197
-  hps: 270.35651
+  dps: 7849.30367
+  tps: 5173.76641
+  hps: 270.67346
  }
 }
 dps_results: {
@@ -982,9 +982,9 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Average-Default"
  value: {
-  dps: 8111.87531
-  tps: 5160.2888
-  hps: 269.64538
+  dps: 8112.67925
+  tps: 5160.94034
+  hps: 269.64831
  }
 }
 dps_results: {
@@ -1014,24 +1014,24 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Settings-Human-Unholy P1 -Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 20893.18946
-  tps: 22983.35023
-  hps: 160.04779
+  dps: 20839.54713
+  tps: 22983.8858
+  hps: 160.62144
  }
 }
 dps_results: {
  key: "TestUnholy-Settings-Human-Unholy P1 -Basic-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3901.7127
-  tps: 2780.70227
-  hps: 159.28293
+  dps: 3898.57353
+  tps: 2779.01056
+  hps: 158.51806
  }
 }
 dps_results: {
  key: "TestUnholy-Settings-Human-Unholy P1 -Basic-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 4956.9929
-  tps: 2798.16613
+  dps: 4959.71512
+  tps: 2808.11043
   hps: 134.80728
  }
 }
@@ -1062,24 +1062,24 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Settings-Orc-Unholy P1 -Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 21044.84291
-  tps: 23092.79655
-  hps: 160.36638
+  dps: 20980.51679
+  tps: 23083.10089
+  hps: 160.94049
  }
 }
 dps_results: {
  key: "TestUnholy-Settings-Orc-Unholy P1 -Basic-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3986.85298
-  tps: 2796.07434
-  hps: 158.64407
+  dps: 3988.52272
+  tps: 2798.0667
+  hps: 158.83544
  }
 }
 dps_results: {
  key: "TestUnholy-Settings-Orc-Unholy P1 -Basic-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 5129.31205
-  tps: 2828.55873
+  dps: 5134.50942
+  tps: 2840.12094
   hps: 134.91444
  }
 }
