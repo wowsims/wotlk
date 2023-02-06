@@ -51,6 +51,8 @@ func NewRetributionPaladin(character core.Character, options *proto.Player) *Ret
 
 	ret.PaladinAura = retOptions.Options.Aura
 
+	ret.HasGlyphOfReckoning = ret.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfReckoning)
+
 	ret.RotatioOption = retOptions.Rotation.CustomRotation
 	if retOptions.Rotation.Type == proto.RetributionPaladin_Rotation_Standard {
 		ret.SelectedRotation = ret.mainRotation
@@ -88,6 +90,8 @@ type RetributionPaladin struct {
 	ConsSlack            int32
 	HolyWrathThreshold   int32
 	MaxSoVTargets        int32
+
+	HasGlyphOfReckoning bool
 
 	HasLightswornBattlegear2Pc bool
 
