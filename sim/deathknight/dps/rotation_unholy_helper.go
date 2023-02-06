@@ -368,6 +368,7 @@ func (dk *DpsDeathknight) uhGargoyleCheck(sim *core.Simulation, target *core.Uni
 		dk.ur.activatingGargoyle = false
 
 		if dk.SummonGargoyle.Cast(sim, target) {
+			dk.UpdateMajorCooldowns()
 			dk.ur.gargoyleSnapshot.ResetProcTrackers()
 			dk.ur.gargoyleMaxDelay = -1
 			return true
@@ -426,6 +427,15 @@ func (dk *DpsDeathknight) uhGargoyleCheck(sim *core.Simulation, target *core.Uni
 func (dk *DpsDeathknight) uhGargoyleCanCast(sim *core.Simulation, castTime time.Duration) bool {
 	if !dk.SummonGargoyle.IsReady(sim) {
 		return false
+	}
+	gargMcd := dk.getMajorCooldown(dk.SummonGargoyle.ActionID)
+	if gargMcd != nil {
+		timings := gargMcd.GetTimings()
+		if len(timings) > 0 {
+			if sim.CurrentTime < timings[0] {
+				return false
+			}
+		}
 	}
 	if !dk.CastCostPossible(sim, 60.0, 0, 0, 0) {
 		return false

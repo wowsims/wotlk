@@ -218,6 +218,9 @@ func (dk *DpsDeathknight) Initialize() {
 }
 
 func (dk *DpsDeathknight) setupGargProcTrackers() {
+	// Disable MCD casting of Gargoyle
+	dk.GetMajorCooldown(dk.SummonGargoyle.ActionID).Disable()
+
 	snapshotManager := dk.ur.gargoyleSnapshot
 
 	// Don't need to wait for haste snapshots anymore
