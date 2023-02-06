@@ -18,7 +18,9 @@ type BloodRotation struct {
 
 func (br *BloodRotation) Reset(sim *core.Simulation) {
 	br.activatingDrw = false
-	br.drwSnapshot.ResetProcTrackers()
+	if br.drwSnapshot != nil {
+		br.drwSnapshot.ResetProcTrackers()
+	}
 	br.drwMaxDelay = -1
 }
 

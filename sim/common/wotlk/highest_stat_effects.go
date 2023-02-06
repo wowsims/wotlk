@@ -13,6 +13,12 @@ type HighestStatAura struct {
 	factory     func(stat stats.Stat) *core.Aura
 }
 
+func (hsa HighestStatAura) Init(character *core.Character) {
+	for i, stat := range hsa.statOptions {
+		hsa.auras[i] = hsa.factory(stat)
+	}
+}
+
 func (hsa HighestStatAura) Get(character *core.Character) *core.Aura {
 	bestValue := 0.0
 	bestIdx := 0
@@ -59,6 +65,7 @@ func init() {
 					return character.NewTemporaryStatsAura("DMC Greatness "+stat.StatName()+" Proc", core.ActionID{ItemID: itemID}, bonus, time.Second*15)
 				})
 
+			hsa.Init(character)
 			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:       "DMC Greatness",
 				Callback:   core.CallbackOnSpellHitDealt | core.CallbackOnPeriodicDamageDealt | core.CallbackOnHealDealt | core.CallbackOnPeriodicHealDealt,
@@ -93,6 +100,7 @@ func init() {
 					return character.NewTemporaryStatsAura(name+" "+stat.StatName()+" Proc", core.ActionID{ItemID: itemID}, bonus, time.Second*15)
 				})
 
+			hsa.Init(character)
 			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:       name,
 				Callback:   core.CallbackOnSpellHitDealt | core.CallbackOnPeriodicDamageDealt,

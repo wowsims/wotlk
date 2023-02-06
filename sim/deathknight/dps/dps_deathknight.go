@@ -205,11 +205,15 @@ func (dk *DpsDeathknight) GetDeathknight() *deathknight.Deathknight {
 func (dk *DpsDeathknight) Initialize() {
 	dk.Deathknight.Initialize()
 
-	dk.br.drwSnapshot = core.NewSnapshotManager(dk.GetCharacter())
-	dk.setupDrwProcTrackers()
+	if dk.Talents.DancingRuneWeapon {
+		dk.br.drwSnapshot = core.NewSnapshotManager(dk.GetCharacter())
+		dk.setupDrwProcTrackers()
+	}
 
-	dk.ur.gargoyleSnapshot = core.NewSnapshotManager(dk.GetCharacter())
-	dk.setupGargProcTrackers()
+	if dk.Talents.SummonGargoyle {
+		dk.ur.gargoyleSnapshot = core.NewSnapshotManager(dk.GetCharacter())
+		dk.setupGargProcTrackers()
+	}
 
 	dk.sr.Initialize(dk)
 	dk.br.Initialize(dk)
