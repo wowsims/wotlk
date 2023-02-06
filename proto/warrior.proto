@@ -153,9 +153,10 @@ message Warrior {
 		bool use_slam = 3;
 
 		enum MainGcd {
-			Slam = 0;
-			Bloodthirst = 1;
-			Whirlwind = 2;
+			None = 0;
+			Slam = 1;
+			Bloodthirst = 2;
+			Whirlwind = 3;
 		}
 		MainGcd main_gcd = 4;
 
