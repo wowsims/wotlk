@@ -60,9 +60,17 @@ func (dk *Deathknight) registerSummonGargoyleCD() {
 				},
 			}
 			sim.AddPendingAction(&pa)
-			dk.UpdateMajorCooldowns()
 		},
 	})
+
+	// We use this for defining the min cast time of gargoyle
+	// but we dont cast it with the MCD system
+	dk.AddMajorCooldown(core.MajorCooldown{
+		Spell:       dk.SummonGargoyle,
+		Type:        core.CooldownTypeUnknown,
+		CanActivate: func(s *core.Simulation, c *core.Character) bool { return false },
+	})
+	dk.GetMajorCooldown(dk.SummonGargoyle.ActionID).Disable()
 }
 
 type GargoylePet struct {

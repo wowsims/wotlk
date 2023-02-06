@@ -85,6 +85,8 @@ export const WarriorRotationConfig = {
 				{ name: 'Bloodthirst', value: MainGcd.Bloodthirst },
 				{ name: 'Whirlwind', value: MainGcd.Whirlwind },
 			],
+			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().bloodthirst,
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecWarrior>({
 			fieldName: 'msRageThreshold',

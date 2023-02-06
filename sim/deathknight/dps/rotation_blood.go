@@ -58,8 +58,6 @@ func (dk *DpsDeathknight) setupBloodRotations() {
 			NewAction(dk.RotationActionCallback_HS).
 			NewAction(dk.RotationActionCallback_HS)
 	}
-	// } else if dk.Inputs.BloodOpener == proto.Deathknight_Rotation_Experimental_1 {
-	// }
 
 	dk.RotationSequence.NewAction(dk.RotationActionCallback_BloodRotation)
 }
