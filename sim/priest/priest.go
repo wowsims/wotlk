@@ -240,21 +240,21 @@ func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassPriest}] = stats.Stats{
 		stats.Health:    6960,
 		stats.Mana:      3863,
-		stats.Strength:  38,
-		stats.Agility:   43,
-		stats.Stamina:   59,
-		stats.Intellect: 143,
-		stats.Spirit:    156,
+		stats.Strength:  42,
+		stats.Agility:   49,
+		stats.Stamina:   67,
+		stats.Intellect: 172,
+		stats.Spirit:    186,
 		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassPriest}] = stats.Stats{
 		stats.Health:    6960,
 		stats.Mana:      3863,
-		stats.Strength:  40,
-		stats.Agility:   47,
-		stats.Stamina:   59,
-		stats.Intellect: 141,
-		stats.Spirit:    152,
+		stats.Strength:  44,
+		stats.Agility:   53,
+		stats.Stamina:   67,
+		stats.Intellect: 170,
+		stats.Spirit:    182,
 		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassPriest}] = stats.Stats{
