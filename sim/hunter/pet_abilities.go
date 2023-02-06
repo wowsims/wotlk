@@ -373,6 +373,9 @@ func (hp *HunterPet) newFuriousHowl() PetAbility {
 				Duration: hp.hunterOwner.applyLongevity(time.Second * 40),
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return hp.IsEnabled() && hp.CurrentFocus() >= cost
+		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			hp.SpendFocus(sim, cost, actionID)
 			petAura.Activate(sim)
@@ -383,9 +386,6 @@ func (hp *HunterPet) newFuriousHowl() PetAbility {
 	hp.hunterOwner.AddMajorCooldown(core.MajorCooldown{
 		Spell: howlSpell,
 		Type:  core.CooldownTypeDPS,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return hp.IsEnabled() && hp.CurrentFocus() >= cost
-		},
 	})
 
 	return PetAbility{}
@@ -653,6 +653,9 @@ func (hp *HunterPet) newSavageRend() PetAbility {
 				Duration: hp.hunterOwner.applyLongevity(time.Second * 60),
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return hp.IsEnabled() && hp.CurrentFocus() >= cost
+		},
 
 		DamageMultiplier: 1 * hp.hunterOwner.markedForDeathMultiplier(),
 		CritMultiplier:   2,
@@ -692,9 +695,6 @@ func (hp *HunterPet) newSavageRend() PetAbility {
 	hp.hunterOwner.AddMajorCooldown(core.MajorCooldown{
 		Spell: srSpell,
 		Type:  core.CooldownTypeDPS,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return hp.IsEnabled() && hp.CurrentFocus() >= cost
-		},
 	})
 
 	return PetAbility{}

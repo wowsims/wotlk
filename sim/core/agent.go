@@ -32,9 +32,6 @@ type Agent interface {
 	// and once after the final iteration.
 	Reset(sim *Simulation)
 
-	// Called once before each Sim iteration, after reset
-	Prepull(sim *Simulation)
-
 	// Called whenever the GCD becomes ready for this Agent.
 	OnGCDReady(sim *Simulation)
 

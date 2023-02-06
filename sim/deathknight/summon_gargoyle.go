@@ -70,6 +70,7 @@ func (dk *Deathknight) registerSummonGargoyleCD() {
 		Type:        core.CooldownTypeUnknown,
 		CanActivate: func(s *core.Simulation, c *core.Character) bool { return false },
 	})
+	dk.GetMajorCooldown(dk.SummonGargoyle.ActionID).Disable()
 }
 
 type GargoylePet struct {

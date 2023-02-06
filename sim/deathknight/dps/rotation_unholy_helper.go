@@ -55,7 +55,9 @@ func (ur *UnholyRotation) Reset(sim *core.Simulation) {
 	ur.ohSwapped = false
 	ur.bmIcd = -1
 
-	ur.gargoyleSnapshot.ResetProcTrackers()
+	if ur.gargoyleSnapshot != nil {
+		ur.gargoyleSnapshot.ResetProcTrackers()
+	}
 }
 
 func (ur *UnholyRotation) Initialize(dk *DpsDeathknight) {

@@ -42,10 +42,6 @@ type Pet struct {
 	inheritedStats                 stats.Stats
 	guardianDynamicStatInheritance PetStatInheritance
 
-	// Whether this pet is currently active. Pets which are active throughout a whole
-	// encounter, like Hunter pets, are always enabled. Pets which are instead summoned,
-	// such as Mage Water Elemental, begin as disabled and are enabled when summoned.
-	enabled bool
 	isReset bool
 
 	// Some pets expire after a certain duration. This is the pending action that disables
@@ -140,10 +136,6 @@ func (pet *Pet) doneIteration(sim *Simulation) {
 	pet.isReset = false
 }
 
-func (pet *Pet) IsEnabled() bool {
-	return pet.enabled
-}
-
 func (pet *Pet) IsGuardian() bool {
 	return pet.isGuardian
 }
@@ -170,7 +162,7 @@ func (pet *Pet) Enable(sim *Simulation, petAgent PetAgent) {
 	//reset current mana after applying stats
 	pet.manaBar.reset()
 
-	pet.SetGCDTimer(sim, sim.CurrentTime)
+	pet.SetGCDTimer(sim, MaxDuration(0, sim.CurrentTime))
 	pet.AutoAttacks.EnableAutoSwing(sim)
 
 	pet.enabled = true

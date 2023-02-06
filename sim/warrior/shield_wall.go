@@ -47,6 +47,9 @@ func (warrior *Warrior) RegisterShieldWallCD() {
 				Duration: cooldownDur,
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return warrior.StanceMatches(DefensiveStance)
+		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
 			swAura.Activate(sim)
@@ -56,8 +59,5 @@ func (warrior *Warrior) RegisterShieldWallCD() {
 	warrior.AddMajorCooldown(core.MajorCooldown{
 		Spell: swSpell,
 		Type:  core.CooldownTypeSurvival,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return warrior.StanceMatches(DefensiveStance)
-		},
 	})
 }

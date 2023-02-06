@@ -205,11 +205,15 @@ func (dk *DpsDeathknight) GetDeathknight() *deathknight.Deathknight {
 func (dk *DpsDeathknight) Initialize() {
 	dk.Deathknight.Initialize()
 
-	dk.br.drwSnapshot = core.NewSnapshotManager(dk.GetCharacter())
-	dk.setupDrwProcTrackers()
+	if dk.Talents.DancingRuneWeapon {
+		dk.br.drwSnapshot = core.NewSnapshotManager(dk.GetCharacter())
+		dk.setupDrwProcTrackers()
+	}
 
-	dk.ur.gargoyleSnapshot = core.NewSnapshotManager(dk.GetCharacter())
-	dk.setupGargProcTrackers()
+	if dk.Talents.SummonGargoyle {
+		dk.ur.gargoyleSnapshot = core.NewSnapshotManager(dk.GetCharacter())
+		dk.setupGargProcTrackers()
+	}
 
 	dk.sr.Initialize(dk)
 	dk.br.Initialize(dk)
@@ -218,9 +222,6 @@ func (dk *DpsDeathknight) Initialize() {
 }
 
 func (dk *DpsDeathknight) setupGargProcTrackers() {
-	// Disable MCD casting of Gargoyle
-	dk.GetMajorCooldown(dk.SummonGargoyle.ActionID).Disable()
-
 	snapshotManager := dk.ur.gargoyleSnapshot
 
 	// Don't need to wait for haste snapshots anymore
@@ -249,11 +250,6 @@ func (dk *DpsDeathknight) setupGargProcTrackers() {
 			snapshotManager.AddProc(53344, "Rune Of The Fallen Crusader Proc", false)
 		}
 	}
-
-	if dk.Talents.ScourgeStrike {
-		snapshotManager.AddProc(47673, "Sigil of Virulence Proc", false)
-	}
-	//snapshotManager.AddProc(67117, "Unholy Might Proc", false)
 
 	snapshotManager.AddProc(42987, "DMC Greatness Strength Proc", false)
 
