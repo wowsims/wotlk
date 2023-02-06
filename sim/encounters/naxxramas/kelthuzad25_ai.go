@@ -11,7 +11,7 @@ func addKelThuzad25(bossPrefix string) {
 		PathPrefix: bossPrefix,
 		Config: &proto.Target{
 			Id:        15990,
-			Name:      "Kel'Thuzad 25",
+			Name:      "Kel'Thuzad",
 			Level:     83,
 			MobType:   proto.MobType_MobTypeUndead,
 			TankIndex: 0,
@@ -32,8 +32,8 @@ func addKelThuzad25(bossPrefix string) {
 		},
 		AI: NewKelThuzad25AI(),
 	})
-	core.AddPresetEncounter("Kel'Thuzad 25", []string{
-		bossPrefix + "/Kel'Thuzad 25",
+	core.AddPresetEncounter("Kel'Thuzad", []string{
+		bossPrefix + "/Kel'Thuzad",
 	})
 }
 

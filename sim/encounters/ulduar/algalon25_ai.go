@@ -13,7 +13,7 @@ func addAlgalon25(bossPrefix string) {
 		PathPrefix: bossPrefix,
 		Config: &proto.Target{
 			Id:        32871,
-			Name:      "Algalon 25",
+			Name:      "Algalon",
 			Level:     83,
 			MobType:   proto.MobType_MobTypeElemental,
 			TankIndex: 0,
@@ -35,8 +35,8 @@ func addAlgalon25(bossPrefix string) {
 		},
 		AI: NewAlgalon25AI(),
 	})
-	core.AddPresetEncounter("Algalon 25", []string{
-		bossPrefix + "/Algalon 25",
+	core.AddPresetEncounter("Algalon", []string{
+		bossPrefix + "/Algalon",
 	})
 }
 

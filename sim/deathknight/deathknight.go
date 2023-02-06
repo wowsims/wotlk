@@ -454,7 +454,9 @@ func NewDeathknight(character core.Character, inputs DeathknightInputs, talents 
 		}
 	}
 
-	dk.RuneWeapon = dk.NewRuneWeapon()
+	if dk.Talents.DancingRuneWeapon {
+		dk.RuneWeapon = dk.NewRuneWeapon()
+	}
 
 	dk.RotationSequence = &Sequence{}
 

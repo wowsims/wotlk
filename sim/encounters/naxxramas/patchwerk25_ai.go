@@ -13,7 +13,7 @@ func addPatchwerk25(bossPrefix string) {
 		PathPrefix: bossPrefix,
 		Config: &proto.Target{
 			Id:        16028,
-			Name:      "Patchwerk 25",
+			Name:      "Patchwerk",
 			Level:     83,
 			MobType:   proto.MobType_MobTypeUndead,
 			TankIndex: 0,
@@ -35,8 +35,8 @@ func addPatchwerk25(bossPrefix string) {
 		},
 		AI: NewPatchwerk25AI(),
 	})
-	core.AddPresetEncounter("Patchwerk 25", []string{
-		bossPrefix + "/Patchwerk 25",
+	core.AddPresetEncounter("Patchwerk", []string{
+		bossPrefix + "/Patchwerk",
 	})
 }
 

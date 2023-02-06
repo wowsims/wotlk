@@ -363,7 +363,7 @@ func ApplyInspiration(character *Character, uptime float64) {
 
 	inspirationAura := InspirationAura(&character.Unit, 3)
 
-	ApplyFixedUptimeAura(inspirationAura, uptime, time.Millisecond*2500)
+	ApplyFixedUptimeAura(inspirationAura, uptime, time.Millisecond*2500, 1)
 }
 
 func RetributionAura(character *Character, sanctifiedRetribution bool) *Aura {
@@ -898,7 +898,7 @@ func registerRevitalizeHotCD(agent Agent, label string, hotID ActionID, ticks in
 		},
 	})
 
-	ApplyFixedUptimeAura(aura, uptimePercent, totalDuration)
+	ApplyFixedUptimeAura(aura, uptimePercent, totalDuration, 1)
 }
 
 const ShatteringThrowCD = time.Minute * 5

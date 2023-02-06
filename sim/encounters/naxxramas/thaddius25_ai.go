@@ -11,7 +11,7 @@ func addThaddius25(bossPrefix string) {
 		PathPrefix: bossPrefix,
 		Config: &proto.Target{
 			Id:        15990,
-			Name:      "Thaddius 25",
+			Name:      "Thaddius",
 			Level:     83,
 			MobType:   proto.MobType_MobTypeUndead,
 			TankIndex: 0,
@@ -32,8 +32,8 @@ func addThaddius25(bossPrefix string) {
 		},
 		AI: NewThaddius25AI(),
 	})
-	core.AddPresetEncounter("Thaddius 25", []string{
-		bossPrefix + "/Thaddius 25",
+	core.AddPresetEncounter("Thaddius", []string{
+		bossPrefix + "/Thaddius",
 	})
 }
 

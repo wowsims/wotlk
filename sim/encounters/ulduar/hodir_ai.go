@@ -10,12 +10,43 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+func addHodir10(bossPrefix string) {
+	core.AddPresetTarget(&core.PresetTarget{
+		PathPrefix: bossPrefix,
+		Config: &proto.Target{
+			Id:        32845,
+			Name:      "Hodir",
+			Level:     83,
+			MobType:   proto.MobType_MobTypeGiant,
+			TankIndex: 0,
+
+			Stats: stats.Stats{
+				stats.Health:      8_115_990,
+				stats.Armor:       10643,
+				stats.AttackPower: 574,
+			}.ToFloatArray(),
+
+			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
+			SwingSpeed:       2.4,
+			MinBaseDamage:    25000, // TODO: Find real value
+			SuppressDodge:    false,
+			ParryHaste:       false,
+			DualWield:        false,
+			DualWieldPenalty: false,
+		},
+		AI: NewHodir10AI(),
+	})
+	core.AddPresetEncounter("Hodir", []string{
+		bossPrefix + "/Hodir",
+	})
+}
+
 func addHodir25(bossPrefix string) {
 	core.AddPresetTarget(&core.PresetTarget{
 		PathPrefix: bossPrefix,
 		Config: &proto.Target{
 			Id:        32845,
-			Name:      "Hodir 25",
+			Name:      "Hodir",
 			Level:     83,
 			MobType:   proto.MobType_MobTypeGiant,
 			TankIndex: 0,
@@ -28,7 +59,7 @@ func addHodir25(bossPrefix string) {
 
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
 			SwingSpeed:       2.4,
-			MinBaseDamage:    50000,
+			MinBaseDamage:    50000, // TODO: Find real value
 			SuppressDodge:    false,
 			ParryHaste:       false,
 			DualWield:        false,
@@ -36,12 +67,12 @@ func addHodir25(bossPrefix string) {
 		},
 		AI: NewHodir25AI(),
 	})
-	core.AddPresetEncounter("Hodir 25", []string{
-		bossPrefix + "/Hodir 25",
+	core.AddPresetEncounter("Hodir", []string{
+		bossPrefix + "/Hodir",
 	})
 }
 
-type Hodir25AI struct {
+type HodirAI struct {
 	Target *core.Target
 
 	// Frozen Blows Mechanics
@@ -64,15 +95,27 @@ type Hodir25AI struct {
 	// Crit Buff
 	StormCloud []*core.Aura
 	NextStorms time.Duration
+
+	raidSize int
+}
+
+func NewHodir10AI() core.AIFactory {
+	return func() core.TargetAI {
+		return &HodirAI{
+			raidSize: 10,
+		}
+	}
 }
 
 func NewHodir25AI() core.AIFactory {
 	return func() core.TargetAI {
-		return &Hodir25AI{}
+		return &HodirAI{
+			raidSize: 25,
+		}
 	}
 }
 
-func (ai *Hodir25AI) Initialize(target *core.Target) {
+func (ai *HodirAI) Initialize(target *core.Target) {
 	ai.Target = target
 
 	ai.registerBuffsDebuffs(target)
@@ -80,14 +123,15 @@ func (ai *Hodir25AI) Initialize(target *core.Target) {
 	ai.registerFrozenBlowSpell(target)
 }
 
-func (ai *Hodir25AI) Reset(*core.Simulation) {
+func (ai *HodirAI) Reset(*core.Simulation) {
 	ai.HasCampfire = true
 	// First campfire in 15-20 seconds
 	ai.ToastyFireTime = time.Duration(15+rand.Intn(5)) * time.Second
-	ai.NextStorms = time.Duration(2+rand.Intn(5)) * time.Second
+	// First storms in 33-38 seconds
+	ai.NextStorms = time.Duration(33+rand.Intn(5)) * time.Second
 }
 
-func (ai *Hodir25AI) registerFlashFreeze(target *core.Target) {
+func (ai *HodirAI) registerFlashFreeze(target *core.Target) {
 	ai.FlashFreeze = target.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 61968},
 
@@ -101,8 +145,8 @@ func (ai *Hodir25AI) registerFlashFreeze(target *core.Target) {
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// Remove last fire in 0-5 seconds
 			pa := &core.PendingAction{
-				// Remove last fire in 0-5 seconds
 				NextActionAt: sim.CurrentTime + time.Duration(rand.Intn(5))*time.Second,
 				OnAction: func(s *core.Simulation) {
 					ai.HasCampfire = false
@@ -115,8 +159,8 @@ func (ai *Hodir25AI) registerFlashFreeze(target *core.Target) {
 			}
 			sim.AddPendingAction(pa)
 
+			// Activate new fires in 15-20 seconds
 			pa = &core.PendingAction{
-				// Activate new fires in 15-20 seconds
 				NextActionAt: sim.CurrentTime + time.Duration(15+rand.Intn(5))*time.Second,
 				OnAction: func(s *core.Simulation) {
 					ai.HasCampfire = true
@@ -128,13 +172,15 @@ func (ai *Hodir25AI) registerFlashFreeze(target *core.Target) {
 				},
 			}
 			sim.AddPendingAction(pa)
+
+			ai.NextStorms = core.MaxDuration(ai.NextStorms, sim.CurrentTime+time.Duration(3+rand.Intn(5))*time.Second)
 		},
 	})
 }
 
-func (ai *Hodir25AI) registerBuffsDebuffs(target *core.Target) {
+func (ai *HodirAI) registerBuffsDebuffs(target *core.Target) {
 	// Create aura for stacking singed in raid sim
-	if ai.Target.Env.Raid.Size() >= 10 {
+	if ai.Target.Env.Raid.Size() > 1 {
 		ai.ToastyFires = make([]*core.Aura, 0)
 		for _, party := range ai.Target.Env.Raid.Parties {
 			for _, player := range party.Players {
@@ -189,7 +235,7 @@ func (ai *Hodir25AI) registerBuffsDebuffs(target *core.Target) {
 		for _, player := range party.PlayersAndPets {
 			character := player.GetCharacter()
 			aura := character.RegisterAura(core.Aura{
-				Label:    "Starlight" + strconv.Itoa(int(character.Index)),
+				Label:    "Starlight" + strconv.Itoa(int(character.UnitIndex)),
 				ActionID: core.ActionID{SpellID: 62807},
 				Duration: time.Second * 30,
 				OnGain: func(aura *core.Aura, sim *core.Simulation) {
@@ -202,7 +248,7 @@ func (ai *Hodir25AI) registerBuffsDebuffs(target *core.Target) {
 				},
 			})
 
-			core.ApplyFixedUptimeAura(aura, 0.8, time.Second*5)
+			core.ApplyFixedUptimeAura(aura, 0.90, time.Second*15, time.Second*10)
 			ai.Starlight = append(ai.Starlight, aura)
 		}
 	}
@@ -236,18 +282,14 @@ func (ai *Hodir25AI) registerBuffsDebuffs(target *core.Target) {
 			})
 
 			ai.StormCloud = append(ai.StormCloud, aura)
-
-			if ai.Target.Env.Raid.Size() < 10 {
-				core.ApplyFixedUptimeAura(aura, 0.6, time.Second*30)
-			}
 		}
 	}
 }
 
-func (ai *Hodir25AI) registerFrozenBlowSpell(target *core.Target) {
+func (ai *HodirAI) registerFrozenBlowSpell(target *core.Target) {
 	ai.FrozenBlowsAura = target.RegisterAura(core.Aura{
 		Label:    "Hodir Frozen Blows",
-		ActionID: core.ActionID{SpellID: 63512},
+		ActionID: core.ActionID{SpellID: core.TernaryInt32(ai.raidSize == 25, 63512, 62478)},
 		Duration: time.Second * 20,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[core.SpellSchoolPhysical] *= 0.3
@@ -258,7 +300,7 @@ func (ai *Hodir25AI) registerFrozenBlowSpell(target *core.Target) {
 	})
 
 	ai.FrozenBlows = target.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 63512},
+		ActionID:    core.ActionID{SpellID: core.TernaryInt32(ai.raidSize == 25, 63512, 62478)},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHAuto,
 		Flags:       core.SpellFlagMeleeMetrics,
@@ -285,7 +327,7 @@ func (ai *Hodir25AI) registerFrozenBlowSpell(target *core.Target) {
 	}
 
 	ai.FrozenBlowsAuto = target.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 63511},
+		ActionID:    core.ActionID{SpellID: core.TernaryInt32(ai.raidSize == 25, 63511, 62867)}.WithTag(1),
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHAuto,
 		Flags:       core.SpellFlagMeleeMetrics,
@@ -307,7 +349,7 @@ func (ai *Hodir25AI) registerFrozenBlowSpell(target *core.Target) {
 	})
 
 	ai.FrozenBlowsCast = target.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 63511},
+		ActionID:    core.ActionID{SpellID: core.TernaryInt32(ai.raidSize == 25, 63511, 62867)}.WithTag(2),
 		SpellSchool: core.SpellSchoolFrost,
 		ProcMask:    core.ProcMaskSpellDamage,
 
@@ -315,18 +357,18 @@ func (ai *Hodir25AI) registerFrozenBlowSpell(target *core.Target) {
 		CritMultiplier:   1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			spell.CalcAndDealDamage(sim, target, 40000, spell.OutcomeAlwaysHit)
+			spell.CalcAndDealDamage(sim, target, core.TernaryFloat64(ai.raidSize == 25, 40000, 31062), spell.OutcomeAlwaysHit)
 		},
 	})
 }
 
-func (ai *Hodir25AI) DoAction(sim *core.Simulation) {
+func (ai *HodirAI) DoAction(sim *core.Simulation) {
 
 	singedStacks := ai.Singed.GetStacks()
 
 	if sim.CurrentTime >= ai.ToastyFireTime && ai.HasCampfire {
 		// Refresh Singed approximately in individual sims
-		if ai.Target.Env.Raid.Size() < 10 {
+		if ai.Target.Env.Raid.Size() == 1 {
 			if singedStacks < 25 {
 				ai.Singed.Activate(sim)
 				ai.Singed.AddStack(sim)
@@ -350,21 +392,80 @@ func (ai *Hodir25AI) DoAction(sim *core.Simulation) {
 		}
 	}
 
-	if ai.Target.Env.Raid.Size() >= 10 {
-		if sim.CurrentTime >= ai.NextStorms {
-			ai.NextStorms = sim.CurrentTime + 30*time.Second
+	// Stormclouds are cast every 30-35 seconds
+	// Affects 2 people - each spread storm power to 6 others
+	if sim.CurrentTime >= ai.NextStorms {
+		ai.NextStorms = sim.CurrentTime + 30*time.Second + time.Duration(rand.Intn(5))*time.Second
+
+		if ai.Target.Env.Raid.Size() > 1 {
+			// Raid sim we simulate storm clouds and storm power spreading
+			// Assign random storm spreader
 			storm1 := rand.Intn(ai.Target.Env.Raid.Size())
 			storm2 := storm1
+
+			// Set max possible spreads
 			maxBuffs := core.MinInt(6, sim.Raid.Size()-1)
 
 			// 2 storms on 25m
-			if sim.Raid.Size() > 10 {
+			if ai.raidSize == 25 {
 				for storm1 == storm2 {
+					// Assign 2nd random spreader
 					storm2 = rand.Intn(sim.Raid.Size())
 				}
+
+				// Set max possible spreads
 				maxBuffs = core.MinInt(12, sim.Raid.Size()-2)
 			}
 
+			// Prio order for storm power
+			mages := make([]int, 0)
+			boomies := make([]int, 0)
+			warlocks := make([]int, 0)
+			shamans := make([]int, 0)
+			spriests := make([]int, 0)
+			dks := make([]int, 0)
+
+			for _, party := range sim.Raid.Parties {
+				for _, player := range party.Players {
+					character := player.GetCharacter()
+					raidIndex := int(character.Index)
+
+					// Can't prio if its the storm spreader
+					if raidIndex == storm1 || raidIndex == storm2 {
+						continue
+					}
+
+					switch character.Class {
+					case proto.Class_ClassMage:
+						mages = append(mages, raidIndex)
+					case proto.Class_ClassDruid:
+						if character.PrimaryTalentTree == 0 {
+							boomies = append(boomies, raidIndex)
+						}
+					case proto.Class_ClassWarlock:
+						warlocks = append(warlocks, raidIndex)
+					case proto.Class_ClassShaman:
+						if character.PrimaryTalentTree != 2 {
+							shamans = append(shamans, raidIndex)
+						}
+					case proto.Class_ClassPriest:
+						if character.PrimaryTalentTree == 2 {
+							spriests = append(spriests, raidIndex)
+						}
+					case proto.Class_ClassDeathknight:
+						dks = append(dks, raidIndex)
+					}
+				}
+			}
+
+			maxBuffs = ai.stormCloudPrioApply(sim, maxBuffs, mages)
+			maxBuffs = ai.stormCloudPrioApply(sim, maxBuffs, boomies)
+			maxBuffs = ai.stormCloudPrioApply(sim, maxBuffs, warlocks)
+			maxBuffs = ai.stormCloudPrioApply(sim, maxBuffs, shamans)
+			maxBuffs = ai.stormCloudPrioApply(sim, maxBuffs, spriests)
+			maxBuffs = ai.stormCloudPrioApply(sim, maxBuffs, dks)
+
+			// Spread randomly whats left
 			for maxBuffs > 0 {
 				target := -1
 				for target == -1 || target == storm1 || target == storm2 || ai.StormCloud[target].IsActive() {
@@ -372,6 +473,12 @@ func (ai *Hodir25AI) DoAction(sim *core.Simulation) {
 				}
 				ai.StormCloud[target].Activate(sim)
 				maxBuffs = maxBuffs - 1
+			}
+		} else {
+			// Individual sim we assume actor is prioritized for every storm power
+			// so just activate them
+			for _, stormCloud := range ai.StormCloud {
+				stormCloud.Activate(sim)
 			}
 		}
 	}
@@ -384,9 +491,6 @@ func (ai *Hodir25AI) DoAction(sim *core.Simulation) {
 		ai.FlashFreeze.Cast(sim, nil)
 	}
 
-	// Stormcloud CD - 30, starts casting 1-5 seconds in
-	// Affects 2 people - each spread storm power to 6 others
-
 	if ai.Target.GCD.IsReady(sim) {
 		nextEventAt := sim.CurrentTime + time.Minute
 
@@ -397,13 +501,13 @@ func (ai *Hodir25AI) DoAction(sim *core.Simulation) {
 			ai.NextStorms,
 		}
 
-		if ai.Target.Env.Raid.Size() < 10 {
+		if ai.Target.Env.Raid.Size() == 1 {
 			// Individual Sim approximation - taken from some random logs
 			timeBetweenStacks := 400 * time.Millisecond // TODO: Expose this
 			events = append(events, core.MaxDuration(ai.ToastyFireTime, sim.CurrentTime+timeBetweenStacks))
 		} else {
-			timeBetweenFireStacks := 3 * time.Second // TODO: Improve on Fires Approximation by actually simulating active campfires
-			events = append(events, core.MaxDuration(ai.ToastyFireTime, sim.CurrentTime+timeBetweenFireStacks))
+			timeBetweenNewCampfires := 3 * time.Second // TODO: Improve on Fires Approximation by actually simulating active campfires
+			events = append(events, core.MaxDuration(ai.ToastyFireTime, sim.CurrentTime+timeBetweenNewCampfires))
 		}
 
 		// if ai.Target.CurrentTarget != nil {
@@ -423,4 +527,17 @@ func (ai *Hodir25AI) DoAction(sim *core.Simulation) {
 
 		ai.Target.WaitUntil(sim, nextEventAt)
 	}
+}
+
+func (ai *HodirAI) stormCloudPrioApply(sim *core.Simulation, maxBuffs int, targets []int) int {
+	// Loop over prio targets
+	for _, target := range targets {
+		if maxBuffs > 0 {
+			if !ai.StormCloud[target].IsActive() {
+				ai.StormCloud[target].Activate(sim)
+				maxBuffs = maxBuffs - 1
+			}
+		}
+	}
+	return maxBuffs
 }

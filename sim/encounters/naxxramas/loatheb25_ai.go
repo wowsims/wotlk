@@ -11,7 +11,7 @@ func addLoatheb25(bossPrefix string) {
 		PathPrefix: bossPrefix,
 		Config: &proto.Target{
 			Id:        16011,
-			Name:      "Loatheb 25",
+			Name:      "Loatheb",
 			Level:     83,
 			MobType:   proto.MobType_MobTypeUndead,
 			TankIndex: 0,
@@ -32,8 +32,8 @@ func addLoatheb25(bossPrefix string) {
 		},
 		AI: NewLoatheb25AI(),
 	})
-	core.AddPresetEncounter("Loatheb 25", []string{
-		bossPrefix + "/Loatheb 25",
+	core.AddPresetEncounter("Loatheb", []string{
+		bossPrefix + "/Loatheb",
 	})
 }
 
