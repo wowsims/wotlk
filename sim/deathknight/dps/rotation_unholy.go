@@ -37,6 +37,7 @@ func (dk *DpsDeathknight) setupUnholyRotations() {
 			dk.RotationSequence.
 				NewAction(dk.RotationActionCallback_SS).
 				NewAction(dk.RotationActionCallback_BS).
+				NewAction(dk.RotationActionCallback_DC).
 				NewAction(dk.RotationActionCallback_ERW).
 				NewAction(dk.RotationActionCallback_SS).
 				NewAction(dk.RotationActionCallback_BS).
@@ -101,6 +102,10 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 	if dk.uhGargoyleCheck(sim, target, 100*time.Millisecond) {
 		dk.uhAfterGargoyleSequence(sim)
 		return sim.CurrentTime
+	}
+
+	if dk.CurrentRunicPower() > 100 && dk.GCD.IsReady(sim) && dk.DeathCoil.Cast(sim, target) {
+		return -1
 	}
 
 	if dk.Talents.GhoulFrenzy && !dk.uhShouldWaitForDnD(sim, false, true, true) {

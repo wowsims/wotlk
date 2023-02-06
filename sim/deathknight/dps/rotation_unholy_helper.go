@@ -33,6 +33,7 @@ type UnholyRotation struct {
 	gargoyleSnapshot   *core.SnapshotManager
 	activatingGargoyle bool
 	gargoyleMaxDelay   time.Duration
+	gargoyleMinTime    time.Duration
 
 	mhSwap    WeaponSwapType
 	mhSwapped bool
@@ -55,7 +56,15 @@ func (ur *UnholyRotation) Reset(sim *core.Simulation) {
 	ur.ohSwapped = false
 	ur.bmIcd = -1
 
-	if ur.gargoyleSnapshot != nil {
+	if ur.dk.Talents.SummonGargoyle {
+		gargMcd := ur.dk.getMajorCooldown(ur.dk.SummonGargoyle.ActionID)
+		if gargMcd != nil {
+			timings := gargMcd.GetTimings()
+			if len(timings) > 0 {
+				ur.gargoyleMinTime = timings[0]
+			}
+		}
+
 		ur.gargoyleSnapshot.ResetProcTrackers()
 	}
 }
@@ -341,7 +350,8 @@ func (dk *DpsDeathknight) uhMindFreeze(sim *core.Simulation, target *core.Unit) 
 
 // Save up Runic Power for Summon Gargoyle - Allow casts above 100 rp or garg CD > 5 sec
 func (dk *DpsDeathknight) uhDeathCoilCheck(sim *core.Simulation) bool {
-	return !(dk.SummonGargoyle.IsReady(sim) || dk.SummonGargoyle.CD.TimeToReady(sim) < 5*time.Second) || dk.CurrentRunicPower() >= 100 || !dk.Rotation.UseGargoyle
+
+	return !(dk.SummonGargoyle.IsReady(sim) || dk.SummonGargoyle.CD.TimeToReady(sim) < 5*time.Second) || sim.CurrentTime < dk.ur.gargoyleMinTime-5*time.Second || dk.CurrentRunicPower() >= 100 || !dk.Rotation.UseGargoyle
 }
 
 // Combined checks for casting gargoyle sequence & going back to blood presence after
@@ -430,14 +440,8 @@ func (dk *DpsDeathknight) uhGargoyleCanCast(sim *core.Simulation, castTime time.
 	if !dk.SummonGargoyle.IsReady(sim) {
 		return false
 	}
-	gargMcd := dk.getMajorCooldown(dk.SummonGargoyle.ActionID)
-	if gargMcd != nil {
-		timings := gargMcd.GetTimings()
-		if len(timings) > 0 {
-			if sim.CurrentTime < timings[0] {
-				return false
-			}
-		}
+	if sim.CurrentTime < dk.ur.gargoyleMinTime {
+		return false
 	}
 	if !dk.CastCostPossible(sim, 60.0, 0, 0, 0) {
 		return false
@@ -449,7 +453,7 @@ func (dk *DpsDeathknight) uhGargoyleCanCast(sim *core.Simulation, castTime time.
 		for timeLeft > gargCd {
 			timeLeft = timeLeft - (gargCd + 2*time.Second)
 		}
-		dk.ur.gargoyleMaxDelay = timeLeft - 2*time.Second
+		dk.ur.gargoyleMaxDelay = sim.CurrentTime + timeLeft - 2*time.Second
 	}
 	// Cast it if holding will result in less total Gargoyles for the encounter
 	if sim.CurrentTime > dk.ur.gargoyleMaxDelay {
