@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (paladin *Paladin) registerHandOfReckoningSpell() {
@@ -29,10 +28,7 @@ func (paladin *Paladin) registerHandOfReckoningSpell() {
 		DamageMultiplier:         1,
 		ThreatMultiplier:         1,
 		CritMultiplier:           paladin.SpellCritMultiplier(),
-		BonusHitRating: core.TernaryFloat64(
-			paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfRighteousDefense),
-			8*core.SpellHitRatingPerHitChance,
-			0),
+		BonusHitRating:           100 * core.SpellHitRatingPerHitChance,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := 1 +
