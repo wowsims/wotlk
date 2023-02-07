@@ -107,6 +107,8 @@ func readAtlasLootDungeonData(db *WowDatabase, expansion proto.Expansion, srcUrl
 			}
 			if npcName == "Onyxia" { // AtlasLoot uses 15956 for some reason, which is the ID for Anub'Rekan.
 				npcID = 10184
+			} else if npcName == "Yogg-Saron" { // AtlasLoot uses 33271 for some reason, which is the ID for General Vezax.
+				npcID = 33288
 			}
 			fmt.Printf("NPC: %s/%d\n", npcName, npcID)
 			if npcID != 0 {
