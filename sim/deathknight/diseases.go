@@ -9,11 +9,13 @@ import (
 
 func (dk *Deathknight) drwCountActiveDiseases(target *core.Unit) float64 {
 	count := 0
-	if dk.RuneWeapon.FrostFeverSpell.Dot(target).IsActive() {
-		count++
-	}
-	if dk.RuneWeapon.BloodPlagueSpell.Dot(target).IsActive() {
-		count++
+	if dk.Talents.DancingRuneWeapon {
+		if dk.RuneWeapon.FrostFeverSpell.Dot(target).IsActive() {
+			count++
+		}
+		if dk.RuneWeapon.BloodPlagueSpell.Dot(target).IsActive() {
+			count++
+		}
 	}
 	return float64(count)
 }
