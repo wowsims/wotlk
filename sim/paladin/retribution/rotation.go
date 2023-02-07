@@ -56,7 +56,7 @@ func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 	nextSwingAt := ret.AutoAttacks.NextAttackAt()
 	isExecutePhase := sim.IsExecutePhase20()
 
-	if ret.HasGlyphOfReckoning && ret.HandOfReckoning.IsReady(sim) {
+	if ret.HandOfReckoning != nil && ret.HandOfReckoning.IsReady(sim) {
 		ret.HandOfReckoning.Cast(sim, ret.CurrentTarget)
 	}
 
@@ -170,7 +170,7 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 	nextPrimaryAbility = core.MinDuration(nextPrimaryAbility, ret.SelectedJudgement.CD.ReadyAt())
 	nextPrimaryAbilityDelta := nextPrimaryAbility - sim.CurrentTime
 
-	if ret.HasGlyphOfReckoning && ret.HandOfReckoning.IsReady(sim) {
+	if ret.HandOfReckoning != nil && ret.HandOfReckoning.IsReady(sim) {
 		ret.HandOfReckoning.Cast(sim, ret.CurrentTarget)
 	}
 

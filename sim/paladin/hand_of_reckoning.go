@@ -4,9 +4,14 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (paladin *Paladin) registerHandOfReckoningSpell() {
+	if !paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfReckoning) {
+		return
+	}
+
 	paladin.HandOfReckoning = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 62124},
 		SpellSchool: core.SpellSchoolHoly,
