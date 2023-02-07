@@ -260,11 +260,11 @@ func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassPriest}] = stats.Stats{
 		stats.Health:    6960,
 		stats.Mana:      3863,
-		stats.Strength:  36,
-		stats.Agility:   47,
-		stats.Stamina:   57,
-		stats.Intellect: 149,
-		stats.Spirit:    150,
+		stats.Strength:  40,
+		stats.Agility:   53,
+		stats.Stamina:   67,
+		stats.Intellect: 177,
+		stats.Spirit:    179,
 		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
 	}
 }
