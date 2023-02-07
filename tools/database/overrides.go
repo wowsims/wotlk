@@ -124,6 +124,13 @@ var ItemOverrides = []*proto.UIItem{
 
 	// Drape of Icy Intent
 	{Id: 45461, Phase: 2},
+
+	// Valentine's day event rewards
+	{Id: 51804, Phase: 2},
+	{Id: 51805, Phase: 2},
+	{Id: 51806, Phase: 2},
+	{Id: 51807, Phase: 2},
+	{Id: 51808, Phase: 2},
 }
 
 // Keep these sorted by item ID.
