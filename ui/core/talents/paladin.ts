@@ -149,6 +149,11 @@ export const paladinGlyphsConfig: GlyphsConfig = {
 			description: 'Reduces the casting time of your Turn Evil spell by 100%, but increases the cooldown by 8 sec.',
 			iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/spell_holy_turnundead.jpg',
 		},
+		[PaladinMajorGlyph.GlyphOfReckoning]: {
+			name: 'Glyph of Reckoning',
+			description: 'Your Hand of Reckoning spell no longer taunts the target and can deal damage to untauntable targets.',
+			iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/spell_holy_unyieldingfaith.jpg',
+		},
 	},
 	minorGlyphs: {
 		[PaladinMinorGlyph.GlyphOfBlessingOfKings]: {

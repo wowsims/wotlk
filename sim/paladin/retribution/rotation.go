@@ -56,6 +56,10 @@ func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 	nextSwingAt := ret.AutoAttacks.NextAttackAt()
 	isExecutePhase := sim.IsExecutePhase20()
 
+	if ret.HandOfReckoning != nil && ret.HandOfReckoning.IsReady(sim) {
+		ret.HandOfReckoning.Cast(sim, ret.CurrentTarget)
+	}
+
 	if ret.GCD.IsReady(sim) {
 	rotationLoop:
 		for _, spell := range ret.RotationInput {
@@ -165,6 +169,10 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 	nextPrimaryAbility := core.MinDuration(ret.CrusaderStrike.CD.ReadyAt(), ret.DivineStorm.CD.ReadyAt())
 	nextPrimaryAbility = core.MinDuration(nextPrimaryAbility, ret.SelectedJudgement.CD.ReadyAt())
 	nextPrimaryAbilityDelta := nextPrimaryAbility - sim.CurrentTime
+
+	if ret.HandOfReckoning != nil && ret.HandOfReckoning.IsReady(sim) {
+		ret.HandOfReckoning.Cast(sim, ret.CurrentTarget)
+	}
 
 	if ret.GCD.IsReady(sim) {
 		switch {
