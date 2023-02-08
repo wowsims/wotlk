@@ -260,9 +260,9 @@ class ItemPicker extends Component {
 				if (gemIdx == newItem.numPossibleSockets - 1 && [ItemType.ItemTypeWrist, ItemType.ItemTypeHands].includes(newItem.item.type)) {
 					const updateProfession = () => {
 						if (this.player.isBlacksmithing()) {
-							gemIconElem.style.removeProperty('display');
+							gemContainer.classList.remove('hide');
 						} else {
-							gemIconElem.style.display = 'none';
+							gemContainer.classList.add('hide');
 						}
 					};
 					this.player.professionChangeEmitter.on(updateProfession);
