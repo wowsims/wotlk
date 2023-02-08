@@ -86,17 +86,17 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 2485.02102
-  tps: 19881.38866
-  dtps: 2.27406
+  dps: 2496.67575
+  tps: 19425.05028
+  dtps: 2.18293
  }
 }
 dps_results: {
  key: "TestFeralTank-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 2485.02102
-  tps: 19881.38866
-  dtps: 2.27406
+  dps: 2496.67575
+  tps: 19425.05028
+  dtps: 2.18293
  }
 }
 dps_results: {

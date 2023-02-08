@@ -458,9 +458,6 @@ func (hunter *Hunter) registerBestialWrathCD() {
 	hunter.AddMajorCooldown(core.MajorCooldown{
 		Spell: bwSpell,
 		Type:  core.CooldownTypeDPS,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return hunter.CurrentMana() >= bwSpell.DefaultCast.Cost
-		},
 	})
 }
 
@@ -815,6 +812,10 @@ func (hunter *Hunter) registerReadinessCD() {
 				Duration: time.Minute * 3,
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			// Don't use if there are no cooldowns to reset.
+			return !hunter.RapidFire.IsReady(sim)
+		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			hunter.RapidFire.CD.Reset()
@@ -853,10 +854,6 @@ func (hunter *Hunter) registerReadinessCD() {
 	hunter.AddMajorCooldown(core.MajorCooldown{
 		Spell: readinessSpell,
 		Type:  core.CooldownTypeDPS,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			// Don't use if there are no cooldowns to reset.
-			return !hunter.RapidFire.IsReady(sim)
-		},
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 			// If RF is about to become ready naturally, wait so we can get 2x usages.
 			if !hunter.RapidFire.IsReady(sim) && hunter.RapidFire.TimeToReady(sim) < time.Second*10 {

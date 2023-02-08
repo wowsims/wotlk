@@ -91,19 +91,21 @@ func (cat *FeralDruid) MissChance() float64 {
 	return miss + dodge
 }
 
-func (cat *FeralDruid) Prepull(sim *core.Simulation) {
-	if cat.prepopOoc && cat.Talents.OmenOfClarity {
-		cat.ProcOoc(sim)
-		cat.ClearcastingAura.UpdateExpires(cat.ClearcastingAura.Duration - cat.SpellGCD())
-	}
-	if cat.PrePopBerserk && cat.Talents.Berserk {
-		cat.Berserk.CD.UsePrePull(sim, time.Second)
-	}
-}
-
 func (cat *FeralDruid) Initialize() {
 	cat.Druid.Initialize()
 	cat.RegisterFeralCatSpells()
+
+	if cat.PrePopBerserk && cat.Talents.Berserk {
+		cat.RegisterPrepullAction(-time.Second, func(sim *core.Simulation) {
+			cat.Berserk.Cast(sim, nil)
+		})
+	}
+
+	if cat.prepopOoc && cat.Talents.OmenOfClarity {
+		cat.RegisterPrepullAction(-cat.SpellGCD(), func(sim *core.Simulation) {
+			cat.ProcOoc(sim)
+		})
+	}
 }
 
 func (cat *FeralDruid) Reset(sim *core.Simulation) {

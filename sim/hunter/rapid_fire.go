@@ -52,6 +52,10 @@ func (hunter *Hunter) registerRapidFireCD() {
 				Duration: time.Minute*5 - time.Minute*time.Duration(hunter.Talents.RapidKilling),
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			// Make sure we don't reuse after a Readiness cast.
+			return !hunter.RapidFireAura.IsActive()
+		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			hunter.RapidFireAura.Activate(sim)
@@ -61,9 +65,5 @@ func (hunter *Hunter) registerRapidFireCD() {
 	hunter.AddMajorCooldown(core.MajorCooldown{
 		Spell: hunter.RapidFire,
 		Type:  core.CooldownTypeDPS,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			// Make sure we don't reuse after a Readiness cast.
-			return !hunter.RapidFireAura.IsActive()
-		},
 	})
 }

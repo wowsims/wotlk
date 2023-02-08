@@ -4,6 +4,8 @@ import (
 	"time"
 )
 
+const startingCDTime = -60 * time.Minute
+
 // Stored value is the time at which the cooldown will be available again.
 type Timer time.Duration
 
@@ -40,7 +42,7 @@ func (timer *Timer) Set(t time.Duration) {
 }
 
 func (timer *Timer) Reset() {
-	*timer = 0
+	*timer = Timer(startingCDTime)
 }
 
 func (timer *Timer) TimeToReady(sim *Simulation) time.Duration {
@@ -54,12 +56,6 @@ func (timer *Timer) IsReady(sim *Simulation) bool {
 // Puts this CD on cooldown, using the default duration.
 func (cd *Cooldown) Use(sim *Simulation) {
 	*cd.Timer = Timer(sim.CurrentTime + cd.Duration)
-}
-
-func (cd *Cooldown) UsePrePull(sim *Simulation, timeBeforePull time.Duration) {
-	if cd.Duration-timeBeforePull >= 0 {
-		*cd.Timer = Timer(sim.CurrentTime - timeBeforePull + cd.Duration)
-	}
 }
 
 func BothTimersReadyAt(t1 *Timer, t2 *Timer) time.Duration {

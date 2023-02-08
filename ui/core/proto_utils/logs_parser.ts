@@ -134,7 +134,7 @@ export class SimLog {
 				line = line.substring(0, threatMatch.index);
 			}
 
-			let match = line.match(/\[([0-9]+\.[0-9]+)\]\w*(.*)/);
+			let match = line.match(/\[(-?[0-9]+\.[0-9]+)\]\w*(.*)/);
 			if (!match || !match[1]) {
 				return new SimLog(params);
 			}

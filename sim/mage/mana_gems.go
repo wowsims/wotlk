@@ -48,6 +48,9 @@ func (mage *Mage) registerManaGemsCD() {
 				Duration: time.Minute * 2,
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return remainingManaGems != 0
+		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			var manaGain float64
@@ -80,9 +83,6 @@ func (mage *Mage) registerManaGemsCD() {
 		Spell:    spell,
 		Priority: core.CooldownPriorityDefault,
 		Type:     core.CooldownTypeMana,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return remainingManaGems != 0
-		},
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 			// Only pop if we have less than the max mana provided by the gem minus 1mp5 tick.
 			totalRegen := character.ManaRegenPerSecondWhileCasting() * 5
