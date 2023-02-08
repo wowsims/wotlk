@@ -43,9 +43,6 @@ func (warrior *Warrior) RegisterShatteringThrowCD() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			if !warrior.StanceMatches(BattleStance) && warrior.BattleStance.IsReady(sim) {
-				warrior.BattleStance.Cast(sim, nil)
-			}
 
 			baseDamage := 0.5 * spell.MeleeAttackPower()
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialNoBlockDodgeParry)
@@ -58,5 +55,12 @@ func (warrior *Warrior) RegisterShatteringThrowCD() {
 	warrior.AddMajorCooldown(core.MajorCooldown{
 		Spell: ShatteringThrowSpell,
 		Type:  core.CooldownTypeDPS,
+		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
+			if !warrior.StanceMatches(BattleStance) && warrior.BattleStance.IsReady(sim) {
+				warrior.BattleStance.Cast(sim, nil)
+				return true
+			}
+			return warrior.StanceMatches(BattleStance)
+		},
 	})
 }

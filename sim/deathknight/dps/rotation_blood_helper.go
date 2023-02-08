@@ -123,7 +123,7 @@ func (dk *DpsDeathknight) blBloodTapCheck(sim *core.Simulation, target *core.Uni
 		return false
 	}
 
-	if dk.RuneWeapon.IsEnabled() && dk.BloodTap.IsReady(sim) {
+	if (!dk.Talents.DancingRuneWeapon || dk.RuneWeapon.IsEnabled()) && dk.BloodTap.IsReady(sim) {
 		return dk.BloodTap.Cast(sim, target)
 	}
 

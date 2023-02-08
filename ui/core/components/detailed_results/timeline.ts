@@ -1193,9 +1193,11 @@ const idToCategoryMap: Record<number, number> = {
 
 const idsToGroupForRotation: Array<number> = [
 	6774,  // Slice and Dice
-	26866, // Expose Armor
-	26865, // Eviscerate
-	26867, // Rupture
+	8647, // Expose Armor
+	48668, // Eviscerate
+	48672, // Rupture
+	51690, // Killing Spree
+	57993, // Envenom
 ];
 
 const percentageResources: Array<ResourceType> = [
