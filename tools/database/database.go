@@ -170,6 +170,9 @@ func (db *WowDatabase) MergeNpc(src *proto.UINPC) {
 
 func (db *WowDatabase) AddItemIcon(id int32, tooltips map[int32]WowheadItemResponse) {
 	if tooltip, ok := tooltips[id]; ok {
+		if tooltip.GetName() == "" || tooltip.GetIcon() == "" {
+			return
+		}
 		db.ItemIcons[id] = &proto.IconData{Id: id, Name: tooltip.GetName(), Icon: tooltip.GetIcon()}
 	} else {
 		panic(fmt.Sprintf("No item tooltip with id %d", id))
@@ -178,6 +181,9 @@ func (db *WowDatabase) AddItemIcon(id int32, tooltips map[int32]WowheadItemRespo
 
 func (db *WowDatabase) AddSpellIcon(id int32, tooltips map[int32]WowheadItemResponse) {
 	if tooltip, ok := tooltips[id]; ok {
+		if tooltip.GetName() == "" || tooltip.GetIcon() == "" {
+			return
+		}
 		db.SpellIcons[id] = &proto.IconData{Id: id, Name: tooltip.GetName(), Icon: tooltip.GetIcon()}
 	} else {
 		panic(fmt.Sprintf("No spell tooltip with id %d", id))
