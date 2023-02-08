@@ -267,7 +267,7 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 		rogue.setSubtletyBuilder()
 		rogue.setupSubtletyRotation(sim)
 	}
-	isMultiTarget := sim.GetNumTargets() > 3
+	isMultiTarget := sim.GetNumTargets() >= 3
 	// Slice and Dice
 	rogue.priorityItems = make([]roguePriorityItem, 0)
 
@@ -285,7 +285,7 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 	}
 	if isMultiTarget {
 		if rogue.Rotation.MultiTargetSliceFrequency != proto.Rogue_Rotation_Never {
-			sliceAndDice.MinimumComboPoints = rogue.Rotation.MinimumComboPointsMultiTargetSlice
+			sliceAndDice.MinimumComboPoints = core.MaxInt32(1, rogue.Rotation.MinimumComboPointsMultiTargetSlice)
 			if rogue.Rotation.MultiTargetSliceFrequency == proto.Rogue_Rotation_Once {
 				sliceAndDice.MaxCasts = 1
 			}
