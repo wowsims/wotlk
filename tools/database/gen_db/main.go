@@ -19,7 +19,7 @@ import (
 // To do a full re-scrape, delete the previous output file first.
 // go run ./tools/database/gen_db -outDir=assets -gen=atlasloot
 // go run ./tools/database/gen_db -outDir=assets -gen=wowhead-items
-// go run ./tools/database/gen_db -outDir=assets -gen=wowhead-spells
+// go run ./tools/database/gen_db -outDir=assets -gen=wowhead-spells -maxid=75000
 // go run ./tools/database/gen_db -outDir=assets -gen=wowhead-gearplannerdb
 // go run ./tools/database/gen_db -outDir=assets -gen=wotlk-items
 // go run ./tools/database/gen_db -outDir=assets -gen=db
