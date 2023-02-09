@@ -618,7 +618,7 @@ func (aa *AutoAttacks) StopMeleeUntil(sim *Simulation, readyAt time.Duration, de
 
 func (aa *AutoAttacks) restartMelee(sim *Simulation) {
 	if !aa.autoSwingCancelled {
-		panic("restartMelee used while auto swing isn't cancelled")
+		return
 	}
 
 	aa.MainhandSwingAt = sim.CurrentTime + aa.MainhandSwingSpeed()
@@ -633,7 +633,7 @@ func (aa *AutoAttacks) restartMelee(sim *Simulation) {
 // After swing timer has passed half the swing time, Offhand swing timer will be reset.
 func (aa *AutoAttacks) desyncedRestartMelee(sim *Simulation) {
 	if !aa.autoSwingCancelled {
-		panic("desyncedRestartMelee used while auto swing isn't cancelled")
+		return
 	}
 
 	aa.MainhandSwingAt = sim.CurrentTime + aa.MainhandSwingSpeed()
