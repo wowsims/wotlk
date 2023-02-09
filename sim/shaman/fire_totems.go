@@ -8,10 +8,21 @@ import (
 )
 
 func (shaman *Shaman) registerSearingTotemSpell() {
-	actionID := core.ActionID{SpellID: 58704}
+	var extraCastCondition core.CanCastCondition
+	if shaman.Totems.Fire == proto.FireTotem_SearingTotem && shaman.Totems.UseFireMcd {
+		extraCastCondition = func(sim *core.Simulation, target *core.Unit) bool {
+			if shaman.Totems.Fire != proto.FireTotem_SearingTotem {
+				return false
+			}
+			if shaman.SearingTotem.AOEDot().IsActive() || shaman.FireElemental.IsEnabled() || shaman.FireElementalTotem.IsReady(sim) {
+				return false
+			}
+			return true
+		}
+	}
 
 	shaman.SearingTotem = shaman.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
+		ActionID:    core.ActionID{SpellID: 58704},
 		SpellSchool: core.SpellSchoolFire,
 		ProcMask:    core.ProcMaskEmpty,
 		Flags:       SpellFlagTotem,
@@ -27,6 +38,7 @@ func (shaman *Shaman) registerSearingTotemSpell() {
 				GCD: time.Second,
 			},
 		},
+		ExtraCastCondition: extraCastCondition,
 
 		BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
 		DamageMultiplier: 1 + float64(shaman.Talents.CallOfFlame)*0.05,
@@ -62,30 +74,32 @@ func (shaman *Shaman) registerSearingTotemSpell() {
 		},
 	})
 
-	if shaman.Totems.Fire != proto.FireTotem_SearingTotem || !shaman.Totems.UseFireMcd {
+	if extraCastCondition == nil {
 		return
 	}
 	shaman.AddMajorCooldown(core.MajorCooldown{
 		Spell:    shaman.SearingTotem,
 		Priority: core.CooldownPriorityDefault, // TODO needs to be altered due to snap shotting.
 		Type:     core.CooldownTypeDPS,
-		CanActivate: func(s *core.Simulation, c *core.Character) bool {
-			if shaman.Totems.Fire != proto.FireTotem_SearingTotem {
-				return false
-			}
-			if shaman.SearingTotem.AOEDot().IsActive() || shaman.FireElemental.IsEnabled() || shaman.FireElementalTotem.IsReady(s) {
-				return false
-			}
-			return true
-		},
 	})
 }
 
 func (shaman *Shaman) registerMagmaTotemSpell() {
-	actionID := core.ActionID{SpellID: 58734}
+	var extraCastCondition core.CanCastCondition
+	if shaman.Totems.Fire == proto.FireTotem_MagmaTotem && shaman.Totems.UseFireMcd {
+		extraCastCondition = func(sim *core.Simulation, target *core.Unit) bool {
+			if shaman.Totems.Fire != proto.FireTotem_MagmaTotem {
+				return false
+			}
+			if shaman.MagmaTotem.AOEDot().IsActive() || shaman.FireElemental.IsEnabled() || shaman.FireElementalTotem.IsReady(sim) {
+				return false
+			}
+			return true
+		}
+	}
 
 	shaman.MagmaTotem = shaman.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
+		ActionID:    core.ActionID{SpellID: 58734},
 		SpellSchool: core.SpellSchoolFire,
 		ProcMask:    core.ProcMaskEmpty,
 		Flags:       SpellFlagTotem,
@@ -101,6 +115,7 @@ func (shaman *Shaman) registerMagmaTotemSpell() {
 				GCD: time.Second,
 			},
 		},
+		ExtraCastCondition: extraCastCondition,
 
 		BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
 		DamageMultiplier: 1 + float64(shaman.Talents.CallOfFlame)*0.05,
@@ -134,22 +149,12 @@ func (shaman *Shaman) registerMagmaTotemSpell() {
 		},
 	})
 
-	if shaman.Totems.Fire != proto.FireTotem_MagmaTotem || !shaman.Totems.UseFireMcd {
-		return // don't add magma totem to the CDs
+	if extraCastCondition == nil {
+		return
 	}
-
 	shaman.AddMajorCooldown(core.MajorCooldown{
 		Spell:    shaman.MagmaTotem,
 		Priority: core.CooldownPriorityDefault, // TODO needs to be altered due to snap shotting.
 		Type:     core.CooldownTypeDPS,
-		CanActivate: func(s *core.Simulation, c *core.Character) bool {
-			if shaman.Totems.Fire != proto.FireTotem_MagmaTotem {
-				return false
-			}
-			if shaman.MagmaTotem.AOEDot().IsActive() || shaman.FireElemental.IsEnabled() || shaman.FireElementalTotem.IsReady(s) {
-				return false
-			}
-			return true
-		},
 	})
 }
