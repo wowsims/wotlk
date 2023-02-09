@@ -17,29 +17,7 @@ func (war *ProtectionWarrior) OnAutoAttack(sim *core.Simulation, spell *core.Spe
 
 func (war *ProtectionWarrior) doRotation(sim *core.Simulation) {
 	war.trySwapToDefensive(sim)
-	if war.CustomRotation != nil {
-		war.CustomRotation.Cast(sim)
-	} else {
-		if war.GCD.IsReady(sim) {
-			if war.ShieldSlam.CanCast(sim, war.CurrentTarget) {
-				war.ShieldSlam.Cast(sim, war.CurrentTarget)
-			} else if war.Revenge.CanCast(sim, war.CurrentTarget) {
-				war.Revenge.Cast(sim, war.CurrentTarget)
-			} else if war.ShouldShout(sim) {
-				war.Shout.Cast(sim, nil)
-			} else if war.shouldThunderClap(sim) {
-				war.ThunderClap.Cast(sim, war.CurrentTarget)
-			} else if war.shouldDemoShout(sim) {
-				war.DemoralizingShout.Cast(sim, war.CurrentTarget)
-			} else if war.MortalStrike.CanCast(sim, war.CurrentTarget) {
-				war.MortalStrike.Cast(sim, war.CurrentTarget)
-			} else if war.Devastate.CanCast(sim, war.CurrentTarget) {
-				war.Devastate.Cast(sim, war.CurrentTarget)
-			} else if war.SunderArmor.CanCast(sim, war.CurrentTarget) {
-				war.SunderArmor.Cast(sim, war.CurrentTarget)
-			}
-		}
-	}
+	war.CustomRotation.Cast(sim)
 
 	// if we did nothing else, mark we intentionally did nothing here.
 	if war.GCD.IsReady(sim) {
