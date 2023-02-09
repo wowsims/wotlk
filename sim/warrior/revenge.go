@@ -85,6 +85,9 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 				Duration: cooldownDur,
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return warrior.StanceMatches(DefensiveStance) && warrior.revengeProcAura.IsActive()
+		},
 
 		DamageMultiplier: 1.0 + 0.1*float64(warrior.Talents.UnrelentingAssault) + 0.3*float64(warrior.Talents.ImprovedRevenge),
 		CritMultiplier:   warrior.critMultiplier(mh),
@@ -113,11 +116,4 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 			}
 		},
 	})
-}
-
-func (warrior *Warrior) CanRevenge(sim *core.Simulation) bool {
-	return warrior.revengeProcAura.IsActive() &&
-		warrior.StanceMatches(DefensiveStance) &&
-		warrior.CurrentRage() >= warrior.Revenge.DefaultCast.Cost &&
-		warrior.Revenge.IsReady(sim)
 }
