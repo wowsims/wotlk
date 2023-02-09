@@ -15,6 +15,7 @@ func (dk *Deathknight) registerBoneShieldSpell() {
 	actionID := core.ActionID{SpellID: 49222}
 	cdTimer := dk.NewTimer()
 	cd := time.Minute*1 - dk.thassariansPlateCooldownReduction(dk.BoneShield)
+	stackRemovalCd := 0 * time.Second
 
 	dk.BoneShieldAura = dk.RegisterAura(core.Aura{
 		Label:     "Bone Shield",
@@ -27,19 +28,22 @@ func (dk *Deathknight) registerBoneShieldSpell() {
 			dk.BoneShieldAura.SetStacks(sim, dk.BoneShieldAura.MaxStacks)
 		},
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			aura.RemoveStack(sim)
-			if aura.GetStacks() == 0 {
-				aura.Deactivate(sim)
+			if sim.CurrentTime > stackRemovalCd+2*time.Second {
+				stackRemovalCd = sim.CurrentTime
+
+				aura.RemoveStack(sim)
+				if aura.GetStacks() == 0 {
+					aura.Deactivate(sim)
+				}
 			}
 		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			dk.ModifyDamageModifier(0.02)
-
 			aura.Unit.PseudoStats.DamageTakenMultiplier *= 0.8
+			stackRemovalCd = sim.CurrentTime
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			dk.ModifyDamageModifier(-0.02)
-
 			aura.Unit.PseudoStats.DamageTakenMultiplier /= 0.8
 		},
 	})
@@ -63,6 +67,7 @@ func (dk *Deathknight) registerBoneShieldSpell() {
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dk.BoneShieldAura.Activate(sim)
+			dk.BoneShieldAura.SetStacks(sim, dk.BoneShieldAura.MaxStacks)
 		},
 	})
 }
