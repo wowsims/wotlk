@@ -34,7 +34,6 @@ func NewRestorationShaman(character core.Character, options *proto.Player) *Rest
 	totems := &proto.ShamanTotems{}
 	if restoShamOptions.Rotation.Totems != nil {
 		totems = restoShamOptions.Rotation.Totems
-		totems.UseFireMcd = true // Control fire totems as MCD.
 	}
 
 	resto := &RestorationShaman{

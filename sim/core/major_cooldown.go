@@ -51,11 +51,6 @@ type MajorCooldown struct {
 	// all DPS cooldowns during their regen rotation.
 	Type CooldownType
 
-	// Whether the cooldown meets all hard requirements for activation (e.g. resource cost).
-	// Note chat whether the cooldown is off CD is automatically checked, so it does not
-	// need to be checked again by this function.
-	CanActivate CooldownActivationCondition
-
 	// Whether the cooldown meets all optional conditions for activation. These
 	// conditions will be ignored when the user specifies their own activation time.
 	// This is for things like mana thresholds, which are optimizations for better
@@ -131,11 +126,13 @@ func (mcd *MajorCooldown) tryActivateInternal(sim *Simulation, character *Charac
 // Activates this MCD, if all the conditions pass.
 // Returns whether the MCD was activated.
 func (mcd *MajorCooldown) tryActivateHelper(sim *Simulation, character *Character) bool {
-	if !mcd.Spell.CanCast(sim, character.CurrentTarget) {
-		return false
+	if mcd.Type.Matches(CooldownTypeSurvival) && character.cooldownConfigs.HpPercentForDefensives != 0 {
+		if character.CurrentHealthPercent() > character.cooldownConfigs.HpPercentForDefensives {
+			return false
+		}
 	}
 
-	if !mcd.CanActivate(sim, character) {
+	if !mcd.Spell.CanCast(sim, character.CurrentTarget) {
 		return false
 	}
 
@@ -282,22 +279,6 @@ func (mcdm *majorCooldownManager) AddMajorCooldown(mcd MajorCooldown) {
 		panic("Major cooldown must have a Spell!")
 	}
 
-	if mcd.Type.Matches(CooldownTypeSurvival) && mcdm.cooldownConfigs.HpPercentForDefensives != 0 {
-		origCanActivate := mcd.CanActivate
-		mcd.CanActivate = func(sim *Simulation, character *Character) bool {
-			if character.CurrentHealthPercent() > mcdm.cooldownConfigs.HpPercentForDefensives {
-				return false
-			}
-
-			return origCanActivate == nil || origCanActivate(sim, character)
-		}
-	}
-
-	if mcd.CanActivate == nil {
-		mcd.CanActivate = func(sim *Simulation, character *Character) bool {
-			return true
-		}
-	}
 	if mcd.ShouldActivate == nil {
 		mcd.ShouldActivate = func(sim *Simulation, character *Character) bool {
 			return true
@@ -360,7 +341,7 @@ restart:
 
 		if mcd.tryActivateInternal(sim, mcdm.character) {
 			if mcd.IsReady(sim) {
-				continue // activation failed, most likely because CanActivate() is incomplete or not implemented
+				continue // activation failed
 			}
 			mcdm.sort()
 

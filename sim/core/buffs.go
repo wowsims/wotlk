@@ -502,6 +502,17 @@ func registerExternalConsecutiveCDApproximation(agent Agent, config externalCons
 				Duration: config.AuraDuration, // Assumes that multiple buffs are different sources.
 			},
 		},
+		ExtraCastCondition: func(sim *Simulation, target *Unit) bool {
+			if !externalTimers[nextExternalIndex].IsReady(sim) {
+				return false
+			}
+
+			if character.HasActiveAuraWithTag(config.AuraTag) {
+				return false
+			}
+
+			return true
+		},
 
 		ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
 			config.AddAura(sim, character)
@@ -522,17 +533,6 @@ func registerExternalConsecutiveCDApproximation(agent Agent, config externalCons
 		Priority: config.CooldownPriority,
 		Type:     config.Type,
 
-		CanActivate: func(sim *Simulation, character *Character) bool {
-			if !externalTimers[nextExternalIndex].IsReady(sim) {
-				return false
-			}
-
-			if character.HasActiveAuraWithTag(config.AuraTag) {
-				return false
-			}
-
-			return true
-		},
 		ShouldActivate: config.ShouldActivate,
 	})
 }
