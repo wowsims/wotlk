@@ -41,12 +41,8 @@ func (warrior *Warrior) registerDemoralizingShoutSpell() {
 	})
 }
 
-func (warrior *Warrior) CanDemoralizingShout(sim *core.Simulation) bool {
-	return warrior.CurrentRage() >= warrior.DemoralizingShout.DefaultCast.Cost
-}
-
 func (warrior *Warrior) ShouldDemoralizingShout(sim *core.Simulation, filler bool, maintainOnly bool) bool {
-	if !warrior.CanDemoralizingShout(sim) {
+	if !warrior.DemoralizingShout.CanCast(sim, warrior.CurrentTarget) {
 		return false
 	}
 

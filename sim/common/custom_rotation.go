@@ -59,8 +59,9 @@ func NewCustomRotation(crProto *proto.CustomRotation, character *core.Character,
 			}
 		}
 		if customSpell.Condition == nil {
+			spell := customSpell.Spell
 			customSpell.Condition = func(sim *core.Simulation) bool {
-				return true
+				return spell.CanCast(sim, character.CurrentTarget)
 			}
 		}
 		if customSpell.Action != nil {

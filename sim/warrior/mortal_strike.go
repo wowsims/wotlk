@@ -8,6 +8,10 @@ import (
 )
 
 func (warrior *Warrior) registerMortalStrikeSpell(cdTimer *core.Timer) {
+	if !warrior.Talents.MortalStrike {
+		return
+	}
+
 	warrior.MortalStrike = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47486},
 		SpellSchool: core.SpellSchoolPhysical,
@@ -49,12 +53,4 @@ func (warrior *Warrior) registerMortalStrikeSpell(cdTimer *core.Timer) {
 			}
 		},
 	})
-}
-
-func (warrior *Warrior) CanMortalStrike(sim *core.Simulation) bool {
-	if warrior.Talents.MortalStrike {
-		return warrior.CurrentRage() >= warrior.MortalStrike.DefaultCast.Cost && warrior.MortalStrike.IsReady(sim)
-	} else {
-		return false
-	}
 }

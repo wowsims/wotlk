@@ -46,7 +46,3 @@ func (warrior *Warrior) registerConcussionBlowSpell() {
 		},
 	})
 }
-
-func (warrior *Warrior) CanConcussionBlow(sim *core.Simulation) bool {
-	return warrior.Talents.ConcussionBlow && warrior.CurrentRage() >= warrior.ConcussionBlow.DefaultCast.Cost && warrior.ConcussionBlow.IsReady(sim)
-}
