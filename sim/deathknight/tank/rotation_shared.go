@@ -67,6 +67,16 @@ func (dk *TankDeathknight) DoDefensiveCds(sim *core.Simulation, target *core.Uni
 				return true
 			}
 		}
+
+		if dk.Talents.BoneShield {
+			if !dk.BoneShield.CanCast(sim, target) && dk.BloodTap.CanCast(sim, nil) {
+				dk.BloodTap.Cast(sim, nil)
+			}
+			if dk.BoneShield.CanCast(sim, target) {
+				dk.BoneShield.Cast(sim, target)
+				return true
+			}
+		}
 	}
 
 	return false
