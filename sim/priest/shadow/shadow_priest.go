@@ -73,14 +73,14 @@ func (spriest *ShadowPriest) GetPriest() *priest.Priest {
 func (spriest *ShadowPriest) Initialize() {
 	spriest.Priest.Initialize()
 
-	if spriest.rotation.PrecastVt {
+	if spriest.rotation.PrecastType > 0 {
 		spriest.RegisterPrepullAction(-1500*time.Millisecond, func(sim *core.Simulation) {
-			// Decide if precast MB or VT is more dps
-			precastSpell := spriest.VampiricTouch
-			if spriest.BLUsedAt == 0 {
-				precastSpell = spriest.MindBlast
+			if spriest.rotation.PrecastType == 1 {
+				spriest.VampiricTouch.Cast(sim, spriest.CurrentTarget)
 			}
-			precastSpell.Cast(sim, spriest.CurrentTarget)
+			if spriest.rotation.PrecastType == 2 {
+				spriest.MindBlast.Cast(sim, spriest.CurrentTarget)
+			}
 		})
 	}
 }
