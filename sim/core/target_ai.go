@@ -9,7 +9,7 @@ import (
 )
 
 type TargetAI interface {
-	Initialize(*Target)
+	Initialize(*Target, *proto.Target)
 	Reset(*Simulation)
 	DoAction(*Simulation)
 }
@@ -42,7 +42,7 @@ func (target *Target) initialize(config *proto.Target) {
 	}
 
 	if target.AI != nil {
-		target.AI.Initialize(target)
+		target.AI.Initialize(target, config)
 
 		target.gcdAction = &PendingAction{
 			Priority: ActionPriorityGCD,

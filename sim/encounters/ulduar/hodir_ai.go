@@ -33,6 +33,7 @@ func addHodir10(bossPrefix string) {
 			ParryHaste:       false,
 			DualWield:        false,
 			DualWieldPenalty: false,
+			TargetInputs:     HodirTargetInputs(),
 		},
 		AI: NewHodir10AI(),
 	})
@@ -64,6 +65,7 @@ func addHodir25(bossPrefix string) {
 			ParryHaste:       false,
 			DualWield:        false,
 			DualWieldPenalty: false,
+			TargetInputs:     HodirTargetInputs(),
 		},
 		AI: NewHodir25AI(),
 	})
@@ -97,6 +99,26 @@ type HodirAI struct {
 	NextStorms time.Duration
 
 	raidSize int
+
+	StormPowerPrio  bool
+	StarlightUptime float64
+}
+
+func HodirTargetInputs() []*proto.TargetInput {
+	return []*proto.TargetInput{
+		{
+			Label:     "Stormpower Prio",
+			Tooltip:   "Should stormpower buff be applied when available",
+			InputType: proto.InputType_Bool,
+			BoolValue: true,
+		},
+		{
+			Label:       "Starlight Uptime %",
+			Tooltip:     "Uptime on Starlight haste buff (Range 0-100%)",
+			InputType:   proto.InputType_Number,
+			NumberValue: 80.0,
+		},
+	}
 }
 
 func NewHodir10AI() core.AIFactory {
@@ -115,8 +137,11 @@ func NewHodir25AI() core.AIFactory {
 	}
 }
 
-func (ai *HodirAI) Initialize(target *core.Target) {
+func (ai *HodirAI) Initialize(target *core.Target, config *proto.Target) {
 	ai.Target = target
+
+	ai.StormPowerPrio = config.TargetInputs[0].BoolValue
+	ai.StarlightUptime = config.TargetInputs[1].NumberValue
 
 	ai.registerBuffsDebuffs(target)
 	ai.registerFlashFreeze(target)
@@ -248,7 +273,7 @@ func (ai *HodirAI) registerBuffsDebuffs(target *core.Target) {
 				},
 			})
 
-			core.ApplyFixedUptimeAura(aura, 0.90, time.Second*15, time.Second*10)
+			core.ApplyFixedUptimeAura(aura, core.MinFloat(core.MaxFloat(ai.StarlightUptime, 0.0), 100.0)/100.0, time.Second*15, time.Second*10)
 			ai.Starlight = append(ai.Starlight, aura)
 		}
 	}
@@ -477,8 +502,10 @@ func (ai *HodirAI) DoAction(sim *core.Simulation) {
 		} else {
 			// Individual sim we assume actor is prioritized for every storm power
 			// so just activate them
-			for _, stormCloud := range ai.StormCloud {
-				stormCloud.Activate(sim)
+			if ai.StormPowerPrio {
+				for _, stormCloud := range ai.StormCloud {
+					stormCloud.Activate(sim)
+				}
 			}
 		}
 	}

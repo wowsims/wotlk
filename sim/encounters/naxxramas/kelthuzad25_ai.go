@@ -29,6 +29,7 @@ func addKelThuzad25(bossPrefix string) {
 			ParryHaste:       false,
 			DualWield:        false,
 			DualWieldPenalty: false,
+			TargetInputs:     make([]*proto.TargetInput, 0),
 		},
 		AI: NewKelThuzad25AI(),
 	})
@@ -47,7 +48,7 @@ func NewKelThuzad25AI() core.AIFactory {
 	}
 }
 
-func (ai *KelThuzad25AI) Initialize(target *core.Target) {
+func (ai *KelThuzad25AI) Initialize(target *core.Target, config *proto.Target) {
 	ai.Target = target
 }
 

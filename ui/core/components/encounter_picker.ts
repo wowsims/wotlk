@@ -1,7 +1,9 @@
 import {
+	InputType,
 	MobType,
 	SpellSchool,
-	Stat
+	Stat,
+	TargetInput
  } from '../proto/common.js';
 import { Encounter } from '../encounter.js';
 import { Raid } from '../raid.js';
@@ -21,6 +23,7 @@ import { IndividualSimUI } from '../individual_sim_ui.js';
 import { SimUI } from '../sim_ui.js';
 import { Input } from './input.js';
 import { BaseModal } from './base_modal.js';
+import { simUI } from 'ui/balance_druid/index.js';
 
 export interface EncounterPickerConfig {
 	showExecuteProportion: boolean,
@@ -35,6 +38,7 @@ export class EncounterPicker extends Component {
 		// Need to wait so that the encounter and target presets will be loaded.
 		modEncounter.sim.waitForInit().then(() => {
 			const presetTargets = modEncounter.sim.db.getAllPresetTargets();
+
 			new EnumPicker<Encounter>(this.rootElem, modEncounter, {
 				extraCssClasses: ['damage-metrics', 'npc-picker'],
 				label: 'NPC',
@@ -53,6 +57,8 @@ export class EncounterPicker extends Component {
 					if (newValue != -1) {
 						encounter.primaryTarget.applyPreset(eventID, presetTargets[newValue]);
 					}
+
+					EncounterPicker.updatePrimaryTargetInputs(encounter.primaryTarget);
 				},
 			});
 
@@ -125,7 +131,67 @@ export class EncounterPicker extends Component {
 			advancedButton.textContent = 'Advanced';
 			advancedButton.addEventListener('click', () => new AdvancedEncounterModal(simUI.rootElem, simUI, modEncounter));
 			this.rootElem.appendChild(advancedButton);
+
+			EncounterPicker.primaryRootElem = this.rootElem;
+			EncounterPicker.updatePrimaryTargetInputs(modEncounter.primaryTarget);
 		});
+	}
+
+	static primaryRootElem: HTMLElement;
+	static primaryPickers = new Array<Component>();
+
+	static clearTargetInputPickers(targetInputPickers: Array<Component>) {
+		targetInputPickers.forEach(picker => {
+			picker?.rootElem.remove()
+			picker?.dispose()
+		})
+	}
+
+	static updatePrimaryTargetInputs(target: Target) {
+		EncounterPicker.clearTargetInputPickers(EncounterPicker.primaryPickers)
+		EncounterPicker.primaryPickers = []
+		EncounterPicker.rebuildTargetInputs(EncounterPicker.primaryRootElem, target, EncounterPicker.primaryPickers, true)
+	}
+
+	static rebuildTargetInputs(rootElem: HTMLElement, target: Target, pickers: Array<Component>, beforeLast: boolean) {
+		if (target.hasTargetInputs()) {
+			for (let index = 0; index < target.getTargetInputsCount(); index++) {
+				let targetInput = target.getTargetInputs().getTargetInput(index)
+				if (targetInput.inputType == InputType.Number) {
+					let numberPicker = new NumberPicker(rootElem, target, {
+						label: targetInput.label,
+						labelTooltip: targetInput.tooltip,
+						changedEvent: (target: Target) => target.propChangeEmitter,
+						getValue: (target: Target) => target.getTargetInputNumberValue(index),
+						setValue: (eventID: EventID, target: Target, newValue: number) => {
+							target.setTargetInputNumberValue(eventID, index, newValue)
+						},
+					});
+					if (beforeLast) {
+						let parent = numberPicker.rootElem.parentElement;
+						parent?.removeChild(numberPicker.rootElem)
+						parent?.insertBefore(numberPicker.rootElem, parent.lastChild)
+					}
+					pickers.push(numberPicker)
+				} else if (targetInput.inputType == InputType.Bool) {
+					let booleanPicker = new BooleanPicker(rootElem, target, {
+						label: targetInput.label,
+						labelTooltip: targetInput.tooltip,
+						changedEvent: (target: Target) => target.propChangeEmitter,
+						getValue: (target: Target) => target.getTargetInputBooleanValue(index),
+						setValue: (eventID: EventID, target: Target, newValue: boolean) => {
+							target.setTargetInputBooleanValue(eventID, index, newValue);
+						},
+					});
+					if (beforeLast) {
+						let parent = booleanPicker.rootElem.parentElement;
+						parent?.removeChild(booleanPicker.rootElem)
+						parent?.insertBefore(booleanPicker.rootElem, parent.lastChild)
+					}
+					pickers.push(booleanPicker)
+				}
+			}
+		}
 	}
 }
 
@@ -211,6 +277,8 @@ class TargetPicker extends Component {
 		const section2 = this.rootElem.getElementsByClassName('target-picker-section2')[0] as HTMLElement;
 		const section3 = this.rootElem.getElementsByClassName('target-picker-section3')[0] as HTMLElement;
 
+		let targetInputPickers = new Array<NumberPicker<Target>>();
+
 		const presetTargets = modTarget.sim.db.getAllPresetTargets();
 		new EnumPicker<Target>(section1, modTarget, {
 			extraCssClasses: ['npc-picker'],
@@ -230,6 +298,11 @@ class TargetPicker extends Component {
 				if (newValue != -1) {
 					target.applyPreset(eventID, presetTargets[newValue]);
 				}
+				
+				EncounterPicker.clearTargetInputPickers(targetInputPickers);
+				targetInputPickers = [];
+				EncounterPicker.rebuildTargetInputs(section1, target, targetInputPickers, false);
+				EncounterPicker.updatePrimaryTargetInputs(encounter.primaryTarget);
 			},
 		});
 
@@ -295,6 +368,8 @@ class TargetPicker extends Component {
 				target.setTankIndex(eventID, newValue);
 			},
 		});
+
+		EncounterPicker.rebuildTargetInputs(section1, modTarget, targetInputPickers, false);
 
 		ALL_TARGET_STATS.forEach(statData => {
 			const stat = statData.stat;

@@ -31,6 +31,7 @@ func addPatchwerk10(bossPrefix string) {
 			ParryHaste:       false,
 			DualWield:        true,
 			DualWieldPenalty: false,
+			TargetInputs:     make([]*proto.TargetInput, 0),
 		},
 		AI: NewPatchwerk10AI(),
 	})
@@ -52,7 +53,7 @@ func NewPatchwerk10AI() core.AIFactory {
 	}
 }
 
-func (ai *Patchwerk10AI) Initialize(target *core.Target) {
+func (ai *Patchwerk10AI) Initialize(target *core.Target, config *proto.Target) {
 	ai.Target = target
 
 	ai.registerHatefulStrikeSpell(target)

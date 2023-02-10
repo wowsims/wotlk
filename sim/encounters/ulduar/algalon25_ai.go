@@ -32,6 +32,7 @@ func addAlgalon25(bossPrefix string) {
 			DualWield:        true,
 			DualWieldPenalty: false,
 			TightEnemyDamage: true,
+			TargetInputs:     make([]*proto.TargetInput, 0),
 		},
 		AI: NewAlgalon25AI(),
 	})
@@ -55,7 +56,7 @@ func NewAlgalon25AI() core.AIFactory {
 	}
 }
 
-func (ai *Algalon25AI) Initialize(target *core.Target) {
+func (ai *Algalon25AI) Initialize(target *core.Target, config *proto.Target) {
 	ai.Target = target
 
 	ai.registerQuantumStrikeSpell(target)

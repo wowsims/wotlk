@@ -1,4 +1,4 @@
-import { MobType } from './proto/common.js';
+import { MobType, TargetInput } from './proto/common.js';
 import { SpellSchool } from './proto/common.js';
 import { Stat } from './proto/common.js';
 import { Target as TargetProto } from './proto/common.js';
@@ -7,11 +7,9 @@ import { Stats } from './proto_utils/stats.js';
 
 import * as Mechanics from './constants/mechanics.js';
 
-import { Listener } from './typed_event.js';
 import { Sim } from './sim.js';
 import { EventID, TypedEvent } from './typed_event.js';
-import { sum } from './utils.js';
-import { wait } from './utils.js';
+import { TargetInputs } from './target_inputs.js';
 
 // Manages all the settings for a single Target.
 export class Target {
@@ -32,6 +30,7 @@ export class Target {
 	private parryHaste: boolean = true;
 	private tightEnemyDamage: boolean = false;
 	private spellSchool: SpellSchool = SpellSchool.SpellSchoolPhysical;
+	private targetInputs: TargetInputs = new TargetInputs()
 
 	readonly idChangeEmitter = new TypedEvent<void>();
 	readonly nameChangeEmitter = new TypedEvent<void>();
@@ -214,6 +213,50 @@ export class Target {
 		this.propChangeEmitter.emit(eventID);
 	}
 
+	getTargetInputs(): TargetInputs {
+		return this.targetInputs;
+	}
+
+	setTargetInputs(eventID: EventID, newTargetInputs: TargetInputs) {
+		if (newTargetInputs.equals(this.targetInputs))
+			return;
+
+		this.targetInputs = newTargetInputs;
+		this.propChangeEmitter.emit(eventID);
+	}
+
+	hasTargetInputs(): boolean {
+		return this.targetInputs.hasInputs();
+	}
+
+	getTargetInputsCount(): number {
+		return this.targetInputs.getLength();
+	}
+
+	getTargetInputNumberValue(index: number): number {
+		return this.targetInputs.getTargetInput(index)?.numberValue;
+	}
+
+	setTargetInputNumberValue(eventID: EventID, index: number, newValue: number) {
+		if (this.getTargetInputNumberValue(index) == newValue)
+			return;
+
+		this.targetInputs.getTargetInput(index).numberValue = newValue;
+		this.propChangeEmitter.emit(eventID);
+	}
+
+	getTargetInputBooleanValue(index: number): boolean {
+		return this.targetInputs.getTargetInput(index)?.boolValue;
+	}
+
+	setTargetInputBooleanValue(eventID: EventID, index: number, newValue: boolean) {
+		if (this.getTargetInputBooleanValue(index) == newValue)
+			return;
+
+		this.targetInputs.getTargetInput(index).boolValue = newValue;
+		this.propChangeEmitter.emit(eventID);
+	}
+
 	getStats(): Stats {
 		return this.stats;
 	}
@@ -250,6 +293,7 @@ export class Target {
 			tightEnemyDamage: this.getTightEnemyDamage(),
 			spellSchool: this.getSpellSchool(),
 			stats: this.stats.asArray(),
+			targetInputs: this.targetInputs.asArray(),
 		});
 	}
 
@@ -268,6 +312,7 @@ export class Target {
 			this.setParryHaste(eventID, proto.parryHaste);
 			this.setTightEnemyDamage(eventID, proto.tightEnemyDamage);
 			this.setSpellSchool(eventID, proto.spellSchool);
+			this.setTargetInputs(eventID, new TargetInputs(proto.targetInputs));
 			this.setStats(eventID, new Stats(proto.stats));
 		});
 	}
@@ -294,6 +339,7 @@ export class Target {
 				[Stat.StatArmor]: 10643,
 				[Stat.StatAttackPower]: 574,
 			}).asArray(),
+			targetInputs: new Array<TargetInput>(0),
 		});
 	}
 
