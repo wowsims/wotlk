@@ -3,7 +3,8 @@ import { Player } from '../core/player.js';
 import { Spec } from '../core/proto/common.js';
 import {
 	ShadowPriest_Options_Armor as Armor,
-	ShadowPriest_Rotation_RotationType as RotationType
+	ShadowPriest_Rotation_RotationType as RotationType,
+	ShadowPriest_Rotation_PreCastOption as precastType
 } from '../core/proto/priest.js';
 import { EventID } from '../core/typed_event.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
@@ -49,10 +50,14 @@ export const ShadowPriestRotationConfig = {
 				{ name: 'AoE', value: RotationType.AoE },
 			],
 		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecShadowPriest>({
-			fieldName: 'precastVt',
-			label: 'Precast Vampiric Touch',
-			labelTooltip: 'Start fight with VT landing at time 0',
+		InputHelpers.makeRotationEnumInput<Spec.SpecShadowPriest, precastType>({
+			fieldName: 'precastType',
+			label: 'PreCast Spell',
+			labelTooltip: 'Choose which spell you want to Precast',
+			values: [
+				{ name: 'Vampiric Touch', value: precastType.PrecastVt },
+				{ name: 'Mind Blast', value: precastType.PrecastMb },
+			],
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecShadowPriest>({
 			fieldName: 'latency',
