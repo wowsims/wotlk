@@ -43,6 +43,9 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 			},
 			CD: cd,
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return !priest.WeakenedSouls[target.UnitIndex].IsActive()
+		},
 
 		DamageMultiplier: 1 *
 			(1 + .05*float64(priest.Talents.ImprovedPowerWordShield)) *
@@ -54,15 +57,11 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			weakenedSoul := priest.WeakenedSouls[target.UnitIndex]
-			if weakenedSoul.IsActive() {
-				panic("Cannot cast PWS on target with Weakened Soul!")
-			}
-
 			shieldAmount := 2230.0 + coeff*spell.HealingPower(target)
 			shield := priest.PWSShields[target.UnitIndex]
 			shield.Apply(sim, shieldAmount)
 
+			weakenedSoul := priest.WeakenedSouls[target.UnitIndex]
 			weakenedSoul.Duration = wsDuration
 			weakenedSoul.Activate(sim)
 
@@ -132,10 +131,4 @@ func (priest *Priest) makeWeakenedSoul(target *core.Unit) *core.Aura {
 		ActionID: core.ActionID{SpellID: 6788},
 		Duration: time.Second * 15,
 	})
-}
-
-func (priest *Priest) CanCastPWS(sim *core.Simulation, target *core.Unit) bool {
-	return priest.PowerWordShield.IsReady(sim) &&
-		priest.WeakenedSouls[target.UnitIndex] != nil &&
-		!priest.WeakenedSouls[target.UnitIndex].IsActive()
 }

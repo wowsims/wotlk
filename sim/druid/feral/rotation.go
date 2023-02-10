@@ -503,7 +503,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 			shiftNow = timeToDump >= sim.GetRemainingDuration()
 		}
 
-		if emergencyLacerate && cat.CanLacerate(sim) {
+		if emergencyLacerate && cat.Lacerate.CanCast(sim, cat.CurrentTarget) {
 			cat.Lacerate.Cast(sim, cat.CurrentTarget)
 			return
 		} else if shiftNow {
@@ -523,13 +523,13 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 			}
 		} else if powerbearNow {
 			cat.shiftBearCat(sim, true)
-		} else if lacerateNow && cat.CanLacerate(sim) {
+		} else if lacerateNow && cat.Lacerate.CanCast(sim, cat.CurrentTarget) {
 			cat.Lacerate.Cast(sim, cat.CurrentTarget)
 			return
-		} else if cat.CanMangleBear(sim) {
+		} else if cat.MangleBear.CanCast(sim, cat.CurrentTarget) {
 			cat.MangleBear.Cast(sim, cat.CurrentTarget)
 			return
-		} else if cat.CanLacerate(sim) {
+		} else if cat.Lacerate.CanCast(sim, cat.CurrentTarget) {
 			cat.Lacerate.Cast(sim, cat.CurrentTarget)
 			return
 		} else {
@@ -542,31 +542,31 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		cat.UpdateMajorCooldowns()
 		return
 	} else if roarNow {
-		if cat.CanSavageRoar() {
+		if cat.SavageRoar.CanCast(sim, cat.CurrentTarget) {
 			cat.SavageRoar.Cast(sim, nil)
 			return
 		}
 		timeToNextAction = time.Duration((cat.CurrentSavageRoarCost() - curEnergy) * float64(core.EnergyTickDuration))
 	} else if ripNow {
-		if cat.CanRip() {
+		if cat.Rip.CanCast(sim, cat.CurrentTarget) {
 			cat.Rip.Cast(sim, cat.CurrentTarget)
 			return
 		}
 		timeToNextAction = time.Duration((cat.CurrentRipCost() - curEnergy) * float64(core.EnergyTickDuration))
 	} else if biteNow {
-		if cat.CanFerociousBite() {
+		if cat.FerociousBite.CanCast(sim, cat.CurrentTarget) {
 			cat.FerociousBite.Cast(sim, cat.CurrentTarget)
 			return
 		}
 		timeToNextAction = time.Duration((cat.CurrentFerociousBiteCost() - curEnergy) * float64(core.EnergyTickDuration))
 	} else if rakeNow {
-		if cat.CanRake() {
+		if cat.Rake.CanCast(sim, cat.CurrentTarget) {
 			cat.Rake.Cast(sim, cat.CurrentTarget)
 			return
 		}
 		timeToNextAction = time.Duration((cat.CurrentRakeCost() - curEnergy) * float64(core.EnergyTickDuration))
 	} else if mangleNow {
-		if cat.CanMangleCat() {
+		if cat.MangleCat.CanCast(sim, cat.CurrentTarget) {
 			cat.MangleCat.Cast(sim, cat.CurrentTarget)
 			return
 		}

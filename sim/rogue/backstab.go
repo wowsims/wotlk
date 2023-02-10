@@ -8,9 +8,6 @@ import (
 )
 
 func (rogue *Rogue) registerBackstabSpell() {
-	// FIXME: Require a dagger MH
-	//daggerMH := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
-
 	rogue.Backstab = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 26863},
 		SpellSchool: core.SpellSchoolPhysical,
@@ -28,7 +25,7 @@ func (rogue *Rogue) registerBackstabSpell() {
 			IgnoreHaste: true,
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return rogue.GetMHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger
+			return !rogue.PseudoStats.InFrontOfTarget && rogue.GetMHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger
 		},
 
 		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +

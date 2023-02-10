@@ -31,7 +31,7 @@ func (druid *Druid) registerSavageDefensePassive() {
 		ProcMask: core.ProcMaskMelee | core.ProcMaskSpellDamage,
 		Harmful:  true,
 		Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
-			if result.Outcome.Matches(core.OutcomeCrit) {
+			if result.DidCrit() {
 				druid.SavageDefenseAura.Activate(sim)
 			}
 		},

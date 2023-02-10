@@ -48,31 +48,31 @@ dps_results: {
  value: {
   dps: 85.67686
   tps: 38.67518
-  hps: 3354.10599
+  hps: 3374.95014
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-Althor'sAbacus-50359"
  value: {
   dps: 106.86288
-  tps: 50.43814
-  hps: 5130.90724
+  tps: 50.53814
+  hps: 5137.34736
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-Althor'sAbacus-50366"
  value: {
   dps: 107.49609
-  tps: 50.43814
-  hps: 5173.04855
+  tps: 50.53814
+  hps: 5178.92808
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-AshtongueTalismanofAcumen-32490"
  value: {
   dps: 101.71083
-  tps: 50.28814
-  hps: 4795.94909
+  tps: 50.43814
+  hps: 4805.63152
  }
 }
 dps_results: {
@@ -80,31 +80,31 @@ dps_results: {
  value: {
   dps: 104.90568
   tps: 45.64175
-  hps: 4873.42398
+  hps: 4887.87111
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-Bandit'sInsignia-40371"
  value: {
   dps: 101.71083
-  tps: 50.28814
-  hps: 4795.94909
+  tps: 50.43814
+  hps: 4805.63152
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-BaubleofTrueBlood-50354"
  value: {
   dps: 101.71083
-  tps: 50.38814
-  hps: 8602.17144
+  tps: 50.43814
+  hps: 8675.36852
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-BaubleofTrueBlood-50726"
  value: {
   dps: 101.71083
-  tps: 50.38814
-  hps: 8602.17144
+  tps: 50.43814
+  hps: 8675.36852
  }
 }
 dps_results: {
@@ -112,7 +112,7 @@ dps_results: {
  value: {
   dps: 104.90568
   tps: 46.37603
-  hps: 4910.98086
+  hps: 4934.5302
  }
 }
 dps_results: {
@@ -120,7 +120,7 @@ dps_results: {
  value: {
   dps: 89.3205
   tps: 45.25419
-  hps: 3906.15918
+  hps: 3900.9952
  }
 }
 dps_results: {
@@ -128,7 +128,7 @@ dps_results: {
  value: {
   dps: 105.62524
   tps: 45.64175
-  hps: 4897.20502
+  hps: 4911.71269
  }
 }
 dps_results: {
@@ -136,31 +136,31 @@ dps_results: {
  value: {
   dps: 104.90568
   tps: 45.64175
-  hps: 4886.45687
+  hps: 4900.29033
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-CorpseTongueCoin-50349"
  value: {
   dps: 101.71083
-  tps: 50.28814
-  hps: 4795.94909
+  tps: 50.43814
+  hps: 4805.63152
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-CorpseTongueCoin-50352"
  value: {
   dps: 101.71083
-  tps: 50.28814
-  hps: 4795.94909
+  tps: 50.43814
+  hps: 4805.63152
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-CorrodedSkeletonKey-50356"
  value: {
   dps: 101.71083
-  tps: 50.28814
-  hps: 4859.94909
+  tps: 50.43814
+  hps: 4869.63152
  }
 }
 dps_results: {
@@ -168,7 +168,7 @@ dps_results: {
  value: {
   dps: 101.66061
   tps: 49.59422
-  hps: 5193.0234
+  hps: 5195.0513
  }
 }
 dps_results: {
@@ -176,71 +176,71 @@ dps_results: {
  value: {
   dps: 104.27561
   tps: 49.59422
-  hps: 4568.87531
+  hps: 4554.73727
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-DarkmoonCard:Berserker!-42989"
  value: {
   dps: 101.71083
-  tps: 50.28814
-  hps: 4795.94909
+  tps: 50.43814
+  hps: 4805.63152
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-DarkmoonCard:Death-42990"
  value: {
   dps: 101.71083
-  tps: 50.33814
-  hps: 4836.96974
+  tps: 50.38814
+  hps: 4838.69523
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-DarkmoonCard:Greatness-44255"
  value: {
   dps: 101.7305
-  tps: 55.09191
-  hps: 5089.77581
+  tps: 55.19191
+  hps: 5090.42071
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-Death'sChoice-47464"
  value: {
   dps: 101.71083
-  tps: 50.28814
-  hps: 4795.94909
+  tps: 50.43814
+  hps: 4805.63152
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-DeathKnight'sAnguish-38212"
  value: {
   dps: 101.71083
-  tps: 50.28814
-  hps: 4806.54593
+  tps: 50.43814
+  hps: 4811.49064
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-Deathbringer'sWill-50362"
  value: {
   dps: 101.71083
-  tps: 50.28814
-  hps: 4795.94909
+  tps: 50.43814
+  hps: 4805.63152
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-Deathbringer'sWill-50363"
  value: {
   dps: 101.71083
-  tps: 50.28814
-  hps: 4795.94909
+  tps: 50.43814
+  hps: 4805.63152
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-Defender'sCode-40257"
  value: {
   dps: 101.71083
-  tps: 50.28814
-  hps: 4795.94909
+  tps: 50.43814
+  hps: 4805.63152
  }
 }
 dps_results: {
@@ -248,23 +248,23 @@ dps_results: {
  value: {
   dps: 104.90568
   tps: 45.64175
-  hps: 4890.29358
+  hps: 4906.25862
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-DislodgedForeignObject-50348"
  value: {
   dps: 101.71083
-  tps: 50.38814
-  hps: 4791.23306
+  tps: 50.48814
+  hps: 4791.09856
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-DislodgedForeignObject-50353"
  value: {
   dps: 101.71083
-  tps: 50.43814
-  hps: 4796.37274
+  tps: 50.48814
+  hps: 4794.62908
  }
 }
 dps_results: {
@@ -272,7 +272,7 @@ dps_results: {
  value: {
   dps: 104.90568
   tps: 45.64175
-  hps: 4873.42398
+  hps: 4887.87111
  }
 }
 dps_results: {
@@ -280,7 +280,7 @@ dps_results: {
  value: {
   dps: 105.62524
   tps: 46.25254
-  hps: 4947.80167
+  hps: 4949.97136
  }
 }
 dps_results: {
@@ -288,7 +288,7 @@ dps_results: {
  value: {
   dps: 104.90568
   tps: 45.64175
-  hps: 4886.45687
+  hps: 4900.29033
  }
 }
 dps_results: {
@@ -296,23 +296,23 @@ dps_results: {
  value: {
   dps: 104.90568
   tps: 45.64175
-  hps: 4888.05859
+  hps: 4900.07356
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-EphemeralSnowflake-50260"
  value: {
   dps: 101.71083
-  tps: 55.61414
-  hps: 4913.56878
+  tps: 55.80264
+  hps: 4923.33895
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-EssenceofGossamer-37220"
  value: {
   dps: 101.71083
-  tps: 50.28814
-  hps: 4795.94909
+  tps: 50.43814
+  hps: 4805.63152
  }
 }
 dps_results: {
@@ -320,39 +320,39 @@ dps_results: {
  value: {
   dps: 104.90568
   tps: 45.64175
-  hps: 4873.42398
+  hps: 4887.87111
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-ExtractofNecromanticPower-40373"
  value: {
   dps: 101.71083
-  tps: 50.33814
-  hps: 4839.03642
+  tps: 50.38814
+  hps: 4840.77594
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-EyeoftheBroodmother-45308"
  value: {
   dps: 105.45254
-  tps: 50.33814
-  hps: 4963.58591
+  tps: 50.38814
+  hps: 4965.82973
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-Figurine-SapphireOwl-42413"
  value: {
   dps: 101.71083
-  tps: 55.50732
-  hps: 4982.38207
+  tps: 55.65732
+  hps: 4981.35281
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-ForgeEmber-37660"
  value: {
   dps: 101.71083
-  tps: 50.33814
-  hps: 4830.31476
+  tps: 50.38814
+  hps: 4833.08705
  }
 }
 dps_results: {
@@ -360,7 +360,7 @@ dps_results: {
  value: {
   dps: 105.62524
   tps: 45.64175
-  hps: 4897.20502
+  hps: 4911.71269
  }
 }
 dps_results: {
@@ -368,23 +368,23 @@ dps_results: {
  value: {
   dps: 105.48133
   tps: 45.64175
-  hps: 4892.44881
+  hps: 4906.94437
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-FuryoftheFiveFlights-40431"
  value: {
   dps: 101.71083
-  tps: 50.28814
-  hps: 4795.94909
+  tps: 50.43814
+  hps: 4805.63152
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-FuturesightRune-38763"
  value: {
   dps: 103.7367
-  tps: 50.38814
-  hps: 4908.91494
+  tps: 50.43814
+  hps: 4916.29831
  }
 }
 dps_results: {
@@ -392,7 +392,7 @@ dps_results: {
  value: {
   dps: 97.6162
   tps: 45.24366
-  hps: 4245.07294
+  hps: 4282.7253
  }
 }
 dps_results: {
@@ -400,7 +400,7 @@ dps_results: {
  value: {
   dps: 109.86726
   tps: 46.75072
-  hps: 4989.35912
+  hps: 5018.08917
  }
 }
 dps_results: {
@@ -408,55 +408,55 @@ dps_results: {
  value: {
   dps: 106.14397
   tps: 46.75072
-  hps: 4650.05285
+  hps: 4664.02369
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-GlowingTwilightScale-54573"
  value: {
   dps: 107.17949
-  tps: 50.28814
-  hps: 5192.92732
+  tps: 50.43814
+  hps: 5203.12566
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-GlowingTwilightScale-54589"
  value: {
   dps: 107.89905
-  tps: 50.28814
-  hps: 5244.65926
+  tps: 50.43814
+  hps: 5254.92563
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-GnomishLightningGenerator-41121"
  value: {
   dps: 101.71083
-  tps: 50.33814
-  hps: 4845.82816
+  tps: 50.38814
+  hps: 4847.20648
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-Heartpierce-49982"
  value: {
   dps: 104.90568
-  tps: 50.28814
-  hps: 5016.7505
+  tps: 50.43814
+  hps: 5026.3
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-Heartpierce-50641"
  value: {
   dps: 104.90568
-  tps: 50.28814
-  hps: 5016.7505
+  tps: 50.43814
+  hps: 5026.3
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
   dps: 107.46731
-  tps: 50.28814
-  hps: 4982.76294
+  tps: 50.43814
+  hps: 4993.06337
  }
 }
 dps_results: {
@@ -464,7 +464,7 @@ dps_results: {
  value: {
   dps: 104.90568
   tps: 45.64175
-  hps: 4886.45687
+  hps: 4900.29033
  }
 }
 dps_results: {
@@ -472,23 +472,23 @@ dps_results: {
  value: {
   dps: 104.90568
   tps: 45.64175
-  hps: 4888.05859
+  hps: 4900.07356
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-IncisorFragment-37723"
  value: {
   dps: 101.71083
-  tps: 50.28814
-  hps: 4795.94909
+  tps: 50.43814
+  hps: 4805.63152
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-InsightfulEarthsiegeDiamond"
  value: {
   dps: 104.90568
-  tps: 50.28814
-  hps: 5016.7505
+  tps: 50.43814
+  hps: 5026.3
  }
 }
 dps_results: {
@@ -496,31 +496,31 @@ dps_results: {
  value: {
   dps: 104.90568
   tps: 45.64175
-  hps: 4873.42398
+  hps: 4887.87111
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-Lavanthor'sTalisman-37872"
  value: {
   dps: 101.71083
-  tps: 50.28814
-  hps: 4795.94909
+  tps: 50.43814
+  hps: 4805.63152
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-MajesticDragonFigurine-40430"
  value: {
   dps: 103.2068
-  tps: 50.58814
-  hps: 4998.50257
+  tps: 50.63814
+  hps: 5004.98975
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-MeteoriteWhetstone-37390"
  value: {
   dps: 101.71083
-  tps: 50.33814
-  hps: 4830.31476
+  tps: 50.38814
+  hps: 4833.08705
  }
 }
 dps_results: {
@@ -528,15 +528,15 @@ dps_results: {
  value: {
   dps: 104.90568
   tps: 50.38814
-  hps: 4969.79991
+  hps: 4978.03536
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-OfferingofSacrifice-37638"
  value: {
   dps: 101.71083
-  tps: 50.28814
-  hps: 4796.50831
+  tps: 50.43814
+  hps: 4814.00722
  }
 }
 dps_results: {
@@ -544,7 +544,7 @@ dps_results: {
  value: {
   dps: 104.90568
   tps: 45.64175
-  hps: 4873.42398
+  hps: 4887.87111
  }
 }
 dps_results: {
@@ -552,23 +552,23 @@ dps_results: {
  value: {
   dps: 104.90568
   tps: 45.64175
-  hps: 4873.42398
+  hps: 4887.87111
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-PetrifiedTwilightScale-54571"
  value: {
   dps: 101.71083
-  tps: 50.28814
-  hps: 4795.94909
+  tps: 50.43814
+  hps: 4805.63152
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-PetrifiedTwilightScale-54591"
  value: {
   dps: 101.71083
-  tps: 50.28814
-  hps: 4795.94909
+  tps: 50.43814
+  hps: 4805.63152
  }
 }
 dps_results: {
@@ -576,7 +576,7 @@ dps_results: {
  value: {
   dps: 104.90568
   tps: 45.64175
-  hps: 4873.42398
+  hps: 4887.87111
  }
 }
 dps_results: {
@@ -584,15 +584,15 @@ dps_results: {
  value: {
   dps: 104.90568
   tps: 45.64175
-  hps: 4873.42398
+  hps: 4887.87111
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-PurifiedShardoftheGods"
  value: {
   dps: 101.71083
-  tps: 50.28814
-  hps: 4795.94909
+  tps: 50.43814
+  hps: 4805.63152
  }
 }
 dps_results: {
@@ -600,23 +600,23 @@ dps_results: {
  value: {
   dps: 94.5505
   tps: 44.93088
-  hps: 4452.08315
+  hps: 4470.51335
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-ReignoftheDead-47316"
  value: {
   dps: 106.02819
-  tps: 50.28814
-  hps: 4941.79875
+  tps: 50.43814
+  hps: 4951.93532
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-ReignoftheDead-47477"
  value: {
   dps: 106.54627
-  tps: 50.28814
-  hps: 4959.30071
+  tps: 50.43814
+  hps: 4969.49177
  }
 }
 dps_results: {
@@ -624,7 +624,7 @@ dps_results: {
  value: {
   dps: 104.90568
   tps: 45.64175
-  hps: 4873.42398
+  hps: 4887.87111
  }
 }
 dps_results: {
@@ -632,15 +632,15 @@ dps_results: {
  value: {
   dps: 104.90568
   tps: 45.64175
-  hps: 4942.42903
+  hps: 4953.1907
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-RuneofRepulsion-40372"
  value: {
   dps: 101.71083
-  tps: 50.28814
-  hps: 4795.94909
+  tps: 50.43814
+  hps: 4805.63152
  }
 }
 dps_results: {
@@ -648,7 +648,7 @@ dps_results: {
  value: {
   dps: 99.82072
   tps: 46.06828
-  hps: 4411.26531
+  hps: 4430.01807
  }
 }
 dps_results: {
@@ -656,55 +656,55 @@ dps_results: {
  value: {
   dps: 101.04734
   tps: 46.66541
-  hps: 4682.02318
+  hps: 4697.19134
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-SealofthePantheon-36993"
  value: {
   dps: 101.71083
-  tps: 50.28814
-  hps: 4795.94909
+  tps: 50.43814
+  hps: 4805.63152
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-ShinyShardoftheGods"
  value: {
   dps: 101.71083
-  tps: 50.28814
-  hps: 4795.94909
+  tps: 50.43814
+  hps: 4805.63152
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-Sindragosa'sFlawlessFang-50361"
  value: {
   dps: 101.71083
-  tps: 50.28814
-  hps: 4795.94909
+  tps: 50.43814
+  hps: 4805.63152
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-SliverofPureIce-50339"
  value: {
   dps: 106.25845
-  tps: 55.85481
-  hps: 5088.24317
+  tps: 56.00481
+  hps: 5081.8382
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-SliverofPureIce-50346"
  value: {
   dps: 106.8341
-  tps: 56.68814
-  hps: 5109.13958
+  tps: 56.58814
+  hps: 5126.46422
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-SouloftheDead-40382"
  value: {
   dps: 101.71083
-  tps: 57.4374
-  hps: 4991.48048
+  tps: 57.8374
+  hps: 5012.61986
  }
 }
 dps_results: {
@@ -712,23 +712,23 @@ dps_results: {
  value: {
   dps: 102.59179
   tps: 50.53814
-  hps: 4914.54614
+  hps: 4922.69199
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-SparkofLife-37657"
  value: {
   dps: 101.71083
-  tps: 50.48814
-  hps: 4898.94657
+  tps: 50.53814
+  hps: 4892.4624
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-SphereofRedDragon'sBlood-37166"
  value: {
   dps: 103.47145
-  tps: 50.28814
-  hps: 4795.94909
+  tps: 50.43814
+  hps: 4805.63152
  }
 }
 dps_results: {
@@ -736,7 +736,7 @@ dps_results: {
  value: {
   dps: 104.90568
   tps: 45.64175
-  hps: 4873.42398
+  hps: 4887.87111
  }
 }
 dps_results: {
@@ -744,7 +744,7 @@ dps_results: {
  value: {
   dps: 104.90568
   tps: 45.64175
-  hps: 4873.42398
+  hps: 4887.87111
  }
 }
 dps_results: {
@@ -752,31 +752,31 @@ dps_results: {
  value: {
   dps: 104.90568
   tps: 45.64175
-  hps: 4873.42398
+  hps: 4887.87111
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-TalismanofTrollDivinity-37734"
  value: {
   dps: 102.31753
-  tps: 50.48814
-  hps: 4892.99952
+  tps: 50.43814
+  hps: 4890.1189
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-TearsoftheVanquished-47215"
  value: {
   dps: 101.71083
-  tps: 57.99335
-  hps: 5083.12137
+  tps: 58.03502
+  hps: 5074.76342
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-TheGeneral'sHeart-45507"
  value: {
   dps: 101.71083
-  tps: 50.28814
-  hps: 4795.94909
+  tps: 50.43814
+  hps: 4805.63152
  }
 }
 dps_results: {
@@ -784,23 +784,23 @@ dps_results: {
  value: {
   dps: 104.90568
   tps: 45.64175
-  hps: 4873.42398
+  hps: 4887.87111
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-TinyAbominationinaJar-50351"
  value: {
   dps: 105.10568
-  tps: 50.28814
-  hps: 4795.94909
+  tps: 50.43814
+  hps: 4805.63152
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-TinyAbominationinaJar-50706"
  value: {
   dps: 105.10568
-  tps: 50.28814
-  hps: 4795.94909
+  tps: 50.43814
+  hps: 4805.63152
  }
 }
 dps_results: {
@@ -808,7 +808,7 @@ dps_results: {
  value: {
   dps: 105.62524
   tps: 45.64175
-  hps: 4897.20502
+  hps: 4911.71269
  }
 }
 dps_results: {
@@ -816,7 +816,7 @@ dps_results: {
  value: {
   dps: 105.48133
   tps: 45.64175
-  hps: 4892.44881
+  hps: 4906.94437
  }
 }
 dps_results: {
@@ -824,7 +824,7 @@ dps_results: {
  value: {
   dps: 103.66804
   tps: 50.33814
-  hps: 4866.93722
+  hps: 4865.09666
  }
 }
 dps_results: {
@@ -832,7 +832,7 @@ dps_results: {
  value: {
   dps: 105.48133
   tps: 45.64175
-  hps: 4892.44881
+  hps: 4906.94437
  }
 }
 dps_results: {
@@ -840,15 +840,15 @@ dps_results: {
  value: {
   dps: 105.62524
   tps: 45.64175
-  hps: 4897.20502
+  hps: 4911.71269
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-Val'anyr,HammerofAncientKings-46017"
  value: {
   dps: 108.302
-  tps: 50.81467
-  hps: 5323.7278
+  tps: 50.86467
+  hps: 5362.51258
  }
 }
 dps_results: {
@@ -856,15 +856,15 @@ dps_results: {
  value: {
   dps: 84.36874
   tps: 37.99274
-  hps: 3429.54984
+  hps: 3455.84605
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-WingedTalisman-37844"
  value: {
   dps: 103.69547
-  tps: 50.28814
-  hps: 4863.94039
+  tps: 50.43814
+  hps: 4874.09203
  }
 }
 dps_results: {
@@ -872,7 +872,7 @@ dps_results: {
  value: {
   dps: 97.52969
   tps: 47.40472
-  hps: 4824.51777
+  hps: 4849.90401
  }
 }
 dps_results: {
@@ -880,31 +880,31 @@ dps_results: {
  value: {
   dps: 103.94966
   tps: 47.40472
-  hps: 4443.8402
+  hps: 4484.33418
  }
 }
 dps_results: {
  key: "TestHoly-Average-Default"
  value: {
   dps: 102.26825
-  tps: 50.96309
-  hps: 5024.87877
+  tps: 50.99651
+  hps: 5029.47843
  }
 }
 dps_results: {
  key: "TestHoly-Settings-Undead-P1-Holy-FullBuffs-LongMultiTarget"
  value: {
   dps: 104.90568
-  tps: 1005.76285
-  hps: 5016.7505
+  tps: 1008.76285
+  hps: 5026.3
  }
 }
 dps_results: {
  key: "TestHoly-Settings-Undead-P1-Holy-FullBuffs-LongSingleTarget"
  value: {
   dps: 104.90568
-  tps: 50.28814
-  hps: 5016.7505
+  tps: 50.43814
+  hps: 5026.3
  }
 }
 dps_results: {
@@ -919,16 +919,16 @@ dps_results: {
  key: "TestHoly-Settings-Undead-P1-Holy-NoBuffs-LongMultiTarget"
  value: {
   dps: 48.94206
-  tps: 456.74813
-  hps: 2806.21538
+  tps: 459.74813
+  hps: 2933.29844
  }
 }
 dps_results: {
  key: "TestHoly-Settings-Undead-P1-Holy-NoBuffs-LongSingleTarget"
  value: {
   dps: 48.94206
-  tps: 22.83741
-  hps: 2806.21538
+  tps: 22.98741
+  hps: 2933.29844
  }
 }
 dps_results: {
@@ -943,7 +943,7 @@ dps_results: {
  key: "TestHoly-SwitchInFrontOfTarget-Default"
  value: {
   dps: 86.60673
-  tps: 50.28814
-  hps: 5016.7505
+  tps: 50.43814
+  hps: 5026.3
  }
 }

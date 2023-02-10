@@ -52,6 +52,9 @@ func (druid *Druid) registerSavageRoarSpell() {
 			},
 			IgnoreHaste: true,
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return druid.InForm(Cat) && druid.ComboPoints() > 0
+		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
 			druid.SavageRoarAura.Duration = druid.SavageRoarDurationTable[druid.ComboPoints()]
@@ -61,10 +64,6 @@ func (druid *Druid) registerSavageRoarSpell() {
 	})
 
 	druid.SavageRoar = srSpell
-}
-
-func (druid *Druid) CanSavageRoar() bool {
-	return druid.InForm(Cat) && druid.ComboPoints() > 0 && (druid.CurrentEnergy() >= druid.CurrentSavageRoarCost())
 }
 
 func (druid *Druid) CurrentSavageRoarCost() float64 {
