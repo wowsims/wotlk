@@ -10,9 +10,6 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 	apRatio := 0.09 * float64(comboPoints)
 	chanceToRetainStacks := []float64{0, 0.33, 0.66, 1}[rogue.Talents.MasterPoisoner]
 
-	// TODO Envenom can only be cast if the target is afflicted by Deadly Poison
-	//  The current rotation code doesn't handle cast failures gracefully, so this is hard to
-	//  work around at the moment
 	return rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 57993, Tag: comboPoints},
 		SpellSchool: core.SpellSchoolNature,
@@ -29,6 +26,9 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 				GCD: time.Second,
 			},
 			IgnoreHaste: true,
+		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return rogue.DeadlyPoison.Dot(target).IsActive()
 		},
 
 		DamageMultiplier: 1 +

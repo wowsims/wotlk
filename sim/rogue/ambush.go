@@ -5,30 +5,27 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (rogue *Rogue) registerAmbushSpell() {
 	rogue.Ambush = rogue.RegisterSpell(core.SpellConfig{
-		ActionID:     core.ActionID{SpellID: 48691},
-		SpellSchool:  core.SpellSchoolPhysical,
-		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBuilder,
-		ResourceType: stats.Energy,
+		ActionID:    core.ActionID{SpellID: 48691},
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBuilder,
+
 		EnergyCost: core.EnergyCostOptions{
 			Cost:   rogue.costModifier(60 - 4*float64(rogue.Talents.SlaughterFromTheShadows)),
 			Refund: 0,
 		},
-
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: time.Second,
 			},
 			IgnoreHaste: true,
 		},
-
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return rogue.GetMHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger
+			return !rogue.PseudoStats.InFrontOfTarget && rogue.GetMHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger
 		},
 
 		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +

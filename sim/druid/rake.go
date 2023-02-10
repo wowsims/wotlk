@@ -28,6 +28,9 @@ func (druid *Druid) registerRakeSpell() {
 			},
 			IgnoreHaste: true,
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return druid.InForm(Cat)
+		},
 
 		DamageMultiplier: 1 + 0.1*float64(druid.Talents.SavageFury),
 		CritMultiplier:   druid.MeleeCritMultiplier(Cat),
@@ -94,10 +97,6 @@ func (druid *Druid) registerRakeSpell() {
 			return ticks
 		},
 	})
-}
-
-func (druid *Druid) CanRake() bool {
-	return druid.InForm(Cat) && druid.CurrentEnergy() >= druid.CurrentRakeCost()
 }
 
 func (druid *Druid) CurrentRakeCost() float64 {

@@ -35,6 +35,9 @@ func (warlock *Warlock) registerConflagrateSpell() {
 				Duration: time.Second * 10,
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return warlock.ImmolateDot.IsActive()
+		},
 
 		BonusCritRating: 0 +
 			warlock.masterDemonologistFireCrit +
@@ -50,10 +53,6 @@ func (warlock *Warlock) registerConflagrateSpell() {
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			if !warlock.ImmolateDot.IsActive() {
-				panic("Conflagrate spell is cast while Immolate is not active.")
-			}
-
 			baseDamage := directFlatDamage + directSpellCoeff*spell.SpellPower()
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if result.Landed() {

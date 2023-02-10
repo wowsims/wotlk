@@ -106,7 +106,3 @@ func (druid *Druid) registerLacerateSpell() {
 		},
 	})
 }
-
-func (druid *Druid) CanLacerate(sim *core.Simulation) bool {
-	return druid.CurrentRage() >= druid.Lacerate.DefaultCast.Cost
-}
