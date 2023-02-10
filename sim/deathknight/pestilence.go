@@ -37,13 +37,13 @@ func (dk *Deathknight) registerPestilenceSpell() {
 				// Zero damage spell with a Hit mechanic, thanks blizz!
 				result := spell.CalcAndDealDamage(sim, aoeUnit, 0, spell.OutcomeMagicHit)
 
-				if aoeUnit == dk.CurrentTarget {
+				if aoeUnit == target {
 					spell.SpendRefundableCostAndConvertBloodRune(sim, result, deathConvertChance)
 					dk.LastOutcome = result.Outcome
 				}
 				if result.Landed() {
 					// Main target
-					if aoeUnit == dk.CurrentTarget {
+					if aoeUnit == target {
 						if hasGlyphOfDisease {
 							// Update expire instead of Apply to keep old snapshotted value
 							if dk.FrostFeverSpell.Dot(aoeUnit).IsActive() {
@@ -60,11 +60,11 @@ func (dk *Deathknight) registerPestilenceSpell() {
 						}
 					} else {
 						// Apply diseases on every other target
-						if dk.FrostFeverSpell.Dot(dk.CurrentTarget).IsActive() {
+						if dk.FrostFeverSpell.Dot(target).IsActive() {
 							dk.FrostFeverExtended[aoeUnit.Index] = 0
 							dk.FrostFeverSpell.Dot(aoeUnit).Apply(sim)
 						}
-						if dk.BloodPlagueSpell.Dot(dk.CurrentTarget).IsActive() {
+						if dk.BloodPlagueSpell.Dot(target).IsActive() {
 							dk.BloodPlagueExtended[aoeUnit.Index] = 0
 							dk.BloodPlagueSpell.Dot(aoeUnit).Apply(sim)
 						}
