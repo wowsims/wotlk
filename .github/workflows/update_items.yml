@@ -39,7 +39,7 @@ jobs:
         run: rm assets/db_inputs/wowhead_item_tooltips.csv
           
       - name: Update DB
-        run: go run ./tools/database/gen_tooltips -source=wowhead-items -output=assets/db_inputs/wowhead_item_tooltips.csv
+        run: go run ./tools/database/gen_db -outDir=assets -gen=wowhead-items
           
       - name: Make Items
         run: make items

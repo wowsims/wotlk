@@ -44,6 +44,9 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 				Duration: time.Second * 6,
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return warrior.PseudoStats.CanBlock
+		},
 
 		BonusCritRating: 5 * core.CritRatingPerCritChance * float64(warrior.Talents.CriticalBlock),
 		DamageMultiplier: 1 +
@@ -79,12 +82,4 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 			}
 		},
 	})
-}
-
-func (warrior *Warrior) HasEnoughRageForShieldSlam() bool {
-	return warrior.CurrentRage() >= warrior.ShieldSlam.DefaultCast.Cost*warrior.ShieldSlam.CostMultiplier
-}
-
-func (warrior *Warrior) CanShieldSlam(sim *core.Simulation) bool {
-	return warrior.PseudoStats.CanBlock && warrior.HasEnoughRageForShieldSlam() && warrior.ShieldSlam.IsReady(sim)
 }

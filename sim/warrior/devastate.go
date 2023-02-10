@@ -33,6 +33,9 @@ func (warrior *Warrior) registerDevastateSpell() {
 			},
 			IgnoreHaste: true,
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return warrior.CanApplySunderAura()
+		},
 
 		BonusCritRating: 5*core.CritRatingPerCritChance*float64(warrior.Talents.SwordAndBoard) +
 			core.TernaryFloat64(warrior.HasSetBonus(ItemSetSiegebreakerPlate, 2), 10*core.CritRatingPerCritChance, 0),
@@ -65,12 +68,4 @@ func (warrior *Warrior) registerDevastateSpell() {
 			}
 		},
 	})
-}
-
-func (warrior *Warrior) CanDevastate(sim *core.Simulation) bool {
-	if warrior.Devastate != nil {
-		return warrior.CurrentRage() >= warrior.Devastate.DefaultCast.Cost
-	} else {
-		return false
-	}
 }

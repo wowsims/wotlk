@@ -449,7 +449,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_ERW_Check(sim *co
 		This ERW should only ever happen from the desync rotation when it falls back to this normal sub blood rotation
 	*/
 	bothDeath := dk.RuneIsDeath(0) && dk.RuneIsDeath(1)
-	noMoreUAs := sim.Duration-dk.UnbreakableArmor.ReadyAt() < 5*time.Second
+	noMoreUAs := !dk.Talents.UnbreakableArmor || sim.Duration-dk.UnbreakableArmor.ReadyAt() < 5*time.Second
 	numRunes := dk.CurrentDeathRunes() + dk.CurrentBloodRunes() + dk.CurrentUnholyRunes() + dk.CurrentFrostRunes()
 
 	if sim.IsExecutePhase35() && dk.Rotation.UseEmpowerRuneWeapon && dk.EmpowerRuneWeapon.IsReady(sim) && numRunes <= 2 && bothDeath && (dk.UnbreakableArmorAura.IsActive() || noMoreUAs) {

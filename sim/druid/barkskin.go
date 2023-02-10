@@ -54,5 +54,4 @@ func (druid *Druid) registerBarkskinCD() {
 		Spell: druid.Barkskin,
 		Type:  core.CooldownTypeSurvival,
 	})
-
 }

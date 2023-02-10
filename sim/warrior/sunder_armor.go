@@ -26,6 +26,9 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 			},
 			IgnoreHaste: true,
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return warrior.CanApplySunderAura()
+		},
 
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  360,
@@ -35,6 +38,7 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 	if isDevastateEffect {
 		config.RageCost = core.RageCostOptions{}
 		config.Cast.DefaultCast.GCD = 0
+		config.ExtraCastCondition = nil
 
 		// In wrath sunder from devastate generates no threat
 		config.ThreatMultiplier = 0
@@ -67,9 +71,6 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 	return warrior.RegisterSpell(config)
 }
 
-func (warrior *Warrior) CanSunderArmor(sim *core.Simulation) bool {
-	return warrior.CurrentRage() >= warrior.SunderArmor.DefaultCast.Cost && warrior.CanApplySunderAura()
-}
 func (warrior *Warrior) CanApplySunderAura() bool {
 	return warrior.SunderArmorAura.IsActive() || !warrior.SunderArmorAura.ExclusiveEffects[0].Category.AnyActive()
 }

@@ -145,9 +145,13 @@ message ShadowPriest {
 			Ideal = 3;
 			AoE = 4;
 		}
-	
+		enum PreCastOption {
+			Nothing = 0;
+			PrecastVt = 1;
+			PrecastMb = 2;
+		}
 		RotationType rotation_type = 1;
-		bool precast_vt = 2; // casts VT ahead of the start of the fight so that it lands on 0
+		PreCastOption precast_type = 2;
 		double latency = 3; // Latency between actions
 	}
 	Rotation rotation = 1;

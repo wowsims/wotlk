@@ -331,9 +331,8 @@ func init() {
 			return
 		}
 
-		target := character.CurrentTarget
 		procMask := core.GetMeleeProcMaskForHands(mh, oh)
-		vulnAura := core.RuneOfRazoriceVulnerabilityAura(target)
+		vulnAuras := character.NewEnemyAuraArray(core.RuneOfRazoriceVulnerabilityAura)
 		mhRazoriceSpell := newRazoriceHitSpell(character, true)
 		ohRazoriceSpell := newRazoriceHitSpell(character, false)
 		aura := character.GetOrRegisterAura(core.Aura{
@@ -348,12 +347,13 @@ func init() {
 					return
 				}
 
+				vulnAura := vulnAuras.Get(result.Target)
 				vulnAura.Activate(sim)
 				if spell.IsMH() {
-					mhRazoriceSpell.Cast(sim, target)
+					mhRazoriceSpell.Cast(sim, result.Target)
 					vulnAura.AddStack(sim)
 				} else {
-					ohRazoriceSpell.Cast(sim, target)
+					ohRazoriceSpell.Cast(sim, result.Target)
 					vulnAura.AddStack(sim)
 				}
 			},

@@ -11,10 +11,10 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 	spellCoeff := 0.857 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
 	ISBProcChance := 0.2 * float64(warlock.Talents.ImprovedShadowBolt)
 
-	var shadowMasteryAura *core.Aura
+	var shadowMasteryAuras core.AuraArray
 	if ISBProcChance > 0 {
-		shadowMasteryAura = core.ShadowMasteryAura(warlock.CurrentTarget)
-		warlock.CritDebuffCategory = shadowMasteryAura.ExclusiveEffects[0].Category
+		shadowMasteryAuras = warlock.NewEnemyAuraArray(core.ShadowMasteryAura)
+		warlock.CritDebuffCategory = shadowMasteryAuras.Get(warlock.CurrentTarget).ExclusiveEffects[0].Category
 	}
 
 	warlock.ShadowBolt = warlock.RegisterSpell(core.SpellConfig{
@@ -57,7 +57,7 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 				if result.Landed() {
 					// ISB debuff
 					if sim.Proc(ISBProcChance, "ISB") {
-						shadowMasteryAura.Activate(sim)
+						shadowMasteryAuras.Get(target).Activate(sim)
 					}
 				}
 			})

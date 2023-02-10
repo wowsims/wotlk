@@ -8,6 +8,10 @@ import (
 )
 
 func (warrior *Warrior) registerShockwaveSpell() {
+	if !warrior.Talents.Shockwave {
+		return
+	}
+
 	warrior.Shockwave = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 46968},
 		SpellSchool: core.SpellSchoolPhysical,
@@ -28,6 +32,9 @@ func (warrior *Warrior) registerShockwaveSpell() {
 				Duration: 20*time.Second - core.TernaryDuration(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfShockwave), 3*time.Second, 0),
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return warrior.StanceMatches(DefensiveStance)
+		},
 
 		DamageMultiplier: 1 + core.TernaryFloat64(warrior.HasSetBonus(ItemSetYmirjarLordsPlate, 2), .20, 0),
 		CritMultiplier:   warrior.critMultiplier(none),
@@ -45,10 +52,4 @@ func (warrior *Warrior) registerShockwaveSpell() {
 			}
 		},
 	})
-}
-
-func (warrior *Warrior) CanShockwave(sim *core.Simulation) bool {
-	return warrior.StanceMatches(DefensiveStance) &&
-		warrior.CurrentRage() >= warrior.Shockwave.DefaultCast.Cost &&
-		warrior.Shockwave.IsReady(sim)
 }

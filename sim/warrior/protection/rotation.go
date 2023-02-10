@@ -17,29 +17,7 @@ func (war *ProtectionWarrior) OnAutoAttack(sim *core.Simulation, spell *core.Spe
 
 func (war *ProtectionWarrior) doRotation(sim *core.Simulation) {
 	war.trySwapToDefensive(sim)
-	if war.CustomRotation != nil {
-		war.CustomRotation.Cast(sim)
-	} else {
-		if war.GCD.IsReady(sim) {
-			if war.CanShieldSlam(sim) {
-				war.ShieldSlam.Cast(sim, war.CurrentTarget)
-			} else if war.CanRevenge(sim) {
-				war.Revenge.Cast(sim, war.CurrentTarget)
-			} else if war.ShouldShout(sim) {
-				war.Shout.Cast(sim, nil)
-			} else if war.shouldThunderClap(sim) {
-				war.ThunderClap.Cast(sim, war.CurrentTarget)
-			} else if war.shouldDemoShout(sim) {
-				war.DemoralizingShout.Cast(sim, war.CurrentTarget)
-			} else if war.CanMortalStrike(sim) {
-				war.MortalStrike.Cast(sim, war.CurrentTarget)
-			} else if war.CanDevastate(sim) {
-				war.Devastate.Cast(sim, war.CurrentTarget)
-			} else if war.CanSunderArmor(sim) {
-				war.SunderArmor.Cast(sim, war.CurrentTarget)
-			}
-		}
-	}
+	war.CustomRotation.Cast(sim)
 
 	// if we did nothing else, mark we intentionally did nothing here.
 	if war.GCD.IsReady(sim) {
@@ -80,13 +58,13 @@ func (war *ProtectionWarrior) makeCustomRotation() *common.CustomRotation {
 			Spell: war.Revenge,
 			Condition: func(sim *core.Simulation) bool {
 				if !war.Rotation.PrioSslamOnShieldBlock {
-					return war.CanRevenge(sim)
+					return war.Revenge.CanCast(sim, war.CurrentTarget)
 				}
 
 				if war.ShieldBlockAura.IsActive() {
-					return !war.CanShieldSlam(sim) && war.CanRevenge(sim)
+					return !war.ShieldSlam.CanCast(sim, war.CurrentTarget) && war.Revenge.CanCast(sim, war.CurrentTarget)
 				} else {
-					return war.CanRevenge(sim)
+					return war.Revenge.CanCast(sim, war.CurrentTarget)
 				}
 			},
 		},
@@ -94,23 +72,21 @@ func (war *ProtectionWarrior) makeCustomRotation() *common.CustomRotation {
 			Spell: war.ShieldSlam,
 			Condition: func(sim *core.Simulation) bool {
 				if !war.Rotation.PrioSslamOnShieldBlock {
-					return war.CanShieldSlam(sim)
+					return war.ShieldSlam.CanCast(sim, war.CurrentTarget)
 				}
 
 				if war.ShieldBlockAura.IsActive() {
-					return war.CanShieldSlam(sim)
+					return war.ShieldSlam.CanCast(sim, war.CurrentTarget)
 				} else {
-					return !war.CanRevenge(sim) && war.CanShieldSlam(sim)
+					return !war.Revenge.CanCast(sim, war.CurrentTarget) && war.ShieldSlam.CanCast(sim, war.CurrentTarget)
 				}
 			},
 		},
 		int32(proto.ProtectionWarrior_Rotation_Devastate): {
-			Spell:     war.Devastate,
-			Condition: war.CanDevastate,
+			Spell: war.Devastate,
 		},
 		int32(proto.ProtectionWarrior_Rotation_SunderArmor): {
-			Spell:     war.SunderArmor,
-			Condition: war.CanSunderArmor,
+			Spell: war.SunderArmor,
 		},
 		int32(proto.ProtectionWarrior_Rotation_DemoralizingShout): {
 			Spell:     war.DemoralizingShout,
@@ -125,16 +101,13 @@ func (war *ProtectionWarrior) makeCustomRotation() *common.CustomRotation {
 			Condition: war.ShouldShout,
 		},
 		int32(proto.ProtectionWarrior_Rotation_MortalStrike): {
-			Spell:     war.MortalStrike,
-			Condition: war.CanMortalStrike,
+			Spell: war.MortalStrike,
 		},
 		int32(proto.ProtectionWarrior_Rotation_ConcussionBlow): {
-			Spell:     war.ConcussionBlow,
-			Condition: war.CanConcussionBlow,
+			Spell: war.ConcussionBlow,
 		},
 		int32(proto.ProtectionWarrior_Rotation_Shockwave): {
-			Spell:     war.Shockwave,
-			Condition: war.CanShockwave,
+			Spell: war.Shockwave,
 		},
 	})
 }

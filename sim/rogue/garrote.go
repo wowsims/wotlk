@@ -31,6 +31,9 @@ func (rogue *Rogue) registerGarrote() {
 			},
 			IgnoreHaste: true,
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return !rogue.PseudoStats.InFrontOfTarget
+		},
 
 		DamageMultiplier: 1 +
 			glyphMultiplier +

@@ -818,3 +818,29 @@ func (at *auraTracker) GetMetricsProto() []*proto.AuraMetrics {
 
 	return metrics
 }
+
+type AuraArray []*Aura
+
+func (auras AuraArray) Get(target *Unit) *Aura {
+	return auras[target.UnitIndex]
+}
+
+func (caster *Unit) NewAllyAuraArray(makeAura func(*Unit) *Aura) AuraArray {
+	auras := make([]*Aura, len(caster.Env.AllUnits))
+	for _, target := range caster.Env.AllUnits {
+		if target.Type != EnemyUnit {
+			auras[target.UnitIndex] = makeAura(target)
+		}
+	}
+	return auras
+}
+
+func (caster *Unit) NewEnemyAuraArray(makeAura func(*Unit) *Aura) AuraArray {
+	auras := make([]*Aura, len(caster.Env.AllUnits))
+	for _, target := range caster.Env.AllUnits {
+		if target.Type == EnemyUnit {
+			auras[target.UnitIndex] = makeAura(target)
+		}
+	}
+	return auras
+}

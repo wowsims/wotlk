@@ -284,7 +284,7 @@ func (warlock *Warlock) ShadowEmbraceDebuffAura(target *core.Unit) *core.Aura {
 }
 
 func (warlock *Warlock) setupShadowEmbrace() {
-	ShadowEmbraceAura := warlock.ShadowEmbraceDebuffAura(warlock.CurrentTarget)
+	shadowEmbraceAuras := warlock.NewEnemyAuraArray(warlock.ShadowEmbraceDebuffAura)
 
 	warlock.RegisterAura(core.Aura{
 		Label:    "Shadow Embrace Talent Hidden Aura",
@@ -294,19 +294,15 @@ func (warlock *Warlock) setupShadowEmbrace() {
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell == warlock.ShadowBolt || spell == warlock.Haunt {
-				if !ShadowEmbraceAura.IsActive() {
-					ShadowEmbraceAura.Activate(sim)
-				} else {
-					ShadowEmbraceAura.Refresh(sim)
-				}
-				ShadowEmbraceAura.AddStack(sim)
+				aura := shadowEmbraceAuras.Get(result.Target)
+				aura.Activate(sim)
+				aura.AddStack(sim)
 			}
 		},
 	})
 }
 
 func (warlock *Warlock) setupNightfall() {
-
 	nightfallProcChance := 0.02*float64(warlock.Talents.Nightfall) +
 		0.04*core.TernaryFloat64(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCorruption), 1, 0)
 

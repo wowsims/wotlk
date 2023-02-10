@@ -31,6 +31,9 @@ func (warrior *Warrior) RegisterShatteringThrowCD() {
 				} else {
 					warrior.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+cast.CastTime, false)
 				}
+				if !warrior.StanceMatches(BattleStance) && warrior.BattleStance.IsReady(sim) {
+					warrior.BattleStance.Cast(sim, nil)
+				}
 			},
 			IgnoreHaste: true,
 		},
@@ -55,12 +58,5 @@ func (warrior *Warrior) RegisterShatteringThrowCD() {
 	warrior.AddMajorCooldown(core.MajorCooldown{
 		Spell: ShatteringThrowSpell,
 		Type:  core.CooldownTypeDPS,
-		CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-			if !warrior.StanceMatches(BattleStance) && warrior.BattleStance.IsReady(sim) {
-				warrior.BattleStance.Cast(sim, nil)
-				return true
-			}
-			return warrior.StanceMatches(BattleStance)
-		},
 	})
 }

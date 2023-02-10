@@ -35,6 +35,9 @@ func (warrior *Warrior) registerThunderClapSpell() {
 				Duration: time.Second * 6,
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return warrior.StanceMatches(BattleStance | DefensiveStance)
+		},
 
 		// Cruelty doesn't apply to Thunder Clap
 		BonusCritRating:  (float64(warrior.Talents.Incite)*5 - float64(warrior.Talents.Cruelty)*1) * core.CritRatingPerCritChance,
@@ -56,9 +59,6 @@ func (warrior *Warrior) registerThunderClapSpell() {
 	})
 }
 
-func (warrior *Warrior) CanThunderClap(sim *core.Simulation) bool {
-	return warrior.StanceMatches(BattleStance|DefensiveStance) && warrior.CanThunderClapIgnoreStance(sim)
-}
 func (warrior *Warrior) CanThunderClapIgnoreStance(sim *core.Simulation) bool {
 	return warrior.CurrentRage() >= warrior.ThunderClap.DefaultCast.Cost && warrior.ThunderClap.IsReady(sim)
 }
@@ -66,7 +66,7 @@ func (warrior *Warrior) CanThunderClapIgnoreStance(sim *core.Simulation) bool {
 func (warrior *Warrior) ShouldThunderClap(sim *core.Simulation, filler bool, maintainOnly bool, ignoreStance bool) bool {
 	if ignoreStance && !warrior.CanThunderClapIgnoreStance(sim) {
 		return false
-	} else if !ignoreStance && !warrior.CanThunderClap(sim) {
+	} else if !ignoreStance && !warrior.ThunderClap.CanCast(sim, warrior.CurrentTarget) {
 		return false
 	}
 

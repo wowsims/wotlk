@@ -160,9 +160,10 @@ var furyRotation = &proto.Warrior_Rotation{
 }
 
 var warriorOptions = &proto.Warrior_Options{
-	StartingRage:    50,
-	UseRecklessness: true,
-	Shout:           proto.WarriorShout_WarriorShoutBattle,
+	StartingRage:       50,
+	UseRecklessness:    true,
+	UseShatteringThrow: true,
+	Shout:              proto.WarriorShout_WarriorShoutBattle,
 }
 
 var FullConsumes = &proto.Consumes{
