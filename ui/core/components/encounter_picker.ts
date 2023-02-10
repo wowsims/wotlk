@@ -257,6 +257,7 @@ class AdvancedEncounterModal extends BaseModal {
 			setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
 				if (newValue != -1) {
 					encounter.applyPreset(eventID, presetEncounters[newValue]);
+					EncounterPicker.updatePrimaryTargetInputs(encounter.primaryTarget);
 				}
 			},
 		});

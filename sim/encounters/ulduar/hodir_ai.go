@@ -157,7 +157,7 @@ func (ai *HodirAI) Reset(*core.Simulation) {
 }
 
 func (ai *HodirAI) registerFlashFreeze(target *core.Target) {
-	ai.FlashFreeze = target.RegisterSpell(core.SpellConfig{
+	ai.FlashFreeze = target.GetOrRegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 61968},
 
 		Cast: core.CastConfig{
@@ -210,7 +210,7 @@ func (ai *HodirAI) registerBuffsDebuffs(target *core.Target) {
 		for _, party := range ai.Target.Env.Raid.Parties {
 			for _, player := range party.Players {
 				character := player.GetCharacter()
-				aura := character.RegisterAura(core.Aura{
+				aura := character.GetOrRegisterAura(core.Aura{
 					Label:    "Toasty Fire" + strconv.Itoa(int(character.Index)),
 					ActionID: core.ActionID{SpellID: 62821},
 					Duration: core.NeverExpires,
@@ -230,7 +230,7 @@ func (ai *HodirAI) registerBuffsDebuffs(target *core.Target) {
 		}
 	}
 
-	ai.Singed = target.RegisterAura(core.Aura{
+	ai.Singed = target.GetOrRegisterAura(core.Aura{
 		Label:     "Singed",
 		ActionID:  core.ActionID{SpellID: 65280},
 		MaxStacks: 25,
@@ -259,7 +259,7 @@ func (ai *HodirAI) registerBuffsDebuffs(target *core.Target) {
 	for _, party := range ai.Target.Env.Raid.Parties {
 		for _, player := range party.PlayersAndPets {
 			character := player.GetCharacter()
-			aura := character.RegisterAura(core.Aura{
+			aura := character.GetOrRegisterAura(core.Aura{
 				Label:    "Starlight" + strconv.Itoa(int(character.UnitIndex)),
 				ActionID: core.ActionID{SpellID: 62807},
 				Duration: time.Second * 30,
@@ -282,7 +282,7 @@ func (ai *HodirAI) registerBuffsDebuffs(target *core.Target) {
 	for _, party := range ai.Target.Env.Raid.Parties {
 		for _, player := range party.Players {
 			character := player.GetCharacter()
-			aura := character.RegisterAura(core.Aura{
+			aura := character.GetOrRegisterAura(core.Aura{
 				Label:    "Stormcloud" + strconv.Itoa(int(character.Index)),
 				ActionID: core.ActionID{SpellID: 63711},
 				Duration: 30 * time.Second,
@@ -312,7 +312,7 @@ func (ai *HodirAI) registerBuffsDebuffs(target *core.Target) {
 }
 
 func (ai *HodirAI) registerFrozenBlowSpell(target *core.Target) {
-	ai.FrozenBlowsAura = target.RegisterAura(core.Aura{
+	ai.FrozenBlowsAura = target.GetOrRegisterAura(core.Aura{
 		Label:    "Hodir Frozen Blows",
 		ActionID: core.ActionID{SpellID: core.TernaryInt32(ai.raidSize == 25, 63512, 62478)},
 		Duration: time.Second * 20,
@@ -324,7 +324,7 @@ func (ai *HodirAI) registerFrozenBlowSpell(target *core.Target) {
 		},
 	})
 
-	ai.FrozenBlows = target.RegisterSpell(core.SpellConfig{
+	ai.FrozenBlows = target.GetOrRegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: core.TernaryInt32(ai.raidSize == 25, 63512, 62478)},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHAuto,
@@ -351,7 +351,7 @@ func (ai *HodirAI) registerFrozenBlowSpell(target *core.Target) {
 		}
 	}
 
-	ai.FrozenBlowsAuto = target.RegisterSpell(core.SpellConfig{
+	ai.FrozenBlowsAuto = target.GetOrRegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: core.TernaryInt32(ai.raidSize == 25, 63511, 62867)}.WithTag(1),
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHAuto,
@@ -373,7 +373,7 @@ func (ai *HodirAI) registerFrozenBlowSpell(target *core.Target) {
 		},
 	})
 
-	ai.FrozenBlowsCast = target.RegisterSpell(core.SpellConfig{
+	ai.FrozenBlowsCast = target.GetOrRegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: core.TernaryInt32(ai.raidSize == 25, 63511, 62867)}.WithTag(2),
 		SpellSchool: core.SpellSchoolFrost,
 		ProcMask:    core.ProcMaskSpellDamage,
