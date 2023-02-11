@@ -125,10 +125,10 @@ func (warlock *Warlock) defineRotation() {
 	}
 	//Immolate
 	warlock.SpellsRotation[1].CastIn = func(sim *core.Simulation) time.Duration {
-		if !(secondaryDot == proto.Warlock_Rotation_Immolate) || sim.GetRemainingDuration() < warlock.ImmolateDot.Duration/2. {
+		if !(secondaryDot == proto.Warlock_Rotation_Immolate) || sim.GetRemainingDuration() < warlock.Immolate.CurDot().Duration/2. {
 			return core.NeverExpires
 		}
-		return core.MaxDuration(0, warlock.ImmolateDot.RemainingDuration(sim)-warlock.ApplyCastSpeed(warlock.Immolate.DefaultCast.CastTime))
+		return core.MaxDuration(0, warlock.Immolate.CurDot().RemainingDuration(sim)-warlock.ApplyCastSpeed(warlock.Immolate.DefaultCast.CastTime))
 		//This return is used as "the time left to refresh the spell"
 		//It's remaining duration - time it will take to reapply the spell, when it is 0, you optimally benefit from everytick, while restoring the debuff the milisecond it falls off.
 	}
@@ -154,7 +154,7 @@ func (warlock *Warlock) defineRotation() {
 		if sim.IsExecutePhase25() {
 			spellCastTime = warlock.ApplyCastSpeed(warlock.DrainSoul.CurDot().TickLength) + time.Millisecond*1000
 		}
-		return core.MaxDuration(0, warlock.HauntDebuffAura.RemainingDuration(sim)-hauntCastTime-hauntSBTravelTime-spellCastTime)
+		return core.MaxDuration(0, warlock.HauntDebuffAuras.Get(warlock.CurrentTarget).RemainingDuration(sim)-hauntCastTime-hauntSBTravelTime-spellCastTime)
 		//Since Haunt's unique behavior, this return is the "Leeway" you have for the spell. Meaning, if this hits below 0, you are too late and haunt dropped off.
 		//On the other hand, reapplying this when not 0, but say 0.5 or 1, is not a tick loss as it is for other dots.
 	}
@@ -174,7 +174,7 @@ func (warlock *Warlock) defineRotation() {
 	}
 	//Conflagrate
 	warlock.SpellsRotation[6].CastIn = func(sim *core.Simulation) time.Duration {
-		if !warlock.Talents.Conflagrate || !warlock.ImmolateDot.IsActive() {
+		if !warlock.Talents.Conflagrate || !warlock.Immolate.CurDot().IsActive() {
 			return core.NeverExpires
 		}
 
@@ -183,7 +183,7 @@ func (warlock *Warlock) defineRotation() {
 			return core.MaxDuration(0, warlock.Conflagrate.TimeToReady(sim))
 		} else {
 			// Cast at the end of an Immolate
-			return core.MaxDuration(core.MaxDuration(0, warlock.ImmolateDot.RemainingDuration(sim)-warlock.ImmolateDot.TickLength), warlock.Conflagrate.TimeToReady(sim))
+			return core.MaxDuration(core.MaxDuration(0, warlock.Immolate.CurDot().RemainingDuration(sim)-warlock.Immolate.CurDot().TickLength), warlock.Conflagrate.TimeToReady(sim))
 		}
 	}
 	//Chaos Bolt
@@ -314,7 +314,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	nextTick := previousTickAt + tickLength + humanReactionTime
 
 	allCDs := []time.Duration{
-		core.MaxDuration(0, time.Duration(float64(warlock.HauntDebuffAura.RemainingDuration(sim)-hauntcasttime)-float64(warlock.DistanceFromTarget)/20*1000)),
+		core.MaxDuration(0, time.Duration(float64(warlock.HauntDebuffAuras.Get(warlock.CurrentTarget).RemainingDuration(sim)-hauntcasttime)-float64(warlock.DistanceFromTarget)/20*1000)),
 		core.MaxDuration(0, warlock.UnstableAffliction.CurDot().RemainingDuration(sim)-hauntcasttime),
 		core.MaxDuration(0, warlock.CurseOfAgony.CurDot().RemainingDuration(sim)),
 	}
@@ -479,11 +479,11 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 
 	switch curse {
 	case proto.Warlock_Rotation_Elements:
-		castDebuffCurse(warlock.CurseOfElements, warlock.CurseOfElementsAura)
+		castDebuffCurse(warlock.CurseOfElements, warlock.CurseOfElementsAuras.Get(warlock.CurrentTarget))
 	case proto.Warlock_Rotation_Weakness:
-		castDebuffCurse(warlock.CurseOfWeakness, warlock.CurseOfWeaknessAura)
+		castDebuffCurse(warlock.CurseOfWeakness, warlock.CurseOfWeaknessAuras.Get(warlock.CurrentTarget))
 	case proto.Warlock_Rotation_Tongues:
-		castDebuffCurse(warlock.CurseOfTongues, warlock.CurseOfTonguesAura)
+		castDebuffCurse(warlock.CurseOfTongues, warlock.CurseOfTonguesAuras.Get(warlock.CurrentTarget))
 	}
 
 	if spell != nil {
@@ -632,7 +632,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	//}
 
 	if filler == warlock.DrainSoul {
-		if spell == warlock.Haunt && sim.GetRemainingDuration() < warlock.HauntDebuffAura.Duration/3 {
+		if spell == warlock.Haunt && sim.GetRemainingDuration() < warlock.HauntDebuffAuras.Get(warlock.CurrentTarget).Duration/3 {
 			spell = filler
 		} else if spell == warlock.UnstableAffliction && sim.GetRemainingDuration() < warlock.UnstableAffliction.CurDot().Duration/2 {
 			spell = filler

@@ -8,10 +8,7 @@ import (
 )
 
 func (warlock *Warlock) registerCurseOfElementsSpell() {
-	if warlock.Rotation.Curse != proto.Warlock_Rotation_Elements {
-		return
-	}
-	warlock.CurseOfElementsAura = core.CurseOfElementsAura(warlock.CurrentTarget)
+	warlock.CurseOfElementsAuras = warlock.NewEnemyAuraArray(core.CurseOfElementsAura)
 
 	warlock.CurseOfElements = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47865},
@@ -34,19 +31,20 @@ func (warlock *Warlock) registerCurseOfElementsSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
-				warlock.CurseOfElementsAura.Activate(sim)
+				warlock.CurseOfElementsAuras.Get(target).Activate(sim)
 			}
 		},
 	})
 }
 
 func (warlock *Warlock) ShouldCastCurseOfElements(sim *core.Simulation, target *core.Unit, curse proto.Warlock_Rotation_Curse) bool {
-	return curse == proto.Warlock_Rotation_Elements && !warlock.CurseOfElementsAura.IsActive()
+	return curse == proto.Warlock_Rotation_Elements && !warlock.CurseOfElementsAuras.Get(target).IsActive()
 }
 
 func (warlock *Warlock) registerCurseOfWeaknessSpell() {
-	warlock.CurseOfWeaknessAura = core.CurseOfWeaknessAura(warlock.CurrentTarget, warlock.Talents.ImprovedCurseOfWeakness)
-	warlock.CurseOfWeaknessAura.Duration = time.Minute * 2
+	warlock.CurseOfWeaknessAuras = warlock.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+		return core.CurseOfWeaknessAura(target, warlock.Talents.ImprovedCurseOfWeakness)
+	})
 
 	warlock.CurseOfWeakness = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 50511},
@@ -69,7 +67,7 @@ func (warlock *Warlock) registerCurseOfWeaknessSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
-				warlock.CurseOfWeaknessAura.Activate(sim)
+				warlock.CurseOfWeaknessAuras.Get(target).Activate(sim)
 			}
 		},
 	})
@@ -79,10 +77,12 @@ func (warlock *Warlock) registerCurseOfTonguesSpell() {
 	actionID := core.ActionID{SpellID: 11719}
 
 	// Empty aura so we can simulate cost/time to keep tongues up
-	warlock.CurseOfTonguesAura = warlock.CurrentTarget.GetOrRegisterAura(core.Aura{
-		Label:    "Curse of Tongues",
-		ActionID: actionID,
-		Duration: time.Second * 30,
+	warlock.CurseOfTonguesAuras = warlock.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+		return target.GetOrRegisterAura(core.Aura{
+			Label:    "Curse of Tongues",
+			ActionID: actionID,
+			Duration: time.Second * 30,
+		})
 	})
 
 	warlock.CurseOfTongues = warlock.RegisterSpell(core.SpellConfig{
@@ -106,7 +106,7 @@ func (warlock *Warlock) registerCurseOfTonguesSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
-				warlock.CurseOfTonguesAura.Activate(sim)
+				warlock.CurseOfTonguesAuras.Get(target).Activate(sim)
 			}
 		},
 	})

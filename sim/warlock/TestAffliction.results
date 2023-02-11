@@ -46,8 +46,8 @@ character_stats_results: {
 dps_results: {
  key: "TestAffliction-AllItems-AshtongueTalismanofShadows-32493"
  value: {
-  dps: 7388.66311
-  tps: 6663.47697
+  dps: 7388.73649
+  tps: 6663.55034
  }
 }
 dps_results: {
@@ -305,8 +305,8 @@ dps_results: {
 dps_results: {
  key: "TestAffliction-Average-Default"
  value: {
-  dps: 7416.18896
-  tps: 6681.20462
+  dps: 7416.21738
+  tps: 6681.23304
  }
 }
 dps_results: {

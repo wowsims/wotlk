@@ -1,7 +1,6 @@
 package warlock
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -9,16 +8,19 @@ import (
 )
 
 func (warlock *Warlock) registerConflagrateSpell() {
-	actionID := core.ActionID{SpellID: 17962}
 	hasGlyphOfConflag := warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfConflagrate)
 
-	directFlatDamage := 0.6 * 785 / 5 * float64(warlock.ImmolateDot.NumberOfTicks)
-	directSpellCoeff := 0.6 * 0.2 * float64(warlock.ImmolateDot.NumberOfTicks)
-	dotFlatDamage := 0.4 / 3 * 785 / 5 * float64(warlock.ImmolateDot.NumberOfTicks)
-	dotSpellCoeff := 0.4 / 3 * 0.2 * float64(warlock.ImmolateDot.NumberOfTicks)
+	directFlatDamage := 0.6 * 785 / 5 * float64(warlock.Immolate.CurDot().NumberOfTicks)
+	directSpellCoeff := 0.6 * 0.2 * float64(warlock.Immolate.CurDot().NumberOfTicks)
+	dotFlatDamage := 0.4 / 3 * 785 / 5 * float64(warlock.Immolate.CurDot().NumberOfTicks)
+	dotSpellCoeff := 0.4 / 3 * 0.2 * float64(warlock.Immolate.CurDot().NumberOfTicks)
+
+	bonusPeriodicDamageMultiplier := 0 +
+		warlock.GrandSpellstoneBonus() -
+		warlock.GrandFirestoneBonus()
 
 	warlock.Conflagrate = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
+		ActionID:    core.ActionID{SpellID: 17962},
 		SpellSchool: core.SpellSchoolFire,
 		ProcMask:    core.ProcMaskSpellDamage,
 
@@ -36,7 +38,7 @@ func (warlock *Warlock) registerConflagrateSpell() {
 			},
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return warlock.ImmolateDot.IsActive()
+			return warlock.Immolate.Dot(target).IsActive()
 		},
 
 		BonusCritRating: 0 +
@@ -52,52 +54,39 @@ func (warlock *Warlock) registerConflagrateSpell() {
 		CritMultiplier:   warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
+		Dot: core.DotConfig{
+			Aura: core.Aura{
+				Label: "Conflagrate",
+			},
+			NumberOfTicks: 3,
+			TickLength:    time.Second * 2,
+
+			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+				dot.SnapshotBaseDamage = dotFlatDamage + dotSpellCoeff*dot.Spell.SpellPower()
+				attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
+				dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
+
+				dot.Spell.DamageMultiplierAdditive += bonusPeriodicDamageMultiplier
+				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
+				dot.Spell.DamageMultiplierAdditive -= bonusPeriodicDamageMultiplier
+			},
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
+			},
+		},
+
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := directFlatDamage + directSpellCoeff*spell.SpellPower()
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if result.Landed() {
-				warlock.ConflagrateDot.Apply(sim)
+				spell.Dot(target).Apply(sim)
 			}
 			spell.DealDamage(sim, result)
 
 			if !hasGlyphOfConflag {
-				warlock.ImmolateDot.Deactivate(sim)
+				warlock.Immolate.Dot(target).Deactivate(sim)
 				//warlock.ShadowflameDot.Deactivate(sim)
 			}
-		},
-	})
-
-	warlock.ConflagrateDot = core.NewDot(core.Dot{
-		Spell: warlock.RegisterSpell(core.SpellConfig{
-			ActionID:    actionID,
-			SpellSchool: core.SpellSchoolFire,
-			ProcMask:    core.ProcMaskSpellDamage,
-
-			BonusCritRating: warlock.Conflagrate.BonusCritRating,
-			DamageMultiplierAdditive: 1 +
-				warlock.GrandSpellstoneBonus() +
-				0.03*float64(warlock.Talents.Emberstorm) +
-				0.03*float64(warlock.Talents.Aftermath) +
-				0.1*float64(warlock.Talents.ImprovedImmolate) +
-				core.TernaryFloat64(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfImmolate), 0.1, 0),
-			CritMultiplier:   warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
-			ThreatMultiplier: warlock.Conflagrate.ThreatMultiplier,
-		}),
-		Aura: warlock.CurrentTarget.RegisterAura(core.Aura{
-			Label:    "conflagrate-" + strconv.Itoa(int(warlock.Index)),
-			ActionID: actionID,
-		}),
-		NumberOfTicks: 3,
-		TickLength:    time.Second * 2,
-
-		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-			dot.SnapshotBaseDamage = dotFlatDamage + dotSpellCoeff*dot.Spell.SpellPower()
-			attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
-			dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
-			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
-		},
-		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
 		},
 	})
 }
