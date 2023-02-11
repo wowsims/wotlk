@@ -15,7 +15,6 @@ func (druid *Druid) registerShredSpell() {
 
 	hasGlyphofShred := druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfShred)
 	maxRipTicks := druid.MaxRipTicks()
-	bleedCategory := druid.CurrentTarget.GetExclusiveEffectCategory(core.BleedEffectCategory)
 
 	druid.Shred = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48572},
@@ -44,7 +43,7 @@ func (druid *Druid) registerShredSpell() {
 				spell.BonusWeaponDamage()
 
 			modifier := 1.0
-			if bleedCategory.AnyActive() {
+			if druid.BleedCategories.Get(target).AnyActive() {
 				modifier += .3
 			}
 
@@ -74,7 +73,7 @@ func (druid *Druid) registerShredSpell() {
 			baseDamage := flatDamageBonus + spell.Unit.AutoAttacks.MH.CalculateAverageWeaponDamage(spell.MeleeAttackPower()) + spell.BonusWeaponDamage()
 
 			modifier := 1.0
-			if bleedCategory.AnyActive() {
+			if druid.BleedCategories.Get(target).AnyActive() {
 				modifier += .3
 			}
 			if druid.AssumeBleedActive || druid.Rip.Dot(target).IsActive() || druid.Rake.Dot(target).IsActive() || druid.Lacerate.Dot(target).IsActive() {

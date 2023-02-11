@@ -588,6 +588,25 @@ func init() {
 		}))
 	})
 
+	core.NewItemEffect(47670, func(agent core.Agent) {
+		druid := agent.(DruidAgent).GetDruid()
+		procAura := druid.NewTemporaryStatsAura("Lunar Fire", core.ActionID{SpellID: 67360}, stats.Stats{stats.MeleeCrit: 200, stats.SpellCrit: 200}, time.Second*12)
+		icd := core.Cooldown{
+			Timer:    druid.NewTimer(),
+			Duration: time.Second * 6,
+		}
+
+		core.MakePermanent(druid.RegisterAura(core.Aura{
+			Label: "Idol of Lunar Fury",
+			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if spell == druid.Moonfire && icd.IsReady(sim) && sim.RandomFloat("lunar fire") < 0.7 {
+					icd.Use(sim)
+					procAura.Activate(sim)
+				}
+			},
+		}))
+	})
+
 	core.NewItemEffect(42591, func(agent core.Agent) {
 		druid := agent.(DruidAgent).GetDruid()
 		procAura := druid.NewTemporaryStatsAura("Relentless Gladiator's Idol of Resolve Proc", core.ActionID{ItemID: 42591}, stats.Stats{stats.AttackPower: 172}, time.Second*10)
