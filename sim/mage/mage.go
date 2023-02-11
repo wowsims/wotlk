@@ -77,20 +77,18 @@ type Mage struct {
 	IcyVeins             *core.Spell
 	SummonWaterElemental *core.Spell
 
-	FrostfireDot *core.Dot
-
 	ArcaneBlastAura    *core.Aura
 	ArcanePotencyAura  *core.Aura
 	ArcanePowerAura    *core.Aura
 	MissileBarrageAura *core.Aura
 	ClearcastingAura   *core.Aura
-	ScorchAura         *core.Aura
+	ScorchAuras        core.AuraArray
 	HotStreakAura      *core.Aura
 	CombustionAura     *core.Aura
 	FingersOfFrostAura *core.Aura
 	BrainFreezeAura    *core.Aura
 
-	CritDebuffCategory *core.ExclusiveCategory
+	CritDebuffCategories core.ExclusiveCategoryArray
 }
 
 func (mage *Mage) GetCharacter() *core.Character {

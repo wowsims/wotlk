@@ -148,7 +148,7 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 				if hasCastExpose && rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Once {
 					return Skip
 				}
-				timeLeft := rogue.ExposeArmorAura.RemainingDuration(sim)
+				timeLeft := rogue.ExposeArmorAuras.Get(rogue.CurrentTarget).RemainingDuration(sim)
 				minPoints := core.MaxInt32(1, core.MinInt32(rogue.Rotation.MinimumComboPointsExposeArmor, 5))
 				if rogue.Rotation.ExposeArmorFrequency != proto.Rogue_Rotation_Once {
 					minPoints = 1

@@ -56,7 +56,7 @@ func init() {
 				if stackingAura.GetStacks() == 10 {
 					stackingAura.Deactivate(sim)
 					tempStrProc.Activate(sim)
-					choasBaneSpell.Cast(sim, player.CurrentTarget)
+					choasBaneSpell.Cast(sim, result.Target)
 					return
 				}
 

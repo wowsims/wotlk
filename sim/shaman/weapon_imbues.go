@@ -353,6 +353,8 @@ func (shaman *Shaman) RegisterFrostbrandImbue(mh bool, oh bool) {
 		shaman.Equip[proto.ItemSlot_ItemSlotOffHand].TempEnchant = 3784
 	}
 
+	fbDebuffAuras := shaman.NewEnemyAuraArray(shaman.FrostbrandDebuffAura)
+
 	aura := shaman.RegisterAura(core.Aura{
 		Label:    "Frostbrand Imbue",
 		Duration: core.NeverExpires,
@@ -373,7 +375,7 @@ func (shaman *Shaman) RegisterFrostbrandImbue(mh bool, oh bool) {
 			} else {
 				ohSpell.Cast(sim, result.Target)
 			}
-			shaman.FrostbrandDebuffAura(shaman.CurrentTarget).Activate(sim)
+			fbDebuffAuras.Get(result.Target).Activate(sim)
 		},
 	})
 

@@ -1,7 +1,6 @@
 package shaman
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -59,47 +58,37 @@ func (shaman *Shaman) registerEarthShockSpell(shockTimer *core.Timer) {
 	shaman.EarthShock = shaman.RegisterSpell(config)
 }
 
-const FlameshockID = 49233
-
 func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
-	actionID := core.ActionID{SpellID: FlameshockID}
-	config := shaman.newShockSpellConfig(FlameshockID, core.SpellSchoolFire, 0.17, shockTimer)
+	config := shaman.newShockSpellConfig(49233, core.SpellSchoolFire, 0.17, shockTimer)
 
 	config.Cast.CD.Duration -= time.Duration(shaman.Talents.BoomingEchoes) * time.Second
 	config.CritMultiplier = shaman.ElementalCritMultiplier(core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfFlameShock), 0.6, 0))
+	config.DamageMultiplier += 0.1 * float64(shaman.Talents.BoomingEchoes)
 
 	config.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 		baseDamage := 500 + 0.214*spell.SpellPower()
 		result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 		if result.Landed() {
-			shaman.FlameShockDot.Apply(sim)
+			spell.Dot(target).Apply(sim)
 		}
 		spell.DealDamage(sim, result)
 	}
 
-	target := shaman.CurrentTarget
-	shaman.FlameShockDot = core.NewDot(core.Dot{
-		Spell: shaman.RegisterSpell(core.SpellConfig{
-			ActionID:    actionID,
-			SpellSchool: core.SpellSchoolFire,
-			ProcMask:    core.ProcMaskSpellDamage,
+	bonusPeriodicDamageMultiplier := 0 +
+		0.2*float64(shaman.Talents.StormEarthAndFire) +
+		core.TernaryFloat64(shaman.HasSetBonus(ItemSetWorldbreakerGarb, 2), 0.2, 0) -
+		0.1*float64(shaman.Talents.BoomingEchoes)
 
-			DamageMultiplier: config.DamageMultiplier +
-				float64(shaman.Talents.StormEarthAndFire)*0.2 +
-				core.TernaryFloat64(shaman.HasSetBonus(ItemSetWorldbreakerGarb, 2), 0.2, 0),
-			CritMultiplier:   config.CritMultiplier,
-			ThreatMultiplier: config.ThreatMultiplier,
-		}),
-		Aura: target.RegisterAura(core.Aura{
-			Label:    "FlameShock-" + strconv.Itoa(int(shaman.Index)),
-			ActionID: actionID,
+	config.Dot = core.DotConfig{
+		Aura: core.Aura{
+			Label: "FlameShock",
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
 				shaman.LavaBurst.BonusCritRating += 100 * core.CritRatingPerCritChance
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 				shaman.LavaBurst.BonusCritRating -= 100 * core.CritRatingPerCritChance
 			},
-		}),
+		},
 		NumberOfTicks:       6 + core.TernaryInt32(shaman.HasSetBonus(ItemSetThrallsRegalia, 2), 3, 0),
 		TickLength:          time.Second * 3,
 		AffectedByCastSpeed: true,
@@ -107,15 +96,16 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
 			dot.SnapshotBaseDamage = 834/6 + 0.1*dot.Spell.SpellPower()
 			dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
+
+			dot.Spell.DamageMultiplierAdditive += bonusPeriodicDamageMultiplier
 			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+			dot.Spell.DamageMultiplierAdditive -= bonusPeriodicDamageMultiplier
 		},
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 			dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
 		},
-	})
+	}
 
-	// Apply this talent after creating DoT spell, so it doesn't get copied into periodic DamageMultiplier.
-	config.DamageMultiplier += 0.1 * float64(shaman.Talents.BoomingEchoes)
 	shaman.FlameShock = shaman.RegisterSpell(config)
 }
 

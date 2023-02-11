@@ -34,7 +34,7 @@ func (warrior *Warrior) registerDevastateSpell() {
 			IgnoreHaste: true,
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return warrior.CanApplySunderAura()
+			return warrior.CanApplySunderAura(target)
 		},
 
 		BonusCritRating: 5*core.CritRatingPerCritChance*float64(warrior.Talents.SwordAndBoard) +
@@ -48,7 +48,7 @@ func (warrior *Warrior) registerDevastateSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// Bonus 242 damage / stack of sunder. Counts stacks AFTER cast but only if stacks > 0.
 			sunderBonus := 0.0
-			saStacks := warrior.SunderArmorAura.GetStacks()
+			saStacks := warrior.SunderArmorAuras.Get(target).GetStacks()
 			if saStacks != 0 {
 				sunderBonus = 242 * float64(core.MinInt32(saStacks+1, 5))
 			}
@@ -60,7 +60,7 @@ func (warrior *Warrior) registerDevastateSpell() {
 			spell.DealDamage(sim, result)
 
 			if result.Landed() {
-				if warrior.CanApplySunderAura() {
+				if warrior.CanApplySunderAura(target) {
 					warrior.SunderArmorDevastate.Cast(sim, target)
 				}
 			} else {

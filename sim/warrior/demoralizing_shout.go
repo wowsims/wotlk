@@ -7,10 +7,9 @@ import (
 )
 
 func (warrior *Warrior) registerDemoralizingShoutSpell() {
-	warrior.DemoralizingShoutAuras = make([]*core.Aura, warrior.Env.GetNumTargets())
-	for _, target := range warrior.Env.Encounter.Targets {
-		warrior.DemoralizingShoutAuras[target.Index] = core.DemoralizingShoutAura(&target.Unit, warrior.Talents.BoomingVoice, warrior.Talents.ImprovedDemoralizingShout)
-	}
+	warrior.DemoralizingShoutAuras = warrior.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+		return core.DemoralizingShoutAura(target, warrior.Talents.BoomingVoice, warrior.Talents.ImprovedDemoralizingShout)
+	})
 
 	warrior.DemoralizingShout = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 25203},
@@ -31,18 +30,18 @@ func (warrior *Warrior) registerDemoralizingShoutSpell() {
 		FlatThreatBonus:  63.2,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			for _, aoeTarget := range sim.Encounter.Targets {
-				result := spell.CalcAndDealOutcome(sim, &aoeTarget.Unit, spell.OutcomeMagicHit)
+			for _, aoeTarget := range sim.Encounter.TargetUnits {
+				result := spell.CalcAndDealOutcome(sim, aoeTarget, spell.OutcomeMagicHit)
 				if result.Landed() {
-					warrior.DemoralizingShoutAuras[aoeTarget.Index].Activate(sim)
+					warrior.DemoralizingShoutAuras.Get(aoeTarget).Activate(sim)
 				}
 			}
 		},
 	})
 }
 
-func (warrior *Warrior) ShouldDemoralizingShout(sim *core.Simulation, filler bool, maintainOnly bool) bool {
-	if !warrior.DemoralizingShout.CanCast(sim, warrior.CurrentTarget) {
+func (warrior *Warrior) ShouldDemoralizingShout(sim *core.Simulation, target *core.Unit, filler bool, maintainOnly bool) bool {
+	if !warrior.DemoralizingShout.CanCast(sim, target) {
 		return false
 	}
 
@@ -51,5 +50,5 @@ func (warrior *Warrior) ShouldDemoralizingShout(sim *core.Simulation, filler boo
 	}
 
 	return maintainOnly &&
-		warrior.DemoralizingShoutAuras[warrior.CurrentTarget.Index].ShouldRefreshExclusiveEffects(sim, time.Second*2)
+		warrior.DemoralizingShoutAuras.Get(target).ShouldRefreshExclusiveEffects(sim, time.Second*2)
 }

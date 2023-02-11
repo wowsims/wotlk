@@ -308,7 +308,7 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 			MaxCasts:           maxCasts,
 			MaximumComboPoints: 5,
 			MinimumComboPoints: minPoints,
-			Aura:               rogue.ExposeArmorAura,
+			Aura:               rogue.ExposeArmorAuras.Get(rogue.CurrentTarget),
 			EnergyCost:         rogue.ExposeArmor[1].DefaultCast.Cost,
 			GetDuration: func(r *Rogue, cp int32) time.Duration {
 				return rogue.exposeArmorDurations[cp]
