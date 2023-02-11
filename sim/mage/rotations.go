@@ -21,7 +21,7 @@ func (mage *Mage) tryUseGCD(sim *core.Simulation) {
 }
 
 func (mage *Mage) chooseSpell(sim *core.Simulation) *core.Spell {
-	if mage.Rotation.MaintainImprovedScorch && (!mage.CritDebuffCategory.AnyActive() || (mage.ScorchAura.IsActive() && mage.ScorchAura.RemainingDuration(sim) < time.Millisecond*4000)) {
+	if mage.Rotation.MaintainImprovedScorch && (!mage.CritDebuffCategories.Get(mage.CurrentTarget).AnyActive() || (mage.ScorchAuras.Get(mage.CurrentTarget).IsActive() && mage.ScorchAuras.Get(mage.CurrentTarget).RemainingDuration(sim) < time.Millisecond*4000)) {
 		return mage.Scorch
 	}
 

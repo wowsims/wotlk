@@ -244,8 +244,8 @@ func init() {
 				ProcMask:   core.ProcMaskRanged,
 				Outcome:    core.OutcomeLanded,
 				ProcChance: procChance,
-				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
-					rangedSpell.Cast(sim, hunter.CurrentTarget)
+				Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
+					rangedSpell.Cast(sim, result.Target)
 				},
 			})
 			triggerAura.OnInit = func(aura *core.Aura, sim *core.Simulation) {

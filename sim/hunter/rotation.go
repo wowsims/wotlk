@@ -59,7 +59,7 @@ func (hunter *Hunter) singleTargetChooseSpell(sim *core.Simulation) *core.Spell 
 		return hunter.ExplosiveShotR4
 	} else if hunter.Rotation.AllowExplosiveShotDownrank && hunter.ExplosiveShotR3.IsReady(sim) && !hunter.ExplosiveShotR3.CurDot().IsActive() {
 		return hunter.ExplosiveShotR3
-	} else if hunter.Rotation.Sting == proto.Hunter_Rotation_ScorpidSting && !hunter.ScorpidStingAura.IsActive() {
+	} else if hunter.Rotation.Sting == proto.Hunter_Rotation_ScorpidSting && !hunter.ScorpidStingAuras.Get(hunter.CurrentTarget).IsActive() {
 		return hunter.ScorpidSting
 	} else if hunter.Rotation.Sting == proto.Hunter_Rotation_SerpentSting && !hunter.SerpentSting.CurDot().IsActive() {
 		return hunter.SerpentSting
@@ -195,7 +195,7 @@ func (hunter *Hunter) makeCustomRotation() *common.CustomRotation {
 				return hunter.ScorpidSting.Cast(sim, target), cost
 			},
 			Condition: func(sim *core.Simulation) bool {
-				return hunter.Rotation.Sting == proto.Hunter_Rotation_ScorpidSting && !hunter.ScorpidStingAura.IsActive()
+				return hunter.Rotation.Sting == proto.Hunter_Rotation_ScorpidSting && !hunter.ScorpidStingAuras.Get(hunter.CurrentTarget).IsActive()
 			},
 		},
 		int32(proto.Hunter_Rotation_SerpentStingSpell): {

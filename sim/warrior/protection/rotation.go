@@ -32,13 +32,13 @@ func (war *ProtectionWarrior) tryQueueHsCleave(sim *core.Simulation) {
 }
 
 func (war *ProtectionWarrior) shouldDemoShout(sim *core.Simulation) bool {
-	return war.ShouldDemoralizingShout(sim,
+	return war.ShouldDemoralizingShout(sim, war.CurrentTarget,
 		war.Rotation.DemoShoutChoice == proto.ProtectionWarrior_Rotation_DemoShoutChoiceFiller,
 		war.Rotation.DemoShoutChoice == proto.ProtectionWarrior_Rotation_DemoShoutChoiceMaintain)
 }
 
 func (war *ProtectionWarrior) shouldThunderClap(sim *core.Simulation) bool {
-	return war.ShouldThunderClap(sim,
+	return war.ShouldThunderClap(sim, war.CurrentTarget,
 		war.Rotation.ThunderClapChoice == proto.ProtectionWarrior_Rotation_ThunderClapChoiceOnCD,
 		war.Rotation.ThunderClapChoice == proto.ProtectionWarrior_Rotation_ThunderClapChoiceMaintain,
 		false)

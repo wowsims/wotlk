@@ -261,7 +261,7 @@ func (hp *HunterPet) newSpecialAbility(config PetSpecialAbilityConfig) PetAbilit
 }
 
 func (hp *HunterPet) newAcidSpit() PetAbility {
-	acidSpitAura := core.AcidSpitAura(hp.CurrentTarget)
+	acidSpitAuras := hp.NewEnemyAuraArray(core.AcidSpitAura)
 	return hp.newSpecialAbility(PetSpecialAbilityConfig{
 		Type:    AcidSpit,
 		Cost:    20,
@@ -274,9 +274,10 @@ func (hp *HunterPet) newAcidSpit() PetAbility {
 		APRatio: 0.049,
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if result.Landed() {
-				acidSpitAura.Activate(sim)
-				if acidSpitAura.IsActive() {
-					acidSpitAura.AddStack(sim)
+				aura := acidSpitAuras.Get(result.Target)
+				aura.Activate(sim)
+				if aura.IsActive() {
+					aura.AddStack(sim)
 				}
 			}
 		},
@@ -871,7 +872,7 @@ func (hp *HunterPet) newSporeCloud() PetAbility {
 }
 
 func (hp *HunterPet) newStampede() PetAbility {
-	debuff := core.StampedeAura(hp.CurrentTarget)
+	debuffs := hp.NewEnemyAuraArray(core.StampedeAura)
 	return hp.newSpecialAbility(PetSpecialAbilityConfig{
 		Type:    Stampede,
 		Cost:    0,
@@ -883,14 +884,14 @@ func (hp *HunterPet) newStampede() PetAbility {
 		APRatio: 0.07,
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if result.Landed() {
-				debuff.Activate(sim)
+				debuffs.Get(result.Target).Activate(sim)
 			}
 		},
 	})
 }
 
 func (hp *HunterPet) newSting() PetAbility {
-	debuff := core.StingAura(hp.CurrentTarget)
+	debuffs := hp.NewEnemyAuraArray(core.StingAura)
 	return hp.newSpecialAbility(PetSpecialAbilityConfig{
 		Type:    Sting,
 		Cost:    20,
@@ -903,7 +904,7 @@ func (hp *HunterPet) newSting() PetAbility {
 		APRatio: 0.049,
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if result.Landed() {
-				debuff.Activate(sim)
+				debuffs.Get(result.Target).Activate(sim)
 			}
 		},
 	})

@@ -83,7 +83,7 @@ type Hunter struct {
 	ImprovedSteadyShotAura    *core.Aura
 	LockAndLoadAura           *core.Aura
 	RapidFireAura             *core.Aura
-	ScorpidStingAura          *core.Aura
+	ScorpidStingAuras         core.AuraArray
 	TalonOfAlarAura           *core.Aura
 
 	CustomRotation *common.CustomRotation
