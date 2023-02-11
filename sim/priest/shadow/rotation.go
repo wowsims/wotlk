@@ -628,6 +628,7 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 		} else if numTicks == 2 && spriest.AllCDs[mbIdx].Seconds() == 0 && spriest.options.UseMindBlast {
 			return spriest.MindBlast, 0
 		} else {
+			//numTicks = 3
 			return spriest.MindFlay[numTicks], 0
 		}
 	} else {
@@ -700,7 +701,7 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, gcd tim
 
 	AlmostAnotherTick := numTicks_Base - numTicks_floored
 
-	if AlmostAnotherTick > 0.95 {
+	if AlmostAnotherTick >= 0.3 {
 		numTicks += 1
 	}
 
@@ -711,14 +712,14 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, gcd tim
 		return numTicks
 	}
 
-	//if sim.Log != nil {
-	//spriest.Log(sim, "AlmostAnotherTick %d", AlmostAnotherTick)
-	//spriest.Log(sim, "numTicks %d", numTicks)
-	//spriest.Log(sim, "tickLength %d", tickLength.Seconds())
-	//spriest.Log(sim, "nextCD %d", nextCD.Seconds())
-	//spriest.Log(sim, "numTicks_Base %d", numTicks_Base)
-	//spriest.Log(sim, "numTicks_floored %d", numTicks_floored)
-	//}
+	if sim.Log != nil {
+		spriest.Log(sim, "AlmostAnotherTick %d", AlmostAnotherTick)
+		spriest.Log(sim, "numTicks %d", numTicks)
+		spriest.Log(sim, "tickLength %d", tickLength.Seconds())
+		spriest.Log(sim, "nextCD %d", nextCD.Seconds())
+		spriest.Log(sim, "numTicks_Base %d", numTicks_Base)
+		spriest.Log(sim, "numTicks_floored %d", numTicks_floored)
+	}
 
 	if numTicks < 100 && overwriteDPS == 0 { // if the code entered this loop because mf is the higest dps spell, and the number of ticks that can fit in the remaining cd time is < 1, then just cast a mf3 as it essentially fits perfectly
 		// TODO: Should spriest latency be added to the second option here?
@@ -799,7 +800,7 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, gcd tim
 			}
 			AlmostAnotherTick := numTicks_Base - numTicks_floored
 
-			if AlmostAnotherTick > 0.75 {
+			if AlmostAnotherTick >= 0.3 {
 				numTicks += 1
 			}
 
