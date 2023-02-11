@@ -276,7 +276,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 
 	rotation := &cat.Rotation
 
-	if rotation.MaintainFaerieFire && cat.ShouldFaerieFire(sim) {
+	if rotation.MaintainFaerieFire && cat.ShouldFaerieFire(sim, cat.CurrentTarget) {
 		cat.FaerieFire.Cast(sim, cat.CurrentTarget)
 		return
 	}

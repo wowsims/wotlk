@@ -8,7 +8,6 @@ import (
 )
 
 func (druid *Druid) registerRakeSpell() {
-	bleedCategory := druid.CurrentTarget.GetExclusiveEffectCategory(core.BleedEffectCategory)
 	numTicks := 3 + core.TernaryInt32(druid.HasSetBonus(ItemSetMalfurionsBattlegear, 2), 1, 0)
 	dotCanCrit := druid.HasSetBonus(ItemSetLasherweaveBattlegear, 4)
 
@@ -60,7 +59,7 @@ func (druid *Druid) registerRakeSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := 176 + 0.01*spell.MeleeAttackPower()
-			if bleedCategory.AnyActive() {
+			if druid.BleedCategories.Get(target).AnyActive() {
 				baseDamage *= 1.3
 			}
 
@@ -77,7 +76,7 @@ func (druid *Druid) registerRakeSpell() {
 		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
 			baseDamage := 176 + 0.01*spell.MeleeAttackPower()
 			tickBase := (358 + 0.06*spell.MeleeAttackPower()) * float64(numTicks)
-			if bleedCategory.AnyActive() {
+			if druid.BleedCategories.Get(target).AnyActive() {
 				baseDamage *= 1.3
 				tickBase *= 1.3
 			}

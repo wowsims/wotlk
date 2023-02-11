@@ -30,7 +30,9 @@ func (druid *Druid) registerFaerieFireSpell() {
 		flatThreatBonus = 632.
 	}
 
-	druid.FaerieFireAura = core.FaerieFireAura(druid.CurrentTarget, druid.Talents.ImprovedFaerieFire)
+	druid.FaerieFireAuras = druid.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+		return core.FaerieFireAura(target, druid.Talents.ImprovedFaerieFire)
+	})
 
 	druid.FaerieFire = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -62,13 +64,13 @@ func (druid *Druid) registerFaerieFireSpell() {
 
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, outcome)
 			if result.Landed() {
-				druid.FaerieFireAura.Activate(sim)
+				druid.FaerieFireAuras.Get(target).Activate(sim)
 			}
 		},
 	})
 }
 
-func (druid *Druid) ShouldFaerieFire(sim *core.Simulation) bool {
+func (druid *Druid) ShouldFaerieFire(sim *core.Simulation, target *core.Unit) bool {
 	if druid.FaerieFire == nil {
 		return false
 	}
@@ -77,5 +79,5 @@ func (druid *Druid) ShouldFaerieFire(sim *core.Simulation) bool {
 		return false
 	}
 
-	return druid.FaerieFireAura.ShouldRefreshExclusiveEffects(sim, time.Second*3)
+	return druid.FaerieFireAuras.Get(target).ShouldRefreshExclusiveEffects(sim, time.Second*3)
 }
