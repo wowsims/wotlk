@@ -76,8 +76,6 @@ type Hunter struct {
 	// Fake spells to encapsulate weaving logic.
 	TrapWeaveSpell *core.Spell
 
-	ExplosiveTrapDot *core.Dot
-
 	AspectOfTheDragonhawkAura *core.Aura
 	AspectOfTheViperAura      *core.Aura
 	ImprovedSteadyShotAura    *core.Aura

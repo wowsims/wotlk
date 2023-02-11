@@ -45,7 +45,7 @@ func (hunter *Hunter) rotation(sim *core.Simulation) {
 }
 
 func (hunter *Hunter) aoeChooseSpell(sim *core.Simulation) *core.Spell {
-	if hunter.Rotation.TrapWeave && hunter.ExplosiveTrap.IsReady(sim) && !hunter.ExplosiveTrapDot.IsActive() {
+	if hunter.Rotation.TrapWeave && hunter.ExplosiveTrap.IsReady(sim) && !hunter.ExplosiveTrap.AOEDot().IsActive() {
 		return hunter.TrapWeaveSpell
 	} else {
 		return hunter.Volley
@@ -67,7 +67,7 @@ func (hunter *Hunter) singleTargetChooseSpell(sim *core.Simulation) *core.Spell 
 		return hunter.ChimeraShot
 	} else if !hunter.Rotation.TrapWeave && hunter.BlackArrow.IsReady(sim) {
 		return hunter.BlackArrow
-	} else if hunter.Rotation.TrapWeave && hunter.ExplosiveTrap.IsReady(sim) && !hunter.ExplosiveTrapDot.IsActive() {
+	} else if hunter.Rotation.TrapWeave && hunter.ExplosiveTrap.IsReady(sim) && !hunter.ExplosiveTrap.AOEDot().IsActive() {
 		return hunter.TrapWeaveSpell
 	} else if hunter.AimedShot.IsReady(sim) {
 		return hunter.AimedShot
@@ -168,7 +168,7 @@ func (hunter *Hunter) makeCustomRotation() *common.CustomRotation {
 				return hunter.TrapWeaveSpell.Cast(sim, target), cost
 			},
 			Condition: func(sim *core.Simulation) bool {
-				return hunter.ExplosiveTrap.IsReady(sim) && !hunter.ExplosiveTrapDot.IsActive()
+				return hunter.ExplosiveTrap.IsReady(sim) && !hunter.ExplosiveTrap.AOEDot().IsActive()
 			},
 		},
 		int32(proto.Hunter_Rotation_KillShot): {
