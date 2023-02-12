@@ -132,12 +132,24 @@ export class EncounterPicker extends Component {
 			advancedButton.addEventListener('click', () => new AdvancedEncounterModal(simUI.rootElem, simUI, modEncounter));
 			this.rootElem.appendChild(advancedButton);
 
-			// Transfer Target Inputs from the AI of the selected target if its a custom one
+			// Transfer Target Inputs from target Id if they dont match (possible when custom AI is selected)
 			let targetIndex = presetTargets.findIndex(pe => modEncounter.primaryTarget.getId() == pe.target?.id);
 			let targetInputs = new TargetInputs(presetTargets[targetIndex]?.target?.targetInputs);
 
 			if (targetInputs.getLength() != modEncounter.primaryTarget.getTargetInputsLength()) {
 				modEncounter.primaryTarget.setTargetInputs(TypedEvent.nextEventID(), targetInputs);
+			} else {
+				let isDiff = false
+				for (let i = 0; i < modEncounter.primaryTarget.getTargetInputsLength(); i++) {
+					if (modEncounter.primaryTarget.getTargetInputs().getTargetInput(i).label != targetInputs.getTargetInput(i)?.label) {
+						isDiff = true
+						break;
+					}
+				}
+
+				if (isDiff) {
+					modEncounter.primaryTarget.setTargetInputs(TypedEvent.nextEventID(), targetInputs);
+				}
 			}
 
 			EncounterPicker.primaryRootElem = this.rootElem;
