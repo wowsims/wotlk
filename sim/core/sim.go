@@ -334,6 +334,7 @@ func (sim *Simulation) runPendingActions(max time.Duration) {
 			if pa.NextActionAt < max {
 				sim.advance(pa.NextActionAt - sim.CurrentTime)
 			} else {
+				sim.pendingActions = append(sim.pendingActions, pa)
 				break
 			}
 		}
@@ -362,6 +363,7 @@ func (sim *Simulation) runOnce() {
 		}
 
 		if sim.CurrentTime < 0 {
+			sim.runPendingActions(0)
 			sim.advance(0 - sim.CurrentTime)
 		}
 	}
