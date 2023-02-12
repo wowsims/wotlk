@@ -379,6 +379,10 @@ func (character *Character) initialize(agent Agent) {
 	character.gcdAction = &PendingAction{
 		Priority: ActionPriorityGCD,
 		OnAction: func(sim *Simulation) {
+			if sim.CurrentTime < 0 {
+				return
+			}
+
 			character.TryUseCooldowns(sim)
 			if character.GCD.IsReady(sim) {
 				agent.OnGCDReady(sim)

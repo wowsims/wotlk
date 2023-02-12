@@ -312,29 +312,7 @@ func (sim *Simulation) run() *proto.RaidSimResult {
 	return result
 }
 
-// RunOnce is the main event loop. It will run the simulation for number of seconds.
-func (sim *Simulation) runOnce() {
-	sim.reset()
-
-	if len(sim.Environment.prepullActions) > 0 {
-		sim.CurrentTime = sim.Environment.prepullActions[0].DoAt
-
-		for _, prepullAction := range sim.Environment.prepullActions {
-			if prepullAction.DoAt > sim.CurrentTime {
-				sim.advance(prepullAction.DoAt - sim.CurrentTime)
-			}
-			prepullAction.Action(sim)
-		}
-
-		if sim.CurrentTime < 0 {
-			sim.advance(0 - sim.CurrentTime)
-		}
-	}
-
-	for _, unit := range sim.Environment.AllUnits {
-		unit.startPull(sim)
-	}
-
+func (sim *Simulation) runPendingActions(max time.Duration) {
 	for {
 		last := len(sim.pendingActions) - 1
 		pa := sim.pendingActions[last]
@@ -353,7 +331,11 @@ func (sim *Simulation) runOnce() {
 		}
 
 		if pa.NextActionAt > sim.CurrentTime {
-			sim.advance(pa.NextActionAt - sim.CurrentTime)
+			if pa.NextActionAt < max {
+				sim.advance(pa.NextActionAt - sim.CurrentTime)
+			} else {
+				break
+			}
 		}
 		pa.consumed = true
 
@@ -363,18 +345,44 @@ func (sim *Simulation) runOnce() {
 		pa.OnAction(sim)
 	}
 
-	// The last event loop will leave CurrentTime at some value close to but not
-	// quite at the Duration. Explicitly set this so that accesses to CurrentTime
-	// during the doneIteration phase will return the Duration value, which is
-	// intuitive.
-	sim.CurrentTime = sim.Duration
-
 	for _, pa := range sim.pendingActions {
 		if pa.CleanUp != nil {
 			pa.CleanUp(sim)
 		}
 	}
+}
 
+// RunOnce is the main event loop. It will run the simulation for number of seconds.
+func (sim *Simulation) runOnce() {
+	sim.reset()
+
+	if len(sim.Environment.prepullActions) > 0 {
+		sim.CurrentTime = sim.Environment.prepullActions[0].DoAt
+
+		for _, prepullAction := range sim.Environment.prepullActions {
+			if prepullAction.DoAt > sim.CurrentTime {
+				sim.runPendingActions(prepullAction.DoAt)
+				sim.advance(prepullAction.DoAt - sim.CurrentTime)
+			}
+			prepullAction.Action(sim)
+		}
+
+		if sim.CurrentTime < 0 {
+			sim.advance(0 - sim.CurrentTime)
+		}
+	}
+
+	for _, unit := range sim.Environment.AllUnits {
+		unit.startPull(sim)
+	}
+
+	sim.runPendingActions(NeverExpires)
+
+	// The last event loop will leave CurrentTime at some value close to but not
+	// quite at the Duration. Explicitly set this so that accesses to CurrentTime
+	// during the doneIteration phase will return the Duration value, which is
+	// intuitive.
+	sim.CurrentTime = sim.Duration
 	sim.Raid.doneIteration(sim)
 	sim.Encounter.doneIteration(sim)
 
