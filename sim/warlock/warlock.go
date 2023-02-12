@@ -140,15 +140,19 @@ func (warlock *Warlock) Initialize() {
 	if warlock.Rotation.Type == proto.Warlock_Rotation_Destruction {
 		precastSpell = warlock.SoulFire
 	}
-	precastSpellAt := -precastSpell.DefaultCast.CastTime
-	warlock.RegisterPrepullAction(precastSpellAt, func(sim *core.Simulation) {
-		precastSpell.Cast(sim, warlock.CurrentTarget)
-	})
-	if warlock.GlyphOfLifeTapAura != nil || warlock.SpiritsoftheDamnedAura != nil {
-		warlock.RegisterPrepullAction(precastSpellAt-core.GCDDefault, func(sim *core.Simulation) {
-			warlock.LifeTap.Cast(sim, nil)
+	// Do this post-finalize so cast speed is updated with new stats
+	warlock.Env.RegisterPostFinalizeEffect(func() {
+		precastSpellAt := -warlock.ApplyCastSpeedForSpell(precastSpell.DefaultCast.CastTime, precastSpell)
+
+		warlock.RegisterPrepullAction(precastSpellAt, func(sim *core.Simulation) {
+			precastSpell.Cast(sim, warlock.CurrentTarget)
 		})
-	}
+		if warlock.GlyphOfLifeTapAura != nil || warlock.SpiritsoftheDamnedAura != nil {
+			warlock.RegisterPrepullAction(precastSpellAt-core.GCDDefault, func(sim *core.Simulation) {
+				warlock.LifeTap.Cast(sim, nil)
+			})
+		}
+	})
 }
 
 func (warlock *Warlock) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
