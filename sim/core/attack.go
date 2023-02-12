@@ -440,8 +440,8 @@ func (aa *AutoAttacks) CancelAutoSwing(sim *Simulation) {
 	if aa.autoSwingAction != nil {
 		aa.autoSwingAction.Cancel(sim)
 		aa.autoSwingAction = nil
-		aa.autoSwingCancelled = true
 	}
+	aa.autoSwingCancelled = true
 }
 
 // Renables the auto swing action for the iteration
