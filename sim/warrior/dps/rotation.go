@@ -27,7 +27,7 @@ func (war *DpsWarrior) doRotation(sim *core.Simulation) {
 	if war.thunderClapNext {
 		if war.ThunderClap.CanCast(sim, war.CurrentTarget) {
 			if war.ThunderClap.Cast(sim, war.CurrentTarget) {
-				if war.ThunderClapAuras[war.CurrentTarget.Index].RemainingDuration(sim) > DebuffRefreshWindow {
+				if war.ThunderClapAuras.Get(war.CurrentTarget).RemainingDuration(sim) > DebuffRefreshWindow {
 					war.thunderClapNext = false
 
 					// Switching back to berserker immediately is unrealistic because the player needs
@@ -73,7 +73,7 @@ func (war *DpsWarrior) doRotation(sim *core.Simulation) {
 		}
 
 		if war.Rotation.SunderArmor == proto.Warrior_Rotation_SunderArmorMaintain {
-			nextSunderAt := war.SunderArmorAura.ExpiresAt() - SunderWindow
+			nextSunderAt := war.SunderArmorAuras.Get(war.CurrentTarget).ExpiresAt() - SunderWindow
 			// TODO looks fishy, nextCD is unused
 			nextCD = core.MinDuration(nextCD, nextSunderAt)
 		}
@@ -205,12 +205,13 @@ func (war *DpsWarrior) shouldSunder(sim *core.Simulation) bool {
 		return false
 	}
 
-	stacks := war.SunderArmorAura.GetStacks()
+	saAura := war.SunderArmorAuras.Get(war.CurrentTarget)
+	stacks := saAura.GetStacks()
 	if war.Rotation.SunderArmor == proto.Warrior_Rotation_SunderArmorHelpStack && stacks == 5 {
 		war.maintainSunder = false
 	}
 
-	return stacks < 5 || war.SunderArmorAura.RemainingDuration(sim) <= SunderWindow
+	return stacks < 5 || saAura.RemainingDuration(sim) <= SunderWindow
 }
 
 // Returns whether any ability was cast.
@@ -218,10 +219,10 @@ func (war *DpsWarrior) tryMaintainDebuffs(sim *core.Simulation) bool {
 	if war.ShouldShout(sim) {
 		war.Shout.Cast(sim, nil)
 		return true
-	} else if war.Rotation.MaintainDemoShout && war.ShouldDemoralizingShout(sim, false, true) {
+	} else if war.Rotation.MaintainDemoShout && war.ShouldDemoralizingShout(sim, war.CurrentTarget, false, true) {
 		war.DemoralizingShout.Cast(sim, war.CurrentTarget)
 		return true
-	} else if war.Rotation.MaintainThunderClap && war.ShouldThunderClap(sim, false, true, true) {
+	} else if war.Rotation.MaintainThunderClap && war.ShouldThunderClap(sim, war.CurrentTarget, false, true, true) {
 		war.thunderClapNext = true
 		if !war.StanceMatches(warrior.BattleStance) {
 			if !war.BattleStance.IsReady(sim) {
@@ -232,7 +233,7 @@ func (war *DpsWarrior) tryMaintainDebuffs(sim *core.Simulation) bool {
 		// Need to check again because we might have lost rage from switching stances.
 		if war.ThunderClap.CanCast(sim, war.CurrentTarget) {
 			war.ThunderClap.Cast(sim, war.CurrentTarget)
-			if war.ThunderClapAuras[war.CurrentTarget.Index].RemainingDuration(sim) > DebuffRefreshWindow {
+			if war.ThunderClapAuras.Get(war.CurrentTarget).RemainingDuration(sim) > DebuffRefreshWindow {
 				war.thunderClapNext = false
 			}
 		}

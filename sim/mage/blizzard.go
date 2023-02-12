@@ -43,8 +43,8 @@ func (mage *Mage) registerBlizzardSpell() {
 				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				for i, aoeTarget := range sim.Encounter.Targets {
-					results[i] = dot.CalcSnapshotDamage(sim, &aoeTarget.Unit, dot.OutcomeTick)
+				for i, aoeTarget := range sim.Encounter.TargetUnits {
+					results[i] = dot.CalcSnapshotDamage(sim, aoeTarget, dot.OutcomeTick)
 				}
 				for i := range sim.Encounter.Targets {
 					dot.Spell.DealPeriodicDamage(sim, results[i])

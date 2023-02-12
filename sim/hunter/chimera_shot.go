@@ -53,8 +53,8 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 				if hunter.SerpentSting.Dot(target).IsActive() {
 					hunter.SerpentSting.Dot(target).Rollover(sim)
 					ssProcSpell.Cast(sim, target)
-				} else if hunter.ScorpidStingAura.IsActive() {
-					hunter.ScorpidStingAura.Refresh(sim)
+				} else if hunter.ScorpidStingAuras.Get(target).IsActive() {
+					hunter.ScorpidStingAuras.Get(target).Refresh(sim)
 				}
 			}
 			spell.DealDamage(sim, result)

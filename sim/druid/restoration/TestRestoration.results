@@ -269,6 +269,10 @@ dps_results: {
  value: {}
 }
 dps_results: {
+ key: "TestRestoration-AllItems-IdolofLunarFury-47670"
+ value: {}
+}
+dps_results: {
  key: "TestRestoration-AllItems-IdolofMutilation-47668"
  value: {}
 }

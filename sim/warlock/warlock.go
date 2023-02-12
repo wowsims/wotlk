@@ -24,7 +24,6 @@ type Warlock struct {
 	ShadowBolt         *core.Spell
 	Incinerate         *core.Spell
 	Immolate           *core.Spell
-	ImmolateDot        *core.Dot
 	UnstableAffliction *core.Spell
 	Corruption         *core.Spell
 	Haunt              *core.Spell
@@ -33,20 +32,19 @@ type Warlock struct {
 	ChaosBolt          *core.Spell
 	SoulFire           *core.Spell
 	Conflagrate        *core.Spell
-	ConflagrateDot     *core.Dot
 	DrainSoul          *core.Spell
 	Shadowburn         *core.Spell
 
-	CurseOfElements     *core.Spell
-	CurseOfElementsAura *core.Aura
-	CurseOfWeakness     *core.Spell
-	CurseOfWeaknessAura *core.Aura
-	CurseOfTongues      *core.Spell
-	CurseOfTonguesAura  *core.Aura
-	CurseOfAgony        *core.Spell
-	CurseOfDoom         *core.Spell
-	Seed                *core.Spell
-	SeedDamageTracker   []float64
+	CurseOfElements      *core.Spell
+	CurseOfElementsAuras core.AuraArray
+	CurseOfWeakness      *core.Spell
+	CurseOfWeaknessAuras core.AuraArray
+	CurseOfTongues       *core.Spell
+	CurseOfTonguesAuras  core.AuraArray
+	CurseOfAgony         *core.Spell
+	CurseOfDoom          *core.Spell
+	Seed                 *core.Spell
+	SeedDamageTracker    []float64
 
 	NightfallProcAura      *core.Aura
 	EradicationAura        *core.Aura
@@ -57,7 +55,7 @@ type Warlock struct {
 	Metamorphosis          *core.Spell
 	MetamorphosisAura      *core.Aura
 	ImmolationAura         *core.Spell
-	HauntDebuffAura        *core.Aura
+	HauntDebuffAuras       core.AuraArray
 	MoltenCoreAura         *core.Aura
 	DecimationAura         *core.Aura
 	PyroclasmAura          *core.Aura

@@ -32,7 +32,7 @@ func (warrior *Warrior) registerBloodthirstSpell(cdTimer *core.Timer) {
 			},
 		},
 
-		BonusCritRating:  core.TernaryFloat64(warrior.HasSetBonus(ItemSetSiegebreakerBattlegear, 4), 10, 0) * core.CritRatingPerCritChance,
+		BonusCritRating:  core.TernaryFloat64(warrior.HasSetBonus(ItemSetSiegebreakerBattlegear, 4), 4, 0) * core.CritRatingPerCritChance,
 		DamageMultiplier: 1 + 0.02*float64(warrior.Talents.UnendingFury) + core.TernaryFloat64(warrior.HasSetBonus(ItemSetOnslaughtBattlegear, 4), 0.05, 0),
 		CritMultiplier:   warrior.critMultiplier(mh),
 		ThreatMultiplier: 1,
@@ -47,9 +47,9 @@ func (warrior *Warrior) registerBloodthirstSpell(cdTimer *core.Timer) {
 				DoAt: sim.CurrentTime + warrior.Bloodthirst.CD.Duration,
 				OnAction: func(_ *core.Simulation) {
 					if warrior.ShouldInstantSlam(sim) {
-						warrior.CastSlam(sim, warrior.CurrentTarget)
-					} else if warrior.Bloodthirst.CanCast(sim, warrior.CurrentTarget) {
-						warrior.Bloodthirst.Cast(sim, warrior.CurrentTarget)
+						warrior.CastSlam(sim, target)
+					} else if warrior.Bloodthirst.CanCast(sim, target) {
+						warrior.Bloodthirst.Cast(sim, target)
 					}
 				},
 			})

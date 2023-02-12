@@ -423,6 +423,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeral-AllItems-IdolofLunarFury-47670"
+ value: {
+  dps: 7225.25283
+  tps: 7778.64798
+ }
+}
+dps_results: {
  key: "TestFeral-AllItems-IdolofMutilation-47668"
  value: {
   dps: 7448.2951

@@ -22,8 +22,6 @@ func (druid *Druid) registerLacerateSpell() {
 		core.TernaryFloat64(druid.HasSetBonus(ItemSetLasherweaveBattlegear, 2), 1.2, 1) *
 		core.TernaryFloat64(druid.HasSetBonus(ItemSetMalfurionsBattlegear, 2), 1.05, 1)
 
-	bleedCategory := druid.CurrentTarget.GetExclusiveEffectCategory(core.BleedEffectCategory)
-
 	druid.Lacerate = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48568},
 		SpellSchool: core.SpellSchoolPhysical,
@@ -77,7 +75,7 @@ func (druid *Druid) registerLacerateSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := initialDamage + 0.01*spell.MeleeAttackPower()
-			if bleedCategory.AnyActive() {
+			if druid.BleedCategories.Get(target).AnyActive() {
 				baseDamage *= 1.3
 			}
 

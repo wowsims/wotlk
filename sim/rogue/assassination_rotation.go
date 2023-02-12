@@ -84,7 +84,7 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 
 				prioExpose := rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Once ||
 					rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Maintain
-				if prioExpose && !r.ExposeArmorAura.IsActive() {
+				if prioExpose && !r.ExposeArmorAuras.Get(rogue.CurrentTarget).IsActive() {
 					return Skip
 				}
 
@@ -117,7 +117,7 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 				if hasCastExpose && rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Once {
 					return Skip
 				}
-				timeLeft := rogue.ExposeArmorAura.RemainingDuration(sim)
+				timeLeft := rogue.ExposeArmorAuras.Get(rogue.CurrentTarget).RemainingDuration(sim)
 				minPoints := core.MaxInt32(1, core.MinInt32(rogue.Rotation.MinimumComboPointsExposeArmor, 5))
 				if rogue.Rotation.ExposeArmorFrequency != proto.Rogue_Rotation_Once {
 					minPoints = 1

@@ -12,7 +12,7 @@ func (druid *Druid) registerMangleBearSpell() {
 		return
 	}
 
-	mangleAura := core.MangleAura(druid.CurrentTarget)
+	mangleAuras := druid.NewEnemyAuraArray(core.MangleAura)
 	durReduction := (0.5) * float64(druid.Talents.ImprovedMangle)
 	glyphBonus := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMangle), 1.1, 1.0)
 
@@ -52,7 +52,7 @@ func (druid *Druid) registerMangleBearSpell() {
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 
 			if result.Landed() {
-				mangleAura.Activate(sim)
+				mangleAuras.Get(target).Activate(sim)
 			} else {
 				spell.IssueRefund(sim)
 			}
@@ -69,7 +69,7 @@ func (druid *Druid) registerMangleCatSpell() {
 		return
 	}
 
-	mangleAura := core.MangleAura(druid.CurrentTarget)
+	mangleAuras := druid.NewEnemyAuraArray(core.MangleAura)
 	glyphBonus := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMangle), 1.1, 1.0)
 
 	druid.MangleCat = druid.RegisterSpell(core.SpellConfig{
@@ -105,7 +105,7 @@ func (druid *Druid) registerMangleCatSpell() {
 
 			if result.Landed() {
 				druid.AddComboPoints(sim, 1, spell.ComboPointMetrics())
-				mangleAura.Activate(sim)
+				mangleAuras.Get(target).Activate(sim)
 			} else {
 				spell.IssueRefund(sim)
 			}

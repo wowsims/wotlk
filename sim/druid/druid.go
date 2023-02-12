@@ -66,17 +66,15 @@ type Druid struct {
 	CatForm  *core.Spell
 	BearForm *core.Spell
 
-	MoonfireDot *core.Dot
-
 	BarkskinAura             *core.Aura
 	BearFormAura             *core.Aura
 	BerserkAura              *core.Aura
 	CatFormAura              *core.Aura
 	ClearcastingAura         *core.Aura
-	DemoralizingRoarAuras    []*core.Aura
+	DemoralizingRoarAuras    core.AuraArray
 	EarthAndMoonAura         *core.Aura
 	EnrageAura               *core.Aura
-	FaerieFireAura           *core.Aura
+	FaerieFireAuras          core.AuraArray
 	FrenziedRegenerationAura *core.Aura
 	MaulQueueAura            *core.Aura
 	MoonkinT84PCAura         *core.Aura
@@ -88,6 +86,8 @@ type Druid struct {
 	SavageRoarAura           *core.Aura
 	SolarEclipseProcAura     *core.Aura
 	LunarEclipseProcAura     *core.Aura
+
+	BleedCategories core.ExclusiveCategoryArray
 
 	PrimalPrecisionRecoveryMetrics *core.ResourceMetrics
 	SavageRoarDurationTable        [6]time.Duration
@@ -187,6 +187,8 @@ func (druid *Druid) TryMaul(sim *core.Simulation, mhSwingSpell *core.Spell) *cor
 }
 
 func (druid *Druid) Initialize() {
+	druid.BleedCategories = druid.GetEnemyExclusiveCategories(core.BleedEffectCategory)
+
 	if druid.Talents.PrimalPrecision > 0 {
 		druid.PrimalPrecisionRecoveryMetrics = druid.NewEnergyMetrics(core.ActionID{SpellID: 48410})
 	}

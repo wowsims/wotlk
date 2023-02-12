@@ -58,10 +58,11 @@ var ItemSetFrostWitchRegalia = core.NewItemSet(core.ItemSet{
 					aura.Activate(sim)
 				},
 				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-					if spell == shaman.LavaBurst && shaman.FlameShockDot.IsActive() { // Doesn't have to hit from tooltip
+					fsDot := shaman.FlameShock.Dot(result.Target)
+					if spell == shaman.LavaBurst && fsDot.IsActive() { // Doesn't have to hit from tooltip
 						// Modify dot to last 6 more seconds than it has left, and refresh aura
-						shaman.FlameShockDot.Duration = shaman.FlameShockDot.RemainingDuration(sim) + time.Second*6
-						shaman.FlameShockDot.Refresh(sim)
+						fsDot.Duration = fsDot.RemainingDuration(sim) + time.Second*6
+						fsDot.Refresh(sim)
 					}
 				},
 			})
@@ -174,7 +175,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if spell.ActionID.SpellID == FlameshockID {
+				if spell == shaman.FlameShock {
 					procAura.Activate(sim)
 					procAura.AddStack(sim)
 				}

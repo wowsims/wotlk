@@ -8,6 +8,8 @@ import (
 )
 
 func (rogue *Rogue) registerBackstabSpell() {
+	hasGlyph := rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfBackstab)
+
 	rogue.Backstab = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 26863},
 		SpellSchool: core.SpellSchoolPhysical,
@@ -53,10 +55,11 @@ func (rogue *Rogue) registerBackstabSpell() {
 			if result.Landed() {
 				rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())
 				// FIXME: Extension of a Rupture Dot can occur up to 3 times
-				if rogue.HasGlyph(42956) && rogue.Rupture[0].Dot(rogue.CurrentTarget).IsActive() {
-					rogue.Rupture[0].Dot(rogue.CurrentTarget).NumberOfTicks += 1
-					rogue.Rupture[0].Dot(rogue.CurrentTarget).RecomputeAuraDuration()
-					rogue.Rupture[0].Dot(rogue.CurrentTarget).UpdateExpires(rogue.Rupture[0].Dot(rogue.CurrentTarget).ExpiresAt() + rogue.Rupture[0].Dot(rogue.CurrentTarget).TickLength)
+				ruptureDot := rogue.Rupture[0].Dot(target)
+				if hasGlyph && ruptureDot.IsActive() {
+					ruptureDot.NumberOfTicks += 1
+					ruptureDot.RecomputeAuraDuration()
+					ruptureDot.UpdateExpires(ruptureDot.ExpiresAt() + ruptureDot.TickLength)
 				}
 			} else {
 				spell.IssueRefund(sim)

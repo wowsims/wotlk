@@ -97,7 +97,7 @@ type Rogue struct {
 	AdrenalineRushAura   *core.Aura
 	BladeFlurryAura      *core.Aura
 	EnvenomAura          *core.Aura
-	ExposeArmorAura      *core.Aura
+	ExposeArmorAuras     core.AuraArray
 	HungerForBloodAura   *core.Aura
 	KillingSpreeAura     *core.Aura
 	OverkillAura         *core.Aura
