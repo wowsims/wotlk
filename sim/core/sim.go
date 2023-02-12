@@ -344,12 +344,6 @@ func (sim *Simulation) runPendingActions(max time.Duration) {
 		}
 		pa.OnAction(sim)
 	}
-
-	for _, pa := range sim.pendingActions {
-		if pa.CleanUp != nil {
-			pa.CleanUp(sim)
-		}
-	}
 }
 
 // RunOnce is the main event loop. It will run the simulation for number of seconds.
@@ -383,6 +377,13 @@ func (sim *Simulation) runOnce() {
 	// during the doneIteration phase will return the Duration value, which is
 	// intuitive.
 	sim.CurrentTime = sim.Duration
+
+	for _, pa := range sim.pendingActions {
+		if pa.CleanUp != nil {
+			pa.CleanUp(sim)
+		}
+	}
+
 	sim.Raid.doneIteration(sim)
 	sim.Encounter.doneIteration(sim)
 
