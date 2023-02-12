@@ -217,11 +217,11 @@ export class Target {
 		return this.targetInputs;
 	}
 
-	setTargetInputs(eventID: EventID, newTargetInputs: TargetInputs) {
-		if (newTargetInputs.equals(this.targetInputs))
+	setTargetInputs(eventID: EventID, newTargetInputs?: TargetInputs) {
+		if (newTargetInputs?.equals(this.targetInputs))
 			return;
 
-		this.targetInputs = newTargetInputs;
+		this.targetInputs = newTargetInputs ?? new TargetInputs();
 		this.propChangeEmitter.emit(eventID);
 	}
 
@@ -229,7 +229,7 @@ export class Target {
 		return this.targetInputs.hasInputs();
 	}
 
-	getTargetInputsCount(): number {
+	getTargetInputsLength(): number {
 		return this.targetInputs.getLength();
 	}
 

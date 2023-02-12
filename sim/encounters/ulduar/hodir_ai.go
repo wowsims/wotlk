@@ -219,7 +219,7 @@ func (ai *HodirAI) registerBuffsDebuffs(target *core.Target) {
 							return
 						}
 
-						if sim.Proc(0.3, "Singed") {
+						if sim.Proc(0.33, "Singed") {
 							ai.Singed.Activate(sim)
 							ai.Singed.AddStack(sim)
 						}
