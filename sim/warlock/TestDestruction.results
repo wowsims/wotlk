@@ -46,8 +46,8 @@ character_stats_results: {
 dps_results: {
  key: "TestDestruction-AllItems-AshtongueTalismanofShadows-32493"
  value: {
-  dps: 6769.09333
-  tps: 5647.53243
+  dps: 6765.44717
+  tps: 5644.30285
  }
 }
 dps_results: {
@@ -81,8 +81,8 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-AllItems-DarkCoven'sRegalia"
  value: {
-  dps: 7109.22351
-  tps: 5894.52773
+  dps: 7114.41215
+  tps: 5900.50419
  }
 }
 dps_results: {
@@ -151,8 +151,8 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-AllItems-Gladiator'sFelshroud"
  value: {
-  dps: 6566.74366
-  tps: 5467.10281
+  dps: 6568.63665
+  tps: 5468.74853
  }
 }
 dps_results: {
@@ -193,8 +193,8 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-AllItems-MaleficRaiment"
  value: {
-  dps: 5151.35519
-  tps: 4279.3337
+  dps: 5146.78315
+  tps: 4274.46337
  }
 }
 dps_results: {
@@ -214,8 +214,8 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-AllItems-PlagueheartGarb"
  value: {
-  dps: 6178.41051
-  tps: 5135.23277
+  dps: 6179.86979
+  tps: 5136.43778
  }
 }
 dps_results: {
@@ -305,8 +305,8 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-Average-Default"
  value: {
-  dps: 7008.57731
-  tps: 5836.73468
+  dps: 7008.0959
+  tps: 5836.19692
  }
 }
 dps_results: {
@@ -333,15 +333,15 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-Settings-Orc-P1-Destruction Warlock-NoBuffs-LongMultiTarget"
  value: {
-  dps: 3677.10794
-  tps: 5422.13545
+  dps: 3677.74443
+  tps: 5423.60177
  }
 }
 dps_results: {
  key: "TestDestruction-Settings-Orc-P1-Destruction Warlock-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3677.10794
-  tps: 3282.35864
+  dps: 3677.74443
+  tps: 3283.15915
  }
 }
 dps_results: {

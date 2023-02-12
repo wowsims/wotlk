@@ -148,7 +148,7 @@ func (warlock *Warlock) Initialize() {
 			precastSpell.Cast(sim, warlock.CurrentTarget)
 		})
 		if warlock.GlyphOfLifeTapAura != nil || warlock.SpiritsoftheDamnedAura != nil {
-			warlock.RegisterPrepullAction(precastSpellAt-core.GCDDefault, func(sim *core.Simulation) {
+			warlock.RegisterPrepullAction(precastSpellAt-warlock.SpellGCD(), func(sim *core.Simulation) {
 				warlock.LifeTap.Cast(sim, nil)
 			})
 		}
