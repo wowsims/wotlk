@@ -579,8 +579,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-NightsongGarb"
  value: {
-  dps: 6739.193
-  tps: 6580.97202
+  dps: 6730.02746
+  tps: 6571.68352
  }
 }
 dps_results: {

@@ -163,7 +163,16 @@ func (pet *Pet) Enable(sim *Simulation, petAgent PetAgent) {
 	pet.manaBar.reset()
 
 	pet.SetGCDTimer(sim, MaxDuration(0, sim.CurrentTime))
-	pet.AutoAttacks.EnableAutoSwing(sim)
+	if sim.CurrentTime >= 0 {
+		pet.AutoAttacks.EnableAutoSwing(sim)
+	} else {
+		sim.AddPendingAction(&PendingAction{
+			NextActionAt: 0,
+			OnAction: func(sim *Simulation) {
+				pet.AutoAttacks.EnableAutoSwing(sim)
+			},
+		})
+	}
 
 	pet.enabled = true
 

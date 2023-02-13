@@ -13,7 +13,9 @@ func (dk *Deathknight) registerArmyOfTheDeadCD() {
 		ActionID: core.ActionID{SpellID: 42650},
 		Duration: time.Millisecond * 500 * 8,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			dk.AutoAttacks.CancelAutoSwing(sim)
+			if sim.CurrentTime >= 0 {
+				dk.AutoAttacks.CancelAutoSwing(sim)
+			}
 			dk.CancelGCDTimer(sim)
 
 			ghoulIndex = 0

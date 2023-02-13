@@ -114,7 +114,9 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 				return moonkin.Starfire
 			} else if solarIsActive {
 				if rotation.UseWrath {
-					if moonkin.MoonkinT84PCAura.IsActive() && moonkin.LunarICD.TimeToReady(sim)+playerLatency > moonkin.MoonkinT84PCAura.RemainingDuration(sim) {
+					if moonkin.MoonkinT84PCAura.IsActive() &&
+						(moonkin.LunarICD.TimeToReady(sim)+playerLatency > moonkin.MoonkinT84PCAura.RemainingDuration(sim) ||
+							moonkin.MoonkinT84PCAura.RemainingDuration(sim) < solarUptime) {
 						return moonkin.Starfire
 					}
 					if (rotation.UseSmartCooldowns && solarUptime > 10*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
