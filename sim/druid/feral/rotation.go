@@ -666,11 +666,11 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 	cat.Rotation = FeralDruidRotation{
 		BearweaveType:      rotation.BearWeaveType,
 		MaintainFaerieFire: rotation.MaintainFaerieFire,
-		MinCombosForRip:    rotation.MinCombosForRip,
+		MinCombosForRip:    core.Ternary(rotation.MinCombosForRip > 0, rotation.MinCombosForRip, 1),
 		UseRake:            rotation.UseRake,
 		UseBite:            rotation.UseBite,
 		BiteTime:           time.Duration(float64(rotation.BiteTime) * float64(time.Second)),
-		MinCombosForBite:   rotation.MinCombosForBite,
+		MinCombosForBite:   core.Ternary(rotation.MinCombosForBite > 0, rotation.MinCombosForBite, 1),
 		MangleSpam:         rotation.MangleSpam,
 		BerserkBiteThresh:  float64(rotation.BerserkBiteThresh),
 		Powerbear:          rotation.Powerbear,
