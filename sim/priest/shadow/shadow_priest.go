@@ -74,13 +74,18 @@ func (spriest *ShadowPriest) Initialize() {
 	spriest.Priest.Initialize()
 
 	if spriest.rotation.PrecastType > 0 {
-		spriest.RegisterPrepullAction(-1500*time.Millisecond, func(sim *core.Simulation) {
-			if spriest.rotation.PrecastType == 1 {
-				spriest.VampiricTouch.Cast(sim, spriest.CurrentTarget)
-			}
-			if spriest.rotation.PrecastType == 2 {
-				spriest.MindBlast.Cast(sim, spriest.CurrentTarget)
-			}
+		precastSpell := spriest.VampiricTouch
+		if spriest.rotation.PrecastType == 2 {
+			precastSpell = spriest.MindBlast
+		}
+
+		// Do this post-finalize so cast speed is updated with new stats
+		spriest.Env.RegisterPostFinalizeEffect(func() {
+			precastSpellAt := -spriest.ApplyCastSpeedForSpell(precastSpell.DefaultCast.CastTime, precastSpell)
+
+			spriest.RegisterPrepullAction(precastSpellAt, func(sim *core.Simulation) {
+				precastSpell.Cast(sim, spriest.CurrentTarget)
+			})
 		})
 	}
 }

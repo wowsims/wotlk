@@ -395,7 +395,7 @@ func (aa *AutoAttacks) startPull(sim *Simulation) {
 }
 
 func (aa *AutoAttacks) resetAutoSwing(sim *Simulation) {
-	if aa.autoSwingCancelled || (!aa.AutoSwingMelee && !aa.AutoSwingRanged) {
+	if aa.autoSwingCancelled || (!aa.AutoSwingMelee && !aa.AutoSwingRanged) || sim.CurrentTime < 0 {
 		return
 	}
 
@@ -440,8 +440,8 @@ func (aa *AutoAttacks) CancelAutoSwing(sim *Simulation) {
 	if aa.autoSwingAction != nil {
 		aa.autoSwingAction.Cancel(sim)
 		aa.autoSwingAction = nil
-		aa.autoSwingCancelled = true
 	}
+	aa.autoSwingCancelled = true
 }
 
 // Renables the auto swing action for the iteration
