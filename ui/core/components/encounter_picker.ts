@@ -298,7 +298,7 @@ class TargetPicker extends Component {
 		const section2 = this.rootElem.getElementsByClassName('target-picker-section2')[0] as HTMLElement;
 		const section3 = this.rootElem.getElementsByClassName('target-picker-section3')[0] as HTMLElement;
 
-		let targetInputPickers = new Array<NumberPicker<Target>>();
+		let targetInputPickers = new Array<Component>();
 
 		const presetTargets = modTarget.sim.db.getAllPresetTargets();
 		new EnumPicker<Target>(section1, modTarget, {
