@@ -5,7 +5,7 @@ import (
 )
 
 func (hunter *Hunter) registerScorpidStingSpell() {
-	hunter.ScorpidStingAura = core.ScorpidStingAura(hunter.CurrentTarget)
+	hunter.ScorpidStingAuras = hunter.NewEnemyAuraArray(core.ScorpidStingAura)
 
 	hunter.ScorpidSting = hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 3043},
@@ -28,7 +28,7 @@ func (hunter *Hunter) registerScorpidStingSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeRangedHit)
 			if result.Landed() {
-				hunter.ScorpidStingAura.Activate(sim)
+				hunter.ScorpidStingAuras.Get(target).Activate(sim)
 			}
 			spell.DealOutcome(sim, result)
 		},

@@ -45,15 +45,15 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 				baseDmg := 142 + 0.429*dot.Spell.SpellPower()
 
 				auras := []*core.Aura{
-					warlock.HauntDebuffAura,
+					warlock.HauntDebuffAuras.Get(target),
 					warlock.UnstableAffliction.Dot(target).Aura,
 					warlock.Corruption.Dot(target).Aura,
 					warlock.Seed.Dot(target).Aura,
 					warlock.CurseOfAgony.Dot(target).Aura,
 					warlock.CurseOfDoom.Dot(target).Aura,
-					warlock.CurseOfElementsAura,
-					warlock.CurseOfWeaknessAura,
-					warlock.CurseOfTonguesAura,
+					warlock.CurseOfElementsAuras.Get(target),
+					warlock.CurseOfWeaknessAuras.Get(target),
+					warlock.CurseOfTonguesAuras.Get(target),
 					warlock.ShadowEmbraceDebuffAura(target),
 					// missing: death coil
 				}

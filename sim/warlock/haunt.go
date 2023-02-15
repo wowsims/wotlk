@@ -15,16 +15,18 @@ func (warlock *Warlock) registerHauntSpell() {
 		debuffMultiplier += 0.03
 	}
 
-	warlock.HauntDebuffAura = warlock.CurrentTarget.GetOrRegisterAura(core.Aura{
-		Label:    "Haunt-" + warlock.Label,
-		ActionID: core.ActionID{SpellID: 59164},
-		Duration: time.Second * 12,
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			warlock.AttackTables[aura.Unit.UnitIndex].PeriodicShadowDamageTakenMultiplier *= debuffMultiplier
-		},
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			warlock.AttackTables[aura.Unit.UnitIndex].PeriodicShadowDamageTakenMultiplier /= debuffMultiplier
-		},
+	warlock.HauntDebuffAuras = warlock.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+		return target.GetOrRegisterAura(core.Aura{
+			Label:    "Haunt-" + warlock.Label,
+			ActionID: actionID,
+			Duration: time.Second * 12,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				warlock.AttackTables[aura.Unit.UnitIndex].PeriodicShadowDamageTakenMultiplier *= debuffMultiplier
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				warlock.AttackTables[aura.Unit.UnitIndex].PeriodicShadowDamageTakenMultiplier /= debuffMultiplier
+			},
+		})
 	})
 
 	warlock.Haunt = warlock.RegisterSpell(core.SpellConfig{
@@ -62,7 +64,7 @@ func (warlock *Warlock) registerHauntSpell() {
 			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
 				spell.DealDamage(sim, result)
 				if result.Landed() {
-					warlock.HauntDebuffAura.Activate(sim)
+					warlock.HauntDebuffAuras.Get(result.Target).Activate(sim)
 				}
 			})
 		},

@@ -214,3 +214,24 @@ func (aura *Aura) ShouldRefreshExclusiveEffects(sim *Simulation, refreshWindow t
 	}
 	return false
 }
+
+type ExclusiveCategoryArray []*ExclusiveCategory
+
+func (categories ExclusiveCategoryArray) Get(target *Unit) *ExclusiveCategory {
+	return categories[target.UnitIndex]
+}
+
+func (caster *Unit) NewEnemyExclusiveCategoryArray(makeExclusiveCategory func(*Unit) *ExclusiveCategory) ExclusiveCategoryArray {
+	categories := make([]*ExclusiveCategory, len(caster.Env.AllUnits))
+	for _, target := range caster.Env.AllUnits {
+		if target.Type == EnemyUnit {
+			categories[target.UnitIndex] = makeExclusiveCategory(target)
+		}
+	}
+	return categories
+}
+func (caster *Unit) GetEnemyExclusiveCategories(category string) ExclusiveCategoryArray {
+	return caster.NewEnemyExclusiveCategoryArray(func(target *Unit) *ExclusiveCategory {
+		return target.GetExclusiveEffectCategory(category)
+	})
+}

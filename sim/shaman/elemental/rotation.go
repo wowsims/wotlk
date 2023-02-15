@@ -62,7 +62,7 @@ func (rotation *AdaptiveRotation) DoAction(eleShaman *ElementalShaman, sim *core
 		return
 	}
 
-	fsTime := eleShaman.FlameShockDot.RemainingDuration(sim)
+	fsTime := eleShaman.FlameShock.CurDot().RemainingDuration(sim)
 	lvTime := eleShaman.LavaBurst.CD.TimeToReady(sim)
 	lvCastTime := eleShaman.ApplyCastSpeed(eleShaman.LavaBurst.DefaultCast.CastTime)
 	if fsTime <= 0 && eleShaman.FlameShock.IsReady(sim) {
@@ -189,7 +189,7 @@ func (rotation *ManualRotation) DoAction(eleShaman *ElementalShaman, sim *core.S
 		return
 	}
 
-	fsRemain := eleShaman.FlameShockDot.RemainingDuration(sim)
+	fsRemain := eleShaman.FlameShock.CurDot().RemainingDuration(sim)
 	needFS := fsRemain <= 0
 	// Only overwrite if lvb is ready right now.
 	if !needFS && rotation.options.OverwriteFlameshock && eleShaman.LavaBurst.CD.TimeToReady(sim) <= core.GCDDefault {

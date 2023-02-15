@@ -84,7 +84,7 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 	mhHit := shaman.newStormstrikeHitSpell(true)
 	ohHit := shaman.newStormstrikeHitSpell(false)
 
-	ssDebuffAura := shaman.StormstrikeDebuffAura(shaman.CurrentTarget)
+	ssDebuffAuras := shaman.NewEnemyAuraArray(shaman.StormstrikeDebuffAura)
 
 	var skyshatterAura *core.Aura
 	if shaman.HasSetBonus(ItemSetSkyshatterHarness, 4) {
@@ -129,6 +129,7 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 				if impSSChance > 0 && sim.RandomFloat("Improved Stormstrike") < impSSChance {
 					shaman.AddMana(sim, 0.2*shaman.BaseMana, manaMetrics, true)
 				}
+				ssDebuffAura := ssDebuffAuras.Get(target)
 				ssDebuffAura.Activate(sim)
 				ssDebuffAura.SetStacks(sim, 4)
 

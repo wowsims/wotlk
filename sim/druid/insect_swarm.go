@@ -10,8 +10,7 @@ import (
 const CryingWind int32 = 45270
 
 func (druid *Druid) registerInsectSwarmSpell() {
-	target := druid.CurrentTarget
-	missAura := core.InsectSwarmAura(target)
+	missAuras := druid.NewEnemyAuraArray(core.InsectSwarmAura)
 	hasGlyph := druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfInsectSwarm)
 	idolSpellPower := core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == CryingWind, 396, 0)
 
@@ -89,7 +88,7 @@ func (druid *Druid) registerInsectSwarmSpell() {
 			if result.Landed() {
 				spell.Dot(target).Apply(sim)
 				if !hasGlyph {
-					missAura.Activate(sim)
+					missAuras.Get(target).Activate(sim)
 				}
 			}
 			spell.DealOutcome(sim, result)

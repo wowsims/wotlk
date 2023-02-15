@@ -46,7 +46,7 @@ func (hunter *Hunter) registerSilencingShotSpell() {
 				OnAction: func(sim *core.Simulation) {
 					// Need to check in case Readiness caused a shift in timing.
 					if hunter.SilencingShot.IsReady(sim) && hunter.Hardcast.Expires <= sim.CurrentTime {
-						hunter.SilencingShot.Cast(sim, hunter.CurrentTarget)
+						hunter.SilencingShot.Cast(sim, target)
 					}
 				},
 			})

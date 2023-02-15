@@ -23,7 +23,7 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 	rotation := moonkin.Rotation
 	target := moonkin.CurrentTarget
 
-	if rotation.MaintainFaerieFire && moonkin.ShouldFaerieFire(sim) {
+	if rotation.MaintainFaerieFire && moonkin.ShouldFaerieFire(sim, moonkin.CurrentTarget) {
 		return moonkin.FaerieFire
 	}
 
@@ -53,7 +53,7 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 		return moonkin.Hurricane
 	}
 
-	moonfireUptime := moonkin.MoonfireDot.RemainingDuration(sim)
+	moonfireUptime := moonkin.Moonfire.CurDot().RemainingDuration(sim)
 	insectSwarmUptime := moonkin.InsectSwarm.CurDot().RemainingDuration(sim)
 	useMf := moonkin.Rotation.MfUsage != proto.BalanceDruid_Rotation_NoMf
 	useIs := moonkin.Rotation.IsUsage != proto.BalanceDruid_Rotation_NoIs

@@ -8,7 +8,7 @@ import (
 // TODO: GlyphOfSunderArmor will require refactoring this a bit
 
 func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell {
-	warrior.SunderArmorAura = core.SunderArmorAura(warrior.CurrentTarget)
+	warrior.SunderArmorAuras = warrior.NewEnemyAuraArray(core.SunderArmorAura)
 
 	config := core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47467},
@@ -27,7 +27,7 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 			IgnoreHaste: true,
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return warrior.CanApplySunderAura()
+			return warrior.CanApplySunderAura(target)
 		},
 
 		ThreatMultiplier: 1,
@@ -55,11 +55,12 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 		}
 
 		if result.Landed() {
-			warrior.SunderArmorAura.Activate(sim)
-			if warrior.SunderArmorAura.IsActive() {
-				warrior.SunderArmorAura.AddStack(sim)
+			aura := warrior.SunderArmorAuras.Get(target)
+			aura.Activate(sim)
+			if aura.IsActive() {
+				aura.AddStack(sim)
 				if extraStack {
-					warrior.SunderArmorAura.AddStack(sim)
+					aura.AddStack(sim)
 				}
 			}
 		} else {
@@ -71,6 +72,6 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 	return warrior.RegisterSpell(config)
 }
 
-func (warrior *Warrior) CanApplySunderAura() bool {
-	return warrior.SunderArmorAura.IsActive() || !warrior.SunderArmorAura.ExclusiveEffects[0].Category.AnyActive()
+func (warrior *Warrior) CanApplySunderAura(target *core.Unit) bool {
+	return warrior.SunderArmorAuras.Get(target).IsActive() || !warrior.SunderArmorAuras.Get(target).ExclusiveEffects[0].Category.AnyActive()
 }

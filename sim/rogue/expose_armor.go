@@ -8,10 +8,8 @@ import (
 )
 
 func (rogue *Rogue) makeExposeArmor(comboPoints int32) *core.Spell {
-	actionID := core.ActionID{SpellID: 8647}
-
 	return rogue.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID.WithTag(comboPoints),
+		ActionID:    core.ActionID{SpellID: 8647}.WithTag(comboPoints),
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | rogue.finisherFlags(),
@@ -33,8 +31,9 @@ func (rogue *Rogue) makeExposeArmor(comboPoints int32) *core.Spell {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
 			if result.Landed() {
-				rogue.ExposeArmorAura.Duration = rogue.exposeArmorDurations[comboPoints]
-				rogue.ExposeArmorAura.Activate(sim)
+				debuffAura := rogue.ExposeArmorAuras.Get(target)
+				debuffAura.Duration = rogue.exposeArmorDurations[comboPoints]
+				debuffAura.Activate(sim)
 				rogue.ApplyFinisher(sim, spell)
 			} else {
 				spell.IssueRefund(sim)
@@ -45,7 +44,9 @@ func (rogue *Rogue) makeExposeArmor(comboPoints int32) *core.Spell {
 }
 
 func (rogue *Rogue) registerExposeArmorSpell() {
-	rogue.ExposeArmorAura = core.ExposeArmorAura(rogue.CurrentTarget, rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfExposeArmor))
+	rogue.ExposeArmorAuras = rogue.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+		return core.ExposeArmorAura(target, rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfExposeArmor))
+	})
 	durationBonus := core.TernaryDuration(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfExposeArmor), time.Second*12, 0)
 	rogue.exposeArmorDurations = [6]time.Duration{
 		0,

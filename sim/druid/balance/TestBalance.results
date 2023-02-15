@@ -423,6 +423,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBalance-AllItems-IdolofLunarFury-47670"
+ value: {
+  dps: 7367.43381
+  tps: 7209.17639
+ }
+}
+dps_results: {
  key: "TestBalance-AllItems-IdolofMutilation-47668"
  value: {
   dps: 7367.43381

@@ -93,11 +93,11 @@ type Warrior struct {
 	SuddenDeathAura *core.Aura
 	ShieldBlockAura *core.Aura
 
-	DemoralizingShoutAuras []*core.Aura
+	DemoralizingShoutAuras core.AuraArray
 	BloodFrenzyAuras       []*core.Aura
 	TraumaAuras            []*core.Aura
-	SunderArmorAura        *core.Aura
-	ThunderClapAuras       []*core.Aura
+	SunderArmorAuras       core.AuraArray
+	ThunderClapAuras       core.AuraArray
 }
 
 func (warrior *Warrior) GetCharacter() *core.Character {
