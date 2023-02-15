@@ -13,9 +13,15 @@ func (druid *Druid) registerMoonfireSpell() {
 	starfireBonusCrit := float64(druid.Talents.ImprovedInsectSwarm) * core.CritRatingPerCritChance
 	dotCanCrit := druid.HasSetBonus(ItemSetMalfurionsRegalia, 2)
 
+	baseDamageMultiplier := 1 +
+		0.05*float64(druid.Talents.ImprovedMoonfire) +
+		[]float64{0.0, 0.03, 0.06, 0.1}[druid.Talents.Moonfury]
+
+	malusInitialDamageMultiplier := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMoonfire), 0.9, 0)
+
 	bonusPeriodicDamageMultiplier := 0 +
 		0.01*float64(druid.Talents.Genesis) +
-		core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMoonfire), 0.75+0.9, 0)
+		core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMoonfire), 0.75, 0)
 
 	druid.Moonfire = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48463},
@@ -33,11 +39,8 @@ func (druid *Druid) registerMoonfireSpell() {
 			},
 		},
 
-		BonusCritRating: float64(druid.Talents.ImprovedMoonfire) * 5 * core.CritRatingPerCritChance,
-		DamageMultiplier: 1 +
-			0.05*float64(druid.Talents.ImprovedMoonfire) +
-			[]float64{0.0, 0.03, 0.06, 0.1}[druid.Talents.Moonfury] -
-			core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMoonfire), 0.9, 0),
+		BonusCritRating:  float64(druid.Talents.ImprovedMoonfire) * 5 * core.CritRatingPerCritChance,
+		DamageMultiplier: baseDamageMultiplier - malusInitialDamageMultiplier,
 
 		CritMultiplier:   druid.BalanceCritMultiplier(),
 		ThreatMultiplier: 1,
@@ -56,13 +59,12 @@ func (druid *Druid) registerMoonfireSpell() {
 			TickLength:    time.Second * 3,
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+				dot.Spell.DamageMultiplier = baseDamageMultiplier + bonusPeriodicDamageMultiplier
 				dot.SnapshotBaseDamage = 200 + 0.13*dot.Spell.SpellPower()
 				attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
 				dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
-
-				dot.Spell.DamageMultiplierAdditive += bonusPeriodicDamageMultiplier
 				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
-				dot.Spell.DamageMultiplierAdditive -= bonusPeriodicDamageMultiplier
+				dot.Spell.DamageMultiplier = baseDamageMultiplier - malusInitialDamageMultiplier
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				if dotCanCrit {
