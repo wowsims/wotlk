@@ -264,7 +264,7 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 		rogue.setupAssassinationRotation(sim)
 	}
 	if rogue.PrimaryTalentTree == SubtletyTree {
-		rogue.setSubtletyBuilder()
+		rogue.setSubtletyBuilder(sim)
 		rogue.setupSubtletyRotation(sim)
 	}
 	isMultiTarget := sim.GetNumTargets() >= 3
