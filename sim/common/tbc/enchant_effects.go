@@ -138,6 +138,40 @@ func init() {
 		character.ItemSwap.RegisterOnSwapItemForEffectWithPPMManager(2673, 0.73, &ppmm, aura)
 	})
 
+	core.NewEnchantEffect(4045, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 4045
+		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 4045
+		procMask := core.GetMeleeProcMaskForHands(mh, oh)
+		ppmm := character.AutoAttacks.NewPPMManager(0.73, procMask)
+
+		mhAura := character.NewTemporaryStatsAura("Lightning Speed MH", core.ActionID{SpellID: 28093, Tag: 1}, stats.Stats{stats.MeleeHaste: 75.0, stats.Agility: 225}, time.Second*15)
+		ohAura := character.NewTemporaryStatsAura("Lightning Speed OH", core.ActionID{SpellID: 28093, Tag: 2}, stats.Stats{stats.MeleeHaste: 75.0, stats.Agility: 225}, time.Second*15)
+
+		aura := character.GetOrRegisterAura(core.Aura{
+			Label:    "Mongoose Enchant",
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
+					return
+				}
+
+				if ppmm.Proc(sim, spell.ProcMask, "mongoose") {
+					if spell.IsMH() {
+						mhAura.Activate(sim)
+					} else {
+						ohAura.Activate(sim)
+					}
+				}
+			},
+		})
+
+		character.ItemSwap.RegisterOnSwapItemForEffectWithPPMManager(4045, 0.73, &ppmm, aura)
+	})
+
 	core.AddWeaponEffect(2723, func(agent core.Agent, _ proto.ItemSlot) {
 		w := &agent.GetCharacter().AutoAttacks.Ranged
 		w.BaseDamageMin += 12

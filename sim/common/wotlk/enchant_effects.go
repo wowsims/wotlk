@@ -158,7 +158,22 @@ func init() {
 		character.PseudoStats.ThreatMultiplier *= 1.02
 	})
 
+	core.NewEnchantEffect(4029, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		character.PseudoStats.ThreatMultiplier *= 1.05
+	})
+
+	core.NewEnchantEffect(4018, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		character.PseudoStats.ThreatMultiplier *= 1.05
+	})
+
 	core.NewEnchantEffect(3296, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		character.PseudoStats.ThreatMultiplier *= 0.98
+	})
+
+	core.NewEnchantEffect(4008, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		character.PseudoStats.ThreatMultiplier *= 0.98
 	})
@@ -198,6 +213,43 @@ func init() {
 		})
 
 		character.ItemSwap.RegisterOnSwapItemForEffectWithPPMManager(3789, 1.0, &ppmm, aura)
+	})
+
+	core.NewEnchantEffect(4046, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 4046
+		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 4046
+
+		procMask := core.GetMeleeProcMaskForHands(mh, oh)
+		ppmm := character.AutoAttacks.NewPPMManager(1.0, procMask)
+
+		// Modify only gear armor, including from agility
+		fivePercentOfArmor := (character.Equip.Stats()[stats.Armor] + 2.0*character.Equip.Stats()[stats.Agility]) * 0.05
+		procAuraMH := character.NewTemporaryStatsAura("Berserking MH Proc", core.ActionID{SpellID: 59620, Tag: 1}, stats.Stats{stats.AttackPower: 600, stats.RangedAttackPower: 600, stats.Armor: -fivePercentOfArmor}, time.Second*15)
+		procAuraOH := character.NewTemporaryStatsAura("Berserking OH Proc", core.ActionID{SpellID: 59620, Tag: 2}, stats.Stats{stats.AttackPower: 600, stats.RangedAttackPower: 600, stats.Armor: -fivePercentOfArmor}, time.Second*15)
+
+		aura := character.GetOrRegisterAura(core.Aura{
+			Label:    "Berserking (Enchant)",
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
+					return
+				}
+
+				if ppmm.Proc(sim, spell.ProcMask, "Berserking") {
+					if spell.IsMH() {
+						procAuraMH.Activate(sim)
+					} else {
+						procAuraOH.Activate(sim)
+					}
+				}
+			},
+		})
+
+		character.ItemSwap.RegisterOnSwapItemForEffectWithPPMManager(4046, 1.0, &ppmm, aura)
 	})
 
 	// TODO: These are stand-in values without any real reference.
@@ -259,6 +311,37 @@ func init() {
 		})
 
 		character.ItemSwap.ReigsterOnSwapItemForEffect(3790, aura)
+	})
+
+	core.NewEnchantEffect(4047, func(agent core.Agent) {
+		character := agent.GetCharacter()
+
+		procAura := character.NewTemporaryStatsAura("Black Magic Proc", core.ActionID{SpellID: 59626}, stats.Stats{stats.MeleeHaste: 375, stats.SpellHaste: 375}, time.Second*10)
+		icd := core.Cooldown{
+			Timer:    character.NewTimer(),
+			Duration: time.Second * 35,
+		}
+
+		aura := character.GetOrRegisterAura(core.Aura{
+			Label:    "Black Magic",
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Activate(sim)
+			},
+			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				isSpell := spell.ActionID.SpellID == 47465 || spell.ActionID.SpellID == 12867 || spell.ActionID.SpellID == 58790 || spell.ActionID.SpellID == 58789
+				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskSpellDamage) && !isSpell {
+					return
+				}
+
+				if icd.IsReady(sim) && sim.RandomFloat("Black Magic") < 0.35 {
+					icd.Use(sim)
+					procAura.Activate(sim)
+				}
+			},
+		})
+
+		character.ItemSwap.ReigsterOnSwapItemForEffect(4047, aura)
 	})
 
 	core.AddWeaponEffect(3843, func(agent core.Agent, _ proto.ItemSlot) {
@@ -345,7 +428,7 @@ func init() {
 	core.NewEnchantEffect(3722, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
-		procAura := character.NewTemporaryStatsAura("Lightweave Embroidery Proc", core.ActionID{SpellID: 55637}, stats.Stats{stats.SpellPower: 295}, time.Second*15)
+		procAura := character.NewTemporaryStatsAura("Lightweave Embroidery Proc", core.ActionID{SpellID: 55637}, stats.Stats{stats.SpellPower: 450}, time.Second*15)
 		icd := core.Cooldown{
 			Timer:    character.NewTimer(),
 			Duration: time.Second * 60,
@@ -387,7 +470,7 @@ func init() {
 			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 				if icd.IsReady(sim) && sim.RandomFloat("Darkglow") < 0.35 {
 					icd.Use(sim)
-					character.AddMana(sim, 400, manaMetrics, false)
+					character.AddMana(sim, 575, manaMetrics, false)
 				}
 			},
 		})
@@ -396,7 +479,7 @@ func init() {
 	core.NewEnchantEffect(3730, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
-		procAura := character.NewTemporaryStatsAura("Swordguard Embroidery Proc", core.ActionID{SpellID: 55775}, stats.Stats{stats.AttackPower: 400, stats.RangedAttackPower: 400}, time.Second*15)
+		procAura := character.NewTemporaryStatsAura("Swordguard Embroidery Proc", core.ActionID{SpellID: 55775}, stats.Stats{stats.AttackPower: 575, stats.RangedAttackPower: 575}, time.Second*15)
 		icd := core.Cooldown{
 			Timer:    character.NewTimer(),
 			Duration: time.Second * 55,
