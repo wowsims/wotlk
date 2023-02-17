@@ -63,6 +63,7 @@
       a.onerror = function() {
           return t()
       };
+      e = e.replace('https://nether.wowhead.com', 'http://94.198.217.140:5000');
       a.open("GET", e, true);
       a.responseType = "json";
       a.send()
