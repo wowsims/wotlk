@@ -322,6 +322,30 @@ func (character *Character) calculateCritMultiplier(normalCritDamage float64, pr
 		primaryModifiers *= 1.06 // 4% of race passive, and 2% of party bonus
 	}
 
+	if character.Race == proto.Race_RaceGoblin {
+		primaryModifiers *= 1.06 // 6% from buff with uptime 90-100%
+	}
+
+	if character.Race == proto.Race_RaceZandalar {
+		primaryModifiers *= 1.04
+		// check if Zandalar racials is active
+		if character.HasActiveAura("Battle regeneration") {
+			primaryModifiers *= 1.12
+		}
+	}
+
+	if character.Race == proto.Race_RaceEredar {
+		primaryModifiers *= 1.02
+	}
+
+	if character.Race == proto.Race_RaceOrc {
+		primaryModifiers *= 1.04
+		// check if Orc racials is active
+		if character.HasActiveAura("Blood Fury") {
+			primaryModifiers *= 1.12
+		}
+	}
+
 	if character.HasMetaGemEquipped(34220) ||
 		character.HasMetaGemEquipped(32409) ||
 		character.HasMetaGemEquipped(41285) ||

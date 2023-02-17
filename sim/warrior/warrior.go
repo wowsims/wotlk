@@ -240,6 +240,17 @@ func (warrior *Warrior) intensifyRageCooldown(baseCd time.Duration) time.Duratio
 }
 
 func init() {
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightborne, Class: proto.Class_ClassWarrior}] = stats.Stats{
+		stats.Health:      9611,
+		stats.Strength:    187,
+		stats.Agility:     110,
+		stats.Stamina:     170,
+		stats.Intellect:   33,
+		stats.Spirit:      62,
+		stats.AttackPower: 240,
+		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
+	}
+
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarfOfBlackIron, Class: proto.Class_ClassWarrior}] = stats.Stats{
 		stats.Health:      9611,
 		stats.Strength:    186,

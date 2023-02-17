@@ -496,6 +496,16 @@ func (dk *Deathknight) AverageDSHeal() float64 {
 }
 
 func init() {
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightborne, Class: proto.Class_ClassDeathknight}] = stats.Stats{
+		stats.Health:      7941,
+		stats.Strength:    172,
+		stats.Agility:     114,
+		stats.Stamina:     158,
+		stats.Intellect:   39,
+		stats.Spirit:      58,
+		stats.AttackPower: 220,
+		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
+	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassDeathknight}] = stats.Stats{
 		stats.Health:      7941,
 		stats.Strength:    176,

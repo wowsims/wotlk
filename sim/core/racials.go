@@ -11,14 +11,88 @@ func applyRaceEffects(agent Agent) {
 	character := agent.GetCharacter()
 
 	switch character.Race {
+	case proto.Race_RaceEredar:
+		/*
+			+2% to crit modifier to Party and Character (+ handled in character.go)
+			+2% to crit chance and 2% haste for spells (+)
+			souls fragments (this is insane to make)
+			+2% to armor, and some resistances (+)
+		*/
+		character.stats[stats.SpellHaste] += 2.0 * HasteRatingPerHastePercent
+		character.stats[stats.MeleeCrit] += 2.0 * CritRatingPerCritChance
+		character.stats[stats.SpellCrit] += 2.0 * CritRatingPerCritChance
+
+		character.MultiplyStat(stats.Armor, 1.02)
 	case proto.Race_RaceGoblin:
-		character.stats[stats.MeleeHaste] = 1.0 * HasteRatingPerHastePercent
-		character.stats[stats.SpellHaste] = 1.0 * HasteRatingPerHastePercent
+		/*
+			1% to Haste (+), 1% to Crit Chance (+)
+			6% to Crit modifier (this is buf, but uptime in combat is 90-100%) (+, handled in character.go)
+			+3% to Dodge and +1% to miss by character (+)
+			active: rocket with CD 60 second and damage == 2*AP/SPD (-)
+		*/
+		character.stats[stats.MeleeHaste] += 1.0 * HasteRatingPerHastePercent
+		character.stats[stats.SpellHaste] += 1.0 * HasteRatingPerHastePercent
 		character.stats[stats.MeleeCrit] += 1.0 * CritRatingPerCritChance
 		character.stats[stats.SpellCrit] += 1.0 * CritRatingPerCritChance
 
-	case proto.Race_RaceZandalar:
+		character.stats[stats.Dodge] = 3.0 * DodgeRatingPerDodgeChance
 
+		character.PseudoStats.ReducedPhysicalHitTakenChance += 0.01
+		character.PseudoStats.ReducedArcaneHitTakenChance += 0.01
+		character.PseudoStats.ReducedFireHitTakenChance += 0.01
+		character.PseudoStats.ReducedFrostHitTakenChance += 0.01
+		character.PseudoStats.ReducedNatureHitTakenChance += 0.01
+		character.PseudoStats.ReducedShadowHitTakenChance += 0.01
+
+	case proto.Race_RaceZandalar:
+		/*
+			1% to AP and SPD for group and character (+)
+			Various Loa bufs (?)
+			4% Crit Modifier (+, handled in character.go)
+			+5% Incoming heal and 2% Dodge (+)
+			active: +40% HP in 10 seconds,
+				increase Haste (both) to 10%  and crit modifier to 12% in 10 seconds (++)
+
+		*/
+		character.MultiplyStat(stats.AttackPower, 1.01)
+		character.MultiplyStat(stats.SpellPower, 1.01)
+		character.PseudoStats.HealingTakenMultiplier *= 1.05
+		character.stats[stats.Dodge] = 2.0 * DodgeRatingPerDodgeChance
+
+		actionID := ActionID{SpellID: 319326}
+		battleRegenerationAura := character.RegisterAura(Aura{
+			Label:    "Battle regeneration",
+			ActionID: actionID,
+			Duration: time.Second * 10,
+			OnGain: func(aura *Aura, sim *Simulation) {
+				character.MultiplyCastSpeed(1.1)
+				character.MultiplyAttackSpeed(sim, 1.1)
+			},
+			OnExpire: func(aura *Aura, sim *Simulation) {
+				character.MultiplyCastSpeed(1 / 1.1)
+				character.MultiplyAttackSpeed(sim, 1/1.1)
+			},
+		})
+
+		battleRegenerationSpell := character.RegisterSpell(SpellConfig{
+			ActionID: actionID,
+
+			Cast: CastConfig{
+				CD: Cooldown{
+					Timer:    character.NewTimer(),
+					Duration: time.Second * 60,
+				},
+			},
+
+			ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
+				battleRegenerationAura.Activate(sim)
+			},
+		})
+
+		character.AddMajorCooldown(MajorCooldown{
+			Spell: battleRegenerationSpell,
+			Type:  CooldownTypeDPS,
+		})
 	case proto.Race_RaceNaga:
 
 	case proto.Race_RaceDwarfOfBlackIron:
@@ -169,44 +243,42 @@ func applyRaceEffects(agent Agent) {
 		character.PseudoStats.ReducedPhysicalHitTakenChance += 0.02
 		// TODO: Shadowmeld?
 	case proto.Race_RaceOrc:
-		// Command (Pet damage +5%)
-		if len(character.Pets) > 0 {
-			for _, petAgent := range character.Pets {
-				pet := petAgent.GetPet()
-				pet.PseudoStats.DamageDealtMultiplier *= 1.05
-			}
-		}
+		character.stats[stats.Expertise] += 2.0 * ExpertisePerQuarterPercentReduction
+		character.MultiplyStat(stats.Strength, 1.02)
 
 		// Blood Fury
-		actionID := ActionID{SpellID: 33697}
-		apBonus := float64(character.Level)*4 + 2
-		spBonus := float64(character.Level)*2 + 3
-		bloodFuryAura := character.NewTemporaryStatsAura("Blood Fury", actionID, stats.Stats{stats.AttackPower: apBonus, stats.RangedAttackPower: apBonus, stats.SpellPower: spBonus}, time.Second*15)
+		actionID := ActionID{SpellID: 316373}
 
-		spell := character.RegisterSpell(SpellConfig{
+		bloodFuryAura := character.RegisterAura(Aura{
+			Label:    "Blood Fury",
 			ActionID: actionID,
-			Flags:    SpellFlagNoOnCastComplete,
+			Duration: time.Second * 10,
+			OnGain: func(aura *Aura, sim *Simulation) {
+			},
+			OnExpire: func(aura *Aura, sim *Simulation) {
+			},
+		})
+
+		bloodFureSpell := character.RegisterSpell(SpellConfig{
+			ActionID: actionID,
+
 			Cast: CastConfig{
 				CD: Cooldown{
 					Timer:    character.NewTimer(),
-					Duration: time.Minute * 2,
+					Duration: time.Second * 60,
 				},
 			},
+
 			ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
 				bloodFuryAura.Activate(sim)
 			},
 		})
 
 		character.AddMajorCooldown(MajorCooldown{
-			Spell: spell,
+			Spell: bloodFureSpell,
 			Type:  CooldownTypeDPS,
 		})
 
-		// Axe specialization
-		applyWeaponSpecialization(
-			character,
-			5*ExpertisePerQuarterPercentReduction,
-			[]proto.WeaponType{proto.WeaponType_WeaponTypeAxe, proto.WeaponType_WeaponTypeFist})
 	case proto.Race_RaceTauren:
 		character.PseudoStats.ReducedNatureHitTakenChance += 0.02
 		character.AddStat(stats.Health, character.GetBaseStats()[stats.Health]*0.05)
