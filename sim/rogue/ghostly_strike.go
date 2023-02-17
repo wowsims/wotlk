@@ -13,8 +13,9 @@ func (rogue *Rogue) registerGhostlyStrikeSpell() {
 		return
 	}
 
+	hasGlyph := rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfGhostlyStrike)
+
 	actionID := core.ActionID{SpellID: 14278}
-	// FIXME: Add Ghostly Strike Glyph
 	daggerMH := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
 
 	rogue.GhostlyStrike = rogue.RegisterSpell(core.SpellConfig{
@@ -32,15 +33,17 @@ func (rogue *Rogue) registerGhostlyStrikeSpell() {
 			DefaultCast: core.Cast{
 				GCD: time.Second,
 			},
+			CD: core.Cooldown{
+				Timer:    rogue.NewTimer(),
+				Duration: time.Second * 20 + core.TernaryDuration(hasGlyph, time.Second*10, 0),
+			},
 			IgnoreHaste: true,
 		},
 
 		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +
 			[]float64{0, 2, 4, 6}[rogue.Talents.TurnTheTables]*core.CritRatingPerCritChance,
 
-		DamageMultiplier: core.TernaryFloat64(daggerMH, 1.8, 1.25) * (1 + 0.02*float64(rogue.Talents.FindWeakness) +
-			core.TernaryFloat64(rogue.HasSetBonus(ItemSetSlayers, 4), 0.06, 0)) *
-			(1 + 0.02*float64(rogue.Talents.SinisterCalling)),
+		DamageMultiplier: (core.TernaryFloat64(daggerMH, 1.8, 1.25) + core.TernaryFloat64(hasGlyph, 0.4, 0)) * (1 + 0.02*float64(rogue.Talents.FindWeakness)),
 		CritMultiplier:   rogue.MeleeCritMultiplier(true),
 		ThreatMultiplier: 1,
 
