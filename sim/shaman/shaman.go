@@ -371,6 +371,19 @@ func (shaman *Shaman) ElementalCritMultiplier(secondary float64) float64 {
 }
 
 func init() {
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarfOfBlackIron, Class: proto.Class_ClassShaman}] = stats.Stats{
+		stats.Health:      8109,
+		stats.Strength:    121,
+		stats.Agility:     71,
+		stats.Stamina:     135,
+		stats.Intellect:   141,
+		stats.Spirit:      145,
+		stats.Mana:        6441,
+		stats.SpellCrit:   3.2 * core.CritRatingPerCritChance,
+		stats.AttackPower: 95, // TODO: confirm this.
+		stats.MeleeCrit:   2.92 * core.CritRatingPerCritChance,
+	}
+
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassShaman}] = stats.Stats{
 		stats.Health:      6759,
 		stats.Strength:    121,

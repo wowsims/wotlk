@@ -226,7 +226,7 @@ func RegisterWarlock() {
 }
 
 func init() {
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassWarlock}] = stats.Stats{
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceSindorei, Class: proto.Class_ClassWarlock}] = stats.Stats{
 		stats.Health:    7164,
 		stats.Strength:  56,
 		stats.Agility:   69,

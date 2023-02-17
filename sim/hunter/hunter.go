@@ -234,7 +234,7 @@ func NewHunter(character core.Character, options *proto.Player) *Hunter {
 }
 
 func init() {
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassHunter}] = stats.Stats{
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceSindorei, Class: proto.Class_ClassHunter}] = stats.Stats{
 		stats.Health:    7324,
 		stats.Strength:  71,
 		stats.Agility:   183,

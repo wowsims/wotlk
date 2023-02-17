@@ -211,7 +211,7 @@ func (paladin *Paladin) GetMutualLockoutDPAW() *core.Timer {
 }
 
 func init() {
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassPaladin}] = stats.Stats{
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceSindorei, Class: proto.Class_ClassPaladin}] = stats.Stats{
 		stats.Health:      6754,
 		stats.Stamina:     143,
 		stats.Intellect:   101,

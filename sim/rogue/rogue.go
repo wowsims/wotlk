@@ -307,7 +307,7 @@ func (rogue *Rogue) CanMutilate() bool {
 }
 
 func init() {
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassRogue}] = stats.Stats{
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceSindorei, Class: proto.Class_ClassRogue}] = stats.Stats{
 		stats.Health:    3524,
 		stats.Strength:  110,
 		stats.Agility:   191,

@@ -586,7 +586,7 @@ func init() {
 		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassDeathknight}] = stats.Stats{
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceSindorei, Class: proto.Class_ClassDeathknight}] = stats.Stats{
 		stats.Health:      7941,
 		stats.Strength:    172,
 		stats.Agility:     114,

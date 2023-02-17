@@ -11,7 +11,57 @@ func applyRaceEffects(agent Agent) {
 	character := agent.GetCharacter()
 
 	switch character.Race {
-	case proto.Race_RaceBloodElf:
+	case proto.Race_RaceGoblin:
+		character.stats[stats.MeleeHaste] = 1.0 * HasteRatingPerHastePercent
+		character.stats[stats.SpellHaste] = 1.0 * HasteRatingPerHastePercent
+		character.stats[stats.MeleeCrit] += 1.0 * CritRatingPerCritChance
+		character.stats[stats.SpellCrit] += 1.0 * CritRatingPerCritChance
+
+	case proto.Race_RaceZandalar:
+
+	case proto.Race_RaceNaga:
+
+	case proto.Race_RaceDwarfOfBlackIron:
+		// this is a active bonus aura, but uptime in combat is 95-99%
+		character.PseudoStats.DamageDealtMultiplier *= 1.03
+
+		character.stats[stats.MeleeCrit] += 1.0 * CritRatingPerCritChance
+		character.stats[stats.SpellCrit] += 1.0 * CritRatingPerCritChance
+
+		actionID := ActionID{SpellID: 316162} // ability_rhyolith_lavapool
+
+		slagEruptionAura := character.RegisterAura(Aura{
+			Label:    "Slag eruption",
+			ActionID: actionID,
+			Duration: time.Second * 10,
+			OnGain: func(aura *Aura, sim *Simulation) {
+				character.PseudoStats.DamageDealtMultiplier *= 1.06
+			},
+			OnExpire: func(aura *Aura, sim *Simulation) {
+				character.PseudoStats.DamageDealtMultiplier /= 1.06
+			},
+		})
+
+		slagEruptionSpell := character.RegisterSpell(SpellConfig{
+			ActionID: actionID,
+
+			Cast: CastConfig{
+				CD: Cooldown{
+					Timer:    character.NewTimer(),
+					Duration: time.Second * 30,
+				},
+			},
+
+			ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
+				slagEruptionAura.Activate(sim)
+			},
+		})
+
+		character.AddMajorCooldown(MajorCooldown{
+			Spell: slagEruptionSpell,
+			Type:  CooldownTypeDPS,
+		})
+	case proto.Race_RaceSindorei:
 		character.PseudoStats.ReducedArcaneHitTakenChance += 0.02
 		character.PseudoStats.ReducedFireHitTakenChance += 0.02
 		character.PseudoStats.ReducedFrostHitTakenChance += 0.02

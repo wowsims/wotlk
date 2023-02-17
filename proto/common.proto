@@ -29,7 +29,7 @@ enum Spec {
 
 enum Race {
 	RaceUnknown = 0;
-	RaceBloodElf = 1;
+	RaceSindorei = 1;
 	RaceDraenei = 2;
 	RaceDwarf = 3;
 	RaceGnome = 4;
@@ -39,6 +39,19 @@ enum Race {
 	RaceTauren = 8;
 	RaceTroll = 9;
 	RaceUndead = 10;
+	RaceDwarfOfBlackIron = 11;
+	RaceZandalar = 12;
+	RaceEredar = 13;
+	RaceNaga = 14;
+	RaceNightborne = 15;
+	RaceWorgen = 16;
+	RaceVulpera = 17;
+	RaceDraktir = 18;
+	RaceVoidElves = 19;
+	RaceHighElves = 20;
+	RaceLightDraenei = 21;
+	RaceGoblin = 22;
+	RacePanda = 23;
 }
 
 enum Faction {

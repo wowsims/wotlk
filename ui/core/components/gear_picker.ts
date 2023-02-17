@@ -967,8 +967,9 @@ class SelectorModal extends BaseModal {
 				}
 
 				if (searchInput.value.length > 0) {
-					const searchQuery = searchInput.value.toLowerCase().replaceAll(/[^a-zA-Z0-9\s]/g, '').split(" ");
-					const name = listItemData.name.toLowerCase().replaceAll(/[^a-zA-Z0-9\s]/g, '');
+					//const searchQuery = searchInput.value.toLowerCase().replaceAll(/[^a-zA-Z0-9\s]/g, '').split(" ");
+					const searchQuery = searchInput.value.toLowerCase().split(" ");
+					const name = listItemData.name.toLowerCase();
 
 					var include = true;
 					searchQuery.forEach(v => {
