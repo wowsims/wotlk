@@ -156,6 +156,12 @@ export const RogueRotationConfig = {
 			labelTooltip: 'Cast Feint on cooldown. Mainly useful when using the associate glyph.'
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
+			fieldName: "useGhostlyStrike",
+			label: 'Use Ghostly Strike',
+			labelTooltip: 'Use Ghostly Strike as a builder.',
+			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().ghostlyStrike
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
 			fieldName: 'ruptureForBleed',
 			label: 'Rupture for Bleed',
 			labelTooltip: 'Cast Rupture as needed to apply a bleed effect for Hunger for Blood',
