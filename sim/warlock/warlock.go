@@ -226,7 +226,32 @@ func RegisterWarlock() {
 }
 
 func init() {
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassWarlock}] = stats.Stats{
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceGoblin, Class: proto.Class_ClassWarlock}] = stats.Stats{
+		stats.Health:    7164,
+		stats.Strength:  62,
+		stats.Agility:   64,
+		stats.Stamina:   99,
+		stats.Intellect: 156,
+		stats.Spirit:    169,
+		stats.Mana:      3856,
+		stats.SpellCrit: 1.697 * core.CritRatingPerCritChance,
+		// Not sure how stats modify the crit chance.
+		// stats.MeleeCrit:   4.43 * core.CritRatingPerCritChance,
+	}
+
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceEredar, Class: proto.Class_ClassWarlock}] = stats.Stats{
+		stats.Health:    7164,
+		stats.Strength:  59,
+		stats.Agility:   67,
+		stats.Stamina:   97,
+		stats.Intellect: 159,
+		stats.Spirit:    170,
+		stats.Mana:      3856,
+		stats.SpellCrit: 1.697 * core.CritRatingPerCritChance,
+		// Not sure how stats modify the crit chance.
+		// stats.MeleeCrit:   4.43 * core.CritRatingPerCritChance,
+	}
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceSindorei, Class: proto.Class_ClassWarlock}] = stats.Stats{
 		stats.Health:    7164,
 		stats.Strength:  56,
 		stats.Agility:   69,

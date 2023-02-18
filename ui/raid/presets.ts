@@ -796,7 +796,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceHuman,
-			[Faction.Horde]: Race.RaceBloodElf,
+			[Faction.Horde]: Race.RaceSindorei,
 		},
 		defaultGear: {
 			[Faction.Unknown]: {},
@@ -822,7 +822,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceHuman,
-			[Faction.Horde]: Race.RaceBloodElf,
+			[Faction.Horde]: Race.RaceSindorei,
 		},
 		defaultGear: {
 			[Faction.Unknown]: {},
@@ -848,7 +848,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
 			[Faction.Alliance]: Race.RaceHuman,
-			[Faction.Horde]: Race.RaceBloodElf,
+			[Faction.Horde]: Race.RaceSindorei,
 		},
 		defaultGear: {
 			[Faction.Unknown]: {},

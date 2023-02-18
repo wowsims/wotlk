@@ -15,7 +15,7 @@ func init() {
 func TestProtection(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
 		Class:      proto.Class_ClassPaladin,
-		Race:       proto.Race_RaceBloodElf,
+		Race:       proto.Race_RaceSindorei,
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
 		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
@@ -74,7 +74,7 @@ func BenchmarkSimulate(b *testing.B) {
 	rsr := &proto.RaidSimRequest{
 		Raid: core.SinglePlayerRaidProto(
 			&proto.Player{
-				Race:      proto.Race_RaceBloodElf,
+				Race:      proto.Race_RaceSindorei,
 				Class:     proto.Class_ClassPaladin,
 				Equipment: P1Gear,
 				Consumes:  FullConsumes,

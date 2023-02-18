@@ -212,7 +212,18 @@ func NewMage(character core.Character, options *proto.Player) *Mage {
 }
 
 func init() {
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassMage}] = stats.Stats{
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceEredar, Class: proto.Class_ClassMage}] = stats.Stats{
+		stats.Health:    3213,
+		stats.Strength:  37,
+		stats.Agility:   40,
+		stats.Stamina:   58,
+		stats.Intellect: 182,
+		stats.Spirit:    176,
+		stats.Mana:      3268,
+		stats.SpellCrit: core.CritRatingPerCritChance * 0.908,
+	}
+
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceSindorei, Class: proto.Class_ClassMage}] = stats.Stats{
 		stats.Health:    3213,
 		stats.Strength:  30,
 		stats.Agility:   41,

@@ -287,6 +287,45 @@ func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents strin
 }
 
 func init() {
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNaga, Class: proto.Class_ClassDruid}] = stats.Stats{
+		stats.Health:      6892,
+		stats.Strength:    94,
+		stats.Agility:     77,
+		stats.Stamina:     100,
+		stats.Intellect:   138,
+		stats.Spirit:      185,
+		stats.Mana:        3496,
+		stats.SpellCrit:   1.85 * core.CritRatingPerCritChance, // Class-specific constant
+		stats.MeleeCrit:   8.48 * core.CritRatingPerCritChance,
+		stats.AttackPower: -20,
+	}
+
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceGoblin, Class: proto.Class_ClassDruid}] = stats.Stats{
+		stats.Health:      6892,
+		stats.Strength:    94,
+		stats.Agility:     77,
+		stats.Stamina:     100,
+		stats.Intellect:   138,
+		stats.Spirit:      185,
+		stats.Mana:        3496,
+		stats.SpellCrit:   1.85 * core.CritRatingPerCritChance, // Class-specific constant
+		stats.MeleeCrit:   8.48 * core.CritRatingPerCritChance,
+		stats.AttackPower: -20,
+	}
+
+	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceZandalar, Class: proto.Class_ClassDruid}] = stats.Stats{
+		stats.Health:      6892,
+		stats.Strength:    94,
+		stats.Agility:     77,
+		stats.Stamina:     100,
+		stats.Intellect:   138,
+		stats.Spirit:      185,
+		stats.Mana:        3496,
+		stats.SpellCrit:   1.85 * core.CritRatingPerCritChance, // Class-specific constant
+		stats.MeleeCrit:   7.48 * core.CritRatingPerCritChance,
+		stats.AttackPower: -20,
+	}
+
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTauren, Class: proto.Class_ClassDruid}] = stats.Stats{
 		stats.Health:      6892, // 8227 health shown on naked character (would include tauren bonus)
 		stats.Strength:    94,

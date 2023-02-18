@@ -315,13 +315,46 @@ func (character *Character) GetBaseStats() stats.Stats {
 // https://web.archive.org/web/20081014064638/http://elitistjerks.com/f31/t12595-relentless_earthstorm_diamond_-_melee_only/p4/
 // https://github.com/TheGroxEmpire/TBC_DPS_Warrior_Sim/issues/30
 func (character *Character) calculateCritMultiplier(normalCritDamage float64, primaryModifiers float64, secondaryModifiers float64) float64 {
+	// rewrite this part of code to Sirus crit multiplier formula
+	result := normalCritDamage + secondaryModifiers
+
+	if character.Race == proto.Race_RaceDwarfOfBlackIron {
+		primaryModifiers *= 1.06 // 4% of race passive, and 2% of party bonus
+	}
+
+	if character.Race == proto.Race_RaceGoblin {
+		primaryModifiers *= 1.06 // 6% from buff with uptime 90-100%
+	}
+
+	if character.Race == proto.Race_RaceZandalar {
+		primaryModifiers *= 1.04
+		// check if Zandalar racials is active
+		if character.HasActiveAura("Battle regeneration") {
+			primaryModifiers *= 1.12
+		}
+	}
+
+	if character.Race == proto.Race_RaceEredar {
+		primaryModifiers *= 1.02
+	}
+
+	if character.Race == proto.Race_RaceOrc {
+		primaryModifiers *= 1.04
+		// check if Orc racials is active
+		if character.HasActiveAura("Blood Fury") {
+			primaryModifiers *= 1.12
+		}
+	}
+
 	if character.HasMetaGemEquipped(34220) ||
 		character.HasMetaGemEquipped(32409) ||
 		character.HasMetaGemEquipped(41285) ||
 		character.HasMetaGemEquipped(41398) {
 		primaryModifiers *= 1.03
 	}
-	return 1.0 + (normalCritDamage*primaryModifiers-1.0)*(1.0+secondaryModifiers)
+	return result * primaryModifiers
+	// return 1.0 + (normalCritDamage*primaryModifiers-1.0)*(1.0+secondaryModifiers)
+
 }
 func (character *Character) calculateHealingCritMultiplier(normalCritDamage float64, primaryModifiers float64, secondaryModifiers float64) float64 {
 	if character.HasMetaGemEquipped(41376) {
