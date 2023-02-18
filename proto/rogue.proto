@@ -208,6 +208,8 @@ message Rogue {
 		int32 envenom_energy_threshold_overkill = 22;
 
 		int32 envenom_energy_threshold_overkill_min = 23;
+
+		bool use_ghostly_strike = 24;
 	}
 	Rotation rotation = 1;
 	
