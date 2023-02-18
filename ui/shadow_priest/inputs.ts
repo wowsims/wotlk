@@ -55,6 +55,7 @@ export const ShadowPriestRotationConfig = {
 			label: 'PreCast Spell',
 			labelTooltip: 'Choose which spell you want to Precast',
 			values: [
+				{ name: "None", value: precastType.Nothing },
 				{ name: 'Vampiric Touch', value: precastType.PrecastVt },
 				{ name: 'Mind Blast', value: precastType.PrecastMb },
 			],
