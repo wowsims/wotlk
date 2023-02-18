@@ -86,6 +86,16 @@ export const RogueRotationConfig = {
 			],
 			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
 		}),
+		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, SubtletyPriority>({
+			fieldName: 'subtletyFinisherPriority',
+			label: "Finisher Priority",
+			labelTooltip: 'The finisher that will be cast with highest priority.',
+			values: [
+				{ name: "Eviscerate", value: SubtletyPriority.SubtletyEviscerate },
+				{ name: "Envenom", value: SubtletyPriority.SubtletyEnvenom },
+			],
+			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().honorAmongThieves > 0
+		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
 			fieldName: 'envenomEnergyThreshold',
 			label: 'Energy Threshold (4cp Envenom)',
