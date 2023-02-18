@@ -147,7 +147,7 @@ func init() {
 		core.NewSimpleStatDefensiveTrinketEffect(itemID, stats.Stats{stats.Parry: bonus}, duration, cooldown)
 	})
 	newParryActive(40372, 375, time.Second*20, time.Minute*2) // Rune of Repulsion
-	newParryActive(46021, 380, time.Second*20, time.Minute*2) // Royal Seal of King Llane
+	newParryActive(46021, 402, time.Second*20, time.Minute*2) // Royal Seal of King Llane
 
 	newSpiritActive := testFirstOnly(func(itemID int32, bonus float64, duration time.Duration, cooldown time.Duration) {
 		core.NewSimpleStatDefensiveTrinketEffect(itemID, stats.Stats{stats.Spirit: bonus}, duration, cooldown)
