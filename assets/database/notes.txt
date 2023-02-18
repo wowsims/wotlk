@@ -1,0 +1,81 @@
+<table><tr><td><table style=\"display:inline-table; vertical-align:inherit\"><tr><td><!--nstart--><b class=\"q4\">Солярные наручники</b><!--nend--></td></tr></table><!--ndstart--><!--ndend--><span class=\"q\"><br>Уровень предмета: <!--ilvl-->239</span><!--bo--><br>Становится персональным при поднятии<!--ue--><table width=\"100%\"><tr><td>Запастья</td><th><!--scstart4:4--><span class=\"q1\">Кожа</span><!--scend--></th></tr></table><span><!--amr-->Броня: 267</span><br><span><!--stat3-->+64 к ловкости</span><br><span><!--stat7-->+61 к выносливости</span><br><span class=\"socket-orange q3\" style=\"background-image:url(https://wow.zamimg.com/images/wow/icons/tiny/inv_jewelcrafting_gem_30.gif)\"><!--gem10:0:0:0:0:0-->+8 к силе и +8 к рейтингу критического удара</span><br><span class=\"q2\">При соответствии цвета: +4 к ловкости</span><br /><br /></td></tr></table><table><tr><td>Требуется <!--rlvl-->80-й ур.<br><span class=\"q2\">Если на персонаже: Увеличивает силу атаки на  <!--rtg38-->86.</span><br><span class=\"q2\">Если на персонаже: Рейтинг скорости <!--rtg36-->+48.</span><br><span class=\"q2\">Если на персонаже: Рейтинг мастерства <!--rtg37-->+47.</span><br></td></tr></table>
+
+
+
+3923 - Grull
+{"id":18831,"name":"High King Maulgar","zoneId":3923},
+{"id":19044,"name":"Gruul the Dragonkiller","zoneId":3923},
+
+"sources":[{"drop":{"difficulty":"DifficultyRaid25","zoneId":3923,"otherName":"The Lich King"}}]
+
+    ,"sources":[{"drop":{"difficulty":"DifficultyRaid25","npcId":18831,"zoneId":3923}}], - molgar
+    ,"sources":[{"drop":{"difficulty":"DifficultyRaid25","npcId":19044,"zoneId":3923}}], - Grull
+
+for heroic mode
+    ,"sources":[{"drop":{"difficulty":"DifficultyRaid25H","npcId":18831,"zoneId":3923}}] - molgar (heroic)
+    ,"sources":[{"drop":{"difficulty":"DifficultyRaid25H","npcId":19044,"zoneId":3923}}] - Grull (heroic)
+
+Magic
+,"sources":[{"drop":{"difficulty":"DifficultyRaid25H","npcId":17257,"zoneId":3836}}]
+
+ {"id":17257,"name":"Magtheridon","zoneId":3836},
+
+
+,"classAllowlist":["ClassWarrior"],
+,"classAllowlist":["ClassPaladin"],
+,"classAllowlist":["ClassWarlock"], t6+ (all)
+,"classAllowlist":["ClassRogue"],
+,"classAllowlist":["ClassDeathknight"], t4+, t5+, t6+ (all)
+,"classAllowlist":["ClassMage"], t4+, t5+, t6+ (all)
+,"classAllowlist":["ClassPriest"],
+,"classAllowlist":["ClassDruid"],
+,"classAllowlist":["ClassHunter"],
+,"classAllowlist":["ClassShaman"],
+
+Karazhan
+    мороз - 
+    ,"sources":[{"drop":{"difficulty":"DifficultyRaid10","npcId":15687,"zoneId":3457}}]
+    ,"sources":[{"drop":{"difficulty":"DifficultyRaid10H","npcId":15687,"zoneId":3457}}]
+
+    ловчий - 
+    ,"sources":[{"drop":{"difficulty":"DifficultyRaid10","npcId":16152,"zoneId":3457}}]
+    ,"sources":[{"drop":{"difficulty":"DifficultyRaid10H","npcId":16152,"zoneId":3457}}]
+
+    дева - 
+    ,"sources":[{"drop":{"difficulty":"DifficultyRaid10","npcId":16457,"zoneId":3457}}]
+    ,"sources":[{"drop":{"difficulty":"DifficultyRaid10H","npcId":16457,"zoneId":3457}}]
+
+    опера - 
+    17522
+    ,"sources":[{"drop":{"difficulty":"DifficultyRaid10","npcId":17522,"zoneId":3457}}]
+
+    смотритель - 
+    ,"sources":[{"drop":{"difficulty":"DifficultyRaid10H","npcId":15691,"zoneId":3457}}]
+
+    копыто - 
+    ,"sources":[{"drop":{"difficulty":"DifficultyRaid10H","npcId":15688,"zoneId":3457}}]
+
+    аран - 
+    ,"sources":[{"drop":{"difficulty":"DifficultyRaid10H","npcId":16524,"zoneId":3457}}]
+
+    гнев - 
+    ,"sources":[{"drop":{"difficulty":"DifficultyRaid10H","npcId":15689,"zoneId":3457}}]
+
+    малч - 
+    ,"sources":[{"drop":{"difficulty":"DifficultyRaid10H","npcId":15690,"zoneId":3457}}]
+
+    {"id":15690,"name":"Prince Malchezaar","zoneId":3457},
+    {"id":15691,"name":"The Curator","zoneId":3457},
+    {"id":16152,"name":"Attumen the Huntsman","zoneId":3457},
+
+    {"id":16179,"name":"Hyakiss the Lurker","zoneId":3457},
+    {"id":16180,"name":"Shadikith the Glider","zoneId":3457},
+    {"id":16181,"name":"Rokad the Ravager","zoneId":3457},
+    
+    {"id":16457,"name":"Maiden of Virtue","zoneId":3457},
+    {"id":16524,"name":"Shade of Aran","zoneId":3457},
+    {"id":17225,"name":"Nightbane","zoneId":3457},
+    {"id":17521,"name":"The Big Bad Wolf","zoneId":3457},
+    {"id":17533,"name":"Romulo and Julianne","zoneId":3457},
+    {"id":18168,"name":"The Wizard of Oz","zoneId":3457},
+    {"id":28194,"name":"Prince Tenris Mirkblood","zoneId":3457},

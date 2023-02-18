@@ -1047,14 +1047,14 @@ class SelectorModal extends BaseModal {
 			}
 
 			let innerHTML = `
-				<a href="${ActionId.makeZoneUrl(zone.id)}">${zone.name} (${difficultyNames[src.difficulty]})</a>
+				${zone.name} (${difficultyNames[src.difficulty]})
 			`;
 
 			const category = src.category ? ` - ${src.category}` : '';
 			if (npc) {
 				innerHTML += `
 					<br>
-					<a href="${ActionId.makeNpcUrl(npc.id)}">${npc.name + category}</a>
+					${npc.name + category}
 				`;
 			} else if (src.otherName) {
 				innerHTML += `
