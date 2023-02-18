@@ -44,8 +44,8 @@ export const ShadowPriestRotationConfig = {
 			label: 'Rotation Type',
 			labelTooltip: 'Choose how to clip your mindflay. Basic will never clip. Clipping will clip for other spells and use a 2xMF2 when there is time for 4 ticks. Ideal will evaluate the DPS gain of every action to determine MF actions.',
 			values: [
-				{ name: 'Basic', value: RotationType.Basic },
-				{ name: 'Clipping', value: RotationType.Clipping },
+				//{ name: 'Basic', value: RotationType.Basic },
+				//{ name: 'Clipping', value: RotationType.Clipping },
 				{ name: 'Ideal', value: RotationType.Ideal },
 				{ name: 'AoE', value: RotationType.AoE },
 			],
