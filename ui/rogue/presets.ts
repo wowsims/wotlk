@@ -79,7 +79,7 @@ export const DefaultRotation = RogueRotation.create({
 	tricksOfTheTradeFrequency: Rogue_Rotation_Frequency.Maintain,
 	assassinationFinisherPriority: Rogue_Rotation_AssassinationPriority.EnvenomRupture,
 	combatFinisherPriority: Rogue_Rotation_CombatPriority.RuptureEviscerate,
-	subtletyFinisherPriority: Rogue_Rotation_SubtletyPriority.Rupture,
+	subtletyFinisherPriority: Rogue_Rotation_SubtletyPriority.SubtletyEviscerate,
 	minimumComboPointsPrimaryFinisher: 3,
 	minimumComboPointsSecondaryFinisher: 2,
 	envenomEnergyThreshold: 85,

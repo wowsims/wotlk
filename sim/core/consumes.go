@@ -458,7 +458,11 @@ func registerPotionCD(agent Agent, consumes *proto.Consumes) {
 	if startingMCD.Spell != nil {
 		character.RegisterPrepullAction(-1*time.Second, func(sim *Simulation) {
 			startingMCD.Spell.Cast(sim, nil)
-			potionCD.Set(sim.CurrentTime + time.Minute)
+			if startingPotion == proto.Potions_IndestructiblePotion {
+				potionCD.Set(sim.CurrentTime + 2*time.Minute)
+			} else {
+				potionCD.Set(sim.CurrentTime + time.Minute)
+			}
 			character.UpdateMajorCooldowns()
 		})
 	}
