@@ -18,11 +18,10 @@ func applyRaceEffects(agent Agent) {
 			souls fragments (this is insane to make)
 			+2% to armor, and some resistances (+)
 		*/
-		character.stats[stats.SpellHaste] += 2.0 * HasteRatingPerHastePercent
 		character.stats[stats.MeleeCrit] += 2.0 * CritRatingPerCritChance
-		character.stats[stats.SpellCrit] += 2.0 * CritRatingPerCritChance
 
 		character.MultiplyStat(stats.Armor, 1.02)
+		character.MultiplyCastSpeed(1.02)
 	case proto.Race_RaceGoblin:
 		/*
 			1% to Haste (+), 1% to Crit Chance (+)

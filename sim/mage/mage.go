@@ -220,7 +220,7 @@ func init() {
 		stats.Intellect: 182,
 		stats.Spirit:    176,
 		stats.Mana:      3268,
-		stats.SpellCrit: core.CritRatingPerCritChance * 0.926,
+		stats.SpellCrit: core.CritRatingPerCritChance * 0.908,
 	}
 
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceSindorei, Class: proto.Class_ClassMage}] = stats.Stats{
