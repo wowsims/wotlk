@@ -267,51 +267,16 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 		rogue.Rupture[1].DefaultCast.Cost,
 	})
 
-	// Eviscerate
-	if rogue.Rotation.SubtletyFinisherPriority == proto.Rogue_Rotation_SubtletyEviscerate {
-		rogue.subtletyPrios = append(rogue.subtletyPrios, subtletyPrio{
-			func(s *core.Simulation, r *Rogue) PriorityAction {
-				if rogue.Rotation.AllowCpUndercap {
-					if r.ComboPoints() == 3 && r.CurrentEnergy() >= r.Eviscerate[1].DefaultCast.Cost {
-						return Cast
-					}
-				}
-				energyNeeded := r.Eviscerate[1].DefaultCast.Cost
-				minimumCP := int32(5)
-				if rogue.Rotation.AllowCpOvercap {
-					if r.ComboPoints() == 4 && r.getExpectedComboPointPerSecond() >= 1 {
-						return Wait
-					}
-					if r.ComboPoints() == 4 {
-						return Build
-					}
-				}
-				if r.ComboPoints() >= minimumCP && r.CurrentEnergy() >= energyNeeded {
-					return Cast
-				}
-				if r.ComboPoints() < minimumCP && r.CurrentEnergy() >= r.Builder.DefaultCast.Cost+r.Eviscerate[1].DefaultCast.Cost {
-					return Build
-				}
-				return Wait
-			},
-			func(s *core.Simulation, r *Rogue) bool {
-				return rogue.Eviscerate[r.ComboPoints()].Cast(sim, rogue.CurrentTarget)
-			},
-			rogue.Eviscerate[1].DefaultCast.Cost,
-		})
-	}
-
 	//Envenom
 	if rogue.Rotation.SubtletyFinisherPriority == proto.Rogue_Rotation_SubtletyEnvenom {
 		rogue.subtletyPrios = append(rogue.subtletyPrios, subtletyPrio{
 			func(s *core.Simulation, r *Rogue) PriorityAction {
 				minimumCP := int32(5)
-
-				if r.EnvenomAura.IsActive() && r.CurrentEnergy() < r.maxEnergy-12 {
-					return Wait
+				if !r.DeadlyPoison.Dot(r.CurrentTarget).Aura.IsActive() {
+					return Skip
 				}
-				if r.EnvenomAura.IsActive() && r.CurrentEnergy() >= r.maxEnergy-12 && r.ComboPoints() >= minimumCP {
-					return Cast
+				if r.EnvenomAura.IsActive() {
+					return Skip
 				}
 				if rogue.ComboPoints() >= minimumCP && rogue.CurrentEnergy() >= rogue.Envenom[1].DefaultCast.Cost {
 					return Cast
@@ -333,6 +298,25 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 			rogue.Envenom[1].DefaultCast.Cost,
 		})
 	}
+
+	// Eviscerate
+	rogue.subtletyPrios = append(rogue.subtletyPrios, subtletyPrio{
+		func(s *core.Simulation, r *Rogue) PriorityAction {
+			energyNeeded := r.Eviscerate[1].DefaultCast.Cost
+			minimumCP := int32(5)
+			if r.ComboPoints() >= minimumCP && r.CurrentEnergy() >= energyNeeded {
+				return Cast
+			}
+			if r.ComboPoints() < minimumCP && r.CurrentEnergy() >= r.Builder.DefaultCast.Cost+r.Eviscerate[1].DefaultCast.Cost {
+				return Build
+			}
+			return Wait
+		},
+		func(s *core.Simulation, r *Rogue) bool {
+			return rogue.Eviscerate[r.ComboPoints()].Cast(sim, rogue.CurrentTarget)
+		},
+		rogue.Eviscerate[1].DefaultCast.Cost,
+	})
 }
 
 func (rogue *Rogue) doSubtletyRotation(sim *core.Simulation) {
