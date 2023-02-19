@@ -73,19 +73,6 @@ func NewEnhancementShaman(character core.Character, options *proto.Player) *Enha
 		enh.SelfBuffs.ImbueOH = proto.ShamanImbue_NoImbue
 	}
 
-	enh.RegisterFlametongueImbue(
-		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FlametongueWeapon,
-		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_FlametongueWeapon)
-	enh.RegisterFlametongueDownrankImbue(
-		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FlametongueWeaponDownrank,
-		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_FlametongueWeaponDownrank)
-	enh.RegisterWindfuryImbue(
-		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_WindfuryWeapon,
-		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_WindfuryWeapon)
-	enh.RegisterFrostbrandImbue(
-		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FrostbrandWeapon,
-		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_FrostbrandWeapon)
-
 	enh.SpiritWolves = &shaman.SpiritWolves{
 		SpiritWolf1: enh.NewSpiritWolf(1),
 		SpiritWolf2: enh.NewSpiritWolf(2),
@@ -112,6 +99,19 @@ func (enh *EnhancementShaman) GetShaman() *shaman.Shaman {
 func (enh *EnhancementShaman) Initialize() {
 	enh.Shaman.Initialize()
 
+	enh.RegisterFlametongueImbue(
+		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FlametongueWeapon,
+		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_FlametongueWeapon)
+	enh.RegisterFlametongueDownrankImbue(
+		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FlametongueWeaponDownrank,
+		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_FlametongueWeaponDownrank)
+	enh.RegisterWindfuryImbue(
+		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_WindfuryWeapon,
+		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_WindfuryWeapon)
+	enh.RegisterFrostbrandImbue(
+		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FrostbrandWeapon,
+		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_FrostbrandWeapon)
+
 	if enh.ItemSwap.IsEnabled() {
 		mh := enh.ItemSwap.GetItem(proto.ItemSlot_ItemSlotMainHand)
 		enh.ApplyFlametongueImbueToItem(mh, true)
@@ -129,7 +129,6 @@ func (enh *EnhancementShaman) Initialize() {
 		})
 	}
 	enh.DelayDPSCooldowns(3 * time.Second)
-
 }
 
 func (enh *EnhancementShaman) Reset(sim *core.Simulation) {
