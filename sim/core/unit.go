@@ -161,24 +161,7 @@ func (character *Character) DoNothing() {
 }
 
 func (unit *Unit) IsActive() bool {
-	if unit.Type == PetUnit {
-		// Any faster way to get the Pet interface? I'm a Go noob so maybe theres an easier way
-		for _, player := range unit.Env.Raid.GetPlayerFromUnit(unit).GetCharacter().Party.Players {
-			// Find player owner
-			if player.GetCharacter().Index == unit.Index {
-				// Find pet in owner pets
-				for _, pet := range player.GetCharacter().Pets {
-					if pet.GetCharacter().UnitIndex == unit.UnitIndex {
-						if !pet.GetPet().IsEnabled() {
-							return false
-						}
-						break
-					}
-				}
-			}
-		}
-	}
-	return unit.CurrentHealthPercent() > 0
+	return unit.IsEnabled() && unit.CurrentHealthPercent() > 0
 }
 
 func (unit *Unit) IsOpponent(other *Unit) bool {
