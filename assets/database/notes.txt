@@ -22,9 +22,9 @@ Magic
 
 
 ,"classAllowlist":["ClassWarrior"],
-,"classAllowlist":["ClassPaladin"],
-,"classAllowlist":["ClassWarlock"], t6+ (all)
-,"classAllowlist":["ClassRogue"],
+,"classAllowlist":["ClassPaladin"], t4+, t5, t6 
+,"classAllowlist":["ClassWarlock"], t4+, t5+, t6+ (all)
+,"classAllowlist":["ClassRogue"], t4, t5, t6
 ,"classAllowlist":["ClassDeathknight"], t4+, t5+, t6+ (all)
 ,"classAllowlist":["ClassMage"], t4+, t5+, t6+ (all)
 ,"classAllowlist":["ClassPriest"],
@@ -32,50 +32,3 @@ Magic
 ,"classAllowlist":["ClassHunter"],
 ,"classAllowlist":["ClassShaman"],
 
-Karazhan
-    мороз - 
-    ,"sources":[{"drop":{"difficulty":"DifficultyRaid10","npcId":15687,"zoneId":3457}}]
-    ,"sources":[{"drop":{"difficulty":"DifficultyRaid10H","npcId":15687,"zoneId":3457}}]
-
-    ловчий - 
-    ,"sources":[{"drop":{"difficulty":"DifficultyRaid10","npcId":16152,"zoneId":3457}}]
-    ,"sources":[{"drop":{"difficulty":"DifficultyRaid10H","npcId":16152,"zoneId":3457}}]
-
-    дева - 
-    ,"sources":[{"drop":{"difficulty":"DifficultyRaid10","npcId":16457,"zoneId":3457}}]
-    ,"sources":[{"drop":{"difficulty":"DifficultyRaid10H","npcId":16457,"zoneId":3457}}]
-
-    опера - 
-    17522
-    ,"sources":[{"drop":{"difficulty":"DifficultyRaid10","npcId":17522,"zoneId":3457}}]
-
-    смотритель - 
-    ,"sources":[{"drop":{"difficulty":"DifficultyRaid10H","npcId":15691,"zoneId":3457}}]
-
-    копыто - 
-    ,"sources":[{"drop":{"difficulty":"DifficultyRaid10H","npcId":15688,"zoneId":3457}}]
-
-    аран - 
-    ,"sources":[{"drop":{"difficulty":"DifficultyRaid10H","npcId":16524,"zoneId":3457}}]
-
-    гнев - 
-    ,"sources":[{"drop":{"difficulty":"DifficultyRaid10H","npcId":15689,"zoneId":3457}}]
-
-    малч - 
-    ,"sources":[{"drop":{"difficulty":"DifficultyRaid10H","npcId":15690,"zoneId":3457}}]
-
-    {"id":15690,"name":"Prince Malchezaar","zoneId":3457},
-    {"id":15691,"name":"The Curator","zoneId":3457},
-    {"id":16152,"name":"Attumen the Huntsman","zoneId":3457},
-
-    {"id":16179,"name":"Hyakiss the Lurker","zoneId":3457},
-    {"id":16180,"name":"Shadikith the Glider","zoneId":3457},
-    {"id":16181,"name":"Rokad the Ravager","zoneId":3457},
-    
-    {"id":16457,"name":"Maiden of Virtue","zoneId":3457},
-    {"id":16524,"name":"Shade of Aran","zoneId":3457},
-    {"id":17225,"name":"Nightbane","zoneId":3457},
-    {"id":17521,"name":"The Big Bad Wolf","zoneId":3457},
-    {"id":17533,"name":"Romulo and Julianne","zoneId":3457},
-    {"id":18168,"name":"The Wizard of Oz","zoneId":3457},
-    {"id":28194,"name":"Prince Tenris Mirkblood","zoneId":3457},
