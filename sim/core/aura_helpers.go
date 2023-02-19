@@ -207,7 +207,7 @@ func (character *Character) NewTemporaryStatsAuraWrapped(auraLabel string, actio
 	return character.GetOrRegisterAura(config)
 }
 
-func ApplyFixedUptimeAura(aura *Aura, uptime float64, tickLength time.Duration) {
+func ApplyFixedUptimeAura(aura *Aura, uptime float64, tickLength time.Duration, startTime time.Duration) {
 	auraDuration := aura.Duration
 	ticksPerAura := float64(auraDuration) / float64(tickLength)
 	chancePerTick := TernaryFloat64(uptime == 1, 1, 1.0-math.Pow(1-uptime, 1/ticksPerAura))
@@ -224,7 +224,7 @@ func ApplyFixedUptimeAura(aura *Aura, uptime float64, tickLength time.Duration) 
 
 		// Also try once at the start.
 		StartPeriodicAction(sim, PeriodicActionOptions{
-			Period:   1,
+			Period:   startTime,
 			NumTicks: 1,
 			OnAction: func(sim *Simulation) {
 				if sim.RandomFloat("FixedAura") < uptime {

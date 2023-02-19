@@ -13,7 +13,7 @@ func addPatchwerk25(bossPrefix string) {
 		PathPrefix: bossPrefix,
 		Config: &proto.Target{
 			Id:        16028,
-			Name:      "Patchwerk 25",
+			Name:      "Patchwerk",
 			Level:     83,
 			MobType:   proto.MobType_MobTypeUndead,
 			TankIndex: 0,
@@ -32,11 +32,12 @@ func addPatchwerk25(bossPrefix string) {
 			DualWield:        false,
 			DualWieldPenalty: false,
 			TightEnemyDamage: true,
+			TargetInputs:     make([]*proto.TargetInput, 0),
 		},
 		AI: NewPatchwerk25AI(),
 	})
-	core.AddPresetEncounter("Patchwerk 25", []string{
-		bossPrefix + "/Patchwerk 25",
+	core.AddPresetEncounter("Patchwerk", []string{
+		bossPrefix + "/Patchwerk",
 	})
 }
 
@@ -53,11 +54,14 @@ func NewPatchwerk25AI() core.AIFactory {
 	}
 }
 
-func (ai *Patchwerk25AI) Initialize(target *core.Target) {
+func (ai *Patchwerk25AI) Initialize(target *core.Target, config *proto.Target) {
 	ai.Target = target
 
 	//ai.registerHatefulStrikeSpell(target)
 	//ai.registerFrenzySpell(target)
+}
+
+func (ai *Patchwerk25AI) Reset(*core.Simulation) {
 }
 
 func (ai *Patchwerk25AI) registerHatefulStrikeSpell(target *core.Target) {
@@ -120,6 +124,12 @@ func (ai *Patchwerk25AI) registerFrenzySpell(target *core.Target) {
 }
 
 func (ai *Patchwerk25AI) DoAction(sim *core.Simulation) {
+	if ai.Target.CurrentTarget == nil {
+		ai.Target.DoNothing()
+		return
+	}
+
+	ai.Target.DoNothing()
 	// TODO: Re-enable Frenzy when we have a feature to flag for tank cooldown timing
 	//       Otherwise users get confused why the default settings say they die a lot...
 	//if ai.Frenzy.IsReady(sim) && sim.GetRemainingDurationPercent() < 0.05 {

@@ -84,7 +84,7 @@ func (druid *Druid) registerShredSpell() {
 
 			critRating := druid.GetStat(stats.MeleeCrit) + spell.BonusCritRating
 			critChance := critRating / (core.CritRatingPerCritChance * 100)
-			critMod := (critChance * (spell.CritMultiplier - 1))
+			critMod := (critChance * (spell.FinalCritMultiplier() - 1))
 
 			baseres.Damage *= (1 + critMod)
 
