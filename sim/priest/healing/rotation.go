@@ -48,7 +48,7 @@ func (hpriest *HealingPriest) makeCustomRotation() *common.CustomRotation {
 		int32(proto.HealingPriest_Rotation_Renew): {
 			Spell: hpriest.Renew,
 			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
-				for _, unit := range hpriest.Env.AllUnits {
+				for _, unit := range hpriest.Env.Raid.AllUnits {
 					renewHot := hpriest.Renew.Hot(unit)
 					if renewHot != nil && !renewHot.IsActive() {
 						success := hpriest.Renew.Cast(sim, unit)
@@ -58,7 +58,7 @@ func (hpriest *HealingPriest) makeCustomRotation() *common.CustomRotation {
 				panic("No valid Renew target")
 			},
 			Condition: func(sim *core.Simulation) bool {
-				for _, unit := range hpriest.Env.AllUnits {
+				for _, unit := range hpriest.Env.Raid.AllUnits {
 					renewHot := hpriest.Renew.Hot(unit)
 					if renewHot != nil && !renewHot.IsActive() {
 						return true
@@ -70,7 +70,7 @@ func (hpriest *HealingPriest) makeCustomRotation() *common.CustomRotation {
 		int32(proto.HealingPriest_Rotation_PowerWordShield): {
 			Spell: hpriest.PowerWordShield,
 			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
-				for _, unit := range hpriest.Env.AllUnits {
+				for _, unit := range hpriest.Env.Raid.AllUnits {
 					if hpriest.PowerWordShield.CanCast(sim, unit) {
 						success := hpriest.PowerWordShield.Cast(sim, unit)
 						return success, hpriest.PowerWordShield.CurCast.Cost
@@ -79,7 +79,7 @@ func (hpriest *HealingPriest) makeCustomRotation() *common.CustomRotation {
 				panic("No valid PowerWordShield target")
 			},
 			Condition: func(sim *core.Simulation) bool {
-				for _, unit := range hpriest.Env.AllUnits {
+				for _, unit := range hpriest.Env.Raid.AllUnits {
 					if hpriest.PowerWordShield.CanCast(sim, unit) {
 						return true
 					}
