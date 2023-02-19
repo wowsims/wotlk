@@ -32,7 +32,11 @@ func (dk *DpsDeathknight) setupUnholyRotations() {
 		if dk.ur.sigil == Sigil_Virulence {
 			dk.RotationSequence.
 				NewAction(dk.RotationActionCallback_SS).
-				NewAction(dk.RotationActionCallback_BS)
+				NewAction(dk.RotationActionCallback_BS).
+				NewAction(dk.RotationActionUH_SS_Sigil).
+				NewAction(dk.RotationActionUH_BS_Sigil).
+				NewAction(dk.RotationActionUH_SS_Sigil).
+				NewAction(dk.RotationActionUH_BS_Sigil)
 		} else if dk.ur.sigil == Sigil_HangedMan {
 			dk.RotationSequence.
 				NewAction(dk.RotationActionCallback_SS).
@@ -456,6 +460,41 @@ func (dk *DpsDeathknight) RotationActionCallback_MindFreezeFiller(sim *core.Simu
 	}
 	s.Advance()
 	return sim.CurrentTime
+}
+
+// Custom SS Callback for when we have virulence sigil
+func (dk *DpsDeathknight) RotationActionUH_SS_Sigil(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	if dk.HasActiveAura("Sigil of Virulence Proc") || !dk.Rotation.UseEmpowerRuneWeapon {
+		s.Advance()
+		return sim.CurrentTime
+	}
+
+	if dk.EmpowerRuneWeapon.IsReady(sim) {
+		dk.EmpowerRuneWeapon.Cast(sim, target)
+	}
+
+	casted := dk.ScourgeStrike.Cast(sim, target)
+	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
+
+	s.ConditionalAdvance(casted && advance)
+	return -1
+}
+
+// Custom SS Callback for when we have virulence sigil
+func (dk *DpsDeathknight) RotationActionUH_BS_Sigil(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	if dk.HasActiveAura("Sigil of Virulence Proc") {
+		s.Advance()
+		return sim.CurrentTime
+	}
+	bloodSpell := dk.BloodBoil
+	if dk.desolationAuraCheck(sim) {
+		bloodSpell = dk.BloodStrike
+	}
+	casted := bloodSpell.Cast(sim, target)
+	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
+
+	s.ConditionalAdvance(casted && advance)
+	return -1
 }
 
 func (dk *DpsDeathknight) RotationActionCallback_Pesti_Custom(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
