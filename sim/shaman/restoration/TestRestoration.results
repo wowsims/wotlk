@@ -540,12 +540,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestRestoration-AllItems-SparkofHope-45703"
- value: {
-  tps: 0.1
- }
-}
-dps_results: {
  key: "TestRestoration-AllItems-SparkofLife-37657"
  value: {
   tps: 0.1

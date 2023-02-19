@@ -106,13 +106,13 @@ func (cat *FeralDruid) checkReplaceMaul(sim *core.Simulation) *core.Spell {
 
 	maulRageThresh := 10.0
 	if emergencyLacerateNext {
-		maulRageThresh += cat.Lacerate.BaseCost
+		maulRageThresh += cat.Lacerate.DefaultCast.Cost
 	} else if shiftNext {
 		maulRageThresh = 10.0
 	} else if mangleNext {
-		maulRageThresh += cat.MangleBear.BaseCost
+		maulRageThresh += cat.MangleBear.DefaultCast.Cost
 	} else if lacerateNext {
-		maulRageThresh += cat.Lacerate.BaseCost
+		maulRageThresh += cat.Lacerate.DefaultCast.Cost
 	}
 
 	if cat.CurrentRage() >= maulRageThresh {
@@ -341,20 +341,20 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	pendingActions := make([]pendingAction, 0, 4)
 
 	if ripDot.IsActive() && (ripDot.RemainingDuration(sim) < simTimeRemain-endThresh) {
-		ripCost := core.TernaryFloat64(cat.berserkExpectedAt(sim, ripDot.ExpiresAt()), cat.Rip.BaseCost*0.5, cat.Rip.BaseCost)
+		ripCost := core.TernaryFloat64(cat.berserkExpectedAt(sim, ripDot.ExpiresAt()), cat.Rip.DefaultCast.Cost*0.5, cat.Rip.DefaultCast.Cost)
 		pendingActions = append(pendingActions, pendingAction{ripDot.ExpiresAt(), ripCost})
 		ripRefreshPending = true
 	}
 	if rakeDot.IsActive() && (rakeDot.RemainingDuration(sim) < simTimeRemain-(9*time.Second)) {
-		rakeCost := core.TernaryFloat64(cat.berserkExpectedAt(sim, rakeDot.ExpiresAt()), cat.Rake.BaseCost*0.5, cat.Rake.BaseCost)
+		rakeCost := core.TernaryFloat64(cat.berserkExpectedAt(sim, rakeDot.ExpiresAt()), cat.Rake.DefaultCast.Cost*0.5, cat.Rake.DefaultCast.Cost)
 		pendingActions = append(pendingActions, pendingAction{rakeDot.ExpiresAt(), rakeCost})
 	}
 	if cat.bleedAura.IsActive() && (cat.bleedAura.RemainingDuration(sim) < simTimeRemain-time.Second) {
-		mangleCost := core.TernaryFloat64(cat.berserkExpectedAt(sim, cat.bleedAura.ExpiresAt()), cat.MangleCat.BaseCost*0.5, cat.MangleCat.BaseCost)
+		mangleCost := core.TernaryFloat64(cat.berserkExpectedAt(sim, cat.bleedAura.ExpiresAt()), cat.MangleCat.DefaultCast.Cost*0.5, cat.MangleCat.DefaultCast.Cost)
 		pendingActions = append(pendingActions, pendingAction{cat.bleedAura.ExpiresAt(), mangleCost})
 	}
 	if cat.SavageRoarAura.IsActive() {
-		roarCost := core.TernaryFloat64(cat.berserkExpectedAt(sim, cat.SavageRoarAura.ExpiresAt()), cat.SavageRoar.BaseCost*0.5, cat.SavageRoar.BaseCost)
+		roarCost := core.TernaryFloat64(cat.berserkExpectedAt(sim, cat.SavageRoarAura.ExpiresAt()), cat.SavageRoar.DefaultCast.Cost*0.5, cat.SavageRoar.DefaultCast.Cost)
 		pendingActions = append(pendingActions, pendingAction{cat.SavageRoarAura.ExpiresAt(), roarCost})
 	}
 
@@ -420,7 +420,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 
 	if flowershiftNow {
 		// if we cant cast and get back then abandon flowershift
-		if cat.CurrentMana() <= shiftCost+cat.GiftOfTheWild.BaseCost {
+		if cat.CurrentMana() <= shiftCost+cat.GiftOfTheWild.DefaultCast.Cost {
 			flowershiftNow = false
 			cat.Metrics.MarkOOM(sim)
 

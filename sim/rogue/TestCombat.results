@@ -606,13 +606,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestCombat-AllItems-SparkofHope-45703"
- value: {
-  dps: 6252.93473
-  tps: 4439.58366
- }
-}
-dps_results: {
  key: "TestCombat-AllItems-SparkofLife-37657"
  value: {
   dps: 6349.23683

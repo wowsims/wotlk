@@ -112,7 +112,7 @@ func (war *DpsWarrior) normalRotation(sim *core.Simulation) {
 				war.BattleStance.Cast(sim, nil)
 			}
 			war.Rend.Cast(sim, war.CurrentTarget)
-		} else if war.CanSuddenDeathExecute() {
+		} else if war.Execute.CanCast(sim, war.CurrentTarget) {
 			war.CastExecute(sim, war.CurrentTarget)
 		} else if war.Rotation.UseMs && war.MortalStrike.CanCast(sim, war.CurrentTarget) && war.CurrentRage() >= war.Rotation.MsRageThreshold {
 			war.MortalStrike.Cast(sim, war.CurrentTarget)
@@ -127,7 +127,6 @@ func (war *DpsWarrior) normalRotation(sim *core.Simulation) {
 
 func (war *DpsWarrior) executeRotation(sim *core.Simulation) {
 	if war.GCD.IsReady(sim) {
-
 		if war.tryMaintainDebuffs(sim) {
 			war.DoNothing()
 		} else if war.ShouldOverpower(sim) {
@@ -166,11 +165,11 @@ func (war *DpsWarrior) executeRotation(sim *core.Simulation) {
 				war.BattleStance.Cast(sim, nil)
 			}
 			war.Rend.Cast(sim, war.CurrentTarget)
-		} else if war.CanSuddenDeathExecute() {
+		} else if war.IsSuddenDeathActive() && war.Execute.CanCast(sim, war.CurrentTarget) {
 			war.CastExecute(sim, war.CurrentTarget)
 		} else if war.Rotation.UseMs && war.MortalStrike.CanCast(sim, war.CurrentTarget) && war.CurrentRage() >= war.Rotation.MsRageThreshold {
 			war.MortalStrike.Cast(sim, war.CurrentTarget)
-		} else if war.CanExecute() {
+		} else if war.Execute.CanCast(sim, war.CurrentTarget) {
 			war.CastExecute(sim, war.CurrentTarget)
 		}
 	}

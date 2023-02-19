@@ -598,13 +598,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestFrost-AllItems-SparkofHope-45703"
- value: {
-  dps: 4862.61247
-  tps: 3846.354
- }
-}
-dps_results: {
  key: "TestFrost-AllItems-SparkofLife-37657"
  value: {
   dps: 4982.0276
