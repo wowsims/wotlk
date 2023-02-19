@@ -256,12 +256,12 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 			const rotation = this.player.getRotation()
 			const options = this.player.getSpecOptions()
 			const encounter = this.sim.encounter
-			if (this.player.getTalents().mutilate) {
+			if (this.player.getTalentTree() == 0) {
 				if (rotation.assassinationFinisherPriority == AssassinationPriority.AssassinationPriorityUnknown) {
 					rotation.assassinationFinisherPriority = Presets.DefaultRotation.assassinationFinisherPriority;
 				}
 				rotation.combatFinisherPriority = CombatPriority.CombatPriorityUnknown;
-			} else if (this.player.getTalents().combatPotency) {
+			} else if (this.player.getTalentTree() == 1) {
 				rotation.assassinationFinisherPriority = AssassinationPriority.AssassinationPriorityUnknown;
 				if (rotation.combatFinisherPriority == CombatPriority.CombatPriorityUnknown) {
 					rotation.combatFinisherPriority = Presets.DefaultRotation.combatFinisherPriority;
