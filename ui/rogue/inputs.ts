@@ -177,12 +177,5 @@ export const RogueRotationConfig = {
 			labelTooltip: 'Cast Rupture as needed to apply a bleed effect for Hunger for Blood',
 			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().hungerForBlood
 		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
-			fieldName: 'bleedAppliedByOther',
-			label: 'Bleed provided by other',
-			labelTooltip: 'Another player in the raid is applying a bleed effect for Hunger for Blood',
-			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().hungerForBlood
-
-		})
 	],
 };

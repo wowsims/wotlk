@@ -231,12 +231,6 @@ func (rogue *Rogue) Reset(sim *core.Simulation) {
 			rogue.MasterOfSubtletyAura.UpdateExpires(sim.CurrentTime + time.Second*time.Duration(length))
 		}
 	}
-	// Bleed applied by other rotation option
-	if rogue.Rotation.BleedAppliedByOther {
-		// add a bleed debuff
-		bleedAura := core.DummyBleedAura(rogue.CurrentTarget)
-		bleedAura.Activate(sim)
-	}
 	rogue.setPriorityItems(sim)
 }
 
