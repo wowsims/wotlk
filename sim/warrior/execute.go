@@ -40,6 +40,9 @@ func (warrior *Warrior) registerExecuteSpell() {
 			},
 			IgnoreHaste: true,
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return sim.IsExecutePhase20() || warrior.IsSuddenDeathActive()
+		},
 
 		DamageMultiplier: 1,
 		CritMultiplier:   warrior.critMultiplier(mh),
@@ -65,15 +68,7 @@ func (warrior *Warrior) registerExecuteSpell() {
 }
 
 func (warrior *Warrior) SpamExecute(spam bool) bool {
-	return warrior.CurrentRage() >= warrior.Execute.BaseCost && spam && warrior.PrimaryTalentTree == ArmsTree
-}
-
-func (warrior *Warrior) CanExecute() bool {
-	return warrior.CurrentRage() >= warrior.Execute.BaseCost
-}
-
-func (warrior *Warrior) CanSuddenDeathExecute() bool {
-	return warrior.CurrentRage() >= warrior.Execute.BaseCost && warrior.isSuddenDeathActive()
+	return warrior.CurrentRage() >= warrior.Execute.DefaultCast.Cost && spam && warrior.PrimaryTalentTree == ArmsTree
 }
 
 func (warrior *Warrior) CastExecute(sim *core.Simulation, target *core.Unit) bool {

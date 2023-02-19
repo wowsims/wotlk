@@ -18,7 +18,6 @@ type SpellConfig struct {
 	ProcMask     ProcMask
 	Flags        SpellFlag
 	MissileSpeed float64
-	ResourceType stats.Stat
 	BaseCost     float64
 	MetricSplits int
 
@@ -75,8 +74,6 @@ type Spell struct {
 	// Example: https://wow.tools/dbc/?dbc=spellmisc&build=3.4.0.44996
 	MissileSpeed float64
 
-	// Should be stats.Mana, stats.Energy, stats.Rage, or unset.
-	ResourceType      stats.Stat
 	ResourceMetrics   *ResourceMetrics
 	comboPointMetrics *ResourceMetrics
 	runicPowerMetrics *ResourceMetrics
@@ -85,10 +82,6 @@ type Spell struct {
 	unholyRuneMetrics *ResourceMetrics
 	deathRuneMetrics  *ResourceMetrics
 	healthMetrics     []*ResourceMetrics
-
-	// Base cost. Many effects in the game which 'reduce mana cost by X%'
-	// are calculated using the base cost.
-	BaseCost float64
 
 	Cost               SpellCost // Cost for the spell.
 	DefaultCast        Cast      // Default cast parameters with all static effects applied.
@@ -171,8 +164,6 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		ProcMask:     config.ProcMask,
 		Flags:        config.Flags,
 		MissileSpeed: config.MissileSpeed,
-		ResourceType: config.ResourceType,
-		BaseCost:     config.BaseCost,
 
 		DefaultCast:        config.Cast.DefaultCast,
 		CD:                 config.Cast.CD,
@@ -233,10 +224,6 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		spell.Cost = newRageCost(spell, config.RageCost)
 	} else if config.RuneCost.BloodRuneCost != 0 || config.RuneCost.FrostRuneCost != 0 || config.RuneCost.UnholyRuneCost != 0 || config.RuneCost.RunicPowerCost != 0 || config.RuneCost.RunicPowerGain != 0 {
 		spell.Cost = newRuneCost(spell, config.RuneCost)
-	}
-
-	if spell.ResourceType == 0 && spell.DefaultCast.Cost != 0 {
-		panic("Cost set for spell " + spell.ActionID.String() + " but no resource type")
 	}
 
 	spell.createDots(config.Dot, false)

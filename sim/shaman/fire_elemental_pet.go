@@ -87,8 +87,8 @@ func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
 		return
 	}
 
-	if fireElemental.FireNova.BaseCost > fireElemental.CurrentMana() {
-		fireElemental.WaitForMana(sim, fireElemental.FireNova.BaseCost)
+	if fireElemental.FireNova.DefaultCast.Cost > fireElemental.CurrentMana() {
+		fireElemental.WaitForMana(sim, fireElemental.FireNova.DefaultCast.Cost)
 		return
 	}
 

@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 type OnRune func(sim *Simulation)
@@ -1110,10 +1109,9 @@ type RuneCostImpl struct {
 }
 
 func newRuneCost(spell *Spell, options RuneCostOptions) *RuneCostImpl {
-	spell.ResourceType = stats.RunicPower
-	spell.BaseCost = float64(NewRuneCost(uint8(options.RunicPowerCost), uint8(options.BloodRuneCost), uint8(options.FrostRuneCost), uint8(options.UnholyRuneCost), 0))
-	spell.DefaultCast.Cost = spell.BaseCost
-	spell.CurCast.Cost = spell.BaseCost
+	baseCost := float64(NewRuneCost(uint8(options.RunicPowerCost), uint8(options.BloodRuneCost), uint8(options.FrostRuneCost), uint8(options.UnholyRuneCost), 0))
+	spell.DefaultCast.Cost = baseCost
+	spell.CurCast.Cost = baseCost
 
 	return &RuneCostImpl{
 		BloodRuneCost:  options.BloodRuneCost,
