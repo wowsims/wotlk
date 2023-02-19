@@ -466,7 +466,7 @@ func (paladin *Paladin) applyJudgmentsOfTheWise() {
 	procSpell := paladin.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 31878},
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, _ *core.Spell) {
-			paladin.AddMana(sim, paladin.BaseMana*0.25, paladin.JowiseManaMetrics, false)
+			paladin.AddMana(sim, paladin.BaseMana*0.25, paladin.JowiseManaMetrics)
 			paladin.Env.Raid.ProcReplenishment(sim, replSrc)
 		},
 	})

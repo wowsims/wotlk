@@ -387,7 +387,7 @@ func init() {
 			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 				if icd.IsReady(sim) && sim.RandomFloat("Darkglow") < 0.35 {
 					icd.Use(sim)
-					character.AddMana(sim, 400, manaMetrics, false)
+					character.AddMana(sim, 400, manaMetrics)
 				}
 			},
 		})

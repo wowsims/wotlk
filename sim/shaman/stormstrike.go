@@ -127,7 +127,7 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
 			if result.Landed() {
 				if impSSChance > 0 && sim.RandomFloat("Improved Stormstrike") < impSSChance {
-					shaman.AddMana(sim, 0.2*shaman.BaseMana, manaMetrics, true)
+					shaman.AddMana(sim, 0.2*shaman.BaseMana, manaMetrics)
 				}
 				ssDebuffAura := ssDebuffAuras.Get(target)
 				ssDebuffAura.Activate(sim)

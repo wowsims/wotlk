@@ -217,7 +217,7 @@ func (wp *WarlockPet) newShadowBite() *core.Spell {
 
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if impFelhunter && result.Landed() {
-				wp.AddMana(sim, wp.MaxMana()*maxManaMult, petManaMetrics, true)
+				wp.AddMana(sim, wp.MaxMana()*maxManaMult, petManaMetrics)
 			}
 			spell.DealDamage(sim, result)
 		},

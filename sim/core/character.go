@@ -64,11 +64,6 @@ type Character struct {
 	// This character's index within its party [0-4].
 	PartyIndex int
 
-	// Total amount of remaining additional mana expected for the current sim iteration,
-	// beyond this Character's mana pool. This should include mana potions / runes /
-	// innervates / etc.
-	ExpectedBonusMana float64
-
 	defensiveTrinketCD *Timer
 	offensiveTrinketCD *Timer
 	conjuredCD         *Timer
@@ -426,7 +421,6 @@ func (character *Character) init(sim *Simulation, agent Agent) {
 }
 
 func (character *Character) reset(sim *Simulation, agent Agent) {
-	character.ExpectedBonusMana = 0
 	character.Unit.reset(sim, agent)
 	character.majorCooldownManager.reset(sim)
 	character.ItemSwap.reset(sim)

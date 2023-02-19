@@ -171,7 +171,7 @@ func (hp *HunterPet) registerRoarOfRecoveryCD() {
 				Period:   time.Second * 3,
 				NumTicks: 3,
 				OnAction: func(sim *core.Simulation) {
-					hunter.AddMana(sim, hunter.MaxMana()*0.1, manaMetrics, false)
+					hunter.AddMana(sim, 0.1*hunter.MaxMana(), manaMetrics)
 				},
 			})
 		},

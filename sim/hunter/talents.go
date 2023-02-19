@@ -187,7 +187,7 @@ func (hunter *Hunter) applyInvigoration() {
 			}
 
 			if sim.Proc(procChance, "Invigoration") {
-				hunter.AddMana(sim, 0.01*hunter.MaxMana(), manaMetrics, false)
+				hunter.AddMana(sim, 0.01*hunter.MaxMana(), manaMetrics)
 			}
 		},
 	})
@@ -615,14 +615,14 @@ func (hunter *Hunter) applyThrillOfTheHunt() {
 			}
 
 			if sim.Proc(procChance, "ThrillOfTheHunt") {
-				hunter.AddMana(sim, spell.CurCast.Cost*0.4, manaMetrics, false)
+				hunter.AddMana(sim, spell.CurCast.Cost*0.4, manaMetrics)
 			}
 		},
 		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if result.DidCrit() && (spell == hunter.ExplosiveShotR4 || spell == hunter.ExplosiveShotR3) {
 				// Explosive shot ticks can proc TotH but with 1/3 the bonus.
 				if sim.Proc(procChance, "ThrillOfTheHunt") {
-					hunter.AddMana(sim, spell.CurCast.Cost*0.4/3, manaMetrics, false)
+					hunter.AddMana(sim, spell.CurCast.Cost*0.4/3, manaMetrics)
 				}
 			}
 		},

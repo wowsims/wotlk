@@ -38,7 +38,7 @@ func (priest *Priest) RegisterHymnOfHopeCD() {
 				OnAction: func(sim *core.Simulation) {
 					// This is 3%, but it increases the target's max mana by 20% for the duration
 					// so just simplify to 3 * 1.2 = 3.6%.
-					priest.AddMana(sim, priest.MaxMana()*0.036, manaMetrics, true)
+					priest.AddMana(sim, priest.MaxMana()*0.036, manaMetrics)
 				},
 			})
 		},
