@@ -7,16 +7,13 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
-	flatBaseDamage := 127.0 + 370*float64(comboPoints)
-	// tooltip implies 3..7% AP scaling, but testing show it's fixed at 7% (3.4.0.46158)
-	apRatio := 0.07 * float64(comboPoints)
-
-	return rogue.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48668, Tag: comboPoints},
-		SpellSchool: core.SpellSchoolPhysical,
-		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | rogue.finisherFlags(),
+func (rogue *Rogue) registerEviscerate() {
+	rogue.Eviscerate = rogue.RegisterSpell(core.SpellConfig{
+		ActionID:     core.ActionID{SpellID: 48668},
+		SpellSchool:  core.SpellSchoolPhysical,
+		ProcMask:     core.ProcMaskMeleeMHSpecial,
+		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | rogue.finisherFlags(),
+		MetricSplits: 6,
 
 		EnergyCost: core.EnergyCostOptions{
 			Cost:          35,
@@ -28,6 +25,12 @@ func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 				GCD: time.Second,
 			},
 			IgnoreHaste: true,
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				spell.SetMetricsSplit(spell.Unit.ComboPoints())
+			},
+		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return rogue.ComboPoints() > 0
 		},
 
 		BonusCritRating: core.TernaryFloat64(
@@ -40,6 +43,11 @@ func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			comboPoints := rogue.ComboPoints()
+			flatBaseDamage := 127 + 370*float64(comboPoints)
+			// tooltip implies 3..7% AP scaling, but testing show it's fixed at 7% (3.4.0.46158)
+			apRatio := 0.07 * float64(comboPoints)
+
 			baseDamage := flatBaseDamage +
 				254.0*sim.RandomFloat("Eviscerate") +
 				apRatio*spell.MeleeAttackPower() +
@@ -57,15 +65,4 @@ func (rogue *Rogue) makeEviscerate(comboPoints int32) *core.Spell {
 			spell.DealDamage(sim, result)
 		},
 	})
-}
-
-func (rogue *Rogue) registerEviscerate() {
-	rogue.Eviscerate = [6]*core.Spell{
-		nil,
-		rogue.makeEviscerate(1),
-		rogue.makeEviscerate(2),
-		rogue.makeEviscerate(3),
-		rogue.makeEviscerate(4),
-		rogue.makeEviscerate(5),
-	}
 }
