@@ -44,7 +44,7 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 			CD: cd,
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return !priest.WeakenedSouls[target.UnitIndex].IsActive()
+			return !priest.WeakenedSouls.Get(target).IsActive()
 		},
 
 		DamageMultiplier: 1 *
@@ -61,7 +61,7 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 			shield := priest.PWSShields[target.UnitIndex]
 			shield.Apply(sim, shieldAmount)
 
-			weakenedSoul := priest.WeakenedSouls[target.UnitIndex]
+			weakenedSoul := priest.WeakenedSouls.Get(target)
 			weakenedSoul.Duration = wsDuration
 			weakenedSoul.Activate(sim)
 
@@ -82,12 +82,13 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 			Duration: time.Second * 30,
 		})
 
-	priest.WeakenedSouls = make([]*core.Aura, len(priest.Env.AllUnits))
-	for _, unit := range priest.Env.AllUnits {
-		if !priest.IsOpponent(unit) {
-			priest.WeakenedSouls[unit.UnitIndex] = priest.makeWeakenedSoul(unit)
-		}
-	}
+	priest.WeakenedSouls = priest.NewAllyAuraArray(func(target *core.Unit) *core.Aura {
+		return target.GetOrRegisterAura(core.Aura{
+			Label:    "Weakened Soul",
+			ActionID: core.ActionID{SpellID: 6788},
+			Duration: time.Second * 15,
+		})
+	})
 
 	if priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfPowerWordShield) {
 		glyphHeal = priest.RegisterSpell(core.SpellConfig{
@@ -122,13 +123,5 @@ func (priest *Priest) makePWSShield(target *core.Unit) *core.Shield {
 			ActionID: priest.PowerWordShield.ActionID,
 			Duration: time.Second * 30,
 		}),
-	})
-}
-
-func (priest *Priest) makeWeakenedSoul(target *core.Unit) *core.Aura {
-	return target.GetOrRegisterAura(core.Aura{
-		Label:    "Weakened Soul",
-		ActionID: core.ActionID{SpellID: 6788},
-		Duration: time.Second * 15,
 	})
 }
