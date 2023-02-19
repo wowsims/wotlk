@@ -13,7 +13,7 @@ func addPatchwerk10(bossPrefix string) {
 		PathPrefix: bossPrefix,
 		Config: &proto.Target{
 			Id:        16028,
-			Name:      "Patchwerk 10",
+			Name:      "Patchwerk",
 			Level:     83,
 			MobType:   proto.MobType_MobTypeUndead,
 			TankIndex: 0,
@@ -31,11 +31,12 @@ func addPatchwerk10(bossPrefix string) {
 			ParryHaste:       false,
 			DualWield:        true,
 			DualWieldPenalty: false,
+			TargetInputs:     make([]*proto.TargetInput, 0),
 		},
 		AI: NewPatchwerk10AI(),
 	})
-	core.AddPresetEncounter("Patchwerk 10", []string{
-		bossPrefix + "/Patchwerk 10",
+	core.AddPresetEncounter("Patchwerk", []string{
+		bossPrefix + "/Patchwerk",
 	})
 }
 
@@ -52,11 +53,14 @@ func NewPatchwerk10AI() core.AIFactory {
 	}
 }
 
-func (ai *Patchwerk10AI) Initialize(target *core.Target) {
+func (ai *Patchwerk10AI) Initialize(target *core.Target, config *proto.Target) {
 	ai.Target = target
 
 	ai.registerHatefulStrikeSpell(target)
 	ai.registerFrenzySpell(target)
+}
+
+func (ai *Patchwerk10AI) Reset(*core.Simulation) {
 }
 
 func (ai *Patchwerk10AI) registerHatefulStrikeSpell(target *core.Target) {
@@ -119,6 +123,11 @@ func (ai *Patchwerk10AI) registerFrenzySpell(target *core.Target) {
 }
 
 func (ai *Patchwerk10AI) DoAction(sim *core.Simulation) {
+	if ai.Target.CurrentTarget == nil {
+		ai.Target.DoNothing()
+		return
+	}
+
 	if ai.Frenzy.IsReady(sim) && sim.GetRemainingDurationPercent() < 0.05 {
 		ai.Frenzy.Cast(sim, ai.Target.CurrentTarget)
 	}

@@ -160,6 +160,10 @@ func (character *Character) DoNothing() {
 	character.doNothing = true
 }
 
+func (unit *Unit) IsActive() bool {
+	return unit.IsEnabled() && unit.CurrentHealthPercent() > 0
+}
+
 func (unit *Unit) IsOpponent(other *Unit) bool {
 	return (unit.Type == EnemyUnit) != (other.Type == EnemyUnit)
 }

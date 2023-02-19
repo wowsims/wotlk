@@ -15,7 +15,7 @@ func (mage *Mage) applyFocusMagic() {
 	if mage.Party.Raid.Size() == 1 {
 		if mage.Options.FocusMagicPercentUptime > 0 {
 			selfAura, _ := core.FocusMagicAura(mage.GetCharacter(), nil)
-			core.ApplyFixedUptimeAura(selfAura, float64(mage.Options.FocusMagicPercentUptime)/100, time.Second*10)
+			core.ApplyFixedUptimeAura(selfAura, float64(mage.Options.FocusMagicPercentUptime)/100, time.Second*10, 1)
 		}
 		return
 	}

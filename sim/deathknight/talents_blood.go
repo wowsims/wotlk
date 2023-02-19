@@ -34,11 +34,11 @@ func (dk *Deathknight) ApplyBloodTalents() {
 
 	// Two Handed Specialization
 	if dk.HasMHWeapon() && dk.Equip[proto.ItemSlot_ItemSlotMainHand].HandType == proto.HandType_HandTypeTwoHand {
-		dk.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1 + 0.01*float64(dk.Talents.TwoHandedWeaponSpecialization)
+		dk.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1 + 0.02*float64(dk.Talents.TwoHandedWeaponSpecialization)
 	}
 
 	// Rune Tap
-	// TODO: Implemented outside
+	// Implemented outside
 
 	// Dark Conviction
 	dk.AddStats(stats.Stats{
@@ -47,16 +47,16 @@ func (dk *Deathknight) ApplyBloodTalents() {
 	})
 
 	// Death Rune Mastery
-	// TODO: Implemented outside
+	// Implemented outside
 
 	// Improved Rune Tap
-	// TODO: Implemented outside
+	// Implemented outside
 
 	// Spell Deflection
 	dk.applySpellDeflection()
 
 	// Vendetta
-	// TODO: Pointless
+	// Pointless
 
 	// Bloody Strikes
 	// Implemented
@@ -72,7 +72,7 @@ func (dk *Deathknight) ApplyBloodTalents() {
 	}
 
 	// Mark of Blood
-	// TODO: Implement
+	// Implemented
 
 	dk.applyBloodworms()
 	dk.applyBloodyVengeance()
@@ -355,19 +355,18 @@ func (dk *Deathknight) applyBloodGorged() {
 	}
 
 	bonusDamage := 1.1
+
 	armorPenRating := 10.0 * core.ArmorPenPerPercentArmor
-	bonusStats := stats.Stats{stats.ArmorPenetration: armorPenRating}
+	dk.AddStat(stats.ArmorPenetration, armorPenRating)
 
 	procAura := core.MakePermanent(dk.RegisterAura(core.Aura{
 		Label:    "Blood Gorged Proc",
 		ActionID: core.ActionID{SpellID: 50111},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.DamageDealtMultiplier *= bonusDamage
-			aura.Unit.AddStatsDynamic(sim, bonusStats)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.DamageDealtMultiplier /= bonusDamage
-			aura.Unit.AddStatsDynamic(sim, bonusStats.Multiply(-1))
 		},
 	}))
 

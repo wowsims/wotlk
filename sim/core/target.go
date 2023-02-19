@@ -170,6 +170,10 @@ func (target *Target) init(sim *Simulation) {
 
 func (target *Target) Reset(sim *Simulation) {
 	target.Unit.reset(sim, nil)
+	target.SetGCDTimer(sim, 0)
+	if target.AI != nil {
+		target.AI.Reset(sim)
+	}
 }
 
 func (target *Target) Advance(sim *Simulation, elapsedTime time.Duration) {

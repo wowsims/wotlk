@@ -620,6 +620,20 @@ enum MobType {
 	MobTypeUndead = 8;
 }
 
+enum InputType {
+	Bool = 0;
+	Number = 1;
+}
+
+message TargetInput {
+	InputType input_type = 1;
+	string label = 2;
+	string tooltip = 5;
+	
+	bool bool_value = 3;
+	double number_value = 4;
+}
+
 message Target {
 	// The in-game NPC ID.
 	int32 id = 14;
@@ -642,6 +656,9 @@ message Target {
 	// Index in Raid.tanks indicating the player tanking this mob.
 	// -1 or invalid index indicates not being tanked.
 	int32 tank_index = 6;
+
+	// Custom Target AI parameters
+	repeated TargetInput target_inputs = 18;
 }
 
 message Encounter {

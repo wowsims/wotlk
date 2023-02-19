@@ -410,6 +410,10 @@ func (spell *Spell) HealthMetrics(target *Unit) *ResourceMetrics {
 	return spell.healthMetrics[target.UnitIndex]
 }
 
+func (spell *Spell) FinalCritMultiplier() float64 {
+	return spell.CritMultiplier * spell.Unit.PseudoStats.SchoolCritMultiplier[spell.SchoolIndex]
+}
+
 func (spell *Spell) ReadyAt() time.Duration {
 	return BothTimersReadyAt(spell.CD.Timer, spell.SharedCD.Timer)
 }
@@ -499,7 +503,10 @@ func (spell *Spell) applyEffects(sim *Simulation, target *Unit) {
 	if target == nil {
 		target = spell.Unit.CurrentTarget
 	}
-	spell.SpellMetrics[target.UnitIndex].Casts++
+	// target can still be null in individual sims when the caster is the enemy target
+	if target != nil {
+		spell.SpellMetrics[target.UnitIndex].Casts++
+	}
 	spell.ApplyEffects(sim, target, spell)
 }
 
