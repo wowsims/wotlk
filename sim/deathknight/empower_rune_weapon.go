@@ -11,6 +11,7 @@ func (dk *Deathknight) registerEmpowerRuneWeaponSpell() {
 	cdTimer := dk.NewTimer()
 	cd := time.Minute * 5
 
+	rpMetrics := dk.NewRunicPowerMetrics(actionID)
 	dk.EmpowerRuneWeapon = dk.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
@@ -22,7 +23,7 @@ func (dk *Deathknight) registerEmpowerRuneWeaponSpell() {
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dk.RegenAllRunes(sim)
-			dk.AddRunicPower(sim, 25, dk.EmpowerRuneWeapon.RunicPowerMetrics())
+			dk.AddRunicPower(sim, 25, rpMetrics)
 		},
 	})
 }

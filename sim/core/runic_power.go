@@ -1106,6 +1106,12 @@ type RuneCostImpl struct {
 	RunicPowerCost float64
 	RunicPowerGain float64
 	Refundable     bool
+
+	runicPowerMetrics *ResourceMetrics
+	bloodRuneMetrics  *ResourceMetrics
+	frostRuneMetrics  *ResourceMetrics
+	unholyRuneMetrics *ResourceMetrics
+	deathRuneMetrics  *ResourceMetrics
 }
 
 func newRuneCost(spell *Spell, options RuneCostOptions) *RuneCostImpl {
@@ -1120,6 +1126,12 @@ func newRuneCost(spell *Spell, options RuneCostOptions) *RuneCostImpl {
 		RunicPowerCost: options.RunicPowerCost,
 		RunicPowerGain: options.RunicPowerGain,
 		Refundable:     options.Refundable,
+
+		runicPowerMetrics: Ternary(options.RunicPowerCost > 0 || options.RunicPowerGain > 0, spell.Unit.NewRunicPowerMetrics(spell.ActionID), nil),
+		bloodRuneMetrics:  Ternary(options.BloodRuneCost > 0, spell.Unit.NewBloodRuneMetrics(spell.ActionID), nil),
+		frostRuneMetrics:  Ternary(options.FrostRuneCost > 0, spell.Unit.NewFrostRuneMetrics(spell.ActionID), nil),
+		unholyRuneMetrics: Ternary(options.UnholyRuneCost > 0, spell.Unit.NewUnholyRuneMetrics(spell.ActionID), nil),
+		deathRuneMetrics:  spell.Unit.NewDeathRuneMetrics(spell.ActionID),
 	}
 }
 
@@ -1224,4 +1236,24 @@ func (spell *Spell) SpendRefundableCostAndConvertFrostOrUnholyRune(sim *Simulati
 func (rc *RuneCostImpl) IssueRefund(sim *Simulation, spell *Spell) {
 	// Instead of issuing refunds we just don't charge the cost of spells which
 	// miss; this is better for perf since we'd have to cancel the regen actions.
+}
+
+func (spell *Spell) RunicPowerMetrics() *ResourceMetrics {
+	return spell.Cost.(*RuneCostImpl).runicPowerMetrics
+}
+
+func (spell *Spell) BloodRuneMetrics() *ResourceMetrics {
+	return spell.Cost.(*RuneCostImpl).bloodRuneMetrics
+}
+
+func (spell *Spell) FrostRuneMetrics() *ResourceMetrics {
+	return spell.Cost.(*RuneCostImpl).frostRuneMetrics
+}
+
+func (spell *Spell) UnholyRuneMetrics() *ResourceMetrics {
+	return spell.Cost.(*RuneCostImpl).unholyRuneMetrics
+}
+
+func (spell *Spell) DeathRuneMetrics() *ResourceMetrics {
+	return spell.Cost.(*RuneCostImpl).deathRuneMetrics
 }

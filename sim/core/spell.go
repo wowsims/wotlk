@@ -74,14 +74,8 @@ type Spell struct {
 	// Example: https://wow.tools/dbc/?dbc=spellmisc&build=3.4.0.44996
 	MissileSpeed float64
 
-	ResourceMetrics   *ResourceMetrics
-	comboPointMetrics *ResourceMetrics
-	runicPowerMetrics *ResourceMetrics
-	bloodRuneMetrics  *ResourceMetrics
-	frostRuneMetrics  *ResourceMetrics
-	unholyRuneMetrics *ResourceMetrics
-	deathRuneMetrics  *ResourceMetrics
-	healthMetrics     []*ResourceMetrics
+	ResourceMetrics *ResourceMetrics
+	healthMetrics   []*ResourceMetrics
 
 	Cost               SpellCost // Cost for the spell.
 	DefaultCast        Cast      // Default cast parameters with all static effects applied.
@@ -366,48 +360,6 @@ func (spell *Spell) doneIteration() {
 			spell.Unit.Metrics.addSpellMetrics(spell, spell.ActionID.WithTag(int32(i)), spellMetrics)
 		}
 	}
-}
-
-func (spell *Spell) ComboPointMetrics() *ResourceMetrics {
-	if spell.comboPointMetrics == nil {
-		spell.comboPointMetrics = spell.Unit.NewComboPointMetrics(spell.ActionID)
-	}
-	return spell.comboPointMetrics
-}
-
-func (spell *Spell) RunicPowerMetrics() *ResourceMetrics {
-	if spell.runicPowerMetrics == nil {
-		spell.runicPowerMetrics = spell.Unit.NewRunicPowerMetrics(spell.ActionID)
-	}
-	return spell.runicPowerMetrics
-}
-
-func (spell *Spell) BloodRuneMetrics() *ResourceMetrics {
-	if spell.bloodRuneMetrics == nil {
-		spell.bloodRuneMetrics = spell.Unit.NewBloodRuneMetrics(spell.ActionID)
-	}
-	return spell.bloodRuneMetrics
-}
-
-func (spell *Spell) FrostRuneMetrics() *ResourceMetrics {
-	if spell.frostRuneMetrics == nil {
-		spell.frostRuneMetrics = spell.Unit.NewFrostRuneMetrics(spell.ActionID)
-	}
-	return spell.frostRuneMetrics
-}
-
-func (spell *Spell) UnholyRuneMetrics() *ResourceMetrics {
-	if spell.unholyRuneMetrics == nil {
-		spell.unholyRuneMetrics = spell.Unit.NewUnholyRuneMetrics(spell.ActionID)
-	}
-	return spell.unholyRuneMetrics
-}
-
-func (spell *Spell) DeathRuneMetrics() *ResourceMetrics {
-	if spell.deathRuneMetrics == nil {
-		spell.deathRuneMetrics = spell.Unit.NewDeathRuneMetrics(spell.ActionID)
-	}
-	return spell.deathRuneMetrics
 }
 
 func (spell *Spell) HealthMetrics(target *Unit) *ResourceMetrics {
