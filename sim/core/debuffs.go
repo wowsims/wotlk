@@ -439,6 +439,14 @@ func StampedeAura(target *Unit) *Aura {
 	}, 1.25)
 }
 
+func DummyBleedAura(target *Unit) *Aura {
+	return bleedDamageAura(target, Aura{
+		Label:    "Bleeding Out",
+		ActionID: ActionID{SpellID: 50665},
+		Duration: NeverExpires,
+	}, 1.0)
+}
+
 const BleedEffectCategory = "BleedDamage"
 
 func bleedDamageAura(target *Unit, config Aura, multiplier float64) *Aura {
