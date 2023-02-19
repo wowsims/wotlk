@@ -187,7 +187,7 @@ func init() {
 				// Need to store the points because they get spent before OnSpellHit is called.
 				numPoints = rogue.ComboPoints()
 
-				if spell.SameActionIgnoreTag(rogue.SliceAndDice[1].ActionID) {
+				if spell == rogue.SliceAndDice {
 					// SND won't call OnSpellHit, so we have to add the effect now.
 					if p := 0.2 * float64(numPoints); sim.Proc(p, "AshtongueTalismanOfLethality") {
 						procAura.Activate(sim)

@@ -290,23 +290,6 @@ func init() {
 		})
 	})
 
-	core.NewItemEffect(45703, func(agent core.Agent) { // Spark of Hope
-		character := agent.GetCharacter()
-
-		if !character.HasManaBar() {
-			return
-		}
-
-		for _, spell := range character.Spellbook {
-			if spell.ResourceType == stats.Mana && spell.BaseCost > 0 {
-				defaultCastRatio := spell.DefaultCast.Cost / spell.BaseCost
-
-				spell.BaseCost = core.MaxFloat(spell.BaseCost-44, 0)
-				spell.DefaultCast.Cost = spell.BaseCost * defaultCastRatio
-			}
-		}
-	})
-
 	core.NewItemEffect(46017, func(agent core.Agent) { // Val'anyr
 		character := agent.GetCharacter()
 

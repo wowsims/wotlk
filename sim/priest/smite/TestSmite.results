@@ -626,13 +626,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-SparkofHope-45703"
- value: {
-  dps: 3399.69258
-  tps: 2895.90335
- }
-}
-dps_results: {
  key: "TestSmite-AllItems-SparkofLife-37657"
  value: {
   dps: 3401.97192

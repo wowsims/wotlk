@@ -463,7 +463,7 @@ type CharacterSuiteConfig struct {
 func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator {
 	allRaces := append(config.OtherRaces, config.Race)
 	allGearSets := append(config.OtherGearSets, config.GearSet)
-	allTalentSets := []TalentsCombo{TalentsCombo{
+	allTalentSets := []TalentsCombo{{
 		Label:   "Talents",
 		Talents: config.Talents,
 		Glyphs:  config.Glyphs,

@@ -18,8 +18,8 @@ type SpellConfig struct {
 	ProcMask     ProcMask
 	Flags        SpellFlag
 	MissileSpeed float64
-	ResourceType stats.Stat
 	BaseCost     float64
+	MetricSplits int
 
 	ManaCost   ManaCostOptions
 	EnergyCost EnergyCostOptions
@@ -74,8 +74,6 @@ type Spell struct {
 	// Example: https://wow.tools/dbc/?dbc=spellmisc&build=3.4.0.44996
 	MissileSpeed float64
 
-	// Should be stats.Mana, stats.Energy, stats.Rage, or unset.
-	ResourceType      stats.Stat
 	ResourceMetrics   *ResourceMetrics
 	comboPointMetrics *ResourceMetrics
 	runicPowerMetrics *ResourceMetrics
@@ -84,10 +82,6 @@ type Spell struct {
 	unholyRuneMetrics *ResourceMetrics
 	deathRuneMetrics  *ResourceMetrics
 	healthMetrics     []*ResourceMetrics
-
-	// Base cost. Many effects in the game which 'reduce mana cost by X%'
-	// are calculated using the base cost.
-	BaseCost float64
 
 	Cost               SpellCost // Cost for the spell.
 	DefaultCast        Cast      // Default cast parameters with all static effects applied.
@@ -98,7 +92,8 @@ type Spell struct {
 	// Performs a cast of this spell.
 	castFn CastSuccessFunc
 
-	SpellMetrics []SpellMetrics
+	SpellMetrics      []SpellMetrics
+	splitSpellMetrics [][]SpellMetrics // Used to split metrics by some condition.
 
 	// Performs the actions of this spell.
 	ApplyEffects ApplySpellResults
@@ -169,8 +164,6 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		ProcMask:     config.ProcMask,
 		Flags:        config.Flags,
 		MissileSpeed: config.MissileSpeed,
-		ResourceType: config.ResourceType,
-		BaseCost:     config.BaseCost,
 
 		DefaultCast:        config.Cast.DefaultCast,
 		CD:                 config.Cast.CD,
@@ -194,6 +187,8 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 
 		ThreatMultiplier: config.ThreatMultiplier,
 		FlatThreatBonus:  config.FlatThreatBonus,
+
+		splitSpellMetrics: make([][]SpellMetrics, MaxInt(1, config.MetricSplits)),
 	}
 
 	if (spell.DamageMultiplier != 0 || spell.ThreatMultiplier != 0) && spell.ProcMask == ProcMaskUnknown {
@@ -229,10 +224,6 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		spell.Cost = newRageCost(spell, config.RageCost)
 	} else if config.RuneCost.BloodRuneCost != 0 || config.RuneCost.FrostRuneCost != 0 || config.RuneCost.UnholyRuneCost != 0 || config.RuneCost.RunicPowerCost != 0 || config.RuneCost.RunicPowerGain != 0 {
 		spell.Cost = newRuneCost(spell, config.RuneCost)
-	}
-
-	if spell.ResourceType == 0 && spell.DefaultCast.Cost != 0 {
-		panic("Cost set for spell " + spell.ActionID.String() + " but no resource type")
 	}
 
 	spell.createDots(config.Dot, false)
@@ -329,14 +320,20 @@ func (spell *Spell) finalize() {
 	spell.initialDamageMultiplierAdditive = spell.DamageMultiplierAdditive
 	spell.initialCritMultiplier = spell.CritMultiplier
 	spell.initialThreatMultiplier = spell.ThreatMultiplier
+
+	if len(spell.splitSpellMetrics) > 1 && spell.ActionID.Tag != 0 {
+		panic(spell.ActionID.String() + " has split metrics and a non-zero tag, can only have one!")
+	}
+	for i := range spell.splitSpellMetrics {
+		spell.splitSpellMetrics[i] = make([]SpellMetrics, len(spell.Unit.Env.AllUnits))
+	}
+	spell.SpellMetrics = spell.splitSpellMetrics[0]
 }
 
 func (spell *Spell) reset(_ *Simulation) {
-	if len(spell.SpellMetrics) != len(spell.Unit.Env.AllUnits) {
-		spell.SpellMetrics = make([]SpellMetrics, len(spell.Unit.Env.AllUnits))
-	} else {
-		for i := range spell.SpellMetrics {
-			spell.SpellMetrics[i] = SpellMetrics{}
+	for i := range spell.splitSpellMetrics {
+		for j := range spell.SpellMetrics {
+			spell.splitSpellMetrics[i][j] = SpellMetrics{}
 		}
 	}
 
@@ -352,9 +349,22 @@ func (spell *Spell) reset(_ *Simulation) {
 	spell.ThreatMultiplier = spell.initialThreatMultiplier
 }
 
+func (spell *Spell) SetMetricsSplit(splitIdx int32) {
+	spell.SpellMetrics = spell.splitSpellMetrics[splitIdx]
+	spell.ActionID.Tag = splitIdx
+}
+
 func (spell *Spell) doneIteration() {
-	if !spell.Flags.Matches(SpellFlagNoMetrics) {
-		spell.Unit.Metrics.addSpell(spell)
+	if spell.Flags.Matches(SpellFlagNoMetrics) {
+		return
+	}
+
+	if len(spell.splitSpellMetrics) == 1 {
+		spell.Unit.Metrics.addSpellMetrics(spell, spell.ActionID, spell.SpellMetrics)
+	} else {
+		for i, spellMetrics := range spell.splitSpellMetrics {
+			spell.Unit.Metrics.addSpellMetrics(spell, spell.ActionID.WithTag(int32(i)), spellMetrics)
+		}
 	}
 }
 

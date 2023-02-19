@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // Time between energy ticks.
@@ -179,8 +178,6 @@ type EnergyCost struct {
 }
 
 func newEnergyCost(spell *Spell, options EnergyCostOptions) *EnergyCost {
-	spell.ResourceType = stats.Energy
-	spell.BaseCost = options.Cost
 	spell.DefaultCast.Cost = options.Cost
 	if options.Refund > 0 && options.RefundMetrics == nil {
 		options.RefundMetrics = spell.Unit.EnergyRefundMetrics
