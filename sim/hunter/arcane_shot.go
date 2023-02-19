@@ -49,7 +49,7 @@ func (hunter *Hunter) registerArcaneShotSpell(timer *core.Timer) {
 			baseDamage := 492 + 0.15*spell.RangedAttackPower(target)
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCrit)
 			if hasGlyph && result.Landed() && (hunter.SerpentSting.Dot(target).IsActive() || hunter.ScorpidStingAuras.Get(target).IsActive()) {
-				hunter.AddMana(sim, 0.2*hunter.ArcaneShot.DefaultCast.Cost, manaMetrics, false)
+				hunter.AddMana(sim, 0.2*hunter.ArcaneShot.DefaultCast.Cost, manaMetrics)
 			}
 			spell.DealDamage(sim, result)
 		},

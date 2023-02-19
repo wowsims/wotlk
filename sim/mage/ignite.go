@@ -105,7 +105,7 @@ func (mage *Mage) applyEmpoweredFire() {
 		},
 		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell == mage.Ignite && (procChance == 1 || sim.Proc(procChance, "Empowered Fire")) {
-				mage.AddMana(sim, mage.Unit.BaseMana*0.02, manaMetrics, false)
+				mage.AddMana(sim, mage.Unit.BaseMana*0.02, manaMetrics)
 			}
 		},
 	})

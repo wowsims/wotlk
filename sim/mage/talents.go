@@ -386,7 +386,7 @@ func (mage *Mage) applyMasterOfElements() {
 				if refundCoeff < 0 {
 					mage.SpendMana(sim, -1*spell.DefaultCast.Cost*refundCoeff, manaMetrics)
 				} else {
-					mage.AddMana(sim, spell.DefaultCast.Cost*refundCoeff, manaMetrics, false)
+					mage.AddMana(sim, spell.DefaultCast.Cost*refundCoeff, manaMetrics)
 				}
 			}
 		},

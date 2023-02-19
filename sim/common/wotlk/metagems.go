@@ -105,7 +105,7 @@ func init() {
 			ProcChance: 0.05,
 			ICD:        time.Second * 15,
 			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
-				character.AddMana(sim, 600, manaMetrics, false)
+				character.AddMana(sim, 600, manaMetrics)
 			},
 		})
 	})

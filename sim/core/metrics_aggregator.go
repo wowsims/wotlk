@@ -108,9 +108,8 @@ type CharacterIterationMetrics struct {
 	Died    bool // Whether this unit died in the current iteration.
 	WentOOM bool // Whether the agent has hit OOM at least once in this iteration.
 
-	ManaSpent       float64
-	ManaGained      float64
-	BonusManaGained float64 // Only includes amount from mana pots / runes / innervates.
+	ManaSpent  float64
+	ManaGained float64
 
 	OOMTime time.Duration // time spent not casting and waiting for regen.
 
@@ -390,7 +389,7 @@ func (unitMetrics *UnitMetrics) doneIteration(unit *Unit, sim *Simulation) {
 		timeToOOM := unitMetrics.FirstOOMTimestamp
 		if !unitMetrics.WentOOM {
 			// If we didn't actually go OOM in this iteration, infer TTO based on remaining mana.
-			manaSpentPerSecond := (unitMetrics.ManaSpent - (unitMetrics.ManaGained - unitMetrics.BonusManaGained)) / encounterDurationSeconds
+			manaSpentPerSecond := (unitMetrics.ManaSpent - unitMetrics.ManaGained) / encounterDurationSeconds
 			remainingTTO := DurationFromSeconds(unit.CurrentMana() / manaSpentPerSecond)
 			timeToOOM = DurationFromSeconds(encounterDurationSeconds) + remainingTTO
 			timeToOOM = MinDuration(timeToOOM, time.Minute*60)

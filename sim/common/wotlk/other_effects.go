@@ -248,7 +248,7 @@ func init() {
 			ProcChance: 0.25,
 			ICD:        time.Second * 45,
 			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
-				character.AddMana(sim, 900, manaMetrics, false)
+				character.AddMana(sim, 900, manaMetrics)
 			},
 		})
 	})
@@ -410,7 +410,7 @@ func init() {
 					},
 				},
 				ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-					character.AddMana(sim, amount, manaMetrics, false)
+					character.AddMana(sim, amount, manaMetrics)
 				},
 			})
 			character.AddMajorCooldown(core.MajorCooldown{
@@ -524,7 +524,7 @@ func init() {
 					NumTicks: 12,
 					Period:   time.Second * 1,
 					OnAction: func(sim *core.Simulation) {
-						character.AddMana(sim, 195, manaMetrics, false)
+						character.AddMana(sim, 195, manaMetrics)
 					},
 				})
 			},
@@ -547,7 +547,7 @@ func init() {
 			ProcChance: 0.25,
 			ICD:        time.Second * 45,
 			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
-				character.AddMana(sim, 500, manaMetrics, false)
+				character.AddMana(sim, 500, manaMetrics)
 			},
 		})
 	})
@@ -591,7 +591,7 @@ func init() {
 						OnAction: func(sim *core.Simulation) {
 							cpb := character.GetCurrentPowerBar()
 							if cpb == core.ManaBar {
-								character.AddMana(sim, 120, resourceMetricsMana, false)
+								character.AddMana(sim, 120, resourceMetricsMana)
 							} else if cpb == core.RageBar {
 								character.AddRage(sim, 2, resourceMetricsRage)
 							} else if cpb == core.EnergyBar {
@@ -629,7 +629,7 @@ func init() {
 			Callback: core.CallbackOnHealDealt | core.CallbackOnPeriodicHealDealt,
 			ICD:      time.Millisecond * 250,
 			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
-				character.AddMana(sim, 11, manaMetrics, false)
+				character.AddMana(sim, 11, manaMetrics)
 			},
 		})
 	})
