@@ -300,23 +300,23 @@ func (unit *Unit) NewFocusMetrics(actionID ActionID) *ResourceMetrics {
 }
 
 // Adds the results of a spell to the character metrics.
-func (unitMetrics *UnitMetrics) addSpell(spell *Spell) {
-	actionMetrics, ok := unitMetrics.actions[spell.ActionID]
+func (unitMetrics *UnitMetrics) addSpellMetrics(spell *Spell, actionID ActionID, spellMetrics []SpellMetrics) {
+	actionMetrics, ok := unitMetrics.actions[actionID]
 
 	if !ok {
 		actionMetrics = &ActionMetrics{IsMelee: spell.Flags.Matches(SpellFlagMeleeMetrics)}
-		unitMetrics.actions[spell.ActionID] = actionMetrics
+		unitMetrics.actions[actionID] = actionMetrics
 	}
 
 	if len(actionMetrics.Targets) == 0 {
-		actionMetrics.Targets = make([]TargetedActionMetrics, len(spell.SpellMetrics))
+		actionMetrics.Targets = make([]TargetedActionMetrics, len(spellMetrics))
 		for i := range actionMetrics.Targets {
 			tam := &actionMetrics.Targets[i]
 			tam.UnitIndex = spell.Unit.AttackTables[i].Defender.UnitIndex
 		}
 	}
 
-	for i, spellTargetMetrics := range spell.SpellMetrics {
+	for i, spellTargetMetrics := range spellMetrics {
 		tam := &actionMetrics.Targets[i]
 		tam.Casts += spellTargetMetrics.Casts
 		tam.Misses += spellTargetMetrics.Misses

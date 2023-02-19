@@ -20,6 +20,7 @@ type SpellConfig struct {
 	MissileSpeed float64
 	ResourceType stats.Stat
 	BaseCost     float64
+	MetricSplits int
 
 	ManaCost   ManaCostOptions
 	EnergyCost EnergyCostOptions
@@ -98,7 +99,8 @@ type Spell struct {
 	// Performs a cast of this spell.
 	castFn CastSuccessFunc
 
-	SpellMetrics []SpellMetrics
+	SpellMetrics      []SpellMetrics
+	splitSpellMetrics [][]SpellMetrics // Used to split metrics by some condition.
 
 	// Performs the actions of this spell.
 	ApplyEffects ApplySpellResults
@@ -194,6 +196,8 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 
 		ThreatMultiplier: config.ThreatMultiplier,
 		FlatThreatBonus:  config.FlatThreatBonus,
+
+		splitSpellMetrics: make([][]SpellMetrics, MaxInt(1, config.MetricSplits)),
 	}
 
 	if (spell.DamageMultiplier != 0 || spell.ThreatMultiplier != 0) && spell.ProcMask == ProcMaskUnknown {
@@ -329,14 +333,20 @@ func (spell *Spell) finalize() {
 	spell.initialDamageMultiplierAdditive = spell.DamageMultiplierAdditive
 	spell.initialCritMultiplier = spell.CritMultiplier
 	spell.initialThreatMultiplier = spell.ThreatMultiplier
+
+	if len(spell.splitSpellMetrics) > 1 && spell.ActionID.Tag != 0 {
+		panic(spell.ActionID.String() + " has split metrics and a non-zero tag, can only have one!")
+	}
+	for i := range spell.splitSpellMetrics {
+		spell.splitSpellMetrics[i] = make([]SpellMetrics, len(spell.Unit.Env.AllUnits))
+	}
+	spell.SpellMetrics = spell.splitSpellMetrics[0]
 }
 
 func (spell *Spell) reset(_ *Simulation) {
-	if len(spell.SpellMetrics) != len(spell.Unit.Env.AllUnits) {
-		spell.SpellMetrics = make([]SpellMetrics, len(spell.Unit.Env.AllUnits))
-	} else {
-		for i := range spell.SpellMetrics {
-			spell.SpellMetrics[i] = SpellMetrics{}
+	for i := range spell.splitSpellMetrics {
+		for j := range spell.SpellMetrics {
+			spell.splitSpellMetrics[i][j] = SpellMetrics{}
 		}
 	}
 
@@ -352,9 +362,22 @@ func (spell *Spell) reset(_ *Simulation) {
 	spell.ThreatMultiplier = spell.initialThreatMultiplier
 }
 
+func (spell *Spell) SetMetricsSplit(splitIdx int32) {
+	spell.SpellMetrics = spell.splitSpellMetrics[splitIdx]
+	spell.ActionID.Tag = splitIdx
+}
+
 func (spell *Spell) doneIteration() {
-	if !spell.Flags.Matches(SpellFlagNoMetrics) {
-		spell.Unit.Metrics.addSpell(spell)
+	if spell.Flags.Matches(SpellFlagNoMetrics) {
+		return
+	}
+
+	if len(spell.splitSpellMetrics) == 1 {
+		spell.Unit.Metrics.addSpellMetrics(spell, spell.ActionID, spell.SpellMetrics)
+	} else {
+		for i, spellMetrics := range spell.splitSpellMetrics {
+			spell.Unit.Metrics.addSpellMetrics(spell, spell.ActionID.WithTag(int32(i)), spellMetrics)
+		}
 	}
 }
 
