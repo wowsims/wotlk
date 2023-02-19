@@ -63,7 +63,7 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 			if rogue.SliceAndDiceAura.IsActive() {
 				return Skip
 			}
-			if rogue.ComboPoints() > 0 && rogue.CurrentEnergy() > rogue.SliceAndDice[1].DefaultCast.Cost {
+			if rogue.ComboPoints() > 0 && rogue.CurrentEnergy() > rogue.SliceAndDice.DefaultCast.Cost {
 				return Cast
 			}
 			if rogue.ComboPoints() < 1 && rogue.CurrentEnergy() > rogue.Builder.DefaultCast.Cost {
@@ -72,9 +72,9 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 			return Wait
 		},
 		func(s *core.Simulation, r *Rogue) bool {
-			return rogue.SliceAndDice[rogue.ComboPoints()].Cast(sim, rogue.CurrentTarget)
+			return rogue.SliceAndDice.Cast(sim, rogue.CurrentTarget)
 		},
-		rogue.SliceAndDice[1].DefaultCast.Cost,
+		rogue.SliceAndDice.DefaultCast.Cost,
 	})
 
 	// Hunger while planning
@@ -130,7 +130,7 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 							return Wait
 						}
 					} else {
-						if rogue.CurrentEnergy() >= rogue.ExposeArmor[1].DefaultCast.Cost {
+						if rogue.CurrentEnergy() >= rogue.ExposeArmor.DefaultCast.Cost {
 							return Cast
 						} else {
 							return Wait
@@ -153,13 +153,13 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 				}
 			},
 			func(s *core.Simulation, r *Rogue) bool {
-				casted := r.ExposeArmor[r.ComboPoints()].Cast(sim, r.CurrentTarget)
+				casted := r.ExposeArmor.Cast(sim, r.CurrentTarget)
 				if casted {
 					hasCastExpose = true
 				}
 				return casted
 			},
-			rogue.ExposeArmor[1].DefaultCast.Cost,
+			rogue.ExposeArmor.DefaultCast.Cost,
 		})
 	}
 
@@ -173,7 +173,7 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 				if rogue.HungerForBloodAura.IsActive() {
 					return Skip
 				}
-				if rogue.ComboPoints() > 0 && rogue.CurrentEnergy() >= rogue.Rupture[1].DefaultCast.Cost {
+				if rogue.ComboPoints() > 0 && rogue.CurrentEnergy() >= rogue.Rupture.DefaultCast.Cost {
 					return Cast
 				}
 				if rogue.ComboPoints() < 1 && rogue.CurrentEnergy() >= rogue.Builder.DefaultCast.Cost {
@@ -182,9 +182,9 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 				return Wait
 			},
 			func(s *core.Simulation, r *Rogue) bool {
-				return rogue.Rupture[rogue.ComboPoints()].Cast(sim, rogue.CurrentTarget)
+				return rogue.Rupture.Cast(sim, rogue.CurrentTarget)
 			},
-			rogue.Rupture[1].DefaultCast.Cost,
+			rogue.Rupture.DefaultCast.Cost,
 		})
 	}
 
@@ -235,10 +235,10 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 	if rogue.Rotation.AssassinationFinisherPriority == proto.Rogue_Rotation_RuptureEnvenom {
 		rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
 			func(s *core.Simulation, r *Rogue) PriorityAction {
-				if r.Rupture[0].CurDot().IsActive() || s.GetRemainingDuration() < time.Second*18 {
+				if r.Rupture.CurDot().IsActive() || s.GetRemainingDuration() < time.Second*18 {
 					return Skip
 				}
-				if rogue.ComboPoints() > 3 && rogue.CurrentEnergy() >= rogue.Rupture[1].DefaultCast.Cost {
+				if rogue.ComboPoints() > 3 && rogue.CurrentEnergy() >= rogue.Rupture.DefaultCast.Cost {
 					return Cast
 				}
 				if rogue.ComboPoints() < 4 && rogue.CurrentEnergy() >= rogue.Builder.DefaultCast.Cost {
@@ -248,9 +248,9 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 
 			},
 			func(s *core.Simulation, r *Rogue) bool {
-				return r.Rupture[r.ComboPoints()].Cast(s, r.CurrentTarget)
+				return r.Rupture.Cast(s, r.CurrentTarget)
 			},
-			rogue.Rupture[1].DefaultCast.Cost,
+			rogue.Rupture.DefaultCast.Cost,
 		})
 	}
 
@@ -261,7 +261,7 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 			if r.ComboPoints() >= minimumCP {
 				// Don't pool when fight is about to end
 				fightEndsSoon := false
-				energyNeeded := r.Envenom[1].DefaultCast.Cost
+				energyNeeded := r.Envenom.DefaultCast.Cost
 				if s.GetRemainingDuration() <= time.Second*6 {
 					fightEndsSoon = true
 				} else {
@@ -280,9 +280,9 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 			return Wait
 		},
 		func(s *core.Simulation, r *Rogue) bool {
-			return rogue.Envenom[r.ComboPoints()].Cast(sim, rogue.CurrentTarget)
+			return rogue.Envenom.Cast(sim, rogue.CurrentTarget)
 		},
-		rogue.Envenom[1].DefaultCast.Cost,
+		rogue.Envenom.DefaultCast.Cost,
 	})
 }
 
@@ -298,7 +298,7 @@ func (r *Rogue) getEnvenomThreshold(s *core.Simulation) float64 {
 	} else if hasOverkill {
 		energyNeeded = core.MinFloat(r.maxEnergy, float64(r.Rotation.EnvenomEnergyThresholdOverkill))
 	}
-	energyNeeded = core.MaxFloat(r.Envenom[1].DefaultCast.Cost, energyNeeded)
+	energyNeeded = core.MaxFloat(r.Envenom.DefaultCast.Cost, energyNeeded)
 	return energyNeeded
 }
 

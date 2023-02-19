@@ -6,15 +6,28 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
-	apRatio := 0.09 * float64(comboPoints)
+func (rogue *Rogue) registerEnvenom() {
+	rogue.EnvenomAura = rogue.RegisterAura(core.Aura{
+		Label:    "Envenom",
+		ActionID: core.ActionID{SpellID: 57993},
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			rogue.deadlyPoisonProcChanceBonus += 0.15
+			rogue.UpdateInstantPoisonPPM(0.75)
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			rogue.deadlyPoisonProcChanceBonus -= 0.15
+			rogue.UpdateInstantPoisonPPM(0.0)
+		},
+	})
+
 	chanceToRetainStacks := []float64{0, 0.33, 0.66, 1}[rogue.Talents.MasterPoisoner]
 
-	return rogue.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 57993, Tag: comboPoints},
-		SpellSchool: core.SpellSchoolNature,
-		ProcMask:    core.ProcMaskMeleeMHSpecial, // not core.ProcMaskSpellDamage
-		Flags:       core.SpellFlagMeleeMetrics | rogue.finisherFlags(),
+	rogue.Envenom = rogue.RegisterSpell(core.SpellConfig{
+		ActionID:     core.ActionID{SpellID: 57993},
+		SpellSchool:  core.SpellSchoolNature,
+		ProcMask:     core.ProcMaskMeleeMHSpecial, // not core.ProcMaskSpellDamage
+		Flags:        core.SpellFlagMeleeMetrics | rogue.finisherFlags(),
+		MetricSplits: 6,
 
 		EnergyCost: core.EnergyCostOptions{
 			Cost:          35,
@@ -26,9 +39,12 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 				GCD: time.Second,
 			},
 			IgnoreHaste: true,
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				spell.SetMetricsSplit(spell.Unit.ComboPoints())
+			},
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return rogue.DeadlyPoison.Dot(target).IsActive()
+			return rogue.ComboPoints() > 0 && rogue.DeadlyPoison.Dot(target).IsActive()
 		},
 
 		DamageMultiplier: 1 +
@@ -38,6 +54,7 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			comboPoints := rogue.ComboPoints()
 			// - the aura is active even if the attack fails to land
 			// - the aura is applied before the hit effect
 			// See: https://github.com/where-fore/rogue-wotlk/issues/32
@@ -48,7 +65,7 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 			// - 215 base is scaled by consumed doses (<= comboPoints)
 			// - apRatio is independent of consumed doses (== comboPoints)
 			consumed := core.MinInt32(dp.GetStacks(), comboPoints)
-			baseDamage := 215*float64(consumed) + apRatio*spell.MeleeAttackPower()
+			baseDamage := 215*float64(consumed) + 0.09*float64(comboPoints)*spell.MeleeAttackPower()
 
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 
@@ -69,27 +86,4 @@ func (rogue *Rogue) makeEnvenom(comboPoints int32) *core.Spell {
 			spell.DealDamage(sim, result)
 		},
 	})
-}
-
-func (rogue *Rogue) registerEnvenom() {
-	rogue.EnvenomAura = rogue.RegisterAura(core.Aura{
-		Label:    "Envenom",
-		ActionID: core.ActionID{SpellID: 57993},
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			rogue.deadlyPoisonProcChanceBonus += 0.15
-			rogue.UpdateInstantPoisonPPM(0.75)
-		},
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			rogue.deadlyPoisonProcChanceBonus -= 0.15
-			rogue.UpdateInstantPoisonPPM(0.0)
-		},
-	})
-	rogue.Envenom = [6]*core.Spell{
-		nil,
-		rogue.makeEnvenom(1),
-		rogue.makeEnvenom(2),
-		rogue.makeEnvenom(3),
-		rogue.makeEnvenom(4),
-		rogue.makeEnvenom(5),
-	}
 }
