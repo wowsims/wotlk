@@ -264,7 +264,7 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 		rogue.setupAssassinationRotation(sim)
 	}
 	if rogue.PrimaryTalentTree == SubtletyTree {
-		rogue.setSubtletyBuilder()
+		rogue.setSubtletyBuilder(sim)
 		rogue.setupSubtletyRotation(sim)
 	}
 	isMultiTarget := sim.GetNumTargets() >= 3
@@ -444,13 +444,13 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 			}
 		} else {
 			switch rogue.Rotation.SubtletyFinisherPriority {
-			case proto.Rogue_Rotation_Rupture:
+			case proto.Rogue_Rotation_SubtletyEviscerate:
 				rupture.MinimumComboPoints = core.MaxInt32(1, rogue.Rotation.MinimumComboPointsPrimaryFinisher)
 				rogue.priorityItems = append(rogue.priorityItems, rupture)
 				eviscerate.MinimumComboPoints = core.MaxInt32(1, rogue.Rotation.MinimumComboPointsSecondaryFinisher)
 				eviscerate.IsFiller = true
 				rogue.priorityItems = append(rogue.priorityItems, eviscerate)
-			case proto.Rogue_Rotation_Eviscerate:
+			case proto.Rogue_Rotation_SubtletyEnvenom:
 				eviscerate.MinimumComboPoints = core.MaxInt32(1, rogue.Rotation.MinimumComboPointsPrimaryFinisher)
 				rogue.priorityItems = append(rogue.priorityItems, eviscerate)
 				rupture.MinimumComboPoints = rogue.Rotation.MinimumComboPointsSecondaryFinisher

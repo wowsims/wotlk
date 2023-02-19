@@ -314,6 +314,10 @@ func (sim *Simulation) run() *proto.RaidSimResult {
 
 func (sim *Simulation) runPendingActions(max time.Duration) {
 	for {
+		if len(sim.pendingActions) == 0 {
+			return
+		}
+
 		last := len(sim.pendingActions) - 1
 		pa := sim.pendingActions[last]
 		sim.pendingActions = sim.pendingActions[:last]
