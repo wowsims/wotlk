@@ -116,6 +116,7 @@ func init() {
 	core.AddEffectsToTest = false
 	newDeathsChoiceEffect(47115, "Deaths Verdict", 450)
 	newDeathsChoiceEffect(47131, "Deaths Verdict H", 510)
+	newDeathsChoiceEffect(137049, "Могущество военачальника", 370)
 	newDeathsChoiceEffect(47303, "Deaths Choice", 450)
 	core.AddEffectsToTest = true
 	newDeathsChoiceEffect(47464, "Deaths Choice H", 510)

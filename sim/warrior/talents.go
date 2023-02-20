@@ -210,7 +210,7 @@ func (warrior *Warrior) applyTrauma() {
 }
 
 func (warrior *Warrior) isBloodsurgeActive() bool {
-	return warrior.BloodsurgeAura.IsActive() || (warrior.Talents.Bloodsurge > 0 && warrior.Ymirjar4pcProcAura.IsActive())
+	return warrior.BloodsurgeAura.IsActive() || (warrior.Talents.Bloodsurge > 0 && warrior.Ymirjar4pcProcAura.IsActive()) || (warrior.PouringOutAngerProc.IsActive())
 }
 
 func (warrior *Warrior) applyBloodsurge() {
@@ -230,8 +230,9 @@ func (warrior *Warrior) applyBloodsurge() {
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			warrior.Slam.DefaultCast.CastTime = 1500 * time.Millisecond
 		},
+
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell == warrior.Slam { // removed even if slam doesn't land
+			if spell == warrior.Slam && !warrior.PouringOutAngerProc.IsActive() { // removed even if slam doesn't land
 				aura.Deactivate(sim)
 			}
 		},

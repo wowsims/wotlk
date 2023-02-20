@@ -90,6 +90,7 @@ type Warrior struct {
 	BerserkerStanceAura *core.Aura
 
 	BloodsurgeAura  *core.Aura
+	PouringOutAngerProc *core.Aura
 	SuddenDeathAura *core.Aura
 	ShieldBlockAura *core.Aura
 
@@ -98,6 +99,13 @@ type Warrior struct {
 	TraumaAuras            []*core.Aura
 	SunderArmorAuras       core.AuraArray
 	ThunderClapAuras       core.AuraArray
+
+	// T4 helpers
+	SetBonusDPS2T4 bool
+	SetBonusDPS4T4 bool
+	PouringAngerWasFaded bool
+	// 4t4 Fury additional spell
+	CircularAttack       *core.Spell
 }
 
 func (warrior *Warrior) GetCharacter() *core.Character {
@@ -151,6 +159,9 @@ func (warrior *Warrior) Initialize() {
 	warrior.registerWhirlwindSpell()
 	warrior.registerShockwaveSpell()
 	warrior.registerConcussionBlowSpell()
+	
+	// 4t4 fury extra spell
+	warrior.registerCircularAttackSpell()
 
 	warrior.SunderArmor = warrior.newSunderArmorSpell(false)
 	warrior.SunderArmorDevastate = warrior.newSunderArmorSpell(true)
@@ -193,6 +204,17 @@ func NewWarrior(character core.Character, talents string, inputs WarriorInputs) 
 	// Base dodge unaffected by Diminishing Returns
 	warrior.PseudoStats.BaseDodge += 0.03664
 	warrior.PseudoStats.BaseParry += 0.05
+
+	if warrior.HasSetBonus(ItemSetWarriorDPST4, 2) {
+		warrior.SetBonusDPS2T4 = true
+		if warrior.HasSetBonus(ItemSetWarriorDPST4, 4) {
+			warrior.SetBonusDPS4T4 = true
+		} else {
+			warrior.SetBonusDPS4T4 = false
+		}
+	} else {
+		warrior.SetBonusDPS2T4 = false
+	}
 
 	return warrior
 }
