@@ -11,6 +11,7 @@ import (
 func (dk *Deathknight) registerHornOfWinterSpell() {
 	actionID := core.ActionID{SpellID: 57623}
 	duration := time.Minute * time.Duration((2.0 + core.TernaryFloat64(dk.HasMinorGlyph(proto.DeathknightMinorGlyph_GlyphOfHornOfWinter), 1.0, 0.0)))
+	rpMetrics := dk.NewRunicPowerMetrics(actionID)
 
 	bonusStats := stats.Stats{stats.Strength: 155.0, stats.Agility: 155.0}
 	negativeStats := bonusStats.Multiply(-1)
@@ -53,7 +54,7 @@ func (dk *Deathknight) registerHornOfWinterSpell() {
 			if dk.Inputs.RefreshHornOfWinter {
 				dk.HornOfWinterAura.Activate(sim)
 			}
-			dk.AddRunicPower(sim, 10, dk.HornOfWinter.RunicPowerMetrics())
+			dk.AddRunicPower(sim, 10, rpMetrics)
 		},
 	})
 }
