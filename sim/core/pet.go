@@ -110,7 +110,7 @@ func (pet *Pet) addOwnerStats(sim *Simulation, addedStats stats.Stats) {
 }
 
 func (pet *Pet) Finalize() {
-	pet.Character.Finalize(nil)
+	pet.Character.Finalize()
 }
 
 func (pet *Pet) reset(sim *Simulation, agent PetAgent) {

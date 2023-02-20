@@ -62,6 +62,7 @@ func (hunter *Hunter) registerAspectOfTheDragonhawkSpell() {
 
 	hunter.AspectOfTheDragonhawk = hunter.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
+		Flags:    core.SpellFlagAPL,
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			hunter.AspectOfTheDragonhawkAura.Activate(sim)
@@ -123,6 +124,7 @@ func (hunter *Hunter) registerAspectOfTheViperSpell() {
 
 	hunter.AspectOfTheViper = hunter.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
+		Flags:    core.SpellFlagAPL,
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			hunter.AspectOfTheViperAura.Activate(sim)

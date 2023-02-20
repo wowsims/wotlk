@@ -397,7 +397,7 @@ func (character *Character) initialize(agent Agent) {
 	}
 }
 
-func (character *Character) Finalize(playerStats *proto.PlayerStats) {
+func (character *Character) Finalize() {
 	if character.Env.IsFinalized() {
 		return
 	}
@@ -408,17 +408,35 @@ func (character *Character) Finalize(playerStats *proto.PlayerStats) {
 
 	character.majorCooldownManager.finalize()
 	character.ItemSwap.finalize()
+}
 
-	if playerStats != nil {
-		character.applyBuildPhaseAuras(CharacterBuildPhaseAll)
-		playerStats.FinalStats = &proto.UnitStats{
-			Stats:       character.GetStats().ToFloatArray(),
-			PseudoStats: character.GetPseudoStatsProto(),
-		}
-		character.clearBuildPhaseAuras(CharacterBuildPhaseAll)
-		playerStats.Sets = character.GetActiveSetBonusNames()
-		playerStats.Cooldowns = character.GetMajorCooldownIDs()
+func (character *Character) FillPlayerStats(playerStats *proto.PlayerStats) {
+	if playerStats == nil {
+		return
 	}
+
+	character.applyBuildPhaseAuras(CharacterBuildPhaseAll)
+	playerStats.FinalStats = &proto.UnitStats{
+		Stats:       character.GetStats().ToFloatArray(),
+		PseudoStats: character.GetPseudoStatsProto(),
+	}
+	character.clearBuildPhaseAuras(CharacterBuildPhaseAll)
+	playerStats.Sets = character.GetActiveSetBonusNames()
+	playerStats.Cooldowns = character.GetMajorCooldownIDs()
+
+	aplSpells := FilterSlice(character.Spellbook, func(spell *Spell) bool {
+		return spell.Flags.Matches(SpellFlagAPL)
+	})
+	playerStats.Spells = MapSlice(aplSpells, func(spell *Spell) *proto.ActionID {
+		return spell.ActionID.ToProto()
+	})
+
+	aplAuras := FilterSlice(character.auras, func(aura *Aura) bool {
+		return !aura.ActionID.IsEmptyAction()
+	})
+	playerStats.Auras = MapSlice(aplAuras, func(aura *Aura) *proto.ActionID {
+		return aura.ActionID.ToProto()
+	})
 }
 
 func (character *Character) init(sim *Simulation, agent Agent) {
