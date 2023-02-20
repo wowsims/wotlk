@@ -258,6 +258,13 @@ func (shaman *Shaman) RegisterFlametongueDownrankImbue(mh bool, oh bool) {
 		return
 	}
 
+	if mh {
+		shaman.ApplyFlametongueImbueToItem(shaman.GetMHWeapon(), true)
+	}
+	if oh {
+		shaman.ApplyFlametongueImbueToItem(shaman.GetOHWeapon(), true)
+	}
+
 	ftDownrankIcd := core.Cooldown{
 		Timer:    shaman.NewTimer(),
 		Duration: time.Millisecond,

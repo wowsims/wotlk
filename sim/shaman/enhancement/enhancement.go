@@ -74,14 +74,6 @@ func NewEnhancementShaman(character core.Character, options *proto.Player) *Enha
 		enh.SelfBuffs.ImbueOH = proto.ShamanImbue_NoImbue
 	}
 
-	if enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FlametongueWeapon || enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FlametongueWeaponDownrank {
-		enh.ApplyFlametongueImbueToItem(enh.GetMHWeapon(), enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FlametongueWeaponDownrank)
-	}
-
-	if enh.SelfBuffs.ImbueOH == proto.ShamanImbue_FlametongueWeapon || enh.SelfBuffs.ImbueOH == proto.ShamanImbue_FlametongueWeaponDownrank {
-		enh.ApplyFlametongueImbueToItem(enh.GetOHWeapon(), enh.SelfBuffs.ImbueOH == proto.ShamanImbue_FlametongueWeaponDownrank)
-	}
-
 	enh.RegisterFlametongueImbue(
 		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FlametongueWeapon,
 		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_FlametongueWeapon)
@@ -91,9 +83,6 @@ func NewEnhancementShaman(character core.Character, options *proto.Player) *Enha
 	enh.RegisterWindfuryImbue(
 		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_WindfuryWeapon,
 		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_WindfuryWeapon)
-	enh.RegisterFrostbrandImbue(
-		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FrostbrandWeapon,
-		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_FrostbrandWeapon)
 
 	enh.SpiritWolves = &shaman.SpiritWolves{
 		SpiritWolf1: enh.NewSpiritWolf(1),
@@ -120,6 +109,10 @@ func (enh *EnhancementShaman) GetShaman() *shaman.Shaman {
 
 func (enh *EnhancementShaman) Initialize() {
 	enh.Shaman.Initialize()
+
+	enh.RegisterFrostbrandImbue(
+		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FrostbrandWeapon,
+		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_FrostbrandWeapon)
 
 	if enh.ItemSwap.IsEnabled() {
 		mh := enh.ItemSwap.GetItem(proto.ItemSlot_ItemSlotMainHand)
