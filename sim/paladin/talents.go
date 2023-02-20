@@ -499,8 +499,8 @@ func (paladin *Paladin) applyRighteousVengeance() {
 
 	dotActionID := core.ActionID{SpellID: 61840} // Righteous Vengeance
 
-	rvSpell := paladin.RegisterSpell(core.SpellConfig{
-		ActionID:    dotActionID,
+	rvDot := paladin.RegisterSpell(core.SpellConfig{
+		ActionID:    dotActionID.WithTag(2),
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskEmpty,
 		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreModifiers,
@@ -524,9 +524,16 @@ func (paladin *Paladin) applyRighteousVengeance() {
 				}
 			},
 		},
+	})
+
+	rvSpell := paladin.RegisterSpell(core.SpellConfig{
+		ActionID:    dotActionID.WithTag(1),
+		SpellSchool: core.SpellSchoolHoly,
+		ProcMask:    core.ProcMaskEmpty,
+		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			spell.Dot(target).ApplyOrReset(sim)
+			rvDot.Dot(target).ApplyOrReset(sim)
 			spell.CalcAndDealOutcome(sim, target, spell.OutcomeAlwaysHit)
 		},
 	})
@@ -545,7 +552,7 @@ func (paladin *Paladin) applyRighteousVengeance() {
 				return
 			}
 
-			dot := rvSpell.Dot(result.Target)
+			dot := rvDot.Dot(result.Target)
 
 			newDamage := result.Damage * (0.10 * float64(paladin.Talents.RighteousVengeance))
 			outstandingDamage := core.TernaryFloat64(dot.IsActive(), dot.SnapshotBaseDamage*float64(dot.NumberOfTicks-dot.TickCount), 0)

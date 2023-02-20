@@ -285,6 +285,13 @@ export class ActionId {
 					name += ' (Proc)';
 				}
 				break;
+			case 'Righteous Vengeance':
+				if (this.tag == 1) {
+					name += ' (Application)'
+				} else if (this.tag == 2) {
+					name += ' (DoT)'
+				}
+				break;
 			// For targetted buffs, tag is the source player's raid index or -1 if none.
 			case 'Bloodlust':
 			case 'Ferocious Inspiration':
