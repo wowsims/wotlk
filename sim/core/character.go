@@ -378,6 +378,11 @@ func (character *Character) initialize(agent Agent) {
 				return
 			}
 
+			if character.Rotation != nil {
+				character.Rotation.DoNextAction(sim)
+				return
+			}
+
 			character.TryUseCooldowns(sim)
 			if character.GCD.IsReady(sim) {
 				agent.OnGCDReady(sim)

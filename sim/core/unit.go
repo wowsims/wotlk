@@ -110,6 +110,8 @@ type Unit struct {
 	// Must be enabled to use, with "EnableAutoAttacks()".
 	AutoAttacks AutoAttacks
 
+	Rotation *APLRotation
+
 	// Statistics describing the results of the sim.
 	Metrics UnitMetrics
 
@@ -157,8 +159,8 @@ func (unit *Unit) IsEnabled() bool {
 //
 //	If the GCD is not used during OnGCDReady and this flag is set, OnGCDReady will not be called again
 //	until it is used in some other way (like from an auto attack or resource regeneration).
-func (character *Character) DoNothing() {
-	character.doNothing = true
+func (unit *Unit) DoNothing() {
+	unit.doNothing = true
 }
 
 func (unit *Unit) IsActive() bool {
