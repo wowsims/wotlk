@@ -174,7 +174,7 @@ func (shaman *Shaman) ApplyFlametongueImbueToItem(item *core.Item, isDownranked 
 		newStats = newStats.Add(stats.Stats{stats.SpellCrit: 2 * core.CritRatingPerCritChance})
 	}
 
-	shaman.AddStats(newStats)
+	item.Stats.Add(newStats)
 	item.TempEnchant = int32(id)
 }
 
