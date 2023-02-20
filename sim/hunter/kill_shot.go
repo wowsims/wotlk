@@ -28,6 +28,9 @@ func (hunter *Hunter) registerKillShotSpell() {
 				Duration: time.Second*15 - core.TernaryDuration(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfKillShot), time.Second*6, 0),
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return sim.IsExecutePhase20()
+		},
 
 		BonusCritRating: 0 +
 			5*core.CritRatingPerCritChance*float64(hunter.Talents.SniperTraining),

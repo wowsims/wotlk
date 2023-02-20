@@ -146,6 +146,19 @@ func (env *Environment) finalize(raidProto *proto.Raid, encounterProto *proto.En
 		}
 	}
 
+	for partyIdx, party := range env.Raid.Parties {
+		partyProto := raidProto.Parties[partyIdx]
+		for playerIdx, player := range party.Players {
+			if playerIdx >= len(partyProto.Players) {
+				// This happens for target dummies.
+				continue
+			}
+			playerProto := partyProto.Players[playerIdx]
+			char := player.GetCharacter()
+			char.Rotation = char.newAPLRotation(playerProto.Rotation)
+		}
+	}
+
 	for _, finalizeEffect := range env.postFinalizeEffects {
 		finalizeEffect()
 	}
