@@ -25,6 +25,7 @@ type SpellConfig struct {
 	EnergyCost EnergyCostOptions
 	RageCost   RageCostOptions
 	RuneCost   RuneCostOptions
+	FocusCost  FocusCostOptions
 
 	Cast               CastConfig
 	ExtraCastCondition CanCastCondition
@@ -218,6 +219,8 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		spell.Cost = newRageCost(spell, config.RageCost)
 	} else if config.RuneCost.BloodRuneCost != 0 || config.RuneCost.FrostRuneCost != 0 || config.RuneCost.UnholyRuneCost != 0 || config.RuneCost.RunicPowerCost != 0 || config.RuneCost.RunicPowerGain != 0 {
 		spell.Cost = newRuneCost(spell, config.RuneCost)
+	} else if config.FocusCost.Cost != 0 {
+		spell.Cost = newFocusCost(spell, config.FocusCost)
 	}
 
 	spell.createDots(config.Dot, false)

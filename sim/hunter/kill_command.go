@@ -21,13 +21,13 @@ func (hunter *Hunter) registerKillCommandCD() {
 		MaxStacks: 3,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			hunter.pet.focusDump.BonusCritRating += bonusPetSpecialCrit
-			if !hunter.pet.specialAbility.IsEmpty() {
+			if hunter.pet.specialAbility != nil {
 				hunter.pet.specialAbility.BonusCritRating += bonusPetSpecialCrit
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			hunter.pet.focusDump.BonusCritRating -= bonusPetSpecialCrit
-			if !hunter.pet.specialAbility.IsEmpty() {
+			if hunter.pet.specialAbility != nil {
 				hunter.pet.specialAbility.BonusCritRating -= bonusPetSpecialCrit
 			}
 		},

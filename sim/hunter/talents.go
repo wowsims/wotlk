@@ -208,13 +208,13 @@ func (hunter *Hunter) applyCobraStrikes() {
 		MaxStacks: 2,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			hunter.pet.focusDump.BonusCritRating += 100 * core.CritRatingPerCritChance
-			if !hunter.pet.specialAbility.IsEmpty() {
+			if hunter.pet.specialAbility != nil {
 				hunter.pet.specialAbility.BonusCritRating += 100 * core.CritRatingPerCritChance
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			hunter.pet.focusDump.BonusCritRating -= 100 * core.CritRatingPerCritChance
-			if !hunter.pet.specialAbility.IsEmpty() {
+			if hunter.pet.specialAbility != nil {
 				hunter.pet.specialAbility.BonusCritRating -= 100 * core.CritRatingPerCritChance
 			}
 		},

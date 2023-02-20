@@ -96,6 +96,7 @@ type Unit struct {
 	manaBar
 	rageBar
 	energyBar
+	focusBar
 	RunicPowerBar
 
 	// All spells that can be cast by this unit.
@@ -434,6 +435,7 @@ func (unit *Unit) reset(sim *Simulation, agent Agent) {
 	}
 
 	unit.manaBar.reset()
+	unit.focusBar.reset(sim)
 	unit.healthBar.reset(sim)
 	unit.UpdateManaRegenRates()
 

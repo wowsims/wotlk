@@ -204,6 +204,7 @@ func (pet *Pet) Disable(sim *Simulation) {
 	}
 
 	pet.CancelGCDTimer(sim)
+	pet.focusBar.Cancel(sim)
 	pet.AutoAttacks.CancelAutoSwing(sim)
 	pet.enabled = false
 	pet.DoNothing() // mark it is as doing nothing now.
