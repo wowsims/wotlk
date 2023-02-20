@@ -174,7 +174,7 @@ func (shaman *Shaman) ApplyFlametongueImbueToItem(item *core.Item, isDownranked 
 		newStats = newStats.Add(stats.Stats{stats.SpellCrit: 2 * core.CritRatingPerCritChance})
 	}
 
-	item.Stats.Add(newStats)
+	item.Stats = item.Stats.Add(newStats)
 	item.TempEnchant = int32(id)
 }
 
@@ -256,13 +256,6 @@ func (shaman *Shaman) newFlametongueDownrankImbueSpell(isMH bool) *core.Spell {
 func (shaman *Shaman) RegisterFlametongueDownrankImbue(mh bool, oh bool) {
 	if !mh && !oh && !shaman.ItemSwap.IsEnabled() {
 		return
-	}
-
-	if mh {
-		shaman.ApplyFlametongueImbueToItem(shaman.GetMHWeapon(), true)
-	}
-	if oh {
-		shaman.ApplyFlametongueImbueToItem(shaman.GetOHWeapon(), true)
 	}
 
 	ftDownrankIcd := core.Cooldown{
