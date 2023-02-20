@@ -18,6 +18,7 @@ func (hunter *Hunter) registerBlackArrowSpell(timer *core.Timer) {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskRangedSpecial,
+		Flags:       core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.06,

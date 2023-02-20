@@ -304,6 +304,9 @@ message PlayerStats {
 	repeated string sets = 3;
 	IndividualBuffs buffs = 4;
 	repeated ActionID cooldowns = 5;
+
+	repeated ActionID spells = 10;
+	repeated ActionID auras = 11;
 }
 message PartyStats {
 	repeated PlayerStats players = 1;

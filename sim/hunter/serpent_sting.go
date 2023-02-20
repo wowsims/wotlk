@@ -16,6 +16,7 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 		ActionID:    core.ActionID{SpellID: 49001},
 		SpellSchool: core.SpellSchoolNature,
 		ProcMask:    core.ProcMaskEmpty,
+		Flags:       core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.09,

@@ -12,7 +12,7 @@ func (hunter *Hunter) registerVolleySpell() {
 		ActionID:    core.ActionID{SpellID: 58434},
 		SpellSchool: core.SpellSchoolArcane,
 		ProcMask:    core.ProcMaskRangedSpecial,
-		Flags:       core.SpellFlagChanneled,
+		Flags:       core.SpellFlagChanneled | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.17,

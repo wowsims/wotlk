@@ -135,11 +135,10 @@ func (env *Environment) finalize(raidProto *proto.Raid, encounterProto *proto.En
 		target.finalize()
 	}
 
-	for partyIdx, party := range env.Raid.Parties {
+	for _, party := range env.Raid.Parties {
 		for _, player := range party.Players {
 			character := player.GetCharacter()
-			character.Finalize(raidStats.Parties[partyIdx].Players[character.PartyIndex])
-
+			character.Finalize()
 			for _, petAgent := range character.Pets {
 				petAgent.GetPet().Finalize()
 			}
@@ -169,6 +168,13 @@ func (env *Environment) finalize(raidProto *proto.Raid, encounterProto *proto.En
 	})
 
 	env.setupAttackTables()
+
+	for partyIdx, party := range env.Raid.Parties {
+		for _, player := range party.Players {
+			character := player.GetCharacter()
+			character.FillPlayerStats(raidStats.Parties[partyIdx].Players[character.PartyIndex])
+		}
+	}
 
 	env.State = Finalized
 }

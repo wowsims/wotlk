@@ -18,7 +18,7 @@ func (hunter *Hunter) registerArcaneShotSpell(timer *core.Timer) {
 		ActionID:    core.ActionID{SpellID: 49045},
 		SpellSchool: core.SpellSchoolArcane,
 		ProcMask:    core.ProcMaskRangedSpecial,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.05,
