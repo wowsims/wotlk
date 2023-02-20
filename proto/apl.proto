@@ -32,21 +32,15 @@ message APLAction {
 
 message APLValue {
     oneof value {
-        // Constants
-        APLValueBool bool = 1;
-        APLValueInt int = 2;
-        APLValueFloat float = 3;
-        APLValueDuration duration = 4;
-        APLValueString string = 5;
-
         // Operators
-        APLValueAnd and = 6;
-        APLValueOr or = 7;
-        APLValueNot not = 8;
-        APLValueCompare cmp = 9;
+        APLValueConst const = 1;
+        APLValueAnd and = 2;
+        APLValueOr or = 3;
+        APLValueNot not = 4;
+        APLValueCompare cmp = 5;
 
         // Dot values
-        APLValueDotIsActive dot_is_active = 10;
+        APLValueDotIsActive dot_is_active = 6;
     }
 }
 
@@ -84,19 +78,7 @@ enum APLValueType {
     ValueTypeString = 5;
 }
 
-message APLValueBool {
-    bool val = 1;
-}
-message APLValueInt {
-    int32 val = 1;
-}
-message APLValueFloat {
-    double val = 1;
-}
-message APLValueDuration {
-    Duration val = 1;
-}
-message APLValueString {
+message APLValueConst {
     string val = 1;
 }
 
