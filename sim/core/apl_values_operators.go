@@ -8,6 +8,64 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
+type APLValueConst struct {
+	valType proto.APLValueType
+
+	intVal      int32
+	floatVal    float64
+	durationVal time.Duration
+	stringVal   string
+	boolVal     bool
+}
+
+func (unit *Unit) newValueConst(config *proto.APLValueConst) APLValue {
+	result := &APLValueConst{
+		valType:   proto.APLValueType_ValueTypeString,
+		stringVal: config.Val,
+		boolVal:   config.Val != "",
+	}
+
+	if durVal, err := time.ParseDuration(config.Val); err == nil {
+		result.durationVal = durVal
+		result.valType = proto.APLValueType_ValueTypeDuration
+		return result
+	}
+
+	if intVal, err := strconv.Atoi(config.Val); err == nil {
+		result.intVal = int32(intVal)
+		result.floatVal = float64(result.intVal)
+		result.durationVal = DurationFromSeconds(result.floatVal)
+		result.valType = proto.APLValueType_ValueTypeInt
+		return result
+	}
+
+	if floatVal, err := strconv.ParseFloat(config.Val, 64); err == nil {
+		result.floatVal = floatVal
+		result.durationVal = DurationFromSeconds(floatVal)
+		result.valType = proto.APLValueType_ValueTypeFloat
+		return result
+	}
+	return result
+}
+func (value *APLValueConst) Type() proto.APLValueType {
+	return value.valType
+}
+func (value *APLValueConst) GetBool(sim *Simulation) bool {
+	return value.boolVal
+}
+func (value *APLValueConst) GetInt(sim *Simulation) int32 {
+	return value.intVal
+}
+func (value *APLValueConst) GetFloat(sim *Simulation) float64 {
+	return value.floatVal
+}
+func (value *APLValueConst) GetDuration(sim *Simulation) time.Duration {
+	return value.durationVal
+}
+func (value *APLValueConst) GetString(sim *Simulation) string {
+	return value.stringVal
+}
+
 type APLValueCoerced struct {
 	valueType proto.APLValueType
 	inner     APLValue
@@ -106,6 +164,13 @@ func (unit *Unit) coerceTo(value APLValue, newType proto.APLValueType) APLValue 
 		return nil
 	} else if value.Type() == newType {
 		return value
+	} else if constVal, ok := value.(*APLValueConst); ok {
+		// For the special case of APLValueConst, we can skip the wrapper and
+		// simply make a copy with a different type.
+		newVal := &APLValueConst{}
+		*newVal = *constVal
+		newVal.valType = newType
+		return newVal
 	} else {
 		return &APLValueCoerced{
 			valueType: newType,

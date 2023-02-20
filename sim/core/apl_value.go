@@ -45,19 +45,9 @@ func (unit *Unit) newAPLValue(config *proto.APLValue) APLValue {
 	}
 
 	switch config.Value.(type) {
-	// Constants
-	case *proto.APLValue_Bool:
-		return unit.newValueBool(config.GetBool())
-	case *proto.APLValue_Int:
-		return unit.newValueInt(config.GetInt())
-	case *proto.APLValue_Float:
-		return unit.newValueFloat(config.GetFloat())
-	case *proto.APLValue_Duration:
-		return unit.newValueDuration(config.GetDuration())
-	case *proto.APLValue_String_:
-		return unit.newValueString(config.GetString_())
-
 	// Operators
+	case *proto.APLValue_Const:
+		return unit.newValueConst(config.GetConst())
 	case *proto.APLValue_And:
 		return unit.newValueAnd(config.GetAnd())
 	case *proto.APLValue_Or:
