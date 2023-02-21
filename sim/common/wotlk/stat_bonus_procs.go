@@ -590,6 +590,17 @@ func init() {
 		ICD:      time.Second * 60,
 	})
 	newProcStatBonusEffect(ProcStatBonusEffect{
+		Name:     "Символ Хитреца (245)",
+		ID:       153678,
+		Bonus:    stats.Stats{stats.AttackPower: 321, stats.RangedAttackPower: 321},
+		Duration: time.Second * 10,
+		Callback: core.CallbackOnSpellHitDealt,
+		ProcMask: core.ProcMaskMeleeOrRanged,
+		Outcome:  core.OutcomeLanded,
+		ProcChance:      0.35,
+		ICD:      time.Second * 45,
+	})
+	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:     "Ashen Band of Endless Might",
 		ID:       52572,
 		Bonus:    stats.Stats{stats.AttackPower: 480, stats.RangedAttackPower: 480},

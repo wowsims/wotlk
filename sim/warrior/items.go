@@ -276,6 +276,128 @@ var ItemSetYmirjarLordsBattlegear = core.NewItemSet(core.ItemSet{
 	},
 })
 
+/////////////////////////////////////////////////////////////////
+// Sirus Custom Item set
+/////////////////////////////////////////////////////////////////
+
+// Warrior T4 set (Fury/Arms)
+var ItemSetWarriorDPST4 = core.NewItemSet(core.ItemSet{
+	Name: "Warrior DPS T4 set",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			warrior := agent.(WarriorAgent).GetWarrior()
+			bloodSurgeWasActive := false
+			activatedBySlam := false
+
+			warrior.PouringOutAngerProc = warrior.RegisterAura(core.Aura{
+				Label:    "Pouring out anger", // Изливающаяся злоба - 319854
+				ActionID: core.ActionID{SpellID: 319854},
+				Duration: time.Second * 12,
+
+				OnGain: func(aura *core.Aura, sim *core.Simulation) {
+					if activatedBySlam {
+						warrior.BloodsurgeAura.Deactivate(sim)
+						bloodSurgeWasActive = false
+					}
+					
+					if warrior.BloodsurgeAura.IsActive() {
+						warrior.BloodsurgeAura.Deactivate(sim)
+						bloodSurgeWasActive = true
+					}
+					warrior.Slam.DefaultCast.CastTime = 0
+					warrior.Slam.DamageMultiplierAdditive += 1.15
+				},
+				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+					warrior.Slam.DefaultCast.CastTime = 1500 * time.Millisecond
+					warrior.Slam.DamageMultiplierAdditive -= 1.15
+
+					if bloodSurgeWasActive {
+						warrior.BloodsurgeAura.Activate(sim)
+						bloodSurgeWasActive = false
+					}
+				},
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+					if activatedBySlam {
+						activatedBySlam = false
+						return
+					}
+
+					if warrior.BloodsurgeAura.IsActive() {
+						bloodSurgeWasActive = true
+						warrior.BloodsurgeAura.Deactivate(sim)
+						warrior.Slam.DefaultCast.CastTime = 0
+					}
+
+					if spell == warrior.Slam && result.Landed() {
+						if warrior.SetBonusDPS4T4 {
+							warrior.CircularAttack.Cast(sim, warrior.CurrentTarget)
+							warrior.CircularAttack.Cast(sim, warrior.CurrentTarget)
+						}
+						aura.Deactivate(sim)
+					}
+				},
+			})
+
+			angerAccumulatorAura := warrior.RegisterAura(core.Aura{
+				Label:     "Anger accumulator", //  накопитель злобы - 319853
+				ActionID:  core.ActionID{SpellID: 319853},
+				Duration:  time.Second * 12,
+				MaxStacks: 5,
+
+				OnReset: func(aura *core.Aura, sim *core.Simulation) {
+					aura.Activate(sim)
+				},
+				OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks, newStacks int32) {
+					if newStacks == aura.MaxStacks {
+						aura.SetStacks(sim, 0)
+						warrior.PouringOutAngerProc.Activate(sim)
+					}
+				},
+			})
+
+			// hidden aura to stack Anger accumulator aura
+			warrior.RegisterAura(core.Aura{
+				Label:    "Hidden Aura Anger Accum",
+				Duration: core.NeverExpires,
+				OnReset: func(aura *core.Aura, sim *core.Simulation) {
+					aura.Activate(sim)
+				},
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+					if !spell.ProcMask.Matches(core.ProcMaskMelee) {
+						return
+					}
+	
+					if warrior.PouringOutAngerProc.IsActive() {
+						return
+					}
+
+					if !angerAccumulatorAura.IsActive() {
+						angerAccumulatorAura.Activate(sim)
+						angerAccumulatorAura.SetStacks(sim, 1)
+						return
+					}
+					stacks := angerAccumulatorAura.GetStacks()
+					// 50% chance to get stack
+					if result.Outcome.Matches(core.OutcomeLanded) {
+						if sim.RandomFloat("Anger accum fury t4") < 0.5 {	
+							if stacks == 4 {
+								if spell == warrior.Slam {
+									activatedBySlam = true
+								}
+							}
+							angerAccumulatorAura.SetStacks(sim, angerAccumulatorAura.GetStacks()+1)
+						}
+						return
+					}
+				},
+			})
+		},
+		4: func(agent core.Agent) {
+			// increase damage of slam to 25%, handeled in slam.go
+		},
+	},
+})
+
 func init() {
 
 	core.NewItemEffect(32485, func(agent core.Agent) {
