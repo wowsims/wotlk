@@ -523,15 +523,15 @@ dps_results: {
 dps_results: {
  key: "TestFire-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 6369.97888
-  tps: 5141.23479
+  dps: 6351.24171
+  tps: 5122.49762
  }
 }
 dps_results: {
  key: "TestFire-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 6422.79009
-  tps: 5187.85801
+  dps: 6401.71306
+  tps: 5166.78098
  }
 }
 dps_results: {
