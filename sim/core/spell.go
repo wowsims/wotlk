@@ -375,10 +375,6 @@ func (spell *Spell) HealthMetrics(target *Unit) *ResourceMetrics {
 	return spell.healthMetrics[target.UnitIndex]
 }
 
-func (spell *Spell) FinalCritMultiplier() float64 {
-	return spell.CritMultiplier * spell.Unit.PseudoStats.SchoolCritMultiplier[spell.SchoolIndex]
-}
-
 func (spell *Spell) ReadyAt() time.Duration {
 	return BothTimersReadyAt(spell.CD.Timer, spell.SharedCD.Timer)
 }

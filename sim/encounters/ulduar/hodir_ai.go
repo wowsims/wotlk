@@ -287,22 +287,14 @@ func (ai *HodirAI) registerBuffsDebuffs(target *core.Target) {
 				ActionID: core.ActionID{SpellID: 63711},
 				Duration: 30 * time.Second,
 				OnGain: func(aura *core.Aura, sim *core.Simulation) {
-					aura.Unit.PseudoStats.SchoolCritMultiplier[stats.SchoolIndexPhysical] += 1.35
-					aura.Unit.PseudoStats.SchoolCritMultiplier[stats.SchoolIndexArcane] += 1.35
-					aura.Unit.PseudoStats.SchoolCritMultiplier[stats.SchoolIndexFire] += 1.35
-					aura.Unit.PseudoStats.SchoolCritMultiplier[stats.SchoolIndexFrost] += 1.35
-					aura.Unit.PseudoStats.SchoolCritMultiplier[stats.SchoolIndexHoly] += 1.35
-					aura.Unit.PseudoStats.SchoolCritMultiplier[stats.SchoolIndexNature] += 1.35
-					aura.Unit.PseudoStats.SchoolCritMultiplier[stats.SchoolIndexShadow] += 1.35
+					for _, spell := range aura.Unit.Spellbook {
+						spell.CritMultiplier *= 2.35
+					}
 				},
 				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-					aura.Unit.PseudoStats.SchoolCritMultiplier[stats.SchoolIndexPhysical] -= 1.35
-					aura.Unit.PseudoStats.SchoolCritMultiplier[stats.SchoolIndexArcane] -= 1.35
-					aura.Unit.PseudoStats.SchoolCritMultiplier[stats.SchoolIndexFire] -= 1.35
-					aura.Unit.PseudoStats.SchoolCritMultiplier[stats.SchoolIndexFrost] -= 1.35
-					aura.Unit.PseudoStats.SchoolCritMultiplier[stats.SchoolIndexHoly] -= 1.35
-					aura.Unit.PseudoStats.SchoolCritMultiplier[stats.SchoolIndexNature] -= 1.35
-					aura.Unit.PseudoStats.SchoolCritMultiplier[stats.SchoolIndexShadow] -= 1.35
+					for _, spell := range aura.Unit.Spellbook {
+						spell.CritMultiplier /= 2.35
+					}
 				},
 			})
 
