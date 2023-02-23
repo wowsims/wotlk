@@ -258,7 +258,7 @@ func (rp *RunicPowerBar) SpentDeathRuneReadyAt() time.Duration {
 	return readyAt
 }
 
-func (rp *RunicPowerBar) CurrentRuneGrace(sim *Simulation, slot int32) time.Duration {
+func (rp *RunicPowerBar) RuneGraceRemaining(sim *Simulation, slot int32) time.Duration {
 	if rp.runeMeta[slot].lastRegenTime < sim.CurrentTime {
 		return time.Millisecond*2500 - MinDuration(2500*time.Millisecond, sim.CurrentTime-rp.runeMeta[slot].lastRegenTime)
 	}
@@ -270,19 +270,15 @@ const anyFrostSpent = 0b0101 << 4
 const anyUnholySpent = 0b0101 << 8
 
 func (rp *RunicPowerBar) CurrentBloodRuneGrace(sim *Simulation) time.Duration {
-	return MaxDuration(rp.CurrentRuneGrace(sim, 0), rp.CurrentRuneGrace(sim, 1))
+	return MaxDuration(rp.RuneGraceRemaining(sim, 0), rp.RuneGraceRemaining(sim, 1))
 }
 
 func (rp *RunicPowerBar) CurrentFrostRuneGrace(sim *Simulation) time.Duration {
-	return MaxDuration(rp.CurrentRuneGrace(sim, 2), rp.CurrentRuneGrace(sim, 3))
+	return MaxDuration(rp.RuneGraceRemaining(sim, 2), rp.RuneGraceRemaining(sim, 3))
 }
 
 func (rp *RunicPowerBar) CurrentUnholyRuneGrace(sim *Simulation) time.Duration {
-	return MaxDuration(rp.CurrentRuneGrace(sim, 4), rp.CurrentRuneGrace(sim, 5))
-}
-
-func (rp *RunicPowerBar) CurrentRuneGraces(sim *Simulation) (time.Duration, time.Duration, time.Duration) {
-	return rp.CurrentBloodRuneGrace(sim), rp.CurrentFrostRuneGrace(sim), rp.CurrentUnholyRuneGrace(sim)
+	return MaxDuration(rp.RuneGraceRemaining(sim, 4), rp.RuneGraceRemaining(sim, 5))
 }
 
 func (rp *RunicPowerBar) NormalSpentBloodRuneReadyAt(sim *Simulation) time.Duration {
@@ -889,6 +885,11 @@ func (rp *RunicPowerBar) SpendRuneFromKind(sim *Simulation, rkind RuneKind) int8
 }
 
 func (rp *RunicPowerBar) RuneGraceAt(slot int8, at time.Duration) (runeGraceDuration time.Duration) {
+	lastRegenTime := rp.runeMeta[slot].lastRegenTime
+	// pre-pull casts should not get rune-grace
+	if at <= 0 || lastRegenTime <= 0 {
+		return 0
+	}
 	if rp.runeMeta[slot].lastRegenTime != -1 {
 		runeGraceDuration = MinDuration(time.Millisecond*2500, at-rp.runeMeta[slot].lastRegenTime)
 	}
