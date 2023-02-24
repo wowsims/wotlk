@@ -52,6 +52,7 @@ func (rogue *Rogue) ApplyTalents() {
 	rogue.registerPreparationCD()
 	rogue.registerPremeditation()
 	rogue.registerGhostlyStrikeSpell()
+	rogue.registerDirtyDeeds()
 	rogue.registerHonorAmongThieves()
 }
 
@@ -159,16 +160,6 @@ func (rogue *Rogue) preyOnTheWeakMultiplier(_ *core.Unit) float64 {
 	return 1 + 0.04*float64(rogue.Talents.PreyOnTheWeak)
 }
 
-func (rogue *Rogue) applyDirtyDeeds(target *core.Unit) {
-	if rogue.Talents.DirtyDeeds == 0 {
-		return
-	}
-	// Special abilities cause 20% more damage against targets below 35% health
-	if target.CurrentHealthPercent() < 0.35 {
-		// Apply Dirty Deeds damage increase
-	}
-}
-
 func (rogue *Rogue) registerDirtyDeeds() {
 	if rogue.Talents.DirtyDeeds == 0 {
 		return
@@ -176,15 +167,31 @@ func (rogue *Rogue) registerDirtyDeeds() {
 
 	actionID := core.ActionID{SpellID: 14083}
 
+	rogue.RegisterResetEffect(func(sim *core.Simulation) {
+		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {
+			if isExecute == 35 {
+				rogue.DirtyDeedsAura.Activate(sim)
+			}
+		})
+	})
+
 	rogue.DirtyDeedsAura = rogue.RegisterAura(core.Aura{
 		Label:    "Dirty Deeds",
 		ActionID: actionID,
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			rogue.PseudoStats.DamageDealtMultiplier *= rogue.DirtyDeedsMultiplier()
+			for _, spell := range rogue.Spellbook {
+				if spell.Flags.Matches(SpellFlagBuilder|SpellFlagFinisher) && spell.DamageMultiplier > 0 {
+					spell.DamageMultiplier *= rogue.DirtyDeedsMultiplier()
+				}
+			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			rogue.PseudoStats.DamageDealtMultiplier *= 1 / rogue.DirtyDeedsMultiplier()
+			for _, spell := range rogue.Spellbook {
+				if spell.Flags.Matches(SpellFlagBuilder|SpellFlagFinisher) && spell.DamageMultiplier > 0 {
+					spell.DamageMultiplier /= rogue.DirtyDeedsMultiplier()
+				}
+			}
 		},
 	})
 }
