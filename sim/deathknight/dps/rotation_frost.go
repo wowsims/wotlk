@@ -9,7 +9,6 @@ import (
 
 type FrostRotation struct {
 	oblitCount int32
-	oblitDelay time.Duration
 	uaCycle    bool
 
 	// CDS
@@ -33,7 +32,6 @@ func (fr *FrostRotation) Initialize(dk *DpsDeathknight) {
 
 func (fr *FrostRotation) Reset(sim *core.Simulation) {
 	fr.oblitCount = 0
-	fr.oblitDelay = 0
 	fr.uaCycle = false
 
 	fr.hyperSpeedMCD = nil

@@ -271,14 +271,6 @@ export const AvgAMSHitInput = InputHelpers.makeRotationNumberInput<Spec.SpecDeat
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
 
-export const OblitDelayDurationInput = InputHelpers.makeRotationNumberInput<Spec.SpecDeathknight>({
-	fieldName: 'oblitDelayDuration',
-	label: 'Oblit Delay (ms)',
-	labelTooltip: 'How long a FS/HB/HW can delay a Oblit by.',
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast && !player.getRotation().autoRotation && player.getRotation().frostRotationType != FrostRotationType.Custom,
-	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-});
-
 export const UseAutoRotation = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
 	fieldName: 'autoRotation',
 	label: 'Automatic Rotation',
@@ -403,7 +395,6 @@ export const DeathKnightRotationConfig = {
 		FightPresence,
 		BloodRuneFillerInput,
 		UseDeathAndDecay,
-		OblitDelayDurationInput,
 		UseAMSInput,
 		AvgAMSSuccessRateInput,
 		AvgAMSHitInput,
