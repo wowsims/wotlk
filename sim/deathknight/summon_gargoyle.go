@@ -79,6 +79,7 @@ type GargoylePet struct {
 
 	GargoyleStrike *core.Spell
 
+	ownerMeleeMultiplier float64
 	meleeSpeedMultiplier func() float64
 	isNerfedGargoyle     bool
 }
@@ -126,8 +127,9 @@ func (dk *Deathknight) NewGargoyle(nerfedGargoyle bool) *GargoylePet {
 			false,
 			true,
 		),
-		dkOwner:          dk,
-		isNerfedGargoyle: nerfedGargoyle,
+		dkOwner:              dk,
+		isNerfedGargoyle:     nerfedGargoyle,
+		ownerMeleeMultiplier: 1.0,
 	}
 
 	// NightOfTheDead
@@ -147,6 +149,7 @@ func (garg *GargoylePet) Initialize() {
 }
 
 func (garg *GargoylePet) Reset(sim *core.Simulation) {
+	garg.ownerMeleeMultiplier = 1.0
 }
 
 func (garg *GargoylePet) OnGCDReady(sim *core.Simulation) {
@@ -156,8 +159,9 @@ func (garg *GargoylePet) OnGCDReady(sim *core.Simulation) {
 }
 
 func (garg *GargoylePet) updateCastSpeed() {
-	garg.PseudoStats.CastSpeedMultiplier = 1.0
-	garg.MultiplyCastSpeed(garg.meleeSpeedMultiplier())
+	garg.MultiplyCastSpeed(1.0 / garg.ownerMeleeMultiplier)
+	garg.ownerMeleeMultiplier = garg.meleeSpeedMultiplier()
+	garg.MultiplyCastSpeed(garg.ownerMeleeMultiplier)
 }
 
 func (garg *GargoylePet) registerGargoyleStrikeSpell() {

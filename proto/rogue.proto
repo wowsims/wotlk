@@ -169,8 +169,8 @@ message Rogue {
 		AssassinationPriority assassination_finisher_priority = 5;
 
 		enum SubtletyPriority {
-			Rupture = 0;
-			Eviscerate = 1;
+			SubtletyEviscerate = 0;
+			SubtletyEnvenom = 1;
 			SubtletyPriorityUnknown = 2;
 		}
 		SubtletyPriority subtlety_finisher_priority = 6;

@@ -121,7 +121,7 @@ func (shadowfiend *Shadowfiend) OnGCDReady(sim *core.Simulation) {
 
 func (shadowfiend *Shadowfiend) Reset(sim *core.Simulation) {
 	shadowfiend.ShadowcrawlAura.Deactivate(sim)
-	shadowfiend.AutoAttacks.CancelAutoSwing(sim)
+	shadowfiend.Disable(sim)
 }
 
 func (shadowfiend *Shadowfiend) GetPet() *core.Pet {

@@ -759,7 +759,7 @@ func (hunter *Hunter) applySniperTraining() {
 		},
 	})
 
-	core.ApplyFixedUptimeAura(stAura, uptime, time.Second*15)
+	core.ApplyFixedUptimeAura(stAura, uptime, time.Second*15, 1)
 }
 
 func (hunter *Hunter) applyHuntingParty() {
