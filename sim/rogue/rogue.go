@@ -185,7 +185,7 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerEnvenom()
 
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()
-	rogue.DelayDPSCooldownsForArmorDebuffs(time.Second * 14)
+	rogue.DelayDPSCooldownsForArmorDebuffs(time.Second * 10)
 }
 
 func (rogue *Rogue) getExpectedEnergyPerSecond() float64 {
@@ -213,6 +213,7 @@ func (rogue *Rogue) Reset(sim *core.Simulation) {
 	}
 	rogue.allMCDsDisabled = true
 	rogue.lastDeadlyPoisonProcMask = core.ProcMaskEmpty
+
 	// Vanish triggered effects (Overkill and Master of Subtlety) prepull activation
 	if rogue.Rotation.OpenWithGarrote || rogue.Options.StartingOverkillDuration > 0 {
 		length := rogue.Options.StartingOverkillDuration

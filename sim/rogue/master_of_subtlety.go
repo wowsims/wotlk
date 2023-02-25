@@ -18,17 +18,17 @@ func (rogue *Rogue) registerMasterOfSubtletyCD() {
 
 	var MasterOfSubtletyID = core.ActionID{SpellID: getMasterOfSubtletySpellID(rogue.Talents.MasterOfSubtlety)}
 
-	percent := []float64{0, 0.04, 0.07, 0.1}[rogue.Talents.MasterOfSubtlety]
+	percent := []float64{1, 1.04, 1.07, 1.1}[rogue.Talents.MasterOfSubtlety]
 
 	rogue.MasterOfSubtletyAura = rogue.RegisterAura(core.Aura{
 		Label:    "Master of Subtlety",
 		ActionID: MasterOfSubtletyID,
 		Duration: time.Second * 6,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			rogue.PseudoStats.DamageDealtMultiplier *= 1 + percent
+			rogue.PseudoStats.DamageDealtMultiplier *= percent
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			rogue.PseudoStats.DamageDealtMultiplier *= 1 / (1 + percent)
+			rogue.PseudoStats.DamageDealtMultiplier *= 1 / percent
 		},
 	})
 
@@ -53,7 +53,16 @@ func (rogue *Rogue) registerMasterOfSubtletyCD() {
 		Spell: rogue.MasterOfSubtlety,
 		Type:  core.CooldownTypeDPS,
 		ShouldActivate: func(s *core.Simulation, c *core.Character) bool {
-			return rogue.CurrentEnergy() > 90
+			if rogue.MasterOfSubtletyAura.IsActive() {
+				return false // possible after preparation
+			}
+			if s.GetRemainingDuration() < time.Second*10 {
+				return true // getting the buff up under non-ideal circumstances is fine at end of combat
+			}
+			if rogue.Premeditation != nil && !rogue.Premeditation.IsReady(s) {
+				return false // essentially sync with premed if possible
+			}
+			return rogue.ComboPoints() <= 1 && rogue.CurrentEnergy() >= 40 // this covers any opener w/ talents, for now
 		},
 	})
 }

@@ -86,7 +86,7 @@ func (rogue *Rogue) energyToBuild(points int32) float64 {
 	return buildersNeeded * costPerBuilder
 }
 
-func (rogue *Rogue) timeToBuild(sim *core.Simulation, points int32, builderPoints int32, eps float64, finisherCost float64) time.Duration {
+func (rogue *Rogue) timeToBuild(_ *core.Simulation, points int32, builderPoints int32, eps float64, finisherCost float64) time.Duration {
 	energyNeeded := rogue.energyToBuild(points) + finisherCost
 	secondsNeeded := energyNeeded / eps
 	globalsNeeded := math.Ceil(float64(points)/float64(builderPoints)) + 1
@@ -95,7 +95,7 @@ func (rogue *Rogue) timeToBuild(sim *core.Simulation, points int32, builderPoint
 }
 
 func (rogue *Rogue) shouldCastNextRotationItem(sim *core.Simulation, eps float64) shouldCastRotationItemResult {
-	if len(rogue.rotationItems) < 1 {
+	if len(rogue.rotationItems) == 0 {
 		panic("Empty rotation")
 	}
 	currentEnergy := rogue.CurrentEnergy()
@@ -108,10 +108,10 @@ func (rogue *Rogue) shouldCastNextRotationItem(sim *core.Simulation, eps float64
 	timeUntilNextGCD := rogue.GCD.TimeToReady(sim)
 
 	// Check to see if a higher prio item will expire
-	if len(rogue.rotationItems) > 0 {
+	if len(rogue.rotationItems) >= 2 {
 		timeElapsed := time.Second * 1
 		for _, nextItem := range rogue.rotationItems[1:] {
-			if nextItem.ExpiresAt-(currentTime+timeElapsed) <= 0 {
+			if nextItem.ExpiresAt <= currentTime+timeElapsed {
 				return ShouldNotCast
 			}
 			timeElapsed += nextItem.MinimumBuildDuration
@@ -172,7 +172,7 @@ func (rogue *Rogue) shouldCastNextRotationItem(sim *core.Simulation, eps float64
 }
 
 func (rogue *Rogue) planRotation(sim *core.Simulation) []rogueRotationItem {
-	rotationItems := make([]rogueRotationItem, 0)
+	var rotationItems []rogueRotationItem
 	eps := rogue.getExpectedEnergyPerSecond()
 	for pi, prio := range rogue.priorityItems {
 		if prio.MaxCasts > 0 && prio.CastCount >= prio.MaxCasts {
@@ -204,7 +204,7 @@ func (rogue *Rogue) planRotation(sim *core.Simulation) []rogueRotationItem {
 	comboPoints := rogue.ComboPoints()
 	currentEnergy := rogue.CurrentEnergy()
 
-	prioStack := make([]rogueRotationItem, 0)
+	var prioStack []rogueRotationItem
 	for _, item := range rotationItems {
 		if item.ExpiresAt >= sim.Duration {
 			continue
@@ -269,17 +269,17 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 	}
 	isMultiTarget := sim.GetNumTargets() >= 3
 	// Slice and Dice
-	rogue.priorityItems = make([]roguePriorityItem, 0)
+	rogue.priorityItems = rogue.priorityItems[:0]
 
 	sliceAndDice := roguePriorityItem{
 		MinimumComboPoints: 1,
 		MaximumComboPoints: 5,
 		Aura:               rogue.SliceAndDiceAura,
 		EnergyCost:         rogue.SliceAndDice.DefaultCast.Cost,
-		GetDuration: func(r *Rogue, cp int32) time.Duration {
+		GetDuration: func(rogue *Rogue, cp int32) time.Duration {
 			return rogue.sliceAndDiceDurations[cp]
 		},
-		GetSpell: func(r *Rogue, cp int32) *core.Spell {
+		GetSpell: func(rogue *Rogue, cp int32) *core.Spell {
 			return rogue.SliceAndDice
 		},
 	}
@@ -310,10 +310,10 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 			MinimumComboPoints: minPoints,
 			Aura:               rogue.ExposeArmorAuras.Get(rogue.CurrentTarget),
 			EnergyCost:         rogue.ExposeArmor.DefaultCast.Cost,
-			GetDuration: func(r *Rogue, cp int32) time.Duration {
+			GetDuration: func(rogue *Rogue, cp int32) time.Duration {
 				return rogue.exposeArmorDurations[cp]
 			},
-			GetSpell: func(r *Rogue, cp int32) *core.Spell {
+			GetSpell: func(rogue *Rogue, cp int32) *core.Spell {
 				return rogue.ExposeArmor
 			},
 		})
@@ -325,11 +325,11 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 			MaximumComboPoints: 0,
 			Aura:               rogue.HungerForBloodAura,
 			EnergyCost:         rogue.HungerForBlood.DefaultCast.Cost,
-			GetDuration: func(r *Rogue, cp int32) time.Duration {
+			GetDuration: func(rogue *Rogue, cp int32) time.Duration {
 				return rogue.HungerForBloodAura.Duration
 			},
-			GetSpell: func(r *Rogue, cp int32) *core.Spell {
-				return r.HungerForBlood
+			GetSpell: func(rogue *Rogue, cp int32) *core.Spell {
+				return rogue.HungerForBlood
 			},
 		})
 	}
@@ -338,15 +338,15 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 	rogue.priorityItems = append(rogue.priorityItems, roguePriorityItem{
 		MaxCasts:           1,
 		MaximumComboPoints: 0,
-		GetDuration: func(r *Rogue, cp int32) time.Duration {
+		GetDuration: func(rogue *Rogue, cp int32) time.Duration {
 			return 0
 		},
-		GetSpell: func(r *Rogue, cp int32) *core.Spell {
-			if r.allMCDsDisabled {
-				for _, mcd := range r.GetMajorCooldowns() {
+		GetSpell: func(rogue *Rogue, cp int32) *core.Spell {
+			if rogue.allMCDsDisabled {
+				for _, mcd := range rogue.GetMajorCooldowns() {
 					mcd.Enable()
 				}
-				r.allMCDsDisabled = false
+				rogue.allMCDsDisabled = false
 			}
 			return nil
 		},
@@ -358,10 +358,10 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 		MaximumComboPoints: 5,
 		Aura:               rogue.Rupture.CurDot().Aura,
 		EnergyCost:         rogue.Rupture.DefaultCast.Cost,
-		GetDuration: func(r *Rogue, cp int32) time.Duration {
-			return r.RuptureDuration(cp)
+		GetDuration: func(rogue *Rogue, cp int32) time.Duration {
+			return rogue.RuptureDuration(cp)
 		},
-		GetSpell: func(r *Rogue, cp int32) *core.Spell {
+		GetSpell: func(rogue *Rogue, cp int32) *core.Spell {
 			return rogue.Rupture
 		},
 	}
@@ -371,10 +371,10 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 		MinimumComboPoints: 1,
 		MaximumComboPoints: 5,
 		EnergyCost:         rogue.Eviscerate.DefaultCast.Cost,
-		GetDuration: func(r *Rogue, cp int32) time.Duration {
+		GetDuration: func(rogue *Rogue, cp int32) time.Duration {
 			return 0
 		},
-		GetSpell: func(r *Rogue, cp int32) *core.Spell {
+		GetSpell: func(rogue *Rogue, cp int32) *core.Spell {
 			return rogue.Eviscerate
 		},
 	}
@@ -383,8 +383,8 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 		rogue.priorityItems = append(rogue.priorityItems, roguePriorityItem{
 			MaximumComboPoints: 0,
 			EnergyCost:         rogue.FanOfKnives.DefaultCast.Cost,
-			GetSpell: func(r *Rogue, i int32) *core.Spell {
-				return r.FanOfKnives
+			GetSpell: func(rogue *Rogue, i int32) *core.Spell {
+				return rogue.FanOfKnives
 			},
 		})
 
@@ -396,10 +396,10 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 			Aura:               rogue.EnvenomAura,
 			EnergyCost:         rogue.Envenom.DefaultCast.Cost,
 			PoolAmount:         float64(rogue.Rotation.EnvenomPoolAmount),
-			GetDuration: func(r *Rogue, cp int32) time.Duration {
-				return r.EnvenomAura.Duration
+			GetDuration: func(rogue *Rogue, cp int32) time.Duration {
+				return rogue.EnvenomAura.Duration
 			},
-			GetSpell: func(r *Rogue, cp int32) *core.Spell {
+			GetSpell: func(rogue *Rogue, cp int32) *core.Spell {
 				return rogue.Envenom
 			},
 		}
@@ -472,6 +472,7 @@ func (rogue *Rogue) rotation(sim *core.Simulation) {
 	shouldCast := rogue.shouldCastNextRotationItem(sim, eps)
 	item := rogue.rotationItems[0]
 	prio := rogue.priorityItems[item.PrioIndex]
+
 	switch shouldCast {
 	case ShouldNotCast:
 		rogue.rotationItems = rogue.rotationItems[1:]

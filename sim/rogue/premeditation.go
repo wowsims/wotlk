@@ -38,8 +38,8 @@ func (rogue *Rogue) registerPremeditation() {
 		Type:     core.CooldownTypeDPS,
 		Priority: core.CooldownPriorityLow,
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-			thresh := 2
-			return rogue.ComboPoints() <= int32(thresh) && rogue.ShadowDanceAura.IsActive()
+			// guarding by Master of Subtlety is slightly hacky, but working
+			return rogue.ComboPoints() <= 2 && (rogue.MasterOfSubtletyAura.IsActive() || rogue.ShadowDanceAura.IsActive())
 		},
 	})
 }
