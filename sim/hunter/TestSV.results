@@ -142,6 +142,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSV-AllItems-Bryntroll,theBoneArbiter-50415"
+ value: {
+  dps: 7388.40027
+  tps: 6326.23087
+ }
+}
+dps_results: {
+ key: "TestSV-AllItems-Bryntroll,theBoneArbiter-50709"
+ value: {
+  dps: 7386.08199
+  tps: 6322.77318
+ }
+}
+dps_results: {
  key: "TestSV-AllItems-ChaoticSkyflareDiamond"
  value: {
   dps: 7198.68849

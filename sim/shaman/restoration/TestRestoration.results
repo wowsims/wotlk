@@ -116,6 +116,18 @@ dps_results: {
  value: {}
 }
 dps_results: {
+ key: "TestRestoration-AllItems-Bryntroll,theBoneArbiter-50415"
+ value: {
+  tps: 0.1
+ }
+}
+dps_results: {
+ key: "TestRestoration-AllItems-Bryntroll,theBoneArbiter-50709"
+ value: {
+  tps: 0.1
+ }
+}
+dps_results: {
  key: "TestRestoration-AllItems-ChaoticSkyflareDiamond"
  value: {}
 }
