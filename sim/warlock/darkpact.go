@@ -43,7 +43,7 @@ func (warlock *Warlock) registerDarkPactSpell() {
 			actualDrain := math.Min(maxDrain, warlock.Pet.CurrentMana())
 
 			warlock.Pet.SpendMana(sim, actualDrain, petManaMetrics)
-			warlock.AddMana(sim, actualDrain, manaMetrics, true)
+			warlock.AddMana(sim, actualDrain, manaMetrics)
 		},
 	})
 }

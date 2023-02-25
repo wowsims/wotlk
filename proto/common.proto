@@ -839,3 +839,7 @@ message ItemSwap {
 	ItemSpec oh_item = 2;
 	ItemSpec ranged_item = 3;
 }
+
+message Duration {
+	double ms = 1;
+}

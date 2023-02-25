@@ -242,7 +242,6 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump(sim *core
 					if dk.fr.oblitCount == 2 {
 						s.Advance()
 						dk.fr.oblitCount = 0
-						dk.fr.oblitDelay = sim.CurrentTime - dk.fr.oblitDelay
 					}
 				} else {
 					s.Advance()

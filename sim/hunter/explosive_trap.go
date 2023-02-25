@@ -71,7 +71,7 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 	halfWeaveTime := timeToTrapWeave / 2
 	hunter.TrapWeaveSpell = hunter.RegisterSpell(core.SpellConfig{
 		ActionID: hunter.ExplosiveTrap.ActionID.WithTag(1),
-		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagNoMetrics | core.SpellFlagNoLogs,
+		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagNoMetrics | core.SpellFlagNoLogs | core.SpellFlagAPL,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// Assume we started running after the most recent ranged auto, so that time

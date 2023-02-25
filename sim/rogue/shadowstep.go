@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (rogue *Rogue) registerShadowstepCD() {
@@ -50,8 +49,7 @@ func (rogue *Rogue) registerShadowstepCD() {
 	})
 
 	rogue.Shadowstep = rogue.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID,
-		ResourceType: stats.Energy,
+		ActionID: actionID,
 		EnergyCost: core.EnergyCostOptions{
 			Cost:   baseCost,
 			Refund: 0,

@@ -1,10 +1,11 @@
 package balance
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
-	"time"
 )
 
 func (moonkin *BalanceDruid) OnGCDReady(sim *core.Simulation) {
@@ -81,7 +82,6 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 	fishingForLunar := lunarICD <= solarICD
 
 	if moonkin.Talents.Eclipse > 0 {
-
 		solarUptime := moonkin.SolarEclipseProcAura.ExpiresAt() - sim.CurrentTime
 		solarIsActive := moonkin.SolarEclipseProcAura.IsActive()
 

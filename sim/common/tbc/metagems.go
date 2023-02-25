@@ -59,7 +59,7 @@ func init() {
 					return
 				}
 				icd.Use(sim)
-				character.AddMana(sim, 300, manaMetrics, false)
+				character.AddMana(sim, 300, manaMetrics)
 			},
 		})
 	})

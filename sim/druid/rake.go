@@ -86,7 +86,7 @@ func (druid *Druid) registerRakeSpell() {
 
 			critRating := druid.GetStat(stats.MeleeCrit) + spell.BonusCritRating
 			critChance := critRating / (core.CritRatingPerCritChance * 100)
-			critMod := (critChance * (spell.FinalCritMultiplier() - 1))
+			critMod := (critChance * (spell.CritMultiplier - 1))
 
 			if dotCanCrit {
 				ticks.Damage *= critChance * (1 + critMod)
@@ -99,5 +99,5 @@ func (druid *Druid) registerRakeSpell() {
 }
 
 func (druid *Druid) CurrentRakeCost() float64 {
-	return druid.Rake.ApplyCostModifiers(druid.Rake.BaseCost)
+	return druid.Rake.ApplyCostModifiers(druid.Rake.DefaultCast.Cost)
 }

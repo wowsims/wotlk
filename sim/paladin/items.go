@@ -29,7 +29,7 @@ var ItemSetLightbringerBattlegear = core.NewItemSet(core.ItemSet{
 					if sim.RandomFloat("lightbringer 2pc") > 0.2 {
 						return
 					}
-					paladin.AddMana(sim, 50, manaMetrics, true)
+					paladin.AddMana(sim, 50, manaMetrics)
 				},
 			})
 		},

@@ -127,7 +127,6 @@ export const DefaultUnholyRotation = DeathKnightRotation.create({
 	gargoylePresence: Deathknight_Rotation_Presence.Unholy,
 	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
 	useAms: false,
-	oblitDelayDuration: 1000.0,
 	drwDiseases: Deathknight_Rotation_DrwDiseases.Pestilence,
 });
 
@@ -154,7 +153,6 @@ export const DefaultFrostRotation = DeathKnightRotation.create({
 	useAms: false,
 	avgAmsSuccessRate: 1.0,
 	avgAmsHit: 10000.0,
-	oblitDelayDuration: 1000.0,
 	drwDiseases: Deathknight_Rotation_DrwDiseases.Pestilence,
   	frostRotationType: Deathknight_Rotation_FrostRotationType.SingleTarget,
   	frostCustomRotation: CustomRotation.create({

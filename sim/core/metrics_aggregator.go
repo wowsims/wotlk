@@ -108,9 +108,8 @@ type CharacterIterationMetrics struct {
 	Died    bool // Whether this unit died in the current iteration.
 	WentOOM bool // Whether the agent has hit OOM at least once in this iteration.
 
-	ManaSpent       float64
-	ManaGained      float64
-	BonusManaGained float64 // Only includes amount from mana pots / runes / innervates.
+	ManaSpent  float64
+	ManaGained float64
 
 	OOMTime time.Duration // time spent not casting and waiting for regen.
 
@@ -300,23 +299,23 @@ func (unit *Unit) NewFocusMetrics(actionID ActionID) *ResourceMetrics {
 }
 
 // Adds the results of a spell to the character metrics.
-func (unitMetrics *UnitMetrics) addSpell(spell *Spell) {
-	actionMetrics, ok := unitMetrics.actions[spell.ActionID]
+func (unitMetrics *UnitMetrics) addSpellMetrics(spell *Spell, actionID ActionID, spellMetrics []SpellMetrics) {
+	actionMetrics, ok := unitMetrics.actions[actionID]
 
 	if !ok {
 		actionMetrics = &ActionMetrics{IsMelee: spell.Flags.Matches(SpellFlagMeleeMetrics)}
-		unitMetrics.actions[spell.ActionID] = actionMetrics
+		unitMetrics.actions[actionID] = actionMetrics
 	}
 
 	if len(actionMetrics.Targets) == 0 {
-		actionMetrics.Targets = make([]TargetedActionMetrics, len(spell.SpellMetrics))
+		actionMetrics.Targets = make([]TargetedActionMetrics, len(spellMetrics))
 		for i := range actionMetrics.Targets {
 			tam := &actionMetrics.Targets[i]
 			tam.UnitIndex = spell.Unit.AttackTables[i].Defender.UnitIndex
 		}
 	}
 
-	for i, spellTargetMetrics := range spell.SpellMetrics {
+	for i, spellTargetMetrics := range spellMetrics {
 		tam := &actionMetrics.Targets[i]
 		tam.Casts += spellTargetMetrics.Casts
 		tam.Misses += spellTargetMetrics.Misses
@@ -390,7 +389,7 @@ func (unitMetrics *UnitMetrics) doneIteration(unit *Unit, sim *Simulation) {
 		timeToOOM := unitMetrics.FirstOOMTimestamp
 		if !unitMetrics.WentOOM {
 			// If we didn't actually go OOM in this iteration, infer TTO based on remaining mana.
-			manaSpentPerSecond := (unitMetrics.ManaSpent - (unitMetrics.ManaGained - unitMetrics.BonusManaGained)) / encounterDurationSeconds
+			manaSpentPerSecond := (unitMetrics.ManaSpent - unitMetrics.ManaGained) / encounterDurationSeconds
 			remainingTTO := DurationFromSeconds(unit.CurrentMana() / manaSpentPerSecond)
 			timeToOOM = DurationFromSeconds(encounterDurationSeconds) + remainingTTO
 			timeToOOM = MinDuration(timeToOOM, time.Minute*60)

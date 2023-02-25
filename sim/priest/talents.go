@@ -179,7 +179,7 @@ func (priest *Priest) ApplyRapture(ppm float64) {
 		core.StartPeriodicAction(sim, core.PeriodicActionOptions{
 			Period: time.Minute / time.Duration(ppm),
 			OnAction: func(sim *core.Simulation) {
-				priest.AddMana(sim, raptureManaCoeff*priest.MaxMana(), raptureMetrics, false)
+				priest.AddMana(sim, raptureManaCoeff*priest.MaxMana(), raptureMetrics)
 			},
 		})
 	})

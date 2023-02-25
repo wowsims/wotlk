@@ -96,6 +96,7 @@ type Unit struct {
 	manaBar
 	rageBar
 	energyBar
+	focusBar
 	RunicPowerBar
 
 	// All spells that can be cast by this unit.
@@ -108,6 +109,8 @@ type Unit struct {
 	// AutoAttacks is the manager for auto attack swings.
 	// Must be enabled to use, with "EnableAutoAttacks()".
 	AutoAttacks AutoAttacks
+
+	Rotation *APLRotation
 
 	// Statistics describing the results of the sim.
 	Metrics UnitMetrics
@@ -156,8 +159,8 @@ func (unit *Unit) IsEnabled() bool {
 //
 //	If the GCD is not used during OnGCDReady and this flag is set, OnGCDReady will not be called again
 //	until it is used in some other way (like from an auto attack or resource regeneration).
-func (character *Character) DoNothing() {
-	character.doNothing = true
+func (unit *Unit) DoNothing() {
+	unit.doNothing = true
 }
 
 func (unit *Unit) IsActive() bool {
@@ -434,6 +437,7 @@ func (unit *Unit) reset(sim *Simulation, agent Agent) {
 	}
 
 	unit.manaBar.reset()
+	unit.focusBar.reset(sim)
 	unit.healthBar.reset(sim)
 	unit.UpdateManaRegenRates()
 

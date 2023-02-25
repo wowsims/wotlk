@@ -2,7 +2,6 @@ package core
 
 import (
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 const MaxRage = 100.0
@@ -208,8 +207,6 @@ type RageCost struct {
 }
 
 func newRageCost(spell *Spell, options RageCostOptions) *RageCost {
-	spell.ResourceType = stats.Rage
-	spell.BaseCost = options.Cost
 	spell.DefaultCast.Cost = options.Cost
 	if options.Refund > 0 && options.RefundMetrics == nil {
 		options.RefundMetrics = spell.Unit.RageRefundMetrics

@@ -42,7 +42,7 @@ func (shaman *Shaman) registerThunderstormSpell() {
 		ThreatMultiplier: shaman.spellThreatMultiplier(),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			shaman.AddMana(sim, shaman.MaxMana()*manaRestore, manaMetrics, true)
+			shaman.AddMana(sim, shaman.MaxMana()*manaRestore, manaMetrics)
 
 			if shaman.thunderstormInRange {
 				dmgFromSP := 0.172 * spell.SpellPower()

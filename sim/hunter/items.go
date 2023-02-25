@@ -35,7 +35,7 @@ func init() {
 				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskRanged) {
 					return
 				}
-				hunter.AddMana(sim, manaGain, manaMetrics, false)
+				hunter.AddMana(sim, manaGain, manaMetrics)
 			},
 		})
 	})

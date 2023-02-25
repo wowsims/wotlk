@@ -69,7 +69,7 @@ func (mage *Mage) registerManaGemsCD() {
 				serpentCoilAura.Activate(sim)
 			}
 
-			mage.AddMana(sim, manaGain, manaMetrics, true)
+			mage.AddMana(sim, manaGain, manaMetrics)
 
 			remainingManaGems--
 			if remainingManaGems == 0 {

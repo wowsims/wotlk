@@ -13,10 +13,6 @@ func (dk *TankDeathknight) TankRA_Tps(sim *core.Simulation, target *core.Unit, s
 		return dk.NextGCDAt()
 	}
 
-	if dk.DoDefensiveCds(sim, target, s) {
-		return -1
-	}
-
 	t := sim.CurrentTime
 	ff := dk.FrostFeverSpell.Dot(target).ExpiresAt() - t
 	bp := dk.BloodPlagueSpell.Dot(target).ExpiresAt() - t

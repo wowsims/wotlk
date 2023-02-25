@@ -69,6 +69,7 @@ func NewEnhancementShaman(character core.Character, options *proto.Player) *Enha
 	if !enh.HasMHWeapon() {
 		enh.SelfBuffs.ImbueMH = proto.ShamanImbue_NoImbue
 	}
+
 	if !enh.HasOHWeapon() {
 		enh.SelfBuffs.ImbueOH = proto.ShamanImbue_NoImbue
 	}
@@ -82,9 +83,6 @@ func NewEnhancementShaman(character core.Character, options *proto.Player) *Enha
 	enh.RegisterWindfuryImbue(
 		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_WindfuryWeapon,
 		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_WindfuryWeapon)
-	enh.RegisterFrostbrandImbue(
-		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FrostbrandWeapon,
-		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_FrostbrandWeapon)
 
 	enh.SpiritWolves = &shaman.SpiritWolves{
 		SpiritWolf1: enh.NewSpiritWolf(1),
@@ -112,6 +110,10 @@ func (enh *EnhancementShaman) GetShaman() *shaman.Shaman {
 func (enh *EnhancementShaman) Initialize() {
 	enh.Shaman.Initialize()
 
+	enh.RegisterFrostbrandImbue(
+		enh.SelfBuffs.ImbueMH == proto.ShamanImbue_FrostbrandWeapon,
+		enh.SelfBuffs.ImbueOH == proto.ShamanImbue_FrostbrandWeapon)
+
 	if enh.ItemSwap.IsEnabled() {
 		mh := enh.ItemSwap.GetItem(proto.ItemSlot_ItemSlotMainHand)
 		enh.ApplyFlametongueImbueToItem(mh, true)
@@ -129,7 +131,6 @@ func (enh *EnhancementShaman) Initialize() {
 		})
 	}
 	enh.DelayDPSCooldowns(3 * time.Second)
-
 }
 
 func (enh *EnhancementShaman) Reset(sim *core.Simulation) {

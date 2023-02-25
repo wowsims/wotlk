@@ -599,13 +599,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestAssassination-AllItems-SparkofHope-45703"
- value: {
-  dps: 7412.28246
-  tps: 5262.72055
- }
-}
-dps_results: {
  key: "TestAssassination-AllItems-SparkofLife-37657"
  value: {
   dps: 7496.36522

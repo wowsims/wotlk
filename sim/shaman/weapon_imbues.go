@@ -302,20 +302,27 @@ func (shaman *Shaman) RegisterFlametongueDownrankImbue(mh bool, oh bool) {
 }
 
 func (shaman *Shaman) FrostbrandDebuffAura(target *core.Unit) *core.Aura {
+	multiplier := 1 + 0.05*float64(shaman.Talents.FrozenPower)
 	return target.GetOrRegisterAura(core.Aura{
 		Label:    "Frostbrand Attack-" + shaman.Label,
 		ActionID: core.ActionID{SpellID: 58799},
 		Duration: time.Second * 8,
-		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell.Unit != &shaman.Unit {
-				return
-			}
-			//if spell != shaman.LightningBolt || shaman.ChainLightning || shaman.FlameShock || shaman.FrostShock || shaman.EarthShock || shaman.LavaLash {
-			//	return
-			//}
-			//modifier goes here, maybe?? might need to go in the specific spell files i guess
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			shaman.LightningBolt.DamageMultiplier *= multiplier
+			shaman.ChainLightning.DamageMultiplier *= multiplier
+			shaman.LavaLash.DamageMultiplier *= multiplier
+			shaman.EarthShock.DamageMultiplier *= multiplier
+			shaman.FlameShock.DamageMultiplier *= multiplier
+			shaman.FrostShock.DamageMultiplier *= multiplier
 		},
-		//TODO: figure out how to implement frozen power (might not be here)
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			shaman.LightningBolt.DamageMultiplier /= multiplier
+			shaman.ChainLightning.DamageMultiplier /= multiplier
+			shaman.LavaLash.DamageMultiplier /= multiplier
+			shaman.EarthShock.DamageMultiplier /= multiplier
+			shaman.FlameShock.DamageMultiplier /= multiplier
+			shaman.FrostShock.DamageMultiplier /= multiplier
+		},
 	})
 }
 

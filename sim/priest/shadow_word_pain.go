@@ -81,7 +81,7 @@ func (priest *Priest) registerShadowWordPainSpell() {
 				}
 
 				if glyphManaMetrics != nil {
-					priest.AddMana(sim, priest.BaseMana*0.01, glyphManaMetrics, false)
+					priest.AddMana(sim, priest.BaseMana*0.01, glyphManaMetrics)
 				}
 			},
 		},

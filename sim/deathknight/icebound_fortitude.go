@@ -51,9 +51,9 @@ func (dk *Deathknight) registerIceboundFortitudeSpell() {
 	})
 
 	if !dk.Inputs.IsDps {
-		// dk.AddMajorCooldown(core.MajorCooldown{
-		// 	Spell: dk.IceboundFortitude,
-		// 	Type:  core.CooldownTypeSurvival,
-		// })
+		dk.AddMajorCooldown(core.MajorCooldown{
+			Spell: dk.IceboundFortitude,
+			Type:  core.CooldownTypeSurvival,
+		})
 	}
 }

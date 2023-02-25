@@ -532,7 +532,7 @@ func (druid *Druid) applyImprovedLotp() {
 				return
 			}
 			icd.Use(sim)
-			druid.AddMana(sim, druid.MaxMana()*manaRestore, manaMetrics, false)
+			druid.AddMana(sim, druid.MaxMana()*manaRestore, manaMetrics)
 			druid.GainHealth(sim, druid.MaxHealth()*healthRestore, healthMetrics)
 		},
 	})

@@ -234,7 +234,6 @@ message Deathknight {
 		Presence starting_presence = 10;
 		BloodTap blood_tap = 11;
 
-		double oblit_delay_duration = 12;
 		bool use_ams = 13;
 		double avg_ams_success_rate = 14;
 		double avg_ams_hit = 15;

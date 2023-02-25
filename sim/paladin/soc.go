@@ -127,7 +127,7 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if glyphManaMetrics != nil && spell.Flags.Matches(SpellFlagPrimaryJudgement) {
-				paladin.AddMana(sim, glyphManaGain, glyphManaMetrics, false)
+				paladin.AddMana(sim, glyphManaGain, glyphManaMetrics)
 			}
 
 			// Don't proc on misses or our own procs.
