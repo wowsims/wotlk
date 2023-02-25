@@ -160,7 +160,7 @@ func init() {
 			PPM:      1.0,
 		},
 		School: core.SpellSchoolShadow,
-		MinDmg: 2138,
-		MaxDmg: 2362,
+		MinDmg: 2412,
+		MaxDmg: 2664,
 	})
 }
