@@ -52,6 +52,7 @@ func (dk *Deathknight) registerDrwBloodBoilSpell() {
 		ActionID:    BloodBoilActionID,
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       core.SpellFlagIgnoreAttackerModifiers,
 
 		DamageMultiplier: 0.5 * dk.bloodyStrikesBonus(dk.BloodBoil),
 		CritMultiplier:   dk.bonusCritMultiplier(dk.Talents.MightOfMograine),
