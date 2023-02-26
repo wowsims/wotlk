@@ -110,6 +110,9 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 					moonkin.castMajorCooldown(moonkin.hyperSpeedMCD, sim, target)
 					moonkin.castMajorCooldown(moonkin.potionSpeedMCD, sim, target)
 					moonkin.useTrinkets(stats.SpellHaste, sim, target)
+					if !moonkin.HasActiveAuraWithTag(core.BloodlustAuraTag) {
+						moonkin.castMajorCooldown(moonkin.powerInfusion, sim, target)
+					}
 				}
 				return moonkin.Starfire
 			} else if solarIsActive {
