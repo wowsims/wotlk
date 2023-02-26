@@ -46,3 +46,26 @@ func (dk *Deathknight) registerBloodBoilSpell() {
 		},
 	})
 }
+
+func (dk *Deathknight) registerDrwBloodBoilSpell() {
+	dk.RuneWeapon.BloodBoil = dk.RuneWeapon.RegisterSpell(core.SpellConfig{
+		ActionID:    BloodBoilActionID,
+		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskSpellDamage,
+
+		DamageMultiplier: dk.bloodyStrikesBonus(dk.BloodBoil),
+		CritMultiplier:   dk.bonusCritMultiplier(dk.Talents.MightOfMograine),
+		ThreatMultiplier: 1,
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			for _, aoeTarget := range sim.Encounter.Targets {
+				aoeUnit := &aoeTarget.Unit
+
+				baseDamage := (sim.Roll(180, 220) + 0.06*dk.RuneWeapon.getImpurityBonus(spell)) * core.TernaryFloat64(dk.DrwDiseasesAreActive(aoeUnit), 1.5, 1.0)
+				baseDamage *= sim.Encounter.AOECapMultiplier()
+
+				spell.CalcAndDealDamage(sim, aoeUnit, baseDamage, spell.OutcomeMagicHitAndCrit)
+			}
+		},
+	})
+}

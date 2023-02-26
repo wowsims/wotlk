@@ -195,6 +195,12 @@ message Deathknight {
 			Experimental_1 = 1;
 			Experimental_2 = 2;
 		}
+
+		enum BloodSpell {
+			HS = 0;
+			BB = 1;
+			BS = 2;
+		}
 		
 		enum CustomSpellOption {
 			CustomNoSpell = 0;
@@ -259,6 +265,10 @@ message Deathknight {
 
 		bool enable_weapon_swap = 28;
 		ItemSwap weapon_swap = 29;
+
+		bool use_dancing_rune_weapon = 30;
+
+		BloodSpell blood_spender = 31;
 	}
 	Rotation rotation = 1;
 	

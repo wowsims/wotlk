@@ -31,12 +31,16 @@ func (dk *Deathknight) registerDancingRuneWeaponCD() {
 				dk.RuneWeapon.PlagueStrike.Cast(sim, spell.Unit.CurrentTarget)
 			case dk.DeathStrike:
 				dk.RuneWeapon.DeathStrike.Cast(sim, spell.Unit.CurrentTarget)
+			case dk.BloodStrike:
+				dk.RuneWeapon.BloodStrike.Cast(sim, spell.Unit.CurrentTarget)
 			case dk.HeartStrike:
 				dk.RuneWeapon.HeartStrike.Cast(sim, spell.Unit.CurrentTarget)
 			case dk.DeathCoil:
 				dk.RuneWeapon.DeathCoil.Cast(sim, spell.Unit.CurrentTarget)
 			case dk.Pestilence:
 				dk.RuneWeapon.Pestilence.Cast(sim, spell.Unit.CurrentTarget)
+			case dk.BloodBoil:
+				dk.RuneWeapon.BloodBoil.Cast(sim, spell.Unit.CurrentTarget)
 			}
 		},
 	})
@@ -85,10 +89,12 @@ type RuneWeaponPet struct {
 	DeathStrike *core.Spell
 	DeathCoil   *core.Spell
 
+	BloodStrike       *core.Spell
 	HeartStrike       *core.Spell
 	HeartStrikeOffHit *core.Spell
 
 	Pestilence *core.Spell
+	BloodBoil  *core.Spell
 
 	// Diseases
 	FrostFeverSpell  *core.Spell
@@ -98,10 +104,12 @@ type RuneWeaponPet struct {
 func (runeWeapon *RuneWeaponPet) Initialize() {
 	runeWeapon.dkOwner.registerDrwDiseaseDots()
 	runeWeapon.dkOwner.registerDrwPestilenceSpell()
+	runeWeapon.dkOwner.registerDrwBloodBoilSpell()
 
 	runeWeapon.dkOwner.registerDrwIcyTouchSpell()
 	runeWeapon.dkOwner.registerDrwPlagueStrikeSpell()
 	runeWeapon.dkOwner.registerDrwDeathStrikeSpell()
+	runeWeapon.dkOwner.registerDrwBloodStrikeSpell()
 	runeWeapon.dkOwner.registerDrwHeartStrikeSpell()
 	runeWeapon.dkOwner.registerDrwDeathCoilSpell()
 }
