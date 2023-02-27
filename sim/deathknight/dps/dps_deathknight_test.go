@@ -154,7 +154,9 @@ var unholyRotation = &proto.Deathknight_Rotation{
 	BloodTap:             proto.Deathknight_Rotation_GhoulFrenzy,
 }
 
-var frostRotation = &proto.Deathknight_Rotation{}
+var frostRotation = &proto.Deathknight_Rotation{
+	UseEmpowerRuneWeapon: true,
+}
 
 var deathKnightOptions = &proto.Deathknight_Options{
 	UnholyFrenzyTarget:  &proto.RaidTarget{TargetIndex: 0},
