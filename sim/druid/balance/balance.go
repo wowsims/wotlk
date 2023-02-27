@@ -57,6 +57,7 @@ type BalanceDruid struct {
 	hyperSpeedMCD      *core.MajorCooldown
 	potionSpeedMCD     *core.MajorCooldown
 	potionWildMagicMCD *core.MajorCooldown
+	powerInfusion      *core.MajorCooldown
 	onUseTrinket1      BalanceOnUseTrinket
 	onUseTrinket2      BalanceOnUseTrinket
 	potionUsed         bool
@@ -101,6 +102,7 @@ func (moonkin *BalanceDruid) Reset(sim *core.Simulation) {
 		if moonkin.HasProfession(proto.Profession_Engineering) {
 			moonkin.hyperSpeedMCD = moonkin.getBalanceMajorCooldown(core.ActionID{SpellID: 54758})
 		}
+		moonkin.powerInfusion = moonkin.getBalanceMajorCooldown(core.ActionID{SpellID: 10060})
 		moonkin.onUseTrinket1 = BalanceOnUseTrinket{
 			Cooldown: moonkin.getBalanceMajorCooldown(core.ActionID{ItemID: moonkin.Equip[core.ItemSlotTrinket1].ID}),
 			Stat:     getOnUseTrinketStat(moonkin.Equip[core.ItemSlotTrinket1].ID),
@@ -114,7 +116,7 @@ func (moonkin *BalanceDruid) Reset(sim *core.Simulation) {
 
 // Takes out a Cooldown from the generic MajorCooldownManager and adds it to a custom Slice of Cooldowns
 func (moonkin *BalanceDruid) getBalanceMajorCooldown(actionID core.ActionID) *core.MajorCooldown {
-	if majorCd := moonkin.Character.GetMajorCooldown(actionID); majorCd != nil {
+	if majorCd := moonkin.Character.GetMajorCooldownIgnoreTag(actionID); majorCd != nil {
 		majorCd.Disable()
 		return majorCd
 	}

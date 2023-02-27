@@ -134,6 +134,8 @@ var bloodRotation = &proto.Deathknight_Rotation{
 	DrwDiseases:          proto.Deathknight_Rotation_Pestilence,
 	UseEmpowerRuneWeapon: true,
 	PreNerfedGargoyle:    false,
+	UseDancingRuneWeapon: true,
+	BloodSpender:         proto.Deathknight_Rotation_HS,
 }
 
 var unholyRotation = &proto.Deathknight_Rotation{

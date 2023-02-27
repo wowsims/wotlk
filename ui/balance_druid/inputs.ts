@@ -12,6 +12,7 @@ import {
 	BalanceDruid_Rotation_Type as RotationType,
 	BalanceDruid_Rotation_MfUsage as MfUsage,
 	BalanceDruid_Rotation_IsUsage as IsUsage,
+	BalanceDruid_Rotation_EclipsePrio as EclipsePrio,
 } from '../core/proto/druid.js';
 
 
@@ -113,6 +114,16 @@ export const BalanceDruidRotationConfig = {
 			fieldName: 'playerLatency',
 			label: 'Player latency',
 			labelTooltip: 'Time before the player reacts to an eclipse proc, in milliseconds.',
+			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
+		}),
+		InputHelpers.makeRotationEnumInput<Spec.SpecBalanceDruid, EclipsePrio>({
+			fieldName: 'eclipsePrio',
+			label: 'Eclipse priority',
+			labelTooltip: 'Defines which eclipse will get prioritized in the rotation.',
+			values: [
+				{ name: 'Lunar', value: EclipsePrio.Lunar },
+				{ name: 'Solar', value: EclipsePrio.Solar },
+			],
 			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
 		}),
 	],
