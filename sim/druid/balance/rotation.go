@@ -56,10 +56,10 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 
 	moonfireUptime := moonkin.Moonfire.CurDot().RemainingDuration(sim)
 	insectSwarmUptime := moonkin.InsectSwarm.CurDot().RemainingDuration(sim)
-	useMf := moonkin.Rotation.MfUsage != proto.BalanceDruid_Rotation_NoMf
-	useIs := moonkin.Rotation.IsUsage != proto.BalanceDruid_Rotation_NoIs
-	maximizeMfUptime := moonkin.Rotation.MfUsage == proto.BalanceDruid_Rotation_MaximizeMf
-	maximizeIsUptime := moonkin.Rotation.IsUsage == proto.BalanceDruid_Rotation_MaximizeIs
+	useMf := rotation.MfUsage != proto.BalanceDruid_Rotation_NoMf
+	useIs := rotation.IsUsage != proto.BalanceDruid_Rotation_NoIs
+	maximizeMfUptime := rotation.MfUsage == proto.BalanceDruid_Rotation_MaximizeMf
+	maximizeIsUptime := rotation.IsUsage == proto.BalanceDruid_Rotation_MaximizeIs
 	lunarIsActive := moonkin.LunarEclipseProcAura.IsActive()
 
 	shouldHoldIs := false
@@ -80,6 +80,9 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 	lunarICD := moonkin.LunarICD.Timer.TimeToReady(sim)
 	solarICD := moonkin.SolarICD.Timer.TimeToReady(sim)
 	fishingForLunar := lunarICD <= solarICD
+	if rotation.EclipsePrio == proto.BalanceDruid_Rotation_Solar {
+		fishingForLunar = lunarICD < solarICD
+	}
 
 	if moonkin.Talents.Eclipse > 0 {
 		solarUptime := moonkin.SolarEclipseProcAura.ExpiresAt() - sim.CurrentTime
@@ -110,6 +113,9 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 					moonkin.castMajorCooldown(moonkin.hyperSpeedMCD, sim, target)
 					moonkin.castMajorCooldown(moonkin.potionSpeedMCD, sim, target)
 					moonkin.useTrinkets(stats.SpellHaste, sim, target)
+					if !moonkin.HasActiveAuraWithTag(core.BloodlustAuraTag) {
+						moonkin.castMajorCooldown(moonkin.powerInfusion, sim, target)
+					}
 				}
 				return moonkin.Starfire
 			} else if solarIsActive {
@@ -127,10 +133,10 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 				}
 			}
 		}
-		if moonkin.Rotation.MfUsage == proto.BalanceDruid_Rotation_BeforeLunar && lunarICD < 2*time.Second && shouldRefreshMf {
+		if rotation.MfUsage == proto.BalanceDruid_Rotation_BeforeLunar && lunarICD < 2*time.Second && shouldRefreshMf {
 			return moonkin.Moonfire
 		}
-		if moonkin.Rotation.IsUsage == proto.BalanceDruid_Rotation_BeforeSolar && solarICD < 2*time.Second && shouldRefreshIs {
+		if rotation.IsUsage == proto.BalanceDruid_Rotation_BeforeSolar && solarICD < 2*time.Second && shouldRefreshIs {
 			return moonkin.InsectSwarm
 		}
 	}
