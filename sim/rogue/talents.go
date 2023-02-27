@@ -598,7 +598,9 @@ func (rogue *Rogue) registerKillingSpreeCD() {
 }
 
 func (rogue *Rogue) registerHonorAmongThieves() {
-	// When anyone in your group critically hits with a damage or healing spell or ability, you have a [33%/66%/100%] cahnce to gain a combo point on your current target. This effect cannot occur more than once per second.
+	// When anyone in your group critically hits with a damage or healing spell or ability,
+	// you have a [33%/66%/100%] chance to gain a combo point on your current target.
+	// This effect cannot occur more than once per second.
 	if rogue.Talents.HonorAmongThieves == 0 {
 		return
 	}
@@ -618,7 +620,7 @@ func (rogue *Rogue) registerHonorAmongThieves() {
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
 				Period: time.Second,
-				OnAction: func(s *core.Simulation) {
+				OnAction: func(sim *core.Simulation) {
 					if sim.Proc(procChance, "Honor Among Thieves") {
 						rogue.AddComboPoints(sim, 1, comboMetrics)
 					}
