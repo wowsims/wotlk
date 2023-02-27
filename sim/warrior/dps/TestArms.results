@@ -135,6 +135,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestArms-AllItems-Bryntroll,theBoneArbiter-50415"
+ value: {
+  dps: 8264.30758
+  tps: 6769.96925
+ }
+}
+dps_results: {
+ key: "TestArms-AllItems-Bryntroll,theBoneArbiter-50709"
+ value: {
+  dps: 8264.30758
+  tps: 6769.96925
+ }
+}
+dps_results: {
  key: "TestArms-AllItems-ChaoticSkyflareDiamond"
  value: {
   dps: 8264.30758
@@ -243,8 +257,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-DreadnaughtBattlegear"
  value: {
-  dps: 7522.87691
-  tps: 6173.68059
+  dps: 7519.45813
+  tps: 6171.24046
  }
 }
 dps_results: {
@@ -608,8 +622,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-SiegebreakerBattlegear"
  value: {
-  dps: 7833.90448
-  tps: 6414.47932
+  dps: 7883.94772
+  tps: 6454.76555
  }
 }
 dps_results: {
@@ -645,13 +659,6 @@ dps_results: {
  value: {
   dps: 7844.74559
   tps: 6427.3924
- }
-}
-dps_results: {
- key: "TestArms-AllItems-SparkofHope-45703"
- value: {
-  dps: 7746.92486
-  tps: 6347.17886
  }
 }
 dps_results: {

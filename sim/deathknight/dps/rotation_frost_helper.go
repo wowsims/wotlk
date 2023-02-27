@@ -62,7 +62,6 @@ func (dk *DpsDeathknight) RotationActionCallback_EndOfFightCheck(sim *core.Simul
 }
 
 func (dk *DpsDeathknight) RotationActionCallback_EndOfFightPrio(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-
 	simDur := sim.CurrentTime + sim.GetRemainingDuration()
 	simTimeLeft := sim.GetRemainingDuration()
 	ffExpiresAt := dk.FrostFeverSpell.Dot(target).ExpiresAt()
@@ -74,7 +73,6 @@ func (dk *DpsDeathknight) RotationActionCallback_EndOfFightPrio(sim *core.Simula
 	uhAt := dk.NormalUnholyRuneReadyAt(sim)
 	obAt := core.MaxDuration(frAt, uhAt)
 	fsCost := float64(core.RuneCost(dk.FrostStrike.CurCast.Cost).RunicPower())
-	delayAmount := core.MinDuration(time.Duration(dk.Rotation.OblitDelayDuration)*time.Millisecond, 2501*time.Millisecond)
 	bothblAt := dk.BloodDeathRuneBothReadyAt()
 
 	if bothblAt == core.NeverExpires {
@@ -101,23 +99,23 @@ func (dk *DpsDeathknight) RotationActionCallback_EndOfFightPrio(sim *core.Simula
 			s.Clear().
 				NewAction(dk.RotationActionCallback_HB).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
-		} else if (abGcd > simTimeLeft || sim.CurrentTime+abGcd > obAt+delayAmount) && obAt < simDur { //oblit can be used, it's the last GCD or it goes over oblit delay
+		} else if (abGcd > simTimeLeft || sim.CurrentTime+abGcd > obAt) && obAt < simDur { //oblit can be used, it's the last GCD or it goes over oblit
 			s.Clear().
 				NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
-		} else if dk.CurrentRunicPower() >= fsCost && sim.CurrentTime+abGcd < obAt+delayAmount { //can FS and wont cross oblit delay
+		} else if dk.CurrentRunicPower() >= fsCost && sim.CurrentTime+abGcd < obAt { //can FS and wont cross oblit
 			s.Clear().
 				NewAction(dk.RotationActionCallback_FS).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
-		} else if dk.RimeAura.IsActive() && sim.CurrentTime+spGcd < obAt+delayAmount { //can rime and wont cross oblit delay
+		} else if dk.RimeAura.IsActive() && sim.CurrentTime+spGcd < obAt { //can rime and wont cross oblit
 			s.Clear().
 				NewAction(dk.RotationActionCallback_HB).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
-		} else if (dk.CurrentBloodRunes() >= 1 || dk.CurrentDeathRunes() == 1) && (sim.CurrentTime+abGcd < obAt+delayAmount) { //have runes for BS, and it cant be used for oblit instead
+		} else if (dk.CurrentBloodRunes() >= 1 || dk.CurrentDeathRunes() == 1) && (sim.CurrentTime+abGcd < obAt) { //have runes for BS, and it cant be used for oblit instead
 			s.Clear().
 				NewAction(dk.RotationActionCallback_BS).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
-		} else if dk.HornOfWinter.IsReady(sim) && sim.CurrentTime+spGcd < obAt+delayAmount && simTimeLeft > spGcd { //can horn and wont cross oblit delay
+		} else if dk.HornOfWinter.IsReady(sim) && sim.CurrentTime+spGcd < obAt && simTimeLeft > spGcd { //can horn and wont cross oblit
 			s.Clear().
 				NewAction(dk.RotationActionCallback_HW).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
@@ -139,15 +137,15 @@ func (dk *DpsDeathknight) RotationActionCallback_EndOfFightPrio(sim *core.Simula
 			s.Clear().
 				NewAction(dk.RotationActionCallback_HB).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
-		} else if abGcd > simTimeLeft && obAt < simDur { //oblit can be used, it's the last GCD or it goes over oblit delay
+		} else if abGcd > simTimeLeft && obAt < simDur { //oblit can be used, it's the last GCD or it goes over oblit
 			s.Clear().
 				NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
-		} else if dk.CurrentRunicPower() >= fsCost && sim.CurrentTime+abGcd < obAt+delayAmount { //can FS and wont cross oblit delay
+		} else if dk.CurrentRunicPower() >= fsCost && sim.CurrentTime+abGcd < obAt { //can FS and wont cross oblit
 			s.Clear().
 				NewAction(dk.RotationActionCallback_FS).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
-		} else if dk.RimeAura.IsActive() && sim.CurrentTime+spGcd < obAt+delayAmount { //can rime and wont cross oblit delay
+		} else if dk.RimeAura.IsActive() && sim.CurrentTime+spGcd < obAt { //can rime and wont cross oblit
 			s.Clear().
 				NewAction(dk.RotationActionCallback_HB).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
@@ -175,11 +173,11 @@ func (dk *DpsDeathknight) RotationActionCallback_EndOfFightPrio(sim *core.Simula
 			s.Clear().
 				NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
-		} else if sim.CurrentTime+spGcd > obAt+delayAmount && (dk.Talents.Epidemic == 2 || (dk.CurrentFrostRunes() >= 1 && dk.CurrentUnholyRunes() >= 1)) { //same as above, no time to spellGCD before oblit
+		} else if sim.CurrentTime+spGcd > obAt && (dk.Talents.Epidemic == 2 || (dk.CurrentFrostRunes() >= 1 && dk.CurrentUnholyRunes() >= 1)) { //same as above, no time to spellGCD before oblit
 			s.Clear().
 				NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
-		} else if sim.CurrentTime+spGcd < obAt+delayAmount && sim.CurrentTime+abGcd > obAt && (dk.RimeAura.IsActive() || dk.CurrentRunicPower() < fsCost*4-2*dk.fr.oblitRPRegen && dk.HornOfWinter.IsReady(sim)) { //if you can fit a spGcd before oblit and won't overcap RP with horn
+		} else if sim.CurrentTime+spGcd < obAt && sim.CurrentTime+abGcd > obAt && (dk.RimeAura.IsActive() || dk.CurrentRunicPower() < fsCost*4-2*dk.fr.oblitRPRegen && dk.HornOfWinter.IsReady(sim)) { //if you can fit a spGcd before oblit and won't overcap RP with horn
 			if dk.RimeAura.IsActive() {
 				s.Clear().
 					NewAction(dk.RotationActionCallback_HB).
@@ -189,7 +187,7 @@ func (dk *DpsDeathknight) RotationActionCallback_EndOfFightPrio(sim *core.Simula
 					NewAction(dk.RotationActionCallback_HW).
 					NewAction(dk.RotationActionCallback_EndOfFightCheck)
 			}
-		} else if sim.CurrentTime+abGcd > obAt+delayAmount { //if no time to abGcd before oblit
+		} else if sim.CurrentTime+abGcd > obAt { //if no time to abGcd before oblit
 			s.Clear().
 				NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)

@@ -563,7 +563,7 @@ func (warrior *Warrior) applyWreckingCrew() {
 	})
 }
 
-func (warrior *Warrior) isSuddenDeathActive() bool {
+func (warrior *Warrior) IsSuddenDeathActive() bool {
 	return warrior.SuddenDeathAura.IsActive() || (warrior.Talents.SuddenDeath > 0 && warrior.Ymirjar4pcProcAura.IsActive())
 }
 

@@ -140,6 +140,22 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestUnholy-AllItems-Bryntroll,theBoneArbiter-50415"
+ value: {
+  dps: 8098.44122
+  tps: 5150.9384
+  hps: 266.55313
+ }
+}
+dps_results: {
+ key: "TestUnholy-AllItems-Bryntroll,theBoneArbiter-50709"
+ value: {
+  dps: 8098.44122
+  tps: 5150.9384
+  hps: 266.55313
+ }
+}
+dps_results: {
  key: "TestUnholy-AllItems-ChaoticSkyflareDiamond"
  value: {
   dps: 8112.23807
@@ -776,14 +792,6 @@ dps_results: {
  value: {
   dps: 7593.48719
   tps: 4893.3721
-  hps: 265.28534
- }
-}
-dps_results: {
- key: "TestUnholy-AllItems-SparkofHope-45703"
- value: {
-  dps: 7506.30803
-  tps: 4808.2212
   hps: 265.28534
  }
 }

@@ -264,7 +264,7 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 		rogue.setupAssassinationRotation(sim)
 	}
 	if rogue.PrimaryTalentTree == SubtletyTree {
-		rogue.setSubtletyBuilder()
+		rogue.setSubtletyBuilder(sim)
 		rogue.setupSubtletyRotation(sim)
 	}
 	isMultiTarget := sim.GetNumTargets() >= 3
@@ -275,12 +275,12 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 		MinimumComboPoints: 1,
 		MaximumComboPoints: 5,
 		Aura:               rogue.SliceAndDiceAura,
-		EnergyCost:         rogue.SliceAndDice[1].DefaultCast.Cost,
+		EnergyCost:         rogue.SliceAndDice.DefaultCast.Cost,
 		GetDuration: func(r *Rogue, cp int32) time.Duration {
 			return rogue.sliceAndDiceDurations[cp]
 		},
 		GetSpell: func(r *Rogue, cp int32) *core.Spell {
-			return rogue.SliceAndDice[cp]
+			return rogue.SliceAndDice
 		},
 	}
 	if isMultiTarget {
@@ -309,12 +309,12 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 			MaximumComboPoints: 5,
 			MinimumComboPoints: minPoints,
 			Aura:               rogue.ExposeArmorAuras.Get(rogue.CurrentTarget),
-			EnergyCost:         rogue.ExposeArmor[1].DefaultCast.Cost,
+			EnergyCost:         rogue.ExposeArmor.DefaultCast.Cost,
 			GetDuration: func(r *Rogue, cp int32) time.Duration {
 				return rogue.exposeArmorDurations[cp]
 			},
 			GetSpell: func(r *Rogue, cp int32) *core.Spell {
-				return rogue.ExposeArmor[cp]
+				return rogue.ExposeArmor
 			},
 		})
 	}
@@ -356,13 +356,13 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 	rupture := roguePriorityItem{
 		MinimumComboPoints: 3,
 		MaximumComboPoints: 5,
-		Aura:               rogue.Rupture[0].CurDot().Aura,
-		EnergyCost:         rogue.Rupture[1].DefaultCast.Cost,
+		Aura:               rogue.Rupture.CurDot().Aura,
+		EnergyCost:         rogue.Rupture.DefaultCast.Cost,
 		GetDuration: func(r *Rogue, cp int32) time.Duration {
 			return r.RuptureDuration(cp)
 		},
 		GetSpell: func(r *Rogue, cp int32) *core.Spell {
-			return rogue.Rupture[cp]
+			return rogue.Rupture
 		},
 	}
 
@@ -370,12 +370,12 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 	eviscerate := roguePriorityItem{
 		MinimumComboPoints: 1,
 		MaximumComboPoints: 5,
-		EnergyCost:         rogue.Eviscerate[1].DefaultCast.Cost,
+		EnergyCost:         rogue.Eviscerate.DefaultCast.Cost,
 		GetDuration: func(r *Rogue, cp int32) time.Duration {
 			return 0
 		},
 		GetSpell: func(r *Rogue, cp int32) *core.Spell {
-			return rogue.Eviscerate[cp]
+			return rogue.Eviscerate
 		},
 	}
 
@@ -394,13 +394,13 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 			MinimumComboPoints: 1,
 			MaximumComboPoints: 5,
 			Aura:               rogue.EnvenomAura,
-			EnergyCost:         rogue.Envenom[1].DefaultCast.Cost,
+			EnergyCost:         rogue.Envenom.DefaultCast.Cost,
 			PoolAmount:         float64(rogue.Rotation.EnvenomPoolAmount),
 			GetDuration: func(r *Rogue, cp int32) time.Duration {
 				return r.EnvenomAura.Duration
 			},
 			GetSpell: func(r *Rogue, cp int32) *core.Spell {
-				return rogue.Envenom[cp]
+				return rogue.Envenom
 			},
 		}
 		switch rogue.Rotation.AssassinationFinisherPriority {
@@ -444,13 +444,13 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 			}
 		} else {
 			switch rogue.Rotation.SubtletyFinisherPriority {
-			case proto.Rogue_Rotation_Rupture:
+			case proto.Rogue_Rotation_SubtletyEviscerate:
 				rupture.MinimumComboPoints = core.MaxInt32(1, rogue.Rotation.MinimumComboPointsPrimaryFinisher)
 				rogue.priorityItems = append(rogue.priorityItems, rupture)
 				eviscerate.MinimumComboPoints = core.MaxInt32(1, rogue.Rotation.MinimumComboPointsSecondaryFinisher)
 				eviscerate.IsFiller = true
 				rogue.priorityItems = append(rogue.priorityItems, eviscerate)
-			case proto.Rogue_Rotation_Eviscerate:
+			case proto.Rogue_Rotation_SubtletyEnvenom:
 				eviscerate.MinimumComboPoints = core.MaxInt32(1, rogue.Rotation.MinimumComboPointsPrimaryFinisher)
 				rogue.priorityItems = append(rogue.priorityItems, eviscerate)
 				rupture.MinimumComboPoints = rogue.Rotation.MinimumComboPointsSecondaryFinisher

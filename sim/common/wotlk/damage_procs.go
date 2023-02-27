@@ -135,4 +135,32 @@ func init() {
 		MinDmg: 1750,
 		MaxDmg: 2250,
 	})
+
+	newProcDamageEffect(ProcDamageEffect{
+		ID: 50415,
+		Trigger: core.ProcTrigger{
+			Name:     "Bryntroll, the Bone Arbiter (N) Proc",
+			Callback: core.CallbackOnSpellHitDealt,
+			ProcMask: core.ProcMaskMeleeOrRanged,
+			Harmful:  true,
+			PPM:      1.0,
+		},
+		School: core.SpellSchoolShadow,
+		MinDmg: 2138,
+		MaxDmg: 2362,
+	})
+
+	newProcDamageEffect(ProcDamageEffect{
+		ID: 50709,
+		Trigger: core.ProcTrigger{
+			Name:     "Bryntroll, the Bone Arbiter (H) Proc",
+			Callback: core.CallbackOnSpellHitDealt,
+			ProcMask: core.ProcMaskMeleeOrRanged,
+			Harmful:  true,
+			PPM:      1.0,
+		},
+		School: core.SpellSchoolShadow,
+		MinDmg: 2412,
+		MaxDmg: 2664,
+	})
 }

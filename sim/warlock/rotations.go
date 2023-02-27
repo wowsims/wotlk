@@ -553,10 +553,10 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	var fillerCastTime time.Duration
 	if warlock.Talents.SoulSiphon > 0 { //SoulSiphon >0 is an affliction check.
 		fillerCastTime = warlock.ApplyCastSpeed(warlock.ShadowBolt.DefaultCast.CastTime)
-		ManaSpendRate = warlock.ShadowBolt.BaseCost / fillerCastTime.Seconds()
+		ManaSpendRate = warlock.ShadowBolt.DefaultCast.Cost / fillerCastTime.Seconds()
 	} else {
 		fillerCastTime = warlock.ApplyCastSpeed(filler.DefaultCast.CastTime)
-		ManaSpendRate = filler.BaseCost / fillerCastTime.Seconds()
+		ManaSpendRate = filler.DefaultCast.Cost / fillerCastTime.Seconds()
 	}
 
 	if spell == nil {

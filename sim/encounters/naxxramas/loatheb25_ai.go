@@ -11,7 +11,7 @@ func addLoatheb25(bossPrefix string) {
 		PathPrefix: bossPrefix,
 		Config: &proto.Target{
 			Id:        16011,
-			Name:      "Loatheb 25",
+			Name:      "Loatheb",
 			Level:     83,
 			MobType:   proto.MobType_MobTypeUndead,
 			TankIndex: 0,
@@ -29,11 +29,12 @@ func addLoatheb25(bossPrefix string) {
 			ParryHaste:       false,
 			DualWield:        false,
 			DualWieldPenalty: false,
+			TargetInputs:     make([]*proto.TargetInput, 0),
 		},
 		AI: NewLoatheb25AI(),
 	})
-	core.AddPresetEncounter("Loatheb 25", []string{
-		bossPrefix + "/Loatheb 25",
+	core.AddPresetEncounter("Loatheb", []string{
+		bossPrefix + "/Loatheb",
 	})
 }
 
@@ -47,8 +48,11 @@ func NewLoatheb25AI() core.AIFactory {
 	}
 }
 
-func (ai *Loatheb25AI) Initialize(target *core.Target) {
+func (ai *Loatheb25AI) Initialize(target *core.Target, config *proto.Target) {
 	ai.Target = target
+}
+
+func (ai *Loatheb25AI) Reset(*core.Simulation) {
 }
 
 func (ai *Loatheb25AI) DoAction(sim *core.Simulation) {

@@ -74,6 +74,7 @@ func (dk *Deathknight) registerPestilenceSpell() {
 		},
 	})
 }
+
 func (dk *Deathknight) registerDrwPestilenceSpell() {
 	hasGlyphOfDisease := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease)
 	dk.RuneWeapon.Pestilence = dk.RuneWeapon.RegisterSpell(core.SpellConfig{

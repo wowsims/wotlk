@@ -1,7 +1,6 @@
 package dps
 
 import (
-	"log"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -83,9 +82,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Detect_Broken_Des
 	frost := dk.FrostRuneReadyAt(sim)
 	unholy := dk.UnholyRuneReadyAt(sim)
 
-	log.Println("CHECKING DESYNC")
 	if frost == unholy {
-		log.Println("DESYNC BROKEN", sim.CurrentTime)
 		s.Clear().NewAction(dk.RotationActionCallback_FrostSubBlood_SequenceRotation)
 	} else {
 		s.Advance()

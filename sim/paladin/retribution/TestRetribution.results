@@ -164,6 +164,22 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRetribution-AllItems-Bryntroll,theBoneArbiter-50415"
+ value: {
+  dps: 7030.8166
+  tps: 7132.29992
+  dtps: 9.9694
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-Bryntroll,theBoneArbiter-50709"
+ value: {
+  dps: 7050.1093
+  tps: 7151.46945
+  dtps: 10.01695
+ }
+}
+dps_results: {
  key: "TestRetribution-AllItems-ChaoticSkyflareDiamond"
  value: {
   dps: 6518.92588
@@ -794,14 +810,6 @@ dps_results: {
  value: {
   dps: 6336.11766
   tps: 6438.15744
-  dtps: 9.92959
- }
-}
-dps_results: {
- key: "TestRetribution-AllItems-SparkofHope-45703"
- value: {
-  dps: 6267.75558
-  tps: 6369.17163
   dtps: 9.92959
  }
 }

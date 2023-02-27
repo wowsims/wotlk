@@ -86,6 +86,16 @@ export const RogueRotationConfig = {
 			],
 			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
 		}),
+		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, SubtletyPriority>({
+			fieldName: 'subtletyFinisherPriority',
+			label: "Finisher Priority",
+			labelTooltip: 'The finisher that will be cast with highest priority.',
+			values: [
+				{ name: "Eviscerate", value: SubtletyPriority.SubtletyEviscerate },
+				{ name: "Envenom", value: SubtletyPriority.SubtletyEnvenom },
+			],
+			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().honorAmongThieves > 0
+		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
 			fieldName: 'envenomEnergyThreshold',
 			label: 'Energy Threshold (4cp Envenom)',
@@ -154,6 +164,12 @@ export const RogueRotationConfig = {
 			fieldName: 'useFeint',
 			label: 'Use Feint',
 			labelTooltip: 'Cast Feint on cooldown. Mainly useful when using the associate glyph.'
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
+			fieldName: "useGhostlyStrike",
+			label: 'Use Ghostly Strike',
+			labelTooltip: 'Use Ghostly Strike as a builder.',
+			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().ghostlyStrike
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
 			fieldName: 'ruptureForBleed',

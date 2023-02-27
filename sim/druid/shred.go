@@ -98,5 +98,5 @@ func (druid *Druid) CanShred() bool {
 }
 
 func (druid *Druid) CurrentShredCost() float64 {
-	return druid.Shred.ApplyCostModifiers(druid.Shred.BaseCost)
+	return druid.Shred.ApplyCostModifiers(druid.Shred.DefaultCast.Cost)
 }

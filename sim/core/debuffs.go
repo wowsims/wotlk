@@ -247,7 +247,7 @@ func JudgementOfWisdomAura(target *Unit) *Aura {
 				unit.JowManaMetrics = unit.NewManaMetrics(actionID)
 			}
 			// JoW returns 2% of base mana 50% of the time.
-			unit.AddMana(sim, unit.BaseMana*0.02, unit.JowManaMetrics, false)
+			unit.AddMana(sim, unit.BaseMana*0.02, unit.JowManaMetrics)
 		},
 	})
 }

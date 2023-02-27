@@ -830,14 +830,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestFeralTank-AllItems-SparkofHope-45703"
- value: {
-  dps: 2499.62074
-  tps: 5192.09999
-  dtps: 2.18293
- }
-}
-dps_results: {
  key: "TestFeralTank-AllItems-SparkofLife-37657"
  value: {
   dps: 2508.15729

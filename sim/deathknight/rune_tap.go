@@ -43,4 +43,9 @@ func (dk *Deathknight) registerRuneTapSpell() {
 			dk.GainHealth(sim, dk.GetRuneTapHealing(), healthMetrics)
 		},
 	})
+
+	dk.AddMajorCooldown(core.MajorCooldown{
+		Spell: dk.RuneTap,
+		Type:  core.CooldownTypeSurvival,
+	})
 }

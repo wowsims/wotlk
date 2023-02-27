@@ -55,7 +55,7 @@ func (rogue *Rogue) registerBackstabSpell() {
 			if result.Landed() {
 				rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())
 				// FIXME: Extension of a Rupture Dot can occur up to 3 times
-				ruptureDot := rogue.Rupture[0].Dot(target)
+				ruptureDot := rogue.Rupture.Dot(target)
 				if hasGlyph && ruptureDot.IsActive() {
 					ruptureDot.NumberOfTicks += 1
 					ruptureDot.RecomputeAuraDuration()

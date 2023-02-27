@@ -1,0 +1,112 @@
+syntax = "proto3";
+package proto;
+
+option go_package = "./proto";
+
+import "common.proto";
+
+// Rotation options are based heavily on APL. See https://github.com/simulationcraft/simc/wiki/ActionLists.
+
+message APLRotation {
+    bool enabled = 20; // If false, use old rotation options.
+	repeated APLPrepullAction prepull_actions = 1;
+	repeated APLListItem priority_list = 2;
+}
+
+message APLListItem {
+    bool hide = 1;        // Causes this item to be ignored.
+    string notes = 2;     // Comments for the reader.
+    APLAction action = 3; // The action to be performed.
+}
+
+message APLAction {
+    APLValue condition = 1; // If set, action will only execute if value is true or != 0.
+
+    oneof action {
+        APLActionSequence sequence = 2;
+
+        APLActionCastSpell cast_spell = 3;
+        APLActionWait wait = 4;
+    }
+}
+
+message APLValue {
+    oneof value {
+        // Operators
+        APLValueConst const = 1;
+        APLValueAnd and = 2;
+        APLValueOr or = 3;
+        APLValueNot not = 4;
+        APLValueCompare cmp = 5;
+
+        // Dot values
+        APLValueDotIsActive dot_is_active = 6;
+    }
+}
+
+message APLPrepullAction {
+    APLAction action = 1;
+    Duration do_at = 2; // Should be a negative value.
+}
+
+///////////////////////////////////////////////////////////////////////////
+//                                 ACTIONS
+///////////////////////////////////////////////////////////////////////////
+
+message APLActionSequence {
+    repeated APLAction actions = 1;
+}
+
+message APLActionCastSpell {
+    ActionID spell_id = 1;
+}
+
+message APLActionWait {
+    Duration duration = 1;
+}
+
+///////////////////////////////////////////////////////////////////////////
+//                                  VALUES
+///////////////////////////////////////////////////////////////////////////
+
+enum APLValueType {
+    ValueTypeUnknown = 0;
+    ValueTypeBool = 1;
+    ValueTypeInt = 2;
+    ValueTypeFloat = 3;
+    ValueTypeDuration = 4;
+    ValueTypeString = 5;
+}
+
+message APLValueConst {
+    string val = 1;
+}
+
+message APLValueAnd {
+    repeated APLValue vals = 1;
+}
+message APLValueOr {
+    repeated APLValue vals = 1;
+}
+message APLValueNot {
+    APLValue val = 1;
+}
+message APLValueCompare {
+    enum ComparisonOperator {
+        OpUnknown = 0;
+        OpEq = 1; // Equals
+        OpNe = 2; // Not equals
+        OpLt = 3; // Less than
+        OpLe = 4; // Less than or equal
+        OpGt = 5; // Greater than
+        OpGe = 6; // Greater than or equal
+    }
+    ComparisonOperator op = 1;
+
+    APLValue lhs = 2;
+    APLValue rhs = 3;
+}
+
+message APLValueDotIsActive {
+    ActionID spell_id = 1;
+}

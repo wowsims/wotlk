@@ -410,9 +410,9 @@ func init() {
 		druid := agent.(DruidAgent).GetDruid()
 		procAura := druid.NewTemporaryStatsAura("Idol of the Corruptor Proc", core.ActionID{ItemID: 45509}, stats.Stats{stats.Agility: 162}, time.Second*12)
 
-		// This proc chance may need confirmation, going off of 'Idol of Terror' values currently
+		// Proc chances based on testing by druid discord
 		procChanceBear := 0.50
-		procChanceCat := 0.85
+		procChanceCat := 1.0
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Idol of the Corruptor",
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {

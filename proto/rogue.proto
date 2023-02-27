@@ -169,8 +169,8 @@ message Rogue {
 		AssassinationPriority assassination_finisher_priority = 5;
 
 		enum SubtletyPriority {
-			Rupture = 0;
-			Eviscerate = 1;
+			SubtletyEviscerate = 0;
+			SubtletyEnvenom = 1;
 			SubtletyPriorityUnknown = 2;
 		}
 		SubtletyPriority subtlety_finisher_priority = 6;
@@ -208,6 +208,8 @@ message Rogue {
 		int32 envenom_energy_threshold_overkill = 22;
 
 		int32 envenom_energy_threshold_overkill_min = 23;
+
+		bool use_ghostly_strike = 24;
 	}
 	Rotation rotation = 1;
 	

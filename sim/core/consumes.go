@@ -458,7 +458,11 @@ func registerPotionCD(agent Agent, consumes *proto.Consumes) {
 	if startingMCD.Spell != nil {
 		character.RegisterPrepullAction(-1*time.Second, func(sim *Simulation) {
 			startingMCD.Spell.Cast(sim, nil)
-			potionCD.Set(sim.CurrentTime + time.Minute)
+			if startingPotion == proto.Potions_IndestructiblePotion {
+				potionCD.Set(sim.CurrentTime + 2*time.Minute)
+			} else {
+				potionCD.Set(sim.CurrentTime + time.Minute)
+			}
 			character.UpdateMajorCooldowns()
 		})
 	}
@@ -546,7 +550,7 @@ func makePotionActivation(potionType proto.Potions, character *Character, potion
 					} else if hasEngi && potionType == proto.Potions_RunicManaInjector {
 						manaGain *= 1.25
 					}
-					character.AddMana(sim, manaGain, manaMetrics, true)
+					character.AddMana(sim, manaGain, manaMetrics)
 				},
 			}),
 		}
@@ -627,7 +631,7 @@ func makePotionActivation(potionType proto.Potions, character *Character, potion
 					if alchStoneEquipped {
 						manaGain *= 1.4
 					}
-					character.AddMana(sim, manaGain, manaMetrics, true)
+					character.AddMana(sim, manaGain, manaMetrics)
 				},
 			}),
 		}
@@ -771,7 +775,7 @@ func registerConjuredCD(agent Agent, consumes *proto.Consumes) {
 			ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
 				// Restores 900 to 1500 mana. (2 Min Cooldown)
 				manaGain := sim.RollWithLabel(900, 1500, "dark rune")
-				character.AddMana(sim, manaGain, manaMetrics, true)
+				character.AddMana(sim, manaGain, manaMetrics)
 
 				// if character.Class == proto.Class_ClassPaladin {
 				// 	// Paladins gain extra mana from self-inflicted damage

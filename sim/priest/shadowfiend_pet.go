@@ -105,7 +105,7 @@ func (shadowfiend *Shadowfiend) OnAutoAttack(sim *core.Simulation, spell *core.S
 	priest := shadowfiend.Priest
 	restoreMana := priest.MaxMana() * 0.05
 
-	priest.AddMana(sim, restoreMana, shadowfiend.ManaMetric, false)
+	priest.AddMana(sim, restoreMana, shadowfiend.ManaMetric)
 }
 
 func (shadowfiend *Shadowfiend) Initialize() {
@@ -121,7 +121,7 @@ func (shadowfiend *Shadowfiend) OnGCDReady(sim *core.Simulation) {
 
 func (shadowfiend *Shadowfiend) Reset(sim *core.Simulation) {
 	shadowfiend.ShadowcrawlAura.Deactivate(sim)
-	shadowfiend.AutoAttacks.CancelAutoSwing(sim)
+	shadowfiend.Disable(sim)
 }
 
 func (shadowfiend *Shadowfiend) GetPet() *core.Pet {

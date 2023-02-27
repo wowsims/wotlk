@@ -18,13 +18,14 @@ type SpellConfig struct {
 	ProcMask     ProcMask
 	Flags        SpellFlag
 	MissileSpeed float64
-	ResourceType stats.Stat
 	BaseCost     float64
+	MetricSplits int
 
 	ManaCost   ManaCostOptions
 	EnergyCost EnergyCostOptions
 	RageCost   RageCostOptions
 	RuneCost   RuneCostOptions
+	FocusCost  FocusCostOptions
 
 	Cast               CastConfig
 	ExtraCastCondition CanCastCondition
@@ -74,20 +75,8 @@ type Spell struct {
 	// Example: https://wow.tools/dbc/?dbc=spellmisc&build=3.4.0.44996
 	MissileSpeed float64
 
-	// Should be stats.Mana, stats.Energy, stats.Rage, or unset.
-	ResourceType      stats.Stat
-	ResourceMetrics   *ResourceMetrics
-	comboPointMetrics *ResourceMetrics
-	runicPowerMetrics *ResourceMetrics
-	bloodRuneMetrics  *ResourceMetrics
-	frostRuneMetrics  *ResourceMetrics
-	unholyRuneMetrics *ResourceMetrics
-	deathRuneMetrics  *ResourceMetrics
-	healthMetrics     []*ResourceMetrics
-
-	// Base cost. Many effects in the game which 'reduce mana cost by X%'
-	// are calculated using the base cost.
-	BaseCost float64
+	ResourceMetrics *ResourceMetrics
+	healthMetrics   []*ResourceMetrics
 
 	Cost               SpellCost // Cost for the spell.
 	DefaultCast        Cast      // Default cast parameters with all static effects applied.
@@ -98,7 +87,8 @@ type Spell struct {
 	// Performs a cast of this spell.
 	castFn CastSuccessFunc
 
-	SpellMetrics []SpellMetrics
+	SpellMetrics      []SpellMetrics
+	splitSpellMetrics [][]SpellMetrics // Used to split metrics by some condition.
 
 	// Performs the actions of this spell.
 	ApplyEffects ApplySpellResults
@@ -169,8 +159,6 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		ProcMask:     config.ProcMask,
 		Flags:        config.Flags,
 		MissileSpeed: config.MissileSpeed,
-		ResourceType: config.ResourceType,
-		BaseCost:     config.BaseCost,
 
 		DefaultCast:        config.Cast.DefaultCast,
 		CD:                 config.Cast.CD,
@@ -194,6 +182,8 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 
 		ThreatMultiplier: config.ThreatMultiplier,
 		FlatThreatBonus:  config.FlatThreatBonus,
+
+		splitSpellMetrics: make([][]SpellMetrics, MaxInt(1, config.MetricSplits)),
 	}
 
 	if (spell.DamageMultiplier != 0 || spell.ThreatMultiplier != 0) && spell.ProcMask == ProcMaskUnknown {
@@ -229,10 +219,8 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		spell.Cost = newRageCost(spell, config.RageCost)
 	} else if config.RuneCost.BloodRuneCost != 0 || config.RuneCost.FrostRuneCost != 0 || config.RuneCost.UnholyRuneCost != 0 || config.RuneCost.RunicPowerCost != 0 || config.RuneCost.RunicPowerGain != 0 {
 		spell.Cost = newRuneCost(spell, config.RuneCost)
-	}
-
-	if spell.ResourceType == 0 && spell.DefaultCast.Cost != 0 {
-		panic("Cost set for spell " + spell.ActionID.String() + " but no resource type")
+	} else if config.FocusCost.Cost != 0 {
+		spell.Cost = newFocusCost(spell, config.FocusCost)
 	}
 
 	spell.createDots(config.Dot, false)
@@ -329,14 +317,20 @@ func (spell *Spell) finalize() {
 	spell.initialDamageMultiplierAdditive = spell.DamageMultiplierAdditive
 	spell.initialCritMultiplier = spell.CritMultiplier
 	spell.initialThreatMultiplier = spell.ThreatMultiplier
+
+	if len(spell.splitSpellMetrics) > 1 && spell.ActionID.Tag != 0 {
+		panic(spell.ActionID.String() + " has split metrics and a non-zero tag, can only have one!")
+	}
+	for i := range spell.splitSpellMetrics {
+		spell.splitSpellMetrics[i] = make([]SpellMetrics, len(spell.Unit.Env.AllUnits))
+	}
+	spell.SpellMetrics = spell.splitSpellMetrics[0]
 }
 
 func (spell *Spell) reset(_ *Simulation) {
-	if len(spell.SpellMetrics) != len(spell.Unit.Env.AllUnits) {
-		spell.SpellMetrics = make([]SpellMetrics, len(spell.Unit.Env.AllUnits))
-	} else {
-		for i := range spell.SpellMetrics {
-			spell.SpellMetrics[i] = SpellMetrics{}
+	for i := range spell.splitSpellMetrics {
+		for j := range spell.SpellMetrics {
+			spell.splitSpellMetrics[i][j] = SpellMetrics{}
 		}
 	}
 
@@ -352,52 +346,23 @@ func (spell *Spell) reset(_ *Simulation) {
 	spell.ThreatMultiplier = spell.initialThreatMultiplier
 }
 
+func (spell *Spell) SetMetricsSplit(splitIdx int32) {
+	spell.SpellMetrics = spell.splitSpellMetrics[splitIdx]
+	spell.ActionID.Tag = splitIdx
+}
+
 func (spell *Spell) doneIteration() {
-	if !spell.Flags.Matches(SpellFlagNoMetrics) {
-		spell.Unit.Metrics.addSpell(spell)
+	if spell.Flags.Matches(SpellFlagNoMetrics) {
+		return
 	}
-}
 
-func (spell *Spell) ComboPointMetrics() *ResourceMetrics {
-	if spell.comboPointMetrics == nil {
-		spell.comboPointMetrics = spell.Unit.NewComboPointMetrics(spell.ActionID)
+	if len(spell.splitSpellMetrics) == 1 {
+		spell.Unit.Metrics.addSpellMetrics(spell, spell.ActionID, spell.SpellMetrics)
+	} else {
+		for i, spellMetrics := range spell.splitSpellMetrics {
+			spell.Unit.Metrics.addSpellMetrics(spell, spell.ActionID.WithTag(int32(i)), spellMetrics)
+		}
 	}
-	return spell.comboPointMetrics
-}
-
-func (spell *Spell) RunicPowerMetrics() *ResourceMetrics {
-	if spell.runicPowerMetrics == nil {
-		spell.runicPowerMetrics = spell.Unit.NewRunicPowerMetrics(spell.ActionID)
-	}
-	return spell.runicPowerMetrics
-}
-
-func (spell *Spell) BloodRuneMetrics() *ResourceMetrics {
-	if spell.bloodRuneMetrics == nil {
-		spell.bloodRuneMetrics = spell.Unit.NewBloodRuneMetrics(spell.ActionID)
-	}
-	return spell.bloodRuneMetrics
-}
-
-func (spell *Spell) FrostRuneMetrics() *ResourceMetrics {
-	if spell.frostRuneMetrics == nil {
-		spell.frostRuneMetrics = spell.Unit.NewFrostRuneMetrics(spell.ActionID)
-	}
-	return spell.frostRuneMetrics
-}
-
-func (spell *Spell) UnholyRuneMetrics() *ResourceMetrics {
-	if spell.unholyRuneMetrics == nil {
-		spell.unholyRuneMetrics = spell.Unit.NewUnholyRuneMetrics(spell.ActionID)
-	}
-	return spell.unholyRuneMetrics
-}
-
-func (spell *Spell) DeathRuneMetrics() *ResourceMetrics {
-	if spell.deathRuneMetrics == nil {
-		spell.deathRuneMetrics = spell.Unit.NewDeathRuneMetrics(spell.ActionID)
-	}
-	return spell.deathRuneMetrics
 }
 
 func (spell *Spell) HealthMetrics(target *Unit) *ResourceMetrics {
@@ -499,7 +464,10 @@ func (spell *Spell) applyEffects(sim *Simulation, target *Unit) {
 	if target == nil {
 		target = spell.Unit.CurrentTarget
 	}
-	spell.SpellMetrics[target.UnitIndex].Casts++
+	// target can still be null in individual sims when the caster is the enemy target
+	if target != nil {
+		spell.SpellMetrics[target.UnitIndex].Casts++
+	}
 	spell.ApplyEffects(sim, target, spell)
 }
 

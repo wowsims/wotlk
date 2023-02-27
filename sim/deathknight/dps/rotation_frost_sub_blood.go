@@ -242,7 +242,6 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump(sim *core
 					if dk.fr.oblitCount == 2 {
 						s.Advance()
 						dk.fr.oblitCount = 0
-						dk.fr.oblitDelay = sim.CurrentTime - dk.fr.oblitDelay
 					}
 				} else {
 					s.Advance()
@@ -345,9 +344,9 @@ func (dk *DpsDeathknight) setupFrostSubBloodERWOpener() {
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
 		NewAction(dk.RotationActionCallback_ERW).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
-		NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
-		NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
 		NewAction(dk.RotationActionCallback_Frost_FS_HB).
+		NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
+		NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
 		NewAction(dk.RotationActionCallback_RD).
 		NewAction(dk.RotationActionCallback_Frost_FS_HB).
 		NewAction(dk.RotationActionCallback_Frost_FS_HB).

@@ -284,11 +284,11 @@ func (dk *Deathknight) sigilOfArthriticBindingBonus() float64 {
 }
 
 func (dk *Deathknight) sigilOfTheVengefulHeartDeathCoil() float64 {
-	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 45254, 437, 0)
+	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 45254, 403, 0)
 }
 
 func (dk *Deathknight) sigilOfTheVengefulHeartFrostStrike() float64 {
-	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 45254, 247, 0) // (1 / 0.55) * 137
+	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 45254, 218, 0) // (1 / 0.55) * 120
 }
 
 func init() {

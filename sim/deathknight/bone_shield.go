@@ -70,4 +70,11 @@ func (dk *Deathknight) registerBoneShieldSpell() {
 			dk.BoneShieldAura.SetStacks(sim, dk.BoneShieldAura.MaxStacks)
 		},
 	})
+
+	if !dk.Inputs.IsDps {
+		dk.AddMajorCooldown(core.MajorCooldown{
+			Spell: dk.BoneShield,
+			Type:  core.CooldownTypeSurvival,
+		})
+	}
 }

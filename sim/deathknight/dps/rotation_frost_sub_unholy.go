@@ -255,7 +255,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_FS_Dump(sim *cor
 		frAt := dk.NormalFrostRuneReadyAt(sim)
 		uhAt := dk.NormalUnholyRuneReadyAt(sim)
 		obAt := core.MaxDuration(frAt, uhAt)
-		delayAmount := core.MinDuration(time.Duration(dk.Rotation.OblitDelayDuration)*time.Millisecond, 2501*time.Millisecond)
+		delayAmount := time.Second
 		spell := dk.RegularPrioPickSpell(sim, target, obAt+delayAmount)
 		if spell != nil {
 			casted = spell.Cast(sim, target)
