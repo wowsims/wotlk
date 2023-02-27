@@ -241,10 +241,12 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 		})
 	}
 
+	const ruptureMinDuration = time.Second * 10 // heuristically, 5 Rupture ticks are better DPE than other finishers
+
 	// Rupture
 	rogue.subtletyPrios = append(rogue.subtletyPrios, subtletyPrio{
 		func(sim *core.Simulation, rogue *Rogue) PriorityAction {
-			if rogue.Rupture.CurDot().IsActive() || sim.GetRemainingDuration() < time.Second*22 {
+			if rogue.Rupture.CurDot().IsActive() || sim.GetRemainingDuration() < ruptureMinDuration {
 				return Skip
 			}
 			if rogue.ComboPoints() > 4 && rogue.CurrentEnergy() >= rogue.Rupture.DefaultCast.Cost {
