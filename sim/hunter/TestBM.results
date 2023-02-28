@@ -832,8 +832,8 @@ dps_results: {
 dps_results: {
  key: "TestBM-Settings-Dwarf-P1-BM-FullBuffs-LongMultiTarget"
  value: {
-  dps: 6909.41027
-  tps: 5936.57681
+  dps: 6963.77338
+  tps: 5990.93447
  }
 }
 dps_results: {
@@ -874,8 +874,8 @@ dps_results: {
 dps_results: {
  key: "TestBM-Settings-Orc-P1-BM-FullBuffs-LongMultiTarget"
  value: {
-  dps: 7015.34385
-  tps: 5931.12438
+  dps: 7069.54242
+  tps: 5985.25859
  }
 }
 dps_results: {

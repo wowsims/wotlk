@@ -740,8 +740,8 @@ dps_results: {
 dps_results: {
  key: "TestFrostFire-Settings-Troll-P1FrostFire-FrostFireRotation-FullBuffs-LongMultiTarget"
  value: {
-  dps: 7934.00836
-  tps: 8042.5415
+  dps: 8207.42906
+  tps: 8252.82851
  }
 }
 dps_results: {

@@ -762,8 +762,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-Settings-Human-P1 Assassination-Assassination-FullBuffs-LongMultiTarget"
  value: {
-  dps: 25704.52751
-  tps: 18250.21453
+  dps: 28034.79439
+  tps: 19904.70402
  }
 }
 dps_results: {
@@ -804,8 +804,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-Settings-Human-P1 Assassination-MH Deadly OH Deadly-FullBuffs-LongMultiTarget"
  value: {
-  dps: 15987.58546
-  tps: 11351.18567
+  dps: 17837.16923
+  tps: 12664.39015
  }
 }
 dps_results: {
@@ -846,8 +846,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-Settings-Human-P1 Assassination-MH Instant OH Deadly-FullBuffs-LongMultiTarget"
  value: {
-  dps: 25704.52751
-  tps: 18250.21453
+  dps: 28034.79439
+  tps: 19904.70402
  }
 }
 dps_results: {
@@ -888,8 +888,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-Settings-Human-P1 Assassination-MH Instant OH Instant-FullBuffs-LongMultiTarget"
  value: {
-  dps: 19766.05867
-  tps: 14033.90166
+  dps: 21280.48805
+  tps: 15109.14652
  }
 }
 dps_results: {
@@ -930,8 +930,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-Settings-Orc-P1 Assassination-Assassination-FullBuffs-LongMultiTarget"
  value: {
-  dps: 25855.00889
-  tps: 18357.05631
+  dps: 28177.25885
+  tps: 20005.85378
  }
 }
 dps_results: {
@@ -972,8 +972,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-Settings-Orc-P1 Assassination-MH Deadly OH Deadly-FullBuffs-LongMultiTarget"
  value: {
-  dps: 16057.3132
-  tps: 11400.69237
+  dps: 17926.71283
+  tps: 12727.96611
  }
 }
 dps_results: {
@@ -1014,8 +1014,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-Settings-Orc-P1 Assassination-MH Instant OH Deadly-FullBuffs-LongMultiTarget"
  value: {
-  dps: 25855.00889
-  tps: 18357.05631
+  dps: 28177.25885
+  tps: 20005.85378
  }
 }
 dps_results: {
@@ -1056,8 +1056,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-Settings-Orc-P1 Assassination-MH Instant OH Instant-FullBuffs-LongMultiTarget"
  value: {
-  dps: 19873.4399
-  tps: 14110.14233
+  dps: 21394.07471
+  tps: 15189.79304
  }
 }
 dps_results: {

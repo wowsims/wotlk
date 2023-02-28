@@ -853,8 +853,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-Settings-Human-Arms P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 10816.34389
-  tps: 9203.51116
+  dps: 10929.55769
+  tps: 9309.00195
  }
 }
 dps_results: {
@@ -895,8 +895,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-Settings-Orc-Arms P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 10856.02609
-  tps: 9236.73108
+  dps: 10971.37644
+  tps: 9344.13523
  }
 }
 dps_results: {

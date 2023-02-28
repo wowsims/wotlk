@@ -853,8 +853,8 @@ dps_results: {
 dps_results: {
  key: "TestFury-Settings-Human-Fury P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 9009.39591
-  tps: 7242.24582
+  dps: 9218.96044
+  tps: 7417.09544
  }
 }
 dps_results: {
@@ -895,8 +895,8 @@ dps_results: {
 dps_results: {
  key: "TestFury-Settings-Orc-Fury P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 9069.37764
-  tps: 7287.08285
+  dps: 9267.92111
+  tps: 7454.23768
  }
 }
 dps_results: {
