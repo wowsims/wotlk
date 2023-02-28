@@ -137,16 +137,12 @@ func (dk *Deathknight) NewRuneWeapon() *RuneWeaponPet {
 			},
 			func(ownerStats stats.Stats) stats.Stats {
 				ownerHitChance := ownerStats[stats.MeleeHit] / core.MeleeHitRatingPerHitChance
-				spellHitRatingFromOwner := ((ownerHitChance / 8.0) * 17.0) * core.SpellHitRatingPerHitChance
-
 				return stats.Stats{
 					stats.AttackPower: ownerStats[stats.AttackPower],
-
-					stats.MeleeHaste: ownerStats[stats.MeleeHaste],
-					stats.SpellHaste: (ownerStats[stats.MeleeHaste] / dk.PseudoStats.MeleeHasteRatingPerHastePercent) * core.HasteRatingPerHastePercent,
+					stats.MeleeHaste:  (ownerStats[stats.MeleeHaste] / dk.PseudoStats.MeleeHasteRatingPerHastePercent) * core.HasteRatingPerHastePercent,
 
 					stats.MeleeHit: ownerHitChance * core.MeleeHitRatingPerHitChance,
-					stats.SpellHit: spellHitRatingFromOwner,
+					stats.SpellHit: ((ownerHitChance / 8.0) * 17.0) * core.SpellHitRatingPerHitChance,
 
 					stats.Expertise: ownerHitChance * PetExpertiseScale * core.ExpertisePerQuarterPercentReduction,
 
