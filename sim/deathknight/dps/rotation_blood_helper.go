@@ -29,6 +29,14 @@ func (br *BloodRotation) Reset(sim *core.Simulation) {
 func (br *BloodRotation) Initialize(dk *DpsDeathknight) {
 }
 
+func (dk *DpsDeathknight) blBloodRuneAction() deathknight.RotationAction {
+	if dk.Env.GetNumTargets() > 1 {
+		return dk.RotationActionCallback_Pesti
+	} else {
+		return dk.RotationActionBL_BS
+	}
+}
+
 func (dk *DpsDeathknight) blDiseaseCheck(sim *core.Simulation, target *core.Unit, spell *core.Spell, costRunes bool, casts int) bool {
 	// Early exit at end of fight
 	if sim.GetRemainingDuration() < 10*time.Second {

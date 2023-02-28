@@ -99,7 +99,7 @@ func (dk *DpsDeathknight) getSecondDiseaseAction() deathknight.RotationAction {
 	return dk.RotationActionCallback_IT
 }
 
-func (dk *DpsDeathknight) getBloodRuneAction(isFirst bool) deathknight.RotationAction {
+func (dk *DpsDeathknight) uhBloodRuneAction(isFirst bool) deathknight.RotationAction {
 	if isFirst {
 		if dk.Env.GetNumTargets() > 1 {
 			return dk.RotationActionCallback_Pesti

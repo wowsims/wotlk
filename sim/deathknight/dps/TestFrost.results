@@ -895,8 +895,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Human-Frost P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 15869.29079
-  tps: 9399.75697
+  dps: 19232.10535
+  tps: 11417.65132
  }
 }
 dps_results: {
@@ -937,8 +937,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Orc-Frost P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 15772.4721
-  tps: 9337.98292
+  dps: 19059.36872
+  tps: 11310.53569
  }
 }
 dps_results: {

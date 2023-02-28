@@ -312,8 +312,8 @@ dps_results: {
 dps_results: {
  key: "TestDemonology-Settings-Orc-P1-Demonology Warlock-FullBuffs-LongMultiTarget"
  value: {
-  dps: 9506.01342
-  tps: 10275.9439
+  dps: 9840.26056
+  tps: 10587.00059
  }
 }
 dps_results: {

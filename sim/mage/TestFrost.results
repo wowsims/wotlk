@@ -740,8 +740,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Troll-P1Frost-AOE-FullBuffs-LongMultiTarget"
  value: {
-  dps: 10480.95395
-  tps: 10258.12172
+  dps: 11692.0658
+  tps: 11348.12238
  }
 }
 dps_results: {

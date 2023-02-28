@@ -908,8 +908,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-Starfire-FullBuffs-LongMultiTarget"
  value: {
-  dps: 10474.59639
-  tps: 12524.88378
+  dps: 11042.11499
+  tps: 13102.16955
  }
 }
 dps_results: {
