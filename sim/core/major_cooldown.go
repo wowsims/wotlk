@@ -170,7 +170,7 @@ type majorCooldownManager struct {
 	initialMajorCooldowns []MajorCooldown
 
 	// Major cooldowns, ordered by next available. This should always contain
-	// the same cooldows as initialMajorCooldowns, but the order will change over
+	// the same cooldowns as initialMajorCooldowns, but the order will change over
 	// the course of the sim.
 	majorCooldowns []*MajorCooldown
 	minReady       time.Duration
@@ -232,7 +232,13 @@ func (mcdm *majorCooldownManager) DelayDPSCooldownsForArmorDebuffs(delay time.Du
 		for i := range mcdm.initialMajorCooldowns {
 			mcd := &mcdm.initialMajorCooldowns[i]
 			if len(mcd.timings) == 0 && mcd.Type.Matches(CooldownTypeDPS) && !mcd.Type.Matches(CooldownTypeExplosive) {
-				mcd.timings = append(mcd.timings, delay)
+				oldShouldActivate := mcd.ShouldActivate
+				mcd.ShouldActivate = func(sim *Simulation, character *Character) bool {
+					if oldShouldActivate != nil && !oldShouldActivate(sim, character) {
+						return false
+					}
+					return sim.CurrentTime >= delay
+				}
 			}
 		}
 	})

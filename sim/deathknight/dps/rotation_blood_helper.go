@@ -13,6 +13,8 @@ type BloodRotation struct {
 	drwSnapshot *core.SnapshotManager
 	drwMaxDelay time.Duration
 
+	bloodSpell *core.Spell
+
 	activatingDrw bool
 }
 
@@ -158,6 +160,9 @@ func (dk *DpsDeathknight) blDrwCheck(sim *core.Simulation, target *core.Unit, ca
 
 func (dk *DpsDeathknight) blDrwCanCast(sim *core.Simulation, castTime time.Duration) bool {
 	if !dk.Talents.DancingRuneWeapon {
+		return false
+	}
+	if !dk.Rotation.UseDancingRuneWeapon {
 		return false
 	}
 	if !dk.DancingRuneWeapon.IsReady(sim) {

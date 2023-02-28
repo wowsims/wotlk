@@ -471,6 +471,10 @@ func (dk *Deathknight) DiseasesAreActive(target *core.Unit) bool {
 	return dk.FrostFeverSpell.Dot(target).IsActive() || dk.BloodPlagueSpell.Dot(target).IsActive()
 }
 
+func (dk *Deathknight) DrwDiseasesAreActive(target *core.Unit) bool {
+	return dk.Talents.DancingRuneWeapon && dk.RuneWeapon.FrostFeverSpell.Dot(target).IsActive() || dk.RuneWeapon.BloodPlagueSpell.Dot(target).IsActive()
+}
+
 func (dk *Deathknight) bonusCritMultiplier(bonusTalentPoints int32) float64 {
 	return dk.MeleeCritMultiplier(1, 0.15*float64(bonusTalentPoints))
 }

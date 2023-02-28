@@ -25,19 +25,19 @@ type assassinationPrio struct {
 	cost  float64
 }
 
-func (rogue *Rogue) targetHasBleed(sim *core.Simulation) bool {
+func (rogue *Rogue) targetHasBleed(_ *core.Simulation) bool {
 	return rogue.bleedCategory.AnyActive() || rogue.CurrentTarget.HasActiveAuraWithTag(RogueBleedTag)
 }
 
 func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
-	rogue.assassinationPrios = make([]assassinationPrio, 0)
+	rogue.assassinationPrios = rogue.assassinationPrios[:0]
 	rogue.bleedCategory = rogue.CurrentTarget.GetExclusiveEffectCategory(core.BleedEffectCategory)
 
 	// Garrote
 	if rogue.Rotation.OpenWithGarrote {
 		hasCastGarrote := false
 		rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
-			func(s *core.Simulation, r *Rogue) PriorityAction {
+			func(sim *core.Simulation, rogue *Rogue) PriorityAction {
 				if hasCastGarrote {
 					return Skip
 				}
@@ -46,8 +46,8 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 				}
 				return Wait
 			},
-			func(s *core.Simulation, r *Rogue) bool {
-				casted := r.Garrote.Cast(sim, rogue.CurrentTarget)
+			func(sim *core.Simulation, rogue *Rogue) bool {
+				casted := rogue.Garrote.Cast(sim, rogue.CurrentTarget)
 				if casted {
 					hasCastGarrote = true
 				}
@@ -59,7 +59,7 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 
 	// Slice And Dice
 	rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
-		func(s *core.Simulation, r *Rogue) PriorityAction {
+		func(sim *core.Simulation, rogue *Rogue) PriorityAction {
 			if rogue.SliceAndDiceAura.IsActive() {
 				return Skip
 			}
@@ -71,7 +71,7 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 			}
 			return Wait
 		},
-		func(s *core.Simulation, r *Rogue) bool {
+		func(sim *core.Simulation, rogue *Rogue) bool {
 			return rogue.SliceAndDice.Cast(sim, rogue.CurrentTarget)
 		},
 		rogue.SliceAndDice.DefaultCast.Cost,
@@ -80,28 +80,28 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 	// Hunger while planning
 	if rogue.Talents.HungerForBlood {
 		rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
-			func(s *core.Simulation, r *Rogue) PriorityAction {
+			func(sim *core.Simulation, rogue *Rogue) PriorityAction {
 
 				prioExpose := rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Once ||
 					rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Maintain
-				if prioExpose && !r.ExposeArmorAuras.Get(rogue.CurrentTarget).IsActive() {
+				if prioExpose && !rogue.ExposeArmorAuras.Get(rogue.CurrentTarget).IsActive() {
 					return Skip
 				}
 
-				if r.HungerForBloodAura.IsActive() {
+				if rogue.HungerForBloodAura.IsActive() {
 					return Skip
 				}
 
-				if !r.targetHasBleed(s) {
+				if !rogue.targetHasBleed(sim) {
 					return Skip
 				}
 
-				if r.targetHasBleed(s) && r.CurrentEnergy() > r.HungerForBlood.DefaultCast.Cost {
+				if rogue.targetHasBleed(sim) && rogue.CurrentEnergy() > rogue.HungerForBlood.DefaultCast.Cost {
 					return Cast
 				}
 				return Wait
 			},
-			func(s *core.Simulation, r *Rogue) bool {
+			func(sim *core.Simulation, rogue *Rogue) bool {
 				return rogue.HungerForBlood.Cast(sim, rogue.CurrentTarget)
 			},
 			rogue.HungerForBlood.DefaultCast.Cost,
@@ -113,7 +113,7 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 		rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Maintain {
 		hasCastExpose := false
 		rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
-			func(s *core.Simulation, r *Rogue) PriorityAction {
+			func(sim *core.Simulation, rogue *Rogue) PriorityAction {
 				if hasCastExpose && rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Once {
 					return Skip
 				}
@@ -152,8 +152,8 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 					}
 				}
 			},
-			func(s *core.Simulation, r *Rogue) bool {
-				casted := r.ExposeArmor.Cast(sim, r.CurrentTarget)
+			func(sim *core.Simulation, rogue *Rogue) bool {
+				casted := rogue.ExposeArmor.Cast(sim, rogue.CurrentTarget)
 				if casted {
 					hasCastExpose = true
 				}
@@ -166,8 +166,8 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 	// Rupture for Bleed
 	if rogue.Rotation.RuptureForBleed {
 		rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
-			func(s *core.Simulation, r *Rogue) PriorityAction {
-				if r.targetHasBleed(s) {
+			func(sim *core.Simulation, rogue *Rogue) PriorityAction {
+				if rogue.targetHasBleed(sim) {
 					return Skip
 				}
 				if rogue.HungerForBloodAura.IsActive() {
@@ -181,7 +181,7 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 				}
 				return Wait
 			},
-			func(s *core.Simulation, r *Rogue) bool {
+			func(sim *core.Simulation, rogue *Rogue) bool {
 				return rogue.Rupture.Cast(sim, rogue.CurrentTarget)
 			},
 			rogue.Rupture.DefaultCast.Cost,
@@ -191,17 +191,17 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 	// Hunger for Blood
 	if rogue.Talents.HungerForBlood {
 		rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
-			func(s *core.Simulation, r *Rogue) PriorityAction {
+			func(sim *core.Simulation, rogue *Rogue) PriorityAction {
 
-				if r.HungerForBloodAura.IsActive() {
+				if rogue.HungerForBloodAura.IsActive() {
 					return Skip
 				}
 
-				if !r.targetHasBleed(s) {
+				if !rogue.targetHasBleed(sim) {
 					return Skip
 				}
 
-				if r.targetHasBleed(s) && r.CurrentEnergy() > r.HungerForBlood.DefaultCast.Cost {
+				if rogue.targetHasBleed(sim) && rogue.CurrentEnergy() > rogue.HungerForBlood.DefaultCast.Cost {
 					return Cast
 				}
 				return Wait
@@ -216,12 +216,12 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 	// TODO I'd assume this should only be used once, to re-enable MCDs when sensible?
 	// Enable CDs
 	rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
-		func(s *core.Simulation, r *Rogue) PriorityAction {
-			if r.allMCDsDisabled {
-				for _, mcd := range r.GetMajorCooldowns() {
+		func(sim *core.Simulation, rogue *Rogue) PriorityAction {
+			if rogue.allMCDsDisabled {
+				for _, mcd := range rogue.GetMajorCooldowns() {
 					mcd.Enable()
 				}
-				r.allMCDsDisabled = false
+				rogue.allMCDsDisabled = false
 			}
 			return Skip
 		},
@@ -234,8 +234,8 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 	// Rupture
 	if rogue.Rotation.AssassinationFinisherPriority == proto.Rogue_Rotation_RuptureEnvenom {
 		rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
-			func(s *core.Simulation, r *Rogue) PriorityAction {
-				if r.Rupture.CurDot().IsActive() || s.GetRemainingDuration() < time.Second*18 {
+			func(sim *core.Simulation, rogue *Rogue) PriorityAction {
+				if rogue.Rupture.CurDot().IsActive() || sim.GetRemainingDuration() < time.Second*18 {
 					return Skip
 				}
 				if rogue.ComboPoints() > 3 && rogue.CurrentEnergy() >= rogue.Rupture.DefaultCast.Cost {
@@ -247,8 +247,8 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 				return Wait
 
 			},
-			func(s *core.Simulation, r *Rogue) bool {
-				return r.Rupture.Cast(s, r.CurrentTarget)
+			func(sim *core.Simulation, rogue *Rogue) bool {
+				return rogue.Rupture.Cast(sim, rogue.CurrentTarget)
 			},
 			rogue.Rupture.DefaultCast.Cost,
 		})
@@ -256,54 +256,53 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 
 	// Envenom
 	rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
-		func(s *core.Simulation, r *Rogue) PriorityAction {
-			minimumCP := int32(4)
-			if r.ComboPoints() >= minimumCP {
+		func(sim *core.Simulation, rogue *Rogue) PriorityAction {
+			const minimumCP = 4
+			if rogue.ComboPoints() >= minimumCP {
 				// Don't pool when fight is about to end
 				fightEndsSoon := false
-				energyNeeded := r.Envenom.DefaultCast.Cost
-				if s.GetRemainingDuration() <= time.Second*6 {
+				energyNeeded := rogue.Envenom.DefaultCast.Cost
+				if sim.GetRemainingDuration() <= time.Second*6 {
 					fightEndsSoon = true
 				} else {
-					energyNeeded = r.getEnvenomThreshold(s)
+					energyNeeded = rogue.getEnvenomThreshold(sim)
 				}
-				if r.CurrentEnergy() >= energyNeeded {
-					if !fightEndsSoon && r.EnvenomAura.IsActive() && r.CurrentEnergy() < (r.maxEnergy-16) {
+				if rogue.CurrentEnergy() >= energyNeeded {
+					if !fightEndsSoon && rogue.EnvenomAura.IsActive() && rogue.CurrentEnergy() < (rogue.maxEnergy-16) {
 						return Wait
 					}
 					return Cast
 				}
 			}
-			if r.ComboPoints() < 4 && r.CurrentEnergy() >= r.Builder.DefaultCast.Cost {
+			if rogue.ComboPoints() < 4 && rogue.CurrentEnergy() >= rogue.Builder.DefaultCast.Cost {
 				return Build
 			}
 			return Wait
 		},
-		func(s *core.Simulation, r *Rogue) bool {
+		func(sim *core.Simulation, rogue *Rogue) bool {
 			return rogue.Envenom.Cast(sim, rogue.CurrentTarget)
 		},
 		rogue.Envenom.DefaultCast.Cost,
 	})
 }
 
-func (r *Rogue) getEnvenomThreshold(s *core.Simulation) float64 {
-	hasOverkill := r.OverkillAura.RemainingDuration(s) > time.Duration(3)*time.Second
-	energyNeeded := core.MinFloat(r.maxEnergy, float64(r.Rotation.EnvenomEnergyThreshold))
-	if r.ComboPoints() == 5 {
+func (rogue *Rogue) getEnvenomThreshold(sim *core.Simulation) float64 {
+	hasOverkill := rogue.OverkillAura.RemainingDuration(sim) > time.Duration(3)*time.Second
+	energyNeeded := core.MinFloat(rogue.maxEnergy, float64(rogue.Rotation.EnvenomEnergyThreshold))
+	if rogue.ComboPoints() == 5 {
 		if hasOverkill {
-			energyNeeded = core.MinFloat(energyNeeded, float64(r.Rotation.EnvenomEnergyThresholdOverkillMin))
+			energyNeeded = core.MinFloat(energyNeeded, float64(rogue.Rotation.EnvenomEnergyThresholdOverkillMin))
 		} else {
-			energyNeeded = core.MinFloat(energyNeeded, float64(r.Rotation.EnvenomEnergyThresholdMin))
+			energyNeeded = core.MinFloat(energyNeeded, float64(rogue.Rotation.EnvenomEnergyThresholdMin))
 		}
 	} else if hasOverkill {
-		energyNeeded = core.MinFloat(r.maxEnergy, float64(r.Rotation.EnvenomEnergyThresholdOverkill))
+		energyNeeded = core.MinFloat(rogue.maxEnergy, float64(rogue.Rotation.EnvenomEnergyThresholdOverkill))
 	}
-	energyNeeded = core.MaxFloat(r.Envenom.DefaultCast.Cost, energyNeeded)
+	energyNeeded = core.MaxFloat(rogue.Envenom.DefaultCast.Cost, energyNeeded)
 	return energyNeeded
 }
 
 func (rogue *Rogue) doAssassinationRotation(sim *core.Simulation) {
-
 	prioIndex := 0
 	for prioIndex < len(rogue.assassinationPrios) {
 		prio := rogue.assassinationPrios[prioIndex]
