@@ -33,7 +33,7 @@ func (dk *DpsDeathknight) setupBloodRotations() {
 	dk.RotationSequence.Clear().
 		NewAction(dk.RotationActionCallback_IT).
 		NewAction(dk.RotationActionCallback_PS).
-		NewAction(dk.RotationActionBL_BS).
+		NewAction(dk.blBloodRuneAction()).
 		NewAction(dk.RotationActionBL_FU).
 		NewAction(dk.RotationActionBL_BS).
 		NewAction(dk.RotationActionCallback_ERW).
@@ -44,7 +44,7 @@ func (dk *DpsDeathknight) setupBloodRotations() {
 		dk.RotationSequence.
 			NewAction(dk.RotationActionCallback_Pesti).
 			NewAction(dk.RotationActionCallback_BT).
-			NewAction(dk.RotationActionBL_BS).
+			NewAction(dk.blBloodRuneAction()).
 			NewAction(dk.RotationActionBL_BS).
 			NewAction(dk.RotationActionBL_FU).
 			NewAction(dk.RotationActionBL_BS).
@@ -53,7 +53,7 @@ func (dk *DpsDeathknight) setupBloodRotations() {
 		dk.RotationSequence.
 			NewAction(dk.RotationActionCallback_IT).
 			NewAction(dk.RotationActionCallback_PS).
-			NewAction(dk.RotationActionBL_BS).
+			NewAction(dk.blBloodRuneAction()).
 			NewAction(dk.RotationActionCallback_BT).
 			NewAction(dk.RotationActionBL_BS).
 			NewAction(dk.RotationActionBL_BS).

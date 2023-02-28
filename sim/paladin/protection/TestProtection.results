@@ -882,8 +882,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Settings-BloodElf-P1-Protection Paladin SOC-FullBuffs-LongMultiTarget"
  value: {
-  dps: 10250.87102
-  tps: 27690.72741
+  dps: 11447.28034
+  tps: 30770.28499
  }
 }
 dps_results: {
@@ -924,8 +924,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Settings-BloodElf-P1-Protection Paladin SOR-FullBuffs-LongMultiTarget"
  value: {
-  dps: 9298.80085
-  tps: 25246.78225
+  dps: 10343.42614
+  tps: 27935.64773
  }
 }
 dps_results: {
@@ -966,8 +966,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Settings-BloodElf-P1-Protection Paladin SOV-FullBuffs-LongMultiTarget"
  value: {
-  dps: 10152.23019
-  tps: 27442.03916
+  dps: 11262.32986
+  tps: 30299.4357
  }
 }
 dps_results: {
@@ -1008,8 +1008,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Settings-Human-P1-Protection Paladin SOC-FullBuffs-LongMultiTarget"
  value: {
-  dps: 10030.93127
-  tps: 27080.47382
+  dps: 11196.43514
+  tps: 30080.48078
  }
 }
 dps_results: {
@@ -1050,8 +1050,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Settings-Human-P1-Protection Paladin SOR-FullBuffs-LongMultiTarget"
  value: {
-  dps: 9054.16511
-  tps: 24573.61591
+  dps: 10065.84206
+  tps: 27177.67237
  }
 }
 dps_results: {
@@ -1092,8 +1092,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Settings-Human-P1-Protection Paladin SOV-FullBuffs-LongMultiTarget"
  value: {
-  dps: 9941.13528
-  tps: 26859.02027
+  dps: 11020.7643
+  tps: 29637.98536
  }
 }
 dps_results: {

@@ -896,8 +896,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-Settings-Human-Blood Tank P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 4837.85221
-  tps: 11404.05627
+  dps: 6487.00255
+  tps: 14818.05343
  }
 }
 dps_results: {
@@ -938,8 +938,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-Settings-Orc-Blood Tank P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 4867.48123
-  tps: 11487.06646
+  dps: 6525.47354
+  tps: 14919.27942
  }
 }
 dps_results: {

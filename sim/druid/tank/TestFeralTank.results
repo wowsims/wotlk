@@ -1032,8 +1032,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-Settings-Tauren-P1-Default-FullBuffs-LongMultiTarget"
  value: {
-  dps: 4261.86599
-  tps: 9541.53937
+  dps: 4456.98021
+  tps: 9971.16656
   dtps: 3.70915
  }
 }

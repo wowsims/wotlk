@@ -998,8 +998,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Settings-Human-Unholy P1 -Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 34865.13959
-  tps: 37322.09347
+  dps: 35351.72003
+  tps: 38154.3224
   hps: 267.34875
  }
 }
@@ -1046,8 +1046,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Settings-Orc-Unholy P1 -Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 35416.39533
-  tps: 37795.97727
+  dps: 35868.37811
+  tps: 38584.15876
   hps: 265.60229
  }
 }
