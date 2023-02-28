@@ -48,13 +48,13 @@ func (dk *DpsDeathknight) setupFrostSubBloodDesyncERWOpener() {
 		NewAction(dk.RotationActionCallback_Frost_FS_HB).
 		NewAction(dk.RotationActionCallback_Obli).
 
-		// Obliterate the death runes (since we are re-casting IT + PS)
+		// Get death runes again
 		NewAction(dk.RotationActionCallback_BS).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
 		NewAction(dk.RotationActionCallback_Frost_FS_HB).
 		NewAction(dk.RotationActionCallback_Frost_FS_HB).
 
-		// Re-cast IT + PS and desync f1 u1 runes
+		// Re-cast IT then desync f1 u1 runes
 		NewAction(dk.RotationActionCallback_IT).
 		NewAction(dk.RotationActionCallback_Force_Desync).
 		NewAction(dk.RotationActionCallback_Obli).
