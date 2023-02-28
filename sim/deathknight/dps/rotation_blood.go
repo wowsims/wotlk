@@ -14,55 +14,66 @@ func (dk *DpsDeathknight) setupBloodRotations() {
 		dk.Inputs.FuStrike = deathknight.FuStrike_Obliterate
 	}
 
-	if dk.Talents.DancingRuneWeapon {
+	switch dk.Rotation.BloodSpender {
+	case proto.Deathknight_Rotation_HS:
+		dk.br.bloodSpell = dk.HeartStrike
+		if !dk.Talents.HeartStrike {
+			dk.br.bloodSpell = dk.BloodStrike
+		}
+	case proto.Deathknight_Rotation_BB:
+		dk.br.bloodSpell = dk.BloodBoil
+	case proto.Deathknight_Rotation_BS:
+		dk.br.bloodSpell = dk.BloodStrike
+	}
+
+	if dk.Rotation.UseDancingRuneWeapon && dk.Talents.DancingRuneWeapon {
 		dk.setupDrwCooldowns()
 	}
 
-	//if dk.Inputs.BloodOpener == proto.Deathknight_Rotation_Standard {
 	dk.RotationSequence.Clear().
 		NewAction(dk.RotationActionCallback_IT).
 		NewAction(dk.RotationActionCallback_PS).
-		NewAction(dk.RotationActionCallback_HS).
-		NewAction(dk.RotationActionCallback_FU).
-		NewAction(dk.RotationActionCallback_HS).
+		NewAction(dk.blBloodRuneAction()).
+		NewAction(dk.RotationActionBL_FU).
+		NewAction(dk.RotationActionBL_BS).
 		NewAction(dk.RotationActionCallback_ERW).
 		NewAction(dk.RotationActionCallback_RD).
-		NewAction(dk.RotationActionCallback_DRW_Custom)
+		NewAction(dk.RotationActionBL_DRW_Custom)
 
-	if dk.sr.hasGod && dk.Rotation.DrwDiseases == proto.Deathknight_Rotation_Pestilence {
+	if dk.Rotation.UseDancingRuneWeapon && dk.sr.hasGod && dk.Rotation.DrwDiseases == proto.Deathknight_Rotation_Pestilence {
 		dk.RotationSequence.
 			NewAction(dk.RotationActionCallback_Pesti).
 			NewAction(dk.RotationActionCallback_BT).
-			NewAction(dk.RotationActionCallback_HS).
-			NewAction(dk.RotationActionCallback_HS).
-			NewAction(dk.RotationActionCallback_FU).
-			NewAction(dk.RotationActionCallback_HS).
-			NewAction(dk.RotationActionCallback_HS)
-	} else if dk.Rotation.DrwDiseases == proto.Deathknight_Rotation_Normal {
+			NewAction(dk.blBloodRuneAction()).
+			NewAction(dk.RotationActionBL_BS).
+			NewAction(dk.RotationActionBL_FU).
+			NewAction(dk.RotationActionBL_BS).
+			NewAction(dk.RotationActionBL_BS)
+	} else if dk.Rotation.UseDancingRuneWeapon && dk.Rotation.DrwDiseases == proto.Deathknight_Rotation_Normal {
 		dk.RotationSequence.
 			NewAction(dk.RotationActionCallback_IT).
 			NewAction(dk.RotationActionCallback_PS).
-			NewAction(dk.RotationActionCallback_HS).
+			NewAction(dk.blBloodRuneAction()).
 			NewAction(dk.RotationActionCallback_BT).
-			NewAction(dk.RotationActionCallback_HS).
-			NewAction(dk.RotationActionCallback_HS).
-			NewAction(dk.RotationActionCallback_HS).
-			NewAction(dk.RotationActionCallback_HS)
+			NewAction(dk.RotationActionBL_BS).
+			NewAction(dk.RotationActionBL_BS).
+			NewAction(dk.RotationActionBL_BS).
+			NewAction(dk.RotationActionBL_BS)
 	} else {
 		dk.RotationSequence.
-			NewAction(dk.RotationActionCallback_HS).
+			NewAction(dk.RotationActionBL_BS).
 			NewAction(dk.RotationActionCallback_BT).
-			NewAction(dk.RotationActionCallback_HS).
-			NewAction(dk.RotationActionCallback_HS).
-			NewAction(dk.RotationActionCallback_FU).
-			NewAction(dk.RotationActionCallback_HS).
-			NewAction(dk.RotationActionCallback_HS)
+			NewAction(dk.RotationActionBL_BS).
+			NewAction(dk.RotationActionBL_BS).
+			NewAction(dk.RotationActionBL_FU).
+			NewAction(dk.RotationActionBL_BS).
+			NewAction(dk.RotationActionBL_BS)
 	}
 
-	dk.RotationSequence.NewAction(dk.RotationActionCallback_BloodRotation)
+	dk.RotationSequence.NewAction(dk.RotationActionBL_BloodRotation)
 }
 
-func (dk *DpsDeathknight) RotationActionCallback_BloodRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+func (dk *DpsDeathknight) RotationActionBL_BloodRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	casted := false
 
 	if !dk.blDiseaseCheck(sim, target, dk.RaiseDead, true, 1) {
@@ -88,15 +99,11 @@ func (dk *DpsDeathknight) RotationActionCallback_BloodRotation(sim *core.Simulat
 	}
 
 	if !casted {
-		if dk.blDiseaseCheck(sim, target, dk.BloodStrike, true, 1) {
+		if dk.blDiseaseCheck(sim, target, dk.br.bloodSpell, true, 1) {
 			if dk.shShouldSpreadDisease(sim) {
 				return dk.blSpreadDiseases(sim, target, s)
 			} else {
-				if dk.Talents.HeartStrike {
-					casted = dk.HeartStrike.Cast(sim, target)
-				} else {
-					casted = dk.BloodStrike.Cast(sim, target)
-				}
+				casted = dk.br.bloodSpell.Cast(sim, target)
 			}
 		} else {
 			dk.blRecastDiseasesSequence(sim)
@@ -127,7 +134,7 @@ func (dk *DpsDeathknight) blAfterDrwSequence(sim *core.Simulation) {
 	dk.RotationSequence.Clear()
 
 	if dk.sr.hasGod && dk.Rotation.DrwDiseases == proto.Deathknight_Rotation_Pestilence {
-		dk.RotationSequence.NewAction(dk.RotationActionCallback_Pesti_DRW)
+		dk.RotationSequence.NewAction(dk.RotationActionBL_Pesti_DRW)
 	} else if dk.Rotation.DrwDiseases == proto.Deathknight_Rotation_Normal {
 		dk.RotationSequence.
 			NewAction(dk.RotationActionBL_IT_DRW).
@@ -135,7 +142,7 @@ func (dk *DpsDeathknight) blAfterDrwSequence(sim *core.Simulation) {
 	}
 
 	dk.RotationSequence.
-		NewAction(dk.RotationAction_ResetToBloodMain)
+		NewAction(dk.RotationActionBL_ResetToBloodMain)
 }
 
 func (dk *DpsDeathknight) blRecastDiseasesSequence(sim *core.Simulation) {
@@ -160,17 +167,17 @@ func (dk *DpsDeathknight) blRecastDiseasesSequence(sim *core.Simulation) {
 	}
 
 	dk.RotationSequence.
-		NewAction(dk.RotationAction_ResetToBloodMain)
+		NewAction(dk.RotationActionBL_ResetToBloodMain)
 }
 
-func (dk *DpsDeathknight) RotationAction_ResetToBloodMain(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+func (dk *DpsDeathknight) RotationActionBL_ResetToBloodMain(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	dk.RotationSequence.Clear().
-		NewAction(dk.RotationActionCallback_BloodRotation)
+		NewAction(dk.RotationActionBL_BloodRotation)
 
 	return sim.CurrentTime
 }
 
-func (dk *DpsDeathknight) RotationActionCallback_DRW_Snapshot(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+func (dk *DpsDeathknight) RotationActionBL_DRW_Snapshot(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	dk.br.activatingDrw = true
 	dk.br.drwSnapshot.ActivateMajorCooldowns(sim)
 	dk.br.activatingDrw = false
@@ -178,8 +185,8 @@ func (dk *DpsDeathknight) RotationActionCallback_DRW_Snapshot(sim *core.Simulati
 	return sim.CurrentTime
 }
 
-func (dk *DpsDeathknight) RotationActionCallback_DRW_Custom(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	if dk.Talents.DancingRuneWeapon {
+func (dk *DpsDeathknight) RotationActionBL_DRW_Custom(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	if dk.Rotation.UseDancingRuneWeapon && dk.Talents.DancingRuneWeapon {
 		casted := dk.DancingRuneWeapon.Cast(sim, target)
 		if casted {
 			dk.br.drwSnapshot.ResetProcTrackers()
@@ -192,7 +199,14 @@ func (dk *DpsDeathknight) RotationActionCallback_DRW_Custom(sim *core.Simulation
 	return -1
 }
 
-func (dk *DpsDeathknight) RotationActionCallback_FU(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+func (dk *DpsDeathknight) RotationActionBL_BS(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	casted := dk.br.bloodSpell.Cast(sim, target)
+	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
+	s.ConditionalAdvance(casted && advance)
+	return -1
+}
+
+func (dk *DpsDeathknight) RotationActionBL_FU(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	casted := false
 	if dk.Inputs.FuStrike == deathknight.FuStrike_DeathStrike {
 		casted = dk.DeathStrike.Cast(sim, target)
@@ -205,7 +219,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FU(sim *core.Simulation, target
 	return -1
 }
 
-func (dk *DpsDeathknight) RotationActionCallback_Pesti_DRW(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+func (dk *DpsDeathknight) RotationActionBL_Pesti_DRW(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	casted := dk.Pestilence.Cast(sim, target)
 	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
 
