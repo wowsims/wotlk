@@ -7,7 +7,6 @@ import (
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
-// frosst's opener
 func (dk *DpsDeathknight) setupFrostSubUnholyERWOpener() {
 	dk.setupUnbreakableArmorCooldowns()
 
