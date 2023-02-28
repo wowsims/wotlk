@@ -319,7 +319,6 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Obli_Check(sim *c
 
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_SequenceRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	s.Clear().
-		NewAction(dk.RotationActionCallback_FrostSubBlood_ERW_Check).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_FS_Dump)
 
 	if dk.UnbreakableArmor != nil {
@@ -441,27 +440,4 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Sequence_Pesti(si
 			return core.TernaryDuration(casted, -1, waitUntil)
 		}
 	}
-}
-
-func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_ERW_Check(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	/*
-		This ERW should only ever happen from the desync rotation when it falls back to this normal sub blood rotation
-	*/
-	bothDeath := dk.RuneIsDeath(0) && dk.RuneIsDeath(1)
-	noMoreUAs := !dk.Talents.UnbreakableArmor || sim.Duration-dk.UnbreakableArmor.ReadyAt() < 5*time.Second
-	numRunes := dk.CurrentDeathRunes() + dk.CurrentBloodRunes() + dk.CurrentUnholyRunes() + dk.CurrentFrostRunes()
-
-	if sim.IsExecutePhase35() && dk.Rotation.UseEmpowerRuneWeapon && dk.EmpowerRuneWeapon.IsReady(sim) && numRunes <= 2 && bothDeath && (dk.UnbreakableArmorAura.IsActive() || noMoreUAs) {
-		dk.castAllMajorCooldowns(sim)
-
-		s.Clear().
-			NewAction(dk.RotationActionCallback_ERW).
-			NewAction(dk.RotationActionCallback_Obli).
-			NewAction(dk.RotationActionCallback_Obli).
-			NewAction(dk.RotationActionCallback_Obli).
-			NewAction(dk.RotationActionCallback_FrostSubBlood_SequenceRotation)
-	} else {
-		s.Advance()
-	}
-	return sim.CurrentTime
 }
