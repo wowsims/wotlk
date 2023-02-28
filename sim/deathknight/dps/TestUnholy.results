@@ -1044,6 +1044,54 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestUnholy-Settings-Human-Unholy P2-Basic-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 45370.121
+  tps: 49144.75874
+  hps: 329.01693
+ }
+}
+dps_results: {
+ key: "TestUnholy-Settings-Human-Unholy P2-Basic-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 10273.85288
+  tps: 6785.60002
+  hps: 329.41002
+ }
+}
+dps_results: {
+ key: "TestUnholy-Settings-Human-Unholy P2-Basic-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 14448.72487
+  tps: 7353.63767
+  hps: 273.19805
+ }
+}
+dps_results: {
+ key: "TestUnholy-Settings-Human-Unholy P2-Basic-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 28113.99312
+  tps: 31050.04239
+  hps: 215.38871
+ }
+}
+dps_results: {
+ key: "TestUnholy-Settings-Human-Unholy P2-Basic-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 5317.86899
+  tps: 3877.43379
+  hps: 213.60864
+ }
+}
+dps_results: {
+ key: "TestUnholy-Settings-Human-Unholy P2-Basic-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 6599.53004
+  tps: 3927.01048
+  hps: 178.0072
+ }
+}
+dps_results: {
  key: "TestUnholy-Settings-Orc-Unholy P1 -Basic-FullBuffs-LongMultiTarget"
  value: {
   dps: 35868.37811
@@ -1089,6 +1137,54 @@ dps_results: {
   dps: 5152.95644
   tps: 2853.25762
   hps: 132.04392
+ }
+}
+dps_results: {
+ key: "TestUnholy-Settings-Orc-Unholy P2-Basic-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 45551.65876
+  tps: 49274.30079
+  hps: 328.38432
+ }
+}
+dps_results: {
+ key: "TestUnholy-Settings-Orc-Unholy P2-Basic-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 10452.0918
+  tps: 6789.32937
+  hps: 329.56415
+ }
+}
+dps_results: {
+ key: "TestUnholy-Settings-Orc-Unholy P2-Basic-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 14919.21041
+  tps: 7435.80601
+  hps: 273.32587
+ }
+}
+dps_results: {
+ key: "TestUnholy-Settings-Orc-Unholy P2-Basic-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 28311.79693
+  tps: 31263.56241
+  hps: 213.48187
+ }
+}
+dps_results: {
+ key: "TestUnholy-Settings-Orc-Unholy P2-Basic-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 5385.33688
+  tps: 3873.87599
+  hps: 212.46408
+ }
+}
+dps_results: {
+ key: "TestUnholy-Settings-Orc-Unholy P2-Basic-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 6788.35612
+  tps: 3968.68604
+  hps: 165.3912
  }
 }
 dps_results: {

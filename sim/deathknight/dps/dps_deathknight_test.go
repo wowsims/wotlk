@@ -42,7 +42,10 @@ func TestUnholy(t *testing.T) {
 		Race:       proto.Race_RaceOrc,
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
-		GearSet:     core.GearSetCombo{Label: "Unholy P1 ", GearSet: UnholyDwP1Gear},
+		GearSet: core.GearSetCombo{Label: "Unholy P1 ", GearSet: UnholyDwP1Gear},
+		OtherGearSets: []core.GearSetCombo{
+			{Label: "Unholy P2", GearSet: UnholyDwP2Gear},
+		},
 		Talents:     UnholyTalents,
 		Glyphs:      UnholyDefaultGlyphs,
 		Consumes:    FullConsumes,
@@ -66,7 +69,10 @@ func TestFrost(t *testing.T) {
 		Race:       proto.Race_RaceOrc,
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
-		GearSet:     core.GearSetCombo{Label: "Frost P1", GearSet: FrostP1Gear},
+		GearSet: core.GearSetCombo{Label: "Frost P1", GearSet: FrostP1Gear},
+		OtherGearSets: []core.GearSetCombo{
+			{Label: "Frost P2", GearSet: FrostP2Gear},
+		},
 		Talents:     FrostTalents,
 		Glyphs:      FrostDefaultGlyphs,
 		Consumes:    FullConsumes,
@@ -74,6 +80,33 @@ func TestFrost(t *testing.T) {
 		OtherSpecOptions: []core.SpecOptionsCombo{
 			{Label: "Desync", SpecOptions: PlayerOptionsDesyncFrost},
 		},
+
+		ItemFilter: core.ItemFilter{
+			ArmorType: proto.ArmorType_ArmorTypePlate,
+
+			WeaponTypes: []proto.WeaponType{
+				proto.WeaponType_WeaponTypeAxe,
+				proto.WeaponType_WeaponTypeSword,
+				proto.WeaponType_WeaponTypeMace,
+			},
+		},
+	}))
+}
+
+func TestFrostUH(t *testing.T) {
+	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
+		Class:      proto.Class_ClassDeathknight,
+		Race:       proto.Race_RaceOrc,
+		OtherRaces: []proto.Race{proto.Race_RaceHuman},
+
+		GearSet: core.GearSetCombo{Label: "Frost P1", GearSet: FrostP1Gear},
+		OtherGearSets: []core.GearSetCombo{
+			{Label: "Frost P2", GearSet: FrostP2Gear},
+		},
+		Talents:     FrostUHTalents,
+		Glyphs:      FrostUHDefaultGlyphs,
+		Consumes:    FullConsumes,
+		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsFrost},
 
 		ItemFilter: core.ItemFilter{
 			ArmorType: proto.ArmorType_ArmorTypePlate,
@@ -97,6 +130,14 @@ var BloodDefaultGlyphs = &proto.Glyphs{
 
 var FrostTalents = "23050005-32005350352203012300033101351"
 var FrostDefaultGlyphs = &proto.Glyphs{
+	Major1: int32(proto.DeathknightMajorGlyph_GlyphOfFrostStrike),
+	Major2: int32(proto.DeathknightMajorGlyph_GlyphOfObliterate),
+	Major3: int32(proto.DeathknightMajorGlyph_GlyphOfDisease),
+	// No interesting minor glyphs.
+}
+
+var FrostUHTalents = "01-32002350342203012300033101351-230200305003"
+var FrostUHDefaultGlyphs = &proto.Glyphs{
 	Major1: int32(proto.DeathknightMajorGlyph_GlyphOfFrostStrike),
 	Major2: int32(proto.DeathknightMajorGlyph_GlyphOfObliterate),
 	Major3: int32(proto.DeathknightMajorGlyph_GlyphOfDisease),
@@ -369,6 +410,117 @@ var UnholyDwP1Gear = core.EquipmentSpecFromJsonString(`{"items": [
 	}
 ]}`)
 
+var UnholyDwP2Gear = core.EquipmentSpecFromJsonString(`{"items": [
+	{
+	  "id": 45472,
+	  "enchant": 3817,
+	  "gems": [
+		41398,
+		40041
+	  ]
+	},
+	{
+	  "id": 46040,
+	  "gems": [
+		39996
+	  ]
+	},
+	{
+	  "id": 46117,
+	  "enchant": 3808,
+	  "gems": [
+		39996
+	  ]
+	},
+	{
+	  "id": 45588,
+	  "enchant": 3831,
+	  "gems": [
+		39996
+	  ]
+	},
+	{
+	  "id": 46111,
+	  "enchant": 3832,
+	  "gems": [
+		42142,
+		42142
+	  ]
+	},
+	{
+	  "id": 45663,
+	  "enchant": 3845,
+	  "gems": [
+		39996,
+		0
+	  ]
+	},
+	{
+	  "id": 45481,
+	  "enchant": 3604,
+	  "gems": [
+		0
+	  ]
+	},
+	{
+	  "id": 45241,
+	  "gems": [
+		42142,
+		45862,
+		39996
+	  ]
+	},
+	{
+	  "id": 45134,
+	  "enchant": 3823,
+	  "gems": [
+		40041,
+		39996,
+		40022
+	  ]
+	},
+	{
+	  "id": 45599,
+	  "enchant": 3606,
+	  "gems": [
+		39996,
+		39996
+	  ]
+	},
+	{
+	  "id": 45534,
+	  "gems": [
+		39996
+	  ]
+	},
+	{
+	  "id": 45250
+	},
+	{
+	  "id": 45609
+	},
+	{
+	  "id": 42987
+	},
+	{
+	  "id": 46097,
+	  "enchant": 3368,
+	  "gems": [
+		39996
+	  ]
+	},
+	{
+	  "id": 46036,
+	  "enchant": 3368,
+	  "gems": [
+		39996
+	  ]
+	},
+	{
+	  "id": 45254
+	}
+]}`)
+
 var FrostP1Gear = core.EquipmentSpecFromJsonString(`{ "items": [
 	{
 		"id": 44006,
@@ -460,5 +612,121 @@ var FrostP1Gear = core.EquipmentSpecFromJsonString(`{ "items": [
 	},
 	{
 		"id": 40207
+	}
+]}`)
+
+var FrostP2Gear = core.EquipmentSpecFromJsonString(`{ "items": [
+	{
+	  "id": 46115,
+	  "enchant": 3817,
+	  "gems": [
+		41398,
+		42702
+	  ]
+	},
+	{
+	  "id": 45459,
+	  "gems": [
+		39996
+	  ]
+	},
+	{
+	  "id": 46117,
+	  "enchant": 3808,
+	  "gems": [
+		39996
+	  ]
+	},
+	{
+	  "id": 46032,
+	  "enchant": 3831,
+	  "gems": [
+		39996,
+		39996
+	  ]
+	},
+	{
+	  "id": 46111,
+	  "enchant": 3832,
+	  "gems": [
+		42142,
+		42142
+	  ]
+	},
+	{
+	  "id": 45663,
+	  "enchant": 3845,
+	  "gems": [
+		39996,
+		0
+	  ]
+	},
+	{
+	  "id": 46113,
+	  "enchant": 3604,
+	  "gems": [
+		39996,
+		0
+	  ]
+	},
+	{
+	  "id": 45241,
+	  "gems": [
+		42142,
+		45862,
+		39996
+	  ]
+	},
+	{
+	  "id": 45134,
+	  "enchant": 3823,
+	  "gems": [
+		39996,
+		39996,
+		39996
+	  ]
+	},
+	{
+	  "id": 45599,
+	  "enchant": 3606,
+	  "gems": [
+		39996,
+		39996
+	  ]
+	},
+	{
+	  "id": 45608,
+	  "gems": [
+		39996
+	  ]
+	},
+	{
+	  "id": 45534,
+	  "gems": [
+		39996
+	  ]
+	},
+	{
+	  "id": 45931
+	},
+	{
+	  "id": 42987
+	},
+	{
+	  "id": 46097,
+	  "enchant": 3370,
+	  "gems": [
+		39996
+	  ]
+	},
+	{
+	  "id": 46097,
+	  "enchant": 3368,
+	  "gems": [
+		39996
+	  ]
+	},
+	{
+	  "id": 40207
 	}
 ]}`)

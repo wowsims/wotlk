@@ -977,6 +977,90 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFrost-Settings-Human-Frost P2-Basic-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 23057.5632
+  tps: 13698.2504
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Human-Frost P2-Basic-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 9794.10865
+  tps: 5740.80918
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Human-Frost P2-Basic-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 11274.5898
+  tps: 6442.42978
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Human-Frost P2-Basic-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 12403.37321
+  tps: 7354.22904
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Human-Frost P2-Basic-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 5936.77774
+  tps: 3473.68337
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Human-Frost P2-Basic-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 6332.69769
+  tps: 3621.45301
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Human-Frost P2-Desync-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 23760.41262
+  tps: 14123.37967
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Human-Frost P2-Desync-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 9979.08879
+  tps: 5855.84938
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Human-Frost P2-Desync-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 11231.03601
+  tps: 6414.82414
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Human-Frost P2-Desync-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 12819.62163
+  tps: 7607.19892
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Human-Frost P2-Desync-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 6034.7649
+  tps: 3535.00807
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Human-Frost P2-Desync-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 6336.82746
+  tps: 3622.94509
+ }
+}
+dps_results: {
  key: "TestFrost-Settings-Orc-Frost P1-Basic-FullBuffs-LongMultiTarget"
  value: {
   dps: 19123.17674
@@ -1058,6 +1142,90 @@ dps_results: {
  value: {
   dps: 5121.34634
   tps: 2910.92684
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Orc-Frost P2-Basic-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 23203.3082
+  tps: 13779.35274
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Orc-Frost P2-Basic-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 9842.41368
+  tps: 5763.56254
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Orc-Frost P2-Basic-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 11353.36677
+  tps: 6477.50194
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Orc-Frost P2-Basic-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 12467.57256
+  tps: 7388.77904
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Orc-Frost P2-Basic-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 5975.5854
+  tps: 3493.94831
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Orc-Frost P2-Basic-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 6368.0764
+  tps: 3633.96405
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Orc-Frost P2-Desync-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 23836.04325
+  tps: 14162.7852
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Orc-Frost P2-Desync-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 10029.34837
+  tps: 5880.6411
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Orc-Frost P2-Desync-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 11294.61584
+  tps: 6442.0243
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Orc-Frost P2-Desync-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 12992.31181
+  tps: 7706.9517
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Orc-Frost P2-Desync-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 6024.58556
+  tps: 3524.25913
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Orc-Frost P2-Desync-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 6363.72426
+  tps: 3630.13206
  }
 }
 dps_results: {
