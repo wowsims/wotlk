@@ -49,15 +49,17 @@ func (dk *DpsDeathknight) setupFrostSubBloodDesyncERWOpener() {
 		NewAction(dk.RotationActionCallback_Obli).
 
 		// Obliterate the death runes (since we are re-casting IT + PS)
-		NewAction(dk.RotationActionCallback_Obli).
+		NewAction(dk.RotationActionCallback_BS).
+		NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
 		NewAction(dk.RotationActionCallback_Frost_FS_HB).
 		NewAction(dk.RotationActionCallback_Frost_FS_HB).
 
 		// Re-cast IT + PS and desync f1 u1 runes
+		NewAction(dk.RotationActionCallback_IT).
 		NewAction(dk.RotationActionCallback_Force_Desync).
 		NewAction(dk.RotationActionCallback_Obli).
-		NewAction(dk.RotationActionCallback_Pesti).
-		NewAction(dk.RotationActionCallback_BS).
+		NewAction(dk.RotationActionCallback_Frost_FS_HB).
+		NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
 
 		// Continue desync rotation
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Desync_Sequence1)
@@ -88,26 +90,14 @@ func (dk *DpsDeathknight) firstOblitAt(sim *core.Simulation) time.Duration {
 }
 
 func (dk *DpsDeathknight) RotationActionCallback_Force_Desync(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	ff := dk.FrostFeverSpell.Dot(target).IsActive()
-	bp := dk.BloodPlagueSpell.Dot(target).IsActive()
-
-	if ff && bp {
-		s.Advance()
-		return sim.CurrentTime
-	}
-
-	if !ff {
-		dk.IcyTouch.Cast(sim, target)
-		return -1
-	}
-
 	frostReadyAt := dk.RuneReadyAt(sim, 2)
 	unholyReadyAt := dk.SpendRuneReadyAt(4, sim.CurrentTime)
 	drift := unholyReadyAt - frostReadyAt
 	desiredDrift := 1000 * time.Millisecond
 
 	if drift >= desiredDrift {
-		dk.PlagueStrike.Cast(sim, target)
+		dk.Obliterate.Cast(sim, target)
+		s.Advance()
 		return -1
 	} else {
 		dk.FrostStrike.Cast(sim, target)
