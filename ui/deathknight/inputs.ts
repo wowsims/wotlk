@@ -284,7 +284,7 @@ export const DesyncRotation = InputHelpers.makeRotationBooleanInput<Spec.SpecDea
 	fieldName: 'desyncRotation',
 	label: 'Use Desync Rotation',
 	labelTooltip: 'Use the Desync Rotation.',
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast && !player.getRotation().autoRotation && player.sim.getShowExperimental(),
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast && !player.getRotation().autoRotation,
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
 

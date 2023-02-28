@@ -71,6 +71,9 @@ func TestFrost(t *testing.T) {
 		Glyphs:      FrostDefaultGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsFrost},
+		OtherSpecOptions: []core.SpecOptionsCombo{
+			{Label: "Desync", SpecOptions: PlayerOptionsDesyncFrost},
+		},
 
 		ItemFilter: core.ItemFilter{
 			ArmorType: proto.ArmorType_ArmorTypePlate,
@@ -129,6 +132,13 @@ var PlayerOptionsFrost = &proto.Player_Deathknight{
 	},
 }
 
+var PlayerOptionsDesyncFrost = &proto.Player_Deathknight{
+	Deathknight: &proto.Deathknight{
+		Options:  deathKnightOptions,
+		Rotation: frostDesyncRotation,
+	},
+}
+
 var bloodRotation = &proto.Deathknight_Rotation{
 	ArmyOfTheDead:        proto.Deathknight_Rotation_PreCast,
 	DrwDiseases:          proto.Deathknight_Rotation_Pestilence,
@@ -156,6 +166,11 @@ var unholyRotation = &proto.Deathknight_Rotation{
 
 var frostRotation = &proto.Deathknight_Rotation{
 	UseEmpowerRuneWeapon: true,
+}
+
+var frostDesyncRotation = &proto.Deathknight_Rotation{
+	UseEmpowerRuneWeapon: true,
+	DesyncRotation:       true,
 }
 
 var deathKnightOptions = &proto.Deathknight_Options{

@@ -74,15 +74,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 7687.51205
-  tps: 8503.67393
+  dps: 7687.62617
+  tps: 8206.93754
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 7687.51205
-  tps: 8503.67393
+  dps: 7687.62617
+  tps: 8206.93754
  }
 }
 dps_results: {
@@ -935,6 +935,48 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFrost-Settings-Human-Frost P1-Desync-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 19758.21188
+  tps: 11737.9558
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Human-Frost P1-Desync-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 8230.61065
+  tps: 4820.85073
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Human-Frost P1-Desync-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 9051.60067
+  tps: 5142.69143
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Human-Frost P1-Desync-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 10579.97035
+  tps: 6274.33117
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Human-Frost P1-Desync-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 4891.8375
+  tps: 2859.5564
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Human-Frost P1-Desync-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 5072.00487
+  tps: 2887.65786
+ }
+}
+dps_results: {
  key: "TestFrost-Settings-Orc-Frost P1-Basic-FullBuffs-LongMultiTarget"
  value: {
   dps: 19123.17674
@@ -974,6 +1016,48 @@ dps_results: {
  value: {
   dps: 5206.8456
   tps: 2964.02745
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Orc-Frost P1-Desync-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 19904.89765
+  tps: 11819.85481
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Orc-Frost P1-Desync-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 8263.06278
+  tps: 4833.87571
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Orc-Frost P1-Desync-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 9111.03373
+  tps: 5163.75845
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Orc-Frost P1-Desync-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 10497.95767
+  tps: 6219.14442
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Orc-Frost P1-Desync-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 4914.83493
+  tps: 2868.80309
+ }
+}
+dps_results: {
+ key: "TestFrost-Settings-Orc-Frost P1-Desync-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 5121.34634
+  tps: 2910.92684
  }
 }
 dps_results: {
