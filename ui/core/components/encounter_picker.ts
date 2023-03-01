@@ -244,7 +244,7 @@ class AdvancedEncounterModal extends BaseModal {
 				},
 			});
 		}
-		new ListPicker<Encounter, Target, TargetPicker>(targetsElem, simUI, this.encounter, {
+		new ListPicker<Encounter, Target>(targetsElem, simUI, this.encounter, {
 			extraCssClasses: ['targets-picker', 'mb-0'],
 			itemLabel: 'Target',
 			changedEvent: (encounter: Encounter) => encounter.targetsChangeEmitter,
@@ -284,9 +284,15 @@ class AdvancedEncounterModal extends BaseModal {
 	}
 }
 
-class TargetPicker extends Component {
+class TargetPicker extends Input<Target, Target> {
 	constructor(parent: HTMLElement, modTarget: Target) {
-		super(parent, 'target-picker-root');
+		super(parent, 'target-picker-root', modTarget, {
+			changedEvent: (target: Target) => target.changeEmitter,
+			getValue: (target: Target) => target,
+			setValue: (eventID: EventID, target: Target, newValue: Target) => {
+				target.fromProto(eventID, newValue.toProto());
+			},
+		});
 		this.rootElem.innerHTML = `
 			<div class="target-picker-section target-picker-section1"></div>
 			<div class="target-picker-section target-picker-section2"></div>
@@ -514,6 +520,16 @@ class TargetPicker extends Component {
 			},
 			enableWhen: (target: Target) => target.getLevel() == Mechanics.BOSS_LEVEL,
 		});
+	}
+
+	getInputElem(): HTMLElement|null {
+		return null;
+	}
+	getInputValue(): Target {
+		return this.value;
+	}
+	setInputValue(newValue: Target) {
+
 	}
 }
 

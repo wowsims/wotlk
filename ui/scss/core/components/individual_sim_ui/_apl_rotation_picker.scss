@@ -1,0 +1,33 @@
+.apl-rotation-picker-root {
+	.input-root.apl-list-item-picker {
+		flex-wrap: wrap;
+		align-items: flex-start !important;
+
+		.list-picker-title {
+			width: unset;
+			padding: 0;
+			border: 0;
+		}
+
+		.list-picker-items {
+			width: unset;
+		}
+
+		.list-picker-new-button {
+			width: 100%;
+		}
+	}
+}
+
+.apl-list-item-picker-root {
+	display: flex;
+	align-items: center;
+
+	&> :not(:last-child) {
+		margin-right: map.get($spacers, 2);
+	}
+
+	.number-picker-input {
+		width: 100% !important;
+	}
+}

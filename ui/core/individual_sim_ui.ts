@@ -16,6 +16,7 @@ import { addStatWeightsAction } from './components/stat_weights_action';
 
 import { GearTab } from './components/individual_sim_ui/gear_tab';
 import { SettingsTab } from './components/individual_sim_ui/settings_tab';
+import { RotationTab } from './components/individual_sim_ui/rotation_tab';
 
 import {
 	Class,
@@ -269,6 +270,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		this.addGearTab();
 		this.addSettingsTab();
 		this.addTalentsTab();
+		this.addRotationTab();
 
 		if (!this.isWithinRaidSim) {
 			this.addDetailedResultsTab();
@@ -343,7 +345,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		let gearTab = new GearTab(this.simTabContentsContainer, this);
 		gearTab.rootElem.classList.add('active', 'show');
 	}
-
 
 	private addSettingsTab() {
 		new SettingsTab(this.simTabContentsContainer, this);
@@ -431,6 +432,10 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				const petTypeToggle = new IconEnumPicker(toggleContainer, this.player as Player<Spec.SpecHunter>, makePetTypeInputConfig(false));
 			}
 		});
+	}
+
+	private addRotationTab() {
+		new RotationTab(this.simTabContentsContainer, this);
 	}
 
 	private addDetailedResultsTab() {

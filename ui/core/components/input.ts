@@ -82,11 +82,11 @@ export abstract class Input<ModObject, T> extends Component {
 		if (enable) {
 			this.enabled = true;
 			this.rootElem.classList.remove('disabled');
-			this.getInputElem().removeAttribute('disabled');
+			this.getInputElem()?.removeAttribute('disabled');
 		} else {
 			this.enabled = false;
 			this.rootElem.classList.add('disabled');
-			this.getInputElem().setAttribute('disabled', '');
+			this.getInputElem()?.setAttribute('disabled', '');
 		}
 
 		const show = !this.inputConfig.showWhen || this.inputConfig.showWhen(this.modObject);
@@ -107,7 +107,7 @@ export abstract class Input<ModObject, T> extends Component {
 		this.update();
 	}
 
-	abstract getInputElem(): HTMLElement;
+	abstract getInputElem(): HTMLElement|null;
 
 	abstract getInputValue(): T;
 
