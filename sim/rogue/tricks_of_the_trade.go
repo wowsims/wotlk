@@ -47,7 +47,7 @@ func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			rogue.TricksOfTheTradeAura.Activate(sim)
 			if hasShadowblades {
-				rogue.AddEnergy(sim, energyCost, energyMetrics)
+				rogue.AddEnergy(sim, 15, energyMetrics)
 			}
 		},
 	})

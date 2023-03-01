@@ -605,10 +605,27 @@ func (rogue *Rogue) registerHonorAmongThieves() {
 		return
 	}
 
-	// FIXME: Implement a flow of combo points that simulates the party/raid crit procs
+	// In an ideal party, you'd probably get up to 6 ability crits/s (Rate = 600).
+	//  Survival Hunters, Enhancement Shamans, and Assassination Rogues are particularly good.
+	if rogue.Options.HonorOfThievesCritRate <= 0 {
+		rogue.Options.HonorOfThievesCritRate = 400
+	}
+
 	procChance := []float64{0, 0.33, 0.66, 1}[rogue.Talents.HonorAmongThieves]
 	comboMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 51701})
 	honorAmongThievesID := core.ActionID{SpellID: 51701}
+
+	icd := core.Cooldown{
+		Timer:    rogue.NewTimer(),
+		Duration: time.Second,
+	}
+
+	maybeProc := func(sim *core.Simulation) {
+		if icd.IsReady(sim) && sim.Proc(procChance, "honor of thieves") {
+			rogue.AddComboPoints(sim, 1, comboMetrics)
+			icd.Use(sim)
+		}
+	}
 
 	rogue.HonorAmongThieves = rogue.RegisterAura(core.Aura{
 		Label:    "Honor Among Thieves",
@@ -617,15 +634,27 @@ func (rogue *Rogue) registerHonorAmongThieves() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
-				Period: time.Second,
-				OnAction: func(sim *core.Simulation) {
-					if sim.Proc(procChance, "Honor Among Thieves") {
-						rogue.AddComboPoints(sim, 1, comboMetrics)
-					}
-				},
-			})
+		OnGain: func(_ *core.Aura, sim *core.Simulation) {
+			rateToDuration := float64(time.Second) * 100 / float64(rogue.Options.HonorOfThievesCritRate)
+
+			pa := &core.PendingAction{}
+			pa.OnAction = func(sim *core.Simulation) {
+				maybeProc(sim)
+				pa.NextActionAt = sim.CurrentTime + time.Duration(sim.RandomExpFloat("next party crit")*rateToDuration)
+				sim.AddPendingAction(pa)
+			}
+			pa.NextActionAt = sim.CurrentTime + time.Duration(sim.RandomExpFloat("next party crit")*rateToDuration)
+			sim.AddPendingAction(pa)
+		},
+		OnSpellHitDealt: func(_ *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.DidCrit() && !spell.ProcMask.Matches(core.ProcMaskMeleeMHAuto|core.ProcMaskMeleeOHAuto|core.ProcMaskRangedAuto) {
+				maybeProc(sim)
+			}
+		},
+		OnPeriodicDamageDealt: func(_ *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.DidCrit() {
+				maybeProc(sim)
+			}
 		},
 	})
 }
