@@ -5,29 +5,29 @@ import { arrayEquals, swap } from '../utils.js';
 
 import { Input, InputConfig } from './input.js';
 
-export interface ListPickerConfig<ModObject, ItemType, ItemPicker> extends InputConfig<ModObject, Array<ItemType>> {
+export interface ListPickerConfig<ModObject, ItemType> extends InputConfig<ModObject, Array<ItemType>> {
 	title?: string,
 	titleTooltip?: string,
 	itemLabel: string,
 	newItem: () => ItemType,
 	copyItem: (oldItem: ItemType) => ItemType,
-	newItemPicker: (parent: HTMLElement, item: ItemType, listPicker: ListPicker<ModObject, ItemType, ItemPicker>) => ItemPicker,
+	newItemPicker: (parent: HTMLElement, item: ItemType, listPicker: ListPicker<ModObject, ItemType>) => Input<ItemType, ItemType>,
 	inlineMenuBar?: boolean,
 }
 
-interface ItemPickerPair<ItemType, ItemPicker> {
+interface ItemPickerPair<ItemType> {
 	item: ItemType,
 	elem: HTMLElement,
-	picker: ItemPicker,
+	picker: Input<ItemType, ItemType>,
 }
 
-export class ListPicker<ModObject, ItemType, ItemPicker> extends Input<ModObject, Array<ItemType>> {
-	private readonly config: ListPickerConfig<ModObject, ItemType, ItemPicker>;
+export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<ItemType>> {
+	private readonly config: ListPickerConfig<ModObject, ItemType>;
 	private readonly itemsDiv: HTMLElement;
 
-	private itemPickerPairs: Array<ItemPickerPair<ItemType, ItemPicker>>;
+	private itemPickerPairs: Array<ItemPickerPair<ItemType>>;
 
-	constructor(parent: HTMLElement, simUI: SimUI, modObject: ModObject, config: ListPickerConfig<ModObject, ItemType, ItemPicker>) {
+	constructor(parent: HTMLElement, simUI: SimUI, modObject: ModObject, config: ListPickerConfig<ModObject, ItemType>) {
 		super(parent, 'list-picker-root', modObject, config);
 		this.config = config;
 		this.itemPickerPairs = [];
@@ -90,7 +90,7 @@ export class ListPicker<ModObject, ItemType, ItemPicker> extends Input<ModObject
 		}
 	}
 
-	getPickerIndex(picker: ItemPicker): number {
+	getPickerIndex(picker: Input<ItemType, ItemType>): number {
 		return this.itemPickerPairs.findIndex(ipp => ipp.picker == picker);
 	}
 

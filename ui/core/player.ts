@@ -25,6 +25,9 @@ import {
 	WeaponType,
 } from './proto/common.js';
 import {
+	APLRotation,
+} from './proto/apl.js';
+import {
 	DungeonDifficulty,
 	Expansion,
 	RaidFilterOption,
@@ -83,9 +86,6 @@ import { Party, MAX_PARTY_SIZE } from './party.js';
 import { Raid } from './raid.js';
 import { Sim } from './sim.js';
 import { sum } from './utils.js';
-import { wait } from './utils.js';
-import { WorkerPool } from './worker_pool.js';
-import { EnhancementShaman_Options } from './proto/shaman.js';
 
 // Manages all the gear / consumes / other settings for a single Player.
 export class Player<SpecType extends Spec> {
@@ -105,6 +105,7 @@ export class Player<SpecType extends Spec> {
 	private profession1: Profession = 0;
 	private profession2: Profession = 0;
 	private rotation: SpecRotation<SpecType>;
+	private aplRotation: APLRotation = APLRotation.create();
 	private talentsString: string = '';
 	private glyphs: Glyphs = Glyphs.create();
 	private specOptions: SpecOptions<SpecType>;
@@ -530,11 +531,23 @@ export class Player<SpecType extends Spec> {
 		this.rotationChangeEmitter.emit(eventID);
 	}
 
+	getAplRotation(): APLRotation {
+		return APLRotation.clone(this.aplRotation);
+	}
+
+	setAplRotation(eventID: EventID, newRotation: APLRotation) {
+		if (APLRotation.equals(newRotation, this.aplRotation))
+			return;
+
+		this.aplRotation = APLRotation.clone(newRotation);
+		this.rotationChangeEmitter.emit(eventID);
+	}
+
 	getTalents(): SpecTalents<SpecType> {
 		if (this.talents == null) {
 			this.talents = playerTalentStringToProto(this.spec, this.talentsString) as SpecTalents<SpecType>;
 		}
-		return this.talents;
+		return this.talents!;
 	}
 
 	getTalentsString(): string {
@@ -991,6 +1004,7 @@ export class Player<SpecType extends Spec> {
 				cooldowns: this.getCooldowns(),
 				talentsString: this.getTalentsString(),
 				glyphs: this.getGlyphs(),
+				rotation: this.getAplRotation(),
 				profession1: this.getProfession1(),
 				profession2: this.getProfession2(),
 				inFrontOfTarget: this.getInFrontOfTarget(),
@@ -1020,6 +1034,7 @@ export class Player<SpecType extends Spec> {
 			this.setDistanceFromTarget(eventID, proto.distanceFromTarget);
 			this.setHealingModel(eventID, proto.healingModel || HealingModel.create());
 			this.setRotation(eventID, this.specTypeFunctions.rotationFromPlayer(proto));
+			this.setAplRotation(eventID, proto.rotation || APLRotation.create())
 			this.setSpecOptions(eventID, this.specTypeFunctions.optionsFromPlayer(proto));
 		});
 	}
