@@ -126,5 +126,11 @@ export const BalanceDruidRotationConfig = {
 			],
 			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
 		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
+			fieldName: 'multidotIs',
+			label: 'Mutlti-dot Insect Swarm',
+			labelTooltip: 'Should the rotation mutlti-dot Insect Swarm',
+			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().isUsage == IsUsage.MaximizeIs,
+		}),
 	],
 };
