@@ -19,7 +19,7 @@ func (rogue *Rogue) OnEnergyGain(sim *core.Simulation) {
 	}
 	rogue.TryUseCooldowns(sim)
 	if rogue.GCD.IsReady(sim) {
-		if rogue.Talents.Shadowstep {
+		if rogue.Talents.HonorAmongThieves > 0 {
 			rogue.doSubtletyRotation(sim)
 		} else {
 			rogue.rotation(sim)
@@ -32,7 +32,7 @@ func (rogue *Rogue) OnGCDReady(sim *core.Simulation) {
 		rogue.OnCanAct(sim)
 		return
 	}
-	if rogue.Talents.Shadowstep && sim.GetNumTargets() <= 3 {
+	if rogue.Talents.HonorAmongThieves > 0 && sim.GetNumTargets() <= 3 {
 		rogue.OnCanActSubtlety(sim)
 		return
 	}
