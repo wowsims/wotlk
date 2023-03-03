@@ -49,6 +49,7 @@ func (dk *Deathknight) registerHornOfWinterSpell() {
 				Timer:    dk.NewTimer(),
 				Duration: 20 * time.Second,
 			},
+			IgnoreHaste: true,
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			if dk.Inputs.RefreshHornOfWinter {
