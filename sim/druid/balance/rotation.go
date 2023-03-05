@@ -21,6 +21,7 @@ func (moonkin *BalanceDruid) tryUseGCD(sim *core.Simulation) {
 }
 
 func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*core.Spell, *core.Unit) {
+	moonkin.CurrentTarget = sim.Environment.GetTargetUnit(0)
 	rotation := moonkin.Rotation
 	target := moonkin.CurrentTarget
 
@@ -63,12 +64,13 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*core.Spell, *core.
 	// Max IS uptime
 	if rotation.IsUsage == proto.BalanceDruid_Rotation_MaximizeIs && !shouldHoldIs {
 		if rotation.MultidotIs {
-			for _, aoeTarget := range sim.Encounter.Targets {
-				moonkin.CurrentTarget = &aoeTarget.Unit
+			targetIndex := 0
+			for targetIndex < len(sim.Encounter.Targets) {
 				if moonkin.InsectSwarm.CurDot().RemainingDuration(sim) <= 0 {
-					return moonkin.InsectSwarm, &aoeTarget.Unit
+					return moonkin.InsectSwarm, moonkin.CurrentTarget
 				}
-				moonkin.CurrentTarget = target
+				moonkin.CurrentTarget = sim.Environment.NextTargetUnit(moonkin.CurrentTarget)
+				targetIndex += 1
 			}
 		} else {
 			if moonkin.InsectSwarm.CurDot().RemainingDuration(sim) <= 0 {
