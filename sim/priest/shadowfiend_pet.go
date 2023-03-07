@@ -69,7 +69,7 @@ func (priest *Priest) NewShadowfiend() *Shadowfiend {
 			BaseDamageMax:        210,
 			SwingSpeed:           1.5,
 			NormalizedSwingSpeed: 1.5,
-			SwingDuration:        time.Millisecond * 1500,
+			SwingDuration:        time.Second,
 			CritMultiplier:       2,
 			SpellSchool:          core.SpellSchoolShadow,
 		},
@@ -122,6 +122,10 @@ func (shadowfiend *Shadowfiend) OnGCDReady(sim *core.Simulation) {
 func (shadowfiend *Shadowfiend) Reset(sim *core.Simulation) {
 	shadowfiend.ShadowcrawlAura.Deactivate(sim)
 	shadowfiend.Disable(sim)
+}
+
+func (shadowfiend *Shadowfiend) OnPetDisable(sim *core.Simulation) {
+	shadowfiend.ShadowcrawlAura.Deactivate(sim)
 }
 
 func (shadowfiend *Shadowfiend) GetPet() *core.Pet {
