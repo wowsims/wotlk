@@ -73,7 +73,7 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
 				dot := spell.Dot(target)
 				dot.Apply(sim)

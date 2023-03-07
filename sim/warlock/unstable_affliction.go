@@ -61,7 +61,9 @@ func (warlock *Warlock) registerUnstableAfflictionSpell() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
+			// this is a non-standard way of dealing with dot effects, but get's rid of the 0 damage tick
+			// that can proc on-damage effects; same with corruption, curses, ds
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
 				spell.Dot(target).Apply(sim)
 			}
