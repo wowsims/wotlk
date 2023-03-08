@@ -180,6 +180,7 @@ message BalanceDruid {
 			Solar = 1;
 		}
 		EclipsePrio eclipse_prio = 12;
+		bool multidot_is = 13;
 	}
   Rotation rotation = 1;
 

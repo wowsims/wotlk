@@ -202,9 +202,8 @@ func (rogue *Rogue) ApplyEnergyTickMultiplier(multiplier float64) {
 }
 
 func (rogue *Rogue) getExpectedComboPointPerSecond() float64 {
-	const criticalPerSecond = 1
 	honorAmongThievesChance := []float64{0, 0.33, 0.66, 1.0}[rogue.Talents.HonorAmongThieves]
-	return criticalPerSecond * honorAmongThievesChance
+	return 1 / (1 + 1/(float64(rogue.Options.HonorOfThievesCritRate+100)/100*honorAmongThievesChance))
 }
 
 func (rogue *Rogue) Reset(sim *core.Simulation) {
