@@ -67,22 +67,22 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 7820.66514
-  tps: 4580.709
+  dps: 7821.52801
+  tps: 4581.22672
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 7650.16802
-  tps: 8403.44151
+  dps: 7650.16807
+  tps: 8407.19366
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 7650.16802
-  tps: 8403.44151
+  dps: 7650.16807
+  tps: 8407.19366
  }
 }
 dps_results: {
@@ -95,8 +95,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Beast-tamer'sShoulders-30892"
  value: {
-  dps: 7664.47613
-  tps: 4475.70285
+  dps: 7670.15873
+  tps: 4479.00124
  }
 }
 dps_results: {
@@ -109,15 +109,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-BlessedGarboftheUndeadSlayer"
  value: {
-  dps: 6504.83868
-  tps: 3802.15198
+  dps: 6504.68405
+  tps: 3802.0592
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
-  dps: 6230.31003
-  tps: 3637.99961
+  dps: 6230.37578
+  tps: 3638.03512
  }
 }
 dps_results: {
@@ -180,8 +180,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-DarkmoonCard:Death-42990"
  value: {
-  dps: 7772.63849
-  tps: 4551.79849
+  dps: 7774.32679
+  tps: 4552.81147
  }
 }
 dps_results: {
@@ -194,15 +194,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-DarkrunedBattlegear"
  value: {
-  dps: 7525.26933
-  tps: 4397.41667
+  dps: 7522.36143
+  tps: 4395.67192
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-DarkrunedPlate"
  value: {
-  dps: 6582.5583
-  tps: 3838.46517
+  dps: 6601.39975
+  tps: 3850.12396
  }
 }
 dps_results: {
@@ -229,15 +229,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Deathbringer'sWill-50362"
  value: {
-  dps: 8126.61258
-  tps: 4757.35284
+  dps: 8125.66801
+  tps: 4756.77879
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-Deathbringer'sWill-50363"
  value: {
-  dps: 8154.44294
-  tps: 4775.43202
+  dps: 8158.98538
+  tps: 4778.27141
  }
 }
 dps_results: {
@@ -257,15 +257,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 7813.09458
-  tps: 4571.07091
+  dps: 7805.87231
+  tps: 4566.68292
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 7804.67865
-  tps: 4566.41122
+  dps: 7799.60643
+  tps: 4563.33428
  }
 }
 dps_results: {
@@ -475,8 +475,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-MeteoriteWhetstone-37390"
  value: {
-  dps: 7846.96054
-  tps: 4590.0669
+  dps: 7846.98531
+  tps: 4590.08177
  }
 }
 dps_results: {
@@ -601,22 +601,22 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-ScourgebornePlate"
  value: {
-  dps: 6540.62922
-  tps: 3815.13681
+  dps: 6540.87924
+  tps: 3815.26662
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-Scourgelord'sBattlegear"
  value: {
-  dps: 8234.21852
-  tps: 4822.66249
+  dps: 8244.85596
+  tps: 4829.1908
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-Scourgelord'sPlate"
  value: {
-  dps: 6926.63409
-  tps: 4040.11543
+  dps: 6930.09556
+  tps: 4042.25369
  }
 }
 dps_results: {
@@ -720,8 +720,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-SparkofLife-37657"
  value: {
-  dps: 7742.28148
-  tps: 4530.27538
+  dps: 7738.87713
+  tps: 4528.30777
  }
 }
 dps_results: {
@@ -734,8 +734,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-StormshroudArmor"
  value: {
-  dps: 6201.56145
-  tps: 3622.60262
+  dps: 6197.70112
+  tps: 3620.18805
  }
 }
 dps_results: {
@@ -776,8 +776,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Thassarian'sBattlegear"
  value: {
-  dps: 7614.44035
-  tps: 4451.31418
+  dps: 7608.42538
+  tps: 4447.27822
  }
 }
 dps_results: {
@@ -804,22 +804,22 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 7855.17069
-  tps: 4586.14418
+  dps: 7853.56318
+  tps: 4585.17968
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-TinyAbominationinaJar-50351"
  value: {
-  dps: 7828.79751
-  tps: 4583.6622
+  dps: 7822.5735
+  tps: 4579.69372
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-TinyAbominationinaJar-50706"
  value: {
-  dps: 7863.54077
-  tps: 4605.0025
+  dps: 7864.04574
+  tps: 4605.10799
  }
 }
 dps_results: {
@@ -839,8 +839,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-TomeofArcanePhenomena-36972"
  value: {
-  dps: 7686.40031
-  tps: 4495.43741
+  dps: 7678.00148
+  tps: 4490.68968
  }
 }
 dps_results: {
@@ -860,15 +860,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
-  dps: 6476.85282
-  tps: 3785.20021
+  dps: 6475.62417
+  tps: 3784.46302
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-Val'anyr,HammerofAncientKings-46017"
  value: {
-  dps: 7535.18566
-  tps: 4391.83502
+  dps: 7538.90382
+  tps: 4394.40752
  }
 }
 dps_results: {
@@ -888,8 +888,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Average-Default"
  value: {
-  dps: 8076.83398
-  tps: 4719.88496
+  dps: 8075.47598
+  tps: 4719.0926
  }
 }
 dps_results: {
@@ -923,8 +923,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Human-Frost P1-Basic-NoBuffs-LongSingleTarget"
  value: {
-  dps: 4828.71854
-  tps: 2819.68033
+  dps: 4828.4078
+  tps: 2819.4966
  }
 }
 dps_results: {
@@ -965,8 +965,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Orc-Frost P1-Basic-NoBuffs-LongSingleTarget"
  value: {
-  dps: 4870.87586
-  tps: 2840.21737
+  dps: 4869.26565
+  tps: 2839.24491
  }
 }
 dps_results: {
@@ -979,7 +979,7 @@ dps_results: {
 dps_results: {
  key: "TestFrost-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 7818.72449
-  tps: 4576.42302
+  dps: 7795.2041
+  tps: 4561.48506
  }
 }
