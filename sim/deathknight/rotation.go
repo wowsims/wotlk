@@ -228,19 +228,8 @@ func (s *Sequence) DoAction(sim *core.Simulation, target *core.Unit, dk *Deathkn
 	return action(sim, target, s)
 }
 
-func (dk *Deathknight) NextMHSwingAt(sim *core.Simulation) time.Duration {
-	return dk.AutoAttacks.MainhandSwingAt
-}
-func (dk *Deathknight) NextSwingAt(sim *core.Simulation) time.Duration {
-	waitUntil := dk.AutoAttacks.MainhandSwingAt
-	if dk.AutoAttacks.OffhandSwingAt > sim.CurrentTime {
-		waitUntil = core.MinDuration(waitUntil, dk.AutoAttacks.OffhandSwingAt)
-	}
-	return waitUntil
-}
-
 func (dk *Deathknight) Wait(sim *core.Simulation) {
-	waitUntil := dk.NextSwingAt(sim)
+	waitUntil := sim.CurrentTime + time.Millisecond*200
 
 	anyRuneAt := dk.AnyRuneReadyAt(sim)
 	if anyRuneAt != sim.CurrentTime {
