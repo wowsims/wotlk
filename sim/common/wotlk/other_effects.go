@@ -868,4 +868,58 @@ func init() {
 			})
 		})
 	})
+
+	NewItemEffectWithHeroic(func(isHeroic bool) {
+		name := "Bryntroll, the Bone Arbiter"
+		itemID := int32(50415)
+		minDmg := float64(2138)
+		maxDmg := float64(2362)
+		if isHeroic {
+			name += " H"
+			itemID = 50709
+			minDmg = float64(2412)
+			maxDmg = float64(2664)
+		}
+
+		core.NewItemEffect(itemID, func(agent core.Agent) {
+			character := agent.GetCharacter()
+			mh, oh := character.GetWeaponHands(itemID)
+			procMask := core.GetMeleeProcMaskForHands(mh, oh)
+			ppmm := character.AutoAttacks.NewPPMManager(1.0, procMask)
+
+			procActionID := core.ActionID{ItemID: itemID}
+
+			proc := character.RegisterSpell(core.SpellConfig{
+				ActionID:    procActionID.WithTag(1),
+				SpellSchool: core.SpellSchoolShadow,
+				ProcMask:    core.ProcMaskEmpty,
+
+				DamageMultiplier: 1,
+				CritMultiplier:   character.DefaultSpellCritMultiplier(),
+				ThreatMultiplier: 1,
+
+				ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+					spell.CalcAndDealDamage(sim, target, sim.Roll(minDmg, maxDmg), spell.OutcomeMagicHitAndCrit)
+				},
+			})
+
+			character.RegisterAura(core.Aura{
+				Label:    name,
+				Duration: core.NeverExpires,
+				OnReset: func(aura *core.Aura, sim *core.Simulation) {
+					aura.Activate(sim)
+				},
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+					if !result.Landed() || !spell.ProcMask.Matches(procMask) {
+						return
+					}
+					if !ppmm.Proc(sim, spell.ProcMask, name) {
+						return
+					}
+
+					proc.Cast(sim, result.Target)
+				},
+			})
+		})
+	})
 }

@@ -130,15 +130,15 @@ dps_results: {
 dps_results: {
  key: "TestBlood-AllItems-Bryntroll,theBoneArbiter-50415"
  value: {
-  dps: 8490.76658
-  tps: 4455.66064
+  dps: 8289.11185
+  tps: 4327.90447
  }
 }
 dps_results: {
  key: "TestBlood-AllItems-Bryntroll,theBoneArbiter-50709"
  value: {
-  dps: 8605.38594
-  tps: 4517.5507
+  dps: 8370.72027
+  tps: 4378.63702
  }
 }
 dps_results: {
