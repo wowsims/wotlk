@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"math/rand"
 	"runtime"
 	"runtime/debug"
 	"strconv"
@@ -142,8 +143,12 @@ func NewSim(rsr *proto.RaidSimRequest) *Simulation {
 // testing we use a separate rand object for each RandomFloat callsite,
 // distinguished by the label string.
 func (sim *Simulation) RandomFloat(label string) float64 {
+	return sim.labelRand(label).NextFloat64()
+}
+
+func (sim *Simulation) labelRand(label string) Rand {
 	if !sim.isTest {
-		return sim.rand.NextFloat64()
+		return sim.rand
 	}
 
 	labelRand, isPresent := sim.testRands[label]
@@ -152,11 +157,7 @@ func (sim *Simulation) RandomFloat(label string) float64 {
 		labelRand = NewSplitMix(uint64(makeTestRandSeed(sim.rseed, label)))
 		sim.testRands[label] = labelRand
 	}
-	v := labelRand.NextFloat64()
-	// if sim.Log != nil {
-	// 	sim.Log("FLOAT64 '%s': %0.5f", label, v)
-	// }
-	return v
+	return labelRand
 }
 
 func (sim *Simulation) reseedRands(i int64) {
@@ -172,6 +173,10 @@ func (sim *Simulation) reseedRands(i int64) {
 
 func makeTestRandSeed(rseed int64, label string) int64 {
 	return int64(hash(label + strconv.FormatInt(rseed, 16)))
+}
+
+func (sim *Simulation) RandomExpFloat(label string) float64 {
+	return rand.New(sim.labelRand(label)).ExpFloat64()
 }
 
 // Shorthand for commonly-used RNG behavior.

@@ -1,6 +1,7 @@
 package core
 
 import (
+	"math"
 	"math/rand"
 )
 
@@ -9,7 +10,10 @@ type Rand interface {
 	Next() uint64
 	NextFloat64() float64
 	Seed(int64)
+
 	GetSeed() int64
+
+	rand.Source64
 }
 
 // wraps go's default source; will panic if it's not a Source64
@@ -58,4 +62,12 @@ func (sm *SplitMix64) Seed(s int64) {
 
 func (sm *SplitMix64) GetSeed() int64 {
 	return int64(sm.start)
+}
+
+func (sm *SplitMix64) Int63() int64 {
+	return int64(sm.Next() & math.MaxInt64)
+}
+
+func (sm *SplitMix64) Uint64() uint64 {
+	return sm.Next()
 }

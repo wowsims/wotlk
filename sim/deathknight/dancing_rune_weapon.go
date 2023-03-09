@@ -31,12 +31,16 @@ func (dk *Deathknight) registerDancingRuneWeaponCD() {
 				dk.RuneWeapon.PlagueStrike.Cast(sim, spell.Unit.CurrentTarget)
 			case dk.DeathStrike:
 				dk.RuneWeapon.DeathStrike.Cast(sim, spell.Unit.CurrentTarget)
+			case dk.BloodStrike:
+				dk.RuneWeapon.BloodStrike.Cast(sim, spell.Unit.CurrentTarget)
 			case dk.HeartStrike:
 				dk.RuneWeapon.HeartStrike.Cast(sim, spell.Unit.CurrentTarget)
 			case dk.DeathCoil:
 				dk.RuneWeapon.DeathCoil.Cast(sim, spell.Unit.CurrentTarget)
 			case dk.Pestilence:
 				dk.RuneWeapon.Pestilence.Cast(sim, spell.Unit.CurrentTarget)
+			case dk.BloodBoil:
+				dk.RuneWeapon.BloodBoil.Cast(sim, spell.Unit.CurrentTarget)
 			}
 		},
 	})
@@ -85,10 +89,12 @@ type RuneWeaponPet struct {
 	DeathStrike *core.Spell
 	DeathCoil   *core.Spell
 
+	BloodStrike       *core.Spell
 	HeartStrike       *core.Spell
 	HeartStrikeOffHit *core.Spell
 
 	Pestilence *core.Spell
+	BloodBoil  *core.Spell
 
 	// Diseases
 	FrostFeverSpell  *core.Spell
@@ -98,17 +104,53 @@ type RuneWeaponPet struct {
 func (runeWeapon *RuneWeaponPet) Initialize() {
 	runeWeapon.dkOwner.registerDrwDiseaseDots()
 	runeWeapon.dkOwner.registerDrwPestilenceSpell()
+	runeWeapon.dkOwner.registerDrwBloodBoilSpell()
 
 	runeWeapon.dkOwner.registerDrwIcyTouchSpell()
 	runeWeapon.dkOwner.registerDrwPlagueStrikeSpell()
 	runeWeapon.dkOwner.registerDrwDeathStrikeSpell()
+	runeWeapon.dkOwner.registerDrwBloodStrikeSpell()
 	runeWeapon.dkOwner.registerDrwHeartStrikeSpell()
 	runeWeapon.dkOwner.registerDrwDeathCoilSpell()
 }
 
 func (dk *Deathknight) NewRuneWeapon() *RuneWeaponPet {
+	// Remove any hit that would be given by NocS as it does not translate to pets
+	nocsHit := 0.0
+	nocsSpellHit := 0.0
+	if dk.nervesOfColdSteelActive() {
+		nocsHit = float64(dk.Talents.NervesOfColdSteel)
+		nocsSpellHit = (float64(dk.Talents.NervesOfColdSteel) / 8.0) * 17.0
+	}
+	if dk.HasDraeneiHitAura {
+		nocsHit = nocsHit + 1.0
+		nocsSpellHit = nocsSpellHit + 1.0
+	}
+
 	runeWeapon := &RuneWeaponPet{
-		Pet:     core.NewPet("Rune Weapon", &dk.Character, runeWeaponBaseStats, runeWeaponStatInheritance, nil, false, true),
+		Pet: core.NewPet("Rune Weapon", &dk.Character,
+			stats.Stats{
+				stats.Stamina:   100,
+				stats.MeleeHit:  -nocsHit * core.MeleeHitRatingPerHitChance,
+				stats.SpellHit:  -nocsSpellHit * core.SpellHitRatingPerHitChance,
+				stats.Expertise: -nocsHit * PetExpertiseScale * core.ExpertisePerQuarterPercentReduction,
+			},
+			func(ownerStats stats.Stats) stats.Stats {
+				ownerHitChance := ownerStats[stats.MeleeHit] / core.MeleeHitRatingPerHitChance
+				return stats.Stats{
+					stats.AttackPower: ownerStats[stats.AttackPower],
+					stats.MeleeHaste:  (ownerStats[stats.MeleeHaste] / dk.PseudoStats.MeleeHasteRatingPerHastePercent) * core.HasteRatingPerHastePercent,
+
+					stats.MeleeHit: ownerHitChance * core.MeleeHitRatingPerHitChance,
+					stats.SpellHit: ((ownerHitChance / 8.0) * 17.0) * core.SpellHitRatingPerHitChance,
+
+					stats.Expertise: ownerHitChance * PetExpertiseScale * core.ExpertisePerQuarterPercentReduction,
+
+					stats.MeleeCrit: ownerStats[stats.MeleeCrit],
+					stats.SpellCrit: ownerStats[stats.SpellCrit],
+				}
+			},
+			nil, false, true),
 		dkOwner: dk,
 	}
 
@@ -150,21 +192,4 @@ func (runeWeapon *RuneWeaponPet) disable(sim *core.Simulation) {
 	// Clear snapshot speed
 	runeWeapon.PseudoStats.MeleeSpeedMultiplier = 1
 	runeWeapon.MultiplyMeleeSpeed(sim, 1)
-}
-
-// These numbers are just rough guesses
-var runeWeaponBaseStats = stats.Stats{
-	stats.Stamina: 100,
-}
-
-var runeWeaponStatInheritance = func(ownerStats stats.Stats) stats.Stats {
-	return stats.Stats{
-		stats.AttackPower: ownerStats[stats.AttackPower],
-		stats.MeleeHaste:  ownerStats[stats.MeleeHaste],
-		stats.MeleeHit:    ownerStats[stats.MeleeHit],
-		stats.MeleeCrit:   ownerStats[stats.MeleeCrit],
-		stats.SpellHit:    ownerStats[stats.SpellHit],
-		stats.SpellCrit:   ownerStats[stats.SpellCrit],
-		stats.Expertise:   ownerStats[stats.Expertise],
-	}
 }

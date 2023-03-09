@@ -52,7 +52,7 @@ func (rogue *Rogue) setSubtletyBuilder(sim *core.Simulation) {
 }
 
 func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
-	rogue.subtletyPrios = make([]subtletyPrio, 0)
+	rogue.subtletyPrios = rogue.subtletyPrios[:0]
 
 	if rogue.Rotation.OpenWithPremeditation && rogue.Talents.Premeditation {
 		hasCastPremeditation := false
@@ -104,7 +104,7 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 	if rogue.Rotation.OpenWithGarrote {
 		hasCastGarrote := false
 		rogue.subtletyPrios = append(rogue.subtletyPrios, subtletyPrio{
-			func(s *core.Simulation, r *Rogue) PriorityAction {
+			func(sim *core.Simulation, rogue *Rogue) PriorityAction {
 				if hasCastGarrote {
 					return Skip
 				}
@@ -113,7 +113,7 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 				}
 				return Wait
 			},
-			func(s *core.Simulation, r *Rogue) bool {
+			func(sim *core.Simulation, rogue *Rogue) bool {
 				casted := rogue.Garrote.Cast(sim, rogue.CurrentTarget)
 				if casted {
 					hasCastGarrote = true
@@ -126,7 +126,7 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 
 	// Slice and Dice
 	rogue.subtletyPrios = append(rogue.subtletyPrios, subtletyPrio{
-		func(s *core.Simulation, r *Rogue) PriorityAction {
+		func(sim *core.Simulation, rogue *Rogue) PriorityAction {
 			if rogue.SliceAndDiceAura.IsActive() {
 				return Skip
 			}
@@ -141,8 +141,8 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 			}
 			return Wait
 		},
-		func(s *core.Simulation, r *Rogue) bool {
-			return rogue.SliceAndDice.Cast(s, r.CurrentTarget)
+		func(sim *core.Simulation, rogue *Rogue) bool {
+			return rogue.SliceAndDice.Cast(sim, rogue.CurrentTarget)
 		},
 		rogue.SliceAndDice.DefaultCast.Cost,
 	})
@@ -152,7 +152,7 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 		rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Maintain {
 		hasCastExpose := false
 		rogue.subtletyPrios = append(rogue.subtletyPrios, subtletyPrio{
-			func(s *core.Simulation, r *Rogue) PriorityAction {
+			func(sim *core.Simulation, rogue *Rogue) PriorityAction {
 				if hasCastExpose && rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Once {
 					return Skip
 				}
@@ -192,8 +192,8 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 					}
 				}
 			},
-			func(s *core.Simulation, r *Rogue) bool {
-				casted := r.ExposeArmor.Cast(sim, r.CurrentTarget)
+			func(sim *core.Simulation, rogue *Rogue) bool {
+				casted := rogue.ExposeArmor.Cast(sim, rogue.CurrentTarget)
 				if casted {
 					hasCastExpose = true
 				}
@@ -205,16 +205,16 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 
 	// Enable CDS
 	rogue.subtletyPrios = append(rogue.subtletyPrios, subtletyPrio{
-		func(s *core.Simulation, r *Rogue) PriorityAction {
-			if r.allMCDsDisabled {
-				for _, mcd := range r.GetMajorCooldowns() {
+		func(sim *core.Simulation, rogue *Rogue) PriorityAction {
+			if rogue.allMCDsDisabled {
+				for _, mcd := range rogue.GetMajorCooldowns() {
 					mcd.Enable()
 				}
-				r.allMCDsDisabled = false
+				rogue.allMCDsDisabled = false
 			}
 			return Skip
 		},
-		func(s *core.Simulation, r *Rogue) bool {
+		func(_ *core.Simulation, _ *Rogue) bool {
 			return false
 		},
 		0,
@@ -223,10 +223,10 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 	//Shadowstep
 	if rogue.Talents.Shadowstep {
 		rogue.subtletyPrios = append(rogue.subtletyPrios, subtletyPrio{
-			func(s *core.Simulation, r *Rogue) PriorityAction {
-				if r.Shadowstep.IsReady(s) {
+			func(sim *core.Simulation, rogue *Rogue) PriorityAction {
+				if rogue.Shadowstep.IsReady(sim) {
 					// Can we cast Rupture now?
-					if !r.Rupture.CurDot().IsActive() && rogue.ComboPoints() > 4 && rogue.CurrentEnergy() >= rogue.Rupture.DefaultCast.Cost+rogue.Shadowstep.DefaultCast.Cost {
+					if !rogue.Rupture.CurDot().IsActive() && rogue.ComboPoints() > 4 && rogue.CurrentEnergy() >= rogue.Rupture.DefaultCast.Cost+rogue.Shadowstep.DefaultCast.Cost {
 						return Cast
 					} else {
 						return Skip
@@ -234,17 +234,19 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 				}
 				return Skip
 			},
-			func(s *core.Simulation, r *Rogue) bool {
-				return r.Shadowstep.Cast(s, r.CurrentTarget)
+			func(sim *core.Simulation, rogue *Rogue) bool {
+				return rogue.Shadowstep.Cast(sim, rogue.CurrentTarget)
 			},
 			rogue.Shadowstep.DefaultCast.Cost,
 		})
 	}
 
+	const ruptureMinDuration = time.Second * 10 // heuristically, 5 Rupture ticks are better DPE than other finishers
+
 	// Rupture
 	rogue.subtletyPrios = append(rogue.subtletyPrios, subtletyPrio{
-		func(s *core.Simulation, r *Rogue) PriorityAction {
-			if r.Rupture.CurDot().IsActive() || s.GetRemainingDuration() < time.Second*22 {
+		func(sim *core.Simulation, rogue *Rogue) PriorityAction {
+			if rogue.Rupture.CurDot().IsActive() || sim.GetRemainingDuration() < ruptureMinDuration {
 				return Skip
 			}
 			if rogue.ComboPoints() > 4 && rogue.CurrentEnergy() >= rogue.Rupture.DefaultCast.Cost {
@@ -261,8 +263,8 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 			}
 			return Wait
 		},
-		func(s *core.Simulation, r *Rogue) bool {
-			return r.Rupture.Cast(s, r.CurrentTarget)
+		func(sim *core.Simulation, rogue *Rogue) bool {
+			return rogue.Rupture.Cast(sim, rogue.CurrentTarget)
 		},
 		rogue.Rupture.DefaultCast.Cost,
 	})
@@ -270,12 +272,12 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 	//Envenom
 	if rogue.Rotation.SubtletyFinisherPriority == proto.Rogue_Rotation_SubtletyEnvenom {
 		rogue.subtletyPrios = append(rogue.subtletyPrios, subtletyPrio{
-			func(s *core.Simulation, r *Rogue) PriorityAction {
+			func(sim *core.Simulation, rogue *Rogue) PriorityAction {
 				minimumCP := int32(5)
-				if !r.DeadlyPoison.Dot(r.CurrentTarget).Aura.IsActive() {
+				if !rogue.DeadlyPoison.Dot(rogue.CurrentTarget).Aura.IsActive() {
 					return Skip
 				}
-				if r.EnvenomAura.IsActive() {
+				if rogue.EnvenomAura.IsActive() {
 					return Skip
 				}
 				if rogue.ComboPoints() >= minimumCP && rogue.CurrentEnergy() >= rogue.Envenom.DefaultCast.Cost {
@@ -292,7 +294,7 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 				}
 				return Wait
 			},
-			func(s *core.Simulation, r *Rogue) bool {
+			func(sim *core.Simulation, rogue *Rogue) bool {
 				return rogue.Envenom.Cast(sim, rogue.CurrentTarget)
 			},
 			rogue.Envenom.DefaultCast.Cost,
@@ -301,18 +303,18 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 
 	// Eviscerate
 	rogue.subtletyPrios = append(rogue.subtletyPrios, subtletyPrio{
-		func(s *core.Simulation, r *Rogue) PriorityAction {
-			energyNeeded := r.Eviscerate.DefaultCast.Cost
+		func(sim *core.Simulation, rogue *Rogue) PriorityAction {
+			energyNeeded := rogue.Eviscerate.DefaultCast.Cost
 			minimumCP := int32(5)
-			if r.ComboPoints() >= minimumCP && r.CurrentEnergy() >= energyNeeded {
+			if rogue.ComboPoints() >= minimumCP && rogue.CurrentEnergy() >= energyNeeded {
 				return Cast
 			}
-			if r.ComboPoints() < minimumCP && r.CurrentEnergy() >= r.Builder.DefaultCast.Cost+r.Eviscerate.DefaultCast.Cost {
+			if rogue.ComboPoints() < minimumCP && rogue.CurrentEnergy() >= rogue.Builder.DefaultCast.Cost+rogue.Eviscerate.DefaultCast.Cost {
 				return Build
 			}
 			return Wait
 		},
-		func(s *core.Simulation, r *Rogue) bool {
+		func(sim *core.Simulation, rogue *Rogue) bool {
 			return rogue.Eviscerate.Cast(sim, rogue.CurrentTarget)
 		},
 		rogue.Eviscerate.DefaultCast.Cost,
@@ -327,6 +329,13 @@ func (rogue *Rogue) doSubtletyRotation(sim *core.Simulation) {
 		case Skip:
 			prioIndex += 1
 		case Build:
+			if rogue.HonorAmongThieves != nil && rogue.ComboPoints() == 4 && rogue.CurrentEnergy() <= rogue.maxEnergy-20 {
+				// just wait for HaT proc - if it happens, a finisher will follow and often cost effectively 0 energy,
+				// so we add another GCD worth of energy headroom
+				rogue.WaitUntil(sim, sim.CurrentTime+time.Second)
+				return
+			}
+
 			if rogue.GCD.IsReady(sim) {
 				rogue.setSubtletyBuilder(sim)
 				if !rogue.Builder.Cast(sim, rogue.CurrentTarget) {
