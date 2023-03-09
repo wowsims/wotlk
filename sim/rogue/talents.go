@@ -380,25 +380,14 @@ func (rogue *Rogue) applyCombatPotency() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !result.Landed() {
+			// from 3.0.3 patch notes: "Combat Potency: Now only works with auto attacks"
+			if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeOHAuto) {
 				return
 			}
 
-			// https://wotlk.wowhead.com/spell=35553/combat-potency, proc mask = 8838608.
-			if !spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
-				return
+			if sim.RandomFloat("Combat Potency") < procChance {
+				rogue.AddEnergy(sim, energyBonus, energyMetrics)
 			}
-
-			// Fan of Knives OH hits do not proc combat potency
-			if spell.IsSpellAction(FanOfKnivesSpellID) {
-				return
-			}
-
-			if sim.RandomFloat("Combat Potency") > procChance {
-				return
-			}
-
-			rogue.AddEnergy(sim, energyBonus, energyMetrics)
 		},
 	})
 }
