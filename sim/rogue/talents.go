@@ -300,25 +300,18 @@ func (rogue *Rogue) applyInitiative() {
 
 	procChance := []float64{0, 0.33, 0.66, 1.0}[rogue.Talents.Initiative]
 	cpMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 13980})
-	var affectedSpells []*core.Spell
 
 	rogue.RegisterAura(core.Aura{
 		Label:    "Initiative",
 		Duration: core.NeverExpires,
-		OnInit: func(aura *core.Aura, sim *core.Simulation) {
-			affectedSpells = append(affectedSpells, rogue.Ambush)
-			affectedSpells = append(affectedSpells, rogue.Garrote)
-		},
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			for _, affectedSpell := range affectedSpells {
-				if spell == affectedSpell {
-					if result.Landed() {
-						if sim.Proc(procChance, "Initiative") {
-							rogue.AddComboPoints(sim, 1, cpMetrics)
-						}
+			if spell == rogue.Garrote || spell == rogue.Ambush {
+				if result.Landed() {
+					if sim.Proc(procChance, "Initiative") {
+						rogue.AddComboPoints(sim, 1, cpMetrics)
 					}
 				}
 			}

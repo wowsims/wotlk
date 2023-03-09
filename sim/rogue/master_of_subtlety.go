@@ -43,7 +43,7 @@ func (rogue *Rogue) registerMasterOfSubtletyCD() {
 			return true, 0
 		}
 
-		if rogue.Garrote.Dot(rogue.CurrentTarget).IsActive() || sim.GetRemainingDuration() <= garroteMinDuration {
+		if rogue.Garrote.CurDot().IsActive() || sim.GetRemainingDuration() <= garroteMinDuration {
 			return true, 0
 		}
 
