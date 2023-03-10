@@ -102,8 +102,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
-  dps: 5715.78866
-  tps: 5563.07955
+  dps: 5722.48205
+  tps: 5569.89489
  }
 }
 dps_results: {
@@ -159,8 +159,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-DarkmoonCard:Death-42990"
  value: {
-  dps: 7291.24861
-  tps: 7137.51881
+  dps: 7296.27413
+  tps: 7142.65092
  }
 }
 dps_results: {
@@ -544,15 +544,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-Malfurion'sBattlegear"
  value: {
-  dps: 5305.54944
-  tps: 5169.95902
+  dps: 5291.70983
+  tps: 5155.92359
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-Malfurion'sRegalia"
  value: {
-  dps: 6725.62223
-  tps: 6569.74211
+  dps: 6748.76649
+  tps: 6593.16707
  }
 }
 dps_results: {
@@ -572,15 +572,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-NightsongBattlegear"
  value: {
-  dps: 5131.40299
-  tps: 4994.1544
+  dps: 5132.73178
+  tps: 4995.67856
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-NightsongGarb"
  value: {
-  dps: 6751.07718
-  tps: 6595.94043
+  dps: 6753.13775
+  tps: 6598.03978
  }
 }
 dps_results: {
@@ -747,8 +747,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-StormshroudArmor"
  value: {
-  dps: 5239.37121
-  tps: 5089.89728
+  dps: 5235.84207
+  tps: 5086.18382
  }
 }
 dps_results: {
@@ -803,8 +803,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-ThunderheartRegalia"
  value: {
-  dps: 5123.58985
-  tps: 4976.31769
+  dps: 5127.26705
+  tps: 4980.10694
  }
 }
 dps_results: {
@@ -866,8 +866,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
-  dps: 5378.78175
-  tps: 5231.45229
+  dps: 5380.53352
+  tps: 5233.20487
  }
 }
 dps_results: {
@@ -901,8 +901,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Average-Default"
  value: {
-  dps: 7531.49231
-  tps: 7378.12173
+  dps: 7531.19928
+  tps: 7377.8257
  }
 }
 dps_results: {

@@ -14,10 +14,10 @@ func (moonkin *BalanceDruid) OnGCDReady(sim *core.Simulation) {
 
 func (moonkin *BalanceDruid) tryUseGCD(sim *core.Simulation) {
 	spell, target := moonkin.rotation(sim)
-
 	if success := spell.Cast(sim, target); !success {
 		moonkin.WaitForMana(sim, spell.CurCast.Cost)
 	}
+	moonkin.LastCast = spell
 }
 
 func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*core.Spell, *core.Unit) {
@@ -89,16 +89,12 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*core.Spell, *core.
 	playerLatency := time.Duration(core.MaxInt32(rotation.PlayerLatency, 0)) * time.Millisecond
 	lunarICD := moonkin.LunarICD.Timer.TimeToReady(sim)
 	solarICD := moonkin.SolarICD.Timer.TimeToReady(sim)
-	fishingForLunar := lunarICD <= solarICD
-	if rotation.EclipsePrio == proto.BalanceDruid_Rotation_Solar {
-		fishingForLunar = lunarICD < solarICD
-	}
 
 	if moonkin.Talents.Eclipse > 0 {
 		solarUptime := moonkin.SolarEclipseProcAura.ExpiresAt() - sim.CurrentTime
 		solarIsActive := moonkin.SolarEclipseProcAura.IsActive()
 
-		// "Dispelling" eclipse effects before casting if needed
+		//"Dispelling" eclipse effects before casting if needed
 		if float64(lunarUptime-moonkin.Starfire.CurCast.CastTime) <= 0 {
 			moonkin.LunarEclipseProcAura.Deactivate(sim)
 			lunarIsActive = false
@@ -113,7 +109,7 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*core.Spell, *core.
 		}
 		if solarIsActive {
 			solarIsActive = solarUptime < (moonkin.SolarEclipseProcAura.Duration - playerLatency)
-			fishingForLunar = false
+			solarICD = 0
 		}
 
 		// Eclipse
@@ -151,8 +147,17 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*core.Spell, *core.
 			return moonkin.InsectSwarm, target
 		}
 	}
+
+	fishingForLunar := lunarICD <= solarICD
+	if rotation.EclipsePrio == proto.BalanceDruid_Rotation_Solar {
+		fishingForLunar = lunarICD < solarICD
+	}
 	// Non-Eclipse
-	if fishingForLunar && rotation.UseWrath {
+	eclipseShuffle := rotation.EclipseShuffling && lunarICD == 0 && solarICD == 0
+	if eclipseShuffle && moonkin.LastCast == moonkin.Wrath && rotation.UseStarfire {
+		return moonkin.Starfire, target
+	}
+	if (fishingForLunar || eclipseShuffle) && rotation.UseWrath {
 		return moonkin.Wrath, target
 	} else {
 		return moonkin.Starfire, target

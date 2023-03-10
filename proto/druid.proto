@@ -181,6 +181,7 @@ message BalanceDruid {
 		}
 		EclipsePrio eclipse_prio = 12;
 		bool multidot_is = 13;
+		bool eclipse_shuffling = 14;
 	}
   Rotation rotation = 1;
 
