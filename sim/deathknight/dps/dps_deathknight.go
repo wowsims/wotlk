@@ -58,11 +58,8 @@ func NewDpsDeathknight(character core.Character, player *proto.Player) *DpsDeath
 			UseAMS:              dk.Rotation.UseAms,
 			AvgAMSSuccessRate:   dk.Rotation.AvgAmsSuccessRate,
 			AvgAMSHit:           dk.Rotation.AvgAmsHit,
-		}, player.TalentsString),
+		}, player.TalentsString, dk.Rotation.PreNerfedGargoyle),
 		Rotation: dk.Rotation,
-	}
-	if dpsDk.Talents.SummonGargoyle {
-		dpsDk.Gargoyle = dpsDk.NewGargoyle(!dk.Rotation.PreNerfedGargoyle)
 	}
 
 	dpsDk.Inputs.UnholyFrenzyTarget = dk.Options.UnholyFrenzyTarget

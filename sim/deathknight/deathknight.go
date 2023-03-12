@@ -383,7 +383,7 @@ func (dk *Deathknight) HasMinorGlyph(glyph proto.DeathknightMinorGlyph) bool {
 	return dk.HasGlyph(int32(glyph))
 }
 
-func NewDeathknight(character core.Character, inputs DeathknightInputs, talents string) *Deathknight {
+func NewDeathknight(character core.Character, inputs DeathknightInputs, talents string, preNerfedGargoyle bool) *Deathknight {
 	dk := &Deathknight{
 		Character:  character,
 		Talents:    &proto.DeathknightTalents{},
@@ -437,6 +437,10 @@ func NewDeathknight(character core.Character, inputs DeathknightInputs, talents 
 	dk.PseudoStats.BaseParry += 0.05
 
 	dk.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
+
+	if dk.Talents.SummonGargoyle {
+		dk.Gargoyle = dk.NewGargoyle(!preNerfedGargoyle)
+	}
 
 	dk.Ghoul = dk.NewGhoulPet(dk.Talents.MasterOfGhouls)
 	dk.OnGargoyleStartFirstCast = func() {}
