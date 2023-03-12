@@ -332,9 +332,6 @@ type PseudoStats struct {
 	DamageDealtMultiplier       float64            // All damage
 	SchoolDamageDealtMultiplier [SchoolLen]float64 // For specific spell schools (arcane, fire, shadow, etc).
 
-	// Apply Aura: Mod Melee Critical Damage % (Arcane, Fire, Frost, Holy, Nature, Physical, Shadow)
-	SchoolCritMultiplier [SchoolLen]float64 // For specific spell schools (arcane, fire, shadow, etc).
-
 	// Treat melee haste as a pseudostat so that shamans, death knights, paladins, and druids can get the correct scaling
 	MeleeHasteRatingPerHastePercent float64
 
@@ -398,7 +395,6 @@ func NewPseudoStats() PseudoStats {
 
 		DamageDealtMultiplier:       1,
 		SchoolDamageDealtMultiplier: NewSchoolFloatArray(),
-		SchoolCritMultiplier:        NewSchoolFloatArray(),
 
 		MeleeHasteRatingPerHastePercent: 32.79,
 

@@ -11,6 +11,7 @@ func (dk *Deathknight) registerBloodTapSpell() {
 	cdTimer := dk.NewTimer()
 	cd := time.Minute * 1
 
+	rpMetrics := dk.NewRunicPowerMetrics(actionID)
 	dk.BloodTapAura = dk.RegisterAura(core.Aura{
 		Label:    "Blood Tap",
 		ActionID: actionID,
@@ -23,7 +24,7 @@ func (dk *Deathknight) registerBloodTapSpell() {
 
 			// Gain at the end, to take into account previous effects for callback
 			amountOfRunicPower := 10.0
-			dk.AddRunicPower(sim, amountOfRunicPower, dk.BloodTap.RunicPowerMetrics())
+			dk.AddRunicPower(sim, amountOfRunicPower, rpMetrics)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			dk.CancelBloodTap(sim)

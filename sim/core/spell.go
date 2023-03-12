@@ -25,6 +25,7 @@ type SpellConfig struct {
 	EnergyCost EnergyCostOptions
 	RageCost   RageCostOptions
 	RuneCost   RuneCostOptions
+	FocusCost  FocusCostOptions
 
 	Cast               CastConfig
 	ExtraCastCondition CanCastCondition
@@ -74,14 +75,8 @@ type Spell struct {
 	// Example: https://wow.tools/dbc/?dbc=spellmisc&build=3.4.0.44996
 	MissileSpeed float64
 
-	ResourceMetrics   *ResourceMetrics
-	comboPointMetrics *ResourceMetrics
-	runicPowerMetrics *ResourceMetrics
-	bloodRuneMetrics  *ResourceMetrics
-	frostRuneMetrics  *ResourceMetrics
-	unholyRuneMetrics *ResourceMetrics
-	deathRuneMetrics  *ResourceMetrics
-	healthMetrics     []*ResourceMetrics
+	ResourceMetrics *ResourceMetrics
+	healthMetrics   []*ResourceMetrics
 
 	Cost               SpellCost // Cost for the spell.
 	DefaultCast        Cast      // Default cast parameters with all static effects applied.
@@ -224,6 +219,8 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		spell.Cost = newRageCost(spell, config.RageCost)
 	} else if config.RuneCost.BloodRuneCost != 0 || config.RuneCost.FrostRuneCost != 0 || config.RuneCost.UnholyRuneCost != 0 || config.RuneCost.RunicPowerCost != 0 || config.RuneCost.RunicPowerGain != 0 {
 		spell.Cost = newRuneCost(spell, config.RuneCost)
+	} else if config.FocusCost.Cost != 0 {
+		spell.Cost = newFocusCost(spell, config.FocusCost)
 	}
 
 	spell.createDots(config.Dot, false)
@@ -368,48 +365,6 @@ func (spell *Spell) doneIteration() {
 	}
 }
 
-func (spell *Spell) ComboPointMetrics() *ResourceMetrics {
-	if spell.comboPointMetrics == nil {
-		spell.comboPointMetrics = spell.Unit.NewComboPointMetrics(spell.ActionID)
-	}
-	return spell.comboPointMetrics
-}
-
-func (spell *Spell) RunicPowerMetrics() *ResourceMetrics {
-	if spell.runicPowerMetrics == nil {
-		spell.runicPowerMetrics = spell.Unit.NewRunicPowerMetrics(spell.ActionID)
-	}
-	return spell.runicPowerMetrics
-}
-
-func (spell *Spell) BloodRuneMetrics() *ResourceMetrics {
-	if spell.bloodRuneMetrics == nil {
-		spell.bloodRuneMetrics = spell.Unit.NewBloodRuneMetrics(spell.ActionID)
-	}
-	return spell.bloodRuneMetrics
-}
-
-func (spell *Spell) FrostRuneMetrics() *ResourceMetrics {
-	if spell.frostRuneMetrics == nil {
-		spell.frostRuneMetrics = spell.Unit.NewFrostRuneMetrics(spell.ActionID)
-	}
-	return spell.frostRuneMetrics
-}
-
-func (spell *Spell) UnholyRuneMetrics() *ResourceMetrics {
-	if spell.unholyRuneMetrics == nil {
-		spell.unholyRuneMetrics = spell.Unit.NewUnholyRuneMetrics(spell.ActionID)
-	}
-	return spell.unholyRuneMetrics
-}
-
-func (spell *Spell) DeathRuneMetrics() *ResourceMetrics {
-	if spell.deathRuneMetrics == nil {
-		spell.deathRuneMetrics = spell.Unit.NewDeathRuneMetrics(spell.ActionID)
-	}
-	return spell.deathRuneMetrics
-}
-
 func (spell *Spell) HealthMetrics(target *Unit) *ResourceMetrics {
 	if spell.healthMetrics == nil {
 		spell.healthMetrics = make([]*ResourceMetrics, len(spell.Unit.AttackTables))
@@ -418,10 +373,6 @@ func (spell *Spell) HealthMetrics(target *Unit) *ResourceMetrics {
 		spell.healthMetrics[target.UnitIndex] = target.NewHealthMetrics(spell.ActionID)
 	}
 	return spell.healthMetrics[target.UnitIndex]
-}
-
-func (spell *Spell) FinalCritMultiplier() float64 {
-	return spell.CritMultiplier * spell.Unit.PseudoStats.SchoolCritMultiplier[spell.SchoolIndex]
 }
 
 func (spell *Spell) ReadyAt() time.Duration {

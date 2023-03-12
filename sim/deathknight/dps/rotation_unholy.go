@@ -26,7 +26,7 @@ func (dk *DpsDeathknight) setupUnholyRotations() {
 		NewAction(dk.RotationActionCallback_MindFreezeFiller).
 		NewAction(dk.getFirstDiseaseAction()).
 		NewAction(dk.getSecondDiseaseAction()).
-		NewAction(dk.getBloodRuneAction(true))
+		NewAction(dk.uhBloodRuneAction(true))
 
 	if dk.Talents.ScourgeStrike {
 		if dk.ur.sigil == Sigil_Virulence {

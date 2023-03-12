@@ -12,7 +12,7 @@ func (hunter *Hunter) registerKillShotSpell() {
 		ActionID:    core.ActionID{SpellID: 61006},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskRangedSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.07,
@@ -27,6 +27,9 @@ func (hunter *Hunter) registerKillShotSpell() {
 				Timer:    hunter.NewTimer(),
 				Duration: time.Second*15 - core.TernaryDuration(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfKillShot), time.Second*6, 0),
 			},
+		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return sim.IsExecutePhase20()
 		},
 
 		BonusCritRating: 0 +

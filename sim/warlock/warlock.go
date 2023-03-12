@@ -181,7 +181,6 @@ func NewWarlock(character core.Character, options *proto.Player) *Warlock {
 		Talents:   &proto.WarlockTalents{},
 		Options:   warlockOptions.Options,
 		Rotation:  warlockOptions.Rotation,
-		// manaTracker:           common.NewManaSpendingRateTracker(),
 	}
 	core.FillTalentsProto(warlock.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
 	warlock.EnableManaBar()

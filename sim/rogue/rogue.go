@@ -185,7 +185,7 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerEnvenom()
 
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()
-	rogue.DelayDPSCooldownsForArmorDebuffs(time.Second * 14)
+	rogue.DelayDPSCooldownsForArmorDebuffs(time.Second * 10)
 }
 
 func (rogue *Rogue) getExpectedEnergyPerSecond() float64 {
@@ -202,9 +202,8 @@ func (rogue *Rogue) ApplyEnergyTickMultiplier(multiplier float64) {
 }
 
 func (rogue *Rogue) getExpectedComboPointPerSecond() float64 {
-	const criticalPerSecond = 1
 	honorAmongThievesChance := []float64{0, 0.33, 0.66, 1.0}[rogue.Talents.HonorAmongThieves]
-	return criticalPerSecond * honorAmongThievesChance
+	return 1 / (1 + 1/(float64(rogue.Options.HonorOfThievesCritRate+100)/100*honorAmongThievesChance))
 }
 
 func (rogue *Rogue) Reset(sim *core.Simulation) {
@@ -213,22 +212,23 @@ func (rogue *Rogue) Reset(sim *core.Simulation) {
 	}
 	rogue.allMCDsDisabled = true
 	rogue.lastDeadlyPoisonProcMask = core.ProcMaskEmpty
-	// Vanish triggered effects (Overkill and Master of Subtlety) prepull activation
+
+	// Stealth triggered effects (Overkill and Master of Subtlety) pre-pull activation
 	if rogue.Rotation.OpenWithGarrote || rogue.Options.StartingOverkillDuration > 0 {
-		length := rogue.Options.StartingOverkillDuration
+		dur := time.Duration(rogue.Options.StartingOverkillDuration) * time.Second
 		if rogue.OverkillAura != nil {
-			if rogue.Rotation.OpenWithGarrote {
-				length = 20
+			if maxDur := rogue.OverkillAura.Duration; rogue.Rotation.OpenWithGarrote || dur > maxDur {
+				dur = maxDur
 			}
 			rogue.OverkillAura.Activate(sim)
-			rogue.OverkillAura.UpdateExpires(sim.CurrentTime + time.Second*time.Duration(length))
+			rogue.OverkillAura.UpdateExpires(sim.CurrentTime + dur)
 		}
 		if rogue.MasterOfSubtletyAura != nil {
-			if rogue.Rotation.OpenWithGarrote {
-				length = 6
+			if maxDur := rogue.MasterOfSubtletyAura.Duration; rogue.Rotation.OpenWithGarrote || dur > maxDur {
+				dur = maxDur
 			}
 			rogue.MasterOfSubtletyAura.Activate(sim)
-			rogue.MasterOfSubtletyAura.UpdateExpires(sim.CurrentTime + time.Second*time.Duration(length))
+			rogue.MasterOfSubtletyAura.UpdateExpires(sim.CurrentTime + dur)
 		}
 	}
 	rogue.setPriorityItems(sim)

@@ -27,6 +27,7 @@ import {
 	DeathknightMajorGlyph,
 	DeathknightMinorGlyph,
 	Deathknight_Rotation_DrwDiseases,
+	Deathknight_Rotation_BloodSpell,
 } from '../core/proto/deathknight.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
@@ -127,8 +128,9 @@ export const DefaultUnholyRotation = DeathKnightRotation.create({
 	gargoylePresence: Deathknight_Rotation_Presence.Unholy,
 	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
 	useAms: false,
-	oblitDelayDuration: 1000.0,
 	drwDiseases: Deathknight_Rotation_DrwDiseases.Pestilence,
+	bloodSpender: Deathknight_Rotation_BloodSpell.HS,
+	useDancingRuneWeapon: true
 });
 
 export const DefaultUnholyOptions = DeathKnightOptions.create({
@@ -154,7 +156,6 @@ export const DefaultFrostRotation = DeathKnightRotation.create({
 	useAms: false,
 	avgAmsSuccessRate: 1.0,
 	avgAmsHit: 10000.0,
-	oblitDelayDuration: 1000.0,
 	drwDiseases: Deathknight_Rotation_DrwDiseases.Pestilence,
   	frostRotationType: Deathknight_Rotation_FrostRotationType.SingleTarget,
   	frostCustomRotation: CustomRotation.create({
@@ -192,6 +193,8 @@ export const DefaultBloodRotation = DeathKnightRotation.create({
 	holdErwArmy: false,
 	useAms: false,
 	drwDiseases: Deathknight_Rotation_DrwDiseases.Pestilence,
+	bloodSpender: Deathknight_Rotation_BloodSpell.HS,
+	useDancingRuneWeapon: true
 });
 
 export const DefaultBloodOptions = DeathKnightOptions.create({

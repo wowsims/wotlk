@@ -52,6 +52,7 @@ func (rogue *Rogue) ApplyTalents() {
 	rogue.registerPreparationCD()
 	rogue.registerPremeditation()
 	rogue.registerGhostlyStrikeSpell()
+	rogue.registerDirtyDeeds()
 	rogue.registerHonorAmongThieves()
 }
 
@@ -159,16 +160,6 @@ func (rogue *Rogue) preyOnTheWeakMultiplier(_ *core.Unit) float64 {
 	return 1 + 0.04*float64(rogue.Talents.PreyOnTheWeak)
 }
 
-func (rogue *Rogue) applyDirtyDeeds(target *core.Unit) {
-	if rogue.Talents.DirtyDeeds == 0 {
-		return
-	}
-	// Special abilities cause 20% more damage against targets below 35% health
-	if target.CurrentHealthPercent() < 0.35 {
-		// Apply Dirty Deeds damage increase
-	}
-}
-
 func (rogue *Rogue) registerDirtyDeeds() {
 	if rogue.Talents.DirtyDeeds == 0 {
 		return
@@ -176,15 +167,31 @@ func (rogue *Rogue) registerDirtyDeeds() {
 
 	actionID := core.ActionID{SpellID: 14083}
 
+	rogue.RegisterResetEffect(func(sim *core.Simulation) {
+		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {
+			if isExecute == 35 {
+				rogue.DirtyDeedsAura.Activate(sim)
+			}
+		})
+	})
+
 	rogue.DirtyDeedsAura = rogue.RegisterAura(core.Aura{
 		Label:    "Dirty Deeds",
 		ActionID: actionID,
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			rogue.PseudoStats.DamageDealtMultiplier *= rogue.DirtyDeedsMultiplier()
+			for _, spell := range rogue.Spellbook {
+				if spell.Flags.Matches(SpellFlagBuilder|SpellFlagFinisher) && spell.DamageMultiplier > 0 {
+					spell.DamageMultiplier *= rogue.DirtyDeedsMultiplier()
+				}
+			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			rogue.PseudoStats.DamageDealtMultiplier *= 1 / rogue.DirtyDeedsMultiplier()
+			for _, spell := range rogue.Spellbook {
+				if spell.Flags.Matches(SpellFlagBuilder|SpellFlagFinisher) && spell.DamageMultiplier > 0 {
+					spell.DamageMultiplier /= rogue.DirtyDeedsMultiplier()
+				}
+			}
 		},
 	})
 }
@@ -591,15 +598,34 @@ func (rogue *Rogue) registerKillingSpreeCD() {
 }
 
 func (rogue *Rogue) registerHonorAmongThieves() {
-	// When anyone in your group critically hits with a damage or healing spell or ability, you have a [33%/66%/100%] cahnce to gain a combo point on your current target. This effect cannot occur more than once per second.
+	// When anyone in your group critically hits with a damage or healing spell or ability,
+	// you have a [33%/66%/100%] chance to gain a combo point on your current target.
+	// This effect cannot occur more than once per second.
 	if rogue.Talents.HonorAmongThieves == 0 {
 		return
 	}
 
-	// FIXME: Implement a flow of combo points that simulates the party/raid crit procs
+	// In an ideal party, you'd probably get up to 6 ability crits/s (Rate = 600).
+	//  Survival Hunters, Enhancement Shamans, and Assassination Rogues are particularly good.
+	if rogue.Options.HonorOfThievesCritRate <= 0 {
+		rogue.Options.HonorOfThievesCritRate = 400
+	}
+
 	procChance := []float64{0, 0.33, 0.66, 1}[rogue.Talents.HonorAmongThieves]
 	comboMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 51701})
 	honorAmongThievesID := core.ActionID{SpellID: 51701}
+
+	icd := core.Cooldown{
+		Timer:    rogue.NewTimer(),
+		Duration: time.Second,
+	}
+
+	maybeProc := func(sim *core.Simulation) {
+		if icd.IsReady(sim) && sim.Proc(procChance, "honor of thieves") {
+			rogue.AddComboPoints(sim, 1, comboMetrics)
+			icd.Use(sim)
+		}
+	}
 
 	rogue.HonorAmongThieves = rogue.RegisterAura(core.Aura{
 		Label:    "Honor Among Thieves",
@@ -608,15 +634,27 @@ func (rogue *Rogue) registerHonorAmongThieves() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
-				Period: time.Second,
-				OnAction: func(s *core.Simulation) {
-					if sim.Proc(procChance, "Honor Among Thieves") {
-						rogue.AddComboPoints(sim, 1, comboMetrics)
-					}
-				},
-			})
+		OnGain: func(_ *core.Aura, sim *core.Simulation) {
+			rateToDuration := float64(time.Second) * 100 / float64(rogue.Options.HonorOfThievesCritRate)
+
+			pa := &core.PendingAction{}
+			pa.OnAction = func(sim *core.Simulation) {
+				maybeProc(sim)
+				pa.NextActionAt = sim.CurrentTime + time.Duration(sim.RandomExpFloat("next party crit")*rateToDuration)
+				sim.AddPendingAction(pa)
+			}
+			pa.NextActionAt = sim.CurrentTime + time.Duration(sim.RandomExpFloat("next party crit")*rateToDuration)
+			sim.AddPendingAction(pa)
+		},
+		OnSpellHitDealt: func(_ *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.DidCrit() && !spell.ProcMask.Matches(core.ProcMaskMeleeMHAuto|core.ProcMaskMeleeOHAuto|core.ProcMaskRangedAuto) {
+				maybeProc(sim)
+			}
+		},
+		OnPeriodicDamageDealt: func(_ *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.DidCrit() {
+				maybeProc(sim)
+			}
 		},
 	})
 }

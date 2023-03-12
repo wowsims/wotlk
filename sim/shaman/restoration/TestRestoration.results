@@ -100,6 +100,18 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRestoration-AllItems-BlackBruise-50035"
+ value: {
+  tps: 0.1
+ }
+}
+dps_results: {
+ key: "TestRestoration-AllItems-BlackBruise-50692"
+ value: {
+  tps: 0.1
+ }
+}
+dps_results: {
  key: "TestRestoration-AllItems-BlessedGarboftheUndeadSlayer"
  value: {
   tps: 0.1
@@ -114,6 +126,18 @@ dps_results: {
 dps_results: {
  key: "TestRestoration-AllItems-BracingEarthsiegeDiamond"
  value: {}
+}
+dps_results: {
+ key: "TestRestoration-AllItems-Bryntroll,theBoneArbiter-50415"
+ value: {
+  tps: 0.1
+ }
+}
+dps_results: {
+ key: "TestRestoration-AllItems-Bryntroll,theBoneArbiter-50709"
+ value: {
+  tps: 0.1
+ }
 }
 dps_results: {
  key: "TestRestoration-AllItems-ChaoticSkyflareDiamond"
@@ -643,6 +667,12 @@ dps_results: {
 }
 dps_results: {
  key: "TestRestoration-AllItems-TotemofElectrifyingWind-47666"
+ value: {
+  tps: 0.1
+ }
+}
+dps_results: {
+ key: "TestRestoration-AllItems-TotemofQuakingEarth-47667"
  value: {
   tps: 0.1
  }

@@ -74,6 +74,7 @@ func (dk *Deathknight) registerPestilenceSpell() {
 		},
 	})
 }
+
 func (dk *Deathknight) registerDrwPestilenceSpell() {
 	hasGlyphOfDisease := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDisease)
 	dk.RuneWeapon.Pestilence = dk.RuneWeapon.RegisterSpell(core.SpellConfig{
@@ -97,23 +98,19 @@ func (dk *Deathknight) registerDrwPestilenceSpell() {
 
 				if result.Landed() {
 					// Main target
-					if aoeUnit == dk.CurrentTarget {
+					if aoeUnit == target {
 						if hasGlyphOfDisease {
 							// Update expire instead of Apply to keep old snapshotted value
-							if dk.FrostFeverSpell.Dot(aoeUnit).IsActive() {
-								if dk.RuneWeapon.FrostFeverSpell.Dot(aoeUnit).IsActive() {
-									dk.RuneWeapon.FrostFeverSpell.Dot(aoeUnit).Rollover(sim)
-								} else if shouldApplyDrwDots {
-									dk.RuneWeapon.FrostFeverSpell.Dot(aoeUnit).Apply(sim)
-								}
+							if dk.RuneWeapon.FrostFeverSpell.Dot(aoeUnit).IsActive() {
+								dk.RuneWeapon.FrostFeverSpell.Dot(aoeUnit).Rollover(sim)
+							} else if shouldApplyDrwDots && dk.FrostFeverSpell.Dot(aoeUnit).IsActive() {
+								dk.RuneWeapon.FrostFeverSpell.Dot(aoeUnit).Apply(sim)
 							}
 
-							if dk.BloodPlagueSpell.Dot(aoeUnit).IsActive() {
-								if dk.RuneWeapon.BloodPlagueSpell.Dot(aoeUnit).IsActive() {
-									dk.RuneWeapon.BloodPlagueSpell.Dot(aoeUnit).Rollover(sim)
-								} else if shouldApplyDrwDots {
-									dk.RuneWeapon.BloodPlagueSpell.Dot(aoeUnit).Apply(sim)
-								}
+							if dk.RuneWeapon.BloodPlagueSpell.Dot(aoeUnit).IsActive() {
+								dk.RuneWeapon.BloodPlagueSpell.Dot(aoeUnit).Rollover(sim)
+							} else if shouldApplyDrwDots && dk.BloodPlagueSpell.Dot(aoeUnit).IsActive() {
+								dk.RuneWeapon.BloodPlagueSpell.Dot(aoeUnit).Apply(sim)
 							}
 						} else if shouldApplyDrwDots {
 							if dk.FrostFeverSpell.Dot(aoeUnit).IsActive() {
@@ -126,10 +123,10 @@ func (dk *Deathknight) registerDrwPestilenceSpell() {
 						}
 					} else {
 						// Apply diseases on every other target
-						if dk.FrostFeverSpell.Dot(dk.CurrentTarget).IsActive() {
+						if dk.RuneWeapon.FrostFeverSpell.Dot(target).IsActive() {
 							dk.RuneWeapon.FrostFeverSpell.Dot(aoeUnit).Apply(sim)
 						}
-						if dk.BloodPlagueSpell.Dot(dk.CurrentTarget).IsActive() {
+						if dk.RuneWeapon.BloodPlagueSpell.Dot(target).IsActive() {
 							dk.RuneWeapon.BloodPlagueSpell.Dot(aoeUnit).Apply(sim)
 						}
 					}

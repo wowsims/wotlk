@@ -152,6 +152,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtectionWarrior-AllItems-BlackBruise-50035"
+ value: {
+  dps: 1708.01584
+  tps: 4370.24259
+ }
+}
+dps_results: {
+ key: "TestProtectionWarrior-AllItems-BlackBruise-50692"
+ value: {
+  dps: 1750.64071
+  tps: 4460.35757
+ }
+}
+dps_results: {
  key: "TestProtectionWarrior-AllItems-BlessedBattlegearofUndeadSlaying"
  value: {
   dps: 1410.12347
@@ -177,6 +191,20 @@ dps_results: {
  value: {
   dps: 1639.92264
   tps: 4183.50942
+ }
+}
+dps_results: {
+ key: "TestProtectionWarrior-AllItems-Bryntroll,theBoneArbiter-50415"
+ value: {
+  dps: 1637.70892
+  tps: 4255.48833
+ }
+}
+dps_results: {
+ key: "TestProtectionWarrior-AllItems-Bryntroll,theBoneArbiter-50709"
+ value: {
+  dps: 1637.70892
+  tps: 4255.48833
  }
 }
 dps_results: {
@@ -878,8 +906,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-Settings-Human-P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 3089.77576
-  tps: 7427.38101
+  dps: 3173.39984
+  tps: 7600.77553
  }
 }
 dps_results: {
@@ -920,8 +948,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-Settings-Orc-P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 3106.68571
-  tps: 7459.62511
+  dps: 3191.78222
+  tps: 7636.07273
  }
 }
 dps_results: {

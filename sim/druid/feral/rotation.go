@@ -340,7 +340,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	ripRefreshPending := false
 	pendingActions := make([]pendingAction, 0, 4)
 
-	if ripDot.IsActive() && (ripDot.RemainingDuration(sim) < simTimeRemain-endThresh) {
+	if ripDot.IsActive() && (ripDot.RemainingDuration(sim) < simTimeRemain-endThresh) && curCp == 5 {
 		ripCost := core.TernaryFloat64(cat.berserkExpectedAt(sim, ripDot.ExpiresAt()), cat.Rip.DefaultCast.Cost*0.5, cat.Rip.DefaultCast.Cost)
 		pendingActions = append(pendingActions, pendingAction{ripDot.ExpiresAt(), ripCost})
 		ripRefreshPending = true

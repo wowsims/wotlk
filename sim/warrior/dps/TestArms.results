@@ -107,6 +107,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestArms-AllItems-BlackBruise-50035"
+ value: {
+  dps: 6229.89524
+  tps: 5160.65894
+ }
+}
+dps_results: {
+ key: "TestArms-AllItems-BlackBruise-50692"
+ value: {
+  dps: 6357.10514
+  tps: 5263.00807
+ }
+}
+dps_results: {
  key: "TestArms-AllItems-BlessedBattlegearofUndeadSlaying"
  value: {
   dps: 6758.47728
@@ -132,6 +146,20 @@ dps_results: {
  value: {
   dps: 8066.3605
   tps: 6479.61344
+ }
+}
+dps_results: {
+ key: "TestArms-AllItems-Bryntroll,theBoneArbiter-50415"
+ value: {
+  dps: 8264.30758
+  tps: 6769.96925
+ }
+}
+dps_results: {
+ key: "TestArms-AllItems-Bryntroll,theBoneArbiter-50709"
+ value: {
+  dps: 8264.30758
+  tps: 6769.96925
  }
 }
 dps_results: {
@@ -839,8 +867,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-Settings-Human-Arms P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 10816.34389
-  tps: 9203.51116
+  dps: 10929.55769
+  tps: 9309.00195
  }
 }
 dps_results: {
@@ -881,8 +909,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-Settings-Orc-Arms P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 10856.02609
-  tps: 9236.73108
+  dps: 10971.37644
+  tps: 9344.13523
  }
 }
 dps_results: {

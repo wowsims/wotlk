@@ -105,7 +105,7 @@ func (shadowfiend *Shadowfiend) OnAutoAttack(sim *core.Simulation, spell *core.S
 	priest := shadowfiend.Priest
 	restoreMana := priest.MaxMana() * 0.05
 
-	priest.AddMana(sim, restoreMana, shadowfiend.ManaMetric, false)
+	priest.AddMana(sim, restoreMana, shadowfiend.ManaMetric)
 }
 
 func (shadowfiend *Shadowfiend) Initialize() {

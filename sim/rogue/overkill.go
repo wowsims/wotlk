@@ -39,8 +39,9 @@ func (rogue *Rogue) registerOverkillCD() {
 	rogue.AddMajorCooldown(core.MajorCooldown{
 		Spell: rogue.Overkill,
 		Type:  core.CooldownTypeDPS,
-		ShouldActivate: func(s *core.Simulation, c *core.Character) bool {
-			return rogue.CurrentEnergy() < 50
+
+		ShouldActivate: func(sim *core.Simulation, c *core.Character) bool {
+			return !rogue.OverkillAura.IsActive() && rogue.CurrentEnergy() < 50
 		},
 	})
 

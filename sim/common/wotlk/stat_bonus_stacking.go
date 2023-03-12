@@ -300,7 +300,7 @@ func init() {
 		ID:          46051,
 		Duration:    time.Second * 20,
 		MaxStacks:   20,
-		Bonus:       stats.Stats{stats.MP5: 68},
+		Bonus:       stats.Stats{stats.MP5: 85},
 		CD:          time.Minute * 2,
 		Callback:    core.CallbackOnCastComplete,
 		IsDefensive: true,

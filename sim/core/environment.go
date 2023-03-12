@@ -79,7 +79,9 @@ func (env *Environment) construct(raidProto *proto.Raid, encounterProto *proto.E
 
 	// Apply extra debuffs from raid.
 	if raidProto.Debuffs != nil && len(env.Encounter.Targets) > 0 {
-		applyDebuffEffects(&env.Encounter.Targets[0].Unit, raidProto.Debuffs, raidProto)
+		for targetIdx, targetUnit := range env.Encounter.TargetUnits {
+			applyDebuffEffects(targetUnit, targetIdx, raidProto.Debuffs, raidProto)
+		}
 	}
 
 	// Assign target or target using Tanks field.
@@ -135,14 +137,26 @@ func (env *Environment) finalize(raidProto *proto.Raid, encounterProto *proto.En
 		target.finalize()
 	}
 
-	for partyIdx, party := range env.Raid.Parties {
+	for _, party := range env.Raid.Parties {
 		for _, player := range party.Players {
 			character := player.GetCharacter()
-			character.Finalize(raidStats.Parties[partyIdx].Players[character.PartyIndex])
-
+			character.Finalize()
 			for _, petAgent := range character.Pets {
 				petAgent.GetPet().Finalize()
 			}
+		}
+	}
+
+	for partyIdx, party := range env.Raid.Parties {
+		partyProto := raidProto.Parties[partyIdx]
+		for playerIdx, player := range party.Players {
+			if playerIdx >= len(partyProto.Players) {
+				// This happens for target dummies.
+				continue
+			}
+			playerProto := partyProto.Players[playerIdx]
+			char := player.GetCharacter()
+			char.Rotation = char.newAPLRotation(playerProto.Rotation)
 		}
 	}
 
@@ -156,6 +170,13 @@ func (env *Environment) finalize(raidProto *proto.Raid, encounterProto *proto.En
 	})
 
 	env.setupAttackTables()
+
+	for partyIdx, party := range env.Raid.Parties {
+		for _, player := range party.Players {
+			character := player.GetCharacter()
+			character.FillPlayerStats(raidStats.Parties[partyIdx].Players[character.PartyIndex])
+		}
+	}
 
 	env.State = Finalized
 }

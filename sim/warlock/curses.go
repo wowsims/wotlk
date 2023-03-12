@@ -29,7 +29,7 @@ func (warlock *Warlock) registerCurseOfElementsSpell() {
 		FlatThreatBonus:  156,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
 				warlock.CurseOfElementsAuras.Get(target).Activate(sim)
 			}
@@ -65,7 +65,7 @@ func (warlock *Warlock) registerCurseOfWeaknessSpell() {
 		FlatThreatBonus:  142,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
 				warlock.CurseOfWeaknessAuras.Get(target).Activate(sim)
 			}
@@ -104,7 +104,7 @@ func (warlock *Warlock) registerCurseOfTonguesSpell() {
 		FlatThreatBonus:  100,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
 				warlock.CurseOfTonguesAuras.Get(target).Activate(sim)
 			}
@@ -159,7 +159,7 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
 				warlock.CurseOfDoom.Dot(target).Cancel(sim)
 				spell.Dot(target).Apply(sim)
@@ -209,7 +209,7 @@ func (warlock *Warlock) registerCurseOfDoomSpell() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
 				warlock.CurseOfAgony.Dot(target).Cancel(sim)
 				spell.Dot(target).Apply(sim)

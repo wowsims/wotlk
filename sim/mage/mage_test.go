@@ -70,6 +70,32 @@ func TestFire(t *testing.T) {
 	}))
 }
 
+func TestFrostFire(t *testing.T) {
+	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
+		Class: proto.Class_ClassMage,
+		Race:  proto.Race_RaceTroll,
+
+		GearSet:     core.GearSetCombo{Label: "P1FrostFire", GearSet: P1FireGear},
+		Talents:     FrostFireTalents,
+		Glyphs:      FrostFireGlyphs,
+		Consumes:    FullFireConsumes,
+		SpecOptions: core.SpecOptionsCombo{Label: "FrostFireRotation", SpecOptions: PlayerOptionsFrostFire},
+
+		ItemFilter: core.ItemFilter{
+			WeaponTypes: []proto.WeaponType{
+				proto.WeaponType_WeaponTypeDagger,
+				proto.WeaponType_WeaponTypeSword,
+				proto.WeaponType_WeaponTypeOffHand,
+				proto.WeaponType_WeaponTypeStaff,
+			},
+			ArmorType: proto.ArmorType_ArmorTypeCloth,
+			RangedWeaponTypes: []proto.RangedWeaponType{
+				proto.RangedWeaponType_RangedWeaponTypeWand,
+			},
+		},
+	}))
+}
+
 func TestFrost(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
 		Class: proto.Class_ClassMage,
@@ -101,6 +127,7 @@ func TestFrost(t *testing.T) {
 
 var ArcaneTalents = "23000513310033015032310250532-03-023303001"
 var FireTalents = "23000503110003-0055030012303331053120301351"
+var FrostFireTalents = "23000503110003-0055030012303331053120301351"
 var FrostTalents = "23000503110003--0533030310233100030152231351"
 var ArcaneGlyphs = &proto.Glyphs{
 	Major1: int32(proto.MageMajorGlyph_GlyphOfArcaneBlast),
@@ -109,6 +136,11 @@ var ArcaneGlyphs = &proto.Glyphs{
 }
 var FireGlyphs = &proto.Glyphs{
 	Major1: int32(proto.MageMajorGlyph_GlyphOfFireball),
+	Major2: int32(proto.MageMajorGlyph_GlyphOfMoltenArmor),
+	Major3: int32(proto.MageMajorGlyph_GlyphOfLivingBomb),
+}
+var FrostFireGlyphs = &proto.Glyphs{
+	Major1: int32(proto.MageMajorGlyph_GlyphOfFrostfire),
 	Major2: int32(proto.MageMajorGlyph_GlyphOfMoltenArmor),
 	Major3: int32(proto.MageMajorGlyph_GlyphOfLivingBomb),
 }
@@ -129,6 +161,17 @@ var PlayerOptionsFire = &proto.Player_Mage{
 		Rotation: &proto.Mage_Rotation{
 			Type:                   proto.Mage_Rotation_Fire,
 			PrimaryFireSpell:       proto.Mage_Rotation_Fireball,
+			MaintainImprovedScorch: false,
+			PyroblastDelayMs:       50,
+		},
+	},
+}
+var PlayerOptionsFrostFire = &proto.Player_Mage{
+	Mage: &proto.Mage{
+		Options: fireMageOptions,
+		Rotation: &proto.Mage_Rotation{
+			Type:                   proto.Mage_Rotation_Fire,
+			PrimaryFireSpell:       proto.Mage_Rotation_FrostfireBolt,
 			MaintainImprovedScorch: false,
 			PyroblastDelayMs:       50,
 		},

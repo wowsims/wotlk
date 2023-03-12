@@ -248,7 +248,7 @@ func init() {
 			ProcChance: 0.25,
 			ICD:        time.Second * 45,
 			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
-				character.AddMana(sim, 900, manaMetrics, false)
+				character.AddMana(sim, 900, manaMetrics)
 			},
 		})
 	})
@@ -410,7 +410,7 @@ func init() {
 					},
 				},
 				ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-					character.AddMana(sim, amount, manaMetrics, false)
+					character.AddMana(sim, amount, manaMetrics)
 				},
 			})
 			character.AddMajorCooldown(core.MajorCooldown{
@@ -524,7 +524,7 @@ func init() {
 					NumTicks: 12,
 					Period:   time.Second * 1,
 					OnAction: func(sim *core.Simulation) {
-						character.AddMana(sim, 195, manaMetrics, false)
+						character.AddMana(sim, 195, manaMetrics)
 					},
 				})
 			},
@@ -547,7 +547,7 @@ func init() {
 			ProcChance: 0.25,
 			ICD:        time.Second * 45,
 			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
-				character.AddMana(sim, 500, manaMetrics, false)
+				character.AddMana(sim, 500, manaMetrics)
 			},
 		})
 	})
@@ -591,7 +591,7 @@ func init() {
 						OnAction: func(sim *core.Simulation) {
 							cpb := character.GetCurrentPowerBar()
 							if cpb == core.ManaBar {
-								character.AddMana(sim, 120, resourceMetricsMana, false)
+								character.AddMana(sim, 120, resourceMetricsMana)
 							} else if cpb == core.RageBar {
 								character.AddRage(sim, 2, resourceMetricsRage)
 							} else if cpb == core.EnergyBar {
@@ -629,7 +629,7 @@ func init() {
 			Callback: core.CallbackOnHealDealt | core.CallbackOnPeriodicHealDealt,
 			ICD:      time.Millisecond * 250,
 			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
-				character.AddMana(sim, 11, manaMetrics, false)
+				character.AddMana(sim, 11, manaMetrics)
 			},
 		})
 	})
@@ -864,6 +864,112 @@ func init() {
 						icd.Use(sim)
 						procAura.Activate(sim)
 					}
+				},
+			})
+		})
+	})
+
+	NewItemEffectWithHeroic(func(isHeroic bool) {
+		name := "Bryntroll, the Bone Arbiter"
+		itemID := int32(50415)
+		minDmg := float64(2138)
+		maxDmg := float64(2362)
+		if isHeroic {
+			name += " H"
+			itemID = 50709
+			minDmg = float64(2412)
+			maxDmg = float64(2664)
+		}
+
+		core.NewItemEffect(itemID, func(agent core.Agent) {
+			character := agent.GetCharacter()
+			mh, oh := character.GetWeaponHands(itemID)
+			procMask := core.GetMeleeProcMaskForHands(mh, oh)
+			ppmm := character.AutoAttacks.NewPPMManager(1.0, procMask)
+
+			procActionID := core.ActionID{ItemID: itemID}
+
+			proc := character.RegisterSpell(core.SpellConfig{
+				ActionID:    procActionID.WithTag(1),
+				SpellSchool: core.SpellSchoolShadow,
+				ProcMask:    core.ProcMaskEmpty,
+
+				DamageMultiplier: 1,
+				CritMultiplier:   character.DefaultSpellCritMultiplier(),
+				ThreatMultiplier: 1,
+
+				ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+					spell.CalcAndDealDamage(sim, target, sim.Roll(minDmg, maxDmg), spell.OutcomeMagicHitAndCrit)
+				},
+			})
+
+			character.RegisterAura(core.Aura{
+				Label:    name,
+				Duration: core.NeverExpires,
+				OnReset: func(aura *core.Aura, sim *core.Simulation) {
+					aura.Activate(sim)
+				},
+				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+					if !result.Landed() || !spell.ProcMask.Matches(procMask) {
+						return
+					}
+					if !ppmm.Proc(sim, spell.ProcMask, name) {
+						return
+					}
+
+					proc.Cast(sim, result.Target)
+				},
+			})
+		})
+	})
+
+	NewItemEffectWithHeroic(func(isHeroic bool) {
+		name := "Black Bruise"
+		itemID := int32(50035)
+		amount := 0.09
+		spellID := int32(71875)
+		if isHeroic {
+			name += " H"
+			itemID = 50692
+			spellID = 71877
+			amount = 0.10
+		}
+
+		core.NewItemEffect(itemID, func(agent core.Agent) {
+			character := agent.GetCharacter()
+
+			var curDmg float64
+			necrosisHit := character.RegisterSpell(core.SpellConfig{
+				ActionID:         core.ActionID{SpellID: 51460},
+				SpellSchool:      core.SpellSchoolShadow,
+				ProcMask:         core.ProcMaskEmpty,
+				Flags:            core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers,
+				DamageMultiplier: 1,
+				ThreatMultiplier: 1,
+				ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+					spell.CalcAndDealDamage(sim, target, curDmg*amount, spell.OutcomeAlwaysHit)
+				},
+			})
+
+			procAura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+				Name:     name + " Proc",
+				ActionID: core.ActionID{SpellID: spellID},
+				Callback: core.CallbackOnSpellHitDealt,
+				ProcMask: core.ProcMaskMelee,
+				Duration: time.Second * 10,
+				Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
+					curDmg = result.Damage
+					necrosisHit.Cast(sim, result.Target)
+				},
+			})
+
+			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+				Name:       name + " Trigger",
+				Callback:   core.CallbackOnSpellHitDealt,
+				ProcMask:   core.ProcMaskMelee,
+				ProcChance: 0.03,
+				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
+					procAura.Activate(sim)
 				},
 			})
 		})

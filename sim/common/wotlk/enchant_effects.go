@@ -434,18 +434,25 @@ func init() {
 			Duration: time.Second * 60,
 		}
 
+		callback := func(_ *core.Aura, sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
+			if !result.Landed() {
+				return
+			}
+
+			if icd.IsReady(sim) && sim.RandomFloat("Lightweave") < 0.35 {
+				icd.Use(sim)
+				procAura.Activate(sim)
+			}
+		}
+
 		character.GetOrRegisterAura(core.Aura{
 			Label:    "Lightweave Embroidery",
 			Duration: core.NeverExpires,
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if icd.IsReady(sim) && sim.RandomFloat("Lightweave") < 0.35 {
-					icd.Use(sim)
-					procAura.Activate(sim)
-				}
-			},
+			OnPeriodicDamageDealt: callback,
+			OnSpellHitDealt:       callback,
 		})
 	})
 

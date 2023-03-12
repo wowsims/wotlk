@@ -452,7 +452,7 @@ func BlessingOfSanctuaryAura(character *Character) {
 		},
 		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
 			if result.Outcome.Matches(OutcomeBlock | OutcomeDodge | OutcomeParry) {
-				character.AddMana(sim, 0.02*character.MaxMana(), manaMetrics, false)
+				character.AddMana(sim, 0.02*character.MaxMana(), manaMetrics)
 			}
 		},
 	})
@@ -883,7 +883,7 @@ func registerRevitalizeHotCD(agent Agent, label string, hotID ActionID, ticks in
 					if s.RandomFloat("Revitalize Proc") < 0.15 {
 						cpb := aura.Unit.GetCurrentPowerBar()
 						if cpb == ManaBar {
-							aura.Unit.AddMana(s, aura.Unit.MaxMana()*0.01, manaMetrics, true)
+							aura.Unit.AddMana(s, 0.01*aura.Unit.MaxMana(), manaMetrics)
 						} else if cpb == EnergyBar {
 							aura.Unit.AddEnergy(s, 8, energyMetrics)
 						} else if cpb == RageBar {
@@ -948,17 +948,12 @@ func registerInnervateCD(agent Agent, numInnervates int32) {
 	}
 
 	innervateThreshold := 0.0
-	expectedManaPerInnervate := 0.0
-	remainingInnervateUsages := 0
 	var innervateAura *Aura
 
 	character := agent.GetCharacter()
 	character.Env.RegisterPostFinalizeEffect(func() {
 		innervateThreshold = InnervateManaThreshold(character)
-		expectedManaPerInnervate = 3496 * 2.25 // WotLK druid's base mana
-		remainingInnervateUsages = int(1 + (MaxDuration(0, character.Env.BaseDuration))/InnervateCD)
-		character.ExpectedBonusMana += expectedManaPerInnervate * float64(remainingInnervateUsages)
-		innervateAura = InnervateAura(character, expectedManaPerInnervate, -1)
+		innervateAura = InnervateAura(character, -1)
 	})
 
 	registerExternalConsecutiveCDApproximation(
@@ -976,17 +971,12 @@ func registerInnervateCD(agent Agent, numInnervates int32) {
 			},
 			AddAura: func(sim *Simulation, character *Character) {
 				innervateAura.Activate(sim)
-
-				newRemainingUsages := int(sim.GetRemainingDuration() / InnervateCD)
-				// AddInnervateAura already accounts for 1 usage, which is why we subtract 1 less.
-				character.ExpectedBonusMana -= expectedManaPerInnervate * MaxFloat(0, float64(remainingInnervateUsages-newRemainingUsages-1))
-				remainingInnervateUsages = newRemainingUsages
 			},
 		},
 		numInnervates)
 }
 
-func InnervateAura(character *Character, expectedBonusManaReduction float64, actionTag int32) *Aura {
+func InnervateAura(character *Character, actionTag int32) *Aura {
 	actionID := ActionID{SpellID: 29166, Tag: actionTag}
 	manaMetrics := character.NewManaMetrics(actionID)
 	return character.GetOrRegisterAura(Aura{
@@ -995,13 +985,12 @@ func InnervateAura(character *Character, expectedBonusManaReduction float64, act
 		ActionID: actionID,
 		Duration: InnervateDuration,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			expectedBonusManaPerTick := expectedBonusManaReduction / 10
+			const manaPerTick = 3496 * 2.25 / 10 // WotLK druid's base mana
 			StartPeriodicAction(sim, PeriodicActionOptions{
 				Period:   InnervateDuration / 10,
 				NumTicks: 10,
 				OnAction: func(sim *Simulation) {
-					character.ExpectedBonusMana -= expectedBonusManaPerTick
-					character.AddMana(sim, expectedBonusManaPerTick, manaMetrics, true)
+					character.AddMana(sim, manaPerTick, manaMetrics)
 				},
 			})
 		},
@@ -1019,8 +1008,6 @@ func registerManaTideTotemCD(agent Agent, numManaTideTotems int32) {
 		return
 	}
 
-	expectedManaPerManaTideTotem := 0.0
-	remainingManaTideTotemUsages := 0
 	initialDelay := time.Duration(0)
 	var mttAura *Aura
 
@@ -1028,10 +1015,6 @@ func registerManaTideTotemCD(agent Agent, numManaTideTotems int32) {
 	character.Env.RegisterPostFinalizeEffect(func() {
 		// Use first MTT at 60s, or halfway through the fight, whichever comes first.
 		initialDelay = MinDuration(character.Env.BaseDuration/2, time.Second*60)
-
-		expectedManaPerManaTideTotem = 0.24 * character.MaxMana()
-		remainingManaTideTotemUsages = int(1 + MaxDuration(0, character.Env.BaseDuration-initialDelay)/ManaTideTotemCD)
-		character.ExpectedBonusMana += expectedManaPerManaTideTotem * float64(remainingManaTideTotemUsages)
 		mttAura = ManaTideTotemAura(character, -1)
 	})
 
@@ -1050,11 +1033,6 @@ func registerManaTideTotemCD(agent Agent, numManaTideTotems int32) {
 			},
 			AddAura: func(sim *Simulation, character *Character) {
 				mttAura.Activate(sim)
-
-				newRemainingUsages := int(sim.GetRemainingDuration() / ManaTideTotemCD)
-				// AddManaTideTotemAura already accounts for 1 usage, which is why we subtract 1 less.
-				character.ExpectedBonusMana -= expectedManaPerManaTideTotem * MaxFloat(0, float64(remainingManaTideTotemUsages-newRemainingUsages-1))
-				remainingManaTideTotemUsages = newRemainingUsages
 			},
 		},
 		numManaTideTotems)
@@ -1084,9 +1062,7 @@ func ManaTideTotemAura(character *Character, actionTag int32) *Aura {
 					for i, player := range character.Party.Players {
 						if metrics[i] != nil {
 							char := player.GetCharacter()
-							manaGain := 0.06 * char.MaxMana()
-							char.AddMana(sim, manaGain, metrics[i], true)
-							char.ExpectedBonusMana -= manaGain
+							char.AddMana(sim, 0.06*char.MaxMana(), metrics[i])
 						}
 					}
 				},

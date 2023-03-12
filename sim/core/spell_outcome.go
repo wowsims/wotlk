@@ -28,7 +28,7 @@ func (dot *Dot) OutcomeTick(sim *Simulation, result *SpellResult, attackTable *A
 func (dot *Dot) OutcomeTickPhysicalCrit(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
 	if dot.Spell.PhysicalCritCheck(sim, result.Target, attackTable) {
 		result.Outcome = OutcomeCrit
-		result.Damage *= dot.Spell.FinalCritMultiplier()
+		result.Damage *= dot.Spell.CritMultiplier
 	} else {
 		result.Outcome = OutcomeHit
 	}
@@ -40,7 +40,7 @@ func (dot *Dot) OutcomeSnapshotCrit(sim *Simulation, result *SpellResult, attack
 	}
 	if sim.RandomFloat("Snapshot Crit Roll") < dot.SnapshotCritChance {
 		result.Outcome = OutcomeCrit
-		result.Damage *= dot.Spell.FinalCritMultiplier()
+		result.Damage *= dot.Spell.CritMultiplier
 		dot.Spell.SpellMetrics[result.Target.UnitIndex].Crits++
 	} else {
 		result.Outcome = OutcomeHit
@@ -55,7 +55,7 @@ func (dot *Dot) OutcomeMagicHitAndSnapshotCrit(sim *Simulation, result *SpellRes
 	if dot.Spell.MagicHitCheck(sim, attackTable) {
 		if sim.RandomFloat("Snapshot Crit Roll") < dot.SnapshotCritChance {
 			result.Outcome = OutcomeCrit
-			result.Damage *= dot.Spell.FinalCritMultiplier()
+			result.Damage *= dot.Spell.CritMultiplier
 			dot.Spell.SpellMetrics[result.Target.UnitIndex].Crits++
 		} else {
 			result.Outcome = OutcomeHit
@@ -75,7 +75,7 @@ func (spell *Spell) OutcomeMagicHitAndCrit(sim *Simulation, result *SpellResult,
 	if spell.MagicHitCheck(sim, attackTable) {
 		if spell.MagicCritCheck(sim, result.Target) {
 			result.Outcome = OutcomeCrit
-			result.Damage *= spell.FinalCritMultiplier()
+			result.Damage *= spell.CritMultiplier
 			spell.SpellMetrics[result.Target.UnitIndex].Crits++
 		} else {
 			result.Outcome = OutcomeHit
@@ -94,7 +94,7 @@ func (spell *Spell) OutcomeMagicCrit(sim *Simulation, result *SpellResult, attac
 	}
 	if spell.MagicCritCheck(sim, result.Target) {
 		result.Outcome = OutcomeCrit
-		result.Damage *= spell.FinalCritMultiplier()
+		result.Damage *= spell.CritMultiplier
 		spell.SpellMetrics[result.Target.UnitIndex].Crits++
 	} else {
 		result.Outcome = OutcomeHit
@@ -108,7 +108,7 @@ func (spell *Spell) OutcomeHealingCrit(sim *Simulation, result *SpellResult, att
 	}
 	if spell.HealingCritCheck(sim) {
 		result.Outcome = OutcomeCrit
-		result.Damage *= spell.FinalCritMultiplier()
+		result.Damage *= spell.CritMultiplier
 		spell.SpellMetrics[result.Target.UnitIndex].Crits++
 	} else {
 		result.Outcome = OutcomeHit
@@ -123,7 +123,7 @@ func (spell *Spell) OutcomeCritFixedChance(critChance float64) OutcomeApplier {
 		}
 		if spell.fixedCritCheck(sim, critChance) {
 			result.Outcome = OutcomeCrit
-			result.Damage *= spell.FinalCritMultiplier()
+			result.Damage *= spell.CritMultiplier
 			spell.SpellMetrics[result.Target.UnitIndex].Crits++
 		} else {
 			result.Outcome = OutcomeHit
@@ -140,7 +140,7 @@ func (spell *Spell) OutcomeMagicCritFixedChance(critChance float64) OutcomeAppli
 		if spell.MagicHitCheck(sim, attackTable) {
 			if spell.fixedCritCheck(sim, critChance) {
 				result.Outcome = OutcomeCrit
-				result.Damage *= spell.FinalCritMultiplier()
+				result.Damage *= spell.CritMultiplier
 				spell.SpellMetrics[result.Target.UnitIndex].Crits++
 			} else {
 				result.Outcome = OutcomeHit
@@ -485,7 +485,7 @@ func (result *SpellResult) applyAttackTableCrit(spell *Spell, attackTable *Attac
 	if roll < *chance {
 		result.Outcome = OutcomeCrit
 		spell.SpellMetrics[result.Target.UnitIndex].Crits++
-		result.Damage *= spell.FinalCritMultiplier()
+		result.Damage *= spell.CritMultiplier
 		return true
 	}
 	return false
@@ -498,7 +498,7 @@ func (result *SpellResult) applyAttackTableCritSeparateRoll(sim *Simulation, spe
 	if spell.PhysicalCritCheck(sim, result.Target, attackTable) {
 		result.Outcome = OutcomeCrit
 		spell.SpellMetrics[result.Target.UnitIndex].Crits++
-		result.Damage *= spell.FinalCritMultiplier()
+		result.Damage *= spell.CritMultiplier
 		return true
 	}
 	return false
@@ -509,7 +509,7 @@ func (result *SpellResult) applyAttackTableCritSeparateRollSnapshot(sim *Simulat
 	}
 	if sim.RandomFloat("Physical Crit Roll") < dot.SnapshotCritChance {
 		result.Outcome = OutcomeCrit
-		result.Damage *= dot.Spell.FinalCritMultiplier()
+		result.Damage *= dot.Spell.CritMultiplier
 		dot.Spell.SpellMetrics[result.Target.UnitIndex].Crits++
 		return true
 	}
@@ -630,7 +630,7 @@ func (spell *Spell) OutcomeExpectedMagicCrit(sim *Simulation, result *SpellResul
 	}
 
 	averageMultiplier := 1.0
-	averageMultiplier += spell.SpellCritChance(result.Target) * (spell.FinalCritMultiplier() - 1)
+	averageMultiplier += spell.SpellCritChance(result.Target) * (spell.CritMultiplier - 1)
 
 	result.Damage *= averageMultiplier
 }
@@ -642,7 +642,7 @@ func (spell *Spell) OutcomeExpectedMagicHitAndCrit(sim *Simulation, result *Spel
 
 	averageMultiplier := 1.0
 	averageMultiplier -= spell.SpellChanceToMiss(attackTable)
-	averageMultiplier += averageMultiplier * spell.SpellCritChance(result.Target) * (spell.FinalCritMultiplier() - 1)
+	averageMultiplier += averageMultiplier * spell.SpellCritChance(result.Target) * (spell.CritMultiplier - 1)
 
 	result.Damage *= averageMultiplier
 }
@@ -653,7 +653,7 @@ func (dot *Dot) OutcomeExpectedMagicSnapshotCrit(sim *Simulation, result *SpellR
 	}
 
 	averageMultiplier := 1.0
-	averageMultiplier += dot.SnapshotCritChance * (dot.Spell.FinalCritMultiplier() - 1)
+	averageMultiplier += dot.SnapshotCritChance * (dot.Spell.CritMultiplier - 1)
 
 	result.Damage *= averageMultiplier
 }

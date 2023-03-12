@@ -40,9 +40,9 @@ func (dk *Deathknight) registerDeathPactSpell() {
 	})
 
 	if !dk.Inputs.IsDps {
-		// dk.AddMajorCooldown(core.MajorCooldown{
-		// 	Spell: dk.DeathPact,
-		// 	Type:  core.CooldownTypeSurvival,
-		// })
+		dk.AddMajorCooldown(core.MajorCooldown{
+			Spell: dk.DeathPact,
+			Type:  core.CooldownTypeSurvival,
+		})
 	}
 }

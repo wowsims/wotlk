@@ -4,6 +4,7 @@ package proto;
 option go_package = "./proto";
 
 import "common.proto";
+import "apl.proto";
 import "deathknight.proto";
 import "druid.proto";
 import "hunter.proto";
@@ -58,6 +59,8 @@ message Player {
 	Profession profession1 = 29;
 	Profession profession2 = 30;
 	Cooldowns cooldowns = 19;
+
+	APLRotation rotation = 40;
 
 	bool in_front_of_target = 23;
 	double distance_from_target = 33;
@@ -301,6 +304,9 @@ message PlayerStats {
 	repeated string sets = 3;
 	IndividualBuffs buffs = 4;
 	repeated ActionID cooldowns = 5;
+
+	repeated ActionID spells = 10;
+	repeated ActionID auras = 11;
 }
 message PartyStats {
 	repeated PlayerStats players = 1;

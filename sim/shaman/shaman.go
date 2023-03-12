@@ -300,6 +300,7 @@ func (shaman *Shaman) setupProcTrackers() {
 	snapshotManager.AddProc(54572, "Charred Twilight Scale Proc", false)
 	snapshotManager.AddProc(54588, "Charred Twilight Scale H Proc", false)
 	snapshotManager.AddProc(47213, "Abyssal Rune Proc", false)
+	snapshotManager.AddProc(45490, "Pandora's Plea Proc", false)
 
 	//AP Trinket Procs
 	snapshotManager.AddProc(40684, "Mirror of Truth Proc", false)

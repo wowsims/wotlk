@@ -172,7 +172,7 @@ func applyRaceEffects(agent Agent) {
 				} else if spell.Unit.HasEnergyBar() {
 					spell.Unit.AddEnergy(sim, 15.0, resourceMetrics)
 				} else if spell.Unit.HasManaBar() {
-					spell.Unit.AddMana(sim, spell.Unit.MaxMana()*0.06, resourceMetrics, false)
+					spell.Unit.AddMana(sim, spell.Unit.MaxMana()*0.06, resourceMetrics)
 				}
 			},
 		})
