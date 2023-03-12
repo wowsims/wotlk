@@ -102,15 +102,15 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-BlackBruise-50035"
  value: {
-  dps: 6785.27542
-  tps: 4817.54555
+  dps: 6775.08263
+  tps: 4810.30866
  }
 }
 dps_results: {
  key: "TestCombat-AllItems-BlackBruise-50692"
  value: {
-  dps: 6894.74754
-  tps: 4895.27076
+  dps: 6885.90816
+  tps: 4888.99479
  }
 }
 dps_results: {

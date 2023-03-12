@@ -102,15 +102,15 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-AllItems-BlackBruise-50035"
  value: {
-  dps: 8479.17731
-  tps: 6015.36174
+  dps: 8960.1337
+  tps: 6357.19907
  }
 }
 dps_results: {
  key: "TestSubtlety-AllItems-BlackBruise-50692"
  value: {
-  dps: 8571.95875
-  tps: 6081.24551
+  dps: 9054.4291
+  tps: 6424.15732
  }
 }
 dps_results: {
