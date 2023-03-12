@@ -121,6 +121,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSV-AllItems-BlackBruise-50035"
+ value: {
+  dps: 6844.77047
+  tps: 5820.014
+ }
+}
+dps_results: {
+ key: "TestSV-AllItems-BlackBruise-50692"
+ value: {
+  dps: 6835.51324
+  tps: 5811.09433
+ }
+}
+dps_results: {
  key: "TestSV-AllItems-BlessedGarboftheUndeadSlayer"
  value: {
   dps: 5907.8986

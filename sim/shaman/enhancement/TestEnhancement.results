@@ -114,6 +114,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-BlackBruise-50035"
+ value: {
+  dps: 7005.28903
+  tps: 3896.89563
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-BlackBruise-50692"
+ value: {
+  dps: 7066.25053
+  tps: 3929.62724
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-BlessedGarboftheUndeadSlayer"
  value: {
   dps: 5659.54475
@@ -848,6 +862,13 @@ dps_results: {
  value: {
   dps: 7318.88794
   tps: 4112.47545
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-TotemofQuakingEarth-47667"
+ value: {
+  dps: 7260.61239
+  tps: 4058.57453
  }
 }
 dps_results: {
