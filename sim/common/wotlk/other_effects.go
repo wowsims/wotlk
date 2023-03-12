@@ -903,7 +903,7 @@ func init() {
 				},
 			})
 
-			character.RegisterAura(core.Aura{
+			character.GetOrRegisterAura(core.Aura{
 				Label:    name,
 				Duration: core.NeverExpires,
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
