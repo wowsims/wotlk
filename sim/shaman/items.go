@@ -166,7 +166,7 @@ func init() {
 		statAura := shaman.NewTemporaryStatsAura("Volcanic Fury", core.ActionID{SpellID: 67391}, stats.Stats{stats.AttackPower: 400}, time.Second*18)
 
 		core.MakeProcTriggerAura(&shaman.Unit, core.ProcTrigger{
-			Name:       "Totem of Quaking Earth",
+			Name:       "Totem of Quaking Earth Trigger",
 			Callback:   core.CallbackOnSpellHitDealt,
 			ProcMask:   core.ProcMaskMeleeOHSpecial,
 			ProcChance: .80,

@@ -927,15 +927,16 @@ func init() {
 		name := "Black Bruise"
 		itemID := int32(50035)
 		amount := 0.09
+		spellID := int32(71875)
 		if isHeroic {
 			name += " H"
 			itemID = 50692
+			spellID = 71877
 			amount = 0.10
 		}
 
 		core.NewItemEffect(itemID, func(agent core.Agent) {
 			character := agent.GetCharacter()
-			actionID := core.ActionID{ItemID: itemID}
 
 			var curDmg float64
 			necrosisHit := character.RegisterSpell(core.SpellConfig{
@@ -952,7 +953,7 @@ func init() {
 
 			procAura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:     name + " Proc",
-				ActionID: actionID,
+				ActionID: core.ActionID{SpellID: spellID},
 				Callback: core.CallbackOnSpellHitDealt,
 				ProcMask: core.ProcMaskMelee,
 				Duration: time.Second * 10,
