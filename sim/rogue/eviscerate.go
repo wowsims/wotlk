@@ -12,7 +12,7 @@ func (rogue *Rogue) registerEviscerate() {
 		ActionID:     core.ActionID{SpellID: 48668},
 		SpellSchool:  core.SpellSchoolPhysical,
 		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | rogue.finisherFlags(),
+		Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | rogue.finisherFlags() | SpellFlagColdBlooded,
 		MetricSplits: 6,
 
 		EnergyCost: core.EnergyCostOptions{
