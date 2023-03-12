@@ -61,8 +61,8 @@ func (shaman *Shaman) registerTotemOfWrathSpell() {
 }
 
 func (shaman *Shaman) applyToWDebuff(sim *core.Simulation) {
-	for _, target := range sim.Encounter.Targets {
-		auraDef := core.TotemOfWrathDebuff(&target.Unit)
+	for _, target := range sim.Encounter.TargetUnits {
+		auraDef := core.TotemOfWrathDebuff(target)
 		auraDef.Activate(sim)
 	}
 }

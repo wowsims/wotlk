@@ -512,7 +512,7 @@ func (hunter *Hunter) applyImprovedTracking() {
 			}
 			applied = true
 
-			for _, target := range hunter.Env.Encounter.Targets {
+			for _, target := range hunter.Env.Encounter.TargetUnits {
 				switch target.MobType {
 				case proto.MobType_MobTypeBeast, proto.MobType_MobTypeDemon,
 					proto.MobType_MobTypeDragonkin, proto.MobType_MobTypeElemental,

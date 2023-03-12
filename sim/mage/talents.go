@@ -716,9 +716,9 @@ func (mage *Mage) applyWintersChill() {
 
 	procChance := []float64{0, 0.33, 0.66, 1}[mage.Talents.WintersChill]
 
-	wcAuras := make([]*core.Aura, mage.Env.GetNumTargets())
-	for _, target := range mage.Env.Encounter.Targets {
-		wcAuras[target.Index] = core.WintersChillAura(&target.Unit, 0)
+	wcAuras := make([]*core.Aura, len(mage.Env.Encounter.TargetUnits))
+	for i, target := range mage.Env.Encounter.TargetUnits {
+		wcAuras[i] = core.WintersChillAura(target, 0)
 	}
 
 	mage.RegisterAura(core.Aura{

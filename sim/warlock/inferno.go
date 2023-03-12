@@ -46,8 +46,8 @@ func (warlock *Warlock) registerInfernoSpell() {
 			// TODO: add fire spell damage
 			baseDmg := (200 + 1*spell.SpellPower()) * sim.Encounter.AOECapMultiplier()
 
-			for _, aoeTarget := range sim.Encounter.Targets {
-				spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDmg, spell.OutcomeMagicHitAndCrit)
+			for _, aoeTarget := range sim.Encounter.TargetUnits {
+				spell.CalcAndDealDamage(sim, aoeTarget, baseDmg, spell.OutcomeMagicHitAndCrit)
 			}
 
 			if warlock.Pet != nil {
@@ -176,8 +176,8 @@ func (infernal *InfernalPet) Initialize() {
 				warlockSP := infernal.owner.Unit.GetStat(stats.SpellPower) - infernal.owner.Unit.GetStat(stats.Spirit)*coef
 				baseDmg := (40 + warlockSP*0.2) * sim.Encounter.AOECapMultiplier()
 
-				for _, aoeTarget := range sim.Encounter.Targets {
-					dot.Spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDmg, dot.Spell.OutcomeMagicHit)
+				for _, aoeTarget := range sim.Encounter.TargetUnits {
+					dot.Spell.CalcAndDealDamage(sim, aoeTarget, baseDmg, dot.Spell.OutcomeMagicHit)
 				}
 			},
 		},

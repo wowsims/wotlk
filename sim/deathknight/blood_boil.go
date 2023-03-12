@@ -30,15 +30,13 @@ func (dk *Deathknight) registerBloodBoilSpell() {
 		ThreatMultiplier: 1.0,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			for _, aoeTarget := range sim.Encounter.Targets {
-				aoeUnit := &aoeTarget.Unit
-
-				baseDamage := (sim.Roll(180, 220) + 0.06*dk.getImpurityBonus(spell)) * dk.RoRTSBonus(aoeUnit) * core.TernaryFloat64(dk.DiseasesAreActive(aoeUnit), 1.5, 1.0)
+			for _, aoeTarget := range sim.Encounter.TargetUnits {
+				baseDamage := (sim.Roll(180, 220) + 0.06*dk.getImpurityBonus(spell)) * dk.RoRTSBonus(aoeTarget) * core.TernaryFloat64(dk.DiseasesAreActive(aoeTarget), 1.5, 1.0)
 				baseDamage *= sim.Encounter.AOECapMultiplier()
 
-				result := spell.CalcAndDealDamage(sim, aoeUnit, baseDamage, spell.OutcomeMagicHitAndCrit)
+				result := spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeMagicHitAndCrit)
 
-				if aoeUnit == target {
+				if aoeTarget == target {
 					spell.SpendRefundableCost(sim, result)
 					dk.LastOutcome = result.Outcome
 				}
@@ -59,13 +57,11 @@ func (dk *Deathknight) registerDrwBloodBoilSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			for _, aoeTarget := range sim.Encounter.Targets {
-				aoeUnit := &aoeTarget.Unit
-
-				baseDamage := (sim.Roll(180, 220) + 0.06*dk.RuneWeapon.getImpurityBonus(spell)) * core.TernaryFloat64(dk.DrwDiseasesAreActive(aoeUnit), 1.5, 1.0)
+			for _, aoeTarget := range sim.Encounter.TargetUnits {
+				baseDamage := (sim.Roll(180, 220) + 0.06*dk.RuneWeapon.getImpurityBonus(spell)) * core.TernaryFloat64(dk.DrwDiseasesAreActive(aoeTarget), 1.5, 1.0)
 				baseDamage *= sim.Encounter.AOECapMultiplier()
 
-				spell.CalcAndDealDamage(sim, aoeUnit, baseDamage, spell.OutcomeMagicHitAndCrit)
+				spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeMagicHitAndCrit)
 			}
 		},
 	})

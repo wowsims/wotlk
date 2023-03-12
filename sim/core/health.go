@@ -90,9 +90,8 @@ func (hb *healthBar) RemoveHealth(sim *Simulation, amount float64) {
 var ChanceOfDeathAuraLabel = "Chance of Death"
 
 func (character *Character) trackChanceOfDeath(healingModel *proto.HealingModel) {
-
 	character.Unit.Metrics.isTanking = false
-	for _, target := range character.Env.Encounter.Targets {
+	for _, target := range character.Env.Encounter.TargetUnits {
 		if target.CurrentTarget == &character.Unit {
 			character.Unit.Metrics.isTanking = true
 		}
