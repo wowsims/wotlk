@@ -31,45 +31,6 @@
   <!-- Load wowhead scripts after done loading everything else -->
   <script>const whTooltips = {colorLinks: true};</script>
   <script src="https://wow.zamimg.com/js/tooltips.js"></script>
-  <script>
-    var WowSim = {};
-    // Override wowheads xhrjsonrequest for our own usage of preprocessing
-    // This is basically a copy paste of WH.xhrJsonRequest, but with WhOnLoadHook hook
-    if (WH && WH.xhrJsonRequest) {   
-      WH.xhrJsonRequest = function(e, t) {
-      var a = new XMLHttpRequest;
-      a.onload = function(e) {
-          var a = e.target.response;
-          switch (e.target.responseType) {
-          case "json":
-              break;
-          case "":
-          case "text":
-              try {
-                  a = JSON.parse(a)
-              } catch (a) {
-                  WH.error("Could not parse expected JSON response", e.target);
-                  return t()
-              }
-              break;
-          default:
-              WH.error("Unexpected response type from JSON request", e.target);
-              return t()
-          }
-          if (WowSim.WhOnLoadHook)
-            a = WowSim.WhOnLoadHook(a)
-          return t(a)
-      };
-      a.onerror = function() {
-          return t()
-      };
-      a.open("GET", e, true);
-      a.responseType = "json";
-      a.send()
-    };
-  }
-
-  </script>
 	<!--<script>const aowow_tooltips = {colorlinks: true}</script>
 	<script type="text/javascript" src="https://wotlk.evowow.com/static/widgets/power.js"></script>-->
 </html>

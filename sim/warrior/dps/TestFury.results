@@ -107,6 +107,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFury-AllItems-BlackBruise-50035"
+ value: {
+  dps: 5797.69128
+  tps: 4308.16759
+ }
+}
+dps_results: {
+ key: "TestFury-AllItems-BlackBruise-50692"
+ value: {
+  dps: 5911.67686
+  tps: 4389.2583
+ }
+}
+dps_results: {
  key: "TestFury-AllItems-BlessedBattlegearofUndeadSlaying"
  value: {
   dps: 5295.94769

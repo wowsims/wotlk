@@ -100,6 +100,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSubtlety-AllItems-BlackBruise-50035"
+ value: {
+  dps: 8479.17731
+  tps: 6015.36174
+ }
+}
+dps_results: {
+ key: "TestSubtlety-AllItems-BlackBruise-50692"
+ value: {
+  dps: 8571.95875
+  tps: 6081.24551
+ }
+}
+dps_results: {
  key: "TestSubtlety-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
   dps: 6632.25859

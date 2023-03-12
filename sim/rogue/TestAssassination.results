@@ -100,6 +100,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestAssassination-AllItems-BlackBruise-50035"
+ value: {
+  dps: 5816.52583
+  tps: 4129.73334
+ }
+}
+dps_results: {
+ key: "TestAssassination-AllItems-BlackBruise-50692"
+ value: {
+  dps: 5887.38893
+  tps: 4180.04614
+ }
+}
+dps_results: {
  key: "TestAssassination-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
   dps: 5763.15447
