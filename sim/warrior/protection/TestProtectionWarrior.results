@@ -152,6 +152,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtectionWarrior-AllItems-BlackBruise-50035"
+ value: {
+  dps: 1708.01584
+  tps: 4370.24259
+ }
+}
+dps_results: {
+ key: "TestProtectionWarrior-AllItems-BlackBruise-50692"
+ value: {
+  dps: 1750.64071
+  tps: 4460.35757
+ }
+}
+dps_results: {
  key: "TestProtectionWarrior-AllItems-BlessedBattlegearofUndeadSlaying"
  value: {
   dps: 1410.12347

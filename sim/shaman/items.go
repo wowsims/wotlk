@@ -159,6 +159,25 @@ func init() {
 	registerSpellPVPTotem("Furious Gladiator's Totem of Survival", 42603, 84, 10)
 	registerSpellPVPTotem("Relentless Gladiator's Totem of Survival", 42604, 101, 10)
 	registerSpellPVPTotem("Wrathful Gladiator's Totem of Survival", 51513, 119, 10)
+
+	core.NewItemEffect(47667, func(agent core.Agent) {
+		shaman := agent.(ShamanAgent).GetShaman()
+
+		statAura := shaman.NewTemporaryStatsAura("Volcanic Fury", core.ActionID{SpellID: 67391}, stats.Stats{stats.AttackPower: 400}, time.Second*18)
+
+		core.MakeProcTriggerAura(&shaman.Unit, core.ProcTrigger{
+			Name:       "Totem of Quaking Earth Trigger",
+			Callback:   core.CallbackOnSpellHitDealt,
+			ProcMask:   core.ProcMaskMeleeOHSpecial,
+			ProcChance: .80,
+			ICD:        time.Second * 9,
+			Handler: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if spell == shaman.LavaLash {
+					statAura.Activate(sim)
+				}
+			},
+		})
+	})
 }
 
 func registerSpellPVPTotem(name string, id int32, sp float64, seconds float64) {
