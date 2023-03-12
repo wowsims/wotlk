@@ -322,6 +322,7 @@ func init() {
 		ProcMask:   core.ProcMaskSpellDamage,
 		ProcChance: 0.1,
 		ICD:        time.Second * 45,
+		Harmful:    true,
 	})
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Show of Faith",
