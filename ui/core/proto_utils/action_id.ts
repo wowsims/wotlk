@@ -344,6 +344,7 @@ export class ActionId {
 			case 'Blood-Caked Strike':
 			case 'Lightning Speed':
 			case 'Windfury Weapon':
+			case 'Berserk':
 				if (this.tag == 1) {
 					name += ' (Main Hand)';
 				} else if (this.tag == 2) {
