@@ -8,10 +8,7 @@ import (
 )
 
 func (dk *DpsDeathknight) RotationActionCallback_BS_Frost(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	uf := dk.CurrentUnholyRunes() + dk.CurrentFrostRunes()
-	if uf < 2 {
-		dk.BloodStrike.Cast(sim, target)
-	}
+	dk.BloodStrike.Cast(sim, target)
 	s.Advance()
 	return -1
 }
