@@ -26,15 +26,15 @@ func (warlock *Warlock) registerSeedSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dmgFromSP := 0.2129 * spell.SpellPower()
-			for _, aoeTarget := range sim.Encounter.Targets {
+			for _, aoeTarget := range sim.Encounter.TargetUnits {
 				// Seeded target is not affected by explosion.
-				if &aoeTarget.Unit == target {
+				if aoeTarget == target {
 					continue
 				}
 
 				baseDamage := sim.Roll(1633, 1897) + dmgFromSP
 				baseDamage *= sim.Encounter.AOECapMultiplier()
-				spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeMagicHitAndCrit)
+				spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeMagicHitAndCrit)
 			}
 		},
 	})

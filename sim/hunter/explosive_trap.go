@@ -46,11 +46,11 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				baseDamage := 90 + 0.1*dot.Spell.RangedAttackPower(target)
 				dot.Spell.DamageMultiplierAdditive += bonusPeriodicDamageMultiplier
-				for _, aoeTarget := range sim.Encounter.Targets {
+				for _, aoeTarget := range sim.Encounter.TargetUnits {
 					if hasGlyph {
-						dot.Spell.CalcAndDealPeriodicDamage(sim, &aoeTarget.Unit, baseDamage, dot.Spell.OutcomeRangedHitAndCrit)
+						dot.Spell.CalcAndDealPeriodicDamage(sim, aoeTarget, baseDamage, dot.Spell.OutcomeRangedHitAndCrit)
 					} else {
-						dot.Spell.CalcAndDealPeriodicDamage(sim, &aoeTarget.Unit, baseDamage, dot.Spell.OutcomeRangedHit)
+						dot.Spell.CalcAndDealPeriodicDamage(sim, aoeTarget, baseDamage, dot.Spell.OutcomeRangedHit)
 					}
 				}
 				dot.Spell.DamageMultiplierAdditive -= bonusPeriodicDamageMultiplier

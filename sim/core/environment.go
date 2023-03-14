@@ -74,11 +74,11 @@ func (env *Environment) construct(raidProto *proto.Raid, encounterProto *proto.E
 	}
 
 	for _, unit := range env.Raid.AllUnits {
-		unit.CurrentTarget = &env.Encounter.Targets[0].Unit
+		unit.CurrentTarget = env.Encounter.TargetUnits[0]
 	}
 
 	// Apply extra debuffs from raid.
-	if raidProto.Debuffs != nil && len(env.Encounter.Targets) > 0 {
+	if raidProto.Debuffs != nil && len(env.Encounter.TargetUnits) > 0 {
 		for targetIdx, targetUnit := range env.Encounter.TargetUnits {
 			applyDebuffEffects(targetUnit, targetIdx, raidProto.Debuffs, raidProto)
 		}
@@ -132,7 +132,7 @@ func (env *Environment) initialize(raidProto *proto.Raid, encounterProto *proto.
 }
 
 // The finalization phase.
-func (env *Environment) finalize(raidProto *proto.Raid, encounterProto *proto.Encounter, raidStats *proto.RaidStats) {
+func (env *Environment) finalize(raidProto *proto.Raid, _ *proto.Encounter, raidStats *proto.RaidStats) {
 	for _, target := range env.Encounter.Targets {
 		target.finalize()
 	}

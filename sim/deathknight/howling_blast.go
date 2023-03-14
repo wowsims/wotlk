@@ -43,18 +43,16 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			for _, aoeTarget := range sim.Encounter.Targets {
-				aoeUnit := &aoeTarget.Unit
-
+			for _, aoeTarget := range sim.Encounter.TargetUnits {
 				baseDamage := (sim.Roll(518, 562) + 0.2*dk.getImpurityBonus(spell)) *
-					dk.glacielRotBonus(aoeUnit) *
-					dk.RoRTSBonus(aoeUnit) *
+					dk.glacielRotBonus(aoeTarget) *
+					dk.RoRTSBonus(aoeTarget) *
 					dk.mercilessCombatBonus(sim) *
 					sim.Encounter.AOECapMultiplier()
 
-				result := spell.CalcDamage(sim, aoeUnit, baseDamage, spell.OutcomeMagicHitAndCrit)
+				result := spell.CalcDamage(sim, aoeTarget, baseDamage, spell.OutcomeMagicHitAndCrit)
 
-				if aoeUnit == target {
+				if aoeTarget == target {
 					spell.SpendRefundableCost(sim, result)
 					dk.LastOutcome = result.Outcome
 				}
@@ -63,7 +61,7 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 				}
 
 				if hasGlyph {
-					dk.FrostFeverSpell.Cast(sim, aoeUnit)
+					dk.FrostFeverSpell.Cast(sim, aoeTarget)
 				}
 
 				spell.DealDamage(sim, result)

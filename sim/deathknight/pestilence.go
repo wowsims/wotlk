@@ -31,42 +31,40 @@ func (dk *Deathknight) registerPestilenceSpell() {
 		ThreatMultiplier: 0,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			for _, aoeTarget := range sim.Encounter.Targets {
-				aoeUnit := &aoeTarget.Unit
-
+			for _, aoeTarget := range sim.Encounter.TargetUnits {
 				// Zero damage spell with a Hit mechanic, thanks blizz!
-				result := spell.CalcAndDealDamage(sim, aoeUnit, 0, spell.OutcomeMagicHit)
+				result := spell.CalcAndDealDamage(sim, aoeTarget, 0, spell.OutcomeMagicHit)
 
-				if aoeUnit == target {
+				if aoeTarget == target {
 					spell.SpendRefundableCostAndConvertBloodRune(sim, result, deathConvertChance)
 					dk.LastOutcome = result.Outcome
 				}
 				if result.Landed() {
 					// Main target
-					if aoeUnit == target {
+					if aoeTarget == target {
 						if hasGlyphOfDisease {
 							// Update expire instead of Apply to keep old snapshotted value
-							if dk.FrostFeverSpell.Dot(aoeUnit).IsActive() {
-								dk.FrostFeverSpell.Dot(aoeUnit).Rollover(sim)
+							if dk.FrostFeverSpell.Dot(aoeTarget).IsActive() {
+								dk.FrostFeverSpell.Dot(aoeTarget).Rollover(sim)
 								if dk.Talents.IcyTalons > 0 {
 									dk.IcyTalonsAura.Activate(sim)
 								}
-								dk.FrostFeverDebuffAura[aoeUnit.Index].Activate(sim)
+								dk.FrostFeverDebuffAura[aoeTarget.Index].Activate(sim)
 							}
 
-							if dk.BloodPlagueSpell.Dot(aoeUnit).IsActive() {
-								dk.BloodPlagueSpell.Dot(aoeUnit).Rollover(sim)
+							if dk.BloodPlagueSpell.Dot(aoeTarget).IsActive() {
+								dk.BloodPlagueSpell.Dot(aoeTarget).Rollover(sim)
 							}
 						}
 					} else {
 						// Apply diseases on every other target
 						if dk.FrostFeverSpell.Dot(target).IsActive() {
-							dk.FrostFeverExtended[aoeUnit.Index] = 0
-							dk.FrostFeverSpell.Dot(aoeUnit).Apply(sim)
+							dk.FrostFeverExtended[aoeTarget.Index] = 0
+							dk.FrostFeverSpell.Dot(aoeTarget).Apply(sim)
 						}
 						if dk.BloodPlagueSpell.Dot(target).IsActive() {
-							dk.BloodPlagueExtended[aoeUnit.Index] = 0
-							dk.BloodPlagueSpell.Dot(aoeUnit).Apply(sim)
+							dk.BloodPlagueExtended[aoeTarget.Index] = 0
+							dk.BloodPlagueSpell.Dot(aoeTarget).Apply(sim)
 						}
 					}
 				}
@@ -90,44 +88,42 @@ func (dk *Deathknight) registerDrwPestilenceSpell() {
 			// with the spread effect from pestilence if the target has the Dks dots up but it
 			// only works if there is a valid target for spread mechanic to happen (2+ mobs)
 			shouldApplyDrwDots := dk.Env.GetNumTargets() > 1 || dk.Inputs.DrwPestiApply
-			for _, aoeTarget := range sim.Encounter.Targets {
-				aoeUnit := &aoeTarget.Unit
-
+			for _, aoeTarget := range sim.Encounter.TargetUnits {
 				// Zero damage spell with a Hit mechanic, thanks blizz!
-				result := spell.CalcAndDealDamage(sim, aoeUnit, 0, spell.OutcomeMagicHit)
+				result := spell.CalcAndDealDamage(sim, aoeTarget, 0, spell.OutcomeMagicHit)
 
 				if result.Landed() {
 					// Main target
-					if aoeUnit == target {
+					if aoeTarget == target {
 						if hasGlyphOfDisease {
 							// Update expire instead of Apply to keep old snapshotted value
-							if dk.RuneWeapon.FrostFeverSpell.Dot(aoeUnit).IsActive() {
-								dk.RuneWeapon.FrostFeverSpell.Dot(aoeUnit).Rollover(sim)
-							} else if shouldApplyDrwDots && dk.FrostFeverSpell.Dot(aoeUnit).IsActive() {
-								dk.RuneWeapon.FrostFeverSpell.Dot(aoeUnit).Apply(sim)
+							if dk.RuneWeapon.FrostFeverSpell.Dot(aoeTarget).IsActive() {
+								dk.RuneWeapon.FrostFeverSpell.Dot(aoeTarget).Rollover(sim)
+							} else if shouldApplyDrwDots && dk.FrostFeverSpell.Dot(aoeTarget).IsActive() {
+								dk.RuneWeapon.FrostFeverSpell.Dot(aoeTarget).Apply(sim)
 							}
 
-							if dk.RuneWeapon.BloodPlagueSpell.Dot(aoeUnit).IsActive() {
-								dk.RuneWeapon.BloodPlagueSpell.Dot(aoeUnit).Rollover(sim)
-							} else if shouldApplyDrwDots && dk.BloodPlagueSpell.Dot(aoeUnit).IsActive() {
-								dk.RuneWeapon.BloodPlagueSpell.Dot(aoeUnit).Apply(sim)
+							if dk.RuneWeapon.BloodPlagueSpell.Dot(aoeTarget).IsActive() {
+								dk.RuneWeapon.BloodPlagueSpell.Dot(aoeTarget).Rollover(sim)
+							} else if shouldApplyDrwDots && dk.BloodPlagueSpell.Dot(aoeTarget).IsActive() {
+								dk.RuneWeapon.BloodPlagueSpell.Dot(aoeTarget).Apply(sim)
 							}
 						} else if shouldApplyDrwDots {
-							if dk.FrostFeverSpell.Dot(aoeUnit).IsActive() {
-								dk.RuneWeapon.FrostFeverSpell.Dot(aoeUnit).Apply(sim)
+							if dk.FrostFeverSpell.Dot(aoeTarget).IsActive() {
+								dk.RuneWeapon.FrostFeverSpell.Dot(aoeTarget).Apply(sim)
 							}
 
-							if dk.BloodPlagueSpell.Dot(aoeUnit).IsActive() {
-								dk.RuneWeapon.BloodPlagueSpell.Dot(aoeUnit).Apply(sim)
+							if dk.BloodPlagueSpell.Dot(aoeTarget).IsActive() {
+								dk.RuneWeapon.BloodPlagueSpell.Dot(aoeTarget).Apply(sim)
 							}
 						}
 					} else {
 						// Apply diseases on every other target
 						if dk.RuneWeapon.FrostFeverSpell.Dot(target).IsActive() {
-							dk.RuneWeapon.FrostFeverSpell.Dot(aoeUnit).Apply(sim)
+							dk.RuneWeapon.FrostFeverSpell.Dot(aoeTarget).Apply(sim)
 						}
 						if dk.RuneWeapon.BloodPlagueSpell.Dot(target).IsActive() {
-							dk.RuneWeapon.BloodPlagueSpell.Dot(aoeUnit).Apply(sim)
+							dk.RuneWeapon.BloodPlagueSpell.Dot(aoeTarget).Apply(sim)
 						}
 					}
 				}
