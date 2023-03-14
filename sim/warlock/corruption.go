@@ -60,7 +60,7 @@ func (warlock *Warlock) registerCorruptionSpell() {
 				if canCrit {
 					dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
 				} else {
-					dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+					dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTickCounted)
 				}
 			},
 		},
