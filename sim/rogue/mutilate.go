@@ -89,8 +89,8 @@ func (rogue *Rogue) registerMutilateSpell() {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit) // Miss/Dodge/Parry/Hit
 			if result.Landed() {
 				rogue.AddComboPoints(sim, 2, spell.ComboPointMetrics())
-				ohHitSpell.SkipCastAndApplyEffects(sim, target)
-				mhHitSpell.SkipCastAndApplyEffects(sim, target)
+				ohHitSpell.Cast(sim, target)
+				mhHitSpell.Cast(sim, target)
 				if MHOutcome == core.OutcomeCrit || OHOutcome == core.OutcomeCrit {
 					result.Outcome = core.OutcomeCrit
 				}
