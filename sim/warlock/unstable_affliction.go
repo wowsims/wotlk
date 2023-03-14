@@ -65,6 +65,7 @@ func (warlock *Warlock) registerUnstableAfflictionSpell() {
 			// that can proc on-damage effects; same with corruption, curses, ds
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
+				spell.SpellMetrics[target.UnitIndex].Hits--
 				spell.Dot(target).Apply(sim)
 			}
 		},
