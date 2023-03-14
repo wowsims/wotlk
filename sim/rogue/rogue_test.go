@@ -325,16 +325,16 @@ var DeadlyInstant = &proto.Rogue_Options{
 	OhImbue: proto.Rogue_Options_InstantPoison,
 }
 var InstantDeadly = &proto.Rogue_Options{
-	MhImbue: proto.Rogue_Options_DeadlyPoison,
-	OhImbue: proto.Rogue_Options_InstantPoison,
-}
-var InstantInstant = &proto.Rogue_Options{
-	MhImbue: proto.Rogue_Options_DeadlyPoison,
+	MhImbue: proto.Rogue_Options_InstantPoison,
 	OhImbue: proto.Rogue_Options_DeadlyPoison,
 }
-var DeadlyDeadly = &proto.Rogue_Options{
+var InstantInstant = &proto.Rogue_Options{
 	MhImbue: proto.Rogue_Options_InstantPoison,
 	OhImbue: proto.Rogue_Options_InstantPoison,
+}
+var DeadlyDeadly = &proto.Rogue_Options{
+	MhImbue: proto.Rogue_Options_DeadlyPoison,
+	OhImbue: proto.Rogue_Options_DeadlyPoison,
 }
 
 var FullConsumes = &proto.Consumes{

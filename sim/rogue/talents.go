@@ -210,34 +210,29 @@ func (rogue *Rogue) registerColdBloodCD() {
 	}
 
 	actionID := core.ActionID{SpellID: 14177}
-	var affectedSpells []*core.Spell
 
 	coldBloodAura := rogue.RegisterAura(core.Aura{
 		Label:    "Cold Blood",
 		ActionID: actionID,
 		Duration: core.NeverExpires,
-		OnInit: func(aura *core.Aura, sim *core.Simulation) {
-			for _, spell := range rogue.Spellbook {
-				if spell.Flags.Matches(SpellFlagBuilder | SpellFlagFinisher) {
-					affectedSpells = append(affectedSpells, spell)
-				}
-			}
-		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			for _, spell := range affectedSpells {
-				spell.BonusCritRating += 100 * core.CritRatingPerCritChance
+			for _, spell := range rogue.Spellbook {
+				if spell.Flags.Matches(SpellFlagColdBlooded) {
+					spell.BonusCritRating += 100 * core.CritRatingPerCritChance
+				}
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			for _, spell := range affectedSpells {
-				spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			for _, spell := range rogue.Spellbook {
+				if spell.Flags.Matches(SpellFlagColdBlooded) {
+					spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
+				}
 			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			for _, affectedSpell := range affectedSpells {
-				if spell == affectedSpell {
-					aura.Deactivate(sim)
-				}
+			// for Fan of Knives and Mutilate, the offhand hit comes first and is ignored, so the aura doesn't fade too early
+			if spell.Flags.Matches(SpellFlagColdBlooded) && spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
+				aura.Deactivate(sim)
 			}
 		},
 	})
@@ -300,25 +295,18 @@ func (rogue *Rogue) applyInitiative() {
 
 	procChance := []float64{0, 0.33, 0.66, 1.0}[rogue.Talents.Initiative]
 	cpMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 13980})
-	var affectedSpells []*core.Spell
 
 	rogue.RegisterAura(core.Aura{
 		Label:    "Initiative",
 		Duration: core.NeverExpires,
-		OnInit: func(aura *core.Aura, sim *core.Simulation) {
-			affectedSpells = append(affectedSpells, rogue.Ambush)
-			affectedSpells = append(affectedSpells, rogue.Garrote)
-		},
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			for _, affectedSpell := range affectedSpells {
-				if spell == affectedSpell {
-					if result.Landed() {
-						if sim.Proc(procChance, "Initiative") {
-							rogue.AddComboPoints(sim, 1, cpMetrics)
-						}
+			if spell == rogue.Garrote || spell == rogue.Ambush {
+				if result.Landed() {
+					if sim.Proc(procChance, "Initiative") {
+						rogue.AddComboPoints(sim, 1, cpMetrics)
 					}
 				}
 			}
@@ -387,25 +375,14 @@ func (rogue *Rogue) applyCombatPotency() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !result.Landed() {
+			// from 3.0.3 patch notes: "Combat Potency: Now only works with auto attacks"
+			if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeOHAuto) {
 				return
 			}
 
-			// https://wotlk.wowhead.com/spell=35553/combat-potency, proc mask = 8838608.
-			if !spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
-				return
+			if sim.RandomFloat("Combat Potency") < procChance {
+				rogue.AddEnergy(sim, energyBonus, energyMetrics)
 			}
-
-			// Fan of Knives OH hits do not proc combat potency
-			if spell.IsSpellAction(FanOfKnivesSpellID) {
-				return
-			}
-
-			if sim.RandomFloat("Combat Potency") > procChance {
-				return
-			}
-
-			rogue.AddEnergy(sim, energyBonus, energyMetrics)
 		},
 	})
 }

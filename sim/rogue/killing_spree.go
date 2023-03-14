@@ -44,7 +44,7 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 	rogue.KillingSpreeAura = rogue.RegisterAura(core.Aura{
 		Label:    "Killing Spree",
 		ActionID: core.ActionID{SpellID: 51690},
-		Duration: time.Second * 2,
+		Duration: time.Second*2 + 1,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.PseudoStats.DamageDealtMultiplier *= 1.2
 			core.StartPeriodicAction(sim, core.PeriodicActionOptions{

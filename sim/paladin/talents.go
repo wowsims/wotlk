@@ -405,7 +405,7 @@ func (paladin *Paladin) applyHeartOfTheCrusader() {
 			if !spell.Flags.Matches(SpellFlagSecondaryJudgement) {
 				return
 			}
-			debuffAura := core.HeartoftheCrusaderDebuff(result.Target, float64(paladin.Talents.HeartOfTheCrusader))
+			debuffAura := core.HeartOfTheCrusaderDebuff(result.Target, float64(paladin.Talents.HeartOfTheCrusader))
 			debuffAura.Activate(sim)
 		},
 	})

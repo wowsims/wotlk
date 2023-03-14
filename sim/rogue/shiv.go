@@ -44,11 +44,11 @@ func (rogue *Rogue) registerShivSpell() {
 
 				switch rogue.Options.OhImbue {
 				case proto.Rogue_Options_DeadlyPoison:
-					rogue.DeadlyPoison.Cast(sim, target)
+					rogue.DeadlyPoison.SkipCastAndApplyEffects(sim, target)
 				case proto.Rogue_Options_InstantPoison:
-					rogue.InstantPoison[ShivProc].Cast(sim, target)
+					rogue.InstantPoison[ShivProc].SkipCastAndApplyEffects(sim, target)
 				case proto.Rogue_Options_WoundPoison:
-					rogue.WoundPoison[ShivProc].Cast(sim, target)
+					rogue.WoundPoison[ShivProc].SkipCastAndApplyEffects(sim, target)
 				}
 			}
 		},
