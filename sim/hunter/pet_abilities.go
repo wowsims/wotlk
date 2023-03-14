@@ -251,9 +251,9 @@ func (hp *HunterPet) newAcidSpit() *core.Spell {
 }
 
 func (hp *HunterPet) newDemoralizingScreech() *core.Spell {
-	var debuffs []*core.Aura
-	for _, target := range hp.Env.Encounter.Targets {
-		debuffs = append(debuffs, core.DemoralizingScreechAura(&target.Unit))
+	debuffs := make([]*core.Aura, len(hp.Env.Encounter.TargetUnits))
+	for i, target := range hp.Env.Encounter.TargetUnits {
+		debuffs[i] = core.DemoralizingScreechAura(target)
 	}
 
 	return hp.newSpecialAbility(PetSpecialAbilityConfig{
@@ -810,8 +810,8 @@ func (hp *HunterPet) newSporeCloud() *core.Spell {
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
-				for _, aoeTarget := range sim.Encounter.Targets {
-					dot.CalcAndDealPeriodicSnapshotDamage(sim, &aoeTarget.Unit, dot.OutcomeTick)
+				for _, aoeTarget := range sim.Encounter.TargetUnits {
+					dot.CalcAndDealPeriodicSnapshotDamage(sim, aoeTarget, dot.OutcomeTick)
 				}
 			},
 		},

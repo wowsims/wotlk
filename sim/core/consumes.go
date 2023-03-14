@@ -269,9 +269,9 @@ func applyConsumeEffects(agent Agent) {
 				stats.ShadowResistance: 10,
 			})
 
-			var debuffAuras []*Aura
-			for _, target := range character.Env.Encounter.Targets {
-				debuffAuras = append(debuffAuras, GiftOfArthasAura(&target.Unit))
+			debuffAuras := make([]*Aura, len(character.Env.Encounter.TargetUnits))
+			for i, target := range character.Env.Encounter.TargetUnits {
+				debuffAuras[i] = GiftOfArthasAura(target)
 			}
 
 			actionID := ActionID{SpellID: 11374}
@@ -965,9 +965,9 @@ func (character *Character) newBasicExplosiveSpellConfig(sharedTimer *Timer, act
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
-			for _, aoeTarget := range sim.Encounter.Targets {
+			for _, aoeTarget := range sim.Encounter.TargetUnits {
 				baseDamage := sim.Roll(minDamage, maxDamage) * sim.Encounter.AOECapMultiplier()
-				spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeMagicHitAndCrit)
+				spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeMagicHitAndCrit)
 			}
 
 			if dealSelfDamage {

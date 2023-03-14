@@ -243,15 +243,15 @@ func init() {
 			return
 		}
 
-		var debuffs []*core.Aura
-		for _, target := range character.Env.Encounter.Targets {
+		debuffs := make([]*core.Aura, len(character.Env.Encounter.TargetUnits))
+		for i, target := range character.Env.Encounter.TargetUnits {
 			aura := target.GetOrRegisterAura(core.Aura{
 				Label:    "Deathfrost",
 				ActionID: actionID,
 				Duration: time.Second * 8,
 			})
 			core.AtkSpeedReductionEffect(aura, 1.15)
-			debuffs = append(debuffs, aura)
+			debuffs[i] = aura
 		}
 
 		procSpell := character.RegisterSpell(core.SpellConfig{

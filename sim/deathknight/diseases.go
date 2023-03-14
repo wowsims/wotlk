@@ -34,6 +34,20 @@ func (dk *Deathknight) dkCountActiveDiseases(target *core.Unit) float64 {
 	return float64(count)
 }
 
+func (dk *Deathknight) dkCountActiveDiseasesBcb(target *core.Unit) float64 {
+	count := 0
+	if dk.FrostFeverSpell.Dot(target).IsActive() {
+		count++
+	}
+	if dk.BloodPlagueSpell.Dot(target).IsActive() {
+		count++
+	}
+	if dk.EbonPlagueOrCryptFeverAura[target.Index].IsActive() || target.GetAura("EbonPlaguebringer-1").IsActive() {
+		count++
+	}
+	return float64(count)
+}
+
 // diseaseMultiplier calculates the bonus based on if you have DarkrunedBattlegear 4p.
 //
 //	This function is slow so should only be used during initialization.

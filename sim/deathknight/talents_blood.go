@@ -354,9 +354,8 @@ func (dk *Deathknight) applyBloodGorged() {
 		return
 	}
 
-	bonusDamage := 1.1
-
-	armorPenRating := 10.0 * core.ArmorPenPerPercentArmor
+	bonusDamage := 1.0 + 0.02*float64(dk.Talents.BloodGorged)
+	armorPenRating := float64(dk.Talents.BloodGorged) * 2.0 * core.ArmorPenPerPercentArmor
 	dk.AddStat(stats.ArmorPenetration, armorPenRating)
 
 	procAura := core.MakePermanent(dk.RegisterAura(core.Aura{

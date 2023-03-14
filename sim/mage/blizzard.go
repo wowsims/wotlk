@@ -7,7 +7,7 @@ import (
 )
 
 func (mage *Mage) registerBlizzardSpell() {
-	results := make([]*core.SpellResult, len(mage.Env.Encounter.Targets))
+	results := make([]*core.SpellResult, len(mage.Env.Encounter.TargetUnits))
 
 	mage.Blizzard = mage.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 42939},
@@ -46,7 +46,7 @@ func (mage *Mage) registerBlizzardSpell() {
 				for i, aoeTarget := range sim.Encounter.TargetUnits {
 					results[i] = dot.CalcSnapshotDamage(sim, aoeTarget, dot.OutcomeTick)
 				}
-				for i := range sim.Encounter.Targets {
+				for i := range sim.Encounter.TargetUnits {
 					dot.Spell.DealPeriodicDamage(sim, results[i])
 				}
 			},

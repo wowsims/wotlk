@@ -401,8 +401,8 @@ func (sim *Simulation) runOnce() {
 	for _, unit := range sim.Raid.AllUnits {
 		unit.Metrics.doneIteration(unit, sim)
 	}
-	for _, target := range sim.Encounter.Targets {
-		target.Metrics.doneIteration(&target.Unit, sim)
+	for _, target := range sim.Encounter.TargetUnits {
+		target.Metrics.doneIteration(target, sim)
 	}
 }
 

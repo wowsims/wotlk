@@ -9,7 +9,6 @@ import (
 
 type FrostRotation struct {
 	oblitCount int32
-	uaCycle    bool
 
 	// CDS
 	hyperSpeedMCD           *core.MajorCooldown
@@ -32,7 +31,6 @@ func (fr *FrostRotation) Initialize(dk *DpsDeathknight) {
 
 func (fr *FrostRotation) Reset(sim *core.Simulation) {
 	fr.oblitCount = 0
-	fr.uaCycle = false
 
 	fr.hyperSpeedMCD = nil
 	fr.stoneformMCD = nil

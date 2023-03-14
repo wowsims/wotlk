@@ -48,8 +48,8 @@ func (druid *Druid) registerHurricaneSpell() {
 				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				for _, aoeTarget := range sim.Encounter.Targets {
-					dot.CalcAndDealPeriodicSnapshotDamage(sim, &aoeTarget.Unit, dot.OutcomeMagicHitAndSnapshotCrit)
+				for _, aoeTarget := range sim.Encounter.TargetUnits {
+					dot.CalcAndDealPeriodicSnapshotDamage(sim, aoeTarget, dot.OutcomeMagicHitAndSnapshotCrit)
 				}
 			},
 		},
