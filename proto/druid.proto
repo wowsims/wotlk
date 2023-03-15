@@ -147,7 +147,7 @@ message BalanceDruid {
   message Rotation {
 		enum Type {
 			Unknown = 0;
-			Adaptive = 1;
+			Default = 1;
 			Manual = 2;
 		}
 		Type type = 1;
@@ -163,11 +163,17 @@ message BalanceDruid {
 			NoIs = 0;
 			BeforeSolar = 1;
 			MaximizeIs = 2;
+			MultidotIs = 3;
 		}
 		IsUsage is_usage = 3;
 
 		bool use_battle_res = 4;
-		bool use_wrath = 5;
+		enum WrathUsage {
+			NoWrath = 0;
+			FishingForLunar= 1;
+			RegularWrath = 2;
+		}
+		WrathUsage wrath_usage = 5;
 		bool use_starfire = 6;
 		bool use_typhoon = 7;
 		bool use_hurricane = 8;
@@ -180,8 +186,7 @@ message BalanceDruid {
 			Solar = 1;
 		}
 		EclipsePrio eclipse_prio = 12;
-		bool multidot_is = 13;
-		bool eclipse_shuffling = 14;
+		bool eclipse_shuffling = 13;
 	}
   Rotation rotation = 1;
 
