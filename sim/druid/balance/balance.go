@@ -77,12 +77,12 @@ func (moonkin *BalanceDruid) Reset(sim *core.Simulation) {
 	moonkin.Druid.Reset(sim)
 	moonkin.RebirthTiming = moonkin.Env.BaseDuration.Seconds() * sim.RandomFloat("Rebirth Timing")
 
-	if moonkin.Rotation.Type == proto.BalanceDruid_Rotation_Adaptive {
+	if moonkin.Rotation.Type == proto.BalanceDruid_Rotation_Default {
 		moonkin.Rotation.MfUsage = proto.BalanceDruid_Rotation_BeforeLunar
 		moonkin.Rotation.IsUsage = proto.BalanceDruid_Rotation_MaximizeIs
+		moonkin.Rotation.WrathUsage = proto.BalanceDruid_Rotation_RegularWrath
 		moonkin.Rotation.UseBattleRes = false
 		moonkin.Rotation.UseStarfire = true
-		moonkin.Rotation.UseWrath = true
 		moonkin.Rotation.UseTyphoon = false
 		moonkin.Rotation.UseHurricane = false
 		moonkin.Rotation.UseSmartCooldowns = true

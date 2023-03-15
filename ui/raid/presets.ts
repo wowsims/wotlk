@@ -213,7 +213,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	{
 		spec: Spec.SpecBalanceDruid,
 		rotation: BalanceDruidPresets.DefaultRotation,
-		talents: BalanceDruidPresets.StandardTalents.data,
+		talents: BalanceDruidPresets.Phase2Talents.data,
 		specOptions: BalanceDruidPresets.DefaultOptions,
 		consumes: BalanceDruidPresets.DefaultConsumes,
 		otherDefaults: BalanceDruidPresets.OtherDefaults,

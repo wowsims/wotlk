@@ -12,6 +12,7 @@ import {
 	BalanceDruid_Rotation_Type as RotationType,
 	BalanceDruid_Rotation_MfUsage as MfUsage,
 	BalanceDruid_Rotation_IsUsage as IsUsage,
+	BalanceDruid_Rotation_WrathUsage as WrathUsage,
 	BalanceDruid_Rotation_EclipsePrio as EclipsePrio,
 } from '../core/proto/druid.js';
 
@@ -40,22 +41,26 @@ export const BalanceDruidRotationConfig = {
 		InputHelpers.makeRotationEnumInput<Spec.SpecBalanceDruid, RotationType>({
 			fieldName: 'type',
 			label: 'Type',
-			labelTooltip: 'If set to \'Adaptive\', will dynamically adjust rotation.',
+			labelTooltip: 'Set to \'Manual\', to manage eclipses, spells, CDs and DoTs usage.',
 			values: [
 				{
-					name: 'Adaptive', value: RotationType.Adaptive,
-					tooltip: 'Dynamically adapts based on available mana to maximize CL casts without going OOM.',
+					name: 'Default', value: RotationType.Default,
+					tooltip: 'The default rotation.',
 				},
 				{
 					name: 'Manual', value: RotationType.Manual,
-					tooltip: 'Allows custom selection of which spells to use, dot managment and CD usage.',
+					tooltip: 'Allows custom selection of which spells to use, dot management and CD usage.',
 				},
 			],
 		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
-			fieldName: 'useSmartCooldowns',
-			label: 'Smart Cooldowns usage',
-			labelTooltip: 'The rotation will use cooldowns during eclipses, avoiding Haste CDs in solar and Crit CDs in lunar',
+		InputHelpers.makeRotationEnumInput<Spec.SpecBalanceDruid, EclipsePrio>({
+			fieldName: 'eclipsePrio',
+			label: 'Eclipse priority',
+			labelTooltip: 'Defines which eclipse will get prioritized in the rotation.',
+			values: [
+				{ name: 'Lunar', value: EclipsePrio.Lunar },
+				{ name: 'Solar', value: EclipsePrio.Solar },
+			],
 			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
 		}),
 		InputHelpers.makeRotationEnumInput<Spec.SpecBalanceDruid, MfUsage>({
@@ -77,6 +82,18 @@ export const BalanceDruidRotationConfig = {
 				{ name: 'Unused', value: IsUsage.NoIs },
 				{ name: 'Before solar', value: IsUsage.BeforeSolar },
 				{ name: 'Maximize', value: IsUsage.MaximizeIs },
+				{ name: 'Multidot', value: IsUsage.MultidotIs },
+			],
+			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
+		}),
+		InputHelpers.makeRotationEnumInput<Spec.SpecBalanceDruid, WrathUsage>({
+			fieldName: 'wrathUsage',
+			label: 'Wrath usage',
+			labelTooltip: 'Defines how Wrath will be used in the rotation.',
+			values: [
+				{ name: 'Unused', value: WrathUsage.NoWrath },
+				{ name: 'Fishing for Lunar', value: WrathUsage.FishingForLunar },
+				{ name: 'Regular', value: WrathUsage.RegularWrath },
 			],
 			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
 		}),
@@ -87,9 +104,15 @@ export const BalanceDruidRotationConfig = {
 			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
-			fieldName: 'useWrath',
-			label: 'Use Wrath',
-			labelTooltip: 'Should the rotation use Wrath.',
+			fieldName: 'useSmartCooldowns',
+			label: 'Smart Cooldowns usage',
+			labelTooltip: 'The rotation will use cooldowns during eclipses, avoiding Haste CDs in solar and Crit CDs in lunar',
+			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
+			fieldName: 'eclipseShuffling',
+			label: 'Eclipse Shuffling',
+			labelTooltip: 'Should the rotation alternate Starfire and Wrath when both eclipses are available.',
 			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
@@ -115,27 +138,6 @@ export const BalanceDruidRotationConfig = {
 			label: 'Player latency',
 			labelTooltip: 'Time before the player reacts to an eclipse proc, in milliseconds.',
 			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
-		}),
-		InputHelpers.makeRotationEnumInput<Spec.SpecBalanceDruid, EclipsePrio>({
-			fieldName: 'eclipsePrio',
-			label: 'Eclipse priority',
-			labelTooltip: 'Defines which eclipse will get prioritized in the rotation.',
-			values: [
-				{ name: 'Lunar', value: EclipsePrio.Lunar },
-				{ name: 'Solar', value: EclipsePrio.Solar },
-			],
-			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
-			fieldName: 'multidotIs',
-			label: 'Mutlti-dot Insect Swarm',
-			labelTooltip: 'Should the rotation mutlti-dot Insect Swarm',
-			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().isUsage == IsUsage.MaximizeIs,
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
-			fieldName: 'eclipseShuffling',
-			label: 'Eclipse Shuffling',
-			labelTooltip: 'Should the rotation alternate Starfire and Wrath when both eclipses are available.',
 		}),
 	],
 };
