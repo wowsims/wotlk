@@ -59,9 +59,6 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 		ActionID: actionID,
 
 		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				GCD: core.GCDDefault,
-			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    warrior.NewTimer(),
@@ -79,6 +76,7 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 
 			reckAura.Activate(sim)
 			reckAura.SetStacks(sim, 3)
+			warrior.WaitUntil(sim, sim.CurrentTime+core.GCDDefault)
 		},
 	})
 
