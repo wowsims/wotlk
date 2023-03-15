@@ -132,5 +132,10 @@ export const BalanceDruidRotationConfig = {
 			labelTooltip: 'Should the rotation mutlti-dot Insect Swarm',
 			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().isUsage == IsUsage.MaximizeIs,
 		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecBalanceDruid>({
+			fieldName: 'eclipseShuffling',
+			label: 'Eclipse Shuffling',
+			labelTooltip: 'Should the rotation alternate Starfire and Wrath when both eclipses are available.',
+		}),
 	],
 };

@@ -43,8 +43,8 @@ func (warrior *Warrior) registerShockwaveSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := 0.75 * spell.MeleeAttackPower()
 			baseDamage *= sim.Encounter.AOECapMultiplier()
-			for _, aoeTarget := range sim.Encounter.Targets {
-				result := spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+			for _, aoeTarget := range sim.Encounter.TargetUnits {
+				result := spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 				// TODO: AOE spells usually don't give refunds, this is probably wrong
 				if !result.Landed() {
 					spell.IssueRefund(sim)

@@ -170,7 +170,7 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 	}
 
 	if debuffs.HeartOfTheCrusader && targetIdx == 0 {
-		MakePermanent(HeartoftheCrusaderDebuff(target, 3))
+		MakePermanent(HeartOfTheCrusaderDebuff(target, 3))
 	}
 
 	if debuffs.HuntersMark > 0 && targetIdx == 0 {
@@ -914,7 +914,7 @@ func MasterPoisonerDebuff(target *Unit, points float64) *Aura {
 	return minorCritDebuffAura(target, "Master Poisoner", ActionID{SpellID: 58410}, time.Second*20, points*CritRatingPerCritChance)
 }
 
-func HeartoftheCrusaderDebuff(target *Unit, points float64) *Aura {
+func HeartOfTheCrusaderDebuff(target *Unit, points float64) *Aura {
 	return minorCritDebuffAura(target, "Heart of the Crusader", ActionID{SpellID: 20337}, time.Second*20, points*CritRatingPerCritChance)
 }
 

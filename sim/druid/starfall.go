@@ -82,8 +82,8 @@ func (druid *Druid) registerStarfallSpell() {
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				baseDamage := 101 + 0.13*dot.Spell.SpellPower()
 				baseDamage *= sim.Encounter.AOECapMultiplier()
-				for _, aoeTarget := range sim.Encounter.Targets {
-					dot.Spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, dot.Spell.OutcomeMagicHitAndCrit)
+				for _, aoeTarget := range sim.Encounter.TargetUnits {
+					dot.Spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, dot.Spell.OutcomeMagicHitAndCrit)
 				}
 			},
 		},

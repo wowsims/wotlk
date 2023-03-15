@@ -922,4 +922,56 @@ func init() {
 			})
 		})
 	})
+
+	NewItemEffectWithHeroic(func(isHeroic bool) {
+		name := "Black Bruise"
+		itemID := int32(50035)
+		amount := 0.09
+		spellID := int32(71875)
+		if isHeroic {
+			name += " H"
+			itemID = 50692
+			spellID = 71877
+			amount = 0.10
+		}
+
+		core.NewItemEffect(itemID, func(agent core.Agent) {
+			character := agent.GetCharacter()
+
+			var curDmg float64
+			necrosisHit := character.RegisterSpell(core.SpellConfig{
+				ActionID:         core.ActionID{SpellID: 51460},
+				SpellSchool:      core.SpellSchoolShadow,
+				ProcMask:         core.ProcMaskEmpty,
+				Flags:            core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers,
+				DamageMultiplier: 1,
+				ThreatMultiplier: 1,
+				ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+					spell.CalcAndDealDamage(sim, target, curDmg*amount, spell.OutcomeAlwaysHit)
+				},
+			})
+
+			procAura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+				Name:     name + " Proc",
+				ActionID: core.ActionID{SpellID: spellID},
+				Callback: core.CallbackOnSpellHitDealt,
+				ProcMask: core.ProcMaskMelee,
+				Duration: time.Second * 10,
+				Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
+					curDmg = result.Damage
+					necrosisHit.Cast(sim, result.Target)
+				},
+			})
+
+			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+				Name:       name + " Trigger",
+				Callback:   core.CallbackOnSpellHitDealt,
+				ProcMask:   core.ProcMaskMelee,
+				ProcChance: 0.03,
+				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
+					procAura.Activate(sim)
+				},
+			})
+		})
+	})
 }

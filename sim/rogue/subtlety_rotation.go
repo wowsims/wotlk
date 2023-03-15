@@ -16,7 +16,7 @@ type subtletyPrio struct {
 func (rogue *Rogue) setSubtletyBuilder(sim *core.Simulation) {
 	mhDagger := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
 	// Garrote
-	if !rogue.Garrote.Dot(rogue.CurrentTarget).Aura.IsActive() && rogue.ShadowDanceAura.IsActive() && !rogue.PseudoStats.InFrontOfTarget {
+	if !rogue.Garrote.CurDot().Aura.IsActive() && rogue.ShadowDanceAura.IsActive() && !rogue.PseudoStats.InFrontOfTarget {
 		rogue.Builder = rogue.Garrote
 		rogue.BuilderPoints = 1
 		return
@@ -274,7 +274,7 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 		rogue.subtletyPrios = append(rogue.subtletyPrios, subtletyPrio{
 			func(sim *core.Simulation, rogue *Rogue) PriorityAction {
 				minimumCP := int32(5)
-				if !rogue.DeadlyPoison.Dot(rogue.CurrentTarget).Aura.IsActive() {
+				if !rogue.DeadlyPoison.CurDot().Aura.IsActive() {
 					return Skip
 				}
 				if rogue.EnvenomAura.IsActive() {

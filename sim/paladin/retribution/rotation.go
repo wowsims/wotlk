@@ -36,7 +36,7 @@ func (ret *RetributionPaladin) OnAutoAttack(sim *core.Simulation, spell *core.Sp
 		} else if ret.SovDotSpell.Dot(ret.CurrentTarget).GetStacks() == 5 && minVengeanceDotStacks < 5 {
 			ret.CurrentTarget = minVengeanceDotStacksTarget
 		} else {
-			ret.CurrentTarget = &ret.Env.Encounter.Targets[0].Unit
+			ret.CurrentTarget = ret.Env.Encounter.TargetUnits[0]
 		}
 	}
 }
@@ -51,7 +51,7 @@ func (ret *RetributionPaladin) OnGCDReady(sim *core.Simulation) {
 
 func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 	// Setup
-	target := &ret.Env.Encounter.Targets[0].Unit
+	target := ret.Env.Encounter.TargetUnits[0]
 
 	nextSwingAt := ret.AutoAttacks.NextAttackAt()
 	isExecutePhase := sim.IsExecutePhase20()
@@ -127,7 +127,7 @@ func (ret *RetributionPaladin) castSequenceRotation(sim *core.Simulation) {
 	}
 
 	// Setup
-	target := &ret.Env.Encounter.Targets[0].Unit
+	target := ret.Env.Encounter.TargetUnits[0]
 	isExecutePhase := sim.IsExecutePhase20()
 
 	nextReadyAt := sim.CurrentTime
@@ -174,7 +174,7 @@ func (ret *RetributionPaladin) castSequenceRotation(sim *core.Simulation) {
 func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 
 	// Setup
-	target := &ret.Env.Encounter.Targets[0].Unit
+	target := ret.Env.Encounter.TargetUnits[0]
 
 	nextSwingAt := ret.AutoAttacks.NextAttackAt()
 	isExecutePhase := sim.IsExecutePhase20()

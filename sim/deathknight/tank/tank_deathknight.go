@@ -40,7 +40,7 @@ func NewTankDeathknight(character core.Character, options *proto.Player) *TankDe
 		Deathknight: deathknight.NewDeathknight(character, deathknight.DeathknightInputs{
 			IsDps:              false,
 			StartingRunicPower: dkOptions.Options.StartingRunicPower,
-		}, options.TalentsString),
+		}, options.TalentsString, false),
 		Rotation: dkOptions.Rotation,
 	}
 

@@ -8,7 +8,7 @@ import (
 )
 
 func (paladin *Paladin) registerHolyWrathSpell() {
-	results := make([]*core.SpellResult, len(paladin.Env.Encounter.Targets))
+	results := make([]*core.SpellResult, len(paladin.Env.Encounter.TargetUnits))
 
 	paladin.HolyWrath = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48817},
@@ -37,18 +37,17 @@ func (paladin *Paladin) registerHolyWrathSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			constBaseDamage := .07*spell.SpellPower() + .07*spell.MeleeAttackPower()
 
-			for i, aoeTarget := range sim.Encounter.Targets {
-				aoeUnit := &aoeTarget.Unit
+			for i, aoeTarget := range sim.Encounter.TargetUnits {
 				baseDamage := constBaseDamage + sim.Roll(1050, 1234)
 
-				if aoeUnit.MobType == proto.MobType_MobTypeDemon || aoeUnit.MobType == proto.MobType_MobTypeUndead {
-					results[i] = spell.CalcDamage(sim, aoeUnit, baseDamage, spell.OutcomeMagicHitAndCrit)
+				if aoeTarget.MobType == proto.MobType_MobTypeDemon || aoeTarget.MobType == proto.MobType_MobTypeUndead {
+					results[i] = spell.CalcDamage(sim, aoeTarget, baseDamage, spell.OutcomeMagicHitAndCrit)
 				} else {
-					results[i] = spell.CalcDamage(sim, aoeUnit, baseDamage, spell.OutcomeAlwaysMiss)
+					results[i] = spell.CalcDamage(sim, aoeTarget, baseDamage, spell.OutcomeAlwaysMiss)
 				}
 			}
 
-			for i := range sim.Encounter.Targets {
+			for i := range sim.Encounter.TargetUnits {
 				spell.DealDamage(sim, results[i])
 			}
 		},

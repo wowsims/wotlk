@@ -8,27 +8,8 @@ import (
 )
 
 func (dk *DpsDeathknight) RotationActionCallback_BS_Frost(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	casted := false
-
-	frAt := dk.NormalFrostRuneReadyAt(sim)
-	uhAt := dk.NormalUnholyRuneReadyAt(sim)
-	obAt := core.MaxDuration(frAt, uhAt)
-
-	if !dk.fr.uaCycle {
-		if sim.CurrentTime+1500*time.Millisecond <= obAt {
-			casted = dk.FrostStrike.Cast(sim, target)
-		}
-
-		if !casted {
-			dk.BloodStrike.Cast(sim, target)
-			s.Advance()
-		}
-	} else {
-		dk.BloodStrike.Cast(sim, target)
-		s.Advance()
-		dk.fr.uaCycle = false
-	}
-
+	dk.BloodStrike.Cast(sim, target)
+	s.Advance()
 	return -1
 }
 
@@ -112,37 +93,22 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_KM(sim *core.S
 	return core.TernaryDuration(casted, -1, sim.CurrentTime)
 }
 
-func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump_UntilBR(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Dump_UntilBR(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	casted := false
 	waitUntil := time.Duration(-1)
 
 	casted = dk.RotationActionCallback_LastSecondsCast(sim, target)
 	if !casted {
 		br := dk.CurrentBloodRunes() + dk.CurrentDeathRunes()
-		ddAt := dk.SpentBloodRuneReadyAt()
 
 		if br == 0 {
 			spell := dk.RegularPrioPickSpell(sim, target, core.NeverExpires)
 			if spell != nil {
 				casted = spell.Cast(sim, target)
-			} else {
-				s.Advance()
-				waitUntil = ddAt
 			}
-		} else if br == 1 {
-			spell := dk.RegularPrioPickSpell(sim, target, ddAt+1500*time.Millisecond)
-			if spell != nil {
-				casted = spell.Cast(sim, target)
-			} else {
-				s.Advance()
-				waitUntil = sim.CurrentTime
-			}
-		} else if br == 2 {
-			ffExpiresAt := dk.FrostFeverSpell.Dot(target).ExpiresAt()
-			bpExpiresAt := dk.BloodPlagueSpell.Dot(target).ExpiresAt()
+		} else if br >= 1 {
 			km := dk.KillingMachineAura.IsActive()
-			if km && sim.CurrentTime+1500*time.Millisecond < core.MinDuration(ffExpiresAt, bpExpiresAt) &&
-				dk.DeathRuneRevertAt() > sim.CurrentTime+1500*time.Millisecond {
+			if km {
 				if dk.FrostStrike.CanCast(sim, nil) {
 					casted = dk.FrostStrike.Cast(sim, target)
 				}
@@ -289,7 +255,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_UA_Check(sim *cor
 	} else {
 		s.Clear().
 			NewAction(dk.RotationActionCallback_FrostSubBlood_FS_Dump_UntilUA).
-			NewAction(dk.RotationActionCallback_FrostSubBlood_FS_Dump_UntilBR).
+			NewAction(dk.RotationActionCallback_FrostSubBlood_Dump_UntilBR).
 			NewAction(dk.RotationActionCallback_UA_Frost).
 			NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
 			NewAction(dk.RotationActionCallback_FrostSubBlood_SequenceRotation)
@@ -299,16 +265,16 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_UA_Check(sim *cor
 }
 
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Obli_Check(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	if dk.BloodTap.IsReady(sim) && dk.RuneIsDeath(0) && dk.RuneIsDeath(1) {
+	if dk.BloodTap.IsReady(sim) {
 		s.Clear().
-			NewAction(dk.RotationActionCallback_FrostSubBlood_FS_Dump_UntilBR).
-			NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
-			NewAction(dk.RotationActionCallback_BT).
+			NewAction(dk.RotationActionCallback_FrostSubBlood_Dump_UntilBR).
 			NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
+			NewAction(dk.RotationActionCallback_BT).
+			NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
 			NewAction(dk.RotationActionCallback_FrostSubBlood_SequenceRotation)
 	} else {
 		s.Clear().
-			NewAction(dk.RotationActionCallback_FrostSubBlood_FS_Dump_UntilBR).
+			NewAction(dk.RotationActionCallback_FrostSubBlood_Dump_UntilBR).
 			NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
 			NewAction(dk.RotationActionCallback_FrostSubBlood_FS_KM).
 			NewAction(dk.RotationActionCallback_BS_Frost).
@@ -389,7 +355,9 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_RecoverFromPestiM
 			NewAction(dk.RotationActionCallback_IT).
 			NewAction(dk.RotationActionCallback_PS).
 			NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
+			NewAction(dk.RotationActionCallback_Frost_FS_HB).
 			NewAction(dk.RotationActionCallback_BS).
+			NewAction(dk.RotationActionCallback_Frost_FS_HB).
 			NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
 			NewAction(dk.RotationActionCallback_FrostSubBlood_SequenceRotation)
 	} else {
@@ -400,7 +368,9 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_RecoverFromPestiM
 			NewAction(dk.RotationActionCallback_IT).
 			NewAction(dk.RotationActionCallback_PS).
 			NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
+			NewAction(dk.RotationActionCallback_Frost_FS_HB).
 			NewAction(dk.RotationActionCallback_BS).
+			NewAction(dk.RotationActionCallback_Frost_FS_HB).
 			NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
 			NewAction(dk.RotationActionCallback_FrostSubBlood_SequenceRotation)
 	}

@@ -56,7 +56,7 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBuilder,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBuilder | SpellFlagColdBlooded,
 
 		EnergyCost: core.EnergyCostOptions{
 			Cost:   rogue.costModifier(35 - float64(rogue.Talents.SlaughterFromTheShadows)),

@@ -41,7 +41,6 @@ import {
 } from '../proto/ui.js';
 
 declare var tippy: any;
-declare var WowSim: any;
 
 export class GearPicker extends Component {
 	// ItemSlot is used as the index
@@ -170,16 +169,6 @@ class ItemPicker extends Component {
 				this.player.setWowheadData(this._equippedItem, this.iconElem);
 			}
 		});
-
-		// Use hacky wowhead xhr override to 'preprocess' tooltips
-		WowSim.WhOnLoadHook = (a: any) => {
-			if (a.tooltip) {
-				// This fixes wowhead being able to parse 'pcs' aka set bonus highlighting in tooltip
-				// Their internal regex looks for 'href="/item=' but for wotlk we get 'href="/wotlk/item="'
-				a.tooltip = (<String>a.tooltip).replaceAll("href=\"/wotlk/item", "href=\"/item");
-			}
-			return a;
-		}
 	}
 
 	set item(newItem: EquippedItem | null) {
@@ -342,16 +331,6 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 			this.iconAnchor.addEventListener('click', onClickStart);
 			this.iconAnchor.addEventListener('touchstart', onClickStart);
 		}).finally(() => this.init());
-
-		// Use hacky wowhead xhr override to 'preprocess' tooltips
-		WowSim.WhOnLoadHook = (a: any) => {
-			if (a.tooltip) {
-				// This fixes wowhead being able to parse 'pcs' aka set bonus highlighting in tooltip
-				// Their internal regex looks for 'href="/item=' but for wotlk we get 'href="/wotlk/item="'
-				a.tooltip = (<String>a.tooltip).replaceAll("href=\"/wotlk/item", "href=\"/item");
-			}
-			return a;
-		}
 
 	}
 
