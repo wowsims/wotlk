@@ -16,9 +16,9 @@ func (dk *DpsDeathknight) setupFrostSubUnholyERWOpener() {
 		NewAction(dk.RotationActionCallback_BT).
 		NewAction(dk.RotationActionCallback_UA_Frost).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
+		NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_HB).
 		NewAction(dk.RotationActionCallback_Frost_Pesti_ERW).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
-		NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_HB).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_HB).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_Obli).
