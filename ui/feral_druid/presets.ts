@@ -48,7 +48,7 @@ export const DefaultRotation = FeralDruidRotation.create({
 	mangleSpam: false,
 	biteModeType: FeralDruid_Rotation_BiteModeType.Emperical,
 	biteTime: 10.0,
-	berserkBiteThresh: 30.0,
+	berserkBiteThresh: 25.0,
 	powerbear: false,
 	minRoarOffset: 14.0,
 	maintainFaerieFire: true,
