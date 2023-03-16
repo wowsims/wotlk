@@ -1,31 +1,34 @@
-import { RaidBuffs, WeaponType } from '../core/proto/common.js';
-import { PartyBuffs } from '../core/proto/common.js';
-import { IndividualBuffs } from '../core/proto/common.js';
-import { Debuffs } from '../core/proto/common.js';
-import { ItemSlot } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { Stat, PseudoStat } from '../core/proto/common.js';
-import { TristateEffect } from '../core/proto/common.js'
-import { Player } from '../core/player.js';
-import { Stats } from '../core/proto_utils/stats.js';
-import { IndividualSimUI } from '../core/individual_sim_ui.js';
+import {
+	Debuffs,
+	IndividualBuffs,
+	ItemSlot,
+	PartyBuffs,
+	PseudoStat,
+	RaidBuffs,
+	Spec,
+	Stat,
+	TristateEffect,
+	WeaponType
+} from '../core/proto/common.js';
+import {Player} from '../core/player.js';
+import {Stats} from '../core/proto_utils/stats.js';
+import {IndividualSimUI} from '../core/individual_sim_ui.js';
 
 import {
+	Rogue_Options_PoisonImbue,
 	Rogue_Rotation_AssassinationPriority as AssassinationPriority,
 	Rogue_Rotation_CombatPriority as CombatPriority,
-	Rogue_Rotation_SubtletyPriority as SubtletyPriority,
 	Rogue_Rotation_Frequency as Frequency,
+	Rogue_Rotation_SubtletyPriority as SubtletyPriority,
 	RogueMajorGlyph,
-	Rogue_Options_PoisonImbue,
 } from '../core/proto/rogue.js';
 
 import * as IconInputs from '../core/components/icon_inputs.js';
-import * as Mechanics from '../core/constants/mechanics.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
-import * as Tooltips from '../core/constants/tooltips.js';
 
 import * as RogueInputs from './inputs.js';
 import * as Presets from './presets.js';
+import {DefaultOptions} from "./presets.js";
 
 export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecRogue>) {
@@ -35,14 +38,13 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
 				'Rotations are not fully optimized, especially for non-standard setups.',
-				'Subtlety specs are not currently supported.'
 			],
 			warnings: [
 				(simUI: IndividualSimUI<Spec.SpecRogue>) => {
 					return {
 						updateOn: simUI.sim.encounter.changeEmitter,
 						getContent: () => {
-							var hasNoArmor = false
+							let hasNoArmor = false
 							for (const target of simUI.sim.encounter.getTargets()) {
 								if (target.getStats().getStat(Stat.StatArmor) <= 0) {
 									hasNoArmor = true
@@ -224,6 +226,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 			otherInputs: {
 				inputs: [
 					RogueInputs.StartingOverkillDuration,
+					RogueInputs.HonorOfThievesCritRate,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],
@@ -247,8 +250,10 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					Presets.PRERAID_PRESET_COMBAT,
 					Presets.P1_PRESET_ASSASSINATION,
 					Presets.P1_PRESET_COMBAT,
+					Presets.P1_PRESET_HEMO_SUB,
 					Presets.P2_PRESET_ASSASSINATION,
 					Presets.P2_PRESET_COMBAT,
+					Presets.P2_PRESET_HEMO_SUB,
 				],
 			},
 		})
@@ -261,28 +266,24 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					rotation.assassinationFinisherPriority = Presets.DefaultRotation.assassinationFinisherPriority;
 				}
 				rotation.combatFinisherPriority = CombatPriority.CombatPriorityUnknown;
+				rotation.subtletyFinisherPriority = SubtletyPriority.SubtletyPriorityUnknown;
+				options.honorOfThievesCritRate = -1;
 			} else if (this.player.getTalentTree() == 1) {
-				rotation.assassinationFinisherPriority = AssassinationPriority.AssassinationPriorityUnknown;
 				if (rotation.combatFinisherPriority == CombatPriority.CombatPriorityUnknown) {
 					rotation.combatFinisherPriority = Presets.DefaultRotation.combatFinisherPriority;
 				}
+				rotation.assassinationFinisherPriority = AssassinationPriority.AssassinationPriorityUnknown;
+				rotation.subtletyFinisherPriority = SubtletyPriority.SubtletyPriorityUnknown;
+				options.honorOfThievesCritRate = -1;
 			} else {
-				rotation.combatFinisherPriority = CombatPriority.CombatPriorityUnknown;
 				if (rotation.subtletyFinisherPriority == SubtletyPriority.SubtletyPriorityUnknown) {
 					rotation.subtletyFinisherPriority = Presets.DefaultRotation.subtletyFinisherPriority;
 				}
-			}
-			if (rotation.envenomEnergyThreshold == 0) {
-				rotation.envenomEnergyThreshold == Presets.DefaultRotation.envenomEnergyThreshold
-			}
-			if (rotation.envenomEnergyThresholdOverkill == 0) {
-				rotation.envenomEnergyThresholdOverkill == Presets.DefaultRotation.envenomEnergyThresholdOverkill
-			}
-			if (rotation.envenomEnergyThresholdMin == 0) {
-				rotation.envenomEnergyThresholdMin == Presets.DefaultRotation.envenomEnergyThresholdMin
-			}
-			if (rotation.envenomEnergyThresholdOverkillMin == 0) {
-				rotation.envenomEnergyThresholdOverkillMin == Presets.DefaultRotation.envenomEnergyThresholdOverkillMin
+				rotation.assassinationFinisherPriority = AssassinationPriority.AssassinationPriorityUnknown;
+				rotation.combatFinisherPriority = CombatPriority.CombatPriorityUnknown;
+				if (options.honorOfThievesCritRate == -1) {
+					options.honorOfThievesCritRate = DefaultOptions.honorOfThievesCritRate
+				}
 			}
 			this.player.setRotation(c, rotation)
 			if (!options.applyPoisonsManually) {

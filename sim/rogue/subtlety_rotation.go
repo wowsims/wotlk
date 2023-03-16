@@ -61,7 +61,7 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 				if hasCastPremeditation {
 					return Skip
 				}
-				if rogue.Preparation.IsReady(s) {
+				if rogue.Premeditation.IsReady(s) {
 					return Cast
 				}
 				return Wait
@@ -73,7 +73,7 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 				}
 				return casted
 			},
-			rogue.Preparation.DefaultCast.Cost,
+			rogue.Premeditation.DefaultCast.Cost,
 		})
 	}
 
@@ -130,10 +130,14 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 			if rogue.SliceAndDiceAura.IsActive() {
 				return Skip
 			}
-			if rogue.ComboPoints() > 0 && rogue.CurrentEnergy() > rogue.SliceAndDice.DefaultCast.Cost {
+			// end of combat handling - prefer Eviscerate over a mostly wasted SnD
+			if rogue.ComboPoints() >= 2 && rogue.sliceAndDiceDurations[rogue.ComboPoints()] >= 2*sim.GetRemainingDuration() {
+				return Skip
+			}
+			if rogue.ComboPoints() >= 1 && rogue.CurrentEnergy() > rogue.SliceAndDice.DefaultCast.Cost {
 				return Cast
 			}
-			if rogue.ComboPoints() < 1 && rogue.CurrentEnergy() > rogue.Builder.DefaultCast.Cost && rogue.getExpectedComboPointPerSecond() >= 0.7 {
+			if rogue.ComboPoints() < 1 && rogue.CurrentEnergy() > rogue.Builder.DefaultCast.Cost && rogue.getExpectedComboPointsPerSecond() >= 0.7 {
 				return Wait
 			}
 			if rogue.ComboPoints() < 1 && rogue.CurrentEnergy() > rogue.Builder.DefaultCast.Cost {
@@ -163,7 +167,7 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 				}
 				if timeLeft <= 0 {
 					if rogue.ComboPoints() < minPoints {
-						if rogue.CurrentEnergy() >= rogue.Builder.DefaultCast.Cost && rogue.getExpectedComboPointPerSecond() < 1 {
+						if rogue.CurrentEnergy() >= rogue.Builder.DefaultCast.Cost && rogue.getExpectedComboPointsPerSecond() < 1 {
 							return Build
 						} else {
 							return Wait
@@ -177,7 +181,7 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 					}
 				} else {
 					energyGained := rogue.getExpectedEnergyPerSecond() * timeLeft.Seconds()
-					comboGained := rogue.getExpectedComboPointPerSecond() * timeLeft.Seconds()
+					comboGained := rogue.getExpectedComboPointsPerSecond() * timeLeft.Seconds()
 					cpGenerated := energyGained/rogue.Builder.DefaultCast.Cost + comboGained
 					currentCP := float64(rogue.ComboPoints())
 					if currentCP+cpGenerated > 5 {
@@ -241,7 +245,7 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 		})
 	}
 
-	const ruptureMinDuration = time.Second * 10 // heuristically, 5 Rupture ticks are better DPE than other finishers
+	const ruptureMinDuration = time.Second * 8 // heuristically, 3-4 Rupture ticks are better DPE than Eviscerate or Envenom
 
 	// Rupture
 	rogue.subtletyPrios = append(rogue.subtletyPrios, subtletyPrio{
@@ -249,16 +253,11 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 			if rogue.Rupture.CurDot().IsActive() || sim.GetRemainingDuration() < ruptureMinDuration {
 				return Skip
 			}
-			if rogue.ComboPoints() > 4 && rogue.CurrentEnergy() >= rogue.Rupture.DefaultCast.Cost {
+			if rogue.ComboPoints() >= 5 && rogue.CurrentEnergy() >= rogue.Rupture.DefaultCast.Cost {
 				return Cast
 			}
-			if rogue.ComboPoints() < 5 && rogue.CurrentEnergy()+rogue.getExpectedEnergyPerSecond() >= rogue.maxEnergy {
-				return Build
-			}
-			if rogue.ComboPoints() < 5 && rogue.getExpectedComboPointPerSecond() >= 0.7 {
-				return Wait
-			}
-			if rogue.ComboPoints() < 5 && rogue.CurrentEnergy() >= rogue.Builder.DefaultCast.Cost {
+			// don't explicitly wait here, to shorten downtime
+			if rogue.ComboPoints() < 5 && rogue.CurrentEnergy() >= rogue.Builder.DefaultCast.Cost+rogue.Rupture.DefaultCast.Cost {
 				return Build
 			}
 			return Wait
@@ -273,23 +272,16 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 	if rogue.Rotation.SubtletyFinisherPriority == proto.Rogue_Rotation_SubtletyEnvenom {
 		rogue.subtletyPrios = append(rogue.subtletyPrios, subtletyPrio{
 			func(sim *core.Simulation, rogue *Rogue) PriorityAction {
-				minimumCP := int32(5)
 				if !rogue.DeadlyPoison.CurDot().Aura.IsActive() {
 					return Skip
 				}
 				if rogue.EnvenomAura.IsActive() {
 					return Skip
 				}
-				if rogue.ComboPoints() >= minimumCP && rogue.CurrentEnergy() >= rogue.Envenom.DefaultCast.Cost {
+				if rogue.ComboPoints() >= 5 && rogue.CurrentEnergy() >= rogue.Envenom.DefaultCast.Cost {
 					return Cast
 				}
-				if rogue.ComboPoints() < minimumCP && rogue.CurrentEnergy()+rogue.getExpectedEnergyPerSecond() >= rogue.maxEnergy {
-					return Build
-				}
-				if rogue.ComboPoints() < minimumCP && rogue.getExpectedComboPointPerSecond() >= 0.7 {
-					return Wait
-				}
-				if rogue.ComboPoints() < minimumCP && rogue.CurrentEnergy() >= rogue.Builder.DefaultCast.Cost {
+				if rogue.ComboPoints() < 5 && rogue.CurrentEnergy() >= rogue.Builder.DefaultCast.Cost+rogue.Envenom.DefaultCast.Cost {
 					return Build
 				}
 				return Wait
@@ -304,12 +296,14 @@ func (rogue *Rogue) setupSubtletyRotation(sim *core.Simulation) {
 	// Eviscerate
 	rogue.subtletyPrios = append(rogue.subtletyPrios, subtletyPrio{
 		func(sim *core.Simulation, rogue *Rogue) PriorityAction {
-			energyNeeded := rogue.Eviscerate.DefaultCast.Cost
-			minimumCP := int32(5)
-			if rogue.ComboPoints() >= minimumCP && rogue.CurrentEnergy() >= energyNeeded {
+			// end of combat handling - prefer Eviscerate over Builder, heuristically
+			if sim.GetRemainingDuration().Seconds() < rogue.getExpectedSecondsPerComboPoint() && rogue.ComboPoints() >= 2 && rogue.CurrentEnergy() >= rogue.Eviscerate.DefaultCast.Cost {
 				return Cast
 			}
-			if rogue.ComboPoints() < minimumCP && rogue.CurrentEnergy() >= rogue.Builder.DefaultCast.Cost+rogue.Eviscerate.DefaultCast.Cost {
+			if rogue.ComboPoints() >= 5 && rogue.CurrentEnergy() >= rogue.Eviscerate.DefaultCast.Cost {
+				return Cast
+			}
+			if rogue.ComboPoints() < 5 && rogue.CurrentEnergy() >= rogue.Builder.DefaultCast.Cost+rogue.Eviscerate.DefaultCast.Cost {
 				return Build
 			}
 			return Wait
@@ -329,10 +323,10 @@ func (rogue *Rogue) doSubtletyRotation(sim *core.Simulation) {
 		case Skip:
 			prioIndex += 1
 		case Build:
-			if rogue.HonorAmongThieves != nil && rogue.ComboPoints() == 4 && rogue.CurrentEnergy() <= rogue.maxEnergy-20 {
+			if rogue.ComboPoints() == 4 && rogue.CurrentEnergy() <= rogue.maxEnergy-10 {
 				// just wait for HaT proc - if it happens, a finisher will follow and often cost effectively 0 energy,
 				// so we add another GCD worth of energy headroom
-				rogue.WaitUntil(sim, sim.CurrentTime+time.Second)
+				rogue.DoNothing()
 				return
 			}
 

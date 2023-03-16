@@ -582,12 +582,6 @@ func (rogue *Rogue) registerHonorAmongThieves() {
 		return
 	}
 
-	// In an ideal party, you'd probably get up to 6 ability crits/s (Rate = 600).
-	//  Survival Hunters, Enhancement Shamans, and Assassination Rogues are particularly good.
-	if rogue.Options.HonorOfThievesCritRate <= 0 {
-		rogue.Options.HonorOfThievesCritRate = 400
-	}
-
 	procChance := []float64{0, 0.33, 0.66, 1}[rogue.Talents.HonorAmongThieves]
 	comboMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 51701})
 	honorAmongThievesID := core.ActionID{SpellID: 51701}
@@ -612,6 +606,16 @@ func (rogue *Rogue) registerHonorAmongThieves() {
 			aura.Activate(sim)
 		},
 		OnGain: func(_ *core.Aura, sim *core.Simulation) {
+			// In an ideal party, you'd probably get up to 6 ability crits/s (Rate = 600).
+			//  Survival Hunters, Enhancement Shamans, and Assassination Rogues are particularly good.
+			if rogue.Options.HonorOfThievesCritRate <= 0 {
+				return
+			}
+
+			if rogue.Options.HonorOfThievesCritRate > 2000 {
+				rogue.Options.HonorOfThievesCritRate = 2000 // limited, so performance doesn't suffer
+			}
+
 			rateToDuration := float64(time.Second) * 100 / float64(rogue.Options.HonorOfThievesCritRate)
 
 			pa := &core.PendingAction{}

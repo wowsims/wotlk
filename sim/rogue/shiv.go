@@ -37,18 +37,18 @@ func (rogue *Rogue) registerShivSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower())
-			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialNoBlockDodgeParryNoCrit)
 
 			if result.Landed() {
 				rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())
 
 				switch rogue.Options.OhImbue {
 				case proto.Rogue_Options_DeadlyPoison:
-					rogue.DeadlyPoison.SkipCastAndApplyEffects(sim, target)
+					rogue.DeadlyPoison.Cast(sim, target)
 				case proto.Rogue_Options_InstantPoison:
-					rogue.InstantPoison[ShivProc].SkipCastAndApplyEffects(sim, target)
+					rogue.InstantPoison[ShivProc].Cast(sim, target)
 				case proto.Rogue_Options_WoundPoison:
-					rogue.WoundPoison[ShivProc].SkipCastAndApplyEffects(sim, target)
+					rogue.WoundPoison[ShivProc].Cast(sim, target)
 				}
 			}
 		},
