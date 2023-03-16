@@ -15,12 +15,11 @@ func (warrior *Warrior) registerShockwaveSpell() {
 	warrior.Shockwave = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 46968},
 		SpellSchool: core.SpellSchoolPhysical,
-		ProcMask:    core.ProcMaskRanged, // TODO: Is this correct?
+		ProcMask:    core.ProcMaskRangedSpecial, // TODO: Is this correct?
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
 		RageCost: core.RageCostOptions{
-			Cost:   15 - float64(warrior.Talents.FocusedRage),
-			Refund: 0.8,
+			Cost: 15 - float64(warrior.Talents.FocusedRage),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -44,11 +43,7 @@ func (warrior *Warrior) registerShockwaveSpell() {
 			baseDamage := 0.75 * spell.MeleeAttackPower()
 			baseDamage *= sim.Encounter.AOECapMultiplier()
 			for _, aoeTarget := range sim.Encounter.TargetUnits {
-				result := spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
-				// TODO: AOE spells usually don't give refunds, this is probably wrong
-				if !result.Landed() {
-					spell.IssueRefund(sim)
-				}
+				spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 			}
 		},
 	})
