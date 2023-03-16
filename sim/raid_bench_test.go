@@ -19,7 +19,7 @@ var castersWithElemental = &proto.Party{
 			Spec: &proto.Player_BalanceDruid{
 				BalanceDruid: &proto.BalanceDruid{
 					Rotation: &proto.BalanceDruid_Rotation{
-						Type: proto.BalanceDruid_Rotation_Adaptive,
+						Type: proto.BalanceDruid_Rotation_Default,
 					},
 					Options: &proto.BalanceDruid_Options{
 						InnervateTarget: &proto.RaidTarget{
@@ -125,7 +125,7 @@ var castersWithResto = &proto.Party{
 			Spec: &proto.Player_BalanceDruid{
 				BalanceDruid: &proto.BalanceDruid{
 					Rotation: &proto.BalanceDruid_Rotation{
-						Type: proto.BalanceDruid_Rotation_Adaptive,
+						Type: proto.BalanceDruid_Rotation_Default,
 					},
 					Options: &proto.BalanceDruid_Options{
 						InnervateTarget: &proto.RaidTarget{

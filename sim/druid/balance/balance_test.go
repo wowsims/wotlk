@@ -61,7 +61,7 @@ var PlayerOptionsAdaptive = &proto.Player_BalanceDruid{
 			InnervateTarget: &proto.RaidTarget{TargetIndex: 0}, // self innervate
 		},
 		Rotation: &proto.BalanceDruid_Rotation{
-			Type: proto.BalanceDruid_Rotation_Adaptive,
+			Type: proto.BalanceDruid_Rotation_Default,
 		},
 	},
 }
@@ -72,7 +72,7 @@ var PlayerOptionsAOE = &proto.Player_BalanceDruid{
 			InnervateTarget: &proto.RaidTarget{TargetIndex: 0}, // self innervate
 		},
 		Rotation: &proto.BalanceDruid_Rotation{
-			Type: proto.BalanceDruid_Rotation_Adaptive,
+			Type: proto.BalanceDruid_Rotation_Default,
 		},
 	},
 }

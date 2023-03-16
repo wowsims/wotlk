@@ -1,7 +1,7 @@
 import {
 	Consumes,
 	Debuffs,
-	EquipmentSpec,
+	EquipmentSpec, Explosive,
 	Flask,
 	Food,
 	Glyphs,
@@ -20,6 +20,7 @@ import {
 	BalanceDruid_Rotation_IsUsage,
 	BalanceDruid_Rotation_MfUsage,
 	BalanceDruid_Rotation_Type as RotationType,
+	BalanceDruid_Rotation_WrathUsage,
 	DruidMajorGlyph,
 	DruidMinorGlyph,
 } from '../core/proto/druid.js';
@@ -33,7 +34,7 @@ import {NO_TARGET} from "../core/proto_utils/utils";
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
-export const StandardTalents = {
+export const Phase1Talents = {
 	name: 'Phase 1',
 	data: SavedTalents.create({
 		talentsString: '5032003115331303213305311231--205003012',
@@ -48,14 +49,29 @@ export const StandardTalents = {
 	}),
 };
 
+export const Phase2Talents = {
+	name: 'Phase 2',
+	data: SavedTalents.create({
+		talentsString: '5012203115331303213305311231--205003012',
+		glyphs: Glyphs.create({
+			major1: DruidMajorGlyph.GlyphOfStarfire,
+			major2: DruidMajorGlyph.GlyphOfInsectSwarm,
+			major3: DruidMajorGlyph.GlyphOfStarfall,
+			minor1: DruidMinorGlyph.GlyphOfTyphoon,
+			minor2: DruidMinorGlyph.GlyphOfUnburdenedRebirth,
+			minor3: DruidMinorGlyph.GlyphOfTheWild,
+		}),
+	}),
+};
+
 export const DefaultRotation = BalanceDruidRotation.create({
-	type: RotationType.Adaptive,
+	type: RotationType.Default,
 	maintainFaerieFire: true,
 	useSmartCooldowns: true,
-	mfUsage: BalanceDruid_Rotation_MfUsage.NoMf,
+	mfUsage: BalanceDruid_Rotation_MfUsage.BeforeLunar,
 	isUsage: BalanceDruid_Rotation_IsUsage.MaximizeIs,
-	useStarfire:       true,
-	useWrath:          true,
+	wrathUsage: BalanceDruid_Rotation_WrathUsage.RegularWrath,
+	useStarfire: true,
 	useBattleRes: false,
 	playerLatency: 200,
 });
@@ -71,7 +87,7 @@ export const DefaultConsumes = Consumes.create({
     flask: Flask.FlaskOfTheFrostWyrm,
     food: Food.FoodFishFeast,
     prepopPotion: Potions.PotionOfWildMagic,
-    thermalSapper: true,
+	fillerExplosive: Explosive.ExplosiveSaroniteBomb,
 });
 
 export const DefaultRaidBuffs = RaidBuffs.create({
@@ -87,6 +103,7 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
 	trueshotAura: true,
 	wrathOfAirTotem: true,
+	demonicPact: 4500,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
