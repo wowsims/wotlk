@@ -800,15 +800,15 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-TinyAbominationinaJar-50351"
  value: {
-  dps: 1662.63194
-  tps: 4289.80885
+  dps: 1625.83188
+  tps: 4197.58407
  }
 }
 dps_results: {
  key: "TestProtectionWarrior-AllItems-TinyAbominationinaJar-50706"
  value: {
-  dps: 1637.19911
-  tps: 4232.59645
+  dps: 1650.16161
+  tps: 4257.54593
  }
 }
 dps_results: {

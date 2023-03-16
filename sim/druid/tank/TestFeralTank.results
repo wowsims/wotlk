@@ -928,16 +928,16 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-TinyAbominationinaJar-50351"
  value: {
-  dps: 2637.5111
-  tps: 5510.10351
+  dps: 2592.10195
+  tps: 5399.28229
   dtps: 2.18293
  }
 }
 dps_results: {
  key: "TestFeralTank-AllItems-TinyAbominationinaJar-50706"
  value: {
-  dps: 2644.91515
-  tps: 5523.02694
+  dps: 2618.50773
+  tps: 5456.34649
   dtps: 2.18293
  }
 }

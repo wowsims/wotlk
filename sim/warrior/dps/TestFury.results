@@ -762,15 +762,15 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-TinyAbominationinaJar-50351"
  value: {
-  dps: 6814.2821
-  tps: 5044.11289
+  dps: 6818.5214
+  tps: 5039.7778
  }
 }
 dps_results: {
  key: "TestFury-AllItems-TinyAbominationinaJar-50706"
  value: {
-  dps: 6864.66631
-  tps: 5080.46659
+  dps: 6895.82342
+  tps: 5099.08107
  }
 }
 dps_results: {
