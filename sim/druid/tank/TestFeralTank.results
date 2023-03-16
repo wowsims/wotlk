@@ -616,8 +616,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-Malfurion'sBattlegear"
  value: {
-  dps: 2584.73931
-  tps: 5351.12762
+  dps: 2549.75327
+  tps: 5280.3616
   dtps: 2.34008
  }
 }
