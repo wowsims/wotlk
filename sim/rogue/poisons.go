@@ -98,17 +98,17 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 			if rogue.lastDeadlyPoisonProcMask.Matches(core.ProcMaskMeleeMH) {
 				switch rogue.Options.OhImbue {
 				case proto.Rogue_Options_InstantPoison:
-					rogue.InstantPoison[DeadlyProc].SkipCastAndApplyEffects(sim, target)
+					rogue.InstantPoison[DeadlyProc].Cast(sim, target)
 				case proto.Rogue_Options_WoundPoison:
-					rogue.WoundPoison[DeadlyProc].SkipCastAndApplyEffects(sim, target)
+					rogue.WoundPoison[DeadlyProc].Cast(sim, target)
 				}
 			}
 			if rogue.lastDeadlyPoisonProcMask.Matches(core.ProcMaskMeleeOH) {
 				switch rogue.Options.MhImbue {
 				case proto.Rogue_Options_InstantPoison:
-					rogue.InstantPoison[DeadlyProc].SkipCastAndApplyEffects(sim, target)
+					rogue.InstantPoison[DeadlyProc].Cast(sim, target)
 				case proto.Rogue_Options_WoundPoison:
-					rogue.WoundPoison[DeadlyProc].SkipCastAndApplyEffects(sim, target)
+					rogue.WoundPoison[DeadlyProc].Cast(sim, target)
 				}
 			}
 			dot.Refresh(sim)
@@ -118,7 +118,7 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 
 func (rogue *Rogue) procDeadlyPoison(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 	rogue.lastDeadlyPoisonProcMask = spell.ProcMask
-	rogue.DeadlyPoison.SkipCastAndApplyEffects(sim, result.Target)
+	rogue.DeadlyPoison.Cast(sim, result.Target)
 }
 
 func (rogue *Rogue) applyDeadlyPoison() {
@@ -170,7 +170,7 @@ func (rogue *Rogue) applyWoundPoison() {
 				return
 			}
 			if rogue.woundPoisonPPMM.Proc(sim, spell.ProcMask, "Wound Poison") {
-				rogue.WoundPoison[NormalProc].SkipCastAndApplyEffects(sim, result.Target)
+				rogue.WoundPoison[NormalProc].Cast(sim, result.Target)
 			}
 		},
 	})
@@ -320,7 +320,7 @@ func (rogue *Rogue) applyInstantPoison() {
 				return
 			}
 			if rogue.instantPoisonPPMM.Proc(sim, spell.ProcMask, "Instant Poison") {
-				rogue.InstantPoison[NormalProc].SkipCastAndApplyEffects(sim, result.Target)
+				rogue.InstantPoison[NormalProc].Cast(sim, result.Target)
 			}
 		},
 	})

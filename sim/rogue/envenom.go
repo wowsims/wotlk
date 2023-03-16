@@ -87,3 +87,7 @@ func (rogue *Rogue) registerEnvenom() {
 		},
 	})
 }
+
+func (rogue *Rogue) EnvenomDuration(comboPoints int32) time.Duration {
+	return time.Second * (1 + time.Duration(comboPoints))
+}

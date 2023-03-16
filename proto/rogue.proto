@@ -176,39 +176,25 @@ message Rogue {
 		SubtletyPriority subtlety_finisher_priority = 6;
 
 		int32 minimum_combo_points_primary_finisher = 7;
-
 		int32 minimum_combo_points_secondary_finisher = 8;
 
 		Frequency MultiTargetSliceFrequency = 9;
-
 		int32 minimum_combo_points_multi_target_slice = 10;
 
-		int32 envenom_pool_amount = 11;
+		reserved 11, 19, 21, 22, 23; // the various envenom pooling parameters
 
 		bool use_feint = 12;
 
 		bool allow_cp_overcap = 13;
-
 		bool allow_cp_undercap = 14;
 
 		bool open_with_garrote = 15;
-
 		bool open_with_premeditation = 16;
-
 		bool open_with_shadowstep = 17;
 
 		bool rupture_for_bleed = 18;
 
-		int32 envenom_energy_threshold = 19;
-
 		bool hemo_with_dagger = 20;
-
-		int32 envenom_energy_threshold_min = 21;
-		
-		int32 envenom_energy_threshold_overkill = 22;
-
-		int32 envenom_energy_threshold_overkill_min = 23;
-
 		bool use_ghostly_strike = 24;
 	}
 	Rotation rotation = 1;

@@ -395,7 +395,6 @@ func (rogue *Rogue) setPriorityItems(sim *core.Simulation) {
 			MaximumComboPoints: 5,
 			Aura:               rogue.EnvenomAura,
 			EnergyCost:         rogue.Envenom.DefaultCast.Cost,
-			PoolAmount:         float64(rogue.Rotation.EnvenomPoolAmount),
 			GetDuration: func(rogue *Rogue, cp int32) time.Duration {
 				return rogue.EnvenomAura.Duration
 			},

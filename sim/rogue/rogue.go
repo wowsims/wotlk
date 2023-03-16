@@ -187,7 +187,6 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerEnvenom()
 
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()
-	rogue.DelayDPSCooldownsForArmorDebuffs(time.Second * 10)
 }
 
 func (rogue *Rogue) getExpectedEnergyPerSecond() float64 {
@@ -203,9 +202,13 @@ func (rogue *Rogue) ApplyEnergyTickMultiplier(multiplier float64) {
 	rogue.EnergyTickMultiplier += multiplier
 }
 
-func (rogue *Rogue) getExpectedComboPointPerSecond() float64 {
+func (rogue *Rogue) getExpectedComboPointsPerSecond() float64 {
+	return 1 / rogue.getExpectedSecondsPerComboPoint()
+}
+
+func (rogue *Rogue) getExpectedSecondsPerComboPoint() float64 {
 	honorAmongThievesChance := []float64{0, 0.33, 0.66, 1.0}[rogue.Talents.HonorAmongThieves]
-	return 1 / (1 + 1/(float64(rogue.Options.HonorOfThievesCritRate+100)/100*honorAmongThievesChance))
+	return 1 + 1/(float64(rogue.Options.HonorOfThievesCritRate+100)/100*honorAmongThievesChance)
 }
 
 func (rogue *Rogue) Reset(sim *core.Simulation) {

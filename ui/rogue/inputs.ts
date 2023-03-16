@@ -43,6 +43,13 @@ export const StartingOverkillDuration = InputHelpers.makeSpecOptionsNumberInput<
 	labelTooltip: 'Initial Overkill buff duration at the start of each iteration.',
 });
 
+export const HonorOfThievesCritRate = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecRogue>({
+	fieldName: 'honorOfThievesCritRate',
+	label: 'Honor of Thieves Crit Rate',
+	labelTooltip: 'Number of crits other group members generate within 100 seconds',
+	showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().honorAmongThieves > 0
+});
+
 export const ApplyPoisonsManually = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecRogue>({
 	fieldName: 'applyPoisonsManually',
 	label: 'Configure poisons manually',
@@ -96,34 +103,10 @@ export const RogueRotationConfig = {
 			],
 			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().honorAmongThieves > 0
 		}),
-		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
-			fieldName: 'envenomEnergyThreshold',
-			label: 'Energy Threshold (4cp Envenom)',
-			labelTooltip: 'Amount of total energy to pool before casting a 4 point Envenom.',
-			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
-		}),
-		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
-			fieldName: 'envenomEnergyThresholdOverkill',
-			label: 'Energy Threshold (4cp Envenom w/ Overkill)',
-			labelTooltip: 'Amount of total energy to pool before casting a 4 point Envenom.',
-			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
-		}),
-		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
-			fieldName: 'envenomEnergyThresholdMin',
-			label: 'Energy Threshold (5cp Envenom)',
-			labelTooltip: 'Amount of total energy to pool before casting a 5 point Envenom.',
-			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
-		}),
-		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
-			fieldName: 'envenomEnergyThresholdOverkillMin',
-			label: 'Energy Threshold (5cp Envenom w/ Overkill)',
-			labelTooltip: 'Amount of total energy to pool before casting a 4 point Envenom.',
-			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
-		}),
 		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, Frequency>({
 			fieldName: 'multiTargetSliceFrequency',
 			label: 'Multi-Target S&D',
-			labelTooltip: 'Frequency of Slice and Dice cast in multi-target scnearios.',
+			labelTooltip: 'Frequency of Slice and Dice cast in multi-target scenarios.',
 			values: [
 				{ name: 'Never', value: Frequency.Never },
 				{ name: 'Once', value: Frequency.Once },
