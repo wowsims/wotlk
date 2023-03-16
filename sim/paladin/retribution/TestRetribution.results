@@ -904,16 +904,16 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-TinyAbominationinaJar-50351"
  value: {
-  dps: 6429.30881
-  tps: 6531.1204
+  dps: 6449.3801
+  tps: 6551.14705
   dtps: 9.92959
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-TinyAbominationinaJar-50706"
  value: {
-  dps: 6449.22583
-  tps: 6551.10636
+  dps: 6487.15842
+  tps: 6589.14091
   dtps: 9.92959
  }
 }
