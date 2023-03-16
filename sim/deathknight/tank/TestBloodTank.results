@@ -811,15 +811,15 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-TinyAbominationinaJar-50351"
  value: {
-  dps: 1451.60872
-  tps: 4426.83952
+  dps: 1457.07246
+  tps: 4439.7017
  }
 }
 dps_results: {
  key: "TestBloodTank-AllItems-TinyAbominationinaJar-50706"
  value: {
-  dps: 1456.41818
-  tps: 4441.74418
+  dps: 1460.3386
+  tps: 4447.53897
  }
 }
 dps_results: {

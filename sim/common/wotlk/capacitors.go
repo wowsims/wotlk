@@ -155,6 +155,7 @@ func init() {
 		MaxDmg: 2275,
 	})
 
+	// see various posts around https://web.archive.org/web/20100530203708/http://elitistjerks.com/f78/t39136-combat_mutilate_spreadsheets_updated_3_3_a/p96/#post1518212
 	NewItemEffectWithHeroic(func(isHeroic bool) {
 		name := "Tiny Abomination in a Jar"
 		itemID := int32(50351)
@@ -175,34 +176,42 @@ func init() {
 			var ohSpell *core.Spell
 			initSpells := func() {
 				mhSpell = character.GetOrRegisterSpell(core.SpellConfig{
-					ActionID:         core.ActionID{ItemID: itemID}.WithTag(1),
+					ActionID:         core.ActionID{SpellID: 71433}, // "Manifest Anger"
 					SpellSchool:      core.SpellSchoolPhysical,
-					ProcMask:         core.ProcMaskMeleeMHAuto,
+					ProcMask:         core.ProcMaskMeleeMHSpecial,
 					Flags:            core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete,
 					DamageMultiplier: character.AutoAttacks.MHConfig.DamageMultiplier * 0.5,
 					CritMultiplier:   character.AutoAttacks.MHConfig.CritMultiplier,
 					ThreatMultiplier: character.AutoAttacks.MHConfig.ThreatMultiplier,
-					ApplyEffects:     character.AutoAttacks.MHConfig.ApplyEffects,
+					ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+						baseDamage := character.MHWeaponDamage(sim, spell.MeleeAttackPower())
+						spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
+					},
 				})
 
 				if character.AutoAttacks.IsDualWielding {
 					ohSpell = character.GetOrRegisterSpell(core.SpellConfig{
-						ActionID:         core.ActionID{ItemID: itemID}.WithTag(2),
+						ActionID:         core.ActionID{SpellID: 71434}, // "Manifest Anger"
 						SpellSchool:      core.SpellSchoolPhysical,
-						ProcMask:         core.ProcMaskMeleeOHAuto,
+						ProcMask:         core.ProcMaskMeleeOHSpecial,
 						Flags:            core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete,
-						DamageMultiplier: character.AutoAttacks.MHConfig.DamageMultiplier * 0.5,
+						DamageMultiplier: character.AutoAttacks.OHConfig.DamageMultiplier * 0.5,
 						CritMultiplier:   character.AutoAttacks.OHConfig.CritMultiplier,
 						ThreatMultiplier: character.AutoAttacks.OHConfig.ThreatMultiplier,
-						ApplyEffects:     character.AutoAttacks.OHConfig.ApplyEffects,
+						ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+							baseDamage := character.OHWeaponDamage(sim, spell.MeleeAttackPower())
+							spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
+						},
 					})
 				}
 			}
 
+			firstProc := core.MainHand
+
 			capacitorAura := makeCapacitorAura(&character.Unit, CapacitorAura{
 				Aura: core.Aura{
 					Label:     name,
-					ActionID:  core.ActionID{ItemID: itemID},
+					ActionID:  core.ActionID{SpellID: 71432}, // "Motes of Anger", the aura is either 71406 or 71545 (H) ("Anger Capacitor")
 					Duration:  core.NeverExpires,
 					MaxStacks: maxStacks,
 					OnInit: func(aura *core.Aura, sim *core.Simulation) {
@@ -210,14 +219,10 @@ func init() {
 					},
 				},
 				Handler: func(sim *core.Simulation) {
-					if character.AutoAttacks.IsDualWielding {
-						if sim.RandomFloat("Tiny Abom") < 0.5 {
-							mhSpell.Cast(sim, character.CurrentTarget)
-						} else {
-							ohSpell.Cast(sim, character.CurrentTarget)
-						}
-					} else {
+					if firstProc == core.MainHand {
 						mhSpell.Cast(sim, character.CurrentTarget)
+					} else {
+						ohSpell.Cast(sim, character.CurrentTarget)
 					}
 				},
 			})
@@ -227,8 +232,18 @@ func init() {
 				Callback:   core.CallbackOnSpellHitDealt,
 				ProcMask:   core.ProcMaskMelee,
 				Outcome:    core.OutcomeLanded,
-				ProcChance: 0.45,
-				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
+				ProcChance: 0.5,
+				Handler: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+					if spell == mhSpell || spell == ohSpell { // can't proc itself
+						return
+					}
+					if !capacitorAura.IsActive() {
+						if spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
+							firstProc = core.MainHand
+						} else {
+							firstProc = core.OffHand
+						}
+					}
 					capacitorAura.Activate(sim)
 					capacitorAura.AddStack(sim)
 				},
