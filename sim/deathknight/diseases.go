@@ -102,11 +102,11 @@ func (dk *Deathknight) registerFrostFever() {
 				firstTsApply := !flagTs[target.Index]
 				flagTs[target.Index] = true
 				// 80.0 * 0.32 * 1.15 base, 0.055 * 1.15
-				dot.SnapshotBaseDamage = (29.44 + 0.06325*dk.getImpurityBonus(dot.Spell)) *
-					core.TernaryFloat64(firstTsApply, 1.0, dk.RoRTSBonus(target))
+				dot.SnapshotBaseDamage = 29.44 + 0.06325*dk.getImpurityBonus(dot.Spell)
 
 				if !isRollover {
 					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+					dot.SnapshotAttackerMultiplier *= core.TernaryFloat64(firstTsApply, 1.0, dk.RoRTSBonus(target))
 				}
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
@@ -166,12 +166,12 @@ func (dk *Deathknight) registerBloodPlague() {
 				firstRorApply := !flagRor[target.Index]
 				flagRor[target.Index] = true
 				// 80.0 * 0.394 * 1.15 for base, 0.055 * 1.15 for ap coeff
-				dot.SnapshotBaseDamage = (36.248 + 0.06325*dk.getImpurityBonus(dot.Spell)) *
-					core.TernaryFloat64(firstRorApply, 1.0, dk.RoRTSBonus(target))
+				dot.SnapshotBaseDamage = (36.248 + 0.06325*dk.getImpurityBonus(dot.Spell))
 
 				if !isRollover {
 					dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
 					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+					dot.SnapshotAttackerMultiplier *= core.TernaryFloat64(firstRorApply, 1.0, dk.RoRTSBonus(target))
 				}
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
