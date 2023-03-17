@@ -192,7 +192,7 @@ func (cat *FeralDruid) calcBuilderDpe(sim *core.Simulation) (float64, float64) {
 func (cat *FeralDruid) clipRoar(sim *core.Simulation) bool {
 	ripDot := cat.Rip.CurDot()
 	ripdotRemaining := ripDot.RemainingDuration(sim)
-	if !ripDot.IsActive() || (ripdotRemaining < 10*time.Second) {
+	if !ripDot.IsActive() || (sim.GetRemainingDuration()-ripdotRemaining < 10*time.Second) {
 		return false
 	}
 
