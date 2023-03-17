@@ -98,7 +98,7 @@ func (cat *FeralDruid) checkReplaceMaul(sim *core.Simulation) *core.Spell {
 		lacerateNext = !lacerateDot.IsActive() || (lacerateDot.GetStacks() < 5) || (lacerateDot.RemainingDuration(sim) <= lacerateLeeway)
 		emergencyLeeway := gcdTimeToRdy + (3 * time.Second) + (2 * cat.latency)
 		emergencyLacerateNext = lacerateDot.IsActive() && (lacerateDot.RemainingDuration(sim) <= emergencyLeeway)
-		mangleNext = cat.MangleBear != nil && !lacerateNext && (!cat.bleedAura.IsActive() || (cat.bleedAura.RemainingDuration(sim) < gcdTimeToRdy+time.Second*3))
+		mangleNext = cat.MangleBear != nil && !lacerateNext && (!cat.bleedAura.IsActive() || (cat.bleedAura.RemainingDuration(sim) < gcdTimeToRdy+time.Second*3) || (sim.CurrentTime-cat.lastShift < time.Duration(1500*time.Millisecond)))
 	} else {
 		mangleNext = cat.MangleBear != nil && cat.MangleBear.TimeToReady(sim) < gcdTimeToRdy
 		lacerateNext = lacerateDot.IsActive() && (lacerateDot.GetStacks() < 5 || lacerateDot.RemainingDuration(sim) < gcdTimeToRdy+(time.Second*4))
@@ -138,6 +138,7 @@ func (cat *FeralDruid) shiftBearCat(sim *core.Simulation, powershift bool) bool 
 		toCat = !toCat
 	}
 
+	cat.lastShift = sim.CurrentTime
 	if toCat {
 		return cat.CatForm.Cast(sim, nil)
 	} else {
@@ -602,7 +603,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		// after pooling in order to save the Lacerate. Instead, it is
 		// preferable to just Shred and bearweave early.
 		nextCastEnd := sim.CurrentTime + timeToNextAction + cat.latency + time.Second*2
-		ignorePooling := rotation.BearweaveType == proto.FeralDruid_Rotation_Lacerate && lacerateDot.IsActive() && (lacerateDot.ExpiresAt().Seconds()-1.5-latencySecs <= nextCastEnd.Seconds())
+		ignorePooling := cat.BerserkAura.IsActive() || (rotation.BearweaveType == proto.FeralDruid_Rotation_Lacerate && lacerateDot.IsActive() && (lacerateDot.ExpiresAt().Seconds()-1.5-latencySecs <= nextCastEnd.Seconds()))
 
 		if ignorePooling {
 			if curEnergy >= cat.CurrentShredCost() {
