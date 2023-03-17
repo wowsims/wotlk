@@ -76,6 +76,7 @@ type FeralDruid struct {
 	maxRipTicks    int32
 	berserkUsed    bool
 	bleedAura      *core.Aura
+	lastShift      time.Duration
 
 	rotationAction *core.PendingAction
 }
