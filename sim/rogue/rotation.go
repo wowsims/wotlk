@@ -16,14 +16,12 @@ const (
 	Build
 	Cast
 	Wait
+	Once
 )
 
-type GetAction func(*core.Simulation, *Rogue) PriorityAction
-type DoAction func(*core.Simulation, *Rogue) bool
-
 type prio struct {
-	check GetAction
-	cast  DoAction
+	check func(sim *core.Simulation, rogue *Rogue) PriorityAction
+	cast  func(sim *core.Simulation, rogue *Rogue) bool
 	cost  float64
 }
 
@@ -55,7 +53,7 @@ func (rogue *Rogue) setupRotation(sim *core.Simulation) {
 	case rogue.Talents.HonorAmongThieves > 0 && rogue.Env.GetNumTargets() <= 3:
 		rogue.rotation = &subtlety_rotation{}
 	default:
-		rogue.rotation = &combat_rotation{}
+		rogue.rotation = &generic_rotation{}
 	}
 	rogue.rotation.setup(sim, rogue)
 }

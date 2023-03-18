@@ -29,10 +29,6 @@ const (
 	SpellFlagBuilder     = core.SpellFlagAgentReserved2
 	SpellFlagFinisher    = core.SpellFlagAgentReserved3
 	SpellFlagColdBlooded = core.SpellFlagAgentReserved4
-
-	AssassinationTree = 0
-	CombatTree        = 1
-	SubtletyTree      = 2
 )
 
 var TalentTreeSizes = [3]int{27, 28, 28}
@@ -57,8 +53,6 @@ type Rogue struct {
 
 	maxEnergy float64
 
-	BuilderPoints    int32
-	Builder          *core.Spell
 	Backstab         *core.Spell
 	BladeFlurry      *core.Spell
 	DeadlyPoison     *core.Spell

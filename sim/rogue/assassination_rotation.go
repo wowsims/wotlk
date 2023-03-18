@@ -2,6 +2,7 @@ package rogue
 
 import (
 	"github.com/wowsims/wotlk/sim/core/stats"
+	"golang.org/x/exp/slices"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -10,34 +11,27 @@ import (
 
 type assassination_rotation struct {
 	prios []prio
+
+	builder *core.Spell
 }
 
 func (x *assassination_rotation) setup(sim *core.Simulation, rogue *Rogue) {
-	rogue.Builder = rogue.Mutilate
-	rogue.BuilderPoints = 2
+	x.builder = rogue.Mutilate
 
 	x.prios = x.prios[:0]
 	rogue.bleedCategory = rogue.CurrentTarget.GetExclusiveEffectCategory(core.BleedEffectCategory)
 
 	// Garrote
 	if rogue.Rotation.OpenWithGarrote {
-		hasCastGarrote := false
 		x.prios = append(x.prios, prio{
 			func(sim *core.Simulation, rogue *Rogue) PriorityAction {
-				if hasCastGarrote {
-					return Skip
-				}
 				if rogue.CurrentEnergy() > rogue.Garrote.DefaultCast.Cost {
-					return Cast
+					return Once
 				}
 				return Wait
 			},
 			func(sim *core.Simulation, rogue *Rogue) bool {
-				casted := rogue.Garrote.Cast(sim, rogue.CurrentTarget)
-				if casted {
-					hasCastGarrote = true
-				}
-				return casted
+				return rogue.Garrote.Cast(sim, rogue.CurrentTarget)
 			},
 			rogue.Garrote.DefaultCast.Cost,
 		})
@@ -52,7 +46,7 @@ func (x *assassination_rotation) setup(sim *core.Simulation, rogue *Rogue) {
 			if rogue.ComboPoints() > 0 && rogue.CurrentEnergy() > rogue.SliceAndDice.DefaultCast.Cost {
 				return Cast
 			}
-			if rogue.ComboPoints() < 1 && rogue.CurrentEnergy() > rogue.Builder.DefaultCast.Cost {
+			if rogue.ComboPoints() < 1 && rogue.CurrentEnergy() > x.builder.DefaultCast.Cost {
 				return Build
 			}
 			return Wait
@@ -110,7 +104,7 @@ func (x *assassination_rotation) setup(sim *core.Simulation, rogue *Rogue) {
 				}
 				if timeLeft <= 0 {
 					if rogue.ComboPoints() < minPoints {
-						if rogue.CurrentEnergy() >= rogue.Builder.DefaultCast.Cost {
+						if rogue.CurrentEnergy() >= x.builder.DefaultCast.Cost {
 							return Build
 						} else {
 							return Wait
@@ -124,13 +118,13 @@ func (x *assassination_rotation) setup(sim *core.Simulation, rogue *Rogue) {
 					}
 				} else {
 					energyGained := rogue.getExpectedEnergyPerSecond() * timeLeft.Seconds()
-					cpGenerated := energyGained / rogue.Builder.DefaultCast.Cost
+					cpGenerated := energyGained / x.builder.DefaultCast.Cost
 					currentCp := float64(rogue.ComboPoints())
 					if currentCp+cpGenerated > 5 {
 						return Skip
 					} else {
 						if currentCp < 5 {
-							if rogue.CurrentEnergy() >= rogue.Builder.DefaultCast.Cost {
+							if rogue.CurrentEnergy() >= x.builder.DefaultCast.Cost {
 								return Build
 							}
 						}
@@ -162,7 +156,7 @@ func (x *assassination_rotation) setup(sim *core.Simulation, rogue *Rogue) {
 				if rogue.ComboPoints() > 0 && rogue.CurrentEnergy() >= rogue.Rupture.DefaultCast.Cost {
 					return Cast
 				}
-				if rogue.ComboPoints() < 1 && rogue.CurrentEnergy() >= rogue.Builder.DefaultCast.Cost {
+				if rogue.ComboPoints() < 1 && rogue.CurrentEnergy() >= x.builder.DefaultCast.Cost {
 					return Build
 				}
 				return Wait
@@ -245,7 +239,7 @@ func (x *assassination_rotation) setup(sim *core.Simulation, rogue *Rogue) {
 
 				// use Rupture if you can re-cast Envenom with minimal delay, hoping for a Ruthlessness proc ;)
 				avail := e + rogue.EnvenomAura.RemainingDuration(sim).Seconds()*energyPerSecond()
-				cost := rogue.Rupture.DefaultCast.Cost + rogue.Builder.DefaultCast.Cost + rogue.Envenom.DefaultCast.Cost
+				cost := rogue.Rupture.DefaultCast.Cost + x.builder.DefaultCast.Cost + rogue.Envenom.DefaultCast.Cost
 				if avail >= cost {
 					return Cast
 				}
@@ -258,7 +252,7 @@ func (x *assassination_rotation) setup(sim *core.Simulation, rogue *Rogue) {
 				if cp >= 4 && e >= rogue.Rupture.DefaultCast.Cost {
 					return Cast
 				}
-				if cp < 4 && e >= rogue.Builder.DefaultCast.Cost {
+				if cp < 4 && e >= x.builder.DefaultCast.Cost {
 					return Build
 				}
 				return Wait
@@ -275,7 +269,7 @@ func (x *assassination_rotation) setup(sim *core.Simulation, rogue *Rogue) {
 		func(sim *core.Simulation, rogue *Rogue) PriorityAction {
 			e, cp := rogue.CurrentEnergy(), rogue.ComboPoints()
 
-			costEnv, costMut := rogue.Envenom.DefaultCast.Cost, rogue.Builder.DefaultCast.Cost
+			costEnv, costMut := rogue.Envenom.DefaultCast.Cost, x.builder.DefaultCast.Cost
 
 			// end of combat handling - possibly use low CP Envenoms instead of doing nothing
 			if dur := sim.GetRemainingDuration(); dur <= 10*time.Second {
@@ -313,7 +307,7 @@ func (x *assassination_rotation) setup(sim *core.Simulation, rogue *Rogue) {
 				return Cast
 			}
 
-			if e >= rogue.Builder.DefaultCast.Cost {
+			if e >= x.builder.DefaultCast.Cost {
 				return Build
 			}
 			return Wait
@@ -329,34 +323,29 @@ func (x *assassination_rotation) setup(sim *core.Simulation, rogue *Rogue) {
 }
 
 func (x *assassination_rotation) run(sim *core.Simulation, rogue *Rogue) {
-	prioIndex := 0
-	for prioIndex < len(x.prios) {
-		prio := x.prios[prioIndex]
-		switch prio.check(sim, rogue) {
+	for i, p := range x.prios {
+		switch p.check(sim, rogue) {
 		case Skip:
-			prioIndex += 1
+			continue
 		case Build:
-			if rogue.GCD.IsReady(sim) {
-				if !rogue.Builder.Cast(sim, rogue.CurrentTarget) {
-					rogue.WaitForEnergy(sim, rogue.Builder.DefaultCast.Cost)
-					return
-				}
+			if !x.builder.Cast(sim, rogue.CurrentTarget) {
+				rogue.WaitForEnergy(sim, x.builder.DefaultCast.Cost)
+				return
 			}
-			rogue.DoNothing()
-			return
 		case Cast:
-			if rogue.GCD.IsReady(sim) {
-				if !prio.cast(sim, rogue) {
-					rogue.WaitForEnergy(sim, prio.cost)
-					return
-				}
+			if !p.cast(sim, rogue) {
+				rogue.WaitForEnergy(sim, p.cost)
+				return
 			}
-			rogue.DoNothing()
-			return
+		case Once:
+			if !p.cast(sim, rogue) {
+				rogue.WaitForEnergy(sim, p.cost)
+				return
+			}
+			x.prios = slices.Delete(x.prios, i, i+1)
 		case Wait:
-			rogue.DoNothing()
-			return
 		}
+		break
 	}
 	rogue.DoNothing()
 }

@@ -528,14 +528,14 @@ func (rogue *Rogue) registerAdrenalineRushCD() {
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.ResetEnergyTick(sim)
 			rogue.ApplyEnergyTickMultiplier(1.0)
-			if r, ok := rogue.rotation.(*combat_rotation); ok {
+			if r, ok := rogue.rotation.(*generic_rotation); ok {
 				r.planRotation(sim, rogue)
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.ResetEnergyTick(sim)
 			rogue.ApplyEnergyTickMultiplier(-1.0)
-			if r, ok := rogue.rotation.(*combat_rotation); ok {
+			if r, ok := rogue.rotation.(*generic_rotation); ok {
 				r.planRotation(sim, rogue)
 			}
 		},

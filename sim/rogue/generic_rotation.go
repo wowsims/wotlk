@@ -40,25 +40,28 @@ const (
 type generic_rotation struct {
 	priorityItems []roguePriorityItem
 	rotationItems []rogueRotationItem
+
+	builder       *core.Spell
+	builderPoints int32
 }
 
 func (x *generic_rotation) setup(sim *core.Simulation, rogue *Rogue) {
-	rogue.Builder = rogue.SinisterStrike
-	rogue.BuilderPoints = 1
+	x.builder = rogue.SinisterStrike
+	x.builderPoints = 1
 
 	if rogue.CanMutilate() {
-		rogue.Builder = rogue.Mutilate
-		rogue.BuilderPoints = 2
+		x.builder = rogue.Mutilate
+		x.builderPoints = 2
 	}
 
 	if rogue.Talents.Hemorrhage {
-		rogue.Builder = rogue.Hemorrhage
-		rogue.BuilderPoints = 1
+		x.builder = rogue.Hemorrhage
+		x.builderPoints = 1
 	}
 
 	if rogue.Talents.SlaughterFromTheShadows > 0 && !rogue.Rotation.HemoWithDagger && !rogue.PseudoStats.InFrontOfTarget && rogue.HasDagger(core.MainHand) {
-		rogue.Builder = rogue.Backstab
-		rogue.BuilderPoints = 1
+		x.builder = rogue.Backstab
+		x.builderPoints = 1
 	}
 
 	isMultiTarget := sim.GetNumTargets() >= 3
@@ -219,7 +222,7 @@ func (x *generic_rotation) setup(sim *core.Simulation, rogue *Rogue) {
 		eviscerate.MinimumComboPoints = 1
 		x.priorityItems = append(x.priorityItems, eviscerate)
 	} else {
-		if rogue.PrimaryTalentTree == CombatTree {
+		if rogue.Talents.Vitality > 0 {
 			switch rogue.Rotation.CombatFinisherPriority {
 			case proto.Rogue_Rotation_RuptureEviscerate:
 				rupture.MinimumComboPoints = core.MaxInt32(1, rogue.Rotation.MinimumComboPointsPrimaryFinisher)
@@ -277,7 +280,7 @@ func (x *generic_rotation) run(sim *core.Simulation, rogue *Rogue) {
 		x.rotationItems = x.rotationItems[1:]
 		x.run(sim, rogue)
 	case ShouldBuild:
-		spell := rogue.Builder
+		spell := x.builder
 		if spell == nil || spell.Cast(sim, rogue.CurrentTarget) {
 			if rogue.GCD.IsReady(sim) {
 				x.run(sim, rogue)
@@ -304,7 +307,7 @@ func (x *generic_rotation) run(sim *core.Simulation, rogue *Rogue) {
 			if rogue.CurrentEnergy() < prio.EnergyCost && rogue.ComboPoints() >= prio.MinimumComboPoints {
 				desiredEnergy = prio.EnergyCost
 			} else if rogue.ComboPoints() < 5 {
-				desiredEnergy = rogue.Builder.DefaultCast.Cost
+				desiredEnergy = x.builder.DefaultCast.Cost
 			}
 		}
 		cdAvailableTime := time.Second * 10
@@ -330,15 +333,15 @@ func (x *generic_rotation) run(sim *core.Simulation, rogue *Rogue) {
 	}
 }
 
-func (x *generic_rotation) energyToBuild(rogue *Rogue, points int32) float64 {
-	costPerBuilder := rogue.Builder.DefaultCast.Cost
+func (x *generic_rotation) energyToBuild(points int32) float64 {
+	costPerBuilder := x.builder.DefaultCast.Cost
 
-	buildersNeeded := math.Ceil(float64(points) / float64(rogue.BuilderPoints))
+	buildersNeeded := math.Ceil(float64(points) / float64(x.builderPoints))
 	return buildersNeeded * costPerBuilder
 }
 
-func (x *generic_rotation) timeToBuild(_ *core.Simulation, rogue *Rogue, points int32, builderPoints int32, eps float64, finisherCost float64) time.Duration {
-	energyNeeded := x.energyToBuild(rogue, points) + finisherCost
+func (x *generic_rotation) timeToBuild(points int32, builderPoints int32, eps float64, finisherCost float64) time.Duration {
+	energyNeeded := x.energyToBuild(points) + finisherCost
 	secondsNeeded := energyNeeded / eps
 	globalsNeeded := math.Ceil(float64(points)/float64(builderPoints)) + 1
 	// Return greater of the time it takes to use the globals and the time it takes to build the energy
@@ -373,7 +376,7 @@ func (x *generic_rotation) shouldCastNextRotationItem(sim *core.Simulation, rogu
 	if tte <= timeUntilNextGCD {
 		if comboPoints >= prio.MinimumComboPoints && currentEnergy >= (prio.EnergyCost+prio.PoolAmount) {
 			return ShouldCast
-		} else if comboPoints < prio.MinimumComboPoints && currentEnergy >= rogue.Builder.DefaultCast.Cost {
+		} else if comboPoints < prio.MinimumComboPoints && currentEnergy >= x.builder.DefaultCast.Cost {
 			return ShouldBuild
 		} else {
 			return ShouldWait
@@ -401,11 +404,11 @@ func (x *generic_rotation) shouldCastNextRotationItem(sim *core.Simulation, rogu
 			}
 		}
 		// Overcap CP with builder
-		if x.timeToBuild(sim, rogue, 1, rogue.BuilderPoints, eps, prio.EnergyCost+prio.PoolAmount) <= tte && currentEnergy >= rogue.Builder.DefaultCast.Cost {
+		if x.timeToBuild(1, x.builderPoints, eps, prio.EnergyCost+prio.PoolAmount) <= tte && currentEnergy >= x.builder.DefaultCast.Cost {
 			return ShouldBuild
 		}
 	} else if comboPoints < prio.MinimumComboPoints { // Need CP
-		if currentEnergy >= rogue.Builder.DefaultCast.Cost {
+		if currentEnergy >= x.builder.DefaultCast.Cost {
 			return ShouldBuild
 		} else {
 			return ShouldWait
@@ -414,8 +417,8 @@ func (x *generic_rotation) shouldCastNextRotationItem(sim *core.Simulation, rogu
 		if currentEnergy >= prio.EnergyCost+prio.PoolAmount && tte <= timeUntilNextGCD {
 			return ShouldCast
 		}
-		ttb := x.timeToBuild(sim, rogue, 1, 2, eps, prio.EnergyCost+prio.PoolAmount-currentEnergy)
-		if currentEnergy >= rogue.Builder.DefaultCast.Cost && tte > ttb {
+		ttb := x.timeToBuild(1, 2, eps, prio.EnergyCost+prio.PoolAmount-currentEnergy)
+		if currentEnergy >= x.builder.DefaultCast.Cost && tte > ttb {
 			return ShouldBuild
 		}
 	}
@@ -441,8 +444,8 @@ func (x *generic_rotation) planRotation(sim *core.Simulation, rogue *Rogue) []ro
 		} else {
 			expiresAt = sim.CurrentTime
 		}
-		minimumBuildDuration := x.timeToBuild(sim, rogue, prio.MinimumComboPoints, rogue.BuilderPoints, eps, prio.EnergyCost)
-		maximumBuildDuration := x.timeToBuild(sim, rogue, maxCP, rogue.BuilderPoints, eps, prio.EnergyCost)
+		minimumBuildDuration := x.timeToBuild(prio.MinimumComboPoints, x.builderPoints, eps, prio.EnergyCost)
+		maximumBuildDuration := x.timeToBuild(maxCP, x.builderPoints, eps, prio.EnergyCost)
 		rotationItems = append(rotationItems, rogueRotationItem{
 			ExpiresAt:            expiresAt,
 			MaximumBuildDuration: maximumBuildDuration,
@@ -463,7 +466,7 @@ func (x *generic_rotation) planRotation(sim *core.Simulation, rogue *Rogue) []ro
 		prio := x.priorityItems[item.PrioIndex]
 		maxBuildAt := item.ExpiresAt - item.MaximumBuildDuration
 		if prio.Aura == nil {
-			timeValueOfResources := time.Duration((float64(comboPoints)*rogue.Builder.DefaultCast.Cost/float64(rogue.BuilderPoints) + currentEnergy) / eps)
+			timeValueOfResources := time.Duration((float64(comboPoints)*x.builder.DefaultCast.Cost/float64(x.builderPoints) + currentEnergy) / eps)
 			maxBuildAt = currentTime - item.MaximumBuildDuration - timeValueOfResources
 		}
 		if currentTime < maxBuildAt {
@@ -476,7 +479,7 @@ func (x *generic_rotation) planRotation(sim *core.Simulation, rogue *Rogue) []ro
 		} else {
 			cpUsed := core.MaxInt32(0, prio.MinimumComboPoints-comboPoints)
 			energyUsed := core.MaxFloat(0, prio.EnergyCost-currentEnergy)
-			minBuildTime := x.timeToBuild(sim, rogue, cpUsed, rogue.BuilderPoints, eps, energyUsed)
+			minBuildTime := x.timeToBuild(cpUsed, x.builderPoints, eps, energyUsed)
 			if currentTime+minBuildTime <= item.ExpiresAt || !prio.IsFiller {
 				prioStack = append(prioStack, item)
 				currentTime = core.MaxDuration(item.ExpiresAt, currentTime+minBuildTime)
