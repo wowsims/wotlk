@@ -29,9 +29,10 @@ const (
 	SpellFlagBuilder     = core.SpellFlagAgentReserved2
 	SpellFlagFinisher    = core.SpellFlagAgentReserved3
 	SpellFlagColdBlooded = core.SpellFlagAgentReserved4
-	AssassinTree         = 0
-	CombatTree           = 1
-	SubtletyTree         = 2
+
+	AssassinationTree = 0
+	CombatTree        = 1
+	SubtletyTree      = 2
 )
 
 var TalentTreeSizes = [3]int{27, 28, 28}
@@ -45,11 +46,9 @@ type Rogue struct {
 	Options  *proto.Rogue_Options
 	Rotation *proto.Rogue_Rotation
 
-	priorityItems      []roguePriorityItem
-	rotationItems      []rogueRotationItem
-	assassinationPrios []assassinationPrio
-	subtletyPrios      []subtletyPrio
-	bleedCategory      *core.ExclusiveCategory
+	rotation rotation
+
+	bleedCategory *core.ExclusiveCategory
 
 	sliceAndDiceDurations [6]time.Duration
 	exposeArmorDurations  [6]time.Duration
@@ -235,7 +234,8 @@ func (rogue *Rogue) Reset(sim *core.Simulation) {
 			rogue.MasterOfSubtletyAura.UpdateExpires(sim.CurrentTime + dur)
 		}
 	}
-	rogue.setPriorityItems(sim)
+
+	rogue.setupRotation(sim)
 }
 
 func (rogue *Rogue) MeleeCritMultiplier(applyLethality bool) float64 {
@@ -304,10 +304,14 @@ func (rogue *Rogue) ApplyCutToTheChase(sim *core.Simulation) {
 }
 
 func (rogue *Rogue) CanMutilate() bool {
-	return rogue.Talents.Mutilate &&
-		rogue.HasMHWeapon() && rogue.HasOHWeapon() &&
-		rogue.GetMHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger &&
-		rogue.GetOHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger
+	return rogue.Talents.Mutilate && rogue.HasDagger(core.MainHand) && rogue.HasDagger(core.OffHand)
+}
+
+func (rogue *Rogue) HasDagger(hand core.Hand) bool {
+	if hand == core.MainHand {
+		return rogue.HasMHWeapon() && rogue.GetMHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger
+	}
+	return rogue.HasOHWeapon() && rogue.GetOHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger
 }
 
 func init() {

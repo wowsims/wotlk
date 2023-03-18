@@ -8,36 +8,21 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-type PriorityAction int32
-
-const (
-	Skip PriorityAction = iota
-	Build
-	Cast
-	Wait
-)
-
-type GetAction func(*core.Simulation, *Rogue) PriorityAction
-type DoAction func(*core.Simulation, *Rogue) bool
-
-type assassinationPrio struct {
-	check GetAction
-	cast  DoAction
-	cost  float64
+type assassination_rotation struct {
+	prios []prio
 }
 
-func (rogue *Rogue) targetHasBleed(_ *core.Simulation) bool {
-	return rogue.bleedCategory.AnyActive() || rogue.CurrentTarget.HasActiveAuraWithTag(RogueBleedTag)
-}
+func (x *assassination_rotation) setup(sim *core.Simulation, rogue *Rogue) {
+	rogue.Builder = rogue.Mutilate
+	rogue.BuilderPoints = 2
 
-func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
-	rogue.assassinationPrios = rogue.assassinationPrios[:0]
+	x.prios = x.prios[:0]
 	rogue.bleedCategory = rogue.CurrentTarget.GetExclusiveEffectCategory(core.BleedEffectCategory)
 
 	// Garrote
 	if rogue.Rotation.OpenWithGarrote {
 		hasCastGarrote := false
-		rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
+		x.prios = append(x.prios, prio{
 			func(sim *core.Simulation, rogue *Rogue) PriorityAction {
 				if hasCastGarrote {
 					return Skip
@@ -59,7 +44,7 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 	}
 
 	// Slice And Dice
-	rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
+	x.prios = append(x.prios, prio{
 		func(sim *core.Simulation, rogue *Rogue) PriorityAction {
 			if rogue.SliceAndDiceAura.IsActive() {
 				return Skip
@@ -80,7 +65,7 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 
 	// Hunger while planning
 	if rogue.Talents.HungerForBlood {
-		rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
+		x.prios = append(x.prios, prio{
 			func(sim *core.Simulation, rogue *Rogue) PriorityAction {
 
 				prioExpose := rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Once ||
@@ -93,11 +78,11 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 					return Skip
 				}
 
-				if !rogue.targetHasBleed(sim) {
+				if !x.targetHasBleed(sim, rogue) {
 					return Skip
 				}
 
-				if rogue.targetHasBleed(sim) && rogue.CurrentEnergy() > rogue.HungerForBlood.DefaultCast.Cost {
+				if x.targetHasBleed(sim, rogue) && rogue.CurrentEnergy() > rogue.HungerForBlood.DefaultCast.Cost {
 					return Cast
 				}
 				return Wait
@@ -113,7 +98,7 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 	if rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Once ||
 		rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Maintain {
 		hasCastExpose := false
-		rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
+		x.prios = append(x.prios, prio{
 			func(sim *core.Simulation, rogue *Rogue) PriorityAction {
 				if hasCastExpose && rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Once {
 					return Skip
@@ -166,9 +151,9 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 
 	// Rupture for Bleed
 	if rogue.Rotation.RuptureForBleed {
-		rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
+		x.prios = append(x.prios, prio{
 			func(sim *core.Simulation, rogue *Rogue) PriorityAction {
-				if rogue.targetHasBleed(sim) {
+				if x.targetHasBleed(sim, rogue) {
 					return Skip
 				}
 				if rogue.HungerForBloodAura.IsActive() {
@@ -191,17 +176,17 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 
 	// Hunger for Blood
 	if rogue.Talents.HungerForBlood {
-		rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
+		x.prios = append(x.prios, prio{
 			func(sim *core.Simulation, rogue *Rogue) PriorityAction {
 				if rogue.HungerForBloodAura.IsActive() {
 					return Skip
 				}
 
-				if !rogue.targetHasBleed(sim) {
+				if !x.targetHasBleed(sim, rogue) {
 					return Skip
 				}
 
-				if rogue.targetHasBleed(sim) && rogue.CurrentEnergy() >= rogue.HungerForBlood.DefaultCast.Cost {
+				if x.targetHasBleed(sim, rogue) && rogue.CurrentEnergy() >= rogue.HungerForBlood.DefaultCast.Cost {
 					return Cast
 				}
 				return Wait
@@ -214,7 +199,7 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 	}
 
 	// Enable CDs
-	rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
+	x.prios = append(x.prios, prio{
 		func(sim *core.Simulation, rogue *Rogue) PriorityAction {
 			if rogue.allMCDsDisabled {
 				for _, mcd := range rogue.GetMajorCooldowns() {
@@ -246,7 +231,7 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 	}
 
 	// Rupture
-	rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
+	x.prios = append(x.prios, prio{
 		func(sim *core.Simulation, rogue *Rogue) PriorityAction {
 			cp, e := rogue.ComboPoints(), rogue.CurrentEnergy()
 
@@ -286,7 +271,7 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 	})
 
 	// Envenom
-	rogue.assassinationPrios = append(rogue.assassinationPrios, assassinationPrio{
+	x.prios = append(x.prios, prio{
 		func(sim *core.Simulation, rogue *Rogue) PriorityAction {
 			e, cp := rogue.CurrentEnergy(), rogue.ComboPoints()
 
@@ -343,10 +328,10 @@ func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {
 	})
 }
 
-func (rogue *Rogue) doAssassinationRotation(sim *core.Simulation) {
+func (x *assassination_rotation) run(sim *core.Simulation, rogue *Rogue) {
 	prioIndex := 0
-	for prioIndex < len(rogue.assassinationPrios) {
-		prio := rogue.assassinationPrios[prioIndex]
+	for prioIndex < len(x.prios) {
+		prio := x.prios[prioIndex]
 		switch prio.check(sim, rogue) {
 		case Skip:
 			prioIndex += 1
@@ -376,13 +361,6 @@ func (rogue *Rogue) doAssassinationRotation(sim *core.Simulation) {
 	rogue.DoNothing()
 }
 
-func (rogue *Rogue) OnCanAct(sim *core.Simulation) {
-	if rogue.KillingSpreeAura.IsActive() {
-		rogue.DoNothing()
-		return
-	}
-	rogue.TryUseCooldowns(sim)
-	if rogue.GCD.IsReady(sim) {
-		rogue.doAssassinationRotation(sim)
-	}
+func (x *assassination_rotation) targetHasBleed(_ *core.Simulation, rogue *Rogue) bool {
+	return rogue.bleedCategory.AnyActive() || rogue.CurrentTarget.HasActiveAuraWithTag(RogueBleedTag)
 }
