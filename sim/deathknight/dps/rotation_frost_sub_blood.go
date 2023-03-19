@@ -306,8 +306,7 @@ func (dk *DpsDeathknight) setupFrostSubBloodERWOpener() {
 		NewAction(dk.RotationActionCallback_BT).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
 		NewAction(dk.RotationActionCallback_Frost_FS_HB).
-		NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
-		NewAction(dk.RotationActionCallback_ERW).
+		NewAction(dk.RotationActionCallback_Frost_Pesti_ERW).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
 		NewAction(dk.RotationActionCallback_Frost_FS_HB).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Obli).
