@@ -266,6 +266,11 @@ func (rogue *Rogue) applySealFate() {
 	procChance := 0.2 * float64(rogue.Talents.SealFate)
 	cpMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 14195})
 
+	icd := core.Cooldown{
+		Timer:    rogue.NewTimer(),
+		Duration: 500 * time.Millisecond,
+	}
+
 	rogue.RegisterAura(core.Aura{
 		Label:    "Seal Fate",
 		Duration: core.NeverExpires,
@@ -281,8 +286,9 @@ func (rogue *Rogue) applySealFate() {
 				return
 			}
 
-			if sim.Proc(procChance, "Seal Fate") {
+			if icd.IsReady(sim) && sim.Proc(procChance, "Seal Fate") {
 				rogue.AddComboPoints(sim, 1, cpMetrics)
+				icd.Use(sim)
 			}
 		},
 	})

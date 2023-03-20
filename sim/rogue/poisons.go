@@ -30,7 +30,7 @@ func (rogue *Rogue) registerPoisonAuras() {
 func (rogue *Rogue) registerDeadlyPoisonSpell() {
 	var energyMetrics *core.ResourceMetrics
 	if rogue.HasSetBonus(ItemSetTerrorblade, 2) {
-		energyMetrics = rogue.NewEnergyMetrics(core.ActionID{SpellID: 64914})
+		energyMetrics = rogue.NewEnergyMetrics(core.ActionID{SpellID: 64913})
 	}
 
 	rogue.DeadlyPoison = rogue.RegisterSpell(core.SpellConfig{
@@ -66,10 +66,16 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 			NumberOfTicks: 4,
 			TickLength:    time.Second * 3,
 
-			// TODO: MAP part snapshots
+			OnSnapshot: func(_ *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+				if stacks := dot.GetStacks(); stacks > 0 {
+					dot.SnapshotBaseDamage = (74 + 0.027*dot.Spell.MeleeAttackPower()) * float64(stacks)
+					attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
+					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
+				}
+			},
+
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				baseDmg := (74 + 0.027*dot.Spell.MeleeAttackPower()) * float64(dot.GetStacks())
-				result := dot.Spell.CalcAndDealPeriodicDamage(sim, target, baseDmg, dot.OutcomeTick)
+				result := dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
 				if energyMetrics != nil && result.Landed() {
 					rogue.AddEnergy(sim, 1, energyMetrics)
 				}
@@ -86,12 +92,14 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 			if !dot.IsActive() {
 				dot.Apply(sim)
 				dot.SetStacks(sim, 1)
+				dot.TakeSnapshot(sim, false)
 				return
 			}
 
 			if dot.GetStacks() < 5 {
 				dot.Refresh(sim)
 				dot.AddStack(sim)
+				dot.TakeSnapshot(sim, false)
 				return
 			}
 
@@ -112,6 +120,7 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 				}
 			}
 			dot.Refresh(sim)
+			dot.TakeSnapshot(sim, false)
 		},
 	})
 }

@@ -7,9 +7,6 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-var MHOutcome = core.OutcomeHit
-var OHOutcome = core.OutcomeHit
-
 var MutilateSpellID int32 = 48666
 
 func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
@@ -24,7 +21,7 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    procMask,
-		Flags:       core.SpellFlagMeleeMetrics | SpellFlagColdBlooded,
+		Flags:       core.SpellFlagMeleeMetrics | SpellFlagBuilder | SpellFlagColdBlooded,
 
 		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +
 			[]float64{0, 2, 4, 6}[rogue.Talents.TurnTheTables]*core.CritRatingPerCritChance +
@@ -51,13 +48,7 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 				baseDamage *= 1.2
 			}
 
-			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialCritOnly)
-
-			if isMH {
-				MHOutcome = result.Outcome
-			} else {
-				OHOutcome = result.Outcome
-			}
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialCritOnly)
 		},
 	})
 }
@@ -70,7 +61,7 @@ func (rogue *Rogue) registerMutilateSpell() {
 		ActionID:    core.ActionID{SpellID: MutilateSpellID},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | SpellFlagBuilder,
+		Flags:       core.SpellFlagMeleeMetrics,
 
 		EnergyCost: core.EnergyCostOptions{
 			Cost:   rogue.costModifier(60 - core.TernaryFloat64(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfMutilate), 5, 0)),
@@ -91,9 +82,6 @@ func (rogue *Rogue) registerMutilateSpell() {
 				rogue.AddComboPoints(sim, 2, spell.ComboPointMetrics())
 				ohHitSpell.Cast(sim, target)
 				mhHitSpell.Cast(sim, target)
-				if MHOutcome == core.OutcomeCrit || OHOutcome == core.OutcomeCrit {
-					result.Outcome = core.OutcomeCrit
-				}
 			} else {
 				spell.IssueRefund(sim)
 			}
