@@ -16,17 +16,27 @@ func (druid *Druid) registerEnrageSpell() {
 	dmgBonus := 0.05 * float64(druid.Talents.KingOfTheJungle)
 	armorLoss := druid.ScaleBaseArmor(0.16 * druid.TotalBearArmorMultiplier())
 
+	t10_4p := druid.HasSetBonus(ItemSetLasherweaveBattlegear, 4)
+
 	druid.EnrageAura = druid.RegisterAura(core.Aura{
 		Label:    "Enrage Aura",
 		ActionID: actionID,
 		Duration: 10 * time.Second,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			druid.PseudoStats.DamageDealtMultiplier *= 1.0 + dmgBonus
-			druid.AddStatDynamic(sim, stats.Armor, -armorLoss)
+			if !t10_4p {
+				druid.AddStatDynamic(sim, stats.Armor, -armorLoss)
+			} else {
+				druid.PseudoStats.DamageTakenMultiplier *= 0.88
+			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			druid.PseudoStats.DamageDealtMultiplier /= 1.0 + dmgBonus
-			druid.AddStatDynamic(sim, stats.Armor, armorLoss)
+			if !t10_4p {
+				druid.AddStatDynamic(sim, stats.Armor, armorLoss)
+			} else {
+				druid.PseudoStats.DamageTakenMultiplier /= 0.88
+			}
 		},
 	})
 
