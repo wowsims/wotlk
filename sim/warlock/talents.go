@@ -452,29 +452,29 @@ func (warlock *Warlock) backdraftModifier() float64 {
 	return castTimeModifier
 }
 
-func (warlock *Warlock) setupEverlastingAffliction() {
-	everlastingAfflictionProcChance := 0.2 * float64(warlock.Talents.EverlastingAffliction)
+func (warlock *Warlock) everlastingAfflictionRefresh(sim *core.Simulation, target *core.Unit) {
+	procChance := 0.2 * float64(warlock.Talents.EverlastingAffliction)
 
+	if warlock.Corruption.Dot(target).IsActive() && sim.Proc(procChance, "EverlastingAffliction") {
+		warlock.Corruption.Dot(target).Rollover(sim)
+	}
+}
+
+func (warlock *Warlock) setupEverlastingAffliction() {
 	warlock.RegisterAura(core.Aura{
 		Label:    "Everlasting Affliction Hidden Aura",
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !result.Landed() {
+		OnSpellHitDealt: func(_ *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			// TODO: also works on drain life...
+			// drain soul is handled inside the spell itself
+			if (spell != warlock.ShadowBolt && spell != warlock.Haunt) || !result.Landed() {
 				return
 			}
-			if spell == warlock.ShadowBolt || spell == warlock.Haunt || spell == warlock.DrainSoul { // TODO: also works on drain life...
-				if warlock.Corruption.Dot(result.Target).IsActive() {
-					if warlock.Talents.EverlastingAffliction < 5 { // This will return early if we 'miss' the refresh, 5 pts can't 'miss'.
-						if sim.RandomFloat("EverlastingAffliction") > everlastingAfflictionProcChance {
-							return
-						}
-					}
-					warlock.Corruption.Dot(result.Target).Rollover(sim)
-				}
-			}
+
+			warlock.everlastingAfflictionRefresh(sim, result.Target)
 		},
 	})
 }

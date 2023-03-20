@@ -79,6 +79,8 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 				dot := spell.Dot(target)
 				dot.Apply(sim)
 				dot.UpdateExpires(dot.ExpiresAt())
+
+				warlock.everlastingAfflictionRefresh(sim, target)
 			}
 		},
 	})
