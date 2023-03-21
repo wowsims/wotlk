@@ -387,17 +387,29 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 			this.player.setWowheadData(equippedItem, this.iconAnchor);
 
 			equippedItem.allSocketColors().forEach((socketColor, gemIdx) => {
-				const gemIconElem = document.createElement('img');
-				gemIconElem.classList.add('item-picker-gem-icon');
+				let gemFragment = document.createElement('fragment');
+				gemFragment.innerHTML = `
+					<div class="gem-socket-container">
+						<img class="gem-icon" />
+						<img class="socket-icon" />
+					</div>
+				`;
 
-				if (equippedItem!.gems[gemIdx] == null) {
-					gemIconElem.src = getEmptyGemSocketIconUrl(socketColor);
+				const gemContainer = gemFragment.children[0] as HTMLElement;
+				const gemIconElem = gemContainer.querySelector('.gem-icon') as HTMLImageElement;
+				const socketIconElem = gemContainer.querySelector('.socket-icon') as HTMLImageElement;
+				socketIconElem.src = getEmptyGemSocketIconUrl(socketColor);
+
+				if (equippedItem.gems[gemIdx] == null) {
+					gemIconElem.classList.add('hide');
 				} else {
-					ActionId.fromItemId(equippedItem!.gems[gemIdx]!.id).fill().then(filledId => {
+					gemIconElem.classList.remove('hide');
+					ActionId.fromItemId(equippedItem.gems[gemIdx]!.id).fill().then(filledId => {
 						gemIconElem.src = filledId.iconUrl;
 					});
 				}
-				this.socketsContainerElem.appendChild(gemIconElem);
+
+				this.socketsContainerElem.appendChild(gemContainer);
 			});
 
 		} else {

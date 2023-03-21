@@ -20,6 +20,10 @@
       border-color: $success;
       filter: none;
     }
+
+    .gem-socket-container {
+      --gem-width: 0.8rem;
+    }
   }
 
   .icon-picker-button,
