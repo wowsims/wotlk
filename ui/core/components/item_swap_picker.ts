@@ -33,7 +33,7 @@ export class ItemSwapPicker<SpecType extends Spec, T> extends Component {
 		}
 
 		let itemSwapContainer = Input.newGroupContainer();
-		itemSwapContainer.classList.add("icon-group")
+		itemSwapContainer.classList.add('icon-group')
 		this.rootElem.appendChild(itemSwapContainer);
 
 		let swapButtonFragment = document.createElement('fragment');
