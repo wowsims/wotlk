@@ -346,7 +346,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		pendingActions = append(pendingActions, pendingAction{ripDot.ExpiresAt(), ripCost})
 		ripRefreshPending = true
 	}
-	if rakeDot.IsActive() && (rakeDot.RemainingDuration(sim) < simTimeRemain-(9*time.Second)) {
+	if rakeDot.IsActive() && (rakeDot.RemainingDuration(sim) < simTimeRemain-rakeDot.Duration) {
 		rakeCost := core.TernaryFloat64(cat.berserkExpectedAt(sim, rakeDot.ExpiresAt()), cat.Rake.DefaultCast.Cost*0.5, cat.Rake.DefaultCast.Cost)
 		pendingActions = append(pendingActions, pendingAction{rakeDot.ExpiresAt(), rakeCost})
 	}
