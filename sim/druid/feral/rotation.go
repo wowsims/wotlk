@@ -346,7 +346,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		pendingActions = append(pendingActions, pendingAction{ripDot.ExpiresAt(), ripCost})
 		ripRefreshPending = true
 	}
-	if rakeDot.IsActive() && (rakeDot.RemainingDuration(sim) < simTimeRemain-(9*time.Second)) {
+	if rakeDot.IsActive() && (rakeDot.RemainingDuration(sim) < simTimeRemain-rakeDot.Duration) {
 		rakeCost := core.TernaryFloat64(cat.berserkExpectedAt(sim, rakeDot.ExpiresAt()), cat.Rake.DefaultCast.Cost*0.5, cat.Rake.DefaultCast.Cost)
 		pendingActions = append(pendingActions, pendingAction{rakeDot.ExpiresAt(), rakeCost})
 	}
@@ -627,7 +627,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 
 	// If Lacerateweaving, then also schedule an action just before Lacerate
 	// expires to ensure we can save it in time.
-	lacRefreshTime := lacerateDot.ExpiresAt() - (time.Duration(1.5*float64(time.Second) - float64(3*cat.latency*time.Second)))
+	lacRefreshTime := lacerateDot.ExpiresAt() - (1500 * time.Millisecond) - (3 * cat.latency * time.Second)
 	if rotation.BearweaveType == proto.FeralDruid_Rotation_Lacerate && lacerateDot.IsActive() && lacerateDot.RemainingDuration(sim) < sim.GetRemainingDuration() && (sim.CurrentTime < lacRefreshTime) {
 		nextAction = core.MinDuration(nextAction, lacRefreshTime)
 	}
