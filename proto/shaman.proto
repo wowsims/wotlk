@@ -203,6 +203,7 @@ enum ShamanSyncType {
     NoSync = 0;
     SyncMainhandOffhandSwings = 1;
     DelayOffhandSwings = 2;
+	Auto = 3;
 }
 
 message ElementalShaman {

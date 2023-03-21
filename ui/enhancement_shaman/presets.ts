@@ -91,7 +91,7 @@ export const DefaultOptions = EnhancementShamanOptions.create({
 	bloodlust: true,
 	imbueMh: ShamanImbue.WindfuryWeapon,
 	imbueOh: ShamanImbue.FlametongueWeapon,
-	syncType: ShamanSyncType.SyncMainhandOffhandSwings,
+	syncType: ShamanSyncType.Auto,
 });
 
 export const DefaultConsumes = Consumes.create({

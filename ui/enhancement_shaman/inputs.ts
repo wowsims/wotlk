@@ -67,8 +67,16 @@ export const ShamanImbueOH = InputHelpers.makeSpecOptionsEnumIconInput<Spec.Spec
 export const SyncTypeInput = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecEnhancementShaman, ShamanSyncType>({
 	fieldName: 'syncType',
 	label: 'Sync/Stagger Setting',
-	labelTooltip: 'Choose your sync or stagger option, Perfect Sync makes your weapons always attack at the same time, which is ideal for mixed imbues. Delayed Offhand is similar but additionally adds a slight delay to the offhand attacks while staying within the 0.5s flurry ICD window, ideal for matched imbues.',
+	labelTooltip: 
+	`Choose your sync or stagger option Perfect
+		<ul>
+			<li><div>Auto: Will auto pick sync options based on your weapons attack speeds</div></li>
+			<li><div>None: No Sync or Staggering, used for mismatched weapon speeds</div></li>
+			<li><div>Perfect Sync: Makes your weapons always attack at the same time, for match weapon speeds</div></li>
+			<li><div>Delayed Offhand: Adds a slight delay to the offhand attacks while staying within the 0.5s flurry ICD window</div></li>
+		</ul>`,
 	values: [
+		{ name: "Automatic", value: ShamanSyncType.Auto},
 		{ name: 'None', value: ShamanSyncType.NoSync },
 		{ name: 'Perfect Sync', value: ShamanSyncType.SyncMainhandOffhandSwings },
 		{ name: 'Delayed Offhand', value: ShamanSyncType.DelayOffhandSwings },

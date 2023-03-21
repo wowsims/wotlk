@@ -48,12 +48,17 @@ func NewEnhancementShaman(character core.Character, options *proto.Player) *Enha
 	enh.EnableResumeAfterManaWait(enh.OnGCDReady)
 	enh.rotation = NewPriorityRotation(enh, enhOptions.Rotation)
 
+	syncType := int32(enhOptions.Options.SyncType)
+	if syncType == int32(proto.ShamanSyncType_Auto) {
+		syncType = enh.AutoSyncWeapons()
+	}
+
 	// Enable Auto Attacks for this spec
 	enh.EnableAutoAttacks(enh, core.AutoAttackOptions{
 		MainHand:       enh.WeaponFromMainHand(enh.DefaultMeleeCritMultiplier()),
 		OffHand:        enh.WeaponFromOffHand(enh.DefaultMeleeCritMultiplier()),
 		AutoSwingMelee: true,
-		SyncType:       int32(enhOptions.Options.SyncType),
+		SyncType:       syncType,
 	})
 
 	if enh.Totems.UseFireElemental && enhOptions.Rotation.EnableItemSwap {
@@ -120,14 +125,7 @@ func (enh *EnhancementShaman) Initialize() {
 		oh := enh.ItemSwap.GetItem(proto.ItemSlot_ItemSlotOffHand)
 		enh.ApplyFlametongueImbueToItem(oh, false)
 		enh.RegisterOnItemSwap(func(s *core.Simulation) {
-			mh := enh.GetMHWeapon()
-			oh := enh.GetOHWeapon()
-
-			if mh == nil || oh == nil || mh.SwingSpeed != oh.SwingSpeed {
-				enh.AutoAttacks.SyncType = int32(proto.ShamanSyncType_NoSync)
-			} else {
-				enh.AutoAttacks.SyncType = int32(proto.ShamanSyncType_SyncMainhandOffhandSwings)
-			}
+			enh.AutoAttacks.SyncType = enh.AutoSyncWeapons()
 		})
 	}
 	enh.DelayDPSCooldowns(3 * time.Second)
@@ -136,6 +134,17 @@ func (enh *EnhancementShaman) Initialize() {
 func (enh *EnhancementShaman) Reset(sim *core.Simulation) {
 	enh.Shaman.Reset(sim)
 	enh.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand, proto.ItemSlot_ItemSlotOffHand}, false)
+}
+
+func (enh *EnhancementShaman) AutoSyncWeapons() int32 {
+	mh := enh.GetMHWeapon()
+	oh := enh.GetOHWeapon()
+
+	if mh == nil || oh == nil || mh.SwingSpeed != oh.SwingSpeed {
+		return int32(proto.ShamanSyncType_NoSync)
+	}
+
+	return int32(proto.ShamanSyncType_SyncMainhandOffhandSwings)
 }
 
 func (enh *EnhancementShaman) CastLightningBoltWeave(sim *core.Simulation, reactionTime time.Duration) bool {
