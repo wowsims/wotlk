@@ -49,8 +49,8 @@ func NewEnhancementShaman(character core.Character, options *proto.Player) *Enha
 	enh.rotation = NewPriorityRotation(enh, enhOptions.Rotation)
 
 	syncType := int32(enhOptions.Options.SyncType)
-	if syncType == int32(proto.ShamanSyncType_Automatic) {
-		syncType = enh.AutoSync()
+	if syncType == int32(proto.ShamanSyncType_Auto) {
+		syncType = enh.AutoSyncWeapons()
 	}
 
 	// Enable Auto Attacks for this spec
@@ -125,7 +125,7 @@ func (enh *EnhancementShaman) Initialize() {
 		oh := enh.ItemSwap.GetItem(proto.ItemSlot_ItemSlotOffHand)
 		enh.ApplyFlametongueImbueToItem(oh, false)
 		enh.RegisterOnItemSwap(func(s *core.Simulation) {
-			enh.AutoAttacks.SyncType = enh.AutoSync()
+			enh.AutoAttacks.SyncType = enh.AutoSyncWeapons()
 		})
 	}
 	enh.DelayDPSCooldowns(3 * time.Second)
@@ -136,7 +136,7 @@ func (enh *EnhancementShaman) Reset(sim *core.Simulation) {
 	enh.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand, proto.ItemSlot_ItemSlotOffHand}, false)
 }
 
-func (enh *EnhancementShaman) AutoSync() int32 {
+func (enh *EnhancementShaman) AutoSyncWeapons() int32 {
 	mh := enh.GetMHWeapon()
 	oh := enh.GetOHWeapon()
 
