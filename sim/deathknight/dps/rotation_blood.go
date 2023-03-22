@@ -33,10 +33,10 @@ func (dk *DpsDeathknight) setupBloodRotations() {
 	dk.RotationSequence.Clear().
 		NewAction(dk.RotationActionCallback_IT).
 		NewAction(dk.RotationActionCallback_PS).
-		NewAction(dk.blBloodRuneAction()).
 		NewAction(dk.RotationActionBL_FU).
-		NewAction(dk.RotationActionBL_BS).
-		NewAction(dk.RotationActionCallback_ERW).
+		NewAction(dk.blBloodRuneAction()).
+		NewAction(dk.RotationActionBL_BS_ERW).
+		//NewAction(dk.RotationActionCallback_ERW).
 		NewAction(dk.RotationActionCallback_RD).
 		NewAction(dk.RotationActionBL_DRW_Custom)
 
@@ -200,9 +200,30 @@ func (dk *DpsDeathknight) RotationActionBL_DRW_Custom(sim *core.Simulation, targ
 }
 
 func (dk *DpsDeathknight) RotationActionBL_BS(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	casted := dk.br.bloodSpell.Cast(sim, target)
+	ffRemaining := dk.FrostFeverSpell.Dot(target).RemainingDuration(sim)
+	bpRemaining := dk.BloodPlagueSpell.Dot(target).RemainingDuration(sim)
+	casted := false
+	// FF is not active or will drop before Gcd is ready after this cast
+	if !dk.FrostFeverSpell.Dot(target).IsActive() || ffRemaining <= core.GCDDefault || !dk.BloodPlagueSpell.Dot(target).IsActive() || bpRemaining <= core.GCDDefault {
+		casted = dk.Pestilence.Cast(sim, target)
+	} else {
+		casted = dk.br.bloodSpell.Cast(sim, target)
+	}
+
 	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
 	s.ConditionalAdvance(casted && advance)
+	return -1
+}
+
+func (dk *DpsDeathknight) RotationActionBL_BS_ERW(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	casted := dk.br.bloodSpell.Cast(sim, target)
+	advance := casted && dk.LastOutcome.Matches(core.OutcomeLanded)
+
+	if advance {
+		casted = dk.EmpowerRuneWeapon.Cast(sim, target)
+		advance = casted && advance
+		s.ConditionalAdvance(advance)
+	}
 	return -1
 }
 
