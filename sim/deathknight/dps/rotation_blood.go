@@ -35,18 +35,18 @@ func (dk *DpsDeathknight) setupBloodRotations() {
 		NewAction(dk.RotationActionCallback_PS).
 		NewAction(dk.RotationActionBL_FU).
 		NewAction(dk.blBloodRuneAction()).
-		NewAction(dk.RotationActionBL_BS_ERW).
-		//NewAction(dk.RotationActionCallback_ERW).
+		NewAction(dk.RotationActionBL_BS).
+		NewAction(dk.RotationActionCallback_ERW).
 		NewAction(dk.RotationActionCallback_RD).
 		NewAction(dk.RotationActionBL_DRW_Custom)
 
 	if dk.Rotation.UseDancingRuneWeapon && dk.sr.hasGod && dk.Rotation.DrwDiseases == proto.Deathknight_Rotation_Pestilence {
 		dk.RotationSequence.
+			NewAction(dk.RotationActionBL_FU).
 			NewAction(dk.RotationActionCallback_Pesti).
 			NewAction(dk.RotationActionCallback_BT).
 			NewAction(dk.blBloodRuneAction()).
 			NewAction(dk.RotationActionBL_BS).
-			NewAction(dk.RotationActionBL_FU).
 			NewAction(dk.RotationActionBL_BS).
 			NewAction(dk.RotationActionBL_BS)
 	} else if dk.Rotation.UseDancingRuneWeapon && dk.Rotation.DrwDiseases == proto.Deathknight_Rotation_Normal {
@@ -61,11 +61,11 @@ func (dk *DpsDeathknight) setupBloodRotations() {
 			NewAction(dk.RotationActionBL_BS)
 	} else {
 		dk.RotationSequence.
+			NewAction(dk.RotationActionBL_FU).
 			NewAction(dk.RotationActionBL_BS).
 			NewAction(dk.RotationActionCallback_BT).
 			NewAction(dk.RotationActionBL_BS).
 			NewAction(dk.RotationActionBL_BS).
-			NewAction(dk.RotationActionBL_FU).
 			NewAction(dk.RotationActionBL_BS).
 			NewAction(dk.RotationActionBL_BS)
 	}
