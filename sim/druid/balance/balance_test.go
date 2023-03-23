@@ -43,9 +43,9 @@ func TestBalance(t *testing.T) {
 	}))
 }
 
-var StandardTalents = "5032003115331303213305311231--205003012"
+var StandardTalents = "5012203115331303213305311231--205003012"
 var StandardGlyphs = &proto.Glyphs{
-	Major1: int32(proto.DruidMajorGlyph_GlyphOfFocus),
+	Major1: int32(proto.DruidMajorGlyph_GlyphOfStarfire),
 	Major2: int32(proto.DruidMajorGlyph_GlyphOfInsectSwarm),
 	Major3: int32(proto.DruidMajorGlyph_GlyphOfStarfall),
 	Minor1: int32(proto.DruidMinorGlyph_GlyphOfTyphoon),
@@ -60,22 +60,18 @@ var FullConsumes = &proto.Consumes{
 
 var PlayerOptionsAdaptive = &proto.Player_BalanceDruid{
 	BalanceDruid: &proto.BalanceDruid{
-		Options: &proto.BalanceDruid_Options{
-			InnervateTarget: &proto.RaidTarget{TargetIndex: 0}, // self innervate
-		},
+		Options: &proto.BalanceDruid_Options{},
 		Rotation: &proto.BalanceDruid_Rotation{
-			Type: proto.BalanceDruid_Rotation_Default,
-		},
-	},
-}
-
-var PlayerOptionsAOE = &proto.Player_BalanceDruid{
-	BalanceDruid: &proto.BalanceDruid{
-		Options: &proto.BalanceDruid_Options{
-			InnervateTarget: &proto.RaidTarget{TargetIndex: 0}, // self innervate
-		},
-		Rotation: &proto.BalanceDruid_Rotation{
-			Type: proto.BalanceDruid_Rotation_Default,
+			MfUsage:            proto.BalanceDruid_Rotation_BeforeLunar,
+			IsUsage:            proto.BalanceDruid_Rotation_MaximizeIs,
+			WrathUsage:         proto.BalanceDruid_Rotation_RegularWrath,
+			UseBattleRes:       false,
+			UseStarfire:        true,
+			UseTyphoon:         false,
+			UseHurricane:       false,
+			UseSmartCooldowns:  true,
+			MaintainFaerieFire: true,
+			PlayerLatency:      200,
 		},
 	},
 }
