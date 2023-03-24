@@ -27,7 +27,6 @@ func (warlock *Warlock) registerCorruptionSpell() {
 		},
 
 		BonusCritRating: 0 +
-			warlock.masterDemonologistShadowCrit +
 			3*float64(warlock.Talents.Malediction)*core.CritRatingPerCritChance +
 			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDarkCovensRegalia, 2), 5*core.CritRatingPerCritChance, 0),
 		DamageMultiplierAdditive: 1 +

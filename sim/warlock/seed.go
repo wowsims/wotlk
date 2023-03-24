@@ -15,7 +15,6 @@ func (warlock *Warlock) registerSeedSpell() {
 		ProcMask:    core.ProcMaskSpellDamage,
 
 		BonusCritRating: 0 +
-			warlock.masterDemonologistShadowCrit +
 			float64(warlock.Talents.ImprovedCorruption)*core.CritRatingPerCritChance,
 		DamageMultiplierAdditive: 1 +
 			warlock.GrandFirestoneBonus() +
