@@ -89,7 +89,7 @@ func (dk *DpsDeathknight) RotationActionBL_BloodRotation(sim *core.Simulation, t
 	}
 
 	if dk.RaiseDead.CanCast(sim, nil) && sim.GetRemainingDuration() >= time.Second*30 {
-		if dk.Talents.DancingRuneWeapon && dk.Rotation.UseDancingRuneWeapon && dk.DancingRuneWeapon.IsReady(sim) || dk.DancingRuneWeapon.TimeToReady(sim) < 5*time.Second {
+		if dk.Talents.DancingRuneWeapon && dk.Rotation.UseDancingRuneWeapon && (dk.DancingRuneWeapon.IsReady(sim) || dk.DancingRuneWeapon.TimeToReady(sim) < 5*time.Second) {
 			// Use CDs
 			dk.br.activatingDrw = true
 			dk.br.drwSnapshot.ActivateMajorCooldowns(sim)
