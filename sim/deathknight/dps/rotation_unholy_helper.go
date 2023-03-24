@@ -354,8 +354,7 @@ func (dk *DpsDeathknight) uhMindFreeze(sim *core.Simulation, target *core.Unit) 
 
 // Save up Runic Power for Summon Gargoyle - Allow casts above 100 rp or garg CD > 5 sec
 func (dk *DpsDeathknight) uhDeathCoilCheck(sim *core.Simulation) bool {
-
-	return !(dk.SummonGargoyle.IsReady(sim) || dk.SummonGargoyle.CD.TimeToReady(sim) < 5*time.Second) || sim.CurrentTime < dk.ur.gargoyleMinTime-5*time.Second || dk.CurrentRunicPower() >= 100 || !dk.Rotation.UseGargoyle
+	return !dk.Talents.SummonGargoyle || !(dk.SummonGargoyle.IsReady(sim) || dk.SummonGargoyle.CD.TimeToReady(sim) < 5*time.Second) || sim.CurrentTime < dk.ur.gargoyleMinTime-5*time.Second || dk.CurrentRunicPower() >= 100 || !dk.Rotation.UseGargoyle
 }
 
 // Combined checks for casting gargoyle sequence & going back to blood presence after
