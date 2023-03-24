@@ -42,7 +42,6 @@ func (warlock *Warlock) registerConflagrateSpell() {
 		},
 
 		BonusCritRating: 0 +
-			warlock.masterDemonologistFireCrit +
 			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0) +
 			5*float64(warlock.Talents.FireAndBrimstone)*core.CritRatingPerCritChance,
 		DamageMultiplierAdditive: 1 +

@@ -227,19 +227,46 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		mdLockAura := warlock.RegisterAura(md)
 		mdPetAura := wp.RegisterAura(md)
 
+		masterDemonologist := float64(warlock.Talents.MasterDemonologist) * core.CritRatingPerCritChance
+		masterDemonologistFireCrit := core.TernaryFloat64(warlock.Options.Summon == proto.Warlock_Options_Imp, masterDemonologist, 0)
+		masterDemonologistShadowCrit := core.TernaryFloat64(warlock.Options.Summon == proto.Warlock_Options_Succubus, masterDemonologist, 0)
+
 		wp.OnPetEnable = func(sim *core.Simulation) {
-			val := float64(warlock.Talents.MasterDemonologist) * core.CritRatingPerCritChance
 			mdLockAura.Activate(sim)
 			mdPetAura.Activate(sim)
-			warlock.masterDemonologistFireCrit = core.TernaryFloat64(warlock.Options.Summon == proto.Warlock_Options_Imp, val, 0)
-			warlock.masterDemonologistShadowCrit = core.TernaryFloat64(warlock.Options.Summon == proto.Warlock_Options_Succubus, val, 0)
+
+			spellbook := make([]*core.Spell, 0)
+			spellbook = append(spellbook, warlock.Spellbook...)
+			spellbook = append(spellbook, wp.Spellbook...)
+
+			for _, spell := range spellbook {
+				if spell.SpellSchool.Matches(core.SpellSchoolFire) {
+					spell.BonusCritRating += masterDemonologistFireCrit
+				}
+
+				if spell.SpellSchool.Matches(core.SpellSchoolShadow) {
+					spell.BonusCritRating += masterDemonologistShadowCrit
+				}
+			}
 		}
 
 		wp.OnPetDisable = func(sim *core.Simulation) {
 			mdLockAura.Deactivate(sim)
 			mdPetAura.Deactivate(sim)
-			warlock.masterDemonologistFireCrit = 0.0
-			warlock.masterDemonologistShadowCrit = 0.0
+
+			spellbook := make([]*core.Spell, 0)
+			spellbook = append(spellbook, warlock.Spellbook...)
+			spellbook = append(spellbook, wp.Spellbook...)
+
+			for _, spell := range spellbook {
+				if spell.SpellSchool.Matches(core.SpellSchoolFire) {
+					spell.BonusCritRating -= masterDemonologistFireCrit
+				}
+
+				if spell.SpellSchool.Matches(core.SpellSchoolShadow) {
+					spell.BonusCritRating -= masterDemonologistShadowCrit
+				}
+			}
 		}
 	}
 

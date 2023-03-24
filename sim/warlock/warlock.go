@@ -75,9 +75,7 @@ type Warlock struct {
 	PreviousTime   time.Duration
 	SpellsRotation []SpellRotation
 
-	petStmBonusSP                float64
-	masterDemonologistFireCrit   float64
-	masterDemonologistShadowCrit float64
+	petStmBonusSP float64
 
 	CritDebuffCategory *core.ExclusiveCategory
 }
