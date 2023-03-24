@@ -102,15 +102,15 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-BlackBruise-50035"
  value: {
-  dps: 5873.6918
-  tps: 4170.32118
+  dps: 5794.83443
+  tps: 4114.33244
  }
 }
 dps_results: {
  key: "TestAssassination-AllItems-BlackBruise-50692"
  value: {
-  dps: 5956.05754
-  tps: 4228.80085
+  dps: 5868.81783
+  tps: 4166.86066
  }
 }
 dps_results: {
@@ -566,8 +566,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-Shadowblade'sBattlegear"
  value: {
-  dps: 7787.26234
-  tps: 5528.95626
+  dps: 7790.58277
+  tps: 5531.31376
  }
 }
 dps_results: {
@@ -678,8 +678,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-TheFistsofFury"
  value: {
-  dps: 5100.8384
-  tps: 3621.59526
+  dps: 4991.69544
+  tps: 3544.10376
  }
 }
 dps_results: {

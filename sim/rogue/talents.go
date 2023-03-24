@@ -71,6 +71,10 @@ func getRelentlessStrikesSpellID(talentPoints int32) int32 {
 func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, numPoints int32) {
 	ruthlessnessMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 14161})
 	relentlessStrikesMetrics := rogue.NewEnergyMetrics(core.ActionID{SpellID: getRelentlessStrikesSpellID(rogue.Talents.RelentlessStrikes)})
+	var mayhemMetrics *core.ResourceMetrics
+	if rogue.HasSetBonus(ItemSetShadowblades, 4) {
+		mayhemMetrics = rogue.NewComboPointMetrics(core.ActionID{SpellID: 70802})
+	}
 
 	return func(sim *core.Simulation, numPoints int32) {
 		if t := rogue.Talents.Ruthlessness; t > 0 {
@@ -81,6 +85,11 @@ func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, 
 		if t := rogue.Talents.RelentlessStrikes; t > 0 {
 			if sim.RandomFloat("RelentlessStrikes") < 0.04*float64(t*numPoints) {
 				rogue.AddEnergy(sim, 25, relentlessStrikesMetrics)
+			}
+		}
+		if mayhemMetrics != nil {
+			if sim.RandomFloat("Mayhem") < 0.13 {
+				rogue.AddComboPoints(sim, 3, mayhemMetrics)
 			}
 		}
 	}
@@ -534,12 +543,16 @@ func (rogue *Rogue) registerAdrenalineRushCD() {
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.ResetEnergyTick(sim)
 			rogue.ApplyEnergyTickMultiplier(1.0)
-			rogue.rotationItems = rogue.planRotation(sim)
+			if r, ok := rogue.rotation.(*rotation_generic); ok {
+				r.planRotation(sim, rogue)
+			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.ResetEnergyTick(sim)
 			rogue.ApplyEnergyTickMultiplier(-1.0)
-			rogue.rotationItems = rogue.planRotation(sim)
+			if r, ok := rogue.rotation.(*rotation_generic); ok {
+				r.planRotation(sim, rogue)
+			}
 		},
 	})
 

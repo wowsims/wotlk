@@ -29,9 +29,6 @@ const (
 	SpellFlagBuilder     = core.SpellFlagAgentReserved2
 	SpellFlagFinisher    = core.SpellFlagAgentReserved3
 	SpellFlagColdBlooded = core.SpellFlagAgentReserved4
-	AssassinTree         = 0
-	CombatTree           = 1
-	SubtletyTree         = 2
 )
 
 var TalentTreeSizes = [3]int{27, 28, 28}
@@ -45,11 +42,9 @@ type Rogue struct {
 	Options  *proto.Rogue_Options
 	Rotation *proto.Rogue_Rotation
 
-	priorityItems      []roguePriorityItem
-	rotationItems      []rogueRotationItem
-	assassinationPrios []assassinationPrio
-	subtletyPrios      []subtletyPrio
-	bleedCategory      *core.ExclusiveCategory
+	rotation rotation
+
+	bleedCategory *core.ExclusiveCategory
 
 	sliceAndDiceDurations [6]time.Duration
 	exposeArmorDurations  [6]time.Duration
@@ -58,8 +53,6 @@ type Rogue struct {
 
 	maxEnergy float64
 
-	BuilderPoints    int32
-	Builder          *core.Spell
 	Backstab         *core.Spell
 	BladeFlurry      *core.Spell
 	DeadlyPoison     *core.Spell
@@ -189,26 +182,8 @@ func (rogue *Rogue) Initialize() {
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()
 }
 
-func (rogue *Rogue) getExpectedEnergyPerSecond() float64 {
-	const finishersPerSecond = 1.0 / 6
-	const averageComboPointsSpendOnFinisher = 4.0
-	bonusEnergyPerSecond := float64(rogue.Talents.CombatPotency) * 3 * 0.2 * 1.0 / (rogue.AutoAttacks.OH.SwingSpeed / 1.4)
-	bonusEnergyPerSecond += float64(rogue.Talents.FocusedAttacks)
-	bonusEnergyPerSecond += float64(rogue.Talents.RelentlessStrikes) * 0.04 * 25 * finishersPerSecond * averageComboPointsSpendOnFinisher
-	return (core.EnergyPerTick*rogue.EnergyTickMultiplier)/core.EnergyTickDuration.Seconds() + bonusEnergyPerSecond
-}
-
 func (rogue *Rogue) ApplyEnergyTickMultiplier(multiplier float64) {
 	rogue.EnergyTickMultiplier += multiplier
-}
-
-func (rogue *Rogue) getExpectedComboPointsPerSecond() float64 {
-	return 1 / rogue.getExpectedSecondsPerComboPoint()
-}
-
-func (rogue *Rogue) getExpectedSecondsPerComboPoint() float64 {
-	honorAmongThievesChance := []float64{0, 0.33, 0.66, 1.0}[rogue.Talents.HonorAmongThieves]
-	return 1 + 1/(float64(rogue.Options.HonorOfThievesCritRate+100)/100*honorAmongThievesChance)
 }
 
 func (rogue *Rogue) Reset(sim *core.Simulation) {
@@ -235,7 +210,8 @@ func (rogue *Rogue) Reset(sim *core.Simulation) {
 			rogue.MasterOfSubtletyAura.UpdateExpires(sim.CurrentTime + dur)
 		}
 	}
-	rogue.setPriorityItems(sim)
+
+	rogue.setupRotation(sim)
 }
 
 func (rogue *Rogue) MeleeCritMultiplier(applyLethality bool) float64 {
@@ -304,10 +280,14 @@ func (rogue *Rogue) ApplyCutToTheChase(sim *core.Simulation) {
 }
 
 func (rogue *Rogue) CanMutilate() bool {
-	return rogue.Talents.Mutilate &&
-		rogue.HasMHWeapon() && rogue.HasOHWeapon() &&
-		rogue.GetMHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger &&
-		rogue.GetOHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger
+	return rogue.Talents.Mutilate && rogue.HasDagger(core.MainHand) && rogue.HasDagger(core.OffHand)
+}
+
+func (rogue *Rogue) HasDagger(hand core.Hand) bool {
+	if hand == core.MainHand {
+		return rogue.HasMHWeapon() && rogue.GetMHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger
+	}
+	return rogue.HasOHWeapon() && rogue.GetOHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger
 }
 
 func init() {

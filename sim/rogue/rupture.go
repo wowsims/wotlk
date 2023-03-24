@@ -12,6 +12,7 @@ const RuptureSpellID = 48672
 
 func (rogue *Rogue) registerRupture() {
 	glyphTicks := core.TernaryInt32(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfRupture), 2, 0)
+
 	rogue.Rupture = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: RuptureSpellID},
 		SpellSchool:  core.SpellSchoolPhysical,
@@ -55,11 +56,7 @@ func (rogue *Rogue) registerRupture() {
 			TickLength:    time.Second * 2,
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
-				comboPoints := rogue.ComboPoints()
-				dot.SnapshotBaseDamage = 127 +
-					18*float64(comboPoints) +
-					[]float64{0, 0.06 / 4, 0.12 / 5, 0.18 / 6, 0.24 / 7, 0.30 / 8}[comboPoints]*dot.Spell.MeleeAttackPower()
-
+				dot.SnapshotBaseDamage = rogue.RuptureDamage(rogue.ComboPoints())
 				attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
 				dot.SnapshotCritChance = dot.Spell.PhysicalCritChance(target, attackTable)
 				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
@@ -72,11 +69,11 @@ func (rogue *Rogue) registerRupture() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
 			if result.Landed() {
-				comboPoints := rogue.ComboPoints()
+				numberOfTicks := 3 + rogue.ComboPoints() + glyphTicks
 				dot := spell.Dot(target)
 				dot.Spell = spell
-				dot.NumberOfTicks = 3 + comboPoints + glyphTicks
-				dot.RecomputeAuraDuration()
+				dot.NumberOfTicks = numberOfTicks
+				dot.MaxStacks = numberOfTicks // slightly hacky; used to determine max extra ticks from Glyph of Backstab
 				dot.Apply(sim)
 				rogue.ApplyFinisher(sim, spell)
 			} else {
@@ -87,8 +84,16 @@ func (rogue *Rogue) registerRupture() {
 	})
 }
 
+func (rogue *Rogue) RuptureDamage(comboPoints int32) float64 {
+	return 127 +
+		18*float64(comboPoints) +
+		[]float64{0, 0.06 / 4, 0.12 / 5, 0.18 / 6, 0.24 / 7, 0.30 / 8}[comboPoints]*rogue.Rupture.MeleeAttackPower()
+}
+
+func (rogue *Rogue) RuptureTicks(comboPoints int32) int32 {
+	return 3 + comboPoints + core.TernaryInt32(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfRupture), 2, 0)
+}
+
 func (rogue *Rogue) RuptureDuration(comboPoints int32) time.Duration {
-	return time.Second*6 +
-		time.Second*2*time.Duration(comboPoints) +
-		core.TernaryDuration(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfRupture), time.Second*4, 0)
+	return time.Duration(rogue.RuptureTicks(comboPoints)) * time.Second * 2
 }
