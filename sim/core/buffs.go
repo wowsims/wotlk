@@ -211,7 +211,7 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 	}
 	if raidBuffs.DemonicPact > 0 {
 		dpAura := DemonicPactAura(character)
-		dpAura.ExclusiveEffects[0].Priority = float64(raidBuffs.DemonicPact) / 10.0
+		dpAura.ExclusiveEffects[0].Priority = float64(raidBuffs.DemonicPact)
 		MakePermanent(dpAura)
 	}
 
