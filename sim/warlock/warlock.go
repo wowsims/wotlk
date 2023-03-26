@@ -104,7 +104,6 @@ func (warlock *Warlock) GrandFirestoneBonus() float64 {
 }
 
 func (warlock *Warlock) Initialize() {
-
 	warlock.registerIncinerateSpell()
 	warlock.registerShadowBoltSpell()
 	warlock.registerImmolateSpell()
@@ -122,12 +121,8 @@ func (warlock *Warlock) Initialize() {
 	warlock.registerConflagrateSpell()
 	warlock.registerHauntSpell()
 	warlock.registerChaosBoltSpell()
-
 	warlock.registerDemonicEmpowermentSpell()
-	if warlock.Talents.Metamorphosis {
-		warlock.registerMetamorphosisSpell()
-		warlock.registerImmolationAuraSpell()
-	}
+	warlock.registerMetamorphosisSpell()
 	warlock.registerDarkPactSpell()
 	warlock.registerShadowBurnSpell()
 	warlock.registerInfernoSpell()

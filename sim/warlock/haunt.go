@@ -9,11 +9,7 @@ import (
 
 func (warlock *Warlock) registerHauntSpell() {
 	actionID := core.ActionID{SpellID: 59164}
-
-	debuffMultiplier := 1.2
-	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfHaunt) {
-		debuffMultiplier += 0.03
-	}
+	debuffMult := core.TernaryFloat64(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfHaunt), 1.23, 1.2)
 
 	warlock.HauntDebuffAuras = warlock.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
 		return target.GetOrRegisterAura(core.Aura{
@@ -21,10 +17,10 @@ func (warlock *Warlock) registerHauntSpell() {
 			ActionID: actionID,
 			Duration: time.Second * 12,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				warlock.AttackTables[aura.Unit.UnitIndex].PeriodicShadowDamageTakenMultiplier *= debuffMultiplier
+				warlock.AttackTables[aura.Unit.UnitIndex].PeriodicShadowDamageTakenMultiplier *= debuffMult
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				warlock.AttackTables[aura.Unit.UnitIndex].PeriodicShadowDamageTakenMultiplier /= debuffMultiplier
+				warlock.AttackTables[aura.Unit.UnitIndex].PeriodicShadowDamageTakenMultiplier /= debuffMult
 			},
 		})
 	})

@@ -8,6 +8,10 @@ import (
 )
 
 func (warlock *Warlock) registerMetamorphosisSpell() {
+	if !warlock.Talents.Metamorphosis {
+		return
+	}
+
 	warlock.MetamorphosisAura = warlock.RegisterAura(core.Aura{
 		Label:    "Metamorphosis Aura",
 		ActionID: core.ActionID{SpellID: 47241},
@@ -49,9 +53,7 @@ func (warlock *Warlock) registerMetamorphosisSpell() {
 			return true
 		},
 	})
-}
 
-func (warlock *Warlock) registerImmolationAuraSpell() {
 	warlock.ImmolationAura = warlock.RegisterSpell(core.SpellConfig{
 		// the spellID that deals damage in the combat log is 50590, but we don't use it here
 		ActionID:    core.ActionID{SpellID: 50589},

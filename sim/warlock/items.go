@@ -56,10 +56,8 @@ var ItemSetPlagueheartGarb = core.NewItemSet(core.ItemSet{
 					aura.Activate(sim)
 				},
 				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-					if spell == warlock.Corruption || spell == warlock.Immolate {
-						if sim.RandomFloat("2pT7") < 0.15 {
-							warlock.DemonicSoulAura.Activate(sim)
-						}
+					if (spell == warlock.Corruption || spell == warlock.Immolate) && sim.Proc(0.15, "2pT7") {
+						warlock.DemonicSoulAura.Activate(sim)
 					}
 				},
 			})
@@ -116,11 +114,12 @@ var ItemSetGuldansRegalia = core.NewItemSet(core.ItemSet{
 		2: func(agent core.Agent) {
 			// TODO: probably doesn't apply to infernal
 			warlock := agent.(WarlockAgent).GetWarlock()
-			pet := warlock.Pets[0].GetCharacter()
-			pet.AddStats(stats.Stats{
-				stats.MeleeCrit: 10 * core.CritRatingPerCritChance,
-				stats.SpellCrit: 10 * core.CritRatingPerCritChance,
-			})
+			if warlock.Pet != nil {
+				warlock.Pet.AddStats(stats.Stats{
+					stats.MeleeCrit: 10 * core.CritRatingPerCritChance,
+					stats.SpellCrit: 10 * core.CritRatingPerCritChance,
+				})
+			}
 		},
 		4: func(agent core.Agent) {
 			// Implemented
@@ -139,7 +138,7 @@ var ItemSetDarkCovensRegalia = core.NewItemSet(core.ItemSet{
 			warlock := agent.(WarlockAgent).GetWarlock()
 			pet := warlock.Pets[0].GetCharacter()
 
-			DeviousMindsAura := warlock.RegisterAura(core.Aura{
+			deviousMindsAura := warlock.RegisterAura(core.Aura{
 				Label:    "Devious Minds",
 				ActionID: core.ActionID{SpellID: 70840},
 				Duration: time.Second * 10,
@@ -171,11 +170,9 @@ var ItemSetDarkCovensRegalia = core.NewItemSet(core.ItemSet{
 				},
 				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 					if spell == warlock.UnstableAffliction || spell == warlock.Immolate {
-						if sim.RandomFloat("4pT10") < 0.15 {
-							DeviousMindsAura.Activate(sim)
-							DeviousMindsAura.Refresh(sim)
+						if sim.Proc(0.15, "4pT10") {
+							deviousMindsAura.Activate(sim)
 							petDeviousMindsAura.Activate(sim)
-							petDeviousMindsAura.Refresh(sim)
 						}
 					}
 				},
@@ -210,7 +207,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if spell == warlock.Corruption && sim.RandomFloat("Ashtongue Talisman of Insight") < 0.2 {
+				if spell == warlock.Corruption && sim.Proc(0.2, "Ashtongue Talisman of Insight") {
 					procAura.Activate(sim)
 				}
 			},
