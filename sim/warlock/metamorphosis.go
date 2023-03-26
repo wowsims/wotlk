@@ -72,6 +72,9 @@ func (warlock *Warlock) registerMetamorphosisSpell() {
 				Duration: time.Second * time.Duration(30),
 			},
 		},
+		ExtraCastCondition: func(_ *core.Simulation, _ *core.Unit) bool {
+			return warlock.MetamorphosisAura.IsActive()
+		},
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
