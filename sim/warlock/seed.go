@@ -10,9 +10,10 @@ func (warlock *Warlock) registerSeedSpell() {
 	actionID := core.ActionID{SpellID: 47836}
 
 	seedExplosion := warlock.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID.WithTag(1),
-		SpellSchool: core.SpellSchoolShadow,
-		ProcMask:    core.ProcMaskSpellDamage,
+		ActionID:     actionID.WithTag(1), // actually 47834
+		SpellSchool:  core.SpellSchoolShadow,
+		ProcMask:     core.ProcMaskSpellDamage,
+		MissileSpeed: 28,
 
 		BonusCritRating: 0 +
 			float64(warlock.Talents.ImprovedCorruption)*core.CritRatingPerCritChance,
@@ -24,16 +25,11 @@ func (warlock *Warlock) registerSeedSpell() {
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			dmgFromSP := 0.2129 * spell.SpellPower()
+			baseDmg := (sim.Roll(1633, 1897) + 0.286*spell.SpellPower()) * sim.Encounter.AOECapMultiplier()
 			for _, aoeTarget := range sim.Encounter.TargetUnits {
-				// Seeded target is not affected by explosion.
-				if aoeTarget == target {
-					continue
-				}
-
-				baseDamage := sim.Roll(1633, 1897) + dmgFromSP
-				baseDamage *= sim.Encounter.AOECapMultiplier()
-				spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeMagicHitAndCrit)
+				// TODO: should be affected by haunt/SE, but they only work on periodic shadow damage
+				// right now, thus as a hacky workaround we make the explosion periodic too
+				spell.CalcAndDealPeriodicDamage(sim, aoeTarget, baseDmg, spell.OutcomeMagicHitAndCrit)
 			}
 		},
 	})
@@ -107,14 +103,15 @@ func (warlock *Warlock) registerSeedSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
-			if result.Landed() {
-				if warlock.Rotation.DetonateSeed {
-					seedExplosion.Cast(sim, target)
-				} else {
-					spell.Dot(target).Apply(sim)
+			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
+				if result.Landed() {
+					if warlock.Rotation.DetonateSeed {
+						seedExplosion.Cast(sim, target)
+					} else {
+						spell.Dot(target).Apply(sim)
+					}
 				}
-			}
-			spell.DealOutcome(sim, result)
+			})
 		},
 	})
 }
