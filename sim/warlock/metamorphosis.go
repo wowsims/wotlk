@@ -30,7 +30,7 @@ func (warlock *Warlock) registerMetamorphosisSpell() {
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    warlock.NewTimer(),
-				Duration: time.Second * time.Duration(3*60.*(1.-0.1*float64(warlock.Talents.Nemesis))),
+				Duration: time.Duration(180-18*warlock.Talents.Nemesis) * time.Second,
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
