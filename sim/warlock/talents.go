@@ -481,11 +481,10 @@ func (warlock *Warlock) setupEverlastingAffliction() {
 
 func (warlock *Warlock) setupImprovedSoulLeech() {
 	soulLeechProcChance := 0.1 * float64(warlock.Talents.SoulLeech)
-	improvedSoulLeechProcChance := float64(warlock.Talents.ImprovedSoulLeech) / 2.
+	impSoulLeechProcChance := float64(warlock.Talents.ImprovedSoulLeech) / 2.
 	actionID := core.ActionID{SpellID: 54118}
-	improvedSoulLeechManaMetric := warlock.NewManaMetrics(actionID)
-	improvedSoulLeechPetManaMetric := warlock.Pets[0].GetCharacter().NewManaMetrics(actionID)
-
+	impSoulLeechManaMetric := warlock.NewManaMetrics(actionID)
+	impSoulLeechPetManaMetric := warlock.Pet.NewManaMetrics(actionID)
 	replSrc := warlock.Env.Raid.NewReplenishmentSource(core.ActionID{SpellID: 54118})
 
 	warlock.RegisterAura(core.Aura{
@@ -495,13 +494,21 @@ func (warlock *Warlock) setupImprovedSoulLeech() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell == warlock.Conflagrate || spell == warlock.ShadowBolt || spell == warlock.ChaosBolt || spell == warlock.SoulFire || spell == warlock.Incinerate {
-				if sim.RandomFloat("SoulLeech") < soulLeechProcChance {
-					warlock.AddMana(sim, warlock.MaxMana()*float64(warlock.Talents.ImprovedSoulLeech)/100, improvedSoulLeechManaMetric)
-					warlock.Pets[0].GetCharacter().AddMana(sim, warlock.Pets[0].GetCharacter().MaxMana()*float64(warlock.Talents.ImprovedSoulLeech)/100, improvedSoulLeechPetManaMetric)
-					if warlock.Talents.ImprovedSoulLeech == 2 || sim.RandomFloat("ImprovedSoulLeech") < improvedSoulLeechProcChance {
-						warlock.Env.Raid.ProcReplenishment(sim, replSrc)
-					}
+			if spell == warlock.Conflagrate || spell == warlock.ShadowBolt || spell == warlock.ChaosBolt ||
+				spell == warlock.SoulFire || spell == warlock.Incinerate {
+				if !sim.Proc(soulLeechProcChance, "SoulLeech") {
+					return
+				}
+
+				restorePct := float64(warlock.Talents.ImprovedSoulLeech) / 100
+				warlock.AddMana(sim, warlock.MaxMana()*restorePct, impSoulLeechManaMetric)
+				pet := warlock.Pet
+				if pet != nil {
+					pet.AddMana(sim, pet.MaxMana()*restorePct, impSoulLeechPetManaMetric)
+				}
+
+				if sim.Proc(impSoulLeechProcChance, "ImprovedSoulLeech") {
+					warlock.Env.Raid.ProcReplenishment(sim, replSrc)
 				}
 			}
 		},
