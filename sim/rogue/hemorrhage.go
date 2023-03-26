@@ -51,7 +51,6 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 		})
 	}
 
-	daggerMH := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
 	rogue.Hemorrhage = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
@@ -72,7 +71,7 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +
 			[]float64{0, 2, 4, 6}[rogue.Talents.TurnTheTables]*core.CritRatingPerCritChance,
 
-		DamageMultiplier: core.TernaryFloat64(daggerMH, 1.6, 1.1) * (1 +
+		DamageMultiplier: core.TernaryFloat64(rogue.HasDagger(core.MainHand), 1.6, 1.1) * (1 +
 			0.02*float64(rogue.Talents.FindWeakness) +
 			core.TernaryFloat64(rogue.HasSetBonus(ItemSetSlayers, 4), 0.06, 0)) *
 			(1 + 0.02*float64(rogue.Talents.SinisterCalling)),

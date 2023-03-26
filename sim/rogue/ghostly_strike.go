@@ -15,7 +15,6 @@ func (rogue *Rogue) registerGhostlyStrikeSpell() {
 	hasGlyph := rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfGhostlyStrike)
 
 	actionID := core.ActionID{SpellID: 14278}
-	daggerMH := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger
 
 	rogue.GhostlyStrike = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -41,7 +40,7 @@ func (rogue *Rogue) registerGhostlyStrikeSpell() {
 		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +
 			[]float64{0, 2, 4, 6}[rogue.Talents.TurnTheTables]*core.CritRatingPerCritChance,
 
-		DamageMultiplier: (core.TernaryFloat64(daggerMH, 1.8, 1.25) + core.TernaryFloat64(hasGlyph, 0.4, 0)) * (1 + 0.02*float64(rogue.Talents.FindWeakness)),
+		DamageMultiplier: core.TernaryFloat64(rogue.HasDagger(core.MainHand), 1.8, 1.25) * core.TernaryFloat64(hasGlyph, 1.4, 1) * (1 + 0.02*float64(rogue.Talents.FindWeakness)),
 		CritMultiplier:   rogue.MeleeCritMultiplier(true),
 		ThreatMultiplier: 1,
 

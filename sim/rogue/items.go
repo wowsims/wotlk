@@ -111,28 +111,7 @@ var ItemSetShadowblades = core.NewItemSet(core.ItemSet{
 		},
 		4: func(agent core.Agent) {
 			// Gives your melee finishing moves a 13% chance to add 3 combo points to your target.
-			actionID := core.ActionID{SpellID: 70803}
-			rogue := agent.(RogueAgent).GetRogue()
-			metrics := rogue.NewComboPointMetrics(actionID)
-			rogue.RegisterAura(core.Aura{
-				Label:    "Shadowblade's 4pc",
-				Duration: core.NeverExpires,
-				OnReset: func(aura *core.Aura, sim *core.Simulation) {
-					aura.Activate(sim)
-				},
-				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-					if !result.Landed() {
-						return
-					}
-					if !spell.Flags.Matches(SpellFlagFinisher) {
-						return
-					}
-					if sim.RandomFloat("Shadowblades") > 0.13 {
-						return
-					}
-					rogue.AddComboPoints(sim, 3, metrics)
-				},
-			})
+			// Handled in the finishing move effect applier
 		},
 	},
 })
