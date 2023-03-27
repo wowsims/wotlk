@@ -45,7 +45,7 @@ func (rogue *Rogue) registerEviscerate() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			comboPoints := rogue.ComboPoints()
 			flatBaseDamage := 127 + 370*float64(comboPoints)
-			// tooltip implies 3..7% AP scaling, but testing show it's fixed at 7% (3.4.0.46158)
+			// tooltip implies 3..7% AP scaling, but testing shows it's fixed at 7% (3.4.0.46158)
 			apRatio := 0.07 * float64(comboPoints)
 
 			baseDamage := flatBaseDamage +

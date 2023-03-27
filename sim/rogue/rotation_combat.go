@@ -31,6 +31,8 @@ func (x *rotation_combat) setup(_ *core.Simulation, rogue *Rogue) {
 	baseEps := 10 * rogue.EnergyTickMultiplier
 	maxPool := rogue.maxEnergy - 3*float64(rogue.Talents.CombatPotency)
 
+	ruthCp := 0.2 * float64(rogue.Talents.Ruthlessness)
+
 	// estimate of energy per second while nothing is cast
 	energyPerSecond := func() float64 {
 		if rogue.Talents.CombatPotency == 0 {
@@ -51,6 +53,7 @@ func (x *rotation_combat) setup(_ *core.Simulation, rogue *Rogue) {
 		return 10*rogue.EnergyTickMultiplier + landsPerSecond*0.2*float64(rogue.Talents.CombatPotency)*3
 	}
 
+	// Glyph of Backstab support
 	var bonusDuration float64
 	rupRemaining := func(sim *core.Simulation) time.Duration {
 		if dot := rogue.Rupture.CurDot(); dot.IsActive() {
@@ -198,6 +201,53 @@ func (x *rotation_combat) setup(_ *core.Simulation, rogue *Rogue) {
 		0,
 	})
 
+	if rogue.Rotation.CombatFinisherPriority == proto.Rogue_Rotation_EviscerateRupture {
+		// this is the pre-3.3.3 "rupture-less" rotation, essentially
+		x.prios = append(x.prios, prio{
+			func(sim *core.Simulation, rogue *Rogue) PriorityAction {
+				e, cp := rogue.CurrentEnergy(), rogue.ComboPoints()
+
+				if dur := sim.GetRemainingDuration(); dur <= 10*time.Second {
+					// end of fight handling - build towards a 3+ cp eviscerate, or just sinister strike
+					switch cp {
+					case 5:
+						if e >= evisCost {
+							return Cast
+						}
+						return Wait
+					default:
+						if e+dur.Seconds()*energyPerSecond() >= bldCost+evisCost {
+							return Build
+						}
+						if cp >= 3 && e >= evisCost {
+							return Cast
+						}
+						if cp < 3 && e >= bldCost {
+							return Build
+						}
+					}
+					return Wait
+				}
+
+				if cp >= 5 {
+					sndDur := rogue.SliceAndDiceAura.RemainingDuration(sim)
+					// correcting with ruthCp seems to be a loss, so we just use bldCost directly
+					if e+sndDur.Seconds()*energyPerSecond() >= evisCost+bldCost+sndCost {
+						return Cast
+					}
+					return Wait
+				}
+				return Build
+			},
+			func(sim *core.Simulation, rogue *Rogue) bool {
+				return rogue.Eviscerate.Cast(sim, rogue.CurrentTarget)
+			},
+			evisCost,
+		})
+
+		return
+	}
+
 	const ruptureMinDuration = time.Second * 10 // heuristically, 4-5 rupture ticks are better DPE than eviscerate
 
 	// seconds a 5 cp rupture can be delayed to match a 4 cp rupture's dps. for rup4to5 and rup3to4, this delay is < 2s,
@@ -306,13 +356,12 @@ func (x *rotation_combat) setup(_ *core.Simulation, rogue *Rogue) {
 				return Build
 			}
 
-			ruthCP := 0.2 * float64(rogue.Talents.Ruthlessness)
-			cost := evisCost + (4-ruthCP)*bldCost*bldPerCp + rupCost
+			cost := evisCost + (4-ruthCp)*bldCost*bldPerCp + rupCost
 
 			rupDur := rupRemaining(sim)
 			sndDur := rogue.SliceAndDiceAura.RemainingDuration(sim)
 			if sndDur < rupDur {
-				cost += sndCost + (1-ruthCP)*bldCost*bldPerCp
+				cost += sndCost + (1-ruthCp)*bldCost*bldPerCp
 			}
 
 			if avail := e + rupDur.Seconds()*energyPerSecond(); avail >= cost {

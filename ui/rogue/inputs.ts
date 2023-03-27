@@ -94,7 +94,6 @@ export const RogueRotationConfig = {
 			],
 			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().combatPotency > 0
 		}),
-		/*
 		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, CombatPriority>({
 			fieldName: 'combatFinisherPriority',
 			label: 'Finisher Priority',
@@ -105,7 +104,6 @@ export const RogueRotationConfig = {
 			],
 			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().combatPotency > 0
 		}),
-		*/
 		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, AssassinationPriority>({
 			fieldName: 'assassinationFinisherPriority',
 			label: 'Finisher Priority',
