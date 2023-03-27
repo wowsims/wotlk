@@ -144,8 +144,6 @@ message Rogue {
 			Never = 0;
 			Once = 1;
 			Maintain = 2;
-			Build = 3;
-			Fill = 4;
 			FrequencyUnknown = 5;
 		}
 		Frequency expose_armor_frequency = 1;
@@ -160,6 +158,12 @@ message Rogue {
 			CombatPriorityUnknown = 2;
 		}
 		CombatPriority combat_finisher_priority = 4;
+
+		enum CombatBuilder {
+			SinisterStrike = 0;
+			Backstab = 1;
+		}
+		CombatBuilder combat_builder = 25;
 
 		enum AssassinationPriority {
 			EnvenomRupture = 0;

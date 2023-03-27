@@ -17,6 +17,7 @@ import {IndividualSimUI} from '../core/individual_sim_ui.js';
 import {
 	Rogue_Options_PoisonImbue,
 	Rogue_Rotation_AssassinationPriority as AssassinationPriority,
+	Rogue_Rotation_CombatBuilder as CombatBuilder,
 	Rogue_Rotation_CombatPriority as CombatPriority,
 	Rogue_Rotation_Frequency as Frequency,
 	Rogue_Rotation_SubtletyPriority as SubtletyPriority,
@@ -28,7 +29,7 @@ import * as OtherInputs from '../core/components/other_inputs.js';
 
 import * as RogueInputs from './inputs.js';
 import * as Presets from './presets.js';
-import {DefaultOptions} from "./presets.js";
+import {DefaultOptions} from './presets.js';
 
 export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecRogue>) {
@@ -52,7 +53,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 								}
 							}
 							if (hasNoArmor) {
-								return 'One or more targets have no armor! Check advanced encounter settings.';
+								return 'One or more targets have no armor. Check advanced encounter settings.';
 							} else {
 								return '';
 							}
@@ -68,7 +69,45 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 								(simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponType != WeaponType.WeaponTypeDagger ||
 									simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponType != WeaponType.WeaponTypeDagger)
 							) {
-								return '\'Mutilate\' talent selected, but daggers not equipped in both hands!';
+								return '"Mutilate" talent selected, but daggers not equipped in both hands.';
+							} else {
+								return '';
+							}
+						},
+					};
+				},
+				(simUI: IndividualSimUI<Spec.SpecRogue>) => {
+					return {
+						updateOn: simUI.player.changeEmitter,
+						getContent: () => {
+							if (simUI.player.getRotation().combatBuilder == CombatBuilder.Backstab &&
+								simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponType != WeaponType.WeaponTypeDagger) {
+								return 'Builder "Backstab" selected, but no dagger equipped.';
+							} else {
+								return '';
+							}
+						},
+					};
+				},
+				(simUI: IndividualSimUI<Spec.SpecRogue>) => {
+					return {
+						updateOn: simUI.player.changeEmitter,
+						getContent: () => {
+							if (simUI.player.getInFrontOfTarget() && (simUI.player.getRotation().combatBuilder == CombatBuilder.Backstab ||
+								simUI.player.getRotation().openWithGarrote)) {
+								return 'Option "In Front of Target" selected, but using Backstab or Garrote as builder or opener.';
+							} else {
+								return '';
+							}
+						},
+					};
+				},
+				(simUI: IndividualSimUI<Spec.SpecRogue>) => {
+					return {
+						updateOn: simUI.player.changeEmitter,
+						getContent: () => {
+							if (simUI.player.getRotation().useGhostlyStrike && !simUI.player.getMajorGlyphs().includes(RogueMajorGlyph.GlyphOfGhostlyStrike)) {
+								return '"Use Ghostly Strike" selected, but missing Glyph of Ghostly Strike.';
 							} else {
 								return '';
 							}
@@ -80,7 +119,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 						updateOn: simUI.player.changeEmitter,
 						getContent: () => {
 							if (simUI.player.getRotation().useFeint && !simUI.player.getMajorGlyphs().includes(RogueMajorGlyph.GlyphOfFeint)) {
-								return '\'Use Feint\' selected, but missing Glyph of Feint!';
+								return '"Use Feint" selected, but missing Glyph of Feint.';
 							} else {
 								return '';
 							}
@@ -98,11 +137,11 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 							if (typeof mhWeaponSpeed == 'undefined' || typeof ohWeaponSpeed == 'undefined' || !simUI.player.getSpecOptions().applyPoisonsManually) {
 								return '';
 							}
-							if ((mhWeaponSpeed < ohWeaponSpeed) && (ohImbue == Rogue_Options_PoisonImbue.DeadlyPoison)) {
-								return 'Deadly poison applied to slower (off hand) weapon!';
+							if (mhWeaponSpeed < ohWeaponSpeed && ohImbue == Rogue_Options_PoisonImbue.DeadlyPoison) {
+								return 'Deadly poison applied to slower (off hand) weapon.';
 							}
-							if ((ohWeaponSpeed < mhWeaponSpeed) && (mhImbue == Rogue_Options_PoisonImbue.DeadlyPoison)) {
-								return 'Deadly poison applied to slower (main hand) weapon!';
+							if (ohWeaponSpeed < mhWeaponSpeed && mhImbue == Rogue_Options_PoisonImbue.DeadlyPoison) {
+								return 'Deadly poison applied to slower (main hand) weapon.';
 							}
 							return '';
 						},
@@ -266,11 +305,13 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					rotation.assassinationFinisherPriority = Presets.DefaultRotation.assassinationFinisherPriority;
 				}
 				rotation.combatFinisherPriority = CombatPriority.CombatPriorityUnknown;
+				rotation.combatBuilder = CombatBuilder.SinisterStrike;
 				rotation.subtletyFinisherPriority = SubtletyPriority.SubtletyPriorityUnknown;
 				options.honorOfThievesCritRate = -1;
 			} else if (this.player.getTalentTree() == 1) {
 				if (rotation.combatFinisherPriority == CombatPriority.CombatPriorityUnknown) {
 					rotation.combatFinisherPriority = Presets.DefaultRotation.combatFinisherPriority;
+					rotation.combatBuilder = Presets.DefaultRotation.combatBuilder;
 				}
 				rotation.assassinationFinisherPriority = AssassinationPriority.AssassinationPriorityUnknown;
 				rotation.subtletyFinisherPriority = SubtletyPriority.SubtletyPriorityUnknown;
@@ -281,6 +322,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 				}
 				rotation.assassinationFinisherPriority = AssassinationPriority.AssassinationPriorityUnknown;
 				rotation.combatFinisherPriority = CombatPriority.CombatPriorityUnknown;
+				rotation.combatBuilder = CombatBuilder.SinisterStrike;
 				if (options.honorOfThievesCritRate == -1) {
 					options.honorOfThievesCritRate = DefaultOptions.honorOfThievesCritRate
 				}

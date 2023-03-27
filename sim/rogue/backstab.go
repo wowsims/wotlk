@@ -11,7 +11,7 @@ func (rogue *Rogue) registerBackstabSpell() {
 	hasGlyph := rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfBackstab)
 
 	rogue.Backstab = rogue.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 26863},
+		ActionID:    core.ActionID{SpellID: 48657},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBuilder | SpellFlagColdBlooded,

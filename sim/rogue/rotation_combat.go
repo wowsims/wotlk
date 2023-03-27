@@ -11,12 +11,19 @@ import (
 
 type rotation_combat struct {
 	prios []prio
+
+	builder *core.Spell
 }
 
 func (x *rotation_combat) setup(_ *core.Simulation, rogue *Rogue) {
 	x.prios = x.prios[:0]
 
-	ssCost := rogue.SinisterStrike.DefaultCast.Cost
+	x.builder = rogue.SinisterStrike
+	if rogue.Rotation.CombatBuilder == proto.Rogue_Rotation_Backstab && rogue.HasDagger(core.MainHand) && !rogue.PseudoStats.InFrontOfTarget {
+		x.builder = rogue.Backstab
+	}
+
+	bldCost := x.builder.DefaultCast.Cost
 	sndCost := rogue.SliceAndDice.DefaultCast.Cost
 	rupCost := rogue.Rupture.DefaultCast.Cost
 	evisCost := rogue.Eviscerate.DefaultCast.Cost
@@ -44,6 +51,26 @@ func (x *rotation_combat) setup(_ *core.Simulation, rogue *Rogue) {
 		return 10*rogue.EnergyTickMultiplier + landsPerSecond*0.2*float64(rogue.Talents.CombatPotency)*3
 	}
 
+	var bonusDuration float64
+	rupRemaining := func(sim *core.Simulation) time.Duration {
+		if dot := rogue.Rupture.CurDot(); dot.IsActive() {
+			return dot.RemainingDuration(sim)
+		}
+		return 0
+	}
+
+	if x.builder == rogue.Backstab && rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfBackstab) {
+		bonusDuration = 6
+		rupRemaining = func(sim *core.Simulation) time.Duration {
+			if dot := rogue.Rupture.CurDot(); dot.IsActive() {
+				dur := dot.RemainingDuration(sim)
+				dur += dot.TickLength * time.Duration(dot.MaxStacks+3-dot.NumberOfTicks)
+				return dur
+			}
+			return 0
+		}
+	}
+
 	// Garrote
 	if rogue.Rotation.OpenWithGarrote && !rogue.PseudoStats.InFrontOfTarget {
 		x.prios = append(x.prios, prio{
@@ -65,11 +92,10 @@ func (x *rotation_combat) setup(_ *core.Simulation, rogue *Rogue) {
 		func(sim *core.Simulation, rogue *Rogue) PriorityAction {
 			cp, e := rogue.ComboPoints(), rogue.CurrentEnergy()
 
-			if rogue.SliceAndDiceAura.IsActive() {
+			if sndDur := rogue.SliceAndDiceAura.RemainingDuration(sim); sndDur > 0 {
 				if cp == 5 { // pool for snd if pooling for rupture fails
-					rupDur := rogue.Rupture.CurDot().RemainingDuration(sim)
+					rupDur := rupRemaining(sim)
 					if e+rupDur.Seconds()*energyPerSecond() > maxPool {
-						sndDur := rogue.SliceAndDiceAura.RemainingDuration(sim)
 						if e+sndDur.Seconds()*energyPerSecond() <= maxPool {
 							return Wait
 						}
@@ -78,8 +104,7 @@ func (x *rotation_combat) setup(_ *core.Simulation, rogue *Rogue) {
 				}
 
 				if cp >= 1 { // don't build if it reduces uptime
-					sndDur := rogue.SliceAndDiceAura.RemainingDuration(sim)
-					if e+sndDur.Seconds()*energyPerSecond() < sndCost+ssCost || sndDur < time.Second {
+					if e+sndDur.Seconds()*energyPerSecond() < sndCost+bldCost || sndDur < time.Second {
 						return Wait
 					}
 				}
@@ -94,7 +119,7 @@ func (x *rotation_combat) setup(_ *core.Simulation, rogue *Rogue) {
 			if cp >= 1 && e >= sndCost {
 				return Cast
 			}
-			if cp < 1 && e >= ssCost {
+			if cp < 1 && e >= bldCost {
 				return Build
 			}
 			return Wait
@@ -120,7 +145,7 @@ func (x *rotation_combat) setup(_ *core.Simulation, rogue *Rogue) {
 				}
 				if timeLeft <= 0 {
 					if rogue.ComboPoints() < minPoints {
-						if rogue.CurrentEnergy() >= ssCost {
+						if rogue.CurrentEnergy() >= bldCost {
 							return Build
 						} else {
 							return Wait
@@ -134,13 +159,13 @@ func (x *rotation_combat) setup(_ *core.Simulation, rogue *Rogue) {
 					}
 				} else {
 					energyGained := energyPerSecond() * timeLeft.Seconds()
-					cpGenerated := energyGained / ssCost
+					cpGenerated := energyGained / bldCost
 					currentCp := float64(rogue.ComboPoints())
 					if currentCp+cpGenerated > 5 {
 						return Skip
 					} else {
 						if currentCp < 5 {
-							if rogue.CurrentEnergy() >= ssCost {
+							if rogue.CurrentEnergy() >= bldCost {
 								return Build
 							}
 						}
@@ -177,8 +202,8 @@ func (x *rotation_combat) setup(_ *core.Simulation, rogue *Rogue) {
 
 	// seconds a 5 cp rupture can be delayed to match a 4 cp rupture's dps. for rup4to5 and rup3to4, this delay is < 2s,
 	// which also means that clipping 3 or 4 cp ruptures is usually a dps loss
-	rup4to5 := rogue.RuptureDuration(4).Seconds() * (1 - rogue.RuptureDamage(4)/rogue.RuptureDamage(5))
-	rup3to4 := rogue.RuptureDuration(3).Seconds() * (1 - rogue.RuptureDamage(3)/rogue.RuptureDamage(4))
+	rup4to5 := (rogue.RuptureDuration(4).Seconds() + bonusDuration) * (1 - rogue.RuptureDamage(4)/rogue.RuptureDamage(5))
+	rup3to4 := (rogue.RuptureDuration(3).Seconds() + bonusDuration) * (1 - rogue.RuptureDamage(3)/rogue.RuptureDamage(4))
 
 	// Rupture
 	x.prios = append(x.prios, prio{
@@ -194,20 +219,20 @@ func (x *rotation_combat) setup(_ *core.Simulation, rogue *Rogue) {
 				if cp == 5 && e >= rupCost {
 					return Cast
 				}
-				if cp == 4 && e+rup4to5*energyPerSecond() < ssCost+rupCost {
+				if cp == 4 && e+rup4to5*energyPerSecond() < bldCost+rupCost {
 					return Cast
 				}
-				if cp == 3 && e+rup3to4*energyPerSecond() < ssCost+rupCost {
+				if cp == 3 && e+rup3to4*energyPerSecond() < bldCost+rupCost {
 					return Cast
 				}
-				if e >= ssCost {
+				if e >= bldCost {
 					return Build
 				}
 				return Wait
 			}
 
 			// there's ample time to rebuild, simply skip
-			dur := rupDot.RemainingDuration(sim).Seconds()
+			dur := rupRemaining(sim).Seconds()
 			if e+dur*baseEps > maxPool {
 				return Skip
 			}
@@ -218,13 +243,13 @@ func (x *rotation_combat) setup(_ *core.Simulation, rogue *Rogue) {
 				}
 				return Wait
 			}
-			if cp == 4 && e+(dur+rup4to5)*energyPerSecond() < ssCost+rupCost {
+			if cp == 4 && e+(dur+rup4to5)*energyPerSecond() < bldCost+rupCost {
 				return Wait
 			}
-			if cp == 3 && e+(dur+rup3to4)*energyPerSecond() < ssCost+rupCost {
+			if cp == 3 && e+(dur+rup3to4)*energyPerSecond() < bldCost+rupCost {
 				return Wait
 			}
-			if e >= ssCost {
+			if e >= bldCost {
 				return Build
 			}
 			return Wait
@@ -235,11 +260,16 @@ func (x *rotation_combat) setup(_ *core.Simulation, rogue *Rogue) {
 		rupCost,
 	})
 
-	ssPerCp := 1.0
-	if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfSinisterStrike) {
+	bldPerCp := 1.0
+	if x.builder == rogue.SinisterStrike && rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfSinisterStrike) {
 		attackTable := rogue.AttackTables[rogue.CurrentTarget.UnitIndex]
 		crit := rogue.SinisterStrike.PhysicalCritChance(rogue.CurrentTarget, attackTable)
-		ssPerCp = 1 / (1 + crit*0.5)
+		bldPerCp = 1 / (1 + crit*(0.5+0.2*float64(rogue.Talents.SealFate)))
+	}
+	if x.builder == rogue.Backstab && rogue.Talents.SealFate > 0 {
+		attackTable := rogue.AttackTables[rogue.CurrentTarget.UnitIndex]
+		crit := rogue.Backstab.PhysicalCritChance(rogue.CurrentTarget, attackTable)
+		bldPerCp = 1 / (1 + crit*(0.2*float64(rogue.Talents.SealFate)))
 	}
 
 	// Eviscerate
@@ -256,13 +286,13 @@ func (x *rotation_combat) setup(_ *core.Simulation, rogue *Rogue) {
 					}
 					return Wait
 				default:
-					if e+dur.Seconds()*energyPerSecond() >= ssCost+evisCost {
+					if e+dur.Seconds()*energyPerSecond() >= bldCost+evisCost {
 						return Build
 					}
 					if cp >= 3 && e >= evisCost {
 						return Cast
 					}
-					if cp < 3 && e >= ssCost {
+					if cp < 3 && e >= bldCost {
 						return Build
 					}
 				}
@@ -276,20 +306,30 @@ func (x *rotation_combat) setup(_ *core.Simulation, rogue *Rogue) {
 				return Build
 			}
 
-			rupDot := rogue.Rupture.CurDot()
-
 			ruthCP := 0.2 * float64(rogue.Talents.Ruthlessness)
-			cost := evisCost + (4-ruthCP)*ssCost*ssPerCp + rupCost
+			cost := evisCost + (4-ruthCP)*bldCost*bldPerCp + rupCost
 
-			rupDur := rupDot.RemainingDuration(sim)
+			rupDur := rupRemaining(sim)
 			sndDur := rogue.SliceAndDiceAura.RemainingDuration(sim)
 			if sndDur < rupDur {
-				cost += sndCost + (1-ruthCP)*ssCost*ssPerCp
+				cost += sndCost + (1-ruthCP)*bldCost*bldPerCp
 			}
 
 			if avail := e + rupDur.Seconds()*energyPerSecond(); avail >= cost {
 				return Cast
 			}
+
+			// we'd lose a CP here, so we just wait...
+			if e <= maxPool {
+				return Wait
+			}
+
+			// ... and if that doesn't work, allow to clip snd
+			if sndDur < rogue.sliceAndDiceDurations[2]-rogue.sliceAndDiceDurations[1] {
+				rogue.SliceAndDice.Cast(sim, rogue.CurrentTarget)
+				return Wait
+			}
+
 			return Build
 		},
 		func(sim *core.Simulation, rogue *Rogue) bool {
@@ -310,8 +350,8 @@ func (x *rotation_combat) run(sim *core.Simulation, rogue *Rogue) {
 		case Skip:
 			continue
 		case Build:
-			if !rogue.SinisterStrike.Cast(sim, rogue.CurrentTarget) {
-				rogue.WaitForEnergy(sim, rogue.SinisterStrike.DefaultCast.Cost)
+			if !x.builder.Cast(sim, rogue.CurrentTarget) {
+				rogue.WaitForEnergy(sim, x.builder.DefaultCast.Cost)
 				return
 			}
 		case Cast:

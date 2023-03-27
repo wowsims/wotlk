@@ -1,23 +1,17 @@
-import { Flask } from '../core/proto/common.js';
-import { Conjured } from '../core/proto/common.js';
-import { Consumes } from '../core/proto/common.js';
-
-import { EquipmentSpec } from '../core/proto/common.js';
-import { Food } from '../core/proto/common.js';
-import { Glyphs } from '../core/proto/common.js';
-import { Player } from '../core/player.js';
-import { Potions } from '../core/proto/common.js';
-import { SavedTalents } from '../core/proto/ui.js';
+import {Conjured, Consumes, EquipmentSpec, Flask, Food, Glyphs, Potions} from '../core/proto/common.js';
+import {Player} from '../core/player.js';
+import {SavedTalents} from '../core/proto/ui.js';
 
 import {
-	Rogue_Rotation as RogueRotation,
 	Rogue_Options as RogueOptions,
 	Rogue_Options_PoisonImbue as Poison,
-	RogueMajorGlyph,
-	Rogue_Rotation_Frequency,
+	Rogue_Rotation as RogueRotation,
 	Rogue_Rotation_AssassinationPriority,
+	Rogue_Rotation_CombatBuilder,
 	Rogue_Rotation_CombatPriority,
+	Rogue_Rotation_Frequency,
 	Rogue_Rotation_SubtletyPriority,
+	RogueMajorGlyph,
 } from '../core/proto/rogue.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
@@ -77,6 +71,7 @@ export const DefaultRotation = RogueRotation.create({
 	minimumComboPointsExposeArmor: 2,
 	tricksOfTheTradeFrequency: Rogue_Rotation_Frequency.Maintain,
 	assassinationFinisherPriority: Rogue_Rotation_AssassinationPriority.EnvenomRupture,
+	combatBuilder: Rogue_Rotation_CombatBuilder.SinisterStrike,
 	combatFinisherPriority: Rogue_Rotation_CombatPriority.RuptureEviscerate,
 	subtletyFinisherPriority: Rogue_Rotation_SubtletyPriority.SubtletyEviscerate,
 	minimumComboPointsPrimaryFinisher: 4,
