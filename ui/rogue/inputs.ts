@@ -7,6 +7,7 @@ import * as InputHelpers from '../core/components/input_helpers.js';
 import {
 	Rogue_Rotation_AssassinationPriority as AssassinationPriority,
 	Rogue_Rotation_CombatPriority as CombatPriority,
+	Rogue_Rotation_CombatBuilder as CombatBuilder,
 	Rogue_Rotation_SubtletyPriority as SubtletyPriority,
 	Rogue_Rotation_Frequency as Frequency,
 	Rogue_Options_PoisonImbue as Poison,
@@ -83,6 +84,26 @@ export const RogueRotationConfig = {
 				{ name: 'Maintain', value: Frequency.Maintain },
 			],
 		}),
+		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, CombatBuilder>({
+			fieldName: 'combatBuilder',
+			label: "Builder",
+			labelTooltip: 'Use Sinister Strike or Backstab as builder.',
+			values: [
+				{ name: "Sinister Strike", value: CombatBuilder.SinisterStrike },
+				{ name: "Backstab", value: CombatBuilder.Backstab },
+			],
+			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().combatPotency > 0
+		}),
+		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, CombatPriority>({
+			fieldName: 'combatFinisherPriority',
+			label: 'Finisher Priority',
+			labelTooltip: 'The finisher that will be cast with highest priority.',
+			values: [
+				{ name: 'Rupture', value: CombatPriority.RuptureEviscerate },
+				{ name: 'Eviscerate', value: CombatPriority.EviscerateRupture },
+			],
+			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().combatPotency > 0
+		}),
 		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, AssassinationPriority>({
 			fieldName: 'assassinationFinisherPriority',
 			label: 'Finisher Priority',
@@ -151,7 +172,7 @@ export const RogueRotationConfig = {
 		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
 			fieldName: "useGhostlyStrike",
 			label: 'Use Ghostly Strike',
-			labelTooltip: 'Use Ghostly Strike as a builder.',
+			labelTooltip: 'Use Ghostly Strike on cooldown. Mainly useful when using the associate glyph.',
 			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().ghostlyStrike
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({

@@ -107,8 +107,7 @@ func (x *rotation_subtlety) setup(sim *core.Simulation, rogue *Rogue) {
 	})
 
 	// Expose armor
-	if rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Once ||
-		rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Maintain {
+	if rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Once || rogue.Rotation.ExposeArmorFrequency == proto.Rogue_Rotation_Maintain {
 		hasCastExpose := false
 		x.prios = append(x.prios, prio{
 			func(sim *core.Simulation, rogue *Rogue) PriorityAction {
@@ -182,7 +181,7 @@ func (x *rotation_subtlety) setup(sim *core.Simulation, rogue *Rogue) {
 			func(sim *core.Simulation, rogue *Rogue) PriorityAction {
 				if rogue.Shadowstep.IsReady(sim) {
 					// Can we cast Rupture now?
-					if !rogue.Rupture.CurDot().IsActive() && rogue.ComboPoints() > 4 && rogue.CurrentEnergy() >= rogue.Rupture.DefaultCast.Cost+rogue.Shadowstep.DefaultCast.Cost {
+					if !rogue.Rupture.CurDot().IsActive() && rogue.ComboPoints() >= 5 && rogue.CurrentEnergy() >= rogue.Rupture.DefaultCast.Cost+rogue.Shadowstep.DefaultCast.Cost {
 						return Cast
 					} else {
 						return Skip
