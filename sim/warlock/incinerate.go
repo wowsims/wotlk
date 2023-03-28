@@ -8,7 +8,7 @@ import (
 )
 
 func (warlock *Warlock) registerIncinerateSpell() {
-	spellCoeff := 0.713 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
+	spellCoeff := 0.714 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
 
 	warlock.Incinerate = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 47838},

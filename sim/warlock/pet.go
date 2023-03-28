@@ -64,6 +64,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 			stats.Intellect: 369,
 			stats.Spirit:    367,
 			stats.Mana:      1174,
+			stats.MP5:       270, // rough guess, unclear if it's affected by other stats
 			stats.MeleeCrit: 3.454 * core.CritRatingPerCritChance,
 			stats.SpellCrit: 0.9075 * core.CritRatingPerCritChance,
 		}
