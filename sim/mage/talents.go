@@ -287,6 +287,9 @@ func (mage *Mage) registerPresenceOfMindCD() {
 			if !mage.GCD.IsReady(sim) {
 				return false
 			}
+			if mage.ArcanePowerAura.IsActive() {
+				return false
+			}
 
 			manaCost := spellToUse.DefaultCast.Cost * mage.PseudoStats.CostMultiplier
 			if spellToUse == mage.ArcaneBlast {
@@ -355,6 +358,12 @@ func (mage *Mage) registerArcanePowerCD() {
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			mage.ArcanePowerAura.Activate(sim)
+		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			if mage.ArcanePotencyAura.IsActive() {
+				return false
+			}
+			return true
 		},
 	})
 
