@@ -385,7 +385,7 @@ func (warlock *Warlock) tryUseGCD(sim *core.Simulation) {
 	// ------------------------------------------
 	// Data
 	// ------------------------------------------
-	if warlock.Talents.DemonicPact > 0 && sim.CurrentTime != 0 {
+	if warlock.Talents.DemonicPact > 0 && sim.CurrentTime != 0 && warlock.Pet != nil {
 		dpspCurrent := warlock.DemonicPactAura.ExclusiveEffects[0].Priority
 		currentTimeJump := sim.CurrentTime.Seconds() - warlock.PreviousTime.Seconds()
 
