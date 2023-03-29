@@ -45,6 +45,7 @@ func (dk *DpsDeathknight) RotationActionCallback_LastSecondsCast(sim *core.Simul
 	bpActive := dk.BloodPlagueSpell.Dot(target).IsActive()
 	ffExpiresAt := dk.FrostFeverSpell.Dot(target).ExpiresAt()
 	bpExpiresAt := dk.BloodPlagueSpell.Dot(target).ExpiresAt()
+	fsCost := float64(core.RuneCost(dk.FrostStrike.CurCast.Cost).RunicPower())
 
 	km := dk.KillingMachineAura.IsActive()
 	if core.MinDuration(ffExpiresAt, bpExpiresAt) > sim.CurrentTime+sim.GetRemainingDuration() {
@@ -55,16 +56,18 @@ func (dk *DpsDeathknight) RotationActionCallback_LastSecondsCast(sim *core.Simul
 			casted = dk.Obliterate.Cast(sim, target)
 		} else if dk.FrostStrike.CanCast(sim, nil) && km {
 			casted = dk.FrostStrike.Cast(sim, target)
-		} else if dk.FrostStrike.CanCast(sim, nil) {
-			casted = dk.FrostStrike.Cast(sim, target)
 		} else if dk.Obliterate.CanCast(sim, nil) {
 			if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
 				dk.Deathchill.Cast(sim, target)
 			}
 			casted = dk.Obliterate.Cast(sim, target)
+		} else if dk.FrostStrike.CanCast(sim, nil) {
+			casted = dk.FrostStrike.Cast(sim, target)
 		} else if dk.HowlingBlast.CanCast(sim, nil) {
 			casted = dk.HowlingBlast.Cast(sim, target)
-		} else if dk.HornOfWinter.CanCast(sim, nil) && sim.GetRemainingDuration() > dk.SpellGCD() {
+		} else if dk.BloodStrike.CanCast(sim, nil) {
+			casted = dk.BloodStrike.Cast(sim, target)
+		} else if dk.HornOfWinter.CanCast(sim, nil) && dk.CurrentRunicPower() < fsCost && sim.GetRemainingDuration() > dk.SpellGCD() {
 			casted = dk.HornOfWinter.Cast(sim, target)
 		}
 	}
