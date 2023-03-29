@@ -75,14 +75,14 @@ dps_results: {
  key: "TestFrostUH-AllItems-BaubleofTrueBlood-50354"
  value: {
   dps: 7819.64725
-  tps: 11012.20826
+  tps: 11005.79788
  }
 }
 dps_results: {
  key: "TestFrostUH-AllItems-BaubleofTrueBlood-50726"
  value: {
   dps: 7819.64725
-  tps: 11012.20826
+  tps: 11005.79788
  }
 }
 dps_results: {
@@ -95,29 +95,29 @@ dps_results: {
 dps_results: {
  key: "TestFrostUH-AllItems-Beast-tamer'sShoulders-30892"
  value: {
-  dps: 7886.19462
-  tps: 5610.42952
+  dps: 7887.0516
+  tps: 5611.06026
  }
 }
 dps_results: {
  key: "TestFrostUH-AllItems-BlessedBattlegearofUndeadSlaying"
  value: {
-  dps: 6622.69293
-  tps: 4711.62747
+  dps: 6624.67552
+  tps: 4713.08666
  }
 }
 dps_results: {
  key: "TestFrostUH-AllItems-BlessedGarboftheUndeadSlayer"
  value: {
-  dps: 6589.65828
-  tps: 4694.22676
+  dps: 6590.28939
+  tps: 4694.84794
  }
 }
 dps_results: {
  key: "TestFrostUH-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
-  dps: 6338.90955
-  tps: 4510.84139
+  dps: 6345.62032
+  tps: 4515.76938
  }
 }
 dps_results: {
@@ -601,8 +601,8 @@ dps_results: {
 dps_results: {
  key: "TestFrostUH-AllItems-ScourgebornePlate"
  value: {
-  dps: 6635.81295
-  tps: 4708.89167
+  dps: 6636.22579
+  tps: 4709.19552
  }
 }
 dps_results: {
@@ -734,8 +734,8 @@ dps_results: {
 dps_results: {
  key: "TestFrostUH-AllItems-StormshroudArmor"
  value: {
-  dps: 6321.36946
-  tps: 4499.59075
+  dps: 6321.65086
+  tps: 4499.79787
  }
 }
 dps_results: {
@@ -783,8 +783,8 @@ dps_results: {
 dps_results: {
  key: "TestFrostUH-AllItems-Thassarian'sPlate"
  value: {
-  dps: 6662.61592
-  tps: 4728.25916
+  dps: 6663.65085
+  tps: 4729.02086
  }
 }
 dps_results: {
@@ -860,8 +860,8 @@ dps_results: {
 dps_results: {
  key: "TestFrostUH-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
-  dps: 6545.92917
-  tps: 4664.38967
+  dps: 6547.31885
+  tps: 4665.41247
  }
 }
 dps_results: {
@@ -888,8 +888,8 @@ dps_results: {
 dps_results: {
  key: "TestFrostUH-Average-Default"
  value: {
-  dps: 8242.46484
-  tps: 5865.11518
+  dps: 8242.48869
+  tps: 5865.13274
  }
 }
 dps_results: {
@@ -937,15 +937,15 @@ dps_results: {
 dps_results: {
  key: "TestFrostUH-Settings-Human-Frost P2-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 22310.18625
-  tps: 16195.16572
+  dps: 22310.77867
+  tps: 16195.60175
  }
 }
 dps_results: {
  key: "TestFrostUH-Settings-Human-Frost P2-Basic-FullBuffs-LongSingleTarget"
  value: {
-  dps: 10078.94528
-  tps: 7195.28849
+  dps: 10080.93832
+  tps: 7196.75537
  }
 }
 dps_results: {
@@ -1000,8 +1000,8 @@ dps_results: {
 dps_results: {
  key: "TestFrostUH-Settings-Orc-Frost P1-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 9374.89109
-  tps: 6774.63617
+  dps: 9375.10921
+  tps: 6774.7967
  }
 }
 dps_results: {
@@ -1028,8 +1028,8 @@ dps_results: {
 dps_results: {
  key: "TestFrostUH-Settings-Orc-Frost P2-Basic-FullBuffs-LongSingleTarget"
  value: {
-  dps: 10141.15956
-  tps: 7226.48962
+  dps: 10142.14854
+  tps: 7227.21751
  }
 }
 dps_results: {
@@ -1063,7 +1063,7 @@ dps_results: {
 dps_results: {
  key: "TestFrostUH-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 7366.21786
-  tps: 5237.43191
+  dps: 7365.79151
+  tps: 5237.11812
  }
 }
