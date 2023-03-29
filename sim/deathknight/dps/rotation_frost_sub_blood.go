@@ -279,7 +279,6 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Obli_Check(sim *c
 		s.Clear().
 			NewAction(dk.RotationActionCallback_FrostSubBlood_Dump_UntilBR).
 			NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
-			NewAction(dk.RotationActionCallback_FrostSubBlood_FS_KM).
 			NewAction(dk.RotationActionCallback_BS_Frost).
 			NewAction(dk.RotationActionCallback_FrostSubBlood_SequenceRotation)
 	}
