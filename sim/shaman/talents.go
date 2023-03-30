@@ -468,6 +468,14 @@ func (shaman *Shaman) registerManaTideTotemCD() {
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			mttAura.Activate(sim)
+
+			// If healing stream is active, cancel it while mana tide is up.
+			if shaman.HealingStreamTotem.Hot(&shaman.Unit).IsActive() {
+				for _, agent := range shaman.Party.Players {
+					shaman.HealingStreamTotem.Hot(&agent.GetCharacter().Unit).Cancel(sim)
+				}
+			}
+
 			// TODO: Current water totem buff needs to be removed from party/raid.
 			if shaman.Totems.Water != proto.WaterTotem_NoWaterTotem {
 				shaman.NextTotemDrops[WaterTotem] = sim.CurrentTime + time.Second*12

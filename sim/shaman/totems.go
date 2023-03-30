@@ -55,30 +55,35 @@ func (shaman *Shaman) registerManaSpringTotemSpell() {
 func (shaman *Shaman) registerHealingStreamTotemSpell() {
 	config := shaman.newTotemSpellConfig(0.03, 58757)
 	hsHeal := shaman.RegisterSpell(core.SpellConfig{
-		ActionID:         core.ActionID{SpellID: 58757},
+		ActionID:         core.ActionID{SpellID: 52042},
 		SpellSchool:      core.SpellSchoolNature,
-		ProcMask:         core.ProcMaskSpellHealing,
-		Flags:            core.SpellFlagHelpful,
+		ProcMask:         core.ProcMaskEmpty,
+		Flags:            core.SpellFlagHelpful | core.SpellFlagNoOnCastComplete,
 		DamageMultiplier: 1 * (1 + .02*float64(shaman.Talents.Purification)),
 		CritMultiplier:   1,
 		ThreatMultiplier: 1 - (float64(shaman.Talents.HealingGrace) * 0.05),
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// TODO: find healing stream coeff
-			healing := 25 + spell.HealingPower(target)*0.11
+			healing := 25 + spell.HealingPower(target)*0.0827
 			spell.CalcAndDealHealing(sim, target, healing, spell.OutcomeHealing)
 		},
 	})
-	config.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+	config.Hot = core.DotConfig{
+		Aura: core.Aura{
+			Label: "HealingStreamHot",
+		},
+		NumberOfTicks: 150,
+		TickLength:    time.Second * 2,
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			hsHeal.Cast(sim, target)
+		},
+	}
+	config.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
 		shaman.NextTotemDrops[WaterTotem] = sim.CurrentTime + time.Second*300
-		core.StartPeriodicAction(sim, core.PeriodicActionOptions{
-			Period:   time.Second * 2,
-			NumTicks: 150,
-			OnAction: func(s *core.Simulation) {
-				for _, agent := range shaman.Party.PlayersAndPets {
-					hsHeal.Cast(sim, &agent.GetCharacter().Unit)
-				}
-			},
-		})
+		for _, agent := range shaman.Party.Players {
+			spell.Hot(&agent.GetCharacter().Unit).Activate(sim)
+		}
+
 	}
 	shaman.HealingStreamTotem = shaman.RegisterSpell(config)
 }

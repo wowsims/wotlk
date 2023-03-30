@@ -389,4 +389,95 @@ func (shaman *Shaman) RegisterFrostbrandImbue(mh bool, oh bool) {
 	shaman.ItemSwap.RegisterOnSwapItemForEffectWithPPMManager(3784, 9.0, &ppmm, aura)
 }
 
-//earthliving? not important for dps sims though
+func (shaman *Shaman) newEarthlivingImbueSpell(isMH bool) *core.Spell {
+	return shaman.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 51994},
+		SpellSchool: core.SpellSchoolNature,
+		ProcMask:    core.ProcMaskEmpty,
+
+		DamageMultiplier: 1,
+		CritMultiplier:   shaman.ElementalCritMultiplier(0),
+		ThreatMultiplier: 1,
+
+		Hot: core.DotConfig{
+			Aura: core.Aura{
+				Label:    "Earthliving",
+				ActionID: core.ActionID{SpellID: 52000},
+			},
+			NumberOfTicks: 4,
+			TickLength:    time.Second * 3,
+			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+				dot.SnapshotBaseDamage = 280 + 0.171*dot.Spell.HealingPower(target)
+				dot.SnapshotAttackerMultiplier = dot.Spell.CasterHealingMultiplier()
+			},
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				dot.CalcAndDealPeriodicSnapshotHealing(sim, target, dot.OutcomeTick)
+			},
+		},
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			spell.SpellMetrics[target.UnitIndex].Hits++
+			spell.Hot(target).Apply(sim)
+		},
+	})
+}
+
+func (shaman *Shaman) ApplyEarthlivingImbueToItem(item *core.Item, isDownranked bool) {
+	if item == nil || item.TempEnchant == 3350 || item.TempEnchant == 3349 {
+		// downranking not implemented yet but put the temp enchant ID there.
+		return
+	}
+
+	spBonus := 150.0
+	spMod := 1.0 + 0.1*float64(shaman.Talents.ElementalWeapons)
+	id := 3350
+
+	newStats := stats.Stats{stats.SpellPower: spBonus * spMod}
+	item.Stats = item.Stats.Add(newStats)
+	item.TempEnchant = int32(id)
+}
+
+func (shaman *Shaman) RegisterEarthlivingImbue(mh bool, oh bool) {
+	if !mh && !oh && !shaman.ItemSwap.IsEnabled() {
+		return
+	}
+
+	if mh {
+		shaman.ApplyEarthlivingImbueToItem(shaman.GetMHWeapon(), false)
+	}
+	if oh {
+		shaman.ApplyEarthlivingImbueToItem(shaman.GetOHWeapon(), false)
+	}
+
+	// ftIcd := core.Cooldown{
+	// 	Timer:    shaman.NewTimer(),
+	// 	Duration: time.Millisecond,
+	// }
+
+	mhSpell := shaman.newEarthlivingImbueSpell(true)
+	ohSpell := shaman.newEarthlivingImbueSpell(false)
+
+	procChance := 0.2
+	// if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfEarthlivingWeapon) {
+	// TODO: increase proc chance.
+	// }
+	procMask := core.GetMeleeProcMaskForHands(mh, oh)
+	aura := shaman.RegisterAura(core.Aura{
+		Label:    "Earthliving Imbue",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if mhSpell != nil && sim.RandomFloat("earthliving") > procChance {
+				mhSpell.Cast(sim, result.Target)
+			}
+			// TODO: how does having MH/OH enchanted with earthliving work?
+			if ohSpell != nil {
+
+			}
+		},
+	})
+
+	shaman.RegisterOnItemSwapWithImbue(3350, &procMask, aura)
+}

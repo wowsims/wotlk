@@ -66,5 +66,12 @@ func (resto *RestorationShaman) GetMainTarget() *core.Unit {
 
 func (resto *RestorationShaman) Initialize() {
 	resto.CurrentTarget = resto.GetMainTarget()
+
+	// Has to be here because earthliving can cast hots and needs Env to be set to create the hots.
+	resto.RegisterEarthlivingImbue(
+		resto.HasMHWeapon(),
+		resto.HasOHWeapon(),
+	)
+
 	resto.Shaman.Initialize()
 }
