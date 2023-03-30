@@ -6,6 +6,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
+	"golang.org/x/exp/slices"
 )
 
 func (warlock *Warlock) ApplyTalents() {
@@ -113,18 +114,36 @@ func (warlock *Warlock) setupEmpoweredImp() {
 
 	warlock.Pet.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.1*float64(warlock.Talents.EmpoweredImp)
 
+	var affectedSpells []*core.Spell
 	warlock.EmpoweredImpAura = warlock.RegisterAura(core.Aura{
 		Label:    "Empowered Imp Proc Aura",
 		ActionID: core.ActionID{SpellID: 47283},
 		Duration: time.Second * 8,
+		OnInit: func(aura *core.Aura, sim *core.Simulation) {
+			affectedSpells = core.FilterSlice([]*core.Spell{
+				warlock.Immolate,
+				warlock.ShadowBolt,
+				warlock.Incinerate,
+				warlock.Shadowburn,
+				warlock.SoulFire,
+				warlock.ChaosBolt,
+				// missing: shadowfury, searing pain, shadowflame, seed explosion (not dot)
+				//          rain of fire (consumes proc on cast start, but doesn't increase crit, ticks
+				//          also consume the proc but do seem to benefit from the increaesed crit)
+			}, func(spell *core.Spell) bool { return spell != nil })
+		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			warlock.AddStatDynamic(sim, stats.SpellCrit, 100*core.CritRatingPerCritChance)
+			for _, spell := range affectedSpells {
+				spell.BonusCritRating += 100 * core.CritRatingPerCritChance
+			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			warlock.AddStatDynamic(sim, stats.SpellCrit, -100*core.CritRatingPerCritChance)
+			for _, spell := range affectedSpells {
+				spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			}
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if result.Outcome.Matches(core.OutcomeCrit) {
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if slices.Contains(affectedSpells, spell) {
 				aura.Deactivate(sim)
 			}
 		},
@@ -137,7 +156,7 @@ func (warlock *Warlock) setupEmpoweredImp() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if result.Outcome.Matches(core.OutcomeCrit) {
+			if result.DidCrit() {
 				warlock.EmpoweredImpAura.Activate(sim)
 			}
 		},
@@ -211,7 +230,7 @@ func (warlock *Warlock) setupPyroclasm() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell == warlock.Conflagrate && result.Outcome.Matches(core.OutcomeCrit) { // || spell == warlock.SearingPain
+			if spell == warlock.Conflagrate && result.DidCrit() { // || spell == warlock.SearingPain
 				warlock.PyroclasmAura.Activate(sim)
 			}
 		},
@@ -291,7 +310,7 @@ func (warlock *Warlock) setupShadowEmbrace() {
 }
 
 func (warlock *Warlock) setupNightfall() {
-	if warlock.Talents.Nightfall <= 0 && !!warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCorruption) {
+	if warlock.Talents.Nightfall <= 0 && !warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCorruption) {
 		return
 	}
 
@@ -420,11 +439,8 @@ func (warlock *Warlock) setupBackdraft() {
 			}
 		},
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			for _, destroSpell := range affectedSpells {
-				if spell == destroSpell {
-					aura.RemoveStack(sim)
-					return
-				}
+			if slices.Contains(affectedSpells, spell) {
+				aura.RemoveStack(sim)
 			}
 		},
 	})

@@ -7,86 +7,10 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-type PetAbilityType byte
-
-const (
-	Unknown PetAbilityType = iota
-	Cleave
-	Intercept
-	LashOfPain
-	ShadowBite
-	Firebolt
-)
-
-// TODO: this seems pointless
-// Returns whether the ability was successfully cast.
-func (wp *WarlockPet) TryCast(sim *core.Simulation, target *core.Unit, spell *core.Spell) bool {
-	if wp.CurrentMana() < spell.DefaultCast.Cost {
-		return false
-	}
-	if !spell.IsReady(sim) {
-		return false
-	}
-
-	spell.Cast(sim, target)
-	return true
-}
-
-func (wp *WarlockPet) NewPetAbility(abilityType PetAbilityType, isPrimary bool) *core.Spell {
-	switch abilityType {
-	case Cleave:
-		return wp.newCleave()
-	case Intercept:
-		return wp.newIntercept()
-	case LashOfPain:
-		return wp.newLashOfPain()
-	case Firebolt:
-		return wp.newFirebolt()
-	case ShadowBite:
-		return wp.newShadowBite()
-	case Unknown:
-		return nil
-	default:
-		panic("Invalid pet ability type")
-	}
-}
-
-func (wp *WarlockPet) newIntercept() *core.Spell {
-	return nil
-}
-
-func (wp *WarlockPet) newFirebolt() *core.Spell {
-	return wp.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 47964},
-		SpellSchool: core.SpellSchoolFire,
-		ProcMask:    core.ProcMaskSpellDamage,
-
-		ManaCost: core.ManaCostOptions{
-			FlatCost: 180,
-		},
-		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				GCD:      core.GCDDefault,
-				CastTime: time.Millisecond * (2500 - time.Duration(250*wp.owner.Talents.DemonicPower)),
-			},
-		},
-
-		DamageMultiplier: (1 + 0.1*float64(wp.owner.Talents.ImprovedImp)) *
-			(1 + 0.2*core.TernaryFloat64(wp.owner.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfImp), 1, 0)),
-		CritMultiplier:   2,
-		ThreatMultiplier: 1,
-
-		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := sim.Roll(203, 227) + 0.571*spell.SpellPower()
-			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
-		},
-	})
-}
-
-func (wp *WarlockPet) newCleave() *core.Spell {
+func (wp *WarlockPet) registerCleaveSpell() {
 	numHits := core.MinInt32(2, wp.Env.GetNumTargets())
 
-	return wp.RegisterSpell(core.SpellConfig{
+	wp.primaryAbility = wp.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47994},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
@@ -123,8 +47,12 @@ func (wp *WarlockPet) newCleave() *core.Spell {
 	})
 }
 
-func (wp *WarlockPet) newLashOfPain() *core.Spell {
-	return wp.RegisterSpell(core.SpellConfig{
+func (wp *WarlockPet) registerInterceptSpell() {
+	wp.secondaryAbility = nil // not implemented
+}
+
+func (wp *WarlockPet) registerLashOfPainSpell() {
+	wp.primaryAbility = wp.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47992},
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
@@ -155,7 +83,7 @@ func (wp *WarlockPet) newLashOfPain() *core.Spell {
 	})
 }
 
-func (wp *WarlockPet) newShadowBite() *core.Spell {
+func (wp *WarlockPet) registerShadowBiteSpell() {
 	actionID := core.ActionID{SpellID: 54053}
 
 	var petManaMetrics *core.ResourceMetrics
@@ -165,7 +93,7 @@ func (wp *WarlockPet) newShadowBite() *core.Spell {
 		petManaMetrics = wp.NewManaMetrics(actionID)
 	}
 
-	return wp.RegisterSpell(core.SpellConfig{
+	wp.primaryAbility = wp.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
@@ -218,6 +146,34 @@ func (wp *WarlockPet) newShadowBite() *core.Spell {
 				wp.AddMana(sim, wp.MaxMana()*maxManaMult, petManaMetrics)
 			}
 			spell.DealDamage(sim, result)
+		},
+	})
+}
+
+func (wp *WarlockPet) registerFireboltSpell() {
+	wp.primaryAbility = wp.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 47964},
+		SpellSchool: core.SpellSchoolFire,
+		ProcMask:    core.ProcMaskSpellDamage,
+
+		ManaCost: core.ManaCostOptions{
+			FlatCost: 180,
+		},
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				GCD:      core.GCDDefault,
+				CastTime: time.Millisecond * (2500 - time.Duration(250*wp.owner.Talents.DemonicPower)),
+			},
+		},
+
+		DamageMultiplier: (1 + 0.1*float64(wp.owner.Talents.ImprovedImp)) *
+			(1 + 0.2*core.TernaryFloat64(wp.owner.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfImp), 1, 0)),
+		CritMultiplier:   2,
+		ThreatMultiplier: 1,
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := sim.Roll(203, 227) + 0.571*spell.SpellPower()
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 		},
 	})
 }
