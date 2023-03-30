@@ -732,6 +732,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeral-AllItems-SoulPreserver-37111"
+ value: {
+  dps: 7168.65627
+  tps: 7831.83953
+ }
+}
+dps_results: {
  key: "TestFeral-AllItems-SouloftheDead-40382"
  value: {
   dps: 7240.63141

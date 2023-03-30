@@ -711,6 +711,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFrost-AllItems-SoulPreserver-37111"
+ value: {
+  dps: 7822.66064
+  tps: 4580.32384
+ }
+}
+dps_results: {
  key: "TestFrost-AllItems-SouloftheDead-40382"
  value: {
   dps: 7924.45437

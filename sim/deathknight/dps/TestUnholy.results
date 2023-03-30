@@ -788,6 +788,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestUnholy-AllItems-SoulPreserver-37111"
+ value: {
+  dps: 7510.45902
+  tps: 4805.44624
+  hps: 267.50398
+ }
+}
+dps_results: {
  key: "TestUnholy-AllItems-SouloftheDead-40382"
  value: {
   dps: 7595.75023

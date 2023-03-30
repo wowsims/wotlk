@@ -700,6 +700,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestHoly-AllItems-SoulPreserver-37111"
+ value: {
+  dps: 103.86951
+  tps: 55.63751
+  hps: 4992.65741
+ }
+}
+dps_results: {
  key: "TestHoly-AllItems-SouloftheDead-40382"
  value: {
   dps: 101.71083

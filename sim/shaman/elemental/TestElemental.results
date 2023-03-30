@@ -126,15 +126,15 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 5781.6063
-  tps: 10568.35031
+  dps: 5784.72417
+  tps: 10570.26042
  }
 }
 dps_results: {
  key: "TestElemental-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 5781.6063
-  tps: 10568.35031
+  dps: 5784.72417
+  tps: 10570.26042
  }
 }
 dps_results: {
@@ -548,7 +548,7 @@ dps_results: {
  key: "TestElemental-AllItems-InsightfulEarthsiegeDiamond"
  value: {
   dps: 6028.67468
-  tps: 3819.668
+  tps: 3819.718
  }
 }
 dps_results: {
@@ -752,6 +752,13 @@ dps_results: {
  value: {
   dps: 6053.59264
   tps: 3854.60687
+ }
+}
+dps_results: {
+ key: "TestElemental-AllItems-SoulPreserver-37111"
+ value: {
+  dps: 5886.91059
+  tps: 3749.44179
  }
 }
 dps_results: {
@@ -1065,8 +1072,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Settings-Orc-P1-EleFireElemental-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3587.38504
-  tps: 1972.22158
+  dps: 3581.95866
+  tps: 1968.54623
  }
 }
 dps_results: {
@@ -1149,8 +1156,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Settings-Troll-P1-EleFireElemental-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3535.57969
-  tps: 1964.99284
+  dps: 3534.63809
+  tps: 1964.09774
  }
 }
 dps_results: {

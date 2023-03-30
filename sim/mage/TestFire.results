@@ -74,15 +74,15 @@ dps_results: {
 dps_results: {
  key: "TestFire-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 5947.47599
-  tps: 10872.69609
+  dps: 5946.83349
+  tps: 10872.18209
  }
 }
 dps_results: {
  key: "TestFire-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 5947.47599
-  tps: 10872.69609
+  dps: 5946.83349
+  tps: 10872.18209
  }
 }
 dps_results: {
@@ -588,6 +588,13 @@ dps_results: {
  value: {
   dps: 6234.16412
   tps: 4995.26311
+ }
+}
+dps_results: {
+ key: "TestFire-AllItems-SoulPreserver-37111"
+ value: {
+  dps: 6070.05337
+  tps: 4860.66152
  }
 }
 dps_results: {

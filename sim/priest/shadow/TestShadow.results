@@ -88,15 +88,15 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 6790.72709
-  tps: 12987.2744
+  dps: 6791.57242
+  tps: 12988.11974
  }
 }
 dps_results: {
  key: "TestShadow-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 6790.72709
-  tps: 12987.2744
+  dps: 6791.57242
+  tps: 12988.11974
  }
 }
 dps_results: {
@@ -616,6 +616,13 @@ dps_results: {
  value: {
   dps: 7093.86141
   tps: 7046.20379
+ }
+}
+dps_results: {
+ key: "TestShadow-AllItems-SoulPreserver-37111"
+ value: {
+  dps: 6919.4921
+  tps: 6871.90863
  }
 }
 dps_results: {

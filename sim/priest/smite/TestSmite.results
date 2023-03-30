@@ -619,6 +619,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSmite-AllItems-SoulPreserver-37111"
+ value: {
+  dps: 3373.27452
+  tps: 2873.91034
+ }
+}
+dps_results: {
  key: "TestSmite-AllItems-SouloftheDead-40382"
  value: {
   dps: 3419.20069

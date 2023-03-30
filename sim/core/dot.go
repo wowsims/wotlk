@@ -179,6 +179,19 @@ func (dot *Dot) TickOnce(sim *Simulation) {
 	dot.OnTick(sim, dot.Unit, dot)
 }
 
+// ManualTick forces the dot forward one tick
+// Will cancel the dot if it is out of ticks.
+func (dot *Dot) ManualTick(sim *Simulation) {
+	if dot.lastTickTime != sim.CurrentTime {
+		dot.TickCount++
+		if dot.NumTicksRemaining(sim) <= 0 {
+			dot.Cancel(sim)
+		} else {
+			dot.TickOnce(sim)
+		}
+	}
+}
+
 func (dot *Dot) basePeriodicOptions() PeriodicActionOptions {
 	return PeriodicActionOptions{
 		//Priority: ActionPriorityDOT,

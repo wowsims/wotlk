@@ -13,6 +13,7 @@ import {
 	ShamanShield,
 	ShamanMajorGlyph,
 	ShamanMinorGlyph,
+	ShamanHealSpell,
 } from '../core/proto/shaman.js';
 
 import {
@@ -35,9 +36,9 @@ import * as Tooltips from '../core/constants/tooltips.js';
 export const TankHealingTalents = {
 	name: 'Tank Healing',
 	data: SavedTalents.create({
-		talentsString: '-3020503-50005331335310501122331251',
+		talentsString: '-30205033-05005331335010501122331251',
 		glyphs: Glyphs.create({
-			major1: ShamanMajorGlyph.GlyphOfChainHeal,
+			major1: ShamanMajorGlyph.GlyphOfEarthlivingWeapon,
 			major2: ShamanMajorGlyph.GlyphOfEarthShield,
 			major3: ShamanMajorGlyph.GlyphOfLesserHealingWave,
 			minor2: ShamanMinorGlyph.GlyphOfWaterShield,
@@ -66,13 +67,16 @@ export const DefaultRotation = RestorationShamanRotation.create({
 		earth: EarthTotem.StrengthOfEarthTotem,
 		air: AirTotem.WrathOfAirTotem,
 		fire: FireTotem.FlametongueTotem,
-		water: WaterTotem.ManaSpringTotem,
+		water: WaterTotem.HealingStreamTotem,
 	}),
+	useEarthShield: true,
+	useRiptide: true,
 });
 
 export const DefaultOptions = RestorationShamanOptions.create({
 	shield: ShamanShield.WaterShield,
 	bloodlust: true,
+	earthShieldPPM: 0,
 });
 
 export const DefaultConsumes = Consumes.create({

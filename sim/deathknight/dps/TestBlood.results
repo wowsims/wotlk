@@ -711,6 +711,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBlood-AllItems-SoulPreserver-37111"
+ value: {
+  dps: 6761.54998
+  tps: 3465.28577
+ }
+}
+dps_results: {
  key: "TestBlood-AllItems-SouloftheDead-40382"
  value: {
   dps: 6851.81922

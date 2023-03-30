@@ -158,6 +158,7 @@ enum FireTotem {
 enum WaterTotem {
 	NoWaterTotem = 0;
 	ManaSpringTotem = 1;
+	HealingStreamTotem = 2;
 }
 
 message ShamanTotems {
@@ -306,15 +307,26 @@ message EnhancementShaman {
 	Options options = 3;
 }
 
+enum ShamanHealSpell {
+	AutoHeal = 0;
+	HealingWave = 1;
+	LesserHealingWave = 2;
+	ChainHeal = 3;
+}
+
 message RestorationShaman {
 	message Rotation {
 		ShamanTotems totems = 1;
+		bool use_earth_shield = 2;
+		ShamanHealSpell primary_heal = 3;
+		bool use_riptide = 4;
 	}
 
 	message Options {
 		ShamanShield shield = 1;
 		bool bloodlust = 2;
 		ShamanImbue imbue_mh = 4;
+		int32 earth_shield_p_p_m = 5;
 	}
 
 	Rotation rotation = 1;
