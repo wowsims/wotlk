@@ -974,4 +974,41 @@ func init() {
 			})
 		})
 	})
+
+	core.NewItemEffect(37111, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		actionID := core.ActionID{ItemID: 37111}
+
+		if !character.HasManaBar() {
+			return
+		}
+		resourceMetricsMana := character.NewManaMetrics(actionID)
+
+		procAura := character.GetOrRegisterAura(core.Aura{
+			Label:    "Soul Preserver",
+			ActionID: actionID,
+			Duration: time.Second * 15,
+			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+				if !spell.ProcMask.Matches(core.ProcMaskSpellHealing) || spell.CurCast.Cost == 0 {
+					return
+				}
+				amount := spell.CurCast.Cost
+				if spell.CurCast.Cost > 800 {
+					amount = 800
+				}
+				spell.Unit.AddMana(sim, amount, resourceMetricsMana)
+				aura.Deactivate(sim)
+			},
+		})
+
+		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+			Name:       "Soul Preserver Trigger",
+			Callback:   core.CallbackOnHealDealt,
+			ProcMask:   core.ProcMaskSpellHealing,
+			ProcChance: 0.02,
+			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
+				procAura.Activate(sim)
+			},
+		})
+	})
 }

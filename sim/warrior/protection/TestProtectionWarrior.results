@@ -281,8 +281,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-Deathbringer'sWill-50363"
  value: {
-  dps: 1745.64745
-  tps: 4490.88337
+  dps: 1744.90178
+  tps: 4489.33722
  }
 }
 dps_results: {
@@ -309,8 +309,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-DreadnaughtBattlegear"
  value: {
-  dps: 1677.86236
-  tps: 4303.23786
+  dps: 1677.76705
+  tps: 4304.36593
  }
 }
 dps_results: {
@@ -541,8 +541,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-NevermeltingIceCrystal-50259"
  value: {
-  dps: 1653.37989
-  tps: 4276.76144
+  dps: 1652.35928
+  tps: 4274.6452
  }
 }
 dps_results: {
@@ -674,8 +674,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-SiegebreakerBattlegear"
  value: {
-  dps: 1707.21741
-  tps: 4365.13895
+  dps: 1706.56102
+  tps: 4363.77793
  }
 }
 dps_results: {
@@ -701,6 +701,13 @@ dps_results: {
 }
 dps_results: {
  key: "TestProtectionWarrior-AllItems-SliverofPureIce-50346"
+ value: {
+  dps: 1581.85828
+  tps: 4096.94483
+ }
+}
+dps_results: {
+ key: "TestProtectionWarrior-AllItems-SoulPreserver-37111"
  value: {
   dps: 1581.85828
   tps: 4096.94483
@@ -870,8 +877,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-Wrynn'sBattlegear"
  value: {
-  dps: 1764.51884
-  tps: 4497.05123
+  dps: 1763.86269
+  tps: 4495.6907
  }
 }
 dps_results: {
@@ -884,8 +891,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-YmirjarLord'sBattlegear"
  value: {
-  dps: 1920.31969
-  tps: 4863.06407
+  dps: 1920.57545
+  tps: 4864.70911
  }
 }
 dps_results: {
@@ -898,8 +905,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-Average-Default"
  value: {
-  dps: 2936.52947
-  tps: 7163.90269
+  dps: 2936.47662
+  tps: 7163.7931
   dtps: 127.31609
  }
 }

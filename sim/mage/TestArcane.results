@@ -74,15 +74,15 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 6766.54619
-  tps: 10205.78121
+  dps: 6768.22557
+  tps: 10206.78884
  }
 }
 dps_results: {
  key: "TestArcane-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 6766.54619
-  tps: 10205.78121
+  dps: 6768.22557
+  tps: 10206.78884
  }
 }
 dps_results: {
@@ -588,6 +588,13 @@ dps_results: {
  value: {
   dps: 7104.55787
   tps: 4298.9191
+ }
+}
+dps_results: {
+ key: "TestArcane-AllItems-SoulPreserver-37111"
+ value: {
+  dps: 6886.3592
+  tps: 4164.95411
  }
 }
 dps_results: {

@@ -41,9 +41,9 @@ func (shaman *Shaman) ApplyTalents() {
 	if shaman.Talents.MentalDexterity > 0 {
 		shaman.AddStatDependency(stats.Intellect, stats.AttackPower, 0.3333*float64(shaman.Talents.MentalDexterity))
 	}
-	// if shaman.Talents.NaturesBlessing > 0 {
-	// 	shaman.AddStatDependency(stats.Intellect, stats.SpellPower, 0.1*float64(shaman.Talents.NaturesBlessing))
-	// }
+	if shaman.Talents.NaturesBlessing > 0 {
+		shaman.AddStatDependency(stats.Intellect, stats.SpellPower, 0.1*float64(shaman.Talents.NaturesBlessing))
+	}
 
 	if shaman.Talents.SpiritWeapons {
 		shaman.PseudoStats.CanParry = true

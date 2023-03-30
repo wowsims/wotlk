@@ -138,7 +138,7 @@ func (shaman *Shaman) registerMagmaTotemSpell() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-			shaman.SearingTotem.Dot(sim.GetTargetUnit(0)).Cancel(sim)
+			shaman.SearingTotem.Dot(shaman.CurrentTarget).Cancel(sim)
 			shaman.FireElemental.Disable(sim)
 			spell.AOEDot().Apply(sim)
 			if !shaman.Totems.UseFireMcd {

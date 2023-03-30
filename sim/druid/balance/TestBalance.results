@@ -523,8 +523,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-LasherweaveRegalia"
  value: {
-  dps: 7598.81553
-  tps: 7443.63275
+  dps: 7587.84721
+  tps: 7432.66443
  }
 }
 dps_results: {
@@ -721,6 +721,13 @@ dps_results: {
  value: {
   dps: 7640.78273
   tps: 7477.36001
+ }
+}
+dps_results: {
+ key: "TestBalance-AllItems-SoulPreserver-37111"
+ value: {
+  dps: 7457.13064
+  tps: 7295.27032
  }
 }
 dps_results: {

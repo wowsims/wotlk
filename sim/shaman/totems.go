@@ -59,12 +59,12 @@ func (shaman *Shaman) registerHealingStreamTotemSpell() {
 		SpellSchool:      core.SpellSchoolNature,
 		ProcMask:         core.ProcMaskEmpty,
 		Flags:            core.SpellFlagHelpful | core.SpellFlagNoOnCastComplete,
-		DamageMultiplier: 1 * (1 + .02*float64(shaman.Talents.Purification)),
+		DamageMultiplier: 1 + (.02 * float64(shaman.Talents.Purification)) + 0.15*float64(shaman.Talents.RestorativeTotems),
 		CritMultiplier:   1,
 		ThreatMultiplier: 1 - (float64(shaman.Talents.HealingGrace) * 0.05),
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// TODO: find healing stream coeff
-			healing := 25 + spell.HealingPower(target)*0.0827
+			healing := 25 + spell.HealingPower(target)*0.08272
 			spell.CalcAndDealHealing(sim, target, healing, spell.OutcomeHealing)
 		},
 	})
@@ -83,7 +83,6 @@ func (shaman *Shaman) registerHealingStreamTotemSpell() {
 		for _, agent := range shaman.Party.Players {
 			spell.Hot(&agent.GetCharacter().Unit).Activate(sim)
 		}
-
 	}
 	shaman.HealingStreamTotem = shaman.RegisterSpell(config)
 }

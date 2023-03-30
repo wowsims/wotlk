@@ -455,7 +455,7 @@ dps_results: {
  value: {
   dps: 1406.81585
   tps: 4309.84201
-  hps: 15.03299
+  hps: 16.72057
  }
 }
 dps_results: {
@@ -705,6 +705,13 @@ dps_results: {
 }
 dps_results: {
  key: "TestBloodTank-AllItems-SliverofPureIce-50346"
+ value: {
+  dps: 1400.15065
+  tps: 4289.60154
+ }
+}
+dps_results: {
+ key: "TestBloodTank-AllItems-SoulPreserver-37111"
  value: {
   dps: 1400.15065
   tps: 4289.60154

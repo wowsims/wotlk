@@ -449,18 +449,13 @@ func (shaman *Shaman) RegisterEarthlivingImbue(mh bool, oh bool) {
 		shaman.ApplyEarthlivingImbueToItem(shaman.GetOHWeapon(), false)
 	}
 
-	// ftIcd := core.Cooldown{
-	// 	Timer:    shaman.NewTimer(),
-	// 	Duration: time.Millisecond,
-	// }
-
 	mhSpell := shaman.newEarthlivingImbueSpell(true)
 	ohSpell := shaman.newEarthlivingImbueSpell(false)
 
 	procChance := 0.2
-	// if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfEarthlivingWeapon) {
-	// TODO: increase proc chance.
-	// }
+	if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfEarthlivingWeapon) {
+		procChance += 0.05
+	}
 	procMask := core.GetMeleeProcMaskForHands(mh, oh)
 	aura := shaman.RegisterAura(core.Aura{
 		Label:    "Earthliving Imbue",
@@ -469,12 +464,13 @@ func (shaman *Shaman) RegisterEarthlivingImbue(mh bool, oh bool) {
 			aura.Activate(sim)
 		},
 		OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if mhSpell != nil && sim.RandomFloat("earthliving") > procChance {
-				mhSpell.Cast(sim, result.Target)
+			if spell != shaman.ChainHeal && spell != shaman.LesserHealingWave && spell != shaman.HealingWave && spell != shaman.Riptide {
+				return
 			}
-			// TODO: how does having MH/OH enchanted with earthliving work?
-			if ohSpell != nil {
-
+			if mhSpell != nil && sim.RandomFloat("earthliving") < procChance {
+				mhSpell.Cast(sim, result.Target)
+			} else if ohSpell != nil && sim.RandomFloat("earthliving") < procChance {
+				ohSpell.Cast(sim, result.Target)
 			}
 		},
 	})
