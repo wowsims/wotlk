@@ -285,14 +285,14 @@ func (wp *WarlockPet) GetPet() *core.Pet {
 func (wp *WarlockPet) Initialize() {
 	switch wp.owner.Options.Summon {
 	case proto.Warlock_Options_Felguard:
-		wp.primaryAbility = wp.NewPetAbility(Cleave, true)
-		wp.secondaryAbility = wp.NewPetAbility(Intercept, false)
+		wp.registerCleaveSpell()
+		wp.registerInterceptSpell()
 	case proto.Warlock_Options_Succubus:
-		wp.primaryAbility = wp.NewPetAbility(LashOfPain, true)
+		wp.registerLashOfPainSpell()
 	case proto.Warlock_Options_Felhunter:
-		wp.primaryAbility = wp.NewPetAbility(ShadowBite, true)
+		wp.registerShadowBiteSpell()
 	case proto.Warlock_Options_Imp:
-		wp.primaryAbility = wp.NewPetAbility(Firebolt, true)
+		wp.registerFireboltSpell()
 	}
 }
 
@@ -300,15 +300,15 @@ func (wp *WarlockPet) Reset(sim *core.Simulation) {
 }
 
 func (wp *WarlockPet) OnGCDReady(sim *core.Simulation) {
-	target := wp.CurrentTarget
-
-	if !wp.TryCast(sim, target, wp.primaryAbility) {
-		if !wp.primaryAbility.IsReady(sim) {
-			wp.WaitUntil(sim, wp.primaryAbility.CD.ReadyAt())
-		} else {
-			wp.WaitForMana(sim, wp.primaryAbility.CurCast.Cost)
-		}
+	if !wp.primaryAbility.IsReady(sim) {
+		wp.WaitUntil(sim, wp.primaryAbility.CD.ReadyAt())
+		return
 	}
+
+	if success := wp.primaryAbility.Cast(sim, wp.CurrentTarget); !success {
+		wp.WaitForMana(sim, wp.primaryAbility.CurCast.Cost)
+	}
+
 }
 
 func (warlock *Warlock) makeStatInheritance() core.PetStatInheritance {
