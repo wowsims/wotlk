@@ -291,7 +291,7 @@ func (warlock *Warlock) setupShadowEmbrace() {
 }
 
 func (warlock *Warlock) setupNightfall() {
-	if warlock.Talents.Nightfall <= 0 && !!warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCorruption) {
+	if warlock.Talents.Nightfall <= 0 && !warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCorruption) {
 		return
 	}
 
