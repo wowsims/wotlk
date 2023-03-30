@@ -158,6 +158,7 @@ enum FireTotem {
 enum WaterTotem {
 	NoWaterTotem = 0;
 	ManaSpringTotem = 1;
+	HealingStreamTotem = 2;
 }
 
 message ShamanTotems {

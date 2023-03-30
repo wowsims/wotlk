@@ -28,10 +28,11 @@ func (dk *Deathknight) registerVampiricBloodSpell() {
 			bonusHealth = dk.MaxHealth() * 0.15
 			dk.AddStatsDynamic(sim, stats.Stats{stats.Health: bonusHealth})
 			dk.GainHealth(sim, bonusHealth, healthMetrics)
+			dk.PseudoStats.HealingTakenMultiplier *= 1.35
 		},
-
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			dk.AddStatsDynamic(sim, stats.Stats{stats.Health: -bonusHealth})
+			dk.PseudoStats.HealingTakenMultiplier /= 1.35
 		},
 	})
 

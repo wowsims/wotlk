@@ -21,7 +21,7 @@ export const simLaunchStatuses: Record<Spec, LaunchStatus> = {
 	[Spec.SpecRestorationDruid]: LaunchStatus.Unlaunched,
 	[Spec.SpecElementalShaman]: LaunchStatus.Beta,
 	[Spec.SpecEnhancementShaman]: LaunchStatus.Beta,
-	[Spec.SpecRestorationShaman]: LaunchStatus.Unlaunched,
+	[Spec.SpecRestorationShaman]: LaunchStatus.Alpha,
 	[Spec.SpecHunter]: LaunchStatus.Launched,
 	[Spec.SpecMage]: LaunchStatus.Beta,
 	[Spec.SpecRogue]: LaunchStatus.Beta,

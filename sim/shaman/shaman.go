@@ -28,6 +28,8 @@ func NewShaman(character core.Character, talents string, totems *proto.ShamanTot
 		SelfBuffs:           selfBuffs,
 		thunderstormInRange: thunderstormRange,
 	}
+	shaman.waterShieldManaMetrics = shaman.NewManaMetrics(core.ActionID{SpellID: 57960})
+
 	core.FillTalentsProto(shaman.Talents.ProtoReflect(), talents, TalentTreeSizes)
 	shaman.EnableManaBar()
 
@@ -114,6 +116,7 @@ type Shaman struct {
 
 	MagmaTotem           *core.Spell
 	ManaSpringTotem      *core.Spell
+	HealingStreamTotem   *core.Spell
 	SearingTotem         *core.Spell
 	StrengthOfEarthTotem *core.Spell
 	TotemOfWrath         *core.Spell
@@ -124,6 +127,16 @@ type Shaman struct {
 	FlametongueTotem     *core.Spell
 
 	MaelstromWeaponAura *core.Aura
+
+	// Healing Spells
+	ancestralHealingAmount float64
+	AncestralAwakening     *core.Spell
+	LesserHealingWave      *core.Spell
+	HealingWave            *core.Spell
+	ChainHeal              *core.Spell
+	Riptide                *core.Spell
+
+	waterShieldManaMetrics *core.ResourceMetrics
 }
 
 // Implemented by each Shaman spec.
@@ -211,6 +224,7 @@ func (shaman *Shaman) Initialize() {
 	shaman.registerLightningShieldSpell()
 	shaman.registerMagmaTotemSpell()
 	shaman.registerManaSpringTotemSpell()
+	shaman.registerHealingStreamTotemSpell()
 	shaman.registerSearingTotemSpell()
 	shaman.registerShocks()
 	shaman.registerStormstrikeSpell()
@@ -222,6 +236,10 @@ func (shaman *Shaman) Initialize() {
 	shaman.registerStoneskinTotemSpell()
 	shaman.registerWindfuryTotemSpell()
 	shaman.registerWrathOfAirTotemSpell()
+
+	shaman.registerAncestralHealingSpell()
+	shaman.registerLesserHealingWaveSpell()
+	shaman.registerHealingWaveSpell()
 
 	shaman.registerBloodlustCD()
 
@@ -268,8 +286,11 @@ func (shaman *Shaman) Reset(sim *core.Simulation) {
 				}
 			}
 		case WaterTotem:
+			shaman.NextTotemDropType[i] = int32(shaman.Totems.Water)
 			if shaman.Totems.Water == proto.WaterTotem_ManaSpringTotem {
 				shaman.NextTotemDrops[i] = TotemRefreshTime5M
+			} else if shaman.Totems.Water == proto.WaterTotem_HealingStreamTotem {
+				shaman.NextTotemDrops[i] = 0
 			}
 		}
 	}
