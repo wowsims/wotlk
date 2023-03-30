@@ -606,6 +606,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSubtlety-AllItems-SoulPreserver-37111"
+ value: {
+  dps: 8049.6123
+  tps: 5713.6272
+ }
+}
+dps_results: {
  key: "TestSubtlety-AllItems-SouloftheDead-40382"
  value: {
   dps: 8226.61702

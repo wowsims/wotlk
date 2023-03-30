@@ -442,8 +442,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-FrostWitch'sRegalia"
  value: {
-  dps: 6147.84339
-  tps: 3894.88467
+  dps: 6387.365
+  tps: 4030.79964
  }
 }
 dps_results: {
@@ -981,8 +981,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-WorldbreakerGarb"
  value: {
-  dps: 5923.31244
-  tps: 3819.39406
+  dps: 5944.31417
+  tps: 3842.94886
  }
 }
 dps_results: {

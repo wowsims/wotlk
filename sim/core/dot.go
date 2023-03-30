@@ -195,7 +195,12 @@ func (dot *Dot) ManualTick(sim *Simulation) {
 func (dot *Dot) basePeriodicOptions() PeriodicActionOptions {
 	return PeriodicActionOptions{
 		//Priority: ActionPriorityDOT,
-		OnAction: dot.ManualTick,
+		OnAction: func(sim *Simulation) {
+			if dot.lastTickTime != sim.CurrentTime {
+				dot.TickCount++
+				dot.TickOnce(sim)
+			}
+		},
 		CleanUp: func(sim *Simulation) {
 			// In certain cases, the last tick and the dot aura expiration can happen in
 			// different orders, so we might need to apply the last tick.
