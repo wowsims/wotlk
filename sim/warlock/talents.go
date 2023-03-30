@@ -156,7 +156,7 @@ func (warlock *Warlock) setupEmpoweredImp() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if result.Outcome.Matches(core.OutcomeCrit) {
+			if result.DidCrit() {
 				warlock.EmpoweredImpAura.Activate(sim)
 			}
 		},
@@ -230,7 +230,7 @@ func (warlock *Warlock) setupPyroclasm() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell == warlock.Conflagrate && result.Outcome.Matches(core.OutcomeCrit) { // || spell == warlock.SearingPain
+			if spell == warlock.Conflagrate && result.DidCrit() { // || spell == warlock.SearingPain
 				warlock.PyroclasmAura.Activate(sim)
 			}
 		},
@@ -439,11 +439,8 @@ func (warlock *Warlock) setupBackdraft() {
 			}
 		},
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			for _, destroSpell := range affectedSpells {
-				if spell == destroSpell {
-					aura.RemoveStack(sim)
-					return
-				}
+			if slices.Contains(affectedSpells, spell) {
+				aura.RemoveStack(sim)
 			}
 		},
 	})
