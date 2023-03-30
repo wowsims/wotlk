@@ -70,6 +70,7 @@ export const DefaultRotation = RestorationShamanRotation.create({
 		water: WaterTotem.HealingStreamTotem,
 	}),
 	useEarthShield: true,
+	useRiptide: true,
 });
 
 export const DefaultOptions = RestorationShamanOptions.create({
