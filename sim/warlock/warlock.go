@@ -16,9 +16,6 @@ type Warlock struct {
 	Options  *proto.Warlock_Options
 	Rotation *proto.Warlock_Rotation
 
-	procTrackers []*ProcTracker
-	majorCds     []*core.MajorCooldown
-
 	Pet *WarlockPet
 
 	ShadowBolt         *core.Spell
@@ -67,26 +64,29 @@ type Warlock struct {
 	Infernal *InfernalPet
 	Inferno  *core.Spell
 
-	// Rotation related memory
-	CorruptionRolloverPower float64
-	DrainSoulRolloverPower  float64
+	CritDebuffCategory *core.ExclusiveCategory
+
 	// The sum total of demonic pact spell power * seconds.
-	DPSPAggregate  float64
-	PreviousTime   time.Duration
-	SpellsRotation []SpellRotation
+	DPSPAggregate float64
+	PreviousTime  time.Duration
 
 	petStmBonusSP float64
-
-	CritDebuffCategory *core.ExclusiveCategory
+	acl           []ActionCondition
+	skipList      map[int]struct{}
 }
 
-type SpellRotation struct {
-	Spell    *core.Spell
-	CastIn   CastReadyness
-	Priority int
-}
+type ACLaction int
 
-type CastReadyness func(*core.Simulation) time.Duration
+const (
+	ACLCast ACLaction = iota
+	ACLNext
+	ACLRecast
+)
+
+type ActionCondition struct {
+	Spell     *core.Spell
+	Condition func(*core.Simulation) (ACLaction, *core.Unit)
+}
 
 func (warlock *Warlock) GetCharacter() *core.Character {
 	return &warlock.Character
