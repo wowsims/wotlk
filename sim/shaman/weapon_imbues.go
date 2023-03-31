@@ -310,7 +310,9 @@ func (shaman *Shaman) FrostbrandDebuffAura(target *core.Unit) *core.Aura {
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			shaman.LightningBolt.DamageMultiplier *= multiplier
 			shaman.ChainLightning.DamageMultiplier *= multiplier
-			shaman.LavaLash.DamageMultiplier *= multiplier
+			if shaman.LavaLash != nil {
+				shaman.LavaLash.DamageMultiplier *= multiplier
+			}
 			shaman.EarthShock.DamageMultiplier *= multiplier
 			shaman.FlameShock.DamageMultiplier *= multiplier
 			shaman.FrostShock.DamageMultiplier *= multiplier
@@ -318,7 +320,9 @@ func (shaman *Shaman) FrostbrandDebuffAura(target *core.Unit) *core.Aura {
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			shaman.LightningBolt.DamageMultiplier /= multiplier
 			shaman.ChainLightning.DamageMultiplier /= multiplier
-			shaman.LavaLash.DamageMultiplier /= multiplier
+			if shaman.LavaLash != nil {
+				shaman.LavaLash.DamageMultiplier /= multiplier
+			}
 			shaman.EarthShock.DamageMultiplier /= multiplier
 			shaman.FlameShock.DamageMultiplier /= multiplier
 			shaman.FrostShock.DamageMultiplier /= multiplier
