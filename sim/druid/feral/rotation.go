@@ -187,7 +187,7 @@ func (cat *FeralDruid) calcBuilderDpe(sim *core.Simulation) (float64, float64) {
 	// dynamic proc occurring
 	shredDpc := cat.Shred.ExpectedDamage(sim, cat.CurrentTarget)
 	rakeDpc := cat.Rake.ExpectedDamage(sim, cat.CurrentTarget)
-	return rakeDpc / 35., shredDpc / 42.
+	return rakeDpc / cat.CurrentRakeCost(), shredDpc / cat.CurrentShredCost()
 }
 
 func (cat *FeralDruid) clipRoar(sim *core.Simulation) bool {
@@ -319,6 +319,20 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		rakeNow = (rakeDpe > shredDpe)
 	}
 
+	// Additionally, don't Rake if there is insufficient time to max out
+	// our available glyph of shred extensions before rip falls off
+	if rakeNow && ripDot.IsActive() {
+		maxRipDur := time.Duration(cat.maxRipTicks) * ripDot.TickLength
+		remainingExt := cat.maxRipTicks - ripDot.NumberOfTicks
+		energyForShreds := curEnergy - cat.CurrentRakeCost() - 30 + float64((ripDot.StartedAt()+maxRipDur-sim.CurrentTime)/core.EnergyTickDuration) + core.TernaryFloat64(cat.tfExpectedBefore(sim, ripDot.StartedAt()+maxRipDur), 60.0, 0)
+		maxShredsPossible := core.MinFloat(energyForShreds/cat.Shred.DefaultCast.Cost, (ripDot.ExpiresAt() - (sim.CurrentTime + time.Second)).Seconds())
+		rakeNow = remainingExt == 0 || (maxShredsPossible > float64(remainingExt))
+	}
+
+	// Disable Energy pooling for Rake in weaving rotations, since these
+	// rotations prioritize weave cpm over Rake uptime.
+	poolForRake := !(rotation.FlowerWeave || (rotation.BearweaveType != proto.FeralDruid_Rotation_None))
+
 	// Berserk algorithm: time Berserk for just after a Tiger's Fury
 	// *unless* we'll lose Berserk uptime by waiting for Tiger's Fury to
 	// come off cooldown. The latter exception is necessary for
@@ -348,6 +362,9 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	}
 	if rakeDot.IsActive() && (rakeDot.RemainingDuration(sim) < simTimeRemain-rakeDot.Duration) {
 		rakeCost := core.TernaryFloat64(cat.berserkExpectedAt(sim, rakeDot.ExpiresAt()), cat.Rake.DefaultCast.Cost*0.5, cat.Rake.DefaultCast.Cost)
+		if !poolForRake {
+			rakeCost = 0
+		}
 		pendingActions = append(pendingActions, pendingAction{rakeDot.ExpiresAt(), rakeCost})
 	}
 	if cat.bleedAura.IsActive() && (cat.bleedAura.RemainingDuration(sim) < simTimeRemain-time.Second) {
