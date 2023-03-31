@@ -15,12 +15,15 @@ import (
 //   granting you 270 Strength for 10 sec.
 
 func init() {
+	// https://web.archive.org/web/20120509024819/http://elitistjerks.com/f81/t37680-depth_fury_dps_discussion/p129/
+	// has some testing, and arrives at ~12 ppm (75% for 3.7 speed)
 	const drainChance = 0.5
 
 	core.NewItemEffect(49623, func(agent core.Agent) {
 		player := agent.GetCharacter()
 
-		tempStrProc := player.NewTemporaryStatsAura("Chaos Bane", core.ActionID{SpellID: 73422}, stats.Stats{stats.Strength: 270}, time.Second*10)
+		chaosBaneAura := player.NewTemporaryStatsAura("Chaos Bane", core.ActionID{SpellID: 73422}, stats.Stats{stats.Strength: 270}, time.Second*10)
+
 		choasBaneSpell := player.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 71904},
 			SpellSchool: core.SpellSchoolShadow,
@@ -30,9 +33,11 @@ func init() {
 			ThreatMultiplier: 1,
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				baseDamage := sim.Roll(1900, 2100)
-				// can miss, can't crit
-				spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHit)
+				baseDamage := sim.Roll(1900, 2100) / float64(sim.GetNumTargets())
+				for _, target := range sim.Encounter.TargetUnits {
+					// can miss, can't crit
+					spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHit)
+				}
 			},
 		})
 
@@ -43,6 +48,13 @@ func init() {
 			MaxStacks: 10,
 			OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks, newStacks int32) {
 				player.AddStatDynamic(sim, stats.Strength, float64(newStacks-oldStacks)*30)
+
+				if newStacks == aura.MaxStacks {
+					choasBaneSpell.Cast(sim, nil)
+					chaosBaneAura.Activate(sim)
+					aura.SetStacks(sim, 0)
+					return
+				}
 			},
 		})
 
@@ -53,23 +65,14 @@ func init() {
 					return
 				}
 
-				if stackingAura.GetStacks() == 10 {
-					stackingAura.Deactivate(sim)
-					tempStrProc.Activate(sim)
-					choasBaneSpell.Cast(sim, result.Target)
+				if chaosBaneAura.IsActive() {
 					return
 				}
 
-				if tempStrProc.IsActive() {
-					return
+				if sim.RandomFloat("Shadowmourne") < drainChance {
+					stackingAura.Activate(sim)
+					stackingAura.AddStack(sim)
 				}
-
-				if sim.RandomFloat("shadowmourne") > drainChance {
-					return
-				}
-
-				stackingAura.Activate(sim)
-				stackingAura.AddStack(sim)
 			},
 		}))
 	})

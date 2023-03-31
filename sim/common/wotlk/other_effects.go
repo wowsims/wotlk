@@ -869,6 +869,9 @@ func init() {
 		})
 	})
 
+	// https://web.archive.org/web/20100127195814/http://elitistjerks.com/f76/t68951-retribution_updated_3_3_a/p75/
+	// suggests 2 ppm; there's a test with ~1k auto attacks on this page, and mention of a previous test
+	// with ~10k auto attacks.
 	NewItemEffectWithHeroic(func(isHeroic bool) {
 		name := "Bryntroll, the Bone Arbiter"
 		itemID := int32(50415)
