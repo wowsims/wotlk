@@ -1,27 +1,27 @@
 character_stats_results: {
  key: "TestDemonology-CharacterStats-Default"
  value: {
-  final_stats: 331.1
-  final_stats: 333.3
-  final_stats: 1619.585
-  final_stats: 1155
-  final_stats: 767.8
-  final_stats: 2955.442
+  final_stats: 320.1
+  final_stats: 322.3
+  final_stats: 1820.445
+  final_stats: 1383.8
+  final_stats: 1167.1
+  final_stats: 3819.169
   final_stats: 109
-  final_stats: 290
-  final_stats: 1324.71556
-  final_stats: 902
+  final_stats: 374
+  final_stats: 1678.74081
+  final_stats: 650
   final_stats: 0
-  final_stats: 1207.91
-  final_stats: 290
-  final_stats: 928.65
-  final_stats: 662
-  final_stats: 0
-  final_stats: 0
-  final_stats: 21528.03
+  final_stats: 1195.81
+  final_stats: 374
+  final_stats: 1219.65
+  final_stats: 410
   final_stats: 0
   final_stats: 0
-  final_stats: 5468.1
+  final_stats: 25062.99
+  final_stats: 0
+  final_stats: 0
+  final_stats: 5593.1
   final_stats: 843.7
   final_stats: 0
   final_stats: 0
@@ -29,7 +29,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 0
-  final_stats: 24060.6455
+  final_stats: 26129.5035
   final_stats: 75
   final_stats: 75
   final_stats: 75
@@ -46,315 +46,315 @@ character_stats_results: {
 dps_results: {
  key: "TestDemonology-AllItems-AshtongueTalismanofShadows-32493"
  value: {
-  dps: 7395.79261
-  tps: 6189.65623
+  dps: 8900.3512
+  tps: 7512.75131
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-AustereEarthsiegeDiamond"
  value: {
-  dps: 7281.08377
-  tps: 6079.99894
+  dps: 8845.15859
+  tps: 7458.37371
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-BeamingEarthsiegeDiamond"
  value: {
-  dps: 7290.93613
-  tps: 6090.63953
+  dps: 8856.95828
+  tps: 7470.96496
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-BracingEarthsiegeDiamond"
  value: {
-  dps: 7306.70896
-  tps: 6101.94169
+  dps: 8882.22401
+  tps: 7491.22137
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-ChaoticSkyflareDiamond"
  value: {
-  dps: 7414.21191
-  tps: 6213.91531
+  dps: 9027.03271
+  tps: 7641.03939
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-DarkCoven'sRegalia"
  value: {
-  dps: 7606.96042
-  tps: 6387.56434
+  dps: 8878.6984
+  tps: 7499.69596
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-DeathbringerGarb"
  value: {
-  dps: 7036.40518
-  tps: 5866.68711
+  dps: 8231.67807
+  tps: 6906.50733
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-DestructiveSkyflareDiamond"
  value: {
-  dps: 7290.93613
-  tps: 6090.63953
+  dps: 8859.2355
+  tps: 7473.24218
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-EffulgentSkyflareDiamond"
  value: {
-  dps: 7281.08377
-  tps: 6079.99894
+  dps: 8845.15859
+  tps: 7458.37371
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-EmberSkyflareDiamond"
  value: {
-  dps: 7306.70896
-  tps: 6101.94169
+  dps: 8882.22401
+  tps: 7491.22137
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-EnigmaticSkyflareDiamond"
  value: {
-  dps: 7290.93613
-  tps: 6090.63953
+  dps: 8856.95828
+  tps: 7470.96496
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-EnigmaticStarflareDiamond"
  value: {
-  dps: 7287.57691
-  tps: 6087.2803
+  dps: 8851.96622
+  tps: 7465.97291
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-EternalEarthsiegeDiamond"
  value: {
-  dps: 7275.45901
-  tps: 6075.1624
+  dps: 8838.25387
+  tps: 7452.26056
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-ForlornSkyflareDiamond"
  value: {
-  dps: 7306.70896
-  tps: 6101.94169
+  dps: 8882.22401
+  tps: 7491.22137
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-ForlornStarflareDiamond"
  value: {
-  dps: 7294.83245
-  tps: 6090.92918
+  dps: 8872.77384
+  tps: 7482.69494
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-Gladiator'sFelshroud"
  value: {
-  dps: 6953.94961
-  tps: 5792.80544
+  dps: 8304.35552
+  tps: 6945.07114
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-Gul'dan'sRegalia"
  value: {
-  dps: 7046.66179
-  tps: 5774.40332
+  dps: 8231.78568
+  tps: 6792.92031
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-ImpassiveSkyflareDiamond"
  value: {
-  dps: 7290.93613
-  tps: 6090.63953
+  dps: 8856.95828
+  tps: 7470.96496
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-ImpassiveStarflareDiamond"
  value: {
-  dps: 7287.57691
-  tps: 6087.2803
+  dps: 8851.96622
+  tps: 7465.97291
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-InsightfulEarthsiegeDiamond"
  value: {
-  dps: 7282.98547
-  tps: 6082.69258
+  dps: 8839.73012
+  tps: 7452.5781
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-InvigoratingEarthsiegeDiamond"
  value: {
-  dps: 7275.45901
-  tps: 6075.1624
+  dps: 8838.25387
+  tps: 7452.26056
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-MaleficRaiment"
  value: {
-  dps: 5523.21933
-  tps: 4500.40967
+  dps: 6396.45225
+  tps: 5249.54543
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-PersistentEarthshatterDiamond"
  value: {
-  dps: 7275.45901
-  tps: 6075.1624
+  dps: 8838.25387
+  tps: 7452.26056
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-PersistentEarthsiegeDiamond"
  value: {
-  dps: 7275.45901
-  tps: 6075.1624
+  dps: 8838.25387
+  tps: 7452.26056
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-PlagueheartGarb"
  value: {
-  dps: 6689.27184
-  tps: 5546.30887
+  dps: 8005.55517
+  tps: 6707.93739
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-PowerfulEarthshatterDiamond"
  value: {
-  dps: 7279.82028
-  tps: 6078.8803
+  dps: 8843.86396
+  tps: 7457.2275
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-PowerfulEarthsiegeDiamond"
  value: {
-  dps: 7281.08377
-  tps: 6079.99894
+  dps: 8845.15859
+  tps: 7458.37371
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-RelentlessEarthsiegeDiamond"
  value: {
-  dps: 7397.34185
-  tps: 6197.04524
+  dps: 9006.6449
+  tps: 7620.65159
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-RevitalizingSkyflareDiamond"
  value: {
-  dps: 7271.55469
-  tps: 6071.27069
+  dps: 8842.99344
+  tps: 7456.04101
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-SwiftSkyflareDiamond"
  value: {
-  dps: 7275.45901
-  tps: 6075.1624
+  dps: 8838.25387
+  tps: 7452.26056
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-SwiftStarflareDiamond"
  value: {
-  dps: 7275.45901
-  tps: 6075.1624
+  dps: 8838.25387
+  tps: 7452.26056
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-SwiftWindfireDiamond"
  value: {
-  dps: 7275.45901
-  tps: 6075.1624
+  dps: 8838.25387
+  tps: 7452.26056
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 7275.45901
-  tps: 6075.1624
+  dps: 8838.25387
+  tps: 7452.26056
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-TirelessSkyflareDiamond"
  value: {
-  dps: 7306.70896
-  tps: 6101.94169
+  dps: 8882.22401
+  tps: 7491.22137
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-TirelessStarflareDiamond"
  value: {
-  dps: 7294.83245
-  tps: 6090.92918
+  dps: 8872.77384
+  tps: 7482.69494
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-TrenchantEarthshatterDiamond"
  value: {
-  dps: 7294.83245
-  tps: 6090.92918
+  dps: 8872.77384
+  tps: 7482.69494
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-TrenchantEarthsiegeDiamond"
  value: {
-  dps: 7306.70896
-  tps: 6101.94169
+  dps: 8882.22401
+  tps: 7491.22137
  }
 }
 dps_results: {
  key: "TestDemonology-Average-Default"
  value: {
-  dps: 7471.04888
-  tps: 6273.23813
+  dps: 9128.60367
+  tps: 7740.43793
  }
 }
 dps_results: {
- key: "TestDemonology-Settings-Orc-P1-Demonology Warlock-FullBuffs-LongMultiTarget"
+ key: "TestDemonology-Settings-Orc-P2-Demonology Warlock-FullBuffs-LongMultiTarget"
  value: {
-  dps: 9785.95519
-  tps: 10548.46736
+  dps: 11788.57198
+  tps: 12152.68262
  }
 }
 dps_results: {
- key: "TestDemonology-Settings-Orc-P1-Demonology Warlock-FullBuffs-LongSingleTarget"
+ key: "TestDemonology-Settings-Orc-P2-Demonology Warlock-FullBuffs-LongSingleTarget"
  value: {
-  dps: 7441.95547
-  tps: 6242.53158
+  dps: 9057.55284
+  tps: 7671.12451
  }
 }
 dps_results: {
- key: "TestDemonology-Settings-Orc-P1-Demonology Warlock-FullBuffs-ShortSingleTarget"
+ key: "TestDemonology-Settings-Orc-P2-Demonology Warlock-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 8505.72353
-  tps: 7129.76938
+  dps: 10464.70821
+  tps: 8876.34
  }
 }
 dps_results: {
- key: "TestDemonology-Settings-Orc-P1-Demonology Warlock-NoBuffs-LongMultiTarget"
+ key: "TestDemonology-Settings-Orc-P2-Demonology Warlock-NoBuffs-LongMultiTarget"
  value: {
-  dps: 5916.10142
-  tps: 7941.99416
+  dps: 7317.20957
+  tps: 9009.58248
  }
 }
 dps_results: {
- key: "TestDemonology-Settings-Orc-P1-Demonology Warlock-NoBuffs-LongSingleTarget"
+ key: "TestDemonology-Settings-Orc-P2-Demonology Warlock-NoBuffs-LongSingleTarget"
  value: {
-  dps: 4180.86005
-  tps: 3834.35941
+  dps: 5216.28815
+  tps: 4767.7166
  }
 }
 dps_results: {
- key: "TestDemonology-Settings-Orc-P1-Demonology Warlock-NoBuffs-ShortSingleTarget"
+ key: "TestDemonology-Settings-Orc-P2-Demonology Warlock-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 4359.24279
-  tps: 3942.15217
+  dps: 5508.70524
+  tps: 4942.02371
  }
 }
 dps_results: {
  key: "TestDemonology-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 7280.44615
-  tps: 6214.52873
+  dps: 8895.31703
+  tps: 7641.38695
  }
 }
