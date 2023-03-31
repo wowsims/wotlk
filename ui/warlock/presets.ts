@@ -742,7 +742,7 @@ export const P2_Preset_Affliction = {
 			"enchant": 1144,
 			"gems": [
 				39998,
-				45987
+				40014
 			]
 		},
 		{
