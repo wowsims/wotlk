@@ -319,36 +319,35 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 		cur = 0;
 		while (cur < gearBytes.length) {
 			const itemSpec = ItemSpec.create();
-			const slotId = gearBytes[cur] & 0b01111111;
+			const slotId = gearBytes[cur] & 0b00111111;
 			const isEnchanted = Boolean(gearBytes[cur] & 0b10000000);
+			const randomEnchant = Boolean(gearBytes[cur] & 0b01000000);
+			if (randomEnchant)
+				throw new Error('randomEnchant not 0');
 			cur++;
 
 			const numGems = (gearBytes[cur] & 0b11100000) >> 5;
+			const highid = (gearBytes[cur] & 0b00011111);
 			cur++;
 
-			itemSpec.id = (gearBytes[cur] << 8) + gearBytes[cur + 1];
+			itemSpec.id = (highid << 16) + (gearBytes[cur] << 8) + gearBytes[cur + 1];
 			cur += 2;
 			//console.log(`Slot ID: ${slotId}, isEnchanted: ${isEnchanted}, numGems: ${numGems}, itemID: ${itemSpec.id}`);
 
 			if (isEnchanted) {
-				// Ignore first byte, seems to always be 0?
-				if (gearBytes[cur] != 0) {
-					throw new Error('other ench byte: ' + gearBytes[cur]);
-				}
-				cur++;
-
 				// Note: this is the enchant SPELL id, not the effect ID.
-				const enchantSpellId = (gearBytes[cur] << 8) + gearBytes[cur + 1];
+				const enchantSpellId = (gearBytes[cur] << 16) + (gearBytes[cur + 1] << 8) + gearBytes[cur + 2];
 				itemSpec.enchant = this.simUI.sim.db.enchantSpellIdToEffectId(enchantSpellId);
-				cur += 2;
-				//console.log(`Enchant ID: ${itemSpec.enchant}`);
+				cur += 3;
+				//console.log(`Enchant ID: ${itemSpec.enchant}. Spellid: ${enchantSpellId}`);
 			}
 
 			for (let gemIdx = 0; gemIdx < numGems; gemIdx++) {
 				const gemPosition = (gearBytes[cur] & 0b11100000) >> 5;
+				const highgemid   = (gearBytes[cur] & 0b00011111);
 				cur++;
 
-				const gemId = (gearBytes[cur] << 8) + gearBytes[cur + 1];
+				const gemId = (highgemid << 16) + (gearBytes[cur] << 8) + gearBytes[cur + 1];
 				cur += 2;
 				//console.log(`Gem position: ${gemPosition}, gemID: ${gemId}`);
 
