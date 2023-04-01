@@ -601,6 +601,7 @@ func BloodlustAura(character *Character, actionTag int32) *Aura {
 	return aura
 }
 
+var PowerInfusionActionID = ActionID{SpellID: 10060}
 var PowerInfusionAuraTag = "PowerInfusion"
 
 const PowerInfusionDuration = time.Second * 15
@@ -616,7 +617,7 @@ func registerPowerInfusionCD(agent Agent, numPowerInfusions int32) {
 	registerExternalConsecutiveCDApproximation(
 		agent,
 		externalConsecutiveCDApproximation{
-			ActionID:         ActionID{SpellID: 10060, Tag: -1},
+			ActionID:         PowerInfusionActionID.WithTag(-1),
 			AuraTag:          PowerInfusionAuraTag,
 			CooldownPriority: CooldownPriorityDefault,
 			AuraDuration:     PowerInfusionDuration,

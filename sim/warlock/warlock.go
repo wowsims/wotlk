@@ -164,6 +164,8 @@ func (warlock *Warlock) Reset(sim *core.Simulation) {
 	if sim.CurrentTime == 0 {
 		warlock.petStmBonusSP = 0
 	}
+
+	warlock.setupCooldowns(sim)
 }
 
 func NewWarlock(character core.Character, options *proto.Player) *Warlock {

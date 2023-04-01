@@ -1,6 +1,7 @@
 package warlock
 
 import (
+	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -9,6 +10,94 @@ import (
 )
 
 const humanReactionTime = 150 * time.Millisecond
+
+func (warlock *Warlock) setupCooldowns(sim *core.Simulation) {
+	// TODO: also need to consider shared CDs that cause delays, like double on-use trinkets
+
+	// check if waiting `waitDuration` amount of time results in fewer cooldown usages
+	retainUses := func(timeLeft time.Duration, spellCD time.Duration, waitDuration time.Duration) bool {
+		return math.Floor(float64(timeLeft)/float64(spellCD)+1) ==
+			math.Floor(float64(timeLeft-waitDuration)/float64(spellCD)+1)
+	}
+
+	// TODO: find a way of getting the duration directly from the spell instead
+	durMap := make(map[core.ActionID]time.Duration)
+	if warlock.MetamorphosisAura != nil {
+		durMap[core.ActionID{SpellID: 47241}] = warlock.MetamorphosisAura.Duration
+	}
+	durMap[core.ActionID{SpellID: 33697}] = 15 * time.Second
+	durMap[core.ActionID{SpellID: 54758}] = 12 * time.Second
+	durMap[core.ActionID{SpellID: 10060}] = 15 * time.Second
+	durMap[core.ActionID{ItemID: 40211}] = 15 * time.Second
+	durMap[core.ActionID{ItemID: 40212}] = 15 * time.Second
+	durMap[core.ActionID{ItemID: 45466}] = 20 * time.Second
+	durMap[core.ActionID{ItemID: 45148}] = 20 * time.Second
+	durMap[core.ActionID{ItemID: 37873}] = 20 * time.Second
+
+	ignoredCDs := make(map[core.ActionID]struct{})
+	ignoredCDs[core.ActionID{ItemID: 42641}] = struct{}{}       // sapper
+	ignoredCDs[core.ActionID{ItemID: 41119}] = struct{}{}       // saronite bomb
+	ignoredCDs[core.ActionID{ItemID: 40536}] = struct{}{}       // explosive decoy
+	ignoredCDs[core.BloodlustActionID.WithTag(-1)] = struct{}{} // don't mess with BL
+
+	var executeActive func() bool
+	var executePhase time.Duration
+	if warlock.Talents.Decimation > 0 {
+		// approximation since we don't know exactly when decimation will be active
+		executePhase = time.Duration(float64(sim.Duration)*(1.0-sim.Encounter.ExecuteProportion_35)) + 3*time.Second
+		executeActive = func() bool { return warlock.DecimationAura.IsActive() }
+	} else if warlock.Talents.Haunt {
+		executePhase = time.Duration(float64(sim.Duration) * (1.0 - sim.Encounter.ExecuteProportion_25))
+		executeActive = func() bool { return sim.IsExecutePhase25() }
+	} else {
+		executePhase = time.Duration(0)
+		executeActive = func() bool { return true }
+	}
+
+	lustCD := warlock.GetMajorCooldownIgnoreTag(core.BloodlustActionID)
+	for _, cd := range warlock.GetMajorCooldowns() {
+		if _, ignored := ignoredCDs[cd.Spell.ActionID]; ignored {
+			continue
+		}
+
+		spellCD := core.MaxDuration(cd.Spell.CD.Duration, cd.Spell.SharedCD.Duration)
+		runTime := time.Duration(float64(durMap[cd.Spell.ActionID]) * 0.75)
+		spell := cd.Spell
+
+		cd.ShouldActivate = func(sim *core.Simulation, character *core.Character) bool {
+			timeLeft := sim.GetRemainingDuration() - runTime
+			timeUntilExecute := core.MaxDuration(0, executePhase-sim.CurrentTime)
+
+			// if time until execute is less than the CD AND remaining time minus time till execute gives
+			// the same amount of uses as remaining time alone then delay
+			if !executeActive() && timeUntilExecute < spellCD+runTime &&
+				retainUses(timeLeft, spellCD, timeUntilExecute) {
+				return false
+			}
+
+			if warlock.Talents.Metamorphosis && spell.ActionID != warlock.Metamorphosis.ActionID {
+				metaCD := warlock.GetMajorCooldown(warlock.Metamorphosis.ActionID)
+				if !warlock.MetamorphosisAura.IsActive() && metaCD.TimeToNextCast(sim) < spellCD+runTime &&
+					retainUses(timeLeft, spellCD, metaCD.TimeToNextCast(sim)) {
+					return false
+				}
+			}
+
+			if lustCD != nil && !character.HasActiveAuraWithTag(core.BloodlustAuraTag) &&
+				lustCD.TimeToNextCast(sim) < spellCD+runTime && retainUses(timeLeft, spellCD,
+				lustCD.TimeToNextCast(sim)) {
+				return false
+			}
+
+			if spell.ActionID.SameActionIgnoreTag(core.PowerInfusionActionID) &&
+				(character.HasActiveAuraWithTag(core.BloodlustAuraTag) || lustCD.TimeToNextCast(sim) < runTime) {
+				return false // don't use PI while lust is active or it would overlap
+			}
+
+			return true
+		}
+	}
+}
 
 func (warlock *Warlock) calcRelativeCorruptionInc(target *core.Unit) float64 {
 	dot := warlock.Corruption.Dot(target)
