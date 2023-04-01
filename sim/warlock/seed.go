@@ -13,6 +13,7 @@ func (warlock *Warlock) registerSeedSpell() {
 		ActionID:     actionID.WithTag(1), // actually 47834
 		SpellSchool:  core.SpellSchoolShadow,
 		ProcMask:     core.ProcMaskSpellDamage,
+		Flags:        core.SpellFlagHauntSE,
 		MissileSpeed: 28,
 
 		BonusCritRating: 0 +
@@ -27,9 +28,7 @@ func (warlock *Warlock) registerSeedSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDmg := (sim.Roll(1633, 1897) + 0.286*spell.SpellPower()) * sim.Encounter.AOECapMultiplier()
 			for _, aoeTarget := range sim.Encounter.TargetUnits {
-				// TODO: should be affected by haunt/SE, but they only work on periodic shadow damage
-				// right now, thus as a hacky workaround we make the explosion periodic too
-				spell.CalcAndDealPeriodicDamage(sim, aoeTarget, baseDmg, spell.OutcomeMagicHitAndCrit)
+				spell.CalcAndDealDamage(sim, aoeTarget, baseDmg, spell.OutcomeMagicHitAndCrit)
 			}
 		},
 	})
@@ -47,6 +46,7 @@ func (warlock *Warlock) registerSeedSpell() {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskEmpty,
+		Flags:       core.SpellFlagHauntSE,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.34,

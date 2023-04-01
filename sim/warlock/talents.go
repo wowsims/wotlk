@@ -280,8 +280,8 @@ func (warlock *Warlock) ShadowEmbraceDebuffAura(target *core.Unit) *core.Aura {
 		Duration:  time.Second * 12,
 		MaxStacks: 3,
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
-			warlock.AttackTables[aura.Unit.UnitIndex].PeriodicShadowDamageTakenMultiplier /= 1.0 + shadowEmbraceBonus*float64(oldStacks)
-			warlock.AttackTables[aura.Unit.UnitIndex].PeriodicShadowDamageTakenMultiplier *= 1.0 + shadowEmbraceBonus*float64(newStacks)
+			warlock.AttackTables[aura.Unit.UnitIndex].HauntSEDamageTakenMultiplier /= 1.0 + shadowEmbraceBonus*float64(oldStacks)
+			warlock.AttackTables[aura.Unit.UnitIndex].HauntSEDamageTakenMultiplier *= 1.0 + shadowEmbraceBonus*float64(newStacks)
 		},
 	})
 }
