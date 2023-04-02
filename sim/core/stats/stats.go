@@ -190,29 +190,25 @@ func FromFloatArray(values []float64) Stats {
 
 // Adds two Stats together, returning the new Stats.
 func (stats Stats) Add(other Stats) Stats {
-	newStats := Stats{}
-
-	for i, thisStat := range stats {
-		newStats[i] = thisStat + other[i]
+	var newStats Stats
+	for k, v := range stats {
+		newStats[k] = v + other[k]
 	}
-
 	return newStats
 }
 
 // Subtracts another Stats from this one, returning the new Stats.
 func (stats Stats) Subtract(other Stats) Stats {
-	newStats := Stats{}
-
+	var newStats Stats
 	for k, v := range stats {
 		newStats[k] = v - other[k]
 	}
-
 	return newStats
 }
 
 func (stats Stats) Multiply(multiplier float64) Stats {
-	newStats := stats
-	for k, v := range newStats {
+	var newStats Stats
+	for k, v := range stats {
 		newStats[k] = v * multiplier
 	}
 	return newStats
@@ -221,32 +217,28 @@ func (stats Stats) Multiply(multiplier float64) Stats {
 // Multiplies two Stats together by multiplying the values of corresponding
 // stats, like a dot product operation.
 func (stats Stats) DotProduct(other Stats) Stats {
-	newStats := Stats{}
-
+	var newStats Stats
 	for k, v := range stats {
 		newStats[k] = v * other[k]
 	}
-
 	return newStats
 }
 
 func (stats Stats) Equals(other Stats) bool {
-	for i := range stats {
-		if stats[i] != other[i] {
+	for k, v := range stats {
+		if v != other[k] {
 			return false
 		}
 	}
-
 	return true
 }
 
 func (stats Stats) EqualsWithTolerance(other Stats, tolerance float64) bool {
-	for i := range stats {
-		if stats[i] < other[i]-tolerance || stats[i] > other[i]+tolerance {
+	for k, v := range stats {
+		if v < other[k]-tolerance || v > other[k]+tolerance {
 			return false
 		}
 	}
-
 	return true
 }
 
@@ -259,8 +251,7 @@ func (stats Stats) String() string {
 		if name == "none" || statValue == 0 {
 			continue
 		}
-
-		fmt.Fprintf(&sb, "\t%s: %0.3f,\n", name, statValue)
+		_, _ = fmt.Fprintf(&sb, "\t%s: %0.3f,\n", name, statValue)
 	}
 
 	sb.WriteString("\n}")
@@ -277,7 +268,7 @@ func (stats Stats) FlatString() string {
 		if name == "none" || statValue == 0 {
 			continue
 		}
-		fmt.Fprintf(&sb, "\"%s\": %0.3f,", name, statValue)
+		_, _ = fmt.Fprintf(&sb, "\"%s\": %0.3f,", name, statValue)
 	}
 
 	sb.WriteString("}")
