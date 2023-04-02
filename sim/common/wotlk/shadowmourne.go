@@ -16,11 +16,13 @@ import (
 
 func init() {
 	// https://web.archive.org/web/20120509024819/http://elitistjerks.com/f81/t37680-depth_fury_dps_discussion/p129/
-	// has some testing, and arrives at ~12 ppm (75% for 3.7 speed)
-	const drainChance = 0.5
-
+	// has some testing, and arrives at ~12 ppm (~75% for 3.7 speed)
+	// https://web.archive.org/web/20100508065259/http://elitistjerks.com/f81/t37462-warrior_dps_calculation_spreadsheet/p109/
+	// arrives at ~80% with "2000 white swings" on a dummy.
 	core.NewItemEffect(49623, func(agent core.Agent) {
 		player := agent.GetCharacter()
+
+		ppmm := player.AutoAttacks.NewPPMManager(12, core.ProcMaskMelee)
 
 		chaosBaneAura := player.NewTemporaryStatsAura("Chaos Bane", core.ActionID{SpellID: 73422}, stats.Stats{stats.Strength: 270}, time.Second*10)
 
@@ -35,8 +37,7 @@ func init() {
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				baseDamage := sim.Roll(1900, 2100) / float64(sim.GetNumTargets())
 				for _, target := range sim.Encounter.TargetUnits {
-					// can miss, can't crit
-					spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHit)
+					spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHit) // probably has a very low crit rate
 				}
 			},
 		})
@@ -61,15 +62,11 @@ func init() {
 		core.MakePermanent(player.GetOrRegisterAura(core.Aura{
 			Label: "Shadowmourne",
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if !spell.ProcMask.Matches(core.ProcMaskMelee) {
-					return
-				}
-
 				if chaosBaneAura.IsActive() {
 					return
 				}
 
-				if sim.RandomFloat("Shadowmourne") < drainChance {
+				if ppmm.Proc(sim, spell.ProcMask, "Shadowmourne") {
 					stackingAura.Activate(sim)
 					stackingAura.AddStack(sim)
 				}

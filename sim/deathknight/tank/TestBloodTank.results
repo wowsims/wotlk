@@ -6,7 +6,7 @@ character_stats_results: {
   final_stats: 2938.26555
   final_stats: 157.3
   final_stats: 211.2
-  final_stats: 280
+  final_stats: 500
   final_stats: 109
   final_stats: 137
   final_stats: 459.1
@@ -130,15 +130,15 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-Bryntroll,theBoneArbiter-50415"
  value: {
-  dps: 1778.63333
-  tps: 5169.36197
+  dps: 1828.52493
+  tps: 5274.71557
  }
 }
 dps_results: {
  key: "TestBloodTank-AllItems-Bryntroll,theBoneArbiter-50709"
  value: {
-  dps: 1815.64364
-  tps: 5244.69106
+  dps: 1872.06049
+  tps: 5359.85549
  }
 }
 dps_results: {
@@ -629,8 +629,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-Shadowmourne-49623"
  value: {
-  dps: 2034.05719
-  tps: 5820.07924
+  dps: 2053.01461
+  tps: 5884.08289
  }
 }
 dps_results: {

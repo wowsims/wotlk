@@ -888,7 +888,7 @@ func init() {
 			character := agent.GetCharacter()
 			mh, oh := character.GetWeaponHands(itemID)
 			procMask := core.GetMeleeProcMaskForHands(mh, oh)
-			ppmm := character.AutoAttacks.NewPPMManager(1.0, procMask)
+			ppmm := character.AutoAttacks.NewPPMManager(2.0, procMask)
 
 			procActionID := core.ActionID{ItemID: itemID}
 
@@ -913,14 +913,12 @@ func init() {
 					aura.Activate(sim)
 				},
 				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-					if !result.Landed() || !spell.ProcMask.Matches(procMask) {
+					if !result.Landed() {
 						return
 					}
-					if !ppmm.Proc(sim, spell.ProcMask, name) {
-						return
+					if ppmm.Proc(sim, spell.ProcMask, name) {
+						proc.Cast(sim, result.Target)
 					}
-
-					proc.Cast(sim, result.Target)
 				},
 			})
 		})

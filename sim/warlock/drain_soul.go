@@ -9,11 +9,34 @@ import (
 func (warlock *Warlock) registerDrainSoulSpell() {
 	soulSiphonMultiplier := 0.03 * float64(warlock.Talents.SoulSiphon)
 
+	calcSoulSiphonMult := func(target *core.Unit) float64 {
+		auras := []*core.Aura{
+			warlock.HauntDebuffAuras.Get(target),
+			warlock.UnstableAffliction.Dot(target).Aura,
+			warlock.Corruption.Dot(target).Aura,
+			warlock.Seed.Dot(target).Aura,
+			warlock.CurseOfAgony.Dot(target).Aura,
+			warlock.CurseOfDoom.Dot(target).Aura,
+			warlock.CurseOfElementsAuras.Get(target),
+			warlock.CurseOfWeaknessAuras.Get(target),
+			warlock.CurseOfTonguesAuras.Get(target),
+			warlock.ShadowEmbraceDebuffAura(target),
+			// missing: death coil
+		}
+		numActive := 0
+		for _, aura := range auras {
+			if aura.IsActive() {
+				numActive++
+			}
+		}
+		return 1.0 + float64(core.MinInt(3, numActive))*soulSiphonMultiplier
+	}
+
 	warlock.DrainSoul = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47855},
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagChanneled,
+		Flags:       core.SpellFlagChanneled | core.SpellFlagHauntSE,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.14,
@@ -42,28 +65,7 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 				baseDmg := 142 + 0.429*dot.Spell.SpellPower()
-
-				auras := []*core.Aura{
-					warlock.HauntDebuffAuras.Get(target),
-					warlock.UnstableAffliction.Dot(target).Aura,
-					warlock.Corruption.Dot(target).Aura,
-					warlock.Seed.Dot(target).Aura,
-					warlock.CurseOfAgony.Dot(target).Aura,
-					warlock.CurseOfDoom.Dot(target).Aura,
-					warlock.CurseOfElementsAuras.Get(target),
-					warlock.CurseOfWeaknessAuras.Get(target),
-					warlock.CurseOfTonguesAuras.Get(target),
-					warlock.ShadowEmbraceDebuffAura(target),
-					// missing: death coil
-				}
-				numActive := 0
-				for _, aura := range auras {
-					if aura.IsActive() {
-						numActive++
-					}
-				}
-				dot.SnapshotBaseDamage = baseDmg * (1.0 + float64(core.MinInt(3, numActive))*soulSiphonMultiplier)
-
+				dot.SnapshotBaseDamage = baseDmg * calcSoulSiphonMult(target)
 				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
@@ -80,6 +82,15 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 				dot.UpdateExpires(dot.ExpiresAt())
 
 				warlock.everlastingAfflictionRefresh(sim, target)
+			}
+		},
+		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, useSnapshot bool) *core.SpellResult {
+			if useSnapshot {
+				dot := spell.Dot(target)
+				return dot.CalcSnapshotDamage(sim, target, spell.OutcomeExpectedMagicAlwaysHit)
+			} else {
+				baseDmg := (142 + 0.429*spell.SpellPower()) * calcSoulSiphonMult(target)
+				return spell.CalcPeriodicDamage(sim, target, baseDmg, spell.OutcomeExpectedMagicAlwaysHit)
 			}
 		},
 	})
