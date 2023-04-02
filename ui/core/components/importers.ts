@@ -322,8 +322,6 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 			const slotId = gearBytes[cur] & 0b00111111;
 			const isEnchanted = Boolean(gearBytes[cur] & 0b10000000);
 			const randomEnchant = Boolean(gearBytes[cur] & 0b01000000);
-			if (randomEnchant)
-				throw new Error('randomEnchant not 0');
 			cur++;
 
 			const numGems = (gearBytes[cur] & 0b11100000) >> 5;
