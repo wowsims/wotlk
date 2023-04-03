@@ -7,7 +7,7 @@ require (
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 	github.com/satori/go.uuid v1.2.0
 	golang.org/x/exp v0.0.0-20221028150844-83b7d23a625f
-	google.golang.org/protobuf v1.28.1
+	google.golang.org/protobuf v1.30.0
 )
 
 require (

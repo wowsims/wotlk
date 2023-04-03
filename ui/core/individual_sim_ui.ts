@@ -14,7 +14,7 @@ import { addRaidSimAction, RaidSimResultsManager } from './components/raid_sim_a
 import { SavedDataConfig, SavedDataManager } from './components/saved_data_manager';
 import { addStatWeightsAction } from './components/stat_weights_action';
 
-import { GearTab } from './components/individual_sim_ui/gear_tab';
+import { GearTab, BulkTab } from './components/individual_sim_ui/gear_tab';
 import { SettingsTab } from './components/individual_sim_ui/settings_tab';
 
 import {
@@ -267,6 +267,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 		this.addSidebarComponents();
 		this.addGearTab();
+		this.addBulkTab();
 		this.addSettingsTab();
 		this.addTalentsTab();
 
@@ -344,6 +345,14 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		gearTab.rootElem.classList.add('active', 'show');
 	}
 
+	private addBulkTab() {
+		let bulkTab = new BulkTab(this.simTabContentsContainer, this);
+		const riotDogIsDevTODODONOTSUBMIT = true;
+		bulkTab.navLink.hidden = !this.sim.getShowExperimental() && !riotDogIsDevTODODONOTSUBMIT
+    this.sim.showExperimentalChangeEmitter.on(() => {
+			bulkTab.navLink.hidden = !this.sim.getShowExperimental();
+    });
+	}
 
 	private addSettingsTab() {
 		new SettingsTab(this.simTabContentsContainer, this);

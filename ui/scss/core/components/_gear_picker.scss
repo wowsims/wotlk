@@ -2,6 +2,10 @@
 
 @import "./filters_menu";
 
+.bulk-settings-button {
+  margin-top: map.get($spacers, 3);
+}
+
 .gear-picker-root {
   display: flex;
   flex-wrap: wrap;

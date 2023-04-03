@@ -16,6 +16,7 @@ import "shaman.proto";
 import "warlock.proto";
 import "warrior.proto";
 
+// Next tag: 42
 message Player {
 	// Label used for logging.
 	string name = 16;
@@ -24,6 +25,7 @@ message Player {
 	Class class = 2;
 
 	EquipmentSpec equipment = 3;
+	BulkEquipmentSpec bulk_equipment = 41;
 	Consumes consumes = 4;
 	UnitStats bonus_stats = 36;
 

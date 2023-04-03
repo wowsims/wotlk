@@ -1792,6 +1792,8 @@ export function getEligibleItemSlots(item: Item): Array<ItemSlot> {
 			return [ItemSlot.ItemSlotMainHand];
 		} else if (item.handType == HandType.HandTypeOffHand) {
 			return [ItemSlot.ItemSlotOffHand];
+		} else if (item.handType == HandType.HandTypeTwoHand) {
+			return [ItemSlot.ItemSlotMainHand];
 		} else {
 			return [ItemSlot.ItemSlotMainHand, ItemSlot.ItemSlotOffHand];
 		}
