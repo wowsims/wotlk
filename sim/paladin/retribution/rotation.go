@@ -302,6 +302,11 @@ func (ret *RetributionPaladin) waitUntilNextEvent(sim *core.Simulation, events [
 			nextEventAt = elem
 		}
 	}
+
+	if ret.Paladin.HasActiveAura("Chaos Bane") && ret.Paladin.CancelChaosBane {
+		ret.Paladin.GetAura("Chaos Bane").Deactivate(sim)
+	}
+
 	// If the next action is  the GCD, just return
 	if nextEventAt == ret.GCD.ReadyAt() {
 		return

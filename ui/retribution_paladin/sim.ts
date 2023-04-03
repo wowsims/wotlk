@@ -166,6 +166,7 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 					RetributionPaladinInputs.RetributionPaladinRotationDivinePleaSelection,
 					RetributionPaladinInputs.RetributionPaladinRotationAvoidClippingConsecration,
 					RetributionPaladinInputs.RetributionPaladinRotationHoldLastAvengingWrathUntilExecution,
+					RetributionPaladinInputs.RetributionPaladinRotationCancelChaosBane,
 					RetributionPaladinInputs.RetributionPaladinRotationDivinePleaSelectionAlternate,
 					RetributionPaladinInputs.RetributionPaladinRotationDivinePleaPercentageConfig,
 					RetributionPaladinInputs.RetributionPaladinRotationConsSlackConfig,

@@ -119,6 +119,13 @@ export const RetributionPaladinRotationHoldLastAvengingWrathUntilExecution = Inp
 	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => (player.getRotation().type == RotationType.Standard) || (player.getRotation().type == RotationType.Custom) ,
 });
 
+export const RetributionPaladinRotationCancelChaosBane = InputHelpers.makeRotationBooleanInput<Spec.SpecRetributionPaladin>({
+	fieldName: 'cancelChaosBane',
+	label: 'Cancel Chaos Bane Buff From Shadowmourne',
+	labelTooltip: 'Cancels the buff provided when Shadowmourne soul shard buff reaches 10 stacks. On Retribution Paladin this is theorized to be a dps increase over retaining the 270 strength Chaos Bane buff.',
+	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => (player.getRotation().type == RotationType.Standard) || (player.getRotation().type == RotationType.Custom) ,
+});
+
 export const RetributionPaladinRotationPriorityConfig = InputHelpers.makeCustomRotationInput<Spec.SpecRetributionPaladin, SpellOption>({
 	fieldName: 'customRotation',
 	numColumns: 2,
