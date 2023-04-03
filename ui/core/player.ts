@@ -918,7 +918,7 @@ export class Player<SpecType extends Spec> {
 		const dbItemSwapGear = this.getItemSwapGear().toDatabase();
 
 		// TODO(Riotdog-GehennasEU): We should probably also populate the database
-		// with the bulk items/gems/enchants.. or just build --tags=with_db like a normal person.
+		// with the bulk items/gems/enchants...
 
 		return SimDatabase.create({
 			items: dbGear.items.concat(dbItemSwapGear.items),

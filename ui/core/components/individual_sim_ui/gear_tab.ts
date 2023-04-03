@@ -1,12 +1,13 @@
 import { ContentBlock } from "../content_block";
 import { Database } from '../../proto_utils/database';
 import { Importer } from "../importers";
+import { Component } from '../component';
 
 import { IndividualSimUI } from "../../individual_sim_ui";
 import { Player } from "../../player";
 import { EventID, TypedEvent } from "../../typed_event";
 
-import { EquipmentSpec, BulkEquipmentSpec, Spec, UnitStats, BulkEquipmentSpec_ItemSpecWithSlots, ItemSpec } from "../../proto/common";
+import { EquipmentSpec, BulkEquipmentSpec, Spec, UnitStats, BulkEquipmentSpec_ItemSpecWithSlots, ItemSpec, ItemSlot } from "../../proto/common";
 import { SavedGearSet } from "../../proto/ui";
 import { Stats } from "../../proto_utils/stats";
 
@@ -62,6 +63,33 @@ export class BulkGearJsonImporter<SpecType extends Spec> extends Importer {
 	}
 }
 
+class BulkSimResultRenderer extends Component {
+  private readonly simUI: IndividualSimUI<Spec>;
+
+	constructor(parent: HTMLElement, simUI: IndividualSimUI<Spec>, spec: BulkEquipmentSpec) {
+		super(parent, 'bulk-result');
+    this.rootElem.style.flexDirection = 'row';
+    this.rootElem.style.display = 'flex';
+		this.simUI = simUI;
+
+    for (const is of spec.items) {
+      const item = this.simUI.sim.db.lookupItemSpec(is.item!)
+      const renderer = new ItemRenderer(this.rootElem, this.simUI, this.simUI.player);
+      renderer.update(item!);
+      const p = document.createElement('a');
+      p.classList.add('bulk-result-item-slot');
+      p.textContent = JSON.parse(BulkEquipmentSpec_ItemSpecWithSlots.toJsonString(is))['slots'][0];
+      renderer.nameElem.appendChild(p); 
+    }
+
+    if (spec.items.length == 0) {
+      const p = document.createElement('p');
+      p.textContent = 'No changes - this is your currently equipped gear!';
+      this.rootElem.appendChild(p);
+    }
+	}
+}
+
 export class BulkTab extends SimTab {
   protected simUI: IndividualSimUI<Spec>;
 
@@ -89,9 +117,30 @@ export class BulkTab extends SimTab {
 
   protected buildTabContent() {
     const itemsBlock = new ContentBlock(this.column1, 'bulk-items', {
-      header: {title: 'Items'}
+      header: {title: 'Items', extraCssClasses: ['bulk-header']}
     });
     itemsBlock.bodyElement.classList.add('gear-picker-root', 'gear-picker-left', 'tab-panel-col');
+    itemsBlock.bodyElement.style.flexDirection = 'row';
+    itemsBlock.bodyElement.style.display = 'flex';
+    let resultsBlock = new ContentBlock(this.column1, 'bulk-results', {
+      header: {title: 'Results', extraCssClasses: ['bulk-header']}
+    });
+    resultsBlock.bodyElement.classList.add('gear-picker-root', 'gear-picker-left', 'tab-panel-col');
+    this.simUI.sim.simResultEmitter.on((idx, simResult) => {
+      let i = 1;
+      resultsBlock.bodyElement.innerHTML = '';
+      for (const r of simResult.result.bulkResults) {
+        const resultBlock = new ContentBlock(resultsBlock.bodyElement, 'bulk-result', {
+          header: {
+            title: 'Rank ' + i + ': ' + (Math.round(r.raidMetrics?.dps?.avg! * 100) / 100).toFixed(2) + 'DPS',
+            extraCssClasses: ['bulk-item-header'],
+          }
+        });
+        //const text = 'Rank ' + i + ' with ' + r.raidMetrics?.dps?.avg + 'DPS, changes: ' + BulkEquipmentSpec.toJsonString(r.itemsAdded!);
+        new BulkSimResultRenderer(resultBlock.bodyElement, this.simUI, r.itemsAdded!)
+        i++;
+      }
+    });
 
     const settingsBlock = new ContentBlock(this.rightPanel, 'bulk-settings', {
       header: {title: 'Settings'}
@@ -109,6 +158,7 @@ export class BulkTab extends SimTab {
     clearButton.addEventListener('click', () => {
       const eventID = TypedEvent.nextEventID();
       this.simUI.player.setBulkEquipmentSpec(eventID, BulkEquipmentSpec.create());
+      resultsBlock.bodyElement.innerHTML = '';
     });
     settingsBlock.bodyElement.appendChild(clearButton);
 
@@ -127,23 +177,6 @@ export class BulkTab extends SimTab {
             itemRenderer.update(item);
           }
         }
-      }
-    });
-
-    // this.simResultEmitter
-    let resultBlock = new ContentBlock(this.column1, 'bulk-results', {
-      header: {title: 'Results'}
-    });
-    this.simUI.sim.simResultEmitter.on((idx, simResult) => {
-      let i = 1;
-      resultBlock.bodyElement.innerHTML = '';
-      for (const r of simResult.result.bulkResults) {
-        // TODO: Implement the result display.
-        console.log(r.raidMetrics?.dps?.avg);
-        const p = document.createElement('p');
-        p.textContent = 'TODO Rank ' + i + ' with ' + r.raidMetrics?.dps?.avg + 'DPS, changes: ' + BulkEquipmentSpec.toJsonString(r.itemsAdded!);
-        resultBlock.bodyElement.appendChild(p)
-        i++;
       }
     });
   }

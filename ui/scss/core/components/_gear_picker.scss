@@ -6,6 +6,16 @@
   margin-top: map.get($spacers, 3);
 }
 
+.bulk-result-item-slot {
+  color:aliceblue;
+}
+
+.bulk-header {
+  * {
+    font-size: map.get($font-sizes, 6);
+  }
+}
+
 .gear-picker-root {
   display: flex;
   flex-wrap: wrap;
