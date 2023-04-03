@@ -11,6 +11,7 @@ require (
 )
 
 require (
+	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/tailscale/hujson v0.0.0-20221223112325-20486734a56a // indirect
 	golang.org/x/sys v0.1.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect

@@ -55,11 +55,10 @@ export class BulkGearJsonImporter<SpecType extends Spec> extends Importer {
         const eventID = TypedEvent.nextEventID();
         this.simUI.player.setBulkEquipmentSpec(eventID, bulkEquipment);
       }
+      this.close();
     } catch (e: any) {
       alert(e.toString());
     }
-
-		this.close();
 	}
 }
 
@@ -89,7 +88,7 @@ export class BulkTab extends SimTab {
   }
 
   protected buildTabContent() {
-    let itemsBlock = new ContentBlock(this.column1, 'bulk-items', {
+    const itemsBlock = new ContentBlock(this.column1, 'bulk-items', {
       header: {title: 'Items'}
     });
     itemsBlock.bodyElement.classList.add('gear-picker-root', 'gear-picker-left', 'tab-panel-col');
@@ -128,6 +127,17 @@ export class BulkTab extends SimTab {
             itemRenderer.update(item);
           }
         }
+      }
+    });
+
+    // this.simResultEmitter
+    let resultBlock = new ContentBlock(this.column1, 'bulk-results', {
+      header: {title: 'Results'}
+    });
+    this.simUI.sim.simResultEmitter.on((idx, simResult) => {
+      for (const r of simResult.result.bulkResults) {
+        // TODO: Implement the result display.
+        console.log(r.raidMetrics?.dps?.avg);
       }
     });
   }

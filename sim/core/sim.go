@@ -42,7 +42,20 @@ type Simulation struct {
 	executePhaseCallbacks []func(*Simulation, int) // 2nd parameter is 35 for 35%, 25 for 25% and 20 for 20%
 }
 
-func RunSim(rsr *proto.RaidSimRequest, progress chan *proto.ProgressMetrics) (result *proto.RaidSimResult) {
+func RunSim(rsr *proto.RaidSimRequest, progress chan *proto.ProgressMetrics) *proto.RaidSimResult {
+	// TODO(Riotdog-GehennasEU): expose this as a separate API.
+	if parties := rsr.GetRaid().GetParties(); len(parties) != 0 {
+		if players := parties[0].GetPlayers(); len(players) != 0 {
+			if len(players[0].GetBulkEquipment().GetItems()) > 0 {
+				result, err := RunBulkSim(rsr, progress)
+				if err != nil {
+					panic(err) // TODO(Riotdog-GehennasEU): Just return a failure response..
+				}
+				return result
+			}
+		}
+	}
+
 	return runSim(rsr, progress, false)
 }
 

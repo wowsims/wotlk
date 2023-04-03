@@ -288,6 +288,16 @@ message RaidSimResult {
 	double avg_iteration_duration = 6;
 
 	string error_result = 5;
+
+	repeated BulkSimResultWithSubstitutions bulk_results = 7;
+}
+
+message BulkSimResultWithSubstitutions {
+	BulkEquipmentSpec items_added = 1;
+	BulkEquipmentSpec items_removed = 2;
+	RaidMetrics raid_metrics = 3;
+	EncounterMetrics encounter_metrics = 4;
+	string error_result = 5;
 }
 
 // RPC ComputeStats
