@@ -135,9 +135,15 @@ export class BulkTab extends SimTab {
       header: {title: 'Results'}
     });
     this.simUI.sim.simResultEmitter.on((idx, simResult) => {
+      let i = 1;
+      resultBlock.bodyElement.innerHTML = '';
       for (const r of simResult.result.bulkResults) {
         // TODO: Implement the result display.
         console.log(r.raidMetrics?.dps?.avg);
+        const p = document.createElement('p');
+        p.textContent = 'TODO Rank ' + i + ' with ' + r.raidMetrics?.dps?.avg + 'DPS, changes: ' + BulkEquipmentSpec.toJsonString(r.itemsAdded!);
+        resultBlock.bodyElement.appendChild(p)
+        i++;
       }
     });
   }
