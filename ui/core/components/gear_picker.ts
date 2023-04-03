@@ -282,6 +282,8 @@ export class ItemPicker extends Component {
 
 		if (newItem != null) {
 			this.itemElem.update(newItem);
+		} else {
+			this.itemElem.iconElem.style.backgroundImage = `url('${getEmptySlotIconUrl(this.slot)}')`;
 		}
 		
 		this._equippedItem = newItem;

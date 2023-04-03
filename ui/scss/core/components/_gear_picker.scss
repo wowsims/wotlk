@@ -8,11 +8,14 @@
 
 .bulk-result-item-slot {
   color:aliceblue;
+  margin-left: 0.5rem;
+  font-size: 0.5 * map.get($font-sizes, 6);
+
 }
 
 .bulk-header {
   * {
-    font-size: map.get($font-sizes, 6);
+    font-size: 3 * map.get($font-sizes, 6);
   }
 }
 
