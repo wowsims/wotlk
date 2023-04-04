@@ -39,7 +39,7 @@ func NewRetributionPaladin(character core.Character, options *proto.Player) *Ret
 		AvoidClippingConsecration:           retOptions.Rotation.AvoidClippingConsecration,
 		HoldLastAvengingWrathUntilExecution: retOptions.Rotation.HoldLastAvengingWrathUntilExecution,
 		DivinePleaPercentage:                retOptions.Rotation.DivinePleaPercentage,
-		CancelChaosBane:			 		 retOptions.Rotation.CancelChaosBane,
+		CancelChaosBane:                     retOptions.Rotation.CancelChaosBane,
 		ExoSlack:                            retOptions.Rotation.ExoSlack,
 		ConsSlack:                           retOptions.Rotation.ConsSlack,
 		HolyWrathThreshold:                  retOptions.Rotation.HolyWrathThreshold,
@@ -84,7 +84,7 @@ type RetributionPaladin struct {
 	UseDivinePlea                       bool
 	AvoidClippingConsecration           bool
 	HoldLastAvengingWrathUntilExecution bool
-	ShadowmourneCancelMacro				bool
+	CancelChaosBane                     bool
 
 	DivinePleaPercentage float64
 	ExoSlack             int32

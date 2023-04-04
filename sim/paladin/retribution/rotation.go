@@ -97,6 +97,10 @@ func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 				break rotationLoop
 			}
 		}
+
+		if ret.Paladin.HasActiveAura("Chaos Bane") && ret.Paladin.CancelChaosBane {
+			ret.Paladin.GetAura("Chaos Bane").Deactivate(sim)
+		}
 	}
 
 	// All possible next events
@@ -301,10 +305,6 @@ func (ret *RetributionPaladin) waitUntilNextEvent(sim *core.Simulation, events [
 		if elem > sim.CurrentTime && elem < nextEventAt {
 			nextEventAt = elem
 		}
-	}
-
-	if ret.Paladin.HasActiveAura("Chaos Bane") && ret.Paladin.CancelChaosBane {
-		ret.Paladin.GetAura("Chaos Bane").Deactivate(sim)
 	}
 
 	// If the next action is  the GCD, just return
