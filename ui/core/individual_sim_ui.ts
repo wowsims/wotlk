@@ -347,8 +347,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 	private addBulkTab() {
 		let bulkTab = new BulkTab(this.simTabContentsContainer, this);
-		const riotDogIsDevTODODONOTSUBMIT = true;
-		bulkTab.navLink.hidden = !this.sim.getShowExperimental() && !riotDogIsDevTODODONOTSUBMIT
+		bulkTab.navLink.hidden = !this.sim.getShowExperimental()
     this.sim.showExperimentalChangeEmitter.on(() => {
 			bulkTab.navLink.hidden = !this.sim.getShowExperimental();
     });

@@ -3,6 +3,7 @@ package core
 import (
 	"context"
 	"fmt"
+	"log"
 	"runtime"
 	"sort"
 
@@ -69,14 +70,7 @@ func RunBulkSim(ctx context.Context, request *proto.RaidSimRequest, progress cha
 				Substitution: sub,
 				ChangeLog:    changeLog,
 			}
-			/*
-				if progress != nil {
-					progress <- &proto.ProgressMetrics{
-						TotalIterations:     (numCombinations + 1) * request.SimOptions.Iterations, // So close!
-						CompletedIterations: numCombinations * request.SimOptions.Iterations,
-					}
-				}
-			*/
+
 			numCombinations++
 		}
 		close(results)
@@ -170,6 +164,9 @@ func (es *equipmentSubstitution) IsValid() bool {
 
 		knownItem, ok := ItemsByID[it.Item.Id]
 		if !ok {
+			// TODO(Riotdog-GehennasEU): Should we bother verifying that the item is in the database?
+			// What about gems and enchants? Should we just expect that we will receive a valid database?
+			log.Printf("Warning: bulk item %v not found in the provided database", it.Item)
 			return false
 		}
 

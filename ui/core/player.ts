@@ -17,6 +17,9 @@ import {
 	RaidTarget,
 	RangedWeaponType,
 	SimDatabase,
+	SimEnchant,
+	SimGem,
+	SimItem,
 	Spec,
 	Stat,
 	UnitStats,
@@ -913,17 +916,37 @@ export class Player<SpecType extends Spec> {
 		}
 	}
 
+	private bulkEquipmentSpecToDatabase(): SimDatabase {
+		const bulkDb = SimDatabase.create();
+		for (const is of this.bulkEquipmentSpec.items) {
+			if (!is.item)
+				continue
+
+			const item = this.sim.db.lookupItemSpec(is.item);
+			if (!item)
+				continue
+			
+			if (item.item)
+				bulkDb.items.push(SimItem.fromJson(Item.toJson(item.item), { ignoreUnknownFields: true }));
+			if (item.enchant)
+				bulkDb.enchants.push(SimEnchant.fromJson(Enchant.toJson(item.enchant), { ignoreUnknownFields: true }));
+			for (const gem of item.gems) {
+				if (gem)
+					bulkDb.gems.push(SimGem.fromJson(Gem.toJson(gem), { ignoreUnknownFields: true }));
+			}
+		}
+
+		return bulkDb
+	}
+
 	private toDatabase(): SimDatabase {
-		const dbGear =  this.getGear().toDatabase()
+		const dbGear = this.getGear().toDatabase()
 		const dbItemSwapGear = this.getItemSwapGear().toDatabase();
-
-		// TODO(Riotdog-GehennasEU): We should probably also populate the database
-		// with the bulk items/gems/enchants...
-
+		const dbBulk = this.bulkEquipmentSpecToDatabase()
 		return SimDatabase.create({
-			items: dbGear.items.concat(dbItemSwapGear.items),
-			enchants: dbGear.enchants.concat(dbItemSwapGear.enchants),
-			gems: dbGear.gems.concat(dbItemSwapGear.gems),
+			items: dbGear.items.concat(dbItemSwapGear.items).concat(dbBulk.items),
+			enchants: dbGear.enchants.concat(dbItemSwapGear.enchants).concat(dbBulk.enchants),
+			gems: dbGear.gems.concat(dbItemSwapGear.gems).concat(dbBulk.gems),
 		})
 	}
 

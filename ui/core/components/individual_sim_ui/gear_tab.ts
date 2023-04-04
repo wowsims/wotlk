@@ -78,7 +78,7 @@ class BulkSimResultRenderer extends Component {
       renderer.update(item!);
       const p = document.createElement('a');
       p.classList.add('bulk-result-item-slot');
-      p.textContent = JSON.parse(BulkEquipmentSpec_ItemSpecWithSlots.toJsonString(is))['slots'][0];
+      p.textContent = JSON.parse(BulkEquipmentSpec_ItemSpecWithSlots.toJsonString(is))['slots'][0].replace('ItemSlot', '');
       renderer.nameElem.appendChild(p); 
     }
 
@@ -117,26 +117,27 @@ export class BulkTab extends SimTab {
 
   protected buildTabContent() {
     const itemsBlock = new ContentBlock(this.column1, 'bulk-items', {
-      header: {title: 'Items', extraCssClasses: ['bulk-header']}
+      header: {title: 'Items'}
     });
     itemsBlock.bodyElement.classList.add('gear-picker-root', 'gear-picker-left', 'tab-panel-col');
     itemsBlock.bodyElement.style.flexDirection = 'row';
     itemsBlock.bodyElement.style.display = 'flex';
     let resultsBlock = new ContentBlock(this.column1, 'bulk-results', {
-      header: {title: 'Results', extraCssClasses: ['bulk-header']}
+      header: {title: 'Results', extraCssClasses: ['bulk-header-margin']}
     });
+    resultsBlock.rootElem.hidden = true;
     resultsBlock.bodyElement.classList.add('gear-picker-root', 'gear-picker-left', 'tab-panel-col');
-    this.simUI.sim.simResultEmitter.on((idx, simResult) => {
+    this.simUI.sim.simResultEmitter.on((_, simResult) => {
+      resultsBlock.rootElem.hidden = false;
       let i = 1;
       resultsBlock.bodyElement.innerHTML = '';
       for (const r of simResult.result.bulkResults) {
         const resultBlock = new ContentBlock(resultsBlock.bodyElement, 'bulk-result', {
           header: {
-            title: 'Rank ' + i + ': ' + (Math.round(r.raidMetrics?.dps?.avg! * 100) / 100).toFixed(2) + 'DPS',
+            title: 'Rank ' + i + ': ' + (Math.round(r.raidMetrics?.dps?.avg! * 100) / 100).toFixed(2) + ' DPS',
             extraCssClasses: ['bulk-item-header'],
           }
         });
-        //const text = 'Rank ' + i + ' with ' + r.raidMetrics?.dps?.avg + 'DPS, changes: ' + BulkEquipmentSpec.toJsonString(r.itemsAdded!);
         new BulkSimResultRenderer(resultBlock.bodyElement, this.simUI, r.itemsAdded!)
         i++;
       }
@@ -158,6 +159,7 @@ export class BulkTab extends SimTab {
     clearButton.addEventListener('click', () => {
       const eventID = TypedEvent.nextEventID();
       this.simUI.player.setBulkEquipmentSpec(eventID, BulkEquipmentSpec.create());
+      resultsBlock.rootElem.hidden = true;
       resultsBlock.bodyElement.innerHTML = '';
     });
     settingsBlock.bodyElement.appendChild(clearButton);

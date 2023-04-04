@@ -13,10 +13,8 @@
 
 }
 
-.bulk-header {
-  * {
-    font-size: 3 * map.get($font-sizes, 6);
-  }
+.bulk-header-margin {
+  margin-top: 2rem;
 }
 
 .gear-picker-root {
