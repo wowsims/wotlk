@@ -1,7 +1,7 @@
 -- Author      : generalwrex (Natop on Myzrael TBC)
 -- Create Date : 1/28/2022 9:30:08 AM
 --
--- Update Date : 2023-04-04 Riotdog-GehennasEU: exporting bag items for bulk sim
+-- Update Date : 2023-04-04 Riotdog-GehennasEU: v2.5 - exporting bag items for bulk sim
 --
 
 WowSimsExporter = LibStub("AceAddon-3.0"):NewAddon("WowSimsExporter", "AceConsole-3.0", "AceEvent-3.0")
@@ -13,7 +13,7 @@ WowSimsExporter.Link = "https://wowsims.github.io/wotlk/"
 local AceGUI = LibStub("AceGUI-3.0")
 local LibParse = LibStub("LibParse")
 
-local version = "2.3"
+local version = "2.5"
 
 local defaults = {
 	profile = {

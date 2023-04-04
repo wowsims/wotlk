@@ -14,18 +14,18 @@ import { SimTab } from "../sim_tab";
 import { getEligibleItemSlots } from '../../proto_utils/utils.js';
 
 export class BulkGearJsonImporter<SpecType extends Spec> extends Importer {
-	private readonly simUI: IndividualSimUI<SpecType>;
-	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
-		super(parent, simUI, 'Bag Item Import', true);
-		this.simUI = simUI;
+  private readonly simUI: IndividualSimUI<SpecType>;
+  constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
+    super(parent, simUI, 'Bag Item Import', true);
+    this.simUI = simUI;
 
-		this.descriptionElem.innerHTML = `
-			<p>Import bag items from a JSON file, which can be created by the WowSimsExporter in-game AddOn.</p>
-			<p>To import, upload the file or paste the text below, then click, 'Import'.</p>
-		`;
-	}
+    this.descriptionElem.innerHTML = `
+      <p>Import bag items from a JSON file, which can be created by the WowSimsExporter in-game AddOn.</p>
+      <p>To import, upload the file or paste the text below, then click, 'Import'.</p>
+    `;
+  }
 
-	async onImport(data: string) {
+  async onImport(data: string) {
     try {
       const equipment = EquipmentSpec.fromJsonString(data, { ignoreUnknownFields: true });
       if (equipment?.items?.length > 0) {
@@ -54,17 +54,17 @@ export class BulkGearJsonImporter<SpecType extends Spec> extends Importer {
     } catch (e: any) {
       alert(e.toString());
     }
-	}
+  }
 }
 
 class BulkSimResultRenderer extends Component {
   private readonly simUI: IndividualSimUI<Spec>;
 
-	constructor(parent: HTMLElement, simUI: IndividualSimUI<Spec>, spec: BulkEquipmentSpec) {
-		super(parent, 'bulk-result');
+  constructor(parent: HTMLElement, simUI: IndividualSimUI<Spec>, spec: BulkEquipmentSpec) {
+    super(parent, 'bulk-result');
     this.rootElem.style.flexDirection = 'row';
     this.rootElem.style.display = 'flex';
-		this.simUI = simUI;
+    this.simUI = simUI;
 
     for (const is of spec.items) {
       const item = this.simUI.sim.db.lookupItemSpec(is.item!)
@@ -81,7 +81,7 @@ class BulkSimResultRenderer extends Component {
       p.textContent = 'No changes - this is your currently equipped gear!';
       this.rootElem.appendChild(p);
     }
-	}
+  }
 }
 
 export class BulkTab extends SimTab {
@@ -98,9 +98,9 @@ export class BulkTab extends SimTab {
 
     this.leftPanel = document.createElement('div');
     this.leftPanel.classList.add('bulk-tab-left', 'tab-panel-left');
-		this.leftPanel.appendChild(this.column1);
+    this.leftPanel.appendChild(this.column1);
 
-		this.rightPanel = document.createElement('div');
+    this.rightPanel = document.createElement('div');
     this.rightPanel.classList.add('bulk-tab-right', 'tab-panel-right');
 
     this.contentContainer.appendChild(this.leftPanel);
@@ -145,15 +145,15 @@ export class BulkTab extends SimTab {
       header: {title: 'Settings'}
     });
 
-		const importButton = document.createElement('button');
-		importButton.classList.add('btn', 'btn-primary', 'w-100', 'bulk-settings-button');
-		importButton.textContent = 'Import From Bags';
+    const importButton = document.createElement('button');
+    importButton.classList.add('btn', 'btn-primary', 'w-100', 'bulk-settings-button');
+    importButton.textContent = 'Import From Bags';
     importButton.addEventListener('click', () => new BulkGearJsonImporter(this.simUI.rootElem, this.simUI));
     settingsBlock.bodyElement.appendChild(importButton);
 
-		const clearButton = document.createElement('button');
-		clearButton.classList.add('btn', 'btn-primary', 'w-100', 'bulk-settings-button');
-		clearButton.textContent = 'Clear All';
+    const clearButton = document.createElement('button');
+    clearButton.classList.add('btn', 'btn-primary', 'w-100', 'bulk-settings-button');
+    clearButton.textContent = 'Clear All';
     clearButton.addEventListener('click', () => {
       const eventID = TypedEvent.nextEventID();
       this.simUI.player.setBulkEquipmentSpec(eventID, BulkEquipmentSpec.create());
