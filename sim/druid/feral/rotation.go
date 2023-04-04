@@ -726,7 +726,7 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 		if hasT84P {
 			cat.Rotation.MinRoarOffset = 26 * time.Second
 		} else {
-			cat.Rotation.MinRoarOffset = 12 * time.Second
+			cat.Rotation.MinRoarOffset = 20 * time.Second
 		}
 		cat.Rotation.BiteTime = 4 * time.Second
 	} else {
