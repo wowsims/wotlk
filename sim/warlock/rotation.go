@@ -39,6 +39,9 @@ func (warlock *Warlock) setupCooldowns(sim *core.Simulation) {
 	ignoredCDs[core.ActionID{ItemID: 41119}] = struct{}{}       // saronite bomb
 	ignoredCDs[core.ActionID{ItemID: 40536}] = struct{}{}       // explosive decoy
 	ignoredCDs[core.BloodlustActionID.WithTag(-1)] = struct{}{} // don't mess with BL
+	if warlock.Inferno != nil {
+		ignoredCDs[warlock.Inferno.ActionID] = struct{}{}
+	}
 
 	var executeActive func() bool
 	var executePhase time.Duration
