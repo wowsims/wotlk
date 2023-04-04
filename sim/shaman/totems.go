@@ -81,7 +81,7 @@ func (shaman *Shaman) registerHealingStreamTotemSpell() {
 	config.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
 		shaman.NextTotemDrops[WaterTotem] = sim.CurrentTime + time.Second*300
 		for _, agent := range shaman.Party.Players {
-			spell.Hot(&agent.GetCharacter().Unit).Apply(sim)
+			spell.Hot(&agent.GetCharacter().Unit).Activate(sim)
 		}
 	}
 	shaman.HealingStreamTotem = shaman.RegisterSpell(config)
