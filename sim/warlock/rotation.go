@@ -239,20 +239,20 @@ func (warlock *Warlock) defineRotation() {
 		})
 	}
 
-	prefCurse := warlock.CurseOfAgony
+	prefCurse := warlock.CurseOfAgony.CurDot().Aura
 	switch warlock.Rotation.Curse {
 	case proto.Warlock_Rotation_Elements:
-		prefCurse = warlock.CurseOfElements
+		prefCurse = warlock.CurseOfElementsAuras.Get(mainTarget)
 		acl = aclAppendSimple(acl, warlock.CurseOfElements, func(sim *core.Simulation) (bool, *core.Unit) {
 			return warlock.CurseOfElementsAuras.Get(mainTarget).RemainingDuration(sim) < 3*time.Second, mainTarget
 		})
 	case proto.Warlock_Rotation_Weakness:
-		prefCurse = warlock.CurseOfWeakness
+		prefCurse = warlock.CurseOfWeaknessAuras.Get(mainTarget)
 		acl = aclAppendSimple(acl, warlock.CurseOfWeakness, func(sim *core.Simulation) (bool, *core.Unit) {
 			return warlock.CurseOfWeaknessAuras.Get(mainTarget).RemainingDuration(sim) < 3*time.Second, mainTarget
 		})
 	case proto.Warlock_Rotation_Tongues:
-		prefCurse = warlock.CurseOfTongues
+		prefCurse = warlock.CurseOfTonguesAuras.Get(mainTarget)
 		acl = aclAppendSimple(acl, warlock.CurseOfTongues, func(sim *core.Simulation) (bool, *core.Unit) {
 			return warlock.CurseOfTonguesAuras.Get(mainTarget).RemainingDuration(sim) < 3*time.Second, mainTarget
 		})
@@ -376,8 +376,8 @@ func (warlock *Warlock) defineRotation() {
 			uaRefresh := warlock.UnstableAffliction.Dot(mainTarget).RemainingDuration(sim) -
 				warlock.UnstableAffliction.CastTime()
 
-			curseRefresh := core.MaxDuration(prefCurse.CurDot().RemainingDuration(sim),
-				warlock.CurseOfDoom.CurDot().RemainingDuration(sim)) - prefCurse.CastTime()
+			curseRefresh := core.MaxDuration(prefCurse.RemainingDuration(sim),
+				warlock.CurseOfDoom.CurDot().RemainingDuration(sim)) - warlock.CurseOfAgony.CastTime()
 
 			hauntRefresh := warlock.HauntDebuffAuras.Get(mainTarget).RemainingDuration(sim) -
 				warlock.Haunt.CastTime() - hauntTravel
