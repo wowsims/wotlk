@@ -1,6 +1,7 @@
 package core
 
 import (
+	"context"
 	"fmt"
 	"math/rand"
 	"runtime"
@@ -47,7 +48,7 @@ func RunSim(rsr *proto.RaidSimRequest, progress chan *proto.ProgressMetrics) *pr
 	if parties := rsr.GetRaid().GetParties(); len(parties) != 0 {
 		if players := parties[0].GetPlayers(); len(players) != 0 {
 			if len(players[0].GetBulkEquipment().GetItems()) > 0 {
-				result, err := RunBulkSim(rsr, progress)
+				result, err := RunBulkSim(context.Background(), rsr, progress)
 				if err != nil {
 					panic(err) // TODO(Riotdog-GehennasEU): Just return a failure response..
 				}
