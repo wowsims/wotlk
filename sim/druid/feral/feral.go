@@ -104,7 +104,7 @@ func (cat *FeralDruid) Initialize() {
 
 	if cat.prepopOoc && cat.Talents.OmenOfClarity {
 		cat.RegisterPrepullAction(-cat.SpellGCD(), func(sim *core.Simulation) {
-			cat.ProcOoc(sim)
+			cat.FaerieFire.Cast(sim, nil)
 		})
 	}
 }
