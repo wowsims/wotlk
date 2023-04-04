@@ -60,6 +60,11 @@ func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 		ret.HandOfReckoning.Cast(sim, ret.CurrentTarget)
 	}
 
+	if ret.Paladin.HasActiveAura("Chaos Bane") && ret.Paladin.CancelChaosBane {
+		ret.Paladin.GetAura("Chaos Bane").Deactivate(sim)
+	}
+
+
 	if ret.GCD.IsReady(sim) {
 	rotationLoop:
 		for _, spell := range ret.RotationInput {
@@ -97,11 +102,12 @@ func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 				break rotationLoop
 			}
 		}
-
-		if ret.Paladin.HasActiveAura("Chaos Bane") && ret.Paladin.CancelChaosBane {
-			ret.Paladin.GetAura("Chaos Bane").Deactivate(sim)
-		}
 	}
+
+	if ret.Paladin.HasActiveAura("Chaos Bane") && ret.Paladin.CancelChaosBane {
+		ret.Paladin.GetAura("Chaos Bane").Deactivate(sim)
+	}
+
 
 	// All possible next events
 	events := []time.Duration{
