@@ -41,7 +41,7 @@ func RunBulkSim(ctx context.Context, request *proto.RaidSimRequest, progress cha
 	results := make(chan *bulkRaidSimResult, concurrency)
 	go func() {
 		var numCombinations int32
-		for sub := range generateAllequipmentSubstitutions(ctx, player.GetBulkEquipment()) {
+		for sub := range generateAllEquipmentSubstitutions(ctx, player.GetBulkEquipment()) {
 			substitutedRequest, changeLog := createNewRequestWithSubstitution(request, sub)
 			if isValidEquipment(substitutedRequest.Raid.Parties[0].Players[0].Equipment) {
 				singleSimProgress := make(chan *proto.ProgressMetrics)
@@ -146,7 +146,7 @@ func (es *equipmentSubstitution) HasItemReplacements() bool {
 // IsValid returns true if the equipment substituion is valid. A valid substition can only
 // reference an item or slot once.
 func (es *equipmentSubstitution) IsValid() bool {
-	slotReuseTracker := map[int]bool{}
+	slotReuseTracker := map[proto.ItemSlot]bool{}
 	itemReuseTracker := map[int]bool{}
 
 	for _, it := range es.Items {
@@ -155,10 +155,10 @@ func (es *equipmentSubstitution) IsValid() bool {
 		}
 		itemReuseTracker[it.Index] = true
 
-		if slotReuseTracker[it.Index] {
+		if slotReuseTracker[it.Slot] {
 			return false
 		}
-		slotReuseTracker[it.Index] = true
+		slotReuseTracker[it.Slot] = true
 	}
 
 	return true
@@ -170,7 +170,7 @@ func isValidEquipment(equipment *proto.EquipmentSpec) bool {
 	var usesTwoHander, usesOffhand bool
 
 	for _, it := range equipment.Items {
-		if it.Id == 0 {
+		if it.GetId() == 0 {
 			continue
 		}
 
@@ -182,24 +182,22 @@ func isValidEquipment(equipment *proto.EquipmentSpec) bool {
 			return false
 		}
 
-		if knownItem.Type == proto.ItemType_ItemTypeWeapon {
-			if knownItem.HandType == proto.HandType_HandTypeTwoHand {
-				usesTwoHander = true
-			}
-			if knownItem.HandType == proto.HandType_HandTypeOffHand {
-				usesOffhand = true
-			}
+		if knownItem.HandType == proto.HandType_HandTypeTwoHand {
+			usesTwoHander = true
+		}
+		if knownItem.HandType == proto.HandType_HandTypeOffHand {
+			usesOffhand = true
 		}
 	}
 
 	return !(usesTwoHander && usesOffhand)
 }
 
-// generateAllequipmentSubstitutions generates all possible valid equipment substitutions for the
+// generateAllEquipmentSubstitutions generates all possible valid equipment substitutions for the
 // given bulk sim request. Also returns the unchanged equipment ("base equipment set") set as the
 // first result. This ensures that simming over all possible equipment substitutions includes the
 // base case as well.
-func generateAllequipmentSubstitutions(ctx context.Context, spec *proto.BulkEquipmentSpec) chan *equipmentSubstitution {
+func generateAllEquipmentSubstitutions(ctx context.Context, spec *proto.BulkEquipmentSpec) chan *equipmentSubstitution {
 	results := make(chan *equipmentSubstitution)
 	go func() {
 		defer close(results)
