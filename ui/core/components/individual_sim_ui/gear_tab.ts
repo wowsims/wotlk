@@ -1,22 +1,14 @@
-import { ContentBlock } from "../content_block";
-import { Database } from '../../proto_utils/database';
-import { Importer } from "../importers";
-import { Component } from '../component';
-
 import { IndividualSimUI } from "../../individual_sim_ui";
 import { Player } from "../../player";
 import { EventID, TypedEvent } from "../../typed_event";
 
-import { EquipmentSpec, BulkEquipmentSpec, Spec, UnitStats, BulkEquipmentSpec_ItemSpecWithSlots, ItemSpec, ItemSlot } from "../../proto/common";
+import { EquipmentSpec, Spec, UnitStats } from "../../proto/common";
 import { SavedGearSet } from "../../proto/ui";
 import { Stats } from "../../proto_utils/stats";
 
 import { GearPicker, ItemRenderer } from "../gear_picker";
 import { SavedDataManager } from "../saved_data_manager";
 import { SimTab } from "../sim_tab";
-
-import { getEligibleItemSlots } from '../../proto_utils/utils.js';
-import { EquippedItem } from "ui/core/proto_utils/equipped_item";
 
 export class GearTab extends SimTab {
   protected simUI: IndividualSimUI<Spec>;
