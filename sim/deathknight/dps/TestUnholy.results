@@ -6,7 +6,7 @@ character_stats_results: {
   final_stats: 1720.95
   final_stats: 174.9
   final_stats: 228.8
-  final_stats: 280
+  final_stats: 500
   final_stats: 109
   final_stats: 327.696
   final_stats: 1023.28
@@ -781,6 +781,14 @@ dps_results: {
 }
 dps_results: {
  key: "TestUnholy-AllItems-SliverofPureIce-50346"
+ value: {
+  dps: 7510.45902
+  tps: 4805.44624
+  hps: 267.50398
+ }
+}
+dps_results: {
+ key: "TestUnholy-AllItems-SoulPreserver-37111"
  value: {
   dps: 7510.45902
   tps: 4805.44624

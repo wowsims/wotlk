@@ -869,6 +869,9 @@ func init() {
 		})
 	})
 
+	// https://web.archive.org/web/20100127195814/http://elitistjerks.com/f76/t68951-retribution_updated_3_3_a/p75/
+	// suggests 2 ppm; there's a test with ~1k auto attacks on this page, and mention of a previous test
+	// with ~10k auto attacks.
 	NewItemEffectWithHeroic(func(isHeroic bool) {
 		name := "Bryntroll, the Bone Arbiter"
 		itemID := int32(50415)
@@ -885,7 +888,7 @@ func init() {
 			character := agent.GetCharacter()
 			mh, oh := character.GetWeaponHands(itemID)
 			procMask := core.GetMeleeProcMaskForHands(mh, oh)
-			ppmm := character.AutoAttacks.NewPPMManager(1.0, procMask)
+			ppmm := character.AutoAttacks.NewPPMManager(2.0, procMask)
 
 			procActionID := core.ActionID{ItemID: itemID}
 
@@ -895,11 +898,10 @@ func init() {
 				ProcMask:    core.ProcMaskEmpty,
 
 				DamageMultiplier: 1,
-				CritMultiplier:   character.DefaultSpellCritMultiplier(),
 				ThreatMultiplier: 1,
 
 				ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-					spell.CalcAndDealDamage(sim, target, sim.Roll(minDmg, maxDmg), spell.OutcomeMagicHitAndCrit)
+					spell.CalcAndDealDamage(sim, target, sim.Roll(minDmg, maxDmg), spell.OutcomeMagicHit)
 				},
 			})
 
@@ -910,14 +912,12 @@ func init() {
 					aura.Activate(sim)
 				},
 				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-					if !result.Landed() || !spell.ProcMask.Matches(procMask) {
+					if !result.Landed() {
 						return
 					}
-					if !ppmm.Proc(sim, spell.ProcMask, name) {
-						return
+					if ppmm.Proc(sim, spell.ProcMask, name) {
+						proc.Cast(sim, result.Target)
 					}
-
-					proc.Cast(sim, result.Target)
 				},
 			})
 		})
@@ -972,6 +972,43 @@ func init() {
 					procAura.Activate(sim)
 				},
 			})
+		})
+	})
+
+	core.NewItemEffect(37111, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		actionID := core.ActionID{ItemID: 37111}
+
+		if !character.HasManaBar() {
+			return
+		}
+		resourceMetricsMana := character.NewManaMetrics(actionID)
+
+		procAura := character.GetOrRegisterAura(core.Aura{
+			Label:    "Soul Preserver",
+			ActionID: actionID,
+			Duration: time.Second * 15,
+			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+				if !spell.ProcMask.Matches(core.ProcMaskSpellHealing) || spell.CurCast.Cost == 0 {
+					return
+				}
+				amount := spell.CurCast.Cost
+				if spell.CurCast.Cost > 800 {
+					amount = 800
+				}
+				spell.Unit.AddMana(sim, amount, resourceMetricsMana)
+				aura.Deactivate(sim)
+			},
+		})
+
+		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+			Name:       "Soul Preserver Trigger",
+			Callback:   core.CallbackOnHealDealt,
+			ProcMask:   core.ProcMaskSpellHealing,
+			ProcChance: 0.02,
+			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
+				procAura.Activate(sim)
+			},
 		})
 	})
 }

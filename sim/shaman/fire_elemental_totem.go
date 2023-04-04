@@ -47,7 +47,7 @@ func (shaman *Shaman) registerFireElementalTotem() {
 				shaman.NextTotemDrops[FireTotem] = sim.CurrentTime + fireTotemDuration
 			}
 			shaman.MagmaTotem.AOEDot().Cancel(sim)
-			shaman.SearingTotem.AOEDot().Cancel(sim)
+			shaman.SearingTotem.Dot(shaman.CurrentTarget).Cancel(sim)
 
 			shaman.FireElemental.EnableWithTimeout(sim, shaman.FireElemental, fireTotemDuration)
 

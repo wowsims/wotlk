@@ -16,7 +16,7 @@ func TestAffliction(t *testing.T) {
 		Class: proto.Class_ClassWarlock,
 		Race:  proto.Race_RaceOrc,
 
-		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		GearSet:     core.GearSetCombo{Label: "P2", GearSet: P2Gear_affliction},
 		Talents:     AfflictionTalents,
 		Glyphs:      AfflictionGlyphs,
 		Consumes:    FullConsumes,
@@ -31,7 +31,7 @@ func TestDemonology(t *testing.T) {
 		Class: proto.Class_ClassWarlock,
 		Race:  proto.Race_RaceOrc,
 
-		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		GearSet:     core.GearSetCombo{Label: "P2", GearSet: P2Gear_demodestro},
 		Talents:     DemonologyTalents,
 		Glyphs:      DemonologyGlyphs,
 		Consumes:    FullConsumes,
@@ -46,7 +46,7 @@ func TestDestruction(t *testing.T) {
 		Class: proto.Class_ClassWarlock,
 		Race:  proto.Race_RaceOrc,
 
-		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		GearSet:     core.GearSetCombo{Label: "P2", GearSet: P2Gear_demodestro},
 		Talents:     DestructionTalents,
 		Glyphs:      DestructionGlyphs,
 		Consumes:    FullConsumes,
@@ -167,93 +167,232 @@ var FullConsumes = &proto.Consumes{
 	Food:          proto.Food_FoodFishFeast,
 }
 
-var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
-	{
-		"id": 40421,
-		"enchant": 3820,
-		"gems": [
-			41285,
-			40051
-		]
-	},
-	{
-		"id": 44661,
-		"gems": [
-			40026
-		]
-	},
-	{
-		"id": 40424,
-		"enchant": 3810,
-		"gems": [
-			39998
-		]
-	},
-	{
-		"id": 44005,
-		"enchant": 3722,
-		"gems": [
-			40026
-		]
-	},
-	{
-		"id": 40423,
-		"enchant": 3832,
-		"gems": [
-			39998,
-			40051
-		]
-	},
-	{
-		"id": 44008,
-		"enchant": 2332,
-		"gems": [
-			39998,
-			0
-		]
-	},
-	{
-		"id": 40420,
-		"enchant": 3604,
-		"gems": [
-			39998,
-			0
-		]
-	},
-	{
-		"id": 40561,
-		"gems": [
-			39998
-		]
-	},
-	{
-		"id": 40560,
-		"enchant": 3719
-	},
-	{
-		"id": 40558,
-		"enchant": 3606
-	},
-	{
-		"id": 40399
-	},
-	{
-		"id": 40719
-	},
-	{
-		"id": 40432
-	},
-	{
-		"id": 40255
-	},
-	{
-		"id": 40396,
-		"enchant": 3834
-	},
-	{
-		"id": 39766
-	},
-	{
-		"id": 39712
-	}
+var P2Gear_affliction = core.EquipmentSpecFromJsonString(`{"items": [
+		{
+			"id": 45497,
+			"enchant": 3820,
+			"gems": [
+				41285,
+				45883
+			]
+		},
+		{
+			"id": 45133,
+			"gems": [
+				40051
+			]
+		},
+		{
+			"id": 46068,
+			"enchant": 3810,
+			"gems": [
+				39998,
+				40049
+			]
+		},
+		{
+			"id": 45618,
+			"enchant": 3722,
+			"gems": [
+				40026
+			]
+		},
+		{
+			"id": 46137,
+			"enchant": 1144,
+			"gems": [
+				39998,
+				40014
+			]
+		},
+		{
+			"id": 45446,
+			"enchant": 2332,
+			"gems": [
+				39998,
+				0
+			]
+		},
+		{
+			"id": 45665,
+			"enchant": 3604,
+			"gems": [
+				39998,
+				39998,
+				0
+			]
+		},
+		{
+			"id": 45619,
+			"enchant": 3601,
+			"gems": [
+				40051,
+				40051,
+				39998
+			]
+		},
+		{
+			"id": 46139,
+			"enchant": 3872,
+			"gems": [
+				39998,
+				39998
+			]
+		},
+		{
+			"id": 45135,
+			"enchant": 3606,
+			"gems": [
+				39998,
+				40051
+			]
+		},
+		{
+			"id": 45495,
+			"gems": [
+				40026
+			]
+		},
+		{
+			"id": 46046,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 45518
+		},
+		{
+			"id": 45466
+		},
+		{
+			"id": 45620,
+			"enchant": 3834,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 45617
+		},
+		{
+			"id": 45294,
+			"gems": [
+				40051
+			]
+		}
+]}`)
+
+var P2Gear_demodestro = core.EquipmentSpecFromJsonString(`{"items": [
+		{
+			"id": 45497,
+			"enchant": 3820,
+			"gems": [
+				41285,
+				45883
+			]
+		},
+		{
+			"id": 45243,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 46068,
+			"enchant": 3810, "gems": [ 39998,
+				40051
+			]
+		},
+		{
+			"id": 45618,
+			"enchant": 3722,
+			"gems": [
+				40026
+			]
+		},
+		{
+			"id": 46137,
+			"enchant": 1144,
+			"gems": [
+				39998,
+				40051
+			]
+		},
+		{
+			"id": 45446,
+			"enchant": 2332,
+			"gems": [
+				39998,
+				0
+			]
+		},
+		{
+			"id": 45520,
+			"enchant": 3604,
+			"gems": [
+				39998,
+				39998,
+				0
+			]
+		},
+		{
+			"id": 45619,
+			"enchant": 3601,
+			"gems": [
+				39998,
+				39998,
+				39998
+			]
+		},
+		{
+			"id": 46139,
+			"enchant": 3872,
+			"gems": [
+				39998,
+				39998
+			]
+		},
+		{
+			"id": 45135,
+			"enchant": 3606,
+			"gems": [
+				39998,
+				39998
+			]
+		},
+		{
+			"id": 45495,
+			"gems": [
+				40026
+			]
+		},
+		{
+			"id": 45297,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 45518
+		},
+		{
+			"id": 45148
+		},
+		{
+			"id": 45620,
+			"enchant": 3834,
+			"gems": [
+				39998
+			]
+		},
+		{
+			"id": 45617
+		},
+		{
+			"id": 45294,
+			"gems": [
+				39998
+			]
+		}
 ]}`)

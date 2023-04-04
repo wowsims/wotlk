@@ -107,6 +107,11 @@ func (spell *Spell) OutcomeMagicCrit(sim *Simulation, result *SpellResult, attac
 	}
 }
 
+func (spell *Spell) OutcomeHealing(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
+	result.Outcome = OutcomeHit
+	spell.SpellMetrics[result.Target.UnitIndex].Hits++
+}
+
 func (spell *Spell) OutcomeHealingCrit(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
 	if spell.CritMultiplier == 0 {
 		panic("Spell " + spell.ActionID.String() + " missing CritMultiplier")

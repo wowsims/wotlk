@@ -13,10 +13,10 @@ func (rogue *Rogue) makeFanOfKnivesWeaponHitSpell(isMH bool) *core.Spell {
 	var procMask core.ProcMask
 	var weaponMultiplier float64
 	if isMH {
-		weaponMultiplier = core.TernaryFloat64(rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType == proto.WeaponType_WeaponTypeDagger, 1.05, 0.7)
+		weaponMultiplier = core.TernaryFloat64(rogue.HasDagger(core.MainHand), 1.05, 0.7)
 		procMask = core.ProcMaskMeleeMHSpecial
 	} else {
-		weaponMultiplier = core.TernaryFloat64(rogue.Equip[proto.ItemSlot_ItemSlotOffHand].WeaponType == proto.WeaponType_WeaponTypeDagger, 1.05, 0.7)
+		weaponMultiplier = core.TernaryFloat64(rogue.HasDagger(core.OffHand), 1.05, 0.7)
 		weaponMultiplier *= rogue.dwsMultiplier()
 		procMask = core.ProcMaskMeleeOHSpecial
 	}

@@ -28,6 +28,8 @@ func NewShaman(character core.Character, talents string, totems *proto.ShamanTot
 		SelfBuffs:           selfBuffs,
 		thunderstormInRange: thunderstormRange,
 	}
+	shaman.waterShieldManaMetrics = shaman.NewManaMetrics(core.ActionID{SpellID: 57960})
+
 	core.FillTalentsProto(shaman.Talents.ProtoReflect(), talents, TalentTreeSizes)
 	shaman.EnableManaBar()
 
@@ -114,6 +116,7 @@ type Shaman struct {
 
 	MagmaTotem           *core.Spell
 	ManaSpringTotem      *core.Spell
+	HealingStreamTotem   *core.Spell
 	SearingTotem         *core.Spell
 	StrengthOfEarthTotem *core.Spell
 	TotemOfWrath         *core.Spell
@@ -124,6 +127,18 @@ type Shaman struct {
 	FlametongueTotem     *core.Spell
 
 	MaelstromWeaponAura *core.Aura
+
+	// Healing Spells
+	tidalWaveProc          *core.Aura
+	ancestralHealingAmount float64
+	AncestralAwakening     *core.Spell
+	LesserHealingWave      *core.Spell
+	HealingWave            *core.Spell
+	ChainHeal              *core.Spell
+	Riptide                *core.Spell
+	EarthShield            *core.Spell
+
+	waterShieldManaMetrics *core.ResourceMetrics
 }
 
 // Implemented by each Shaman spec.
@@ -211,6 +226,7 @@ func (shaman *Shaman) Initialize() {
 	shaman.registerLightningShieldSpell()
 	shaman.registerMagmaTotemSpell()
 	shaman.registerManaSpringTotemSpell()
+	shaman.registerHealingStreamTotemSpell()
 	shaman.registerSearingTotemSpell()
 	shaman.registerShocks()
 	shaman.registerStormstrikeSpell()
@@ -232,6 +248,35 @@ func (shaman *Shaman) Initialize() {
 
 	if shaman.Talents.SpiritWeapons {
 		shaman.PseudoStats.ThreatMultiplier -= 0.3
+	}
+}
+
+func (shaman *Shaman) RegisterHealingSpells() {
+	shaman.registerAncestralHealingSpell()
+	shaman.registerLesserHealingWaveSpell()
+	shaman.registerHealingWaveSpell()
+	shaman.registerRiptideSpell()
+	shaman.registerEarthShieldSpell()
+	shaman.registerChainHealSpell()
+
+	if shaman.Talents.TidalWaves > 0 {
+		shaman.tidalWaveProc = shaman.GetOrRegisterAura(core.Aura{
+			Label:    "Tidal Wave Proc",
+			ActionID: core.ActionID{SpellID: 53390},
+			Duration: core.NeverExpires,
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Deactivate(sim)
+			},
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				shaman.HealingWave.CastTimeMultiplier *= 0.7
+				shaman.LesserHealingWave.BonusCritRating += core.CritRatingPerCritChance * 25
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				shaman.HealingWave.CastTimeMultiplier /= 0.7
+				shaman.LesserHealingWave.BonusCritRating -= core.CritRatingPerCritChance * 25
+			},
+			MaxStacks: 2,
+		})
 	}
 }
 
@@ -258,18 +303,23 @@ func (shaman *Shaman) Reset(sim *core.Simulation) {
 		case FireTotem:
 			shaman.NextTotemDropType[FireTotem] = int32(shaman.Totems.Fire)
 			if shaman.NextTotemDropType[FireTotem] != int32(proto.FireTotem_NoFireTotem) {
-				if shaman.NextTotemDropType[FireTotem] != int32(proto.FireTotem_TotemOfWrath) {
+				if shaman.NextTotemDropType[FireTotem] != int32(proto.FireTotem_TotemOfWrath) && shaman.NextTotemDropType[FireTotem] != int32(proto.FireTotem_FlametongueTotem) {
 					if !shaman.Totems.UseFireMcd {
 						shaman.NextTotemDrops[FireTotem] = 0
 					}
 				} else {
 					shaman.NextTotemDrops[FireTotem] = TotemRefreshTime5M
-					shaman.applyToWDebuff(sim)
+					if shaman.NextTotemDropType[FireTotem] == int32(proto.FireTotem_TotemOfWrath) {
+						shaman.applyToWDebuff(sim)
+					}
 				}
 			}
 		case WaterTotem:
+			shaman.NextTotemDropType[i] = int32(shaman.Totems.Water)
 			if shaman.Totems.Water == proto.WaterTotem_ManaSpringTotem {
 				shaman.NextTotemDrops[i] = TotemRefreshTime5M
+			} else if shaman.Totems.Water == proto.WaterTotem_HealingStreamTotem {
+				shaman.NextTotemDrops[i] = 0
 			}
 		}
 	}

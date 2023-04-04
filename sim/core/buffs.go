@@ -211,7 +211,7 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 	}
 	if raidBuffs.DemonicPact > 0 {
 		dpAura := DemonicPactAura(character)
-		dpAura.ExclusiveEffects[0].Priority = float64(raidBuffs.DemonicPact) / 10.0
+		dpAura.ExclusiveEffects[0].Priority = float64(raidBuffs.DemonicPact)
 		MakePermanent(dpAura)
 	}
 
@@ -601,6 +601,7 @@ func BloodlustAura(character *Character, actionTag int32) *Aura {
 	return aura
 }
 
+var PowerInfusionActionID = ActionID{SpellID: 10060}
 var PowerInfusionAuraTag = "PowerInfusion"
 
 const PowerInfusionDuration = time.Second * 15
@@ -616,7 +617,7 @@ func registerPowerInfusionCD(agent Agent, numPowerInfusions int32) {
 	registerExternalConsecutiveCDApproximation(
 		agent,
 		externalConsecutiveCDApproximation{
-			ActionID:         ActionID{SpellID: 10060, Tag: -1},
+			ActionID:         PowerInfusionActionID.WithTag(-1),
 			AuraTag:          PowerInfusionAuraTag,
 			CooldownPriority: CooldownPriorityDefault,
 			AuraDuration:     PowerInfusionDuration,

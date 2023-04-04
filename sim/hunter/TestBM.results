@@ -6,7 +6,7 @@ character_stats_results: {
   final_stats: 1453.65
   final_stats: 589.6
   final_stats: 276.1
-  final_stats: 280
+  final_stats: 500
   final_stats: 109
   final_stats: 232
   final_stats: 1181.96121
@@ -652,6 +652,13 @@ dps_results: {
  value: {
   dps: 6263.14682
   tps: 4189.47597
+ }
+}
+dps_results: {
+ key: "TestBM-AllItems-SoulPreserver-37111"
+ value: {
+  dps: 6242.97035
+  tps: 4164.25906
  }
 }
 dps_results: {

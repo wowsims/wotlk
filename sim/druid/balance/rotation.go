@@ -29,17 +29,21 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*core.Spell, *core.
 		return moonkin.FaerieFire, target
 	}
 
+	if sim.GetRemainingDuration() < 15*time.Second {
+		moonkin.castMajorCooldown(moonkin.hyperSpeedMCD, sim, target)
+		moonkin.castMajorCooldown(moonkin.potionSpeedMCD, sim, target)
+		moonkin.castMajorCooldown(moonkin.potionWildMagicMCD, sim, target)
+		moonkin.useTrinkets(stats.SpellHaste, sim, target)
+		moonkin.useTrinkets(stats.SpellPower, sim, target)
+		moonkin.useTrinkets(stats.SpellCrit, sim, target)
+	}
+
 	var lunarUptime time.Duration
 	if moonkin.LunarEclipseProcAura != nil {
 		lunarUptime = moonkin.LunarEclipseProcAura.RemainingDuration(sim)
 	}
 
 	if moonkin.MoonkinT84PCAura.IsActive() && moonkin.MoonkinT84PCAura.RemainingDuration(sim) < moonkin.SpellGCD() {
-		if (rotation.UseSmartCooldowns && lunarUptime > 14*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
-			moonkin.castMajorCooldown(moonkin.hyperSpeedMCD, sim, target)
-			moonkin.castMajorCooldown(moonkin.potionSpeedMCD, sim, target)
-			moonkin.useTrinkets(stats.SpellHaste, sim, target)
-		}
 		return moonkin.Starfire, target
 	} else if rotation.UseBattleRes && sim.GetRemainingDuration().Seconds() < moonkin.RebirthTiming && moonkin.Rebirth.IsReady(sim) {
 		return moonkin.Rebirth, target
@@ -56,10 +60,7 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*core.Spell, *core.
 	}
 
 	lunarIsActive := moonkin.LunarEclipseProcAura.IsActive()
-	shouldHoldIs := false
-	if lunarIsActive && moonkin.MoonkinT84PCAura == nil {
-		shouldHoldIs = lunarUptime.Seconds() < (moonkin.InsectSwarm.DamageMultiplier-1)/0.042
-	}
+	shouldHoldIs := core.Ternary(moonkin.MoonkinT84PCAura == nil, lunarIsActive, lunarIsActive && moonkin.HasActiveAuraWithTag(core.BloodlustAuraTag))
 
 	// Max IS uptime
 	if rotation.IsUsage == proto.BalanceDruid_Rotation_MaximizeIs && !shouldHoldIs {

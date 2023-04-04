@@ -1056,9 +1056,12 @@ func (rp *RunicPowerBar) SpendUnholyRune(sim *Simulation, metrics *ResourceMetri
 //
 //	Returns -1 if there are no ready death runes
 func (rp *RunicPowerBar) ReadyDeathRune() int8 {
-	for i := int8(0); i < 6; i++ {
-		if rp.runeStates&isDeaths[i] != 0 && rp.runeStates&isSpents[i] == 0 {
-			return i
+	// Death runes are spent in the order Unholy -> Frost -> Blood in-game...
+	for runeType := int8(2); runeType >= 0; runeType-- {
+		for i := runeType * 2; i < (runeType+1)*2; i++ {
+			if rp.runeStates&isDeaths[i] != 0 && rp.runeStates&isSpents[i] == 0 {
+				return i
+			}
 		}
 	}
 	return -1

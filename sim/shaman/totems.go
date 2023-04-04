@@ -20,7 +20,8 @@ func (shaman *Shaman) newTotemSpellConfig(baseCost float64, spellID int32) core.
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD: time.Second,
+				CastTime: time.Second,
+				GCD:      time.Second,
 			},
 			IgnoreHaste: true,
 		},
@@ -49,6 +50,41 @@ func (shaman *Shaman) registerManaSpringTotemSpell() {
 		shaman.NextTotemDrops[WaterTotem] = sim.CurrentTime + time.Second*300
 	}
 	shaman.ManaSpringTotem = shaman.RegisterSpell(config)
+}
+
+func (shaman *Shaman) registerHealingStreamTotemSpell() {
+	config := shaman.newTotemSpellConfig(0.03, 58757)
+	hsHeal := shaman.RegisterSpell(core.SpellConfig{
+		ActionID:         core.ActionID{SpellID: 52042},
+		SpellSchool:      core.SpellSchoolNature,
+		ProcMask:         core.ProcMaskEmpty,
+		Flags:            core.SpellFlagHelpful | core.SpellFlagNoOnCastComplete,
+		DamageMultiplier: 1 + (.02 * float64(shaman.Talents.Purification)) + 0.15*float64(shaman.Talents.RestorativeTotems),
+		CritMultiplier:   1,
+		ThreatMultiplier: 1 - (float64(shaman.Talents.HealingGrace) * 0.05),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// TODO: find healing stream coeff
+			healing := 25 + spell.HealingPower(target)*0.08272
+			spell.CalcAndDealHealing(sim, target, healing, spell.OutcomeHealing)
+		},
+	})
+	config.Hot = core.DotConfig{
+		Aura: core.Aura{
+			Label: "HealingStreamHot",
+		},
+		NumberOfTicks: 150,
+		TickLength:    time.Second * 2,
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			hsHeal.Cast(sim, target)
+		},
+	}
+	config.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
+		shaman.NextTotemDrops[WaterTotem] = sim.CurrentTime + time.Second*300
+		for _, agent := range shaman.Party.Players {
+			spell.Hot(&agent.GetCharacter().Unit).Activate(sim)
+		}
+	}
+	shaman.HealingStreamTotem = shaman.RegisterSpell(config)
 }
 
 func (shaman *Shaman) registerTotemOfWrathSpell() {
@@ -151,7 +187,12 @@ func (shaman *Shaman) TryDropTotems(sim *core.Simulation) bool {
 				}
 
 			case WaterTotem:
-				spell = shaman.ManaSpringTotem
+				switch proto.WaterTotem(nextDrop) {
+				case proto.WaterTotem_ManaSpringTotem:
+					spell = shaman.ManaSpringTotem
+				case proto.WaterTotem_HealingStreamTotem:
+					spell = shaman.HealingStreamTotem
+				}
 			}
 		}
 	}

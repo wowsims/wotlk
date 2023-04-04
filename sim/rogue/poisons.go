@@ -30,7 +30,7 @@ func (rogue *Rogue) registerPoisonAuras() {
 func (rogue *Rogue) registerDeadlyPoisonSpell() {
 	var energyMetrics *core.ResourceMetrics
 	if rogue.HasSetBonus(ItemSetTerrorblade, 2) {
-		energyMetrics = rogue.NewEnergyMetrics(core.ActionID{SpellID: 64914})
+		energyMetrics = rogue.NewEnergyMetrics(core.ActionID{SpellID: 64913})
 	}
 
 	rogue.DeadlyPoison = rogue.RegisterSpell(core.SpellConfig{
@@ -66,10 +66,16 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 			NumberOfTicks: 4,
 			TickLength:    time.Second * 3,
 
-			// TODO: MAP part snapshots
+			OnSnapshot: func(_ *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+				if stacks := dot.GetStacks(); stacks > 0 {
+					dot.SnapshotBaseDamage = (74 + 0.027*dot.Spell.MeleeAttackPower()) * float64(stacks)
+					attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
+					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
+				}
+			},
+
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				baseDmg := (74 + 0.027*dot.Spell.MeleeAttackPower()) * float64(dot.GetStacks())
-				result := dot.Spell.CalcAndDealPeriodicDamage(sim, target, baseDmg, dot.OutcomeTick)
+				result := dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
 				if energyMetrics != nil && result.Landed() {
 					rogue.AddEnergy(sim, 1, energyMetrics)
 				}
@@ -86,39 +92,42 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 			if !dot.IsActive() {
 				dot.Apply(sim)
 				dot.SetStacks(sim, 1)
+				dot.TakeSnapshot(sim, false)
 				return
 			}
 
 			if dot.GetStacks() < 5 {
 				dot.Refresh(sim)
 				dot.AddStack(sim)
+				dot.TakeSnapshot(sim, false)
 				return
 			}
 
 			if rogue.lastDeadlyPoisonProcMask.Matches(core.ProcMaskMeleeMH) {
 				switch rogue.Options.OhImbue {
 				case proto.Rogue_Options_InstantPoison:
-					rogue.InstantPoison[DeadlyProc].SkipCastAndApplyEffects(sim, target)
+					rogue.InstantPoison[DeadlyProc].Cast(sim, target)
 				case proto.Rogue_Options_WoundPoison:
-					rogue.WoundPoison[DeadlyProc].SkipCastAndApplyEffects(sim, target)
+					rogue.WoundPoison[DeadlyProc].Cast(sim, target)
 				}
 			}
 			if rogue.lastDeadlyPoisonProcMask.Matches(core.ProcMaskMeleeOH) {
 				switch rogue.Options.MhImbue {
 				case proto.Rogue_Options_InstantPoison:
-					rogue.InstantPoison[DeadlyProc].SkipCastAndApplyEffects(sim, target)
+					rogue.InstantPoison[DeadlyProc].Cast(sim, target)
 				case proto.Rogue_Options_WoundPoison:
-					rogue.WoundPoison[DeadlyProc].SkipCastAndApplyEffects(sim, target)
+					rogue.WoundPoison[DeadlyProc].Cast(sim, target)
 				}
 			}
 			dot.Refresh(sim)
+			dot.TakeSnapshot(sim, false)
 		},
 	})
 }
 
 func (rogue *Rogue) procDeadlyPoison(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 	rogue.lastDeadlyPoisonProcMask = spell.ProcMask
-	rogue.DeadlyPoison.SkipCastAndApplyEffects(sim, result.Target)
+	rogue.DeadlyPoison.Cast(sim, result.Target)
 }
 
 func (rogue *Rogue) applyDeadlyPoison() {
@@ -170,7 +179,7 @@ func (rogue *Rogue) applyWoundPoison() {
 				return
 			}
 			if rogue.woundPoisonPPMM.Proc(sim, spell.ProcMask, "Wound Poison") {
-				rogue.WoundPoison[NormalProc].SkipCastAndApplyEffects(sim, result.Target)
+				rogue.WoundPoison[NormalProc].Cast(sim, result.Target)
 			}
 		},
 	})
@@ -320,7 +329,7 @@ func (rogue *Rogue) applyInstantPoison() {
 				return
 			}
 			if rogue.instantPoisonPPMM.Proc(sim, spell.ProcMask, "Instant Poison") {
-				rogue.InstantPoison[NormalProc].SkipCastAndApplyEffects(sim, result.Target)
+				rogue.InstantPoison[NormalProc].Cast(sim, result.Target)
 			}
 		},
 	})

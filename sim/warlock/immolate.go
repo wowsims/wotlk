@@ -32,7 +32,6 @@ func (warlock *Warlock) registerImmolateSpell() {
 		},
 
 		BonusCritRating: 0 +
-			warlock.masterDemonologistFireCrit +
 			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0),
 		DamageMultiplierAdditive: 1 +
 			warlock.GrandFirestoneBonus() +
@@ -59,7 +58,7 @@ func (warlock *Warlock) registerImmolateSpell() {
 			TickLength:    time.Second * 3,
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-				dot.SnapshotBaseDamage = 785/5 + 0.2*dot.Spell.SpellPower()
+				dot.SnapshotBaseDamage = 157 + 0.2*dot.Spell.SpellPower()
 				attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
 				dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
 

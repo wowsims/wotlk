@@ -26,7 +26,7 @@ import * as Tooltips from '../core/constants/tooltips.js';
 export const StandardTalents = {
 	name: 'Standard',
 	data: SavedTalents.create({
-		talentsString: '-503202132322010053120230310511-205503012',
+		talentsString: '-543202132322010053120030310511-203503012',
 		glyphs: Glyphs.create({
 			major1: DruidMajorGlyph.GlyphOfRip,
 			major2: DruidMajorGlyph.GlyphOfSavageRoar,
@@ -39,7 +39,7 @@ export const StandardTalents = {
 };
 
 export const DefaultRotation = FeralDruidRotation.create({
-	bearWeaveType: FeralDruid_Rotation_BearweaveType.Lacerate,
+	bearWeaveType: FeralDruid_Rotation_BearweaveType.None,
 	minCombosForRip: 5,
 	minCombosForBite: 5,
 
@@ -47,10 +47,10 @@ export const DefaultRotation = FeralDruidRotation.create({
 	useBite: true,
 	mangleSpam: false,
 	biteModeType: FeralDruid_Rotation_BiteModeType.Emperical,
-	biteTime: 10.0,
-	berserkBiteThresh: 30.0,
+	biteTime: 4.0,
+	berserkBiteThresh: 25.0,
 	powerbear: false,
-	minRoarOffset: 14.0,
+	minRoarOffset: 12.0,
 	maintainFaerieFire: true,
 	hotUptime: 0.0,
 	snekWeave: false,

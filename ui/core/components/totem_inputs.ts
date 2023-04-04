@@ -67,6 +67,7 @@ export function TotemsSection(parentElem: HTMLElement, simUI: IndividualSimUI<Sh
 		values: [
 			{ color: '#bae1ff', value: WaterTotem.NoWaterTotem },
 			{ actionId: ActionId.fromSpellId(58774), value: WaterTotem.ManaSpringTotem },
+			{ actionId: ActionId.fromSpellId(58757), value: WaterTotem.HealingStreamTotem },
 		],
 		equals: (a: WaterTotem, b: WaterTotem) => a == b,
 		zeroValue: WaterTotem.NoWaterTotem,

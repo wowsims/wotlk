@@ -412,15 +412,14 @@ func (spell *Spell) TargetDamageMultiplier(attackTable *AttackTable, isPeriodic 
 		multiplier *= attackTable.Defender.PseudoStats.DiseaseDamageTakenMultiplier
 	}
 
+	if spell.Flags.Matches(SpellFlagHauntSE) {
+		multiplier *= attackTable.HauntSEDamageTakenMultiplier
+	}
+
 	if spell.SpellSchool.Matches(SpellSchoolNature) {
 		multiplier *= attackTable.NatureDamageTakenMultiplier
-	} else if isPeriodic {
-		switch {
-		case spell.SpellSchool.Matches(SpellSchoolPhysical):
-			multiplier *= attackTable.Defender.PseudoStats.PeriodicPhysicalDamageTakenMultiplier
-		case spell.SpellSchool.Matches(SpellSchoolShadow):
-			multiplier *= attackTable.PeriodicShadowDamageTakenMultiplier
-		}
+	} else if isPeriodic && spell.SpellSchool.Matches(SpellSchoolPhysical) {
+		multiplier *= attackTable.Defender.PseudoStats.PeriodicPhysicalDamageTakenMultiplier
 	}
 
 	return multiplier

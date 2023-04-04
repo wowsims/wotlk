@@ -421,9 +421,10 @@ message RaidBuffs {
 	TristateEffect windfury_totem = 17; // none, 16%, 20%
 
 	// +Spell Power
-	bool totem_of_wrath = 18; // shouldn't stack with demonic pact (does in beta right now)
+	bool totem_of_wrath = 18;
 	bool flametongue_totem = 19;
-	int32 demonic_pact = 20; // SP buff, variable : 10% of demonology warlock's own SP
+	reserved 20;
+	int32 demonic_pact = 43; // SP buff
 
 	// +5% Spell Crit and/or +3% Haste
 	bool swift_retribution = 21; //haste only
@@ -447,7 +448,7 @@ message RaidBuffs {
 	TristateEffect devotion_aura = 31;
 	TristateEffect stoneskin_totem = 42;
 	bool retribution_aura = 32;
-	bool shadow_protection = 33;	
+	bool shadow_protection = 33;
 
 	// Drums
 	bool drums_of_forgotten_kings = 34;

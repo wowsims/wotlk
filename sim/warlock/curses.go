@@ -113,16 +113,13 @@ func (warlock *Warlock) registerCurseOfTonguesSpell() {
 }
 
 func (warlock *Warlock) registerCurseOfAgonySpell() {
-	numberOfTicks := int32(12)
-	totalBaseDmg := 1740.0
-	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCurseOfAgony) {
-		numberOfTicks += 2
-		totalBaseDmg += 2 * totalBaseDmg * 0.056 // Glyphed ticks
-	}
+	numberOfTicks := core.TernaryInt32(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCurseOfAgony), 14, 12)
+	baseTickDmg := 145.0
 
 	warlock.CurseOfAgony = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47864},
 		SpellSchool: core.SpellSchoolShadow,
+		Flags:       core.SpellFlagHauntSE,
 		ProcMask:    core.ProcMaskSpellDamage,
 
 		ManaCost: core.ManaCostOptions{
@@ -149,12 +146,14 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 			NumberOfTicks: numberOfTicks,
 			TickLength:    time.Second * 2,
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-				// Ignored: CoA ramp up effect
-				dot.SnapshotBaseDamage = totalBaseDmg/float64(numberOfTicks) + 0.1*dot.Spell.SpellPower()
+				dot.SnapshotBaseDamage = 0.5*baseTickDmg + 0.1*dot.Spell.SpellPower()
 				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTickCounted)
+				if dot.TickCount%4 == 0 { // CoA ramp up
+					dot.SnapshotBaseDamage += 0.5 * baseTickDmg
+				}
 			},
 		},
 

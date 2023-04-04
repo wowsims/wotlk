@@ -76,6 +76,7 @@ type FeralDruid struct {
 	maxRipTicks    int32
 	berserkUsed    bool
 	bleedAura      *core.Aura
+	lastShift      time.Duration
 
 	rotationAction *core.PendingAction
 }
@@ -103,7 +104,7 @@ func (cat *FeralDruid) Initialize() {
 
 	if cat.prepopOoc && cat.Talents.OmenOfClarity {
 		cat.RegisterPrepullAction(-cat.SpellGCD(), func(sim *core.Simulation) {
-			cat.ProcOoc(sim)
+			cat.FaerieFire.Cast(sim, nil)
 		})
 	}
 }

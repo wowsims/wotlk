@@ -11,7 +11,7 @@ func (rogue *Rogue) registerBackstabSpell() {
 	hasGlyph := rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfBackstab)
 
 	rogue.Backstab = rogue.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 26863},
+		ActionID:    core.ActionID{SpellID: 48657},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBuilder | SpellFlagColdBlooded,
@@ -54,12 +54,10 @@ func (rogue *Rogue) registerBackstabSpell() {
 
 			if result.Landed() {
 				rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())
-				// FIXME: Extension of a Rupture Dot can occur up to 3 times
-				ruptureDot := rogue.Rupture.Dot(target)
-				if hasGlyph && ruptureDot.IsActive() {
-					ruptureDot.NumberOfTicks += 1
-					ruptureDot.RecomputeAuraDuration()
-					ruptureDot.UpdateExpires(ruptureDot.ExpiresAt() + ruptureDot.TickLength)
+				if dot := rogue.Rupture.Dot(target); hasGlyph && dot.IsActive() && dot.NumberOfTicks < dot.MaxStacks+3 {
+					dot.NumberOfTicks += 1
+					dot.RecomputeAuraDuration()
+					dot.UpdateExpires(dot.ExpiresAt() + dot.TickLength)
 				}
 			} else {
 				spell.IssueRefund(sim)

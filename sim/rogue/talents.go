@@ -71,6 +71,10 @@ func getRelentlessStrikesSpellID(talentPoints int32) int32 {
 func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, numPoints int32) {
 	ruthlessnessMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 14161})
 	relentlessStrikesMetrics := rogue.NewEnergyMetrics(core.ActionID{SpellID: getRelentlessStrikesSpellID(rogue.Talents.RelentlessStrikes)})
+	var mayhemMetrics *core.ResourceMetrics
+	if rogue.HasSetBonus(ItemSetShadowblades, 4) {
+		mayhemMetrics = rogue.NewComboPointMetrics(core.ActionID{SpellID: 70802})
+	}
 
 	return func(sim *core.Simulation, numPoints int32) {
 		if t := rogue.Talents.Ruthlessness; t > 0 {
@@ -81,6 +85,11 @@ func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, 
 		if t := rogue.Talents.RelentlessStrikes; t > 0 {
 			if sim.RandomFloat("RelentlessStrikes") < 0.04*float64(t*numPoints) {
 				rogue.AddEnergy(sim, 25, relentlessStrikesMetrics)
+			}
+		}
+		if mayhemMetrics != nil {
+			if sim.RandomFloat("Mayhem") < 0.13 {
+				rogue.AddComboPoints(sim, 3, mayhemMetrics)
 			}
 		}
 	}
@@ -266,6 +275,11 @@ func (rogue *Rogue) applySealFate() {
 	procChance := 0.2 * float64(rogue.Talents.SealFate)
 	cpMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 14195})
 
+	icd := core.Cooldown{
+		Timer:    rogue.NewTimer(),
+		Duration: 500 * time.Millisecond,
+	}
+
 	rogue.RegisterAura(core.Aura{
 		Label:    "Seal Fate",
 		Duration: core.NeverExpires,
@@ -281,8 +295,9 @@ func (rogue *Rogue) applySealFate() {
 				return
 			}
 
-			if sim.Proc(procChance, "Seal Fate") {
+			if icd.IsReady(sim) && sim.Proc(procChance, "Seal Fate") {
 				rogue.AddComboPoints(sim, 1, cpMetrics)
+				icd.Use(sim)
 			}
 		},
 	})
@@ -528,12 +543,16 @@ func (rogue *Rogue) registerAdrenalineRushCD() {
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.ResetEnergyTick(sim)
 			rogue.ApplyEnergyTickMultiplier(1.0)
-			rogue.rotationItems = rogue.planRotation(sim)
+			if r, ok := rogue.rotation.(*rotation_generic); ok {
+				r.planRotation(sim, rogue)
+			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.ResetEnergyTick(sim)
 			rogue.ApplyEnergyTickMultiplier(-1.0)
-			rogue.rotationItems = rogue.planRotation(sim)
+			if r, ok := rogue.rotation.(*rotation_generic); ok {
+				r.planRotation(sim, rogue)
+			}
 		},
 	})
 
@@ -582,12 +601,6 @@ func (rogue *Rogue) registerHonorAmongThieves() {
 		return
 	}
 
-	// In an ideal party, you'd probably get up to 6 ability crits/s (Rate = 600).
-	//  Survival Hunters, Enhancement Shamans, and Assassination Rogues are particularly good.
-	if rogue.Options.HonorOfThievesCritRate <= 0 {
-		rogue.Options.HonorOfThievesCritRate = 400
-	}
-
 	procChance := []float64{0, 0.33, 0.66, 1}[rogue.Talents.HonorAmongThieves]
 	comboMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 51701})
 	honorAmongThievesID := core.ActionID{SpellID: 51701}
@@ -612,6 +625,16 @@ func (rogue *Rogue) registerHonorAmongThieves() {
 			aura.Activate(sim)
 		},
 		OnGain: func(_ *core.Aura, sim *core.Simulation) {
+			// In an ideal party, you'd probably get up to 6 ability crits/s (Rate = 600).
+			//  Survival Hunters, Enhancement Shamans, and Assassination Rogues are particularly good.
+			if rogue.Options.HonorOfThievesCritRate <= 0 {
+				return
+			}
+
+			if rogue.Options.HonorOfThievesCritRate > 2000 {
+				rogue.Options.HonorOfThievesCritRate = 2000 // limited, so performance doesn't suffer
+			}
+
 			rateToDuration := float64(time.Second) * 100 / float64(rogue.Options.HonorOfThievesCritRate)
 
 			pa := &core.PendingAction{}
