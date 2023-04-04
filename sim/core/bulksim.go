@@ -43,34 +43,33 @@ func RunBulkSim(ctx context.Context, request *proto.RaidSimRequest, progress cha
 		var numCombinations int32
 		for sub := range generateAllequipmentSubstitutions(ctx, player.GetBulkEquipment()) {
 			substitutedRequest, changeLog := createNewRequestWithSubstitution(request, sub)
-			// TODO(Riotdog-GehennasEU): We could do this a bit nicer: create a new progress reporter, and then forward
-			// forward those results instead. That way we could accurately aggregate the progress metrics.
-			singleSimProgress := make(chan *proto.ProgressMetrics)
-			go func(i int32) {
-				for p := range singleSimProgress {
-					// Do not forward the final message, since we have to do multiple invidiual sims and this
-					// would confuse the UI.
-					if p.FinalRaidResult != nil {
-						continue
-					}
+			if isValidEquipment(substitutedRequest.Raid.Parties[0].Players[0].Equipment) {
+				singleSimProgress := make(chan *proto.ProgressMetrics)
+				go func(i int32) {
+					for p := range singleSimProgress {
+						// Do not forward the final message, since we have to do multiple invidiual sims and this
+						// would confuse the UI.
+						if p.FinalRaidResult != nil {
+							continue
+						}
 
-					p.CompletedIterations += i * request.SimOptions.Iterations
-					p.TotalIterations += i * request.SimOptions.Iterations
-					select {
-					case progress <- p:
-					default:
-						// We tried. Do not block here because it could slow down the sim.
+						p.CompletedIterations += i * request.SimOptions.Iterations
+						p.TotalIterations += i * request.SimOptions.Iterations
+						select {
+						case progress <- p:
+						default:
+							// We tried. Do not block here because it could slow down the sim.
+						}
 					}
+				}(numCombinations)
+
+				results <- &bulkRaidSimResult{
+					Request:      substitutedRequest,
+					Result:       runSim(substitutedRequest, singleSimProgress, false),
+					Substitution: sub,
+					ChangeLog:    changeLog,
 				}
-			}(numCombinations)
-
-			results <- &bulkRaidSimResult{
-				Request:      substitutedRequest,
-				Result:       runSim(substitutedRequest, singleSimProgress, false),
-				Substitution: sub,
-				ChangeLog:    changeLog,
 			}
-
 			numCombinations++
 		}
 		close(results)
@@ -145,11 +144,10 @@ func (es *equipmentSubstitution) HasItemReplacements() bool {
 }
 
 // IsValid returns true if the equipment substituion is valid. A valid substition can only
-// reference an item once, and it may not specify invalid weapon combinations.
+// reference an item or slot once.
 func (es *equipmentSubstitution) IsValid() bool {
 	slotReuseTracker := map[int]bool{}
 	itemReuseTracker := map[int]bool{}
-	var usesTwoHander, usesOffhand bool
 
 	for _, it := range es.Items {
 		if itemReuseTracker[it.Index] {
@@ -161,12 +159,26 @@ func (es *equipmentSubstitution) IsValid() bool {
 			return false
 		}
 		slotReuseTracker[it.Index] = true
+	}
 
-		knownItem, ok := ItemsByID[it.Item.Id]
+	return true
+}
+
+// isValidEquipment returns true if the specified equipment spec is valid. A equipment spec
+// is valid if it does not reference a two-hander and off-hand weapon combo.
+func isValidEquipment(equipment *proto.EquipmentSpec) bool {
+	var usesTwoHander, usesOffhand bool
+
+	for _, it := range equipment.Items {
+		if it.Id == 0 {
+			continue
+		}
+
+		knownItem, ok := ItemsByID[it.Id]
 		if !ok {
 			// TODO(Riotdog-GehennasEU): Should we bother verifying that the item is in the database?
 			// What about gems and enchants? Should we just expect that we will receive a valid database?
-			log.Printf("Warning: bulk item %v not found in the provided database", it.Item)
+			log.Printf("Warning: bulk item %d not found in the provided database", it.Id)
 			return false
 		}
 
