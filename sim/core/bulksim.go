@@ -210,7 +210,7 @@ func generateAllEquipmentSubstitutions(ctx context.Context, spec *proto.BulkEqui
 		// For each slot, we will create one itemWithSlot pair, so (item, off-hand) and (item, main-hand).
 		// We verify later that we are not emitting any item substitution that refers to the same item.
 		var distinctItemSlotCombos []*itemWithSlot
-		for i, is := range spec.Items {
+		for i, is := range spec.GetItems() {
 			for _, slot := range is.Slots {
 				distinctItemSlotCombos = append(distinctItemSlotCombos, &itemWithSlot{
 					Item:  is.Item,

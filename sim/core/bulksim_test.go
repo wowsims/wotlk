@@ -1,8 +1,11 @@
 package core
 
 import (
+	"context"
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
@@ -16,6 +19,11 @@ var (
 	starshardEdge1 = &itemWithSlot{
 		Item:  &proto.ItemSpec{Id: itemStarshardEdge},
 		Slot:  proto.ItemSlot_ItemSlotMainHand,
+		Index: 0,
+	}
+	ironmender = &itemWithSlot{
+		Item:  &proto.ItemSpec{Id: itemIronmender},
+		Slot:  proto.ItemSlot_ItemSlotOffHand,
 		Index: 1,
 	}
 	starshardEdge2 = &itemWithSlot{
@@ -27,11 +35,6 @@ var (
 		Item:  &proto.ItemSpec{Id: itemPillarOfFortitude},
 		Slot:  proto.ItemSlot_ItemSlotMainHand,
 		Index: 3,
-	}
-	ironmender = &itemWithSlot{
-		Item:  &proto.ItemSpec{Id: itemIronmender},
-		Slot:  proto.ItemSlot_ItemSlotOffHand,
-		Index: 4,
 	}
 
 	tinyItemDatabase = &proto.SimDatabase{
@@ -83,6 +86,8 @@ func TestEquipmentSubstitutionIsValid(t *testing.T) {
 }
 
 func TestIsValidEquipment(t *testing.T) {
+	// This is a bit awkward because code everywhere accesses the global database maps. Hopefully
+	// this won't mess with any other unit tests that need existing item/gem/enchant databases?
 	addToDatabase(tinyItemDatabase)
 
 	for _, tc := range []struct {
@@ -107,6 +112,69 @@ func TestIsValidEquipment(t *testing.T) {
 	}
 }
 
+func TestGenerateAllEquipmentSubstitutions(t *testing.T) {
+	for _, tc := range []struct {
+		comment string
+		spec    *proto.BulkEquipmentSpec
+		want    []*equipmentSubstitution
+	}{
+		{
+			comment: "empty spec returns empty base equipment substitution only",
+			spec:    createBulkSpecFromItems(),
+			want: []*equipmentSubstitution{
+				{},
+			},
+		},
+		{
+			comment: "spec with one item returns empty base equipment substitution plus one item substitution",
+			spec:    createBulkSpecFromItems(starshardEdge1),
+			want: []*equipmentSubstitution{
+				{},
+				{Items: []*itemWithSlot{starshardEdge1}},
+			},
+		},
+		{
+			comment: "spec with one item returns empty base equipment substitution plus one item substitution",
+			spec:    createBulkSpecFromItems(starshardEdge1),
+			want: []*equipmentSubstitution{
+				{},
+				{Items: []*itemWithSlot{starshardEdge1}},
+			},
+		},
+		{
+			comment: "spec with two items returns empty base equipment substitution plus all item combos",
+			spec:    createBulkSpecFromItems(starshardEdge1, ironmender),
+			want: []*equipmentSubstitution{
+				{},
+				{Items: []*itemWithSlot{starshardEdge1}},
+				{Items: []*itemWithSlot{ironmender}},
+				{Items: []*itemWithSlot{starshardEdge1, ironmender}},
+			},
+		},
+		{
+			comment: "spec with a duplicate item slot returns only valid substitutions",
+			spec:    createBulkSpecFromItems(starshardEdge1, ironmender, starshardEdge2),
+			want: []*equipmentSubstitution{
+				{},
+				{Items: []*itemWithSlot{starshardEdge1}},
+				{Items: []*itemWithSlot{ironmender}},
+				{Items: []*itemWithSlot{starshardEdge1, ironmender}},
+				{Items: []*itemWithSlot{starshardEdge2}},
+				{Items: []*itemWithSlot{ironmender, starshardEdge2}},
+			},
+		},
+	} {
+		var got []*equipmentSubstitution
+		for sub := range generateAllEquipmentSubstitutions(context.Background(), tc.spec) {
+			got = append(got, sub)
+		}
+
+		if diff := cmp.Diff(tc.want, got, cmpopts.IgnoreUnexported(proto.ItemSpec{})); diff != "" {
+			t.Fatalf("%s: generateAllEquipmentSubstitutions(%v) returned diff (-want +got):\n%s", tc.comment, tc.spec, diff)
+		}
+	}
+}
+
 func createEquipmentFromItems(items ...*itemWithSlot) *proto.EquipmentSpec {
 	spec := &proto.EquipmentSpec{
 		Items: make([]*proto.ItemSpec, 17),
@@ -117,10 +185,13 @@ func createEquipmentFromItems(items ...*itemWithSlot) *proto.EquipmentSpec {
 	return spec
 }
 
-func TestGenerateAllequipmentSubstitutions(t *testing.T) {
-	// TODO(Riotdog-GehennasEU): Implement.
-}
-
-func TestCreateNewRequestWithSubstitution(t *testing.T) {
-	// TODO(Riotdog-GehennasEU): Implement.
+func createBulkSpecFromItems(items ...*itemWithSlot) *proto.BulkEquipmentSpec {
+	spec := &proto.BulkEquipmentSpec{}
+	for _, is := range items {
+		spec.Items = append(spec.Items, &proto.BulkEquipmentSpec_ItemSpecWithSlots{
+			Item:  is.Item,
+			Slots: []proto.ItemSlot{is.Slot},
+		})
+	}
+	return spec
 }
