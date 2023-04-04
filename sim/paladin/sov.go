@@ -165,6 +165,10 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 				return
 			}
 
+			if aura.Label == "Righteous Vengeance" {
+				return
+			}
+
 			// Differ between judgements and other melee abilities.
 			if spell.Flags.Matches(SpellFlagPrimaryJudgement) {
 				onJudgementProc.Cast(sim, result.Target)
