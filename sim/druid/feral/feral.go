@@ -96,15 +96,16 @@ func (cat *FeralDruid) Initialize() {
 	cat.Druid.Initialize()
 	cat.RegisterFeralCatSpells()
 
-	if cat.PrePopBerserk && cat.Talents.Berserk {
-		cat.RegisterPrepullAction(-time.Second, func(sim *core.Simulation) {
-			cat.Berserk.Cast(sim, nil)
+	if cat.prepopOoc && cat.Talents.OmenOfClarity {
+		time := core.Ternary(cat.PrePopBerserk, time.Second*2, time.Second)
+		cat.RegisterPrepullAction(-time, func(sim *core.Simulation) {
+			cat.FaerieFire.Cast(sim, nil)
 		})
 	}
 
-	if cat.prepopOoc && cat.Talents.OmenOfClarity {
-		cat.RegisterPrepullAction(-cat.SpellGCD(), func(sim *core.Simulation) {
-			cat.FaerieFire.Cast(sim, nil)
+	if cat.PrePopBerserk && cat.Talents.Berserk {
+		cat.RegisterPrepullAction(-time.Second, func(sim *core.Simulation) {
+			cat.Berserk.Cast(sim, nil)
 		})
 	}
 }
