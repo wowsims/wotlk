@@ -142,7 +142,7 @@ func TestDotSnapshotSpellPower(t *testing.T) {
 	expectDotTickDamage(t, sim, fa.Dot, 150) // (100) * 1.5
 
 	fa.Dot.Deactivate(sim)
-	fa.Dot.Activate(sim)
+	fa.Dot.Apply(sim)
 	expectDotTickDamage(t, sim, fa.Dot, 300) // (100 + 100) * 1.5
 }
 

@@ -67,9 +67,6 @@ func (dk *Deathknight) registerDiseaseDots() {
 }
 
 func (dk *Deathknight) registerFrostFever() {
-	flagTs := make([]bool, dk.Env.GetNumTargets())
-	isRefreshing := make([]bool, dk.Env.GetNumTargets())
-
 	dk.FrostFeverSpell = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 55095},
 		SpellSchool: core.SpellSchoolFrost,
@@ -90,23 +87,16 @@ func (dk *Deathknight) registerFrostFever() {
 						dk.EbonPlagueOrCryptFeverAura[aura.Unit.Index].Activate(sim)
 					}
 				},
-				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-					if !isRefreshing[aura.Unit.Index] {
-						flagTs[aura.Unit.Index] = false
-					}
-				},
 			},
 			NumberOfTicks: 5 + dk.Talents.Epidemic,
 			TickLength:    time.Second * 3,
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-				firstTsApply := !flagTs[target.Index]
-				flagTs[target.Index] = true
 				// 80.0 * 0.32 * 1.15 base, 0.055 * 1.15
 				dot.SnapshotBaseDamage = 29.44 + 0.06325*dk.getImpurityBonus(dot.Spell)
 
 				if !isRollover {
 					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
-					dot.SnapshotAttackerMultiplier *= core.TernaryFloat64(firstTsApply, 1.0, dk.RoRTSBonus(target))
+					dot.SnapshotAttackerMultiplier *= dk.RoRTSBonus(target)
 				}
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
@@ -117,21 +107,13 @@ func (dk *Deathknight) registerFrostFever() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dot := spell.Dot(target)
-			if dot.IsActive() {
-				isRefreshing[target.Index] = true
-			}
 			dot.Apply(sim)
-			isRefreshing[target.Index] = false
-			dot.Activate(sim)
 		},
 	})
 	dk.FrostFeverExtended = make([]int, dk.Env.GetNumTargets())
 }
 
 func (dk *Deathknight) registerBloodPlague() {
-	flagRor := make([]bool, dk.Env.GetNumTargets())
-	isRefreshing := make([]bool, dk.Env.GetNumTargets())
-
 	// Tier9 4Piece
 	canCrit := dk.HasSetBonus(ItemSetThassariansBattlegear, 4)
 
@@ -153,25 +135,18 @@ func (dk *Deathknight) registerBloodPlague() {
 						dk.EbonPlagueOrCryptFeverAura[aura.Unit.Index].Activate(sim)
 					}
 				},
-				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-					if !isRefreshing[aura.Unit.Index] {
-						flagRor[aura.Unit.Index] = false
-					}
-				},
 			},
 			NumberOfTicks: 5 + dk.Talents.Epidemic,
 			TickLength:    time.Second * 3,
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-				firstRorApply := !flagRor[target.Index]
-				flagRor[target.Index] = true
 				// 80.0 * 0.394 * 1.15 for base, 0.055 * 1.15 for ap coeff
-				dot.SnapshotBaseDamage = (36.248 + 0.06325*dk.getImpurityBonus(dot.Spell))
+				dot.SnapshotBaseDamage = 36.248 + 0.06325*dk.getImpurityBonus(dot.Spell)
 
 				if !isRollover {
 					dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
 					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
-					dot.SnapshotAttackerMultiplier *= core.TernaryFloat64(firstRorApply, 1.0, dk.RoRTSBonus(target))
+					dot.SnapshotAttackerMultiplier *= dk.RoRTSBonus(target)
 				}
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
@@ -187,11 +162,7 @@ func (dk *Deathknight) registerBloodPlague() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dot := spell.Dot(target)
-			if dot.IsActive() {
-				isRefreshing[target.Index] = true
-			}
 			dot.Apply(sim)
-			isRefreshing[target.Index] = false
 		},
 	})
 	dk.BloodPlagueExtended = make([]int, dk.Env.GetNumTargets())
