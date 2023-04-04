@@ -38,8 +38,19 @@ func (dk *Deathknight) applyRageOfRivendare() {
 	dk.AddStat(stats.Expertise, float64(dk.Talents.RageOfRivendare)*core.ExpertisePerQuarterPercentReduction)
 
 	bonus := 1.0 + 0.02*float64(dk.Talents.RageOfRivendare)
-	dk.RoRTSBonus = func(target *core.Unit) float64 {
-		return core.TernaryFloat64(dk.BloodPlagueSpell.Dot(target).IsActive(), bonus, 1.0)
+	dk.RoRTSBonus = func(sim *core.Simulation, target *core.Unit) float64 {
+		if dk.BloodPlagueSpell.Dot(target).IsActive() {
+			return bonus
+		}
+		// always assume another DK has applied it after 3 seconds
+		if sim.CurrentTime > 3*time.Second {
+			return bonus
+		}
+		// Assume we have 3 DKs in the raid, and we have a 1/3 chance of being the first to apply BP.
+		if sim.Roll(0, 3) > 1 {
+			return bonus
+		}
+		return 1.0
 	}
 }
 
@@ -181,7 +192,7 @@ func (dk *Deathknight) bloodCakedBladeHit(isMh bool) *core.Spell {
 
 func (dk *Deathknight) applyEbonPlaguebringerOrCryptFever() {
 	dk.EbonPlagueOrCryptFeverAura = make([]*core.Aura, len(dk.Env.Encounter.TargetUnits))
-	
+
 	if dk.Talents.CryptFever == 0 {
 		return
 	}

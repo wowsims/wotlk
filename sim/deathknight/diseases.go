@@ -96,7 +96,7 @@ func (dk *Deathknight) registerFrostFever() {
 
 				if !isRollover {
 					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
-					dot.SnapshotAttackerMultiplier *= dk.RoRTSBonus(target)
+					dot.SnapshotAttackerMultiplier *= dk.RoRTSBonus(sim, target)
 				}
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
@@ -146,7 +146,7 @@ func (dk *Deathknight) registerBloodPlague() {
 				if !isRollover {
 					dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
 					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
-					dot.SnapshotAttackerMultiplier *= dk.RoRTSBonus(target)
+					dot.SnapshotAttackerMultiplier *= dk.RoRTSBonus(sim, target)
 				}
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {

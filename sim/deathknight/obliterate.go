@@ -55,7 +55,7 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool) *core.Spell {
 					spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
 					spell.BonusWeaponDamage()
 			}
-			baseDamage *= dk.RoRTSBonus(target) *
+			baseDamage *= dk.RoRTSBonus(sim, target) *
 				(1.0 + dk.dkCountActiveDiseases(target)*diseaseMulti) *
 				dk.mercilessCombatBonus(sim)
 

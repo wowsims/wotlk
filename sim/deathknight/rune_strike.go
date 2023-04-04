@@ -62,7 +62,7 @@ func (dk *Deathknight) newRuneStrikeSpell(isMH bool) *core.Spell {
 				outcomeApplier = spell.OutcomeMeleeSpecialCritOnly
 			}
 
-			baseDamage *= dk.RoRTSBonus(target)
+			baseDamage *= dk.RoRTSBonus(sim, target)
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, outcomeApplier)
 
 			if isMH {

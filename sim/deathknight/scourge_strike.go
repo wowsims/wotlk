@@ -75,7 +75,7 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 				bonusBaseDamage +
 				spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
 				spell.BonusWeaponDamage()
-			baseDamage *= dk.RoRTSBonus(target)
+			baseDamage *= dk.RoRTSBonus(sim, target)
 
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 

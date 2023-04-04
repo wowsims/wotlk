@@ -52,7 +52,7 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *core.Spell {
 					spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
 					spell.BonusWeaponDamage()
 			}
-			baseDamage *= dk.RoRTSBonus(target) *
+			baseDamage *= dk.RoRTSBonus(sim, target) *
 				(1.0 + dk.dkCountActiveDiseases(target)*diseaseMulti)
 
 			result := spell.CalcDamage(sim, target, baseDamage, dk.threatOfThassarianOutcomeApplier(spell))
@@ -111,7 +111,7 @@ func (dk *Deathknight) registerDrwBloodStrikeSpell() {
 				spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
 				spell.BonusWeaponDamage()
 
-			baseDamage *= dk.RoRTSBonus(target) *
+			baseDamage *= dk.RoRTSBonus(sim, target) *
 				(1.0 + dk.drwCountActiveDiseases(target)*diseaseMulti)
 
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)

@@ -30,7 +30,7 @@ func (dk *Deathknight) registerDeathCoilSpell() {
 		ThreatMultiplier: 1.0,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := (bonusFlatDamage + 0.15*dk.getImpurityBonus(spell)) * dk.RoRTSBonus(target)
+			baseDamage := (bonusFlatDamage + 0.15*dk.getImpurityBonus(spell)) * dk.RoRTSBonus(sim, target)
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if result.Landed() && dk.Talents.UnholyBlight {
 				dk.procUnholyBlight(sim, target, result.Damage)

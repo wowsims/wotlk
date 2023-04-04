@@ -46,7 +46,7 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 			for _, aoeTarget := range sim.Encounter.TargetUnits {
 				baseDamage := (sim.Roll(518, 562) + 0.2*dk.getImpurityBonus(spell)) *
 					dk.glacielRotBonus(aoeTarget) *
-					dk.RoRTSBonus(aoeTarget) *
+					dk.RoRTSBonus(sim, aoeTarget) *
 					dk.mercilessCombatBonus(sim) *
 					sim.Encounter.AOECapMultiplier()
 
