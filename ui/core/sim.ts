@@ -110,6 +110,8 @@ export class Sim {
 
 	// Fires when a raid sim API call completes.
 	readonly simResultEmitter = new TypedEvent<SimResult>();
+	// Fires when a raid sim API call starts.
+	readonly simRequestStartedEmitter = new TypedEvent<void>();
 
 	private readonly _initPromise: Promise<any>;
 	private lastUsedRngSeed: number = 0;
@@ -221,6 +223,7 @@ export class Sim {
 
 		await this.waitForInit();
 
+		this.simRequestStartedEmitter.emit(eventID);
 		const request = this.makeRaidSimRequest(false);
 
 		var result = await this.workerPool.raidSimAsync(request, onProgress);
@@ -240,6 +243,7 @@ export class Sim {
 
 		await this.waitForInit();
 
+		this.simRequestStartedEmitter.emit(eventID);
 		const request = this.makeRaidSimRequest(true);
 		const result = await this.workerPool.raidSimAsync(request, () => { });
 		if (result.errorResult != "") {

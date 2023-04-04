@@ -14,7 +14,8 @@ import { addRaidSimAction, RaidSimResultsManager } from './components/raid_sim_a
 import { SavedDataConfig, SavedDataManager } from './components/saved_data_manager';
 import { addStatWeightsAction } from './components/stat_weights_action';
 
-import { GearTab, BulkTab } from './components/individual_sim_ui/gear_tab';
+import { BulkTab } from './components/individual_sim_ui/bulk_tab';
+import { GearTab } from './components/individual_sim_ui/gear_tab';
 import { SettingsTab } from './components/individual_sim_ui/settings_tab';
 
 import {

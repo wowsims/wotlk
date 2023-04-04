@@ -2,21 +2,6 @@
 
 @import "./filters_menu";
 
-.bulk-settings-button {
-  margin-top: map.get($spacers, 3);
-}
-
-.bulk-result-item-slot {
-  color:aliceblue;
-  margin-left: 0.5rem;
-  font-size: 0.5 * map.get($font-sizes, 6);
-
-}
-
-.bulk-header-margin {
-  margin-top: 2rem;
-}
-
 .gear-picker-root {
   display: flex;
   flex-wrap: wrap;
