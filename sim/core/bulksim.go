@@ -32,6 +32,14 @@ func RunBulkSim(ctx context.Context, request *proto.RaidSimRequest, progress cha
 		return nil, fmt.Errorf("bulksim: expected exactly 1 player, found %d", playerCount)
 	}
 
+	if len(player.GetBulkEquipment().GetItems()) > 20 {
+		// At even just 1 iteration per sim (useless), this would be at around 2**20 = 1 million
+		// iterations. Anything above this is just not feasible, and even this upper bound is
+		// a bit extreme. Mostly we have to ensure that we don't exceed the 64-bit range used to
+		// compute all combinations.
+		return nil, fmt.Errorf("bulksim: too many items specified, computationally too expensive")
+	}
+
 	// TODO(Riotdog-GehennasEU): Expose this as a setting?
 	concurrency := (runtime.NumCPU() - 1) * 2
 	if concurrency <= 0 {
@@ -222,10 +230,10 @@ func generateAllEquipmentSubstitutions(ctx context.Context, spec *proto.BulkEqui
 
 		// Borrowed from https://github.com/mxschmitt/golang-combinations and adapted to
 		// only emit valid combinations.
-		count := uint(len(distinctItemSlotCombos))
-		for bits := 1; bits < (1 << count); bits++ {
+		count := uint64(len(distinctItemSlotCombos))
+		for bits := uint64(1); bits < (1 << count); bits++ {
 			combo := &equipmentSubstitution{}
-			for idx := uint(0); idx < count; idx++ {
+			for idx := uint64(0); idx < count; idx++ {
 				if (bits>>idx)&1 == 1 {
 					combo.Items = append(combo.Items, distinctItemSlotCombos[idx])
 				}
