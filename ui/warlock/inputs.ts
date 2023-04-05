@@ -162,38 +162,21 @@ export const WarlockRotationConfig = {
 				var newOptions: WarlockOptions;
 				var newGlyphs: Glyphs;
 				var newTalents: string;
-				// var newIndividualBuffs = player.getBuffs();
-				// const raid = player.getRaid();
-				// var newDebuffs = raid?.getDebuffs();
-				// var newRaidBuffs = raid?.getBuffs();
 				if (newValue == RotationType.Affliction) {
 					newTalents = Presets.AfflictionTalents.data.talentsString
 					newGlyphs = Presets.AfflictionTalents.data.glyphs || Glyphs.create();
 					newRotation = Presets.AfflictionRotation
 					newOptions = Presets.AfflictionOptions
-					// if (newDebuffs != undefined) {
-					// 	newDebuffs.shadowMastery = false
-					// }
 				} else if (newValue == RotationType.Demonology) {
 					newTalents = Presets.DemonologyTalents.data.talentsString
 					newGlyphs = Presets.DemonologyTalents.data.glyphs || Glyphs.create();
 					newRotation = Presets.DemonologyRotation
 					newOptions = Presets.DemonologyOptions
-					// if (newDebuffs != undefined) {
-					// 	newDebuffs.shadowMastery = false
-					// }
-					// if (newRaidBuffs != undefined) {
-					// 	newRaidBuffs.demonicPact = 0
-					// }
 				} else if (newValue == RotationType.Destruction) {
 					newTalents = Presets.DestructionTalents.data.talentsString
 					newGlyphs = Presets.DestructionTalents.data.glyphs || Glyphs.create();
 					newRotation = Presets.DestructionRotation
 					newOptions = Presets.DestructionOptions
-					// newIndividualBuffs.improvedSoulLeech = false
-					// if (newDebuffs != undefined) {
-					// 	newDebuffs.shadowMastery = true
-					// }
 				}
 				newRotation.type = newValue;
 				newRotation.preset = RotationPreset.Automatic;
@@ -202,9 +185,6 @@ export const WarlockRotationConfig = {
 					player.setSpecOptions(eventID, newOptions);
 					player.setGlyphs(eventID, newGlyphs);
 					player.setRotation(eventID, newRotation);
-					// player.setBuffs(eventID, newIndividualBuffs);
-					// raid?.setDebuffs(eventID, newDebuffs || Debuffs.create());
-					// raid?.setBuffs(eventID, newRaidBuffs || RaidBuffs.create());
 				});
 			},
 		},
@@ -225,34 +205,21 @@ export const WarlockRotationConfig = {
 					var newOptions: WarlockOptions;
 					var newGlyphs: Glyphs;
 					var newTalents: string;
-					// var newIndividualBuffs = player.getBuffs();
-					// const raid = player.getRaid();
-					// var newDebuffs = raid?.getDebuffs();
 					if (newRotation.type == RotationType.Affliction) {
 						newTalents = Presets.AfflictionTalents.data.talentsString
 						newGlyphs = Presets.AfflictionTalents.data.glyphs || Glyphs.create()
 						newRotation = Presets.AfflictionRotation
 						newOptions = Presets.AfflictionOptions
-						// if (newDebuffs != undefined) {
-						// 	newDebuffs.shadowMastery = false
-						// }
 					} else if (newRotation.type == RotationType.Demonology) {
 						newTalents = Presets.DemonologyTalents.data.talentsString
 						newGlyphs = Presets.DemonologyTalents.data.glyphs || Glyphs.create()
 						newRotation = Presets.DemonologyRotation
 						newOptions = Presets.DemonologyOptions
-						// if (newDebuffs != undefined) {
-						// 	newDebuffs.shadowMastery = false
-						// }
 					} else if (newRotation.type == RotationType.Destruction) {
 						newTalents = Presets.DestructionTalents.data.talentsString
 						newGlyphs = Presets.DestructionTalents.data.glyphs || Glyphs.create()
 						newRotation = Presets.DestructionRotation
 						newOptions = Presets.DestructionOptions
-						// newIndividualBuffs.improvedSoulLeech = false
-						// if (newDebuffs != undefined) {
-						// 	newDebuffs.shadowMastery = true
-						// }
 					}
 				}
 				newRotation.preset = newValue;
@@ -262,8 +229,6 @@ export const WarlockRotationConfig = {
 						player.setTalentsString(eventID, newTalents);
 						player.setSpecOptions(eventID, newOptions);
 						player.setGlyphs(eventID, newGlyphs);
-						// player.setBuffs(eventID, newIndividualBuffs);
-						// raid?.setDebuffs(eventID, newDebuffs || Debuffs.create());
 					}
 					player.setRotation(eventID, newRotation);
 				});
