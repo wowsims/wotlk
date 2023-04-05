@@ -295,7 +295,7 @@ func createNewRequestWithSubstitution(readonlyInputRequest *proto.RaidSimRequest
 		equipment.Items[is.Slot] = is.Item
 	}
 
-	// Clear the playuer's bulk equipment set since we don't want to recursively keep bulk simming.
+	// Clear the player's bulk equipment set since we don't want to recursively keep bulk simming.
 	player.BulkEquipment = nil
 	return request, changeLog
 }
