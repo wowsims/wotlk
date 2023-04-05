@@ -57,7 +57,7 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *core.Spell {
 					spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
 					spell.BonusWeaponDamage()
 			}
-			baseDamage *= dk.RoRTSBonus(sim, target)
+			baseDamage *= dk.RoRTSBonus(target)
 			if hasGlyph {
 				baseDamage *= 1 + 0.01*core.MinFloat(dk.CurrentRunicPower(), 25)
 			}

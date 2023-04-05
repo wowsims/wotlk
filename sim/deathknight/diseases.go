@@ -79,6 +79,7 @@ func (dk *Deathknight) registerFrostFever() {
 		Dot: core.DotConfig{
 			Aura: core.Aura{
 				Label: "FrostFever",
+				Tag:   "FrostFever",
 				OnGain: func(aura *core.Aura, sim *core.Simulation) {
 					if dk.IcyTalonsAura != nil {
 						dk.IcyTalonsAura.Activate(sim)
@@ -96,7 +97,7 @@ func (dk *Deathknight) registerFrostFever() {
 
 				if !isRollover {
 					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
-					dot.SnapshotAttackerMultiplier *= dk.RoRTSBonus(sim, target)
+					dot.SnapshotAttackerMultiplier *= dk.RoRTSBonus(target)
 				}
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
@@ -130,6 +131,7 @@ func (dk *Deathknight) registerBloodPlague() {
 		Dot: core.DotConfig{
 			Aura: core.Aura{
 				Label: "BloodPlague",
+				Tag:   "BloodPlague",
 				OnGain: func(aura *core.Aura, sim *core.Simulation) {
 					if dk.EbonPlagueOrCryptFeverAura[aura.Unit.Index] != nil {
 						dk.EbonPlagueOrCryptFeverAura[aura.Unit.Index].Activate(sim)
@@ -146,7 +148,7 @@ func (dk *Deathknight) registerBloodPlague() {
 				if !isRollover {
 					dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
 					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
-					dot.SnapshotAttackerMultiplier *= dk.RoRTSBonus(sim, target)
+					dot.SnapshotAttackerMultiplier *= dk.RoRTSBonus(target)
 				}
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {

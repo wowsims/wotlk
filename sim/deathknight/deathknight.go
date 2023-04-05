@@ -208,7 +208,9 @@ type Deathknight struct {
 	FrostFeverDebuffAura       []*core.Aura
 	EbonPlagueOrCryptFeverAura []*core.Aura
 
-	RoRTSBonus func(*core.Simulation, *core.Unit) float64 // is either RoR or TS bonus function based on talents
+	RoRTSBonus func(*core.Unit) float64 // is either RoR or TS bonus function based on talents
+
+	MakeTSRoRAssumptions bool
 }
 
 func (dk *Deathknight) ModifyDamageModifier(value float64) {
@@ -370,6 +372,7 @@ func (dk *Deathknight) Reset(sim *core.Simulation) {
 	dk.LastCast = nil
 	dk.NextCast = nil
 	dk.DeathStrikeHeals = dk.DeathStrikeHeals[:0]
+	dk.MakeTSRoRAssumptions = sim.Raid.Size() <= 1
 }
 
 func (dk *Deathknight) IsFuStrike(spell *core.Spell) bool {
@@ -388,7 +391,7 @@ func NewDeathknight(character core.Character, inputs DeathknightInputs, talents 
 		Character:  character,
 		Talents:    &proto.DeathknightTalents{},
 		Inputs:     inputs,
-		RoRTSBonus: func(s *core.Simulation, u *core.Unit) float64 { return 1.0 }, // default to no bonus for RoR/TS
+		RoRTSBonus: func(u *core.Unit) float64 { return 1.0 }, // default to no bonus for RoR/TS
 	}
 	core.FillTalentsProto(dk.Talents.ProtoReflect(), talents, TalentTreeSizes)
 

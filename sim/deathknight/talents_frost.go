@@ -105,19 +105,13 @@ func (dk *Deathknight) mercilessCombatBonus(sim *core.Simulation) float64 {
 
 func (dk *Deathknight) applyTundaStalker() {
 	bonus := 1.0 + 0.03*float64(dk.Talents.TundraStalker)
-	dk.RoRTSBonus = func(sim *core.Simulation, target *core.Unit) float64 {
-		if dk.FrostFeverSpell.Dot(target).IsActive() {
+	dk.RoRTSBonus = func(target *core.Unit) float64 {
+		// assume if external ebon plaguebringer is active, then another DK will always have Frost Fever up
+		if dk.MakeTSRoRAssumptions && target.HasActiveAura("EbonPlaguebringer-1") {
 			return bonus
 		}
-		// always assume another DK has applied it after 3 seconds
-		if sim.CurrentTime > 3*time.Second {
-			return bonus
-		}
-		// Assume we have 3 DKs in the raid, and we have a 1/3 chance of being the first to apply FF.
-		if sim.Roll(0, 3) > 1 {
-			return bonus
-		}
-		return 1.0
+
+		return core.TernaryFloat64(target.HasActiveAuraWithTag("FrostFever"), bonus, 1.0)
 	}
 }
 

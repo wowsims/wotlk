@@ -38,19 +38,13 @@ func (dk *Deathknight) applyRageOfRivendare() {
 	dk.AddStat(stats.Expertise, float64(dk.Talents.RageOfRivendare)*core.ExpertisePerQuarterPercentReduction)
 
 	bonus := 1.0 + 0.02*float64(dk.Talents.RageOfRivendare)
-	dk.RoRTSBonus = func(sim *core.Simulation, target *core.Unit) float64 {
-		if dk.BloodPlagueSpell.Dot(target).IsActive() {
+	dk.RoRTSBonus = func(target *core.Unit) float64 {
+		// assume if external ebon plaguebringer is active, then another DK will always have Blood Plague up
+		if dk.MakeTSRoRAssumptions && target.HasActiveAura("EbonPlaguebringer-1") {
 			return bonus
 		}
-		// always assume another DK has applied it after 3 seconds
-		if sim.CurrentTime > 3*time.Second {
-			return bonus
-		}
-		// Assume we have 3 DKs in the raid, and we have a 1/3 chance of being the first to apply BP.
-		if sim.Roll(0, 3) > 1 {
-			return bonus
-		}
-		return 1.0
+
+		return core.TernaryFloat64(target.HasActiveAuraWithTag("BloodPlague"), bonus, 1.0)
 	}
 }
 

@@ -42,7 +42,7 @@ func (dk *Deathknight) registerIcyTouchSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := (sim.Roll(227, 245) + sigilBonus + 0.1*dk.getImpurityBonus(spell)) *
 				dk.glacielRotBonus(target) *
-				dk.RoRTSBonus(sim, target) *
+				dk.RoRTSBonus(target) *
 				dk.mercilessCombatBonus(sim)
 
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)

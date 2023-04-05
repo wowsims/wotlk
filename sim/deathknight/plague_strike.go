@@ -46,7 +46,7 @@ func (dk *Deathknight) newPlagueStrikeSpell(isMH bool) *core.Spell {
 					spell.Unit.OHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
 					spell.BonusWeaponDamage()
 			}
-			baseDamage *= dk.RoRTSBonus(sim, target)
+			baseDamage *= dk.RoRTSBonus(target)
 
 			result := spell.CalcDamage(sim, target, baseDamage, dk.threatOfThassarianOutcomeApplier(spell))
 

@@ -49,7 +49,7 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool) *core.Spell {
 					spell.BonusWeaponDamage()
 			}
 			baseDamage *= dk.glacielRotBonus(target) *
-				dk.RoRTSBonus(sim, target) *
+				dk.RoRTSBonus(target) *
 				dk.mercilessCombatBonus(sim)
 
 			result := spell.CalcDamage(sim, target, baseDamage, dk.threatOfThassarianOutcomeApplier(spell))
