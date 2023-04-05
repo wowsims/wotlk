@@ -21,6 +21,9 @@ func TestAffliction(t *testing.T) {
 		Glyphs:      AfflictionGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Affliction Warlock", SpecOptions: DefaultAfflictionWarlock},
+		OtherSpecOptions: []core.SpecOptionsCombo{
+			{Label: "AffItemSwap", SpecOptions: afflictionItemSwap},
+		},
 
 		ItemFilter: ItemFilter,
 	}))
@@ -119,6 +122,13 @@ var DefaultAfflictionWarlock = &proto.Player_Warlock{
 	},
 }
 
+var afflictionItemSwap = &proto.Player_Warlock{
+	Warlock: &proto.Warlock{
+		Options:  defaultAfflictionOptions,
+		Rotation: afflictionItemSwapRotation,
+	},
+}
+
 var defaultAfflictionOptions = &proto.Warlock_Options{
 	Armor:       proto.Warlock_Options_FelArmor,
 	Summon:      proto.Warlock_Options_Felhunter,
@@ -133,6 +143,24 @@ var defaultAfflictionRotation = &proto.Warlock_Rotation{
 	Curse:        proto.Warlock_Rotation_Agony,
 	Corruption:   true,
 	DetonateSeed: true,
+}
+
+var afflictionItemSwapRotation = &proto.Warlock_Rotation{
+	Type:             proto.Warlock_Rotation_Affliction,
+	PrimarySpell:     proto.Warlock_Rotation_ShadowBolt,
+	SecondaryDot:     proto.Warlock_Rotation_UnstableAffliction,
+	SpecSpell:        proto.Warlock_Rotation_Haunt,
+	Curse:            proto.Warlock_Rotation_Agony,
+	Corruption:       true,
+	DetonateSeed:     true,
+	EnableWeaponSwap: true,
+	WeaponSwap: &proto.ItemSwap{
+		MhItem: &proto.ItemSpec{
+			Id:      45457,
+			Enchant: 3790,
+			Gems:    []int32{40013, 40013},
+		},
+	},
 }
 
 // ---------------------------------------

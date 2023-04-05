@@ -73,6 +73,7 @@ type Warlock struct {
 	petStmBonusSP float64
 	acl           []ActionCondition
 	skipList      map[int]struct{}
+	swapped       bool
 }
 
 type ACLaction int
@@ -135,6 +136,16 @@ func (warlock *Warlock) Initialize() {
 	}
 	// Do this post-finalize so cast speed is updated with new stats
 	warlock.Env.RegisterPostFinalizeEffect(func() {
+		// if itemswap is enabled, correct for any possible haste changes
+		var correction stats.Stats
+		if warlock.ItemSwap.IsEnabled() {
+			correction = warlock.ItemSwap.CalcStatChanges([]proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand,
+				proto.ItemSlot_ItemSlotOffHand, proto.ItemSlot_ItemSlotRanged})
+
+			warlock.AddStats(correction)
+			warlock.MultiplyCastSpeed(1.0)
+		}
+
 		precastSpellAt := -warlock.ApplyCastSpeedForSpell(precastSpell.DefaultCast.CastTime, precastSpell)
 
 		warlock.RegisterPrepullAction(precastSpellAt, func(sim *core.Simulation) {
@@ -144,6 +155,10 @@ func (warlock *Warlock) Initialize() {
 			warlock.RegisterPrepullAction(precastSpellAt-warlock.SpellGCD(), func(sim *core.Simulation) {
 				warlock.LifeTap.Cast(sim, nil)
 			})
+		}
+		if warlock.ItemSwap.IsEnabled() {
+			warlock.AddStats(correction.Multiply(-1))
+			warlock.MultiplyCastSpeed(1.0)
 		}
 	})
 }
@@ -165,6 +180,9 @@ func (warlock *Warlock) Reset(sim *core.Simulation) {
 		warlock.petStmBonusSP = 0
 	}
 
+	warlock.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand,
+		proto.ItemSlot_ItemSlotOffHand, proto.ItemSlot_ItemSlotRanged}, false)
+	warlock.swapped = true
 	warlock.setupCooldowns(sim)
 }
 
@@ -195,6 +213,10 @@ func NewWarlock(character core.Character, options *proto.Player) *Warlock {
 
 	if warlock.Rotation.UseInfernal {
 		warlock.Infernal = warlock.NewInfernal()
+	}
+
+	if warlock.Rotation.Type == proto.Warlock_Rotation_Affliction && warlock.Rotation.EnableWeaponSwap {
+		warlock.EnableItemSwap(warlock.Rotation.WeaponSwap, 1, 1, 1)
 	}
 
 	warlock.applyWeaponImbue()

@@ -493,6 +493,7 @@ export interface TypedItemSwapPickerConfig<SpecType extends Spec, T> extends Ite
 interface WrappedItemSwapInputConfig<SpecType extends Spec> {
 	fieldName: keyof SpecRotation<SpecType>,
 	values: Array<ItemSlot>,
+	label: string,
 	labelTooltip?: string,
 	getValue?: (player: Player<SpecType>) => ItemSwap,
 	setValue?: (eventID: EventID, player: Player<SpecType>, newValue: ItemSwap) => void,
@@ -510,6 +511,7 @@ export function MakeItemSwapInput<SpecType extends Spec>(config: WrappedItemSwap
 		}),
 		itemSlots: config.values,
 		changedEvent: (player: Player<SpecType>) => player.rotationChangeEmitter,
+		label: config.label,
 		labelTooltip: config.labelTooltip,
 		showWhen: config.showWhen,
 	}
