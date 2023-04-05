@@ -350,7 +350,11 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	// determining whether to cast it vs. dump Energy first. That puts the
 	// Energy threshold for FF usage as 107 minus 10 for the Clearcasted
 	// special minus 10 for the FF GCD = 87 Energy.
-	ffNow := cat.FaerieFire.CanCast(sim, cat.CurrentTarget) && !isClearcast && curEnergy < 87
+	ffThresh := 87.0
+	if cat.BerserkAura.IsActive() {
+		ffThresh = cat.Rotation.BerserkFfThresh
+	}
+	ffNow := cat.FaerieFire.CanCast(sim, cat.CurrentTarget) && !isClearcast && curEnergy < ffThresh
 
 	roarNow := curCp >= 1 && (!cat.SavageRoarAura.IsActive() || cat.clipRoar(sim))
 
@@ -681,6 +685,7 @@ type FeralDruidRotation struct {
 	MinCombosForBite   int32
 	MangleSpam         bool
 	BerserkBiteThresh  float64
+	BerserkFfThresh    float64
 	Powerbear          bool
 	MinRoarOffset      time.Duration
 	RevitFreq          float64
