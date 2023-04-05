@@ -1,4 +1,7 @@
-import { Spec } from '../core/proto/common.js';
+import { 
+	Spec, 
+	ItemSlot
+} from '../core/proto/common.js';
 import { Player } from '../core/player.js';
 import { EventID } from '../core/typed_event.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
@@ -122,8 +125,8 @@ export const RetributionPaladinRotationHoldLastAvengingWrathUntilExecution = Inp
 export const RetributionPaladinRotationCancelChaosBane = InputHelpers.makeRotationBooleanInput<Spec.SpecRetributionPaladin>({
 	fieldName: 'cancelChaosBane',
 	label: 'Cancel Chaos Bane Buff From Shadowmourne',
-	labelTooltip: 'Cancels the buff provided when Shadowmourne soul shard buff reaches 10 stacks. On Retribution Paladin this is theorized to be a dps increase over retaining the 270 strength Chaos Bane buff.',
-	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => (player.getRotation().type == RotationType.Standard) || (player.getRotation().type == RotationType.Custom) ,
+	labelTooltip: 'Cancels the buff provided when Shadowmourne soul shard buff reaches 10 stacks.',
+	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.name == "Shadowmourne" ,
 });
 
 export const RetributionPaladinRotationPriorityConfig = InputHelpers.makeCustomRotationInput<Spec.SpecRetributionPaladin, SpellOption>({

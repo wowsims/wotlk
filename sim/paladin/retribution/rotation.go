@@ -91,9 +91,9 @@ func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 
 			if spell.IsReady(sim) {
 				success := spell.Cast(sim, target)
-				if ret.Paladin.HasActiveAura("Chaos Bane") && ret.Paladin.CancelChaosBane {
-					ret.Paladin.GetAura("Chaos Bane").Deactivate(sim)
-				}
+				
+				CancelChaosBane(ret, sim)
+
 				if !success {
 					ret.WaitForMana(sim, spell.CurCast.Cost)
 				}
@@ -122,6 +122,12 @@ func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 
 	ret.waitUntilNextEvent(sim, events, ret.customRotation)
 
+}
+
+func CancelChaosBane(ret *RetributionPaladin, sim *core.Simulation) {
+	if ret.Paladin.HasActiveAura("Chaos Bane") && ret.Paladin.CancelChaosBane {
+		ret.Paladin.GetAura("Chaos Bane").Deactivate(sim)
+	}
 }
 
 func (ret *RetributionPaladin) castSequenceRotation(sim *core.Simulation) {
