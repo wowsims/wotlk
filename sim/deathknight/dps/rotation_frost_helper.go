@@ -252,8 +252,7 @@ func (dk *DpsDeathknight) RotationActionCallback_EndOfFightPrio(sim *core.Simula
 }
 
 func (dk *DpsDeathknight) RotationActionCallback_BS_Frost(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	casted := dk.castBloodSpell(sim, target)
-	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
-	s.ConditionalAdvance(casted && advance)
+	dk.castBloodSpell(sim, target)
+	s.Advance()
 	return -1
 }
