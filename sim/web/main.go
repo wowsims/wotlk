@@ -203,7 +203,6 @@ func setupAsyncServer() {
 		if err != nil {
 			return
 		}
-
 		msg := &proto.AsyncAPIResult{}
 		if err := googleProto.Unmarshal(body, msg); err != nil {
 			log.Printf("Failed to parse request: %s", err.Error())

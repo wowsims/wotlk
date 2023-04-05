@@ -1,11 +1,3 @@
-# Bulk Sim Branch
-
-![Example1](bulk_feature_1.png)
-
-![Example1](bulk_feature_2.png)
-
-# Original
-
 Welcome to the WoW WOTLK Classic simulator! If you have questions or are thinking about contributing, [join our discord](https://discord.gg/jJMPr9JWwx "https://discord.gg/jJMPr9JWwx") to chat!
 
 The primary goal of this project is to provide a framework that makes it easy to build a DPS sim for any class/spec, with a polished UI and accurate results. Each community will have ownership / responsibility over their portion of the sim, to ensure accuracy and that their community is represented. By having all the individual sims on the same engine, we can also have a combined 'raid sim' for testing raid compositions.
