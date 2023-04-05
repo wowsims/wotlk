@@ -310,6 +310,48 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestAffliction-Settings-Orc-P2-AffItemSwap-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 9917.93286
+  tps: 10635.38151
+ }
+}
+dps_results: {
+ key: "TestAffliction-Settings-Orc-P2-AffItemSwap-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 9917.93286
+  tps: 8921.08721
+ }
+}
+dps_results: {
+ key: "TestAffliction-Settings-Orc-P2-AffItemSwap-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 10579.33103
+  tps: 9539.13517
+ }
+}
+dps_results: {
+ key: "TestAffliction-Settings-Orc-P2-AffItemSwap-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 5681.69666
+  tps: 7350.03451
+ }
+}
+dps_results: {
+ key: "TestAffliction-Settings-Orc-P2-AffItemSwap-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 5681.69666
+  tps: 5345.70269
+ }
+}
+dps_results: {
+ key: "TestAffliction-Settings-Orc-P2-AffItemSwap-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 5495.32631
+  tps: 5085.13094
+ }
+}
+dps_results: {
  key: "TestAffliction-Settings-Orc-P2-Affliction Warlock-FullBuffs-LongMultiTarget"
  value: {
   dps: 9897.64989

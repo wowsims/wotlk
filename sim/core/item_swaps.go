@@ -97,6 +97,17 @@ func (swap *ItemSwap) GetItem(slot proto.ItemSlot) *Item {
 	return &swap.unEquippedItems[slot-offset]
 }
 
+func (swap *ItemSwap) CalcStatChanges(slots []proto.ItemSlot) stats.Stats {
+	newStats := stats.Stats{}
+	for _, slot := range slots {
+		oldItemStats := swap.getItemStats(swap.character.Equip[slot])
+		newItemStats := swap.getItemStats(*swap.GetItem(slot))
+		newStats = newStats.Add(newItemStats.Subtract(oldItemStats))
+	}
+
+	return newStats
+}
+
 func (swap *ItemSwap) SwapItems(sim *Simulation, slots []proto.ItemSlot, useGCD bool) {
 	if !swap.IsEnabled() {
 		return

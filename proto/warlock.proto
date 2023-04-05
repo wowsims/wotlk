@@ -2,6 +2,7 @@ syntax = "proto3";
 package proto;
 
 option go_package = "./proto";
+import "common.proto";
 
 // WotLK talents
 message WarlockTalents {
@@ -170,7 +171,7 @@ message Warlock {
 			ChaosBolt = 1;
 			Haunt = 2;
 		}
-		Preset preset= 1;
+		Preset preset = 1;
 		Curse curse = 2;
 		PrimarySpell primary_spell = 3;
 		SecondaryDot secondary_dot = 4;
@@ -179,6 +180,9 @@ message Warlock {
 		SpecSpell spec_spell = 7;
 		Type type = 8;
 		bool use_infernal = 9;
+
+		bool enable_weapon_swap = 10;
+		ItemSwap weapon_swap = 11;
 	}
 	Rotation rotation = 1;
 	

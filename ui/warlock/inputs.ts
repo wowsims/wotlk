@@ -11,7 +11,7 @@ import {
 	Warlock_Options_Summon as Summon,
 } from '../core/proto/warlock.js';
 
-import { RaidTarget, Spec, Glyphs, Debuffs, IndividualBuffs, RaidBuffs } from '../core/proto/common.js';
+import { RaidTarget, Spec, Glyphs, Debuffs, IndividualBuffs, RaidBuffs, ItemSwap, ItemSlot } from '../core/proto/common.js';
 import { NO_TARGET } from '../core/proto_utils/utils.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
@@ -142,7 +142,6 @@ export const CorruptionSpell = {
 		player.setRotation(eventID, newRotation);
 	},
 };
-
 
 export const WarlockRotationConfig = {
 	inputs: [
@@ -302,6 +301,23 @@ export const WarlockRotationConfig = {
 			label: 'Detonate Seed on Cast',
 			labelTooltip: 'Simulates raid doing damage to targets such that seed detonates immediately on cast.',
 			showWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().primarySpell == PrimarySpell.Seed,
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecWarlock>({
+			fieldName: 'enableWeaponSwap',
+			label: 'Enable Weapon Swapping',
+			labelTooltip: 'Toggle on/off item swapping',
+			showWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction
+		}),
+		InputHelpers.MakeItemSwapInput<Spec.SpecWarlock>({
+			fieldName: 'weaponSwap',
+			label: 'Weapon Swap',
+			values: [
+				ItemSlot.ItemSlotMainHand,
+				ItemSlot.ItemSlotOffHand,
+				ItemSlot.ItemSlotRanged,
+			],
+			labelTooltip: 'Start with the swapped items until Corruption has been cast, then swap back to normal gear set. If a slot is empty it will not be used in the swap',
+			showWhen: (player: Player<Spec.SpecWarlock>) => (player.getRotation().type == RotationType.Affliction && player.getRotation().enableWeaponSwap) || false
 		}),
 	],
 };
