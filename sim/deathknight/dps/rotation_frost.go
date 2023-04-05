@@ -30,7 +30,6 @@ type FrostRotation struct {
 func (fr *FrostRotation) Initialize(dk *DpsDeathknight) {
 	fr.oblitRPRegen = core.TernaryFloat64(dk.HasSetBonus(deathknight.ItemSetScourgeborneBattlegear, 4), 25.0, 20.0)
 	fr.onUseTrinkets = make([]*core.MajorCooldown, 0)
-	fr.fuSpellPriority = make([]*core.Spell, 0)
 
 	if dk.Env.GetNumTargets() > 2 {
 		fr.fuSpellPriority = []*core.Spell{dk.HowlingBlast, dk.Obliterate}
