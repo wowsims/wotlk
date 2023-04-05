@@ -37,10 +37,6 @@ func (warlock *Warlock) registerCurseOfElementsSpell() {
 	})
 }
 
-func (warlock *Warlock) ShouldCastCurseOfElements(sim *core.Simulation, target *core.Unit, curse proto.Warlock_Rotation_Curse) bool {
-	return curse == proto.Warlock_Rotation_Elements && !warlock.CurseOfElementsAuras.Get(target).IsActive()
-}
-
 func (warlock *Warlock) registerCurseOfWeaknessSpell() {
 	warlock.CurseOfWeaknessAuras = warlock.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
 		return core.CurseOfWeaknessAura(target, warlock.Talents.ImprovedCurseOfWeakness)
