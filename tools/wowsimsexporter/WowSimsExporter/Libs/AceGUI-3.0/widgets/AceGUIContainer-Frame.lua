@@ -190,7 +190,7 @@ local function Constructor()
 	frame:SetFrameLevel(100) -- Lots of room to draw under it
 	frame:SetBackdrop(FrameBackdrop)
 	frame:SetBackdropColor(0, 0, 0, 1)
-	frame:SetMinResize(400, 200)
+	frame:SetResizeBounds(400, 200) -- https://wowpedia.fandom.com/wiki/API_Frame_SetMinResize replaced in Ulduar patch.
 	frame:SetToplevel(true)
 	frame:SetScript("OnShow", Frame_OnShow)
 	frame:SetScript("OnHide", Frame_OnClose)
