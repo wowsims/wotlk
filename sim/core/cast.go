@@ -59,6 +59,7 @@ type Cast struct {
 func (cast Cast) EffectiveTime() time.Duration {
 	gcd := cast.GCD
 	if cast.GCD != 0 {
+		// TODO: isn't this wrong for spells like shadowfury, that have a reduced GCD?
 		gcd = MaxDuration(GCDMin, gcd)
 	}
 	fullCastTime := cast.CastTime + cast.ChannelTime + cast.AfterCastDelay

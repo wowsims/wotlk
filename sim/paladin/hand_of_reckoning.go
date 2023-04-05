@@ -13,7 +13,7 @@ func (paladin *Paladin) registerHandOfReckoningSpell() {
 	}
 
 	paladin.HandOfReckoning = paladin.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 62124},
+		ActionID:    core.ActionID{SpellID: 67485}, // 62124 is the "taunt" part
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       core.SpellFlagMeleeMetrics,
@@ -33,12 +33,10 @@ func (paladin *Paladin) registerHandOfReckoningSpell() {
 		DamageMultiplier:         1,
 		ThreatMultiplier:         1,
 		CritMultiplier:           paladin.SpellCritMultiplier(),
-		BonusHitRating:           100 * core.SpellHitRatingPerHitChance,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := 1 +
-				.5*spell.MeleeAttackPower()
-			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+			baseDamage := 1 + .5*spell.MeleeAttackPower()
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicCrit) // cannot miss
 		},
 	})
 }

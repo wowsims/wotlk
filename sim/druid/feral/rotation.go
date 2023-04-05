@@ -187,7 +187,7 @@ func (cat *FeralDruid) calcBuilderDpe(sim *core.Simulation) (float64, float64) {
 	// dynamic proc occurring
 	shredDpc := cat.Shred.ExpectedDamage(sim, cat.CurrentTarget)
 	rakeDpc := cat.Rake.ExpectedDamage(sim, cat.CurrentTarget)
-	return rakeDpc / 35., shredDpc / 42.
+	return rakeDpc / cat.CurrentRakeCost(), shredDpc / cat.CurrentShredCost()
 }
 
 func (cat *FeralDruid) clipRoar(sim *core.Simulation) bool {
@@ -277,11 +277,6 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 
 	rotation := &cat.Rotation
 
-	if rotation.MaintainFaerieFire && cat.ShouldFaerieFire(sim, cat.CurrentTarget) {
-		cat.FaerieFire.Cast(sim, cat.CurrentTarget)
-		return
-	}
-
 	cat.missChance = cat.MissChance()
 	cat.bleedAura = cat.CurrentTarget.GetExclusiveEffectCategory(core.BleedEffectCategory).GetActiveAura()
 
@@ -319,6 +314,20 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		rakeNow = (rakeDpe > shredDpe)
 	}
 
+	// Additionally, don't Rake if there is insufficient time to max out
+	// our available glyph of shred extensions before rip falls off
+	if rakeNow && ripDot.IsActive() {
+		maxRipDur := time.Duration(cat.maxRipTicks) * ripDot.TickLength
+		remainingExt := cat.maxRipTicks - ripDot.NumberOfTicks
+		energyForShreds := curEnergy - cat.CurrentRakeCost() - 30 + float64((ripDot.StartedAt()+maxRipDur-sim.CurrentTime)/core.EnergyTickDuration) + core.TernaryFloat64(cat.tfExpectedBefore(sim, ripDot.StartedAt()+maxRipDur), 60.0, 0)
+		maxShredsPossible := core.MinFloat(energyForShreds/cat.Shred.DefaultCast.Cost, (ripDot.ExpiresAt() - (sim.CurrentTime + time.Second)).Seconds())
+		rakeNow = remainingExt == 0 || (maxShredsPossible > float64(remainingExt))
+	}
+
+	// Disable Energy pooling for Rake in weaving rotations, since these
+	// rotations prioritize weave cpm over Rake uptime.
+	poolForRake := !(rotation.FlowerWeave || (rotation.BearweaveType != proto.FeralDruid_Rotation_None))
+
 	// Berserk algorithm: time Berserk for just after a Tiger's Fury
 	// *unless* we'll lose Berserk uptime by waiting for Tiger's Fury to
 	// come off cooldown. The latter exception is necessary for
@@ -336,6 +345,13 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		berserkNow = sim.GetRemainingDuration() < cat.BerserkAura.Duration+(3*time.Second)
 	}
 
+	// Faerie Fire on cooldown for Omen procs. Each second of FF delay is
+	// worth ~7 Energy, so it is okay to waste up to 7 Energy to cap when
+	// determining whether to cast it vs. dump Energy first. That puts the
+	// Energy threshold for FF usage as 107 minus 10 for the Clearcasted
+	// special minus 10 for the FF GCD = 87 Energy.
+	ffNow := cat.FaerieFire.CanCast(sim, cat.CurrentTarget) && !isClearcast && curEnergy < 87
+
 	roarNow := curCp >= 1 && (!cat.SavageRoarAura.IsActive() || cat.clipRoar(sim))
 
 	ripRefreshPending := false
@@ -348,6 +364,9 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	}
 	if rakeDot.IsActive() && (rakeDot.RemainingDuration(sim) < simTimeRemain-rakeDot.Duration) {
 		rakeCost := core.TernaryFloat64(cat.berserkExpectedAt(sim, rakeDot.ExpiresAt()), cat.Rake.DefaultCast.Cost*0.5, cat.Rake.DefaultCast.Cost)
+		if !poolForRake {
+			rakeCost = 0
+		}
 		pendingActions = append(pendingActions, pendingAction{rakeDot.ExpiresAt(), rakeCost})
 	}
 	if cat.bleedAura.IsActive() && (cat.bleedAura.RemainingDuration(sim) < simTimeRemain-time.Second) {
@@ -538,6 +557,9 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		}
 	} else if emergencyBearweave {
 		cat.readyToShift = true
+	} else if ffNow {
+		cat.FaerieFire.Cast(sim, cat.CurrentTarget)
+		return
 	} else if berserkNow {
 		cat.Berserk.Cast(sim, nil)
 		cat.UpdateMajorCooldowns()
@@ -631,6 +653,10 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	if rotation.BearweaveType == proto.FeralDruid_Rotation_Lacerate && lacerateDot.IsActive() && lacerateDot.RemainingDuration(sim) < sim.GetRemainingDuration() && (sim.CurrentTime < lacRefreshTime) {
 		nextAction = core.MinDuration(nextAction, lacRefreshTime)
 	}
+
+	// Schedule an action when Faerie Fire (Feral) is off cooldown next
+	nextAction = core.MinDuration(nextAction, sim.CurrentTime+cat.FaerieFire.TimeToReady(sim))
+
 	nextAction += cat.latency
 
 	if nextAction <= sim.CurrentTime {
@@ -682,6 +708,9 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 		FlowerWeave:        core.Ternary(rotation.BearWeaveType == proto.FeralDruid_Rotation_None, rotation.FlowerWeave, false),
 	}
 
+	cat.Rotation.FlowerWeave = false
+	cat.Rotation.BearweaveType = proto.FeralDruid_Rotation_None
+
 	// Use automatic values unless specified
 	if rotation.ManualParams {
 		return
@@ -693,11 +722,11 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 	cat.Rotation.UseRake = true
 	cat.Rotation.UseBite = true
 
-	if cat.Rotation.FlowerWeave {
+	if cat.Rotation.FlowerWeave || (cat.Rotation.BearweaveType == proto.FeralDruid_Rotation_None) {
 		if hasT84P {
 			cat.Rotation.MinRoarOffset = 26 * time.Second
 		} else {
-			cat.Rotation.MinRoarOffset = 13 * time.Second
+			cat.Rotation.MinRoarOffset = 20 * time.Second
 		}
 		cat.Rotation.BiteTime = 4 * time.Second
 	} else {

@@ -977,7 +977,7 @@ export class TargetedActionMetrics {
 	}
 
 	get missPercent() {
-		return (this.data.misses / (this.hitAttempts || 1)) * 100;
+		return (this.data.misses / (this.data.casts || 1)) * 100;
 	}
 
 	get dodges() {

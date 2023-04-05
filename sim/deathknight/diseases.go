@@ -288,7 +288,8 @@ func (dk *Deathknight) doWanderingPlague(sim *core.Simulation, spell *core.Spell
 		return
 	}
 
-	if dk.LastTickTime == sim.CurrentTime {
+	// 500ms ICD
+	if sim.CurrentTime < dk.LastTickTime+500*time.Millisecond {
 		return
 	}
 

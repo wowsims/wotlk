@@ -103,7 +103,7 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
 	trueshotAura: true,
 	wrathOfAirTotem: true,
-	demonicPact: 4500,
+	demonicPact: 500,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
