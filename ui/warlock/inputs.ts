@@ -275,7 +275,6 @@ export const WarlockRotationConfig = {
 		}),
 		InputHelpers.MakeItemSwapInput<Spec.SpecWarlock>({
 			fieldName: 'weaponSwap',
-			label: 'Weapon Swap',
 			values: [
 				ItemSlot.ItemSlotMainHand,
 				ItemSlot.ItemSlotOffHand,
