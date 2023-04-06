@@ -43,7 +43,8 @@ func main() {
 		log.Fatalf("failed to load input json file: %s", err)
 	}
 	input := &proto.RaidSimRequest{}
-	err = protojson.Unmarshal(data, input)
+
+	err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(data, input)
 	if err != nil {
 		log.Fatalf("failed to load input json file: %s", err)
 	}

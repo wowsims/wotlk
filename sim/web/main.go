@@ -189,12 +189,12 @@ func (s *server) handleAsyncAPI(w http.ResponseWriter, r *http.Request) {
 				delete(s.asyncProgresses, simProgress.id)
 				s.progMut.Unlock()
 				return
-			case progMetric, ok := <-reporter:
-				if !ok {
+			case progMetric := <-reporter:
+				if progMetric == nil {
 					return
 				}
 				simProgress.latestProgress.Store(progMetric)
-				if progMetric.FinalRaidResult != nil || progMetric.FinalWeightResult != nil {
+				if progMetric.FinalRaidResult != nil || progMetric.FinalWeightResult != nil || progMetric.FinalBulkResult != nil {
 					return
 				}
 			}
