@@ -231,6 +231,10 @@ export class Sim {
 			bulkSettings: bulkSettings,
 		});
 
+		if (request.baseSettings != null && request.baseSettings.simOptions != null) {
+			request.baseSettings.simOptions.debugFirstIteration = false;
+		}
+
 		if (!request.baseSettings?.raid || request.baseSettings?.raid?.parties.length == 0 || request.baseSettings?.raid?.parties[0].players.length == 0) {
 			throw new Error('Raid must contain exactly 1 player for bulk sim.');
 		}

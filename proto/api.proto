@@ -406,7 +406,6 @@ message BulkSimResult {
 message BulkComboResult {
     repeated ItemSpecWithSlot items_added = 1;
     UnitMetrics unit_metrics = 2;
-    EncounterMetrics encounter_metrics = 3;
 }
 
 message ItemSpecWithSlot {

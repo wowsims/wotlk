@@ -183,16 +183,14 @@ func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMe
 
 	result = &proto.BulkSimResult{
 		EquippedGearResult: &proto.BulkComboResult{
-			UnitMetrics:      baseResult.Result.GetRaidMetrics().GetParties()[0].GetPlayers()[0],
-			EncounterMetrics: baseResult.Result.GetEncounterMetrics(),
+			UnitMetrics: baseResult.Result.GetRaidMetrics().GetParties()[0].GetPlayers()[0],
 		},
 	}
 
 	for _, r := range rankedResults {
 		result.Results = append(result.Results, &proto.BulkComboResult{
-			ItemsAdded:       r.ChangeLog.AddedItems,
-			UnitMetrics:      r.Result.GetRaidMetrics().GetParties()[0].GetPlayers()[0],
-			EncounterMetrics: r.Result.GetEncounterMetrics(),
+			ItemsAdded:  r.ChangeLog.AddedItems,
+			UnitMetrics: r.Result.GetRaidMetrics().GetParties()[0].GetPlayers()[0],
 		})
 	}
 
