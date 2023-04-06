@@ -98,6 +98,19 @@ export const DefaultFireRotation = MageRotation.create({
 	pyroblastDelayMs: 50,
 });
 
+export const DefaultFFBRotation = MageRotation.create({
+	type: RotationType.Fire,
+	primaryFireSpell: PrimaryFireSpell.FrostfireBolt,
+	maintainImprovedScorch: false,
+	pyroblastDelayMs: 50,
+});
+
+export const DefaultFFBOptions = MageOptions.create({
+	armor: ArmorType.MoltenArmor,
+	reactionTimeMs: 300,
+	igniteMunching: true,
+});
+
 export const DefaultFireOptions = MageOptions.create({
 	armor: ArmorType.MoltenArmor,
 	focusMagicPercentUptime: 99,
