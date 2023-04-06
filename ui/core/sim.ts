@@ -14,7 +14,7 @@ import { RaidTarget } from './proto/common.js';
 import { Spec } from './proto/common.js';
 import { Stat, PseudoStat } from './proto/common.js';
 import { RangedWeaponType, WeaponType } from './proto/common.js';
-import { Raid as RaidProto } from './proto/api.js';
+import { BulkSimRequest, BulkSimResult, BulkSettings, Raid as RaidProto } from './proto/api.js';
 import { ComputeStatsRequest, ComputeStatsResult } from './proto/api.js';
 import { RaidSimRequest, RaidSimResult } from './proto/api.js';
 import { SimOptions } from './proto/api.js';
@@ -110,8 +110,6 @@ export class Sim {
 
 	// Fires when a raid sim API call completes.
 	readonly simResultEmitter = new TypedEvent<SimResult>();
-	// Fires when a raid sim API call starts.
-	readonly simRequestStartedEmitter = new TypedEvent<void>();
 
 	private readonly _initPromise: Promise<any>;
 	private lastUsedRngSeed: number = 0;
@@ -214,6 +212,42 @@ export class Sim {
 		});
 	}
 
+	private makeBulkSimRequest(debug: boolean): BulkSimRequest {
+		const raid = this.getModifiedRaidProto();
+		const encounter = this.encounter.toProto();
+
+		let simReq = RaidSimRequest.create({
+			raid: raid,
+			encounter: encounter,
+			simOptions: SimOptions.create({
+				iterations: debug ? 1 : this.getIterations(),
+				randomSeed: BigInt(this.nextRngSeed()),
+			}),
+		})
+		return BulkSimRequest.create({
+			baseSettings: simReq,
+		});
+	}
+
+	async runBulkSim(eventID: EventID, bulkSettings: BulkSettings, onProgress: Function): Promise<BulkSimResult> {
+		if (this.raid.isEmpty()) {
+			throw new Error('Raid is empty! Try adding some players first.');
+		} else if (this.encounter.getNumTargets() < 1) {
+			throw new Error('Encounter has no targets! Try adding some targets first.');
+		}
+
+		await this.waitForInit();
+
+		const request = this.makeBulkSimRequest(false);
+		request.bulkSettings = bulkSettings;
+
+		var result = await this.workerPool.bulkSimAsync(request, onProgress);
+		if (result.errorResult != "") {
+			throw new SimError(result.errorResult);
+		}
+		return result;
+	}
+
 	async runRaidSim(eventID: EventID, onProgress: Function) {
 		if (this.raid.isEmpty()) {
 			throw new Error('Raid is empty! Try adding some players first.');
@@ -223,7 +257,6 @@ export class Sim {
 
 		await this.waitForInit();
 
-		this.simRequestStartedEmitter.emit(eventID);
 		const request = this.makeRaidSimRequest(false);
 
 		var result = await this.workerPool.raidSimAsync(request, onProgress);
@@ -243,7 +276,6 @@ export class Sim {
 
 		await this.waitForInit();
 
-		this.simRequestStartedEmitter.emit(eventID);
 		const request = this.makeRaidSimRequest(true);
 		const result = await this.workerPool.raidSimAsync(request, () => { });
 		if (result.errorResult != "") {

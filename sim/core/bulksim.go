@@ -12,6 +12,10 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
+func BulkSim(ctx context.Context, request *proto.BulkSimRequest, progress chan *proto.ProgressMetrics) (*proto.BulkSimResult, error) {
+	panic("not implemented")
+}
+
 // RunBulkSim runs a bulk simulation. The original sim request must contain exactly one player
 // (i.e. not a full raid sim) with a specified bulk equipment.
 func RunBulkSim(ctx context.Context, request *proto.RaidSimRequest, progress chan *proto.ProgressMetrics) (*proto.RaidSimResult, error) {

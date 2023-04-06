@@ -26,6 +26,15 @@ addEventListener('message', async (e) => {
 	let handled = false;
 
 	[
+		['bulkSimAsync', (data) => {
+			return bulkSimAsync(data, (result) => {
+				postMessage({
+					msg: "progress",
+					outputData: result,
+					id: id + "progress",
+				});
+			});
+		}],
 		['computeStats', computeStats],
 		['computeStatsJson', computeStatsJson],
 		['raidSim', raidSim],

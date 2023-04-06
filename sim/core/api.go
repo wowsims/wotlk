@@ -2,6 +2,8 @@
 package core
 
 import (
+	"context"
+
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -43,4 +45,16 @@ func RunRaidSim(request *proto.RaidSimRequest) *proto.RaidSimResult {
 
 func RunRaidSimAsync(request *proto.RaidSimRequest, progress chan *proto.ProgressMetrics) {
 	go RunSim(request, progress)
+}
+
+func RunBulkSim(request *proto.BulkSimRequest) *proto.BulkSimResult {
+	result, err := BulkSim(context.Background(), request, nil)
+	if err != nil {
+		result.ErrorResult = err.Error()
+	}
+	return result
+}
+
+func RunBulkSimAsync(ctx context.Context, request *proto.BulkSimRequest, progress chan *proto.ProgressMetrics) {
+	go BulkSim(ctx, request, progress)
 }
