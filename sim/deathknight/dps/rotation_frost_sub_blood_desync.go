@@ -7,6 +7,16 @@ import (
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
+func (dk *DpsDeathknight) RotationActionCallback_FrostDesync_Obli(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
+		dk.Deathchill.Cast(sim, target)
+	}
+	casted := dk.castFrostUnholySpell(sim, target)
+	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
+	s.ConditionalAdvance(casted && advance)
+	return -1
+}
+
 func (dk *DpsDeathknight) setupFrostSubBloodDesyncOpener() {
 	if dk.Rotation.UseEmpowerRuneWeapon {
 		dk.setupFrostSubBloodDesyncERWOpener()
@@ -24,18 +34,18 @@ func (dk *DpsDeathknight) setupFrostSubBloodDesyncERWOpener() {
 		NewAction(dk.RotationActionCallback_PS).
 		NewAction(dk.RotationActionCallback_UA_Frost).
 		NewAction(dk.RotationActionCallback_BT).
-		NewAction(dk.RotationActionCallback_Obli).
+		NewAction(dk.RotationActionCallback_FrostDesync_Obli).
 		NewAction(dk.RotationActionCallback_Frost_FS_HB).
 		NewAction(dk.RotationActionCallback_Frost_Pesti_ERW).
-		NewAction(dk.RotationActionCallback_Obli).
+		NewAction(dk.RotationActionCallback_FrostDesync_Obli).
 		NewAction(dk.RotationActionCallback_Frost_FS_HB).
-		NewAction(dk.RotationActionCallback_Obli).
-		NewAction(dk.RotationActionCallback_Obli).
+		NewAction(dk.RotationActionCallback_FrostDesync_Obli).
+		NewAction(dk.RotationActionCallback_FrostDesync_Obli).
 		NewAction(dk.RotationActionCallback_RD).
 		NewAction(dk.RotationActionCallback_Frost_FS_HB).
 		NewAction(dk.RotationActionCallback_Frost_FS_HB).
-		NewAction(dk.RotationActionCallback_Obli).
-		NewAction(dk.RotationActionCallback_Obli).
+		NewAction(dk.RotationActionCallback_FrostDesync_Obli).
+		NewAction(dk.RotationActionCallback_FrostDesync_Obli).
 		NewAction(dk.RotationAction_CancelBT).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
 		NewAction(dk.RotationActionCallback_Frost_FS_HB).
@@ -43,9 +53,9 @@ func (dk *DpsDeathknight) setupFrostSubBloodDesyncERWOpener() {
 		NewAction(dk.RotationActionCallback_Frost_FS_HB).
 		// End standard sub-blood opener
 
-		NewAction(dk.RotationActionCallback_Obli).
+		NewAction(dk.RotationActionCallback_FrostDesync_Obli).
 		NewAction(dk.RotationActionCallback_Frost_FS_HB).
-		NewAction(dk.RotationActionCallback_Obli).
+		NewAction(dk.RotationActionCallback_FrostDesync_Obli).
 
 		// Get death runes again
 		NewAction(dk.RotationActionCallback_BS).
@@ -56,7 +66,7 @@ func (dk *DpsDeathknight) setupFrostSubBloodDesyncERWOpener() {
 		// Re-cast IT then desync f1 u1 runes
 		NewAction(dk.RotationActionCallback_IT).
 		NewAction(dk.RotationActionCallback_Force_Desync).
-		NewAction(dk.RotationActionCallback_Obli).
+		NewAction(dk.RotationActionCallback_FrostDesync_Obli).
 		NewAction(dk.RotationActionCallback_Frost_FS_HB).
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Sequence_Pesti).
 
@@ -118,11 +128,11 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Desync_Obli(sim *
 	bp := dk.BloodPlagueSpell.Dot(target).IsActive()
 
 	if ff && bp {
-		if dk.Obliterate.CanCast(sim, nil) {
+		if dk.canCastFrostUnholySpell(sim, target) {
 			if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
 				dk.Deathchill.Cast(sim, target)
 			}
-			casted = dk.Obliterate.Cast(sim, target)
+			casted = dk.castFrostUnholySpell(sim, target)
 			advance = dk.LastOutcome.Matches(core.OutcomeLanded)
 			s.ConditionalAdvance(casted && advance)
 		} else {
