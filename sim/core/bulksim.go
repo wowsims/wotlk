@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	maxItemCount              = 20
+	maxItemCount              = 22
 	defaultIterationsPerCombo = 1000
 )
 
@@ -49,6 +49,7 @@ func BulkSim(ctx context.Context, request *proto.BulkSimRequest, progress chan *
 		progress <- &proto.ProgressMetrics{
 			FinalBulkResult: result,
 		}
+		close(progress)
 	}
 
 	return result
@@ -96,19 +97,6 @@ func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMe
 	if b.Request.BulkSettings.Combinations && numItems > maxItemCount {
 		return nil, fmt.Errorf("too many items specified (%d > %d), not computationally feasible", numItems, maxItemCount)
 	}
-
-	var totalIterationsUpperBound int64
-	if b.Request.BulkSettings.Combinations {
-		totalIterationsUpperBound = int64(math.Pow(2.0, float64(numItems)) * float64(iterations))
-	} else {
-		totalIterationsUpperBound = int64(numItems) * int64(iterations)
-	}
-
-	if totalIterationsUpperBound > math.MaxInt32 {
-		return nil, fmt.Errorf("number of total iterations %d too large", totalIterationsUpperBound)
-	}
-
-	// fmt.Printf("Upper Bound: %d\n", totalIterationsUpperBound)
 
 	// Create all distinct combinations of (item, slot). For example, let's say the only item we
 	// want to bulk sim is a one-handed item that can be worn both as an off-hand or a main-hand weapon.
@@ -162,6 +150,11 @@ func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMe
 		if newIters > 1000 {
 			newIters = 1000
 		}
+	}
+
+	maxIterations := newIters * int64(len(validCombos))
+	if maxIterations > math.MaxInt32 {
+		return nil, fmt.Errorf("number of total iterations %d too large", maxIterations)
 	}
 
 	for {
