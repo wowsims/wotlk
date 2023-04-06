@@ -175,7 +175,7 @@ func (s *server) handleAsyncAPI(w http.ResponseWriter, r *http.Request) {
 	reporter := make(chan *proto.ProgressMetrics, 100)
 	handler.handle(msg, reporter)
 
-	// Generate a new async simulation, and get back the ID and reporting function.
+	// Generate a new async simulation
 	simProgress := s.addNewSim()
 
 	// Now launch a background process that pulls progress reports off the reporter channel
@@ -183,8 +183,12 @@ func (s *server) handleAsyncAPI(w http.ResponseWriter, r *http.Request) {
 	go func() {
 		for {
 			select {
-			case <-time.After(time.Hour):
-				return // if we get no progress after an hour, exit
+			case <-time.After(time.Minute * 10):
+				// if we get no progress after 10 minutes, delete the pending sim and exit.
+				s.progMut.Lock()
+				delete(s.asyncProgresses, simProgress.id)
+				s.progMut.Unlock()
+				return
 			case progMetric, ok := <-reporter:
 				if !ok {
 					return
