@@ -99,7 +99,10 @@ func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMe
 	// want to bulk sim is a one-handed item that can be worn both as an off-hand or a main-hand weapon.
 	// For each slot, we will create one itemWithSlot pair, so (item, off-hand) and (item, main-hand).
 	// We verify later that we are not emitting any invalid equipment set.
-	addToDatabase(player.GetDatabase())
+	if player.GetDatabase() != nil {
+		addToDatabase(player.GetDatabase())
+	}
+
 	var distinctItemSlotCombos []*itemWithSlot
 	for index, is := range items {
 		item, ok := ItemsByID[is.Id]
