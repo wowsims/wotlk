@@ -39,7 +39,12 @@ func (dk *Deathknight) applyRageOfRivendare() {
 
 	bonus := 1.0 + 0.02*float64(dk.Talents.RageOfRivendare)
 	dk.RoRTSBonus = func(target *core.Unit) float64 {
-		return core.TernaryFloat64(dk.BloodPlagueSpell.Dot(target).IsActive(), bonus, 1.0)
+		// assume if external ebon plaguebringer is active, then another DK will always have Blood Plague up
+		if dk.MakeTSRoRAssumptions && target.HasActiveAura("EbonPlaguebringer-1") {
+			return bonus
+		}
+
+		return core.TernaryFloat64(target.HasActiveAuraWithTag("BloodPlague"), bonus, 1.0)
 	}
 }
 
@@ -181,7 +186,7 @@ func (dk *Deathknight) bloodCakedBladeHit(isMh bool) *core.Spell {
 
 func (dk *Deathknight) applyEbonPlaguebringerOrCryptFever() {
 	dk.EbonPlagueOrCryptFeverAura = make([]*core.Aura, len(dk.Env.Encounter.TargetUnits))
-	
+
 	if dk.Talents.CryptFever == 0 {
 		return
 	}
