@@ -392,7 +392,6 @@ message BulkSettings {
 	bool ensure_meta_req_met = 10; // ensures that meta requirements are met when auto-gemming.
 
 	// Number of iterations per combo.
-	// In 'fast' mode this is the starting iterations.
 	// If set to 0 the sim core decides the optimal iterations.
 	int32 iterations_per_combo = 11;
 }
