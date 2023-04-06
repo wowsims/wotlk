@@ -333,7 +333,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	// come off cooldown. The latter exception is necessary for
 	// Lacerateweave rotation since TF timings can drift over time.
 	waitForTf := cat.Talents.Berserk && (cat.TigersFury.ReadyAt() <= cat.BerserkAura.Duration) && (cat.TigersFury.ReadyAt()+time.Second < sim.GetRemainingDuration()-cat.BerserkAura.Duration)
-	berserkNow := cat.Berserk.IsReady(sim) && !waitForTf
+	berserkNow := cat.Berserk.IsReady(sim) && !waitForTf && ripDot.IsActive() && !isClearcast
 
 	// Additionally, for Lacerateweave rotation, postpone the final Berserk
 	// of the fight to as late as possible so as to minimize the impact of
@@ -354,7 +354,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	if cat.BerserkAura.IsActive() {
 		ffThresh = cat.Rotation.BerserkFfThresh
 	}
-	ffNow := cat.FaerieFire.CanCast(sim, cat.CurrentTarget) && !isClearcast && curEnergy < ffThresh
+	ffNow := cat.FaerieFire.CanCast(sim, cat.CurrentTarget) && !isClearcast && curEnergy < ffThresh && (!ripNow || (curEnergy < cat.CurrentRipCost()))
 
 	roarNow := curCp >= 1 && (!cat.SavageRoarAura.IsActive() || cat.clipRoar(sim))
 
