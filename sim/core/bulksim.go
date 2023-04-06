@@ -54,6 +54,12 @@ func BulkSim(ctx context.Context, request *proto.BulkSimRequest, progress chan *
 	return result
 }
 
+type singleBulkSim struct {
+	req *proto.RaidSimRequest
+	cl  *raidSimRequestChangeLog
+	eq  *equipmentSubstitution
+}
+
 func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMetrics) (result *proto.BulkSimResult, resultErr error) {
 	defer func() {
 		if err := recover(); err != nil {
@@ -122,6 +128,81 @@ func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMe
 		}
 	}
 
+	fmt.Printf("generating all substitutions...\n")
+	allCombos := generateAllEquipmentSubstitutions(ctx, distinctItemSlotCombos)
+
+	validCombos := []singleBulkSim{}
+	fmt.Printf("cleaning to only valid combos...\n")
+	for sub := range allCombos {
+		substitutedRequest, changeLog := createNewRequestWithSubstitution(b.Request.BaseSettings, sub)
+		if isValidEquipment(substitutedRequest.Raid.Parties[0].Players[0].Equipment) {
+			validCombos = append(validCombos, singleBulkSim{req: substitutedRequest, cl: changeLog, eq: sub})
+		}
+	}
+
+	// TODO(Riotdog-GehennasEU): Make this configurable?
+	maxResults := 20
+
+	var rankedResults []*itemSubstitutionSimResult
+	var baseResult *itemSubstitutionSimResult
+	newIters := int64(iterations)
+	if b.Request.BulkSettings.FastMode {
+		newIters /= 100
+	}
+	for {
+		rankedResults, baseResult = b.getRankedResults(validCombos, newIters, progress)
+		if !b.Request.BulkSettings.FastMode || len(rankedResults) <= maxResults {
+			break
+		}
+
+		newIters *= 2
+		if int32(newIters) > iterations {
+			newIters = int64(iterations)
+		}
+		newNumCombos := len(rankedResults) / 2
+		validCombos = validCombos[:newNumCombos]
+		rankedResults = rankedResults[:newNumCombos]
+		for i, comb := range rankedResults {
+			validCombos[i] = singleBulkSim{
+				req: comb.Request,
+				cl:  comb.ChangeLog,
+				eq:  comb.Substitution,
+			}
+		}
+	}
+
+	if baseResult == nil {
+		return nil, fmt.Errorf("no base result for equipped gear found in bulk sim")
+	}
+
+	if len(rankedResults) > maxResults {
+		rankedResults = rankedResults[:maxResults]
+	}
+
+	result = &proto.BulkSimResult{
+		EquippedGearResult: &proto.BulkComboResult{
+			UnitMetrics: baseResult.Result.GetRaidMetrics().GetParties()[0].GetPlayers()[0],
+		},
+	}
+
+	for _, r := range rankedResults {
+		result.Results = append(result.Results, &proto.BulkComboResult{
+			ItemsAdded:  r.ChangeLog.AddedItems,
+			UnitMetrics: r.Result.GetRaidMetrics().GetParties()[0].GetPlayers()[0],
+		})
+	}
+
+	if progress != nil {
+		progress <- &proto.ProgressMetrics{
+			FinalBulkResult: result,
+		}
+	}
+
+	return result, nil
+}
+
+func (b *bulkSimRunner) getRankedResults(validCombos []singleBulkSim, iterations int64, progress chan *proto.ProgressMetrics) ([]*itemSubstitutionSimResult, *itemSubstitutionSimResult) {
+	fmt.Printf("running %d combos with %d iterations...\n", len(validCombos), iterations)
 	concurrency := (runtime.NumCPU() - 1) * 2
 	if concurrency <= 0 {
 		concurrency = 2
@@ -134,24 +215,8 @@ func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMe
 
 	results := make(chan *itemSubstitutionSimResult, 10)
 
-	fmt.Printf("generating all substitutions...\n")
-	allCombos := generateAllEquipmentSubstitutions(ctx, distinctItemSlotCombos)
-
-	type singleSim struct {
-		req *proto.RaidSimRequest
-		cl  *raidSimRequestChangeLog
-		eq  *equipmentSubstitution
-	}
-	validCombos := []singleSim{}
-	fmt.Printf("cleaning to only valid combos...\n")
-	for sub := range allCombos {
-		substitutedRequest, changeLog := createNewRequestWithSubstitution(b.Request.BaseSettings, sub)
-		if isValidEquipment(substitutedRequest.Raid.Parties[0].Players[0].Equipment) {
-			validCombos = append(validCombos, singleSim{req: substitutedRequest, cl: changeLog, eq: sub})
-		}
-	}
 	numCombinations := int32(len(validCombos))
-	totalIterationsUpperBound = int64(numCombinations) * int64(iterations)
+	totalIterationsUpperBound := int64(numCombinations) * iterations
 
 	var totalCompletedIterations int32
 	var totalCompletedSims int32
@@ -196,7 +261,9 @@ func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMe
 				}
 			}(singleSimProgress)
 			// actually run the sim in here.
-			go func(sub singleSim) {
+			go func(sub singleBulkSim) {
+				// overwrite the requests iterations with the input for this function.
+				sub.req.SimOptions.Iterations = int32(iterations)
 				results <- &itemSubstitutionSimResult{
 					Request:      sub.req,
 					Result:       b.SingleRaidSimRunner(sub.req, singleSimProgress, false),
@@ -217,7 +284,6 @@ func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMe
 		return rankedResults[i].Score() > rankedResults[j].Score()
 	})
 
-	totalResultCount := int32(len(rankedResults))
 	var baseResult *itemSubstitutionSimResult
 	for _, r := range rankedResults {
 		if !r.Substitution.HasItemReplacements() {
@@ -225,39 +291,7 @@ func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMe
 		}
 	}
 
-	if baseResult == nil {
-		// TODO(Riotdog-GehennasEU): Panic instead? This is likely programmer error.
-		return nil, fmt.Errorf("no base result for equipped gear found in bulk sim")
-	}
-
-	// TODO(Riotdog-GehennasEU): Make this configurable?
-	maxResults := 10
-	if len(rankedResults) > maxResults {
-		rankedResults = rankedResults[:maxResults]
-	}
-
-	result = &proto.BulkSimResult{
-		EquippedGearResult: &proto.BulkComboResult{
-			UnitMetrics: baseResult.Result.GetRaidMetrics().GetParties()[0].GetPlayers()[0],
-		},
-	}
-
-	for _, r := range rankedResults {
-		result.Results = append(result.Results, &proto.BulkComboResult{
-			ItemsAdded:  r.ChangeLog.AddedItems,
-			UnitMetrics: r.Result.GetRaidMetrics().GetParties()[0].GetPlayers()[0],
-		})
-	}
-
-	if progress != nil {
-		progress <- &proto.ProgressMetrics{
-			TotalIterations:     totalResultCount * iterations,
-			CompletedIterations: totalResultCount * iterations,
-			FinalBulkResult:     result,
-		}
-	}
-
-	return result, nil
+	return rankedResults, baseResult
 }
 
 // itemSubstitutionSimResult stores the request and response of a simulation, along with the used
