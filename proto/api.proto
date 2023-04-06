@@ -394,12 +394,13 @@ message BulkSettings {
 	// Number of iterations per combo.
 	// In 'fast' mode this is the starting iterations.
 	// If set to 0 the sim core decides the optimal iterations.
-int32 iterations_per_combo = 11;
+	int32 iterations_per_combo = 11;
 }
 
 message BulkSimResult {
     repeated BulkComboResult results = 1;
-    string error_result = 2; // only set if sim failed.
+		BulkComboResult equipped_gear_result = 2;
+    string error_result = 3; // only set if sim failed.
 }
 
 message BulkComboResult {

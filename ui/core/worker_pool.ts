@@ -64,10 +64,7 @@ export class WorkerPool {
 		// Now start the async sim
 		const resultData = await worker.doApiCall('bulkSimAsync', BulkSimRequest.toBinary(request), id);
 		const result = ProgressMetrics.fromBinary(resultData)
-
-		// Don't print the logs because it just clogs the console.
 		const resultJson = BulkSimResult.toJson(result.finalBulkResult!) as any;
-		delete resultJson!['logs'];
 		console.log('bulk sim result: ' + JSON.stringify(resultJson));
 		return result.finalBulkResult!;
 	}

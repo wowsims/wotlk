@@ -1,25 +1,25 @@
 import { ContentBlock } from "../content_block";
 import { Database } from '../../proto_utils/database';
 import { Importer } from "../importers";
-import { Component } from '../component';
 
 import { IndividualSimUI } from "../../individual_sim_ui";
 import { TypedEvent } from "../../typed_event";
 
-import { EquipmentSpec, BulkEquipmentSpec, Spec, BulkEquipmentSpec_ItemSpecWithSlots } from "../../proto/common";
+import { EquipmentSpec, ItemSpec, SimDatabase, SimEnchant, SimGem, SimItem, Spec } from "../../proto/common";
+import { BulkComboResult, BulkSettings, ItemSpecWithSlot, ProgressMetrics, RaidSimResult } from "../../proto/api";
 
 import { ItemRenderer } from "../gear_picker";
 import { SimTab } from "../sim_tab";
 
-import { getEligibleItemSlots } from '../../proto_utils/utils.js';
-import { BulkSimResultWithSubstitutions, RaidSimResult } from "ui/core/proto/api";
+import { UIEnchant, UIGem, UIItem } from "../../proto/ui";
 
 export class BulkGearJsonImporter<SpecType extends Spec> extends Importer {
   private readonly simUI: IndividualSimUI<SpecType>;
-  constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
+  private readonly bulkUI: BulkTab
+  constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>, bulkUI: BulkTab) {
     super(parent, simUI, 'Bag Item Import', true);
     this.simUI = simUI;
-
+    this.bulkUI = bulkUI;
     this.descriptionElem.innerHTML = `
       <p>Import bag items from a JSON file, which can be created by the WowSimsExporter in-game AddOn.</p>
       <p>To import, upload the file or paste the text below, then click, 'Import'.</p>
@@ -31,25 +31,18 @@ export class BulkGearJsonImporter<SpecType extends Spec> extends Importer {
       const equipment = EquipmentSpec.fromJsonString(data, { ignoreUnknownFields: true });
       if (equipment?.items?.length > 0) {
         const db = await Database.loadLeftoversIfNecessary(equipment);
-        const bulkEquipment = BulkEquipmentSpec.create();
-        for (const itemSpec of equipment.items) {
-          if (itemSpec.id == 0) {
-            continue;
+        const items = equipment.items.filter((spec) => spec.id > 0);
+        if (items.length > 0) {
+          for (const itemSpec of items) {
+            if (itemSpec.id == 0) {
+              continue;
+            }
+            if (!db.lookupItemSpec(itemSpec)) {
+              throw new Error("cannot find item with ID " + itemSpec.id);
+            }
           }
-
-          const item = db.lookupItemSpec(itemSpec)
-          if (!item) {
-            throw new Error("cannot find item with ID " + itemSpec.id);
-          }
-
-          const itemWithSlot = BulkEquipmentSpec_ItemSpecWithSlots.create();
-          itemWithSlot.item = itemSpec;
-          itemWithSlot.slots = getEligibleItemSlots(item.item);
-          bulkEquipment.items.push(itemWithSlot);
+          this.bulkUI.importItems(items);
         }
-
-        const eventID = TypedEvent.nextEventID();
-        this.simUI.player.setBulkEquipmentSpec(eventID, bulkEquipment);
       }
       this.close();
     } catch (e: any) {
@@ -60,7 +53,7 @@ export class BulkGearJsonImporter<SpecType extends Spec> extends Importer {
 
 class BulkSimResultRenderer {
 
-  constructor(parent: ContentBlock, simUI: IndividualSimUI<Spec>, result: BulkSimResultWithSubstitutions, rank: number, baseResult: RaidSimResult) {
+  constructor(parent: ContentBlock, simUI: IndividualSimUI<Spec>, result: BulkComboResult, rank: number, baseResult: BulkComboResult) {
     if (parent.headerElement) {
       parent.headerElement.innerHTML = `Rank ${rank}`;
     }
@@ -74,11 +67,11 @@ class BulkSimResultRenderer {
     dpsDivParent.appendChild(dpsDiv);
     
     const dpsNumber = document.createElement('span');
-    dpsNumber.textContent = this.formatDps(result.raidMetrics?.dps?.avg!);
+    dpsNumber.textContent = this.formatDps(result.unitMetrics?.dps?.avg!);
     dpsNumber.classList.add('topline-result-avg');
     dpsDiv.appendChild(dpsNumber);
 
-    const dpsDelta = result.raidMetrics?.dps?.avg! - baseResult.raidMetrics?.dps?.avg!;
+    const dpsDelta = result.unitMetrics?.dps?.avg! - baseResult.unitMetrics?.dps?.avg!;
     const dpsDeltaSpan = document.createElement('span'); 
     dpsDeltaSpan.textContent = `${this.formatDpsDelta(dpsDelta)}`;
     dpsDeltaSpan.classList.add(dpsDelta >= 0 ? 'bulk-result-header-positive' : 'bulk-result-header-negative');
@@ -89,8 +82,8 @@ class BulkSimResultRenderer {
     itemsContainer.style.display = 'flex';
     parent.bodyElement.appendChild(itemsContainer);
 
-    if (result.itemsAdded && result.itemsAdded.items && result.itemsAdded.items.length > 0) {
-      for (const is of result.itemsAdded.items) {
+    if (result.itemsAdded && result.itemsAdded.length > 0) {
+      for (const is of result.itemsAdded) {
         const item = simUI.sim.db.lookupItemSpec(is.item!)
         const renderer = new ItemRenderer(itemsContainer, simUI, simUI.player);
         renderer.update(item!);
@@ -116,18 +109,22 @@ class BulkSimResultRenderer {
     return ((delta >= 0) ? "+" : "") + this.formatDps(delta); 
   }
 
-  private itemSlotName(is: BulkEquipmentSpec_ItemSpecWithSlots): string {
-    return JSON.parse(BulkEquipmentSpec_ItemSpecWithSlots.toJsonString(is))['slots'][0].replace('ItemSlot', '')
+  private itemSlotName(is: ItemSpecWithSlot): string {
+    return JSON.parse(ItemSpecWithSlot.toJsonString(is))['slot'].replace('ItemSlot', '')
   }
 }
 
 export class BulkTab extends SimTab {
-  protected simUI: IndividualSimUI<Spec>;
+  readonly simUI: IndividualSimUI<Spec>;
+  
+	readonly itemsChangedEmitter = new TypedEvent<void>();
 
   readonly leftPanel: HTMLElement;
   readonly rightPanel: HTMLElement;
 
   readonly column1: HTMLElement = this.buildColumn(1, 'raid-settings-col');
+
+  protected items: Array<ItemSpec> = new Array<ItemSpec>();
 
   constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>) {
     super(parentElem, simUI, {identifier: 'bulk-tab', title: 'Bulk'});
@@ -145,6 +142,53 @@ export class BulkTab extends SimTab {
 
     this.buildTabContent();
   }
+
+  protected createBulkSettings(): BulkSettings {
+    return BulkSettings.create({
+      items: this.items,
+
+      // TODO(Riotdog-GehennasEU): Make all of these configurable.
+      // For now, it's always constant iteration combinations mode for "sim my bags".
+      combinations: true,
+      fastMode: false,
+      autoEnchant: false,
+      autoGem: false,
+      iterationsPerCombo: this.simUI.sim.getIterations(), // TODO(Riotdog-GehennasEU): Define a new UI element for the iteration setting.
+    });
+  }
+
+  protected createBulkItemsDatabase(): SimDatabase {
+    const itemsDb = SimDatabase.create();
+    for (const is of this.items) {
+      const item = this.simUI.sim.db.lookupItemSpec(is)
+      if (!item) {
+        throw new Error(`item with ID ${is.id} not found in database`);
+      }
+      itemsDb.items.push(SimItem.fromJson(UIItem.toJson(item.item), { ignoreUnknownFields: true }))
+      if (item.enchant) {
+        itemsDb.enchants.push(SimEnchant.fromJson(UIEnchant.toJson(item.enchant), { ignoreUnknownFields: true }));
+      }
+      for (const gem of item.gems) {
+        if (gem) {
+          itemsDb.gems.push(SimGem.fromJson(UIGem.toJson(gem), { ignoreUnknownFields: true }));
+        }
+      }
+    }
+    return itemsDb;
+  }
+
+  importItems(items: Array<ItemSpec>) {
+    this.items = items;
+    this.itemsChangedEmitter.emit(TypedEvent.nextEventID());
+  }
+
+	protected async runBulkSim(onProgress: Function) {
+		try {
+			await this.simUI.sim.runBulkSim(this.createBulkSettings(), this.createBulkItemsDatabase(), onProgress);
+		} catch (e) {
+			this.simUI.handleCrash(e);
+		}
+	}
 
   protected buildTabContent() {
     const itemsBlock = new ContentBlock(this.column1, 'bulk-items', {
@@ -169,18 +213,19 @@ export class BulkTab extends SimTab {
 
     resultsBlock.rootElem.hidden = true;
     resultsBlock.bodyElement.classList.add('gear-picker-root', 'gear-picker-left', 'tab-panel-col');
-    this.simUI.sim.simRequestStartedEmitter.on(() => {
+    
+    this.simUI.sim.bulkSimStartEmitter.on(() => {
       resultsBlock.rootElem.hidden = true;
     });
 
-    this.simUI.sim.simResultEmitter.on((_, simResult) => {
-      resultsBlock.rootElem.hidden = simResult.result.bulkResults.length == 0;
+    this.simUI.sim.bulkSimResultEmitter.on((_, bulkSimResult) => {
+      resultsBlock.rootElem.hidden = bulkSimResult.results.length == 0;
       resultsBlock.bodyElement.innerHTML = '';
 
       let rank = 1;
-      for (const r of simResult.result.bulkResults) {
+      for (const r of bulkSimResult.results) {
         const resultBlock = new ContentBlock(resultsBlock.bodyElement, 'bulk-result', {header: {title: ''}});
-        new BulkSimResultRenderer(resultBlock, this.simUI, r, rank, simResult.result);
+        new BulkSimResultRenderer(resultBlock, this.simUI, r, rank, bulkSimResult.equippedGearResult!);
         rank++;
       }
     });
@@ -192,38 +237,37 @@ export class BulkTab extends SimTab {
     const importButton = document.createElement('button');
     importButton.classList.add('btn', 'btn-primary', 'w-100', 'bulk-settings-button');
     importButton.textContent = 'Import From Bags';
-    importButton.addEventListener('click', () => new BulkGearJsonImporter(this.simUI.rootElem, this.simUI));
+    importButton.addEventListener('click', () => new BulkGearJsonImporter(this.simUI.rootElem, this.simUI, this));
     settingsBlock.bodyElement.appendChild(importButton);
+
+    const bulkSimButton = document.createElement('button');
+    bulkSimButton.classList.add('btn', 'btn-primary', 'w-100', 'bulk-settings-button');
+    bulkSimButton.textContent = 'Bulk Simulate';
+    bulkSimButton.addEventListener('click', () => {
+      this.runBulkSim((progressMetrics: ProgressMetrics) => {
+        console.log(progressMetrics);
+      });
+    });
+    settingsBlock.bodyElement.appendChild(bulkSimButton);
 
     const clearButton = document.createElement('button');
     clearButton.classList.add('btn', 'btn-primary', 'w-100', 'bulk-settings-button');
     clearButton.textContent = 'Clear All';
     clearButton.addEventListener('click', () => {
-      const eventID = TypedEvent.nextEventID();
-      this.simUI.player.setBulkEquipmentSpec(eventID, BulkEquipmentSpec.create());
+      this.importItems(new Array<ItemSpec>());
       resultsBlock.rootElem.hidden = true;
       resultsBlock.bodyElement.innerHTML = '';
     });
     settingsBlock.bodyElement.appendChild(clearButton);
 
-    this.simUI.player.bulkGearChangeEmitter.on(() => {
-      const bulkEquipmentSpec = this.simUI.player.getBulkEquipmentSpec();
-      if (bulkEquipmentSpec) {
-        itemList.innerHTML = '';
-        // Note: if this were to be fired from the player's fromProto() call,
-        // we would have to load the database here with the missing items.
-        // For now we assume that bulk items are not persisted. Bulk simming should be
-        // a very conscious choice.
-        if (bulkEquipmentSpec.items.length > 0) {
-          notice.textContent = 'The following items will be simmed in all possible combinations together with your equipped gear.';
-        }
-
-        for (const itemWithSlots of bulkEquipmentSpec.items) {
-          const item = this.simUI.sim.db.lookupItemSpec(itemWithSlots.item!);
-          if (item) {
-            const itemRenderer = new ItemRenderer(itemList, this.simUI, this.simUI.player);
-            itemRenderer.update(item);
-          }
+    this.itemsChangedEmitter.on(() => {
+      itemList.innerHTML = '';
+      if (this.items.length > 0) {
+        notice.textContent = 'The following items will be simmed in all possible combinations together with your equipped gear.';
+        for (const spec of this.items) {
+          const item = this.simUI.sim.db.lookupItemSpec(spec);
+          const itemRenderer = new ItemRenderer(itemList, this.simUI, this.simUI.player);
+          itemRenderer.update(item!);
         }
       }
     });

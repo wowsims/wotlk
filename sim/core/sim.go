@@ -1,7 +1,6 @@
 package core
 
 import (
-	"context"
 	"fmt"
 	"math/rand"
 	"runtime"
@@ -44,26 +43,6 @@ type Simulation struct {
 }
 
 func RunSim(rsr *proto.RaidSimRequest, progress chan *proto.ProgressMetrics) *proto.RaidSimResult {
-	// TODO(Riotdog-GehennasEU): expose this as a separate API?
-	if parties := rsr.GetRaid().GetParties(); len(parties) != 0 {
-		if players := parties[0].GetPlayers(); len(players) != 0 {
-			if len(players[0].GetBulkEquipment().GetItems()) > 0 {
-				result, err := RunBulkSim(context.Background(), rsr, progress)
-				if err != nil {
-					result = &proto.RaidSimResult{
-						ErrorResult: err.Error(),
-					}
-					if progress != nil {
-						progress <- &proto.ProgressMetrics{
-							FinalRaidResult: result,
-						}
-					}
-				}
-				return result
-			}
-		}
-	}
-
 	return runSim(rsr, progress, false)
 }
 
