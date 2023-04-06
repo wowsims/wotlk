@@ -110,6 +110,9 @@ class BulkSimResultRenderer {
   }
 
   private itemSlotName(is: ItemSpecWithSlot): string {
+    if (is.slot == 0) {
+      return "Head";
+    }
     return JSON.parse(ItemSpecWithSlot.toJsonString(is))['slot'].replace('ItemSlot', '')
   }
 }
