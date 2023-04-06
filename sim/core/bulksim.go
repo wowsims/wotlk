@@ -8,6 +8,8 @@ import (
 	"runtime"
 	"runtime/debug"
 	"sort"
+	"sync/atomic"
+	"time"
 
 	goproto "github.com/golang/protobuf/proto"
 
@@ -47,7 +49,6 @@ func BulkSim(ctx context.Context, request *proto.BulkSimRequest, progress chan *
 		progress <- &proto.ProgressMetrics{
 			FinalBulkResult: result,
 		}
-		close(progress)
 	}
 
 	return result
@@ -95,6 +96,8 @@ func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMe
 		return nil, fmt.Errorf("number of total iterations %d too large", totalIterationsUpperBound)
 	}
 
+	fmt.Printf("Upper Bound: %d\n", totalIterationsUpperBound)
+
 	// Create all distinct combinations of (item, slot). For example, let's say the only item we
 	// want to bulk sim is a one-handed item that can be worn both as an off-hand or a main-hand weapon.
 	// For each slot, we will create one itemWithSlot pair, so (item, off-hand) and (item, main-hand).
@@ -103,6 +106,7 @@ func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMe
 		addToDatabase(player.GetDatabase())
 	}
 
+	fmt.Printf("generating item slot combos...\n")
 	var distinctItemSlotCombos []*itemWithSlot
 	for index, is := range items {
 		item, ok := ItemsByID[is.Id]
@@ -120,46 +124,94 @@ func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMe
 
 	concurrency := (runtime.NumCPU() - 1) * 2
 	if concurrency <= 0 {
-		concurrency = 1
+		concurrency = 2
 	}
-	results := make(chan *itemSubstitutionSimResult, concurrency)
 
+	tickets := make(chan struct{}, concurrency)
+	for i := 0; i < concurrency; i++ {
+		tickets <- struct{}{}
+	}
+
+	results := make(chan *itemSubstitutionSimResult, 10)
+
+	fmt.Printf("generating all substitutions...\n")
+	allCombos := generateAllEquipmentSubstitutions(ctx, distinctItemSlotCombos)
+
+	type singleSim struct {
+		req *proto.RaidSimRequest
+		cl  *raidSimRequestChangeLog
+		eq  *equipmentSubstitution
+	}
+	validCombos := []singleSim{}
+	fmt.Printf("cleaning to only valid combos...\n")
+	for sub := range allCombos {
+		substitutedRequest, changeLog := createNewRequestWithSubstitution(b.Request.BaseSettings, sub)
+		if isValidEquipment(substitutedRequest.Raid.Parties[0].Players[0].Equipment) {
+			validCombos = append(validCombos, singleSim{req: substitutedRequest, cl: changeLog, eq: sub})
+		}
+	}
+	numCombinations := int32(len(validCombos))
+	totalIterationsUpperBound = int64(numCombinations) * int64(iterations)
+
+	var totalCompletedIterations int32
+	var totalCompletedSims int32
+
+	fmt.Printf("Launching sims now...\n")
+	// reporter for all sims combined.
 	go func() {
-		var numCombinations int32
-		for sub := range generateAllEquipmentSubstitutions(ctx, distinctItemSlotCombos) {
-			substitutedRequest, changeLog := createNewRequestWithSubstitution(b.Request.BaseSettings, sub)
-			if isValidEquipment(substitutedRequest.Raid.Parties[0].Players[0].Equipment) {
-				singleSimProgress := make(chan *proto.ProgressMetrics)
-				go func(i int32) {
-					for p := range singleSimProgress {
-						if p.FinalRaidResult != nil {
-							continue
-						}
+		for {
+			time.Sleep(time.Second)
+			complIters := atomic.LoadInt32(&totalCompletedIterations)
+			complSims := atomic.LoadInt32(&totalCompletedSims)
 
-						p.CompletedIterations += i * iterations
-						p.TotalIterations = int32(totalIterationsUpperBound)
-						select {
-						case progress <- p:
-						default:
-							// We tried. Do not block here because it could slow down the sim.
-						}
-					}
-				}(numCombinations)
-				numCombinations++
-				results <- &itemSubstitutionSimResult{
-					Request:      substitutedRequest,
-					Result:       b.SingleRaidSimRunner(substitutedRequest, singleSimProgress, false),
-					Substitution: sub,
-					ChangeLog:    changeLog,
-				}
+			// stop reporting
+			if complIters == int32(totalIterationsUpperBound) || numCombinations == complSims {
+				return
+			}
+
+			progress <- &proto.ProgressMetrics{
+				TotalSims:           numCombinations,
+				CompletedSims:       complSims,
+				CompletedIterations: complIters,
+				TotalIterations:     int32(totalIterationsUpperBound),
 			}
 		}
-		close(results)
 	}()
 
-	var rankedResults []*itemSubstitutionSimResult
-	for r := range results {
-		rankedResults = append(rankedResults, r)
+	// launcher for all combos (limited by concurrency max)
+	go func() {
+		for _, singleCombo := range validCombos {
+			<-tickets
+			singleSimProgress := make(chan *proto.ProgressMetrics)
+			// watches this progress and pushes up to main reporter.
+			go func(prog chan *proto.ProgressMetrics) {
+				var prevDone int32
+				for p := range singleSimProgress {
+					delta := p.CompletedIterations - prevDone
+					atomic.AddInt32(&totalCompletedIterations, delta)
+					prevDone = p.CompletedIterations
+					if p.FinalRaidResult != nil {
+						break
+					}
+				}
+			}(singleSimProgress)
+			// actually run the sim in here.
+			go func(sub singleSim) {
+				results <- &itemSubstitutionSimResult{
+					Request:      sub.req,
+					Result:       b.SingleRaidSimRunner(sub.req, singleSimProgress, false),
+					Substitution: sub.eq,
+					ChangeLog:    sub.cl,
+				}
+				atomic.AddInt32(&totalCompletedSims, 1)
+				tickets <- struct{}{} // when done, allow for new sim to be launched.
+			}(singleCombo)
+		}
+	}()
+
+	rankedResults := make([]*itemSubstitutionSimResult, numCombinations)
+	for i := range rankedResults {
+		rankedResults[i] = <-results
 	}
 	sort.Slice(rankedResults, func(i, j int) bool {
 		return rankedResults[i].Score() > rankedResults[j].Score()

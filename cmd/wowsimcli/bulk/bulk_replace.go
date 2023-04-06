@@ -36,10 +36,17 @@ func Sim(input *proto.RaidSimRequest, replaceFile string, verbose bool) string {
 		log.Fatalf("failed to parse replace json file: %s", err)
 	}
 
+	iters := input.SimOptions.Iterations
+	if replaceInput.Combinations {
+		iters /= 100
+	}
 	bsr := &proto.BulkSimRequest{
 		BaseSettings: input,
 		BulkSettings: &proto.BulkSettings{
-			Items: replaceInput.Items,
+			Combinations:       replaceInput.Combinations,
+			Items:              replaceInput.Items,
+			IterationsPerCombo: iters,
+			FastMode:           replaceInput.Combinations,
 		},
 	}
 	progress := make(chan *proto.ProgressMetrics, 100)
@@ -58,6 +65,9 @@ func Sim(input *proto.RaidSimRequest, replaceFile string, verbose bool) string {
 			if status.FinalBulkResult != nil {
 				if status.FinalBulkResult.ErrorResult != "" {
 					fmt.Printf("Failed: %s\n", status.FinalBulkResult.ErrorResult)
+				} else {
+					fmt.Printf("Done.\n")
+					os.Exit(0)
 				}
 			}
 
@@ -81,7 +91,7 @@ func Sim(input *proto.RaidSimRequest, replaceFile string, verbose bool) string {
 				}
 				totalStr := strconv.Itoa(int(status.TotalIterations))
 				fmtStr := "%" + strconv.Itoa(len(totalStr)) + ".f"
-				fmt.Printf("Sim Progress: "+fmtStr+" / %d | %s\n", float64(compl), status.TotalIterations, timeEst)
+				fmt.Printf("Sim Progress: "+fmtStr+" / %d | %s  (completed %d / %d)\n", float64(compl), status.TotalIterations, timeEst, status.CompletedSims, status.TotalSims)
 				time.Sleep(time.Second * 2)
 			}
 		case <-c:
