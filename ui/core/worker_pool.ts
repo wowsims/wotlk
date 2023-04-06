@@ -9,6 +9,7 @@ import { Stat } from './proto/common.js';
 import { ComputeStatsRequest, ComputeStatsResult } from './proto/api.js';
 import { RaidSimRequest, RaidSimResult, ProgressMetrics } from './proto/api.js';
 import { StatWeightsRequest, StatWeightsResult } from './proto/api.js';
+import { BulkSimRequest, BulkSimResult } from './proto/api.js';
 
 import { wait } from './utils.js';
 
@@ -51,6 +52,24 @@ export class WorkerPool {
 		const result = ProgressMetrics.fromBinary(resultData)
 		console.log('Stat weights result: ' + StatWeightsResult.toJsonString(result.finalWeightResult!));
 		return result.finalWeightResult!;
+	}
+
+	async bulkSimAsync(request: BulkSimRequest, onProgress: Function): Promise<BulkSimResult> {
+		console.log('bulk sim request: ' + BulkSimRequest.toJsonString(request));
+		const worker = this.getLeastBusyWorker();
+		const id = worker.makeTaskId();
+		// Add handler for the progress events
+		worker.addPromiseFunc(id + "progress", this.newProgressHandler(id, worker, onProgress), (err) => { })
+
+		// Now start the async sim
+		const resultData = await worker.doApiCall('bulkSimAsync', BulkSimRequest.toBinary(request), id);
+		const result = ProgressMetrics.fromBinary(resultData)
+
+		// Don't print the logs because it just clogs the console.
+		const resultJson = BulkSimResult.toJson(result.finalBulkResult!) as any;
+		delete resultJson!['logs'];
+		console.log('bulk sim result: ' + JSON.stringify(resultJson));
+		return result.finalBulkResult!;
 	}
 
 	async raidSimAsync(request: RaidSimRequest, onProgress: Function): Promise<RaidSimResult> {
