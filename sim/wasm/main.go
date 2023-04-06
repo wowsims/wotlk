@@ -248,7 +248,7 @@ reader:
 			js.CopyBytesToJS(outArray, outbytes)
 			progFunc.Invoke(outArray)
 
-			if progMetric.FinalWeightResult != nil || progMetric.FinalRaidResult != nil {
+			if progMetric.FinalWeightResult != nil || progMetric.FinalRaidResult != nil || progMetric.FinalBulkResult != nil {
 				return outArray
 			}
 		}

@@ -48,11 +48,7 @@ func RunRaidSimAsync(request *proto.RaidSimRequest, progress chan *proto.Progres
 }
 
 func RunBulkSim(request *proto.BulkSimRequest) *proto.BulkSimResult {
-	result, err := BulkSim(context.Background(), request, nil)
-	if err != nil {
-		result.ErrorResult = err.Error()
-	}
-	return result
+	return BulkSim(context.Background(), request, nil)
 }
 
 func RunBulkSimAsync(ctx context.Context, request *proto.BulkSimRequest, progress chan *proto.ProgressMetrics) {

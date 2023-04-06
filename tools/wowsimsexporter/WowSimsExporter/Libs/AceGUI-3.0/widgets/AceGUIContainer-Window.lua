@@ -186,7 +186,7 @@ do
 
 		frame:SetScript("OnShow",frameOnShow)
 		frame:SetScript("OnHide",frameOnClose)
-		frame:SetMinResize(240,240)
+		frame:SetResizeBounds(240,240) -- https://wowpedia.fandom.com/wiki/API_Frame_SetMinResize replaced in Ulduar patch.
 		frame:SetToplevel(true)
 
 		local titlebg = frame:CreateTexture(nil, "BACKGROUND")

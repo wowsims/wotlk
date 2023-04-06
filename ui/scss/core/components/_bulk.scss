@@ -1,0 +1,41 @@
+@use "sass:map";
+
+.bulk-settings-button {
+  margin-top: map.get($spacers, 3);
+}
+
+.bulk-result-item-slot {
+  color:aliceblue;
+  margin-left: 0.5rem;
+  font-size: 0.5 * map.get($font-sizes, 6);
+}
+
+.bulk-results-header .content-block-header {
+  border-bottom: none;
+}
+
+.bulk-result-header-positive, .bulk-result-header-negative {
+  font-weight: bold;
+  margin-left: 0.5rem;
+}
+
+.bulk-result-header-positive {
+  color: rgb(146, 207, 76);
+}
+
+.bulk-result-header-negative {
+  color: rgb(218, 92, 53);
+}
+
+.bulk-result-body-dps {
+  font-size: map.get($font-sizes, 6);
+  text-align: left;
+
+  .topline-result-avg {
+    text-align: left;
+  }
+}
+
+.bulk-items-text-line {
+  margin-bottom: 1rem;
+}
