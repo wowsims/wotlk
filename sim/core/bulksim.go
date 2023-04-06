@@ -148,6 +148,14 @@ func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMe
 	newIters := int64(iterations)
 	if b.Request.BulkSettings.FastMode {
 		newIters /= 100
+
+		// In fast mode try to keep starting iterations between 50 and 1000.
+		if newIters < 50 {
+			newIters = 50
+		}
+		if newIters > 1000 {
+			newIters = 1000
+		}
 	}
 	for {
 		var tempBase *itemSubstitutionSimResult
@@ -162,10 +170,13 @@ func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMe
 			break
 		}
 
-		newIters *= 2
-		if int32(newIters) > iterations {
-			newIters = int64(iterations)
+		// we have reached max accuracy now
+		if newIters >= int64(iterations) {
+			break
 		}
+
+		// Increase accuracy
+		newIters *= 2
 		newNumCombos := len(rankedResults) / 2
 		validCombos = validCombos[:newNumCombos]
 		rankedResults = rankedResults[:newNumCombos]

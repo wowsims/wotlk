@@ -55,15 +55,14 @@ func Sim(input *proto.RaidSimRequest, replaceFile string, verbose bool) string {
 		select {
 		case status, ok := <-progress:
 			if !ok {
-				//wtf
 				return ""
 			}
 			if status.FinalBulkResult != nil {
 				if status.FinalBulkResult.ErrorResult != "" {
 					fmt.Printf("Failed: %s\n", status.FinalBulkResult.ErrorResult)
 				} else {
-					fmt.Printf("Done.\n")
-					os.Exit(0)
+					outputStr := ""
+					return outputStr
 				}
 			}
 
