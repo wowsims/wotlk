@@ -184,14 +184,22 @@ var ItemSetScourgelordsBattlegear = core.NewItemSet(core.ItemSet{
 	},
 })
 
-func (dk *Deathknight) scourgelordsBattlegearDamageBonus(spell *core.Spell) float64 {
+type ScourgelordBonusSpell int8
+
+const (
+	ScourgelordBonusSpellOB = iota + 1
+	ScourgelordBonusSpellSS
+	ScourgelordBonusSpellHS
+)
+
+func (dk *Deathknight) scourgelordsBattlegearDamageBonus(spell ScourgelordBonusSpell) float64 {
 	if !dk.HasSetBonus(ItemSetScourgelordsBattlegear, 2) {
 		return 1.0
 	}
 
-	if spell == dk.Obliterate || spell == dk.ScourgeStrike {
+	if spell == ScourgelordBonusSpellOB || spell == ScourgelordBonusSpellSS {
 		return 1.1
-	} else if spell == dk.HeartStrike {
+	} else if spell == ScourgelordBonusSpellHS {
 		return 1.07
 	}
 	return 1.0

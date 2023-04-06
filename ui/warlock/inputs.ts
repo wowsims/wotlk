@@ -11,7 +11,7 @@ import {
 	Warlock_Options_Summon as Summon,
 } from '../core/proto/warlock.js';
 
-import { RaidTarget, Spec, Glyphs, Debuffs, IndividualBuffs, RaidBuffs } from '../core/proto/common.js';
+import { RaidTarget, Spec, Glyphs, Debuffs, IndividualBuffs, RaidBuffs, ItemSwap, ItemSlot } from '../core/proto/common.js';
 import { NO_TARGET } from '../core/proto_utils/utils.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
@@ -143,7 +143,6 @@ export const CorruptionSpell = {
 	},
 };
 
-
 export const WarlockRotationConfig = {
 	inputs: [
 		{
@@ -163,38 +162,21 @@ export const WarlockRotationConfig = {
 				var newOptions: WarlockOptions;
 				var newGlyphs: Glyphs;
 				var newTalents: string;
-				// var newIndividualBuffs = player.getBuffs();
-				// const raid = player.getRaid();
-				// var newDebuffs = raid?.getDebuffs();
-				// var newRaidBuffs = raid?.getBuffs();
 				if (newValue == RotationType.Affliction) {
 					newTalents = Presets.AfflictionTalents.data.talentsString
 					newGlyphs = Presets.AfflictionTalents.data.glyphs || Glyphs.create();
 					newRotation = Presets.AfflictionRotation
 					newOptions = Presets.AfflictionOptions
-					// if (newDebuffs != undefined) {
-					// 	newDebuffs.shadowMastery = false
-					// }
 				} else if (newValue == RotationType.Demonology) {
 					newTalents = Presets.DemonologyTalents.data.talentsString
 					newGlyphs = Presets.DemonologyTalents.data.glyphs || Glyphs.create();
 					newRotation = Presets.DemonologyRotation
 					newOptions = Presets.DemonologyOptions
-					// if (newDebuffs != undefined) {
-					// 	newDebuffs.shadowMastery = false
-					// }
-					// if (newRaidBuffs != undefined) {
-					// 	newRaidBuffs.demonicPact = 0
-					// }
 				} else if (newValue == RotationType.Destruction) {
 					newTalents = Presets.DestructionTalents.data.talentsString
 					newGlyphs = Presets.DestructionTalents.data.glyphs || Glyphs.create();
 					newRotation = Presets.DestructionRotation
 					newOptions = Presets.DestructionOptions
-					// newIndividualBuffs.improvedSoulLeech = false
-					// if (newDebuffs != undefined) {
-					// 	newDebuffs.shadowMastery = true
-					// }
 				}
 				newRotation.type = newValue;
 				newRotation.preset = RotationPreset.Automatic;
@@ -203,9 +185,6 @@ export const WarlockRotationConfig = {
 					player.setSpecOptions(eventID, newOptions);
 					player.setGlyphs(eventID, newGlyphs);
 					player.setRotation(eventID, newRotation);
-					// player.setBuffs(eventID, newIndividualBuffs);
-					// raid?.setDebuffs(eventID, newDebuffs || Debuffs.create());
-					// raid?.setBuffs(eventID, newRaidBuffs || RaidBuffs.create());
 				});
 			},
 		},
@@ -226,34 +205,21 @@ export const WarlockRotationConfig = {
 					var newOptions: WarlockOptions;
 					var newGlyphs: Glyphs;
 					var newTalents: string;
-					// var newIndividualBuffs = player.getBuffs();
-					// const raid = player.getRaid();
-					// var newDebuffs = raid?.getDebuffs();
 					if (newRotation.type == RotationType.Affliction) {
 						newTalents = Presets.AfflictionTalents.data.talentsString
 						newGlyphs = Presets.AfflictionTalents.data.glyphs || Glyphs.create()
 						newRotation = Presets.AfflictionRotation
 						newOptions = Presets.AfflictionOptions
-						// if (newDebuffs != undefined) {
-						// 	newDebuffs.shadowMastery = false
-						// }
 					} else if (newRotation.type == RotationType.Demonology) {
 						newTalents = Presets.DemonologyTalents.data.talentsString
 						newGlyphs = Presets.DemonologyTalents.data.glyphs || Glyphs.create()
 						newRotation = Presets.DemonologyRotation
 						newOptions = Presets.DemonologyOptions
-						// if (newDebuffs != undefined) {
-						// 	newDebuffs.shadowMastery = false
-						// }
 					} else if (newRotation.type == RotationType.Destruction) {
 						newTalents = Presets.DestructionTalents.data.talentsString
 						newGlyphs = Presets.DestructionTalents.data.glyphs || Glyphs.create()
 						newRotation = Presets.DestructionRotation
 						newOptions = Presets.DestructionOptions
-						// newIndividualBuffs.improvedSoulLeech = false
-						// if (newDebuffs != undefined) {
-						// 	newDebuffs.shadowMastery = true
-						// }
 					}
 				}
 				newRotation.preset = newValue;
@@ -263,8 +229,6 @@ export const WarlockRotationConfig = {
 						player.setTalentsString(eventID, newTalents);
 						player.setSpecOptions(eventID, newOptions);
 						player.setGlyphs(eventID, newGlyphs);
-						// player.setBuffs(eventID, newIndividualBuffs);
-						// raid?.setDebuffs(eventID, newDebuffs || Debuffs.create());
 					}
 					player.setRotation(eventID, newRotation);
 				});
@@ -302,6 +266,22 @@ export const WarlockRotationConfig = {
 			label: 'Detonate Seed on Cast',
 			labelTooltip: 'Simulates raid doing damage to targets such that seed detonates immediately on cast.',
 			showWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().primarySpell == PrimarySpell.Seed,
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecWarlock>({
+			fieldName: 'enableWeaponSwap',
+			label: 'Enable Weapon Swapping',
+			labelTooltip: 'Toggle on/off item swapping',
+			showWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction
+		}),
+		InputHelpers.MakeItemSwapInput<Spec.SpecWarlock>({
+			fieldName: 'weaponSwap',
+			values: [
+				ItemSlot.ItemSlotMainHand,
+				ItemSlot.ItemSlotOffHand,
+				ItemSlot.ItemSlotRanged,
+			],
+			labelTooltip: 'Start with the swapped items until Corruption has been cast, then swap back to normal gear set. If a slot is empty it will not be used in the swap',
+			showWhen: (player: Player<Spec.SpecWarlock>) => (player.getRotation().type == RotationType.Affliction && player.getRotation().enableWeaponSwap) || false
 		}),
 	],
 };

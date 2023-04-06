@@ -44,7 +44,7 @@ export const LatencyMs = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecFeralD
 export const PrepopOoc = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecFeralDruid>({
 	fieldName: 'prepopOoc',
 	label: 'Pre-pop Clearcasting',
-	labelTooltip: 'Start fight with clearcasting active',
+	labelTooltip: 'Start fight with clearcasting using FFF',
 	showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getTalents().omenOfClarity,
 	changeEmitter: (player: Player<Spec.SpecFeralDruid>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 })
@@ -66,39 +66,6 @@ export const AssumeBleedActive = InputHelpers.makeSpecOptionsBooleanInput<Spec.S
 
 export const FeralDruidRotationConfig = {
 	inputs: [
-		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
-			fieldName: 'maintainFaerieFire',
-			label: 'Maintain Faerie Fire',
-			labelTooltip: 'Use Faerie Fire whenever it is not active on the target.',
-		}),
-		InputHelpers.makeRotationEnumInput<Spec.SpecFeralDruid, BearweaveType>({
-			fieldName: 'bearWeaveType',
-			label: 'Bearweaving',
-			values: [
-				{ name: 'None', value: BearweaveType.None },
-				{ name: 'Mangle', value: BearweaveType.Mangle },
-				{ name: 'Lacerate', value: BearweaveType.Lacerate },
-			],
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
-			fieldName: 'snekWeave',
-			label: 'Snek Weave',
-			labelTooltip: 'Reset swing timer using albino snek, when going from bear to cat',
-			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().bearWeaveType != BearweaveType.None,
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
-			fieldName: 'flowerWeave',
-			label: 'Flower Weave',
-			labelTooltip: 'Fish for clearcasting during rotation with gotw',
-			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().bearWeaveType == BearweaveType.None,
-		}),
-		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
-			fieldName: 'raidTargets',
-			label: 'GotW Raid Targets',
-			labelTooltip: 'Raid size to assume for clearcast proc chance (can include pets as well, so 25 man raid potentically can be ~30)',
-			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().bearWeaveType == BearweaveType.None && player.getRotation().flowerWeave == true,
-		}),
-
 		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
 			fieldName: 'manualParams',
 			label: 'Manual Advanced Parameters',

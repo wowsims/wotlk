@@ -39,6 +39,9 @@ func (warlock *Warlock) setupCooldowns(sim *core.Simulation) {
 	ignoredCDs[core.ActionID{ItemID: 41119}] = struct{}{}       // saronite bomb
 	ignoredCDs[core.ActionID{ItemID: 40536}] = struct{}{}       // explosive decoy
 	ignoredCDs[core.BloodlustActionID.WithTag(-1)] = struct{}{} // don't mess with BL
+	if warlock.Inferno != nil {
+		ignoredCDs[warlock.Inferno.ActionID] = struct{}{}
+	}
 
 	var executeActive func() bool
 	var executePhase time.Duration
@@ -236,20 +239,20 @@ func (warlock *Warlock) defineRotation() {
 		})
 	}
 
-	prefCurse := warlock.CurseOfAgony
+	prefCurse := warlock.CurseOfAgony.CurDot().Aura
 	switch warlock.Rotation.Curse {
 	case proto.Warlock_Rotation_Elements:
-		prefCurse = warlock.CurseOfElements
+		prefCurse = warlock.CurseOfElementsAuras.Get(mainTarget)
 		acl = aclAppendSimple(acl, warlock.CurseOfElements, func(sim *core.Simulation) (bool, *core.Unit) {
 			return warlock.CurseOfElementsAuras.Get(mainTarget).RemainingDuration(sim) < 3*time.Second, mainTarget
 		})
 	case proto.Warlock_Rotation_Weakness:
-		prefCurse = warlock.CurseOfWeakness
+		prefCurse = warlock.CurseOfWeaknessAuras.Get(mainTarget)
 		acl = aclAppendSimple(acl, warlock.CurseOfWeakness, func(sim *core.Simulation) (bool, *core.Unit) {
 			return warlock.CurseOfWeaknessAuras.Get(mainTarget).RemainingDuration(sim) < 3*time.Second, mainTarget
 		})
 	case proto.Warlock_Rotation_Tongues:
-		prefCurse = warlock.CurseOfTongues
+		prefCurse = warlock.CurseOfTonguesAuras.Get(mainTarget)
 		acl = aclAppendSimple(acl, warlock.CurseOfTongues, func(sim *core.Simulation) (bool, *core.Unit) {
 			return warlock.CurseOfTonguesAuras.Get(mainTarget).RemainingDuration(sim) < 3*time.Second, mainTarget
 		})
@@ -373,8 +376,8 @@ func (warlock *Warlock) defineRotation() {
 			uaRefresh := warlock.UnstableAffliction.Dot(mainTarget).RemainingDuration(sim) -
 				warlock.UnstableAffliction.CastTime()
 
-			curseRefresh := core.MaxDuration(prefCurse.CurDot().RemainingDuration(sim),
-				warlock.CurseOfDoom.CurDot().RemainingDuration(sim)) - prefCurse.CastTime()
+			curseRefresh := core.MaxDuration(prefCurse.RemainingDuration(sim),
+				warlock.CurseOfDoom.CurDot().RemainingDuration(sim)) - warlock.CurseOfAgony.CastTime()
 
 			hauntRefresh := warlock.HauntDebuffAuras.Get(mainTarget).RemainingDuration(sim) -
 				warlock.Haunt.CastTime() - hauntTravel
@@ -542,6 +545,14 @@ func (warlock *Warlock) OnGCDReady(sim *core.Simulation) {
 
 		if success := ac.Spell.Cast(sim, target); success {
 			if !warlock.GCD.IsReady(sim) {
+				// after-GCD actions
+
+				if ac.Spell == warlock.Corruption && warlock.ItemSwap.IsEnabled() && warlock.swapped {
+					warlock.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand,
+						proto.ItemSlot_ItemSlotOffHand, proto.ItemSlot_ItemSlotRanged}, true)
+					warlock.swapped = false
+				}
+
 				return
 			}
 

@@ -277,11 +277,6 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 
 	rotation := &cat.Rotation
 
-	if rotation.MaintainFaerieFire && cat.ShouldFaerieFire(sim, cat.CurrentTarget) {
-		cat.FaerieFire.Cast(sim, cat.CurrentTarget)
-		return
-	}
-
 	cat.missChance = cat.MissChance()
 	cat.bleedAura = cat.CurrentTarget.GetExclusiveEffectCategory(core.BleedEffectCategory).GetActiveAura()
 
@@ -338,7 +333,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	// come off cooldown. The latter exception is necessary for
 	// Lacerateweave rotation since TF timings can drift over time.
 	waitForTf := cat.Talents.Berserk && (cat.TigersFury.ReadyAt() <= cat.BerserkAura.Duration) && (cat.TigersFury.ReadyAt()+time.Second < sim.GetRemainingDuration()-cat.BerserkAura.Duration)
-	berserkNow := cat.Berserk.IsReady(sim) && !waitForTf
+	berserkNow := cat.Berserk.IsReady(sim) && !waitForTf && ripDot.IsActive() && !isClearcast
 
 	// Additionally, for Lacerateweave rotation, postpone the final Berserk
 	// of the fight to as late as possible so as to minimize the impact of
@@ -349,6 +344,17 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	if berserkNow && rotation.BearweaveType == proto.FeralDruid_Rotation_Lacerate && cat.berserkUsed && sim.GetRemainingDuration() < cat.Berserk.CD.Duration {
 		berserkNow = sim.GetRemainingDuration() < cat.BerserkAura.Duration+(3*time.Second)
 	}
+
+	// Faerie Fire on cooldown for Omen procs. Each second of FF delay is
+	// worth ~7 Energy, so it is okay to waste up to 7 Energy to cap when
+	// determining whether to cast it vs. dump Energy first. That puts the
+	// Energy threshold for FF usage as 107 minus 10 for the Clearcasted
+	// special minus 10 for the FF GCD = 87 Energy.
+	ffThresh := 87.0
+	if cat.BerserkAura.IsActive() {
+		ffThresh = cat.Rotation.BerserkFfThresh
+	}
+	ffNow := cat.FaerieFire.CanCast(sim, cat.CurrentTarget) && !isClearcast && curEnergy < ffThresh && (!ripNow || (curEnergy < cat.CurrentRipCost()))
 
 	roarNow := curCp >= 1 && (!cat.SavageRoarAura.IsActive() || cat.clipRoar(sim))
 
@@ -555,6 +561,9 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		}
 	} else if emergencyBearweave {
 		cat.readyToShift = true
+	} else if ffNow {
+		cat.FaerieFire.Cast(sim, cat.CurrentTarget)
+		return
 	} else if berserkNow {
 		cat.Berserk.Cast(sim, nil)
 		cat.UpdateMajorCooldowns()
@@ -648,6 +657,10 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	if rotation.BearweaveType == proto.FeralDruid_Rotation_Lacerate && lacerateDot.IsActive() && lacerateDot.RemainingDuration(sim) < sim.GetRemainingDuration() && (sim.CurrentTime < lacRefreshTime) {
 		nextAction = core.MinDuration(nextAction, lacRefreshTime)
 	}
+
+	// Schedule an action when Faerie Fire (Feral) is off cooldown next
+	nextAction = core.MinDuration(nextAction, sim.CurrentTime+cat.FaerieFire.TimeToReady(sim))
+
 	nextAction += cat.latency
 
 	if nextAction <= sim.CurrentTime {
@@ -672,6 +685,7 @@ type FeralDruidRotation struct {
 	MinCombosForBite   int32
 	MangleSpam         bool
 	BerserkBiteThresh  float64
+	BerserkFfThresh    float64
 	Powerbear          bool
 	MinRoarOffset      time.Duration
 	RevitFreq          float64
@@ -699,6 +713,9 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 		FlowerWeave:        core.Ternary(rotation.BearWeaveType == proto.FeralDruid_Rotation_None, rotation.FlowerWeave, false),
 	}
 
+	cat.Rotation.FlowerWeave = false
+	cat.Rotation.BearweaveType = proto.FeralDruid_Rotation_None
+
 	// Use automatic values unless specified
 	if rotation.ManualParams {
 		return
@@ -710,11 +727,11 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 	cat.Rotation.UseRake = true
 	cat.Rotation.UseBite = true
 
-	if cat.Rotation.FlowerWeave {
+	if cat.Rotation.FlowerWeave || (cat.Rotation.BearweaveType == proto.FeralDruid_Rotation_None) {
 		if hasT84P {
 			cat.Rotation.MinRoarOffset = 26 * time.Second
 		} else {
-			cat.Rotation.MinRoarOffset = 13 * time.Second
+			cat.Rotation.MinRoarOffset = 20 * time.Second
 		}
 		cat.Rotation.BiteTime = 4 * time.Second
 	} else {
