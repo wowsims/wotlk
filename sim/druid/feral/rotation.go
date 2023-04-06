@@ -354,7 +354,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	if cat.BerserkAura.IsActive() {
 		ffThresh = cat.Rotation.BerserkFfThresh
 	}
-	ffNow := cat.FaerieFire.CanCast(sim, cat.CurrentTarget) && !isClearcast && curEnergy < ffThresh
+	ffNow := cat.FaerieFire.CanCast(sim, cat.CurrentTarget) && !isClearcast && curEnergy < ffThresh && (!ripNow || (curEnergy < cat.CurrentRipCost()))
 
 	roarNow := curCp >= 1 && (!cat.SavageRoarAura.IsActive() || cat.clipRoar(sim))
 
