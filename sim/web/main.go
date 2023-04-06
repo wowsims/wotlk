@@ -99,6 +99,9 @@ var asyncAPIHandlers = map[string]asyncAPIHandler{
 	"/statWeightsAsync": {msg: func() googleProto.Message { return &proto.StatWeightsRequest{} }, handle: func(msg googleProto.Message, reporter chan *proto.ProgressMetrics) {
 		core.StatWeightsAsync(msg.(*proto.StatWeightsRequest), reporter)
 	}},
+	"/bulkSimAsync": {msg: func() googleProto.Message { return &proto.BulkSimRequest{} }, handle: func(msg googleProto.Message, reporter chan *proto.ProgressMetrics) {
+		core.RunBulkSimAsync(msg.(*proto.BulkSimRequest), reporter)
+	}},
 }
 
 func handleAsyncAPI(w http.ResponseWriter, r *http.Request, addNewSim simProgReportCreator) {
@@ -194,6 +197,9 @@ func setupAsyncServer() {
 		handleAsyncAPI(w, r, addNewSim)
 	})
 	http.HandleFunc("/raidSimAsync", func(w http.ResponseWriter, r *http.Request) {
+		handleAsyncAPI(w, r, addNewSim)
+	})
+	http.HandleFunc("/bulkSimAsync", func(w http.ResponseWriter, r *http.Request) {
 		handleAsyncAPI(w, r, addNewSim)
 	})
 

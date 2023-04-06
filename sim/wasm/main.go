@@ -4,6 +4,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"runtime/debug"
 	"syscall/js"
@@ -29,6 +30,7 @@ func main() {
 	js.Global().Set("raidSimAsync", js.FuncOf(raidSimAsync))
 	js.Global().Set("statWeights", js.FuncOf(statWeights))
 	js.Global().Set("statWeightsAsync", js.FuncOf(statWeightsAsync))
+	js.Global().Set("bulkSimAsync", js.FuncOf(bulkSimAsync))
 	js.Global().Call("wasmready")
 	<-c
 }
@@ -195,6 +197,21 @@ func statWeightsAsync(this js.Value, args []js.Value) interface{} {
 	}
 	reporter := make(chan *proto.ProgressMetrics, 100)
 	core.StatWeightsAsync(rsr, reporter)
+
+	result := processAsyncProgress(args[1], reporter)
+	return result
+}
+
+func bulkSimAsync(this js.Value, args []js.Value) interface{} {
+	rsr := &proto.BulkSimRequest{}
+	if err := googleProto.Unmarshal(getArgsBinary(args[0]), rsr); err != nil {
+		log.Printf("Failed to parse request: %s", err)
+		return nil
+	}
+	reporter := make(chan *proto.ProgressMetrics, 100)
+	// for now just use context.Background() until we can figure out the best way to handle
+	// allowing front end to cancel.
+	core.RunBulkSimAsync(context.Background(), rsr, reporter)
 
 	result := processAsyncProgress(args[1], reporter)
 	return result
