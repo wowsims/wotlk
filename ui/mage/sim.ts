@@ -176,6 +176,7 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 					Presets.FIRE_P2_PRESET,
 					Presets.FROST_P1_PRESET,
 					Presets.FROST_P2_PRESET,
+					Presets.FFB_P2_PRESET,
 				],
 			},
 		});

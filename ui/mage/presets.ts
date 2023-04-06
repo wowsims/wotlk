@@ -65,7 +65,7 @@ export const FireTalents = {
 export const FrostfireTalents = {
 	name: 'Frostfire',
 	data: SavedTalents.create({
-		talentsString: '-2305030012303331053120311351-023303031002',
+		talentsString: '-2305032012303331053120311351-023303031',
 		glyphs: Glyphs.create({
 			major1: MageMajorGlyph.GlyphOfFrostfire,
 			major2: MageMajorGlyph.GlyphOfMoltenArmor,
@@ -1014,4 +1014,124 @@ export const FROST_P2_PRESET = {
 			]
 		}
 	]}`),
+};
+
+export const FFB_P2_PRESET = {
+	name: 'FFB P2 Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecMage>) => (player.getTalentTree() == 1 && player.getTalents().icyVeins) || (player.getRotation().type == RotationType.Fire && player.getRotation().primaryFireSpell == PrimaryFireSpell.FrostfireBolt),
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+		  "id": 45497,
+		  "enchant": 3820,
+		  "gems": [
+			41285,
+			45883
+		  ]
+		},
+		{
+		  "id": 45133,
+		  "gems": [
+			40048
+		  ]
+		},
+		{
+		  "id": 46134,
+		  "enchant": 3810,
+		  "gems": [
+			39998
+		  ]
+		},
+		{
+		  "id": 45618,
+		  "enchant": 3722,
+		  "gems": [
+			39998
+		  ]
+		},
+		{
+		  "id": 46130,
+		  "enchant": 3832,
+		  "gems": [
+			39998,
+			39998
+		  ]
+		},
+		{
+		  "id": 45446,
+		  "enchant": 2332,
+		  "gems": [
+			39998,
+			0
+		  ]
+		},
+		{
+		  "id": 45665,
+		  "enchant": 3604,
+		  "gems": [
+			39998,
+			39998,
+			0
+		  ]
+		},
+		{
+		  "id": 45619,
+		  "gems": [
+			40048,
+			40048,
+			39998
+		  ]
+		},
+		{
+		  "id": 45488,
+		  "enchant": 3719,
+		  "gems": [
+			39998,
+			40048,
+			40026
+		  ]
+		},
+		{
+		  "id": 45537,
+		  "enchant": 3606,
+		  "gems": [
+			39998,
+			40026
+		  ]
+		},
+		{
+		  "id": 45495,
+		  "gems": [
+			39998
+		  ]
+		},
+		{
+		  "id": 46046,
+		  "gems": [
+			39998
+		  ]
+		},
+		{
+		  "id": 45466
+		},
+		{
+		  "id": 45518
+		},
+		{
+		  "id": 45620,
+		  "enchant": 3834,
+		  "gems": [
+			39998
+		  ]
+		},
+		{
+		  "id": 45617
+		},
+		{
+		  "id": 45294,
+		  "gems": [
+			39998
+		  ]
+		}
+	  ]}`),
 };

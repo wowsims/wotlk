@@ -464,11 +464,11 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
 				1: MagePresets.FIRE_P1_PRESET.gear,
-				2: MagePresets.FIRE_P2_PRESET.gear,
+				2: MagePresets.FFB_P2_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: MagePresets.FIRE_P1_PRESET.gear,
-				2: MagePresets.FIRE_P2_PRESET.gear,
+				2: MagePresets.FFB_P2_PRESET.gear,
 			},
 		},
 		tooltip: 'FFB Fire Mage',
