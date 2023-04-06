@@ -78,6 +78,12 @@ export const FeralDruidRotationConfig = {
 			labelTooltip: 'Targeted offset in Rip/Roar timings',
 			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().manualParams,
 		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
+			fieldName: 'ripLeeway',
+			label: 'Rip Leeway',
+			labelTooltip: 'Rip leeway when determining roar clips',
+			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().manualParams,
+		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
 			fieldName: 'useRake',
 			label: 'Use Rake',
