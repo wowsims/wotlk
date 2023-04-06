@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"math"
 	"runtime"
+	"runtime/debug"
 	"sort"
 
 	goproto "github.com/golang/protobuf/proto"
@@ -12,16 +14,61 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-// RunBulkSim runs a bulk simulation. The original sim request must contain exactly one player
-// (i.e. not a full raid sim) with a specified bulk equipment.
-func RunBulkSim(ctx context.Context, request *proto.RaidSimRequest, progress chan *proto.ProgressMetrics) (*proto.RaidSimResult, error) {
+const (
+	maxItemCount              = 20
+	defaultIterationsPerCombo = 1000
+)
+
+// raidSimRunner runs a standard raid simulation.
+type raidSimRunner func(*proto.RaidSimRequest, chan *proto.ProgressMetrics, bool) *proto.RaidSimResult
+
+// bulkSimRunner runs a bulk simulation.
+type bulkSimRunner struct {
+	// SingleRaidSimRunner used to run one simulation of the bulk.
+	SingleRaidSimRunner raidSimRunner
+	// Request used for this bulk simulation.
+	Request *proto.BulkSimRequest
+}
+
+func BulkSim(ctx context.Context, request *proto.BulkSimRequest, progress chan *proto.ProgressMetrics) *proto.BulkSimResult {
+	bulk := &bulkSimRunner{
+		SingleRaidSimRunner: runSim,
+		Request:             request,
+	}
+
+	result, err := bulk.Run(ctx, progress)
+	if err != nil {
+		result = &proto.BulkSimResult{
+			ErrorResult: err.Error(),
+		}
+	}
+
+	if progress != nil {
+		progress <- &proto.ProgressMetrics{
+			FinalBulkResult: result,
+		}
+		close(progress)
+	}
+
+	return result
+}
+
+func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMetrics) (result *proto.BulkSimResult, resultErr error) {
+	defer func() {
+		if err := recover(); err != nil {
+			result = &proto.BulkSimResult{
+				ErrorResult: fmt.Sprintf("%v\nStack Trace:\n%s", err, string(debug.Stack())),
+			}
+		}
+	}()
+
 	// Bulk simming is only supported for the single-player use (i.e. not whole raid-wide simming).
 	// Verify that we have exactly 1 player.
 	var playerCount int
 	var player *proto.Player
-	for _, p := range request.GetRaid().GetParties() {
+	for _, p := range b.Request.GetBaseSettings().GetRaid().GetParties() {
 		for _, pl := range p.GetPlayers() {
-			// TODO(Riotdog-GehennasEU): Is this a reasonable check?
+			// TODO(Riotdog-GehennasEU): Better way to check if a player is valid/set?
 			if pl.Name != "" {
 				player = pl
 				playerCount++
@@ -32,37 +79,62 @@ func RunBulkSim(ctx context.Context, request *proto.RaidSimRequest, progress cha
 		return nil, fmt.Errorf("bulksim: expected exactly 1 player, found %d", playerCount)
 	}
 
-	if len(player.GetBulkEquipment().GetItems()) > 20 {
-		// At even just 1 iteration per sim (useless), this would be at around 2**20 = 1 million
-		// iterations. Anything above this is just not feasible, and even this upper bound is
-		// a bit extreme. Mostly we have to ensure that we don't exceed the 64-bit range used to
-		// compute all combinations.
-		return nil, fmt.Errorf("bulksim: too many items specified, computationally too expensive")
+	iterations := b.Request.GetBulkSettings().GetIterationsPerCombo()
+	if iterations <= 0 {
+		iterations = defaultIterationsPerCombo
 	}
 
-	// TODO(Riotdog-GehennasEU): Expose this as a setting?
+	items := b.Request.GetBulkSettings().GetItems()
+	numItems := len(items)
+	if numItems > maxItemCount {
+		return nil, fmt.Errorf("too many items specified (%d > %d), not computationally feasible", numItems, maxItemCount)
+	}
+
+	totalIterationsUpperBound := int64(math.Pow(2.0, float64(numItems)) * float64(iterations))
+	if totalIterationsUpperBound > math.MaxInt32 {
+		return nil, fmt.Errorf("number of total iterations %d too large", totalIterationsUpperBound)
+	}
+
+	// Create all distinct combinations of (item, slot). For example, let's say the only item we
+	// want to bulk sim is a one-handed item that can be worn both as an off-hand or a main-hand weapon.
+	// For each slot, we will create one itemWithSlot pair, so (item, off-hand) and (item, main-hand).
+	// We verify later that we are not emitting any invalid equipment set.
+	addToDatabase(player.GetDatabase())
+	var distinctItemSlotCombos []*itemWithSlot
+	for index, is := range items {
+		item, ok := ItemsByID[is.Id]
+		if !ok {
+			return nil, fmt.Errorf("unknown item with id %d in bulk settings", is.Id)
+		}
+		for _, slot := range eligibleSlotsForItem(item) {
+			distinctItemSlotCombos = append(distinctItemSlotCombos, &itemWithSlot{
+				Item:  is,
+				Slot:  slot,
+				Index: index,
+			})
+		}
+	}
+
 	concurrency := (runtime.NumCPU() - 1) * 2
 	if concurrency <= 0 {
 		concurrency = 1
 	}
+	results := make(chan *itemSubstitutionSimResult, concurrency)
 
-	results := make(chan *bulkRaidSimResult, concurrency)
 	go func() {
 		var numCombinations int32
-		for sub := range generateAllEquipmentSubstitutions(ctx, player.GetBulkEquipment()) {
-			substitutedRequest, changeLog := createNewRequestWithSubstitution(request, sub)
+		for sub := range generateAllEquipmentSubstitutions(ctx, distinctItemSlotCombos) {
+			substitutedRequest, changeLog := createNewRequestWithSubstitution(b.Request.BaseSettings, sub)
 			if isValidEquipment(substitutedRequest.Raid.Parties[0].Players[0].Equipment) {
 				singleSimProgress := make(chan *proto.ProgressMetrics)
 				go func(i int32) {
 					for p := range singleSimProgress {
-						// Do not forward the final message, since we have to do multiple invidiual sims and this
-						// would confuse the UI.
 						if p.FinalRaidResult != nil {
 							continue
 						}
 
-						p.CompletedIterations += i * request.SimOptions.Iterations
-						p.TotalIterations += i * request.SimOptions.Iterations
+						p.CompletedIterations += i * iterations
+						p.TotalIterations = int32(totalIterationsUpperBound)
 						select {
 						case progress <- p:
 						default:
@@ -70,20 +142,19 @@ func RunBulkSim(ctx context.Context, request *proto.RaidSimRequest, progress cha
 						}
 					}
 				}(numCombinations)
-
-				results <- &bulkRaidSimResult{
+				numCombinations++
+				results <- &itemSubstitutionSimResult{
 					Request:      substitutedRequest,
-					Result:       runSim(substitutedRequest, singleSimProgress, false),
+					Result:       b.SingleRaidSimRunner(substitutedRequest, singleSimProgress, false),
 					Substitution: sub,
 					ChangeLog:    changeLog,
 				}
 			}
-			numCombinations++
 		}
 		close(results)
 	}()
 
-	var rankedResults []*bulkRaidSimResult
+	var rankedResults []*itemSubstitutionSimResult
 	for r := range results {
 		rankedResults = append(rankedResults, r)
 	}
@@ -92,11 +163,16 @@ func RunBulkSim(ctx context.Context, request *proto.RaidSimRequest, progress cha
 	})
 
 	totalResultCount := int32(len(rankedResults))
-	var baseResult *bulkRaidSimResult
+	var baseResult *itemSubstitutionSimResult
 	for _, r := range rankedResults {
 		if !r.Substitution.HasItemReplacements() {
 			baseResult = r
 		}
+	}
+
+	if baseResult == nil {
+		// TODO(Riotdog-GehennasEU): Panic instead? This is likely programmer error.
+		return nil, fmt.Errorf("no base result for equipped gear found in bulk sim")
 	}
 
 	// TODO(Riotdog-GehennasEU): Make this configurable?
@@ -105,31 +181,36 @@ func RunBulkSim(ctx context.Context, request *proto.RaidSimRequest, progress cha
 		rankedResults = rankedResults[:maxResults]
 	}
 
+	result = &proto.BulkSimResult{
+		EquippedGearResult: &proto.BulkComboResult{
+			UnitMetrics:      baseResult.Result.GetRaidMetrics().GetParties()[0].GetPlayers()[0],
+			EncounterMetrics: baseResult.Result.GetEncounterMetrics(),
+		},
+	}
+
 	for _, r := range rankedResults {
-		baseResult.Result.BulkResults = append(baseResult.Result.BulkResults, &proto.BulkSimResultWithSubstitutions{
-			ItemsAdded:       itemWithSlotToBulkSpec(r.ChangeLog.AddedItems),
-			ItemsRemoved:     itemWithSlotToBulkSpec(r.ChangeLog.RemovedItems),
-			RaidMetrics:      r.Result.RaidMetrics,
-			EncounterMetrics: r.Result.EncounterMetrics,
-			ErrorResult:      r.Result.ErrorResult,
+		result.Results = append(result.Results, &proto.BulkComboResult{
+			ItemsAdded:       r.ChangeLog.AddedItems,
+			UnitMetrics:      r.Result.GetRaidMetrics().GetParties()[0].GetPlayers()[0],
+			EncounterMetrics: r.Result.GetEncounterMetrics(),
 		})
 	}
 
 	if progress != nil {
 		progress <- &proto.ProgressMetrics{
-			TotalIterations:     request.SimOptions.Iterations * totalResultCount,
-			CompletedIterations: request.SimOptions.Iterations * totalResultCount,
-			Dps:                 baseResult.Result.RaidMetrics.Dps.Avg,
-			FinalRaidResult:     baseResult.Result,
+			TotalIterations:     totalResultCount * iterations,
+			CompletedIterations: totalResultCount * iterations,
+			FinalBulkResult:     result,
 		}
 	}
 
-	return baseResult.Result, nil
+	return result, nil
 }
 
-// bulkRaidSimResult stores the request and response of a simulation, along with the used equipment
-// susbstitution and a changelog of which items were added and removed from the base equipment set.
-type bulkRaidSimResult struct {
+// itemSubstitutionSimResult stores the request and response of a simulation, along with the used
+// equipment susbstitution and a changelog of which items were added and removed from the base
+// equipment set.
+type itemSubstitutionSimResult struct {
 	Request      *proto.RaidSimRequest
 	Result       *proto.RaidSimResult
 	Substitution *equipmentSubstitution
@@ -137,7 +218,7 @@ type bulkRaidSimResult struct {
 }
 
 // Score used to rank results.
-func (r *bulkRaidSimResult) Score() float64 {
+func (r *itemSubstitutionSimResult) Score() float64 {
 	return r.Result.RaidMetrics.Dps.Avg
 }
 
@@ -205,28 +286,13 @@ func isValidEquipment(equipment *proto.EquipmentSpec) bool {
 // given bulk sim request. Also returns the unchanged equipment ("base equipment set") set as the
 // first result. This ensures that simming over all possible equipment substitutions includes the
 // base case as well.
-func generateAllEquipmentSubstitutions(ctx context.Context, spec *proto.BulkEquipmentSpec) chan *equipmentSubstitution {
+func generateAllEquipmentSubstitutions(ctx context.Context, distinctItemSlotCombos []*itemWithSlot) chan *equipmentSubstitution {
 	results := make(chan *equipmentSubstitution)
 	go func() {
 		defer close(results)
 
 		// No substitutions (base case).
 		results <- &equipmentSubstitution{}
-
-		// Create all distinct combinations of (item, slot). For example, let's say the only item we
-		// want to bulk sim is a one-handed item that can be worn both as an off-hand or a main-hand weapon.
-		// For each slot, we will create one itemWithSlot pair, so (item, off-hand) and (item, main-hand).
-		// We verify later that we are not emitting any item substitution that refers to the same item.
-		var distinctItemSlotCombos []*itemWithSlot
-		for i, is := range spec.GetItems() {
-			for _, slot := range is.Slots {
-				distinctItemSlotCombos = append(distinctItemSlotCombos, &itemWithSlot{
-					Item:  is.Item,
-					Slot:  slot,
-					Index: i,
-				})
-			}
-		}
 
 		// Borrowed from https://github.com/mxschmitt/golang-combinations and adapted to
 		// only emit valid combinations.
@@ -265,23 +331,10 @@ type itemWithSlot struct {
 	Index int
 }
 
-// itemWithSlotToBulkSpec converts the given slice of itemWithSlot to a BulkEquipmentSpec.
-func itemWithSlotToBulkSpec(items []*itemWithSlot) *proto.BulkEquipmentSpec {
-	r := &proto.BulkEquipmentSpec{}
-	for _, it := range items {
-		r.Items = append(r.Items, &proto.BulkEquipmentSpec_ItemSpecWithSlots{
-			Item:  it.Item,
-			Slots: []proto.ItemSlot{it.Slot},
-		})
-	}
-	return r
-}
-
 // raidSimRequestChangeLog stores a change log of which items were added and removed from the base
 // equipment set.
 type raidSimRequestChangeLog struct {
-	AddedItems   []*itemWithSlot
-	RemovedItems []*itemWithSlot
+	AddedItems []*proto.ItemSpecWithSlot
 }
 
 // createNewRequestWithSubstitution creates a copy of the input RaidSimRequest and applis the given
@@ -292,18 +345,11 @@ func createNewRequestWithSubstitution(readonlyInputRequest *proto.RaidSimRequest
 	player := request.Raid.Parties[0].Players[0]
 	equipment := player.Equipment
 	for _, is := range substitution.Items {
-		equippedItem := equipment.Items[is.Slot]
-		if equippedItem.GetId() > 0 {
-			changeLog.RemovedItems = append(changeLog.RemovedItems, &itemWithSlot{
-				Item: equippedItem,
-				Slot: is.Slot,
-			})
-		}
-		changeLog.AddedItems = append(changeLog.AddedItems, is)
+		changeLog.AddedItems = append(changeLog.AddedItems, &proto.ItemSpecWithSlot{
+			Item: is.Item,
+			Slot: is.Slot,
+		})
 		equipment.Items[is.Slot] = is.Item
 	}
-
-	// Clear the player's bulk equipment set since we don't want to recursively keep bulk simming.
-	player.BulkEquipment = nil
 	return request, changeLog
 }

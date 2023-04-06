@@ -1,5 +1,4 @@
 import {
-	BulkEquipmentSpec,
 	Class,
 	Consumes,
 	Cooldowns,
@@ -99,7 +98,7 @@ export class Player<SpecType extends Spec> {
 	private consumes: Consumes = Consumes.create();
 	private bonusStats: Stats = new Stats();
 	private gear: Gear = new Gear({});
-	private bulkEquipmentSpec: BulkEquipmentSpec = BulkEquipmentSpec.create();
+	//private bulkEquipmentSpec: BulkEquipmentSpec = BulkEquipmentSpec.create();
 	private itemSwapGear: ItemSwapGear = new ItemSwapGear();
 	private race: Race;
 	private profession1: Profession = 0;
@@ -129,7 +128,6 @@ export class Player<SpecType extends Spec> {
 	readonly consumesChangeEmitter = new TypedEvent<void>('PlayerConsumes');
 	readonly bonusStatsChangeEmitter = new TypedEvent<void>('PlayerBonusStats');
 	readonly gearChangeEmitter = new TypedEvent<void>('PlayerGear');
-	readonly bulkGearChangeEmitter = new TypedEvent<void>('PlayerGearBulk');
 	readonly professionChangeEmitter = new TypedEvent<void>('PlayerProfession');
 	readonly raceChangeEmitter = new TypedEvent<void>('PlayerRace');
 	readonly rotationChangeEmitter = new TypedEvent<void>('PlayerRotation');
@@ -164,7 +162,6 @@ export class Player<SpecType extends Spec> {
 			this.consumesChangeEmitter,
 			this.bonusStatsChangeEmitter,
 			this.gearChangeEmitter,
-			this.bulkGearChangeEmitter,
 			this.professionChangeEmitter,
 			this.raceChangeEmitter,
 			this.rotationChangeEmitter,
@@ -463,6 +460,7 @@ export class Player<SpecType extends Spec> {
 		});
 	}
 
+	/*
 	setBulkEquipmentSpec(eventID: EventID, newBulkEquipmentSpec: BulkEquipmentSpec) {
 		if (BulkEquipmentSpec.equals(this.bulkEquipmentSpec, newBulkEquipmentSpec))
 			return;
@@ -476,6 +474,7 @@ export class Player<SpecType extends Spec> {
 	getBulkEquipmentSpec(): BulkEquipmentSpec {
 		return BulkEquipmentSpec.clone(this.bulkEquipmentSpec);
 	}
+	*/
 
 	getBonusStats(): Stats {
 		return this.bonusStats;
@@ -916,37 +915,13 @@ export class Player<SpecType extends Spec> {
 		}
 	}
 
-	private bulkEquipmentSpecToDatabase(): SimDatabase {
-		const bulkDb = SimDatabase.create();
-		for (const is of this.bulkEquipmentSpec.items) {
-			if (!is.item)
-				continue
-
-			const item = this.sim.db.lookupItemSpec(is.item);
-			if (!item)
-				continue
-			
-			if (item.item)
-				bulkDb.items.push(SimItem.fromJson(Item.toJson(item.item), { ignoreUnknownFields: true }));
-			if (item.enchant)
-				bulkDb.enchants.push(SimEnchant.fromJson(Enchant.toJson(item.enchant), { ignoreUnknownFields: true }));
-			for (const gem of item.gems) {
-				if (gem)
-					bulkDb.gems.push(SimGem.fromJson(Gem.toJson(gem), { ignoreUnknownFields: true }));
-			}
-		}
-
-		return bulkDb
-	}
-
 	private toDatabase(): SimDatabase {
 		const dbGear = this.getGear().toDatabase()
 		const dbItemSwapGear = this.getItemSwapGear().toDatabase();
-		const dbBulk = this.bulkEquipmentSpecToDatabase()
 		return SimDatabase.create({
-			items: dbGear.items.concat(dbItemSwapGear.items).concat(dbBulk.items),
-			enchants: dbGear.enchants.concat(dbItemSwapGear.enchants).concat(dbBulk.enchants),
-			gems: dbGear.gems.concat(dbItemSwapGear.gems).concat(dbBulk.gems),
+			items: dbGear.items.concat(dbItemSwapGear.items),
+			enchants: dbGear.enchants.concat(dbItemSwapGear.enchants),
+			gems: dbGear.gems.concat(dbItemSwapGear.gems),
 		})
 	}
 
@@ -959,7 +934,6 @@ export class Player<SpecType extends Spec> {
 				race: this.getRace(),
 				class: this.getClass(),
 				equipment: gear.asSpec(),
-				bulkEquipment: BulkEquipmentSpec.clone(this.bulkEquipmentSpec),
 				consumes: this.getConsumes(),
 				bonusStats: this.getBonusStats().toProto(),
 				buffs: this.getBuffs(),
@@ -982,7 +956,7 @@ export class Player<SpecType extends Spec> {
 			this.setName(eventID, proto.name);
 			this.setRace(eventID, proto.race);
 			this.setGear(eventID, proto.equipment ? this.sim.db.lookupEquipmentSpec(proto.equipment) : new Gear({}));
-			this.setBulkEquipmentSpec(eventID, BulkEquipmentSpec.create()); // Do not persist the bulk equipment settings.
+			//this.setBulkEquipmentSpec(eventID, BulkEquipmentSpec.create()); // Do not persist the bulk equipment settings.
 			this.setConsumes(eventID, proto.consumes || Consumes.create());
 			this.setBonusStats(eventID, Stats.fromProto(proto.bonusStats || UnitStats.create()));
 			this.setBuffs(eventID, proto.buffs || IndividualBuffs.create());

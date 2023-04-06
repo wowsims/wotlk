@@ -692,22 +692,6 @@ message EquipmentSpec {
 	repeated ItemSpec items = 1;
 }
 
-// According to some comments in e.g. database.ts, the EquipmentSpec message above is
-// supposed to be indexed by ItemSlot (i.e. we'd expect 17 items in a specific order).
-// When dealing with bulk simming via bag items, it is entirely possible that multiple
-// items for the same ItemSlot exist (e.g. 2 chest pieces to compare against each other).
-// For this purpose, we introduce BulkEquipmentSpec which explicitly does not assume any
-// ordering or indexing of the items.
-message BulkEquipmentSpec {
-	message ItemSpecWithSlots {
-		ItemSpec item = 1;
-		// Some items (one handed weapons, trinkets etc.) can fit into multiple slots.
-		repeated ItemSlot slots = 2;
-	}
-
-	repeated ItemSpecWithSlots items = 1;
-}
-
 message SimDatabase {
 	repeated SimItem items = 1;
 	repeated SimEnchant enchants = 2;

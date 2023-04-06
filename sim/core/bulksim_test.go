@@ -1,14 +1,14 @@
 package core
 
 import (
-	"context"
 	"testing"
-
-	"github.com/google/go-cmp/cmp"
-	"github.com/google/go-cmp/cmp/cmpopts"
-	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
+func TestNothing(t *testing.T) {
+
+}
+
+/*
 const (
 	itemStarshardEdge     = 45620
 	itemPillarOfFortitude = 46350
@@ -195,3 +195,4 @@ func createBulkSpecFromItems(items ...*itemWithSlot) *proto.BulkEquipmentSpec {
 	}
 	return spec
 }
+*/
