@@ -150,7 +150,14 @@ func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMe
 		newIters /= 100
 	}
 	for {
-		rankedResults, baseResult = b.getRankedResults(validCombos, newIters, progress)
+		var tempBase *itemSubstitutionSimResult
+		rankedResults, tempBase = b.getRankedResults(validCombos, newIters, progress)
+
+		// keep replacing the base result with more refined base until we don't have base in the ranked results any more.
+		if tempBase != nil {
+			baseResult = tempBase
+		}
+
 		if !b.Request.BulkSettings.FastMode || len(rankedResults) <= maxResults {
 			break
 		}
