@@ -93,16 +93,22 @@ func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMe
 
 	items := b.Request.GetBulkSettings().GetItems()
 	numItems := len(items)
-	if numItems > maxItemCount {
+	if b.Request.BulkSettings.Combinations && numItems > maxItemCount {
 		return nil, fmt.Errorf("too many items specified (%d > %d), not computationally feasible", numItems, maxItemCount)
 	}
 
-	totalIterationsUpperBound := int64(math.Pow(2.0, float64(numItems)) * float64(iterations))
+	var totalIterationsUpperBound int64
+	if b.Request.BulkSettings.Combinations {
+		totalIterationsUpperBound = int64(math.Pow(2.0, float64(numItems)) * float64(iterations))
+	} else {
+		totalIterationsUpperBound = int64(numItems) * int64(iterations)
+	}
+
 	if totalIterationsUpperBound > math.MaxInt32 {
 		return nil, fmt.Errorf("number of total iterations %d too large", totalIterationsUpperBound)
 	}
 
-	fmt.Printf("Upper Bound: %d\n", totalIterationsUpperBound)
+	// fmt.Printf("Upper Bound: %d\n", totalIterationsUpperBound)
 
 	// Create all distinct combinations of (item, slot). For example, let's say the only item we
 	// want to bulk sim is a one-handed item that can be worn both as an off-hand or a main-hand weapon.
@@ -112,7 +118,6 @@ func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMe
 		addToDatabase(player.GetDatabase())
 	}
 
-	fmt.Printf("generating item slot combos...\n")
 	var distinctItemSlotCombos []*itemWithSlot
 	for index, is := range items {
 		item, ok := ItemsByID[is.Id]
@@ -128,11 +133,9 @@ func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMe
 		}
 	}
 
-	fmt.Printf("generating all substitutions...\n")
-	allCombos := generateAllEquipmentSubstitutions(ctx, distinctItemSlotCombos)
+	allCombos := generateAllEquipmentSubstitutions(ctx, b.Request.BulkSettings.Combinations, distinctItemSlotCombos)
 
 	validCombos := []singleBulkSim{}
-	fmt.Printf("cleaning to only valid combos...\n")
 	for sub := range allCombos {
 		substitutedRequest, changeLog := createNewRequestWithSubstitution(b.Request.BaseSettings, sub)
 		if isValidEquipment(substitutedRequest.Raid.Parties[0].Players[0].Equipment) {
@@ -142,11 +145,14 @@ func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMe
 
 	// TODO(Riotdog-GehennasEU): Make this configurable?
 	maxResults := 20
+	if !b.Request.BulkSettings.Combinations {
+		maxResults = len(validCombos)
+	}
 
 	var rankedResults []*itemSubstitutionSimResult
 	var baseResult *itemSubstitutionSimResult
 	newIters := int64(iterations)
-	if b.Request.BulkSettings.FastMode {
+	if b.Request.BulkSettings.FastMode && b.Request.BulkSettings.Combinations {
 		newIters /= 100
 
 		// In fast mode try to keep starting iterations between 50 and 1000.
@@ -157,8 +163,10 @@ func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMe
 			newIters = 1000
 		}
 	}
+
 	for {
 		var tempBase *itemSubstitutionSimResult
+		// TODO: we could theoretically make getRankedResults accept a channel of validCombos that stream in to it and launches sims as it gets them...
 		rankedResults, tempBase = b.getRankedResults(validCombos, newIters, progress)
 
 		// keep replacing the base result with more refined base until we don't have base in the ranked results any more.
@@ -220,7 +228,6 @@ func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMe
 }
 
 func (b *bulkSimRunner) getRankedResults(validCombos []singleBulkSim, iterations int64, progress chan *proto.ProgressMetrics) ([]*itemSubstitutionSimResult, *itemSubstitutionSimResult) {
-	fmt.Printf("running %d combos with %d iterations...\n", len(validCombos), iterations)
 	concurrency := (runtime.NumCPU() - 1) * 2
 	if concurrency <= 0 {
 		concurrency = 2
@@ -239,7 +246,6 @@ func (b *bulkSimRunner) getRankedResults(validCombos []singleBulkSim, iterations
 	var totalCompletedIterations int32
 	var totalCompletedSims int32
 
-	fmt.Printf("Launching sims now...\n")
 	// reporter for all sims combined.
 	go func() {
 		for {
@@ -391,7 +397,7 @@ func isValidEquipment(equipment *proto.EquipmentSpec) bool {
 // given bulk sim request. Also returns the unchanged equipment ("base equipment set") set as the
 // first result. This ensures that simming over all possible equipment substitutions includes the
 // base case as well.
-func generateAllEquipmentSubstitutions(ctx context.Context, distinctItemSlotCombos []*itemWithSlot) chan *equipmentSubstitution {
+func generateAllEquipmentSubstitutions(ctx context.Context, combinations bool, distinctItemSlotCombos []*itemWithSlot) chan *equipmentSubstitution {
 	results := make(chan *equipmentSubstitution)
 	go func() {
 		defer close(results)
@@ -399,6 +405,14 @@ func generateAllEquipmentSubstitutions(ctx context.Context, distinctItemSlotComb
 		// No substitutions (base case).
 		results <- &equipmentSubstitution{}
 
+		if !combinations {
+			for _, slotItem := range distinctItemSlotCombos {
+				results <- &equipmentSubstitution{
+					Items: []*itemWithSlot{slotItem},
+				}
+			}
+			return
+		}
 		// Borrowed from https://github.com/mxschmitt/golang-combinations and adapted to
 		// only emit valid combinations.
 		count := uint64(len(distinctItemSlotCombos))

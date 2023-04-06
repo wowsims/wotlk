@@ -51,6 +51,7 @@ func Sim(input *proto.RaidSimRequest, replaceFile string, verbose bool) string {
 	startTime := time.Now()
 
 	c := time.After(time.Minute)
+	var lastTotal int32
 	for {
 		select {
 		case status, ok := <-progress:
@@ -61,12 +62,17 @@ func Sim(input *proto.RaidSimRequest, replaceFile string, verbose bool) string {
 				if status.FinalBulkResult.ErrorResult != "" {
 					fmt.Printf("Failed: %s\n", status.FinalBulkResult.ErrorResult)
 				} else {
-					outputStr := ""
-					return outputStr
+					return printCombos(status.FinalBulkResult)
 				}
 			}
 
 			if verbose {
+				if lastTotal != status.TotalSims {
+					if lastTotal > status.TotalSims {
+						fmt.Printf("Refining results, running the best combos with more iterations...\n")
+					}
+					lastTotal = status.TotalSims
+				}
 				compl := status.CompletedIterations
 				if compl == 0 {
 					break
@@ -92,4 +98,34 @@ func Sim(input *proto.RaidSimRequest, replaceFile string, verbose bool) string {
 
 		}
 	}
+}
+
+func printCombos(results *proto.BulkSimResult) string {
+	result := ""
+	foundBase := false
+	for i := 1; i < len(results.Results); i++ {
+		if len(results.Results[i].ItemsAdded) == 0 {
+			foundBase = true
+		}
+		result += printCombo(results.Results[i])
+	}
+	if !foundBase {
+		result += fmt.Sprintf("[BASE RESULT],%0.1f\n", results.EquippedGearResult.UnitMetrics.Dps.Avg)
+	}
+	return result
+}
+
+func printCombo(combo *proto.BulkComboResult) string {
+	itemtext := "["
+	if len(combo.ItemsAdded) == 0 {
+		itemtext += "BASE RESULT"
+	}
+	for j, item := range combo.ItemsAdded {
+		if j != 0 {
+			itemtext += ";"
+		}
+		itemtext += fmt.Sprintf("%s@%s", core.ItemsByID[item.Item.Id].Name, item.Slot.String())
+	}
+	itemtext += "]"
+	return fmt.Sprintf("%s,%0.1f\n", itemtext, combo.UnitMetrics.Dps.Avg)
 }
