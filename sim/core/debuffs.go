@@ -319,6 +319,7 @@ func EbonPlaguebringerOrCryptFeverAura(caster *Character, target *Unit, epidemic
 
 	aura := target.GetOrRegisterAura(Aura{
 		Label: "EbonPlaguebringer" + strconv.Itoa(casterIndex), // Support multiple DKs having their EP up
+		Tag:   "EbonPlaguebringer",
 		// ActionID: ActionID{SpellID: 49632}, // Crypt Fever spellID if we ever care
 		ActionID: ActionID{SpellID: 51161},
 		Duration: time.Second * (15 + 3*time.Duration(epidemicPoints)),
