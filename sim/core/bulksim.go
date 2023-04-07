@@ -2,6 +2,7 @@ package core
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"math"
@@ -93,10 +94,10 @@ func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMe
 	}
 
 	items := b.Request.GetBulkSettings().GetItems()
-	numItems := len(items)
-	if b.Request.BulkSettings.Combinations && numItems > maxItemCount {
-		return nil, fmt.Errorf("too many items specified (%d > %d), not computationally feasible", numItems, maxItemCount)
-	}
+	// numItems := len(items)
+	// if b.Request.BulkSettings.Combinations && numItems > maxItemCount {
+	// 	return nil, fmt.Errorf("too many items specified (%d > %d), not computationally feasible", numItems, maxItemCount)
+	// }
 
 	// Create all distinct combinations of (item, slot). For example, let's say the only item we
 	// want to bulk sim is a one-handed item that can be worn both as an off-hand or a main-hand weapon.
@@ -115,13 +116,14 @@ func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMe
 		for _, slot := range eligibleSlotsForItem(item) {
 			distinctItemSlotCombos = append(distinctItemSlotCombos, &itemWithSlot{
 				Item:  is,
-				Slot:  slot,
+				Slot:  ItemSlot(slot),
 				Index: index,
 			})
 		}
 	}
+	baseItems := player.Equipment.Items
 
-	allCombos := generateAllEquipmentSubstitutions(ctx, b.Request.BulkSettings.Combinations, distinctItemSlotCombos)
+	allCombos := generateAllEquipmentSubstitutions(ctx, baseItems, b.Request.BulkSettings.Combinations, distinctItemSlotCombos)
 
 	validCombos := []singleBulkSim{}
 	for sub := range allCombos {
@@ -132,15 +134,12 @@ func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMe
 	}
 
 	// TODO(Riotdog-GehennasEU): Make this configurable?
-	maxResults := 20
-	if !b.Request.BulkSettings.Combinations {
-		maxResults = len(validCombos)
-	}
+	maxResults := 30
 
 	var rankedResults []*itemSubstitutionSimResult
 	var baseResult *itemSubstitutionSimResult
 	newIters := int64(iterations)
-	if b.Request.BulkSettings.FastMode && b.Request.BulkSettings.Combinations {
+	if b.Request.BulkSettings.FastMode {
 		newIters /= 100
 
 		// In fast mode try to keep starting iterations between 50 and 1000.
@@ -159,9 +158,13 @@ func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMe
 
 	for {
 		var tempBase *itemSubstitutionSimResult
+		var err error
 		// TODO: we could theoretically make getRankedResults accept a channel of validCombos that stream in to it and launches sims as it gets them...
-		rankedResults, tempBase = b.getRankedResults(validCombos, newIters, progress)
+		rankedResults, tempBase, err = b.getRankedResults(validCombos, newIters, progress)
 
+		if err != nil {
+			return nil, err
+		}
 		// keep replacing the base result with more refined base until we don't have base in the ranked results any more.
 		if tempBase != nil {
 			baseResult = tempBase
@@ -233,7 +236,7 @@ func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMe
 	return result, nil
 }
 
-func (b *bulkSimRunner) getRankedResults(validCombos []singleBulkSim, iterations int64, progress chan *proto.ProgressMetrics) ([]*itemSubstitutionSimResult, *itemSubstitutionSimResult) {
+func (b *bulkSimRunner) getRankedResults(validCombos []singleBulkSim, iterations int64, progress chan *proto.ProgressMetrics) ([]*itemSubstitutionSimResult, *itemSubstitutionSimResult, error) {
 	concurrency := (runtime.NumCPU() - 1) * 2
 	if concurrency <= 0 {
 		concurrency = 2
@@ -308,7 +311,11 @@ func (b *bulkSimRunner) getRankedResults(validCombos []singleBulkSim, iterations
 
 	rankedResults := make([]*itemSubstitutionSimResult, numCombinations)
 	for i := range rankedResults {
-		rankedResults[i] = <-results
+		result := <-results
+		if result.Result == nil || result.Result.ErrorResult != "" {
+			return nil, nil, errors.New("simulation failed: " + result.Result.ErrorResult)
+		}
+		rankedResults[i] = result
 	}
 	sort.Slice(rankedResults, func(i, j int) bool {
 		return rankedResults[i].Score() > rankedResults[j].Score()
@@ -321,7 +328,7 @@ func (b *bulkSimRunner) getRankedResults(validCombos []singleBulkSim, iterations
 		}
 	}
 
-	return rankedResults, baseResult
+	return rankedResults, baseResult, nil
 }
 
 // itemSubstitutionSimResult stores the request and response of a simulation, along with the used
@@ -336,6 +343,9 @@ type itemSubstitutionSimResult struct {
 
 // Score used to rank results.
 func (r *itemSubstitutionSimResult) Score() float64 {
+	if r.Result == nil || r.Result.ErrorResult != "" {
+		return 0
+	}
 	return r.Result.RaidMetrics.Dps.Avg
 }
 
@@ -347,27 +357,6 @@ type equipmentSubstitution struct {
 // HasChanges returns true if the equipment substitution has any item replacmenets.
 func (es *equipmentSubstitution) HasItemReplacements() bool {
 	return len(es.Items) > 0
-}
-
-// IsValid returns true if the equipment substituion is valid. A valid substition can only
-// reference an item or slot once.
-func (es *equipmentSubstitution) IsValid() bool {
-	slotReuseTracker := map[proto.ItemSlot]bool{}
-	itemReuseTracker := map[int]bool{}
-
-	for _, it := range es.Items {
-		if itemReuseTracker[it.Index] {
-			return false
-		}
-		itemReuseTracker[it.Index] = true
-
-		if slotReuseTracker[it.Slot] {
-			return false
-		}
-		slotReuseTracker[it.Slot] = true
-	}
-
-	return true
 }
 
 // isValidEquipment returns true if the specified equipment spec is valid. A equipment spec
@@ -396,6 +385,12 @@ func isValidEquipment(equipment *proto.EquipmentSpec) bool {
 		}
 	}
 
+	if equipment.Items[ItemSlotFinger1].Id == equipment.Items[ItemSlotFinger2].Id {
+		return false
+	} else if equipment.Items[ItemSlotTrinket1].Id == equipment.Items[ItemSlotTrinket2].Id {
+		return false
+	}
+
 	return !(usesTwoHander && usesOffhand)
 }
 
@@ -403,7 +398,8 @@ func isValidEquipment(equipment *proto.EquipmentSpec) bool {
 // given bulk sim request. Also returns the unchanged equipment ("base equipment set") set as the
 // first result. This ensures that simming over all possible equipment substitutions includes the
 // base case as well.
-func generateAllEquipmentSubstitutions(ctx context.Context, combinations bool, distinctItemSlotCombos []*itemWithSlot) chan *equipmentSubstitution {
+func generateAllEquipmentSubstitutions(ctx context.Context, baseItems []*proto.ItemSpec, combinations bool, distinctItemSlotCombos []*itemWithSlot) chan *equipmentSubstitution {
+
 	results := make(chan *equipmentSubstitution)
 	go func() {
 		defer close(results)
@@ -411,44 +407,119 @@ func generateAllEquipmentSubstitutions(ctx context.Context, combinations bool, d
 		// No substitutions (base case).
 		results <- &equipmentSubstitution{}
 
+		// seenCombos lets us deduplicate trinket/ring combos.
+		comboChecker := ItemComboChecker{}
+
+		// Pre-seed the existing item combos
+		comboChecker.HasCombo(baseItems[ItemSlotFinger1].Id, baseItems[ItemSlotFinger2].Id)
+		comboChecker.HasCombo(baseItems[ItemSlotTrinket1].Id, baseItems[ItemSlotTrinket2].Id)
+
+		// Organize everything by slot.
+		itemsBySlot := make([][]*proto.ItemSpec, 17)
+		for _, is := range distinctItemSlotCombos {
+			itemsBySlot[is.Slot] = append(itemsBySlot[is.Slot], is.Item)
+		}
+
 		if !combinations {
-			for _, slotItem := range distinctItemSlotCombos {
-				results <- &equipmentSubstitution{
-					Items: []*itemWithSlot{slotItem},
+			for slotid, slot := range itemsBySlot {
+				for _, item := range slot {
+					sub := equipmentSubstitution{
+						Items: []*itemWithSlot{{Item: item, Slot: ItemSlot(slotid)}},
+					}
+					// Handle finger/trinket specially to generate combos
+					switch slotid {
+					case int(ItemSlotFinger1), int(ItemSlotTrinket1):
+						if !comboChecker.HasCombo(item.Id, baseItems[slotid+1].Id) {
+							results <- &sub
+						}
+						// Generate extra combos
+						subslot := slotid + 1
+						for _, subitem := range itemsBySlot[subslot] {
+							if shouldSkipCombo(baseItems, subitem, ItemSlot(subslot), comboChecker, sub) {
+								continue
+							}
+							miniCombo := createReplacement(sub, &itemWithSlot{Item: subitem, Slot: ItemSlot(subslot)})
+							results <- &miniCombo
+						}
+					case int(ItemSlotFinger2), int(ItemSlotTrinket2):
+						// Ensure we don't have this combo with the base equipment.
+						if !comboChecker.HasCombo(item.Id, baseItems[slotid-1].Id) {
+							results <- &sub
+						}
+					default:
+						results <- &sub
+					}
 				}
 			}
 			return
 		}
-		// Borrowed from https://github.com/mxschmitt/golang-combinations and adapted to
-		// only emit valid combinations.
-		count := uint64(len(distinctItemSlotCombos))
-		for bits := uint64(1); bits < (1 << count); bits++ {
-			combo := &equipmentSubstitution{}
-			for idx := uint64(0); idx < count; idx++ {
-				if (bits>>idx)&1 == 1 {
-					combo.Items = append(combo.Items, distinctItemSlotCombos[idx])
-				}
-			}
 
-			if !combo.IsValid() {
+		// Now generate combos by slot
+		for i := 0; i < len(itemsBySlot); i++ {
+			if len(itemsBySlot[i]) == 0 {
 				continue
 			}
-
-			select {
-			case <-ctx.Done():
-				return
-			case results <- combo:
-			}
+			genSlotCombos(ItemSlot(i), baseItems, equipmentSubstitution{}, itemsBySlot, comboChecker, results)
 		}
 	}()
 
 	return results
 }
 
+func createReplacement(repl equipmentSubstitution, item *itemWithSlot) equipmentSubstitution {
+	newItems := make([]*itemWithSlot, len(repl.Items))
+	copy(newItems, repl.Items)
+	newItems = append(newItems, item)
+	repl.Items = newItems
+	return repl
+}
+
+func shouldSkipCombo(baseItems []*proto.ItemSpec, item *proto.ItemSpec, slot ItemSlot, comboChecker ItemComboChecker, replacements equipmentSubstitution) bool {
+	switch slot {
+	case ItemSlotFinger1, ItemSlotTrinket1:
+		return comboChecker.HasCombo(item.Id, baseItems[slot+1].Id)
+	case ItemSlotFinger2, ItemSlotTrinket2:
+
+		for _, repl := range replacements.Items {
+			if slot == ItemSlotFinger2 && repl.Slot == ItemSlotFinger1 ||
+				slot == ItemSlotTrinket2 && repl.Slot == ItemSlotTrinket1 {
+				return comboChecker.HasCombo(repl.Item.Id, item.Id)
+			}
+		}
+		// Since we didn't find an item in the opposite slot, check against base items.
+		return comboChecker.HasCombo(item.Id, baseItems[slot-1].Id)
+	}
+	return false
+}
+
+func genSlotCombos(slot ItemSlot, baseItems []*proto.ItemSpec, baseRepl equipmentSubstitution, replaceBySlot [][]*proto.ItemSpec, comboChecker ItemComboChecker, results chan *equipmentSubstitution) {
+	// iterate all items in this slot, add to the baseRepl, then descend to add all other item combos.
+	for _, item := range replaceBySlot[slot] {
+
+		// Make sure we don't generate invalid or duplicate ring/trinket combos
+		if slot >= ItemSlotFinger1 && slot <= ItemSlotTrinket2 {
+			if shouldSkipCombo(baseItems, item, slot, comboChecker, baseRepl) {
+				continue
+			}
+		}
+
+		combo := createReplacement(baseRepl, &itemWithSlot{Slot: slot, Item: item})
+		results <- &combo
+
+		// Now descend to each other slot to pair with this combo
+		for j := slot + 1; int(j) < len(replaceBySlot); j++ {
+			if len(replaceBySlot[j]) == 0 {
+				continue
+			}
+			genSlotCombos(j, baseItems, combo, replaceBySlot, comboChecker, results)
+		}
+	}
+}
+
 // itemWithSlot pairs an item with its fixed item slot.
 type itemWithSlot struct {
 	Item *proto.ItemSpec
-	Slot proto.ItemSlot
+	Slot ItemSlot
 
 	// This index refers to the item's position in the BulkEquipmentSpec of the player and serves as
 	// a unique item ID. It is used to verify that a valid equipmentSubstitution only references an
@@ -472,9 +543,32 @@ func createNewRequestWithSubstitution(readonlyInputRequest *proto.RaidSimRequest
 	for _, is := range substitution.Items {
 		changeLog.AddedItems = append(changeLog.AddedItems, &proto.ItemSpecWithSlot{
 			Item: is.Item,
-			Slot: is.Slot,
+			Slot: proto.ItemSlot(is.Slot),
 		})
 		equipment.Items[is.Slot] = is.Item
 	}
 	return request, changeLog
+}
+
+type ItemComboChecker map[int64]struct{}
+
+func (ic *ItemComboChecker) HasCombo(itema int32, itemb int32) bool {
+	if itema == itemb {
+		return true
+	}
+	key := ic.generateComboKey(itema, itemb)
+	if _, ok := (*ic)[key]; ok {
+		return true
+	} else {
+		(*ic)[key] = struct{}{}
+	}
+	return false
+}
+
+// put this function on ic just so it isn't in global namespace
+func (ic *ItemComboChecker) generateComboKey(itemA int32, itemB int32) int64 {
+	if itemA > itemB {
+		return int64(itemA) + int64(itemB)<<4
+	}
+	return int64(itemB) + int64(itemA)<<4
 }

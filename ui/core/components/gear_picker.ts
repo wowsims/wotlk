@@ -39,6 +39,7 @@ import {
 	UIGem as Gem,
 	UIItem as Item,
 } from '../proto/ui.js';
+import { IndividualSimUI } from '../individual_sim_ui.js';
 
 declare var tippy: any;
 
@@ -718,6 +719,7 @@ class SelectorModal extends BaseModal {
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-1h-weapons"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-2h-weapons"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-matching-gems"></div>
+					<button class="selector-modal-simall-button btn btn-danger">Sim All</button>
 					<button class="selector-modal-remove-button btn btn-danger">Unequip Item</button>
 				</div>
 				<div style="width: 100%;height: 30px;font-size: 18px;">
@@ -1040,6 +1042,22 @@ class SelectorModal extends BaseModal {
 			this.player.sim.filtersChangeEmitter.off(applyFilters);
 			gearData.changeEvent.off(applyFilters);
 		});
+
+		const simAllButton = tabContent.getElementsByClassName('selector-modal-simall-button')[0] as HTMLButtonElement;
+		simAllButton.addEventListener('click', event => {
+			if (this.simUI instanceof IndividualSimUI) {
+				let itemSpecs = Array<ItemSpec>();
+				this.simUI.sim.db.getItems(this.config.slot).forEach((item) => {
+					if (item.ilvl >= 200) {
+						itemSpecs.push(ItemSpec.create({id: item.id}));
+					}
+				})
+				this.simUI.bt.importItems(itemSpecs);
+				this.simUI.bt.setCombinations(false);
+				this.simUI.bt.setFastMode(true);
+			}	
+		});
+
 
 		applyFilters();
 	}

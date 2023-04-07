@@ -1,7 +1,10 @@
 package core
 
 import (
+	"context"
 	"testing"
+
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func TestNothing(t *testing.T) {
@@ -196,3 +199,72 @@ func createBulkSpecFromItems(items ...*itemWithSlot) *proto.BulkEquipmentSpec {
 	return spec
 }
 */
+
+func TestGenerateAllEquipmentSubstitutions(t *testing.T) {
+	baseItems := make([]*proto.ItemSpec, 17)
+	for i := range baseItems {
+		baseItems[i] = &proto.ItemSpec{}
+	}
+	item1 := &proto.ItemSpec{Id: 1}
+	item2 := &proto.ItemSpec{Id: 2}
+	type args struct {
+		combinations           bool
+		distinctItemSlotCombos []*itemWithSlot
+	}
+	tests := []struct {
+		name string
+		args args
+		want []*equipmentSubstitution
+	}{
+		{
+			name: "basic finger combo",
+			args: args{
+				combinations: false,
+				distinctItemSlotCombos: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+					{Item: item1, Slot: ItemSlotFinger2},
+					{Item: item2, Slot: ItemSlotFinger1},
+					{Item: item2, Slot: ItemSlotFinger2},
+				},
+			},
+			want: []*equipmentSubstitution{
+				{},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+					{Item: item2, Slot: ItemSlotFinger2},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item2, Slot: ItemSlotFinger1},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger2},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item2, Slot: ItemSlotFinger2},
+				}},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			results := generateAllEquipmentSubstitutions(context.Background(), baseItems, tt.args.combinations, tt.args.distinctItemSlotCombos)
+
+			idx := 0
+			for got := range results {
+				wanted := tt.want[idx]
+				if len(got.Items) != len(wanted.Items) {
+					t.Errorf("generateAllEquipmentSubstitutions(%d) has incorrect number of items, expected: %d, got: %d", idx, len(wanted.Items), len(got.Items))
+				}
+				for itemIdx, item := range got.Items {
+					if wanted.Items[itemIdx].Item.Id != item.Item.Id {
+						t.Errorf("generateAllEquipmentSubstitutions(%d) has incorrect item in list, expected: %d, got: %d", idx, wanted.Items[itemIdx].Item.Id, item.Item.Id)
+					}
+				}
+				idx++
+			}
+		})
+	}
+}
