@@ -351,6 +351,15 @@ func (shaman *Shaman) setupProcTrackers() {
 	snapshotManager.AddProc(54588, "Charred Twilight Scale H Proc", false)
 	snapshotManager.AddProc(47213, "Abyssal Rune Proc", false)
 	snapshotManager.AddProc(45490, "Pandora's Plea Proc", false)
+	snapshotManager.AddProc(50348, "Dislodged Foreign Object H", false)
+	snapshotManager.AddProc(50353, "Dislodged Foreign Object", false)
+	snapshotManager.AddProc(50360, "Phylactery of the Nameless Lich Proc", false)
+	snapshotManager.AddProc(50365, "Phylactery of the Nameless Lich H Proc", false)
+	snapshotManager.AddProc(50345, "Muradin's Spyglass H Proc", false)
+	snapshotManager.AddProc(50340, "Muradin's Spyglass Proc", false)
+
+	// SP Ring Procs
+	snapshotManager.AddProc(50398, "Ashen Band of Endless Destruction", false)
 
 	//AP Trinket Procs
 	snapshotManager.AddProc(40684, "Mirror of Truth Proc", false)
