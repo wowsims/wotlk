@@ -1,14 +1,19 @@
 package core
 
 import (
+	"context"
+	"fmt"
+	"sort"
+	"strings"
 	"testing"
+
+	goproto "github.com/golang/protobuf/proto"
+
+	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-func TestNothing(t *testing.T) {
-
-}
-
-/*
 const (
 	itemStarshardEdge     = 45620
 	itemPillarOfFortitude = 46350
@@ -112,38 +117,49 @@ func TestIsValidEquipment(t *testing.T) {
 	}
 }
 
-func TestGenerateAllEquipmentSubstitutions(t *testing.T) {
+func TestGenerateAllEquipmentSubstitutionCombos(t *testing.T) {
+	format := func(es *equipmentSubstitution) string {
+		var itemTexts []string
+		for _, is := range es.Items {
+			itemTexts = append(itemTexts, fmt.Sprintf("%s@%d@%d", goproto.MarshalTextString(is.Item), is.Slot, is.Index))
+		}
+		sort.Strings(itemTexts)
+		return strings.Join(itemTexts, ",")
+	}
+	compareOptions := []cmp.Option{
+		// Required to make the protos comparable with cmp.Diff due to unexported fields.
+		cmp.Comparer(func(a, b *equipmentSubstitution) bool {
+			return format(a) == format(b)
+		}),
+		// Ignore result order.
+		cmpopts.SortSlices(func(a, b *equipmentSubstitution) bool {
+			return format(a) < format(b)
+		}),
+	}
+
 	for _, tc := range []struct {
 		comment string
-		spec    *proto.BulkEquipmentSpec
+		input   []*itemWithSlot
 		want    []*equipmentSubstitution
 	}{
 		{
 			comment: "empty spec returns empty base equipment substitution only",
-			spec:    createBulkSpecFromItems(),
+			input:   []*itemWithSlot{},
 			want: []*equipmentSubstitution{
 				{},
 			},
 		},
 		{
-			comment: "spec with one item returns empty base equipment substitution plus one item substitution",
-			spec:    createBulkSpecFromItems(starshardEdge1),
-			want: []*equipmentSubstitution{
-				{},
-				{Items: []*itemWithSlot{starshardEdge1}},
-			},
-		},
-		{
-			comment: "spec with one item returns empty base equipment substitution plus one item substitution",
-			spec:    createBulkSpecFromItems(starshardEdge1),
+			comment: "spec with 1 item returns empty base equipment substitution plus 1 item substitution",
+			input:   []*itemWithSlot{starshardEdge1},
 			want: []*equipmentSubstitution{
 				{},
 				{Items: []*itemWithSlot{starshardEdge1}},
 			},
 		},
 		{
-			comment: "spec with two items returns empty base equipment substitution plus all item combos",
-			spec:    createBulkSpecFromItems(starshardEdge1, ironmender),
+			comment: "spec with 2 items returns empty base equipment substitution plus all 3 item combos",
+			input:   []*itemWithSlot{starshardEdge1, ironmender},
 			want: []*equipmentSubstitution{
 				{},
 				{Items: []*itemWithSlot{starshardEdge1}},
@@ -153,7 +169,7 @@ func TestGenerateAllEquipmentSubstitutions(t *testing.T) {
 		},
 		{
 			comment: "spec with a duplicate item slot returns only valid substitutions",
-			spec:    createBulkSpecFromItems(starshardEdge1, ironmender, starshardEdge2),
+			input:   []*itemWithSlot{starshardEdge1, ironmender, starshardEdge2},
 			want: []*equipmentSubstitution{
 				{},
 				{Items: []*itemWithSlot{starshardEdge1}},
@@ -165,12 +181,12 @@ func TestGenerateAllEquipmentSubstitutions(t *testing.T) {
 		},
 	} {
 		var got []*equipmentSubstitution
-		for sub := range generateAllEquipmentSubstitutions(context.Background(), tc.spec) {
+		for sub := range generateAllEquipmentSubstitutions(context.Background(), true, tc.input) {
 			got = append(got, sub)
 		}
 
-		if diff := cmp.Diff(tc.want, got, cmpopts.IgnoreUnexported(proto.ItemSpec{})); diff != "" {
-			t.Fatalf("%s: generateAllEquipmentSubstitutions(%v) returned diff (-want +got):\n%s", tc.comment, tc.spec, diff)
+		if diff := cmp.Diff(tc.want, got, compareOptions...); diff != "" {
+			t.Fatalf("%s: generateAllEquipmentSubstitutions(%v) returned diff (-want +got):\n%s", tc.comment, tc.input, diff)
 		}
 	}
 }
@@ -185,14 +201,27 @@ func createEquipmentFromItems(items ...*itemWithSlot) *proto.EquipmentSpec {
 	return spec
 }
 
-func createBulkSpecFromItems(items ...*itemWithSlot) *proto.BulkEquipmentSpec {
-	spec := &proto.BulkEquipmentSpec{}
-	for _, is := range items {
-		spec.Items = append(spec.Items, &proto.BulkEquipmentSpec_ItemSpecWithSlots{
-			Item:  is.Item,
-			Slots: []proto.ItemSlot{is.Slot},
-		})
+func TestBulkSim(t *testing.T) {
+	t.Skip("TODO: Implement")
+
+	fakeRunSim := func(rsr *proto.RaidSimRequest, progress chan *proto.ProgressMetrics, skipPresim bool) *proto.RaidSimResult {
+		return &proto.RaidSimResult{}
 	}
-	return spec
+
+	bulk := &bulkSimRunner{
+		SingleRaidSimRunner: fakeRunSim,
+		Request:             &proto.BulkSimRequest{},
+	}
+
+	got, err := bulk.Run(context.Background(), nil)
+	if err != nil {
+		t.Fatalf("BulkSim() returned error: %v", err)
+	}
+
+	want := &proto.BulkSimResult{}
+	if diff := cmp.Diff(want, got, cmp.Comparer(func(a, b *proto.BulkSimResult) bool {
+		return goproto.MarshalTextString(a) == goproto.MarshalTextString(b)
+	})); diff != "" {
+		t.Fatalf("BulkSim() returned diff (-want +got):\n%s", diff)
+	}
 }
-*/
