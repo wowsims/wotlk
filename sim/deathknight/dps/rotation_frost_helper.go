@@ -7,16 +7,42 @@ import (
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
+func (dk *DpsDeathknight) canCastFrostUnholySpell(sim *core.Simulation, target *core.Unit) bool {
+	for _, spell := range dk.fr.fuSpellPriority {
+		if spell.CanCast(sim, target) {
+			return true
+		}
+	}
+	return false
+}
+
+func (dk *DpsDeathknight) castFrostUnholySpell(sim *core.Simulation, target *core.Unit) bool {
+	for _, spell := range dk.fr.fuSpellPriority {
+		if spell.CanCast(sim, target) {
+			return spell.Cast(sim, target)
+		}
+	}
+	return false
+}
+
+func (dk *DpsDeathknight) canCastBloodSpell(sim *core.Simulation, target *core.Unit) bool {
+	return dk.fr.bloodSpell.CanCast(sim, target)
+}
+
+func (dk *DpsDeathknight) castBloodSpell(sim *core.Simulation, target *core.Unit) bool {
+	return dk.fr.bloodSpell.Cast(sim, target)
+}
+
 // end of fight oblit does not check diseases, it just presses it regardless, but will retry if fails to land.
 func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnh_EndOfFight_Obli(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	casted := false
 	advance := true
 	waitTime := time.Duration(-1)
-	if dk.Obliterate.CanCast(sim, nil) {
+	if dk.canCastFrostUnholySpell(sim, target) {
 		if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
 			dk.Deathchill.Cast(sim, target)
 		}
-		casted = dk.Obliterate.Cast(sim, target)
+		casted = dk.castFrostUnholySpell(sim, target)
 		advance = dk.LastOutcome.Matches(core.OutcomeLanded)
 	}
 	s.ConditionalAdvance(casted && advance)
@@ -223,4 +249,10 @@ func (dk *DpsDeathknight) RotationActionCallback_EndOfFightPrio(sim *core.Simula
 		return -1
 	}
 	return sim.CurrentTime
+}
+
+func (dk *DpsDeathknight) RotationActionCallback_BS_Frost(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	dk.castBloodSpell(sim, target)
+	s.Advance()
+	return -1
 }

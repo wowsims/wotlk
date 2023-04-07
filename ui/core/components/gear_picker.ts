@@ -84,24 +84,18 @@ export class GearPicker extends Component {
 	}
 }
 
-class ItemPicker extends Component {
-	readonly slot: ItemSlot;
-
+export class ItemRenderer extends Component {
 	private readonly simUI: SimUI;
 	private readonly player: Player<any>;
-	private readonly iconElem: HTMLAnchorElement;
-	private readonly nameElem: HTMLAnchorElement;
-	private readonly enchantElem: HTMLAnchorElement;
-	private readonly socketsContainerElem: HTMLElement;
-	// All items and enchants that are eligible for this slot
-	private _items: Array<Item> = [];
-	private _enchants: Array<Enchant> = [];
 
-	private _equippedItem: EquippedItem | null = null;
+	readonly iconElem: HTMLAnchorElement;
+	readonly nameElem: HTMLAnchorElement;
+	readonly enchantElem: HTMLAnchorElement;
+	readonly socketsContainerElem: HTMLElement;
 
-	constructor(parent: HTMLElement, simUI: SimUI, player: Player<any>, slot: ItemSlot) {
+	constructor(parent: HTMLElement, simUI: SimUI, player: Player<any>) {
 		super(parent, 'item-picker-root');
-		this.slot = slot;
+
 		this.simUI = simUI;
 		this.player = player;
 
@@ -119,6 +113,115 @@ class ItemPicker extends Component {
 		this.nameElem = this.rootElem.querySelector('.item-picker-name') as HTMLAnchorElement;
 		this.enchantElem = this.rootElem.querySelector('.item-picker-enchant') as HTMLAnchorElement;
 		this.socketsContainerElem = this.rootElem.querySelector('.item-picker-sockets-container') as HTMLElement;
+	}
+
+	clear() {
+		this.nameElem.removeAttribute('data-wowhead');
+		this.nameElem.removeAttribute('href');
+		this.iconElem.removeAttribute('data-wowhead');
+		this.iconElem.removeAttribute('href');
+		this.enchantElem.removeAttribute('data-wowhead');
+		this.enchantElem.removeAttribute('href');
+		this.iconElem.removeAttribute('href');
+
+		this.iconElem.style.backgroundImage = '';
+		this.enchantElem.innerHTML = '';
+		this.socketsContainerElem.innerHTML = '';
+		this.nameElem.textContent = '';
+	}
+
+	update(newItem: EquippedItem) {
+		this.nameElem.textContent = newItem.item.name;
+		if (newItem.item.heroic) {
+			var heroic_span = document.createElement('span');
+			heroic_span.style.color = "green";
+			heroic_span.style.marginLeft = "3px";
+			heroic_span.innerText = "[H]";
+			this.nameElem.appendChild(heroic_span);
+		}
+
+		setItemQualityCssClass(this.nameElem, newItem.item.quality);
+
+		this.player.setWowheadData(newItem, this.iconElem);
+		this.player.setWowheadData(newItem, this.nameElem);
+		newItem.asActionId().fill().then(filledId => {
+			filledId.setBackgroundAndHref(this.iconElem);
+			filledId.setWowheadHref(this.nameElem);
+		});
+
+		if (newItem.enchant) {
+			getEnchantDescription(newItem.enchant).then(description => {
+				this.enchantElem.textContent = description;
+			});
+			// Make enchant text hover have a tooltip.
+			if (newItem.enchant.spellId) {
+				this.enchantElem.href = ActionId.makeSpellUrl(newItem.enchant.spellId);
+				this.enchantElem.setAttribute('data-wowhead', `domain=wotlk&spell=${newItem.enchant.spellId}`);
+			} else {
+				this.enchantElem.href = ActionId.makeItemUrl(newItem.enchant.itemId);
+				this.enchantElem.setAttribute('data-wowhead', `domain=wotlk&item=${newItem.enchant.itemId}`);
+			}
+		}
+
+		newItem.allSocketColors().forEach((socketColor, gemIdx) => {
+			let gemFragment = document.createElement('fragment');
+			gemFragment.innerHTML = `
+				<div class="gem-socket-container">
+					<img class="gem-icon" />
+					<img class="socket-icon" />
+				</div>
+			`;
+
+			const gemContainer = gemFragment.children[0] as HTMLElement;
+			const gemIconElem = gemContainer.querySelector('.gem-icon') as HTMLImageElement;
+			const socketIconElem = gemContainer.querySelector('.socket-icon') as HTMLImageElement;
+			socketIconElem.src = getEmptyGemSocketIconUrl(socketColor);
+
+			if (newItem.gems[gemIdx] == null) {
+				gemIconElem.classList.add('hide');
+			} else {
+				gemIconElem.classList.remove('hide');
+				ActionId.fromItemId(newItem.gems[gemIdx]!.id).fill().then(filledId => {
+					gemIconElem.src = filledId.iconUrl;
+				});
+			}
+
+			if (gemIdx == newItem.numPossibleSockets - 1 && [ItemType.ItemTypeWrist, ItemType.ItemTypeHands].includes(newItem.item.type)) {
+				const updateProfession = () => {
+					if (this.player.isBlacksmithing()) {
+						gemContainer.classList.remove('hide');
+					} else {
+						gemContainer.classList.add('hide');
+					}
+				};
+				this.player.professionChangeEmitter.on(updateProfession);
+				updateProfession();
+			}
+
+			this.socketsContainerElem.appendChild(gemContainer);
+		});
+	}
+}
+
+export class ItemPicker extends Component {
+	readonly slot: ItemSlot;
+
+	private readonly simUI: SimUI;
+	private readonly player: Player<any>;
+
+	private readonly itemElem: ItemRenderer;
+
+	// All items and enchants that are eligible for this slot
+	private _items: Array<Item> = [];
+	private _enchants: Array<Enchant> = [];
+	private _equippedItem: EquippedItem | null = null;
+
+	constructor(parent: HTMLElement, simUI: SimUI, player: Player<any>, slot: ItemSlot) {
+		super(parent, 'item-picker-root');
+		this.slot = slot;
+		this.simUI = simUI;
+		this.player = player;
+		this.itemElem = new ItemRenderer(this.rootElem, simUI, player);
 
 		this.item = player.getEquippedItem(slot);
 		player.sim.waitForInit().then(() => {
@@ -146,19 +249,19 @@ class ItemPicker extends Component {
 			};
 
 			// Make icon open gear selector
-			this.iconElem.addEventListener('click', openGearSelector);
-			this.iconElem.addEventListener('touchstart', openGearSelector);
-			this.iconElem.addEventListener('touchend', onClickEnd);
+			this.itemElem.iconElem.addEventListener('click', openGearSelector);
+			this.itemElem.iconElem.addEventListener('touchstart', openGearSelector);
+			this.itemElem.iconElem.addEventListener('touchend', onClickEnd);
 
 			// Make item name open gear selector
-			this.nameElem.addEventListener('click', openGearSelector);
-			this.nameElem.addEventListener('touchstart', openGearSelector);
-			this.nameElem.addEventListener('touchend', onClickEnd);
+			this.itemElem.nameElem.addEventListener('click', openGearSelector);
+			this.itemElem.nameElem.addEventListener('touchstart', openGearSelector);
+			this.itemElem.nameElem.addEventListener('touchend', onClickEnd);
 
 			// Make enchant name open enchant selector
-			this.enchantElem.addEventListener('click', openEnchantSelector);
-			this.enchantElem.addEventListener('touchstart', openEnchantSelector);
-			this.enchantElem.addEventListener('touchend', onClickEnd);
+			this.itemElem.enchantElem.addEventListener('click', openEnchantSelector);
+			this.itemElem.enchantElem.addEventListener('touchstart', openEnchantSelector);
+			this.itemElem.enchantElem.addEventListener('touchend', onClickEnd);
 		});
 
 		player.gearChangeEmitter.on(() => {
@@ -166,99 +269,23 @@ class ItemPicker extends Component {
 		});
 		player.professionChangeEmitter.on(() => {
 			if (this._equippedItem != null) {
-				this.player.setWowheadData(this._equippedItem, this.iconElem);
+				this.player.setWowheadData(this._equippedItem, this.itemElem.iconElem);
 			}
 		});
 	}
 
 	set item(newItem: EquippedItem | null) {
 		// Clear everything first
-		this.nameElem.removeAttribute('data-wowhead');
-		this.nameElem.removeAttribute('href');
-		this.iconElem.style.backgroundImage = `url('${getEmptySlotIconUrl(this.slot)}')`;
-		this.iconElem.removeAttribute('data-wowhead');
-		this.iconElem.removeAttribute('href');
-		this.enchantElem.removeAttribute('data-wowhead');
-		this.enchantElem.removeAttribute('href');
-		this.iconElem.removeAttribute('href');
-
-		this.nameElem.textContent = slotNames[this.slot];
-		setItemQualityCssClass(this.nameElem, null);
-
-		this.enchantElem.innerHTML = '';
-		this.socketsContainerElem.innerHTML = '';
+		this.itemElem.clear();
+		this.itemElem.nameElem.textContent = slotNames[this.slot];
+		setItemQualityCssClass(this.itemElem.nameElem, null);
 
 		if (newItem != null) {
-			this.nameElem.textContent = newItem.item.name;
-			if (newItem.item.heroic) {
-				var heroic_span = document.createElement('span');
-				heroic_span.style.color = "green";
-				heroic_span.style.marginLeft = "3px";
-				heroic_span.innerText = "[H]";
-				this.nameElem.appendChild(heroic_span);
-			}
-
-			setItemQualityCssClass(this.nameElem, newItem.item.quality);
-
-			this.player.setWowheadData(newItem, this.iconElem);
-			this.player.setWowheadData(newItem, this.nameElem);
-			newItem.asActionId().fill().then(filledId => {
-				filledId.setBackgroundAndHref(this.iconElem);
-				filledId.setWowheadHref(this.nameElem);
-			});
-
-			if (newItem.enchant) {
-				getEnchantDescription(newItem.enchant).then(description => {
-					this.enchantElem.textContent = description;
-				});
-				// Make enchant text hover have a tooltip.
-				if (newItem.enchant.spellId) {
-					this.enchantElem.href = ActionId.makeSpellUrl(newItem.enchant.spellId);
-					this.enchantElem.setAttribute('data-wowhead', `domain=wotlk&spell=${newItem.enchant.spellId}`);
-				} else {
-					this.enchantElem.href = ActionId.makeItemUrl(newItem.enchant.itemId);
-					this.enchantElem.setAttribute('data-wowhead', `domain=wotlk&item=${newItem.enchant.itemId}`);
-				}
-			}
-
-			newItem.allSocketColors().forEach((socketColor, gemIdx) => {
-				let gemFragment = document.createElement('fragment');
-				gemFragment.innerHTML = `
-					<div class="gem-socket-container">
-						<img class="gem-icon" />
-						<img class="socket-icon" />
-					</div>
-				`;
-
-				const gemContainer = gemFragment.children[0] as HTMLElement;
-				const gemIconElem = gemContainer.querySelector('.gem-icon') as HTMLImageElement;
-				const socketIconElem = gemContainer.querySelector('.socket-icon') as HTMLImageElement;
-				socketIconElem.src = getEmptyGemSocketIconUrl(socketColor);
-
-				if (newItem.gems[gemIdx] == null) {
-					gemIconElem.classList.add('hide');
-				} else {
-					gemIconElem.classList.remove('hide');
-					ActionId.fromItemId(newItem.gems[gemIdx]!.id).fill().then(filledId => {
-						gemIconElem.src = filledId.iconUrl;
-					});
-				}
-
-				this.socketsContainerElem.appendChild(gemContainer);
-
-				if (gemIdx == newItem.numPossibleSockets - 1 && [ItemType.ItemTypeWrist, ItemType.ItemTypeHands].includes(newItem.item.type)) {
-					const updateProfession = () => {
-						if (this.player.isBlacksmithing()) {
-							gemContainer.classList.remove('hide');
-						} else {
-							gemContainer.classList.add('hide');
-						}
-					};
-					this.player.professionChangeEmitter.on(updateProfession);
-					updateProfession();
-				}
-			});
+			this.itemElem.update(newItem);
+		} else {
+			this.itemElem.iconElem.style.backgroundImage = `url('${getEmptySlotIconUrl(this.slot)}')`;
 		}
+		
 		this._equippedItem = newItem;
 	}
 

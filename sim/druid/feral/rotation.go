@@ -202,7 +202,7 @@ func (cat *FeralDruid) clipRoar(sim *core.Simulation) bool {
 	ripDur := ripDot.Aura.StartedAt() + maxRipDur - sim.CurrentTime
 	roarDur := cat.SavageRoarAura.RemainingDuration(sim)
 
-	if roarDur > ripDur {
+	if roarDur > (ripDur + cat.Rotation.RipLeeway) {
 		return false
 	}
 
@@ -333,7 +333,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	// come off cooldown. The latter exception is necessary for
 	// Lacerateweave rotation since TF timings can drift over time.
 	waitForTf := cat.Talents.Berserk && (cat.TigersFury.ReadyAt() <= cat.BerserkAura.Duration) && (cat.TigersFury.ReadyAt()+time.Second < sim.GetRemainingDuration()-cat.BerserkAura.Duration)
-	berserkNow := cat.Berserk.IsReady(sim) && !waitForTf
+	berserkNow := cat.Berserk.IsReady(sim) && !waitForTf && ripDot.IsActive() && !isClearcast
 
 	// Additionally, for Lacerateweave rotation, postpone the final Berserk
 	// of the fight to as late as possible so as to minimize the impact of
@@ -354,7 +354,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	if cat.BerserkAura.IsActive() {
 		ffThresh = cat.Rotation.BerserkFfThresh
 	}
-	ffNow := cat.FaerieFire.CanCast(sim, cat.CurrentTarget) && !isClearcast && curEnergy < ffThresh
+	ffNow := cat.FaerieFire.CanCast(sim, cat.CurrentTarget) && !isClearcast && curEnergy < ffThresh && (!ripNow || (curEnergy < cat.CurrentRipCost()))
 
 	roarNow := curCp >= 1 && (!cat.SavageRoarAura.IsActive() || cat.clipRoar(sim))
 
@@ -688,6 +688,7 @@ type FeralDruidRotation struct {
 	BerserkFfThresh    float64
 	Powerbear          bool
 	MinRoarOffset      time.Duration
+	RipLeeway          time.Duration
 	RevitFreq          float64
 	LacerateTime       time.Duration
 	SnekWeave          bool
@@ -707,6 +708,7 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 		BerserkBiteThresh:  float64(rotation.BerserkBiteThresh),
 		Powerbear:          rotation.Powerbear,
 		MinRoarOffset:      time.Duration(float64(rotation.MinRoarOffset) * float64(time.Second)),
+		RipLeeway:          time.Duration(float64(rotation.RipLeeway) * float64(time.Second)),
 		RevitFreq:          15.0 / (8 * float64(rotation.HotUptime)),
 		LacerateTime:       8.0 * time.Second,
 		SnekWeave:          core.Ternary(rotation.BearWeaveType == proto.FeralDruid_Rotation_None, false, rotation.SnekWeave),
@@ -727,11 +729,13 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 	cat.Rotation.UseRake = true
 	cat.Rotation.UseBite = true
 
+	cat.Rotation.RipLeeway = 3 * time.Second
+
 	if cat.Rotation.FlowerWeave || (cat.Rotation.BearweaveType == proto.FeralDruid_Rotation_None) {
 		if hasT84P {
 			cat.Rotation.MinRoarOffset = 26 * time.Second
 		} else {
-			cat.Rotation.MinRoarOffset = 20 * time.Second
+			cat.Rotation.MinRoarOffset = 24 * time.Second
 		}
 		cat.Rotation.BiteTime = 4 * time.Second
 	} else {

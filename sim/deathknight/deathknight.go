@@ -209,6 +209,8 @@ type Deathknight struct {
 	EbonPlagueOrCryptFeverAura []*core.Aura
 
 	RoRTSBonus func(*core.Unit) float64 // is either RoR or TS bonus function based on talents
+
+	MakeTSRoRAssumptions bool
 }
 
 func (dk *Deathknight) ModifyDamageModifier(value float64) {
@@ -370,6 +372,7 @@ func (dk *Deathknight) Reset(sim *core.Simulation) {
 	dk.LastCast = nil
 	dk.NextCast = nil
 	dk.DeathStrikeHeals = dk.DeathStrikeHeals[:0]
+	dk.MakeTSRoRAssumptions = sim.Raid.Size() <= 1
 }
 
 func (dk *Deathknight) IsFuStrike(spell *core.Spell) bool {

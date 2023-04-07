@@ -16,6 +16,9 @@ import {
 	RaidTarget,
 	RangedWeaponType,
 	SimDatabase,
+	SimEnchant,
+	SimGem,
+	SimItem,
 	Spec,
 	Stat,
 	UnitStats,
@@ -95,6 +98,7 @@ export class Player<SpecType extends Spec> {
 	private consumes: Consumes = Consumes.create();
 	private bonusStats: Stats = new Stats();
 	private gear: Gear = new Gear({});
+	//private bulkEquipmentSpec: BulkEquipmentSpec = BulkEquipmentSpec.create();
 	private itemSwapGear: ItemSwapGear = new ItemSwapGear();
 	private race: Race;
 	private profession1: Profession = 0;
@@ -455,6 +459,22 @@ export class Player<SpecType extends Spec> {
 			//this.setCooldowns(eventID, newCooldowns);
 		});
 	}
+
+	/*
+	setBulkEquipmentSpec(eventID: EventID, newBulkEquipmentSpec: BulkEquipmentSpec) {
+		if (BulkEquipmentSpec.equals(this.bulkEquipmentSpec, newBulkEquipmentSpec))
+			return;
+
+		TypedEvent.freezeAllAndDo(() => {
+			this.bulkEquipmentSpec = newBulkEquipmentSpec;
+			this.bulkGearChangeEmitter.emit(eventID);
+		});
+	}
+
+	getBulkEquipmentSpec(): BulkEquipmentSpec {
+		return BulkEquipmentSpec.clone(this.bulkEquipmentSpec);
+	}
+	*/
 
 	getBonusStats(): Stats {
 		return this.bonusStats;
@@ -896,7 +916,7 @@ export class Player<SpecType extends Spec> {
 	}
 
 	private toDatabase(): SimDatabase {
-		const dbGear =  this.getGear().toDatabase()
+		const dbGear = this.getGear().toDatabase()
 		const dbItemSwapGear = this.getItemSwapGear().toDatabase();
 		return SimDatabase.create({
 			items: dbGear.items.concat(dbItemSwapGear.items),
@@ -936,6 +956,7 @@ export class Player<SpecType extends Spec> {
 			this.setName(eventID, proto.name);
 			this.setRace(eventID, proto.race);
 			this.setGear(eventID, proto.equipment ? this.sim.db.lookupEquipmentSpec(proto.equipment) : new Gear({}));
+			//this.setBulkEquipmentSpec(eventID, BulkEquipmentSpec.create()); // Do not persist the bulk equipment settings.
 			this.setConsumes(eventID, proto.consumes || Consumes.create());
 			this.setBonusStats(eventID, Stats.fromProto(proto.bonusStats || UnitStats.create()));
 			this.setBuffs(eventID, proto.buffs || IndividualBuffs.create());

@@ -365,4 +365,49 @@ message ProgressMetrics {
 	// Final Results
 	RaidSimResult final_raid_result = 6; // only set when completed
 	StatWeightsResult final_weight_result = 7;
+	BulkSimResult final_bulk_result = 10;
+}
+
+// RPC: BulkSim
+message BulkSimRequest {
+    RaidSimRequest base_settings = 1;
+    BulkSettings bulk_settings = 2;
+}
+
+message BulkSettings {
+	repeated ItemSpec items = 1;
+	bool combinations = 2;
+	bool fast_mode = 3; // Used to run with less iterations to start and slowly increase to weed out items faster.
+	// Use current enchant on the slot if not specified by the ItemSpec.
+	// Only works when replacement item is valid target for enchant.
+	bool auto_enchant = 4;
+
+	// Currently not used.
+	// Used to fill out gem slots that are not filled in the ItemSpec
+	bool auto_gem = 5;
+	int32 default_red_gem = 6;
+	int32 default_blue_gem = 7;
+	int32 default_yellow_gem = 8;
+	int32 default_meta_gem = 9;
+	bool ensure_meta_req_met = 10; // ensures that meta requirements are met when auto-gemming.
+
+	// Number of iterations per combo.
+	// If set to 0 the sim core decides the optimal iterations.
+	int32 iterations_per_combo = 11;
+}
+
+message BulkSimResult {
+    repeated BulkComboResult results = 1;
+		BulkComboResult equipped_gear_result = 2;
+    string error_result = 3; // only set if sim failed.
+}
+
+message BulkComboResult {
+    repeated ItemSpecWithSlot items_added = 1;
+    UnitMetrics unit_metrics = 2;
+}
+
+message ItemSpecWithSlot {
+    ItemSpec item = 1;
+    ItemSlot slot = 2;
 }
