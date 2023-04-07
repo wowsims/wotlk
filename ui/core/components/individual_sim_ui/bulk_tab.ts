@@ -8,11 +8,13 @@ import { TypedEvent } from "../../typed_event";
 import { EquipmentSpec, ItemSpec, SimDatabase, SimEnchant, SimGem, SimItem, Spec } from "../../proto/common";
 import { BulkComboResult, BulkSettings, ItemSpecWithSlot, ProgressMetrics, RaidSimResult } from "../../proto/api";
 
-import { ItemRenderer } from "../gear_picker";
+import { ItemRenderer, getEmptySlotIconUrl } from "../gear_picker";
 import { SimTab } from "../sim_tab";
 
 import { UIEnchant, UIGem, UIItem } from "../../proto/ui";
 import { Component } from "../component";
+import { EquippedItem } from "../../proto_utils/equipped_item";
+import { setItemQualityCssClass } from "../../css_utils";
 
 export class BulkGearJsonImporter<SpecType extends Spec> extends Importer {
   private readonly simUI: IndividualSimUI<SpecType>;
@@ -85,7 +87,7 @@ class BulkSimResultRenderer {
     if (result.itemsAdded && result.itemsAdded.length > 0) {
       for (const is of result.itemsAdded) {
         const item = simUI.sim.db.lookupItemSpec(is.item!)
-        const renderer = new ItemRenderer(itemsContainer, simUI, simUI.player);
+        const renderer = new ItemRenderer(itemsContainer, simUI.player);
         renderer.update(item!);
   
         const p = document.createElement('a');
@@ -112,6 +114,60 @@ class BulkSimResultRenderer {
   private itemSlotName(is: ItemSpecWithSlot): string {
     return JSON.parse(ItemSpecWithSlot.toJsonString(is, {emitDefaultValues: true}))['slot'].replace('ItemSlot', '')
   }
+}
+
+
+export class BulkItemPicker extends Component {
+  readonly simUI: IndividualSimUI<Spec>;
+	private readonly itemElem: ItemRenderer;
+
+	constructor(parent: HTMLElement, simUI: IndividualSimUI<Spec>, item: EquippedItem|null) {
+		super(parent, 'bulk-item-picker');
+		this.simUI = simUI;
+		this.itemElem = new ItemRenderer(this.rootElem, simUI.player);
+
+		this.simUI.sim.waitForInit().then(() => {
+      this.item = item
+
+			const openGearSelector = (event: Event) => {
+				event.preventDefault();
+				//this.openSelectorModal(SelectorModalTabs.Items, gearData);
+			};
+			const openEnchantSelector = (event: Event) => {
+				event.preventDefault();
+				//this.openSelectorModal(SelectorModalTabs.Enchants, gearData);
+			};
+			const onClickEnd = (event: Event) => {
+				event.preventDefault();
+			};
+
+			// Make icon open gear selector
+			this.itemElem.iconElem.addEventListener('click', openGearSelector);
+			this.itemElem.iconElem.addEventListener('touchstart', openGearSelector);
+			this.itemElem.iconElem.addEventListener('touchend', onClickEnd);
+
+			// Make item name open gear selector
+			this.itemElem.nameElem.addEventListener('click', openGearSelector);
+			this.itemElem.nameElem.addEventListener('touchstart', openGearSelector);
+			this.itemElem.nameElem.addEventListener('touchend', onClickEnd);
+
+			// Make enchant name open enchant selector
+			this.itemElem.enchantElem.addEventListener('click', openEnchantSelector);
+			this.itemElem.enchantElem.addEventListener('touchstart', openEnchantSelector);
+			this.itemElem.enchantElem.addEventListener('touchend', onClickEnd);
+		});
+	}
+
+	set item(newItem: EquippedItem | null) {
+		this.itemElem.clear();
+		if (newItem != null) {
+			this.itemElem.update(newItem);
+		} else {
+			this.itemElem.iconElem.style.backgroundImage = `url('/wotlk/assets/item_slots/empty.jpg')`;
+      this.itemElem.nameElem.textContent = 'Add new item';
+      this.itemElem.rootElem.style.alignItems = 'center';
+    }
+	}
 }
 
 export class BulkTab extends SimTab {
@@ -206,6 +262,20 @@ export class BulkTab extends SimTab {
     itemList.classList.add('tab-panel-col', 'bulk-gear-combo');
     itemsBlock.bodyElement.appendChild(itemList);
     
+    this.itemsChangedEmitter.on(() => {
+      itemList.innerHTML = '';
+      new BulkItemPicker(itemList, this.simUI, null); // Add new item picker.
+      if (this.items.length > 0) {
+        notice.textContent = 'The following items will be simmed in all possible combinations together with your equipped gear.';
+        for (const spec of this.items) {
+          const item = this.simUI.sim.db.lookupItemSpec(spec);
+          const bulkItemPicker = new BulkItemPicker(itemList, this.simUI, item);
+        }
+      }
+    });
+
+    this.importItems(new Array<ItemSpec>());
+
     let resultsBlock = new ContentBlock(this.column1, 'bulk-results', {header: {
       title: 'Results',
       extraCssClasses: ['bulk-results-header'],
@@ -242,7 +312,7 @@ export class BulkTab extends SimTab {
 
     const bulkSimButton = document.createElement('button');
     bulkSimButton.classList.add('btn', 'btn-primary', 'w-100', 'bulk-settings-button');
-    bulkSimButton.innerHTML = '<i class="fa fa-play"></i> Run Bulk Sim';
+    bulkSimButton.textContent = 'Run Bulk Sim';
     bulkSimButton.addEventListener('click', () => {
       this.runBulkSim((progressMetrics: ProgressMetrics) => {
         console.log(progressMetrics);
@@ -252,24 +322,12 @@ export class BulkTab extends SimTab {
 
     const clearButton = document.createElement('button');
     clearButton.classList.add('btn', 'btn-primary', 'w-100', 'bulk-settings-button');
-    clearButton.innerHTML = '<i class="fa fa-trash"></i> Clear All';
+    clearButton.textContent = 'Clear All';
     clearButton.addEventListener('click', () => {
       this.importItems(new Array<ItemSpec>());
       resultsBlock.rootElem.hidden = true;
       resultsBlock.bodyElement.innerHTML = '';
     });
     settingsBlock.bodyElement.appendChild(clearButton);
-
-    this.itemsChangedEmitter.on(() => {
-      itemList.innerHTML = '';
-      if (this.items.length > 0) {
-        notice.textContent = 'The following items will be simmed in all possible combinations together with your equipped gear.';
-        for (const spec of this.items) {
-          const item = this.simUI.sim.db.lookupItemSpec(spec);
-          const itemRenderer = new ItemRenderer(itemList, this.simUI, this.simUI.player);
-          itemRenderer.update(item!);
-        }
-      }
-    });
   }
 }

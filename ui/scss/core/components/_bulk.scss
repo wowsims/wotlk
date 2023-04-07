@@ -42,27 +42,25 @@
 
 $bulk-gear-item-width: 220px;
 
+.bulk-item-picker {
+  margin-bottom: 0.75rem;
+}
+
 .bulk-gear-combo {
   display: grid;
-  grid-template-columns: $bulk-gear-item-width $bulk-gear-item-width $bulk-gear-item-width $bulk-gear-item-width;
+  grid-template-columns: repeat(3, 32%);
   grid-template-rows: auto;
   column-gap: 50px;
 }
 
-@media (max-width: 1850px) {
+@media (max-width: 1899px) {
   .bulk-gear-combo {
-    grid-template-columns: $bulk-gear-item-width $bulk-gear-item-width $bulk-gear-item-width;
+    grid-template-columns: repeat(2, 48%);
   }
 }
 
-@media (max-width: 1450px) {
+@media (max-width: 1399px) {
   .bulk-gear-combo {
-    grid-template-columns: $bulk-gear-item-width $bulk-gear-item-width;
-  }
-}
-
-@include media-breakpoint-down(md) {
-  .bulk-gear-combo {
-    grid-template-columns: $bulk-gear-item-width;
+    grid-template-columns: repeat(1, 96%);
   }
 }
