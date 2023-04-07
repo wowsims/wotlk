@@ -12,6 +12,7 @@ import { ItemRenderer } from "../gear_picker";
 import { SimTab } from "../sim_tab";
 
 import { UIEnchant, UIGem, UIItem } from "../../proto/ui";
+import { Component } from "../component";
 
 export class BulkGearJsonImporter<SpecType extends Spec> extends Importer {
   private readonly simUI: IndividualSimUI<SpecType>;
@@ -78,8 +79,7 @@ class BulkSimResultRenderer {
     dpsDiv.appendChild(dpsDeltaSpan);
 
     const itemsContainer = document.createElement('div');
-    itemsContainer.style.flexDirection = 'row';
-    itemsContainer.style.display = 'flex';
+    itemsContainer.classList.add('bulk-gear-combo');
     parent.bodyElement.appendChild(itemsContainer);
 
     if (result.itemsAdded && result.itemsAdded.length > 0) {
@@ -195,15 +195,15 @@ export class BulkTab extends SimTab {
       header: {title: 'Items'}
     });
 
+    itemsBlock.bodyElement.classList.add('gear-picker-root');
+
     const notice = document.createElement('div');
     notice.classList.add('bulk-items-text-line');
     itemsBlock.bodyElement.appendChild(notice);
 
     const itemList = document.createElement('div');
 
-    itemList.classList.add('gear-picker-root', 'gear-picker-left', 'tab-panel-col');
-    itemList.style.flexDirection = 'row';
-    itemList.style.display = 'flex';
+    itemList.classList.add('tab-panel-col', 'bulk-gear-combo');
     itemsBlock.bodyElement.appendChild(itemList);
     
     let resultsBlock = new ContentBlock(this.column1, 'bulk-results', {header: {
@@ -212,7 +212,7 @@ export class BulkTab extends SimTab {
     }});
 
     resultsBlock.rootElem.hidden = true;
-    resultsBlock.bodyElement.classList.add('gear-picker-root', 'gear-picker-left', 'tab-panel-col');
+    resultsBlock.bodyElement.classList.add('gear-picker-root', 'tab-panel-col');
     
     this.simUI.sim.bulkSimStartEmitter.on(() => {
       resultsBlock.rootElem.hidden = true;
@@ -236,13 +236,13 @@ export class BulkTab extends SimTab {
 
     const importButton = document.createElement('button');
     importButton.classList.add('btn', 'btn-primary', 'w-100', 'bulk-settings-button');
-    importButton.textContent = 'Import From Bags';
+    importButton.innerHTML = '<i class="fa fa-download"></i> Import From Bags';
     importButton.addEventListener('click', () => new BulkGearJsonImporter(this.simUI.rootElem, this.simUI, this));
     settingsBlock.bodyElement.appendChild(importButton);
 
     const bulkSimButton = document.createElement('button');
     bulkSimButton.classList.add('btn', 'btn-primary', 'w-100', 'bulk-settings-button');
-    bulkSimButton.textContent = 'Bulk Simulate';
+    bulkSimButton.innerHTML = '<i class="fa fa-play"></i> Run Bulk Sim';
     bulkSimButton.addEventListener('click', () => {
       this.runBulkSim((progressMetrics: ProgressMetrics) => {
         console.log(progressMetrics);
@@ -252,7 +252,7 @@ export class BulkTab extends SimTab {
 
     const clearButton = document.createElement('button');
     clearButton.classList.add('btn', 'btn-primary', 'w-100', 'bulk-settings-button');
-    clearButton.textContent = 'Clear All';
+    clearButton.innerHTML = '<i class="fa fa-trash"></i> Clear All';
     clearButton.addEventListener('click', () => {
       this.importItems(new Array<ItemSpec>());
       resultsBlock.rootElem.hidden = true;

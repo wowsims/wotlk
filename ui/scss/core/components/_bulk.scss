@@ -39,3 +39,30 @@
 .bulk-items-text-line {
   margin-bottom: 1rem;
 }
+
+$bulk-gear-item-width: 220px;
+
+.bulk-gear-combo {
+  display: grid;
+  grid-template-columns: $bulk-gear-item-width $bulk-gear-item-width $bulk-gear-item-width $bulk-gear-item-width;
+  grid-template-rows: auto;
+  column-gap: 50px;
+}
+
+@media (max-width: 1850px) {
+  .bulk-gear-combo {
+    grid-template-columns: $bulk-gear-item-width $bulk-gear-item-width $bulk-gear-item-width;
+  }
+}
+
+@media (max-width: 1450px) {
+  .bulk-gear-combo {
+    grid-template-columns: $bulk-gear-item-width $bulk-gear-item-width;
+  }
+}
+
+@include media-breakpoint-down(md) {
+  .bulk-gear-combo {
+    grid-template-columns: $bulk-gear-item-width;
+  }
+}
