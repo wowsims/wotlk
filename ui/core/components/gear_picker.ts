@@ -86,7 +86,6 @@ export class GearPicker extends Component {
 }
 
 export class ItemRenderer extends Component {
-	private readonly simUI: SimUI;
 	private readonly player: Player<any>;
 
 	readonly iconElem: HTMLAnchorElement;
@@ -94,10 +93,8 @@ export class ItemRenderer extends Component {
 	readonly enchantElem: HTMLAnchorElement;
 	readonly socketsContainerElem: HTMLElement;
 
-	constructor(parent: HTMLElement, simUI: SimUI, player: Player<any>) {
+	constructor(parent: HTMLElement, player: Player<any>) {
 		super(parent, 'item-picker-root');
-
-		this.simUI = simUI;
 		this.player = player;
 
 		this.rootElem.innerHTML = `
@@ -222,7 +219,7 @@ export class ItemPicker extends Component {
 		this.slot = slot;
 		this.simUI = simUI;
 		this.player = player;
-		this.itemElem = new ItemRenderer(this.rootElem, simUI, player);
+		this.itemElem = new ItemRenderer(this.rootElem, player);
 
 		this.item = player.getEquippedItem(slot);
 		player.sim.waitForInit().then(() => {
