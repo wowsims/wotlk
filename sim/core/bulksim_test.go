@@ -4,14 +4,11 @@ import (
 	"context"
 	"testing"
 
+	goproto "github.com/golang/protobuf/proto"
+	"github.com/google/go-cmp/cmp"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-func TestNothing(t *testing.T) {
-
-}
-
-/*
 const (
 	itemStarshardEdge     = 45620
 	itemPillarOfFortitude = 46350
@@ -21,22 +18,22 @@ const (
 var (
 	starshardEdge1 = &itemWithSlot{
 		Item:  &proto.ItemSpec{Id: itemStarshardEdge},
-		Slot:  proto.ItemSlot_ItemSlotMainHand,
+		Slot:  ItemSlotMainHand,
 		Index: 0,
 	}
 	ironmender = &itemWithSlot{
 		Item:  &proto.ItemSpec{Id: itemIronmender},
-		Slot:  proto.ItemSlot_ItemSlotOffHand,
+		Slot:  ItemSlotOffHand,
 		Index: 1,
 	}
 	starshardEdge2 = &itemWithSlot{
 		Item:  &proto.ItemSpec{Id: itemStarshardEdge},
-		Slot:  proto.ItemSlot_ItemSlotMainHand,
+		Slot:  ItemSlotMainHand,
 		Index: 2,
 	}
 	pillarOfFortitude = &itemWithSlot{
 		Item:  &proto.ItemSpec{Id: itemPillarOfFortitude},
-		Slot:  proto.ItemSlot_ItemSlotMainHand,
+		Slot:  ItemSlotMainHand,
 		Index: 3,
 	}
 
@@ -48,45 +45,6 @@ var (
 		},
 	}
 )
-
-func TestEquipmentSubstitutionIsValid(t *testing.T) {
-	for _, tc := range []struct {
-		comment string
-		items   []*itemWithSlot
-		want    bool
-	}{
-		{
-			comment: "empty replacement is valid (1)",
-			items:   nil,
-			want:    true,
-		},
-		{
-			comment: "empty replacement is valid (2)",
-			items:   []*itemWithSlot{},
-			want:    true,
-		},
-		{
-			comment: "mainhand replacement is valid",
-			items:   []*itemWithSlot{starshardEdge1},
-			want:    true,
-		},
-		{
-			comment: "same item cannot occurr twice in a substitution",
-			items:   []*itemWithSlot{starshardEdge1, starshardEdge1},
-			want:    false,
-		},
-		{
-			comment: "cannot use two items for the same item slot",
-			items:   []*itemWithSlot{starshardEdge1, starshardEdge2},
-			want:    false,
-		},
-	} {
-		sub := &equipmentSubstitution{Items: tc.items}
-		if got := sub.IsValid(); got != tc.want {
-			t.Fatalf("%s: equipmentSubstitution.IsValid(%v) = %v, want %v", tc.comment, sub, got, tc.want)
-		}
-	}
-}
 
 func TestIsValidEquipment(t *testing.T) {
 	// This is a bit awkward because code everywhere accesses the global database maps. Hopefully
@@ -115,69 +73,6 @@ func TestIsValidEquipment(t *testing.T) {
 	}
 }
 
-func TestGenerateAllEquipmentSubstitutions(t *testing.T) {
-	for _, tc := range []struct {
-		comment string
-		spec    *proto.BulkEquipmentSpec
-		want    []*equipmentSubstitution
-	}{
-		{
-			comment: "empty spec returns empty base equipment substitution only",
-			spec:    createBulkSpecFromItems(),
-			want: []*equipmentSubstitution{
-				{},
-			},
-		},
-		{
-			comment: "spec with one item returns empty base equipment substitution plus one item substitution",
-			spec:    createBulkSpecFromItems(starshardEdge1),
-			want: []*equipmentSubstitution{
-				{},
-				{Items: []*itemWithSlot{starshardEdge1}},
-			},
-		},
-		{
-			comment: "spec with one item returns empty base equipment substitution plus one item substitution",
-			spec:    createBulkSpecFromItems(starshardEdge1),
-			want: []*equipmentSubstitution{
-				{},
-				{Items: []*itemWithSlot{starshardEdge1}},
-			},
-		},
-		{
-			comment: "spec with two items returns empty base equipment substitution plus all item combos",
-			spec:    createBulkSpecFromItems(starshardEdge1, ironmender),
-			want: []*equipmentSubstitution{
-				{},
-				{Items: []*itemWithSlot{starshardEdge1}},
-				{Items: []*itemWithSlot{ironmender}},
-				{Items: []*itemWithSlot{starshardEdge1, ironmender}},
-			},
-		},
-		{
-			comment: "spec with a duplicate item slot returns only valid substitutions",
-			spec:    createBulkSpecFromItems(starshardEdge1, ironmender, starshardEdge2),
-			want: []*equipmentSubstitution{
-				{},
-				{Items: []*itemWithSlot{starshardEdge1}},
-				{Items: []*itemWithSlot{ironmender}},
-				{Items: []*itemWithSlot{starshardEdge1, ironmender}},
-				{Items: []*itemWithSlot{starshardEdge2}},
-				{Items: []*itemWithSlot{ironmender, starshardEdge2}},
-			},
-		},
-	} {
-		var got []*equipmentSubstitution
-		for sub := range generateAllEquipmentSubstitutions(context.Background(), tc.spec) {
-			got = append(got, sub)
-		}
-
-		if diff := cmp.Diff(tc.want, got, cmpopts.IgnoreUnexported(proto.ItemSpec{})); diff != "" {
-			t.Fatalf("%s: generateAllEquipmentSubstitutions(%v) returned diff (-want +got):\n%s", tc.comment, tc.spec, diff)
-		}
-	}
-}
-
 func createEquipmentFromItems(items ...*itemWithSlot) *proto.EquipmentSpec {
 	spec := &proto.EquipmentSpec{
 		Items: make([]*proto.ItemSpec, 17),
@@ -188,25 +83,39 @@ func createEquipmentFromItems(items ...*itemWithSlot) *proto.EquipmentSpec {
 	return spec
 }
 
-func createBulkSpecFromItems(items ...*itemWithSlot) *proto.BulkEquipmentSpec {
-	spec := &proto.BulkEquipmentSpec{}
-	for _, is := range items {
-		spec.Items = append(spec.Items, &proto.BulkEquipmentSpec_ItemSpecWithSlots{
-			Item:  is.Item,
-			Slots: []proto.ItemSlot{is.Slot},
-		})
+func TestBulkSim(t *testing.T) {
+	t.Skip("TODO: Implement")
+
+	fakeRunSim := func(rsr *proto.RaidSimRequest, progress chan *proto.ProgressMetrics, skipPresim bool) *proto.RaidSimResult {
+		return &proto.RaidSimResult{}
 	}
-	return spec
+
+	bulk := &bulkSimRunner{
+		SingleRaidSimRunner: fakeRunSim,
+		Request:             &proto.BulkSimRequest{},
+	}
+
+	got, err := bulk.Run(context.Background(), nil)
+	if err != nil {
+		t.Fatalf("BulkSim() returned error: %v", err)
+	}
+
+	want := &proto.BulkSimResult{}
+	if diff := cmp.Diff(want, got, cmp.Comparer(func(a, b *proto.BulkSimResult) bool {
+		return goproto.MarshalTextString(a) == goproto.MarshalTextString(b)
+	})); diff != "" {
+		t.Fatalf("BulkSim() returned diff (-want +got):\n%s", diff)
+	}
 }
-*/
 
 func TestGenerateAllEquipmentSubstitutions(t *testing.T) {
 	baseItems := make([]*proto.ItemSpec, 17)
 	for i := range baseItems {
-		baseItems[i] = &proto.ItemSpec{}
+		baseItems[i] = &proto.ItemSpec{Id: int32(i) + 1000}
 	}
 	item1 := &proto.ItemSpec{Id: 1}
 	item2 := &proto.ItemSpec{Id: 2}
+	item3 := &proto.ItemSpec{Id: 1010}
 	type args struct {
 		combinations           bool
 		distinctItemSlotCombos []*itemWithSlot
@@ -217,7 +126,77 @@ func TestGenerateAllEquipmentSubstitutions(t *testing.T) {
 		want []*equipmentSubstitution
 	}{
 		{
-			name: "basic finger combo",
+			name: "no combos",
+			args: args{
+				combinations:           true,
+				distinctItemSlotCombos: []*itemWithSlot{},
+			},
+			want: []*equipmentSubstitution{
+				{},
+			},
+		},
+		{
+			name: "one item",
+			args: args{
+				combinations: true,
+				distinctItemSlotCombos: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotHead},
+				},
+			},
+			want: []*equipmentSubstitution{
+				{},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotHead},
+				}},
+			},
+		},
+		{
+			name: "two items",
+			args: args{
+				combinations: true,
+				distinctItemSlotCombos: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotHead},
+					{Item: item2, Slot: ItemSlotShoulder},
+				},
+			},
+			want: []*equipmentSubstitution{
+				{},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotHead},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotHead},
+					{Item: item2, Slot: ItemSlotShoulder},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item2, Slot: ItemSlotShoulder},
+				}},
+			},
+		},
+		{
+			name: "special case same itemID",
+			args: args{
+				combinations: false,
+				distinctItemSlotCombos: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+					{Item: item1, Slot: ItemSlotFinger2},
+					{Item: item3, Slot: ItemSlotFinger1},
+					{Item: item3, Slot: ItemSlotFinger2},
+				},
+			},
+			want: []*equipmentSubstitution{
+				{},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+					{Item: item3, Slot: ItemSlotFinger2},
+				}},
+			},
+		},
+		{
+			name: "special case finger combo",
 			args: args{
 				combinations: false,
 				distinctItemSlotCombos: []*itemWithSlot{
@@ -264,6 +243,9 @@ func TestGenerateAllEquipmentSubstitutions(t *testing.T) {
 					}
 				}
 				idx++
+			}
+			if idx != len(tt.want) {
+				t.Errorf("generateAllEquipmentSubstitutions has incorrect number of items, expected: %d, got: %d", len(tt.want), idx)
 			}
 		})
 	}
