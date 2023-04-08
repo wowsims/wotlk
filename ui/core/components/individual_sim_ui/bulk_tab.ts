@@ -267,14 +267,6 @@ export class BulkTab extends SimTab {
     this.fastMode = fastMode;
   }
 
-  protected async runBulkSim(onProgress: Function) {
-    try {
-      await this.simUI.sim.runBulkSim(this.createBulkSettings(), this.createBulkItemsDatabase(), onProgress);
-    } catch (e) {
-      this.simUI.handleCrash(e);
-    }
-  }
-
 	protected async runBulkSim(onProgress: Function) {
 		try {
 			await this.simUI.sim.runBulkSim(this.createBulkSettings(), this.createBulkItemsDatabase(), onProgress);
