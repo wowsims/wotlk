@@ -1054,7 +1054,6 @@ class SelectorModal extends BaseModal {
 				})
 				this.simUI.bt.importItems(itemSpecs);
 				this.simUI.bt.setCombinations(false);
-				this.simUI.bt.setFastMode(true);
 			}	
 		});
 

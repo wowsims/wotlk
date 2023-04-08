@@ -62,13 +62,15 @@ type singleBulkSim struct {
 	eq  *equipmentSubstitution
 }
 
-func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMetrics) (result *proto.BulkSimResult, resultErr error) {
+func (b *bulkSimRunner) Run(pctx context.Context, progress chan *proto.ProgressMetrics) (result *proto.BulkSimResult, resultErr error) {
+	ctx, cancel := context.WithCancel(pctx)
 	defer func() {
 		if err := recover(); err != nil {
 			result = &proto.BulkSimResult{
 				ErrorResult: fmt.Sprintf("%v\nStack Trace:\n%s", err, string(debug.Stack())),
 			}
 		}
+		cancel()
 	}()
 
 	// Bulk simming is only supported for the single-player use (i.e. not whole raid-wide simming).
@@ -160,7 +162,7 @@ func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMe
 		var tempBase *itemSubstitutionSimResult
 		var err error
 		// TODO: we could theoretically make getRankedResults accept a channel of validCombos that stream in to it and launches sims as it gets them...
-		rankedResults, tempBase, err = b.getRankedResults(validCombos, newIters, progress)
+		rankedResults, tempBase, err = b.getRankedResults(ctx, validCombos, newIters, progress)
 
 		if err != nil {
 			return nil, err
@@ -214,7 +216,6 @@ func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMe
 	}
 
 	for _, r := range rankedResults {
-
 		um := r.Result.GetRaidMetrics().GetParties()[0].GetPlayers()[0]
 		um.Actions = nil
 		um.Auras = nil
@@ -236,7 +237,7 @@ func (b *bulkSimRunner) Run(ctx context.Context, progress chan *proto.ProgressMe
 	return result, nil
 }
 
-func (b *bulkSimRunner) getRankedResults(validCombos []singleBulkSim, iterations int64, progress chan *proto.ProgressMetrics) ([]*itemSubstitutionSimResult, *itemSubstitutionSimResult, error) {
+func (b *bulkSimRunner) getRankedResults(pctx context.Context, validCombos []singleBulkSim, iterations int64, progress chan *proto.ProgressMetrics) ([]*itemSubstitutionSimResult, *itemSubstitutionSimResult, error) {
 	concurrency := (runtime.NumCPU() - 1) * 2
 	if concurrency <= 0 {
 		concurrency = 2
@@ -255,10 +256,10 @@ func (b *bulkSimRunner) getRankedResults(validCombos []singleBulkSim, iterations
 	var totalCompletedIterations int32
 	var totalCompletedSims int32
 
+	ctx, cancel := context.WithCancel(pctx)
 	// reporter for all sims combined.
 	go func() {
-		for {
-			time.Sleep(time.Second)
+		for ctx.Err() == nil {
 			complIters := atomic.LoadInt32(&totalCompletedIterations)
 			complSims := atomic.LoadInt32(&totalCompletedSims)
 
@@ -273,6 +274,7 @@ func (b *bulkSimRunner) getRankedResults(validCombos []singleBulkSim, iterations
 				CompletedIterations: complIters,
 				TotalIterations:     int32(totalIterationsUpperBound),
 			}
+			time.Sleep(time.Second)
 		}
 	}()
 
@@ -310,24 +312,24 @@ func (b *bulkSimRunner) getRankedResults(validCombos []singleBulkSim, iterations
 	}()
 
 	rankedResults := make([]*itemSubstitutionSimResult, numCombinations)
+	var baseResult *itemSubstitutionSimResult
+
 	for i := range rankedResults {
 		result := <-results
 		if result.Result == nil || result.Result.ErrorResult != "" {
+			cancel() // cancel reporter
 			return nil, nil, errors.New("simulation failed: " + result.Result.ErrorResult)
+		}
+		if !result.Substitution.HasItemReplacements() {
+			baseResult = result
 		}
 		rankedResults[i] = result
 	}
+	cancel() // cancel reporter
+
 	sort.Slice(rankedResults, func(i, j int) bool {
 		return rankedResults[i].Score() > rankedResults[j].Score()
 	})
-
-	var baseResult *itemSubstitutionSimResult
-	for _, r := range rankedResults {
-		if !r.Substitution.HasItemReplacements() {
-			baseResult = r
-		}
-	}
-
 	return rankedResults, baseResult, nil
 }
 
