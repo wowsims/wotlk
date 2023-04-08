@@ -213,6 +213,12 @@ export class Raid {
 
 	fromProto(eventID: EventID, proto: RaidProto) {
 		TypedEvent.freezeAllAndDo(() => {
+			if (proto.buffs!.demonicPact > 0 && proto.buffs!.demonicPactSp == 0) {
+				proto.buffs!.demonicPactSp = proto.buffs!.demonicPact;
+				if (proto.buffs!.demonicPactSp > 1000) {
+					proto.buffs!.demonicPactSp /= 10;
+				}
+			}
 			this.setBuffs(eventID, proto.buffs || RaidBuffs.create());
 			this.setDebuffs(eventID, proto.debuffs || Debuffs.create());
 			this.setTanks(eventID, proto.tanks);
