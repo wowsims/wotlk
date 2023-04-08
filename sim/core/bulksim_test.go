@@ -80,6 +80,11 @@ func createEquipmentFromItems(items ...*itemWithSlot) *proto.EquipmentSpec {
 	for _, is := range items {
 		spec.Items[is.Slot] = is.Item
 	}
+	for i := range spec.Items {
+		if spec.Items[i] == nil {
+			spec.Items[i] = &proto.ItemSpec{}
+		}
+	}
 	return spec
 }
 

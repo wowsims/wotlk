@@ -127,14 +127,16 @@ dps_results: {
  key: "TestElemental-AllItems-BaubleofTrueBlood-50354"
  value: {
   dps: 6094.95926
-  tps: 10764.90617
+  tps: 3879.80256
+  hps: 6885.1036
  }
 }
 dps_results: {
  key: "TestElemental-AllItems-BaubleofTrueBlood-50726"
  value: {
   dps: 6094.95926
-  tps: 10764.90617
+  tps: 3879.80256
+  hps: 6885.1036
  }
 }
 dps_results: {

@@ -103,16 +103,18 @@ dps_results: {
  key: "TestRetribution-AllItems-BaubleofTrueBlood-50354"
  value: {
   dps: 6333.33258
-  tps: 12468.57395
+  tps: 6434.74863
   dtps: 9.92959
+  hps: 6033.82531
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-BaubleofTrueBlood-50726"
  value: {
   dps: 6333.33258
-  tps: 12468.57395
+  tps: 6434.74863
   dtps: 9.92959
+  hps: 6033.82531
  }
 }
 dps_results: {

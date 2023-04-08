@@ -387,9 +387,9 @@ func isValidEquipment(equipment *proto.EquipmentSpec) bool {
 		}
 	}
 
-	if equipment.Items[ItemSlotFinger1].Id == equipment.Items[ItemSlotFinger2].Id {
+	if equipment.Items[ItemSlotFinger1].Id == equipment.Items[ItemSlotFinger2].Id && equipment.Items[ItemSlotFinger1].Id != 0 {
 		return false
-	} else if equipment.Items[ItemSlotTrinket1].Id == equipment.Items[ItemSlotTrinket2].Id {
+	} else if equipment.Items[ItemSlotTrinket1].Id == equipment.Items[ItemSlotTrinket2].Id && equipment.Items[ItemSlotTrinket1].Id != 0 {
 		return false
 	}
 

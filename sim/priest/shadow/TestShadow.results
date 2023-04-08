@@ -89,14 +89,16 @@ dps_results: {
  key: "TestShadow-AllItems-BaubleofTrueBlood-50354"
  value: {
   dps: 7150.71003
-  tps: 13349.48587
+  tps: 7098.83258
+  hps: 6250.65328
  }
 }
 dps_results: {
  key: "TestShadow-AllItems-BaubleofTrueBlood-50726"
  value: {
   dps: 7150.71003
-  tps: 13349.48587
+  tps: 7098.83258
+  hps: 6250.65328
  }
 }
 dps_results: {

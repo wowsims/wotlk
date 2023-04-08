@@ -82,14 +82,16 @@ dps_results: {
  key: "TestFury-AllItems-BaubleofTrueBlood-50354"
  value: {
   dps: 6433.86627
-  tps: 10607.24625
+  tps: 4762.97534
+  hps: 8348.95844
  }
 }
 dps_results: {
  key: "TestFury-AllItems-BaubleofTrueBlood-50726"
  value: {
   dps: 6433.86627
-  tps: 10607.24625
+  tps: 4762.97534
+  hps: 8348.95844
  }
 }
 dps_results: {

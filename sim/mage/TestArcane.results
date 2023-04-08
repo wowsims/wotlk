@@ -75,14 +75,16 @@ dps_results: {
  key: "TestArcane-AllItems-BaubleofTrueBlood-50354"
  value: {
   dps: 7121.80393
-  tps: 10415.70875
+  tps: 4304.58187
+  hps: 6111.12687
  }
 }
 dps_results: {
  key: "TestArcane-AllItems-BaubleofTrueBlood-50726"
  value: {
   dps: 7121.80393
-  tps: 10415.70875
+  tps: 4304.58187
+  hps: 6111.12687
  }
 }
 dps_results: {

@@ -75,14 +75,16 @@ dps_results: {
  key: "TestFrostUH-AllItems-BaubleofTrueBlood-50354"
  value: {
   dps: 7821.21185
-  tps: 11006.94943
+  tps: 5579.61458
+  hps: 7374.09627
  }
 }
 dps_results: {
  key: "TestFrostUH-AllItems-BaubleofTrueBlood-50726"
  value: {
   dps: 7821.21185
-  tps: 11006.94943
+  tps: 5579.61458
+  hps: 7374.09627
  }
 }
 dps_results: {

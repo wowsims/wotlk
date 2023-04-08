@@ -74,13 +74,15 @@ dps_results: {
 dps_results: {
  key: "TestHoly-AllItems-BaubleofTrueBlood-50354"
  value: {
-  tps: 2121.02206
+  tps: 8.83773
+  hps: 2112.18433
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-BaubleofTrueBlood-50726"
  value: {
-  tps: 2121.02206
+  tps: 8.83773
+  hps: 2112.18433
  }
 }
 dps_results: {
