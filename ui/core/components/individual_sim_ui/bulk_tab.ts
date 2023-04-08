@@ -285,7 +285,7 @@ export class BulkTab extends SimTab {
     const noticeWorkInProgress = document.createElement('div');
     noticeWorkInProgress.classList.add('bulk-items-text-line');
     itemsBlock.bodyElement.appendChild(noticeWorkInProgress);
-    noticeWorkInProgress.innerHTML = '<i>Notice: This is under very early but active development and experimental. You may also need to update your WoW AddOn if you want to import your bags.'
+    noticeWorkInProgress.innerHTML = '<i>Notice: This is under very early but active development and experimental. You may also need to update your WoW AddOn if you want to import your bags.</i>'
 
     const itemTextIntro = document.createElement('div');
     itemTextIntro.classList.add('bulk-items-text-line');
