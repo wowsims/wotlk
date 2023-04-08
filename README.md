@@ -45,7 +45,7 @@ go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 
 # Install node
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
-nvm install 14.18.3
+nvm install 19.8.0
 
 # Install the npm package dependencies using node
 npm install
@@ -68,12 +68,12 @@ WOTLK_CMD="docker run --rm -it -p 8080:8080 -v $(pwd):/wotlk wowsims-wotlk"
 # ... do some coding on the sim ...
 
 # Run tests
-$WOTLK_CMD make test
+$(echo $WOTLK_CMD) make test
 
 # ... do some coding on the UI ...
 
 # Host a local site
-$WOTLK_CMD make host
+$(echo $WOTLK_CMD) make host
 ```
 
 ## Windows
