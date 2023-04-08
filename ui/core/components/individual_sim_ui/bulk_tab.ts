@@ -6,9 +6,9 @@ import { IndividualSimUI } from "../../individual_sim_ui";
 import { TypedEvent } from "../../typed_event";
 
 import { EquipmentSpec, ItemSpec, SimDatabase, SimEnchant, SimGem, SimItem, Spec } from "../../proto/common";
-import { BulkComboResult, BulkSettings, ItemSpecWithSlot, ProgressMetrics, RaidSimResult } from "../../proto/api";
+import { BulkComboResult, BulkSettings, ItemSpecWithSlot, ProgressMetrics } from "../../proto/api";
 
-import { ItemRenderer, getEmptySlotIconUrl } from "../gear_picker";
+import { ItemRenderer } from "../gear_picker";
 import { SimTab } from "../sim_tab";
 
 import { UIEnchant, UIGem, UIItem } from "../../proto/ui";
