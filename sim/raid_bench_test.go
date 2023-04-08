@@ -201,10 +201,10 @@ func BenchmarkSimulate(b *testing.B) {
 				{
 					Players: []*proto.Player{
 						{
-							Name:  "Enhancement Shaman 1",
-							Race:  proto.Race_RaceTroll,
-							Class: proto.Class_ClassShaman,
-							//Equipment: EnhancementEquipment,
+							Name:      "Enhancement Shaman 1",
+							Race:      proto.Race_RaceTroll,
+							Class:     proto.Class_ClassShaman,
+							Equipment: EnhancementEquipment,
 							Spec: &proto.Player_EnhancementShaman{
 								EnhancementShaman: &proto.EnhancementShaman{
 									Rotation: &proto.EnhancementShaman_Rotation{
