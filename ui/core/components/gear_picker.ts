@@ -719,7 +719,7 @@ class SelectorModal extends BaseModal {
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-1h-weapons"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-2h-weapons"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-matching-gems"></div>
-					<button class="selector-modal-simall-button btn btn-danger">Sim All</button>
+					<button class="selector-modal-simall-button btn btn-warning">Add to Bulk Sim</button>
 					<button class="selector-modal-remove-button btn btn-danger">Unequip Item</button>
 				</div>
 				<div style="width: 100%;height: 30px;font-size: 18px;">
@@ -1044,6 +1044,10 @@ class SelectorModal extends BaseModal {
 		});
 
 		const simAllButton = tabContent.getElementsByClassName('selector-modal-simall-button')[0] as HTMLButtonElement;
+		simAllButton.hidden = !this.player.sim.getShowExperimental()
+		this.player.sim.showExperimentalChangeEmitter.on(() => {
+			simAllButton.hidden = !this.player.sim.getShowExperimental();
+		});
 		simAllButton.addEventListener('click', event => {
 			if (this.simUI instanceof IndividualSimUI) {
 				let itemSpecs = Array<ItemSpec>();
@@ -1054,6 +1058,7 @@ class SelectorModal extends BaseModal {
 				})
 				this.simUI.bt.importItems(itemSpecs);
 				this.simUI.bt.setCombinations(false);
+				// TODO: should we open the bulk sim UI or should we run in the background showing progress, and then sort the items in the picker?
 			}	
 		});
 
