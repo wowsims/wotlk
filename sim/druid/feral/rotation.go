@@ -297,7 +297,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	mangleNow := !ripNow && !cat.bleedAura.IsActive() && cat.MangleCat != nil
 
 	biteBeforeRip := (curCp >= rotation.MinCombosForBite) && ripDot.IsActive() && cat.SavageRoarAura.IsActive() && rotation.UseBite && cat.canBite(sim)
-	biteNow := (biteBeforeRip || biteAtEnd) && !isClearcast
+	biteNow := (biteBeforeRip || biteAtEnd) && !isClearcast && curEnergy < 67
 
 	// During Berserk, we additionally add an Energy constraint on Bite
 	// usage to maximize the total Energy expenditure we can get.
