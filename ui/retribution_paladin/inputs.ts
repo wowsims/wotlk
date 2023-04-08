@@ -1,4 +1,7 @@
-import { Spec } from '../core/proto/common.js';
+import { 
+	Spec, 
+	ItemSlot
+} from '../core/proto/common.js';
 import { Player } from '../core/player.js';
 import { EventID } from '../core/typed_event.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
@@ -117,6 +120,13 @@ export const RetributionPaladinRotationHoldLastAvengingWrathUntilExecution = Inp
 	label: 'Hold Avenging Wrath Until Execution',
 	labelTooltip: 'Hold last Avenging Wrath usage until the execution phase. This currently does not work if specific Avenging Wrath CD usage times are specified.',
 	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => (player.getRotation().type == RotationType.Standard) || (player.getRotation().type == RotationType.Custom) ,
+});
+
+export const RetributionPaladinRotationCancelChaosBane = InputHelpers.makeRotationBooleanInput<Spec.SpecRetributionPaladin>({
+	fieldName: 'cancelChaosBane',
+	label: 'Cancel Chaos Bane Buff From Shadowmourne',
+	labelTooltip: 'Cancels the buff provided when Shadowmourne soul shard buff reaches 10 stacks.',
+	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.name == "Shadowmourne" ,
 });
 
 export const RetributionPaladinRotationPriorityConfig = InputHelpers.makeCustomRotationInput<Spec.SpecRetributionPaladin, SpellOption>({
