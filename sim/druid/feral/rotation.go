@@ -733,7 +733,7 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 
 	if cat.Rotation.FlowerWeave || (cat.Rotation.BearweaveType == proto.FeralDruid_Rotation_None) {
 		if hasT84P {
-			cat.Rotation.MinRoarOffset = 26 * time.Second
+			cat.Rotation.MinRoarOffset = 34 * time.Second
 		} else {
 			cat.Rotation.MinRoarOffset = 24 * time.Second
 		}
