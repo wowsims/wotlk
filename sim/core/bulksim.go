@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"math"
 	"runtime"
 	"runtime/debug"
@@ -366,34 +365,38 @@ func (es *equipmentSubstitution) HasItemReplacements() bool {
 func isValidEquipment(equipment *proto.EquipmentSpec) bool {
 	var usesTwoHander, usesOffhand bool
 
-	for _, it := range equipment.Items {
-		if it.GetId() == 0 {
-			continue
-		}
-
-		knownItem, ok := ItemsByID[it.Id]
-		if !ok {
-			// TODO(Riotdog-GehennasEU): Should we bother verifying that the item is in the database?
-			// What about gems and enchants? Should we just expect that we will receive a valid database?
-			log.Printf("Warning: bulk item %d not found in the provided database", it.Id)
-			return false
-		}
-
-		if knownItem.HandType == proto.HandType_HandTypeTwoHand {
-			usesTwoHander = true
-		}
-		if knownItem.HandType == proto.HandType_HandTypeOffHand {
-			usesOffhand = true
-		}
+	// Validate weapons
+	if knownItem, ok := ItemsByID[equipment.Items[ItemSlotMainHand].Id]; ok {
+		usesTwoHander = knownItem.HandType == proto.HandType_HandTypeTwoHand
+	}
+	if knownItem, ok := ItemsByID[equipment.Items[ItemSlotOffHand].Id]; ok {
+		usesOffhand = knownItem.HandType == proto.HandType_HandTypeOffHand
+	}
+	if usesTwoHander && usesOffhand {
+		return false
 	}
 
+	// Validate trinkets/rings for duplicate IDs
 	if equipment.Items[ItemSlotFinger1].Id == equipment.Items[ItemSlotFinger2].Id && equipment.Items[ItemSlotFinger1].Id != 0 {
 		return false
 	} else if equipment.Items[ItemSlotTrinket1].Id == equipment.Items[ItemSlotTrinket2].Id && equipment.Items[ItemSlotTrinket1].Id != 0 {
 		return false
 	}
 
-	return !(usesTwoHander && usesOffhand)
+	// Validate rings/trinkets for heroic/non-heroic (matching name)
+	f1 := ItemsByID[equipment.Items[ItemSlotFinger1].Id]
+	f2 := ItemsByID[equipment.Items[ItemSlotFinger2].Id]
+	if len(f1.Name) > 0 && f1.Name == f2.Name {
+		return false
+	}
+
+	t1 := ItemsByID[equipment.Items[ItemSlotTrinket1].Id]
+	t2 := ItemsByID[equipment.Items[ItemSlotTrinket2].Id]
+	if len(t1.Name) > 0 && t1.Name == t2.Name {
+		return false
+	}
+
+	return true
 }
 
 // generateAllEquipmentSubstitutions generates all possible valid equipment substitutions for the

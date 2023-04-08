@@ -62,3 +62,53 @@
     grid-template-columns: repeat(1, 96%);
   }
 }
+
+.blurred {
+  filter: blur(2px);
+  overflow: hidden;
+  margin: 0;
+}
+
+.results-pending-overlay {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  background: rgba(0,0,0,0.5);
+  max-height: 100vh;
+  
+  .results-content {
+    .results-sim {
+      div {
+        margin-top: 5px;
+      }
+    }
+  }
+}
+
+.bulk-tab {
+  position: relative;
+
+  .input-root {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 10px;
+    label {
+      flex: 1;
+    }
+  }
+}
+
+.results-sim {
+  margin-top: 5px;
+}
+
+.bulk-check-input {
+  width: 100%;
+  height: 40px;
+  padding: 5px;
+  margin-top: 15px;
+  display: flex;
+}
