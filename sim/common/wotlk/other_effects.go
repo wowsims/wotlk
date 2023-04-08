@@ -691,7 +691,12 @@ func init() {
 				SpellSchool: core.SpellSchoolHoly,
 				ProcMask:    core.ProcMaskSpellHealing,
 				Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagHelpful,
-
+				Cast: core.CastConfig{
+					CD: core.Cooldown{
+						Timer:    character.NewTimer(),
+						Duration: time.Minute * 2,
+					},
+				},
 				DamageMultiplier: 1,
 				ThreatMultiplier: 1,
 				CritMultiplier:   character.DefaultHealingCritMultiplier(),

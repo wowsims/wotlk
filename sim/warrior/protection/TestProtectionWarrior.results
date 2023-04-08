@@ -126,17 +126,17 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 1581.9256
-  tps: 4097.12631
-  hps: 12884.33127
+  dps: 1581.83954
+  tps: 4096.89432
+  hps: 82.04411
  }
 }
 dps_results: {
  key: "TestProtectionWarrior-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 1581.9256
-  tps: 4097.12631
-  hps: 12884.33127
+  dps: 1581.83954
+  tps: 4096.89432
+  hps: 82.04411
  }
 }
 dps_results: {

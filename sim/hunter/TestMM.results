@@ -88,17 +88,17 @@ dps_results: {
 dps_results: {
  key: "TestMM-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 6962.65117
+  dps: 6962.39568
   tps: 6046.95014
-  hps: 9338.96864
+  hps: 90.78718
  }
 }
 dps_results: {
  key: "TestMM-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 6962.65117
+  dps: 6962.39568
   tps: 6046.95014
-  hps: 9338.96864
+  hps: 90.78718
  }
 }
 dps_results: {
