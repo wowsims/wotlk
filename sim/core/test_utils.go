@@ -227,6 +227,9 @@ func RaidBenchmark(b *testing.B, rsr *proto.RaidSimRequest) {
 	rsr.SimOptions.IsTest = false
 
 	for i := 0; i < b.N; i++ {
-		RunRaidSim(rsr)
+		result := RunRaidSim(rsr)
+		if result.ErrorResult != "" {
+			b.Fatalf("RaidBenchmark() at iteration %d failed: %v", i, result.ErrorResult)
+		}
 	}
 }
