@@ -5,6 +5,8 @@ import { Importer } from "../importers";
 import { IndividualSimUI } from "../../individual_sim_ui";
 import { TypedEvent } from "../../typed_event";
 
+import { EventID } from '../../typed_event.js';
+
 import { EquipmentSpec, ItemSpec, SimDatabase, SimEnchant, SimGem, SimItem, Spec } from "../../proto/common";
 import { BulkComboResult, BulkSettings, ItemSpecWithSlot, ProgressMetrics } from "../../proto/api";
 
@@ -14,6 +16,10 @@ import { SimTab } from "../sim_tab";
 import { UIEnchant, UIGem, UIItem } from "../../proto/ui";
 import { Component } from "../component";
 import { EquippedItem } from "../../proto_utils/equipped_item";
+import { ResultsViewer } from "../results_viewer";
+
+import { Popover, Tooltip } from 'bootstrap';
+import { BooleanPicker } from "../boolean_picker";
 
 export class BulkGearJsonImporter<SpecType extends Spec> extends Importer {
   private readonly simUI: IndividualSimUI<SpecType>;
@@ -191,6 +197,9 @@ export class BulkTab extends SimTab {
 
   protected items: Array<ItemSpec> = new Array<ItemSpec>();
 
+  private pendingResults: ResultsViewer;
+  private pendingDiv: HTMLDivElement;
+
   // TODO: Make a real options probably
   private doCombos: boolean;
   private fastMode: boolean;
@@ -206,8 +215,14 @@ export class BulkTab extends SimTab {
     this.rightPanel = document.createElement('div');
     this.rightPanel.classList.add('bulk-tab-right', 'tab-panel-right');
 
+    this.pendingDiv = document.createElement('div');
+    this.pendingDiv.classList.add("results-pending-overlay");
+		this.pendingResults = new ResultsViewer(this.pendingDiv);
+    this.pendingResults.hideAll();
+
     this.contentContainer.appendChild(this.leftPanel);
     this.contentContainer.appendChild(this.rightPanel);
+    this.contentContainer.appendChild(this.pendingDiv);
 
     this.doCombos = true;
     this.fastMode = false;
@@ -261,13 +276,17 @@ export class BulkTab extends SimTab {
 
   setCombinations(doCombos: boolean) {
     this.doCombos = doCombos;
+    this.itemsChangedEmitter.emit(TypedEvent.nextEventID());
   }
 
   setFastMode(fastMode: boolean) {
     this.fastMode = fastMode;
+    this.itemsChangedEmitter.emit(TypedEvent.nextEventID());
   }
 
   protected async runBulkSim(onProgress: Function) {
+    this.pendingResults.setPending();
+
     try {
       await this.simUI.sim.runBulkSim(this.createBulkSettings(), this.createBulkItemsDatabase(), onProgress);
     } catch (e) {
@@ -348,10 +367,60 @@ export class BulkTab extends SimTab {
     bulkSimButton.classList.add('btn', 'btn-primary', 'w-100', 'bulk-settings-button');
     bulkSimButton.textContent = 'Run Bulk Sim';
     bulkSimButton.addEventListener('click', () => {
+
+      this.pendingDiv.style.display = "flex";
+      this.leftPanel.classList.add("blurred");
+      this.rightPanel.classList.add("blurred");
+
+      const previousContents = bulkSimButton.innerHTML;
+      bulkSimButton.disabled = true;
+      bulkSimButton.classList.add(".disabled");
+			bulkSimButton.innerHTML = `<i class="fa fa-spinner fa-spin"></i>&nbsp;Running`;
+
+
+      let simStart = new Date().getTime();
+      let lastTotal = 0;
+      let rounds = 0;
+      let currentRound = 0;
+      let combinations = 0;
+
       this.runBulkSim((progressMetrics: ProgressMetrics) => {
         console.log(progressMetrics);
+
+        const msSinceStart = new Date().getTime() - simStart;
+        const iterPerSecond = progressMetrics.completedIterations / (msSinceStart/1000);
+
+        if (combinations == 0) {
+          combinations = progressMetrics.totalSims;
+        }
+        if (this.fastMode) {
+          if (rounds == 0 && progressMetrics.totalSims > 0) {
+            rounds = Math.ceil(Math.log(progressMetrics.totalSims/20) / Math.log(2)) + 1;
+            currentRound = 1;
+          }
+          if (progressMetrics.totalSims < lastTotal) {
+            currentRound += 1;
+            simStart = new Date().getTime();
+          }
+        }
+
+        this.setSimProgress(progressMetrics, iterPerSecond, currentRound, rounds, combinations);
+        lastTotal = progressMetrics.totalSims;
+
+        if (progressMetrics.finalBulkResult != null) {  
+          // reset state
+          this.pendingDiv.style.display = "none";
+          this.leftPanel.classList.remove("blurred");
+          this.rightPanel.classList.remove("blurred");
+    
+          this.pendingResults.hideAll();
+          bulkSimButton.disabled = false;
+          bulkSimButton.classList.remove(".disabled");
+          bulkSimButton.innerHTML = previousContents;    
+        }
       });
     });
+
     settingsBlock.bodyElement.appendChild(bulkSimButton);
 
     const clearButton = document.createElement('button');
@@ -363,5 +432,43 @@ export class BulkTab extends SimTab {
       resultsBlock.bodyElement.innerHTML = '';
     });
     settingsBlock.bodyElement.appendChild(clearButton);
+
+    new BooleanPicker<BulkTab>(settingsBlock.bodyElement, this, {
+      label: "Fast Mode",
+      labelTooltip: "Fast mode reduces accuracy but will run faster.",
+      changedEvent: (obj: BulkTab) => this.itemsChangedEmitter,
+      getValue: (obj) => this.fastMode,
+      setValue: (id: EventID, obj: BulkTab, value: boolean) => {obj.fastMode = value}
+    });
+    new BooleanPicker<BulkTab>(settingsBlock.bodyElement, this, {
+      label: "Combinations",
+      labelTooltip: "When checked bulk simulator will create all possible combinations of the items. When disabled trinkets and rings will still run all combinations becausee they have two slots to fill each.",
+      changedEvent: (obj: BulkTab) => this.itemsChangedEmitter,
+      getValue: (obj) => this.doCombos,
+      setValue: (id: EventID, obj: BulkTab, value: boolean) => {obj.doCombos = value}
+    });
   }
+
+  private setSimProgress(progress: ProgressMetrics, iterPerSecond: number, currentRound: number, rounds: number, combinations: number) {
+    const secondsRemain = ((progress.totalIterations - progress.completedIterations) / iterPerSecond).toFixed();
+
+    let roundsText = "";
+    if (rounds > 0) {
+      roundsText = `${currentRound} / ${rounds} refining rounds`;
+    }
+
+		this.pendingResults.setContent(`
+			<div class="results-sim">
+        <div class="">${combinations} total combinations.</div>
+        <div class="">${roundsText}</div>
+				<div class=""> ${progress.completedSims} / ${progress.totalSims}<br>simulations complete</div>
+				<div class="">
+					${progress.completedIterations} / ${progress.totalIterations}<br>iterations complete
+				</div>
+        <div class="">
+          ${secondsRemain} seconds remaining.
+        </div>
+			</div>
+		`);
+	}
 }
