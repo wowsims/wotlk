@@ -191,6 +191,10 @@ export class BulkTab extends SimTab {
 
   protected items: Array<ItemSpec> = new Array<ItemSpec>();
 
+  // TODO: Make a real options probably
+  private doCombos: boolean;
+  private fastMode: boolean;
+
   constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>) {
     super(parentElem, simUI, {identifier: 'bulk-tab', title: 'Bulk'});
     this.simUI = simUI;
@@ -205,6 +209,8 @@ export class BulkTab extends SimTab {
     this.contentContainer.appendChild(this.leftPanel);
     this.contentContainer.appendChild(this.rightPanel);
 
+    this.doCombos = true;
+    this.fastMode = false;
     this.buildTabContent();
   }
 
@@ -214,8 +220,8 @@ export class BulkTab extends SimTab {
 
       // TODO(Riotdog-GehennasEU): Make all of these configurable.
       // For now, it's always constant iteration combinations mode for "sim my bags".
-      combinations: true,
-      fastMode: false,
+      combinations: this.doCombos,
+      fastMode: this.fastMode,
       autoEnchant: false,
       autoGem: false,
       iterationsPerCombo: this.simUI.sim.getIterations(), // TODO(Riotdog-GehennasEU): Define a new UI element for the iteration setting.
@@ -253,6 +259,14 @@ export class BulkTab extends SimTab {
     return result;
   }
 
+  setCombinations(doCombos: boolean) {
+    this.doCombos = doCombos;
+  }
+
+  setFastMode(fastMode: boolean) {
+    this.fastMode = fastMode;
+  }
+
   protected async runBulkSim(onProgress: Function) {
     try {
       await this.simUI.sim.runBulkSim(this.createBulkSettings(), this.createBulkItemsDatabase(), onProgress);
@@ -260,6 +274,14 @@ export class BulkTab extends SimTab {
       this.simUI.handleCrash(e);
     }
   }
+
+	protected async runBulkSim(onProgress: Function) {
+		try {
+			await this.simUI.sim.runBulkSim(this.createBulkSettings(), this.createBulkItemsDatabase(), onProgress);
+		} catch (e) {
+			this.simUI.handleCrash(e);
+		}
+	}
 
   protected buildTabContent() {
     const itemsBlock = new ContentBlock(this.column1, 'bulk-items', {

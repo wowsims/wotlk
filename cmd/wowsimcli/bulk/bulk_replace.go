@@ -103,7 +103,7 @@ func Sim(input *proto.RaidSimRequest, replaceFile string, verbose bool) string {
 func printCombos(results *proto.BulkSimResult) string {
 	result := ""
 	foundBase := false
-	for i := 1; i < len(results.Results); i++ {
+	for i := 0; i < len(results.Results); i++ {
 		if len(results.Results[i].ItemsAdded) == 0 {
 			foundBase = true
 		}
