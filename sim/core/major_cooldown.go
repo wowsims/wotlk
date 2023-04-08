@@ -144,7 +144,12 @@ func (mcd *MajorCooldown) tryActivateHelper(sim *Simulation, character *Characte
 	}
 
 	if shouldActivate {
-		mcd.Spell.Cast(sim, character.CurrentTarget)
+		if mcd.Spell.Flags.Matches(SpellFlagHelpful) {
+			mcd.Spell.Cast(sim, &character.Unit)
+		} else {
+			mcd.Spell.Cast(sim, character.CurrentTarget)
+		}
+
 		mcd.numUsages++
 		if sim.Log != nil {
 			character.Log(sim, "Major cooldown used: %s", mcd.Spell.ActionID)

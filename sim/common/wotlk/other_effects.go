@@ -92,8 +92,7 @@ func init() {
 			Duration: time.Second * 20,
 			Callback: core.CallbackOnHealDealt,
 			Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
-				aura := procAuras[result.Target.UnitIndex]
-				aura.Activate(sim)
+				procAuras[result.Target.UnitIndex].Activate(sim)
 			},
 		})
 
@@ -692,7 +691,12 @@ func init() {
 				SpellSchool: core.SpellSchoolHoly,
 				ProcMask:    core.ProcMaskSpellHealing,
 				Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagHelpful,
-
+				Cast: core.CastConfig{
+					CD: core.Cooldown{
+						Timer:    character.NewTimer(),
+						Duration: time.Minute * 2,
+					},
+				},
 				DamageMultiplier: 1,
 				ThreatMultiplier: 1,
 				CritMultiplier:   character.DefaultHealingCritMultiplier(),

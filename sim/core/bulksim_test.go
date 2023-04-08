@@ -2,15 +2,10 @@ package core
 
 import (
 	"context"
-	"fmt"
-	"sort"
-	"strings"
 	"testing"
 
 	goproto "github.com/golang/protobuf/proto"
-
 	"github.com/google/go-cmp/cmp"
-	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
@@ -23,22 +18,22 @@ const (
 var (
 	starshardEdge1 = &itemWithSlot{
 		Item:  &proto.ItemSpec{Id: itemStarshardEdge},
-		Slot:  proto.ItemSlot_ItemSlotMainHand,
+		Slot:  ItemSlotMainHand,
 		Index: 0,
 	}
 	ironmender = &itemWithSlot{
 		Item:  &proto.ItemSpec{Id: itemIronmender},
-		Slot:  proto.ItemSlot_ItemSlotOffHand,
+		Slot:  ItemSlotOffHand,
 		Index: 1,
 	}
 	starshardEdge2 = &itemWithSlot{
 		Item:  &proto.ItemSpec{Id: itemStarshardEdge},
-		Slot:  proto.ItemSlot_ItemSlotMainHand,
+		Slot:  ItemSlotMainHand,
 		Index: 2,
 	}
 	pillarOfFortitude = &itemWithSlot{
 		Item:  &proto.ItemSpec{Id: itemPillarOfFortitude},
-		Slot:  proto.ItemSlot_ItemSlotMainHand,
+		Slot:  ItemSlotMainHand,
 		Index: 3,
 	}
 
@@ -50,45 +45,6 @@ var (
 		},
 	}
 )
-
-func TestEquipmentSubstitutionIsValid(t *testing.T) {
-	for _, tc := range []struct {
-		comment string
-		items   []*itemWithSlot
-		want    bool
-	}{
-		{
-			comment: "empty replacement is valid (1)",
-			items:   nil,
-			want:    true,
-		},
-		{
-			comment: "empty replacement is valid (2)",
-			items:   []*itemWithSlot{},
-			want:    true,
-		},
-		{
-			comment: "mainhand replacement is valid",
-			items:   []*itemWithSlot{starshardEdge1},
-			want:    true,
-		},
-		{
-			comment: "same item cannot occurr twice in a substitution",
-			items:   []*itemWithSlot{starshardEdge1, starshardEdge1},
-			want:    false,
-		},
-		{
-			comment: "cannot use two items for the same item slot",
-			items:   []*itemWithSlot{starshardEdge1, starshardEdge2},
-			want:    false,
-		},
-	} {
-		sub := &equipmentSubstitution{Items: tc.items}
-		if got := sub.IsValid(); got != tc.want {
-			t.Fatalf("%s: equipmentSubstitution.IsValid(%v) = %v, want %v", tc.comment, sub, got, tc.want)
-		}
-	}
-}
 
 func TestIsValidEquipment(t *testing.T) {
 	// This is a bit awkward because code everywhere accesses the global database maps. Hopefully
@@ -117,86 +73,17 @@ func TestIsValidEquipment(t *testing.T) {
 	}
 }
 
-func TestGenerateAllEquipmentSubstitutionCombos(t *testing.T) {
-	format := func(es *equipmentSubstitution) string {
-		var itemTexts []string
-		for _, is := range es.Items {
-			itemTexts = append(itemTexts, fmt.Sprintf("%s@%d@%d", goproto.MarshalTextString(is.Item), is.Slot, is.Index))
-		}
-		sort.Strings(itemTexts)
-		return strings.Join(itemTexts, ",")
-	}
-	compareOptions := []cmp.Option{
-		// Required to make the protos comparable with cmp.Diff due to unexported fields.
-		cmp.Comparer(func(a, b *equipmentSubstitution) bool {
-			return format(a) == format(b)
-		}),
-		// Ignore result order.
-		cmpopts.SortSlices(func(a, b *equipmentSubstitution) bool {
-			return format(a) < format(b)
-		}),
-	}
-
-	for _, tc := range []struct {
-		comment string
-		input   []*itemWithSlot
-		want    []*equipmentSubstitution
-	}{
-		{
-			comment: "empty spec returns empty base equipment substitution only",
-			input:   []*itemWithSlot{},
-			want: []*equipmentSubstitution{
-				{},
-			},
-		},
-		{
-			comment: "spec with 1 item returns empty base equipment substitution plus 1 item substitution",
-			input:   []*itemWithSlot{starshardEdge1},
-			want: []*equipmentSubstitution{
-				{},
-				{Items: []*itemWithSlot{starshardEdge1}},
-			},
-		},
-		{
-			comment: "spec with 2 items returns empty base equipment substitution plus all 3 item combos",
-			input:   []*itemWithSlot{starshardEdge1, ironmender},
-			want: []*equipmentSubstitution{
-				{},
-				{Items: []*itemWithSlot{starshardEdge1}},
-				{Items: []*itemWithSlot{ironmender}},
-				{Items: []*itemWithSlot{starshardEdge1, ironmender}},
-			},
-		},
-		{
-			comment: "spec with a duplicate item slot returns only valid substitutions",
-			input:   []*itemWithSlot{starshardEdge1, ironmender, starshardEdge2},
-			want: []*equipmentSubstitution{
-				{},
-				{Items: []*itemWithSlot{starshardEdge1}},
-				{Items: []*itemWithSlot{ironmender}},
-				{Items: []*itemWithSlot{starshardEdge1, ironmender}},
-				{Items: []*itemWithSlot{starshardEdge2}},
-				{Items: []*itemWithSlot{ironmender, starshardEdge2}},
-			},
-		},
-	} {
-		var got []*equipmentSubstitution
-		for sub := range generateAllEquipmentSubstitutions(context.Background(), true, tc.input) {
-			got = append(got, sub)
-		}
-
-		if diff := cmp.Diff(tc.want, got, compareOptions...); diff != "" {
-			t.Fatalf("%s: generateAllEquipmentSubstitutions(%v) returned diff (-want +got):\n%s", tc.comment, tc.input, diff)
-		}
-	}
-}
-
 func createEquipmentFromItems(items ...*itemWithSlot) *proto.EquipmentSpec {
 	spec := &proto.EquipmentSpec{
 		Items: make([]*proto.ItemSpec, 17),
 	}
 	for _, is := range items {
 		spec.Items[is.Slot] = is.Item
+	}
+	for i := range spec.Items {
+		if spec.Items[i] == nil {
+			spec.Items[i] = &proto.ItemSpec{}
+		}
 	}
 	return spec
 }
@@ -223,5 +110,148 @@ func TestBulkSim(t *testing.T) {
 		return goproto.MarshalTextString(a) == goproto.MarshalTextString(b)
 	})); diff != "" {
 		t.Fatalf("BulkSim() returned diff (-want +got):\n%s", diff)
+	}
+}
+
+func TestGenerateAllEquipmentSubstitutions(t *testing.T) {
+	baseItems := make([]*proto.ItemSpec, 17)
+	for i := range baseItems {
+		baseItems[i] = &proto.ItemSpec{Id: int32(i) + 1000}
+	}
+	item1 := &proto.ItemSpec{Id: 1}
+	item2 := &proto.ItemSpec{Id: 2}
+	item3 := &proto.ItemSpec{Id: 1010}
+	type args struct {
+		combinations           bool
+		distinctItemSlotCombos []*itemWithSlot
+	}
+	tests := []struct {
+		name string
+		args args
+		want []*equipmentSubstitution
+	}{
+		{
+			name: "no combos",
+			args: args{
+				combinations:           true,
+				distinctItemSlotCombos: []*itemWithSlot{},
+			},
+			want: []*equipmentSubstitution{
+				{},
+			},
+		},
+		{
+			name: "one item",
+			args: args{
+				combinations: true,
+				distinctItemSlotCombos: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotHead},
+				},
+			},
+			want: []*equipmentSubstitution{
+				{},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotHead},
+				}},
+			},
+		},
+		{
+			name: "two items",
+			args: args{
+				combinations: true,
+				distinctItemSlotCombos: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotHead},
+					{Item: item2, Slot: ItemSlotShoulder},
+				},
+			},
+			want: []*equipmentSubstitution{
+				{},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotHead},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotHead},
+					{Item: item2, Slot: ItemSlotShoulder},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item2, Slot: ItemSlotShoulder},
+				}},
+			},
+		},
+		{
+			name: "special case same itemID",
+			args: args{
+				combinations: false,
+				distinctItemSlotCombos: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+					{Item: item1, Slot: ItemSlotFinger2},
+					{Item: item3, Slot: ItemSlotFinger1},
+					{Item: item3, Slot: ItemSlotFinger2},
+				},
+			},
+			want: []*equipmentSubstitution{
+				{},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+					{Item: item3, Slot: ItemSlotFinger2},
+				}},
+			},
+		},
+		{
+			name: "special case finger combo",
+			args: args{
+				combinations: false,
+				distinctItemSlotCombos: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+					{Item: item1, Slot: ItemSlotFinger2},
+					{Item: item2, Slot: ItemSlotFinger1},
+					{Item: item2, Slot: ItemSlotFinger2},
+				},
+			},
+			want: []*equipmentSubstitution{
+				{},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+					{Item: item2, Slot: ItemSlotFinger2},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item2, Slot: ItemSlotFinger1},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger2},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item2, Slot: ItemSlotFinger2},
+				}},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			results := generateAllEquipmentSubstitutions(context.Background(), baseItems, tt.args.combinations, tt.args.distinctItemSlotCombos)
+
+			idx := 0
+			for got := range results {
+				wanted := tt.want[idx]
+				if len(got.Items) != len(wanted.Items) {
+					t.Errorf("generateAllEquipmentSubstitutions(%d) has incorrect number of items, expected: %d, got: %d", idx, len(wanted.Items), len(got.Items))
+				}
+				for itemIdx, item := range got.Items {
+					if wanted.Items[itemIdx].Item.Id != item.Item.Id {
+						t.Errorf("generateAllEquipmentSubstitutions(%d) has incorrect item in list, expected: %d, got: %d", idx, wanted.Items[itemIdx].Item.Id, item.Item.Id)
+					}
+				}
+				idx++
+			}
+			if idx != len(tt.want) {
+				t.Errorf("generateAllEquipmentSubstitutions has incorrect number of items, expected: %d, got: %d", len(tt.want), idx)
+			}
+		})
 	}
 }

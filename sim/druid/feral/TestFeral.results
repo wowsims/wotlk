@@ -81,15 +81,17 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 7454.05601
-  tps: 76621.17178
+  dps: 7454.51907
+  tps: 5351.79
+  hps: 89.11518
  }
 }
 dps_results: {
  key: "TestFeral-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 7454.05601
-  tps: 76621.17178
+  dps: 7454.51907
+  tps: 5351.79
+  hps: 89.11518
  }
 }
 dps_results: {
