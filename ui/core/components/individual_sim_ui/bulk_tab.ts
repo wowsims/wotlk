@@ -117,72 +117,72 @@ class BulkSimResultRenderer {
 
 
 export class BulkItemPicker extends Component {
-	private readonly itemElem: ItemRenderer;
+  private readonly itemElem: ItemRenderer;
   readonly simUI: IndividualSimUI<Spec>;
   readonly bulkUI: BulkTab;
 
   protected item: EquippedItem|null = null;
   
-	constructor(parent: HTMLElement, simUI: IndividualSimUI<Spec>, bulkUI: BulkTab, item: EquippedItem|null) {
-		super(parent, 'bulk-item-picker');
-		this.simUI = simUI;
+  constructor(parent: HTMLElement, simUI: IndividualSimUI<Spec>, bulkUI: BulkTab, item: EquippedItem|null) {
+    super(parent, 'bulk-item-picker');
+    this.simUI = simUI;
     this.bulkUI = bulkUI;
-		this.itemElem = new ItemRenderer(this.rootElem, simUI.player);
+    this.itemElem = new ItemRenderer(this.rootElem, simUI.player);
 
-		this.simUI.sim.waitForInit().then(() => {
+    this.simUI.sim.waitForInit().then(() => {
       this.setItem(item);
 
-			const openGearSelector = (event: Event) => {
-				event.preventDefault();
-				// TODO(Riotdog-GehennasEU): Implement model to search for more items / delete the item etc.
+      const openGearSelector = (event: Event) => {
+        event.preventDefault();
+        // TODO(Riotdog-GehennasEU): Implement model to search for more items / delete the item etc.
         // For now you get a crappy alert box!
         if (this.item && confirm('Delete item from bulk?')) {
           const needle = this.item.asSpec();
           bulkUI.importItems(bulkUI.getItems().filter((spec) => { return !ItemSpec.equals(spec, needle); }));
         }
-			};
-			const openEnchantSelector = (event: Event) => {
-				event.preventDefault();
-			};
-			const onClickEnd = (event: Event) => {
-				event.preventDefault();
-			};
+      };
+      const openEnchantSelector = (event: Event) => {
+        event.preventDefault();
+      };
+      const onClickEnd = (event: Event) => {
+        event.preventDefault();
+      };
 
-			// Make icon open gear selector
-			this.itemElem.iconElem.addEventListener('click', openGearSelector);
-			this.itemElem.iconElem.addEventListener('touchstart', openGearSelector);
-			this.itemElem.iconElem.addEventListener('touchend', onClickEnd);
+      // Make icon open gear selector
+      this.itemElem.iconElem.addEventListener('click', openGearSelector);
+      this.itemElem.iconElem.addEventListener('touchstart', openGearSelector);
+      this.itemElem.iconElem.addEventListener('touchend', onClickEnd);
 
-			// Make item name open gear selector
-			this.itemElem.nameElem.addEventListener('click', openGearSelector);
-			this.itemElem.nameElem.addEventListener('touchstart', openGearSelector);
-			this.itemElem.nameElem.addEventListener('touchend', onClickEnd);
+      // Make item name open gear selector
+      this.itemElem.nameElem.addEventListener('click', openGearSelector);
+      this.itemElem.nameElem.addEventListener('touchstart', openGearSelector);
+      this.itemElem.nameElem.addEventListener('touchend', onClickEnd);
 
-			// Make enchant name open enchant selector
-			this.itemElem.enchantElem.addEventListener('click', openEnchantSelector);
-			this.itemElem.enchantElem.addEventListener('touchstart', openEnchantSelector);
-			this.itemElem.enchantElem.addEventListener('touchend', onClickEnd);
-		});
-	}
+      // Make enchant name open enchant selector
+      this.itemElem.enchantElem.addEventListener('click', openEnchantSelector);
+      this.itemElem.enchantElem.addEventListener('touchstart', openEnchantSelector);
+      this.itemElem.enchantElem.addEventListener('touchend', onClickEnd);
+    });
+  }
 
-	setItem(newItem: EquippedItem | null) {
-		this.itemElem.clear();
-		if (newItem != null) {
-			this.itemElem.update(newItem);
+  setItem(newItem: EquippedItem | null) {
+    this.itemElem.clear();
+    if (newItem != null) {
+      this.itemElem.update(newItem);
       this.item = newItem;
-		} else {
+    } else {
       this.itemElem.rootElem.style.opacity = '30%';
-			this.itemElem.iconElem.style.backgroundImage = `url('/wotlk/assets/item_slots/empty.jpg')`;
+      this.itemElem.iconElem.style.backgroundImage = `url('/wotlk/assets/item_slots/empty.jpg')`;
       this.itemElem.nameElem.textContent = 'Add new item (not implemented)';
       this.itemElem.rootElem.style.alignItems = 'center';
     }
-	}
+  }
 }
 
 export class BulkTab extends SimTab {
   readonly simUI: IndividualSimUI<Spec>;
   
-	readonly itemsChangedEmitter = new TypedEvent<void>();
+  readonly itemsChangedEmitter = new TypedEvent<void>();
 
   readonly leftPanel: HTMLElement;
   readonly rightPanel: HTMLElement;
@@ -253,13 +253,13 @@ export class BulkTab extends SimTab {
     return result;
   }
 
-	protected async runBulkSim(onProgress: Function) {
-		try {
-			await this.simUI.sim.runBulkSim(this.createBulkSettings(), this.createBulkItemsDatabase(), onProgress);
-		} catch (e) {
-			this.simUI.handleCrash(e);
-		}
-	}
+  protected async runBulkSim(onProgress: Function) {
+    try {
+      await this.simUI.sim.runBulkSim(this.createBulkSettings(), this.createBulkItemsDatabase(), onProgress);
+    } catch (e) {
+      this.simUI.handleCrash(e);
+    }
+  }
 
   protected buildTabContent() {
     const itemsBlock = new ContentBlock(this.column1, 'bulk-items', {
