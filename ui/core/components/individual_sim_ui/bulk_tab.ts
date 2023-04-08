@@ -14,7 +14,6 @@ import { SimTab } from "../sim_tab";
 import { UIEnchant, UIGem, UIItem } from "../../proto/ui";
 import { Component } from "../component";
 import { EquippedItem } from "../../proto_utils/equipped_item";
-import { setItemQualityCssClass } from "../../css_utils";
 
 export class BulkGearJsonImporter<SpecType extends Spec> extends Importer {
   private readonly simUI: IndividualSimUI<SpecType>;
@@ -118,24 +117,32 @@ class BulkSimResultRenderer {
 
 
 export class BulkItemPicker extends Component {
-  readonly simUI: IndividualSimUI<Spec>;
 	private readonly itemElem: ItemRenderer;
+  readonly simUI: IndividualSimUI<Spec>;
+  readonly bulkUI: BulkTab;
 
-	constructor(parent: HTMLElement, simUI: IndividualSimUI<Spec>, item: EquippedItem|null) {
+  protected item: EquippedItem|null = null;
+  
+	constructor(parent: HTMLElement, simUI: IndividualSimUI<Spec>, bulkUI: BulkTab, item: EquippedItem|null) {
 		super(parent, 'bulk-item-picker');
 		this.simUI = simUI;
+    this.bulkUI = bulkUI;
 		this.itemElem = new ItemRenderer(this.rootElem, simUI.player);
 
 		this.simUI.sim.waitForInit().then(() => {
-      this.item = item
+      this.setItem(item);
 
 			const openGearSelector = (event: Event) => {
 				event.preventDefault();
-				//this.openSelectorModal(SelectorModalTabs.Items, gearData);
+				// TODO(Riotdog-GehennasEU): Implement model to search for more items / delete the item etc.
+        // For now you get a crappy alert box!
+        if (this.item && confirm('Delete item from bulk?')) {
+          const needle = this.item.asSpec();
+          bulkUI.importItems(bulkUI.getItems().filter((spec) => { return !ItemSpec.equals(spec, needle); }));
+        }
 			};
 			const openEnchantSelector = (event: Event) => {
 				event.preventDefault();
-				//this.openSelectorModal(SelectorModalTabs.Enchants, gearData);
 			};
 			const onClickEnd = (event: Event) => {
 				event.preventDefault();
@@ -158,13 +165,15 @@ export class BulkItemPicker extends Component {
 		});
 	}
 
-	set item(newItem: EquippedItem | null) {
+	setItem(newItem: EquippedItem | null) {
 		this.itemElem.clear();
 		if (newItem != null) {
 			this.itemElem.update(newItem);
+      this.item = newItem;
 		} else {
+      this.itemElem.rootElem.style.opacity = '30%';
 			this.itemElem.iconElem.style.backgroundImage = `url('/wotlk/assets/item_slots/empty.jpg')`;
-      this.itemElem.nameElem.textContent = 'Add new item';
+      this.itemElem.nameElem.textContent = 'Add new item (not implemented)';
       this.itemElem.rootElem.style.alignItems = 'center';
     }
 	}
@@ -238,6 +247,12 @@ export class BulkTab extends SimTab {
     this.itemsChangedEmitter.emit(TypedEvent.nextEventID());
   }
 
+  getItems(): Array<ItemSpec> {
+    const result = new Array<ItemSpec>();
+    this.items.forEach((spec) => { result.push(ItemSpec.clone(spec)); });
+    return result;
+  }
+
 	protected async runBulkSim(onProgress: Function) {
 		try {
 			await this.simUI.sim.runBulkSim(this.createBulkSettings(), this.createBulkItemsDatabase(), onProgress);
@@ -253,9 +268,14 @@ export class BulkTab extends SimTab {
 
     itemsBlock.bodyElement.classList.add('gear-picker-root');
 
-    const notice = document.createElement('div');
-    notice.classList.add('bulk-items-text-line');
-    itemsBlock.bodyElement.appendChild(notice);
+    const noticeWorkInProgress = document.createElement('div');
+    noticeWorkInProgress.classList.add('bulk-items-text-line');
+    itemsBlock.bodyElement.appendChild(noticeWorkInProgress);
+    noticeWorkInProgress.innerHTML = '<i>Notice: This is under very early but active development and experimental. You may also need to update your WoW AddOn if you want to import your bags.'
+
+    const itemTextIntro = document.createElement('div');
+    itemTextIntro.classList.add('bulk-items-text-line');
+    itemsBlock.bodyElement.appendChild(itemTextIntro);
 
     const itemList = document.createElement('div');
 
@@ -264,12 +284,12 @@ export class BulkTab extends SimTab {
     
     this.itemsChangedEmitter.on(() => {
       itemList.innerHTML = '';
-      new BulkItemPicker(itemList, this.simUI, null); // Add new item picker.
+      new BulkItemPicker(itemList, this.simUI, this, null); // Add new item picker.
       if (this.items.length > 0) {
-        notice.textContent = 'The following items will be simmed in all possible combinations together with your equipped gear.';
+        itemTextIntro.textContent = 'The following items will be simmed in all possible combinations together with your equipped gear.';
         for (const spec of this.items) {
           const item = this.simUI.sim.db.lookupItemSpec(spec);
-          const bulkItemPicker = new BulkItemPicker(itemList, this.simUI, item);
+          const bulkItemPicker = new BulkItemPicker(itemList, this.simUI, this, item);
         }
       }
     });
