@@ -119,7 +119,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	onSpecialOrSwingProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 42463}, // Seal of Vengeance damage bonus.
 		SpellSchool: core.SpellSchoolHoly,
-		ProcMask:    core.ProcMaskEmpty, // does proc certain spell damage-based items, e.g. Black Magic, Pendulum of Telluric Currents
+		ProcMask:    core.ProcMaskMeleeMHSpecial, // does proc certain spell damage-based items, e.g. Black Magic, Pendulum of Telluric Currents
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		// (mult * weaponScaling / stacks)
