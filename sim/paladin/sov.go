@@ -165,6 +165,10 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 				return
 			}
 
+			if spell.ActionID.SpellID == 61840 {
+				return
+			}
+
 			// Differ between judgements and other melee abilities.
 			if spell.Flags.Matches(SpellFlagPrimaryJudgement) {
 				onJudgementProc.Cast(sim, result.Target)

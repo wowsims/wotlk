@@ -56,7 +56,6 @@ const (
 	ProcMaskRangedSpecial
 	ProcMaskSpellDamage
 	ProcMaskSpellHealing
-	ProcMaskRetAbomination
 )
 
 const (
@@ -71,7 +70,7 @@ const (
 	// Equivalent to in-game mask of 272.
 	ProcMaskMeleeOrRangedSpecial = ProcMaskMeleeSpecial | ProcMaskRangedSpecial
 	// Equivalent to in-game mask of 20.
-	ProcMaskMelee = ProcMaskMeleeWhiteHit | ProcMaskMeleeSpecial | ProcMaskRetAbomination
+	ProcMaskMelee = ProcMaskMeleeWhiteHit | ProcMaskMeleeSpecial
 	// Equivalent to in-game mask of 320.
 	ProcMaskRanged = ProcMaskRangedAuto | ProcMaskRangedSpecial
 	// Equivalent to in-game mask of 340.
