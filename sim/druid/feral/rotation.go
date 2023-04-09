@@ -706,6 +706,7 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 		MinCombosForBite:   core.Ternary(rotation.MinCombosForBite > 0, rotation.MinCombosForBite, 1),
 		MangleSpam:         rotation.MangleSpam,
 		BerserkBiteThresh:  float64(rotation.BerserkBiteThresh),
+		BerserkFfThresh:    float64(rotation.BerserkFfThresh),
 		Powerbear:          rotation.Powerbear,
 		MinRoarOffset:      time.Duration(float64(rotation.MinRoarOffset) * float64(time.Second)),
 		RipLeeway:          time.Duration(float64(rotation.RipLeeway) * float64(time.Second)),
@@ -730,6 +731,7 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 	cat.Rotation.UseBite = true
 
 	cat.Rotation.RipLeeway = 3 * time.Second
+	cat.Rotation.BerserkFfThresh = 15
 
 	if cat.Rotation.FlowerWeave || (cat.Rotation.BearweaveType == proto.FeralDruid_Rotation_None) {
 		if hasT84P {

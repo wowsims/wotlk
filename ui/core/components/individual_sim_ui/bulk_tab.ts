@@ -10,7 +10,7 @@ import { EventID } from '../../typed_event.js';
 import { EquipmentSpec, GemColor, ItemSpec, SimDatabase, SimEnchant, SimGem, SimItem, Spec } from "../../proto/common";
 import { BulkComboResult, BulkSettings, ItemSpecWithSlot, ProgressMetrics } from "../../proto/api";
 
-import { ItemRenderer } from "../gear_picker";
+import { ItemRenderer, SelectorModal, SelectorModalTabs } from "../gear_picker";
 import { SimTab } from "../sim_tab";
 
 import { UIEnchant, UIGem, UIItem } from "../../proto/ui";
@@ -21,6 +21,7 @@ import { ResultsViewer } from "../results_viewer";
 import { Popover, Tooltip } from 'bootstrap';
 import { BooleanPicker } from "../boolean_picker";
 import { getEmptyGemSocketIconUrl } from "../../proto_utils/gems";
+import { getEligibleItemSlots } from "../../proto_utils/utils";
 
 export class BulkGearJsonImporter<SpecType extends Spec> extends Importer {
   private readonly simUI: IndividualSimUI<SpecType>;
@@ -122,52 +123,80 @@ class BulkSimResultRenderer {
   }
 }
 
-
 export class BulkItemPicker extends Component {
   private readonly itemElem: ItemRenderer;
   readonly simUI: IndividualSimUI<Spec>;
   readonly bulkUI: BulkTab;
+  readonly index: number;
 
-  protected item: EquippedItem | null = null;
-
-  constructor(parent: HTMLElement, simUI: IndividualSimUI<Spec>, bulkUI: BulkTab, item: EquippedItem | null) {
+  protected item: EquippedItem;
+  
+  constructor(parent: HTMLElement, simUI: IndividualSimUI<Spec>, bulkUI: BulkTab, item: EquippedItem, index: number) {
     super(parent, 'bulk-item-picker');
     this.simUI = simUI;
     this.bulkUI = bulkUI;
+    this.index = index;
+    this.item = item;
     this.itemElem = new ItemRenderer(this.rootElem, simUI.player);
-
+    
     this.simUI.sim.waitForInit().then(() => {
       this.setItem(item);
-
-      const openGearSelector = (event: Event) => {
+      const slot = getEligibleItemSlots(this.item.item)[0];
+      const eligibleEnchants = this.simUI.sim.db.getEnchants(slot);
+      const openEnchantGemSelector = (event: Event) => {
         event.preventDefault();
-        // TODO(Riotdog-GehennasEU): Implement model to search for more items / delete the item etc.
-        // For now you get a crappy alert box!
-        if (this.item && confirm('Delete item from bulk?')) {
-          const needle = this.item.asSpec();
-          bulkUI.importItems(bulkUI.getItems().filter((spec) => { return !ItemSpec.equals(spec, needle); }));
+        const changeEvent = new TypedEvent<void>();
+        const modal = new SelectorModal(this.bulkUI.rootElem, this.simUI, this.simUI.player, {
+          selectedTab: SelectorModalTabs.Enchants,
+          slot: slot,
+          equippedItem: this.item,
+          eligibleItems: new Array<UIItem>(),
+          eligibleEnchants: eligibleEnchants,
+          gearData: {
+            equipItem: (eventID: EventID, equippedItem: EquippedItem | null) => {
+              if (equippedItem) {
+                const otherItems = this.bulkUI.getItems();
+                otherItems[this.index] = equippedItem.asSpec();
+                this.item = equippedItem;
+                this.bulkUI.importItems(otherItems);
+                changeEvent.emit(TypedEvent.nextEventID());
+              }
+            },
+            getEquippedItem: () => this.item,
+            changeEvent: changeEvent,
+          }
+        });
+
+        const removeButton = modal.body.querySelector('.selector-modal-remove-button');
+        if (removeButton && removeButton.parentNode) {
+          const destroyItemButton = document.createElement('button');
+          destroyItemButton.textContent = 'Destroy Item';
+          destroyItemButton.classList.add('btn', 'btn-danger');
+          destroyItemButton.onclick = () => {
+            const needle = this.item.asSpec();
+            bulkUI.importItems(bulkUI.getItems().filter((spec) => { return !ItemSpec.equals(spec, needle); }));
+            modal.close();
+          };
+          removeButton.parentNode.appendChild(destroyItemButton);
         }
       };
-      const openEnchantSelector = (event: Event) => {
-        event.preventDefault();
-      };
+
       const onClickEnd = (event: Event) => {
         event.preventDefault();
       };
 
       // Make icon open gear selector
-      this.itemElem.iconElem.addEventListener('click', openGearSelector);
-      this.itemElem.iconElem.addEventListener('touchstart', openGearSelector);
+      this.itemElem.iconElem.addEventListener('click', openEnchantGemSelector);
+      this.itemElem.iconElem.addEventListener('touchstart', openEnchantGemSelector);
       this.itemElem.iconElem.addEventListener('touchend', onClickEnd);
 
       // Make item name open gear selector
-      this.itemElem.nameElem.addEventListener('click', openGearSelector);
-      this.itemElem.nameElem.addEventListener('touchstart', openGearSelector);
+      this.itemElem.nameElem.addEventListener('click', openEnchantGemSelector);
+      this.itemElem.nameElem.addEventListener('touchstart', openEnchantGemSelector);
       this.itemElem.nameElem.addEventListener('touchend', onClickEnd);
 
-      // Make enchant name open enchant selector
-      this.itemElem.enchantElem.addEventListener('click', openEnchantSelector);
-      this.itemElem.enchantElem.addEventListener('touchstart', openEnchantSelector);
+      this.itemElem.enchantElem.addEventListener('click', openEnchantGemSelector);
+      this.itemElem.enchantElem.addEventListener('touchstart', openEnchantGemSelector);
       this.itemElem.enchantElem.addEventListener('touchend', onClickEnd);
     });
   }
@@ -320,12 +349,12 @@ export class BulkTab extends SimTab {
 
     this.itemsChangedEmitter.on(() => {
       itemList.innerHTML = '';
-      new BulkItemPicker(itemList, this.simUI, this, null); // Add new item picker.
       if (this.items.length > 0) {
         itemTextIntro.textContent = 'The following items will be simmed in all possible combinations together with your equipped gear.';
-        for (const spec of this.items) {
+        for (let i = 0; i < this.items.length; ++i) {
+          const spec = this.items[i];
           const item = this.simUI.sim.db.lookupItemSpec(spec);
-          const bulkItemPicker = new BulkItemPicker(itemList, this.simUI, this, item);
+          const bulkItemPicker = new BulkItemPicker(itemList, this.simUI, this, item!, i);
         }
       }
     });
@@ -544,17 +573,17 @@ export class BulkTab extends SimTab {
     }
 
     this.pendingResults.setContent(`
-			<div class="results-sim">
+      <div class="results-sim">
         <div class="">${combinations} total combinations.</div>
         <div class="">${roundsText}</div>
-				<div class=""> ${progress.completedSims} / ${progress.totalSims}<br>simulations complete</div>
-				<div class="">
-					${progress.completedIterations} / ${progress.totalIterations}<br>iterations complete
-				</div>
+        <div class=""> ${progress.completedSims} / ${progress.totalSims}<br>simulations complete</div>
+        <div class="">
+          ${progress.completedIterations} / ${progress.totalIterations}<br>iterations complete
+        </div>
         <div class="">
           ${secondsRemain} seconds remaining.
         </div>
-			</div>
-		`);
+      </div>
+    `);
   }
 }

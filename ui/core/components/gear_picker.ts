@@ -450,7 +450,7 @@ interface GearData {
 	changeEvent: TypedEvent<any>,
 }
 
-enum SelectorModalTabs {
+export enum SelectorModalTabs {
 	Items = 'Items',
 	Enchants = 'Enchants',
 	Gem1 = 'Gem1',
@@ -467,7 +467,7 @@ interface SelectorModalConfig {
 	gearData: GearData
 }
 
-class SelectorModal extends BaseModal {
+export class SelectorModal extends BaseModal {
 	private readonly simUI: SimUI;
 	private player: Player<any>;
 	private config: SelectorModalConfig;
@@ -619,7 +619,8 @@ class SelectorModal extends BaseModal {
 
 					const gemElem = tabAnchor.querySelector('.gem-icon') as HTMLElement;
 					const socketElem = tabAnchor.querySelector('.socket-icon') as HTMLElement;
-					socketElem.setAttribute('src', getEmptyGemSocketIconUrl(socketColor));
+					const emptySocketUrl = getEmptyGemSocketIconUrl(socketColor)
+					socketElem.setAttribute('src', emptySocketUrl);
 
 					const updateGemIcon = () => {
 						const equippedItem = gearData.getEquippedItem();
@@ -629,6 +630,8 @@ class SelectorModal extends BaseModal {
 							ActionId.fromItemId(gem.id).fill().then(filledId => {
 								gemElem.setAttribute('src', filledId.iconUrl);
 							});
+						} else {
+							gemElem.setAttribute('src', emptySocketUrl);
 						}
 					};
 
@@ -1064,7 +1067,13 @@ class ItemList<T> {
 			this.listItemElems.forEach(elem => elem.classList.remove('active'));
 			onRemove(TypedEvent.nextEventID());
 		});
-
+		
+		if (label.startsWith("Enchants")) {
+			removeButton.textContent = 'Remove Enchant';
+		} else if (label.startsWith("Gem")) {
+			removeButton.textContent = 'Remove Gem';
+		}
+		
 		this.updateSelected();
 
 		this.searchInput = tabContent.getElementsByClassName('selector-modal-search')[0] as HTMLInputElement;
