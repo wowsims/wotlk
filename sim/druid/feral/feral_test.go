@@ -82,9 +82,10 @@ var StandardGlyphs = &proto.Glyphs{
 var PlayerOptionsBearweaveLacerate = &proto.Player_FeralDruid{
 	FeralDruid: &proto.FeralDruid{
 		Options: &proto.FeralDruid_Options{
-			InnervateTarget: &proto.RaidTarget{TargetIndex: -1}, // no Innervate
-			LatencyMs:       100,
-			PrepopOoc:       true,
+			InnervateTarget:   &proto.RaidTarget{TargetIndex: -1}, // no Innervate
+			LatencyMs:         100,
+			PrepopOoc:         true,
+			AssumeBleedActive: true,
 		},
 		Rotation: &proto.FeralDruid_Rotation{
 			BearWeaveType:      proto.FeralDruid_Rotation_Lacerate,
@@ -108,9 +109,10 @@ var PlayerOptionsBearweaveLacerate = &proto.Player_FeralDruid{
 var PlayerOptionsMonoCatFlowerWeave = &proto.Player_FeralDruid{
 	FeralDruid: &proto.FeralDruid{
 		Options: &proto.FeralDruid_Options{
-			InnervateTarget: &proto.RaidTarget{TargetIndex: -1}, // no Innervate
-			LatencyMs:       100,
-			PrepopOoc:       true,
+			InnervateTarget:   &proto.RaidTarget{TargetIndex: -1}, // no Innervate
+			LatencyMs:         100,
+			PrepopOoc:         true,
+			AssumeBleedActive: true,
 		},
 		Rotation: &proto.FeralDruid_Rotation{
 			BearWeaveType:      proto.FeralDruid_Rotation_None,
