@@ -81,15 +81,17 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 8049.37398
-  tps: 74730.02392
+  dps: 8050.09098
+  tps: 5713.96706
+  hps: 88.31668
  }
 }
 dps_results: {
  key: "TestSubtlety-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 8049.37398
-  tps: 74730.02392
+  dps: 8050.09098
+  tps: 5713.96706
+  hps: 88.31668
  }
 }
 dps_results: {
