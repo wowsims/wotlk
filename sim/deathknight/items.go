@@ -534,7 +534,7 @@ func init() {
 		consumeSpells := [5]core.ActionID{
 			BloodBoilActionID,
 			DeathCoilActionID,
-			FrostStrikeActionID,
+			FrostStrikeMHActionID,
 			HowlingBlastActionID,
 			IcyTouchActionID,
 		}
@@ -558,13 +558,25 @@ func init() {
 				dk.modifyShadowDamageModifier(-0.2)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if spell.ActionID == HowlingBlastActionID || spell.ActionID == BloodBoilActionID {
+					if result.Target.Index == sim.GetNumTargets()-1 {
+						// Last target, consume a stack for every target hit
+						for i := int32(0); i < dk.AoESpellNumTargetsHit; i++ {
+							if aura.IsActive() {
+								aura.RemoveStack(sim)
+							}
+						}
+					}
+					return
+				}
+
 				if !result.Outcome.Matches(core.OutcomeLanded) {
 					return
 				}
 
 				shouldConsume := false
 				for _, consumeSpell := range consumeSpells {
-					if spell.ActionID.SameActionIgnoreTag(consumeSpell) {
+					if spell.ActionID == consumeSpell {
 						shouldConsume = true
 						break
 					}
