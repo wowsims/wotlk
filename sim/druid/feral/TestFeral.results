@@ -944,6 +944,48 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeral-Settings-Tauren-P1-Default-NoBleed-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 7822.73374
+  tps: 5619.5045
+ }
+}
+dps_results: {
+ key: "TestFeral-Settings-Tauren-P1-Default-NoBleed-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 7822.73374
+  tps: 5619.5045
+ }
+}
+dps_results: {
+ key: "TestFeral-Settings-Tauren-P1-Default-NoBleed-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 8745.2452
+  tps: 6270.07522
+ }
+}
+dps_results: {
+ key: "TestFeral-Settings-Tauren-P1-Default-NoBleed-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 4948.46084
+  tps: 3577.20022
+ }
+}
+dps_results: {
+ key: "TestFeral-Settings-Tauren-P1-Default-NoBleed-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 4948.46084
+  tps: 3577.20022
+ }
+}
+dps_results: {
+ key: "TestFeral-Settings-Tauren-P1-Default-NoBleed-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 5249.94866
+  tps: 3788.78861
+ }
+}
+dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Default-NoBuffs-LongMultiTarget"
  value: {
   dps: 4960.41478
@@ -959,48 +1001,6 @@ dps_results: {
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Default-NoBuffs-ShortSingleTarget"
- value: {
-  dps: 5256.88306
-  tps: 3794.08597
- }
-}
-dps_results: {
- key: "TestFeral-Settings-Tauren-P1-FlowerWeave-FullBuffs-LongMultiTarget"
- value: {
-  dps: 7820.73708
-  tps: 5617.78773
- }
-}
-dps_results: {
- key: "TestFeral-Settings-Tauren-P1-FlowerWeave-FullBuffs-LongSingleTarget"
- value: {
-  dps: 7820.73708
-  tps: 5617.78773
- }
-}
-dps_results: {
- key: "TestFeral-Settings-Tauren-P1-FlowerWeave-FullBuffs-ShortSingleTarget"
- value: {
-  dps: 8722.80064
-  tps: 6254.51352
- }
-}
-dps_results: {
- key: "TestFeral-Settings-Tauren-P1-FlowerWeave-NoBuffs-LongMultiTarget"
- value: {
-  dps: 4960.41478
-  tps: 3585.68752
- }
-}
-dps_results: {
- key: "TestFeral-Settings-Tauren-P1-FlowerWeave-NoBuffs-LongSingleTarget"
- value: {
-  dps: 4960.41478
-  tps: 3585.68752
- }
-}
-dps_results: {
- key: "TestFeral-Settings-Tauren-P1-FlowerWeave-NoBuffs-ShortSingleTarget"
  value: {
   dps: 5256.88306
   tps: 3794.08597
