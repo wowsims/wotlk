@@ -187,7 +187,7 @@ func (cat *FeralDruid) calcBuilderDpe(sim *core.Simulation) (float64, float64) {
 	// dynamic proc occurring
 	shredDpc := cat.Shred.ExpectedDamage(sim, cat.CurrentTarget)
 	rakeDpc := cat.Rake.ExpectedDamage(sim, cat.CurrentTarget)
-	return rakeDpc / cat.CurrentRakeCost(), shredDpc / cat.CurrentShredCost()
+	return rakeDpc / cat.Rake.DefaultCast.Cost, shredDpc / cat.Shred.DefaultCast.Cost
 }
 
 func (cat *FeralDruid) clipRoar(sim *core.Simulation) bool {
