@@ -91,24 +91,30 @@
 .bulk-tab {
   position: relative;
 
-  .input-root {
-    flex-direction: row;
-    align-items: center;
-    margin-top: 10px;
-    label {
-      flex: 1;
+  .selector-modal-simall-button {
+    visibility: hidden;
+  }
+
+  .bulk-settings {
+    .input-root {
+      flex-direction: row;
+      align-items: center;
+      margin-top: 10px;
+      label {
+        flex: 1;
+      }
+    }
+
+    .bulk-check-input {
+      width: 100%;
+      height: 40px;
+      padding: 5px;
+      margin-top: 15px;
+      display: flex;
     }
   }
 }
 
 .results-sim {
   margin-top: 5px;
-}
-
-.bulk-check-input {
-  width: 100%;
-  height: 40px;
-  padding: 5px;
-  margin-top: 15px;
-  display: flex;
 }

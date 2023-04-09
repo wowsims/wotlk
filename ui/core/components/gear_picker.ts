@@ -450,7 +450,7 @@ interface GearData {
 	changeEvent: TypedEvent<any>,
 }
 
-enum SelectorModalTabs {
+export enum SelectorModalTabs {
 	Items = 'Items',
 	Enchants = 'Enchants',
 	Gem1 = 'Gem1',
@@ -467,7 +467,7 @@ interface SelectorModalConfig {
 	gearData: GearData
 }
 
-class SelectorModal extends BaseModal {
+export class SelectorModal extends BaseModal {
 	private readonly simUI: SimUI;
 	private player: Player<any>;
 	private config: SelectorModalConfig;
@@ -619,7 +619,8 @@ class SelectorModal extends BaseModal {
 
 					const gemElem = tabAnchor.querySelector('.gem-icon') as HTMLElement;
 					const socketElem = tabAnchor.querySelector('.socket-icon') as HTMLElement;
-					socketElem.setAttribute('src', getEmptyGemSocketIconUrl(socketColor));
+					const emptySocketUrl = getEmptyGemSocketIconUrl(socketColor)
+					socketElem.setAttribute('src', emptySocketUrl);
 
 					const updateGemIcon = () => {
 						const equippedItem = gearData.getEquippedItem();
@@ -629,6 +630,8 @@ class SelectorModal extends BaseModal {
 							ActionId.fromItemId(gem.id).fill().then(filledId => {
 								gemElem.setAttribute('src', filledId.iconUrl);
 							});
+						} else {
+							gemElem.setAttribute('src', emptySocketUrl);
 						}
 					};
 
@@ -924,6 +927,12 @@ class SelectorModal extends BaseModal {
 			onRemove(TypedEvent.nextEventID());
 		});
 
+		if (label.startsWith("Enchants")) {
+			removeButton.textContent = 'Remove Enchant';
+		} else if (label.startsWith("Gem")) {
+			removeButton.textContent = 'Remove Gem';
+		}
+
 		const updateSelected = () => {
 			const newEquippedItem = gearData.getEquippedItem();
 			const newItem = equippedToItemFn(newEquippedItem);
@@ -1041,7 +1050,7 @@ class SelectorModal extends BaseModal {
 		});
 
 		const simAllButton = tabContent.getElementsByClassName('selector-modal-simall-button')[0] as HTMLButtonElement;
-		simAllButton.hidden = !this.player.sim.getShowExperimental()
+		simAllButton.hidden = !this.player.sim.getShowExperimental();
 		this.player.sim.showExperimentalChangeEmitter.on(() => {
 			simAllButton.hidden = !this.player.sim.getShowExperimental();
 		});
