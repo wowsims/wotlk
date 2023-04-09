@@ -289,10 +289,16 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	rakeDot := cat.Rake.CurDot()
 	ripDot := cat.Rip.CurDot()
 	lacerateDot := cat.Lacerate.CurDot()
+	isBleedActive := cat.AssumeBleedActive || ripDot.IsActive() || rakeDot.IsActive() || lacerateDot.IsActive()
+
+	// Prioritize using rake/rip with omen procs if bleed isnt active
+	// But less priority then mangle aura
+	ripCcCheck := core.Ternary(isBleedActive, !isClearcast, true)
+	rakeCcCheck := core.Ternary(isBleedActive, !isClearcast, cat.bleedAura.IsActive())
 
 	endThresh := time.Second * 10
 
-	ripNow := (curCp >= rotation.MinCombosForRip) && !ripDot.IsActive() && (simTimeRemain >= endThresh) && !isClearcast
+	ripNow := (curCp >= rotation.MinCombosForRip) && !ripDot.IsActive() && (simTimeRemain >= endThresh) && ripCcCheck
 	biteAtEnd := (curCp >= rotation.MinCombosForBite) && ((simTimeRemain < endThresh) || (ripDot.IsActive() && (simTimeRemain-ripDot.RemainingDuration(sim) < endThresh)))
 	mangleNow := !ripNow && !cat.bleedAura.IsActive() && cat.MangleCat != nil
 
@@ -305,7 +311,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		biteNow = curEnergy <= rotation.BerserkBiteThresh
 	}
 
-	rakeNow := rotation.UseRake && !rakeDot.IsActive() && (simTimeRemain > rakeDot.Duration) && !isClearcast
+	rakeNow := rotation.UseRake && !rakeDot.IsActive() && (simTimeRemain > rakeDot.Duration) && rakeCcCheck
 
 	// Additionally, don't Rake if the current Shred DPE is higher due to
 	// trinket procs etc.
