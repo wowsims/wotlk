@@ -81,15 +81,15 @@ dps_results: {
 dps_results: {
  key: "TestRestoration-AllItems-BaubleofTrueBlood-50354"
  value: {
-  tps: 56.2746
-  hps: 3753.38959
+  tps: 57.94221
+  hps: 8630.96629
  }
 }
 dps_results: {
  key: "TestRestoration-AllItems-BaubleofTrueBlood-50726"
  value: {
-  tps: 56.2746
-  hps: 3753.38959
+  tps: 57.94221
+  hps: 8630.96629
  }
 }
 dps_results: {

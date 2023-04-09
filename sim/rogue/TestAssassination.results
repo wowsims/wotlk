@@ -81,17 +81,15 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 7422.27295
-  tps: 5269.81379
-  hps: 60.07923
+  dps: 7422.49556
+  tps: 34397.73584
  }
 }
 dps_results: {
  key: "TestAssassination-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 7422.27295
-  tps: 5269.81379
-  hps: 60.07923
+  dps: 7422.49556
+  tps: 34397.73584
  }
 }
 dps_results: {

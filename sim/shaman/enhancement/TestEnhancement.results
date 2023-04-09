@@ -81,17 +81,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 7156.92365
-  tps: 4020.18213
-  hps: 95.36199
+  dps: 7156.76899
+  tps: 9344.78345
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 7156.92365
-  tps: 4020.18213
-  hps: 95.36199
+  dps: 7156.76899
+  tps: 9344.78345
  }
 }
 dps_results: {
