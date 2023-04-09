@@ -94,9 +94,27 @@
   .input-root {
     flex-direction: row;
     align-items: center;
-    margin-top: 10px;
+    margin-top: 5px;
+    border-bottom: 1px solid white;
+    padding: 3px;
     label {
       flex: 1;
+    }
+  }
+
+  .default-gem-container {
+    display: flex;
+    flex-direction: column;
+
+    .gem-socket-container {
+      height: 40px;
+      width: 40px;
+      margin-right: 3px;
+    }
+
+    .sockets-container {
+      display: flex;
+      flex-direction: row;
     }
   }
 }
