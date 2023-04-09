@@ -207,9 +207,12 @@ func (dk *DpsDeathknight) Initialize() {
 		dk.setupDrwProcTrackers()
 	}
 
-	if dk.Talents.SummonGargoyle {
+	// unholy rotation uses dk.ur.gargoyleSnapshot for AOTD if unholy talents > others
+	bl, fr, uh := deathknight.PointsInTalents(dk.Talents)
+	if uh > fr && uh > bl {
 		dk.ur.gargoyleSnapshot = core.NewSnapshotManager(dk.GetCharacter())
 		dk.setupGargProcTrackers()
+
 	}
 
 	dk.sr.Initialize(dk)
