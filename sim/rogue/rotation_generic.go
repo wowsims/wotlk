@@ -288,6 +288,7 @@ func (x *rotation_generic) run(sim *core.Simulation, rogue *Rogue) {
 		} else {
 			panic("Unexpected builder cast failure")
 		}
+
 	case ShouldCast:
 		spell := prio.GetSpell(rogue, rogue.ComboPoints())
 		if spell == nil || spell.Cast(sim, rogue.CurrentTarget) {
@@ -374,7 +375,7 @@ func (x *rotation_generic) shouldCastNextRotationItem(sim *core.Simulation, rogu
 
 	// Expires before next GCD
 	if tte <= timeUntilNextGCD {
-		if comboPoints >= prio.MinimumComboPoints && currentEnergy >= (prio.EnergyCost+prio.PoolAmount) {
+		if comboPoints >= prio.MinimumComboPoints && currentEnergy >= (prio.EnergyCost+prio.PoolAmount) && prio.GetSpell(rogue, comboPoints).CanCast(sim, rogue.CurrentTarget) {
 			return ShouldCast
 		} else if comboPoints < prio.MinimumComboPoints && currentEnergy >= x.builder.DefaultCast.Cost {
 			return ShouldBuild
@@ -384,7 +385,7 @@ func (x *rotation_generic) shouldCastNextRotationItem(sim *core.Simulation, rogu
 	}
 	if comboPoints >= prio.MaximumComboPoints { // Don't need CP
 		// Cast
-		if tte <= clippingThreshold && currentEnergy >= (prio.EnergyCost+prio.PoolAmount) {
+		if tte <= clippingThreshold && currentEnergy >= (prio.EnergyCost+prio.PoolAmount) && prio.GetSpell(rogue, comboPoints).CanCast(sim, rogue.CurrentTarget) {
 			return ShouldCast
 		}
 		// Pool energy
@@ -395,7 +396,7 @@ func (x *rotation_generic) shouldCastNextRotationItem(sim *core.Simulation, rogu
 		if tte > item.MinimumBuildDuration {
 			// Find the first lower prio item that can be cast and use it
 			for lpi, lowerPrio := range x.priorityItems[item.PrioIndex+1:] {
-				if comboPoints > lowerPrio.MinimumComboPoints && currentEnergy > lowerPrio.EnergyCost && lowerPrio.MaxCasts == 0 {
+				if comboPoints > lowerPrio.MinimumComboPoints && currentEnergy > lowerPrio.EnergyCost && lowerPrio.MaxCasts == 0 && prio.GetSpell(rogue, comboPoints).CanCast(sim, rogue.CurrentTarget) {
 					x.rotationItems = append([]rogueRotationItem{
 						{ExpiresAt: currentTime, PrioIndex: lpi + item.PrioIndex + 1},
 					}, x.rotationItems...)
@@ -414,7 +415,7 @@ func (x *rotation_generic) shouldCastNextRotationItem(sim *core.Simulation, rogu
 			return ShouldWait
 		}
 	} else { // Between MinimumComboPoints and MaximumComboPoints
-		if currentEnergy >= prio.EnergyCost+prio.PoolAmount && tte <= timeUntilNextGCD {
+		if currentEnergy >= prio.EnergyCost+prio.PoolAmount && tte <= timeUntilNextGCD && prio.GetSpell(rogue, comboPoints).CanCast(sim, rogue.CurrentTarget) {
 			return ShouldCast
 		}
 		ttb := x.timeToBuild(1, 2, eps, prio.EnergyCost+prio.PoolAmount-currentEnergy)
