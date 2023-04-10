@@ -1810,7 +1810,9 @@ export function validWeaponCombo(mainHand: Item | null | undefined, offHand: Ite
 		return true;
 	}
 
-	if (mainHand.handType == HandType.HandTypeTwoHand && !canDW2h) {
+	if (mainHand.handType == HandType.HandTypeTwoHand && !canDW2h ||
+		mainHand.handType == HandType.HandTypeTwoHand && 
+		(mainHand.weaponType == WeaponType.WeaponTypePolearm || mainHand.weaponType == WeaponType.WeaponTypeStaff)) {
 		return false;
 	}
 
