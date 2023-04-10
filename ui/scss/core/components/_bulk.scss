@@ -96,6 +96,10 @@
   }
 
   .bulk-settings {
+    .selector-modal-tab-pane {
+      position: absolute;
+    }
+
     .input-root {
       flex-direction: row;
       align-items: center;
@@ -124,6 +128,11 @@
       height: 40px;
       width: 40px;
       margin-right: 3px;
+    }
+
+    .gem-icon {
+      height: 100%;
+      width: 100%;
     }
 
     .sockets-container {

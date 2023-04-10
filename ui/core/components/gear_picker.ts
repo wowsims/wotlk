@@ -444,7 +444,7 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 
 }
 
-interface GearData {
+export interface GearData {
 	equipItem: (eventID: EventID, equippedItem: EquippedItem | null) => void,
 	getEquippedItem: () => EquippedItem | null,
 	changeEvent: TypedEvent<any>,
@@ -766,7 +766,7 @@ export class SelectorModal extends BaseModal {
 	}
 }
 
-interface ItemData<T> {
+export interface ItemData<T> {
 	item: T,
 	name: string,
 	id: number,
@@ -802,7 +802,7 @@ export function getEmptySlotIconUrl(slot: ItemSlot): string {
 	return emptySlotIcons[slot];
 }
 
-class ItemList<T> {
+export class ItemList<T> {
 
 	private listItemElems: HTMLLIElement[];
 	private readonly player: Player<any>;

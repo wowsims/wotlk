@@ -7,10 +7,10 @@ import { TypedEvent } from "../../typed_event";
 
 import { EventID } from '../../typed_event.js';
 
-import { EquipmentSpec, GemColor, ItemSpec, SimDatabase, SimEnchant, SimGem, SimItem, Spec } from "../../proto/common";
+import { EquipmentSpec, GemColor, ItemSlot, ItemSpec, SimDatabase, SimEnchant, SimGem, SimItem, Spec } from "../../proto/common";
 import { BulkComboResult, BulkSettings, ItemSpecWithSlot, ProgressMetrics } from "../../proto/api";
 
-import { ItemRenderer, SelectorModal, SelectorModalTabs } from "../gear_picker";
+import { ItemData, ItemList, ItemRenderer, SelectorModal, SelectorModalTabs } from "../gear_picker";
 import { SimTab } from "../sim_tab";
 
 import { UIEnchant, UIGem, UIItem } from "../../proto/ui";
@@ -20,8 +20,11 @@ import { ResultsViewer } from "../results_viewer";
 
 import { Popover, Tooltip } from 'bootstrap';
 import { BooleanPicker } from "../boolean_picker";
-import { getEmptyGemSocketIconUrl } from "../../proto_utils/gems";
+import { gemMatchesSocket, getEmptyGemSocketIconUrl } from "../../proto_utils/gems";
 import { getEligibleItemSlots } from "../../proto_utils/utils";
+import { ActionId } from "../../proto_utils/action_id";
+import { BaseModal } from "../base_modal";
+import { SimUI } from "ui/core/sim_ui";
 
 export class BulkGearJsonImporter<SpecType extends Spec> extends Importer {
   private readonly simUI: IndividualSimUI<SpecType>;
@@ -234,6 +237,7 @@ export class BulkTab extends SimTab {
   private doCombos: boolean;
   private fastMode: boolean;
   private autoGem: boolean;
+  private defaultGems: SimGem[];
 
   constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>) {
     super(parentElem, simUI, { identifier: 'bulk-tab', title: 'Bulk' });
@@ -250,7 +254,7 @@ export class BulkTab extends SimTab {
     this.pendingDiv.classList.add("results-pending-overlay");
     this.pendingResults = new ResultsViewer(this.pendingDiv);
     this.pendingResults.hideAll();
-
+    
     this.contentContainer.appendChild(this.leftPanel);
     this.contentContainer.appendChild(this.rightPanel);
     this.contentContainer.appendChild(this.pendingDiv);
@@ -258,6 +262,7 @@ export class BulkTab extends SimTab {
     this.doCombos = true;
     this.fastMode = false;
     this.autoGem = false;
+    this.defaultGems = [UIGem.create(), UIGem.create(), UIGem.create(), UIGem.create()];
     this.buildTabContent();
   }
 
@@ -467,29 +472,6 @@ export class BulkTab extends SimTab {
     });
     settingsBlock.bodyElement.appendChild(clearButton);
 
-    // let ilist = new ItemList(
-		// 	this.contentElem,
-		// 	this.simUI,
-		// 	this.config,
-		// 	this.player,
-		// 	label,
-		// 	itemData,
-		// 	computeEP,
-		// 	equippedToItemFn,
-		// 	socketColor,
-		// 	onRemove,
-		// 	(itemData: ItemData<T>) => {
-		// 		const item = itemData.item;
-		// 		itemData.onEquip(TypedEvent.nextEventID(), item);
-
-		// 		// If the item changes, the gem slots might change, so remove and recreate the gem tabs
-		// 		if (Item.is(item)) {
-		// 			this.removeTabs('Gem');
-		// 			this.addGemTabs(slot, gearData.getEquippedItem(), gearData);
-		// 		}
-		// 	},
-		// )
-
     // Default Gem Options
     const defaultGemDiv = document.createElement("div");
     if (this.autoGem) {
@@ -505,7 +487,8 @@ export class BulkTab extends SimTab {
 
     const gemSocketsDiv = document.createElement("div");
     gemSocketsDiv.classList.add("sockets-container");
-    Array<GemColor>(GemColor.GemColorBlue, GemColor.GemColorRed, GemColor.GemColorYellow, GemColor.GemColorMeta).forEach((socketColor) => {
+
+    Array<GemColor>(GemColor.GemColorBlue, GemColor.GemColorRed, GemColor.GemColorYellow, GemColor.GemColorMeta).forEach((socketColor, socketIndex) => {
       let gemFragment = document.createElement('fragment');
       gemFragment.innerHTML = `
           <div class="gem-socket-container">
@@ -518,16 +501,27 @@ export class BulkTab extends SimTab {
       const gemIconElem = gemContainer.querySelector('.gem-icon') as HTMLImageElement;
       const socketIconElem = gemContainer.querySelector('.socket-icon') as HTMLImageElement;
       socketIconElem.src = getEmptyGemSocketIconUrl(socketColor);
+    
+      let selector: GemSelectorModal;
+      let handleChoose = (itemData: ItemData<UIGem>) => {
+        this.defaultGems[socketIndex] = itemData.item;
+        ActionId.fromItemId(itemData.id).fill().then(filledId => {
+          gemIconElem.src = filledId.iconUrl;
+        });
+        selector.close();
+      };
 
-      // if (equippedItem.gems[gemIdx] == null) {
-      //   gemIconElem.classList.add('hide');
-      // } else {
-      //   gemIconElem.classList.remove('hide');
-      //   ActionId.fromItemId(equippedItem.gems[gemIdx]!.id).fill().then(filledId => {
-      //     gemIconElem.src = filledId.iconUrl;
-      //   });
-      // }
+      let openGemSelector = (color: GemColor, socketIndex: number) => {
+        return (event: Event) => {
+          if (selector == null) {
+            selector = new GemSelectorModal(this.simUI.rootElem, this.simUI, socketColor, handleChoose);      
+          }
+          selector.show();
+        }
+      }
 
+      gemIconElem.addEventListener("click", openGemSelector(socketColor, socketIndex));
+      gemContainer.addEventListener("click", openGemSelector(socketColor, socketIndex));
       gemSocketsDiv.appendChild(gemContainer);
     });
     defaultGemDiv.appendChild(gemSocketsDiv);
@@ -585,5 +579,93 @@ export class BulkTab extends SimTab {
         </div>
       </div>
     `);
+  }
+}
+
+
+class GemSelectorModal extends BaseModal {
+	private readonly simUI: IndividualSimUI<Spec>;
+
+	private readonly tabsElem: HTMLElement;
+	private readonly contentElem: HTMLElement;
+  private ilist: ItemList<UIGem> | null;
+  private socketColor: GemColor;
+  private onSelect: (itemData: ItemData<UIGem>) => void;
+
+	constructor(parent: HTMLElement, simUI: IndividualSimUI<Spec>, socketColor: GemColor, onSelect: (itemData: ItemData<UIGem>) => void) {
+		super(parent, 'selector-modal');
+
+		this.simUI = simUI;
+    this.onSelect = onSelect;
+    this.socketColor = socketColor;
+    this.ilist = null;
+
+		window.scrollTo({ top: 0 });
+
+		this.header!.insertAdjacentHTML('afterbegin', `<span>Choose Default Gem</span>`);
+
+		this.body.innerHTML = `<div class="tab-content selector-modal-tab-content"></div>`
+
+		this.tabsElem = this.rootElem.querySelector('.selector-modal-tabs') as HTMLElement;
+		this.contentElem = this.rootElem.querySelector('.selector-modal-tab-content') as HTMLElement;
+	}
+
+  show() {
+    if (this.ilist == null) {
+
+      this.ilist = new ItemList<UIGem>(
+        this.body,
+        this.simUI,
+        {
+          selectedTab: SelectorModalTabs.Gem1,
+          slot: ItemSlot.ItemSlotHead,
+          equippedItem: null,
+          eligibleItems: new Array<UIItem>(),
+          eligibleEnchants: new Array<UIEnchant>(),
+          gearData: {
+            equipItem: (eventID: EventID, equippedItem: EquippedItem | null) => {},
+            getEquippedItem: () => null,
+            changeEvent: new TypedEvent(), // FIXME
+          },
+        },
+        this.simUI.player,
+        "Gem1",
+        this.simUI.player.getGems(this.socketColor).map((gem: UIGem) => {
+          return {
+            item: gem,
+            id: gem.id,
+            actionId: ActionId.fromItemId(gem.id),
+            name: gem.name,
+            quality: gem.quality,
+            phase: gem.phase,
+            heroic: false,
+            baseEP: 0,
+            ignoreEPFilter: true,
+            onEquip: (eventID, gem: UIGem) => {
+            },
+          };
+        }),
+        gem => {
+          return this.simUI.player.computeGemEP(gem);
+        },
+        ()=>{return null},
+        this.socketColor,
+        ()=>{},
+        this.onSelect
+      )
+
+      // let invokeUpdate = () => {this.ilist?.updateSelected()}
+      let applyFilter = () => {this.ilist?.applyFilters()}
+      // Add event handlers
+      // this.itemsChangedEmitter.on(invokeUpdate);
+  
+      // this.addOnDisposeCallback(() => gearData.changeEvent.off(invokeUpdate));
+  
+      this.simUI.sim.phaseChangeEmitter.on(applyFilter);
+      this.simUI.sim.filtersChangeEmitter.on(applyFilter);
+      // gearData.changeEvent.on(applyFilter);  
+    }
+
+    this.open();
   }
 }
