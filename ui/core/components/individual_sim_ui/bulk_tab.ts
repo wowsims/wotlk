@@ -241,7 +241,7 @@ export class BulkTab extends SimTab {
   private defaultGems: SimGem[];
 
   constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>) {
-    super(parentElem, simUI, { identifier: 'bulk-tab', title: 'Bulk' });
+    super(parentElem, simUI, { identifier: 'bulk-tab', title: 'Batch' });
     this.simUI = simUI;
 
     this.leftPanel = document.createElement('div');
