@@ -1816,6 +1816,12 @@ export function validWeaponCombo(mainHand: Item | null | undefined, offHand: Ite
 		return false;
 	}
 
+	if (offHand.handType == HandType.HandTypeTwoHand && !canDW2h ||
+		offHand.handType == HandType.HandTypeTwoHand && 
+		(offHand.weaponType == WeaponType.WeaponTypePolearm || offHand.weaponType == WeaponType.WeaponTypeStaff)) {
+		return false;
+	}
+
 	return true;
 }
 
