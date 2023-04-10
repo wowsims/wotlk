@@ -251,6 +251,7 @@ message IndividualSimSettings {
 	// Deprecate after 2 months (on 2023/02/13)
 	repeated double ep_weights = 6;
 	UnitStats ep_weights_stats = 10;
+	repeated double ep_ratios = 11;
 }
 
 // Local storage data for gear settings.
