@@ -432,6 +432,7 @@ func (hunter *Hunter) registerBestialWrathCD() {
 			aura.Unit.PseudoStats.CostMultiplier += 0.5
 		},
 	})
+	core.RegisterPercentDamageModifierEffect(bestialWrathAura, 1.1)
 
 	bwSpell := hunter.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,

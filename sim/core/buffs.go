@@ -699,7 +699,7 @@ func registerTricksOfTheTradeCD(agent Agent, numTricksOfTheTrades int32) {
 			Type:             CooldownTypeDPS,
 
 			ShouldActivate: func(sim *Simulation, character *Character) bool {
-				return true
+				return !agent.GetCharacter().GetExclusiveEffectCategory("PercentDamageModifier").AnyActive()
 			},
 			AddAura: func(sim *Simulation, character *Character) { TotTAura.Activate(sim) },
 		},
@@ -709,7 +709,7 @@ func registerTricksOfTheTradeCD(agent Agent, numTricksOfTheTrades int32) {
 func TricksOfTheTradeAura(character *Character, actionTag int32, glyphed bool) *Aura {
 	actionID := ActionID{SpellID: 57933, Tag: actionTag}
 
-	return character.GetOrRegisterAura(Aura{
+	aura := character.GetOrRegisterAura(Aura{
 		Label:    "TricksOfTheTrade-" + actionID.String(),
 		Tag:      TricksOfTheTradeAuraTag,
 		ActionID: actionID,
@@ -721,6 +721,9 @@ func TricksOfTheTradeAura(character *Character, actionTag int32, glyphed bool) *
 			character.PseudoStats.DamageDealtMultiplier /= 1.15
 		},
 	})
+
+	RegisterPercentDamageModifierEffect(aura, 1.15)
+	return aura
 }
 
 var UnholyFrenzyAuraTag = "UnholyFrenzy"
@@ -746,7 +749,7 @@ func registerUnholyFrenzyCD(agent Agent, numUnholyFrenzy int32) {
 			Type:             CooldownTypeDPS,
 
 			ShouldActivate: func(sim *Simulation, character *Character) bool {
-				return true
+				return !agent.GetCharacter().GetExclusiveEffectCategory("PercentDamageModifier").AnyActive()
 			},
 			AddAura: func(sim *Simulation, character *Character) { ufAura.Activate(sim) },
 		},
@@ -756,7 +759,7 @@ func registerUnholyFrenzyCD(agent Agent, numUnholyFrenzy int32) {
 func UnholyFrenzyAura(character *Character, actionTag int32) *Aura {
 	actionID := ActionID{SpellID: 49016, Tag: actionTag}
 
-	return character.GetOrRegisterAura(Aura{
+	aura := character.GetOrRegisterAura(Aura{
 		Label:    "UnholyFrenzy-" + actionID.String(),
 		Tag:      UnholyFrenzyAuraTag,
 		ActionID: actionID,
@@ -767,6 +770,15 @@ func UnholyFrenzyAura(character *Character, actionTag int32) *Aura {
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			character.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] /= 1.2
 		},
+	})
+
+	RegisterPercentDamageModifierEffect(aura, 1.2)
+	return aura
+}
+
+func RegisterPercentDamageModifierEffect(aura *Aura, percentDamageModifier float64) *ExclusiveEffect {
+	return aura.NewExclusiveEffect("PercentDamageModifier", false, ExclusiveEffect{
+		Priority: percentDamageModifier,
 	})
 }
 
