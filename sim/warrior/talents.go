@@ -561,6 +561,7 @@ func (warrior *Warrior) applyWreckingCrew() {
 			procAura.Activate(sim)
 		},
 	})
+	core.RegisterPercentDamageModifierEffect(procAura, bonus)
 }
 
 func (warrior *Warrior) IsSuddenDeathActive() bool {
@@ -693,6 +694,7 @@ func (warrior *Warrior) registerDeathWishCD() {
 			warrior.PseudoStats.DamageTakenMultiplier /= 1.05
 		},
 	})
+	core.RegisterPercentDamageModifierEffect(deathWishAura, 1.2)
 
 	deathWishSpell := warrior.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
