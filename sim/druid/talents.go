@@ -28,7 +28,7 @@ func (druid *Druid) ApplyTalents() {
 	druid.PseudoStats.CastSpeedMultiplier *= 1 + (float64(druid.Talents.CelestialFocus) * 0.01)
 	druid.PseudoStats.DamageDealtMultiplier *= 1 + (float64(druid.Talents.EarthAndMoon) * 0.02)
 	druid.PseudoStats.SpiritRegenRateCasting = float64(druid.Talents.Intensity) * (0.5 / 3)
-	druid.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1 + 0.02*float64(druid.Talents.Naturalist)
+	druid.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1 + 0.01*float64(druid.Talents.Naturalist)
 	druid.AddStat(stats.Armor, druid.ScaleBaseArmor(druid.ThickHideMultiplier()-1.0))
 
 	if druid.Talents.LunarGuidance > 0 {
