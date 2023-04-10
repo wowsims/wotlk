@@ -1097,14 +1097,27 @@ export class ItemList<T> {
 			player.sim.showExperimentalChangeEmitter.on(() => {
 				simAllButton.hidden = !player.sim.getShowExperimental();
 			});
-			simAllButton.addEventListener('click', event => {
+			simAllButton.addEventListener('click', (event) => {
 				if (simUI instanceof IndividualSimUI) {
 					let itemSpecs = Array<ItemSpec>();
-					simUI.sim.db.getItems(config.slot).forEach((item) => {
-						if (item.ilvl >= 200) {
-							itemSpecs.push(ItemSpec.create({ id: item.id }));
+					if (this.listItemElems.length != this.itemData.length) {
+						console.log("difference...", this.listItemElems, this.itemData);
+					}
+					this.listItemElems.forEach((elem, index) => {
+						if (elem.classList.contains('hidden')) {
+							return;
 						}
-					})
+						const idata = this.itemData[index];
+						// Add any item that is either >0 EP or a trinket/ranged item.
+						if ( idata.baseEP > 0 || 
+							this.slot == ItemSlot.ItemSlotRanged ||
+							this.slot == ItemSlot.ItemSlotTrinket1 ||
+							this.slot == ItemSlot.ItemSlotTrinket2 ) {
+							itemSpecs.push(ItemSpec.create({ id: idata.id }));
+						}
+						
+					});
+
 					simUI.bt.importItems(itemSpecs);
 					simUI.bt.setCombinations(false);
 					// TODO: should we open the bulk sim UI or should we run in the background showing progress, and then sort the items in the picker?

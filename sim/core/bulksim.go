@@ -88,6 +88,31 @@ func (b *bulkSimRunner) Run(pctx context.Context, progress chan *proto.ProgressM
 	if playerCount != 1 || player == nil {
 		return nil, fmt.Errorf("bulksim: expected exactly 1 player, found %d", playerCount)
 	}
+	if player.GetDatabase() != nil {
+		addToDatabase(player.GetDatabase())
+	}
+
+	// Gemming for now can happen before slots are decided.
+	// We might have to add logic after slot decisions if we want to enforce keeping meta gem active.
+	if b.Request.BulkSettings.AutoGem {
+		for _, replaceItem := range b.Request.BulkSettings.Items {
+			itemData := ItemsByID[replaceItem.Id]
+			if len(replaceItem.Gems) < len(itemData.GemSockets) {
+				sockets := make([]int32, len(itemData.GemSockets))
+				copy(sockets, replaceItem.Gems)
+				for i, color := range itemData.GemSockets {
+					if ColorIntersects(color, proto.GemColor_GemColorRed) {
+						sockets[i] = b.Request.BulkSettings.DefaultRedGem
+					} else if ColorIntersects(color, proto.GemColor_GemColorYellow) {
+						sockets[i] = b.Request.BulkSettings.DefaultYellowGem
+					} else if ColorIntersects(color, proto.GemColor_GemColorBlue) {
+						sockets[i] = b.Request.BulkSettings.DefaultBlueGem
+					}
+				}
+				replaceItem.Gems = sockets
+			}
+		}
+	}
 
 	iterations := b.Request.GetBulkSettings().GetIterationsPerCombo()
 	if iterations <= 0 {
@@ -104,10 +129,6 @@ func (b *bulkSimRunner) Run(pctx context.Context, progress chan *proto.ProgressM
 	// want to bulk sim is a one-handed item that can be worn both as an off-hand or a main-hand weapon.
 	// For each slot, we will create one itemWithSlot pair, so (item, off-hand) and (item, main-hand).
 	// We verify later that we are not emitting any invalid equipment set.
-	if player.GetDatabase() != nil {
-		addToDatabase(player.GetDatabase())
-	}
-
 	var distinctItemSlotCombos []*itemWithSlot
 	for index, is := range items {
 		item, ok := ItemsByID[is.Id]
@@ -128,7 +149,7 @@ func (b *bulkSimRunner) Run(pctx context.Context, progress chan *proto.ProgressM
 
 	validCombos := []singleBulkSim{}
 	for sub := range allCombos {
-		substitutedRequest, changeLog := createNewRequestWithSubstitution(b.Request.BaseSettings, sub)
+		substitutedRequest, changeLog := createNewRequestWithSubstitution(b.Request.BaseSettings, sub, b.Request.BulkSettings.AutoEnchant)
 		if isValidEquipment(substitutedRequest.Raid.Parties[0].Players[0].Equipment) {
 			validCombos = append(validCombos, singleBulkSim{req: substitutedRequest, cl: changeLog, eq: sub})
 		}
@@ -539,18 +560,33 @@ type raidSimRequestChangeLog struct {
 }
 
 // createNewRequestWithSubstitution creates a copy of the input RaidSimRequest and applis the given
-// equipment susbstitution to the player's equipment.
-func createNewRequestWithSubstitution(readonlyInputRequest *proto.RaidSimRequest, substitution *equipmentSubstitution) (*proto.RaidSimRequest, *raidSimRequestChangeLog) {
+// equipment susbstitution to the player's equipment. Copies enchant if specified and possible.
+func createNewRequestWithSubstitution(readonlyInputRequest *proto.RaidSimRequest, substitution *equipmentSubstitution, autoEnchant bool) (*proto.RaidSimRequest, *raidSimRequestChangeLog) {
 	request := goproto.Clone(readonlyInputRequest).(*proto.RaidSimRequest)
 	changeLog := &raidSimRequestChangeLog{}
 	player := request.Raid.Parties[0].Players[0]
 	equipment := player.Equipment
 	for _, is := range substitution.Items {
-		changeLog.AddedItems = append(changeLog.AddedItems, &proto.ItemSpecWithSlot{
-			Item: is.Item,
-			Slot: proto.ItemSlot(is.Slot),
-		})
-		equipment.Items[is.Slot] = is.Item
+		oldItem := equipment.Items[is.Slot]
+		if autoEnchant && oldItem.Enchant > 0 && is.Item.Enchant == 0 {
+			equipment.Items[is.Slot] = goproto.Clone(is.Item).(*proto.ItemSpec)
+			equipment.Items[is.Slot].Enchant = oldItem.Enchant
+			// TODO: logic to decide if the enchant can be applied to the new item...
+			// Specifically, offhand shouldn't get shield enchant
+			// Main/One hand shouldn't get staff enchant
+			// Later: replace normal enchant if replacement is staff.
+
+			changeLog.AddedItems = append(changeLog.AddedItems, &proto.ItemSpecWithSlot{
+				Item: equipment.Items[is.Slot],
+				Slot: proto.ItemSlot(is.Slot),
+			})
+		} else {
+			equipment.Items[is.Slot] = is.Item
+			changeLog.AddedItems = append(changeLog.AddedItems, &proto.ItemSpecWithSlot{
+				Item: is.Item,
+				Slot: proto.ItemSlot(is.Slot),
+			})
+		}
 	}
 	return request, changeLog
 }

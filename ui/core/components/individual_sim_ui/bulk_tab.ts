@@ -237,6 +237,7 @@ export class BulkTab extends SimTab {
   private doCombos: boolean;
   private fastMode: boolean;
   private autoGem: boolean;
+  private autoEnchant: boolean;
   private defaultGems: SimGem[];
 
   constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>) {
@@ -262,20 +263,25 @@ export class BulkTab extends SimTab {
     this.doCombos = true;
     this.fastMode = false;
     this.autoGem = false;
+    this.autoEnchant = true;
     this.defaultGems = [UIGem.create(), UIGem.create(), UIGem.create(), UIGem.create()];
     this.buildTabContent();
   }
 
   protected createBulkSettings(): BulkSettings {
+
     return BulkSettings.create({
       items: this.items,
-
       // TODO(Riotdog-GehennasEU): Make all of these configurable.
       // For now, it's always constant iteration combinations mode for "sim my bags".
       combinations: this.doCombos,
       fastMode: this.fastMode,
-      autoEnchant: false,
+      autoEnchant: this.autoEnchant,
       autoGem: this.autoGem,
+      defaultRedGem: this.defaultGems[0].id,
+      defaultYellowGem: this.defaultGems[1].id,
+      defaultBlueGem: this.defaultGems[2].id,
+      defaultMetaGem: this.defaultGems[3].id,
       iterationsPerCombo: this.simUI.sim.getIterations(), // TODO(Riotdog-GehennasEU): Define a new UI element for the iteration setting.
     });
   }
@@ -295,6 +301,11 @@ export class BulkTab extends SimTab {
         if (gem) {
           itemsDb.gems.push(SimGem.fromJson(UIGem.toJson(gem), { ignoreUnknownFields: true }));
         }
+      }
+    }
+    for (const gem of this.defaultGems) {
+      if (gem.id > 0) {
+        itemsDb.gems.push(gem);
       }
     }
     return itemsDb;
@@ -488,7 +499,7 @@ export class BulkTab extends SimTab {
     const gemSocketsDiv = document.createElement("div");
     gemSocketsDiv.classList.add("sockets-container");
 
-    Array<GemColor>(GemColor.GemColorBlue, GemColor.GemColorRed, GemColor.GemColorYellow, GemColor.GemColorMeta).forEach((socketColor, socketIndex) => {
+    Array<GemColor>(GemColor.GemColorRed, GemColor.GemColorYellow, GemColor.GemColorBlue, GemColor.GemColorMeta).forEach((socketColor, socketIndex) => {
       let gemFragment = document.createElement('fragment');
       gemFragment.innerHTML = `
           <div class="gem-socket-container">
@@ -503,6 +514,7 @@ export class BulkTab extends SimTab {
       socketIconElem.src = getEmptyGemSocketIconUrl(socketColor);
     
       let selector: GemSelectorModal;
+      
       let handleChoose = (itemData: ItemData<UIGem>) => {
         this.defaultGems[socketIndex] = itemData.item;
         ActionId.fromItemId(itemData.id).fill().then(filledId => {
@@ -539,6 +551,20 @@ export class BulkTab extends SimTab {
       changedEvent: (obj: BulkTab) => this.itemsChangedEmitter,
       getValue: (obj) => this.doCombos,
       setValue: (id: EventID, obj: BulkTab, value: boolean) => { obj.doCombos = value }
+    });
+    new BooleanPicker<BulkTab>(settingsBlock.bodyElement, this, {
+      label: "Auto Enchant",
+      labelTooltip: "When checked bulk simulator apply the current enchant for a slot to each replacement item it can.",
+      changedEvent: (obj: BulkTab) => this.itemsChangedEmitter,
+      getValue: (obj) => this.autoEnchant,
+      setValue: (id: EventID, obj: BulkTab, value: boolean) => { 
+        obj.autoEnchant = value 
+        if (value) {
+          defaultGemDiv.style.display = "flex";
+        } else {
+          defaultGemDiv.style.display = "none";
+        }
+      }
     });
     new BooleanPicker<BulkTab>(settingsBlock.bodyElement, this, {
       label: "Auto Gem",
@@ -586,7 +612,6 @@ export class BulkTab extends SimTab {
 class GemSelectorModal extends BaseModal {
 	private readonly simUI: IndividualSimUI<Spec>;
 
-	private readonly tabsElem: HTMLElement;
 	private readonly contentElem: HTMLElement;
   private ilist: ItemList<UIGem> | null;
   private socketColor: GemColor;
@@ -603,16 +628,14 @@ class GemSelectorModal extends BaseModal {
 		window.scrollTo({ top: 0 });
 
 		this.header!.insertAdjacentHTML('afterbegin', `<span>Choose Default Gem</span>`);
-
 		this.body.innerHTML = `<div class="tab-content selector-modal-tab-content"></div>`
-
-		this.tabsElem = this.rootElem.querySelector('.selector-modal-tabs') as HTMLElement;
 		this.contentElem = this.rootElem.querySelector('.selector-modal-tab-content') as HTMLElement;
 	}
 
   show() {
+    // construct item list the first time its opened. 
+    // This makes startup faster and also means we are sure to have item database loaded.
     if (this.ilist == null) {
-
       this.ilist = new ItemList<UIGem>(
         this.body,
         this.simUI,
@@ -663,7 +686,7 @@ class GemSelectorModal extends BaseModal {
   
       this.simUI.sim.phaseChangeEmitter.on(applyFilter);
       this.simUI.sim.filtersChangeEmitter.on(applyFilter);
-      // gearData.changeEvent.on(applyFilter);  
+      // gearData.changeEvent.on(applyFilter);
     }
 
     this.open();
