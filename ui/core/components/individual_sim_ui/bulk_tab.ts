@@ -312,7 +312,11 @@ export class BulkTab extends SimTab {
   }
 
   importItems(items: Array<ItemSpec>) {
-    this.items = items;
+    if (this.items == null || this.items.length == 0) {
+      this.items = items;
+    } else {
+      this.items = this.items.concat(items);
+    }
     this.itemsChangedEmitter.emit(TypedEvent.nextEventID());
   }
 
@@ -473,11 +477,23 @@ export class BulkTab extends SimTab {
     importButton.addEventListener('click', () => new BulkGearJsonImporter(this.simUI.rootElem, this.simUI, this));
     settingsBlock.bodyElement.appendChild(importButton);
 
+    const importFavsButton = document.createElement('button');
+    importFavsButton.classList.add('btn', 'btn-secondary', 'w-100', 'bulk-settings-button');
+    importFavsButton.innerHTML = '<i class="fa fa-download"></i> Import Favorites';
+    importFavsButton.addEventListener('click', () => {
+      const filters = this.simUI.player.sim.getFilters();
+      const items = filters.favoriteItems.map((itemID) => {
+        return ItemSpec.create({id: itemID});
+      });
+      this.importItems(items);
+    });
+    settingsBlock.bodyElement.appendChild(importFavsButton);
+
     const clearButton = document.createElement('button');
     clearButton.classList.add('btn', 'btn-secondary', 'w-100', 'bulk-settings-button');
     clearButton.textContent = 'Clear All';
     clearButton.addEventListener('click', () => {
-      this.importItems(new Array<ItemSpec>());
+      this.items = new Array<ItemSpec>();
       resultsBlock.rootElem.hidden = true;
       resultsBlock.bodyElement.innerHTML = '';
     });

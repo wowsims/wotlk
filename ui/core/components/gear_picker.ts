@@ -1100,6 +1100,9 @@ export class ItemList<T> {
 			simAllButton.addEventListener('click', (event) => {
 				if (simUI instanceof IndividualSimUI) {
 					let itemSpecs = Array<ItemSpec>();
+					const isRangedOrTrinket = this.slot == ItemSlot.ItemSlotRanged ||
+					this.slot == ItemSlot.ItemSlotTrinket1 ||
+					this.slot == ItemSlot.ItemSlotTrinket2
 
 					const curItem = this.equippedToItemFn(this.player.getEquippedItem(this.slot));
 					let curEP = 0;
@@ -1108,19 +1111,18 @@ export class ItemList<T> {
 					}
 					
 					this.listItemElems.forEach((elem, index) => {
+						// skip items already filtered out.
 						if (elem.classList.contains('hidden')) {
 							return;
 						}
+
 						const idata = this.itemData[index];
-						if (curEP > 0 && idata.baseEP < (curEP / 2) ) {
+						if (!isRangedOrTrinket && curEP > 0 && idata.baseEP < (curEP / 2) ) {
 							return; // If we have EPs on current item, dont sim items with less than half the EP.
 						}
 
 						// Add any item that is either >0 EP or a trinket/ranged item.
-						if ( idata.baseEP > 0 || 
-							this.slot == ItemSlot.ItemSlotRanged ||
-							this.slot == ItemSlot.ItemSlotTrinket1 ||
-							this.slot == ItemSlot.ItemSlotTrinket2 ) {
+						if ( idata.baseEP > 0 || isRangedOrTrinket ) {
 							itemSpecs.push(ItemSpec.create({ id: idata.id }));
 						}
 						
