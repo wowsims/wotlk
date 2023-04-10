@@ -66,6 +66,8 @@ type Rogue struct {
 	InstantPoison    [3]*core.Spell
 	WoundPoison      [3]*core.Spell
 	Mutilate         *core.Spell
+	MutilateMH       *core.Spell
+	MutilateOH       *core.Spell
 	Shiv             *core.Spell
 	SinisterStrike   *core.Spell
 	TricksOfTheTrade *core.Spell
