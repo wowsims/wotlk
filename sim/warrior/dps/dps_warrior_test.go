@@ -139,8 +139,9 @@ var armsRotation = &proto.Warrior_Rotation{
 }
 
 var furyRotation = &proto.Warrior_Rotation{
-	UseRend:   false,
-	UseCleave: false,
+	UseRend:      true,
+	UseCleave:    false,
+	UseOverpower: false,
 
 	HsRageThreshold:          30,
 	RendRageThresholdBelow:   100,

@@ -126,7 +126,7 @@ func (war *DpsWarrior) furyNormalRotation(sim *core.Simulation) {
 			war.BattleStance.Cast(sim, nil)
 		}
 		war.Rend.Cast(sim, war.CurrentTarget)
-	} else if war.ShouldOverpower(sim) {
+	} else if war.Rotation.UseOverpower && war.ShouldOverpower(sim) {
 		if !war.StanceMatches(warrior.BattleStance) {
 			if !war.BattleStance.IsReady(sim) {
 				return
@@ -196,6 +196,15 @@ func (war *DpsWarrior) furyExecuteRotation(sim *core.Simulation) {
 			war.BattleStance.Cast(sim, nil)
 		}
 		war.Rend.Cast(sim, war.CurrentTarget)
+	} else if war.Rotation.UseOverpower && war.Rotation.ExecutePhaseOverpower &&
+		war.ShouldOverpower(sim) {
+		if !war.StanceMatches(warrior.BattleStance) {
+			if !war.BattleStance.IsReady(sim) {
+				return
+			}
+			war.BattleStance.Cast(sim, nil)
+		}
+		war.Overpower.Cast(sim, war.CurrentTarget)
 	} else if war.Execute.CanCast(sim, war.CurrentTarget) {
 		war.CastExecute(sim, war.CurrentTarget)
 	}

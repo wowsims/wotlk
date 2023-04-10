@@ -66,6 +66,8 @@ export const DefaultRotation = WarriorRotation.create({
 	useRend: true,
 	useMs: true,
 	useCleave: false,
+	useOverpower: false,
+	executePhaseOverpower: false,
 
 	mainGcd: MainGcd.Slam,
 
