@@ -58,6 +58,13 @@ func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 			Spell:    rogue.TricksOfTheTrade,
 			Priority: core.CooldownPriorityDrums,
 			Type:     core.CooldownTypeDPS,
+			ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
+				if hasShadowblades {
+					return rogue.CurrentEnergy() <= rogue.maxEnergy-15-rogue.EnergyTickMultiplier*10
+				} else {
+					return rogue.CurrentEnergy() >= rogue.TricksOfTheTrade.DefaultCast.Cost
+				}
+			},
 		})
 	}
 }

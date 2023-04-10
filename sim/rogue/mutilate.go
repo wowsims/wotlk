@@ -54,8 +54,8 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 }
 
 func (rogue *Rogue) registerMutilateSpell() {
-	mhHitSpell := rogue.newMutilateHitSpell(true)
-	ohHitSpell := rogue.newMutilateHitSpell(false)
+	rogue.MutilateMH = rogue.newMutilateHitSpell(true)
+	rogue.MutilateOH = rogue.newMutilateHitSpell(false)
 
 	rogue.Mutilate = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: MutilateSpellID},
@@ -80,8 +80,8 @@ func (rogue *Rogue) registerMutilateSpell() {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit) // Miss/Dodge/Parry/Hit
 			if result.Landed() {
 				rogue.AddComboPoints(sim, 2, spell.ComboPointMetrics())
-				ohHitSpell.Cast(sim, target)
-				mhHitSpell.Cast(sim, target)
+				rogue.MutilateOH.Cast(sim, target)
+				rogue.MutilateMH.Cast(sim, target)
 			} else {
 				spell.IssueRefund(sim)
 			}
