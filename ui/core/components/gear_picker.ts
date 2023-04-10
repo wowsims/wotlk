@@ -505,7 +505,7 @@ export class SelectorModal extends BaseModal {
 
 		const { slot, equippedItem, eligibleItems, eligibleEnchants, gearData } = this.config;
 
-		this.addTab(
+		this.addTab<Item>(
 			'Items',
 			eligibleItems.map(item => {
 				return {
@@ -535,7 +535,7 @@ export class SelectorModal extends BaseModal {
 				gearData.equipItem(eventID, null);
 			});
 
-		this.addTab(
+		this.addTab<Enchant>(
 			'Enchants',
 			eligibleEnchants.map(enchant => {
 				return {
@@ -574,7 +574,7 @@ export class SelectorModal extends BaseModal {
 
 		const socketBonusEP = this.player.computeStatsEP(new Stats(equippedItem.item.socketBonus)) / (equippedItem.item.gemSockets.length || 1);
 		equippedItem.curSocketColors(this.player.isBlacksmithing()).forEach((socketColor, socketIdx) => {
-			this.addTab(
+			this.addTab<Gem>(
 				'Gem ' + (socketIdx + 1),
 				this.player.getGems(socketColor).map((gem: Gem) => {
 					return {
@@ -711,7 +711,7 @@ export class SelectorModal extends BaseModal {
 			return;
 		}
 
-		let ilist = new ItemList(
+		let ilist = new ItemList<T>(
 			this.contentElem,
 			this.simUI,
 			this.config,
@@ -868,7 +868,7 @@ export class ItemList<T> {
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-1h-weapons"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-2h-weapons"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-matching-gems"></div>
-					<button class="selector-modal-simall-button btn btn-warning">Add to Bulk Sim</button>
+					<button class="selector-modal-simall-button btn btn-warning">Add to Batch Sim</button>
 					<button class="selector-modal-remove-button btn btn-danger">Unequip Item</button>
 				</div>
 				<div style="width: 100%;height: 30px;font-size: 18px;">
@@ -1091,7 +1091,7 @@ export class ItemList<T> {
 			}
 		});
 
-		if (!label.startsWith('Gem')) {
+		if (label == "Items") {
 			const simAllButton = tabContent.getElementsByClassName('selector-modal-simall-button')[0] as HTMLButtonElement;
 			simAllButton.hidden = !player.sim.getShowExperimental()
 			player.sim.showExperimentalChangeEmitter.on(() => {
@@ -1100,14 +1100,22 @@ export class ItemList<T> {
 			simAllButton.addEventListener('click', (event) => {
 				if (simUI instanceof IndividualSimUI) {
 					let itemSpecs = Array<ItemSpec>();
-					if (this.listItemElems.length != this.itemData.length) {
-						console.log("difference...", this.listItemElems, this.itemData);
+
+					const curItem = this.equippedToItemFn(this.player.getEquippedItem(this.slot));
+					let curEP = 0;
+					if (curItem != null) {
+						curEP = this.computeEP(curItem);
 					}
+					
 					this.listItemElems.forEach((elem, index) => {
 						if (elem.classList.contains('hidden')) {
 							return;
 						}
 						const idata = this.itemData[index];
+						if (curEP > 0 && idata.baseEP < (curEP / 2) ) {
+							return; // If we have EPs on current item, dont sim items with less than half the EP.
+						}
+
 						// Add any item that is either >0 EP or a trinket/ranged item.
 						if ( idata.baseEP > 0 || 
 							this.slot == ItemSlot.ItemSlotRanged ||

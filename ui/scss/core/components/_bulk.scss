@@ -123,7 +123,9 @@
   .default-gem-container {
     display: flex;
     flex-direction: column;
-
+    border-bottom: 1px solid white;
+    padding-bottom: 5px;
+    
     .gem-socket-container {
       height: 40px;
       width: 40px;

@@ -192,7 +192,8 @@ func (b *bulkSimRunner) Run(pctx context.Context, progress chan *proto.ProgressM
 			baseResult = tempBase
 		}
 
-		if !b.Request.BulkSettings.FastMode || len(rankedResults) <= maxResults {
+		// If we aren't doing fast mode, or if halving our results will be less than the maxResults, be done.
+		if !b.Request.BulkSettings.FastMode || len(rankedResults) <= maxResults*2 {
 			break
 		}
 

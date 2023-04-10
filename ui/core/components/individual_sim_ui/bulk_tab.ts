@@ -366,7 +366,7 @@ export class BulkTab extends SimTab {
     this.itemsChangedEmitter.on(() => {
       itemList.innerHTML = '';
       if (this.items.length > 0) {
-        itemTextIntro.textContent = 'The following items will be simmed in all possible combinations together with your equipped gear.';
+        itemTextIntro.textContent = 'The following items will be simmed together with your equipped gear.';
         for (let i = 0; i < this.items.length; ++i) {
           const spec = this.items[i];
           const item = this.simUI.sim.db.lookupItemSpec(spec);
@@ -404,18 +404,12 @@ export class BulkTab extends SimTab {
     });
 
     const settingsBlock = new ContentBlock(this.rightPanel, 'bulk-settings', {
-      header: { title: 'Import' }
+      header: { title: 'Setup' }
     });
-
-    const importButton = document.createElement('button');
-    importButton.classList.add('btn', 'btn-primary', 'w-100', 'bulk-settings-button');
-    importButton.innerHTML = '<i class="fa fa-download"></i> Import From Bags';
-    importButton.addEventListener('click', () => new BulkGearJsonImporter(this.simUI.rootElem, this.simUI, this));
-    settingsBlock.bodyElement.appendChild(importButton);
 
     const bulkSimButton = document.createElement('button');
     bulkSimButton.classList.add('btn', 'btn-primary', 'w-100', 'bulk-settings-button');
-    bulkSimButton.textContent = 'Run Bulk Sim';
+    bulkSimButton.textContent = 'Simulate Batch';
     bulkSimButton.addEventListener('click', () => {
 
       this.pendingDiv.style.display = "flex";
@@ -473,8 +467,14 @@ export class BulkTab extends SimTab {
 
     settingsBlock.bodyElement.appendChild(bulkSimButton);
 
+    const importButton = document.createElement('button');
+    importButton.classList.add('btn', 'btn-secondary', 'w-100', 'bulk-settings-button');
+    importButton.innerHTML = '<i class="fa fa-download"></i> Import From Bags';
+    importButton.addEventListener('click', () => new BulkGearJsonImporter(this.simUI.rootElem, this.simUI, this));
+    settingsBlock.bodyElement.appendChild(importButton);
+
     const clearButton = document.createElement('button');
-    clearButton.classList.add('btn', 'btn-primary', 'w-100', 'bulk-settings-button');
+    clearButton.classList.add('btn', 'btn-secondary', 'w-100', 'bulk-settings-button');
     clearButton.textContent = 'Clear All';
     clearButton.addEventListener('click', () => {
       this.importItems(new Array<ItemSpec>());
