@@ -46,6 +46,7 @@ func (warrior *Warrior) makeStanceSpell(stance Stance, aura *core.Aura, stanceCD
 				warrior.SpendRage(sim, warrior.CurrentRage()-maxRetainedRage, rageMetrics)
 			}
 
+			aura.Activate(sim)
 			warrior.Stance = stance
 		},
 	})
