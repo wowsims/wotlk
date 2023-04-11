@@ -156,13 +156,23 @@ func (character *Character) addUniversalStatDependencies() {
 	character.AddStatDependency(stats.Agility, stats.Armor, 2)
 }
 
+func (character *Character) applyHasteMultipliersAsHasteRating(charStats stats.Stats) stats.Stats {
+	equivalentMeleeHasteRating := (character.PseudoStats.MeleeSpeedMultiplier - 1) * character.PseudoStats.MeleeHasteRatingPerHastePercent * 100
+	equivalentSpellHasteRating := (character.PseudoStats.CastSpeedMultiplier - 1) * HasteRatingPerHastePercent * 100
+
+	charStats[stats.MeleeHaste] += equivalentMeleeHasteRating
+	charStats[stats.SpellHaste] += equivalentSpellHasteRating
+	return charStats
+}
+
 // Returns a partially-filled PlayerStats proto for use in the CharacterStats api call.
 func (character *Character) applyAllEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto.PartyBuffs, individualBuffs *proto.IndividualBuffs) *proto.PlayerStats {
 	playerStats := &proto.PlayerStats{}
 
 	measureStats := func() *proto.UnitStats {
+		effectiveStats := character.applyHasteMultipliersAsHasteRating(character.stats)
 		return &proto.UnitStats{
-			Stats:       character.SortAndApplyStatDependencies(character.stats).ToFloatArray(),
+			Stats:       character.SortAndApplyStatDependencies(effectiveStats).ToFloatArray(),
 			PseudoStats: character.GetPseudoStatsProto(),
 		}
 	}
@@ -416,8 +426,9 @@ func (character *Character) FillPlayerStats(playerStats *proto.PlayerStats) {
 	}
 
 	character.applyBuildPhaseAuras(CharacterBuildPhaseAll)
+	effectiveStats := character.applyHasteMultipliersAsHasteRating(character.GetStats())
 	playerStats.FinalStats = &proto.UnitStats{
-		Stats:       character.GetStats().ToFloatArray(),
+		Stats:       effectiveStats.ToFloatArray(),
 		PseudoStats: character.GetPseudoStatsProto(),
 	}
 	character.clearBuildPhaseAuras(CharacterBuildPhaseAll)
