@@ -157,8 +157,14 @@ func (character *Character) addUniversalStatDependencies() {
 }
 
 func (character *Character) applyHasteMultipliersAsHasteRating(charStats stats.Stats) stats.Stats {
-	equivalentMeleeHasteRating := (character.PseudoStats.MeleeSpeedMultiplier - 1) * character.PseudoStats.MeleeHasteRatingPerHastePercent * 100
-	equivalentSpellHasteRating := (character.PseudoStats.CastSpeedMultiplier - 1) * HasteRatingPerHastePercent * 100
+	meleeHasteMultiplierFromRating := 1 + charStats[stats.MeleeHaste]/(character.PseudoStats.MeleeHasteRatingPerHastePercent*100)
+	spellHasteMultiplierFromRating := 1 + charStats[stats.SpellHaste]/(HasteRatingPerHastePercent*100)
+
+	totalMeleeHasteMultiplier := meleeHasteMultiplierFromRating * character.PseudoStats.MeleeSpeedMultiplier
+	totalSpellHasteMultiplier := spellHasteMultiplierFromRating * character.PseudoStats.CastSpeedMultiplier
+
+	equivalentMeleeHasteRating := (totalMeleeHasteMultiplier - 1) * character.PseudoStats.MeleeHasteRatingPerHastePercent * 100
+	equivalentSpellHasteRating := (totalSpellHasteMultiplier - 1) * HasteRatingPerHastePercent * 100
 
 	charStats[stats.MeleeHaste] += toFixed(equivalentMeleeHasteRating, 0)
 	charStats[stats.SpellHaste] += toFixed(equivalentSpellHasteRating, 0)
