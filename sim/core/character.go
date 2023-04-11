@@ -160,8 +160,8 @@ func (character *Character) applyHasteMultipliersAsHasteRating(charStats stats.S
 	equivalentMeleeHasteRating := (character.PseudoStats.MeleeSpeedMultiplier - 1) * character.PseudoStats.MeleeHasteRatingPerHastePercent * 100
 	equivalentSpellHasteRating := (character.PseudoStats.CastSpeedMultiplier - 1) * HasteRatingPerHastePercent * 100
 
-	charStats[stats.MeleeHaste] += equivalentMeleeHasteRating
-	charStats[stats.SpellHaste] += equivalentSpellHasteRating
+	charStats[stats.MeleeHaste] += toFixed(equivalentMeleeHasteRating, 0)
+	charStats[stats.SpellHaste] += toFixed(equivalentSpellHasteRating, 0)
 	return charStats
 }
 
