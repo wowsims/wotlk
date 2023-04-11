@@ -47,6 +47,12 @@ export const Munch = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecWarrior>(
 	labelTooltip: 'Apply "munching" to Deep Wounds',
 });
 
+export const StanceSnapshot = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecWarrior>({
+	fieldName: 'stanceSnapshot',
+	label: 'Stance Snapshot',
+	labelTooltip: 'Ability that is cast at the same time as stance swap will benefit from the bonus of the stance before the swap.',
+});
+
 export const ShoutPicker = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecWarrior, WarriorShout>({
 	fieldName: 'shout',
 	values: [

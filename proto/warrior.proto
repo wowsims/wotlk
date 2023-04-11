@@ -210,6 +210,7 @@ message Warrior {
 		bool use_shattering_throw = 4;
 		WarriorShout shout = 3;
 		bool munch = 5;
+		bool stance_snapshot = 6;
 	}
 	Options options = 3;
 }
