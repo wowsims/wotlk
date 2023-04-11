@@ -1091,8 +1091,8 @@ export class ItemList<T> {
 			}
 		});
 
+		const simAllButton = tabContent.getElementsByClassName('selector-modal-simall-button')[0] as HTMLButtonElement;
 		if (label == "Items") {
-			const simAllButton = tabContent.getElementsByClassName('selector-modal-simall-button')[0] as HTMLButtonElement;
 			simAllButton.hidden = !player.sim.getShowExperimental()
 			player.sim.showExperimentalChangeEmitter.on(() => {
 				simAllButton.hidden = !player.sim.getShowExperimental();
@@ -1131,6 +1131,9 @@ export class ItemList<T> {
 					// TODO: should we open the bulk sim UI or should we run in the background showing progress, and then sort the items in the picker?
 				}
 			});
+		} else {
+			// always hide non-items from being added to batch.
+			simAllButton.hidden = true;
 		}
 
 		this.applyFilters();
