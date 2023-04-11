@@ -582,8 +582,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-Shadowblade'sBattlegear"
  value: {
-  dps: 6677.94077
-  tps: 4741.33795
+  dps: 6670.11079
+  tps: 4735.77866
  }
 }
 dps_results: {

@@ -7,10 +7,10 @@ import { TypedEvent } from "../../typed_event";
 
 import { EventID } from '../../typed_event.js';
 
-import { EquipmentSpec, ItemSpec, SimDatabase, SimEnchant, SimGem, SimItem, Spec } from "../../proto/common";
+import { EquipmentSpec, GemColor, ItemSlot, ItemSpec, SimDatabase, SimEnchant, SimGem, SimItem, Spec } from "../../proto/common";
 import { BulkComboResult, BulkSettings, ItemSpecWithSlot, ProgressMetrics } from "../../proto/api";
 
-import { ItemRenderer, SelectorModal, SelectorModalTabs } from "../gear_picker";
+import { ItemData, ItemList, ItemRenderer, SelectorModal, SelectorModalTabs } from "../gear_picker";
 import { SimTab } from "../sim_tab";
 
 import { UIEnchant, UIGem, UIItem } from "../../proto/ui";
@@ -20,7 +20,11 @@ import { ResultsViewer } from "../results_viewer";
 
 import { Popover, Tooltip } from 'bootstrap';
 import { BooleanPicker } from "../boolean_picker";
+import { gemMatchesSocket, getEmptyGemSocketIconUrl } from "../../proto_utils/gems";
 import { getEligibleItemSlots } from "../../proto_utils/utils";
+import { ActionId } from "../../proto_utils/action_id";
+import { BaseModal } from "../base_modal";
+import { SimUI } from "ui/core/sim_ui";
 
 export class BulkGearJsonImporter<SpecType extends Spec> extends Importer {
   private readonly simUI: IndividualSimUI<SpecType>;
@@ -74,14 +78,14 @@ class BulkSimResultRenderer {
     const dpsDiv = document.createElement('div');
     dpsDiv.classList.add('bulk-result-body-dps', 'bulk-items-text-line', 'results-sim-dps', 'damage-metrics');
     dpsDivParent.appendChild(dpsDiv);
-    
+
     const dpsNumber = document.createElement('span');
     dpsNumber.textContent = this.formatDps(result.unitMetrics?.dps?.avg!);
     dpsNumber.classList.add('topline-result-avg');
     dpsDiv.appendChild(dpsNumber);
 
     const dpsDelta = result.unitMetrics?.dps?.avg! - baseResult.unitMetrics?.dps?.avg!;
-    const dpsDeltaSpan = document.createElement('span'); 
+    const dpsDeltaSpan = document.createElement('span');
     dpsDeltaSpan.textContent = `${this.formatDpsDelta(dpsDelta)}`;
     dpsDeltaSpan.classList.add(dpsDelta >= 0 ? 'bulk-result-header-positive' : 'bulk-result-header-negative');
     dpsDiv.appendChild(dpsDeltaSpan);
@@ -95,11 +99,11 @@ class BulkSimResultRenderer {
         const item = simUI.sim.db.lookupItemSpec(is.item!)
         const renderer = new ItemRenderer(itemsContainer, simUI.player);
         renderer.update(item!);
-  
+
         const p = document.createElement('a');
         p.classList.add('bulk-result-item-slot');
         p.textContent = this.itemSlotName(is);
-        renderer.nameElem.appendChild(p); 
+        renderer.nameElem.appendChild(p);
       }
     } else {
       const p = document.createElement('p');
@@ -114,11 +118,11 @@ class BulkSimResultRenderer {
   }
 
   private formatDpsDelta(delta: number): string {
-    return ((delta >= 0) ? "+" : "") + this.formatDps(delta); 
+    return ((delta >= 0) ? "+" : "") + this.formatDps(delta);
   }
 
   private itemSlotName(is: ItemSpecWithSlot): string {
-    return JSON.parse(ItemSpecWithSlot.toJsonString(is, {emitDefaultValues: true}))['slot'].replace('ItemSlot', '')
+    return JSON.parse(ItemSpecWithSlot.toJsonString(is, { emitDefaultValues: true }))['slot'].replace('ItemSlot', '')
   }
 }
 
@@ -216,7 +220,7 @@ export class BulkItemPicker extends Component {
 
 export class BulkTab extends SimTab {
   readonly simUI: IndividualSimUI<Spec>;
-  
+
   readonly itemsChangedEmitter = new TypedEvent<void>();
 
   readonly leftPanel: HTMLElement;
@@ -232,9 +236,12 @@ export class BulkTab extends SimTab {
   // TODO: Make a real options probably
   private doCombos: boolean;
   private fastMode: boolean;
+  private autoGem: boolean;
+  private autoEnchant: boolean;
+  private defaultGems: SimGem[];
 
   constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>) {
-    super(parentElem, simUI, {identifier: 'bulk-tab', title: 'Bulk'});
+    super(parentElem, simUI, { identifier: 'bulk-tab', title: 'Batch' });
     this.simUI = simUI;
 
     this.leftPanel = document.createElement('div');
@@ -248,26 +255,33 @@ export class BulkTab extends SimTab {
     this.pendingDiv.classList.add("results-pending-overlay");
     this.pendingResults = new ResultsViewer(this.pendingDiv);
     this.pendingResults.hideAll();
-
+    
     this.contentContainer.appendChild(this.leftPanel);
     this.contentContainer.appendChild(this.rightPanel);
     this.contentContainer.appendChild(this.pendingDiv);
 
     this.doCombos = true;
     this.fastMode = false;
+    this.autoGem = false;
+    this.autoEnchant = true;
+    this.defaultGems = [UIGem.create(), UIGem.create(), UIGem.create(), UIGem.create()];
     this.buildTabContent();
   }
 
   protected createBulkSettings(): BulkSettings {
+
     return BulkSettings.create({
       items: this.items,
-
       // TODO(Riotdog-GehennasEU): Make all of these configurable.
       // For now, it's always constant iteration combinations mode for "sim my bags".
       combinations: this.doCombos,
       fastMode: this.fastMode,
-      autoEnchant: false,
-      autoGem: false,
+      autoEnchant: this.autoEnchant,
+      autoGem: this.autoGem,
+      defaultRedGem: this.defaultGems[0].id,
+      defaultYellowGem: this.defaultGems[1].id,
+      defaultBlueGem: this.defaultGems[2].id,
+      defaultMetaGem: this.defaultGems[3].id,
       iterationsPerCombo: this.simUI.sim.getIterations(), // TODO(Riotdog-GehennasEU): Define a new UI element for the iteration setting.
     });
   }
@@ -289,11 +303,20 @@ export class BulkTab extends SimTab {
         }
       }
     }
+    for (const gem of this.defaultGems) {
+      if (gem.id > 0) {
+        itemsDb.gems.push(gem);
+      }
+    }
     return itemsDb;
   }
 
   importItems(items: Array<ItemSpec>) {
-    this.items = items;
+    if (this.items == null || this.items.length == 0) {
+      this.items = items;
+    } else {
+      this.items = this.items.concat(items);
+    }
     this.itemsChangedEmitter.emit(TypedEvent.nextEventID());
   }
 
@@ -325,7 +348,7 @@ export class BulkTab extends SimTab {
 
   protected buildTabContent() {
     const itemsBlock = new ContentBlock(this.column1, 'bulk-items', {
-      header: {title: 'Items'}
+      header: { title: 'Items' }
     });
 
     itemsBlock.bodyElement.classList.add('gear-picker-root');
@@ -343,11 +366,11 @@ export class BulkTab extends SimTab {
 
     itemList.classList.add('tab-panel-col', 'bulk-gear-combo');
     itemsBlock.bodyElement.appendChild(itemList);
-    
+
     this.itemsChangedEmitter.on(() => {
       itemList.innerHTML = '';
       if (this.items.length > 0) {
-        itemTextIntro.textContent = 'The following items will be simmed in all possible combinations together with your equipped gear.';
+        itemTextIntro.textContent = 'The following items will be simmed together with your equipped gear.';
         for (let i = 0; i < this.items.length; ++i) {
           const spec = this.items[i];
           const item = this.simUI.sim.db.lookupItemSpec(spec);
@@ -358,14 +381,16 @@ export class BulkTab extends SimTab {
 
     this.importItems(new Array<ItemSpec>());
 
-    let resultsBlock = new ContentBlock(this.column1, 'bulk-results', {header: {
-      title: 'Results',
-      extraCssClasses: ['bulk-results-header'],
-    }});
+    let resultsBlock = new ContentBlock(this.column1, 'bulk-results', {
+      header: {
+        title: 'Results',
+        extraCssClasses: ['bulk-results-header'],
+      }
+    });
 
     resultsBlock.rootElem.hidden = true;
     resultsBlock.bodyElement.classList.add('gear-picker-root', 'tab-panel-col');
-    
+
     this.simUI.sim.bulkSimStartEmitter.on(() => {
       resultsBlock.rootElem.hidden = true;
     });
@@ -376,25 +401,19 @@ export class BulkTab extends SimTab {
 
       let rank = 1;
       for (const r of bulkSimResult.results) {
-        const resultBlock = new ContentBlock(resultsBlock.bodyElement, 'bulk-result', {header: {title: ''}});
+        const resultBlock = new ContentBlock(resultsBlock.bodyElement, 'bulk-result', { header: { title: '' } });
         new BulkSimResultRenderer(resultBlock, this.simUI, r, rank, bulkSimResult.equippedGearResult!);
         rank++;
       }
     });
 
     const settingsBlock = new ContentBlock(this.rightPanel, 'bulk-settings', {
-      header: {title: 'Import'}
+      header: { title: 'Setup' }
     });
-
-    const importButton = document.createElement('button');
-    importButton.classList.add('btn', 'btn-primary', 'w-100', 'bulk-settings-button');
-    importButton.innerHTML = '<i class="fa fa-download"></i> Import From Bags';
-    importButton.addEventListener('click', () => new BulkGearJsonImporter(this.simUI.rootElem, this.simUI, this));
-    settingsBlock.bodyElement.appendChild(importButton);
 
     const bulkSimButton = document.createElement('button');
     bulkSimButton.classList.add('btn', 'btn-primary', 'w-100', 'bulk-settings-button');
-    bulkSimButton.textContent = 'Run Bulk Sim';
+    bulkSimButton.textContent = 'Simulate Batch';
     bulkSimButton.addEventListener('click', () => {
 
       this.pendingDiv.style.display = "flex";
@@ -417,14 +436,14 @@ export class BulkTab extends SimTab {
         console.log(progressMetrics);
 
         const msSinceStart = new Date().getTime() - simStart;
-        const iterPerSecond = progressMetrics.completedIterations / (msSinceStart/1000);
+        const iterPerSecond = progressMetrics.completedIterations / (msSinceStart / 1000);
 
         if (combinations == 0) {
           combinations = progressMetrics.totalSims;
         }
         if (this.fastMode) {
           if (rounds == 0 && progressMetrics.totalSims > 0) {
-            rounds = Math.ceil(Math.log(progressMetrics.totalSims/20) / Math.log(2)) + 1;
+            rounds = Math.ceil(Math.log(progressMetrics.totalSims / 20) / Math.log(2)) + 1;
             currentRound = 1;
           }
           if (progressMetrics.totalSims < lastTotal) {
@@ -436,46 +455,149 @@ export class BulkTab extends SimTab {
         this.setSimProgress(progressMetrics, iterPerSecond, currentRound, rounds, combinations);
         lastTotal = progressMetrics.totalSims;
 
-        if (progressMetrics.finalBulkResult != null) {  
+        if (progressMetrics.finalBulkResult != null) {
           // reset state
           this.pendingDiv.style.display = "none";
           this.leftPanel.classList.remove("blurred");
           this.rightPanel.classList.remove("blurred");
-    
+
           this.pendingResults.hideAll();
           bulkSimButton.disabled = false;
           bulkSimButton.classList.remove(".disabled");
-          bulkSimButton.innerHTML = previousContents;    
+          bulkSimButton.innerHTML = previousContents;
         }
       });
     });
 
     settingsBlock.bodyElement.appendChild(bulkSimButton);
 
+    const importButton = document.createElement('button');
+    importButton.classList.add('btn', 'btn-secondary', 'w-100', 'bulk-settings-button');
+    importButton.innerHTML = '<i class="fa fa-download"></i> Import From Bags';
+    importButton.addEventListener('click', () => new BulkGearJsonImporter(this.simUI.rootElem, this.simUI, this));
+    settingsBlock.bodyElement.appendChild(importButton);
+
+    const importFavsButton = document.createElement('button');
+    importFavsButton.classList.add('btn', 'btn-secondary', 'w-100', 'bulk-settings-button');
+    importFavsButton.innerHTML = '<i class="fa fa-download"></i> Import Favorites';
+    importFavsButton.addEventListener('click', () => {
+      const filters = this.simUI.player.sim.getFilters();
+      const items = filters.favoriteItems.map((itemID) => {
+        return ItemSpec.create({id: itemID});
+      });
+      this.importItems(items);
+    });
+    settingsBlock.bodyElement.appendChild(importFavsButton);
+
     const clearButton = document.createElement('button');
-    clearButton.classList.add('btn', 'btn-primary', 'w-100', 'bulk-settings-button');
+    clearButton.classList.add('btn', 'btn-secondary', 'w-100', 'bulk-settings-button');
     clearButton.textContent = 'Clear All';
     clearButton.addEventListener('click', () => {
-      this.importItems(new Array<ItemSpec>());
+      this.items = new Array<ItemSpec>();
       resultsBlock.rootElem.hidden = true;
       resultsBlock.bodyElement.innerHTML = '';
     });
     settingsBlock.bodyElement.appendChild(clearButton);
+
+    // Default Gem Options
+    const defaultGemDiv = document.createElement("div");
+    if (this.autoGem) {
+      defaultGemDiv.style.display = "flex";
+    } else {
+      defaultGemDiv.style.display = "none";
+    }
+
+    defaultGemDiv.classList.add("default-gem-container");
+    const gemLabel = document.createElement("label");
+    gemLabel.innerText = "Defaults for Auto Gem";
+    defaultGemDiv.appendChild(gemLabel);
+
+    const gemSocketsDiv = document.createElement("div");
+    gemSocketsDiv.classList.add("sockets-container");
+
+    Array<GemColor>(GemColor.GemColorRed, GemColor.GemColorYellow, GemColor.GemColorBlue, GemColor.GemColorMeta).forEach((socketColor, socketIndex) => {
+      let gemFragment = document.createElement('fragment');
+      gemFragment.innerHTML = `
+          <div class="gem-socket-container">
+            <img class="gem-icon" />
+            <img class="socket-icon" />
+          </div>
+        `;
+
+      const gemContainer = gemFragment.children[0] as HTMLElement;
+      const gemIconElem = gemContainer.querySelector('.gem-icon') as HTMLImageElement;
+      const socketIconElem = gemContainer.querySelector('.socket-icon') as HTMLImageElement;
+      socketIconElem.src = getEmptyGemSocketIconUrl(socketColor);
+    
+      let selector: GemSelectorModal;
+      
+      let handleChoose = (itemData: ItemData<UIGem>) => {
+        this.defaultGems[socketIndex] = itemData.item;
+        ActionId.fromItemId(itemData.id).fill().then(filledId => {
+          gemIconElem.src = filledId.iconUrl;
+        });
+        selector.close();
+      };
+
+      let openGemSelector = (color: GemColor, socketIndex: number) => {
+        return (event: Event) => {
+          if (selector == null) {
+            selector = new GemSelectorModal(this.simUI.rootElem, this.simUI, socketColor, handleChoose);      
+          }
+          selector.show();
+        }
+      }
+
+      gemIconElem.addEventListener("click", openGemSelector(socketColor, socketIndex));
+      gemContainer.addEventListener("click", openGemSelector(socketColor, socketIndex));
+      gemSocketsDiv.appendChild(gemContainer);
+    });
+    defaultGemDiv.appendChild(gemSocketsDiv);
 
     new BooleanPicker<BulkTab>(settingsBlock.bodyElement, this, {
       label: "Fast Mode",
       labelTooltip: "Fast mode reduces accuracy but will run faster.",
       changedEvent: (obj: BulkTab) => this.itemsChangedEmitter,
       getValue: (obj) => this.fastMode,
-      setValue: (id: EventID, obj: BulkTab, value: boolean) => {obj.fastMode = value}
+      setValue: (id: EventID, obj: BulkTab, value: boolean) => { obj.fastMode = value }
     });
     new BooleanPicker<BulkTab>(settingsBlock.bodyElement, this, {
       label: "Combinations",
       labelTooltip: "When checked bulk simulator will create all possible combinations of the items. When disabled trinkets and rings will still run all combinations becausee they have two slots to fill each.",
       changedEvent: (obj: BulkTab) => this.itemsChangedEmitter,
       getValue: (obj) => this.doCombos,
-      setValue: (id: EventID, obj: BulkTab, value: boolean) => {obj.doCombos = value}
+      setValue: (id: EventID, obj: BulkTab, value: boolean) => { obj.doCombos = value }
     });
+    new BooleanPicker<BulkTab>(settingsBlock.bodyElement, this, {
+      label: "Auto Enchant",
+      labelTooltip: "When checked bulk simulator apply the current enchant for a slot to each replacement item it can.",
+      changedEvent: (obj: BulkTab) => this.itemsChangedEmitter,
+      getValue: (obj) => this.autoEnchant,
+      setValue: (id: EventID, obj: BulkTab, value: boolean) => { 
+        obj.autoEnchant = value 
+        if (value) {
+          defaultGemDiv.style.display = "flex";
+        } else {
+          defaultGemDiv.style.display = "none";
+        }
+      }
+    });
+    new BooleanPicker<BulkTab>(settingsBlock.bodyElement, this, {
+      label: "Auto Gem",
+      labelTooltip: "When checked bulk simulator will fill any un-filled gem sockets with default gems.",
+      changedEvent: (obj: BulkTab) => this.itemsChangedEmitter,
+      getValue: (obj) => this.autoGem,
+      setValue: (id: EventID, obj: BulkTab, value: boolean) => { 
+        obj.autoGem = value 
+        if (value) {
+          defaultGemDiv.style.display = "flex";
+        } else {
+          defaultGemDiv.style.display = "none";
+        }
+      }
+    });
+
+    settingsBlock.bodyElement.appendChild(defaultGemDiv);
   }
 
   private setSimProgress(progress: ProgressMetrics, iterPerSecond: number, currentRound: number, rounds: number, combinations: number) {
@@ -499,5 +621,90 @@ export class BulkTab extends SimTab {
         </div>
       </div>
     `);
+  }
+}
+
+
+class GemSelectorModal extends BaseModal {
+	private readonly simUI: IndividualSimUI<Spec>;
+
+	private readonly contentElem: HTMLElement;
+  private ilist: ItemList<UIGem> | null;
+  private socketColor: GemColor;
+  private onSelect: (itemData: ItemData<UIGem>) => void;
+
+	constructor(parent: HTMLElement, simUI: IndividualSimUI<Spec>, socketColor: GemColor, onSelect: (itemData: ItemData<UIGem>) => void) {
+		super(parent, 'selector-modal');
+
+		this.simUI = simUI;
+    this.onSelect = onSelect;
+    this.socketColor = socketColor;
+    this.ilist = null;
+
+		window.scrollTo({ top: 0 });
+
+		this.header!.insertAdjacentHTML('afterbegin', `<span>Choose Default Gem</span>`);
+		this.body.innerHTML = `<div class="tab-content selector-modal-tab-content"></div>`
+		this.contentElem = this.rootElem.querySelector('.selector-modal-tab-content') as HTMLElement;
+	}
+
+  show() {
+    // construct item list the first time its opened. 
+    // This makes startup faster and also means we are sure to have item database loaded.
+    if (this.ilist == null) {
+      this.ilist = new ItemList<UIGem>(
+        this.body,
+        this.simUI,
+        {
+          selectedTab: SelectorModalTabs.Gem1,
+          slot: ItemSlot.ItemSlotHead,
+          equippedItem: null,
+          eligibleItems: new Array<UIItem>(),
+          eligibleEnchants: new Array<UIEnchant>(),
+          gearData: {
+            equipItem: (eventID: EventID, equippedItem: EquippedItem | null) => {},
+            getEquippedItem: () => null,
+            changeEvent: new TypedEvent(), // FIXME
+          },
+        },
+        this.simUI.player,
+        "Gem1",
+        this.simUI.player.getGems(this.socketColor).map((gem: UIGem) => {
+          return {
+            item: gem,
+            id: gem.id,
+            actionId: ActionId.fromItemId(gem.id),
+            name: gem.name,
+            quality: gem.quality,
+            phase: gem.phase,
+            heroic: false,
+            baseEP: 0,
+            ignoreEPFilter: true,
+            onEquip: (eventID, gem: UIGem) => {
+            },
+          };
+        }),
+        gem => {
+          return this.simUI.player.computeGemEP(gem);
+        },
+        ()=>{return null},
+        this.socketColor,
+        ()=>{},
+        this.onSelect
+      )
+
+      // let invokeUpdate = () => {this.ilist?.updateSelected()}
+      let applyFilter = () => {this.ilist?.applyFilters()}
+      // Add event handlers
+      // this.itemsChangedEmitter.on(invokeUpdate);
+  
+      // this.addOnDisposeCallback(() => gearData.changeEvent.off(invokeUpdate));
+  
+      this.simUI.sim.phaseChangeEmitter.on(applyFilter);
+      this.simUI.sim.filtersChangeEmitter.on(applyFilter);
+      // gearData.changeEvent.on(applyFilter);
+    }
+
+    this.open();
   }
 }

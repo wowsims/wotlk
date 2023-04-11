@@ -197,6 +197,10 @@ message Warrior {
 		}
 		StanceOption stance_option = 19;
 		double rend_health_threshold_above = 20;
+
+		// Only used for Fury
+		bool use_overpower = 21;
+		bool execute_phase_overpower = 22;
 	}
 	Rotation rotation = 1;
 

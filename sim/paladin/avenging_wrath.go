@@ -27,6 +27,7 @@ func (paladin *Paladin) RegisterAvengingWrathCD() {
 			aura.Unit.PseudoStats.DamageDealtMultiplier /= 1.2
 		},
 	})
+	core.RegisterPercentDamageModifierEffect(paladin.AvengingWrathAura, 1.2)
 
 	paladin.AvengingWrath = paladin.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
