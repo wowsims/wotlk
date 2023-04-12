@@ -71,7 +71,7 @@ func NewDpsWarrior(character core.Character, options *proto.Player) *DpsWarrior 
 			if war.GCD.IsReady(sim) {
 				war.doRotation(sim)
 			}
-		} else if !war.thunderClapNext && war.PrimaryTalentTree == warrior.FuryTree {
+		} else if !war.thunderClapNext && war.Rotation.StanceOption == proto.Warrior_Rotation_BerserkerStance {
 			war.trySwapToBerserker(sim)
 		}
 	})
