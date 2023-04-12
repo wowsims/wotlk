@@ -44,7 +44,7 @@ export const LatencyMs = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecFeralD
 export const PrepopOoc = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecFeralDruid>({
 	fieldName: 'prepopOoc',
 	label: 'Pre-pop Clearcasting',
-	labelTooltip: 'Start fight with clearcasting using FFF',
+	labelTooltip: 'Start fight with clearcasting',
 	showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getTalents().omenOfClarity,
 	changeEmitter: (player: Player<Spec.SpecFeralDruid>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 })
