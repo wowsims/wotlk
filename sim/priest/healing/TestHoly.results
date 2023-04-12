@@ -336,7 +336,7 @@ dps_results: {
  value: {
   dps: 111.78467
   tps: 50.38814
-  hps: 5177.15927
+  hps: 5177.28244
  }
 }
 dps_results: {

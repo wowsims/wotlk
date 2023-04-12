@@ -312,11 +312,16 @@ export class BulkTab extends SimTab {
   }
 
   importItems(items: Array<ItemSpec>) {
-    if (this.items == null || this.items.length == 0) {
+    if (this.items.length == 0) {
       this.items = items;
     } else {
       this.items = this.items.concat(items);
     }
+    this.itemsChangedEmitter.emit(TypedEvent.nextEventID());
+  }
+  
+  clearItems() {
+    this.items = new Array<ItemSpec>();
     this.itemsChangedEmitter.emit(TypedEvent.nextEventID());
   }
 
@@ -379,7 +384,7 @@ export class BulkTab extends SimTab {
       }
     });
 
-    this.importItems(new Array<ItemSpec>());
+    this.clearItems();
 
     let resultsBlock = new ContentBlock(this.column1, 'bulk-results', {
       header: {
@@ -493,7 +498,7 @@ export class BulkTab extends SimTab {
     clearButton.classList.add('btn', 'btn-secondary', 'w-100', 'bulk-settings-button');
     clearButton.textContent = 'Clear All';
     clearButton.addEventListener('click', () => {
-      this.items = new Array<ItemSpec>();
+      this.clearItems();
       resultsBlock.rootElem.hidden = true;
       resultsBlock.bodyElement.innerHTML = '';
     });

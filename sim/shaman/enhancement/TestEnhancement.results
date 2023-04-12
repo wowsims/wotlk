@@ -350,8 +350,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 7366.04581
-  tps: 4142.1301
+  dps: 7366.05156
+  tps: 4142.13412
  }
 }
 dps_results: {
