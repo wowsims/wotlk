@@ -115,15 +115,15 @@ class EpWeightsMenu extends BaseModal {
 									<i class="fa fa-copy"></i>
 								</a>
 							</th>
-							<th>
+							<th style="text-align: center;">
 								<span>Current EP</span>
 								<a href="javascript:void(0)" role="button" class="col-action">
 									<i class="fas fa-arrows-rotate"></i>
 								</a>
 							</th>
 						</tr>
-						<tr>
-							<th>Ratio</th>
+						<tr class="ep-ratios">
+							<td>EP Ratio</td>
 							<td class="damage-metrics type-ratio type-weight">
 							</td>
 							<td class="damage-metrics type-ratio type-ep">
@@ -140,7 +140,7 @@ class EpWeightsMenu extends BaseModal {
 							</td>
 							<td class="threat-metrics type-ratio type-ep">
 							</td>
-							<td>
+							<td style="text-align: center; vertical-align: middle;">
 								<button class="btn btn-primary compute-ep">
 									<i class="fas fa-calculator"></i>
 									Compute EP
