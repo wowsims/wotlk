@@ -97,9 +97,8 @@ func (cat *FeralDruid) Initialize() {
 	cat.RegisterFeralCatSpells()
 
 	if cat.prepopOoc && cat.Talents.OmenOfClarity {
-		time := core.Ternary(cat.PrePopBerserk, time.Second*2, time.Second)
-		cat.RegisterPrepullAction(-time, func(sim *core.Simulation) {
-			cat.FaerieFire.Cast(sim, nil)
+		cat.RegisterPrepullAction(-time.Second, func(sim *core.Simulation) {
+			cat.ProcOoc(sim)
 		})
 	}
 
