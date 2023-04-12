@@ -395,8 +395,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 6373.48622
-  tps: 4050.19163
+  dps: 6372.67289
+  tps: 4049.62229
  }
 }
 dps_results: {

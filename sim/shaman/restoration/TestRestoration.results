@@ -348,7 +348,7 @@ dps_results: {
  key: "TestRestoration-AllItems-EyeoftheBroodmother-45308"
  value: {
   tps: 57.359
-  hps: 3820.81464
+  hps: 3819.91492
  }
 }
 dps_results: {

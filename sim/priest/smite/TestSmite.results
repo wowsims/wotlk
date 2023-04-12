@@ -301,8 +301,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 3610.94422
-  tps: 3069.94745
+  dps: 3611.47698
+  tps: 3070.41645
  }
 }
 dps_results: {
