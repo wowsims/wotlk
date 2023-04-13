@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -53,8 +52,6 @@ func (shaman *Shaman) NewFireElemental() *FireElemental {
 			stats.MeleeHit: -1 * core.MeleeHitRatingPerHitChance,
 			stats.SpellHit: -1 * core.SpellHitRatingPerHitChance,
 		})
-	} else if shaman.Race == proto.Race_RaceOrc {
-		fireElemental.PseudoStats.DamageDealtMultiplier *= 1.05
 	}
 
 	shaman.AddPet(fireElemental)
