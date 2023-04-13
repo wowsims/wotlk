@@ -36,7 +36,7 @@ func (shaman *Shaman) NewFireElemental() *FireElemental {
 	fireElemental.EnableAutoAttacks(fireElemental, core.AutoAttackOptions{
 		MainHand: core.Weapon{
 			BaseDamageMin:  1,  // Estimated from base AP
-			BaseDamageMax:  24, // Estimated from base AP
+			BaseDamageMax:  23, // Estimated from base AP
 			SwingSpeed:     2,
 			SwingDuration:  time.Second * 2,
 			CritMultiplier: 2, // Pretty sure this is right.
