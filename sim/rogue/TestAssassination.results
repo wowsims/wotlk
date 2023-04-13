@@ -81,15 +81,17 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 7422.49556
-  tps: 34397.73584
+  dps: 7422.27295
+  tps: 5269.81379
+  hps: 60.07923
  }
 }
 dps_results: {
  key: "TestAssassination-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 7422.49556
-  tps: 34397.73584
+  dps: 7422.27295
+  tps: 5269.81379
+  hps: 60.07923
  }
 }
 dps_results: {
@@ -102,15 +104,15 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-BlackBruise-50035"
  value: {
-  dps: 5794.83443
-  tps: 4114.33244
+  dps: 4918.97032
+  tps: 3492.46893
  }
 }
 dps_results: {
  key: "TestAssassination-AllItems-BlackBruise-50692"
  value: {
-  dps: 5868.81783
-  tps: 4166.86066
+  dps: 4990.83279
+  tps: 3543.49128
  }
 }
 dps_results: {
@@ -566,8 +568,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-Shadowblade'sBattlegear"
  value: {
-  dps: 7790.58277
-  tps: 5531.31376
+  dps: 7780.75381
+  tps: 5524.3352
  }
 }
 dps_results: {
@@ -685,8 +687,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-TheFistsofFury"
  value: {
-  dps: 4991.69544
-  tps: 3544.10376
+  dps: 4227.34765
+  tps: 3001.41683
  }
 }
 dps_results: {

@@ -85,7 +85,21 @@ func (dk *DpsDeathknight) shRecastAvailableCheck(expiresAt time.Duration, afterC
 }
 
 func (dk *DpsDeathknight) shShouldSpreadDisease(sim *core.Simulation) bool {
-	return dk.sr.recastedFF && dk.sr.recastedBP && dk.Env.GetNumTargets() > 1
+	prioritizeSpread := dk.Env.GetNumTargets() > 1
+
+	// on 2 or 3 targets, we don't want to spread if we have diseases up on all targets already (to maximize Desolation uptime)
+	// on 4+ targets always spread to maximize disease and Wandering Plague uptime
+	if dk.Env.GetNumTargets() > 1 && dk.Env.GetNumTargets() < 4 {
+		for i := int32(1); i < dk.Env.GetNumTargets(); i++ {
+			target := dk.Env.GetTargetUnit(i)
+			if dk.FrostFeverSpell.Dot(target).IsActive() && dk.BloodPlagueSpell.Dot(target).IsActive() {
+				prioritizeSpread = false
+				break
+			}
+		}
+	}
+
+	return dk.sr.recastedFF && dk.sr.recastedBP && prioritizeSpread
 }
 
 func (dk *DpsDeathknight) RotationAction_CancelBT(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {

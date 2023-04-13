@@ -74,15 +74,17 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 1400.09513
-  tps: 60209.4353
+  dps: 1400.14649
+  tps: 4289.54121
+  hps: 82.8441
  }
 }
 dps_results: {
  key: "TestBloodTank-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 1400.09513
-  tps: 60209.4353
+  dps: 1400.14649
+  tps: 4289.54121
+  hps: 82.8441
  }
 }
 dps_results: {

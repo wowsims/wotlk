@@ -52,6 +52,7 @@ export const DefaultRotation = FeralDruidRotation.create({
 	berserkFfThresh: 15.0,
 	powerbear: false,
 	minRoarOffset: 12.0,
+	ripLeeway: 3.0,
 	maintainFaerieFire: true,
 	hotUptime: 0.0,
 	snekWeave: false,
@@ -62,7 +63,7 @@ export const DefaultRotation = FeralDruidRotation.create({
 export const DefaultOptions = FeralDruidOptions.create({
 	latencyMs: 100,
 	prepopOoc: true,
-	assumeBleedActive: false,
+	assumeBleedActive: true,
 });
 
 export const DefaultConsumes = Consumes.create({

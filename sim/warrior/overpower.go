@@ -78,5 +78,5 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 func (warrior *Warrior) ShouldOverpower(sim *core.Simulation) bool {
 	return sim.CurrentTime < warrior.overpowerValidUntil &&
 		warrior.Overpower.IsReady(sim) &&
-		warrior.CurrentRage() >= warrior.Overpower.DefaultCast.Cost && warrior.PrimaryTalentTree == ArmsTree
+		warrior.CurrentRage() >= warrior.Overpower.DefaultCast.Cost
 }

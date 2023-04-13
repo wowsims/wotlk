@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"sync"
 	"testing"
 	"time"
 
@@ -48,8 +49,12 @@ var p1Equip = &proto.EquipmentSpec{
 }
 
 func init() {
+	s := &server{
+		progMut:         sync.RWMutex{},
+		asyncProgresses: map[string]*asyncProgress{},
+	}
 	go func() {
-		runServer(true, ":3339", false, "", false, bufio.NewReader(bytes.NewBuffer([]byte{})))
+		s.runServer(true, ":3339", false, "", false, bufio.NewReader(bytes.NewBuffer([]byte{})))
 	}()
 
 	time.Sleep(time.Second) // hack so we have time for server to startup. Probably could repeatedly curl the endpoint until it responds.

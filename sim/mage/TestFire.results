@@ -74,15 +74,17 @@ dps_results: {
 dps_results: {
  key: "TestFire-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 6305.39659
-  tps: 11154.8026
+  dps: 6296.17656
+  tps: 5038.67102
+  hps: 94.82295
  }
 }
 dps_results: {
  key: "TestFire-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 6305.39659
-  tps: 11154.8026
+  dps: 6296.17656
+  tps: 5038.67102
+  hps: 94.82295
  }
 }
 dps_results: {
@@ -278,8 +280,8 @@ dps_results: {
 dps_results: {
  key: "TestFire-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 6686.55884
-  tps: 5350.42498
+  dps: 6685.02435
+  tps: 5349.19739
  }
 }
 dps_results: {
@@ -754,8 +756,8 @@ dps_results: {
 dps_results: {
  key: "TestFire-Settings-Troll-P1Fire-AOE-FullBuffs-LongSingleTarget"
  value: {
-  dps: 1911.21418
-  tps: 1682.17787
+  dps: 1911.18403
+  tps: 1682.15073
  }
 }
 dps_results: {

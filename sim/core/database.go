@@ -393,6 +393,43 @@ func ItemTypeToSlot(it proto.ItemType) ItemSlot {
 	return 255
 }
 
+// See getEligibleItemSlots in proto_utils/utils.ts.
+var itemTypeToSlotsMap = map[proto.ItemType][]proto.ItemSlot{
+	proto.ItemType_ItemTypeHead:     {proto.ItemSlot_ItemSlotHead},
+	proto.ItemType_ItemTypeNeck:     {proto.ItemSlot_ItemSlotNeck},
+	proto.ItemType_ItemTypeShoulder: {proto.ItemSlot_ItemSlotShoulder},
+	proto.ItemType_ItemTypeBack:     {proto.ItemSlot_ItemSlotBack},
+	proto.ItemType_ItemTypeChest:    {proto.ItemSlot_ItemSlotChest},
+	proto.ItemType_ItemTypeWrist:    {proto.ItemSlot_ItemSlotWrist},
+	proto.ItemType_ItemTypeHands:    {proto.ItemSlot_ItemSlotHands},
+	proto.ItemType_ItemTypeWaist:    {proto.ItemSlot_ItemSlotWaist},
+	proto.ItemType_ItemTypeLegs:     {proto.ItemSlot_ItemSlotLegs},
+	proto.ItemType_ItemTypeFeet:     {proto.ItemSlot_ItemSlotFeet},
+	proto.ItemType_ItemTypeFinger:   {proto.ItemSlot_ItemSlotFinger1, proto.ItemSlot_ItemSlotFinger2},
+	proto.ItemType_ItemTypeTrinket:  {proto.ItemSlot_ItemSlotTrinket1, proto.ItemSlot_ItemSlotTrinket2},
+	proto.ItemType_ItemTypeRanged:   {proto.ItemSlot_ItemSlotRanged},
+	// ItemType_ItemTypeWeapon is excluded intentionally - the slot cannot be decided based on type alone for weapons.
+}
+
+func eligibleSlotsForItem(item Item) []proto.ItemSlot {
+	if slots, ok := itemTypeToSlotsMap[item.Type]; ok {
+		return slots
+	}
+
+	if item.Type == proto.ItemType_ItemTypeWeapon {
+		switch item.HandType {
+		case proto.HandType_HandTypeTwoHand, proto.HandType_HandTypeMainHand:
+			return []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand}
+		case proto.HandType_HandTypeOffHand:
+			return []proto.ItemSlot{proto.ItemSlot_ItemSlotOffHand}
+		case proto.HandType_HandTypeOneHand:
+			return []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand, proto.ItemSlot_ItemSlotOffHand}
+		}
+	}
+
+	return nil
+}
+
 func ColorIntersects(g proto.GemColor, o proto.GemColor) bool {
 	if g == o {
 		return true

@@ -209,9 +209,18 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 	if raidBuffs.TotemOfWrath {
 		MakePermanent(TotemOfWrathAura(character))
 	}
-	if raidBuffs.DemonicPact > 0 {
+	if raidBuffs.DemonicPactOld > 0 || raidBuffs.DemonicPact > 0 || raidBuffs.DemonicPactSp > 0 {
+		// Use DemonicPactSp if set.
+		power := raidBuffs.DemonicPactSp
+		if power == 0 {
+			power = raidBuffs.DemonicPact // fallback to old setting.
+		}
+		if power == 0 {
+			power = raidBuffs.DemonicPactOld
+		}
+
 		dpAura := DemonicPactAura(character)
-		dpAura.ExclusiveEffects[0].Priority = float64(raidBuffs.DemonicPact)
+		dpAura.ExclusiveEffects[0].Priority = float64(power)
 		MakePermanent(dpAura)
 	}
 
@@ -690,7 +699,7 @@ func registerTricksOfTheTradeCD(agent Agent, numTricksOfTheTrades int32) {
 			Type:             CooldownTypeDPS,
 
 			ShouldActivate: func(sim *Simulation, character *Character) bool {
-				return true
+				return !agent.GetCharacter().GetExclusiveEffectCategory("PercentDamageModifier").AnyActive()
 			},
 			AddAura: func(sim *Simulation, character *Character) { TotTAura.Activate(sim) },
 		},
@@ -700,7 +709,7 @@ func registerTricksOfTheTradeCD(agent Agent, numTricksOfTheTrades int32) {
 func TricksOfTheTradeAura(character *Character, actionTag int32, glyphed bool) *Aura {
 	actionID := ActionID{SpellID: 57933, Tag: actionTag}
 
-	return character.GetOrRegisterAura(Aura{
+	aura := character.GetOrRegisterAura(Aura{
 		Label:    "TricksOfTheTrade-" + actionID.String(),
 		Tag:      TricksOfTheTradeAuraTag,
 		ActionID: actionID,
@@ -712,6 +721,9 @@ func TricksOfTheTradeAura(character *Character, actionTag int32, glyphed bool) *
 			character.PseudoStats.DamageDealtMultiplier /= 1.15
 		},
 	})
+
+	RegisterPercentDamageModifierEffect(aura, 1.15)
+	return aura
 }
 
 var UnholyFrenzyAuraTag = "UnholyFrenzy"
@@ -737,7 +749,7 @@ func registerUnholyFrenzyCD(agent Agent, numUnholyFrenzy int32) {
 			Type:             CooldownTypeDPS,
 
 			ShouldActivate: func(sim *Simulation, character *Character) bool {
-				return true
+				return !agent.GetCharacter().GetExclusiveEffectCategory("PercentDamageModifier").AnyActive()
 			},
 			AddAura: func(sim *Simulation, character *Character) { ufAura.Activate(sim) },
 		},
@@ -747,7 +759,7 @@ func registerUnholyFrenzyCD(agent Agent, numUnholyFrenzy int32) {
 func UnholyFrenzyAura(character *Character, actionTag int32) *Aura {
 	actionID := ActionID{SpellID: 49016, Tag: actionTag}
 
-	return character.GetOrRegisterAura(Aura{
+	aura := character.GetOrRegisterAura(Aura{
 		Label:    "UnholyFrenzy-" + actionID.String(),
 		Tag:      UnholyFrenzyAuraTag,
 		ActionID: actionID,
@@ -758,6 +770,15 @@ func UnholyFrenzyAura(character *Character, actionTag int32) *Aura {
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			character.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] /= 1.2
 		},
+	})
+
+	RegisterPercentDamageModifierEffect(aura, 1.2)
+	return aura
+}
+
+func RegisterPercentDamageModifierEffect(aura *Aura, percentDamageModifier float64) *ExclusiveEffect {
+	return aura.NewExclusiveEffect("PercentDamageModifier", false, ExclusiveEffect{
+		Priority: percentDamageModifier,
 	})
 }
 

@@ -17,6 +17,7 @@ type WarriorInputs struct {
 	PrecastShoutT2       bool
 	RendCdThreshold      time.Duration
 	Munch                bool
+	StanceSnapshot       bool
 }
 
 const (

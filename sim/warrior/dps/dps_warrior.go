@@ -48,6 +48,7 @@ func NewDpsWarrior(character core.Character, options *proto.Player) *DpsWarrior 
 			ShoutType:       warOptions.Options.Shout,
 			RendCdThreshold: core.DurationFromSeconds(warOptions.Rotation.RendCdThreshold),
 			Munch:           warOptions.Options.Munch,
+			StanceSnapshot:  warOptions.Options.StanceSnapshot,
 		}),
 		Rotation: warOptions.Rotation,
 		Options:  warOptions.Options,
@@ -70,7 +71,7 @@ func NewDpsWarrior(character core.Character, options *proto.Player) *DpsWarrior 
 			if war.GCD.IsReady(sim) {
 				war.doRotation(sim)
 			}
-		} else if !war.thunderClapNext && war.PrimaryTalentTree == warrior.FuryTree {
+		} else if !war.thunderClapNext && war.Rotation.StanceOption == proto.Warrior_Rotation_BerserkerStance {
 			war.trySwapToBerserker(sim)
 		}
 	})

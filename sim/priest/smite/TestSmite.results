@@ -88,15 +88,17 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 3485.84731
-  tps: 8743.98956
+  dps: 3484.80291
+  tps: 2965.98567
+  hps: 89.78664
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 3485.84731
-  tps: 8743.98956
+  dps: 3484.80291
+  tps: 2965.98567
+  hps: 89.78664
  }
 }
 dps_results: {
@@ -299,8 +301,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 3610.94422
-  tps: 3069.94745
+  dps: 3611.47698
+  tps: 3070.41645
  }
 }
 dps_results: {

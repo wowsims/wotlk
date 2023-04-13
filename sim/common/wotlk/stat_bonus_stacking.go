@@ -203,7 +203,7 @@ func init() {
 		Duration:  time.Second * 10,
 		MaxStacks: 5,
 		Bonus:     stats.Stats{stats.SpellPower: 26},
-		Callback:  core.CallbackOnCastComplete,
+		Callback:  core.CallbackOnHealDealt | core.CallbackOnSpellHitDealt | core.CallbackOnPeriodicHealDealt | core.CallbackOnPeriodicDamageDealt,
 	})
 
 	core.AddEffectsToTest = false
