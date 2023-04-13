@@ -32,7 +32,7 @@ func (fireElemental *FireElemental) registerFireBlast() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// TODO these are approximation, from base SP
-			baseDamage := sim.Roll(323, 459) + 0.429*spell.SpellPower()
+			baseDamage := sim.Roll(714, 844) + 0.429*spell.SpellPower()
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 		},
 	})
@@ -64,11 +64,8 @@ func (fireElemental *FireElemental) registerFireNova() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			// TODO is this the right affect should it be Capped?
-			// TODO these are approximation, from base SP
-			dmgFromSP := 1.0071 * spell.SpellPower()
 			for _, aoeTarget := range sim.Encounter.TargetUnits {
-				baseDamage := sim.Roll(1, 150) + dmgFromSP
+				baseDamage := sim.Roll(955, 1098) + spell.SpellPower()
 				baseDamage *= sim.Encounter.AOECapMultiplier()
 				spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeMagicHitAndCrit)
 			}
@@ -102,7 +99,7 @@ func (fireElemental *FireElemental) registerFireShieldAura() {
 				// TODO these are approximation, from base SP
 				dmgFromSP := 0.032 * dot.Spell.SpellPower()
 				for _, aoeTarget := range sim.Encounter.TargetUnits {
-					baseDamage := sim.Roll(68, 70) + dmgFromSP
+					baseDamage := sim.Roll(95, 97) + dmgFromSP
 					//baseDamage *= sim.Encounter.AOECapMultiplier()
 					dot.Spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, dot.Spell.OutcomeMagicCrit)
 				}

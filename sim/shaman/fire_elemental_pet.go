@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -46,6 +47,15 @@ func (shaman *Shaman) NewFireElemental() *FireElemental {
 	fireElemental.AddStatDependency(stats.Intellect, stats.SpellCrit, core.CritRatingPerCritChance/212)
 	fireElemental.OnPetEnable = fireElemental.enable
 	fireElemental.OnPetDisable = fireElemental.disable
+
+	if shaman.hasHeroicPresence {
+		fireElemental.AddStats(stats.Stats{
+			stats.MeleeHit: -1 * core.MeleeHitRatingPerHitChance,
+			stats.SpellHit: -1 * core.SpellHitRatingPerHitChance,
+		})
+	} else if shaman.Race == proto.Race_RaceOrc {
+		fireElemental.PseudoStats.DamageDealtMultiplier *= 1.05
+	}
 
 	shaman.AddPet(fireElemental)
 
@@ -134,8 +144,8 @@ var fireElementalPetBaseStats = stats.Stats{
 	stats.Health:      994,
 	stats.Intellect:   147,
 	stats.Stamina:     327,
-	stats.SpellPower:  995,  //Estimated
-	stats.AttackPower: 1369, //Estimated
+	stats.SpellPower:  0,    //Estimated
+	stats.AttackPower: 1303, //Estimated
 
 	// TODO : Log digging and my own samples this seems to be around the 5% mark.
 	stats.MeleeCrit: (5 + 1.8) * core.CritRatingPerCritChance,
@@ -152,8 +162,8 @@ func (shaman *Shaman) fireElementalStatInheritance() core.PetStatInheritance {
 		return stats.Stats{
 			stats.Stamina:     ownerStats[stats.Stamina] * 0.75,
 			stats.Intellect:   ownerStats[stats.Intellect] * 0.30,
-			stats.SpellPower:  ownerStats[stats.SpellPower] * 0.5218,
-			stats.AttackPower: ownerStats[stats.SpellPower] * 4.45,
+			stats.SpellPower:  ownerStats[stats.SpellPower] * 0.4970,
+			stats.AttackPower: ownerStats[stats.SpellPower] * 4.2381,
 
 			// TODO tested useing pre-patch lvl 70 stats need to confirm in WOTLK at 80.
 			stats.MeleeHit: hitRatingFromOwner,
