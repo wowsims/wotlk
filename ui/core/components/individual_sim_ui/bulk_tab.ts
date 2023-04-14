@@ -161,7 +161,7 @@ export class BulkItemPicker extends Component {
                 const otherItems = this.bulkUI.getItems();
                 otherItems[this.index] = equippedItem.asSpec();
                 this.item = equippedItem;
-                this.bulkUI.addItems(otherItems);
+                this.bulkUI.setItems(otherItems);
                 changeEvent.emit(TypedEvent.nextEventID());
               }
             },
