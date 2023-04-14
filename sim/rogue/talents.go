@@ -72,7 +72,7 @@ func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, 
 	ruthlessnessMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 14161})
 	relentlessStrikesMetrics := rogue.NewEnergyMetrics(core.ActionID{SpellID: getRelentlessStrikesSpellID(rogue.Talents.RelentlessStrikes)})
 	var mayhemMetrics *core.ResourceMetrics
-	if rogue.HasSetBonus(ItemSetShadowblades, 4) {
+	if rogue.HasSetBonus(Tier10, 4) {
 		mayhemMetrics = rogue.NewComboPointMetrics(core.ActionID{SpellID: 70802})
 	}
 
@@ -96,7 +96,7 @@ func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, 
 }
 
 func (rogue *Rogue) makeCostModifier() func(baseCost float64) float64 {
-	if rogue.HasSetBonus(ItemSetBonescythe, 4) {
+	if rogue.HasSetBonus(Tier7, 4) {
 		return func(baseCost float64) float64 {
 			return math.RoundToEven(0.95 * baseCost)
 		}
