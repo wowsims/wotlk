@@ -158,10 +158,10 @@ export class BulkItemPicker extends Component {
           gearData: {
             equipItem: (eventID: EventID, equippedItem: EquippedItem | null) => {
               if (equippedItem) {
-                const otherItems = this.bulkUI.getItems();
-                otherItems[this.index] = equippedItem.asSpec();
+                const allItems = this.bulkUI.getItems();
+                allItems[this.index] = equippedItem.asSpec();
                 this.item = equippedItem;
-                this.bulkUI.setItems(otherItems);
+                this.bulkUI.setItems(allItems);
                 changeEvent.emit(TypedEvent.nextEventID());
               }
             },
