@@ -54,7 +54,7 @@ export class BulkGearJsonImporter<SpecType extends Spec> extends Importer {
               throw new Error("cannot find item with ID " + itemSpec.id);
             }
           }
-          this.bulkUI.importItems(items);
+          this.bulkUI.addItems(items);
         }
       }
       this.close();
@@ -161,7 +161,7 @@ export class BulkItemPicker extends Component {
                 const otherItems = this.bulkUI.getItems();
                 otherItems[this.index] = equippedItem.asSpec();
                 this.item = equippedItem;
-                this.bulkUI.importItems(otherItems);
+                this.bulkUI.addItems(otherItems);
                 changeEvent.emit(TypedEvent.nextEventID());
               }
             },
@@ -173,11 +173,10 @@ export class BulkItemPicker extends Component {
         const removeButton = modal.body.querySelector('.selector-modal-remove-button');
         if (removeButton && removeButton.parentNode) {
           const destroyItemButton = document.createElement('button');
-          destroyItemButton.textContent = 'Destroy Item';
+          destroyItemButton.textContent = 'Remove from Batch';
           destroyItemButton.classList.add('btn', 'btn-danger');
           destroyItemButton.onclick = () => {
-            const needle = this.item.asSpec();
-            bulkUI.importItems(bulkUI.getItems().filter((spec) => { return !ItemSpec.equals(spec, needle); }));
+            bulkUI.setItems(bulkUI.getItems().filter((item, idx) => { return idx != this.index }));
             modal.close();
           };
           removeButton.parentNode.appendChild(destroyItemButton);
@@ -311,7 +310,7 @@ export class BulkTab extends SimTab {
     return itemsDb;
   }
 
-  importItems(items: Array<ItemSpec>) {
+  addItems(items: Array<ItemSpec>) {
     if (this.items.length == 0) {
       this.items = items;
     } else {
@@ -319,7 +318,12 @@ export class BulkTab extends SimTab {
     }
     this.itemsChangedEmitter.emit(TypedEvent.nextEventID());
   }
-  
+
+  setItems(items: Array<ItemSpec>) {
+    this.items = items;
+    this.itemsChangedEmitter.emit(TypedEvent.nextEventID());
+  }
+
   clearItems() {
     this.items = new Array<ItemSpec>();
     this.itemsChangedEmitter.emit(TypedEvent.nextEventID());
@@ -490,7 +494,7 @@ export class BulkTab extends SimTab {
       const items = filters.favoriteItems.map((itemID) => {
         return ItemSpec.create({id: itemID});
       });
-      this.importItems(items);
+      this.addItems(items);
     });
     settingsBlock.bodyElement.appendChild(importFavsButton);
 
