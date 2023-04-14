@@ -3,6 +3,7 @@ package dps
 import (
 	"time"
 
+	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/warrior"
@@ -28,8 +29,9 @@ func RegisterDpsWarrior() {
 type DpsWarrior struct {
 	*warrior.Warrior
 
-	Options  *proto.Warrior_Options
-	Rotation *proto.Warrior_Rotation
+	Options        *proto.Warrior_Options
+	Rotation       *proto.Warrior_Rotation
+	CustomRotation *common.CustomRotation
 
 	// Prevent swapping stances until this time, to account for human reaction time.
 	canSwapStanceAt time.Duration
@@ -96,6 +98,7 @@ func (war *DpsWarrior) Initialize() {
 
 	war.RegisterHSOrCleave(war.Rotation.UseCleave, war.Rotation.HsRageThreshold)
 	war.RegisterRendSpell(war.Rotation.RendRageThresholdBelow, war.Rotation.RendHealthThresholdAbove)
+	war.CustomRotation = war.makeCustomRotation()
 
 	if war.Options.UseRecklessness {
 		war.RegisterRecklessnessCD()

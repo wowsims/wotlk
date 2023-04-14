@@ -20,6 +20,7 @@ import {
 	WarriorMajorGlyph,
 	WarriorMinorGlyph,
 	Warrior_Rotation_StanceOption as StanceOption,
+	ProtectionWarrior_Rotation_SpellOption as SpellOption,
 	Warrior_Rotation_MainGcd as MainGcd,
 } from '../core/proto/warrior.js';
 
