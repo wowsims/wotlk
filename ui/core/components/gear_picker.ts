@@ -1128,7 +1128,7 @@ export class ItemList<T> {
 						
 					});
 
-					simUI.bt.importItems(itemSpecs);
+					simUI.bt.addItems(itemSpecs);
 					simUI.bt.setCombinations(false);
 					// TODO: should we open the bulk sim UI or should we run in the background showing progress, and then sort the items in the picker?
 				}
