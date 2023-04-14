@@ -3,6 +3,7 @@ package dps
 import (
 	"time"
 
+	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/warrior"
@@ -62,11 +63,14 @@ func (war *DpsWarrior) doRotation(sim *core.Simulation) {
 	}
 
 	IsExecutePhase20 := sim.IsExecutePhase20()
-
-	if IsExecutePhase20 {
-		war.executeRotation(sim)
+	if war.Rotation.CustomRotationOption {
+		war.CustomRotation.Cast(sim)
 	} else {
-		war.normalRotation(sim)
+		if IsExecutePhase20 {
+			war.executeRotation(sim)
+		} else {
+			war.normalRotation(sim)
+		}
 	}
 
 	if war.GCD.IsReady(sim) && !war.thunderClapNext {
@@ -318,4 +322,68 @@ func (war *DpsWarrior) tryQueueHsCleave(sim *core.Simulation) {
 	if war.ShouldQueueHSOrCleave(sim) {
 		war.QueueHSOrCleave(sim)
 	}
+}
+
+func (war *DpsWarrior) makeCustomRotation() *common.CustomRotation {
+	return common.NewCustomRotation(war.Rotation.CustomRotation, war.GetCharacter(), map[int32]common.CustomSpell{
+		int32(proto.Warrior_Rotation_BloodthirstCustom): {
+			Spell: war.Bloodthirst,
+			Condition: func(sim *core.Simulation) bool {
+				if sim.IsExecutePhase20() && !war.Rotation.UseBtDuringExecute {
+					return false
+				}
+				return war.Bloodthirst.CanCast(sim, war.CurrentTarget)
+			},
+		},
+		int32(proto.Warrior_Rotation_MortalStrike): {
+			Spell: war.MortalStrike,
+			Condition: func(sim *core.Simulation) bool {
+				return war.MortalStrike.CanCast(sim, war.CurrentTarget) && war.CurrentRage() >= war.Rotation.MsRageThreshold
+			},
+		},
+		int32(proto.Warrior_Rotation_WhirlwindCustom): {
+			Spell: war.Whirlwind,
+			Condition: func(sim *core.Simulation) bool {
+				if sim.IsExecutePhase20() && !war.Rotation.UseWwDuringExecute {
+					return false
+				}
+				return war.Whirlwind.CanCast(sim, war.CurrentTarget)
+			},
+		},
+		int32(proto.Warrior_Rotation_SlamCustom): {
+			Spell: war.Slam,
+			Condition: func(sim *core.Simulation) bool {
+				if sim.IsExecutePhase20() && !war.Rotation.UseSlamOverExecute {
+					return false
+				}
+				if (war.ShouldSlam(sim) && war.CurrentRage() >= war.Rotation.SlamRageThreshold || war.ShouldInstantSlam(sim)) &&
+					war.Slam.CanCast(sim, war.CurrentTarget) {
+					war.AutoAttacks.DelayMeleeBy(sim, war.Slam.CurCast.CastTime)
+					return true
+				}
+				return false
+			},
+		},
+		int32(proto.Warrior_Rotation_Rend): {
+			Spell: war.Rend,
+			Condition: func(sim *core.Simulation) bool {
+				return war.ShouldRend(sim) && war.Rend.CanCast(sim, war.CurrentTarget)
+			},
+		},
+		int32(proto.Warrior_Rotation_Overpower): {
+			Spell: war.Overpower,
+			Condition: func(sim *core.Simulation) bool {
+				if !war.StanceMatches(warrior.BattleStance) {
+					if !war.BattleStance.IsReady(sim) {
+						return false
+					}
+					war.BattleStance.Cast(sim, nil)
+				}
+				return war.ShouldOverpower(sim) && war.Overpower.CanCast(sim, war.CurrentTarget)
+			},
+		},
+		int32(proto.Warrior_Rotation_Execute): {
+			Spell: war.Execute,
+		},
+	})
 }
