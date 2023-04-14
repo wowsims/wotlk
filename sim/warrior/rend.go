@@ -38,7 +38,8 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold
 
 		Dot: core.DotConfig{
 			Aura: core.Aura{
-				Label: "Rends",
+				Label: "Rend",
+				Tag:   "Rend",
 			},
 			NumberOfTicks: dotTicks,
 			TickLength:    time.Second * 3,
@@ -60,7 +61,7 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold
 			if result.Landed() {
 				spell.Dot(target).Apply(sim)
 				warrior.procBloodFrenzy(sim, result, dotDuration)
-				warrior.rendValidUntil = sim.CurrentTime + dotDuration
+				warrior.RendValidUntil = sim.CurrentTime + dotDuration
 			} else {
 				spell.IssueRefund(sim)
 			}
@@ -74,9 +75,9 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold
 
 func (warrior *Warrior) ShouldRend(sim *core.Simulation) bool {
 	if warrior.PrimaryTalentTree == FuryTree {
-		return warrior.Rend.IsReady(sim) && sim.CurrentTime >= (warrior.rendValidUntil-warrior.RendCdThreshold) && !warrior.Whirlwind.IsReady(sim) &&
+		return warrior.Rend.IsReady(sim) && sim.CurrentTime >= (warrior.RendValidUntil-warrior.RendCdThreshold) && !warrior.Whirlwind.IsReady(sim) &&
 			warrior.CurrentRage() <= warrior.RendRageThresholdBelow && warrior.RendHealthThresholdAbove < sim.GetRemainingDurationPercent() &&
 			warrior.CurrentRage() >= warrior.Rend.DefaultCast.Cost
 	}
-	return warrior.Rend.IsReady(sim) && sim.CurrentTime >= (warrior.rendValidUntil-warrior.RendCdThreshold) && warrior.CurrentRage() >= warrior.Rend.DefaultCast.Cost
+	return warrior.Rend.IsReady(sim) && sim.CurrentTime >= (warrior.RendValidUntil-warrior.RendCdThreshold) && warrior.CurrentRage() >= warrior.Rend.DefaultCast.Cost
 }

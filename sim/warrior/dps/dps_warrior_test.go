@@ -91,7 +91,7 @@ func BenchmarkSimulate(b *testing.B) {
 	core.RaidBenchmark(b, rsr)
 }
 
-var FuryTalents = "30202301233-305053000520310053120500351"
+var FuryTalents = "302023102331-305053000520310053120500351"
 var FuryGlyphs = &proto.Glyphs{
 	Major1: int32(proto.WarriorMajorGlyph_GlyphOfWhirlwind),
 	Major2: int32(proto.WarriorMajorGlyph_GlyphOfHeroicStrike),
@@ -139,9 +139,10 @@ var armsRotation = &proto.Warrior_Rotation{
 }
 
 var furyRotation = &proto.Warrior_Rotation{
-	UseRend:      true,
-	UseCleave:    false,
-	UseOverpower: false,
+	UseRend:               true,
+	UseCleave:             false,
+	UseOverpower:          true,
+	ExecutePhaseOverpower: false,
 
 	HsRageThreshold:          30,
 	RendRageThresholdBelow:   100,

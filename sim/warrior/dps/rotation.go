@@ -11,6 +11,12 @@ import (
 const DebuffRefreshWindow = time.Second * 2
 
 func (war *DpsWarrior) OnGCDReady(sim *core.Simulation) {
+	rendRemainingDur := war.RendValidUntil - sim.CurrentTime
+
+	// Pause rotation on every rend tick to check if TFB procs
+	if rendRemainingDur != war.Rend.CurDot().Duration && rendRemainingDur%3 == 0 && war.Talents.TasteForBlood > 0 {
+		war.WaitUntil(sim, sim.CurrentTime+time.Microsecond*1)
+	}
 	war.doRotation(sim)
 
 	if war.GCD.IsReady(sim) && !war.IsWaiting() {
@@ -160,7 +166,7 @@ func (war *DpsWarrior) armsNormalRotation(sim *core.Simulation) {
 		war.Overpower.Cast(sim, war.CurrentTarget)
 	} else if war.Rotation.UseMs && war.MortalStrike.CanCast(sim, war.CurrentTarget) && war.CurrentRage() >= war.Rotation.MsRageThreshold {
 		war.MortalStrike.Cast(sim, war.CurrentTarget)
-	} else if war.ShouldSlam(sim) && war.CurrentRage() >= war.Rotation.SlamRageThreshold {
+	} else if war.Slam.CanCast(sim, war.CurrentTarget) && war.CurrentRage() >= war.Rotation.SlamRageThreshold {
 		war.CastSlam(sim, war.CurrentTarget)
 	}
 }
