@@ -115,12 +115,37 @@ class EpWeightsMenu extends BaseModal {
 									<i class="fa fa-copy"></i>
 								</a>
 							</th>
-							<th>
+							<th style="text-align: center;">
 								<span>Current EP</span>
 								<a href="javascript:void(0)" role="button" class="col-action">
 									<i class="fas fa-arrows-rotate"></i>
 								</a>
 							</th>
+						</tr>
+						<tr class="ep-ratios">
+							<td>EP Ratio</td>
+							<td class="damage-metrics type-ratio type-weight">
+							</td>
+							<td class="damage-metrics type-ratio type-ep">
+							</td>
+							<td class="healing-metrics type-ratio type-weight">
+							</td>
+							<td class="healing-metrics type-ratio type-ep">
+							</td>
+							<td class="threat-metrics type-ratio type-weight">
+							</td>
+							<td class="threat-metrics type-ratio type-ep">
+							</td>
+							<td class="threat-metrics type-ratio type-weight">
+							</td>
+							<td class="threat-metrics type-ratio type-ep">
+							</td>
+							<td style="text-align: center; vertical-align: middle;">
+								<button class="btn btn-primary compute-ep">
+									<i class="fas fa-calculator"></i>
+									Compute EP
+								</button>
+							</td>
 						</tr>
 					</thead>
 					<tbody></tbody>
@@ -248,6 +273,51 @@ class EpWeightsMenu extends BaseModal {
 		});
 
 		this.updateTable(this.simUI.prevEpIterations || 1, this.getPrevSimResult(), true);
+
+		const makeEpRatioCell = (cell: HTMLElement, idx: number) => {
+			new NumberPicker(cell, this.simUI.player, {
+				float: true,
+				changedEvent: (player: Player<any>) => player.epRatiosChangeEmitter,
+				getValue: (player: Player<any>) => this.simUI.player.getEpRatios()[idx],
+				setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
+					const epRatios = player.getEpRatios();
+					epRatios[idx] = newValue;
+					player.setEpRatios(eventID, epRatios);
+				},
+			});
+		};
+		const epRatioCells = this.body.querySelectorAll('.type-ratio.type-ep') as NodeListOf<HTMLElement>;
+		epRatioCells.forEach(makeEpRatioCell);
+
+		const weightRatioCells = this.body.querySelectorAll('.type-ratio.type-weight') as NodeListOf<HTMLElement>;
+		weightRatioCells.forEach(makeEpRatioCell);
+
+		const updateButton = this.rootElem.getElementsByClassName('compute-ep')[0] as HTMLElement;
+		updateButton.setAttribute('data-bs-toggle', 'tooltip');
+		updateButton.setAttribute('data-bs-title', "Compute Weighted EP");
+		updateButton.setAttribute('data-bs-html', 'true');
+
+		Tooltip.getOrCreateInstance(updateButton);
+
+		updateButton.addEventListener('click', event => {
+			const results = this.getPrevSimResult();
+			const epRatios = this.simUI.player.getEpRatios();
+			if (this.statsType == 'ep') {
+				const scaledDpsEp = Stats.fromProto(results.dps!.epValues).scale(epRatios[0]);
+				const scaledHpsEp = Stats.fromProto(results.hps!.epValues).scale(epRatios[1]);
+				const scaledTpsEp = Stats.fromProto(results.tps!.epValues).scale(epRatios[2]);
+				const scaledDtpsEp = Stats.fromProto(results.dtps!.epValues).scale(epRatios[3]);
+				const newEp = scaledDpsEp.add(scaledHpsEp).add(scaledTpsEp).add(scaledDtpsEp);
+				this.simUI.player.setEpWeights(TypedEvent.nextEventID(), newEp);
+			} else {
+				const scaledDpsWeights = Stats.fromProto(results.dps!.epValues).scale(epRatios[0]);
+				const scaledHpsWeights = Stats.fromProto(results.hps!.epValues).scale(epRatios[1]);
+				const scaledTpsWeights = Stats.fromProto(results.tps!.epValues).scale(epRatios[2]);
+				const scaledDtpsWeights = Stats.fromProto(results.dtps!.epValues).scale(epRatios[3]);
+				const newWeights = scaledDpsWeights.add(scaledHpsWeights).add(scaledTpsWeights).add(scaledDtpsWeights);
+				this.simUI.player.setEpWeights(TypedEvent.nextEventID(), newWeights);
+			}
+		});
 	}
 
 	private setSimProgress(progress: ProgressMetrics) {
