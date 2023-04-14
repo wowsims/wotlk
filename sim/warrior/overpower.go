@@ -20,9 +20,15 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if result.Outcome.Matches(outcomeMask) {
-				warrior.overpowerValidUntil = sim.CurrentTime + time.Second*5
+				warrior.OverpowerAura.Activate(sim)
 			}
 		},
+	})
+
+	warrior.OverpowerAura = warrior.RegisterAura(core.Aura{
+		ActionID: core.ActionID{SpellID: 68051},
+		Label:    "Overpower Aura",
+		Duration: time.Second * 5,
 	})
 
 	cooldownDur := time.Second * 5
@@ -61,7 +67,7 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 		ThreatMultiplier: 0.75,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			warrior.overpowerValidUntil = 0
+			warrior.OverpowerAura.Deactivate(sim)
 
 			baseDamage := 0 +
 				spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
@@ -76,7 +82,7 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 }
 
 func (warrior *Warrior) ShouldOverpower(sim *core.Simulation) bool {
-	return sim.CurrentTime < warrior.overpowerValidUntil &&
+	return warrior.OverpowerAura.IsActive() &&
 		warrior.Overpower.IsReady(sim) &&
 		warrior.CurrentRage() >= warrior.Overpower.DefaultCast.Cost
 }

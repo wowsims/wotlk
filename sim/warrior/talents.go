@@ -171,8 +171,9 @@ func (warrior *Warrior) applyTasteForBlood() {
 			}
 
 			icd.Use(sim)
-			warrior.overpowerValidUntil = sim.CurrentTime + time.Second*9
-			warrior.lastTasteForBloodProc = sim.CurrentTime
+			warrior.OverpowerAura.Duration = time.Second * 9
+			warrior.OverpowerAura.Activate(sim)
+			warrior.OverpowerAura.Duration = time.Second * 5
 		},
 	})
 }
