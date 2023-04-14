@@ -718,7 +718,6 @@ const externalCDSpells: Array<{id: number, name: string, class: Class, applyFunc
 
 // Healing spells which only affect the caster's party.
 const samePartyHealingSpells: Array<{id: number, name: string}> = [
-	{id: 54172, name: 'Divine Storm'},
 	{id: 52042, name: 'Healing Stream Totem'},
 	{id: 48076, name: 'Holy Nova'},
 	{id: 48445, name: 'Tranquility'},
