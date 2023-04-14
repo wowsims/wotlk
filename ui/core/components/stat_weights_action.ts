@@ -196,6 +196,20 @@ class EpWeightsMenu extends BaseModal {
 		selectElem.value = this.statsType;
 		updateType();
 
+		const getNameFromStat = (stat: Stat|undefined) => {
+			return stat !== undefined ? getClassStatName(stat, this.simUI.player.getClass()) : '??';
+		};
+
+		const getStatFromName = (value: string) => {
+			for (let stat of this.epStats) {
+				if (getNameFromStat(stat) == value) {
+					return stat;
+				}
+			}
+
+			return undefined;
+		};
+
 		const optimizeGemsButton = this.rootElem.getElementsByClassName('optimize-gems')[0] as HTMLElement;
 		Tooltip.getOrCreateInstance(optimizeGemsButton);
 		optimizeGemsButton.addEventListener('click', async event => {
