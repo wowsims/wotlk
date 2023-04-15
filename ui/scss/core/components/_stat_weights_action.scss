@@ -52,6 +52,23 @@
 				text-align: left;
 			}
 
+			.ep-ratios {
+				background-color: $table-row-even-bg;
+
+				td {
+					padding: $table-cell-padding;
+				}
+
+				.input-root {
+					align-items: flex-end;
+				}
+
+				input {
+					text-align: right;
+					width: 65%;
+				}
+			}
+
 			tbody {
 				tr:nth-child(even) {
 					background-color: $table-row-even-bg;	

@@ -2,6 +2,7 @@ package core
 
 import (
 	"math"
+	"runtime"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -153,8 +154,20 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, referenceStat stats.Stat, pro
 	var simsTotal int32
 	var simsCompleted int32
 
+	concurrency := (runtime.NumCPU() - 1) * 2
+	if concurrency <= 0 {
+		concurrency = 2
+	}
+
+	tickets := make(chan struct{}, concurrency)
+	for i := 0; i < concurrency; i++ {
+		tickets <- struct{}{}
+	}
+
 	doStat := func(stat stats.UnitStat, value float64, isLow bool) {
 		defer waitGroup.Done()
+		// wait until we have CPU time available.
+		<-tickets
 
 		simRequest := googleProto.Clone(baseSimRequest).(*proto.RaidSimRequest)
 		stat.AddToStatsProto(simRequest.Raid.Parties[0].Players[0].BonusStats, value)
@@ -196,6 +209,7 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, referenceStat stats.Stat, pro
 		} else {
 			resultsHigh[stat] = simResult
 		}
+		tickets <- struct{}{}
 	}
 
 	const defaultStatMod = 20.0

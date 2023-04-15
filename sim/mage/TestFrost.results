@@ -74,15 +74,17 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 5161.37963
-  tps: 10297.33305
+  dps: 5160.55669
+  tps: 4091.79156
+  hps: 93.60355
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 5161.37963
-  tps: 10297.33305
+  dps: 5160.55669
+  tps: 4091.79156
+  hps: 93.60355
  }
 }
 dps_results: {
@@ -278,8 +280,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 5402.48085
-  tps: 4306.72778
+  dps: 5400.43583
+  tps: 4304.88747
  }
 }
 dps_results: {

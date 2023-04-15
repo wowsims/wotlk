@@ -152,6 +152,12 @@ export class Stats {
 			this.pseudoStats.map((value, stat) => value - other.pseudoStats[stat]));
 	}
 
+	scale(scalar: number): Stats {
+		return new Stats(
+			this.stats.map((value, stat) => value * scalar),
+			this.pseudoStats.map((value, stat) => value * scalar));
+	}
+
 	computeEP(epWeights: Stats): number {
 		let total = 0;
 		this.stats.forEach((stat, idx) => {

@@ -81,15 +81,17 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 6343.51712
-  tps: 57141.58873
+  dps: 6344.61796
+  tps: 4504.67875
+  hps: 88.62681
  }
 }
 dps_results: {
  key: "TestCombat-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 6343.51712
-  tps: 57141.58873
+  dps: 6344.61796
+  tps: 4504.67875
+  hps: 88.62681
  }
 }
 dps_results: {
@@ -580,8 +582,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-Shadowblade'sBattlegear"
  value: {
-  dps: 6677.94077
-  tps: 4741.33795
+  dps: 6670.11079
+  tps: 4735.77866
  }
 }
 dps_results: {

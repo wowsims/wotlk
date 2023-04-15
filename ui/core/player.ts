@@ -120,6 +120,7 @@ export class Player<SpecType extends Spec> {
 
 	readonly specTypeFunctions: SpecTypeFunctions<SpecType>;
 
+	private epRatios: Array<number> = new Array<number>(4).fill(0);
 	private epWeights: Stats = new Stats();
 	private currentStats: PlayerStats = PlayerStats.create();
 
@@ -141,6 +142,7 @@ export class Player<SpecType extends Spec> {
 	readonly epWeightsChangeEmitter = new TypedEvent<void>('PlayerEpWeights');
 
 	readonly currentStatsEmitter = new TypedEvent<void>('PlayerCurrentStats');
+	readonly epRatiosChangeEmitter = new TypedEvent<void>('PlayerEpRatios');
 
 	// Emits when any of the above emitters emit.
 	readonly changeEmitter: TypedEvent<void>;
@@ -173,6 +175,7 @@ export class Player<SpecType extends Spec> {
 			this.distanceFromTargetChangeEmitter,
 			this.healingModelChangeEmitter,
 			this.epWeightsChangeEmitter,
+			this.epRatiosChangeEmitter,
 		], 'PlayerChange');
 	}
 
@@ -266,6 +269,31 @@ export class Player<SpecType extends Spec> {
 		this.gemEPCache = new Map();
 		this.itemEPCache = new Map();
 		this.enchantEPCache = new Map();
+	}
+
+	getDefaultEpRatios(isTankSpec: boolean, isHealingSpec: boolean): Array<number> {
+		const defaultRatios = new Array(4).fill(0);
+		if (isHealingSpec) {
+			// By default only value HPS EP for healing spec
+			defaultRatios[1] = 1;
+		} else if (isTankSpec) {
+			// By default value TPS and DTPS EP equally for tanking spec
+			defaultRatios[2] = 1;
+			defaultRatios[3] = 1;
+		} else {
+			// By default only value DPS EP
+			defaultRatios[0] = 1;
+		}
+		return defaultRatios;
+	}
+
+	getEpRatios() {
+		return this.epRatios.slice();
+	}
+
+	setEpRatios(eventID: EventID, newRatios: Array<number>) {
+		this.epRatios = newRatios;
+		this.epRatiosChangeEmitter.emit(eventID);
 	}
 
 	async computeStatWeights(eventID: EventID, epStats: Array<Stat>, epPseudoStats: Array<PseudoStat>, epReferenceStat: Stat, onProgress: Function): Promise<StatWeightsResult> {

@@ -3,6 +3,7 @@ package dps
 import (
 	"time"
 
+	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/warrior"
@@ -11,6 +12,12 @@ import (
 const DebuffRefreshWindow = time.Second * 2
 
 func (war *DpsWarrior) OnGCDReady(sim *core.Simulation) {
+	rendRemainingDur := war.RendValidUntil - sim.CurrentTime
+
+	// Pause rotation on every rend tick to check if TFB procs
+	if rendRemainingDur != war.Rend.CurDot().Duration && rendRemainingDur%3 == 0 && war.Talents.TasteForBlood > 0 {
+		war.WaitUntil(sim, sim.CurrentTime+time.Microsecond*1)
+	}
 	war.doRotation(sim)
 
 	if war.GCD.IsReady(sim) && !war.IsWaiting() {
@@ -56,11 +63,14 @@ func (war *DpsWarrior) doRotation(sim *core.Simulation) {
 	}
 
 	IsExecutePhase20 := sim.IsExecutePhase20()
-
-	if IsExecutePhase20 {
-		war.executeRotation(sim)
+	if war.Rotation.CustomRotationOption {
+		war.CustomRotation.Cast(sim)
 	} else {
-		war.normalRotation(sim)
+		if IsExecutePhase20 {
+			war.executeRotation(sim)
+		} else {
+			war.normalRotation(sim)
+		}
 	}
 
 	if war.GCD.IsReady(sim) && !war.thunderClapNext {
@@ -82,44 +92,10 @@ func (war *DpsWarrior) doRotation(sim *core.Simulation) {
 
 func (war *DpsWarrior) normalRotation(sim *core.Simulation) {
 	if war.GCD.IsReady(sim) {
-		if war.tryMaintainDebuffs(sim) {
-			war.DoNothing()
-		} else if war.ShouldOverpower(sim) {
-			if !war.StanceMatches(warrior.BattleStance) {
-				if !war.BattleStance.IsReady(sim) {
-					return
-				}
-				war.BattleStance.Cast(sim, nil)
-			}
-			war.Overpower.Cast(sim, war.CurrentTarget)
-		} else if war.Rotation.MainGcd == proto.Warrior_Rotation_Slam && war.ShouldInstantSlam(sim) {
-			war.CastSlam(sim, war.CurrentTarget)
-		} else if war.Rotation.MainGcd == proto.Warrior_Rotation_Bloodthirst && war.Bloodthirst.CanCast(sim, war.CurrentTarget) {
-			war.Bloodthirst.Cast(sim, war.CurrentTarget)
-		} else if war.Rotation.MainGcd == proto.Warrior_Rotation_Whirlwind && war.CanWhirlwind(sim) {
-			war.Whirlwind.Cast(sim, war.CurrentTarget)
-		} else if war.Rotation.MainGcd != proto.Warrior_Rotation_Slam && war.ShouldInstantSlam(sim) {
-			war.CastSlam(sim, war.CurrentTarget)
-		} else if war.Rotation.MainGcd != proto.Warrior_Rotation_Bloodthirst && war.Bloodthirst.CanCast(sim, war.CurrentTarget) {
-			war.Bloodthirst.Cast(sim, war.CurrentTarget)
-		} else if war.Rotation.MainGcd != proto.Warrior_Rotation_Whirlwind && war.CanWhirlwind(sim) {
-			war.Whirlwind.Cast(sim, war.CurrentTarget)
-		} else if war.Rotation.UseRend && war.ShouldRend(sim) {
-			if !war.StanceMatches(warrior.BattleStance) {
-				if !war.BattleStance.IsReady(sim) {
-					return
-				}
-				war.BattleStance.Cast(sim, nil)
-			}
-			war.Rend.Cast(sim, war.CurrentTarget)
-		} else if war.Execute.CanCast(sim, war.CurrentTarget) {
-			war.CastExecute(sim, war.CurrentTarget)
-		} else if war.Rotation.UseMs && war.MortalStrike.CanCast(sim, war.CurrentTarget) && war.CurrentRage() >= war.Rotation.MsRageThreshold {
-			war.MortalStrike.Cast(sim, war.CurrentTarget)
-		} else if war.ShouldSlam(sim) && war.CurrentRage() >= war.Rotation.SlamRageThreshold {
-			war.CastSlam(sim, war.CurrentTarget)
-		} else if war.ShieldSlam.CanCast(sim, war.CurrentTarget) {
-			war.ShieldSlam.Cast(sim, war.CurrentTarget)
+		if war.Warrior.PrimaryTalentTree == warrior.FuryTree {
+			war.furyNormalRotation(sim)
+		} else if war.Warrior.PrimaryTalentTree == warrior.ArmsTree {
+			war.armsNormalRotation(sim)
 		}
 	}
 	war.tryQueueHsCleave(sim)
@@ -127,54 +103,151 @@ func (war *DpsWarrior) normalRotation(sim *core.Simulation) {
 
 func (war *DpsWarrior) executeRotation(sim *core.Simulation) {
 	if war.GCD.IsReady(sim) {
-		if war.tryMaintainDebuffs(sim) {
-			war.DoNothing()
-		} else if war.ShouldOverpower(sim) {
-			if !war.StanceMatches(warrior.BattleStance) {
-				if !war.BattleStance.IsReady(sim) {
-					return
-				}
-				war.BattleStance.Cast(sim, nil)
-			}
-			war.Overpower.Cast(sim, war.CurrentTarget)
-		} else if war.SpamExecute(war.Rotation.SpamExecute) {
-			war.CastExecute(sim, war.CurrentTarget)
-		} else if war.Rotation.MainGcd == proto.Warrior_Rotation_Slam &&
-			war.Rotation.UseSlamOverExecute && war.ShouldInstantSlam(sim) {
-			war.CastSlam(sim, war.CurrentTarget)
-		} else if war.Rotation.MainGcd == proto.Warrior_Rotation_Bloodthirst &&
-			war.Rotation.UseBtDuringExecute && war.Bloodthirst.CanCast(sim, war.CurrentTarget) {
-			war.Bloodthirst.Cast(sim, war.CurrentTarget)
-		} else if war.Rotation.MainGcd == proto.Warrior_Rotation_Whirlwind &&
-			war.Rotation.UseWwDuringExecute && war.CanWhirlwind(sim) {
-			war.Whirlwind.Cast(sim, war.CurrentTarget)
-		} else if war.Rotation.MainGcd != proto.Warrior_Rotation_Slam &&
-			war.Rotation.UseSlamOverExecute && war.ShouldInstantSlam(sim) {
-			war.CastSlam(sim, war.CurrentTarget)
-		} else if war.Rotation.MainGcd != proto.Warrior_Rotation_Bloodthirst &&
-			war.Rotation.UseBtDuringExecute && war.Bloodthirst.CanCast(sim, war.CurrentTarget) {
-			war.Bloodthirst.Cast(sim, war.CurrentTarget)
-		} else if war.Rotation.MainGcd != proto.Warrior_Rotation_Whirlwind &&
-			war.Rotation.UseWwDuringExecute && war.CanWhirlwind(sim) {
-			war.Whirlwind.Cast(sim, war.CurrentTarget)
-		} else if war.Rotation.UseRend && war.ShouldRend(sim) {
-			if !war.StanceMatches(warrior.BattleStance) {
-				if !war.BattleStance.IsReady(sim) {
-					return
-				}
-				war.BattleStance.Cast(sim, nil)
-			}
-			war.Rend.Cast(sim, war.CurrentTarget)
-		} else if war.IsSuddenDeathActive() && war.Execute.CanCast(sim, war.CurrentTarget) {
-			war.CastExecute(sim, war.CurrentTarget)
-		} else if war.Rotation.UseMs && war.MortalStrike.CanCast(sim, war.CurrentTarget) && war.CurrentRage() >= war.Rotation.MsRageThreshold {
-			war.MortalStrike.Cast(sim, war.CurrentTarget)
-		} else if war.Execute.CanCast(sim, war.CurrentTarget) {
-			war.CastExecute(sim, war.CurrentTarget)
+		if war.Warrior.PrimaryTalentTree == warrior.FuryTree {
+			war.furyExecuteRotation(sim)
+		} else if war.Warrior.PrimaryTalentTree == warrior.ArmsTree {
+			war.armsExecuteRotation(sim)
 		}
 	}
 
 	war.tryQueueHsCleave(sim)
+}
+
+func (war *DpsWarrior) furyNormalRotation(sim *core.Simulation) {
+	if war.tryMaintainDebuffs(sim) {
+		war.DoNothing()
+	} else if war.Rotation.MainGcd == proto.Warrior_Rotation_Slam && war.ShouldInstantSlam(sim) {
+		war.CastSlam(sim, war.CurrentTarget)
+	} else if war.Rotation.MainGcd == proto.Warrior_Rotation_Bloodthirst && war.Bloodthirst.CanCast(sim, war.CurrentTarget) {
+		war.Bloodthirst.Cast(sim, war.CurrentTarget)
+	} else if war.Rotation.MainGcd == proto.Warrior_Rotation_Whirlwind && war.CanWhirlwind(sim) {
+		war.Whirlwind.Cast(sim, war.CurrentTarget)
+	} else if war.Rotation.MainGcd != proto.Warrior_Rotation_Slam && war.ShouldInstantSlam(sim) {
+		war.CastSlam(sim, war.CurrentTarget)
+	} else if war.Rotation.MainGcd != proto.Warrior_Rotation_Bloodthirst && war.Bloodthirst.CanCast(sim, war.CurrentTarget) {
+		war.Bloodthirst.Cast(sim, war.CurrentTarget)
+	} else if war.Rotation.MainGcd != proto.Warrior_Rotation_Whirlwind && war.CanWhirlwind(sim) {
+		war.Whirlwind.Cast(sim, war.CurrentTarget)
+	} else if war.Rotation.UseRend && war.ShouldRend(sim) {
+		if !war.StanceMatches(warrior.BattleStance) {
+			if !war.BattleStance.IsReady(sim) {
+				return
+			}
+			war.BattleStance.Cast(sim, nil)
+		}
+		war.Rend.Cast(sim, war.CurrentTarget)
+	} else if war.Rotation.UseOverpower && war.ShouldOverpower(sim) {
+		if !war.StanceMatches(warrior.BattleStance) {
+			if !war.BattleStance.IsReady(sim) {
+				return
+			}
+			war.BattleStance.Cast(sim, nil)
+		}
+		war.Overpower.Cast(sim, war.CurrentTarget)
+	}
+}
+
+func (war *DpsWarrior) armsNormalRotation(sim *core.Simulation) {
+	if war.tryMaintainDebuffs(sim) {
+		war.DoNothing()
+	} else if war.Execute.CanCast(sim, war.CurrentTarget) {
+		war.CastExecute(sim, war.CurrentTarget)
+	} else if war.Rotation.UseRend && war.ShouldRend(sim) {
+		if !war.StanceMatches(warrior.BattleStance) {
+			if !war.BattleStance.IsReady(sim) {
+				return
+			}
+			war.BattleStance.Cast(sim, nil)
+		}
+		war.Rend.Cast(sim, war.CurrentTarget)
+	} else if war.ShouldOverpower(sim) {
+		if !war.StanceMatches(warrior.BattleStance) {
+			if !war.BattleStance.IsReady(sim) {
+				return
+			}
+			war.BattleStance.Cast(sim, nil)
+		}
+		war.Overpower.Cast(sim, war.CurrentTarget)
+	} else if war.Rotation.UseMs && war.MortalStrike.CanCast(sim, war.CurrentTarget) && war.CurrentRage() >= war.Rotation.MsRageThreshold {
+		war.MortalStrike.Cast(sim, war.CurrentTarget)
+	} else if war.Slam.CanCast(sim, war.CurrentTarget) && war.CurrentRage() >= war.Rotation.SlamRageThreshold {
+		war.CastSlam(sim, war.CurrentTarget)
+	}
+}
+
+func (war *DpsWarrior) furyExecuteRotation(sim *core.Simulation) {
+	if war.tryMaintainDebuffs(sim) {
+		war.DoNothing()
+	} else if war.SpamExecute(war.Rotation.SpamExecute) {
+		war.CastExecute(sim, war.CurrentTarget)
+	} else if war.Rotation.MainGcd == proto.Warrior_Rotation_Slam &&
+		war.Rotation.UseSlamOverExecute && war.ShouldInstantSlam(sim) {
+		war.CastSlam(sim, war.CurrentTarget)
+	} else if war.Rotation.MainGcd == proto.Warrior_Rotation_Bloodthirst &&
+		war.Rotation.UseBtDuringExecute && war.Bloodthirst.CanCast(sim, war.CurrentTarget) {
+		war.Bloodthirst.Cast(sim, war.CurrentTarget)
+	} else if war.Rotation.MainGcd == proto.Warrior_Rotation_Whirlwind &&
+		war.Rotation.UseWwDuringExecute && war.CanWhirlwind(sim) {
+		war.Whirlwind.Cast(sim, war.CurrentTarget)
+	} else if war.Rotation.MainGcd != proto.Warrior_Rotation_Slam &&
+		war.Rotation.UseSlamOverExecute && war.ShouldInstantSlam(sim) {
+		war.CastSlam(sim, war.CurrentTarget)
+	} else if war.Rotation.MainGcd != proto.Warrior_Rotation_Bloodthirst &&
+		war.Rotation.UseBtDuringExecute && war.Bloodthirst.CanCast(sim, war.CurrentTarget) {
+		war.Bloodthirst.Cast(sim, war.CurrentTarget)
+	} else if war.Rotation.MainGcd != proto.Warrior_Rotation_Whirlwind &&
+		war.Rotation.UseWwDuringExecute && war.CanWhirlwind(sim) {
+		war.Whirlwind.Cast(sim, war.CurrentTarget)
+	} else if war.Rotation.UseRend && war.ShouldRend(sim) {
+		if !war.StanceMatches(warrior.BattleStance) {
+			if !war.BattleStance.IsReady(sim) {
+				return
+			}
+			war.BattleStance.Cast(sim, nil)
+		}
+		war.Rend.Cast(sim, war.CurrentTarget)
+	} else if war.Rotation.UseOverpower && war.Rotation.ExecutePhaseOverpower &&
+		war.ShouldOverpower(sim) {
+		if !war.StanceMatches(warrior.BattleStance) {
+			if !war.BattleStance.IsReady(sim) {
+				return
+			}
+			war.BattleStance.Cast(sim, nil)
+		}
+		war.Overpower.Cast(sim, war.CurrentTarget)
+	} else if war.Execute.CanCast(sim, war.CurrentTarget) {
+		war.CastExecute(sim, war.CurrentTarget)
+	}
+}
+
+func (war *DpsWarrior) armsExecuteRotation(sim *core.Simulation) {
+	if war.tryMaintainDebuffs(sim) {
+		war.DoNothing()
+	} else if war.IsSuddenDeathActive() && war.Execute.CanCast(sim, war.CurrentTarget) {
+		war.CastExecute(sim, war.CurrentTarget)
+	} else if war.ShouldOverpower(sim) {
+		if !war.StanceMatches(warrior.BattleStance) {
+			if !war.BattleStance.IsReady(sim) {
+				return
+			}
+			war.BattleStance.Cast(sim, nil)
+		}
+		war.Overpower.Cast(sim, war.CurrentTarget)
+	} else if war.SpamExecute(war.Rotation.SpamExecute) {
+		war.CastExecute(sim, war.CurrentTarget)
+	} else if war.Rotation.UseRend && war.ShouldRend(sim) {
+		if !war.StanceMatches(warrior.BattleStance) {
+			if !war.BattleStance.IsReady(sim) {
+				return
+			}
+			war.BattleStance.Cast(sim, nil)
+		}
+		war.Rend.Cast(sim, war.CurrentTarget)
+	} else if war.Rotation.UseMs && war.MortalStrike.CanCast(sim, war.CurrentTarget) && war.CurrentRage() >= war.Rotation.MsRageThreshold {
+		war.MortalStrike.Cast(sim, war.CurrentTarget)
+	} else if war.Execute.CanCast(sim, war.CurrentTarget) {
+		war.CastExecute(sim, war.CurrentTarget)
+	}
 }
 
 func (war *DpsWarrior) trySwapToBerserker(sim *core.Simulation) bool {
@@ -249,4 +322,68 @@ func (war *DpsWarrior) tryQueueHsCleave(sim *core.Simulation) {
 	if war.ShouldQueueHSOrCleave(sim) {
 		war.QueueHSOrCleave(sim)
 	}
+}
+
+func (war *DpsWarrior) makeCustomRotation() *common.CustomRotation {
+	return common.NewCustomRotation(war.Rotation.CustomRotation, war.GetCharacter(), map[int32]common.CustomSpell{
+		int32(proto.Warrior_Rotation_BloodthirstCustom): {
+			Spell: war.Bloodthirst,
+			Condition: func(sim *core.Simulation) bool {
+				if sim.IsExecutePhase20() && !war.Rotation.UseBtDuringExecute {
+					return false
+				}
+				return war.Bloodthirst.CanCast(sim, war.CurrentTarget)
+			},
+		},
+		int32(proto.Warrior_Rotation_MortalStrike): {
+			Spell: war.MortalStrike,
+			Condition: func(sim *core.Simulation) bool {
+				return war.MortalStrike.CanCast(sim, war.CurrentTarget) && war.CurrentRage() >= war.Rotation.MsRageThreshold
+			},
+		},
+		int32(proto.Warrior_Rotation_WhirlwindCustom): {
+			Spell: war.Whirlwind,
+			Condition: func(sim *core.Simulation) bool {
+				if sim.IsExecutePhase20() && !war.Rotation.UseWwDuringExecute {
+					return false
+				}
+				return war.Whirlwind.CanCast(sim, war.CurrentTarget)
+			},
+		},
+		int32(proto.Warrior_Rotation_SlamCustom): {
+			Spell: war.Slam,
+			Condition: func(sim *core.Simulation) bool {
+				if sim.IsExecutePhase20() && !war.Rotation.UseSlamOverExecute {
+					return false
+				}
+				if (war.ShouldSlam(sim) && war.CurrentRage() >= war.Rotation.SlamRageThreshold || war.ShouldInstantSlam(sim)) &&
+					war.Slam.CanCast(sim, war.CurrentTarget) {
+					war.AutoAttacks.DelayMeleeBy(sim, war.Slam.CurCast.CastTime)
+					return true
+				}
+				return false
+			},
+		},
+		int32(proto.Warrior_Rotation_Rend): {
+			Spell: war.Rend,
+			Condition: func(sim *core.Simulation) bool {
+				return war.ShouldRend(sim) && war.Rend.CanCast(sim, war.CurrentTarget)
+			},
+		},
+		int32(proto.Warrior_Rotation_Overpower): {
+			Spell: war.Overpower,
+			Condition: func(sim *core.Simulation) bool {
+				if !war.StanceMatches(warrior.BattleStance) {
+					if !war.BattleStance.IsReady(sim) {
+						return false
+					}
+					war.BattleStance.Cast(sim, nil)
+				}
+				return war.ShouldOverpower(sim) && war.Overpower.CanCast(sim, war.CurrentTarget)
+			},
+		},
+		int32(proto.Warrior_Rotation_Execute): {
+			Spell: war.Execute,
+		},
+	})
 }

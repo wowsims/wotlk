@@ -88,15 +88,17 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 7150.71003
-  tps: 13349.48587
+  dps: 7148.78344
+  tps: 7096.90599
+  hps: 88.62456
  }
 }
 dps_results: {
  key: "TestShadow-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 7150.71003
-  tps: 13349.48587
+  dps: 7148.78344
+  tps: 7096.90599
+  hps: 88.62456
  }
 }
 dps_results: {
@@ -299,8 +301,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 7461.47792
-  tps: 7405.09071
+  dps: 7462.06507
+  tps: 7405.67786
  }
 }
 dps_results: {

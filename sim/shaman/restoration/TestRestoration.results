@@ -81,15 +81,15 @@ dps_results: {
 dps_results: {
  key: "TestRestoration-AllItems-BaubleofTrueBlood-50354"
  value: {
-  tps: 57.94221
-  hps: 8630.96629
+  tps: 56.2746
+  hps: 3753.38959
  }
 }
 dps_results: {
  key: "TestRestoration-AllItems-BaubleofTrueBlood-50726"
  value: {
-  tps: 57.94221
-  hps: 8630.96629
+  tps: 56.2746
+  hps: 3753.38959
  }
 }
 dps_results: {
@@ -348,7 +348,7 @@ dps_results: {
  key: "TestRestoration-AllItems-EyeoftheBroodmother-45308"
  value: {
   tps: 57.359
-  hps: 3820.81464
+  hps: 3819.91492
  }
 }
 dps_results: {

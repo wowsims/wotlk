@@ -109,6 +109,25 @@ export abstract class SimUI extends Component {
 		updateShowHealingMetrics();
 		this.sim.showHealingMetricsChangeEmitter.on(updateShowHealingMetrics);
 
+		const updateShowEpRatios = () => {
+			// Threat metrics *always* shows multiple columns, so
+			// always show ratios when they are shown
+			if (this.sim.getShowThreatMetrics()) {
+				this.rootElem.classList.remove('hide-ep-ratios');
+			// This case doesn't currently happen, but who knows
+			// what the future holds...
+			} else if (this.sim.getShowDamageMetrics() && this.sim.getShowHealingMetrics()) {
+				this.rootElem.classList.remove('hide-ep-ratios');
+			} else {
+				this.rootElem.classList.add('hide-ep-ratios');
+			}
+		};
+
+		updateShowEpRatios();
+		this.sim.showDamageMetricsChangeEmitter.on(updateShowEpRatios);
+		this.sim.showHealingMetricsChangeEmitter.on(updateShowEpRatios);
+		this.sim.showThreatMetricsChangeEmitter.on(updateShowEpRatios);
+
 		const updateShowExperimental = () => {
 			if (this.sim.getShowExperimental())
 				this.rootElem.classList.remove('hide-experimental');

@@ -423,8 +423,9 @@ message RaidBuffs {
 	// +Spell Power
 	bool totem_of_wrath = 18;
 	bool flametongue_totem = 19;
-	reserved 20;
-	int32 demonic_pact = 43; // SP buff
+	int32 demonic_pact_old = 20; // old demo SP 
+	int32 demonic_pact = 43; // SP buff -- deprecated.
+	int32 demonic_pact_sp = 44; // SP buff NEW CORRECT
 
 	// +5% Spell Crit and/or +3% Haste
 	bool swift_retribution = 21; //haste only

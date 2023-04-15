@@ -197,6 +197,23 @@ message Warrior {
 		}
 		StanceOption stance_option = 19;
 		double rend_health_threshold_above = 20;
+
+		// Only used for Fury
+		bool use_overpower = 21;
+		bool execute_phase_overpower = 22;
+
+		enum SpellOption {
+			NoSpell = 0;
+			BloodthirstCustom = 1;
+			MortalStrike = 2;
+			WhirlwindCustom = 3;
+			SlamCustom = 4;
+			Rend = 5;
+			Overpower = 6;
+			Execute = 7;
+		}
+		CustomRotation custom_rotation = 23;
+		bool custom_rotation_option = 24;
 	}
 	Rotation rotation = 1;
 
@@ -206,6 +223,7 @@ message Warrior {
 		bool use_shattering_throw = 4;
 		WarriorShout shout = 3;
 		bool munch = 5;
+		bool stance_snapshot = 6;
 	}
 	Options options = 3;
 }

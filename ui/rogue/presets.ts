@@ -45,11 +45,11 @@ export const AssassinationTalents = {
 export const SubtletyTalents = {
 	name: 'Subtlety',
 	data: SavedTalents.create({
-		talentsString: '30522300014--5020032030321121350115031151',
+		talentsString: '30332310014--5022012030321121350115031151',
 		glyphs: Glyphs.create({
 			major1: RogueMajorGlyph.GlyphOfBackstab,
-			major2: RogueMajorGlyph.GlyphOfEviscerate,
-			major3: RogueMajorGlyph.GlyphOfShadowDance,
+			major2: RogueMajorGlyph.GlyphOfRupture,
+			major3: RogueMajorGlyph.GlyphOfTricksOfTheTrade,
 		})
 	}),
 }
@@ -57,11 +57,11 @@ export const SubtletyTalents = {
 export const HemoSubtletyTalents = {
 	name: 'Hemo Sub',
 	data: SavedTalents.create({
-		talentsString: '30532010135--502003203032112135011503113',
+		talentsString: '30532010135--502201203032112135011503122',
 		glyphs: Glyphs.create({
 			major1: RogueMajorGlyph.GlyphOfEviscerate,
 			major2: RogueMajorGlyph.GlyphOfRupture,
-			major3: RogueMajorGlyph.GlyphOfSliceAndDice,
+			major3: RogueMajorGlyph.GlyphOfTricksOfTheTrade,
 		})
 	}),
 }
@@ -950,4 +950,249 @@ export const P2_PRESET_HEMO_SUB = {
 			]
 		}
   ]}`),
+}
+
+export const P3_PRESET_HEMO_SUB = {
+	name: "P3 Hemo Sub",
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<any>) => player.getTalentTree() == 2,
+	gear: EquipmentSpec.fromJsonString(`{ "items":[
+		{
+			"id": 48235,
+			"enchant": 3817,
+			"gems": [
+				41398,
+				49110
+			]
+		},
+		{
+			"id": 47060,
+			"gems": [
+				40112
+			]
+		},
+		{
+			"id": 48237,
+			"enchant": 3808,
+			"gems": [
+				40112
+			]
+		},
+		{
+			"id": 47546,
+			"enchant": 3605,
+			"gems": [
+				40112
+			]
+		},
+		{
+			"id": 47431,
+			"enchant": 3832,
+			"gems": [
+				40148,
+				40130,
+				40112
+			]
+		},
+		{
+			"id": 45611,
+			"enchant": 3845,
+			"gems": [
+				40148,
+				0
+			]
+		},
+		{
+			"id": 48234,
+			"enchant": 3604,
+			"gems": [
+				40112,
+				0
+			]
+		},
+		{
+			"id": 47460,
+			"gems": [
+				40148,
+				40112,
+				40162
+			]
+		},
+		{
+			"id": 47420,
+			"enchant": 3823,
+			"gems": [
+				40112,
+				40112,
+				40148
+			]
+		},
+		{
+			"id": 47445,
+			"enchant": 3606,
+			"gems": [
+				40148,
+				40112
+			]
+		},
+		{
+			"id": 47443,
+			"gems": [40112]},
+		{
+			"id": 46048,
+			"gems": [
+				40112
+			]
+		},
+		{
+			"id": 45609
+		},
+		{
+			"id": 47131
+		},
+		{
+			"id": 47475,
+			"enchant": 3789,
+			"gems": [
+				40148
+			]
+		},
+		{
+			"id": 47416,
+			"enchant": 3789,
+			"gems": [
+				40148
+			]
+		},
+		{
+			"id": 45296,
+			"gems": [
+				40112
+			]
+		}
+	]}`),
+}
+
+export const P3_PRESET_DANCE_SUB = {
+	name: "P3 Dance Sub",
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<any>) => player.getTalentTree() == 2,
+	gear: EquipmentSpec.fromJsonString(`{ "items":[
+		{
+			"id": 48235,
+			"enchant": 3817,
+			"gems": [
+				41398,
+				49110
+			]
+		},
+		{
+			"id": 47060,
+			"gems": [
+				40112
+			]
+		},
+		{
+			"id": 48237,
+			"enchant": 3808,
+			"gems": [
+				40112
+			]
+		},
+		{
+			"id": 47546,
+			"enchant":3605,
+			"gems": [
+				40112
+			]
+		},
+		{
+			"id": 47431,
+			"enchant": 3832,
+			"gems": [
+				40148,
+				40130,
+				40112
+			]
+		},
+		{
+			"id": 45611,
+			"enchant": 3845,
+			"gems": [
+				40148,
+				0
+			]
+		},
+		{
+			"id": 48234,
+			"enchant" :3604,
+			"gems": [
+				40112,
+				0
+			]
+		},
+		{
+			"id": 47460,
+			"gems": [
+				40148,
+				40112,
+				40162
+			]
+		},
+		{
+			"id": 47420,
+			"enchant": 3823,
+			"gems": [
+				40112,
+				40112,
+				40148
+			]
+		},
+		{
+			"id": 47445,
+			"enchant": 3606,
+			"gems": [
+				40148,
+				40112
+			]
+		},
+		{
+			"id": 47443,
+			"gems": [
+				40112
+			]
+		},
+		{
+			"id": 46048,
+			"gems": [
+				40112
+			]
+		},
+		{
+			"id": 45609
+		},
+		{
+			"id": 47131
+		},
+		{
+			"id": 47416,
+			"enchant": 3789,
+			"gems": [
+				40148
+			]
+		},
+		{
+			"id": 47416,
+			"enchant": 3789,
+			"gems": [
+				40148
+			]
+		},
+		{
+			"id": 45296,
+			"gems": [
+				40112
+			]
+		}
+	]}`),
 }

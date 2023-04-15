@@ -81,15 +81,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 7716.03492
-  tps: 8096.68255
+  dps: 7716.97475
+  tps: 7641.90967
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 7716.03492
-  tps: 8096.68255
+  dps: 7716.97475
+  tps: 7641.90967
  }
 }
 dps_results: {
@@ -306,8 +306,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 8077.22033
-  tps: 7911.68142
+  dps: 8077.36938
+  tps: 7911.83047
  }
 }
 dps_results: {

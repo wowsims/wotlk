@@ -187,7 +187,7 @@ func (cat *FeralDruid) calcBuilderDpe(sim *core.Simulation) (float64, float64) {
 	// dynamic proc occurring
 	shredDpc := cat.Shred.ExpectedDamage(sim, cat.CurrentTarget)
 	rakeDpc := cat.Rake.ExpectedDamage(sim, cat.CurrentTarget)
-	return rakeDpc / cat.CurrentRakeCost(), shredDpc / cat.CurrentShredCost()
+	return rakeDpc / cat.Rake.DefaultCast.Cost, shredDpc / cat.Shred.DefaultCast.Cost
 }
 
 func (cat *FeralDruid) clipRoar(sim *core.Simulation) bool {
@@ -289,15 +289,21 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	rakeDot := cat.Rake.CurDot()
 	ripDot := cat.Rip.CurDot()
 	lacerateDot := cat.Lacerate.CurDot()
+	isBleedActive := cat.AssumeBleedActive || ripDot.IsActive() || rakeDot.IsActive() || lacerateDot.IsActive()
+
+	// Prioritize using rake/rip with omen procs if bleed isnt active
+	// But less priority then mangle aura
+	ripCcCheck := core.Ternary(isBleedActive, !isClearcast, true)
+	rakeCcCheck := core.Ternary(isBleedActive, !isClearcast, cat.bleedAura.IsActive())
 
 	endThresh := time.Second * 10
 
-	ripNow := (curCp >= rotation.MinCombosForRip) && !ripDot.IsActive() && (simTimeRemain >= endThresh) && !isClearcast
+	ripNow := (curCp >= rotation.MinCombosForRip) && !ripDot.IsActive() && (simTimeRemain >= endThresh) && ripCcCheck
 	biteAtEnd := (curCp >= rotation.MinCombosForBite) && ((simTimeRemain < endThresh) || (ripDot.IsActive() && (simTimeRemain-ripDot.RemainingDuration(sim) < endThresh)))
 	mangleNow := !ripNow && !cat.bleedAura.IsActive() && cat.MangleCat != nil
 
 	biteBeforeRip := (curCp >= rotation.MinCombosForBite) && ripDot.IsActive() && cat.SavageRoarAura.IsActive() && rotation.UseBite && cat.canBite(sim)
-	biteNow := (biteBeforeRip || biteAtEnd) && !isClearcast
+	biteNow := (biteBeforeRip || biteAtEnd) && !isClearcast && curEnergy < 67
 
 	// During Berserk, we additionally add an Energy constraint on Bite
 	// usage to maximize the total Energy expenditure we can get.
@@ -305,7 +311,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		biteNow = curEnergy <= rotation.BerserkBiteThresh
 	}
 
-	rakeNow := rotation.UseRake && !rakeDot.IsActive() && (simTimeRemain > rakeDot.Duration) && !isClearcast
+	rakeNow := rotation.UseRake && !rakeDot.IsActive() && (simTimeRemain > rakeDot.Duration) && rakeCcCheck
 
 	// Additionally, don't Rake if the current Shred DPE is higher due to
 	// trinket procs etc.
@@ -706,6 +712,7 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 		MinCombosForBite:   core.Ternary(rotation.MinCombosForBite > 0, rotation.MinCombosForBite, 1),
 		MangleSpam:         rotation.MangleSpam,
 		BerserkBiteThresh:  float64(rotation.BerserkBiteThresh),
+		BerserkFfThresh:    float64(rotation.BerserkFfThresh),
 		Powerbear:          rotation.Powerbear,
 		MinRoarOffset:      time.Duration(float64(rotation.MinRoarOffset) * float64(time.Second)),
 		RipLeeway:          time.Duration(float64(rotation.RipLeeway) * float64(time.Second)),
@@ -730,10 +737,11 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 	cat.Rotation.UseBite = true
 
 	cat.Rotation.RipLeeway = 3 * time.Second
+	cat.Rotation.BerserkFfThresh = 15
 
 	if cat.Rotation.FlowerWeave || (cat.Rotation.BearweaveType == proto.FeralDruid_Rotation_None) {
 		if hasT84P {
-			cat.Rotation.MinRoarOffset = 26 * time.Second
+			cat.Rotation.MinRoarOffset = 34 * time.Second
 		} else {
 			cat.Rotation.MinRoarOffset = 24 * time.Second
 		}
