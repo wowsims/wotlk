@@ -1,0 +1,149 @@
+@use "sass:map";
+
+.bulk-settings-button {
+  margin-top: map.get($spacers, 3);
+}
+
+.bulk-result-item-slot {
+  color:aliceblue;
+  margin-left: 0.5rem;
+  font-size: 0.5 * map.get($font-sizes, 6);
+}
+
+.bulk-results-header .content-block-header {
+  border-bottom: none;
+}
+
+.bulk-result-header-positive, .bulk-result-header-negative {
+  font-weight: bold;
+  margin-left: 0.5rem;
+}
+
+.bulk-result-header-positive {
+  color: rgb(146, 207, 76);
+}
+
+.bulk-result-header-negative {
+  color: rgb(218, 92, 53);
+}
+
+.bulk-result-body-dps {
+  font-size: map.get($font-sizes, 6);
+  text-align: left;
+
+  .topline-result-avg {
+    text-align: left;
+  }
+}
+
+.bulk-items-text-line {
+  margin-bottom: 1rem;
+}
+
+.bulk-item-picker {
+  margin-bottom: 0.75rem;
+}
+
+.bulk-gear-combo {
+  display: grid;
+  grid-template-columns: repeat(3, 32%);
+  grid-template-rows: auto;
+  column-gap: 50px;
+}
+
+@media (max-width: 1899px) {
+  .bulk-gear-combo {
+    grid-template-columns: repeat(2, 48%);
+  }
+}
+
+@media (max-width: 1399px) {
+  .bulk-gear-combo {
+    grid-template-columns: repeat(1, 96%);
+  }
+}
+
+.blurred {
+  filter: blur(2px);
+  overflow: hidden;
+  margin: 0;
+}
+
+.results-pending-overlay {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  background: rgba(0,0,0,0.5);
+  max-height: 100vh;
+  
+  .results-content {
+    .results-sim {
+      div {
+        margin-top: 5px;
+      }
+    }
+  }
+}
+
+.bulk-tab {
+  position: relative;
+
+  .selector-modal-simall-button {
+    visibility: hidden;
+  }
+
+  .bulk-settings {
+    .selector-modal-tab-pane {
+      position: absolute;
+    }
+
+    .input-root {
+      flex-direction: row;
+      align-items: center;
+      margin-top: 5px;
+      border-bottom: 1px solid white;
+      padding: 3px;
+      label {
+        flex: 1;
+      }
+    }
+
+    .bulk-check-input {
+      width: 100%;
+      height: 40px;
+      padding: 5px;
+      margin-top: 15px;
+      display: flex;
+    }
+  }
+
+  .default-gem-container {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid white;
+    padding-bottom: 5px;
+    
+    .gem-socket-container {
+      height: 40px;
+      width: 40px;
+      margin-right: 3px;
+    }
+
+    .gem-icon {
+      height: 100%;
+      width: 100%;
+    }
+
+    .sockets-container {
+      display: flex;
+      flex-direction: row;
+    }
+  }
+}
+
+.results-sim {
+  margin-top: 5px;
+}

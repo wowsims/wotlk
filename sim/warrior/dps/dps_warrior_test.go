@@ -73,7 +73,7 @@ func BenchmarkSimulate(b *testing.B) {
 				Equipment:     FuryP1Gear,
 				Consumes:      FullConsumes,
 				Spec:          PlayerOptionsFury,
-				TalentsString: "32002301233-305053000520310053120500351",
+				TalentsString: FuryTalents,
 				Buffs:         core.FullIndividualBuffs,
 			},
 			core.FullPartyBuffs,
@@ -91,11 +91,11 @@ func BenchmarkSimulate(b *testing.B) {
 	core.RaidBenchmark(b, rsr)
 }
 
-var FuryTalents = "32002301233-305053000520310053120500351"
+var FuryTalents = "302023102331-305053000520310053120500351"
 var FuryGlyphs = &proto.Glyphs{
 	Major1: int32(proto.WarriorMajorGlyph_GlyphOfWhirlwind),
 	Major2: int32(proto.WarriorMajorGlyph_GlyphOfHeroicStrike),
-	Major3: int32(proto.WarriorMajorGlyph_GlyphOfExecution),
+	Major3: int32(proto.WarriorMajorGlyph_GlyphOfRending),
 }
 var ArmsTalents = "3022032023335100102012213231251-305-2033"
 var ArmsGlyphs = &proto.Glyphs{
@@ -139,8 +139,10 @@ var armsRotation = &proto.Warrior_Rotation{
 }
 
 var furyRotation = &proto.Warrior_Rotation{
-	UseRend:   false,
-	UseCleave: false,
+	UseRend:               true,
+	UseCleave:             false,
+	UseOverpower:          true,
+	ExecutePhaseOverpower: false,
 
 	HsRageThreshold:          30,
 	RendRageThresholdBelow:   100,
@@ -168,9 +170,9 @@ var warriorOptions = &proto.Warrior_Options{
 
 var FullConsumes = &proto.Consumes{
 	Flask:         proto.Flask_FlaskOfEndlessRage,
-	DefaultPotion: proto.Potions_IndestructiblePotion,
+	DefaultPotion: proto.Potions_PotionOfSpeed,
 	PrepopPotion:  proto.Potions_PotionOfSpeed,
-	Food:          proto.Food_FoodDragonfinFilet,
+	Food:          proto.Food_FoodFishFeast,
 }
 
 var FuryP1Gear = core.EquipmentSpecFromJsonString(`{"items": [

@@ -16,6 +16,9 @@ import {
 	RaidTarget,
 	RangedWeaponType,
 	SimDatabase,
+	SimEnchant,
+	SimGem,
+	SimItem,
 	Spec,
 	Stat,
 	UnitStats,
@@ -95,6 +98,7 @@ export class Player<SpecType extends Spec> {
 	private consumes: Consumes = Consumes.create();
 	private bonusStats: Stats = new Stats();
 	private gear: Gear = new Gear({});
+	//private bulkEquipmentSpec: BulkEquipmentSpec = BulkEquipmentSpec.create();
 	private itemSwapGear: ItemSwapGear = new ItemSwapGear();
 	private race: Race;
 	private profession1: Profession = 0;
@@ -116,6 +120,7 @@ export class Player<SpecType extends Spec> {
 
 	readonly specTypeFunctions: SpecTypeFunctions<SpecType>;
 
+	private epRatios: Array<number> = new Array<number>(4).fill(0);
 	private epWeights: Stats = new Stats();
 	private currentStats: PlayerStats = PlayerStats.create();
 
@@ -137,6 +142,7 @@ export class Player<SpecType extends Spec> {
 	readonly epWeightsChangeEmitter = new TypedEvent<void>('PlayerEpWeights');
 
 	readonly currentStatsEmitter = new TypedEvent<void>('PlayerCurrentStats');
+	readonly epRatiosChangeEmitter = new TypedEvent<void>('PlayerEpRatios');
 
 	// Emits when any of the above emitters emit.
 	readonly changeEmitter: TypedEvent<void>;
@@ -169,6 +175,7 @@ export class Player<SpecType extends Spec> {
 			this.distanceFromTargetChangeEmitter,
 			this.healingModelChangeEmitter,
 			this.epWeightsChangeEmitter,
+			this.epRatiosChangeEmitter,
 		], 'PlayerChange');
 	}
 
@@ -262,6 +269,31 @@ export class Player<SpecType extends Spec> {
 		this.gemEPCache = new Map();
 		this.itemEPCache = new Map();
 		this.enchantEPCache = new Map();
+	}
+
+	getDefaultEpRatios(isTankSpec: boolean, isHealingSpec: boolean): Array<number> {
+		const defaultRatios = new Array(4).fill(0);
+		if (isHealingSpec) {
+			// By default only value HPS EP for healing spec
+			defaultRatios[1] = 1;
+		} else if (isTankSpec) {
+			// By default value TPS and DTPS EP equally for tanking spec
+			defaultRatios[2] = 1;
+			defaultRatios[3] = 1;
+		} else {
+			// By default only value DPS EP
+			defaultRatios[0] = 1;
+		}
+		return defaultRatios;
+	}
+
+	getEpRatios() {
+		return this.epRatios.slice();
+	}
+
+	setEpRatios(eventID: EventID, newRatios: Array<number>) {
+		this.epRatios = newRatios;
+		this.epRatiosChangeEmitter.emit(eventID);
 	}
 
 	async computeStatWeights(eventID: EventID, epStats: Array<Stat>, epPseudoStats: Array<PseudoStat>, epReferenceStat: Stat, onProgress: Function): Promise<StatWeightsResult> {
@@ -455,6 +487,22 @@ export class Player<SpecType extends Spec> {
 			//this.setCooldowns(eventID, newCooldowns);
 		});
 	}
+
+	/*
+	setBulkEquipmentSpec(eventID: EventID, newBulkEquipmentSpec: BulkEquipmentSpec) {
+		if (BulkEquipmentSpec.equals(this.bulkEquipmentSpec, newBulkEquipmentSpec))
+			return;
+
+		TypedEvent.freezeAllAndDo(() => {
+			this.bulkEquipmentSpec = newBulkEquipmentSpec;
+			this.bulkGearChangeEmitter.emit(eventID);
+		});
+	}
+
+	getBulkEquipmentSpec(): BulkEquipmentSpec {
+		return BulkEquipmentSpec.clone(this.bulkEquipmentSpec);
+	}
+	*/
 
 	getBonusStats(): Stats {
 		return this.bonusStats;
@@ -896,7 +944,7 @@ export class Player<SpecType extends Spec> {
 	}
 
 	private toDatabase(): SimDatabase {
-		const dbGear =  this.getGear().toDatabase()
+		const dbGear = this.getGear().toDatabase()
 		const dbItemSwapGear = this.getItemSwapGear().toDatabase();
 		return SimDatabase.create({
 			items: dbGear.items.concat(dbItemSwapGear.items),
@@ -936,6 +984,7 @@ export class Player<SpecType extends Spec> {
 			this.setName(eventID, proto.name);
 			this.setRace(eventID, proto.race);
 			this.setGear(eventID, proto.equipment ? this.sim.db.lookupEquipmentSpec(proto.equipment) : new Gear({}));
+			//this.setBulkEquipmentSpec(eventID, BulkEquipmentSpec.create()); // Do not persist the bulk equipment settings.
 			this.setConsumes(eventID, proto.consumes || Consumes.create());
 			this.setBonusStats(eventID, Stats.fromProto(proto.bonusStats || UnitStats.create()));
 			this.setBuffs(eventID, proto.buffs || IndividualBuffs.create());

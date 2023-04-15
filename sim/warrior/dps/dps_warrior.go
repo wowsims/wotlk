@@ -3,6 +3,7 @@ package dps
 import (
 	"time"
 
+	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/warrior"
@@ -28,8 +29,9 @@ func RegisterDpsWarrior() {
 type DpsWarrior struct {
 	*warrior.Warrior
 
-	Options  *proto.Warrior_Options
-	Rotation *proto.Warrior_Rotation
+	Options        *proto.Warrior_Options
+	Rotation       *proto.Warrior_Rotation
+	CustomRotation *common.CustomRotation
 
 	// Prevent swapping stances until this time, to account for human reaction time.
 	canSwapStanceAt time.Duration
@@ -45,9 +47,11 @@ func NewDpsWarrior(character core.Character, options *proto.Player) *DpsWarrior 
 
 	war := &DpsWarrior{
 		Warrior: warrior.NewWarrior(character, options.TalentsString, warrior.WarriorInputs{
-			ShoutType:       warOptions.Options.Shout,
-			RendCdThreshold: core.DurationFromSeconds(warOptions.Rotation.RendCdThreshold),
-			Munch:           warOptions.Options.Munch,
+			ShoutType:                   warOptions.Options.Shout,
+			RendCdThreshold:             core.DurationFromSeconds(warOptions.Rotation.RendCdThreshold),
+			BloodsurgeDurationThreshold: core.DurationFromSeconds(warOptions.Rotation.BloodsurgeDurationThreshold),
+			Munch:                       warOptions.Options.Munch,
+			StanceSnapshot:              warOptions.Options.StanceSnapshot,
 		}),
 		Rotation: warOptions.Rotation,
 		Options:  warOptions.Options,
@@ -70,7 +74,7 @@ func NewDpsWarrior(character core.Character, options *proto.Player) *DpsWarrior 
 			if war.GCD.IsReady(sim) {
 				war.doRotation(sim)
 			}
-		} else if !war.thunderClapNext && war.PrimaryTalentTree == warrior.FuryTree {
+		} else if !war.thunderClapNext && war.Rotation.StanceOption == proto.Warrior_Rotation_BerserkerStance {
 			war.trySwapToBerserker(sim)
 		}
 	})
@@ -95,6 +99,7 @@ func (war *DpsWarrior) Initialize() {
 
 	war.RegisterHSOrCleave(war.Rotation.UseCleave, war.Rotation.HsRageThreshold)
 	war.RegisterRendSpell(war.Rotation.RendRageThresholdBelow, war.Rotation.RendHealthThresholdAbove)
+	war.CustomRotation = war.makeCustomRotation()
 
 	if war.Options.UseRecklessness {
 		war.RegisterRecklessnessCD()

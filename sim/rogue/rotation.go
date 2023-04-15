@@ -48,11 +48,13 @@ func (rogue *Rogue) OnGCDReady(sim *core.Simulation) {
 
 func (rogue *Rogue) setupRotation(sim *core.Simulation) {
 	switch {
-	case rogue.CanMutilate() && rogue.Env.GetNumTargets() <= 3:
+	case rogue.Env.GetNumTargets() >= 3:
+		rogue.rotation = &rotation_multi{} // rotation multi will soon be removed
+	case rogue.CanMutilate():
 		rogue.rotation = &rotation_assassination{}
-	case rogue.Talents.CombatPotency > 0 && rogue.Env.GetNumTargets() <= 3:
+	case rogue.Talents.CombatPotency > 0:
 		rogue.rotation = &rotation_combat{}
-	case rogue.Talents.HonorAmongThieves > 0 && rogue.Env.GetNumTargets() <= 3:
+	case rogue.Talents.HonorAmongThieves > 0:
 		rogue.rotation = &rotation_subtlety{}
 	default:
 		rogue.rotation = &rotation_generic{}

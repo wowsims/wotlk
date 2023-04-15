@@ -171,8 +171,9 @@ func (warrior *Warrior) applyTasteForBlood() {
 			}
 
 			icd.Use(sim)
-			warrior.overpowerValidUntil = sim.CurrentTime + time.Second*9
-			warrior.lastTasteForBloodProc = sim.CurrentTime
+			warrior.OverpowerAura.Duration = time.Second * 9
+			warrior.OverpowerAura.Activate(sim)
+			warrior.OverpowerAura.Duration = time.Second * 5
 		},
 	})
 }
@@ -287,9 +288,11 @@ func (warrior *Warrior) applyBloodsurge() {
 			//  the improved aura is not overwritten by the regular one, but simply refreshed
 			if ymirjar4Set && (warrior.Ymirjar4pcProcAura.IsActive() || sim.RandomFloat("Ymirjar 4pc") < 0.2) {
 				warrior.Ymirjar4pcProcAura.Activate(sim)
+				warrior.BloodsurgeValidUntil = sim.CurrentTime + warrior.Ymirjar4pcProcAura.Duration
 				return
 			}
 
+			warrior.BloodsurgeValidUntil = sim.CurrentTime + warrior.BloodsurgeAura.Duration
 			warrior.BloodsurgeAura.Activate(sim)
 		},
 	})
@@ -561,6 +564,7 @@ func (warrior *Warrior) applyWreckingCrew() {
 			procAura.Activate(sim)
 		},
 	})
+	core.RegisterPercentDamageModifierEffect(procAura, bonus)
 }
 
 func (warrior *Warrior) IsSuddenDeathActive() bool {
@@ -693,6 +697,7 @@ func (warrior *Warrior) registerDeathWishCD() {
 			warrior.PseudoStats.DamageTakenMultiplier /= 1.05
 		},
 	})
+	core.RegisterPercentDamageModifierEffect(deathWishAura, 1.2)
 
 	deathWishSpell := warrior.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,

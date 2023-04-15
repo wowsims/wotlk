@@ -1,4 +1,4 @@
-import { ArmorType } from './proto/common.js';
+import { ArmorType, SimDatabase } from './proto/common.js';
 import { Class, Faction } from './proto/common.js';
 import { Consumes } from './proto/common.js';
 import { Encounter as EncounterProto } from './proto/common.js';
@@ -14,7 +14,7 @@ import { RaidTarget } from './proto/common.js';
 import { Spec } from './proto/common.js';
 import { Stat, PseudoStat } from './proto/common.js';
 import { RangedWeaponType, WeaponType } from './proto/common.js';
-import { Raid as RaidProto } from './proto/api.js';
+import { BulkSimRequest, BulkSimResult, BulkSettings, Raid as RaidProto } from './proto/api.js';
 import { ComputeStatsRequest, ComputeStatsResult } from './proto/api.js';
 import { RaidSimRequest, RaidSimResult } from './proto/api.js';
 import { SimOptions } from './proto/api.js';
@@ -110,6 +110,11 @@ export class Sim {
 
 	// Fires when a raid sim API call completes.
 	readonly simResultEmitter = new TypedEvent<SimResult>();
+
+	// Fires when a bulk sim API call starts.
+	readonly bulkSimStartEmitter = new TypedEvent<BulkSimRequest>();
+	// Fires when a bulk sim API call completes..
+	readonly bulkSimResultEmitter = new TypedEvent<BulkSimResult>();
 
 	private readonly _initPromise: Promise<any>;
 	private lastUsedRngSeed: number = 0;
@@ -212,7 +217,46 @@ export class Sim {
 		});
 	}
 
-	async runRaidSim(eventID: EventID, onProgress: Function) {
+	async runBulkSim(bulkSettings: BulkSettings, bulkItemsDb: SimDatabase, onProgress: Function): Promise<BulkSimResult> {
+		if (this.raid.isEmpty()) {
+			throw new Error('Raid is empty! Try adding some players first.');
+		} else if (this.encounter.getNumTargets() < 1) {
+			throw new Error('Encounter has no targets! Try adding some targets first.');
+		}
+
+		await this.waitForInit();
+
+		const request = BulkSimRequest.create({
+			baseSettings: this.makeRaidSimRequest(false),
+			bulkSettings: bulkSettings,
+		});
+
+		if (request.baseSettings != null && request.baseSettings.simOptions != null) {
+			request.baseSettings.simOptions.debugFirstIteration = false;
+		}
+
+		if (!request.baseSettings?.raid || request.baseSettings?.raid?.parties.length == 0 || request.baseSettings?.raid?.parties[0].players.length == 0) {
+			throw new Error('Raid must contain exactly 1 player for bulk sim.');
+		}
+
+		// Attach the extra database to the player.
+		const playerDatabase = request.baseSettings.raid.parties[0].players[0].database;
+		playerDatabase?.items.push(...bulkItemsDb.items);
+		playerDatabase?.enchants.push(...bulkItemsDb.enchants);
+		playerDatabase?.gems.push(...bulkItemsDb.gems);
+
+		this.bulkSimStartEmitter.emit(TypedEvent.nextEventID(), request);
+		
+		var result = await this.workerPool.bulkSimAsync(request, onProgress);
+		if (result.errorResult != "") {
+			throw new SimError(result.errorResult);
+		}
+
+		this.bulkSimResultEmitter.emit(TypedEvent.nextEventID(), result);
+		return result;
+	}
+
+	async runRaidSim(eventID: EventID, onProgress: Function): Promise<SimResult> {
 		if (this.raid.isEmpty()) {
 			throw new Error('Raid is empty! Try adding some players first.');
 		} else if (this.encounter.getNumTargets() < 1) {
@@ -229,6 +273,7 @@ export class Sim {
 		}
 		const simResult = await SimResult.makeNew(request, result);
 		this.simResultEmitter.emit(eventID, simResult);
+		return simResult;
 	}
 
 	async runRaidSimWithLogs(eventID: EventID): Promise<SimResult> {

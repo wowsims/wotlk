@@ -359,7 +359,7 @@ export const P2_PRESET = {
 			"enchant": 3604,
 			"gems": [
 				39996,
-				0,
+				39996,
 				0
 			]
 		},
@@ -391,7 +391,7 @@ export const P2_PRESET = {
 		{
 			"id": 45608,
 			"gems": [
-				0
+				39996
 			]
 		},
 		{

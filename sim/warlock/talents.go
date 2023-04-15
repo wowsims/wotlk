@@ -1,6 +1,7 @@
 package warlock
 
 import (
+	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -536,12 +537,12 @@ func (warlock *Warlock) setupDemonicPact() {
 		return
 	}
 
-	demonicPactMultiplier := 0.02 * float64(warlock.Talents.DemonicPact)
-	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *= 1. + demonicPactMultiplier
-	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFire] *= 1. + demonicPactMultiplier
-	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexArcane] *= 1. + demonicPactMultiplier
-	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexNature] *= 1. + demonicPactMultiplier
-	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly] *= 1. + demonicPactMultiplier
+	dpMult := 0.02 * float64(warlock.Talents.DemonicPact)
+	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *= 1. + dpMult
+	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFire] *= 1. + dpMult
+	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexArcane] *= 1. + dpMult
+	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexNature] *= 1. + dpMult
+	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly] *= 1. + dpMult
 
 	if warlock.Options.Summon == proto.Warlock_Options_NoSummon {
 		return
@@ -560,7 +561,7 @@ func (warlock *Warlock) setupDemonicPact() {
 	}
 	warlock.DemonicPactAura = demonicPactAuras[warlock.Index]
 
-	warlock.Pets[0].GetCharacter().RegisterAura(core.Aura{
+	warlock.Pet.RegisterAura(core.Aura{
 		Label:    "Demonic Pact Hidden Aura",
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
@@ -571,14 +572,22 @@ func (warlock *Warlock) setupDemonicPact() {
 				return
 			}
 
-			icd.Use(sim)
-			newSPBonus := warlock.GetStat(stats.SpellPower) * demonicPactMultiplier
+			lastBonus := 0.0
+			newSPBonus := 0.0
+			if warlock.DemonicPactAura.IsActive() {
+				lastBonus = warlock.DemonicPactAura.ExclusiveEffects[0].Priority
+				newSPBonus = math.Floor(lastBonus*dpMult*dpMult+
+					(1-dpMult)*dpMult*warlock.GetStat(stats.SpellPower)) + 1
+			} else {
+				newSPBonus = math.Floor(warlock.GetStat(stats.SpellPower)*(dpMult+dpMult*dpMult)) + 1
+			}
 
 			shouldRefresh := !warlock.DemonicPactAura.IsActive() ||
 				warlock.DemonicPactAura.RemainingDuration(sim) < time.Second*10 ||
-				newSPBonus > warlock.DemonicPactAura.ExclusiveEffects[0].Priority
+				newSPBonus > lastBonus
 
 			if shouldRefresh {
+				icd.Use(sim)
 				for _, dpAura := range demonicPactAuras {
 					if dpAura != nil {
 						dpAura.ExclusiveEffects[0].SetPriority(sim, newSPBonus)

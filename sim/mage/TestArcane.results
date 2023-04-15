@@ -74,15 +74,17 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 7121.80393
-  tps: 10415.70875
+  dps: 7119.50805
+  tps: 4302.64095
+  hps: 95.54671
  }
 }
 dps_results: {
  key: "TestArcane-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 7121.80393
-  tps: 10415.70875
+  dps: 7119.50805
+  tps: 4302.64095
+  hps: 95.54671
  }
 }
 dps_results: {
@@ -278,8 +280,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 7424.45329
-  tps: 4484.29323
+  dps: 7422.59151
+  tps: 4483.17615
  }
 }
 dps_results: {

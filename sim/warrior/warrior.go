@@ -11,12 +11,14 @@ import (
 var TalentTreeSizes = [3]int{31, 27, 27}
 
 type WarriorInputs struct {
-	ShoutType            proto.WarriorShout
-	PrecastShout         bool
-	PrecastShoutSapphire bool
-	PrecastShoutT2       bool
-	RendCdThreshold      time.Duration
-	Munch                bool
+	ShoutType                   proto.WarriorShout
+	PrecastShout                bool
+	PrecastShoutSapphire        bool
+	PrecastShoutT2              bool
+	RendCdThreshold             time.Duration
+	BloodsurgeDurationThreshold time.Duration
+	Munch                       bool
+	StanceSnapshot              bool
 }
 
 const (
@@ -34,13 +36,12 @@ type Warrior struct {
 	WarriorInputs
 
 	// Current state
-	Stance                Stance
-	overpowerValidUntil   time.Duration
-	rendValidUntil        time.Duration
-	shoutExpiresAt        time.Duration
-	revengeProcAura       *core.Aura
-	lastTasteForBloodProc time.Duration
-	Ymirjar4pcProcAura    *core.Aura
+	Stance               Stance
+	RendValidUntil       time.Duration
+	BloodsurgeValidUntil time.Duration
+	shoutExpiresAt       time.Duration
+	revengeProcAura      *core.Aura
+	Ymirjar4pcProcAura   *core.Aura
 
 	munchedDeepWoundsProcs []*core.PendingAction
 
@@ -81,6 +82,7 @@ type Warrior struct {
 
 	HeroicStrikeOrCleave     *core.Spell
 	HSOrCleaveQueueAura      *core.Aura
+	OverpowerAura            *core.Aura
 	HSRageThreshold          float64
 	RendRageThresholdBelow   float64
 	RendHealthThresholdAbove float64
@@ -163,8 +165,7 @@ func (warrior *Warrior) Initialize() {
 }
 
 func (warrior *Warrior) Reset(_ *core.Simulation) {
-	warrior.overpowerValidUntil = 0
-	warrior.rendValidUntil = 0
+	warrior.RendValidUntil = 0
 
 	warrior.shoutExpiresAt = 0
 	if warrior.Shout != nil && warrior.PrecastShout {

@@ -49,8 +49,10 @@ export const DefaultRotation = FeralDruidRotation.create({
 	biteModeType: FeralDruid_Rotation_BiteModeType.Emperical,
 	biteTime: 4.0,
 	berserkBiteThresh: 25.0,
+	berserkFfThresh: 15.0,
 	powerbear: false,
 	minRoarOffset: 12.0,
+	ripLeeway: 3.0,
 	maintainFaerieFire: true,
 	hotUptime: 0.0,
 	snekWeave: false,
@@ -61,7 +63,7 @@ export const DefaultRotation = FeralDruidRotation.create({
 export const DefaultOptions = FeralDruidOptions.create({
 	latencyMs: 100,
 	prepopOoc: true,
-	assumeBleedActive: false,
+	assumeBleedActive: true,
 });
 
 export const DefaultConsumes = Consumes.create({

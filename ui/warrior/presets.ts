@@ -20,6 +20,7 @@ import {
 	WarriorMajorGlyph,
 	WarriorMinorGlyph,
 	Warrior_Rotation_StanceOption as StanceOption,
+	ProtectionWarrior_Rotation_SpellOption as SpellOption,
 	Warrior_Rotation_MainGcd as MainGcd,
 } from '../core/proto/warrior.js';
 
@@ -66,6 +67,8 @@ export const DefaultRotation = WarriorRotation.create({
 	useRend: true,
 	useMs: true,
 	useCleave: false,
+	useOverpower: false,
+	executePhaseOverpower: false,
 
 	mainGcd: MainGcd.Slam,
 
