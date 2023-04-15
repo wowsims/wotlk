@@ -502,7 +502,7 @@ func (paladin *Paladin) applyRighteousVengeance() {
 	rvDot := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    dotActionID.WithTag(2),
 		SpellSchool: core.SpellSchoolHoly,
-		ProcMask:    core.ProcMaskEmpty,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreModifiers,
 
 		DamageMultiplier: 1,
@@ -529,7 +529,7 @@ func (paladin *Paladin) applyRighteousVengeance() {
 	rvSpell := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    dotActionID.WithTag(1),
 		SpellSchool: core.SpellSchoolHoly,
-		ProcMask:    core.ProcMaskEmpty,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
