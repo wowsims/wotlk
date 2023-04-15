@@ -16,9 +16,15 @@ func (war *DpsWarrior) OnGCDReady(sim *core.Simulation) {
 
 	// Pause rotation on every rend tick to check if TFB procs
 	if rendRemainingDur != war.Rend.CurDot().Duration && rendRemainingDur%3 == 0 && war.Talents.TasteForBlood > 0 {
-		war.WaitUntil(sim, sim.CurrentTime+time.Microsecond*1)
+		core.StartDelayedAction(sim, core.DelayedActionOptions{
+			DoAt: sim.CurrentTime + time.Microsecond*1,
+			OnAction: func(_ *core.Simulation) {
+				war.doRotation(sim)
+			},
+		})
+	} else {
+		war.doRotation(sim)
 	}
-	war.doRotation(sim)
 
 	if war.GCD.IsReady(sim) && !war.IsWaiting() {
 		// This means we did nothing
