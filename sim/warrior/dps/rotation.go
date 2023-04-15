@@ -347,6 +347,13 @@ func (war *DpsWarrior) makeCustomRotation() *common.CustomRotation {
 				if sim.IsExecutePhase20() && !war.Rotation.UseWwDuringExecute {
 					return false
 				}
+
+				if !war.StanceMatches(warrior.BerserkerStance) {
+					if !war.BerserkerStance.IsReady(sim) {
+						return false
+					}
+					war.BerserkerStance.Cast(sim, nil)
+				}
 				return war.Whirlwind.CanCast(sim, war.CurrentTarget)
 			},
 		},
@@ -356,6 +363,7 @@ func (war *DpsWarrior) makeCustomRotation() *common.CustomRotation {
 				if sim.IsExecutePhase20() && !war.Rotation.UseSlamOverExecute {
 					return false
 				}
+
 				if (war.ShouldSlam(sim) && war.CurrentRage() >= war.Rotation.SlamRageThreshold || war.ShouldInstantSlam(sim)) &&
 					war.Slam.CanCast(sim, war.CurrentTarget) {
 					war.AutoAttacks.DelayMeleeBy(sim, war.Slam.CurCast.CastTime)
@@ -364,14 +372,70 @@ func (war *DpsWarrior) makeCustomRotation() *common.CustomRotation {
 				return false
 			},
 		},
+
+		int32(proto.Warrior_Rotation_SlamExpiring): {
+			Spell: war.Slam,
+			Condition: func(sim *core.Simulation) bool {
+				if !war.ShouldInstantSlam(sim) {
+					return false
+				}
+
+				if (war.BloodsurgeValidUntil - sim.CurrentTime) > war.BloodsurgeDurationThreshold {
+					return false
+				}
+
+				if sim.IsExecutePhase20() && !war.Rotation.UseSlamOverExecute {
+					return false
+				}
+
+				if war.CurrentRage() >= war.Rotation.SlamRageThreshold && war.Slam.CanCast(sim, war.CurrentTarget) {
+					war.AutoAttacks.DelayMeleeBy(sim, war.Slam.CurCast.CastTime)
+					return true
+				}
+				return false
+			},
+		},
+
 		int32(proto.Warrior_Rotation_Rend): {
 			Spell: war.Rend,
 			Condition: func(sim *core.Simulation) bool {
-				return war.ShouldRend(sim) && war.Rend.CanCast(sim, war.CurrentTarget)
+				if !war.ShouldRend(sim) {
+					return false
+				}
+
+				if !war.StanceMatches(warrior.BattleStance) {
+					if !war.BattleStance.IsReady(sim) {
+						return false
+					}
+					war.BattleStance.Cast(sim, nil)
+				}
+				return war.Rend.CanCast(sim, war.CurrentTarget)
 			},
 		},
 		int32(proto.Warrior_Rotation_Overpower): {
 			Spell: war.Overpower,
+			Condition: func(sim *core.Simulation) bool {
+				if !war.ShouldOverpower(sim) {
+					return false
+				}
+				if sim.IsExecutePhase20() && !war.Rotation.ExecutePhaseOverpower {
+					return false
+				}
+
+				if !war.StanceMatches(warrior.BattleStance) {
+					if !war.BattleStance.IsReady(sim) {
+						return false
+					}
+					war.BattleStance.Cast(sim, nil)
+				}
+				return war.Overpower.CanCast(sim, war.CurrentTarget)
+			},
+		},
+		int32(proto.Warrior_Rotation_Execute): {
+			Spell: war.Execute,
+		},
+		int32(proto.Warrior_Rotation_ThunderClap): {
+			Spell: war.ThunderClap,
 			Condition: func(sim *core.Simulation) bool {
 				if !war.StanceMatches(warrior.BattleStance) {
 					if !war.BattleStance.IsReady(sim) {
@@ -379,11 +443,8 @@ func (war *DpsWarrior) makeCustomRotation() *common.CustomRotation {
 					}
 					war.BattleStance.Cast(sim, nil)
 				}
-				return war.ShouldOverpower(sim) && war.Overpower.CanCast(sim, war.CurrentTarget)
+				return war.ThunderClap.CanCast(sim, war.CurrentTarget)
 			},
-		},
-		int32(proto.Warrior_Rotation_Execute): {
-			Spell: war.Execute,
 		},
 	})
 }

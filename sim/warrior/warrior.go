@@ -11,13 +11,14 @@ import (
 var TalentTreeSizes = [3]int{31, 27, 27}
 
 type WarriorInputs struct {
-	ShoutType            proto.WarriorShout
-	PrecastShout         bool
-	PrecastShoutSapphire bool
-	PrecastShoutT2       bool
-	RendCdThreshold      time.Duration
-	Munch                bool
-	StanceSnapshot       bool
+	ShoutType                   proto.WarriorShout
+	PrecastShout                bool
+	PrecastShoutSapphire        bool
+	PrecastShoutT2              bool
+	RendCdThreshold             time.Duration
+	BloodsurgeDurationThreshold time.Duration
+	Munch                       bool
+	StanceSnapshot              bool
 }
 
 const (
@@ -35,11 +36,12 @@ type Warrior struct {
 	WarriorInputs
 
 	// Current state
-	Stance             Stance
-	RendValidUntil     time.Duration
-	shoutExpiresAt     time.Duration
-	revengeProcAura    *core.Aura
-	Ymirjar4pcProcAura *core.Aura
+	Stance               Stance
+	RendValidUntil       time.Duration
+	BloodsurgeValidUntil time.Duration
+	shoutExpiresAt       time.Duration
+	revengeProcAura      *core.Aura
+	Ymirjar4pcProcAura   *core.Aura
 
 	munchedDeepWoundsProcs []*core.PendingAction
 
