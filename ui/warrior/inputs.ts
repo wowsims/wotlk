@@ -94,13 +94,6 @@ export const WarriorRotationConfig = {
 			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalentTree() == 1 && !player.getRotation().customRotationOption,
 		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecWarrior>({
-			fieldName: 'executePhaseOverpower',
-			label: 'Overpower in Execute Phase',
-			labelTooltip: 'Use Overpower instead of Execute whenever it is available.',
-			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-			showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().useOverpower == true && player.getTalentTree() == 1 || player.getRotation().customRotationOption,
-		}),
 
 		InputHelpers.makeRotationEnumInput<Spec.SpecWarrior, MainGcd>({
 			fieldName: 'mainGcd',
@@ -186,6 +179,13 @@ export const WarriorRotationConfig = {
 			labelTooltip: 'Use Slam Over Execute when Bloodsurge Procs in Execute Phase.',
 			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalentTree() == 1,
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecWarrior>({
+			fieldName: 'executePhaseOverpower',
+			label: 'Overpower in Execute Phase',
+			labelTooltip: 'Use Overpower instead of Execute whenever it is available.',
+			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+			showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().useOverpower == true && player.getTalentTree() == 1 || player.getRotation().customRotationOption,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecWarrior>({
 			fieldName: 'spamExecute',
