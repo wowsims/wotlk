@@ -47,10 +47,11 @@ func NewDpsWarrior(character core.Character, options *proto.Player) *DpsWarrior 
 
 	war := &DpsWarrior{
 		Warrior: warrior.NewWarrior(character, options.TalentsString, warrior.WarriorInputs{
-			ShoutType:       warOptions.Options.Shout,
-			RendCdThreshold: core.DurationFromSeconds(warOptions.Rotation.RendCdThreshold),
-			Munch:           warOptions.Options.Munch,
-			StanceSnapshot:  warOptions.Options.StanceSnapshot,
+			ShoutType:                   warOptions.Options.Shout,
+			RendCdThreshold:             core.DurationFromSeconds(warOptions.Rotation.RendCdThreshold),
+			BloodsurgeDurationThreshold: core.DurationFromSeconds(warOptions.Rotation.BloodsurgeDurationThreshold),
+			Munch:                       warOptions.Options.Munch,
+			StanceSnapshot:              warOptions.Options.StanceSnapshot,
 		}),
 		Rotation: warOptions.Rotation,
 		Options:  warOptions.Options,

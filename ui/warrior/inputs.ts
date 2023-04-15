@@ -99,7 +99,7 @@ export const WarriorRotationConfig = {
 			label: 'Overpower in Execute Phase',
 			labelTooltip: 'Use Overpower instead of Execute whenever it is available.',
 			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-			showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().useOverpower == true && player.getTalentTree() == 1 || !player.getRotation().customRotationOption,
+			showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().useOverpower == true && player.getTalentTree() == 1 || player.getRotation().customRotationOption,
 		}),
 
 		InputHelpers.makeRotationEnumInput<Spec.SpecWarrior, MainGcd>({
@@ -129,6 +129,13 @@ export const WarriorRotationConfig = {
 			showWhen: (player: Player<Spec.SpecWarrior>) => (player.getRotation().useMs || player.getRotation().customRotationOption) && player.getTalentTree() == 0,
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecWarrior>({
+			fieldName: 'bloodsurgeDurationThreshold',
+			label: 'Exp Slam: Bloodsurge duration threshold (s)',
+			labelTooltip: 'Cast Exp Slam when Bloodsurge duration is below (seconds):',
+			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+			showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().customRotationOption && player.getTalentTree() == 1,
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecWarrior>({
 			fieldName: 'hsRageThreshold',
 			label: 'HS rage threshold',
 			labelTooltip: 'Heroic Strike when rage is above:',
@@ -149,7 +156,7 @@ export const WarriorRotationConfig = {
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecWarrior>({
 			fieldName: 'rendCdThreshold',
-			label: 'Rend Refresh Time',
+			label: 'Rend Refresh Time (s)',
 			labelTooltip: 'Refresh Rend when the remaining duration is less than this amount of time (seconds).',
 			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 			showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().useRend == true || player.getRotation().customRotationOption,
@@ -233,10 +240,12 @@ export const WarriorRotationConfig = {
 				{ actionId: ActionId.fromSpellId(23881), value: SpellOption.BloodthirstCustom },
 				{ actionId: ActionId.fromSpellId(1680), value: SpellOption.WhirlwindCustom },
 				{ actionId: ActionId.fromSpellId(47475), value: SpellOption.SlamCustom },
+				{ actionId: ActionId.fromSpellId(47475), value: SpellOption.SlamExpiring, text: "Exp", showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalentTree() == 1, },
 				{ actionId: ActionId.fromSpellId(47486), value: SpellOption.MortalStrike },
 				{ actionId: ActionId.fromSpellId(47465), value: SpellOption.Rend },
 				{ actionId: ActionId.fromSpellId(7384), value: SpellOption.Overpower },
 				{ actionId: ActionId.fromSpellId(47471), value: SpellOption.Execute },
+				{ actionId: ActionId.fromSpellId(47502), value: SpellOption.ThunderClap },
 			],
 		}),
 	],
