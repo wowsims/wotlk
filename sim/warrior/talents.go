@@ -288,9 +288,11 @@ func (warrior *Warrior) applyBloodsurge() {
 			//  the improved aura is not overwritten by the regular one, but simply refreshed
 			if ymirjar4Set && (warrior.Ymirjar4pcProcAura.IsActive() || sim.RandomFloat("Ymirjar 4pc") < 0.2) {
 				warrior.Ymirjar4pcProcAura.Activate(sim)
+				warrior.BloodsurgeValidUntil = sim.CurrentTime + warrior.Ymirjar4pcProcAura.Duration
 				return
 			}
 
+			warrior.BloodsurgeValidUntil = sim.CurrentTime + warrior.BloodsurgeAura.Duration
 			warrior.BloodsurgeAura.Activate(sim)
 		},
 	})
