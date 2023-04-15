@@ -43,7 +43,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	dotSpell := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 31803},
 		SpellSchool: core.SpellSchoolHoly,
-		ProcMask:    core.ProcMaskMeleeMHSpecial, // Might need to be changed later if SOV secondary rolls can proc other things.
+		ProcMask:    core.ProcMaskEmpty, // Might need to be changed later if SOV secondary rolls can proc other things.
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		DamageMultiplier: 1 *
