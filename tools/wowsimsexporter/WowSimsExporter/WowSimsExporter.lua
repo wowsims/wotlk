@@ -178,7 +178,7 @@ end
 	-- TODO(Riotdog-GehennasEU): Is this sufficient? This seems to be what simc uses:
 	-- https://github.com/simulationcraft/simc-addon/blob/master/core.lua
 	-- Except we don't need the artifact check for wotlk classic.
-function considerItemReplacement(bag, slot, itemLink)
+function considerItemReplacement(itemLink)
 	if not IsEquippableItem(itemLink) then
 		return false
 	end
@@ -225,7 +225,7 @@ function WowSimsExporter:GetGearEnchantGems(withBags)
 	for bag = 0, 4 do
 		for slot = 1, GetContainerNumSlots(bag) do
 			local itemLink = GetContainerItemLink(bag, slot)
-			if itemLink and considerItemReplacement(bag, slot, itemLink) then
+			if itemLink and considerItemReplacement(itemLink) then
 				table.insert(bagGear, self:createItemFromItemLink(itemLink))
 			end
 		end
