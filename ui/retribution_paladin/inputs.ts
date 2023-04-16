@@ -1,7 +1,4 @@
-import { 
-	Spec, 
-	ItemSlot
-} from '../core/proto/common.js';
+import { Spec, ItemSlot } from '../core/proto/common.js';
 import { Player } from '../core/player.js';
 import { EventID } from '../core/typed_event.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';

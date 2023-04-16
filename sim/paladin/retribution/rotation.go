@@ -120,12 +120,6 @@ func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 	ret.waitUntilNextEvent(sim, events, ret.customRotation)
 }
 
-func CancelChaosBane(ret *RetributionPaladin, sim *core.Simulation) {
-	if ret.Paladin.HasActiveAura("Chaos Bane") && ret.Paladin.CancelChaosBane {
-		ret.Paladin.GetAura("Chaos Bane").Deactivate(sim)
-	}
-}
-
 func (ret *RetributionPaladin) castSequenceRotation(sim *core.Simulation) {
 	if len(ret.RotationInput) == 0 {
 		return
@@ -309,7 +303,6 @@ func (ret *RetributionPaladin) waitUntilNextEvent(sim *core.Simulation, events [
 			nextEventAt = elem
 		}
 	}
-
 	// If the next action is  the GCD, just return
 	if nextEventAt == ret.GCD.ReadyAt() {
 		return
@@ -323,4 +316,10 @@ func (ret *RetributionPaladin) waitUntilNextEvent(sim *core.Simulation, events [
 	}
 
 	sim.AddPendingAction(pa)
+}
+
+func CancelChaosBane(ret *RetributionPaladin, sim *core.Simulation) {
+	if ret.Paladin.HasActiveAura("Chaos Bane") && ret.Paladin.CancelChaosBane {
+		ret.Paladin.GetAura("Chaos Bane").Deactivate(sim)
+	}
 }
