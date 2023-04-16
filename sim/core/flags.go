@@ -56,6 +56,7 @@ const (
 	ProcMaskRangedSpecial
 	ProcMaskSpellDamage
 	ProcMaskSpellHealing
+	ProcMaskSuppressedMeleeProc
 )
 
 const (
@@ -81,6 +82,8 @@ const (
 	ProcMaskTwoRoll = ProcMaskRanged | ProcMaskMeleeSpecial
 
 	ProcMaskSpecial = ProcMaskMeleeOrRangedSpecial | ProcMaskSpellDamage
+
+	ProcMaskMeleeOrSuppressedMeleeProcs = ProcMaskMelee | ProcMaskSuppressedMeleeProc
 )
 
 func GetMeleeProcMaskForHands(mh bool, oh bool) ProcMask {
