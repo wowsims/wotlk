@@ -43,7 +43,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	dotSpell := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 31803},
 		SpellSchool: core.SpellSchoolHoly,
-		ProcMask:    core.ProcMaskMeleeMHSpecial, // Might need to be changed later if SOV secondary rolls can proc other things.
+		ProcMask:    core.ProcMaskEmpty, // Might need to be changed later if SOV secondary rolls can proc other things.
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		DamageMultiplier: 1 *
@@ -119,7 +119,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	onSpecialOrSwingProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 42463}, // Seal of Vengeance damage bonus.
 		SpellSchool: core.SpellSchoolHoly,
-		ProcMask:    core.ProcMaskMeleeMHSpecial, // does proc certain spell damage-based items, e.g. Black Magic, Pendulum of Telluric Currents
+		ProcMask:    core.ProcMaskEmpty, // does proc certain spell damage-based items, e.g. Black Magic, Pendulum of Telluric Currents
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		// (mult * weaponScaling / stacks)
