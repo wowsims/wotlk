@@ -174,6 +174,7 @@ func (warrior *Warrior) applyTasteForBlood() {
 			warrior.OverpowerAura.Duration = time.Second * 9
 			warrior.OverpowerAura.Activate(sim)
 			warrior.OverpowerAura.Duration = time.Second * 5
+			warrior.lastOverpowerProc = sim.CurrentTime
 		},
 	})
 }
