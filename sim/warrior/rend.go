@@ -74,10 +74,6 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold
 }
 
 func (warrior *Warrior) ShouldRend(sim *core.Simulation) bool {
-	if warrior.PrimaryTalentTree == FuryTree {
-		return warrior.Rend.IsReady(sim) && sim.CurrentTime >= (warrior.RendValidUntil-warrior.RendCdThreshold) && !warrior.Whirlwind.IsReady(sim) &&
-			warrior.CurrentRage() <= warrior.RendRageThresholdBelow && warrior.RendHealthThresholdAbove < sim.GetRemainingDurationPercent() &&
-			warrior.CurrentRage() >= warrior.Rend.DefaultCast.Cost
-	}
-	return warrior.Rend.IsReady(sim) && sim.CurrentTime >= (warrior.RendValidUntil-warrior.RendCdThreshold) && warrior.CurrentRage() >= warrior.Rend.DefaultCast.Cost
+	return warrior.Rend.IsReady(sim) && sim.CurrentTime >= (warrior.RendValidUntil-warrior.RendCdThreshold) &&
+		warrior.CurrentRage() >= warrior.Rend.DefaultCast.Cost && warrior.RendHealthThresholdAbove < sim.GetRemainingDurationPercent()
 }
