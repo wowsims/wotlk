@@ -72,10 +72,19 @@ func NewDpsWarrior(character core.Character, options *proto.Player) *DpsWarrior 
 		if war.GCD.IsReady(sim) {
 			war.TryUseCooldowns(sim)
 			if war.GCD.IsReady(sim) {
-				war.doRotation(sim)
+				// Pause rotation until after AM ticks to detect procs that happened right after the ticks
+				if war.LastAMTick == sim.CurrentTime {
+					war.WaitUntil(sim, sim.CurrentTime+time.Microsecond*1)
+					core.StartDelayedAction(sim, core.DelayedActionOptions{
+						DoAt: sim.CurrentTime + time.Microsecond*1,
+						OnAction: func(_ *core.Simulation) {
+							war.doRotation(sim)
+						},
+					})
+				} else {
+					war.doRotation(sim)
+				}
 			}
-		} else if !war.thunderClapNext && war.Rotation.StanceOption == proto.Warrior_Rotation_BerserkerStance {
-			war.trySwapToBerserker(sim)
 		}
 	})
 	war.EnableAutoAttacks(war, core.AutoAttackOptions{
