@@ -136,7 +136,6 @@ var ItemSetDarkCovensRegalia = core.NewItemSet(core.ItemSet{
 		},
 		4: func(agent core.Agent) {
 			warlock := agent.(WarlockAgent).GetWarlock()
-			pet := warlock.Pets[0].GetCharacter()
 
 			deviousMindsAura := warlock.RegisterAura(core.Aura{
 				Label:    "Devious Minds",
@@ -150,17 +149,20 @@ var ItemSetDarkCovensRegalia = core.NewItemSet(core.ItemSet{
 				},
 			})
 
-			petDeviousMindsAura := pet.RegisterAura(core.Aura{
-				Label:    "Devious Minds",
-				ActionID: core.ActionID{SpellID: 70840},
-				Duration: time.Second * 10,
-				OnGain: func(aura *core.Aura, sim *core.Simulation) {
-					aura.Unit.PseudoStats.DamageDealtMultiplier *= 1.1
-				},
-				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-					aura.Unit.PseudoStats.DamageDealtMultiplier /= 1.1
-				},
-			})
+			var petDeviousMindsAura *core.Aura
+			if warlock.Pet != nil {
+				petDeviousMindsAura = warlock.Pet.RegisterAura(core.Aura{
+					Label:    "Devious Minds",
+					ActionID: core.ActionID{SpellID: 70840},
+					Duration: time.Second * 10,
+					OnGain: func(aura *core.Aura, sim *core.Simulation) {
+						aura.Unit.PseudoStats.DamageDealtMultiplier *= 1.1
+					},
+					OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+						aura.Unit.PseudoStats.DamageDealtMultiplier /= 1.1
+					},
+				})
+			}
 
 			warlock.RegisterAura(core.Aura{
 				Label:    "4pT10 Hidden Aura",
@@ -172,7 +174,9 @@ var ItemSetDarkCovensRegalia = core.NewItemSet(core.ItemSet{
 					if spell == warlock.UnstableAffliction || spell == warlock.Immolate {
 						if sim.Proc(0.15, "4pT10") {
 							deviousMindsAura.Activate(sim)
-							petDeviousMindsAura.Activate(sim)
+							if petDeviousMindsAura != nil {
+								petDeviousMindsAura.Activate(sim)
+							}
 						}
 					}
 				},
