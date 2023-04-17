@@ -170,8 +170,14 @@ else
 	./wowsimwotlk --usefs=true --launch=false
 endif
 
-release: wowsimwotlk
-	GOOS=windows GOARCH=amd64 GOAMD64=v2 go build -o wowsimwotlk-windows.exe -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
+wowsimwotlk-windows.exe: wowsimwotlk
+# go build only considers syso files when invoked without specifying .go files: https://github.com/golang/go/issues/16090
+	cp ./assets/favicon_io/icon-windows_amd64.syso ./sim/web/icon-windows_amd64.syso
+	cd ./sim/web/ && GOOS=windows GOARCH=amd64 GOAMD64=v2 go build -o wowsimwotlk-windows.exe -ldflags="-X 'main.Version=$(VERSION)' -s -w"
+	rm ./sim/web/icon-windows_amd64.syso
+	mv ./sim/web/wowsimwotlk-windows.exe ./wowsimwotlk-windows.exe
+
+release: wowsimwotlk wowsimwotlk-windows.exe
 	GOOS=darwin GOARCH=amd64 GOAMD64=v2 go build -o wowsimwotlk-amd64-darwin -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
 	GOOS=linux GOARCH=amd64 GOAMD64=v2 go build -o wowsimwotlk-amd64-linux   -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
 	GOOS=linux GOARCH=amd64 GOAMD64=v2 go build -o wowsimcli-amd64-linux --tags=with_db -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./cmd/wowsimcli/cli_main.go
