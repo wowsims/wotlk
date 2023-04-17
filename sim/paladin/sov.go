@@ -119,7 +119,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	onSpecialOrSwingProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 42463}, // Seal of Vengeance damage bonus.
 		SpellSchool: core.SpellSchoolHoly,
-		ProcMask:    core.ProcMaskEmpty, // does proc certain spell damage-based items, e.g. Black Magic, Pendulum of Telluric Currents
+		ProcMask:    core.ProcMaskEmpty, // crits proc Vengeance
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		// (mult * weaponScaling / stacks)
@@ -134,7 +134,8 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 				float64(dotSpell.Dot(target).GetStacks())
 
 			// can't miss if melee swing landed, but can crit
-			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialCritOnly)
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialCritOnly)
+			paladin.maybeProcVengeance(sim, result)
 		},
 	})
 
