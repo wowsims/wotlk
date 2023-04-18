@@ -206,6 +206,10 @@ func (cat *FeralDruid) clipRoar(sim *core.Simulation) bool {
 		return false
 	}
 
+	if roarDur > sim.GetRemainingDuration() {
+		return false
+	}
+
 	// Calculate when roar would end if casted now
 	newRoarDur := cat.SavageRoarDurationTable[cat.ComboPoints()]
 
