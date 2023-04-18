@@ -65,7 +65,20 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold
 			} else {
 				spell.IssueRefund(sim)
 			}
+
 			spell.DealOutcome(sim, result)
+
+			// Queue Overpower to be cast at 3s after rend if talented for 3/3 TfB
+			if warrior.Talents.TasteForBlood == 3 {
+				core.StartDelayedAction(sim, core.DelayedActionOptions{
+					DoAt: sim.CurrentTime + time.Second*3,
+					OnAction: func(_ *core.Simulation) {
+						if warrior.Overpower.CanCast(sim, target) {
+							warrior.CastFullTfbOverpower(sim, target)
+						}
+					},
+				})
+			}
 		},
 	})
 

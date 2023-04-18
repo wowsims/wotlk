@@ -50,6 +50,7 @@ type Warrior struct {
 	reactionTime       time.Duration
 	lastBloodsurgeProc time.Duration
 	lastOverpowerProc  time.Duration
+	LastAMTick         time.Duration
 
 	// Cached values
 	shoutDuration time.Duration

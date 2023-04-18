@@ -135,6 +135,7 @@ func (warrior *Warrior) applyAngerManagement() {
 			Period: time.Second * 3,
 			OnAction: func(sim *core.Simulation) {
 				warrior.AddRage(sim, 1, rageMetrics)
+				warrior.LastAMTick = sim.CurrentTime
 			},
 		})
 	})
