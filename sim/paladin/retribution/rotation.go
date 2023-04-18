@@ -295,9 +295,6 @@ func (ret *RetributionPaladin) checkConsecrationClipping(sim *core.Simulation) b
 
 // Helper function for finding the next event
 func (ret *RetributionPaladin) waitUntilNextEvent(sim *core.Simulation, events []time.Duration, rotationCallback func(*core.Simulation)) {
-	if ret.CancelChaosBane && ret.HasActiveAura("Chaos Bane") {
-		ret.GetAura("Chaos Bane").Deactivate(sim)
-	}
 
 	// Find the minimum possible next event that is greater than the current time
 	nextEventAt := time.Duration(math.MaxInt64) // any event will happen before forever.
@@ -308,6 +305,9 @@ func (ret *RetributionPaladin) waitUntilNextEvent(sim *core.Simulation, events [
 	}
 	// If the next action is  the GCD, just return
 	if nextEventAt == ret.GCD.ReadyAt() {
+		if ret.CancelChaosBane && ret.HasActiveAura("Chaos Bane") {
+			ret.GetAura("Chaos Bane").Deactivate(sim)
+		}
 		return
 	}
 
@@ -319,4 +319,8 @@ func (ret *RetributionPaladin) waitUntilNextEvent(sim *core.Simulation, events [
 	}
 
 	sim.AddPendingAction(pa)
+
+	if ret.CancelChaosBane && ret.HasActiveAura("Chaos Bane") {
+		ret.GetAura("Chaos Bane").Deactivate(sim)
+	}
 }
