@@ -375,13 +375,13 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 
 	roarNow := curCp >= 1 && (!cat.SavageRoarAura.IsActive() || cat.clipRoar(sim))
 
-	ripRefreshPending := false
+	cat.ripRefreshPending = false
 	pendingActions := make([]pendingAction, 0, 4)
 
 	if ripDot.IsActive() && (ripDot.RemainingDuration(sim) < simTimeRemain-endThresh) && curCp == 5 {
 		ripCost := core.TernaryFloat64(cat.berserkExpectedAt(sim, ripDot.ExpiresAt()), cat.Rip.DefaultCast.Cost*0.5, cat.Rip.DefaultCast.Cost)
 		pendingActions = append(pendingActions, pendingAction{ripDot.ExpiresAt(), ripCost})
-		ripRefreshPending = true
+		cat.ripRefreshPending = true
 	}
 	if rakeDot.IsActive() && (rakeDot.RemainingDuration(sim) < simTimeRemain-rakeDot.Duration) {
 		rakeCost := core.TernaryFloat64(cat.berserkExpectedAt(sim, rakeDot.ExpiresAt()), cat.Rake.DefaultCast.Cost*0.5, cat.Rake.DefaultCast.Cost)
@@ -419,7 +419,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	}
 
 	weaveEnd := time.Duration(float64(sim.CurrentTime) + (4.5+2*latencySecs)*float64(time.Second))
-	bearweaveNow := rotation.BearweaveType != proto.FeralDruid_Rotation_None && curEnergy <= weaveEnergy && !isClearcast && (!ripRefreshPending || ripDot.ExpiresAt() >= weaveEnd) && !cat.BerserkAura.IsActive()
+	bearweaveNow := rotation.BearweaveType != proto.FeralDruid_Rotation_None && curEnergy <= weaveEnergy && !isClearcast && (!cat.ripRefreshPending || ripDot.ExpiresAt() >= weaveEnd) && !cat.BerserkAura.IsActive()
 
 	if bearweaveNow && rotation.BearweaveType != proto.FeralDruid_Rotation_Lacerate {
 		bearweaveNow = !cat.tfExpectedBefore(sim, weaveEnd)
@@ -447,7 +447,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	flowershiftEnergy := core.MinFloat(furorCap, 75) - 10*cat.SpellGCD().Seconds() - 20*latencySecs
 
 	flowerEnd := time.Duration(float64(sim.CurrentTime) + (3.0+2*latencySecs)*float64(time.Second))
-	flowershiftNow := rotation.FlowerWeave && (curEnergy <= flowershiftEnergy) && !isClearcast && (!ripRefreshPending || ripDot.ExpiresAt() >= flowerEnd) && !cat.BerserkAura.IsActive() && !cat.tfExpectedBefore(sim, flowerEnd)
+	flowershiftNow := rotation.FlowerWeave && (curEnergy <= flowershiftEnergy) && !isClearcast && (!cat.ripRefreshPending || ripDot.ExpiresAt() >= flowerEnd) && !cat.BerserkAura.IsActive() && !cat.tfExpectedBefore(sim, flowerEnd)
 
 	if bearweaveNow || emergencyBearweave {
 		// oom check, if we arent able to shift into bear and back
@@ -515,8 +515,8 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		// Clearcasting, or (b) our first bear auto didn't generate enough
 		// Rage to Mangle or Maul, or (c) we don't have enough time or
 		// Energy leeway to spend an additional GCD in Dire Bear Form.
-		shiftNow := (curEnergy+15.0+(10.0*latencySecs) > furorCap) || (ripRefreshPending && (ripDot.RemainingDuration(sim) < (3.0 * time.Second))) || cat.BerserkAura.IsActive()
-		shiftNext := (curEnergy+30.0+(10.0*latencySecs) > furorCap) || (ripRefreshPending && (ripDot.RemainingDuration(sim) < time.Duration(4500*time.Millisecond))) || cat.BerserkAura.IsActive()
+		shiftNow := (curEnergy+15.0+(10.0*latencySecs) > furorCap) || (cat.ripRefreshPending && (ripDot.RemainingDuration(sim) < (3.0 * time.Second))) || cat.BerserkAura.IsActive()
+		shiftNext := (curEnergy+30.0+(10.0*latencySecs) > furorCap) || (cat.ripRefreshPending && (ripDot.RemainingDuration(sim) < time.Duration(4500*time.Millisecond))) || cat.BerserkAura.IsActive()
 
 		var powerbearNow bool
 		if rotation.Powerbear {
@@ -553,7 +553,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 			// see whether we can delay the shift until the next bear swing
 			// goes out in order to maximize the gains from the reset.
 			projectedDelay := cat.AutoAttacks.MainhandSwingAt + 2*cat.latency - sim.CurrentTime
-			ripConflict := ripRefreshPending && (ripDot.ExpiresAt() < sim.CurrentTime+projectedDelay+(1500*time.Millisecond))
+			ripConflict := cat.ripRefreshPending && (ripDot.ExpiresAt() < sim.CurrentTime+projectedDelay+(1500*time.Millisecond))
 			nextCatSwing := sim.CurrentTime + cat.latency + time.Duration(float64(cat.AutoAttacks.MainhandSwingSpeed())/float64(2500*time.Millisecond))
 			canDelayShift := !ripConflict && cat.Rotation.SnekWeave && (curEnergy+10*projectedDelay.Seconds() <= furorCap) && (cat.AutoAttacks.MainhandSwingAt < nextCatSwing)
 

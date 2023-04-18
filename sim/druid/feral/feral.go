@@ -67,16 +67,17 @@ type FeralDruid struct {
 
 	Rotation FeralDruidRotation
 
-	prepopOoc      bool
-	missChance     float64
-	readyToShift   bool
-	readyToGift    bool
-	waitingForTick bool
-	latency        time.Duration
-	maxRipTicks    int32
-	berserkUsed    bool
-	bleedAura      *core.Aura
-	lastShift      time.Duration
+	prepopOoc         bool
+	missChance        float64
+	readyToShift      bool
+	readyToGift       bool
+	waitingForTick    bool
+	latency           time.Duration
+	maxRipTicks       int32
+	berserkUsed       bool
+	bleedAura         *core.Aura
+	lastShift         time.Duration
+	ripRefreshPending bool
 
 	rotationAction *core.PendingAction
 }
