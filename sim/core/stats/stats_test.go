@@ -1,7 +1,10 @@
 package stats
 
 import (
+	"strings"
 	"testing"
+
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func TestStatsAdd(t *testing.T) {
@@ -71,5 +74,22 @@ func TestStatsEqualsWithTolerance_Failure(t *testing.T) {
 
 	if a.EqualsWithTolerance(b, 0.5) {
 		t.Fatalf("Expected not equal stats but were equal: %s, %s", a, b)
+	}
+}
+
+func TestStatsProtoInSync(t *testing.T) {
+	d := proto.Stat_StatStrength.Descriptor().Values()
+	if d.Len() != int(Len) {
+		t.Fatalf("Unequal number of stats defined in proto.Stats (%d) and Go (%d)", d.Len(), Len)
+	}
+
+	for i := 0; i < d.Len(); i++ {
+		enum := d.Get(i)
+		protoName := enum.Name()
+		goName := Stat(enum.Number()).StatName()
+		sanitizedGoName := strings.ReplaceAll(goName, " ", "")
+		if string(protoName) != "Stat"+sanitizedGoName {
+			t.Fatalf("Encountered stat enum %d in proto.Stats with name %s differs from Go enum name %s (ignoring Stat prefix)", enum.Number(), protoName, goName)
+		}
 	}
 }
