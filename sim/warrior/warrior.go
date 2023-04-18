@@ -22,10 +22,11 @@ type WarriorInputs struct {
 }
 
 const (
-	SpellFlagBloodsurge = core.SpellFlagAgentReserved1
-	ArmsTree            = 0
-	FuryTree            = 1
-	ProtTree            = 2
+	SpellFlagBloodsurge  = core.SpellFlagAgentReserved1
+	SpellFlagWhirlwindOH = core.SpellFlagAgentReserved2
+	ArmsTree             = 0
+	FuryTree             = 1
+	ProtTree             = 2
 )
 
 type Warrior struct {
