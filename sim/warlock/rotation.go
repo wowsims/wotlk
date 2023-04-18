@@ -132,6 +132,7 @@ func (warlock *Warlock) defineRotation() {
 	warlock.skipList = make(map[int]struct{})
 	mainTarget := warlock.CurrentTarget
 	hauntTravel := time.Duration(float64(time.Second) * warlock.DistanceFromTarget / warlock.Haunt.MissileSpeed)
+	critDebuffCat := warlock.GetEnemyExclusiveCategories(core.SpellCritEffectCategory)[0]
 
 	if warlock.Talents.DemonicEmpowerment && warlock.Options.Summon != proto.Warlock_Options_NoSummon {
 		acl = aclAppendSimple(acl, warlock.DemonicEmpowerment, func(sim *core.Simulation) (bool, *core.Unit) {
@@ -211,7 +212,7 @@ func (warlock *Warlock) defineRotation() {
 
 	if warlock.Rotation.Corruption && warlock.Talents.EverlastingAffliction > 0 {
 		acl = aclAppendSimple(acl, warlock.Corruption, func(sim *core.Simulation) (bool, *core.Unit) {
-			if !warlock.CritDebuffCategory.AnyActive() &&
+			if !critDebuffCat.AnyActive() &&
 				warlock.Talents.ImprovedShadowBolt > 0 && sim.CurrentTime < 25 {
 				return false, nil
 			}
