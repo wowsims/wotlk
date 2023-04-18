@@ -170,7 +170,7 @@ export class Stats {
 	}
 
 	asArray(): Array<number> {
-		return this.stats.slice();
+		return this.stats.slice().concat(this.pseudoStats.slice());
 	}
 
 	toJson(): Object {
