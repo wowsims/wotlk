@@ -362,6 +362,17 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	}
 	ffNow := cat.FaerieFire.CanCast(sim, cat.CurrentTarget) && !isClearcast && curEnergy < ffThresh && (!ripNow || (curEnergy < cat.CurrentRipCost()))
 
+	// Also add an end of fight condition to make sure we can spend down our
+	// Energy post-FF before the encounter ends. Time to spend is
+	// given by 1 second for FF GCD plus 1 second for Clearcast Shred plus
+	// 1 second per 42 Energy that we have after that Clearcast Shred.
+	if ffNow {
+		maxShredsWithoutFF := (int)((curEnergy + (sim.GetRemainingDuration().Seconds())*10) / (float64)(cat.CurrentShredCost()))
+		numShredsWithoutFF := core.MinInt(maxShredsWithoutFF, int(sim.GetRemainingDuration().Seconds())+1)
+		numShredsWithFF := core.MinInt(maxShredsWithoutFF+1, int(sim.GetRemainingDuration().Seconds()))
+		ffNow = numShredsWithFF > numShredsWithoutFF
+	}
+
 	roarNow := curCp >= 1 && (!cat.SavageRoarAura.IsActive() || cat.clipRoar(sim))
 
 	ripRefreshPending := false
