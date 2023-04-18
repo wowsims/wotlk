@@ -437,7 +437,7 @@ func (warlock *Warlock) defineRotation() {
 		})
 	}
 
-	if warlock.Talents.Emberstorm > 0 {
+	if warlock.Rotation.PrimarySpell == proto.Warlock_Rotation_Incinerate {
 		acl = aclAppendSimple(acl, warlock.Incinerate, func(sim *core.Simulation) (bool, *core.Unit) {
 			return true, mainTarget
 		})
