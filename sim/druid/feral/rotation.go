@@ -355,6 +355,8 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		berserkNow = sim.GetRemainingDuration() < cat.BerserkAura.Duration+(3*time.Second)
 	}
 
+	roarNow := curCp >= 1 && (!cat.SavageRoarAura.IsActive() || cat.clipRoar(sim))
+
 	// Faerie Fire on cooldown for Omen procs. Each second of FF delay is
 	// worth ~7 Energy, so it is okay to waste up to 7 Energy to cap when
 	// determining whether to cast it vs. dump Energy first. That puts the
@@ -377,7 +379,10 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		ffNow = numShredsWithFF > numShredsWithoutFF
 	}
 
-	roarNow := curCp >= 1 && (!cat.SavageRoarAura.IsActive() || cat.clipRoar(sim))
+	// Additionally, block Shred and Rake casts if FF is coming off CD in
+	// less than a second (and we won't Energy cap by pooling).
+	nextFfEnergy := curEnergy + float64((cat.FaerieFire.TimeToReady(sim)+cat.latency)/core.EnergyTickDuration)
+	waitForFf := (cat.FaerieFire.TimeToReady(sim) < cat.Rotation.MaxFfDelay) && (nextFfEnergy < ffThresh) && !isClearcast && (!ripDot.IsActive() || ripDot.RemainingDuration(sim) > time.Second)
 
 	cat.ripRefreshPending = false
 	pendingActions := make([]pendingAction, 0, 4)
@@ -607,13 +612,13 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 			return
 		}
 		timeToNextAction = time.Duration((cat.CurrentFerociousBiteCost() - curEnergy) * float64(core.EnergyTickDuration))
-	} else if rakeNow {
+	} else if rakeNow && !waitForFf {
 		if cat.Rake.CanCast(sim, cat.CurrentTarget) {
 			cat.Rake.Cast(sim, cat.CurrentTarget)
 			return
 		}
 		timeToNextAction = time.Duration((cat.CurrentRakeCost() - curEnergy) * float64(core.EnergyTickDuration))
-	} else if mangleNow {
+	} else if mangleNow && !waitForFf {
 		if cat.MangleCat.CanCast(sim, cat.CurrentTarget) {
 			cat.MangleCat.Cast(sim, cat.CurrentTarget)
 			return
@@ -629,7 +634,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 			return
 		}
 		timeToNextAction = time.Duration((cat.CurrentMangleCatCost() - excessE) * float64(core.EnergyTickDuration))
-	} else {
+	} else if !waitForFf {
 		if excessE >= cat.CurrentShredCost() || isClearcast {
 			cat.Shred.Cast(sim, cat.CurrentTarget)
 			return
@@ -710,6 +715,7 @@ type FeralDruidRotation struct {
 	Powerbear          bool
 	MinRoarOffset      time.Duration
 	RipLeeway          time.Duration
+	MaxFfDelay         time.Duration
 	RevitFreq          float64
 	LacerateTime       time.Duration
 	SnekWeave          bool
@@ -728,6 +734,7 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 		MangleSpam:         rotation.MangleSpam,
 		BerserkBiteThresh:  float64(rotation.BerserkBiteThresh),
 		BerserkFfThresh:    float64(rotation.BerserkFfThresh),
+		MaxFfDelay:         time.Duration(float64(rotation.MaxFfDelay) * float64(time.Second)),
 		Powerbear:          rotation.Powerbear,
 		MinRoarOffset:      time.Duration(float64(rotation.MinRoarOffset) * float64(time.Second)),
 		RipLeeway:          time.Duration(float64(rotation.RipLeeway) * float64(time.Second)),
@@ -753,6 +760,7 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 
 	cat.Rotation.RipLeeway = 3 * time.Second
 	cat.Rotation.BerserkFfThresh = 15
+	cat.Rotation.MaxFfDelay = 700 * time.Millisecond
 
 	if cat.Rotation.FlowerWeave || (cat.Rotation.BearweaveType == proto.FeralDruid_Rotation_None) {
 		if hasT84P {
