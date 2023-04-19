@@ -58,7 +58,9 @@ func NewPeriodicAction(sim *Simulation, options PeriodicActionOptions) *PendingA
 	tickIndex := 0
 
 	pa.OnAction = func(sim *Simulation) {
-		options.OnAction(sim)
+		if options.OnAction != nil {
+			options.OnAction(sim)
+		}
 		tickIndex++
 
 		if options.NumTicks == 0 || tickIndex < options.NumTicks {
@@ -76,7 +78,9 @@ func NewPeriodicAction(sim *Simulation, options PeriodicActionOptions) *PendingA
 		if sim.CurrentTime == 0 {
 			pa.NextActionAt = 0
 		} else {
-			options.OnAction(sim)
+			if options.OnAction != nil {
+				options.OnAction(sim)
+			}
 			tickIndex++
 			if options.NumTicks == 1 {
 				pa.Cancel(sim)
