@@ -52,6 +52,7 @@ func NewPeriodicAction(sim *Simulation, options PeriodicActionOptions) *PendingA
 	pa := &PendingAction{
 		NextActionAt: sim.CurrentTime + options.Period,
 		Priority:     options.Priority,
+		CleanUp:      options.CleanUp,
 	}
 
 	tickIndex := 0
@@ -66,11 +67,6 @@ func NewPeriodicAction(sim *Simulation, options PeriodicActionOptions) *PendingA
 			sim.AddPendingAction(pa)
 		} else {
 			pa.Cancel(sim)
-		}
-	}
-	pa.CleanUp = func(sim *Simulation) {
-		if options.CleanUp != nil {
-			options.CleanUp(sim)
 		}
 	}
 
