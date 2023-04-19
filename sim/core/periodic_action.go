@@ -15,21 +15,12 @@ type DelayedActionOptions struct {
 }
 
 func NewDelayedAction(sim *Simulation, options DelayedActionOptions) *PendingAction {
-	pa := &PendingAction{
+	return &PendingAction{
 		NextActionAt: options.DoAt,
 		Priority:     options.Priority,
+		OnAction:     options.OnAction,
+		CleanUp:      options.CleanUp,
 	}
-
-	pa.OnAction = func(sim *Simulation) {
-		options.OnAction(sim)
-	}
-	pa.CleanUp = func(sim *Simulation) {
-		if options.CleanUp != nil {
-			options.CleanUp(sim)
-		}
-	}
-
-	return pa
 }
 
 // Convenience for immediately creating and starting a delayed action.

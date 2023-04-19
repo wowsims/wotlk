@@ -31,6 +31,26 @@ type PendingAction struct {
 
 	cancelled bool
 	consumed  bool
+
+	repetitions    int
+	maxRepetitions int
+	period         time.Duration
+}
+
+func (pa *PendingAction) RunOnAction(sim *Simulation) {
+	if pa.OnAction != nil {
+		pa.OnAction(sim)
+	}
+
+	if pa.period > 0 {
+		pa.repetitions--
+		if pa.repetitions > 0 || pa.maxRepetitions == 0 {
+			pa.NextActionAt = sim.CurrentTime + pa.period
+			sim.AddPendingAction(pa)
+		} else {
+			pa.Cancel(sim)
+		}
+	}
 }
 
 func (pa *PendingAction) Cancel(sim *Simulation) {
