@@ -73,7 +73,7 @@ export const FeralDruidRotationConfig = {
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
 			fieldName: 'maxFfDelay',
-			label: 'Max Ff Delay',
+			label: 'Max FF Delay',
 			labelTooltip: 'Max allowed delay to wait for ff to come off CD in seconds',
 			float: true,
 			positive: true,

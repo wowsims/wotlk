@@ -382,7 +382,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 	// Additionally, block Shred and Rake casts if FF is coming off CD in
 	// less than a second (and we won't Energy cap by pooling).
 	nextFfEnergy := curEnergy + float64((cat.FaerieFire.TimeToReady(sim)+cat.latency)/core.EnergyTickDuration)
-	waitForFf := (cat.FaerieFire.TimeToReady(sim) < cat.Rotation.MaxFfDelay) && (nextFfEnergy < ffThresh) && !isClearcast && (!ripDot.IsActive() || ripDot.RemainingDuration(sim) > time.Second)
+	waitForFf := (cat.FaerieFire.TimeToReady(sim) < time.Second-cat.Rotation.MaxFfDelay) && (nextFfEnergy < ffThresh) && !isClearcast && (!ripDot.IsActive() || ripDot.RemainingDuration(sim) > time.Second)
 
 	cat.ripRefreshPending = false
 	pendingActions := make([]pendingAction, 0, 4)
