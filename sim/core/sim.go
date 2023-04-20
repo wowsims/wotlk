@@ -136,7 +136,7 @@ func NewSim(rsr *proto.RaidSimRequest) *Simulation {
 	}
 }
 
-// Returns a random float.
+// Returns a random float64 between 0.0 (inclusive) and 1.0 (exclusive).
 //
 // In tests, although we can set the initial seed, test results are still very
 // sensitive to the exact order of RandomFloat() calls. To mitigate this, when
