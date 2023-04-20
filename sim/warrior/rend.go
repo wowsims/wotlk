@@ -73,7 +73,7 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold
 				core.StartDelayedAction(sim, core.DelayedActionOptions{
 					DoAt: sim.CurrentTime + time.Second*3,
 					OnAction: func(_ *core.Simulation) {
-						if warrior.Overpower.CanCast(sim, target) {
+						if warrior.Overpower.CanCast(sim, target) && warrior.ShouldOverpower(sim) {
 							warrior.CastFullTfbOverpower(sim, target)
 						}
 					},

@@ -97,7 +97,7 @@ func (warrior *Warrior) CastFullTfbOverpower(sim *core.Simulation, target *core.
 	core.StartDelayedAction(sim, core.DelayedActionOptions{
 		DoAt: sim.CurrentTime + time.Second*6,
 		OnAction: func(_ *core.Simulation) {
-			if warrior.Overpower.CanCast(sim, target) {
+			if warrior.Overpower.CanCast(sim, target) && warrior.ShouldOverpower(sim) {
 				warrior.CastFullTfbOverpower(sim, target)
 			}
 		},
