@@ -352,10 +352,7 @@ func (sim *Simulation) runPendingActions(max time.Duration) {
 		if pa.cancelled {
 			continue // pa was cancelled during the advance.
 		}
-
-		if pa.OnAction != nil {
-			pa.OnAction(sim)
-		}
+		pa.OnAction(sim)
 	}
 }
 

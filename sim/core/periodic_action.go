@@ -15,6 +15,10 @@ type DelayedActionOptions struct {
 }
 
 func NewDelayedAction(sim *Simulation, options DelayedActionOptions) *PendingAction {
+	if options.OnAction == nil {
+		panic("NewDelayedAction: OnAction must not be nil")
+	}
+
 	return &PendingAction{
 		NextActionAt: options.DoAt,
 		Priority:     options.Priority,
@@ -49,6 +53,10 @@ type PeriodicActionOptions struct {
 }
 
 func NewPeriodicAction(sim *Simulation, options PeriodicActionOptions) *PendingAction {
+	if options.OnAction == nil {
+		panic("NewPeriodicAction: OnAction must not be nil")
+	}
+
 	pa := &PendingAction{
 		NextActionAt: sim.CurrentTime + options.Period,
 		Priority:     options.Priority,
@@ -58,9 +66,7 @@ func NewPeriodicAction(sim *Simulation, options PeriodicActionOptions) *PendingA
 	tickIndex := 0
 
 	pa.OnAction = func(sim *Simulation) {
-		if options.OnAction != nil {
-			options.OnAction(sim)
-		}
+		options.OnAction(sim)
 		tickIndex++
 
 		if options.NumTicks == 0 || tickIndex < options.NumTicks {
@@ -78,9 +84,7 @@ func NewPeriodicAction(sim *Simulation, options PeriodicActionOptions) *PendingA
 		if sim.CurrentTime == 0 {
 			pa.NextActionAt = 0
 		} else {
-			if options.OnAction != nil {
-				options.OnAction(sim)
-			}
+			options.OnAction(sim)
 			tickIndex++
 			if options.NumTicks == 1 {
 				pa.Cancel(sim)

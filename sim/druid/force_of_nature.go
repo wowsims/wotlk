@@ -52,7 +52,8 @@ func (druid *Druid) registerForceOfNatureCD() {
 			pa := core.PendingAction{
 				NextActionAt: sim.CurrentTime + time.Second*1,
 				Priority:     core.ActionPriorityAuto,
-				// No action.
+				OnAction: func(s *core.Simulation) {
+				},
 			}
 			sim.AddPendingAction(&pa)
 		},

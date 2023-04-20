@@ -15,7 +15,9 @@ func (unit *Unit) newHardcastAction(sim *Simulation) {
 	if unit.hardcastAction == nil {
 		pa := &PendingAction{
 			NextActionAt: unit.Hardcast.Expires,
-			// No action, the Advance() call will take care of the hardcast.
+			OnAction: func(sim *Simulation) {
+				// Don't need to do anything, the Advance() call will take care of the hardcast.
+			},
 		}
 		unit.hardcastAction = pa
 	} else {
