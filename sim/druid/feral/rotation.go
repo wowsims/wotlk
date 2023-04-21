@@ -36,14 +36,11 @@ func (cat *FeralDruid) OnGCDReady(sim *core.Simulation) {
 }
 
 func (cat *FeralDruid) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
-	if cat.InForm(druid.Cat) {
-		return
-	}
 	if cat.InForm(druid.Humanoid) {
 		panic("auto attack out of form?")
 	}
 
-	// If the swing/Maul resulted in an Omen proc, then schedule the
+	// If the swing resulted in an Omen proc, then schedule the
 	// next player decision based on latency.
 
 	if cat.Talents.OmenOfClarity && cat.ClearcastingAura.RemainingDuration(sim) == cat.ClearcastingAura.Duration {
