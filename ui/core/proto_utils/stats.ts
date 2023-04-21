@@ -54,6 +54,14 @@ export class UnitStat {
 		}
 	}
 
+	setProtoValue(proto: UnitStats, val: number) {
+		if (this.isStat()) {
+			proto.stats[this.stat!] = val;
+		} else {
+			proto.pseudoStats[this.pseudoStat!] = val;
+		}
+	}
+
 	static fromStat(stat: Stat): UnitStat {
 		return new UnitStat(stat, null);
 	}

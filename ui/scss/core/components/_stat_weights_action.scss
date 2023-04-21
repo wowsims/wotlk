@@ -5,6 +5,17 @@
 		margin-bottom: $block-spacer;
 	}
 
+	.ep-reference-options {
+		margin-bottom: $block-spacer;
+		span {
+			font-weight: bold;
+		}
+
+		p {
+			margin-top: $block-spacer;
+		}
+	}
+
 	.results-ep-table-container {
 		position: relative;
 
