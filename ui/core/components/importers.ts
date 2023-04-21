@@ -18,7 +18,7 @@ import { classGlyphsConfig, talentSpellIdsToTalentString } from '../talents/fact
 import { GlyphConfig } from '../talents/glyphs_picker';
 import { BaseModal } from './base_modal';
 import { buf2hex } from '../utils';
-import { JsonObject, JsonValue, isJsonObject } from '@protobuf-ts/runtime';
+import { JsonObject } from '@protobuf-ts/runtime';
 
 export abstract class Importer extends BaseModal {
 	protected readonly textElem: HTMLTextAreaElement;
