@@ -59,6 +59,24 @@ class EpWeightsMenu extends BaseModal {
 				</div>
 				<div class="show-all-stats-container col col-sm-3"></div>
 			</div>
+			<div class="ep-reference-options row experimental">
+				<div class="col col-sm-3 damage-metrics">
+					<span>DPS/TPS reference:</span>
+					<select class="ref-stat-select form-select damage-metrics">
+					</select>
+				</div>
+				<div class="col col-sm-3 healing-metrics">
+					<span>Healing reference:</span>
+					<select class="ref-stat-select form-select healing-metrics">
+					</select>
+				</div>
+				<div class="col col-sm-3 threat-metrics">
+					<span>Mitigation reference:</span>
+					<select class="ref-stat-select form-select threat-metrics">
+					</select>
+				</div>
+				<p>The above stat selectors control which reference stat is used for EP normalisation for the different EP columns.</p>
+			</div>
 			<p>The 'Current EP' column displays the values currently used by the item pickers to sort items.</br>
 			Use the <a href='javascript:void(0)' class="fa fa-copy"></a> icon above the EPs to use newly calculated EPs.</p>
 			<div class="results-ep-table-container modal-scroll-table">
@@ -209,6 +227,37 @@ class EpWeightsMenu extends BaseModal {
 
 			return undefined;
 		};
+
+		const updateEpRefStat = () => {
+			this.simUI.prevEpSimResult = this.calculateEp(this.getPrevSimResult());
+			this.updateTable(this.simUI.prevEpIterations || 1, this.getPrevSimResult());
+		};
+
+		const epRefSelects = this.rootElem.querySelectorAll('.ref-stat-select') as NodeListOf<HTMLSelectElement>;
+		epRefSelects.forEach((epSelect: HTMLSelectElement, idx: number) => {
+			this.epStats.forEach((stat) => {
+				epSelect.options[epSelect.options.length] = new Option(getNameFromStat(stat));
+			});
+			if (epSelect.classList.contains('damage-metrics')) {
+				epSelect.addEventListener('input', event => {
+					this.simUI.dpsRefStat = getStatFromName(epSelect.value);
+					updateEpRefStat();
+				});
+				epSelect.value = getNameFromStat(this.getDpsEpRefStat());
+			} else if (epSelect.classList.contains('healing-metrics')) {
+				epSelect.addEventListener('input', event => {
+					this.simUI.healRefStat = getStatFromName(epSelect.value);
+					updateEpRefStat();
+				});
+				epSelect.value = getNameFromStat(this.getHealEpRefStat());
+			} else if (epSelect.classList.contains('threat-metrics')) {
+				epSelect.addEventListener('input', event => {
+					this.simUI.tankRefStat = getStatFromName(epSelect.value);
+					updateEpRefStat();
+				});
+				epSelect.value = getNameFromStat(this.getTankEpRefStat());
+			}
+		});
 
 		const optimizeGemsButton = this.rootElem.getElementsByClassName('optimize-gems')[0] as HTMLElement;
 		Tooltip.getOrCreateInstance(optimizeGemsButton);
