@@ -433,8 +433,8 @@ export class IndividualAddonImporter<SpecType extends Spec> extends Importer {
 		const talentsStr = (importJson['talents'] as string) || '';
 
 		const glyphsConfig = classGlyphsConfig[charClass];
-		const majorGlyphIDs = (importJson['glyphs']['major'] as Array<string>).map(glyphName => glyphNameToID(glyphName, glyphsConfig.majorGlyphs));
-		const minorGlyphIDs = (importJson['glyphs']['minor'] as Array<string>).map(glyphName => glyphNameToID(glyphName, glyphsConfig.minorGlyphs));
+		const majorGlyphIDs = importJson['glyphs']['major'] as Array<number>;
+		const minorGlyphIDs = importJson['glyphs']['minor'] as Array<number>;
 		const glyphs = Glyphs.create({
 			major1: majorGlyphIDs[0] || 0,
 			major2: majorGlyphIDs[1] || 0,
