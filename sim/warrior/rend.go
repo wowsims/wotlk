@@ -73,7 +73,8 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold
 				core.StartDelayedAction(sim, core.DelayedActionOptions{
 					DoAt: sim.CurrentTime + time.Second*3,
 					OnAction: func(_ *core.Simulation) {
-						if warrior.Overpower.CanCast(sim, target) {
+						// Force to use OP on first 3s due to AM ticks that happens before TfB procs and break that
+						if warrior.Overpower.CanCast(sim, target) && (warrior.ShouldOverpower(sim) || sim.CurrentTime >= time.Second*3 && sim.CurrentTime <= time.Second*4) {
 							warrior.CastFullTfbOverpower(sim, target)
 						}
 					},

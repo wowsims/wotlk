@@ -628,7 +628,7 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 		} else if numTicks == 2 && spriest.AllCDs[mbIdx].Seconds() == 0 && spriest.options.UseMindBlast {
 			return spriest.MindBlast, 0
 		} else {
-			//numTicks = 3
+			//numTicks = 3 // just for testing
 			return spriest.MindFlay[numTicks], 0
 		}
 	} else {
@@ -672,9 +672,16 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, gcd tim
 	nextIdx := -1
 
 	newCDs := []time.Duration{
-		core.MaxDuration(0, spriest.AllCDs[0]),
 		core.MaxDuration(0, spriest.AllCDs[1]),
 		core.MaxDuration(0, spriest.AllCDs[2]),
+	}
+
+	if mbDamage != 0 {
+		newCDs = []time.Duration{
+			core.MaxDuration(0, spriest.AllCDs[0]),
+			core.MaxDuration(0, spriest.AllCDs[1]),
+			core.MaxDuration(0, spriest.AllCDs[2]),
+		}
 	}
 
 	for i, v := range newCDs {

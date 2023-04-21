@@ -40,7 +40,7 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *core.Spell {
 		BonusCritRating: (dk.annihilationCritBonus() + dk.improvedDeathStrikeCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: .75 *
 			core.TernaryFloat64(isMH, 1, dk.nervesOfColdSteelBonus()) *
-			(1.0 + 0.15*float64(dk.Talents.ImprovedDeathStrike)),
+			dk.improvedDeathStrikeDamageBonus(),
 		CritMultiplier:   dk.bonusCritMultiplier(dk.Talents.MightOfMograine),
 		ThreatMultiplier: 1,
 

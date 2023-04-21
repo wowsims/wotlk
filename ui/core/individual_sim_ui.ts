@@ -173,6 +173,9 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 	prevEpIterations: number;
 	prevEpSimResult: StatWeightsResult | null;
+	dpsRefStat?: Stat;
+	healRefStat?: Stat;
+	tankRefStat?: Stat;
 
 	readonly bt: BulkTab;
 

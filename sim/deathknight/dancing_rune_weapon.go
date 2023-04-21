@@ -75,7 +75,7 @@ func (dk *Deathknight) registerDancingRuneWeaponCD() {
 			// and then a 2nd -50% damage dealt multiplier is added from the second aura
 			// Previous iteration we had made the dks full damage multiplier be applied at 50% to the RW
 			// but comparing with logs the damage was way lower then what we saw in-game which lead us to
-			// rething all this and find the above mentioned auras
+			// rethink all this and find the above mentioned auras
 			dk.RuneWeapon.PseudoStats.DamageDealtMultiplier = dk.PseudoStats.DamageDealtMultiplier - 0.5
 			// the second aura also transfers the DK owners physical school damage dealt to the Rune weapon
 			// to make sure the dks own physical buffs also affect the rune weapon (tested in game and confirmed they do with UF)

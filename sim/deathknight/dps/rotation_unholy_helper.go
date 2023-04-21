@@ -70,6 +70,9 @@ func (ur *UnholyRotation) Reset(sim *core.Simulation) {
 }
 
 func (ur *UnholyRotation) Initialize(dk *DpsDeathknight) {
+	dk.ur.gargoyleSnapshot = core.NewSnapshotManager(dk.GetCharacter())
+	dk.setupGargProcTrackers()
+
 	if dk.Talents.SummonGargoyle && dk.Rotation.UseGargoyle {
 		dk.setupWeaponSwap()
 	}
