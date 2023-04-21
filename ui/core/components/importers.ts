@@ -18,6 +18,7 @@ import { classGlyphsConfig, talentSpellIdsToTalentString } from '../talents/fact
 import { GlyphConfig } from '../talents/glyphs_picker';
 import { BaseModal } from './base_modal';
 import { buf2hex } from '../utils';
+import { JsonObject, JsonValue, isJsonObject } from '@protobuf-ts/runtime';
 
 export abstract class Importer extends BaseModal {
 	protected readonly textElem: HTMLTextAreaElement;
@@ -409,7 +410,7 @@ export class IndividualAddonImporter<SpecType extends Spec> extends Importer {
 		`;
 	}
 
-	onImport(data: string) {
+	async onImport(data: string) {
 		const importJson = JSON.parse(data);
 
 		// Parse all the settings.
@@ -431,10 +432,12 @@ export class IndividualAddonImporter<SpecType extends Spec> extends Importer {
 		});
 
 		const talentsStr = (importJson['talents'] as string) || '';
-
 		const glyphsConfig = classGlyphsConfig[charClass];
-		const majorGlyphIDs = (importJson['glyphs']['major'] as Array<string>).map(glyphName => glyphNameToID(glyphName, glyphsConfig.majorGlyphs));
-		const minorGlyphIDs = (importJson['glyphs']['minor'] as Array<string>).map(glyphName => glyphNameToID(glyphName, glyphsConfig.minorGlyphs));
+
+		const db = await Database.get();
+		const majorGlyphIDs = (importJson['glyphs']['major'] as Array<string|JsonObject>).map(g => glyphToID(g, db, glyphsConfig.majorGlyphs));
+		const minorGlyphIDs = (importJson['glyphs']['minor'] as Array<string|JsonObject>).map(g => glyphToID(g, db, glyphsConfig.minorGlyphs));
+
 		const glyphs = Glyphs.create({
 			major1: majorGlyphIDs[0] || 0,
 			major2: majorGlyphIDs[1] || 0,
@@ -468,4 +471,13 @@ function glyphNameToID(glyphName: string, glyphsConfig: Record<number, GlyphConf
 		}
 	}
 	throw new Error(`Unknown glyph name '${glyphName}'`);
+}
+
+function glyphToID(glyph: string|JsonObject, db: Database, glyphsConfig: Record<number, GlyphConfig>): number {
+	if (typeof glyph === 'string') {
+		// Legacy version: AddOn exports Glyphs by name (string) only. Names must be in English.
+		return glyphNameToID(glyph, glyphsConfig);
+	}
+	// New version exports glyph information in a table that includes the name and the glyph spell ID.
+	return db.glyphSpellToItemId(glyph['spellID'] as number);
 }

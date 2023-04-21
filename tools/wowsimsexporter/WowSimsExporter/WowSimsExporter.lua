@@ -71,32 +71,18 @@ end
 function WowSimsExporter:CreateGlyphEntry()
 	local minor = {}
 	local major = {}
-
-    for t = 1, 6 do
-
-		local enabled, glyphType, glyphTooltipIndex, glyphSpellID, icon = GetGlyphSocketInfo(t);
-		local link = GetGlyphLink(t);
-
-		if(enabled) then	
-			
-			local name, _ = string.match(link,"Glyph of .+]")
-			if(name) then
-				local formattedName = name:gsub('%]', '')
-
-				if(glyphType == 1 ) then-- major
-					table.insert(major, formattedName)
-				else if(glyphType == 2 ) then -- minor
-					table.insert(minor, formattedName)
-				end
+	for t = 1, 6 do
+		local enabled, glyphType, glyphSpellID = GetGlyphSocketInfo(t)
+		if enabled and glyphSpellID then
+			local localizedName = GetSpellInfo(glyphSpellID)
+			if localizedName then
+				local t = glyphType == 1 and major or minor
+				table.insert(t, {["name"] = localizedName, ["spellID"] = glyphSpellID})
 			end
-
 		end
 		self.Character.glyphs.major = major
 		self.Character.glyphs.minor = minor
-	
-    end
-
-end
+	end
 end
 
 function WowSimsExporter:CreateProfessionEntry()
