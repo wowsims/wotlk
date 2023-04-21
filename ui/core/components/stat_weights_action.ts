@@ -226,8 +226,8 @@ class EpWeightsMenu extends BaseModal {
 			calcButton.innerHTML = previousContents;
 			calcButton.classList.remove('disabled');
 			this.simUI.prevEpIterations = iterations;
-			this.simUI.prevEpSimResult = result;
-			this.updateTable(iterations, result);
+			this.simUI.prevEpSimResult = this.calculateEp(result);
+			this.updateTable(iterations, this.simUI.prevEpSimResult);
 		});
 
 		const colActionButtons = Array.from(this.rootElem.getElementsByClassName('col-action')) as Array<HTMLSelectElement>;
@@ -402,6 +402,40 @@ class EpWeightsMenu extends BaseModal {
 		});
 
 		return row;
+	}
+
+	private calculateEp(weights: StatWeightsResult) {
+		var result = StatWeightsResult.clone(weights);
+		const normaliseValue = (refStat: Stat, values: StatWeightValues) => {
+			const refUnitStat = UnitStat.fromStat(refStat);
+			const refWeight = refUnitStat.getProtoValue(values.weights!);
+			const refStdev = refUnitStat.getProtoValue(values.weightsStdev!);
+			EpWeightsMenu.epUnitStats.forEach(stat => {
+				const value = stat.getProtoValue(values.weights!);
+				stat.setProtoValue(values.epValues!, refWeight == 0 ? 0 : value / refWeight);
+
+				const valueStdev = stat.getProtoValue(values.weightsStdev!);
+				stat.setProtoValue(values.epValuesStdev!, refStdev == 0 ? 0 : valueStdev / refStdev);
+			});
+		};
+
+		if (this.simUI.dpsRefStat !== undefined) normaliseValue(this.simUI.dpsRefStat, result.dps!);
+		if (this.simUI.healRefStat !== undefined) normaliseValue(this.simUI.healRefStat, result.hps!);
+		if (this.simUI.dpsRefStat !== undefined) normaliseValue(this.simUI.dpsRefStat, result.tps!);
+		if (this.simUI.tankRefStat !== undefined) normaliseValue(this.simUI.tankRefStat, result.dtps!);
+		return result;
+	}
+
+	private getDpsEpRefStat(): Stat {
+		return this.simUI.dpsRefStat !== undefined ? this.simUI.dpsRefStat : this.epReferenceStat;
+	}
+
+	private getHealEpRefStat(): Stat {
+		return this.simUI.healRefStat !== undefined ? this.simUI.healRefStat : this.epReferenceStat;
+	}
+
+	private getTankEpRefStat(): Stat {
+		return this.simUI.tankRefStat !== undefined ? this.simUI.tankRefStat : Stat.StatArmor;
 	}
 
 	private getPrevSimResult(): StatWeightsResult {
