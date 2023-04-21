@@ -80,7 +80,6 @@ clean:
 	  $(HTML_INDECIES)
 	find . -name "*.results.tmp" -type f -delete
 
-
 ui/core/proto/api.ts: proto/*.proto node_modules
 	npx protoc --ts_opt generate_dependencies --ts_out ui/core/proto --proto_path proto proto/api.proto
 	npx protoc --ts_out ui/core/proto --proto_path proto proto/test.proto
@@ -138,6 +137,10 @@ binary_dist: $(OUT_DIR)/.dirstamp
 	rm -rf binary_dist/wotlk/assets/db_inputs
 	rm binary_dist/wotlk/assets/database/db.bin
 	rm binary_dist/wotlk/assets/database/leftover_db.bin
+
+# Rebuild the protobuf generated code.
+.PHONY: proto
+proto: sim/core/proto/api.pb.go ui/core/proto/api.ts
 
 # Builds the web server with the compiled client.
 .PHONY: wowsimwotlk
