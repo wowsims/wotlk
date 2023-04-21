@@ -72,7 +72,7 @@ function WowSimsExporter:CreateGlyphEntry()
 	local minor = {}
 	local major = {}
 
-    for t = 1, 6 do
+	for t = 1, 6 do
 
 		local enabled, glyphType, glyphTooltipIndex, glyphSpellID, icon = GetGlyphSocketInfo(t);
 		local link = GetGlyphLink(t);
@@ -94,7 +94,7 @@ function WowSimsExporter:CreateGlyphEntry()
 		self.Character.glyphs.major = major
 		self.Character.glyphs.minor = minor
 	
-    end
+	end
 
 end
 end
