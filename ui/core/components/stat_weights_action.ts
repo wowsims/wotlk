@@ -245,16 +245,24 @@ class EpWeightsMenu extends BaseModal {
 		});
 
 		const colActionButtons = Array.from(this.rootElem.getElementsByClassName('col-action')) as Array<HTMLSelectElement>;
-		const makeUpdateWeights = (button: HTMLElement, labelTooltip: string, tooltip: string, weightsFunc: () => UnitStats|undefined) => {
+		const makeUpdateWeights = (button: HTMLElement, labelTooltip: string, tooltip: string, weightsFunc: () => UnitStats|undefined, epRefStat?: () => Stat) => {
 			const label = button.previousElementSibling as HTMLElement;
-			label!.setAttribute('data-bs-toggle', 'tooltip');
-			label!.setAttribute('data-bs-title', labelTooltip);
-			label!.setAttribute('data-bs-html',	'true');
+			const title = () => {
+				if (!epRefStat) return labelTooltip;
+
+				const refStatName = getNameFromStat(epRefStat());
+				return labelTooltip + ` Normalized by ${refStatName}.`;
+			};
+			const labelTooltipConfig = {
+				toggle: 'tooltip',
+				html: true,
+				title: title
+			};
 			button.setAttribute('data-bs-toggle', 'tooltip');
 			button.setAttribute('data-bs-title', tooltip);
 			button.setAttribute('data-bs-html', 'true');
 
-			Tooltip.getOrCreateInstance(label);
+			new Tooltip(label, labelTooltipConfig);
 			Tooltip.getOrCreateInstance(button);
 
 			button.addEventListener('click', event => {
@@ -262,16 +270,14 @@ class EpWeightsMenu extends BaseModal {
 			});
 		};
 
-		const epRefStatName = getClassStatName(this.epReferenceStat, this.simUI.player.getClass());
-		const armorStatName = getClassStatName(Stat.StatArmor, this.simUI.player.getClass());
 		makeUpdateWeights(colActionButtons[0], 'Per-point increase in DPS (Damage Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().dps!.weights);
-		makeUpdateWeights(colActionButtons[1], `EP (Equivalency Points) for DPS (Damage Per Second) for each stat. Normalized by ${epRefStatName}.`, 'Copy to Current EP', () => this.getPrevSimResult().dps!.epValues);
+		makeUpdateWeights(colActionButtons[1], 'EP (Equivalency Points) for DPS (Damage Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().dps!.epValues, () => this.getDpsEpRefStat());
 		makeUpdateWeights(colActionButtons[2], 'Per-point increase in HPS (Healing Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().hps!.weights);
-		makeUpdateWeights(colActionButtons[3], `EP (Equivalency Points) for HPS (Healing Per Second) for each stat. Normalized by ${epRefStatName}.`, 'Copy to Current EP', () => this.getPrevSimResult().hps!.epValues);
+		makeUpdateWeights(colActionButtons[3], 'EP (Equivalency Points) for HPS (Healing Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().hps!.epValues, () => this.getHealEpRefStat());
 		makeUpdateWeights(colActionButtons[4], 'Per-point increase in TPS (Threat Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().tps!.weights);
-		makeUpdateWeights(colActionButtons[5], `EP (Equivalency Points) for TPS (Threat Per Second) for each stat. Normalized by ${epRefStatName}.`, 'Copy to Current EP', () => this.getPrevSimResult().tps!.epValues);
+		makeUpdateWeights(colActionButtons[5], 'EP (Equivalency Points) for TPS (Threat Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().tps!.epValues, () => this.getDpsEpRefStat());
 		makeUpdateWeights(colActionButtons[6], 'Per-point increase in DTPS (Damage Taken Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().dtps!.weights);
-		makeUpdateWeights(colActionButtons[7], `EP (Equivalency Points) for DTPS (Damage Taken Per Second) for each stat. Normalized by ${armorStatName}.`, 'Copy to Current EP', () => this.getPrevSimResult().dtps!.epValues);
+		makeUpdateWeights(colActionButtons[7], 'EP (Equivalency Points) for DTPS (Damage Taken Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().dtps!.epValues, () => this.getTankEpRefStat());
 		makeUpdateWeights(colActionButtons[8], 'Current EP Weights. Used to sort the gear selector menus.', 'Restore Default EP', () => this.simUI.individualConfig.defaults.epWeights.toProto());
 
 		const showAllStatsContainer = this.rootElem.getElementsByClassName('show-all-stats-container')[0] as HTMLElement;
