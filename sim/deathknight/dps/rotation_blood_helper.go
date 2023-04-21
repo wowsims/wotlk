@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
@@ -16,6 +17,7 @@ type BloodRotation struct {
 	bloodSpell *core.Spell
 
 	activatingDrw bool
+	dsGlyphed     bool
 }
 
 func (br *BloodRotation) Reset(sim *core.Simulation) {
@@ -27,6 +29,12 @@ func (br *BloodRotation) Reset(sim *core.Simulation) {
 }
 
 func (br *BloodRotation) Initialize(dk *DpsDeathknight) {
+	if dk.Talents.DancingRuneWeapon {
+		dk.br.drwSnapshot = core.NewSnapshotManager(dk.GetCharacter())
+		dk.setupDrwProcTrackers()
+	}
+
+	br.dsGlyphed = dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDeathStrike)
 }
 
 func (dk *DpsDeathknight) blBloodRuneAction() deathknight.RotationAction {
@@ -121,11 +129,11 @@ func (dk *DpsDeathknight) blSpreadDiseases(sim *core.Simulation, target *core.Un
 	}
 }
 
-// Save up Runic Power for DRW - Allow casts above 100 RP when DRW is ready or above 85 (for death strike glyph) when not
+// Save up Runic Power for DRW - Allow casts above 100 RP when DRW is ready or above 65 (for death strike glyph) when not
 func (dk *DpsDeathknight) blDeathCoilCheck(sim *core.Simulation) bool {
 	canCastDrw := dk.Talents.DancingRuneWeapon && dk.DancingRuneWeapon != nil && (dk.DancingRuneWeapon.IsReady(sim) || dk.DancingRuneWeapon.CD.TimeToReady(sim) < 5*time.Second)
 	currentRP := dk.CurrentRunicPower()
-	return (!canCastDrw && currentRP >= 65) || (canCastDrw && dk.CurrentRunicPower() >= 100)
+	return (!canCastDrw && currentRP >= float64(core.TernaryInt(dk.br.dsGlyphed, 65, 40))) || (canCastDrw && currentRP >= 100)
 }
 
 func (dk *DpsDeathknight) blBloodTapCheck(sim *core.Simulation, target *core.Unit) bool {
