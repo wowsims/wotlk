@@ -76,10 +76,8 @@ func NewDpsWarrior(character core.Character, options *proto.Player) *DpsWarrior 
 				if war.LastAMTick == sim.CurrentTime {
 					war.WaitUntil(sim, sim.CurrentTime+time.Microsecond*1)
 					core.StartDelayedAction(sim, core.DelayedActionOptions{
-						DoAt: sim.CurrentTime + time.Microsecond*1,
-						OnAction: func(_ *core.Simulation) {
-							war.doRotation(sim)
-						},
+						DoAt:     sim.CurrentTime + time.Microsecond*1,
+						OnAction: war.doRotation,
 					})
 				} else {
 					war.doRotation(sim)
