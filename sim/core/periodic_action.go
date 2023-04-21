@@ -15,21 +15,16 @@ type DelayedActionOptions struct {
 }
 
 func NewDelayedAction(sim *Simulation, options DelayedActionOptions) *PendingAction {
-	pa := &PendingAction{
+	if options.OnAction == nil {
+		panic("NewDelayedAction: OnAction must not be nil")
+	}
+
+	return &PendingAction{
 		NextActionAt: options.DoAt,
 		Priority:     options.Priority,
+		OnAction:     options.OnAction,
+		CleanUp:      options.CleanUp,
 	}
-
-	pa.OnAction = func(sim *Simulation) {
-		options.OnAction(sim)
-	}
-	pa.CleanUp = func(sim *Simulation) {
-		if options.CleanUp != nil {
-			options.CleanUp(sim)
-		}
-	}
-
-	return pa
 }
 
 // Convenience for immediately creating and starting a delayed action.
@@ -58,9 +53,14 @@ type PeriodicActionOptions struct {
 }
 
 func NewPeriodicAction(sim *Simulation, options PeriodicActionOptions) *PendingAction {
+	if options.OnAction == nil {
+		panic("NewPeriodicAction: OnAction must not be nil")
+	}
+
 	pa := &PendingAction{
 		NextActionAt: sim.CurrentTime + options.Period,
 		Priority:     options.Priority,
+		CleanUp:      options.CleanUp,
 	}
 
 	tickIndex := 0
@@ -75,11 +75,6 @@ func NewPeriodicAction(sim *Simulation, options PeriodicActionOptions) *PendingA
 			sim.AddPendingAction(pa)
 		} else {
 			pa.Cancel(sim)
-		}
-	}
-	pa.CleanUp = func(sim *Simulation) {
-		if options.CleanUp != nil {
-			options.CleanUp(sim)
 		}
 	}
 

@@ -219,6 +219,14 @@ func (war *DpsWarrior) armsExecuteRotation(sim *core.Simulation) {
 		war.DoNothing()
 	} else if war.IsSuddenDeathActive() && war.Execute.CanCast(sim, war.CurrentTarget) {
 		war.CastExecute(sim, war.CurrentTarget)
+	} else if war.Rotation.UseRend && war.ShouldRend(sim) {
+		if !war.StanceMatches(warrior.BattleStance) {
+			if !war.BattleStance.IsReady(sim) {
+				return
+			}
+			war.BattleStance.Cast(sim, nil)
+		}
+		war.Rend.Cast(sim, war.CurrentTarget)
 	} else if war.ShouldOverpower(sim) {
 		if !war.StanceMatches(warrior.BattleStance) {
 			if !war.BattleStance.IsReady(sim) {
