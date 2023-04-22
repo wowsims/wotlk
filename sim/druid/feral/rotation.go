@@ -744,6 +744,10 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 	cat.Rotation.FlowerWeave = false
 	cat.Rotation.BearweaveType = proto.FeralDruid_Rotation_None
 
+	// Until these are exposed as customizable param in ui, its easier to just force
+	cat.Rotation.BerserkFfThresh = 15
+	cat.Rotation.BerserkBiteThresh = 25
+
 	// Use automatic values unless specified
 	if rotation.ManualParams {
 		return
@@ -756,7 +760,6 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 	cat.Rotation.UseBite = true
 
 	cat.Rotation.RipLeeway = 3 * time.Second
-	cat.Rotation.BerserkFfThresh = 15
 	cat.Rotation.MaxFfDelay = 700 * time.Millisecond
 
 	if cat.Rotation.FlowerWeave || (cat.Rotation.BearweaveType == proto.FeralDruid_Rotation_None) {
