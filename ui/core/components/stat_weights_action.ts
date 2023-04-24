@@ -60,17 +60,17 @@ class EpWeightsMenu extends BaseModal {
 				<div class="show-all-stats-container col col-sm-3"></div>
 			</div>
 			<div class="ep-reference-options row experimental">
-				<div class="col col-sm-3 damage-metrics">
+				<div class="col col-sm-4 damage-metrics">
 					<span>DPS/TPS reference:</span>
 					<select class="ref-stat-select form-select damage-metrics">
 					</select>
 				</div>
-				<div class="col col-sm-3 healing-metrics">
+				<div class="col col-sm-4 healing-metrics">
 					<span>Healing reference:</span>
 					<select class="ref-stat-select form-select healing-metrics">
 					</select>
 				</div>
-				<div class="col col-sm-3 threat-metrics">
+				<div class="col col-sm-4 threat-metrics">
 					<span>Mitigation reference:</span>
 					<select class="ref-stat-select form-select threat-metrics">
 					</select>
