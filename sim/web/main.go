@@ -305,7 +305,10 @@ func (s *server) runServer(useFS bool, host string, launchBrowser bool, simName 
 	})
 
 	if launchBrowser {
-		url := fmt.Sprintf("http://localhost%s/wotlk/%s", host, simName)
+		if strings.HasPrefix(host, ":") {
+			host = "localhost" + host
+		}
+		url := fmt.Sprintf("http://%s/wotlk/%s", host, simName)
 		log.Printf("Launching interface on %s", url)
 		go func() {
 			err := browser.OpenURL(url)
