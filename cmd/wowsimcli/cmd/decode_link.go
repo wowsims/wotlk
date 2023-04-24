@@ -53,7 +53,7 @@ func decodeLink(link string) error {
 
 	settings := &proto.IndividualSimSettings{}
 	if err := goproto.Unmarshal(buf.Bytes(), settings); err != nil {
-		return fmt.Errorf("cannot unmarshal raw proto: %v", err)
+		return fmt.Errorf("cannot unmarshal raw proto: %w", err)
 	}
 
 	fmt.Println(protojson.Format(settings))
