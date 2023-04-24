@@ -13,12 +13,11 @@ var rootCmd = &cobra.Command{
 	Long:  "wowsims command line tool",
 }
 
-func init() {
+func Execute(version string) {
+	rootCmd.AddCommand(newVersionCommand(version))
 	rootCmd.AddCommand(bulkCmd)
 	rootCmd.AddCommand(decodeLinkCmd)
-}
 
-func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
