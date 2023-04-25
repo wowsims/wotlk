@@ -1,4 +1,4 @@
-package bulk
+package cmd
 
 import (
 	"context"
@@ -9,12 +9,86 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/spf13/cobra"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
+var (
+	infile      string
+	replacefile string
+	outfile     string
+	verbose     bool
+)
+
+var bulkCmd = &cobra.Command{
+	Use:   "bulk",
+	Short: "bulk simulate item replacements and combinations",
+	Long:  "bulk simulate item replacements and combinations",
+	Run:   bulkSimMain,
+}
+
+func init() {
+	bulkCmd.Flags().StringVar(&infile, "infile", "input.json", "location of input file (RaidSimRequest in protojson format)")
+	bulkCmd.Flags().StringVar(&replacefile, "replacefile", "", "location of replacement items file. Writes a CSV result of the items replaced instead of JSON")
+	bulkCmd.Flags().StringVar(&infile, "output", "", "location of output file, defaults to stdout")
+	bulkCmd.Flags().BoolVar(&verbose, "verbose", false, "print information during runtime")
+	bulkCmd.MarkFlagRequired("infile")
+}
+
+func bulkSimMain(cmd *cobra.Command, args []string) {
+	data, err := os.ReadFile(infile)
+	if err != nil {
+		log.Fatalf("failed to load input json file %q: %v", infile, err)
+	}
+	input := &proto.RaidSimRequest{}
+
+	err = protojson.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(data, input)
+	if err != nil {
+		log.Fatalf("failed to load input json file: %s", err)
+	}
+
+	var output []byte
+	if replacefile != "" {
+		output = []byte(Sim(input, replacefile, verbose))
+	} else {
+		reporter := make(chan *proto.ProgressMetrics, 10)
+		core.RunRaidSimAsync(input, reporter)
+
+		var finalResult *proto.RaidSimResult
+		for v := range reporter {
+			if v.FinalRaidResult != nil {
+				finalResult = v.FinalRaidResult
+				break
+			}
+			if verbose {
+				fmt.Printf("Sim Progress: %d / %d\n", v.CompletedIterations, v.TotalIterations)
+			}
+		}
+
+		output, err = protojson.MarshalOptions{EmitUnpopulated: true}.Marshal(finalResult)
+		if err != nil {
+			log.Fatalf("failed to marshal final results: %s", err)
+		}
+	}
+
+	if outfile == "" {
+		print(string(output))
+	} else {
+		err = os.WriteFile(outfile, output, 0666)
+		if err != nil {
+			log.Fatalf("failed to write output file:: %s", err)
+		}
+		if verbose {
+			fmt.Printf("Wrote output file: `%s` successfully.\n", outfile)
+		}
+	}
+}
+
 type ItemReplacementInput struct {
-	Combinations bool
+	Combinations bool              `json:"combinations"`
+	FastMode     bool              `json:"fast_mode"`
 	Items        []*proto.ItemSpec // spec for replacement
 	replaceSlots []core.ItemSlot
 }
@@ -42,7 +116,7 @@ func Sim(input *proto.RaidSimRequest, replaceFile string, verbose bool) string {
 			Combinations:       replaceInput.Combinations,
 			Items:              replaceInput.Items,
 			IterationsPerCombo: input.SimOptions.Iterations,
-			FastMode:           replaceInput.Combinations,
+			FastMode:           replaceInput.FastMode,
 		},
 	}
 	progress := make(chan *proto.ProgressMetrics, 100)
