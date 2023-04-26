@@ -319,7 +319,10 @@ func (ret *RetributionPaladin) waitUntilNextEvent(sim *core.Simulation, events [
 }
 
 func CancelChaosBane(ret *RetributionPaladin, sim *core.Simulation) {
-	if ret.Paladin.HasActiveAura("Chaos Bane") && ret.Paladin.CancelChaosBane {
-		ret.Paladin.GetAura("Chaos Bane").Deactivate(sim)
+	if !ret.Paladin.CancelChaosBane {
+		return
+	}
+	if a := ret.Paladin.GetAura("Chaos Bane"); a != nil {
+		a.Deactivate(sim)
 	}
 }
