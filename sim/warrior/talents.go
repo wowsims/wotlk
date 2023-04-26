@@ -135,6 +135,7 @@ func (warrior *Warrior) applyAngerManagement() {
 			Period: time.Second * 3,
 			OnAction: func(sim *core.Simulation) {
 				warrior.AddRage(sim, 1, rageMetrics)
+				warrior.LastAMTick = sim.CurrentTime
 			},
 		})
 	})
@@ -174,6 +175,7 @@ func (warrior *Warrior) applyTasteForBlood() {
 			warrior.OverpowerAura.Duration = time.Second * 9
 			warrior.OverpowerAura.Activate(sim)
 			warrior.OverpowerAura.Duration = time.Second * 5
+			warrior.lastOverpowerProc = sim.CurrentTime
 		},
 	})
 }
@@ -510,7 +512,7 @@ func (warrior *Warrior) applyFlurry() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !spell.ProcMask.Matches(core.ProcMaskMelee) {
+			if !spell.ProcMask.Matches(core.ProcMaskMelee) && !spell.Flags.Matches(SpellFlagWhirlwindOH) {
 				return
 			}
 

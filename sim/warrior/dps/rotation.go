@@ -12,19 +12,7 @@ import (
 const DebuffRefreshWindow = time.Second * 2
 
 func (war *DpsWarrior) OnGCDReady(sim *core.Simulation) {
-	rendRemainingDur := war.RendValidUntil - sim.CurrentTime
-
-	// Pause rotation on every rend tick to check if TFB procs
-	if rendRemainingDur != war.Rend.CurDot().Duration && rendRemainingDur%3 == 0 && war.Talents.TasteForBlood > 0 {
-		core.StartDelayedAction(sim, core.DelayedActionOptions{
-			DoAt: sim.CurrentTime + time.Microsecond*1,
-			OnAction: func(_ *core.Simulation) {
-				war.doRotation(sim)
-			},
-		})
-	} else {
-		war.doRotation(sim)
-	}
+	war.doRotation(sim)
 
 	if war.GCD.IsReady(sim) && !war.IsWaiting() {
 		// This means we did nothing
@@ -128,10 +116,10 @@ func (war *DpsWarrior) furyNormalRotation(sim *core.Simulation) {
 		war.Bloodthirst.Cast(sim, war.CurrentTarget)
 	} else if war.Rotation.MainGcd == proto.Warrior_Rotation_Whirlwind && war.CanWhirlwind(sim) {
 		war.Whirlwind.Cast(sim, war.CurrentTarget)
-	} else if war.Rotation.MainGcd != proto.Warrior_Rotation_Slam && war.ShouldInstantSlam(sim) {
-		war.CastSlam(sim, war.CurrentTarget)
 	} else if war.Rotation.MainGcd != proto.Warrior_Rotation_Bloodthirst && war.Bloodthirst.CanCast(sim, war.CurrentTarget) {
 		war.Bloodthirst.Cast(sim, war.CurrentTarget)
+	} else if war.Rotation.MainGcd != proto.Warrior_Rotation_Slam && war.ShouldInstantSlam(sim) {
+		war.CastSlam(sim, war.CurrentTarget)
 	} else if war.Rotation.MainGcd != proto.Warrior_Rotation_Whirlwind && war.CanWhirlwind(sim) {
 		war.Whirlwind.Cast(sim, war.CurrentTarget)
 	} else if war.Rotation.UseRend && war.ShouldRend(sim) {
@@ -195,12 +183,12 @@ func (war *DpsWarrior) furyExecuteRotation(sim *core.Simulation) {
 	} else if war.Rotation.MainGcd == proto.Warrior_Rotation_Whirlwind &&
 		war.Rotation.UseWwDuringExecute && war.CanWhirlwind(sim) {
 		war.Whirlwind.Cast(sim, war.CurrentTarget)
-	} else if war.Rotation.MainGcd != proto.Warrior_Rotation_Slam &&
-		war.Rotation.UseSlamOverExecute && war.ShouldInstantSlam(sim) {
-		war.CastSlam(sim, war.CurrentTarget)
 	} else if war.Rotation.MainGcd != proto.Warrior_Rotation_Bloodthirst &&
 		war.Rotation.UseBtDuringExecute && war.Bloodthirst.CanCast(sim, war.CurrentTarget) {
 		war.Bloodthirst.Cast(sim, war.CurrentTarget)
+	} else if war.Rotation.MainGcd != proto.Warrior_Rotation_Slam &&
+		war.Rotation.UseSlamOverExecute && war.ShouldInstantSlam(sim) {
+		war.CastSlam(sim, war.CurrentTarget)
 	} else if war.Rotation.MainGcd != proto.Warrior_Rotation_Whirlwind &&
 		war.Rotation.UseWwDuringExecute && war.CanWhirlwind(sim) {
 		war.Whirlwind.Cast(sim, war.CurrentTarget)
@@ -231,6 +219,14 @@ func (war *DpsWarrior) armsExecuteRotation(sim *core.Simulation) {
 		war.DoNothing()
 	} else if war.IsSuddenDeathActive() && war.Execute.CanCast(sim, war.CurrentTarget) {
 		war.CastExecute(sim, war.CurrentTarget)
+	} else if war.Rotation.UseRend && war.ShouldRend(sim) {
+		if !war.StanceMatches(warrior.BattleStance) {
+			if !war.BattleStance.IsReady(sim) {
+				return
+			}
+			war.BattleStance.Cast(sim, nil)
+		}
+		war.Rend.Cast(sim, war.CurrentTarget)
 	} else if war.ShouldOverpower(sim) {
 		if !war.StanceMatches(warrior.BattleStance) {
 			if !war.BattleStance.IsReady(sim) {
@@ -424,7 +420,7 @@ func (war *DpsWarrior) makeCustomRotation() *common.CustomRotation {
 				if !war.ShouldOverpower(sim) {
 					return false
 				}
-				if sim.IsExecutePhase20() && !war.Rotation.ExecutePhaseOverpower {
+				if sim.IsExecutePhase20() && !war.Rotation.ExecutePhaseOverpower && war.PrimaryTalentTree == warrior.FuryTree {
 					return false
 				}
 

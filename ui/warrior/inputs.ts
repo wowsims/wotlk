@@ -138,7 +138,7 @@ export const WarriorRotationConfig = {
 			label: 'Rend health threshold (%)',
 			labelTooltip: 'Rend will only be used when boss health is above this value in %.',
 			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-			showWhen: (player: Player<Spec.SpecWarrior>) => (player.getRotation().useRend == true || player.getRotation().customRotationOption) && player.getTalentTree() == 1,
+			showWhen: (player: Player<Spec.SpecWarrior>) => (player.getRotation().useRend == true || player.getRotation().customRotationOption),
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecWarrior>({
 			fieldName: 'rendRageThresholdBelow',
@@ -185,7 +185,7 @@ export const WarriorRotationConfig = {
 			label: 'Overpower in Execute Phase',
 			labelTooltip: 'Use Overpower instead of Execute whenever it is available.',
 			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-			showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().useOverpower == true && player.getTalentTree() == 1 || player.getRotation().customRotationOption,
+			showWhen: (player: Player<Spec.SpecWarrior>) => (player.getRotation().useOverpower == true || player.getRotation().customRotationOption) && player.getTalentTree() == 1 ,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecWarrior>({
 			fieldName: 'spamExecute',

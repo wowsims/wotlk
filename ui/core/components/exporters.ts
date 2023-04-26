@@ -289,6 +289,11 @@ export class Individual80UEPExporter<SpecType extends Spec> extends Exporter {
 		[Stat.StatNatureResistance]: 'natureResistance',
 		[Stat.StatShadowResistance]: 'shadowResistance',
 		[Stat.StatBonusArmor]: 'armorBonus',
+		[Stat.StatRunicPower]: 'runicPower',
+		[Stat.StatBloodRune]: 'bloodRune',
+		[Stat.StatFrostRune]: 'frostRune',
+		[Stat.StatUnholyRune]: 'unholyRune',
+		[Stat.StatDeathRune]: 'deathRune',
 	}
 	static pseudoStatNames: Partial<Record<PseudoStat, string>> = {
 		[PseudoStat.PseudoStatMainHandDps]: 'dps',
@@ -377,6 +382,11 @@ export class IndividualPawnEPExporter<SpecType extends Spec> extends Exporter {
 		[Stat.StatNatureResistance]: 'NatureResistance',
 		[Stat.StatShadowResistance]: 'ShadowResistance',
 		[Stat.StatBonusArmor]: 'Armor2',
+		[Stat.StatRunicPower]: 'RunicPower',
+		[Stat.StatBloodRune]: 'BloodRune',
+		[Stat.StatFrostRune]: 'FrostRune',
+		[Stat.StatUnholyRune]: 'UnholyRune',
+		[Stat.StatDeathRune]: 'DeathRune',
 	}
 	static pseudoStatNames: Partial<Record<PseudoStat, string>> = {
 		[PseudoStat.PseudoStatMainHandDps]: 'MeleeDps',

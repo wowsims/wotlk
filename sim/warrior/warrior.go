@@ -22,10 +22,11 @@ type WarriorInputs struct {
 }
 
 const (
-	SpellFlagBloodsurge = core.SpellFlagAgentReserved1
-	ArmsTree            = 0
-	FuryTree            = 1
-	ProtTree            = 2
+	SpellFlagBloodsurge  = core.SpellFlagAgentReserved1
+	SpellFlagWhirlwindOH = core.SpellFlagAgentReserved2
+	ArmsTree             = 0
+	FuryTree             = 1
+	ProtTree             = 2
 )
 
 type Warrior struct {
@@ -48,6 +49,8 @@ type Warrior struct {
 	// Reaction time values
 	reactionTime       time.Duration
 	lastBloodsurgeProc time.Duration
+	lastOverpowerProc  time.Duration
+	LastAMTick         time.Duration
 
 	// Cached values
 	shoutDuration time.Duration

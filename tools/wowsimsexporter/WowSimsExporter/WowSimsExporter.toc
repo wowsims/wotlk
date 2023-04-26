@@ -1,4 +1,4 @@
-## Title: WowSimsExporter v2.4 |c0000ffffWOTLK|r
+## Title: WowSimsExporter v2.5 |c0000ffffWOTLK|r
 ## Version: 2.5
 ## Author: generalwrex, namreeb
 ## Interface: 30400

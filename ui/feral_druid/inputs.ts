@@ -71,7 +71,14 @@ export const FeralDruidRotationConfig = {
 			label: 'Manual Advanced Parameters',
 			labelTooltip: 'Manually specify advanced parameters, otherwise will use preset defaults',
 		}),
-
+		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
+			fieldName: 'maxFfDelay',
+			label: 'Max FF Delay',
+			labelTooltip: 'Max allowed delay to wait for ff to come off CD in seconds',
+			float: true,
+			positive: true,
+			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().manualParams,
+		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
 			fieldName: 'minRoarOffset',
 			label: 'Roar Offset',

@@ -54,7 +54,7 @@ func init() {
 		asyncProgresses: map[string]*asyncProgress{},
 	}
 	go func() {
-		s.runServer(true, ":3339", false, "", false, bufio.NewReader(bytes.NewBuffer([]byte{})))
+		s.runServer(true, "localhost:3339", false, "", false, bufio.NewReader(bytes.NewBuffer([]byte{})))
 	}()
 
 	time.Sleep(time.Second) // hack so we have time for server to startup. Probably could repeatedly curl the endpoint until it responds.

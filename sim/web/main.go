@@ -45,7 +45,7 @@ func main() {
 	var useFS = flag.Bool("usefs", false, "Use local file system for client files. Set to true during development.")
 	var wasm = flag.Bool("wasm", false, "Use wasm for sim instead of web server apis. Can only be used with usefs=true")
 	var simName = flag.String("sim", "", "Name of simulator to launch (ex: balance_druid, elemental_shaman, etc)")
-	var host = flag.String("host", ":3333", "URL to host the interface on.")
+	var host = flag.String("host", "localhost:3333", "URL to host the interface on.")
 	var launch = flag.Bool("launch", true, "auto launch browser")
 	var skipVersionCheck = flag.Bool("nvc", false, "set true to skip version check")
 
@@ -305,7 +305,10 @@ func (s *server) runServer(useFS bool, host string, launchBrowser bool, simName 
 	})
 
 	if launchBrowser {
-		url := fmt.Sprintf("http://localhost%s/wotlk/%s", host, simName)
+		if strings.HasPrefix(host, ":") {
+			host = "localhost" + host
+		}
+		url := fmt.Sprintf("http://%s/wotlk/%s", host, simName)
 		log.Printf("Launching interface on %s", url)
 		go func() {
 			err := browser.OpenURL(url)

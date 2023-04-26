@@ -58,6 +58,7 @@ export const DefaultRotation = FeralDruidRotation.create({
 	snekWeave: false,
 	flowerWeave: false,
 	raidTargets: 30,
+	maxFfDelay: 0.7,
 });
 
 export const DefaultOptions = FeralDruidOptions.create({
