@@ -301,7 +301,20 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 
 	ripNow := (curCp >= rotation.MinCombosForRip) && !ripDot.IsActive() && (simTimeRemain >= endThresh) && ripCcCheck
 	biteAtEnd := (curCp >= rotation.MinCombosForBite) && ((simTimeRemain < endThresh) || (ripDot.IsActive() && (simTimeRemain-ripDot.RemainingDuration(sim) < endThresh)))
-	mangleNow := !ripNow && !cat.bleedAura.IsActive() && cat.MangleCat != nil
+
+	// Clip Mangle if it won't change the total number of Mangles we have to
+	// cast before the fight ends.
+	mangleRefreshNow := !cat.bleedAura.IsActive() && simTimeRemain > time.Second
+	mangleRefreshPending := cat.bleedAura.IsActive() && cat.bleedAura.RemainingDuration(sim) < (simTimeRemain-time.Second)
+	clipMangle := false
+
+	if mangleRefreshPending {
+		numManglesRemaining := int((time.Second + (simTimeRemain - cat.bleedAura.RemainingDuration(sim) - time.Second)).Minutes())
+		earliestMangle := (sim.GetRemainingDuration() + sim.CurrentTime) - time.Duration(numManglesRemaining)*time.Minute
+		clipMangle = sim.CurrentTime >= earliestMangle
+	}
+
+	mangleNow := !ripNow && cat.MangleCat != nil && (mangleRefreshNow || clipMangle)
 
 	biteBeforeRip := (curCp >= rotation.MinCombosForBite) && ripDot.IsActive() && cat.SavageRoarAura.IsActive() && rotation.UseBite && cat.canBite(sim)
 	biteNow := (biteBeforeRip || biteAtEnd) && !isClearcast && curEnergy < 67
@@ -397,7 +410,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 		}
 		pendingActions = append(pendingActions, pendingAction{rakeDot.ExpiresAt(), rakeCost})
 	}
-	if cat.bleedAura.IsActive() && (cat.bleedAura.RemainingDuration(sim) < simTimeRemain-time.Second) {
+	if mangleRefreshPending {
 		mangleCost := core.TernaryFloat64(cat.berserkExpectedAt(sim, cat.bleedAura.ExpiresAt()), cat.MangleCat.DefaultCast.Cost*0.5, cat.MangleCat.DefaultCast.Cost)
 		pendingActions = append(pendingActions, pendingAction{cat.bleedAura.ExpiresAt(), mangleCost})
 	}
@@ -610,18 +623,18 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) {
 			return
 		}
 		timeToNextAction = time.Duration((cat.CurrentFerociousBiteCost() - curEnergy) * float64(core.EnergyTickDuration))
-	} else if rakeNow && !waitForFf {
-		if cat.Rake.CanCast(sim, cat.CurrentTarget) {
-			cat.Rake.Cast(sim, cat.CurrentTarget)
-			return
-		}
-		timeToNextAction = time.Duration((cat.CurrentRakeCost() - curEnergy) * float64(core.EnergyTickDuration))
 	} else if mangleNow && !waitForFf {
 		if cat.MangleCat.CanCast(sim, cat.CurrentTarget) {
 			cat.MangleCat.Cast(sim, cat.CurrentTarget)
 			return
 		}
 		timeToNextAction = time.Duration((cat.CurrentMangleCatCost() - curEnergy) * float64(core.EnergyTickDuration))
+	} else if rakeNow && !waitForFf {
+		if cat.Rake.CanCast(sim, cat.CurrentTarget) {
+			cat.Rake.Cast(sim, cat.CurrentTarget)
+			return
+		}
+		timeToNextAction = time.Duration((cat.CurrentRakeCost() - curEnergy) * float64(core.EnergyTickDuration))
 	} else if bearweaveNow {
 		cat.readyToShift = true
 	} else if flowershiftNow && curEnergy < 42 {
