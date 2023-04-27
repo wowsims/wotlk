@@ -64,7 +64,7 @@ func (warlock *Warlock) registerDemonicEmpowermentSpell() {
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    warlock.NewTimer(),
-				Duration: time.Duration(180-6*warlock.Talents.Nemesis) * time.Second,
+				Duration: time.Duration(60-6*warlock.Talents.Nemesis) * time.Second,
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
