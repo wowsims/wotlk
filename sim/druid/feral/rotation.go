@@ -491,8 +491,9 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) (bool, time.Duration) {
 	// flowershifts take only 3 seconds to execute.
 	flowershiftEnergy := core.MinFloat(furorCap, 75) - 10*cat.SpellGCD().Seconds() - 20*latencySecs
 
-	flowerEnd := time.Duration(float64(sim.CurrentTime) + (3.0+2*latencySecs)*float64(time.Second))
-	flowershiftNow := rotation.FlowerWeave && (curEnergy <= flowershiftEnergy) && !isClearcast && (!cat.ripRefreshPending || ripDot.ExpiresAt() >= flowerEnd) && !cat.BerserkAura.IsActive() && !cat.tfExpectedBefore(sim, flowerEnd)
+	flowerEnd := time.Duration(float64(sim.CurrentTime) + (2.5+2*latencySecs)*float64(time.Second))
+	flowerFfDelay := flowerEnd - cat.FaerieFire.ReadyAt()
+	flowershiftNow := rotation.FlowerWeave && (curEnergy <= flowershiftEnergy) && !isClearcast && (!cat.ripRefreshPending || ripDot.ExpiresAt() >= flowerEnd) && !cat.BerserkAura.IsActive() && !cat.tfExpectedBefore(sim, flowerEnd) && flowerFfDelay < rotation.MaxFfDelay
 
 	if bearweaveNow || emergencyBearweave {
 		// oom check, if we arent able to shift into bear and back
