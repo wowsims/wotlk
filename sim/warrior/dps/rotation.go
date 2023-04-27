@@ -57,14 +57,12 @@ func (war *DpsWarrior) doRotation(sim *core.Simulation) {
 	}
 
 	IsExecutePhase20 := sim.IsExecutePhase20()
-	if war.Rotation.CustomRotationOption {
+	if war.Rotation.CustomRotationOption && war.GCD.IsReady(sim) {
 		war.CustomRotation.Cast(sim)
+	} else if IsExecutePhase20 {
+		war.executeRotation(sim)
 	} else {
-		if IsExecutePhase20 {
-			war.executeRotation(sim)
-		} else {
-			war.normalRotation(sim)
-		}
+		war.normalRotation(sim)
 	}
 
 	if war.GCD.IsReady(sim) && !war.thunderClapNext {
