@@ -724,6 +724,11 @@ type FeralDruidRotation struct {
 }
 
 func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
+	// Force reset params that aren't customizable, or removed from ui
+	rotation.BerserkFfThresh = 15
+	rotation.BerserkBiteThresh = 25
+	rotation.BearWeaveType = proto.FeralDruid_Rotation_None
+
 	cat.Rotation = FeralDruidRotation{
 		BearweaveType:      rotation.BearWeaveType,
 		MaintainFaerieFire: rotation.MaintainFaerieFire,
@@ -744,13 +749,6 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 		SnekWeave:          core.Ternary(rotation.BearWeaveType == proto.FeralDruid_Rotation_None, false, rotation.SnekWeave),
 		FlowerWeave:        core.Ternary(rotation.BearWeaveType == proto.FeralDruid_Rotation_None, rotation.FlowerWeave, false),
 	}
-
-	cat.Rotation.FlowerWeave = false
-	cat.Rotation.BearweaveType = proto.FeralDruid_Rotation_None
-
-	// Until these are exposed as customizable param in ui, its easier to just force
-	cat.Rotation.BerserkFfThresh = 15
-	cat.Rotation.BerserkBiteThresh = 25
 
 	// Use automatic values unless specified
 	if rotation.ManualParams {
