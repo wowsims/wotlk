@@ -27,6 +27,7 @@ func TestFeral(t *testing.T) {
 		SpecOptions: core.SpecOptionsCombo{Label: "Default", SpecOptions: PlayerOptionsMonoCat},
 		OtherSpecOptions: []core.SpecOptionsCombo{
 			{Label: "Default-NoBleed", SpecOptions: PlayerOptionsMonoCatNoBleed},
+			{Label: "Flower-Aoe", SpecOptions: PlayerOptionsFlowerCatAoe},
 		},
 
 		ItemFilter: core.ItemFilter{
@@ -91,6 +92,7 @@ var PlayerOptionsMonoCat = &proto.Player_FeralDruid{
 			AssumeBleedActive: true,
 		},
 		Rotation: &proto.FeralDruid_Rotation{
+			RotationType:       proto.FeralDruid_Rotation_SingleTarget,
 			BearWeaveType:      proto.FeralDruid_Rotation_None,
 			UseRake:            true,
 			UseBite:            true,
@@ -119,6 +121,7 @@ var PlayerOptionsMonoCatNoBleed = &proto.Player_FeralDruid{
 			AssumeBleedActive: false,
 		},
 		Rotation: &proto.FeralDruid_Rotation{
+			RotationType:       proto.FeralDruid_Rotation_SingleTarget,
 			BearWeaveType:      proto.FeralDruid_Rotation_None,
 			UseRake:            true,
 			UseBite:            true,
@@ -133,6 +136,35 @@ var PlayerOptionsMonoCatNoBleed = &proto.Player_FeralDruid{
 			RipLeeway:          3,
 			SnekWeave:          false,
 			FlowerWeave:        false,
+			RaidTargets:        30,
+		},
+	},
+}
+
+var PlayerOptionsFlowerCatAoe = &proto.Player_FeralDruid{
+	FeralDruid: &proto.FeralDruid{
+		Options: &proto.FeralDruid_Options{
+			InnervateTarget:   &proto.RaidTarget{TargetIndex: -1}, // no Innervate
+			LatencyMs:         100,
+			PrepopOoc:         true,
+			AssumeBleedActive: false,
+		},
+		Rotation: &proto.FeralDruid_Rotation{
+			RotationType:       proto.FeralDruid_Rotation_Aoe,
+			BearWeaveType:      proto.FeralDruid_Rotation_None,
+			UseRake:            true,
+			UseBite:            true,
+			MinCombosForRip:    5,
+			MinCombosForBite:   5,
+			BiteTime:           4.0,
+			MaintainFaerieFire: true,
+			BerserkBiteThresh:  25.0,
+			BerserkFfThresh:    15.0,
+			MaxFfDelay:         0.7,
+			MinRoarOffset:      24.0,
+			RipLeeway:          3,
+			SnekWeave:          false,
+			FlowerWeave:        true,
 			RaidTargets:        30,
 		},
 	},

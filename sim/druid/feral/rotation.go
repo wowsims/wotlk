@@ -25,7 +25,13 @@ func (cat *FeralDruid) OnGCDReady(sim *core.Simulation) {
 	cat.bleedAura = cat.CurrentTarget.GetExclusiveEffectCategory(core.BleedEffectCategory).GetActiveAura()
 
 	if cat.preRotationCleanup(sim) {
-		valid, nextAction := cat.doRotation(sim)
+		valid := false
+		nextAction := time.Duration(0)
+		if cat.Rotation.RotationType == proto.FeralDruid_Rotation_SingleTarget {
+			valid, nextAction = cat.doRotation(sim)
+		} else {
+			valid, nextAction = cat.doAoeRotation(sim)
+		}
 		if valid {
 			cat.postRotation(sim, nextAction)
 		}
@@ -704,6 +710,8 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) (bool, time.Duration) {
 }
 
 type FeralDruidRotation struct {
+	RotationType proto.FeralDruid_Rotation_AplType
+
 	BearweaveType      proto.FeralDruid_Rotation_BearweaveType
 	MaintainFaerieFire bool
 	MinCombosForRip    int32
@@ -722,6 +730,8 @@ type FeralDruidRotation struct {
 	LacerateTime       time.Duration
 	SnekWeave          bool
 	FlowerWeave        bool
+
+	AoeMangleBuilder bool
 }
 
 func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
@@ -731,6 +741,7 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 	rotation.BearWeaveType = proto.FeralDruid_Rotation_None
 
 	cat.Rotation = FeralDruidRotation{
+		RotationType:       rotation.RotationType,
 		BearweaveType:      rotation.BearWeaveType,
 		MaintainFaerieFire: rotation.MaintainFaerieFire,
 		MinCombosForRip:    core.Ternary(rotation.MinCombosForRip > 0, rotation.MinCombosForRip, 1),
@@ -748,7 +759,9 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 		RevitFreq:          15.0 / (8 * float64(rotation.HotUptime)),
 		LacerateTime:       8.0 * time.Second,
 		SnekWeave:          core.Ternary(rotation.BearWeaveType == proto.FeralDruid_Rotation_None, false, rotation.SnekWeave),
-		FlowerWeave:        core.Ternary(rotation.BearWeaveType == proto.FeralDruid_Rotation_None, rotation.FlowerWeave, false),
+		FlowerWeave:        core.Ternary(rotation.RotationType == proto.FeralDruid_Rotation_Aoe, rotation.FlowerWeave, false),
+		// Use mangle if idol of corruptor equipped
+		AoeMangleBuilder: cat.Equip[core.ItemSlotRanged].ID == 45509,
 	}
 
 	// Use automatic values unless specified
@@ -764,6 +777,10 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 
 	cat.Rotation.RipLeeway = 3 * time.Second
 	cat.Rotation.MaxFfDelay = 700 * time.Millisecond
+
+	if cat.Rotation.RotationType == proto.FeralDruid_Rotation_Aoe {
+		cat.Rotation.FlowerWeave = true
+	}
 
 	if cat.Rotation.FlowerWeave || (cat.Rotation.BearweaveType == proto.FeralDruid_Rotation_None) {
 		if hasT84P {
