@@ -17,7 +17,10 @@ func TestFeral(t *testing.T) {
 		Class: proto.Class_ClassDruid,
 		Race:  proto.Race_RaceTauren,
 
-		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		GearSet: core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		OtherGearSets: []core.GearSetCombo{
+			{Label: "P2", GearSet: P2Gear},
+		},
 		Talents:     StandardTalents,
 		Glyphs:      StandardGlyphs,
 		Consumes:    FullConsumes,
@@ -231,5 +234,116 @@ var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
 	{},
 	{
 		"id": 39757
+	}
+]}`)
+
+var P2Gear = core.EquipmentSpecFromJsonString(`{"items": [
+	{
+		"id": 46161,
+		"enchant": 3817,
+		"gems": [
+			41398,
+			40002
+		]
+	},
+	{
+		"id": 45517,
+		"gems": [
+			40002
+		]
+	},
+	{
+		"id": 45245,
+		"enchant": 3808,
+		"gems": [
+			40002,
+			40002
+		]
+	},
+	{
+		"id": 46032,
+		"enchant": 3605,
+		"gems": [
+			40002,
+			40058
+		]
+	},
+	{
+		"id": 45473,
+		"enchant": 3832,
+		"gems": [
+			40002,
+			40002,
+			40002
+		]
+	},
+	{
+		"id": 45869,
+		"enchant": 3845,
+		"gems": [
+			40037
+		]
+	},
+	{
+		"id": 46158,
+		"enchant": 3604,
+		"gems": [
+			40002
+		]
+	},
+	{
+		"id": 46095,
+		"gems": [
+			40002,
+			40002,
+			40002
+		]
+	},
+	{
+		"id": 45536,
+		"enchant": 3823,
+		"gems": [
+			39996,
+			39996,
+			39996
+		]
+	},
+	{
+		"id": 45564,
+		"enchant": 3606,
+		"gems": [
+			39996,
+			39996
+		]
+	},
+	{
+		"id": 46048,
+		"gems": [
+			45862
+		]
+	},
+	{
+		"id": 45608,
+		"gems": [
+			39996
+		]
+	},
+	{
+		"id": 45931
+	},
+	{
+		"id": 46038
+	},
+	{
+		"id": 45613,
+		"enchant": 3789,
+		"gems": [
+			40037,
+			42702
+		]
+	},
+	{},
+	{
+		"id": 40713
 	}
 ]}`)
