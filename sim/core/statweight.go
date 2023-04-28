@@ -72,10 +72,12 @@ func (swv StatWeightValues) ToProto() *proto.StatWeightValues {
 }
 
 type StatWeightsResult struct {
-	Dps  StatWeightValues
-	Hps  StatWeightValues
-	Tps  StatWeightValues
-	Dtps StatWeightValues
+	Dps    StatWeightValues
+	Hps    StatWeightValues
+	Tps    StatWeightValues
+	Dtps   StatWeightValues
+	Tmi    StatWeightValues
+	PDeath StatWeightValues
 }
 
 func NewStatWeightsResult() StatWeightsResult {
@@ -84,15 +86,19 @@ func NewStatWeightsResult() StatWeightsResult {
 		Hps:  NewStatWeightValues(),
 		Tps:  NewStatWeightValues(),
 		Dtps: NewStatWeightValues(),
+		Tmi: NewStatWeightValues(),
+		PDeath: NewStatWeightValues(),
 	}
 }
 
 func (swr StatWeightsResult) ToProto() *proto.StatWeightsResult {
 	return &proto.StatWeightsResult{
-		Dps:  swr.Dps.ToProto(),
-		Hps:  swr.Hps.ToProto(),
-		Tps:  swr.Tps.ToProto(),
-		Dtps: swr.Dtps.ToProto(),
+		Dps:    swr.Dps.ToProto(),
+		Hps:    swr.Hps.ToProto(),
+		Tps:    swr.Tps.ToProto(),
+		Dtps:   swr.Dtps.ToProto(),
+		Tmi:    swr.Tmi.ToProto(),
+		PDeath: swr.PDeath.ToProto(),
 	}
 }
 

@@ -488,10 +488,16 @@ class EpWeightsMenu extends BaseModal {
 			});
 		};
 
-		if (this.simUI.dpsRefStat !== undefined) normaliseValue(this.simUI.dpsRefStat, result.dps!);
+		if (this.simUI.dpsRefStat !== undefined) {
+			normaliseValue(this.simUI.dpsRefStat, result.dps!);
+			normaliseValue(this.simUI.dpsRefStat, result.tps!);
+		}
 		if (this.simUI.healRefStat !== undefined) normaliseValue(this.simUI.healRefStat, result.hps!);
-		if (this.simUI.dpsRefStat !== undefined) normaliseValue(this.simUI.dpsRefStat, result.tps!);
-		if (this.simUI.tankRefStat !== undefined) normaliseValue(this.simUI.tankRefStat, result.dtps!);
+		if (this.simUI.tankRefStat !== undefined) {
+			normaliseValue(this.simUI.tankRefStat, result.dtps!);
+			normaliseValue(this.simUI.tankRefStat, result.tmi!);
+			normaliseValue(this.simUI.tankRefStat, result.pDeath!);
+		}
 		return result;
 	}
 
@@ -528,6 +534,18 @@ class EpWeightsMenu extends BaseModal {
 				epValuesStdev: new Stats().toProto(),
 			},
 			dtps: {
+				weights: new Stats().toProto(),
+				weightsStdev: new Stats().toProto(),
+				epValues: new Stats().toProto(),
+				epValuesStdev: new Stats().toProto(),
+			},
+			tmi: {
+				weights: new Stats().toProto(),
+				weightsStdev: new Stats().toProto(),
+				epValues: new Stats().toProto(),
+				epValuesStdev: new Stats().toProto(),
+			},
+			pDeath: {
 				weights: new Stats().toProto(),
 				weightsStdev: new Stats().toProto(),
 				epValues: new Stats().toProto(),
