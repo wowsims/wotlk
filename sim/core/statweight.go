@@ -277,7 +277,7 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, referenceStat stats.Stat, pro
 
 		// Check for hard caps. Hard caps will have results identical to the baseline because RNG is fixed.
 		// When we find a hard-capped stat, just skip it (will return 0).
-		if modPlayerHigh.Dps.Avg == baselinePlayer.Dps.Avg && modPlayerHigh.Hps.Avg == baselinePlayer.Hps.Avg {
+		if modPlayerHigh.Dps.Avg == baselinePlayer.Dps.Avg && modPlayerHigh.Hps.Avg == baselinePlayer.Hps.Avg && modPlayerHigh.Tmi.Avg == baselinePlayer.Tmi.Avg {
 			continue
 		}
 
