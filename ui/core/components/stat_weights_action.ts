@@ -379,10 +379,10 @@ class EpWeightsMenu extends BaseModal {
 				const newEp = scaledDpsEp.add(scaledHpsEp).add(scaledTpsEp).add(scaledDtpsEp);
 				this.simUI.player.setEpWeights(TypedEvent.nextEventID(), newEp);
 			} else {
-				const scaledDpsWeights = Stats.fromProto(results.dps!.epValues).scale(epRatios[0]);
-				const scaledHpsWeights = Stats.fromProto(results.hps!.epValues).scale(epRatios[1]);
-				const scaledTpsWeights = Stats.fromProto(results.tps!.epValues).scale(epRatios[2]);
-				const scaledDtpsWeights = Stats.fromProto(results.dtps!.epValues).scale(epRatios[3]);
+				const scaledDpsWeights = Stats.fromProto(results.dps!.weights).scale(epRatios[0]);
+				const scaledHpsWeights = Stats.fromProto(results.hps!.weights).scale(epRatios[1]);
+				const scaledTpsWeights = Stats.fromProto(results.tps!.weights).scale(epRatios[2]);
+				const scaledDtpsWeights = Stats.fromProto(results.dtps!.weights).scale(epRatios[3]);
 				const newWeights = scaledDpsWeights.add(scaledHpsWeights).add(scaledTpsWeights).add(scaledDtpsWeights);
 				this.simUI.player.setEpWeights(TypedEvent.nextEventID(), newWeights);
 			}
