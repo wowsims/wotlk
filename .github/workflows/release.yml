@@ -60,7 +60,8 @@ jobs:
           makeLatest: true
           artifactErrorsFailBuild: true
           artifacts: |
-            wowsimcli-amd64-linux
+            wowsimcli-amd64-linux.zip
+            wowsimcli-windows.exe.zip
             wowsimwotlk-amd64-darwin.zip
             wowsimwotlk-amd64-linux.zip
             wowsimwotlk-windows.exe.zip
