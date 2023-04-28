@@ -1,6 +1,7 @@
 package feral
 
 import (
+	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -30,6 +31,14 @@ func (cat *FeralDruid) doAoeRotation(sim *core.Simulation) (bool, time.Duration)
 	}
 	ffNow := cat.FaerieFire.CanCast(sim, cat.CurrentTarget) && !isClearcast && curEnergy < ffThresh
 
+	if ffNow {
+		simTimeSecs := sim.GetRemainingDuration().Seconds()
+		maxSwipesWithoutFF := (int)((curEnergy + simTimeSecs*10) / cat.SwipeCat.DefaultCast.Cost)
+		numSwipesWithoutFF := core.MinInt(maxSwipesWithoutFF, int(simTimeSecs)+1)
+		numSwipesWithFF := core.MinInt(maxSwipesWithoutFF+1, int(simTimeSecs))
+		ffNow = numSwipesWithFF > numSwipesWithoutFF
+	}
+
 	roarNow := curCp >= 1 && (!cat.SavageRoarAura.IsActive() || cat.clipRoar(sim))
 
 	nextFfEnergy := curEnergy + float64((cat.FaerieFire.TimeToReady(sim)+cat.latency)/core.EnergyTickDuration)
@@ -38,7 +47,7 @@ func (cat *FeralDruid) doAoeRotation(sim *core.Simulation) (bool, time.Duration)
 	furorCap := core.MinFloat(20.0*float64(cat.Talents.Furor), 85)
 	flowershiftEnergy := core.MinFloat(furorCap, 75) - 10*cat.SpellGCD().Seconds() - 20*latencySecs
 
-	flowerEnd := time.Duration(float64(sim.CurrentTime) + (2.5+2*latencySecs)*float64(time.Second))
+	flowerEnd := time.Duration(float64(sim.CurrentTime) + float64(cat.SpellGCD()) + (2.5+2*latencySecs)*float64(time.Second))
 	flowerFfDelay := flowerEnd - cat.FaerieFire.ReadyAt()
 	flowershiftNow := rotation.FlowerWeave && (curEnergy <= flowershiftEnergy) && !isClearcast && !cat.BerserkAura.IsActive() && !cat.tfExpectedBefore(sim, flowerEnd) && flowerFfDelay < rotation.MaxFfDelay
 
@@ -51,8 +60,8 @@ func (cat *FeralDruid) doAoeRotation(sim *core.Simulation) (bool, time.Duration)
 	}
 
 	if flowershiftNow {
-		energyToDump := curEnergy + ((flowerEnd + time.Second - sim.CurrentTime).Seconds() * 10)
-		flowershiftNow = flowerEnd+time.Second+time.Duration((energyToDump/42)*float64(time.Second)) < sim.CurrentTime+simTimeRemain
+		energyToDump := curEnergy + ((flowerEnd - sim.CurrentTime).Seconds() * 10)
+		flowershiftNow = flowerEnd+time.Duration(math.Floor(energyToDump/42)*float64(time.Second)) < sim.CurrentTime+simTimeRemain
 	}
 
 	pendingPool := PoolingActions{}
