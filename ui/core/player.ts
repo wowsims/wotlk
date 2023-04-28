@@ -120,7 +120,8 @@ export class Player<SpecType extends Spec> {
 
 	readonly specTypeFunctions: SpecTypeFunctions<SpecType>;
 
-	private epRatios: Array<number> = new Array<number>(4).fill(0);
+	private static readonly numEpRatios = 4;
+	private epRatios: Array<number> = new Array<number>(Player.numEpRatios).fill(0);
 	private epWeights: Stats = new Stats();
 	private currentStats: PlayerStats = PlayerStats.create();
 
@@ -272,7 +273,7 @@ export class Player<SpecType extends Spec> {
 	}
 
 	getDefaultEpRatios(isTankSpec: boolean, isHealingSpec: boolean): Array<number> {
-		const defaultRatios = new Array(4).fill(0);
+		const defaultRatios = new Array(Player.numEpRatios).fill(0);
 		if (isHealingSpec) {
 			// By default only value HPS EP for healing spec
 			defaultRatios[1] = 1;
