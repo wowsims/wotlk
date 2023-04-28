@@ -1,6 +1,7 @@
 package feral
 
 import (
+	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -415,7 +416,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) (bool, time.Duration) {
 	// 1 second per 42 Energy that we have after that Clearcast Shred.
 	if ffNow {
 		simTimeSecs := sim.GetRemainingDuration().Seconds()
-		maxShredsWithoutFF := (int)((curEnergy + simTimeSecs*10) / (float64)(cat.CurrentShredCost()))
+		maxShredsWithoutFF := (int)((curEnergy + simTimeSecs*10) / cat.Shred.DefaultCast.Cost)
 		numShredsWithoutFF := core.MinInt(maxShredsWithoutFF, int(simTimeSecs)+1)
 		numShredsWithFF := core.MinInt(maxShredsWithoutFF+1, int(simTimeSecs))
 		ffNow = numShredsWithFF > numShredsWithoutFF
@@ -482,7 +483,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) (bool, time.Duration) {
 	// weave_end.
 	if bearweaveNow {
 		energyToDump := curEnergy + ((weaveEnd - sim.CurrentTime).Seconds() * 10)
-		bearweaveNow = weaveEnd+time.Duration((energyToDump/42)*float64(time.Second)) < sim.CurrentTime+simTimeRemain
+		bearweaveNow = weaveEnd+time.Duration(math.Floor(energyToDump/42)*float64(time.Second)) < sim.CurrentTime+simTimeRemain
 	}
 
 	// If we're maintaining Lacerate, then allow for emergency bearweaves
@@ -497,7 +498,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) (bool, time.Duration) {
 	// flowershifts take only 3 seconds to execute.
 	flowershiftEnergy := core.MinFloat(furorCap, 75) - 10*cat.SpellGCD().Seconds() - 20*latencySecs
 
-	flowerEnd := time.Duration(float64(sim.CurrentTime) + (2.5+2*latencySecs)*float64(time.Second))
+	flowerEnd := time.Duration(float64(sim.CurrentTime) + float64(cat.SpellGCD()) + (2.5+2*latencySecs)*float64(time.Second))
 	flowerFfDelay := flowerEnd - cat.FaerieFire.ReadyAt()
 	flowershiftNow := rotation.FlowerWeave && (curEnergy <= flowershiftEnergy) && !isClearcast && (!cat.ripRefreshPending || ripDot.ExpiresAt() >= flowerEnd) && !cat.BerserkAura.IsActive() && !cat.tfExpectedBefore(sim, flowerEnd) && flowerFfDelay < rotation.MaxFfDelay
 
@@ -525,8 +526,8 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) (bool, time.Duration) {
 	// given by flower_end plus 1 second for Clearcast Shred plus 1 second
 	// per 42 Energy that we have after that Clearcast Shred.
 	if flowershiftNow {
-		energyToDump := curEnergy + ((flowerEnd + time.Second - sim.CurrentTime).Seconds() * 10)
-		flowershiftNow = flowerEnd+time.Second+time.Duration((energyToDump/42)*float64(time.Second)) < sim.CurrentTime+simTimeRemain
+		energyToDump := curEnergy + ((flowerEnd - sim.CurrentTime).Seconds() * 10)
+		flowershiftNow = flowerEnd+time.Duration(math.Floor(energyToDump/42)*float64(time.Second)) < sim.CurrentTime+simTimeRemain
 	}
 
 	floatingEnergy := pendingPool.calcFloatingEnergy(sim.CurrentTime, func(refreshTime time.Duration) bool {
@@ -575,7 +576,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) (bool, time.Duration) {
 		// if we don't have enough time to spend the pooled Energy thus far.
 		if !shiftNow {
 			energyToDump := curEnergy + 30 + 10*latencySecs
-			timeToDump := (3 * time.Second) + cat.latency + time.Duration((energyToDump/42)*float64(time.Second))
+			timeToDump := (3 * time.Second) + cat.latency + time.Duration(math.Floor(energyToDump/42)*float64(time.Second))
 			shiftNow = timeToDump >= simTimeRemain
 		}
 
