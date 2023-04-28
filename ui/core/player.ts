@@ -120,7 +120,7 @@ export class Player<SpecType extends Spec> {
 
 	readonly specTypeFunctions: SpecTypeFunctions<SpecType>;
 
-	private static readonly numEpRatios = 4;
+	private static readonly numEpRatios = 6;
 	private epRatios: Array<number> = new Array<number>(Player.numEpRatios).fill(0);
 	private epWeights: Stats = new Stats();
 	private currentStats: PlayerStats = PlayerStats.create();

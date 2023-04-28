@@ -27,6 +27,17 @@ export function addStatWeightsAction(simUI: IndividualSimUI<any>, epStats: Array
 	});
 }
 
+// Create the config for modal in separate function, as constructor cannot
+// contain any logic before `super' call. Use modal-xl to accommodate the extra
+// TMI & p(death) EP in the UI.
+function getModalConfig(simUI: IndividualSimUI<any>) {
+	const baseConfig = { footer: true, scrollContents: true };
+	if (simUI.sim.getShowThreatMetrics() && simUI.sim.getShowExperimental()) {
+		return {size: 'xl' as const, ...baseConfig };
+	}
+	return baseConfig;
+}
+
 class EpWeightsMenu extends BaseModal {
 	private readonly simUI: IndividualSimUI<any>;
 	private readonly container: HTMLElement;
@@ -41,7 +52,7 @@ class EpWeightsMenu extends BaseModal {
 	private showAllStats: boolean = false;
 
 	constructor(simUI: IndividualSimUI<any>, epStats: Array<Stat>, epPseudoStats: Array<PseudoStat>, epReferenceStat: Stat) {
-		super(simUI.rootElem, 'ep-weights-menu', {footer: true, scrollContents: true});
+		super(simUI.rootElem, 'ep-weights-menu', getModalConfig(simUI));
 		this.simUI = simUI;
 		this.statsType = 'ep';
 		this.epStats = epStats;
@@ -133,7 +144,31 @@ class EpWeightsMenu extends BaseModal {
 									<i class="fa fa-copy"></i>
 								</a>
 							</th>
-							<th class="type-current">
+							<th class="threat-metrics type-weight experimental">
+								<span>TMI Weight</span>
+								<a href="javascript:void(0)" role="button" class="col-action">
+									<i class="fa fa-copy"></i>
+								</a>
+							</th>
+							<th class="threat-metrics type-ep experimental">
+								<span>TMI EP</span>
+								<a href="javascript:void(0)" role="button" class="col-action">
+									<i class="fa fa-copy"></i>
+								</a>
+							</th>
+							<th class="threat-metrics type-weight experimental">
+								<span>Death Weight</span>
+								<a href="javascript:void(0)" role="button" class="col-action">
+									<i class="fa fa-copy"></i>
+								</a>
+							</th>
+							<th class="threat-metrics type-ep experimental">
+								<span>Death EP</span>
+								<a href="javascript:void(0)" role="button" class="col-action">
+									<i class="fa fa-copy"></i>
+								</a>
+							</th>
+							<th style="text-align: center">
 								<span>Current EP</span>
 								<a href="javascript:void(0)" role="button" class="col-action">
 									<i class="fas fa-arrows-rotate"></i>
@@ -157,6 +192,14 @@ class EpWeightsMenu extends BaseModal {
 							<td class="threat-metrics type-ratio type-weight">
 							</td>
 							<td class="threat-metrics type-ratio type-ep">
+							</td>
+							<td class="threat-metrics type-ratio type-weight experimental">
+							</td>
+							<td class="threat-metrics type-ratio type-ep experimental">
+							</td>
+							<td class="threat-metrics type-ratio type-weight experimental">
+							</td>
+							<td class="threat-metrics type-ratio type-ep experimental">
 							</td>
 							<td style="text-align: center; vertical-align: middle;">
 								<button class="btn btn-primary compute-ep">
@@ -327,7 +370,11 @@ class EpWeightsMenu extends BaseModal {
 		makeUpdateWeights(colActionButtons[5], 'EP (Equivalency Points) for TPS (Threat Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().tps!.epValues, () => this.getDpsEpRefStat());
 		makeUpdateWeights(colActionButtons[6], 'Per-point increase in DTPS (Damage Taken Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().dtps!.weights);
 		makeUpdateWeights(colActionButtons[7], 'EP (Equivalency Points) for DTPS (Damage Taken Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().dtps!.epValues, () => this.getTankEpRefStat());
-		makeUpdateWeights(colActionButtons[8], 'Current EP Weights. Used to sort the gear selector menus.', 'Restore Default EP', () => this.simUI.individualConfig.defaults.epWeights.toProto());
+		makeUpdateWeights(colActionButtons[8], 'Per-point decrease in TMI (Theck-Meloree Index) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().tmi!.weights);
+		makeUpdateWeights(colActionButtons[9], 'EP (Equivalency Points) for TMI (Theck-Meloree Index) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().tmi!.epValues, () => this.getTankEpRefStat());
+		makeUpdateWeights(colActionButtons[10], 'Per-point decrease in p(death) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().pDeath!.weights);
+		makeUpdateWeights(colActionButtons[11], 'EP (Equivalency Points) for p(death) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().pDeath!.epValues, () => this.getTankEpRefStat());
+		makeUpdateWeights(colActionButtons[12], 'Current EP Weights. Used to sort the gear selector menus.', 'Restore Default EP', () => this.simUI.individualConfig.defaults.epWeights.toProto());
 
 		const showAllStatsContainer = this.rootElem.getElementsByClassName('show-all-stats-container')[0] as HTMLElement;
 		new BooleanPicker(showAllStatsContainer, this, {
@@ -376,14 +423,18 @@ class EpWeightsMenu extends BaseModal {
 				const scaledHpsEp = Stats.fromProto(results.hps!.epValues).scale(epRatios[1]);
 				const scaledTpsEp = Stats.fromProto(results.tps!.epValues).scale(epRatios[2]);
 				const scaledDtpsEp = Stats.fromProto(results.dtps!.epValues).scale(epRatios[3]);
-				const newEp = scaledDpsEp.add(scaledHpsEp).add(scaledTpsEp).add(scaledDtpsEp);
+				const scaledTmiEp = Stats.fromProto(results.tmi!.epValues).scale(epRatios[4]);
+				const scaledPDeathEp = Stats.fromProto(results.pDeath!.epValues).scale(epRatios[5]);
+				const newEp = scaledDpsEp.add(scaledHpsEp).add(scaledTpsEp).add(scaledDtpsEp).add(scaledTmiEp).add(scaledPDeathEp);
 				this.simUI.player.setEpWeights(TypedEvent.nextEventID(), newEp);
 			} else {
 				const scaledDpsWeights = Stats.fromProto(results.dps!.weights).scale(epRatios[0]);
 				const scaledHpsWeights = Stats.fromProto(results.hps!.weights).scale(epRatios[1]);
 				const scaledTpsWeights = Stats.fromProto(results.tps!.weights).scale(epRatios[2]);
 				const scaledDtpsWeights = Stats.fromProto(results.dtps!.weights).scale(epRatios[3]);
-				const newWeights = scaledDpsWeights.add(scaledHpsWeights).add(scaledTpsWeights).add(scaledDtpsWeights);
+				const scaledTmiWeights = Stats.fromProto(results.tmi!.weights).scale(epRatios[4]);
+				const scaledPDeathWeights = Stats.fromProto(results.pDeath!.weights).scale(epRatios[5]);
+				const newWeights = scaledDpsWeights.add(scaledHpsWeights).add(scaledTpsWeights).add(scaledDtpsWeights).add(scaledTmiWeights).add(scaledPDeathWeights);
 				this.simUI.player.setEpWeights(TypedEvent.nextEventID(), newWeights);
 			}
 		});
@@ -456,6 +507,8 @@ class EpWeightsMenu extends BaseModal {
 			${makeWeightAndEpCellHtml(result.hps!, 'healing-metrics')}
 			${makeWeightAndEpCellHtml(result.tps!, 'threat-metrics')}
 			${makeWeightAndEpCellHtml(result.dtps!, 'threat-metrics')}
+			${makeWeightAndEpCellHtml(result.tmi!, 'threat-metrics experimental')}
+			${makeWeightAndEpCellHtml(result.pDeath!, 'threat-metrics experimental')}
 			<td class="current-ep"></td>
 		`;
 
