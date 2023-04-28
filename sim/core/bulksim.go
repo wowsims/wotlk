@@ -8,6 +8,7 @@ import (
 	"runtime"
 	"runtime/debug"
 	"sort"
+	"strings"
 	"sync/atomic"
 	"time"
 
@@ -382,6 +383,45 @@ func (es *equipmentSubstitution) HasItemReplacements() bool {
 	return len(es.Items) > 0
 }
 
+func (es *equipmentSubstitution) CanonicalHash() string {
+	slotToID := map[ItemSlot]int32{}
+	for _, repl := range es.Items {
+		slotToID[repl.Slot] = repl.Item.Id
+	}
+
+	// Canonical representation always has the ring or trinket with smaller item ID in slot1
+	// if the equipment subsitution mentions two rings or trinkets.
+	if ring1, ok := slotToID[ItemSlotFinger1]; ok {
+		if ring2, ok := slotToID[ItemSlotFinger2]; ok {
+			if ring1 == ring2 {
+				return ""
+			}
+			if ring1 > ring2 {
+				slotToID[ItemSlotFinger1], slotToID[ItemSlotFinger2] = ring2, ring1
+			}
+		}
+	}
+	if trink1, ok := slotToID[ItemSlotTrinket1]; ok {
+		if trink2, ok := slotToID[ItemSlotTrinket2]; ok {
+			if trink1 == trink2 {
+				return ""
+			}
+			if trink1 > trink2 {
+				slotToID[ItemSlotTrinket1], slotToID[ItemSlotTrinket2] = trink2, trink1
+			}
+		}
+	}
+
+	var parts []string
+	for i := 0; i < 17; i++ {
+		if id, ok := slotToID[ItemSlot(i)]; ok {
+			parts = append(parts, fmt.Sprintf("%d=%d", i, id))
+		}
+	}
+
+	return strings.Join(parts, ":")
+}
+
 // isValidEquipment returns true if the specified equipment spec is valid. A equipment spec
 // is valid if it does not reference a two-hander and off-hand weapon combo.
 func isValidEquipment(equipment *proto.EquipmentSpec) bool {
@@ -434,13 +474,6 @@ func generateAllEquipmentSubstitutions(ctx context.Context, baseItems []*proto.I
 		// No substitutions (base case).
 		results <- &equipmentSubstitution{}
 
-		// seenCombos lets us deduplicate trinket/ring combos.
-		comboChecker := ItemComboChecker{}
-
-		// Pre-seed the existing item combos
-		comboChecker.HasCombo(baseItems[ItemSlotFinger1].Id, baseItems[ItemSlotFinger2].Id)
-		comboChecker.HasCombo(baseItems[ItemSlotTrinket1].Id, baseItems[ItemSlotTrinket2].Id)
-
 		// Organize everything by slot.
 		itemsBySlot := make([][]*proto.ItemSpec, 17)
 		for _, is := range distinctItemSlotCombos {
@@ -448,6 +481,13 @@ func generateAllEquipmentSubstitutions(ctx context.Context, baseItems []*proto.I
 		}
 
 		if !combinations {
+			// seenCombos lets us deduplicate trinket/ring combos.
+			comboChecker := ItemComboChecker{}
+
+			// Pre-seed the existing item combos
+			comboChecker.HasCombo(baseItems[ItemSlotFinger1].Id, baseItems[ItemSlotFinger2].Id)
+			comboChecker.HasCombo(baseItems[ItemSlotTrinket1].Id, baseItems[ItemSlotTrinket2].Id)
+
 			for slotid, slot := range itemsBySlot {
 				for _, item := range slot {
 					sub := equipmentSubstitution{
@@ -481,12 +521,11 @@ func generateAllEquipmentSubstitutions(ctx context.Context, baseItems []*proto.I
 			return
 		}
 
-		// Now generate combos by slot
+		// Simming all combinations of items. This is useful to find the e.g.
+		// the best set of items in your bags.
+		subComboChecker := SubstitutionComboChecker{}
 		for i := 0; i < len(itemsBySlot); i++ {
-			if len(itemsBySlot[i]) == 0 {
-				continue
-			}
-			genSlotCombos(ItemSlot(i), baseItems, equipmentSubstitution{}, itemsBySlot, comboChecker, results)
+			genSlotCombos(ItemSlot(i), baseItems, equipmentSubstitution{}, itemsBySlot, subComboChecker, results)
 		}
 	}()
 
@@ -519,25 +558,18 @@ func shouldSkipCombo(baseItems []*proto.ItemSpec, item *proto.ItemSpec, slot Ite
 	return false
 }
 
-func genSlotCombos(slot ItemSlot, baseItems []*proto.ItemSpec, baseRepl equipmentSubstitution, replaceBySlot [][]*proto.ItemSpec, comboChecker ItemComboChecker, results chan *equipmentSubstitution) {
-	// iterate all items in this slot, add to the baseRepl, then descend to add all other item combos.
+func genSlotCombos(slot ItemSlot, baseItems []*proto.ItemSpec, baseRepl equipmentSubstitution, replaceBySlot [][]*proto.ItemSpec, comboChecker SubstitutionComboChecker, results chan *equipmentSubstitution) {
+	// Iterate all items in this slot, add to the baseRepl, then descend to add all other item combos.
 	for _, item := range replaceBySlot[slot] {
-
-		// Make sure we don't generate invalid or duplicate ring/trinket combos
-		if slot >= ItemSlotFinger1 && slot <= ItemSlotTrinket2 {
-			if shouldSkipCombo(baseItems, item, slot, comboChecker, baseRepl) {
-				continue
-			}
-		}
-
+		// Create a new equipment substitution from the current replacements plus the new item.
 		combo := createReplacement(baseRepl, &itemWithSlot{Slot: slot, Item: item})
+		if comboChecker.HasCombo(combo) {
+			continue
+		}
 		results <- &combo
 
-		// Now descend to each other slot to pair with this combo
+		// Now descend to each other slot to pair with this combo.
 		for j := slot + 1; int(j) < len(replaceBySlot); j++ {
-			if len(replaceBySlot[j]) == 0 {
-				continue
-			}
 			genSlotCombos(j, baseItems, combo, replaceBySlot, comboChecker, results)
 		}
 	}
@@ -613,4 +645,19 @@ func (ic *ItemComboChecker) generateComboKey(itemA int32, itemB int32) int64 {
 		return int64(itemA) + int64(itemB)<<4
 	}
 	return int64(itemB) + int64(itemA)<<4
+}
+
+type SubstitutionComboChecker map[string]struct{}
+
+func (ic *SubstitutionComboChecker) HasCombo(replacements equipmentSubstitution) bool {
+	key := replacements.CanonicalHash()
+	if key == "" {
+		// Invalid combo.
+		return true
+	}
+	if _, ok := (*ic)[key]; ok {
+		return true
+	}
+	(*ic)[key] = struct{}{}
+	return false
 }
