@@ -173,4 +173,20 @@
 			}
 		}
 	}
+
+	// Style overrides for the expanded/experimental EP UI in tank mode
+	&:not(.hide-experimental) {
+		@include media-breakpoint-down(lg) {
+			@include compact-button;
+			@include compact-table;
+			.results-ep-table {
+				@include compact-input;
+			}
+		}
+		@include media-breakpoint-only(lg) {
+			.results-ep-table {
+				th { padding-right: 0; }
+			}
+		}
+	}
 }

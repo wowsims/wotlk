@@ -338,6 +338,8 @@ message StatWeightsResult {
 	StatWeightValues hps = 4;
 	StatWeightValues tps = 2;
 	StatWeightValues dtps = 3;
+	StatWeightValues tmi = 5;
+	StatWeightValues p_death = 6;
 }
 message StatWeightValues {
 	UnitStats weights = 1;

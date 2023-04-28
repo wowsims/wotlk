@@ -591,12 +591,13 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				this.player.setEpWeights(eventID, this.individualConfig.defaults.epWeights);
 			}
 
+			const tankSpec = isTankSpec(this.player.spec);
+			const healingSpec = isHealingSpec(this.player.spec);
+			const defaultRatios = this.player.getDefaultEpRatios(tankSpec, healingSpec);
 			if (settings.epRatios) {
-				this.player.setEpRatios(eventID, settings.epRatios);
+				const missingRatios = new Array<number>(defaultRatios.length - settings.epRatios.length).fill(0);
+				this.player.setEpRatios(eventID, settings.epRatios.concat(missingRatios));
 			} else {
-				const tankSpec = isTankSpec(this.player.spec);
-				const healingSpec = isHealingSpec(this.player.spec);
-				const defaultRatios = this.player.getDefaultEpRatios(tankSpec, healingSpec)
 				this.player.setEpRatios(eventID, defaultRatios);
 			}
 
