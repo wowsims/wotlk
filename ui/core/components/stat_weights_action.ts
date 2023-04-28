@@ -133,7 +133,7 @@ class EpWeightsMenu extends BaseModal {
 									<i class="fa fa-copy"></i>
 								</a>
 							</th>
-							<th style="text-align: center;">
+							<th class="type-current">
 								<span>Current EP</span>
 								<a href="javascript:void(0)" role="button" class="col-action">
 									<i class="fas fa-arrows-rotate"></i>
@@ -161,7 +161,7 @@ class EpWeightsMenu extends BaseModal {
 							<td style="text-align: center; vertical-align: middle;">
 								<button class="btn btn-primary compute-ep">
 									<i class="fas fa-calculator"></i>
-									Compute EP
+									<span class="not-tiny">Compute </span>EP
 								</button>
 							</td>
 						</tr>
