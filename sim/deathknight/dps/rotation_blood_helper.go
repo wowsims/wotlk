@@ -133,7 +133,8 @@ func (dk *DpsDeathknight) blSpreadDiseases(sim *core.Simulation, target *core.Un
 func (dk *DpsDeathknight) blDeathCoilCheck(sim *core.Simulation) bool {
 	canCastDrw := dk.Talents.DancingRuneWeapon && dk.DancingRuneWeapon != nil && (dk.DancingRuneWeapon.IsReady(sim) || dk.DancingRuneWeapon.CD.TimeToReady(sim) < 5*time.Second)
 	currentRP := dk.CurrentRunicPower()
-	return (!canCastDrw && currentRP >= float64(core.TernaryInt(dk.br.dsGlyphed, 65, 40))) || (canCastDrw && currentRP >= 100)
+	willCastDS := dk.NormalCurrentFrostRunes() > 0 && dk.NormalCurrentUnholyRunes() > 1 && dk.CurrentBloodRunes() == 0
+	return (!canCastDrw && currentRP >= float64(core.TernaryInt(dk.br.dsGlyphed && willCastDS, 65, 40))) || (canCastDrw && currentRP >= 100)
 }
 
 func (dk *DpsDeathknight) blBloodTapCheck(sim *core.Simulation, target *core.Unit) bool {
