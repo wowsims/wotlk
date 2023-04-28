@@ -157,7 +157,7 @@ func (b *bulkSimRunner) Run(pctx context.Context, progress chan *proto.ProgressM
 	}
 
 	// TODO(Riotdog-GehennasEU): Make this configurable?
-	maxResults := 40
+	maxResults := 30
 
 	var rankedResults []*itemSubstitutionSimResult
 	var baseResult *itemSubstitutionSimResult
@@ -461,24 +461,6 @@ func isValidEquipment(equipment *proto.EquipmentSpec) bool {
 	return true
 }
 
-func shouldSkipCombo(baseItems []*proto.ItemSpec, item *proto.ItemSpec, slot ItemSlot, comboChecker ItemComboChecker, replacements equipmentSubstitution) bool {
-	switch slot {
-	case ItemSlotFinger1, ItemSlotTrinket1:
-		return comboChecker.HasCombo(item.Id, baseItems[slot+1].Id)
-	case ItemSlotFinger2, ItemSlotTrinket2:
-
-		for _, repl := range replacements.Items {
-			if slot == ItemSlotFinger2 && repl.Slot == ItemSlotFinger1 ||
-				slot == ItemSlotTrinket2 && repl.Slot == ItemSlotTrinket1 {
-				return comboChecker.HasCombo(repl.Item.Id, item.Id)
-			}
-		}
-		// Since we didn't find an item in the opposite slot, check against base items.
-		return comboChecker.HasCombo(item.Id, baseItems[slot-1].Id)
-	}
-	return false
-}
-
 // generateAllEquipmentSubstitutions generates all possible valid equipment substitutions for the
 // given bulk sim request. Also returns the unchanged equipment ("base equipment set") set as the
 // first result. This ensures that simming over all possible equipment substitutions includes the
@@ -558,6 +540,24 @@ func createReplacement(repl equipmentSubstitution, item *itemWithSlot) equipment
 	return repl
 }
 
+func shouldSkipCombo(baseItems []*proto.ItemSpec, item *proto.ItemSpec, slot ItemSlot, comboChecker ItemComboChecker, replacements equipmentSubstitution) bool {
+	switch slot {
+	case ItemSlotFinger1, ItemSlotTrinket1:
+		return comboChecker.HasCombo(item.Id, baseItems[slot+1].Id)
+	case ItemSlotFinger2, ItemSlotTrinket2:
+
+		for _, repl := range replacements.Items {
+			if slot == ItemSlotFinger2 && repl.Slot == ItemSlotFinger1 ||
+				slot == ItemSlotTrinket2 && repl.Slot == ItemSlotTrinket1 {
+				return comboChecker.HasCombo(repl.Item.Id, item.Id)
+			}
+		}
+		// Since we didn't find an item in the opposite slot, check against base items.
+		return comboChecker.HasCombo(item.Id, baseItems[slot-1].Id)
+	}
+	return false
+}
+
 func genSlotCombos(slot ItemSlot, baseItems []*proto.ItemSpec, baseRepl equipmentSubstitution, replaceBySlot [][]*proto.ItemSpec, comboChecker SubstitutionComboChecker, results chan *equipmentSubstitution) {
 	// Iterate all items in this slot, add to the baseRepl, then descend to add all other item combos.
 	for _, item := range replaceBySlot[slot] {
@@ -626,14 +626,6 @@ func createNewRequestWithSubstitution(readonlyInputRequest *proto.RaidSimRequest
 
 type ItemComboChecker map[int64]struct{}
 
-// put this function on ic just so it isn't in global namespace
-func (ic *ItemComboChecker) generateComboKey(itemA int32, itemB int32) int64 {
-	if itemA > itemB {
-		return int64(itemA) + int64(itemB)<<4
-	}
-	return int64(itemB) + int64(itemA)<<4
-}
-
 func (ic *ItemComboChecker) HasCombo(itema int32, itemb int32) bool {
 	if itema == itemb {
 		return true
@@ -645,6 +637,14 @@ func (ic *ItemComboChecker) HasCombo(itema int32, itemb int32) bool {
 		(*ic)[key] = struct{}{}
 	}
 	return false
+}
+
+// put this function on ic just so it isn't in global namespace
+func (ic *ItemComboChecker) generateComboKey(itemA int32, itemB int32) int64 {
+	if itemA > itemB {
+		return int64(itemA) + int64(itemB)<<4
+	}
+	return int64(itemB) + int64(itemA)<<4
 }
 
 type SubstitutionComboChecker map[string]struct{}
