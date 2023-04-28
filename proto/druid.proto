@@ -198,6 +198,10 @@ message BalanceDruid {
 
 message FeralDruid {
   message Rotation {
+	enum AplType {
+		SingleTarget = 0;
+		Aoe = 1;
+	}
     enum BearweaveType {
       None = 0;
       Mangle = 1;
@@ -228,6 +232,7 @@ message FeralDruid {
 	int32 raid_targets = 16;
 	bool manual_params = 17;
 	float max_ff_delay = 20;
+	AplType rotation_type = 21;
   }
   Rotation rotation = 1;
 
