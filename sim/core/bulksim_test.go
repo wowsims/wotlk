@@ -179,6 +179,49 @@ func TestGenerateAllEquipmentSubstitutions(t *testing.T) {
 			},
 		},
 		{
+			name: "ring and trinket",
+			args: args{
+				combinations: true,
+				distinctItemSlotCombos: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+					{Item: item1, Slot: ItemSlotFinger2},
+					{Item: item2, Slot: ItemSlotTrinket1},
+					{Item: item2, Slot: ItemSlotTrinket2},
+				},
+			},
+			want: []*equipmentSubstitution{
+				{},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+					{Item: item2, Slot: ItemSlotTrinket1},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+					{Item: item2, Slot: ItemSlotTrinket2},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger2},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger2},
+					{Item: item2, Slot: ItemSlotTrinket1},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger2},
+					{Item: item2, Slot: ItemSlotTrinket2},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item2, Slot: ItemSlotTrinket1},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item2, Slot: ItemSlotTrinket2},
+				}},
+			},
+		},
+		{
 			name: "special case same itemID",
 			args: args{
 				combinations: false,
