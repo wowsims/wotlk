@@ -14,6 +14,7 @@ func (cat *FeralDruid) doAoeRotation(sim *core.Simulation) (bool, time.Duration)
 	isClearcast := cat.ClearcastingAura.IsActive()
 	simTimeRemain := sim.GetRemainingDuration()
 	latencySecs := cat.latency.Seconds()
+	shiftCost := cat.CatForm.DefaultCast.Cost
 
 	waitForTf := cat.Talents.Berserk && (cat.TigersFury.ReadyAt() <= cat.BerserkAura.Duration) && (cat.TigersFury.ReadyAt()+time.Second < simTimeRemain-cat.BerserkAura.Duration)
 	berserkNow := cat.Berserk.IsReady(sim) && !waitForTf && !isClearcast
@@ -40,6 +41,19 @@ func (cat *FeralDruid) doAoeRotation(sim *core.Simulation) (bool, time.Duration)
 	flowerEnd := time.Duration(float64(sim.CurrentTime) + (2.5+2*latencySecs)*float64(time.Second))
 	flowerFfDelay := flowerEnd - cat.FaerieFire.ReadyAt()
 	flowershiftNow := rotation.FlowerWeave && (curEnergy <= flowershiftEnergy) && !isClearcast && !cat.BerserkAura.IsActive() && !cat.tfExpectedBefore(sim, flowerEnd) && flowerFfDelay < rotation.MaxFfDelay
+
+	if flowershiftNow {
+		// if we cant cast and get back then abandon flowershift
+		if cat.CurrentMana() <= shiftCost+cat.GiftOfTheWild.DefaultCast.Cost {
+			flowershiftNow = false
+			cat.Metrics.MarkOOM(sim)
+		}
+	}
+
+	if flowershiftNow {
+		energyToDump := curEnergy + ((flowerEnd + time.Second - sim.CurrentTime).Seconds() * 10)
+		flowershiftNow = flowerEnd+time.Second+time.Duration((energyToDump/42)*float64(time.Second)) < sim.CurrentTime+simTimeRemain
+	}
 
 	pendingPool := PoolingActions{}
 
