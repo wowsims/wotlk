@@ -50,7 +50,7 @@ func (rotation *AdaptiveRotation) DoAction(eleShaman *ElementalShaman, sim *core
 
 	shouldTS := false
 	cmp := eleShaman.CurrentManaPercent()
-	percent := 0.55
+	percent := sim.GetRemainingDurationPercent() - 0.1
 	if eleShaman.Env.GetNumTargets() > 1 {
 		percent = 0.9 // single target we need less mana.
 	}
@@ -177,7 +177,7 @@ func (rotation *ManualRotation) DoAction(eleShaman *ElementalShaman, sim *core.S
 	cmp := eleShaman.CurrentManaPercent()
 
 	// TODO: expose these percents to let user tweak
-	percent := 0.55
+	percent := sim.GetRemainingDurationPercent() - 0.1
 	if eleShaman.Env.GetNumTargets() > 1 {
 		percent = 0.9
 	}
