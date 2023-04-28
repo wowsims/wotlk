@@ -76,7 +76,16 @@
 
 				input {
 					text-align: right;
-					width: 65%;
+					max-width: 100px;
+				}
+
+				.compute-ep {
+					white-space: nowrap;
+					.not-tiny { display: inline; }
+					.fas {
+						display: inline;
+						vertical-align:middle;
+					}
 				}
 			}
 
@@ -91,6 +100,7 @@
 
 				td {
 					padding: $table-cell-padding;
+					.fas { display: inline; }
 				}
 			}
 
@@ -104,6 +114,62 @@
 
 			.col-action {
 				margin-left: map.get($spacers, 1);
+			}
+		}
+	}
+}
+
+// Style overrides for the EP UI in tank mode
+.ep-weights-menu:not(.hide-threat-metrics) {
+	// Compact rendering of EP compute button
+	@mixin compact-button {
+		.results-ep-table-container {
+			.results-ep-table {
+				.not-tiny { display: none !important; }
+			}
+		}
+	}
+
+	// Compact rendering of number pickers
+	@mixin compact-input {
+		input {
+			text-align: center;
+			padding-left: 0;
+			padding-right: 3px;
+		}
+	}
+
+	// Compact table display by shrinking padding
+	@mixin compact-table {
+		.results-ep-table-container {
+			.results-ep-table {
+				padding-right: 0;
+				td {
+					padding-left: 0;
+				}
+			}
+		}
+	}
+
+	// Shorten the compute EP button on very small devices
+	@media (max-width: 471px) { @include compact-button; }
+
+	// More compact EP table on mobile viewports
+	@include media-breakpoint-only(xs) {
+		@include compact-table;
+		.ep-ratios { @include compact-input; }
+	}
+
+	// Padding obscures part of the value on these sizes
+	@include media-breakpoint-between(sm,lg) {
+		.ep-ratios { @include compact-input; }
+	}
+
+	// Avoid awkward line wrapping of table headers
+	@include media-breakpoint-down(lg) {
+		.results-ep-table {
+			th[class*="type-"] {
+				text-align: center;
 			}
 		}
 	}
