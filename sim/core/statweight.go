@@ -303,6 +303,11 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, referenceStat stats.Stat, pro
 		calcWeightResults(baselinePlayer.Hps, modPlayerLow.Hps, modPlayerHigh.Hps, &result.Hps)
 		calcWeightResults(baselinePlayer.Threat, modPlayerLow.Threat, modPlayerHigh.Threat, &result.Tps)
 		calcWeightResults(baselinePlayer.Dtps, modPlayerLow.Dtps, modPlayerHigh.Dtps, &result.Dtps)
+		calcWeightResults(baselinePlayer.Tmi, modPlayerLow.Tmi, modPlayerHigh.Tmi, &result.Tmi)
+		meanLow := (modPlayerLow.ChanceOfDeath - baselinePlayer.ChanceOfDeath)/statModsLow[stat];
+		meanHigh := (modPlayerHigh.ChanceOfDeath - baselinePlayer.ChanceOfDeath)/statModsHigh[stat];
+		result.PDeath.Weights.AddStat(stat, (meanLow + meanHigh)/2);
+		result.PDeath.WeightsStdev.AddStat(stat, 0)
 	}
 
 	// Compute EP results.
@@ -326,6 +331,8 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, referenceStat stats.Stat, pro
 		calcEpResults(&result.Hps, referenceStat)
 		calcEpResults(&result.Tps, referenceStat)
 		calcEpResults(&result.Dtps, DTPSReferenceStat)
+		calcEpResults(&result.Tmi, DTPSReferenceStat)
+		calcEpResults(&result.PDeath, DTPSReferenceStat)
 	}
 
 	return result
