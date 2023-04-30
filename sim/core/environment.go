@@ -140,6 +140,7 @@ func (env *Environment) finalize(raidProto *proto.Raid, _ *proto.Encounter, raid
 	for _, party := range env.Raid.Parties {
 		for _, player := range party.Players {
 			character := player.GetCharacter()
+			character.DesyncTrinketProcs()
 			character.Finalize()
 			for _, petAgent := range character.Pets {
 				petAgent.GetPet().Finalize()

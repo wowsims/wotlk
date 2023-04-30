@@ -111,8 +111,6 @@ func (cat *FeralDruid) Initialize() {
 			cat.Berserk.Cast(sim, nil)
 		})
 	}
-
-	cat.DesyncTrinketProcs()
 }
 
 func (cat *FeralDruid) Reset(sim *core.Simulation) {

@@ -326,7 +326,6 @@ func desyncTrinketProcAura(aura *Aura, delay time.Duration) {
 
 func findTrinketAura(character *Character, trinketID int32) *Aura {
 	for _, aura := range character.auras {
-		//fmt.Printf("aura: %v\n", aura)
 		if strings.HasSuffix(aura.Label, "Proc") {
 			continue
 		}
