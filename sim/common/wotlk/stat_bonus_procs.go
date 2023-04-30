@@ -42,7 +42,7 @@ func newProcStatBonusEffect(config ProcStatBonusEffect) {
 		}
 
 		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
-			ActionID:   procAura.ActionID,
+			ActionID:   core.ActionID{ItemID: config.ID},
 			Name:       config.Name,
 			Callback:   config.Callback,
 			ProcMask:   config.ProcMask,

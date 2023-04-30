@@ -472,6 +472,8 @@ type CharacterSuiteConfig struct {
 
 	StatsToWeigh    []proto.Stat
 	EPReferenceStat proto.Stat
+
+	Cooldowns *proto.Cooldowns
 }
 
 func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator {
@@ -496,6 +498,7 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 			Glyphs:        config.Glyphs,
 			Profession1:   proto.Profession_Engineering,
 			Rotation:      config.Rotation.Rotation,
+			Cooldowns:     config.Cooldowns,
 
 			InFrontOfTarget:    config.InFrontOfTarget,
 			DistanceFromTarget: 30,

@@ -324,9 +324,13 @@ func desyncTrinketProcAura(aura *Aura, delay time.Duration) {
 	}
 }
 
-func findTrinketProcAura(character *Character, trinketID int32) *Aura {
+func findTrinketAura(character *Character, trinketID int32) *Aura {
 	for _, aura := range character.auras {
-		if aura.ActionID.ItemID == trinketID && !strings.HasSuffix(aura.Label, "Proc") {
+		//fmt.Printf("aura: %v\n", aura)
+		if strings.HasSuffix(aura.Label, "Proc") {
+			continue
+		}
+		if aura.ActionID.ItemID == trinketID || aura.metrics.ID.ItemID == trinketID {
 			return aura
 		}
 	}
@@ -340,7 +344,7 @@ func (mcdm *majorCooldownManager) DesyncTrinketProcs() {
 	if delay := time.Duration(mcdm.cooldownConfigs.DesyncProcTrinket1Seconds) * time.Second; delay > 0 {
 		if trinket1 := mcdm.character.Equip[ItemSlotTrinket1]; trinket1.ID > 0 && HasItemEffect(trinket1.ID) {
 			mcdm.character.Env.RegisterPostFinalizeEffect(func() {
-				if aura := findTrinketProcAura(mcdm.character, trinket1.ID); aura != nil {
+				if aura := findTrinketAura(mcdm.character, trinket1.ID); aura != nil {
 					desyncTrinketProcAura(aura, delay)
 				}
 			})
@@ -350,7 +354,7 @@ func (mcdm *majorCooldownManager) DesyncTrinketProcs() {
 	if delay := time.Duration(mcdm.cooldownConfigs.DesyncProcTrinket2Seconds) * time.Second; delay > 0 {
 		if trinket2 := mcdm.character.Equip[ItemSlotTrinket2]; trinket2.ID > 0 && HasItemEffect(trinket2.ID) {
 			mcdm.character.Env.RegisterPostFinalizeEffect(func() {
-				if aura := findTrinketProcAura(mcdm.character, trinket2.ID); aura != nil {
+				if aura := findTrinketAura(mcdm.character, trinket2.ID); aura != nil {
 					desyncTrinketProcAura(aura, delay)
 				}
 			})
