@@ -196,10 +196,21 @@ release: wowsimwotlk wowsimwotlk-windows.exe
 sim/core/proto/api.pb.go: proto/*.proto
 	protoc -I=./proto --go_out=./sim/core ./proto/*.proto
 
-.PHONY: lib
-lib:
+# Only useful for building the lib on a host platform that matches the target platform
+.PHONY: locallib
+locallib:
 	protoc -I=./proto --go_out=./sim/core ./proto/*.proto
 	go build -buildmode=c-shared -o wowsimwotlk.so ./sim/lib/library.go
+
+.PHONY: nixlib
+nixlib:
+	protoc -I=./proto --go_out=./sim/core ./proto/*.proto
+	GOOS=linux GOARCH=amd64 GOAMD64=v2 go build -buildmode=c-shared -o wowsimwotlk-linux.so ./sim/lib/library.go
+
+.PHONY: winlib
+winlib:
+	protoc -I=./proto --go_out=./sim/core ./proto/*.proto
+	GOOS=windows GOARCH=amd64 GOAMD64=v2 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -buildmode=c-shared -o wowsimwotlk-windows.dll ./sim/lib/library.go
 
 .PHONY: items
 items: sim/core/items/all_items.go sim/core/proto/api.pb.go

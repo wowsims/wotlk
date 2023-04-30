@@ -40,7 +40,7 @@ func (unit *Unit) EnableEnergyBar(maxEnergy float64, onEnergyGain OnEnergyGain) 
 		unit:      unit,
 		maxEnergy: MaxFloat(100, maxEnergy),
 		onEnergyGain: func(sim *Simulation) {
-			if !unit.IsWaitingForEnergy() || unit.DoneWaitingForEnergy(sim) {
+			if !sim.Options.Interactive && (!unit.IsWaitingForEnergy() || unit.DoneWaitingForEnergy(sim)) {
 				onEnergyGain(sim)
 			}
 		},

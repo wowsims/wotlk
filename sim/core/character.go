@@ -378,6 +378,14 @@ func (character *Character) initialize(agent Agent) {
 				return
 			}
 
+			if sim.Options.Interactive {
+				if character.GCD.IsReady(sim) {
+					sim.NeedsInput = true
+					character.doNothing = false
+				}
+				return
+			}
+
 			if character.Rotation != nil {
 				character.Rotation.DoNextAction(sim)
 				return

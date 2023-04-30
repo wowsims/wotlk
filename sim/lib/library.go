@@ -70,6 +70,9 @@ func trySpell(act int) bool {
 	if spell.CanCast(_active_sim, target) {
 		casted = spell.Cast(_active_sim, target)
 	}
+	if casted {
+		_active_sim.NeedsInput = false
+	}
 	return casted
 }
 
@@ -219,6 +222,11 @@ func getSpellMetrics() *C.char {
 //export step
 func step() bool {
 	return _active_sim.Step(core.NeverExpires)
+}
+
+//export needsInput
+func needsInput() bool {
+	return _active_sim.NeedsInput
 }
 
 //export cleanup

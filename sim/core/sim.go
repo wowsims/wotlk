@@ -28,6 +28,7 @@ type Simulation struct {
 	pendingActions []*PendingAction
 	CurrentTime    time.Duration // duration that has elapsed in the sim since starting
 	Duration       time.Duration // Duration of current iteration
+	NeedsInput     bool          // Sim is in interactive mode and needs input
 
 	ProgressReport func(*proto.ProgressMetrics)
 
