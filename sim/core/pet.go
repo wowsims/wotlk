@@ -193,7 +193,7 @@ func (pet *Pet) Disable(sim *Simulation) {
 	}
 
 	// Remove inherited stats on dismiss if not permanent
-	if pet.isGuardian {
+	if pet.isGuardian || pet.timeoutAction != nil {
 		pet.AddStatsDynamic(sim, pet.inheritedStats.Multiply(-1))
 		pet.inheritedStats = stats.Stats{}
 		pet.currentStatInheritance = func(ownerStats stats.Stats) stats.Stats {
