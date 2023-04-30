@@ -90,7 +90,7 @@ export class CooldownsPicker extends Component {
 	private addTrinketDesyncPicker(slot: ItemSlot) {
 		const index = slot - ItemSlot.ItemSlotTrinket1 + 1;
 		const picker = new NumberPicker(this.rootElem, this.player.sim, {
-			label: `Desync Trinket ${index} (seconds)`,
+			label: `Desync Proc Trinket ${index}`,
 			labelTooltip: ' Put the trinket on a cooldown before pull by re-equipping it. Must be between 0 and 30 seconds.',
 			extraCssClasses: [
 				'within-raid-sim-hide',
