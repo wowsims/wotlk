@@ -196,6 +196,11 @@ release: wowsimwotlk wowsimwotlk-windows.exe
 sim/core/proto/api.pb.go: proto/*.proto
 	protoc -I=./proto --go_out=./sim/core ./proto/*.proto
 
+.PHONY: lib
+lib:
+	protoc -I=./proto --go_out=./sim/core ./proto/*.proto
+	go build -buildmode=c-shared -o wowsimwotlk.so ./sim/lib/library.go
+
 .PHONY: items
 items: sim/core/items/all_items.go sim/core/proto/api.pb.go
 
