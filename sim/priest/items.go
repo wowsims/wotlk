@@ -109,7 +109,8 @@ var ItemSetSanctificationRegalia = core.NewItemSet(core.ItemSet{
 })
 
 var ItemSetZabras = core.NewItemSet(core.ItemSet{
-	Name: "Zabra's Regalia",
+	Name:            "Zabra's Regalia",
+	AlternativeName: "Velen's Regalia",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 			// Implemented in vampiric_touch.go
