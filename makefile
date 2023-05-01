@@ -198,18 +198,15 @@ sim/core/proto/api.pb.go: proto/*.proto
 
 # Only useful for building the lib on a host platform that matches the target platform
 .PHONY: locallib
-locallib:
-	protoc -I=./proto --go_out=./sim/core ./proto/*.proto
+locallib: sim/core/proto/api.pb.go
 	go build -buildmode=c-shared -o wowsimwotlk.so ./sim/lib/library.go
 
 .PHONY: nixlib
-nixlib:
-	protoc -I=./proto --go_out=./sim/core ./proto/*.proto
+nixlib: sim/core/proto/api.pb.go
 	GOOS=linux GOARCH=amd64 GOAMD64=v2 go build -buildmode=c-shared -o wowsimwotlk-linux.so ./sim/lib/library.go
 
 .PHONY: winlib
-winlib:
-	protoc -I=./proto --go_out=./sim/core ./proto/*.proto
+winlib: sim/core/proto/api.pb.go
 	GOOS=windows GOARCH=amd64 GOAMD64=v2 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -buildmode=c-shared -o wowsimwotlk-windows.dll ./sim/lib/library.go
 
 .PHONY: items
