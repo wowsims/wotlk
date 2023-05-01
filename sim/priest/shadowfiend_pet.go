@@ -69,7 +69,7 @@ func (priest *Priest) NewShadowfiend() *Shadowfiend {
 			BaseDamageMax:        210,
 			SwingSpeed:           1.5,
 			NormalizedSwingSpeed: 1.5,
-			SwingDuration:        time.Second,
+			SwingDuration:        time.Millisecond * 1500,
 			CritMultiplier:       2,
 			SpellSchool:          core.SpellSchoolShadow,
 		},
