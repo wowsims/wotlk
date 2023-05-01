@@ -22,7 +22,7 @@ import (
 // go run ./tools/database/gen_db -outDir=assets -gen=wowhead-spells -maxid=75000
 // go run ./tools/database/gen_db -outDir=assets -gen=wowhead-gearplannerdb
 // go run ./tools/database/gen_db -outDir=assets -gen=wotlk-items
-// go run ./tools/database/gen_db -outDir=assets -gen=wago-db2-sparse
+// go run ./tools/database/gen_db -outDir=assets -gen=wago-db2-items
 // go run ./tools/database/gen_db -outDir=assets -gen=db
 
 var minId = flag.Int("minid", 1, "Minimum ID to scan for")
@@ -55,7 +55,7 @@ func main() {
 	} else if *genAsset == "wotlk-items" {
 		database.NewWotlkItemTooltipManager(fmt.Sprintf("%s/wotlk_items_tooltips.csv", inputsDir)).Fetch(int32(*minId), int32(*maxId))
 		return
-	} else if *genAsset == "wago-db2-sparse" {
+	} else if *genAsset == "wago-db2-items" {
 		tools.WriteFile(fmt.Sprintf("%s/wago_db2_items.csv", inputsDir), tools.ReadWebRequired("https://wago.tools/db2/ItemSparse/csv?build=3.4.2.49311"))
 		return
 	} else if *genAsset != "db" {
