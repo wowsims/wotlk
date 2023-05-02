@@ -431,6 +431,7 @@ func NewDeathknight(character core.Character, inputs DeathknightInputs, talents 
 	dk.AddStatDependency(stats.Agility, stats.Dodge, core.DodgeRatingPerDodgeChance/84.74576271)
 	dk.AddStatDependency(stats.Strength, stats.AttackPower, 2)
 	dk.AddStatDependency(stats.Strength, stats.Parry, 0.25)
+	dk.AddStatDependency(stats.BonusArmor, stats.Armor, 1)
 
 	dk.PseudoStats.CanParry = true
 	dk.PseudoStats.GracefulCastCDFailures = true

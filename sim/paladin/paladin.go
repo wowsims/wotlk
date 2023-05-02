@@ -199,6 +199,9 @@ func NewPaladin(character core.Character, talentsStr string) *Paladin {
 	// Paladins get 1 block value per 2 str
 	paladin.AddStatDependency(stats.Strength, stats.BlockValue, .5)
 
+	// Bonus Armor and Armor are treated identically for Paladins
+	paladin.AddStatDependency(stats.BonusArmor, stats.Armor, 1)
+
 	// Base dodge is unaffected by Diminishing Returns
 	paladin.PseudoStats.BaseDodge += 0.0327
 	paladin.PseudoStats.BaseParry += 0.05

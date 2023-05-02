@@ -21,6 +21,7 @@ func (paladin *Paladin) ApplyTalents() {
 	paladin.PseudoStats.BaseDodge += 0.01 * float64(paladin.Talents.Anticipation)
 
 	paladin.AddStat(stats.Armor, paladin.Equip.Stats()[stats.Armor]*0.02*float64(paladin.Talents.Toughness))
+	paladin.AddStat(stats.BonusArmor, paladin.Equip.Stats()[stats.BonusArmor]*0.02*float64(paladin.Talents.Toughness))
 
 	if paladin.Talents.DivineStrength > 0 {
 		paladin.MultiplyStat(stats.Strength, 1.0+0.03*float64(paladin.Talents.DivineStrength))

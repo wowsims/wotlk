@@ -15,6 +15,7 @@ var safeDepsOrder = []Stat{
 	Stamina,
 	Intellect,
 	Spirit,
+	BonusArmor,
 	Armor,
 	AttackPower,
 	RangedAttackPower,
