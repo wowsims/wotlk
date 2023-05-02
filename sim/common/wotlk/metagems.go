@@ -29,7 +29,6 @@ func init() {
 	core.NewItemEffect(41380, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		character.AddStat(stats.Armor, character.Equip.Stats()[stats.Armor]*0.02)
-		character.AddStat(stats.BonusArmor, character.Equip.Stats()[stats.BonusArmor]*0.02)
 	})
 
 	core.NewItemEffect(41385, func(agent core.Agent) {
