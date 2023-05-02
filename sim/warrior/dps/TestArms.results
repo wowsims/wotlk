@@ -245,8 +245,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-Defender'sCode-40257"
  value: {
-  dps: 7718.01335
-  tps: 6343.74348
+  dps: 7718.78768
+  tps: 6344.36752
  }
 }
 dps_results: {
@@ -512,8 +512,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-OfferingofSacrifice-37638"
  value: {
-  dps: 7705.87134
-  tps: 6335.38657
+  dps: 7706.37463
+  tps: 6335.79211
  }
 }
 dps_results: {
@@ -547,15 +547,15 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-PetrifiedTwilightScale-54571"
  value: {
-  dps: 7698.63303
-  tps: 6328.12719
+  dps: 7703.14604
+  tps: 6331.86671
  }
 }
 dps_results: {
  key: "TestArms-AllItems-PetrifiedTwilightScale-54591"
  value: {
-  dps: 7695.02313
-  tps: 6325.35674
+  dps: 7688.27301
+  tps: 6319.58524
  }
 }
 dps_results: {
