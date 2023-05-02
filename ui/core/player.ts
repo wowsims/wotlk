@@ -32,6 +32,7 @@ import {
 	UIEnchant as Enchant,
 	UIGem as Gem,
 	UIItem as Item,
+	UIItem_FactionRestriction,
 } from './proto/ui.js';
 
 import { PlayerStats } from './proto/api.js';
@@ -813,6 +814,10 @@ export class Player<SpecType extends Spec> {
 		const filterItems = (itemData: Array<T>, filterFunc: (item: Item) => boolean) => {
 			return itemData.filter(itemElem => filterFunc(getItemFunc(itemElem)));
 		};
+
+		if (filters.factionRestriction != UIItem_FactionRestriction.UNSPECIFIED) {
+			itemData = filterItems(itemData, item => item.factionRestriction == filters.factionRestriction || item.factionRestriction == UIItem_FactionRestriction.UNSPECIFIED);
+		}
 
 		if (!filters.sources.includes(SourceFilterOption.SourceCrafting)) {
 			itemData = filterItems(itemData, item => !item.sources.some(itemSrc => itemSrc.source.oneofKind == 'crafted'));

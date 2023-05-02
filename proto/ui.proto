@@ -38,6 +38,7 @@ message UINPC {
 // Contains all information about an Item needed by the UI.
 // Generally this will include everything needed by the sim, plus some
 // additional data for displaying / filtering.
+// Next tag: 26.
 message UIItem {
 	int32 id = 1;
 	string name = 2;
@@ -73,6 +74,14 @@ message UIItem {
 
 	Expansion expansion = 24;
 	repeated UIItemSource sources = 23;
+
+	enum FactionRestriction {
+		FACTION_RESTRICTION_UNSPECIFIED = 0;
+		FACTION_RESTRICTION_ALLIANCE_ONLY = 1;
+		FACTION_RESTRICTION_HORDE_ONLY = 2;
+	}
+
+	FactionRestriction faction_restriction = 25;
 }
 
 enum Expansion {
@@ -199,12 +208,14 @@ enum RaidFilterOption {
 	RaidRubySanctum = 11;
 }
 
+// Next tag: 20.
 message DatabaseFilters {
 	repeated ArmorType armor_types = 1;
 	repeated WeaponType weapon_types = 2;
 	repeated RangedWeaponType ranged_weapon_types = 16;
 	repeated SourceFilterOption sources = 17;
 	repeated RaidFilterOption raids = 18;
+	UIItem.FactionRestriction faction_restriction = 19;
 
 	double min_mh_weapon_speed = 4;
 	double max_mh_weapon_speed = 5;
