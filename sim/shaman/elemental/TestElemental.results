@@ -255,8 +255,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-DarkmoonCard:Greatness-44255"
  value: {
-  dps: 6328.11787
-  tps: 4022.05546
+  dps: 6329.92257
+  tps: 4017.32562
  }
 }
 dps_results: {
