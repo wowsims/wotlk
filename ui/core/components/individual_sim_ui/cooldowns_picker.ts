@@ -102,7 +102,7 @@ export class CooldownsPicker extends Component {
 				return (slot == ItemSlot.ItemSlotTrinket1) ? cooldowns.desyncProcTrinket1Seconds : cooldowns.desyncProcTrinket2Seconds;
 			},
 			setValue: (eventID: EventID, _: Sim, newValue: number) => {
-				if (newValue >= 0 && newValue <= 30) {
+				if (newValue >= 0) {
 					const newCooldowns = this.player.getCooldowns();
 					if (slot == ItemSlot.ItemSlotTrinket1) {
 						newCooldowns.desyncProcTrinket1Seconds = newValue;
@@ -122,7 +122,6 @@ export class CooldownsPicker extends Component {
 		const pickerInput = picker.rootElem.querySelector('.number-picker-input') as HTMLInputElement;
 		pickerInput.type = 'number';
 		pickerInput.min = "0";
-		pickerInput.max = "30";
 
 		const validator = () => {
 			if (!pickerInput.checkValidity()) {
