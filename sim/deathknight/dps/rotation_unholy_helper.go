@@ -123,7 +123,7 @@ func (dk *DpsDeathknight) bonusProcRotationChecks(sim *core.Simulation) (bool, b
 		prioSs = !virulenceAura.IsActive() || virulenceAura.RemainingDuration(sim) < 10*time.Second
 	}
 
-	// If we have T9 2P we prio BS over BB for refreshing the buff
+	// If we have T9 2P we prio BS over BB for refreshing the buff when out of ICD
 	prioBs := false
 	if dk.ur.unholyMight {
 		unholyMightAura := dk.GetAura("Unholy Might Proc")

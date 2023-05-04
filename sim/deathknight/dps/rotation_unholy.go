@@ -32,21 +32,21 @@ func (dk *DpsDeathknight) setupUnholyRotations() {
 		if dk.ur.sigil == Sigil_Virulence {
 			dk.RotationSequence.
 				NewAction(dk.RotationActionCallback_SS).
-				NewAction(dk.RotationActionCallback_BS).
+				NewAction(dk.RotationActionUH_BS).
 				NewAction(dk.RotationActionUH_SS_Sigil).
-				NewAction(dk.RotationActionUH_BS_Sigil).
+				NewAction(dk.RotationActionUH_BS).
 				NewAction(dk.RotationActionUH_SS_Sigil).
-				NewAction(dk.RotationActionUH_BS_Sigil)
+				NewAction(dk.RotationActionUH_BS)
 		} else if dk.ur.sigil == Sigil_HangedMan {
 			dk.RotationSequence.
 				NewAction(dk.RotationActionCallback_SS).
-				NewAction(dk.RotationActionCallback_BS).
+				NewAction(dk.RotationActionUH_BS).
 				NewAction(dk.RotationActionCallback_DC).
 				NewAction(dk.RotationActionCallback_ERW).
 				NewAction(dk.RotationActionCallback_SS).
-				NewAction(dk.RotationActionCallback_BS).
+				NewAction(dk.RotationActionUH_BS).
 				NewAction(dk.RotationActionCallback_SS).
-				NewAction(dk.RotationActionCallback_BS)
+				NewAction(dk.RotationActionUH_BS)
 		}
 	}
 
@@ -131,7 +131,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 	}
 
 	cast := false
-	prioSs, prioBs := dk.bonusProcRotationChecks(sim)
+	prioSs, _ := dk.bonusProcRotationChecks(sim)
 
 	if dk.uhDiseaseCheck(sim, target, dk.DeathAndDecay, true, 1) {
 		if prioSs {
@@ -142,7 +142,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 			cast = dk.ScourgeStrike.Cast(sim, target)
 			if cast {
 				dk.RotationSequence.Clear().
-					NewAction(dk.RotationActionCallback_BS).
+					NewAction(dk.RotationActionUH_BS).
 					NewAction(dk.RotationActionCallback_UnholyDndRotation)
 			}
 		} else {
@@ -163,15 +163,20 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 
 	if !cast {
 		if dk.uhDiseaseCheck(sim, target, dk.ScourgeStrike, true, 1) {
-			if !dk.uhShouldWaitForDnD(sim, false, true, true) {
+			if !dk.uhShouldWaitForDnD(sim, true, true, true) {
 				if dk.Talents.ScourgeStrike && dk.ScourgeStrike.IsReady(sim) {
-					if dk.uhGargoyleCheck(sim, target, core.GCDDefault+50*time.Millisecond) {
+					if dk.uhGargoyleCheck(sim, target, core.GCDDefault*2+50*time.Millisecond) {
 						dk.uhAfterGargoyleSequence(sim)
 						return sim.CurrentTime
 					}
 					cast = dk.ScourgeStrike.Cast(sim, target)
+					if cast {
+						dk.RotationSequence.Clear().
+							NewAction(dk.RotationActionUH_BS).
+							NewAction(dk.RotationActionCallback_UnholyDndRotation)
+					}
 				} else if dk.IcyTouch.CanCast(sim, nil) && dk.PlagueStrike.CanCast(sim, nil) {
-					if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+core.GCDDefault+50*time.Millisecond) {
+					if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+core.GCDDefault*2+50*time.Millisecond) {
 						dk.uhAfterGargoyleSequence(sim)
 						return sim.CurrentTime
 					}
@@ -193,17 +198,17 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 					cast = dk.uhSpreadDiseases(sim, target, s)
 				}
 			} else {
-				if !dk.uhShouldWaitForDnD(sim, true, false, false) {
-					if dk.uhGargoyleCheck(sim, target, core.GCDDefault+50*time.Millisecond) {
-						dk.uhAfterGargoyleSequence(sim)
-						return sim.CurrentTime
-					}
-					if dk.desolationAuraCheck(sim) || prioBs {
-						cast = dk.BloodStrike.Cast(sim, target)
-					} else {
-						cast = dk.BloodBoil.Cast(sim, target)
-					}
-				}
+				// if !dk.uhShouldWaitForDnD(sim, true, false, false) {
+				// 	if dk.uhGargoyleCheck(sim, target, core.GCDDefault+50*time.Millisecond) {
+				// 		dk.uhAfterGargoyleSequence(sim)
+				// 		return sim.CurrentTime
+				// 	}
+				// 	if dk.desolationAuraCheck(sim) || prioBs {
+				// 		cast = dk.BloodStrike.Cast(sim, target)
+				// 	} else {
+				// 		cast = dk.BloodBoil.Cast(sim, target)
+				// 	}
+				// }
 			}
 			if !cast {
 				if dk.uhDeathCoilCheck(sim) {
@@ -350,7 +355,9 @@ func (dk *DpsDeathknight) uhAfterGargoyleSequence(sim *core.Simulation) {
 				didErw = true
 			}
 			dk.RotationSequence.
-				NewAction(dk.RotationActionCallback_Haste_Snapshot).
+				NewAction(dk.RotationActionCallback_IT).
+				NewAction(dk.RotationActionCallback_PS).
+				NewAction(dk.RotationActionUH_BS).
 				NewAction(dk.RotationActionCallback_AOTD)
 		}
 
@@ -400,11 +407,13 @@ func (dk *DpsDeathknight) uhGhoulFrenzySequence(sim *core.Simulation, bloodTap b
 		if dk.sr.ffFirst {
 			dk.RotationSequence.Clear().
 				NewAction(dk.RotationActionUH_IT_SetSync).
-				NewAction(dk.RotationActionCallback_GF)
+				NewAction(dk.RotationActionCallback_GF).
+				NewAction(dk.RotationActionUH_BS)
 		} else {
 			dk.RotationSequence.Clear().
 				NewAction(dk.RotationActionCallback_GF).
-				NewAction(dk.RotationActionUH_IT_SetSync)
+				NewAction(dk.RotationActionUH_IT_SetSync).
+				NewAction(dk.RotationActionUH_BS)
 		}
 	}
 
@@ -434,13 +443,15 @@ func (dk *DpsDeathknight) uhRecastDiseasesSequence(sim *core.Simulation) {
 				NewAction(dk.RotationActionUH_FF_ClipCheck).
 				NewAction(dk.RotationActionUH_IT_Custom).
 				NewAction(dk.RotationActionUH_BP_ClipCheck).
-				NewAction(dk.RotationActionUH_PS_Custom)
+				NewAction(dk.RotationActionUH_PS_Custom).
+				NewAction(dk.RotationActionUH_BS)
 		} else {
 			dk.RotationSequence.
 				NewAction(dk.RotationActionUH_BP_ClipCheck).
 				NewAction(dk.RotationActionUH_PS_Custom).
 				NewAction(dk.RotationActionUH_FF_ClipCheck).
-				NewAction(dk.RotationActionUH_IT_Custom)
+				NewAction(dk.RotationActionUH_IT_Custom).
+				NewAction(dk.RotationActionUH_BS)
 		}
 	}
 
@@ -462,10 +473,33 @@ func (dk *DpsDeathknight) RotationActionCallback_MindFreezeFiller(sim *core.Simu
 	return sim.CurrentTime
 }
 
+// Custom BS Callback
+func (dk *DpsDeathknight) RotationActionUH_BS(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	if dk.CurrentBloodRunes() == 0 {
+		s.Advance()
+		return sim.CurrentTime
+	}
+
+	bloodSpell := dk.BloodBoil
+	_, prioBs := dk.bonusProcRotationChecks(sim)
+	if dk.desolationAuraCheck(sim) || prioBs {
+		bloodSpell = dk.BloodStrike
+	}
+	casted := bloodSpell.Cast(sim, target)
+	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
+	s.ConditionalAdvance(casted && advance)
+	return -1
+}
+
 // Custom SS Callback for when we have virulence sigil
 func (dk *DpsDeathknight) RotationActionUH_SS_Sigil(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	if dk.HasActiveAura("Sigil of Virulence Proc") || !dk.Rotation.UseEmpowerRuneWeapon {
-		s.Advance()
+		dk.RotationSequence.Clear()
+		if dk.Rotation.UseDeathAndDecay || (!dk.Talents.ScourgeStrike && dk.Talents.Annihilation == 0) {
+			dk.RotationSequence.NewAction(dk.RotationActionUH_ResetToDndMain)
+		} else {
+			dk.RotationSequence.NewAction(dk.RotationActionUH_ResetToSsMain)
+		}
 		return sim.CurrentTime
 	}
 
@@ -474,23 +508,6 @@ func (dk *DpsDeathknight) RotationActionUH_SS_Sigil(sim *core.Simulation, target
 	}
 
 	casted := dk.ScourgeStrike.Cast(sim, target)
-	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
-
-	s.ConditionalAdvance(casted && advance)
-	return -1
-}
-
-// Custom SS Callback for when we have virulence sigil
-func (dk *DpsDeathknight) RotationActionUH_BS_Sigil(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	if dk.HasActiveAura("Sigil of Virulence Proc") {
-		s.Advance()
-		return sim.CurrentTime
-	}
-	bloodSpell := dk.BloodBoil
-	if dk.desolationAuraCheck(sim) {
-		bloodSpell = dk.BloodStrike
-	}
-	casted := bloodSpell.Cast(sim, target)
 	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
 
 	s.ConditionalAdvance(casted && advance)
@@ -513,13 +530,15 @@ func (dk *DpsDeathknight) RotationActionCallback_Pesti_Custom(sim *core.Simulati
 				NewAction(dk.RotationActionUH_FF_ClipCheck).
 				NewAction(dk.RotationActionUH_IT_Custom).
 				NewAction(dk.RotationActionUH_BP_ClipCheck).
-				NewAction(dk.RotationActionUH_PS_Custom)
+				NewAction(dk.RotationActionUH_PS_Custom).
+				NewAction(dk.RotationActionUH_BS)
 		} else {
 			dk.RotationSequence.
 				NewAction(dk.RotationActionUH_BP_ClipCheck).
 				NewAction(dk.RotationActionUH_PS_Custom).
 				NewAction(dk.RotationActionUH_FF_ClipCheck).
-				NewAction(dk.RotationActionUH_IT_Custom)
+				NewAction(dk.RotationActionUH_IT_Custom).
+				NewAction(dk.RotationActionUH_BS)
 		}
 		return sim.CurrentTime
 	}
