@@ -66,14 +66,9 @@ export class BulkGearJsonImporter<SpecType extends Spec> extends Importer {
 
 class BulkSimResultRenderer {
 
-  constructor(parent: ContentBlock, simUI: IndividualSimUI<Spec>, result: BulkComboResult, rank: number, baseResult: BulkComboResult) {
-    if (parent.headerElement) {
-      parent.headerElement.innerHTML = `Rank ${rank}`;
-    }
-
+  constructor(parent: ContentBlock, simUI: IndividualSimUI<Spec>, result: BulkComboResult, baseResult: BulkComboResult) {
     const dpsDivParent = document.createElement('div');
     dpsDivParent.classList.add('results-sim');
-    parent.bodyElement.appendChild(dpsDivParent);
 
     const dpsDiv = document.createElement('div');
     dpsDiv.classList.add('bulk-result-body-dps', 'bulk-items-text-line', 'results-sim-dps', 'damage-metrics');
@@ -93,8 +88,22 @@ class BulkSimResultRenderer {
     const itemsContainer = document.createElement('div');
     itemsContainer.classList.add('bulk-gear-combo');
     parent.bodyElement.appendChild(itemsContainer);
+    parent.bodyElement.appendChild(dpsDivParent);
 
     if (result.itemsAdded && result.itemsAdded.length > 0) {
+      const equipBtn = document.createElement('button');
+      equipBtn.textContent = 'Equip';
+      equipBtn.classList.add('btn', 'btn-primary', 'bulk-equipit');
+      equipBtn.onclick = () => {
+        result.itemsAdded.forEach((itemAdded) => {
+          const item = simUI.sim.db.lookupItemSpec(itemAdded.item!);
+          simUI.player.equipItem(TypedEvent.nextEventID(), itemAdded.slot, item);
+          simUI.simHeader.activateTab('gear-tab');
+        });
+      };
+  
+      parent.bodyElement.appendChild(equipBtn);
+  
       for (const is of result.itemsAdded) {
         const item = simUI.sim.db.lookupItemSpec(is.item!)
         const renderer = new ItemRenderer(itemsContainer, simUI.player);
@@ -238,6 +247,7 @@ export class BulkTab extends SimTab {
   private autoGem: boolean;
   private autoEnchant: boolean;
   private defaultGems: SimGem[];
+  private gemIconElements: HTMLImageElement[];
 
   constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>) {
     super(parentElem, simUI, { identifier: 'bulk-tab', title: 'Batch' });
@@ -260,12 +270,51 @@ export class BulkTab extends SimTab {
     this.contentContainer.appendChild(this.pendingDiv);
 
     this.doCombos = true;
-    this.fastMode = false;
-    this.autoGem = false;
+    this.fastMode = true;
+    this.autoGem = true;
     this.autoEnchant = true;
     this.defaultGems = [UIGem.create(), UIGem.create(), UIGem.create(), UIGem.create()];
+    this.gemIconElements = [];
     this.buildTabContent();
+
+    this.simUI.sim.waitForInit().then(() => this.loadSettings());
   }
+
+  private getSettingsKey(): string {
+    return this.simUI.getStorageKey("bulk-settings.v1");
+  }
+
+  private loadSettings() {
+    const storedSettings = window.localStorage.getItem(this.getSettingsKey());
+    if (storedSettings != null) {
+      let settings = BulkSettings.fromJsonString(storedSettings, {ignoreUnknownFields: true})
+
+      this.doCombos = settings.combinations;
+      this.fastMode = settings.fastMode;
+      this.autoEnchant = settings.autoEnchant;
+      this.autoGem = settings.autoGem;
+      this.defaultGems = new Array<SimGem>(
+        SimGem.create({id: settings.defaultRedGem}),
+        SimGem.create({id: settings.defaultYellowGem}),
+        SimGem.create({id: settings.defaultBlueGem}),
+        SimGem.create({id: settings.defaultMetaGem}),
+      )
+
+      this.defaultGems.forEach((gem, idx) => {
+        ActionId.fromItemId(gem.id).fill().then(filledId => {
+          this.gemIconElements[idx].src = filledId.iconUrl;
+        });  
+      });
+
+    }
+  }
+
+  private storeSettings() {
+    const settings = this.createBulkSettings();
+    const setStr = BulkSettings.toJsonString(settings)
+    window.localStorage.setItem(this.getSettingsKey(), setStr);
+  }
+
 
   protected createBulkSettings(): BulkSettings {
 
@@ -394,7 +443,7 @@ export class BulkTab extends SimTab {
       header: {
         title: 'Results',
         extraCssClasses: ['bulk-results-header'],
-      }
+      },
     });
 
     resultsBlock.rootElem.hidden = true;
@@ -408,11 +457,9 @@ export class BulkTab extends SimTab {
       resultsBlock.rootElem.hidden = bulkSimResult.results.length == 0;
       resultsBlock.bodyElement.innerHTML = '';
 
-      let rank = 1;
       for (const r of bulkSimResult.results) {
-        const resultBlock = new ContentBlock(resultsBlock.bodyElement, 'bulk-result', { header: { title: '' } });
-        new BulkSimResultRenderer(resultBlock, this.simUI, r, rank, bulkSimResult.equippedGearResult!);
-        rank++;
+        const resultBlock = new ContentBlock(resultsBlock.bodyElement, 'bulk-result', { header: { title: '' }, bodyClasses: ['bulk-results-body'] });
+        new BulkSimResultRenderer(resultBlock, this.simUI, r, bulkSimResult.equippedGearResult!);
       }
     });
 
@@ -534,7 +581,7 @@ export class BulkTab extends SimTab {
         `;
 
       const gemContainer = gemFragment.children[0] as HTMLElement;
-      const gemIconElem = gemContainer.querySelector('.gem-icon') as HTMLImageElement;
+      this.gemIconElements.push(gemContainer.querySelector('.gem-icon') as HTMLImageElement);
       const socketIconElem = gemContainer.querySelector('.socket-icon') as HTMLImageElement;
       socketIconElem.src = getEmptyGemSocketIconUrl(socketColor);
     
@@ -542,8 +589,9 @@ export class BulkTab extends SimTab {
       
       let handleChoose = (itemData: ItemData<UIGem>) => {
         this.defaultGems[socketIndex] = itemData.item;
+        this.storeSettings();
         ActionId.fromItemId(itemData.id).fill().then(filledId => {
-          gemIconElem.src = filledId.iconUrl;
+          this.gemIconElements[socketIndex].src = filledId.iconUrl;
         });
         selector.close();
       };
@@ -557,7 +605,7 @@ export class BulkTab extends SimTab {
         }
       }
 
-      gemIconElem.addEventListener("click", openGemSelector(socketColor, socketIndex));
+      this.gemIconElements[socketIndex].addEventListener("click", openGemSelector(socketColor, socketIndex));
       gemContainer.addEventListener("click", openGemSelector(socketColor, socketIndex));
       gemSocketsDiv.appendChild(gemContainer);
     });
