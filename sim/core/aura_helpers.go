@@ -129,9 +129,9 @@ func ApplyProcTriggerCallback(unit *Unit, aura *Aura, config ProcTrigger) {
 
 func MakeProcTriggerAura(unit *Unit, config ProcTrigger) *Aura {
 	aura := Aura{
-		Label:    config.Name,
-		ActionID: config.ActionID,
-		Duration: config.Duration,
+		Label:           config.Name,
+		ActionIDForProc: config.ActionID,
+		Duration:        config.Duration,
 	}
 	if config.Duration == 0 {
 		aura.Duration = NeverExpires
