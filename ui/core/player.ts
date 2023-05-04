@@ -628,11 +628,28 @@ export class Player<SpecType extends Spec> {
 		this.distanceFromTargetChangeEmitter.emit(eventID);
 	}
 
+	setDefaultHealingParams(hm: HealingModel) {
+		var boss = this.sim.encounter.primaryTarget;
+		var dualWield = boss.getDualWield();
+		if (hm.cadenceSeconds == 0) {
+			hm.cadenceSeconds = 1.5 * boss.getSwingSpeed();
+			if (dualWield) {
+				hm.cadenceSeconds /= 2;
+			}
+		}
+		if (hm.hps == 0) {
+			hm.hps = 0.175 * boss.getMinBaseDamage() / boss.getSwingSpeed();
+			if (dualWield) {
+				hm.hps *= 1.5;
+			}
+		}
+	}
+	
 	enableHealing() {
 		this.healingEnabled = true;
 		var hm = this.getHealingModel();
-		if (hm.cadenceSeconds == 0) {
-			hm.cadenceSeconds = 2;
+		if (hm.cadenceSeconds == 0 || hm.hps == 0) {
+			this.setDefaultHealingParams(hm)
 			this.setHealingModel(0, hm)
 		}
 	}
@@ -648,9 +665,9 @@ export class Player<SpecType extends Spec> {
 
 		// Make a defensive copy
 		this.healingModel = HealingModel.clone(newHealingModel);
-		// If we have enabled healing model and try to set 0s cadence, default to 2s.
-		if (this.healingModel.cadenceSeconds == 0 && this.healingEnabled) {
-			this.healingModel.cadenceSeconds = 2;
+		// If we have enabled healing model and try to set 0s cadence or 0 incoming HPS, then set intelligent defaults instead based on boss parameters.
+		if (this.healingEnabled) {
+			this.setDefaultHealingParams(this.healingModel)
 		}
 		this.healingModelChangeEmitter.emit(eventID);
 	}
