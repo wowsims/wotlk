@@ -10,9 +10,6 @@ import (
 
 func init() {
 	// Keep these in order by item ID.
-	core.NewEnchantEffect(846, func(a core.Agent) {
-		// placeholder so fishing gloves enchant doesn't crash.
-	})
 
 	core.NewEnchantEffect(3251, func(agent core.Agent) {
 		character := agent.GetCharacter()
