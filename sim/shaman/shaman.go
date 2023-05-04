@@ -304,7 +304,8 @@ func (shaman *Shaman) Reset(sim *core.Simulation) {
 		case FireTotem:
 			shaman.NextTotemDropType[FireTotem] = int32(shaman.Totems.Fire)
 			if shaman.NextTotemDropType[FireTotem] != int32(proto.FireTotem_NoFireTotem) {
-				if shaman.NextTotemDropType[FireTotem] != int32(proto.FireTotem_TotemOfWrath) && shaman.NextTotemDropType[FireTotem] != int32(proto.FireTotem_FlametongueTotem) {
+				if shaman.NextTotemDropType[FireTotem] != int32(proto.FireTotem_TotemOfWrath) &&
+					shaman.NextTotemDropType[FireTotem] != int32(proto.FireTotem_FlametongueTotem) {
 					if !shaman.Totems.UseFireMcd {
 						shaman.NextTotemDrops[FireTotem] = 0
 					}
@@ -317,11 +318,10 @@ func (shaman *Shaman) Reset(sim *core.Simulation) {
 			}
 		case WaterTotem:
 			shaman.NextTotemDropType[i] = int32(shaman.Totems.Water)
-			if shaman.Totems.Water == proto.WaterTotem_ManaSpringTotem {
-				shaman.NextTotemDrops[i] = TotemRefreshTime5M
-			} else if shaman.Totems.Water == proto.WaterTotem_HealingStreamTotem {
-				shaman.NextTotemDrops[i] = 0
+			if shaman.Totems.Water == proto.WaterTotem_HealingStreamTotem {
+				shaman.HealingStreamTotem.Cast(sim, &shaman.Unit)
 			}
+			shaman.NextTotemDrops[i] = TotemRefreshTime5M
 		}
 	}
 
