@@ -126,7 +126,7 @@ var ItemSetLasherweaveRegalia = core.NewItemSet(core.ItemSet{
 					if result.DidCrit() {
 						dot := druid.Languish.Dot(result.Target)
 
-						newDamage := result.Damage * 0.074
+						newDamage := result.Damage * 0.07
 						outstandingDamage := core.TernaryFloat64(dot.IsActive(), dot.SnapshotBaseDamage*float64(dot.NumberOfTicks-dot.TickCount), 0)
 
 						dot.SnapshotAttackerMultiplier = 1
