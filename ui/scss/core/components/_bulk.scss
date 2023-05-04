@@ -4,6 +4,17 @@
   margin-top: map.get($spacers, 3);
 }
 
+.bulk-result {
+  margin-bottom: 0.5rem;
+  .bulk-equipit {
+    height: 40px;
+    flex: 1;
+  }
+  .bulk-results-body {
+    flex-direction: row;
+  }
+}
+
 .bulk-result-item-slot {
   color:aliceblue;
   margin-left: 0.5rem;
@@ -48,7 +59,10 @@
   display: grid;
   grid-template-columns: repeat(3, 32%);
   grid-template-rows: auto;
-  column-gap: 50px;
+  flex: 5;
+  .item-picker-root {
+    padding: 2px;
+  }
 }
 
 @media (max-width: 1899px) {
@@ -146,4 +160,6 @@
 
 .results-sim {
   margin-top: 5px;
+  flex: 2;
+  margin-right: 2px;
 }
