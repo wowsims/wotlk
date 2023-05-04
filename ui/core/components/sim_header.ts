@@ -49,6 +49,10 @@ export class SimHeader extends Component {
 		this.addSocialLinks();
   }
 
+  activateTab(className: string) {
+	(this.simTabsContainer.getElementsByClassName(className)[0] as HTMLElement).click();
+  }
+
   addTab(title: string, contentId: string) {
 		const isFirstTab = this.simTabsContainer.children.length == 0;
 

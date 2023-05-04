@@ -81,14 +81,14 @@ dps_results: {
 dps_results: {
  key: "TestRestoration-AllItems-BaubleofTrueBlood-50354"
  value: {
-  tps: 56.2746
+  tps: 56.3246
   hps: 3753.38959
  }
 }
 dps_results: {
  key: "TestRestoration-AllItems-BaubleofTrueBlood-50726"
  value: {
-  tps: 56.2746
+  tps: 56.3246
   hps: 3753.38959
  }
 }
@@ -319,7 +319,7 @@ dps_results: {
 dps_results: {
  key: "TestRestoration-AllItems-EphemeralSnowflake-50260"
  value: {
-  tps: 60.80306
+  tps: 60.85306
   hps: 3766.0802
  }
 }
@@ -354,7 +354,7 @@ dps_results: {
 dps_results: {
  key: "TestRestoration-AllItems-Figurine-SapphireOwl-42413"
  value: {
-  tps: 62.49691
+  tps: 62.54691
   hps: 3854.96602
  }
 }
@@ -537,7 +537,7 @@ dps_results: {
 dps_results: {
  key: "TestRestoration-AllItems-NevermeltingIceCrystal-50259"
  value: {
-  tps: 58.51645
+  tps: 58.66645
   hps: 3879.25235
  }
 }
@@ -698,7 +698,7 @@ dps_results: {
 dps_results: {
  key: "TestRestoration-AllItems-SliverofPureIce-50339"
  value: {
-  tps: 64.95365
+  tps: 65.00365
   hps: 3970.99489
  }
 }
@@ -901,7 +901,7 @@ dps_results: {
 dps_results: {
  key: "TestRestoration-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
-  tps: 48.33364
+  tps: 48.38364
   hps: 2666.57055
  }
 }
@@ -943,8 +943,8 @@ dps_results: {
 dps_results: {
  key: "TestRestoration-Average-Default"
  value: {
-  tps: 62.83944
-  hps: 3895.53922
+  tps: 62.84608
+  hps: 3895.31136
  }
 }
 dps_results: {

@@ -98,20 +98,42 @@ func (b *bulkSimRunner) Run(pctx context.Context, progress chan *proto.ProgressM
 	if b.Request.BulkSettings.AutoGem {
 		for _, replaceItem := range b.Request.BulkSettings.Items {
 			itemData := ItemsByID[replaceItem.Id]
-			if len(replaceItem.Gems) < len(itemData.GemSockets) {
-				sockets := make([]int32, len(itemData.GemSockets))
-				copy(sockets, replaceItem.Gems)
-				for i, color := range itemData.GemSockets {
-					if ColorIntersects(color, proto.GemColor_GemColorRed) {
-						sockets[i] = b.Request.BulkSettings.DefaultRedGem
-					} else if ColorIntersects(color, proto.GemColor_GemColorYellow) {
-						sockets[i] = b.Request.BulkSettings.DefaultYellowGem
-					} else if ColorIntersects(color, proto.GemColor_GemColorBlue) {
-						sockets[i] = b.Request.BulkSettings.DefaultBlueGem
-					}
-				}
-				replaceItem.Gems = sockets
+			if len(itemData.GemSockets) == 0 && itemData.Type != proto.ItemType_ItemTypeWaist {
+				continue
 			}
+
+			sockets := make([]int32, len(itemData.GemSockets))
+			if len(sockets) < len(replaceItem.Gems) {
+				// this means the extra gem was specified, just add an extra element
+				sockets = append(sockets, 0)
+			}
+			// now copy over what we have from inputs.
+			copy(sockets, replaceItem.Gems)
+			if itemData.Type == proto.ItemType_ItemTypeWaist {
+				// Assume waist always has the eternal belt buckle and add extra red gem.
+				// TODO: is there a better way to do this?
+				// Should we have a 'prismatic' standard gem in the defaults?
+				if len(sockets) == len(itemData.GemSockets) {
+					sockets = append(sockets, b.Request.BulkSettings.DefaultRedGem)
+				} else if len(sockets) > len(itemData.GemSockets) && sockets[len(sockets)-1] == 0 {
+					sockets[len(sockets)-1] = b.Request.BulkSettings.DefaultRedGem
+				}
+			}
+
+			for i, color := range itemData.GemSockets {
+				if sockets[i] > 0 {
+					// This means gem was already specified, skip autogem
+					continue
+				}
+				if ColorIntersects(color, proto.GemColor_GemColorRed) {
+					sockets[i] = b.Request.BulkSettings.DefaultRedGem
+				} else if ColorIntersects(color, proto.GemColor_GemColorYellow) {
+					sockets[i] = b.Request.BulkSettings.DefaultYellowGem
+				} else if ColorIntersects(color, proto.GemColor_GemColorBlue) {
+					sockets[i] = b.Request.BulkSettings.DefaultBlueGem
+				}
+			}
+			replaceItem.Gems = sockets
 		}
 	}
 
