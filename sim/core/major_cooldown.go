@@ -1,7 +1,6 @@
 package core
 
 import (
-	"strings"
 	"time"
 
 	"golang.org/x/exp/slices"
@@ -326,10 +325,7 @@ func desyncTrinketProcAura(aura *Aura, delay time.Duration) {
 
 func findTrinketAura(character *Character, trinketID int32) *Aura {
 	for _, aura := range character.auras {
-		if strings.HasSuffix(aura.Label, "Proc") {
-			continue
-		}
-		if aura.ActionID.ItemID == trinketID || aura.metrics.ID.ItemID == trinketID {
+		if aura.ActionIDForProc.ItemID == trinketID {
 			return aura
 		}
 	}
