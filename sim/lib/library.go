@@ -40,6 +40,23 @@ func runSim(json *C.char) *C.char {
 	return C.CString(string(out))
 }
 
+//export computeStats
+func computeStats(json *C.char) *C.char {
+	input := &proto.ComputeStatsRequest{}
+	jsonString := C.GoString(json)
+	err := protojson.Unmarshal([]byte(jsonString), input)
+	if err != nil {
+		log.Fatalf("failed to load input json file: %s", err)
+	}
+	sim.RegisterAll()
+	result := core.ComputeStats(input)
+	out, err := protojson.Marshal(result)
+	if err != nil {
+		panic(err)
+	}
+	return C.CString(string(out))
+}
+
 //export new
 func new(json *C.char) {
 	input := &proto.RaidSimRequest{}
@@ -61,17 +78,29 @@ func new(json *C.char) {
 func trySpell(act int) bool {
 	player := _active_sim.Raid.Parties[0].Players[0]
 	spells := player.GetCharacter().Spellbook
-	if act >= len(spells) {
+	if act >= len(spells) || act < 0 {
 		return false
 	}
 	spell := spells[act]
 	target := player.GetCharacter().CurrentTarget
 	casted := false
+
+	// FIXME : This is a hack to allow Heroic strike to work
+	if spell.ActionID.SpellID == 47450 {
+		aura := player.GetCharacter().GetAura("HS Queue Aura")
+		if aura.IsActive() {
+			return false
+		}
+		aura.Activate(_active_sim)
+		return true
+	}
+	// End of Heroic strike hack
+
 	if spell.CanCast(_active_sim, target) {
 		casted = spell.Cast(_active_sim, target)
-	}
-	if casted && spell.CurCast.GCD > 0 {
-		_active_sim.NeedsInput = false
+		if casted && spell.CurCast.GCD > 0 {
+			_active_sim.NeedsInput = false
+		}
 	}
 	return casted
 }
@@ -122,7 +151,12 @@ func getSpells(storage *int32, n int32) {
 	spellbook := player.GetCharacter().Spellbook
 	spells := unsafe.Slice(storage, n)
 	for i, spell := range spellbook[:n] {
-		spells[i] = spell.ActionID.SpellID
+		if spell.Tag != -1 {
+			spells[i] = spell.ActionID.SpellID
+		} else {
+			// These spells are not castable by the player
+			spells[i] = -1
+		}
 	}
 }
 
