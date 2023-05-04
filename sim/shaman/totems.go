@@ -18,13 +18,6 @@ func (shaman *Shaman) newTotemSpellConfig(baseCost float64, spellID int32) core.
 				0.05*float64(shaman.Talents.TotemicFocus) -
 				0.02*float64(shaman.Talents.MentalQuickness),
 		},
-		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				CastTime: time.Second,
-				GCD:      time.Second,
-			},
-			IgnoreHaste: true,
-		},
 	}
 }
 
@@ -149,10 +142,8 @@ func (shaman *Shaman) NextTotemAt(_ *core.Simulation) time.Duration {
 func (shaman *Shaman) TryDropTotems(sim *core.Simulation) bool {
 	var spell *core.Spell
 
+	casted := false
 	for totemTypeIdx, totemExpiration := range shaman.NextTotemDrops {
-		if spell != nil {
-			break
-		}
 		nextDrop := shaman.NextTotemDropType[totemTypeIdx]
 		if sim.CurrentTime >= totemExpiration {
 			switch totemTypeIdx {
@@ -195,13 +186,17 @@ func (shaman *Shaman) TryDropTotems(sim *core.Simulation) bool {
 				}
 			}
 		}
+		if spell != nil {
+			if success := spell.Cast(sim, shaman.CurrentTarget); !success {
+				shaman.WaitForMana(sim, spell.CurCast.Cost)
+				return true
+			}
+			casted = true
+		}
 	}
 
-	if spell != nil {
-		if success := spell.Cast(sim, shaman.CurrentTarget); !success {
-			shaman.WaitForMana(sim, spell.CurCast.Cost)
-		}
-		return true
+	if casted {
+		shaman.WaitUntil(sim, sim.CurrentTime+time.Second)
 	}
-	return false
+	return casted
 }
