@@ -197,18 +197,6 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 					}
 					cast = dk.uhSpreadDiseases(sim, target, s)
 				}
-			} else {
-				// if !dk.uhShouldWaitForDnD(sim, true, false, false) {
-				// 	if dk.uhGargoyleCheck(sim, target, core.GCDDefault+50*time.Millisecond) {
-				// 		dk.uhAfterGargoyleSequence(sim)
-				// 		return sim.CurrentTime
-				// 	}
-				// 	if dk.desolationAuraCheck(sim) || prioBs {
-				// 		cast = dk.BloodStrike.Cast(sim, target)
-				// 	} else {
-				// 		cast = dk.BloodBoil.Cast(sim, target)
-				// 	}
-				// }
 			}
 			if !cast {
 				if dk.uhDeathCoilCheck(sim) {
