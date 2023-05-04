@@ -10,12 +10,13 @@ func (warlock *Warlock) registerSeedSpell() {
 	actionID := core.ActionID{SpellID: 47836}
 
 	seedExplosion := warlock.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID.WithTag(1),
-		SpellSchool: core.SpellSchoolShadow,
-		ProcMask:    core.ProcMaskSpellDamage,
+		ActionID:     actionID.WithTag(1), // actually 47834
+		SpellSchool:  core.SpellSchoolShadow,
+		ProcMask:     core.ProcMaskSpellDamage,
+		Flags:        core.SpellFlagHauntSE,
+		MissileSpeed: 28,
 
 		BonusCritRating: 0 +
-			warlock.masterDemonologistShadowCrit +
 			float64(warlock.Talents.ImprovedCorruption)*core.CritRatingPerCritChance,
 		DamageMultiplierAdditive: 1 +
 			warlock.GrandFirestoneBonus() +
@@ -25,16 +26,9 @@ func (warlock *Warlock) registerSeedSpell() {
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.ImprovedDrainSoul),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			dmgFromSP := 0.2129 * spell.SpellPower()
-			for _, aoeTarget := range sim.Encounter.Targets {
-				// Seeded target is not affected by explosion.
-				if &aoeTarget.Unit == target {
-					continue
-				}
-
-				baseDamage := sim.Roll(1633, 1897) + dmgFromSP
-				baseDamage *= sim.Encounter.AOECapMultiplier()
-				spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeMagicHitAndCrit)
+			baseDmg := (sim.Roll(1633, 1897) + 0.286*spell.SpellPower()) * sim.Encounter.AOECapMultiplier()
+			for _, aoeTarget := range sim.Encounter.TargetUnits {
+				spell.CalcAndDealDamage(sim, aoeTarget, baseDmg, spell.OutcomeMagicHitAndCrit)
 			}
 		},
 	})
@@ -52,6 +46,7 @@ func (warlock *Warlock) registerSeedSpell() {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskEmpty,
+		Flags:       core.SpellFlagHauntSE,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.34,
@@ -108,14 +103,15 @@ func (warlock *Warlock) registerSeedSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
-			if result.Landed() {
-				if warlock.Rotation.DetonateSeed {
-					seedExplosion.Cast(sim, target)
-				} else {
-					spell.Dot(target).Apply(sim)
+			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
+				if result.Landed() {
+					if warlock.Rotation.DetonateSeed {
+						seedExplosion.Cast(sim, target)
+					} else {
+						spell.Dot(target).Apply(sim)
+					}
 				}
-			}
-			spell.DealOutcome(sim, result)
+			})
 		},
 	})
 }

@@ -30,7 +30,7 @@ type DotConfig struct {
 type Dot struct {
 	Spell *Spell
 
-	// Embed Aura so we can use IsActive/Refresh/etc directly.
+	// Embed Aura, so we can use IsActive/Refresh/etc directly.
 	*Aura
 
 	NumberOfTicks int32         // number of ticks over the whole duration
@@ -55,7 +55,7 @@ type Dot struct {
 	lastTickTime time.Duration
 }
 
-// TickPeriod is how fast the snapshotted dot ticks.
+// TickPeriod is how fast the snapshot dot ticks.
 func (dot *Dot) TickPeriod() time.Duration {
 	return dot.tickPeriod
 }
@@ -72,7 +72,7 @@ func (dot *Dot) NumTicksRemaining(sim *Simulation) int {
 
 // Roll over = gets carried over with everlasting refresh and doesn't get applied if triggered when the spell is already up.
 // - Example: critical strike rating, internal % damage modifiers: buffs or debuffs on player
-// Nevermelting Ice, Shadow Mastery (ISB), Trick of the Trades, Deaths Embrace, Thadius Polarity, Hera Spores, Crit on weapons from swapping
+// Nevermelting Ice, Shadow Mastery (ISB), Trick of the Trades, Deaths Embrace, Thaddius Polarity, Hera Spores, Crit on weapons from swapping
 
 // Snapshot = calculation happens at refresh and application (stays up even if buff falls of, until new refresh or application)
 // - Example: Spell power, Haste rating
@@ -83,8 +83,8 @@ func (dot *Dot) NumTicksRemaining(sim *Simulation) int {
 // Haunt, Curse of Shadow, Shadow Embrace
 
 // Rollover is used to reset the duration of a dot from an external spell (not casting the dot itself)
-// This keeps the snapshotted crit and %dmg modifiers.
-// However sp and haste are recalculated.
+// This keeps the snapshot crit and %dmg modifiers.
+// However, sp and haste are recalculated.
 func (dot *Dot) Rollover(sim *Simulation) {
 	dot.TakeSnapshot(sim, true)
 
@@ -103,6 +103,8 @@ func (dot *Dot) Rollover(sim *Simulation) {
 }
 
 func (dot *Dot) Apply(sim *Simulation) {
+	dot.TakeSnapshot(sim, false)
+
 	dot.Cancel(sim)
 	dot.TickCount = 0
 	dot.RecomputeAuraDuration()
@@ -138,6 +140,8 @@ func (dot *Dot) ApplyOrReset(sim *Simulation) {
 
 // Like Apply(), but does not reset the tick timer.
 func (dot *Dot) ApplyOrRefresh(sim *Simulation) {
+	dot.TakeSnapshot(sim, false)
+
 	dot.TickCount = 0
 	dot.RecomputeAuraDuration()
 	dot.Aura.Activate(sim)
@@ -179,6 +183,19 @@ func (dot *Dot) TickOnce(sim *Simulation) {
 	dot.OnTick(sim, dot.Unit, dot)
 }
 
+// ManualTick forces the dot forward one tick
+// Will cancel the dot if it is out of ticks.
+func (dot *Dot) ManualTick(sim *Simulation) {
+	if dot.lastTickTime != sim.CurrentTime {
+		dot.TickCount++
+		if dot.NumTicksRemaining(sim) <= 0 {
+			dot.Cancel(sim)
+		} else {
+			dot.TickOnce(sim)
+		}
+	}
+}
+
 func (dot *Dot) basePeriodicOptions() PeriodicActionOptions {
 	return PeriodicActionOptions{
 		//Priority: ActionPriorityDOT,
@@ -210,8 +227,6 @@ func NewDot(config Dot) *Dot {
 
 	dot.Aura.ApplyOnGain(func(aura *Aura, sim *Simulation) {
 		dot.lastTickTime = sim.CurrentTime
-		dot.TakeSnapshot(sim, false)
-
 		periodicOptions := dot.basePeriodicOptions()
 		periodicOptions.Period = dot.tickPeriod
 		dot.tickAction = NewPeriodicAction(sim, periodicOptions)

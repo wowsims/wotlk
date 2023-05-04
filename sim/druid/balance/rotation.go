@@ -1,10 +1,11 @@
 package balance
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
-	"time"
 )
 
 func (moonkin *BalanceDruid) OnGCDReady(sim *core.Simulation) {
@@ -12,19 +13,29 @@ func (moonkin *BalanceDruid) OnGCDReady(sim *core.Simulation) {
 }
 
 func (moonkin *BalanceDruid) tryUseGCD(sim *core.Simulation) {
-	spell := moonkin.rotation(sim)
-
-	if success := spell.Cast(sim, moonkin.CurrentTarget); !success {
+	spell, target := moonkin.rotation(sim)
+	if success := spell.Cast(sim, target); !success {
 		moonkin.WaitForMana(sim, spell.CurCast.Cost)
 	}
+	moonkin.LastCast = spell
 }
 
-func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
+func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*core.Spell, *core.Unit) {
+	moonkin.CurrentTarget = sim.Environment.GetTargetUnit(0)
 	rotation := moonkin.Rotation
 	target := moonkin.CurrentTarget
 
 	if rotation.MaintainFaerieFire && moonkin.ShouldFaerieFire(sim, moonkin.CurrentTarget) {
-		return moonkin.FaerieFire
+		return moonkin.FaerieFire, target
+	}
+
+	if sim.GetRemainingDuration() < 15*time.Second {
+		moonkin.castMajorCooldown(moonkin.hyperSpeedMCD, sim, target)
+		moonkin.castMajorCooldown(moonkin.potionSpeedMCD, sim, target)
+		moonkin.castMajorCooldown(moonkin.potionWildMagicMCD, sim, target)
+		moonkin.useTrinkets(stats.SpellHaste, sim, target)
+		moonkin.useTrinkets(stats.SpellPower, sim, target)
+		moonkin.useTrinkets(stats.SpellCrit, sim, target)
 	}
 
 	var lunarUptime time.Duration
@@ -33,59 +44,56 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 	}
 
 	if moonkin.MoonkinT84PCAura.IsActive() && moonkin.MoonkinT84PCAura.RemainingDuration(sim) < moonkin.SpellGCD() {
-		if (rotation.UseSmartCooldowns && lunarUptime > 14*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
-			moonkin.castMajorCooldown(moonkin.hyperSpeedMCD, sim, target)
-			moonkin.castMajorCooldown(moonkin.potionSpeedMCD, sim, target)
-			moonkin.useTrinkets(stats.SpellHaste, sim, target)
-		}
-		return moonkin.Starfire
+		return moonkin.Starfire, target
 	} else if rotation.UseBattleRes && sim.GetRemainingDuration().Seconds() < moonkin.RebirthTiming && moonkin.Rebirth.IsReady(sim) {
-		return moonkin.Rebirth
+		return moonkin.Rebirth, target
 	} else if moonkin.Talents.ForceOfNature && moonkin.ForceOfNature.IsReady(sim) {
 		moonkin.useTrinkets(stats.SpellPower, sim, target)
-		return moonkin.ForceOfNature
+		return moonkin.ForceOfNature, target
 	} else if moonkin.Starfall.IsReady(sim) {
 		moonkin.useTrinkets(stats.SpellPower, sim, target)
-		return moonkin.Starfall
+		return moonkin.Starfall, target
 	} else if moonkin.Typhoon.IsReady(sim) && rotation.UseTyphoon {
-		return moonkin.Typhoon
+		return moonkin.Typhoon, target
 	} else if rotation.UseHurricane {
-		return moonkin.Hurricane
+		return moonkin.Hurricane, target
 	}
 
-	moonfireUptime := moonkin.Moonfire.CurDot().RemainingDuration(sim)
-	insectSwarmUptime := moonkin.InsectSwarm.CurDot().RemainingDuration(sim)
-	useMf := moonkin.Rotation.MfUsage != proto.BalanceDruid_Rotation_NoMf
-	useIs := moonkin.Rotation.IsUsage != proto.BalanceDruid_Rotation_NoIs
-	maximizeMfUptime := moonkin.Rotation.MfUsage == proto.BalanceDruid_Rotation_MaximizeMf
-	maximizeIsUptime := moonkin.Rotation.IsUsage == proto.BalanceDruid_Rotation_MaximizeIs
 	lunarIsActive := moonkin.LunarEclipseProcAura.IsActive()
+	shouldHoldIs := core.Ternary(moonkin.MoonkinT84PCAura == nil, lunarIsActive, lunarIsActive && moonkin.HasActiveAuraWithTag(core.BloodlustAuraTag))
 
-	shouldHoldIs := false
-	if lunarIsActive && moonkin.MoonkinT84PCAura == nil {
-		shouldHoldIs = lunarUptime.Seconds() < (moonkin.InsectSwarm.DamageMultiplier-1)/0.042
+	// Max IS uptime
+	if rotation.IsUsage == proto.BalanceDruid_Rotation_MaximizeIs && !shouldHoldIs {
+		if moonkin.InsectSwarm.CurDot().RemainingDuration(sim) <= 0 {
+			return moonkin.InsectSwarm, target
+		}
+	} else if rotation.IsUsage == proto.BalanceDruid_Rotation_MultidotIs {
+		targetIndex := 0
+		for targetIndex < len(sim.Encounter.Targets) {
+			if moonkin.InsectSwarm.CurDot().RemainingDuration(sim) <= 0 {
+				return moonkin.InsectSwarm, moonkin.CurrentTarget
+			}
+			moonkin.CurrentTarget = sim.Environment.NextTargetUnit(moonkin.CurrentTarget)
+			targetIndex += 1
+		}
 	}
-	shouldRefreshMf := moonfireUptime <= 0 && useMf
-	shouldRefreshIs := insectSwarmUptime <= 0 && useIs && !shouldHoldIs
-	if maximizeIsUptime && shouldRefreshIs {
-		return moonkin.InsectSwarm
-	}
-	if maximizeMfUptime && shouldRefreshMf {
-		return moonkin.Moonfire
+
+	// Max MF uptime
+	shouldRefreshMf := moonkin.Moonfire.CurDot().RemainingDuration(sim) <= 0
+	if rotation.MfUsage == proto.BalanceDruid_Rotation_MaximizeMf && shouldRefreshMf {
+		return moonkin.Moonfire, target
 	}
 
 	// Player "brain" latency
 	playerLatency := time.Duration(core.MaxInt32(rotation.PlayerLatency, 0)) * time.Millisecond
 	lunarICD := moonkin.LunarICD.Timer.TimeToReady(sim)
 	solarICD := moonkin.SolarICD.Timer.TimeToReady(sim)
-	fishingForLunar := lunarICD <= solarICD
 
 	if moonkin.Talents.Eclipse > 0 {
-
 		solarUptime := moonkin.SolarEclipseProcAura.ExpiresAt() - sim.CurrentTime
 		solarIsActive := moonkin.SolarEclipseProcAura.IsActive()
 
-		// "Dispelling" eclipse effects before casting if needed
+		//"Dispelling" eclipse effects before casting if needed
 		if float64(lunarUptime-moonkin.Starfire.CurCast.CastTime) <= 0 {
 			moonkin.LunarEclipseProcAura.Deactivate(sim)
 			lunarIsActive = false
@@ -100,7 +108,7 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 		}
 		if solarIsActive {
 			solarIsActive = solarUptime < (moonkin.SolarEclipseProcAura.Duration - playerLatency)
-			fishingForLunar = false
+			solarICD = 0
 		}
 
 		// Eclipse
@@ -110,35 +118,46 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) *core.Spell {
 					moonkin.castMajorCooldown(moonkin.hyperSpeedMCD, sim, target)
 					moonkin.castMajorCooldown(moonkin.potionSpeedMCD, sim, target)
 					moonkin.useTrinkets(stats.SpellHaste, sim, target)
-				}
-				return moonkin.Starfire
-			} else if solarIsActive {
-				if rotation.UseWrath {
-					if moonkin.MoonkinT84PCAura.IsActive() &&
-						(moonkin.LunarICD.TimeToReady(sim)+playerLatency > moonkin.MoonkinT84PCAura.RemainingDuration(sim) ||
-							moonkin.MoonkinT84PCAura.RemainingDuration(sim) < solarUptime) {
-						return moonkin.Starfire
+					if !moonkin.HasActiveAuraWithTag(core.BloodlustAuraTag) {
+						moonkin.castMajorCooldown(moonkin.powerInfusion, sim, target)
 					}
-					if (rotation.UseSmartCooldowns && solarUptime > 10*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
-						moonkin.castMajorCooldown(moonkin.potionWildMagicMCD, sim, target)
-						moonkin.useTrinkets(stats.SpellCrit, sim, target)
-					}
-					return moonkin.Wrath
 				}
+				return moonkin.Starfire, target
+			} else if solarIsActive && rotation.WrathUsage == proto.BalanceDruid_Rotation_RegularWrath {
+				if moonkin.MoonkinT84PCAura.IsActive() {
+					if moonkin.MoonkinT84PCAura.RemainingDuration(sim) < solarUptime {
+						return moonkin.Starfire, target
+					}
+				}
+				if (rotation.UseSmartCooldowns && solarUptime > 10*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
+					moonkin.castMajorCooldown(moonkin.potionWildMagicMCD, sim, target)
+					moonkin.useTrinkets(stats.SpellCrit, sim, target)
+				}
+				return moonkin.Wrath, target
 			}
 		}
-		if moonkin.Rotation.MfUsage == proto.BalanceDruid_Rotation_BeforeLunar && lunarICD < 2*time.Second && shouldRefreshMf {
-			return moonkin.Moonfire
+		if rotation.MfUsage == proto.BalanceDruid_Rotation_BeforeLunar && lunarICD < 2*time.Second && shouldRefreshMf {
+			return moonkin.Moonfire, target
 		}
-		if moonkin.Rotation.IsUsage == proto.BalanceDruid_Rotation_BeforeSolar && solarICD < 2*time.Second && shouldRefreshIs {
-			return moonkin.InsectSwarm
+		shouldRefreshIs := moonkin.InsectSwarm.CurDot().RemainingDuration(sim) <= 0
+		if rotation.IsUsage == proto.BalanceDruid_Rotation_BeforeSolar && solarICD < 2*time.Second && shouldRefreshIs {
+			return moonkin.InsectSwarm, target
 		}
 	}
+
+	fishingForLunar := lunarICD <= solarICD
+	if rotation.EclipsePrio == proto.BalanceDruid_Rotation_Solar {
+		fishingForLunar = lunarICD < solarICD
+	}
 	// Non-Eclipse
-	if fishingForLunar && rotation.UseWrath {
-		return moonkin.Wrath
+	eclipseShuffle := rotation.EclipseShuffling && lunarICD == 0 && solarICD == 0
+	if eclipseShuffle && moonkin.LastCast == moonkin.Wrath && rotation.UseStarfire {
+		return moonkin.Starfire, target
+	}
+	if (fishingForLunar || eclipseShuffle) && rotation.WrathUsage != proto.BalanceDruid_Rotation_NoWrath {
+		return moonkin.Wrath, target
 	} else {
-		return moonkin.Starfire
+		return moonkin.Starfire, target
 	}
 }
 

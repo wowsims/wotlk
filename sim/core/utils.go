@@ -92,6 +92,14 @@ func DurationFromSeconds(numSeconds float64) time.Duration {
 	return time.Duration(float64(time.Second) * numSeconds)
 }
 
+func DurationFromProto(durProto *proto.Duration) time.Duration {
+	if durProto == nil {
+		return 0
+	} else {
+		return time.Millisecond * time.Duration(durProto.Ms)
+	}
+}
+
 func GetTristateValueInt32(effect proto.TristateEffect, regularValue int32, impValue int32) int32 {
 	if effect == proto.TristateEffect_TristateEffectRegular {
 		return regularValue

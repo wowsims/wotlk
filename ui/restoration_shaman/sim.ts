@@ -119,7 +119,7 @@ export class RestorationShamanSimUI extends IndividualSimUI<Spec.SpecRestoration
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
-					OtherInputs.TankAssignment,
+					OtherInputs.TankAssignment
 				],
 			},
 			customSections: [

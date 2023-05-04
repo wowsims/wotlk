@@ -21,8 +21,8 @@ func (dk *Deathknight) NewBloodwormPet(index int) *BloodwormPet {
 
 	bloodworm.EnableAutoAttacks(bloodworm, core.AutoAttackOptions{
 		MainHand: core.Weapon{
-			BaseDamageMin:  25,
-			BaseDamageMax:  27,
+			BaseDamageMin:  37,
+			BaseDamageMax:  42,
 			SwingSpeed:     2,
 			SwingDuration:  time.Second * 2,
 			CritMultiplier: 2,
@@ -31,12 +31,12 @@ func (dk *Deathknight) NewBloodwormPet(index int) *BloodwormPet {
 	})
 
 	// Hit and Crit only
-	bloodworm.AutoAttacks.MHConfig.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-		baseDamage := spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
-			spell.BonusWeaponDamage()
+	// bloodworm.AutoAttacks.MHConfig.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+	// 	baseDamage := spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
+	// 		spell.BonusWeaponDamage()
 
-		spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialCritOnly)
-	}
+	// 	spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWhite)
+	// }
 
 	bloodworm.AddStatDependency(stats.Strength, stats.AttackPower, 1.0+1)
 	bloodworm.AddStatDependency(stats.Agility, stats.MeleeCrit, 1.0+(core.CritRatingPerCritChance/83.3))
@@ -82,7 +82,7 @@ var bloodwormPetBaseStats = stats.Stats{
 func (dk *Deathknight) bloodwormStatInheritance() core.PetStatInheritance {
 	return func(ownerStats stats.Stats) stats.Stats {
 		return stats.Stats{
-			stats.AttackPower: ownerStats[stats.AttackPower] * 0.05,
+			stats.AttackPower: ownerStats[stats.AttackPower] * 0.112,
 			stats.MeleeHaste:  ownerStats[stats.MeleeHaste],
 		}
 	}

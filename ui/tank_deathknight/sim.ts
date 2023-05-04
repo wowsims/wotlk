@@ -89,6 +89,7 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatArmor]: 0.05,
+					[Stat.StatBonusArmor]: 0.03,
 					[Stat.StatStamina]: 1,
 					[Stat.StatStrength]: 0.33,
 					[Stat.StatAgility]: 0.6,
@@ -167,12 +168,11 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 			otherInputs: {
 				inputs: [
 					OtherInputs.TankAssignment,
+					OtherInputs.HpPercentForDefensives,
 					OtherInputs.IncomingHps,
 					OtherInputs.HealingCadence,
 					OtherInputs.BurstWindow,
 					OtherInputs.InspirationUptime,
-					//OtherInputs.HpPercentForDefensives,
-					//DeathKnightInputs.DefensiveCdDelay,
 					OtherInputs.InFrontOfTarget,
 					DeathKnightInputs.StartingRunicPower,
 				],

@@ -52,11 +52,13 @@ type BalanceDruid struct {
 
 	Rotation           *proto.BalanceDruid_Rotation
 	CooldownsAvailable []*core.MajorCooldown
+	LastCast           *core.Spell
 
 	// CDS
 	hyperSpeedMCD      *core.MajorCooldown
 	potionSpeedMCD     *core.MajorCooldown
 	potionWildMagicMCD *core.MajorCooldown
+	powerInfusion      *core.MajorCooldown
 	onUseTrinket1      BalanceOnUseTrinket
 	onUseTrinket2      BalanceOnUseTrinket
 	potionUsed         bool
@@ -75,12 +77,12 @@ func (moonkin *BalanceDruid) Reset(sim *core.Simulation) {
 	moonkin.Druid.Reset(sim)
 	moonkin.RebirthTiming = moonkin.Env.BaseDuration.Seconds() * sim.RandomFloat("Rebirth Timing")
 
-	if moonkin.Rotation.Type == proto.BalanceDruid_Rotation_Adaptive {
+	if moonkin.Rotation.Type == proto.BalanceDruid_Rotation_Default {
 		moonkin.Rotation.MfUsage = proto.BalanceDruid_Rotation_BeforeLunar
 		moonkin.Rotation.IsUsage = proto.BalanceDruid_Rotation_MaximizeIs
+		moonkin.Rotation.WrathUsage = proto.BalanceDruid_Rotation_RegularWrath
 		moonkin.Rotation.UseBattleRes = false
 		moonkin.Rotation.UseStarfire = true
-		moonkin.Rotation.UseWrath = true
 		moonkin.Rotation.UseTyphoon = false
 		moonkin.Rotation.UseHurricane = false
 		moonkin.Rotation.UseSmartCooldowns = true
@@ -101,6 +103,7 @@ func (moonkin *BalanceDruid) Reset(sim *core.Simulation) {
 		if moonkin.HasProfession(proto.Profession_Engineering) {
 			moonkin.hyperSpeedMCD = moonkin.getBalanceMajorCooldown(core.ActionID{SpellID: 54758})
 		}
+		moonkin.powerInfusion = moonkin.getBalanceMajorCooldown(core.ActionID{SpellID: 10060})
 		moonkin.onUseTrinket1 = BalanceOnUseTrinket{
 			Cooldown: moonkin.getBalanceMajorCooldown(core.ActionID{ItemID: moonkin.Equip[core.ItemSlotTrinket1].ID}),
 			Stat:     getOnUseTrinketStat(moonkin.Equip[core.ItemSlotTrinket1].ID),
@@ -114,7 +117,7 @@ func (moonkin *BalanceDruid) Reset(sim *core.Simulation) {
 
 // Takes out a Cooldown from the generic MajorCooldownManager and adds it to a custom Slice of Cooldowns
 func (moonkin *BalanceDruid) getBalanceMajorCooldown(actionID core.ActionID) *core.MajorCooldown {
-	if majorCd := moonkin.Character.GetMajorCooldown(actionID); majorCd != nil {
+	if majorCd := moonkin.Character.GetMajorCooldownIgnoreTag(actionID); majorCd != nil {
 		majorCd.Disable()
 		return majorCd
 	}

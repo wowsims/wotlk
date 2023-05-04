@@ -209,6 +209,8 @@ type Deathknight struct {
 	EbonPlagueOrCryptFeverAura []*core.Aura
 
 	RoRTSBonus func(*core.Unit) float64 // is either RoR or TS bonus function based on talents
+
+	MakeTSRoRAssumptions bool
 }
 
 func (dk *Deathknight) ModifyDamageModifier(value float64) {
@@ -370,6 +372,7 @@ func (dk *Deathknight) Reset(sim *core.Simulation) {
 	dk.LastCast = nil
 	dk.NextCast = nil
 	dk.DeathStrikeHeals = dk.DeathStrikeHeals[:0]
+	dk.MakeTSRoRAssumptions = sim.Raid.Size() <= 1
 }
 
 func (dk *Deathknight) IsFuStrike(spell *core.Spell) bool {
@@ -383,7 +386,7 @@ func (dk *Deathknight) HasMinorGlyph(glyph proto.DeathknightMinorGlyph) bool {
 	return dk.HasGlyph(int32(glyph))
 }
 
-func NewDeathknight(character core.Character, inputs DeathknightInputs, talents string) *Deathknight {
+func NewDeathknight(character core.Character, inputs DeathknightInputs, talents string, preNerfedGargoyle bool) *Deathknight {
 	dk := &Deathknight{
 		Character:  character,
 		Talents:    &proto.DeathknightTalents{},
@@ -428,6 +431,7 @@ func NewDeathknight(character core.Character, inputs DeathknightInputs, talents 
 	dk.AddStatDependency(stats.Agility, stats.Dodge, core.DodgeRatingPerDodgeChance/84.74576271)
 	dk.AddStatDependency(stats.Strength, stats.AttackPower, 2)
 	dk.AddStatDependency(stats.Strength, stats.Parry, 0.25)
+	dk.AddStatDependency(stats.BonusArmor, stats.Armor, 1)
 
 	dk.PseudoStats.CanParry = true
 	dk.PseudoStats.GracefulCastCDFailures = true
@@ -437,6 +441,10 @@ func NewDeathknight(character core.Character, inputs DeathknightInputs, talents 
 	dk.PseudoStats.BaseParry += 0.05
 
 	dk.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
+
+	if dk.Talents.SummonGargoyle {
+		dk.Gargoyle = dk.NewGargoyle(!preNerfedGargoyle)
+	}
 
 	dk.Ghoul = dk.NewGhoulPet(dk.Talents.MasterOfGhouls)
 	dk.OnGargoyleStartFirstCast = func() {}
@@ -469,6 +477,10 @@ func (dk *Deathknight) AllDiseasesAreActive(target *core.Unit) bool {
 
 func (dk *Deathknight) DiseasesAreActive(target *core.Unit) bool {
 	return dk.FrostFeverSpell.Dot(target).IsActive() || dk.BloodPlagueSpell.Dot(target).IsActive()
+}
+
+func (dk *Deathknight) DrwDiseasesAreActive(target *core.Unit) bool {
+	return dk.Talents.DancingRuneWeapon && dk.RuneWeapon.FrostFeverSpell.Dot(target).IsActive() || dk.RuneWeapon.BloodPlagueSpell.Dot(target).IsActive()
 }
 
 func (dk *Deathknight) bonusCritMultiplier(bonusTalentPoints int32) float64 {

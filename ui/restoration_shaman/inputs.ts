@@ -9,6 +9,7 @@ import { EventID, TypedEvent } from '../core/typed_event.js';
 import {
 	AirTotem,
 	RestorationShaman_Options as ShamanOptions,
+	ShamanHealSpell,
 	ShamanShield,
 } from '../core/proto/shaman.js';
 
@@ -30,7 +31,62 @@ export const ShamanShieldInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.
 	],
 });
 
+
+export const PrimaryHealInput = InputHelpers.makeRotationEnumInput<Spec.SpecRestorationShaman, ShamanHealSpell>({
+	fieldName: 'primaryHeal',
+	label: 'Primary Heal',
+	labelTooltip: 'Set to \'AutoHeal\', to automatically swap based on best heal.',
+	values: [
+		{
+			name: "Auto Heal",
+			value: ShamanHealSpell.AutoHeal
+		},
+		{
+			name: "Lesser Healing Wave",
+			value: ShamanHealSpell.LesserHealingWave // actionId: ActionId.fromSpellId(49276),
+		},
+		{
+			name: "Healing Wave",
+			value: ShamanHealSpell.HealingWave // actionId: ActionId.fromSpellId(49273),
+		},
+		{
+			name: "Chain Heal",
+			value: ShamanHealSpell.ChainHeal // actionId: ActionId.fromSpellId(55459),
+		},
+	]
+});
+
+
+export const UseRiptide = InputHelpers.makeRotationBooleanInput<Spec.SpecRestorationShaman>({
+	fieldName: 'useRiptide',
+	label: 'Use Riptide',
+	labelTooltip: 'Causes riptide to be cast on primary target when CD is available and not already on.',
+	showWhen: (player: Player<Spec.SpecRestorationShaman>) => player.getTalents().riptide,
+	changeEmitter: (player: Player<Spec.SpecRestorationShaman>) => TypedEvent.onAny([player.specOptionsChangeEmitter, player.rotationChangeEmitter, player.talentsChangeEmitter]),
+});
+
+export const UseEarthShield = InputHelpers.makeRotationBooleanInput<Spec.SpecRestorationShaman>({
+	fieldName: 'useEarthShield',
+	label: 'Use Earth Shield',
+	labelTooltip: 'Causes earth shield to be cast on healing target.',
+	showWhen: (player: Player<Spec.SpecRestorationShaman>) => player.getTalents().earthShield,
+	changeEmitter: (player: Player<Spec.SpecRestorationShaman>) => TypedEvent.onAny([player.specOptionsChangeEmitter, player.rotationChangeEmitter, player.talentsChangeEmitter]),
+});
+
+export const TriggerEarthShield = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecRestorationShaman>({
+	fieldName: 'earthShieldPPM',
+	label: 'Earth Shield PPM',
+	labelTooltip: 'How many times Earth Shield should be triggered per minute.',
+	showWhen: (player: Player<Spec.SpecRestorationShaman>) => player.getTalents().earthShield && player.getRotation().useEarthShield,
+	changeEmitter: (player: Player<Spec.SpecRestorationShaman>) => TypedEvent.onAny([player.specOptionsChangeEmitter, player.rotationChangeEmitter, player.talentsChangeEmitter]),
+});
+
 export const RestorationShamanRotationConfig = {
 	inputs: [
+		PrimaryHealInput,
+		UseRiptide,
+		UseEarthShield,
+		TriggerEarthShield,
 	],
 };
+

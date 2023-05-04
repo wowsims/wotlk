@@ -4,6 +4,7 @@ package proto;
 option go_package = "./proto";
 
 import "common.proto";
+import "apl.proto";
 import "deathknight.proto";
 import "druid.proto";
 import "hunter.proto";
@@ -59,6 +60,8 @@ message Player {
 	Profession profession2 = 30;
 	Cooldowns cooldowns = 19;
 
+	APLRotation rotation = 40;
+
 	bool in_front_of_target = 23;
 	double distance_from_target = 33;
 
@@ -107,6 +110,7 @@ message SimOptions {
 	bool debug_first_iteration = 6;
 	bool is_test = 5; // Only used internally.
 	bool save_all_values = 7; // Only used internally.
+	bool interactive = 8; // Enables interactive mode.
 }
 
 // The aggregated results from all uses of a particular action.
@@ -301,6 +305,9 @@ message PlayerStats {
 	repeated string sets = 3;
 	IndividualBuffs buffs = 4;
 	repeated ActionID cooldowns = 5;
+
+	repeated ActionID spells = 10;
+	repeated ActionID auras = 11;
 }
 message PartyStats {
 	repeated PlayerStats players = 1;
@@ -332,6 +339,8 @@ message StatWeightsResult {
 	StatWeightValues hps = 4;
 	StatWeightValues tps = 2;
 	StatWeightValues dtps = 3;
+	StatWeightValues tmi = 5;
+	StatWeightValues p_death = 6;
 }
 message StatWeightValues {
 	UnitStats weights = 1;
@@ -359,4 +368,49 @@ message ProgressMetrics {
 	// Final Results
 	RaidSimResult final_raid_result = 6; // only set when completed
 	StatWeightsResult final_weight_result = 7;
+	BulkSimResult final_bulk_result = 10;
+}
+
+// RPC: BulkSim
+message BulkSimRequest {
+    RaidSimRequest base_settings = 1;
+    BulkSettings bulk_settings = 2;
+}
+
+message BulkSettings {
+	repeated ItemSpec items = 1;
+	bool combinations = 2;
+	bool fast_mode = 3; // Used to run with less iterations to start and slowly increase to weed out items faster.
+	// Use current enchant on the slot if not specified by the ItemSpec.
+	// Only works when replacement item is valid target for enchant.
+	bool auto_enchant = 4;
+
+	// Currently not used.
+	// Used to fill out gem slots that are not filled in the ItemSpec
+	bool auto_gem = 5;
+	int32 default_red_gem = 6;
+	int32 default_blue_gem = 7;
+	int32 default_yellow_gem = 8;
+	int32 default_meta_gem = 9;
+	bool ensure_meta_req_met = 10; // ensures that meta requirements are met when auto-gemming.
+
+	// Number of iterations per combo.
+	// If set to 0 the sim core decides the optimal iterations.
+	int32 iterations_per_combo = 11;
+}
+
+message BulkSimResult {
+    repeated BulkComboResult results = 1;
+		BulkComboResult equipped_gear_result = 2;
+    string error_result = 3; // only set if sim failed.
+}
+
+message BulkComboResult {
+    repeated ItemSpecWithSlot items_added = 1;
+    UnitMetrics unit_metrics = 2;
+}
+
+message ItemSpecWithSlot {
+    ItemSpec item = 1;
+    ItemSlot slot = 2;
 }

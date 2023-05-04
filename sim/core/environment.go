@@ -74,12 +74,14 @@ func (env *Environment) construct(raidProto *proto.Raid, encounterProto *proto.E
 	}
 
 	for _, unit := range env.Raid.AllUnits {
-		unit.CurrentTarget = &env.Encounter.Targets[0].Unit
+		unit.CurrentTarget = env.Encounter.TargetUnits[0]
 	}
 
 	// Apply extra debuffs from raid.
-	if raidProto.Debuffs != nil && len(env.Encounter.Targets) > 0 {
-		applyDebuffEffects(&env.Encounter.Targets[0].Unit, raidProto.Debuffs, raidProto)
+	if raidProto.Debuffs != nil && len(env.Encounter.TargetUnits) > 0 {
+		for targetIdx, targetUnit := range env.Encounter.TargetUnits {
+			applyDebuffEffects(targetUnit, targetIdx, raidProto.Debuffs, raidProto)
+		}
 	}
 
 	// Assign target or target using Tanks field.
@@ -130,19 +132,31 @@ func (env *Environment) initialize(raidProto *proto.Raid, encounterProto *proto.
 }
 
 // The finalization phase.
-func (env *Environment) finalize(raidProto *proto.Raid, encounterProto *proto.Encounter, raidStats *proto.RaidStats) {
+func (env *Environment) finalize(raidProto *proto.Raid, _ *proto.Encounter, raidStats *proto.RaidStats) {
 	for _, target := range env.Encounter.Targets {
 		target.finalize()
 	}
 
-	for partyIdx, party := range env.Raid.Parties {
+	for _, party := range env.Raid.Parties {
 		for _, player := range party.Players {
 			character := player.GetCharacter()
-			character.Finalize(raidStats.Parties[partyIdx].Players[character.PartyIndex])
-
+			character.Finalize()
 			for _, petAgent := range character.Pets {
 				petAgent.GetPet().Finalize()
 			}
+		}
+	}
+
+	for partyIdx, party := range env.Raid.Parties {
+		partyProto := raidProto.Parties[partyIdx]
+		for playerIdx, player := range party.Players {
+			if playerIdx >= len(partyProto.Players) {
+				// This happens for target dummies.
+				continue
+			}
+			playerProto := partyProto.Players[playerIdx]
+			char := player.GetCharacter()
+			char.Rotation = char.newAPLRotation(playerProto.Rotation)
 		}
 	}
 
@@ -156,6 +170,13 @@ func (env *Environment) finalize(raidProto *proto.Raid, encounterProto *proto.En
 	})
 
 	env.setupAttackTables()
+
+	for partyIdx, party := range env.Raid.Parties {
+		for _, player := range party.Players {
+			character := player.GetCharacter()
+			character.FillPlayerStats(raidStats.Parties[partyIdx].Players[character.PartyIndex])
+		}
+	}
 
 	env.State = Finalized
 }

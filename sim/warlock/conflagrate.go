@@ -42,7 +42,6 @@ func (warlock *Warlock) registerConflagrateSpell() {
 		},
 
 		BonusCritRating: 0 +
-			warlock.masterDemonologistFireCrit +
 			core.TernaryFloat64(warlock.Talents.Devastation, 5*core.CritRatingPerCritChance, 0) +
 			5*float64(warlock.Talents.FireAndBrimstone)*core.CritRatingPerCritChance,
 		DamageMultiplierAdditive: 1 +
@@ -77,11 +76,12 @@ func (warlock *Warlock) registerConflagrateSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := directFlatDamage + directSpellCoeff*spell.SpellPower()
-			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
-			if result.Landed() {
-				spell.Dot(target).Apply(sim)
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+			if !result.Landed() {
+				return
 			}
-			spell.DealDamage(sim, result)
+
+			spell.Dot(target).Apply(sim)
 
 			if !hasGlyphOfConflag {
 				warlock.Immolate.Dot(target).Deactivate(sim)

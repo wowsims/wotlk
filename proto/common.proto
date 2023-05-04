@@ -76,6 +76,7 @@ enum Profession {
 	Tailoring = 11;
 }
 
+// Keep in sync with sim/core/stats/stats.go.
 enum Stat {
 	StatStrength = 0;
 	StatAgility = 1;
@@ -112,6 +113,11 @@ enum Stat {
 	StatNatureResistance = 32;
 	StatShadowResistance = 33;
 	StatBonusArmor = 34;
+	StatRunicPower = 35; // Placeholder: not used yet.
+	StatBloodRune = 36; // Placeholder: not used yet.
+	StatFrostRune = 37; // Placeholder: not used yet.
+	StatUnholyRune = 38; // Placeholder: not used yet.
+	StatDeathRune = 39; // Placeholder: not used yet.
 	// DO NOT add new stats here without discussing it first; new stats come with
 	// a performance penalty.
 }
@@ -421,9 +427,11 @@ message RaidBuffs {
 	TristateEffect windfury_totem = 17; // none, 16%, 20%
 
 	// +Spell Power
-	bool totem_of_wrath = 18; // shouldn't stack with demonic pact (does in beta right now)
+	bool totem_of_wrath = 18;
 	bool flametongue_totem = 19;
-	int32 demonic_pact = 20; // SP buff, variable : 10% of demonology warlock's own SP
+	int32 demonic_pact_old = 20; // old demo SP 
+	int32 demonic_pact = 43; // SP buff -- deprecated.
+	int32 demonic_pact_sp = 44; // SP buff NEW CORRECT
 
 	// +5% Spell Crit and/or +3% Haste
 	bool swift_retribution = 21; //haste only
@@ -447,7 +455,7 @@ message RaidBuffs {
 	TristateEffect devotion_aura = 31;
 	TristateEffect stoneskin_totem = 42;
 	bool retribution_aura = 32;
-	bool shadow_protection = 33;	
+	bool shadow_protection = 33;
 
 	// Drums
 	bool drums_of_forgotten_kings = 34;
@@ -607,6 +615,20 @@ enum MobType {
 	MobTypeUndead = 8;
 }
 
+enum InputType {
+	Bool = 0;
+	Number = 1;
+}
+
+message TargetInput {
+	InputType input_type = 1;
+	string label = 2;
+	string tooltip = 5;
+	
+	bool bool_value = 3;
+	double number_value = 4;
+}
+
 message Target {
 	// The in-game NPC ID.
 	int32 id = 14;
@@ -629,6 +651,9 @@ message Target {
 	// Index in Raid.tanks indicating the player tanking this mob.
 	// -1 or invalid index indicates not being tanked.
 	int32 tank_index = 6;
+
+	// Custom Target AI parameters
+	repeated TargetInput target_inputs = 18;
 }
 
 message Encounter {
@@ -791,6 +816,8 @@ message Cooldowns {
 
 	// % HP threshold, below which defensive cooldowns can be used.
 	double hp_percent_for_defensives = 2;
+	int32 desync_proc_trinket1_seconds = 3;
+	int32 desync_proc_trinket2_seconds = 4;
 }
 
 message HealingModel {
@@ -821,4 +848,8 @@ message ItemSwap {
 	ItemSpec mh_item = 1;
 	ItemSpec oh_item = 2;
 	ItemSpec ranged_item = 3;
+}
+
+message Duration {
+	double ms = 1;
 }

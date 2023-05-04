@@ -28,10 +28,11 @@ func (dk *Deathknight) registerVampiricBloodSpell() {
 			bonusHealth = dk.MaxHealth() * 0.15
 			dk.AddStatsDynamic(sim, stats.Stats{stats.Health: bonusHealth})
 			dk.GainHealth(sim, bonusHealth, healthMetrics)
+			dk.PseudoStats.HealingTakenMultiplier *= 1.35
 		},
-
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			dk.AddStatsDynamic(sim, stats.Stats{stats.Health: -bonusHealth})
+			dk.PseudoStats.HealingTakenMultiplier /= 1.35
 		},
 	})
 
@@ -57,17 +58,9 @@ func (dk *Deathknight) registerVampiricBloodSpell() {
 	})
 
 	if !dk.Inputs.IsDps {
-		// dk.AddMajorCooldown(core.MajorCooldown{
-		// 	Spell: dk.VampiricBlood,
-		// 	Type:  core.CooldownTypeSurvival,
-		// 	CanActivate: func(sim *core.Simulation, character *core.Character) bool {
-		// 		success := dk.VampiricBlood.CanCast(sim, nil)
-		// 		if !success && dk.BloodTap.IsReady(sim) {
-		// 			dk.BloodTap.Cast(sim, nil)
-		// 			success = dk.VampiricBlood.CanCast(sim, nil)
-		// 		}
-		// 		return success
-		// 	},
-		// })
+		dk.AddMajorCooldown(core.MajorCooldown{
+			Spell: dk.VampiricBlood,
+			Type:  core.CooldownTypeSurvival,
+		})
 	}
 }

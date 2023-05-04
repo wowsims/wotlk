@@ -71,7 +71,7 @@ export class SpellMetricsTable extends MetricsTable<ActionMetrics> {
 			},
 			{
 				name: 'Miss %',
-				tooltip: 'Misses / (Hits + Misses)',
+				tooltip: 'Misses / Casts',
 				getValue: (metric: ActionMetrics) => metric.missPercent,
 				getDisplayString: (metric: ActionMetrics) => metric.missPercent.toFixed(2) + '%',
 			},

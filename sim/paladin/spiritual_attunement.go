@@ -23,13 +23,13 @@ func (paladin *Paladin) registerSpiritualAttunement() {
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			// We assume we were instantly healed for the damage.
 			if result.Damage > 0 {
-				paladin.AddMana(sim, result.Damage*SpiritualAttunementScalar, paladin.SpiritualAttunementMetrics, false)
+				paladin.AddMana(sim, result.Damage*SpiritualAttunementScalar, paladin.SpiritualAttunementMetrics)
 			}
 		},
 		OnPeriodicDamageTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			// We assume we were instantly healed for the damage.
 			if result.Damage > 0 {
-				paladin.AddMana(sim, result.Damage*SpiritualAttunementScalar, paladin.SpiritualAttunementMetrics, false)
+				paladin.AddMana(sim, result.Damage*SpiritualAttunementScalar, paladin.SpiritualAttunementMetrics)
 			}
 		},
 	})

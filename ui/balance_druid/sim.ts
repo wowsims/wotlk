@@ -10,12 +10,13 @@ import * as OtherInputs from '../core/components/other_inputs.js';
 import * as DruidInputs from './inputs.js';
 import * as Presets from './presets.js';
 
+// noinspection TypeScriptValidateTypes
 export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecBalanceDruid>) {
 		super(parentElem, player, {
 			cssClass: 'balance-druid-sim-ui',
 			cssScheme: 'druid',
-			// List any known bugs / issues here and they'll be shown on the site.
+			// List any known bugs / issues here, and they'll be shown on the site.
 			knownIssues: [
 			],
 
@@ -46,14 +47,14 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P1_PRESET.gear,
+				gear: Presets.P2_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
-					[Stat.StatIntellect]: 0.38,
+					[Stat.StatIntellect]: 0.43,
 					[Stat.StatSpirit]: 0.34,
 					[Stat.StatSpellPower]: 1,
-					[Stat.StatSpellCrit]: 0.69,
-					[Stat.StatSpellHaste]: 0.77,
+					[Stat.StatSpellCrit]: 0.82,
+					[Stat.StatSpellHaste]: 0.80,
 					[Stat.StatMP5]: 0.00,
 				}),
 				// Default consumes settings.
@@ -61,7 +62,7 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 				// Default rotation settings.
 				rotation: Presets.DefaultRotation,
 				// Default talents.
-				talents: Presets.StandardTalents.data,
+				talents: Presets.Phase2Talents.data,
 				// Default spec-specific settings.
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
@@ -105,7 +106,8 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 			presets: {
 				// Preset talents that the user can quickly select.
 				talents: [
-					Presets.StandardTalents,
+					Presets.Phase1Talents,
+					Presets.Phase2Talents,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [

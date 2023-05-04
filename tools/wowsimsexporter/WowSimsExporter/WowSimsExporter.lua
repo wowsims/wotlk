@@ -1,5 +1,8 @@
 -- Author      : generalwrex (Natop on Myzrael TBC)
 -- Create Date : 1/28/2022 9:30:08 AM
+--
+-- Update Date : 2023-04-16 Riotdog-GehennasEU: v2.5 - exporting bag items for bulk sim, fixes use of legacy APIs in libs and corrects link order (LibStub must come first).
+--
 
 WowSimsExporter = LibStub("AceAddon-3.0"):NewAddon("WowSimsExporter", "AceConsole-3.0", "AceEvent-3.0")
 
@@ -10,7 +13,11 @@ WowSimsExporter.Link = "https://wowsims.github.io/wotlk/"
 local AceGUI = LibStub("AceGUI-3.0")
 local LibParse = LibStub("LibParse")
 
-local version = "2.4"
+local version = "2.5"
+
+-- Ulduar WotLK classic patch moved to the retail API.
+local GetContainerNumSlots = C_Container and C_Container.GetContainerNumSlots or _G.GetContainerNumSlots
+local GetContainerItemLink = C_Container and C_Container.GetContainerItemLink or _G.GetContainerItemLink
 
 local defaults = {
 	profile = {
@@ -64,32 +71,18 @@ end
 function WowSimsExporter:CreateGlyphEntry()
 	local minor = {}
 	local major = {}
-
-    for t = 1, 6 do
-
-		local enabled, glyphType, glyphTooltipIndex, glyphSpellID, icon = GetGlyphSocketInfo(t);
-		local link = GetGlyphLink(t);
-
-		if(enabled) then	
-			
-			local name, _ = string.match(link,"Glyph of .+]")
-			if(name) then
-				local formattedName = name:gsub('%]', '')
-
-				if(glyphType == 1 ) then-- major
-					table.insert(major, formattedName)
-				else if(glyphType == 2 ) then -- minor
-					table.insert(minor, formattedName)
-				end
+	for t = 1, 6 do
+		local enabled, glyphType, glyphSpellID = GetGlyphSocketInfo(t)
+		if enabled and glyphSpellID then
+			local localizedName = GetSpellInfo(glyphSpellID)
+			if localizedName then
+				local t = glyphType == 1 and major or minor
+				table.insert(t, {["name"] = localizedName, ["spellID"] = glyphSpellID})
 			end
-
 		end
 		self.Character.glyphs.major = major
 		self.Character.glyphs.minor = minor
-	
-    end
-
-end
+	end
 end
 
 function WowSimsExporter:CreateProfessionEntry()
@@ -159,51 +152,72 @@ function WowSimsExporter:OpenWindow(input)
     end
 end
 
-function WowSimsExporter:GetGearEnchantGems(type)
-    local gear = {}
+function WowSimsExporter:createItemFromItemLink(itemLink)
+	local Id, Enchant, Gem1, Gem2, Gem3, Gem4 = self:ParseItemLink(itemLink)
+	item = {}
+	item.id = tonumber(Id)
+	item.enchant = tonumber(Enchant)
+	item.gems = {tonumber(Gem1), tonumber(Gem2), tonumber(Gem3), tonumber(Gem4)}
+	return item
+end
 
-	local slotNames = WowSimsExporter.slotNames
+	-- TODO(Riotdog-GehennasEU): Is this sufficient? This seems to be what simc uses:
+	-- https://github.com/simulationcraft/simc-addon/blob/master/core.lua
+	-- Except we don't need the artifact check for wotlk classic.
+function considerItemReplacement(itemLink)
+	if not IsEquippableItem(itemLink) then
+		return false
+	end
 
-    for slotNum = 1, #slotNames do
-        local slotId = GetInventorySlotInfo(slotNames[slotNum])
-        local itemLink = GetInventoryItemLink("player", slotId)
+	local _, _, itemRarity, itemLevel = GetItemInfo(itemLink)
 
-        if itemLink then
-			gear[slotNum] = self:ParseItemLink(itemLink)
-        end
-    end
+	-- Ignore TBC items like Rocket Boots Xtreme (Lite). The ilvl limit is intentionally set low
+	-- to limit accidental filtering.
+	if itemLevel <= 112 then
+		return false
+	end
 
-    local bagSlots = {BANK_CONTAINER}
-    for bagNum = 0, NUM_BAG_SLOTS+NUM_BANKBAGSLOTS do
-        if GetContainerNumSlots(bagNum) > 0 then
-            table.insert(bagSlots, bagNum)
-        end
-    end
+	-- https://wowwiki-archive.fandom.com/wiki/API_TYPE_Quality
+	-- 3 = Rare, 4 = Epic, 5 = Legendary
+	return itemRarity == 3 or itemRarity == 4 or itemRarity == 5
+end
 
-    local bags = {}
+function WowSimsExporter:GetGearEnchantGems(withBags)
+	self.Character.gear = {}
+	self.Character.glyphs = {}
+	self.Character.bagItems = {}
+	self.Character.items = nil
 
-    for bagNum = 1, #bagSlots do
-        local slotCount = GetContainerNumSlots(bagSlots[bagNum])
-        for slotNum = 1, slotCount do
-            local _,_,_,_,_,_,itemLink = GetContainerItemInfo(bagSlots[bagNum], slotNum)
-            if itemLink and IsEquippableItem(itemLink) then
-                local _,_,_,_,_,_,_,_,itemEquipLoc,_,_ = GetItemInfo(itemLink)
+	if not withBags then
+		local equippedGear = {}
+		local slotNames = WowSimsExporter.slotNames
+		for slotNum = 1, #slotNames do
+				local slotId = GetInventorySlotInfo(slotNames[slotNum])
+				local itemLink = GetInventoryItemLink("player", slotId)
+				if itemLink then
+					equippedGear[slotNum] = self:createItemFromItemLink(itemLink)
+				end
+		end
 
-                if itemEquipLoc ~= "INVTYPE_BAG" then
-                    table.insert(bags, self:ParseItemLink(itemLink))
-                end
-            end
-        end
-    end
+		self.Character.spec = self:CheckCharacterSpec(self.Character.class)
+		self.Character.talents = self:CreateTalentEntry()
+		self:CreateGlyphEntry() -- wotlk
+		self:CreateProfessionEntry() -- wotlk
+		self.Character.gear.items = equippedGear
+		return self.Character
+	end
 
-	self.Character.spec = self:CheckCharacterSpec(self.Character.class)
-	self.Character.talents = self:CreateTalentEntry()
-	self:CreateGlyphEntry() -- wotlk
-	self:CreateProfessionEntry() -- wotlk
-	self.Character.gear.items = gear
-    self.Character.gear.bags = bags
-
-    return self.Character
+	local bagGear = {}
+	for bag = 0, 4 do
+		for slot = 1, GetContainerNumSlots(bag) do
+			local itemLink = GetContainerItemLink(bag, slot)
+			if itemLink and considerItemReplacement(itemLink) then
+				table.insert(bagGear, self:createItemFromItemLink(itemLink))
+			end
+		end
+	end
+	DEFAULT_CHAT_FRAME:AddMessage(("[|cffFFFF00WowSimsExporter|r] Exported %d items from bags."):format(#bagGear))
+  return {["items"] = bagGear}
 end
 
 
@@ -213,11 +227,7 @@ function WowSimsExporter:ParseItemLink(itemLink)
         itemLink,
         "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?"
     )
-    local item = {}
-    item.id = tonumber(Id)
-    item.enchant = tonumber(Enchant)
-    item.gems = {tonumber(Gem1), tonumber(Gem2), tonumber(Gem3), tonumber(Gem4)}
-    return item
+    return Id, Enchant, Gem1, Gem2, Gem3, Gem4
 end
 
 function WowSimsExporter:OnInitialize()
@@ -295,7 +305,6 @@ function WowSimsExporter:CreateCopyDialog(text)
 end
 
 function WowSimsExporter:CreateWindow(generate)
-
 	local char = self:CreateCharacterStructure("player")
 	
     local frame = AceGUI:Create("Frame")
@@ -316,9 +325,15 @@ function WowSimsExporter:CreateWindow(generate)
     jsonbox:SetFullHeight(true)
     jsonbox:DisableButton(true)
    
-	local function l_Generate()
-		WowSimsExporter.Character = WowSimsExporter:GetGearEnchantGems("player")
-		jsonbox:SetText(LibParse:JSONEncode(WowSimsExporter.Character)) 
+	local function l_Generate(withBags)
+		jsonbox:SetText('')
+		if not withBags then
+			WowSimsExporter.Character = WowSimsExporter:GetGearEnchantGems(withBags)
+			jsonbox:SetText(LibParse:JSONEncode(WowSimsExporter.Character))
+		else
+			local bagData = WowSimsExporter:GetGearEnchantGems(withBags)
+			jsonbox:SetText(LibParse:JSONEncode(bagData))
+		end
 		jsonbox:HighlightText()
 		jsonbox:SetFocus()
 
@@ -327,23 +342,28 @@ function WowSimsExporter:CreateWindow(generate)
 
 	if generate then l_Generate() end
 
-    local button = AceGUI:Create("Button")
-    button:SetText("Generate Data")
-    button:SetWidth(200)
+  local button = AceGUI:Create("Button")
+    button:SetText("Generate Data (Equipped Only)")
+    button:SetWidth(300)
 	button:SetCallback("OnClick", function()		
-		l_Generate()
+		l_Generate(false)
 	end)
-	
+
+	local extraButton = AceGUI:Create("Button")
+	extraButton:SetText("Batch: Export Bag Items")
+	extraButton:SetWidth(300)
+	extraButton:SetCallback("OnClick", function()		
+		l_Generate(true)
+	end)
 	
 	local icon = AceGUI:Create("Icon")
 	icon:SetImage("Interface\\AddOns\\wowsimsexporter\\Skins\\wowsims.tga") 
 	icon:SetImageSize(32, 32)
 	icon:SetFullWidth(true)
 
-
-    local label = AceGUI:Create("Label")
+  local label = AceGUI:Create("Label")
 	label:SetFullWidth(true)
-    label:SetText([[
+  label:SetText([[
 
 To upload your character to the simuator, click on the url below that leads to the simuator website.
 
@@ -374,6 +394,7 @@ into the provided box and click "Import"
 		frame:AddChild(label)
 		WowSimsExporter:BuildLinks(frame, char)
 		frame:AddChild(button)
+		frame:AddChild(extraButton)
 		frame:AddChild(jsonbox)
 
 	end

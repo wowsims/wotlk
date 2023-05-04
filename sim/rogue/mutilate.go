@@ -7,9 +7,6 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-var MHOutcome = core.OutcomeHit
-var OHOutcome = core.OutcomeHit
-
 var MutilateSpellID int32 = 48666
 
 func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
@@ -24,16 +21,16 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    procMask,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | SpellFlagBuilder | SpellFlagColdBlooded,
 
-		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +
+		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(Tier9, 4), 5*core.CritRatingPerCritChance, 0) +
 			[]float64{0, 2, 4, 6}[rogue.Talents.TurnTheTables]*core.CritRatingPerCritChance +
 			5*core.CritRatingPerCritChance*float64(rogue.Talents.PuncturingWounds),
 
 		DamageMultiplierAdditive: 1 +
 			0.1*float64(rogue.Talents.Opportunity) +
 			0.02*float64(rogue.Talents.FindWeakness) +
-			core.TernaryFloat64(rogue.HasSetBonus(ItemSetSlayers, 4), 0.06, 0),
+			core.TernaryFloat64(rogue.HasSetBonus(Tier6, 4), 0.06, 0),
 		DamageMultiplier: 1 *
 			core.TernaryFloat64(isMH, 1, rogue.dwsMultiplier()),
 		CritMultiplier:   rogue.MeleeCritMultiplier(true),
@@ -51,26 +48,20 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 				baseDamage *= 1.2
 			}
 
-			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialCritOnly)
-
-			if isMH {
-				MHOutcome = result.Outcome
-			} else {
-				OHOutcome = result.Outcome
-			}
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialCritOnly)
 		},
 	})
 }
 
 func (rogue *Rogue) registerMutilateSpell() {
-	mhHitSpell := rogue.newMutilateHitSpell(true)
-	ohHitSpell := rogue.newMutilateHitSpell(false)
+	rogue.MutilateMH = rogue.newMutilateHitSpell(true)
+	rogue.MutilateOH = rogue.newMutilateHitSpell(false)
 
 	rogue.Mutilate = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: MutilateSpellID},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | SpellFlagBuilder,
+		Flags:       core.SpellFlagMeleeMetrics,
 
 		EnergyCost: core.EnergyCostOptions{
 			Cost:   rogue.costModifier(60 - core.TernaryFloat64(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfMutilate), 5, 0)),
@@ -89,11 +80,8 @@ func (rogue *Rogue) registerMutilateSpell() {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit) // Miss/Dodge/Parry/Hit
 			if result.Landed() {
 				rogue.AddComboPoints(sim, 2, spell.ComboPointMetrics())
-				mhHitSpell.Cast(sim, target)
-				ohHitSpell.Cast(sim, target)
-				if MHOutcome == core.OutcomeCrit || OHOutcome == core.OutcomeCrit {
-					result.Outcome = core.OutcomeCrit
-				}
+				rogue.MutilateOH.Cast(sim, target)
+				rogue.MutilateMH.Cast(sim, target)
 			} else {
 				spell.IssueRefund(sim)
 			}

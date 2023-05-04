@@ -16,7 +16,7 @@ export const raidSimStatus: LaunchStatus = LaunchStatus.Alpha;
 // This list controls which links are shown in the top-left dropdown menu.
 export const simLaunchStatuses: Record<Spec, LaunchStatus> = {
 	[Spec.SpecBalanceDruid]: LaunchStatus.Beta,
-	[Spec.SpecFeralDruid]: LaunchStatus.Beta,
+	[Spec.SpecFeralDruid]: LaunchStatus.Launched,
 	[Spec.SpecFeralTankDruid]: LaunchStatus.Beta,
 	[Spec.SpecRestorationDruid]: LaunchStatus.Unlaunched,
 	[Spec.SpecElementalShaman]: LaunchStatus.Beta,

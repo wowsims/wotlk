@@ -50,8 +50,8 @@ func (rotation *AdaptiveRotation) DoAction(eleShaman *ElementalShaman, sim *core
 
 	shouldTS := false
 	cmp := eleShaman.CurrentManaPercent()
-	percent := 0.55
-	if len(eleShaman.Env.Encounter.Targets) > 1 {
+	percent := sim.GetRemainingDurationPercent() - 0.1
+	if eleShaman.Env.GetNumTargets() > 1 {
 		percent = 0.9 // single target we need less mana.
 	}
 	if cmp < percent {
@@ -94,9 +94,9 @@ func (rotation *AdaptiveRotation) DoAction(eleShaman *ElementalShaman, sim *core
 	}
 
 	if cmp > rotation.clmm && eleShaman.ChainLightning.IsReady(sim) {
-		lbTime := eleShaman.ApplyCastSpeed(eleShaman.LightningBolt.DefaultCast.CastTime)
-		// Only CL if LB is slower than CL or there is more than 1 target.
-		if lbTime > time.Second || len(eleShaman.Env.Encounter.Targets) > 1 {
+		clTime := eleShaman.ApplyCastSpeed(eleShaman.ChainLightning.DefaultCast.CastTime)
+		// Only CL if cast time > 1 second than CL or there is more than 1 target.
+		if clTime > core.GCDMin || eleShaman.Env.GetNumTargets() > 1 {
 			if !eleShaman.ChainLightning.Cast(sim, target) {
 				eleShaman.WaitForMana(sim, eleShaman.ChainLightning.CurCast.Cost)
 			}
@@ -177,8 +177,8 @@ func (rotation *ManualRotation) DoAction(eleShaman *ElementalShaman, sim *core.S
 	cmp := eleShaman.CurrentManaPercent()
 
 	// TODO: expose these percents to let user tweak
-	percent := 0.55
-	if len(eleShaman.Env.Encounter.Targets) > 1 {
+	percent := sim.GetRemainingDurationPercent() - 0.1
+	if eleShaman.Env.GetNumTargets() > 1 {
 		percent = 0.9
 	}
 	if cmp < percent {
@@ -208,11 +208,12 @@ func (rotation *ManualRotation) DoAction(eleShaman *ElementalShaman, sim *core.S
 	}
 
 	shouldCL := rotation.options.UseChainLightning && cmp > (rotation.options.ClMinManaPer/100) && eleShaman.ChainLightning.IsReady(sim)
-	lbTime := eleShaman.ApplyCastSpeed(eleShaman.LightningBolt.DefaultCast.CastTime)
+	clTime := eleShaman.ApplyCastSpeed(eleShaman.ChainLightning.DefaultCast.CastTime)
 
-	// Never cast CL if single target and LB cast time == CL cast time.
-	if lbTime <= time.Second && len(eleShaman.Env.Encounter.Targets) == 1 {
-		shouldCL = false // never CL if your LB is just as fast.
+	// Never cast CL if single target and cast time <= 1 second
+	// This is effecively a waste of haste (that is probably temporary.)
+	if clTime <= time.Second && eleShaman.Env.GetNumTargets() == 1 {
+		shouldCL = false
 	}
 	lvbCD := eleShaman.LavaBurst.CD.TimeToReady(sim)
 	if shouldCL && rotation.options.UseClOnlyGap {

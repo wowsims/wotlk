@@ -170,6 +170,10 @@ func (target *Target) init(sim *Simulation) {
 
 func (target *Target) Reset(sim *Simulation) {
 	target.Unit.reset(sim, nil)
+	target.SetGCDTimer(sim, 0)
+	if target.AI != nil {
+		target.AI.Reset(sim)
+	}
 }
 
 func (target *Target) Advance(sim *Simulation, elapsedTime time.Duration) {
@@ -212,11 +216,11 @@ type AttackTable struct {
 	GlanceMultiplier float64
 	CritSuppression  float64
 
-	DamageDealtMultiplier               float64 // attacker buff, applied in applyAttackerModifiers()
-	DamageTakenMultiplier               float64 // defender debuff, applied in applyTargetModifiers()
-	NatureDamageTakenMultiplier         float64
-	PeriodicShadowDamageTakenMultiplier float64
-	HealingDealtMultiplier              float64
+	DamageDealtMultiplier        float64 // attacker buff, applied in applyAttackerModifiers()
+	DamageTakenMultiplier        float64 // defender debuff, applied in applyTargetModifiers()
+	NatureDamageTakenMultiplier  float64
+	HauntSEDamageTakenMultiplier float64
+	HealingDealtMultiplier       float64
 }
 
 func NewAttackTable(attacker *Unit, defender *Unit) *AttackTable {
@@ -224,11 +228,11 @@ func NewAttackTable(attacker *Unit, defender *Unit) *AttackTable {
 		Attacker: attacker,
 		Defender: defender,
 
-		DamageDealtMultiplier:               1,
-		DamageTakenMultiplier:               1,
-		NatureDamageTakenMultiplier:         1,
-		PeriodicShadowDamageTakenMultiplier: 1,
-		HealingDealtMultiplier:              1,
+		DamageDealtMultiplier:        1,
+		DamageTakenMultiplier:        1,
+		NatureDamageTakenMultiplier:  1,
+		HauntSEDamageTakenMultiplier: 1,
+		HealingDealtMultiplier:       1,
 	}
 
 	if defender.Type == EnemyUnit {

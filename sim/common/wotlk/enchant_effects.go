@@ -143,7 +143,7 @@ func init() {
 			},
 		})
 
-		character.ItemSwap.ReigsterOnSwapItemForEffect(3748, aura)
+		character.ItemSwap.RegisterOnSwapItemForEffect(3748, aura)
 	})
 
 	core.NewEnchantEffect(3247, func(agent core.Agent) {
@@ -258,7 +258,7 @@ func init() {
 			},
 		})
 
-		character.ItemSwap.ReigsterOnSwapItemForEffect(3790, aura)
+		character.ItemSwap.RegisterOnSwapItemForEffect(3790, aura)
 	})
 
 	core.AddWeaponEffect(3843, func(agent core.Agent, _ proto.ItemSlot) {
@@ -351,18 +351,26 @@ func init() {
 			Duration: time.Second * 60,
 		}
 
+		callback := func(_ *core.Aura, sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
+			if !result.Landed() {
+				return
+			}
+
+			if icd.IsReady(sim) && sim.RandomFloat("Lightweave") < 0.35 {
+				icd.Use(sim)
+				procAura.Activate(sim)
+			}
+		}
+
 		character.GetOrRegisterAura(core.Aura{
 			Label:    "Lightweave Embroidery",
 			Duration: core.NeverExpires,
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if icd.IsReady(sim) && sim.RandomFloat("Lightweave") < 0.35 {
-					icd.Use(sim)
-					procAura.Activate(sim)
-				}
-			},
+			OnHealDealt:           callback,
+			OnPeriodicDamageDealt: callback,
+			OnSpellHitDealt:       callback,
 		})
 	})
 
@@ -387,7 +395,7 @@ func init() {
 			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 				if icd.IsReady(sim) && sim.RandomFloat("Darkglow") < 0.35 {
 					icd.Use(sim)
-					character.AddMana(sim, 400, manaMetrics, false)
+					character.AddMana(sim, 400, manaMetrics)
 				}
 			},
 		})

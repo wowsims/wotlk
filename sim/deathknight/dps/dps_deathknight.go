@@ -58,11 +58,8 @@ func NewDpsDeathknight(character core.Character, player *proto.Player) *DpsDeath
 			UseAMS:              dk.Rotation.UseAms,
 			AvgAMSSuccessRate:   dk.Rotation.AvgAmsSuccessRate,
 			AvgAMSHit:           dk.Rotation.AvgAmsHit,
-		}, player.TalentsString),
+		}, player.TalentsString, dk.Rotation.PreNerfedGargoyle),
 		Rotation: dk.Rotation,
-	}
-	if dpsDk.Talents.SummonGargoyle {
-		dpsDk.Gargoyle = dpsDk.NewGargoyle(!dk.Rotation.PreNerfedGargoyle)
 	}
 
 	dpsDk.Inputs.UnholyFrenzyTarget = dk.Options.UnholyFrenzyTarget
@@ -204,16 +201,6 @@ func (dk *DpsDeathknight) GetDeathknight() *deathknight.Deathknight {
 
 func (dk *DpsDeathknight) Initialize() {
 	dk.Deathknight.Initialize()
-
-	if dk.Talents.DancingRuneWeapon {
-		dk.br.drwSnapshot = core.NewSnapshotManager(dk.GetCharacter())
-		dk.setupDrwProcTrackers()
-	}
-
-	if dk.Talents.SummonGargoyle {
-		dk.ur.gargoyleSnapshot = core.NewSnapshotManager(dk.GetCharacter())
-		dk.setupGargProcTrackers()
-	}
 
 	dk.sr.Initialize(dk)
 	dk.br.Initialize(dk)

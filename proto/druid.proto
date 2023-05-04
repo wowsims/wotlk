@@ -147,7 +147,7 @@ message BalanceDruid {
   message Rotation {
 		enum Type {
 			Unknown = 0;
-			Adaptive = 1;
+			Default = 1;
 			Manual = 2;
 		}
 		Type type = 1;
@@ -163,17 +163,30 @@ message BalanceDruid {
 			NoIs = 0;
 			BeforeSolar = 1;
 			MaximizeIs = 2;
+			MultidotIs = 3;
 		}
 		IsUsage is_usage = 3;
 
 		bool use_battle_res = 4;
-		bool use_wrath = 5;
+		enum WrathUsage {
+			NoWrath = 0;
+			FishingForLunar= 1;
+			RegularWrath = 2;
+		}
+		WrathUsage wrath_usage = 5;
 		bool use_starfire = 6;
 		bool use_typhoon = 7;
 		bool use_hurricane = 8;
 		bool use_smart_cooldowns = 9;
 		bool maintain_faerie_fire = 10;
 		int32 player_latency = 11;
+
+		enum EclipsePrio {
+			Lunar = 0;
+			Solar = 1;
+		}
+		EclipsePrio eclipse_prio = 12;
+		bool eclipse_shuffling = 13;
 	}
   Rotation rotation = 1;
 
@@ -185,33 +198,41 @@ message BalanceDruid {
 
 message FeralDruid {
   message Rotation {
+	enum AplType {
+		SingleTarget = 0;
+		Aoe = 1;
+	}
     enum BearweaveType {
       None = 0;
       Mangle = 1;
       Lacerate = 2;
     }
-		enum BiteModeType {
+    enum BiteModeType {
       Emperical = 0;
       Analytical = 1;
     }
 
     BearweaveType bear_weave_type = 1;
-		bool maintain_faerie_fire = 2;
-		int32 min_combos_for_rip = 3;
-		bool use_rake = 4;
-		bool use_bite = 5;
-		bool mangle_spam = 6;
-		float bite_time = 7;
-		int32 min_combos_for_bite = 8;
-		int32 berserk_bite_thresh = 9;
-		bool powerbear = 10;
-		float min_roar_offset = 11;
-		BiteModeType bite_mode_type = 12;
-		float hot_uptime = 13;
-		bool snek_weave = 14;
-		bool flower_weave = 15;
-		int32 raid_targets = 16;
-		bool manual_params = 17;
+	bool maintain_faerie_fire = 2;
+	int32 min_combos_for_rip = 3;
+	bool use_rake = 4;
+	bool use_bite = 5;
+	bool mangle_spam = 6;
+	float bite_time = 7;
+	int32 min_combos_for_bite = 8;
+	int32 berserk_bite_thresh = 9;
+	int32 berserk_ff_thresh = 18;
+	int32 rip_leeway = 19;
+	bool powerbear = 10;
+	float min_roar_offset = 11;
+	BiteModeType bite_mode_type = 12;
+	float hot_uptime = 13;
+	bool snek_weave = 14;
+	bool flower_weave = 15;
+	int32 raid_targets = 16;
+	bool manual_params = 17;
+	float max_ff_delay = 20;
+	AplType rotation_type = 21;
   }
   Rotation rotation = 1;
 

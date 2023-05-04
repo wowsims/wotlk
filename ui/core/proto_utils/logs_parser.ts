@@ -818,7 +818,6 @@ export class CastLog extends SimLog {
 			const abilityCastsBegan = castBeganLogsByAbility[bucketKey]!;
 			const abilityCastsCompleted = castCompletedLogsByAbility[bucketKey];
 			const abilityDamageDealt = damageDealtLogsByAbility[bucketKey];
-			const actionId = abilityCastsBegan[0].actionId!;
 
 			let ddIdx = 0;
 			for (let cbIdx = 0; cbIdx < abilityCastsBegan.length; cbIdx++) {
@@ -826,8 +825,14 @@ export class CastLog extends SimLog {
 
 				// Assume cast completed log is the same index because they always come in pairs.
 				// Only exception is final pair, where there might be a cast began without a cast completed.
-				const ccLog = abilityCastsCompleted[cbIdx] || null;
-				const nextCcLog = abilityCastsCompleted[cbIdx + 1] || null;
+				let ccLog: CastCompletedLog|null = null;
+				let nextCcLog: CastCompletedLog|null = null;
+				if (abilityCastsCompleted && cbIdx < abilityCastsCompleted.length) {
+					ccLog = abilityCastsCompleted[cbIdx];
+					if (cbIdx + 1 < abilityCastsCompleted.length) {
+						nextCcLog = abilityCastsCompleted[cbIdx + 1];
+					}
+				}
 
 				// Find all damage dealt logs between the cur and next cast completed logs.
 				let ddLogs = [];

@@ -54,6 +54,14 @@ export class UnitStat {
 		}
 	}
 
+	setProtoValue(proto: UnitStats, val: number) {
+		if (this.isStat()) {
+			proto.stats[this.stat!] = val;
+		} else {
+			proto.pseudoStats[this.pseudoStat!] = val;
+		}
+	}
+
 	static fromStat(stat: Stat): UnitStat {
 		return new UnitStat(stat, null);
 	}
@@ -150,6 +158,12 @@ export class Stats {
 		return new Stats(
 			this.stats.map((value, stat) => value - other.stats[stat]),
 			this.pseudoStats.map((value, stat) => value - other.pseudoStats[stat]));
+	}
+
+	scale(scalar: number): Stats {
+		return new Stats(
+			this.stats.map((value, stat) => value * scalar),
+			this.pseudoStats.map((value, stat) => value * scalar));
 	}
 
 	computeEP(epWeights: Stats): number {

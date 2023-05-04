@@ -9,8 +9,6 @@ import (
 
 type FrostRotation struct {
 	oblitCount int32
-	oblitDelay time.Duration
-	uaCycle    bool
 
 	// CDS
 	hyperSpeedMCD           *core.MajorCooldown
@@ -24,17 +22,26 @@ type FrostRotation struct {
 	onUseTrinkets []*core.MajorCooldown
 
 	oblitRPRegen float64
+
+	fuSpellPriority []*core.Spell
+	bloodSpell      *core.Spell
 }
 
 func (fr *FrostRotation) Initialize(dk *DpsDeathknight) {
 	fr.oblitRPRegen = core.TernaryFloat64(dk.HasSetBonus(deathknight.ItemSetScourgeborneBattlegear, 4), 25.0, 20.0)
 	fr.onUseTrinkets = make([]*core.MajorCooldown, 0)
+
+	if dk.Env.GetNumTargets() > 2 {
+		fr.fuSpellPriority = []*core.Spell{dk.HowlingBlast, dk.Obliterate}
+		fr.bloodSpell = dk.BloodBoil
+	} else {
+		fr.fuSpellPriority = []*core.Spell{dk.Obliterate}
+		fr.bloodSpell = dk.BloodStrike
+	}
 }
 
 func (fr *FrostRotation) Reset(sim *core.Simulation) {
 	fr.oblitCount = 0
-	fr.oblitDelay = 0
-	fr.uaCycle = false
 
 	fr.hyperSpeedMCD = nil
 	fr.stoneformMCD = nil
@@ -168,12 +175,26 @@ func (dk *DpsDeathknight) RotationActionCallback_UA_Frost(sim *core.Simulation, 
 }
 
 func (dk *DpsDeathknight) RotationActionCallback_Frost_FS_HB(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	if dk.RimeAura.IsActive() {
+	if dk.RimeAura.IsActive() && dk.Talents.HowlingBlast {
 		dk.HowlingBlast.Cast(sim, target)
-	} else {
+	} else if dk.Talents.FrostStrike {
 		dk.FrostStrike.Cast(sim, target)
 	}
 
 	s.Advance()
+	return -1
+}
+
+func (dk *DpsDeathknight) RotationActionCallback_Frost_Pesti_ERW(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+	// Casts Pesti then ERW in the same GCD (rather than chaining them sequentially which will cause ERW to be delayed by pesti GCD)
+	// This is a DPS increase since it allows rune grace to start as soon as possible
+	casted := dk.Pestilence.Cast(sim, target)
+	advance := casted && dk.LastOutcome.Matches(core.OutcomeLanded)
+
+	if advance {
+		casted = dk.EmpowerRuneWeapon.Cast(sim, target)
+		advance = casted && advance
+		s.ConditionalAdvance(advance)
+	}
 	return -1
 }

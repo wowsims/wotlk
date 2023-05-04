@@ -42,7 +42,7 @@ func (rogue *Rogue) registerPreparationCD() {
 		Type:     core.CooldownTypeDPS,
 		Priority: core.CooldownPriorityDefault,
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return !rogue.MasterOfSubtlety.CD.IsReady(sim)
+			return rogue.MasterOfSubtlety != nil && !rogue.MasterOfSubtlety.CD.IsReady(sim)
 		},
 	})
 }

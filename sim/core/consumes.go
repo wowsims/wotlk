@@ -269,9 +269,9 @@ func applyConsumeEffects(agent Agent) {
 				stats.ShadowResistance: 10,
 			})
 
-			var debuffAuras []*Aura
-			for _, target := range character.Env.Encounter.Targets {
-				debuffAuras = append(debuffAuras, GiftOfArthasAura(&target.Unit))
+			debuffAuras := make([]*Aura, len(character.Env.Encounter.TargetUnits))
+			for i, target := range character.Env.Encounter.TargetUnits {
+				debuffAuras[i] = GiftOfArthasAura(target)
 			}
 
 			actionID := ActionID{SpellID: 11374}
@@ -550,7 +550,7 @@ func makePotionActivation(potionType proto.Potions, character *Character, potion
 					} else if hasEngi && potionType == proto.Potions_RunicManaInjector {
 						manaGain *= 1.25
 					}
-					character.AddMana(sim, manaGain, manaMetrics, true)
+					character.AddMana(sim, manaGain, manaMetrics)
 				},
 			}),
 		}
@@ -631,7 +631,7 @@ func makePotionActivation(potionType proto.Potions, character *Character, potion
 					if alchStoneEquipped {
 						manaGain *= 1.4
 					}
-					character.AddMana(sim, manaGain, manaMetrics, true)
+					character.AddMana(sim, manaGain, manaMetrics)
 				},
 			}),
 		}
@@ -775,7 +775,7 @@ func registerConjuredCD(agent Agent, consumes *proto.Consumes) {
 			ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
 				// Restores 900 to 1500 mana. (2 Min Cooldown)
 				manaGain := sim.RollWithLabel(900, 1500, "dark rune")
-				character.AddMana(sim, manaGain, manaMetrics, true)
+				character.AddMana(sim, manaGain, manaMetrics)
 
 				// if character.Class == proto.Class_ClassPaladin {
 				// 	// Paladins gain extra mana from self-inflicted damage
@@ -965,9 +965,9 @@ func (character *Character) newBasicExplosiveSpellConfig(sharedTimer *Timer, act
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
-			for _, aoeTarget := range sim.Encounter.Targets {
+			for _, aoeTarget := range sim.Encounter.TargetUnits {
 				baseDamage := sim.Roll(minDamage, maxDamage) * sim.Encounter.AOECapMultiplier()
-				spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeMagicHitAndCrit)
+				spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeMagicHitAndCrit)
 			}
 
 			if dealSelfDamage {

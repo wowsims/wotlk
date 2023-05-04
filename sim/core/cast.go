@@ -59,6 +59,7 @@ type Cast struct {
 func (cast Cast) EffectiveTime() time.Duration {
 	gcd := cast.GCD
 	if cast.GCD != 0 {
+		// TODO: isn't this wrong for spells like shadowfury, that have a reduced GCD?
 		gcd = MaxDuration(GCDMin, gcd)
 	}
 	fullCastTime := cast.CastTime + cast.ChannelTime + cast.AfterCastDelay
@@ -150,27 +151,23 @@ func (spell *Spell) wrapCastFuncCDsReady(config CastConfig, onCastComplete CastS
 }
 
 func (spell *Spell) wrapCastFuncResources(config CastConfig, onCastComplete CastFunc) CastSuccessFunc {
-	if spell.ResourceType == 0 || spell.DefaultCast.Cost == 0 {
+	if spell.Cost == nil {
 		return func(sim *Simulation, target *Unit) bool {
 			onCastComplete(sim, target)
 			return true
 		}
 	}
 
-	if spell.Cost != nil {
-		return func(sim *Simulation, target *Unit) bool {
-			if !spell.Cost.MeetsRequirement(spell) {
-				if sim.Log != nil && !spell.Flags.Matches(SpellFlagNoLogs) {
-					spell.Cost.LogCostFailure(sim, spell)
-				}
-				return false
+	return func(sim *Simulation, target *Unit) bool {
+		if !spell.Cost.MeetsRequirement(spell) {
+			if sim.Log != nil && !spell.Flags.Matches(SpellFlagNoLogs) {
+				spell.Cost.LogCostFailure(sim, spell)
 			}
-			onCastComplete(sim, target)
-			return true
+			return false
 		}
+		onCastComplete(sim, target)
+		return true
 	}
-
-	panic("Invalid resource type")
 }
 
 func (spell *Spell) wrapCastFuncHaste(config CastConfig, onCastComplete CastFunc) CastFunc {

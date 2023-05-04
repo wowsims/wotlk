@@ -52,6 +52,7 @@ func (rogue *Rogue) ApplyTalents() {
 	rogue.registerPreparationCD()
 	rogue.registerPremeditation()
 	rogue.registerGhostlyStrikeSpell()
+	rogue.registerDirtyDeeds()
 	rogue.registerHonorAmongThieves()
 }
 
@@ -70,6 +71,10 @@ func getRelentlessStrikesSpellID(talentPoints int32) int32 {
 func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, numPoints int32) {
 	ruthlessnessMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 14161})
 	relentlessStrikesMetrics := rogue.NewEnergyMetrics(core.ActionID{SpellID: getRelentlessStrikesSpellID(rogue.Talents.RelentlessStrikes)})
+	var mayhemMetrics *core.ResourceMetrics
+	if rogue.HasSetBonus(Tier10, 4) {
+		mayhemMetrics = rogue.NewComboPointMetrics(core.ActionID{SpellID: 70802})
+	}
 
 	return func(sim *core.Simulation, numPoints int32) {
 		if t := rogue.Talents.Ruthlessness; t > 0 {
@@ -82,11 +87,16 @@ func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, 
 				rogue.AddEnergy(sim, 25, relentlessStrikesMetrics)
 			}
 		}
+		if mayhemMetrics != nil {
+			if sim.RandomFloat("Mayhem") < 0.13 {
+				rogue.AddComboPoints(sim, 3, mayhemMetrics)
+			}
+		}
 	}
 }
 
 func (rogue *Rogue) makeCostModifier() func(baseCost float64) float64 {
-	if rogue.HasSetBonus(ItemSetBonescythe, 4) {
+	if rogue.HasSetBonus(Tier7, 4) {
 		return func(baseCost float64) float64 {
 			return math.RoundToEven(0.95 * baseCost)
 		}
@@ -159,16 +169,6 @@ func (rogue *Rogue) preyOnTheWeakMultiplier(_ *core.Unit) float64 {
 	return 1 + 0.04*float64(rogue.Talents.PreyOnTheWeak)
 }
 
-func (rogue *Rogue) applyDirtyDeeds(target *core.Unit) {
-	if rogue.Talents.DirtyDeeds == 0 {
-		return
-	}
-	// Special abilities cause 20% more damage against targets below 35% health
-	if target.CurrentHealthPercent() < 0.35 {
-		// Apply Dirty Deeds damage increase
-	}
-}
-
 func (rogue *Rogue) registerDirtyDeeds() {
 	if rogue.Talents.DirtyDeeds == 0 {
 		return
@@ -176,15 +176,31 @@ func (rogue *Rogue) registerDirtyDeeds() {
 
 	actionID := core.ActionID{SpellID: 14083}
 
+	rogue.RegisterResetEffect(func(sim *core.Simulation) {
+		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {
+			if isExecute == 35 {
+				rogue.DirtyDeedsAura.Activate(sim)
+			}
+		})
+	})
+
 	rogue.DirtyDeedsAura = rogue.RegisterAura(core.Aura{
 		Label:    "Dirty Deeds",
 		ActionID: actionID,
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			rogue.PseudoStats.DamageDealtMultiplier *= rogue.DirtyDeedsMultiplier()
+			for _, spell := range rogue.Spellbook {
+				if spell.Flags.Matches(SpellFlagBuilder|SpellFlagFinisher) && spell.DamageMultiplier > 0 {
+					spell.DamageMultiplier *= rogue.DirtyDeedsMultiplier()
+				}
+			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			rogue.PseudoStats.DamageDealtMultiplier *= 1 / rogue.DirtyDeedsMultiplier()
+			for _, spell := range rogue.Spellbook {
+				if spell.Flags.Matches(SpellFlagBuilder|SpellFlagFinisher) && spell.DamageMultiplier > 0 {
+					spell.DamageMultiplier /= rogue.DirtyDeedsMultiplier()
+				}
+			}
 		},
 	})
 }
@@ -203,34 +219,29 @@ func (rogue *Rogue) registerColdBloodCD() {
 	}
 
 	actionID := core.ActionID{SpellID: 14177}
-	var affectedSpells []*core.Spell
 
 	coldBloodAura := rogue.RegisterAura(core.Aura{
 		Label:    "Cold Blood",
 		ActionID: actionID,
 		Duration: core.NeverExpires,
-		OnInit: func(aura *core.Aura, sim *core.Simulation) {
-			for _, spell := range rogue.Spellbook {
-				if spell.Flags.Matches(SpellFlagBuilder | SpellFlagFinisher) {
-					affectedSpells = append(affectedSpells, spell)
-				}
-			}
-		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			for _, spell := range affectedSpells {
-				spell.BonusCritRating += 100 * core.CritRatingPerCritChance
+			for _, spell := range rogue.Spellbook {
+				if spell.Flags.Matches(SpellFlagColdBlooded) {
+					spell.BonusCritRating += 100 * core.CritRatingPerCritChance
+				}
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			for _, spell := range affectedSpells {
-				spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			for _, spell := range rogue.Spellbook {
+				if spell.Flags.Matches(SpellFlagColdBlooded) {
+					spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
+				}
 			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			for _, affectedSpell := range affectedSpells {
-				if spell == affectedSpell {
-					aura.Deactivate(sim)
-				}
+			// for Fan of Knives and Mutilate, the offhand hit comes first and is ignored, so the aura doesn't fade too early
+			if spell.Flags.Matches(SpellFlagColdBlooded) && spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
+				aura.Deactivate(sim)
 			}
 		},
 	})
@@ -264,6 +275,11 @@ func (rogue *Rogue) applySealFate() {
 	procChance := 0.2 * float64(rogue.Talents.SealFate)
 	cpMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 14195})
 
+	icd := core.Cooldown{
+		Timer:    rogue.NewTimer(),
+		Duration: 500 * time.Millisecond,
+	}
+
 	rogue.RegisterAura(core.Aura{
 		Label:    "Seal Fate",
 		Duration: core.NeverExpires,
@@ -279,8 +295,9 @@ func (rogue *Rogue) applySealFate() {
 				return
 			}
 
-			if sim.Proc(procChance, "Seal Fate") {
+			if icd.IsReady(sim) && sim.Proc(procChance, "Seal Fate") {
 				rogue.AddComboPoints(sim, 1, cpMetrics)
+				icd.Use(sim)
 			}
 		},
 	})
@@ -293,25 +310,18 @@ func (rogue *Rogue) applyInitiative() {
 
 	procChance := []float64{0, 0.33, 0.66, 1.0}[rogue.Talents.Initiative]
 	cpMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 13980})
-	var affectedSpells []*core.Spell
 
 	rogue.RegisterAura(core.Aura{
 		Label:    "Initiative",
 		Duration: core.NeverExpires,
-		OnInit: func(aura *core.Aura, sim *core.Simulation) {
-			affectedSpells = append(affectedSpells, rogue.Ambush)
-			affectedSpells = append(affectedSpells, rogue.Garrote)
-		},
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			for _, affectedSpell := range affectedSpells {
-				if spell == affectedSpell {
-					if result.Landed() {
-						if sim.Proc(procChance, "Initiative") {
-							rogue.AddComboPoints(sim, 1, cpMetrics)
-						}
+			if spell == rogue.Garrote || spell == rogue.Ambush {
+				if result.Landed() {
+					if sim.Proc(procChance, "Initiative") {
+						rogue.AddComboPoints(sim, 1, cpMetrics)
 					}
 				}
 			}
@@ -380,25 +390,14 @@ func (rogue *Rogue) applyCombatPotency() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !result.Landed() {
+			// from 3.0.3 patch notes: "Combat Potency: Now only works with auto attacks"
+			if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeOHAuto) {
 				return
 			}
 
-			// https://wotlk.wowhead.com/spell=35553/combat-potency, proc mask = 8838608.
-			if !spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
-				return
+			if sim.RandomFloat("Combat Potency") < procChance {
+				rogue.AddEnergy(sim, energyBonus, energyMetrics)
 			}
-
-			// Fan of Knives OH hits do not proc combat potency
-			if spell.IsSpellAction(FanOfKnivesSpellID) {
-				return
-			}
-
-			if sim.RandomFloat("Combat Potency") > procChance {
-				return
-			}
-
-			rogue.AddEnergy(sim, energyBonus, energyMetrics)
 		},
 	})
 }
@@ -544,12 +543,16 @@ func (rogue *Rogue) registerAdrenalineRushCD() {
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.ResetEnergyTick(sim)
 			rogue.ApplyEnergyTickMultiplier(1.0)
-			rogue.rotationItems = rogue.planRotation(sim)
+			if r, ok := rogue.rotation.(*rotation_multi); ok {
+				r.planRotation(sim, rogue)
+			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.ResetEnergyTick(sim)
 			rogue.ApplyEnergyTickMultiplier(-1.0)
-			rogue.rotationItems = rogue.planRotation(sim)
+			if r, ok := rogue.rotation.(*rotation_multi); ok {
+				r.planRotation(sim, rogue)
+			}
 		},
 	})
 
@@ -591,15 +594,28 @@ func (rogue *Rogue) registerKillingSpreeCD() {
 }
 
 func (rogue *Rogue) registerHonorAmongThieves() {
-	// When anyone in your group critically hits with a damage or healing spell or ability, you have a [33%/66%/100%] cahnce to gain a combo point on your current target. This effect cannot occur more than once per second.
+	// When anyone in your group critically hits with a damage or healing spell or ability,
+	// you have a [33%/66%/100%] chance to gain a combo point on your current target.
+	// This effect cannot occur more than once per second.
 	if rogue.Talents.HonorAmongThieves == 0 {
 		return
 	}
 
-	// FIXME: Implement a flow of combo points that simulates the party/raid crit procs
 	procChance := []float64{0, 0.33, 0.66, 1}[rogue.Talents.HonorAmongThieves]
 	comboMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 51701})
 	honorAmongThievesID := core.ActionID{SpellID: 51701}
+
+	icd := core.Cooldown{
+		Timer:    rogue.NewTimer(),
+		Duration: time.Second,
+	}
+
+	maybeProc := func(sim *core.Simulation) {
+		if icd.IsReady(sim) && sim.Proc(procChance, "honor of thieves") {
+			rogue.AddComboPoints(sim, 1, comboMetrics)
+			icd.Use(sim)
+		}
+	}
 
 	rogue.HonorAmongThieves = rogue.RegisterAura(core.Aura{
 		Label:    "Honor Among Thieves",
@@ -608,15 +624,37 @@ func (rogue *Rogue) registerHonorAmongThieves() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
-				Period: time.Second,
-				OnAction: func(s *core.Simulation) {
-					if sim.Proc(procChance, "Honor Among Thieves") {
-						rogue.AddComboPoints(sim, 1, comboMetrics)
-					}
-				},
-			})
+		OnGain: func(_ *core.Aura, sim *core.Simulation) {
+			// In an ideal party, you'd probably get up to 6 ability crits/s (Rate = 600).
+			//  Survival Hunters, Enhancement Shamans, and Assassination Rogues are particularly good.
+			if rogue.Options.HonorOfThievesCritRate <= 0 {
+				return
+			}
+
+			if rogue.Options.HonorOfThievesCritRate > 2000 {
+				rogue.Options.HonorOfThievesCritRate = 2000 // limited, so performance doesn't suffer
+			}
+
+			rateToDuration := float64(time.Second) * 100 / float64(rogue.Options.HonorOfThievesCritRate)
+
+			pa := &core.PendingAction{}
+			pa.OnAction = func(sim *core.Simulation) {
+				maybeProc(sim)
+				pa.NextActionAt = sim.CurrentTime + time.Duration(sim.RandomExpFloat("next party crit")*rateToDuration)
+				sim.AddPendingAction(pa)
+			}
+			pa.NextActionAt = sim.CurrentTime + time.Duration(sim.RandomExpFloat("next party crit")*rateToDuration)
+			sim.AddPendingAction(pa)
+		},
+		OnSpellHitDealt: func(_ *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.DidCrit() && !spell.ProcMask.Matches(core.ProcMaskMeleeMHAuto|core.ProcMaskMeleeOHAuto|core.ProcMaskRangedAuto) {
+				maybeProc(sim)
+			}
+		},
+		OnPeriodicDamageDealt: func(_ *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.DidCrit() {
+				maybeProc(sim)
+			}
 		},
 	})
 }

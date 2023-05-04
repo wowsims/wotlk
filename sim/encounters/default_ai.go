@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 // Default implementation of TargetAI which takes a list of abilities as input
@@ -36,7 +37,7 @@ func NewDefaultAI(abilities []TargetAbility) core.AIFactory {
 	}
 }
 
-func (ai *DefaultAI) Initialize(target *core.Target) {
+func (ai *DefaultAI) Initialize(target *core.Target, config *proto.Target) {
 	ai.Target = target
 
 	for i := range ai.Abilities {
@@ -45,6 +46,10 @@ func (ai *DefaultAI) Initialize(target *core.Target) {
 			ability.Spell = ability.MakeSpell(target)
 		}
 	}
+}
+
+func (ai *DefaultAI) Reset(sim *core.Simulation) {
+
 }
 
 func (ai *DefaultAI) DoAction(sim *core.Simulation) {

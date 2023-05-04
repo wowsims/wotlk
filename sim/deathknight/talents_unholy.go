@@ -39,7 +39,12 @@ func (dk *Deathknight) applyRageOfRivendare() {
 
 	bonus := 1.0 + 0.02*float64(dk.Talents.RageOfRivendare)
 	dk.RoRTSBonus = func(target *core.Unit) float64 {
-		return core.TernaryFloat64(dk.BloodPlagueSpell.Dot(target).IsActive(), bonus, 1.0)
+		// assume if external ebon plaguebringer is active, then another DK will always have Blood Plague up
+		if dk.MakeTSRoRAssumptions && target.HasActiveAura("EbonPlaguebringer-1") {
+			return bonus
+		}
+
+		return core.TernaryFloat64(target.HasActiveAuraWithTag("BloodPlague"), bonus, 1.0)
 	}
 }
 
@@ -74,8 +79,8 @@ func (dk *Deathknight) applyWanderingPlague() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := dk.LastDiseaseDamage * dk.bonusCoeffs.wanderingPlagueMultiplier
 			baseDamage *= sim.Encounter.AOECapMultiplier()
-			for _, aoeTarget := range sim.Encounter.Targets {
-				spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeAlwaysHit)
+			for _, aoeTarget := range sim.Encounter.TargetUnits {
+				spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeAlwaysHit)
 			}
 		},
 	})
@@ -172,7 +177,7 @@ func (dk *Deathknight) bloodCakedBladeHit(isMh bool) *core.Spell {
 					spell.Unit.OHWeaponDamage(sim, spell.MeleeAttackPower()) +
 					spell.BonusWeaponDamage()
 			}
-			baseDamage *= 0.25 + 0.125*dk.dkCountActiveDiseases(target)
+			baseDamage *= 0.25 + 0.125*dk.dkCountActiveDiseasesBcb(target)
 
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialNoCrit)
 		},
@@ -180,7 +185,8 @@ func (dk *Deathknight) bloodCakedBladeHit(isMh bool) *core.Spell {
 }
 
 func (dk *Deathknight) applyEbonPlaguebringerOrCryptFever() {
-	dk.EbonPlagueOrCryptFeverAura = make([]*core.Aura, dk.Env.GetNumTargets())
+	dk.EbonPlagueOrCryptFeverAura = make([]*core.Aura, len(dk.Env.Encounter.TargetUnits))
+
 	if dk.Talents.CryptFever == 0 {
 		return
 	}
@@ -189,10 +195,9 @@ func (dk *Deathknight) applyEbonPlaguebringerOrCryptFever() {
 	dk.AddStat(stats.MeleeCrit, ebonPlaguebringerBonusCrit)
 	dk.AddStat(stats.SpellCrit, ebonPlaguebringerBonusCrit)
 
-	for _, encounterTarget := range dk.Env.Encounter.Targets {
-		target := &encounterTarget.Unit
+	for i, target := range dk.Env.Encounter.TargetUnits {
 		epAura := core.EbonPlaguebringerOrCryptFeverAura(dk.GetCharacter(), target, dk.Talents.Epidemic, dk.Talents.CryptFever, dk.Talents.EbonPlaguebringer)
-		dk.EbonPlagueOrCryptFeverAura[target.Index] = epAura
+		dk.EbonPlagueOrCryptFeverAura[i] = epAura
 	}
 }
 

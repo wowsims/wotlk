@@ -42,6 +42,7 @@ func newProcStatBonusEffect(config ProcStatBonusEffect) {
 		}
 
 		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+			ActionID:   core.ActionID{ItemID: config.ID},
 			Name:       config.Name,
 			Callback:   config.Callback,
 			ProcMask:   config.ProcMask,
@@ -318,7 +319,7 @@ func init() {
 		ID:         45518,
 		Bonus:      stats.Stats{stats.SpellPower: 959},
 		Duration:   time.Second * 10,
-		Callback:   core.CallbackOnSpellHitDealt,
+		Callback:   core.CallbackOnCastComplete,
 		ProcMask:   core.ProcMaskSpellDamage,
 		ProcChance: 0.1,
 		ICD:        time.Second * 45,
@@ -339,7 +340,7 @@ func init() {
 		Duration:   time.Second * 10,
 		Callback:   core.CallbackOnSpellHitDealt,
 		ProcMask:   core.ProcMaskMeleeOrRanged,
-		Outcome:    core.OutcomeCrit,
+		Outcome:    core.OutcomeLanded,
 		ProcChance: 0.15,
 		ICD:        time.Second * 45,
 	})

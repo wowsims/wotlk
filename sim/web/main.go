@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -44,7 +45,7 @@ func main() {
 	var useFS = flag.Bool("usefs", false, "Use local file system for client files. Set to true during development.")
 	var wasm = flag.Bool("wasm", false, "Use wasm for sim instead of web server apis. Can only be used with usefs=true")
 	var simName = flag.String("sim", "", "Name of simulator to launch (ex: balance_druid, elemental_shaman, etc)")
-	var host = flag.String("host", ":3333", "URL to host the interface on.")
+	var host = flag.String("host", "localhost:3333", "URL to host the interface on.")
 	var launch = flag.Bool("launch", true, "auto launch browser")
 	var skipVersionCheck = flag.Bool("nvc", false, "set true to skip version check")
 
@@ -81,15 +82,24 @@ func main() {
 		}()
 	}
 
-	setupAsyncServer()
-	runServer(*useFS, *host, *launch, *simName, *wasm, bufio.NewReader(os.Stdin))
+	s := &server{
+		progMut:         sync.RWMutex{},
+		asyncProgresses: map[string]*asyncProgress{},
+	}
+	s.runServer(*useFS, *host, *launch, *simName, *wasm, bufio.NewReader(os.Stdin))
 }
 
-type simProgReportCreator func() (string, progReport)
-type progReport func(progMetric *proto.ProgressMetrics)
-type asyncAPIHandler struct {
-	msg    func() googleProto.Message
-	handle func(googleProto.Message, chan *proto.ProgressMetrics)
+// Handlers to decode and handle each proto function
+var handlers = map[string]apiHandler{
+	"/raidSim": {msg: func() googleProto.Message { return &proto.RaidSimRequest{} }, handle: func(msg googleProto.Message) googleProto.Message {
+		return core.RunRaidSim(msg.(*proto.RaidSimRequest))
+	}},
+	"/statWeights": {msg: func() googleProto.Message { return &proto.StatWeightsRequest{} }, handle: func(msg googleProto.Message) googleProto.Message {
+		return core.StatWeights(msg.(*proto.StatWeightsRequest))
+	}},
+	"/computeStats": {msg: func() googleProto.Message { return &proto.ComputeStatsRequest{} }, handle: func(msg googleProto.Message) googleProto.Message {
+		return core.ComputeStats(msg.(*proto.ComputeStatsRequest))
+	}},
 }
 
 var asyncAPIHandlers = map[string]asyncAPIHandler{
@@ -99,9 +109,47 @@ var asyncAPIHandlers = map[string]asyncAPIHandler{
 	"/statWeightsAsync": {msg: func() googleProto.Message { return &proto.StatWeightsRequest{} }, handle: func(msg googleProto.Message, reporter chan *proto.ProgressMetrics) {
 		core.StatWeightsAsync(msg.(*proto.StatWeightsRequest), reporter)
 	}},
+	"/bulkSimAsync": {msg: func() googleProto.Message { return &proto.BulkSimRequest{} }, handle: func(msg googleProto.Message, reporter chan *proto.ProgressMetrics) {
+		// TODO: we can use context's to cancel stuff.
+		// We should have all the async APIs take in context and let it be cancelled via its async ID.
+		core.RunBulkSimAsync(context.Background(), msg.(*proto.BulkSimRequest), reporter)
+	}},
 }
 
-func handleAsyncAPI(w http.ResponseWriter, r *http.Request, addNewSim simProgReportCreator) {
+type server struct {
+	progMut         sync.RWMutex
+	asyncProgresses map[string]*asyncProgress
+}
+
+type apiHandler struct {
+	msg    func() googleProto.Message
+	handle func(googleProto.Message) googleProto.Message
+}
+type asyncAPIHandler struct {
+	msg    func() googleProto.Message
+	handle func(googleProto.Message, chan *proto.ProgressMetrics)
+}
+
+type asyncProgress struct {
+	id             string
+	latestProgress atomic.Value
+}
+
+func (s *server) addNewSim() *asyncProgress {
+	newID := uuid.NewV4().String()
+	simProgress := &asyncProgress{
+		id: newID,
+	}
+	simProgress.latestProgress.Store(&proto.ProgressMetrics{})
+
+	s.progMut.Lock()
+	s.asyncProgresses[newID] = simProgress
+	s.progMut.Unlock()
+
+	return simProgress
+}
+
+func (s *server) handleAsyncAPI(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		return
@@ -127,22 +175,26 @@ func handleAsyncAPI(w http.ResponseWriter, r *http.Request, addNewSim simProgRep
 	reporter := make(chan *proto.ProgressMetrics, 100)
 	handler.handle(msg, reporter)
 
-	// Generate a new async simulation, and get back the ID and reporting function.
-	id, cacheProgressFunc := addNewSim()
+	// Generate a new async simulation
+	simProgress := s.addNewSim()
 
 	// Now launch a background process that pulls progress reports off the reporter channel
 	// and pushes it into the async progress cache.
 	go func() {
 		for {
 			select {
-			case <-time.After(time.Hour):
-				return // if we get no progress after an hour, exit
-			case progMetric, ok := <-reporter:
-				if !ok {
+			case <-time.After(time.Minute * 10):
+				// if we get no progress after 10 minutes, delete the pending sim and exit.
+				s.progMut.Lock()
+				delete(s.asyncProgresses, simProgress.id)
+				s.progMut.Unlock()
+				return
+			case progMetric := <-reporter:
+				if progMetric == nil {
 					return
 				}
-				cacheProgressFunc(progMetric)
-				if progMetric.FinalRaidResult != nil || progMetric.FinalWeightResult != nil {
+				simProgress.latestProgress.Store(progMetric)
+				if progMetric.FinalRaidResult != nil || progMetric.FinalWeightResult != nil || progMetric.FinalBulkResult != nil {
 					return
 				}
 			}
@@ -150,7 +202,7 @@ func handleAsyncAPI(w http.ResponseWriter, r *http.Request, addNewSim simProgRep
 	}()
 
 	protoResult := &proto.AsyncAPIResult{
-		ProgressId: id,
+		ProgressId: simProgress.id,
 	}
 
 	outbytes, err := googleProto.Marshal(protoResult)
@@ -164,38 +216,13 @@ func handleAsyncAPI(w http.ResponseWriter, r *http.Request, addNewSim simProgRep
 	w.Write(outbytes)
 }
 
-func setupAsyncServer() {
-
-	// Hold all state for in-flight async processes here.
-	type asyncProgress struct {
-		latestProgress atomic.Value
-	}
-	progMut := &sync.RWMutex{} // mutex for progresses map
-	progresses := map[string]*asyncProgress{}
-
-	// addNewSim just stores progress data for a new running simulation into the state above.
-	addNewSim := func() (string, progReport) {
-		newID := uuid.NewV4().String()
-		simProgress := &asyncProgress{}
-		simProgress.latestProgress.Store(&proto.ProgressMetrics{})
-		progMut.Lock()
-		progresses[newID] = simProgress
-		progMut.Unlock()
-
-		return newID, func(newProg *proto.ProgressMetrics) {
-			// caches progress into the progress map indexed by the ID.
-			// This can later be fetched by the async progress endpoint.
-			simProgress.latestProgress.Store(newProg)
-		}
-	}
-
+func (s *server) setupAsyncServer() {
 	// All async handlers here will call the addNewSim, generating a new UUID and cached progress state.
-	http.HandleFunc("/statWeightsAsync", func(w http.ResponseWriter, r *http.Request) {
-		handleAsyncAPI(w, r, addNewSim)
-	})
-	http.HandleFunc("/raidSimAsync", func(w http.ResponseWriter, r *http.Request) {
-		handleAsyncAPI(w, r, addNewSim)
-	})
+	for route := range asyncAPIHandlers {
+		http.HandleFunc(route, func(w http.ResponseWriter, r *http.Request) {
+			s.handleAsyncAPI(w, r)
+		})
+	}
 
 	// asyncProgress will fetch the current progress of a simulation by its UUID.
 	http.HandleFunc("/asyncProgress", func(w http.ResponseWriter, r *http.Request) {
@@ -211,9 +238,9 @@ func setupAsyncServer() {
 		}
 
 		// Read lock the map of all progress statuses, fetching current one.
-		progMut.RLock()
-		progress, ok := progresses[msg.ProgressId]
-		progMut.RUnlock()
+		s.progMut.RLock()
+		progress, ok := s.asyncProgresses[msg.ProgressId]
+		s.progMut.RUnlock()
 		if !ok {
 			w.WriteHeader(http.StatusNoContent)
 			return
@@ -227,17 +254,19 @@ func setupAsyncServer() {
 		}
 
 		// If this was the last result, delete the cache for this simulation.
-		if latest.FinalRaidResult != nil || latest.FinalWeightResult != nil {
-			progMut.Lock()
-			delete(progresses, msg.ProgressId)
-			progMut.Unlock()
+		if latest.FinalRaidResult != nil || latest.FinalWeightResult != nil || latest.FinalBulkResult != nil {
+			s.progMut.Lock()
+			delete(s.asyncProgresses, msg.ProgressId)
+			s.progMut.Unlock()
 		}
 		w.Header().Add("Content-Type", "application/x-protobuf")
 		w.Write(outbytes)
 	})
 }
 
-func runServer(useFS bool, host string, launchBrowser bool, simName string, wasm bool, inputReader *bufio.Reader) {
+func (s *server) runServer(useFS bool, host string, launchBrowser bool, simName string, wasm bool, inputReader *bufio.Reader) {
+	s.setupAsyncServer()
+
 	var fs http.Handler
 	if useFS {
 		log.Printf("Using local file system for development.")
@@ -247,14 +276,14 @@ func runServer(useFS bool, host string, launchBrowser bool, simName string, wasm
 		fs = http.FileServer(http.FS(dist.FS))
 	}
 
+	for route := range handlers {
+		http.HandleFunc(route, handleAPI)
+	}
+
 	http.HandleFunc("/version", func(resp http.ResponseWriter, req *http.Request) {
 		msg := fmt.Sprintf(`{"version": "%s", "outdated": %d}`, Version, outdated)
 		resp.Write([]byte(msg))
 	})
-	http.HandleFunc("/statWeights", handleAPI)
-	http.HandleFunc("/computeStats", handleAPI)
-	http.HandleFunc("/individualSim", handleAPI)
-	http.HandleFunc("/raidSim", handleAPI)
 	http.HandleFunc("/", func(resp http.ResponseWriter, req *http.Request) {
 		if req.URL.Path == "/" {
 			http.Redirect(resp, req, "/wotlk/", http.StatusPermanentRedirect)
@@ -276,7 +305,10 @@ func runServer(useFS bool, host string, launchBrowser bool, simName string, wasm
 	})
 
 	if launchBrowser {
-		url := fmt.Sprintf("http://localhost%s/wotlk/%s", host, simName)
+		if strings.HasPrefix(host, ":") {
+			host = "localhost" + host
+		}
+		url := fmt.Sprintf("http://%s/wotlk/%s", host, simName)
 		log.Printf("Launching interface on %s", url)
 		go func() {
 			err := browser.OpenURL(url)
@@ -336,34 +368,24 @@ func runServer(useFS bool, host string, launchBrowser bool, simName string, wasm
 				f.Close()
 				fmt.Printf("Profiling complete.\n> ")
 			}()
+		case "sims":
+			s.progMut.RLock()
+			fmt.Printf("Total Sims Running: %d\n", len(s.asyncProgresses))
+			for _, v := range s.asyncProgresses {
+				latest := (v.latestProgress.Load()).(*proto.ProgressMetrics)
+				fmt.Printf("Process: %s (%d sims)\n\t  Progress: %d/%d\n", v.id, latest.TotalSims, latest.CompletedIterations, latest.TotalIterations)
+			}
+			s.progMut.RUnlock()
 		case "quit":
 			os.Exit(1)
 		case "?":
-			fmt.Printf("Commands:\n\tprofile - start a CPU profile for debugging performance\n\tquit - exits\n\n")
+			fmt.Printf("Commands:\n\tsims - Lists all active async sims running currently.\n\tprofile - start a CPU profile for debugging performance\n\tquit - exits\n\n")
 		case "":
 			// nothing.
 		default:
 			fmt.Printf("Unknown command: '%s'", command)
 		}
 	}
-}
-
-type apiHandler struct {
-	msg    func() googleProto.Message
-	handle func(googleProto.Message) googleProto.Message
-}
-
-// Handlers to decode and handle each proto function
-var handlers = map[string]apiHandler{
-	"/raidSim": {msg: func() googleProto.Message { return &proto.RaidSimRequest{} }, handle: func(msg googleProto.Message) googleProto.Message {
-		return core.RunRaidSim(msg.(*proto.RaidSimRequest))
-	}},
-	"/statWeights": {msg: func() googleProto.Message { return &proto.StatWeightsRequest{} }, handle: func(msg googleProto.Message) googleProto.Message {
-		return core.StatWeights(msg.(*proto.StatWeightsRequest))
-	}},
-	"/computeStats": {msg: func() googleProto.Message { return &proto.ComputeStatsRequest{} }, handle: func(msg googleProto.Message) googleProto.Message {
-		return core.ComputeStats(msg.(*proto.ComputeStatsRequest))
-	}},
 }
 
 // handleAPI is generic handler for any api function using protos.

@@ -88,7 +88,7 @@ func (unit *Unit) CurrentManaPercent() float64 {
 	return unit.CurrentMana() / unit.MaxMana()
 }
 
-func (unit *Unit) AddMana(sim *Simulation, amount float64, metrics *ResourceMetrics, isBonusMana bool) {
+func (unit *Unit) AddMana(sim *Simulation, amount float64, metrics *ResourceMetrics) {
 	if amount < 0 {
 		panic("Trying to add negative mana!")
 	}
@@ -103,9 +103,6 @@ func (unit *Unit) AddMana(sim *Simulation, amount float64, metrics *ResourceMetr
 
 	unit.currentMana = newMana
 	unit.Metrics.ManaGained += newMana - oldMana
-	if isBonusMana {
-		unit.Metrics.BonusManaGained += newMana - oldMana
-	}
 }
 
 func (unit *Unit) SpendMana(sim *Simulation, amount float64, metrics *ResourceMetrics) {
@@ -197,10 +194,10 @@ func (unit *Unit) UpdateManaRegenRates() {
 func (unit *Unit) ManaTick(sim *Simulation) {
 	if sim.CurrentTime < unit.PseudoStats.FiveSecondRuleRefreshTime {
 		regen := unit.manaTickWhileCasting
-		unit.AddMana(sim, MaxFloat(0, regen), unit.manaCastingMetrics, false)
+		unit.AddMana(sim, MaxFloat(0, regen), unit.manaCastingMetrics)
 	} else {
 		regen := unit.manaTickWhileNotCasting
-		unit.AddMana(sim, MaxFloat(0, regen), unit.manaNotCastingMetrics, false)
+		unit.AddMana(sim, MaxFloat(0, regen), unit.manaNotCastingMetrics)
 	}
 }
 
@@ -303,9 +300,14 @@ type ManaCost struct {
 }
 
 func newManaCost(spell *Spell, options ManaCostOptions) *ManaCost {
-	spell.ResourceType = stats.Mana
-	spell.BaseCost = TernaryFloat64(options.FlatCost > 0, options.FlatCost, options.BaseCost*spell.Unit.BaseMana)
-	spell.DefaultCast.Cost = spell.BaseCost * TernaryFloat64(options.Multiplier == 0, 1, options.Multiplier)
+	baseCost := TernaryFloat64(options.FlatCost > 0, options.FlatCost, options.BaseCost*spell.Unit.BaseMana)
+	if player := spell.Unit.Env.Raid.GetPlayerFromUnit(spell.Unit); player != nil {
+		if player.GetCharacter().HasTrinketEquipped(45703) { // Spark of Hope
+			baseCost = MaxFloat(0, baseCost-44)
+		}
+	}
+
+	spell.DefaultCast.Cost = baseCost * TernaryFloat64(options.Multiplier == 0, 1, options.Multiplier)
 
 	return &ManaCost{
 		ResourceMetrics: spell.Unit.NewManaMetrics(spell.ActionID),

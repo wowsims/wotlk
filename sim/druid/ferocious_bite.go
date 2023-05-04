@@ -62,5 +62,5 @@ func (druid *Druid) registerFerociousBiteSpell() {
 }
 
 func (druid *Druid) CurrentFerociousBiteCost() float64 {
-	return druid.FerociousBite.ApplyCostModifiers(druid.FerociousBite.BaseCost)
+	return druid.FerociousBite.ApplyCostModifiers(druid.FerociousBite.DefaultCast.Cost)
 }

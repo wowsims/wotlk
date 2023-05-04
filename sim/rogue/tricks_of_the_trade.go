@@ -10,7 +10,7 @@ import (
 func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 	actionID := core.ActionID{SpellID: 57934}
 	energyMetrics := rogue.NewEnergyMetrics(actionID)
-	hasShadowblades := rogue.HasSetBonus(ItemSetShadowblades, 2)
+	hasShadowblades := rogue.HasSetBonus(Tier10, 2)
 	energyCost := 15 - 5*float64(rogue.Talents.FilthyTricks)
 
 	hasGlyph := rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfTricksOfTheTrade)
@@ -47,7 +47,7 @@ func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
 			rogue.TricksOfTheTradeAura.Activate(sim)
 			if hasShadowblades {
-				rogue.AddEnergy(sim, energyCost, energyMetrics)
+				rogue.AddEnergy(sim, 15, energyMetrics)
 			}
 		},
 	})
@@ -58,6 +58,13 @@ func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 			Spell:    rogue.TricksOfTheTrade,
 			Priority: core.CooldownPriorityDrums,
 			Type:     core.CooldownTypeDPS,
+			ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
+				if hasShadowblades {
+					return rogue.CurrentEnergy() <= rogue.maxEnergy-15-rogue.EnergyTickMultiplier*10
+				} else {
+					return rogue.CurrentEnergy() >= rogue.TricksOfTheTrade.DefaultCast.Cost
+				}
+			},
 		})
 	}
 }

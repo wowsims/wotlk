@@ -285,6 +285,20 @@ export class ActionId {
 					name += ' (Proc)';
 				}
 				break;
+			case 'Righteous Vengeance':
+				if (this.tag == 1) {
+					name += ' (Application)'
+				} else if (this.tag == 2) {
+					name += ' (DoT)'
+				}
+				break;
+			case 'Holy Vengeance':
+				if (this.tag == 1) {
+						name += ' (Application)'
+				} else if (this.tag == 2) {
+					name += ' (DoT)'
+				}
+				break;
 			// For targetted buffs, tag is the source player's raid index or -1 if none.
 			case 'Bloodlust':
 			case 'Ferocious Inspiration':
@@ -305,6 +319,13 @@ export class ActionId {
 					name += ' (Melee)';
 				} else if (this.tag == 2) {
 					name += ' (Spell)';
+				}
+				break;
+			case 'Frozen Blows':
+				if (this.tag == 1) {
+					name += ' (Physical)';
+				} else if (this.tag == 2) {
+					name += ' (Frost)';
 				}
 				break;
 			case 'Scourge Strike':
@@ -330,6 +351,7 @@ export class ActionId {
 			case 'Blood-Caked Strike':
 			case 'Lightning Speed':
 			case 'Windfury Weapon':
+			case 'Berserk':
 				if (this.tag == 1) {
 					name += ' (Main Hand)';
 				} else if (this.tag == 2) {

@@ -18,6 +18,7 @@ import { classGlyphsConfig, talentSpellIdsToTalentString } from '../talents/fact
 import { GlyphConfig } from '../talents/glyphs_picker';
 import { BaseModal } from './base_modal';
 import { buf2hex } from '../utils';
+import { JsonObject } from '@protobuf-ts/runtime';
 
 export abstract class Importer extends BaseModal {
 	protected readonly textElem: HTMLTextAreaElement;
@@ -319,36 +320,33 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 		cur = 0;
 		while (cur < gearBytes.length) {
 			const itemSpec = ItemSpec.create();
-			const slotId = gearBytes[cur] & 0b01111111;
+			const slotId = gearBytes[cur] & 0b00111111;
 			const isEnchanted = Boolean(gearBytes[cur] & 0b10000000);
+			const randomEnchant = Boolean(gearBytes[cur] & 0b01000000);
 			cur++;
 
 			const numGems = (gearBytes[cur] & 0b11100000) >> 5;
+			const highid = (gearBytes[cur] & 0b00011111);
 			cur++;
 
-			itemSpec.id = (gearBytes[cur] << 8) + gearBytes[cur + 1];
+			itemSpec.id = (highid << 16) + (gearBytes[cur] << 8) + gearBytes[cur + 1];
 			cur += 2;
 			//console.log(`Slot ID: ${slotId}, isEnchanted: ${isEnchanted}, numGems: ${numGems}, itemID: ${itemSpec.id}`);
 
 			if (isEnchanted) {
-				// Ignore first byte, seems to always be 0?
-				if (gearBytes[cur] != 0) {
-					throw new Error('other ench byte: ' + gearBytes[cur]);
-				}
-				cur++;
-
 				// Note: this is the enchant SPELL id, not the effect ID.
-				const enchantSpellId = (gearBytes[cur] << 8) + gearBytes[cur + 1];
+				const enchantSpellId = (gearBytes[cur] << 16) + (gearBytes[cur + 1] << 8) + gearBytes[cur + 2];
 				itemSpec.enchant = this.simUI.sim.db.enchantSpellIdToEffectId(enchantSpellId);
-				cur += 2;
-				//console.log(`Enchant ID: ${itemSpec.enchant}`);
+				cur += 3;
+				//console.log(`Enchant ID: ${itemSpec.enchant}. Spellid: ${enchantSpellId}`);
 			}
 
 			for (let gemIdx = 0; gemIdx < numGems; gemIdx++) {
 				const gemPosition = (gearBytes[cur] & 0b11100000) >> 5;
+				const highgemid   = (gearBytes[cur] & 0b00011111);
 				cur++;
 
-				const gemId = (gearBytes[cur] << 8) + gearBytes[cur + 1];
+				const gemId = (highgemid << 16) + (gearBytes[cur] << 8) + gearBytes[cur + 1];
 				cur += 2;
 				//console.log(`Gem position: ${gemPosition}, gemID: ${gemId}`);
 
@@ -412,7 +410,7 @@ export class IndividualAddonImporter<SpecType extends Spec> extends Importer {
 		`;
 	}
 
-	onImport(data: string) {
+	async onImport(data: string) {
 		const importJson = JSON.parse(data);
 
 		// Parse all the settings.
@@ -434,10 +432,12 @@ export class IndividualAddonImporter<SpecType extends Spec> extends Importer {
 		});
 
 		const talentsStr = (importJson['talents'] as string) || '';
-
 		const glyphsConfig = classGlyphsConfig[charClass];
-		const majorGlyphIDs = (importJson['glyphs']['major'] as Array<string>).map(glyphName => glyphNameToID(glyphName, glyphsConfig.majorGlyphs));
-		const minorGlyphIDs = (importJson['glyphs']['minor'] as Array<string>).map(glyphName => glyphNameToID(glyphName, glyphsConfig.minorGlyphs));
+
+		const db = await Database.get();
+		const majorGlyphIDs = (importJson['glyphs']['major'] as Array<string|JsonObject>).map(g => glyphToID(g, db, glyphsConfig.majorGlyphs));
+		const minorGlyphIDs = (importJson['glyphs']['minor'] as Array<string|JsonObject>).map(g => glyphToID(g, db, glyphsConfig.minorGlyphs));
+
 		const glyphs = Glyphs.create({
 			major1: majorGlyphIDs[0] || 0,
 			major2: majorGlyphIDs[1] || 0,
@@ -471,4 +471,13 @@ function glyphNameToID(glyphName: string, glyphsConfig: Record<number, GlyphConf
 		}
 	}
 	throw new Error(`Unknown glyph name '${glyphName}'`);
+}
+
+function glyphToID(glyph: string|JsonObject, db: Database, glyphsConfig: Record<number, GlyphConfig>): number {
+	if (typeof glyph === 'string') {
+		// Legacy version: AddOn exports Glyphs by name (string) only. Names must be in English.
+		return glyphNameToID(glyph, glyphsConfig);
+	}
+	// New version exports glyph information in a table that includes the name and the glyph spell ID.
+	return db.glyphSpellToItemId(glyph['spellID'] as number);
 }

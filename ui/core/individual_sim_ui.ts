@@ -14,6 +14,7 @@ import { addRaidSimAction, RaidSimResultsManager } from './components/raid_sim_a
 import { SavedDataConfig, SavedDataManager } from './components/saved_data_manager';
 import { addStatWeightsAction } from './components/stat_weights_action';
 
+import { BulkTab } from './components/individual_sim_ui/bulk_tab';
 import { GearTab } from './components/individual_sim_ui/gear_tab';
 import { SettingsTab } from './components/individual_sim_ui/settings_tab';
 
@@ -172,6 +173,11 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 	prevEpIterations: number;
 	prevEpSimResult: StatWeightsResult | null;
+	dpsRefStat?: Stat;
+	healRefStat?: Stat;
+	tankRefStat?: Stat;
+
+	readonly bt: BulkTab;
 
 	constructor(parentElem: HTMLElement, player: Player<SpecType>, config: IndividualSimUIConfig<SpecType>) {
 		super(parentElem, player.sim, {
@@ -267,6 +273,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 		this.addSidebarComponents();
 		this.addGearTab();
+		this.bt = this.addBulkTab();
 		this.addSettingsTab();
 		this.addTalentsTab();
 
@@ -344,6 +351,14 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		gearTab.rootElem.classList.add('active', 'show');
 	}
 
+	private addBulkTab(): BulkTab {
+		let bulkTab = new BulkTab(this.simTabContentsContainer, this);
+		bulkTab.navLink.hidden = !this.sim.getShowExperimental()
+		this.sim.showExperimentalChangeEmitter.on(() => {
+			bulkTab.navLink.hidden = !this.sim.getShowExperimental();
+		});
+		return bulkTab;
+	}
 
 	private addSettingsTab() {
 		new SettingsTab(this.simTabContentsContainer, this);
@@ -486,6 +501,8 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.player.getParty()!.setBuffs(eventID, this.individualConfig.defaults.partyBuffs);
 			this.player.getRaid()!.setBuffs(eventID, this.individualConfig.defaults.raidBuffs);
 			this.player.setEpWeights(eventID, this.individualConfig.defaults.epWeights);
+			const defaultRatios = this.player.getDefaultEpRatios(tankSpec, healingSpec)
+			this.player.setEpRatios(eventID, defaultRatios);
 			this.player.setProfession1(eventID, this.individualConfig.defaults.other?.profession1 || Profession.Engineering);
 			this.player.setProfession2(eventID, this.individualConfig.defaults.other?.profession2 || Profession.Jewelcrafting);
 			this.player.setDistanceFromTarget(eventID, this.individualConfig.defaults.other?.distanceFromTarget || 0);
@@ -540,6 +557,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			partyBuffs: this.player.getParty()?.getBuffs() || PartyBuffs.create(),
 			encounter: this.sim.encounter.toProto(),
 			epWeightsStats: this.player.getEpWeights().toProto(),
+			epRatios: this.player.getEpRatios(),
 			targetDummies: this.sim.raid.getTargetDummies(),
 		});
 	}
@@ -572,6 +590,17 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			} else {
 				this.player.setEpWeights(eventID, this.individualConfig.defaults.epWeights);
 			}
+
+			const tankSpec = isTankSpec(this.player.spec);
+			const healingSpec = isHealingSpec(this.player.spec);
+			const defaultRatios = this.player.getDefaultEpRatios(tankSpec, healingSpec);
+			if (settings.epRatios) {
+				const missingRatios = new Array<number>(defaultRatios.length - settings.epRatios.length).fill(0);
+				this.player.setEpRatios(eventID, settings.epRatios.concat(missingRatios));
+			} else {
+				this.player.setEpRatios(eventID, defaultRatios);
+			}
+
 			this.sim.raid.setBuffs(eventID, settings.raidBuffs || RaidBuffs.create());
 			this.sim.raid.setDebuffs(eventID, settings.debuffs || Debuffs.create());
 			this.sim.raid.setTanks(eventID, settings.tanks || []);

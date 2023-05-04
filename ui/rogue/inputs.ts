@@ -7,6 +7,7 @@ import * as InputHelpers from '../core/components/input_helpers.js';
 import {
 	Rogue_Rotation_AssassinationPriority as AssassinationPriority,
 	Rogue_Rotation_CombatPriority as CombatPriority,
+	Rogue_Rotation_CombatBuilder as CombatBuilder,
 	Rogue_Rotation_SubtletyPriority as SubtletyPriority,
 	Rogue_Rotation_Frequency as Frequency,
 	Rogue_Options_PoisonImbue as Poison,
@@ -43,6 +44,13 @@ export const StartingOverkillDuration = InputHelpers.makeSpecOptionsNumberInput<
 	labelTooltip: 'Initial Overkill buff duration at the start of each iteration.',
 });
 
+export const HonorOfThievesCritRate = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecRogue>({
+	fieldName: 'honorOfThievesCritRate',
+	label: 'Honor of Thieves Crit Rate',
+	labelTooltip: 'Number of crits other group members generate within 100 seconds',
+	showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().honorAmongThieves > 0
+});
+
 export const ApplyPoisonsManually = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecRogue>({
 	fieldName: 'applyPoisonsManually',
 	label: 'Configure poisons manually',
@@ -76,6 +84,26 @@ export const RogueRotationConfig = {
 				{ name: 'Maintain', value: Frequency.Maintain },
 			],
 		}),
+		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, CombatBuilder>({
+			fieldName: 'combatBuilder',
+			label: "Builder",
+			labelTooltip: 'Use Sinister Strike or Backstab as builder.',
+			values: [
+				{ name: "Sinister Strike", value: CombatBuilder.SinisterStrike },
+				{ name: "Backstab", value: CombatBuilder.Backstab },
+			],
+			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().combatPotency > 0
+		}),
+		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, CombatPriority>({
+			fieldName: 'combatFinisherPriority',
+			label: 'Finisher Priority',
+			labelTooltip: 'The finisher that will be cast with highest priority.',
+			values: [
+				{ name: 'Rupture', value: CombatPriority.RuptureEviscerate },
+				{ name: 'Eviscerate', value: CombatPriority.EviscerateRupture },
+			],
+			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().combatPotency > 0
+		}),
 		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, AssassinationPriority>({
 			fieldName: 'assassinationFinisherPriority',
 			label: 'Finisher Priority',
@@ -96,34 +124,10 @@ export const RogueRotationConfig = {
 			],
 			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().honorAmongThieves > 0
 		}),
-		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
-			fieldName: 'envenomEnergyThreshold',
-			label: 'Energy Threshold (4cp Envenom)',
-			labelTooltip: 'Amount of total energy to pool before casting a 4 point Envenom.',
-			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
-		}),
-		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
-			fieldName: 'envenomEnergyThresholdOverkill',
-			label: 'Energy Threshold (4cp Envenom w/ Overkill)',
-			labelTooltip: 'Amount of total energy to pool before casting a 4 point Envenom.',
-			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
-		}),
-		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
-			fieldName: 'envenomEnergyThresholdMin',
-			label: 'Energy Threshold (5cp Envenom)',
-			labelTooltip: 'Amount of total energy to pool before casting a 5 point Envenom.',
-			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
-		}),
-		InputHelpers.makeRotationNumberInput<Spec.SpecRogue>({
-			fieldName: 'envenomEnergyThresholdOverkillMin',
-			label: 'Energy Threshold (5cp Envenom w/ Overkill)',
-			labelTooltip: 'Amount of total energy to pool before casting a 4 point Envenom.',
-			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
-		}),
 		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, Frequency>({
 			fieldName: 'multiTargetSliceFrequency',
 			label: 'Multi-Target S&D',
-			labelTooltip: 'Frequency of Slice and Dice cast in multi-target scnearios.',
+			labelTooltip: 'Frequency of Slice and Dice cast in multi-target scenarios.',
 			values: [
 				{ name: 'Never', value: Frequency.Never },
 				{ name: 'Once', value: Frequency.Once },
@@ -168,7 +172,7 @@ export const RogueRotationConfig = {
 		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
 			fieldName: "useGhostlyStrike",
 			label: 'Use Ghostly Strike',
-			labelTooltip: 'Use Ghostly Strike as a builder.',
+			labelTooltip: 'Use Ghostly Strike on cooldown. Mainly useful when using the associate glyph.',
 			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().ghostlyStrike
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({

@@ -8,7 +8,6 @@ import (
 
 type HunterPet struct {
 	core.Pet
-	focusBar
 
 	config PetConfig
 
@@ -17,8 +16,8 @@ type HunterPet struct {
 	CobraStrikesAura *core.Aura
 	KillCommandAura  *core.Aura
 
-	specialAbility PetAbility
-	focusDump      PetAbility
+	specialAbility *core.Spell
+	focusDump      *core.Spell
 
 	uptimePercent    float64
 	hasOwnerCooldown bool
@@ -86,17 +85,11 @@ func (hp *HunterPet) Talents() *proto.HunterPetTalents {
 }
 
 func (hp *HunterPet) Initialize() {
-	//if hp.hunterOwner.Options.PetSingleAbility {
-	//	hp.specialAbility = hp.NewPetAbility(hp.config.FocusDump, true)
-	//	hp.config.RandomSelection = false
-	//} else {
 	hp.specialAbility = hp.NewPetAbility(hp.config.SpecialAbility, true)
 	hp.focusDump = hp.NewPetAbility(hp.config.FocusDump, false)
-	//}
 }
 
 func (hp *HunterPet) Reset(sim *core.Simulation) {
-	hp.focusBar.reset(sim)
 	hp.uptimePercent = core.MinFloat(1, core.MaxFloat(0, hp.hunterOwner.Options.PetUptime))
 }
 
@@ -104,7 +97,6 @@ func (hp *HunterPet) OnGCDReady(sim *core.Simulation) {
 	percentRemaining := sim.GetRemainingDurationPercent()
 	if percentRemaining < 1.0-hp.uptimePercent { // once fight is % completed, disable pet.
 		hp.Disable(sim)
-		hp.focusBar.Cancel(sim)
 		return
 	}
 
@@ -118,14 +110,14 @@ func (hp *HunterPet) OnGCDReady(sim *core.Simulation) {
 	target := hp.CurrentTarget
 	if hp.config.RandomSelection {
 		if sim.RandomFloat("Hunter Pet Ability") < 0.5 {
-			if !hp.specialAbility.TryCast(sim, target, hp) {
-				if !hp.focusDump.TryCast(sim, target, hp) {
+			if !hp.specialAbility.CanCast(sim, target) || !hp.specialAbility.Cast(sim, target) {
+				if !hp.focusDump.Cast(sim, target) {
 					hp.DoNothing()
 				}
 			}
 		} else {
-			if !hp.focusDump.TryCast(sim, target, hp) {
-				if !hp.specialAbility.TryCast(sim, target, hp) {
+			if !hp.focusDump.Cast(sim, target) {
+				if !hp.specialAbility.CanCast(sim, target) || !hp.specialAbility.Cast(sim, target) {
 					hp.DoNothing()
 				}
 			}
@@ -133,11 +125,11 @@ func (hp *HunterPet) OnGCDReady(sim *core.Simulation) {
 		return
 	}
 
-	if hp.specialAbility.TryCast(sim, target, hp) {
+	if !hp.specialAbility.CanCast(sim, target) || hp.specialAbility.Cast(sim, target) {
 		// For abilities that don't use the GCD.
 		if hp.GCD.IsReady(sim) {
-			if hp.focusDump.Type != Unknown {
-				if !hp.focusDump.TryCast(sim, target, hp) {
+			if hp.focusDump != nil {
+				if !hp.focusDump.Cast(sim, target) {
 					hp.DoNothing()
 				}
 			} else {
@@ -145,8 +137,8 @@ func (hp *HunterPet) OnGCDReady(sim *core.Simulation) {
 			}
 		}
 	} else {
-		if hp.focusDump.Type != Unknown {
-			if !hp.focusDump.TryCast(sim, target, hp) {
+		if hp.focusDump != nil {
+			if !hp.focusDump.Cast(sim, target) {
 				hp.DoNothing()
 			}
 		} else {

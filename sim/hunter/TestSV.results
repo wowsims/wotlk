@@ -6,7 +6,7 @@ character_stats_results: {
   final_stats: 1599.015
   final_stats: 589.6
   final_stats: 276.1
-  final_stats: 280
+  final_stats: 500
   final_stats: 109
   final_stats: 232
   final_stats: 1181.96121
@@ -88,15 +88,17 @@ dps_results: {
 dps_results: {
  key: "TestSV-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 6917.07218
-  tps: 14781.20245
+  dps: 6916.37309
+  tps: 5885.94367
+  hps: 90.56904
  }
 }
 dps_results: {
  key: "TestSV-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 6917.07218
-  tps: 14781.20245
+  dps: 6916.37309
+  tps: 5885.94367
+  hps: 90.56904
  }
 }
 dps_results: {
@@ -121,6 +123,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSV-AllItems-BlackBruise-50035"
+ value: {
+  dps: 6844.77047
+  tps: 5820.014
+ }
+}
+dps_results: {
+ key: "TestSV-AllItems-BlackBruise-50692"
+ value: {
+  dps: 6835.51324
+  tps: 5811.09433
+ }
+}
+dps_results: {
  key: "TestSV-AllItems-BlessedGarboftheUndeadSlayer"
  value: {
   dps: 5907.8986
@@ -139,6 +155,20 @@ dps_results: {
  value: {
   dps: 7035.08338
   tps: 5871.07935
+ }
+}
+dps_results: {
+ key: "TestSV-AllItems-Bryntroll,theBoneArbiter-50415"
+ value: {
+  dps: 7255.09956
+  tps: 6193.11259
+ }
+}
+dps_results: {
+ key: "TestSV-AllItems-Bryntroll,theBoneArbiter-50709"
+ value: {
+  dps: 7258.43555
+  tps: 6195.35328
  }
 }
 dps_results: {
@@ -627,17 +657,17 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSV-AllItems-SoulPreserver-37111"
+ value: {
+  dps: 6916.39859
+  tps: 5885.98877
+ }
+}
+dps_results: {
  key: "TestSV-AllItems-SouloftheDead-40382"
  value: {
   dps: 7008.87698
   tps: 5978.14742
- }
-}
-dps_results: {
- key: "TestSV-AllItems-SparkofHope-45703"
- value: {
-  dps: 6916.39859
-  tps: 5885.98877
  }
 }
 dps_results: {
@@ -825,8 +855,8 @@ dps_results: {
 dps_results: {
  key: "TestSV-Settings-Dwarf-P1-AOE-FullBuffs-LongMultiTarget"
  value: {
-  dps: 17867.34674
-  tps: 18064.75215
+  dps: 19273.55263
+  tps: 19471.00027
  }
 }
 dps_results: {
@@ -909,8 +939,8 @@ dps_results: {
 dps_results: {
  key: "TestSV-Settings-Orc-P1-AOE-FullBuffs-LongMultiTarget"
  value: {
-  dps: 17974.75078
-  tps: 18110.78368
+  dps: 19388.00635
+  tps: 19524.09708
  }
 }
 dps_results: {
