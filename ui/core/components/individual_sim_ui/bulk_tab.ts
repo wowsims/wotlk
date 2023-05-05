@@ -682,7 +682,7 @@ export class BulkTab extends SimTab {
 }
 
 
-class GemSelectorModal extends BaseModal {
+export class GemSelectorModal extends BaseModal {
 	private readonly simUI: IndividualSimUI<Spec>;
 
 	private readonly contentElem: HTMLElement;
