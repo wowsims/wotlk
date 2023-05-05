@@ -17,7 +17,6 @@ func (paladin *Paladin) registerHolyShieldSpell() {
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskEmpty,
 
-		// DamageMultiplier: 1 + 0.1*float64(paladin.Talents.ImprovedHolyShield),
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
@@ -71,6 +70,9 @@ func (paladin *Paladin) registerHolyShieldSpell() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+			if paladin.HolyShieldAura.IsActive() {
+				paladin.HolyShieldAura.SetStacks(sim, numCharges)
+			}
 			paladin.HolyShieldAura.Activate(sim)
 		},
 	})
