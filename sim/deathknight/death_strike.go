@@ -102,10 +102,10 @@ func (dk *Deathknight) registerDrwDeathStrikeSpell() {
 		ActionID:    DeathStrikeActionID.WithTag(1),
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagIgnoreAttackerModifiers,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
 		BonusCritRating:  (dk.annihilationCritBonus() + dk.improvedDeathStrikeCritBonus()) * core.CritRatingPerCritChance,
-		DamageMultiplier: .5 * .75 * dk.improvedDeathStrikeDamageBonus(),
+		DamageMultiplier: .75 * dk.improvedDeathStrikeDamageBonus(),
 		CritMultiplier:   dk.bonusCritMultiplier(dk.Talents.MightOfMograine),
 		ThreatMultiplier: 1,
 
@@ -118,4 +118,9 @@ func (dk *Deathknight) registerDrwDeathStrikeSpell() {
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 		},
 	})
+
+	if !dk.Inputs.NewDrw {
+		dk.RuneWeapon.DeathStrike.DamageMultiplier *= 0.5
+		dk.RuneWeapon.DeathStrike.Flags |= core.SpellFlagIgnoreAttackerModifiers
+	}
 }

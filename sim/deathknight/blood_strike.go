@@ -95,10 +95,10 @@ func (dk *Deathknight) registerDrwBloodStrikeSpell() {
 		ActionID:    BloodStrikeActionID.WithTag(1),
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagIgnoreAttackerModifiers,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
 		BonusCritRating: (dk.subversionCritBonus() + dk.annihilationCritBonus()) * core.CritRatingPerCritChance,
-		DamageMultiplier: .5 * 0.4 *
+		DamageMultiplier: 0.4 *
 			dk.bloodOfTheNorthCoeff() *
 			dk.thassariansPlateDamageBonus() *
 			dk.bloodyStrikesBonus(dk.BloodStrike),
@@ -117,4 +117,9 @@ func (dk *Deathknight) registerDrwBloodStrikeSpell() {
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 		},
 	})
+
+	if !dk.Inputs.NewDrw {
+		dk.RuneWeapon.BloodStrike.DamageMultiplier *= 0.5
+		dk.RuneWeapon.BloodStrike.Flags |= core.SpellFlagIgnoreAttackerModifiers
+	}
 }

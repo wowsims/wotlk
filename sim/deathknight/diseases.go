@@ -179,9 +179,9 @@ func (dk *Deathknight) registerDrwFrostFever() {
 		ActionID:    core.ActionID{SpellID: 55095},
 		SpellSchool: core.SpellSchoolFrost,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagDisease | core.SpellFlagIgnoreAttackerModifiers,
+		Flags:       core.SpellFlagDisease,
 
-		DamageMultiplier: 0.5 * core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfIcyTouch), 1.2, 1.0),
+		DamageMultiplier: core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfIcyTouch), 1.2, 1.0),
 		ThreatMultiplier: 1,
 
 		Dot: core.DotConfig{
@@ -207,6 +207,11 @@ func (dk *Deathknight) registerDrwFrostFever() {
 			spell.Dot(target).Apply(sim)
 		},
 	})
+
+	if !dk.Inputs.NewDrw {
+		dk.RuneWeapon.FrostFeverSpell.DamageMultiplier *= 0.5
+		dk.RuneWeapon.FrostFeverSpell.Flags |= core.SpellFlagIgnoreAttackerModifiers
+	}
 }
 
 func (dk *Deathknight) registerDrwBloodPlague() {
@@ -217,9 +222,9 @@ func (dk *Deathknight) registerDrwBloodPlague() {
 		ActionID:    core.ActionID{SpellID: 55078},
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagDisease | core.SpellFlagIgnoreAttackerModifiers,
+		Flags:       core.SpellFlagDisease,
 
-		DamageMultiplier: 0.5,
+		DamageMultiplier: 1,
 		CritMultiplier:   dk.RuneWeapon.DefaultMeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 
@@ -254,6 +259,11 @@ func (dk *Deathknight) registerDrwBloodPlague() {
 			spell.Dot(target).Apply(sim)
 		},
 	})
+
+	if !dk.Inputs.NewDrw {
+		dk.RuneWeapon.BloodPlagueSpell.DamageMultiplier *= 0.5
+		dk.RuneWeapon.BloodPlagueSpell.Flags |= core.SpellFlagIgnoreAttackerModifiers
+	}
 }
 
 func (dk *Deathknight) doWanderingPlague(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
