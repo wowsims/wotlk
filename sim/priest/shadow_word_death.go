@@ -19,6 +19,8 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 	}
 
 	hasGlyphOfShadow := priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow))
+	mentalAgility := []float64{0, .04, .07, .10}[priest.Talents.MentalAgility]
+	shadowFocus := 0.02 * float64(priest.Talents.ShadowFocus)
 
 	priest.ShadowWordDeath = priest.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48158},
@@ -27,7 +29,7 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.12,
-			Multiplier: 1 - []float64{0, .04, .07, .10}[priest.Talents.MentalAgility],
+			Multiplier: 1 - (shadowFocus + mentalAgility),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
