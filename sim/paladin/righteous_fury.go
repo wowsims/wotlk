@@ -5,14 +5,33 @@ import (
 )
 
 func (paladin *Paladin) ActivateRighteousFury() {
-	paladin.PseudoStats.DamageTakenMultiplier *= 1 - 0.02*float64(paladin.Talents.ImprovedRighteousFury)
 
+	var holySpells []*core.Spell
 	paladin.OnSpellRegistered(func(spell *core.Spell) {
 		if spell.SpellSchool == core.SpellSchoolHoly {
-			spell.ThreatMultiplier *= 1.8
+			holySpells = append(holySpells, spell)
 		}
 	})
 
-	// Extra threat provided to all tanks on certain buff activation, for Paladins that is RF.
-	paladin.PseudoStats.ThreatMultiplier *= 1.43
+	dtmMul := 1 - 0.02*float64(paladin.Talents.ImprovedRighteousFury)
+
+	paladin.RighteousFuryAura = paladin.RegisterAura(core.Aura{
+		Label:    "Righteous Fury",
+		ActionID: core.ActionID{SpellID: 25780},
+		Duration: core.NeverExpires,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			paladin.PseudoStats.ThreatMultiplier *= 1.43
+			paladin.PseudoStats.DamageTakenMultiplier *= dtmMul
+			for _, spell := range holySpells {
+				spell.ThreatMultiplier *= 1.8
+			}
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			paladin.PseudoStats.ThreatMultiplier /= 1.43
+			paladin.PseudoStats.DamageTakenMultiplier /= dtmMul
+			for _, spell := range holySpells {
+				spell.ThreatMultiplier /= 1.8
+			}
+		},
+	})
 }
