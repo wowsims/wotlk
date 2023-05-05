@@ -22,6 +22,7 @@ func addPatchwerk25(bossPrefix string) {
 				stats.Health:      16_950_147,
 				stats.Armor:       10643,
 				stats.AttackPower: 805,
+				stats.BlockValue:  76,
 			}.ToFloatArray(),
 
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,

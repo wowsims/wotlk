@@ -55,6 +55,7 @@ func addHodir25(bossPrefix string) {
 				stats.Health:      32_477_905,
 				stats.Armor:       10643,
 				stats.AttackPower: 805,
+				stats.BlockValue:  76,
 			}.ToFloatArray(),
 
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,

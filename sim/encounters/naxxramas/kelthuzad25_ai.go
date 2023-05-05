@@ -20,6 +20,7 @@ func addKelThuzad25(bossPrefix string) {
 				stats.Health:      19_034_924,
 				stats.Armor:       10643,
 				stats.AttackPower: 805,
+				stats.BlockValue:  76,
 			}.ToFloatArray(),
 
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
