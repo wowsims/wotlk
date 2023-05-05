@@ -8,6 +8,8 @@ import (
 
 func (priest *Priest) registerDevouringPlagueSpell() {
 	actionID := core.ActionID{SpellID: 48300}
+	mentalAgility := []float64{0, .04, .07, .10}[priest.Talents.MentalAgility]
+	shadowFocus := 0.02 * float64(priest.Talents.ShadowFocus)
 	priest.DpInitMultiplier = 8 * 0.1 * float64(priest.Talents.ImprovedDevouringPlague)
 
 	priest.DevouringPlague = priest.RegisterSpell(core.SpellConfig{
@@ -18,7 +20,7 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.25,
-			Multiplier: 1 - []float64{0, .04, .07, .10}[priest.Talents.MentalAgility],
+			Multiplier: 1 - (shadowFocus + mentalAgility),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
