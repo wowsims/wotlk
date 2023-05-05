@@ -386,6 +386,13 @@ export const WeaponSwapInputs = InputHelpers.MakeItemSwapInput<Spec.SpecDeathkni
 	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && player.getRotation().useGargoyle && player.getRotation().enableWeaponSwap,
 })
 
+export const NewDrwInput = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecDeathknight>({
+	fieldName: 'newDrw',
+	label: 'PTR DRW Scaling',
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().dancingRuneWeapon && player.getRotation().useDancingRuneWeapon,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+})
+
 export const DeathKnightRotationConfig = {
 	inputs: [
 		InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, FrostRotationType>({
@@ -406,6 +413,7 @@ export const DeathKnightRotationConfig = {
 		WeaponSwapInputs,
 		UseEmpowerRuneWeapon,
 		UseDancingRuneWeapon,
+		NewDrwInput,
 		HoldErwArmy,
 		BloodTapInput,
 		BloodSpenderInput,
