@@ -374,7 +374,13 @@ func (item WowheadItemResponse) GetItemType() proto.ItemType {
 	return proto.ItemType_ItemTypeUnknown
 }
 
-func (item WowheadItemResponse) IsScalableArmorSlot(itemType proto.ItemType) bool {
+func (item WowheadItemResponse) IsScalableArmorSlot() bool {
+	// Special case shields as Base Armor
+	if item.GetWeaponType() == proto.WeaponType_WeaponTypeShield {
+		return true
+	}
+
+	itemType := item.GetItemType()
 	switch itemType {
 	case
 		proto.ItemType_ItemTypeNeck,
@@ -390,7 +396,7 @@ func (item WowheadItemResponse) GetArmorValues() (int, int) {
 	armorValue := item.GetIntValue(armorRegex)
 	bonusArmorValue := item.GetIntValue(bonusArmorRegex)
 
-	if item.IsScalableArmorSlot(item.GetItemType()) {
+	if item.IsScalableArmorSlot() {
 		armorValue = armorValue - bonusArmorValue
 	} else {
 		bonusArmorValue = armorValue
