@@ -19,12 +19,12 @@ func addKelThuzad25(bossPrefix string) {
 			Stats: stats.Stats{
 				stats.Health:      19_034_924,
 				stats.Armor:       10643,
-				stats.AttackPower: 574,
+				stats.AttackPower: 805,
 			}.ToFloatArray(),
 
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
 			SwingSpeed:       2.3,
-			MinBaseDamage:    28767,
+			MinBaseDamage:    26639,
 			SuppressDodge:    false,
 			ParryHaste:       false,
 			DualWield:        false,

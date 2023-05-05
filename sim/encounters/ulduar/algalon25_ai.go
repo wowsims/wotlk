@@ -21,12 +21,12 @@ func addAlgalon25(bossPrefix string) {
 			Stats: stats.Stats{
 				stats.Health:      41_834_998,
 				stats.Armor:       10643,
-				stats.AttackPower: 574,
+				stats.AttackPower: 805,
 			}.ToFloatArray(),
 
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
 			SwingSpeed:       1.00,
-			MinBaseDamage:    77000,
+			MinBaseDamage:    63649,
 			SuppressDodge:    false,
 			ParryHaste:       false,
 			DualWield:        true,

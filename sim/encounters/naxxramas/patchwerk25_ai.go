@@ -21,12 +21,12 @@ func addPatchwerk25(bossPrefix string) {
 			Stats: stats.Stats{
 				stats.Health:      16_950_147,
 				stats.Armor:       10643,
-				stats.AttackPower: 574,
+				stats.AttackPower: 805,
 			}.ToFloatArray(),
 
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
 			SwingSpeed:       0.75,
-			MinBaseDamage:    38068,
+			MinBaseDamage:    34964,
 			SuppressDodge:    false,
 			ParryHaste:       false,
 			DualWield:        false,

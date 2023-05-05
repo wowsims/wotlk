@@ -19,12 +19,12 @@ func addLoatheb25(bossPrefix string) {
 			Stats: stats.Stats{
 				stats.Health:      26_286_324,
 				stats.Armor:       10643,
-				stats.AttackPower: 574,
+				stats.AttackPower: 805,
 			}.ToFloatArray(),
 
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
 			SwingSpeed:       1.2,
-			MinBaseDamage:    6727,
+			MinBaseDamage:    6229,
 			SuppressDodge:    false,
 			ParryHaste:       false,
 			DualWield:        false,

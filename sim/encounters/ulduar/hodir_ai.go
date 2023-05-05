@@ -54,12 +54,12 @@ func addHodir25(bossPrefix string) {
 			Stats: stats.Stats{
 				stats.Health:      32_477_905,
 				stats.Armor:       10643,
-				stats.AttackPower: 574,
+				stats.AttackPower: 805,
 			}.ToFloatArray(),
 
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
 			SwingSpeed:       2.4,
-			MinBaseDamage:    50000, // TODO: Find real value
+			MinBaseDamage:    46300, // TODO: Find real value
 			SuppressDodge:    false,
 			ParryHaste:       false,
 			DualWield:        false,
