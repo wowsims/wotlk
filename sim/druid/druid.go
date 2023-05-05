@@ -44,6 +44,7 @@ type Druid struct {
 	InsectSwarm          *core.Spell
 	GiftOfTheWild        *core.Spell
 	Lacerate             *core.Spell
+	Languish             *core.Spell
 	MangleBear           *core.Spell
 	MangleCat            *core.Spell
 	Maul                 *core.Spell
