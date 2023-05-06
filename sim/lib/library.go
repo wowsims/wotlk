@@ -92,6 +92,58 @@ func encodeSettings(json *C.char) *C.char {
 	return C.CString(string(out))
 }
 
+//export getDatabase
+func getDatabase(itemIds *int32, numItems int32, enchantIds *int32, numEnchants int32, gemIds *int32, numGems int32) *C.char {
+	ids := unsafe.Slice(itemIds, numItems)
+	eids := unsafe.Slice(enchantIds, numEnchants)
+	gids := unsafe.Slice(gemIds, numGems)
+	simDB := &proto.SimDatabase{
+		Items:    make([]*proto.SimItem, numItems),
+		Enchants: make([]*proto.SimEnchant, numEnchants),
+		Gems:     make([]*proto.SimGem, numGems),
+	}
+	for i, itemId := range ids {
+		item := core.ItemsByID[itemId]
+		simDB.Items[i] = &proto.SimItem{
+			Id:               item.ID,
+			Name:             item.Name,
+			Type:             item.Type,
+			ArmorType:        item.ArmorType,
+			WeaponType:       item.WeaponType,
+			HandType:         item.HandType,
+			RangedWeaponType: item.RangedWeaponType,
+			Stats:            item.Stats[:],
+			GemSockets:       item.GemSockets,
+			SocketBonus:      item.SocketBonus[:],
+			WeaponDamageMin:  item.WeaponDamageMin,
+			WeaponDamageMax:  item.WeaponDamageMax,
+			WeaponSpeed:      item.SwingSpeed,
+			SetName:          item.SetName,
+		}
+	}
+	for i, enchantId := range eids {
+		enchant := core.EnchantsByEffectID[enchantId]
+		simDB.Enchants[i] = &proto.SimEnchant{
+			EffectId: enchant.EffectID,
+			Stats:    enchant.Stats[:],
+		}
+	}
+	for i, gemId := range gids {
+		gem := core.GemsByID[gemId]
+		simDB.Gems[i] = &proto.SimGem{
+			Id:    gem.ID,
+			Name:  gem.Name,
+			Color: gem.Color,
+			Stats: gem.Stats[:],
+		}
+	}
+	out, err := protojson.Marshal(simDB)
+	if err != nil {
+		panic(err)
+	}
+	return C.CString(string(out))
+}
+
 //export new
 func new(json *C.char) {
 	input := &proto.RaidSimRequest{}
