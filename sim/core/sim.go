@@ -74,7 +74,6 @@ func runSim(rsr *proto.RaidSimRequest, progress chan *proto.ProgressMetrics, ski
 	}()
 
 	sim := NewSim(rsr)
-	panic("lololo")
 
 	if !skipPresim {
 		if progress != nil {
