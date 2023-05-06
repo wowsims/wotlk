@@ -3,6 +3,9 @@ package main
 // #include <stdlib.h>
 import "C"
 import (
+	"bytes"
+	"compress/zlib"
+	"encoding/base64"
 	"encoding/json"
 	"log"
 	"unsafe"
@@ -11,6 +14,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"google.golang.org/protobuf/encoding/protojson"
+	goproto "google.golang.org/protobuf/proto"
 )
 
 var _default_rsr = proto.RaidSimRequest{
@@ -54,6 +58,37 @@ func computeStats(json *C.char) *C.char {
 	if err != nil {
 		panic(err)
 	}
+	return C.CString(string(out))
+}
+
+//export encodeSettings
+func encodeSettings(json *C.char) *C.char {
+	input := &proto.RaidSimRequest{}
+	jsonString := C.GoString(json)
+	err := protojson.Unmarshal([]byte(jsonString), input)
+	if err != nil {
+		log.Fatalf("failed to load input json file: %s", err)
+	}
+	settings := &proto.IndividualSimSettings{
+		Settings: &proto.SimSettings{
+			Iterations: input.SimOptions.Iterations,
+		},
+		RaidBuffs:  input.Raid.Buffs,
+		Debuffs:    input.Raid.Debuffs,
+		Tanks:      input.Raid.Tanks,
+		PartyBuffs: input.Raid.Parties[0].Buffs,
+		Player:     input.Raid.Parties[0].Players[0],
+		Encounter:  input.Encounter,
+	}
+	var buffer bytes.Buffer
+	data, err := goproto.Marshal(settings)
+	if err != nil {
+		panic(err)
+	}
+	writer := zlib.NewWriter(&buffer)
+	writer.Write(data)
+	writer.Close()
+	out := base64.StdEncoding.EncodeToString(buffer.Bytes())
 	return C.CString(string(out))
 }
 
