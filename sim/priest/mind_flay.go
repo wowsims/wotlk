@@ -22,6 +22,8 @@ func (priest *Priest) newMindFlaySpell(numTicks int32) *core.Spell {
 	rolloverChance := float64(priest.Talents.PainAndSuffering) / 3.0
 	miseryCoeff := 0.257 * (1 + 0.05*float64(priest.Talents.Misery))
 	hasGlyphOfShadow := priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow))
+	shadowFocus := 0.02 * float64(priest.Talents.ShadowFocus)
+	focusedMind := 0.05 * float64(priest.Talents.FocusedMind)
 
 	return priest.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48156}.WithTag(numTicks),
@@ -31,7 +33,7 @@ func (priest *Priest) newMindFlaySpell(numTicks int32) *core.Spell {
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.09,
-			Multiplier: 1 - 0.05*float64(priest.Talents.FocusedMind),
+			Multiplier: 1 - (shadowFocus + focusedMind),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

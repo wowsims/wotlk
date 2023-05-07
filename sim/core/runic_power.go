@@ -572,6 +572,17 @@ func (rp *RunicPowerBar) NormalCurrentBloodRunes() int32 {
 	return count
 }
 
+func (rp *RunicPowerBar) BloodRunesBTSync() bool {
+	const unspentBlood1 = isSpent
+	const unspentBlood2 = unspentBlood1 << 2
+
+	if rp.runeStates&unspentBlood1 != 0 && rp.runeStates&unspentBlood2 == 0 {
+		return true
+	}
+
+	return false
+}
+
 func (rp *RunicPowerBar) NormalCurrentFrostRunes() int32 {
 	const unspentFrost1 = (isSpent) << 4
 	const unspentFrost2 = unspentFrost1 << 2

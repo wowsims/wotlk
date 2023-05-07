@@ -185,9 +185,9 @@ func (dk *DpsDeathknight) blDrwCanCast(sim *core.Simulation, castTime time.Durat
 		drwCd := dk.DancingRuneWeapon.CD.Duration
 		timeLeft := sim.GetRemainingDuration()
 		for timeLeft > drwCd {
-			timeLeft = timeLeft - (drwCd + 2*time.Second)
+			timeLeft = timeLeft - (drwCd + time.Second)
 		}
-		dk.br.drwMaxDelay = timeLeft - 2*time.Second
+		dk.br.drwMaxDelay = timeLeft - time.Second
 	}
 	// Cast it if holding will result in less total DRWs for the encounter
 	if sim.CurrentTime > dk.br.drwMaxDelay {
@@ -198,10 +198,10 @@ func (dk *DpsDeathknight) blDrwCanCast(sim *core.Simulation, castTime time.Durat
 		return true
 	}
 	// Make sure we can instantly put diseases up with the rune weapon
-	if !dk.sr.hasGod && (dk.CurrentFrostRunes() < 1 || dk.CurrentUnholyRunes() < 1) {
+	if !dk.sr.hasGod && dk.Rotation.DrwDiseases == proto.Deathknight_Rotation_Normal && (dk.CurrentFrostRunes() < 1 || dk.CurrentUnholyRunes() < 1) {
 		return false
 	}
-	if dk.sr.hasGod && dk.CurrentBloodRunes() < 1 {
+	if dk.sr.hasGod && dk.Rotation.DrwDiseases == proto.Deathknight_Rotation_Pestilence && dk.CurrentBloodRunes() < 1 {
 		return false
 	}
 	if !dk.br.drwSnapshot.CanSnapShot(sim, castTime) {

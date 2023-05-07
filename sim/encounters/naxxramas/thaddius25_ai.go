@@ -19,12 +19,13 @@ func addThaddius25(bossPrefix string) {
 			Stats: stats.Stats{
 				stats.Health:      39_520_129,
 				stats.Armor:       10643,
-				stats.AttackPower: 574,
+				stats.AttackPower: 805,
+				stats.BlockValue:  76,
 			}.ToFloatArray(),
 
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
 			SwingSpeed:       1.25,
-			MinBaseDamage:    25315,
+			MinBaseDamage:    23442,
 			SuppressDodge:    false,
 			ParryHaste:       false,
 			DualWield:        false,

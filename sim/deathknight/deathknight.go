@@ -21,7 +21,8 @@ var TalentTreeSizes = [3]int{28, 29, 31}
 
 type DeathknightInputs struct {
 	// Option Vars
-	IsDps bool
+	IsDps  bool
+	NewDrw bool
 
 	UnholyFrenzyTarget *proto.RaidTarget
 
@@ -77,6 +78,8 @@ type Deathknight struct {
 
 	RuneWeapon        *RuneWeaponPet
 	DancingRuneWeapon *core.Spell
+	drwDmgSnapshot    float64
+	drwPhysSnapshot   float64
 
 	ArmyOfTheDead *core.Spell
 	ArmyGhoul     []*GhoulPet

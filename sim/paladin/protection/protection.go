@@ -122,4 +122,5 @@ func (prot *ProtectionPaladin) Reset(sim *core.Simulation) {
 
 	prot.DivinePleaAura.Activate(sim)
 	prot.DivinePlea.CD.Use(sim)
+	prot.RighteousFuryAura.Activate(sim)
 }

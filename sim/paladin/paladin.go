@@ -46,8 +46,8 @@ type Paladin struct {
 	// SealOfWisdom        *core.Spell
 	// SealOfLight         *core.Spell
 
-	HolyShieldAura *core.Aura
-	// RighteousFuryAura       *core.Aura
+	HolyShieldAura          *core.Aura
+	RighteousFuryAura       *core.Aura
 	DivinePleaAura          *core.Aura
 	JudgementOfWisdomAura   *core.Aura
 	JudgementOfLightAura    *core.Aura

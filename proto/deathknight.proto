@@ -282,6 +282,8 @@ message Deathknight {
 		RaidTarget unholy_frenzy_target = 5;
 
 		bool drw_pesti_apply = 6;
+
+		bool new_drw = 7;
 	}
 	Options options = 3;
 }

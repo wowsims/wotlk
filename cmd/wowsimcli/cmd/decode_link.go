@@ -51,11 +51,17 @@ func decodeLink(link string) error {
 		return fmt.Errorf("reading zlib data failed: %w", err)
 	}
 
-	settings := &proto.IndividualSimSettings{}
+	var settings goproto.Message
+	if strings.Contains(link, "/raid/") {
+		settings = &proto.RaidSimSettings{}
+	} else {
+		settings = &proto.IndividualSimSettings{}
+	}
+
 	if err := goproto.Unmarshal(buf.Bytes(), settings); err != nil {
 		return fmt.Errorf("cannot unmarshal raw proto: %w", err)
 	}
 
-	fmt.Println(protojson.Format(settings))
+	fmt.Println(protojson.Format(goproto.MessageV2(settings)))
 	return nil
 }
