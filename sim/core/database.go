@@ -202,9 +202,10 @@ func NewItem(itemSpec ItemSpec) Item {
 	if itemSpec.Enchant != 0 {
 		if enchant, ok := EnchantsByEffectID[itemSpec.Enchant]; ok {
 			item.Enchant = enchant
-		} else {
-			panic(fmt.Sprintf("No enchant with id: %d", itemSpec.Enchant))
 		}
+		// else {
+		// 	panic(fmt.Sprintf("No enchant with id: %d", itemSpec.Enchant))
+		// }
 	}
 
 	if len(itemSpec.Gems) > 0 {
