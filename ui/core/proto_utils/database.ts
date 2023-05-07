@@ -127,10 +127,12 @@ export class Database {
 		db.glyphIds.forEach(id => this.glyphIds.push(id));
 	}
 
+	getAllItems(): Array<Item> {
+		return Object.values(this.items);
+	}
+
 	getItems(slot: ItemSlot): Array<Item> {
-		let items = Object.values(this.items);
-		items = items.filter(item => getEligibleItemSlots(item).includes(slot));
-		return items;
+		return this.getAllItems().filter(item => getEligibleItemSlots(item).includes(slot));
 	}
 
 	getEnchants(slot: ItemSlot): Array<Enchant> {
