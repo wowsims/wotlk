@@ -573,10 +573,6 @@ export class BulkTab extends SimTab {
       const searchString = searchText.value;
       searchResults.innerHTML = "";
 
-      if (searchString.length < 2) {
-        return;
-      }
-
       var pieces = searchString.split(' ');
       var items = this.simUI.sim.db.getAllItems();
       
@@ -584,8 +580,12 @@ export class BulkTab extends SimTab {
       items.every((item) => {
         let matched = true;
         const lcName = item.name.toLowerCase();
+        const lcSetName = item.setName.toLowerCase();
+
         pieces.forEach((piece) => {
-          if (!lcName.includes(piece.toLowerCase())) {
+          var lcPiece = piece.toLowerCase();
+
+          if (!lcName.includes(lcPiece) && !lcSetName.includes(lcPiece)) {
             matched = false;
             return false;
           }
@@ -603,7 +603,7 @@ export class BulkTab extends SimTab {
           displayCount++;
         }
 
-        return displayCount < 5;
+        return displayCount < 10;
       });
     });
 
