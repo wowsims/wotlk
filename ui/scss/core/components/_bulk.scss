@@ -133,6 +133,18 @@
       display: flex;
     }
   }
+  
+  .batch-search-results {
+    list-style: none;
+    background: rgba(0,0,0,0.3);
+    li {
+      cursor: pointer;
+      background: transparent;
+      &:hover {
+        background: rgba(255,255,255, 0.3);
+      }
+    }
+  }
 
   .default-gem-container {
     display: flex;
