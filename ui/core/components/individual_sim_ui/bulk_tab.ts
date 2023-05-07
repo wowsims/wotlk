@@ -277,7 +277,9 @@ export class BulkTab extends SimTab {
     this.gemIconElements = [];
     this.buildTabContent();
 
-    this.simUI.sim.waitForInit().then(() => this.loadSettings());
+    this.simUI.sim.waitForInit().then(() => {
+      this.loadSettings();
+    });
   }
 
   private getSettingsKey(): string {
@@ -544,6 +546,80 @@ export class BulkTab extends SimTab {
       this.addItems(items);
     });
     settingsBlock.bodyElement.appendChild(importFavsButton);
+
+    const searchButton = document.createElement('button');
+    let searchText = document.createElement('input');
+    searchText.type = "text";
+    searchText.placeholder = "search...";
+    searchText.style.display = "none";
+
+    const searchResults = document.createElement('ul');
+    searchResults.classList.add("batch-search-results");
+
+		searchText.addEventListener("keyup", ev => {
+			if (ev.key == "Enter") {
+        let toAdd = Array<ItemSpec>();
+        searchResults.childNodes.forEach((node) =>{
+          const strID = (node as HTMLElement).getAttribute('data-item-id');
+          if (strID != null) {
+            toAdd.push(ItemSpec.create({id: Number.parseInt(strID)}));
+          }
+        });
+        this.addItems(toAdd);
+			}
+		});
+    
+    searchText.addEventListener("input", (e) => {
+      const searchString = searchText.value;
+      searchResults.innerHTML = "";
+
+      if (searchString.length < 2) {
+        return;
+      }
+
+      var pieces = searchString.split(' ');
+      var items = this.simUI.sim.db.getAllItems();
+      
+      let displayCount = 0;
+      items.every((item) => {
+        let matched = true;
+        const lcName = item.name.toLowerCase();
+        pieces.forEach((piece) => {
+          if (!lcName.includes(piece.toLowerCase())) {
+            matched = false;
+            return false;
+          }
+          return true;
+        })
+
+        if (matched) {
+          let itemElement = document.createElement('li');
+          itemElement.innerText = item.name;
+          itemElement.setAttribute("data-item-id", item.id.toString());
+          itemElement.addEventListener("click", (ev) => {
+            this.addItems(Array<ItemSpec>(ItemSpec.create({id: item.id})));
+          })
+          searchResults.append(itemElement);  
+          displayCount++;
+        }
+
+        return displayCount < 5;
+      });
+    });
+
+    searchButton.classList.add('btn', 'btn-secondary', 'w-100', 'bulk-settings-button');
+    searchButton.innerHTML = '<i class="fa fa-search"></i> Add Item';
+    searchButton.addEventListener('click', () => {
+      if (searchText.style.display == "none") {
+        searchText.style.display = "block";
+      } else {
+        searchText.style.display = "none";
+        searchResults.innerHTML = "";
+      }
+    });
+    settingsBlock.bodyElement.appendChild(searchButton);
+    settingsBlock.bodyElement.appendChild(searchText);
+    settingsBlock.bodyElement.appendChild(searchResults);
 
     const clearButton = document.createElement('button');
     clearButton.classList.add('btn', 'btn-secondary', 'w-100', 'bulk-settings-button');
