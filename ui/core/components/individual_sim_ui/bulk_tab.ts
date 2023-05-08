@@ -1,5 +1,5 @@
-import { ContentBlock } from "../content_block";
 import { Database } from '../../proto_utils/database';
+import { ContentBlock } from "../content_block";
 import { Importer } from "../importers";
 
 import { IndividualSimUI } from "../../individual_sim_ui";
@@ -7,25 +7,22 @@ import { TypedEvent } from "../../typed_event";
 
 import { EventID } from '../../typed_event.js';
 
-import { EquipmentSpec, GemColor, ItemSlot, ItemSpec, SimDatabase, SimEnchant, SimGem, SimItem, Spec } from "../../proto/common";
 import { BulkComboResult, BulkSettings, ItemSpecWithSlot, ProgressMetrics } from "../../proto/api";
+import { EquipmentSpec, GemColor, ItemSlot, ItemSpec, SimDatabase, SimEnchant, SimGem, SimItem, Spec } from "../../proto/common";
 
 import { ItemData, ItemList, ItemRenderer, SelectorModal, SelectorModalTabs } from "../gear_picker";
 import { SimTab } from "../sim_tab";
 
 import { UIEnchant, UIGem, UIItem } from "../../proto/ui";
-import { Component } from "../component";
 import { EquippedItem } from "../../proto_utils/equipped_item";
+import { Component } from "../component";
 import { ResultsViewer } from "../results_viewer";
 
-import { Popover, Tooltip } from 'bootstrap';
-import { BooleanPicker } from "../boolean_picker";
-import { gemMatchesSocket, getEmptyGemSocketIconUrl } from "../../proto_utils/gems";
-import { getEligibleItemSlots } from "../../proto_utils/utils";
 import { ActionId } from "../../proto_utils/action_id";
+import { getEmptyGemSocketIconUrl } from "../../proto_utils/gems";
+import { canEquipItem, getEligibleItemSlots } from "../../proto_utils/utils";
 import { BaseModal } from "../base_modal";
-import { SimUI } from "ui/core/sim_ui";
-import { canEquipItem } from "../../proto_utils/utils";
+import { BooleanPicker } from "../boolean_picker";
 
 export class BulkGearJsonImporter<SpecType extends Spec> extends Importer {
   private readonly simUI: IndividualSimUI<SpecType>;
@@ -180,16 +177,22 @@ export class BulkItemPicker extends Component {
           }
         });
 
-        const removeButton = modal.body.querySelector('.selector-modal-remove-button');
-        if (removeButton && removeButton.parentNode) {
-          const destroyItemButton = document.createElement('button');
-          destroyItemButton.textContent = 'Remove from Batch';
-          destroyItemButton.classList.add('btn', 'btn-danger');
-          destroyItemButton.onclick = () => {
-            bulkUI.setItems(bulkUI.getItems().filter((item, idx) => { return idx != this.index }));
-            modal.close();
-          };
-          removeButton.parentNode.appendChild(destroyItemButton);
+        if (eligibleEnchants.length > 0) {
+          modal.openTabName("Enchants");
+        } else if (this.item._gems.length > 0) {
+          modal.openTabName("Gem1");
+        }
+
+        const destroyItemButton = document.createElement('button');
+        destroyItemButton.textContent = 'Remove from Batch';
+        destroyItemButton.classList.add('btn', 'btn-danger');
+        destroyItemButton.onclick = () => {
+          bulkUI.setItems(bulkUI.getItems().filter((item, idx) => { return idx != this.index }));
+          modal.close();
+        };
+        const closeX = modal.header?.querySelector('.close-button');
+        if (closeX != undefined) {
+          modal.header?.insertBefore(destroyItemButton, closeX);
         }
       };
 
