@@ -494,6 +494,15 @@ export class SelectorModal extends BaseModal {
 		this.setData();
 	}
 
+	// Could be 'Items' 'Enchants' or 'Gem1'-'Gem3'
+	openTabName(name: string) {
+		Array.from(this.tabsElem.getElementsByClassName("selector-modal-item-tab")).forEach(elem => {
+			if (elem.getAttribute("data-content-id") == name+"-tab") {
+				(elem as HTMLElement).click();
+			}			
+		});
+	}
+	
 	openTab(idx: number) {
 		const elems = this.tabsElem.getElementsByClassName("selector-modal-item-tab");
 		(elems[idx] as HTMLElement).click();
