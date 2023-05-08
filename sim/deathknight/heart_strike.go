@@ -35,7 +35,7 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool) *core.
 			core.TernaryFloat64(isMainTarget, 1, 0.5) *
 			dk.thassariansPlateDamageBonus() *
 			dk.scourgelordsBattlegearDamageBonus(ScourgelordBonusSpellHS) *
-			dk.bloodyStrikesBonus(dk.HeartStrike),
+			dk.bloodyStrikesBonus(BloodyStrikesHS),
 		CritMultiplier:   critMultiplier,
 		ThreatMultiplier: 1,
 

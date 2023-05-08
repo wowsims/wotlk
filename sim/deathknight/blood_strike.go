@@ -34,7 +34,7 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *core.Spell {
 			core.TernaryFloat64(isMH, 1, dk.nervesOfColdSteelBonus()) *
 			dk.bloodOfTheNorthCoeff() *
 			dk.thassariansPlateDamageBonus() *
-			dk.bloodyStrikesBonus(dk.BloodStrike),
+			dk.bloodyStrikesBonus(BloodyStrikesBS),
 		CritMultiplier:   dk.bonusCritMultiplier(dk.Talents.MightOfMograine + dk.Talents.GuileOfGorefiend),
 		ThreatMultiplier: 1,
 
@@ -101,7 +101,7 @@ func (dk *Deathknight) registerDrwBloodStrikeSpell() {
 		DamageMultiplier: 0.4 *
 			dk.bloodOfTheNorthCoeff() *
 			dk.thassariansPlateDamageBonus() *
-			dk.bloodyStrikesBonus(dk.BloodStrike),
+			dk.bloodyStrikesBonus(BloodyStrikesBS),
 		CritMultiplier:   dk.bonusCritMultiplier(dk.Talents.MightOfMograine + dk.Talents.GuileOfGorefiend),
 		ThreatMultiplier: 1,
 
