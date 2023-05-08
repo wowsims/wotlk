@@ -71,6 +71,7 @@ export const BalanceDruidRotationConfig = {
 				{ name: 'Unused', value: MfUsage.NoMf },
 				{ name: 'Before lunar', value: MfUsage.BeforeLunar },
 				{ name: 'Maximize', value: MfUsage.MaximizeMf },
+				{ name: 'Multidot', value: MfUsage.MultidotMf },
 			],
 			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
 		}),

@@ -68,13 +68,11 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*core.Spell, *core.
 			return moonkin.InsectSwarm, target
 		}
 	} else if rotation.IsUsage == proto.BalanceDruid_Rotation_MultidotIs {
-		targetIndex := 0
-		for targetIndex < len(sim.Encounter.Targets) {
+		for range sim.Encounter.Targets {
 			if moonkin.InsectSwarm.CurDot().RemainingDuration(sim) <= 0 {
 				return moonkin.InsectSwarm, moonkin.CurrentTarget
 			}
 			moonkin.CurrentTarget = sim.Environment.NextTargetUnit(moonkin.CurrentTarget)
-			targetIndex += 1
 		}
 	}
 
@@ -82,6 +80,13 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*core.Spell, *core.
 	shouldRefreshMf := moonkin.Moonfire.CurDot().RemainingDuration(sim) <= 0
 	if rotation.MfUsage == proto.BalanceDruid_Rotation_MaximizeMf && shouldRefreshMf {
 		return moonkin.Moonfire, target
+	} else if rotation.MfUsage == proto.BalanceDruid_Rotation_MultidotMf {
+		for range sim.Encounter.Targets {
+			if moonkin.Moonfire.CurDot().RemainingDuration(sim) <= 0 {
+				return moonkin.Moonfire, moonkin.CurrentTarget
+			}
+			moonkin.CurrentTarget = sim.Environment.NextTargetUnit(moonkin.CurrentTarget)
+		}
 	}
 
 	// Player "brain" latency

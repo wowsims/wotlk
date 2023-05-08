@@ -156,6 +156,7 @@ message BalanceDruid {
 			NoMf = 0;
 			BeforeLunar = 1;
 			MaximizeMf = 2;
+			MultidotMf = 3;
 		}
 		MfUsage mf_usage = 2;
 
