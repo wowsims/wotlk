@@ -1006,9 +1006,9 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Settings-Human-Unholy P1 -Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 29048.01459
-  tps: 33647.50746
-  hps: 262.91405
+  dps: 37002.69445
+  tps: 39837.53652
+  hps: 264.81464
  }
 }
 dps_results: {
@@ -1030,8 +1030,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Settings-Human-Unholy P1 -Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 14590.27593
-  tps: 17364.40508
+  dps: 21909.8768
+  tps: 24056.02182
   hps: 158.32685
  }
 }
@@ -1054,9 +1054,9 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Settings-Human-Unholy P2-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 37584.35143
-  tps: 43523.04508
-  hps: 324.29984
+  dps: 47472.80814
+  tps: 51339.17834
+  hps: 322.72748
  }
 }
 dps_results: {
@@ -1078,9 +1078,9 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Settings-Human-Unholy P2-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 19794.85907
-  tps: 23720.65044
-  hps: 211.06568
+  dps: 29559.52102
+  tps: 32650.94862
+  hps: 211.31998
  }
 }
 dps_results: {
@@ -1102,9 +1102,9 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Settings-Orc-Unholy P1 -Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 29064.46448
-  tps: 33662.45524
-  hps: 256.72775
+  dps: 37231.75036
+  tps: 39894.00472
+  hps: 263.06671
  }
 }
 dps_results: {
@@ -1126,9 +1126,9 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Settings-Orc-Unholy P1 -Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 15060.28453
-  tps: 17748.85918
-  hps: 159.79228
+  dps: 22146.6096
+  tps: 24261.39418
+  hps: 158.4527
  }
 }
 dps_results: {
@@ -1150,9 +1150,9 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Settings-Orc-Unholy P2-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 37646.77834
-  tps: 43630.99938
-  hps: 324.0583
+  dps: 47586.45262
+  tps: 51246.54095
+  hps: 323.27175
  }
 }
 dps_results: {
@@ -1174,9 +1174,9 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Settings-Orc-Unholy P2-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 19936.66488
-  tps: 23807.10318
-  hps: 207.37512
+  dps: 29653.73126
+  tps: 32737.42104
+  hps: 211.95518
  }
 }
 dps_results: {

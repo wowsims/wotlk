@@ -493,14 +493,21 @@ func (dk *DpsDeathknight) RotationActionUH_BS(sim *core.Simulation, target *core
 		return sim.CurrentTime
 	}
 
-	bloodSpell := dk.BloodBoil
-	_, prioBs := dk.bonusProcRotationChecks(sim)
-	if dk.desolationAuraCheck(sim) || prioBs {
-		bloodSpell = dk.BloodStrike
+	if dk.shShouldSpreadDisease(sim) {
+		casted := dk.uhSpreadDiseases(sim, target, s)
+		advance := dk.LastOutcome.Matches(core.OutcomeLanded)
+		s.ConditionalAdvance(casted && advance)
+	} else {
+		bloodSpell := dk.BloodBoil
+		_, prioBs := dk.bonusProcRotationChecks(sim)
+		if dk.desolationAuraCheck(sim) || prioBs {
+			bloodSpell = dk.BloodStrike
+		}
+		casted := bloodSpell.Cast(sim, target)
+		advance := dk.LastOutcome.Matches(core.OutcomeLanded)
+		s.ConditionalAdvance(casted && advance)
 	}
-	casted := bloodSpell.Cast(sim, target)
-	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
-	s.ConditionalAdvance(casted && advance)
+
 	return -1
 }
 
