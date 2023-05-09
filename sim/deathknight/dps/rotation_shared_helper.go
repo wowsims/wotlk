@@ -74,8 +74,8 @@ func (dk *DpsDeathknight) shDiseaseCheck(sim *core.Simulation, target *core.Unit
 
 func (dk *DpsDeathknight) shRecastAvailableCheck(expiresAt time.Duration, afterCastTime time.Duration,
 	spellCost int, currentRunes int32, nextRuneAt time.Duration) bool {
-	// Allow disease drops in unholy as its a dps increase
-	downTime := core.TernaryDuration(dk.Talents.SummonGargoyle, 2, 0) * time.Second
+	// Allow disease drops in unholy as its a dps increase sometimes
+	downTime := time.Duration(core.TernaryFloat64(dk.PrimaryTalentTree == 2, dk.Inputs.DiseaseDowntime, 0)) * time.Second
 	if spellCost > 0 && currentRunes == 0 {
 		if expiresAt+downTime <= nextRuneAt {
 			return true

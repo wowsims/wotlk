@@ -41,6 +41,7 @@ type DeathknightInputs struct {
 	AvgAMSSuccessRate   float64
 	AvgAMSHit           float64
 	FuStrike            Rotation_FuStrike
+	DiseaseDowntime     float64
 }
 
 type DeathknightCoeffs struct {
