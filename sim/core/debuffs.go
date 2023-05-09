@@ -845,9 +845,13 @@ func MarkOfBloodAura(target *Unit) *Aura {
 		OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
 			target := aura.Unit.CurrentTarget
 
-			// TODO: Does vampiric blood make it so this health gain is increased?
 			if target != nil {
-				target.GainHealth(sim, target.MaxHealth()*0.04, healthMetrics)
+				// Vampiric Blood bonus max health is ignored in MoB calculation (maybe other Max health effects as well?)
+				targetHealth := target.MaxHealth()
+				if target.HasActiveAura("Vampiric Blood") {
+					targetHealth /= 1.15
+				}
+				target.GainHealth(sim, targetHealth*0.04*target.PseudoStats.HealingTakenMultiplier, healthMetrics)
 				aura.RemoveStack(sim)
 
 				if aura.GetStacks() == 0 {
