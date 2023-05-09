@@ -57,7 +57,7 @@ func simMain(cmd *cobra.Command, args []string) {
 	}
 
 	if outfile == "" {
-		print(string(output))
+		fmt.Print(string(output))
 	} else {
 		err = os.WriteFile(outfile, output, 0666)
 		if err != nil {
