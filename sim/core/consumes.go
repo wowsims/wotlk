@@ -515,7 +515,7 @@ func makePotionActivation(potionType proto.Potions, character *Character, potion
 					} else if hasEngi && potionType == proto.Potions_RunicHealingInjector {
 						healthGain *= 1.25
 					}
-					character.GainHealth(sim, healthGain, healthMetrics)
+					character.GainHealth(sim, healthGain*character.PseudoStats.HealingTakenMultiplier, healthMetrics)
 				},
 			}),
 		}

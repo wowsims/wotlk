@@ -29,6 +29,7 @@ func (dk *Deathknight) registerVampiricBloodSpell() {
 			dk.AddStatsDynamic(sim, stats.Stats{stats.Health: bonusHealth})
 			dk.GainHealth(sim, bonusHealth, healthMetrics)
 			dk.PseudoStats.HealingTakenMultiplier *= 1.35
+
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			dk.AddStatsDynamic(sim, stats.Stats{stats.Health: -bonusHealth})
@@ -45,7 +46,6 @@ func (dk *Deathknight) registerVampiricBloodSpell() {
 			RunicPowerGain: 10,
 		},
 		Cast: core.CastConfig{
-			// TODO: does not invoke the GCD?
 			CD: core.Cooldown{
 				Timer:    cdTimer,
 				Duration: cd,
