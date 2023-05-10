@@ -45,9 +45,9 @@ export const AssassinationTalents = {
 export const SubtletyTalents = {
 	name: 'Subtlety',
 	data: SavedTalents.create({
-		talentsString: '30332310014--5022012030321121350115031151',
+		talentsString: '30532010114--5022012030321121350115031151',
 		glyphs: Glyphs.create({
-			major1: RogueMajorGlyph.GlyphOfBackstab,
+			major1: RogueMajorGlyph.GlyphOfEviscerate,
 			major2: RogueMajorGlyph.GlyphOfRupture,
 			major3: RogueMajorGlyph.GlyphOfTricksOfTheTrade,
 		})
@@ -76,7 +76,7 @@ export const DefaultRotation = RogueRotation.create({
 	subtletyFinisherPriority: Rogue_Rotation_SubtletyPriority.SubtletyEviscerate,
 	minimumComboPointsPrimaryFinisher: 4,
 	minimumComboPointsSecondaryFinisher: 4,
-	hemoWithDagger: false,
+	hemoWithDagger: true,
 });
 
 export const DefaultOptions = RogueOptions.create({
