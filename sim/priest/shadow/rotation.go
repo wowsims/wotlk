@@ -85,7 +85,7 @@ func (spriest *ShadowPriest) chooseSpellAOE(sim *core.Simulation) (*core.Spell, 
 		if !spriest.ShadowWordPain.Dot(t).IsActive() && sim.GetRemainingDuration().Seconds() > 12 {
 			return spriest.ShadowWordPain, t
 		}
-		if spriest.ShadowWordPain.Dot(t).RemainingDuration(sim).Seconds() < 2 {
+		if spriest.ShadowWordPain.Dot(t).RemainingDuration(sim).Seconds() < 2.5 {
 			return spriest.MindFlay[2], t
 		}
 	}
