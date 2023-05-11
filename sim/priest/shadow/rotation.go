@@ -224,6 +224,10 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 	mfDamage = spriest.MindFlay[3].ExpectedDamage(sim, spriest.CurrentTarget)
 	swpTickDamage := spriest.ShadowWordPain.ExpectedDamage(sim, spriest.CurrentTarget)
 
+	//if spriest.rotation.RotationType == 4 {
+	//	msDamage = spriest.MindSear[5].ExpectedDamage(sim, spriest.CurrentTarget)
+	//	}
+
 	// this should be cleaned up, but essentially we want to cast SWP either 3rd or 5th in the rotation which is fight length dependent
 	castSwpNow := 0 // if SW stacks = 3, and we want to get SWP up immediately becaues fight length is low enough, then this flag gets set to 1
 	if swStacks > 2 && swStacks < 5 && !spriest.ShadowWordPain.CurDot().IsActive() {
@@ -629,7 +633,11 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 			return spriest.MindBlast, 0
 		} else {
 			//numTicks = 3
-			return spriest.MindFlay[numTicks], 0
+			if spriest.rotation.RotationType == 4 {
+				return spriest.MindSear[numTicks], 0
+			} else {
+				return spriest.MindFlay[numTicks], 0
+			}
 		}
 	} else {
 		mbcd := spriest.MindBlast.TimeToReady(sim)
