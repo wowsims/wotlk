@@ -16,6 +16,13 @@ var ItemOverrides = []*proto.UIItem{
 	{ /** Lightning Etched Specs */ Id: 34355, ClassAllowlist: []proto.Class{proto.Class_ClassShaman}},
 	{ /** Annihilator Holo-Gogs */ Id: 34847, ClassAllowlist: []proto.Class{proto.Class_ClassMage, proto.Class_ClassPriest, proto.Class_ClassWarlock}},
 
+	// Balance T9 "of Conquest" Alliance set
+	{Id: 48158, SetName: "Malfurion's Regalia"},
+	{Id: 48159, SetName: "Malfurion's Regalia"},
+	{Id: 48160, SetName: "Malfurion's Regalia"},
+	{Id: 48161, SetName: "Malfurion's Regalia"},
+	{Id: 48162, SetName: "Malfurion's Regalia"},
+
 	// Valorous T8 Sets
 	{Id: 45375, Phase: 2},
 	{Id: 45381, Phase: 2},
