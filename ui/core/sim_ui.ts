@@ -202,7 +202,7 @@ export abstract class SimUI extends Component {
 	}
 
 	addWarning(warning: SimWarning) {
-		this.simHeader.addWarning(warning);
+		this.resultsViewer.addWarning(warning);
 	}
 
 	private addKnownIssues(config: SimUIConfig) {
