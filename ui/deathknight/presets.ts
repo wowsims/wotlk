@@ -142,6 +142,7 @@ export const DefaultUnholyOptions = DeathKnightOptions.create({
 	unholyFrenzyTarget: RaidTarget.create({
 		targetIndex: NO_TARGET, // In an individual sim the 0-indexed player is ourself.
 	}),
+	diseaseDowntime: 2,
 });
 
 export const DefaultFrostRotation = DeathKnightRotation.create({
@@ -181,6 +182,7 @@ export const DefaultFrostOptions = DeathKnightOptions.create({
 	unholyFrenzyTarget: RaidTarget.create({
 		targetIndex: NO_TARGET, // In an individual sim the 0-indexed player is ourself.
 	}),
+	diseaseDowntime: 0,
 });
 
 export const DefaultBloodRotation = DeathKnightRotation.create({
@@ -205,6 +207,7 @@ export const DefaultBloodOptions = DeathKnightOptions.create({
 	unholyFrenzyTarget: RaidTarget.create({
 		targetIndex: NO_TARGET, // In an individual sim the 0-indexed player is ourself.
 	}),
+	diseaseDowntime: 0,
 });
 
 export const OtherDefaults = {

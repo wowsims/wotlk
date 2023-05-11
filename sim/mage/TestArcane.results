@@ -280,8 +280,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 7424.45329
-  tps: 4484.29323
+  dps: 7422.59151
+  tps: 4483.17615
  }
 }
 dps_results: {

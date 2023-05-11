@@ -41,6 +41,7 @@ func NewShaman(character core.Character, talents string, totems *proto.ShamanTot
 	shaman.AddStatDependency(stats.Strength, stats.AttackPower, 1)
 	shaman.AddStatDependency(stats.Agility, stats.AttackPower, 1)
 	shaman.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/83.3)
+	shaman.AddStatDependency(stats.BonusArmor, stats.Armor, 1)
 	// Set proper Melee Haste scaling
 	shaman.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
 
@@ -249,6 +250,14 @@ func (shaman *Shaman) Initialize() {
 	if shaman.Talents.SpiritWeapons {
 		shaman.PseudoStats.ThreatMultiplier -= 0.3
 	}
+
+	// Healing stream totem applies a HoT (aura) and so needs to be handled as a pre-pull action
+	// instead of during init/reset.
+	if shaman.Totems.Water == proto.WaterTotem_HealingStreamTotem {
+		shaman.RegisterPrepullAction(0, func(sim *core.Simulation) {
+			shaman.HealingStreamTotem.Cast(sim, &shaman.Unit)
+		})
+	}
 }
 
 func (shaman *Shaman) RegisterHealingSpells() {
@@ -303,7 +312,8 @@ func (shaman *Shaman) Reset(sim *core.Simulation) {
 		case FireTotem:
 			shaman.NextTotemDropType[FireTotem] = int32(shaman.Totems.Fire)
 			if shaman.NextTotemDropType[FireTotem] != int32(proto.FireTotem_NoFireTotem) {
-				if shaman.NextTotemDropType[FireTotem] != int32(proto.FireTotem_TotemOfWrath) && shaman.NextTotemDropType[FireTotem] != int32(proto.FireTotem_FlametongueTotem) {
+				if shaman.NextTotemDropType[FireTotem] != int32(proto.FireTotem_TotemOfWrath) &&
+					shaman.NextTotemDropType[FireTotem] != int32(proto.FireTotem_FlametongueTotem) {
 					if !shaman.Totems.UseFireMcd {
 						shaman.NextTotemDrops[FireTotem] = 0
 					}
@@ -316,11 +326,7 @@ func (shaman *Shaman) Reset(sim *core.Simulation) {
 			}
 		case WaterTotem:
 			shaman.NextTotemDropType[i] = int32(shaman.Totems.Water)
-			if shaman.Totems.Water == proto.WaterTotem_ManaSpringTotem {
-				shaman.NextTotemDrops[i] = TotemRefreshTime5M
-			} else if shaman.Totems.Water == proto.WaterTotem_HealingStreamTotem {
-				shaman.NextTotemDrops[i] = 0
-			}
+			shaman.NextTotemDrops[i] = TotemRefreshTime5M
 		}
 	}
 

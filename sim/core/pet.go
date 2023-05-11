@@ -168,9 +168,7 @@ func (pet *Pet) Enable(sim *Simulation, petAgent PetAgent) {
 	} else {
 		sim.AddPendingAction(&PendingAction{
 			NextActionAt: 0,
-			OnAction: func(sim *Simulation) {
-				pet.AutoAttacks.EnableAutoSwing(sim)
-			},
+			OnAction:     pet.AutoAttacks.EnableAutoSwing,
 		})
 	}
 
@@ -195,7 +193,7 @@ func (pet *Pet) Disable(sim *Simulation) {
 	}
 
 	// Remove inherited stats on dismiss if not permanent
-	if pet.isGuardian {
+	if pet.isGuardian || pet.timeoutAction != nil {
 		pet.AddStatsDynamic(sim, pet.inheritedStats.Multiply(-1))
 		pet.inheritedStats = stats.Stats{}
 		pet.currentStatInheritance = func(ownerStats stats.Stats) stats.Stats {

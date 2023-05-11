@@ -370,11 +370,20 @@ func (character *Character) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 
 func (character *Character) initialize(agent Agent) {
 	character.majorCooldownManager.initialize(character)
+	character.DesyncTrinketProcs()
 
 	character.gcdAction = &PendingAction{
 		Priority: ActionPriorityGCD,
 		OnAction: func(sim *Simulation) {
 			if sim.CurrentTime < 0 {
+				return
+			}
+
+			if sim.Options.Interactive {
+				if character.GCD.IsReady(sim) {
+					sim.NeedsInput = true
+					character.doNothing = false
+				}
 				return
 			}
 

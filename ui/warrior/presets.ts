@@ -20,6 +20,7 @@ import {
 	WarriorMajorGlyph,
 	WarriorMinorGlyph,
 	Warrior_Rotation_StanceOption as StanceOption,
+	ProtectionWarrior_Rotation_SpellOption as SpellOption,
 	Warrior_Rotation_MainGcd as MainGcd,
 } from '../core/proto/warrior.js';
 
@@ -75,7 +76,7 @@ export const DefaultRotation = WarriorRotation.create({
 
 	msRageThreshold: 35,
 	hsRageThreshold: 30,
-  rendHealthThresholdAbove: 20,
+    rendHealthThresholdAbove: 20,
 	rendRageThresholdBelow: 100,
 	slamRageThreshold: 25,
 	rendCdThreshold: 0,
@@ -96,6 +97,7 @@ export const ArmsRotation = WarriorRotation.create({
 	slamRageThreshold: 25,
 	hsRageThreshold: 50,
 	rendCdThreshold: 0,
+	rendHealthThresholdAbove: 100,
 	useHsDuringExecute: true,
 	spamExecute: true,
 	stanceOption: StanceOption.DefaultStance,

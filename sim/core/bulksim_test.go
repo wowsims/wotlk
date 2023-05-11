@@ -121,6 +121,7 @@ func TestGenerateAllEquipmentSubstitutions(t *testing.T) {
 	item1 := &proto.ItemSpec{Id: 1}
 	item2 := &proto.ItemSpec{Id: 2}
 	item3 := &proto.ItemSpec{Id: 1010}
+	item4 := &proto.ItemSpec{Id: 4}
 	type args struct {
 		combinations           bool
 		distinctItemSlotCombos []*itemWithSlot
@@ -175,6 +176,130 @@ func TestGenerateAllEquipmentSubstitutions(t *testing.T) {
 				}},
 				{Items: []*itemWithSlot{
 					{Item: item2, Slot: ItemSlotShoulder},
+				}},
+			},
+		},
+		{
+			name: "ring and trinket",
+			args: args{
+				combinations: true,
+				distinctItemSlotCombos: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+					{Item: item1, Slot: ItemSlotFinger2},
+					{Item: item2, Slot: ItemSlotTrinket1},
+					{Item: item2, Slot: ItemSlotTrinket2},
+				},
+			},
+			want: []*equipmentSubstitution{
+				{},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+					{Item: item2, Slot: ItemSlotTrinket1},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+					{Item: item2, Slot: ItemSlotTrinket2},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger2},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger2},
+					{Item: item2, Slot: ItemSlotTrinket1},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger2},
+					{Item: item2, Slot: ItemSlotTrinket2},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item2, Slot: ItemSlotTrinket1},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item2, Slot: ItemSlotTrinket2},
+				}},
+			},
+		},
+		{
+			name: "two rings and one trinket",
+			args: args{
+				combinations: true,
+				distinctItemSlotCombos: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+					{Item: item1, Slot: ItemSlotFinger2},
+					{Item: item4, Slot: ItemSlotFinger1},
+					{Item: item4, Slot: ItemSlotFinger2},
+					{Item: item2, Slot: ItemSlotTrinket1},
+					{Item: item2, Slot: ItemSlotTrinket2},
+				},
+			},
+			want: []*equipmentSubstitution{
+				{},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+					{Item: item4, Slot: ItemSlotFinger2},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+					{Item: item4, Slot: ItemSlotFinger2},
+					{Item: item2, Slot: ItemSlotTrinket1},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+					{Item: item4, Slot: ItemSlotFinger2},
+					{Item: item2, Slot: ItemSlotTrinket2},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+					{Item: item2, Slot: ItemSlotTrinket1},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+					{Item: item2, Slot: ItemSlotTrinket2},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item4, Slot: ItemSlotFinger2},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item4, Slot: ItemSlotFinger2},
+					{Item: item2, Slot: ItemSlotTrinket1},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item4, Slot: ItemSlotFinger2},
+					{Item: item2, Slot: ItemSlotTrinket2},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+					{Item: item2, Slot: ItemSlotTrinket1},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item1, Slot: ItemSlotFinger1},
+					{Item: item2, Slot: ItemSlotTrinket2},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item4, Slot: ItemSlotFinger2},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item4, Slot: ItemSlotFinger2},
+					{Item: item2, Slot: ItemSlotTrinket1},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item4, Slot: ItemSlotFinger2},
+					{Item: item2, Slot: ItemSlotTrinket2},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item2, Slot: ItemSlotTrinket1},
+				}},
+				{Items: []*itemWithSlot{
+					{Item: item2, Slot: ItemSlotTrinket2},
 				}},
 			},
 		},

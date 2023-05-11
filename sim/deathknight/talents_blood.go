@@ -169,12 +169,20 @@ func (dk *Deathknight) applyScentOfBlood() {
 	}))
 }
 
-func (dk *Deathknight) bloodyStrikesBonus(spell *core.Spell) float64 {
-	if spell == dk.BloodStrike {
+type BloodyStrikesBonusSpell int8
+
+const (
+	BloodyStrikesBS = iota + 1
+	BloodyStrikesHS
+	BloodyStrikesBB
+)
+
+func (dk *Deathknight) bloodyStrikesBonus(spell BloodyStrikesBonusSpell) float64 {
+	if spell == BloodyStrikesBS {
 		return []float64{1.0, 1.05, 1.1, 1.15}[dk.Talents.BloodyStrikes]
-	} else if spell == dk.HeartStrike {
+	} else if spell == BloodyStrikesHS {
 		return []float64{1.0, 1.15, 1.3, 1.45}[dk.Talents.BloodyStrikes]
-	} else if spell == dk.BloodBoil {
+	} else if spell == BloodyStrikesBB {
 		return []float64{1.0, 1.1, 1.2, 1.3}[dk.Talents.BloodyStrikes]
 	}
 	return 1.0

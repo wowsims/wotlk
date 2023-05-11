@@ -95,6 +95,7 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatArmor]: 0.07,
+					[Stat.StatBonusArmor]: 0.06,
 					[Stat.StatStamina]: 1.14,
 					[Stat.StatStrength]: 1.00,
 					[Stat.StatAgility]: 0.62,

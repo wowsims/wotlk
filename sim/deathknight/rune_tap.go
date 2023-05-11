@@ -9,7 +9,7 @@ import (
 
 func (dk *Deathknight) GetRuneTapHealing() float64 {
 	maxHealth := dk.MaxHealth()
-	return maxHealth * dk.bonusCoeffs.runeTapHealing * core.TernaryFloat64(dk.VampiricBloodAura.IsActive(), 1.35, 1.0)
+	return maxHealth * dk.bonusCoeffs.runeTapHealing
 }
 
 func (dk *Deathknight) registerRuneTapSpell() {
@@ -40,7 +40,7 @@ func (dk *Deathknight) registerRuneTapSpell() {
 			IgnoreHaste: true,
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			dk.GainHealth(sim, dk.GetRuneTapHealing(), healthMetrics)
+			dk.GainHealth(sim, dk.GetRuneTapHealing()*dk.PseudoStats.HealingTakenMultiplier, healthMetrics)
 		},
 	})
 

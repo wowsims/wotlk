@@ -36,6 +36,7 @@ func newStackingStatBonusEffect(config StackingStatBonusEffect) {
 		})
 
 		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+			ActionID:   core.ActionID{ItemID: config.ID},
 			Name:       config.Name,
 			Callback:   config.Callback,
 			ProcMask:   config.ProcMask,
@@ -153,6 +154,7 @@ func init() {
 			ProcMask:   core.ProcMaskMeleeOrRanged,
 			Outcome:    core.OutcomeLanded,
 			ProcChance: 0.1,
+			ActionID:   core.ActionID{ItemID: 38212},
 			ICD:        time.Second * 45,
 			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 				procAura.Activate(sim)
@@ -203,7 +205,7 @@ func init() {
 		Duration:  time.Second * 10,
 		MaxStacks: 5,
 		Bonus:     stats.Stats{stats.SpellPower: 26},
-		Callback:  core.CallbackOnCastComplete,
+		Callback:  core.CallbackOnHealDealt | core.CallbackOnSpellHitDealt | core.CallbackOnPeriodicHealDealt | core.CallbackOnPeriodicDamageDealt,
 	})
 
 	core.AddEffectsToTest = false

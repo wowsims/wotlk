@@ -64,8 +64,6 @@ type Warlock struct {
 	Infernal *InfernalPet
 	Inferno  *core.Spell
 
-	CritDebuffCategory *core.ExclusiveCategory
-
 	// The sum total of demonic pact spell power * seconds.
 	DPSPAggregate float64
 	PreviousTime  time.Duration

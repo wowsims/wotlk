@@ -33,6 +33,9 @@ export class ContentBlock extends Component {
 
     this.headerElement = this.buildHeader();
     this.bodyElement = this.buildBody();
+    config.bodyClasses?.forEach((cl) => {
+      this.bodyElement.classList.add(cl);
+    })
 	}
 
   private buildHeader(): HTMLElement|null {

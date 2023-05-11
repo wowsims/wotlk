@@ -172,7 +172,7 @@ func WriteProtoArrayToBuilder(arrInterface interface{}, builder *strings.Builder
 	builder.WriteString("\":[\n")
 
 	for i, elem := range arr {
-		jsonBytes, err := protojson.MarshalOptions{}.Marshal(elem.(googleProto.Message))
+		jsonBytes, err := protojson.MarshalOptions{UseEnumNumbers: true}.Marshal(elem.(googleProto.Message))
 		if err != nil {
 			log.Printf("[ERROR] Failed to marshal: %s", err.Error())
 		}

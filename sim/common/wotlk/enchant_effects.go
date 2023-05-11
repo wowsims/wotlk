@@ -222,7 +222,7 @@ func init() {
 				}
 
 				if ppmm.Proc(sim, spell.ProcMask, "Lifeward") {
-					character.GainHealth(sim, 300, healthMetrics)
+					character.GainHealth(sim, 300*character.PseudoStats.HealingTakenMultiplier, healthMetrics)
 				}
 			},
 		})

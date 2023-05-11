@@ -494,6 +494,15 @@ export class SelectorModal extends BaseModal {
 		this.setData();
 	}
 
+	// Could be 'Items' 'Enchants' or 'Gem1'-'Gem3'
+	openTabName(name: string) {
+		Array.from(this.tabsElem.getElementsByClassName("selector-modal-item-tab")).forEach(elem => {
+			if (elem.getAttribute("data-content-id") == name+"-tab") {
+				(elem as HTMLElement).click();
+			}			
+		});
+	}
+	
 	openTab(idx: number) {
 		const elems = this.tabsElem.getElementsByClassName("selector-modal-item-tab");
 		(elems[idx] as HTMLElement).click();
@@ -1091,8 +1100,8 @@ export class ItemList<T> {
 			}
 		});
 
+		const simAllButton = tabContent.getElementsByClassName('selector-modal-simall-button')[0] as HTMLButtonElement;
 		if (label == "Items") {
-			const simAllButton = tabContent.getElementsByClassName('selector-modal-simall-button')[0] as HTMLButtonElement;
 			simAllButton.hidden = !player.sim.getShowExperimental()
 			player.sim.showExperimentalChangeEmitter.on(() => {
 				simAllButton.hidden = !player.sim.getShowExperimental();
@@ -1100,6 +1109,9 @@ export class ItemList<T> {
 			simAllButton.addEventListener('click', (event) => {
 				if (simUI instanceof IndividualSimUI) {
 					let itemSpecs = Array<ItemSpec>();
+					const isRangedOrTrinket = this.slot == ItemSlot.ItemSlotRanged ||
+					this.slot == ItemSlot.ItemSlotTrinket1 ||
+					this.slot == ItemSlot.ItemSlotTrinket2
 
 					const curItem = this.equippedToItemFn(this.player.getEquippedItem(this.slot));
 					let curEP = 0;
@@ -1108,29 +1120,30 @@ export class ItemList<T> {
 					}
 					
 					this.listItemElems.forEach((elem, index) => {
+						// skip items already filtered out.
 						if (elem.classList.contains('hidden')) {
 							return;
 						}
+
 						const idata = this.itemData[index];
-						if (curEP > 0 && idata.baseEP < (curEP / 2) ) {
+						if (!isRangedOrTrinket && curEP > 0 && idata.baseEP < (curEP / 2) ) {
 							return; // If we have EPs on current item, dont sim items with less than half the EP.
 						}
 
 						// Add any item that is either >0 EP or a trinket/ranged item.
-						if ( idata.baseEP > 0 || 
-							this.slot == ItemSlot.ItemSlotRanged ||
-							this.slot == ItemSlot.ItemSlotTrinket1 ||
-							this.slot == ItemSlot.ItemSlotTrinket2 ) {
+						if ( idata.baseEP > 0 || isRangedOrTrinket ) {
 							itemSpecs.push(ItemSpec.create({ id: idata.id }));
 						}
 						
 					});
 
-					simUI.bt.importItems(itemSpecs);
-					simUI.bt.setCombinations(false);
+					simUI.bt.addItems(itemSpecs);
 					// TODO: should we open the bulk sim UI or should we run in the background showing progress, and then sort the items in the picker?
 				}
 			});
+		} else {
+			// always hide non-items from being added to batch.
+			simAllButton.hidden = true;
 		}
 
 		this.applyFilters();

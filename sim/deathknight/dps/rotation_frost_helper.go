@@ -100,6 +100,7 @@ func (dk *DpsDeathknight) RotationActionCallback_EndOfFightPrio(sim *core.Simula
 	obAt := core.MaxDuration(frAt, uhAt)
 	fsCost := float64(core.RuneCost(dk.FrostStrike.CurCast.Cost).RunicPower())
 	bothblAt := dk.BloodDeathRuneBothReadyAt()
+	hasRime := dk.RimeAura.IsActive() && dk.Talents.HowlingBlast
 
 	if bothblAt == core.NeverExpires {
 		bothblAt = 1
@@ -121,7 +122,7 @@ func (dk *DpsDeathknight) RotationActionCallback_EndOfFightPrio(sim *core.Simula
 			s.Clear().
 				NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
-		} else if spGcd < simTimeLeft && abGcd > simTimeLeft && obAt < simDur && dk.RimeAura.IsActive() { //can fit a spell but not melee ability before last GCD of fight and have rime
+		} else if spGcd < simTimeLeft && abGcd > simTimeLeft && obAt < simDur && hasRime { //can fit a spell but not melee ability before last GCD of fight and have rime
 			s.Clear().
 				NewAction(dk.RotationActionCallback_HB).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
@@ -133,7 +134,7 @@ func (dk *DpsDeathknight) RotationActionCallback_EndOfFightPrio(sim *core.Simula
 			s.Clear().
 				NewAction(dk.RotationActionCallback_FS).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
-		} else if dk.RimeAura.IsActive() && sim.CurrentTime+spGcd < obAt { //can rime and wont cross oblit
+		} else if hasRime && sim.CurrentTime+spGcd < obAt { //can rime and wont cross oblit
 			s.Clear().
 				NewAction(dk.RotationActionCallback_HB).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
@@ -159,7 +160,7 @@ func (dk *DpsDeathknight) RotationActionCallback_EndOfFightPrio(sim *core.Simula
 			s.Clear().
 				NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
-		} else if spGcd < simTimeLeft && abGcd > simTimeLeft && obAt < simDur && dk.RimeAura.IsActive() { //can fit a spell but not melee ability before last GCD of fight and have rime
+		} else if spGcd < simTimeLeft && abGcd > simTimeLeft && obAt < simDur && hasRime { //can fit a spell but not melee ability before last GCD of fight and have rime
 			s.Clear().
 				NewAction(dk.RotationActionCallback_HB).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
@@ -171,7 +172,7 @@ func (dk *DpsDeathknight) RotationActionCallback_EndOfFightPrio(sim *core.Simula
 			s.Clear().
 				NewAction(dk.RotationActionCallback_FS).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
-		} else if dk.RimeAura.IsActive() && sim.CurrentTime+spGcd < obAt { //can rime and wont cross oblit
+		} else if hasRime && sim.CurrentTime+spGcd < obAt { //can rime and wont cross oblit
 			s.Clear().
 				NewAction(dk.RotationActionCallback_HB).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
@@ -184,8 +185,8 @@ func (dk *DpsDeathknight) RotationActionCallback_EndOfFightPrio(sim *core.Simula
 				NewAction(dk.RotationActionCallback_HW).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
 		}
-	} else if sim.CurrentTime+spGcd < diseaseExpiresAt && sim.CurrentTime+abGcd > diseaseExpiresAt && dk.CurrentRunicPower() < 100 && (dk.RimeAura.IsActive() || dk.HornOfWinter.IsReady(sim)) { //if you can fit a spellgcd before disease dropping, and only if spell hit cap is reached
-		if dk.RimeAura.IsActive() && dk.CurrentRunicPower() < 100 { //rime prio
+	} else if sim.CurrentTime+spGcd < diseaseExpiresAt && sim.CurrentTime+abGcd > diseaseExpiresAt && dk.CurrentRunicPower() < 100 && (hasRime || dk.HornOfWinter.IsReady(sim)) { //if you can fit a spellgcd before disease dropping, and only if spell hit cap is reached
+		if hasRime && dk.CurrentRunicPower() < 100 { //rime prio
 			s.Clear().
 				NewAction(dk.RotationActionCallback_HB).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
@@ -203,8 +204,8 @@ func (dk *DpsDeathknight) RotationActionCallback_EndOfFightPrio(sim *core.Simula
 			s.Clear().
 				NewAction(dk.RotationActionCallback_FrostSubUnh_EndOfFight_Obli).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
-		} else if sim.CurrentTime+spGcd < obAt && sim.CurrentTime+abGcd > obAt && (dk.RimeAura.IsActive() || dk.CurrentRunicPower() < fsCost*4-2*dk.fr.oblitRPRegen && dk.HornOfWinter.IsReady(sim)) { //if you can fit a spGcd before oblit and won't overcap RP with horn
-			if dk.RimeAura.IsActive() {
+		} else if sim.CurrentTime+spGcd < obAt && sim.CurrentTime+abGcd > obAt && (hasRime || dk.CurrentRunicPower() < fsCost*4-2*dk.fr.oblitRPRegen && dk.HornOfWinter.IsReady(sim)) { //if you can fit a spGcd before oblit and won't overcap RP with horn
+			if hasRime {
 				s.Clear().
 					NewAction(dk.RotationActionCallback_HB).
 					NewAction(dk.RotationActionCallback_EndOfFightCheck)
@@ -221,7 +222,7 @@ func (dk *DpsDeathknight) RotationActionCallback_EndOfFightPrio(sim *core.Simula
 			s.Clear().
 				NewAction(dk.RotationActionCallback_FS).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)
-		} else if dk.RimeAura.IsActive() { //rime if can
+		} else if hasRime { //rime if can
 			s.Clear().
 				NewAction(dk.RotationActionCallback_HB).
 				NewAction(dk.RotationActionCallback_EndOfFightCheck)

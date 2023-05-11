@@ -244,6 +244,7 @@ func init() {
 				ProcMask:   core.ProcMaskRanged,
 				Outcome:    core.OutcomeLanded,
 				ProcChance: procChance,
+				ActionID:   core.ActionID{ItemID: itemID},
 				Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
 					rangedSpell.Cast(sim, result.Target)
 				},
