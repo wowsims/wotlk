@@ -183,7 +183,6 @@ type Deathknight struct {
 	KillingMachineAura  *core.Aura
 	IcyTalonsAura       *core.Aura
 	DesolationAura      *core.Aura
-	NecrosisAura        *core.Aura
 	BloodCakedBladeAura *core.Aura
 	ButcheryAura        *core.Aura
 	ButcheryPA          *core.PendingAction
@@ -196,9 +195,10 @@ type Deathknight struct {
 	LastDiseaseDamage float64
 	LastTickTime      time.Duration
 	WanderingPlague   *core.Spell
-
-	Deathchill     *core.Spell
-	DeathchillAura *core.Aura
+	NecrosisCoeff     float64
+	Necrosis          *core.Spell
+	Deathchill        *core.Spell
+	DeathchillAura    *core.Aura
 
 	// Presences
 	BloodPresence      *core.Spell
