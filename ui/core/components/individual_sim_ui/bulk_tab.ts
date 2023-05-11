@@ -317,7 +317,7 @@ export class BulkTab extends SimTab {
 
   private storeSettings() {
     const settings = this.createBulkSettings();
-    const setStr = BulkSettings.toJsonString(settings)
+    const setStr = BulkSettings.toJsonString(settings, {enumAsInteger: true})
     window.localStorage.setItem(this.getSettingsKey(), setStr);
   }
 
@@ -615,16 +615,18 @@ export class BulkTab extends SimTab {
     });
 
     searchButton.classList.add('btn', 'btn-secondary', 'w-100', 'bulk-settings-button');
-    searchButton.innerHTML = '<i class="fa fa-search"></i> Add Item';
+    const baseSearchHTML = '<i class="fa fa-search"></i> Add Item';
+    searchButton.innerHTML = baseSearchHTML;
     searchButton.addEventListener('click', () => {
       if (searchText.style.display == "none") {
-
+        searchButton.innerHTML = 'Close Search Results';
         allItems = this.simUI.sim.db.getAllItems().filter((item) => {
           return canEquipItem(item, this.simUI.player.spec, undefined);
         })
         searchText.style.display = "block";
         searchText.focus();
       } else {
+        searchButton.innerHTML = baseSearchHTML;
         searchText.style.display = "none";
         searchResults.innerHTML = "";
       }

@@ -92,6 +92,10 @@ func (b *bulkSimRunner) Run(pctx context.Context, progress chan *proto.ProgressM
 	if player.GetDatabase() != nil {
 		addToDatabase(player.GetDatabase())
 	}
+	// reduce to just base party.
+	b.Request.BaseSettings.Raid.Parties = []*proto.Party{b.Request.BaseSettings.Raid.Parties[0]}
+	// clean to reduce memory
+	player.Database = nil
 
 	// Gemming for now can happen before slots are decided.
 	// We might have to add logic after slot decisions if we want to enforce keeping meta gem active.
@@ -171,7 +175,12 @@ func (b *bulkSimRunner) Run(pctx context.Context, progress chan *proto.ProgressM
 	allCombos := generateAllEquipmentSubstitutions(ctx, baseItems, b.Request.BulkSettings.Combinations, distinctItemSlotCombos)
 
 	validCombos := []singleBulkSim{}
+	count := 0
 	for sub := range allCombos {
+		count++
+		if count > 1000000 {
+			panic("over 1 million combos, abandoning attempt")
+		}
 		substitutedRequest, changeLog := createNewRequestWithSubstitution(b.Request.BaseSettings, sub, b.Request.BulkSettings.AutoEnchant)
 		if isValidEquipment(substitutedRequest.Raid.Parties[0].Players[0].Equipment) {
 			validCombos = append(validCombos, singleBulkSim{req: substitutedRequest, cl: changeLog, eq: sub})
@@ -282,7 +291,7 @@ func (b *bulkSimRunner) Run(pctx context.Context, progress chan *proto.ProgressM
 }
 
 func (b *bulkSimRunner) getRankedResults(pctx context.Context, validCombos []singleBulkSim, iterations int64, progress chan *proto.ProgressMetrics) ([]*itemSubstitutionSimResult, *itemSubstitutionSimResult, error) {
-	concurrency := (runtime.NumCPU() - 1) * 2
+	concurrency := runtime.NumCPU() + 1
 	if concurrency <= 0 {
 		concurrency = 2
 	}
