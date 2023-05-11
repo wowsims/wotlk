@@ -487,6 +487,28 @@ export class Timeline extends ResultComponent {
 		const playerCastsByAbility = this.getSortedCastsByAbility(player);
 		playerCastsByAbility.forEach(castLogs => this.addCastRow(castLogs, buffsAndDebuffsById, duration));
 
+		if (player.pets.length > 0) {
+			let playerPets = new Map<string, CastLog[][]>();
+			player.pets.forEach(petsLog => {
+				const petCastsByAbility = this.getSortedCastsByAbility(petsLog);
+				if (petCastsByAbility.length > 0) {
+					// Because multiple pets can have the same name and we parse cast logs
+					// by pet name each individual pet ends up with all the casts of pets
+					// with the same name. Because of this we can just grab the first pet
+					// of each name and visualize only that.
+					if (!playerPets.has(petsLog.name)) {
+						playerPets.set(petsLog.name, petCastsByAbility);
+					}
+				}
+			});
+
+			playerPets.forEach(petLogs => {
+				this.addSeparatorRow(duration);
+				this.addPetRow(petLogs[0][0].source!.name, duration);
+				petLogs.forEach(castLogs => this.addCastRow(castLogs, buffsAndDebuffsById, duration));
+			});
+		}
+
 		// Don't add a row for buffs that were already visualized in a cast row.
 		const buffsToShow = buffsById.filter(auraUptimeLogs => playerCastsByAbility.findIndex(casts => casts[0].actionId!.equalsIgnoringTag(auraUptimeLogs[0].actionId!)));
 		if (buffsToShow.length > 0) {
@@ -604,6 +626,29 @@ export class Timeline extends ResultComponent {
 		this.hiddenIdsChangeEmitter.on(updateHidden);
 		updateHidden();
 		return rowElem;
+	}
+
+	private addPetRow(petName: string, duration: number) {
+		const actionId = ActionId.fromPetName(petName);
+		const rowElem = this.makeRowElem(actionId, duration);
+
+		const iconElem = document.createElement('div');
+		this.rotationLabels.appendChild(iconElem);
+
+		actionId.fill().then(filledActionId => {
+			const labelElem = document.createElement('div');
+			labelElem.classList.add('rotation-label', 'rotation-row');
+			const labelText = idsToGroupForRotation.includes(filledActionId.spellId) ? filledActionId.baseName : filledActionId.name;
+			labelElem.innerHTML = `
+				<a class="rotation-label-icon"></a>
+				<span class="rotation-label-text">${labelText}</span>
+			`;
+			const labelIcon = labelElem.getElementsByClassName('rotation-label-icon')[0] as HTMLAnchorElement;
+			filledActionId.setBackgroundAndHref(labelIcon);
+			iconElem.appendChild(labelElem);
+		});
+
+		this.rotationTimeline.appendChild(rowElem);
 	}
 
 	private addSeparatorRow(duration: number) {
