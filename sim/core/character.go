@@ -460,7 +460,6 @@ func (character *Character) reset(sim *Simulation, agent Agent) {
 
 	agent.Reset(sim)
 
-	character.ActivePets = character.ActivePets[:0]
 	for _, petAgent := range character.Pets {
 		petAgent.GetPet().reset(sim, petAgent)
 	}
@@ -470,8 +469,8 @@ func (character *Character) reset(sim *Simulation, agent Agent) {
 func (character *Character) advance(sim *Simulation, elapsedTime time.Duration) {
 	character.Unit.advance(sim, elapsedTime)
 
-	if len(character.ActivePets) > 0 {
-		for _, petAgent := range character.ActivePets {
+	if len(character.Pets) > 0 {
+		for _, petAgent := range character.Pets {
 			petAgent.GetPet().advance(sim, elapsedTime)
 		}
 	}
