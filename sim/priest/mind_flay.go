@@ -13,9 +13,9 @@ import (
 
 func (priest *Priest) newMindFlaySpell(numTicks int32) *core.Spell {
 	var mfReducTime time.Duration
-	//if priest.HasSetBonus(ItemSetCrimsonAcolyte, 4) {
-	mfReducTime = time.Millisecond * 170
-	//}
+	if priest.HasSetBonus(ItemSetCrimsonAcolyte, 4) {
+		mfReducTime = time.Millisecond * 170
+	}
 	tickLength := time.Second - mfReducTime
 	channelTime := tickLength * time.Duration(numTicks)
 
