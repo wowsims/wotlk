@@ -39,7 +39,7 @@ func (priest *Priest) newMindSearSpell(numTicks int32) *core.Spell {
 			0.02*float64(priest.Talents.Darkness) +
 			0.01*float64(priest.Talents.TwinDisciplines),
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
-		CritMultiplier:   priest.SpellCritMultiplier(1, 1),
+		CritMultiplier:   priest.DefaultSpellCritMultiplier(),
 		Dot: core.DotConfig{
 			Aura: core.Aura{
 				Label: "MindSear-" + strconv.Itoa(int(numTicks)),

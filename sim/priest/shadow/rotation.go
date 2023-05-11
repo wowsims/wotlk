@@ -227,17 +227,19 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 	//if spriest.rotation.RotationType == 4 {
 	//	msDamage = spriest.MindSear[5].ExpectedDamage(sim, spriest.CurrentTarget)
 	//	}
-
-	// this should be cleaned up, but essentially we want to cast SWP either 3rd or 5th in the rotation which is fight length dependent
 	castSwpNow := 0 // if SW stacks = 3, and we want to get SWP up immediately becaues fight length is low enough, then this flag gets set to 1
-	if swStacks > 2 && swStacks < 5 && !spriest.ShadowWordPain.CurDot().IsActive() {
-		addedDmg := mbDamage*0.12 + mfDamage*0.22*2/3 + swpTickDamage*2*gcd.Seconds()/3
-		numswptickstime = addedDmg / (swpTickDamage * 0.06) * 3 //if the fight lenght is < numswptickstime then use swp 3rd.. if > then use at weaving = 5
-		//
-		if remain_fight*math.Pow(10, -9) < numswptickstime {
-			castSwpNow = 1
-		} else {
-			castMf2 = 1
+	if spriest.rotation.RotationType != 4 {
+		// this should be cleaned up, but essentially we want to cast SWP either 3rd or 5th in the rotation which is fight length dependent
+
+		if swStacks > 2 && swStacks < 5 && !spriest.ShadowWordPain.CurDot().IsActive() {
+			addedDmg := mbDamage*0.12 + mfDamage*0.22*2/3 + swpTickDamage*2*gcd.Seconds()/3
+			numswptickstime = addedDmg / (swpTickDamage * 0.06) * 3 //if the fight lenght is < numswptickstime then use swp 3rd.. if > then use at weaving = 5
+			//
+			if remain_fight*math.Pow(10, -9) < numswptickstime {
+				castSwpNow = 1
+			} else {
+				castMf2 = 1
+			}
 		}
 	}
 
