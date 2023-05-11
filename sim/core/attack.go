@@ -1,6 +1,7 @@
 package core
 
 import (
+	"arena"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -403,10 +404,9 @@ func (aa *AutoAttacks) resetAutoSwing(sim *Simulation) {
 		aa.autoSwingAction.Cancel(sim)
 	}
 
-	pa := &PendingAction{
-		NextActionAt: TernaryDuration(aa.AutoSwingMelee, aa.NextAttackAt(), aa.RangedSwingAt),
-		Priority:     ActionPriorityAuto,
-	}
+	pa := arena.New[PendingAction](sim.arena)
+	pa.NextActionAt = TernaryDuration(aa.AutoSwingMelee, aa.NextAttackAt(), aa.RangedSwingAt)
+	pa.Priority = ActionPriorityAuto
 
 	if aa.AutoSwingMelee {
 		pa.OnAction = func(sim *Simulation) {
@@ -603,23 +603,21 @@ func (aa *AutoAttacks) StopMeleeUntil(sim *Simulation, readyAt time.Duration, de
 	}
 	aa.CancelAutoSwing(sim)
 
-	// Used by warrior to desync offhand after Shattering Throw.
+	// schedule restart action
 	if desyncOH {
-		// schedule restart action
-		sim.AddPendingAction(&PendingAction{
-			NextActionAt: readyAt,
-			Priority:     ActionPriorityAuto,
-			OnAction:     aa.desyncedRestartMelee,
-		})
+		// Used by warrior to desync offhand after Shattering Throw.
+		pa := arena.New[PendingAction](sim.arena)
+		pa.NextActionAt = readyAt
+		pa.Priority = ActionPriorityAuto
+		pa.OnAction = aa.desyncedRestartMelee
+		sim.AddPendingAction(pa)
 	} else {
-		// schedule restart action
-		sim.AddPendingAction(&PendingAction{
-			NextActionAt: readyAt,
-			Priority:     ActionPriorityAuto,
-			OnAction:     aa.restartMelee,
-		})
+		pa := arena.New[PendingAction](sim.arena)
+		pa.NextActionAt = readyAt
+		pa.Priority = ActionPriorityAuto
+		pa.OnAction = aa.restartMelee
+		sim.AddPendingAction(pa)
 	}
-
 }
 
 func (aa *AutoAttacks) restartMelee(sim *Simulation) {

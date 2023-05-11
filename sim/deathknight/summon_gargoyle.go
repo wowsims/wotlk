@@ -12,7 +12,7 @@ func (dk *Deathknight) registerSummonGargoyleCD() {
 		return
 	}
 
-	summonGargoyleAura := dk.RegisterAura(core.Aura{
+	dk.SummonGargoyleAura = dk.RegisterAura(core.Aura{
 		Label:    "Summon Gargoyle",
 		ActionID: core.ActionID{SpellID: 49206},
 		Duration: time.Second * 30,
@@ -48,7 +48,7 @@ func (dk *Deathknight) registerSummonGargoyleCD() {
 			dk.Gargoyle.updateCastSpeed()
 
 			// Add a dummy aura to show in metrics
-			summonGargoyleAura.Activate(sim)
+			dk.SummonGargoyleAura.Activate(sim)
 
 			// Start casting after a 2.5s delay to simulate the summon animation
 			pa := core.PendingAction{
