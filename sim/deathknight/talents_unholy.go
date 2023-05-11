@@ -93,18 +93,16 @@ func (dk *Deathknight) applyNecrosis() {
 
 	dk.NecrosisCoeff = 0.04 * float64(dk.Talents.Necrosis)
 	dk.Necrosis = dk.Unit.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 51460},
-		SpellSchool: core.SpellSchoolShadow,
-		ProcMask:    core.ProcMaskEmpty,
-		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers | core.SpellFlagNoOnDamageDealt,
-
+		ActionID:         core.ActionID{SpellID: 51460},
+		SpellSchool:      core.SpellSchoolShadow,
+		ProcMask:         core.ProcMaskEmpty,
+		Flags:            core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers | core.SpellFlagNoOnDamageDealt,
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
-
-		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-		},
 	})
 
+	// Replace normal melee swing applier with one that also applies necrosis damage.
+	// Doing it this way means you don't see necrosis dmg on the timeline but is faster.
 	dk.AutoAttacks.MHConfig.ApplyEffects = dk.necrosisMHAuto
 	dk.AutoAttacks.OHConfig.ApplyEffects = dk.necrosisOHAuto
 }
@@ -114,8 +112,9 @@ func (dk *Deathknight) necrosisOHAuto(sim *core.Simulation, target *core.Unit, s
 		spell.BonusWeaponDamage()
 
 	if result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWhite); result.Damage > 0 {
-		curDmg := result.Damage
-		dk.Necrosis.CalcAndDealDamage(sim, target, curDmg*dk.NecrosisCoeff, spell.OutcomeAlwaysHit)
+		dk.Necrosis.SpellMetrics[target.UnitIndex].Hits++
+		dk.Necrosis.SpellMetrics[target.UnitIndex].Casts++
+		dk.Necrosis.CalcAndDealDamage(sim, target, result.Damage*dk.NecrosisCoeff, spell.OutcomeAlwaysHit)
 	}
 }
 func (dk *Deathknight) necrosisMHAuto(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -123,8 +122,9 @@ func (dk *Deathknight) necrosisMHAuto(sim *core.Simulation, target *core.Unit, s
 		spell.BonusWeaponDamage()
 
 	if result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWhite); result.Damage > 0 {
-		curDmg := result.Damage
-		dk.Necrosis.CalcAndDealDamage(sim, target, curDmg*dk.NecrosisCoeff, spell.OutcomeAlwaysHit)
+		dk.Necrosis.SpellMetrics[target.UnitIndex].Hits++
+		dk.Necrosis.SpellMetrics[target.UnitIndex].Casts++
+		dk.Necrosis.CalcAndDealDamage(sim, target, result.Damage*dk.NecrosisCoeff, spell.OutcomeAlwaysHit)
 	}
 }
 
@@ -242,11 +242,7 @@ func (dk *Deathknight) procUnholyBlight(sim *core.Simulation, target *core.Unit,
 	dot.SnapshotAttackerMultiplier = dk.UnholyBlightSpell.DamageMultiplier
 	dot.SnapshotBaseDamage = (outstandingDamage + newDamage) / float64(dot.NumberOfTicks)
 
-	if dk.UnholyBlightSpell.SpellMetrics[0].Casts == 0 {
-		dk.UnholyBlightSpell.Cast(sim, target)
-	} else {
-		dot.ApplyOrReset(sim)
-	}
+	dk.UnholyBlightSpell.Cast(sim, target)
 }
 
 func (dk *Deathknight) applyUnholyBlight() {
