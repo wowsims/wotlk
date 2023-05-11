@@ -70,13 +70,13 @@ func NewDpsDeathknight(character core.Character, player *proto.Player) *DpsDeath
 		MainHand:       dpsDk.WeaponFromMainHand(dpsDk.DefaultMeleeCritMultiplier()),
 		OffHand:        dpsDk.WeaponFromOffHand(dpsDk.DefaultMeleeCritMultiplier()),
 		AutoSwingMelee: true,
-		ReplaceMHSwing: func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
-			if dpsDk.RuneStrike.CanCast(sim, nil) {
-				return dpsDk.RuneStrike
-			} else {
-				return nil
-			}
-		},
+		// ReplaceMHSwing: func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
+		// 	if dpsDk.RuneStrike.CanCast(sim, nil) {
+		// 		return dpsDk.RuneStrike
+		// 	} else {
+		// 		return nil
+		// 	}
+		// },
 	})
 
 	if dpsDk.Talents.SummonGargoyle && dpsDk.Rotation.UseGargoyle && dpsDk.Rotation.EnableWeaponSwap {
@@ -341,7 +341,7 @@ func (dk *DpsDeathknight) gargoyleHasteCooldownSync(actionID core.ActionID, isPo
 
 		majorCd.ShouldActivate = func(sim *core.Simulation, character *core.Character) bool {
 			if !dk.Rotation.PreNerfedGargoyle {
-				aura := dk.GetAura("Summon Gargoyle")
+				aura := dk.SummonGargoyleAura
 
 				if aura != nil && aura.IsActive() {
 					return true

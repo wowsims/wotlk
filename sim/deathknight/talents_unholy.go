@@ -71,7 +71,7 @@ func (dk *Deathknight) applyWanderingPlague() {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskEmpty,
-		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreAttackerModifiers,
+		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreAttackerModifiers | core.SpellFlagNoOnDamageDealt,
 
 		DamageMultiplier: []float64{0.0, 0.33, 0.66, 1.0}[dk.Talents.WanderingPlague],
 		ThreatMultiplier: 1,
@@ -91,34 +91,41 @@ func (dk *Deathknight) applyNecrosis() {
 		return
 	}
 
-	coeff := 0.04 * float64(dk.Talents.Necrosis)
-	var curDmg float64
-	necrosisHit := dk.Unit.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 51460},
-		SpellSchool: core.SpellSchoolShadow,
-		ProcMask:    core.ProcMaskEmpty,
-		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers,
-
+	dk.NecrosisCoeff = 0.04 * float64(dk.Talents.Necrosis)
+	dk.Necrosis = dk.Unit.RegisterSpell(core.SpellConfig{
+		ActionID:         core.ActionID{SpellID: 51460},
+		SpellSchool:      core.SpellSchoolShadow,
+		ProcMask:         core.ProcMaskEmpty,
+		Flags:            core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers | core.SpellFlagNoOnDamageDealt,
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
-
-		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			spell.CalcAndDealDamage(sim, target, curDmg*coeff, spell.OutcomeAlwaysHit)
-		},
 	})
 
-	dk.NecrosisAura = core.MakePermanent(dk.RegisterAura(core.Aura{
-		Label: "Necrosis",
-		// ActionID: core.ActionID{SpellID: 51465}, // hide from metrics
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if result.Damage == 0 || !spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
-				return
-			}
+	// Replace normal melee swing applier with one that also applies necrosis damage.
+	// Doing it this way means you don't see necrosis dmg on the timeline but is faster.
+	dk.AutoAttacks.MHConfig.ApplyEffects = dk.necrosisMHAuto
+	dk.AutoAttacks.OHConfig.ApplyEffects = dk.necrosisOHAuto
+}
 
-			curDmg = result.Damage
-			necrosisHit.Cast(sim, result.Target)
-		},
-	}))
+func (dk *Deathknight) necrosisOHAuto(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+	baseDamage := spell.Unit.OHWeaponDamage(sim, spell.MeleeAttackPower()) +
+		spell.BonusWeaponDamage()
+
+	if result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWhite); result.Damage > 0 {
+		dk.Necrosis.SpellMetrics[target.UnitIndex].Hits++
+		dk.Necrosis.SpellMetrics[target.UnitIndex].Casts++
+		dk.Necrosis.CalcAndDealDamage(sim, target, result.Damage*dk.NecrosisCoeff, spell.OutcomeAlwaysHit)
+	}
+}
+func (dk *Deathknight) necrosisMHAuto(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+	baseDamage := spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
+		spell.BonusWeaponDamage()
+
+	if result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWhite); result.Damage > 0 {
+		dk.Necrosis.SpellMetrics[target.UnitIndex].Hits++
+		dk.Necrosis.SpellMetrics[target.UnitIndex].Casts++
+		dk.Necrosis.CalcAndDealDamage(sim, target, result.Damage*dk.NecrosisCoeff, spell.OutcomeAlwaysHit)
+	}
 }
 
 func (dk *Deathknight) applyBloodCakedBlade() {
@@ -247,7 +254,7 @@ func (dk *Deathknight) applyUnholyBlight() {
 		ActionID:    core.ActionID{SpellID: 50536},
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskEmpty,
-		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers,
+		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers | core.SpellFlagNoOnDamageDealt,
 
 		DamageMultiplier: core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfUnholyBlight), 1.4, 1),
 		ThreatMultiplier: 1,
@@ -263,7 +270,6 @@ func (dk *Deathknight) applyUnholyBlight() {
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
 			},
 		},
-
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			spell.Dot(target).ApplyOrReset(sim)
 			spell.CalcAndDealOutcome(sim, target, spell.OutcomeAlwaysHit)
