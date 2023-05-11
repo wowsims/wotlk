@@ -76,6 +76,12 @@ func (spriest *ShadowPriest) chooseSpellAOE(sim *core.Simulation) (*core.Spell, 
 	}
 
 	for _, t := range sim.Encounter.TargetUnits {
+		if spriest.ShadowWordPain.Dot(t).IsActive() && spriest.ShadowWordPain.Dot(t).RemainingDuration(sim).Seconds() < 3 {
+			return spriest.MindFlay[2], t
+		}
+	}
+
+	for _, t := range sim.Encounter.TargetUnits {
 		if !spriest.VampiricTouch.Dot(t).IsActive() && sim.GetRemainingDuration().Seconds() > 5 {
 			return spriest.VampiricTouch, t
 		}
