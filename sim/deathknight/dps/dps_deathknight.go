@@ -341,7 +341,7 @@ func (dk *DpsDeathknight) gargoyleHasteCooldownSync(actionID core.ActionID, isPo
 
 		majorCd.ShouldActivate = func(sim *core.Simulation, character *core.Character) bool {
 			if !dk.Rotation.PreNerfedGargoyle {
-				aura := dk.GetAura("Summon Gargoyle")
+				aura := dk.SummonGargoyleAura
 
 				if aura != nil && aura.IsActive() {
 					return true
