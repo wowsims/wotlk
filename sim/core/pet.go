@@ -162,6 +162,14 @@ func (pet *Pet) Enable(sim *Simulation, petAgent PetAgent) {
 	//reset current mana after applying stats
 	pet.manaBar.reset()
 
+	// Call onEnable callbacks before enabling auto swing
+	// to not have to reorder PAs multiple times
+	pet.enabled = true
+
+	if pet.OnPetEnable != nil {
+		pet.OnPetEnable(sim)
+	}
+
 	pet.SetGCDTimer(sim, MaxDuration(0, sim.CurrentTime))
 	if sim.CurrentTime >= 0 {
 		pet.AutoAttacks.EnableAutoSwing(sim)
@@ -170,12 +178,6 @@ func (pet *Pet) Enable(sim *Simulation, petAgent PetAgent) {
 			NextActionAt: 0,
 			OnAction:     pet.AutoAttacks.EnableAutoSwing,
 		})
-	}
-
-	pet.enabled = true
-
-	if pet.OnPetEnable != nil {
-		pet.OnPetEnable(sim)
 	}
 
 	if sim.Log != nil {

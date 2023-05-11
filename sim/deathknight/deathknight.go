@@ -74,6 +74,7 @@ type Deathknight struct {
 
 	Gargoyle                 *GargoylePet
 	SummonGargoyle           *core.Spell
+	SummonGargoyleAura       *core.Aura
 	GargoyleSummonDelay      time.Duration
 	OnGargoyleStartFirstCast func()
 
