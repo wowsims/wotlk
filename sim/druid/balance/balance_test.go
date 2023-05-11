@@ -26,6 +26,11 @@ func TestBalance(t *testing.T) {
 		Glyphs:      StandardGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Default", SpecOptions: PlayerOptionsAdaptive},
+		OtherSpecOptions: []core.SpecOptionsCombo{
+			{Label: "MultidotIs", SpecOptions: PlayerOptionsMultidotIs},
+			{Label: "MultidotMf", SpecOptions: PlayerOptionsMultidotMf},
+			{Label: "MultidotBoth", SpecOptions: PlayerOptionsMultidotBoth},
+		},
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
@@ -64,6 +69,60 @@ var PlayerOptionsAdaptive = &proto.Player_BalanceDruid{
 		Rotation: &proto.BalanceDruid_Rotation{
 			MfUsage:            proto.BalanceDruid_Rotation_BeforeLunar,
 			IsUsage:            proto.BalanceDruid_Rotation_MaximizeIs,
+			WrathUsage:         proto.BalanceDruid_Rotation_RegularWrath,
+			UseBattleRes:       false,
+			UseStarfire:        true,
+			UseTyphoon:         false,
+			UseHurricane:       false,
+			UseSmartCooldowns:  true,
+			MaintainFaerieFire: true,
+			PlayerLatency:      200,
+		},
+	},
+}
+
+var PlayerOptionsMultidotIs = &proto.Player_BalanceDruid{
+	BalanceDruid: &proto.BalanceDruid{
+		Options: &proto.BalanceDruid_Options{},
+		Rotation: &proto.BalanceDruid_Rotation{
+			MfUsage:            proto.BalanceDruid_Rotation_BeforeLunar,
+			IsUsage:            proto.BalanceDruid_Rotation_MultidotIs,
+			WrathUsage:         proto.BalanceDruid_Rotation_RegularWrath,
+			UseBattleRes:       false,
+			UseStarfire:        true,
+			UseTyphoon:         false,
+			UseHurricane:       false,
+			UseSmartCooldowns:  true,
+			MaintainFaerieFire: true,
+			PlayerLatency:      200,
+		},
+	},
+}
+
+var PlayerOptionsMultidotMf = &proto.Player_BalanceDruid{
+	BalanceDruid: &proto.BalanceDruid{
+		Options: &proto.BalanceDruid_Options{},
+		Rotation: &proto.BalanceDruid_Rotation{
+			MfUsage:            proto.BalanceDruid_Rotation_MultidotMf,
+			IsUsage:            proto.BalanceDruid_Rotation_MaximizeIs,
+			WrathUsage:         proto.BalanceDruid_Rotation_RegularWrath,
+			UseBattleRes:       false,
+			UseStarfire:        true,
+			UseTyphoon:         false,
+			UseHurricane:       false,
+			UseSmartCooldowns:  true,
+			MaintainFaerieFire: true,
+			PlayerLatency:      200,
+		},
+	},
+}
+
+var PlayerOptionsMultidotBoth = &proto.Player_BalanceDruid{
+	BalanceDruid: &proto.BalanceDruid{
+		Options: &proto.BalanceDruid_Options{},
+		Rotation: &proto.BalanceDruid_Rotation{
+			MfUsage:            proto.BalanceDruid_Rotation_MultidotMf,
+			IsUsage:            proto.BalanceDruid_Rotation_MultidotIs,
 			WrathUsage:         proto.BalanceDruid_Rotation_RegularWrath,
 			UseBattleRes:       false,
 			UseStarfire:        true,

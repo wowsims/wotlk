@@ -280,8 +280,8 @@ dps_results: {
 dps_results: {
  key: "TestFire-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 6686.55884
-  tps: 5350.42498
+  dps: 6685.02435
+  tps: 5349.19739
  }
 }
 dps_results: {

@@ -292,6 +292,13 @@ export class ActionId {
 					name += ' (DoT)'
 				}
 				break;
+			case 'Holy Vengeance':
+				if (this.tag == 1) {
+						name += ' (Application)'
+				} else if (this.tag == 2) {
+					name += ' (DoT)'
+				}
+				break;
 			// For targetted buffs, tag is the source player's raid index or -1 if none.
 			case 'Bloodlust':
 			case 'Ferocious Inspiration':
@@ -530,6 +537,9 @@ const petNameToActionId: Record<string, ActionId> = {
 	'Spirit Wolf 2': ActionId.fromSpellId(51533),
 	'Rune Weapon': ActionId.fromSpellId(49028),
 	'Bloodworm': ActionId.fromSpellId(50452),
+	'Gargoyle': ActionId.fromSpellId(49206),
+	'Ghoul': ActionId.fromSpellId(46584),
+	'Army of the Dead': ActionId.fromSpellId(42650),
 };
 
 // https://wowhead.com/wotlk/hunter-pets
@@ -549,9 +559,6 @@ const petNameToIcon: Record<string, string> = {
 	'Felguard': 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_summonfelguard.jpg',
 	'Felhunter': 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_summonfelhunter.jpg',
 	'Infernal': 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_summoninfernal.jpg',
-	'Gargoyle': 'https://wow.zamimg.com/images/wow/icons/large/ability_hunter_pet_bat.jpg',
-	'Ghoul': 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_raisedead.jpg',
-	'Army of the Dead': 'https://wow.zamimg.com/images/wow/icons/large/spell_deathknight_armyofthedead.jpg',
 	'Gorilla': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_gorilla.jpg',
 	'Hyena': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_hyena.jpg',
 	'Imp': 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_summonimp.jpg',

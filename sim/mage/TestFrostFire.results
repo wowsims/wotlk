@@ -280,8 +280,8 @@ dps_results: {
 dps_results: {
  key: "TestFrostFire-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 6224.13267
-  tps: 4958.7932
+  dps: 6223.31362
+  tps: 4958.13796
  }
 }
 dps_results: {

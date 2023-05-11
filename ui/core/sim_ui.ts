@@ -14,6 +14,7 @@ import { EventID, TypedEvent } from './typed_event.js';
 
 import { Tooltip } from 'bootstrap';
 import { SimTab } from './components/sim_tab.js';
+import { BaseModal } from './components/base_modal.js';
 
 const URLMAXLEN = 2048;
 const noticeText = '';
@@ -108,6 +109,25 @@ export abstract class SimUI extends Component {
 		};
 		updateShowHealingMetrics();
 		this.sim.showHealingMetricsChangeEmitter.on(updateShowHealingMetrics);
+
+		const updateShowEpRatios = () => {
+			// Threat metrics *always* shows multiple columns, so
+			// always show ratios when they are shown
+			if (this.sim.getShowThreatMetrics()) {
+				this.rootElem.classList.remove('hide-ep-ratios');
+			// This case doesn't currently happen, but who knows
+			// what the future holds...
+			} else if (this.sim.getShowDamageMetrics() && this.sim.getShowHealingMetrics()) {
+				this.rootElem.classList.remove('hide-ep-ratios');
+			} else {
+				this.rootElem.classList.add('hide-ep-ratios');
+			}
+		};
+
+		updateShowEpRatios();
+		this.sim.showDamageMetricsChangeEmitter.on(updateShowEpRatios);
+		this.sim.showHealingMetricsChangeEmitter.on(updateShowEpRatios);
+		this.sim.showThreatMetricsChangeEmitter.on(updateShowEpRatios);
 
 		const updateShowExperimental = () => {
 			if (this.sim.getShowExperimental())
@@ -260,9 +280,21 @@ export abstract class SimUI extends Component {
 						const base_url = 'https://github.com/wowsims/wotlk/issues/new?assignees=&labels=&title=Crash%20Report%20'
 						const base = `${base_url}${hash}&body=`;
 						const maxBodyLength = URLMAXLEN - base.length;
-						let issueBody = encodeURIComponent(`Link:\n${link}\n\nRNG Seed: ${rngSeed}\n\n${errorStr}`)
-						while (issueBody.length > maxBodyLength) {
-							issueBody = issueBody.slice(0, issueBody.lastIndexOf('%')) // Avoid truncating in the middle of a URLencoded segment
+						let issueBody = encodeURIComponent(`Link:\n${link}\n\nRNG Seed: ${rngSeed}\n\n${errorStr}`);
+						if (link.includes('/raid/')) {
+							// Move the actual error before the link, as it will likely get truncated.
+							issueBody = encodeURIComponent(`${errorStr}\nRNG Seed: ${rngSeed}\nLink:\n${link}`);
+						}
+						let truncated = false;
+						while (issueBody.length > maxBodyLength - (truncated ? 3 : 0)) {
+							issueBody = issueBody.slice(0, issueBody.lastIndexOf('%')) // Avoid truncating in the middle of a URLencoded segment.
+							truncated = true;
+						}
+						if (truncated) {
+							issueBody += "...";
+							// The raid links are too large and will always cause truncation.
+							// Prompt the user to add more information to the issue.
+							new CrashModal(this.rootElem, link);
 						}
 						window.open(base + issueBody, '_blank');
 					}
@@ -271,7 +303,6 @@ export abstract class SimUI extends Component {
 				alert('Failed to file report... try again another time:' + fetchErr);
 			});
 		}
-		return;
 	}
 
 	hashCode(str: string): number {
@@ -286,6 +317,20 @@ export abstract class SimUI extends Component {
 
 	abstract applyDefaults(eventID: EventID): void;
 	abstract toLink(): string;
+}
+
+class CrashModal extends BaseModal {
+	constructor(parent: HTMLElement, link: string) {
+		super(parent, 'crash', {title: 'Extra Crash Information'});
+		this.body.innerHTML = `
+			<div class="sim-crash-report">
+				<h3 class="sim-crash-report-header">Please append the following complete link to the issue you just created. This will simplify debugging the issue.</h3>
+				<textarea class="sim-crash-report-text form-control"></textarea>
+			</div>
+		`;
+		let text = document.createTextNode(link);
+		this.body.querySelector('textarea')?.appendChild(text);
+	}
 }
 
 const simHTML = `

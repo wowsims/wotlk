@@ -21,7 +21,8 @@ var TalentTreeSizes = [3]int{28, 29, 31}
 
 type DeathknightInputs struct {
 	// Option Vars
-	IsDps bool
+	IsDps  bool
+	NewDrw bool
 
 	UnholyFrenzyTarget *proto.RaidTarget
 
@@ -40,6 +41,7 @@ type DeathknightInputs struct {
 	AvgAMSSuccessRate   float64
 	AvgAMSHit           float64
 	FuStrike            Rotation_FuStrike
+	DiseaseDowntime     float64
 }
 
 type DeathknightCoeffs struct {
@@ -77,6 +79,8 @@ type Deathknight struct {
 
 	RuneWeapon        *RuneWeaponPet
 	DancingRuneWeapon *core.Spell
+	drwDmgSnapshot    float64
+	drwPhysSnapshot   float64
 
 	ArmyOfTheDead *core.Spell
 	ArmyGhoul     []*GhoulPet
@@ -431,6 +435,7 @@ func NewDeathknight(character core.Character, inputs DeathknightInputs, talents 
 	dk.AddStatDependency(stats.Agility, stats.Dodge, core.DodgeRatingPerDodgeChance/84.74576271)
 	dk.AddStatDependency(stats.Strength, stats.AttackPower, 2)
 	dk.AddStatDependency(stats.Strength, stats.Parry, 0.25)
+	dk.AddStatDependency(stats.BonusArmor, stats.Armor, 1)
 
 	dk.PseudoStats.CanParry = true
 	dk.PseudoStats.GracefulCastCDFailures = true

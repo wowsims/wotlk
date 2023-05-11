@@ -13,6 +13,7 @@ import {
 	DruidMinorGlyph,
 	FeralDruid_Rotation_BearweaveType,
 	FeralDruid_Rotation_BiteModeType,
+	FeralDruid_Rotation_AplType,
 } from '../core/proto/druid.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
@@ -39,6 +40,8 @@ export const StandardTalents = {
 };
 
 export const DefaultRotation = FeralDruidRotation.create({
+	rotationType: FeralDruid_Rotation_AplType.SingleTarget,
+
 	bearWeaveType: FeralDruid_Rotation_BearweaveType.None,
 	minCombosForRip: 5,
 	minCombosForBite: 5,
@@ -58,6 +61,7 @@ export const DefaultRotation = FeralDruidRotation.create({
 	snekWeave: false,
 	flowerWeave: false,
 	raidTargets: 30,
+	maxFfDelay: 0.7,
 });
 
 export const DefaultOptions = FeralDruidOptions.create({
@@ -348,7 +352,7 @@ export const P2_PRESET = {
 			"id": 45931
 		},
 		{
-			"id": 45609
+			"id": 46038
 		},
 		{
 			"id": 45613,

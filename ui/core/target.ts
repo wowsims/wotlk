@@ -337,7 +337,8 @@ export class Target {
 			spellSchool: SpellSchool.SpellSchoolPhysical,
 			stats: Stats.fromMap({
 				[Stat.StatArmor]: 10643,
-				[Stat.StatAttackPower]: 574,
+				[Stat.StatAttackPower]: 805,
+				[Stat.StatBlockValue]: 76,
 			}).asArray(),
 			targetInputs: new Array<TargetInput>(0),
 		});

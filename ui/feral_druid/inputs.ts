@@ -10,6 +10,7 @@ import * as InputHelpers from '../core/components/input_helpers.js';
 import {
 	FeralDruid,
 	FeralDruid_Rotation as DruidRotation,
+	FeralDruid_Rotation_AplType as AplType,
 	FeralDruid_Rotation_BearweaveType as BearweaveType,
 	FeralDruid_Rotation_BiteModeType as BiteModeType,
 	FeralDruid_Options as DruidOptions,
@@ -44,7 +45,7 @@ export const LatencyMs = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecFeralD
 export const PrepopOoc = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecFeralDruid>({
 	fieldName: 'prepopOoc',
 	label: 'Pre-pop Clearcasting',
-	labelTooltip: 'Start fight with clearcasting using FFF',
+	labelTooltip: 'Start fight with clearcasting',
 	showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getTalents().omenOfClarity,
 	changeEmitter: (player: Player<Spec.SpecFeralDruid>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 })
@@ -64,44 +65,81 @@ export const AssumeBleedActive = InputHelpers.makeSpecOptionsBooleanInput<Spec.S
 	extraCssClasses: ['within-raid-sim-hide'],
 })
 
+function ShouldShowAdvParamST(player: Player<Spec.SpecFeralDruid>): boolean {
+	let rot = player.getRotation();
+	return rot.manualParams && rot.rotationType == AplType.SingleTarget;
+}
+
+function ShouldShowAdvParamAoe(player: Player<Spec.SpecFeralDruid>): boolean {
+	let rot = player.getRotation();
+	return rot.manualParams && rot.rotationType == AplType.Aoe;
+}
+
 export const FeralDruidRotationConfig = {
 	inputs: [
+		InputHelpers.makeRotationEnumInput<Spec.SpecFeralDruid, AplType>({
+			fieldName: 'rotationType',
+			label: 'Type',
+			values: [
+				{ name: 'Single Target', value: AplType.SingleTarget },
+				{ name: 'AOE', value: AplType.Aoe },
+			],
+		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
 			fieldName: 'manualParams',
 			label: 'Manual Advanced Parameters',
 			labelTooltip: 'Manually specify advanced parameters, otherwise will use preset defaults',
 		}),
-
+		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
+			fieldName: 'maxFfDelay',
+			label: 'Max FF Delay',
+			labelTooltip: 'Max allowed delay to wait for ff to come off CD in seconds',
+			float: true,
+			positive: true,
+			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().manualParams,
+		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
 			fieldName: 'minRoarOffset',
 			label: 'Roar Offset',
 			labelTooltip: 'Targeted offset in Rip/Roar timings',
-			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().manualParams,
+			showWhen: ShouldShowAdvParamST,
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
 			fieldName: 'ripLeeway',
 			label: 'Rip Leeway',
 			labelTooltip: 'Rip leeway when determining roar clips',
-			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().manualParams,
+			showWhen: ShouldShowAdvParamST,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
 			fieldName: 'useRake',
 			label: 'Use Rake',
 			labelTooltip: 'Use rake during rotation',
-			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().manualParams,
+			showWhen: ShouldShowAdvParamST,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
 			fieldName: 'useBite',
 			label: 'Bite during rotation',
 			labelTooltip: 'Use bite during rotation rather than just at end',
-			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().manualParams,
+			showWhen: ShouldShowAdvParamST,
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
 			fieldName: 'biteTime',
 			label: 'Bite Time',
 			labelTooltip: 'Min seconds on Rip/Roar to bite',
 			showWhen: (player: Player<Spec.SpecFeralDruid>) => 
-				player.getRotation().manualParams && player.getRotation().useBite == true && player.getRotation().biteModeType == BiteModeType.Emperical,
+			ShouldShowAdvParamST(player) && player.getRotation().useBite == true && player.getRotation().biteModeType == BiteModeType.Emperical,
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
+			fieldName: 'flowerWeave',
+			label: 'Flower Weave',
+			labelTooltip: 'Fish for clearcasting during rotation with gotw',
+			showWhen: ShouldShowAdvParamAoe,
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
+			fieldName: 'raidTargets',
+			label: 'GotW Raid Targets',
+			labelTooltip: 'Raid size to assume for clearcast proc chance (can include pets as well, so 25 man raid potentically can be ~30)',
+			showWhen: (player: Player<Spec.SpecFeralDruid>) => ShouldShowAdvParamAoe(player) && player.getRotation().flowerWeave == true,
 		}),
 		// Can be uncommented if/when analytical bite mode is added
 		//InputHelpers.makeRotationEnumInput<Spec.SpecFeralDruid, BiteModeType>({

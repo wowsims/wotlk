@@ -682,9 +682,16 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, gcd tim
 	nextIdx := -1
 
 	newCDs := []time.Duration{
-		core.MaxDuration(0, spriest.AllCDs[0]),
 		core.MaxDuration(0, spriest.AllCDs[1]),
 		core.MaxDuration(0, spriest.AllCDs[2]),
+	}
+
+	if mbDamage != 0 {
+		newCDs = []time.Duration{
+			core.MaxDuration(0, spriest.AllCDs[0]),
+			core.MaxDuration(0, spriest.AllCDs[1]),
+			core.MaxDuration(0, spriest.AllCDs[2]),
+		}
 	}
 
 	for i, v := range newCDs {

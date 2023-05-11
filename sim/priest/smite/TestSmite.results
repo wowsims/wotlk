@@ -301,8 +301,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 3610.94422
-  tps: 3069.94745
+  dps: 3611.47698
+  tps: 3070.41645
  }
 }
 dps_results: {
@@ -805,29 +805,29 @@ dps_results: {
 dps_results: {
  key: "TestSmite-Settings-Undead-P1-Basic-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 4903.94499
+  dps: 4825.63723
   tps: 4209.93726
  }
 }
 dps_results: {
  key: "TestSmite-Settings-Undead-P1-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 1178.71235
-  tps: 1436.33734
+  dps: 1199.72139
+  tps: 1483.26263
  }
 }
 dps_results: {
  key: "TestSmite-Settings-Undead-P1-Basic-NoBuffs-LongSingleTarget"
  value: {
-  dps: 1178.71235
-  tps: 1017.00605
+  dps: 1199.72139
+  tps: 1031.37456
  }
 }
 dps_results: {
  key: "TestSmite-Settings-Undead-P1-Basic-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 2772.93015
-  tps: 2244.83721
+  dps: 2804.86383
+  tps: 2254.80468
  }
 }
 dps_results: {

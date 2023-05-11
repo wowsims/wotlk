@@ -5,6 +5,7 @@ import {
 import {
 	RaidFilterOption,
 	SourceFilterOption,
+	UIItem_FactionRestriction,
 } from '../proto/ui.js';
 import {
 	armorTypeNames,
@@ -27,13 +28,42 @@ import { getEnumValues } from '../utils.js';
 import { BooleanPicker } from './boolean_picker.js';
 import { NumberPicker } from './number_picker.js';
 import { BaseModal } from './base_modal.js';
-import { Input } from './input.js';
+import { EnumPicker } from './enum_picker.js';
+
+const factionRestrictionsToLabels: Record<UIItem_FactionRestriction, string> = {
+	[UIItem_FactionRestriction.UNSPECIFIED]: 'None',
+	[UIItem_FactionRestriction.ALLIANCE_ONLY]: 'Alliance only',
+	[UIItem_FactionRestriction.HORDE_ONLY]: 'Horde only',
+};
 
 export class FiltersMenu extends BaseModal {
 	constructor(rootElem: HTMLElement, player: Player<any>, slot: ItemSlot) {
 		super(rootElem, 'filters-menu', {size: 'md', title: 'Filters'});
 
-		let section = this.newSection('Source');
+		let section = this.newSection('Factions');
+
+		new EnumPicker(section, player.sim, {
+			label: 'Faction Restrictions',
+			values: [
+				UIItem_FactionRestriction.UNSPECIFIED,
+				UIItem_FactionRestriction.ALLIANCE_ONLY,
+				UIItem_FactionRestriction.HORDE_ONLY
+			].map((restriction) => {
+				return {
+					name: factionRestrictionsToLabels[restriction],
+					value: restriction,
+				};
+			}),
+			changedEvent: sim => sim.filtersChangeEmitter,
+			getValue: (sim: Sim) => sim.getFilters().factionRestriction,
+			setValue: (eventID: EventID, sim: Sim, newValue: UIItem_FactionRestriction) => {
+				const newFilters = sim.getFilters();
+				newFilters.factionRestriction = newValue;
+				sim.setFilters(eventID, newFilters);
+			},
+		});
+
+		section = this.newSection('Source');
 		section.classList.add('filters-menu-section-bool-list');
 		const sources = Sim.ALL_SOURCES.filter(s => s != SourceFilterOption.SourceUnknown);
 		sources.forEach(source => {

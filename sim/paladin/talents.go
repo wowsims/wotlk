@@ -353,6 +353,13 @@ func (paladin *Paladin) applyWeaponSpecialization() {
 	}
 }
 
+func (paladin *Paladin) maybeProcVengeance(sim *core.Simulation, result *core.SpellResult) {
+	if result.DidCrit() && paladin.Talents.Vengeance > 0 {
+		paladin.VengeanceAura.Activate(sim)
+		paladin.VengeanceAura.AddStack(sim)
+	}
+}
+
 // I don't know if the new stack of vengeance applies to the crit that triggered it or not
 // Need to check this
 func (paladin *Paladin) applyVengeance() {
@@ -361,7 +368,7 @@ func (paladin *Paladin) applyVengeance() {
 	}
 
 	bonusPerStack := 0.01 * float64(paladin.Talents.Vengeance)
-	procAura := paladin.RegisterAura(core.Aura{
+	paladin.VengeanceAura = paladin.RegisterAura(core.Aura{
 		Label:     "Vengeance Proc",
 		ActionID:  core.ActionID{SpellID: 20057},
 		Duration:  time.Second * 30,
@@ -382,10 +389,7 @@ func (paladin *Paladin) applyVengeance() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if result.Outcome.Matches(core.OutcomeCrit) {
-				procAura.Activate(sim)
-				procAura.AddStack(sim)
-			}
+			paladin.maybeProcVengeance(sim, result)
 		},
 	})
 }

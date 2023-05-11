@@ -1,19 +1,12 @@
 package warrior
 
 import (
-	"time"
-
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (warrior *Warrior) registerExecuteSpell() {
 	const maxRage = 30
-
-	gcd := core.GCDDefault
-	if warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4) {
-		gcd = time.Second
-	}
 
 	var extraRageBonus float64
 	if warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfExecution) {
@@ -36,7 +29,7 @@ func (warrior *Warrior) registerExecuteSpell() {
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD: gcd,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
 		},

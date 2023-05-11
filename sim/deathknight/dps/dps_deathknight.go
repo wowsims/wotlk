@@ -51,6 +51,8 @@ func NewDpsDeathknight(character core.Character, player *proto.Player) *DpsDeath
 			DrwPestiApply:       dk.Options.DrwPestiApply,
 			BloodOpener:         dk.Rotation.BloodOpener,
 			IsDps:               true,
+			NewDrw:              dk.Options.NewDrw,
+			DiseaseDowntime:     dk.Options.DiseaseDowntime,
 
 			RefreshHornOfWinter: dk.Rotation.RefreshHornOfWinter,
 			ArmyOfTheDeadType:   dk.Rotation.ArmyOfTheDead,
@@ -201,16 +203,6 @@ func (dk *DpsDeathknight) GetDeathknight() *deathknight.Deathknight {
 
 func (dk *DpsDeathknight) Initialize() {
 	dk.Deathknight.Initialize()
-
-	if dk.Talents.DancingRuneWeapon {
-		dk.br.drwSnapshot = core.NewSnapshotManager(dk.GetCharacter())
-		dk.setupDrwProcTrackers()
-	}
-
-	if dk.Talents.SummonGargoyle {
-		dk.ur.gargoyleSnapshot = core.NewSnapshotManager(dk.GetCharacter())
-		dk.setupGargProcTrackers()
-	}
 
 	dk.sr.Initialize(dk)
 	dk.br.Initialize(dk)

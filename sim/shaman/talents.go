@@ -73,11 +73,16 @@ func (shaman *Shaman) applyElementalFocus() {
 	oathBonus := 1 + (0.05 * float64(shaman.Talents.ElementalOath))
 	var affectedSpells []*core.Spell
 
+	// TODO: fix this.
+	// Right now: Set to 3 so that the spell that cast it consumes a charge down to expected 2.
+	// Correct fix would be to figure out how to make 'onCastComplete' fire before 'onspellhitdealt' without breaking all the other things.
+	maxStacks := int32(3)
+
 	clearcastingAura := shaman.RegisterAura(core.Aura{
 		Label:     "Clearcasting",
 		ActionID:  core.ActionID{SpellID: 16246},
 		Duration:  time.Second * 15,
-		MaxStacks: 2,
+		MaxStacks: maxStacks,
 		OnInit: func(aura *core.Aura, sim *core.Simulation) {
 			affectedSpells = core.FilterSlice([]*core.Spell{
 				shaman.LightningBolt,
@@ -134,7 +139,7 @@ func (shaman *Shaman) applyElementalFocus() {
 				return
 			}
 			clearcastingAura.Activate(sim)
-			clearcastingAura.SetStacks(sim, 2)
+			clearcastingAura.SetStacks(sim, maxStacks)
 		},
 	})
 }
