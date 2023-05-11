@@ -1,6 +1,7 @@
 package core
 
 import (
+	"arena"
 	"time"
 )
 
@@ -57,11 +58,10 @@ func NewPeriodicAction(sim *Simulation, options PeriodicActionOptions) *PendingA
 		panic("NewPeriodicAction: OnAction must not be nil")
 	}
 
-	pa := &PendingAction{
-		NextActionAt: sim.CurrentTime + options.Period,
-		Priority:     options.Priority,
-		CleanUp:      options.CleanUp,
-	}
+	pa := arena.New[PendingAction](sim.arena)
+	pa.NextActionAt = sim.CurrentTime + options.Period
+	pa.Priority = options.Priority
+	pa.CleanUp = options.CleanUp
 
 	tickIndex := 0
 

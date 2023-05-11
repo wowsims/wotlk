@@ -26,11 +26,11 @@ const (
 // Shared precomputation logic for LB and CL.
 func (shaman *Shaman) newElectricSpellConfig(actionID core.ActionID, baseCost float64, baseCastTime time.Duration, isLightningOverload bool) core.SpellConfig {
 	spell := core.SpellConfig{
-		ActionID:     actionID,
-		SpellSchool:  core.SpellSchoolNature,
-		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagElectric | SpellFlagFocusable,
-		MetricSplits: 6,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolNature,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       SpellFlagElectric | SpellFlagFocusable,
+		// MetricSplits: 6,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   core.TernaryFloat64(isLightningOverload, 0, baseCost),

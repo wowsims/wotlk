@@ -95,7 +95,7 @@ func (dot *Dot) Rollover(sim *Simulation) {
 	dot.tickAction.Cancel(sim) // remove old PA ticker
 
 	// recreate with new period, resetting the next tick.
-	periodicOptions := dot.basePeriodicOptions()
+	periodicOptions := dot.basePeriodicOptions(sim)
 	periodicOptions.Period = dot.tickPeriod
 	dot.tickAction = NewPeriodicAction(sim, periodicOptions)
 	dot.tickAction.NextActionAt = oldNextTick
@@ -132,7 +132,7 @@ func (dot *Dot) ApplyOrReset(sim *Simulation) {
 	oldTickAction.Cancel(sim) // remove old PA ticker
 
 	// recreate with new period, resetting the next tick.
-	periodicOptions := dot.basePeriodicOptions()
+	periodicOptions := dot.basePeriodicOptions(sim)
 	periodicOptions.Period = dot.tickPeriod
 	dot.tickAction = NewPeriodicAction(sim, periodicOptions)
 	sim.AddPendingAction(dot.tickAction)
@@ -196,25 +196,28 @@ func (dot *Dot) ManualTick(sim *Simulation) {
 	}
 }
 
-func (dot *Dot) basePeriodicOptions() PeriodicActionOptions {
+func (dot *Dot) basePeriodicOptions(sim *Simulation) PeriodicActionOptions {
 	return PeriodicActionOptions{
-		//Priority: ActionPriorityDOT,
-		OnAction: func(sim *Simulation) {
-			if dot.lastTickTime != sim.CurrentTime {
-				dot.TickCount++
-				dot.TickOnce(sim)
-			}
-		},
-		CleanUp: func(sim *Simulation) {
-			// In certain cases, the last tick and the dot aura expiration can happen in
-			// different orders, so we might need to apply the last tick.
-			if dot.tickAction != nil && dot.tickAction.NextActionAt == sim.CurrentTime {
-				if dot.lastTickTime != sim.CurrentTime {
-					dot.TickCount++
-					dot.TickOnce(sim)
-				}
-			}
-		},
+		OnAction: dot.onaction,
+		CleanUp:  dot.cleanup,
+	}
+}
+
+func (dot *Dot) onaction(sim *Simulation) {
+	if dot.lastTickTime != sim.CurrentTime {
+		dot.TickCount++
+		dot.TickOnce(sim)
+	}
+}
+
+func (dot *Dot) cleanup(sim *Simulation) {
+	// In certain cases, the last tick and the dot aura expiration can happen in
+	// different orders, so we might need to apply the last tick.
+	if dot.tickAction != nil && dot.tickAction.NextActionAt == sim.CurrentTime {
+		if dot.lastTickTime != sim.CurrentTime {
+			dot.TickCount++
+			dot.TickOnce(sim)
+		}
 	}
 }
 
@@ -227,7 +230,7 @@ func NewDot(config Dot) *Dot {
 
 	dot.Aura.ApplyOnGain(func(aura *Aura, sim *Simulation) {
 		dot.lastTickTime = sim.CurrentTime
-		periodicOptions := dot.basePeriodicOptions()
+		periodicOptions := dot.basePeriodicOptions(sim)
 		periodicOptions.Period = dot.tickPeriod
 		dot.tickAction = NewPeriodicAction(sim, periodicOptions)
 		sim.AddPendingAction(dot.tickAction)

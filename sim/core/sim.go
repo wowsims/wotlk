@@ -1,6 +1,7 @@
 package core
 
 import (
+	"arena"
 	"fmt"
 	"math/rand"
 	"runtime"
@@ -14,6 +15,8 @@ import (
 
 type Simulation struct {
 	*Environment
+
+	arena *arena.Arena
 
 	Options *proto.SimOptions
 
@@ -113,7 +116,7 @@ func runSim(rsr *proto.RaidSimRequest, progress chan *proto.ProgressMetrics, ski
 
 	// using a variable here allows us to mutate it in the deferred recover, sending out error info
 	result = sim.run()
-
+	sim.arena.Free()
 	return result
 }
 
@@ -123,9 +126,11 @@ func NewSim(rsr *proto.RaidSimRequest) *Simulation {
 	if rseed == 0 {
 		rseed = time.Now().UnixNano()
 	}
+	arena := arena.NewArena()
 
 	env, _ := NewEnvironment(rsr.Raid, rsr.Encounter)
 	return &Simulation{
+		arena:       arena,
 		Environment: env,
 		Options:     simOptions,
 
