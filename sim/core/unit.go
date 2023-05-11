@@ -104,7 +104,8 @@ type Unit struct {
 	spellRegistrationHandlers []SpellRegisteredHandler
 
 	// Pets owned by this Unit.
-	Pets []PetAgent
+	Pets       []PetAgent
+	ActivePets []PetAgent
 
 	// AutoAttacks is the manager for auto attack swings.
 	// Must be enabled to use, with "EnableAutoAttacks()".

@@ -94,7 +94,7 @@ func (pet *Pet) OwnerAttackSpeedChanged(sim *Simulation) {}
 // owner lost stats).
 func (pet *Pet) addOwnerStats(sim *Simulation, addedStats stats.Stats) {
 	// Only gargoyle is a guardian that inherits haste dynamically
-	if (pet.guardianDynamicStatInheritance == nil && pet.isGuardian) || !pet.enabled {
+	if !pet.enabled || (pet.guardianDynamicStatInheritance == nil && pet.isGuardian) {
 		return
 	}
 
@@ -178,6 +178,8 @@ func (pet *Pet) Enable(sim *Simulation, petAgent PetAgent) {
 		pet.OnPetEnable(sim)
 	}
 
+	pet.Owner.ActivePets = append(pet.Owner.ActivePets, petAgent)
+
 	if sim.Log != nil {
 		pet.Log(sim, "Pet stats: %s", pet.GetStats())
 		pet.Log(sim, "Pet inherited stats: %s", pet.ApplyStatDependencies(pet.inheritedStats))
@@ -218,6 +220,19 @@ func (pet *Pet) Disable(sim *Simulation) {
 
 	if pet.OnPetDisable != nil {
 		pet.OnPetDisable(sim)
+	}
+
+	for i := range pet.Owner.ActivePets {
+		if pet.Owner.ActivePets[i].GetPet() == pet {
+			num := len(pet.Owner.ActivePets)
+			if num > 1 {
+				pet.Owner.ActivePets[i] = pet.Owner.ActivePets[num-1]
+				pet.Owner.ActivePets = pet.Owner.ActivePets[:num-1]
+			} else {
+				pet.Owner.ActivePets = pet.Owner.ActivePets[:0]
+			}
+			break
+		}
 	}
 
 	if sim.Log != nil {
