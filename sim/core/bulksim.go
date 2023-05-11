@@ -617,9 +617,11 @@ type raidSimRequestChangeLog struct {
 // createNewRequestWithSubstitution creates a copy of the input RaidSimRequest and applis the given
 // equipment susbstitution to the player's equipment. Copies enchant if specified and possible.
 func createNewRequestWithSubstitution(readonlyInputRequest *proto.RaidSimRequest, substitution *equipmentSubstitution, autoEnchant bool) (*proto.RaidSimRequest, *raidSimRequestChangeLog) {
-	request := goproto.Clone(readonlyInputRequest).(*proto.RaidSimRequest)
+	// request := goproto.Clone(readonlyInputRequest).(*proto.RaidSimRequest)
+	request := *readonlyInputRequest
+	request.SimOptions = goproto.Clone(readonlyInputRequest.SimOptions).(*proto.SimOptions)
 	changeLog := &raidSimRequestChangeLog{}
-	player := request.Raid.Parties[0].Players[0]
+	player := goproto.Clone(request.Raid.Parties[0].Players[0]).(*proto.Player)
 	equipment := player.Equipment
 	for _, is := range substitution.Items {
 		oldItem := equipment.Items[is.Slot]
@@ -643,7 +645,13 @@ func createNewRequestWithSubstitution(readonlyInputRequest *proto.RaidSimRequest
 			})
 		}
 	}
-	return request, changeLog
+	// Assign the new raid/players to this request.
+	request.Raid = &proto.Raid{
+		Parties: []*proto.Party{{
+			Players: []*proto.Player{player},
+		}},
+	}
+	return &request, changeLog
 }
 
 type ItemComboChecker map[int64]struct{}

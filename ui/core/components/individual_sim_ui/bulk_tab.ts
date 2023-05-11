@@ -746,11 +746,16 @@ export class BulkTab extends SimTab {
   }
 
   private setSimProgress(progress: ProgressMetrics, iterPerSecond: number, currentRound: number, rounds: number, combinations: number) {
-    const secondsRemain = ((progress.totalIterations - progress.completedIterations) / iterPerSecond).toFixed();
+    const secondsRemain = ((progress.totalIterations - progress.completedIterations) / iterPerSecond);
 
     let roundsText = "";
     if (rounds > 0) {
       roundsText = `${currentRound} / ${rounds} refining rounds`;
+    }
+
+    let timeText = `${secondsRemain.toFixed()} seconds remaining.`;
+    if (secondsRemain > 120) {
+      timeText = `${(secondsRemain/60).toFixed(1)} minutes remaining.`;
     }
 
     this.pendingResults.setContent(`
@@ -762,7 +767,7 @@ export class BulkTab extends SimTab {
           ${progress.completedIterations} / ${progress.totalIterations}<br>iterations complete
         </div>
         <div class="">
-          ${secondsRemain} seconds remaining.
+          ${timeText}
         </div>
       </div>
     `);
