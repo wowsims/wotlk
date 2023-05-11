@@ -247,12 +247,14 @@ func (spell *Spell) dealDamageInternal(sim *Simulation, isPeriodic bool, result 
 		}
 	}
 
-	if isPeriodic {
-		spell.Unit.OnPeriodicDamageDealt(sim, spell, result)
-		result.Target.OnPeriodicDamageTaken(sim, spell, result)
-	} else {
-		spell.Unit.OnSpellHitDealt(sim, spell, result)
-		result.Target.OnSpellHitTaken(sim, spell, result)
+	if !spell.Flags.Matches(SpellFlagNoOnDamageDealt) {
+		if isPeriodic {
+			spell.Unit.OnPeriodicDamageDealt(sim, spell, result)
+			result.Target.OnPeriodicDamageTaken(sim, spell, result)
+		} else {
+			spell.Unit.OnSpellHitDealt(sim, spell, result)
+			result.Target.OnSpellHitTaken(sim, spell, result)
+		}
 	}
 
 	spell.DisposeResult(result)
