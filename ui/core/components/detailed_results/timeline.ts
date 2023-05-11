@@ -648,12 +648,6 @@ export class Timeline extends ResultComponent {
 			iconElem.appendChild(labelElem);
 		});
 
-		const castElem = document.createElement('div');
-		castElem.classList.add('rotation-timeline-cast');
-		castElem.style.left = this.timeToPx(0);
-		castElem.style.minWidth = this.timeToPx(duration);
-		rowElem.appendChild(castElem);
-
 		this.rotationTimeline.appendChild(rowElem);
 	}
 
