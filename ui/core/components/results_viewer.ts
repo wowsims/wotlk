@@ -34,7 +34,7 @@ export class ResultsViewer extends Component {
       </div>
       <div class="results-content">
       </div>
-	  <div class="warning-zone">
+	  <div class="warning-zone" style="text-align: center">
 	  </div>
 		`;
 
