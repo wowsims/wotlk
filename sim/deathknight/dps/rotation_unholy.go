@@ -131,15 +131,9 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 	}
 
 	cast := false
-	prioSs := dk.virulenceRotationChecks(sim)
-
-	gargCheckSpellGCD := dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond)
-	gargCheck2GCD := dk.uhGargoyleCheck(sim, target, core.GCDDefault*2+50*time.Millisecond)
-	gargCheckDiseaseRecast := dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+core.GCDDefault*2+50*time.Millisecond)
-
-	if prioSs {
-		if dk.uhDiseaseCheck(sim, target, dk.ScourgeStrike, true, 2) {
-			if gargCheck2GCD {
+	if dk.uhDiseaseCheck(sim, target, dk.DeathAndDecay, true, 1) {
+		if dk.virulenceRotationChecks(sim) {
+			if dk.uhGargoyleCheck(sim, target, core.GCDDefault*2+50*time.Millisecond) {
 				dk.uhAfterGargoyleSequence(sim)
 				return sim.CurrentTime
 			}
@@ -150,35 +144,26 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 					NewAction(dk.RotationActionCallback_UnholyDndRotation)
 			}
 		} else {
-			if gargCheckDiseaseRecast {
-				dk.uhAfterGargoyleSequence(sim)
-			} else {
-				dk.uhRecastDiseasesSequence(sim)
-			}
-			return sim.CurrentTime
-		}
-	} else {
-		if dk.uhDiseaseCheck(sim, target, dk.DeathAndDecay, true, 1) {
-			if gargCheckSpellGCD {
+			if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
 				dk.uhAfterGargoyleSequence(sim)
 				return sim.CurrentTime
 			}
 			cast = dk.DeathAndDecay.Cast(sim, target)
-		} else {
-			if gargCheckDiseaseRecast {
-				dk.uhAfterGargoyleSequence(sim)
-			} else {
-				dk.uhRecastDiseasesSequence(sim)
-			}
+		}
+	} else {
+		if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+core.GCDDefault+50*time.Millisecond) {
+			dk.uhAfterGargoyleSequence(sim)
 			return sim.CurrentTime
 		}
+		dk.uhRecastDiseasesSequence(sim)
+		return sim.CurrentTime
 	}
 
 	if !cast {
-		if dk.uhDiseaseCheck(sim, target, dk.DeathAndDecay, true, 1) {
+		if dk.uhDiseaseCheck(sim, target, dk.ScourgeStrike, true, 1) {
 			if !dk.uhShouldWaitForDnD(sim, true, true, true) {
 				if dk.Talents.ScourgeStrike && dk.ScourgeStrike.IsReady(sim) {
-					if gargCheck2GCD {
+					if dk.uhGargoyleCheck(sim, target, core.GCDDefault*2+50*time.Millisecond) {
 						dk.uhAfterGargoyleSequence(sim)
 						return sim.CurrentTime
 					}
@@ -189,7 +174,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 							NewAction(dk.RotationActionCallback_UnholyDndRotation)
 					}
 				} else if dk.IcyTouch.CanCast(sim, nil) && dk.PlagueStrike.CanCast(sim, nil) {
-					if gargCheckDiseaseRecast {
+					if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+core.GCDDefault*2+50*time.Millisecond) {
 						dk.uhAfterGargoyleSequence(sim)
 						return sim.CurrentTime
 					}
@@ -204,7 +189,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 		if !cast {
 			if dk.shShouldSpreadDisease(sim) {
 				if !dk.uhShouldWaitForDnD(sim, true, false, false) {
-					if gargCheckSpellGCD {
+					if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
 						dk.uhAfterGargoyleSequence(sim)
 						return sim.CurrentTime
 					}
@@ -213,14 +198,14 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 			}
 			if !cast {
 				if dk.uhDeathCoilCheck(sim) {
-					if gargCheckSpellGCD {
+					if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
 						dk.uhAfterGargoyleSequence(sim)
 						return sim.CurrentTime
 					}
 					cast = dk.DeathCoil.Cast(sim, target)
 				}
 				if !cast {
-					if gargCheckSpellGCD {
+					if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
 						dk.uhAfterGargoyleSequence(sim)
 						return sim.CurrentTime
 					}
