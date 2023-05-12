@@ -172,6 +172,12 @@ message Rogue {
 		}
 		AssassinationPriority assassination_finisher_priority = 5;
 
+		enum SubtletyBuilder {
+			Hemorrhage = 0;
+			BackstabSub = 1;
+		}
+		SubtletyBuilder subtlety_builder = 26;
+
 		enum SubtletyPriority {
 			SubtletyEviscerate = 0;
 			SubtletyEnvenom = 1;
