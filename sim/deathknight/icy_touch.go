@@ -70,7 +70,7 @@ func (dk *Deathknight) registerDrwIcyTouchSpell() {
 		BonusCritRating:  dk.rimeCritBonus() * core.CritRatingPerCritChance,
 		DamageMultiplier: 1 + 0.05*float64(dk.Talents.ImprovedIcyTouch),
 		CritMultiplier:   dk.DefaultMeleeCritMultiplier(),
-		ThreatMultiplier: 7,
+		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(227, 245) + sigilBonus + 0.1*dk.RuneWeapon.getImpurityBonus(spell)
