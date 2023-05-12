@@ -10,6 +10,7 @@ import {
 	Rogue_Rotation_CombatBuilder,
 	Rogue_Rotation_CombatPriority,
 	Rogue_Rotation_Frequency,
+	Rogue_Rotation_SubtletyBuilder,
 	Rogue_Rotation_SubtletyPriority,
 	RogueMajorGlyph,
 } from '../core/proto/rogue.js';
@@ -73,10 +74,10 @@ export const DefaultRotation = RogueRotation.create({
 	assassinationFinisherPriority: Rogue_Rotation_AssassinationPriority.EnvenomRupture,
 	combatBuilder: Rogue_Rotation_CombatBuilder.SinisterStrike,
 	combatFinisherPriority: Rogue_Rotation_CombatPriority.RuptureEviscerate,
+	subtletyBuilder: Rogue_Rotation_SubtletyBuilder.Hemorrhage,
 	subtletyFinisherPriority: Rogue_Rotation_SubtletyPriority.SubtletyEviscerate,
 	minimumComboPointsPrimaryFinisher: 4,
 	minimumComboPointsSecondaryFinisher: 4,
-	hemoWithDagger: true,
 });
 
 export const DefaultOptions = RogueOptions.create({
