@@ -106,10 +106,7 @@ func (dk *Deathknight) registerDrwBloodStrikeSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := 764 +
-				bonusBaseDamage +
-				spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
-				spell.BonusWeaponDamage()
+			baseDamage := 764 + bonusBaseDamage + dk.DrwWeaponDamage(sim, spell)
 
 			baseDamage *= dk.RoRTSBonus(target) *
 				(1.0 + dk.drwCountActiveDiseases(target)*diseaseMulti)

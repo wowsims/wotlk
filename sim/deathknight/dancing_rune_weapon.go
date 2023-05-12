@@ -109,6 +109,16 @@ func (runeWeapon *RuneWeaponPet) Initialize() {
 	runeWeapon.dkOwner.registerDrwDeathCoilSpell()
 }
 
+func (dk *Deathknight) DrwWeaponDamage(sim *core.Simulation, spell *core.Spell) float64 {
+	if dk.Inputs.NewDrw {
+		return spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
+			spell.BonusWeaponDamage()
+	} else {
+		return spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+			spell.BonusWeaponDamage()
+	}
+}
+
 func (dk *Deathknight) NewRuneWeapon() *RuneWeaponPet {
 	// Remove any hit that would be given by NocS as it does not translate to pets
 	nocsHit := 0.0
