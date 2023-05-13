@@ -78,17 +78,17 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 7526.33743
-  tps: 4842.29764
-  hps: 355.33475
+  dps: 7526.33795
+  tps: 4842.29806
+  hps: 355.32486
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 7526.33743
-  tps: 4842.29764
-  hps: 355.33475
+  dps: 7526.33795
+  tps: 4842.29806
+  hps: 355.32486
  }
 }
 dps_results: {
@@ -486,8 +486,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-IncisorFragment-37723"
  value: {
-  dps: 7693.2175
-  tps: 4979.70576
+  dps: 7693.27173
+  tps: 4979.74915
   hps: 266.55313
  }
 }

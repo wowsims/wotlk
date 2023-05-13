@@ -500,10 +500,11 @@ func (dk *DpsDeathknight) drwCooldownSync(actionID core.ActionID, isPotion bool)
 			if dk.br.activatingDrw {
 				return true
 			}
+
 			if dk.DancingRuneWeapon.CD.TimeToReady(sim) > majorCd.Spell.CD.Duration && !isPotion {
 				return true
 			}
-			if dk.DancingRuneWeapon.CD.ReadyAt() > sim.Duration {
+			if !dk.DancingRuneWeapon.IsReady(sim) && dk.DancingRuneWeapon.CD.ReadyAt() > sim.Duration {
 				return true
 			}
 

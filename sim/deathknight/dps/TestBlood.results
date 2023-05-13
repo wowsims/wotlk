@@ -74,17 +74,17 @@ dps_results: {
 dps_results: {
  key: "TestBlood-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 6879.24838
-  tps: 3485.56722
-  hps: 61.26936
+  dps: 6879.24966
+  tps: 3485.56799
+  hps: 91.47459
  }
 }
 dps_results: {
  key: "TestBlood-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 6879.24838
-  tps: 3485.56722
-  hps: 61.26936
+  dps: 6879.24966
+  tps: 3485.56799
+  hps: 91.47459
  }
 }
 dps_results: {
@@ -169,7 +169,7 @@ dps_results: {
  value: {
   dps: 6879.24571
   tps: 3485.56562
-  hps: 42.66667
+  hps: 64
  }
 }
 dps_results: {
@@ -406,8 +406,8 @@ dps_results: {
 dps_results: {
  key: "TestBlood-AllItems-GnomishLightningGenerator-41121"
  value: {
-  dps: 6984.44375
-  tps: 3545.305
+  dps: 6998.33335
+  tps: 3553.01431
  }
 }
 dps_results: {
@@ -441,8 +441,8 @@ dps_results: {
 dps_results: {
  key: "TestBlood-AllItems-IncisorFragment-37723"
  value: {
-  dps: 7046.54571
-  tps: 3578.51945
+  dps: 7070.97551
+  tps: 3593.17733
  }
 }
 dps_results: {
@@ -624,8 +624,8 @@ dps_results: {
 dps_results: {
  key: "TestBlood-AllItems-SealofthePantheon-36993"
  value: {
-  dps: 6890.60959
-  tps: 3491.07819
+  dps: 6894.58792
+  tps: 3493.39924
  }
 }
 dps_results: {

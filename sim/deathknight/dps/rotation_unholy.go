@@ -378,6 +378,7 @@ func (dk *DpsDeathknight) uhAfterGargoyleSequence(sim *core.Simulation) {
 
 func (dk *DpsDeathknight) RotationActionCallback_Haste_Snapshot(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	dk.ur.gargoyleSnapshot.ActivateMajorCooldowns(sim)
+	dk.UpdateMajorCooldowns()
 	s.Advance()
 	return sim.CurrentTime
 }

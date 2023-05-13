@@ -155,6 +155,7 @@ func (dk *DpsDeathknight) blDrwCheck(sim *core.Simulation, target *core.Unit, ca
 
 		dk.br.activatingDrw = true
 		dk.br.drwSnapshot.ActivateMajorCooldowns(sim)
+		dk.UpdateMajorCooldowns()
 		dk.br.activatingDrw = false
 
 		if dk.DancingRuneWeapon.Cast(sim, target) {
