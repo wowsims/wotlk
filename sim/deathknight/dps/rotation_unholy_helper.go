@@ -381,8 +381,10 @@ func (dk *DpsDeathknight) uhGargoyleCheck(sim *core.Simulation, target *core.Uni
 		dk.ur.activatingGargoyle = true
 		dk.OnGargoyleStartFirstCast = func() {
 			dk.ur.gargoyleSnapshot.ActivateMajorCooldowns(sim)
+			dk.UpdateMajorCooldowns()
 		}
 		dk.ur.gargoyleSnapshot.ActivateMajorCooldowns(sim)
+		dk.UpdateMajorCooldowns()
 		dk.ur.activatingGargoyle = false
 
 		if dk.SummonGargoyle.Cast(sim, target) {
