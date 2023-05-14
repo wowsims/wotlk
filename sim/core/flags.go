@@ -56,6 +56,9 @@ const (
 	ProcMaskRangedSpecial
 	ProcMaskSpellDamage
 	ProcMaskSpellHealing
+
+	// Special case where a Proc Can trigger a Proc
+	ProcMaskCanProcFromProc
 )
 
 const (

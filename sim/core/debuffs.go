@@ -223,7 +223,7 @@ func JudgementOfWisdomAura(target *Unit) *Aura {
 				return
 			}
 
-			if spell.ProcMask.Matches(ProcMaskEmpty) {
+			if spell.ProcMask.Matches(ProcMaskEmpty) || spell.ProcMask.Matches(ProcMaskCanProcFromProc) {
 				return // Phantom spells (Romulo's, Lightning Capacitor, etc) don't proc JoW.
 			}
 
