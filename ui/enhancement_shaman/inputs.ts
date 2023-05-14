@@ -128,6 +128,7 @@ export const EnhancementShamanRotationConfig = {
 					{ actionId: ActionId.fromSpellId(49238), value: CustomRotationSpell.LightningBolt},
 					{ actionId: ActionId.fromSpellId(49238), value: CustomRotationSpell.LightningBoltWeave, text: "Weave" },
 					{ actionId: ActionId.fromSpellId(49238), value: CustomRotationSpell.LightningBoltDelayedWeave, text: "Delay" },
+					{ actionId: ActionId.fromSpellId(49271), value: CustomRotationSpell.ChainLightning},
 					{ actionId: ActionId.fromSpellId(17364), value: CustomRotationSpell.StormstrikeDebuffMissing, text: "Debuff"  },
 					{ actionId: ActionId.fromSpellId(17364), value: CustomRotationSpell.Stormstrike },
 					{ actionId: ActionId.fromSpellId(49233), value: CustomRotationSpell.FlameShock },

@@ -78,6 +78,18 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 		},
 	}
 
+	chainLightning := Spell{
+		condition: func(sim *core.Simulation, target *core.Unit) bool {
+			return enh.MaelstromWeaponAura.GetStacks() == 5 && enh.ChainLightning.IsReady(sim)
+		},
+		cast: func(sim *core.Simulation, target *core.Unit) bool {
+			return enh.ChainLightning.Cast(sim, enh.CurrentTarget)
+		},
+		readyAt: func() time.Duration {
+			return 0
+		},
+	}
+
 	stormstrike := Spell{
 		condition: func(sim *core.Simulation, target *core.Unit) bool {
 			//Checking if we learned the spell, ie untalented
@@ -294,6 +306,8 @@ func (rotation *PriorityRotation) buildPriorityRotation(enh *EnhancementShaman) 
 				spellPriority = append(spellPriority, stormstrikeApplyDebuff)
 			case int32(proto.EnhancementShaman_Rotation_LightningBolt):
 				spellPriority = append(spellPriority, instantLightningBolt)
+			case int32(proto.EnhancementShaman_Rotation_ChainLightning):
+				spellPriority = append(spellPriority, chainLightning)
 			case int32(proto.EnhancementShaman_Rotation_LightningBoltWeave):
 				rotation.options.LightningboltWeave = true
 				spellPriority = append(spellPriority, weaveLightningBolt)
