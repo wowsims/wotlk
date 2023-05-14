@@ -511,8 +511,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-InsightfulEarthsiegeDiamond"
  value: {
-  dps: 7096.6981
-  tps: 4019.59834
+  dps: 7095.07269
+  tps: 4015.89689
  }
 }
 dps_results: {
@@ -603,15 +603,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 7310.44865
-  tps: 4173.41128
+  dps: 7439.3566
+  tps: 4264.42042
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 7340.91522
-  tps: 4193.66483
+  dps: 7489.77367
+  tps: 4298.63581
  }
 }
 dps_results: {
@@ -729,8 +729,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-SparkofLife-37657"
  value: {
-  dps: 7141.10933
-  tps: 4039.55922
+  dps: 7140.99674
+  tps: 4039.70467
  }
 }
 dps_results: {
