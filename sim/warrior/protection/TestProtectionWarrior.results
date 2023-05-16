@@ -886,8 +886,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-Wrynn'sPlate"
  value: {
-  dps: 1515.08083
-  tps: 3919.63877
+  dps: 1537.58968
+  tps: 3980.3125
  }
 }
 dps_results: {
