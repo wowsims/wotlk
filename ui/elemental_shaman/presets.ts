@@ -6,6 +6,8 @@ import { Food } from '../core/proto/common.js';
 import { Glyphs } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
+import { Spec } from '../core/proto/common.js';
+import { Player } from '../core/player.js';
 
 import { ElementalShaman_Rotation as ElementalShamanRotation, ElementalShaman_Options as ElementalShamanOptions, ShamanShield, ShamanMajorGlyph, ShamanMinorGlyph } from '../core/proto/shaman.js';
 import { ElementalShaman_Rotation_RotationType as RotationType } from '../core/proto/shaman.js';
@@ -20,6 +22,7 @@ import {
 
 
 import * as Tooltips from '../core/constants/tooltips.js';
+import { Faction } from '../core/proto/common.js';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -373,4 +376,248 @@ export const P2_PRESET = {
           "id": 40267
         }
       ]}`),
+};
+
+export const P3_PRESET_HORDE = {
+	name: 'P3 Preset',
+	enableWhen:(player: Player<Spec.SpecElementalShaman>) => player.getFaction() == Faction.Horde,
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+        {
+          "id": 48328,
+          "enchant": 3820,
+          "gems": [
+            41285,
+            40153
+          ]
+        },
+        {
+          "id": 47468,
+          "gems": [
+            40155
+          ]
+        },
+        {
+          "id": 48330,
+          "enchant": 3810,
+          "gems": [
+            40113
+          ]
+        },
+        {
+          "id": 47551,
+          "enchant": 3722,
+          "gems": [
+            40113
+          ]
+        },
+        {
+          "id": 48326,
+          "enchant": 3832,
+          "gems": [
+            40113,
+            40132
+          ]
+        },
+        {
+          "id": 45460,
+          "enchant": 2332,
+          "gems": [
+            40113,
+            0
+          ]
+        },
+        {
+          "id": 48327,
+          "enchant": 3604,
+          "gems": [
+            40155,
+            0
+          ]
+        },
+        {
+          "id": 47447,
+          "enchant": 3599,
+          "gems": [
+            40132,
+            40113,
+            40113
+          ]
+        },
+        {
+          "id": 47479,
+          "enchant": 3721,
+          "gems": [
+            40113,
+            40113,
+            40113
+          ]
+        },
+        {
+          "id": 47456,
+          "enchant": 3606,
+          "gems": [
+            40113,
+            40113
+          ]
+        },
+        {
+          "id": 46046,
+          "gems": [
+            40155
+          ]
+        },
+        {
+          "id": 45495,
+          "gems": [
+            40113
+          ]
+        },
+        {
+          "id": 47477
+        },
+        {
+          "id": 45518
+        },
+        {
+          "id": 47422,
+          "enchant": 3834,
+          "gems": [
+            40113
+          ]
+        },
+        {
+          "id": 47448,
+          "enchant": 1128,
+          "gems": [
+            40155
+          ]
+        },
+        {
+          "id": 47666
+        }
+      ]
+    }`),
+};
+
+export const P3_PRESET_ALLI = {
+	name: 'P3 Preset',
+	enableWhen:(player: Player<Spec.SpecElementalShaman>) => player.getFaction() == Faction.Alliance,
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+        {
+          "id": 48323,
+          "enchant": 3820,
+          "gems": [
+            41285,
+            40155
+          ]
+        },
+        {
+          "id": 47144,
+          "gems": [
+            40155
+          ]
+        },
+        {
+          "id": 48321,
+          "enchant": 3810,
+          "gems": [
+            40113
+          ]
+        },
+        {
+          "id": 47552,
+          "enchant": 3722,
+          "gems": [
+            40113
+          ]
+        },
+        {
+          "id": 48325,
+          "enchant": 3832,
+          "gems": [
+            40113,
+            40132
+          ]
+        },
+        {
+          "id": 45460,
+          "enchant": 2332,
+          "gems": [
+            40113,
+            0
+          ]
+        },
+        {
+          "id": 48324,
+          "enchant": 3604,
+          "gems": [
+            40155,
+            0
+          ]
+        },
+        {
+          "id": 47084,
+          "enchant": 3599,
+          "gems": [
+            40132,
+            40113,
+            40113
+          ]
+        },
+        {
+          "id": 47190,
+          "enchant": 3721,
+          "gems": [
+            40113,
+            40113,
+            40113
+          ]
+        },
+        {
+          "id": 47099,
+          "enchant": 3606,
+          "gems": [
+            40113,
+            40113
+          ]
+        },
+        {
+          "id": 46046,
+          "gems": [
+            40155
+          ]
+        },
+        {
+          "id": 45495,
+          "gems": [
+            40113
+          ]
+        },
+        {
+          "id": 47188
+        },
+        {
+          "id": 45518
+        },
+        {
+          "id": 46980,
+          "enchant": 3834,
+          "gems": [
+            40113
+          ]
+        },
+        {
+          "id": 47085,
+          "enchant": 1128,
+          "gems": [
+            40155
+          ]
+        },
+        {
+          "id": 47666
+        }
+      ]
+    }`),
 };
