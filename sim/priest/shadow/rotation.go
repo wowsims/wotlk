@@ -641,7 +641,7 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 			return spriest.MindBlast, 0
 		} else {
 			//numTicks = 3
-			if spriest.rotation.RotationType == 4 {
+			if spriest.rotation.RotationType == 4 && len(sim.Encounter.Targets) >= 3 {
 				return spriest.MindSear[numTicks], 0
 			} else {
 				return spriest.MindFlay[numTicks], 0
