@@ -144,11 +144,15 @@ func (character *Character) trackChanceOfDeath(healingModel *proto.HealingModel)
 }
 
 func (character *Character) applyHealingModel(healingModel *proto.HealingModel) {
-	cadence := DurationFromSeconds(healingModel.CadenceSeconds)
-	if cadence == 0 {
-		cadence = time.Millisecond * 2000
+	// Store variance parameters for healing cadence. Note that low rolls on
+	// cadence are special cased here so that the model is still well-behaved
+	// when CadenceVariation exceeds CadenceSeconds.
+	medianCadence := healingModel.CadenceSeconds
+	if medianCadence == 0 {
+		medianCadence = 2.0
 	}
-	healPerTick := healingModel.Hps * (float64(cadence) / float64(time.Second))
+	minCadence := MaxFloat(0.0, medianCadence-healingModel.CadenceVariation)
+	cadenceVariationLow := medianCadence - minCadence
 
 	healthMetrics := character.NewHealthMetrics(ActionID{OtherID: proto.OtherAction_OtherActionHealingModel})
 
@@ -157,21 +161,47 @@ func (character *Character) applyHealingModel(healingModel *proto.HealingModel) 
 		//ardentDefenderAura := character.GetAura("Ardent Defender")
 		willOfTheNecropolisAura := character.GetAura("Will of The Necropolis")
 
-		StartPeriodicAction(sim, PeriodicActionOptions{
-			Period: cadence,
-			OnAction: func(sim *Simulation) {
-				character.GainHealth(sim, healPerTick*character.PseudoStats.HealingTakenMultiplier, healthMetrics)
+		// Initialize randomized cadence model
+		timeToNextHeal := DurationFromSeconds(0.0)
+		healPerTick := 0.0
+		pa := &PendingAction{
+			NextActionAt: timeToNextHeal,
+		}
 
-				// Might use this again in the future to track "absorb" metrics but currently disabled
-				//if ardentDefenderAura != nil && character.CurrentHealthPercent() >= 0.35 {
-				//	ardentDefenderAura.Deactivate(sim)
-				//}
+		pa.OnAction = func(sim *Simulation) {
+			// Use modeled HPS to scale heal per tick based on random cadence
+			healPerTick = healingModel.Hps * (float64(timeToNextHeal) / float64(time.Second))
 
-				if willOfTheNecropolisAura != nil && character.CurrentHealthPercent() > 0.35 {
-					willOfTheNecropolisAura.Deactivate(sim)
-				}
-			},
-		})
+			// Execute the heal
+			character.GainHealth(sim, healPerTick*character.PseudoStats.HealingTakenMultiplier, healthMetrics)
+
+			// Might use this again in the future to track "absorb" metrics but currently disabled
+			//if ardentDefenderAura != nil && character.CurrentHealthPercent() >= 0.35 {
+			//	ardentDefenderAura.Deactivate(sim)
+			//}
+
+			if willOfTheNecropolisAura != nil && character.CurrentHealthPercent() > 0.35 {
+				willOfTheNecropolisAura.Deactivate(sim)
+			}
+
+			// Random roll for time to next heal. In the case where CadenceVariation exceeds CadenceSeconds, then
+			// CadenceSeconds is treated as the median, with two separate uniform distributions to the left and right
+			// of it.
+			signRoll := sim.RandomFloat("Healing Cadence Variation Sign")
+			magnitudeRoll := sim.RandomFloat("Healing Cadence Variation Magnitude")
+
+			if signRoll < 0.5 {
+				timeToNextHeal = DurationFromSeconds(minCadence + magnitudeRoll*cadenceVariationLow)
+			} else {
+				timeToNextHeal = DurationFromSeconds(medianCadence + magnitudeRoll*healingModel.CadenceVariation)
+			}
+
+			// Refresh action
+			pa.NextActionAt = sim.CurrentTime + timeToNextHeal
+			sim.AddPendingAction(pa)
+		}
+
+		sim.AddPendingAction(pa)
 	})
 }
 
