@@ -51,6 +51,7 @@ func (war *DpsWarrior) doRotation(sim *core.Simulation) {
 			war.Devastate.Cast(sim, war.CurrentTarget)
 		} else {
 			war.SunderArmor.Cast(sim, war.CurrentTarget)
+			war.lastSunderAt = sim.CurrentTime
 		}
 		war.tryQueueHsCleave(sim)
 		return
@@ -75,7 +76,7 @@ func (war *DpsWarrior) doRotation(sim *core.Simulation) {
 		}
 
 		if war.Rotation.SunderArmor == proto.Warrior_Rotation_SunderArmorMaintain {
-			nextSunderAt := war.SunderArmorAuras.Get(war.CurrentTarget).ExpiresAt() - SunderWindow
+			nextSunderAt := war.lastSunderAt + 30*time.Second - sim.CurrentTime - SunderWindow
 			// TODO looks fishy, nextCD is unused
 			nextCD = core.MinDuration(nextCD, nextSunderAt)
 		}
@@ -283,7 +284,7 @@ func (war *DpsWarrior) shouldSunder(sim *core.Simulation) bool {
 		war.maintainSunder = false
 	}
 
-	return stacks < 5 || saAura.RemainingDuration(sim) <= SunderWindow
+	return stacks < 5 || (war.lastSunderAt+30*time.Second-sim.CurrentTime) <= SunderWindow
 }
 
 // Returns whether any ability was cast.
