@@ -434,8 +434,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralDoubleArmorPenTrinketsNoDesync-AllItems-IdolofMutilation-47668"
  value: {
-  dps: 9999.95769
-  tps: 7164.58564
+  dps: 9993.23769
+  tps: 7159.81444
  }
 }
 dps_results: {
