@@ -61,6 +61,10 @@ func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 			ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 				if hasShadowblades {
 					return rogue.CurrentEnergy() <= rogue.maxEnergy-15-rogue.EnergyTickMultiplier*10
+				} else if sim.CurrentTime < (time.Second * time.Duration(30-5*rogue.Talents.FilthyTricks)) {
+					// This assumes you precast a Tricks before combat, and activated it (and the cooldown) at 0.00 on the sim.
+					// This was put intentionally below the hasShadowblades check, because once you have that set a precast is no longer optimal.
+					return false
 				} else {
 					return rogue.CurrentEnergy() >= rogue.TricksOfTheTrade.DefaultCast.Cost
 				}
