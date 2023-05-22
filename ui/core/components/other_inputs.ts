@@ -165,6 +165,25 @@ export const HealingCadence = {
 	enableWhen: (player: Player<any>) => (player.getRaid()?.getTanks() || []).find(tank => RaidTarget.equals(tank, player.makeRaidTarget())) != null,
 };
 
+export const HealingCadenceVariation = {
+	type: 'number' as const,
+	float: true,
+	label: 'Cadence +/-',
+	labelTooltip: `
+		<p>Magnitude of random variation in healing intervals, in seconds.</p>
+		<p>Example: if Healing Cadence is set to 1s with 0.5s variation, then the interval between successive heals will vary uniformly between 0.5 and 1.5s. If the variation is instead set to 2s, then 50% of healing intervals will fall between 0s and 1s, and the other 50% will fall between 1s and 3s.</p>
+		<p>The amount of healing per 'tick' is automatically scaled up or down based on the randomized time since the last tick, so as to keep HPS constant.</p>
+	`,
+	changedEvent: (player: Player<any>) => player.getRaid()!.changeEmitter,
+	getValue: (player: Player<any>) => player.getHealingModel().cadenceVariation,
+	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
+		const healingModel = player.getHealingModel();
+		healingModel.cadenceVariation = newValue;
+		player.setHealingModel(eventID, healingModel);
+	},
+	enableWhen: (player: Player<any>) => (player.getRaid()?.getTanks() || []).find(tank => RaidTarget.equals(tank, player.makeRaidTarget())) != null,
+};
+
 export const BurstWindow = {
 	type: 'number' as const,
 	float: false,

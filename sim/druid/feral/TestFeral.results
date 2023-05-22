@@ -434,8 +434,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-IdolofMutilation-47668"
  value: {
-  dps: 7938.24634
-  tps: 5700.54622
+  dps: 7935.65164
+  tps: 5698.70399
  }
 }
 dps_results: {

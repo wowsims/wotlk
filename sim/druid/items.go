@@ -442,8 +442,8 @@ func init() {
 	core.NewItemEffect(47668, func(agent core.Agent) {
 		druid := agent.(DruidAgent).GetDruid()
 		actionID := core.ActionID{ItemID: 47668}
-		bearAura := druid.NewTemporaryStatsAura("Idol of the Mutilation Bear Proc", actionID, stats.Stats{stats.Dodge: 200.0 / core.DodgeRatingPerDodgeChance}, time.Second*9)
-		catAura := druid.NewTemporaryStatsAura("Idol of the Mutilation Cat Proc", actionID, stats.Stats{stats.Agility: 200.0}, time.Second*16)
+		bearAura := druid.NewTemporaryStatsAura("Idol of Mutilation Bear Proc", actionID, stats.Stats{stats.Dodge: 200.0}, time.Second*9)
+		catAura := druid.NewTemporaryStatsAura("Idol of Mutilation Cat Proc", actionID, stats.Stats{stats.Agility: 200.0}, time.Second*16)
 
 		// Based off of wowhead tooltip
 		icd := core.Cooldown{
@@ -467,9 +467,11 @@ func init() {
 					return
 				}
 				if spell == druid.SwipeBear || spell == druid.Lacerate {
+					icd.Use(sim)
 					bearAura.Activate(sim)
 				}
 				if spell == druid.MangleCat || spell == druid.Shred {
+					icd.Use(sim)
 					catAura.Activate(sim)
 				}
 			},

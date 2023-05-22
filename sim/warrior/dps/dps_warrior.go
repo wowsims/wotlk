@@ -35,6 +35,8 @@ type DpsWarrior struct {
 
 	// Prevent swapping stances until this time, to account for human reaction time.
 	canSwapStanceAt time.Duration
+	// Last time sunder was applied. Used for maintaining sunder even if sunder is enabled as debuff in individual sim
+	lastSunderAt time.Duration
 
 	maintainSunder  bool
 	thunderClapNext bool
