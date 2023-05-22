@@ -68,7 +68,7 @@ export const HemoSubtletyTalents = {
 }
 
 export const DefaultRotation = RogueRotation.create({
-	exposeArmorFrequency: Rogue_Rotation_Frequency.Maintain,
+	exposeArmorFrequency: Rogue_Rotation_Frequency.Never,
 	minimumComboPointsExposeArmor: 2,
 	tricksOfTheTradeFrequency: Rogue_Rotation_Frequency.Maintain,
 	assassinationFinisherPriority: Rogue_Rotation_AssassinationPriority.EnvenomRupture,
