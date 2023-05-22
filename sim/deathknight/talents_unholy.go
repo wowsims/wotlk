@@ -107,14 +107,17 @@ func (dk *Deathknight) applyNecrosis() {
 	dk.AutoAttacks.OHConfig.ApplyEffects = dk.necrosisOHAuto
 }
 
+func (dk *Deathknight) necrosisDamage(damage float64, sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+	dk.Necrosis.SpellMetrics[target.UnitIndex].Hits++
+	dk.Necrosis.SpellMetrics[target.UnitIndex].Casts++
+	dk.Necrosis.CalcAndDealDamage(sim, target, damage*dk.NecrosisCoeff, spell.OutcomeAlwaysHit)
+}
 func (dk *Deathknight) necrosisOHAuto(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 	baseDamage := spell.Unit.OHWeaponDamage(sim, spell.MeleeAttackPower()) +
 		spell.BonusWeaponDamage()
 
 	if result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWhite); result.Damage > 0 {
-		dk.Necrosis.SpellMetrics[target.UnitIndex].Hits++
-		dk.Necrosis.SpellMetrics[target.UnitIndex].Casts++
-		dk.Necrosis.CalcAndDealDamage(sim, target, result.Damage*dk.NecrosisCoeff, spell.OutcomeAlwaysHit)
+		dk.necrosisDamage(result.Damage, sim, target, spell)
 	}
 }
 func (dk *Deathknight) necrosisMHAuto(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -122,9 +125,7 @@ func (dk *Deathknight) necrosisMHAuto(sim *core.Simulation, target *core.Unit, s
 		spell.BonusWeaponDamage()
 
 	if result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWhite); result.Damage > 0 {
-		dk.Necrosis.SpellMetrics[target.UnitIndex].Hits++
-		dk.Necrosis.SpellMetrics[target.UnitIndex].Casts++
-		dk.Necrosis.CalcAndDealDamage(sim, target, result.Damage*dk.NecrosisCoeff, spell.OutcomeAlwaysHit)
+		dk.necrosisDamage(result.Damage, sim, target, spell)
 	}
 }
 

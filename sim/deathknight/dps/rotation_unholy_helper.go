@@ -78,7 +78,7 @@ func (ur *UnholyRotation) Initialize(dk *DpsDeathknight) {
 	}
 
 	// Init Sigil of Virulence Rotation
-	if dk.Talents.ScourgeStrike && dk.Equip[core.ItemSlotRanged].ID == 47673 {
+	if dk.Equip[core.ItemSlotRanged].ID == 47673 {
 		ur.sigil = Sigil_Virulence
 	}
 
@@ -114,13 +114,21 @@ func (dk *DpsDeathknight) uhBloodRuneAction(isFirst bool) deathknight.RotationAc
 	}
 }
 
+func (dk *DpsDeathknight) uhCastVirulenceStrike(sim *core.Simulation, target *core.Unit) bool {
+	if dk.Talents.ScourgeStrike {
+		return dk.ScourgeStrike.Cast(sim, target)
+	} else {
+		return dk.DeathStrike.Cast(sim, target)
+	}
+}
+
 func (dk *DpsDeathknight) bonusProcRotationChecks(sim *core.Simulation) (bool, bool) {
 	// If we have sigil of virulence
 	// Higher prio SS then Dnd when gargoyle is ready
-	prioSs := false
-	if dk.Talents.ScourgeStrike && dk.ur.sigil == Sigil_Virulence && (dk.SummonGargoyle.IsReady(sim) || dk.SummonGargoyle.CD.TimeToReady(sim) < 10*time.Second) {
+	prioVirulenceStrike := false
+	if dk.ur.sigil == Sigil_Virulence && (dk.SummonGargoyle.IsReady(sim) || dk.SummonGargoyle.CD.TimeToReady(sim) < 10*time.Second) {
 		virulenceAura := dk.GetAura("Sigil of Virulence Proc")
-		prioSs = !virulenceAura.IsActive() || virulenceAura.RemainingDuration(sim) < 10*time.Second
+		prioVirulenceStrike = !virulenceAura.IsActive() || virulenceAura.RemainingDuration(sim) < 10*time.Second
 	}
 
 	// If we have T9 2P we prio BS over BB for refreshing the buff when out of ICD
@@ -129,7 +137,7 @@ func (dk *DpsDeathknight) bonusProcRotationChecks(sim *core.Simulation) (bool, b
 		unholyMightAura := dk.GetAura("Unholy Might Proc")
 		prioBs = unholyMightAura.StartedAt() == 0 || unholyMightAura.StartedAt() < sim.CurrentTime-45*time.Second
 	}
-	return prioSs, prioBs
+	return prioVirulenceStrike, prioBs
 }
 
 func (dk *DpsDeathknight) weaponSwapCheck(sim *core.Simulation) bool {
