@@ -66,7 +66,7 @@ func (dk *Deathknight) newRuneStrikeSpell(isMH bool) *core.Spell {
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, outcomeApplier)
 
 			if result.Damage > 0 && dk.Talents.Necrosis > 0 {
-				dk.necrosisDamage(result.Damage, sim, target, spell)
+				dk.necrosisDamage(result.Damage, sim, target)
 			}
 
 			if isMH {

@@ -45,6 +45,13 @@ type UnholyRotation struct {
 
 	sigil       SigilType
 	unholyMight bool
+
+	virulenceAura      *core.Aura
+	unholyMightAura    *core.Aura
+	blackMagicProc     *core.Aura
+	fallenCrusaderProc *core.Aura
+	berserkingMh       *core.Aura
+	berserkingOh       *core.Aura
 }
 
 func (ur *UnholyRotation) Reset(sim *core.Simulation) {
@@ -75,16 +82,22 @@ func (ur *UnholyRotation) Initialize(dk *DpsDeathknight) {
 
 	if dk.Talents.SummonGargoyle && dk.Rotation.UseGargoyle {
 		dk.setupWeaponSwap()
+		ur.blackMagicProc = dk.GetAura("Black Magic Proc")
+		ur.fallenCrusaderProc = dk.GetAura("Rune Of The Fallen Crusader Proc")
+		ur.berserkingMh = dk.GetAura("Berserking MH Proc")
+		ur.berserkingOh = dk.GetAura("Berserking OH Proc")
 	}
 
 	// Init Sigil of Virulence Rotation
 	if dk.Equip[core.ItemSlotRanged].ID == 47673 {
 		ur.sigil = Sigil_Virulence
+		ur.virulenceAura = dk.GetAura("Sigil of Virulence Proc")
 	}
 
 	// Init T9 2P Proc
 	if dk.HasSetBonus(deathknight.ItemSetThassariansBattlegear, 2) {
 		ur.unholyMight = true
+		ur.unholyMightAura = dk.GetAura("Unholy Might Proc")
 	}
 }
 
@@ -122,22 +135,23 @@ func (dk *DpsDeathknight) uhCastVirulenceStrike(sim *core.Simulation, target *co
 	}
 }
 
-func (dk *DpsDeathknight) bonusProcRotationChecks(sim *core.Simulation) (bool, bool) {
+func (dk *DpsDeathknight) uhVirulenceRotationCheck(sim *core.Simulation, gargCheck bool) bool {
 	// If we have sigil of virulence
 	// Higher prio SS then Dnd when gargoyle is ready
 	prioVirulenceStrike := false
-	if dk.ur.sigil == Sigil_Virulence && (dk.SummonGargoyle.IsReady(sim) || dk.SummonGargoyle.CD.TimeToReady(sim) < 10*time.Second) {
-		virulenceAura := dk.GetAura("Sigil of Virulence Proc")
-		prioVirulenceStrike = !virulenceAura.IsActive() || virulenceAura.RemainingDuration(sim) < 10*time.Second
+	if dk.ur.sigil == Sigil_Virulence && (!gargCheck || (dk.SummonGargoyle.IsReady(sim) || dk.SummonGargoyle.CD.TimeToReady(sim) < 10*time.Second)) {
+		prioVirulenceStrike = !dk.ur.virulenceAura.IsActive() || dk.ur.virulenceAura.RemainingDuration(sim) < 10*time.Second
 	}
+	return prioVirulenceStrike
+}
 
+func (dk *DpsDeathknight) unholyMightRotationChecks(sim *core.Simulation) bool {
 	// If we have T9 2P we prio BS over BB for refreshing the buff when out of ICD
 	prioBs := false
 	if dk.ur.unholyMight {
-		unholyMightAura := dk.GetAura("Unholy Might Proc")
-		prioBs = unholyMightAura.StartedAt() == 0 || unholyMightAura.StartedAt() < sim.CurrentTime-45*time.Second
+		prioBs = dk.ur.unholyMightAura.StartedAt() == 0 || dk.ur.unholyMightAura.StartedAt() < sim.CurrentTime-45*time.Second
 	}
-	return prioVirulenceStrike, prioBs
+	return prioBs
 }
 
 func (dk *DpsDeathknight) weaponSwapCheck(sim *core.Simulation) bool {
@@ -147,22 +161,16 @@ func (dk *DpsDeathknight) weaponSwapCheck(sim *core.Simulation) bool {
 
 	// Swap if gargoyle will still be on CD for full ICD or if gargoyle is already active
 	shouldSwapBm := dk.ur.bmIcd < sim.CurrentTime && (dk.SummonGargoyle.CD.TimeToReady(sim) > 45*time.Second || dk.SummonGargoyleAura.IsActive())
-	shouldSwapBackFromBm := dk.HasActiveAura("Black Magic Proc") // || dk.GetAura("Rune Of The Fallen Crusader Proc").RemainingDuration(sim) < 5*time.Second
+	shouldSwapBackFromBm := dk.ur.blackMagicProc.IsActive() // || dk.GetAura("Rune Of The Fallen Crusader Proc").RemainingDuration(sim) < 5*time.Second
 
 	if dk.ur.mhSwap == WeaponSwap_BlackMagic {
 		if !dk.ur.mhSwapped && shouldSwapBm {
 			// Swap to BM
-			if sim.Log != nil {
-				sim.Log("Swapping MH to BM")
-			}
 			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand}, true)
 			dk.ur.mhSwapped = true
 		} else if dk.ur.mhSwapped && shouldSwapBackFromBm {
 			// Swap to Normal set and set BM Icd tracker
-			if sim.Log != nil {
-				sim.Log("Swapping MH to Normal")
-			}
-			dk.ur.bmIcd = dk.GetAura("Black Magic Proc").ExpiresAt() + 35*time.Second
+			dk.ur.bmIcd = dk.ur.blackMagicProc.ExpiresAt() + 35*time.Second
 			dk.ur.mhSwapped = false
 			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand}, true)
 		}
@@ -171,58 +179,40 @@ func (dk *DpsDeathknight) weaponSwapCheck(sim *core.Simulation) bool {
 	if dk.ur.ohSwap == WeaponSwap_BlackMagic {
 		if !dk.ur.ohSwapped && shouldSwapBm {
 			// Swap to BM
-			if sim.Log != nil {
-				sim.Log("Swapping OH to BM")
-			}
 			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotOffHand}, true)
 			dk.ur.ohSwapped = true
 		} else if dk.ur.ohSwapped && shouldSwapBackFromBm {
 			// Swap to Normal set and set BM Icd tracker
-			if sim.Log != nil {
-				sim.Log("Swapping OH to Normal")
-			}
-			dk.ur.bmIcd = dk.GetAura("Black Magic Proc").ExpiresAt() + 35*time.Second
+			dk.ur.bmIcd = dk.ur.blackMagicProc.ExpiresAt() + 35*time.Second
 			dk.ur.ohSwapped = false
 			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotOffHand}, true)
 		}
 	}
 
-	shouldSwapBerserking := dk.HasActiveAura("Rune Of The Fallen Crusader Proc") &&
-		dk.GetAura("Rune Of The Fallen Crusader Proc").RemainingDuration(sim) > time.Second*10
+	shouldSwapBerserking := dk.ur.fallenCrusaderProc.IsActive() &&
+		dk.ur.fallenCrusaderProc.RemainingDuration(sim) > time.Second*10
 
 	shouldSwapBackfromBerserking := false //dk.GetAura("Rune Of The Fallen Crusader Proc").RemainingDuration(sim) < 5*time.Second
 
 	if dk.ur.mhSwap == WeaponSwap_Berserking {
-		if !dk.ur.mhSwapped && !dk.HasActiveAura("Berserking MH Proc") && shouldSwapBerserking {
+		if !dk.ur.mhSwapped && !dk.ur.berserkingMh.IsActive() && shouldSwapBerserking {
 			// Swap to Berserking
-			if sim.Log != nil {
-				sim.Log("Swapping MH to Berserking")
-			}
 			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand}, true)
 			dk.ur.mhSwapped = true
-		} else if dk.ur.mhSwapped && (dk.HasActiveAura("Berserking MH Proc") || shouldSwapBackfromBerserking) {
+		} else if dk.ur.mhSwapped && (dk.ur.berserkingMh.IsActive() || shouldSwapBackfromBerserking) {
 			// Swap to Normal set
-			if sim.Log != nil {
-				sim.Log("Swapping MH to Normal")
-			}
 			dk.ur.mhSwapped = false
 			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand}, true)
 		}
 	}
 
 	if dk.ur.ohSwap == WeaponSwap_Berserking {
-		if !dk.ur.ohSwapped && !dk.HasActiveAura("Berserking OH Proc") && shouldSwapBerserking {
+		if !dk.ur.ohSwapped && !dk.ur.berserkingOh.IsActive() && shouldSwapBerserking {
 			// Swap to Berserking
-			if sim.Log != nil {
-				sim.Log("Swapping OH to Berserking")
-			}
 			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotOffHand}, true)
 			dk.ur.ohSwapped = true
-		} else if dk.ur.ohSwapped && (dk.HasActiveAura("Berserking OH Proc") || shouldSwapBackfromBerserking) {
+		} else if dk.ur.ohSwapped && (dk.ur.berserkingOh.IsActive() || shouldSwapBackfromBerserking) {
 			// Swap to Normal set
-			if sim.Log != nil {
-				sim.Log("Swapping OH to Normal")
-			}
 			dk.ur.ohSwapped = false
 			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotOffHand}, true)
 		}

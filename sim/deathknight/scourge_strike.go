@@ -35,6 +35,10 @@ func (dk *Deathknight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
 }
 
 func (dk *Deathknight) registerScourgeStrikeSpell() {
+	if !dk.Talents.ScourgeStrike {
+		return
+	}
+
 	shadowDamageSpell := dk.registerScourgeStrikeShadowDamageSpell()
 	bonusBaseDamage := dk.sigilOfAwarenessBonus() + dk.sigilOfArthriticBindingBonus()
 	hasGlyph := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfScourgeStrike)
@@ -56,9 +60,6 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
-		},
-		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return dk.Talents.ScourgeStrike
 		},
 
 		BonusCritRating: (dk.subversionCritBonus() + dk.viciousStrikesCritChanceBonus() + dk.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
