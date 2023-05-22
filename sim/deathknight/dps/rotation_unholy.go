@@ -28,26 +28,29 @@ func (dk *DpsDeathknight) setupUnholyRotations() {
 		NewAction(dk.getSecondDiseaseAction()).
 		NewAction(dk.uhBloodRuneAction(true))
 
+	fuStrikeAction := dk.RotationActionCallback_DS
 	if dk.Talents.ScourgeStrike {
-		if dk.ur.sigil == Sigil_Virulence {
-			dk.RotationSequence.
-				NewAction(dk.RotationActionCallback_SS).
-				NewAction(dk.RotationActionUH_BS).
-				NewAction(dk.RotationActionUH_SS_Sigil).
-				NewAction(dk.RotationActionUH_BS).
-				NewAction(dk.RotationActionUH_SS_Sigil).
-				NewAction(dk.RotationActionUH_BS)
-		} else if dk.ur.sigil == Sigil_HangedMan {
-			dk.RotationSequence.
-				NewAction(dk.RotationActionCallback_SS).
-				NewAction(dk.RotationActionUH_BS).
-				NewAction(dk.RotationActionCallback_DC).
-				NewAction(dk.RotationActionCallback_ERW).
-				NewAction(dk.RotationActionCallback_SS).
-				NewAction(dk.RotationActionUH_BS).
-				NewAction(dk.RotationActionCallback_SS).
-				NewAction(dk.RotationActionUH_BS)
-		}
+		fuStrikeAction = dk.RotationActionCallback_SS
+	}
+
+	if dk.ur.sigil == Sigil_Virulence {
+		dk.RotationSequence.
+			NewAction(fuStrikeAction).
+			NewAction(dk.RotationActionUH_BS).
+			NewAction(dk.RotationActionUH_SS_Sigil).
+			NewAction(dk.RotationActionUH_BS).
+			NewAction(dk.RotationActionUH_SS_Sigil).
+			NewAction(dk.RotationActionUH_BS)
+	} else if dk.ur.sigil == Sigil_HangedMan {
+		dk.RotationSequence.
+			NewAction(fuStrikeAction).
+			NewAction(dk.RotationActionUH_BS).
+			NewAction(dk.RotationActionCallback_DC).
+			NewAction(dk.RotationActionCallback_ERW).
+			NewAction(fuStrikeAction).
+			NewAction(dk.RotationActionUH_BS).
+			NewAction(fuStrikeAction).
+			NewAction(dk.RotationActionUH_BS)
 	}
 
 	if dk.Rotation.UseDeathAndDecay || (!dk.Talents.ScourgeStrike && dk.Talents.Annihilation == 0) {
@@ -131,19 +134,19 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 	}
 
 	cast := false
-	prioSs, _ := dk.bonusProcRotationChecks(sim)
-
 	if dk.uhDiseaseCheck(sim, target, dk.DeathAndDecay, true, 1) {
-		if prioSs {
+		if dk.uhVirulenceRotationCheck(sim, true) {
 			if dk.uhGargoyleCheck(sim, target, core.GCDDefault*2+50*time.Millisecond) {
 				dk.uhAfterGargoyleSequence(sim)
 				return sim.CurrentTime
 			}
-			cast = dk.ScourgeStrike.Cast(sim, target)
+			cast = dk.uhCastVirulenceStrike(sim, target)
 			if cast {
-				dk.RotationSequence.Clear().
-					NewAction(dk.RotationActionUH_BS).
-					NewAction(dk.RotationActionCallback_UnholyDndRotation)
+				if dk.LastOutcome.Matches(core.OutcomeLanded) {
+					dk.RotationSequence.Clear().
+						NewAction(dk.RotationActionUH_BS).
+						NewAction(dk.RotationActionCallback_UnholyDndRotation)
+				}
 			}
 		} else {
 			if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
@@ -164,16 +167,18 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 	if !cast {
 		if dk.uhDiseaseCheck(sim, target, dk.ScourgeStrike, true, 1) {
 			if !dk.uhShouldWaitForDnD(sim, true, true, true) {
-				if dk.Talents.ScourgeStrike && dk.ScourgeStrike.IsReady(sim) {
+				if dk.uhVirulenceRotationCheck(sim, false) && dk.DeathStrike.IsReady(sim) {
 					if dk.uhGargoyleCheck(sim, target, core.GCDDefault*2+50*time.Millisecond) {
 						dk.uhAfterGargoyleSequence(sim)
 						return sim.CurrentTime
 					}
-					cast = dk.ScourgeStrike.Cast(sim, target)
+					cast = dk.uhCastVirulenceStrike(sim, target)
 					if cast {
-						dk.RotationSequence.Clear().
-							NewAction(dk.RotationActionUH_BS).
-							NewAction(dk.RotationActionCallback_UnholyDndRotation)
+						if dk.LastOutcome.Matches(core.OutcomeLanded) {
+							dk.RotationSequence.Clear().
+								NewAction(dk.RotationActionUH_BS).
+								NewAction(dk.RotationActionCallback_UnholyDndRotation)
+						}
 					}
 				} else if dk.IcyTouch.CanCast(sim, nil) && dk.PlagueStrike.CanCast(sim, nil) {
 					if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+core.GCDDefault*2+50*time.Millisecond) {
@@ -189,9 +194,10 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 			return sim.CurrentTime
 		}
 		if !cast {
+			gargCheck := dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond)
 			if dk.shShouldSpreadDisease(sim) {
 				if !dk.uhShouldWaitForDnD(sim, true, false, false) {
-					if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
+					if gargCheck {
 						dk.uhAfterGargoyleSequence(sim)
 						return sim.CurrentTime
 					}
@@ -200,14 +206,14 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 			}
 			if !cast {
 				if dk.uhDeathCoilCheck(sim) {
-					if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
+					if gargCheck {
 						dk.uhAfterGargoyleSequence(sim)
 						return sim.CurrentTime
 					}
 					cast = dk.DeathCoil.Cast(sim, target)
 				}
 				if !cast {
-					if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
+					if gargCheck {
 						dk.uhAfterGargoyleSequence(sim)
 						return sim.CurrentTime
 					}
@@ -258,13 +264,13 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 		fuStrike = dk.Obliterate
 	}
 	if dk.uhDiseaseCheck(sim, target, fuStrike, true, 1) {
-		if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
+		if dk.uhGargoyleCheck(sim, target, core.GCDDefault+50*time.Millisecond) {
 			dk.uhAfterGargoyleSequence(sim)
 			return sim.CurrentTime
 		}
 		casted = fuStrike.Cast(sim, target)
 	} else {
-		if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()*2+50*time.Millisecond) {
+		if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+core.GCDDefault*2+50*time.Millisecond) {
 			dk.uhAfterGargoyleSequence(sim)
 			return sim.CurrentTime
 		}
@@ -272,15 +278,16 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 		return sim.CurrentTime
 	}
 	if !casted {
+		gargCheck := dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond)
 		if dk.shShouldSpreadDisease(sim) {
-			if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
+			if gargCheck {
 				dk.uhAfterGargoyleSequence(sim)
 				return sim.CurrentTime
 			}
 			casted = dk.uhSpreadDiseases(sim, target, s)
 		} else {
 			if dk.uhDiseaseCheck(sim, target, dk.BloodStrike, true, 1) {
-				if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
+				if dk.uhGargoyleCheck(sim, target, core.GCDDefault+50*time.Millisecond) {
 					dk.uhAfterGargoyleSequence(sim)
 					return sim.CurrentTime
 				}
@@ -290,7 +297,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 					casted = dk.BloodBoil.Cast(sim, target)
 				}
 			} else {
-				if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()*2+50*time.Millisecond) {
+				if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+core.GCDDefault*2+50*time.Millisecond) {
 					dk.uhAfterGargoyleSequence(sim)
 					return sim.CurrentTime
 				}
@@ -300,14 +307,14 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholySsRotation(sim *core.Simu
 		}
 		if !casted {
 			if dk.uhDeathCoilCheck(sim) {
-				if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
+				if gargCheck {
 					dk.uhAfterGargoyleSequence(sim)
 					return sim.CurrentTime
 				}
 				casted = dk.DeathCoil.Cast(sim, target)
 			}
 			if !casted {
-				if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+50*time.Millisecond) {
+				if gargCheck {
 					dk.uhAfterGargoyleSequence(sim)
 					return sim.CurrentTime
 				}
@@ -500,7 +507,7 @@ func (dk *DpsDeathknight) RotationActionUH_BS(sim *core.Simulation, target *core
 		s.ConditionalAdvance(casted && advance)
 	} else {
 		bloodSpell := dk.BloodBoil
-		_, prioBs := dk.bonusProcRotationChecks(sim)
+		prioBs := dk.unholyMightRotationChecks(sim)
 		if dk.desolationAuraCheck(sim) || prioBs {
 			bloodSpell = dk.BloodStrike
 		}
@@ -528,7 +535,7 @@ func (dk *DpsDeathknight) RotationActionUH_SS_Sigil(sim *core.Simulation, target
 		dk.EmpowerRuneWeapon.Cast(sim, target)
 	}
 
-	casted := dk.ScourgeStrike.Cast(sim, target)
+	casted := dk.uhCastVirulenceStrike(sim, target)
 	advance := dk.LastOutcome.Matches(core.OutcomeLanded)
 
 	s.ConditionalAdvance(casted && advance)
