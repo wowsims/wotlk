@@ -19,10 +19,22 @@ import * as Tooltips from '../core/constants/tooltips.js';
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
-export const CombatTalents = {
-	name: 'Combat',
+export const CombatHackTalents = {
+	name: 'Combat Axes/Swords/Hack and Slash',
 	data: SavedTalents.create({
-		talentsString: '00532000514-0252051050035010223100501251',
+		talentsString: '00532010414-0252051000035015223100501251',
+		glyphs: Glyphs.create({
+			major1: RogueMajorGlyph.GlyphOfKillingSpree,
+			major2: RogueMajorGlyph.GlyphOfTricksOfTheTrade,
+			major3: RogueMajorGlyph.GlyphOfRupture,
+		})
+	}),
+};
+
+export const CombatCQCTalents = {
+	name: 'Combat Fists/Daggers/Close Quarters Combat',
+	data: SavedTalents.create({
+		talentsString: '00532010414-0252051050035010223100501251',
 		glyphs: Glyphs.create({
 			major1: RogueMajorGlyph.GlyphOfKillingSpree,
 			major2: RogueMajorGlyph.GlyphOfTricksOfTheTrade,
@@ -343,6 +355,256 @@ export const P2_PRESET_COMBAT = {
 			  40053
 			]
 		  }
+	]}`),
+};
+
+export const P3_PRESET_ASSASSINATION = {
+	name: 'P3 Assassination',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<any>) => player.getTalentTree() == 0,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		  {
+			"id": 48230,
+			"enchant": 3817,
+			"gems": [
+			  41398,
+			  49110
+			]
+		  },
+		  {
+			"id": 47060,
+			"gems": [
+			  40114
+			]
+		  },
+		  {
+			"id": 48228,
+			"enchant": 3808,
+			"gems": [
+			  40114
+			]
+		  },
+		  {
+			"id": 47545,
+			"enchant": 3605,
+			"gems": [
+			  40114
+			]
+		  },
+		  {
+			"id": 48232,
+			"enchant": 3832,
+			"gems": [
+			  40114,
+			  40114
+			]
+		  },
+		  {
+			"id": 47155,
+			"enchant": 3845,
+			"gems": [
+			  40114,
+			  40114,
+			  0
+			]
+		  },
+		  {
+			"id": 48231,
+			"enchant": 3604,
+			"gems": [
+			  40114,
+			  0
+			]
+		  },
+		  {
+			"id": 47112,
+			"enchant": 3599,
+			"gems": [
+			  40156,
+			  40114,
+			  40114
+			]
+		  },
+		  {
+			"id": 46975,
+			"enchant": 3823,
+			"gems": [
+			  40118,
+			  40118,
+			  40118
+			]
+		  },
+		  {
+			"id": 47077,
+			"enchant": 3606,
+			"gems": [
+			  40156,
+			  40114
+			]
+		  },
+		  {
+			"id": 47075,
+			"gems": [
+			  40114
+			]
+		  },
+		  {
+			"id": 45608,
+			"gems": [
+			  40114
+			]
+		  },
+		  {
+			"id": 47131
+		  },
+		  {
+			"id": 45609
+		  },
+		  {
+			"id": 46969,
+			"enchant": 3789,
+			"gems": [
+			  40156
+			]
+		  },
+		  {
+			"id": 46969,
+			"enchant": 3789,
+			"gems": [
+			  40156
+			]
+		  },
+		  {
+			"id": 47521,
+			"gems": [
+			  40156
+			]
+		  }
+		]}`),
+	};
+
+export const P3_PRESET_COMBAT = {
+	name: 'P3 Combat',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<any>) => player.getTalentTree() == 1,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+        {
+          "id": 48230,
+          "enchant": 3817,
+          "gems": [
+            41398,
+            49110
+          ]
+        },
+        {
+          "id": 47060,
+          "gems": [
+            40114
+          ]
+        },
+        {
+          "id": 48228,
+          "enchant": 3808,
+          "gems": [
+            40114
+          ]
+        },
+        {
+          "id": 47545,
+          "enchant": 3605,
+          "gems": [
+            40114
+          ]
+        },
+        {
+          "id": 48232,
+          "enchant": 3832,
+          "gems": [
+            40114,
+            40114
+          ]
+        },
+        {
+          "id": 47155,
+          "enchant": 3845,
+          "gems": [
+            40114,
+            40114,
+            0
+          ]
+        },
+        {
+          "id": 48231,
+          "enchant": 3604,
+          "gems": [
+            40114,
+            0
+          ]
+        },
+        {
+          "id": 47112,
+          "enchant": 3599,
+          "gems": [
+            40157,
+            40114,
+            40114
+          ]
+        },
+        {
+          "id": 46975,
+          "enchant": 3823,
+          "gems": [
+            40114,
+            40114,
+            40114
+          ]
+        },
+        {
+          "id": 47077,
+          "enchant": 3606,
+          "gems": [
+            40157,
+            40114
+          ]
+        },
+        {
+          "id": 47075,
+          "gems": [
+            40114
+          ]
+        },
+        {
+          "id": 47934,
+          "gems": [
+            40157
+          ]
+        },
+        {
+          "id": 47131
+        },
+        {
+          "id": 45609
+        },
+        {
+          "id": 47156,
+          "enchant": 3789,
+          "gems": [
+            40157
+          ]
+        },
+        {
+          "id": 47001,
+          "enchant": 3789,
+          "gems": [
+            40157
+          ]
+        },
+        {
+          "id": 47521,
+          "gems": [
+            40157
+          ]
+        }
 	]}`),
 };
 
