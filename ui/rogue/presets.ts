@@ -20,7 +20,7 @@ import * as Tooltips from '../core/constants/tooltips.js';
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 export const CombatHackTalents = {
-	name: 'Combat Axes/Swords/Hack and Slash',
+	name: 'Combat Axes/Swords',
 	data: SavedTalents.create({
 		talentsString: '00532010414-0252051000035015223100501251',
 		glyphs: Glyphs.create({
@@ -32,7 +32,7 @@ export const CombatHackTalents = {
 };
 
 export const CombatCQCTalents = {
-	name: 'Combat Fists/Daggers/Close Quarters Combat',
+	name: 'Combat Fists',
 	data: SavedTalents.create({
 		talentsString: '00532010414-0252051050035010223100501251',
 		glyphs: Glyphs.create({
