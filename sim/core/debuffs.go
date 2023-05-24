@@ -237,8 +237,12 @@ func JudgementOfWisdomAura(target *Unit) *Aura {
 					return
 				}
 			} else {
-				// TODO: Figure out if spell proc rate is also different from TBC.
-				if sim.RandomFloat("jow") <= 0.5 {
+				ct := spell.CurCast.CastTime.Seconds()
+				if ct == 0 {
+					ct = 1 // insta-cast treat as 1s cast
+				}
+				procChance := ct / 60.0 * 15.0 // 15PPM default for now.
+				if sim.RandomFloat("jow") > procChance {
 					return
 				}
 			}
