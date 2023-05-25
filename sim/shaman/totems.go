@@ -144,6 +144,7 @@ func (shaman *Shaman) TryDropTotems(sim *core.Simulation) bool {
 
 	casted := false
 	for totemTypeIdx, totemExpiration := range shaman.NextTotemDrops {
+		spell = nil
 		nextDrop := shaman.NextTotemDropType[totemTypeIdx]
 		if sim.CurrentTime >= totemExpiration {
 			switch totemTypeIdx {
