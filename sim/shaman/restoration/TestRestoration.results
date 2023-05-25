@@ -943,8 +943,8 @@ dps_results: {
 dps_results: {
  key: "TestRestoration-Average-Default"
  value: {
-  tps: 62.84608
-  hps: 3895.31136
+  tps: 62.84648
+  hps: 3895.50849
  }
 }
 dps_results: {
