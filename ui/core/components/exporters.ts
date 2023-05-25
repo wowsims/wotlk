@@ -12,6 +12,7 @@ import { specNames } from '../proto_utils/utils';
 import { downloadString } from '../utils';
 import { BaseModal } from './base_modal';
 import { IndividualWowheadGearPlannerImporter } from './importers';
+import { RaidSimRequest } from '../proto/api';
 
 import * as Mechanics from '../constants/mechanics';
 
@@ -392,4 +393,22 @@ export class IndividualPawnEPExporter<SpecType extends Spec> extends Exporter {
 		[PseudoStat.PseudoStatMainHandDps]: 'MeleeDps',
 		[PseudoStat.PseudoStatRangedDps]: 'RangedDps',
 	}
+}
+
+export class IndividualCLIExporter<SpecType extends Spec> extends Exporter {
+  private readonly simUI: IndividualSimUI<SpecType>;
+
+  constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
+    super(parent, simUI, "CLI Export", true);
+    this.simUI = simUI;
+    this.init();
+  }
+
+  getData(): string {
+    return JSON.stringify(
+      RaidSimRequest.toJson(this.simUI.sim.makeRaidSimRequest(false)),
+      null,
+      2
+    );
+  }
 }
