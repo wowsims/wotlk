@@ -78,7 +78,15 @@ func (priest *Priest) newMindFlaySpell(numTicks int32) *core.Spell {
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				result := dot.CalcSnapshotDamage(sim, target, dot.OutcomeMagicHitAndSnapshotCrit)
+
+				// TODO: THIS IS A HACK TRY TO FIGURE OUT A BETTER WAY TO DO THIS.
+				// MF is slightly different than other channeled spells in that its dmg ticks can proc things like a normal cast would.
+				// However, ticks do not proc JoW. Since the dmg portion and the initial application are the same Spell
+				//  we can't set one without impacting the other.
+				// For now as a hack, set proc mask to prevent JoW, cast the tick dmg, and then unset it.
+				dot.Spell.ProcMask |= core.ProcMaskCanProcFromProc
 				dot.Spell.DealDamage(sim, result)
+				dot.Spell.ProcMask ^= core.ProcMaskCanProcFromProc
 
 				if result.Landed() {
 					priest.AddShadowWeavingStack(sim)

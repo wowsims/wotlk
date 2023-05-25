@@ -239,9 +239,11 @@ func JudgementOfWisdomAura(target *Unit) *Aura {
 			} else {
 				ct := spell.CurCast.CastTime.Seconds()
 				if ct == 0 {
-					ct = 1 // insta-cast treat as 1s cast
+					// Current theory is that insta-cast is treated as min GCD from retail.
+					// Perhaps this is a bug introduced in classic when converting JoW to wotlk.
+					ct = 0.75
 				}
-				procChance := ct / 60.0 * 15.0 // 15PPM default for now.
+				procChance := ct * 0.25 // ct / 60.0 * 15.0PPM (algabra) = ct*0.25
 				if sim.RandomFloat("jow") > procChance {
 					return
 				}
