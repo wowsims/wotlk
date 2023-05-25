@@ -401,6 +401,14 @@ export const DiseaseDowntime = InputHelpers.makeSpecOptionsNumberInput<Spec.Spec
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
 
+export const VirulenceRefreshTime = InputHelpers.makeRotationNumberInput<Spec.SpecDeathknight>({
+	fieldName: 'virulenceRefresh',
+	label: 'Virulence Refresh',
+	labelTooltip: 'How long to wait after ICD is ready before trying to refresh buff with strike (0-10 seconds range).',
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.sim.getShowExperimental() && !player.getRotation().autoRotation && player.getTalentTree() == 2 && player.getEquippedItem(ItemSlot.ItemSlotRanged)?._item.id == 47673,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter, player.gearChangeEmitter]),
+});
+
 export const DeathKnightRotationConfig = {
 	inputs: [
 		InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, FrostRotationType>({
@@ -441,5 +449,6 @@ export const DeathKnightRotationConfig = {
 		DesyncRotation,
 		FrostCustomRotation,
 		PreNerfedGargoyleInput,
+		VirulenceRefreshTime,
 	],
 };

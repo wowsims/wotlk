@@ -734,8 +734,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-SigilofVirulence-47673"
  value: {
-  dps: 8245.23172
-  tps: 5205.95757
+  dps: 8244.76798
+  tps: 5206.27861
   hps: 238.66172
  }
 }

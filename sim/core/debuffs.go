@@ -849,7 +849,7 @@ func MarkOfBloodAura(target *Unit) *Aura {
 		OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
 			target := aura.Unit.CurrentTarget
 
-			if target != nil {
+			if target != nil && result.Landed() {
 				// Vampiric Blood bonus max health is ignored in MoB calculation (maybe other Max health effects as well?)
 				targetHealth := target.MaxHealth()
 				if target.HasActiveAura("Vampiric Blood") {

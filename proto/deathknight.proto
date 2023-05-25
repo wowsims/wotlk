@@ -269,6 +269,8 @@ message Deathknight {
 		bool use_dancing_rune_weapon = 30;
 
 		BloodSpell blood_spender = 31;
+
+		double virulence_refresh = 32;
 	}
 	Rotation rotation = 1;
 	
