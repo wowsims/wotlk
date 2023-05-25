@@ -1,6 +1,7 @@
 package dps
 
 import (
+	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -138,9 +139,11 @@ func (dk *DpsDeathknight) uhCastVirulenceStrike(sim *core.Simulation, target *co
 func (dk *DpsDeathknight) uhVirulenceRotationCheck(sim *core.Simulation, gargCheck bool) bool {
 	// If we have sigil of virulence
 	// Higher prio SS then Dnd when gargoyle is ready
+	virulenceRefresh := math.Max(0, 10-dk.Inputs.VirulenceRefresh)
+	waitTime := time.Duration(virulenceRefresh) * time.Second
 	prioVirulenceStrike := false
 	if dk.ur.sigil == Sigil_Virulence && (!gargCheck || (dk.SummonGargoyle.IsReady(sim) || dk.SummonGargoyle.CD.TimeToReady(sim) < 10*time.Second)) {
-		prioVirulenceStrike = !dk.ur.virulenceAura.IsActive() || dk.ur.virulenceAura.RemainingDuration(sim) < 10*time.Second
+		prioVirulenceStrike = !dk.ur.virulenceAura.IsActive() || dk.ur.virulenceAura.RemainingDuration(sim) <= waitTime
 	}
 	return prioVirulenceStrike
 }

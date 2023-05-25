@@ -42,6 +42,7 @@ type DeathknightInputs struct {
 	AvgAMSHit           float64
 	FuStrike            Rotation_FuStrike
 	DiseaseDowntime     float64
+	VirulenceRefresh    float64
 }
 
 type DeathknightCoeffs struct {
