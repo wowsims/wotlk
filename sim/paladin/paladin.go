@@ -72,6 +72,7 @@ type Paladin struct {
 
 	AvoidClippingConsecration           bool
 	HoldLastAvengingWrathUntilExecution bool
+	CancelChaosBane                     bool
 
 	mutualLockoutDPAW *core.Timer
 }
