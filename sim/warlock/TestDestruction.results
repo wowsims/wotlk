@@ -193,8 +193,8 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-AllItems-MaleficRaiment"
  value: {
-  dps: 6724.58837
-  tps: 5342.84693
+  dps: 6730.18524
+  tps: 5347.11442
  }
 }
 dps_results: {
@@ -333,15 +333,15 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-Settings-Orc-P2-Destruction Warlock-NoBuffs-LongMultiTarget"
  value: {
-  dps: 5061.0771
-  tps: 6150.64929
+  dps: 5060.70604
+  tps: 6149.03176
  }
 }
 dps_results: {
  key: "TestDestruction-Settings-Orc-P2-Destruction Warlock-NoBuffs-LongSingleTarget"
  value: {
-  dps: 5061.0771
-  tps: 4274.50192
+  dps: 5060.70604
+  tps: 4273.56219
  }
 }
 dps_results: {

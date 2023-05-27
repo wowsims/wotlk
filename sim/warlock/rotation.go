@@ -535,10 +535,12 @@ func (warlock *Warlock) OnGCDReady(sim *core.Simulation) {
 
 				return
 			}
-
+		} else if warlock.CurrentMana() < ac.Spell.DefaultCast.Cost {
 			// TODO: if the reason we failed to cast something is that we have not enough mana, we may want
 			// to just tap. On the other hand maybe falling through and casting the next best thing
 			// sometimes has value?
+			warlock.LifeTap.Cast(sim, nil)
+			return
 		}
 	}
 
