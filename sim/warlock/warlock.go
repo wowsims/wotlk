@@ -70,7 +70,6 @@ type Warlock struct {
 
 	petStmBonusSP float64
 	acl           []ActionCondition
-	skipList      map[int]struct{}
 	swapped       bool
 }
 
@@ -84,7 +83,7 @@ const (
 
 type ActionCondition struct {
 	Spell     *core.Spell
-	Condition func(*core.Simulation) (ACLaction, *core.Unit)
+	Condition func(*core.Simulation) (ACLaction, *core.Unit, string)
 }
 
 func (warlock *Warlock) GetCharacter() *core.Character {
