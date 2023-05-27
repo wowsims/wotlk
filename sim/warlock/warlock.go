@@ -43,6 +43,7 @@ type Warlock struct {
 	Seed                 *core.Spell
 	SeedDamageTracker    []float64
 
+	ShadowEmbraceAuras     core.AuraArray
 	NightfallProcAura      *core.Aura
 	EradicationAura        *core.Aura
 	DemonicEmpowerment     *core.Spell
@@ -71,6 +72,9 @@ type Warlock struct {
 	petStmBonusSP float64
 	acl           []ActionCondition
 	swapped       bool
+
+	// contains for each target the time the last shadowbolt was casted onto them
+	corrRefreshList []time.Duration
 }
 
 type ACLaction int
@@ -180,6 +184,7 @@ func (warlock *Warlock) Reset(sim *core.Simulation) {
 	warlock.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand,
 		proto.ItemSlot_ItemSlotOffHand, proto.ItemSlot_ItemSlotRanged}, false)
 	warlock.swapped = true
+	warlock.corrRefreshList = make([]time.Duration, len(warlock.Env.Encounter.TargetUnits))
 	warlock.setupCooldowns(sim)
 }
 

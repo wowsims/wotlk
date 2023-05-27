@@ -3,6 +3,7 @@ package warlock
 import (
 	"fmt"
 	"math"
+	"sort"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -131,9 +132,41 @@ func aclAppendSimple(acl []ActionCondition, spell *core.Spell, cond func(sim *co
 
 func (warlock *Warlock) defineRotation() {
 	acl := warlock.acl
-	mainTarget := warlock.CurrentTarget
+	mainTarget := warlock.CurrentTarget // assumed to be the first element in the target list
 	hauntTravel := time.Duration(float64(time.Second) * warlock.DistanceFromTarget / warlock.Haunt.MissileSpeed)
-	critDebuffCat := warlock.GetEnemyExclusiveCategories(core.SpellCritEffectCategory)[0]
+	critDebuffCat := warlock.GetEnemyExclusiveCategories(core.SpellCritEffectCategory).Get(mainTarget)
+
+	allUnits := warlock.Env.Encounter.TargetUnits
+	if mainTarget != allUnits[0] {
+		panic("CurrentTarget assumption violated")
+	}
+
+	var multidotTargets, uaDotTargets []*core.Unit
+	multidotCount := core.MinInt(len(allUnits), 3)
+	if warlock.Rotation.Type == proto.Warlock_Rotation_Affliction {
+		// up to 3 targets: multidot, no seed
+		// 4 targets: corruption+UA 3x, seed on 4th; possibly only 1x UA since it's close in value
+		// 5 targets: corruption x3, UA 1x, seed
+		// 6 targets: corruption x2, UA 1x, seed; only 1x corruption + UA is close in value
+		// 7-9 targets: corruption x1, no UA, seed
+		// 10+ targets: no corruption anymore probably
+		uaCount := core.MinInt(len(allUnits), 3)
+
+		if len(allUnits) > 4 {
+			uaCount = 1
+		}
+		if len(allUnits) == 6 {
+			multidotCount = 2
+		} else if len(allUnits) > 6 {
+			uaCount = 0
+			multidotCount = core.TernaryInt(len(allUnits) > 9, 0, 1)
+		}
+
+		uaDotTargets = allUnits[:uaCount]
+	} else if warlock.Rotation.Type == proto.Warlock_Rotation_Destruction {
+		multidotCount = core.MinInt(len(allUnits), 4)
+	}
+	multidotTargets = allUnits[:multidotCount]
 
 	if warlock.Talents.DemonicEmpowerment && warlock.Options.Summon != proto.Warlock_Options_NoSummon {
 		acl = aclAppendSimple(acl, warlock.DemonicEmpowerment, func(sim *core.Simulation) (bool, *core.Unit, string) {
@@ -148,7 +181,7 @@ func (warlock *Warlock) defineRotation() {
 		})
 	}
 
-	// TODO: the real AoE rotation is way more complicated than this, this is really just a stub
+	// only handles deliberate overrides of the primary spell
 	if warlock.Rotation.PrimarySpell == proto.Warlock_Rotation_Seed {
 		acl = aclAppendSimple(acl, warlock.Seed, func(sim *core.Simulation) (bool, *core.Unit, string) {
 			return warlock.Rotation.DetonateSeed || !warlock.Seed.Dot(mainTarget).IsActive(), mainTarget, ""
@@ -207,29 +240,116 @@ func (warlock *Warlock) defineRotation() {
 		})
 	}
 
+	// refresh corruption with shadow bolt if it's running out
+	if warlock.Talents.EverlastingAffliction == 5 && len(allUnits) > 1 {
+		travel := time.Duration(float64(time.Second) * warlock.DistanceFromTarget / warlock.ShadowBolt.MissileSpeed)
+		curIndex := len(acl)
+
+		acl = aclAppendSimple(acl, warlock.ShadowBolt, func(sim *core.Simulation) (bool, *core.Unit, string) {
+			type targetRem struct {
+				target *core.Unit
+				rem    time.Duration
+			}
+			targets := make([]targetRem, 0, len(sim.Encounter.TargetUnits))
+			for _, target := range sim.Encounter.TargetUnits {
+				// if there's already an shadowbolt on the way then skip
+				if warlock.corrRefreshList[target.UnitIndex] >= sim.CurrentTime-travel {
+					continue
+				}
+
+				// same when we can't refresh in time
+				if warlock.Corruption.Dot(target).RemainingDuration(sim) < travel+warlock.ShadowBolt.CastTime() {
+					continue
+				}
+
+				// assuming haunt doesn't drop, which it shouldn't, corruption will already be refreshed
+				if target == mainTarget && warlock.HauntDebuffAuras.Get(target).RemainingDuration(sim) <
+					warlock.Corruption.Dot(target).RemainingDuration(sim) {
+					continue
+				}
+
+				rem := core.MinDuration(warlock.Corruption.Dot(target).RemainingDuration(sim),
+					warlock.ShadowEmbraceAuras.Get(target).RemainingDuration(sim))
+				targets = append(targets, targetRem{rem: rem, target: target})
+			}
+			sort.Slice(targets, func(i, j int) bool { return targets[i].rem < targets[j].rem })
+
+			// we know that the only higher priority action is haunt, thus the only 2 things we need to
+			// consider outside of shadow bolts is haunt and mana
+			nextSpell, timeAdvance := warlock.getAlternativeAction(sim, curIndex)
+			sbCastTime := warlock.ShadowBolt.EffectiveCastTime()
+			timeAdvance += sbCastTime
+			recast := false
+			// shadow trance proc will only speed up one cast
+			if warlock.ShadowBolt.CastTimeMultiplier == 0 {
+				// somewhat hacky, breaks if CastTimeMultiplier is ever changed by anything else
+				sbCastTime = time.Duration(float64(warlock.ShadowBolt.DefaultCast.CastTime) * warlock.CastSpeed)
+				sbCastTime = core.MaxDuration(sbCastTime, warlock.SpellGCD())
+
+				if nextSpell == warlock.ShadowBolt {
+					timeAdvance += sbCastTime - warlock.ShadowBolt.EffectiveCastTime()
+				}
+			}
+			mana := warlock.CurrentMana() - warlock.ShadowBolt.DefaultCast.Cost
+			consideredHaunt := false
+			for _, ele := range targets {
+				if mana < warlock.ShadowBolt.DefaultCast.Cost {
+					timeAdvance += warlock.LifeTap.EffectiveCastTime()
+					mana += 10000.0 // we only need 1 life tap, so the exact value doesn't matter
+				}
+				mana -= warlock.ShadowBolt.DefaultCast.Cost
+
+				if !consideredHaunt && timeAdvance+warlock.Haunt.CastTime()+hauntTravel >=
+					warlock.HauntDebuffAuras.Get(mainTarget).RemainingDuration(sim) {
+					timeAdvance += warlock.Haunt.EffectiveCastTime()
+					mana -= warlock.Haunt.DefaultCast.Cost
+					consideredHaunt = true
+				}
+
+				// some extra time to accommodate haste buffs running out
+				if timeAdvance+travel+250*time.Millisecond >= ele.rem {
+					recast = true
+					break
+				}
+
+				timeAdvance += sbCastTime + 50*time.Millisecond
+			}
+
+			if recast {
+				return true, targets[0].target, ""
+			} else {
+				return false, nil, ""
+			}
+		})
+	}
+
 	if warlock.Rotation.Corruption && warlock.Talents.EverlastingAffliction > 0 {
 		acl = aclAppendSimple(acl, warlock.Corruption, func(sim *core.Simulation) (bool, *core.Unit, string) {
+			// TODO: wait for all targets SB debuff?
 			if !critDebuffCat.AnyActive() &&
 				warlock.Talents.ImprovedShadowBolt > 0 && sim.CurrentTime < 25 {
 				return false, nil, ""
 			}
 
-			if !warlock.Corruption.Dot(mainTarget).IsActive() {
-				return true, mainTarget, ""
-			}
+			reason := ""
+			for _, target := range multidotTargets {
+				if !warlock.Corruption.Dot(target).IsActive() {
+					return true, target, ""
+				}
 
-			// check if reapplying corruption is worthwhile
-			relDmgInc := warlock.calcRelativeCorruptionInc(mainTarget)
-			snapshotDmg := warlock.Corruption.ExpectedDamageFromCurrentSnapshot(sim, mainTarget)
-			snapshotDmg *= float64(sim.GetRemainingDuration()) / float64(warlock.Corruption.Dot(mainTarget).TickPeriod())
-			snapshotDmg *= (relDmgInc - 1)
-			snapshotDmg -= warlock.Corruption.ExpectedDamageFromCurrentSnapshot(sim, mainTarget)
+				// check if reapplying corruption is worthwhile
+				relDmgInc := warlock.calcRelativeCorruptionInc(target)
+				snapshotDmg := warlock.Corruption.ExpectedDamageFromCurrentSnapshot(sim, target)
+				snapshotDmg *= float64(sim.GetRemainingDuration()) / float64(warlock.Corruption.Dot(target).TickPeriod())
+				snapshotDmg *= (relDmgInc - 1)
+				snapshotDmg -= warlock.Corruption.ExpectedDamageFromCurrentSnapshot(sim, target)
 
-			reason := fmt.Sprintf("Relative Corruption Inc: [%.2f], expected dmg gain: [%.2f]",
-				relDmgInc, snapshotDmg)
+				reason = fmt.Sprintf("Relative Corruption Inc: [%.2f], expected dmg gain: [%.2f]",
+					relDmgInc, snapshotDmg)
 
-			if relDmgInc > 1.15 || snapshotDmg > 10000 {
-				return true, mainTarget, reason
+				if relDmgInc > 1.15 || snapshotDmg > 10000 {
+					return true, target, reason
+				}
 			}
 
 			return false, nil, reason
@@ -279,12 +399,26 @@ func (warlock *Warlock) defineRotation() {
 	if warlock.Talents.UnstableAffliction && warlock.Rotation.SecondaryDot == proto.Warlock_Rotation_UnstableAffliction {
 		acl = aclAppendSimple(acl, warlock.UnstableAffliction, func(sim *core.Simulation) (bool, *core.Unit, string) {
 			castTime := warlock.UnstableAffliction.CastTime()
-			if warlock.UnstableAffliction.Dot(mainTarget).RemainingDuration(sim)-castTime <= 0 &&
-				sim.GetRemainingDuration() >= 9*time.Second+castTime {
-				return true, mainTarget, ""
+			for _, target := range uaDotTargets {
+				if warlock.UnstableAffliction.Dot(target).RemainingDuration(sim)-castTime <= 0 &&
+					sim.GetRemainingDuration() >= 9*time.Second+castTime {
+					return true, target, ""
+				}
 			}
 
 			return false, nil, ""
+		})
+	}
+
+	if len(allUnits) > len(multidotTargets) {
+		acl = aclAppendSimple(acl, warlock.Seed, func(sim *core.Simulation) (bool, *core.Unit, string) {
+			for _, target := range sim.Encounter.TargetUnits {
+				// avoid mainTarget as we may want to corruption that later
+				if !warlock.Corruption.Dot(target).IsActive() && target != mainTarget {
+					return true, target, ""
+				}
+			}
+			panic("No viable seed target found")
 		})
 	}
 
@@ -296,32 +430,39 @@ func (warlock *Warlock) defineRotation() {
 		})
 	}
 
-	if warlock.Rotation.Curse == proto.Warlock_Rotation_Agony || warlock.Rotation.Curse == proto.Warlock_Rotation_Doom {
-		tickHeuristic := core.TernaryDuration(warlock.Talents.Haunt, 16*time.Second, 22*time.Second)
+	if warlock.Rotation.Corruption && warlock.Talents.EverlastingAffliction <= 0 {
+		acl = aclAppendSimple(acl, warlock.Corruption, func(sim *core.Simulation) (bool, *core.Unit, string) {
+			for _, target := range multidotTargets {
+				dot := warlock.Corruption.Dot(target)
+				if dot.IsActive() {
+					continue
+				}
 
-		acl = aclAppendSimple(acl, warlock.CurseOfAgony, func(sim *core.Simulation) (bool, *core.Unit, string) {
-			if !warlock.CurseOfDoom.Dot(mainTarget).IsActive() && !warlock.CurseOfAgony.
-				Dot(mainTarget).IsActive() && sim.GetRemainingDuration() >= tickHeuristic {
-				return true, mainTarget, ""
+				tickLen := dot.TickLength
+				if dot.AffectedByCastSpeed {
+					tickLen = warlock.ApplyCastSpeed(tickLen)
+				}
+
+				if sim.GetRemainingDuration() >= 4*tickLen {
+					return true, target, ""
+				}
 			}
-
 			return false, nil, ""
 		})
 	}
 
-	if warlock.Rotation.Corruption && warlock.Talents.EverlastingAffliction <= 0 {
-		acl = aclAppendSimple(acl, warlock.Corruption, func(sim *core.Simulation) (bool, *core.Unit, string) {
-			dot := warlock.Corruption.Dot(mainTarget)
-			if dot.IsActive() {
-				return false, nil, ""
+	if warlock.Rotation.Curse == proto.Warlock_Rotation_Agony || warlock.Rotation.Curse == proto.Warlock_Rotation_Doom {
+		tickHeuristic := core.TernaryDuration(warlock.Talents.Haunt, 16*time.Second, 22*time.Second)
+
+		acl = aclAppendSimple(acl, warlock.CurseOfAgony, func(sim *core.Simulation) (bool, *core.Unit, string) {
+			for _, target := range multidotTargets {
+				if !warlock.CurseOfDoom.Dot(target).IsActive() && !warlock.CurseOfAgony.
+					Dot(target).IsActive() && sim.GetRemainingDuration() >= tickHeuristic {
+					return true, target, ""
+				}
 			}
 
-			tickLen := dot.TickLength
-			if dot.AffectedByCastSpeed {
-				tickLen = warlock.ApplyCastSpeed(tickLen)
-			}
-
-			return sim.GetRemainingDuration() >= 4*tickLen, mainTarget, ""
+			return false, nil, ""
 		})
 	}
 
@@ -330,8 +471,13 @@ func (warlock *Warlock) defineRotation() {
 
 		acl = aclAppendSimple(acl, warlock.Immolate, func(sim *core.Simulation) (bool, *core.Unit, string) {
 			castTime := warlock.Immolate.CastTime()
-			return warlock.Immolate.Dot(mainTarget).RemainingDuration(sim)-castTime <= 0 &&
-				sim.GetRemainingDuration() >= tickHeuristic+castTime, mainTarget, ""
+			for _, target := range multidotTargets {
+				if warlock.Immolate.Dot(target).RemainingDuration(sim)-castTime <= 0 &&
+					sim.GetRemainingDuration() >= tickHeuristic+castTime {
+					return true, target, ""
+				}
+			}
+			return false, nil, ""
 		})
 	}
 
@@ -524,10 +670,15 @@ func (warlock *Warlock) OnGCDReady(sim *core.Simulation) {
 			}
 		}
 
+		castTime := ac.Spell.CastTime()
 		if success := ac.Spell.Cast(sim, target); success {
+			// track shadowbolts "in the air" that haven't refreshed corruption yet
+			if ac.Spell == warlock.ShadowBolt || ac.Spell == warlock.Haunt {
+				warlock.corrRefreshList[target.UnitIndex] = sim.CurrentTime + castTime
+			}
+
 			if !warlock.GCD.IsReady(sim) {
 				// after-GCD actions
-
 				if ac.Spell == warlock.Corruption && warlock.ItemSwap.IsEnabled() && warlock.swapped {
 					warlock.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand,
 						proto.ItemSlot_ItemSlotOffHand, proto.ItemSlot_ItemSlotRanged}, true)
@@ -537,10 +688,10 @@ func (warlock *Warlock) OnGCDReady(sim *core.Simulation) {
 				return
 			}
 		} else if warlock.CurrentMana() < ac.Spell.DefaultCast.Cost {
-			// TODO: if the reason we failed to cast something is that we have not enough mana, we may want
-			// to just tap. On the other hand maybe falling through and casting the next best thing
-			// sometimes has value?
-			warlock.LifeTap.Cast(sim, nil)
+			// TODO: this will only cast life tap right now
+			if success := warlock.acl[len(warlock.acl)-1].Spell.Cast(sim, nil); !success {
+				panic("Failed to cast life tap / dark pact")
+			}
 			return
 		}
 	}

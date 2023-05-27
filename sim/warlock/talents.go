@@ -292,7 +292,7 @@ func (warlock *Warlock) setupShadowEmbrace() {
 		return
 	}
 
-	shadowEmbraceAuras := warlock.NewEnemyAuraArray(warlock.ShadowEmbraceDebuffAura)
+	warlock.ShadowEmbraceAuras = warlock.NewEnemyAuraArray(warlock.ShadowEmbraceDebuffAura)
 
 	warlock.RegisterAura(core.Aura{
 		Label:    "Shadow Embrace Talent Hidden Aura",
@@ -302,7 +302,7 @@ func (warlock *Warlock) setupShadowEmbrace() {
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if (spell == warlock.ShadowBolt || spell == warlock.Haunt) && result.Landed() {
-				aura := shadowEmbraceAuras.Get(result.Target)
+				aura := warlock.ShadowEmbraceAuras.Get(result.Target)
 				aura.Activate(sim)
 				aura.AddStack(sim)
 			}
