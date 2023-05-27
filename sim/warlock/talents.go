@@ -301,7 +301,7 @@ func (warlock *Warlock) setupShadowEmbrace() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell == warlock.ShadowBolt || spell == warlock.Haunt {
+			if (spell == warlock.ShadowBolt || spell == warlock.Haunt) && result.Landed() {
 				aura := shadowEmbraceAuras.Get(result.Target)
 				aura.Activate(sim)
 				aura.AddStack(sim)
@@ -453,7 +453,7 @@ func (warlock *Warlock) setupBackdraft() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell == warlock.Conflagrate {
+			if spell == warlock.Conflagrate && result.Landed() {
 				warlock.BackdraftAura.Activate(sim)
 				warlock.BackdraftAura.SetStacks(sim, 3)
 			}
@@ -511,8 +511,8 @@ func (warlock *Warlock) setupImprovedSoulLeech() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell == warlock.Conflagrate || spell == warlock.ShadowBolt || spell == warlock.ChaosBolt ||
-				spell == warlock.SoulFire || spell == warlock.Incinerate {
+			if (spell == warlock.Conflagrate || spell == warlock.ShadowBolt || spell == warlock.ChaosBolt ||
+				spell == warlock.SoulFire || spell == warlock.Incinerate) && result.Landed() {
 				if !sim.Proc(soulLeechProcChance, "SoulLeech") {
 					return
 				}

@@ -46,8 +46,8 @@ character_stats_results: {
 dps_results: {
  key: "TestDestruction-AllItems-AshtongueTalismanofShadows-32493"
  value: {
-  dps: 9045.8536
-  tps: 7312.21499
+  dps: 9022.58038
+  tps: 7290.00757
  }
 }
 dps_results: {
@@ -151,8 +151,8 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-AllItems-Gladiator'sFelshroud"
  value: {
-  dps: 8518.64487
-  tps: 6847.86149
+  dps: 8504.28635
+  tps: 6832.98717
  }
 }
 dps_results: {
@@ -333,22 +333,22 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-Settings-Orc-P2-Destruction Warlock-NoBuffs-LongMultiTarget"
  value: {
-  dps: 5060.70604
-  tps: 6149.03176
+  dps: 5075.80482
+  tps: 6142.57007
  }
 }
 dps_results: {
  key: "TestDestruction-Settings-Orc-P2-Destruction Warlock-NoBuffs-LongSingleTarget"
  value: {
-  dps: 5060.70604
-  tps: 4273.56219
+  dps: 5075.80482
+  tps: 4285.53034
  }
 }
 dps_results: {
  key: "TestDestruction-Settings-Orc-P2-Destruction Warlock-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 5170.84611
-  tps: 4311.90075
+  dps: 5157.20814
+  tps: 4298.52242
  }
 }
 dps_results: {
