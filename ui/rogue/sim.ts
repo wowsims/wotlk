@@ -46,8 +46,8 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 						updateOn: simUI.sim.encounter.changeEmitter,
 						getContent: () => {
 							let hasNoArmor = false
-							for (const target of simUI.sim.encounter.getTargets()) {
-								if (target.getStats().getStat(Stat.StatArmor) <= 0) {
+							for (const target of simUI.sim.encounter.targets) {
+								if (new Stats(target.stats).getStat(Stat.StatArmor) <= 0) {
 									hasNoArmor = true
 									break
 								}
@@ -339,7 +339,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 				if (typeof mhWeaponSpeed == 'undefined' || typeof ohWeaponSpeed == 'undefined') {
 					return
 				}
-				if (encounter.getNumTargets() > 3) {
+				if (encounter.targets.length > 3) {
 					options.mhImbue = Rogue_Options_PoisonImbue.InstantPoison
 					options.ohImbue = Rogue_Options_PoisonImbue.InstantPoison
 				} else {
@@ -358,7 +358,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 			const rotation = this.player.getRotation()
 			const options = this.player.getSpecOptions()
 			const encounter = this.sim.encounter
-			if (this.sim.encounter.getNumTargets() > 3) {
+			if (this.sim.encounter.targets.length > 3) {
 				if (rotation.multiTargetSliceFrequency == Frequency.FrequencyUnknown) {
 					rotation.multiTargetSliceFrequency = Presets.DefaultRotation.multiTargetSliceFrequency;
 				}
@@ -372,7 +372,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 				if (typeof mhWeaponSpeed == 'undefined' || typeof ohWeaponSpeed == 'undefined') {
 					return
 				}
-				if (encounter.getNumTargets() > 3) {
+				if (encounter.targets.length > 3) {
 					options.mhImbue = Rogue_Options_PoisonImbue.InstantPoison
 					options.ohImbue = Rogue_Options_PoisonImbue.InstantPoison
 				} else {

@@ -4,15 +4,11 @@ import { ResultsViewer } from './components/results_viewer.js';
 import { SimTitleDropdown } from './components/sim_title_dropdown.js';
 import { SimHeader } from './components/sim_header';
 import { Spec } from './proto/common.js';
-import { SimOptions } from './proto/api.js';
 import { LaunchStatus } from './launched_sims.js';
-import { specToLocalStorageKey } from './proto_utils/utils.js';
 
 import { Sim, SimError } from './sim.js';
-import { Target } from './target.js';
 import { EventID, TypedEvent } from './typed_event.js';
 
-import { Tooltip } from 'bootstrap';
 import { SimTab } from './components/sim_tab.js';
 import { BaseModal } from './components/base_modal.js';
 

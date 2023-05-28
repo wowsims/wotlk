@@ -1,9 +1,7 @@
 import { Spec } from '../core/proto/common.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
-import { Sim } from '../core/sim.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
-import { Target } from '../core/target.js';
 import { getEnumValues } from '../core/utils.js';
 import { ItemSlot } from '../core/proto/common.js';
 

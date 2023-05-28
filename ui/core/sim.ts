@@ -188,7 +188,7 @@ export class Sim {
 	async runBulkSim(bulkSettings: BulkSettings, bulkItemsDb: SimDatabase, onProgress: Function): Promise<BulkSimResult> {
 		if (this.raid.isEmpty()) {
 			throw new Error('Raid is empty! Try adding some players first.');
-		} else if (this.encounter.getNumTargets() < 1) {
+		} else if (this.encounter.targets.length < 1) {
 			throw new Error('Encounter has no targets! Try adding some targets first.');
 		}
 
@@ -227,7 +227,7 @@ export class Sim {
 	async runRaidSim(eventID: EventID, onProgress: Function): Promise<SimResult> {
 		if (this.raid.isEmpty()) {
 			throw new Error('Raid is empty! Try adding some players first.');
-		} else if (this.encounter.getNumTargets() < 1) {
+		} else if (this.encounter.targets.length < 1) {
 			throw new Error('Encounter has no targets! Try adding some targets first.');
 		}
 
@@ -247,7 +247,7 @@ export class Sim {
 	async runRaidSimWithLogs(eventID: EventID): Promise<SimResult> {
 		if (this.raid.isEmpty()) {
 			throw new Error('Raid is empty! Try adding some players first.');
-		} else if (this.encounter.getNumTargets() < 1) {
+		} else if (this.encounter.targets.length < 1) {
 			throw new Error('Encounter has no targets! Try adding some targets first.');
 		}
 
@@ -296,7 +296,7 @@ export class Sim {
 	async statWeights(player: Player<any>, epStats: Array<Stat>, epPseudoStats: Array<PseudoStat>, epReferenceStat: Stat, onProgress: Function): Promise<StatWeightsResult> {
 		if (this.raid.isEmpty()) {
 			throw new Error('Raid is empty! Try adding some players first.');
-		} else if (this.encounter.getNumTargets() < 1) {
+		} else if (this.encounter.targets.length < 1) {
 			throw new Error('Encounter has no targets! Try adding some targets first.');
 		}
 

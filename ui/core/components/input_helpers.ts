@@ -1,25 +1,17 @@
 import { ActionId } from '../proto_utils/action_id.js';
 import { CustomRotation, ItemSwap, ItemSlot } from '../proto/common.js';
 import { Spec } from '../proto/common.js';
-import { TristateEffect } from '../proto/common.js';
-import { Party } from '../party.js';
 import { Player } from '../player.js';
-import { Raid } from '../raid.js';
-import { Sim } from '../sim.js';
-import { Target } from '../target.js';
-import { Encounter } from '../encounter.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { SpecOptions, SpecRotation } from '../proto_utils/utils.js';
 import { ItemSwapPickerConfig } from './item_swap_picker.js'
 import { CustomRotationPickerConfig } from './individual_sim_ui/custom_rotation_picker.js';
-import { InputConfig } from './input.js'
 import { IconPickerConfig } from './icon_picker.js';
 import { IconEnumPicker, IconEnumPickerConfig, IconEnumValueConfig } from './icon_enum_picker.js';
 import { EnumPickerConfig, EnumValueConfig } from './enum_picker.js';
 import { BooleanPickerConfig } from './boolean_picker.js';
 import { NumberPickerConfig } from './number_picker.js';
 import { MultiIconPickerConfig } from './multi_icon_picker.js';
-import { playerTalentStringToProto } from '../talents/factory.js';
 
 export function makeMultiIconInput<ModObject>(inputs: Array<IconPickerConfig<ModObject, any>>, label: string, numColumns?: number): MultiIconPickerConfig<ModObject> {
 	return {
