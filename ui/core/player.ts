@@ -642,15 +642,15 @@ export class Player<SpecType extends Spec> {
 	}
 	setDefaultHealingParams(hm: HealingModel) {
 		var boss = this.sim.encounter.primaryTarget;
-		var dualWield = boss.getDualWield();
+		var dualWield = boss.dualWield;
 		if (hm.cadenceSeconds == 0) {
-			hm.cadenceSeconds = 1.5 * boss.getSwingSpeed();
+			hm.cadenceSeconds = 1.5 * boss.swingSpeed;
 			if (dualWield) {
 				hm.cadenceSeconds /= 2;
 			}
 		}
 		if (hm.hps == 0) {
-			hm.hps = 0.175 * boss.getMinBaseDamage() / boss.getSwingSpeed();
+			hm.hps = 0.175 * boss.minBaseDamage / boss.swingSpeed;
 			if (dualWield) {
 				hm.hps *= 1.5;
 			}

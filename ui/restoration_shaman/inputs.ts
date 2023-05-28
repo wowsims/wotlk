@@ -1,5 +1,7 @@
 import { Spec } from '../core/proto/common.js';
+import { Player } from '../core/player.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
+import { EventID, TypedEvent } from '../core/typed_event.js';
 
 import {
 	AirTotem,

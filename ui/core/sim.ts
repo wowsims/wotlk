@@ -188,7 +188,7 @@ export class Sim {
 	async runBulkSim(bulkSettings: BulkSettings, bulkItemsDb: SimDatabase, onProgress: Function): Promise<BulkSimResult> {
 		if (this.raid.isEmpty()) {
 			throw new Error('Raid is empty! Try adding some players first.');
-		} else if (this.encounter.getNumTargets() < 1) {
+		} else if (this.encounter.targets.length < 1) {
 			throw new Error('Encounter has no targets! Try adding some targets first.');
 		}
 
