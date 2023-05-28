@@ -531,6 +531,18 @@ export class Player<SpecType extends Spec> {
 		this.rotationChangeEmitter.emit(eventID);
 	}
 
+	getAplRotation(): APLRotation {
+		return APLRotation.clone(this.aplRotation);
+	}
+
+	setAplRotation(eventID: EventID, newRotation: APLRotation) {
+		if (APLRotation.equals(newRotation, this.aplRotation))
+			return;
+
+		this.aplRotation = APLRotation.clone(newRotation);
+		this.rotationChangeEmitter.emit(eventID);
+	}
+
 	getTalents(): SpecTalents<SpecType> {
 		if (this.talents == null) {
 			this.talents = playerTalentStringToProto(this.spec, this.talentsString) as SpecTalents<SpecType>;
@@ -628,7 +640,6 @@ export class Player<SpecType extends Spec> {
 		this.distanceFromTarget = newDistanceFromTarget;
 		this.distanceFromTargetChangeEmitter.emit(eventID);
 	}
-
 	setDefaultHealingParams(hm: HealingModel) {
 		var boss = this.sim.encounter.primaryTarget;
 		var dualWield = boss.getDualWield();
@@ -1022,6 +1033,7 @@ export class Player<SpecType extends Spec> {
 			this.setDistanceFromTarget(eventID, proto.distanceFromTarget);
 			this.setHealingModel(eventID, proto.healingModel || HealingModel.create());
 			this.setRotation(eventID, this.specTypeFunctions.rotationFromPlayer(proto));
+			this.setAplRotation(eventID, proto.rotation || APLRotation.create())
 			this.setSpecOptions(eventID, this.specTypeFunctions.optionsFromPlayer(proto));
 
 			this.aplRotation = proto.rotation || APLRotation.create();
