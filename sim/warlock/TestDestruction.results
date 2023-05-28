@@ -46,36 +46,36 @@ character_stats_results: {
 dps_results: {
  key: "TestDestruction-AllItems-AshtongueTalismanofShadows-32493"
  value: {
-  dps: 9045.8536
-  tps: 7312.21499
+  dps: 9111.00396
+  tps: 7369.58879
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-AustereEarthsiegeDiamond"
  value: {
-  dps: 9039.20912
-  tps: 7303.9201
+  dps: 9126.76565
+  tps: 7382.72098
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-BeamingEarthsiegeDiamond"
  value: {
-  dps: 9056.68146
-  tps: 7319.6524
+  dps: 9144.4717
+  tps: 7398.66362
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-BracingEarthsiegeDiamond"
  value: {
-  dps: 9079.33864
-  tps: 7337.81174
+  dps: 9167.33869
+  tps: 7417.01178
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-ChaoticSkyflareDiamond"
  value: {
-  dps: 9301.55099
-  tps: 7540.03497
+  dps: 9392.52265
+  tps: 7621.90947
  }
 }
 dps_results: {
@@ -88,127 +88,127 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-AllItems-DeathbringerGarb"
  value: {
-  dps: 8484.75064
-  tps: 6838.40605
+  dps: 8566.41295
+  tps: 6911.90213
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-DestructiveSkyflareDiamond"
  value: {
-  dps: 9063.54242
-  tps: 7325.82727
+  dps: 9151.5324
+  tps: 7405.01824
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-EffulgentSkyflareDiamond"
  value: {
-  dps: 9039.20912
-  tps: 7303.9201
+  dps: 9126.76565
+  tps: 7382.72098
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-EmberSkyflareDiamond"
  value: {
-  dps: 9079.33864
-  tps: 7337.81174
+  dps: 9167.33869
+  tps: 7417.01178
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-EnigmaticSkyflareDiamond"
  value: {
-  dps: 9056.68146
-  tps: 7319.6524
+  dps: 9144.4717
+  tps: 7398.66362
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-EnigmaticStarflareDiamond"
  value: {
-  dps: 9053.9498
-  tps: 7317.1939
+  dps: 9141.71448
+  tps: 7396.18212
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-EternalEarthsiegeDiamond"
  value: {
-  dps: 9039.20912
-  tps: 7303.9201
+  dps: 9126.76565
+  tps: 7382.72098
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-ForlornSkyflareDiamond"
  value: {
-  dps: 9079.33864
-  tps: 7337.81174
+  dps: 9167.33869
+  tps: 7417.01178
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-ForlornStarflareDiamond"
  value: {
-  dps: 9071.37611
-  tps: 7331.08579
+  dps: 9159.29022
+  tps: 7410.20849
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-Gladiator'sFelshroud"
  value: {
-  dps: 8518.64487
-  tps: 6847.86149
+  dps: 8504.28635
+  tps: 6832.98717
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-Gul'dan'sRegalia"
  value: {
-  dps: 8629.66765
-  tps: 6899.66786
+  dps: 8710.91438
+  tps: 6972.78991
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-ImpassiveSkyflareDiamond"
  value: {
-  dps: 9056.68146
-  tps: 7319.6524
+  dps: 9144.4717
+  tps: 7398.66362
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-ImpassiveStarflareDiamond"
  value: {
-  dps: 9053.9498
-  tps: 7317.1939
+  dps: 9141.71448
+  tps: 7396.18212
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-InsightfulEarthsiegeDiamond"
  value: {
-  dps: 9047.64512
-  tps: 7311.01298
+  dps: 9135.28735
+  tps: 7389.89099
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-InvigoratingEarthsiegeDiamond"
  value: {
-  dps: 9039.20912
-  tps: 7303.9201
+  dps: 9126.76565
+  tps: 7382.72098
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-MaleficRaiment"
  value: {
-  dps: 6724.58837
-  tps: 5342.84693
+  dps: 6730.18524
+  tps: 5347.11442
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-PersistentEarthshatterDiamond"
  value: {
-  dps: 9039.20912
-  tps: 7303.9201
+  dps: 9126.76565
+  tps: 7382.72098
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-PersistentEarthsiegeDiamond"
  value: {
-  dps: 9039.20912
-  tps: 7303.9201
+  dps: 9126.76565
+  tps: 7382.72098
  }
 }
 dps_results: {
@@ -221,140 +221,140 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-AllItems-PowerfulEarthshatterDiamond"
  value: {
-  dps: 9039.20912
-  tps: 7303.9201
+  dps: 9126.76565
+  tps: 7382.72098
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-PowerfulEarthsiegeDiamond"
  value: {
-  dps: 9039.20912
-  tps: 7303.9201
+  dps: 9126.76565
+  tps: 7382.72098
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-RelentlessEarthsiegeDiamond"
  value: {
-  dps: 9282.61683
-  tps: 7522.98704
+  dps: 9373.33434
+  tps: 7604.6328
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-RevitalizingSkyflareDiamond"
  value: {
-  dps: 9040.31152
-  tps: 7304.62203
+  dps: 9127.89453
+  tps: 7383.44673
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-SwiftSkyflareDiamond"
  value: {
-  dps: 9039.20912
-  tps: 7303.9201
+  dps: 9126.76565
+  tps: 7382.72098
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-SwiftStarflareDiamond"
  value: {
-  dps: 9039.20912
-  tps: 7303.9201
+  dps: 9126.76565
+  tps: 7382.72098
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-SwiftWindfireDiamond"
  value: {
-  dps: 9039.20912
-  tps: 7303.9201
+  dps: 9126.76565
+  tps: 7382.72098
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 9039.20912
-  tps: 7303.9201
+  dps: 9126.76565
+  tps: 7382.72098
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-TirelessSkyflareDiamond"
  value: {
-  dps: 9079.33864
-  tps: 7337.81174
+  dps: 9167.33869
+  tps: 7417.01178
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-TirelessStarflareDiamond"
  value: {
-  dps: 9071.37611
-  tps: 7331.08579
+  dps: 9159.29022
+  tps: 7410.20849
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-TrenchantEarthshatterDiamond"
  value: {
-  dps: 9071.37611
-  tps: 7331.08579
+  dps: 9159.29022
+  tps: 7410.20849
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-TrenchantEarthsiegeDiamond"
  value: {
-  dps: 9079.33864
-  tps: 7337.81174
+  dps: 9167.33869
+  tps: 7417.01178
  }
 }
 dps_results: {
  key: "TestDestruction-Average-Default"
  value: {
-  dps: 9423.96186
-  tps: 7643.30708
+  dps: 9515.82422
+  tps: 7725.9832
  }
 }
 dps_results: {
  key: "TestDestruction-Settings-Orc-P2-Destruction Warlock-FullBuffs-LongMultiTarget"
  value: {
-  dps: 9335.2174
-  tps: 9610.77145
+  dps: 22376.51722
+  tps: 26905.6487
  }
 }
 dps_results: {
  key: "TestDestruction-Settings-Orc-P2-Destruction Warlock-FullBuffs-LongSingleTarget"
  value: {
-  dps: 9335.2174
-  tps: 7571.57895
+  dps: 9426.175
+  tps: 7653.44079
  }
 }
 dps_results: {
  key: "TestDestruction-Settings-Orc-P2-Destruction Warlock-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 10582.87467
-  tps: 8604.29011
+  dps: 10678.5304
+  tps: 8690.38027
  }
 }
 dps_results: {
  key: "TestDestruction-Settings-Orc-P2-Destruction Warlock-NoBuffs-LongMultiTarget"
  value: {
-  dps: 5061.0771
-  tps: 6150.64929
+  dps: 13081.16517
+  tps: 18081.52664
  }
 }
 dps_results: {
  key: "TestDestruction-Settings-Orc-P2-Destruction Warlock-NoBuffs-LongSingleTarget"
  value: {
-  dps: 5061.0771
-  tps: 4274.50192
+  dps: 5132.70587
+  tps: 4336.74128
  }
 }
 dps_results: {
  key: "TestDestruction-Settings-Orc-P2-Destruction Warlock-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 5170.84611
-  tps: 4311.90075
+  dps: 5211.21887
+  tps: 4347.13208
  }
 }
 dps_results: {
  key: "TestDestruction-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 9301.55099
-  tps: 7540.03497
+  dps: 9392.52265
+  tps: 7621.90947
  }
 }
