@@ -20,9 +20,9 @@ func (hunter *Hunter) registerAimedShotSpell(timer *core.Timer) {
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.08,
-			Multiplier: 1 *
-				(1 - 0.03*float64(hunter.Talents.Efficiency)) *
-				(1 - 0.05*float64(hunter.Talents.MasterMarksman)),
+			Multiplier: 1 -
+				0.03*float64(hunter.Talents.Efficiency) -
+				0.05*float64(hunter.Talents.MasterMarksman),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
