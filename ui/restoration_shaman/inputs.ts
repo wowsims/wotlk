@@ -1,10 +1,5 @@
-import { IconPickerConfig } from '../core/components/icon_picker.js';
 import { Spec } from '../core/proto/common.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
-import { Player } from '../core/player.js';
-import { Sim } from '../core/sim.js';
-import { Target } from '../core/target.js';
-import { EventID, TypedEvent } from '../core/typed_event.js';
 
 import {
 	AirTotem,

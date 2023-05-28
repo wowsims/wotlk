@@ -4,15 +4,17 @@ import {
 	SpellSchool,
 	Stat,
 	Target as TargetProto,
+	TargetInput,
+	Target,
  } from '../proto/common.js';
 import { Encounter } from '../encounter.js';
 import { Raid } from '../raid.js';
-import { Target } from '../target.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { BooleanPicker } from '../components/boolean_picker.js';
 import { EnumPicker } from '../components/enum_picker.js';
-import { ListPicker } from '../components/list_picker.js';
+import { ListItemPickerConfig, ListPicker } from '../components/list_picker.js';
 import { NumberPicker } from '../components/number_picker.js';
+import { Stats } from '../proto_utils/stats.js';
 import { isHealingSpec, isTankSpec } from '../proto_utils/utils.js';
 import { statNames } from '../proto_utils/names.js';
 
@@ -23,7 +25,6 @@ import { IndividualSimUI } from '../individual_sim_ui.js';
 import { SimUI } from '../sim_ui.js';
 import { Input } from './input.js';
 import { BaseModal } from './base_modal.js';
-import { TargetInputs } from '../target_inputs.js';
 
 export interface EncounterPickerConfig {
 	showExecuteProportion: boolean,
@@ -52,13 +53,11 @@ export class EncounterPicker extends Component {
 					};
 				})),
 				changedEvent: (encounter: Encounter) => encounter.changeEmitter,
-				getValue: (encounter: Encounter) => presetTargets.findIndex(pe => encounter.primaryTarget.matchesPreset(pe)),
+				getValue: (encounter: Encounter) => presetTargets.findIndex(pe => equalTargetsIgnoreInputs(encounter.primaryTarget, pe.target)),
 				setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
 					if (newValue != -1) {
-						encounter.primaryTarget.applyPreset(eventID, presetTargets[newValue]);
+						encounter.applyPresetTarget(eventID, presetTargets[newValue], 0);
 					}
-
-					EncounterPicker.updatePrimaryTargetInputs(encounter.primaryTarget);
 				},
 			});
 
@@ -119,99 +118,32 @@ export class EncounterPicker extends Component {
 					label: 'Min Base Damage',
 					labelTooltip: 'Base damage for auto attacks, i.e. lowest roll with 0 AP against a 0-armor Player.',
 					changedEvent: (encounter: Encounter) => encounter.changeEmitter,
-					getValue: (encounter: Encounter) => encounter.primaryTarget.getMinBaseDamage(),
+					getValue: (encounter: Encounter) => encounter.primaryTarget.minBaseDamage,
 					setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
-						encounter.primaryTarget.setMinBaseDamage(eventID, newValue);
+						encounter.primaryTarget.minBaseDamage = newValue;
+						encounter.targetsChangeEmitter.emit(eventID);
 					},
 				});
 			}
+
+			// Transfer Target Inputs from target Id if they dont match (possible when custom AI is selected)
+			let targetIndex = presetTargets.findIndex(pe => modEncounter.primaryTarget.id == pe.target?.id);
+			let targetInputs = presetTargets[targetIndex]?.target?.targetInputs || [];
+
+			if (targetInputs.length != modEncounter.primaryTarget.targetInputs.length
+				|| modEncounter.primaryTarget.targetInputs.some((ti, i) => ti.label != targetInputs[i].label)) {
+				modEncounter.primaryTarget.targetInputs = targetInputs;
+				modEncounter.targetsChangeEmitter.emit(TypedEvent.nextEventID());
+			}
+
+			makeTargetInputsPicker(this.rootElem, modEncounter, 0);
 
 			const advancedButton = document.createElement('button');
 			advancedButton.classList.add('advanced-button', 'btn', 'btn-primary');
 			advancedButton.textContent = 'Advanced';
 			advancedButton.addEventListener('click', () => new AdvancedEncounterModal(simUI.rootElem, simUI, modEncounter));
 			this.rootElem.appendChild(advancedButton);
-
-			// Transfer Target Inputs from target Id if they dont match (possible when custom AI is selected)
-			let targetIndex = presetTargets.findIndex(pe => modEncounter.primaryTarget.getId() == pe.target?.id);
-			let targetInputs = new TargetInputs(presetTargets[targetIndex]?.target?.targetInputs);
-
-			if (targetInputs.getLength() != modEncounter.primaryTarget.getTargetInputsLength()) {
-				modEncounter.primaryTarget.setTargetInputs(TypedEvent.nextEventID(), targetInputs);
-			} else {
-				let isDiff = false
-				for (let i = 0; i < modEncounter.primaryTarget.getTargetInputsLength(); i++) {
-					if (modEncounter.primaryTarget.getTargetInputs().getTargetInput(i).label != targetInputs.getTargetInput(i)?.label) {
-						isDiff = true
-						break;
-					}
-				}
-
-				if (isDiff) {
-					modEncounter.primaryTarget.setTargetInputs(TypedEvent.nextEventID(), targetInputs);
-				}
-			}
-
-			EncounterPicker.primaryRootElem = this.rootElem;
-			EncounterPicker.updatePrimaryTargetInputs(modEncounter.primaryTarget);
 		});
-	}
-
-	static primaryRootElem: HTMLElement;
-	static primaryPickers = new Array<Component>();
-
-	static clearTargetInputPickers(targetInputPickers: Array<Component>) {
-		targetInputPickers.forEach(picker => {
-			picker?.rootElem.remove()
-			picker?.dispose()
-		})
-	}
-
-	static updatePrimaryTargetInputs(target: Target) {
-		EncounterPicker.clearTargetInputPickers(EncounterPicker.primaryPickers)
-		EncounterPicker.primaryPickers = []
-		EncounterPicker.rebuildTargetInputs(EncounterPicker.primaryRootElem, target, EncounterPicker.primaryPickers, true)
-	}
-
-	static rebuildTargetInputs(rootElem: HTMLElement, target: Target, pickers: Array<Component>, beforeLast: boolean) {
-		if (target.hasTargetInputs()) {
-			for (let index = 0; index < target.getTargetInputsLength(); index++) {
-				let targetInput = target.getTargetInputs().getTargetInput(index)
-				if (targetInput.inputType == InputType.Number) {
-					let numberPicker = new NumberPicker(rootElem, target, {
-						label: targetInput.label,
-						labelTooltip: targetInput.tooltip,
-						changedEvent: (target: Target) => target.propChangeEmitter,
-						getValue: (target: Target) => target.getTargetInputNumberValue(index),
-						setValue: (eventID: EventID, target: Target, newValue: number) => {
-							target.setTargetInputNumberValue(eventID, index, newValue)
-						},
-					});
-					if (beforeLast) {
-						let parent = numberPicker.rootElem.parentElement;
-						parent?.removeChild(numberPicker.rootElem)
-						parent?.insertBefore(numberPicker.rootElem, parent.lastChild)
-					}
-					pickers.push(numberPicker)
-				} else if (targetInput.inputType == InputType.Bool) {
-					let booleanPicker = new BooleanPicker(rootElem, target, {
-						label: targetInput.label,
-						labelTooltip: targetInput.tooltip,
-						changedEvent: (target: Target) => target.propChangeEmitter,
-						getValue: (target: Target) => target.getTargetInputBooleanValue(index),
-						setValue: (eventID: EventID, target: Target, newValue: boolean) => {
-							target.setTargetInputBooleanValue(eventID, index, newValue);
-						},
-					});
-					if (beforeLast) {
-						let parent = booleanPicker.rootElem.parentElement;
-						parent?.removeChild(booleanPicker.rootElem)
-						parent?.insertBefore(booleanPicker.rootElem, parent.lastChild)
-					}
-					pickers.push(booleanPicker)
-				}
-			}
-		}
 	}
 }
 
@@ -244,17 +176,18 @@ class AdvancedEncounterModal extends BaseModal {
 				},
 			});
 		}
-		new ListPicker<Encounter, Target>(targetsElem, simUI, this.encounter, {
+		new ListPicker<Encounter, TargetProto>(targetsElem, this.encounter, {
 			extraCssClasses: ['targets-picker', 'mb-0'],
 			itemLabel: 'Target',
 			changedEvent: (encounter: Encounter) => encounter.targetsChangeEmitter,
-			getValue: (encounter: Encounter) => encounter.getTargets(),
-			setValue: (eventID: EventID, encounter: Encounter, newValue: Array<Target>) => {
-				encounter.setTargets(eventID, newValue);
+			getValue: (encounter: Encounter) => encounter.targets,
+			setValue: (eventID: EventID, encounter: Encounter, newValue: Array<TargetProto>) => {
+				encounter.targets = newValue;
+				encounter.targetsChangeEmitter.emit(eventID);
 			},
-			newItem: () => Target.fromDefaults(TypedEvent.nextEventID(), this.encounter.sim),
-			copyItem: (oldItem: Target) => oldItem.clone(TypedEvent.nextEventID()),
-			newItemPicker: (parent: HTMLElement, target: Target) => new TargetPicker(parent, target),
+			newItem: () => Encounter.defaultTargetProto(),
+			copyItem: (oldItem: TargetProto) => TargetProto.clone(oldItem),
+			newItemPicker: (parent: HTMLElement, listPicker: ListPicker<Encounter, TargetProto>, index: number, config: ListItemPickerConfig<Encounter, TargetProto>) => new TargetPicker(parent, encounter, index, config),
 		});
 	}
 
@@ -278,36 +211,51 @@ class AdvancedEncounterModal extends BaseModal {
 				if (newValue != -1) {
 					encounter.applyPreset(eventID, presetEncounters[newValue]);
 				}
-				EncounterPicker.updatePrimaryTargetInputs(encounter.primaryTarget);
 			},
 		});
 	}
 }
 
-class TargetPicker extends Input<Target, Target> {
-	constructor(parent: HTMLElement, modTarget: Target) {
-		super(parent, 'target-picker-root', modTarget, {
-			changedEvent: (target: Target) => target.changeEmitter,
-			getValue: (target: Target) => target,
-			setValue: (eventID: EventID, target: Target, newValue: Target) => {
-				target.fromProto(eventID, newValue.toProto());
-			},
-		});
+class TargetPicker extends Input<Encounter, TargetProto> {
+	private readonly encounter: Encounter;
+	private readonly targetIndex: number;
+
+	private readonly aiPicker: Input<null, number>;
+	private readonly levelPicker: Input<null, number>;
+	private readonly mobTypePicker: Input<null, number>;
+	private readonly tankIndexPicker: Input<null, number>;
+	private readonly statPickers: Array<Input<null, number>>;
+	private readonly swingSpeedPicker: Input<null, number>;
+	private readonly minBaseDamagePicker: Input<null, number>;
+	private readonly dualWieldPicker: Input<null, boolean>;
+	private readonly dwMissPenaltyPicker: Input<null, boolean>;
+	private readonly parryHastePicker: Input<null, boolean>;
+	private readonly spellSchoolPicker: Input<null, number>;
+	private readonly suppressDodgePicker: Input<null, boolean>;
+	private readonly tightDamageRangePicker: Input<null, boolean>;
+	private readonly targetInputPickers: ListPicker<Encounter, TargetInput>;
+
+	private getTarget(): TargetProto {
+		return this.encounter.targets[this.targetIndex] || Target.create();
+	}
+
+	constructor(parent: HTMLElement, encounter: Encounter, targetIndex: number, config: ListItemPickerConfig<Encounter, TargetProto>) {
+		super(parent, 'target-picker-root', encounter, config)
+		this.encounter = encounter;
+		this.targetIndex = targetIndex;
+
 		this.rootElem.innerHTML = `
 			<div class="target-picker-section target-picker-section1"></div>
 			<div class="target-picker-section target-picker-section2"></div>
 			<div class="target-picker-section target-picker-section3 threat-metrics"></div>
 		`;
 
-		const encounter = modTarget.sim.encounter;
 		const section1 = this.rootElem.getElementsByClassName('target-picker-section1')[0] as HTMLElement;
 		const section2 = this.rootElem.getElementsByClassName('target-picker-section2')[0] as HTMLElement;
 		const section3 = this.rootElem.getElementsByClassName('target-picker-section3')[0] as HTMLElement;
 
-		let targetInputPickers = new Array<Component>();
-
-		const presetTargets = modTarget.sim.db.getAllPresetTargets();
-		new EnumPicker<Target>(section1, modTarget, {
+		const presetTargets = encounter.sim.db.getAllPresetTargets();
+		new EnumPicker<null>(section1, null, {
 			extraCssClasses: ['npc-picker'],
 			label: 'NPC',
 			labelTooltip: 'Selects a preset NPC configuration.',
@@ -319,24 +267,17 @@ class TargetPicker extends Input<Target, Target> {
 					value: i,
 				};
 			})),
-			changedEvent: (target: Target) => target.changeEmitter,
-			getValue: (target: Target) => presetTargets.findIndex(pe => target.matchesPreset(pe)),
-			setValue: (eventID: EventID, target: Target, newValue: number) => {
+			changedEvent: () => encounter.targetsChangeEmitter,
+			getValue: () => presetTargets.findIndex(pe => equalTargetsIgnoreInputs(this.getTarget(), pe.target)),
+			setValue: (eventID: EventID, _: null, newValue: number) => {
 				if (newValue != -1) {
-					target.applyPreset(eventID, presetTargets[newValue]);
-				}
-				
-				EncounterPicker.clearTargetInputPickers(targetInputPickers);
-				targetInputPickers = [];
-				EncounterPicker.rebuildTargetInputs(section1, target, targetInputPickers, false);
-
-				if (target == encounter.primaryTarget) {
-					EncounterPicker.updatePrimaryTargetInputs(encounter.primaryTarget);
+					encounter.applyPresetTarget(eventID, presetTargets[newValue], this.targetIndex);
+					encounter.targetsChangeEmitter.emit(eventID);
 				}
 			},
 		});
 
-		new EnumPicker<Target>(section1, modTarget, {
+		this.aiPicker = new EnumPicker<null>(section1, null, {
 			extraCssClasses: ['ai-picker'],
 			label: 'AI',
 			labelTooltip: `
@@ -351,28 +292,20 @@ class TargetPicker extends Input<Target, Target> {
 					value: pe.target!.id,
 				};
 			})),
-			changedEvent: (target: Target) => target.changeEmitter,
-			getValue: (target: Target) => target.getId(),
-			setValue: (eventID: EventID, target: Target, newValue: number) => {
-				target.setId(eventID, newValue);
+			changedEvent: () => encounter.targetsChangeEmitter,
+			getValue: () => this.getTarget().id,
+			setValue: (eventID: EventID, _: null, newValue: number) => {
+				const target = this.getTarget();
+				target.id = newValue;
 
 				// Transfer Target Inputs from the AI of the selected target
-				let newTargetIndex = presetTargets.findIndex(pe => target.getId() == pe.target?.id);
-				let newTargetInputs = new TargetInputs(presetTargets[newTargetIndex]?.target?.targetInputs);
-				target.setTargetInputs(eventID, newTargetInputs);
-				
-				// Update picker elements
-				EncounterPicker.clearTargetInputPickers(targetInputPickers);
-				targetInputPickers = [];
-				EncounterPicker.rebuildTargetInputs(section1, target, targetInputPickers, false);
+				target.targetInputs = (presetTargets.find(pe => target.id == pe.target?.id)?.target?.targetInputs || []).map(ti => TargetInput.clone(ti));
 
-				if (target == encounter.primaryTarget) {
-					EncounterPicker.updatePrimaryTargetInputs(encounter.primaryTarget);
-				}
+				encounter.targetsChangeEmitter.emit(eventID);
 			},
 		});
 
-		new EnumPicker<Target>(section1, modTarget, {
+		this.levelPicker = new EnumPicker<null>(section1, null, {
 			label: 'Level',
 			values: [
 				{ name: '83', value: 83 },
@@ -380,22 +313,24 @@ class TargetPicker extends Input<Target, Target> {
 				{ name: '81', value: 81 },
 				{ name: '80', value: 80 },
 			],
-			changedEvent: (target: Target) => target.levelChangeEmitter,
-			getValue: (target: Target) => target.getLevel(),
-			setValue: (eventID: EventID, target: Target, newValue: number) => {
-				target.setLevel(eventID, newValue);
+			changedEvent: () => encounter.targetsChangeEmitter,
+			getValue: () => this.getTarget().level,
+			setValue: (eventID: EventID, _: null, newValue: number) => {
+				this.getTarget().level = newValue;
+				encounter.targetsChangeEmitter.emit(eventID);
 			},
 		});
-		new EnumPicker(section1, modTarget, {
+		this.mobTypePicker = new EnumPicker(section1, null, {
 			label: 'Mob Type',
 			values: mobTypeEnumValues,
-			changedEvent: (target: Target) => target.mobTypeChangeEmitter,
-			getValue: (target: Target) => target.getMobType(),
-			setValue: (eventID: EventID, target: Target, newValue: number) => {
-				target.setMobType(eventID, newValue);
+			changedEvent: () => encounter.targetsChangeEmitter,
+			getValue: () => this.getTarget().mobType,
+			setValue: (eventID: EventID, _: null, newValue: number) => {
+				this.getTarget().mobType = newValue;
+				encounter.targetsChangeEmitter.emit(eventID);
 			},
 		});
-		new EnumPicker<Target>(section1, modTarget, {
+		this.tankIndexPicker = new EnumPicker<null>(section1, null, {
 			extraCssClasses: ['threat-metrics'],
 			label: 'Tanked By',
 			labelTooltip: 'Determines which player in the raid this enemy will attack. If no player is assigned to the specified tank slot, this enemy will not attack.',
@@ -406,81 +341,88 @@ class TargetPicker extends Input<Target, Target> {
 				{ name: 'Tank 3', value: 2 },
 				{ name: 'Tank 4', value: 3 },
 			],
-			changedEvent: (target: Target) => target.propChangeEmitter,
-			getValue: (target: Target) => target.getTankIndex(),
-			setValue: (eventID: EventID, target: Target, newValue: number) => {
-				target.setTankIndex(eventID, newValue);
+			changedEvent: () => encounter.targetsChangeEmitter,
+			getValue: () => this.getTarget().tankIndex,
+			setValue: (eventID: EventID, _: null, newValue: number) => {
+				this.getTarget().tankIndex = newValue;
+				encounter.targetsChangeEmitter.emit(eventID);
 			},
 		});
 
-		EncounterPicker.rebuildTargetInputs(section1, modTarget, targetInputPickers, false);
+		this.targetInputPickers = makeTargetInputsPicker(section1, encounter, this.targetIndex);
 
-		ALL_TARGET_STATS.forEach(statData => {
+		this.statPickers = ALL_TARGET_STATS.map(statData => {
 			const stat = statData.stat;
-			new NumberPicker(section2, modTarget, {
+			return new NumberPicker(section2, null, {
 				inline: true,
 				extraCssClasses: statData.extraCssClasses,
 				label: statNames[stat],
 				labelTooltip: statData.tooltip,
-				changedEvent: (target: Target) => target.statsChangeEmitter,
-				getValue: (target: Target) => target.getStats().getStat(stat),
-				setValue: (eventID: EventID, target: Target, newValue: number) => {
-					target.setStats(eventID, target.getStats().withStat(stat, newValue));
+				changedEvent: () => encounter.targetsChangeEmitter,
+				getValue: () => this.getTarget().stats[stat],
+				setValue: (eventID: EventID, _: null, newValue: number) => {
+					this.getTarget().stats[stat] = newValue;
+					encounter.targetsChangeEmitter.emit(eventID);
 				},
 			});
 		});
 
-		new NumberPicker(section3, modTarget, {
+		this.swingSpeedPicker = new NumberPicker(section3, null, {
 			label: 'Swing Speed',
 			labelTooltip: 'Time in seconds between auto attacks. Set to 0 to disable auto attacks.',
 			float: true,
-			changedEvent: (target: Target) => target.propChangeEmitter,
-			getValue: (target: Target) => target.getSwingSpeed(),
-			setValue: (eventID: EventID, target: Target, newValue: number) => {
-				target.setSwingSpeed(eventID, newValue);
+			changedEvent: () => encounter.targetsChangeEmitter,
+			getValue: () => this.getTarget().swingSpeed,
+			setValue: (eventID: EventID, _: null, newValue: number) => {
+				this.getTarget().swingSpeed = newValue;
+				encounter.targetsChangeEmitter.emit(eventID);
 			},
 		});
-		new NumberPicker(section3, modTarget, {
+		this.minBaseDamagePicker = new NumberPicker(section3, null, {
 			label: 'Min Base Damage',
 			labelTooltip: 'Base damage for auto attacks, i.e. lowest roll with 0 AP against a 0-armor Player.',
-			changedEvent: (target: Target) => target.propChangeEmitter,
-			getValue: (target: Target) => target.getMinBaseDamage(),
-			setValue: (eventID: EventID, target: Target, newValue: number) => {
-				target.setMinBaseDamage(eventID, newValue);
+			changedEvent: () => encounter.targetsChangeEmitter,
+			getValue: () => this.getTarget().minBaseDamage,
+			setValue: (eventID: EventID, _: null, newValue: number) => {
+				this.getTarget().minBaseDamage = newValue;
+				encounter.targetsChangeEmitter.emit(eventID);
 			},
 		});
-		new BooleanPicker(section3, modTarget, {
+		this.dualWieldPicker = new BooleanPicker(section3, null, {
 			label: 'Dual Wield',
 			labelTooltip: 'Uses 2 separate weapons to attack.',
 			inline: true,
-			changedEvent: (target: Target) => target.propChangeEmitter,
-			getValue: (target: Target) => target.getDualWield(),
-			setValue: (eventID: EventID, target: Target, newValue: boolean) => {
-				target.setDualWield(eventID, newValue);
+			changedEvent: () => encounter.targetsChangeEmitter,
+			getValue: () => this.getTarget().dualWield,
+			setValue: (eventID: EventID, _: null, newValue: boolean) => {
+				this.getTarget().dualWield = newValue;
+				encounter.targetsChangeEmitter.emit(eventID);
 			},
 		});
-		new BooleanPicker(section3, modTarget, {
+		this.dwMissPenaltyPicker = new BooleanPicker(section3, null, {
 			label: 'DW Miss Penalty',
 			labelTooltip: 'Enables the Dual Wield Miss Penalty (+19% chance to miss) if dual wielding. Bosses in Hyjal/BT/SWP usually have this disabled to stop tanks from avoidance stacking.',
 			inline: true,
-			changedEvent: (target: Target) => target.changeEmitter,
-			getValue: (target: Target) => target.getDualWieldPenalty(),
-			setValue: (eventID: EventID, target: Target, newValue: boolean) => {
-				target.setDualWieldPenalty(eventID, newValue);
+			changedEvent: () => encounter.targetsChangeEmitter,
+			getValue: () => this.getTarget().dualWieldPenalty,
+			setValue: (eventID: EventID, _: null, newValue: boolean) => {
+				this.getTarget().dualWieldPenalty = newValue;
+				encounter.targetsChangeEmitter.emit(eventID);
 			},
-			enableWhen: (target: Target) => target.getDualWield(),
+			enableWhen: () => this.getTarget().dualWield,
 		});
-		new BooleanPicker(section3, modTarget, {
+		this.parryHastePicker = new BooleanPicker(section3, null, {
 			label: 'Parry Haste',
 			labelTooltip: 'Whether this enemy will gain parry haste when parrying attacks.',
 			inline: true,
-			changedEvent: (target: Target) => target.propChangeEmitter,
-			getValue: (target: Target) => target.getParryHaste(),
-			setValue: (eventID: EventID, target: Target, newValue: boolean) => {
-				target.setParryHaste(eventID, newValue);
+			changedEvent: () => encounter.targetsChangeEmitter,
+			getValue: () => this.getTarget().parryHaste,
+			setValue: (eventID: EventID, _: null, newValue: boolean) => {
+				this.getTarget().parryHaste = newValue;
+				encounter.targetsChangeEmitter.emit(eventID);
 			},
 		});
-		new EnumPicker<Target>(section3, modTarget, {
+		this.spellSchoolPicker = new EnumPicker<null>(section3, null, {
 			label: 'Spell School',
 			labelTooltip: 'Type of damage caused by auto attacks. This is usually Physical, but some enemies have elemental attacks.',
 			values: [
@@ -492,44 +434,153 @@ class TargetPicker extends Input<Target, Target> {
 				{ name: 'Nature', value: SpellSchool.SpellSchoolNature },
 				{ name: 'Shadow', value: SpellSchool.SpellSchoolShadow },
 			],
-			changedEvent: (target: Target) => target.propChangeEmitter,
-			getValue: (target: Target) => target.getSpellSchool(),
-			setValue: (eventID: EventID, target: Target, newValue: number) => {
-				target.setSpellSchool(eventID, newValue);
+			changedEvent: () => encounter.targetsChangeEmitter,
+			getValue: () => this.getTarget().spellSchool,
+			setValue: (eventID: EventID, _: null, newValue: number) => {
+				this.getTarget().spellSchool = newValue;
+				encounter.targetsChangeEmitter.emit(eventID);
 			},
 		});
-		new BooleanPicker(section3, modTarget, {
+		this.suppressDodgePicker = new BooleanPicker(section3, null, {
 			label: 'Chill of the Throne',
 			labelTooltip: 'Reduces the chance for this enemy\'s attacks to be dodged by 20%. Active in Icecrown Citadel.',
 			inline: true,
-			changedEvent: (target: Target) => target.changeEmitter,
-			getValue: (target: Target) => target.getSuppressDodge(),
-			setValue: (eventID: EventID, target: Target, newValue: boolean) => {
-				target.setSuppressDodge(eventID, newValue);
+			changedEvent: () => encounter.targetsChangeEmitter,
+			getValue: () => this.getTarget().suppressDodge,
+			setValue: (eventID: EventID, _: null, newValue: boolean) => {
+				this.getTarget().suppressDodge = newValue;
+				encounter.targetsChangeEmitter.emit(eventID);
 			},
-			enableWhen: (target: Target) => target.getLevel() == Mechanics.BOSS_LEVEL,
+			enableWhen: () => this.getTarget().level == Mechanics.BOSS_LEVEL,
 		});
-		new BooleanPicker(section3, modTarget, {
+		this.tightDamageRangePicker = new BooleanPicker(section3, null, {
 			label: 'Tightened Damage Range',
 			labelTooltip: 'Reduces the damage range of this enemy\'s auto-attacks. Observed behavior for Patchwerk.',
 			inline: true,
-			changedEvent: (target: Target) => target.changeEmitter,
-			getValue: (target: Target) => target.getTightEnemyDamage(),
-			setValue: (eventID: EventID, target: Target, newValue: boolean) => {
-				target.setTightEnemyDamage(eventID, newValue);
+			changedEvent: () => encounter.targetsChangeEmitter,
+			getValue: () => this.getTarget().tightEnemyDamage,
+			setValue: (eventID: EventID, _: null, newValue: boolean) => {
+				this.getTarget().tightEnemyDamage = newValue;
+				encounter.targetsChangeEmitter.emit(eventID);
 			},
-			enableWhen: (target: Target) => target.getLevel() == Mechanics.BOSS_LEVEL,
+			enableWhen: () => this.getTarget().level == Mechanics.BOSS_LEVEL,
 		});
+
+		this.init();
 	}
 
 	getInputElem(): HTMLElement|null {
 		return null;
 	}
-	getInputValue(): Target {
-		return this.value;
+	getInputValue(): TargetProto {
+		return TargetProto.create({
+			id: this.aiPicker.getInputValue(),
+			level: this.levelPicker.getInputValue(),
+			mobType: this.mobTypePicker.getInputValue(),
+			tankIndex: this.tankIndexPicker.getInputValue(),
+			swingSpeed: this.swingSpeedPicker.getInputValue(),
+			minBaseDamage: this.minBaseDamagePicker.getInputValue(),
+			suppressDodge: this.suppressDodgePicker.getInputValue(),
+			dualWield: this.dualWieldPicker.getInputValue(),
+			dualWieldPenalty: this.dwMissPenaltyPicker.getInputValue(),
+			parryHaste: this.parryHastePicker.getInputValue(),
+			spellSchool: this.spellSchoolPicker.getInputValue(),
+			tightEnemyDamage: this.tightDamageRangePicker.getInputValue(),
+			stats: this.statPickers
+				.map(picker => picker.getInputValue())
+				.map((statValue, i) => new Stats().withStat(ALL_TARGET_STATS[i].stat, statValue))
+				.reduce((totalStats, curStats) => totalStats.add(curStats)).asArray(),
+			targetInputs: this.targetInputPickers.getInputValue(),
+		});
 	}
-	setInputValue(newValue: Target) {
+	setInputValue(newValue: TargetProto) {
+		if (!newValue) {
+			return;
+		}
+		this.aiPicker.setInputValue(newValue.id);
+		this.levelPicker.setInputValue(newValue.level);
+		this.mobTypePicker.setInputValue(newValue.mobType);
+		this.tankIndexPicker.setInputValue(newValue.tankIndex);
+		this.swingSpeedPicker.setInputValue(newValue.swingSpeed);
+		this.minBaseDamagePicker.setInputValue(newValue.minBaseDamage);
+		this.suppressDodgePicker.setInputValue(newValue.suppressDodge);
+		this.dualWieldPicker.setInputValue(newValue.dualWield);
+		this.dwMissPenaltyPicker.setInputValue(newValue.dualWieldPenalty);
+		this.parryHastePicker.setInputValue(newValue.parryHaste);
+		this.spellSchoolPicker.setInputValue(newValue.spellSchool);
+		this.tightDamageRangePicker.setInputValue(newValue.tightEnemyDamage);
+		ALL_TARGET_STATS.forEach((statData, i) => this.statPickers[i].setInputValue(newValue.stats[statData.stat]));
+		this.targetInputPickers.setInputValue(newValue.targetInputs);
+	}
+}
 
+class TargetInputPicker extends Input<Encounter, TargetInput> {
+	private readonly encounter: Encounter;
+	private readonly targetIndex: number;
+	private readonly targetInputIndex: number;
+
+	private boolPicker: Input<null, boolean>|null;
+	private numberPicker: Input<null, number>|null;
+
+	private getTargetInput(): TargetInput {
+		return this.encounter.targets[this.targetIndex].targetInputs[this.targetInputIndex] || TargetInput.create();
+	}
+
+	constructor(parent: HTMLElement, encounter: Encounter, targetIndex: number, targetInputIndex: number, config: ListItemPickerConfig<Encounter, TargetInput>) {
+		super(parent, 'target-input-picker-root', encounter, config)
+		this.encounter = encounter;
+		this.targetIndex = targetIndex;
+		this.targetInputIndex = targetInputIndex;
+
+		this.boolPicker = null;
+		this.numberPicker = null;
+		this.init();
+	}
+
+	getInputElem(): HTMLElement|null {
+		return this.rootElem;
+	}
+	getInputValue(): TargetInput {
+		return TargetInput.create({
+			boolValue: this.boolPicker ? this.boolPicker.getInputValue() : undefined,
+			numberValue: this.numberPicker ? this.numberPicker.getInputValue() : undefined,
+		});
+	}
+	setInputValue(newValue: TargetInput) {
+		if (!newValue) {
+			return;
+		}
+		if (newValue.inputType == InputType.Number && !this.numberPicker) {
+			if (this.boolPicker) {
+				this.boolPicker.rootElem.remove();
+				this.boolPicker = null;
+			}
+			this.numberPicker = new NumberPicker(this.rootElem, null, {
+				label: newValue.label,
+				labelTooltip: newValue.tooltip,
+				changedEvent: () => this.encounter.targetsChangeEmitter,
+				getValue: () => this.getTargetInput().numberValue,
+				setValue: (eventID: EventID, _: null, newValue: number) => {
+					this.getTargetInput().numberValue = newValue;
+					this.encounter.targetsChangeEmitter.emit(eventID);
+				},
+			});
+		} else if (newValue.inputType == InputType.Bool && !this.boolPicker) {
+			if (this.numberPicker) {
+				this.numberPicker.rootElem.remove();
+				this.numberPicker = null;
+			}
+			this.boolPicker = new BooleanPicker(this.rootElem, null, {
+				label: newValue.label,
+				labelTooltip: newValue.tooltip,
+				changedEvent: () => this.encounter.targetsChangeEmitter,
+				getValue: () => this.getTargetInput().boolValue,
+				setValue: (eventID: EventID, _: null, newValue: boolean) => {
+					this.getTargetInput().boolValue = newValue;
+					this.encounter.targetsChangeEmitter.emit(eventID);
+				},
+			});
+		}
 	}
 }
 
@@ -594,6 +645,34 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter, s
 			enableWhen: (obj) => { return !encounter.getUseHealth() },
 		});
 	}
+}
+
+function makeTargetInputsPicker(parent: HTMLElement, encounter: Encounter, targetIndex: number): ListPicker<Encounter, TargetInput> {
+	return new ListPicker<Encounter, TargetInput>(parent, encounter, {
+		itemLabel: 'Target Input',
+		changedEvent: (encounter: Encounter) => encounter.targetsChangeEmitter,
+		getValue: (encounter: Encounter) => encounter.targets[targetIndex].targetInputs,
+		setValue: (eventID: EventID, encounter: Encounter, newValue: Array<TargetInput>) => {
+			encounter.targets[targetIndex].targetInputs = newValue;
+			encounter.targetsChangeEmitter.emit(eventID);
+		},
+		newItem: () => TargetInput.create(),
+		copyItem: (oldItem: TargetInput) => TargetInput.clone(oldItem),
+		newItemPicker: (parent: HTMLElement, listPicker: ListPicker<Encounter, TargetInput>, index: number, config: ListItemPickerConfig<Encounter, TargetInput>) => new TargetInputPicker(parent, encounter, targetIndex, index, config),
+		hideUi: true,
+	});
+}
+
+function equalTargetsIgnoreInputs(target1: TargetProto|undefined, target2: TargetProto|undefined): boolean {
+	if ((target1 == null) != (target2 == null)) {
+		return false;
+	}
+	if (target1 == null) {
+		return true;
+	}
+	const modTarget2 = TargetProto.clone(target2!);
+	modTarget2.targetInputs = target1.targetInputs;
+	return TargetProto.equals(target1, modTarget2);
 }
 
 const ALL_TARGET_STATS: Array<{ stat: Stat, tooltip: string, extraCssClasses: Array<string> }> = [

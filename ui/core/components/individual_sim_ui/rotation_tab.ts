@@ -64,11 +64,10 @@ export class RotationTab extends SimTab {
 		labelTooltip: 'Enables the APL Rotation options.',
 		inline: true,
 		changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
-		getValue: (player: Player<any>) => player.getAplRotation().enabled,
+		getValue: (player: Player<any>) => player.aplRotation.enabled,
 		setValue: (eventID: EventID, player: Player<any>, newValue: boolean) => {
-			const rotation = player.getAplRotation();
-			rotation.enabled = newValue;
-			player.setAplRotation(eventID, rotation);
+			player.aplRotation.enabled = newValue;
+			player.rotationChangeEmitter.emit(eventID);
 		},
 	});
   }

@@ -3,71 +3,77 @@ import { EventID } from '../../typed_event.js';
 import { Player } from '../../player.js';
 import { IconEnumPicker, IconEnumValueConfig } from '../icon_enum_picker.js';
 import { BooleanPicker } from '../boolean_picker.js';
-import { ListPicker } from '../list_picker.js';
+import { ListItemPickerConfig, ListPicker } from '../list_picker.js';
 import { NumberPicker } from '../number_picker.js';
 import { StringPicker } from '../string_picker.js';
 import { APLListItem, APLAction } from '../../proto/apl.js';
 
 import { Component } from '../component.js';
+import { Input } from '../input.js';
 import { SimUI } from 'ui/core/sim_ui.js';
-import { timeStamp } from 'console';
 
 export class APLRotationPicker extends Component {
 	constructor(parent: HTMLElement, simUI: SimUI, modPlayer: Player<any>) {
 		super(parent, 'apl-rotation-picker-root');
 
-		new ListPicker<Player<any>, APLListItem, APLListItemPicker>(this.rootElem, simUI, modPlayer, {
+		new ListPicker<Player<any>, APLListItem>(this.rootElem, modPlayer, {
 			extraCssClasses: ['apl-list-item-picker'],
 			title: 'Priority List',
 			titleTooltip: 'At each decision point, the simulation will perform the first valid action from this list.',
 			itemLabel: 'Action',
 			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
-			getValue: (player: Player<any>) => player.getAplRotation().priorityList,
+			getValue: (player: Player<any>) => player.aplRotation.priorityList,
 			setValue: (eventID: EventID, player: Player<any>, newValue: Array<APLListItem>) => {
-                const rotation = player.getAplRotation();
-                rotation.priorityList = newValue;
-                player.setAplRotation(eventID, rotation);
+                player.aplRotation.priorityList = newValue;
+				player.rotationChangeEmitter.emit(eventID);
 			},
 			newItem: () => APLListItem.create(),
 			copyItem: (oldItem: APLListItem) => APLListItem.clone(oldItem),
-			newItemPicker: (parent: HTMLElement, newItem: APLListItem, listPicker: ListPicker<Player<any>, APLListItem, APLListItemPicker>) => new APLListItemPicker(parent, modPlayer, newItem, listPicker),
+			newItemPicker: (parent: HTMLElement, listPicker: ListPicker<Player<any>, APLListItem>, index: number, config: ListItemPickerConfig<Player<any>, APLListItem>) => new APLListItemPicker(parent, modPlayer, listPicker, index, config),
 			//inlineMenuBar: true,
 		});
 	}
 }
 
-class APLListItemPicker extends Component {
+class APLListItemPicker extends Input<Player<any>, APLListItem> {
 	private readonly player: Player<any>;
-	private readonly listPicker: ListPicker<Player<any>, APLListItem, APLListItemPicker>;
-	private readonly modItem: APLListItem;
+	private readonly listPicker: ListPicker<Player<any>, APLListItem>;
+	private readonly itemIndex: number;
 
-	constructor(parent: HTMLElement, player: Player<any>, modItem: APLListItem, listPicker: ListPicker<Player<any>, APLListItem, APLListItemPicker>) {
-		super(parent, 'apl-list-item-picker-root');
+	private readonly hidePicker: Input<null, boolean>;
+	private readonly notesPicker: Input<null, string>;
+
+    private getItem(): APLListItem {
+        return this.player.aplRotation.priorityList[this.itemIndex] || APLListItem.create();
+    }
+
+	constructor(parent: HTMLElement, player: Player<any>, listPicker: ListPicker<Player<any>, APLListItem>, itemIndex: number, config: ListItemPickerConfig<Player<any>, APLListItem>) {
+		super(parent, 'apl-list-item-picker-root', player, config);
 		this.player = player;
 		this.listPicker = listPicker;
-		this.modItem = modItem;
+		this.itemIndex = itemIndex;
 
-        new BooleanPicker(this.rootElem, modItem, {
+        this.hidePicker = new BooleanPicker(this.rootElem, null, {
             label: 'Hide',
             labelTooltip: 'Ignores this APL action.',
             inline: true,
-            changedEvent: (item: APLListItem) => player.rotationChangeEmitter,
-            getValue: (item: APLListItem) => item.hide,
-            setValue: (eventID: EventID, item: APLListItem, newValue: boolean) => {
-                item.hide = newValue;
-                this.setValue(eventID, item);
+            changedEvent: () => this.player.rotationChangeEmitter,
+            getValue: () => this.getItem().hide,
+            setValue: (eventID: EventID, _: null, newValue: boolean) => {
+                this.getItem().hide = newValue;
+				this.player.rotationChangeEmitter.emit(eventID);
             },
         });
 
-        new StringPicker(this.rootElem, modItem, {
+        this.notesPicker = new StringPicker(this.rootElem, null, {
             label: 'Notes',
             labelTooltip: 'Description for this action. The sim will ignore this value, it\'s just to allow self-documentation.',
             inline: true,
-            changedEvent: (item: APLListItem) => player.rotationChangeEmitter,
-            getValue: (item: APLListItem) => item.notes,
-            setValue: (eventID: EventID, item: APLListItem, newValue: string) => {
-                item.notes = newValue;
-                this.setValue(eventID, item);
+            changedEvent: () => this.player.rotationChangeEmitter,
+            getValue: () => this.getItem().notes,
+            setValue: (eventID: EventID, _: null, newValue: string) => {
+                this.getItem().notes = newValue;
+				this.player.rotationChangeEmitter.emit(eventID);
             },
         });
 
@@ -91,18 +97,22 @@ class APLListItemPicker extends Component {
 		//});
 	}
 
-    private getListIndex(): number {
-        return this.listPicker.getPickerIndex(this);
+	getInputElem(): HTMLElement | null {
+		return this.rootElem;
+	}
+
+    getInputValue(): APLListItem {
+        return APLListItem.create({
+			hide: this.hidePicker.getInputValue(),
+			notes: this.notesPicker.getInputValue(),
+		})
     }
 
-    private getValue(): APLListItem|null {
-        return this.player.getAplRotation().priorityList[this.getListIndex()] || null;
-    }
-
-	private setValue(eventID: EventID, listItem: APLListItem) {
-		const index = this.getListIndex();
-		const rotation = this.player.getAplRotation();
-		rotation.priorityList[index] = APLListItem.clone(listItem);
-		this.player.setAplRotation(eventID, rotation);
+	setInputValue(newValue: APLListItem) {
+		if (!newValue) {
+			return;
+		}
+		this.hidePicker.setInputValue(newValue.hide);
+		this.notesPicker.setInputValue(newValue.notes);
 	}
 }

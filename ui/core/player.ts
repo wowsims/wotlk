@@ -105,7 +105,7 @@ export class Player<SpecType extends Spec> {
 	private profession1: Profession = 0;
 	private profession2: Profession = 0;
 	private rotation: SpecRotation<SpecType>;
-	private aplRotation: APLRotation = APLRotation.create();
+	aplRotation: APLRotation = APLRotation.create();
 	private talentsString: string = '';
 	private glyphs: Glyphs = Glyphs.create();
 	private specOptions: SpecOptions<SpecType>;
@@ -528,18 +528,6 @@ export class Player<SpecType extends Spec> {
 			return;
 
 		this.rotation = this.specTypeFunctions.rotationCopy(newRotation);
-		this.rotationChangeEmitter.emit(eventID);
-	}
-
-	getAplRotation(): APLRotation {
-		return APLRotation.clone(this.aplRotation);
-	}
-
-	setAplRotation(eventID: EventID, newRotation: APLRotation) {
-		if (APLRotation.equals(newRotation, this.aplRotation))
-			return;
-
-		this.aplRotation = APLRotation.clone(newRotation);
 		this.rotationChangeEmitter.emit(eventID);
 	}
 
@@ -1004,7 +992,7 @@ export class Player<SpecType extends Spec> {
 				cooldowns: this.getCooldowns(),
 				talentsString: this.getTalentsString(),
 				glyphs: this.getGlyphs(),
-				rotation: this.getAplRotation(),
+				rotation: this.aplRotation,
 				profession1: this.getProfession1(),
 				profession2: this.getProfession2(),
 				inFrontOfTarget: this.getInFrontOfTarget(),
@@ -1034,8 +1022,10 @@ export class Player<SpecType extends Spec> {
 			this.setDistanceFromTarget(eventID, proto.distanceFromTarget);
 			this.setHealingModel(eventID, proto.healingModel || HealingModel.create());
 			this.setRotation(eventID, this.specTypeFunctions.rotationFromPlayer(proto));
-			this.setAplRotation(eventID, proto.rotation || APLRotation.create())
 			this.setSpecOptions(eventID, this.specTypeFunctions.optionsFromPlayer(proto));
+
+			this.aplRotation = proto.rotation || APLRotation.create();
+			this.rotationChangeEmitter.emit(eventID);
 		});
 	}
 
