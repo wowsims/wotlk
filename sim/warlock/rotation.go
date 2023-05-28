@@ -218,16 +218,17 @@ func (warlock *Warlock) defineRotation() {
 				return true, mainTarget, ""
 			}
 
-			// check if reapplying corruption is a worthwhile
+			// check if reapplying corruption is worthwhile
 			relDmgInc := warlock.calcRelativeCorruptionInc(mainTarget)
 			snapshotDmg := warlock.Corruption.ExpectedDamageFromCurrentSnapshot(sim, mainTarget)
 			snapshotDmg *= float64(sim.GetRemainingDuration()) / float64(warlock.Corruption.Dot(mainTarget).TickPeriod())
 			snapshotDmg *= (relDmgInc - 1)
+			snapshotDmg -= warlock.Corruption.ExpectedDamageFromCurrentSnapshot(sim, mainTarget)
 
 			reason := fmt.Sprintf("Relative Corruption Inc: [%.2f], expected dmg gain: [%.2f]",
 				relDmgInc, snapshotDmg)
 
-			if relDmgInc > 1.15 || snapshotDmg > 6000 {
+			if relDmgInc > 1.15 || snapshotDmg > 10000 {
 				return true, mainTarget, reason
 			}
 
