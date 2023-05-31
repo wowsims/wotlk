@@ -770,8 +770,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-Shadowmourne-49623"
  value: {
-  dps: 7679.06387
-  tps: 7780.2434
+  dps: 7744.40313
+  tps: 7845.53805
   dtps: 9.92959
  }
 }

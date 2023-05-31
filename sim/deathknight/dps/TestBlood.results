@@ -631,8 +631,8 @@ dps_results: {
 dps_results: {
  key: "TestBlood-AllItems-Shadowmourne-49623"
  value: {
-  dps: 9447.14811
-  tps: 4872.96396
+  dps: 9469.83483
+  tps: 4882.6892
  }
 }
 dps_results: {
