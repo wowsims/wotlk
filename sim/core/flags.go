@@ -56,8 +56,8 @@ const (
 	ProcMaskRangedSpecial
 	ProcMaskSpellDamage
 	ProcMaskSpellHealing
-	ProcMaskCanProcFromProc // Special case where a Proc Can trigger a Proc
-	ProcMaskSuppressedMeleeProc
+	// Special case where a Proc Can trigger a Proc
+	ProcMaskCanProcFromProc
 )
 
 const (
@@ -84,7 +84,7 @@ const (
 
 	ProcMaskSpecial = ProcMaskMeleeOrRangedSpecial | ProcMaskSpellDamage
 
-	ProcMaskMeleeOrSuppressedMeleeProcs = ProcMaskMelee | ProcMaskSuppressedMeleeProc
+	ProcMaskMeleeOrFromProcs = ProcMaskMelee | ProcMaskCanProcFromProc
 )
 
 func GetMeleeProcMaskForHands(mh bool, oh bool) ProcMask {

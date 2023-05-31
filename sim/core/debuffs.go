@@ -228,11 +228,10 @@ func JudgementOfWisdomAura(target *Unit) *Aura {
 			}
 
 			// Melee claim that wisdom can proc on misses.
-			if !spell.ProcMask.Matches(ProcMaskMeleeOrRanged) && !result.Landed() {
-				return
-			}
-
-			if spell.ProcMask.Matches(ProcMaskMeleeOrRanged) {
+			if !spell.ProcMask.Matches(ProcMaskMeleeOrRanged) {
+				if !result.Landed() {
+					return
+				}
 				if !unit.AutoAttacks.PPMProc(sim, 15, spell.ProcMask, "jow") {
 					return
 				}

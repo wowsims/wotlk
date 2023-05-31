@@ -158,7 +158,7 @@ func (dk *Deathknight) applyBloodCakedBlade() {
 }
 
 func (dk *Deathknight) bloodCakedBladeHit(isMh bool) *core.Spell {
-	procMask := core.ProcMaskSuppressedMeleeProc
+	procMask := core.ProcMaskCanProcFromProc
 
 	return dk.Unit.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 50463}.WithTag(core.TernaryInt32(isMh, 1, 2)),

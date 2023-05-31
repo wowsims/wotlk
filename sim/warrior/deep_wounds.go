@@ -16,8 +16,8 @@ func (warrior *Warrior) applyDeepWounds() {
 	warrior.DeepWounds = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 12867},
 		SpellSchool: core.SpellSchoolPhysical,
-		ProcMask:    core.ProcMaskEmpty,
-		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers,
+		ProcMask:    core.ProcMaskCanProcFromProc,
+		Flags:       core.SpellFlagNoOnCastComplete,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,

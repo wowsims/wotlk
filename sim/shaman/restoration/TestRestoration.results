@@ -207,8 +207,8 @@ dps_results: {
 dps_results: {
  key: "TestRestoration-AllItems-DarkmoonCard:Greatness-44255"
  value: {
-  tps: 60.74297
-  hps: 3964.79444
+  tps: 60.77917
+  hps: 3958.55574
  }
 }
 dps_results: {

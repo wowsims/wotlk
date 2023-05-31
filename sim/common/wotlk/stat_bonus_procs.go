@@ -468,7 +468,7 @@ func init() {
 		Bonus:      stats.Stats{stats.AttackPower: 1100, stats.RangedAttackPower: 1100},
 		Duration:   time.Second * 15,
 		Callback:   core.CallbackOnSpellHitDealt,
-		ProcMask:   core.ProcMaskDirect,
+		ProcMask:   core.ProcMaskDirect | core.ProcMaskCanProcFromProc,
 		Harmful:    true,
 		ProcChance: 0.35,
 		ICD:        time.Second * 45,
@@ -479,7 +479,7 @@ func init() {
 		Bonus:      stats.Stats{stats.AttackPower: 1250, stats.RangedAttackPower: 1250},
 		Duration:   time.Second * 15,
 		Callback:   core.CallbackOnSpellHitDealt,
-		ProcMask:   core.ProcMaskDirect,
+		ProcMask:   core.ProcMaskDirect | core.ProcMaskCanProcFromProc,
 		Harmful:    true,
 		ProcChance: 0.35,
 		ICD:        time.Second * 45,
@@ -607,6 +607,7 @@ func init() {
 		Bonus:      stats.Stats{stats.AttackPower: 1304, stats.RangedAttackPower: 1304},
 		Duration:   time.Second * 15,
 		Callback:   core.CallbackOnSpellHitDealt,
+		ProcMask:   core.ProcMaskDirect | core.ProcMaskCanProcFromProc,
 		Harmful:    true, // doesn't matter what, just that 'when you deal damage'
 		ProcChance: 0.35,
 		ICD:        time.Second * 45,
@@ -617,6 +618,7 @@ func init() {
 		Bonus:      stats.Stats{stats.AttackPower: 1472, stats.RangedAttackPower: 1472},
 		Duration:   time.Second * 15,
 		Callback:   core.CallbackOnSpellHitDealt,
+		ProcMask:   core.ProcMaskDirect | core.ProcMaskCanProcFromProc,
 		Harmful:    true, // doesn't matter what, just that 'when you deal damage'
 		ProcChance: 0.35,
 		ICD:        time.Second * 45,
