@@ -322,8 +322,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-ForgeEmber-37660"
  value: {
-  dps: 7408.22431
-  tps: 7220.10054
+  dps: 7333.36511
+  tps: 7153.50781
  }
 }
 dps_results: {
@@ -469,8 +469,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-NevermeltingIceCrystal-50259"
  value: {
-  dps: 7428.54149
-  tps: 7242.57137
+  dps: 7514.59588
+  tps: 7329.06992
  }
 }
 dps_results: {
@@ -630,8 +630,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-SouloftheDead-40382"
  value: {
-  dps: 7252.1891
-  tps: 7155.84698
+  dps: 7223.02522
+  tps: 7090.6363
  }
 }
 dps_results: {

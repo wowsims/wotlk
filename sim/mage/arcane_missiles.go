@@ -80,9 +80,10 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 					//  we can't set one without impacting the other.
 					// For now as a hack, set proc mask to prevent JoW, cast the tick dmg, and then unset it.
 					// This also handles trinkets that can proc from proc (or not)
-					dot.Spell.ProcMask |= core.ProcMaskProc
+					oldMask := dot.Spell.ProcMask
+					dot.Spell.ProcMask = core.ProcMaskProc
 					dot.Spell.DealDamage(sim, result)
-					dot.Spell.ProcMask ^= core.ProcMaskProc
+					dot.Spell.ProcMask = oldMask
 				})
 			},
 		},
