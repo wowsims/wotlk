@@ -231,8 +231,8 @@ dps_results: {
 dps_results: {
  key: "TestAPL-AllItems-Death'sChoice-47464"
  value: {
-  dps: 6762.97692
-  tps: 5678.40741
+  dps: 6758.93747
+  tps: 5675.82781
  }
 }
 dps_results: {

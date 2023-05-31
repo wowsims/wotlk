@@ -201,8 +201,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-Death'sChoice-47464"
  value: {
-  dps: 2780.482
-  tps: 5885.66309
+  dps: 2772.46946
+  tps: 5870.44004
   dtps: 2.13788
  }
 }

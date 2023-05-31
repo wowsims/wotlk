@@ -217,8 +217,8 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-Death'sChoice-47464"
  value: {
-  dps: 7441.35656
-  tps: 5487.45392
+  dps: 7447.38833
+  tps: 5491.84485
  }
 }
 dps_results: {

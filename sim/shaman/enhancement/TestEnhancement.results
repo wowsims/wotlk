@@ -224,8 +224,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-Death'sChoice-47464"
  value: {
-  dps: 7381.52933
-  tps: 4177.79462
+  dps: 7380.61571
+  tps: 4177.32831
  }
 }
 dps_results: {
@@ -266,15 +266,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 7421.588
-  tps: 4224.57417
+  dps: 7479.12326
+  tps: 4258.40793
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 7361.13749
-  tps: 4188.80381
+  dps: 7437.09379
+  tps: 4238.60031
  }
 }
 dps_results: {

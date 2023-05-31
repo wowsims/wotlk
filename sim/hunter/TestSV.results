@@ -231,8 +231,8 @@ dps_results: {
 dps_results: {
  key: "TestSV-AllItems-Death'sChoice-47464"
  value: {
-  dps: 7190.6271
-  tps: 6108.12392
+  dps: 7188.15268
+  tps: 6106.24288
  }
 }
 dps_results: {

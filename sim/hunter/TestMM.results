@@ -231,8 +231,8 @@ dps_results: {
 dps_results: {
  key: "TestMM-AllItems-Death'sChoice-47464"
  value: {
-  dps: 7047.81591
-  tps: 6095.29848
+  dps: 7045.56137
+  tps: 6093.07075
  }
 }
 dps_results: {

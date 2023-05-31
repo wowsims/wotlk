@@ -230,8 +230,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-Death'sChoice-47464"
  value: {
-  dps: 8315.67699
-  tps: 5326.6436
+  dps: 8314.96775
+  tps: 5326.51796
   hps: 265.28534
  }
 }
@@ -278,16 +278,16 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 7694.50992
-  tps: 4920.95855
+  dps: 7694.70329
+  tps: 4920.95411
   hps: 265.60229
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 7692.54319
-  tps: 4919.33708
+  dps: 7691.62248
+  tps: 4918.85777
   hps: 263.7006
  }
 }

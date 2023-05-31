@@ -629,7 +629,7 @@ func init() {
 		Bonus:      stats.Stats{stats.SpellPower: 763},
 		Duration:   time.Second * 15,
 		Callback:   core.CallbackOnSpellHitDealt,
-		ProcMask:   core.ProcMaskSpellDamage,
+		ProcMask:   core.ProcMaskSpellDamage | core.ProcMaskCanProcFromProc,
 		ProcChance: 0.10,
 		ICD:        time.Second * 50,
 	})
@@ -639,7 +639,7 @@ func init() {
 		Bonus:      stats.Stats{stats.SpellPower: 861},
 		Duration:   time.Second * 15,
 		Callback:   core.CallbackOnSpellHitDealt,
-		ProcMask:   core.ProcMaskSpellDamage,
+		ProcMask:   core.ProcMaskSpellDamage | core.ProcMaskCanProcFromProc,
 		ProcChance: 0.10,
 		ICD:        time.Second * 50,
 	})

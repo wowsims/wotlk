@@ -241,8 +241,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-Death'sChoice-47464"
  value: {
-  dps: 6922.00616
-  tps: 7016.81168
+  dps: 6920.01909
+  tps: 7014.82461
   dtps: 9.92959
  }
 }
@@ -289,16 +289,16 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 6461.50094
-  tps: 6558.28295
+  dps: 6511.51993
+  tps: 6608.30194
   dtps: 9.92959
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 6450.54198
-  tps: 6547.32635
+  dps: 6488.40991
+  tps: 6585.19428
   dtps: 9.92959
  }
 }
