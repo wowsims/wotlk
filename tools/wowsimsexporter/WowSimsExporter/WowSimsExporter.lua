@@ -1,7 +1,7 @@
 -- Author      : generalwrex (Natop on Myzrael TBC)
 -- Create Date : 1/28/2022 9:30:08 AM
 --
--- Update Date : 2023-04-04 Riotdog-GehennasEU: v2.5 - exporting bag items for bulk sim, fixes use of legacy APIs in libs and corrects link order (LibStub must come first).
+-- Update Date : 2023-04-16 Riotdog-GehennasEU: v2.5 - exporting bag items for bulk sim, fixes use of legacy APIs in libs and corrects link order (LibStub must come first).
 --
 
 WowSimsExporter = LibStub("AceAddon-3.0"):NewAddon("WowSimsExporter", "AceConsole-3.0", "AceEvent-3.0")
@@ -71,32 +71,18 @@ end
 function WowSimsExporter:CreateGlyphEntry()
 	local minor = {}
 	local major = {}
-
-    for t = 1, 6 do
-
-		local enabled, glyphType, glyphTooltipIndex, glyphSpellID, icon = GetGlyphSocketInfo(t);
-		local link = GetGlyphLink(t);
-
-		if(enabled) then	
-			
-			local name, _ = string.match(link,"Glyph of .+]")
-			if(name) then
-				local formattedName = name:gsub('%]', '')
-
-				if(glyphType == 1 ) then-- major
-					table.insert(major, formattedName)
-				else if(glyphType == 2 ) then -- minor
-					table.insert(minor, formattedName)
-				end
+	for t = 1, 6 do
+		local enabled, glyphType, glyphSpellID = GetGlyphSocketInfo(t)
+		if enabled and glyphSpellID then
+			local localizedName = GetSpellInfo(glyphSpellID)
+			if localizedName then
+				local t = glyphType == 1 and major or minor
+				table.insert(t, {["name"] = localizedName, ["spellID"] = glyphSpellID})
 			end
-
 		end
 		self.Character.glyphs.major = major
 		self.Character.glyphs.minor = minor
-	
-    end
-
-end
+	end
 end
 
 function WowSimsExporter:CreateProfessionEntry()
@@ -175,12 +161,25 @@ function WowSimsExporter:createItemFromItemLink(itemLink)
 	return item
 end
 
-function considerItemReplacement(itemLink)
 	-- TODO(Riotdog-GehennasEU): Is this sufficient? This seems to be what simc uses:
 	-- https://github.com/simulationcraft/simc-addon/blob/master/core.lua
 	-- Except we don't need the artifact check for wotlk classic.
-	-- We should probably filter some more, because this also returns e.g. the Mining Pick and items of the wrong armor type etc.. :D
-	return IsEquippableItem(itemLink)
+function considerItemReplacement(itemLink)
+	if not IsEquippableItem(itemLink) then
+		return false
+	end
+
+	local _, _, itemRarity, itemLevel = GetItemInfo(itemLink)
+
+	-- Ignore TBC items like Rocket Boots Xtreme (Lite). The ilvl limit is intentionally set low
+	-- to limit accidental filtering.
+	if itemLevel <= 112 then
+		return false
+	end
+
+	-- https://wowwiki-archive.fandom.com/wiki/API_TYPE_Quality
+	-- 3 = Rare, 4 = Epic, 5 = Legendary
+	return itemRarity == 3 or itemRarity == 4 or itemRarity == 5
 end
 
 function WowSimsExporter:GetGearEnchantGems(withBags)
@@ -217,6 +216,7 @@ function WowSimsExporter:GetGearEnchantGems(withBags)
 			end
 		end
 	end
+	DEFAULT_CHAT_FRAME:AddMessage(("[|cffFFFF00WowSimsExporter|r] Exported %d items from bags."):format(#bagGear))
   return {["items"] = bagGear}
 end
 
@@ -305,7 +305,6 @@ function WowSimsExporter:CreateCopyDialog(text)
 end
 
 function WowSimsExporter:CreateWindow(generate)
-
 	local char = self:CreateCharacterStructure("player")
 	
     local frame = AceGUI:Create("Frame")
@@ -351,7 +350,7 @@ function WowSimsExporter:CreateWindow(generate)
 	end)
 
 	local extraButton = AceGUI:Create("Button")
-	extraButton:SetText("Generate Bulk Bag Data")
+	extraButton:SetText("Batch: Export Bag Items")
 	extraButton:SetWidth(300)
 	extraButton:SetCallback("OnClick", function()		
 		l_Generate(true)

@@ -43,6 +43,7 @@ type Warlock struct {
 	Seed                 *core.Spell
 	SeedDamageTracker    []float64
 
+	ShadowEmbraceAuras     core.AuraArray
 	NightfallProcAura      *core.Aura
 	EradicationAura        *core.Aura
 	DemonicEmpowerment     *core.Spell
@@ -64,16 +65,15 @@ type Warlock struct {
 	Infernal *InfernalPet
 	Inferno  *core.Spell
 
-	CritDebuffCategory *core.ExclusiveCategory
-
 	// The sum total of demonic pact spell power * seconds.
 	DPSPAggregate float64
 	PreviousTime  time.Duration
 
 	petStmBonusSP float64
 	acl           []ActionCondition
-	skipList      map[int]struct{}
-	swapped       bool
+
+	// contains for each target the time the last shadowbolt was casted onto them
+	corrRefreshList []time.Duration
 }
 
 type ACLaction int
@@ -86,7 +86,7 @@ const (
 
 type ActionCondition struct {
 	Spell     *core.Spell
-	Condition func(*core.Simulation) (ACLaction, *core.Unit)
+	Condition func(*core.Simulation) (ACLaction, *core.Unit, string)
 }
 
 func (warlock *Warlock) GetCharacter() *core.Character {
@@ -182,7 +182,7 @@ func (warlock *Warlock) Reset(sim *core.Simulation) {
 
 	warlock.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand,
 		proto.ItemSlot_ItemSlotOffHand, proto.ItemSlot_ItemSlotRanged}, false)
-	warlock.swapped = true
+	warlock.corrRefreshList = make([]time.Duration, len(warlock.Env.Encounter.TargetUnits))
 	warlock.setupCooldowns(sim)
 }
 

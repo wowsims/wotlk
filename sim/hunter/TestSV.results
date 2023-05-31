@@ -856,21 +856,21 @@ dps_results: {
  key: "TestSV-Settings-Dwarf-P1-AOE-FullBuffs-LongMultiTarget"
  value: {
   dps: 19273.55263
-  tps: 19471.00027
+  tps: 19460.71386
  }
 }
 dps_results: {
  key: "TestSV-Settings-Dwarf-P1-AOE-FullBuffs-LongSingleTarget"
  value: {
   dps: 7167.68897
-  tps: 6165.06453
+  tps: 6164.59075
  }
 }
 dps_results: {
  key: "TestSV-Settings-Dwarf-P1-AOE-FullBuffs-ShortSingleTarget"
  value: {
   dps: 8067.24159
-  tps: 6926.79812
+  tps: 6926.37654
  }
 }
 dps_results: {
@@ -940,21 +940,21 @@ dps_results: {
  key: "TestSV-Settings-Orc-P1-AOE-FullBuffs-LongMultiTarget"
  value: {
   dps: 19388.00635
-  tps: 19524.09708
+  tps: 19513.81274
  }
 }
 dps_results: {
  key: "TestSV-Settings-Orc-P1-AOE-FullBuffs-LongSingleTarget"
  value: {
   dps: 7223.05009
-  tps: 6163.91743
+  tps: 6163.44797
  }
 }
 dps_results: {
  key: "TestSV-Settings-Orc-P1-AOE-FullBuffs-ShortSingleTarget"
  value: {
   dps: 8147.25268
-  tps: 6939.50988
+  tps: 6939.10507
  }
 }
 dps_results: {

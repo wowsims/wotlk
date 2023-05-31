@@ -269,6 +269,8 @@ message Deathknight {
 		bool use_dancing_rune_weapon = 30;
 
 		BloodSpell blood_spender = 31;
+
+		double virulence_refresh = 32;
 	}
 	Rotation rotation = 1;
 	
@@ -282,6 +284,10 @@ message Deathknight {
 		RaidTarget unholy_frenzy_target = 5;
 
 		bool drw_pesti_apply = 6;
+
+		bool new_drw = 7;
+
+		double disease_downtime = 8;
 	}
 	Options options = 3;
 }

@@ -44,7 +44,8 @@ type Aura struct {
 	// For easily grouping auras.
 	Tag string
 
-	ActionID ActionID // If set, metrics will be tracked for this aura.
+	ActionID        ActionID // If set, metrics will be tracked for this aura.
+	ActionIDForProc ActionID // If set, indicates that this aura is a trigger aura for the specified proc.
 
 	Duration time.Duration // Duration of aura, upon being applied.
 

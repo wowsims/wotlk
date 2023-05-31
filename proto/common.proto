@@ -76,6 +76,7 @@ enum Profession {
 	Tailoring = 11;
 }
 
+// Keep in sync with sim/core/stats/stats.go.
 enum Stat {
 	StatStrength = 0;
 	StatAgility = 1;
@@ -112,6 +113,11 @@ enum Stat {
 	StatNatureResistance = 32;
 	StatShadowResistance = 33;
 	StatBonusArmor = 34;
+	StatRunicPower = 35; // Placeholder: not used yet.
+	StatBloodRune = 36; // Placeholder: not used yet.
+	StatFrostRune = 37; // Placeholder: not used yet.
+	StatUnholyRune = 38; // Placeholder: not used yet.
+	StatDeathRune = 39; // Placeholder: not used yet.
 	// DO NOT add new stats here without discussing it first; new stats come with
 	// a performance penalty.
 }
@@ -810,6 +816,8 @@ message Cooldowns {
 
 	// % HP threshold, below which defensive cooldowns can be used.
 	double hp_percent_for_defensives = 2;
+	int32 desync_proc_trinket1_seconds = 3;
+	int32 desync_proc_trinket2_seconds = 4;
 }
 
 message HealingModel {
@@ -817,6 +825,8 @@ message HealingModel {
 	double hps = 1;
 	// How often healing is applied.
 	double cadence_seconds = 2;
+	// Variation in the cadence.
+	double cadence_variation = 5;
 	// % Inspiration buff uptime
 	double inspiration_uptime = 3;
 	// TMI burst window bin size

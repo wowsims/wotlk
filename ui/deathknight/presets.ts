@@ -74,7 +74,22 @@ export const UnholyDualWieldTalents = {
 		talentsString: '-320043500002-2300303050032152000150013133051',
 		glyphs: Glyphs.create({
 			major1: DeathknightMajorGlyph.GlyphOfTheGhoul,
-			major2: DeathknightMajorGlyph.GlyphOfDarkDeath,
+			major2: DeathknightMajorGlyph.GlyphOfIcyTouch,
+			major3: DeathknightMajorGlyph.GlyphOfDeathAndDecay,
+			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
+			minor2: DeathknightMinorGlyph.GlyphOfPestilence,
+			minor3: DeathknightMinorGlyph.GlyphOfRaiseDead,
+		}),
+	}),
+};
+
+export const UnholyDualWieldSSTalents = {
+	name: 'Unholy DW SS',
+	data: SavedTalents.create({
+		talentsString: '-320033500002-2300303050032152000150013133151',
+		glyphs: Glyphs.create({
+			major1: DeathknightMajorGlyph.GlyphOfTheGhoul,
+			major2: DeathknightMajorGlyph.GlyphOfIcyTouch,
 			major3: DeathknightMajorGlyph.GlyphOfDeathAndDecay,
 			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
 			minor2: DeathknightMinorGlyph.GlyphOfPestilence,
@@ -101,7 +116,7 @@ export const Unholy2HTalents = {
 export const BloodTalents = {
 	name: 'Blood DPS',
 	data: SavedTalents.create({
-		talentsString: '2305120530003303231023001351--230220305003',
+		talentsString: '2305120530003303231023001351--2302003050032',
 		glyphs: Glyphs.create({
 			major1: DeathknightMajorGlyph.GlyphOfDancingRuneWeapon,
 			major2: DeathknightMajorGlyph.GlyphOfDeathStrike,
@@ -142,6 +157,7 @@ export const DefaultUnholyOptions = DeathKnightOptions.create({
 	unholyFrenzyTarget: RaidTarget.create({
 		targetIndex: NO_TARGET, // In an individual sim the 0-indexed player is ourself.
 	}),
+	diseaseDowntime: 2,
 });
 
 export const DefaultFrostRotation = DeathKnightRotation.create({
@@ -181,6 +197,7 @@ export const DefaultFrostOptions = DeathKnightOptions.create({
 	unholyFrenzyTarget: RaidTarget.create({
 		targetIndex: NO_TARGET, // In an individual sim the 0-indexed player is ourself.
 	}),
+	diseaseDowntime: 0,
 });
 
 export const DefaultBloodRotation = DeathKnightRotation.create({
@@ -194,7 +211,7 @@ export const DefaultBloodRotation = DeathKnightRotation.create({
 	useAms: false,
 	drwDiseases: Deathknight_Rotation_DrwDiseases.Pestilence,
 	bloodSpender: Deathknight_Rotation_BloodSpell.HS,
-	useDancingRuneWeapon: true
+	useDancingRuneWeapon: true,
 });
 
 export const DefaultBloodOptions = DeathKnightOptions.create({
@@ -205,6 +222,7 @@ export const DefaultBloodOptions = DeathKnightOptions.create({
 	unholyFrenzyTarget: RaidTarget.create({
 		targetIndex: NO_TARGET, // In an individual sim the 0-indexed player is ourself.
 	}),
+	diseaseDowntime: 0,
 });
 
 export const OtherDefaults = {
@@ -428,6 +446,122 @@ export const P2_BLOOD_BIS_PRESET = {
 		  {},
 		  {
 			"id": 45254
+		  }
+  ]}`),
+};
+
+export const P3_BLOOD_BIS_PRESET = {
+	name: 'P3 Blood',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
+	gear: EquipmentSpec.fromJsonString(`{   "items": [
+		{
+			"id": 48493,
+			"enchant": 3817,
+			"gems": [
+			  41285,
+			  40142
+			]
+		  },
+		  {
+			"id": 47458,
+			"gems": [
+			  40142
+			]
+		  },
+		  {
+			"id": 48495,
+			"enchant": 3808,
+			"gems": [
+			  40111
+			]
+		  },
+		  {
+			"id": 47546,
+			"enchant": 3831,
+			"gems": [
+			  42142
+			]
+		  },
+		  {
+			"id": 47449,
+			"enchant": 3832,
+			"gems": [
+			  49110,
+			  42142,
+			  40142
+			]
+		  },
+		  {
+			"id": 48008,
+			"enchant": 3845,
+			"gems": [
+			  40111,
+			  0
+			]
+		  },
+		  {
+			"id": 48492,
+			"enchant": 3604,
+			"gems": [
+			  40142,
+			  0
+			]
+		  },
+		  {
+			"id": 47429,
+			"gems": [
+			  40142,
+			  40142,
+			  40111
+			]
+		  },
+		  {
+			"id": 48494,
+			"enchant": 3823,
+			"gems": [
+			  40142,
+			  40111
+			]
+		  },
+		  {
+			"id": 45599,
+			"enchant": 3606,
+			"gems": [
+			  40111,
+			  40111
+			]
+		  },
+		  {
+			"id": 47993,
+			"gems": [
+			  40111,
+			  45862
+			]
+		  },
+		  {
+			"id": 47413,
+			"gems": [
+			  40142
+			]
+		  },
+		  {
+			"id": 45931
+		  },
+		  {
+			"id": 47464
+		  },
+		  {
+			"id": 47446,
+			"enchant": 3368,
+			"gems": [
+			  42142,
+			  40141
+			]
+		  },
+		  {},
+		  {
+			"id": 47673
 		  }
   ]}`),
 };
@@ -934,6 +1068,126 @@ export const P2_UNHOLY_DW_BIS_PRESET = {
   ]}`),
 };
 
+export const P3_UNHOLY_DW_BIS_PRESET = {
+	name: 'P3 DW Unholy',
+	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2 && player.getTalents().nervesOfColdSteel > 0,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 48493,
+			"enchant": 3817,
+			"gems": [
+			  41398,
+			  40146
+			]
+		  },
+		  {
+			"id": 47458,
+			"gems": [
+			  40146
+			]
+		  },
+		  {
+			"id": 48495,
+			"enchant": 3808,
+			"gems": [
+			  40111
+			]
+		  },
+		  {
+			"id": 47548,
+			"enchant": 3831,
+			"gems": [
+			  40111
+			]
+		  },
+		  {
+			"id": 48491,
+			"enchant": 3832,
+			"gems": [
+			  42142,
+			  42142
+			]
+		  },
+		  {
+			"id": 45663,
+			"enchant": 3845,
+			"gems": [
+			  40111,
+			  0
+			]
+		  },
+		  {
+			"id": 48492,
+			"enchant": 3604,
+			"gems": [
+			  40146,
+			  0
+			]
+		  },
+		  {
+			"id": 47429,
+			"gems": [
+			  40111,
+			  45862,
+			  40111
+			]
+		  },
+		  {
+			"id": 47465,
+			"enchant": 3823,
+			"gems": [
+			  49110,
+			  40111,
+			  40146
+			]
+		  },
+		  {
+			"id": 45599,
+			"enchant": 3606,
+			"gems": [
+			  40111,
+			  40111
+			]
+		  },
+		  {
+			"id": 47413,
+			"gems": [
+			  40146
+			]
+		  },
+		  {
+			"id": 45534,
+			"gems": [
+			  42142
+			]
+		  },
+		  {
+			"id": 47464
+		  },
+		  {
+			"id": 45609
+		  },
+		  {
+			"id": 47528,
+			"enchant": 3368,
+			"gems": [
+			  40111
+			]
+		  },
+		  {
+			"id": 47528,
+			"enchant": 3368,
+			"gems": [
+			  40111
+			]
+		  },
+		  {
+			"id": 47673
+		  }
+  ]}`),
+};
+
 export const P1_FROST_PRE_BIS_PRESET = {
 	name: 'Pre-Raid Frost',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
@@ -1252,6 +1506,126 @@ export const P2_FROST_BIS_PRESET = {
 			"enchant": 3368,
 			"gems": [
 			  39996
+			]
+		  },
+		  {
+			"id": 40207
+		  }
+  ]}`),
+};
+
+export const P3_FROST_BIS_PRESET = {
+	name: 'P3 Frost',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
+	gear: EquipmentSpec.fromJsonString(`{   "items": [
+		{
+			"id": 48493,
+			"enchant": 3817,
+			"gems": [
+			  41398,
+			  40142
+			]
+		  },
+		  {
+			"id": 45459,
+			"gems": [
+			  40111
+			]
+		  },
+		  {
+			"id": 48495,
+			"enchant": 3808,
+			"gems": [
+			  40111
+			]
+		  },
+		  {
+			"id": 47548,
+			"enchant": 3831,
+			"gems": [
+			  40111
+			]
+		  },
+		  {
+			"id": 48491,
+			"enchant": 3832,
+			"gems": [
+			  42142,
+			  42142
+			]
+		  },
+		  {
+			"id": 45663,
+			"enchant": 3845,
+			"gems": [
+			  40111,
+			  0
+			]
+		  },
+		  {
+			"id": 47492,
+			"enchant": 3604,
+			"gems": [
+			  49110,
+			  40111,
+			  0
+			]
+		  },
+		  {
+			"id": 45241,
+			"gems": [
+			  40111,
+			  42142,
+			  40111
+			]
+		  },
+		  {
+			"id": 48494,
+			"enchant": 3823,
+			"gems": [
+			  40142,
+			  40111
+			]
+		  },
+		  {
+			"id": 47473,
+			"enchant": 3606,
+			"gems": [
+			  40142,
+			  40111
+			]
+		  },
+		  {
+			"id": 46966,
+			"gems": [
+			  40111
+			]
+		  },
+		  {
+			"id": 45534,
+			"gems": [
+			  40111
+			]
+		  },
+		  {
+			"id": 47464
+		  },
+		  {
+			"id": 45931
+		  },
+		  {
+			"id": 47528,
+			"enchant": 3370,
+			"gems": [
+			  40111
+			]
+		  },
+		  {
+			"id": 47528,
+			"enchant": 3368,
+			"gems": [
+			  40111
 			]
 		  },
 		  {

@@ -239,6 +239,7 @@ func init() {
 
 		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 			Name:       "Blade of Unquenched Thirst Trigger",
+			ActionID:   core.ActionID{ItemID: 31193},
 			Callback:   core.CallbackOnSpellHitDealt,
 			ProcMask:   procMask,
 			Outcome:    core.OutcomeLanded,

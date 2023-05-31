@@ -15,14 +15,8 @@ import { RaidTarget, Spec, Glyphs, Debuffs, IndividualBuffs, RaidBuffs, ItemSwap
 import { NO_TARGET } from '../core/proto_utils/utils.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
-import { Sim } from '../core/sim.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
-import { IndividualSimUI } from '../core/individual_sim_ui.js';
-import { Target } from '../core/target.js';
-import { SimUI, SimWarning } from '../core/sim_ui.js';
 
-import { IconPickerConfig } from '../core/components/icon_picker.js';
-import { IconEnumPicker, IconEnumPickerConfig, IconEnumValueConfig } from '../core/components/icon_enum_picker.js';
 import * as Presets from './presets.js';
 import * as InputHelpers from '../core/components/input_helpers.js';
 

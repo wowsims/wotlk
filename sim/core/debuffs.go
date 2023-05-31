@@ -223,7 +223,7 @@ func JudgementOfWisdomAura(target *Unit) *Aura {
 				return
 			}
 
-			if spell.ProcMask.Matches(ProcMaskEmpty) {
+			if spell.ProcMask.Matches(ProcMaskEmpty) || spell.ProcMask.Matches(ProcMaskCanProcFromProc) {
 				return // Phantom spells (Romulo's, Lightning Capacitor, etc) don't proc JoW.
 			}
 
@@ -237,8 +237,14 @@ func JudgementOfWisdomAura(target *Unit) *Aura {
 					return
 				}
 			} else {
-				// TODO: Figure out if spell proc rate is also different from TBC.
-				if sim.RandomFloat("jow") <= 0.5 {
+				ct := spell.CurCast.CastTime.Seconds()
+				if ct == 0 {
+					// Current theory is that insta-cast is treated as min GCD from retail.
+					// Perhaps this is a bug introduced in classic when converting JoW to wotlk.
+					ct = 0.75
+				}
+				procChance := ct * 0.25 // ct / 60.0 * 15.0PPM (algabra) = ct*0.25
+				if sim.RandomFloat("jow") > procChance {
 					return
 				}
 			}
@@ -845,9 +851,14 @@ func MarkOfBloodAura(target *Unit) *Aura {
 		OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
 			target := aura.Unit.CurrentTarget
 
-			// TODO: Does vampiric blood make it so this health gain is increased?
-			if target != nil {
-				target.GainHealth(sim, target.MaxHealth()*0.04, healthMetrics)
+			if target != nil && result.Landed() {
+				// Vampiric Blood bonus max health is ignored in MoB calculation (maybe other Max health effects as well?)
+				targetHealth := target.MaxHealth()
+				if target.HasActiveAura("Vampiric Blood") {
+					targetHealth /= 1.15
+				}
+				// Current testing shows 5% healing instead of 4% as stated in the tooltip
+				target.GainHealth(sim, targetHealth*0.05*target.PseudoStats.HealingTakenMultiplier, healthMetrics)
 				aura.RemoveStack(sim)
 
 				if aura.GetStacks() == 0 {

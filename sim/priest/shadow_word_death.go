@@ -19,6 +19,8 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 	}
 
 	hasGlyphOfShadow := priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow))
+	mentalAgility := []float64{0, .04, .07, .10}[priest.Talents.MentalAgility]
+	shadowFocus := 0.02 * float64(priest.Talents.ShadowFocus)
 
 	priest.ShadowWordDeath = priest.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48158},
@@ -27,7 +29,7 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.12,
-			Multiplier: 1 - []float64{0, .04, .07, .10}[priest.Talents.MentalAgility],
+			Multiplier: 1 - (shadowFocus + mentalAgility),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -39,10 +41,8 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 			},
 		},
 
-		BonusHitRating: float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
-		BonusCritRating: 0 +
-			float64(priest.Talents.MindMelt)*2*core.CritRatingPerCritChance +
-			core.TernaryFloat64(priest.HasSetBonus(ItemSetValorous, 4), 10, 0)*core.CritRatingPerCritChance, // might be 0.1?
+		BonusHitRating:  float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
+		BonusCritRating: 0 + core.TernaryFloat64(priest.HasSetBonus(ItemSetValorous, 4), 10, 0)*core.CritRatingPerCritChance, // might be 0.1?
 		DamageMultiplier: 1 +
 			0.02*float64(priest.Talents.Darkness) +
 			0.01*float64(priest.Talents.TwinDisciplines),

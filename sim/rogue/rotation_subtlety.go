@@ -1,9 +1,10 @@
 package rogue
 
 import (
-	"golang.org/x/exp/slices"
 	"log"
 	"time"
+
+	"golang.org/x/exp/slices"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -320,7 +321,7 @@ func (x *rotation_subtlety) setSubtletyBuilder(sim *core.Simulation, rogue *Rogu
 		return
 	}
 	// Backstab
-	if !rogue.Rotation.HemoWithDagger && !rogue.PseudoStats.InFrontOfTarget && rogue.HasDagger(core.MainHand) {
+	if rogue.Rotation.SubtletyBuilder == proto.Rogue_Rotation_BackstabSub && !rogue.PseudoStats.InFrontOfTarget && rogue.HasDagger(core.MainHand) {
 		x.builder = rogue.Backstab
 		return
 	}

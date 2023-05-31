@@ -35,7 +35,7 @@ import {
 } from '../core/proto_utils/utils';
 import { MAX_NUM_PARTIES } from '../core/raid';
 import { Player } from '../core/player';
-import { Target } from '../core/target';
+import { Encounter } from '../core/encounter';
 import { bucket, distinct, sortByProperty } from '../core/utils';
 
 import { playerPresets, PresetSpecSettings } from './presets';
@@ -492,7 +492,7 @@ export class RaidWCLImporter extends Importer {
 
 		// Build a manual target list if no preset encounter exists.
 		if (encounter.targets.length === 0) {
-			encounter.targets.push(Target.defaultProto());
+			encounter.targets.push(Encounter.defaultTargetProto());
 		}
 
 		return encounter;

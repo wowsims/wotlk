@@ -777,7 +777,7 @@ func UnholyFrenzyAura(character *Character, actionTag int32) *Aura {
 }
 
 func RegisterPercentDamageModifierEffect(aura *Aura, percentDamageModifier float64) *ExclusiveEffect {
-	return aura.NewExclusiveEffect("PercentDamageModifier", false, ExclusiveEffect{
+	return aura.NewExclusiveEffect("PercentDamageModifier", true, ExclusiveEffect{
 		Priority: percentDamageModifier,
 	})
 }

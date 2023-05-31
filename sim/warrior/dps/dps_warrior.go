@@ -35,6 +35,8 @@ type DpsWarrior struct {
 
 	// Prevent swapping stances until this time, to account for human reaction time.
 	canSwapStanceAt time.Duration
+	// Last time sunder was applied. Used for maintaining sunder even if sunder is enabled as debuff in individual sim
+	lastSunderAt time.Duration
 
 	maintainSunder  bool
 	thunderClapNext bool
@@ -47,10 +49,11 @@ func NewDpsWarrior(character core.Character, options *proto.Player) *DpsWarrior 
 
 	war := &DpsWarrior{
 		Warrior: warrior.NewWarrior(character, options.TalentsString, warrior.WarriorInputs{
-			ShoutType:       warOptions.Options.Shout,
-			RendCdThreshold: core.DurationFromSeconds(warOptions.Rotation.RendCdThreshold),
-			Munch:           warOptions.Options.Munch,
-			StanceSnapshot:  warOptions.Options.StanceSnapshot,
+			ShoutType:                   warOptions.Options.Shout,
+			RendCdThreshold:             core.DurationFromSeconds(warOptions.Rotation.RendCdThreshold),
+			BloodsurgeDurationThreshold: core.DurationFromSeconds(warOptions.Rotation.BloodsurgeDurationThreshold),
+			Munch:                       warOptions.Options.Munch,
+			StanceSnapshot:              warOptions.Options.StanceSnapshot,
 		}),
 		Rotation: warOptions.Rotation,
 		Options:  warOptions.Options,
@@ -71,10 +74,17 @@ func NewDpsWarrior(character core.Character, options *proto.Player) *DpsWarrior 
 		if war.GCD.IsReady(sim) {
 			war.TryUseCooldowns(sim)
 			if war.GCD.IsReady(sim) {
-				war.doRotation(sim)
+				// Pause rotation until after AM ticks to detect procs that happened right after the ticks
+				if war.LastAMTick == sim.CurrentTime {
+					war.WaitUntil(sim, sim.CurrentTime+time.Microsecond*1)
+					core.StartDelayedAction(sim, core.DelayedActionOptions{
+						DoAt:     sim.CurrentTime + time.Microsecond*1,
+						OnAction: war.doRotation,
+					})
+				} else {
+					war.doRotation(sim)
+				}
 			}
-		} else if !war.thunderClapNext && war.Rotation.StanceOption == proto.Warrior_Rotation_BerserkerStance {
-			war.trySwapToBerserker(sim)
 		}
 	})
 	war.EnableAutoAttacks(war, core.AutoAttackOptions{

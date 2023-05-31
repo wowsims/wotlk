@@ -43,7 +43,6 @@ func (ret *RetributionPaladin) OnAutoAttack(sim *core.Simulation, spell *core.Sp
 
 func (ret *RetributionPaladin) OnGCDReady(sim *core.Simulation) {
 	ret.SelectedRotation(sim)
-
 	if ret.GCD.IsReady(sim) {
 		ret.DoNothing() // this means we had nothing to do and we are ok
 	}
@@ -117,8 +116,8 @@ func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 		events = append(events, ret.HandOfReckoning.CD.ReadyAt())
 	}
 
+	CancelChaosBane(ret, sim)
 	ret.waitUntilNextEvent(sim, events, ret.customRotation)
-
 }
 
 func (ret *RetributionPaladin) castSequenceRotation(sim *core.Simulation) {
@@ -168,6 +167,7 @@ func (ret *RetributionPaladin) castSequenceRotation(sim *core.Simulation) {
 		events = append(events, ret.HandOfReckoning.CD.ReadyAt())
 	}
 
+	CancelChaosBane(ret, sim)
 	ret.waitUntilNextEvent(sim, events, ret.castSequenceRotation)
 }
 
@@ -280,6 +280,7 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 		events = append(events, ret.HandOfReckoning.CD.ReadyAt())
 	}
 
+	CancelChaosBane(ret, sim)
 	ret.waitUntilNextEvent(sim, events, ret.mainRotation)
 }
 
@@ -322,5 +323,14 @@ func (ret *RetributionPaladin) waitUntilNextEvent(sim *core.Simulation, events [
 
 	if ret.CancelChaosBane && ret.HasActiveAura("Chaos Bane") {
 		ret.GetAura("Chaos Bane").Deactivate(sim)
+	}
+}
+
+func CancelChaosBane(ret *RetributionPaladin, sim *core.Simulation) {
+	if !ret.Paladin.CancelChaosBane {
+		return
+	}
+	if a := ret.Paladin.GetAura("Chaos Bane"); a != nil {
+		a.Deactivate(sim)
 	}
 }

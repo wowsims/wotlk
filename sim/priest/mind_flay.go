@@ -22,6 +22,8 @@ func (priest *Priest) newMindFlaySpell(numTicks int32) *core.Spell {
 	rolloverChance := float64(priest.Talents.PainAndSuffering) / 3.0
 	miseryCoeff := 0.257 * (1 + 0.05*float64(priest.Talents.Misery))
 	hasGlyphOfShadow := priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow))
+	shadowFocus := 0.02 * float64(priest.Talents.ShadowFocus)
+	focusedMind := 0.05 * float64(priest.Talents.FocusedMind)
 
 	return priest.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48156}.WithTag(numTicks),
@@ -31,7 +33,7 @@ func (priest *Priest) newMindFlaySpell(numTicks int32) *core.Spell {
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.09,
-			Multiplier: 1 - 0.05*float64(priest.Talents.FocusedMind),
+			Multiplier: 1 - (shadowFocus + focusedMind),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -76,7 +78,15 @@ func (priest *Priest) newMindFlaySpell(numTicks int32) *core.Spell {
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				result := dot.CalcSnapshotDamage(sim, target, dot.OutcomeMagicHitAndSnapshotCrit)
+
+				// TODO: THIS IS A HACK TRY TO FIGURE OUT A BETTER WAY TO DO THIS.
+				// MF is slightly different than other channeled spells in that its dmg ticks can proc things like a normal cast would.
+				// However, ticks do not proc JoW. Since the dmg portion and the initial application are the same Spell
+				//  we can't set one without impacting the other.
+				// For now as a hack, set proc mask to prevent JoW, cast the tick dmg, and then unset it.
+				dot.Spell.ProcMask |= core.ProcMaskCanProcFromProc
 				dot.Spell.DealDamage(sim, result)
+				dot.Spell.ProcMask ^= core.ProcMaskCanProcFromProc
 
 				if result.Landed() {
 					priest.AddShadowWeavingStack(sim)

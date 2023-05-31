@@ -8,6 +8,7 @@ import {
 	Rogue_Rotation_AssassinationPriority as AssassinationPriority,
 	Rogue_Rotation_CombatPriority as CombatPriority,
 	Rogue_Rotation_CombatBuilder as CombatBuilder,
+	Rogue_Rotation_SubtletyBuilder as SubtletyBuilder,
 	Rogue_Rotation_SubtletyPriority as SubtletyPriority,
 	Rogue_Rotation_Frequency as Frequency,
 	Rogue_Options_PoisonImbue as Poison,
@@ -114,6 +115,16 @@ export const RogueRotationConfig = {
 			],
 			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
 		}),
+		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, SubtletyBuilder>({
+			fieldName: 'subtletyBuilder',
+			label: "Builder",
+			labelTooltip: 'Use Hemorrhage or Backstab as builder.',
+			values: [
+				{ name: "Hemorrhage", value: SubtletyBuilder.Hemorrhage },
+				{ name: "Backstab", value: SubtletyBuilder.BackstabSub },
+			],
+			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().honorAmongThieves > 0
+		}),
 		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, SubtletyPriority>({
 			fieldName: 'subtletyFinisherPriority',
 			label: "Finisher Priority",
@@ -140,12 +151,6 @@ export const RogueRotationConfig = {
 			label: 'Minimum CP (Slice)',
 			labelTooltip: 'Minimum number of combo points spent if Slice and Dice has frequency: Once',
 			showWhen: (player: Player<Spec.SpecRogue>) => player.getRotation().multiTargetSliceFrequency == Frequency.Once
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
-			fieldName: 'hemoWithDagger',
-			label: 'Hemorrhage with Dagger',
-			labelTooltip: 'Use Hemorrhage with Dagger in mainhand',
-			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().hemorrhage
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
 			fieldName: 'openWithGarrote',

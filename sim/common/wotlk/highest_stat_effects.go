@@ -72,6 +72,7 @@ func init() {
 				Harmful:    true,
 				ProcChance: 0.35,
 				ICD:        time.Second * 45,
+				ActionID:   core.ActionID{ItemID: itemID},
 				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 					hsa.Get(character).Activate(sim)
 				},
@@ -106,6 +107,7 @@ func init() {
 				Callback:   core.CallbackOnSpellHitDealt | core.CallbackOnPeriodicDamageDealt,
 				Harmful:    true,
 				ProcChance: 0.35,
+				ActionID:   core.ActionID{ItemID: itemID},
 				ICD:        time.Second * 45,
 				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 					hsa.Get(character).Activate(sim)

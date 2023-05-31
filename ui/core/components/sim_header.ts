@@ -1,15 +1,8 @@
 import { Component } from './component';
 import { SettingsMenu } from './settings_menu';
 import { SimUI } from '../sim_ui';
-import { TypedEvent } from '../typed_event';
 import { Tooltip } from 'bootstrap';
 import { SimTab } from './sim_tab';
-
-// Config for displaying a warning to the user whenever a condition is met.
-interface SimWarning {
-	updateOn: TypedEvent<any>,
-	getContent: () => string | Array<string>,
-}
 
 interface ToolbarLinkArgs {
 	parent: HTMLElement,
@@ -26,10 +19,7 @@ export class SimHeader extends Component {
 
   private simTabsContainer: HTMLElement;
 	private simToolbar: HTMLElement;
-  private warningsLink: HTMLElement;
 	private knownIssuesLink: HTMLElement;
-
-  private warnings: Array<SimWarning> = [];
 
   constructor(parentElem: HTMLElement, simUI: SimUI) {
     super(parentElem, 'sim-header');
@@ -39,14 +29,15 @@ export class SimHeader extends Component {
     this.simTabsContainer = this.rootElem.querySelector('.sim-tabs') as HTMLElement;
 		this.simToolbar = this.rootElem.querySelector('.sim-toolbar') as HTMLElement;	
 
-		this.warningsLink = this.addWarningsLink();
-		this.updateWarnings();
-
 		this.knownIssuesLink = this.addKnownIssuesLink();
     this.addBugReportLink();
     this.addDownloadBinaryLink();
     this.addSimOptionsLink();
 		this.addSocialLinks();
+  }
+
+  activateTab(className: string) {
+	(this.simTabsContainer.getElementsByClassName(className)[0] as HTMLElement).click();
   }
 
   addTab(title: string, contentId: string) {
@@ -140,44 +131,6 @@ export class SimHeader extends Component {
 		args.parent.appendChild(item);
 
 		return item;
-	}
-
-	private addWarningsLink(): HTMLElement {
-		return this.addToolbarLink({
-			parent: this.simToolbar,
-			icon: 'fas fa-exclamation-triangle fa-3x',
-			tooltip: "<ul class='text-start ps-3 mb-0'></ul>",
-			classes: 'warnings link-warning'
-		}).children[0] as HTMLElement;
-	}
-
-  addWarning(warning: SimWarning) {
-		this.warnings.push(warning);
-		warning.updateOn.on(() => this.updateWarnings());
-		this.updateWarnings();
-	}
-
-  private updateWarnings() {
-		const activeWarnings = this.warnings.map(warning => warning.getContent()).flat().filter(content => content != '');
-
-    let tooltipFragment = document.createElement('fragment');
-		tooltipFragment.innerHTML = this.warningsLink.getAttribute('data-bs-title') as string;
-		let list = tooltipFragment.children[0] as HTMLElement;
-    list.innerHTML = '';
-		
-		if (activeWarnings.length == 0) {
-			this.warningsLink.parentElement?.classList?.add('hide');
-		} else {
-			this.warningsLink.parentElement?.classList?.remove('hide');
-			activeWarnings.forEach(warning => {
-        let listItem = document.createElement('li');
-        listItem.innerHTML = warning;
-        list.appendChild(listItem);
-      });
-		}
-
-    this.warningsLink.setAttribute('data-bs-title', list.outerHTML);
-    new Tooltip(this.warningsLink);
 	}
 
 	private addKnownIssuesLink(): HTMLElement {

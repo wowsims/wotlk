@@ -87,6 +87,7 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatArmor]: 3.5665,
+					[Stat.StatBonusArmor]: 0.5187,
 					[Stat.StatStamina]: 7.3021,
 					[Stat.StatStrength]: 2.3786,
 					[Stat.StatAgility]: 4.4974,
@@ -164,6 +165,7 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 					OtherInputs.TankAssignment,
 					OtherInputs.IncomingHps,
 					OtherInputs.HealingCadence,
+					OtherInputs.HealingCadenceVariation,
 					OtherInputs.BurstWindow,
 					OtherInputs.InspirationUptime,
 					OtherInputs.HpPercentForDefensives,

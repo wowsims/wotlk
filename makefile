@@ -80,7 +80,6 @@ clean:
 	  $(HTML_INDECIES)
 	find . -name "*.results.tmp" -type f -delete
 
-
 ui/core/proto/api.ts: proto/*.proto node_modules
 	npx protoc --ts_opt generate_dependencies --ts_out ui/core/proto --proto_path proto proto/api.proto
 	npx protoc --ts_out ui/core/proto --proto_path proto proto/test.proto
@@ -139,6 +138,10 @@ binary_dist: $(OUT_DIR)/.dirstamp
 	rm binary_dist/wotlk/assets/database/db.bin
 	rm binary_dist/wotlk/assets/database/leftover_db.bin
 
+# Rebuild the protobuf generated code.
+.PHONY: proto
+proto: sim/core/proto/api.pb.go ui/core/proto/api.ts
+
 # Builds the web server with the compiled client.
 .PHONY: wowsimwotlk
 wowsimwotlk: binary_dist devserver
@@ -170,8 +173,16 @@ else
 	./wowsimwotlk --usefs=true --launch=false
 endif
 
-release: wowsimwotlk
-	GOOS=windows GOARCH=amd64 GOAMD64=v2 go build -o wowsimwotlk-windows.exe -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
+wowsimwotlk-windows.exe: wowsimwotlk
+# go build only considers syso files when invoked without specifying .go files: https://github.com/golang/go/issues/16090
+	cp ./assets/favicon_io/icon-windows_amd64.syso ./sim/web/icon-windows_amd64.syso
+	cd ./sim/web/ && GOOS=windows GOARCH=amd64 GOAMD64=v2 go build -o wowsimwotlk-windows.exe -ldflags="-X 'main.Version=$(VERSION)' -s -w"
+	cd ./cmd/wowsimcli && GOOS=windows GOARCH=amd64 GOAMD64=v2 go build -o wowsimcli-windows.exe --tags=with_db -ldflags="-X 'main.Version=$(VERSION)' -s -w"
+	rm ./sim/web/icon-windows_amd64.syso
+	mv ./sim/web/wowsimwotlk-windows.exe ./wowsimwotlk-windows.exe
+	mv ./cmd/wowsimcli/wowsimcli-windows.exe ./wowsimcli-windows.exe
+
+release: wowsimwotlk wowsimwotlk-windows.exe
 	GOOS=darwin GOARCH=amd64 GOAMD64=v2 go build -o wowsimwotlk-amd64-darwin -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
 	GOOS=linux GOARCH=amd64 GOAMD64=v2 go build -o wowsimwotlk-amd64-linux   -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
 	GOOS=linux GOARCH=amd64 GOAMD64=v2 go build -o wowsimcli-amd64-linux --tags=with_db -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./cmd/wowsimcli/cli_main.go
@@ -179,9 +190,24 @@ release: wowsimwotlk
 	zip wowsimwotlk-windows.exe.zip wowsimwotlk-windows.exe
 	zip wowsimwotlk-amd64-darwin.zip wowsimwotlk-amd64-darwin
 	zip wowsimwotlk-amd64-linux.zip wowsimwotlk-amd64-linux
+	zip wowsimcli-amd64-linux.zip wowsimcli-amd64-linux
+	zip wowsimcli-windows.exe.zip wowsimcli-windows.exe
 
 sim/core/proto/api.pb.go: proto/*.proto
 	protoc -I=./proto --go_out=./sim/core ./proto/*.proto
+
+# Only useful for building the lib on a host platform that matches the target platform
+.PHONY: locallib
+locallib: sim/core/proto/api.pb.go
+	go build -buildmode=c-shared -o wowsimwotlk.so --tags=with_db ./sim/lib/library.go
+
+.PHONY: nixlib
+nixlib: sim/core/proto/api.pb.go
+	GOOS=linux GOARCH=amd64 GOAMD64=v2 go build -buildmode=c-shared -o wowsimwotlk-linux.so --tags=with_db ./sim/lib/library.go
+
+.PHONY: winlib
+winlib: sim/core/proto/api.pb.go
+	GOOS=windows GOARCH=amd64 GOAMD64=v2 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -buildmode=c-shared -o wowsimwotlk-windows.dll --tags=with_db ./sim/lib/library.go
 
 .PHONY: items
 items: sim/core/items/all_items.go sim/core/proto/api.pb.go

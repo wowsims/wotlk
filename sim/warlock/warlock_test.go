@@ -99,6 +99,7 @@ var defaultDestroRotation = &proto.Warlock_Rotation{
 	SpecSpell:    proto.Warlock_Rotation_ChaosBolt,
 	Curse:        proto.Warlock_Rotation_Doom,
 	Corruption:   false,
+	DetonateSeed: true,
 }
 
 var defaultDestroOptions = &proto.Warlock_Options{

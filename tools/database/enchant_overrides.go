@@ -53,7 +53,7 @@ var EnchantOverrides = []*proto.UIEnchant{
 	{EffectId: 1446, SpellId: 44590, Name: "Superior Shadow Resistance", Quality: proto.ItemQuality_ItemQualityCommon, Stats: stats.Stats{stats.ShadowResistance: 20}.ToFloatArray(), Type: proto.ItemType_ItemTypeBack},
 	{EffectId: 1951, ItemId: 37347, SpellId: 44591, Name: "Titanweave", Quality: proto.ItemQuality_ItemQualityUncommon, Stats: stats.Stats{stats.Defense: 16}.ToFloatArray(), Type: proto.ItemType_ItemTypeBack},
 	{EffectId: 3256, ItemId: 37349, SpellId: 44631, Name: "Shadow Armor", Quality: proto.ItemQuality_ItemQualityUncommon, Stats: stats.Stats{stats.Agility: 10}.ToFloatArray(), Type: proto.ItemType_ItemTypeBack},
-	{EffectId: 3294, ItemId: 44471, SpellId: 47672, Name: "Mighty Armor", Quality: proto.ItemQuality_ItemQualityUncommon, Stats: stats.Stats{stats.Armor: 225}.ToFloatArray(), Type: proto.ItemType_ItemTypeBack},
+	{EffectId: 3294, ItemId: 44471, SpellId: 47672, Name: "Mighty Armor", Quality: proto.ItemQuality_ItemQualityUncommon, Stats: stats.Stats{stats.BonusArmor: 225}.ToFloatArray(), Type: proto.ItemType_ItemTypeBack},
 	{EffectId: 3831, ItemId: 44472, SpellId: 47898, Name: "Greater Speed", Quality: proto.ItemQuality_ItemQualityUncommon, Stats: stats.Stats{stats.MeleeHaste: 23, stats.SpellHaste: 23}.ToFloatArray(), Type: proto.ItemType_ItemTypeBack},
 	{EffectId: 3296, ItemId: 44488, SpellId: 47899, Name: "Wisdom", Quality: proto.ItemQuality_ItemQualityUncommon, Stats: stats.Stats{stats.Spirit: 10}.ToFloatArray(), Type: proto.ItemType_ItemTypeBack},
 	{EffectId: 3243, SpellId: 44582, Name: "Spell Piercing", Quality: proto.ItemQuality_ItemQualityCommon, Stats: stats.Stats{stats.SpellPenetration: 35}.ToFloatArray(), Type: proto.ItemType_ItemTypeBack},
@@ -106,7 +106,7 @@ var EnchantOverrides = []*proto.UIEnchant{
 	{EffectId: 3234, SpellId: 44488, Name: "Precision", Quality: proto.ItemQuality_ItemQualityCommon, Stats: stats.Stats{stats.MeleeHit: 20, stats.SpellHit: 20}.ToFloatArray(), Type: proto.ItemType_ItemTypeHands},
 	{EffectId: 3603, SpellId: 54998, Name: "Hand-Mounted Pyro Rocket", Quality: proto.ItemQuality_ItemQualityCommon, Stats: stats.Stats{}.ToFloatArray(), Type: proto.ItemType_ItemTypeHands, RequiredProfession: proto.Profession_Engineering},
 	{EffectId: 3604, SpellId: 54999, Name: "Hyperspeed Accelerators", Quality: proto.ItemQuality_ItemQualityCommon, Stats: stats.Stats{}.ToFloatArray(), Type: proto.ItemType_ItemTypeHands, RequiredProfession: proto.Profession_Engineering},
-	{EffectId: 3860, SpellId: 63770, Name: "Reticulated Armor Webbing", Quality: proto.ItemQuality_ItemQualityCommon, Stats: stats.Stats{stats.Armor: 885}.ToFloatArray(), Type: proto.ItemType_ItemTypeHands, RequiredProfession: proto.Profession_Engineering},
+	{EffectId: 3860, SpellId: 63770, Name: "Reticulated Armor Webbing", Quality: proto.ItemQuality_ItemQualityCommon, Stats: stats.Stats{stats.BonusArmor: 885}.ToFloatArray(), Type: proto.ItemType_ItemTypeHands, RequiredProfession: proto.Profession_Engineering},
 
 	// Waist
 	{EffectId: 3599, SpellId: 54736, Name: "Personal Electromagnetic Pulse Generator", Quality: proto.ItemQuality_ItemQualityCommon, Stats: stats.Stats{}.ToFloatArray(), Type: proto.ItemType_ItemTypeWaist, RequiredProfession: proto.Profession_Engineering},
@@ -210,7 +210,7 @@ var EnchantOverrides = []*proto.UIEnchant{
 	{EffectId: 2605, ItemId: 20076, SpellId: 24421, Name: "Zandalar Signet of Mojo", Quality: proto.ItemQuality_ItemQualityRare, Stats: stats.Stats{stats.SpellPower: 18}.ToFloatArray(), Type: proto.ItemType_ItemTypeShoulder},
 	{EffectId: 2721, ItemId: 23545, SpellId: 29467, Name: "Power of the Scourge", Quality: proto.ItemQuality_ItemQualityEpic, Stats: stats.Stats{stats.SpellPower: 15, stats.SpellCrit: 14}.ToFloatArray(), Type: proto.ItemType_ItemTypeShoulder},
 	{EffectId: 2717, ItemId: 23548, SpellId: 29483, Name: "Might of the Scourge", Quality: proto.ItemQuality_ItemQualityEpic, Stats: stats.Stats{stats.AttackPower: 26, stats.RangedAttackPower: 26, stats.MeleeCrit: 14}.ToFloatArray(), Type: proto.ItemType_ItemTypeShoulder},
-	{EffectId: 2716, ItemId: 23549, SpellId: 29480, Name: "Fortitude of the Scourge", Quality: proto.ItemQuality_ItemQualityEpic, Stats: stats.Stats{stats.Stamina: 16, stats.Armor: 100}.ToFloatArray(), Type: proto.ItemType_ItemTypeShoulder},
+	{EffectId: 2716, ItemId: 23549, SpellId: 29480, Name: "Fortitude of the Scourge", Quality: proto.ItemQuality_ItemQualityEpic, Stats: stats.Stats{stats.Stamina: 16, stats.BonusArmor: 100}.ToFloatArray(), Type: proto.ItemType_ItemTypeShoulder},
 
 	// Back
 	{EffectId: 2622, ItemId: 33148, SpellId: 25086, Name: "Enchant Cloak - Dodge", Quality: proto.ItemQuality_ItemQualityRare, Stats: stats.Stats{stats.Dodge: 12}.ToFloatArray(), Type: proto.ItemType_ItemTypeBack},
