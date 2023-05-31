@@ -22,7 +22,7 @@ func init() {
 	core.NewItemEffect(49623, func(agent core.Agent) {
 		player := agent.GetCharacter()
 
-		ppmm := player.AutoAttacks.NewPPMManager(12, core.ProcMaskMeleeOrFromProcs)
+		ppmm := player.AutoAttacks.NewPPMManager(12, core.ProcMaskMeleeOrProc)
 
 		chaosBaneAura := player.NewTemporaryStatsAura("Chaos Bane", core.ActionID{SpellID: 73422}, stats.Stats{stats.Strength: 270}, time.Second*10)
 

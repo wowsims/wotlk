@@ -134,7 +134,7 @@ func (shaman *Shaman) newFlametongueImbueSpell(isMH bool) *core.Spell {
 	return shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 58790},
 		SpellSchool: core.SpellSchoolFire,
-		ProcMask:    core.ProcMaskCanProcFromProc,
+		ProcMask:    core.ProcMaskWeaponProc,
 		Flags:       core.SpellFlagNoOnCastComplete,
 
 		BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
@@ -232,7 +232,7 @@ func (shaman *Shaman) newFlametongueDownrankImbueSpell(isMH bool) *core.Spell {
 	return shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 58789},
 		SpellSchool: core.SpellSchoolFire,
-		ProcMask:    core.ProcMaskCanProcFromProc,
+		ProcMask:    core.ProcMaskWeaponProc,
 		Flags:       core.SpellFlagNoOnCastComplete,
 
 		BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,

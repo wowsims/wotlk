@@ -255,15 +255,15 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-DarkmoonCard:Greatness-44255"
  value: {
-  dps: 1677.15428
-  tps: 4314.54639
+  dps: 1672.40459
+  tps: 4298.9396
  }
 }
 dps_results: {
  key: "TestProtectionWarrior-AllItems-Death'sChoice-47464"
  value: {
-  dps: 1755.09836
-  tps: 4491.24036
+  dps: 1751.8444
+  tps: 4479.14751
  }
 }
 dps_results: {
@@ -276,15 +276,15 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-Deathbringer'sWill-50362"
  value: {
-  dps: 1784.06887
-  tps: 4562.63646
+  dps: 1780.79208
+  tps: 4552.40609
  }
 }
 dps_results: {
  key: "TestProtectionWarrior-AllItems-Deathbringer'sWill-50363"
  value: {
-  dps: 1790.94565
-  tps: 4587.79176
+  dps: 1782.42982
+  tps: 4564.02657
  }
 }
 dps_results: {
@@ -809,15 +809,15 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-TinyAbominationinaJar-50351"
  value: {
-  dps: 1700.20081
-  tps: 4363.46399
+  dps: 1675.2969
+  tps: 4301.80165
  }
 }
 dps_results: {
  key: "TestProtectionWarrior-AllItems-TinyAbominationinaJar-50706"
  value: {
-  dps: 1701.26643
-  tps: 4372.39183
+  dps: 1693.88646
+  tps: 4352.51813
  }
 }
 dps_results: {

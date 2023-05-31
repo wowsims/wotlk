@@ -87,7 +87,7 @@ func init() {
 		MaxStacks: 4,
 		Trigger: core.ProcTrigger{
 			Callback: core.CallbackOnSpellHitDealt,
-			ProcMask: core.ProcMaskSpellDamage | core.ProcMaskCanProcFromProc,
+			ProcMask: core.ProcMaskSpellOrProc | core.ProcMaskWeaponProc,
 			Outcome:  core.OutcomeCrit,
 			ICD:      time.Millisecond * 2500,
 			ActionID: core.ActionID{ItemID: 38072},
@@ -102,7 +102,7 @@ func init() {
 		MaxStacks: 3,
 		Trigger: core.ProcTrigger{
 			Callback: core.CallbackOnSpellHitDealt,
-			ProcMask: core.ProcMaskSpellDamage | core.ProcMaskCanProcFromProc,
+			ProcMask: core.ProcMaskSpellOrProc | core.ProcMaskWeaponProc,
 			Outcome:  core.OutcomeCrit,
 			ICD:      time.Millisecond * 2000,
 			ActionID: core.ActionID{ItemID: 47182},
@@ -117,7 +117,7 @@ func init() {
 		MaxStacks: 3,
 		Trigger: core.ProcTrigger{
 			Callback: core.CallbackOnSpellHitDealt,
-			ProcMask: core.ProcMaskSpellDamage | core.ProcMaskCanProcFromProc,
+			ProcMask: core.ProcMaskSpellOrProc | core.ProcMaskWeaponProc,
 			Outcome:  core.OutcomeCrit,
 			ICD:      time.Millisecond * 2000,
 			ActionID: core.ActionID{ItemID: 47188},
@@ -135,7 +135,7 @@ func init() {
 		MaxStacks: 3,
 		Trigger: core.ProcTrigger{
 			Callback: core.CallbackOnSpellHitDealt,
-			ProcMask: core.ProcMaskSpellDamage | core.ProcMaskCanProcFromProc,
+			ProcMask: core.ProcMaskSpellOrProc | core.ProcMaskWeaponProc,
 			Outcome:  core.OutcomeCrit,
 			ICD:      time.Millisecond * 2000,
 			ActionID: core.ActionID{ItemID: 47316},
@@ -150,7 +150,7 @@ func init() {
 		MaxStacks: 3,
 		Trigger: core.ProcTrigger{
 			Callback: core.CallbackOnSpellHitDealt,
-			ProcMask: core.ProcMaskSpellDamage | core.ProcMaskCanProcFromProc,
+			ProcMask: core.ProcMaskSpellOrProc | core.ProcMaskWeaponProc,
 			Outcome:  core.OutcomeCrit,
 			ICD:      time.Millisecond * 2000,
 			ActionID: core.ActionID{ItemID: 47477},
@@ -235,7 +235,7 @@ func init() {
 			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:       name + " Trigger",
 				Callback:   core.CallbackOnSpellHitDealt,
-				ProcMask:   core.ProcMaskMeleeOrFromProcs,
+				ProcMask:   core.ProcMaskMeleeOrProc | core.ProcMaskWeaponProc,
 				Outcome:    core.OutcomeLanded,
 				ActionID:   core.ActionID{ItemID: itemID},
 				ProcChance: 0.5,
@@ -244,7 +244,7 @@ func init() {
 						return
 					}
 					if !capacitorAura.IsActive() {
-						if spell.ProcMask.Matches(core.ProcMaskMeleeMH | core.ProcMaskCanProcFromProc) {
+						if spell.ProcMask.Matches(core.ProcMaskMeleeMH | core.ProcMaskProc) {
 							firstProc = core.MainHand
 						} else {
 							firstProc = core.OffHand

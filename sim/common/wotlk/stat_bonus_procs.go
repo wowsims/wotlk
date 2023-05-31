@@ -124,7 +124,6 @@ func init() {
 	//	ICD:        time.Second * 45,
 	//})
 	newProcStatBonusEffect(ProcStatBonusEffect{
-		// TODO: should not proc from procs
 		Name:       "Embrace of the Spider",
 		ID:         39229,
 		Bonus:      stats.Stats{stats.MeleeHaste: 505, stats.SpellHaste: 505},
@@ -140,7 +139,7 @@ func init() {
 		Bonus:      stats.Stats{stats.SpellPower: 765},
 		Duration:   time.Second * 10,
 		Callback:   core.CallbackOnCastComplete,
-		ProcMask:   core.ProcMaskSpellDamage,
+		ProcMask:   core.ProcMaskSpellOrProc,
 		ProcChance: 0.15,
 		ICD:        time.Second * 45,
 	})
@@ -161,7 +160,7 @@ func init() {
 		Bonus:      stats.Stats{stats.SpellPower: 590},
 		Duration:   time.Second * 10,
 		Callback:   core.CallbackOnCastComplete,
-		ProcMask:   core.ProcMaskSpellDamage,
+		ProcMask:   core.ProcMaskSpellOrProc,
 		ProcChance: 0.10,
 		ICD:        time.Second * 45,
 	})
@@ -393,7 +392,7 @@ func init() {
 		Bonus:      stats.Stats{stats.SpellPower: 590},
 		Duration:   time.Second * 10,
 		Callback:   core.CallbackOnSpellHitDealt,
-		ProcMask:   core.ProcMaskSpellDamage,
+		ProcMask:   core.ProcMaskSpellOrProc,
 		Harmful:    true,
 		ProcChance: 0.25,
 		ICD:        time.Second * 45,
@@ -437,7 +436,7 @@ func init() {
 		Bonus:      stats.Stats{stats.SpellPower: 590},
 		Duration:   time.Second * 10,
 		Callback:   core.CallbackOnSpellHitDealt,
-		ProcMask:   core.ProcMaskSpellDamage,
+		ProcMask:   core.ProcMaskSpellOrProc,
 		Harmful:    true,
 		ProcChance: 0.10,
 		ICD:        time.Second * 45,
@@ -468,7 +467,7 @@ func init() {
 		Bonus:      stats.Stats{stats.AttackPower: 1100, stats.RangedAttackPower: 1100},
 		Duration:   time.Second * 15,
 		Callback:   core.CallbackOnSpellHitDealt,
-		ProcMask:   core.ProcMaskDirect | core.ProcMaskCanProcFromProc,
+		ProcMask:   core.ProcMaskDirect | core.ProcMaskProc,
 		Harmful:    true,
 		ProcChance: 0.35,
 		ICD:        time.Second * 45,
@@ -479,7 +478,7 @@ func init() {
 		Bonus:      stats.Stats{stats.AttackPower: 1250, stats.RangedAttackPower: 1250},
 		Duration:   time.Second * 15,
 		Callback:   core.CallbackOnSpellHitDealt,
-		ProcMask:   core.ProcMaskDirect | core.ProcMaskCanProcFromProc,
+		ProcMask:   core.ProcMaskDirect | core.ProcMaskProc,
 		Harmful:    true,
 		ProcChance: 0.35,
 		ICD:        time.Second * 45,
@@ -607,7 +606,7 @@ func init() {
 		Bonus:      stats.Stats{stats.AttackPower: 1304, stats.RangedAttackPower: 1304},
 		Duration:   time.Second * 15,
 		Callback:   core.CallbackOnSpellHitDealt,
-		ProcMask:   core.ProcMaskDirect | core.ProcMaskCanProcFromProc,
+		ProcMask:   core.ProcMaskDirect | core.ProcMaskProc,
 		Harmful:    true, // doesn't matter what, just that 'when you deal damage'
 		ProcChance: 0.35,
 		ICD:        time.Second * 45,
@@ -618,7 +617,7 @@ func init() {
 		Bonus:      stats.Stats{stats.AttackPower: 1472, stats.RangedAttackPower: 1472},
 		Duration:   time.Second * 15,
 		Callback:   core.CallbackOnSpellHitDealt,
-		ProcMask:   core.ProcMaskDirect | core.ProcMaskCanProcFromProc,
+		ProcMask:   core.ProcMaskDirect | core.ProcMaskProc,
 		Harmful:    true, // doesn't matter what, just that 'when you deal damage'
 		ProcChance: 0.35,
 		ICD:        time.Second * 45,
@@ -629,7 +628,7 @@ func init() {
 		Bonus:      stats.Stats{stats.SpellPower: 763},
 		Duration:   time.Second * 15,
 		Callback:   core.CallbackOnSpellHitDealt,
-		ProcMask:   core.ProcMaskSpellDamage | core.ProcMaskCanProcFromProc,
+		ProcMask:   core.ProcMaskSpellOrProc,
 		ProcChance: 0.10,
 		ICD:        time.Second * 50,
 	})
@@ -639,7 +638,7 @@ func init() {
 		Bonus:      stats.Stats{stats.SpellPower: 861},
 		Duration:   time.Second * 15,
 		Callback:   core.CallbackOnSpellHitDealt,
-		ProcMask:   core.ProcMaskSpellDamage | core.ProcMaskCanProcFromProc,
+		ProcMask:   core.ProcMaskSpellOrProc,
 		ProcChance: 0.10,
 		ICD:        time.Second * 50,
 	})

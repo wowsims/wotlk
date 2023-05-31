@@ -67,7 +67,7 @@ func init() {
 		Trigger: core.ProcTrigger{
 			Name:       "Pendulum of Telluric Currents",
 			Callback:   core.CallbackOnSpellHitDealt,
-			ProcMask:   core.ProcMaskSpellDamage,
+			ProcMask:   core.ProcMaskSpellOrProc,
 			Outcome:    core.OutcomeLanded,
 			ProcChance: 0.15,
 			ICD:        time.Second * 45,

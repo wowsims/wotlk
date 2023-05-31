@@ -69,7 +69,7 @@ func init() {
 			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:       "DMC Greatness",
 				Callback:   core.CallbackOnSpellHitDealt | core.CallbackOnPeriodicDamageDealt | core.CallbackOnHealDealt | core.CallbackOnPeriodicHealDealt,
-				ProcMask:   core.ProcMaskDirect | core.ProcMaskSpellHealing | core.ProcMaskCanProcFromProc,
+				ProcMask:   core.ProcMaskDirect | core.ProcMaskSpellHealing | core.ProcMaskProc,
 				Harmful:    true,
 				ProcChance: 0.35,
 				ICD:        time.Second * 45,
@@ -106,7 +106,7 @@ func init() {
 			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:       name,
 				Callback:   core.CallbackOnSpellHitDealt | core.CallbackOnPeriodicDamageDealt,
-				ProcMask:   core.ProcMaskDirect | core.ProcMaskCanProcFromProc,
+				ProcMask:   core.ProcMaskDirect | core.ProcMaskProc,
 				Harmful:    true,
 				ProcChance: 0.35,
 				ActionID:   core.ActionID{ItemID: itemID},

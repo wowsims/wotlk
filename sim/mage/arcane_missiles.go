@@ -74,7 +74,15 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 				baseDamage := 362 + spellCoeff*dot.Spell.SpellPower()
 				result := dot.Spell.CalcDamage(sim, target, baseDamage, dot.Spell.OutcomeMagicHitAndCrit)
 				dot.Spell.WaitTravelTime(sim, func(sim *core.Simulation) {
+					// TODO: THIS IS A HACK TRY TO FIGURE OUT A BETTER WAY TO DO THIS.
+					// Arcane Missiles is like mind flay in that its dmg ticks can proc things like a normal cast would.
+					// However, ticks do not proc JoW. Since the dmg portion and the initial application are the same Spell
+					//  we can't set one without impacting the other.
+					// For now as a hack, set proc mask to prevent JoW, cast the tick dmg, and then unset it.
+					// This also handles trinkets that can proc from proc (or not)
+					dot.Spell.ProcMask |= core.ProcMaskProc
 					dot.Spell.DealDamage(sim, result)
+					dot.Spell.ProcMask ^= core.ProcMaskProc
 				})
 			},
 		},

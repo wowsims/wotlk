@@ -246,10 +246,10 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				// Special case for spells that can proc black magic.
-				specialCaseSpell := spell.ActionID.SpellID == 47465
+				// Special case for spells that aren't spells that can proc black magic.
+				specialCaseSpell := spell.ActionID.SpellID == 47465 || spell.ActionID.SpellID == 12867
 
-				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskSpellDamage|core.ProcMaskCanProcFromProc) && !specialCaseSpell {
+				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskSpellDamage|core.ProcMaskWeaponProc) && !specialCaseSpell {
 					return
 				}
 
