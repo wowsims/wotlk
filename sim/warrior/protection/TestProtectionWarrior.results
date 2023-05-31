@@ -255,15 +255,15 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-DarkmoonCard:Greatness-44255"
  value: {
-  dps: 1633.17312
-  tps: 4223.35146
+  dps: 1629.11056
+  tps: 4209.16943
  }
 }
 dps_results: {
  key: "TestProtectionWarrior-AllItems-Death'sChoice-47464"
  value: {
-  dps: 1708.53243
-  tps: 4394.68591
+  dps: 1705.64259
+  tps: 4383.34806
  }
 }
 dps_results: {

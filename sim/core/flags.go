@@ -56,9 +56,10 @@ const (
 	ProcMaskRangedSpecial
 	ProcMaskSpellDamage
 	ProcMaskSpellHealing
-
-	// Special case where a Proc Can trigger a Proc
-	ProcMaskCanProcFromProc
+	// Special mask for procs that can trigger things
+	ProcMaskProc
+	// Mask for FT weapon and rogue poisons, seems to be spell procs from a weapon imbue
+	ProcMaskWeaponProc
 )
 
 const (
@@ -84,6 +85,9 @@ const (
 	ProcMaskTwoRoll = ProcMaskRanged | ProcMaskMeleeSpecial
 
 	ProcMaskSpecial = ProcMaskMeleeOrRangedSpecial | ProcMaskSpellDamage
+
+	ProcMaskMeleeOrProc = ProcMaskMelee | ProcMaskProc
+	ProcMaskSpellOrProc = ProcMaskSpellDamage | ProcMaskProc
 )
 
 func GetMeleeProcMaskForHands(mh bool, oh bool) ProcMask {

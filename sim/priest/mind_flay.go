@@ -84,9 +84,10 @@ func (priest *Priest) newMindFlaySpell(numTicks int32) *core.Spell {
 				// However, ticks do not proc JoW. Since the dmg portion and the initial application are the same Spell
 				//  we can't set one without impacting the other.
 				// For now as a hack, set proc mask to prevent JoW, cast the tick dmg, and then unset it.
-				dot.Spell.ProcMask |= core.ProcMaskCanProcFromProc
+				oldMask := dot.Spell.ProcMask
+				dot.Spell.ProcMask = core.ProcMaskProc
 				dot.Spell.DealDamage(sim, result)
-				dot.Spell.ProcMask ^= core.ProcMaskCanProcFromProc
+				dot.Spell.ProcMask = oldMask
 
 				if result.Landed() {
 					priest.AddShadowWeavingStack(sim)

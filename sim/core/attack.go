@@ -706,6 +706,8 @@ func (ppmm *PPMManager) Chance(procMask ProcMask) float64 {
 		return ppmm.ohProcChance
 	} else if procMask.Matches(ProcMaskRanged) {
 		return ppmm.rangedProcChance
+	} else if procMask.Matches(ppmm.procMask) {
+		return ppmm.mhProcChance // probably a 'proc from proc' so use main hand.
 	}
 
 	return 0

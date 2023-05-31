@@ -249,7 +249,7 @@ func init() {
 		MaxStacks: 10,
 		Bonus:     stats.Stats{stats.SpellPower: 18},
 		Callback:  core.CallbackOnSpellHitDealt,
-		ProcMask:  core.ProcMaskSpellDamage,
+		ProcMask:  core.ProcMaskSpellOrProc,
 		Harmful:   true,
 	})
 	newStackingStatBonusEffect(StackingStatBonusEffect{
@@ -281,7 +281,7 @@ func init() {
 		MaxStacks: 10,
 		Bonus:     stats.Stats{stats.SpellPower: 20},
 		Callback:  core.CallbackOnSpellHitDealt,
-		ProcMask:  core.ProcMaskSpellDamage,
+		ProcMask:  core.ProcMaskSpellOrProc,
 		Harmful:   true,
 	})
 	newStackingStatBonusEffect(StackingStatBonusEffect{
@@ -325,8 +325,8 @@ func init() {
 		MaxStacks: 8,
 		Bonus:     stats.Stats{stats.MeleeHaste: 57, stats.SpellHaste: 57},
 		CD:        time.Minute * 2,
-		Callback:  core.CallbackOnSpellHitDealt,
-		ProcMask:  core.ProcMaskSpellDamage,
+		Callback:  core.CallbackOnCastComplete,
+		ProcMask:  core.ProcMaskSpellOrProc,
 		Outcome:   core.OutcomeLanded,
 		Harmful:   true,
 	})
@@ -359,7 +359,7 @@ func init() {
 		Bonus:     stats.Stats{stats.MeleeHaste: 57, stats.SpellHaste: 57},
 		CD:        time.Minute * 2,
 		Callback:  core.CallbackOnSpellHitDealt,
-		ProcMask:  core.ProcMaskSpellDamage,
+		ProcMask:  core.ProcMaskSpellOrProc,
 		Outcome:   core.OutcomeLanded,
 		Harmful:   true,
 	})
@@ -403,7 +403,7 @@ func init() {
 		Bonus:     stats.Stats{stats.MeleeHaste: 64, stats.SpellHaste: 64},
 		CD:        time.Minute * 2,
 		Callback:  core.CallbackOnSpellHitDealt,
-		ProcMask:  core.ProcMaskSpellDamage,
+		ProcMask:  core.ProcMaskSpellOrProc,
 		Outcome:   core.OutcomeLanded,
 		Harmful:   true,
 	})
@@ -447,7 +447,7 @@ func init() {
 		Bonus:     stats.Stats{stats.MeleeHaste: 64, stats.SpellHaste: 64},
 		CD:        time.Minute * 2,
 		Callback:  core.CallbackOnSpellHitDealt,
-		ProcMask:  core.ProcMaskSpellDamage,
+		ProcMask:  core.ProcMaskSpellOrProc,
 		Outcome:   core.OutcomeLanded,
 		Harmful:   true,
 	})

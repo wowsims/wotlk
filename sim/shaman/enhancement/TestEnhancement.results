@@ -210,8 +210,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-DarkmoonCard:Greatness-44255"
  value: {
-  dps: 7230.88802
-  tps: 4094.79923
+  dps: 7221.91236
+  tps: 4087.84811
  }
 }
 dps_results: {
@@ -224,8 +224,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-Death'sChoice-47464"
  value: {
-  dps: 7409.40612
-  tps: 4192.20424
+  dps: 7402.20178
+  tps: 4187.75611
  }
 }
 dps_results: {
@@ -238,15 +238,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-Deathbringer'sWill-50362"
  value: {
-  dps: 7354.31758
-  tps: 4158.6766
+  dps: 7347.93899
+  tps: 4155.04661
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Deathbringer'sWill-50363"
  value: {
-  dps: 7409.68249
-  tps: 4197.69934
+  dps: 7401.73333
+  tps: 4191.28999
  }
 }
 dps_results: {
@@ -266,15 +266,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 7425.81244
-  tps: 4220.56322
+  dps: 7444.90425
+  tps: 4235.31163
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 7383.88817
-  tps: 4202.74624
+  dps: 7408.97074
+  tps: 4219.2769
  }
 }
 dps_results: {
@@ -834,15 +834,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-TinyAbominationinaJar-50351"
  value: {
-  dps: 7293.72608
-  tps: 4138.54486
+  dps: 7384.05213
+  tps: 4198.85925
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TinyAbominationinaJar-50706"
  value: {
-  dps: 7290.73872
-  tps: 4140.13942
+  dps: 7438.85352
+  tps: 4234.65613
  }
 }
 dps_results: {

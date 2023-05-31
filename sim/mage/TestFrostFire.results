@@ -161,8 +161,8 @@ dps_results: {
 dps_results: {
  key: "TestFrostFire-AllItems-DarkmoonCard:Greatness-44255"
  value: {
-  dps: 5984.11414
-  tps: 4767.6419
+  dps: 5992.30642
+  tps: 4774.46591
  }
 }
 dps_results: {

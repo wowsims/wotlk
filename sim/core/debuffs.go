@@ -223,20 +223,20 @@ func JudgementOfWisdomAura(target *Unit) *Aura {
 				return
 			}
 
-			if spell.ProcMask.Matches(ProcMaskEmpty) || spell.ProcMask.Matches(ProcMaskCanProcFromProc) {
+			if spell.ProcMask.Matches(ProcMaskEmpty | ProcMaskProc | ProcMaskWeaponProc) {
 				return // Phantom spells (Romulo's, Lightning Capacitor, etc) don't proc JoW.
 			}
 
-			// Melee claim that wisdom can proc on misses.
-			if !spell.ProcMask.Matches(ProcMaskMeleeOrRanged) && !result.Landed() {
-				return
-			}
-
 			if spell.ProcMask.Matches(ProcMaskMeleeOrRanged) {
+				// Apparently ranged/melee can still proc on miss
 				if !unit.AutoAttacks.PPMProc(sim, 15, spell.ProcMask, "jow") {
 					return
 				}
-			} else {
+			} else { // spell casting
+				if !result.Landed() {
+					return
+				}
+
 				ct := spell.CurCast.CastTime.Seconds()
 				if ct == 0 {
 					// Current theory is that insta-cast is treated as min GCD from retail.
