@@ -534,7 +534,7 @@ dps_results: {
  key: "TestFeral-AllItems-LasherweaveRegalia"
  value: {
   dps: 6234.42748
-  tps: 4534.43585
+  tps: 4535.39393
  }
 }
 dps_results: {
@@ -562,7 +562,7 @@ dps_results: {
  key: "TestFeral-AllItems-Malfurion'sRegalia"
  value: {
   dps: 5924.9918
-  tps: 4309.82792
+  tps: 4309.89896
  }
 }
 dps_results: {
@@ -1010,21 +1010,21 @@ dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Flower-Aoe-FullBuffs-LongMultiTarget"
  value: {
   dps: 22842.14054
-  tps: 16527.53191
+  tps: 16538.35754
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Flower-Aoe-FullBuffs-LongSingleTarget"
  value: {
   dps: 4743.19044
-  tps: 3445.17827
+  tps: 3445.63969
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Flower-Aoe-FullBuffs-ShortSingleTarget"
  value: {
   dps: 5659.136
-  tps: 4080.15442
+  tps: 4080.4022
  }
 }
 dps_results: {
@@ -1136,21 +1136,21 @@ dps_results: {
  key: "TestFeral-Settings-Tauren-P2-Flower-Aoe-FullBuffs-LongMultiTarget"
  value: {
   dps: 31650.03106
-  tps: 22784.67265
+  tps: 22793.9157
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P2-Flower-Aoe-FullBuffs-LongSingleTarget"
  value: {
   dps: 6332.67438
-  tps: 4572.63525
+  tps: 4572.97658
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P2-Flower-Aoe-FullBuffs-ShortSingleTarget"
  value: {
   dps: 7557.497
-  tps: 5427.07792
+  tps: 5427.18722
  }
 }
 dps_results: {
