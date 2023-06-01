@@ -235,7 +235,7 @@ func init() {
 			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:       name + " Trigger",
 				Callback:   core.CallbackOnSpellHitDealt,
-				ProcMask:   core.ProcMaskMeleeOrProc | core.ProcMaskWeaponProc,
+				ProcMask:   core.ProcMaskMeleeOrProc,
 				Outcome:    core.OutcomeLanded,
 				ActionID:   core.ActionID{ItemID: itemID},
 				ProcChance: 0.5,
