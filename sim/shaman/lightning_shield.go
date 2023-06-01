@@ -55,22 +55,20 @@ func (shaman *Shaman) registerLightningShieldSpell() {
 			if sim.RandomFloat("Static Shock") > procChance {
 				return
 			}
-			procSpell.Cast(sim, result.Target)
 			aura.RemoveStack(sim)
+			procSpell.Cast(sim, result.Target)
 		},
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !spell.ProcMask.Matches(core.ProcMaskMelee) || !result.Landed() {
 				return
 			}
-
 			if !icd.IsReady(sim) {
 				return
 			}
-
 			icd.Use(sim)
 
-			procSpell.Cast(sim, spell.Unit)
 			aura.RemoveStack(sim)
+			procSpell.Cast(sim, spell.Unit)
 		},
 	})
 
