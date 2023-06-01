@@ -405,10 +405,10 @@ export class IndividualCLIExporter<SpecType extends Spec> extends Exporter {
   }
 
   getData(): string {
-    return JSON.stringify(
-      RaidSimRequest.toJson(this.simUI.sim.makeRaidSimRequest(false)),
-      null,
-      2
+    const raidSimJson: any = RaidSimRequest.toJson(
+      this.simUI.sim.makeRaidSimRequest(false)
     );
+    delete raidSimJson.raid?.parties[0]?.players[0]?.database;
+    return JSON.stringify(raidSimJson, null, 2);
   }
 }
