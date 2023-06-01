@@ -834,15 +834,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-TinyAbominationinaJar-50351"
  value: {
-  dps: 7384.05213
-  tps: 4198.85925
+  dps: 7383.54639
+  tps: 4198.59394
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-TinyAbominationinaJar-50706"
  value: {
-  dps: 7438.85352
-  tps: 4234.65613
+  dps: 7429.81957
+  tps: 4227.3369
  }
 }
 dps_results: {
