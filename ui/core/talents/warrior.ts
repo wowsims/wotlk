@@ -181,5 +181,10 @@ export const warriorGlyphsConfig: GlyphsConfig = {
 			description: 'Increases the radius of your Thunder Clap ability by 2 yards.',
 			iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/spell_nature_thunderclap.jpg',
 		},
+		[WarriorMinorGlyph.GlyphOfShatteringThrow]: {
+			name: 'Glyph of Shattering Throw',
+			description: 'Your Shattering Throw is now instant and can be used in any stance, but it no longer removes invulnerabilities and cannot be used on players or player-controlled targets.',
+			iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/ability_warrior_shatteringthrow.jpg',
+		},
 	},
 };

@@ -4,9 +4,11 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (warrior *Warrior) RegisterShatteringThrowCD() {
+	hasGlyph := warrior.HasMinorGlyph(proto.WarriorMinorGlyph_GlyphOfShatteringThrow)
 	ShatteringThrowSpell := warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 64382},
 		SpellSchool: core.SpellSchoolPhysical,
@@ -19,7 +21,7 @@ func (warrior *Warrior) RegisterShatteringThrowCD() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:      core.GCDDefault,
-				CastTime: time.Millisecond * 1500,
+				CastTime: core.TernaryDuration(hasGlyph, time.Duration(0), time.Millisecond*1500),
 			},
 			CD: core.Cooldown{
 				Timer:    warrior.NewTimer(),
@@ -31,14 +33,14 @@ func (warrior *Warrior) RegisterShatteringThrowCD() {
 				} else {
 					warrior.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+cast.CastTime, false)
 				}
-				if !warrior.StanceMatches(BattleStance) && warrior.BattleStance.IsReady(sim) {
+				if !hasGlyph && !warrior.StanceMatches(BattleStance) && warrior.BattleStance.IsReady(sim) {
 					warrior.BattleStance.Cast(sim, nil)
 				}
 			},
 			IgnoreHaste: true,
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return warrior.StanceMatches(BattleStance) || warrior.BattleStance.IsReady(sim)
+			return warrior.StanceMatches(BattleStance) || warrior.BattleStance.IsReady(sim) || hasGlyph
 		},
 
 		DamageMultiplier: 1,

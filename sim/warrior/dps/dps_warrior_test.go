@@ -96,12 +96,14 @@ var FuryGlyphs = &proto.Glyphs{
 	Major1: int32(proto.WarriorMajorGlyph_GlyphOfWhirlwind),
 	Major2: int32(proto.WarriorMajorGlyph_GlyphOfHeroicStrike),
 	Major3: int32(proto.WarriorMajorGlyph_GlyphOfRending),
+	Minor1: int32(proto.WarriorMinorGlyph_GlyphOfShatteringThrow),
 }
 var ArmsTalents = "3022032023335100102012213231251-305-2033"
 var ArmsGlyphs = &proto.Glyphs{
 	Major1: int32(proto.WarriorMajorGlyph_GlyphOfRending),
 	Major2: int32(proto.WarriorMajorGlyph_GlyphOfMortalStrike),
 	Major3: int32(proto.WarriorMajorGlyph_GlyphOfExecution),
+	Minor1: int32(proto.WarriorMinorGlyph_GlyphOfShatteringThrow),
 }
 
 var PlayerOptionsArms = &proto.Player_Warrior{
