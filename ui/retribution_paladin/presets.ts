@@ -538,7 +538,7 @@ export const P3_PRESET = {
 	]}`),
 };
 
-export const P3_PRESET = {
+export const P3_PRESET2 = {
 	name: 'P3 Axe Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecRetributionPaladin>) => true,
