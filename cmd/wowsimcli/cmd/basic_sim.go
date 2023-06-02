@@ -19,7 +19,7 @@ var simCmd = &cobra.Command{
 
 func init() {
 	simCmd.Flags().StringVar(&infile, "infile", "input.json", "location of input file (RaidSimRequest in protojson format)")
-	simCmd.Flags().StringVar(&infile, "output", "", "location of output file, defaults to stdout")
+	simCmd.Flags().StringVar(&outfile, "outfile", "", "location of output file, defaults to stdout")
 	simCmd.Flags().BoolVar(&verbose, "verbose", false, "print information during runtime")
 	simCmd.MarkFlagRequired("infile")
 }
