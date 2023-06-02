@@ -12,6 +12,33 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 	shadowFocus := 0.02 * float64(priest.Talents.ShadowFocus)
 	priest.DpInitMultiplier = 8 * 0.1 * float64(priest.Talents.ImprovedDevouringPlague)
 
+	var impDevouringPlague *core.Spell = nil
+	if priest.DpInitMultiplier != 0 {
+		impDevouringPlague = priest.RegisterSpell(core.SpellConfig{
+			ActionID:    core.ActionID{SpellID: 63675},
+			SpellSchool: core.SpellSchoolShadow,
+			ProcMask:    core.ProcMaskEmpty, // TODO: test if this can proc things
+			Flags:       core.SpellFlagDisease,
+
+			BonusHitRating: float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
+			BonusCritRating: 0 +
+				3*float64(priest.Talents.MindMelt)*core.CritRatingPerCritChance +
+				core.TernaryFloat64(priest.HasSetBonus(ItemSetCrimsonAcolyte, 2), 5, 0)*core.CritRatingPerCritChance,
+			DamageMultiplier: 1 +
+				0.02*float64(priest.Talents.Darkness) +
+				0.01*float64(priest.Talents.TwinDisciplines) +
+				0.05*float64(priest.Talents.ImprovedDevouringPlague) +
+				core.TernaryFloat64(priest.HasSetBonus(ItemSetConquerorSanct, 2), 0.15, 0),
+			CritMultiplier:   priest.DefaultSpellCritMultiplier(),
+			ThreatMultiplier: 1 - 0.05*float64(priest.Talents.ShadowAffinity),
+
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				baseDamage := (1376/8 + 0.1849*spell.SpellPower()) * priest.DpInitMultiplier
+				spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+			},
+		})
+	}
+
 	priest.DevouringPlague = priest.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
@@ -37,28 +64,10 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 			0.01*float64(priest.Talents.TwinDisciplines) +
 			0.05*float64(priest.Talents.ImprovedDevouringPlague) +
 			core.TernaryFloat64(priest.HasSetBonus(ItemSetConquerorSanct, 2), 0.15, 0),
-		CritMultiplier:   priest.DefaultSpellCritMultiplier(),
+		CritMultiplier:   priest.SpellCritMultiplier(1, 1),
 		ThreatMultiplier: 1 - 0.05*float64(priest.Talents.ShadowAffinity),
 
 		Dot: core.DotConfig{
-			Spell: priest.RegisterSpell(core.SpellConfig{
-				ActionID:    actionID,
-				SpellSchool: core.SpellSchoolShadow,
-				ProcMask:    core.ProcMaskSpellDamage,
-				Flags:       core.SpellFlagDisease,
-
-				BonusHitRating: float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
-				BonusCritRating: 0 +
-					3*float64(priest.Talents.MindMelt)*core.CritRatingPerCritChance +
-					core.TernaryFloat64(priest.HasSetBonus(ItemSetCrimsonAcolyte, 2), 5, 0)*core.CritRatingPerCritChance,
-				DamageMultiplier: 1 +
-					float64(priest.Talents.Darkness)*0.02 +
-					float64(priest.Talents.TwinDisciplines)*0.01 +
-					float64(priest.Talents.ImprovedDevouringPlague)*0.05 +
-					core.TernaryFloat64(priest.HasSetBonus(ItemSetConquerorSanct, 2), 0.15, 0),
-				CritMultiplier:   priest.SpellCritMultiplier(1, 1),
-				ThreatMultiplier: 1 - 0.05*float64(priest.Talents.ShadowAffinity),
-			}),
 			Aura: core.Aura{
 				Label: "DevouringPlague",
 			},
@@ -82,14 +91,11 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			var result *core.SpellResult
-			if priest.DpInitMultiplier == 0 {
-				result = spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
-			} else {
-				baseDamage := (1376/8 + 0.1849*spell.SpellPower()) * priest.DpInitMultiplier
-				result = spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+			if impDevouringPlague != nil {
+				impDevouringPlague.SkipCastAndApplyEffects(sim, target)
 			}
 
+			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
 				priest.AddShadowWeavingStack(sim)
 				spell.Dot(target).Apply(sim)
