@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (priest *Priest) registerDevouringPlagueSpell() {
@@ -11,6 +12,7 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 	mentalAgility := []float64{0, .04, .07, .10}[priest.Talents.MentalAgility]
 	shadowFocus := 0.02 * float64(priest.Talents.ShadowFocus)
 	priest.DpInitMultiplier = 8 * 0.1 * float64(priest.Talents.ImprovedDevouringPlague)
+	hasGlyphOfShadow := priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow))
 
 	var impDevouringPlague *core.Spell = nil
 	if priest.DpInitMultiplier != 0 {
@@ -34,7 +36,11 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				baseDamage := (1376/8 + 0.1849*spell.SpellPower()) * priest.DpInitMultiplier
-				spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+				result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+
+				if result.DidCrit() && hasGlyphOfShadow {
+					priest.ShadowyInsightAura.Activate(sim)
+				}
 			},
 		})
 	}
@@ -91,11 +97,13 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// calculate first, so that if imp. DP procs Shadowy Insight it doesn't influence the dot damage
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if impDevouringPlague != nil {
 				impDevouringPlague.SkipCastAndApplyEffects(sim, target)
 			}
 
-			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
+			spell.DealOutcome(sim, result)
 			if result.Landed() {
 				priest.AddShadowWeavingStack(sim)
 				spell.Dot(target).Apply(sim)
