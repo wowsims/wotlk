@@ -71,8 +71,6 @@ func applyDebuffEffects(target *Unit, debuffs *proto.Debuffs, raid *proto.Raid) 
 				},
 			})
 		})
-	} else if debuffs.DeepWounds {
-		MakePermanent(DeepWoundsAura(target))
 	}
 
 	if debuffs.ExposeArmor {
@@ -441,14 +439,7 @@ func StampedeAura(target *Unit) *Aura {
 	}, 1.25)
 }
 
-func DeepWoundsAura(target *Unit) *Aura {
-	return bleedDamageAura(target, Aura{
-		Label:    "Deep Wounds",
-		ActionID: ActionID{SpellID: 23256},
-		Duration: time.Second * 6,
-	}, 1.0)
-}
-
+// Bleed Damage Multiplier category
 const BleedEffectCategory = "BleedDamage"
 
 func bleedDamageAura(target *Unit, config Aura, multiplier float64) *Aura {

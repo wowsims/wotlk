@@ -567,7 +567,6 @@ message Debuffs {
 	bool mangle = 17;
 	bool trauma = 18;
 	bool stampede = 19;
-	bool deep_wounds = 38;
 
 	// Major armor
 	bool expose_armor = 20;

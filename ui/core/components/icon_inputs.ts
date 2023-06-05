@@ -254,7 +254,6 @@ export const JudgementOfWisdom = withLabel(makeBooleanDebuffInput(ActionId.fromS
 export const JudgementOfLight = makeBooleanDebuffInput(ActionId.fromSpellId(20271), 'judgementOfLight');
 export const ShatteringThrow = makeMultistateIndividualBuffInput(ActionId.fromSpellId(64382), 20, 'shatteringThrows');
 export const GiftOfArthas = makeBooleanDebuffInput(ActionId.fromSpellId(11374), 'giftOfArthas');
-exposrt const DeepWounds = makeBooleanDebuffInput(ActionId.fromSpellId(23256), 'deepWounds');
 
 // Consumes
 export const ThermalSapper = makeBooleanConsumeInput(ActionId.fromItemId(42641), 'thermalSapper');
