@@ -39,18 +39,23 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*core.Spell, *core.
 	}
 
 	var lunarUptime time.Duration
+	shouldRefreshMf := moonkin.Moonfire.CurDot().RemainingDuration(sim) <= 0
+	hasLunarFury := core.Ternary(moonkin.Equip[core.ItemSlotRanged].ID == 47670, true, false)
+	lunarIsActive := moonkin.LunarEclipseProcAura.IsActive()
+
 	if moonkin.LunarEclipseProcAura != nil {
 		lunarUptime = moonkin.LunarEclipseProcAura.RemainingDuration(sim)
 	}
-
 	if moonkin.MoonkinT84PCAura.IsActive() && moonkin.MoonkinT84PCAura.RemainingDuration(sim) < moonkin.SpellGCD() {
 		return moonkin.Starfire, target
 	} else if rotation.UseBattleRes && sim.GetRemainingDuration().Seconds() < moonkin.RebirthTiming && moonkin.Rebirth.IsReady(sim) {
 		return moonkin.Rebirth, target
-	} else if moonkin.Talents.ForceOfNature && moonkin.ForceOfNature.IsReady(sim) {
+	} else if rotation.MfUsage == proto.BalanceDruid_Rotation_MaximizeMf && shouldRefreshMf && hasLunarFury {
+		return moonkin.Moonfire, target
+	} else if moonkin.Talents.ForceOfNature && moonkin.ForceOfNature.IsReady(sim) && !lunarIsActive {
 		moonkin.useTrinkets(stats.SpellPower, sim, target)
 		return moonkin.ForceOfNature, target
-	} else if moonkin.Starfall.IsReady(sim) {
+	} else if moonkin.Starfall.IsReady(sim) && !lunarIsActive {
 		moonkin.useTrinkets(stats.SpellPower, sim, target)
 		return moonkin.Starfall, target
 	} else if moonkin.Typhoon.IsReady(sim) && rotation.UseTyphoon {
@@ -59,7 +64,6 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*core.Spell, *core.
 		return moonkin.Hurricane, target
 	}
 
-	lunarIsActive := moonkin.LunarEclipseProcAura.IsActive()
 	shouldHoldIs := core.Ternary(moonkin.MoonkinT84PCAura == nil, lunarIsActive, lunarIsActive && moonkin.HasActiveAuraWithTag(core.BloodlustAuraTag))
 
 	// Max IS uptime
@@ -77,7 +81,6 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*core.Spell, *core.
 	}
 
 	// Max MF uptime
-	shouldRefreshMf := moonkin.Moonfire.CurDot().RemainingDuration(sim) <= 0
 	if rotation.MfUsage == proto.BalanceDruid_Rotation_MaximizeMf && shouldRefreshMf {
 		return moonkin.Moonfire, target
 	} else if rotation.MfUsage == proto.BalanceDruid_Rotation_MultidotMf {
