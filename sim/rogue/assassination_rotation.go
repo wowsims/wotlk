@@ -26,7 +26,7 @@ type assassinationPrio struct {
 }
 
 func (rogue *Rogue) targetHasBleed(sim *core.Simulation) bool {
-	return rogue.bleedCategory.AnyActive() || rogue.CurrentTarget.HasActiveAuraWithTag(RogueBleedTag)
+	return rogue.bleedCategory.AnyActive() || rogue.CurrentTarget.HasActiveAuraWithTag(RogueBleedTag) || rogue.Options.AssumeBleedActive
 }
 
 func (rogue *Rogue) setupAssassinationRotation(sim *core.Simulation) {

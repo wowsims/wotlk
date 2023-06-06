@@ -225,6 +225,7 @@ message Rogue {
 		PoisonImbue oh_imbue = 3;
 		int32 starting_overkill_duration = 4;
 		bool apply_poisons_manually = 5;
+		bool assume_bleed_active = 6;
 	}
 	Options options = 3;
 }
