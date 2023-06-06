@@ -15,6 +15,7 @@ func (warlock *Warlock) registerUnstableAfflictionSpell() {
 		ActionID:    core.ActionID{SpellID: 47843},
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       core.SpellFlagHauntSE,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.15,
@@ -28,7 +29,6 @@ func (warlock *Warlock) registerUnstableAfflictionSpell() {
 		},
 
 		BonusCritRating: 0 +
-			warlock.masterDemonologistShadowCrit +
 			3*core.CritRatingPerCritChance*float64(warlock.Talents.Malediction),
 		DamageMultiplierAdditive: 1 +
 			warlock.GrandSpellstoneBonus() +
@@ -46,7 +46,7 @@ func (warlock *Warlock) registerUnstableAfflictionSpell() {
 			NumberOfTicks: 5,
 			TickLength:    time.Second * 3,
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
-				dot.SnapshotBaseDamage = 1150/5 + spellCoeff*dot.Spell.SpellPower()
+				dot.SnapshotBaseDamage = 230 + spellCoeff*dot.Spell.SpellPower()
 				attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
 				dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
 				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
@@ -55,14 +55,17 @@ func (warlock *Warlock) registerUnstableAfflictionSpell() {
 				if canCrit {
 					dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
 				} else {
-					dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+					dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTickCounted)
 				}
 			},
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
+			// this is a non-standard way of dealing with dot effects, but get's rid of the 0 damage tick
+			// that can proc on-damage effects; same with corruption, curses, ds
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
+				spell.SpellMetrics[target.UnitIndex].Hits--
 				spell.Dot(target).Apply(sim)
 			}
 		},

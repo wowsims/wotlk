@@ -18,12 +18,13 @@ func (hunter *Hunter) registerBlackArrowSpell(timer *core.Timer) {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskRangedSpecial,
+		Flags:       core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.06,
-			Multiplier: 1 *
-				(1 - 0.03*float64(hunter.Talents.Efficiency)) *
-				(1 - 0.2*float64(hunter.Talents.Resourcefulness)),
+			Multiplier: 1 -
+				0.03*float64(hunter.Talents.Efficiency) -
+				0.2*float64(hunter.Talents.Resourcefulness),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

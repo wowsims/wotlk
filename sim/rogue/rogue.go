@@ -26,11 +26,9 @@ func RegisterRogue() {
 }
 
 const (
-	SpellFlagBuilder  = core.SpellFlagAgentReserved2
-	SpellFlagFinisher = core.SpellFlagAgentReserved3
-	AssassinTree      = 0
-	CombatTree        = 1
-	SubtletyTree      = 2
+	SpellFlagBuilder     = core.SpellFlagAgentReserved2
+	SpellFlagFinisher    = core.SpellFlagAgentReserved3
+	SpellFlagColdBlooded = core.SpellFlagAgentReserved4
 )
 
 var TalentTreeSizes = [3]int{27, 28, 28}
@@ -44,11 +42,9 @@ type Rogue struct {
 	Options  *proto.Rogue_Options
 	Rotation *proto.Rogue_Rotation
 
-	priorityItems      []roguePriorityItem
-	rotationItems      []rogueRotationItem
-	assassinationPrios []assassinationPrio
-	subtletyPrios      []subtletyPrio
-	bleedCategory      *core.ExclusiveCategory
+	rotation rotation
+
+	bleedCategory *core.ExclusiveCategory
 
 	sliceAndDiceDurations [6]time.Duration
 	exposeArmorDurations  [6]time.Duration
@@ -57,8 +53,6 @@ type Rogue struct {
 
 	maxEnergy float64
 
-	BuilderPoints    int32
-	Builder          *core.Spell
 	Backstab         *core.Spell
 	BladeFlurry      *core.Spell
 	DeadlyPoison     *core.Spell
@@ -72,6 +66,8 @@ type Rogue struct {
 	InstantPoison    [3]*core.Spell
 	WoundPoison      [3]*core.Spell
 	Mutilate         *core.Spell
+	MutilateMH       *core.Spell
+	MutilateOH       *core.Spell
 	Shiv             *core.Spell
 	SinisterStrike   *core.Spell
 	TricksOfTheTrade *core.Spell
@@ -83,13 +79,14 @@ type Rogue struct {
 	MasterOfSubtlety *core.Spell
 	Overkill         *core.Spell
 
-	Envenom      [6]*core.Spell
-	Eviscerate   [6]*core.Spell
-	ExposeArmor  [6]*core.Spell
-	Rupture      [6]*core.Spell
-	SliceAndDice [6]*core.Spell
+	Envenom      *core.Spell
+	Eviscerate   *core.Spell
+	ExposeArmor  *core.Spell
+	Rupture      *core.Spell
+	SliceAndDice *core.Spell
 
-	lastDeadlyPoisonProcMask    core.ProcMask
+	lastDeadlyPoisonProcMask core.ProcMask
+
 	deadlyPoisonProcChanceBonus float64
 	instantPoisonPPMM           core.PPMManager
 	woundPoisonPPMM             core.PPMManager
@@ -127,8 +124,8 @@ func (rogue *Rogue) GetRogue() *Rogue {
 	return rogue
 }
 
-func (rogue *Rogue) AddRaidBuffs(raidBuffs *proto.RaidBuffs)    {}
-func (rogue *Rogue) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {}
+func (rogue *Rogue) AddRaidBuffs(_ *proto.RaidBuffs)   {}
+func (rogue *Rogue) AddPartyBuffs(_ *proto.PartyBuffs) {}
 
 func (rogue *Rogue) finisherFlags() core.SpellFlag {
 	flags := SpellFlagFinisher
@@ -185,26 +182,10 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerEnvenom()
 
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()
-	rogue.DelayDPSCooldownsForArmorDebuffs(time.Second * 14)
-}
-
-func (rogue *Rogue) getExpectedEnergyPerSecond() float64 {
-	const finishersPerSecond = 1.0 / 6
-	const averageComboPointsSpendOnFinisher = 4.0
-	bonusEnergyPerSecond := float64(rogue.Talents.CombatPotency) * 3 * 0.2 * 1.0 / (rogue.AutoAttacks.OH.SwingSpeed / 1.4)
-	bonusEnergyPerSecond += float64(rogue.Talents.FocusedAttacks)
-	bonusEnergyPerSecond += float64(rogue.Talents.RelentlessStrikes) * 0.04 * 25 * finishersPerSecond * averageComboPointsSpendOnFinisher
-	return (core.EnergyPerTick*rogue.EnergyTickMultiplier)/core.EnergyTickDuration.Seconds() + bonusEnergyPerSecond
 }
 
 func (rogue *Rogue) ApplyEnergyTickMultiplier(multiplier float64) {
 	rogue.EnergyTickMultiplier += multiplier
-}
-
-func (rogue *Rogue) getExpectedComboPointPerSecond() float64 {
-	const criticalPerSecond = 1
-	honorAmongThievesChance := []float64{0, 0.33, 0.66, 1.0}[rogue.Talents.HonorAmongThieves]
-	return criticalPerSecond * honorAmongThievesChance
 }
 
 func (rogue *Rogue) Reset(sim *core.Simulation) {
@@ -212,26 +193,27 @@ func (rogue *Rogue) Reset(sim *core.Simulation) {
 		mcd.Disable()
 	}
 	rogue.allMCDsDisabled = true
-	rogue.lastDeadlyPoisonProcMask = core.ProcMaskEmpty
-	// Vanish triggered effects (Overkill and Master of Subtlety) prepull activation
+
+	// Stealth triggered effects (Overkill and Master of Subtlety) pre-pull activation
 	if rogue.Rotation.OpenWithGarrote || rogue.Options.StartingOverkillDuration > 0 {
-		length := rogue.Options.StartingOverkillDuration
+		dur := time.Duration(rogue.Options.StartingOverkillDuration) * time.Second
 		if rogue.OverkillAura != nil {
-			if rogue.Rotation.OpenWithGarrote {
-				length = 20
+			if maxDur := rogue.OverkillAura.Duration; rogue.Rotation.OpenWithGarrote || dur > maxDur {
+				dur = maxDur
 			}
 			rogue.OverkillAura.Activate(sim)
-			rogue.OverkillAura.UpdateExpires(sim.CurrentTime + time.Second*time.Duration(length))
+			rogue.OverkillAura.UpdateExpires(sim.CurrentTime + dur)
 		}
 		if rogue.MasterOfSubtletyAura != nil {
-			if rogue.Rotation.OpenWithGarrote {
-				length = 6
+			if maxDur := rogue.MasterOfSubtletyAura.Duration; rogue.Rotation.OpenWithGarrote || dur > maxDur {
+				dur = maxDur
 			}
 			rogue.MasterOfSubtletyAura.Activate(sim)
-			rogue.MasterOfSubtletyAura.UpdateExpires(sim.CurrentTime + time.Second*time.Duration(length))
+			rogue.MasterOfSubtletyAura.UpdateExpires(sim.CurrentTime + dur)
 		}
 	}
-	rogue.setPriorityItems(sim)
+
+	rogue.setupRotation(sim)
 }
 
 func (rogue *Rogue) MeleeCritMultiplier(applyLethality bool) float64 {
@@ -268,7 +250,7 @@ func NewRogue(character core.Character, options *proto.Player) *Rogue {
 	if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfVigor) {
 		maxEnergy += 10
 	}
-	if rogue.HasSetBonus(ItemSetGladiatorsVestments, 4) {
+	if rogue.HasSetBonus(Arena, 4) {
 		maxEnergy += 10
 	}
 	rogue.maxEnergy = maxEnergy
@@ -300,10 +282,14 @@ func (rogue *Rogue) ApplyCutToTheChase(sim *core.Simulation) {
 }
 
 func (rogue *Rogue) CanMutilate() bool {
-	return rogue.Talents.Mutilate &&
-		rogue.HasMHWeapon() && rogue.HasOHWeapon() &&
-		rogue.GetMHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger &&
-		rogue.GetOHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger
+	return rogue.Talents.Mutilate && rogue.HasDagger(core.MainHand) && rogue.HasDagger(core.OffHand)
+}
+
+func (rogue *Rogue) HasDagger(hand core.Hand) bool {
+	if hand == core.MainHand {
+		return rogue.HasMHWeapon() && rogue.GetMHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger
+	}
+	return rogue.HasOHWeapon() && rogue.GetOHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger
 }
 
 func init() {

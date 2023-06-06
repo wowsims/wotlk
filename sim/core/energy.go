@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // Time between energy ticks.
@@ -41,7 +40,7 @@ func (unit *Unit) EnableEnergyBar(maxEnergy float64, onEnergyGain OnEnergyGain) 
 		unit:      unit,
 		maxEnergy: MaxFloat(100, maxEnergy),
 		onEnergyGain: func(sim *Simulation) {
-			if !unit.IsWaitingForEnergy() || unit.DoneWaitingForEnergy(sim) {
+			if !sim.Options.Interactive && (!unit.IsWaitingForEnergy() || unit.DoneWaitingForEnergy(sim)) {
 				onEnergyGain(sim)
 			}
 		},
@@ -173,23 +172,23 @@ type EnergyCostOptions struct {
 	RefundMetrics *ResourceMetrics // Optional, will default to unit.EnergyRefundMetrics if not supplied.
 }
 type EnergyCost struct {
-	Refund          float64
-	RefundMetrics   *ResourceMetrics
-	ResourceMetrics *ResourceMetrics
+	Refund            float64
+	RefundMetrics     *ResourceMetrics
+	ResourceMetrics   *ResourceMetrics
+	ComboPointMetrics *ResourceMetrics
 }
 
 func newEnergyCost(spell *Spell, options EnergyCostOptions) *EnergyCost {
-	spell.ResourceType = stats.Energy
-	spell.BaseCost = options.Cost
 	spell.DefaultCast.Cost = options.Cost
 	if options.Refund > 0 && options.RefundMetrics == nil {
 		options.RefundMetrics = spell.Unit.EnergyRefundMetrics
 	}
 
 	return &EnergyCost{
-		Refund:          options.Refund,
-		RefundMetrics:   options.RefundMetrics,
-		ResourceMetrics: spell.Unit.NewEnergyMetrics(spell.ActionID),
+		Refund:            options.Refund,
+		RefundMetrics:     options.RefundMetrics,
+		ResourceMetrics:   spell.Unit.NewEnergyMetrics(spell.ActionID),
+		ComboPointMetrics: spell.Unit.NewComboPointMetrics(spell.ActionID),
 	}
 }
 
@@ -211,4 +210,12 @@ func (ec *EnergyCost) IssueRefund(sim *Simulation, spell *Spell) {
 	if ec.Refund > 0 {
 		spell.Unit.AddEnergy(sim, ec.Refund*spell.CurCast.Cost, ec.RefundMetrics)
 	}
+}
+
+func (spell *Spell) EnergyMetrics() *ResourceMetrics {
+	return spell.Cost.(*EnergyCost).ComboPointMetrics
+}
+
+func (spell *Spell) ComboPointMetrics() *ResourceMetrics {
+	return spell.Cost.(*EnergyCost).ComboPointMetrics
 }

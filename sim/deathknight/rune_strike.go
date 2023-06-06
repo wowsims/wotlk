@@ -65,6 +65,10 @@ func (dk *Deathknight) newRuneStrikeSpell(isMH bool) *core.Spell {
 			baseDamage *= dk.RoRTSBonus(target)
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, outcomeApplier)
 
+			if result.Damage > 0 && dk.Talents.Necrosis > 0 {
+				dk.necrosisDamage(result.Damage, sim, target)
+			}
+
 			if isMH {
 				dk.threatOfThassarianProc(sim, result, dk.RuneStrikeOh)
 				dk.RuneStrikeAura.Deactivate(sim)

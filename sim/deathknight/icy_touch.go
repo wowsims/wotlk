@@ -9,12 +9,11 @@ import (
 var IcyTouchActionID = core.ActionID{SpellID: 59131}
 
 func (dk *Deathknight) registerIcyTouchSpell() {
-	dk.FrostFeverDebuffAura = make([]*core.Aura, dk.Env.GetNumTargets())
-	for _, encounterTarget := range dk.Env.Encounter.Targets {
-		target := &encounterTarget.Unit
+	dk.FrostFeverDebuffAura = make([]*core.Aura, len(dk.Env.Encounter.TargetUnits))
+	for i, target := range dk.Env.Encounter.TargetUnits {
 		ffAura := core.FrostFeverAura(target, dk.Talents.ImprovedIcyTouch)
 		ffAura.Duration = time.Second*15 + (time.Second * 3 * time.Duration(dk.Talents.Epidemic))
-		dk.FrostFeverDebuffAura[target.Index] = ffAura
+		dk.FrostFeverDebuffAura[i] = ffAura
 	}
 
 	sigilBonus := dk.sigilOfTheFrozenConscienceBonus()
@@ -66,12 +65,12 @@ func (dk *Deathknight) registerDrwIcyTouchSpell() {
 		ActionID:    IcyTouchActionID,
 		SpellSchool: core.SpellSchoolFrost,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagIgnoreAttackerModifiers,
+		//Flags:       core.SpellFlagIgnoreAttackerModifiers,
 
 		BonusCritRating:  dk.rimeCritBonus() * core.CritRatingPerCritChance,
-		DamageMultiplier: 0.5 * (1 + 0.05*float64(dk.Talents.ImprovedIcyTouch)),
-		CritMultiplier:   dk.RuneWeapon.DefaultMeleeCritMultiplier(),
-		ThreatMultiplier: 7,
+		DamageMultiplier: 1 + 0.05*float64(dk.Talents.ImprovedIcyTouch),
+		CritMultiplier:   dk.DefaultMeleeCritMultiplier(),
+		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(227, 245) + sigilBonus + 0.1*dk.RuneWeapon.getImpurityBonus(spell)
@@ -83,4 +82,9 @@ func (dk *Deathknight) registerDrwIcyTouchSpell() {
 			spell.DealDamage(sim, result)
 		},
 	})
+
+	if !dk.Inputs.NewDrw {
+		dk.RuneWeapon.IcyTouch.DamageMultiplier *= 0.5
+		dk.RuneWeapon.IcyTouch.Flags |= core.SpellFlagIgnoreAttackerModifiers
+	}
 }

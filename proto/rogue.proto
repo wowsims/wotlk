@@ -144,8 +144,6 @@ message Rogue {
 			Never = 0;
 			Once = 1;
 			Maintain = 2;
-			Build = 3;
-			Fill = 4;
 			FrequencyUnknown = 5;
 		}
 		Frequency expose_armor_frequency = 1;
@@ -161,12 +159,24 @@ message Rogue {
 		}
 		CombatPriority combat_finisher_priority = 4;
 
+		enum CombatBuilder {
+			SinisterStrike = 0;
+			Backstab = 1;
+		}
+		CombatBuilder combat_builder = 25;
+
 		enum AssassinationPriority {
 			EnvenomRupture = 0;
 			RuptureEnvenom = 1;
 			AssassinationPriorityUnknown = 2;
 		}
 		AssassinationPriority assassination_finisher_priority = 5;
+
+		enum SubtletyBuilder {
+			Hemorrhage = 0;
+			BackstabSub = 1;
+		}
+		SubtletyBuilder subtlety_builder = 26;
 
 		enum SubtletyPriority {
 			SubtletyEviscerate = 0;
@@ -176,39 +186,22 @@ message Rogue {
 		SubtletyPriority subtlety_finisher_priority = 6;
 
 		int32 minimum_combo_points_primary_finisher = 7;
-
 		int32 minimum_combo_points_secondary_finisher = 8;
 
 		Frequency MultiTargetSliceFrequency = 9;
-
 		int32 minimum_combo_points_multi_target_slice = 10;
 
-		int32 envenom_pool_amount = 11;
+		reserved 11, 13, 14, 19, 21, 22, 23; // the various envenom pooling parameters
 
 		bool use_feint = 12;
 
-		bool allow_cp_overcap = 13;
-
-		bool allow_cp_undercap = 14;
-
 		bool open_with_garrote = 15;
-
 		bool open_with_premeditation = 16;
-
 		bool open_with_shadowstep = 17;
 
 		bool rupture_for_bleed = 18;
 
-		int32 envenom_energy_threshold = 19;
-
 		bool hemo_with_dagger = 20;
-
-		int32 envenom_energy_threshold_min = 21;
-		
-		int32 envenom_energy_threshold_overkill = 22;
-
-		int32 envenom_energy_threshold_overkill_min = 23;
-
 		bool use_ghostly_strike = 24;
 	}
 	Rotation rotation = 1;
@@ -225,7 +218,8 @@ message Rogue {
 		PoisonImbue oh_imbue = 3;
 		int32 starting_overkill_duration = 4;
 		bool apply_poisons_manually = 5;
-		bool assume_bleed_active = 6;
+		int32 honor_of_thieves_crit_rate = 6;
+		bool assume_bleed_active = 7;
 	}
 	Options options = 3;
 }

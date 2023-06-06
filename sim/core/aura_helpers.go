@@ -129,9 +129,9 @@ func ApplyProcTriggerCallback(unit *Unit, aura *Aura, config ProcTrigger) {
 
 func MakeProcTriggerAura(unit *Unit, config ProcTrigger) *Aura {
 	aura := Aura{
-		Label:    config.Name,
-		ActionID: config.ActionID,
-		Duration: config.Duration,
+		Label:           config.Name,
+		ActionIDForProc: config.ActionID,
+		Duration:        config.Duration,
 	}
 	if config.Duration == 0 {
 		aura.Duration = NeverExpires
@@ -182,6 +182,20 @@ func (character *Character) NewTemporaryStatsAura(auraLabel string, actionID Act
 
 // Alternative that allows modifying the Aura config.
 func (character *Character) NewTemporaryStatsAuraWrapped(auraLabel string, actionID ActionID, buffs stats.Stats, duration time.Duration, modConfig func(*Aura)) *Aura {
+	// If one of the stat bonuses is a health bonus, then set up healing metrics for the associated
+	// heal, since all temporary max health bonuses also instantaneously heal the player.
+	var healthMetrics *ResourceMetrics
+	var amountHealed float64
+	includesHealthBuff := false
+
+	for statIdx, increment := range buffs {
+		if stats.Stat(statIdx) == stats.Health && increment > 0 {
+			includesHealthBuff = true
+			amountHealed = increment
+			healthMetrics = character.NewHealthMetrics(actionID)
+		}
+	}
+
 	config := Aura{
 		Label:    auraLabel,
 		ActionID: actionID,
@@ -191,6 +205,10 @@ func (character *Character) NewTemporaryStatsAuraWrapped(auraLabel string, actio
 				character.Log(sim, "Gained %s from %s.", buffs.FlatString(), actionID)
 			}
 			character.AddStatsDynamic(sim, buffs)
+
+			if includesHealthBuff {
+				character.GainHealth(sim, amountHealed, healthMetrics)
+			}
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			if sim.Log != nil {
@@ -207,7 +225,7 @@ func (character *Character) NewTemporaryStatsAuraWrapped(auraLabel string, actio
 	return character.GetOrRegisterAura(config)
 }
 
-func ApplyFixedUptimeAura(aura *Aura, uptime float64, tickLength time.Duration) {
+func ApplyFixedUptimeAura(aura *Aura, uptime float64, tickLength time.Duration, startTime time.Duration) {
 	auraDuration := aura.Duration
 	ticksPerAura := float64(auraDuration) / float64(tickLength)
 	chancePerTick := TernaryFloat64(uptime == 1, 1, 1.0-math.Pow(1-uptime, 1/ticksPerAura))
@@ -224,7 +242,7 @@ func ApplyFixedUptimeAura(aura *Aura, uptime float64, tickLength time.Duration) 
 
 		// Also try once at the start.
 		StartPeriodicAction(sim, PeriodicActionOptions{
-			Period:   1,
+			Period:   startTime,
 			NumTicks: 1,
 			OnAction: func(sim *Simulation) {
 				if sim.RandomFloat("FixedAura") < uptime {

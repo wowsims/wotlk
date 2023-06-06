@@ -30,7 +30,7 @@ func (hunter *Hunter) registerRapidFireCD() {
 					Period:   time.Second * 3,
 					NumTicks: 5,
 					OnAction: func(sim *core.Simulation) {
-						hunter.AddMana(sim, manaPerTick, manaMetrics, false)
+						hunter.AddMana(sim, manaPerTick, manaMetrics)
 					},
 				})
 			}

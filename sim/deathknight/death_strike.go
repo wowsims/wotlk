@@ -40,7 +40,7 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *core.Spell {
 		BonusCritRating: (dk.annihilationCritBonus() + dk.improvedDeathStrikeCritBonus()) * core.CritRatingPerCritChance,
 		DamageMultiplier: .75 *
 			core.TernaryFloat64(isMH, 1, dk.nervesOfColdSteelBonus()) *
-			(1.0 + 0.15*float64(dk.Talents.ImprovedDeathStrike)),
+			dk.improvedDeathStrikeDamageBonus(),
 		CritMultiplier:   dk.bonusCritMultiplier(dk.Talents.MightOfMograine),
 		ThreatMultiplier: 1,
 
@@ -69,8 +69,8 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *core.Spell {
 				dk.LastOutcome = result.Outcome
 
 				if result.Landed() {
-					healingAmount := 0.05 * dk.dkCountActiveDiseases(target) * dk.MaxHealth() * (1.0 + 0.5*float64(dk.Talents.ImprovedDeathStrike)) * (1.0 + core.TernaryFloat64(dk.VampiricBloodAura.IsActive(), 0.35, 0.0))
-					dk.GainHealth(sim, healingAmount, healthMetrics)
+					healingAmount := 0.05 * dk.dkCountActiveDiseases(target) * dk.MaxHealth() * (1.0 + 0.5*float64(dk.Talents.ImprovedDeathStrike))
+					dk.GainHealth(sim, healingAmount*dk.PseudoStats.HealingTakenMultiplier, healthMetrics)
 					dk.DeathStrikeHeals = append(dk.DeathStrikeHeals, healingAmount)
 				}
 
@@ -97,25 +97,31 @@ func (dk *Deathknight) registerDeathStrikeSpell() {
 
 func (dk *Deathknight) registerDrwDeathStrikeSpell() {
 	bonusBaseDamage := dk.sigilOfAwarenessBonus()
+	hasGlyph := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfDeathStrike)
 
 	dk.RuneWeapon.DeathStrike = dk.RuneWeapon.RegisterSpell(core.SpellConfig{
 		ActionID:    DeathStrikeActionID.WithTag(1),
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagIgnoreAttackerModifiers,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
 		BonusCritRating:  (dk.annihilationCritBonus() + dk.improvedDeathStrikeCritBonus()) * core.CritRatingPerCritChance,
-		DamageMultiplier: .5 * .75 * dk.improvedDeathStrikeDamageBonus(),
+		DamageMultiplier: .75 * dk.improvedDeathStrikeDamageBonus(),
 		CritMultiplier:   dk.bonusCritMultiplier(dk.Talents.MightOfMograine),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := 297 +
-				bonusBaseDamage +
-				spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
-				spell.BonusWeaponDamage()
+			baseDamage := 297 + bonusBaseDamage + dk.DrwWeaponDamage(sim, spell)
 
+			if hasGlyph {
+				baseDamage *= 1 + 0.01*core.MinFloat(dk.CurrentRunicPower(), 25)
+			}
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 		},
 	})
+
+	if !dk.Inputs.NewDrw {
+		dk.RuneWeapon.DeathStrike.DamageMultiplier *= 0.5
+		dk.RuneWeapon.DeathStrike.Flags |= core.SpellFlagIgnoreAttackerModifiers
+	}
 }

@@ -18,9 +18,6 @@ import { TristateEffect } from '../proto/common.js';
 import { Party } from '../party.js';
 import { Player } from '../player.js';
 import { Raid } from '../raid.js';
-import { Sim } from '../sim.js';
-import { Target } from '../target.js';
-import { Encounter } from '../encounter.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 
 import { IconPicker, IconPickerConfig } from './icon_picker.js';
@@ -151,7 +148,7 @@ export const SpellCritBuff = InputHelpers.makeMultiIconInput([
 export const SpellHasteBuff = withLabel(makeBooleanRaidBuffInput(ActionId.fromSpellId(3738), 'wrathOfAirTotem'), 'Spell Haste');
 
 export const SpellPowerBuff = InputHelpers.makeMultiIconInput([
-	makeMultistateRaidBuffInput(ActionId.fromSpellId(47240), 5000, 'demonicPact', 500),
+	makeMultistateRaidBuffInput(ActionId.fromSpellId(47240), 2000, 'demonicPactSp', 20),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(57722), 'totemOfWrath'),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(58656), 'flametongueTotem'),
 ], 'Spell Power');

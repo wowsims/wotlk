@@ -62,10 +62,10 @@ export class Database {
 	}
 
 	// Checks if any items in the equipment are missing from the current DB. If so, loads the leftover DB.
-	static async loadLeftoversIfNecessary(equipment: EquipmentSpec): Promise<void> {
+	static async loadLeftoversIfNecessary(equipment: EquipmentSpec): Promise<Database> {
 		const db = await Database.get();
 		if (db.loadedLeftovers) {
-			return;
+			return db;
 		}
 
 		const shouldLoadLeftovers = equipment.items.some(item => item.id != 0 && !db.items[item.id]);
@@ -74,6 +74,7 @@ export class Database {
 			db.loadProto(leftoverDb);
 			db.loadedLeftovers = true;
 		}
+		return db;
 	}
 
 	private readonly items: Record<number, Item> = {};
@@ -126,10 +127,12 @@ export class Database {
 		db.glyphIds.forEach(id => this.glyphIds.push(id));
 	}
 
+	getAllItems(): Array<Item> {
+		return Object.values(this.items);
+	}
+
 	getItems(slot: ItemSlot): Array<Item> {
-		let items = Object.values(this.items);
-		items = items.filter(item => getEligibleItemSlots(item).includes(slot));
-		return items;
+		return this.getAllItems().filter(item => getEligibleItemSlots(item).includes(slot));
 	}
 
 	getEnchants(slot: ItemSlot): Array<Enchant> {

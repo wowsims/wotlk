@@ -105,6 +105,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
 					moonkinAura: TristateEffect.TristateEffectImproved,
 					sanctifiedRetribution: true,
+					demonicPact: 500,
 				}),
 				partyBuffs: PartyBuffs.create({
 				}),
@@ -157,6 +158,8 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 					Presets.PRE_RAID_PRESET,
 					Presets.P1_PRESET,
 					Presets.P2_PRESET,
+					Presets.P3_PRESET_ALLI,
+					Presets.P3_PRESET_HORDE,
 				],
 			},
 		});

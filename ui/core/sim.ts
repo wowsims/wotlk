@@ -1,20 +1,10 @@
-import { ArmorType } from './proto/common.js';
-import { Class, Faction } from './proto/common.js';
-import { Consumes } from './proto/common.js';
-import { Encounter as EncounterProto } from './proto/common.js';
-import { EquipmentSpec } from './proto/common.js';
-import { GemColor } from './proto/common.js';
-import { ItemQuality } from './proto/common.js';
-import { ItemSlot } from './proto/common.js';
-import { ItemSpec } from './proto/common.js';
-import { ItemType } from './proto/common.js';
-import { Profession } from './proto/common.js';
-import { Race } from './proto/common.js';
+import { ArmorType, SimDatabase } from './proto/common.js';
+import { Faction } from './proto/common.js';
+import { Profession } from './proto/common.js';;
 import { RaidTarget } from './proto/common.js';
-import { Spec } from './proto/common.js';
 import { Stat, PseudoStat } from './proto/common.js';
 import { RangedWeaponType, WeaponType } from './proto/common.js';
-import { Raid as RaidProto } from './proto/api.js';
+import { BulkSimRequest, BulkSimResult, BulkSettings, Raid as RaidProto } from './proto/api.js';
 import { ComputeStatsRequest, ComputeStatsResult } from './proto/api.js';
 import { RaidSimRequest, RaidSimResult } from './proto/api.js';
 import { SimOptions } from './proto/api.js';
@@ -25,36 +15,14 @@ import {
 	SourceFilterOption,
 	RaidFilterOption,
 } from './proto/ui.js';
-import {
-	UIEnchant as Enchant,
-	UIGem as Gem,
-	UIItem as Item,
-} from './proto/ui.js';
-
 import { Database } from './proto_utils/database.js';
-import { EquippedItem } from './proto_utils/equipped_item.js';
-import { Gear } from './proto_utils/gear.js';
 import { SimResult } from './proto_utils/sim_result.js';
-import { Stats } from './proto_utils/stats.js';
-import { SpecRotation } from './proto_utils/utils.js';
-import { SpecTalents } from './proto_utils/utils.js';
-import { SpecTypeFunctions } from './proto_utils/utils.js';
-import { specTypeFunctions } from './proto_utils/utils.js';
-import { SpecOptions } from './proto_utils/utils.js';
-import { specToClass } from './proto_utils/utils.js';
-import { specToEligibleRaces } from './proto_utils/utils.js';
-import { getEligibleItemSlots } from './proto_utils/utils.js';
-import { playerToSpec } from './proto_utils/utils.js';
-
 import { getBrowserLanguageCode, setLanguageCode } from './constants/lang.js';
 import { Encounter } from './encounter.js';
 import { Player } from './player.js';
 import { Raid } from './raid.js';
-import { Listener } from './typed_event.js';
 import { EventID, TypedEvent } from './typed_event.js';
 import { getEnumValues } from './utils.js';
-import { sum } from './utils.js';
-import { wait } from './utils.js';
 import { WorkerPool } from './worker_pool.js';
 
 import * as OtherConstants from './constants/other.js';
@@ -110,6 +78,11 @@ export class Sim {
 
 	// Fires when a raid sim API call completes.
 	readonly simResultEmitter = new TypedEvent<SimResult>();
+
+	// Fires when a bulk sim API call starts.
+	readonly bulkSimStartEmitter = new TypedEvent<BulkSimRequest>();
+	// Fires when a bulk sim API call completes..
+	readonly bulkSimResultEmitter = new TypedEvent<BulkSimResult>();
 
 	private readonly _initPromise: Promise<any>;
 	private lastUsedRngSeed: number = 0;
@@ -195,7 +168,7 @@ export class Sim {
 		return raidProto;
 	}
 
-	private makeRaidSimRequest(debug: boolean): RaidSimRequest {
+	makeRaidSimRequest(debug: boolean): RaidSimRequest {
 		const raid = this.getModifiedRaidProto();
 		const encounter = this.encounter.toProto();
 
@@ -212,10 +185,49 @@ export class Sim {
 		});
 	}
 
-	async runRaidSim(eventID: EventID, onProgress: Function) {
+	async runBulkSim(bulkSettings: BulkSettings, bulkItemsDb: SimDatabase, onProgress: Function): Promise<BulkSimResult> {
 		if (this.raid.isEmpty()) {
 			throw new Error('Raid is empty! Try adding some players first.');
-		} else if (this.encounter.getNumTargets() < 1) {
+		} else if (this.encounter.targets.length < 1) {
+			throw new Error('Encounter has no targets! Try adding some targets first.');
+		}
+
+		await this.waitForInit();
+
+		const request = BulkSimRequest.create({
+			baseSettings: this.makeRaidSimRequest(false),
+			bulkSettings: bulkSettings,
+		});
+
+		if (request.baseSettings != null && request.baseSettings.simOptions != null) {
+			request.baseSettings.simOptions.debugFirstIteration = false;
+		}
+
+		if (!request.baseSettings?.raid || request.baseSettings?.raid?.parties.length == 0 || request.baseSettings?.raid?.parties[0].players.length == 0) {
+			throw new Error('Raid must contain exactly 1 player for bulk sim.');
+		}
+
+		// Attach the extra database to the player.
+		const playerDatabase = request.baseSettings.raid.parties[0].players[0].database;
+		playerDatabase?.items.push(...bulkItemsDb.items);
+		playerDatabase?.enchants.push(...bulkItemsDb.enchants);
+		playerDatabase?.gems.push(...bulkItemsDb.gems);
+
+		this.bulkSimStartEmitter.emit(TypedEvent.nextEventID(), request);
+		
+		var result = await this.workerPool.bulkSimAsync(request, onProgress);
+		if (result.errorResult != "") {
+			throw new SimError(result.errorResult);
+		}
+
+		this.bulkSimResultEmitter.emit(TypedEvent.nextEventID(), result);
+		return result;
+	}
+
+	async runRaidSim(eventID: EventID, onProgress: Function): Promise<SimResult> {
+		if (this.raid.isEmpty()) {
+			throw new Error('Raid is empty! Try adding some players first.');
+		} else if (this.encounter.targets.length < 1) {
 			throw new Error('Encounter has no targets! Try adding some targets first.');
 		}
 
@@ -229,12 +241,13 @@ export class Sim {
 		}
 		const simResult = await SimResult.makeNew(request, result);
 		this.simResultEmitter.emit(eventID, simResult);
+		return simResult;
 	}
 
 	async runRaidSimWithLogs(eventID: EventID): Promise<SimResult> {
 		if (this.raid.isEmpty()) {
 			throw new Error('Raid is empty! Try adding some players first.');
-		} else if (this.encounter.getNumTargets() < 1) {
+		} else if (this.encounter.targets.length < 1) {
 			throw new Error('Encounter has no targets! Try adding some targets first.');
 		}
 
@@ -283,7 +296,7 @@ export class Sim {
 	async statWeights(player: Player<any>, epStats: Array<Stat>, epPseudoStats: Array<PseudoStat>, epReferenceStat: Stat, onProgress: Function): Promise<StatWeightsResult> {
 		if (this.raid.isEmpty()) {
 			throw new Error('Raid is empty! Try adding some players first.');
-		} else if (this.encounter.getNumTargets() < 1) {
+		} else if (this.encounter.targets.length < 1) {
 			throw new Error('Encounter has no targets! Try adding some targets first.');
 		}
 

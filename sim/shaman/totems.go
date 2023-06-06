@@ -18,12 +18,6 @@ func (shaman *Shaman) newTotemSpellConfig(baseCost float64, spellID int32) core.
 				0.05*float64(shaman.Talents.TotemicFocus) -
 				0.02*float64(shaman.Talents.MentalQuickness),
 		},
-		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				GCD: time.Second,
-			},
-			IgnoreHaste: true,
-		},
 	}
 }
 
@@ -51,6 +45,41 @@ func (shaman *Shaman) registerManaSpringTotemSpell() {
 	shaman.ManaSpringTotem = shaman.RegisterSpell(config)
 }
 
+func (shaman *Shaman) registerHealingStreamTotemSpell() {
+	config := shaman.newTotemSpellConfig(0.03, 58757)
+	hsHeal := shaman.RegisterSpell(core.SpellConfig{
+		ActionID:         core.ActionID{SpellID: 52042},
+		SpellSchool:      core.SpellSchoolNature,
+		ProcMask:         core.ProcMaskEmpty,
+		Flags:            core.SpellFlagHelpful | core.SpellFlagNoOnCastComplete,
+		DamageMultiplier: 1 + (.02 * float64(shaman.Talents.Purification)) + 0.15*float64(shaman.Talents.RestorativeTotems),
+		CritMultiplier:   1,
+		ThreatMultiplier: 1 - (float64(shaman.Talents.HealingGrace) * 0.05),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// TODO: find healing stream coeff
+			healing := 25 + spell.HealingPower(target)*0.08272
+			spell.CalcAndDealHealing(sim, target, healing, spell.OutcomeHealing)
+		},
+	})
+	config.Hot = core.DotConfig{
+		Aura: core.Aura{
+			Label: "HealingStreamHot",
+		},
+		NumberOfTicks: 150,
+		TickLength:    time.Second * 2,
+		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+			hsHeal.Cast(sim, target)
+		},
+	}
+	config.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
+		shaman.NextTotemDrops[WaterTotem] = sim.CurrentTime + time.Second*300
+		for _, agent := range shaman.Party.Players {
+			spell.Hot(&agent.GetCharacter().Unit).Activate(sim)
+		}
+	}
+	shaman.HealingStreamTotem = shaman.RegisterSpell(config)
+}
+
 func (shaman *Shaman) registerTotemOfWrathSpell() {
 	config := shaman.newTotemSpellConfig(0.05, 57722)
 	config.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
@@ -61,8 +90,8 @@ func (shaman *Shaman) registerTotemOfWrathSpell() {
 }
 
 func (shaman *Shaman) applyToWDebuff(sim *core.Simulation) {
-	for _, target := range sim.Encounter.Targets {
-		auraDef := core.TotemOfWrathDebuff(&target.Unit)
+	for _, target := range sim.Encounter.TargetUnits {
+		auraDef := core.TotemOfWrathDebuff(target)
 		auraDef.Activate(sim)
 	}
 }
@@ -113,10 +142,9 @@ func (shaman *Shaman) NextTotemAt(_ *core.Simulation) time.Duration {
 func (shaman *Shaman) TryDropTotems(sim *core.Simulation) bool {
 	var spell *core.Spell
 
+	casted := false
 	for totemTypeIdx, totemExpiration := range shaman.NextTotemDrops {
-		if spell != nil {
-			break
-		}
+		spell = nil
 		nextDrop := shaman.NextTotemDropType[totemTypeIdx]
 		if sim.CurrentTime >= totemExpiration {
 			switch totemTypeIdx {
@@ -151,16 +179,25 @@ func (shaman *Shaman) TryDropTotems(sim *core.Simulation) bool {
 				}
 
 			case WaterTotem:
-				spell = shaman.ManaSpringTotem
+				switch proto.WaterTotem(nextDrop) {
+				case proto.WaterTotem_ManaSpringTotem:
+					spell = shaman.ManaSpringTotem
+				case proto.WaterTotem_HealingStreamTotem:
+					spell = shaman.HealingStreamTotem
+				}
 			}
+		}
+		if spell != nil {
+			if success := spell.Cast(sim, shaman.CurrentTarget); !success {
+				shaman.WaitForMana(sim, spell.CurCast.Cost)
+				return true
+			}
+			casted = true
 		}
 	}
 
-	if spell != nil {
-		if success := spell.Cast(sim, shaman.CurrentTarget); !success {
-			shaman.WaitForMana(sim, spell.CurCast.Cost)
-		}
-		return true
+	if casted {
+		shaman.WaitUntil(sim, sim.CurrentTime+time.Second)
 	}
-	return false
+	return casted
 }

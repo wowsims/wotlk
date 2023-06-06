@@ -12,7 +12,7 @@ func (dk *Deathknight) registerSummonGargoyleCD() {
 		return
 	}
 
-	summonGargoyleAura := dk.RegisterAura(core.Aura{
+	dk.SummonGargoyleAura = dk.RegisterAura(core.Aura{
 		Label:    "Summon Gargoyle",
 		ActionID: core.ActionID{SpellID: 49206},
 		Duration: time.Second * 30,
@@ -48,7 +48,7 @@ func (dk *Deathknight) registerSummonGargoyleCD() {
 			dk.Gargoyle.updateCastSpeed()
 
 			// Add a dummy aura to show in metrics
-			summonGargoyleAura.Activate(sim)
+			dk.SummonGargoyleAura.Activate(sim)
 
 			// Start casting after a 2.5s delay to simulate the summon animation
 			pa := core.PendingAction{
@@ -63,13 +63,15 @@ func (dk *Deathknight) registerSummonGargoyleCD() {
 		},
 	})
 
-	// We use this for defining the min cast time of gargoyle
-	// but we dont cast it with the MCD system
 	dk.AddMajorCooldown(core.MajorCooldown{
 		Spell: dk.SummonGargoyle,
-		Type:  core.CooldownTypeUnknown,
+		Type:  core.CooldownTypeDPS,
 	})
-	dk.GetMajorCooldown(dk.SummonGargoyle.ActionID).Disable()
+	if dk.Inputs.IsDps {
+		// We use this for defining the min cast time of gargoyle
+		// but we dont cast it with the MCD system in the dps sim
+		dk.GetMajorCooldown(dk.SummonGargoyle.ActionID).Disable()
+	}
 }
 
 type GargoylePet struct {
@@ -79,6 +81,7 @@ type GargoylePet struct {
 
 	GargoyleStrike *core.Spell
 
+	ownerMeleeMultiplier float64
 	meleeSpeedMultiplier func() float64
 	isNerfedGargoyle     bool
 }
@@ -126,8 +129,9 @@ func (dk *Deathknight) NewGargoyle(nerfedGargoyle bool) *GargoylePet {
 			false,
 			true,
 		),
-		dkOwner:          dk,
-		isNerfedGargoyle: nerfedGargoyle,
+		dkOwner:              dk,
+		isNerfedGargoyle:     nerfedGargoyle,
+		ownerMeleeMultiplier: 1.0,
 	}
 
 	// NightOfTheDead
@@ -147,6 +151,7 @@ func (garg *GargoylePet) Initialize() {
 }
 
 func (garg *GargoylePet) Reset(sim *core.Simulation) {
+	garg.ownerMeleeMultiplier = 1.0
 }
 
 func (garg *GargoylePet) OnGCDReady(sim *core.Simulation) {
@@ -156,8 +161,9 @@ func (garg *GargoylePet) OnGCDReady(sim *core.Simulation) {
 }
 
 func (garg *GargoylePet) updateCastSpeed() {
-	garg.PseudoStats.CastSpeedMultiplier = 1.0
-	garg.MultiplyCastSpeed(garg.meleeSpeedMultiplier())
+	garg.MultiplyCastSpeed(1.0 / garg.ownerMeleeMultiplier)
+	garg.ownerMeleeMultiplier = garg.meleeSpeedMultiplier()
+	garg.MultiplyCastSpeed(garg.ownerMeleeMultiplier)
 }
 
 func (garg *GargoylePet) registerGargoyleStrikeSpell() {

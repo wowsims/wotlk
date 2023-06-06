@@ -287,6 +287,9 @@ func (mage *Mage) registerPresenceOfMindCD() {
 			if !mage.GCD.IsReady(sim) {
 				return false
 			}
+			if mage.ArcanePowerAura.IsActive() {
+				return false
+			}
 
 			manaCost := spellToUse.DefaultCast.Cost * mage.PseudoStats.CostMultiplier
 			if spellToUse == mage.ArcaneBlast {
@@ -343,6 +346,7 @@ func (mage *Mage) registerArcanePowerCD() {
 			}
 		},
 	})
+	core.RegisterPercentDamageModifierEffect(mage.ArcanePowerAura, 1.2)
 
 	spell := mage.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
@@ -355,6 +359,12 @@ func (mage *Mage) registerArcanePowerCD() {
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			mage.ArcanePowerAura.Activate(sim)
+		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			if mage.ArcanePotencyAura.IsActive() {
+				return false
+			}
+			return true
 		},
 	})
 
@@ -384,9 +394,9 @@ func (mage *Mage) applyMasterOfElements() {
 			}
 			if result.DidCrit() {
 				if refundCoeff < 0 {
-					mage.SpendMana(sim, -1*spell.BaseCost*refundCoeff, manaMetrics)
+					mage.SpendMana(sim, -1*spell.DefaultCast.Cost*refundCoeff, manaMetrics)
 				} else {
-					mage.AddMana(sim, spell.BaseCost*refundCoeff, manaMetrics, false)
+					mage.AddMana(sim, spell.DefaultCast.Cost*refundCoeff, manaMetrics)
 				}
 			}
 		},
@@ -403,10 +413,10 @@ func (mage *Mage) registerCombustionCD() {
 		Duration: time.Minute * 2,
 	}
 
-	fireCritMult := mage.SpellCritMultiplier(1, mage.bonusCritDamage)
-	combCritMult := mage.SpellCritMultiplier(1, mage.bonusCritDamage+.5)
-	frostfireCritMult := mage.SpellCritMultiplier(1, mage.bonusCritDamage+float64(mage.Talents.IceShards)/3)
-	frostfireCombCritMult := mage.SpellCritMultiplier(1, mage.bonusCritDamage+float64(mage.Talents.IceShards)/3+.5)
+	fireCombCritMult := mage.SpellCritMultiplier(1, mage.bonusCritDamage+.5) / mage.SpellCritMultiplier(1, mage.bonusCritDamage)
+
+	frostfireCombCritMult := mage.SpellCritMultiplier(1, mage.bonusCritDamage+float64(mage.Talents.IceShards)/3+.5) /
+		mage.SpellCritMultiplier(1, mage.bonusCritDamage+float64(mage.Talents.IceShards)/3)
 
 	var fireSpells []*core.Spell
 	mage.OnSpellRegistered(func(spell *core.Spell) {
@@ -426,17 +436,15 @@ func (mage *Mage) registerCombustionCD() {
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			numCrits = 0
 			for _, spell := range fireSpells {
-				spell.CritMultiplier = combCritMult
+				spell.CritMultiplier *= core.TernaryFloat64(spell != mage.FrostfireBolt, fireCombCritMult, frostfireCombCritMult)
 			}
-			mage.FrostfireBolt.CritMultiplier = frostfireCombCritMult
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			cd.Use(sim)
 			mage.UpdateMajorCooldowns()
 			for _, spell := range fireSpells {
-				spell.CritMultiplier = fireCritMult
+				spell.CritMultiplier /= core.TernaryFloat64(spell != mage.FrostfireBolt, fireCombCritMult, frostfireCombCritMult)
 			}
-			mage.FrostfireBolt.CritMultiplier = frostfireCritMult
 		},
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
 			bonusCrit := critPerStack * float64(newStacks-oldStacks)
@@ -718,9 +726,9 @@ func (mage *Mage) applyWintersChill() {
 
 	procChance := []float64{0, 0.33, 0.66, 1}[mage.Talents.WintersChill]
 
-	wcAuras := make([]*core.Aura, mage.Env.GetNumTargets())
-	for _, target := range mage.Env.Encounter.Targets {
-		wcAuras[target.Index] = core.WintersChillAura(&target.Unit, 0)
+	wcAuras := make([]*core.Aura, len(mage.Env.Encounter.TargetUnits))
+	for i, target := range mage.Env.Encounter.TargetUnits {
+		wcAuras[i] = core.WintersChillAura(target, 0)
 	}
 
 	mage.RegisterAura(core.Aura{

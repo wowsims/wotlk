@@ -17,11 +17,21 @@ func TestBalance(t *testing.T) {
 		Class: proto.Class_ClassDruid,
 		Race:  proto.Race_RaceTauren,
 
-		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		GearSet: core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		OtherGearSets: []core.GearSetCombo{
+			{Label: "P2", GearSet: P2Gear},
+			{Label: "P2-4P", GearSet: P2Gear4P},
+			{Label: "P3", GearSet: P3Gear},
+		},
 		Talents:     StandardTalents,
 		Glyphs:      StandardGlyphs,
 		Consumes:    FullConsumes,
-		SpecOptions: core.SpecOptionsCombo{Label: "Starfire", SpecOptions: PlayerOptionsAdaptive},
+		SpecOptions: core.SpecOptionsCombo{Label: "Default", SpecOptions: PlayerOptionsAdaptive},
+		OtherSpecOptions: []core.SpecOptionsCombo{
+			{Label: "MultidotIs", SpecOptions: PlayerOptionsMultidotIs},
+			{Label: "MultidotMf", SpecOptions: PlayerOptionsMultidotMf},
+			{Label: "MultidotBoth", SpecOptions: PlayerOptionsMultidotBoth},
+		},
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
@@ -39,40 +49,121 @@ func TestBalance(t *testing.T) {
 	}))
 }
 
-var StandardTalents = "5032003115331303213305311231--205003012"
+func TestBalancePhase3(t *testing.T) {
+	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
+		Class: proto.Class_ClassDruid,
+		Race:  proto.Race_RaceTauren,
+
+		GearSet: core.GearSetCombo{Label: "P3", GearSet: P3Gear},
+		Talents: "5102233115331303213305311031--205003002",
+		Glyphs: &proto.Glyphs{
+			Major1: int32(proto.DruidMajorGlyph_GlyphOfStarfire),
+			Major2: int32(proto.DruidMajorGlyph_GlyphOfMoonfire),
+			Major3: int32(proto.DruidMajorGlyph_GlyphOfStarfire),
+		},
+		Consumes: FullConsumes,
+		SpecOptions: core.SpecOptionsCombo{Label: "Default", SpecOptions: &proto.Player_BalanceDruid{
+			BalanceDruid: &proto.BalanceDruid{
+				Options: &proto.BalanceDruid_Options{},
+				Rotation: &proto.BalanceDruid_Rotation{
+					MfUsage:            proto.BalanceDruid_Rotation_MaximizeMf,
+					IsUsage:            proto.BalanceDruid_Rotation_NoIs,
+					WrathUsage:         proto.BalanceDruid_Rotation_RegularWrath,
+					UseBattleRes:       false,
+					UseStarfire:        true,
+					UseTyphoon:         false,
+					UseHurricane:       false,
+					UseSmartCooldowns:  true,
+					MaintainFaerieFire: true,
+					PlayerLatency:      200,
+				},
+			}}},
+	}))
+}
+
+var StandardTalents = "5012203115331303213305311231--205003012"
 var StandardGlyphs = &proto.Glyphs{
-	Major1: int32(proto.DruidMajorGlyph_GlyphOfFocus),
+	Major1: int32(proto.DruidMajorGlyph_GlyphOfStarfire),
 	Major2: int32(proto.DruidMajorGlyph_GlyphOfInsectSwarm),
 	Major3: int32(proto.DruidMajorGlyph_GlyphOfStarfall),
 	Minor1: int32(proto.DruidMinorGlyph_GlyphOfTyphoon),
 }
 
 var FullConsumes = &proto.Consumes{
-	Flask:           proto.Flask_FlaskOfBlindingLight,
-	Food:            proto.Food_FoodBlackenedBasilisk,
-	DefaultPotion:   proto.Potions_SuperManaPotion,
-	PrepopPotion:    proto.Potions_DestructionPotion,
-	DefaultConjured: proto.Conjured_ConjuredDarkRune,
+	Flask:         proto.Flask_FlaskOfTheFrostWyrm,
+	Food:          proto.Food_FoodFishFeast,
+	DefaultPotion: proto.Potions_PotionOfSpeed,
+	PrepopPotion:  proto.Potions_PotionOfWildMagic,
 }
 
 var PlayerOptionsAdaptive = &proto.Player_BalanceDruid{
 	BalanceDruid: &proto.BalanceDruid{
-		Options: &proto.BalanceDruid_Options{
-			InnervateTarget: &proto.RaidTarget{TargetIndex: 0}, // self innervate
-		},
+		Options: &proto.BalanceDruid_Options{},
 		Rotation: &proto.BalanceDruid_Rotation{
-			Type: proto.BalanceDruid_Rotation_Adaptive,
+			MfUsage:            proto.BalanceDruid_Rotation_BeforeLunar,
+			IsUsage:            proto.BalanceDruid_Rotation_MaximizeIs,
+			WrathUsage:         proto.BalanceDruid_Rotation_RegularWrath,
+			UseBattleRes:       false,
+			UseStarfire:        true,
+			UseTyphoon:         false,
+			UseHurricane:       false,
+			UseSmartCooldowns:  true,
+			MaintainFaerieFire: true,
+			PlayerLatency:      200,
 		},
 	},
 }
 
-var PlayerOptionsAOE = &proto.Player_BalanceDruid{
+var PlayerOptionsMultidotIs = &proto.Player_BalanceDruid{
 	BalanceDruid: &proto.BalanceDruid{
-		Options: &proto.BalanceDruid_Options{
-			InnervateTarget: &proto.RaidTarget{TargetIndex: 0}, // self innervate
-		},
+		Options: &proto.BalanceDruid_Options{},
 		Rotation: &proto.BalanceDruid_Rotation{
-			Type: proto.BalanceDruid_Rotation_Adaptive,
+			MfUsage:            proto.BalanceDruid_Rotation_BeforeLunar,
+			IsUsage:            proto.BalanceDruid_Rotation_MultidotIs,
+			WrathUsage:         proto.BalanceDruid_Rotation_RegularWrath,
+			UseBattleRes:       false,
+			UseStarfire:        true,
+			UseTyphoon:         false,
+			UseHurricane:       false,
+			UseSmartCooldowns:  true,
+			MaintainFaerieFire: true,
+			PlayerLatency:      200,
+		},
+	},
+}
+
+var PlayerOptionsMultidotMf = &proto.Player_BalanceDruid{
+	BalanceDruid: &proto.BalanceDruid{
+		Options: &proto.BalanceDruid_Options{},
+		Rotation: &proto.BalanceDruid_Rotation{
+			MfUsage:            proto.BalanceDruid_Rotation_MultidotMf,
+			IsUsage:            proto.BalanceDruid_Rotation_MaximizeIs,
+			WrathUsage:         proto.BalanceDruid_Rotation_RegularWrath,
+			UseBattleRes:       false,
+			UseStarfire:        true,
+			UseTyphoon:         false,
+			UseHurricane:       false,
+			UseSmartCooldowns:  true,
+			MaintainFaerieFire: true,
+			PlayerLatency:      200,
+		},
+	},
+}
+
+var PlayerOptionsMultidotBoth = &proto.Player_BalanceDruid{
+	BalanceDruid: &proto.BalanceDruid{
+		Options: &proto.BalanceDruid_Options{},
+		Rotation: &proto.BalanceDruid_Rotation{
+			MfUsage:            proto.BalanceDruid_Rotation_MultidotMf,
+			IsUsage:            proto.BalanceDruid_Rotation_MultidotIs,
+			WrathUsage:         proto.BalanceDruid_Rotation_RegularWrath,
+			UseBattleRes:       false,
+			UseStarfire:        true,
+			UseTyphoon:         false,
+			UseHurricane:       false,
+			UseSmartCooldowns:  true,
+			MaintainFaerieFire: true,
+			PlayerLatency:      200,
 		},
 	},
 }
@@ -279,6 +370,229 @@ var P2Gear = core.EquipmentSpecFromJsonString(` {
         },
         {
           "id": 40321
+        }
+      ]
+    }`)
+
+var P2Gear4P = core.EquipmentSpecFromJsonString(` {
+       "items": [
+        {
+          "id": 46191,
+          "enchant": 3820,
+          "gems": [
+            41285,
+            42144
+          ]
+        },
+        {
+          "id": 45933,
+          "gems": [
+            39998
+          ]
+        },
+        {
+          "id": 46196,
+          "enchant": 3810,
+          "gems": [
+            40026
+          ]
+        },
+        {
+          "id": 45242,
+          "enchant": 3859,
+          "gems": [
+            39998
+          ]
+        },
+        {
+          "id": 46194,
+          "enchant": 3832,
+          "gems": [
+            39998,
+            42144
+          ]
+        },
+        {
+          "id": 45446,
+          "enchant": 2332,
+          "gems": [
+            42144,
+            0
+          ]
+        },
+        {
+          "id": 45665,
+          "enchant": 3604,
+          "gems": [
+            39998,
+            39998,
+            0
+          ]
+        },
+        {
+          "id": 45616,
+          "gems": [
+            39998,
+            39998,
+            39998
+          ]
+        },
+        {
+          "id": 46192,
+          "enchant": 3719,
+          "gems": [
+            39998,
+            39998
+          ]
+        },
+        {
+          "id": 45537,
+          "enchant": 3606,
+          "gems": [
+            39998,
+            40026
+          ]
+        },
+        {
+          "id": 46046,
+          "gems": [
+            39998
+          ]
+        },
+        {
+          "id": 45495,
+          "gems": [
+            39998
+          ]
+        },
+        {
+          "id": 45466
+        },
+        {
+          "id": 45518
+        },
+        {
+          "id": 45620,
+          "enchant": 3834,
+          "gems": [
+            39998
+          ]
+        },
+        {
+          "id": 45617
+        },
+        {
+          "id": 40321
+        }
+      ]
+    }`)
+
+var P3Gear = core.EquipmentSpecFromJsonString(` {
+		"items": [
+         {
+          "id": 48171,
+          "enchant": 3820,
+          "gems": [
+            41285,
+            40153
+          ]
+        },
+        {
+          "id": 47144,
+          "gems": [
+            40153
+          ]
+        },
+        {
+          "id": 48168,
+          "enchant": 3810,
+          "gems": [
+            40153
+          ]
+        },
+        {
+          "id": 47552,
+          "enchant": 3722,
+          "gems": [
+            40113
+          ]
+        },
+        {
+          "id": 48169,
+          "enchant": 3832,
+          "gems": [
+            40113,
+            40113
+          ]
+        },
+        {
+          "id": 47066,
+          "enchant": 2332,
+          "gems": [
+            40113,
+            0
+          ]
+        },
+        {
+          "id": 48172,
+          "enchant": 3604,
+          "gems": [
+            40113,
+            0
+          ]
+        },
+        {
+          "id": 47084,
+          "gems": [
+            40133,
+            40113,
+            40113
+          ]
+        },
+        {
+          "id": 47190,
+          "enchant": 3719,
+          "gems": [
+            40113,
+            40113,
+            40113
+          ]
+        },
+        {
+          "id": 47097,
+          "enchant": 3606,
+          "gems": [
+            40133,
+            40113
+          ]
+        },
+        {
+          "id": 47237,
+          "gems": [
+            40113
+          ]
+        },
+        {
+          "id": 46046,
+          "gems": [
+            40113
+          ]
+        },
+        {
+          "id": 45518
+        },
+        {
+          "id": 47188
+        },
+        {
+          "id": 47206,
+          "enchant": 3834
+        },
+        {
+          "id": 47064
+        },
+        {
+          "id": 47670
         }
       ]
     }`)

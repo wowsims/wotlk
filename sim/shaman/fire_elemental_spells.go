@@ -67,10 +67,10 @@ func (fireElemental *FireElemental) registerFireNova() {
 			// TODO is this the right affect should it be Capped?
 			// TODO these are approximation, from base SP
 			dmgFromSP := 1.0071 * spell.SpellPower()
-			for _, aoeTarget := range sim.Encounter.Targets {
+			for _, aoeTarget := range sim.Encounter.TargetUnits {
 				baseDamage := sim.Roll(1, 150) + dmgFromSP
 				baseDamage *= sim.Encounter.AOECapMultiplier()
-				spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, spell.OutcomeMagicHitAndCrit)
+				spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeMagicHitAndCrit)
 			}
 		},
 	})
@@ -101,10 +101,10 @@ func (fireElemental *FireElemental) registerFireShieldAura() {
 				// TODO is this the right affect should it be Capped?
 				// TODO these are approximation, from base SP
 				dmgFromSP := 0.032 * dot.Spell.SpellPower()
-				for _, aoeTarget := range sim.Encounter.Targets {
+				for _, aoeTarget := range sim.Encounter.TargetUnits {
 					baseDamage := sim.Roll(68, 70) + dmgFromSP
 					//baseDamage *= sim.Encounter.AOECapMultiplier()
-					dot.Spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, dot.Spell.OutcomeMagicCrit)
+					dot.Spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, dot.Spell.OutcomeMagicCrit)
 				}
 			},
 		},

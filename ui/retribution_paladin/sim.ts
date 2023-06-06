@@ -130,6 +130,7 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 					icyTalons: true,
 					totemOfWrath: true,
 					wrathOfAirTotem: true,
+					demonicPact: 500,
 				}),
 				partyBuffs: PartyBuffs.create({
 				}),
@@ -166,6 +167,7 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 					RetributionPaladinInputs.RetributionPaladinRotationDivinePleaSelection,
 					RetributionPaladinInputs.RetributionPaladinRotationAvoidClippingConsecration,
 					RetributionPaladinInputs.RetributionPaladinRotationHoldLastAvengingWrathUntilExecution,
+					RetributionPaladinInputs.RetributionPaladinRotationCancelChaosBane,
 					RetributionPaladinInputs.RetributionPaladinRotationDivinePleaSelectionAlternate,
 					RetributionPaladinInputs.RetributionPaladinRotationDivinePleaPercentageConfig,
 					RetributionPaladinInputs.RetributionPaladinRotationConsSlackConfig,

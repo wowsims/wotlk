@@ -14,7 +14,7 @@ func (shaman *Shaman) registerSearingTotemSpell() {
 			if shaman.Totems.Fire != proto.FireTotem_SearingTotem {
 				return false
 			}
-			if shaman.SearingTotem.AOEDot().IsActive() || shaman.FireElemental.IsEnabled() || shaman.FireElementalTotem.IsReady(sim) {
+			if shaman.SearingTotem.Dot(shaman.CurrentTarget).IsActive() || shaman.FireElemental.IsEnabled() || shaman.FireElementalTotem.IsReady(sim) {
 				return false
 			}
 			return true
@@ -45,7 +45,6 @@ func (shaman *Shaman) registerSearingTotemSpell() {
 		CritMultiplier:   shaman.ElementalCritMultiplier(0),
 
 		Dot: core.DotConfig{
-			IsAOE: true, // Not really AOE, but we don't want separate DoTs for each enemy.
 			Aura: core.Aura{
 				Label: "SearingTotem",
 			},
@@ -66,7 +65,7 @@ func (shaman *Shaman) registerSearingTotemSpell() {
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
 			shaman.MagmaTotem.AOEDot().Cancel(sim)
 			shaman.FireElemental.Disable(sim)
-			spell.AOEDot().Apply(sim)
+			spell.Dot(sim.GetTargetUnit(0)).Apply(sim)
 			if !shaman.Totems.UseFireMcd {
 				// +1 needed because of rounding issues with totem tick time.
 				shaman.NextTotemDrops[FireTotem] = sim.CurrentTime + time.Second*60 + 1
@@ -132,14 +131,14 @@ func (shaman *Shaman) registerMagmaTotemSpell() {
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				baseDamage := 371 + 0.1*dot.Spell.SpellPower()
 				baseDamage *= sim.Encounter.AOECapMultiplier()
-				for _, aoeTarget := range sim.Encounter.Targets {
-					dot.Spell.CalcAndDealDamage(sim, &aoeTarget.Unit, baseDamage, dot.Spell.OutcomeMagicHitAndCrit)
+				for _, aoeTarget := range sim.Encounter.TargetUnits {
+					dot.Spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, dot.Spell.OutcomeMagicHitAndCrit)
 				}
 			},
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-			shaman.SearingTotem.AOEDot().Cancel(sim)
+			shaman.SearingTotem.Dot(shaman.CurrentTarget).Cancel(sim)
 			shaman.FireElemental.Disable(sim)
 			spell.AOEDot().Apply(sim)
 			if !shaman.Totems.UseFireMcd {

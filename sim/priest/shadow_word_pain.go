@@ -9,6 +9,8 @@ import (
 
 func (priest *Priest) registerShadowWordPainSpell() {
 	twistedFaithMultiplier := 1 + 0.02*float64(priest.Talents.TwistedFaith)
+	mentalAgility := []float64{0, .04, .07, .10}[priest.Talents.MentalAgility]
+	shadowFocus := 0.02 * float64(priest.Talents.ShadowFocus)
 	mindFlayMod := twistedFaithMultiplier +
 		core.TernaryFloat64(priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfMindFlay)), 0.1, 0)
 
@@ -24,7 +26,7 @@ func (priest *Priest) registerShadowWordPainSpell() {
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.22,
-			Multiplier: 1 - []float64{0, .04, .07, .10}[priest.Talents.MentalAgility],
+			Multiplier: 1 - (shadowFocus + mentalAgility),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -81,7 +83,7 @@ func (priest *Priest) registerShadowWordPainSpell() {
 				}
 
 				if glyphManaMetrics != nil {
-					priest.AddMana(sim, priest.BaseMana*0.01, glyphManaMetrics, false)
+					priest.AddMana(sim, priest.BaseMana*0.01, glyphManaMetrics)
 				}
 			},
 		},

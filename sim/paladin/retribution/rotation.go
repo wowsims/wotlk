@@ -36,14 +36,13 @@ func (ret *RetributionPaladin) OnAutoAttack(sim *core.Simulation, spell *core.Sp
 		} else if ret.SovDotSpell.Dot(ret.CurrentTarget).GetStacks() == 5 && minVengeanceDotStacks < 5 {
 			ret.CurrentTarget = minVengeanceDotStacksTarget
 		} else {
-			ret.CurrentTarget = &ret.Env.Encounter.Targets[0].Unit
+			ret.CurrentTarget = ret.Env.Encounter.TargetUnits[0]
 		}
 	}
 }
 
 func (ret *RetributionPaladin) OnGCDReady(sim *core.Simulation) {
 	ret.SelectedRotation(sim)
-
 	if ret.GCD.IsReady(sim) {
 		ret.DoNothing() // this means we had nothing to do and we are ok
 	}
@@ -51,7 +50,7 @@ func (ret *RetributionPaladin) OnGCDReady(sim *core.Simulation) {
 
 func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 	// Setup
-	target := &ret.Env.Encounter.Targets[0].Unit
+	target := ret.Env.Encounter.TargetUnits[0]
 
 	nextSwingAt := ret.AutoAttacks.NextAttackAt()
 	isExecutePhase := sim.IsExecutePhase20()
@@ -117,8 +116,8 @@ func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 		events = append(events, ret.HandOfReckoning.CD.ReadyAt())
 	}
 
+	CancelChaosBane(ret, sim)
 	ret.waitUntilNextEvent(sim, events, ret.customRotation)
-
 }
 
 func (ret *RetributionPaladin) castSequenceRotation(sim *core.Simulation) {
@@ -127,7 +126,7 @@ func (ret *RetributionPaladin) castSequenceRotation(sim *core.Simulation) {
 	}
 
 	// Setup
-	target := &ret.Env.Encounter.Targets[0].Unit
+	target := ret.Env.Encounter.TargetUnits[0]
 	isExecutePhase := sim.IsExecutePhase20()
 
 	nextReadyAt := sim.CurrentTime
@@ -168,13 +167,14 @@ func (ret *RetributionPaladin) castSequenceRotation(sim *core.Simulation) {
 		events = append(events, ret.HandOfReckoning.CD.ReadyAt())
 	}
 
+	CancelChaosBane(ret, sim)
 	ret.waitUntilNextEvent(sim, events, ret.castSequenceRotation)
 }
 
 func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 
 	// Setup
-	target := &ret.Env.Encounter.Targets[0].Unit
+	target := ret.Env.Encounter.TargetUnits[0]
 
 	nextSwingAt := ret.AutoAttacks.NextAttackAt()
 	isExecutePhase := sim.IsExecutePhase20()
@@ -280,6 +280,7 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 		events = append(events, ret.HandOfReckoning.CD.ReadyAt())
 	}
 
+	CancelChaosBane(ret, sim)
 	ret.waitUntilNextEvent(sim, events, ret.mainRotation)
 }
 
@@ -295,6 +296,7 @@ func (ret *RetributionPaladin) checkConsecrationClipping(sim *core.Simulation) b
 
 // Helper function for finding the next event
 func (ret *RetributionPaladin) waitUntilNextEvent(sim *core.Simulation, events []time.Duration, rotationCallback func(*core.Simulation)) {
+
 	// Find the minimum possible next event that is greater than the current time
 	nextEventAt := time.Duration(math.MaxInt64) // any event will happen before forever.
 	for _, elem := range events {
@@ -304,6 +306,9 @@ func (ret *RetributionPaladin) waitUntilNextEvent(sim *core.Simulation, events [
 	}
 	// If the next action is  the GCD, just return
 	if nextEventAt == ret.GCD.ReadyAt() {
+		if ret.CancelChaosBane && ret.HasActiveAura("Chaos Bane") {
+			ret.GetAura("Chaos Bane").Deactivate(sim)
+		}
 		return
 	}
 
@@ -315,4 +320,17 @@ func (ret *RetributionPaladin) waitUntilNextEvent(sim *core.Simulation, events [
 	}
 
 	sim.AddPendingAction(pa)
+
+	if ret.CancelChaosBane && ret.HasActiveAura("Chaos Bane") {
+		ret.GetAura("Chaos Bane").Deactivate(sim)
+	}
+}
+
+func CancelChaosBane(ret *RetributionPaladin, sim *core.Simulation) {
+	if !ret.Paladin.CancelChaosBane {
+		return
+	}
+	if a := ret.Paladin.GetAura("Chaos Bane"); a != nil {
+		a.Deactivate(sim)
+	}
 }

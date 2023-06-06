@@ -1,11 +1,8 @@
-import { Race, RaidTarget } from '../core/proto/common.js';
+import { RaidTarget } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { NO_TARGET } from '../core/proto_utils/utils.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
-import { Sim } from '../core/sim.js';
-import { IndividualSimUI } from '../core/individual_sim_ui.js';
-import { Target } from '../core/target.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';

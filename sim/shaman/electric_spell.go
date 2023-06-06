@@ -25,11 +25,16 @@ const (
 
 // Shared precomputation logic for LB and CL.
 func (shaman *Shaman) newElectricSpellConfig(actionID core.ActionID, baseCost float64, baseCastTime time.Duration, isLightningOverload bool) core.SpellConfig {
+	mask := core.ProcMaskSpellDamage
+	if isLightningOverload {
+		mask = core.ProcMaskProc
+	}
 	spell := core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolNature,
-		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       SpellFlagElectric | SpellFlagFocusable,
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolNature,
+		ProcMask:     mask,
+		Flags:        SpellFlagElectric | SpellFlagFocusable,
+		MetricSplits: 6,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   core.TernaryFloat64(isLightningOverload, 0, baseCost),
@@ -39,6 +44,9 @@ func (shaman *Shaman) newElectricSpellConfig(actionID core.ActionID, baseCost fl
 			DefaultCast: core.Cast{
 				CastTime: baseCastTime - time.Millisecond*100*time.Duration(shaman.Talents.LightningMastery),
 				GCD:      core.GCDDefault,
+			},
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				spell.SetMetricsSplit(shaman.MaelstromWeaponAura.GetStacks())
 			},
 		},
 
@@ -56,6 +64,8 @@ func (shaman *Shaman) newElectricSpellConfig(actionID core.ActionID, baseCost fl
 		spell.Cast.DefaultCast.CastTime = 0
 		spell.Cast.DefaultCast.GCD = 0
 		spell.Cast.DefaultCast.Cost = 0
+		spell.Cast.ModifyCast = nil
+		spell.MetricSplits = 0
 		spell.DamageMultiplier *= 0.5
 		spell.ThreatMultiplier = 0
 	}

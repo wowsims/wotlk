@@ -34,16 +34,20 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool) *core.
 		DamageMultiplier: .5 *
 			core.TernaryFloat64(isMainTarget, 1, 0.5) *
 			dk.thassariansPlateDamageBonus() *
-			dk.scourgelordsBattlegearDamageBonus(dk.HeartStrike) *
-			dk.bloodyStrikesBonus(dk.HeartStrike),
+			dk.scourgelordsBattlegearDamageBonus(ScourgelordBonusSpellHS) *
+			dk.bloodyStrikesBonus(BloodyStrikesHS),
 		CritMultiplier:   critMultiplier,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := 736 +
-				bonusBaseDamage +
-				spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
-				spell.BonusWeaponDamage()
+			baseDamage := 736 + bonusBaseDamage
+
+			if isDrw {
+				baseDamage += dk.DrwWeaponDamage(sim, spell)
+			} else {
+				baseDamage += spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+					spell.BonusWeaponDamage()
+			}
 
 			activeDiseases := core.TernaryFloat64(isDrw, dk.drwCountActiveDiseases(target), dk.dkCountActiveDiseases(target))
 			baseDamage *= 1 + activeDiseases*diseaseMulti
@@ -72,8 +76,10 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool) *core.
 	}
 
 	if isDrw {
-		conf.DamageMultiplier *= .5
-		conf.Flags |= core.SpellFlagIgnoreAttackerModifiers
+		if !dk.Inputs.NewDrw {
+			conf.DamageMultiplier *= 0.5
+			conf.Flags |= core.SpellFlagIgnoreAttackerModifiers
+		}
 		return dk.RuneWeapon.RegisterSpell(conf)
 	} else {
 		return dk.RegisterSpell(conf)

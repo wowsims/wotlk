@@ -19,11 +19,8 @@ func (druid *Druid) registerInnervateCD() {
 	innervateCD := core.InnervateCD
 
 	var innervateAura *core.Aura
-	var expectedManaPerInnervate float64
 	var innervateManaThreshold float64
-	var remainingInnervateUsages int
 	druid.RegisterResetEffect(func(sim *core.Simulation) {
-		expectedManaPerInnervate = innervateTarget.SpiritManaRegenPerSecond() * 5 * 20
 		if innervateTarget == druid.GetCharacter() {
 			if druid.StartingForm.Matches(Cat) {
 				// double shift + innervate cost.
@@ -36,10 +33,7 @@ func (druid *Druid) registerInnervateCD() {
 		} else {
 			innervateManaThreshold = core.InnervateManaThreshold(innervateTarget)
 		}
-		innervateAura = core.InnervateAura(innervateTarget, expectedManaPerInnervate, actionID.Tag)
-
-		remainingInnervateUsages = int(1 + (core.MaxDuration(0, sim.Duration))/innervateCD)
-		innervateTarget.ExpectedBonusMana += expectedManaPerInnervate * float64(remainingInnervateUsages)
+		innervateAura = core.InnervateAura(innervateTarget, actionID.Tag)
 	})
 
 	innervateSpell = druid.RegisterSpell(core.SpellConfig{
@@ -75,11 +69,6 @@ func (druid *Druid) registerInnervateCD() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			// Update expected bonus mana
-			newRemainingUsages := int(sim.GetRemainingDuration() / innervateCD)
-			//expectedBonusManaReduction := expectedManaPerInnervate * float64(remainingInnervateUsages-newRemainingUsages)
-			remainingInnervateUsages = newRemainingUsages
-
 			innervateAura.Activate(sim)
 		},
 	})

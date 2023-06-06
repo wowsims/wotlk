@@ -74,18 +74,34 @@ func (dk *DpsDeathknight) shDiseaseCheck(sim *core.Simulation, target *core.Unit
 
 func (dk *DpsDeathknight) shRecastAvailableCheck(expiresAt time.Duration, afterCastTime time.Duration,
 	spellCost int, currentRunes int32, nextRuneAt time.Duration) bool {
+	// Allow disease drops in unholy as its a dps increase sometimes
+	downTime := time.Duration(core.TernaryFloat64(dk.PrimaryTalentTree == 2, dk.Inputs.DiseaseDowntime, 0)) * time.Second
 	if spellCost > 0 && currentRunes == 0 {
-		if expiresAt <= nextRuneAt {
+		if expiresAt+downTime <= nextRuneAt {
 			return true
 		}
-	} else if afterCastTime >= expiresAt {
+	} else if afterCastTime >= expiresAt+downTime {
 		return true
 	}
 	return false
 }
 
 func (dk *DpsDeathknight) shShouldSpreadDisease(sim *core.Simulation) bool {
-	return dk.sr.recastedFF && dk.sr.recastedBP && dk.Env.GetNumTargets() > 1
+	prioritizeSpread := dk.Env.GetNumTargets() > 1
+
+	// on 2 or 3 targets, we don't want to spread if we have diseases up on all targets already (to maximize Desolation uptime)
+	// on 4+ targets always spread to maximize disease and Wandering Plague uptime
+	if dk.Env.GetNumTargets() > 1 && dk.Env.GetNumTargets() < 4 {
+		for i := int32(1); i < dk.Env.GetNumTargets(); i++ {
+			target := dk.Env.GetTargetUnit(i)
+			if dk.FrostFeverSpell.Dot(target).IsActive() && dk.BloodPlagueSpell.Dot(target).IsActive() {
+				prioritizeSpread = false
+				break
+			}
+		}
+	}
+
+	return dk.sr.recastedFF && dk.sr.recastedBP && prioritizeSpread
 }
 
 func (dk *DpsDeathknight) RotationAction_CancelBT(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {

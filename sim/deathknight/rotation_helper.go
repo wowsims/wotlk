@@ -72,7 +72,8 @@ func (s *Sequence) Clear() *Sequence {
 type RotationHelper struct {
 	RotationSequence *Sequence
 
-	LastOutcome core.HitOutcome
-	LastCast    *core.Spell
-	NextCast    *core.Spell
+	LastOutcome           core.HitOutcome
+	LastCast              *core.Spell
+	NextCast              *core.Spell
+	AoESpellNumTargetsHit int32
 }

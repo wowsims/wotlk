@@ -91,7 +91,7 @@ export const DefaultOptions = EnhancementShamanOptions.create({
 	bloodlust: true,
 	imbueMh: ShamanImbue.WindfuryWeapon,
 	imbueOh: ShamanImbue.FlametongueWeapon,
-	syncType: ShamanSyncType.SyncMainhandOffhandSwings,
+	syncType: ShamanSyncType.Auto,
 });
 
 export const DefaultConsumes = Consumes.create({
@@ -110,6 +110,7 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	sanctifiedRetribution: true,
 	divineSpirit: true,
 	battleShout: TristateEffect.TristateEffectImproved,
+	demonicPact: 500,
 });
 
 export const DefaultDebuffs = Debuffs.create({

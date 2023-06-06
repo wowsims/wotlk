@@ -13,7 +13,7 @@ func addAlgalon25(bossPrefix string) {
 		PathPrefix: bossPrefix,
 		Config: &proto.Target{
 			Id:        32871,
-			Name:      "Algalon 25",
+			Name:      "Algalon",
 			Level:     83,
 			MobType:   proto.MobType_MobTypeElemental,
 			TankIndex: 0,
@@ -21,22 +21,24 @@ func addAlgalon25(bossPrefix string) {
 			Stats: stats.Stats{
 				stats.Health:      41_834_998,
 				stats.Armor:       10643,
-				stats.AttackPower: 574,
+				stats.AttackPower: 805,
+				stats.BlockValue:  76,
 			}.ToFloatArray(),
 
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
 			SwingSpeed:       1.00,
-			MinBaseDamage:    77000,
+			MinBaseDamage:    63649,
 			SuppressDodge:    false,
 			ParryHaste:       false,
 			DualWield:        true,
 			DualWieldPenalty: false,
 			TightEnemyDamage: true,
+			TargetInputs:     make([]*proto.TargetInput, 0),
 		},
 		AI: NewAlgalon25AI(),
 	})
-	core.AddPresetEncounter("Algalon 25", []string{
-		bossPrefix + "/Algalon 25",
+	core.AddPresetEncounter("Algalon", []string{
+		bossPrefix + "/Algalon",
 	})
 }
 
@@ -55,7 +57,7 @@ func NewAlgalon25AI() core.AIFactory {
 	}
 }
 
-func (ai *Algalon25AI) Initialize(target *core.Target) {
+func (ai *Algalon25AI) Initialize(target *core.Target, config *proto.Target) {
 	ai.Target = target
 
 	ai.registerQuantumStrikeSpell(target)
@@ -63,6 +65,9 @@ func (ai *Algalon25AI) Initialize(target *core.Target) {
 	ai.registerBlackHoleExplosionSpell(target)
 	ai.registerCosmicSmashSpell(target)
 
+}
+
+func (ai *Algalon25AI) Reset(*core.Simulation) {
 }
 
 func (ai *Algalon25AI) registerQuantumStrikeSpell(target *core.Target) {
@@ -78,6 +83,9 @@ func (ai *Algalon25AI) registerQuantumStrikeSpell(target *core.Target) {
 			CD: core.Cooldown{
 				Timer:    target.NewTimer(),
 				Duration: time.Millisecond * 3200,
+			},
+			DefaultCast: core.Cast{
+				GCD: core.GCDDefault,
 			},
 		},
 
@@ -104,6 +112,9 @@ func (ai *Algalon25AI) registerPhasePunchSpell(target *core.Target) {
 			CD: core.Cooldown{
 				Timer:    target.NewTimer(),
 				Duration: time.Millisecond * 16000,
+			},
+			DefaultCast: core.Cast{
+				GCD: core.GCDDefault,
 			},
 		},
 
@@ -138,7 +149,9 @@ func (ai *Algalon25AI) registerBlackHoleExplosionSpell(target *core.Target) {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(20475, 21525)
-			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeAlwaysHit)
+			for _, aoeTarget := range sim.Raid.GetActiveUnits() {
+				spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeAlwaysHit)
+			}
 		},
 	})
 }
@@ -167,43 +180,49 @@ func (ai *Algalon25AI) registerCosmicSmashSpell(target *core.Target) {
 		CritMultiplier:   1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			// There are always 3 damage events at different distances
-			spell.CalcAndDealDamage(sim, target, sim.Roll(200, 800), spell.OutcomeAlwaysHit)
-			spell.CalcAndDealDamage(sim, target, sim.Roll(500, 2500), spell.OutcomeAlwaysHit)
-			spell.CalcAndDealDamage(sim, target, sim.Roll(800, 5000), spell.OutcomeAlwaysHit)
+			for _, aoeTarget := range sim.Raid.GetActiveUnits() {
+				// There are always 3 damage events at different distances
+				spell.CalcAndDealDamage(sim, aoeTarget, sim.Roll(200, 800), spell.OutcomeAlwaysHit)
+				spell.CalcAndDealDamage(sim, aoeTarget, sim.Roll(500, 2500), spell.OutcomeAlwaysHit)
+				spell.CalcAndDealDamage(sim, aoeTarget, sim.Roll(800, 5000), spell.OutcomeAlwaysHit)
+			}
 		},
 	})
 }
 
 func (ai *Algalon25AI) DoAction(sim *core.Simulation) {
-
-	// Expected behavior based on PTR: No mutual cooldowns, Algalon will happily overlap everything
-	// Black Hole Explosions maybe something we could allow timing in the cooldown configurator someday?
-
-	if ai.PhasePunch.IsReady(sim) && sim.CurrentTime >= ai.PhasePunch.CD.Duration {
-		ai.PhasePunch.Cast(sim, ai.Target.CurrentTarget)
-	}
-
-	if ai.QuantumStrike.IsReady(sim) && sim.CurrentTime >= ai.QuantumStrike.CD.Duration {
-		ai.QuantumStrike.Cast(sim, ai.Target.CurrentTarget)
-	}
-
 	if ai.BlackHoleExplosion.IsReady(sim) && sim.CurrentTime >= ai.BlackHoleExplosion.CD.Duration {
-		ai.BlackHoleExplosion.Cast(sim, ai.Target.CurrentTarget)
+		ai.BlackHoleExplosion.Cast(sim, nil)
 	}
 
 	if ai.CosmicSmash.IsReady(sim) && sim.CurrentTime >= ai.CosmicSmash.CD.Duration {
-		ai.CosmicSmash.Cast(sim, ai.Target.CurrentTarget)
+		ai.CosmicSmash.Cast(sim, nil)
 	}
-	/*
-		nextEventAt := time.Minute
+
+	if ai.Target.CurrentTarget != nil {
+		if ai.PhasePunch.IsReady(sim) && sim.CurrentTime >= ai.PhasePunch.CD.Duration {
+			ai.PhasePunch.Cast(sim, ai.Target.CurrentTarget)
+			return
+		}
+
+		if ai.QuantumStrike.IsReady(sim) && sim.CurrentTime >= ai.QuantumStrike.CD.Duration {
+			ai.QuantumStrike.Cast(sim, ai.Target.CurrentTarget)
+			return
+		}
+	}
+
+	if ai.Target.GCD.IsReady(sim) {
+		nextEventAt := sim.CurrentTime + time.Minute
 
 		// All possible next events
 		events := []time.Duration{
-			ai.QuantumStrike.ReadyAt(),
-			ai.PhasePunch.ReadyAt(),
-			ai.BlackHoleExplosion.ReadyAt(),
-			ai.CosmicSmash.ReadyAt(),
+			core.MaxDuration(ai.BlackHoleExplosion.ReadyAt(), ai.BlackHoleExplosion.CD.Duration),
+			core.MaxDuration(ai.CosmicSmash.ReadyAt(), ai.CosmicSmash.CD.Duration),
+		}
+
+		if ai.Target.CurrentTarget != nil {
+			events = append(events, core.MaxDuration(ai.PhasePunch.ReadyAt(), ai.PhasePunch.CD.Duration))
+			events = append(events, core.MaxDuration(ai.QuantumStrike.ReadyAt(), ai.QuantumStrike.CD.Duration))
 		}
 
 		for _, elem := range events {
@@ -217,5 +236,6 @@ func (ai *Algalon25AI) DoAction(sim *core.Simulation) {
 		}
 
 		ai.Target.WaitUntil(sim, nextEventAt)
-	*/
+	}
+
 }

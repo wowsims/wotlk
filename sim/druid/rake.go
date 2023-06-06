@@ -75,7 +75,8 @@ func (druid *Druid) registerRakeSpell() {
 
 		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
 			baseDamage := 176 + 0.01*spell.MeleeAttackPower()
-			tickBase := (358 + 0.06*spell.MeleeAttackPower()) * float64(numTicks)
+			potentialTicks := core.MinInt32(numTicks, int32(sim.GetRemainingDuration()/time.Second*3))
+			tickBase := (358 + 0.06*spell.MeleeAttackPower()) * float64(potentialTicks)
 			if druid.BleedCategories.Get(target).AnyActive() {
 				baseDamage *= 1.3
 				tickBase *= 1.3
@@ -99,5 +100,5 @@ func (druid *Druid) registerRakeSpell() {
 }
 
 func (druid *Druid) CurrentRakeCost() float64 {
-	return druid.Rake.ApplyCostModifiers(druid.Rake.BaseCost)
+	return druid.Rake.ApplyCostModifiers(druid.Rake.DefaultCast.Cost)
 }

@@ -106,7 +106,12 @@ func (dk *Deathknight) mercilessCombatBonus(sim *core.Simulation) float64 {
 func (dk *Deathknight) applyTundaStalker() {
 	bonus := 1.0 + 0.03*float64(dk.Talents.TundraStalker)
 	dk.RoRTSBonus = func(target *core.Unit) float64 {
-		return core.TernaryFloat64(dk.FrostFeverSpell.Dot(target).IsActive(), bonus, 1.0)
+		// assume if external ebon plaguebringer is active, then another DK will always have Frost Fever up
+		if dk.MakeTSRoRAssumptions && target.HasActiveAura("EbonPlaguebringer-1") {
+			return bonus
+		}
+
+		return core.TernaryFloat64(target.HasActiveAuraWithTag("FrostFever"), bonus, 1.0)
 	}
 }
 

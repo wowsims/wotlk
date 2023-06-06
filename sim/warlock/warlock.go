@@ -16,9 +16,6 @@ type Warlock struct {
 	Options  *proto.Warlock_Options
 	Rotation *proto.Warlock_Rotation
 
-	procTrackers []*ProcTracker
-	majorCds     []*core.MajorCooldown
-
 	Pet *WarlockPet
 
 	ShadowBolt         *core.Spell
@@ -46,6 +43,7 @@ type Warlock struct {
 	Seed                 *core.Spell
 	SeedDamageTracker    []float64
 
+	ShadowEmbraceAuras     core.AuraArray
 	NightfallProcAura      *core.Aura
 	EradicationAura        *core.Aura
 	DemonicEmpowerment     *core.Spell
@@ -67,28 +65,29 @@ type Warlock struct {
 	Infernal *InfernalPet
 	Inferno  *core.Spell
 
-	// Rotation related memory
-	CorruptionRolloverPower float64
-	DrainSoulRolloverPower  float64
 	// The sum total of demonic pact spell power * seconds.
-	DPSPAggregate  float64
-	PreviousTime   time.Duration
-	SpellsRotation []SpellRotation
+	DPSPAggregate float64
+	PreviousTime  time.Duration
 
-	petStmBonusSP                float64
-	masterDemonologistFireCrit   float64
-	masterDemonologistShadowCrit float64
+	petStmBonusSP float64
+	acl           []ActionCondition
 
-	CritDebuffCategory *core.ExclusiveCategory
+	// contains for each target the time the last shadowbolt was casted onto them
+	corrRefreshList []time.Duration
 }
 
-type SpellRotation struct {
-	Spell    *core.Spell
-	CastIn   CastReadyness
-	Priority int
-}
+type ACLaction int
 
-type CastReadyness func(*core.Simulation) time.Duration
+const (
+	ACLCast ACLaction = iota
+	ACLNext
+	ACLRecast
+)
+
+type ActionCondition struct {
+	Spell     *core.Spell
+	Condition func(*core.Simulation) (ACLaction, *core.Unit, string)
+}
 
 func (warlock *Warlock) GetCharacter() *core.Character {
 	return &warlock.Character
@@ -106,7 +105,6 @@ func (warlock *Warlock) GrandFirestoneBonus() float64 {
 }
 
 func (warlock *Warlock) Initialize() {
-
 	warlock.registerIncinerateSpell()
 	warlock.registerShadowBoltSpell()
 	warlock.registerImmolateSpell()
@@ -124,12 +122,8 @@ func (warlock *Warlock) Initialize() {
 	warlock.registerConflagrateSpell()
 	warlock.registerHauntSpell()
 	warlock.registerChaosBoltSpell()
-
 	warlock.registerDemonicEmpowermentSpell()
-	if warlock.Talents.Metamorphosis {
-		warlock.registerMetamorphosisSpell()
-		warlock.registerImmolationAuraSpell()
-	}
+	warlock.registerMetamorphosisSpell()
 	warlock.registerDarkPactSpell()
 	warlock.registerShadowBurnSpell()
 	warlock.registerInfernoSpell()
@@ -142,6 +136,16 @@ func (warlock *Warlock) Initialize() {
 	}
 	// Do this post-finalize so cast speed is updated with new stats
 	warlock.Env.RegisterPostFinalizeEffect(func() {
+		// if itemswap is enabled, correct for any possible haste changes
+		var correction stats.Stats
+		if warlock.ItemSwap.IsEnabled() {
+			correction = warlock.ItemSwap.CalcStatChanges([]proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand,
+				proto.ItemSlot_ItemSlotOffHand, proto.ItemSlot_ItemSlotRanged})
+
+			warlock.AddStats(correction)
+			warlock.MultiplyCastSpeed(1.0)
+		}
+
 		precastSpellAt := -warlock.ApplyCastSpeedForSpell(precastSpell.DefaultCast.CastTime, precastSpell)
 
 		warlock.RegisterPrepullAction(precastSpellAt, func(sim *core.Simulation) {
@@ -151,6 +155,10 @@ func (warlock *Warlock) Initialize() {
 			warlock.RegisterPrepullAction(precastSpellAt-warlock.SpellGCD(), func(sim *core.Simulation) {
 				warlock.LifeTap.Cast(sim, nil)
 			})
+		}
+		if warlock.ItemSwap.IsEnabled() {
+			warlock.AddStats(correction.Multiply(-1))
+			warlock.MultiplyCastSpeed(1.0)
 		}
 	})
 }
@@ -171,6 +179,11 @@ func (warlock *Warlock) Reset(sim *core.Simulation) {
 	if sim.CurrentTime == 0 {
 		warlock.petStmBonusSP = 0
 	}
+
+	warlock.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand,
+		proto.ItemSlot_ItemSlotOffHand, proto.ItemSlot_ItemSlotRanged}, false)
+	warlock.corrRefreshList = make([]time.Duration, len(warlock.Env.Encounter.TargetUnits))
+	warlock.setupCooldowns(sim)
 }
 
 func NewWarlock(character core.Character, options *proto.Player) *Warlock {
@@ -181,7 +194,6 @@ func NewWarlock(character core.Character, options *proto.Player) *Warlock {
 		Talents:   &proto.WarlockTalents{},
 		Options:   warlockOptions.Options,
 		Rotation:  warlockOptions.Rotation,
-		// manaTracker:           common.NewManaSpendingRateTracker(),
 	}
 	core.FillTalentsProto(warlock.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
 	warlock.EnableManaBar()
@@ -201,6 +213,10 @@ func NewWarlock(character core.Character, options *proto.Player) *Warlock {
 
 	if warlock.Rotation.UseInfernal {
 		warlock.Infernal = warlock.NewInfernal()
+	}
+
+	if warlock.Rotation.Type == proto.Warlock_Rotation_Affliction && warlock.Rotation.EnableWeaponSwap {
+		warlock.EnableItemSwap(warlock.Rotation.WeaponSwap, 1, 1, 1)
 	}
 
 	warlock.applyWeaponImbue()

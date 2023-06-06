@@ -56,9 +56,9 @@ func init() {
 		}
 
 		numHits := core.MinInt32(5, character.Env.GetNumTargets())
-		debuffAuras := make([]*core.Aura, character.Env.GetNumTargets())
-		for _, target := range character.Env.Encounter.Targets {
-			debuffAuras[target.Index] = makeDebuffAura(&target.Unit)
+		debuffAuras := make([]*core.Aura, len(character.Env.Encounter.TargetUnits))
+		for i, target := range character.Env.Encounter.TargetUnits {
+			debuffAuras[i] = makeDebuffAura(target)
 		}
 
 		bounceSpell := character.RegisterSpell(core.SpellConfig{
@@ -239,6 +239,7 @@ func init() {
 
 		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 			Name:       "Blade of Unquenched Thirst Trigger",
+			ActionID:   core.ActionID{ItemID: 31193},
 			Callback:   core.CallbackOnSpellHitDealt,
 			ProcMask:   procMask,
 			Outcome:    core.OutcomeLanded,

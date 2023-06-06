@@ -41,9 +41,9 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	// TODO: Verify whether these bonuses should indeed be additive with similar
 
 	dotSpell := paladin.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 31803},
+		ActionID:    core.ActionID{SpellID: 31803, Tag: 2},
 		SpellSchool: core.SpellSchoolHoly,
-		ProcMask:    core.ProcMaskEmpty, // Might need to be changed later if SOV secondary rolls can proc other things.
+		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		DamageMultiplier: 1 *
@@ -52,7 +52,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 
 		Dot: core.DotConfig{
 			Aura: core.Aura{
-				Label:     "Holy Vengeance",
+				Label:     "Holy Vengeance (DoT)",
 				MaxStacks: 5,
 			},
 			NumberOfTicks: 5,
@@ -69,13 +69,24 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.Spell.OutcomeAlwaysHit)
 			},
 		},
+	})
+	paladin.SovDotSpell = dotSpell
+
+	dotApplicationSpell := paladin.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 31803, Tag: 1},
+		SpellSchool: core.SpellSchoolHoly,
+		ProcMask:    core.ProcMaskEmpty, // Might need to be changed later if SOV secondary rolls can proc other things.
+
+		DamageMultiplier: 1 *
+			(1 + paladin.getItemSetLightswornBattlegearBonus4() + paladin.getItemSetAegisPlateBonus2() + paladin.getTalentSealsOfThePureBonus()),
+		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// Does no damage, just applies dot and rolls.
 			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
 
 			if result.Landed() {
-				dot := spell.Dot(target)
+				dot := dotSpell.Dot(target)
 				if !dot.IsActive() {
 					dot.Apply(sim)
 				}
@@ -85,7 +96,6 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 			}
 		},
 	})
-	paladin.SovDotSpell = dotSpell
 
 	onJudgementProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 31804}, // Judgement of Vengeance.
@@ -119,7 +129,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	onSpecialOrSwingProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 42463}, // Seal of Vengeance damage bonus.
 		SpellSchool: core.SpellSchoolHoly,
-		ProcMask:    core.ProcMaskEmpty,
+		ProcMask:    core.ProcMaskProc, // does proc certain spell damage-based items, e.g. Black Magic, Pendulum of Telluric Currents
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		// (mult * weaponScaling / stacks)
@@ -134,7 +144,8 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 				float64(dotSpell.Dot(target).GetStacks())
 
 			// can't miss if melee swing landed, but can crit
-			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialCritOnly)
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialCritOnly)
+			paladin.maybeProcVengeance(sim, result)
 		},
 	})
 
@@ -184,7 +195,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 
 			// Only white hits, HotR, CS, and DS can trigger this. (SoV dot)
 			if spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) || spell == paladin.HammerOfTheRighteous || spell == paladin.CrusaderStrike || spell == paladin.DivineStorm {
-				dotSpell.Cast(sim, result.Target)
+				dotApplicationSpell.Cast(sim, result.Target)
 			}
 		},
 	})

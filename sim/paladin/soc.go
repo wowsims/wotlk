@@ -30,7 +30,7 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 	onJudgementProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 20467}, // Judgement of Command
 		SpellSchool: core.SpellSchoolHoly,
-		ProcMask:    core.ProcMaskMeleeOrRangedSpecial,
+		ProcMask:    core.ProcMaskMeleeOrRangedSpecial, // defense type is 2, so it's likely only ProcMaskMeleeSpecial
 		Flags:       core.SpellFlagMeleeMetrics | SpellFlagSecondaryJudgement,
 
 		BonusCritRating: (6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance) +
@@ -92,7 +92,7 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 	onSpecialOrSwingProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    onSpecialOrSwingActionID,
 		SpellSchool: core.SpellSchoolHoly,
-		ProcMask:    core.ProcMaskEmpty,
+		ProcMask:    core.ProcMaskEmpty, // unlike SoV, SoC crits don't proc Vengeance
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		DamageMultiplier: 1 *
@@ -127,7 +127,7 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if glyphManaMetrics != nil && spell.Flags.Matches(SpellFlagPrimaryJudgement) {
-				paladin.AddMana(sim, glyphManaGain, glyphManaMetrics, false)
+				paladin.AddMana(sim, glyphManaGain, glyphManaMetrics)
 			}
 
 			// Don't proc on misses or our own procs.

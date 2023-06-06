@@ -117,6 +117,7 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	wrathOfAirTotem: true,
 	sanctifiedRetribution: true,
 	bloodlust: true,
+	demonicPact: 500,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({

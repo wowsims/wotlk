@@ -25,6 +25,11 @@ func (dot *Dot) OutcomeTick(sim *Simulation, result *SpellResult, attackTable *A
 	result.Outcome = OutcomeHit
 }
 
+func (dot *Dot) OutcomeTickCounted(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
+	result.Outcome = OutcomeHit
+	dot.Spell.SpellMetrics[result.Target.UnitIndex].Hits++
+}
+
 func (dot *Dot) OutcomeTickPhysicalCrit(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
 	if dot.Spell.PhysicalCritCheck(sim, result.Target, attackTable) {
 		result.Outcome = OutcomeCrit
@@ -100,6 +105,11 @@ func (spell *Spell) OutcomeMagicCrit(sim *Simulation, result *SpellResult, attac
 		result.Outcome = OutcomeHit
 		spell.SpellMetrics[result.Target.UnitIndex].Hits++
 	}
+}
+
+func (spell *Spell) OutcomeHealing(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
+	result.Outcome = OutcomeHit
+	spell.SpellMetrics[result.Target.UnitIndex].Hits++
 }
 
 func (spell *Spell) OutcomeHealingCrit(sim *Simulation, result *SpellResult, attackTable *AttackTable) {

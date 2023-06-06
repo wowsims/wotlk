@@ -34,7 +34,7 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *core.Spell {
 			core.TernaryFloat64(isMH, 1, dk.nervesOfColdSteelBonus()) *
 			dk.bloodOfTheNorthCoeff() *
 			dk.thassariansPlateDamageBonus() *
-			dk.bloodyStrikesBonus(dk.BloodStrike),
+			dk.bloodyStrikesBonus(BloodyStrikesBS),
 		CritMultiplier:   dk.bonusCritMultiplier(dk.Talents.MightOfMograine + dk.Talents.GuileOfGorefiend),
 		ThreatMultiplier: 1,
 
@@ -85,4 +85,38 @@ func (dk *Deathknight) registerBloodStrikeSpell() {
 	dk.BloodStrikeMhHit = dk.newBloodStrikeSpell(true)
 	dk.BloodStrikeOhHit = dk.newBloodStrikeSpell(false)
 	dk.BloodStrike = dk.BloodStrikeMhHit
+}
+
+func (dk *Deathknight) registerDrwBloodStrikeSpell() {
+	bonusBaseDamage := dk.sigilOfTheDarkRiderBonus()
+	diseaseMulti := dk.dkDiseaseMultiplier(0.125)
+
+	dk.RuneWeapon.BloodStrike = dk.RuneWeapon.RegisterSpell(core.SpellConfig{
+		ActionID:    BloodStrikeActionID.WithTag(1),
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
+
+		BonusCritRating: (dk.subversionCritBonus() + dk.annihilationCritBonus()) * core.CritRatingPerCritChance,
+		DamageMultiplier: 0.4 *
+			dk.bloodOfTheNorthCoeff() *
+			dk.thassariansPlateDamageBonus() *
+			dk.bloodyStrikesBonus(BloodyStrikesBS),
+		CritMultiplier:   dk.bonusCritMultiplier(dk.Talents.MightOfMograine + dk.Talents.GuileOfGorefiend),
+		ThreatMultiplier: 1,
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 764 + bonusBaseDamage + dk.DrwWeaponDamage(sim, spell)
+
+			baseDamage *= dk.RoRTSBonus(target) *
+				(1.0 + dk.drwCountActiveDiseases(target)*diseaseMulti)
+
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
+		},
+	})
+
+	if !dk.Inputs.NewDrw {
+		dk.RuneWeapon.BloodStrike.DamageMultiplier *= 0.5
+		dk.RuneWeapon.BloodStrike.Flags |= core.SpellFlagIgnoreAttackerModifiers
+	}
 }

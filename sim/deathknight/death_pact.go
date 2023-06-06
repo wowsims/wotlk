@@ -34,15 +34,15 @@ func (dk *Deathknight) registerDeathPactSpell() {
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			healthGain := 0.4 * dk.Ghoul.MaxHealth()
-			dk.GainHealth(sim, healthGain, hpMetrics)
+			dk.GainHealth(sim, healthGain*dk.PseudoStats.HealingTakenMultiplier, hpMetrics)
 			dk.Ghoul.Pet.Disable(sim)
 		},
 	})
 
 	if !dk.Inputs.IsDps {
-		// dk.AddMajorCooldown(core.MajorCooldown{
-		// 	Spell: dk.DeathPact,
-		// 	Type:  core.CooldownTypeSurvival,
-		// })
+		dk.AddMajorCooldown(core.MajorCooldown{
+			Spell: dk.DeathPact,
+			Type:  core.CooldownTypeSurvival,
+		})
 	}
 }

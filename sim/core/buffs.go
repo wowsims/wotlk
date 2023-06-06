@@ -209,9 +209,18 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 	if raidBuffs.TotemOfWrath {
 		MakePermanent(TotemOfWrathAura(character))
 	}
-	if raidBuffs.DemonicPact > 0 {
+	if raidBuffs.DemonicPactOld > 0 || raidBuffs.DemonicPact > 0 || raidBuffs.DemonicPactSp > 0 {
+		// Use DemonicPactSp if set.
+		power := raidBuffs.DemonicPactSp
+		if power == 0 {
+			power = raidBuffs.DemonicPact // fallback to old setting.
+		}
+		if power == 0 {
+			power = raidBuffs.DemonicPactOld
+		}
+
 		dpAura := DemonicPactAura(character)
-		dpAura.ExclusiveEffects[0].Priority = float64(raidBuffs.DemonicPact) / 10.0
+		dpAura.ExclusiveEffects[0].Priority = float64(power)
 		MakePermanent(dpAura)
 	}
 
@@ -363,7 +372,7 @@ func ApplyInspiration(character *Character, uptime float64) {
 
 	inspirationAura := InspirationAura(&character.Unit, 3)
 
-	ApplyFixedUptimeAura(inspirationAura, uptime, time.Millisecond*2500)
+	ApplyFixedUptimeAura(inspirationAura, uptime, time.Millisecond*2500, 1)
 }
 
 func RetributionAura(character *Character, sanctifiedRetribution bool) *Aura {
@@ -452,7 +461,7 @@ func BlessingOfSanctuaryAura(character *Character) {
 		},
 		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
 			if result.Outcome.Matches(OutcomeBlock | OutcomeDodge | OutcomeParry) {
-				character.AddMana(sim, 0.02*character.MaxMana(), manaMetrics, false)
+				character.AddMana(sim, 0.02*character.MaxMana(), manaMetrics)
 			}
 		},
 	})
@@ -601,6 +610,7 @@ func BloodlustAura(character *Character, actionTag int32) *Aura {
 	return aura
 }
 
+var PowerInfusionActionID = ActionID{SpellID: 10060}
 var PowerInfusionAuraTag = "PowerInfusion"
 
 const PowerInfusionDuration = time.Second * 15
@@ -616,7 +626,7 @@ func registerPowerInfusionCD(agent Agent, numPowerInfusions int32) {
 	registerExternalConsecutiveCDApproximation(
 		agent,
 		externalConsecutiveCDApproximation{
-			ActionID:         ActionID{SpellID: 10060, Tag: -1},
+			ActionID:         PowerInfusionActionID.WithTag(-1),
 			AuraTag:          PowerInfusionAuraTag,
 			CooldownPriority: CooldownPriorityDefault,
 			AuraDuration:     PowerInfusionDuration,
@@ -689,7 +699,7 @@ func registerTricksOfTheTradeCD(agent Agent, numTricksOfTheTrades int32) {
 			Type:             CooldownTypeDPS,
 
 			ShouldActivate: func(sim *Simulation, character *Character) bool {
-				return true
+				return !agent.GetCharacter().GetExclusiveEffectCategory("PercentDamageModifier").AnyActive()
 			},
 			AddAura: func(sim *Simulation, character *Character) { TotTAura.Activate(sim) },
 		},
@@ -699,7 +709,7 @@ func registerTricksOfTheTradeCD(agent Agent, numTricksOfTheTrades int32) {
 func TricksOfTheTradeAura(character *Character, actionTag int32, glyphed bool) *Aura {
 	actionID := ActionID{SpellID: 57933, Tag: actionTag}
 
-	return character.GetOrRegisterAura(Aura{
+	aura := character.GetOrRegisterAura(Aura{
 		Label:    "TricksOfTheTrade-" + actionID.String(),
 		Tag:      TricksOfTheTradeAuraTag,
 		ActionID: actionID,
@@ -711,6 +721,9 @@ func TricksOfTheTradeAura(character *Character, actionTag int32, glyphed bool) *
 			character.PseudoStats.DamageDealtMultiplier /= 1.15
 		},
 	})
+
+	RegisterPercentDamageModifierEffect(aura, 1.15)
+	return aura
 }
 
 var UnholyFrenzyAuraTag = "UnholyFrenzy"
@@ -736,7 +749,7 @@ func registerUnholyFrenzyCD(agent Agent, numUnholyFrenzy int32) {
 			Type:             CooldownTypeDPS,
 
 			ShouldActivate: func(sim *Simulation, character *Character) bool {
-				return true
+				return !agent.GetCharacter().GetExclusiveEffectCategory("PercentDamageModifier").AnyActive()
 			},
 			AddAura: func(sim *Simulation, character *Character) { ufAura.Activate(sim) },
 		},
@@ -746,7 +759,7 @@ func registerUnholyFrenzyCD(agent Agent, numUnholyFrenzy int32) {
 func UnholyFrenzyAura(character *Character, actionTag int32) *Aura {
 	actionID := ActionID{SpellID: 49016, Tag: actionTag}
 
-	return character.GetOrRegisterAura(Aura{
+	aura := character.GetOrRegisterAura(Aura{
 		Label:    "UnholyFrenzy-" + actionID.String(),
 		Tag:      UnholyFrenzyAuraTag,
 		ActionID: actionID,
@@ -757,6 +770,15 @@ func UnholyFrenzyAura(character *Character, actionTag int32) *Aura {
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			character.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] /= 1.2
 		},
+	})
+
+	RegisterPercentDamageModifierEffect(aura, 1.2)
+	return aura
+}
+
+func RegisterPercentDamageModifierEffect(aura *Aura, percentDamageModifier float64) *ExclusiveEffect {
+	return aura.NewExclusiveEffect("PercentDamageModifier", true, ExclusiveEffect{
+		Priority: percentDamageModifier,
 	})
 }
 
@@ -883,7 +905,7 @@ func registerRevitalizeHotCD(agent Agent, label string, hotID ActionID, ticks in
 					if s.RandomFloat("Revitalize Proc") < 0.15 {
 						cpb := aura.Unit.GetCurrentPowerBar()
 						if cpb == ManaBar {
-							aura.Unit.AddMana(s, aura.Unit.MaxMana()*0.01, manaMetrics, true)
+							aura.Unit.AddMana(s, 0.01*aura.Unit.MaxMana(), manaMetrics)
 						} else if cpb == EnergyBar {
 							aura.Unit.AddEnergy(s, 8, energyMetrics)
 						} else if cpb == RageBar {
@@ -898,7 +920,7 @@ func registerRevitalizeHotCD(agent Agent, label string, hotID ActionID, ticks in
 		},
 	})
 
-	ApplyFixedUptimeAura(aura, uptimePercent, totalDuration)
+	ApplyFixedUptimeAura(aura, uptimePercent, totalDuration, 1)
 }
 
 const ShatteringThrowCD = time.Minute * 5
@@ -908,7 +930,7 @@ func registerShatteringThrowCD(agent Agent, numShatteringThrows int32) {
 		return
 	}
 
-	stAura := ShatteringThrowAura(&agent.GetCharacter().Env.Encounter.Targets[0].Unit)
+	stAura := ShatteringThrowAura(agent.GetCharacter().Env.Encounter.TargetUnits[0])
 
 	registerExternalConsecutiveCDApproximation(
 		agent,
@@ -948,17 +970,12 @@ func registerInnervateCD(agent Agent, numInnervates int32) {
 	}
 
 	innervateThreshold := 0.0
-	expectedManaPerInnervate := 0.0
-	remainingInnervateUsages := 0
 	var innervateAura *Aura
 
 	character := agent.GetCharacter()
 	character.Env.RegisterPostFinalizeEffect(func() {
 		innervateThreshold = InnervateManaThreshold(character)
-		expectedManaPerInnervate = 3496 * 2.25 // WotLK druid's base mana
-		remainingInnervateUsages = int(1 + (MaxDuration(0, character.Env.BaseDuration))/InnervateCD)
-		character.ExpectedBonusMana += expectedManaPerInnervate * float64(remainingInnervateUsages)
-		innervateAura = InnervateAura(character, expectedManaPerInnervate, -1)
+		innervateAura = InnervateAura(character, -1)
 	})
 
 	registerExternalConsecutiveCDApproximation(
@@ -976,17 +993,12 @@ func registerInnervateCD(agent Agent, numInnervates int32) {
 			},
 			AddAura: func(sim *Simulation, character *Character) {
 				innervateAura.Activate(sim)
-
-				newRemainingUsages := int(sim.GetRemainingDuration() / InnervateCD)
-				// AddInnervateAura already accounts for 1 usage, which is why we subtract 1 less.
-				character.ExpectedBonusMana -= expectedManaPerInnervate * MaxFloat(0, float64(remainingInnervateUsages-newRemainingUsages-1))
-				remainingInnervateUsages = newRemainingUsages
 			},
 		},
 		numInnervates)
 }
 
-func InnervateAura(character *Character, expectedBonusManaReduction float64, actionTag int32) *Aura {
+func InnervateAura(character *Character, actionTag int32) *Aura {
 	actionID := ActionID{SpellID: 29166, Tag: actionTag}
 	manaMetrics := character.NewManaMetrics(actionID)
 	return character.GetOrRegisterAura(Aura{
@@ -995,13 +1007,12 @@ func InnervateAura(character *Character, expectedBonusManaReduction float64, act
 		ActionID: actionID,
 		Duration: InnervateDuration,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			expectedBonusManaPerTick := expectedBonusManaReduction / 10
+			const manaPerTick = 3496 * 2.25 / 10 // WotLK druid's base mana
 			StartPeriodicAction(sim, PeriodicActionOptions{
 				Period:   InnervateDuration / 10,
 				NumTicks: 10,
 				OnAction: func(sim *Simulation) {
-					character.ExpectedBonusMana -= expectedBonusManaPerTick
-					character.AddMana(sim, expectedBonusManaPerTick, manaMetrics, true)
+					character.AddMana(sim, manaPerTick, manaMetrics)
 				},
 			})
 		},
@@ -1019,8 +1030,6 @@ func registerManaTideTotemCD(agent Agent, numManaTideTotems int32) {
 		return
 	}
 
-	expectedManaPerManaTideTotem := 0.0
-	remainingManaTideTotemUsages := 0
 	initialDelay := time.Duration(0)
 	var mttAura *Aura
 
@@ -1028,10 +1037,6 @@ func registerManaTideTotemCD(agent Agent, numManaTideTotems int32) {
 	character.Env.RegisterPostFinalizeEffect(func() {
 		// Use first MTT at 60s, or halfway through the fight, whichever comes first.
 		initialDelay = MinDuration(character.Env.BaseDuration/2, time.Second*60)
-
-		expectedManaPerManaTideTotem = 0.24 * character.MaxMana()
-		remainingManaTideTotemUsages = int(1 + MaxDuration(0, character.Env.BaseDuration-initialDelay)/ManaTideTotemCD)
-		character.ExpectedBonusMana += expectedManaPerManaTideTotem * float64(remainingManaTideTotemUsages)
 		mttAura = ManaTideTotemAura(character, -1)
 	})
 
@@ -1050,11 +1055,6 @@ func registerManaTideTotemCD(agent Agent, numManaTideTotems int32) {
 			},
 			AddAura: func(sim *Simulation, character *Character) {
 				mttAura.Activate(sim)
-
-				newRemainingUsages := int(sim.GetRemainingDuration() / ManaTideTotemCD)
-				// AddManaTideTotemAura already accounts for 1 usage, which is why we subtract 1 less.
-				character.ExpectedBonusMana -= expectedManaPerManaTideTotem * MaxFloat(0, float64(remainingManaTideTotemUsages-newRemainingUsages-1))
-				remainingManaTideTotemUsages = newRemainingUsages
 			},
 		},
 		numManaTideTotems)
@@ -1084,9 +1084,7 @@ func ManaTideTotemAura(character *Character, actionTag int32) *Aura {
 					for i, player := range character.Party.Players {
 						if metrics[i] != nil {
 							char := player.GetCharacter()
-							manaGain := 0.06 * char.MaxMana()
-							char.AddMana(sim, manaGain, metrics[i], true)
-							char.ExpectedBonusMana -= manaGain
+							char.AddMana(sim, 0.06*char.MaxMana(), metrics[i])
 						}
 					}
 				},

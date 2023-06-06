@@ -30,8 +30,7 @@ type TankDeathknight struct {
 	BloodSpell *core.Spell
 	FuSpell    *core.Spell
 
-	Rotation               *proto.TankDeathknight_Rotation
-	HpPercentForDefensives float64
+	Rotation *proto.TankDeathknight_Rotation
 }
 
 func NewTankDeathknight(character core.Character, options *proto.Player) *TankDeathknight {
@@ -41,13 +40,8 @@ func NewTankDeathknight(character core.Character, options *proto.Player) *TankDe
 		Deathknight: deathknight.NewDeathknight(character, deathknight.DeathknightInputs{
 			IsDps:              false,
 			StartingRunicPower: dkOptions.Options.StartingRunicPower,
-		}, options.TalentsString),
-		Rotation:               dkOptions.Rotation,
-		HpPercentForDefensives: 0.35,
-	}
-
-	if options.GetCooldowns() != nil {
-		tankDk.HpPercentForDefensives = options.GetCooldowns().HpPercentForDefensives
+		}, options.TalentsString, false),
+		Rotation: dkOptions.Rotation,
 	}
 
 	tankDk.Inputs.UnholyFrenzyTarget = dkOptions.Options.UnholyFrenzyTarget

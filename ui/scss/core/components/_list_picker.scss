@@ -65,3 +65,17 @@
 		width: 33.33%;
 	}
 }
+
+.list-picker-root.hide-ui {
+	.list-picker-item-container {
+		padding: 0 !important;
+		margin: 0 !important;
+		border: none !important;
+	}
+	.list-picker-item-header {
+		display: none !important;
+	}
+	.list-picker-new-button {
+		display: none !important;
+	}
+}

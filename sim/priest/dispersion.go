@@ -28,7 +28,7 @@ func (priest *Priest) registerDispersionSpell() {
 				NumTicks: 6,
 				OnAction: func(sim *core.Simulation) {
 					manaGain := priest.MaxMana() * 0.06
-					priest.AddMana(sim, manaGain, manaMetric, true)
+					priest.AddMana(sim, manaGain, manaMetric)
 				},
 			})
 		},

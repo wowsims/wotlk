@@ -13,10 +13,6 @@ func (dk *TankDeathknight) TankRA_Hps(sim *core.Simulation, target *core.Unit, s
 		return dk.NextGCDAt()
 	}
 
-	if dk.DoDefensiveCds(sim, target, s) {
-		return -1
-	}
-
 	if dk.DoDiseaseChecks(sim, target, s) {
 		return -1
 	}

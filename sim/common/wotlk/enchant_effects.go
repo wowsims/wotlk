@@ -143,7 +143,7 @@ func init() {
 			},
 		})
 
-		character.ItemSwap.ReigsterOnSwapItemForEffect(3748, aura)
+		character.ItemSwap.RegisterOnSwapItemForEffect(3748, aura)
 	})
 
 	core.NewEnchantEffect(3247, func(agent core.Agent) {
@@ -222,7 +222,7 @@ func init() {
 				}
 
 				if ppmm.Proc(sim, spell.ProcMask, "Lifeward") {
-					character.GainHealth(sim, 300, healthMetrics)
+					character.GainHealth(sim, 300*character.PseudoStats.HealingTakenMultiplier, healthMetrics)
 				}
 			},
 		})
@@ -246,8 +246,10 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				isSpell := spell.ActionID.SpellID == 47465 || spell.ActionID.SpellID == 12867 || spell.ActionID.SpellID == 58790 || spell.ActionID.SpellID == 58789
-				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskSpellDamage) && !isSpell {
+				// Special case for spells that aren't spells that can proc black magic.
+				specialCaseSpell := spell.ActionID.SpellID == 47465 || spell.ActionID.SpellID == 12867
+
+				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskSpellDamage|core.ProcMaskWeaponProc) && !specialCaseSpell {
 					return
 				}
 
@@ -258,7 +260,7 @@ func init() {
 			},
 		})
 
-		character.ItemSwap.ReigsterOnSwapItemForEffect(3790, aura)
+		character.ItemSwap.RegisterOnSwapItemForEffect(3790, aura)
 	})
 
 	core.AddWeaponEffect(3843, func(agent core.Agent, _ proto.ItemSlot) {
@@ -351,18 +353,26 @@ func init() {
 			Duration: time.Second * 60,
 		}
 
+		callback := func(_ *core.Aura, sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
+			if !result.Landed() {
+				return
+			}
+
+			if icd.IsReady(sim) && sim.RandomFloat("Lightweave") < 0.35 {
+				icd.Use(sim)
+				procAura.Activate(sim)
+			}
+		}
+
 		character.GetOrRegisterAura(core.Aura{
 			Label:    "Lightweave Embroidery",
 			Duration: core.NeverExpires,
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)
 			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if icd.IsReady(sim) && sim.RandomFloat("Lightweave") < 0.35 {
-					icd.Use(sim)
-					procAura.Activate(sim)
-				}
-			},
+			OnHealDealt:           callback,
+			OnPeriodicDamageDealt: callback,
+			OnSpellHitDealt:       callback,
 		})
 	})
 
@@ -387,7 +397,7 @@ func init() {
 			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 				if icd.IsReady(sim) && sim.RandomFloat("Darkglow") < 0.35 {
 					icd.Use(sim)
-					character.AddMana(sim, 400, manaMetrics, false)
+					character.AddMana(sim, 400, manaMetrics)
 				}
 			},
 		})

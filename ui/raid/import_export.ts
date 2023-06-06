@@ -35,7 +35,7 @@ import {
 } from '../core/proto_utils/utils';
 import { MAX_NUM_PARTIES } from '../core/raid';
 import { Player } from '../core/player';
-import { Target } from '../core/target';
+import { Encounter } from '../core/encounter';
 import { bucket, distinct, sortByProperty } from '../core/utils';
 
 import { playerPresets, PresetSpecSettings } from './presets';
@@ -492,7 +492,7 @@ export class RaidWCLImporter extends Importer {
 
 		// Build a manual target list if no preset encounter exists.
 		if (encounter.targets.length === 0) {
-			encounter.targets.push(Target.defaultProto());
+			encounter.targets.push(Encounter.defaultTargetProto());
 		}
 
 		return encounter;
@@ -718,7 +718,6 @@ const externalCDSpells: Array<{id: number, name: string, class: Class, applyFunc
 
 // Healing spells which only affect the caster's party.
 const samePartyHealingSpells: Array<{id: number, name: string}> = [
-	{id: 54172, name: 'Divine Storm'},
 	{id: 52042, name: 'Healing Stream Totem'},
 	{id: 48076, name: 'Holy Nova'},
 	{id: 48445, name: 'Tranquility'},

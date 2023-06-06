@@ -18,13 +18,13 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 		ActionID:    core.ActionID{SpellID: 53209},
 		SpellSchool: core.SpellSchoolNature,
 		ProcMask:    core.ProcMaskRangedSpecial,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.12,
-			Multiplier: 1 *
-				(1 - 0.03*float64(hunter.Talents.Efficiency)) *
-				(1 - 0.05*float64(hunter.Talents.MasterMarksman)),
+			Multiplier: 1 -
+				0.03*float64(hunter.Talents.Efficiency) -
+				0.05*float64(hunter.Talents.MasterMarksman),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

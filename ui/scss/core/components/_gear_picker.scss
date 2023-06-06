@@ -24,14 +24,6 @@
       width: 4rem;
       height: 4rem;
       border: 1px solid $border-color;
-
-      .item-picker-sockets-container {
-        @include vertical-bottom;
-        @include horizontal-center;
-        width: 100%;
-        display: flex;
-        justify-content: center;
-      }
     }
   }
 
@@ -53,6 +45,14 @@
       text-align: right;
     }
   }
+}
+
+.item-picker-sockets-container {
+  @include vertical-bottom;
+  @include horizontal-center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .selector-modal {

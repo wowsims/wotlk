@@ -59,7 +59,7 @@ type Priest struct {
 	Dispersion      *core.Spell
 
 	PWSShields    []*core.Shield
-	WeakenedSouls []*core.Aura
+	WeakenedSouls core.AuraArray
 
 	ProcPrayerOfMending core.ApplySpellResults
 

@@ -29,16 +29,12 @@ func (warlock *Warlock) registerCurseOfElementsSpell() {
 		FlatThreatBonus:  156,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
 				warlock.CurseOfElementsAuras.Get(target).Activate(sim)
 			}
 		},
 	})
-}
-
-func (warlock *Warlock) ShouldCastCurseOfElements(sim *core.Simulation, target *core.Unit, curse proto.Warlock_Rotation_Curse) bool {
-	return curse == proto.Warlock_Rotation_Elements && !warlock.CurseOfElementsAuras.Get(target).IsActive()
 }
 
 func (warlock *Warlock) registerCurseOfWeaknessSpell() {
@@ -65,7 +61,7 @@ func (warlock *Warlock) registerCurseOfWeaknessSpell() {
 		FlatThreatBonus:  142,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
 				warlock.CurseOfWeaknessAuras.Get(target).Activate(sim)
 			}
@@ -104,7 +100,7 @@ func (warlock *Warlock) registerCurseOfTonguesSpell() {
 		FlatThreatBonus:  100,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
 				warlock.CurseOfTonguesAuras.Get(target).Activate(sim)
 			}
@@ -113,16 +109,13 @@ func (warlock *Warlock) registerCurseOfTonguesSpell() {
 }
 
 func (warlock *Warlock) registerCurseOfAgonySpell() {
-	numberOfTicks := int32(12)
-	totalBaseDmg := 1740.0
-	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCurseOfAgony) {
-		numberOfTicks += 2
-		totalBaseDmg += 2 * totalBaseDmg * 0.056 // Glyphed ticks
-	}
+	numberOfTicks := core.TernaryInt32(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCurseOfAgony), 14, 12)
+	baseTickDmg := 145.0
 
 	warlock.CurseOfAgony = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47864},
 		SpellSchool: core.SpellSchoolShadow,
+		Flags:       core.SpellFlagHauntSE,
 		ProcMask:    core.ProcMaskSpellDamage,
 
 		ManaCost: core.ManaCostOptions{
@@ -149,18 +142,21 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 			NumberOfTicks: numberOfTicks,
 			TickLength:    time.Second * 2,
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-				// Ignored: CoA ramp up effect
-				dot.SnapshotBaseDamage = totalBaseDmg/float64(numberOfTicks) + 0.1*dot.Spell.SpellPower()
+				dot.SnapshotBaseDamage = 0.5*baseTickDmg + 0.1*dot.Spell.SpellPower()
 				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTickCounted)
+				if dot.TickCount%4 == 0 { // CoA ramp up
+					dot.SnapshotBaseDamage += 0.5 * baseTickDmg
+				}
 			},
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
+				spell.SpellMetrics[target.UnitIndex].Hits--
 				warlock.CurseOfDoom.Dot(target).Cancel(sim)
 				spell.Dot(target).Apply(sim)
 			}
@@ -209,7 +205,7 @@ func (warlock *Warlock) registerCurseOfDoomSpell() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
 				warlock.CurseOfAgony.Dot(target).Cancel(sim)
 				spell.Dot(target).Apply(sim)

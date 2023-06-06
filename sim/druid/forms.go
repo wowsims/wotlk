@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -88,6 +89,21 @@ func (druid *Druid) GetFormShiftStats() stats.Stats {
 	return s
 }
 
+func (druid *Druid) GetDynamicPredStrikeStats() stats.Stats {
+	// Accounts for ap bonus for 'dynamic' enchants
+	// just scourgebane currently, this is a bit hacky but is needed as the bonus varies based on current target
+	// so has to be 'cached' differently
+	s := stats.Stats{}
+	if weapon := druid.GetMHWeapon(); weapon != nil {
+		bonusAp := 0.0
+		if weapon.Enchant.EffectID == 3247 && druid.CurrentTarget.MobType == proto.MobType_MobTypeUndead {
+			bonusAp += 140
+		}
+		s[stats.AttackPower] += bonusAp * ((0.2 / 3) * float64(druid.Talents.PredatoryStrikes))
+	}
+	return s
+}
+
 func (druid *Druid) registerCatFormSpell() {
 	actionID := core.ActionID{SpellID: 768}
 
@@ -107,6 +123,8 @@ func (druid *Druid) registerCatFormSpell() {
 
 	clawWeapon := druid.GetCatWeapon()
 
+	predBonus := stats.Stats{}
+
 	druid.CatFormAura = druid.RegisterAura(core.Aura{
 		Label:      "Cat Form",
 		ActionID:   actionID,
@@ -124,6 +142,9 @@ func (druid *Druid) registerCatFormSpell() {
 			druid.PseudoStats.ThreatMultiplier *= 0.71
 			druid.PseudoStats.SpiritRegenMultiplier *= AnimalSpiritRegenSuppression
 			druid.PseudoStats.BaseDodge += 0.02 * float64(druid.Talents.FeralSwiftness)
+
+			predBonus = druid.GetDynamicPredStrikeStats()
+			druid.AddStatsDynamic(sim, predBonus)
 			druid.AddStatsDynamic(sim, statBonus)
 			druid.EnableDynamicStatDep(sim, agiApDep)
 			if hotwDep != nil {
@@ -153,6 +174,8 @@ func (druid *Druid) registerCatFormSpell() {
 			druid.PseudoStats.ThreatMultiplier /= 0.71
 			druid.PseudoStats.SpiritRegenMultiplier /= AnimalSpiritRegenSuppression
 			druid.PseudoStats.BaseDodge -= 0.02 * float64(druid.Talents.FeralSwiftness)
+
+			druid.AddStatsDynamic(sim, predBonus.Multiply(-1))
 			druid.AddStatsDynamic(sim, statBonus.Multiply(-1))
 			druid.DisableDynamicStatDep(sim, agiApDep)
 			if hotwDep != nil {
@@ -241,6 +264,7 @@ func (druid *Druid) registerBearFormSpell() {
 	potpdtm := 1 - 0.04*float64(druid.Talents.ProtectorOfThePack)
 
 	clawWeapon := druid.GetBearWeapon()
+	predBonus := stats.Stats{}
 
 	druid.BearFormAura = druid.RegisterAura(core.Aura{
 		Label:      "Bear Form",
@@ -255,11 +279,14 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.SetCurrentPowerBar(core.RageBar)
 
 			druid.AutoAttacks.MH = clawWeapon
-			druid.PseudoStats.ThreatMultiplier *= 29. / 14.
+			druid.PseudoStats.ThreatMultiplier *= 2.1021
 			druid.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.02*float64(druid.Talents.MasterShapeshifter)
 			druid.PseudoStats.DamageTakenMultiplier *= potpdtm
 			druid.PseudoStats.SpiritRegenMultiplier *= AnimalSpiritRegenSuppression
 			druid.PseudoStats.BaseDodge += 0.02 * float64(druid.Talents.FeralSwiftness+druid.Talents.NaturalReaction)
+
+			predBonus = druid.GetDynamicPredStrikeStats()
+			druid.AddStatsDynamic(sim, predBonus)
 			druid.AddStatsDynamic(sim, statBonus)
 			if potpDep != nil {
 				druid.EnableDynamicStatDep(sim, potpDep)
@@ -285,11 +312,13 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.form = Humanoid
 			druid.AutoAttacks.MH = druid.WeaponFromMainHand(druid.MeleeCritMultiplier(Humanoid))
 
-			druid.PseudoStats.ThreatMultiplier /= 29. / 14.
+			druid.PseudoStats.ThreatMultiplier /= 2.1021
 			druid.PseudoStats.DamageDealtMultiplier /= 1.0 + 0.02*float64(druid.Talents.MasterShapeshifter)
 			druid.PseudoStats.DamageTakenMultiplier /= potpdtm
 			druid.PseudoStats.SpiritRegenMultiplier /= AnimalSpiritRegenSuppression
 			druid.PseudoStats.BaseDodge -= 0.02 * float64(druid.Talents.FeralSwiftness+druid.Talents.NaturalReaction)
+
+			druid.AddStatsDynamic(sim, predBonus.Multiply(-1))
 			druid.AddStatsDynamic(sim, statBonus.Multiply(-1))
 			if potpDep != nil {
 				druid.DisableDynamicStatDep(sim, potpDep)
@@ -389,7 +418,7 @@ func (druid *Druid) applyMoonkinForm() {
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if result.DidCrit() {
 				if spell == druid.Moonfire || spell == druid.Starfire || spell == druid.Wrath {
-					druid.AddMana(sim, 0.02*druid.MaxMana(), manaMetrics, false)
+					druid.AddMana(sim, 0.02*druid.MaxMana(), manaMetrics)
 				}
 			}
 		},

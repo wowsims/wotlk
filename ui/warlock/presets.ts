@@ -150,6 +150,7 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	wrathOfAirTotem: true,
 	sanctifiedRetribution: true,
 	bloodlust: true,
+	demonicPact: 500,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
@@ -742,7 +743,7 @@ export const P2_Preset_Affliction = {
 			"enchant": 1144,
 			"gems": [
 				39998,
-				45987
+				40014
 			]
 		},
 		{

@@ -1,6 +1,7 @@
 package warlock
 
 import (
+	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -64,6 +65,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 			stats.Intellect: 369,
 			stats.Spirit:    367,
 			stats.Mana:      1174,
+			stats.MP5:       270, // rough guess, unclear if it's affected by other stats
 			stats.MeleeCrit: 3.454 * core.CritRatingPerCritChance,
 			stats.SpellCrit: 0.9075 * core.CritRatingPerCritChance,
 		}
@@ -137,9 +139,10 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		stats.MeleeCrit: float64(warlock.Talents.DemonicTactics) * 2 * core.CritRatingPerCritChance,
 		stats.SpellCrit: float64(warlock.Talents.DemonicTactics) * 2 * core.CritRatingPerCritChance,
 
-		// Remove stats the pet incorrectly has because of the suppression talent through stat inheritance
+		// Fix pet stats resulting from gaining the incorrect amount of stats from suppression/hit debuff
+		// see makeStatInheritance() below for a more details about these values
 		stats.MeleeHit:  -float64(warlock.Talents.Suppression) * core.MeleeHitRatingPerHitChance,
-		stats.SpellHit:  -float64(warlock.Talents.Suppression) * core.SpellHitRatingPerHitChance,
+		stats.SpellHit:  (-5.0 * float64(warlock.Talents.Suppression)) / 12.0 * core.SpellHitRatingPerHitChance,
 		stats.Expertise: -float64(warlock.Talents.Suppression) * PetExpertiseScale * core.ExpertisePerQuarterPercentReduction,
 	})
 
@@ -227,19 +230,46 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		mdLockAura := warlock.RegisterAura(md)
 		mdPetAura := wp.RegisterAura(md)
 
+		masterDemonologist := float64(warlock.Talents.MasterDemonologist) * core.CritRatingPerCritChance
+		masterDemonologistFireCrit := core.TernaryFloat64(warlock.Options.Summon == proto.Warlock_Options_Imp, masterDemonologist, 0)
+		masterDemonologistShadowCrit := core.TernaryFloat64(warlock.Options.Summon == proto.Warlock_Options_Succubus, masterDemonologist, 0)
+
 		wp.OnPetEnable = func(sim *core.Simulation) {
-			val := float64(warlock.Talents.MasterDemonologist) * core.CritRatingPerCritChance
 			mdLockAura.Activate(sim)
 			mdPetAura.Activate(sim)
-			warlock.masterDemonologistFireCrit = core.TernaryFloat64(warlock.Options.Summon == proto.Warlock_Options_Imp, val, 0)
-			warlock.masterDemonologistShadowCrit = core.TernaryFloat64(warlock.Options.Summon == proto.Warlock_Options_Succubus, val, 0)
+
+			spellbook := make([]*core.Spell, 0)
+			spellbook = append(spellbook, warlock.Spellbook...)
+			spellbook = append(spellbook, wp.Spellbook...)
+
+			for _, spell := range spellbook {
+				if spell.SpellSchool.Matches(core.SpellSchoolFire) {
+					spell.BonusCritRating += masterDemonologistFireCrit
+				}
+
+				if spell.SpellSchool.Matches(core.SpellSchoolShadow) {
+					spell.BonusCritRating += masterDemonologistShadowCrit
+				}
+			}
 		}
 
 		wp.OnPetDisable = func(sim *core.Simulation) {
 			mdLockAura.Deactivate(sim)
 			mdPetAura.Deactivate(sim)
-			warlock.masterDemonologistFireCrit = 0.0
-			warlock.masterDemonologistShadowCrit = 0.0
+
+			spellbook := make([]*core.Spell, 0)
+			spellbook = append(spellbook, warlock.Spellbook...)
+			spellbook = append(spellbook, wp.Spellbook...)
+
+			for _, spell := range spellbook {
+				if spell.SpellSchool.Matches(core.SpellSchoolFire) {
+					spell.BonusCritRating -= masterDemonologistFireCrit
+				}
+
+				if spell.SpellSchool.Matches(core.SpellSchoolShadow) {
+					spell.BonusCritRating -= masterDemonologistShadowCrit
+				}
+			}
 		}
 	}
 
@@ -257,14 +287,14 @@ func (wp *WarlockPet) GetPet() *core.Pet {
 func (wp *WarlockPet) Initialize() {
 	switch wp.owner.Options.Summon {
 	case proto.Warlock_Options_Felguard:
-		wp.primaryAbility = wp.NewPetAbility(Cleave, true)
-		wp.secondaryAbility = wp.NewPetAbility(Intercept, false)
+		wp.registerCleaveSpell()
+		wp.registerInterceptSpell()
 	case proto.Warlock_Options_Succubus:
-		wp.primaryAbility = wp.NewPetAbility(LashOfPain, true)
+		wp.registerLashOfPainSpell()
 	case proto.Warlock_Options_Felhunter:
-		wp.primaryAbility = wp.NewPetAbility(ShadowBite, true)
+		wp.registerShadowBiteSpell()
 	case proto.Warlock_Options_Imp:
-		wp.primaryAbility = wp.NewPetAbility(Firebolt, true)
+		wp.registerFireboltSpell()
 	}
 }
 
@@ -272,24 +302,41 @@ func (wp *WarlockPet) Reset(sim *core.Simulation) {
 }
 
 func (wp *WarlockPet) OnGCDReady(sim *core.Simulation) {
-	target := wp.CurrentTarget
-
-	if !wp.TryCast(sim, target, wp.primaryAbility) {
-		if !wp.primaryAbility.IsReady(sim) {
-			wp.WaitUntil(sim, wp.primaryAbility.CD.ReadyAt())
-		} else {
-			wp.WaitForMana(sim, wp.primaryAbility.CurCast.Cost)
-		}
+	if !wp.primaryAbility.IsReady(sim) {
+		wp.WaitUntil(sim, wp.primaryAbility.CD.ReadyAt())
+		return
 	}
+
+	if success := wp.primaryAbility.Cast(sim, wp.CurrentTarget); !success {
+		wp.WaitForMana(sim, wp.primaryAbility.CurCast.Cost)
+	}
+
 }
 
 func (warlock *Warlock) makeStatInheritance() core.PetStatInheritance {
 	improvedDemonicTactics := float64(warlock.Talents.ImprovedDemonicTactics)
 
 	return func(ownerStats stats.Stats) stats.Stats {
-		// EJ posts claim this value is passed through math.Floor, but in-game testing
-		// shows pets benefit from each point of owner hit rating in WotLK Classic.
-		// https://web.archive.org/web/20120112003252/http://elitistjerks.com/f80/t100099-demonology_releasing_demon_you
+		// based on testing for WotLK Classic the following is true:
+		// - pets are meele hit capped if and only if the warlock has 210 (8%) spell hit rating or more
+		//   - this is unaffected by suppression and by magic hit debuffs like FF
+		// - pets gain expertise from 0% to 6.5% relative to the owners hit, reaching cap at 17% spell hit
+		//   - this is also unaffected by suppression and by magic hit debuffs like FF
+		//   - this is continious, i.e. not restricted to 0.25 intervals
+		// - pets gain spell hit from 0% to 17% relative to the owners hit, reaching cap at 12% spell hit
+		// spell hit rating is floor'd
+		//   - affected by suppression and ff, but in weird ways:
+		// 3/3 suppression => 262 hit  (9.99%) results in misses, 263 (10.03%) no misses
+		// 2/3 suppression => 278 hit (10.60%) results in misses, 279 (10.64%) no misses
+		// 1/3 suppression => 288 hit (10.98%) results in misses, 289 (11.02%) no misses
+		// 0/3 suppression => 314 hit (11.97%) results in misses, 315 (12.01%) no misses
+		// 3/3 suppression + FF => 209 hit (7.97%) results in misses, 210 (8.01%) no misses
+		// 2/3 suppression + FF => 222 hit (8.46%) results in misses, 223 (8.50%) no misses
+		//
+		// the best approximation of this behaviour is that we scale the warlock's spell hit by `1/12*17` floor
+		// the result and then add the hit percent from suppression/ff
+
+		// does correctly not include ff/misery
 		ownerHitChance := ownerStats[stats.SpellHit] / core.SpellHitRatingPerHitChance
 
 		// TODO: Account for sunfire/soulfrost
@@ -303,7 +350,7 @@ func (warlock *Warlock) makeStatInheritance() core.PetStatInheritance {
 			stats.SpellCrit:        improvedDemonicTactics * 0.1 * ownerStats[stats.SpellCrit],
 			stats.MeleeCrit:        improvedDemonicTactics * 0.1 * ownerStats[stats.SpellCrit],
 			stats.MeleeHit:         ownerHitChance * core.MeleeHitRatingPerHitChance,
-			stats.SpellHit:         ownerHitChance * core.SpellHitRatingPerHitChance,
+			stats.SpellHit:         math.Floor(ownerStats[stats.SpellHit] / 12.0 * 17.0),
 			// TODO: revisit
 			stats.Expertise: (ownerStats[stats.SpellHit] / core.SpellHitRatingPerHitChance) *
 				PetExpertiseScale * core.ExpertisePerQuarterPercentReduction,

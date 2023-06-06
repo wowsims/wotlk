@@ -397,6 +397,9 @@ func (druid *Druid) applyOmenOfClarity() {
 			}
 		},
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if spell == druid.FaerieFire && druid.InForm(Cat|Bear) {
+				druid.ProcOoc(sim)
+			}
 			if spell == druid.GiftOfTheWild {
 				// Based on ingame testing by druid discord, subject to change or incorrectness
 				chanceToProc := 1.0 - math.Pow(1.0-0.0875, float64(druid.RaidBuffTargets))
@@ -532,7 +535,7 @@ func (druid *Druid) applyImprovedLotp() {
 				return
 			}
 			icd.Use(sim)
-			druid.AddMana(sim, druid.MaxMana()*manaRestore, manaMetrics, false)
+			druid.AddMana(sim, druid.MaxMana()*manaRestore, manaMetrics)
 			druid.GainHealth(sim, druid.MaxHealth()*healthRestore, healthMetrics)
 		},
 	})

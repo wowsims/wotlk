@@ -63,6 +63,23 @@ func TestSV(t *testing.T) {
 	}))
 }
 
+func TestAPL(t *testing.T) {
+	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
+		Class:      proto.Class_ClassHunter,
+		Race:       proto.Race_RaceOrc,
+		OtherRaces: []proto.Race{proto.Race_RaceDwarf},
+
+		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		Talents:     SVTalents,
+		Glyphs:      SVGlyphs,
+		Consumes:    FullConsumes,
+		SpecOptions: core.SpecOptionsCombo{Label: "SV", SpecOptions: PlayerOptionsSV},
+		Rotation:    core.RotationCombo{Label: "Default", Rotation: DefaultRotation},
+
+		ItemFilter: ItemFilter,
+	}))
+}
+
 var ItemFilter = core.ItemFilter{
 	ArmorType: proto.ArmorType_ArmorTypeMail,
 	WeaponTypes: []proto.WeaponType{
@@ -140,6 +157,25 @@ var FerocityTalents = &proto.HunterPetTalents{
 	CallOfTheWild:  true,
 	WildHunt:       1,
 }
+
+var DefaultRotation = core.APLRotationFromJsonString(`{
+	"enabled": true,
+	"priorityList": [
+		{"action": {
+			"condition": {"not": {"val": {"dotIsActive": {"spellId": { "spellId": 49001 }}}}},
+			"castSpell": {"spellId": { "spellId": 49001 }}
+		}},
+		{"action": {"castSpell": {"spellId": { "spellId": 61006 }}}},
+		{"action": {"castSpell": {"spellId": { "spellId": 63672 }}}},
+		{"action": {"castSpell": {"spellId": { "spellId": 60053 }}}},
+		{"action": {"castSpell": {"spellId": { "spellId": 49050 }}}},
+		{"action": {
+			"condition": {"not": {"val": {"dotIsActive": {"spellId": { "spellId": 60053 }}}}},
+			"castSpell": {"spellId": { "spellId": 49045 }}
+		}},
+		{"action": {"castSpell": {"spellId": { "spellId": 49052 }}}}
+	]
+}`)
 
 var PlayerOptionsMM = &proto.Player_Hunter{
 	Hunter: &proto.Hunter{

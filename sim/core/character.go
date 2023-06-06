@@ -64,11 +64,6 @@ type Character struct {
 	// This character's index within its party [0-4].
 	PartyIndex int
 
-	// Total amount of remaining additional mana expected for the current sim iteration,
-	// beyond this Character's mana pool. This should include mana potions / runes /
-	// innervates / etc.
-	ExpectedBonusMana float64
-
 	defensiveTrinketCD *Timer
 	offensiveTrinketCD *Timer
 	conjuredCD         *Timer
@@ -375,11 +370,25 @@ func (character *Character) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 
 func (character *Character) initialize(agent Agent) {
 	character.majorCooldownManager.initialize(character)
+	character.DesyncTrinketProcs()
 
 	character.gcdAction = &PendingAction{
 		Priority: ActionPriorityGCD,
 		OnAction: func(sim *Simulation) {
 			if sim.CurrentTime < 0 {
+				return
+			}
+
+			if sim.Options.Interactive {
+				if character.GCD.IsReady(sim) {
+					sim.NeedsInput = true
+					character.doNothing = false
+				}
+				return
+			}
+
+			if character.Rotation != nil {
+				character.Rotation.DoNextAction(sim)
 				return
 			}
 
@@ -397,7 +406,7 @@ func (character *Character) initialize(agent Agent) {
 	}
 }
 
-func (character *Character) Finalize(playerStats *proto.PlayerStats) {
+func (character *Character) Finalize() {
 	if character.Env.IsFinalized() {
 		return
 	}
@@ -408,17 +417,35 @@ func (character *Character) Finalize(playerStats *proto.PlayerStats) {
 
 	character.majorCooldownManager.finalize()
 	character.ItemSwap.finalize()
+}
 
-	if playerStats != nil {
-		character.applyBuildPhaseAuras(CharacterBuildPhaseAll)
-		playerStats.FinalStats = &proto.UnitStats{
-			Stats:       character.GetStats().ToFloatArray(),
-			PseudoStats: character.GetPseudoStatsProto(),
-		}
-		character.clearBuildPhaseAuras(CharacterBuildPhaseAll)
-		playerStats.Sets = character.GetActiveSetBonusNames()
-		playerStats.Cooldowns = character.GetMajorCooldownIDs()
+func (character *Character) FillPlayerStats(playerStats *proto.PlayerStats) {
+	if playerStats == nil {
+		return
 	}
+
+	character.applyBuildPhaseAuras(CharacterBuildPhaseAll)
+	playerStats.FinalStats = &proto.UnitStats{
+		Stats:       character.GetStats().ToFloatArray(),
+		PseudoStats: character.GetPseudoStatsProto(),
+	}
+	character.clearBuildPhaseAuras(CharacterBuildPhaseAll)
+	playerStats.Sets = character.GetActiveSetBonusNames()
+	playerStats.Cooldowns = character.GetMajorCooldownIDs()
+
+	aplSpells := FilterSlice(character.Spellbook, func(spell *Spell) bool {
+		return spell.Flags.Matches(SpellFlagAPL)
+	})
+	playerStats.Spells = MapSlice(aplSpells, func(spell *Spell) *proto.ActionID {
+		return spell.ActionID.ToProto()
+	})
+
+	aplAuras := FilterSlice(character.auras, func(aura *Aura) bool {
+		return !aura.ActionID.IsEmptyAction()
+	})
+	playerStats.Auras = MapSlice(aplAuras, func(aura *Aura) *proto.ActionID {
+		return aura.ActionID.ToProto()
+	})
 }
 
 func (character *Character) init(sim *Simulation, agent Agent) {
@@ -426,7 +453,6 @@ func (character *Character) init(sim *Simulation, agent Agent) {
 }
 
 func (character *Character) reset(sim *Simulation, agent Agent) {
-	character.ExpectedBonusMana = 0
 	character.Unit.reset(sim, agent)
 	character.majorCooldownManager.reset(sim)
 	character.ItemSwap.reset(sim)

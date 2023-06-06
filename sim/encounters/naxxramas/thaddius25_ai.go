@@ -11,7 +11,7 @@ func addThaddius25(bossPrefix string) {
 		PathPrefix: bossPrefix,
 		Config: &proto.Target{
 			Id:        15990,
-			Name:      "Thaddius 25",
+			Name:      "Thaddius",
 			Level:     83,
 			MobType:   proto.MobType_MobTypeUndead,
 			TankIndex: 0,
@@ -19,21 +19,23 @@ func addThaddius25(bossPrefix string) {
 			Stats: stats.Stats{
 				stats.Health:      39_520_129,
 				stats.Armor:       10643,
-				stats.AttackPower: 574,
+				stats.AttackPower: 805,
+				stats.BlockValue:  76,
 			}.ToFloatArray(),
 
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
 			SwingSpeed:       1.25,
-			MinBaseDamage:    25315,
+			MinBaseDamage:    23442,
 			SuppressDodge:    false,
 			ParryHaste:       false,
 			DualWield:        false,
 			DualWieldPenalty: false,
+			TargetInputs:     make([]*proto.TargetInput, 0),
 		},
 		AI: NewThaddius25AI(),
 	})
-	core.AddPresetEncounter("Thaddius 25", []string{
-		bossPrefix + "/Thaddius 25",
+	core.AddPresetEncounter("Thaddius", []string{
+		bossPrefix + "/Thaddius",
 	})
 }
 
@@ -47,8 +49,11 @@ func NewThaddius25AI() core.AIFactory {
 	}
 }
 
-func (ai *Thaddius25AI) Initialize(target *core.Target) {
+func (ai *Thaddius25AI) Initialize(target *core.Target, config *proto.Target) {
 	ai.Target = target
+}
+
+func (ai *Thaddius25AI) Reset(*core.Simulation) {
 }
 
 func (ai *Thaddius25AI) DoAction(sim *core.Simulation) {

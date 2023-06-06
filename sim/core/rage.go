@@ -2,7 +2,6 @@ package core
 
 import (
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 const MaxRage = 100.0
@@ -45,6 +44,9 @@ func (unit *Unit) EnableRageBar(options RageBarOptions, onRageGain OnRageGain) {
 				return
 			}
 			if result.Outcome.Matches(OutcomeMiss) {
+				return
+			}
+			if !spell.ProcMask.Matches(ProcMaskMelee) {
 				return
 			}
 			if !spell.ProcMask.Matches(ProcMaskWhiteHit) {
@@ -136,7 +138,9 @@ func (rb *rageBar) AddRage(sim *Simulation, amount float64, metrics *ResourceMet
 	}
 
 	rb.currentRage = newRage
-	rb.onRageGain(sim)
+	if !sim.Options.Interactive {
+		rb.onRageGain(sim)
+	}
 }
 
 func (rb *rageBar) SpendRage(sim *Simulation, amount float64, metrics *ResourceMetrics) {
@@ -208,8 +212,6 @@ type RageCost struct {
 }
 
 func newRageCost(spell *Spell, options RageCostOptions) *RageCost {
-	spell.ResourceType = stats.Rage
-	spell.BaseCost = options.Cost
 	spell.DefaultCast.Cost = options.Cost
 	if options.Refund > 0 && options.RefundMetrics == nil {
 		options.RefundMetrics = spell.Unit.RageRefundMetrics

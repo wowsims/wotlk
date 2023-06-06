@@ -19,10 +19,6 @@ import {
 import { CustomSpell, Spec, ItemSwap, ItemSlot } from '../core/proto/common.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
-import { Sim } from '../core/sim.js';
-import { IndividualSimUI } from '../core/individual_sim_ui.js';
-import { Target } from '../core/target.js';
-import { EventID, TypedEvent } from '../core/typed_event.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
 
@@ -67,8 +63,16 @@ export const ShamanImbueOH = InputHelpers.makeSpecOptionsEnumIconInput<Spec.Spec
 export const SyncTypeInput = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecEnhancementShaman, ShamanSyncType>({
 	fieldName: 'syncType',
 	label: 'Sync/Stagger Setting',
-	labelTooltip: 'Choose your sync or stagger option, Perfect Sync makes your weapons always attack at the same time, which is ideal for mixed imbues. Delayed Offhand is similar but additionally adds a slight delay to the offhand attacks while staying within the 0.5s flurry ICD window, ideal for matched imbues.',
+	labelTooltip: 
+	`Choose your sync or stagger option Perfect
+		<ul>
+			<li><div>Auto: Will auto pick sync options based on your weapons attack speeds</div></li>
+			<li><div>None: No Sync or Staggering, used for mismatched weapon speeds</div></li>
+			<li><div>Perfect Sync: Makes your weapons always attack at the same time, for match weapon speeds</div></li>
+			<li><div>Delayed Offhand: Adds a slight delay to the offhand attacks while staying within the 0.5s flurry ICD window</div></li>
+		</ul>`,
 	values: [
+		{ name: "Automatic", value: ShamanSyncType.Auto},
 		{ name: 'None', value: ShamanSyncType.NoSync },
 		{ name: 'Perfect Sync', value: ShamanSyncType.SyncMainhandOffhandSwings },
 		{ name: 'Delayed Offhand', value: ShamanSyncType.DelayOffhandSwings },
@@ -120,6 +124,7 @@ export const EnhancementShamanRotationConfig = {
 					{ actionId: ActionId.fromSpellId(49238), value: CustomRotationSpell.LightningBolt},
 					{ actionId: ActionId.fromSpellId(49238), value: CustomRotationSpell.LightningBoltWeave, text: "Weave" },
 					{ actionId: ActionId.fromSpellId(49238), value: CustomRotationSpell.LightningBoltDelayedWeave, text: "Delay" },
+					{ actionId: ActionId.fromSpellId(49271), value: CustomRotationSpell.ChainLightning},
 					{ actionId: ActionId.fromSpellId(17364), value: CustomRotationSpell.StormstrikeDebuffMissing, text: "Debuff"  },
 					{ actionId: ActionId.fromSpellId(17364), value: CustomRotationSpell.Stormstrike },
 					{ actionId: ActionId.fromSpellId(49233), value: CustomRotationSpell.FlameShock },

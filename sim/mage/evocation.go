@@ -47,7 +47,7 @@ func (mage *Mage) registerEvocationCD() {
 				Period:   period,
 				NumTicks: int(numTicks),
 				OnAction: func(sim *core.Simulation) {
-					mage.AddMana(sim, manaPerTick, manaMetrics, true)
+					mage.AddMana(sim, manaPerTick, manaMetrics)
 				},
 			})
 		},

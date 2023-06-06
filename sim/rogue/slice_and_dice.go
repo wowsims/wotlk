@@ -7,38 +7,9 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-var SliceAndDiceActionID = core.ActionID{SpellID: 6774}
-
-const SliceAndDiceEnergyCost = 25.0
-
-func (rogue *Rogue) makeSliceAndDice(comboPoints int32) *core.Spell {
-	actionID := SliceAndDiceActionID
-	actionID.Tag = comboPoints
-	duration := rogue.sliceAndDiceDurations[comboPoints]
-
-	return rogue.RegisterSpell(core.SpellConfig{
-		ActionID: actionID,
-		Flags:    SpellFlagFinisher,
-
-		EnergyCost: core.EnergyCostOptions{
-			Cost: SliceAndDiceEnergyCost,
-		},
-		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				GCD: time.Second,
-			},
-			IgnoreHaste: true,
-		},
-
-		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-			rogue.SliceAndDiceAura.Duration = duration
-			rogue.SliceAndDiceAura.Activate(sim)
-			rogue.ApplyFinisher(sim, spell)
-		},
-	})
-}
-
 func (rogue *Rogue) registerSliceAndDice() {
+	actionID := core.ActionID{SpellID: 6774}
+
 	durationMultiplier := 1.0 + 0.25*float64(rogue.Talents.ImprovedSliceAndDice)
 	durationBonus := time.Duration(0)
 	if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfSliceAndDice) {
@@ -54,14 +25,14 @@ func (rogue *Rogue) registerSliceAndDice() {
 	}
 
 	hasteBonus := 1.4
-	if rogue.HasSetBonus(ItemSetSlayers, 2) {
+	if rogue.HasSetBonus(Tier6, 2) {
 		hasteBonus += 0.05
 	}
 	inverseHasteBonus := 1.0 / hasteBonus
 
 	rogue.SliceAndDiceAura = rogue.RegisterAura(core.Aura{
 		Label:    "Slice and Dice",
-		ActionID: SliceAndDiceActionID,
+		ActionID: actionID,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.MultiplyMeleeSpeed(sim, hasteBonus)
 		},
@@ -70,12 +41,31 @@ func (rogue *Rogue) registerSliceAndDice() {
 		},
 	})
 
-	rogue.SliceAndDice = [6]*core.Spell{
-		nil,
-		rogue.makeSliceAndDice(1),
-		rogue.makeSliceAndDice(2),
-		rogue.makeSliceAndDice(3),
-		rogue.makeSliceAndDice(4),
-		rogue.makeSliceAndDice(5),
-	}
+	rogue.SliceAndDice = rogue.RegisterSpell(core.SpellConfig{
+		ActionID:     actionID,
+		Flags:        SpellFlagFinisher,
+		MetricSplits: 6,
+
+		EnergyCost: core.EnergyCostOptions{
+			Cost: 25,
+		},
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				GCD: time.Second,
+			},
+			IgnoreHaste: true,
+			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				spell.SetMetricsSplit(spell.Unit.ComboPoints())
+			},
+		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return rogue.ComboPoints() > 0
+		},
+
+		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
+			rogue.SliceAndDiceAura.Duration = rogue.sliceAndDiceDurations[rogue.ComboPoints()]
+			rogue.SliceAndDiceAura.Activate(sim)
+			rogue.ApplyFinisher(sim, spell)
+		},
+	})
 }

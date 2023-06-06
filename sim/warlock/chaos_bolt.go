@@ -8,7 +8,7 @@ import (
 )
 
 func (warlock *Warlock) registerChaosBoltSpell() {
-	spellCoeff := 0.7142 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
+	spellCoeff := 0.714 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
 
 	// ChaosBolt is affected by level-based partial resists.
 	// TODO If there's bosses with elevated fire resistances, we'd need another spell flag,
@@ -34,7 +34,6 @@ func (warlock *Warlock) registerChaosBoltSpell() {
 		},
 
 		BonusCritRating: 0 +
-			warlock.masterDemonologistFireCrit +
 			core.TernaryFloat64(warlock.Talents.Devastation, 1, 0)*5*core.CritRatingPerCritChance,
 		DamageMultiplierAdditive: 1 +
 			warlock.GrandFirestoneBonus() +

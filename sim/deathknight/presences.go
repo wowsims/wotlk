@@ -97,8 +97,8 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 	if !dk.Inputs.IsDps {
 		aura.OnSpellHitDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if result.Damage > 0 {
-				healthGain := (0.04 * result.Damage) * (1.0 + core.TernaryFloat64(dk.VampiricBloodAura.IsActive(), 0.35, 0.0))
-				dk.GainHealth(sim, healthGain, healthMetrics)
+				healthGain := 0.04 * result.Damage
+				dk.GainHealth(sim, healthGain*dk.PseudoStats.HealingTakenMultiplier, healthMetrics)
 			}
 		}
 	}
@@ -127,9 +127,9 @@ func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 	})
 
 	threatMult := 2.0735
-	dmgMitigation := 1.0 - (0.01 * float64(dk.Talents.ImprovedFrostPresence))
+	dmgMitigation := 1.0 - (0.08 + 0.01*float64(dk.Talents.ImprovedFrostPresence))
 	stamDep := dk.NewDynamicMultiplyStat(stats.Stamina, 1.08)
-	armorDep := dk.NewDynamicMultiplyStat(stats.Armor, 1.6)
+	armorBonus := dk.Equip.Stats()[stats.Armor] * 0.6
 	dk.FrostPresenceAura = dk.GetOrRegisterAura(core.Aura{
 		Label:    "Frost Presence",
 		ActionID: core.ActionID{SpellID: 48263},
@@ -139,7 +139,7 @@ func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 			aura.Unit.PseudoStats.DamageTakenMultiplier *= dmgMitigation
 
 			aura.Unit.EnableDynamicStatDep(sim, stamDep)
-			aura.Unit.EnableDynamicStatDep(sim, armorDep)
+			aura.Unit.AddStatDynamic(sim, stats.Armor, armorBonus)
 
 			dk.IcyTouch.ThreatMultiplier *= 7
 		},
@@ -148,7 +148,7 @@ func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 			aura.Unit.PseudoStats.DamageTakenMultiplier /= dmgMitigation
 
 			aura.Unit.DisableDynamicStatDep(sim, stamDep)
-			aura.Unit.DisableDynamicStatDep(sim, armorDep)
+			aura.Unit.AddStatDynamic(sim, stats.Armor, -armorBonus)
 
 			dk.IcyTouch.ThreatMultiplier /= 7
 		},
@@ -160,8 +160,8 @@ func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 		healthMetrics := dk.NewHealthMetrics(core.ActionID{SpellID: 50689})
 		dk.FrostPresenceAura.OnSpellHitDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if result.Damage > 0 {
-				healthGain := (healFactor * result.Damage) * (1.0 + core.TernaryFloat64(dk.VampiricBloodAura.IsActive(), 0.35, 0.0))
-				dk.GainHealth(sim, healthGain, healthMetrics)
+				healthGain := healFactor * result.Damage
+				dk.GainHealth(sim, healthGain*dk.PseudoStats.HealingTakenMultiplier, healthMetrics)
 			}
 		}
 	}
@@ -251,8 +251,8 @@ func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 		healthMetrics := dk.NewHealthMetrics(core.ActionID{SpellID: 50689})
 		dk.UnholyPresenceAura.OnSpellHitDealt = func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if result.Damage > 0 {
-				healthGain := (healFactor * result.Damage) * (1.0 + core.TernaryFloat64(dk.VampiricBloodAura.IsActive(), 0.35, 0.0))
-				dk.GainHealth(sim, healthGain, healthMetrics)
+				healthGain := healFactor * result.Damage
+				dk.GainHealth(sim, healthGain*dk.PseudoStats.HealingTakenMultiplier, healthMetrics)
 			}
 		}
 	}

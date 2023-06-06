@@ -89,7 +89,7 @@ var ItemSetLasherweaveRegalia = core.NewItemSet(core.ItemSet{
 			// Your critical strikes from Starfire and Wrath cause the target to languish for an additional 7% of your spell's damage over 4 sec.
 			druid := agent.(DruidAgent).GetDruid()
 
-			lasherweaveSpell := druid.RegisterSpell(core.SpellConfig{
+			druid.Languish = druid.RegisterSpell(core.SpellConfig{
 				ActionID:         core.ActionID{SpellID: 71023},
 				SpellSchool:      core.SpellSchoolNature,
 				ProcMask:         core.ProcMaskEmpty,
@@ -103,22 +103,18 @@ var ItemSetLasherweaveRegalia = core.NewItemSet(core.ItemSet{
 					NumberOfTicks: 2,
 					TickLength:    time.Second * 2,
 
-					OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
-						dot.SnapshotBaseDamage = 0.07 * dot.Spell.SpellPower()
-						dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
-					},
 					OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 						dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
 					},
 				},
-
 				ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-					spell.Dot(target).ApplyOrRefresh(sim)
+					spell.Dot(target).ApplyOrReset(sim)
+					spell.CalcAndDealOutcome(sim, target, spell.OutcomeAlwaysHit)
 				},
 			})
 
 			druid.RegisterAura(core.Aura{
-				Label:    "Lasherweave 4pc Trigger",
+				Label:    "Languish proc",
 				Duration: core.NeverExpires,
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
@@ -127,10 +123,16 @@ var ItemSetLasherweaveRegalia = core.NewItemSet(core.ItemSet{
 					if spell != druid.Starfire && spell != druid.Wrath {
 						return
 					}
-					if !result.DidCrit() {
-						return
+					if result.DidCrit() {
+						dot := druid.Languish.Dot(result.Target)
+
+						newDamage := result.Damage * 0.07
+						outstandingDamage := core.TernaryFloat64(dot.IsActive(), dot.SnapshotBaseDamage*float64(dot.NumberOfTicks-dot.TickCount), 0)
+
+						dot.SnapshotAttackerMultiplier = 1
+						dot.SnapshotBaseDamage = (outstandingDamage + newDamage) / 2.0
+						druid.Languish.Cast(sim, result.Target)
 					}
-					lasherweaveSpell.Cast(sim, result.Target)
 				},
 			})
 		},
@@ -410,9 +412,9 @@ func init() {
 		druid := agent.(DruidAgent).GetDruid()
 		procAura := druid.NewTemporaryStatsAura("Idol of the Corruptor Proc", core.ActionID{ItemID: 45509}, stats.Stats{stats.Agility: 162}, time.Second*12)
 
-		// This proc chance may need confirmation, going off of 'Idol of Terror' values currently
+		// Proc chances based on testing by druid discord
 		procChanceBear := 0.50
-		procChanceCat := 0.85
+		procChanceCat := 1.0
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Idol of the Corruptor",
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
@@ -440,8 +442,8 @@ func init() {
 	core.NewItemEffect(47668, func(agent core.Agent) {
 		druid := agent.(DruidAgent).GetDruid()
 		actionID := core.ActionID{ItemID: 47668}
-		bearAura := druid.NewTemporaryStatsAura("Idol of the Mutilation Bear Proc", actionID, stats.Stats{stats.Dodge: 200.0 / core.DodgeRatingPerDodgeChance}, time.Second*9)
-		catAura := druid.NewTemporaryStatsAura("Idol of the Mutilation Cat Proc", actionID, stats.Stats{stats.Agility: 200.0}, time.Second*16)
+		bearAura := druid.NewTemporaryStatsAura("Idol of Mutilation Bear Proc", actionID, stats.Stats{stats.Dodge: 200.0}, time.Second*9)
+		catAura := druid.NewTemporaryStatsAura("Idol of Mutilation Cat Proc", actionID, stats.Stats{stats.Agility: 200.0}, time.Second*16)
 
 		// Based off of wowhead tooltip
 		icd := core.Cooldown{
@@ -465,9 +467,11 @@ func init() {
 					return
 				}
 				if spell == druid.SwipeBear || spell == druid.Lacerate {
+					icd.Use(sim)
 					bearAura.Activate(sim)
 				}
 				if spell == druid.MangleCat || spell == druid.Shred {
+					icd.Use(sim)
 					catAura.Activate(sim)
 				}
 			},

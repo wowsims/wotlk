@@ -21,7 +21,7 @@ func (paladin *Paladin) registerDivinePleaSpell() {
 			manaPA = core.StartPeriodicAction(sim, core.PeriodicActionOptions{
 				Period: time.Second * 3,
 				OnAction: func(sim *core.Simulation) {
-					paladin.AddMana(sim, 0.05*paladin.MaxMana(), manaMetrics, false)
+					paladin.AddMana(sim, 0.05*paladin.MaxMana(), manaMetrics)
 				},
 			})
 			if hasGlyph {

@@ -45,7 +45,7 @@ func (shaman *Shaman) registerShamanisticRageCD() {
 				return
 			}
 			mana := aura.Unit.GetStat(stats.AttackPower) * 0.15
-			aura.Unit.AddMana(sim, mana, manaMetrics, true)
+			aura.Unit.AddMana(sim, mana, manaMetrics)
 		},
 	})
 

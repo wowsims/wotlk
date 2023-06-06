@@ -16,13 +16,13 @@ func (hunter *Hunter) registerAimedShotSpell(timer *core.Timer) {
 		ActionID:    core.ActionID{SpellID: 49050},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskRangedSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.08,
-			Multiplier: 1 *
-				(1 - 0.03*float64(hunter.Talents.Efficiency)) *
-				(1 - 0.05*float64(hunter.Talents.MasterMarksman)),
+			Multiplier: 1 -
+				0.03*float64(hunter.Talents.Efficiency) -
+				0.05*float64(hunter.Talents.MasterMarksman),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

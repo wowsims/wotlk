@@ -1,13 +1,6 @@
-import { BooleanPicker } from '../core/components/boolean_picker.js';
-import { EnumPicker } from '../core/components/enum_picker.js';
-import { IconEnumPicker, IconEnumPickerConfig } from '../core/components/icon_enum_picker.js';
-import { IconPickerConfig } from '../core/components/icon_picker.js';
-import { CustomRotation } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
-import { Sim } from '../core/sim.js';
-import { Target } from '../core/target.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
 import { makePetTypeInputConfig } from '../core/talents/hunter_pet.js';
 

@@ -51,6 +51,9 @@ func NewDpsDeathknight(character core.Character, player *proto.Player) *DpsDeath
 			DrwPestiApply:       dk.Options.DrwPestiApply,
 			BloodOpener:         dk.Rotation.BloodOpener,
 			IsDps:               true,
+			NewDrw:              dk.Options.NewDrw,
+			DiseaseDowntime:     dk.Options.DiseaseDowntime,
+			VirulenceRefresh:    dk.Rotation.VirulenceRefresh,
 
 			RefreshHornOfWinter: dk.Rotation.RefreshHornOfWinter,
 			ArmyOfTheDeadType:   dk.Rotation.ArmyOfTheDead,
@@ -58,11 +61,8 @@ func NewDpsDeathknight(character core.Character, player *proto.Player) *DpsDeath
 			UseAMS:              dk.Rotation.UseAms,
 			AvgAMSSuccessRate:   dk.Rotation.AvgAmsSuccessRate,
 			AvgAMSHit:           dk.Rotation.AvgAmsHit,
-		}, player.TalentsString),
+		}, player.TalentsString, dk.Rotation.PreNerfedGargoyle),
 		Rotation: dk.Rotation,
-	}
-	if dpsDk.Talents.SummonGargoyle {
-		dpsDk.Gargoyle = dpsDk.NewGargoyle(!dk.Rotation.PreNerfedGargoyle)
 	}
 
 	dpsDk.Inputs.UnholyFrenzyTarget = dk.Options.UnholyFrenzyTarget
@@ -71,13 +71,13 @@ func NewDpsDeathknight(character core.Character, player *proto.Player) *DpsDeath
 		MainHand:       dpsDk.WeaponFromMainHand(dpsDk.DefaultMeleeCritMultiplier()),
 		OffHand:        dpsDk.WeaponFromOffHand(dpsDk.DefaultMeleeCritMultiplier()),
 		AutoSwingMelee: true,
-		ReplaceMHSwing: func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
-			if dpsDk.RuneStrike.CanCast(sim, nil) {
-				return dpsDk.RuneStrike
-			} else {
-				return nil
-			}
-		},
+		// ReplaceMHSwing: func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
+		// 	if dpsDk.RuneStrike.CanCast(sim, nil) {
+		// 		return dpsDk.RuneStrike
+		// 	} else {
+		// 		return nil
+		// 	}
+		// },
 	})
 
 	if dpsDk.Talents.SummonGargoyle && dpsDk.Rotation.UseGargoyle && dpsDk.Rotation.EnableWeaponSwap {
@@ -204,16 +204,6 @@ func (dk *DpsDeathknight) GetDeathknight() *deathknight.Deathknight {
 
 func (dk *DpsDeathknight) Initialize() {
 	dk.Deathknight.Initialize()
-
-	if dk.Talents.DancingRuneWeapon {
-		dk.br.drwSnapshot = core.NewSnapshotManager(dk.GetCharacter())
-		dk.setupDrwProcTrackers()
-	}
-
-	if dk.Talents.SummonGargoyle {
-		dk.ur.gargoyleSnapshot = core.NewSnapshotManager(dk.GetCharacter())
-		dk.setupGargProcTrackers()
-	}
 
 	dk.sr.Initialize(dk)
 	dk.br.Initialize(dk)
@@ -352,7 +342,7 @@ func (dk *DpsDeathknight) gargoyleHasteCooldownSync(actionID core.ActionID, isPo
 
 		majorCd.ShouldActivate = func(sim *core.Simulation, character *core.Character) bool {
 			if !dk.Rotation.PreNerfedGargoyle {
-				aura := dk.GetAura("Summon Gargoyle")
+				aura := dk.SummonGargoyleAura
 
 				if aura != nil && aura.IsActive() {
 					return true
@@ -511,10 +501,11 @@ func (dk *DpsDeathknight) drwCooldownSync(actionID core.ActionID, isPotion bool)
 			if dk.br.activatingDrw {
 				return true
 			}
+
 			if dk.DancingRuneWeapon.CD.TimeToReady(sim) > majorCd.Spell.CD.Duration && !isPotion {
 				return true
 			}
-			if dk.DancingRuneWeapon.CD.ReadyAt() > sim.Duration {
+			if !dk.DancingRuneWeapon.IsReady(sim) && dk.DancingRuneWeapon.CD.ReadyAt() > sim.Duration {
 				return true
 			}
 

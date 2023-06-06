@@ -1,31 +1,33 @@
 import {
-	Consumes,
-	Debuffs,
-	EquipmentSpec,
-	Flask,
-	Food,
-	Glyphs,
-	IndividualBuffs,
-	PartyBuffs,
-	Potions,
-	RaidBuffs,
-	RaidTarget,
-	TristateEffect
+    Consumes,
+    Debuffs,
+    EquipmentSpec, Explosive, Faction,
+    Flask,
+    Food,
+    Glyphs,
+    IndividualBuffs,
+    PartyBuffs,
+    Potions,
+    RaidBuffs,
+    RaidTarget, Spec,
+    TristateEffect
 } from '../core/proto/common.js';
 import {SavedTalents} from '../core/proto/ui.js';
 
 import {
-	BalanceDruid_Options as BalanceDruidOptions,
-	BalanceDruid_Rotation as BalanceDruidRotation,
-	BalanceDruid_Rotation_IsUsage,
-	BalanceDruid_Rotation_MfUsage,
-	BalanceDruid_Rotation_Type as RotationType,
-	DruidMajorGlyph,
-	DruidMinorGlyph,
+    BalanceDruid_Options as BalanceDruidOptions,
+    BalanceDruid_Rotation as BalanceDruidRotation,
+    BalanceDruid_Rotation_IsUsage,
+    BalanceDruid_Rotation_MfUsage,
+    BalanceDruid_Rotation_Type as RotationType,
+    BalanceDruid_Rotation_WrathUsage,
+    DruidMajorGlyph,
+    DruidMinorGlyph,
 } from '../core/proto/druid.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
 import {NO_TARGET} from "../core/proto_utils/utils";
+import {Player} from "../core/player";
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -33,37 +35,67 @@ import {NO_TARGET} from "../core/proto_utils/utils";
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
-export const StandardTalents = {
-	name: 'Phase 1',
-	data: SavedTalents.create({
-		talentsString: '5032003115331303213305311231--205003012',
-		glyphs: Glyphs.create({
-			major1: DruidMajorGlyph.GlyphOfFocus,
-			major2: DruidMajorGlyph.GlyphOfInsectSwarm,
-			major3: DruidMajorGlyph.GlyphOfStarfall,
-			minor1: DruidMinorGlyph.GlyphOfTyphoon,
-			minor2: DruidMinorGlyph.GlyphOfUnburdenedRebirth,
-			minor3: DruidMinorGlyph.GlyphOfTheWild,
-		}),
-	}),
+export const Phase1Talents = {
+    name: 'Phase 1',
+    data: SavedTalents.create({
+        talentsString: '5032003115331303213305311231--205003012',
+        glyphs: Glyphs.create({
+            major1: DruidMajorGlyph.GlyphOfFocus,
+            major2: DruidMajorGlyph.GlyphOfInsectSwarm,
+            major3: DruidMajorGlyph.GlyphOfStarfall,
+            minor1: DruidMinorGlyph.GlyphOfTyphoon,
+            minor2: DruidMinorGlyph.GlyphOfUnburdenedRebirth,
+            minor3: DruidMinorGlyph.GlyphOfTheWild,
+        }),
+    }),
+};
+
+export const Phase2Talents = {
+    name: 'Phase 2',
+    data: SavedTalents.create({
+        talentsString: '5012203115331303213305311231--205003012',
+        glyphs: Glyphs.create({
+            major1: DruidMajorGlyph.GlyphOfStarfire,
+            major2: DruidMajorGlyph.GlyphOfInsectSwarm,
+            major3: DruidMajorGlyph.GlyphOfStarfall,
+            minor1: DruidMinorGlyph.GlyphOfTyphoon,
+            minor2: DruidMinorGlyph.GlyphOfUnburdenedRebirth,
+            minor3: DruidMinorGlyph.GlyphOfTheWild,
+        }),
+    }),
+};
+
+export const Phase3Talents = {
+    name: 'Phase 3',
+    data: SavedTalents.create({
+        talentsString: '5102233115331303213305311031--205003002',
+        glyphs: Glyphs.create({
+            major1: DruidMajorGlyph.GlyphOfStarfire,
+            major2: DruidMajorGlyph.GlyphOfMoonfire,
+            major3: DruidMajorGlyph.GlyphOfStarfall,
+            minor1: DruidMinorGlyph.GlyphOfTyphoon,
+            minor2: DruidMinorGlyph.GlyphOfUnburdenedRebirth,
+            minor3: DruidMinorGlyph.GlyphOfTheWild,
+        }),
+    }),
 };
 
 export const DefaultRotation = BalanceDruidRotation.create({
-	type: RotationType.Adaptive,
-	maintainFaerieFire: true,
-	useSmartCooldowns: true,
-	mfUsage: BalanceDruid_Rotation_MfUsage.NoMf,
-	isUsage: BalanceDruid_Rotation_IsUsage.MaximizeIs,
-	useStarfire:       true,
-	useWrath:          true,
-	useBattleRes: false,
-	playerLatency: 200,
+    type: RotationType.Default,
+    maintainFaerieFire: true,
+    useSmartCooldowns: true,
+    mfUsage: BalanceDruid_Rotation_MfUsage.BeforeLunar,
+    isUsage: BalanceDruid_Rotation_IsUsage.MaximizeIs,
+    wrathUsage: BalanceDruid_Rotation_WrathUsage.RegularWrath,
+    useStarfire: true,
+    useBattleRes: false,
+    playerLatency: 200,
 });
 
 export const DefaultOptions = BalanceDruidOptions.create({
-	innervateTarget: RaidTarget.create({
-		targetIndex: NO_TARGET,
-	}),
+    innervateTarget: RaidTarget.create({
+        targetIndex: NO_TARGET,
+    }),
 });
 
 export const DefaultConsumes = Consumes.create({
@@ -71,54 +103,55 @@ export const DefaultConsumes = Consumes.create({
     flask: Flask.FlaskOfTheFrostWyrm,
     food: Food.FoodFishFeast,
     prepopPotion: Potions.PotionOfWildMagic,
-    thermalSapper: true,
+    fillerExplosive: Explosive.ExplosiveSaroniteBomb,
 });
 
 export const DefaultRaidBuffs = RaidBuffs.create({
-	arcaneBrilliance: true,
-	bloodlust: true,
-	divineSpirit: true,
-	giftOfTheWild: TristateEffect.TristateEffectImproved,
-	icyTalons: true,
-	moonkinAura: TristateEffect.TristateEffectImproved,
-	leaderOfThePack: TristateEffect.TristateEffectImproved,
-	powerWordFortitude: TristateEffect.TristateEffectImproved,
-	sanctifiedRetribution: true,
-	strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
-	trueshotAura: true,
-	wrathOfAirTotem: true,
+    arcaneBrilliance: true,
+    bloodlust: true,
+    divineSpirit: true,
+    giftOfTheWild: TristateEffect.TristateEffectImproved,
+    icyTalons: true,
+    moonkinAura: TristateEffect.TristateEffectImproved,
+    leaderOfThePack: TristateEffect.TristateEffectImproved,
+    powerWordFortitude: TristateEffect.TristateEffectImproved,
+    sanctifiedRetribution: true,
+    strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
+    trueshotAura: true,
+    wrathOfAirTotem: true,
+    demonicPact: 500,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
-	blessingOfKings: true,
-	blessingOfMight: TristateEffect.TristateEffectImproved,
-	blessingOfWisdom: TristateEffect.TristateEffectImproved,
-	vampiricTouch: true,
+    blessingOfKings: true,
+    blessingOfMight: TristateEffect.TristateEffectImproved,
+    blessingOfWisdom: TristateEffect.TristateEffectImproved,
+    vampiricTouch: true,
 });
 
 export const DefaultPartyBuffs = PartyBuffs.create({
-	heroicPresence: false,
+    heroicPresence: false,
 });
 
 export const DefaultDebuffs = Debuffs.create({
-	bloodFrenzy: true,
-	ebonPlaguebringer: true,
-	faerieFire: TristateEffect.TristateEffectImproved,
-	heartOfTheCrusader: true,
-	judgementOfWisdom: true,
-	shadowMastery: true,
-	sunderArmor: true,
-	totemOfWrath: true,
+    bloodFrenzy: true,
+    ebonPlaguebringer: true,
+    faerieFire: TristateEffect.TristateEffectImproved,
+    heartOfTheCrusader: true,
+    judgementOfWisdom: true,
+    shadowMastery: true,
+    sunderArmor: true,
+    totemOfWrath: true,
 });
 
 export const OtherDefaults = {
-	distanceFromTarget: 18,
+    distanceFromTarget: 18,
 };
 
 export const P2_PRESET = {
-	name: 'P2 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(` {
+    name: 'P2 Preset',
+    tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+    gear: EquipmentSpec.fromJsonString(` {
       "items": [
         {
           "id": 45497,
@@ -234,9 +267,9 @@ export const P2_PRESET = {
 };
 
 export const P1_PRESET = {
-	name: 'P1 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
+    name: 'P1 Preset',
+    tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+    gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 40467,
 			"enchant": 3820,
@@ -330,9 +363,9 @@ export const P1_PRESET = {
 };
 
 export const PRE_RAID_PRESET = {
-	name: 'Pre-raid Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{ "items": [
+    name: 'Pre-raid Preset',
+    tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+    gear: EquipmentSpec.fromJsonString(`{ "items": [
 		{
 			"id": 42554,
 			"enchant": 3820,
@@ -423,5 +456,233 @@ export const PRE_RAID_PRESET = {
 			"id": 40712
 		}
 	]}`),
+};
+
+export const P3_PRESET_HORDE = {
+    name: 'P3 Preset Horde',
+    enableWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getFaction() == Faction.Horde,
+    tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+    gear: EquipmentSpec.fromJsonString(`{"items": [
+        {
+          "id": 48174,
+          "enchant": 3820,
+          "gems": [
+            41285,
+            40155
+          ]
+        },
+        {
+          "id": 47468,
+          "gems": [
+            40155
+          ]
+        },
+        {
+          "id": 48177,
+          "enchant": 3810,
+          "gems": [
+            40153
+          ]
+        },
+        {
+          "id": 47551,
+          "enchant": 3722,
+          "gems": [
+            40113
+          ]
+        },
+        {
+          "id": 48176,
+          "enchant": 3832,
+          "gems": [
+            40113,
+            40113
+          ]
+        },
+        {
+          "id": 47467,
+          "enchant": 2332,
+          "gems": [
+            40155,
+            0
+          ]
+        },
+        {
+          "id": 48173,
+          "enchant": 3604,
+          "gems": [
+            40113,
+            0
+          ]
+        },
+        {
+          "id": 47447,
+          "gems": [
+            40133,
+            40113,
+            40113
+          ]
+        },
+        {
+          "id": 47479,
+          "enchant": 3719,
+          "gems": [
+            40113,
+            40113,
+            40113
+          ]
+        },
+        {
+          "id": 47454,
+          "enchant": 3606,
+          "gems": [
+            40133,
+            40113
+          ]
+        },
+        {
+          "id": 47489,
+          "gems": [
+            40155
+          ]
+        },
+        {
+          "id": 46046,
+          "gems": [
+            40155
+          ]
+        },
+        {
+          "id": 45518
+        },
+        {
+          "id": 47477
+        },
+        {
+          "id": 47483,
+          "enchant": 3834
+        },
+        {
+          "id": 47437
+        },
+        {
+          "id": 47670
+        }
+      ]
+    }`),
+};
+
+export const P3_PRESET_ALLI = {
+    name: 'P3 Preset Alliance',
+    enableWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getFaction() == Faction.Alliance,
+    tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+    gear: EquipmentSpec.fromJsonString(`{"items": [
+         {
+          "id": 48171,
+          "enchant": 3820,
+          "gems": [
+            41285,
+            40153
+          ]
+        },
+        {
+          "id": 47144,
+          "gems": [
+            40153
+          ]
+        },
+        {
+          "id": 48168,
+          "enchant": 3810,
+          "gems": [
+            40153
+          ]
+        },
+        {
+          "id": 47552,
+          "enchant": 3722,
+          "gems": [
+            40113
+          ]
+        },
+        {
+          "id": 48169,
+          "enchant": 3832,
+          "gems": [
+            40113,
+            40113
+          ]
+        },
+        {
+          "id": 47066,
+          "enchant": 2332,
+          "gems": [
+            40113,
+            0
+          ]
+        },
+        {
+          "id": 48172,
+          "enchant": 3604,
+          "gems": [
+            40113,
+            0
+          ]
+        },
+        {
+          "id": 47084,
+          "gems": [
+            40133,
+            40113,
+            40113
+          ]
+        },
+        {
+          "id": 47190,
+          "enchant": 3719,
+          "gems": [
+            40113,
+            40113,
+            40113
+          ]
+        },
+        {
+          "id": 47097,
+          "enchant": 3606,
+          "gems": [
+            40133,
+            40113
+          ]
+        },
+        {
+          "id": 47237,
+          "gems": [
+            40113
+          ]
+        },
+        {
+          "id": 46046,
+          "gems": [
+            40113
+          ]
+        },
+        {
+          "id": 45518
+        },
+        {
+          "id": 47188
+        },
+        {
+          "id": 47206,
+          "enchant": 3834
+        },
+        {
+          "id": 47064
+        },
+        {
+          "id": 47670
+        }
+      ]
+    }`),
 };
 

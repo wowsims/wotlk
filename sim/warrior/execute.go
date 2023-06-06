@@ -1,19 +1,12 @@
 package warrior
 
 import (
-	"time"
-
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (warrior *Warrior) registerExecuteSpell() {
 	const maxRage = 30
-
-	gcd := core.GCDDefault
-	if warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4) {
-		gcd = time.Second
-	}
 
 	var extraRageBonus float64
 	if warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfExecution) {
@@ -36,9 +29,12 @@ func (warrior *Warrior) registerExecuteSpell() {
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD: gcd,
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
+		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return sim.IsExecutePhase20() || warrior.IsSuddenDeathActive()
 		},
 
 		DamageMultiplier: 1,
@@ -65,15 +61,7 @@ func (warrior *Warrior) registerExecuteSpell() {
 }
 
 func (warrior *Warrior) SpamExecute(spam bool) bool {
-	return warrior.CurrentRage() >= warrior.Execute.BaseCost && spam && warrior.PrimaryTalentTree == ArmsTree
-}
-
-func (warrior *Warrior) CanExecute() bool {
-	return warrior.CurrentRage() >= warrior.Execute.BaseCost
-}
-
-func (warrior *Warrior) CanSuddenDeathExecute() bool {
-	return warrior.CurrentRage() >= warrior.Execute.BaseCost && warrior.isSuddenDeathActive()
+	return warrior.CurrentRage() >= warrior.Execute.DefaultCast.Cost && spam && warrior.PrimaryTalentTree == ArmsTree
 }
 
 func (warrior *Warrior) CastExecute(sim *core.Simulation, target *core.Unit) bool {

@@ -6,7 +6,7 @@ character_stats_results: {
   final_stats: 1333.497
   final_stats: 1151.172
   final_stats: 1185.7857
-  final_stats: 2324
+  final_stats: 2544
   final_stats: 186
   final_stats: 0
   final_stats: 655.58533
@@ -66,13 +66,13 @@ dps_results: {
 dps_results: {
  key: "TestRestoration-AllItems-BaubleofTrueBlood-50354"
  value: {
-  tps: 1734.19554
+  hps: 87.04794
  }
 }
 dps_results: {
  key: "TestRestoration-AllItems-BaubleofTrueBlood-50726"
  value: {
-  tps: 1734.19554
+  hps: 87.04794
  }
 }
 dps_results: {
@@ -442,10 +442,6 @@ dps_results: {
 }
 dps_results: {
  key: "TestRestoration-AllItems-SouloftheDead-40382"
- value: {}
-}
-dps_results: {
- key: "TestRestoration-AllItems-SparkofHope-45703"
  value: {}
 }
 dps_results: {

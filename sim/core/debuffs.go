@@ -8,15 +8,15 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-func applyDebuffEffects(target *Unit, debuffs *proto.Debuffs, raid *proto.Raid) {
-	if debuffs.Misery {
+func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, raid *proto.Raid) {
+	if debuffs.Misery && targetIdx == 0 {
 		MakePermanent(MiseryAura(target, 3))
 	}
 
-	if debuffs.JudgementOfWisdom {
+	if debuffs.JudgementOfWisdom && targetIdx == 0 {
 		MakePermanent(JudgementOfWisdomAura(target))
 	}
-	if debuffs.JudgementOfLight {
+	if debuffs.JudgementOfLight && targetIdx == 0 {
 		MakePermanent(JudgementOfLightAura(target))
 	}
 
@@ -26,23 +26,23 @@ func applyDebuffEffects(target *Unit, debuffs *proto.Debuffs, raid *proto.Raid) 
 	if debuffs.EbonPlaguebringer {
 		MakePermanent(EbonPlaguebringerOrCryptFeverAura(nil, target, 2, 3, 3))
 	}
-	if debuffs.EarthAndMoon {
+	if debuffs.EarthAndMoon && targetIdx == 0 {
 		MakePermanent(EarthAndMoonAura(target, 3))
 	}
 
-	if debuffs.ShadowMastery {
+	if debuffs.ShadowMastery && targetIdx == 0 {
 		MakePermanent(ShadowMasteryAura(target))
 	}
 
-	if debuffs.ImprovedScorch {
+	if debuffs.ImprovedScorch && targetIdx == 0 {
 		MakePermanent(ImprovedScorchAura(target))
 	}
 
-	if debuffs.WintersChill {
+	if debuffs.WintersChill && targetIdx == 0 {
 		MakePermanent(WintersChillAura(target, 5))
 	}
 
-	if debuffs.BloodFrenzy {
+	if debuffs.BloodFrenzy && targetIdx < 4 {
 		MakePermanent(BloodFrenzyAura(target, 2))
 	}
 	if debuffs.SavageCombat {
@@ -57,11 +57,11 @@ func applyDebuffEffects(target *Unit, debuffs *proto.Debuffs, raid *proto.Raid) 
 		MakePermanent(SporeCloudAura(target))
 	}
 
-	if debuffs.Mangle {
+	if debuffs.Mangle && targetIdx == 0 {
 		MakePermanent(MangleAura(target))
-	} else if debuffs.Trauma {
+	} else if debuffs.Trauma && targetIdx == 0 {
 		MakePermanent(TraumaAura(target, 2))
-	} else if debuffs.Stampede {
+	} else if debuffs.Stampede && targetIdx == 0 {
 		stampedeAura := StampedeAura(target)
 		target.RegisterResetEffect(func(sim *Simulation) {
 			StartPeriodicAction(sim, PeriodicActionOptions{
@@ -73,7 +73,7 @@ func applyDebuffEffects(target *Unit, debuffs *proto.Debuffs, raid *proto.Raid) 
 		})
 	}
 
-	if debuffs.ExposeArmor {
+	if debuffs.ExposeArmor && targetIdx == 0 {
 		aura := ExposeArmorAura(target, false)
 		ScheduledMajorArmorAura(aura, PeriodicActionOptions{
 			Period:   time.Second * 3,
@@ -84,7 +84,7 @@ func applyDebuffEffects(target *Unit, debuffs *proto.Debuffs, raid *proto.Raid) 
 		}, raid)
 	}
 
-	if debuffs.SunderArmor {
+	if debuffs.SunderArmor && targetIdx == 0 {
 		aura := SunderArmorAura(target)
 		ScheduledMajorArmorAura(aura, PeriodicActionOptions{
 			Period:          time.Millisecond * 1500,
@@ -100,7 +100,7 @@ func applyDebuffEffects(target *Unit, debuffs *proto.Debuffs, raid *proto.Raid) 
 		}, raid)
 	}
 
-	if debuffs.AcidSpit {
+	if debuffs.AcidSpit && targetIdx == 0 {
 		aura := AcidSpitAura(target)
 		ScheduledMajorArmorAura(aura, PeriodicActionOptions{
 			Period:          time.Second * 10,
@@ -118,7 +118,7 @@ func applyDebuffEffects(target *Unit, debuffs *proto.Debuffs, raid *proto.Raid) 
 	if debuffs.CurseOfWeakness != proto.TristateEffect_TristateEffectMissing {
 		MakePermanent(CurseOfWeaknessAura(target, GetTristateValueInt32(debuffs.CurseOfWeakness, 1, 2)))
 	}
-	if debuffs.Sting {
+	if debuffs.Sting && targetIdx == 0 {
 		MakePermanent(StingAura(target))
 	}
 
@@ -132,7 +132,7 @@ func applyDebuffEffects(target *Unit, debuffs *proto.Debuffs, raid *proto.Raid) 
 	if debuffs.DemoralizingShout != proto.TristateEffect_TristateEffectMissing {
 		MakePermanent(DemoralizingShoutAura(target, 0, GetTristateValueInt32(debuffs.DemoralizingShout, 0, 5)))
 	}
-	if debuffs.Vindication {
+	if debuffs.Vindication && targetIdx == 0 {
 		MakePermanent(VindicationAura(target))
 	}
 	if debuffs.DemoralizingScreech {
@@ -146,18 +146,18 @@ func applyDebuffEffects(target *Unit, debuffs *proto.Debuffs, raid *proto.Raid) 
 	if debuffs.FrostFever != proto.TristateEffect_TristateEffectMissing {
 		MakePermanent(FrostFeverAura(target, GetTristateValueInt32(debuffs.FrostFever, 0, 3)))
 	}
-	if debuffs.InfectedWounds {
+	if debuffs.InfectedWounds && targetIdx == 0 {
 		MakePermanent(InfectedWoundsAura(target, 3))
 	}
-	if debuffs.JudgementsOfTheJust {
+	if debuffs.JudgementsOfTheJust && targetIdx == 0 {
 		MakePermanent(JudgementsOfTheJustAura(target, 2))
 	}
 
 	// Miss
-	if debuffs.InsectSwarm {
+	if debuffs.InsectSwarm && targetIdx == 0 {
 		MakePermanent(InsectSwarmAura(target))
 	}
-	if debuffs.ScorpidSting {
+	if debuffs.ScorpidSting && targetIdx == 0 {
 		MakePermanent(ScorpidStingAura(target))
 	}
 
@@ -169,11 +169,11 @@ func applyDebuffEffects(target *Unit, debuffs *proto.Debuffs, raid *proto.Raid) 
 		MakePermanent(MasterPoisonerDebuff(target, 3))
 	}
 
-	if debuffs.HeartOfTheCrusader {
-		MakePermanent(HeartoftheCrusaderDebuff(target, 3))
+	if debuffs.HeartOfTheCrusader && targetIdx == 0 {
+		MakePermanent(HeartOfTheCrusaderDebuff(target, 3))
 	}
 
-	if debuffs.HuntersMark > 0 {
+	if debuffs.HuntersMark > 0 && targetIdx == 0 {
 		points := int32(0)
 		glyphed := false
 		if debuffs.HuntersMark > 1 {
@@ -223,22 +223,28 @@ func JudgementOfWisdomAura(target *Unit) *Aura {
 				return
 			}
 
-			if spell.ProcMask.Matches(ProcMaskEmpty) {
+			if spell.ProcMask.Matches(ProcMaskEmpty | ProcMaskProc | ProcMaskWeaponProc) {
 				return // Phantom spells (Romulo's, Lightning Capacitor, etc) don't proc JoW.
 			}
 
-			// Melee claim that wisdom can proc on misses.
-			if !spell.ProcMask.Matches(ProcMaskMeleeOrRanged) && !result.Landed() {
-				return
-			}
-
 			if spell.ProcMask.Matches(ProcMaskMeleeOrRanged) {
+				// Apparently ranged/melee can still proc on miss
 				if !unit.AutoAttacks.PPMProc(sim, 15, spell.ProcMask, "jow") {
 					return
 				}
-			} else {
-				// TODO: Figure out if spell proc rate is also different from TBC.
-				if sim.RandomFloat("jow") <= 0.5 {
+			} else { // spell casting
+				if !result.Landed() {
+					return
+				}
+
+				ct := spell.CurCast.CastTime.Seconds()
+				if ct == 0 {
+					// Current theory is that insta-cast is treated as min GCD from retail.
+					// Perhaps this is a bug introduced in classic when converting JoW to wotlk.
+					ct = 0.75
+				}
+				procChance := ct * 0.25 // ct / 60.0 * 15.0PPM (algabra) = ct*0.25
+				if sim.RandomFloat("jow") > procChance {
 					return
 				}
 			}
@@ -247,7 +253,7 @@ func JudgementOfWisdomAura(target *Unit) *Aura {
 				unit.JowManaMetrics = unit.NewManaMetrics(actionID)
 			}
 			// JoW returns 2% of base mana 50% of the time.
-			unit.AddMana(sim, unit.BaseMana*0.02, unit.JowManaMetrics, false)
+			unit.AddMana(sim, unit.BaseMana*0.02, unit.JowManaMetrics)
 		},
 	})
 }
@@ -319,6 +325,7 @@ func EbonPlaguebringerOrCryptFeverAura(caster *Character, target *Unit, epidemic
 
 	aura := target.GetOrRegisterAura(Aura{
 		Label: "EbonPlaguebringer" + strconv.Itoa(casterIndex), // Support multiple DKs having their EP up
+		Tag:   "EbonPlaguebringer",
 		// ActionID: ActionID{SpellID: 49632}, // Crypt Fever spellID if we ever care
 		ActionID: ActionID{SpellID: 51161},
 		Duration: time.Second * (15 + 3*time.Duration(epidemicPoints)),
@@ -845,9 +852,14 @@ func MarkOfBloodAura(target *Unit) *Aura {
 		OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
 			target := aura.Unit.CurrentTarget
 
-			// TODO: Does vampiric blood make it so this health gain is increased?
-			if target != nil {
-				target.GainHealth(sim, target.MaxHealth()*0.04, healthMetrics)
+			if target != nil && result.Landed() {
+				// Vampiric Blood bonus max health is ignored in MoB calculation (maybe other Max health effects as well?)
+				targetHealth := target.MaxHealth()
+				if target.HasActiveAura("Vampiric Blood") {
+					targetHealth /= 1.15
+				}
+				// Current testing shows 5% healing instead of 4% as stated in the tooltip
+				target.GainHealth(sim, targetHealth*0.05*target.PseudoStats.HealingTakenMultiplier, healthMetrics)
 				aura.RemoveStack(sim)
 
 				if aura.GetStacks() == 0 {
@@ -915,7 +927,7 @@ func MasterPoisonerDebuff(target *Unit, points float64) *Aura {
 	return minorCritDebuffAura(target, "Master Poisoner", ActionID{SpellID: 58410}, time.Second*20, points*CritRatingPerCritChance)
 }
 
-func HeartoftheCrusaderDebuff(target *Unit, points float64) *Aura {
+func HeartOfTheCrusaderDebuff(target *Unit, points float64) *Aura {
 	return minorCritDebuffAura(target, "Heart of the Crusader", ActionID{SpellID: 20337}, time.Second*20, points*CritRatingPerCritChance)
 }
 

@@ -195,6 +195,12 @@ message Deathknight {
 			Experimental_1 = 1;
 			Experimental_2 = 2;
 		}
+
+		enum BloodSpell {
+			HS = 0;
+			BB = 1;
+			BS = 2;
+		}
 		
 		enum CustomSpellOption {
 			CustomNoSpell = 0;
@@ -234,7 +240,6 @@ message Deathknight {
 		Presence starting_presence = 10;
 		BloodTap blood_tap = 11;
 
-		double oblit_delay_duration = 12;
 		bool use_ams = 13;
 		double avg_ams_success_rate = 14;
 		double avg_ams_hit = 15;
@@ -260,6 +265,12 @@ message Deathknight {
 
 		bool enable_weapon_swap = 28;
 		ItemSwap weapon_swap = 29;
+
+		bool use_dancing_rune_weapon = 30;
+
+		BloodSpell blood_spender = 31;
+
+		double virulence_refresh = 32;
 	}
 	Rotation rotation = 1;
 	
@@ -273,6 +284,10 @@ message Deathknight {
 		RaidTarget unholy_frenzy_target = 5;
 
 		bool drw_pesti_apply = 6;
+
+		bool new_drw = 7;
+
+		double disease_downtime = 8;
 	}
 	Options options = 3;
 }
