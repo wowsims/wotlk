@@ -446,6 +446,7 @@ func StampedeAura(target *Unit) *Aura {
 	}, 1.25)
 }
 
+// Bleed Damage Multiplier category
 const BleedEffectCategory = "BleedDamage"
 
 func bleedDamageAura(target *Unit, config Aura, multiplier float64) *Aura {

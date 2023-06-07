@@ -45,6 +45,14 @@ export const StartingOverkillDuration = InputHelpers.makeSpecOptionsNumberInput<
 	labelTooltip: 'Initial Overkill buff duration at the start of each iteration.',
 });
 
+export const AssumeBleedActive = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecRogue>({
+	fieldName: 'assumeBleedActive',
+	label: 'Assume Bleed Always Active',
+	labelTooltip: 'Assume bleed always exists for \'Hunger for Blood\' activation. Otherwise will only calculate based on own garrote/rupture.',
+	extraCssClasses: ['within-raid-sim-hide'],
+	showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().hungerForBlood
+})
+
 export const HonorOfThievesCritRate = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecRogue>({
 	fieldName: 'honorOfThievesCritRate',
 	label: 'Honor of Thieves Crit Rate',

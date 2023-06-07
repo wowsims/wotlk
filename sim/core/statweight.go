@@ -82,11 +82,11 @@ type StatWeightsResult struct {
 
 func NewStatWeightsResult() StatWeightsResult {
 	return StatWeightsResult{
-		Dps:  NewStatWeightValues(),
-		Hps:  NewStatWeightValues(),
-		Tps:  NewStatWeightValues(),
-		Dtps: NewStatWeightValues(),
-		Tmi: NewStatWeightValues(),
+		Dps:    NewStatWeightValues(),
+		Hps:    NewStatWeightValues(),
+		Tps:    NewStatWeightValues(),
+		Dtps:   NewStatWeightValues(),
+		Tmi:    NewStatWeightValues(),
 		PDeath: NewStatWeightValues(),
 	}
 }
@@ -304,9 +304,9 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, referenceStat stats.Stat, pro
 		calcWeightResults(baselinePlayer.Threat, modPlayerLow.Threat, modPlayerHigh.Threat, &result.Tps)
 		calcWeightResults(baselinePlayer.Dtps, modPlayerLow.Dtps, modPlayerHigh.Dtps, &result.Dtps)
 		calcWeightResults(baselinePlayer.Tmi, modPlayerLow.Tmi, modPlayerHigh.Tmi, &result.Tmi)
-		meanLow := (modPlayerLow.ChanceOfDeath - baselinePlayer.ChanceOfDeath)/statModsLow[stat];
-		meanHigh := (modPlayerHigh.ChanceOfDeath - baselinePlayer.ChanceOfDeath)/statModsHigh[stat];
-		result.PDeath.Weights.AddStat(stat, (meanLow + meanHigh)/2);
+		meanLow := (modPlayerLow.ChanceOfDeath - baselinePlayer.ChanceOfDeath) / statModsLow[stat]
+		meanHigh := (modPlayerHigh.ChanceOfDeath - baselinePlayer.ChanceOfDeath) / statModsHigh[stat]
+		result.PDeath.Weights.AddStat(stat, (meanLow+meanHigh)/2)
 		result.PDeath.WeightsStdev.AddStat(stat, 0)
 	}
 

@@ -265,6 +265,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 			otherInputs: {
 				inputs: [
 					RogueInputs.StartingOverkillDuration,
+					RogueInputs.AssumeBleedActive,
 					RogueInputs.HonorOfThievesCritRate,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
