@@ -170,7 +170,7 @@ ifeq ($(WATCH), 1)
 	npx vite build -m development --watch &
 	ulimit -n 10240 && air -tmp_dir "/tmp" -build.include_ext "go,proto" -build.args_bin "--usefs=true --launch=false" -build.bin "./wowsimwotlk" -build.cmd "make devserver" -build.exclude_dir "assets,dist,node_modules,ui,tools"
 else
-	./wowsimwotlk --usefs=true --launch=false
+	./wowsimwotlk --usefs=true --launch=false --host=":3333"
 endif
 
 wowsimwotlk-windows.exe: wowsimwotlk

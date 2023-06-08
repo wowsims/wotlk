@@ -8,7 +8,7 @@ import { TypedEvent } from "../../typed_event";
 import { EventID } from '../../typed_event.js';
 
 import { BulkComboResult, BulkSettings, ItemSpecWithSlot, ProgressMetrics } from "../../proto/api";
-import { EquipmentSpec, GemColor, ItemSlot, ItemSpec, SimDatabase, SimEnchant, SimGem, SimItem, Spec } from "../../proto/common";
+import { EquipmentSpec, Faction, GemColor, ItemSlot, ItemSpec, SimDatabase, SimEnchant, SimGem, SimItem, Spec } from "../../proto/common";
 
 import { ItemData, ItemList, ItemRenderer, SelectorModal, SelectorModalTabs } from "../gear_picker";
 import { SimTab } from "../sim_tab";
@@ -23,6 +23,7 @@ import { getEmptyGemSocketIconUrl } from "../../proto_utils/gems";
 import { canEquipItem, getEligibleItemSlots } from "../../proto_utils/utils";
 import { BaseModal } from "../base_modal";
 import { BooleanPicker } from "../boolean_picker";
+import { UIItem_FactionRestriction } from '../../proto/ui';
 
 export class BulkGearJsonImporter<SpecType extends Spec> extends Importer {
   private readonly simUI: IndividualSimUI<SpecType>;
@@ -591,7 +592,6 @@ export class BulkTab extends SimTab {
 
         pieces.forEach((piece) => {
           var lcPiece = piece.toLowerCase();
-
           if (!lcName.includes(lcPiece) && !lcSetName.includes(lcPiece)) {
             matched = false;
             return false;
@@ -601,11 +601,29 @@ export class BulkTab extends SimTab {
 
         if (matched) {
           let itemElement = document.createElement('li');
-          itemElement.innerText = item.name;
+          itemElement.innerHTML = `<span>${item.name}</span>`;
           itemElement.setAttribute("data-item-id", item.id.toString());
           itemElement.addEventListener("click", (ev) => {
             this.addItems(Array<ItemSpec>(ItemSpec.create({ id: item.id })));
           })
+          if (item.heroic) {
+            let htxt = document.createElement("span");
+            htxt.style.color = "green";
+            htxt.innerText = "[H]";
+            itemElement.appendChild(htxt);
+          }
+          if (item.factionRestriction == UIItem_FactionRestriction.HORDE_ONLY) {
+            let ftxt = document.createElement("span");
+            ftxt.style.color = "red";
+            ftxt.innerText = "(H)";
+            itemElement.appendChild(ftxt);
+          }
+          if (item.factionRestriction == UIItem_FactionRestriction.ALLIANCE_ONLY) {
+            let ftxt = document.createElement("span");
+            ftxt.style.color = "blue";
+            ftxt.innerText = "(A)";
+            itemElement.appendChild(ftxt);
+          }
           searchResults.append(itemElement);
           displayCount++;
         }
