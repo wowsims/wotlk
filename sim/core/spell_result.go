@@ -121,7 +121,7 @@ func (spell *Spell) SpellHitChance(target *Unit) float64 {
 	return hitRating / (SpellHitRatingPerHitChance * 100)
 }
 func (spell *Spell) SpellChanceToMiss(attackTable *AttackTable) float64 {
-	return attackTable.BaseSpellMissChance - spell.SpellHitChance(attackTable.Defender)
+	return math.Max(0, attackTable.BaseSpellMissChance-spell.SpellHitChance(attackTable.Defender))
 }
 func (spell *Spell) MagicHitCheck(sim *Simulation, attackTable *AttackTable) bool {
 	return sim.RandomFloat("Magical Hit Roll") > spell.SpellChanceToMiss(attackTable)

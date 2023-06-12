@@ -161,8 +161,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-CrimsonAcolyte'sRegalia"
  value: {
-  dps: 7989.27085
-  tps: 7911.37101
+  dps: 7988.7079
+  tps: 7910.80806
  }
 }
 dps_results: {
@@ -644,8 +644,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-SphereofRedDragon'sBlood-37166"
  value: {
-  dps: 7177.25973
-  tps: 7032.64962
+  dps: 7198.06486
+  tps: 7045.73471
  }
 }
 dps_results: {
@@ -700,15 +700,15 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-TinyAbominationinaJar-50351"
  value: {
-  dps: 7172.36159
-  tps: 7026.93076
+  dps: 7198.06486
+  tps: 7045.73471
  }
 }
 dps_results: {
  key: "TestShadow-AllItems-TinyAbominationinaJar-50706"
  value: {
-  dps: 7172.36159
-  tps: 7026.93076
+  dps: 7198.06486
+  tps: 7045.73471
  }
 }
 dps_results: {
@@ -777,8 +777,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-Zabra'sRegalia"
  value: {
-  dps: 7074.12062
-  tps: 6997.32292
+  dps: 7060.07723
+  tps: 6983.92667
  }
 }
 dps_results: {
@@ -875,43 +875,43 @@ dps_results: {
 dps_results: {
  key: "TestShadow-Settings-Draenei-P1-Ideal-FullBuffs-LongMultiTarget"
  value: {
-  dps: 7456.52884
-  tps: 8460.94617
+  dps: 7468.51594
+  tps: 8454.52037
  }
 }
 dps_results: {
  key: "TestShadow-Settings-Draenei-P1-Ideal-FullBuffs-LongSingleTarget"
  value: {
-  dps: 7456.52884
-  tps: 7268.38468
+  dps: 7468.51594
+  tps: 7284.97458
  }
 }
 dps_results: {
  key: "TestShadow-Settings-Draenei-P1-Ideal-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 8263.42587
-  tps: 8334.84273
+  dps: 8267.5713
+  tps: 8340.15752
  }
 }
 dps_results: {
  key: "TestShadow-Settings-Draenei-P1-Ideal-NoBuffs-LongMultiTarget"
  value: {
-  dps: 3577.868
-  tps: 4525.62737
+  dps: 3571.98313
+  tps: 4509.7806
  }
 }
 dps_results: {
  key: "TestShadow-Settings-Draenei-P1-Ideal-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3577.868
-  tps: 3507.36163
+  dps: 3571.98313
+  tps: 3501.58563
  }
 }
 dps_results: {
  key: "TestShadow-Settings-Draenei-P1-Ideal-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 4195.35586
-  tps: 3968.42101
+  dps: 4203.12055
+  tps: 3977.75186
  }
 }
 dps_results: {
