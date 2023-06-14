@@ -116,3 +116,6 @@ class APLListItemPicker extends Input<Player<any>, APLListItem> {
 		this.notesPicker.setInputValue(newValue.notes);
 	}
 }
+
+class APLActionPicker extends Input<Player<any>, APLAction> {
+}
