@@ -248,9 +248,13 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 					Presets.MM_PRERAID_PRESET,
 					Presets.MM_P1_PRESET,
 					Presets.MM_P2_PRESET,
+					Presets.MM_P3_PRESET,
+					Presets.MM_P4_PRESET,
 					Presets.SV_PRERAID_PRESET,
 					Presets.SV_P1_PRESET,
 					Presets.SV_P2_PRESET,
+					Presets.SV_P3_PRESET,
+					Presets.SV_P4_PRESET,
 				],
 			},
 		});
