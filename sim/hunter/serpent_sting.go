@@ -29,10 +29,13 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 			IgnoreHaste: true, // Hunter GCD is locked at 1.5s
 		},
 
+		// Need to specially apply LethalShots here, because this spell uses an empty proc mask
+		BonusCritRating: 1 * core.CritRatingPerCritChance * float64(hunter.Talents.LethalShots),
+
 		DamageMultiplierAdditive: 1 +
 			0.1*float64(hunter.Talents.ImprovedStings) +
 			core.TernaryFloat64(hunter.HasSetBonus(ItemSetScourgestalkerBattlegear, 2), .1, 0),
-		CritMultiplier:   hunter.critMultiplier(false, false),
+		CritMultiplier:   hunter.critMultiplier(true, false),
 		ThreatMultiplier: 1,
 
 		Dot: core.DotConfig{
