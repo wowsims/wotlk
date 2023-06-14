@@ -29,7 +29,7 @@ func (warrior *Warrior) registerMortalStrikeSpell(cdTimer *core.Timer) {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    cdTimer,
-				Duration: time.Second*6 - time.Millisecond*200*time.Duration(warrior.Talents.ImprovedMortalStrike),
+				Duration: time.Second*6 - time.Millisecond*[]time.Duration{0, 333, 666, 1000}[warrior.Talents.ImprovedMortalStrike],
 			},
 		},
 
