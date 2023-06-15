@@ -165,6 +165,7 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 					Presets.FireTalents,
 					Presets.FrostfireTalents,
 					Presets.FrostTalents,
+					Presets.Phase3FireTalents,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
@@ -177,6 +178,8 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 					Presets.FROST_P1_PRESET,
 					Presets.FROST_P2_PRESET,
 					Presets.FFB_P2_PRESET,
+					Presets.P3_PRESET_ALLI,
+					Presets.P3_PRESET_HORDE,
 				],
 			},
 		});
