@@ -22,6 +22,9 @@ func (x *rotation_combat) setup(_ *core.Simulation, rogue *Rogue) {
 	if rogue.Rotation.CombatBuilder == proto.Rogue_Rotation_Backstab && rogue.HasDagger(core.MainHand) && !rogue.PseudoStats.InFrontOfTarget {
 		x.builder = rogue.Backstab
 	}
+	if rogue.Talents.Hemorrhage {
+		x.builder = rogue.Hemorrhage
+	}
 
 	bldCost := x.builder.DefaultCast.Cost
 	sndCost := rogue.SliceAndDice.DefaultCast.Cost
@@ -410,6 +413,10 @@ func (x *rotation_combat) run(sim *core.Simulation, rogue *Rogue) {
 					if rogue.Rotation.CombatBuilder == proto.Rogue_Rotation_Backstab && rogue.HasDagger(core.MainHand) && !rogue.PseudoStats.InFrontOfTarget {
 						x.builder = rogue.Backstab
 					}
+					if rogue.Talents.Hemorrhage {
+						x.builder = rogue.Hemorrhage
+						return
+					}
 
 					return
 				}
@@ -417,6 +424,9 @@ func (x *rotation_combat) run(sim *core.Simulation, rogue *Rogue) {
 				x.builder = rogue.SinisterStrike
 				if rogue.Rotation.CombatBuilder == proto.Rogue_Rotation_Backstab && rogue.HasDagger(core.MainHand) && !rogue.PseudoStats.InFrontOfTarget {
 					x.builder = rogue.Backstab
+				}
+				if rogue.Talents.Hemorrhage {
+					x.builder = rogue.Hemorrhage
 				}
 				//Done with Ghostly Strike
 			} else if !x.builder.Cast(sim, rogue.CurrentTarget) {
