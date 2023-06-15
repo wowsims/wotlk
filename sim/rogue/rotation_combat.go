@@ -22,7 +22,7 @@ func (x *rotation_combat) setup(_ *core.Simulation, rogue *Rogue) {
 	if rogue.Rotation.CombatBuilder == proto.Rogue_Rotation_Backstab && rogue.HasDagger(core.MainHand) && !rogue.PseudoStats.InFrontOfTarget {
 		x.builder = rogue.Backstab
 	}
-	if rogue.Talents.Hemorrhage {
+	if rogue.Talents.Hemorrhage && rogue.Rotation.CombatBuilder == proto.Rogue_Rotation_HemorrhageCombat {
 		x.builder = rogue.Hemorrhage
 	}
 
@@ -413,9 +413,8 @@ func (x *rotation_combat) run(sim *core.Simulation, rogue *Rogue) {
 					if rogue.Rotation.CombatBuilder == proto.Rogue_Rotation_Backstab && rogue.HasDagger(core.MainHand) && !rogue.PseudoStats.InFrontOfTarget {
 						x.builder = rogue.Backstab
 					}
-					if rogue.Talents.Hemorrhage {
+					if rogue.Talents.Hemorrhage && rogue.Rotation.CombatBuilder == proto.Rogue_Rotation_HemorrhageCombat {
 						x.builder = rogue.Hemorrhage
-						return
 					}
 
 					return
@@ -425,7 +424,7 @@ func (x *rotation_combat) run(sim *core.Simulation, rogue *Rogue) {
 				if rogue.Rotation.CombatBuilder == proto.Rogue_Rotation_Backstab && rogue.HasDagger(core.MainHand) && !rogue.PseudoStats.InFrontOfTarget {
 					x.builder = rogue.Backstab
 				}
-				if rogue.Talents.Hemorrhage {
+				if rogue.Talents.Hemorrhage && rogue.Rotation.CombatBuilder == proto.Rogue_Rotation_HemorrhageCombat {
 					x.builder = rogue.Hemorrhage
 				}
 				//Done with Ghostly Strike
