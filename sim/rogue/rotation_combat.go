@@ -399,7 +399,28 @@ func (x *rotation_combat) run(sim *core.Simulation, rogue *Rogue) {
 		case Skip:
 			continue
 		case Build:
-			if !x.builder.Cast(sim, rogue.CurrentTarget) {
+
+			//Handle Ghostly Strike. This is badly copy-pasted code, and is not considered in a regular raid setting.
+			if rogue.Talents.GhostlyStrike && rogue.Rotation.UseGhostlyStrike && rogue.GhostlyStrike.IsReady(sim) {
+				x.builder = rogue.GhostlyStrike
+
+				if !x.builder.Cast(sim, rogue.CurrentTarget) {
+					rogue.WaitForEnergy(sim, x.builder.DefaultCast.Cost)
+
+					x.builder = rogue.SinisterStrike
+					if rogue.Rotation.CombatBuilder == proto.Rogue_Rotation_Backstab && rogue.HasDagger(core.MainHand) && !rogue.PseudoStats.InFrontOfTarget {
+						x.builder = rogue.Backstab
+					}
+
+					return
+				}
+
+				x.builder = rogue.SinisterStrike
+				if rogue.Rotation.CombatBuilder == proto.Rogue_Rotation_Backstab && rogue.HasDagger(core.MainHand) && !rogue.PseudoStats.InFrontOfTarget {
+					x.builder = rogue.Backstab
+				}
+				//Done with Ghostly Strike
+			} else if !x.builder.Cast(sim, rogue.CurrentTarget) {
 				rogue.WaitForEnergy(sim, x.builder.DefaultCast.Cost)
 				return
 			}
