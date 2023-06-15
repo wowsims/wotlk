@@ -106,6 +106,18 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					return {
 						updateOn: simUI.player.changeEmitter,
 						getContent: () => {
+							if (simUI.player.getRotation().combatBuilder == CombatBuilder.HemorrhageCombat && !simUI.player.getTalents().hemorrhage) {
+								return 'Builder "Hemorrhage" selected, but Hemorrhage is not talented.';
+							} else {
+								return '';
+							}
+						},
+					};
+				},
+				(simUI: IndividualSimUI<Spec.SpecRogue>) => {
+					return {
+						updateOn: simUI.player.changeEmitter,
+						getContent: () => {
 							if (simUI.player.getRotation().useGhostlyStrike && !simUI.player.getMajorGlyphs().includes(RogueMajorGlyph.GlyphOfGhostlyStrike)) {
 								return '"Use Ghostly Strike" selected, but missing Glyph of Ghostly Strike.';
 							} else {

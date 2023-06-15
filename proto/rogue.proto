@@ -162,6 +162,7 @@ message Rogue {
 		enum CombatBuilder {
 			SinisterStrike = 0;
 			Backstab = 1;
+			HemorrhageCombat = 2;
 		}
 		CombatBuilder combat_builder = 25;
 

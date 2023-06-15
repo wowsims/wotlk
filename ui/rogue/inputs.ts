@@ -96,10 +96,11 @@ export const RogueRotationConfig = {
 		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, CombatBuilder>({
 			fieldName: 'combatBuilder',
 			label: "Builder",
-			labelTooltip: 'Use Sinister Strike or Backstab as builder.',
+			labelTooltip: 'Use Sinister Strike, Backstab, or Hemorrhage as builder.',
 			values: [
 				{ name: "Sinister Strike", value: CombatBuilder.SinisterStrike },
 				{ name: "Backstab", value: CombatBuilder.Backstab },
+				{ name: "Hemorrhage", value: CombatBuilder.HemorrhageCombat },
 			],
 			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().combatPotency > 0
 		}),
