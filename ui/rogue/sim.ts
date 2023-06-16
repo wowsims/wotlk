@@ -220,7 +220,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 				// Default rotation settings.
 				rotation: Presets.DefaultRotation,
 				// Default talents.
-				talents: Presets.AssassinationTalents.data,
+				talents: Presets.AssassinationTalents137.data,
 				// Default spec-specific settings.
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
@@ -291,7 +291,8 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 			presets: {
 				// Preset talents that the user can quickly select.
 				talents: [
-					Presets.AssassinationTalents,
+					Presets.AssassinationTalents137,
+					Presets.AssassinationTalents182,
 					Presets.CombatHackTalents,
 					Presets.CombatCQCTalents,
 					Presets.SubtletyTalents,
