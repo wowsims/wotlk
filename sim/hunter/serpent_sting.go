@@ -83,6 +83,7 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeRangedHit)
 			if result.Landed() {
+				spell.SpellMetrics[target.UnitIndex].Hits--
 				spell.Dot(target).Apply(sim)
 			}
 			spell.DealOutcome(sim, result)
