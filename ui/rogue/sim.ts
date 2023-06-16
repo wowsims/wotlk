@@ -106,6 +106,18 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					return {
 						updateOn: simUI.player.changeEmitter,
 						getContent: () => {
+							if (simUI.player.getRotation().combatBuilder == CombatBuilder.HemorrhageCombat && !simUI.player.getTalents().hemorrhage) {
+								return 'Builder "Hemorrhage" selected, but Hemorrhage is not talented.';
+							} else {
+								return '';
+							}
+						},
+					};
+				},
+				(simUI: IndividualSimUI<Spec.SpecRogue>) => {
+					return {
+						updateOn: simUI.player.changeEmitter,
+						getContent: () => {
 							if (simUI.player.getRotation().useGhostlyStrike && !simUI.player.getMajorGlyphs().includes(RogueMajorGlyph.GlyphOfGhostlyStrike)) {
 								return '"Use Ghostly Strike" selected, but missing Glyph of Ghostly Strike.';
 							} else {
@@ -359,7 +371,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 			const rotation = this.player.getRotation()
 			const options = this.player.getSpecOptions()
 			const encounter = this.sim.encounter
-			if (this.sim.encounter.targets.length > 3) {
+			if (this.sim.encounter.targets.length >= 3) {
 				if (rotation.multiTargetSliceFrequency == Frequency.FrequencyUnknown) {
 					rotation.multiTargetSliceFrequency = Presets.DefaultRotation.multiTargetSliceFrequency;
 				}
