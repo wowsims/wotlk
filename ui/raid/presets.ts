@@ -489,7 +489,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	{
 		spec: Spec.SpecRogue,
 		rotation: RoguePresets.DefaultRotation,
-		talents: RoguePresets.AssassinationTalents.data,
+		talents: RoguePresets.AssassinationTalents137.data,
 		specOptions: RoguePresets.DefaultOptions,
 		consumes: RoguePresets.DefaultConsumes,
 		defaultName: 'Assassination',

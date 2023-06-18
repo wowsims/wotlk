@@ -43,10 +43,22 @@ export const CombatCQCTalents = {
 	}),
 };
 
-export const AssassinationTalents = {
-	name: 'Assassination',
+export const AssassinationTalents137 = {
+	name: 'Assassination 13/7',
 	data: SavedTalents.create({
 		talentsString: '005303104352100520103331051-005005003-502',
+		glyphs: Glyphs.create({
+			major1: RogueMajorGlyph.GlyphOfMutilate,
+			major2: RogueMajorGlyph.GlyphOfTricksOfTheTrade,
+			major3: RogueMajorGlyph.GlyphOfHungerForBlood,
+		})
+	}),
+};
+
+export const AssassinationTalents182 = {
+	name: 'Assassination 18/2',
+	data: SavedTalents.create({
+		talentsString: '005303104352100520103331051-005005005003-2',
 		glyphs: Glyphs.create({
 			major1: RogueMajorGlyph.GlyphOfMutilate,
 			major2: RogueMajorGlyph.GlyphOfTricksOfTheTrade,
