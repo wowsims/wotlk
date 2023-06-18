@@ -320,6 +320,7 @@ func applyPetBuffEffects(petAgent PetAgent, raidBuffs *proto.RaidBuffs, partyBuf
 	individualBuffs.RevitalizeWildGrowth = 0
 	individualBuffs.TricksOfTheTrades = 0
 	individualBuffs.ShatteringThrows = 0
+	individualBuffs.FocusMagic = false
 
 	if !petAgent.GetPet().enabledOnStart {
 		raidBuffs.ArcaneBrilliance = false
