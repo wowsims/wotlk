@@ -12,6 +12,7 @@ import * as OtherInputs from '../core/components/other_inputs.js';
 
 import * as ShamanInputs from './inputs.js';
 import * as Presets from './presets.js';
+import { FireElementalSection } from '../core/components/fire_elemental_inputs.js';
 
 export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancementShaman> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecEnhancementShaman>) {
@@ -136,7 +137,8 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				],
 			},
 			customSections: [
-				TotemsSection
+				TotemsSection,
+				FireElementalSection
 			],
 			encounterPicker: {
 				// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
