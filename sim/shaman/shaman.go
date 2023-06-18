@@ -48,7 +48,13 @@ func NewShaman(character core.Character, talents string, totems *proto.ShamanTot
 	if selfBuffs.Shield == proto.ShamanShield_WaterShield {
 		shaman.AddStat(stats.MP5, 100)
 	}
-	shaman.FireElemental = shaman.NewFireElemental()
+
+	// When using the tier bonus for snapshotting we do not use the bonus spell
+	if totems.EnhTierFourBonus {
+		totems.BonusSpellpower = 0
+	}
+
+	shaman.FireElemental = shaman.NewFireElemental(float64(totems.BonusSpellpower))
 	return shaman
 }
 
@@ -217,6 +223,8 @@ func (shaman *Shaman) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
 
 func (shaman *Shaman) Initialize() {
+	enableSnapshot := shaman.Totems.BonusSpellpower == 0
+
 	shaman.registerChainLightningSpell()
 	shaman.registerFeralSpirit()
 	shaman.registerFireElementalTotem()
@@ -242,7 +250,7 @@ func (shaman *Shaman) Initialize() {
 
 	shaman.registerBloodlustCD()
 
-	if shaman.Totems.UseFireElemental {
+	if shaman.Totems.UseFireElemental && enableSnapshot {
 		shaman.fireElementalSnapShot = core.NewSnapshotManager(shaman.GetCharacter())
 		shaman.setupProcTrackers()
 	}
@@ -392,6 +400,10 @@ func (shaman *Shaman) setupProcTrackers() {
 }
 
 func (shaman *Shaman) setupFireElementalCooldowns() {
+	if shaman.fireElementalSnapShot == nil {
+		return
+	}
+
 	shaman.fireElementalSnapShot.ClearMajorCooldowns()
 
 	// blood fury (orc)

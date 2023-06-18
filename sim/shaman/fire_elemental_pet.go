@@ -26,7 +26,7 @@ type FireElemental struct {
 	shamanOwner *Shaman
 }
 
-func (shaman *Shaman) NewFireElemental() *FireElemental {
+func (shaman *Shaman) NewFireElemental(bonusSpellPower float64) *FireElemental {
 	fireElemental := &FireElemental{
 		Pet:         core.NewPet("Greater Fire Elemental", &shaman.Character, fireElementalPetBaseStats, shaman.fireElementalStatInheritance(), nil, false, true),
 		shamanOwner: shaman,
@@ -44,6 +44,12 @@ func (shaman *Shaman) NewFireElemental() *FireElemental {
 		AutoSwingMelee: true,
 	})
 	fireElemental.AddStatDependency(stats.Intellect, stats.SpellCrit, core.CritRatingPerCritChance/212)
+
+	if bonusSpellPower > 0 {
+		fireElemental.AddStat(stats.SpellPower, float64(bonusSpellPower)*0.5218)
+		fireElemental.AddStat(stats.AttackPower, float64(bonusSpellPower)*4.45)
+	}
+
 	fireElemental.OnPetEnable = fireElemental.enable
 	fireElemental.OnPetDisable = fireElemental.disable
 
