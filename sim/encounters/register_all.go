@@ -3,8 +3,8 @@ package encounters
 import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/encounters/naxxramas"
+	"github.com/wowsims/wotlk/sim/encounters/toc"
 	"github.com/wowsims/wotlk/sim/encounters/ulduar"
-    "github.com/wowsims/wotlk/sim/encounters/toc"
 )
 
 func init() {

@@ -45,12 +45,12 @@ func addGormok25H(bossPrefix string) {
 type Gormok25HAI struct {
 	Target *core.Target
 
-	Impale             *core.Spell
-	StaggeringStomp    *core.Spell
-	RisingAnger        *core.Spell
-	RisingAngerAura    *core.Aura
-    
-    //ValidStompTarget   bool
+	Impale          *core.Spell
+	StaggeringStomp *core.Spell
+	RisingAnger     *core.Spell
+	RisingAngerAura *core.Aura
+
+	//ValidStompTarget   bool
 }
 
 //func GormokTargetInputs() []*proto.TargetInput {
@@ -73,7 +73,7 @@ func NewGormok25HAI() core.AIFactory {
 func (ai *Gormok25HAI) Initialize(target *core.Target, config *proto.Target) {
 	ai.Target = target
 
-    //ai.ValidStompTarget = config.TargetInputs[0].BoolValue
+	//ai.ValidStompTarget = config.TargetInputs[0].BoolValue
 
 	ai.registerImpaleSpell(target)
 	ai.registerStaggeringStompSpell(target)
@@ -87,7 +87,7 @@ func (ai *Gormok25HAI) Reset(*core.Simulation) {
 func (ai *Gormok25HAI) registerImpaleSpell(target *core.Target) {
 	actionID := core.ActionID{SpellID: 66331}
 
-    // TODO - Allegedly he can be Disarmed to suppress this ability?
+	// TODO - Allegedly he can be Disarmed to suppress this ability?
 
 	ai.Impale = target.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -127,7 +127,7 @@ func (ai *Gormok25HAI) registerImpaleSpell(target *core.Target) {
 					dot.SnapshotCritChance = dot.Spell.PhysicalCritChance(target, attackTable)
 					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
 				}
-            },
+			},
 
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.Spell.OutcomeAlwaysHit)
@@ -135,7 +135,7 @@ func (ai *Gormok25HAI) registerImpaleSpell(target *core.Target) {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-            // 150% weapon damage
+			// 150% weapon damage
 			baseDamage := 1.50 * spell.Unit.AutoAttacks.MH.EnemyWeaponDamage(sim, spell.MeleeAttackPower(), false)
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeAlwaysHit)
 
@@ -169,7 +169,7 @@ func (ai *Gormok25HAI) registerStaggeringStompSpell(target *core.Target) {
 			},
 			DefaultCast: core.Cast{
 				CastTime: time.Millisecond * 500,
-				GCD: core.GCDDefault,
+				GCD:      core.GCDDefault,
 			},
 		},
 
@@ -179,12 +179,12 @@ func (ai *Gormok25HAI) registerStaggeringStompSpell(target *core.Target) {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 
 			for _, aoeTarget := range sim.Raid.GetActiveUnits() {
-            
-                // TODO - Filter targets to melee only, right now it just hits everyone
-                // TODO - Should this ignore armor? Damage in logs seems inconsistent
+
+				// TODO - Filter targets to melee only, right now it just hits everyone
+				// TODO - Should this ignore armor? Damage in logs seems inconsistent
 				baseDamage := sim.Roll(11700, 12300)
 				spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeAlwaysHit)
-                // TODO - Interrupts spellcasting for 8 seconds. Does NOT stun or knockdown
+				// TODO - Interrupts spellcasting for 8 seconds. Does NOT stun or knockdown
 			}
 		},
 	})
@@ -195,10 +195,10 @@ func (ai *Gormok25HAI) registerRisingAngerSpell(target *core.Target) {
 	actionID := core.ActionID{SpellID: 66636}
 
 	ai.RisingAngerAura = target.GetOrRegisterAura(core.Aura{
-		Label:    "Rising Anger",
-		ActionID: actionID.WithTag(1),
+		Label:     "Rising Anger",
+		ActionID:  actionID.WithTag(1),
 		MaxStacks: 99,
-		Duration: time.Second * 120,
+		Duration:  time.Second * 120,
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
 			aura.Unit.PseudoStats.DamageDealtMultiplier /= 1 + (.15 * float64(oldStacks))
 			aura.Unit.PseudoStats.DamageDealtMultiplier *= 1 + (.15 * float64(newStacks))
@@ -228,7 +228,7 @@ func (ai *Gormok25HAI) registerRisingAngerSpell(target *core.Target) {
 
 			ai.RisingAngerAura.Activate(sim)
 			ai.RisingAngerAura.AddStack(sim)
-            
+
 		},
 	})
 
