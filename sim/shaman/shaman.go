@@ -50,7 +50,7 @@ func NewShaman(character core.Character, talents string, totems *proto.ShamanTot
 	}
 
 	// When using the tier bonus for snapshotting we do not use the bonus spell
-	if totems.EnhTierFourBonus {
+	if totems.EnhTierTenBonus {
 		totems.BonusSpellpower = 0
 	}
 

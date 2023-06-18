@@ -10,7 +10,6 @@ import { ActionId } from '../proto_utils/action_id.js';
 import { Input } from "./input";
 import { NumberPicker } from "./number_picker";
 import { BooleanPicker } from "./boolean_picker";
-import { Spec } from "../proto/common";
 
 export function FireElementalSection(parentElem: HTMLElement, simUI: IndividualSimUI<ShamanSpecs>): ContentBlock {
 	let contentBlock = new ContentBlock(parentElem, 'fire-elemental-settings', {
@@ -57,19 +56,18 @@ export function FireElementalSection(parentElem: HTMLElement, simUI: IndividualS
         label: "Use Tier 10 (4pc)",
 		labelTooltip: "Will use Tier 10 (4pc) to snapshot Fire Elemental.",
 		inline: true,
-        getValue: (player: Player<ShamanSpecs>) =>  player.getRotation().totems?.enhTierFourBonus || false,
+        getValue: (player: Player<ShamanSpecs>) =>  player.getRotation().totems?.enhTierTenBonus || false,
 		setValue: (eventID: EventID, player: Player<ShamanSpecs>, newVal: boolean) => {
 			const newRotation = player.getRotation();
            
             if (newRotation.totems){
-                newRotation.totems.enhTierFourBonus = newVal
+                newRotation.totems.enhTierTenBonus = newVal
             }
 
 			player.setRotation(eventID, newRotation);
 		},
         changedEvent: (player: Player<ShamanSpecs>) => player.currentStatsEmitter,
 		showWhen: (player: Player<ShamanSpecs>) => {
-			player.getCurrentStats().sets.forEach(set => console.log(set))
 			const hasBonus = player.getCurrentStats().sets.includes('Frost Witch\'s Battlegear (4pc)');
 			return hasBonus
 		}

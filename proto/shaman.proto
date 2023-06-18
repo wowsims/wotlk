@@ -189,7 +189,7 @@ message ShamanTotems {
 	int32 bonus_spellpower = 10;
 
 	// Snapshot fire elemental using Tier 10 4 set bonus.
-	bool enh_tier_four_bonus = 11;
+	bool enh_tier_ten_bonus = 11;
 }
 
 enum ShamanShield {

@@ -72,7 +72,7 @@ func (shaman *Shaman) registerFireElementalTotem() {
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 
 			success := false
-			if enhTier10Aura != nil && shaman.Totems.EnhTierFourBonus {
+			if enhTier10Aura != nil && shaman.Totems.EnhTierTenBonus {
 				if enhTier10Aura.IsActive() {
 					success = shaman.fireElementalSnapShot.CanSnapShot(sim, enhTier10Aura.RemainingDuration(sim))
 				}
