@@ -222,6 +222,7 @@ func (shaman *Shaman) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 	if shaman.Talents.ManaTideTotem {
 		partyBuffs.ManaTideTotems++
 	}
+
 	shaman.hasHeroicPresence = partyBuffs.HeroicPresence
 }
 

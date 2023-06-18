@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -50,15 +51,16 @@ func (shaman *Shaman) NewFireElemental(bonusSpellPower float64) *FireElemental {
 		fireElemental.AddStat(stats.AttackPower, float64(bonusSpellPower)*4.45)
 	}
 
-	fireElemental.OnPetEnable = fireElemental.enable
-	fireElemental.OnPetDisable = fireElemental.disable
-
-	if shaman.hasHeroicPresence {
+	if shaman.hasHeroicPresence || shaman.Race == proto.Race_RaceDraenei {
 		fireElemental.AddStats(stats.Stats{
-			stats.MeleeHit: -1 * core.MeleeHitRatingPerHitChance,
-			stats.SpellHit: -1 * core.SpellHitRatingPerHitChance,
+			stats.MeleeHit:  -core.MeleeHitRatingPerHitChance,
+			stats.SpellHit:  -core.SpellHitRatingPerHitChance,
+			stats.Expertise: math.Floor(-core.SpellHitRatingPerHitChance * 0.79),
 		})
 	}
+
+	fireElemental.OnPetEnable = fireElemental.enable
+	fireElemental.OnPetDisable = fireElemental.disable
 
 	shaman.AddPet(fireElemental)
 
@@ -78,12 +80,14 @@ func (fireElemental *FireElemental) GetPet() *core.Pet {
 }
 
 func (fireElemental *FireElemental) Initialize() {
+
 	fireElemental.registerFireBlast()
 	fireElemental.registerFireNova()
 	fireElemental.registerFireShieldAura()
 }
 
 func (fireElemental *FireElemental) Reset(sim *core.Simulation) {
+
 }
 
 func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
