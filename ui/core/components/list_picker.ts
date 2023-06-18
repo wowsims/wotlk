@@ -1,33 +1,35 @@
 import { Tooltip } from 'bootstrap';
-import { SimUI } from '../sim_ui.js';
 import { EventID, TypedEvent } from '../typed_event.js';
-import { arrayEquals, swap } from '../utils.js';
+import { swap } from '../utils.js';
 
 import { Input, InputConfig } from './input.js';
 
-export interface ListPickerConfig<ModObject, ItemType, ItemPicker> extends InputConfig<ModObject, Array<ItemType>> {
+export interface ListPickerConfig<ModObject, ItemType> extends InputConfig<ModObject, Array<ItemType>> {
 	title?: string,
 	titleTooltip?: string,
 	itemLabel: string,
 	newItem: () => ItemType,
 	copyItem: (oldItem: ItemType) => ItemType,
-	newItemPicker: (parent: HTMLElement, item: ItemType, listPicker: ListPicker<ModObject, ItemType, ItemPicker>) => ItemPicker,
+	newItemPicker: (parent: HTMLElement, listPicker: ListPicker<ModObject, ItemType>, index: number, config: ListItemPickerConfig<ModObject, ItemType>) => Input<ModObject, ItemType>,
 	inlineMenuBar?: boolean,
+	hideUi?: boolean,
 }
 
-interface ItemPickerPair<ItemType, ItemPicker> {
-	item: ItemType,
+export interface ListItemPickerConfig<ModObject, ItemType> extends InputConfig<ModObject, ItemType> {
+}
+
+interface ItemPickerPair<ItemType> {
 	elem: HTMLElement,
-	picker: ItemPicker,
+	picker: Input<any, ItemType>,
 }
 
-export class ListPicker<ModObject, ItemType, ItemPicker> extends Input<ModObject, Array<ItemType>> {
-	private readonly config: ListPickerConfig<ModObject, ItemType, ItemPicker>;
+export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<ItemType>> {
+	readonly config: ListPickerConfig<ModObject, ItemType>;
 	private readonly itemsDiv: HTMLElement;
 
-	private itemPickerPairs: Array<ItemPickerPair<ItemType, ItemPicker>>;
+	private itemPickerPairs: Array<ItemPickerPair<ItemType>>;
 
-	constructor(parent: HTMLElement, simUI: SimUI, modObject: ModObject, config: ListPickerConfig<ModObject, ItemType, ItemPicker>) {
+	constructor(parent: HTMLElement, modObject: ModObject, config: ListPickerConfig<ModObject, ItemType>) {
 		super(parent, 'list-picker-root', modObject, config);
 		this.config = config;
 		this.itemPickerPairs = [];
@@ -43,6 +45,10 @@ export class ListPicker<ModObject, ItemType, ItemPicker> extends Input<ModObject
 			<div class="list-picker-items"></div>
 			<button class="list-picker-new-button btn btn-primary">New ${config.itemLabel}</button>
 		`;
+
+		if (this.config.hideUi) {
+			this.rootElem.classList.add('hide-ui');
+		}
 
 		if (this.config.titleTooltip)
 			Tooltip.getOrCreateInstance(this.rootElem.querySelector('.list-picker-title') as HTMLElement);
@@ -64,37 +70,27 @@ export class ListPicker<ModObject, ItemType, ItemPicker> extends Input<ModObject
 	}
 
 	getInputValue(): Array<ItemType> {
-		return this.itemPickerPairs.map(pair => pair.item);
+		return this.itemPickerPairs.map(pair => pair.picker.getInputValue());
 	}
 
 	setInputValue(newValue: Array<ItemType>): void {
-		// Remove items that are no longer in the list.
-		const removePairs = this.itemPickerPairs.filter(ipp => !newValue.includes(ipp.item));
-		removePairs.forEach(ipp => ipp.elem.remove());
-		this.itemPickerPairs = this.itemPickerPairs.filter(ipp => !removePairs.includes(ipp));
-
-		// Add items that were missing.
-		const curItems = this.getInputValue();
-		newValue
-			.filter(newItem => !curItems.includes(newItem))
-			.forEach(newItem => this.addNewPicker(newItem));
-
-		// Reorder to match the new list.
-		this.itemPickerPairs = newValue.map(item => this.itemPickerPairs.find(ipp => ipp.item == item)!);
-
-		// Reorder item picker elements in the DOM if necessary.
-		const curPickerElems = Array.from(this.itemsDiv.children);
-		if (!curPickerElems.every((elem, i) => elem == this.itemPickerPairs[i].elem)) {
-			this.itemPickerPairs.forEach(ipp => ipp.elem.remove());
-			this.itemPickerPairs.forEach(ipp => this.itemsDiv.appendChild(ipp.elem));
+		// Add/remove pickers to make the lengths match.
+		if (newValue.length < this.itemPickerPairs.length) {
+			this.itemPickerPairs.slice(newValue.length).forEach(ipp => ipp.elem.remove());
+			this.itemPickerPairs = this.itemPickerPairs.slice(0, newValue.length);
+		} else if (newValue.length > this.itemPickerPairs.length) {
+			const numToAdd = newValue.length - this.itemPickerPairs.length;
+			for (let i = 0; i < numToAdd; i++) {
+				this.addNewPicker();
+			}
 		}
+
+		// Set all the values.
+		newValue.forEach((val, i) => this.itemPickerPairs[i].picker.setInputValue(val))
 	}
 
-	getPickerIndex(picker: ItemPicker): number {
-		return this.itemPickerPairs.findIndex(ipp => ipp.picker == picker);
-	}
-
-	private addNewPicker(item: ItemType) {
+	private addNewPicker() {
+		const index = this.itemPickerPairs.length;
 		const itemContainer = document.createElement('div');
 		itemContainer.classList.add('list-picker-item-container');
 		if (this.config.inlineMenuBar) {
@@ -126,11 +122,6 @@ export class ListPicker<ModObject, ItemType, ItemPicker> extends Input<ModObject
 		const upButtonTooltip = Tooltip.getOrCreateInstance(upButton);
 
 		upButton.addEventListener('click', event => {
-			const index = this.itemPickerPairs.findIndex(ipp => ipp.item == item);
-			if (index == -1) {
-				console.error('Could not find list picker item!');
-				return;
-			}
 			if (index == 0) {
 				return;
 			}
@@ -145,11 +136,6 @@ export class ListPicker<ModObject, ItemType, ItemPicker> extends Input<ModObject
 		const downButtonTooltip = Tooltip.getOrCreateInstance(downButton);
 
 		downButton.addEventListener('click', event => {
-			const index = this.itemPickerPairs.findIndex(ipp => ipp.item == item);
-			if (index == -1) {
-				console.error('Could not find list picker item!');
-				return;
-			}
 			if (index == this.itemPickerPairs.length - 1) {
 				return;
 			}
@@ -164,14 +150,8 @@ export class ListPicker<ModObject, ItemType, ItemPicker> extends Input<ModObject
 		const copyButtonTooltip = Tooltip.getOrCreateInstance(copyButton);
 
 		copyButton.addEventListener('click', event => {
-			const index = this.itemPickerPairs.findIndex(ipp => ipp.item == item);
-			if (index == -1) {
-				console.error('Could not find list picker item!');
-				return;
-			}
-
-			const copiedItem = this.config.copyItem(item);
-			const newList = this.config.getValue(this.modObject).concat([copiedItem]);
+			const newList = this.config.getValue(this.modObject)
+			newList.push(this.config.copyItem(newList[index]));
 			this.config.setValue(TypedEvent.nextEventID(), this.modObject, newList);
 			copyButtonTooltip.hide();
 		});
@@ -180,12 +160,6 @@ export class ListPicker<ModObject, ItemType, ItemPicker> extends Input<ModObject
 		const deleteButtonTooltip = Tooltip.getOrCreateInstance(deleteButton);
 
 		deleteButton.addEventListener('click', event => {
-			const index = this.itemPickerPairs.findIndex(ipp => ipp.item == item);
-			if (index == -1) {
-				console.error('Could not find list picker item!');
-				return;
-			}
-
 			const newList = this.config.getValue(this.modObject);
 			newList.splice(index, 1);
 			this.config.setValue(TypedEvent.nextEventID(), this.modObject, newList);
@@ -193,9 +167,17 @@ export class ListPicker<ModObject, ItemType, ItemPicker> extends Input<ModObject
 		});
 
 		const itemElem = itemContainer.getElementsByClassName('list-picker-item')[0] as HTMLElement;
-		const itemPicker = this.config.newItemPicker(itemElem, item, this);
+		const itemPicker = this.config.newItemPicker(itemElem, this, index, {
+			changedEvent: this.config.changedEvent,
+			getValue: (modObj: ModObject) => this.config.getValue(modObj)[index],
+			setValue: (eventID: EventID, modObj: ModObject, newValue: ItemType) => {
+				const newList = this.config.getValue(modObj);
+				newList[index] = newValue;
+				this.config.setValue(eventID, modObj, newList);
+			},
+		});
 		this.itemsDiv.appendChild(itemContainer);
 
-		this.itemPickerPairs.push({ item: item, elem: itemContainer, picker: itemPicker });
+		this.itemPickerPairs.push({ elem: itemContainer, picker: itemPicker });
 	}
 }

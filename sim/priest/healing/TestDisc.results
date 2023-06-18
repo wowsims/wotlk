@@ -963,24 +963,24 @@ dps_results: {
 dps_results: {
  key: "TestDisc-Settings-Undead-P1-Disc-NoBuffs-LongMultiTarget"
  value: {
-  dps: 46.29484
-  tps: 950.54616
-  hps: 4070.37186
+  dps: 51.60864
+  tps: 985.80783
+  hps: 4089.72602
  }
 }
 dps_results: {
  key: "TestDisc-Settings-Undead-P1-Disc-NoBuffs-LongSingleTarget"
  value: {
-  dps: 46.29484
-  tps: 47.52731
-  hps: 4070.37186
+  dps: 51.60864
+  tps: 49.29039
+  hps: 4089.72602
  }
 }
 dps_results: {
  key: "TestDisc-Settings-Undead-P1-Disc-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 231.47421
-  tps: 114.56397
+  dps: 258.04319
+  tps: 123.12939
   hps: 6317.10078
  }
 }

@@ -8,6 +8,7 @@ import {
 	Rogue_Rotation_AssassinationPriority as AssassinationPriority,
 	Rogue_Rotation_CombatPriority as CombatPriority,
 	Rogue_Rotation_CombatBuilder as CombatBuilder,
+	Rogue_Rotation_SubtletyBuilder as SubtletyBuilder,
 	Rogue_Rotation_SubtletyPriority as SubtletyPriority,
 	Rogue_Rotation_Frequency as Frequency,
 	Rogue_Options_PoisonImbue as Poison,
@@ -43,6 +44,14 @@ export const StartingOverkillDuration = InputHelpers.makeSpecOptionsNumberInput<
 	label: 'Starting Overkill duration',
 	labelTooltip: 'Initial Overkill buff duration at the start of each iteration.',
 });
+
+export const AssumeBleedActive = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecRogue>({
+	fieldName: 'assumeBleedActive',
+	label: 'Assume Bleed Always Active',
+	labelTooltip: 'Assume bleed always exists for \'Hunger for Blood\' activation. Otherwise will only calculate based on own garrote/rupture.',
+	extraCssClasses: ['within-raid-sim-hide'],
+	showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().hungerForBlood
+})
 
 export const HonorOfThievesCritRate = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecRogue>({
 	fieldName: 'honorOfThievesCritRate',
@@ -87,10 +96,11 @@ export const RogueRotationConfig = {
 		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, CombatBuilder>({
 			fieldName: 'combatBuilder',
 			label: "Builder",
-			labelTooltip: 'Use Sinister Strike or Backstab as builder.',
+			labelTooltip: 'Use Sinister Strike, Backstab, or Hemorrhage as builder.',
 			values: [
 				{ name: "Sinister Strike", value: CombatBuilder.SinisterStrike },
 				{ name: "Backstab", value: CombatBuilder.Backstab },
+				{ name: "Hemorrhage", value: CombatBuilder.HemorrhageCombat },
 			],
 			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().combatPotency > 0
 		}),
@@ -113,6 +123,16 @@ export const RogueRotationConfig = {
 				{ name: 'Envenom', value: AssassinationPriority.EnvenomRupture },
 			],
 			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
+		}),
+		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, SubtletyBuilder>({
+			fieldName: 'subtletyBuilder',
+			label: "Builder",
+			labelTooltip: 'Use Hemorrhage or Backstab as builder.',
+			values: [
+				{ name: "Hemorrhage", value: SubtletyBuilder.Hemorrhage },
+				{ name: "Backstab", value: SubtletyBuilder.BackstabSub },
+			],
+			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().honorAmongThieves > 0
 		}),
 		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, SubtletyPriority>({
 			fieldName: 'subtletyFinisherPriority',
@@ -140,12 +160,6 @@ export const RogueRotationConfig = {
 			label: 'Minimum CP (Slice)',
 			labelTooltip: 'Minimum number of combo points spent if Slice and Dice has frequency: Once',
 			showWhen: (player: Player<Spec.SpecRogue>) => player.getRotation().multiTargetSliceFrequency == Frequency.Once
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
-			fieldName: 'hemoWithDagger',
-			label: 'Hemorrhage with Dagger',
-			labelTooltip: 'Use Hemorrhage with Dagger in mainhand',
-			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().hemorrhage
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
 			fieldName: 'openWithGarrote',

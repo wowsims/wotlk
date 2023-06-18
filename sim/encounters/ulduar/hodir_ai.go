@@ -1,7 +1,6 @@
 package ulduar
 
 import (
-	"math/rand"
 	"strconv"
 	"time"
 
@@ -55,12 +54,13 @@ func addHodir25(bossPrefix string) {
 			Stats: stats.Stats{
 				stats.Health:      32_477_905,
 				stats.Armor:       10643,
-				stats.AttackPower: 574,
+				stats.AttackPower: 805,
+				stats.BlockValue:  76,
 			}.ToFloatArray(),
 
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
 			SwingSpeed:       2.4,
-			MinBaseDamage:    50000, // TODO: Find real value
+			MinBaseDamage:    46300, // TODO: Find real value
 			SuppressDodge:    false,
 			ParryHaste:       false,
 			DualWield:        false,
@@ -148,12 +148,12 @@ func (ai *HodirAI) Initialize(target *core.Target, config *proto.Target) {
 	ai.registerFrozenBlowSpell(target)
 }
 
-func (ai *HodirAI) Reset(*core.Simulation) {
+func (ai *HodirAI) Reset(sim *core.Simulation) {
 	ai.HasCampfire = true
 	// First campfire in 15-20 seconds
-	ai.ToastyFireTime = time.Duration(15+rand.Intn(5)) * time.Second
+	ai.ToastyFireTime = time.Duration(15+5.0*sim.RandomFloat("HodirAI Toasty Fire")) * time.Second
 	// First storms in 33-38 seconds
-	ai.NextStorms = time.Duration(33+rand.Intn(5)) * time.Second
+	ai.NextStorms = time.Duration(33+5.0*sim.RandomFloat("HodirAI Next Storm")) * time.Second
 }
 
 func (ai *HodirAI) registerFlashFreeze(target *core.Target) {
@@ -172,7 +172,7 @@ func (ai *HodirAI) registerFlashFreeze(target *core.Target) {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// Remove last fire in 0-5 seconds
 			pa := &core.PendingAction{
-				NextActionAt: sim.CurrentTime + time.Duration(rand.Intn(5))*time.Second,
+				NextActionAt: sim.CurrentTime + time.Duration(5.0*sim.RandomFloat("HodirAI Remove Last Fire"))*time.Second,
 				OnAction: func(s *core.Simulation) {
 					ai.HasCampfire = false
 					if sim.Raid.Size() >= 10 {
@@ -186,7 +186,7 @@ func (ai *HodirAI) registerFlashFreeze(target *core.Target) {
 
 			// Activate new fires in 15-20 seconds
 			pa = &core.PendingAction{
-				NextActionAt: sim.CurrentTime + time.Duration(15+rand.Intn(5))*time.Second,
+				NextActionAt: sim.CurrentTime + time.Duration(15+5.0*sim.RandomFloat("HodirAI Activate New Fires"))*time.Second,
 				OnAction: func(s *core.Simulation) {
 					ai.HasCampfire = true
 					if sim.Raid.Size() >= 10 {
@@ -198,7 +198,7 @@ func (ai *HodirAI) registerFlashFreeze(target *core.Target) {
 			}
 			sim.AddPendingAction(pa)
 
-			ai.NextStorms = core.MaxDuration(ai.NextStorms, sim.CurrentTime+time.Duration(3+rand.Intn(5))*time.Second)
+			ai.NextStorms = core.MaxDuration(ai.NextStorms, sim.CurrentTime+time.Duration(3+5.0*sim.RandomFloat("HodirAI Next Storm"))*time.Second)
 		},
 	})
 }
@@ -412,12 +412,12 @@ func (ai *HodirAI) DoAction(sim *core.Simulation) {
 	// Stormclouds are cast every 30-35 seconds
 	// Affects 2 people - each spread storm power to 6 others
 	if sim.CurrentTime >= ai.NextStorms {
-		ai.NextStorms = sim.CurrentTime + 30*time.Second + time.Duration(rand.Intn(5))*time.Second
+		ai.NextStorms = sim.CurrentTime + 30*time.Second + time.Duration(5.0*sim.RandomFloat("HodirAI Cast Storm Cloud"))*time.Second
 
 		if ai.Target.Env.Raid.Size() > 1 {
 			// Raid sim we simulate storm clouds and storm power spreading
 			// Assign random storm spreader
-			storm1 := rand.Intn(ai.Target.Env.Raid.Size())
+			storm1 := int(float64(ai.Target.Env.Raid.Size()) * sim.RandomFloat("HodirAI Random Storm Spreader"))
 			storm2 := storm1
 
 			// Set max possible spreads
@@ -427,7 +427,7 @@ func (ai *HodirAI) DoAction(sim *core.Simulation) {
 			if ai.raidSize == 25 {
 				for storm1 == storm2 {
 					// Assign 2nd random spreader
-					storm2 = rand.Intn(sim.Raid.Size())
+					storm2 = int(float64(ai.Target.Env.Raid.Size()) * sim.RandomFloat("HodirAI Random Storm Spreader"))
 				}
 
 				// Set max possible spreads
@@ -486,7 +486,7 @@ func (ai *HodirAI) DoAction(sim *core.Simulation) {
 			for maxBuffs > 0 {
 				target := -1
 				for target == -1 || target == storm1 || target == storm2 || ai.StormCloud[target].IsActive() {
-					target = rand.Intn(sim.Raid.Size())
+					target = int(float64(ai.Target.Env.Raid.Size()) * sim.RandomFloat("HodirAI Random Storm Receiver"))
 				}
 				ai.StormCloud[target].Activate(sim)
 				maxBuffs = maxBuffs - 1

@@ -7,13 +7,16 @@ import (
 )
 
 func (priest *Priest) registerVampiricTouchSpell() {
+	shadowFocus := 0.02 * float64(priest.Talents.ShadowFocus)
+
 	priest.VampiricTouch = priest.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48160},
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
 
 		ManaCost: core.ManaCostOptions{
-			BaseCost: 0.16,
+			BaseCost:   0.16,
+			Multiplier: 1 - shadowFocus,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

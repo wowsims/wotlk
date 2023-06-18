@@ -428,6 +428,246 @@ export const MM_P2_PRESET = {
 	]}`),
 };
 
+export const MM_P3_PRESET = {
+	name: 'MM P3 Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<any>) => player.getTalentTree() != 2,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+          "id": 48262,
+          "enchant": 3817,
+          "gems": [
+            41398,
+            40147
+          ]
+        },
+        {
+          "id": 47060,
+          "gems": [
+            42143
+          ]
+        },
+        {
+          "id": 48260,
+          "enchant": 3808,
+          "gems": [
+            40112
+          ]
+        },
+        {
+          "id": 47545,
+          "enchant": 3605,
+          "gems": [
+            40112
+          ]
+        },
+        {
+          "id": 46965,
+          "enchant": 3832,
+          "gems": [
+            40112,
+            40112,
+            40112
+          ]
+        },
+        {
+          "id": 47074,
+          "enchant": 3845,
+          "gems": [
+            40147,
+            0
+          ]
+        },
+        {
+          "id": 48263,
+          "enchant": 3604,
+          "gems": [
+            40148,
+            0
+          ]
+        },
+        {
+          "id": 47153,
+          "gems": [
+            40148,
+            42143,
+            42143
+          ]
+        },
+        {
+          "id": 48261,
+          "enchant": 3823,
+          "gems": [
+            49110,
+            40112
+          ]
+        },
+        {
+          "id": 47109,
+          "enchant": 3606,
+          "gems": [
+            40147,
+            40147
+          ]
+        },
+        {
+          "id": 47075,
+          "gems": [
+            40112
+          ]
+        },
+        {
+          "id": 45608,
+          "gems": [
+            40112
+          ]
+        },
+        {
+          "id": 47131
+        },
+        {
+          "id": 45931
+        },
+        {
+          "id": 47239,
+          "enchant": 3827,
+          "gems": [
+            40147,
+            40112
+          ]
+        },
+        {},
+        {
+          "id": 47521,
+          "enchant": 3608,
+          "gems": [
+            40147
+          ]
+        }
+	]}`),
+};
+
+export const MM_P4_PRESET = {
+	name: 'MM P4 Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<any>) => player.getTalentTree() != 2,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+        {
+          "id": 51286,
+          "enchant": 3817,
+          "gems": [
+            41398,
+            40117
+          ]
+        },
+        {
+          "id": 50633,
+          "gems": [
+            40117
+          ]
+        },
+        {
+          "id": 51288,
+          "enchant": 3808,
+          "gems": [
+            40117
+          ]
+        },
+        {
+          "id": 47546,
+          "enchant": 3605,
+          "gems": [
+            42153
+          ]
+        },
+        {
+          "id": 51289,
+          "enchant": 3832,
+          "gems": [
+            40117,
+            40117
+          ]
+        },
+        {
+          "id": 50655,
+          "enchant": 3845,
+          "gems": [
+            40117,
+            0
+          ]
+        },
+        {
+          "id": 51285,
+          "enchant": 3604,
+          "gems": [
+            40117,
+            0
+          ]
+        },
+        {
+          "id": 50688,
+          "enchant": 3601,
+          "gems": [
+            40148,
+            42153,
+            42153
+          ]
+        },
+        {
+          "id": 50645,
+          "enchant": 3823,
+          "gems": [
+            49110,
+            40117,
+            40147
+          ]
+        },
+        {
+          "id": 50607,
+          "enchant": 3606,
+          "gems": [
+            40148,
+            40148
+          ]
+        },
+        {
+          "id": 50618,
+          "gems": [
+            40117
+          ]
+        },
+        {
+          "id": 50402,
+          "gems": [
+            40148
+          ]
+        },
+        {
+          "id": 50363
+        },
+        {
+          "id": 47131
+        },
+        {
+          "id": 50735,
+          "enchant": 3827,
+          "gems": [
+            40117,
+            40117,
+            40117
+          ]
+        },
+        {},
+        {
+          "id": 50733,
+          "enchant": 3608,
+          "gems": [
+            40117
+          ]
+        }
+	]}`),
+};
+
 export const SV_PRERAID_PRESET = {
 	name: 'SV Preraid Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
@@ -733,5 +973,245 @@ export const SV_P2_PRESET = {
 			"id": 45570,
 			"enchant": 3608
 		}
+	]}`),
+};
+
+export const SV_P3_PRESET = {
+	name: 'SV P3 Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<any>) => player.getTalentTree() == 2,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+        {
+          "id": 48262,
+          "enchant": 3817,
+          "gems": [
+            41398,
+            40147
+          ]
+        },
+        {
+          "id": 47060,
+          "gems": [
+            42143
+          ]
+        },
+        {
+          "id": 48260,
+          "enchant": 3808,
+          "gems": [
+            40112
+          ]
+        },
+        {
+          "id": 47545,
+          "enchant": 3605,
+          "gems": [
+            40112
+          ]
+        },
+        {
+          "id": 48264,
+          "enchant": 3832,
+          "gems": [
+            40112,
+            40147
+          ]
+        },
+        {
+          "id": 47074,
+          "enchant": 3845,
+          "gems": [
+            40148,
+            0
+          ]
+        },
+        {
+          "id": 48263,
+          "enchant": 3604,
+          "gems": [
+            40148,
+            0
+          ]
+        },
+        {
+          "id": 47153,
+          "gems": [
+            40147,
+            42143,
+            42143
+          ]
+        },
+        {
+          "id": 47191,
+          "enchant": 3823,
+          "gems": [
+            49110,
+            40147,
+            40112
+          ]
+        },
+        {
+          "id": 47109,
+          "enchant": 3606,
+          "gems": [
+            40112,
+            40112
+          ]
+        },
+        {
+          "id": 47075,
+          "gems": [
+            40112
+          ]
+        },
+        {
+          "id": 45608,
+          "gems": [
+            40112
+          ]
+        },
+        {
+          "id": 47131
+        },
+        {
+          "id": 44253
+        },
+        {
+          "id": 47239,
+          "enchant": 3827,
+          "gems": [
+            40147,
+            40112
+          ]
+        },
+        {},
+        {
+          "id": 47521,
+          "enchant": 3608,
+          "gems": [
+            40112
+          ]
+        }
+	]}`),
+};
+
+export const SV_P4_PRESET = {
+	name: 'SV P4 Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<any>) => player.getTalentTree() == 2,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+        {
+          "id": 51286,
+          "enchant": 3817,
+          "gems": [
+            41398,
+            40112
+          ]
+        },
+        {
+          "id": 50633,
+          "gems": [
+            40112
+          ]
+        },
+        {
+          "id": 51288,
+          "enchant": 3808,
+          "gems": [
+            40112
+          ]
+        },
+        {
+          "id": 47546,
+          "enchant": 3605,
+          "gems": [
+            42143
+          ]
+        },
+        {
+          "id": 51289,
+          "enchant": 3832,
+          "gems": [
+            40112,
+            40112
+          ]
+        },
+        {
+          "id": 50655,
+          "enchant": 3845,
+          "gems": [
+            40112,
+            0
+          ]
+        },
+        {
+          "id": 51285,
+          "enchant": 3604,
+          "gems": [
+            40112,
+            0
+          ]
+        },
+        {
+          "id": 50688,
+          "enchant": 3601,
+          "gems": [
+            40148,
+            42143,
+            42143
+          ]
+        },
+        {
+          "id": 50645,
+          "enchant": 3823,
+          "gems": [
+            49110,
+            40112,
+            40150
+          ]
+        },
+        {
+          "id": 50607,
+          "enchant": 3606,
+          "gems": [
+            40148,
+            40148
+          ]
+        },
+        {
+          "id": 50618,
+          "gems": [
+            45879
+          ]
+        },
+        {
+          "id": 50402,
+          "gems": [
+            40148
+          ]
+        },
+        {
+          "id": 50363
+        },
+        {
+          "id": 47131
+        },
+        {
+          "id": 50735,
+          "enchant": 3827,
+          "gems": [
+            40112,
+            40112,
+            40112
+          ]
+        },
+        {},
+        {
+          "id": 50733,
+          "enchant": 3608,
+          "gems": [
+            40112
+          ]
+        }
 	]}`),
 };

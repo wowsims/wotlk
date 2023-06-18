@@ -228,18 +228,20 @@ export class Raid {
 
 	fromProto(eventID: EventID, proto: RaidProto) {
 		TypedEvent.freezeAllAndDo(() => {
-			if (proto.buffs!.demonicPact > 0 && proto.buffs!.demonicPactSp == 0) {
-				proto.buffs!.demonicPactSp = proto.buffs!.demonicPact;
-				if (proto.buffs!.demonicPactSp > 1000) {
-					proto.buffs!.demonicPactSp /= 10;
+			if (proto.buffs) {
+				if (proto.buffs.demonicPact > 0 && proto.buffs.demonicPactSp == 0) {
+					proto.buffs.demonicPactSp = proto.buffs.demonicPact;
+					if (proto.buffs.demonicPactSp > 1000) {
+						proto.buffs.demonicPactSp /= 10;
+					}
+					proto.buffs.demonicPact = 0;
+				} else if (proto.buffs.demonicPactOld > 0 && proto.buffs.demonicPactSp == 0) {
+					proto.buffs.demonicPactSp = proto.buffs.demonicPactOld;
+					if (proto.buffs.demonicPactSp > 1000) {
+						proto.buffs.demonicPactSp /= 10;
+					}
+					proto.buffs.demonicPactOld = 0;
 				}
-				proto.buffs!.demonicPact = 0;
-			} else if (proto.buffs!.demonicPactOld > 0 && proto.buffs!.demonicPactSp == 0) {
-				proto.buffs!.demonicPactSp = proto.buffs!.demonicPactOld;
-				if (proto.buffs!.demonicPactSp > 1000) {
-					proto.buffs!.demonicPactSp /= 10;
-				}
-				proto.buffs!.demonicPactOld = 0;
 			}
 			this.setBuffs(eventID, proto.buffs || RaidBuffs.create());
 			this.setDebuffs(eventID, proto.debuffs || Debuffs.create());

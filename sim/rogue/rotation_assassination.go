@@ -1,10 +1,11 @@
 package rogue
 
 import (
-	"github.com/wowsims/wotlk/sim/core/stats"
-	"golang.org/x/exp/slices"
 	"log"
 	"time"
+
+	"github.com/wowsims/wotlk/sim/core/stats"
+	"golang.org/x/exp/slices"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -353,5 +354,5 @@ func (x *rotation_assassination) run(sim *core.Simulation, rogue *Rogue) {
 }
 
 func (x *rotation_assassination) targetHasBleed(_ *core.Simulation, rogue *Rogue) bool {
-	return rogue.bleedCategory.AnyActive() || rogue.CurrentTarget.HasActiveAuraWithTag(RogueBleedTag)
+	return rogue.bleedCategory.AnyActive() || rogue.CurrentTarget.HasActiveAuraWithTag(RogueBleedTag) || rogue.Options.AssumeBleedActive
 }

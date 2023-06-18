@@ -10,7 +10,7 @@ import (
 func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 	actionID := core.ActionID{SpellID: 57934}
 	energyMetrics := rogue.NewEnergyMetrics(actionID)
-	hasShadowblades := rogue.HasSetBonus(ItemSetShadowblades, 2)
+	hasShadowblades := rogue.HasSetBonus(Tier10, 2)
 	energyCost := 15 - 5*float64(rogue.Talents.FilthyTricks)
 
 	hasGlyph := rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfTricksOfTheTrade)
@@ -54,13 +54,18 @@ func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 
 	if rogue.Rotation.TricksOfTheTradeFrequency != proto.Rogue_Rotation_Never {
 		// TODO: Support Rogue_Rotation_Once
+		tricksSpell := rogue.TricksOfTheTrade
 		rogue.AddMajorCooldown(core.MajorCooldown{
-			Spell:    rogue.TricksOfTheTrade,
+			Spell:    tricksSpell,
 			Priority: core.CooldownPriorityDrums,
 			Type:     core.CooldownTypeDPS,
 			ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 				if hasShadowblades {
 					return rogue.CurrentEnergy() <= rogue.maxEnergy-15-rogue.EnergyTickMultiplier*10
+				} else if sim.CurrentTime < (tricksSpell.CD.Duration) {
+					// This assumes you precast a Tricks before combat, and activated it (and the cooldown) at 0.00 on the sim.
+					// This was put intentionally below the hasShadowblades check, because once you have that set a precast is no longer optimal.
+					return false
 				} else {
 					return rogue.CurrentEnergy() >= rogue.TricksOfTheTrade.DefaultCast.Cost
 				}

@@ -46,9 +46,7 @@ func (warrior *Warrior) registerBloodthirstSpell(cdTimer *core.Timer) {
 			core.StartDelayedAction(sim, core.DelayedActionOptions{
 				DoAt: sim.CurrentTime + warrior.Bloodthirst.CD.Duration,
 				OnAction: func(_ *core.Simulation) {
-					if warrior.ShouldInstantSlam(sim) {
-						warrior.CastSlam(sim, target)
-					} else if warrior.Bloodthirst.CanCast(sim, target) {
+					if warrior.Bloodthirst.CanCast(sim, target) {
 						warrior.Bloodthirst.Cast(sim, target)
 					}
 				},

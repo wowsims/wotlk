@@ -1,16 +1,8 @@
 import { BooleanPicker } from '../components/boolean_picker.js';
-import { EnumPicker, EnumPickerConfig } from '../components/enum_picker.js';
-import { Conjured } from '../proto/common.js';
+import { EnumPicker } from '../components/enum_picker.js';
 import { RaidTarget } from '../proto/common.js';
-import { TristateEffect } from '../proto/common.js';
-import { Party } from '../party.js';
 import { Player } from '../player.js';
 import { Sim } from '../sim.js';
-import { Target } from '../target.js';
-import { Encounter } from '../encounter.js';
-import { Raid } from '../raid.js';
-import { SimUI } from '../sim_ui.js';
-import { IndividualSimUI } from '../individual_sim_ui.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { emptyRaidTarget } from '../proto_utils/utils.js';
 
@@ -134,7 +126,7 @@ export const IncomingHps = {
 	label: 'Incoming HPS',
 	labelTooltip: `
 		<p>Average amount of healing received per second. Used for calculating chance of death.</p>
-		<p>If set to 0, defaults to 150% of DTPS.</p>
+		<p>If set to 0, defaults to 17.5% of the primary target's base DPS.</p>
 	`,
 	changedEvent: (player: Player<any>) => player.getRaid()!.changeEmitter,
 	getValue: (player: Player<any>) => player.getHealingModel().hps,
@@ -153,13 +145,32 @@ export const HealingCadence = {
 	labelTooltip: `
 		<p>How often the incoming heal 'ticks', in seconds. Generally, longer durations favor Effective Hit Points (EHP) for minimizing Chance of Death, while shorter durations favor avoidance.</p>
 		<p>Example: if Incoming HPS is set to 1000 and this is set to 1s, then every 1s a heal will be received for 1000. If this is instead set to 2s, then every 2s a heal will be recieved for 2000.</p>
-		<p>If set to 0, defaults to 2.0 seconds.</p>
+		<p>If set to 0, defaults to 1.5 times the primary target's base swing timer, and half that for dual wielding targets.</p>
 	`,
 	changedEvent: (player: Player<any>) => player.getRaid()!.changeEmitter,
 	getValue: (player: Player<any>) => player.getHealingModel().cadenceSeconds,
 	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
 		const healingModel = player.getHealingModel();
 		healingModel.cadenceSeconds = newValue;
+		player.setHealingModel(eventID, healingModel);
+	},
+	enableWhen: (player: Player<any>) => (player.getRaid()?.getTanks() || []).find(tank => RaidTarget.equals(tank, player.makeRaidTarget())) != null,
+};
+
+export const HealingCadenceVariation = {
+	type: 'number' as const,
+	float: true,
+	label: 'Cadence +/-',
+	labelTooltip: `
+		<p>Magnitude of random variation in healing intervals, in seconds.</p>
+		<p>Example: if Healing Cadence is set to 1s with 0.5s variation, then the interval between successive heals will vary uniformly between 0.5 and 1.5s. If the variation is instead set to 2s, then 50% of healing intervals will fall between 0s and 1s, and the other 50% will fall between 1s and 3s.</p>
+		<p>The amount of healing per 'tick' is automatically scaled up or down based on the randomized time since the last tick, so as to keep HPS constant.</p>
+	`,
+	changedEvent: (player: Player<any>) => player.getRaid()!.changeEmitter,
+	getValue: (player: Player<any>) => player.getHealingModel().cadenceVariation,
+	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
+		const healingModel = player.getHealingModel();
+		healingModel.cadenceVariation = newValue;
 		player.setHealingModel(eventID, healingModel);
 	},
 	enableWhen: (player: Player<any>) => (player.getRaid()?.getTanks() || []).find(tank => RaidTarget.equals(tank, player.makeRaidTarget())) != null,

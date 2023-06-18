@@ -32,13 +32,13 @@ import * as Tooltips from '../core/constants/tooltips.js';
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 export const AuraMasteryTalents = {
-	name: 'Basic w/Aura Mastery+LoH buff',
+	name: 'Aura Mastery',
 	data: SavedTalents.create({
 		talentsString: '050501-05-05232051203331302133231331',
 		glyphs: Glyphs.create({
 			major1: PaladinMajorGlyph.GlyphOfSealOfVengeance,
 			major2: PaladinMajorGlyph.GlyphOfJudgement,
-			major3: PaladinMajorGlyph.GlyphOfConsecration,
+			major3: PaladinMajorGlyph.GlyphOfReckoning,
 			minor1: PaladinMinorGlyph.GlyphOfSenseUndead,
 			minor2: PaladinMinorGlyph.GlyphOfLayOnHands,
 			minor3: PaladinMinorGlyph.GlyphOfBlessingOfKings
@@ -48,13 +48,13 @@ export const AuraMasteryTalents = {
 
 
 export const DivineSacTalents = {
-	name: 'Basic w/Dsac',
+	name: 'Divine Sacrifice & Guardian',
 	data: SavedTalents.create({
 		talentsString: '03-453201002-05222051203331302133201331',
 		glyphs: Glyphs.create({
 			major1: PaladinMajorGlyph.GlyphOfSealOfVengeance,
 			major2: PaladinMajorGlyph.GlyphOfJudgement,
-			major3: PaladinMajorGlyph.GlyphOfConsecration,
+			major3: PaladinMajorGlyph.GlyphOfReckoning,
 			minor1: PaladinMinorGlyph.GlyphOfSenseUndead,
 			minor2: PaladinMinorGlyph.GlyphOfLayOnHands,
 			minor3: PaladinMinorGlyph.GlyphOfBlessingOfKings
@@ -69,17 +69,19 @@ export const DefaultRotation = RetributionPaladinRotation.create({
 	useDivinePlea: true,
 	avoidClippingConsecration: true,
 	holdLastAvengingWrathUntilExecution: false,
+	cancelChaosBane: false,
 	divinePleaPercentage: 0.75,
 	holyWrathThreshold: 4,
 	sovTargets: 1,
 	customRotation: CustomRotation.create({
 		spells: [
-			CustomSpell.create({ spell: SpellOption.JudgementOfWisdom }),
 			CustomSpell.create({ spell: SpellOption.HammerOfWrath }),
+			CustomSpell.create({ spell: SpellOption.JudgementOfWisdom }),
 			CustomSpell.create({ spell: SpellOption.CrusaderStrike }),
 			CustomSpell.create({ spell: SpellOption.DivineStorm }),
+			CustomSpell.create({ spell: SpellOption.Consecration }),
 			CustomSpell.create({ spell: SpellOption.Exorcism }),
-			CustomSpell.create({ spell: SpellOption.Consecration })
+			CustomSpell.create({ spell: SpellOption.HolyWrath }),
 		],
 	}),
 	customCastSequence: CustomRotation.create({
@@ -108,7 +110,7 @@ export const DefaultConsumes = Consumes.create({
 	defaultPotion: Potions.PotionOfSpeed,
 	defaultConjured: Conjured.ConjuredDarkRune,
 	flask: Flask.FlaskOfEndlessRage,
-	food: Food.FoodFishFeast,
+	food: Food.FoodDragonfinFilet,
 });
 
 // Maybe use this later if I can figure out the interactive tooltips from tippy
@@ -216,21 +218,21 @@ export const P1_PRESET = {
 			"id": 44006,
 			"enchant": 3817,
 			"gems": [
-			  41398,
-			  49110
+			  	41398,
+			  	49110
 			]
 		  },
 		  {
 			"id": 44664,
 			"gems": [
-			  42142
+			  	42142
 			]
 		  },
 		  {
 			"id": 40578,
 			"enchant": 3808,
 			"gems": [
-			  39996
+			  	39996
 			]
 		  },
 		  {
@@ -241,38 +243,38 @@ export const P1_PRESET = {
 			"id": 40574,
 			"enchant": 3832,
 			"gems": [
-			  42142,
-			  39996
+			  	42142,
+			  	39996
 			]
 		  },
 		  {
 			"id": 40330,
 			"enchant": 3845,
 			"gems": [
-			  39996,
-			  0
+			  	39996,
+			  	0
 			]
 		  },
 		  {
 			"id": 40541,
 			"enchant": 3604,
 			"gems": [
-			  0
+			  	0
 			]
 		  },
 		  {
 			"id": 40278,
 			"gems": [
-			  39996,
-			  39996
+			  	39996,
+			  	39996
 			]
 		  },
 		  {
 			"id": 44011,
 			"enchant": 3823,
 			"gems": [
-			  42142,
-			  39996
+			  	42142,
+			  	39996
 			]
 		  },
 		  {
@@ -358,7 +360,7 @@ export const P2_PRESET = {
 			"enchant": 3604,
 			"gems": [
 				39996,
-				0,
+				39996,
 				0
 			]
 		},
@@ -390,7 +392,7 @@ export const P2_PRESET = {
 		{
 			"id": 45608,
 			"gems": [
-				0
+				39996
 			]
 		},
 		{
@@ -421,350 +423,349 @@ export const P2_PRESET = {
 };
 
 export const P3_PRESET = {
-	name: 'P3 Preset (Placeholder)',
+	name: 'P3 Mace Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecRetributionPaladin>) => true,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 48614,
-			"enchant": 3817,
-			"gems": [
-				41398,
-				40111
-			]
-		},
-		{
-			"id": 53103,
-			"gems": [
-				40162
-			]
-		},
-		{
-			"id": 47972,
-			"enchant": 3808,
-			"gems": [
-				40111,
-				40162
-			]
-		},
-		{
-			"id": 46971,
-			"enchant": 3605,
-			"gems": [
-				40111
-			]
-		},
-		{
-			"id": 47004,
-			"enchant": 3832,
-			"gems": [
-				40111,
-				40111,
-				40111
-			]
-		},
-		{
-			"id": 47155,
-			"enchant": 3845,
-			"gems": [
-				49110,
-				40111,
-				0
-			]
-		},
-		{
-			"id": 48615,
-			"enchant": 3604,
-			"gems": [
-				40162,
-				0
-			]
-		},
-		{
-			"id": 47460,
-			"gems": [
-				40111,
-				40111,
-				40111
-			]
-		},
-		{
-			"id": 46975,
-			"enchant": 3823,
-			"gems": [
-				42142,
-				42142,
-				42142
-			]
-		},
-		{
-			"id": 47154,
-			"enchant": 3606,
-			"gems": [
-				40111,
-				40111
-			]
-		},
-		{
-			"id": 47075,
-			"gems": [
-				40111
-			]
-		},
-		{
-			"id": 46966,
-			"gems": [
-				40111
-			]
-		},
-		{
-			"id": 47131
-		},
-		{
-			"id": 47115
-		},
-		{
-			"id": 47519,
-			"enchant": 3789,
-			"gems": [
-				40111,
-				40111
-			]
-		},
-		{},
-		{
-			"id": 47661
+          		"enchant": 3817,
+          		"gems": [
+            			41398,
+            			40142
+          		]
+        	},
+        	{
+          		"id": 47110,
+          		"gems": [
+            			40142
+          		]
+        	},
+        	{
+          		"id": 48612,
+          		"enchant": 3808,
+          		"gems": [
+            			40111
+          		]
+        	},
+        	{
+          		"id": 47548,
+          		"enchant": 3605,
+          		"gems": [
+            			40111
+          		]
+        	},
+        	{
+          		"id": 48616,
+          		"enchant": 3832,
+          		"gems": [
+            			49110,
+            			40111
+          		]
+        	},
+        	{
+          		"id": 47155,
+          		"enchant": 3845,
+          		"gems": [
+            			40111,
+            			40111,
+            			0
+          		]
+        	},
+        	{
+          		"id": 48615,
+          		"enchant": 3604,
+          		"gems": [
+            			40142,
+            			0
+          		]
+       		},
+        	{
+          		"id": 47002,
+          		"gems": [
+            			40111,
+            			40111,
+            			40111
+          		]
+        	},
+        	{
+          		"id": 47132,
+          		"enchant": 3823,
+          		"gems": [
+            			42142,
+            			42142,
+            			42142
+          		]
+        	},
+        	{
+          		"id": 47154,
+          		"enchant": 3606,
+          		"gems": [
+            			40142,
+            			40111
+          		]
+        	},
+        	{
+          		"id": 47075,
+          		"gems": [
+            			40111
+          		]
+        	},
+        	{
+          		"id": 46966,
+          		"gems": [
+            			40142
+          		]
+        	},
+        	{
+          		"id": 47131
+       		},
+        	{
+          		"id": 42987
+        	},
+        	{
+          		"id": 47520,
+          		"enchant": 3789,
+          		"gems": [
+            			40111,
+            			40111
+          		]
+        	},
+        	{},
+        	{
+          		"id": 47661
 		}
 	]}`),
 };
 
 export const P4_PRESET = {
-	name: 'P4 Preset (Placeholder)',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecRetributionPaladin>) => true,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 51162,
-			"enchant": 3817,
-			"gems": [
-				41398,
-				40111
-			]
-		},
-		{
-			"id": 50421,
-			"gems": [
-				40111
-			]
-		},
-		{
-			"id": 51160,
-			"enchant": 3808,
-			"gems": [
-				40111
-			]
-		},
-		{
-			"id": 49998,
-			"enchant": 3605,
-			"gems": [
-				40125
-			]
-		},
-		{
-			"id": 51164,
-			"enchant": 3832,
-			"gems": [
-				40111,
-				49110
-			]
-		},
-		{
-			"id": 51832,
-			"enchant": 3845,
-			"gems": [
-				42142,
-				0
-			]
-		},
-		{
-			"id": 50021,
-			"enchant": 3604,
-			"gems": [
-				40125,
-				40111,
-				0
-			]
-		},
-		{
-			"id": 51925,
-			"gems": [
-				40111,
-				40111,
-				40125
-			]
-		},
-		{
-			"id": 51161,
-			"enchant": 3823,
-			"gems": [
-				42142,
-				42142
-			]
-		},
-		{
-			"id": 49895,
-			"enchant": 3606,
-			"gems": [
-				40125,
-				40111
-			]
-		},
-		{
-			"id": 51843,
-			"gems": [
-				40111
-			]
-		},
-		{
-			"id": 49949,
-			"gems": [
-				40111
-			]
-		},
-		{
-			"id": 50351
-		},
-		{
-			"id": 50343
-		},
-		{
-			"id": 49888,
-			"enchant": 3789,
-			"gems": [
-				40111,
-				40111
-			]
-		},
-		{},
-		{
-			"id": 50455
-		}
-	]}`),
-};
-
-export const P5_PRESET = {
-	name: 'P5 Preset (Placeholder)',
+	name: 'P4 Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecRetributionPaladin>) => true,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 51277,
-			"enchant": 3817,
-			"gems": [
-				41398,
-				40111
-			]
-		},
+          		"enchant": 3817,
+          		"gems": [
+            			41398,
+            			40118
+          		]
+        	},
+        	{
+          		"id": 50633,
+          		"gems": [
+            			40111
+          		]
+        	},
+        	{
+          		"id": 51279,
+          		"enchant": 3808,
+          		"gems": [
+            			40111
+          		]
+        	},
+        	{
+          		"id": 50653,
+          		"enchant": 3605,
+          		"gems": [
+            			40111
+          		]
+        	},
+        	{
+          		"id": 51275,
+          		"enchant": 3832,
+          		"gems": [
+            			40118,
+            			49110
+          		]
+        	},
+        	{
+          		"id": 50659,
+          		"enchant": 3845,
+          		"gems": [
+            			42142,
+            			0
+          		]
+        	},
+        	{
+          		"id": 50690,
+          		"enchant": 3604,
+          		"gems": [
+            			40111,
+            			40111,
+            			0
+          		]
+        	},
+        	{
+          		"id": 50707,
+          		"gems": [
+            			40111,
+            			40111,
+            			45862
+          		]
+        	},
+        	{
+          		"id": 51278,
+          		"enchant": 3823,
+          		"gems": [
+            			42142,
+            			42142
+          		]
+        	},
+        	{
+          		"id": 50607,
+          		"enchant": 3606,
+          		"gems": [
+            			40111,
+            			40111
+          		]
+        	},
+        	{
+          		"id": 50604,
+          		"gems": [
+            			40111
+          		]
+        	},
+        	{
+          		"id": 50402,
+          		"gems": [
+            			40111
+          		]
+        	},
+        	{
+          		"id": 50706
+        	},
+        	{
+          		"id": 47131
+        	},
+        	{
+		  	"id": 49623,
+          		"enchant": 3789,
+          		"gems": [
+            			40111,
+            			40111,
+            			40111
+          		]
+        	},
+        	{},
+        	{
+          		"id": 50455
+		}
+	]}`),
+};
+
+export const P5_PRESET = {
+	name: 'P5 Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecRetributionPaladin>) => true,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
-			"id": 54581,
-			"gems": [
-				40111
-			]
-		},
-		{
-			"id": 51279,
-			"enchant": 3808,
-			"gems": [
-				40118
-			]
-		},
-		{
-			"id": 50653,
-			"enchant": 3605,
-			"gems": [
-				40125
-			]
-		},
-		{
-			"id": 51275,
-			"enchant": 3832,
-			"gems": [
-				40118,
-				49110
-			]
-		},
-		{
-			"id": 54580,
-			"enchant": 3845,
-			"gems": [
-				42142,
-				0
-			]
-		},
-		{
-			"id": 50690,
-			"enchant": 3604,
-			"gems": [
-				40125,
-				40111,
-				0
-			]
-		},
-		{
-			"id": 50707,
-			"gems": [
-				40111,
-				40111,
-				40125
-			]
-		},
-		{
-			"id": 51161,
-			"enchant": 3823,
-			"gems": [
-				42142,
-				42142
-			]
-		},
-		{
-			"id": 54578,
-			"enchant": 3606,
-			"gems": [
-				40111,
-				40111
-			]
-		},
-		{
-			"id": 54576,
-			"gems": [
-				40111
-			]
-		},
-		{
-			"id": 52572,
-			"gems": [
-				40111
-			]
-		},
-		{
-			"id": 50706
-		},
-		{
-			"id": 54590
-		},
-		{
-			"id": 49623,
-			"enchant": 3789,
-			"gems": [
-				40111,
-				40111,
-				40111
-			]
-		},
-		{},
-		{
-			"id": 50455
+			"id": 51277,
+          		"enchant": 3817,
+          		"gems": [
+            			41398,
+            			40111
+          		]
+        	},
+        	{
+          		"id": 54581,
+          		"gems": [
+            			40146
+          		]
+        	},
+        	{
+          		"id": 51279,
+          		"enchant": 3808,
+          		"gems": [
+            			40111
+          		]
+        	},
+        	{
+          		"id": 50677,
+          		"enchant": 3605,
+          		"gems": [
+            			40146
+          		]
+        	},
+        	{
+          		"id": 51275,
+          		"enchant": 3832,
+          		"gems": [
+            			40111,
+            			49110
+          		]
+        	},
+        	{
+          		"id": 54580,
+          		"enchant": 3845,
+          		"gems": [
+            			40111,
+            			0
+          		]
+        	},
+        	{
+          		"id": 50690,
+          		"enchant": 3604,
+          		"gems": [
+            			40146,
+            			40111,
+            			0
+          		]
+        	},
+        	{
+          		"id": 50707,
+          		"gems": [
+            			40111,
+            			40111,
+            			40111
+          		]
+        	},
+        	{
+          		"id": 51278,
+          		"enchant": 3823,
+          		"gems": [
+            			40111,
+            			40111
+          		]
+        	},
+        	{
+          		"id": 54578,
+          		"enchant": 3606,
+          		"gems": [
+            			40111,
+            			40111
+          		]
+        	},
+        	{
+          		"id": 50402,
+          		"gems": [
+            			40111
+          		]
+        	},
+        	{
+          		"id": 54576,
+          		"gems": [
+            			40111
+          		]
+        	},
+        	{
+          		"id": 54590
+        	},
+        	{
+          		"id": 50706
+        	},
+        	{
+          		"id": 49623,
+          		"enchant": 3789,
+          		"gems": [
+            			42142,
+            			42142,
+            			42154
+          		]
+        	},
+        	{},
+        	{
+          		"id": 50455
 		}
 	]}`),
 };

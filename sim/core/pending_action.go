@@ -26,8 +26,10 @@ type PendingAction struct {
 	NextActionAt time.Duration
 	Priority     ActionPriority
 
+	// Action to perform (required).
 	OnAction func(*Simulation)
-	CleanUp  func(*Simulation)
+	// Cleanup when the action is cancelled (optional).
+	CleanUp func(*Simulation)
 
 	cancelled bool
 	consumed  bool

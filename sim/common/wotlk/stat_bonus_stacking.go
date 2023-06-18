@@ -36,6 +36,7 @@ func newStackingStatBonusEffect(config StackingStatBonusEffect) {
 		})
 
 		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+			ActionID:   core.ActionID{ItemID: config.ID},
 			Name:       config.Name,
 			Callback:   config.Callback,
 			ProcMask:   config.ProcMask,
@@ -153,6 +154,7 @@ func init() {
 			ProcMask:   core.ProcMaskMeleeOrRanged,
 			Outcome:    core.OutcomeLanded,
 			ProcChance: 0.1,
+			ActionID:   core.ActionID{ItemID: 38212},
 			ICD:        time.Second * 45,
 			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 				procAura.Activate(sim)
@@ -247,7 +249,7 @@ func init() {
 		MaxStacks: 10,
 		Bonus:     stats.Stats{stats.SpellPower: 18},
 		Callback:  core.CallbackOnSpellHitDealt,
-		ProcMask:  core.ProcMaskSpellDamage,
+		ProcMask:  core.ProcMaskSpellOrProc,
 		Harmful:   true,
 	})
 	newStackingStatBonusEffect(StackingStatBonusEffect{
@@ -279,7 +281,7 @@ func init() {
 		MaxStacks: 10,
 		Bonus:     stats.Stats{stats.SpellPower: 20},
 		Callback:  core.CallbackOnSpellHitDealt,
-		ProcMask:  core.ProcMaskSpellDamage,
+		ProcMask:  core.ProcMaskSpellOrProc,
 		Harmful:   true,
 	})
 	newStackingStatBonusEffect(StackingStatBonusEffect{
@@ -323,8 +325,8 @@ func init() {
 		MaxStacks: 8,
 		Bonus:     stats.Stats{stats.MeleeHaste: 57, stats.SpellHaste: 57},
 		CD:        time.Minute * 2,
-		Callback:  core.CallbackOnSpellHitDealt,
-		ProcMask:  core.ProcMaskSpellDamage,
+		Callback:  core.CallbackOnCastComplete,
+		ProcMask:  core.ProcMaskSpellOrProc,
 		Outcome:   core.OutcomeLanded,
 		Harmful:   true,
 	})
@@ -357,7 +359,7 @@ func init() {
 		Bonus:     stats.Stats{stats.MeleeHaste: 57, stats.SpellHaste: 57},
 		CD:        time.Minute * 2,
 		Callback:  core.CallbackOnSpellHitDealt,
-		ProcMask:  core.ProcMaskSpellDamage,
+		ProcMask:  core.ProcMaskSpellOrProc,
 		Outcome:   core.OutcomeLanded,
 		Harmful:   true,
 	})
@@ -401,7 +403,7 @@ func init() {
 		Bonus:     stats.Stats{stats.MeleeHaste: 64, stats.SpellHaste: 64},
 		CD:        time.Minute * 2,
 		Callback:  core.CallbackOnSpellHitDealt,
-		ProcMask:  core.ProcMaskSpellDamage,
+		ProcMask:  core.ProcMaskSpellOrProc,
 		Outcome:   core.OutcomeLanded,
 		Harmful:   true,
 	})
@@ -445,7 +447,7 @@ func init() {
 		Bonus:     stats.Stats{stats.MeleeHaste: 64, stats.SpellHaste: 64},
 		CD:        time.Minute * 2,
 		Callback:  core.CallbackOnSpellHitDealt,
-		ProcMask:  core.ProcMaskSpellDamage,
+		ProcMask:  core.ProcMaskSpellOrProc,
 		Outcome:   core.OutcomeLanded,
 		Harmful:   true,
 	})

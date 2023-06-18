@@ -124,6 +124,10 @@ func (shadowfiend *Shadowfiend) Reset(sim *core.Simulation) {
 	shadowfiend.Disable(sim)
 }
 
+func (shadowfiend *Shadowfiend) OnPetDisable(sim *core.Simulation) {
+	shadowfiend.ShadowcrawlAura.Deactivate(sim)
+}
+
 func (shadowfiend *Shadowfiend) GetPet() *core.Pet {
 	return &shadowfiend.Pet
 }

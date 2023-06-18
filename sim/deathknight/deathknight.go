@@ -21,7 +21,8 @@ var TalentTreeSizes = [3]int{28, 29, 31}
 
 type DeathknightInputs struct {
 	// Option Vars
-	IsDps bool
+	IsDps  bool
+	NewDrw bool
 
 	UnholyFrenzyTarget *proto.RaidTarget
 
@@ -40,6 +41,8 @@ type DeathknightInputs struct {
 	AvgAMSSuccessRate   float64
 	AvgAMSHit           float64
 	FuStrike            Rotation_FuStrike
+	DiseaseDowntime     float64
+	VirulenceRefresh    float64
 }
 
 type DeathknightCoeffs struct {
@@ -72,11 +75,14 @@ type Deathknight struct {
 
 	Gargoyle                 *GargoylePet
 	SummonGargoyle           *core.Spell
+	SummonGargoyleAura       *core.Aura
 	GargoyleSummonDelay      time.Duration
 	OnGargoyleStartFirstCast func()
 
 	RuneWeapon        *RuneWeaponPet
 	DancingRuneWeapon *core.Spell
+	drwDmgSnapshot    float64
+	drwPhysSnapshot   float64
 
 	ArmyOfTheDead *core.Spell
 	ArmyGhoul     []*GhoulPet
@@ -179,7 +185,6 @@ type Deathknight struct {
 	KillingMachineAura  *core.Aura
 	IcyTalonsAura       *core.Aura
 	DesolationAura      *core.Aura
-	NecrosisAura        *core.Aura
 	BloodCakedBladeAura *core.Aura
 	ButcheryAura        *core.Aura
 	ButcheryPA          *core.PendingAction
@@ -192,9 +197,10 @@ type Deathknight struct {
 	LastDiseaseDamage float64
 	LastTickTime      time.Duration
 	WanderingPlague   *core.Spell
-
-	Deathchill     *core.Spell
-	DeathchillAura *core.Aura
+	NecrosisCoeff     float64
+	Necrosis          *core.Spell
+	Deathchill        *core.Spell
+	DeathchillAura    *core.Aura
 
 	// Presences
 	BloodPresence      *core.Spell
@@ -431,6 +437,7 @@ func NewDeathknight(character core.Character, inputs DeathknightInputs, talents 
 	dk.AddStatDependency(stats.Agility, stats.Dodge, core.DodgeRatingPerDodgeChance/84.74576271)
 	dk.AddStatDependency(stats.Strength, stats.AttackPower, 2)
 	dk.AddStatDependency(stats.Strength, stats.Parry, 0.25)
+	dk.AddStatDependency(stats.BonusArmor, stats.Armor, 1)
 
 	dk.PseudoStats.CanParry = true
 	dk.PseudoStats.GracefulCastCDFailures = true

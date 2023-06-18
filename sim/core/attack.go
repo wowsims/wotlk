@@ -505,7 +505,9 @@ func (aa *AutoAttacks) TrySwingMH(sim *Simulation, target *Unit) {
 	aa.MainhandSwingAt = sim.CurrentTime + aa.MainhandSwingSpeed()
 	aa.previousMHSwingAt = sim.CurrentTime
 	aa.PreviousSwingAt = sim.CurrentTime
-	aa.agent.OnAutoAttack(sim, attackSpell)
+	if !sim.Options.Interactive {
+		aa.agent.OnAutoAttack(sim, attackSpell)
+	}
 }
 
 // Optionally replaces the given swing spell with an Agent-specified MH Swing replacer.
@@ -549,7 +551,9 @@ func (aa *AutoAttacks) TrySwingOH(sim *Simulation, target *Unit) {
 	aa.OHAuto.Cast(sim, target)
 	aa.OffhandSwingAt = sim.CurrentTime + aa.OffhandSwingSpeed()
 	aa.PreviousSwingAt = sim.CurrentTime
-	aa.agent.OnAutoAttack(sim, aa.OHAuto)
+	if !sim.Options.Interactive {
+		aa.agent.OnAutoAttack(sim, aa.OHAuto)
+	}
 }
 
 // Performs an autoattack using the ranged weapon, if the ranged CD is ready.
@@ -561,7 +565,9 @@ func (aa *AutoAttacks) TrySwingRanged(sim *Simulation, target *Unit) {
 	aa.RangedAuto.Cast(sim, target)
 	aa.RangedSwingAt = sim.CurrentTime + aa.RangedSwingSpeed()
 	aa.PreviousSwingAt = sim.CurrentTime
-	aa.agent.OnAutoAttack(sim, aa.RangedAuto)
+	if !sim.Options.Interactive {
+		aa.agent.OnAutoAttack(sim, aa.RangedAuto)
+	}
 }
 
 func (aa *AutoAttacks) UpdateSwingTime(sim *Simulation) {
@@ -700,6 +706,8 @@ func (ppmm *PPMManager) Chance(procMask ProcMask) float64 {
 		return ppmm.ohProcChance
 	} else if procMask.Matches(ProcMaskRanged) {
 		return ppmm.rangedProcChance
+	} else if procMask.Matches(ppmm.procMask) {
+		return ppmm.mhProcChance // probably a 'proc from proc' so use main hand.
 	}
 
 	return 0

@@ -63,17 +63,30 @@ func (shaman *Shaman) registerFireElementalTotem() {
 
 	//Enh has 1.5seconds GCD also, so just going to wait the normal 1.5 instead of using the dynamic Spell GCD
 	var castWindow = 1550 * time.Millisecond
+
+	enhTier10Aura := shaman.GetAura("Maelstrom Power")
+
 	shaman.AddMajorCooldown(core.MajorCooldown{
 		Spell: shaman.FireElementalTotem,
 		Type:  core.CooldownTypeUnknown,
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-			success := shaman.fireElementalSnapShot.CanSnapShot(sim, castWindow)
 
-			if (sim.Encounter.Duration <= 120*time.Second && sim.CurrentTime >= 10*time.Second) || (sim.Encounter.Duration > 120*time.Second && sim.CurrentTime >= 20*time.Second) {
+			success := false
+			if enhTier10Aura != nil && shaman.Totems.EnhTierTenBonus {
+				if enhTier10Aura.IsActive() {
+					success = shaman.fireElementalSnapShot.CanSnapShot(sim, castWindow)
+				}
+			} else if sim.CurrentTime > 1*time.Second && shaman.fireElementalSnapShot == nil {
 				success = true
+			} else if sim.Encounter.Duration <= 120*time.Second && sim.CurrentTime >= 10*time.Second {
+				success = true
+			} else if sim.Encounter.Duration > 120*time.Second && sim.CurrentTime >= 20*time.Second {
+				success = true
+			} else if shaman.fireElementalSnapShot != nil {
+				success = shaman.fireElementalSnapShot.CanSnapShot(sim, castWindow)
 			}
 
-			if success {
+			if success && shaman.fireElementalSnapShot != nil {
 				shaman.castFireElemental = true
 				shaman.fireElementalSnapShot.ActivateMajorCooldowns(sim)
 				shaman.fireElementalSnapShot.ResetProcTrackers()

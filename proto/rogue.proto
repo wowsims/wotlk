@@ -162,6 +162,7 @@ message Rogue {
 		enum CombatBuilder {
 			SinisterStrike = 0;
 			Backstab = 1;
+			HemorrhageCombat = 2;
 		}
 		CombatBuilder combat_builder = 25;
 
@@ -171,6 +172,12 @@ message Rogue {
 			AssassinationPriorityUnknown = 2;
 		}
 		AssassinationPriority assassination_finisher_priority = 5;
+
+		enum SubtletyBuilder {
+			Hemorrhage = 0;
+			BackstabSub = 1;
+		}
+		SubtletyBuilder subtlety_builder = 26;
 
 		enum SubtletyPriority {
 			SubtletyEviscerate = 0;
@@ -213,6 +220,7 @@ message Rogue {
 		int32 starting_overkill_duration = 4;
 		bool apply_poisons_manually = 5;
 		int32 honor_of_thieves_crit_rate = 6;
+		bool assume_bleed_active = 7;
 	}
 	Options options = 3;
 }

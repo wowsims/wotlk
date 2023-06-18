@@ -110,6 +110,7 @@ message SimOptions {
 	bool debug_first_iteration = 6;
 	bool is_test = 5; // Only used internally.
 	bool save_all_values = 7; // Only used internally.
+	bool interactive = 8; // Enables interactive mode.
 }
 
 // The aggregated results from all uses of a particular action.
@@ -338,6 +339,8 @@ message StatWeightsResult {
 	StatWeightValues hps = 4;
 	StatWeightValues tps = 2;
 	StatWeightValues dtps = 3;
+	StatWeightValues tmi = 5;
+	StatWeightValues p_death = 6;
 }
 message StatWeightValues {
 	UnitStats weights = 1;

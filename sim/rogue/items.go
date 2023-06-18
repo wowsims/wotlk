@@ -7,7 +7,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-var ItemSetGladiatorsVestments = core.NewItemSet(core.ItemSet{
+var Arena = core.NewItemSet(core.ItemSet{
 	Name: "Gladiator's Vestments",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
@@ -21,8 +21,23 @@ var ItemSetGladiatorsVestments = core.NewItemSet(core.ItemSet{
 	},
 })
 
-var ItemSetVanCleefs = core.NewItemSet(core.ItemSet{
-	Name: "VanCleef's Battlegear",
+var Tier10 = core.NewItemSet(core.ItemSet{
+	Name: "Shadowblade's Battlegear",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			// Your Tricks of the Trade now grants you 15 energy instead of costing energy.
+			// Handled in tricks_of_the_trade.go.
+		},
+		4: func(agent core.Agent) {
+			// Gives your melee finishing moves a 13% chance to add 3 combo points to your target.
+			// Handled in the finishing move effect applier
+		},
+	},
+})
+
+var Tier9 = core.NewItemSet(core.ItemSet{
+	Name:            "VanCleef's Battlegear",
+	AlternativeName: "Garona's Battlegear",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
 			// Your Rupture ability has a chance each time it deals damage to reduce the cost of your next ability by 40 energy.
@@ -88,7 +103,7 @@ var ItemSetVanCleefs = core.NewItemSet(core.ItemSet{
 	},
 })
 
-var ItemSetTerrorblade = core.NewItemSet(core.ItemSet{
+var Tier8 = core.NewItemSet(core.ItemSet{
 	Name: "Terrorblade Battlegear",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
@@ -102,21 +117,7 @@ var ItemSetTerrorblade = core.NewItemSet(core.ItemSet{
 	},
 })
 
-var ItemSetShadowblades = core.NewItemSet(core.ItemSet{
-	Name: "Shadowblade's Battlegear",
-	Bonuses: map[int32]core.ApplyEffect{
-		2: func(agent core.Agent) {
-			// Your Tricks of the Trade now grants you 15 energy instead of costing energy.
-			// Handled in tricks_of_the_trade.go.
-		},
-		4: func(agent core.Agent) {
-			// Gives your melee finishing moves a 13% chance to add 3 combo points to your target.
-			// Handled in the finishing move effect applier
-		},
-	},
-})
-
-var ItemSetBonescythe = core.NewItemSet(core.ItemSet{
+var Tier7 = core.NewItemSet(core.ItemSet{
 	Name: "Bonescythe Battlegear",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
@@ -130,7 +131,7 @@ var ItemSetBonescythe = core.NewItemSet(core.ItemSet{
 	},
 })
 
-var ItemSetSlayers = core.NewItemSet(core.ItemSet{
+var Tier6 = core.NewItemSet(core.ItemSet{
 	Name: "Slayer's Armor",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {

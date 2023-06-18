@@ -56,6 +56,10 @@ const (
 	ProcMaskRangedSpecial
 	ProcMaskSpellDamage
 	ProcMaskSpellHealing
+	// Special mask for procs that can trigger things
+	ProcMaskProc
+	// Mask for FT weapon and rogue poisons, seems to be spell procs from a weapon imbue
+	ProcMaskWeaponProc
 )
 
 const (
@@ -81,6 +85,9 @@ const (
 	ProcMaskTwoRoll = ProcMaskRanged | ProcMaskMeleeSpecial
 
 	ProcMaskSpecial = ProcMaskMeleeOrRangedSpecial | ProcMaskSpellDamage
+
+	ProcMaskMeleeOrProc = ProcMaskMelee | ProcMaskProc
+	ProcMaskSpellOrProc = ProcMaskSpellDamage | ProcMaskProc
 )
 
 func GetMeleeProcMaskForHands(mh bool, oh bool) ProcMask {
@@ -193,6 +200,7 @@ const (
 	SpellFlagNoLogs                                         // Disables logs for a spell.
 	SpellFlagAPL                                            // Indicates this spell can be used from an APL rotation.
 	SpellFlagMCD                                            // Indicates this spell is a MajorCooldown.
+	SpellFlagNoOnDamageDealt                                // Disables OnSpellHitDealt and OnPeriodicDamageDealt aura callbacks for this spell.
 
 	// Used to let agents categorize their spells.
 	SpellFlagAgentReserved1

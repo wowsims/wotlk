@@ -36,7 +36,7 @@ func (character *Character) applyProfessionEffects() {
 					Period:   time.Second,
 					NumTicks: 5,
 					OnAction: func(sim *Simulation) {
-						character.GainHealth(sim, amount, healthMetrics)
+						character.GainHealth(sim, amount*character.PseudoStats.HealingTakenMultiplier, healthMetrics)
 					},
 				})
 			},

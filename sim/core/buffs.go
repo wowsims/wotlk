@@ -320,6 +320,7 @@ func applyPetBuffEffects(petAgent PetAgent, raidBuffs *proto.RaidBuffs, partyBuf
 	individualBuffs.RevitalizeWildGrowth = 0
 	individualBuffs.TricksOfTheTrades = 0
 	individualBuffs.ShatteringThrows = 0
+	individualBuffs.FocusMagic = false
 
 	if !petAgent.GetPet().enabledOnStart {
 		raidBuffs.ArcaneBrilliance = false
@@ -777,7 +778,7 @@ func UnholyFrenzyAura(character *Character, actionTag int32) *Aura {
 }
 
 func RegisterPercentDamageModifierEffect(aura *Aura, percentDamageModifier float64) *ExclusiveEffect {
-	return aura.NewExclusiveEffect("PercentDamageModifier", false, ExclusiveEffect{
+	return aura.NewExclusiveEffect("PercentDamageModifier", true, ExclusiveEffect{
 		Priority: percentDamageModifier,
 	})
 }

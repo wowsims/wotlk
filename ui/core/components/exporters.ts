@@ -12,6 +12,7 @@ import { specNames } from '../proto_utils/utils';
 import { downloadString } from '../utils';
 import { BaseModal } from './base_modal';
 import { IndividualWowheadGearPlannerImporter } from './importers';
+import { RaidSimRequest } from '../proto/api';
 
 import * as Mechanics from '../constants/mechanics';
 
@@ -289,6 +290,11 @@ export class Individual80UEPExporter<SpecType extends Spec> extends Exporter {
 		[Stat.StatNatureResistance]: 'natureResistance',
 		[Stat.StatShadowResistance]: 'shadowResistance',
 		[Stat.StatBonusArmor]: 'armorBonus',
+		[Stat.StatRunicPower]: 'runicPower',
+		[Stat.StatBloodRune]: 'bloodRune',
+		[Stat.StatFrostRune]: 'frostRune',
+		[Stat.StatUnholyRune]: 'unholyRune',
+		[Stat.StatDeathRune]: 'deathRune',
 	}
 	static pseudoStatNames: Partial<Record<PseudoStat, string>> = {
 		[PseudoStat.PseudoStatMainHandDps]: 'dps',
@@ -377,9 +383,32 @@ export class IndividualPawnEPExporter<SpecType extends Spec> extends Exporter {
 		[Stat.StatNatureResistance]: 'NatureResistance',
 		[Stat.StatShadowResistance]: 'ShadowResistance',
 		[Stat.StatBonusArmor]: 'Armor2',
+		[Stat.StatRunicPower]: 'RunicPower',
+		[Stat.StatBloodRune]: 'BloodRune',
+		[Stat.StatFrostRune]: 'FrostRune',
+		[Stat.StatUnholyRune]: 'UnholyRune',
+		[Stat.StatDeathRune]: 'DeathRune',
 	}
 	static pseudoStatNames: Partial<Record<PseudoStat, string>> = {
 		[PseudoStat.PseudoStatMainHandDps]: 'MeleeDps',
 		[PseudoStat.PseudoStatRangedDps]: 'RangedDps',
 	}
+}
+
+export class IndividualCLIExporter<SpecType extends Spec> extends Exporter {
+  private readonly simUI: IndividualSimUI<SpecType>;
+
+  constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
+    super(parent, simUI, "CLI Export", true);
+    this.simUI = simUI;
+    this.init();
+  }
+
+  getData(): string {
+    const raidSimJson: any = RaidSimRequest.toJson(
+      this.simUI.sim.makeRaidSimRequest(false)
+    );
+    delete raidSimJson.raid?.parties[0]?.players[0]?.database;
+    return JSON.stringify(raidSimJson, null, 2);
+  }
 }

@@ -184,6 +184,12 @@ message ShamanTotems {
 
 	// If set will use fire totems as an MCD instead of manually controlling when to place them.
 	bool use_fire_mcd = 9;
+
+	// Bonus spell power for fire elemental snapshotting.
+	int32 bonus_spellpower = 10;
+
+	// Snapshot fire elemental using Tier 10 4 set bonus.
+	bool enh_tier_ten_bonus = 11;
 }
 
 enum ShamanShield {

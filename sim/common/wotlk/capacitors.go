@@ -87,9 +87,10 @@ func init() {
 		MaxStacks: 4,
 		Trigger: core.ProcTrigger{
 			Callback: core.CallbackOnSpellHitDealt,
-			ProcMask: core.ProcMaskSpellDamage,
+			ProcMask: core.ProcMaskSpellOrProc | core.ProcMaskWeaponProc,
 			Outcome:  core.OutcomeCrit,
 			ICD:      time.Millisecond * 2500,
+			ActionID: core.ActionID{ItemID: 38072},
 		},
 		School: core.SpellSchoolNature,
 		MinDmg: 1181,
@@ -101,9 +102,10 @@ func init() {
 		MaxStacks: 3,
 		Trigger: core.ProcTrigger{
 			Callback: core.CallbackOnSpellHitDealt,
-			ProcMask: core.ProcMaskSpellDamage,
+			ProcMask: core.ProcMaskSpellOrProc | core.ProcMaskWeaponProc,
 			Outcome:  core.OutcomeCrit,
 			ICD:      time.Millisecond * 2000,
+			ActionID: core.ActionID{ItemID: 47182},
 		},
 		School: core.SpellSchoolFire,
 		MinDmg: 1741,
@@ -115,9 +117,10 @@ func init() {
 		MaxStacks: 3,
 		Trigger: core.ProcTrigger{
 			Callback: core.CallbackOnSpellHitDealt,
-			ProcMask: core.ProcMaskSpellDamage,
+			ProcMask: core.ProcMaskSpellOrProc | core.ProcMaskWeaponProc,
 			Outcome:  core.OutcomeCrit,
 			ICD:      time.Millisecond * 2000,
+			ActionID: core.ActionID{ItemID: 47188},
 		},
 		School: core.SpellSchoolFire,
 		MinDmg: 1959,
@@ -132,9 +135,10 @@ func init() {
 		MaxStacks: 3,
 		Trigger: core.ProcTrigger{
 			Callback: core.CallbackOnSpellHitDealt,
-			ProcMask: core.ProcMaskSpellDamage,
+			ProcMask: core.ProcMaskSpellOrProc | core.ProcMaskWeaponProc,
 			Outcome:  core.OutcomeCrit,
 			ICD:      time.Millisecond * 2000,
+			ActionID: core.ActionID{ItemID: 47316},
 		},
 		School: core.SpellSchoolFire,
 		MinDmg: 1741,
@@ -146,9 +150,10 @@ func init() {
 		MaxStacks: 3,
 		Trigger: core.ProcTrigger{
 			Callback: core.CallbackOnSpellHitDealt,
-			ProcMask: core.ProcMaskSpellDamage,
+			ProcMask: core.ProcMaskSpellOrProc | core.ProcMaskWeaponProc,
 			Outcome:  core.OutcomeCrit,
 			ICD:      time.Millisecond * 2000,
+			ActionID: core.ActionID{ItemID: 47477},
 		},
 		School: core.SpellSchoolFire,
 		MinDmg: 1959,
@@ -230,15 +235,16 @@ func init() {
 			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:       name + " Trigger",
 				Callback:   core.CallbackOnSpellHitDealt,
-				ProcMask:   core.ProcMaskMelee,
+				ProcMask:   core.ProcMaskMeleeOrProc,
 				Outcome:    core.OutcomeLanded,
+				ActionID:   core.ActionID{ItemID: itemID},
 				ProcChance: 0.5,
 				Handler: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 					if spell == mhSpell || spell == ohSpell { // can't proc itself
 						return
 					}
 					if !capacitorAura.IsActive() {
-						if spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
+						if spell.ProcMask.Matches(core.ProcMaskMeleeMH | core.ProcMaskProc) {
 							firstProc = core.MainHand
 						} else {
 							firstProc = core.OffHand

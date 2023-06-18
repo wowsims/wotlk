@@ -72,27 +72,33 @@ func (swv StatWeightValues) ToProto() *proto.StatWeightValues {
 }
 
 type StatWeightsResult struct {
-	Dps  StatWeightValues
-	Hps  StatWeightValues
-	Tps  StatWeightValues
-	Dtps StatWeightValues
+	Dps    StatWeightValues
+	Hps    StatWeightValues
+	Tps    StatWeightValues
+	Dtps   StatWeightValues
+	Tmi    StatWeightValues
+	PDeath StatWeightValues
 }
 
 func NewStatWeightsResult() StatWeightsResult {
 	return StatWeightsResult{
-		Dps:  NewStatWeightValues(),
-		Hps:  NewStatWeightValues(),
-		Tps:  NewStatWeightValues(),
-		Dtps: NewStatWeightValues(),
+		Dps:    NewStatWeightValues(),
+		Hps:    NewStatWeightValues(),
+		Tps:    NewStatWeightValues(),
+		Dtps:   NewStatWeightValues(),
+		Tmi:    NewStatWeightValues(),
+		PDeath: NewStatWeightValues(),
 	}
 }
 
 func (swr StatWeightsResult) ToProto() *proto.StatWeightsResult {
 	return &proto.StatWeightsResult{
-		Dps:  swr.Dps.ToProto(),
-		Hps:  swr.Hps.ToProto(),
-		Tps:  swr.Tps.ToProto(),
-		Dtps: swr.Dtps.ToProto(),
+		Dps:    swr.Dps.ToProto(),
+		Hps:    swr.Hps.ToProto(),
+		Tps:    swr.Tps.ToProto(),
+		Dtps:   swr.Dtps.ToProto(),
+		Tmi:    swr.Tmi.ToProto(),
+		PDeath: swr.PDeath.ToProto(),
 	}
 }
 
@@ -227,7 +233,7 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, referenceStat stats.Stat, pro
 		if stat.EqualsStat(stats.Expertise) {
 			// Expertise is non-linear, so adjust in increments that match the stepwise reduction.
 			statMod = ExpertisePerQuarterPercentReduction
-		} else if stat.EqualsStat(stats.Armor) {
+		} else if stat.EqualsStat(stats.Armor) || stat.EqualsStat(stats.BonusArmor) {
 			statMod = defaultStatMod * 10
 		}
 		statModsHigh[stat] = statMod
@@ -271,7 +277,7 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, referenceStat stats.Stat, pro
 
 		// Check for hard caps. Hard caps will have results identical to the baseline because RNG is fixed.
 		// When we find a hard-capped stat, just skip it (will return 0).
-		if modPlayerHigh.Dps.Avg == baselinePlayer.Dps.Avg && modPlayerHigh.Hps.Avg == baselinePlayer.Hps.Avg {
+		if modPlayerHigh.Dps.Avg == baselinePlayer.Dps.Avg && modPlayerHigh.Hps.Avg == baselinePlayer.Hps.Avg && modPlayerHigh.Tmi.Avg == baselinePlayer.Tmi.Avg {
 			continue
 		}
 
@@ -297,6 +303,11 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, referenceStat stats.Stat, pro
 		calcWeightResults(baselinePlayer.Hps, modPlayerLow.Hps, modPlayerHigh.Hps, &result.Hps)
 		calcWeightResults(baselinePlayer.Threat, modPlayerLow.Threat, modPlayerHigh.Threat, &result.Tps)
 		calcWeightResults(baselinePlayer.Dtps, modPlayerLow.Dtps, modPlayerHigh.Dtps, &result.Dtps)
+		calcWeightResults(baselinePlayer.Tmi, modPlayerLow.Tmi, modPlayerHigh.Tmi, &result.Tmi)
+		meanLow := (modPlayerLow.ChanceOfDeath - baselinePlayer.ChanceOfDeath) / statModsLow[stat]
+		meanHigh := (modPlayerHigh.ChanceOfDeath - baselinePlayer.ChanceOfDeath) / statModsHigh[stat]
+		result.PDeath.Weights.AddStat(stat, (meanLow+meanHigh)/2)
+		result.PDeath.WeightsStdev.AddStat(stat, 0)
 	}
 
 	// Compute EP results.
@@ -320,6 +331,8 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, referenceStat stats.Stat, pro
 		calcEpResults(&result.Hps, referenceStat)
 		calcEpResults(&result.Tps, referenceStat)
 		calcEpResults(&result.Dtps, DTPSReferenceStat)
+		calcEpResults(&result.Tmi, DTPSReferenceStat)
+		calcEpResults(&result.PDeath, DTPSReferenceStat)
 	}
 
 	return result

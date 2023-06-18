@@ -25,6 +25,7 @@ type ItemSwap struct {
 
 	// Holds items that are currently not equipped
 	unEquippedItems [3]Item
+	swapped         bool
 }
 
 /*
@@ -41,6 +42,7 @@ func (character *Character) EnableItemSwap(itemSwap *proto.ItemSwap, mhCritMulti
 		ohCritMultiplier:     ohCritMultiplier,
 		rangedCritMultiplier: rangedCritMultiplier,
 		unEquippedItems:      items,
+		swapped:              false,
 	}
 }
 
@@ -88,6 +90,10 @@ func (swap *ItemSwap) RegisterOnSwapItemForEffect(effectID int32, aura *Aura) {
 
 func (swap *ItemSwap) IsEnabled() bool {
 	return swap.character != nil
+}
+
+func (swap *ItemSwap) IsSwapped() bool {
+	return swap.swapped
 }
 
 func (swap *ItemSwap) GetItem(slot proto.ItemSlot) *Item {
@@ -148,6 +154,7 @@ func (swap *ItemSwap) SwapItems(sim *Simulation, slots []proto.ItemSlot, useGCD 
 	if useGCD {
 		character.SetGCDTimer(sim, 1500*time.Millisecond+sim.CurrentTime)
 	}
+	swap.swapped = !swap.swapped
 }
 
 func (swap *ItemSwap) swapItem(slot proto.ItemSlot, has2H bool) (bool, stats.Stats) {
@@ -231,6 +238,7 @@ func (swap *ItemSwap) reset(sim *Simulation) {
 	}
 
 	swap.unEquippedItems = swap.initialUnequippedItems
+	swap.swapped = false
 
 	for _, onSwap := range swap.onSwapCallbacks {
 		onSwap(sim)

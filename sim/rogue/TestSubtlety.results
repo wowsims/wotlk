@@ -182,15 +182,15 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-AllItems-DarkmoonCard:Greatness-44255"
  value: {
-  dps: 8228.13015
-  tps: 5840.03271
+  dps: 8226.78047
+  tps: 5839.07444
  }
 }
 dps_results: {
  key: "TestSubtlety-AllItems-Death'sChoice-47464"
  value: {
-  dps: 8613.02395
-  tps: 6112.33016
+  dps: 8626.57355
+  tps: 6121.95037
  }
 }
 dps_results: {
@@ -231,8 +231,8 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 8250.90669
-  tps: 5856.60201
+  dps: 8235.29856
+  tps: 5845.09976
  }
 }
 dps_results: {
@@ -463,8 +463,8 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-AllItems-NevermeltingIceCrystal-50259"
  value: {
-  dps: 8114.78252
-  tps: 5757.12007
+  dps: 8209.48275
+  tps: 5825.90954
  }
 }
 dps_results: {

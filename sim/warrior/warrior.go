@@ -11,20 +11,22 @@ import (
 var TalentTreeSizes = [3]int{31, 27, 27}
 
 type WarriorInputs struct {
-	ShoutType            proto.WarriorShout
-	PrecastShout         bool
-	PrecastShoutSapphire bool
-	PrecastShoutT2       bool
-	RendCdThreshold      time.Duration
-	Munch                bool
-	StanceSnapshot       bool
+	ShoutType                   proto.WarriorShout
+	PrecastShout                bool
+	PrecastShoutSapphire        bool
+	PrecastShoutT2              bool
+	RendCdThreshold             time.Duration
+	BloodsurgeDurationThreshold time.Duration
+	Munch                       bool
+	StanceSnapshot              bool
 }
 
 const (
-	SpellFlagBloodsurge = core.SpellFlagAgentReserved1
-	ArmsTree            = 0
-	FuryTree            = 1
-	ProtTree            = 2
+	SpellFlagBloodsurge  = core.SpellFlagAgentReserved1
+	SpellFlagWhirlwindOH = core.SpellFlagAgentReserved2
+	ArmsTree             = 0
+	FuryTree             = 1
+	ProtTree             = 2
 )
 
 type Warrior struct {
@@ -35,19 +37,20 @@ type Warrior struct {
 	WarriorInputs
 
 	// Current state
-	Stance                Stance
-	overpowerValidUntil   time.Duration
-	rendValidUntil        time.Duration
-	shoutExpiresAt        time.Duration
-	revengeProcAura       *core.Aura
-	lastTasteForBloodProc time.Duration
-	Ymirjar4pcProcAura    *core.Aura
+	Stance               Stance
+	RendValidUntil       time.Duration
+	BloodsurgeValidUntil time.Duration
+	shoutExpiresAt       time.Duration
+	revengeProcAura      *core.Aura
+	Ymirjar4pcProcAura   *core.Aura
 
 	munchedDeepWoundsProcs []*core.PendingAction
 
 	// Reaction time values
 	reactionTime       time.Duration
 	lastBloodsurgeProc time.Duration
+	lastOverpowerProc  time.Duration
+	LastAMTick         time.Duration
 
 	// Cached values
 	shoutDuration time.Duration
@@ -82,6 +85,7 @@ type Warrior struct {
 
 	HeroicStrikeOrCleave     *core.Spell
 	HSOrCleaveQueueAura      *core.Aura
+	OverpowerAura            *core.Aura
 	HSRageThreshold          float64
 	RendRageThresholdBelow   float64
 	RendHealthThresholdAbove float64
@@ -164,8 +168,7 @@ func (warrior *Warrior) Initialize() {
 }
 
 func (warrior *Warrior) Reset(_ *core.Simulation) {
-	warrior.overpowerValidUntil = 0
-	warrior.rendValidUntil = 0
+	warrior.RendValidUntil = 0
 
 	warrior.shoutExpiresAt = 0
 	if warrior.Shout != nil && warrior.PrecastShout {
@@ -190,6 +193,7 @@ func NewWarrior(character core.Character, talents string, inputs WarriorInputs) 
 	warrior.AddStatDependency(stats.Agility, stats.Dodge, core.DodgeRatingPerDodgeChance/84.746)
 	warrior.AddStatDependency(stats.Strength, stats.AttackPower, 2)
 	warrior.AddStatDependency(stats.Strength, stats.BlockValue, .5) // 50% block from str
+	warrior.AddStatDependency(stats.BonusArmor, stats.Armor, 1)
 
 	// Base dodge unaffected by Diminishing Returns
 	warrior.PseudoStats.BaseDodge += 0.03664

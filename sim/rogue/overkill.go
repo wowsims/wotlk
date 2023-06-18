@@ -28,7 +28,7 @@ func (rogue *Rogue) registerOverkillCD() {
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    rogue.NewTimer(),
-				Duration: time.Minute * 3,
+				Duration: time.Second * time.Duration(180-30*rogue.Talents.Elusiveness),
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {

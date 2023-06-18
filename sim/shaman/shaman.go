@@ -41,13 +41,20 @@ func NewShaman(character core.Character, talents string, totems *proto.ShamanTot
 	shaman.AddStatDependency(stats.Strength, stats.AttackPower, 1)
 	shaman.AddStatDependency(stats.Agility, stats.AttackPower, 1)
 	shaman.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/83.3)
+	shaman.AddStatDependency(stats.BonusArmor, stats.Armor, 1)
 	// Set proper Melee Haste scaling
 	shaman.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
 
 	if selfBuffs.Shield == proto.ShamanShield_WaterShield {
 		shaman.AddStat(stats.MP5, 100)
 	}
-	shaman.FireElemental = shaman.NewFireElemental()
+
+	// When using the tier bonus for snapshotting we do not use the bonus spell
+	if totems.EnhTierTenBonus {
+		totems.BonusSpellpower = 0
+	}
+
+	shaman.FireElemental = shaman.NewFireElemental(float64(totems.BonusSpellpower))
 	return shaman
 }
 
@@ -219,6 +226,8 @@ func (shaman *Shaman) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 }
 
 func (shaman *Shaman) Initialize() {
+	enableSnapshot := shaman.Totems.BonusSpellpower == 0
+
 	shaman.registerChainLightningSpell()
 	shaman.registerFeralSpirit()
 	shaman.registerFireElementalTotem()
@@ -244,13 +253,21 @@ func (shaman *Shaman) Initialize() {
 
 	shaman.registerBloodlustCD()
 
-	if shaman.Totems.UseFireElemental {
+	if shaman.Totems.UseFireElemental && enableSnapshot {
 		shaman.fireElementalSnapShot = core.NewSnapshotManager(shaman.GetCharacter())
 		shaman.setupProcTrackers()
 	}
 
 	if shaman.Talents.SpiritWeapons {
 		shaman.PseudoStats.ThreatMultiplier -= 0.3
+	}
+
+	// Healing stream totem applies a HoT (aura) and so needs to be handled as a pre-pull action
+	// instead of during init/reset.
+	if shaman.Totems.Water == proto.WaterTotem_HealingStreamTotem {
+		shaman.RegisterPrepullAction(0, func(sim *core.Simulation) {
+			shaman.HealingStreamTotem.Cast(sim, &shaman.Unit)
+		})
 	}
 }
 
@@ -306,7 +323,8 @@ func (shaman *Shaman) Reset(sim *core.Simulation) {
 		case FireTotem:
 			shaman.NextTotemDropType[FireTotem] = int32(shaman.Totems.Fire)
 			if shaman.NextTotemDropType[FireTotem] != int32(proto.FireTotem_NoFireTotem) {
-				if shaman.NextTotemDropType[FireTotem] != int32(proto.FireTotem_TotemOfWrath) && shaman.NextTotemDropType[FireTotem] != int32(proto.FireTotem_FlametongueTotem) {
+				if shaman.NextTotemDropType[FireTotem] != int32(proto.FireTotem_TotemOfWrath) &&
+					shaman.NextTotemDropType[FireTotem] != int32(proto.FireTotem_FlametongueTotem) {
 					if !shaman.Totems.UseFireMcd {
 						shaman.NextTotemDrops[FireTotem] = 0
 					}
@@ -319,11 +337,7 @@ func (shaman *Shaman) Reset(sim *core.Simulation) {
 			}
 		case WaterTotem:
 			shaman.NextTotemDropType[i] = int32(shaman.Totems.Water)
-			if shaman.Totems.Water == proto.WaterTotem_ManaSpringTotem {
-				shaman.NextTotemDrops[i] = TotemRefreshTime5M
-			} else if shaman.Totems.Water == proto.WaterTotem_HealingStreamTotem {
-				shaman.NextTotemDrops[i] = 0
-			}
+			shaman.NextTotemDrops[i] = TotemRefreshTime5M
 		}
 	}
 
@@ -386,9 +400,16 @@ func (shaman *Shaman) setupProcTrackers() {
 	snapshotManager.AddProc(71561, "Deathbringer's Will H Agility Proc", false)
 	snapshotManager.AddProc(71492, "Deathbringer's Will AP Proc", false)
 	snapshotManager.AddProc(71561, "Deathbringer's Will H AP Proc", false)
+
+	// Tier Bonus
+	snapshotManager.AddProc(70831, "Maelstrom Power", false)
 }
 
 func (shaman *Shaman) setupFireElementalCooldowns() {
+	if shaman.fireElementalSnapShot == nil {
+		return
+	}
+
 	shaman.fireElementalSnapShot.ClearMajorCooldowns()
 
 	// blood fury (orc)
