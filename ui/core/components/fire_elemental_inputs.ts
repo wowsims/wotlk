@@ -36,8 +36,8 @@ export function FireElementalSection(parentElem: HTMLElement, simUI: IndividualS
 
     new NumberPicker(contentBlock.bodyElement, simUI.player, {
         positive: true,
-        label: "Bonus Spellpower",
-		labelTooltip: "Bonus Spellpower to snapshot Fire Elemental with. Will prioritize dropping Fire Elemental if greater then 0",
+        label: "Bonus spell power",
+		labelTooltip: "Bonus spell power to snapshot Fire Elemental with. Will prioritize dropping Fire Elemental if greater then 0",
 		inline: true,
         getValue: (player: Player<ShamanSpecs>) =>  player.getRotation().totems?.bonusSpellpower || 0,
 		setValue: (eventID: EventID, player: Player<ShamanSpecs>, newVal: number) => {
