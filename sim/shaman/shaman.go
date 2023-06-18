@@ -397,6 +397,9 @@ func (shaman *Shaman) setupProcTrackers() {
 	snapshotManager.AddProc(71561, "Deathbringer's Will H Agility Proc", false)
 	snapshotManager.AddProc(71492, "Deathbringer's Will AP Proc", false)
 	snapshotManager.AddProc(71561, "Deathbringer's Will H AP Proc", false)
+
+	// Tier Bonus
+	snapshotManager.AddProc(70831, "Maelstrom Power", false)
 }
 
 func (shaman *Shaman) setupFireElementalCooldowns() {
