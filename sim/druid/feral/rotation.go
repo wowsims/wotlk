@@ -776,8 +776,8 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 	cat.Rotation.UseRake = true
 	cat.Rotation.UseBite = true
 
-	cat.Rotation.RipLeeway = 3 * time.Second
-	cat.Rotation.MaxFfDelay = 700 * time.Millisecond
+	cat.Rotation.RipLeeway = 4 * time.Second
+	cat.Rotation.MaxFfDelay = 100 * time.Millisecond
 
 	if cat.Rotation.RotationType == proto.FeralDruid_Rotation_Aoe {
 		cat.Rotation.FlowerWeave = true
@@ -787,7 +787,7 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 		if hasT84P {
 			cat.Rotation.MinRoarOffset = 34 * time.Second
 		} else {
-			cat.Rotation.MinRoarOffset = 24 * time.Second
+			cat.Rotation.MinRoarOffset = 25 * time.Second
 		}
 		cat.Rotation.BiteTime = 4 * time.Second
 	} else {

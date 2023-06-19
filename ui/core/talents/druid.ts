@@ -89,6 +89,11 @@ export const druidGlyphsConfig: GlyphsConfig = {
 			description: 'Increases the periodic damage of your Moonfire ability by 75%, but initial damage is decreased by 90%.',
 			iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/spell_nature_starfall.jpg',
 		},
+		[DruidMajorGlyph.GlyphOfOmenOfClarity]: {
+			name: 'Glyph of Omen of Clarity',
+			description: 'Your Omen of Clarity talent has a 100% chance to be triggered by successfully casting Faerie Fire (Feral). Does not trigger on players or player-controlled pets.',
+			iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/spell_nature_faeriefire.jpg',
+		},
 		[DruidMajorGlyph.GlyphOfNourish]: {
 			name: 'Glyph of Nourish',
 			description: 'Your Nourish heals an additional 6% for each of your heal over time effects present on the target.',

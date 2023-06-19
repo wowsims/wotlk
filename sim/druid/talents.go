@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -348,6 +349,8 @@ func (druid *Druid) applyOmenOfClarity() {
 		}
 	}
 
+	hasOocGlyph := druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfOmenOfClarity)
+
 	druid.RegisterAura(core.Aura{
 		Label:    "Omen of Clarity",
 		Duration: core.NeverExpires,
@@ -397,7 +400,7 @@ func (druid *Druid) applyOmenOfClarity() {
 			}
 		},
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if spell == druid.FaerieFire && druid.InForm(Cat|Bear) {
+			if spell == druid.FaerieFire && druid.InForm(Cat|Bear) && hasOocGlyph {
 				druid.ProcOoc(sim)
 			}
 			if spell == druid.GiftOfTheWild {

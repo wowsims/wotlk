@@ -29,7 +29,7 @@ export const StandardTalents = {
 	data: SavedTalents.create({
 		talentsString: '-543202132322010053120030310511-203503012',
 		glyphs: Glyphs.create({
-			major1: DruidMajorGlyph.GlyphOfRip,
+			major1: DruidMajorGlyph.GlyphOfOmenOfClarity,
 			major2: DruidMajorGlyph.GlyphOfSavageRoar,
 			major3: DruidMajorGlyph.GlyphOfShred,
 			minor1: DruidMinorGlyph.GlyphOfDash,
@@ -61,7 +61,7 @@ export const DefaultRotation = FeralDruidRotation.create({
 	snekWeave: false,
 	flowerWeave: false,
 	raidTargets: 30,
-	maxFfDelay: 0.7,
+	maxFfDelay: 0.1,
 });
 
 export const DefaultOptions = FeralDruidOptions.create({
@@ -366,5 +366,119 @@ export const P2_PRESET = {
 		{
 			"id": 40713
 		}
+	]}`),
+};
+
+export const P3_PRESET = {
+	name: 'P3 Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 48204,
+			"enchant": 3817,
+			"gems": [
+			  41398,
+			  40146
+			]
+		  },
+		  {
+			"id": 47060,
+			"gems": [
+			  40117
+			]
+		  },
+		  {
+			"id": 48207,
+			"enchant": 3808,
+			"gems": [
+			  40146
+			]
+		  },
+		  {
+			"id": 47545,
+			"enchant": 3605,
+			"gems": [
+			  40117
+			]
+		  },
+		  {
+			"id": 48206,
+			"enchant": 3832,
+			"gems": [
+			  40117,
+			  40146
+			]
+		  },
+		  {
+			"id": 45611,
+			"enchant": 3845,
+			"gems": [
+			  40146,
+			  0
+			]
+		  },
+		  {
+			"id": 47945,
+			"enchant": 3604,
+			"gems": [
+			  40112,
+			  40117,
+			  0
+			]
+		  },
+		  {
+			"id": 47112,
+			"gems": [
+			  40146,
+			  40117,
+			  40117
+			]
+		  },
+		  {
+			"id": 48205,
+			"enchant": 3823,
+			"gems": [
+			  40117,
+			  49110
+			]
+		  },
+		  {
+			"id": 47077,
+			"enchant": 3606,
+			"gems": [
+			  40146,
+			  40117
+			]
+		  },
+		  {
+			"id": 47075,
+			"gems": [
+			  40117
+			]
+		  },
+		  {
+			"id": 45608,
+			"gems": [
+			  40117
+			]
+		  },
+		  {
+			"id": 45931
+		  },
+		  {
+			"id": 47131
+		  },
+		  {
+			"id": 47239,
+			"enchant": 3789,
+			"gems": [
+			  40146,
+			  40117
+			]
+		  },
+		  {},
+		  {
+			"id": 47668
+		  }
 	]}`),
 };

@@ -139,7 +139,7 @@ func BenchmarkSimulate(b *testing.B) {
 
 var StandardTalents = "-503202132322010053120230310511-205503012"
 var StandardGlyphs = &proto.Glyphs{
-	Major1: int32(proto.DruidMajorGlyph_GlyphOfRip),
+	Major1: int32(proto.DruidMajorGlyph_GlyphOfOmenOfClarity),
 	Major2: int32(proto.DruidMajorGlyph_GlyphOfShred),
 	Major3: int32(proto.DruidMajorGlyph_GlyphOfBerserk),
 	Minor1: int32(proto.DruidMinorGlyph_GlyphOfTheWild),
