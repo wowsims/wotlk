@@ -531,15 +531,11 @@ export class Player<SpecType extends Spec> {
 		this.rotationChangeEmitter.emit(eventID);
 	}
 
-	getAplRotation(): APLRotation {
-		return APLRotation.clone(this.aplRotation);
-	}
-
 	setAplRotation(eventID: EventID, newRotation: APLRotation) {
 		if (APLRotation.equals(newRotation, this.aplRotation))
 			return;
 
-		this.aplRotation = APLRotation.clone(newRotation);
+		this.aplRotation = newRotation;
 		this.rotationChangeEmitter.emit(eventID);
 	}
 

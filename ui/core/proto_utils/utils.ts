@@ -10,7 +10,6 @@ import { ResourceType } from '../proto/api.js';
 import { ArmorType } from '../proto/common.js';
 import { Class } from '../proto/common.js';
 import { EnchantType } from '../proto/common.js';
-import { GemColor } from '../proto/common.js';
 import { HandType } from '../proto/common.js';
 import { ItemSlot } from '../proto/common.js';
 import { ItemType } from '../proto/common.js';

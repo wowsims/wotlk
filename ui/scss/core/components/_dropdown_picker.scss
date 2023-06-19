@@ -1,0 +1,9 @@
+.dropdown-picker-list {
+    max-height: 30vh;
+    overflow-y: auto;
+}
+
+.dropdown-picker-button, .dropdown-picker-item>.dropdown-item {
+    display: flex;
+    align-items: center;
+}
