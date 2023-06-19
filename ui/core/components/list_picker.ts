@@ -169,9 +169,9 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 		const itemElem = itemContainer.getElementsByClassName('list-picker-item')[0] as HTMLElement;
 		const itemPicker = this.config.newItemPicker(itemElem, this, index, {
 			changedEvent: this.config.changedEvent,
-			getValue: (modObj: ModObject) => this.config.getValue(modObj)[index],
+			getValue: (modObj: ModObject) => this.getSourceValue()[index],
 			setValue: (eventID: EventID, modObj: ModObject, newValue: ItemType) => {
-				const newList = this.config.getValue(modObj);
+				const newList = this.getSourceValue();
 				newList[index] = newValue;
 				this.config.setValue(eventID, modObj, newList);
 			},

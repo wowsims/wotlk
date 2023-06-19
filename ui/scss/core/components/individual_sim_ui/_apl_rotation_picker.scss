@@ -1,3 +1,7 @@
+@import "../dropdown_picker";
+
+@import "./apl_helpers";
+
 .apl-rotation-picker-root {
 	.input-root.apl-list-item-picker {
 		flex-wrap: wrap;
@@ -29,5 +33,14 @@
 
 	.number-picker-input {
 		width: 100% !important;
+	}
+}
+
+.apl-action-picker-root {
+	flex-direction: row;
+	margin: 2px;
+
+	.input-root {
+		margin: 0;
 	}
 }

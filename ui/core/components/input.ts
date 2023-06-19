@@ -51,7 +51,7 @@ export abstract class Input<ModObject, T> extends Component {
 		if (config.label) this.rootElem.appendChild(this.buildLabel(config));
 
 		config.changedEvent(this.modObject).on(eventID => {
-			this.setInputValue(config.getValue(this.modObject));
+			this.setInputValue(this.inputConfig.getValue(this.modObject));
 			this.update();
 		});
 	}
@@ -112,6 +112,10 @@ export abstract class Input<ModObject, T> extends Component {
 	abstract getInputValue(): T;
 
 	abstract setInputValue(newValue: T): void;
+
+	protected getSourceValue(): T {
+		return this.inputConfig.getValue(this.modObject);
+	}
 
 	// Child classes should call this method when the value in the input element changes.
 	inputChanged(eventID: EventID) {
