@@ -29,7 +29,7 @@ export const StandardTalents = {
 	data: SavedTalents.create({
 		talentsString: '-543202132322010053120030310511-203503012',
 		glyphs: Glyphs.create({
-			major1: DruidMajorGlyph.GlyphOfRip,
+			major1: DruidMajorGlyph.GlyphOfOmenOfClarity,
 			major2: DruidMajorGlyph.GlyphOfSavageRoar,
 			major3: DruidMajorGlyph.GlyphOfShred,
 			minor1: DruidMinorGlyph.GlyphOfDash,
@@ -61,7 +61,7 @@ export const DefaultRotation = FeralDruidRotation.create({
 	snekWeave: false,
 	flowerWeave: false,
 	raidTargets: 30,
-	maxFfDelay: 0.7,
+	maxFfDelay: 0.1,
 });
 
 export const DefaultOptions = FeralDruidOptions.create({

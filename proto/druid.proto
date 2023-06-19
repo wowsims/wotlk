@@ -117,6 +117,7 @@ enum DruidMajorGlyph {
 	GlyphOfMonsoon = 45622;
 	GlyphOfMoonfire = 40923;
 	GlyphOfNourish = 45603;
+	GlyphOfOmenOfClarity = 206580;
 	GlyphOfRake = 40903;
 	GlyphOfRapidRejuvenation = 50125;
 	GlyphOfRebirth = 40909;
