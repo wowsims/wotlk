@@ -1101,7 +1101,14 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, gcd tim
 			numTicks = 3
 		}
 	}
-
+	if sim.Log != nil {
+		spriest.Log(sim, "c_ticks %d", numTicks)
+		//spriest.Log(sim, "nextCD %d", nextCD)
+		//spriest.Log(sim, "tickLength %d", tickLength)
+	}
+	if numTicks >= 3 {
+		numTicks = 3
+	}
 	return numTicks
 }
 
