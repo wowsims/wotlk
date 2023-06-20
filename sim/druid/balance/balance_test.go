@@ -59,7 +59,7 @@ func TestBalancePhase3(t *testing.T) {
 		Glyphs: &proto.Glyphs{
 			Major1: int32(proto.DruidMajorGlyph_GlyphOfStarfire),
 			Major2: int32(proto.DruidMajorGlyph_GlyphOfMoonfire),
-			Major3: int32(proto.DruidMajorGlyph_GlyphOfStarfire),
+			Major3: int32(proto.DruidMajorGlyph_GlyphOfStarfall),
 		},
 		Consumes: FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Default", SpecOptions: &proto.Player_BalanceDruid{
@@ -78,6 +78,19 @@ func TestBalancePhase3(t *testing.T) {
 					PlayerLatency:      200,
 				},
 			}}},
+		ItemFilter: core.ItemFilter{
+			WeaponTypes: []proto.WeaponType{
+				proto.WeaponType_WeaponTypeDagger,
+				proto.WeaponType_WeaponTypeMace,
+				proto.WeaponType_WeaponTypeOffHand,
+				proto.WeaponType_WeaponTypeStaff,
+				proto.WeaponType_WeaponTypePolearm,
+			},
+			ArmorType: proto.ArmorType_ArmorTypeLeather,
+			RangedWeaponTypes: []proto.RangedWeaponType{
+				proto.RangedWeaponType_RangedWeaponTypeIdol,
+			},
+		},
 	}))
 }
 

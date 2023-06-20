@@ -135,6 +135,14 @@ export const BalanceDruidRotationConfig = {
 			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecBalanceDruid>({
+			fieldName: 'okfPpm',
+			label: 'Owlkin Frenzy PPM',
+			labelTooltip: 'Amount of Owlkin Frenzy procs per minute.',
+			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual && player.getTalents().owlkinFrenzy > 0,
+			float: true,
+			positive: true,
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecBalanceDruid>({
 			fieldName: 'playerLatency',
 			label: 'Player latency',
 			labelTooltip: 'Time before the player reacts to an eclipse proc, in milliseconds.',

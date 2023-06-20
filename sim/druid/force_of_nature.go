@@ -82,7 +82,7 @@ func (druid *Druid) NewTreant() *TreantPet {
 			BaseDamageMax:  357,
 			SwingSpeed:     2,
 			SwingDuration:  time.Second * 2,
-			CritMultiplier: 2,
+			CritMultiplier: druid.BalanceCritMultiplier(),
 		},
 		AutoSwingMelee: true,
 	})
