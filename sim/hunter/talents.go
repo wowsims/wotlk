@@ -68,7 +68,7 @@ func (hunter *Hunter) ApplyTalents() {
 			hunterBonus = 0.1
 			petBonus = 0.2
 		}
-		hunter.AddStat(stats.Armor, hunter.Equip.Stats()[stats.Armor]*hunterBonus)
+		hunter.AddStat(stats.Armor, hunter.EquipStats()[stats.Armor]*hunterBonus)
 		if hunter.pet != nil {
 			hunter.pet.MultiplyStat(stats.Armor, 1.0+petBonus)
 		}

@@ -140,7 +140,7 @@ func (druid *Druid) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 }
 
 func (druid *Druid) ScaleBaseArmor(multiplier float64) float64 {
-	return druid.Equip.Stats()[stats.Armor] * multiplier
+	return druid.EquipStats()[stats.Armor] * multiplier
 }
 
 func (druid *Druid) BalanceCritMultiplier() float64 {

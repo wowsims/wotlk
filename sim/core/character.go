@@ -50,6 +50,13 @@ type Character struct {
 	// Base stats for this Character.
 	baseStats stats.Stats
 
+	// Bonus stats for this Character, specified in the UI and/or EP
+	// calculator
+	bonusStats       stats.Stats
+	bonusMHDps       float64
+	bonusOHDps       float64
+	bonusRangedDps   float64
+
 	professions [2]proto.Profession
 
 	glyphs            [6]int32
@@ -131,13 +138,16 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 
 	if player.BonusStats != nil {
 		if player.BonusStats.Stats != nil {
-			character.AddStats(stats.FromFloatArray(player.BonusStats.Stats))
+			character.bonusStats = stats.FromFloatArray(player.BonusStats.Stats)
 		}
 		if player.BonusStats.PseudoStats != nil {
 			ps := player.BonusStats.PseudoStats
-			character.PseudoStats.BonusMHDps += ps[proto.PseudoStat_PseudoStatMainHandDps]
-			character.PseudoStats.BonusOHDps += ps[proto.PseudoStat_PseudoStatOffHandDps]
-			character.PseudoStats.BonusRangedDps += ps[proto.PseudoStat_PseudoStatRangedDps]
+			character.bonusMHDps = ps[proto.PseudoStat_PseudoStatMainHandDps]
+			character.bonusOHDps = ps[proto.PseudoStat_PseudoStatOffHandDps]
+			character.bonusRangedDps = ps[proto.PseudoStat_PseudoStatRangedDps]
+			character.PseudoStats.BonusMHDps += character.bonusMHDps
+			character.PseudoStats.BonusOHDps += character.bonusOHDps
+			character.PseudoStats.BonusRangedDps += character.bonusRangedDps
 		}
 	}
 
@@ -149,6 +159,10 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 	character.PseudoStats.InFrontOfTarget = player.InFrontOfTarget
 
 	return character
+}
+
+func (character *Character) EquipStats() stats.Stats {
+	return character.Equip.Stats().Add(character.bonusStats)
 }
 
 func (character *Character) addUniversalStatDependencies() {
@@ -172,7 +186,7 @@ func (character *Character) applyAllEffects(agent Agent, raidBuffs *proto.RaidBu
 	character.applyBuildPhaseAuras(CharacterBuildPhaseBase)
 	playerStats.BaseStats = measureStats()
 
-	character.AddStats(character.Equip.Stats())
+	character.AddStats(character.EquipStats())
 	character.applyItemEffects(agent)
 	character.applyItemSetBonusEffects(agent)
 	character.applyBuildPhaseAuras(CharacterBuildPhaseGear)

@@ -42,6 +42,7 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 				Stat.StatArmorPenetration,
 				Stat.StatSpellPower,
 				Stat.StatArmor,
+				Stat.StatBonusArmor,
 				Stat.StatDefense,
 				Stat.StatBlock,
 				Stat.StatBlockValue,
@@ -58,6 +59,7 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 			displayStats: [
 				Stat.StatHealth,
 				Stat.StatArmor,
+				Stat.StatBonusArmor,
 				Stat.StatStamina,
 				Stat.StatStrength,
 				Stat.StatAgility,

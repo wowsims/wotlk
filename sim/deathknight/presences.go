@@ -129,7 +129,7 @@ func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 	threatMult := 2.0735
 	dmgMitigation := 1.0 - (0.08 + 0.01*float64(dk.Talents.ImprovedFrostPresence))
 	stamDep := dk.NewDynamicMultiplyStat(stats.Stamina, 1.08)
-	armorBonus := dk.Equip.Stats()[stats.Armor] * 0.6
+	armorBonus := dk.EquipStats()[stats.Armor] * 0.6
 	dk.FrostPresenceAura = dk.GetOrRegisterAura(core.Aura{
 		Label:    "Frost Presence",
 		ActionID: core.ActionID{SpellID: 48263},
