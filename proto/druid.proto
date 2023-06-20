@@ -182,6 +182,7 @@ message BalanceDruid {
 		bool use_smart_cooldowns = 9;
 		bool maintain_faerie_fire = 10;
 		int32 player_latency = 11;
+		float okf_ppm = 14;
 
 		enum EclipsePrio {
 			Lunar = 0;

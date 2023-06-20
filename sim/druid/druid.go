@@ -87,6 +87,7 @@ type Druid struct {
 	SavageRoarAura           *core.Aura
 	SolarEclipseProcAura     *core.Aura
 	LunarEclipseProcAura     *core.Aura
+	OwlkinFrenzyAura         *core.Aura
 
 	BleedCategories core.ExclusiveCategoryArray
 
@@ -101,8 +102,9 @@ type Druid struct {
 	Treant2  *TreantPet
 	Treant3  *TreantPet
 
-	form         DruidForm
-	disabledMCDs []*core.MajorCooldown
+	form                DruidForm
+	disabledMCDs        []*core.MajorCooldown
+	OwlkinFrenzyTimings []float64
 }
 
 type SelfBuffs struct {

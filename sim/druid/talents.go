@@ -90,6 +90,7 @@ func (druid *Druid) ApplyTalents() {
 	druid.applyImprovedLotp()
 	druid.applyPredatoryInstincts()
 	druid.applyNaturalReaction()
+	druid.applyOwlkinFrenzy()
 }
 
 func (druid *Druid) setupNaturesGrace() {
@@ -500,6 +501,39 @@ func (druid *Druid) applyEclipse() {
 			if sim.RandomFloat("Eclipse (Lunar)") < lunarProcChance {
 				druid.LunarICD.Use(sim)
 				druid.LunarEclipseProcAura.Activate(sim)
+			}
+		},
+	})
+}
+
+func (druid *Druid) applyOwlkinFrenzy() {
+	if druid.Talents.OwlkinFrenzy == 0 {
+		return
+	}
+
+	druid.OwlkinFrenzyAura = druid.RegisterAura(core.Aura{
+		Label:    "Owlkin Frenzy proc",
+		ActionID: core.ActionID{SpellID: 48393},
+		Duration: time.Second * 10,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			druid.PseudoStats.DamageDealtMultiplier *= 1.1
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			druid.PseudoStats.DamageDealtMultiplier /= 1.1
+		},
+	})
+	druid.RegisterAura(core.Aura{
+		Label:    "Owlkin Frenzy",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			for i := 0; i < len(druid.OwlkinFrenzyTimings); i++ {
+				if druid.OwlkinFrenzyTimings[i] < sim.CurrentTime.Seconds() && druid.OwlkinFrenzyTimings[i] != 0 {
+					druid.OwlkinFrenzyAura.Activate(sim)
+					druid.OwlkinFrenzyTimings[i] = 0
+				}
 			}
 		},
 	})
