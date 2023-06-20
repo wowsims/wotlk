@@ -133,6 +133,7 @@ export const statOrder: Array<Stat> = [
 	Stat.StatHealth,
 	Stat.StatMana,
 	Stat.StatArmor,
+	Stat.StatBonusArmor,
 	Stat.StatStamina,
 	Stat.StatStrength,
 	Stat.StatAgility,
