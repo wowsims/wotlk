@@ -20,7 +20,7 @@ func (paladin *Paladin) ApplyTalents() {
 	paladin.PseudoStats.BaseParry += 0.01 * float64(paladin.Talents.Deflection)
 	paladin.PseudoStats.BaseDodge += 0.01 * float64(paladin.Talents.Anticipation)
 
-	paladin.AddStat(stats.Armor, paladin.Equip.Stats()[stats.Armor]*0.02*float64(paladin.Talents.Toughness))
+	paladin.AddStat(stats.Armor, paladin.EquipStats()[stats.Armor]*0.02*float64(paladin.Talents.Toughness))
 
 	if paladin.Talents.DivineStrength > 0 {
 		paladin.MultiplyStat(stats.Strength, 1.0+0.03*float64(paladin.Talents.DivineStrength))

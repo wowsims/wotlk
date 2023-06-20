@@ -139,7 +139,6 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 	if player.BonusStats != nil {
 		if player.BonusStats.Stats != nil {
 			character.bonusStats = stats.FromFloatArray(player.BonusStats.Stats)
-			character.AddStats(character.bonusStats)
 		}
 		if player.BonusStats.PseudoStats != nil {
 			ps := player.BonusStats.PseudoStats
@@ -160,6 +159,10 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 	character.PseudoStats.InFrontOfTarget = player.InFrontOfTarget
 
 	return character
+}
+
+func (character *Character) EquipStats() stats.Stats {
+	return character.Equip.Stats().Add(character.bonusStats)
 }
 
 func (character *Character) addUniversalStatDependencies() {
@@ -183,7 +186,7 @@ func (character *Character) applyAllEffects(agent Agent, raidBuffs *proto.RaidBu
 	character.applyBuildPhaseAuras(CharacterBuildPhaseBase)
 	playerStats.BaseStats = measureStats()
 
-	character.AddStats(character.Equip.Stats())
+	character.AddStats(character.EquipStats())
 	character.applyItemEffects(agent)
 	character.applyItemSetBonusEffects(agent)
 	character.applyBuildPhaseAuras(CharacterBuildPhaseGear)
