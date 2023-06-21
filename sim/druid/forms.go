@@ -232,20 +232,11 @@ func (druid *Druid) registerCatFormSpell() {
 	})
 }
 
-func (druid *Druid) calcArmorBonus() float64 {
-	// Armor calculation: Dire Bear Form, Thick Hide, and Survival of the Fittest
-	// scale multiplicatively with each other. But part of the Thick Hide
-	// contribution was already calculated in ApplyTalents(), so we need to subtract
-	// that part out from the overall scaling factor given to ScaleBaseArmor().
-	return druid.ScaleBaseArmor(druid.TotalBearArmorMultiplier() - druid.ThickHideMultiplier())
-}
-
 func (druid *Druid) registerBearFormSpell() {
 	actionID := core.ActionID{SpellID: 9634}
 	healthMetrics := druid.NewHealthMetrics(actionID)
 
 	statBonus := druid.GetFormShiftStats().Add(stats.Stats{
-		stats.Armor:       druid.calcArmorBonus(),
 		stats.AttackPower: 3 * float64(core.CharacterLevel),
 	})
 
@@ -288,6 +279,7 @@ func (druid *Druid) registerBearFormSpell() {
 			predBonus = druid.GetDynamicPredStrikeStats()
 			druid.AddStatsDynamic(sim, predBonus)
 			druid.AddStatsDynamic(sim, statBonus)
+			druid.ApplyDynamicEquipScaling(sim, stats.Armor, druid.BearArmorMultiplier())
 			if potpDep != nil {
 				druid.EnableDynamicStatDep(sim, potpDep)
 			}
@@ -320,6 +312,7 @@ func (druid *Druid) registerBearFormSpell() {
 
 			druid.AddStatsDynamic(sim, predBonus.Multiply(-1))
 			druid.AddStatsDynamic(sim, statBonus.Multiply(-1))
+			druid.RemoveDynamicEquipScaling(sim, stats.Armor, druid.BearArmorMultiplier())
 			if potpDep != nil {
 				druid.DisableDynamicStatDep(sim, potpDep)
 			}

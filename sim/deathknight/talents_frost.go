@@ -10,14 +10,16 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+func (dk *Deathknight) ToughnessArmorMultiplier() float64 {
+	return 1.0 + 0.02*float64(dk.Talents.Toughness)
+}
+
 func (dk *Deathknight) ApplyFrostTalents() {
 	// Improved Icy Touch
 	// Implemented outside
 
 	// Toughness
-	if dk.Talents.Toughness > 0 {
-		dk.AddStat(stats.Armor, dk.EquipStats()[stats.Armor]*0.02*float64(dk.Talents.Toughness))
-	}
+	dk.ApplyEquipScaling(stats.Armor, dk.ToughnessArmorMultiplier())
 
 	// Icy Reach
 	// Pointless to Implement

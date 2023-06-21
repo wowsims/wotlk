@@ -67,8 +67,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-AustereEarthsiegeDiamond"
  value: {
-  dps: 8030.50344
-  tps: 6599.72809
+  dps: 8030.3264
+  tps: 6599.5857
  }
 }
 dps_results: {
