@@ -14,7 +14,6 @@ func (druid *Druid) registerEnrageSpell() {
 	instantRage := []float64{20, 24, 27, 30}[druid.Talents.Intensity]
 
 	dmgBonus := 0.05 * float64(druid.Talents.KingOfTheJungle)
-	armorLoss := druid.ScaleBaseArmor(0.16 * druid.TotalBearArmorMultiplier())
 
 	t10_4p := druid.HasSetBonus(ItemSetLasherweaveBattlegear, 4)
 
@@ -25,7 +24,7 @@ func (druid *Druid) registerEnrageSpell() {
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			druid.PseudoStats.DamageDealtMultiplier *= 1.0 + dmgBonus
 			if !t10_4p {
-				druid.AddStatDynamic(sim, stats.Armor, -armorLoss)
+				druid.ApplyDynamicEquipScaling(sim, stats.Armor, 0.84)
 			} else {
 				druid.PseudoStats.DamageTakenMultiplier *= 0.88
 			}
@@ -33,7 +32,7 @@ func (druid *Druid) registerEnrageSpell() {
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			druid.PseudoStats.DamageDealtMultiplier /= 1.0 + dmgBonus
 			if !t10_4p {
-				druid.AddStatDynamic(sim, stats.Armor, armorLoss)
+				druid.RemoveDynamicEquipScaling(sim, stats.Armor, 0.84)
 			} else {
 				druid.PseudoStats.DamageTakenMultiplier /= 0.88
 			}
