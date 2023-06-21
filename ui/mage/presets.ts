@@ -1151,6 +1151,490 @@ export const FFB_P2_PRESET = {
 	  ]}`),
 };
 
+export const ARCANE_P3_PRESET_HORDE = {
+	name: 'Arcane P3 Preset Horde',
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0 && player.getRotation().type == RotationType.Arcane && player.getFaction() == Faction.Horde,
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+        {
+          "id": 47764,
+          "enchant": 3820,
+          "gems": [
+            41285,
+            40133
+          ]
+        },
+        {
+          "id": 47468,
+          "gems": [
+            40155
+          ]
+        },
+        {
+          "id": 47767,
+          "enchant": 3810,
+          "gems": [
+            40133
+          ]
+        },
+        {
+          "id": 47551,
+          "enchant": 3722,
+          "gems": [
+            40113
+          ]
+        },
+        {
+          "id": 47425,
+          "enchant": 3832,
+          "gems": [
+            40133,
+            40113,
+            40155
+          ]
+        },
+        {
+          "id": 47485,
+          "enchant": 2332,
+          "gems": [
+            40133,
+            0
+          ]
+        },
+        {
+          "id": 47763,
+          "enchant": 3604,
+          "gems": [
+            40113,
+            0
+          ]
+        },
+        {
+          "id": 47419,
+          "gems": [
+            40133,
+            40113,
+            40113
+          ]
+        },
+        {
+          "id": 47765,
+          "enchant": 3719,
+          "gems": [
+            40155,
+            40155
+          ]
+        },
+        {
+          "id": 47454,
+          "enchant": 3606,
+          "gems": [
+            40133,
+            40113
+          ]
+        },
+        {
+          "id": 45495,
+          "gems": [
+            40133
+          ]
+        },
+        {
+          "id": 47489,
+          "gems": [
+            40155
+          ]
+        },
+        {
+          "id": 47477
+        },
+        {
+          "id": 45518
+        },
+        {
+          "id": 47422,
+          "enchant": 3834,
+          "gems": [
+            40133
+          ]
+        },
+        {
+          "id": 48032,
+          "gems": [
+            40155
+          ]
+        },
+        {
+          "id": 45294,
+          "gems": [
+            40113
+          ]
+        }
+    }`),
+};
+
+export const ARCANE_P3_PRESET_ALLIANCE = {
+	name: 'Arcane P3 Preset Alliance',
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0 && player.getRotation().type == RotationType.Arcane && player.getFaction() == Faction.Alliance,
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+        {
+          "id": 47761,
+          "enchant": 3820,
+          "gems": [
+            41285,
+            40133
+          ]
+        },
+        {
+          "id": 47144,
+          "gems": [
+            40155
+          ]
+        },
+        {
+          "id": 47758,
+          "enchant": 3810,
+          "gems": [
+            40133
+          ]
+        },
+        {
+          "id": 47552,
+          "enchant": 3722,
+          "gems": [
+            40113
+          ]
+        },
+        {
+          "id": 46993,
+          "enchant": 3832,
+          "gems": [
+            40133,
+            40113,
+            40155
+          ]
+        },
+        {
+          "id": 47208,
+          "enchant": 2332,
+          "gems": [
+            40133,
+            0
+          ]
+        },
+        {
+          "id": 47762,
+          "enchant": 3604,
+          "gems": [
+            40113,
+            0
+          ]
+        },
+        {
+          "id": 46973,
+          "gems": [
+            40133,
+            40113,
+            40113
+          ]
+        },
+        {
+          "id": 47760,
+          "enchant": 3719,
+          "gems": [
+            40155,
+            40155
+          ]
+        },
+        {
+          "id": 47097,
+          "enchant": 3606,
+          "gems": [
+            40133,
+            40113
+          ]
+        },
+        {
+          "id": 45495,
+          "gems": [
+            40133
+          ]
+        },
+        {
+          "id": 47489,
+          "gems": [
+            40155
+          ]
+        },
+        {
+          "id": 47188
+        },
+        {
+          "id": 45518
+        },
+        {
+          "id": 46980,
+          "enchant": 3834,
+          "gems": [
+            40133
+          ]
+        },
+        {
+          "id": 47958,
+          "gems": [
+            40155
+          ]
+        },
+        {
+          "id": 47922
+        }
+    }`),
+};
+
+export const FROST_P3_PRESET_HORDE = {
+	name: 'Frost P3 Preset Horde',
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 2 && player.getRotation().type == RotationType.Frost && player.getFaction() == Faction.Horde,
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+        {
+          "id": 47764,
+          "enchant": 3820,
+          "gems": [
+            41285,
+            40133
+          ]
+        },
+        {
+          "id": 47468,
+          "gems": [
+            40155
+          ]
+        },
+        {
+          "id": 47767,
+          "enchant": 3810,
+          "gems": [
+            40133
+          ]
+        },
+        {
+          "id": 47551,
+          "enchant": 3722,
+          "gems": [
+            40113
+          ]
+        },
+        {
+          "id": 47462,
+          "enchant": 3832,
+          "gems": [
+            40133,
+            40155,
+            40155
+          ]
+        },
+        {
+          "id": 47485,
+          "enchant": 2332,
+          "gems": [
+            40155,
+            0
+          ]
+        },
+        {
+          "id": 47763,
+          "enchant": 3604,
+          "gems": [
+            40113,
+            0
+          ]
+        },
+        {
+          "id": 47419,
+          "gems": [
+            40133,
+            40113,
+            40113
+          ]
+        },
+        {
+          "id": 47765,
+          "enchant": 3719,
+          "gems": [
+            40155,
+            40155
+          ]
+        },
+        {
+          "id": 47454,
+          "enchant": 3606,
+          "gems": [
+            40133,
+            40113
+          ]
+        },
+        {
+          "id": 45495,
+          "gems": [
+            40133
+          ]
+        },
+        {
+          "id": 46046,
+          "gems": [
+            40113
+          ]
+        },
+        {
+          "id": 47477
+        },
+        {
+          "id": 45518
+        },
+        {
+          "id": 47422,
+          "enchant": 3834,
+          "gems": [
+            40155
+          ]
+        },
+        {
+          "id": 48032,
+          "gems": [
+            40155
+          ]
+        },
+        {
+          "id": 45294,
+          "gems": [
+            40113
+          ]
+        }
+    }`),
+};
+
+export const FROST_P3_PRESET_ALLIANCE = {
+	name: 'Frost P3 Preset Alliance',
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 2 && player.getRotation().type == RotationType.Frost && player.getFaction() == Faction.Alliance,
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+        {
+          "id": 47761,
+          "enchant": 3820,
+          "gems": [
+            41285,
+            40133
+          ]
+        },
+        {
+          "id": 47144,
+          "gems": [
+            40155
+          ]
+        },
+        {
+          "id": 47758,
+          "enchant": 3810,
+          "gems": [
+            40133
+          ]
+        },
+        {
+          "id": 47552,
+          "enchant": 3722,
+          "gems": [
+            40113
+          ]
+        },
+        {
+          "id": 47129,
+          "enchant": 3832,
+          "gems": [
+            40133,
+            40153,
+            40155
+          ]
+        },
+        {
+          "id": 47208,
+          "enchant": 2332,
+          "gems": [
+            40155,
+            0
+          ]
+        },
+        {
+          "id": 47762,
+          "enchant": 3604,
+          "gems": [
+            40113,
+            0
+          ]
+        },
+        {
+          "id": 46973,
+          "gems": [
+            40133,
+            40113,
+            40113
+          ]
+        },
+        {
+          "id": 47760,
+          "enchant": 3719,
+          "gems": [
+            40155,
+            40155
+          ]
+        },
+        {
+          "id": 47097,
+          "enchant": 3606,
+          "gems": [
+            40133,
+            40113
+          ]
+        },
+        {
+          "id": 45495,
+          "gems": [
+            40133
+          ]
+        },
+        {
+          "id": 46046,
+          "gems": [
+            40155
+          ]
+        },
+        {
+          "id": 47188
+        },
+        {
+          "id": 45518
+        },
+        {
+          "id": 47517,
+          "enchant": 3834,
+          "gems": [
+            40155
+          ]
+        },
+        {
+          "id": 47958,
+          "gems": [
+            40155
+          ]
+        },
+        {
+          "id": 45294,
+          "gems": [
+            40113
+          ]
+        }
+    }`),
+};
 
 export const FIRE_P3_PRESET_HORDE = {
 	name: 'Fire P3 Preset Horde',

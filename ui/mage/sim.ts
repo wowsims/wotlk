@@ -2,18 +2,11 @@ import { RaidBuffs } from '../core/proto/common.js';
 import { PartyBuffs } from '../core/proto/common.js';
 import { IndividualBuffs } from '../core/proto/common.js';
 import { Debuffs } from '../core/proto/common.js';
-import { Class } from '../core/proto/common.js';
-import { Consumes } from '../core/proto/common.js';
-import { Encounter } from '../core/proto/common.js';
-import { ItemSlot } from '../core/proto/common.js';
-import { MobType } from '../core/proto/common.js';
-import { RaidTarget } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { Stat } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js'
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
-import { Sim } from '../core/sim.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
 
 import {
@@ -170,14 +163,18 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 				// Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.ARCANE_PRERAID_PRESET,
-					Presets.ARCANE_P1_PRESET,
-					Presets.ARCANE_P2_PRESET,
 					Presets.FIRE_PRERAID_PRESET,
+					Presets.ARCANE_P1_PRESET,
 					Presets.FIRE_P1_PRESET,
-					Presets.FIRE_P2_PRESET,
 					Presets.FROST_P1_PRESET,
+					Presets.ARCANE_P2_PRESET,
+					Presets.FIRE_P2_PRESET,
 					Presets.FROST_P2_PRESET,
 					Presets.FFB_P2_PRESET,
+					Presets.ARCANE_P3_PRESET_ALLIANCE,
+					Presets.ARCANE_P3_PRESET_HORDE,
+					Presets.FROST_P3_PRESET_ALLIANCE,
+					Presets.FROST_P3_PRESET_HORDE,
 					Presets.FIRE_P3_PRESET_ALLIANCE,
 					Presets.FIRE_P3_PRESET_HORDE,
 					Presets.FFB_P3_PRESET_ALLIANCE,

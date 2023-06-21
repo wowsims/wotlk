@@ -423,10 +423,12 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Alliance]: {
 				1: MagePresets.ARCANE_P1_PRESET.gear,
 				2: MagePresets.ARCANE_P2_PRESET.gear,
+				3: MagePresets.ARCANE_P3_PRESET_ALLIANCE.gear,
 			},
 			[Faction.Horde]: {
 				1: MagePresets.ARCANE_P1_PRESET.gear,
 				2: MagePresets.ARCANE_P2_PRESET.gear,
+				3: MagePresets.ARCANE_P3_PRESET_HORDE.gear,
 			},
 		},
 		tooltip: 'Arcane Mage',
@@ -450,10 +452,12 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Alliance]: {
 				1: MagePresets.FIRE_P1_PRESET.gear,
 				2: MagePresets.FIRE_P2_PRESET.gear,
+				3: MagePresets.FIRE_P3_PRESET_ALLIANCE.gear,
 			},
 			[Faction.Horde]: {
 				1: MagePresets.FIRE_P1_PRESET.gear,
 				2: MagePresets.FIRE_P2_PRESET.gear,
+				3: MagePresets.FIRE_P3_PRESET_HORDE.gear,
 			},
 		},
 		tooltip: 'TTW Fire Mage',
@@ -477,10 +481,12 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Alliance]: {
 				1: MagePresets.FIRE_P1_PRESET.gear,
 				2: MagePresets.FFB_P2_PRESET.gear,
+				3: MagePresets.FFB_P3_PRESET_ALLIANCE.gear,
 			},
 			[Faction.Horde]: {
 				1: MagePresets.FIRE_P1_PRESET.gear,
 				2: MagePresets.FFB_P2_PRESET.gear,
+				3: MagePresets.FFB_P3_PRESET_HORDE.gear,
 			},
 		},
 		tooltip: 'FFB Fire Mage',
