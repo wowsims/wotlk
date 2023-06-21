@@ -1270,7 +1270,7 @@ export const ARCANE_P3_PRESET_HORDE = {
             40113
           ]
         }
-    }`),
+    ]}`),
 };
 
 export const ARCANE_P3_PRESET_ALLIANCE = {
@@ -1389,7 +1389,7 @@ export const ARCANE_P3_PRESET_ALLIANCE = {
         {
           "id": 47922
         }
-    }`),
+    ]}`),
 };
 
 export const FROST_P3_PRESET_HORDE = {
@@ -1511,7 +1511,7 @@ export const FROST_P3_PRESET_HORDE = {
             40113
           ]
         }
-    }`),
+    ]}`),
 };
 
 export const FROST_P3_PRESET_ALLIANCE = {
@@ -1633,7 +1633,7 @@ export const FROST_P3_PRESET_ALLIANCE = {
             40113
           ]
         }
-    }`),
+    ]}`),
 };
 
 export const FIRE_P3_PRESET_HORDE = {
@@ -1752,8 +1752,7 @@ export const FIRE_P3_PRESET_HORDE = {
             40113
           ]
         }
-      ]
-    }`),
+    ]}`),
 };
 
 export const FIRE_P3_PRESET_ALLIANCE = {
@@ -1872,8 +1871,7 @@ export const FIRE_P3_PRESET_ALLIANCE = {
             40153
           ]
         }
-      ]
-    }`),
+    ]}`),
 };
 
 
@@ -1995,8 +1993,7 @@ export const FFB_P3_PRESET_HORDE = {
             40113
           ]
         }
-      ]
-    }`),
+    ]}`),
 };
 
 export const FFB_P3_PRESET_ALLIANCE = {
@@ -2115,6 +2112,5 @@ export const FFB_P3_PRESET_ALLIANCE = {
             40155
           ]
         }
-      ]
-    }`),
+    ]}`),
 };

@@ -50,12 +50,18 @@ type Character struct {
 	// Base stats for this Character.
 	baseStats stats.Stats
 
+	// Handles scaling that only affects stats from items
+	itemStatMultipliers stats.Stats
+	// Used to track if we need to separately apply multipliers, because
+	// equipment was already applied
+	equipStatsApplied bool
+
 	// Bonus stats for this Character, specified in the UI and/or EP
 	// calculator
-	bonusStats       stats.Stats
-	bonusMHDps       float64
-	bonusOHDps       float64
-	bonusRangedDps   float64
+	bonusStats     stats.Stats
+	bonusMHDps     float64
+	bonusOHDps     float64
+	bonusRangedDps float64
 
 	professions [2]proto.Profession
 
@@ -135,6 +141,9 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 
 	character.AddStats(character.baseStats)
 	character.addUniversalStatDependencies()
+	for i, _ := range character.itemStatMultipliers {
+		character.itemStatMultipliers[i] = 1
+	}
 
 	if player.BonusStats != nil {
 		if player.BonusStats.Stats != nil {
@@ -161,8 +170,55 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 	return character
 }
 
+func (character *Character) applyEquipScaling(stat stats.Stat, multiplier float64) float64 {
+	var oldValue = character.EquipStats()[stat]
+	character.itemStatMultipliers[stat] *= multiplier
+	var newValue = character.EquipStats()[stat]
+	return (newValue - oldValue)
+}
+
+func (character *Character) ApplyEquipScaling(stat stats.Stat, multiplier float64) {
+	var statDiff stats.Stats
+	statDiff[stat] = character.applyEquipScaling(stat, multiplier)
+	// Equipment stats already applied, so need to manually at the bonus to
+	// the character now to ensure correct values
+	if character.equipStatsApplied {
+		character.AddStats(statDiff)
+	}
+}
+
+func (character *Character) ApplyDynamicEquipScaling(sim *Simulation, stat stats.Stat, multiplier float64) {
+	statDiff := character.applyEquipScaling(stat, multiplier)
+	character.AddStatDynamic(sim, stat, statDiff)
+}
+
+func (character *Character) RemoveEquipScaling(stat stats.Stat, multiplier float64) {
+	var statDiff stats.Stats
+	statDiff[stat] = character.applyEquipScaling(stat, 1/multiplier)
+	// Equipment stats already applied, so need to manually at the bonus to
+	// the character now to ensure correct values
+	if character.equipStatsApplied {
+		character.AddStats(statDiff)
+	}
+}
+
+func (character *Character) RemoveDynamicEquipScaling(sim *Simulation, stat stats.Stat, multiplier float64) {
+	statDiff := character.applyEquipScaling(stat, 1/multiplier)
+	character.AddStatDynamic(sim, stat, statDiff)
+}
+
 func (character *Character) EquipStats() stats.Stats {
-	return character.Equip.Stats().Add(character.bonusStats)
+	var baseEquipStats = character.Equip.Stats()
+	var bonusEquipStats = baseEquipStats.Add(character.bonusStats)
+	return bonusEquipStats.DotProduct(character.itemStatMultipliers)
+}
+
+func (character *Character) applyEquipment() {
+	if character.equipStatsApplied {
+		panic("Equipment stats already applied to character!")
+	}
+	character.AddStats(character.EquipStats())
+	character.equipStatsApplied = true
 }
 
 func (character *Character) addUniversalStatDependencies() {
@@ -186,7 +242,7 @@ func (character *Character) applyAllEffects(agent Agent, raidBuffs *proto.RaidBu
 	character.applyBuildPhaseAuras(CharacterBuildPhaseBase)
 	playerStats.BaseStats = measureStats()
 
-	character.AddStats(character.EquipStats())
+	character.applyEquipment()
 	character.applyItemEffects(agent)
 	character.applyItemSetBonusEffects(agent)
 	character.applyBuildPhaseAuras(CharacterBuildPhaseGear)

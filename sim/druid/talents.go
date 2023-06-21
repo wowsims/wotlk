@@ -19,9 +19,9 @@ func (druid *Druid) ThickHideMultiplier() float64 {
 	return thickHideMulti
 }
 
-func (druid *Druid) TotalBearArmorMultiplier() float64 {
+func (druid *Druid) BearArmorMultiplier() float64 {
 	sotfMulti := 1.0 + 0.33/3.0*float64(druid.Talents.SurvivalOfTheFittest)
-	return 4.7 * sotfMulti * druid.ThickHideMultiplier()
+	return 4.7 * sotfMulti
 }
 
 func (druid *Druid) ApplyTalents() {
@@ -31,7 +31,7 @@ func (druid *Druid) ApplyTalents() {
 	druid.PseudoStats.DamageDealtMultiplier *= 1 + (float64(druid.Talents.EarthAndMoon) * 0.02)
 	druid.PseudoStats.SpiritRegenRateCasting = float64(druid.Talents.Intensity) * (0.5 / 3)
 	druid.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1 + 0.02*float64(druid.Talents.Naturalist)
-	druid.AddStat(stats.Armor, druid.ScaleBaseArmor(druid.ThickHideMultiplier()-1.0))
+	druid.ApplyEquipScaling(stats.Armor, druid.ThickHideMultiplier())
 
 	if druid.Talents.LunarGuidance > 0 {
 		bonus := 0.04 * float64(druid.Talents.LunarGuidance)
