@@ -170,6 +170,50 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 	return character
 }
 
+func (character *Character) applyEquipScaling(stat stats.Stat, multiplier float64) float64 {
+	var oldValue = character.EquipStats()[stat]
+	character.itemStatMultipliers[stat] *= multiplier
+	var newValue = character.EquipStats()[stat]
+	return (newValue - oldValue)
+}
+
+func (character *Character) ApplyEquipScaling(stat stats.Stat, multiplier float64) {
+	var statDiff stats.Stats
+	statDiff[stat] = character.applyEquipScaling(stat, multiplier)
+	// Equipment stats already applied, so need to manually at the bonus to
+	// the character now to ensure correct values
+	if (character.equipStatsApplied) {
+		character.AddStats(statDiff)
+	}
+}
+
+func (character *Character) ApplyDynamicEquipScaling(sim *Simulation, stat stats.Stat, multiplier float64) {
+	statDiff := character.applyEquipScaling(stat, multiplier)
+	character.AddStatDynamic(sim, stat, statDiff)
+}
+
+func (character *Character) removeEquipScaling(stat stats.Stat, multiplier float64) float64 {
+	var oldValue = character.EquipStats()[stat]
+	character.itemStatMultipliers[stat] /= multiplier
+	var newValue = character.EquipStats()[stat]
+	return (newValue - oldValue)
+}
+
+func (character *Character) RemoveEquipScaling(stat stats.Stat, multiplier float64) {
+	var statDiff stats.Stats
+	statDiff[stat] = character.removeEquipScaling(stat, multiplier)
+	// Equipment stats already applied, so need to manually at the bonus to
+	// the character now to ensure correct values
+	if (character.equipStatsApplied) {
+		character.AddStats(statDiff)
+	}
+}
+
+func (character *Character) RemoveDynamicEquipScaling(sim *Simulation, stat stats.Stat, multiplier float64) {
+	statDiff := character.removeEquipScaling(stat, multiplier)
+	character.AddStatDynamic(sim, stat, statDiff)
+}
+
 func (character *Character) EquipStats() stats.Stats {
 	var baseEquipStats = character.Equip.Stats()
 	var bonusEquipStats = baseEquipStats.Add(character.bonusStats)
