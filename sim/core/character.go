@@ -48,7 +48,13 @@ type Character struct {
 	Consumes *proto.Consumes
 
 	// Base stats for this Character.
-	baseStats stats.Stats
+	baseStats            stats.Stats
+
+	// Handles scaling that only affects stats from items
+	itemStatMultipliers stats.Stats
+	// Used to track if we need to separately apply multipliers, because
+	// equipment was already applied
+	equipStatsApplied   bool
 
 	// Bonus stats for this Character, specified in the UI and/or EP
 	// calculator
@@ -135,6 +141,9 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 
 	character.AddStats(character.baseStats)
 	character.addUniversalStatDependencies()
+	for i, _ := range character.itemStatMultipliers {
+		character.itemStatMultipliers[i] = 1
+	}
 
 	if player.BonusStats != nil {
 		if player.BonusStats.Stats != nil {
@@ -162,7 +171,17 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 }
 
 func (character *Character) EquipStats() stats.Stats {
-	return character.Equip.Stats().Add(character.bonusStats)
+	var baseEquipStats = character.Equip.Stats()
+	var bonusEquipStats = baseEquipStats.Add(character.bonusStats)
+	return bonusEquipStats.DotProduct(character.itemStatMultipliers)
+}
+
+func (character *Character) applyEquipment() {
+	if (character.equipStatsApplied) {
+		panic("Equipment stats already applied to character!")
+	}
+	character.AddStats(character.EquipStats())
+	character.equipStatsApplied = true
 }
 
 func (character *Character) addUniversalStatDependencies() {
@@ -186,7 +205,7 @@ func (character *Character) applyAllEffects(agent Agent, raidBuffs *proto.RaidBu
 	character.applyBuildPhaseAuras(CharacterBuildPhaseBase)
 	playerStats.BaseStats = measureStats()
 
-	character.AddStats(character.EquipStats())
+	character.applyEquipment()
 	character.applyItemEffects(agent)
 	character.applyItemSetBonusEffects(agent)
 	character.applyBuildPhaseAuras(CharacterBuildPhaseGear)
