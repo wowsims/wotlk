@@ -48,20 +48,20 @@ type Character struct {
 	Consumes *proto.Consumes
 
 	// Base stats for this Character.
-	baseStats            stats.Stats
+	baseStats stats.Stats
 
 	// Handles scaling that only affects stats from items
 	itemStatMultipliers stats.Stats
 	// Used to track if we need to separately apply multipliers, because
 	// equipment was already applied
-	equipStatsApplied   bool
+	equipStatsApplied bool
 
 	// Bonus stats for this Character, specified in the UI and/or EP
 	// calculator
-	bonusStats       stats.Stats
-	bonusMHDps       float64
-	bonusOHDps       float64
-	bonusRangedDps   float64
+	bonusStats     stats.Stats
+	bonusMHDps     float64
+	bonusOHDps     float64
+	bonusRangedDps float64
 
 	professions [2]proto.Profession
 
@@ -182,7 +182,7 @@ func (character *Character) ApplyEquipScaling(stat stats.Stat, multiplier float6
 	statDiff[stat] = character.applyEquipScaling(stat, multiplier)
 	// Equipment stats already applied, so need to manually at the bonus to
 	// the character now to ensure correct values
-	if (character.equipStatsApplied) {
+	if character.equipStatsApplied {
 		character.AddStats(statDiff)
 	}
 }
@@ -197,7 +197,7 @@ func (character *Character) RemoveEquipScaling(stat stats.Stat, multiplier float
 	statDiff[stat] = character.applyEquipScaling(stat, 1/multiplier)
 	// Equipment stats already applied, so need to manually at the bonus to
 	// the character now to ensure correct values
-	if (character.equipStatsApplied) {
+	if character.equipStatsApplied {
 		character.AddStats(statDiff)
 	}
 }
@@ -214,7 +214,7 @@ func (character *Character) EquipStats() stats.Stats {
 }
 
 func (character *Character) applyEquipment() {
-	if (character.equipStatsApplied) {
+	if character.equipStatsApplied {
 		panic("Equipment stats already applied to character!")
 	}
 	character.AddStats(character.EquipStats())

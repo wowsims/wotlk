@@ -118,15 +118,15 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
-  dps: 5784.02336
-  tps: 4106.65658
+  dps: 5782.05942
+  tps: 4105.26219
  }
 }
 dps_results: {
  key: "TestAssassination-AllItems-BonescytheBattlegear"
  value: {
-  dps: 6945.7773
-  tps: 4931.50189
+  dps: 6933.47187
+  tps: 4922.76503
  }
 }
 dps_results: {
@@ -357,8 +357,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-Gladiator'sVestments"
  value: {
-  dps: 7437.01823
-  tps: 5280.28294
+  dps: 7436.96615
+  tps: 5280.24597
  }
 }
 dps_results: {
@@ -568,8 +568,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-Shadowblade'sBattlegear"
  value: {
-  dps: 7803.60643
-  tps: 5540.56057
+  dps: 7819.82369
+  tps: 5552.07482
  }
 }
 dps_results: {
@@ -589,8 +589,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-Slayer'sArmor"
  value: {
-  dps: 5702.2367
-  tps: 4048.58805
+  dps: 5706.82247
+  tps: 4051.84396
  }
 }
 dps_results: {
@@ -638,8 +638,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-StormshroudArmor"
  value: {
-  dps: 6014.7949
-  tps: 4270.50438
+  dps: 6003.80375
+  tps: 4262.70066
  }
 }
 dps_results: {
@@ -680,8 +680,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-TerrorbladeBattlegear"
  value: {
-  dps: 7339.57074
-  tps: 5211.09523
+  dps: 7361.37247
+  tps: 5226.57446
  }
 }
 dps_results: {
@@ -757,15 +757,15 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
-  dps: 6141.34034
-  tps: 4360.35164
+  dps: 6136.71857
+  tps: 4357.07018
  }
 }
 dps_results: {
  key: "TestAssassination-AllItems-VanCleef'sBattlegear"
  value: {
-  dps: 7115.79274
-  tps: 5052.21284
+  dps: 7106.93781
+  tps: 5045.92584
  }
 }
 dps_results: {
@@ -1121,7 +1121,7 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 7275.1209
-  tps: 5165.33584
+  dps: 7282.56322
+  tps: 5170.61989
  }
 }

@@ -125,22 +125,22 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-BlessedBattlegearofUndeadSlaying"
  value: {
-  dps: 5326.27664
-  tps: 3951.23134
+  dps: 5322.61045
+  tps: 3949.45661
  }
 }
 dps_results: {
  key: "TestFury-AllItems-BlessedGarboftheUndeadSlayer"
  value: {
-  dps: 5348.76585
-  tps: 3966.65503
+  dps: 5358.33526
+  tps: 3974.01882
  }
 }
 dps_results: {
  key: "TestFury-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
-  dps: 5037.92553
-  tps: 3738.12901
+  dps: 5039.51215
+  tps: 3738.80452
  }
 }
 dps_results: {
@@ -273,15 +273,15 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-DreadnaughtBattlegear"
  value: {
-  dps: 6072.70988
-  tps: 4497.42443
+  dps: 6087.43583
+  tps: 4509.84451
  }
 }
 dps_results: {
  key: "TestFury-AllItems-DreadnaughtPlate"
  value: {
-  dps: 5273.73473
-  tps: 3908.25695
+  dps: 5288.09465
+  tps: 3918.45216
  }
 }
 dps_results: {
@@ -519,15 +519,15 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-OnslaughtArmor"
  value: {
-  dps: 4099.4506
-  tps: 3046.25197
+  dps: 4165.32774
+  tps: 3096.03047
  }
 }
 dps_results: {
  key: "TestFury-AllItems-OnslaughtBattlegear"
  value: {
-  dps: 4904.76732
-  tps: 3639.61127
+  dps: 4906.63348
+  tps: 3641.16862
  }
 }
 dps_results: {
@@ -638,15 +638,15 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-SiegebreakerBattlegear"
  value: {
-  dps: 6379.56711
-  tps: 4716.89865
+  dps: 6390.29601
+  tps: 4727.89989
  }
 }
 dps_results: {
  key: "TestFury-AllItems-SiegebreakerPlate"
  value: {
-  dps: 5439.86528
-  tps: 4029.4104
+  dps: 5457.55266
+  tps: 4040.92932
  }
 }
 dps_results: {
@@ -701,8 +701,8 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-StormshroudArmor"
  value: {
-  dps: 4992.1089
-  tps: 3702.70496
+  dps: 5008.49458
+  tps: 3715.3044
  }
 }
 dps_results: {
@@ -757,8 +757,8 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-TheTwinBladesofAzzinoth"
  value: {
-  dps: 5324.8322
-  tps: 3945.34247
+  dps: 5307.68295
+  tps: 3933.47009
  }
 }
 dps_results: {
@@ -820,15 +820,15 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
-  dps: 5342.30533
-  tps: 3960.31999
+  dps: 5345.3713
+  tps: 3963.82731
  }
 }
 dps_results: {
  key: "TestFury-AllItems-Val'anyr,HammerofAncientKings-46017"
  value: {
-  dps: 5101.02596
-  tps: 3825.74015
+  dps: 5130.36957
+  tps: 3848.11502
  }
 }
 dps_results: {
@@ -841,29 +841,29 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-Wrynn'sBattlegear"
  value: {
-  dps: 6547.89376
-  tps: 4839.9076
+  dps: 6587.94653
+  tps: 4871.21758
  }
 }
 dps_results: {
  key: "TestFury-AllItems-Wrynn'sPlate"
  value: {
-  dps: 5481.73186
-  tps: 4059.11609
+  dps: 5479.70875
+  tps: 4060.53712
  }
 }
 dps_results: {
  key: "TestFury-AllItems-YmirjarLord'sBattlegear"
  value: {
-  dps: 7049.11374
-  tps: 5205.05352
+  dps: 7035.53243
+  tps: 5196.67031
  }
 }
 dps_results: {
  key: "TestFury-AllItems-YmirjarLord'sPlate"
  value: {
-  dps: 5692.93605
-  tps: 4214.146
+  dps: 5728.45454
+  tps: 4239.9752
  }
 }
 dps_results: {
@@ -876,43 +876,43 @@ dps_results: {
 dps_results: {
  key: "TestFury-Settings-Human-Fury P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 9190.42545
-  tps: 7340.704
+  dps: 9207.66112
+  tps: 7354.71579
  }
 }
 dps_results: {
  key: "TestFury-Settings-Human-Fury P1-Basic-FullBuffs-LongSingleTarget"
  value: {
-  dps: 6798.02474
-  tps: 5029.92068
+  dps: 6809.35089
+  tps: 5038.79905
  }
 }
 dps_results: {
  key: "TestFury-Settings-Human-Fury P1-Basic-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 7802.32325
-  tps: 5772.76907
+  dps: 7800.27732
+  tps: 5771.2259
  }
 }
 dps_results: {
  key: "TestFury-Settings-Human-Fury P1-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 4470.3519
-  tps: 3628.33466
+  dps: 4457.13815
+  tps: 3619.21883
  }
 }
 dps_results: {
  key: "TestFury-Settings-Human-Fury P1-Basic-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3117.2196
-  tps: 2319.71303
+  dps: 3130.08783
+  tps: 2328.66535
  }
 }
 dps_results: {
  key: "TestFury-Settings-Human-Fury P1-Basic-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 3280.30569
-  tps: 2443.38683
+  dps: 3291.84083
+  tps: 2453.75864
  }
 }
 dps_results: {
@@ -960,7 +960,7 @@ dps_results: {
 dps_results: {
  key: "TestFury-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 6365.82302
-  tps: 4710.3276
+  dps: 6390.96494
+  tps: 4730.08221
  }
 }

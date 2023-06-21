@@ -46,8 +46,8 @@ character_stats_results: {
 dps_results: {
  key: "TestSV-AllItems-Ahn'KaharBloodHunter'sBattlegear"
  value: {
-  dps: 7456.41124
-  tps: 6459.01804
+  dps: 7465.97576
+  tps: 6466.73727
  }
 }
 dps_results: {
@@ -139,15 +139,15 @@ dps_results: {
 dps_results: {
  key: "TestSV-AllItems-BlessedGarboftheUndeadSlayer"
  value: {
-  dps: 5902.78507
-  tps: 5035.63253
+  dps: 5905.23278
+  tps: 5037.88359
  }
 }
 dps_results: {
  key: "TestSV-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
-  dps: 5633.49397
-  tps: 4782.1074
+  dps: 5632.35996
+  tps: 4780.52225
  }
 }
 dps_results: {
@@ -203,8 +203,8 @@ dps_results: {
 dps_results: {
  key: "TestSV-AllItems-CryptstalkerBattlegear"
  value: {
-  dps: 6451.46458
-  tps: 5478.59304
+  dps: 6461.03457
+  tps: 5483.91279
  }
 }
 dps_results: {
@@ -399,8 +399,8 @@ dps_results: {
 dps_results: {
  key: "TestSV-AllItems-Gladiator'sPursuit"
  value: {
-  dps: 6982.73234
-  tps: 5989.70293
+  dps: 6991.07399
+  tps: 5997.36263
  }
 }
 dps_results: {
@@ -427,8 +427,8 @@ dps_results: {
 dps_results: {
  key: "TestSV-AllItems-Gronnstalker'sArmor"
  value: {
-  dps: 5257.84284
-  tps: 4440.15765
+  dps: 5245.56494
+  tps: 4425.13224
  }
 }
 dps_results: {
@@ -687,7 +687,7 @@ dps_results: {
 dps_results: {
  key: "TestSV-AllItems-StormshroudArmor"
  value: {
-  dps: 5489.11527
+  dps: 5489.32272
   tps: 4650.40516
  }
 }
@@ -806,8 +806,8 @@ dps_results: {
 dps_results: {
  key: "TestSV-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
-  dps: 5854.72777
-  tps: 4984.08499
+  dps: 5851.07286
+  tps: 4980.69567
  }
 }
 dps_results: {
@@ -820,8 +820,8 @@ dps_results: {
 dps_results: {
  key: "TestSV-AllItems-Windrunner'sPursuit"
  value: {
-  dps: 7060.70851
-  tps: 6035.57232
+  dps: 7058.96133
+  tps: 6035.72524
  }
 }
 dps_results: {
@@ -1023,7 +1023,7 @@ dps_results: {
 dps_results: {
  key: "TestSV-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 7135.98045
-  tps: 6176.12777
+  dps: 7135.4218
+  tps: 6176.35247
  }
 }
