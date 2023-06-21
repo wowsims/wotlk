@@ -246,17 +246,17 @@ func (warrior *Warrior) intensifyRageCooldown(baseCd time.Duration) time.Duratio
 
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassWarrior}] = stats.Stats{
-		stats.Health:      9611,
+		stats.Health:      7941,
 		stats.Strength:    175,
 		stats.Agility:     110,
 		stats.Stamina:     159,
-		stats.Intellect:   37,
+		stats.Intellect:   36,
 		stats.Spirit:      61,
 		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarf, Class: proto.Class_ClassWarrior}] = stats.Stats{
-		stats.Health:      9651,
+		stats.Health:      7941,
 		stats.Strength:    179,
 		stats.Agility:     109,
 		stats.Stamina:     160,
@@ -266,29 +266,29 @@ func init() {
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceGnome, Class: proto.Class_ClassWarrior}] = stats.Stats{
-		stats.Health:      9581,
+		stats.Health:      7941,
 		stats.Strength:    169,
-		stats.Agility:     116,
+		stats.Agility:     115,
 		stats.Stamina:     159,
-		stats.Intellect:   42,
+		stats.Intellect:   40,
 		stats.Spirit:      59,
 		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassWarrior}] = stats.Stats{
-		stats.Health:      9621,
+		stats.Health:      7941,
 		stats.Strength:    174,
 		stats.Agility:     113,
 		stats.Stamina:     159,
 		stats.Intellect:   36,
-		stats.Spirit:      63,
+		stats.Spirit:      60,
 		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassWarrior}] = stats.Stats{
-		stats.Health:      9611,
-		stats.Strength:    179,
-		stats.Agility:     118,
+		stats.Health:      7941,
+		stats.Strength:    170,
+		stats.Agility:     117,
 		stats.Stamina:     159,
 		stats.Intellect:   36,
 		stats.Spirit:      59,
@@ -296,27 +296,35 @@ func init() {
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceOrc, Class: proto.Class_ClassWarrior}] = stats.Stats{
-		stats.Health:      9641,
+		stats.Health:      7941,
 		stats.Strength:    177,
 		stats.Agility:     110,
 		stats.Stamina:     160,
 		stats.Intellect:   33,
-		stats.Spirit:      62,
+		stats.Spirit:      61,
 		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTauren, Class: proto.Class_ClassWarrior}] = stats.Stats{
-		stats.Health:      10047,
+		// Ugly hack, should be the same as other races and multiplied
+		// in racial. But stamina conversion in the sim is messed up
+		// (treats stamina as 10 HP, but the first 20 stamina should be
+		// 1 HP.
+		// As a result all base health in this file are actually:
+		// "base health - 180", which messes up the Tauren racial
+		// computation for health. So we back calculate the base health
+		// needed to get to the correct base health after racial...
+		stats.Health:      7950,
 		stats.Strength:    179,
-		stats.Agility:     108,
+		stats.Agility:     109,
 		stats.Stamina:     160,
-		stats.Intellect:   31,
+		stats.Intellect:   32,
 		stats.Spirit:      61,
 		stats.AttackPower: 220,
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassWarrior}] = stats.Stats{
-		stats.Health:      9631,
+		stats.Health:      7941,
 		stats.Strength:    175,
 		stats.Agility:     115,
 		stats.Stamina:     159,
@@ -326,7 +334,7 @@ func init() {
 		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassWarrior}] = stats.Stats{
-		stats.Health:      9541,
+		stats.Health:      7941,
 		stats.Strength:    173,
 		stats.Agility:     111,
 		stats.Stamina:     159,
