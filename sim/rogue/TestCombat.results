@@ -118,15 +118,15 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
-  dps: 5101.02235
-  tps: 3621.72587
+  dps: 5099.31338
+  tps: 3620.5125
  }
 }
 dps_results: {
  key: "TestCombat-AllItems-BonescytheBattlegear"
  value: {
-  dps: 6067.48964
-  tps: 4307.91764
+  dps: 6067.16934
+  tps: 4307.69023
  }
 }
 dps_results: {
@@ -371,8 +371,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-Gladiator'sVestments"
  value: {
-  dps: 6474.45267
-  tps: 4596.8614
+  dps: 6474.21275
+  tps: 4596.69105
  }
 }
 dps_results: {
@@ -582,8 +582,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-Shadowblade'sBattlegear"
  value: {
-  dps: 6720.47226
-  tps: 4771.53531
+  dps: 6747.44303
+  tps: 4790.68455
  }
 }
 dps_results: {
@@ -610,8 +610,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-Slayer'sArmor"
  value: {
-  dps: 5024.63838
-  tps: 3567.49325
+  dps: 5024.4796
+  tps: 3567.38051
  }
 }
 dps_results: {
@@ -659,8 +659,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-StormshroudArmor"
  value: {
-  dps: 5137.98377
-  tps: 3647.96848
+  dps: 5140.90225
+  tps: 3650.0406
  }
 }
 dps_results: {
@@ -701,8 +701,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-TerrorbladeBattlegear"
  value: {
-  dps: 6450.13039
-  tps: 4579.59258
+  dps: 6467.52136
+  tps: 4591.94017
  }
 }
 dps_results: {
@@ -785,8 +785,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
-  dps: 5403.36644
-  tps: 3836.39018
+  dps: 5407.70592
+  tps: 3839.4712
  }
 }
 dps_results: {
@@ -1156,7 +1156,7 @@ dps_results: {
 dps_results: {
  key: "TestCombat-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 6436.80695
-  tps: 4570.13293
+  dps: 6446.74243
+  tps: 4577.18713
  }
 }
