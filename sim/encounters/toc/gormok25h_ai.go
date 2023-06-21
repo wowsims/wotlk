@@ -236,12 +236,12 @@ func (ai *Gormok25HAI) registerRisingAngerSpell(target *core.Target) {
 
 func (ai *Gormok25HAI) DoAction(sim *core.Simulation) {
 	if ai.RisingAnger.IsReady(sim) && sim.CurrentTime >= ai.RisingAnger.CD.Duration && ai.Target.GCD.IsReady(sim) {
-		ai.RisingAnger.Cast(sim, nil)
+		ai.RisingAnger.Cast(sim, &ai.Target.Unit)
 		return
 	}
 
 	if ai.StaggeringStomp.IsReady(sim) && sim.CurrentTime >= ai.StaggeringStomp.CD.Duration && ai.Target.GCD.IsReady(sim) {
-		ai.StaggeringStomp.Cast(sim, nil)
+		ai.StaggeringStomp.Cast(sim, &ai.Target.Unit)
 		return
 	}
 
