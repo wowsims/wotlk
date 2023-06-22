@@ -11,7 +11,7 @@ func (rogue *Rogue) registerFeintSpell() {
 	rogue.Feint = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48659},
 		SpellSchool: core.SpellSchoolPhysical,
-		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		ProcMask:    core.ProcMaskEmpty,
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		EnergyCost: core.EnergyCostOptions{
