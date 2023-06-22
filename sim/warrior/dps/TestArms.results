@@ -5,7 +5,7 @@ character_stats_results: {
   final_stats: 1001
   final_stats: 1953.38
   final_stats: 176
-  final_stats: 229.9
+  final_stats: 228.8
   final_stats: 546
   final_stats: 109
   final_stats: 141
@@ -29,7 +29,7 @@ character_stats_results: {
   final_stats: 534.48245
   final_stats: 0
   final_stats: 0
-  final_stats: 29174.8
+  final_stats: 27474.8
   final_stats: 75
   final_stats: 75
   final_stats: 75
@@ -67,8 +67,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-AustereEarthsiegeDiamond"
  value: {
-  dps: 8030.50344
-  tps: 6599.72809
+  dps: 8030.3264
+  tps: 6599.5857
  }
 }
 dps_results: {
@@ -125,22 +125,22 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-BlessedBattlegearofUndeadSlaying"
  value: {
-  dps: 6725.8614
-  tps: 5530.01366
+  dps: 6718.84114
+  tps: 5524.01576
  }
 }
 dps_results: {
  key: "TestArms-AllItems-BlessedGarboftheUndeadSlayer"
  value: {
-  dps: 6606.38968
-  tps: 5437.73188
+  dps: 6596.07675
+  tps: 5430.52151
  }
 }
 dps_results: {
  key: "TestArms-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
-  dps: 6445.57047
-  tps: 5302.87698
+  dps: 6410.53502
+  tps: 5270.29455
  }
 }
 dps_results: {
@@ -280,8 +280,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-DreadnaughtPlate"
  value: {
-  dps: 6613.27729
-  tps: 5425.60665
+  dps: 6612.33928
+  tps: 5424.72814
  }
 }
 dps_results: {
@@ -478,7 +478,7 @@ dps_results: {
  value: {
   dps: 8061.32547
   tps: 6626.66253
-  hps: 15.02502
+  hps: 14.14952
  }
 }
 dps_results: {
@@ -519,15 +519,15 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-OnslaughtArmor"
  value: {
-  dps: 5365.08507
-  tps: 4412.82815
+  dps: 5354.62192
+  tps: 4407.60222
  }
 }
 dps_results: {
  key: "TestArms-AllItems-OnslaughtBattlegear"
  value: {
-  dps: 6210.15227
-  tps: 5102.23949
+  dps: 6219.53377
+  tps: 5110.97901
  }
 }
 dps_results: {
@@ -645,8 +645,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-SiegebreakerPlate"
  value: {
-  dps: 6785.98216
-  tps: 5564.87003
+  dps: 6812.64163
+  tps: 5589.22091
  }
 }
 dps_results: {
@@ -701,8 +701,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-StormshroudArmor"
  value: {
-  dps: 6360.91636
-  tps: 5228.08401
+  dps: 6382.02807
+  tps: 5244.99985
  }
 }
 dps_results: {
@@ -820,8 +820,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
-  dps: 6673.17226
-  tps: 5488.26115
+  dps: 6669.86653
+  tps: 5486.41475
  }
 }
 dps_results: {
@@ -841,29 +841,29 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-Wrynn'sBattlegear"
  value: {
-  dps: 8055.4494
-  tps: 6613.93458
+  dps: 8076.67904
+  tps: 6631.37735
  }
 }
 dps_results: {
  key: "TestArms-AllItems-Wrynn'sPlate"
  value: {
-  dps: 6774.46802
-  tps: 5555.06027
+  dps: 6769.34458
+  tps: 5551.5625
  }
 }
 dps_results: {
  key: "TestArms-AllItems-YmirjarLord'sBattlegear"
  value: {
-  dps: 8540.45472
-  tps: 7037.09467
+  dps: 8564.07694
+  tps: 7058.58031
  }
 }
 dps_results: {
  key: "TestArms-AllItems-YmirjarLord'sPlate"
  value: {
-  dps: 7034.11444
-  tps: 5771.19501
+  dps: 7024.6254
+  tps: 5762.57944
  }
 }
 dps_results: {
@@ -960,7 +960,7 @@ dps_results: {
 dps_results: {
  key: "TestArms-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 7700.99269
-  tps: 6325.43934
+  dps: 7723.13032
+  tps: 6348.29976
  }
 }

@@ -139,15 +139,15 @@ dps_results: {
 dps_results: {
  key: "TestMM-AllItems-BlessedGarboftheUndeadSlayer"
  value: {
-  dps: 6090.05676
-  tps: 5289.51676
+  dps: 6084.53254
+  tps: 5282.69343
  }
 }
 dps_results: {
  key: "TestMM-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
-  dps: 5871.97511
-  tps: 5083.71064
+  dps: 5865.15992
+  tps: 5076.65464
  }
 }
 dps_results: {
@@ -203,8 +203,8 @@ dps_results: {
 dps_results: {
  key: "TestMM-AllItems-CryptstalkerBattlegear"
  value: {
-  dps: 6622.08297
-  tps: 5721.10738
+  dps: 6629.47061
+  tps: 5728.25766
  }
 }
 dps_results: {
@@ -399,8 +399,8 @@ dps_results: {
 dps_results: {
  key: "TestMM-AllItems-Gladiator'sPursuit"
  value: {
-  dps: 7211.94005
-  tps: 6337.4638
+  dps: 7204.27727
+  tps: 6329.41477
  }
 }
 dps_results: {
@@ -427,8 +427,8 @@ dps_results: {
 dps_results: {
  key: "TestMM-AllItems-Gronnstalker'sArmor"
  value: {
-  dps: 5480.99021
-  tps: 4713.55457
+  dps: 5477.62831
+  tps: 4709.97601
  }
 }
 dps_results: {
@@ -687,8 +687,8 @@ dps_results: {
 dps_results: {
  key: "TestMM-AllItems-StormshroudArmor"
  value: {
-  dps: 5710.97864
-  tps: 4929.59363
+  dps: 5712.66374
+  tps: 4928.88544
  }
 }
 dps_results: {
@@ -806,8 +806,8 @@ dps_results: {
 dps_results: {
  key: "TestMM-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
-  dps: 6007.74829
-  tps: 5207.84623
+  dps: 6004.4255
+  tps: 5202.15606
  }
 }
 dps_results: {
@@ -939,7 +939,7 @@ dps_results: {
 dps_results: {
  key: "TestMM-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 7178.83024
-  tps: 6310.89555
+  dps: 7191.66873
+  tps: 6321.36467
  }
 }

@@ -231,7 +231,6 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, referenceStat stats.Stat, pro
 		stat := stats.UnitStatFromStat(s)
 		statMod := defaultStatMod
 		if stat.EqualsStat(stats.Expertise) {
-			// Expertise is non-linear, so adjust in increments that match the stepwise reduction.
 			statMod = ExpertisePerQuarterPercentReduction
 		} else if stat.EqualsStat(stats.Armor) || stat.EqualsStat(stats.BonusArmor) {
 			statMod = defaultStatMod * 10

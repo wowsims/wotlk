@@ -104,8 +104,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-Beast-tamer'sShoulders-30892"
  value: {
-  dps: 6851.95808
-  tps: 3860.47288
+  dps: 6875.87351
+  tps: 3876.90929
  }
 }
 dps_results: {
@@ -132,15 +132,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-BlessedGarboftheUndeadSlayer"
  value: {
-  dps: 5790.60884
-  tps: 3260.32314
+  dps: 5807.75491
+  tps: 3273.6118
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
-  dps: 5690.34019
-  tps: 3217.89321
+  dps: 5737.52301
+  tps: 3245.36637
  }
 }
 dps_results: {
@@ -280,15 +280,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-EarthshatterBattlegear"
  value: {
-  dps: 6477.40468
-  tps: 3649.99151
+  dps: 6509.62838
+  tps: 3675.24946
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-EarthshatterGarb"
  value: {
-  dps: 6068.1178
-  tps: 3444.97629
+  dps: 6054.16303
+  tps: 3434.70912
  }
 }
 dps_results: {
@@ -392,15 +392,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-FrostWitch'sBattlegear"
  value: {
-  dps: 7161.29033
-  tps: 4023.79946
+  dps: 7177.43233
+  tps: 4035.82143
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-FrostWitch'sRegalia"
  value: {
-  dps: 6794.22308
-  tps: 3867.34849
+  dps: 6774.88655
+  tps: 3857.97681
  }
 }
 dps_results: {
@@ -427,15 +427,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-Gladiator'sEarthshaker"
  value: {
-  dps: 6836.51983
-  tps: 3854.57809
+  dps: 6871.13497
+  tps: 3879.04515
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Gladiator'sWartide"
  value: {
-  dps: 5840.1999
-  tps: 3314.38708
+  dps: 5811.81015
+  tps: 3295.86374
  }
 }
 dps_results: {
@@ -687,8 +687,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-SkyshatterHarness"
  value: {
-  dps: 5140.19717
-  tps: 2890.96866
+  dps: 5133.57244
+  tps: 2886.58325
  }
 }
 dps_results: {
@@ -750,8 +750,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-StormshroudArmor"
  value: {
-  dps: 5408.53342
-  tps: 3038.83697
+  dps: 5427.17735
+  tps: 3058.08629
  }
 }
 dps_results: {
@@ -806,15 +806,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-Thrall'sBattlegear"
  value: {
-  dps: 7006.91625
-  tps: 3982.4262
+  dps: 6994.54717
+  tps: 3976.41673
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-Thrall'sRegalia"
  value: {
-  dps: 6553.81842
-  tps: 3749.55337
+  dps: 6587.61753
+  tps: 3770.89717
  }
 }
 dps_results: {
@@ -827,8 +827,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-TidefuryRaiment"
  value: {
-  dps: 5100.37112
-  tps: 2872.84275
+  dps: 5124.7634
+  tps: 2890.06869
  }
 }
 dps_results: {
@@ -911,8 +911,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
-  dps: 5717.13378
-  tps: 3217.15618
+  dps: 5751.16251
+  tps: 3239.40472
  }
 }
 dps_results: {
@@ -932,15 +932,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-WorldbreakerBattlegear"
  value: {
-  dps: 7003.80831
-  tps: 3986.09088
+  dps: 7021.78479
+  tps: 3996.59599
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-WorldbreakerGarb"
  value: {
-  dps: 6617.4628
-  tps: 3780.45606
+  dps: 6591.41313
+  tps: 3769.08964
  }
 }
 dps_results: {
@@ -1212,7 +1212,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 6881.00642
-  tps: 3878.93371
+  dps: 6883.93976
+  tps: 3881.49415
  }
 }

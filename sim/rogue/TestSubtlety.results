@@ -118,15 +118,15 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
-  dps: 5977.49572
-  tps: 4242.90596
+  dps: 5976.78069
+  tps: 4242.76811
  }
 }
 dps_results: {
  key: "TestSubtlety-AllItems-BonescytheBattlegear"
  value: {
-  dps: 7128.06098
-  tps: 5059.29009
+  dps: 7102.31959
+  tps: 5040.97745
  }
 }
 dps_results: {
@@ -357,8 +357,8 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-AllItems-Gladiator'sVestments"
  value: {
-  dps: 7473.24684
-  tps: 5303.86993
+  dps: 7479.55004
+  tps: 5307.5229
  }
 }
 dps_results: {
@@ -568,8 +568,8 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-AllItems-Shadowblade'sBattlegear"
  value: {
-  dps: 7903.97197
-  tps: 5608.60618
+  dps: 7921.04873
+  tps: 5621.59557
  }
 }
 dps_results: {
@@ -589,8 +589,8 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-AllItems-Slayer'sArmor"
  value: {
-  dps: 5488.73564
-  tps: 3893.33952
+  dps: 5486.78271
+  tps: 3893.1575
  }
 }
 dps_results: {
@@ -638,8 +638,8 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-AllItems-StormshroudArmor"
  value: {
-  dps: 6162.22026
-  tps: 4373.50418
+  dps: 6159.6224
+  tps: 4372.46783
  }
 }
 dps_results: {
@@ -757,8 +757,8 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
-  dps: 6327.99992
-  tps: 4492.17311
+  dps: 6309.28411
+  tps: 4478.01485
  }
 }
 dps_results: {
@@ -869,7 +869,7 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 7720.53051
-  tps: 5478.42353
+  dps: 7734.95288
+  tps: 5488.16631
  }
 }

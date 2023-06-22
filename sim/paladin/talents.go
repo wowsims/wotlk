@@ -11,6 +11,10 @@ import (
 // TODO:
 // Sanctified Wrath (Damage penetration, questions over affected stats)
 
+func (paladin *Paladin) ToughnessArmorMultiplier() float64 {
+	return 1.0 + 0.02*float64(paladin.Talents.Toughness)
+}
+
 func (paladin *Paladin) ApplyTalents() {
 	paladin.AddStat(stats.MeleeCrit, float64(paladin.Talents.Conviction)*core.CritRatingPerCritChance)
 	paladin.AddStat(stats.SpellCrit, float64(paladin.Talents.Conviction)*core.CritRatingPerCritChance)
@@ -20,7 +24,7 @@ func (paladin *Paladin) ApplyTalents() {
 	paladin.PseudoStats.BaseParry += 0.01 * float64(paladin.Talents.Deflection)
 	paladin.PseudoStats.BaseDodge += 0.01 * float64(paladin.Talents.Anticipation)
 
-	paladin.AddStat(stats.Armor, paladin.EquipStats()[stats.Armor]*0.02*float64(paladin.Talents.Toughness))
+	paladin.ApplyEquipScaling(stats.Armor, paladin.ToughnessArmorMultiplier())
 
 	if paladin.Talents.DivineStrength > 0 {
 		paladin.MultiplyStat(stats.Strength, 1.0+0.03*float64(paladin.Talents.DivineStrength))

@@ -8,10 +8,14 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+func (warrior *Warrior) ToughnessArmorMultiplier() float64 {
+	return 1.0 + 0.02*float64(warrior.Talents.Toughness)
+}
+
 func (warrior *Warrior) ApplyTalents() {
 	warrior.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*1*float64(warrior.Talents.Cruelty))
 	warrior.AddStat(stats.MeleeHit, core.MeleeHitRatingPerHitChance*1*float64(warrior.Talents.Precision))
-	warrior.AddStat(stats.Armor, warrior.EquipStats()[stats.Armor]*0.02*float64(warrior.Talents.Toughness))
+	warrior.ApplyEquipScaling(stats.Armor, warrior.ToughnessArmorMultiplier())
 	warrior.PseudoStats.BaseDodge += 0.01 * float64(warrior.Talents.Anticipation)
 	warrior.PseudoStats.BaseParry += 0.01 * float64(warrior.Talents.Deflection)
 	warrior.PseudoStats.DodgeReduction += 0.01 * float64(warrior.Talents.WeaponMastery)
@@ -34,7 +38,7 @@ func (warrior *Warrior) ApplyTalents() {
 	}
 
 	if warrior.Talents.Vitality > 0 {
-		warrior.MultiplyStat(stats.Stamina, 1.0+0.01*float64(warrior.Talents.Vitality))
+		warrior.MultiplyStat(stats.Stamina, 1.0+0.03*float64(warrior.Talents.Vitality))
 		warrior.MultiplyStat(stats.Strength, 1.0+0.02*float64(warrior.Talents.Vitality))
 		warrior.AddStat(stats.Expertise, core.ExpertisePerQuarterPercentReduction*2*float64(warrior.Talents.Vitality))
 	}
