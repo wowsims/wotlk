@@ -67,6 +67,18 @@ export const AssassinationTalents182 = {
 	}),
 };
 
+export const AssassinationTalentsBF = {
+	name: 'Assassination Blade Flurry',
+	data: SavedTalents.create({
+		talentsString: '005303104352100520103231-005205005003001-501',
+		glyphs: Glyphs.create({
+			major1: RogueMajorGlyph.GlyphOfMutilate,
+			major2: RogueMajorGlyph.GlyphOfTricksOfTheTrade,
+			major3: RogueMajorGlyph.GlyphOfBladeFlurry,
+		})
+	}),
+};
+
 export const SubtletyTalents = {
 	name: 'Subtlety',
 	data: SavedTalents.create({
