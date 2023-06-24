@@ -79,7 +79,6 @@ func main() {
 			db.MergeGem(response.ToGemProto())
 		}
 	}
-
 	for _, wowheadItem := range wowheadDB.Items {
 		item := wowheadItem.ToProto()
 		if _, ok := db.Items[item.Id]; ok {
