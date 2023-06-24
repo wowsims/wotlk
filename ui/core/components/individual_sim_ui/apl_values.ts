@@ -10,7 +10,7 @@ import {
 } from '../../proto/apl.js';
 
 import { ActionID, Spec } from '../../proto/common.js';
-import { EventID } from '../../typed_event.js';
+import { EventID, TypedEvent } from '../../typed_event.js';
 import { Input, InputConfig } from '../input.js';
 import { ActionId } from '../../proto_utils/action_id.js';
 import { Player } from '../../player.js';
@@ -18,6 +18,69 @@ import { stringComparator } from '../../utils.js';
 import { TextDropdownPicker } from '../dropdown_picker.js';
 
 import * as AplHelpers from './apl_helpers.js';
+
+export class APLValueConstPicker extends Input<Player<any>, APLValueConst> {
+	private readonly inputElem: HTMLInputElement;
+
+	constructor(parent: HTMLElement, modObject: Player<any>, config: InputConfig<Player<any>, APLValueConst>) {
+		super(parent, 'apl-value-const-picker-root', modObject, config);
+
+		this.inputElem = document.createElement('input');
+		this.inputElem.type = 'text';
+		this.rootElem.appendChild(this.inputElem);
+
+		this.init();
+
+		this.inputElem.addEventListener('change', event => {
+			this.inputChanged(TypedEvent.nextEventID());
+		});
+	}
+
+	getInputElem(): HTMLElement {
+		return this.inputElem;
+	}
+
+	getInputValue(): APLValueConst {
+		return APLValueConst.create({ val: this.inputElem.value });
+	}
+
+	setInputValue(newValue: APLValueConst) {
+		this.inputElem.value = newValue.val;
+	}
+}
+
+export interface APLValuePickerBuilderConfig<T> extends InputConfig<Player<any>, T> {
+}
+
+class APLValuePickerBuilder<T> extends Input<Player<any>, T> {
+	private readonly inputElem: HTMLInputElement;
+
+	constructor(parent: HTMLElement, modObject: Player<any>, config: APLValuePickerBuilderConfig<T>) {
+		super(parent, 'apl-value-picker-builder-root', modObject, config);
+
+		this.inputElem = document.createElement('input');
+		this.inputElem.type = 'text';
+		this.rootElem.appendChild(this.inputElem);
+
+		this.init();
+
+		this.inputElem.addEventListener('change', event => {
+			this.inputChanged(TypedEvent.nextEventID());
+		});
+	}
+
+	getInputElem(): HTMLElement {
+		return this.inputElem;
+	}
+
+	getInputValue(): APLValueConst {
+		return APLValueConst.create({ val: this.inputElem.value });
+	}
+
+	setInputValue(newValue: APLValueConst) {
+		this.inputElem.value = newValue.val;
+	}
+}
 
 export interface APLValuePickerConfig extends InputConfig<Player<any>, APLValue> {
 }
@@ -133,8 +196,11 @@ export class APLValuePicker extends Input<Player<any>, APLValue> {
 	}
 
 	private static valueTypeFactories: Record<NonNullable<APLValueType>, { label: string, newValue: () => object, factory: new (parent: HTMLElement, player: Player<any>, config: InputConfig<Player<any>, any>) => Input<Player<any>, any> }>  = {
-		['and']: { label: 'All of', newValue: APLValueAnd.create, factory: APLValueCastSpellPicker },
-		['or']: { label: 'Any of', newValue: APLValueOr.create, factory: APLValueSequencePicker },
-		['not']: { label: 'Not', newValue: APLValueNot.create, factory: APLValueWaitPicker },
+		['const']: { label: 'Const', newValue: APLValueConst.create, factory: APLValueConstPicker },
+		['and']: { label: 'All of', newValue: APLValueAnd.create, factory: APLValueConstPicker },
+		['or']: { label: 'Any of', newValue: APLValueOr.create, factory: APLValueConstPicker },
+		['not']: { label: 'Not', newValue: APLValueNot.create, factory: APLValueConstPicker },
+		['cmp']: { label: 'Compare', newValue: APLValueNot.create, factory: APLValueConstPicker },
+		['dotIsActive']: { label: 'Dot Is Active', newValue: APLValueNot.create, factory: APLValueConstPicker },
 	};
 }
