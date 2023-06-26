@@ -46,8 +46,8 @@ character_stats_results: {
 dps_results: {
  key: "TestDemonology-AllItems-AshtongueTalismanofShadows-32493"
  value: {
-  dps: 9877.45696
-  tps: 8247.98916
+  dps: 9921.23176
+  tps: 8292.15154
  }
 }
 dps_results: {
@@ -81,15 +81,15 @@ dps_results: {
 dps_results: {
  key: "TestDemonology-AllItems-DarkCoven'sRegalia"
  value: {
-  dps: 9476.54974
-  tps: 8034.42838
+  dps: 9443.36616
+  tps: 8000.42708
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-DeathbringerGarb"
  value: {
-  dps: 8711.48101
-  tps: 7324.59002
+  dps: 8709.19916
+  tps: 7322.50809
  }
 }
 dps_results: {
@@ -151,15 +151,15 @@ dps_results: {
 dps_results: {
  key: "TestDemonology-AllItems-Gladiator'sFelshroud"
  value: {
-  dps: 8610.13992
-  tps: 7196.09208
+  dps: 8657.64693
+  tps: 7242.54322
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-Gul'dan'sRegalia"
  value: {
-  dps: 8721.46551
-  tps: 7214.64985
+  dps: 8740.48553
+  tps: 7232.10595
  }
 }
 dps_results: {
@@ -193,8 +193,8 @@ dps_results: {
 dps_results: {
  key: "TestDemonology-AllItems-MaleficRaiment"
  value: {
-  dps: 6835.55608
-  tps: 5629.80986
+  dps: 6835.276
+  tps: 5630.23138
  }
 }
 dps_results: {
@@ -214,8 +214,8 @@ dps_results: {
 dps_results: {
  key: "TestDemonology-AllItems-PlagueheartGarb"
  value: {
-  dps: 8304.63578
-  tps: 6953.84895
+  dps: 8349.09498
+  tps: 6997.6436
  }
 }
 dps_results: {
@@ -333,22 +333,22 @@ dps_results: {
 dps_results: {
  key: "TestDemonology-Settings-Orc-P2-Demonology Warlock-NoBuffs-LongMultiTarget"
  value: {
-  dps: 21169.42707
-  tps: 26451.58966
+  dps: 20916.36612
+  tps: 26198.52872
  }
 }
 dps_results: {
  key: "TestDemonology-Settings-Orc-P2-Demonology Warlock-NoBuffs-LongSingleTarget"
  value: {
-  dps: 5763.67487
-  tps: 5210.22066
+  dps: 5804.25453
+  tps: 5250.29116
  }
 }
 dps_results: {
  key: "TestDemonology-Settings-Orc-P2-Demonology Warlock-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 6127.58612
-  tps: 5457.69662
+  dps: 6127.8009
+  tps: 5457.96883
  }
 }
 dps_results: {

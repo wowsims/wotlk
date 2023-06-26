@@ -453,7 +453,7 @@ dps_results: {
  key: "TestRestoration-AllItems-GnomishLightningGenerator-41121"
  value: {
   tps: 57.10391
-  dtps: 25.30538
+  dtps: 26.9314
   hps: 3718.36111
  }
 }

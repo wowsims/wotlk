@@ -81,15 +81,15 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-AllItems-DarkCoven'sRegalia"
  value: {
-  dps: 9628.61305
-  tps: 7827.28126
+  dps: 9624.2461
+  tps: 7812.59651
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-DeathbringerGarb"
  value: {
-  dps: 9150.96326
-  tps: 7428.78913
+  dps: 9133.59265
+  tps: 7409.18208
  }
 }
 dps_results: {
@@ -151,15 +151,15 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-AllItems-Gladiator'sFelshroud"
  value: {
-  dps: 8883.2959
-  tps: 7197.71942
+  dps: 8854.4111
+  tps: 7156.4975
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-Gul'dan'sRegalia"
  value: {
-  dps: 9091.53175
-  tps: 7302.32904
+  dps: 9160.25069
+  tps: 7359.83765
  }
 }
 dps_results: {
@@ -193,8 +193,8 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-AllItems-MaleficRaiment"
  value: {
-  dps: 7076.27456
-  tps: 5641.36922
+  dps: 7077.54204
+  tps: 5643.3774
  }
 }
 dps_results: {
@@ -214,8 +214,8 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-AllItems-PlagueheartGarb"
  value: {
-  dps: 8442.5207
-  tps: 6794.77823
+  dps: 8470.4166
+  tps: 6827.63356
  }
 }
 dps_results: {
@@ -305,15 +305,15 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-Average-Default"
  value: {
-  dps: 10459.63971
-  tps: 8466.14233
+  dps: 10460.0253
+  tps: 8466.53893
  }
 }
 dps_results: {
  key: "TestDestruction-Settings-Orc-P2-Destruction Warlock-FullBuffs-LongMultiTarget"
  value: {
-  dps: 23979.64708
-  tps: 28432.19611
+  dps: 23979.6687
+  tps: 28432.91186
  }
 }
 dps_results: {
@@ -333,22 +333,22 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-Settings-Orc-P2-Destruction Warlock-NoBuffs-LongMultiTarget"
  value: {
-  dps: 13987.01945
-  tps: 19003.3802
+  dps: 14032.5197
+  tps: 19048.70925
  }
 }
 dps_results: {
  key: "TestDestruction-Settings-Orc-P2-Destruction Warlock-NoBuffs-LongSingleTarget"
  value: {
-  dps: 5786.62306
-  tps: 4861.58185
+  dps: 5809.76143
+  tps: 4883.75284
  }
 }
 dps_results: {
  key: "TestDestruction-Settings-Orc-P2-Destruction Warlock-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 5822.76927
-  tps: 4840.58964
+  dps: 5797.11262
+  tps: 4816.32657
  }
 }
 dps_results: {

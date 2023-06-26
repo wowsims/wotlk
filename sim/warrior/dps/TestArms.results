@@ -74,8 +74,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 7978.05933
-  tps: 6549.84323
+  dps: 7977.2662
+  tps: 6549.20873
  }
 }
 dps_results: {
@@ -203,8 +203,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-DarkmoonCard:Death-42990"
  value: {
-  dps: 7860.41284
-  tps: 6460.39541
+  dps: 7858.90758
+  tps: 6459.1912
  }
 }
 dps_results: {
@@ -336,8 +336,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-ExtractofNecromanticPower-40373"
  value: {
-  dps: 7882.25131
-  tps: 6478.12239
+  dps: 7881.25202
+  tps: 6477.32296
  }
 }
 dps_results: {
@@ -420,8 +420,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-GnomishLightningGenerator-41121"
  value: {
-  dps: 7836.73244
-  tps: 6441.19363
+  dps: 7836.91497
+  tps: 6441.33966
  }
 }
 dps_results: {
@@ -701,8 +701,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-StormshroudArmor"
  value: {
-  dps: 6382.02807
-  tps: 5244.99985
+  dps: 6382.01807
+  tps: 5244.99184
  }
 }
 dps_results: {
@@ -743,8 +743,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-TheFistsofFury"
  value: {
-  dps: 4698.99416
-  tps: 3950.5227
+  dps: 4698.81909
+  tps: 3950.38263
  }
 }
 dps_results: {

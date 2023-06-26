@@ -81,15 +81,15 @@ dps_results: {
 dps_results: {
  key: "TestAffliction-AllItems-DarkCoven'sRegalia"
  value: {
-  dps: 10126.05968
-  tps: 9120.94549
+  dps: 10129.40241
+  tps: 9119.49472
  }
 }
 dps_results: {
  key: "TestAffliction-AllItems-DeathbringerGarb"
  value: {
-  dps: 9397.69922
-  tps: 8423.77947
+  dps: 9397.45201
+  tps: 8429.55648
  }
 }
 dps_results: {
@@ -151,15 +151,15 @@ dps_results: {
 dps_results: {
  key: "TestAffliction-AllItems-Gladiator'sFelshroud"
  value: {
-  dps: 9254.56378
-  tps: 8303.31748
+  dps: 9328.16409
+  tps: 8371.10602
  }
 }
 dps_results: {
  key: "TestAffliction-AllItems-Gul'dan'sRegalia"
  value: {
-  dps: 9294.63609
-  tps: 8235.81254
+  dps: 9343.54578
+  tps: 8284.32463
  }
 }
 dps_results: {
@@ -193,8 +193,8 @@ dps_results: {
 dps_results: {
  key: "TestAffliction-AllItems-MaleficRaiment"
  value: {
-  dps: 7114.804
-  tps: 6257.87204
+  dps: 7114.38558
+  tps: 6260.46868
  }
 }
 dps_results: {
@@ -214,8 +214,8 @@ dps_results: {
 dps_results: {
  key: "TestAffliction-AllItems-PlagueheartGarb"
  value: {
-  dps: 8859.53801
-  tps: 7913.42675
+  dps: 8896.68627
+  tps: 7952.07812
  }
 }
 dps_results: {
@@ -312,43 +312,43 @@ dps_results: {
 dps_results: {
  key: "TestAffliction-Settings-Orc-P3-AffItemSwap-FullBuffs-LongMultiTarget"
  value: {
-  dps: 28895.69763
-  tps: 33545.81277
+  dps: 28842.22309
+  tps: 33491.3855
  }
 }
 dps_results: {
  key: "TestAffliction-Settings-Orc-P3-AffItemSwap-FullBuffs-LongSingleTarget"
  value: {
-  dps: 11004.1631
-  tps: 9890.8304
+  dps: 10996.83481
+  tps: 9879.62221
  }
 }
 dps_results: {
  key: "TestAffliction-Settings-Orc-P3-AffItemSwap-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 11798.3383
-  tps: 10636.11836
+  dps: 11827.83849
+  tps: 10658.54392
  }
 }
 dps_results: {
  key: "TestAffliction-Settings-Orc-P3-AffItemSwap-NoBuffs-LongMultiTarget"
  value: {
-  dps: 17164.14801
-  tps: 22134.56933
+  dps: 17153.39115
+  tps: 22125.46269
  }
 }
 dps_results: {
  key: "TestAffliction-Settings-Orc-P3-AffItemSwap-NoBuffs-LongSingleTarget"
  value: {
-  dps: 6330.47139
-  tps: 5930.61924
+  dps: 6351.87507
+  tps: 5954.34605
  }
 }
 dps_results: {
  key: "TestAffliction-Settings-Orc-P3-AffItemSwap-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 6046.38053
-  tps: 5572.82006
+  dps: 6086.27163
+  tps: 5610.38955
  }
 }
 dps_results: {
@@ -375,22 +375,22 @@ dps_results: {
 dps_results: {
  key: "TestAffliction-Settings-Orc-P3-Affliction Warlock-NoBuffs-LongMultiTarget"
  value: {
-  dps: 18948.06867
-  tps: 24120.61716
+  dps: 19127.62501
+  tps: 24301.8436
  }
 }
 dps_results: {
  key: "TestAffliction-Settings-Orc-P3-Affliction Warlock-NoBuffs-LongSingleTarget"
  value: {
-  dps: 6339.64885
-  tps: 5941.34035
+  dps: 6314.26994
+  tps: 5913.62043
  }
 }
 dps_results: {
  key: "TestAffliction-Settings-Orc-P3-Affliction Warlock-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 6112.48491
-  tps: 5637.1738
+  dps: 6116.46762
+  tps: 5637.86265
  }
 }
 dps_results: {

@@ -254,8 +254,8 @@ dps_results: {
 dps_results: {
  key: "TestHoly-AllItems-GnomishLightningGenerator-41121"
  value: {
-  dps: 40.49231
-  tps: 40.49231
+  dps: 39.47301
+  tps: 39.47301
  }
 }
 dps_results: {
