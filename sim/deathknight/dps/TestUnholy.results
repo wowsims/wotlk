@@ -870,8 +870,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-Thassarian'sBattlegear"
  value: {
-  dps: 7826.94783
-  tps: 5097.68764
+  dps: 7966.77101
+  tps: 5215.21059
   hps: 276.80769
  }
 }
