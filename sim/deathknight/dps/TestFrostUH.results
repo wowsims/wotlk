@@ -785,8 +785,8 @@ dps_results: {
 dps_results: {
  key: "TestFrostUH-AllItems-Thassarian'sBattlegear"
  value: {
-  dps: 7684.57561
-  tps: 5467.09135
+  dps: 7769.83922
+  tps: 5529.84537
  }
 }
 dps_results: {

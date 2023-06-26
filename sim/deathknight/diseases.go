@@ -125,7 +125,7 @@ func (dk *Deathknight) registerBloodPlague() {
 		Flags:       core.SpellFlagDisease,
 
 		DamageMultiplier: 1,
-		CritMultiplier:   dk.DefaultMeleeCritMultiplier(),
+		CritMultiplier:   dk.MeleeCritMultiplier(2, 0) - 1.0, // Don't know if bugged or intentional
 		ThreatMultiplier: 1,
 
 		Dot: core.DotConfig{

@@ -429,7 +429,7 @@ export const DeathKnightRotationConfig = {
 		WeaponSwapInputs,
 		UseEmpowerRuneWeapon,
 		UseDancingRuneWeapon,
-		NewDrwInput,
+		//NewDrwInput,
 		HoldErwArmy,
 		BloodTapInput,
 		BloodSpenderInput,
