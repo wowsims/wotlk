@@ -27,7 +27,7 @@ func (hunter *Hunter) registerVolleySpell() {
 
 		DamageMultiplier: 1 *
 			(1 + 0.04*float64(hunter.Talents.Barrage)),
-		CritMultiplier:   hunter.critMultiplier(true, false),
+		CritMultiplier:   hunter.critMultiplier(true, false, false),
 		ThreatMultiplier: 1,
 
 		Dot: core.DotConfig{

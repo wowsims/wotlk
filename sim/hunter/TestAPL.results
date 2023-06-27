@@ -820,8 +820,8 @@ dps_results: {
 dps_results: {
  key: "TestAPL-AllItems-Windrunner'sPursuit"
  value: {
-  dps: 6948.89297
-  tps: 5939.66399
+  dps: 6988.95976
+  tps: 5979.73077
  }
 }
 dps_results: {

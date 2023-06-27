@@ -115,9 +115,9 @@ func (hunter *Hunter) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 
 func (hunter *Hunter) Initialize() {
 	// Update auto crit multipliers now that we have the targets.
-	hunter.AutoAttacks.MHConfig.CritMultiplier = hunter.critMultiplier(false, false)
-	hunter.AutoAttacks.OHConfig.CritMultiplier = hunter.critMultiplier(false, false)
-	hunter.AutoAttacks.RangedConfig.CritMultiplier = hunter.critMultiplier(false, false)
+	hunter.AutoAttacks.MHConfig.CritMultiplier = hunter.critMultiplier(false, false, false)
+	hunter.AutoAttacks.OHConfig.CritMultiplier = hunter.critMultiplier(false, false, false)
+	hunter.AutoAttacks.RangedConfig.CritMultiplier = hunter.critMultiplier(false, false, false)
 
 	hunter.registerAspectOfTheDragonhawkSpell()
 	hunter.registerAspectOfTheViperSpell()
