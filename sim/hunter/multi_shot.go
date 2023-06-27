@@ -41,7 +41,7 @@ func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 			.04*float64(hunter.Talents.Barrage),
 		DamageMultiplier: 1 *
 			hunter.markedForDeathMultiplier(),
-		CritMultiplier:   hunter.critMultiplier(true, false),
+		CritMultiplier:   hunter.critMultiplier(true, false, false),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

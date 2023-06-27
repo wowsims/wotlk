@@ -35,7 +35,9 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 		DamageMultiplierAdditive: 1 +
 			0.1*float64(hunter.Talents.ImprovedStings) +
 			core.TernaryFloat64(hunter.HasSetBonus(ItemSetScourgestalkerBattlegear, 2), .1, 0),
-		CritMultiplier:   hunter.critMultiplier(true, false),
+		// according to in-game testing (which happens to match the wowhead 60% mortal shots flag on wowhead)
+		// serpent-sting gets 60% crit modifier instead of 30% crit modifier from mortal shots
+		CritMultiplier:   hunter.critMultiplier(true, false, true),
 		ThreatMultiplier: 1,
 
 		Dot: core.DotConfig{
