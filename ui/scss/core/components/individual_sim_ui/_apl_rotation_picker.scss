@@ -26,6 +26,8 @@
 .apl-list-item-picker-root {
 	display: flex;
 	align-items: center;
+	flex-direction: row;
+	margin: 5px;
 
 	&> :not(:last-child) {
 		margin-right: map.get($spacers, 2);

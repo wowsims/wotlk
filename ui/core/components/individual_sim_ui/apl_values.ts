@@ -9,54 +9,18 @@ import {
 	APLValueDotIsActive,
 } from '../../proto/apl.js';
 
-import { ActionID, Spec } from '../../proto/common.js';
 import { EventID, TypedEvent } from '../../typed_event.js';
 import { Input, InputConfig } from '../input.js';
-import { ActionId } from '../../proto_utils/action_id.js';
 import { Player } from '../../player.js';
-import { stringComparator } from '../../utils.js';
 import { TextDropdownPicker } from '../dropdown_picker.js';
 
 import * as AplHelpers from './apl_helpers.js';
 
-export class APLValueConstPicker extends Input<Player<any>, APLValueConst> {
+export class APLValueConstValuePicker extends Input<Player<any>, APLValueConst> {
 	private readonly inputElem: HTMLInputElement;
 
 	constructor(parent: HTMLElement, modObject: Player<any>, config: InputConfig<Player<any>, APLValueConst>) {
 		super(parent, 'apl-value-const-picker-root', modObject, config);
-
-		this.inputElem = document.createElement('input');
-		this.inputElem.type = 'text';
-		this.rootElem.appendChild(this.inputElem);
-
-		this.init();
-
-		this.inputElem.addEventListener('change', event => {
-			this.inputChanged(TypedEvent.nextEventID());
-		});
-	}
-
-	getInputElem(): HTMLElement {
-		return this.inputElem;
-	}
-
-	getInputValue(): APLValueConst {
-		return APLValueConst.create({ val: this.inputElem.value });
-	}
-
-	setInputValue(newValue: APLValueConst) {
-		this.inputElem.value = newValue.val;
-	}
-}
-
-export interface APLValuePickerBuilderConfig<T> extends InputConfig<Player<any>, T> {
-}
-
-class APLValuePickerBuilder<T> extends Input<Player<any>, T> {
-	private readonly inputElem: HTMLInputElement;
-
-	constructor(parent: HTMLElement, modObject: Player<any>, config: APLValuePickerBuilderConfig<T>) {
-		super(parent, 'apl-value-picker-builder-root', modObject, config);
 
 		this.inputElem = document.createElement('input');
 		this.inputElem.type = 'text';
@@ -92,35 +56,35 @@ export class APLValuePicker extends Input<Player<any>, APLValue> {
 	private typePicker: TextDropdownPicker<Player<any>, APLValueType>;
 
 	private currentType: APLValueType;
-	private actionPicker: Input<Player<any>, any>|null;
+	private valuePicker: Input<Player<any>, any>|null;
 
 	constructor(parent: HTMLElement, player: Player<any>, config: APLValuePickerConfig) {
-		super(parent, 'apl-action-picker-root', player, config);
+		super(parent, 'apl-value-picker-root', player, config);
 
-		const allValueTypes = Object.keys(APLValuePicker.valueTypeFactories) as Array<NonNullable<APLValueType>>;
+		const allValueTypes = Object.keys(valueTypeFactories) as Array<NonNullable<APLValueType>>;
 		this.typePicker = new TextDropdownPicker(this.rootElem, player, {
             defaultLabel: 'No Condition',
-			values: allValueTypes.map(actionType => {
+			values: allValueTypes.map(valueType => {
 				return {
-					value: actionType,
-					label: APLValuePicker.valueTypeFactories[actionType].label,
+					value: valueType,
+					label: valueTypeFactories[valueType].label,
 				};
 			}),
 			equals: (a, b) => a == b,
 			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
 			getValue: (player: Player<any>) => this.getSourceValue().value.oneofKind,
 			setValue: (eventID: EventID, player: Player<any>, newValue: APLValueType) => {
-				const action = this.getSourceValue();
-				if (action.value.oneofKind == newValue) {
+				const value = this.getSourceValue();
+				if (value.value.oneofKind == newValue) {
 					return;
 				}
 				if (newValue) {
-					const factory = APLValuePicker.valueTypeFactories[newValue];
+					const factory = valueTypeFactories[newValue];
 					const obj: any = { oneofKind: newValue };
 					obj[newValue] = factory.newValue();
-					action.value = obj;
+					value.value = obj;
 				} else {
-					action.value = {
+					value.value = {
 						oneofKind: newValue,
 					};
 				}
@@ -129,7 +93,7 @@ export class APLValuePicker extends Input<Player<any>, APLValue> {
 		});
 
 		this.currentType = undefined;
-		this.actionPicker = null;
+		this.valuePicker = null;
 
 		this.init();
 	}
@@ -139,14 +103,14 @@ export class APLValuePicker extends Input<Player<any>, APLValue> {
 	}
 
     getInputValue(): APLValue {
-		const actionType = this.typePicker.getInputValue();
+		const valueType = this.typePicker.getInputValue();
         return APLValue.create({
 			value: {
-				oneofKind: actionType,
+				oneofKind: valueType,
 				...((() => {
-					if (!actionType || !this.actionPicker) return;
+					if (!valueType || !this.valuePicker) return;
 					const val: any = {};
-					val[actionType] = this.actionPicker.getInputValue();
+					val[valueType] = this.valuePicker.getInputValue();
 					return val;
 				})()),
 			},
@@ -162,20 +126,20 @@ export class APLValuePicker extends Input<Player<any>, APLValue> {
 		this.updateValuePicker(newValueType);
 
 		if (newValueType) {
-			this.actionPicker!.setInputValue((newValue.value as any)[newValueType]);
+			this.valuePicker!.setInputValue((newValue.value as any)[newValueType]);
 		}
 	}
 
 	private updateValuePicker(newValueType: APLValueType) {
-		const actionType = this.currentType;
-		if (newValueType == actionType) {
+		const valueType = this.currentType;
+		if (newValueType == valueType) {
 			return;
 		}
 		this.currentType = newValueType;
 
-		if (this.actionPicker) {
-			this.actionPicker.rootElem.remove();
-			this.actionPicker = null;
+		if (this.valuePicker) {
+			this.valuePicker.rootElem.remove();
+			this.valuePicker = null;
 		}
 
 		if (!newValueType) {
@@ -184,8 +148,8 @@ export class APLValuePicker extends Input<Player<any>, APLValue> {
 
 		this.typePicker.setInputValue(newValueType);
 
-		const factory = APLValuePicker.valueTypeFactories[newValueType];
-		this.actionPicker = new factory.factory(this.rootElem, this.modObject, {
+		const factory = valueTypeFactories[newValueType];
+		this.valuePicker = factory.factory(this.rootElem, this.modObject, {
 			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
 			getValue: () => (this.getSourceValue().value as any)[newValueType] || factory.newValue(),
 			setValue: (eventID: EventID, player: Player<any>, newValue: any) => {
@@ -194,13 +158,39 @@ export class APLValuePicker extends Input<Player<any>, APLValue> {
 			},
 		});
 	}
+}
 
-	private static valueTypeFactories: Record<NonNullable<APLValueType>, { label: string, newValue: () => object, factory: new (parent: HTMLElement, player: Player<any>, config: InputConfig<Player<any>, any>) => Input<Player<any>, any> }>  = {
-		['const']: { label: 'Const', newValue: APLValueConst.create, factory: APLValueConstPicker },
-		['and']: { label: 'All of', newValue: APLValueAnd.create, factory: APLValueConstPicker },
-		['or']: { label: 'Any of', newValue: APLValueOr.create, factory: APLValueConstPicker },
-		['not']: { label: 'Not', newValue: APLValueNot.create, factory: APLValueConstPicker },
-		['cmp']: { label: 'Compare', newValue: APLValueNot.create, factory: APLValueConstPicker },
-		['dotIsActive']: { label: 'Dot Is Active', newValue: APLValueNot.create, factory: APLValueConstPicker },
+type ValueTypeConfig = {
+	label: string,
+	newValue: () => object,
+	factory: (parent: HTMLElement, player: Player<any>, config: InputConfig<Player<any>, any>) => Input<Player<any>, any>,
+};
+
+function inputBuilder<T extends object>(label: string, newValue: () => T, fields: Array<AplHelpers.APLPickerBuilderFieldConfig<T, any>>): ValueTypeConfig {
+	return {
+		label: label,
+		newValue: newValue,
+		factory: AplHelpers.aplInputBuilder(newValue, fields),
 	};
 }
+
+const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig>  = {
+	['const']: inputBuilder('Const', APLValueConst.create, [
+		{
+			field: 'value',
+			newValue: () => '',
+			factory: (parent, player, config) => new APLValueConstValuePicker(parent, player, config),
+		},
+	]),
+	['and']: inputBuilder('All of', APLValueAnd.create, [
+	]),
+	['or']: inputBuilder('Any of', APLValueOr.create, [
+	]),
+	['not']: inputBuilder('Not', APLValueNot.create, [
+	]),
+	['cmp']: inputBuilder('Compare', APLValueCompare.create, [
+	]),
+	['dotIsActive']: inputBuilder('Dot Is Active', APLValueDotIsActive.create, [
+		AplHelpers.actionIdFieldConfig('value', 'dots'),
+	]),
+};

@@ -1,123 +1,16 @@
 import {
-	APLListItem,
 	APLAction,
 	APLActionCastSpell,
 	APLActionSequence,
 	APLActionWait,
 } from '../../proto/apl.js';
 
-import { ActionID, Spec } from '../../proto/common.js';
 import { EventID } from '../../typed_event.js';
 import { Input, InputConfig } from '../input.js';
-import { ActionId } from '../../proto_utils/action_id.js';
 import { Player } from '../../player.js';
-import { stringComparator } from '../../utils.js';
 import { TextDropdownPicker } from '../dropdown_picker.js';
 
 import * as AplHelpers from './apl_helpers.js';
-
-class APLActionCastSpellPicker extends Input<Player<any>, APLActionCastSpell> {
-	private readonly spellIdPicker: AplHelpers.APLActionIDPicker;
-
-	constructor(parent: HTMLElement, player: Player<any>, config: InputConfig<Player<any>, APLActionCastSpell>) {
-		super(parent, 'apl-action-cast-spell-picker-root', player, config);
-
-        this.spellIdPicker = new AplHelpers.APLActionIDPicker(this.rootElem, player, {
-            defaultLabel: 'Spell',
-			values: [],
-            changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
-            getValue: () => ActionId.fromProto(this.getSourceValue().spellId || ActionID.create()),
-            setValue: (eventID: EventID, player: Player<any>, newValue: ActionId) => {
-                this.getSourceValue().spellId = newValue.toProto();
-				player.rotationChangeEmitter.emit(eventID);
-            },
-        });
-
-		this.init();
-
-		const updateValues = async () => {
-			const playerStats = player.getCurrentStats();
-			const spellPromises = Promise.all(playerStats.spells.map(spell => ActionId.fromProto(spell).fill()));
-			const cooldownPromises = Promise.all(playerStats.cooldowns.map(cd => ActionId.fromProto(cd).fill()));
-
-			let [spells, cooldowns] = await Promise.all([spellPromises, cooldownPromises]);
-            spells = spells.sort((a, b) => stringComparator(a.name, b.name))
-            cooldowns = cooldowns.sort((a, b) => stringComparator(a.name, b.name))
-
-			const values = [...spells, ...cooldowns].map(actionId => {
-				return {
-					value: actionId,
-				};
-			});
-            this.spellIdPicker.setOptions(values);
-		};
-        updateValues();
-        player.currentStatsEmitter.on(updateValues);
-	}
-
-	getInputElem(): HTMLElement | null {
-		return this.rootElem;
-	}
-
-    getInputValue(): APLActionCastSpell {
-        return APLActionCastSpell.create({
-			spellId: this.spellIdPicker.getInputValue(),
-		})
-    }
-
-	setInputValue(newValue: APLActionCastSpell) {
-		if (!newValue) {
-			return;
-		}
-		this.spellIdPicker.setInputValue(ActionId.fromProto(newValue.spellId || ActionID.create()));
-	}
-}
-
-class APLActionSequencePicker extends Input<Player<any>, APLActionSequence> {
-
-	constructor(parent: HTMLElement, player: Player<any>, config: InputConfig<Player<any>, APLActionSequence>) {
-		super(parent, 'apl-action-sequence-picker-root', player, config);
-		this.init();
-    }
-
-	getInputElem(): HTMLElement | null {
-		return this.rootElem;
-	}
-
-    getInputValue(): APLActionSequence {
-        return APLActionSequence.create({
-		})
-    }
-
-	setInputValue(newValue: APLActionSequence) {
-		if (!newValue) {
-			return;
-		}
-	}
-}
-
-class APLActionWaitPicker extends Input<Player<any>, APLActionWait> {
-
-	constructor(parent: HTMLElement, player: Player<any>, config: InputConfig<Player<any>, APLActionWait>) {
-		super(parent, 'apl-action-wait-picker-root', player, config);
-		this.init();
-    }
-
-	getInputElem(): HTMLElement | null {
-		return this.rootElem;
-	}
-
-    getInputValue(): APLActionWait {
-        return APLActionWait.create({
-		})
-    }
-
-	setInputValue(newValue: APLActionWait) {
-		if (!newValue) {
-			return;
-		}
-	}
-}
 
 export interface APLActionPickerConfig extends InputConfig<Player<any>, APLAction> {
 }
@@ -134,13 +27,13 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 	constructor(parent: HTMLElement, player: Player<any>, config: APLActionPickerConfig) {
 		super(parent, 'apl-action-picker-root', player, config);
 
-		const allActionTypes = Object.keys(APLActionPicker.actionTypeFactories) as Array<NonNullable<APLActionType>>;
+		const allActionTypes = Object.keys(actionTypeFactories) as Array<NonNullable<APLActionType>>;
 		this.typePicker = new TextDropdownPicker(this.rootElem, player, {
             defaultLabel: 'Action',
 			values: allActionTypes.map(actionType => {
 				return {
 					value: actionType,
-					label: APLActionPicker.actionTypeFactories[actionType].label,
+					label: actionTypeFactories[actionType].label,
 				};
 			}),
 			equals: (a, b) => a == b,
@@ -152,7 +45,7 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 					return;
 				}
 				if (newValue) {
-					const factory = APLActionPicker.actionTypeFactories[newValue];
+					const factory = actionTypeFactories[newValue];
 					const obj: any = { oneofKind: newValue };
 					obj[newValue] = factory.newValue();
 					action.action = obj;
@@ -221,8 +114,8 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 
 		this.typePicker.setInputValue(newActionType);
 
-		const factory = APLActionPicker.actionTypeFactories[newActionType];
-		this.actionPicker = new factory.factory(this.rootElem, this.modObject, {
+		const factory = actionTypeFactories[newActionType];
+		this.actionPicker = factory.factory(this.rootElem, this.modObject, {
 			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
 			getValue: () => (this.getSourceValue().action as any)[newActionType] || factory.newValue(),
 			setValue: (eventID: EventID, player: Player<any>, newValue: any) => {
@@ -231,10 +124,28 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 			},
 		});
 	}
+}
 
-	private static actionTypeFactories: Record<NonNullable<APLActionType>, { label: string, newValue: () => object, factory: new (parent: HTMLElement, player: Player<any>, config: InputConfig<Player<any>, any>) => Input<Player<any>, any> }>  = {
-		['castSpell']: { label: 'Cast', newValue: APLActionCastSpell.create, factory: APLActionCastSpellPicker },
-		['sequence']: { label: 'Sequence', newValue: APLActionSequence.create, factory: APLActionSequencePicker },
-		['wait']: { label: 'Wait', newValue: APLActionWait.create, factory: APLActionWaitPicker },
+type ActionTypeConfig = {
+	label: string,
+	newValue: () => object,
+	factory: (parent: HTMLElement, player: Player<any>, config: InputConfig<Player<any>, any>) => Input<Player<any>, any>,
+};
+
+function inputBuilder<T extends object>(label: string, newValue: () => T, fields: Array<AplHelpers.APLPickerBuilderFieldConfig<T, any>>): ActionTypeConfig {
+	return {
+		label: label,
+		newValue: newValue,
+		factory: AplHelpers.aplInputBuilder(newValue, fields),
 	};
 }
+
+export const actionTypeFactories: Record<NonNullable<APLActionType>, ActionTypeConfig> = {
+	['castSpell']: inputBuilder('Cast', APLActionCastSpell.create, [
+		AplHelpers.actionIdFieldConfig('spellId', 'all_spells'),
+	]),
+	['sequence']: inputBuilder('Sequence', APLActionSequence.create, [
+	]),
+	['wait']: inputBuilder('Wait', APLActionWait.create, [
+	]),
+};
