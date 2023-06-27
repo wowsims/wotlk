@@ -785,8 +785,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-Thassarian'sBattlegear"
  value: {
-  dps: 1732.14331
-  tps: 5201.1802
+  dps: 1679.71276
+  tps: 5092.46546
  }
 }
 dps_results: {
