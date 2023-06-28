@@ -470,15 +470,15 @@ class EpWeightsMenu extends BaseModal {
 
 	private makeTableRow(stat: UnitStat): HTMLElement {
 		const row = document.createElement('tr');
-		const result = this.getPrevSimResult();
+		const result = this.simUI.prevEpSimResult;
 		row.innerHTML = `
 			<td>${stat.getName(this.simUI.player.getClass())}</td>
-			${this.makeTableRowCells(stat, result!.dps, 'damage-metrics')}
-			${this.makeTableRowCells(stat, result!.hps, 'healing-metrics')}
-			${this.makeTableRowCells(stat, result!.tps, 'threat-metrics')}
-			${this.makeTableRowCells(stat, result!.dtps, 'threat-metrics')}
-			${this.makeTableRowCells(stat, result!.tmi, 'threat-metrics experimental')}
-			${this.makeTableRowCells(stat, result!.pDeath, 'threat-metrics experimental')}
+			${this.makeTableRowCells(stat, result?.dps, 'damage-metrics')}
+			${this.makeTableRowCells(stat, result?.hps, 'healing-metrics')}
+			${this.makeTableRowCells(stat, result?.tps, 'threat-metrics')}
+			${this.makeTableRowCells(stat, result?.dtps, 'threat-metrics')}
+			${this.makeTableRowCells(stat, result?.tmi, 'threat-metrics experimental')}
+			${this.makeTableRowCells(stat, result?.pDeath, 'threat-metrics experimental')}
 			<td class="current-ep"></td>
 		`;
 
@@ -496,40 +496,58 @@ class EpWeightsMenu extends BaseModal {
 		return row;
 	}
 
-	private makeTableRowCells(stat: UnitStat, statWeights: StatWeightValues, className: string): string {
-		const skipFormatting = this.simUI.prevEpSimResult === null
-		const iterations = this.simUI.prevEpIterations || 1
-		const epCurrent = this.simUI.player.getEpWeights().getUnitStat(stat);
-		const epAvg = stat.getProtoValue(statWeights.epValues!);
+	private makeTableRowCells(stat: UnitStat, statWeights: StatWeightValues|undefined, className: string): string {
+
+		var weightCell, epCell;
+		if (statWeights) {
+			const weightAvg = stat.getProtoValue(statWeights.weights!);
+			const weightStdev = stat.getProtoValue(statWeights.weightsStdev!)
+			weightCell = this.makeTableCellContents(weightAvg, weightStdev)
+
+			const epAvg = stat.getProtoValue(statWeights.epValues!);
+			const epStdev = stat.getProtoValue(statWeights.epValuesStdev!)
+			epCell = this.makeTableCellContents(epAvg, epStdev);
+		} else {
+			weightCell = this.makeTableCellContents(0, 0)
+			epCell = weightCell
+		}
 
 		let template = document.createElement('template');
 		template.innerHTML = `
 			<td class="stdev-cell ${className} type-weight">
-				<span class="results-avg">${stat.getProtoValue(statWeights.weights!).toFixed(2)}</span>
-				<span class="results-stdev">
-					(<i class="fas fa-plus-minus fa-xs"></i>${stDevToConf90(stat.getProtoValue(statWeights.weightsStdev!), iterations).toFixed(2)})
-				</span>
+				${weightCell}
 			</td>
 			<td class="stdev-cell ${className} type-ep">
-				<span class="results-avg">${epAvg.toFixed(2)}</span>
-				<span class="results-stdev">
-					(<i class="fas fa-plus-minus fa-xs"></i>${stDevToConf90(stat.getProtoValue(statWeights.epValuesStdev!), iterations).toFixed(2)})
-				</span>
+				${epCell}
 			</td>
 		`;
 
-		const epAvgElem = template.content.querySelector('.type-ep .results-avg') as HTMLElement;
-		const epDelta = epAvg - epCurrent;
+		if (statWeights) {
+			const epAvg = stat.getProtoValue(statWeights.epValues!);
+			const epCurrent = this.simUI.player.getEpWeights().getUnitStat(stat);
+			const epAvgElem = template.content.querySelector('.type-ep .results-avg') as HTMLElement;
+			const epDelta = epAvg - epCurrent;
 
-		if (skipFormatting || epDelta.toFixed(2) == "0.00")
-			epAvgElem // no-op
-		else if (epDelta > 0)
-			epAvgElem.classList.add('positive');
-		else if (epDelta < 0)
-			epAvgElem.classList.add('negative');
+			if (epDelta.toFixed(2) == "0.00")
+				epAvgElem // no-op
+			else if (epDelta > 0)
+				epAvgElem.classList.add('positive');
+			else if (epDelta < 0)
+				epAvgElem.classList.add('negative');
+		}
 
 		return template.innerHTML;
 	};
+
+	private makeTableCellContents(value: number, stdev: number): string {
+		const iterations = this.simUI.prevEpIterations || 1
+		return `
+			<span class="results-avg">${value.toFixed(2)}</span>
+			<span class="results-stdev">
+				(<i class="fas fa-plus-minus fa-xs"></i>${stDevToConf90(stdev, iterations).toFixed(2)})
+			</span>
+		`;
+	}
 
 	private calculateEp(weights: StatWeightsResult) {
 		var result = StatWeightsResult.clone(weights);
