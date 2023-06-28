@@ -38,7 +38,7 @@ func (hunter *Hunter) registerChimeraShotSpell() {
 		},
 
 		DamageMultiplier: 1 * hunter.markedForDeathMultiplier(),
-		CritMultiplier:   hunter.critMultiplier(true, true),
+		CritMultiplier:   hunter.critMultiplier(true, true, false),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -75,7 +75,7 @@ func (hunter *Hunter) chimeraShotSerpentStingSpell() *core.Spell {
 		DamageMultiplier: 1 *
 			(2.0 + core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfSerpentSting), 0.8, 0)) *
 			hunter.markedForDeathMultiplier(),
-		CritMultiplier:   hunter.critMultiplier(true, false),
+		CritMultiplier:   hunter.critMultiplier(true, false, false),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

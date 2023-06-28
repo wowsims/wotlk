@@ -54,7 +54,7 @@ func (hunter *Hunter) makeExplosiveShotSpell(timer *core.Timer, downrank bool) *
 		DamageMultiplierAdditive: 1 +
 			.02*float64(hunter.Talents.TNT),
 		DamageMultiplier: 1,
-		CritMultiplier:   hunter.critMultiplier(true, false),
+		CritMultiplier:   hunter.critMultiplier(true, false, false),
 		ThreatMultiplier: 1,
 
 		Dot: core.DotConfig{

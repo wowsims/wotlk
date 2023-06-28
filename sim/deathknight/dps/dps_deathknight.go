@@ -51,7 +51,7 @@ func NewDpsDeathknight(character core.Character, player *proto.Player) *DpsDeath
 			DrwPestiApply:       dk.Options.DrwPestiApply,
 			BloodOpener:         dk.Rotation.BloodOpener,
 			IsDps:               true,
-			NewDrw:              dk.Options.NewDrw,
+			NewDrw:              true,
 			DiseaseDowntime:     dk.Options.DiseaseDowntime,
 			VirulenceRefresh:    dk.Rotation.VirulenceRefresh,
 

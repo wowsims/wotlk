@@ -293,6 +293,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 				talents: [
 					Presets.AssassinationTalents137,
 					Presets.AssassinationTalents182,
+					Presets.AssassinationTalentsBF,
 					Presets.CombatHackTalents,
 					Presets.CombatCQCTalents,
 					Presets.SubtletyTalents,

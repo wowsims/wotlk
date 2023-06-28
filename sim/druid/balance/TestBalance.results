@@ -102,8 +102,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
-  dps: 6186.90838
-  tps: 6009.3901
+  dps: 6153.82693
+  tps: 5974.65672
  }
 }
 dps_results: {
@@ -236,15 +236,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-DreamwalkerBattlegear"
  value: {
-  dps: 4414.93637
-  tps: 4229.71775
+  dps: 4517.16426
+  tps: 4333.36058
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-DreamwalkerGarb"
  value: {
-  dps: 6881.19405
-  tps: 6717.39229
+  dps: 7001.59261
+  tps: 6838.51084
  }
 }
 dps_results: {
@@ -369,15 +369,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-Gladiator'sSanctuary"
  value: {
-  dps: 4763.01223
-  tps: 4583.78905
+  dps: 4748.95926
+  tps: 4569.06985
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-Gladiator'sWildhide"
  value: {
-  dps: 7356.11186
-  tps: 7172.47369
+  dps: 7390.20391
+  tps: 7205.11585
  }
 }
 dps_results: {
@@ -516,15 +516,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-LasherweaveBattlegear"
  value: {
-  dps: 4527.22781
-  tps: 4343.95671
+  dps: 4451.78321
+  tps: 4266.33225
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-LasherweaveRegalia"
  value: {
-  dps: 8267.70116
-  tps: 8100.20878
+  dps: 8286.76514
+  tps: 8120.25492
  }
 }
 dps_results: {
@@ -544,15 +544,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-Malfurion'sBattlegear"
  value: {
-  dps: 4893.55175
-  tps: 4713.8823
+  dps: 5057.92502
+  tps: 4880.81598
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-Malfurion'sRegalia"
  value: {
-  dps: 7339.66081
-  tps: 7167.74973
+  dps: 7345.11945
+  tps: 7174.25529
  }
 }
 dps_results: {
@@ -572,8 +572,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-NightsongBattlegear"
  value: {
-  dps: 4720.13094
-  tps: 4538.6182
+  dps: 4681.70488
+  tps: 4499.06715
  }
 }
 dps_results: {
@@ -754,8 +754,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-StormshroudArmor"
  value: {
-  dps: 5093.36804
-  tps: 4905.61608
+  dps: 5276.51971
+  tps: 5091.10609
  }
 }
 dps_results: {
@@ -803,15 +803,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-ThunderheartHarness"
  value: {
-  dps: 3517.52545
-  tps: 3336.70164
+  dps: 3616.02758
+  tps: 3436.65913
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-ThunderheartRegalia"
  value: {
-  dps: 5506.54754
-  tps: 5335.39092
+  dps: 5559.79631
+  tps: 5389.71223
  }
 }
 dps_results: {
@@ -873,8 +873,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
-  dps: 5244.87928
-  tps: 5059.85443
+  dps: 5228.66245
+  tps: 5042.48893
  }
 }
 dps_results: {
@@ -936,15 +936,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-Default-NoBuffs-LongMultiTarget"
  value: {
-  dps: 4321.54811
-  tps: 4572.76092
+  dps: 4352.35877
+  tps: 4634.73094
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-Default-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2325.73803
-  tps: 2217.33648
+  dps: 2325.51593
+  tps: 2217.11438
  }
 }
 dps_results: {
@@ -978,15 +978,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-MultidotBoth-NoBuffs-LongMultiTarget"
  value: {
-  dps: 4239.9181
-  tps: 4113.68638
+  dps: 4252.9728
+  tps: 4126.78508
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-MultidotBoth-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2252.55093
-  tps: 2143.26674
+  dps: 2252.39308
+  tps: 2143.10889
  }
 }
 dps_results: {
@@ -1020,8 +1020,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-MultidotIs-NoBuffs-LongMultiTarget"
  value: {
-  dps: 4239.9181
-  tps: 4113.68638
+  dps: 4252.9728
+  tps: 4126.78508
  }
 }
 dps_results: {
@@ -1062,15 +1062,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-MultidotMf-NoBuffs-LongMultiTarget"
  value: {
-  dps: 3240.66885
-  tps: 3263.52566
+  dps: 3176.82868
+  tps: 3193.08719
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-MultidotMf-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2302.7412
-  tps: 2194.11904
+  dps: 2302.54378
+  tps: 2193.92162
  }
 }
 dps_results: {
@@ -1104,15 +1104,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-Default-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6286.78717
-  tps: 6788.46877
+  dps: 6370.87048
+  tps: 6919.31074
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-Default-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3559.9272
-  tps: 3446.27238
+  dps: 3560.21646
+  tps: 3446.53964
  }
 }
 dps_results: {
@@ -1146,8 +1146,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-MultidotBoth-NoBuffs-LongMultiTarget"
  value: {
-  dps: 5923.91025
-  tps: 5779.44283
+  dps: 5950.52074
+  tps: 5809.00658
  }
 }
 dps_results: {
@@ -1188,15 +1188,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-MultidotIs-NoBuffs-LongMultiTarget"
  value: {
-  dps: 5923.91025
-  tps: 5779.44283
+  dps: 5950.52074
+  tps: 5809.00658
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-MultidotIs-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3559.9272
-  tps: 3446.27238
+  dps: 3560.21646
+  tps: 3446.53964
  }
 }
 dps_results: {
@@ -1230,8 +1230,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-MultidotMf-NoBuffs-LongMultiTarget"
  value: {
-  dps: 4534.26475
-  tps: 4698.98819
+  dps: 4604.40814
+  tps: 4765.32451
  }
 }
 dps_results: {
@@ -1272,8 +1272,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-Default-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6872.69758
-  tps: 7554.45541
+  dps: 6957.9379
+  tps: 7652.31907
  }
 }
 dps_results: {
@@ -1314,15 +1314,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-MultidotBoth-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6158.24751
-  tps: 6011.86745
+  dps: 6165.83532
+  tps: 6019.47725
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-MultidotBoth-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3833.5992
-  tps: 3722.86502
+  dps: 3833.26506
+  tps: 3722.53088
  }
 }
 dps_results: {
@@ -1356,8 +1356,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-MultidotIs-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6158.24751
-  tps: 6011.86745
+  dps: 6165.83532
+  tps: 6019.47725
  }
 }
 dps_results: {
@@ -1398,8 +1398,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-MultidotMf-NoBuffs-LongMultiTarget"
  value: {
-  dps: 4750.25023
-  tps: 4949.50685
+  dps: 4772.64067
+  tps: 4965.77263
  }
 }
 dps_results: {
@@ -1419,169 +1419,169 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-Default-FullBuffs-LongMultiTarget"
  value: {
-  dps: 16307.96245
-  tps: 18783.86421
+  dps: 16274.51202
+  tps: 18764.02679
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-Default-FullBuffs-LongSingleTarget"
  value: {
-  dps: 11453.88762
-  tps: 11257.27165
+  dps: 11459.61479
+  tps: 11262.27146
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-Default-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 12539.60251
-  tps: 11852.40583
+  dps: 12543.90188
+  tps: 11856.56584
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-Default-NoBuffs-LongMultiTarget"
  value: {
-  dps: 8836.90347
-  tps: 9901.53164
+  dps: 8914.40033
+  tps: 10001.93784
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-Default-NoBuffs-LongSingleTarget"
  value: {
-  dps: 6016.57832
-  tps: 5923.58113
+  dps: 6058.42399
+  tps: 5966.60057
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-Default-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 7839.18283
-  tps: 7535.32485
+  dps: 7895.91777
+  tps: 7594.62482
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotBoth-FullBuffs-LongMultiTarget"
  value: {
-  dps: 16276.62376
-  tps: 16971.8023
+  dps: 16256.45422
+  tps: 16951.98236
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotBoth-FullBuffs-LongSingleTarget"
  value: {
-  dps: 11505.11531
-  tps: 11307.63499
+  dps: 11525.86368
+  tps: 11328.72745
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotBoth-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 12666.87551
-  tps: 11980.61632
+  dps: 12614.26593
+  tps: 11926.93122
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotBoth-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6853.43213
-  tps: 6695.3697
+  dps: 6796.88988
+  tps: 6638.80545
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotBoth-NoBuffs-LongSingleTarget"
  value: {
-  dps: 5914.93649
-  tps: 5819.93002
+  dps: 6127.16878
+  tps: 6035.28061
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotBoth-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 8011.04933
-  tps: 7709.11512
+  dps: 8055.30861
+  tps: 7754.87068
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotIs-FullBuffs-LongMultiTarget"
  value: {
-  dps: 16276.62376
-  tps: 16971.8023
+  dps: 16256.45422
+  tps: 16951.98236
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotIs-FullBuffs-LongSingleTarget"
  value: {
-  dps: 11411.89432
-  tps: 11212.35575
+  dps: 11439.74819
+  tps: 11240.45219
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotIs-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 12668.24115
-  tps: 11980.61979
+  dps: 12611.94695
+  tps: 11924.29946
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotIs-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6853.43213
-  tps: 6695.3697
+  dps: 6796.88988
+  tps: 6638.80545
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotIs-NoBuffs-LongSingleTarget"
  value: {
-  dps: 5911.58541
-  tps: 5816.10618
+  dps: 5942.44699
+  tps: 5847.50402
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotIs-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 7928.53506
-  tps: 7622.96705
+  dps: 7927.08808
+  tps: 7623.2301
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotMf-FullBuffs-LongMultiTarget"
  value: {
-  dps: 14974.77558
-  tps: 17984.09441
+  dps: 15130.27768
+  tps: 18203.89754
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotMf-FullBuffs-LongSingleTarget"
  value: {
-  dps: 11567.44222
-  tps: 11372.31722
+  dps: 11553.75758
+  tps: 11358.05688
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotMf-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 12543.86603
-  tps: 11856.89248
+  dps: 12480.80823
+  tps: 11793.51103
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotMf-NoBuffs-LongMultiTarget"
  value: {
-  dps: 5886.31569
-  tps: 6247.09216
+  dps: 5663.36625
+  tps: 5990.8852
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotMf-NoBuffs-LongSingleTarget"
  value: {
-  dps: 6051.34936
-  tps: 5960.01945
+  dps: 6126.36871
+  tps: 6036.38606
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotMf-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 8019.83408
-  tps: 7720.89242
+  dps: 8033.89773
+  tps: 7735.81108
  }
 }
 dps_results: {

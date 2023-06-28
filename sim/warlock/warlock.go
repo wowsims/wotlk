@@ -86,7 +86,7 @@ const (
 
 type ActionCondition struct {
 	Spell     *core.Spell
-	Condition func(*core.Simulation) (ACLaction, *core.Unit, string)
+	Condition func(*core.Simulation) (ACLaction, *core.Unit)
 }
 
 func (warlock *Warlock) GetCharacter() *core.Character {

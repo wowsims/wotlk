@@ -97,29 +97,29 @@ dps_results: {
 dps_results: {
  key: "TestFrostUH-AllItems-Beast-tamer'sShoulders-30892"
  value: {
-  dps: 7858.4259
-  tps: 5589.73866
+  dps: 7816.05525
+  tps: 5559.48088
  }
 }
 dps_results: {
  key: "TestFrostUH-AllItems-BlessedBattlegearofUndeadSlaying"
  value: {
-  dps: 6612.86331
-  tps: 4704.32329
+  dps: 6608.88302
+  tps: 4699.39067
  }
 }
 dps_results: {
  key: "TestFrostUH-AllItems-BlessedGarboftheUndeadSlayer"
  value: {
-  dps: 6583.4355
-  tps: 4689.79478
+  dps: 6549.70773
+  tps: 4664.83982
  }
 }
 dps_results: {
  key: "TestFrostUH-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
-  dps: 6351.4427
-  tps: 4520.27494
+  dps: 6338.2015
+  tps: 4509.6772
  }
 }
 dps_results: {
@@ -203,8 +203,8 @@ dps_results: {
 dps_results: {
  key: "TestFrostUH-AllItems-DarkrunedPlate"
  value: {
-  dps: 6754.89025
-  tps: 4794.10266
+  dps: 6707.9101
+  tps: 4758.8418
  }
 }
 dps_results: {
@@ -617,8 +617,8 @@ dps_results: {
 dps_results: {
  key: "TestFrostUH-AllItems-Scourgelord'sPlate"
  value: {
-  dps: 7094.66039
-  tps: 5030.79394
+  dps: 7090.42677
+  tps: 5026.96165
  }
 }
 dps_results: {
@@ -743,8 +743,8 @@ dps_results: {
 dps_results: {
  key: "TestFrostUH-AllItems-StormshroudArmor"
  value: {
-  dps: 6232.55281
-  tps: 4435.46076
+  dps: 6281.02892
+  tps: 4470.37359
  }
 }
 dps_results: {
@@ -806,8 +806,8 @@ dps_results: {
 dps_results: {
  key: "TestFrostUH-AllItems-TheTwinBladesofAzzinoth"
  value: {
-  dps: 7288.58393
-  tps: 5170.23489
+  dps: 7287.00669
+  tps: 5168.52447
  }
 }
 dps_results: {
@@ -869,15 +869,15 @@ dps_results: {
 dps_results: {
  key: "TestFrostUH-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
-  dps: 6553.75842
-  tps: 4669.81589
+  dps: 6564.40141
+  tps: 4676.42434
  }
 }
 dps_results: {
  key: "TestFrostUH-AllItems-Val'anyr,HammerofAncientKings-46017"
  value: {
-  dps: 7749.54498
-  tps: 5498.81846
+  dps: 7753.20482
+  tps: 5501.19947
  }
 }
 dps_results: {
@@ -925,64 +925,64 @@ dps_results: {
 dps_results: {
  key: "TestFrostUH-Settings-Human-Frost P1-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 10436.82676
-  tps: 7566.14732
+  dps: 10416.34337
+  tps: 7550.9407
  }
 }
 dps_results: {
  key: "TestFrostUH-Settings-Human-Frost P1-Basic-NoBuffs-LongSingleTarget"
  value: {
-  dps: 4799.868
-  tps: 3408.63822
+  dps: 4714.67011
+  tps: 3347.56553
  }
 }
 dps_results: {
  key: "TestFrostUH-Settings-Human-Frost P1-Basic-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 5178.84796
-  tps: 3558.4981
+  dps: 5187.76428
+  tps: 3566.08499
  }
 }
 dps_results: {
  key: "TestFrostUH-Settings-Human-Frost P2-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 24827.89108
-  tps: 18054.77125
+  dps: 23979.14505
+  tps: 17431.57839
  }
 }
 dps_results: {
  key: "TestFrostUH-Settings-Human-Frost P2-Basic-FullBuffs-LongSingleTarget"
  value: {
-  dps: 10059.70472
-  tps: 7180.72946
+  dps: 10037.57937
+  tps: 7163.37912
  }
 }
 dps_results: {
  key: "TestFrostUH-Settings-Human-Frost P2-Basic-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 11767.92494
-  tps: 8111.24586
+  dps: 11789.8706
+  tps: 8126.84999
  }
 }
 dps_results: {
  key: "TestFrostUH-Settings-Human-Frost P2-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 12676.04034
-  tps: 9194.14143
+  dps: 12456.51499
+  tps: 9036.84098
  }
 }
 dps_results: {
  key: "TestFrostUH-Settings-Human-Frost P2-Basic-NoBuffs-LongSingleTarget"
  value: {
-  dps: 5830.23347
-  tps: 4151.41246
+  dps: 5859.29684
+  tps: 4172.23866
  }
 }
 dps_results: {
  key: "TestFrostUH-Settings-Human-Frost P2-Basic-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 6521.47322
-  tps: 4504.89971
+  dps: 6546.06298
+  tps: 4520.4282
  }
 }
 dps_results: {
@@ -1009,64 +1009,64 @@ dps_results: {
 dps_results: {
  key: "TestFrostUH-Settings-Orc-Frost P1-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 10260.63496
-  tps: 7429.4761
+  dps: 10242.11678
+  tps: 7415.84994
  }
 }
 dps_results: {
  key: "TestFrostUH-Settings-Orc-Frost P1-Basic-NoBuffs-LongSingleTarget"
  value: {
-  dps: 4714.57349
-  tps: 3343.57137
+  dps: 4665.07261
+  tps: 3307.01917
  }
 }
 dps_results: {
  key: "TestFrostUH-Settings-Orc-Frost P1-Basic-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 5193.23688
-  tps: 3558.51617
+  dps: 5200.92038
+  tps: 3564.55079
  }
 }
 dps_results: {
  key: "TestFrostUH-Settings-Orc-Frost P2-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 25153.8521
-  tps: 18283.89953
+  dps: 23892.78175
+  tps: 17354.09339
  }
 }
 dps_results: {
  key: "TestFrostUH-Settings-Orc-Frost P2-Basic-FullBuffs-LongSingleTarget"
  value: {
-  dps: 10121.22281
-  tps: 7210.71076
+  dps: 10144.06236
+  tps: 7226.55766
  }
 }
 dps_results: {
  key: "TestFrostUH-Settings-Orc-Frost P2-Basic-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 11861.23814
-  tps: 8152.15053
+  dps: 11887.40683
+  tps: 8171.36393
  }
 }
 dps_results: {
  key: "TestFrostUH-Settings-Orc-Frost P2-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 12697.33835
-  tps: 9203.22843
+  dps: 11924.02022
+  tps: 8638.93311
  }
 }
 dps_results: {
  key: "TestFrostUH-Settings-Orc-Frost P2-Basic-NoBuffs-LongSingleTarget"
  value: {
-  dps: 5796.09989
-  tps: 4120.45674
+  dps: 5840.49527
+  tps: 4152.36994
  }
 }
 dps_results: {
  key: "TestFrostUH-Settings-Orc-Frost P2-Basic-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 6566.62933
-  tps: 4524.39305
+  dps: 6604.08436
+  tps: 4548.92752
  }
 }
 dps_results: {

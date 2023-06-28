@@ -10,6 +10,7 @@ import {
 	IndividualBuffs,
 	Debuffs,
 	TristateEffect,
+	Faction,
 	Spec,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
@@ -941,6 +942,735 @@ export const P2_Preset_Demo_Destro = {
 			"id": 45294,
 			"gems": [
 				39998
+			]
+		}
+	]}`),
+}
+
+export const P3_Preset_Affliction_Horde = {
+	name: 'P3 Affliction H',
+	tooltip: WarlockTooltips.BIS_TOOLTIP,
+	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction && player.getFaction() == Faction.Horde,
+		gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 47796,
+			"enchant": 3820,
+			"gems": [
+				41285,
+				40133
+			]
+		},
+		{
+			"id": 47468,
+			"gems": [
+				40155
+			]
+		},
+		{
+			"id": 47793,
+			"enchant": 3810,
+			"gems": [
+				40155
+			]
+		},
+		{
+			"id": 47551,
+			"enchant": 3722,
+			"gems": [
+				40113
+			]
+		},
+		{
+			"id": 47462,
+			"enchant": 1144,
+			"gems": [
+				40133,
+				40155,
+				40113
+			]
+		},
+		{
+			"id": 47485,
+			"enchant": 2332,
+			"gems": [
+				40113,
+				0
+			]
+		},
+		{
+			"id": 47797,
+			"enchant": 3604,
+			"gems": [
+				40113,
+				0
+			]
+		},
+		{
+			"id": 47419,
+			"enchant": 3599,
+			"gems": [
+				40133,
+				40113,
+				40113
+			]
+		},
+		{
+			"id": 47795,
+			"enchant": 3872,
+			"gems": [
+				40113,
+				40153
+			]
+		},
+		{
+			"id": 47454,
+			"enchant": 3606,
+			"gems": [
+				40133,
+				40113
+			]
+		},
+		{
+			"id": 45495,
+			"gems": [
+				40113
+			]
+		},
+		{
+			"id": 47489,
+			"gems": [
+				40155
+			]
+		},
+		{
+			"id": 45518
+		},
+		{
+			"id": 45466
+		},
+		{
+			"id": 47422,
+			"enchant": 3834,
+			"gems": [
+				40113
+			]
+		},
+		{
+			"id": 48032,
+			"gems": [
+				40155
+			]
+		},
+		{
+			"id": 45294,
+			"gems": [
+				40051
+			]
+		}
+	]}`),
+}
+
+export const P3_Preset_Affliction_Alliance = {
+	name: 'P3 Affliction A',
+	tooltip: WarlockTooltips.BIS_TOOLTIP,
+	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction && player.getFaction() == Faction.Alliance,
+		gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 47789,
+			"enchant": 3820,
+			"gems": [
+				41285,
+				40133
+			]
+		},
+		{
+			"id": 47144,
+			"gems": [
+				40155
+			]
+		},
+		{
+			"id": 47792,
+			"enchant": 3810,
+			"gems": [
+				40155
+			]
+		},
+		{
+			"id": 47552,
+			"enchant": 3722,
+			"gems": [
+				40113
+			]
+		},
+		{
+			"id": 47129,
+			"enchant": 1144,
+			"gems": [
+				40133,
+				40155,
+				40113
+			]
+		},
+		{
+			"id": 47208,
+			"enchant": 2332,
+			"gems": [
+				40113,
+				0
+			]
+		},
+		{
+			"id": 47788,
+			"enchant": 3604,
+			"gems": [
+				40113,
+				0
+			]
+		},
+		{
+			"id": 46973,
+			"enchant": 3599,
+			"gems": [
+				40133,
+				40113,
+				40113
+			]
+		},
+		{
+			"id": 47790,
+			"enchant": 3872,
+			"gems": [
+				40113,
+				40155
+			]
+		},
+		{
+			"id": 47097,
+			"enchant": 3606,
+			"gems": [
+				40133,
+				40113
+			]
+		},
+		{
+			"id": 45495,
+			"gems": [
+				40113
+			]
+		},
+		{
+			"id": 47237,
+			"gems": [
+				40155
+			]
+		},
+		{
+			"id": 45518
+		},
+		{
+			"id": 45466
+		},
+		{
+			"id": 46980,
+			"enchant": 3834,
+			"gems": [
+				40113
+			]
+		},
+		{
+			"id": 47958,
+			"gems": [
+				40155
+			]
+		},
+		{
+			"id": 45294,
+			"gems": [
+				40155
+			]
+		}
+	]}`),
+}
+
+export const P3_Preset_Demo_Horde = {
+	name: 'P3 Demo H',
+	tooltip: WarlockTooltips.BIS_TOOLTIP,
+	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology && player.getFaction() == Faction.Horde,
+		gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 47796,
+			"enchant": 3820,
+			"gems": [
+				41285,
+				40133
+			]
+		},
+		{
+			"id": 45133,
+			"gems": [
+				40153
+			]
+		},
+		{
+			"id": 47793,
+			"enchant": 3810,
+			"gems": [
+				40113
+			]
+		},
+		{
+			"id": 47554,
+			"enchant": 3722,
+			"gems": [
+				40113
+			]
+		},
+		{
+			"id": 47794,
+			"enchant": 1144,
+			"gems": [
+				40113,
+				40133
+			]
+		},
+		{
+			"id": 47485,
+			"enchant": 2332,
+			"gems": [
+				40133,
+				0
+			]
+		},
+		{
+			"id": 47803,
+			"enchant": 3604,
+			"gems": [
+				40113,
+				0
+			]
+		},
+		{
+			"id": 47419,
+			"enchant": 3599,
+			"gems": [
+				40133,
+				40113,
+				40113
+			]
+		},
+		{
+			"id": 47435,
+			"enchant": 3872,
+			"gems": [
+				40113,
+				40133,
+				40133
+			]
+		},
+		{
+			"id": 47454,
+			"enchant": 3606,
+			"gems": [
+				40133,
+				40113
+			]
+		},
+		{
+			"id": 45495,
+			"gems": [
+				40133
+			]
+		},
+		{
+			"id": 47489,
+			"gems": [
+				40113
+			]
+		},
+		{
+			"id": 45518
+		},
+		{
+			"id": 40255
+		},
+		{
+			"id": 47422,
+			"enchant": 3834,
+			"gems": [
+				40133
+			]
+		},
+		{
+			"id": 47470
+		},
+		{
+			"id": 45294,
+			"gems": [
+				40113
+			]
+		}
+	]}`),
+}
+
+export const P3_Preset_Demo_Alliance = {
+	name: 'P3 Demo A',
+	tooltip: WarlockTooltips.BIS_TOOLTIP,
+	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology && player.getFaction() == Faction.Alliance,
+		gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 47789,
+			"enchant": 3820,
+			"gems": [
+				41285,
+				40133
+			]
+		},
+		{
+			"id": 45243,
+			"gems": [
+				40113
+			]
+		},
+		{
+			"id": 47792,
+			"enchant": 3810,
+			"gems": [
+				40153
+			]
+		},
+		{
+			"id": 47553,
+			"enchant": 3722,
+			"gems": [
+				40113
+			]
+		},
+		{
+			"id": 47791,
+			"enchant": 1144,
+			"gems": [
+				40153,
+				40133
+			]
+		},
+		{
+			"id": 47208,
+			"enchant": 2332,
+			"gems": [
+				40133,
+				0
+			]
+		},
+		{
+			"id": 47788,
+			"enchant": 3604,
+			"gems": [
+				40113,
+				0
+			]
+		},
+		{
+			"id": 46973,
+			"enchant": 3599,
+			"gems": [
+				40133,
+				40113,
+				40113
+			]
+		},
+		{
+			"id": 47062,
+			"enchant": 3872,
+			"gems": [
+				40113,
+				40133,
+				40133
+			]
+		},
+		{
+			"id": 47097,
+			"enchant": 3606,
+			"gems": [
+				40133,
+				40113
+			]
+		},
+		{
+			"id": 45495,
+			"gems": [
+				40133
+			]
+		},
+		{
+			"id": 47237,
+			"gems": [
+				40153
+			]
+		},
+		{
+			"id": 45518
+		},
+		{
+			"id": 40255
+		},
+		{
+			"id": 46980,
+			"enchant": 3834,
+			"gems": [
+				40133
+			]
+		},
+		{
+			"id": 47146
+		},
+		{
+			"id": 45294,
+			"gems": [
+				40113
+			]
+		}
+	]}`),
+}
+
+export const P3_Preset_Destro_Horde = {
+	name: 'P3 Destro H',
+	tooltip: WarlockTooltips.BIS_TOOLTIP,
+	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Destruction && player.getFaction() == Faction.Horde,
+		gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 47695,
+			"enchant": 3820,
+			"gems": [
+				41285,
+				40155
+			]
+		},
+		{
+			"id": 47468,
+			"gems": [
+				40153
+			]
+		},
+		{
+			"id": 47793,
+			"enchant": 3810,
+			"gems": [
+				40155
+			]
+		},
+		{
+			"id": 47551,
+			"enchant": 3722,
+			"gems": [
+				40113
+			]
+		},
+		{
+			"id": 47794,
+			"enchant": 1144,
+			"gems": [
+				40113,
+				40133
+			]
+		},
+		{
+			"id": 47467,
+			"enchant": 2332,
+			"gems": [
+				40153,
+				0
+			]
+		},
+		{
+			"id": 47803,
+			"enchant": 3604,
+			"gems": [
+				40113,
+				0
+			]
+		},
+		{
+			"id": 47419,
+			"enchant": 3599,
+			"gems": [
+				40133,
+				40113,
+				40113
+			]
+		},
+		{
+			"id": 47435,
+			"enchant": 3872,
+			"gems": [
+				40113,
+				40133,
+				40133
+			]
+		},
+		{
+			"id": 47454,
+			"enchant": 3606,
+			"gems": [
+				40133,
+				40113
+			]
+		},
+		{
+			"id": 45495,
+			"gems": [
+				40133
+			]
+		},
+		{
+			"id": 47489,
+			"gems": [
+				40155
+			]
+		},
+		{
+			"id": 45518
+		},
+		{
+			"id": 47477
+		},
+		{
+			"id": 47422,
+			"enchant": 3834,
+			"gems": [
+				40133
+			]
+		},
+		{
+			"id": 47437
+		},
+		{
+			"id": 45294,
+			"gems": [
+				40153
+			]
+		}
+	]}`),
+}
+
+export const P3_Preset_Destro_Alliance = {
+	name: 'P3 Destro A',
+	tooltip: WarlockTooltips.BIS_TOOLTIP,
+	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Destruction && player.getFaction() == Faction.Alliance,
+		gear: EquipmentSpec.fromJsonString(`{"items": [
+		{
+			"id": 47789,
+			"enchant": 3820,
+			"gems": [
+				41285,
+				40133
+			]
+		},
+		{
+			"id": 47144,
+			"gems": [
+				40155
+			]
+		},
+		{
+			"id": 47792,
+			"enchant": 3810,
+			"gems": [
+				40155
+			]
+		},
+		{
+			"id": 47552,
+			"enchant": 3722,
+			"gems": [
+				40113
+			]
+		},
+		{
+			"id": 47129,
+			"enchant": 1144,
+			"gems": [
+				40133,
+				40155,
+				40113
+			]
+		},
+		{
+			"id": 47208,
+			"enchant": 2332,
+			"gems": [
+				40133,
+				0
+			]
+		},
+		{
+			"id": 47788,
+			"enchant": 3604,
+			"gems": [
+				40113,
+				0
+			]
+		},
+		{
+			"id": 46973,
+			"enchant": 3599,
+			"gems": [
+				40133,
+				40113,
+				40113
+			]
+		},
+		{
+			"id": 47790,
+			"enchant": 3872,
+			"gems": [
+				40113,
+				40155
+			]
+		},
+		{
+			"id": 47205,
+			"enchant": 3606,
+			"gems": [
+				40133,
+				40113
+			]
+		},
+		{
+			"id": 45495,
+			"gems": [
+				40133
+			]
+		},
+		{
+			"id": 47237,
+			"gems": [
+				40155
+			]
+		},
+		{
+			"id": 45518
+		},
+		{
+			"id": 47188
+		},
+		{
+			"id": 46980,
+			"enchant": 3834,
+			"gems": [
+				40133
+			]
+		},
+		{
+			"id": 47958,
+			"gems": [
+				40155
+			]
+		},
+		{
+			"id": 45294,
+			"gems": [
+				40155
 			]
 		}
 	]}`),
