@@ -204,7 +204,7 @@ class EpWeightsMenu extends BaseModal {
 							<td style="text-align: center; vertical-align: middle;">
 								<button class="btn btn-primary compute-ep">
 									<i class="fas fa-calculator"></i>
-									<span class="not-tiny">Compute </span>EP
+									<span class="not-tiny">Update </span>EP
 								</button>
 							</td>
 						</tr>
