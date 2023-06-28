@@ -57,6 +57,7 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 					if sim.Proc(ISBProcChance, "ISB") {
 						shadowMasteryAuras.Get(target).Activate(sim)
 					}
+					warlock.everlastingAfflictionRefresh(sim, target)
 				}
 			})
 		},

@@ -59,6 +59,7 @@ func (warlock *Warlock) registerHauntSpell() {
 				spell.DealDamage(sim, result)
 				if result.Landed() {
 					warlock.HauntDebuffAuras.Get(result.Target).Activate(sim)
+					warlock.everlastingAfflictionRefresh(sim, target)
 				}
 			})
 		},

@@ -53,7 +53,6 @@ func (warlock *Warlock) ApplyTalents() {
 	}
 
 	warlock.setupNightfall()
-	warlock.setupEverlastingAffliction()
 	warlock.setupShadowEmbrace()
 	warlock.setupEradication()
 	warlock.setupMoltenCore()
@@ -467,29 +466,6 @@ func (warlock *Warlock) everlastingAfflictionRefresh(sim *core.Simulation, targe
 	if warlock.Corruption.Dot(target).IsActive() && sim.Proc(procChance, "EverlastingAffliction") {
 		warlock.Corruption.Dot(target).Rollover(sim)
 	}
-}
-
-func (warlock *Warlock) setupEverlastingAffliction() {
-	if warlock.Talents.EverlastingAffliction <= 0 {
-		return
-	}
-
-	warlock.RegisterAura(core.Aura{
-		Label:    "Everlasting Affliction Hidden Aura",
-		Duration: core.NeverExpires,
-		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Activate(sim)
-		},
-		OnSpellHitDealt: func(_ *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			// TODO: also works on drain life...
-			// drain soul is handled inside the spell itself
-			if (spell != warlock.ShadowBolt && spell != warlock.Haunt) || !result.Landed() {
-				return
-			}
-
-			warlock.everlastingAfflictionRefresh(sim, result.Target)
-		},
-	})
 }
 
 func (warlock *Warlock) setupImprovedSoulLeech() {
