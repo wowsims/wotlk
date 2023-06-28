@@ -309,7 +309,7 @@ var P3Gear_affliction = core.EquipmentSpecFromJsonString(`{"items": [
 		{
 			"id": 45294,
 			"gems": [
-				40051
+				40155
 			]
 		}
 ]}`)

@@ -1547,7 +1547,7 @@ export const P3_Preset_Destro_Horde = {
 		{
 			"id": 45294,
 			"gems": [
-				40153
+				40155
 			]
 		}
 	]}`),
