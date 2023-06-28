@@ -274,7 +274,7 @@ class EpWeightsMenu extends BaseModal {
 		const updateEpRefStat = () => {
 			this.simUI.player.epRefStatChangeEmitter.emit(TypedEvent.nextEventID())
 			this.simUI.prevEpSimResult = this.calculateEp(this.getPrevSimResult());
-			this.updateTable(this.simUI.prevEpIterations || 1, this.getPrevSimResult());
+			this.updateTable();
 		};
 
 		const epRefSelects = this.rootElem.querySelectorAll('.ref-stat-select') as NodeListOf<HTMLSelectElement>;
@@ -334,7 +334,7 @@ class EpWeightsMenu extends BaseModal {
 			calcButton.classList.remove('disabled');
 			this.simUI.prevEpIterations = iterations;
 			this.simUI.prevEpSimResult = this.calculateEp(result);
-			this.updateTable(iterations, this.simUI.prevEpSimResult);
+			this.updateTable();
 		});
 
 		const colActionButtons = Array.from(this.rootElem.getElementsByClassName('col-action')) as Array<HTMLSelectElement>;
@@ -385,11 +385,11 @@ class EpWeightsMenu extends BaseModal {
 			getValue: () => this.showAllStats,
 			setValue: (eventID: EventID, menu: EpWeightsMenu, newValue: boolean) => {
 				this.showAllStats = newValue;
-				this.updateTable(this.simUI.prevEpIterations || 1, this.getPrevSimResult());
+				this.updateTable();
 			},
 		});
 
-		this.updateTable(this.simUI.prevEpIterations || 1, this.getPrevSimResult(), true);
+		this.updateTable();
 
 		const makeEpRatioCell = (cell: HTMLElement, idx: number) => {
 			new NumberPicker(cell, this.simUI.player, {
@@ -452,7 +452,7 @@ class EpWeightsMenu extends BaseModal {
 		`);
 	}
 
-	private updateTable(iterations: number, result: StatWeightsResult, skipFormatting: boolean = false) {
+	private updateTable() {
 		this.tableBody.innerHTML = ``;
 
 		EpWeightsMenu.epUnitStats.forEach(stat => {
@@ -463,53 +463,22 @@ class EpWeightsMenu extends BaseModal {
 			)) {
 				return;
 			}
-			const row = this.makeTableRow(stat, iterations, result, skipFormatting);
+			const row = this.makeTableRow(stat);
 			this.tableBody.appendChild(row);
 		});
 	}
-	private makeTableRow(stat: UnitStat, iterations: number, result: StatWeightsResult, skipFormatting: boolean): HTMLElement {
+
+	private makeTableRow(stat: UnitStat): HTMLElement {
 		const row = document.createElement('tr');
-		const makeWeightAndEpCellHtml = (statWeights: StatWeightValues, className: string): string => {
-			const epCurrent = this.simUI.player.getEpWeights().getUnitStat(stat);
-			const epAvg = stat.getProtoValue(statWeights.epValues!);
-
-			let template = document.createElement('template');
-			template.innerHTML = `
-				<td class="stdev-cell ${className} type-weight">
-					<span class="results-avg">${stat.getProtoValue(statWeights.weights!).toFixed(2)}</span>
-					<span class="results-stdev">
-						(<i class="fas fa-plus-minus fa-xs"></i>${stDevToConf90(stat.getProtoValue(statWeights.weightsStdev!), iterations).toFixed(2)})
-					</span>
-				</td>
-				<td class="stdev-cell ${className} type-ep">
-					<span class="results-avg">${epAvg.toFixed(2)}</span>
-					<span class="results-stdev">
-						(<i class="fas fa-plus-minus fa-xs"></i>${stDevToConf90(stat.getProtoValue(statWeights.epValuesStdev!), iterations).toFixed(2)})
-					</span>
-				</td>
-			`;
-
-			const epAvgElem = template.content.querySelector('.type-ep .results-avg') as HTMLElement;
-			const epDelta = epAvg - epCurrent;
-
-			if (skipFormatting || epDelta.toFixed(2) == "0.00")
-				epAvgElem // no-op
-			else if (epDelta > 0)
-				epAvgElem.classList.add('positive');
-			else if (epDelta < 0)
-				epAvgElem.classList.add('negative');
-
-			return template.innerHTML;
-		};
-
+		const result = this.getPrevSimResult();
 		row.innerHTML = `
 			<td>${stat.getName(this.simUI.player.getClass())}</td>
-			${makeWeightAndEpCellHtml(result.dps!, 'damage-metrics')}
-			${makeWeightAndEpCellHtml(result.hps!, 'healing-metrics')}
-			${makeWeightAndEpCellHtml(result.tps!, 'threat-metrics')}
-			${makeWeightAndEpCellHtml(result.dtps!, 'threat-metrics')}
-			${makeWeightAndEpCellHtml(result.tmi!, 'threat-metrics experimental')}
-			${makeWeightAndEpCellHtml(result.pDeath!, 'threat-metrics experimental')}
+			${this.makeTableRowCells(stat, result!.dps, 'damage-metrics')}
+			${this.makeTableRowCells(stat, result!.hps, 'healing-metrics')}
+			${this.makeTableRowCells(stat, result!.tps, 'threat-metrics')}
+			${this.makeTableRowCells(stat, result!.dtps, 'threat-metrics')}
+			${this.makeTableRowCells(stat, result!.tmi, 'threat-metrics experimental')}
+			${this.makeTableRowCells(stat, result!.pDeath, 'threat-metrics experimental')}
 			<td class="current-ep"></td>
 		`;
 
@@ -526,6 +495,41 @@ class EpWeightsMenu extends BaseModal {
 
 		return row;
 	}
+
+	private makeTableRowCells(stat: UnitStat, statWeights: StatWeightValues, className: string): string {
+		const skipFormatting = this.simUI.prevEpSimResult === null
+		const iterations = this.simUI.prevEpIterations || 1
+		const epCurrent = this.simUI.player.getEpWeights().getUnitStat(stat);
+		const epAvg = stat.getProtoValue(statWeights.epValues!);
+
+		let template = document.createElement('template');
+		template.innerHTML = `
+			<td class="stdev-cell ${className} type-weight">
+				<span class="results-avg">${stat.getProtoValue(statWeights.weights!).toFixed(2)}</span>
+				<span class="results-stdev">
+					(<i class="fas fa-plus-minus fa-xs"></i>${stDevToConf90(stat.getProtoValue(statWeights.weightsStdev!), iterations).toFixed(2)})
+				</span>
+			</td>
+			<td class="stdev-cell ${className} type-ep">
+				<span class="results-avg">${epAvg.toFixed(2)}</span>
+				<span class="results-stdev">
+					(<i class="fas fa-plus-minus fa-xs"></i>${stDevToConf90(stat.getProtoValue(statWeights.epValuesStdev!), iterations).toFixed(2)})
+				</span>
+			</td>
+		`;
+
+		const epAvgElem = template.content.querySelector('.type-ep .results-avg') as HTMLElement;
+		const epDelta = epAvg - epCurrent;
+
+		if (skipFormatting || epDelta.toFixed(2) == "0.00")
+			epAvgElem // no-op
+		else if (epDelta > 0)
+			epAvgElem.classList.add('positive');
+		else if (epDelta < 0)
+			epAvgElem.classList.add('negative');
+
+		return template.innerHTML;
+	};
 
 	private calculateEp(weights: StatWeightsResult) {
 		var result = StatWeightsResult.clone(weights);
