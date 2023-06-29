@@ -360,7 +360,7 @@ var P3Gear_demo = core.EquipmentSpecFromJsonString(`{"items": [
 			]
 		},
 		{
-			"id": 47803,
+			"id": 47788,
 			"enchant": 3604,
 			"gems": [
 				40113,
@@ -431,11 +431,11 @@ var P3Gear_demo = core.EquipmentSpecFromJsonString(`{"items": [
 
 var P3Gear_destro = core.EquipmentSpecFromJsonString(`{"items": [
 		{
-			"id": 47695,
+			"id": 47796,
 			"enchant": 3820,
 			"gems": [
 				41285,
-				40155
+				40133
 			]
 		},
 		{
@@ -475,7 +475,7 @@ var P3Gear_destro = core.EquipmentSpecFromJsonString(`{"items": [
 			]
 		},
 		{
-			"id": 47803,
+			"id": 47788,
 			"enchant": 3604,
 			"gems": [
 				40113,
@@ -539,7 +539,7 @@ var P3Gear_destro = core.EquipmentSpecFromJsonString(`{"items": [
 		{
 			"id": 45294,
 			"gems": [
-				40153
+				40113
 			]
 		}
 ]}`)

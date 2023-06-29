@@ -1243,7 +1243,7 @@ export const P3_Preset_Demo_Horde = {
 			]
 		},
 		{
-			"id": 47803,
+			"id": 47788,
 			"enchant": 3604,
 			"gems": [
 				40113,
@@ -1439,11 +1439,11 @@ export const P3_Preset_Destro_Horde = {
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Destruction && player.getFaction() == Faction.Horde,
 		gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
-			"id": 47695,
+			"id": 47796,
 			"enchant": 3820,
 			"gems": [
 				41285,
-				40155
+				40133
 			]
 		},
 		{
@@ -1483,7 +1483,7 @@ export const P3_Preset_Destro_Horde = {
 			]
 		},
 		{
-			"id": 47803,
+			"id": 47788,
 			"enchant": 3604,
 			"gems": [
 				40113,
@@ -1547,7 +1547,7 @@ export const P3_Preset_Destro_Horde = {
 		{
 			"id": 45294,
 			"gems": [
-				40155
+				40113
 			]
 		}
 	]}`),
