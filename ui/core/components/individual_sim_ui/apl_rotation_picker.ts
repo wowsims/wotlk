@@ -6,6 +6,7 @@ import {
 	APLListItem,
 	APLAction,
 	APLRotation,
+	APLValue,
 } from '../../proto/apl.js';
 
 import { Component } from '../component.js';

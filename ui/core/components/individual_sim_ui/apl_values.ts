@@ -42,7 +42,7 @@ export class APLValueConstValuePicker extends Input<Player<any>, APLValueConst> 
 	}
 
 	setInputValue(newValue: APLValueConst) {
-		this.inputElem.value = newValue.val;
+		this.inputElem.value = newValue ? newValue.val : '';
 	}
 }
 
@@ -108,9 +108,10 @@ export class APLValuePicker extends Input<Player<any>, APLValue> {
 			value: {
 				oneofKind: valueType,
 				...((() => {
-					if (!valueType || !this.valuePicker) return;
 					const val: any = {};
-					val[valueType] = this.valuePicker.getInputValue();
+					if (valueType && this.valuePicker) {
+						val[valueType] = this.valuePicker.getInputValue();
+					}
 					return val;
 				})()),
 			},
@@ -191,6 +192,6 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig>  = 
 	['cmp']: inputBuilder('Compare', APLValueCompare.create, [
 	]),
 	['dotIsActive']: inputBuilder('Dot Is Active', APLValueDotIsActive.create, [
-		AplHelpers.actionIdFieldConfig('value', 'dots'),
+		AplHelpers.actionIdFieldConfig('spellId', 'dots'),
 	]),
 };

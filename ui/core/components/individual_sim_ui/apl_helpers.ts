@@ -4,12 +4,14 @@ import { EventID, TypedEvent } from '../../typed_event.js';
 import { stringComparator } from '../../utils.js';
 import { DropdownPicker, DropdownPickerConfig, DropdownValueConfig, TextDropdownPicker } from '../dropdown_picker.js';
 import { Input, InputConfig } from '../input.js';
-import { ActionID } from 'ui/core/proto/common.js';
+import { ActionID } from '../../proto/common.js';
 
 export type ACTION_ID_SET = 'all_spells' | 'dots';
 
-export interface APLActionIDPickerConfig<ModObject> extends Omit<DropdownPickerConfig<ModObject, ActionId>, 'defaultLabel' | 'equals' | 'setOptionContent' | 'values'> {
+export interface APLActionIDPickerConfig<ModObject> extends Omit<DropdownPickerConfig<ModObject, ActionId>, 'defaultLabel' | 'equals' | 'setOptionContent' | 'values' | 'getValue' | 'setValue'> {
 	actionIdSet: ACTION_ID_SET,
+	getValue: (obj: ModObject) => ActionID,
+	setValue: (eventID: EventID, obj: ModObject, newValue: ActionID) => void,
 }
 
 const actionIdSets: Record<ACTION_ID_SET, {
@@ -55,6 +57,8 @@ export class APLActionIDPicker extends DropdownPicker<Player<any>, ActionId> {
 		const actionIdSet = actionIdSets[config.actionIdSet];
 		super(parent, player, {
 			...config,
+			getValue: (player) => ActionId.fromProto(config.getValue(player)),
+			setValue: (eventID: EventID, player: Player<any>, newValue: ActionId) => config.setValue(eventID, player, newValue.toProto()),
 			defaultLabel: actionIdSet.defaultLabel,
 			equals: (a, b) => ((a == null) == (b == null)) && (!a || a.equals(b!)),
             setOptionContent: (button, valueConfig) => {
@@ -123,7 +127,13 @@ export class APLPickerBuilder<T> extends Input<Player<any>, T> {
 			...fieldConfig,
 			picker: fieldConfig.factory(builder.rootElem, builder.modObject, {
 				changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
-				getValue: () => builder.getSourceValue()[field] || fieldConfig.newValue(),
+				getValue: () => {
+					const source = builder.getSourceValue();
+					if (!source[field]) {
+						source[field] = fieldConfig.newValue();
+					}
+					return source[field];
+				},
 				setValue: (eventID: EventID, player: Player<any>, newValue: any) => {
 					builder.getSourceValue()[field] = newValue;
 					player.rotationChangeEmitter.emit(eventID);

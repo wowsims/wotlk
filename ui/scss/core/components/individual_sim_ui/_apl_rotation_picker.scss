@@ -38,11 +38,20 @@
 	}
 }
 
-.apl-action-picker-root {
+.apl-action-picker-root, .apl-value-picker-root {
 	flex-direction: row;
 	margin: 2px;
 
 	.input-root {
 		margin: 0;
 	}
+}
+.apl-list-item-picker-root > .apl-action-picker-root {
+	flex-direction: column;
+}
+
+.apl-action-picker-action {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
 }

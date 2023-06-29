@@ -3,6 +3,7 @@ import {
 	APLActionCastSpell,
 	APLActionSequence,
 	APLActionWait,
+	APLValue,
 } from '../../proto/apl.js';
 
 import { EventID } from '../../typed_event.js';
@@ -11,6 +12,7 @@ import { Player } from '../../player.js';
 import { TextDropdownPicker } from '../dropdown_picker.js';
 
 import * as AplHelpers from './apl_helpers.js';
+import * as AplValues from './apl_values.js';
 
 export interface APLActionPickerConfig extends InputConfig<Player<any>, APLAction> {
 }
@@ -21,14 +23,36 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 
 	private typePicker: TextDropdownPicker<Player<any>, APLActionType>;
 
+	private readonly actionDiv: HTMLElement;
 	private currentType: APLActionType;
 	private actionPicker: Input<Player<any>, any>|null;
+
+	private readonly conditionPicker: Input<Player<any>, APLValue>;
 
 	constructor(parent: HTMLElement, player: Player<any>, config: APLActionPickerConfig) {
 		super(parent, 'apl-action-picker-root', player, config);
 
+		this.conditionPicker = new AplValues.APLValuePicker(this.rootElem, this.modObject, {
+			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
+			getValue: (player: Player<any>) => {
+				const action = this.getSourceValue();
+				if (!action.condition) {
+					action.condition = APLValue.create();
+				}
+				return action.condition;
+			},
+			setValue: (eventID: EventID, player: Player<any>, newValue: APLValue) => {
+				this.getSourceValue().condition = newValue;
+				player.rotationChangeEmitter.emit(eventID);
+			},
+		});
+
+		this.actionDiv = document.createElement('div');
+		this.actionDiv.classList.add('apl-action-picker-action');
+		this.rootElem.appendChild(this.actionDiv);
+
 		const allActionTypes = Object.keys(actionTypeFactories) as Array<NonNullable<APLActionType>>;
-		this.typePicker = new TextDropdownPicker(this.rootElem, player, {
+		this.typePicker = new TextDropdownPicker(this.actionDiv, player, {
             defaultLabel: 'Action',
 			values: allActionTypes.map(actionType => {
 				return {
@@ -71,12 +95,14 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
     getInputValue(): APLAction {
 		const actionType = this.typePicker.getInputValue();
         return APLAction.create({
+			condition: this.conditionPicker.getInputValue(),
 			action: {
 				oneofKind: actionType,
 				...((() => {
-					if (!actionType || !this.actionPicker) return;
 					const val: any = {};
-					val[actionType] = this.actionPicker.getInputValue();
+					if (actionType && this.actionPicker) {
+						val[actionType] = this.actionPicker.getInputValue();
+					}
 					return val;
 				})()),
 			},
@@ -87,6 +113,8 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 		if (!newValue) {
 			return;
 		}
+
+		this.conditionPicker.setInputValue(newValue.condition || APLValue.create());
 
 		const newActionType = newValue.action.oneofKind;
 		this.updateActionPicker(newActionType);
@@ -115,7 +143,7 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 		this.typePicker.setInputValue(newActionType);
 
 		const factory = actionTypeFactories[newActionType];
-		this.actionPicker = factory.factory(this.rootElem, this.modObject, {
+		this.actionPicker = factory.factory(this.actionDiv, this.modObject, {
 			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
 			getValue: () => (this.getSourceValue().action as any)[newActionType] || factory.newValue(),
 			setValue: (eventID: EventID, player: Player<any>, newValue: any) => {
