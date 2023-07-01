@@ -86,7 +86,7 @@ export const UnholyDualWieldTalents = {
 export const UnholyDualWieldSSTalents = {
 	name: 'Unholy DW SS',
 	data: SavedTalents.create({
-		talentsString: '-320033500002-2300303050032152000150013133151',
+		talentsString: '-320033500002-2301303050032151000150013133151',
 		glyphs: Glyphs.create({
 			major1: DeathknightMajorGlyph.GlyphOfTheGhoul,
 			major2: DeathknightMajorGlyph.GlyphOfIcyTouch,
