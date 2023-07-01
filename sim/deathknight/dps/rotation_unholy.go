@@ -135,7 +135,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 
 	cast := false
 	if dk.uhDiseaseCheck(sim, target, dk.DeathAndDecay, true, 1) {
-		if dk.uhVirulenceRotationCheck(sim, true) {
+		if dk.uhVirulenceRotationCheck(sim, dk.Talents.SummonGargoyle) {
 			if dk.uhGargoyleCheck(sim, target, core.GCDDefault*2+50*time.Millisecond) {
 				dk.uhAfterGargoyleSequence(sim)
 				return sim.CurrentTime
