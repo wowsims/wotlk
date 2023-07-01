@@ -27,21 +27,15 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 	private currentType: APLActionType;
 	private actionPicker: Input<Player<any>, any>|null;
 
-	private readonly conditionPicker: Input<Player<any>, APLValue>;
+	private readonly conditionPicker: AplValues.APLValuePicker;
 
 	constructor(parent: HTMLElement, player: Player<any>, config: APLActionPickerConfig) {
 		super(parent, 'apl-action-picker-root', player, config);
 
 		this.conditionPicker = new AplValues.APLValuePicker(this.rootElem, this.modObject, {
 			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
-			getValue: (player: Player<any>) => {
-				const action = this.getSourceValue();
-				if (!action.condition) {
-					action.condition = APLValue.create();
-				}
-				return action.condition;
-			},
-			setValue: (eventID: EventID, player: Player<any>, newValue: APLValue) => {
+			getValue: (player: Player<any>) => this.getSourceValue().condition,
+			setValue: (eventID: EventID, player: Player<any>, newValue: APLValue|undefined) => {
 				this.getSourceValue().condition = newValue;
 				player.rotationChangeEmitter.emit(eventID);
 			},

@@ -79,3 +79,14 @@
 		display: none !important;
 	}
 }
+
+.list-picker-root.horizontal {
+	flex-direction: row;
+	align-items: center;
+
+	.list-picker-items {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+	}
+}

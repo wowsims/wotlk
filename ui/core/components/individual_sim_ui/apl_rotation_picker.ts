@@ -1,4 +1,6 @@
-import { EventID } from '../../typed_event.js';
+import { Tooltip } from 'bootstrap';
+
+import { EventID, TypedEvent } from '../../typed_event.js';
 import { Player } from '../../player.js';
 import { BooleanPicker } from '../boolean_picker.js';
 import { ListItemPickerConfig, ListPicker } from '../list_picker.js';
@@ -6,7 +8,6 @@ import {
 	APLListItem,
 	APLAction,
 	APLRotation,
-	APLValue,
 } from '../../proto/apl.js';
 
 import { Component } from '../component.js';
@@ -34,7 +35,7 @@ export class APLRotationPicker extends Component {
 				action: {},
 			}),
 			copyItem: (oldItem: APLListItem) => APLListItem.clone(oldItem),
-			newItemPicker: (parent: HTMLElement, listPicker: ListPicker<Player<any>, APLListItem>, index: number, config: ListItemPickerConfig<Player<any>, APLListItem>) => new APLListItemPicker(parent, modPlayer, index, config),
+			newItemPicker: (parent: HTMLElement, listPicker: ListPicker<Player<any>, APLListItem>, index: number, config: ListItemPickerConfig<Player<any>, APLListItem>) => new APLListItemPicker(parent, modPlayer, config),
 			inlineMenuBar: true,
 		});
 
@@ -44,9 +45,8 @@ export class APLRotationPicker extends Component {
 
 class APLListItemPicker extends Input<Player<any>, APLListItem> {
 	private readonly player: Player<any>;
-	private readonly itemIndex: number;
 
-	private readonly hidePicker: Input<null, boolean>;
+	private readonly hidePicker: Input<Player<any>, boolean>;
 	private readonly actionPicker: APLActionPicker;
 
     private getItem(): APLListItem {
@@ -55,18 +55,17 @@ class APLListItemPicker extends Input<Player<any>, APLListItem> {
 		});
     }
 
-	constructor(parent: HTMLElement, player: Player<any>, itemIndex: number, config: ListItemPickerConfig<Player<any>, APLListItem>) {
-		super(parent, 'apl-list-item-picker-root', player, config);
+	constructor(parent: HTMLElement, player: Player<any>, config: ListItemPickerConfig<Player<any>, APLListItem>) {
+		super(parent, 'apl-list-item-picker-root', player, {
+			...config,
+			enableWhen: () => !this.getItem().hide,
+		});
 		this.player = player;
-		this.itemIndex = itemIndex;
 
-        this.hidePicker = new BooleanPicker(this.rootElem, null, {
-            label: 'Hide',
-            labelTooltip: 'Ignores this APL action.',
-            inline: true,
+        this.hidePicker = new HidePicker(ListPicker.getItemHeaderElem(this), player, {
             changedEvent: () => this.player.rotationChangeEmitter,
             getValue: () => this.getItem().hide,
-            setValue: (eventID: EventID, _: null, newValue: boolean) => {
+            setValue: (eventID: EventID, player: Player<any>, newValue: boolean) => {
                 this.getItem().hide = newValue;
 				this.player.rotationChangeEmitter.emit(eventID);
             },
@@ -101,5 +100,48 @@ class APLListItemPicker extends Input<Player<any>, APLListItem> {
 		}
 		this.hidePicker.setInputValue(newValue.hide);
 		this.actionPicker.setInputValue(newValue.action || APLAction.create());
+	}
+}
+
+class HidePicker extends Input<Player<any>, boolean> {
+	private readonly inputElem: HTMLElement;
+	private readonly iconElem: HTMLElement;
+	private tooltip: Tooltip;
+
+	constructor(parent: HTMLElement, modObject: Player<any>, config: InputConfig<Player<any>, boolean>) {
+		super(parent, 'hide-picker-root', modObject, config);
+
+		this.inputElem = ListPicker.makeActionElem('hide-picker-button', 'Enable/Disable', 'fa-eye');
+		this.iconElem = this.inputElem.childNodes[0] as HTMLElement;
+		this.rootElem.appendChild(this.inputElem);
+		this.tooltip = Tooltip.getOrCreateInstance(this.inputElem);
+
+		this.init();
+
+		this.inputElem.addEventListener('click', event => {
+			this.setInputValue(!this.getInputValue());
+			this.inputChanged(TypedEvent.nextEventID());
+		});
+	}
+
+	getInputElem(): HTMLElement {
+		return this.inputElem;
+	}
+
+	getInputValue(): boolean {
+		return this.iconElem.classList.contains('fa-eye-slash');
+	}
+
+	setInputValue(newValue: boolean) {
+		if (newValue) {
+			this.iconElem.classList.add('fa-eye-slash');
+			this.iconElem.classList.remove('fa-eye');
+			this.tooltip.setContent({'.tooltip-inner': 'Enable Action'});
+		} else {
+			this.iconElem.classList.add('fa-eye');
+			this.iconElem.classList.remove('fa-eye-slash');
+			//this.inputElem.setAttribute('data-bs-title', 'Disable Action');
+			this.tooltip.setContent({'.tooltip-inner': 'Disable Action'});
+		}
 	}
 }

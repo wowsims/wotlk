@@ -117,6 +117,10 @@ export abstract class Input<ModObject, T> extends Component {
 		return this.inputConfig.getValue(this.modObject);
 	}
 
+	protected setSourceValue(eventID: EventID, newValue: T) {
+		this.inputConfig.setValue(eventID, this.modObject, newValue);
+	}
+
 	// Child classes should call this method when the value in the input element changes.
 	inputChanged(eventID: EventID) {
 		this.inputConfig.setValue(eventID, this.modObject, this.getInputValue());

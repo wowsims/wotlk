@@ -44,14 +44,32 @@
 
 	.input-root {
 		margin: 0;
+		width: auto;
+		align-items: center;
 	}
 }
 .apl-list-item-picker-root > .apl-action-picker-root {
 	flex-direction: column;
 }
 
+.apl-value-picker-root * {
+	font-size: calc(var(--bs-btn-font-size) - 0.2rem);
+}
+
+.apl-list-item-picker > * > * > .list-picker-item {
+	flex-grow: 1;
+}
+
 .apl-action-picker-action {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
+}
+
+.apl-value-const-picker-root > input {
+	text-align: center;
+}
+
+.hide-picker-root {
+	margin: 0;
 }
