@@ -328,6 +328,7 @@ func (hunter *Hunter) initRotation() {
 			hunter.SerpentSting,
 			hunter.ScorpidSting,
 			hunter.BlackArrow,
+			hunter.AimedShot,
 			hunter.MultiShot,
 			hunter.SteadyShot,
 		}
