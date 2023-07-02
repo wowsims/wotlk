@@ -1,16 +1,12 @@
-import { ActionID } from '../../proto/common.js';
-import { EventID } from '../../typed_event.js';
+import { Tooltip } from 'bootstrap';
+
+import { EventID, TypedEvent } from '../../typed_event.js';
 import { Player } from '../../player.js';
 import { BooleanPicker } from '../boolean_picker.js';
-import { DropdownPicker, DropdownPickerConfig, TextDropdownPicker } from '../dropdown_picker.js';
 import { ListItemPickerConfig, ListPicker } from '../list_picker.js';
-import { StringPicker } from '../string_picker.js';
 import {
 	APLListItem,
 	APLAction,
-	APLActionCastSpell,
-	APLActionSequence,
-	APLActionWait,
 	APLRotation,
 } from '../../proto/apl.js';
 
@@ -18,7 +14,7 @@ import { Component } from '../component.js';
 import { Input, InputConfig } from '../input.js';
 import { SimUI } from '../../sim_ui.js';
 
-import * as AplActions from './apl_actions.js';
+import { APLActionPicker } from './apl_actions.js';
 
 export class APLRotationPicker extends Component {
 	constructor(parent: HTMLElement, simUI: SimUI, modPlayer: Player<any>) {
@@ -39,7 +35,7 @@ export class APLRotationPicker extends Component {
 				action: {},
 			}),
 			copyItem: (oldItem: APLListItem) => APLListItem.clone(oldItem),
-			newItemPicker: (parent: HTMLElement, listPicker: ListPicker<Player<any>, APLListItem>, index: number, config: ListItemPickerConfig<Player<any>, APLListItem>) => new APLListItemPicker(parent, modPlayer, index, config),
+			newItemPicker: (parent: HTMLElement, listPicker: ListPicker<Player<any>, APLListItem>, index: number, config: ListItemPickerConfig<Player<any>, APLListItem>) => new APLListItemPicker(parent, modPlayer, config),
 			inlineMenuBar: true,
 		});
 
@@ -49,10 +45,8 @@ export class APLRotationPicker extends Component {
 
 class APLListItemPicker extends Input<Player<any>, APLListItem> {
 	private readonly player: Player<any>;
-	private readonly itemIndex: number;
 
-	private readonly hidePicker: Input<null, boolean>;
-	private readonly notesPicker: Input<null, string>;
+	private readonly hidePicker: Input<Player<any>, boolean>;
 	private readonly actionPicker: APLActionPicker;
 
     private getItem(): APLListItem {
@@ -61,31 +55,18 @@ class APLListItemPicker extends Input<Player<any>, APLListItem> {
 		});
     }
 
-	constructor(parent: HTMLElement, player: Player<any>, itemIndex: number, config: ListItemPickerConfig<Player<any>, APLListItem>) {
-		super(parent, 'apl-list-item-picker-root', player, config);
+	constructor(parent: HTMLElement, player: Player<any>, config: ListItemPickerConfig<Player<any>, APLListItem>) {
+		super(parent, 'apl-list-item-picker-root', player, {
+			...config,
+			enableWhen: () => !this.getItem().hide,
+		});
 		this.player = player;
-		this.itemIndex = itemIndex;
 
-        this.hidePicker = new BooleanPicker(this.rootElem, null, {
-            label: 'Hide',
-            labelTooltip: 'Ignores this APL action.',
-            inline: true,
+        this.hidePicker = new HidePicker(ListPicker.getItemHeaderElem(this), player, {
             changedEvent: () => this.player.rotationChangeEmitter,
             getValue: () => this.getItem().hide,
-            setValue: (eventID: EventID, _: null, newValue: boolean) => {
+            setValue: (eventID: EventID, player: Player<any>, newValue: boolean) => {
                 this.getItem().hide = newValue;
-				this.player.rotationChangeEmitter.emit(eventID);
-            },
-        });
-
-        this.notesPicker = new StringPicker(this.rootElem, null, {
-            label: 'Notes',
-            labelTooltip: 'Description for this action. The sim will ignore this value, it\'s just to allow self-documentation.',
-            inline: true,
-            changedEvent: () => this.player.rotationChangeEmitter,
-            getValue: () => this.getItem().notes,
-            setValue: (eventID: EventID, _: null, newValue: string) => {
-                this.getItem().notes = newValue;
 				this.player.rotationChangeEmitter.emit(eventID);
             },
         });
@@ -108,7 +89,6 @@ class APLListItemPicker extends Input<Player<any>, APLListItem> {
     getInputValue(): APLListItem {
         const item = APLListItem.create({
 			hide: this.hidePicker.getInputValue(),
-			notes: this.notesPicker.getInputValue(),
 			action: this.actionPicker.getInputValue(),
 		});
 		return item;
@@ -119,128 +99,49 @@ class APLListItemPicker extends Input<Player<any>, APLListItem> {
 			return;
 		}
 		this.hidePicker.setInputValue(newValue.hide);
-		this.notesPicker.setInputValue(newValue.notes);
 		this.actionPicker.setInputValue(newValue.action || APLAction.create());
 	}
 }
 
-export interface APLActionPickerConfig extends InputConfig<Player<any>, APLAction> {
-}
+class HidePicker extends Input<Player<any>, boolean> {
+	private readonly inputElem: HTMLElement;
+	private readonly iconElem: HTMLElement;
+	private tooltip: Tooltip;
 
-type APLActionType = APLAction['action']['oneofKind'];
+	constructor(parent: HTMLElement, modObject: Player<any>, config: InputConfig<Player<any>, boolean>) {
+		super(parent, 'hide-picker-root', modObject, config);
 
-class APLActionPicker extends Input<Player<any>, APLAction> {
-
-	private typePicker: TextDropdownPicker<Player<any>, APLActionType>;
-
-	private currentType: APLActionType;
-	private actionPicker: Input<Player<any>, any>|null;
-
-	constructor(parent: HTMLElement, player: Player<any>, config: APLActionPickerConfig) {
-		super(parent, 'apl-action-picker-root', player, config);
-
-		const allActionTypes = Object.keys(APLActionPicker.actionTypeFactories) as Array<NonNullable<APLActionType>>;
-		this.typePicker = new TextDropdownPicker(this.rootElem, player, {
-            defaultLabel: 'Action',
-			values: allActionTypes.map(actionType => {
-				return {
-					value: actionType,
-					label: APLActionPicker.actionTypeFactories[actionType].label,
-				};
-			}),
-			equals: (a, b) => a == b,
-			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
-			getValue: (player: Player<any>) => this.getSourceValue().action.oneofKind,
-			setValue: (eventID: EventID, player: Player<any>, newValue: APLActionType) => {
-				const action = this.getSourceValue();
-				if (action.action.oneofKind == newValue) {
-					return;
-				}
-				if (newValue) {
-					const factory = APLActionPicker.actionTypeFactories[newValue];
-					const obj: any = { oneofKind: newValue };
-					obj[newValue] = factory.newValue();
-					action.action = obj;
-				} else {
-					action.action = {
-						oneofKind: newValue,
-					};
-				}
-				player.rotationChangeEmitter.emit(eventID);
-			},
-		});
-
-		this.currentType = undefined;
-		this.actionPicker = null;
+		this.inputElem = ListPicker.makeActionElem('hide-picker-button', 'Enable/Disable', 'fa-eye');
+		this.iconElem = this.inputElem.childNodes[0] as HTMLElement;
+		this.rootElem.appendChild(this.inputElem);
+		this.tooltip = Tooltip.getOrCreateInstance(this.inputElem);
 
 		this.init();
-		//player.rotationChangeEmitter.on(() => this.updateActionPicker(this.typePicker.getInputValue()));
-	}
 
-	getInputElem(): HTMLElement | null {
-		return this.rootElem;
-	}
-
-    getInputValue(): APLAction {
-		const actionType = this.typePicker.getInputValue();
-        return APLAction.create({
-			action: {
-				oneofKind: actionType,
-				...((() => {
-					if (!actionType || !this.actionPicker) return;
-					const val: any = {};
-					val[actionType] = this.actionPicker.getInputValue();
-					return val;
-				})()),
-			},
-		})
-    }
-
-	setInputValue(newValue: APLAction) {
-		if (!newValue) {
-			return;
-		}
-
-		const newActionType = newValue.action.oneofKind;
-		this.updateActionPicker(newActionType);
-
-		if (newActionType) {
-			this.actionPicker!.setInputValue((newValue.action as any)[newActionType]);
-		}
-	}
-
-	private updateActionPicker(newActionType: APLActionType) {
-		const actionType = this.currentType;
-		if (newActionType == actionType) {
-			return;
-		}
-		this.currentType = newActionType;
-
-		if (this.actionPicker) {
-			this.actionPicker.rootElem.remove();
-			this.actionPicker = null;
-		}
-
-		if (!newActionType) {
-			return;
-		}
-
-		this.typePicker.setInputValue(newActionType);
-
-		const factory = APLActionPicker.actionTypeFactories[newActionType];
-		this.actionPicker = new factory.factory(this.rootElem, this.modObject, {
-			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
-			getValue: () => (this.getSourceValue().action as any)[newActionType] || factory.newValue(),
-			setValue: (eventID: EventID, player: Player<any>, newValue: any) => {
-				(this.getSourceValue().action as any)[newActionType] = newValue;
-				player.rotationChangeEmitter.emit(eventID);
-			},
+		this.inputElem.addEventListener('click', event => {
+			this.setInputValue(!this.getInputValue());
+			this.inputChanged(TypedEvent.nextEventID());
 		});
 	}
 
-	private static actionTypeFactories: Record<NonNullable<APLActionType>, { label: string, newValue: () => object, factory: new (parent: HTMLElement, player: Player<any>, config: InputConfig<Player<any>, any>) => Input<Player<any>, any> }>  = {
-		['castSpell']: { label: 'Cast', newValue: APLActionCastSpell.create, factory: AplActions.APLActionCastSpellPicker },
-		['sequence']: { label: 'Sequence', newValue: APLActionSequence.create, factory: AplActions.APLActionSequencePicker },
-		['wait']: { label: 'Wait', newValue: APLActionWait.create, factory: AplActions.APLActionWaitPicker },
-	};
+	getInputElem(): HTMLElement {
+		return this.inputElem;
+	}
+
+	getInputValue(): boolean {
+		return this.iconElem.classList.contains('fa-eye-slash');
+	}
+
+	setInputValue(newValue: boolean) {
+		if (newValue) {
+			this.iconElem.classList.add('fa-eye-slash');
+			this.iconElem.classList.remove('fa-eye');
+			this.tooltip.setContent({'.tooltip-inner': 'Enable Action'});
+		} else {
+			this.iconElem.classList.add('fa-eye');
+			this.iconElem.classList.remove('fa-eye-slash');
+			//this.inputElem.setAttribute('data-bs-title', 'Disable Action');
+			this.tooltip.setContent({'.tooltip-inner': 'Disable Action'});
+		}
+	}
 }
