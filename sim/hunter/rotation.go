@@ -58,14 +58,10 @@ func (hunter *Hunter) singleTargetChooseSpell(sim *core.Simulation) (*core.Spell
 			continue
 		}
 
-		if spell == hunter.SerpentSting && hunter.Rotation.MultiDotSerpentSting {
-			for i := int32(0); i < hunter.Env.GetNumTargets(); i++ {
-				if hunter.rotationConditions[spell].CanUse(sim, hunter.Env.GetTargetUnit(i)) {
-					return spell, hunter.Env.GetTargetUnit(i)
-				}
+		for i := int32(0); i < hunter.Env.GetNumTargets(); i++ {
+			if hunter.rotationConditions[spell].CanUse(sim, hunter.Env.GetTargetUnit(i)) {
+				return spell, hunter.Env.GetTargetUnit(i)
 			}
-		} else if hunter.rotationConditions[spell].CanUse(sim, hunter.CurrentTarget) {
-			return spell, hunter.CurrentTarget
 		}
 	}
 	panic("No spell found to cast!")
@@ -232,21 +228,33 @@ func (hunter *Hunter) initRotation() {
 		},
 		hunter.ExplosiveShotR4: RotationCondition{
 			func(sim *core.Simulation, target *core.Unit) bool {
+				if target != hunter.CurrentTarget {
+					return false
+				}
 				return hunter.ExplosiveShotR4.IsReady(sim) && !hunter.ExplosiveShotR4.CurDot().IsActive()
 			},
 		},
 		hunter.ExplosiveShotR3: RotationCondition{
 			func(sim *core.Simulation, target *core.Unit) bool {
+				if target != hunter.CurrentTarget {
+					return false
+				}
 				return hunter.Rotation.AllowExplosiveShotDownrank && hunter.ExplosiveShotR3.IsReady(sim) && !hunter.ExplosiveShotR3.CurDot().IsActive()
 			},
 		},
 		hunter.ScorpidSting: RotationCondition{
 			func(sim *core.Simulation, target *core.Unit) bool {
+				if target != hunter.CurrentTarget {
+					return false
+				}
 				return hunter.Rotation.Sting == proto.Hunter_Rotation_ScorpidSting && !hunter.ScorpidStingAuras.Get(hunter.CurrentTarget).IsActive()
 			},
 		},
 		hunter.SerpentSting: RotationCondition{
 			func(sim *core.Simulation, target *core.Unit) bool {
+				if target != hunter.CurrentTarget && !hunter.Rotation.MultiDotSerpentSting {
+					return false
+				}
 				return hunter.Rotation.Sting == proto.Hunter_Rotation_SerpentSting && !hunter.SerpentSting.Dot(target).IsActive()
 			},
 		},
