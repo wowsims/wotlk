@@ -99,6 +99,13 @@ export const HunterRotationConfig = {
 			showWhen: (player: Player<Spec.SpecHunter>) => player.getRotation().type != RotationType.Custom && player.getTalents().explosiveShot && player.getTalents().lockAndLoad > 0,
 			changeEmitter: (player: Player<Spec.SpecHunter>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecHunter>({
+			fieldName: 'multiDotSerpentSting',
+			label: 'Multi-Dot Serpent Sting',
+			labelTooltip: 'Casts Serpent Sting on multiple targets',
+			showWhen: (player: Player<Spec.SpecHunter>) => player.getRotation().type != RotationType.Custom,
+			changeEmitter: (player: Player<Spec.SpecHunter>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+		}),
 		InputHelpers.makeCustomRotationInput<Spec.SpecHunter, SpellOption>({
 			fieldName: 'customRotation',
 			numColumns: 2,

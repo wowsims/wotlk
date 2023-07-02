@@ -224,6 +224,8 @@ message Hunter {
 
 		// Allow use of Explosive Shot Rank 3 during LNL procs.
 		bool allow_explosive_shot_downrank = 10;
+
+		bool multi_dot_serpent_sting = 11;
 	}
 	Rotation rotation = 1;
 	
