@@ -601,6 +601,8 @@ message Debuffs {
 
 	// 1 = normal, 2 = talented, 3 = talented+glyphed
 	int32 hunters_mark = 35;
+
+	bool crystal_yield = 38;
 }
 
 enum MobType {

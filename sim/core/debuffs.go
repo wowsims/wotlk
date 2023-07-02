@@ -57,6 +57,10 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 		MakePermanent(SporeCloudAura(target))
 	}
 
+	if debuffs.CrystalYield {
+		MakePermanent(CrystalYieldAura(target))
+	}
+
 	if debuffs.Mangle && targetIdx == 0 {
 		MakePermanent(MangleAura(target))
 	} else if debuffs.Trauma && targetIdx == 0 {
@@ -949,6 +953,20 @@ func critBonusEffect(aura *Aura, critBonus float64) *ExclusiveEffect {
 		},
 		OnExpire: func(ee *ExclusiveEffect, sim *Simulation) {
 			ee.Aura.Unit.PseudoStats.BonusCritRatingTaken -= critBonus
+		},
+	})
+}
+
+func CrystalYieldAura(target *Unit) *Aura {
+	return target.GetOrRegisterAura(Aura{
+		Label:    "Crystal Yield",
+		ActionID: ActionID{SpellID: 15235},
+		Duration: 2 * time.Minute,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.stats[stats.Armor] -= 200
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.stats[stats.Armor] += 200
 		},
 	})
 }

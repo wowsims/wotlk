@@ -349,6 +349,7 @@ export class SettingsTab extends SimTab {
 			{ item: IconInputs.JudgementOfLight, stats: [Stat.StatStamina] },
 			{ item: IconInputs.ShatteringThrow, stats: [Stat.StatArmorPenetration] },
 			{ item: IconInputs.GiftOfArthas, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
+			{ item: IconInputs.CrystalYield, stats: [Stat.StatArmorPenetration] },
 		] as Array<StatOption<IconPickerConfig<Player<any>, any>>>);
 		if (miscDebuffOptions.length > 0) {
 			new MultiIconPicker(contentBlock.bodyElement, this.simUI.player, {
