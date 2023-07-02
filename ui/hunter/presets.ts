@@ -82,6 +82,8 @@ export const DefaultRotation = HunterRotation.create({
 	timeToTrapWeaveMs: 2000,
 	viperStartManaPercent: 0.1,
 	viperStopManaPercent: 0.3,
+	multiDotSerpentSting: true,
+	allowExplosiveShotDownrank: true,
 	customRotation: CustomRotation.create({
 		spells: [
 			CustomSpell.create({ spell: SpellOption.SerpentStingSpell }),
