@@ -13,7 +13,7 @@ import { EventID, TypedEvent } from '../../typed_event.js';
 import { Input, InputConfig } from '../input.js';
 import { Player } from '../../player.js';
 import { TextDropdownPicker, TextDropdownValueConfig } from '../dropdown_picker.js';
-import { ListItemPickerConfig, ListPicker, ListItemAction } from '../list_picker.js';
+import { ListItemPickerConfig, ListPicker } from '../list_picker.js';
 
 import * as AplHelpers from './apl_helpers.js';
 
@@ -286,6 +286,6 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 		},
 	]),
 	['dotIsActive']: inputBuilder('Dot Is Active', APLValueDotIsActive.create, [
-		AplHelpers.actionIdFieldConfig('spellId', 'dots'),
+		AplHelpers.actionIdFieldConfig('spellId', 'dot_spells'),
 	]),
 };

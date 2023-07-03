@@ -1,56 +1,51 @@
 import { ActionId } from '../../proto_utils/action_id.js';
 import { Player } from '../../player.js';
 import { EventID, TypedEvent } from '../../typed_event.js';
-import { stringComparator } from '../../utils.js';
+import { bucket } from '../../utils.js';
 import { DropdownPicker, DropdownPickerConfig, DropdownValueConfig, TextDropdownPicker } from '../dropdown_picker.js';
 import { Input, InputConfig } from '../input.js';
 import { ActionID } from '../../proto/common.js';
 
-export type ACTION_ID_SET = 'all_spells' | 'dots';
+export type ACTION_ID_SET = 'castable_spells' | 'dot_spells';
+
+const actionIdSets: Record<ACTION_ID_SET, {
+	defaultLabel: string,
+	getActionIDs: (player: Player<any>) => Promise<Array<DropdownValueConfig<ActionId>>>,
+}> = {
+	['castable_spells']: {
+		defaultLabel: 'Spell',
+		getActionIDs: async (player) => {
+			const castableSpells = player.getSpells().filter(spell => spell.data.isCastable);
+
+			// Split up non-cooldowns and cooldowns into separate sections for easier browsing.
+			const {'spells': spells, 'cooldowns': cooldowns } = bucket(castableSpells, spell => spell.data.isMajorCooldown ? 'cooldowns' : 'spells');
+
+			return [...(spells || []), ...(cooldowns || [])].map(actionId => {
+				return {
+					value: actionId.id,
+				};
+			});
+		},
+	},
+	['dot_spells']: {
+		defaultLabel: 'DoT Spell',
+		getActionIDs: async (player) => {
+			const dotSpells = player.getSpells().filter(spell => spell.data.hasDot);
+
+			return dotSpells.map(actionId => {
+				return {
+					value: actionId.id,
+				};
+			});
+		},
+	},
+};
 
 export interface APLActionIDPickerConfig<ModObject> extends Omit<DropdownPickerConfig<ModObject, ActionId>, 'defaultLabel' | 'equals' | 'setOptionContent' | 'values' | 'getValue' | 'setValue'> {
 	actionIdSet: ACTION_ID_SET,
 	getValue: (obj: ModObject) => ActionID,
 	setValue: (eventID: EventID, obj: ModObject, newValue: ActionID) => void,
 }
-
-const actionIdSets: Record<ACTION_ID_SET, {
-	defaultLabel: string,
-	getActionIDs: (player: Player<any>) => Promise<Array<DropdownValueConfig<ActionId>>>,
-}> = {
-	['all_spells']: {
-		defaultLabel: 'Spell',
-		getActionIDs: async (player) => {
-			const playerStats = player.getCurrentStats();
-			const spellPromises = Promise.all(playerStats.spells.map(spell => ActionId.fromProto(spell).fill()));
-			const cooldownPromises = Promise.all(playerStats.cooldowns.map(cd => ActionId.fromProto(cd).fill()));
-
-			let [spells, cooldowns] = await Promise.all([spellPromises, cooldownPromises]);
-			spells = spells.sort((a, b) => stringComparator(a.name, b.name))
-			cooldowns = cooldowns.sort((a, b) => stringComparator(a.name, b.name))
-
-			return [...spells, ...cooldowns].map(actionId => {
-				return {
-					value: actionId,
-				};
-			});
-		},
-	},
-	['dots']: {
-		defaultLabel: 'DoT Spell',
-		getActionIDs: async (player) => {
-			const playerStats = player.getCurrentStats();
-			let spells = await Promise.all(playerStats.spells.map(spell => ActionId.fromProto(spell).fill()));
-			spells = spells.sort((a, b) => stringComparator(a.name, b.name))
-
-			return spells.map(actionId => {
-				return {
-					value: actionId,
-				};
-			});
-		},
-	},
-};
 
 export class APLActionIDPicker extends DropdownPicker<Player<any>, ActionId> {
 	constructor(parent: HTMLElement, player: Player<any>, config: APLActionIDPickerConfig<Player<any>>) {
@@ -81,7 +76,7 @@ export class APLActionIDPicker extends DropdownPicker<Player<any>, ActionId> {
             this.setOptions(values);
 		};
         updateValues();
-        player.currentStatsEmitter.on(updateValues);
+        player.currentSpellsAndAurasEmitter.on(updateValues);
 	}
 }
 

@@ -501,20 +501,24 @@ func (character *Character) FillPlayerStats(playerStats *proto.PlayerStats) {
 	}
 	character.clearBuildPhaseAuras(CharacterBuildPhaseAll)
 	playerStats.Sets = character.GetActiveSetBonusNames()
-	playerStats.Cooldowns = character.GetMajorCooldownIDs()
 
-	aplSpells := FilterSlice(character.Spellbook, func(spell *Spell) bool {
-		return spell.Flags.Matches(SpellFlagAPL)
-	})
-	playerStats.Spells = MapSlice(aplSpells, func(spell *Spell) *proto.ActionID {
-		return spell.ActionID.ToProto()
+	playerStats.Spells = MapSlice(character.Spellbook, func(spell *Spell) *proto.SpellStats {
+		return &proto.SpellStats{
+			Id: spell.ActionID.ToProto(),
+
+			IsCastable:      spell.Flags.Matches(SpellFlagAPL),
+			IsMajorCooldown: spell.Flags.Matches(SpellFlagMCD),
+			HasDot:          spell.dots != nil,
+		}
 	})
 
 	aplAuras := FilterSlice(character.auras, func(aura *Aura) bool {
 		return !aura.ActionID.IsEmptyAction()
 	})
-	playerStats.Auras = MapSlice(aplAuras, func(aura *Aura) *proto.ActionID {
-		return aura.ActionID.ToProto()
+	playerStats.Auras = MapSlice(aplAuras, func(aura *Aura) *proto.AuraStats {
+		return &proto.AuraStats{
+			Id: aura.ActionID.ToProto(),
+		}
 	})
 }
 

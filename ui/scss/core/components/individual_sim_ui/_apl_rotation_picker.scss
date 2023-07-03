@@ -73,3 +73,7 @@
 .hide-picker-root {
 	margin: 0;
 }
+
+.apl-picker-builder-root.apl-action-sequence .apl-action-condition {
+	display: none;
+}

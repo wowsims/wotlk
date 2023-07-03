@@ -62,7 +62,7 @@ message APLActionCastSpell {
 }
 
 message APLActionWait {
-    Duration duration = 1;
+    APLValue duration = 1;
 }
 
 ///////////////////////////////////////////////////////////////////////////

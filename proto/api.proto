@@ -293,6 +293,16 @@ message RaidSimResult {
 message ComputeStatsRequest {
 	Raid raid = 1;
 }
+message AuraStats {
+	ActionID id = 1;
+}
+message SpellStats {
+	ActionID id = 1;
+
+	bool is_castable = 2; // Whether this spell may be cast by the APL logic.
+	bool is_major_cooldown = 3; // Whether this spell is a major cooldown.
+	bool has_dot = 4; // Whether this spell applies a DoT effect.
+}
 message PlayerStats {
 	// Stats
 	UnitStats base_stats = 6;
@@ -304,10 +314,9 @@ message PlayerStats {
 
 	repeated string sets = 3;
 	IndividualBuffs buffs = 4;
-	repeated ActionID cooldowns = 5;
 
-	repeated ActionID spells = 10;
-	repeated ActionID auras = 11;
+	repeated SpellStats spells = 10;
+	repeated AuraStats auras = 11;
 }
 message PartyStats {
 	repeated PlayerStats players = 1;
