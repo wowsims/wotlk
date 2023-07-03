@@ -158,6 +158,12 @@ message BalanceDruid {
 			BeforeLunar = 1;
 			MaximizeMf = 2;
 			MultidotMf = 3;
+			ExtendFishingForLunar = 4;
+			ExtendFishingForSolar = 5;
+			ExtendDuringLunar = 6;
+			ExtendDuringSolar = 7;
+			ExtendAlways = 8;
+			ExtendOutsideSolar = 9;
 		}
 		MfUsage mf_usage = 2;
 

@@ -96,15 +96,16 @@ type Druid struct {
 
 	ProcOoc func(sim *core.Simulation)
 
-	LunarICD core.Cooldown
-	SolarICD core.Cooldown
-	Treant1  *TreantPet
-	Treant2  *TreantPet
-	Treant3  *TreantPet
+	ExtendingMoonfireStacks int
+	LunarICD                core.Cooldown
+	SolarICD                core.Cooldown
+	Treant1                 *TreantPet
+	Treant2                 *TreantPet
+	Treant3                 *TreantPet
+	OwlkinFrenzyTimings     []float64
 
-	form                DruidForm
-	disabledMCDs        []*core.MajorCooldown
-	OwlkinFrenzyTimings []float64
+	form         DruidForm
+	disabledMCDs []*core.MajorCooldown
 }
 
 type SelfBuffs struct {

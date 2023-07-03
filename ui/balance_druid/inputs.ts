@@ -72,6 +72,13 @@ export const BalanceDruidRotationConfig = {
 				{ name: 'Before lunar', value: MfUsage.BeforeLunar },
 				{ name: 'Maximize', value: MfUsage.MaximizeMf },
 				{ name: 'Multidot', value: MfUsage.MultidotMf },
+				{ name: 'Extend fishing for lunar', value: MfUsage.ExtendFishingForLunar },
+				{ name: 'Extend fishing for solar', value: MfUsage.ExtendFishingForSolar },
+				{ name: 'Extend during lunar', value: MfUsage.ExtendDuringLunar },
+				{ name: 'Extend during solar', value: MfUsage.ExtendDuringSolar },
+				{ name: 'Extend always', value: MfUsage.ExtendAlways },
+				{ name: 'Extend outside solar', value: MfUsage.ExtendOutsideSolar },
+
 			],
 			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
 		}),
