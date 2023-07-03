@@ -140,7 +140,6 @@ class HidePicker extends Input<Player<any>, boolean> {
 		} else {
 			this.iconElem.classList.add('fa-eye');
 			this.iconElem.classList.remove('fa-eye-slash');
-			//this.inputElem.setAttribute('data-bs-title', 'Disable Action');
 			this.tooltip.setContent({'.tooltip-inner': 'Disable Action'});
 		}
 	}

@@ -233,6 +233,15 @@ func FilterMap[K comparable, V any](src map[K]V, f func(K, V) bool) map[K]V {
 	return dst
 }
 
+// Flattens a 2D slice into a 1D slice.
+func Flatten[T any](src [][]T) []T {
+	var dst []T
+	for _, sublist := range src {
+		dst = append(dst, sublist...)
+	}
+	return dst
+}
+
 func calcMeanAndStdev(sample []float64) (float64, float64) {
 	n := len(sample)
 	sum := 0.0

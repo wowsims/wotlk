@@ -18,6 +18,9 @@ func (unit *Unit) newActionCastSpell(config *proto.APLActionCastSpell) APLAction
 		spell: spell,
 	}
 }
+func (action *APLActionCastSpell) GetInnerActions() []*APLAction { return nil }
+func (action *APLActionCastSpell) Finalize()                     {}
+func (action *APLActionCastSpell) Reset(*Simulation)             {}
 func (action *APLActionCastSpell) IsAvailable(sim *Simulation) bool {
 	return action.spell.CanCast(sim, action.spell.Unit.CurrentTarget)
 }
@@ -36,6 +39,9 @@ func (unit *Unit) newActionWait(config *proto.APLActionWait) APLActionImpl {
 		duration: unit.coerceTo(unit.newAPLValue(config.Duration), proto.APLValueType_ValueTypeDuration),
 	}
 }
+func (action *APLActionWait) GetInnerActions() []*APLAction { return nil }
+func (action *APLActionWait) Finalize()                     {}
+func (action *APLActionWait) Reset(*Simulation)             {}
 func (action *APLActionWait) IsAvailable(sim *Simulation) bool {
 	return action.duration != nil
 }

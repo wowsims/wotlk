@@ -17,7 +17,23 @@ func (action *APLAction) Execute(sim *Simulation) {
 	action.impl.Execute(sim)
 }
 
+// Returns this Action, along with all inner Actions.
+func (action *APLAction) GetAllActions() []*APLAction {
+	actions := action.impl.GetInnerActions()
+	actions = append(actions, action)
+	return actions
+}
+
 type APLActionImpl interface {
+	// Returns all inner Actions.
+	GetInnerActions() []*APLAction
+
+	// Performs optional post-processing.
+	Finalize()
+
+	// Invoked before each sim iteration.
+	Reset(*Simulation)
+
 	// Whether this action is available to be used right now.
 	IsAvailable(*Simulation) bool
 
@@ -42,6 +58,12 @@ func (unit *Unit) newAPLActionImpl(config *proto.APLAction) APLActionImpl {
 	}
 
 	switch config.Action.(type) {
+	case *proto.APLAction_Sequence:
+		return unit.newActionSequence(config.GetSequence())
+	case *proto.APLAction_ResetSequence:
+		return unit.newActionResetSequence(config.GetResetSequence())
+	case *proto.APLAction_StrictSequence:
+		return unit.newActionStrictSequence(config.GetStrictSequence())
 	case *proto.APLAction_CastSpell:
 		return unit.newActionCastSpell(config.GetCastSpell())
 	case *proto.APLAction_Wait:
