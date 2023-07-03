@@ -64,17 +64,13 @@ func (hunter *Hunter) singleTargetChooseSpell(sim *core.Simulation) (*core.Spell
 			continue
 		}
 
-		if spell == hunter.SteadyShot && !hunter.shouldCastSteadyShot(sim) {
-			return nil, nil
-		}
-
 		for i := int32(0); i < hunter.Env.GetNumTargets(); i++ {
 			if hunter.rotationConditions[spell].CanUse(sim, hunter.Env.GetTargetUnit(i)) {
 				return spell, hunter.Env.GetTargetUnit(i)
 			}
 		}
 	}
-	panic("No spell found to cast!")
+	return nil, nil
 }
 
 // Returns whether an aspect was swapped.
@@ -329,7 +325,7 @@ func (hunter *Hunter) initRotation() {
 		},
 		hunter.SteadyShot: RotationCondition{
 			func(sim *core.Simulation, target *core.Unit) bool {
-				return hunter.SteadyShot.IsReady(sim)
+				return hunter.SteadyShot.IsReady(sim) && hunter.shouldCastSteadyShot(sim)
 			},
 		},
 	}
