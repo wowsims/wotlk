@@ -40,6 +40,7 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*core.Spell, *core.
 
 	var lunarUptime time.Duration
 	shouldRefreshMf := moonkin.Moonfire.CurDot().RemainingDuration(sim) <= 0
+	maximizeMf := !(rotation.MfUsage == proto.BalanceDruid_Rotation_NoMf) && !(rotation.MfUsage == proto.BalanceDruid_Rotation_BeforeLunar)
 	hasLunarFury := core.Ternary(moonkin.Equip[core.ItemSlotRanged].ID == 47670, true, false)
 	lunarIsActive := moonkin.LunarEclipseProcAura.IsActive()
 
@@ -50,7 +51,7 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*core.Spell, *core.
 		return moonkin.Starfire, target
 	} else if rotation.UseBattleRes && sim.GetRemainingDuration().Seconds() < moonkin.RebirthTiming && moonkin.Rebirth.IsReady(sim) {
 		return moonkin.Rebirth, target
-	} else if rotation.MfUsage == proto.BalanceDruid_Rotation_MaximizeMf && shouldRefreshMf && hasLunarFury {
+	} else if maximizeMf && shouldRefreshMf && hasLunarFury {
 		return moonkin.Moonfire, target
 	} else if moonkin.Talents.ForceOfNature && moonkin.ForceOfNature.IsReady(sim) && !lunarIsActive {
 		moonkin.useTrinkets(stats.SpellPower, sim, target)
@@ -122,6 +123,12 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*core.Spell, *core.
 		// Eclipse
 		if solarIsActive || lunarIsActive {
 			if lunarIsActive {
+				canExtendMf := rotation.MfUsage == proto.BalanceDruid_Rotation_ExtendAlways || rotation.MfUsage == proto.BalanceDruid_Rotation_ExtendOutsideSolar || rotation.MfUsage == proto.BalanceDruid_Rotation_ExtendDuringLunar
+				if canExtendMf && moonkin.ExtendingMoonfireStacks == 0 {
+					if extendTarget := moonkin.tryExtendMoonfire(sim); extendTarget != nil {
+						return moonkin.Moonfire, extendTarget
+					}
+				}
 				if (rotation.UseSmartCooldowns && lunarUptime > 10*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
 					moonkin.castMajorCooldown(moonkin.hyperSpeedMCD, sim, target)
 					moonkin.castMajorCooldown(moonkin.potionSpeedMCD, sim, target)
@@ -131,17 +138,25 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*core.Spell, *core.
 					}
 				}
 				return moonkin.Starfire, target
-			} else if solarIsActive && rotation.WrathUsage == proto.BalanceDruid_Rotation_RegularWrath {
+			} else if solarIsActive {
 				if moonkin.MoonkinT84PCAura.IsActive() {
 					if moonkin.MoonkinT84PCAura.RemainingDuration(sim) < solarUptime {
 						return moonkin.Starfire, target
+					}
+				}
+				canExtendMf := rotation.MfUsage == proto.BalanceDruid_Rotation_ExtendAlways || rotation.MfUsage == proto.BalanceDruid_Rotation_ExtendDuringSolar
+				if canExtendMf && moonkin.ExtendingMoonfireStacks == 0 {
+					if extendTarget := moonkin.tryExtendMoonfire(sim); extendTarget != nil {
+						return moonkin.Moonfire, extendTarget
 					}
 				}
 				if (rotation.UseSmartCooldowns && solarUptime > 10*time.Second) || sim.GetRemainingDuration() < 15*time.Second {
 					moonkin.castMajorCooldown(moonkin.potionWildMagicMCD, sim, target)
 					moonkin.useTrinkets(stats.SpellCrit, sim, target)
 				}
-				return moonkin.Wrath, target
+				if rotation.WrathUsage == proto.BalanceDruid_Rotation_RegularWrath {
+					return moonkin.Wrath, target
+				}
 			}
 		}
 		if rotation.MfUsage == proto.BalanceDruid_Rotation_BeforeLunar && lunarICD < 2*time.Second && shouldRefreshMf {
@@ -153,10 +168,25 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*core.Spell, *core.
 		}
 	}
 
+	canExtendMf := rotation.MfUsage == proto.BalanceDruid_Rotation_ExtendAlways || rotation.MfUsage == proto.BalanceDruid_Rotation_ExtendOutsideSolar
+
 	fishingForLunar := lunarICD <= solarICD
 	if rotation.EclipsePrio == proto.BalanceDruid_Rotation_Solar {
 		fishingForLunar = lunarICD < solarICD
 	}
+
+	if fishingForLunar && (canExtendMf || rotation.MfUsage == proto.BalanceDruid_Rotation_ExtendFishingForLunar) && moonkin.ExtendingMoonfireStacks == 0 {
+		if extendTarget := moonkin.tryExtendMoonfire(sim); extendTarget != nil {
+			return moonkin.Moonfire, extendTarget
+		}
+	}
+
+	if !fishingForLunar && (canExtendMf || rotation.MfUsage == proto.BalanceDruid_Rotation_ExtendFishingForSolar) && moonkin.ExtendingMoonfireStacks == 0 {
+		if extendTarget := moonkin.tryExtendMoonfire(sim); extendTarget != nil {
+			return moonkin.Moonfire, extendTarget
+		}
+	}
+
 	// Non-Eclipse
 	eclipseShuffle := rotation.EclipseShuffling && lunarICD == 0 && solarICD == 0
 	if eclipseShuffle && moonkin.LastCast == moonkin.Wrath && rotation.UseStarfire {
@@ -194,4 +224,14 @@ func (moonkin *BalanceDruid) useTrinkets(stat stats.Stat, sim *core.Simulation, 
 	if moonkin.onUseTrinket2.Stat == stat {
 		moonkin.castMajorCooldown(moonkin.onUseTrinket2.Cooldown, sim, target)
 	}
+}
+
+func (moonkin *BalanceDruid) tryExtendMoonfire(sim *core.Simulation) *core.Unit {
+	for range sim.Encounter.Targets {
+		if moonkin.Moonfire.CurDot().RemainingDuration(sim) <= 0 {
+			return moonkin.CurrentTarget
+		}
+		moonkin.CurrentTarget = sim.Environment.NextTargetUnit(moonkin.CurrentTarget)
+	}
+	return nil
 }

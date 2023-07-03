@@ -79,6 +79,7 @@ func (druid *Druid) registerMoonfireSpell() {
 			baseDamage := sim.Roll(406, 476) + 0.15*spell.SpellPower()
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if result.Landed() {
+				druid.ExtendingMoonfireStacks = 3
 				dot := spell.Dot(target)
 				dot.NumberOfTicks = numTicks
 				dot.Apply(sim)
