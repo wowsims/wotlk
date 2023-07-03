@@ -64,25 +64,13 @@ func (hunter *Hunter) singleTargetChooseSpell(sim *core.Simulation) (*core.Spell
 			continue
 		}
 
-		if spell == hunter.SteadyShot {
-			for _, spell := range hunter.rotationPriority {
-				if spell == nil {
-					continue
-				}
-				ttr := spell.TimeToReady(sim)
-				if ttr > 0 && ttr < time.Duration(hunter.Rotation.SteadyShotMaxDelay)*time.Millisecond {
-					return nil, nil
-				}
-			}
-		}
-
 		for i := int32(0); i < hunter.Env.GetNumTargets(); i++ {
 			if hunter.rotationConditions[spell].CanUse(sim, hunter.Env.GetTargetUnit(i)) {
 				return spell, hunter.Env.GetTargetUnit(i)
 			}
 		}
 	}
-	panic("No spell found to cast!")
+	return nil, nil
 }
 
 // Returns whether an aspect was swapped.
@@ -109,6 +97,19 @@ func (hunter *Hunter) trySwapAspect(sim *core.Simulation) bool {
 		return true
 	}
 	return false
+}
+
+func (hunter *Hunter) shouldCastSteadyShot(sim *core.Simulation) bool {
+	for _, spell := range hunter.rotationPriority {
+		if spell == nil {
+			continue
+		}
+		ttr := spell.TimeToReady(sim)
+		if ttr > 0 && ttr < time.Duration(hunter.Rotation.SteadyShotMaxDelay)*time.Millisecond {
+			return false
+		}
+	}
+	return true
 }
 
 func (hunter *Hunter) makeCustomRotation() *common.CustomRotation {
@@ -206,10 +207,26 @@ func (hunter *Hunter) makeCustomRotation() *common.CustomRotation {
 		int32(proto.Hunter_Rotation_SerpentStingSpell): {
 			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
 				cost := hunter.SerpentSting.CurCast.Cost
-				return hunter.SerpentSting.Cast(sim, target), cost
+				for i := int32(0); i < hunter.Env.GetNumTargets(); i++ {
+					target := hunter.Env.GetTargetUnit(i)
+					if !hunter.SerpentSting.Dot(target).IsActive() {
+						return hunter.SerpentSting.Cast(sim, target), cost
+					}
+				}
+				panic("No valid serpent-sting target found")
 			},
 			Condition: func(sim *core.Simulation) bool {
-				return hunter.Rotation.Sting == proto.Hunter_Rotation_SerpentSting && !hunter.SerpentSting.CurDot().IsActive()
+				if hunter.Rotation.Sting != proto.Hunter_Rotation_SerpentSting {
+					return false
+				}
+				if hunter.Rotation.MultiDotSerpentSting {
+					for i := int32(0); i < hunter.Env.GetNumTargets(); i++ {
+						if !hunter.SerpentSting.Dot(hunter.Env.GetTargetUnit(i)).IsActive() {
+							return true
+						}
+					}
+				}
+				return !hunter.SerpentSting.CurDot().IsActive()
 			},
 		},
 		int32(proto.Hunter_Rotation_SteadyShot): {
@@ -218,7 +235,7 @@ func (hunter *Hunter) makeCustomRotation() *common.CustomRotation {
 				return hunter.SteadyShot.Cast(sim, target), cost
 			},
 			Condition: func(sim *core.Simulation) bool {
-				return true
+				return hunter.shouldCastSteadyShot(sim)
 			},
 		},
 		int32(proto.Hunter_Rotation_Volley): {
@@ -308,7 +325,7 @@ func (hunter *Hunter) initRotation() {
 		},
 		hunter.SteadyShot: RotationCondition{
 			func(sim *core.Simulation, target *core.Unit) bool {
-				return hunter.SteadyShot.IsReady(sim)
+				return hunter.SteadyShot.IsReady(sim) && hunter.shouldCastSteadyShot(sim)
 			},
 		},
 	}
