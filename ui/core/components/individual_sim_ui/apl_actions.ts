@@ -10,6 +10,7 @@ import { EventID } from '../../typed_event.js';
 import { Input, InputConfig } from '../input.js';
 import { Player } from '../../player.js';
 import { TextDropdownPicker } from '../dropdown_picker.js';
+import { ListItemPickerConfig, ListPicker } from '../list_picker.js';
 
 import * as AplHelpers from './apl_helpers.js';
 import * as AplValues from './apl_values.js';
@@ -40,6 +41,7 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 				player.rotationChangeEmitter.emit(eventID);
 			},
 		});
+		this.conditionPicker.rootElem.classList.add('apl-action-condition');
 
 		this.actionDiv = document.createElement('div');
 		this.actionDiv.classList.add('apl-action-picker-action');
@@ -145,16 +147,17 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 				player.rotationChangeEmitter.emit(eventID);
 			},
 		});
+		this.actionPicker.rootElem.classList.add('apl-action-' + newActionType);
 	}
 }
 
-type ActionTypeConfig = {
+type ActionTypeConfig<T> = {
 	label: string,
-	newValue: () => object,
-	factory: (parent: HTMLElement, player: Player<any>, config: InputConfig<Player<any>, any>) => Input<Player<any>, any>,
+	newValue: () => T,
+	factory: (parent: HTMLElement, player: Player<any>, config: InputConfig<Player<any>, T>) => Input<Player<any>, T>,
 };
 
-function inputBuilder<T extends object>(label: string, newValue: () => T, fields: Array<AplHelpers.APLPickerBuilderFieldConfig<T, any>>): ActionTypeConfig {
+function inputBuilder<T>(label: string, newValue: () => T, fields: Array<AplHelpers.APLPickerBuilderFieldConfig<T, any>>): ActionTypeConfig<T> {
 	return {
 		label: label,
 		newValue: newValue,
@@ -162,12 +165,35 @@ function inputBuilder<T extends object>(label: string, newValue: () => T, fields
 	};
 }
 
-export const actionTypeFactories: Record<NonNullable<APLActionType>, ActionTypeConfig> = {
+export const actionTypeFactories: Record<NonNullable<APLActionType>, ActionTypeConfig<any>> = {
 	['castSpell']: inputBuilder('Cast', APLActionCastSpell.create, [
-		AplHelpers.actionIdFieldConfig('spellId', 'all_spells'),
+		AplHelpers.actionIdFieldConfig('spellId', 'castable_spells'),
 	]),
 	['sequence']: inputBuilder('Sequence', APLActionSequence.create, [
+		{
+			field: 'actions',
+			newValue: () => [],
+			factory: (parent, player, config) => new ListPicker<Player<any>, APLAction>(parent, player, {
+				...config,
+				// Override setValue to replace undefined elements with default messages.
+				setValue: (eventID: EventID, player: Player<any>, newValue: Array<APLAction>) => {
+					config.setValue(eventID, player, newValue.map(val => val || APLAction.create()));
+				},
+
+				itemLabel: 'Action',
+				newItem: APLAction.create,
+				copyItem: (oldValue: APLAction) => oldValue ? APLAction.clone(oldValue) : oldValue,
+				newItemPicker: (parent: HTMLElement, listPicker: ListPicker<Player<any>, APLAction>, index: number, config: ListItemPickerConfig<Player<any>, APLAction>) => new APLActionPicker(parent, player, config),
+				horizontalLayout: true,
+				allowedActions: ['create', 'delete'],
+			}),
+		},
 	]),
 	['wait']: inputBuilder('Wait', APLActionWait.create, [
+		{
+			field: 'duration',
+			newValue: APLValue.create,
+			factory: (parent, player, config) => new AplValues.APLValuePicker(parent, player, config),
+		},
 	]),
 };

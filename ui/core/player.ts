@@ -25,6 +25,10 @@ import {
 	WeaponType,
 } from './proto/common.js';
 import {
+	AuraStats as AuraStatsProto,
+	SpellStats as SpellStatsProto,
+} from './proto/api.js';
+import {
 	APLRotation,
 } from './proto/apl.js';
 import {
@@ -41,13 +45,13 @@ import {
 import { PlayerStats } from './proto/api.js';
 import { Player as PlayerProto } from './proto/api.js';
 import { StatWeightsResult } from './proto/api.js';
+import { ActionId } from './proto_utils/action_id.js';
 import { EquippedItem, getWeaponDPS } from './proto_utils/equipped_item.js';
 
 import { playerTalentStringToProto } from './talents/factory.js';
 import { Gear, ItemSwapGear } from './proto_utils/gear.js';
 import {
 	isUnrestrictedGem,
-	gemEligibleForSocket,
 	gemMatchesSocket,
 } from './proto_utils/gems.js';
 import { Stats } from './proto_utils/stats.js';
@@ -64,14 +68,11 @@ import {
 	classColors,
 	emptyRaidTarget,
 	enchantAppliesToItem,
-	getEligibleEnchantSlots,
-	getEligibleItemSlots,
 	getTalentTree,
 	getTalentTreeIcon,
 	getMetaGemEffectEP,
 	isTankSpec,
 	newRaidTarget,
-	playerToSpec,
 	raceToFaction,
 	specToClass,
 	specToEligibleRaces,
@@ -80,12 +81,20 @@ import {
 } from './proto_utils/utils.js';
 
 import { getLanguageCode } from './constants/lang.js';
-import { Listener } from './typed_event.js';
 import { EventID, TypedEvent } from './typed_event.js';
 import { Party, MAX_PARTY_SIZE } from './party.js';
 import { Raid } from './raid.js';
 import { Sim } from './sim.js';
-import { sum } from './utils.js';
+import { stringComparator, sum } from './utils.js';
+
+export interface AuraStats {
+	data: AuraStatsProto,
+	id: ActionId,
+}
+export interface SpellStats {
+	data: SpellStatsProto,
+	id: ActionId,
+}
 
 // Manages all the gear / consumes / other settings for a single Player.
 export class Player<SpecType extends Spec> {
@@ -126,6 +135,8 @@ export class Player<SpecType extends Spec> {
 	private epRatios: Array<number> = new Array<number>(Player.numEpRatios).fill(0);
 	private epWeights: Stats = new Stats();
 	private currentStats: PlayerStats = PlayerStats.create();
+	private spells: Array<SpellStats> = [];
+	private auras: Array<AuraStats> = [];
 
 	readonly nameChangeEmitter = new TypedEvent<void>('PlayerName');
 	readonly buffsChangeEmitter = new TypedEvent<void>('PlayerBuffs');
@@ -145,6 +156,7 @@ export class Player<SpecType extends Spec> {
 	readonly epWeightsChangeEmitter = new TypedEvent<void>('PlayerEpWeights');
 
 	readonly currentStatsEmitter = new TypedEvent<void>('PlayerCurrentStats');
+	readonly currentSpellsAndAurasEmitter = new TypedEvent<void>('PlayerCurrentSpellsAndAuras');
 	readonly epRatiosChangeEmitter = new TypedEvent<void>('PlayerEpRatios');
 
 	// Emits when any of the above emitters emit.
@@ -310,20 +322,51 @@ export class Player<SpecType extends Spec> {
 
 	setCurrentStats(eventID: EventID, newStats: PlayerStats) {
 		this.currentStats = newStats;
-		this.currentStatsEmitter.emit(eventID);
+		this.updateSpellsAndAuras(eventID);
 
-		//// Remove item cooldowns if there is no cooldown available for the item.
-		//const availableCooldowns = this.currentStats.cooldowns;
-		//const newCooldowns = this.getCooldowns();
-		//newCooldowns.cooldowns = newCooldowns.cooldowns.filter(cd => {
-		//	if (cd.id && 'itemId' in cd.id.rawId) {
-		//		return availableCooldowns.find(acd => ActionIdProto.equals(acd, cd.id)) != null;
-		//	} else {
-		//		return true;
-		//	}
-		//});
-		//// TODO: Reference the parent event ID
-		//this.setCooldowns(TypedEvent.nextEventID(), newCooldowns);
+		this.currentStatsEmitter.emit(eventID);
+	}
+
+	getSpells(): Array<SpellStats> {
+		return this.spells.slice();
+	}
+
+	getAuras(): Array<AuraStats> {
+		return this.auras.slice();
+	}
+
+	private async updateSpellsAndAuras(eventID: EventID) {
+		let newSpells = this.currentStats.spells.map(spell => {
+			return {
+				data: spell,
+				id: ActionId.fromProto(spell.id!),
+			};
+		});
+		let newAuras = this.currentStats.auras.map(aura => {
+			return {
+				data: aura,
+				id: ActionId.fromProto(aura.id!),
+			};
+		});
+
+		await Promise.all([...newSpells, ...newAuras].map(newSpell => newSpell.id.fill().then(newId => newSpell.id = newId)));
+
+		newSpells = newSpells.sort((a, b) => stringComparator(a.id.name, b.id.name))
+		newAuras = newAuras.sort((a, b) => stringComparator(a.id.name, b.id.name))
+
+		let anyUpdates = false;
+		if (newSpells.length != this.spells.length || newSpells.some((newSpell, i) => !newSpell.id.equals(this.spells[i].id))) {
+			this.spells = newSpells;
+			anyUpdates = true;
+		}
+		if (newAuras.length != this.auras.length || newAuras.some((newAura, i) => !newAura.id.equals(this.auras[i].id))) {
+			this.auras = newAuras;
+			anyUpdates = true;
+		}
+
+		if (anyUpdates) {
+			this.currentSpellsAndAurasEmitter.emit(eventID);
+		}
 	}
 
 	getName(): string {

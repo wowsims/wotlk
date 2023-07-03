@@ -1,17 +1,11 @@
 import { Component } from '../component.js';
 import { IconEnumPicker, IconEnumValueConfig } from '../icon_enum_picker.js';
-import { Input, InputConfig } from '../input.js';
 import { NumberListPicker } from '../number_list_picker.js';
 import { Player } from '../../player.js';
 import { EventID, TypedEvent } from '../../typed_event.js';
 import { ActionID as ActionIdProto, ItemSlot } from '../../proto/common.js';
-import { Cooldowns } from '../../proto/common.js';
 import { Cooldown } from '../../proto/common.js';
 import { ActionId } from '../../proto_utils/action_id.js';
-import { Class } from '../../proto/common.js';
-import { Spec } from '../../proto/common.js';
-import { getEnumValues } from '../../utils.js';
-import { wait } from '../../utils.js';
 import { Tooltip } from 'bootstrap';
 import { NumberPicker } from '../number_picker.js';
 import { Sim } from 'ui/core/sim.js';
@@ -26,7 +20,7 @@ export class CooldownsPicker extends Component {
 		this.player = player;
 		this.cooldownPickers = [];
 
-		TypedEvent.onAny([this.player.currentStatsEmitter]).on(eventID => {
+		TypedEvent.onAny([this.player.currentSpellsAndAurasEmitter]).on(eventID => {
 			this.update();
 		});
 		this.update();
@@ -133,7 +127,7 @@ export class CooldownsPicker extends Component {
 	}
 
 	private makeActionPicker(parentElem: HTMLElement, cooldownIndex: number): IconEnumPicker<Player<any>, ActionIdProto> {
-		const availableCooldowns = this.player.getCurrentStats().cooldowns;
+		const availableCooldowns = this.player.getSpells().filter(spell => spell.data.isMajorCooldown).map(spell => spell.id);
 
 		const actionPicker = new IconEnumPicker<Player<any>, ActionIdProto>(parentElem, this.player, {
 			extraCssClasses: [
@@ -143,7 +137,7 @@ export class CooldownsPicker extends Component {
 			values: ([
 				{ color: '#grey', value: ActionIdProto.create() },
 			] as Array<IconEnumValueConfig<Player<any>, ActionIdProto>>).concat(availableCooldowns.map(cooldownAction => {
-				return { actionId: ActionId.fromProto(cooldownAction), value: cooldownAction };
+				return { actionId: cooldownAction, value: cooldownAction.toProto() };
 			})),
 			equals: (a: ActionIdProto, b: ActionIdProto) => ActionIdProto.equals(a, b),
 			zeroValue: ActionIdProto.create(),

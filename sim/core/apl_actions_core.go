@@ -1,8 +1,6 @@
 package core
 
 import (
-	"time"
-
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
@@ -29,18 +27,18 @@ func (action *APLActionCastSpell) Execute(sim *Simulation) {
 
 type APLActionWait struct {
 	unit     *Unit
-	duration time.Duration
+	duration APLValue
 }
 
 func (unit *Unit) newActionWait(config *proto.APLActionWait) APLActionImpl {
 	return &APLActionWait{
 		unit:     unit,
-		duration: DurationFromProto(config.Duration),
+		duration: unit.coerceTo(unit.newAPLValue(config.Duration), proto.APLValueType_ValueTypeDuration),
 	}
 }
 func (action *APLActionWait) IsAvailable(sim *Simulation) bool {
-	return true
+	return action.duration != nil
 }
 func (action *APLActionWait) Execute(sim *Simulation) {
-	action.unit.WaitUntil(sim, sim.CurrentTime+action.duration)
+	action.unit.WaitUntil(sim, sim.CurrentTime+action.duration.GetDuration(sim))
 }
