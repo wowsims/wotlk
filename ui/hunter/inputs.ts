@@ -92,6 +92,12 @@ export const HunterRotationConfig = {
 			labelTooltip: 'Amount of time, in milliseconds, between when you start moving towards the boss and when you re-engage your ranged autos.',
 			enableWhen: (player: Player<Spec.SpecHunter>) => (player.getRotation().type != RotationType.Custom && player.getRotation().trapWeave) || (player.getRotation().type == RotationType.Custom && player.getRotation().customRotation?.spells.some(spell => spell.spell == SpellOption.ExplosiveTrap) || false),
 		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecHunter>({
+			fieldName: 'steadyShotMaxDelay',
+			label: 'Steady Shot Max Delay (ms)',
+			labelTooltip: 'If another higher-priority spell comes off cooldown in the specified time then steady shot is not cast and the rotation waits',
+			enableWhen: (player: Player<Spec.SpecHunter>) => player.getRotation().type != RotationType.Custom,
+		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecHunter>({
 			fieldName: 'allowExplosiveShotDownrank',
 			label: 'Allow ES Downrank',
