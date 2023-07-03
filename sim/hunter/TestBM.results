@@ -111,8 +111,8 @@ dps_results: {
 dps_results: {
  key: "TestBM-AllItems-Beast-tamer'sShoulders-30892"
  value: {
-  dps: 6073.12921
-  tps: 4007.36749
+  dps: 6074.14744
+  tps: 4008.3773
  }
 }
 dps_results: {
@@ -139,15 +139,15 @@ dps_results: {
 dps_results: {
  key: "TestBM-AllItems-BlessedGarboftheUndeadSlayer"
  value: {
-  dps: 5165.85118
-  tps: 3408.02377
+  dps: 5163.55324
+  tps: 3405.72582
  }
 }
 dps_results: {
  key: "TestBM-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
-  dps: 5003.05012
-  tps: 3275.27206
+  dps: 5002.2003
+  tps: 3274.40541
  }
 }
 dps_results: {
@@ -427,8 +427,8 @@ dps_results: {
 dps_results: {
  key: "TestBM-AllItems-Gronnstalker'sArmor"
  value: {
-  dps: 4826.14368
-  tps: 3131.17758
+  dps: 4825.91749
+  tps: 3130.94298
  }
 }
 dps_results: {
@@ -687,8 +687,8 @@ dps_results: {
 dps_results: {
  key: "TestBM-AllItems-StormshroudArmor"
  value: {
-  dps: 4862.88001
-  tps: 3143.27306
+  dps: 4862.15377
+  tps: 3142.52159
  }
 }
 dps_results: {
@@ -806,8 +806,8 @@ dps_results: {
 dps_results: {
  key: "TestBM-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
-  dps: 5093.03954
-  tps: 3342.09472
+  dps: 5091.18201
+  tps: 3340.39383
  }
 }
 dps_results: {
@@ -848,8 +848,8 @@ dps_results: {
 dps_results: {
  key: "TestBM-Average-Default"
  value: {
-  dps: 6222.17357
-  tps: 4122.20296
+  dps: 6222.18424
+  tps: 4122.2138
  }
 }
 dps_results: {

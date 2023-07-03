@@ -4,6 +4,7 @@ import (
 	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"time"
 )
 
 func (hunter *Hunter) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
@@ -36,10 +37,15 @@ func (hunter *Hunter) rotation(sim *core.Simulation) {
 		}
 	} else {
 		spell, target := hunter.singleTargetChooseSpell(sim)
-
-		success := spell.Cast(sim, target)
-		if !success {
-			hunter.WaitForMana(sim, spell.CurCast.Cost)
+		if spell == nil {
+			if hunter.GCD.IsReady(sim) {
+				hunter.WaitUntil(sim, sim.CurrentTime+100*time.Millisecond)
+			}
+		} else {
+			success := spell.Cast(sim, target)
+			if !success {
+				hunter.WaitForMana(sim, spell.CurCast.Cost)
+			}
 		}
 	}
 }
@@ -56,6 +62,18 @@ func (hunter *Hunter) singleTargetChooseSpell(sim *core.Simulation) (*core.Spell
 	for _, spell := range hunter.rotationPriority {
 		if spell == nil {
 			continue
+		}
+
+		if spell == hunter.SteadyShot {
+			for _, spell := range hunter.rotationPriority {
+				if spell == nil {
+					continue
+				}
+				ttr := spell.TimeToReady(sim)
+				if ttr > 0 && ttr < 500*time.Millisecond {
+					return nil, nil
+				}
+			}
 		}
 
 		for i := int32(0); i < hunter.Env.GetNumTargets(); i++ {
@@ -331,6 +349,14 @@ func (hunter *Hunter) initRotation() {
 			hunter.AimedShot,
 			hunter.MultiShot,
 			hunter.SteadyShot,
+		}
+	}
+
+	if hunter.Env.GetNumTargets() > 1 {
+		for i, spell := range hunter.rotationPriority {
+			if spell == hunter.AimedShot {
+				hunter.rotationPriority[i] = nil
+			}
 		}
 	}
 }
