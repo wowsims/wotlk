@@ -93,6 +93,61 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					return {
 						updateOn: simUI.player.changeEmitter,
 						getContent: () => {
+							if (simUI.player.getTalents().hackAndSlash) {
+								if (simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponType == WeaponType.WeaponTypeSword ||
+								simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponType == WeaponType.WeaponTypeAxe ||
+								simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponType == WeaponType.WeaponTypeSword ||
+								simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponType == WeaponType.WeaponTypeAxe) {
+									return '';
+								} else {
+									return '"Hack and Slash" talent selected, but swords or axes not equipped.';
+								}
+							} else {
+								return '';
+							}
+						},
+					};
+				},
+				(simUI: IndividualSimUI<Spec.SpecRogue>) => {
+					return {
+						updateOn: simUI.player.changeEmitter,
+						getContent: () => {
+							if (simUI.player.getTalents().closeQuartersCombat) {
+								if (simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponType == WeaponType.WeaponTypeFist ||
+									simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponType == WeaponType.WeaponTypeDagger ||
+									simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponType == WeaponType.WeaponTypeFist ||
+									simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponType == WeaponType.WeaponTypeDagger) {
+									return '';
+								} else {
+									return '"Close Quarters Combat" talent selected, but fists or axes not equipped.';
+								}
+							} else {
+								return '';
+							}
+						},
+					};
+				},
+				(simUI: IndividualSimUI<Spec.SpecRogue>) => {
+					return {
+						updateOn: simUI.player.changeEmitter,
+						getContent: () => {
+							if (simUI.player.getTalents().maceSpecialization) {
+								if (simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponType == WeaponType.WeaponTypeMace ||
+									simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponType == WeaponType.WeaponTypeMace) {
+									return '';
+								} else {
+									return '"Mace Specialization" talent selected, but maces not equipped.';
+								}
+							} else {
+								return '';
+							}
+						},
+					};
+				},
+				(simUI: IndividualSimUI<Spec.SpecRogue>) => {
+					return {
+						updateOn: simUI.player.changeEmitter,
+						getContent: () => {
 							if (simUI.player.getInFrontOfTarget() && (simUI.player.getRotation().combatBuilder == CombatBuilder.Backstab ||
 								simUI.player.getRotation().openWithGarrote)) {
 								return 'Option "In Front of Target" selected, but using Backstab or Garrote as builder or opener.';
