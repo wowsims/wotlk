@@ -24,6 +24,8 @@ message APLAction {
 
     oneof action {
         APLActionSequence sequence = 2;
+        APLActionResetSequence reset_sequence = 5;
+        APLActionStrictSequence strict_sequence = 6;
 
         APLActionCastSpell cast_spell = 3;
         APLActionWait wait = 4;
@@ -54,6 +56,16 @@ message APLPrepullAction {
 ///////////////////////////////////////////////////////////////////////////
 
 message APLActionSequence {
+    string name = 1;
+
+    repeated APLAction actions = 2;
+}
+
+message APLActionResetSequence {
+    string sequence_name = 1;
+}
+
+message APLActionStrictSequence {
     repeated APLAction actions = 1;
 }
 

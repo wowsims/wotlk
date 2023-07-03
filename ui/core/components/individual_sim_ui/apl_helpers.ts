@@ -2,6 +2,7 @@ import { ActionId } from '../../proto_utils/action_id.js';
 import { Player } from '../../player.js';
 import { EventID, TypedEvent } from '../../typed_event.js';
 import { bucket } from '../../utils.js';
+import { AdaptiveStringPicker } from '../string_picker.js';
 import { DropdownPicker, DropdownPickerConfig, DropdownValueConfig, TextDropdownPicker } from '../dropdown_picker.js';
 import { Input, InputConfig } from '../input.js';
 import { ActionID } from '../../proto/common.js';
@@ -164,6 +165,14 @@ export function actionIdFieldConfig(field: string, actionIdSet: ACTION_ID_SET): 
 			...config,
 			actionIdSet: actionIdSet,
 		}),
+	};
+}
+
+export function stringFieldConfig(field: string): APLPickerBuilderFieldConfig<any, any> {
+	return {
+		field: field,
+		newValue: () => '',
+		factory: (parent, player, config) => new AdaptiveStringPicker(parent, player, config),
 	};
 }
 

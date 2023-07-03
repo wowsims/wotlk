@@ -21,6 +21,10 @@
 			width: 100%;
 		}
 	}
+
+	.adaptive-string-picker-root > input {
+		text-align: center;
+	}
 }
 
 .apl-list-item-picker-root {
@@ -64,10 +68,6 @@
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-}
-
-.apl-value-const-picker-root > input {
-	text-align: center;
 }
 
 .hide-picker-root {

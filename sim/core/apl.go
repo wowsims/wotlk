@@ -11,6 +11,9 @@ import (
 type APLRotation struct {
 	unit         *Unit
 	priorityList []*APLAction
+
+	// Current strict sequence
+	strictSequence *APLActionStrictSequence
 }
 
 func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
@@ -27,9 +30,30 @@ func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
 	})
 	priorityList = FilterSlice(priorityList, func(action *APLAction) bool { return action != nil })
 
-	return &APLRotation{
+	rotation := &APLRotation{
 		unit:         unit,
 		priorityList: priorityList,
+	}
+
+	for _, action := range rotation.allAPLActions() {
+		action.impl.Finalize()
+	}
+
+	return rotation
+}
+
+// Returns all action objects as an unstructured list. Used for easily finding specific actions.
+func (rot *APLRotation) allAPLActions() []*APLAction {
+	return Flatten(MapSlice(rot.priorityList, func(action *APLAction) []*APLAction { return action.GetAllActions() }))
+}
+func (unit *Unit) allAPLActions() []*APLAction {
+	return unit.Rotation.allAPLActions()
+}
+
+func (rot *APLRotation) reset(sim *Simulation) {
+	rot.strictSequence = nil
+	for _, action := range rot.allAPLActions() {
+		action.impl.Reset(sim)
 	}
 }
 
@@ -37,11 +61,15 @@ func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
 // and leverage the community's existing familiarity.
 // https://github.com/simulationcraft/simc/wiki/ActionLists
 func (apl *APLRotation) DoNextAction(sim *Simulation) {
-	for _, action := range apl.priorityList {
-		if action.IsAvailable(sim) {
-			action.Execute(sim)
-			return
+	if apl.strictSequence == nil {
+		for _, action := range apl.priorityList {
+			if action.IsAvailable(sim) {
+				action.Execute(sim)
+				return
+			}
 		}
+	} else {
+		apl.strictSequence.Execute(sim)
 	}
 
 	if sim.Log != nil {

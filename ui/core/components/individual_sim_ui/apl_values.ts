@@ -17,47 +17,6 @@ import { ListItemPickerConfig, ListPicker } from '../list_picker.js';
 
 import * as AplHelpers from './apl_helpers.js';
 
-export class APLValueConstValuePicker extends Input<Player<any>, string> {
-	private readonly inputElem: HTMLInputElement;
-
-	constructor(parent: HTMLElement, modObject: Player<any>, config: InputConfig<Player<any>, string>) {
-		super(parent, 'apl-value-const-picker-root', modObject, config);
-
-		this.inputElem = document.createElement('input');
-		this.inputElem.type = 'text';
-		this.rootElem.appendChild(this.inputElem);
-
-		this.init();
-
-		this.inputElem.addEventListener('change', event => {
-			this.inputChanged(TypedEvent.nextEventID());
-		});
-		this.inputElem.addEventListener('input', event => {
-			this.updateSize();
-		});
-		this.updateSize();
-	}
-
-	getInputElem(): HTMLElement {
-		return this.inputElem;
-	}
-
-	getInputValue(): string {
-		return this.inputElem.value;
-	}
-
-	setInputValue(newValue: string) {
-		this.inputElem.value = newValue;
-		this.updateSize();
-	}
-
-	private updateSize() {
-		const newSize = Math.max(3, this.inputElem.value.length);
-		if (this.inputElem.size != newSize)
-			this.inputElem.size = newSize;
-	}
-}
-
 export interface APLValuePickerConfig extends InputConfig<Player<any>, APLValue|undefined> {
 }
 
@@ -193,6 +152,35 @@ type ValueTypeConfig<T> = {
 	factory: (parent: HTMLElement, player: Player<any>, config: InputConfig<Player<any>, T>) => Input<Player<any>, T>,
 };
 
+export function valueFieldConfig(field: string): AplHelpers.APLPickerBuilderFieldConfig<any, any> {
+	return {
+		field: field,
+		newValue: APLValue.create,
+		factory: (parent, player, config) => new APLValuePicker(parent, player, config),
+	};
+}
+
+export function valueListFieldConfig(field: string): AplHelpers.APLPickerBuilderFieldConfig<any, any> {
+	return {
+		field: field,
+		newValue: () => [],
+		factory: (parent, player, config) => new ListPicker<Player<any>, APLValue|undefined>(parent, player, {
+			...config,
+			// Override setValue to replace undefined elements with default messages.
+			setValue: (eventID: EventID, player: Player<any>, newValue: Array<APLValue|undefined>) => {
+				config.setValue(eventID, player, newValue.map(val => val || APLValue.create()));
+			},
+
+			itemLabel: 'Value',
+			newItem: APLValue.create,
+			copyItem: (oldValue: APLValue|undefined) => oldValue ? APLValue.clone(oldValue) : oldValue,
+			newItemPicker: (parent: HTMLElement, listPicker: ListPicker<Player<any>, APLValue|undefined>, index: number, config: ListItemPickerConfig<Player<any>, APLValue|undefined>) => new APLValuePicker(parent, player, config),
+			horizontalLayout: true,
+			allowedActions: ['create', 'delete'],
+		}),
+	};
+}
+
 function inputBuilder<T>(label: string, newValue: () => T, fields: Array<AplHelpers.APLPickerBuilderFieldConfig<T, any>>): ValueTypeConfig<T> {
 	return {
 		label: label,
@@ -203,65 +191,19 @@ function inputBuilder<T>(label: string, newValue: () => T, fields: Array<AplHelp
 
 const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>>  = {
 	['const']: inputBuilder('Const', APLValueConst.create, [
-		{
-			field: 'val',
-			newValue: () => '',
-			factory: (parent, player, config) => new APLValueConstValuePicker(parent, player, config),
-		},
+		AplHelpers.stringFieldConfig('val'),
 	]),
 	['and']: inputBuilder('All of', APLValueAnd.create, [
-		{
-			field: 'vals',
-			newValue: () => [],
-			factory: (parent, player, config) => new ListPicker<Player<any>, APLValue|undefined>(parent, player, {
-				...config,
-				// Override setValue to replace undefined elements with default messages.
-				setValue: (eventID: EventID, player: Player<any>, newValue: Array<APLValue|undefined>) => {
-					config.setValue(eventID, player, newValue.map(val => val || APLValue.create()));
-				},
-
-				itemLabel: 'Value',
-				newItem: APLValue.create,
-				copyItem: (oldValue: APLValue|undefined) => oldValue ? APLValue.clone(oldValue) : oldValue,
-				newItemPicker: (parent: HTMLElement, listPicker: ListPicker<Player<any>, APLValue|undefined>, index: number, config: ListItemPickerConfig<Player<any>, APLValue|undefined>) => new APLValuePicker(parent, player, config),
-				horizontalLayout: true,
-				allowedActions: ['create', 'delete'],
-			}),
-		},
+		valueListFieldConfig('vals'),
 	]),
 	['or']: inputBuilder('Any of', APLValueOr.create, [
-		{
-			field: 'vals',
-			newValue: () => [],
-			factory: (parent, player, config) => new ListPicker<Player<any>, APLValue|undefined>(parent, player, {
-				...config,
-				// Override setValue to replace undefined elements with default messages.
-				setValue: (eventID: EventID, player: Player<any>, newValue: Array<APLValue|undefined>) => {
-					config.setValue(eventID, player, newValue.map(val => val || APLValue.create()));
-				},
-
-				itemLabel: 'Value',
-				newItem: APLValue.create,
-				copyItem: (oldValue: APLValue|undefined) => oldValue ? APLValue.clone(oldValue) : oldValue,
-				newItemPicker: (parent: HTMLElement, listPicker: ListPicker<Player<any>, APLValue|undefined>, index: number, config: ListItemPickerConfig<Player<any>, APLValue|undefined>) => new APLValuePicker(parent, player, config),
-				horizontalLayout: true,
-				allowedActions: ['create', 'delete'],
-			}),
-		},
+		valueListFieldConfig('vals'),
 	]),
 	['not']: inputBuilder('Not', APLValueNot.create, [
-		{
-			field: 'val',
-			newValue: APLValue.create,
-			factory: (parent, player, config) => new APLValuePicker(parent, player, config),
-		},
+		valueFieldConfig('val'),
 	]),
 	['cmp']: inputBuilder('Compare', APLValueCompare.create, [
-		{
-			field: 'lhs',
-			newValue: APLValue.create,
-			factory: (parent, player, config) => new APLValuePicker(parent, player, config),
-		},
+		valueFieldConfig('lhs'),
 		{
 			field: 'op',
 			newValue: () => ComparisonOperator.OpEq,
@@ -279,11 +221,7 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 				],
 			}),
 		},
-		{
-			field: 'rhs',
-			newValue: APLValue.create,
-			factory: (parent, player, config) => new APLValuePicker(parent, player, config),
-		},
+		valueFieldConfig('rhs'),
 	]),
 	['dotIsActive']: inputBuilder('Dot Is Active', APLValueDotIsActive.create, [
 		AplHelpers.actionIdFieldConfig('spellId', 'dot_spells'),

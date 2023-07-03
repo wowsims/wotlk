@@ -39,3 +39,45 @@ export class StringPicker<ModObject> extends Input<ModObject, string> {
 		this.inputElem.textContent = newValue;
 	}
 }
+
+// A string picker which adapts its width to the input.
+export class AdaptiveStringPicker<ModObject> extends Input<ModObject, string> {
+	private readonly inputElem: HTMLInputElement;
+
+	constructor(parent: HTMLElement, modObject: ModObject, config: InputConfig<ModObject, string>) {
+		super(parent, 'adaptive-string-picker-root', modObject, config);
+
+		this.inputElem = document.createElement('input');
+		this.inputElem.type = 'text';
+		this.rootElem.appendChild(this.inputElem);
+
+		this.init();
+
+		this.inputElem.addEventListener('change', event => {
+			this.inputChanged(TypedEvent.nextEventID());
+		});
+		this.inputElem.addEventListener('input', event => {
+			this.updateSize();
+		});
+		this.updateSize();
+	}
+
+	getInputElem(): HTMLElement {
+		return this.inputElem;
+	}
+
+	getInputValue(): string {
+		return this.inputElem.value;
+	}
+
+	setInputValue(newValue: string) {
+		this.inputElem.value = newValue;
+		this.updateSize();
+	}
+
+	private updateSize() {
+		const newSize = Math.max(3, this.inputElem.value.length);
+		if (this.inputElem.size != newSize)
+			this.inputElem.size = newSize;
+	}
+}

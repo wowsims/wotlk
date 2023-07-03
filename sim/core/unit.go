@@ -446,6 +446,10 @@ func (unit *Unit) reset(sim *Simulation, agent Agent) {
 	unit.RunicPowerBar.reset(sim)
 
 	unit.AutoAttacks.reset(sim)
+
+	if unit.Rotation != nil {
+		unit.Rotation.reset(sim)
+	}
 }
 
 func (unit *Unit) startPull(sim *Simulation) {

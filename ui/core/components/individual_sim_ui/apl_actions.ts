@@ -2,6 +2,8 @@ import {
 	APLAction,
 	APLActionCastSpell,
 	APLActionSequence,
+	APLActionResetSequence,
+	APLActionStrictSequence,
 	APLActionWait,
 	APLValue,
 } from '../../proto/apl.js';
@@ -157,6 +159,35 @@ type ActionTypeConfig<T> = {
 	factory: (parent: HTMLElement, player: Player<any>, config: InputConfig<Player<any>, T>) => Input<Player<any>, T>,
 };
 
+function actionFieldConfig(field: string): AplHelpers.APLPickerBuilderFieldConfig<any, any> {
+	return {
+		field: field,
+		newValue: APLValue.create,
+		factory: (parent, player, config) => new APLActionPicker(parent, player, config),
+	};
+}
+
+function actionListFieldConfig(field: string): AplHelpers.APLPickerBuilderFieldConfig<any, any> {
+	return {
+		field: field,
+		newValue: () => [],
+		factory: (parent, player, config) => new ListPicker<Player<any>, APLAction>(parent, player, {
+			...config,
+			// Override setValue to replace undefined elements with default messages.
+			setValue: (eventID: EventID, player: Player<any>, newValue: Array<APLAction>) => {
+				config.setValue(eventID, player, newValue.map(val => val || APLAction.create()));
+			},
+
+			itemLabel: 'Action',
+			newItem: APLAction.create,
+			copyItem: (oldValue: APLAction) => oldValue ? APLAction.clone(oldValue) : oldValue,
+			newItemPicker: (parent: HTMLElement, listPicker: ListPicker<Player<any>, APLAction>, index: number, config: ListItemPickerConfig<Player<any>, APLAction>) => new APLActionPicker(parent, player, config),
+			horizontalLayout: true,
+			allowedActions: ['create', 'delete'],
+		}),
+	};
+}
+
 function inputBuilder<T>(label: string, newValue: () => T, fields: Array<AplHelpers.APLPickerBuilderFieldConfig<T, any>>): ActionTypeConfig<T> {
 	return {
 		label: label,
@@ -170,30 +201,16 @@ export const actionTypeFactories: Record<NonNullable<APLActionType>, ActionTypeC
 		AplHelpers.actionIdFieldConfig('spellId', 'castable_spells'),
 	]),
 	['sequence']: inputBuilder('Sequence', APLActionSequence.create, [
-		{
-			field: 'actions',
-			newValue: () => [],
-			factory: (parent, player, config) => new ListPicker<Player<any>, APLAction>(parent, player, {
-				...config,
-				// Override setValue to replace undefined elements with default messages.
-				setValue: (eventID: EventID, player: Player<any>, newValue: Array<APLAction>) => {
-					config.setValue(eventID, player, newValue.map(val => val || APLAction.create()));
-				},
-
-				itemLabel: 'Action',
-				newItem: APLAction.create,
-				copyItem: (oldValue: APLAction) => oldValue ? APLAction.clone(oldValue) : oldValue,
-				newItemPicker: (parent: HTMLElement, listPicker: ListPicker<Player<any>, APLAction>, index: number, config: ListItemPickerConfig<Player<any>, APLAction>) => new APLActionPicker(parent, player, config),
-				horizontalLayout: true,
-				allowedActions: ['create', 'delete'],
-			}),
-		},
+		AplHelpers.stringFieldConfig('name'),
+		actionListFieldConfig('actions'),
+	]),
+	['resetSequence']: inputBuilder('Reset Sequence', APLActionResetSequence.create, [
+		AplHelpers.stringFieldConfig('name'),
+	]),
+	['strictSequence']: inputBuilder('Strict Sequence', APLActionStrictSequence.create, [
+		actionListFieldConfig('actions'),
 	]),
 	['wait']: inputBuilder('Wait', APLActionWait.create, [
-		{
-			field: 'duration',
-			newValue: APLValue.create,
-			factory: (parent, player, config) => new AplValues.APLValuePicker(parent, player, config),
-		},
+		AplValues.valueFieldConfig('duration'),
 	]),
 };
