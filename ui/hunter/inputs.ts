@@ -96,7 +96,6 @@ export const HunterRotationConfig = {
 			fieldName: 'steadyShotMaxDelay',
 			label: 'Steady Shot Max Delay (ms)',
 			labelTooltip: 'If another higher-priority spell comes off cooldown in the specified time then steady shot is not cast and the rotation waits',
-			enableWhen: (player: Player<Spec.SpecHunter>) => player.getRotation().type != RotationType.Custom,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecHunter>({
 			fieldName: 'allowExplosiveShotDownrank',
@@ -109,7 +108,6 @@ export const HunterRotationConfig = {
 			fieldName: 'multiDotSerpentSting',
 			label: 'Multi-Dot Serpent Sting',
 			labelTooltip: 'Casts Serpent Sting on multiple targets',
-			showWhen: (player: Player<Spec.SpecHunter>) => player.getRotation().type != RotationType.Custom,
 			changeEmitter: (player: Player<Spec.SpecHunter>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 		}),
 		InputHelpers.makeCustomRotationInput<Spec.SpecHunter, SpellOption>({
