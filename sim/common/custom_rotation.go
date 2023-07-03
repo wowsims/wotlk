@@ -127,7 +127,7 @@ func (cr *CustomRotation) Cast(sim *core.Simulation) bool {
 	spell := cr.ChooseSpell(sim)
 
 	if spell == nil {
-		cr.character.WaitUntil(sim, sim.CurrentTime+time.Millisecond*500)
+		cr.character.WaitUntil(sim, sim.CurrentTime+time.Millisecond*100)
 		return false
 	}
 
