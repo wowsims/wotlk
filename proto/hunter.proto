@@ -226,6 +226,7 @@ message Hunter {
 		bool allow_explosive_shot_downrank = 10;
 
 		bool multi_dot_serpent_sting = 11;
+		double steady_shot_max_delay = 12;
 	}
 	Rotation rotation = 1;
 	

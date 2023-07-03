@@ -70,7 +70,7 @@ func (hunter *Hunter) singleTargetChooseSpell(sim *core.Simulation) (*core.Spell
 					continue
 				}
 				ttr := spell.TimeToReady(sim)
-				if ttr > 0 && ttr < 500*time.Millisecond {
+				if ttr > 0 && ttr < time.Duration(hunter.Rotation.SteadyShotMaxDelay)*time.Millisecond {
 					return nil, nil
 				}
 			}

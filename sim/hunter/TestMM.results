@@ -883,15 +883,15 @@ dps_results: {
 dps_results: {
  key: "TestMM-Settings-Dwarf-P1-MM-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3480.04974
-  tps: 3208.37194
+  dps: 3484.69958
+  tps: 3211.8784
  }
 }
 dps_results: {
  key: "TestMM-Settings-Dwarf-P1-MM-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 4095.65563
-  tps: 3734.45786
+  dps: 4146.19849
+  tps: 3784.56535
  }
 }
 dps_results: {
@@ -925,15 +925,15 @@ dps_results: {
 dps_results: {
  key: "TestMM-Settings-Orc-P1-MM-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3506.89288
-  tps: 3215.63762
+  dps: 3510.55818
+  tps: 3219.84328
  }
 }
 dps_results: {
  key: "TestMM-Settings-Orc-P1-MM-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 4130.4409
-  tps: 3745.97141
+  dps: 4183.2087
+  tps: 3800.62106
  }
 }
 dps_results: {
