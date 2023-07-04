@@ -2,7 +2,6 @@ import { Tooltip } from 'bootstrap';
 
 import { EventID, TypedEvent } from '../../typed_event.js';
 import { Player } from '../../player.js';
-import { BooleanPicker } from '../boolean_picker.js';
 import { ListItemPickerConfig, ListPicker } from '../list_picker.js';
 import {
 	APLListItem,

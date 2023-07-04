@@ -36,6 +36,7 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 		super(parent, 'apl-action-picker-root', player, config);
 
 		this.conditionPicker = new AplValues.APLValuePicker(this.rootElem, this.modObject, {
+			label: 'If:',
 			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
 			getValue: (player: Player<any>) => this.getSourceValue().condition,
 			setValue: (eventID: EventID, player: Player<any>, newValue: APLValue|undefined) => {
@@ -53,9 +54,12 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 		this.typePicker = new TextDropdownPicker(this.actionDiv, player, {
             defaultLabel: 'Action',
 			values: allActionTypes.map(actionType => {
+				const factory = actionTypeFactories[actionType];
 				return {
 					value: actionType,
-					label: actionTypeFactories[actionType].label,
+					label: factory.label,
+					submenu: factory.submenu,
+					tooltip: factory.fullDescription ? `<p>${factory.shortDescription}</p> ${factory.fullDescription}` : factory.shortDescription,
 				};
 			}),
 			equals: (a, b) => a == b,
@@ -155,6 +159,9 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 
 type ActionTypeConfig<T> = {
 	label: string,
+	submenu?: Array<string>,
+	shortDescription: string,
+	fullDescription?: string,
 	newValue: () => T,
 	factory: (parent: HTMLElement, player: Player<any>, config: InputConfig<Player<any>, T>) => Input<Player<any>, T>,
 };
@@ -188,29 +195,77 @@ function actionListFieldConfig(field: string): AplHelpers.APLPickerBuilderFieldC
 	};
 }
 
-function inputBuilder<T>(label: string, newValue: () => T, fields: Array<AplHelpers.APLPickerBuilderFieldConfig<T, any>>): ActionTypeConfig<T> {
+function inputBuilder<T>(config: {
+	label: string,
+	submenu?: Array<string>,
+	shortDescription: string,
+	fullDescription?: string,
+	newValue: () => T,
+	fields: Array<AplHelpers.APLPickerBuilderFieldConfig<T, any>>,
+}): ActionTypeConfig<T> {
 	return {
-		label: label,
-		newValue: newValue,
-		factory: AplHelpers.aplInputBuilder(newValue, fields),
+		label: config.label,
+		submenu: config.submenu,
+		shortDescription: config.shortDescription,
+		fullDescription: config.fullDescription,
+		newValue: config.newValue,
+		factory: AplHelpers.aplInputBuilder(config.newValue, config.fields),
 	};
 }
 
 export const actionTypeFactories: Record<NonNullable<APLActionType>, ActionTypeConfig<any>> = {
-	['castSpell']: inputBuilder('Cast', APLActionCastSpell.create, [
-		AplHelpers.actionIdFieldConfig('spellId', 'castable_spells'),
-	]),
-	['sequence']: inputBuilder('Sequence', APLActionSequence.create, [
-		AplHelpers.stringFieldConfig('name'),
-		actionListFieldConfig('actions'),
-	]),
-	['resetSequence']: inputBuilder('Reset Sequence', APLActionResetSequence.create, [
-		AplHelpers.stringFieldConfig('name'),
-	]),
-	['strictSequence']: inputBuilder('Strict Sequence', APLActionStrictSequence.create, [
-		actionListFieldConfig('actions'),
-	]),
-	['wait']: inputBuilder('Wait', APLActionWait.create, [
-		AplValues.valueFieldConfig('duration'),
-	]),
+	['castSpell']: inputBuilder({
+		label: 'Cast',
+		shortDescription: 'Casts the spell if possible, i.e. resource/cooldown/GCD/etc requirements are all met.',
+		newValue: APLActionCastSpell.create,
+		fields: [
+			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells'),
+		],
+	}),
+	['sequence']: inputBuilder({
+		label: 'Sequence',
+		submenu: ['Sequences'],
+		shortDescription: 'A list of sub-actions to execute in the specified order.',
+		fullDescription: `
+			<p>Once one of the sub-actions has been performed, the next sub-action will not necessarily be immediately executed next. The system will restart at the beginning of the whole actions list (not the sequence). If the sequence is executed again, it will perform the next sub-action.</p>
+			<p>When all actions have been performed, the sequence does NOT automatically reset; instead, it will be skipped from now on. Use the <b>Reset Sequence</b> action to reset it, if desired.</p>
+		`,
+		newValue: APLActionSequence.create,
+		fields: [
+			AplHelpers.stringFieldConfig('name'),
+			actionListFieldConfig('actions'),
+		],
+	}),
+	['resetSequence']: inputBuilder({
+		label: 'Reset Sequence',
+		submenu: ['Sequences'],
+		shortDescription: 'Restarts a sequence, so that the next time it executes it will perform its first sub-action.',
+		fullDescription: `
+			<p>Use the <b>name</b> field to refer to the sequence to be reset. The desired sequence must have the same (non-empty) value for its <b>name</b>.</p>
+		`,
+		newValue: APLActionResetSequence.create,
+		fields: [
+			AplHelpers.stringFieldConfig('name'),
+		],
+	}),
+	['strictSequence']: inputBuilder({
+		label: 'Strict Sequence',
+		submenu: ['Sequences'],
+		shortDescription: 'Like a regular <b>Sequence</b>, except all sub-actions are executed immediately after each other and the sequence resets automatically upon completion.',
+		fullDescription: `
+			<p>Strict Sequences do not begin unless ALL sub-actions are ready.</p>
+		`,
+		newValue: APLActionStrictSequence.create,
+		fields: [
+			actionListFieldConfig('actions'),
+		],
+	}),
+	['wait']: inputBuilder({
+		label: 'Wait',
+		shortDescription: 'Pauses the GCD for a specified amount of time.',
+		newValue: APLActionWait.create,
+		fields: [
+			AplValues.valueFieldConfig('duration'),
+		],
+	}),
 };

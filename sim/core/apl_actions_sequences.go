@@ -97,11 +97,16 @@ func (action *APLActionStrictSequence) Reset(*Simulation) {
 	action.curIdx = 0
 }
 func (action *APLActionStrictSequence) IsAvailable(sim *Simulation) bool {
-	return action.actions[action.curIdx].IsAvailable(sim)
+	for _, subaction := range action.actions {
+		if !subaction.IsAvailable(sim) {
+			return false
+		}
+	}
+	return true
 }
 func (action *APLActionStrictSequence) Execute(sim *Simulation) {
 	action.unit.Rotation.strictSequence = action
-	if !action.IsAvailable(sim) {
+	if !action.actions[action.curIdx].IsAvailable(sim) {
 		action.curIdx = 0
 		action.unit.Rotation.strictSequence = nil
 		return

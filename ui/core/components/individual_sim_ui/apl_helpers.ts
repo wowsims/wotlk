@@ -21,11 +21,26 @@ const actionIdSets: Record<ACTION_ID_SET, {
 			// Split up non-cooldowns and cooldowns into separate sections for easier browsing.
 			const {'spells': spells, 'cooldowns': cooldowns } = bucket(castableSpells, spell => spell.data.isMajorCooldown ? 'cooldowns' : 'spells');
 
-			return [...(spells || []), ...(cooldowns || [])].map(actionId => {
-				return {
-					value: actionId.id,
-				};
-			});
+			return [
+				[{
+					value: ActionId.fromEmpty(),
+					headerText: 'Spells',
+				}],
+				(spells || []).map(actionId => {
+					return {
+						value: actionId.id,
+					};
+				}),
+				[{
+					value: ActionId.fromEmpty(),
+					headerText: 'Cooldowns',
+				}],
+				(cooldowns || []).map(actionId => {
+					return {
+						value: actionId.id,
+					};
+				}),
+			].flat();
 		},
 	},
 	['dot_spells']: {
