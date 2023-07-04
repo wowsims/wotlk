@@ -158,12 +158,6 @@ message BalanceDruid {
 			BeforeLunar = 1;
 			MaximizeMf = 2;
 			MultidotMf = 3;
-			ExtendFishingForLunar = 4;
-			ExtendFishingForSolar = 5;
-			ExtendDuringLunar = 6;
-			ExtendDuringSolar = 7;
-			ExtendAlways = 8;
-			ExtendOutsideSolar = 9;
 		}
 		MfUsage mf_usage = 2;
 
@@ -196,6 +190,18 @@ message BalanceDruid {
 		}
 		EclipsePrio eclipse_prio = 12;
 		bool eclipse_shuffling = 13;
+
+		enum MfExtension {
+			ExtendFishingForLunar = 0;
+			ExtendFishingForSolar = 1;
+			ExtendDuringLunar = 2;
+			ExtendDuringSolar = 3;
+			ExtendAlways = 4;
+			ExtendOutsideSolar = 5;
+			DontExtend = 6;
+		}
+		MfExtension mf_extension = 15;
+		bool snapshot_mf = 16;
 	}
   Rotation rotation = 1;
 
