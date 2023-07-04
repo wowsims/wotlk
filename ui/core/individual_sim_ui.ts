@@ -1,4 +1,4 @@
-import { simLaunchStatuses } from './launched_sims';
+import { aplLaunchStatuses, LaunchStatus, simLaunchStatuses } from './launched_sims';
 import { Player } from './player';
 import { SimUI, SimWarning } from './sim_ui';
 import { EventID, TypedEvent } from './typed_event';
@@ -187,6 +187,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			spec: player.spec,
 			knownIssues: config.knownIssues,
 			launchStatus: simLaunchStatuses[player.spec],
+			noticeText: aplLaunchStatuses[player.spec] == LaunchStatus.Alpha || aplLaunchStatuses[player.spec] == LaunchStatus.Beta ? 'Rotation settings have been moved to the \'Rotation\' tab, where experimental APL options are also available. Try them out!' : undefined,
 		});
 		this.rootElem.classList.add('individual-sim-ui');
 		this.player = player;
@@ -277,7 +278,9 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		this.bt = this.addBulkTab();
 		this.addSettingsTab();
 		this.addTalentsTab();
-		//this.addRotationTab();
+		if (aplLaunchStatuses[this.player.spec] != LaunchStatus.Unlaunched) {
+			this.addRotationTab();
+		}
 
 		if (!this.isWithinRaidSim) {
 			this.addDetailedResultsTab();

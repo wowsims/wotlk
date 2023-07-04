@@ -38,6 +38,31 @@ export const simLaunchStatuses: Record<Spec, LaunchStatus> = {
 	[Spec.SpecTankDeathknight]: LaunchStatus.Launched,
 };
 
+// Alpha and Beta show an info notice at the top of the page.
+export const aplLaunchStatuses: Record<Spec, LaunchStatus> = {
+	[Spec.SpecBalanceDruid]: LaunchStatus.Unlaunched,
+	[Spec.SpecFeralDruid]: LaunchStatus.Unlaunched,
+	[Spec.SpecFeralTankDruid]: LaunchStatus.Unlaunched,
+	[Spec.SpecRestorationDruid]: LaunchStatus.Unlaunched,
+	[Spec.SpecElementalShaman]: LaunchStatus.Unlaunched,
+	[Spec.SpecEnhancementShaman]: LaunchStatus.Unlaunched,
+	[Spec.SpecRestorationShaman]: LaunchStatus.Unlaunched,
+	[Spec.SpecHunter]: LaunchStatus.Unlaunched,
+	[Spec.SpecMage]: LaunchStatus.Unlaunched,
+	[Spec.SpecRogue]: LaunchStatus.Unlaunched,
+	[Spec.SpecHolyPaladin]: LaunchStatus.Unlaunched,
+	[Spec.SpecProtectionPaladin]: LaunchStatus.Unlaunched,
+	[Spec.SpecRetributionPaladin]: LaunchStatus.Unlaunched,
+	[Spec.SpecHealingPriest]: LaunchStatus.Unlaunched,
+	[Spec.SpecShadowPriest]: LaunchStatus.Unlaunched,
+	[Spec.SpecSmitePriest]: LaunchStatus.Unlaunched,
+	[Spec.SpecWarlock]: LaunchStatus.Unlaunched,
+	[Spec.SpecWarrior]: LaunchStatus.Unlaunched,
+	[Spec.SpecProtectionWarrior]: LaunchStatus.Unlaunched,
+	[Spec.SpecDeathknight]: LaunchStatus.Unlaunched,
+	[Spec.SpecTankDeathknight]: LaunchStatus.Unlaunched,
+};
+
 // Meme specs are excluded from title drop-down menu.
 export const memeSpecs: Array<Spec> = [
 	Spec.SpecSmitePriest,

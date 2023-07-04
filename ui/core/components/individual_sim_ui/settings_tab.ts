@@ -18,6 +18,7 @@ import { SavedEncounter, SavedSettings } from "../../proto/ui";
 import { EventID, TypedEvent } from "../../typed_event";
 import { getEnumValues } from "../../utils";
 import { Player } from "../../player";
+import { aplLaunchStatuses, LaunchStatus } from '../../launched_sims';
 
 import { ContentBlock } from "../content_block";
 import { EncounterPicker } from '../encounter_picker.js';
@@ -81,12 +82,16 @@ export class SettingsTab extends SimTab {
     	this.buildEncounterSettings();
 		}
 
-		this.buildRotationSettings();
+		if (aplLaunchStatuses[this.simUI.player.spec] == LaunchStatus.Unlaunched) {
+			this.buildRotationSettings();
+		}
 
 		this.buildPlayerSettings();
 		this.buildCustomSettingsSections();
 		this.buildConsumesSection();
-		this.buildCooldownSettings();
+		if (aplLaunchStatuses[this.simUI.player.spec] == LaunchStatus.Unlaunched) {
+			this.buildCooldownSettings();
+		}
 		this.buildOtherSettings();
 
 		if (!this.simUI.isWithinRaidSim) {
@@ -132,7 +137,8 @@ export class SettingsTab extends SimTab {
 	}
 
 	private buildPlayerSettings() {
-		const contentBlock = new ContentBlock(this.column2, 'player-settings', {
+		const column = aplLaunchStatuses[this.simUI.player.spec] == LaunchStatus.Unlaunched ? this.column2 : this.column1;
+		const contentBlock = new ContentBlock(column, 'player-settings', {
 			header: {title: 'Player'}
 		});
 
