@@ -38,7 +38,7 @@ import {
 	Stat,
 } from './proto/common';
 
-import { IndividualSimSettings, SavedTalents } from './proto/ui';
+import { IndividualSimSettings, SavedRotation, SavedTalents } from './proto/ui';
 import { StatWeightsResult } from './proto/api';
 
 import { Gear } from './proto_utils/gear';
@@ -140,7 +140,7 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 	presets: {
 		gear: Array<PresetGear>,
 		talents: Array<SavedDataConfig<Player<any>, SavedTalents>>,
-		rotation?: Array<SavedDataConfig<Player<any>, string>>,
+		rotations?: Array<PresetRotation>,
 	},
 }
 
@@ -152,6 +152,13 @@ export interface GearAndStats {
 export interface PresetGear {
 	name: string;
 	gear: EquipmentSpec;
+	tooltip?: string;
+	enableWhen?: (obj: Player<any>) => boolean;
+}
+
+export interface PresetRotation {
+	name: string;
+	rotation: SavedRotation;
 	tooltip?: string;
 	enableWhen?: (obj: Player<any>) => boolean;
 }

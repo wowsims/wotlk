@@ -6,7 +6,8 @@ import { Food } from '../core/proto/common.js';
 import { Glyphs } from '../core/proto/common.js';
 import { PetFood } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
-import { SavedTalents } from '../core/proto/ui.js';
+import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
+import { APLRotation } from '../core/proto/apl.js';
 import { ferocityDefault, ferocityBMDefault } from '../core/talents/hunter_pet.js';
 import { Player } from '../core/player.js';
 
@@ -98,6 +99,40 @@ export const DefaultRotation = HunterRotation.create({
 		],
 	}),
 });
+
+export const ROTATION_PRESET_LEGACY_DEFAULT = {
+	name: 'Legacy Default',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: HunterRotation.toJsonString(DefaultRotation),
+	}),
+}
+
+export const ROTATION_PRESET_DEFAULT = {
+	name: 'APL Default',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
+			timeToTrapWeaveMs: 2000,
+		})),
+		rotation: APLRotation.fromJsonString(`{
+			"enabled": true,
+			"priorityList": [
+				{"action": {
+					"condition": {"not": {"val": {"dotIsActive": {"spellId": { "spellId": 49001 }}}}},
+					"castSpell": {"spellId": { "spellId": 49001 }}
+				}},
+				{"action": {"castSpell": {"spellId": { "spellId": 61006 }}}},
+				{"action": {"castSpell": {"spellId": { "spellId": 63672 }}}},
+				{"action": {"castSpell": {"spellId": { "spellId": 60053 }}}},
+				{"action": {"castSpell": {"spellId": { "spellId": 49050 }}}},
+				{"action": {
+					"condition": {"not": {"val": {"dotIsActive": {"spellId": { "spellId": 60053 }}}}},
+					"castSpell": {"spellId": { "spellId": 49045 }}
+				}},
+				{"action": {"castSpell": {"spellId": { "spellId": 49052 }}}}
+			]
+		}`),
+	}),
+}
 
 export const DefaultOptions = HunterOptions.create({
 	ammo: Ammo.SaroniteRazorheads,

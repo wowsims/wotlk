@@ -243,6 +243,11 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 					Presets.MarksmanTalents,
 					Presets.SurvivalTalents,
 				],
+				// Preset rotations that the user can quickly select.
+				rotations: [
+					Presets.ROTATION_PRESET_LEGACY_DEFAULT,
+					Presets.ROTATION_PRESET_DEFAULT,
+				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.MM_PRERAID_PRESET,
