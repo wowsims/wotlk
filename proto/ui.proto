@@ -4,6 +4,7 @@ package proto;
 option go_package = "./proto";
 
 import "api.proto";
+import "apl.proto";
 import "common.proto";
 import "paladin.proto";
 
@@ -288,6 +289,12 @@ message SavedSettings {
 message SavedTalents {
 	string talents_string = 1;
 	Glyphs glyphs = 2;
+}
+
+message SavedRotation {
+	APLRotation rotation = 1;
+	string spec_rotation_options_json = 2;
+	Cooldowns cooldowns = 3;
 }
 
 message BlessingsAssignment {

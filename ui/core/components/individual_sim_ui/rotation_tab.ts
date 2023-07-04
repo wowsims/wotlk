@@ -1,7 +1,14 @@
 import { IndividualSimUI, InputSection } from "../../individual_sim_ui";
 import {
+	Cooldowns,
 	Spec,
 } from "../../proto/common";
+import {
+	APLRotation,
+} from "../../proto/apl";
+import {
+	SavedRotation,
+} from "../../proto/ui";
 import { EventID, TypedEvent } from "../../typed_event";
 import { Player } from "../../player";
 
@@ -14,6 +21,7 @@ import { Input } from "../input";
 import { ItemSwapPicker } from "../item_swap_picker";
 import { CooldownsPicker } from "./cooldowns_picker";
 import { CustomRotationPicker } from "./custom_rotation_picker";
+import { SavedDataManager } from "../saved_data_manager";
 
 import * as IconInputs from '../icon_inputs.js';
 import * as Tooltips from '../../constants/tooltips.js';
@@ -51,6 +59,7 @@ export class RotationTab extends SimTab {
 	this.buildContent();
 	this.buildRotationSettings();
 	this.buildCooldownSettings();
+	this.buildSavedDataPickers();
   }
 
   private updateSections() {
@@ -152,4 +161,54 @@ export class RotationTab extends SimTab {
 			}
 		}
 	}
+
+	private buildSavedDataPickers() {
+		const savedRotationsManager = new SavedDataManager<Player<any>, SavedRotation>(this.rightPanel, this.simUI, this.simUI.player, {
+			label: 'Rotation',
+			header: {title: 'Saved Rotations'},
+			storageKey: this.simUI.getSavedRotationStorageKey(),
+			getData: (player: Player<any>) => SavedRotation.create({
+				rotation: player.aplRotation,
+				specRotationOptionsJson: JSON.stringify(player.specTypeFunctions.rotationToJson(player.getRotation())),
+				cooldowns: player.getCooldowns(),
+			}),
+			setData: (eventID: EventID, player: Player<any>, newRotation: SavedRotation) => {
+				TypedEvent.freezeAllAndDo(() => {
+					player.aplRotation = newRotation.rotation || APLRotation.create();
+					if (newRotation.specRotationOptionsJson) {
+						try {
+							const json = JSON.parse(newRotation.specRotationOptionsJson);
+							const specRot = player.specTypeFunctions.rotationFromJson(json);
+							player.setRotation(eventID, specRot);
+						} catch (e) {
+							console.warn('Error parsing rotation spec options: ' + e);
+						}
+					}
+					player.setCooldowns(eventID, newRotation.cooldowns || Cooldowns.create());
+				});
+			},
+			changeEmitters: [this.simUI.player.rotationChangeEmitter, this.simUI.player.cooldownsChangeEmitter],
+			equals: (a: SavedRotation, b: SavedRotation) => SavedRotation.equals(a, b),
+			toJson: (a: SavedRotation) => SavedRotation.toJson(a),
+			fromJson: (obj: any) => SavedRotation.fromJson(obj),
+		});
+
+		this.simUI.sim.waitForInit().then(() => {
+			savedRotationsManager.loadUserData();
+			(this.simUI.individualConfig.presets.rotations || []).forEach(presetRotation => {
+				const rotData = presetRotation.rotation;
+				// Fill default values so the equality checks always work.
+				if (!rotData.cooldowns) rotData.cooldowns = Cooldowns.create();
+				if (!rotData.rotation) rotData.rotation = APLRotation.create();
+
+				savedRotationsManager.addSavedData({
+					name: presetRotation.name,
+					tooltip: presetRotation.tooltip,
+					isPreset: true,
+					data: rotData,
+					enableWhen: presetRotation.enableWhen,
+				});
+			});
+		});
+  }
 }
