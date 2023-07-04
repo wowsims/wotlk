@@ -40,6 +40,10 @@
 	.number-picker-input {
 		width: 100% !important;
 	}
+
+	.dropdown-menu {
+		background-color: #696b71;
+	}
 }
 
 .apl-action-picker-root, .apl-value-picker-root {
@@ -56,8 +60,14 @@
 	flex-direction: column;
 }
 
-.apl-value-picker-root * {
-	font-size: calc(var(--bs-btn-font-size) - 0.2rem);
+.apl-value-picker-root {
+	* {
+		font-size: calc(var(--bs-btn-font-size) - 0.2rem);
+	}
+
+	.form-label {
+		margin: 0;
+	}
 }
 
 .apl-list-item-picker > * > * > .list-picker-item {

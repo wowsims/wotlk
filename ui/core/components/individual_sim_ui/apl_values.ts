@@ -37,11 +37,14 @@ export class APLValuePicker extends Input<Player<any>, APLValue|undefined> {
             defaultLabel: 'No Condition',
 			values: [{
 				value: undefined,
-				label: 'None',
+				label: '<None>',
 			} as TextDropdownValueConfig<APLValueType>].concat(allValueTypes.map(valueType => {
+				const factory = valueTypeFactories[valueType];
 				return {
 					value: valueType,
-					label: valueTypeFactories[valueType].label,
+					label: factory.label,
+					submenu: factory.submenu,
+					tooltip: factory.fullDescription ? `<p>${factory.shortDescription}</p> ${factory.fullDescription}` : factory.shortDescription,
 				};
 			})),
 			equals: (a, b) => a == b,
@@ -148,9 +151,32 @@ export class APLValuePicker extends Input<Player<any>, APLValue|undefined> {
 
 type ValueTypeConfig<T> = {
 	label: string,
+	submenu?: Array<string>,
+	shortDescription: string,
+	fullDescription?: string,
 	newValue: () => T,
 	factory: (parent: HTMLElement, player: Player<any>, config: InputConfig<Player<any>, T>) => Input<Player<any>, T>,
 };
+
+function comparisonOperatorFieldConfig(field: string): AplHelpers.APLPickerBuilderFieldConfig<any, any> {
+	return {
+		field: field,
+		newValue: () => ComparisonOperator.OpEq,
+		factory: (parent, player, config) => new TextDropdownPicker(parent, player, {
+			...config,
+			defaultLabel: 'None',
+			equals: (a, b) => a == b,
+			values: [
+				{ value: ComparisonOperator.OpEq, label: '==' },
+				{ value: ComparisonOperator.OpNe, label: '!=' },
+				{ value: ComparisonOperator.OpGe, label: '>=' },
+				{ value: ComparisonOperator.OpGt, label: '>' },
+				{ value: ComparisonOperator.OpLe, label: '<=' },
+				{ value: ComparisonOperator.OpLt, label: '<' },
+			],
+		}),
+	};
+}
 
 export function valueFieldConfig(field: string): AplHelpers.APLPickerBuilderFieldConfig<any, any> {
 	return {
@@ -181,49 +207,88 @@ export function valueListFieldConfig(field: string): AplHelpers.APLPickerBuilder
 	};
 }
 
-function inputBuilder<T>(label: string, newValue: () => T, fields: Array<AplHelpers.APLPickerBuilderFieldConfig<T, any>>): ValueTypeConfig<T> {
+function inputBuilder<T>(config: {
+	label: string,
+	submenu?: Array<string>,
+	shortDescription: string,
+	fullDescription?: string,
+	newValue: () => T,
+	fields: Array<AplHelpers.APLPickerBuilderFieldConfig<T, any>>,
+}): ValueTypeConfig<T> {
 	return {
-		label: label,
-		newValue: newValue,
-		factory: AplHelpers.aplInputBuilder(newValue, fields),
+		label: config.label,
+		submenu: config.submenu,
+		shortDescription: config.shortDescription,
+		fullDescription: config.fullDescription,
+		newValue: config.newValue,
+		factory: AplHelpers.aplInputBuilder(config.newValue, config.fields),
 	};
 }
 
 const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>>  = {
-	['const']: inputBuilder('Const', APLValueConst.create, [
-		AplHelpers.stringFieldConfig('val'),
-	]),
-	['and']: inputBuilder('All of', APLValueAnd.create, [
-		valueListFieldConfig('vals'),
-	]),
-	['or']: inputBuilder('Any of', APLValueOr.create, [
-		valueListFieldConfig('vals'),
-	]),
-	['not']: inputBuilder('Not', APLValueNot.create, [
-		valueFieldConfig('val'),
-	]),
-	['cmp']: inputBuilder('Compare', APLValueCompare.create, [
-		valueFieldConfig('lhs'),
-		{
-			field: 'op',
-			newValue: () => ComparisonOperator.OpEq,
-			factory: (parent, player, config) => new TextDropdownPicker(parent, player, {
-				...config,
-				defaultLabel: 'None',
-				equals: (a, b) => a == b,
-				values: [
-					{ value: ComparisonOperator.OpEq, label: '==' },
-					{ value: ComparisonOperator.OpNe, label: '!=' },
-					{ value: ComparisonOperator.OpGe, label: '>=' },
-					{ value: ComparisonOperator.OpGt, label: '>' },
-					{ value: ComparisonOperator.OpLe, label: '<=' },
-					{ value: ComparisonOperator.OpLt, label: '<' },
-				],
-			}),
-		},
-		valueFieldConfig('rhs'),
-	]),
-	['dotIsActive']: inputBuilder('Dot Is Active', APLValueDotIsActive.create, [
-		AplHelpers.actionIdFieldConfig('spellId', 'dot_spells'),
-	]),
+	['const']: inputBuilder({
+		label: 'Const',
+		shortDescription: 'A fixed value.',
+		fullDescription: `
+		<p>
+			Examples:
+			<ul>
+				<li><b>Number:</b> '123', '0.5', '-10'</li>
+				<li><b>Time:</b> '100ms', '5s', '3m'</li>
+				<li><b>Percentage:</b> '30%'</li>
+			</ul>
+		</p>
+		`,
+		newValue: APLValueConst.create,
+		fields: [
+			AplHelpers.stringFieldConfig('val'),
+		],
+	}),
+	['cmp']: inputBuilder({
+		label: 'Compare',
+		submenu: ['Logic'],
+		shortDescription: 'Compares two values.',
+		newValue: APLValueCompare.create,
+		fields: [
+			valueFieldConfig('lhs'),
+			comparisonOperatorFieldConfig('op'),
+			valueFieldConfig('rhs'),
+		],
+	}),
+	['and']: inputBuilder({
+		label: 'All of',
+		submenu: ['Logic'],
+		shortDescription: 'Returns <b>True</b> if all of the sub-values are <b>True</b>, otherwise <b>False</b>',
+		newValue: APLValueAnd.create,
+		fields: [
+			valueListFieldConfig('vals'),
+		],
+	}),
+	['or']: inputBuilder({
+		label: 'Any of',
+		submenu: ['Logic'],
+		shortDescription: 'Returns <b>True</b> if any of the sub-values are <b>True</b>, otherwise <b>False</b>',
+		newValue: APLValueOr.create,
+		fields: [
+			valueListFieldConfig('vals'),
+		],
+	}),
+	['not']: inputBuilder({
+		label: 'Not',
+		submenu: ['Logic'],
+		shortDescription: 'Returns the opposite of the inner value, i.e. <b>True</b> if the value is <b>False</b> and vice-versa.',
+		newValue: APLValueNot.create,
+		fields: [
+			valueFieldConfig('val'),
+		],
+	}),
+	['dotIsActive']: inputBuilder({
+		label: 'Dot Is Active',
+		submenu: ['DoT'],
+		shortDescription: '<b>True</b> if the specified dot is currently ticking, otherwise <b>False</b>.',
+		newValue: APLValueDotIsActive.create,
+		fields: [
+			AplHelpers.actionIdFieldConfig('spellId', 'dot_spells'),
+		],
+	}),
 };

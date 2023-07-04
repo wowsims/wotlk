@@ -12,7 +12,7 @@ let body = document.querySelector('body') as HTMLElement;
 body.addEventListener('mouseover', event => {
   let target = event.target as HTMLElement;
   let toggle = target.closest('[data-bs-toggle=dropdown]');
-  if (toggle) {
+  if (toggle && !toggle.classList.contains('open-on-click')) {
     let dropdown = Dropdown.getOrCreateInstance(toggle);
     dropdown.show();
   }

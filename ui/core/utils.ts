@@ -224,3 +224,13 @@ export function buf2hex(data: Uint8Array): string {
 		.map(x => x.toString(16).padStart(2, '0'))
 		.join('');
 }
+
+const randomStringChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_+';
+export function randomString(len?: number): string {
+	let str = '';
+	const strLen = len || 10;
+	for (let i = 0; i < strLen; i++) {
+		str += randomStringChars[Math.floor(Math.random() * randomStringChars.length)];
+	}
+	return str;
+}

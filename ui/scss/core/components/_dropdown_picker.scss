@@ -1,9 +1,4 @@
-.dropdown-picker-list {
-    max-height: 30vh;
-    overflow-y: auto;
-}
-
-.dropdown-picker-button, .dropdown-picker-item>.dropdown-item {
+.dropdown-picker-button, .dropdown-picker-item .dropdown-item {
     display: flex;
     align-items: center;
     padding: 2px;
@@ -11,4 +6,16 @@
 
 .dropdown-picker-root .dropdown {
     width: auto;
+}
+
+.dropdown-header {
+  color: #87a4bd;
+}
+
+.dropdown-tooltip {
+    pointer-events: none;
+}
+.dropdown-tooltip .tooltip-inner {
+    max-width: 35vw;
+    text-align: left;
 }
