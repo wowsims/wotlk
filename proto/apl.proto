@@ -41,8 +41,22 @@ message APLValue {
         APLValueNot not = 4;
         APLValueCompare cmp = 5;
 
+        // Encounter values
+        APLValueCurrentTime current_time = 7;
+        APLValueCurrentTimePercent current_time_percent = 8;
+        APLValueRemainingTime remaining_time = 9;
+        APLValueRemainingTimePercent remaining_time_percent = 10;
+
+        // Resource values
+        APLValueCurrentMana current_mana = 11;
+        APLValueCurrentManaPercent current_mana_percent = 12;
+        APLValueCurrentRage current_rage = 14;
+        APLValueCurrentEnergy current_energy = 15;
+        APLValueCurrentComboPoints current_combo_points = 16;
+
         // Dot values
         APLValueDotIsActive dot_is_active = 6;
+        APLValueDotRemainingTime dot_remaining_time = 13;
     }
 }
 
@@ -119,6 +133,20 @@ message APLValueCompare {
     APLValue rhs = 3;
 }
 
+message APLValueCurrentTime {}
+message APLValueCurrentTimePercent {}
+message APLValueRemainingTime {}
+message APLValueRemainingTimePercent {}
+
+message APLValueCurrentMana {}
+message APLValueCurrentManaPercent {}
+message APLValueCurrentRage {}
+message APLValueCurrentEnergy {}
+message APLValueCurrentComboPoints {}
+
 message APLValueDotIsActive {
+    ActionID spell_id = 1;
+}
+message APLValueDotRemainingTime {
     ActionID spell_id = 1;
 }

@@ -6,7 +6,17 @@ import {
 	APLValueCompare,
 	APLValueCompare_ComparisonOperator as ComparisonOperator,
 	APLValueConst,
+	APLValueCurrentTime,
+	APLValueCurrentTimePercent,
+	APLValueRemainingTime,
+	APLValueRemainingTimePercent,
+	APLValueCurrentMana,
+	APLValueCurrentManaPercent,
+	APLValueCurrentRage,
+	APLValueCurrentEnergy,
+	APLValueCurrentComboPoints,
 	APLValueDotIsActive,
+	APLValueDotRemainingTime,
 } from '../../proto/apl.js';
 
 import { EventID, TypedEvent } from '../../typed_event.js';
@@ -226,6 +236,7 @@ function inputBuilder<T>(config: {
 }
 
 const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>>  = {
+	// Operators
 	['const']: inputBuilder({
 		label: 'Const',
 		shortDescription: 'A fixed value.',
@@ -282,11 +293,89 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 			valueFieldConfig('val'),
 		],
 	}),
+
+	// Encounter
+	['currentTime']: inputBuilder({
+		label: 'Current Time',
+		submenu: ['Encounter'],
+		shortDescription: 'Elapsed time of the current sim iteration.',
+		newValue: APLValueCurrentTime.create,
+		fields: [],
+	}),
+	['currentTimePercent']: inputBuilder({
+		label: 'Current Time (%)',
+		submenu: ['Encounter'],
+		shortDescription: 'Elapsed time of the current sim iteration, as a percentage.',
+		newValue: APLValueCurrentTimePercent.create,
+		fields: [],
+	}),
+	['remainingTime']: inputBuilder({
+		label: 'Remaining Time',
+		submenu: ['Encounter'],
+		shortDescription: 'Elapsed time of the remaining sim iteration.',
+		newValue: APLValueRemainingTime.create,
+		fields: [],
+	}),
+	['remainingTimePercent']: inputBuilder({
+		label: 'Remaining Time (%)',
+		submenu: ['Encounter'],
+		shortDescription: 'Elapsed time of the remaining sim iteration, as a percentage.',
+		newValue: APLValueRemainingTimePercent.create,
+		fields: [],
+	}),
+
+	// Resources
+	['currentMana']: inputBuilder({
+		label: 'Mana',
+		submenu: ['Resources'],
+		shortDescription: 'Amount of currently available Mana.',
+		newValue: APLValueCurrentMana.create,
+		fields: [],
+	}),
+	['currentManaPercent']: inputBuilder({
+		label: 'Mana (%)',
+		submenu: ['Resources'],
+		shortDescription: 'Amount of currently available Mana, as a percentage.',
+		newValue: APLValueCurrentManaPercent.create,
+		fields: [],
+	}),
+	['currentRage']: inputBuilder({
+		label: 'Rage',
+		submenu: ['Resources'],
+		shortDescription: 'Amount of currently available Rage.',
+		newValue: APLValueCurrentRage.create,
+		fields: [],
+	}),
+	['currentEnergy']: inputBuilder({
+		label: 'Energy',
+		submenu: ['Resources'],
+		shortDescription: 'Amount of currently available Energy.',
+		newValue: APLValueCurrentEnergy.create,
+		fields: [],
+	}),
+	['currentComboPoints']: inputBuilder({
+		label: 'Combo Points',
+		submenu: ['Resources'],
+		shortDescription: 'Amount of currently available Combo Points.',
+		newValue: APLValueCurrentComboPoints.create,
+		fields: [],
+	}),
+
+	// DoT
 	['dotIsActive']: inputBuilder({
 		label: 'Dot Is Active',
 		submenu: ['DoT'],
 		shortDescription: '<b>True</b> if the specified dot is currently ticking, otherwise <b>False</b>.',
 		newValue: APLValueDotIsActive.create,
+		fields: [
+			AplHelpers.actionIdFieldConfig('spellId', 'dot_spells'),
+		],
+	}),
+	['dotRemainingTime']: inputBuilder({
+		label: 'Dot Remaining Time',
+		submenu: ['DoT'],
+		shortDescription: 'Time remaining before the last tick of this DoT will occur, or 0 if the DoT is not currently ticking.',
+		newValue: APLValueDotRemainingTime.create,
 		fields: [
 			AplHelpers.actionIdFieldConfig('spellId', 'dot_spells'),
 		],

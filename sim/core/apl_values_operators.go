@@ -39,6 +39,15 @@ func (unit *Unit) newValueConst(config *proto.APLValueConst) APLValue {
 		return result
 	}
 
+	if len(config.Val) > 1 && config.Val[len(config.Val)-1] == '%' {
+		if floatVal, err := strconv.ParseFloat(config.Val[0:len(config.Val)-1], 64); err == nil {
+			result.floatVal = floatVal / 100.0
+			result.durationVal = DurationFromSeconds(floatVal / 100.0)
+			result.valType = proto.APLValueType_ValueTypeFloat
+			return result
+		}
+	}
+
 	if floatVal, err := strconv.ParseFloat(config.Val, 64); err == nil {
 		result.floatVal = floatVal
 		result.durationVal = DurationFromSeconds(floatVal)
