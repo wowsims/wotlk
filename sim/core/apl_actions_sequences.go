@@ -30,8 +30,8 @@ func (action *APLActionSequence) Finalize() {}
 func (action *APLActionSequence) Reset(*Simulation) {
 	action.curIdx = 0
 }
-func (action *APLActionSequence) IsAvailable(sim *Simulation) bool {
-	return action.curIdx < len(action.actions) && action.actions[action.curIdx].IsAvailable(sim)
+func (action *APLActionSequence) IsReady(sim *Simulation) bool {
+	return action.curIdx < len(action.actions) && action.actions[action.curIdx].IsReady(sim)
 }
 func (action *APLActionSequence) Execute(sim *Simulation) {
 	action.actions[action.curIdx].Execute(sim)
@@ -65,7 +65,7 @@ func (action *APLActionResetSequence) Finalize() {
 	validationWarning("No sequence with name: %s", action.name)
 }
 func (action *APLActionResetSequence) Reset(*Simulation) {}
-func (action *APLActionResetSequence) IsAvailable(sim *Simulation) bool {
+func (action *APLActionResetSequence) IsReady(sim *Simulation) bool {
 	return true
 }
 func (action *APLActionResetSequence) Execute(sim *Simulation) {
@@ -96,9 +96,9 @@ func (action *APLActionStrictSequence) Finalize() {}
 func (action *APLActionStrictSequence) Reset(*Simulation) {
 	action.curIdx = 0
 }
-func (action *APLActionStrictSequence) IsAvailable(sim *Simulation) bool {
+func (action *APLActionStrictSequence) IsReady(sim *Simulation) bool {
 	for _, subaction := range action.actions {
-		if !subaction.IsAvailable(sim) {
+		if !subaction.IsReady(sim) {
 			return false
 		}
 	}
@@ -106,7 +106,7 @@ func (action *APLActionStrictSequence) IsAvailable(sim *Simulation) bool {
 }
 func (action *APLActionStrictSequence) Execute(sim *Simulation) {
 	action.unit.Rotation.strictSequence = action
-	if !action.actions[action.curIdx].IsAvailable(sim) {
+	if !action.actions[action.curIdx].IsReady(sim) {
 		action.curIdx = 0
 		action.unit.Rotation.strictSequence = nil
 		return

@@ -4,6 +4,7 @@ import {
 	APLActionSequence,
 	APLActionResetSequence,
 	APLActionStrictSequence,
+	APLActionAutocastOtherCooldowns,
 	APLActionWait,
 	APLValue,
 } from '../../proto/apl.js';
@@ -260,8 +261,22 @@ export const actionTypeFactories: Record<NonNullable<APLActionType>, ActionTypeC
 			actionListFieldConfig('actions'),
 		],
 	}),
+	['autocastOtherCooldowns']: inputBuilder({
+		label: 'Autocast Other Cooldowns',
+		submenu: ['Misc'],
+		shortDescription: 'Auto-casts cooldowns as soon as they are ready.',
+		fullDescription: `
+			<ul>
+				<li>Does not auto-cast cooldowns which are already controlled by other actions in the priority list.</li>
+				<li>Cooldowns are usually cast immediately upon becoming ready, but there are some basic smart checks in place, e.g. don't use Mana CDs when near full mana.</li>
+			</ul>
+		`,
+		newValue: APLActionAutocastOtherCooldowns.create,
+		fields: [],
+	}),
 	['wait']: inputBuilder({
 		label: 'Wait',
+		submenu: ['Misc'],
 		shortDescription: 'Pauses the GCD for a specified amount of time.',
 		newValue: APLActionWait.create,
 		fields: [

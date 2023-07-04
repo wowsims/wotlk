@@ -9,8 +9,8 @@ type APLAction struct {
 	impl      APLActionImpl
 }
 
-func (action *APLAction) IsAvailable(sim *Simulation) bool {
-	return (action.condition == nil || action.condition.GetBool(sim)) && action.impl.IsAvailable(sim)
+func (action *APLAction) IsReady(sim *Simulation) bool {
+	return (action.condition == nil || action.condition.GetBool(sim)) && action.impl.IsReady(sim)
 }
 
 func (action *APLAction) Execute(sim *Simulation) {
@@ -35,7 +35,7 @@ type APLActionImpl interface {
 	Reset(*Simulation)
 
 	// Whether this action is available to be used right now.
-	IsAvailable(*Simulation) bool
+	IsReady(*Simulation) bool
 
 	// Performs the action.
 	Execute(*Simulation)
@@ -66,6 +66,8 @@ func (unit *Unit) newAPLActionImpl(config *proto.APLAction) APLActionImpl {
 		return unit.newActionStrictSequence(config.GetStrictSequence())
 	case *proto.APLAction_CastSpell:
 		return unit.newActionCastSpell(config.GetCastSpell())
+	case *proto.APLAction_AutocastOtherCooldowns:
+		return unit.newActionAutocastOtherCooldowns(config.GetAutocastOtherCooldowns())
 	case *proto.APLAction_Wait:
 		return unit.newActionWait(config.GetWait())
 	default:

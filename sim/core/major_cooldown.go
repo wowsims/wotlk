@@ -123,9 +123,7 @@ func (mcd *MajorCooldown) tryActivateInternal(sim *Simulation, character *Charac
 	return mcd.tryActivateHelper(sim, character)
 }
 
-// Activates this MCD, if all the conditions pass.
-// Returns whether the MCD was activated.
-func (mcd *MajorCooldown) tryActivateHelper(sim *Simulation, character *Character) bool {
+func (mcd *MajorCooldown) shouldActivateHelper(sim *Simulation, character *Character) bool {
 	if mcd.Type.Matches(CooldownTypeSurvival) && character.cooldownConfigs.HpPercentForDefensives != 0 {
 		if character.CurrentHealthPercent() > character.cooldownConfigs.HpPercentForDefensives {
 			return false
@@ -136,12 +134,17 @@ func (mcd *MajorCooldown) tryActivateHelper(sim *Simulation, character *Characte
 		return false
 	}
 
-	var shouldActivate bool
 	if mcd.numUsages < len(mcd.timings) {
-		shouldActivate = sim.CurrentTime >= mcd.timings[mcd.numUsages]
+		return sim.CurrentTime >= mcd.timings[mcd.numUsages]
 	} else {
-		shouldActivate = mcd.ShouldActivate(sim, character)
+		return mcd.ShouldActivate(sim, character)
 	}
+}
+
+// Activates this MCD, if all the conditions pass.
+// Returns whether the MCD was activated.
+func (mcd *MajorCooldown) tryActivateHelper(sim *Simulation, character *Character) bool {
+	shouldActivate := mcd.shouldActivateHelper(sim, character)
 
 	if shouldActivate {
 		if mcd.Spell.Flags.Matches(SpellFlagHelpful) {
@@ -397,6 +400,16 @@ func (mcdm *majorCooldownManager) GetInitialMajorCooldown(actionID ActionID) Maj
 	return MajorCooldown{}
 }
 
+func (mcdm *majorCooldownManager) removeInitialMajorCooldown(actionID ActionID) {
+	for i, mcd := range mcdm.initialMajorCooldowns {
+		if mcd.Spell.SameAction(actionID) {
+			mcdm.initialMajorCooldowns = append(mcdm.initialMajorCooldowns[:i], mcdm.initialMajorCooldowns[i+1:]...)
+			mcdm.majorCooldowns = mcdm.majorCooldowns[:len(mcdm.majorCooldowns)-1]
+			return
+		}
+	}
+}
+
 func (mcdm *majorCooldownManager) GetMajorCooldown(actionID ActionID) *MajorCooldown {
 	for _, mcd := range mcdm.majorCooldowns {
 		if mcd.Spell.SameAction(actionID) {
@@ -425,6 +438,23 @@ func (mcdm *majorCooldownManager) GetMajorCooldownIDs() []*proto.ActionID {
 		ids[i] = mcd.Spell.ActionID.ToProto()
 	}
 	return ids
+}
+
+func (mcdm *majorCooldownManager) getFirstReadyMCD(sim *Simulation) *MajorCooldown {
+	if sim.CurrentTime < mcdm.minReady {
+		return nil
+	}
+
+	for _, mcd := range mcdm.majorCooldowns {
+		if !mcd.IsReady(sim) {
+			return nil
+		}
+		if mcd.shouldActivateHelper(sim, mcdm.character) {
+			return mcd
+		}
+	}
+
+	return nil
 }
 
 func (mcdm *majorCooldownManager) TryUseCooldowns(sim *Simulation) {

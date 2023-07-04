@@ -116,13 +116,17 @@ export const ROTATION_PRESET_DEFAULT = {
 		rotation: APLRotation.fromJsonString(`{
 			"enabled": true,
 			"priorityList": [
+				{"action": {"autocastOtherCooldowns": {}}},
 				{"action": {
 					"condition": {"not": {"val": {"dotIsActive": {"spellId": { "spellId": 49001 }}}}},
 					"castSpell": {"spellId": { "spellId": 49001 }}
 				}},
 				{"action": {"castSpell": {"spellId": { "spellId": 61006 }}}},
 				{"action": {"castSpell": {"spellId": { "spellId": 63672 }}}},
-				{"action": {"castSpell": {"spellId": { "spellId": 60053 }}}},
+				{"action": {
+					"condition": {"not": {"val": {"dotIsActive": {"spellId": { "spellId": 60053 }}}}},
+					"castSpell": {"spellId": { "spellId": 60053 }}
+				}},
 				{"action": {"castSpell": {"spellId": { "spellId": 49050 }}}},
 				{"action": {
 					"condition": {"not": {"val": {"dotIsActive": {"spellId": { "spellId": 60053 }}}}},
