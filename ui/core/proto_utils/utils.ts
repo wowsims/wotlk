@@ -1547,7 +1547,6 @@ export const classToEligibleRangedWeaponTypes: Record<Class, Array<RangedWeaponT
 		RangedWeaponType.RangedWeaponTypeBow,
 		RangedWeaponType.RangedWeaponTypeCrossbow,
 		RangedWeaponType.RangedWeaponTypeGun,
-		RangedWeaponType.RangedWeaponTypeThrown,
 	],
 	[Class.ClassMage]: [RangedWeaponType.RangedWeaponTypeWand],
 	[Class.ClassPaladin]: [RangedWeaponType.RangedWeaponTypeLibram],
