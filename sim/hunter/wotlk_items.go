@@ -96,7 +96,7 @@ var ItemSetWindrunnersPursuit = core.NewItemSet(core.ItemSet{
 				return
 			}
 
-			procAura := hunter.pet.NewTemporaryStatsAura("Windrunner 4pc Proc", core.ActionID{SpellID: 67151}, stats.Stats{stats.AttackPower: 600}, time.Second*15)
+			procAura := hunter.pet.NewTemporaryStatsAura("Windrunner 4pc Proc", core.ActionID{SpellID: 68130}, stats.Stats{stats.AttackPower: 600}, time.Second*15)
 			const procChance = 0.35
 
 			icd := core.Cooldown{
