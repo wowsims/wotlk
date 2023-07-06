@@ -57,9 +57,33 @@ func (unit *Unit) newAPLValue(config *proto.APLValue) APLValue {
 	case *proto.APLValue_Cmp:
 		return unit.newValueCompare(config.GetCmp())
 
+	// Encounter
+	case *proto.APLValue_CurrentTime:
+		return unit.newValueCurrentTime(config.GetCurrentTime())
+	case *proto.APLValue_CurrentTimePercent:
+		return unit.newValueCurrentTimePercent(config.GetCurrentTimePercent())
+	case *proto.APLValue_RemainingTime:
+		return unit.newValueRemainingTime(config.GetRemainingTime())
+	case *proto.APLValue_RemainingTimePercent:
+		return unit.newValueRemainingTimePercent(config.GetRemainingTimePercent())
+
+	// Resources
+	case *proto.APLValue_CurrentMana:
+		return unit.newValueCurrentMana(config.GetCurrentMana())
+	case *proto.APLValue_CurrentManaPercent:
+		return unit.newValueCurrentManaPercent(config.GetCurrentManaPercent())
+	case *proto.APLValue_CurrentRage:
+		return unit.newValueCurrentRage(config.GetCurrentRage())
+	case *proto.APLValue_CurrentEnergy:
+		return unit.newValueCurrentEnergy(config.GetCurrentEnergy())
+	case *proto.APLValue_CurrentComboPoints:
+		return unit.newValueCurrentComboPoints(config.GetCurrentComboPoints())
+
 	// Dots
 	case *proto.APLValue_DotIsActive:
 		return unit.newValueDotIsActive(config.GetDotIsActive())
+	case *proto.APLValue_DotRemainingTime:
+		return unit.newValueDotRemainingTime(config.GetDotRemainingTime())
 
 	default:
 		validationError("Unimplemented value type")
