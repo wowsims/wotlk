@@ -38,7 +38,7 @@ export class APLRotationPicker extends Component {
 			inlineMenuBar: true,
 		});
 
-		modPlayer.rotationChangeEmitter.on(() => console.log('APL: ' + APLRotation.toJsonString(modPlayer.aplRotation)))
+		//modPlayer.rotationChangeEmitter.on(() => console.log('APL: ' + APLRotation.toJsonString(modPlayer.aplRotation)))
 	}
 }
 

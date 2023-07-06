@@ -37,6 +37,12 @@ func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
 
 	for _, action := range rotation.allAPLActions() {
 		action.impl.Finalize()
+
+		// Remove MCDs that are referenced by APL actions.
+		character := unit.Env.Raid.GetPlayerFromUnit(unit).GetCharacter()
+		if castSpellAction, ok := action.impl.(*APLActionCastSpell); ok {
+			character.removeInitialMajorCooldown(castSpellAction.spell.ActionID)
+		}
 	}
 
 	return rotation
@@ -63,8 +69,11 @@ func (rot *APLRotation) reset(sim *Simulation) {
 func (apl *APLRotation) DoNextAction(sim *Simulation) {
 	if apl.strictSequence == nil {
 		for _, action := range apl.priorityList {
-			if action.IsAvailable(sim) {
+			if action.IsReady(sim) {
 				action.Execute(sim)
+				if apl.unit.GCD.IsReady(sim) {
+					apl.unit.WaitUntil(sim, sim.CurrentTime)
+				}
 				return
 			}
 		}

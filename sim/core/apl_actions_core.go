@@ -21,11 +21,36 @@ func (unit *Unit) newActionCastSpell(config *proto.APLActionCastSpell) APLAction
 func (action *APLActionCastSpell) GetInnerActions() []*APLAction { return nil }
 func (action *APLActionCastSpell) Finalize()                     {}
 func (action *APLActionCastSpell) Reset(*Simulation)             {}
-func (action *APLActionCastSpell) IsAvailable(sim *Simulation) bool {
+func (action *APLActionCastSpell) IsReady(sim *Simulation) bool {
 	return action.spell.CanCast(sim, action.spell.Unit.CurrentTarget)
 }
 func (action *APLActionCastSpell) Execute(sim *Simulation) {
 	action.spell.Cast(sim, action.spell.Unit.CurrentTarget)
+}
+
+type APLActionAutocastOtherCooldowns struct {
+	character *Character
+
+	nextReadyMCD *MajorCooldown
+}
+
+func (unit *Unit) newActionAutocastOtherCooldowns(config *proto.APLActionAutocastOtherCooldowns) APLActionImpl {
+	return &APLActionAutocastOtherCooldowns{
+		character: unit.Env.Raid.GetPlayerFromUnit(unit).GetCharacter(),
+	}
+}
+func (action *APLActionAutocastOtherCooldowns) GetInnerActions() []*APLAction { return nil }
+func (action *APLActionAutocastOtherCooldowns) Finalize()                     {}
+func (action *APLActionAutocastOtherCooldowns) Reset(*Simulation) {
+	action.nextReadyMCD = nil
+}
+func (action *APLActionAutocastOtherCooldowns) IsReady(sim *Simulation) bool {
+	action.nextReadyMCD = action.character.getFirstReadyMCD(sim)
+	return action.nextReadyMCD != nil
+}
+func (action *APLActionAutocastOtherCooldowns) Execute(sim *Simulation) {
+	action.nextReadyMCD.tryActivateHelper(sim, action.character)
+	action.character.UpdateMajorCooldowns()
 }
 
 type APLActionWait struct {
@@ -42,7 +67,7 @@ func (unit *Unit) newActionWait(config *proto.APLActionWait) APLActionImpl {
 func (action *APLActionWait) GetInnerActions() []*APLAction { return nil }
 func (action *APLActionWait) Finalize()                     {}
 func (action *APLActionWait) Reset(*Simulation)             {}
-func (action *APLActionWait) IsAvailable(sim *Simulation) bool {
+func (action *APLActionWait) IsReady(sim *Simulation) bool {
 	return action.duration != nil
 }
 func (action *APLActionWait) Execute(sim *Simulation) {
