@@ -76,7 +76,7 @@ func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 			}
 
 			if spell == ret.HolyWrath {
-				// Holy Wrath isn't casting if it will reduce usages of CS/DS
+				// Holy Wrath isn't worth casting if it will reduce usages of CS/DS
 				if ret.CrusaderStrike.ReadyAt()-sim.CurrentTime < 500*time.Millisecond {
 					continue
 				}
@@ -265,7 +265,7 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 				ret.WaitForMana(sim, ret.Exorcism.CurCast.Cost)
 			}
 		case ret.DemonAndUndeadTargetCount >= 1 && ret.HolyWrath.IsReady(sim):
-			// Holy Wrath isn't casting if it will reduce usages of CS/DS
+			// Holy Wrath isn't worth casting if it will reduce usages of CS/DS
 			if ret.CrusaderStrike.ReadyAt()-sim.CurrentTime < 500*time.Millisecond {
 				break
 			}
