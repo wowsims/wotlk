@@ -15,6 +15,14 @@ import {
 	APLValueCurrentRage,
 	APLValueCurrentEnergy,
 	APLValueCurrentComboPoints,
+	APLValueGCDIsReady,
+	APLValueGCDTimeToReady,
+	APLValueSpellCanCast,
+	APLValueSpellIsReady,
+	APLValueSpellTimeToReady,
+	APLValueAuraIsActive,
+	APLValueAuraRemainingTime,
+	APLValueAuraNumStacks,
 	APLValueDotIsActive,
 	APLValueDotRemainingTime,
 } from '../../proto/apl.js';
@@ -359,6 +367,83 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 		shortDescription: 'Amount of currently available Combo Points.',
 		newValue: APLValueCurrentComboPoints.create,
 		fields: [],
+	}),
+
+	// GCD
+	['gcdIsReady']: inputBuilder({
+		label: 'GCD Is Ready',
+		submenu: ['GCD'],
+		shortDescription: '<b>True</b> if the GCD is not on cooldown, otherwise <b>False</b>.',
+		newValue: APLValueGCDIsReady.create,
+		fields: [],
+	}),
+	['gcdTimeToReady']: inputBuilder({
+		label: 'GCD Time To Ready',
+		submenu: ['GCD'],
+		shortDescription: 'Amount of time remaining before the GCD comes off cooldown, or <b>0</b> if it is not on cooldown.',
+		newValue: APLValueGCDTimeToReady.create,
+		fields: [],
+	}),
+
+	// Spells
+	['spellCanCast']: inputBuilder({
+		label: 'Can Cast',
+		submenu: ['Spell'],
+		shortDescription: '<b>True</b> if all requirements for casting the spell are currently met, otherwise <b>False</b>.',
+		fullDescription: `
+			<p>The <b>Cast Spell</b> action does not need to be conditioned on this, because it applies this check automatically.</p>
+		`,
+		newValue: APLValueSpellCanCast.create,
+		fields: [
+			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells'),
+		],
+	}),
+	['spellIsReady']: inputBuilder({
+		label: 'Is Ready',
+		submenu: ['Spell'],
+		shortDescription: '<b>True</b> if the spell is not on cooldown, otherwise <b>False</b>.',
+		newValue: APLValueSpellIsReady.create,
+		fields: [
+			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells'),
+		],
+	}),
+	['spellTimeToReady']: inputBuilder({
+		label: 'Time To Ready',
+		submenu: ['Spell'],
+		shortDescription: 'Amount of time remaining before the spell comes off cooldown, or <b>0</b> if it is not on cooldown.',
+		newValue: APLValueSpellTimeToReady.create,
+		fields: [
+			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells'),
+		],
+	}),
+
+	// Auras
+	['auraIsActive']: inputBuilder({
+		label: 'Aura Is Active',
+		submenu: ['Aura'],
+		shortDescription: '<b>True</b> if the aura is currently active on self, otherwise <b>False</b>.',
+		newValue: APLValueAuraIsActive.create,
+		fields: [
+			AplHelpers.actionIdFieldConfig('auraId', 'auras'),
+		],
+	}),
+	['auraRemainingTime']: inputBuilder({
+		label: 'Aura Remaining Time',
+		submenu: ['Aura'],
+		shortDescription: 'Time remaining before this aura will expire, or 0 if the aura is not currently active on self.',
+		newValue: APLValueAuraRemainingTime.create,
+		fields: [
+			AplHelpers.actionIdFieldConfig('auraId', 'auras'),
+		],
+	}),
+	['auraNumStacks']: inputBuilder({
+		label: 'Aura Num Stacks',
+		submenu: ['Aura'],
+		shortDescription: 'Number of stacks of the aura on self.',
+		newValue: APLValueAuraNumStacks.create,
+		fields: [
+			AplHelpers.actionIdFieldConfig('auraId', 'stackable_auras'),
+		],
 	}),
 
 	// DoT

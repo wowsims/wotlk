@@ -295,6 +295,7 @@ message ComputeStatsRequest {
 }
 message AuraStats {
 	ActionID id = 1;
+	int32 max_stacks = 2;
 }
 message SpellStats {
 	ActionID id = 1;

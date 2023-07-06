@@ -518,6 +518,7 @@ func (character *Character) FillPlayerStats(playerStats *proto.PlayerStats) {
 	playerStats.Auras = MapSlice(aplAuras, func(aura *Aura) *proto.AuraStats {
 		return &proto.AuraStats{
 			Id: aura.ActionID.ToProto(),
+			MaxStacks: aura.MaxStacks,
 		}
 	})
 }

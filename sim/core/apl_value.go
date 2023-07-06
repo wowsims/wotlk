@@ -79,6 +79,28 @@ func (unit *Unit) newAPLValue(config *proto.APLValue) APLValue {
 	case *proto.APLValue_CurrentComboPoints:
 		return unit.newValueCurrentComboPoints(config.GetCurrentComboPoints())
 
+	// GCD
+	case *proto.APLValue_GcdIsReady:
+		return unit.newValueGCDIsReady(config.GetGcdIsReady())
+	case *proto.APLValue_GcdTimeToReady:
+		return unit.newValueGCDTimeToReady(config.GetGcdTimeToReady())
+	
+	// Spells
+	case *proto.APLValue_SpellCanCast:
+		return unit.newValueSpellCanCast(config.GetSpellCanCast())
+	case *proto.APLValue_SpellIsReady:
+		return unit.newValueSpellIsReady(config.GetSpellIsReady())
+	case *proto.APLValue_SpellTimeToReady:
+		return unit.newValueSpellTimeToReady(config.GetSpellTimeToReady())
+
+	// Auras
+	case *proto.APLValue_AuraIsActive:
+		return unit.newValueAuraIsActive(config.GetAuraIsActive())
+	case *proto.APLValue_AuraRemainingTime:
+		return unit.newValueAuraRemainingTime(config.GetAuraRemainingTime())
+	case *proto.APLValue_AuraNumStacks:
+		return unit.newValueAuraNumStacks(config.GetAuraNumStacks())
+
 	// Dots
 	case *proto.APLValue_DotIsActive:
 		return unit.newValueDotIsActive(config.GetDotIsActive())

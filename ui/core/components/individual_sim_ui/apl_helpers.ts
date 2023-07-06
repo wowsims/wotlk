@@ -7,12 +7,32 @@ import { DropdownPicker, DropdownPickerConfig, DropdownValueConfig, TextDropdown
 import { Input, InputConfig } from '../input.js';
 import { ActionID } from '../../proto/common.js';
 
-export type ACTION_ID_SET = 'castable_spells' | 'dot_spells';
+export type ACTION_ID_SET = 'auras' | 'stackable_auras' | 'castable_spells' | 'dot_spells';
 
 const actionIdSets: Record<ACTION_ID_SET, {
 	defaultLabel: string,
 	getActionIDs: (player: Player<any>) => Promise<Array<DropdownValueConfig<ActionId>>>,
 }> = {
+	['auras']: {
+		defaultLabel: 'Aura',
+		getActionIDs: async (player) => {
+			return player.getAuras().map(actionId => {
+				return {
+					value: actionId.id,
+				};
+			});
+		},
+	},
+	['stackable_auras']: {
+		defaultLabel: 'Aura',
+		getActionIDs: async (player) => {
+			return player.getAuras().filter(aura => aura.data.maxStacks > 0).map(actionId => {
+				return {
+					value: actionId.id,
+				};
+			});
+		},
+	},
 	['castable_spells']: {
 		defaultLabel: 'Spell',
 		getActionIDs: async (player) => {
@@ -46,9 +66,7 @@ const actionIdSets: Record<ACTION_ID_SET, {
 	['dot_spells']: {
 		defaultLabel: 'DoT Spell',
 		getActionIDs: async (player) => {
-			const dotSpells = player.getSpells().filter(spell => spell.data.hasDot);
-
-			return dotSpells.map(actionId => {
+			return player.getSpells().filter(spell => spell.data.hasDot).map(actionId => {
 				return {
 					value: actionId.id,
 				};
