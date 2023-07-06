@@ -43,7 +43,7 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*core.Spell, *core.
 		pleaProc := moonkin.GetAura("Pandora's Plea Proc")
 		lightweaveProc := moonkin.GetAura("Lightweave Proc")
 		wildMagicProc := moonkin.GetAura("Potion of Wild Magic")
-		shouldCheckForSnapshot := flareProc.IsActive() || lightweaveProc.IsActive() || wildMagicProc.IsActive() || pleaProc.IsActive()
+		shouldCheckForSnapshot := flareProc.IsActive() || lightweaveProc.IsActive() || pleaProc.IsActive() || (wildMagicProc.IsActive() && sim.CurrentTime > 60*time.Second)
 		if shouldCheckForSnapshot {
 			if moonkin.shouldSnapshotMf(sim, flareProc) || moonkin.shouldSnapshotMf(sim, lightweaveProc) || moonkin.shouldSnapshotMf(sim, wildMagicProc) || moonkin.shouldSnapshotMf(sim, pleaProc) {
 				return moonkin.Moonfire, target
@@ -55,7 +55,7 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*core.Spell, *core.
 	shouldRefreshMf := moonkin.Moonfire.CurDot().RemainingDuration(sim) <= 0
 	hasLunarFury := core.Ternary(moonkin.Equip[core.ItemSlotRanged].ID == 47670, true, false)
 	lunarIsActive := moonkin.LunarEclipseProcAura.IsActive()
-	maximizeMf := !(rotation.MfUsage == proto.BalanceDruid_Rotation_NoMf) && !(rotation.MfUsage == proto.BalanceDruid_Rotation_BeforeLunar)
+	maximizeMf := !(rotation.MfUsage == proto.BalanceDruid_Rotation_NoMf) && !(rotation.MfUsage == proto.BalanceDruid_Rotation_BeforeLunar) && !(rotation.SnapshotMf)
 
 	if moonkin.LunarEclipseProcAura != nil {
 		lunarUptime = moonkin.LunarEclipseProcAura.RemainingDuration(sim)
