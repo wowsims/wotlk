@@ -156,6 +156,8 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump(sim *core
 	if !casted {
 		fr := dk.NormalCurrentFrostRunes()
 		uh := dk.NormalCurrentUnholyRunes()
+		b := dk.NormalCurrentBloodRunes()
+		bAt := dk.NormalBloodRuneReadyAt(sim)
 		frAt := dk.NormalFrostRuneReadyAt(sim)
 		uhAt := dk.NormalUnholyRuneReadyAt(sim)
 		obAt := core.MaxDuration(frAt, uhAt)
@@ -193,15 +195,25 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump(sim *core
 				casted = dk.FrostStrike.Cast(sim, target)
 			} else {
 				if dk.canCastFrostUnholySpell(sim, target) {
-					if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
-						dk.Deathchill.Cast(sim, target)
+					bAt = core.TernaryDuration(b > 0, sim.CurrentTime, bAt)
+					dndAt := core.MaxDuration(bAt-sim.CurrentTime, dk.DeathAndDecay.TimeToReady(sim))
+					if dk.Rotation.UseDeathAndDecay && dk.Env.GetNumTargets() >= 3 && dndAt < 1*time.Second && !dk.UnbreakableArmorAura.IsActive() && dk.UnbreakableArmor.TimeToReady(sim) > 8*time.Second {
+						if b > 0 {
+							casted = dk.DeathAndDecay.Cast(sim, target)
+							dk.fr.oblitCount += 1
+						} else {
+							waitUntil = bAt
+						}
+					} else {
+						if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
+							dk.Deathchill.Cast(sim, target)
+						}
+						casted = dk.castFrostUnholySpell(sim, target)
+						advance := dk.LastOutcome.Matches(core.OutcomeLanded)
+						if casted && advance {
+							dk.fr.oblitCount += 1
+						}
 					}
-					casted = dk.castFrostUnholySpell(sim, target)
-					advance := dk.LastOutcome.Matches(core.OutcomeLanded)
-					if casted && advance {
-						dk.fr.oblitCount += 1
-					}
-
 					if dk.fr.oblitCount == 2 {
 						s.Advance()
 						dk.fr.oblitCount = 0
@@ -210,8 +222,6 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump(sim *core
 					s.Advance()
 				}
 			}
-
-			return core.TernaryDuration(casted, -1, sim.CurrentTime)
 		} else {
 			spell := dk.RegularPrioPickSpell(sim, target, obAt+2500*time.Millisecond)
 			if spell != nil {
