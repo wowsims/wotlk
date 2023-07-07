@@ -20,7 +20,7 @@ export class CooldownsPicker extends Component {
 		this.player = player;
 		this.cooldownPickers = [];
 
-		TypedEvent.onAny([this.player.currentSpellsAndAurasEmitter]).on(eventID => {
+		TypedEvent.onAny([this.player.cooldownsChangeEmitter, this.player.currentSpellsAndAurasEmitter]).on(eventID => {
 			this.update();
 		});
 		this.update();
