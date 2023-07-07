@@ -298,20 +298,6 @@ func (rp *RunicPowerBar) NormalSpentBloodRuneReadyAt(sim *Simulation) time.Durat
 	return readyAt
 }
 
-func (rp *RunicPowerBar) NormalBloodRuneReadyAt(sim *Simulation) time.Duration {
-	readyAt := NeverExpires
-	if rp.runeStates&isDeaths[0] == 0 && rp.runeStates&isSpents[0] != 0 {
-		readyAt = rp.runeMeta[0].regenAt
-	}
-	if rp.runeStates&isDeaths[1] == 0 && rp.runeStates&isSpents[1] != 0 {
-		readyAt = MinDuration(readyAt, rp.runeMeta[3].regenAt)
-	}
-	if (rp.runeStates&isDeaths[0] == 0 && rp.runeStates&isSpents[0] == 0) || (rp.runeStates&isDeaths[1] == 0 && rp.runeStates&isSpents[1] == 0) {
-		readyAt = sim.CurrentTime
-	}
-	return readyAt
-}
-
 func (rp *RunicPowerBar) NormalSpentFrostRuneReadyAt(sim *Simulation) time.Duration {
 	readyAt := NeverExpires
 	if rp.runeStates&isDeaths[2] == 0 && rp.runeStates&isSpents[2] != 0 {

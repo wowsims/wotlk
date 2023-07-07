@@ -157,7 +157,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump(sim *core
 		fr := dk.NormalCurrentFrostRunes()
 		uh := dk.NormalCurrentUnholyRunes()
 		b := dk.NormalCurrentBloodRunes()
-		bAt := dk.NormalBloodRuneReadyAt(sim)
+		bAt := dk.BloodRuneReadyAt(sim)
 		frAt := dk.NormalFrostRuneReadyAt(sim)
 		uhAt := dk.NormalUnholyRuneReadyAt(sim)
 		obAt := core.MaxDuration(frAt, uhAt)
@@ -195,9 +195,8 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump(sim *core
 				casted = dk.FrostStrike.Cast(sim, target)
 			} else {
 				if dk.canCastFrostUnholySpell(sim, target) {
-					bAt = core.TernaryDuration(b > 0, sim.CurrentTime, bAt)
 					dndAt := core.MaxDuration(bAt-sim.CurrentTime, dk.DeathAndDecay.TimeToReady(sim))
-					if dk.Rotation.UseDeathAndDecay && dk.Env.GetNumTargets() >= 3 && dndAt < 1*time.Second && !dk.UnbreakableArmorAura.IsActive() && dk.UnbreakableArmor.TimeToReady(sim) > 8*time.Second {
+					if dk.Rotation.UseDeathAndDecay && dk.Env.GetNumTargets() >= 3 && dndAt < 3*time.Second && !dk.UnbreakableArmorAura.IsActive() && dk.UnbreakableArmor.TimeToReady(sim) > 8*time.Second {
 						if b > 0 {
 							casted = dk.DeathAndDecay.Cast(sim, target)
 							dk.fr.oblitCount += 1

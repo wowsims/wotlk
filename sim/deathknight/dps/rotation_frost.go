@@ -151,7 +151,7 @@ func (dk *DpsDeathknight) castAllMajorCooldowns(sim *core.Simulation) {
 
 func (dk *DpsDeathknight) RotationActionCallback_UA_Frost(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	if dk.UnbreakableArmor != nil {
-		if dk.NormalCurrentBloodRunes() < 2 && !dk.LeftBloodRuneReady() {
+		if !dk.LeftBloodRuneReady() {
 			dk.BloodTap.Cast(sim, nil)
 		}
 		casted := dk.UnbreakableArmor.Cast(sim, target)
