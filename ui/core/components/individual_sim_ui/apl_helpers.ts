@@ -141,15 +141,19 @@ export class APLPickerBuilder<T> extends Input<Player<any>, T> {
 		super(parent, 'apl-picker-builder-root', modObject, config);
 		this.config = config;
 
-		const openSpan = document.createElement('span');
-		openSpan.textContent = '(';
-		this.rootElem.appendChild(openSpan);
+		if (config.fields.length > 0) {
+			const openSpan = document.createElement('span');
+			openSpan.textContent = '(';
+			this.rootElem.appendChild(openSpan);
+		}
 
 		this.fieldPickers = config.fields.map(fieldConfig => APLPickerBuilder.makeFieldPicker(this, fieldConfig));
 
-		const closeSpan = document.createElement('span');
-		closeSpan.textContent = ')';
-		this.rootElem.appendChild(closeSpan);
+		if (config.fields.length > 0) {
+			const closeSpan = document.createElement('span');
+			closeSpan.textContent = ')';
+			this.rootElem.appendChild(closeSpan);
+		}
 
 		this.init();
 	}

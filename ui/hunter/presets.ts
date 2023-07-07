@@ -116,7 +116,10 @@ export const ROTATION_PRESET_DEFAULT = {
 		rotation: APLRotation.fromJsonString(`{
 			"enabled": true,
 			"priorityList": [
-				{"action": {"autocastOtherCooldowns": {}}},
+				{"action": {
+					"condition": {"cmp": {"op": "OpGt", "lhs": {"currentTime": {}}, "rhs": { "const": {"val": "10s"}}}},
+					"autocastOtherCooldowns": {}
+				}},
 				{"action": {
 					"condition": {"not": {"val": {"dotIsActive": {"spellId": { "spellId": 49001 }}}}},
 					"castSpell": {"spellId": { "spellId": 49001 }}

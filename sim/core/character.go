@@ -99,6 +99,7 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 			StatDependencyManager: stats.NewStatDependencyManager(),
 
 			DistanceFromTarget: player.DistanceFromTarget,
+			IsUsingAPL:         player.Rotation != nil && player.Rotation.Enabled,
 		},
 
 		Name:  player.Name,
@@ -517,7 +518,7 @@ func (character *Character) FillPlayerStats(playerStats *proto.PlayerStats) {
 	})
 	playerStats.Auras = MapSlice(aplAuras, func(aura *Aura) *proto.AuraStats {
 		return &proto.AuraStats{
-			Id: aura.ActionID.ToProto(),
+			Id:        aura.ActionID.ToProto(),
 			MaxStacks: aura.MaxStacks,
 		}
 	})
