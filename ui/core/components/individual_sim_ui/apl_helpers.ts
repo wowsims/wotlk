@@ -3,16 +3,37 @@ import { Player } from '../../player.js';
 import { EventID, TypedEvent } from '../../typed_event.js';
 import { bucket } from '../../utils.js';
 import { AdaptiveStringPicker } from '../string_picker.js';
+import { NumberPicker } from '../number_picker.js';
 import { DropdownPicker, DropdownPickerConfig, DropdownValueConfig, TextDropdownPicker } from '../dropdown_picker.js';
 import { Input, InputConfig } from '../input.js';
 import { ActionID } from '../../proto/common.js';
 
-export type ACTION_ID_SET = 'castable_spells' | 'dot_spells';
+export type ACTION_ID_SET = 'auras' | 'stackable_auras' | 'castable_spells' | 'dot_spells';
 
 const actionIdSets: Record<ACTION_ID_SET, {
 	defaultLabel: string,
 	getActionIDs: (player: Player<any>) => Promise<Array<DropdownValueConfig<ActionId>>>,
 }> = {
+	['auras']: {
+		defaultLabel: 'Aura',
+		getActionIDs: async (player) => {
+			return player.getAuras().map(actionId => {
+				return {
+					value: actionId.id,
+				};
+			});
+		},
+	},
+	['stackable_auras']: {
+		defaultLabel: 'Aura',
+		getActionIDs: async (player) => {
+			return player.getAuras().filter(aura => aura.data.maxStacks > 0).map(actionId => {
+				return {
+					value: actionId.id,
+				};
+			});
+		},
+	},
 	['castable_spells']: {
 		defaultLabel: 'Spell',
 		getActionIDs: async (player) => {
@@ -46,9 +67,7 @@ const actionIdSets: Record<ACTION_ID_SET, {
 	['dot_spells']: {
 		defaultLabel: 'DoT Spell',
 		getActionIDs: async (player) => {
-			const dotSpells = player.getSpells().filter(spell => spell.data.hasDot);
-
-			return dotSpells.map(actionId => {
+			return player.getSpells().filter(spell => spell.data.hasDot).map(actionId => {
 				return {
 					value: actionId.id,
 				};
@@ -100,6 +119,9 @@ export interface APLPickerBuilderFieldConfig<T, F extends keyof T> {
 	field: F,
 	newValue: () => T[F],
 	factory: (parent: HTMLElement, player: Player<any>, config: InputConfig<Player<any>, T[F]>) => Input<Player<any>, T[F]>
+
+	label?: string,
+	labelTooltip?: string,
 }
 
 export interface APLPickerBuilderConfig<T> extends InputConfig<Player<any>, T> {
@@ -137,6 +159,9 @@ export class APLPickerBuilder<T> extends Input<Player<any>, T> {
 		return {
 			...fieldConfig,
 			picker: fieldConfig.factory(builder.rootElem, builder.modObject, {
+				label: fieldConfig.label,
+				labelTooltip: fieldConfig.labelTooltip,
+				inline: true,
 				changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
 				getValue: () => {
 					const source = builder.getSourceValue();
@@ -172,7 +197,7 @@ export class APLPickerBuilder<T> extends Input<Player<any>, T> {
 	}
 }
 
-export function actionIdFieldConfig(field: string, actionIdSet: ACTION_ID_SET): APLPickerBuilderFieldConfig<any, any> {
+export function actionIdFieldConfig(field: string, actionIdSet: ACTION_ID_SET, options?: Partial<APLPickerBuilderFieldConfig<any, any>>): APLPickerBuilderFieldConfig<any, any> {
 	return {
 		field: field,
 		newValue: () => ActionID.create(),
@@ -180,14 +205,25 @@ export function actionIdFieldConfig(field: string, actionIdSet: ACTION_ID_SET): 
 			...config,
 			actionIdSet: actionIdSet,
 		}),
+		...(options || {}),
 	};
 }
 
-export function stringFieldConfig(field: string): APLPickerBuilderFieldConfig<any, any> {
+export function numberFieldConfig(field: string, options?: Partial<APLPickerBuilderFieldConfig<any, any>>): APLPickerBuilderFieldConfig<any, any> {
+	return {
+		field: field,
+		newValue: () => 0,
+		factory: (parent, player, config) => new NumberPicker(parent, player, config),
+		...(options || {}),
+	};
+}
+
+export function stringFieldConfig(field: string, options?: Partial<APLPickerBuilderFieldConfig<any, any>>): APLPickerBuilderFieldConfig<any, any> {
 	return {
 		field: field,
 		newValue: () => '',
 		factory: (parent, player, config) => new AdaptiveStringPicker(parent, player, config),
+		...(options || {}),
 	};
 }
 

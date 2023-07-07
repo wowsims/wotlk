@@ -28,6 +28,7 @@ message APLAction {
         APLActionStrictSequence strict_sequence = 6;
 
         APLActionCastSpell cast_spell = 3;
+        APLActionMultidot multidot = 8;
         APLActionAutocastOtherCooldowns autocast_other_cooldowns = 7;
         APLActionWait wait = 4;
     }
@@ -54,6 +55,20 @@ message APLValue {
         APLValueCurrentRage current_rage = 14;
         APLValueCurrentEnergy current_energy = 15;
         APLValueCurrentComboPoints current_combo_points = 16;
+
+				// GCD values
+				APLValueGCDIsReady gcd_is_ready = 17;
+				APLValueGCDTimeToReady gcd_time_to_ready = 18;
+
+				// Spell values
+				APLValueSpellCanCast spell_can_cast = 19;
+				APLValueSpellIsReady spell_is_ready = 20;
+				APLValueSpellTimeToReady spell_time_to_ready = 21;
+
+				// Aura values
+        APLValueAuraIsActive aura_is_active = 22;
+        APLValueAuraRemainingTime aura_remaining_time = 23;
+        APLValueAuraNumStacks aura_num_stacks = 24;
 
         // Dot values
         APLValueDotIsActive dot_is_active = 6;
@@ -86,6 +101,12 @@ message APLActionStrictSequence {
 
 message APLActionCastSpell {
     ActionID spell_id = 1;
+}
+
+message APLActionMultidot {
+    ActionID spell_id = 1;
+    int32 max_dots = 2;
+    APLValue max_overlap = 3;
 }
 
 message APLActionAutocastOtherCooldowns {
@@ -147,6 +168,29 @@ message APLValueCurrentManaPercent {}
 message APLValueCurrentRage {}
 message APLValueCurrentEnergy {}
 message APLValueCurrentComboPoints {}
+
+message APLValueGCDIsReady {}
+message APLValueGCDTimeToReady {}
+
+message APLValueSpellCanCast {
+    ActionID spell_id = 1;
+}
+message APLValueSpellIsReady {
+    ActionID spell_id = 1;
+}
+message APLValueSpellTimeToReady {
+    ActionID spell_id = 1;
+}
+
+message APLValueAuraIsActive {
+    ActionID aura_id = 1;
+}
+message APLValueAuraRemainingTime {
+    ActionID aura_id = 1;
+}
+message APLValueAuraNumStacks {
+    ActionID aura_id = 1;
+}
 
 message APLValueDotIsActive {
     ActionID spell_id = 1;

@@ -66,6 +66,8 @@ func (unit *Unit) newAPLActionImpl(config *proto.APLAction) APLActionImpl {
 		return unit.newActionStrictSequence(config.GetStrictSequence())
 	case *proto.APLAction_CastSpell:
 		return unit.newActionCastSpell(config.GetCastSpell())
+	case *proto.APLAction_Multidot:
+		return unit.newActionMultidot(config.GetMultidot())
 	case *proto.APLAction_AutocastOtherCooldowns:
 		return unit.newActionAutocastOtherCooldowns(config.GetAutocastOtherCooldowns())
 	case *proto.APLAction_Wait:

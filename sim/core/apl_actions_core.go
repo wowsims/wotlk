@@ -28,6 +28,49 @@ func (action *APLActionCastSpell) Execute(sim *Simulation) {
 	action.spell.Cast(sim, action.spell.Unit.CurrentTarget)
 }
 
+type APLActionMultidot struct {
+	spell      *Spell
+	maxDots    int32
+	maxOverlap APLValue
+
+	nextTarget *Unit
+}
+
+func (unit *Unit) newActionMultidot(config *proto.APLActionMultidot) APLActionImpl {
+	spell := unit.aplGetMultidotSpell(config.SpellId)
+	maxOverlap := unit.coerceTo(unit.newAPLValue(config.MaxOverlap), proto.APLValueType_ValueTypeDuration)
+	if maxOverlap == nil {
+		maxOverlap = unit.newValueConst(&proto.APLValueConst{Val: "0ms"})
+	}
+
+	return &APLActionMultidot{
+		spell:      spell,
+		maxDots:    MinInt32(config.MaxDots, unit.Env.GetNumTargets()),
+		maxOverlap: maxOverlap,
+	}
+}
+func (action *APLActionMultidot) GetInnerActions() []*APLAction { return nil }
+func (action *APLActionMultidot) Finalize()                     {}
+func (action *APLActionMultidot) Reset(*Simulation) {
+	action.nextTarget = nil
+}
+func (action *APLActionMultidot) IsReady(sim *Simulation) bool {
+	maxOverlap := action.maxOverlap.GetDuration(sim)
+
+	for i := int32(0); i < action.maxDots; i++ {
+		target := sim.Encounter.TargetUnits[i]
+		dot := action.spell.Dot(target)
+		if (!dot.IsActive() || dot.RemainingDuration(sim) < maxOverlap) && action.spell.CanCast(sim, target) {
+			action.nextTarget = target
+			return true
+		}
+	}
+	return false
+}
+func (action *APLActionMultidot) Execute(sim *Simulation) {
+	action.spell.Cast(sim, action.nextTarget)
+}
+
 type APLActionAutocastOtherCooldowns struct {
 	character *Character
 
