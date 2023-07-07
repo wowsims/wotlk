@@ -110,7 +110,8 @@ type Unit struct {
 	// Must be enabled to use, with "EnableAutoAttacks()".
 	AutoAttacks AutoAttacks
 
-	Rotation *APLRotation
+	IsUsingAPL bool // Used for checks before the finalize() stage, when apl rotations are created.
+	Rotation   *APLRotation
 
 	// Statistics describing the results of the sim.
 	Metrics UnitMetrics

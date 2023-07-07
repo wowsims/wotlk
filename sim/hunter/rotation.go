@@ -10,7 +10,9 @@ import (
 
 func (hunter *Hunter) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
 	hunter.mayMoveAt = sim.CurrentTime
-	hunter.TryUseCooldowns(sim)
+	if !hunter.IsUsingAPL {
+		hunter.TryUseCooldowns(sim)
+	}
 	if hunter.GCD.IsReady(sim) {
 		hunter.rotation(sim)
 	}
@@ -21,6 +23,9 @@ func (hunter *Hunter) OnGCDReady(sim *core.Simulation) {
 }
 
 func (hunter *Hunter) rotation(sim *core.Simulation) {
+	if hunter.IsUsingAPL {
+		return
+	}
 	hunter.trySwapAspect(sim)
 
 	if hunter.SilencingShot.IsReady(sim) {

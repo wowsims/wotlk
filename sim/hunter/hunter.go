@@ -146,7 +146,9 @@ func (hunter *Hunter) Initialize() {
 	hunter.registerKillCommandCD()
 	hunter.registerRapidFireCD()
 
-	hunter.DelayDPSCooldownsForArmorDebuffs(time.Second * 10)
+	if !hunter.IsUsingAPL {
+		hunter.DelayDPSCooldownsForArmorDebuffs(time.Second * 10)
+	}
 
 	hunter.initRotation()
 	hunter.CustomRotation = hunter.makeCustomRotation()
