@@ -1,6 +1,8 @@
 package core
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
@@ -26,6 +28,49 @@ func (action *APLActionCastSpell) IsReady(sim *Simulation) bool {
 }
 func (action *APLActionCastSpell) Execute(sim *Simulation) {
 	action.spell.Cast(sim, action.spell.Unit.CurrentTarget)
+}
+
+type APLActionMultidot struct {
+	spell *Spell
+	maxDots int32
+	refreshWindow time.Duration
+
+	nextTarget *Unit
+}
+
+func (unit *Unit) newActionMultidot(config *proto.APLActionMultidot) APLActionImpl {
+	spell := unit.aplGetMultidotSpell(config.SpellId)
+
+	refreshWindow := time.Duration(0)
+	canRollover := false
+	if canRollover {
+		refreshWindow = time.Second*3
+	}
+	return &APLActionMultidot{
+		spell: spell,
+		maxDots: MinInt32(config.MaxDots, unit.Env.GetNumTargets()),
+		refreshWindow: refreshWindow,
+	}
+}
+func (action *APLActionMultidot) GetInnerActions() []*APLAction { return nil }
+func (action *APLActionMultidot) Finalize()                     {}
+func (action *APLActionMultidot) Reset(*Simulation) {
+	action.nextTarget = nil
+}
+func (action *APLActionMultidot) IsReady(sim *Simulation) bool {
+	for i := 0; i < action.maxDots; i++ {
+		target := sim.Encounter.GetTarget(i)
+		dot := action.spell.Dot(target)
+		shouldPreserveSnapshot := dot.
+		if dot.IsActive() && dot.RemainingDuration(sim) < time.Second*3 {
+			action.nextTarget = target
+			return true
+		}
+	}
+	return false
+}
+func (action *APLActionMultidot) Execute(sim *Simulation) {
+	action.spell.Cast(sim, action.nextTarget)
 }
 
 type APLActionAutocastOtherCooldowns struct {

@@ -28,6 +28,7 @@ message APLAction {
         APLActionStrictSequence strict_sequence = 6;
 
         APLActionCastSpell cast_spell = 3;
+        APLActionMultidot multidot = 8;
         APLActionAutocastOtherCooldowns autocast_other_cooldowns = 7;
         APLActionWait wait = 4;
     }
@@ -100,6 +101,11 @@ message APLActionStrictSequence {
 
 message APLActionCastSpell {
     ActionID spell_id = 1;
+}
+
+message APLActionMultidot {
+    ActionID spell_id = 1;
+		int32 max_dots = 2;
 }
 
 message APLActionAutocastOtherCooldowns {

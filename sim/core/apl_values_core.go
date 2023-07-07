@@ -19,6 +19,14 @@ func (unit *Unit) aplGetDot(spellId *proto.ActionID) *Dot {
 	}
 }
 
+func (unit *Unit) aplGetMultidotSpell(spellId *proto.ActionID) *Spell {
+	spell := unit.GetSpell(ProtoToActionID(spellId))
+	if spell == nil || spell.CurDot() == nil {
+		return nil
+	}
+	return spell
+}
+
 type APLValueDotIsActive struct {
 	defaultAPLValueImpl
 	dot *Dot
