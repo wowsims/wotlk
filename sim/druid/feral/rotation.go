@@ -741,6 +741,8 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 	rotation.BerserkBiteThresh = 25
 	rotation.BearWeaveType = proto.FeralDruid_Rotation_None
 
+	equipedIdol := cat.Equip[core.ItemSlotRanged].ID
+
 	cat.Rotation = FeralDruidRotation{
 		RotationType:       rotation.RotationType,
 		BearweaveType:      rotation.BearWeaveType,
@@ -761,8 +763,8 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 		LacerateTime:       8.0 * time.Second,
 		SnekWeave:          core.Ternary(rotation.BearWeaveType == proto.FeralDruid_Rotation_None, false, rotation.SnekWeave),
 		FlowerWeave:        core.Ternary(rotation.RotationType == proto.FeralDruid_Rotation_Aoe, rotation.FlowerWeave, false),
-		// Use mangle if idol of corruptor equipped
-		AoeMangleBuilder: cat.Equip[core.ItemSlotRanged].ID == 45509,
+		// Use mangle if idol of corruptor or mutilation equipped
+		AoeMangleBuilder: equipedIdol == 45509 || equipedIdol == 47668,
 	}
 
 	// Use automatic values unless specified
