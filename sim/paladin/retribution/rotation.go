@@ -75,6 +75,16 @@ func (ret *RetributionPaladin) customRotation(sim *core.Simulation) {
 				}
 			}
 
+			if spell == ret.HolyWrath {
+				// Holy Wrath isn't worth casting if it will reduce usages of CS/DS
+				if ret.CrusaderStrike.ReadyAt()-sim.CurrentTime < 500*time.Millisecond {
+					continue
+				}
+				if ret.DivineStorm.ReadyAt()-sim.CurrentTime < 500*time.Millisecond {
+					continue
+				}
+			}
+
 			if spell == ret.Consecration && !ret.checkConsecrationClipping(sim) {
 				// This is a skip, so we take the opposite of the clip check.
 				continue
@@ -255,6 +265,13 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 				ret.WaitForMana(sim, ret.Exorcism.CurCast.Cost)
 			}
 		case ret.DemonAndUndeadTargetCount >= 1 && ret.HolyWrath.IsReady(sim):
+			// Holy Wrath isn't worth casting if it will reduce usages of CS/DS
+			if ret.CrusaderStrike.ReadyAt()-sim.CurrentTime < 500*time.Millisecond {
+				break
+			}
+			if ret.DivineStorm.ReadyAt()-sim.CurrentTime < 500*time.Millisecond {
+				break
+			}
 			success := ret.HolyWrath.Cast(sim, target)
 			if !success {
 				ret.WaitForMana(sim, ret.HolyWrath.CurCast.Cost)
