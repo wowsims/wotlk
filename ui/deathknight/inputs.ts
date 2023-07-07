@@ -92,8 +92,8 @@ export const UseDeathAndDecay = InputHelpers.makeRotationBooleanInput<Spec.SpecD
 	fieldName: 'useDeathAndDecay',
 	label: 'Death and Decay',
 	labelTooltip: 'Use Death and Decay based rotation.',
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && player.getTalents().scourgeStrike && !player.getRotation().autoRotation,
-	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+	showWhen: (player: Player<Spec.SpecDeathknight>) => (player.getTalents().summonGargoyle && player.getTalents().scourgeStrike && !player.getRotation().autoRotation) || (!player.getTalents().epidemic && !player.getRotation().desyncRotation && player.getTalentTree() == 1 && player.sim.encounter.targets.length >= 3),
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter, player.sim.encounter.targetsChangeEmitter]),
 });
 
 export const SetDeathAndDecayPrio = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, DeathAndDecayPrio>({
