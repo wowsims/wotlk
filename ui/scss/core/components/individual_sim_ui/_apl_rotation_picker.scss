@@ -60,13 +60,19 @@
 	flex-direction: column;
 }
 
+.apl-picker-builder-root {
+	.form-label {
+		margin: 0 1px 0 5px;
+	}
+}
+
 .apl-value-picker-root {
 	* {
 		font-size: calc(var(--bs-btn-font-size) - 0.2rem);
 	}
 
 	.form-label {
-		margin: 0;
+		margin: 0 1px 0 5px;
 	}
 }
 

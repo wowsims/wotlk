@@ -1,8 +1,6 @@
 package core
 
 import (
-	"time"
-
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
@@ -31,25 +29,24 @@ func (action *APLActionCastSpell) Execute(sim *Simulation) {
 }
 
 type APLActionMultidot struct {
-	spell *Spell
-	maxDots int32
-	refreshWindow time.Duration
+	spell      *Spell
+	maxDots    int32
+	maxOverlap APLValue
 
 	nextTarget *Unit
 }
 
 func (unit *Unit) newActionMultidot(config *proto.APLActionMultidot) APLActionImpl {
 	spell := unit.aplGetMultidotSpell(config.SpellId)
-
-	refreshWindow := time.Duration(0)
-	canRollover := false
-	if canRollover {
-		refreshWindow = time.Second*3
+	maxOverlap := unit.coerceTo(unit.newAPLValue(config.MaxOverlap), proto.APLValueType_ValueTypeDuration)
+	if maxOverlap == nil {
+		maxOverlap = unit.newValueConst(&proto.APLValueConst{Val: "0ms"})
 	}
+
 	return &APLActionMultidot{
-		spell: spell,
-		maxDots: MinInt32(config.MaxDots, unit.Env.GetNumTargets()),
-		refreshWindow: refreshWindow,
+		spell:      spell,
+		maxDots:    MinInt32(config.MaxDots, unit.Env.GetNumTargets()),
+		maxOverlap: maxOverlap,
 	}
 }
 func (action *APLActionMultidot) GetInnerActions() []*APLAction { return nil }
@@ -58,11 +55,12 @@ func (action *APLActionMultidot) Reset(*Simulation) {
 	action.nextTarget = nil
 }
 func (action *APLActionMultidot) IsReady(sim *Simulation) bool {
-	for i := 0; i < action.maxDots; i++ {
-		target := sim.Encounter.GetTarget(i)
+	maxOverlap := action.maxOverlap.GetDuration(sim)
+
+	for i := int32(0); i < action.maxDots; i++ {
+		target := sim.Encounter.TargetUnits[i]
 		dot := action.spell.Dot(target)
-		shouldPreserveSnapshot := dot.
-		if dot.IsActive() && dot.RemainingDuration(sim) < time.Second*3 {
+		if (!dot.IsActive() || dot.RemainingDuration(sim) < maxOverlap) && action.spell.CanCast(sim, target) {
 			action.nextTarget = target
 			return true
 		}

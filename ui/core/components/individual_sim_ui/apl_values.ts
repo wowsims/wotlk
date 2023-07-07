@@ -196,11 +196,12 @@ function comparisonOperatorFieldConfig(field: string): AplHelpers.APLPickerBuild
 	};
 }
 
-export function valueFieldConfig(field: string): AplHelpers.APLPickerBuilderFieldConfig<any, any> {
+export function valueFieldConfig(field: string, options?: Partial<AplHelpers.APLPickerBuilderFieldConfig<any, any>>): AplHelpers.APLPickerBuilderFieldConfig<any, any> {
 	return {
 		field: field,
 		newValue: APLValue.create,
 		factory: (parent, player, config) => new APLValuePicker(parent, player, config),
+		...(options || {}),
 	};
 }
 

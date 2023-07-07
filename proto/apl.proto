@@ -105,7 +105,8 @@ message APLActionCastSpell {
 
 message APLActionMultidot {
     ActionID spell_id = 1;
-		int32 max_dots = 2;
+    int32 max_dots = 2;
+    APLValue max_overlap = 3;
 }
 
 message APLActionAutocastOtherCooldowns {

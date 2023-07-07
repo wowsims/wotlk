@@ -4,6 +4,7 @@ import {
 	APLActionSequence,
 	APLActionResetSequence,
 	APLActionStrictSequence,
+	APLActionMultidot,
 	APLActionAutocastOtherCooldowns,
 	APLActionWait,
 	APLValue,
@@ -261,6 +262,32 @@ export const actionTypeFactories: Record<NonNullable<APLActionType>, ActionTypeC
 			actionListFieldConfig('actions'),
 		],
 	}),
+	['multidot']: inputBuilder({
+		label: 'Multi Dot',
+		shortDescription: 'Keeps a DoT active on multiple targets by casting the specified spell.',
+		newValue: () => APLActionMultidot.create({
+			maxDots: 3,
+			maxOverlap: {
+				value: {
+					oneofKind: 'const',
+					const: {
+						val: '0ms',
+					},
+				},
+			},
+		}),
+		fields: [
+			AplHelpers.actionIdFieldConfig('spellId', 'dot_spells'),
+			AplHelpers.numberFieldConfig('maxDots', {
+				label: 'Max Dots',
+				labelTooltip: 'Maximum number of DoTs to simultaneously apply.',
+			}),
+			AplValues.valueFieldConfig('maxOverlap', {
+				label: 'Overlap',
+				labelTooltip: 'Maximum amount of time before a DoT expires when it may be refreshed.',
+			}),
+		],
+	}),
 	['autocastOtherCooldowns']: inputBuilder({
 		label: 'Autocast Other Cooldowns',
 		submenu: ['Misc'],
@@ -278,7 +305,16 @@ export const actionTypeFactories: Record<NonNullable<APLActionType>, ActionTypeC
 		label: 'Wait',
 		submenu: ['Misc'],
 		shortDescription: 'Pauses the GCD for a specified amount of time.',
-		newValue: APLActionWait.create,
+		newValue: () => APLActionWait.create({
+			duration: {
+				value: {
+					oneofKind: 'const',
+					const: {
+						val: '1000ms',
+					},
+				},
+			},
+		}),
 		fields: [
 			AplValues.valueFieldConfig('duration'),
 		],
