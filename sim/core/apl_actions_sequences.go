@@ -26,7 +26,11 @@ func (rot *APLRotation) newActionSequence(config *proto.APLActionSequence) APLAc
 func (action *APLActionSequence) GetInnerActions() []*APLAction {
 	return Flatten(MapSlice(action.actions, func(action *APLAction) []*APLAction { return action.GetAllActions() }))
 }
-func (action *APLActionSequence) Finalize(*APLRotation) {}
+func (action *APLActionSequence) Finalize(rot *APLRotation) {
+	for _, subaction := range action.actions {
+		subaction.impl.Finalize(rot)
+	}
+}
 func (action *APLActionSequence) Reset(*Simulation) {
 	action.curIdx = 0
 }
@@ -92,7 +96,11 @@ func (rot *APLRotation) newActionStrictSequence(config *proto.APLActionStrictSeq
 func (action *APLActionStrictSequence) GetInnerActions() []*APLAction {
 	return Flatten(MapSlice(action.actions, func(action *APLAction) []*APLAction { return action.GetAllActions() }))
 }
-func (action *APLActionStrictSequence) Finalize(*APLRotation) {}
+func (action *APLActionStrictSequence) Finalize(rot *APLRotation) {
+	for _, subaction := range action.actions {
+		subaction.impl.Finalize(rot)
+	}
+}
 func (action *APLActionStrictSequence) Reset(*Simulation) {
 	action.curIdx = 0
 }

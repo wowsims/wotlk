@@ -50,8 +50,9 @@ func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
 		rotation.curWarnings = nil
 	}
 
-	for i, action := range rotation.allAPLActions() {
+	for i, action := range rotation.priorityList {
 		action.impl.Finalize(rotation)
+
 		rotation.priorityListWarnings[configIdxs[i]] = append(rotation.priorityListWarnings[configIdxs[i]], rotation.curWarnings...)
 		rotation.curWarnings = nil
 
