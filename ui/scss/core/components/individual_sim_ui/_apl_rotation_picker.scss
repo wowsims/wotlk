@@ -3,7 +3,7 @@
 @import "./apl_helpers";
 
 .apl-rotation-picker-root {
-	.input-root.apl-list-item-picker {
+	.apl-list-item-picker {
 		flex-wrap: wrap;
 		align-items: flex-start !important;
 
@@ -20,6 +20,15 @@
 		.list-picker-new-button {
 			width: 100%;
 		}
+	}
+
+	.apl-list-item-picker > * > .list-picker-item-container {
+		background-color: rgba(21, 23, 30, 0.8);
+		padding: 5px;
+	}
+
+	.apl-list-item-picker > * > * > .list-picker-item {
+		flex-grow: 1;
 	}
 
 	.adaptive-string-picker-root > input {
@@ -74,10 +83,6 @@
 	.form-label {
 		margin: 0 1px 0 5px;
 	}
-}
-
-.apl-list-item-picker > * > * > .list-picker-item {
-	flex-grow: 1;
 }
 
 .apl-action-picker-action {

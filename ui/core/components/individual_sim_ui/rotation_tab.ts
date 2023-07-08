@@ -167,13 +167,13 @@ export class RotationTab extends SimTab {
 			header: {title: 'Saved Rotations'},
 			storageKey: this.simUI.getSavedRotationStorageKey(),
 			getData: (player: Player<any>) => SavedRotation.create({
-				rotation: player.aplRotation,
+				rotation: APLRotation.clone(player.aplRotation),
 				specRotationOptionsJson: JSON.stringify(player.specTypeFunctions.rotationToJson(player.getRotation())),
 				cooldowns: player.getCooldowns(),
 			}),
 			setData: (eventID: EventID, player: Player<any>, newRotation: SavedRotation) => {
 				TypedEvent.freezeAllAndDo(() => {
-					player.aplRotation = newRotation.rotation || APLRotation.create();
+					player.setAplRotation(eventID, newRotation.rotation || APLRotation.create());
 					if (newRotation.specRotationOptionsJson) {
 						try {
 							const json = JSON.parse(newRotation.specRotationOptionsJson);
@@ -209,5 +209,5 @@ export class RotationTab extends SimTab {
 				});
 			});
 		});
-  }
+	}
 }

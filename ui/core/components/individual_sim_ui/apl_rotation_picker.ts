@@ -60,10 +60,8 @@ class APLListItemPicker extends Input<Player<any>, APLListItem> {
     }
 
 	constructor(parent: HTMLElement, player: Player<any>, config: ListItemPickerConfig<Player<any>, APLListItem>, index: number) {
-		super(parent, 'apl-list-item-picker-root', player, {
-			...config,
-			enableWhen: () => !this.getItem().hide,
-		});
+		config.enableWhen = () => !this.getItem().hide;
+		super(parent, 'apl-list-item-picker-root', player, config);
 		this.player = player;
 		this.index = index;
 

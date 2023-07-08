@@ -392,8 +392,8 @@ export class SettingsTab extends SimTab {
 					debuffs: simUI.sim.raid.getDebuffs(),
 					consumes: player.getConsumes(),
 					race: player.getRace(),
-					cooldowns: player.getCooldowns(),
-					rotationJson: JSON.stringify(player.specTypeFunctions.rotationToJson(player.getRotation())),
+					cooldowns: aplLaunchStatuses[simUI.player.spec] == LaunchStatus.Unlaunched ? player.getCooldowns() : undefined,
+					rotationJson: aplLaunchStatuses[simUI.player.spec] == LaunchStatus.Unlaunched ? JSON.stringify(player.specTypeFunctions.rotationToJson(player.getRotation())) : undefined,
 				});
 			},
 			setData: (eventID: EventID, simUI: IndividualSimUI<any>, newSettings: SavedSettings) => {
@@ -407,9 +407,11 @@ export class SettingsTab extends SimTab {
 					simUI.player.setBuffs(eventID, newSettings.playerBuffs || IndividualBuffs.create());
 					simUI.player.setConsumes(eventID, newSettings.consumes || Consumes.create());
 					simUI.player.setRace(eventID, newSettings.race);
-					simUI.player.setCooldowns(eventID, newSettings.cooldowns || Cooldowns.create());
-					if (newSettings.rotationJson) {
-						simUI.player.setRotation(eventID, simUI.player.specTypeFunctions.rotationFromJson(JSON.parse(newSettings.rotationJson)));
+					if (aplLaunchStatuses[simUI.player.spec] == LaunchStatus.Unlaunched) {
+						simUI.player.setCooldowns(eventID, newSettings.cooldowns || Cooldowns.create());
+						if (newSettings.rotationJson) {
+							simUI.player.setRotation(eventID, simUI.player.specTypeFunctions.rotationFromJson(JSON.parse(newSettings.rotationJson)));
+						}
 					}
 				});
 			},
@@ -420,9 +422,10 @@ export class SettingsTab extends SimTab {
 				this.simUI.player.buffsChangeEmitter,
 				this.simUI.player.consumesChangeEmitter,
 				this.simUI.player.raceChangeEmitter,
+			].concat(aplLaunchStatuses[this.simUI.player.spec] == LaunchStatus.Unlaunched ? [
 				this.simUI.player.cooldownsChangeEmitter,
 				this.simUI.player.rotationChangeEmitter,
-			],
+			] : []),
 			equals: (a: SavedSettings, b: SavedSettings) => SavedSettings.equals(a, b),
 			toJson: (a: SavedSettings) => SavedSettings.toJson(a),
 			fromJson: (obj: any) => SavedSettings.fromJson(obj),
@@ -432,7 +435,7 @@ export class SettingsTab extends SimTab {
 			savedEncounterManager.loadUserData();
 			savedSettingsManager.loadUserData();
 		});
-  }
+	}
 
 	private configureInputSection(sectionElem: HTMLElement, sectionConfig: InputSection) {
 		sectionConfig.inputs.forEach(inputConfig => {
