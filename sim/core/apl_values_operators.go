@@ -199,6 +199,10 @@ var aplValueTypeOrder = []proto.APLValueType{
 
 // Coerces 2 values into the same type, returning the two new values.
 func (rot *APLRotation) coerceToSameType(value1 APLValue, value2 APLValue) (APLValue, APLValue) {
+	if value1 == nil || value2 == nil {
+		return value1, value2
+	}
+
 	var coercionType proto.APLValueType
 	for _, listType := range aplValueTypeOrder {
 		if value1.Type() == listType || value2.Type() == listType {
@@ -217,6 +221,10 @@ type APLValueCompare struct {
 
 func (rot *APLRotation) newValueCompare(config *proto.APLValueCompare) APLValue {
 	lhs, rhs := rot.coerceToSameType(rot.newAPLValue(config.Lhs), rot.newAPLValue(config.Rhs))
+	if lhs == nil || rhs == nil {
+		return nil
+	}
+
 	if lhs.Type() == proto.APLValueType_ValueTypeBool && !(config.Op == proto.APLValueCompare_OpEq || config.Op == proto.APLValueCompare_OpNe) {
 		rot.validationWarning("Bool types only allow Equals and NotEquals comparisons!")
 		return nil
