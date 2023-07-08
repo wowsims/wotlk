@@ -578,7 +578,7 @@ export class Player<SpecType extends Spec> {
 		if (APLRotation.equals(newRotation, this.aplRotation))
 			return;
 
-		this.aplRotation = newRotation;
+		this.aplRotation = APLRotation.clone(newRotation);
 		this.rotationChangeEmitter.emit(eventID);
 	}
 
