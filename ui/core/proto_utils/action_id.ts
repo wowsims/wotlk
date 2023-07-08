@@ -213,6 +213,18 @@ export class ActionId {
 		const baseName = tooltipData['name'];
 		let name = baseName;
 		switch (baseName) {
+			case 'Explosive Shot':
+				if (this.spellId == 60053) {
+					name += ' (R4)';
+				} else if (this.spellId == 60052) {
+					name += ' (R3)';
+				}
+				break;
+			case 'Explosive Trap':
+				if (this.tag == 1) {
+					name += ' (Weaving)';
+				}
+				break;
 			case 'Arcane Blast':
 				if (this.tag == 1) {
 					name += ' (No Stacks)';
@@ -408,7 +420,7 @@ export class ActionId {
 		} else if (this.otherId) {
 			return 'other-' + this.otherId;
 		} else {
-			return 'empty-action';
+			throw new Error('Empty action id!');
 		}
 	}
 
@@ -481,7 +493,8 @@ export class ActionId {
 		}
 	}
 
-	private static readonly logRegex = /{((SpellID)|(ItemID)|(OtherID)): (\d+)(, Tag: (-?\d+))?}/g;
+	private static readonly logRegex = /{((SpellID)|(ItemID)|(OtherID)): (\d+)(, Tag: (-?\d+))?}/;
+	private static readonly logRegexGlobal = new RegExp(ActionId.logRegex, 'g');
 	private static fromMatch(match: RegExpMatchArray): ActionId {
 		const idType = match[1];
 		const id = parseInt(match[5]);
@@ -503,7 +516,7 @@ export class ActionId {
 	}
 
 	static async replaceAllInString(str: string): Promise<string> {
-		const matches = [...str.matchAll(ActionId.logRegex)];
+		const matches = [...str.matchAll(ActionId.logRegexGlobal)];
 
 		const replaceData = await Promise.all(matches.map(async match => {
 			const actionId = ActionId.fromMatch(match);
