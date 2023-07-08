@@ -522,6 +522,10 @@ func (character *Character) FillPlayerStats(playerStats *proto.PlayerStats) {
 			MaxStacks: aura.MaxStacks,
 		}
 	})
+
+	if character.Rotation != nil {
+		playerStats.RotationStats = character.Rotation.getStats()
+	}
 }
 
 func (character *Character) init(sim *Simulation, agent Agent) {

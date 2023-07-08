@@ -29,7 +29,7 @@ type APLActionImpl interface {
 	GetInnerActions() []*APLAction
 
 	// Performs optional post-processing.
-	Finalize()
+	Finalize(*APLRotation)
 
 	// Invoked before each sim iteration.
 	Reset(*Simulation)
@@ -41,39 +41,44 @@ type APLActionImpl interface {
 	Execute(*Simulation)
 }
 
-func (unit *Unit) newAPLAction(config *proto.APLAction) *APLAction {
+func (rot *APLRotation) newAPLAction(config *proto.APLAction) *APLAction {
 	if config == nil {
 		return nil
 	}
 
-	return &APLAction{
-		condition: unit.coerceTo(unit.newAPLValue(config.Condition), proto.APLValueType_ValueTypeBool),
-		impl:      unit.newAPLActionImpl(config),
+	action := &APLAction{
+		condition: rot.coerceTo(rot.newAPLValue(config.Condition), proto.APLValueType_ValueTypeBool),
+		impl:      rot.newAPLActionImpl(config),
+	}
+
+	if action.impl == nil {
+		return nil
+	} else {
+		return action
 	}
 }
 
-func (unit *Unit) newAPLActionImpl(config *proto.APLAction) APLActionImpl {
+func (rot *APLRotation) newAPLActionImpl(config *proto.APLAction) APLActionImpl {
 	if config == nil {
 		return nil
 	}
 
 	switch config.Action.(type) {
 	case *proto.APLAction_Sequence:
-		return unit.newActionSequence(config.GetSequence())
+		return rot.newActionSequence(config.GetSequence())
 	case *proto.APLAction_ResetSequence:
-		return unit.newActionResetSequence(config.GetResetSequence())
+		return rot.newActionResetSequence(config.GetResetSequence())
 	case *proto.APLAction_StrictSequence:
-		return unit.newActionStrictSequence(config.GetStrictSequence())
+		return rot.newActionStrictSequence(config.GetStrictSequence())
 	case *proto.APLAction_CastSpell:
-		return unit.newActionCastSpell(config.GetCastSpell())
+		return rot.newActionCastSpell(config.GetCastSpell())
 	case *proto.APLAction_Multidot:
-		return unit.newActionMultidot(config.GetMultidot())
+		return rot.newActionMultidot(config.GetMultidot())
 	case *proto.APLAction_AutocastOtherCooldowns:
-		return unit.newActionAutocastOtherCooldowns(config.GetAutocastOtherCooldowns())
+		return rot.newActionAutocastOtherCooldowns(config.GetAutocastOtherCooldowns())
 	case *proto.APLAction_Wait:
-		return unit.newActionWait(config.GetWait())
+		return rot.newActionWait(config.GetWait())
 	default:
-		validationError("Unimplemented action type")
 		return nil
 	}
 }

@@ -481,21 +481,47 @@ export class ActionId {
 		}
 	}
 
+	private static readonly logRegex = /{((SpellID)|(ItemID)|(OtherID)): (\d+)(, Tag: (-?\d+))?}/g;
+	private static fromMatch(match: RegExpMatchArray): ActionId {
+		const idType = match[1];
+		const id = parseInt(match[5]);
+		return new ActionId(
+			idType == 'ItemID' ? id : 0,
+			idType == 'SpellID' ? id : 0,
+			idType == 'OtherID' ? id : 0,
+			match[7] ? parseInt(match[7]) : 0,
+			'', '', '');
+	}
 	static fromLogString(str: string): ActionId {
-		const match = str.match(/{((SpellID)|(ItemID)|(OtherID)): (\d+)(, Tag: (-?\d+))?}/);
+		const match = str.match(ActionId.logRegex);
 		if (match) {
-			const idType = match[1];
-			const id = parseInt(match[5]);
-			return new ActionId(
-				idType == 'ItemID' ? id : 0,
-				idType == 'SpellID' ? id : 0,
-				idType == 'OtherID' ? id : 0,
-				match[7] ? parseInt(match[7]) : 0,
-				'', '', '');
+			return ActionId.fromMatch(match);
 		} else {
 			console.warn('Failed to parse action id from log: ' + str);
 			return ActionId.fromEmpty();
 		}
+	}
+
+	static async replaceAllInString(str: string): Promise<string> {
+		const matches = [...str.matchAll(ActionId.logRegex)];
+
+		const replaceData = await Promise.all(matches.map(async match => {
+			const actionId = ActionId.fromMatch(match);
+			const filledId = await actionId.fill();
+			return {
+				firstIndex: match.index || 0,
+				len: match[0].length,
+				actionId: filledId,
+			};
+		}));
+
+		// Loop in reverse order so we can greedily apply the string replacements.
+		for (let i = replaceData.length - 1; i >= 0; i--) {
+			const data = replaceData[i];
+			str = str.substring(0, data.firstIndex) + data.actionId.name + str.substring(data.firstIndex + data.len);
+		}
+
+		return str;
 	}
 
 	private static makeIconUrl(iconLabel: string): string {

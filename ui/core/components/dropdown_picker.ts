@@ -15,6 +15,7 @@ export interface DropdownPickerConfig<ModObject, T> extends InputConfig<ModObjec
 	values: Array<DropdownValueConfig<T>>;
     equals: (a: T|undefined, b: T|undefined) => boolean,
     setOptionContent: (button: HTMLButtonElement, valueConfig: DropdownValueConfig<T>) => void,
+    createMissingValue?: (val: T) => Promise<DropdownValueConfig<T>>,
     defaultLabel: string,
 }
 
@@ -183,7 +184,15 @@ export class DropdownPicker<ModObject, T> extends Input<ModObject, T> {
 
 	setInputValue(newValue: T) {
         const newSelection = this.valueConfigs.find(v => this.config.equals(v.value, newValue))!;
-        this.updateValue(newSelection);
+        if (newSelection) {
+            this.updateValue(newSelection);
+        } else if (newValue == null) {
+            this.updateValue(null);
+        } else if (this.config.createMissingValue) {
+            this.config.createMissingValue(newValue).then(newSelection => this.updateValue(newSelection));
+        } else {
+            this.updateValue(null);
+        }
 	}
 
     private updateValue(newValue: DropdownValueConfig<T>|null) {

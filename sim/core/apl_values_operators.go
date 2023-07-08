@@ -18,7 +18,7 @@ type APLValueConst struct {
 	boolVal     bool
 }
 
-func (unit *Unit) newValueConst(config *proto.APLValueConst) APLValue {
+func (rot *APLRotation) newValueConst(config *proto.APLValueConst) APLValue {
 	result := &APLValueConst{
 		valType:   proto.APLValueType_ValueTypeString,
 		stringVal: config.Val,
@@ -168,7 +168,7 @@ func (value APLValueCoerced) GetString(sim *Simulation) string {
 }
 
 // Wraps a value so that it is converted into a Boolean.
-func (unit *Unit) coerceTo(value APLValue, newType proto.APLValueType) APLValue {
+func (rot *APLRotation) coerceTo(value APLValue, newType proto.APLValueType) APLValue {
 	if value == nil {
 		return nil
 	} else if value.Type() == newType {
@@ -198,14 +198,14 @@ var aplValueTypeOrder = []proto.APLValueType{
 }
 
 // Coerces 2 values into the same type, returning the two new values.
-func (unit *Unit) coerceToSameType(value1 APLValue, value2 APLValue) (APLValue, APLValue) {
+func (rot *APLRotation) coerceToSameType(value1 APLValue, value2 APLValue) (APLValue, APLValue) {
 	var coercionType proto.APLValueType
 	for _, listType := range aplValueTypeOrder {
 		if value1.Type() == listType || value2.Type() == listType {
 			coercionType = listType
 		}
 	}
-	return unit.coerceTo(value1, coercionType), unit.coerceTo(value2, coercionType)
+	return rot.coerceTo(value1, coercionType), rot.coerceTo(value2, coercionType)
 }
 
 type APLValueCompare struct {
@@ -215,10 +215,11 @@ type APLValueCompare struct {
 	rhs APLValue
 }
 
-func (unit *Unit) newValueCompare(config *proto.APLValueCompare) APLValue {
-	lhs, rhs := unit.coerceToSameType(unit.newAPLValue(config.Lhs), unit.newAPLValue(config.Rhs))
+func (rot *APLRotation) newValueCompare(config *proto.APLValueCompare) APLValue {
+	lhs, rhs := rot.coerceToSameType(rot.newAPLValue(config.Lhs), rot.newAPLValue(config.Rhs))
 	if lhs.Type() == proto.APLValueType_ValueTypeBool && !(config.Op == proto.APLValueCompare_OpEq || config.Op == proto.APLValueCompare_OpNe) {
-		validationError("Bool types only allow Equals and NotEquals comparisons!")
+		rot.validationWarning("Bool types only allow Equals and NotEquals comparisons!")
+		return nil
 	}
 	return &APLValueCompare{
 		op:  config.Op,
@@ -307,9 +308,9 @@ type APLValueAnd struct {
 	vals []APLValue
 }
 
-func (unit *Unit) newValueAnd(config *proto.APLValueAnd) APLValue {
+func (rot *APLRotation) newValueAnd(config *proto.APLValueAnd) APLValue {
 	vals := MapSlice(config.Vals, func(val *proto.APLValue) APLValue {
-		return unit.coerceTo(unit.newAPLValue(val), proto.APLValueType_ValueTypeBool)
+		return rot.coerceTo(rot.newAPLValue(val), proto.APLValueType_ValueTypeBool)
 	})
 	vals = FilterSlice(vals, func(val APLValue) bool { return val != nil })
 	if len(vals) == 0 {
@@ -336,9 +337,9 @@ type APLValueOr struct {
 	vals []APLValue
 }
 
-func (unit *Unit) newValueOr(config *proto.APLValueOr) APLValue {
+func (rot *APLRotation) newValueOr(config *proto.APLValueOr) APLValue {
 	vals := MapSlice(config.Vals, func(val *proto.APLValue) APLValue {
-		return unit.coerceTo(unit.newAPLValue(val), proto.APLValueType_ValueTypeBool)
+		return rot.coerceTo(rot.newAPLValue(val), proto.APLValueType_ValueTypeBool)
 	})
 	vals = FilterSlice(vals, func(val APLValue) bool { return val != nil })
 	if len(vals) == 0 {
@@ -365,8 +366,8 @@ type APLValueNot struct {
 	val APLValue
 }
 
-func (unit *Unit) newValueNot(config *proto.APLValueNot) APLValue {
-	val := unit.coerceTo(unit.newAPLValue(config.Val), proto.APLValueType_ValueTypeBool)
+func (rot *APLRotation) newValueNot(config *proto.APLValueNot) APLValue {
+	val := rot.coerceTo(rot.newAPLValue(config.Val), proto.APLValueType_ValueTypeBool)
 	if val == nil {
 		return nil
 	}

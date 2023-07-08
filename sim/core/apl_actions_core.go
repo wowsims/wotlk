@@ -8,10 +8,9 @@ type APLActionCastSpell struct {
 	spell *Spell
 }
 
-func (unit *Unit) newActionCastSpell(config *proto.APLActionCastSpell) APLActionImpl {
-	spell := unit.GetSpell(ProtoToActionID(config.SpellId))
+func (rot *APLRotation) newActionCastSpell(config *proto.APLActionCastSpell) APLActionImpl {
+	spell := rot.aplGetSpell(config.SpellId)
 	if spell == nil {
-		validationWarning("No spell found for id: %s", ProtoToActionID(config.SpellId).String())
 		return nil
 	}
 	return &APLActionCastSpell{
@@ -19,7 +18,7 @@ func (unit *Unit) newActionCastSpell(config *proto.APLActionCastSpell) APLAction
 	}
 }
 func (action *APLActionCastSpell) GetInnerActions() []*APLAction { return nil }
-func (action *APLActionCastSpell) Finalize()                     {}
+func (action *APLActionCastSpell) Finalize(*APLRotation)         {}
 func (action *APLActionCastSpell) Reset(*Simulation)             {}
 func (action *APLActionCastSpell) IsReady(sim *Simulation) bool {
 	return action.spell.CanCast(sim, action.spell.Unit.CurrentTarget)
@@ -36,11 +35,17 @@ type APLActionMultidot struct {
 	nextTarget *Unit
 }
 
-func (unit *Unit) newActionMultidot(config *proto.APLActionMultidot) APLActionImpl {
-	spell := unit.aplGetMultidotSpell(config.SpellId)
-	maxOverlap := unit.coerceTo(unit.newAPLValue(config.MaxOverlap), proto.APLValueType_ValueTypeDuration)
+func (rot *APLRotation) newActionMultidot(config *proto.APLActionMultidot) APLActionImpl {
+	unit := rot.unit
+
+	spell := rot.aplGetMultidotSpell(config.SpellId)
+	if spell == nil {
+		return nil
+	}
+
+	maxOverlap := rot.coerceTo(rot.newAPLValue(config.MaxOverlap), proto.APLValueType_ValueTypeDuration)
 	if maxOverlap == nil {
-		maxOverlap = unit.newValueConst(&proto.APLValueConst{Val: "0ms"})
+		maxOverlap = rot.newValueConst(&proto.APLValueConst{Val: "0ms"})
 	}
 
 	return &APLActionMultidot{
@@ -50,7 +55,7 @@ func (unit *Unit) newActionMultidot(config *proto.APLActionMultidot) APLActionIm
 	}
 }
 func (action *APLActionMultidot) GetInnerActions() []*APLAction { return nil }
-func (action *APLActionMultidot) Finalize()                     {}
+func (action *APLActionMultidot) Finalize(*APLRotation)         {}
 func (action *APLActionMultidot) Reset(*Simulation) {
 	action.nextTarget = nil
 }
@@ -77,13 +82,14 @@ type APLActionAutocastOtherCooldowns struct {
 	nextReadyMCD *MajorCooldown
 }
 
-func (unit *Unit) newActionAutocastOtherCooldowns(config *proto.APLActionAutocastOtherCooldowns) APLActionImpl {
+func (rot *APLRotation) newActionAutocastOtherCooldowns(config *proto.APLActionAutocastOtherCooldowns) APLActionImpl {
+	unit := rot.unit
 	return &APLActionAutocastOtherCooldowns{
 		character: unit.Env.Raid.GetPlayerFromUnit(unit).GetCharacter(),
 	}
 }
 func (action *APLActionAutocastOtherCooldowns) GetInnerActions() []*APLAction { return nil }
-func (action *APLActionAutocastOtherCooldowns) Finalize()                     {}
+func (action *APLActionAutocastOtherCooldowns) Finalize(*APLRotation)         {}
 func (action *APLActionAutocastOtherCooldowns) Reset(*Simulation) {
 	action.nextReadyMCD = nil
 }
@@ -101,14 +107,15 @@ type APLActionWait struct {
 	duration APLValue
 }
 
-func (unit *Unit) newActionWait(config *proto.APLActionWait) APLActionImpl {
+func (rot *APLRotation) newActionWait(config *proto.APLActionWait) APLActionImpl {
+	unit := rot.unit
 	return &APLActionWait{
 		unit:     unit,
-		duration: unit.coerceTo(unit.newAPLValue(config.Duration), proto.APLValueType_ValueTypeDuration),
+		duration: rot.coerceTo(rot.newAPLValue(config.Duration), proto.APLValueType_ValueTypeDuration),
 	}
 }
 func (action *APLActionWait) GetInnerActions() []*APLAction { return nil }
-func (action *APLActionWait) Finalize()                     {}
+func (action *APLActionWait) Finalize(*APLRotation)         {}
 func (action *APLActionWait) Reset(*Simulation)             {}
 func (action *APLActionWait) IsReady(sim *Simulation) bool {
 	return action.duration != nil

@@ -9,7 +9,8 @@ type APLValueCurrentMana struct {
 	unit *Unit
 }
 
-func (unit *Unit) newValueCurrentMana(config *proto.APLValueCurrentMana) APLValue {
+func (rot *APLRotation) newValueCurrentMana(config *proto.APLValueCurrentMana) APLValue {
+	unit := rot.unit
 	if !unit.HasManaBar() {
 		return nil
 	}
@@ -29,7 +30,8 @@ type APLValueCurrentManaPercent struct {
 	unit *Unit
 }
 
-func (unit *Unit) newValueCurrentManaPercent(config *proto.APLValueCurrentManaPercent) APLValue {
+func (rot *APLRotation) newValueCurrentManaPercent(config *proto.APLValueCurrentManaPercent) APLValue {
+	unit := rot.unit
 	if !unit.HasManaBar() {
 		return nil
 	}
@@ -49,7 +51,8 @@ type APLValueCurrentRage struct {
 	unit *Unit
 }
 
-func (unit *Unit) newValueCurrentRage(config *proto.APLValueCurrentRage) APLValue {
+func (rot *APLRotation) newValueCurrentRage(config *proto.APLValueCurrentRage) APLValue {
+	unit := rot.unit
 	if !unit.HasRageBar() {
 		return nil
 	}
@@ -69,7 +72,8 @@ type APLValueCurrentEnergy struct {
 	unit *Unit
 }
 
-func (unit *Unit) newValueCurrentEnergy(config *proto.APLValueCurrentEnergy) APLValue {
+func (rot *APLRotation) newValueCurrentEnergy(config *proto.APLValueCurrentEnergy) APLValue {
+	unit := rot.unit
 	if !unit.HasEnergyBar() {
 		return nil
 	}
@@ -89,7 +93,8 @@ type APLValueCurrentComboPoints struct {
 	unit *Unit
 }
 
-func (unit *Unit) newValueCurrentComboPoints(config *proto.APLValueCurrentComboPoints) APLValue {
+func (rot *APLRotation) newValueCurrentComboPoints(config *proto.APLValueCurrentComboPoints) APLValue {
+	unit := rot.unit
 	if !unit.HasEnergyBar() {
 		return nil
 	}
