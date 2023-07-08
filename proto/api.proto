@@ -292,6 +292,7 @@ message RaidSimResult {
 // RPC ComputeStats
 message ComputeStatsRequest {
 	Raid raid = 1;
+	Encounter encounter = 2;
 }
 message AuraStats {
 	ActionID id = 1;

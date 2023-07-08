@@ -21,13 +21,13 @@ body.addEventListener('mouseover', event => {
 body.addEventListener('mouseleave', event => {
   let e = event as MouseEvent;
   let target = event.target as HTMLElement;
-  let toggle = target.closest('[data-bs-toggle=dropdown]');
+  let toggle = target.closest('[data-bs-toggle=dropdown]') as HTMLElement | null;
   // Hide dropdowns when hovering off of the toggle, so long as the new target is not part of the dropdown as well
   if (toggle) {
     let dropdown = Dropdown.getOrCreateInstance(toggle);
     let dropdownMenu = toggle.nextElementSibling as HTMLElement;
     let relatedTarget = e.relatedTarget as HTMLElement;
-    if (relatedTarget == null || !isDescendant(relatedTarget, dropdownMenu))
+    if (relatedTarget == null || (!isDescendant(relatedTarget, dropdownMenu) && !isDescendant(relatedTarget, toggle)))
       dropdown.hide();
   }
 

@@ -12,7 +12,11 @@ import (
  * Returns character stats taking into account gear / buffs / consumes / etc
  */
 func ComputeStats(csr *proto.ComputeStatsRequest) *proto.ComputeStatsResult {
-	_, raidStats := NewEnvironment(csr.Raid, &proto.Encounter{})
+	encounter := csr.Encounter
+	if encounter == nil {
+		encounter = &proto.Encounter{}
+	}
+	_, raidStats := NewEnvironment(csr.Raid, encounter)
 
 	return &proto.ComputeStatsResult{
 		RaidStats: raidStats,
