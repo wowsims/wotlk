@@ -102,6 +102,11 @@ export class APLActionIDPicker extends DropdownPicker<Player<any>, ActionId> {
 				const textElem = document.createTextNode(actionId.name);
 				button.appendChild(textElem);
 			},
+			createMissingValue: value => ((value instanceof ActionId) ? value : ActionId.fromProto(value as unknown as ActionID)).fill().then(filledId => {
+				return {
+					value: filledId,
+				};
+			}),
 			values: [],
 		});
 

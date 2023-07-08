@@ -6,22 +6,32 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-func (unit *Unit) aplGetDot(spellId *proto.ActionID) *Dot {
-	spell := unit.GetSpell(ProtoToActionID(spellId))
+func (rot *APLRotation) aplGetSpell(spellId *proto.ActionID) *Spell {
+	spell := rot.unit.GetSpell(ProtoToActionID(spellId))
+	if spell == nil {
+		rot.validationWarning("%s does not know spell %s", rot.unit.Label, ProtoToActionID(spellId))
+	}
+	return spell
+}
+
+func (rot *APLRotation) aplGetDot(spellId *proto.ActionID) *Dot {
+	spell := rot.aplGetSpell(spellId)
+
 	if spell == nil {
 		return nil
-	}
-
-	if spell.AOEDot() != nil {
+	} else if spell.AOEDot() != nil {
 		return spell.AOEDot()
 	} else {
 		return spell.CurDot()
 	}
 }
 
-func (unit *Unit) aplGetMultidotSpell(spellId *proto.ActionID) *Spell {
-	spell := unit.GetSpell(ProtoToActionID(spellId))
-	if spell == nil || spell.CurDot() == nil {
+func (rot *APLRotation) aplGetMultidotSpell(spellId *proto.ActionID) *Spell {
+	spell := rot.aplGetSpell(spellId)
+	if spell == nil {
+		return nil
+	} else if spell.CurDot() == nil {
+		rot.validationWarning("Spell %s does not have an associated DoT", ProtoToActionID(spellId))
 		return nil
 	}
 	return spell
@@ -32,8 +42,8 @@ type APLValueDotIsActive struct {
 	dot *Dot
 }
 
-func (unit *Unit) newValueDotIsActive(config *proto.APLValueDotIsActive) APLValue {
-	dot := unit.aplGetDot(config.SpellId)
+func (rot *APLRotation) newValueDotIsActive(config *proto.APLValueDotIsActive) APLValue {
+	dot := rot.aplGetDot(config.SpellId)
 	if dot == nil {
 		return nil
 	}
@@ -53,8 +63,8 @@ type APLValueDotRemainingTime struct {
 	dot *Dot
 }
 
-func (unit *Unit) newValueDotRemainingTime(config *proto.APLValueDotRemainingTime) APLValue {
-	dot := unit.aplGetDot(config.SpellId)
+func (rot *APLRotation) newValueDotRemainingTime(config *proto.APLValueDotRemainingTime) APLValue {
+	dot := rot.aplGetDot(config.SpellId)
 	if dot == nil {
 		return nil
 	}

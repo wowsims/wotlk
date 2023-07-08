@@ -224,44 +224,6 @@ export const actionTypeFactories: Record<NonNullable<APLActionType>, ActionTypeC
 			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells'),
 		],
 	}),
-	['sequence']: inputBuilder({
-		label: 'Sequence',
-		submenu: ['Sequences'],
-		shortDescription: 'A list of sub-actions to execute in the specified order.',
-		fullDescription: `
-			<p>Once one of the sub-actions has been performed, the next sub-action will not necessarily be immediately executed next. The system will restart at the beginning of the whole actions list (not the sequence). If the sequence is executed again, it will perform the next sub-action.</p>
-			<p>When all actions have been performed, the sequence does NOT automatically reset; instead, it will be skipped from now on. Use the <b>Reset Sequence</b> action to reset it, if desired.</p>
-		`,
-		newValue: APLActionSequence.create,
-		fields: [
-			AplHelpers.stringFieldConfig('name'),
-			actionListFieldConfig('actions'),
-		],
-	}),
-	['resetSequence']: inputBuilder({
-		label: 'Reset Sequence',
-		submenu: ['Sequences'],
-		shortDescription: 'Restarts a sequence, so that the next time it executes it will perform its first sub-action.',
-		fullDescription: `
-			<p>Use the <b>name</b> field to refer to the sequence to be reset. The desired sequence must have the same (non-empty) value for its <b>name</b>.</p>
-		`,
-		newValue: APLActionResetSequence.create,
-		fields: [
-			AplHelpers.stringFieldConfig('name'),
-		],
-	}),
-	['strictSequence']: inputBuilder({
-		label: 'Strict Sequence',
-		submenu: ['Sequences'],
-		shortDescription: 'Like a regular <b>Sequence</b>, except all sub-actions are executed immediately after each other and the sequence resets automatically upon completion.',
-		fullDescription: `
-			<p>Strict Sequences do not begin unless ALL sub-actions are ready.</p>
-		`,
-		newValue: APLActionStrictSequence.create,
-		fields: [
-			actionListFieldConfig('actions'),
-		],
-	}),
 	['multidot']: inputBuilder({
 		label: 'Multi Dot',
 		shortDescription: 'Keeps a DoT active on multiple targets by casting the specified spell.',
@@ -286,6 +248,44 @@ export const actionTypeFactories: Record<NonNullable<APLActionType>, ActionTypeC
 				label: 'Overlap',
 				labelTooltip: 'Maximum amount of time before a DoT expires when it may be refreshed.',
 			}),
+		],
+	}),
+	['sequence']: inputBuilder({
+		label: 'Sequence',
+		submenu: ['Sequences'],
+		shortDescription: 'A list of sub-actions to execute in the specified order.',
+		fullDescription: `
+			<p>Once one of the sub-actions has been performed, the next sub-action will not necessarily be immediately executed next. The system will restart at the beginning of the whole actions list (not the sequence). If the sequence is executed again, it will perform the next sub-action.</p>
+			<p>When all actions have been performed, the sequence does NOT automatically reset; instead, it will be skipped from now on. Use the <b>Reset Sequence</b> action to reset it, if desired.</p>
+		`,
+		newValue: APLActionSequence.create,
+		fields: [
+			AplHelpers.stringFieldConfig('name'),
+			actionListFieldConfig('actions'),
+		],
+	}),
+	['resetSequence']: inputBuilder({
+		label: 'Reset Sequence',
+		submenu: ['Sequences'],
+		shortDescription: 'Restarts a sequence, so that the next time it executes it will perform its first sub-action.',
+		fullDescription: `
+			<p>Use the <b>name</b> field to refer to the sequence to be reset. The desired sequence must have the same (non-empty) value for its <b>name</b>.</p>
+		`,
+		newValue: APLActionResetSequence.create,
+		fields: [
+			AplHelpers.stringFieldConfig('sequenceName'),
+		],
+	}),
+	['strictSequence']: inputBuilder({
+		label: 'Strict Sequence',
+		submenu: ['Sequences'],
+		shortDescription: 'Like a regular <b>Sequence</b>, except all sub-actions are executed immediately after each other and the sequence resets automatically upon completion.',
+		fullDescription: `
+			<p>Strict Sequences do not begin unless ALL sub-actions are ready.</p>
+		`,
+		newValue: APLActionStrictSequence.create,
+		fields: [
+			actionListFieldConfig('actions'),
 		],
 	}),
 	['autocastOtherCooldowns']: inputBuilder({

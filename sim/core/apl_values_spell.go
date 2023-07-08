@@ -15,7 +15,8 @@ type APLValueSpellCanCast struct {
 	spell *Spell
 }
 
-func (unit *Unit) newValueSpellCanCast(config *proto.APLValueSpellCanCast) APLValue {
+func (rot *APLRotation) newValueSpellCanCast(config *proto.APLValueSpellCanCast) APLValue {
+	unit := rot.unit
 	spell := unit.aplGetSpell(config.SpellId)
 	if spell == nil {
 		return nil
@@ -36,7 +37,8 @@ type APLValueSpellIsReady struct {
 	spell *Spell
 }
 
-func (unit *Unit) newValueSpellIsReady(config *proto.APLValueSpellIsReady) APLValue {
+func (rot *APLRotation) newValueSpellIsReady(config *proto.APLValueSpellIsReady) APLValue {
+	unit := rot.unit
 	spell := unit.aplGetSpell(config.SpellId)
 	if spell == nil {
 		return nil
@@ -57,7 +59,8 @@ type APLValueSpellTimeToReady struct {
 	spell *Spell
 }
 
-func (unit *Unit) newValueSpellTimeToReady(config *proto.APLValueSpellTimeToReady) APLValue {
+func (rot *APLRotation) newValueSpellTimeToReady(config *proto.APLValueSpellTimeToReady) APLValue {
+	unit := rot.unit
 	spell := unit.aplGetSpell(config.SpellId)
 	if spell == nil {
 		return nil

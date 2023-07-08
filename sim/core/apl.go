@@ -14,6 +14,17 @@ type APLRotation struct {
 
 	// Current strict sequence
 	strictSequence *APLActionStrictSequence
+
+	// Validation warnings that occur during proto parsing.
+	// We return these back to the user for display in the UI.
+	curWarnings          []string
+	prepullWarnings      [][]string
+	priorityListWarnings [][]string
+}
+
+func (rot *APLRotation) validationWarning(message string, vals ...interface{}) {
+	warning := fmt.Sprintf(message, vals...)
+	rot.curWarnings = append(rot.curWarnings, warning)
 }
 
 func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
@@ -21,22 +32,28 @@ func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
 		return nil
 	}
 
-	priorityList := MapSlice(config.PriorityList, func(aplItem *proto.APLListItem) *APLAction {
-		if aplItem.Hide {
-			return nil
-		} else {
-			return unit.newAPLAction(aplItem.Action)
-		}
-	})
-	priorityList = FilterSlice(priorityList, func(action *APLAction) bool { return action != nil })
-
 	rotation := &APLRotation{
-		unit:         unit,
-		priorityList: priorityList,
+		unit: unit,
 	}
 
-	for _, action := range rotation.allAPLActions() {
-		action.impl.Finalize()
+	var configIdxs []int
+	for i, aplItem := range config.PriorityList {
+		if !aplItem.Hide {
+			action := rotation.newAPLAction(aplItem.Action)
+			if action != nil {
+				rotation.priorityList = append(rotation.priorityList, action)
+				configIdxs = append(configIdxs, i)
+			}
+		}
+
+		rotation.priorityListWarnings = append(rotation.priorityListWarnings, rotation.curWarnings)
+		rotation.curWarnings = nil
+	}
+
+	for i, action := range rotation.allAPLActions() {
+		action.impl.Finalize(rotation)
+		rotation.priorityListWarnings[configIdxs[i]] = append(rotation.priorityListWarnings[configIdxs[i]], rotation.curWarnings...)
+		rotation.curWarnings = nil
 
 		// Remove MCDs that are referenced by APL actions.
 		character := unit.Env.Raid.GetPlayerFromUnit(unit).GetCharacter()
@@ -47,13 +64,16 @@ func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
 
 	return rotation
 }
+func (rot *APLRotation) getStats() *proto.APLStats {
+	return &proto.APLStats{
+		PrepullActions: MapSlice(rot.prepullWarnings, func(warnings []string) *proto.APLActionStats { return &proto.APLActionStats{Warnings: warnings} }),
+		PriorityList:   MapSlice(rot.priorityListWarnings, func(warnings []string) *proto.APLActionStats { return &proto.APLActionStats{Warnings: warnings} }),
+	}
+}
 
 // Returns all action objects as an unstructured list. Used for easily finding specific actions.
 func (rot *APLRotation) allAPLActions() []*APLAction {
 	return Flatten(MapSlice(rot.priorityList, func(action *APLAction) []*APLAction { return action.GetAllActions() }))
-}
-func (unit *Unit) allAPLActions() []*APLAction {
-	return unit.Rotation.allAPLActions()
 }
 
 func (rot *APLRotation) reset(sim *Simulation) {
@@ -89,15 +109,6 @@ func (apl *APLRotation) DoNextAction(sim *Simulation) {
 	} else {
 		apl.unit.DoNothing()
 	}
-}
-
-func validationError(message string, vals ...interface{}) {
-	panic("Validation Error: " + fmt.Sprintf(message, vals...))
-}
-
-// For validation issues that we can manage internally. Will probably make this a test-only panic later.
-func validationWarning(message string, vals ...interface{}) {
-	panic("Validation Warning: " + fmt.Sprintf(message, vals...))
 }
 
 func APLRotationFromJsonString(jsonString string) *proto.APLRotation {

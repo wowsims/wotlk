@@ -39,7 +39,7 @@ func (impl defaultAPLValueImpl) GetString(sim *Simulation) string {
 	panic("Unimplemented GetString")
 }
 
-func (unit *Unit) newAPLValue(config *proto.APLValue) APLValue {
+func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 	if config == nil {
 		return nil
 	}
@@ -47,68 +47,67 @@ func (unit *Unit) newAPLValue(config *proto.APLValue) APLValue {
 	switch config.Value.(type) {
 	// Operators
 	case *proto.APLValue_Const:
-		return unit.newValueConst(config.GetConst())
+		return rot.newValueConst(config.GetConst())
 	case *proto.APLValue_And:
-		return unit.newValueAnd(config.GetAnd())
+		return rot.newValueAnd(config.GetAnd())
 	case *proto.APLValue_Or:
-		return unit.newValueOr(config.GetOr())
+		return rot.newValueOr(config.GetOr())
 	case *proto.APLValue_Not:
-		return unit.newValueNot(config.GetNot())
+		return rot.newValueNot(config.GetNot())
 	case *proto.APLValue_Cmp:
-		return unit.newValueCompare(config.GetCmp())
+		return rot.newValueCompare(config.GetCmp())
 
 	// Encounter
 	case *proto.APLValue_CurrentTime:
-		return unit.newValueCurrentTime(config.GetCurrentTime())
+		return rot.newValueCurrentTime(config.GetCurrentTime())
 	case *proto.APLValue_CurrentTimePercent:
-		return unit.newValueCurrentTimePercent(config.GetCurrentTimePercent())
+		return rot.newValueCurrentTimePercent(config.GetCurrentTimePercent())
 	case *proto.APLValue_RemainingTime:
-		return unit.newValueRemainingTime(config.GetRemainingTime())
+		return rot.newValueRemainingTime(config.GetRemainingTime())
 	case *proto.APLValue_RemainingTimePercent:
-		return unit.newValueRemainingTimePercent(config.GetRemainingTimePercent())
+		return rot.newValueRemainingTimePercent(config.GetRemainingTimePercent())
 
 	// Resources
 	case *proto.APLValue_CurrentMana:
-		return unit.newValueCurrentMana(config.GetCurrentMana())
+		return rot.newValueCurrentMana(config.GetCurrentMana())
 	case *proto.APLValue_CurrentManaPercent:
-		return unit.newValueCurrentManaPercent(config.GetCurrentManaPercent())
+		return rot.newValueCurrentManaPercent(config.GetCurrentManaPercent())
 	case *proto.APLValue_CurrentRage:
-		return unit.newValueCurrentRage(config.GetCurrentRage())
+		return rot.newValueCurrentRage(config.GetCurrentRage())
 	case *proto.APLValue_CurrentEnergy:
-		return unit.newValueCurrentEnergy(config.GetCurrentEnergy())
+		return rot.newValueCurrentEnergy(config.GetCurrentEnergy())
 	case *proto.APLValue_CurrentComboPoints:
-		return unit.newValueCurrentComboPoints(config.GetCurrentComboPoints())
+		return rot.newValueCurrentComboPoints(config.GetCurrentComboPoints())
 
 	// GCD
 	case *proto.APLValue_GcdIsReady:
-		return unit.newValueGCDIsReady(config.GetGcdIsReady())
+		return rot.newValueGCDIsReady(config.GetGcdIsReady())
 	case *proto.APLValue_GcdTimeToReady:
-		return unit.newValueGCDTimeToReady(config.GetGcdTimeToReady())
-	
+		return rot.newValueGCDTimeToReady(config.GetGcdTimeToReady())
+
 	// Spells
 	case *proto.APLValue_SpellCanCast:
-		return unit.newValueSpellCanCast(config.GetSpellCanCast())
+		return rot.newValueSpellCanCast(config.GetSpellCanCast())
 	case *proto.APLValue_SpellIsReady:
-		return unit.newValueSpellIsReady(config.GetSpellIsReady())
+		return rot.newValueSpellIsReady(config.GetSpellIsReady())
 	case *proto.APLValue_SpellTimeToReady:
-		return unit.newValueSpellTimeToReady(config.GetSpellTimeToReady())
+		return rot.newValueSpellTimeToReady(config.GetSpellTimeToReady())
 
 	// Auras
 	case *proto.APLValue_AuraIsActive:
-		return unit.newValueAuraIsActive(config.GetAuraIsActive())
+		return rot.newValueAuraIsActive(config.GetAuraIsActive())
 	case *proto.APLValue_AuraRemainingTime:
-		return unit.newValueAuraRemainingTime(config.GetAuraRemainingTime())
+		return rot.newValueAuraRemainingTime(config.GetAuraRemainingTime())
 	case *proto.APLValue_AuraNumStacks:
-		return unit.newValueAuraNumStacks(config.GetAuraNumStacks())
+		return rot.newValueAuraNumStacks(config.GetAuraNumStacks())
 
 	// Dots
 	case *proto.APLValue_DotIsActive:
-		return unit.newValueDotIsActive(config.GetDotIsActive())
+		return rot.newValueDotIsActive(config.GetDotIsActive())
 	case *proto.APLValue_DotRemainingTime:
-		return unit.newValueDotRemainingTime(config.GetDotRemainingTime())
+		return rot.newValueDotRemainingTime(config.GetDotRemainingTime())
 
 	default:
-		validationError("Unimplemented value type")
 		return nil
 	}
 }

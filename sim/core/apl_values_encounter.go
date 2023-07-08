@@ -10,7 +10,7 @@ type APLValueCurrentTime struct {
 	defaultAPLValueImpl
 }
 
-func (unit *Unit) newValueCurrentTime(config *proto.APLValueCurrentTime) APLValue {
+func (rot *APLRotation) newValueCurrentTime(config *proto.APLValueCurrentTime) APLValue {
 	return &APLValueCurrentTime{}
 }
 func (value *APLValueCurrentTime) Type() proto.APLValueType {
@@ -24,7 +24,7 @@ type APLValueCurrentTimePercent struct {
 	defaultAPLValueImpl
 }
 
-func (unit *Unit) newValueCurrentTimePercent(config *proto.APLValueCurrentTimePercent) APLValue {
+func (rot *APLRotation) newValueCurrentTimePercent(config *proto.APLValueCurrentTimePercent) APLValue {
 	return &APLValueCurrentTimePercent{}
 }
 func (value *APLValueCurrentTimePercent) Type() proto.APLValueType {
@@ -38,7 +38,7 @@ type APLValueRemainingTime struct {
 	defaultAPLValueImpl
 }
 
-func (unit *Unit) newValueRemainingTime(config *proto.APLValueRemainingTime) APLValue {
+func (rot *APLRotation) newValueRemainingTime(config *proto.APLValueRemainingTime) APLValue {
 	return &APLValueRemainingTime{}
 }
 func (value *APLValueRemainingTime) Type() proto.APLValueType {
@@ -52,7 +52,7 @@ type APLValueRemainingTimePercent struct {
 	defaultAPLValueImpl
 }
 
-func (unit *Unit) newValueRemainingTimePercent(config *proto.APLValueRemainingTimePercent) APLValue {
+func (rot *APLRotation) newValueRemainingTimePercent(config *proto.APLValueRemainingTimePercent) APLValue {
 	return &APLValueRemainingTimePercent{}
 }
 func (value *APLValueRemainingTimePercent) Type() proto.APLValueType {

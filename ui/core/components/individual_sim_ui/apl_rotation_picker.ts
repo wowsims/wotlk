@@ -11,6 +11,7 @@ import {
 
 import { Component } from '../component.js';
 import { Input, InputConfig } from '../input.js';
+import { ActionId } from '../../proto_utils/action_id.js';
 import { SimUI } from '../../sim_ui.js';
 
 import { APLActionPicker } from './apl_actions.js';
@@ -34,7 +35,7 @@ export class APLRotationPicker extends Component {
 				action: {},
 			}),
 			copyItem: (oldItem: APLListItem) => APLListItem.clone(oldItem),
-			newItemPicker: (parent: HTMLElement, listPicker: ListPicker<Player<any>, APLListItem>, index: number, config: ListItemPickerConfig<Player<any>, APLListItem>) => new APLListItemPicker(parent, modPlayer, config),
+			newItemPicker: (parent: HTMLElement, listPicker: ListPicker<Player<any>, APLListItem>, index: number, config: ListItemPickerConfig<Player<any>, APLListItem>) => new APLListItemPicker(parent, modPlayer, config, index),
 			inlineMenuBar: true,
 		});
 
@@ -44,9 +45,13 @@ export class APLRotationPicker extends Component {
 
 class APLListItemPicker extends Input<Player<any>, APLListItem> {
 	private readonly player: Player<any>;
+	private readonly index: number;
 
 	private readonly hidePicker: Input<Player<any>, boolean>;
 	private readonly actionPicker: APLActionPicker;
+
+	private readonly warningsElem: HTMLElement;
+	private readonly warningsTooltip: Tooltip;
 
     private getItem(): APLListItem {
         return this.getSourceValue() || APLListItem.create({
@@ -54,14 +59,25 @@ class APLListItemPicker extends Input<Player<any>, APLListItem> {
 		});
     }
 
-	constructor(parent: HTMLElement, player: Player<any>, config: ListItemPickerConfig<Player<any>, APLListItem>) {
+	constructor(parent: HTMLElement, player: Player<any>, config: ListItemPickerConfig<Player<any>, APLListItem>, index: number) {
 		super(parent, 'apl-list-item-picker-root', player, {
 			...config,
 			enableWhen: () => !this.getItem().hide,
 		});
 		this.player = player;
+		this.index = index;
 
-        this.hidePicker = new HidePicker(ListPicker.getItemHeaderElem(this), player, {
+		const itemHeaderElem = ListPicker.getItemHeaderElem(this);
+
+		this.warningsElem = ListPicker.makeActionElem('apl-warnings', 'Warnings', 'fa-exclamation-triangle');
+		this.warningsElem.classList.add('warnings', 'link-warning');
+		this.warningsElem.setAttribute('data-bs-html', 'true');
+		this.warningsTooltip = Tooltip.getOrCreateInstance(this.warningsElem, {
+			customClass: 'dropdown-tooltip',
+		});
+		itemHeaderElem.appendChild(this.warningsElem);
+
+        this.hidePicker = new HidePicker(itemHeaderElem, player, {
             changedEvent: () => this.player.rotationChangeEmitter,
             getValue: () => this.getItem().hide,
             setValue: (eventID: EventID, player: Player<any>, newValue: boolean) => {
@@ -79,6 +95,26 @@ class APLListItemPicker extends Input<Player<any>, APLListItem> {
             },
         });
 		this.init();
+
+		this.updateWarnings();
+		player.currentStatsEmitter.on(() => this.updateWarnings());
+	}
+
+	private async updateWarnings() {
+		this.warningsTooltip.setContent({'.tooltip-inner': ''});
+		const warnings = this.player.getCurrentStats().rotationStats?.priorityList[this.index]?.warnings || [];
+		if (warnings.length == 0) {
+			this.warningsElem.style.visibility = 'hidden';
+		} else {
+			this.warningsElem.style.visibility = 'visible';
+			const formattedWarnings = await Promise.all(warnings.map(w => ActionId.replaceAllInString(w)));
+			this.warningsTooltip.setContent({'.tooltip-inner': `
+				<p>This action has warnings, and might not behave as expected.</p>
+				<ul>
+					${formattedWarnings.map(w => `<li>${w}</li>`).join('')}
+				</ul>
+			`});
+		}
 	}
 
 	getInputElem(): HTMLElement | null {

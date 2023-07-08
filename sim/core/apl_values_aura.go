@@ -6,8 +6,12 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-func (unit *Unit) aplGetAura(auraId *proto.ActionID) *Aura {
-	return unit.GetAuraByID(ProtoToActionID(auraId))
+func (rot *APLRotation) aplGetAura(auraId *proto.ActionID) *Aura {
+	aura := rot.unit.GetAuraByID(ProtoToActionID(auraId))
+	if aura == nil {
+		rot.validationWarning("No aura found for: %s", ProtoToActionID(auraId))
+	}
+	return aura
 }
 
 type APLValueAuraIsActive struct {
@@ -15,8 +19,8 @@ type APLValueAuraIsActive struct {
 	aura *Aura
 }
 
-func (unit *Unit) newValueAuraIsActive(config *proto.APLValueAuraIsActive) APLValue {
-	aura := unit.aplGetAura(config.AuraId)
+func (rot *APLRotation) newValueAuraIsActive(config *proto.APLValueAuraIsActive) APLValue {
+	aura := rot.aplGetAura(config.AuraId)
 	if aura == nil {
 		return nil
 	}
@@ -36,8 +40,8 @@ type APLValueAuraRemainingTime struct {
 	aura *Aura
 }
 
-func (unit *Unit) newValueAuraRemainingTime(config *proto.APLValueAuraRemainingTime) APLValue {
-	aura := unit.aplGetAura(config.AuraId)
+func (rot *APLRotation) newValueAuraRemainingTime(config *proto.APLValueAuraRemainingTime) APLValue {
+	aura := rot.aplGetAura(config.AuraId)
 	if aura == nil {
 		return nil
 	}
@@ -57,12 +61,13 @@ type APLValueAuraNumStacks struct {
 	aura *Aura
 }
 
-func (unit *Unit) newValueAuraNumStacks(config *proto.APLValueAuraNumStacks) APLValue {
-	aura := unit.aplGetAura(config.AuraId)
+func (rot *APLRotation) newValueAuraNumStacks(config *proto.APLValueAuraNumStacks) APLValue {
+	aura := rot.aplGetAura(config.AuraId)
 	if aura == nil {
 		return nil
 	}
 	if aura.MaxStacks == 0 {
+		rot.validationWarning("%s is not a stackable aura", ProtoToActionID(config.AuraId))
 		return nil
 	}
 	return &APLValueAuraNumStacks{

@@ -11,14 +11,14 @@ type APLActionSequence struct {
 	curIdx  int
 }
 
-func (unit *Unit) newActionSequence(config *proto.APLActionSequence) APLActionImpl {
+func (rot *APLRotation) newActionSequence(config *proto.APLActionSequence) APLActionImpl {
 	actions := MapSlice(config.Actions, func(action *proto.APLAction) *APLAction {
-		return unit.newAPLAction(action)
+		return rot.newAPLAction(action)
 	})
 	actions = FilterSlice(actions, func(action *APLAction) bool { return action != nil })
 
 	return &APLActionSequence{
-		unit:    unit,
+		unit:    rot.unit,
 		name:    config.Name,
 		actions: actions,
 	}
@@ -26,7 +26,7 @@ func (unit *Unit) newActionSequence(config *proto.APLActionSequence) APLActionIm
 func (action *APLActionSequence) GetInnerActions() []*APLAction {
 	return Flatten(MapSlice(action.actions, func(action *APLAction) []*APLAction { return action.GetAllActions() }))
 }
-func (action *APLActionSequence) Finalize() {}
+func (action *APLActionSequence) Finalize(*APLRotation) {}
 func (action *APLActionSequence) Reset(*Simulation) {
 	action.curIdx = 0
 }
@@ -44,29 +44,29 @@ type APLActionResetSequence struct {
 	sequence *APLActionSequence
 }
 
-func (unit *Unit) newActionResetSequence(config *proto.APLActionResetSequence) APLActionImpl {
+func (rot *APLRotation) newActionResetSequence(config *proto.APLActionResetSequence) APLActionImpl {
 	if config.SequenceName == "" {
-		validationError("Reset Sequence must provide a sequence name: %s", config.SequenceName)
+		rot.validationWarning("Reset Sequence must provide a sequence name")
 		return nil
 	}
 	return &APLActionResetSequence{
-		unit: unit,
+		unit: rot.unit,
 		name: config.SequenceName,
 	}
 }
 func (action *APLActionResetSequence) GetInnerActions() []*APLAction { return nil }
-func (action *APLActionResetSequence) Finalize() {
-	for _, otherAction := range action.unit.allAPLActions() {
+func (action *APLActionResetSequence) Finalize(rot *APLRotation) {
+	for _, otherAction := range rot.allAPLActions() {
 		if sequence, ok := otherAction.impl.(*APLActionSequence); ok && sequence.name == action.name {
 			action.sequence = sequence
 			return
 		}
 	}
-	validationWarning("No sequence with name: %s", action.name)
+	rot.validationWarning("No sequence with name: '%s'", action.name)
 }
 func (action *APLActionResetSequence) Reset(*Simulation) {}
 func (action *APLActionResetSequence) IsReady(sim *Simulation) bool {
-	return true
+	return action.sequence != nil
 }
 func (action *APLActionResetSequence) Execute(sim *Simulation) {
 	action.sequence.curIdx = 0
@@ -78,21 +78,21 @@ type APLActionStrictSequence struct {
 	curIdx  int
 }
 
-func (unit *Unit) newActionStrictSequence(config *proto.APLActionStrictSequence) APLActionImpl {
+func (rot *APLRotation) newActionStrictSequence(config *proto.APLActionStrictSequence) APLActionImpl {
 	actions := MapSlice(config.Actions, func(action *proto.APLAction) *APLAction {
-		return unit.newAPLAction(action)
+		return rot.newAPLAction(action)
 	})
 	actions = FilterSlice(actions, func(action *APLAction) bool { return action != nil })
 
 	return &APLActionStrictSequence{
-		unit:    unit,
+		unit:    rot.unit,
 		actions: actions,
 	}
 }
 func (action *APLActionStrictSequence) GetInnerActions() []*APLAction {
 	return Flatten(MapSlice(action.actions, func(action *APLAction) []*APLAction { return action.GetAllActions() }))
 }
-func (action *APLActionStrictSequence) Finalize() {}
+func (action *APLActionStrictSequence) Finalize(*APLRotation) {}
 func (action *APLActionStrictSequence) Reset(*Simulation) {
 	action.curIdx = 0
 }

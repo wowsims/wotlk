@@ -304,6 +304,13 @@ message SpellStats {
 	bool is_major_cooldown = 3; // Whether this spell is a major cooldown.
 	bool has_dot = 4; // Whether this spell applies a DoT effect.
 }
+message APLActionStats {
+	repeated string warnings = 1;
+}
+message APLStats {
+	repeated APLActionStats prepull_actions = 1;
+	repeated APLActionStats priority_list = 2;
+}
 message PlayerStats {
 	// Stats
 	UnitStats base_stats = 6;
@@ -318,6 +325,8 @@ message PlayerStats {
 
 	repeated SpellStats spells = 10;
 	repeated AuraStats auras = 11;
+
+	APLStats rotation_stats = 12;
 }
 message PartyStats {
 	repeated PlayerStats players = 1;
