@@ -117,7 +117,7 @@ export class Sim {
 			this.encounter.changeEmitter,
 		]);
 
-		this.raid.changeEmitter.on(eventID => this.updateCharacterStats(eventID));
+		TypedEvent.onAny([this.raid.changeEmitter, this.encounter.changeEmitter]).on(eventID => this.updateCharacterStats(eventID));
 	}
 
 	waitForInit(): Promise<void> {
@@ -277,7 +277,10 @@ export class Sim {
 		// request is in-flight.
 		const players = this.raid.getPlayers();
 
-		const req = ComputeStatsRequest.create({ raid: this.getModifiedRaidProto() });
+		const req = ComputeStatsRequest.create({
+			raid: this.getModifiedRaidProto(),
+			encounter: this.encounter.toProto(),
+		});
 		const result = await this.workerPool.computeStats(req);
 
 		if (result.errorResult != "") {

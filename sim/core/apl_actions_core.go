@@ -48,9 +48,16 @@ func (rot *APLRotation) newActionMultidot(config *proto.APLActionMultidot) APLAc
 		maxOverlap = rot.newValueConst(&proto.APLValueConst{Val: "0ms"})
 	}
 
+	maxDots := config.MaxDots
+	numTargets := unit.Env.GetNumTargets()
+	if numTargets < maxDots {
+		rot.validationWarning("Encounter only has %d targets. Using that for Max Dots instead of %d", numTargets, maxDots)
+		maxDots = numTargets
+	}
+
 	return &APLActionMultidot{
 		spell:      spell,
-		maxDots:    MinInt32(config.MaxDots, unit.Env.GetNumTargets()),
+		maxDots:    maxDots,
 		maxOverlap: maxOverlap,
 	}
 }

@@ -121,11 +121,23 @@ export const ROTATION_PRESET_DEFAULT = {
 					"autocastOtherCooldowns": {}
 				}},
 				{"action": {
+					"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":34074}}}}},{"cmp":{"op":"OpLt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"10%"}}}}]}},
+					"castSpell":{"spellId":{"spellId":34074}}
+				}},
+				{"action":{
+					"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":61847}}}}},{"cmp":{"op":"OpGt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"30%"}}}}]}},
+					"castSpell":{"spellId":{"spellId":61847}}
+				}},
+				{"action": {
 					"condition": {"not": {"val": {"dotIsActive": {"spellId": { "spellId": 49001 }}}}},
 					"castSpell": {"spellId": { "spellId": 49001 }}
 				}},
 				{"action": {"castSpell": {"spellId": { "spellId": 61006 }}}},
 				{"action": {"castSpell": {"spellId": { "spellId": 63672 }}}},
+				{"action":{
+					"condition":{"dotIsActive":{"spellId":{"spellId":60053}}},
+					"castSpell":{"spellId":{"spellId":60052}}
+				}},
 				{"action": {
 					"condition": {"not": {"val": {"dotIsActive": {"spellId": { "spellId": 60053 }}}}},
 					"castSpell": {"spellId": { "spellId": 60053 }}
