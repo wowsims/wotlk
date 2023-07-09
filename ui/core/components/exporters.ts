@@ -9,7 +9,7 @@ import { IndividualSimSettings } from '../proto/ui';
 import { classNames, raceNames } from '../proto_utils/names';
 import { UnitStat } from '../proto_utils/stats';
 import { specNames } from '../proto_utils/utils';
-import { downloadString } from '../utils';
+import { downloadString, jsonStringifyWithFlattenedPaths } from '../utils';
 import { BaseModal } from './base_modal';
 import { IndividualWowheadGearPlannerImporter } from './importers';
 import { RaidSimRequest } from '../proto/api';
@@ -97,7 +97,21 @@ export class IndividualJsonExporter<SpecType extends Spec> extends Exporter {
 	}
 
 	getData(): string {
-		return JSON.stringify(IndividualSimSettings.toJson(this.simUI.toProto()), null, 2);
+		return jsonStringifyWithFlattenedPaths(IndividualSimSettings.toJson(this.simUI.toProto()), 2, (value, path) => {
+			if (['stats', 'pseudoStats'].includes(path[path.length - 1])) {
+				return true;
+			}
+
+			if (['player', 'equipment', 'items'].every((v, i) => path[i] == v)) {
+				return path.length > 3;
+			}
+
+			if (path[0] == 'player' && path[1] == 'rotation' && ['prepullActions', 'priorityList'].includes(path[2])) {
+				return path[path.length - 2] == 'action';
+			}
+
+			return false;
+		});
 	}
 }
 
