@@ -510,6 +510,7 @@ func (character *Character) FillPlayerStats(playerStats *proto.PlayerStats) {
 			IsCastable:      spell.Flags.Matches(SpellFlagAPL),
 			IsMajorCooldown: spell.Flags.Matches(SpellFlagMCD),
 			HasDot:          spell.dots != nil,
+			PrepullOnly:     spell.Flags.Matches(SpellFlagPrepullOnly),
 		}
 	})
 

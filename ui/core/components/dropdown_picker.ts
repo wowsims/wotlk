@@ -9,6 +9,7 @@ export interface DropdownValueConfig<T> {
     submenu?: Array<string>,
     headerText?: string,
     tooltip?: string,
+    extraCssClasses?: Array<string>,
 }
 
 export interface DropdownPickerConfig<ModObject, T> extends InputConfig<ModObject, T> {
@@ -72,6 +73,9 @@ export class DropdownPicker<ModObject, T> extends Input<ModObject, T> {
         this.submenus = [];
 		valueConfigs.forEach(valueConfig => {
             const itemElem = document.createElement('li');
+            if (valueConfig.extraCssClasses) {
+                itemElem.classList.add(...valueConfig.extraCssClasses);
+            }
             if (valueConfig.headerText) {
                 itemElem.classList.add('dropdown-picker-header');
 

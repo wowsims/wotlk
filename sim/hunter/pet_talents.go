@@ -145,10 +145,7 @@ func (hp *HunterPet) applyFeedingFrenzy() {
 }
 
 func (hp *HunterPet) registerRoarOfRecoveryCD() {
-	if !hp.Talents().RoarOfRecovery {
-		return
-	}
-
+	// This CD is enabled even if not talented, for prepull. See below.
 	hunter := hp.hunterOwner
 	actionID := core.ActionID{SpellID: 53517}
 	manaMetrics := hunter.NewManaMetrics(actionID)
@@ -163,7 +160,7 @@ func (hp *HunterPet) registerRoarOfRecoveryCD() {
 			},
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return hp.IsEnabled() && hunter.CurrentManaPercent() < 0.6
+			return sim.CurrentTime < 0 || (hp.IsEnabled() && hunter.CurrentManaPercent() < 0.6)
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
@@ -176,6 +173,13 @@ func (hp *HunterPet) registerRoarOfRecoveryCD() {
 			})
 		},
 	})
+
+	// If not talented, still create the spell but don't make the MCD. This lets it be
+	// selected as a Prepull Action in the APL UI.
+	if !hp.Talents().RoarOfRecovery {
+		rorSpell.Flags |= core.SpellFlagAPL | core.SpellFlagMCD | core.SpellFlagPrepullOnly
+		return
+	}
 
 	hunter.AddMajorCooldown(core.MajorCooldown{
 		Spell: rorSpell,
@@ -260,10 +264,7 @@ func (hp *HunterPet) registerRabidCD() {
 }
 
 func (hp *HunterPet) registerCallOfTheWildCD() {
-	if !hp.Talents().CallOfTheWild {
-		return
-	}
-
+	// This CD is enabled even if not talented, for prepull. See below.
 	hunter := hp.hunterOwner
 	actionID := core.ActionID{SpellID: 53434}
 
@@ -302,7 +303,7 @@ func (hp *HunterPet) registerCallOfTheWildCD() {
 			},
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return hp.IsEnabled()
+			return sim.CurrentTime < 0 || hp.IsEnabled()
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
@@ -310,6 +311,13 @@ func (hp *HunterPet) registerCallOfTheWildCD() {
 			ownerAura.Activate(sim)
 		},
 	})
+
+	// If not talented, still create the spell but don't make the MCD. This lets it be
+	// selected as a Prepull Action in the APL UI.
+	if !hp.Talents().CallOfTheWild {
+		cotwSpell.Flags |= core.SpellFlagAPL | core.SpellFlagMCD | core.SpellFlagPrepullOnly
+		return
+	}
 
 	hunter.AddMajorCooldown(core.MajorCooldown{
 		Spell: cotwSpell,

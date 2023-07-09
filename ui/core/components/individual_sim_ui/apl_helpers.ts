@@ -55,6 +55,7 @@ const actionIdSets: Record<ACTION_ID_SET, {
 				(spells || []).map(actionId => {
 					return {
 						value: actionId.id,
+						extraCssClasses: (actionId.data.prepullOnly ? ['apl-prepull-actions-only'] : []),
 					};
 				}),
 				[{
@@ -64,6 +65,7 @@ const actionIdSets: Record<ACTION_ID_SET, {
 				(cooldowns || []).map(actionId => {
 					return {
 						value: actionId.id,
+						extraCssClasses: (actionId.data.prepullOnly ? ['apl-prepull-actions-only'] : []),
 					};
 				}),
 				[{
@@ -73,6 +75,7 @@ const actionIdSets: Record<ACTION_ID_SET, {
 				placeholders.map(actionId => {
 					return {
 						value: actionId,
+						tooltip: 'The Prepull Potion if CurrentTime < 0, or the Combat Potion if combat has started.',
 					};
 				}),
 			].flat();

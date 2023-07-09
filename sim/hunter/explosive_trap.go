@@ -59,12 +59,28 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			for _, aoeTarget := range sim.Encounter.TargetUnits {
-				baseDamage := sim.Roll(523, 671) + 0.1*spell.RangedAttackPower(aoeTarget)
-				baseDamage *= sim.Encounter.AOECapMultiplier()
-				spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeRangedHitAndCrit)
+			if sim.CurrentTime < 0 {
+				// If using this on prepull, the trap effect will go off when the fight starts
+				// instead of immediately.
+				core.StartDelayedAction(sim, core.DelayedActionOptions{
+					DoAt: 0,
+					OnAction: func(sim *core.Simulation) {
+						for _, aoeTarget := range sim.Encounter.TargetUnits {
+							baseDamage := sim.Roll(523, 671) + 0.1*spell.RangedAttackPower(aoeTarget)
+							baseDamage *= sim.Encounter.AOECapMultiplier()
+							spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeRangedHitAndCrit)
+						}
+						hunter.ExplosiveTrap.AOEDot().Apply(sim)
+					},
+				})
+			} else {
+				for _, aoeTarget := range sim.Encounter.TargetUnits {
+					baseDamage := sim.Roll(523, 671) + 0.1*spell.RangedAttackPower(aoeTarget)
+					baseDamage *= sim.Encounter.AOECapMultiplier()
+					spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeRangedHitAndCrit)
+				}
+				hunter.ExplosiveTrap.AOEDot().Apply(sim)
 			}
-			hunter.ExplosiveTrap.AOEDot().Apply(sim)
 		},
 	})
 
@@ -75,6 +91,10 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagNoMetrics | core.SpellFlagNoLogs | core.SpellFlagAPL,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			if sim.CurrentTime < 0 {
+				hunter.mayMoveAt = sim.CurrentTime
+			}
+
 			// Assume we started running after the most recent ranged auto, so that time
 			// can be subtracted from the run in.
 			reachLocationAt := hunter.mayMoveAt + halfWeaveTime

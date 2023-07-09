@@ -9,8 +9,9 @@ import (
 )
 
 type APLRotation struct {
-	unit         *Unit
-	priorityList []*APLAction
+	unit           *Unit
+	prepullActions []*APLAction
+	priorityList   []*APLAction
 
 	// Current strict sequence
 	strictSequence *APLActionStrictSequence
@@ -39,6 +40,7 @@ func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
 		unit: unit,
 	}
 
+	// Parse prepull actions
 	rotation.parsingPrepull = true
 	for _, prepullItem := range config.PrepullActions {
 		if !prepullItem.Hide {
@@ -51,6 +53,7 @@ func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
 			} else {
 				action := rotation.newAPLAction(prepullItem.Action)
 				if action != nil {
+					rotation.prepullActions = append(rotation.prepullActions, action)
 					unit.RegisterPrepullAction(doAt, func(sim *Simulation) {
 						action.Execute(sim)
 					})
@@ -63,6 +66,7 @@ func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
 	}
 	rotation.parsingPrepull = false
 
+	// Parse priority list
 	var configIdxs []int
 	for i, aplItem := range config.PriorityList {
 		if !aplItem.Hide {
@@ -77,16 +81,40 @@ func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
 		rotation.curWarnings = nil
 	}
 
+	// Finalize
+	for _, action := range rotation.prepullActions {
+		action.impl.Finalize(rotation)
+		rotation.curWarnings = nil
+	}
 	for i, action := range rotation.priorityList {
 		action.impl.Finalize(rotation)
 
 		rotation.priorityListWarnings[configIdxs[i]] = append(rotation.priorityListWarnings[configIdxs[i]], rotation.curWarnings...)
 		rotation.curWarnings = nil
+	}
 
-		// Remove MCDs that are referenced by APL actions.
-		character := unit.Env.Raid.GetPlayerFromUnit(unit).GetCharacter()
+	// Remove MCDs that are referenced by APL actions, so that the Autocast Other Cooldowns
+	// action does not include them.
+	character := unit.Env.Raid.GetPlayerFromUnit(unit).GetCharacter()
+	for _, action := range rotation.allAPLActions() {
 		if castSpellAction, ok := action.impl.(*APLActionCastSpell); ok {
 			character.removeInitialMajorCooldown(castSpellAction.spell.ActionID)
+		}
+	}
+
+	// If user has a Prepull potion set but does not use it in their APL settings, we enable it here.
+	prepotSpell := rotation.aplGetSpell(ActionID{OtherID: proto.OtherAction_OtherActionPotion}.ToProto())
+	if prepotSpell != nil {
+		found := false
+		for _, prepullAction := range rotation.allPrepullActions() {
+			if castSpellAction, ok := prepullAction.impl.(*APLActionCastSpell); ok && castSpellAction.spell == prepotSpell {
+				found = true
+			}
+		}
+		if !found {
+			unit.RegisterPrepullAction(-1*time.Second, func(sim *Simulation) {
+				prepotSpell.Cast(sim, nil)
+			})
 		}
 	}
 
@@ -102,6 +130,11 @@ func (rot *APLRotation) getStats() *proto.APLStats {
 // Returns all action objects as an unstructured list. Used for easily finding specific actions.
 func (rot *APLRotation) allAPLActions() []*APLAction {
 	return Flatten(MapSlice(rot.priorityList, func(action *APLAction) []*APLAction { return action.GetAllActions() }))
+}
+
+// Returns all action objects from the prepull as an unstructured list. Used for easily finding specific actions.
+func (rot *APLRotation) allPrepullActions() []*APLAction {
+	return Flatten(MapSlice(rot.prepullActions, func(action *APLAction) []*APLAction { return action.GetAllActions() }))
 }
 
 func (rot *APLRotation) reset(sim *Simulation) {
