@@ -48,7 +48,7 @@ func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
 			if durVal, err := time.ParseDuration(prepullItem.DoAt); err == nil {
 				doAt = durVal
 			}
-			if doAt == 1 {
+			if doAt > 0 {
 				rotation.validationWarning("Invalid time for 'Do At', ignoring this Prepull Action")
 			} else {
 				action := rotation.newAPLAction(prepullItem.Action)
