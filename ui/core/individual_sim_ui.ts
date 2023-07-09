@@ -398,24 +398,24 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 		const savedTalentsManager = new SavedDataManager<Player<any>, SavedTalents>(
 			this.rootElem.getElementsByClassName('saved-talents-manager')[0] as HTMLElement, this, this.player, {
-				label: 'Talents',
-				header: {title: 'Saved Talents'},
-				storageKey: this.getSavedTalentsStorageKey(),
-				getData: (player: Player<any>) => SavedTalents.create({
-					talentsString: player.getTalentsString(),
-					glyphs: player.getGlyphs(),
-				}),
-				setData: (eventID: EventID, player: Player<any>, newTalents: SavedTalents) => {
-					TypedEvent.freezeAllAndDo(() => {
-						player.setTalentsString(eventID, newTalents.talentsString);
-						player.setGlyphs(eventID, newTalents.glyphs || Glyphs.create());
-					});
-				},
-				changeEmitters: [this.player.talentsChangeEmitter, this.player.glyphsChangeEmitter],
-				equals: (a: SavedTalents, b: SavedTalents) => SavedTalents.equals(a, b),
-				toJson: (a: SavedTalents) => SavedTalents.toJson(a),
-				fromJson: (obj: any) => SavedTalents.fromJson(obj),
-			}
+			label: 'Talents',
+			header: { title: 'Saved Talents' },
+			storageKey: this.getSavedTalentsStorageKey(),
+			getData: (player: Player<any>) => SavedTalents.create({
+				talentsString: player.getTalentsString(),
+				glyphs: player.getGlyphs(),
+			}),
+			setData: (eventID: EventID, player: Player<any>, newTalents: SavedTalents) => {
+				TypedEvent.freezeAllAndDo(() => {
+					player.setTalentsString(eventID, newTalents.talentsString);
+					player.setGlyphs(eventID, newTalents.glyphs || Glyphs.create());
+				});
+			},
+			changeEmitters: [this.player.talentsChangeEmitter, this.player.glyphsChangeEmitter],
+			equals: (a: SavedTalents, b: SavedTalents) => SavedTalents.equals(a, b),
+			toJson: (a: SavedTalents) => SavedTalents.toJson(a),
+			fromJson: (obj: any) => SavedTalents.fromJson(obj),
+		}
 		);
 
 		this.sim.waitForInit().then(() => {
@@ -502,10 +502,10 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			const healingSpec = isHealingSpec(this.player.spec);
 
 			//Special case for Totem of Wrath keeps buff and debuff sync'd
-			const towEnabled =  this.individualConfig.defaults.raidBuffs.totemOfWrath || this.individualConfig.defaults.debuffs.totemOfWrath
+			const towEnabled = this.individualConfig.defaults.raidBuffs.totemOfWrath || this.individualConfig.defaults.debuffs.totemOfWrath
 			this.individualConfig.defaults.raidBuffs.totemOfWrath = towEnabled;
 			this.individualConfig.defaults.debuffs.totemOfWrath = towEnabled;
-			
+
 			this.player.applySharedDefaults(eventID);
 			this.player.setRace(eventID, specToEligibleRaces[this.player.spec][0]);
 			this.player.setGear(eventID, this.sim.db.lookupEquipmentSpec(this.individualConfig.defaults.gear));

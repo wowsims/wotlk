@@ -41,7 +41,7 @@ const actionIdSets: Record<ACTION_ID_SET, {
 			const castableSpells = player.getSpells().filter(spell => spell.data.isCastable);
 
 			// Split up non-cooldowns and cooldowns into separate sections for easier browsing.
-			const {'spells': spells, 'cooldowns': cooldowns } = bucket(castableSpells, spell => spell.data.isMajorCooldown ? 'cooldowns' : 'spells');
+			const { 'spells': spells, 'cooldowns': cooldowns } = bucket(castableSpells, spell => spell.data.isMajorCooldown ? 'cooldowns' : 'spells');
 
 			const placeholders: Array<ActionId> = [
 				ActionId.fromOtherId(OtherAction.OtherActionPotion),
@@ -108,7 +108,7 @@ export class APLActionIDPicker extends DropdownPicker<Player<any>, ActionId> {
 			setValue: (eventID: EventID, player: Player<any>, newValue: ActionId) => config.setValue(eventID, player, newValue.toProto()),
 			defaultLabel: actionIdSet.defaultLabel,
 			equals: (a, b) => ((a == null) == (b == null)) && (!a || a.equals(b!)),
-            setOptionContent: (button, valueConfig) => {
+			setOptionContent: (button, valueConfig) => {
 				const actionId = valueConfig.value;
 
 				const iconElem = document.createElement('a');
@@ -130,10 +130,10 @@ export class APLActionIDPicker extends DropdownPicker<Player<any>, ActionId> {
 		const getActionIDs = actionIdSet.getActionIDs;
 		const updateValues = async () => {
 			const values = await getActionIDs(player);
-            this.setOptions(values);
+			this.setOptions(values);
 		};
-        updateValues();
-        player.currentSpellsAndAurasEmitter.on(updateValues);
+		updateValues();
+		player.currentSpellsAndAurasEmitter.on(updateValues);
 	}
 }
 

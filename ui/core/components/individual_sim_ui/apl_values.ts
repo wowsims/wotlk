@@ -35,24 +35,24 @@ import { ListItemPickerConfig, ListPicker } from '../list_picker.js';
 
 import * as AplHelpers from './apl_helpers.js';
 
-export interface APLValuePickerConfig extends InputConfig<Player<any>, APLValue|undefined> {
+export interface APLValuePickerConfig extends InputConfig<Player<any>, APLValue | undefined> {
 }
 
 export type APLValueType = APLValue['value']['oneofKind'];
 
-export class APLValuePicker extends Input<Player<any>, APLValue|undefined> {
+export class APLValuePicker extends Input<Player<any>, APLValue | undefined> {
 
 	private typePicker: TextDropdownPicker<Player<any>, APLValueType>;
 
 	private currentType: APLValueType;
-	private valuePicker: Input<Player<any>, any>|null;
+	private valuePicker: Input<Player<any>, any> | null;
 
 	constructor(parent: HTMLElement, player: Player<any>, config: APLValuePickerConfig) {
 		super(parent, 'apl-value-picker-root', player, config);
 
 		const allValueTypes = Object.keys(valueTypeFactories) as Array<NonNullable<APLValueType>>;
 		this.typePicker = new TextDropdownPicker(this.rootElem, player, {
-            defaultLabel: 'No Condition',
+			defaultLabel: 'No Condition',
 			values: [{
 				value: undefined,
 				label: '<None>',
@@ -102,7 +102,7 @@ export class APLValuePicker extends Input<Player<any>, APLValue|undefined> {
 		return this.rootElem;
 	}
 
-    getInputValue(): APLValue|undefined {
+	getInputValue(): APLValue | undefined {
 		const valueType = this.typePicker.getInputValue();
 		if (!valueType) {
 			return undefined;
@@ -120,9 +120,9 @@ export class APLValuePicker extends Input<Player<any>, APLValue|undefined> {
 				},
 			})
 		}
-    }
+	}
 
-	setInputValue(newValue: APLValue|undefined) {
+	setInputValue(newValue: APLValue | undefined) {
 		const newValueType = newValue?.value.oneofKind;
 		this.updateValuePicker(newValueType);
 
@@ -209,17 +209,17 @@ export function valueListFieldConfig(field: string): AplHelpers.APLPickerBuilder
 	return {
 		field: field,
 		newValue: () => [],
-		factory: (parent, player, config) => new ListPicker<Player<any>, APLValue|undefined>(parent, player, {
+		factory: (parent, player, config) => new ListPicker<Player<any>, APLValue | undefined>(parent, player, {
 			...config,
 			// Override setValue to replace undefined elements with default messages.
-			setValue: (eventID: EventID, player: Player<any>, newValue: Array<APLValue|undefined>) => {
+			setValue: (eventID: EventID, player: Player<any>, newValue: Array<APLValue | undefined>) => {
 				config.setValue(eventID, player, newValue.map(val => val || APLValue.create()));
 			},
 
 			itemLabel: 'Value',
 			newItem: APLValue.create,
-			copyItem: (oldValue: APLValue|undefined) => oldValue ? APLValue.clone(oldValue) : oldValue,
-			newItemPicker: (parent: HTMLElement, listPicker: ListPicker<Player<any>, APLValue|undefined>, index: number, config: ListItemPickerConfig<Player<any>, APLValue|undefined>) => new APLValuePicker(parent, player, config),
+			copyItem: (oldValue: APLValue | undefined) => oldValue ? APLValue.clone(oldValue) : oldValue,
+			newItemPicker: (parent: HTMLElement, listPicker: ListPicker<Player<any>, APLValue | undefined>, index: number, config: ListItemPickerConfig<Player<any>, APLValue | undefined>) => new APLValuePicker(parent, player, config),
 			horizontalLayout: true,
 			allowedActions: ['create', 'delete'],
 		}),
@@ -244,7 +244,7 @@ function inputBuilder<T>(config: {
 	};
 }
 
-const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>>  = {
+const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>> = {
 	// Operators
 	['const']: inputBuilder({
 		label: 'Const',

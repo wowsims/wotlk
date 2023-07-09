@@ -709,7 +709,7 @@ export const P2_Preset_Affliction = {
 	name: 'P2 Affliction',
 	tooltip: WarlockTooltips.BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction,
-		gear: EquipmentSpec.fromJsonString(`{"items": [
+	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 45497,
 			"enchant": 3820,
@@ -830,7 +830,7 @@ export const P2_Preset_Demo_Destro = {
 	name: 'P2 Demo / Destro',
 	tooltip: WarlockTooltips.BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology || player.getRotation().type == RotationType.Destruction,
-		gear: EquipmentSpec.fromJsonString(`{"items": [
+	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 45497,
 			"enchant": 3820,
@@ -951,7 +951,7 @@ export const P3_Preset_Affliction_Horde = {
 	name: 'P3 Affliction H',
 	tooltip: WarlockTooltips.BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction && player.getFaction() == Faction.Horde,
-		gear: EquipmentSpec.fromJsonString(`{"items": [
+	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 47796,
 			"enchant": 3820,
@@ -1074,7 +1074,7 @@ export const P3_Preset_Affliction_Alliance = {
 	name: 'P3 Affliction A',
 	tooltip: WarlockTooltips.BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction && player.getFaction() == Faction.Alliance,
-		gear: EquipmentSpec.fromJsonString(`{"items": [
+	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 47789,
 			"enchant": 3820,
@@ -1197,7 +1197,7 @@ export const P3_Preset_Demo_Horde = {
 	name: 'P3 Demo H',
 	tooltip: WarlockTooltips.BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology && player.getFaction() == Faction.Horde,
-		gear: EquipmentSpec.fromJsonString(`{"items": [
+	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 47796,
 			"enchant": 3820,
@@ -1317,7 +1317,7 @@ export const P3_Preset_Demo_Alliance = {
 	name: 'P3 Demo A',
 	tooltip: WarlockTooltips.BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology && player.getFaction() == Faction.Alliance,
-		gear: EquipmentSpec.fromJsonString(`{"items": [
+	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 47789,
 			"enchant": 3820,
@@ -1437,7 +1437,7 @@ export const P3_Preset_Destro_Horde = {
 	name: 'P3 Destro H',
 	tooltip: WarlockTooltips.BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Destruction && player.getFaction() == Faction.Horde,
-		gear: EquipmentSpec.fromJsonString(`{"items": [
+	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 47796,
 			"enchant": 3820,
@@ -1557,7 +1557,7 @@ export const P3_Preset_Destro_Alliance = {
 	name: 'P3 Destro A',
 	tooltip: WarlockTooltips.BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Destruction && player.getFaction() == Faction.Alliance,
-		gear: EquipmentSpec.fromJsonString(`{"items": [
+	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{
 			"id": 47789,
 			"enchant": 3820,

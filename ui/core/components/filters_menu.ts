@@ -38,7 +38,7 @@ const factionRestrictionsToLabels: Record<UIItem_FactionRestriction, string> = {
 
 export class FiltersMenu extends BaseModal {
 	constructor(rootElem: HTMLElement, player: Player<any>, slot: ItemSlot) {
-		super(rootElem, 'filters-menu', {size: 'md', title: 'Filters'});
+		super(rootElem, 'filters-menu', { size: 'md', title: 'Filters' });
 
 		let section = this.newSection('Factions');
 
@@ -111,8 +111,8 @@ export class FiltersMenu extends BaseModal {
 				const section = this.newSection('Armor Type');
 				section.classList.add('filters-menu-section-bool-list');
 				const armorTypes = (getEnumValues(ArmorType) as Array<ArmorType>)
-						.filter(at => at != ArmorType.ArmorTypeUnknown)
-						.filter(at => at <= maxArmorType);
+					.filter(at => at != ArmorType.ArmorTypeUnknown)
+					.filter(at => at <= maxArmorType);
 
 				armorTypes.forEach(armorType => {
 					new BooleanPicker<Sim>(section, player.sim, {

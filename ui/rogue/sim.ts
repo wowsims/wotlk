@@ -10,9 +10,9 @@ import {
 	TristateEffect,
 	WeaponType
 } from '../core/proto/common.js';
-import {Player} from '../core/player.js';
-import {Stats} from '../core/proto_utils/stats.js';
-import {IndividualSimUI} from '../core/individual_sim_ui.js';
+import { Player } from '../core/player.js';
+import { Stats } from '../core/proto_utils/stats.js';
+import { IndividualSimUI } from '../core/individual_sim_ui.js';
 
 import {
 	Rogue_Options_PoisonImbue,
@@ -29,7 +29,7 @@ import * as OtherInputs from '../core/components/other_inputs.js';
 
 import * as RogueInputs from './inputs.js';
 import * as Presets from './presets.js';
-import {DefaultOptions} from './presets.js';
+import { DefaultOptions } from './presets.js';
 
 export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecRogue>) {
@@ -95,9 +95,9 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 						getContent: () => {
 							if (simUI.player.getTalents().hackAndSlash) {
 								if (simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponType == WeaponType.WeaponTypeSword ||
-								simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponType == WeaponType.WeaponTypeAxe ||
-								simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponType == WeaponType.WeaponTypeSword ||
-								simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponType == WeaponType.WeaponTypeAxe) {
+									simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponType == WeaponType.WeaponTypeAxe ||
+									simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponType == WeaponType.WeaponTypeSword ||
+									simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponType == WeaponType.WeaponTypeAxe) {
 									return '';
 								} else {
 									return '"Hack and Slash" talent selected, but swords or axes not equipped.';
@@ -259,8 +259,8 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					[Stat.StatAgility]: 1.86,
 					[Stat.StatStrength]: 1.14,
 					[Stat.StatAttackPower]: 1,
-					[Stat.StatSpellCrit] : 0.28,
-					[Stat.StatSpellHit] : 0.08,
+					[Stat.StatSpellCrit]: 0.28,
+					[Stat.StatSpellHit]: 0.08,
 					[Stat.StatMeleeHit]: 1.39,
 					[Stat.StatMeleeCrit]: 1.32,
 					[Stat.StatMeleeHaste]: 1.48,
@@ -413,8 +413,8 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					options.mhImbue = Rogue_Options_PoisonImbue.InstantPoison
 					options.ohImbue = Rogue_Options_PoisonImbue.InstantPoison
 				} else {
-					if (mhWeaponSpeed <= ohWeaponSpeed) { 
-						options.mhImbue = Rogue_Options_PoisonImbue.DeadlyPoison 
+					if (mhWeaponSpeed <= ohWeaponSpeed) {
+						options.mhImbue = Rogue_Options_PoisonImbue.DeadlyPoison
 						options.ohImbue = Rogue_Options_PoisonImbue.InstantPoison
 					} else {
 						options.mhImbue = Rogue_Options_PoisonImbue.InstantPoison
@@ -446,8 +446,8 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					options.mhImbue = Rogue_Options_PoisonImbue.InstantPoison
 					options.ohImbue = Rogue_Options_PoisonImbue.InstantPoison
 				} else {
-					if (mhWeaponSpeed <= ohWeaponSpeed) { 
-						options.mhImbue = Rogue_Options_PoisonImbue.DeadlyPoison 
+					if (mhWeaponSpeed <= ohWeaponSpeed) {
+						options.mhImbue = Rogue_Options_PoisonImbue.DeadlyPoison
 						options.ohImbue = Rogue_Options_PoisonImbue.InstantPoison
 					} else {
 						options.mhImbue = Rogue_Options_PoisonImbue.InstantPoison

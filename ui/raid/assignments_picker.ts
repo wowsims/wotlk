@@ -67,7 +67,7 @@ abstract class AssignedBuffPicker extends Component {
 		if (sourcePlayers.length == 0)
 			this.rootElem.classList.add('hide');
 		else
-		this.rootElem.classList.remove('hide');
+			this.rootElem.classList.remove('hide');
 
 		this.targetPickers = sourcePlayers.map((sourcePlayer, sourcePlayerIndex) => {
 			const row = document.createElement('div');
@@ -77,7 +77,7 @@ abstract class AssignedBuffPicker extends Component {
 			let sourceElem = document.createElement('div');
 			sourceElem.classList.add('raid-target-picker-root');
 			sourceElem.appendChild(
-				RaidTargetPicker.makeOptionElem({player: sourcePlayer, isDropdown: false})
+				RaidTargetPicker.makeOptionElem({ player: sourcePlayer, isDropdown: false })
 			);
 			row.appendChild(sourceElem);
 

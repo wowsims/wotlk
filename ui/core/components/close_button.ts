@@ -13,7 +13,7 @@ export class CloseButton extends Component {
 
 	constructor(parent: HTMLElement, onClick: () => void, config: CloseButtonConfig = {}) {
 		super(parent, 'close-button', document.createElement('a'));
-		this.config = {...DEFAULT_CONFIG, ...config};
+		this.config = { ...DEFAULT_CONFIG, ...config };
 
 		if (this.config.fixed)
 			this.rootElem.classList.add('position-fixed');

@@ -36,7 +36,7 @@ export class DpsHistogram extends ResultComponent {
 
 		const ctx = chartCanvas.getContext('2d');
 		this.rootElem.appendChild(chartCanvas);
-		
+
 		const chart = new Chart(ctx, {
 			type: 'bar',
 			data: {

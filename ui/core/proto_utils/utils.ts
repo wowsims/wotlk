@@ -267,7 +267,7 @@ export const talentTreeIcons: Record<Class, Array<string>> = {
 	],
 };
 
-export const titleIcons: Record<Class|Spec, string> = {
+export const titleIcons: Record<Class | Spec, string> = {
 	[Spec.SpecBalanceDruid]: '/wotlk/assets/img/balance_druid_icon.png',
 	[Spec.SpecFeralDruid]: '/wotlk/assets/img/feral_druid_icon.png',
 	[Spec.SpecFeralTankDruid]: '/wotlk/assets/img/feral_druid_tank_icon.png',
@@ -319,7 +319,7 @@ enum IconSizes {
 // Returns the icon for a given spec
 export function getSpecIcon(klass: Class, specNumber: number, size: IconSizes = IconSizes.Medium): string {
 	const fileName = talentTreeIcons[klass][specNumber];
-		
+
 	return `https://wow.zamimg.com/images/wow/icons/${size}/${fileName}`;
 }
 
@@ -334,12 +334,12 @@ export function getTalentTreeIcon(spec: Spec, talentsString: string, size: IconS
 	// Cat Druid and Smite Priest are being considered a "4th spec"
 	if (spec == Spec.SpecFeralDruid)
 		specNumber += 2;
-	
+
 	if (spec == Spec.SpecSmitePriest)
 		specNumber += 3;
-	
+
 	const fileName = talentTreeIcons[specToClass[spec]][specNumber];
-		
+
 	return `https://wow.zamimg.com/images/wow/icons/${size}/${fileName}`;
 }
 
@@ -1708,7 +1708,7 @@ const metaGemEffectEPs: Partial<Record<Spec, (gem: Gem, playerStats: Stats) => n
 	[Spec.SpecFeralDruid]: (gem, _) => {
 		// Unknown actual EP, but this is the only effect that matters
 		if (gem.id == Gems.RELENTLESS_EARTHSIEGE_DIAMOND.id || gem.id == Gems.CHAOTIC_SKYFLARE_DIAMOND.id || gem.id == Gems.CHAOTIC_SKYFIRE_DIAMOND.id) {
-    		return 80;
+			return 80;
 		}
 		return 0;
 	}
@@ -1790,8 +1790,8 @@ export function getEligibleItemSlots(item: Item): Array<ItemSlot> {
 			return [ItemSlot.ItemSlotMainHand];
 		} else if (item.handType == HandType.HandTypeOffHand) {
 			return [ItemSlot.ItemSlotOffHand];
-		// Missing HandTypeTwoHand 
-		// We allow 2H weapons to be wielded in mainhand and offhand for Fury Warriors
+			// Missing HandTypeTwoHand 
+			// We allow 2H weapons to be wielded in mainhand and offhand for Fury Warriors
 		} else {
 			return [ItemSlot.ItemSlotMainHand, ItemSlot.ItemSlotOffHand];
 		}
@@ -1810,14 +1810,14 @@ export function validWeaponCombo(mainHand: Item | null | undefined, offHand: Ite
 
 	if (mainHand.handType == HandType.HandTypeTwoHand && !canDW2h) {
 		return false;
-	} else if (mainHand.handType == HandType.HandTypeTwoHand && 
+	} else if (mainHand.handType == HandType.HandTypeTwoHand &&
 		(mainHand.weaponType == WeaponType.WeaponTypePolearm || mainHand.weaponType == WeaponType.WeaponTypeStaff)) {
 		return false;
 	}
 
 	if (offHand.handType == HandType.HandTypeTwoHand && !canDW2h) {
 		return false;
-	} else if (offHand.handType == HandType.HandTypeTwoHand && 
+	} else if (offHand.handType == HandType.HandTypeTwoHand &&
 		(offHand.weaponType == WeaponType.WeaponTypePolearm || offHand.weaponType == WeaponType.WeaponTypeStaff)) {
 		return false;
 	}

@@ -12,9 +12,9 @@ import {
 	RaidTarget,
 	Spec
 } from '../core/proto/common.js';
-import {SavedTalents} from '../core/proto/ui.js';
-import {Player} from '../core/player.js';
-import {NO_TARGET} from '../core/proto_utils/utils.js';
+import { SavedTalents } from '../core/proto/ui.js';
+import { Player } from '../core/player.js';
+import { NO_TARGET } from '../core/proto_utils/utils.js';
 
 import {
 	Deathknight_Options as DeathKnightOptions,
@@ -173,8 +173,8 @@ export const DefaultFrostRotation = DeathKnightRotation.create({
 	avgAmsSuccessRate: 1.0,
 	avgAmsHit: 10000.0,
 	drwDiseases: Deathknight_Rotation_DrwDiseases.Pestilence,
-  	frostRotationType: Deathknight_Rotation_FrostRotationType.SingleTarget,
-  	frostCustomRotation: CustomRotation.create({
+	frostRotationType: Deathknight_Rotation_FrostRotationType.SingleTarget,
+	frostCustomRotation: CustomRotation.create({
 		spells: [
 			CustomSpell.create({ spell: CustomSpellOption.CustomDeathAndDecay }),
 			CustomSpell.create({ spell: CustomSpellOption.CustomIcyTouch }),

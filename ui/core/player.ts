@@ -695,7 +695,7 @@ export class Player<SpecType extends Spec> {
 			}
 		}
 	}
-	
+
 	enableHealing() {
 		this.healingEnabled = true;
 		var hm = this.getHealingModel();
@@ -850,12 +850,12 @@ export class Player<SpecType extends Spec> {
 	];
 
 	static readonly DIFFICULTY_SRCS: Partial<Record<SourceFilterOption, DungeonDifficulty>> = {
-		[SourceFilterOption.SourceDungeon ]: DungeonDifficulty.DifficultyNormal,
+		[SourceFilterOption.SourceDungeon]: DungeonDifficulty.DifficultyNormal,
 		[SourceFilterOption.SourceDungeonH]: DungeonDifficulty.DifficultyHeroic,
-		[SourceFilterOption.SourceRaid10  ]: DungeonDifficulty.DifficultyRaid10,
-		[SourceFilterOption.SourceRaid10H ]: DungeonDifficulty.DifficultyRaid10H,
-		[SourceFilterOption.SourceRaid25  ]: DungeonDifficulty.DifficultyRaid25,
-		[SourceFilterOption.SourceRaid25H ]: DungeonDifficulty.DifficultyRaid25H,
+		[SourceFilterOption.SourceRaid10]: DungeonDifficulty.DifficultyRaid10,
+		[SourceFilterOption.SourceRaid10H]: DungeonDifficulty.DifficultyRaid10H,
+		[SourceFilterOption.SourceRaid25]: DungeonDifficulty.DifficultyRaid25,
+		[SourceFilterOption.SourceRaid25H]: DungeonDifficulty.DifficultyRaid25H,
 	};
 
 	static readonly HEROIC_TO_NORMAL: Partial<Record<DungeonDifficulty, DungeonDifficulty>> = {
@@ -898,14 +898,14 @@ export class Player<SpecType extends Spec> {
 			const srcOption = parseInt(srcOptionStr) as SourceFilterOption;
 			if (!filters.sources.includes(srcOption)) {
 				itemData = filterItems(itemData, item =>
-						!item.sources.some(itemSrc =>
-								itemSrc.source.oneofKind == 'drop' && itemSrc.source.drop.difficulty == difficulty));
+					!item.sources.some(itemSrc =>
+						itemSrc.source.oneofKind == 'drop' && itemSrc.source.drop.difficulty == difficulty));
 
 				if (difficulty == DungeonDifficulty.DifficultyRaid10H || difficulty == DungeonDifficulty.DifficultyRaid25H) {
 					const normalDifficulty = Player.HEROIC_TO_NORMAL[difficulty];
 					itemData = filterItems(itemData, item =>
-							!item.sources.some(itemSrc =>
-									itemSrc.source.oneofKind == 'drop' && itemSrc.source.drop.difficulty == normalDifficulty && itemSrc.source.drop.category == AL_CATEGORY_HARD_MODE));
+						!item.sources.some(itemSrc =>
+							itemSrc.source.oneofKind == 'drop' && itemSrc.source.drop.difficulty == normalDifficulty && itemSrc.source.drop.category == AL_CATEGORY_HARD_MODE));
 				}
 			}
 		}
@@ -920,8 +920,8 @@ export class Player<SpecType extends Spec> {
 			const raidOption = parseInt(raidOptionStr) as RaidFilterOption;
 			if (!filters.raids.includes(raidOption)) {
 				itemData = filterItems(itemData, item =>
-						!item.sources.some(itemSrc =>
-								itemSrc.source.oneofKind == 'drop' && itemSrc.source.drop.zoneId == zoneId));
+					!item.sources.some(itemSrc =>
+						itemSrc.source.oneofKind == 'drop' && itemSrc.source.drop.zoneId == zoneId));
 			}
 		}
 
@@ -977,7 +977,7 @@ export class Player<SpecType extends Spec> {
 		return itemData;
 	}
 
-	filterEnchantData<T>(enchantData: Array<T>, getEnchantFunc: (val: T) => Enchant, slot: ItemSlot, currentEquippedItem: EquippedItem|null): Array<T> {
+	filterEnchantData<T>(enchantData: Array<T>, getEnchantFunc: (val: T) => Enchant, slot: ItemSlot, currentEquippedItem: EquippedItem | null): Array<T> {
 		if (!currentEquippedItem) {
 			return enchantData;
 		}

@@ -1757,7 +1757,7 @@ export const FIRE_P3_PRESET_HORDE = {
 
 export const FIRE_P3_PRESET_ALLIANCE = {
 	name: 'Fire P3 Preset Alliance',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1 && player.getRotation().type == RotationType.Fire && player.getFaction() == Faction.Alliance ,
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1 && player.getRotation().type == RotationType.Fire && player.getFaction() == Faction.Alliance,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{  "items": [
         {
@@ -1998,7 +1998,7 @@ export const FFB_P3_PRESET_HORDE = {
 
 export const FFB_P3_PRESET_ALLIANCE = {
 	name: 'FFB P3 Preset Alliance',
-	enableWhen: (player: Player<Spec.SpecMage>) =>  ((player.getFaction() == Faction.Alliance) && ((player.getTalentTree() == 1 && player.getTalents().icyVeins) || (player.getRotation().type == RotationType.Fire && player.getRotation().primaryFireSpell == PrimaryFireSpell.FrostfireBolt))),
+	enableWhen: (player: Player<Spec.SpecMage>) => ((player.getFaction() == Faction.Alliance) && ((player.getTalentTree() == 1 && player.getTalents().icyVeins) || (player.getRotation().type == RotationType.Fire && player.getRotation().primaryFireSpell == PrimaryFireSpell.FrostfireBolt))),
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{   "items": [
         {

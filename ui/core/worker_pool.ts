@@ -55,7 +55,7 @@ export class WorkerPool {
 	}
 
 	async bulkSimAsync(request: BulkSimRequest, onProgress: Function): Promise<BulkSimResult> {
-		console.log('bulk sim request: ' + BulkSimRequest.toJsonString(request, {enumAsInteger: true}));
+		console.log('bulk sim request: ' + BulkSimRequest.toJsonString(request, { enumAsInteger: true }));
 		const worker = this.getLeastBusyWorker();
 		const id = worker.makeTaskId();
 		// Add handler for the progress events

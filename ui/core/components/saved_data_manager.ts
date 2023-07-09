@@ -58,7 +58,7 @@ export class SavedDataManager<ModObject, T> extends Component {
 		this.presets = [];
 		this.frozen = false;
 
-		let contentBlock = new ContentBlock(this.rootElem, 'saved-data', {header: config.header});
+		let contentBlock = new ContentBlock(this.rootElem, 'saved-data', { header: config.header });
 
 		contentBlock.bodyElement.innerHTML = `<div class="saved-data-container hide"></div>`;
 		this.savedDataDiv = contentBlock.bodyElement.querySelector('.saved-data-container') as HTMLElement;
@@ -75,7 +75,7 @@ export class SavedDataManager<ModObject, T> extends Component {
 		const newData = this.makeSavedData(config);
 		const dataArr = config.isPreset ? this.presets : this.userData;
 		const oldIdx = dataArr.findIndex(data => data.name == config.name);
-	
+
 		if (oldIdx == -1) {
 			if (config.isPreset || this.presets.length == 0) {
 				this.savedDataDiv.appendChild(newData.elem);
