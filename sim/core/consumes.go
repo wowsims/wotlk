@@ -498,6 +498,7 @@ func makePotionActivation(potionType proto.Potions, character *Character, potion
 				} else {
 					potionCD.Set(sim.CurrentTime + time.Minute)
 				}
+				character.UpdateMajorCooldowns()
 			}
 		}
 	}
