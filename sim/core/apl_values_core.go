@@ -7,9 +7,31 @@ import (
 )
 
 func (rot *APLRotation) aplGetSpell(spellId *proto.ActionID) *Spell {
-	spell := rot.unit.GetSpell(ProtoToActionID(spellId))
+	actionID := ProtoToActionID(spellId)
+	var spell *Spell
+
+	if actionID.IsOtherAction(proto.OtherAction_OtherActionPotion) {
+		if rot.parsingPrepull {
+			for _, s := range rot.unit.Spellbook {
+				if s.Flags.Matches(SpellFlagPrepullPotion) {
+					spell = s
+					break
+				}
+			}
+		} else {
+			for _, s := range rot.unit.Spellbook {
+				if s.Flags.Matches(SpellFlagCombatPotion) {
+					spell = s
+					break
+				}
+			}
+		}
+	} else {
+		spell = rot.unit.GetSpell(actionID)
+	}
+
 	if spell == nil {
-		rot.validationWarning("%s does not know spell %s", rot.unit.Label, ProtoToActionID(spellId))
+		rot.validationWarning("%s does not know spell %s", rot.unit.Label, actionID)
 	}
 	return spell
 }

@@ -15,6 +15,9 @@ type APLRotation struct {
 	// Current strict sequence
 	strictSequence *APLActionStrictSequence
 
+	// Used inside of actions/value to determine whether they will occur during the prepull or regular rotation.
+	parsingPrepull bool
+
 	// Validation warnings that occur during proto parsing.
 	// We return these back to the user for display in the UI.
 	curWarnings          []string
@@ -35,6 +38,30 @@ func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
 	rotation := &APLRotation{
 		unit: unit,
 	}
+
+	rotation.parsingPrepull = true
+	for _, prepullItem := range config.PrepullActions {
+		if !prepullItem.Hide {
+			doAt := time.Duration(1)
+			if durVal, err := time.ParseDuration(prepullItem.DoAt); err == nil {
+				doAt = durVal
+			}
+			if doAt == 1 {
+				rotation.validationWarning("Invalid time for 'Do At', ignoring this Prepull Action")
+			} else {
+				action := rotation.newAPLAction(prepullItem.Action)
+				if action != nil {
+					unit.RegisterPrepullAction(doAt, func(sim *Simulation) {
+						action.Execute(sim)
+					})
+				}
+			}
+		}
+
+		rotation.prepullWarnings = append(rotation.prepullWarnings, rotation.curWarnings)
+		rotation.curWarnings = nil
+	}
+	rotation.parsingPrepull = false
 
 	var configIdxs []int
 	for i, aplItem := range config.PriorityList {

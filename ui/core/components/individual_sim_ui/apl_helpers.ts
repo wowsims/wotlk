@@ -1,3 +1,4 @@
+import { OtherAction } from '../../proto/common.js';
 import { ActionId } from '../../proto_utils/action_id.js';
 import { Player } from '../../player.js';
 import { EventID, TypedEvent } from '../../typed_event.js';
@@ -42,6 +43,10 @@ const actionIdSets: Record<ACTION_ID_SET, {
 			// Split up non-cooldowns and cooldowns into separate sections for easier browsing.
 			const {'spells': spells, 'cooldowns': cooldowns } = bucket(castableSpells, spell => spell.data.isMajorCooldown ? 'cooldowns' : 'spells');
 
+			const placeholders: Array<ActionId> = [
+				ActionId.fromOtherId(OtherAction.OtherActionPotion),
+			];
+
 			return [
 				[{
 					value: ActionId.fromEmpty(),
@@ -59,6 +64,15 @@ const actionIdSets: Record<ACTION_ID_SET, {
 				(cooldowns || []).map(actionId => {
 					return {
 						value: actionId.id,
+					};
+				}),
+				[{
+					value: ActionId.fromEmpty(),
+					headerText: 'Placeholders',
+				}],
+				placeholders.map(actionId => {
+					return {
+						value: actionId,
 					};
 				}),
 			].flat();

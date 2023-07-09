@@ -3,10 +3,11 @@ import { Tooltip } from 'bootstrap';
 import { EventID, TypedEvent } from '../../typed_event.js';
 import { Player } from '../../player.js';
 import { ListItemPickerConfig, ListPicker } from '../list_picker.js';
+import { AdaptiveStringPicker } from '../string_picker.js';
 import {
 	APLListItem,
 	APLAction,
-	APLRotation,
+	APLPrepullAction,
 } from '../../proto/apl.js';
 
 import { Component } from '../component.js';
@@ -19,6 +20,26 @@ import { APLActionPicker } from './apl_actions.js';
 export class APLRotationPicker extends Component {
 	constructor(parent: HTMLElement, simUI: SimUI, modPlayer: Player<any>) {
 		super(parent, 'apl-rotation-picker-root');
+
+		new ListPicker<Player<any>, APLPrepullAction>(this.rootElem, modPlayer, {
+			extraCssClasses: ['apl-prepull-action-picker'],
+			title: 'Prepull Actions',
+			titleTooltip: 'Actions to perform before the pull.',
+			itemLabel: 'Prepull Action',
+			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
+			getValue: (player: Player<any>) => player.aplRotation.prepullActions,
+			setValue: (eventID: EventID, player: Player<any>, newValue: Array<APLPrepullAction>) => {
+                player.aplRotation.prepullActions = newValue;
+				player.rotationChangeEmitter.emit(eventID);
+			},
+			newItem: () => APLPrepullAction.create({
+				action: {},
+				doAt: '-1s',
+			}),
+			copyItem: (oldItem: APLPrepullAction) => APLPrepullAction.clone(oldItem),
+			newItemPicker: (parent: HTMLElement, listPicker: ListPicker<Player<any>, APLPrepullAction>, index: number, config: ListItemPickerConfig<Player<any>, APLPrepullAction>) => new APLPrepullActionPicker(parent, modPlayer, config, index),
+			inlineMenuBar: true,
+		});
 
 		new ListPicker<Player<any>, APLListItem>(this.rootElem, modPlayer, {
 			extraCssClasses: ['apl-list-item-picker'],
@@ -43,15 +64,88 @@ export class APLRotationPicker extends Component {
 	}
 }
 
+class APLPrepullActionPicker extends Input<Player<any>, APLPrepullAction> {
+	private readonly player: Player<any>;
+
+	private readonly hidePicker: Input<Player<any>, boolean>;
+	private readonly doAtPicker: Input<Player<any>, string>;
+	private readonly actionPicker: APLActionPicker;
+
+    private getItem(): APLPrepullAction {
+        return this.getSourceValue() || APLPrepullAction.create({
+			action: {},
+		});
+    }
+
+	constructor(parent: HTMLElement, player: Player<any>, config: ListItemPickerConfig<Player<any>, APLPrepullAction>, index: number) {
+		config.enableWhen = () => !this.getItem().hide;
+		super(parent, 'apl-list-item-picker-root', player, config);
+		this.player = player;
+
+		const itemHeaderElem = ListPicker.getItemHeaderElem(this);
+		makeListItemWarnings(itemHeaderElem, player, player => player.getCurrentStats().rotationStats?.prepullActions[index]?.warnings || []);
+
+        this.hidePicker = new HidePicker(itemHeaderElem, player, {
+            changedEvent: () => this.player.rotationChangeEmitter,
+            getValue: () => this.getItem().hide,
+            setValue: (eventID: EventID, player: Player<any>, newValue: boolean) => {
+                this.getItem().hide = newValue;
+				this.player.rotationChangeEmitter.emit(eventID);
+            },
+        });
+
+        this.doAtPicker = new AdaptiveStringPicker(this.rootElem, this.player, {
+			label: 'Do At',
+			labelTooltip: 'Time before pull to do the action. Should be negative, and formatted like, \'-1s\' or \'-2500ms\'.',
+			extraCssClasses: ['apl-prepull-actions-doat'],
+            changedEvent: () => this.player.rotationChangeEmitter,
+            getValue: () => this.getItem().doAt,
+            setValue: (eventID: EventID, player: Player<any>, newValue: string) => {
+                this.getItem().doAt = newValue;
+				this.player.rotationChangeEmitter.emit(eventID);
+            },
+			inline: true,
+        });
+
+        this.actionPicker = new APLActionPicker(this.rootElem, this.player, {
+            changedEvent: () => this.player.rotationChangeEmitter,
+            getValue: () => this.getItem().action!,
+            setValue: (eventID: EventID, player: Player<any>, newValue: APLAction) => {
+                this.getItem().action = newValue;
+				this.player.rotationChangeEmitter.emit(eventID);
+            },
+        });
+		this.init();
+	}
+
+	getInputElem(): HTMLElement | null {
+		return this.rootElem;
+	}
+
+    getInputValue(): APLPrepullAction {
+        const item = APLPrepullAction.create({
+			hide: this.hidePicker.getInputValue(),
+			doAt: this.doAtPicker.getInputValue(),
+			action: this.actionPicker.getInputValue(),
+		});
+		return item;
+    }
+
+	setInputValue(newValue: APLPrepullAction) {
+		if (!newValue) {
+			return;
+		}
+		this.hidePicker.setInputValue(newValue.hide);
+		this.doAtPicker.setInputValue(newValue.doAt);
+		this.actionPicker.setInputValue(newValue.action || APLAction.create());
+	}
+}
+
 class APLListItemPicker extends Input<Player<any>, APLListItem> {
 	private readonly player: Player<any>;
-	private readonly index: number;
 
 	private readonly hidePicker: Input<Player<any>, boolean>;
 	private readonly actionPicker: APLActionPicker;
-
-	private readonly warningsElem: HTMLElement;
-	private readonly warningsTooltip: Tooltip;
 
     private getItem(): APLListItem {
         return this.getSourceValue() || APLListItem.create({
@@ -63,17 +157,9 @@ class APLListItemPicker extends Input<Player<any>, APLListItem> {
 		config.enableWhen = () => !this.getItem().hide;
 		super(parent, 'apl-list-item-picker-root', player, config);
 		this.player = player;
-		this.index = index;
 
 		const itemHeaderElem = ListPicker.getItemHeaderElem(this);
-
-		this.warningsElem = ListPicker.makeActionElem('apl-warnings', 'Warnings', 'fa-exclamation-triangle');
-		this.warningsElem.classList.add('warnings', 'link-warning');
-		this.warningsElem.setAttribute('data-bs-html', 'true');
-		this.warningsTooltip = Tooltip.getOrCreateInstance(this.warningsElem, {
-			customClass: 'dropdown-tooltip',
-		});
-		itemHeaderElem.appendChild(this.warningsElem);
+		makeListItemWarnings(itemHeaderElem, player, player => player.getCurrentStats().rotationStats?.priorityList[index]?.warnings || []);
 
         this.hidePicker = new HidePicker(itemHeaderElem, player, {
             changedEvent: () => this.player.rotationChangeEmitter,
@@ -93,26 +179,6 @@ class APLListItemPicker extends Input<Player<any>, APLListItem> {
             },
         });
 		this.init();
-
-		this.updateWarnings();
-		player.currentStatsEmitter.on(() => this.updateWarnings());
-	}
-
-	private async updateWarnings() {
-		this.warningsTooltip.setContent({'.tooltip-inner': ''});
-		const warnings = this.player.getCurrentStats().rotationStats?.priorityList[this.index]?.warnings || [];
-		if (warnings.length == 0) {
-			this.warningsElem.style.visibility = 'hidden';
-		} else {
-			this.warningsElem.style.visibility = 'visible';
-			const formattedWarnings = await Promise.all(warnings.map(w => ActionId.replaceAllInString(w)));
-			this.warningsTooltip.setContent({'.tooltip-inner': `
-				<p>This action has warnings, and might not behave as expected.</p>
-				<ul>
-					${formattedWarnings.map(w => `<li>${w}</li>`).join('')}
-				</ul>
-			`});
-		}
 	}
 
 	getInputElem(): HTMLElement | null {
@@ -134,6 +200,35 @@ class APLListItemPicker extends Input<Player<any>, APLListItem> {
 		this.hidePicker.setInputValue(newValue.hide);
 		this.actionPicker.setInputValue(newValue.action || APLAction.create());
 	}
+}
+
+function makeListItemWarnings(itemHeaderElem: HTMLElement, player: Player<any>, getWarnings: (player: Player<any>) => Array<string>) {
+	const warningsElem = ListPicker.makeActionElem('apl-warnings', 'Warnings', 'fa-exclamation-triangle');
+	warningsElem.classList.add('warnings', 'link-warning');
+	warningsElem.setAttribute('data-bs-html', 'true');
+	const warningsTooltip = Tooltip.getOrCreateInstance(warningsElem, {
+		customClass: 'dropdown-tooltip',
+	});
+	itemHeaderElem.appendChild(warningsElem);
+
+	const updateWarnings = async () => {
+		warningsTooltip.setContent({'.tooltip-inner': ''});
+		const warnings = getWarnings(player);
+		if (warnings.length == 0) {
+			warningsElem.style.visibility = 'hidden';
+		} else {
+			warningsElem.style.visibility = 'visible';
+			const formattedWarnings = await Promise.all(warnings.map(w => ActionId.replaceAllInString(w)));
+			warningsTooltip.setContent({'.tooltip-inner': `
+				<p>This action has warnings, and might not behave as expected.</p>
+				<ul>
+					${formattedWarnings.map(w => `<li>${w}</li>`).join('')}
+				</ul>
+			`});
+		}
+	};
+	updateWarnings();
+	player.currentStatsEmitter.on(updateWarnings);
 }
 
 class HidePicker extends Input<Player<any>, boolean> {

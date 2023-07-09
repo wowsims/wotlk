@@ -456,19 +456,17 @@ func registerPotionCD(agent Agent, consumes *proto.Consumes) {
 
 	startingMCD := makePotionActivation(startingPotion, character, potionCD)
 	if startingMCD.Spell != nil {
-		character.RegisterPrepullAction(-1*time.Second, func(sim *Simulation) {
-			startingMCD.Spell.Cast(sim, nil)
-			if startingPotion == proto.Potions_IndestructiblePotion {
-				potionCD.Set(sim.CurrentTime + 2*time.Minute)
-			} else {
-				potionCD.Set(sim.CurrentTime + time.Minute)
-			}
-			character.UpdateMajorCooldowns()
-		})
+		startingMCD.Spell.Flags |= SpellFlagPrepullPotion
+		if !character.IsUsingAPL {
+			character.RegisterPrepullAction(-1*time.Second, func(sim *Simulation) {
+				startingMCD.Spell.Cast(sim, nil)
+			})
+		}
 	}
 
 	defaultMCD := makePotionActivation(defaultPotion, character, potionCD)
 	if defaultMCD.Spell != nil {
+		defaultMCD.Spell.Flags |= SpellFlagCombatPotion
 		character.AddMajorCooldown(defaultMCD)
 	}
 }
@@ -484,6 +482,24 @@ func (character *Character) HasAlchStone() bool {
 }
 
 func makePotionActivation(potionType proto.Potions, character *Character, potionCD *Timer) MajorCooldown {
+	mcd := makePotionActivationInternal(potionType, character, potionCD)
+	if mcd.Spell != nil {
+		oldApplyEffects := mcd.Spell.ApplyEffects
+		mcd.Spell.ApplyEffects = func(sim *Simulation, target *Unit, spell *Spell) {
+			oldApplyEffects(sim, target, spell)
+			if sim.CurrentTime < 0 {
+				if potionType == proto.Potions_IndestructiblePotion {
+					potionCD.Set(sim.CurrentTime + 2*time.Minute)
+				} else {
+					potionCD.Set(sim.CurrentTime + time.Minute)
+				}
+			}
+		}
+	}
+	return mcd
+}
+
+func makePotionActivationInternal(potionType proto.Potions, character *Character, potionCD *Timer) MajorCooldown {
 	alchStoneEquipped := character.HasAlchStone()
 	hasEngi := character.HasProfession(proto.Profession_Engineering)
 

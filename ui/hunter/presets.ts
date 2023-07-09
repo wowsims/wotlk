@@ -115,6 +115,12 @@ export const ROTATION_PRESET_DEFAULT = {
 		})),
 		rotation: APLRotation.fromJsonString(`{
 			"enabled": true,
+			"prepullActions": [
+				{
+					"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},
+					"doAt":"-1s"
+				}
+			],
 			"priorityList": [
 				{"action": {
 					"condition": {"cmp": {"op": "OpGt", "lhs": {"currentTime": {}}, "rhs": { "const": {"val": "10s"}}}},

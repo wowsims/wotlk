@@ -46,16 +46,20 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 				player.rotationChangeEmitter.emit(eventID);
 			},
 		});
-		this.conditionPicker.rootElem.classList.add('apl-action-condition');
+		this.conditionPicker.rootElem.classList.add('apl-action-condition', 'apl-priority-list-only');
 
 		this.actionDiv = document.createElement('div');
 		this.actionDiv.classList.add('apl-action-picker-action');
 		this.rootElem.appendChild(this.actionDiv);
 
+		const isPrepull = this.rootElem.closest('.apl-prepull-action-picker') != null;
+
 		const allActionTypes = Object.keys(actionTypeFactories) as Array<NonNullable<APLActionType>>;
 		this.typePicker = new TextDropdownPicker(this.actionDiv, player, {
             defaultLabel: 'Action',
-			values: allActionTypes.map(actionType => {
+			values: allActionTypes
+				.filter(actionType => actionTypeFactories[actionType].isPrepull == undefined || actionTypeFactories[actionType].isPrepull === isPrepull)
+				.map(actionType => {
 				const factory = actionTypeFactories[actionType];
 				return {
 					value: actionType,
@@ -164,6 +168,7 @@ type ActionTypeConfig<T> = {
 	submenu?: Array<string>,
 	shortDescription: string,
 	fullDescription?: string,
+	isPrepull?: boolean,
 	newValue: () => T,
 	factory: (parent: HTMLElement, player: Player<any>, config: InputConfig<Player<any>, T>) => Input<Player<any>, T>,
 };
@@ -202,6 +207,7 @@ function inputBuilder<T>(config: {
 	submenu?: Array<string>,
 	shortDescription: string,
 	fullDescription?: string,
+	isPrepull?: boolean,
 	newValue: () => T,
 	fields: Array<AplHelpers.APLPickerBuilderFieldConfig<T, any>>,
 }): ActionTypeConfig<T> {
@@ -210,6 +216,7 @@ function inputBuilder<T>(config: {
 		submenu: config.submenu,
 		shortDescription: config.shortDescription,
 		fullDescription: config.fullDescription,
+		isPrepull: config.isPrepull,
 		newValue: config.newValue,
 		factory: AplHelpers.aplInputBuilder(config.newValue, config.fields),
 	};
@@ -227,6 +234,7 @@ export const actionTypeFactories: Record<NonNullable<APLActionType>, ActionTypeC
 	['multidot']: inputBuilder({
 		label: 'Multi Dot',
 		shortDescription: 'Keeps a DoT active on multiple targets by casting the specified spell.',
+		isPrepull: false,
 		newValue: () => APLActionMultidot.create({
 			maxDots: 3,
 			maxOverlap: {
@@ -258,6 +266,7 @@ export const actionTypeFactories: Record<NonNullable<APLActionType>, ActionTypeC
 			<p>Once one of the sub-actions has been performed, the next sub-action will not necessarily be immediately executed next. The system will restart at the beginning of the whole actions list (not the sequence). If the sequence is executed again, it will perform the next sub-action.</p>
 			<p>When all actions have been performed, the sequence does NOT automatically reset; instead, it will be skipped from now on. Use the <b>Reset Sequence</b> action to reset it, if desired.</p>
 		`,
+		isPrepull: false,
 		newValue: APLActionSequence.create,
 		fields: [
 			AplHelpers.stringFieldConfig('name'),
@@ -271,6 +280,7 @@ export const actionTypeFactories: Record<NonNullable<APLActionType>, ActionTypeC
 		fullDescription: `
 			<p>Use the <b>name</b> field to refer to the sequence to be reset. The desired sequence must have the same (non-empty) value for its <b>name</b>.</p>
 		`,
+		isPrepull: false,
 		newValue: APLActionResetSequence.create,
 		fields: [
 			AplHelpers.stringFieldConfig('sequenceName'),
@@ -283,6 +293,7 @@ export const actionTypeFactories: Record<NonNullable<APLActionType>, ActionTypeC
 		fullDescription: `
 			<p>Strict Sequences do not begin unless ALL sub-actions are ready.</p>
 		`,
+		isPrepull: false,
 		newValue: APLActionStrictSequence.create,
 		fields: [
 			actionListFieldConfig('actions'),
@@ -298,6 +309,7 @@ export const actionTypeFactories: Record<NonNullable<APLActionType>, ActionTypeC
 				<li>Cooldowns are usually cast immediately upon becoming ready, but there are some basic smart checks in place, e.g. don't use Mana CDs when near full mana.</li>
 			</ul>
 		`,
+		isPrepull: false,
 		newValue: APLActionAutocastOtherCooldowns.create,
 		fields: [],
 	}),
@@ -305,6 +317,7 @@ export const actionTypeFactories: Record<NonNullable<APLActionType>, ActionTypeC
 		label: 'Wait',
 		submenu: ['Misc'],
 		shortDescription: 'Pauses the GCD for a specified amount of time.',
+		isPrepull: false,
 		newValue: () => APLActionWait.create({
 			duration: {
 				value: {
