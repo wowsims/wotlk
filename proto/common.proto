@@ -777,6 +777,7 @@ enum OtherAction {
 	OtherActionFrostRuneGain  = 14; // Indicates healing received from healing model.
 	OtherActionUnholyRuneGain  = 15; // Indicates healing received from healing model.
 	OtherActionDeathRuneGain  = 16; // Indicates healing received from healing model.
+	OtherActionPotion = 17; // Used by APL to generically refer to either the prepull or combat potion.
 }
 
 message ActionID {

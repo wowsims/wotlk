@@ -201,6 +201,9 @@ const (
 	SpellFlagAPL                                            // Indicates this spell can be used from an APL rotation.
 	SpellFlagMCD                                            // Indicates this spell is a MajorCooldown.
 	SpellFlagNoOnDamageDealt                                // Disables OnSpellHitDealt and OnPeriodicDamageDealt aura callbacks for this spell.
+	SpellFlagPrepullOnly                                    // Indicates this spell should only be used during prepull. Not enforced, just a signal for the APL UI.
+	SpellFlagPrepullPotion                                  // Indicates this spell is the prepull potion.
+	SpellFlagCombatPotion                                   // Indicates this spell is the combat potion.
 
 	// Used to let agents categorize their spells.
 	SpellFlagAgentReserved1

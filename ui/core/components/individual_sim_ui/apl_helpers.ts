@@ -1,3 +1,4 @@
+import { OtherAction } from '../../proto/common.js';
 import { ActionId } from '../../proto_utils/action_id.js';
 import { Player } from '../../player.js';
 import { EventID, TypedEvent } from '../../typed_event.js';
@@ -42,6 +43,10 @@ const actionIdSets: Record<ACTION_ID_SET, {
 			// Split up non-cooldowns and cooldowns into separate sections for easier browsing.
 			const {'spells': spells, 'cooldowns': cooldowns } = bucket(castableSpells, spell => spell.data.isMajorCooldown ? 'cooldowns' : 'spells');
 
+			const placeholders: Array<ActionId> = [
+				ActionId.fromOtherId(OtherAction.OtherActionPotion),
+			];
+
 			return [
 				[{
 					value: ActionId.fromEmpty(),
@@ -50,6 +55,7 @@ const actionIdSets: Record<ACTION_ID_SET, {
 				(spells || []).map(actionId => {
 					return {
 						value: actionId.id,
+						extraCssClasses: (actionId.data.prepullOnly ? ['apl-prepull-actions-only'] : []),
 					};
 				}),
 				[{
@@ -59,6 +65,17 @@ const actionIdSets: Record<ACTION_ID_SET, {
 				(cooldowns || []).map(actionId => {
 					return {
 						value: actionId.id,
+						extraCssClasses: (actionId.data.prepullOnly ? ['apl-prepull-actions-only'] : []),
+					};
+				}),
+				[{
+					value: ActionId.fromEmpty(),
+					headerText: 'Placeholders',
+				}],
+				placeholders.map(actionId => {
+					return {
+						value: actionId,
+						tooltip: 'The Prepull Potion if CurrentTime < 0, or the Combat Potion if combat has started.',
 					};
 				}),
 			].flat();

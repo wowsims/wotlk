@@ -13,6 +13,12 @@ message APLRotation {
 	repeated APLListItem priority_list = 2;
 }
 
+message APLPrepullAction {
+    APLAction action = 1;
+    string do_at = 2; // Should be a negative value. Uses the same syntax as APLValueConst.
+    bool hide = 3;    // Causes this item to be ignored.
+}
+
 message APLListItem {
     bool hide = 1;        // Causes this item to be ignored.
     string notes = 2;     // Comments for the reader.
@@ -74,11 +80,6 @@ message APLValue {
         APLValueDotIsActive dot_is_active = 6;
         APLValueDotRemainingTime dot_remaining_time = 13;
     }
-}
-
-message APLPrepullAction {
-    APLAction action = 1;
-    Duration do_at = 2; // Should be a negative value.
 }
 
 ///////////////////////////////////////////////////////////////////////////

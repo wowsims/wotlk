@@ -105,6 +105,10 @@ export class ActionId {
 				baseName = 'Death Rune Gain';
 				iconUrl = 'https://wow.zamimg.com/images/wow/icons/medium/spell_deathknight_empowerruneblade.jpg';
 				break;
+			case OtherAction.OtherActionPotion:
+				baseName = 'Potion';
+				iconUrl = 'https://wow.zamimg.com/images/wow/icons/large/inv_alchemy_elixir_04.jpg';
+				break;
 		}
 		this.baseName = baseName;
 		this.name = name || baseName;

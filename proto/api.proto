@@ -304,6 +304,7 @@ message SpellStats {
 	bool is_castable = 2; // Whether this spell may be cast by the APL logic.
 	bool is_major_cooldown = 3; // Whether this spell is a major cooldown.
 	bool has_dot = 4; // Whether this spell applies a DoT effect.
+	bool prepull_only = 5; // Whether this spell may only be cast during prepull.
 }
 message APLActionStats {
 	repeated string warnings = 1;
