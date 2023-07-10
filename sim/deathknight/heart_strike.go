@@ -75,6 +75,10 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool) *core.
 		conf.Cast = core.CastConfig{}
 	}
 
+	if isMainTarget {
+		conf.Flags |= core.SpellFlagAPL
+	}
+
 	if isDrw {
 		if !dk.Inputs.NewDrw {
 			conf.DamageMultiplier *= 0.5

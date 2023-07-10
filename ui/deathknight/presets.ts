@@ -12,7 +12,7 @@ import {
 	RaidTarget,
 	Spec
 } from '../core/proto/common.js';
-import {SavedTalents} from '../core/proto/ui.js';
+import {SavedRotation, SavedTalents} from '../core/proto/ui.js';
 import {Player} from '../core/player.js';
 import {NO_TARGET} from '../core/proto_utils/utils.js';
 
@@ -31,6 +31,7 @@ import {
 } from '../core/proto/deathknight.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
+import { APLRotation } from '../core/proto/apl.js';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -130,7 +131,7 @@ export const BloodTalents = {
 
 export const DefaultUnholyRotation = DeathKnightRotation.create({
 	useDeathAndDecay: true,
-	btGhoulFrenzy: false,
+	btGhoulFrenzy: true,
 	refreshHornOfWinter: false,
 	useGargoyle: true,
 	useEmpowerRuneWeapon: true,
@@ -237,6 +238,304 @@ export const DefaultConsumes = Consumes.create({
 	thermalSapper: true,
 	fillerExplosive: Explosive.ExplosiveSaroniteBomb,
 });
+
+export const UNHOLY_DW_ROTATION_PRESET_LEGACY_DEFAULT = {
+	name: 'Legacy Default',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultUnholyRotation),
+	}),
+}
+
+export const UNHOLY_DW_ROTATION_PRESET_DEFAULT = {
+	name: 'APL Default',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultUnholyRotation),
+		rotation: APLRotation.fromJsonString(`{
+			"enabled": true,
+			"priorityList": [
+			  {
+				"action": {
+				  "autocastOtherCooldowns": {}
+				}
+			  },
+			  {
+				"action": {
+				  "condition": {
+					"cmp": {
+					  "op": "OpLe",
+					  "lhs": {
+						"dotRemainingTime": {
+						  "spellId": {
+							"spellId": 55095
+						  }
+						}
+					  },
+					  "rhs": {
+						"const": {
+						  "val": "3s"
+						}
+					  }
+					}
+				  },
+				  "castSpell": {
+					"spellId": {
+					  "spellId": 59131
+					}
+				  }
+				}
+			  },
+			  {
+				"action": {
+				  "condition": {
+					"cmp": {
+					  "op": "OpLe",
+					  "lhs": {
+						"dotRemainingTime": {
+						  "spellId": {
+							"spellId": 55078
+						  }
+						}
+					  },
+					  "rhs": {
+						"const": {
+						  "val": "3s"
+						}
+					  }
+					}
+				  },
+				  "castSpell": {
+					"spellId": {
+					  "tag": 1,
+					  "spellId": 49921
+					}
+				  }
+				}
+			  },
+			  {
+				"action": {
+				  "condition": {
+					"not": {
+					  "val": {
+						"auraIsActive": {
+						  "auraId": {
+							"spellId": 66803
+						  }
+						}
+					  }
+					}
+				  },
+				  "castSpell": {
+					"spellId": {
+					  "tag": 1,
+					  "spellId": 49930
+					}
+				  }
+				}
+			  },
+			  {
+				"action": {
+				  "condition": {
+					"auraIsActive": {
+					  "auraId": {
+						"spellId": 49206
+					  }
+					}
+				  },
+				  "castSpell": {
+					"spellId": {
+					  "spellId": 47568
+					}
+				  }
+				}
+			  },
+			  {
+				"action": {
+				  "condition": {
+					"auraIsActive": {
+					  "auraId": {
+						"spellId": 49206
+					  }
+					}
+				  },
+				  "castSpell": {
+					"spellId": {
+					  "spellId": 42650
+					}
+				  }
+				}
+			  },
+			  {
+				"action": {
+				  "castSpell": {
+					"spellId": {
+					  "spellId": 49938
+					}
+				  }
+				}
+			  },
+			  {
+				"action": {
+				  "condition": {
+					"cmp": {
+					  "op": "OpGt",
+					  "lhs": {
+						"spellTimeToReady": {
+						  "spellId": {
+							"spellId": 49938
+						  }
+						}
+					  },
+					  "rhs": {
+						"const": {
+						  "val": "6s"
+						}
+					  }
+					}
+				  },
+				  "castSpell": {
+					"spellId": {
+					  "tag": 1,
+					  "spellId": 55271
+					}
+				  }
+				}
+			  },
+			  {
+				"action": {
+				  "condition": {
+					"and": {
+					  "vals": [
+						{
+						  "cmp": {
+							"op": "OpGt",
+							"lhs": {
+							  "spellTimeToReady": {
+								"spellId": {
+								  "spellId": 49938
+								}
+							  }
+							},
+							"rhs": {
+							  "const": {
+								"val": "6s"
+							  }
+							}
+						  }
+						},
+						{
+						  "cmp": {
+							"op": "OpLt",
+							"lhs": {
+							  "auraRemainingTime": {
+								"auraId": {
+								  "spellId": 66803
+								}
+							  }
+							},
+							"rhs": {
+							  "const": {
+								"val": "10s"
+							  }
+							}
+						  }
+						}
+					  ]
+					}
+				  },
+				  "castSpell": {
+					"spellId": {
+					  "tag": 1,
+					  "spellId": 49930
+					}
+				  }
+				}
+			  },
+			  {
+				"action": {
+				  "condition": {
+					"cmp": {
+					  "op": "OpGt",
+					  "lhs": {
+						"spellTimeToReady": {
+						  "spellId": {
+							"spellId": 49938
+						  }
+						}
+					  },
+					  "rhs": {
+						"const": {
+						  "val": "6s"
+						}
+					  }
+					}
+				  },
+				  "castSpell": {
+					"spellId": {
+					  "spellId": 49941
+					}
+				  }
+				}
+			  },
+			  {
+				"action": {
+				  "castSpell": {
+					"spellId": {
+					  "spellId": 26297
+					}
+				  }
+				}
+			  },
+			  {
+				"action": {
+				  "castSpell": {
+					"spellId": {
+					  "spellId": 54758
+					}
+				  }
+				}
+			  },
+			  {
+				"action": {
+				  "castSpell": {
+					"spellId": {
+					  "itemId": 40211
+					}
+				  }
+				}
+			  },
+			  {
+				"action": {
+				  "castSpell": {
+					"spellId": {
+					  "spellId": 49206
+					}
+				  }
+				}
+			  },
+			  {
+				"action": {
+				  "condition": {
+					"not": {
+					  "val": {
+						"spellIsReady": {
+						  "spellId": {
+							"spellId": 49206
+						  }
+						}
+					  }
+					}
+				  },
+				  "castSpell": {
+					"spellId": {
+					  "spellId": 49895
+					}
+				  }
+				}
+			  }
+			]
+		}`),
+	}),
+}
 
 export const P1_BLOOD_BIS_PRESET = {
 	name: 'P1 Blood',

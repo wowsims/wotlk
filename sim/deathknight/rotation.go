@@ -265,6 +265,10 @@ func (dk *Deathknight) IsMainTank() bool {
 }
 
 func (dk *Deathknight) DoRotation(sim *core.Simulation) {
+	if dk.IsUsingAPL {
+		return
+	}
+
 	target := dk.CurrentTarget
 
 	optWait := time.Duration(-1)

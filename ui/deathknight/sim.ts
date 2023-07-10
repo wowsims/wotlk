@@ -179,6 +179,11 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 					Presets.UnholyDualWieldSSTalents,
 					Presets.Unholy2HTalents,
 				],
+				// Preset rotations that the user can quickly select.
+				rotations: [
+					Presets.UNHOLY_DW_ROTATION_PRESET_LEGACY_DEFAULT,
+					Presets.UNHOLY_DW_ROTATION_PRESET_DEFAULT,
+				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.P1_BLOOD_BIS_PRESET,

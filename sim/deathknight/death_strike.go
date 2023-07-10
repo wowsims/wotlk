@@ -84,6 +84,8 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *core.Spell {
 	if !isMH {
 		conf.RuneCost = core.RuneCostOptions{}
 		conf.Cast = core.CastConfig{}
+	} else {
+		conf.Flags |= core.SpellFlagAPL
 	}
 
 	return dk.RegisterSpell(conf)

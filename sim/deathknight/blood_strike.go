@@ -76,6 +76,8 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *core.Spell {
 	if !isMH { // offhand doesn't need GCD
 		conf.RuneCost = core.RuneCostOptions{}
 		conf.Cast = core.CastConfig{}
+	} else {
+		conf.Flags |= core.SpellFlagAPL
 	}
 
 	return dk.RegisterSpell(conf)

@@ -47,6 +47,7 @@ func (dk *Deathknight) registerDancingRuneWeaponCD() {
 
 	dk.DancingRuneWeapon = dk.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 49028},
+		Flags:    core.SpellFlagAPL,
 
 		RuneCost: core.RuneCostOptions{
 			RunicPowerCost: 60,

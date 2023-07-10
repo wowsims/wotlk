@@ -79,6 +79,8 @@ func (dk *Deathknight) newRuneStrikeSpell(isMH bool) *core.Spell {
 		conf.RuneCost = core.RuneCostOptions{}
 		conf.Cast = core.CastConfig{}
 		conf.ExtraCastCondition = nil
+	} else {
+		conf.Flags |= core.SpellFlagAPL
 	}
 
 	return dk.RegisterSpell(conf)

@@ -26,6 +26,7 @@ func (dk *Deathknight) registerRaiseDeadCD() {
 
 	dk.RaiseDead = dk.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 46584},
+		Flags:    core.SpellFlagAPL,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

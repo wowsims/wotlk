@@ -39,7 +39,7 @@ func (dk *Deathknight) registerVampiricBloodSpell() {
 
 	dk.VampiricBlood = dk.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
-		Flags:    core.SpellFlagNoOnCastComplete,
+		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagAPL,
 
 		RuneCost: core.RuneCostOptions{
 			BloodRuneCost:  1,
