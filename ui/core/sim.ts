@@ -55,7 +55,7 @@ export class Sim {
 	readonly raid: Raid;
 	readonly encounter: Encounter;
 
-	private db_: Database|null = null;
+	private db_: Database | null = null;
 
 	readonly iterationsChangeEmitter = new TypedEvent<void>();
 	readonly phaseChangeEmitter = new TypedEvent<void>();
@@ -214,7 +214,7 @@ export class Sim {
 		playerDatabase?.gems.push(...bulkItemsDb.gems);
 
 		this.bulkSimStartEmitter.emit(TypedEvent.nextEventID(), request);
-		
+
 		var result = await this.workerPool.bulkSimAsync(request, onProgress);
 		if (result.errorResult != "") {
 			throw new SimError(result.errorResult);

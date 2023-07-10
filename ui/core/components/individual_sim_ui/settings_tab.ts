@@ -41,22 +41,22 @@ import * as Tooltips from '../../constants/tooltips.js';
 import { ItemSwapPicker } from "../item_swap_picker";
 
 export class SettingsTab extends SimTab {
-  protected simUI: IndividualSimUI<Spec>;
+	protected simUI: IndividualSimUI<Spec>;
 
-  readonly leftPanel: HTMLElement;
-  readonly rightPanel: HTMLElement;
+	readonly leftPanel: HTMLElement;
+	readonly rightPanel: HTMLElement;
 
 	readonly column1: HTMLElement = this.buildColumn(1, 'settings-left-col');
 	readonly column2: HTMLElement = this.buildColumn(2, 'settings-left-col');
 	readonly column3: HTMLElement = this.buildColumn(3, 'settings-left-col');
 	readonly column4?: HTMLElement;
 
-  constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>) {
-    super(parentElem, simUI, {identifier: 'settings-tab', title: 'Settings'});
-    this.simUI = simUI;
+	constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>) {
+		super(parentElem, simUI, { identifier: 'settings-tab', title: 'Settings' });
+		this.simUI = simUI;
 
-    this.leftPanel = document.createElement('div');
-    this.leftPanel.classList.add('settings-tab-left', 'tab-panel-left');
+		this.leftPanel = document.createElement('div');
+		this.leftPanel.classList.add('settings-tab-left', 'tab-panel-left');
 
 		this.leftPanel.appendChild(this.column1);
 		this.leftPanel.appendChild(this.column2);
@@ -69,17 +69,17 @@ export class SettingsTab extends SimTab {
 		}
 
 		this.rightPanel = document.createElement('div');
-    this.rightPanel.classList.add('settings-tab-right', 'tab-panel-right', 'within-raid-sim-hide');
+		this.rightPanel.classList.add('settings-tab-right', 'tab-panel-right', 'within-raid-sim-hide');
 
-    this.contentContainer.appendChild(this.leftPanel);
-    this.contentContainer.appendChild(this.rightPanel);
+		this.contentContainer.appendChild(this.leftPanel);
+		this.contentContainer.appendChild(this.rightPanel);
 
-    this.buildTabContent();
-  }
+		this.buildTabContent();
+	}
 
-  protected buildTabContent() {
+	protected buildTabContent() {
 		if (!this.simUI.isWithinRaidSim) {
-    	this.buildEncounterSettings();
+			this.buildEncounterSettings();
 		}
 
 		if (aplLaunchStatuses[this.simUI.player.spec] == LaunchStatus.Unlaunched) {
@@ -100,22 +100,22 @@ export class SettingsTab extends SimTab {
 		}
 
 		if (!this.simUI.isWithinRaidSim) {
-    	this.buildSavedDataPickers();
+			this.buildSavedDataPickers();
 		}
-  }
+	}
 
-  private buildEncounterSettings() {
-    const contentBlock = new ContentBlock(this.column1, 'encounter-settings', {
-      header: {title: 'Encounter'}
-    });
+	private buildEncounterSettings() {
+		const contentBlock = new ContentBlock(this.column1, 'encounter-settings', {
+			header: { title: 'Encounter' }
+		});
 
-    new EncounterPicker(contentBlock.bodyElement, this.simUI.sim.encounter, this.simUI.individualConfig.encounterPicker, this.simUI);
-  }
+		new EncounterPicker(contentBlock.bodyElement, this.simUI.sim.encounter, this.simUI.individualConfig.encounterPicker, this.simUI);
+	}
 
 	private buildRotationSettings() {
 		const contentBlock = new ContentBlock(this.column1, 'rotation-settings', {
-      header: {title: 'Rotation'}
-    });
+			header: { title: 'Rotation' }
+		});
 
 		const rotationIconGroup = Input.newGroupContainer();
 		rotationIconGroup.classList.add('rotation-icon-group', 'icon-group');
@@ -139,7 +139,7 @@ export class SettingsTab extends SimTab {
 	private buildPlayerSettings() {
 		const column = aplLaunchStatuses[this.simUI.player.spec] == LaunchStatus.Unlaunched ? this.column2 : this.column1;
 		const contentBlock = new ContentBlock(column, 'player-settings', {
-			header: {title: 'Player'}
+			header: { title: 'Player' }
 		});
 
 		const playerIconGroup = Input.newGroupContainer();
@@ -211,7 +211,7 @@ export class SettingsTab extends SimTab {
 	private buildConsumesSection() {
 		const column = this.simUI.isWithinRaidSim ? this.column3 : this.column2;
 		const contentBlock = new ContentBlock(column, 'consumes-settings', {
-			header: {title: 'Consumables'}
+			header: { title: 'Consumables' }
 		});
 
 		new ConsumesPicker(contentBlock.bodyElement, this, this.simUI);
@@ -220,7 +220,7 @@ export class SettingsTab extends SimTab {
 	private buildCooldownSettings() {
 		const column = (this.simUI.isWithinRaidSim ? this.column4 : this.column2) as HTMLElement;
 		const contentBlock = new ContentBlock(column, 'cooldown-settings', {
-			header: {title: 'Cooldowns', tooltip: Tooltips.COOLDOWNS_SECTION}
+			header: { title: 'Cooldowns', tooltip: Tooltips.COOLDOWNS_SECTION }
 		});
 
 		new CooldownsPicker(contentBlock.bodyElement, this.simUI.player);
@@ -234,7 +234,7 @@ export class SettingsTab extends SimTab {
 
 		if (settings.length > 0) {
 			const contentBlock = new ContentBlock(this.column2, 'other-settings', {
-				header: {title: 'Other'}
+				header: { title: 'Other' }
 			});
 
 			this.configureInputSection(contentBlock.bodyElement, this.simUI.individualConfig.otherInputs);
@@ -247,7 +247,7 @@ export class SettingsTab extends SimTab {
 
 	private buildBuffsSettings() {
 		const contentBlock = new ContentBlock(this.column3, 'buffs-settings', {
-			header: {title: 'Raid Buffs', tooltip: Tooltips.BUFFS_SECTION}
+			header: { title: 'Raid Buffs', tooltip: Tooltips.BUFFS_SECTION }
 		});
 
 		const buffOptions = this.simUI.splitRelevantOptions([
@@ -323,7 +323,7 @@ export class SettingsTab extends SimTab {
 
 	private buildDebuffsSettings() {
 		const contentBlock = new ContentBlock(this.column3, 'debuffs-settings', {
-			header: {title: 'Debuffs', tooltip: Tooltips.DEBUFFS_SECTION}
+			header: { title: 'Debuffs', tooltip: Tooltips.DEBUFFS_SECTION }
 		});
 
 		const debuffOptions = this.simUI.splitRelevantOptions([
@@ -367,9 +367,9 @@ export class SettingsTab extends SimTab {
 	}
 
 	private buildSavedDataPickers() {
-    const savedEncounterManager = new SavedDataManager<Encounter, SavedEncounter>(this.rightPanel, this.simUI, this.simUI.sim.encounter, {
+		const savedEncounterManager = new SavedDataManager<Encounter, SavedEncounter>(this.rightPanel, this.simUI, this.simUI.sim.encounter, {
 			label: 'Encounter',
-      header: {title: 'Saved Encounters'},
+			header: { title: 'Saved Encounters' },
 			storageKey: this.simUI.getSavedEncounterStorageKey(),
 			getData: (encounter: Encounter) => SavedEncounter.create({ encounter: encounter.toProto() }),
 			setData: (eventID: EventID, encounter: Encounter, newEncounter: SavedEncounter) => encounter.fromProto(eventID, newEncounter.encounter!),
@@ -379,9 +379,9 @@ export class SettingsTab extends SimTab {
 			fromJson: (obj: any) => SavedEncounter.fromJson(obj),
 		});
 
-    const savedSettingsManager = new SavedDataManager<IndividualSimUI<any>, SavedSettings>(this.rightPanel, this.simUI, this.simUI, {
+		const savedSettingsManager = new SavedDataManager<IndividualSimUI<any>, SavedSettings>(this.rightPanel, this.simUI, this.simUI, {
 			label: 'Settings',
-      header: {title: 'Saved Settings'},
+			header: { title: 'Saved Settings' },
 			storageKey: this.simUI.getSavedSettingsStorageKey(),
 			getData: (simUI: IndividualSimUI<any>) => {
 				const player = simUI.player;
@@ -442,12 +442,12 @@ export class SettingsTab extends SimTab {
 			if (inputConfig.type == 'number') {
 				new NumberPicker(sectionElem, this.simUI.player, inputConfig);
 			} else if (inputConfig.type == 'boolean') {
-				new BooleanPicker(sectionElem, this.simUI.player, {...inputConfig, ...{cssScheme: this.simUI.cssScheme}});
+				new BooleanPicker(sectionElem, this.simUI.player, { ...inputConfig, ...{ cssScheme: this.simUI.cssScheme } });
 			} else if (inputConfig.type == 'enum') {
 				new EnumPicker(sectionElem, this.simUI.player, inputConfig);
 			} else if (inputConfig.type == 'customRotation') {
 				new CustomRotationPicker(sectionElem, this.simUI, this.simUI.player, inputConfig);
-			} else if (inputConfig.type == 'itemSwap'){
+			} else if (inputConfig.type == 'itemSwap') {
 				new ItemSwapPicker(sectionElem, this.simUI, this.simUI.player, inputConfig)
 			}
 		});

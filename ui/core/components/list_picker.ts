@@ -66,7 +66,7 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 
 		if (this.actionEnabled('create')) {
 			let newItemButton = null;
-			let newButtonTooltip: Tooltip|null = null;
+			let newButtonTooltip: Tooltip | null = null;
 			if (this.config.horizontalLayout) {
 				newItemButton = ListPicker.makeActionElem('link-success', `New ${config.itemLabel}`, 'fa-plus')
 				newButtonTooltip = Tooltip.getOrCreateInstance(newItemButton);

@@ -380,7 +380,7 @@ export const P2_PRESET = {
 
 export const P3_PRESET_HORDE = {
 	name: 'P3 Preset Horde',
-	enableWhen:(player: Player<Spec.SpecElementalShaman>) => player.getFaction() == Faction.Horde,
+	enableWhen: (player: Player<Spec.SpecElementalShaman>) => player.getFaction() == Faction.Horde,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
         {
@@ -502,7 +502,7 @@ export const P3_PRESET_HORDE = {
 
 export const P3_PRESET_ALLI = {
 	name: 'P3 Preset Alli',
-	enableWhen:(player: Player<Spec.SpecElementalShaman>) => player.getFaction() == Faction.Alliance,
+	enableWhen: (player: Player<Spec.SpecElementalShaman>) => player.getFaction() == Faction.Alliance,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
         {

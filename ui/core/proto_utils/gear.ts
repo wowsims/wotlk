@@ -45,17 +45,17 @@ abstract class BaseGear {
 	}
 
 	removeUniqueGems(gear: InternalGear, newItem: EquippedItem) {
-			// If the new item has unique gems, remove matching.
-			newItem.gems
-				.filter(gem => gem?.unique)
-				.forEach(gem => {
-					this.getItemSlots().map(slot => Number(slot) as ItemSlot).forEach(slot => {
-						gear[slot] = gear[slot]?.removeGemsWithId(gem!.id) || null;
-					});
+		// If the new item has unique gems, remove matching.
+		newItem.gems
+			.filter(gem => gem?.unique)
+			.forEach(gem => {
+				this.getItemSlots().map(slot => Number(slot) as ItemSlot).forEach(slot => {
+					gear[slot] = gear[slot]?.removeGemsWithId(gem!.id) || null;
 				});
+			});
 	}
 
-	removeUniqueItems(gear: InternalGear, newItem: EquippedItem){
+	removeUniqueItems(gear: InternalGear, newItem: EquippedItem) {
 		if (newItem.item.unique) {
 			this.getItemSlots().map(slot => Number(slot) as ItemSlot).forEach(slot => {
 				if (gear[slot]?.item.id == newItem.item.id) {
@@ -311,7 +311,7 @@ export class ItemSwapGear extends BaseGear {
 			this.removeUniqueGems(this.gear, equippedItem);
 			this.removeUniqueItems(this.gear, equippedItem);
 		}
-		
+
 		this.gear[slot] = equippedItem;
 		this.validateWeaponCombo(this.gear, slot, canDualWield2H);
 	}

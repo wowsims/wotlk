@@ -126,8 +126,8 @@ export const FeralDruidRotationConfig = {
 			fieldName: 'biteTime',
 			label: 'Bite Time',
 			labelTooltip: 'Min seconds on Rip/Roar to bite',
-			showWhen: (player: Player<Spec.SpecFeralDruid>) => 
-			ShouldShowAdvParamST(player) && player.getRotation().useBite == true && player.getRotation().biteModeType == BiteModeType.Emperical,
+			showWhen: (player: Player<Spec.SpecFeralDruid>) =>
+				ShouldShowAdvParamST(player) && player.getRotation().useBite == true && player.getRotation().biteModeType == BiteModeType.Emperical,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
 			fieldName: 'flowerWeave',

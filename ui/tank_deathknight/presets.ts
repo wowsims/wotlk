@@ -11,10 +11,10 @@ import {
 	TankDeathknight_Options as TankDeathKnightOptions,
 	DeathknightMajorGlyph,
 	DeathknightMinorGlyph,
-  TankDeathknight_Rotation_Opener as Opener,
-  TankDeathknight_Rotation_OptimizationSetting as OptimizationSetting,
-  TankDeathknight_Rotation_BloodSpell as BloodSpell,
-  TankDeathknight_Rotation_Presence as Presence,
+	TankDeathknight_Rotation_Opener as Opener,
+	TankDeathknight_Rotation_OptimizationSetting as OptimizationSetting,
+	TankDeathknight_Rotation_BloodSpell as BloodSpell,
+	TankDeathknight_Rotation_Presence as Presence,
 } from '../core/proto/deathknight.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
@@ -80,10 +80,10 @@ export const DoubleBuffFrostTalents = {
 };
 
 export const DefaultRotation = TankDeathKnightRotation.create({
-  opener: Opener.Threat,
-  optimizationSetting: OptimizationSetting.Hps,
-  bloodSpell: BloodSpell.BloodStrike,
-  presence: Presence.Frost,
+	opener: Opener.Threat,
+	optimizationSetting: OptimizationSetting.Hps,
+	bloodSpell: BloodSpell.BloodStrike,
+	presence: Presence.Frost,
 });
 
 export const DefaultOptions = TankDeathKnightOptions.create({

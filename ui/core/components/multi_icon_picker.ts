@@ -62,7 +62,7 @@ export class MultiIconPicker<ModObject> extends Component {
 
 		this.buttonElem.addEventListener('hide.bs.dropdown', event => {
 			if (event.hasOwnProperty('clickEvent'))
-				event.preventDefault();	
+				event.preventDefault();
 		})
 
 		this.buttonElem.addEventListener('contextmenu', event => {

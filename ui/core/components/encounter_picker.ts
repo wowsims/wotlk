@@ -6,7 +6,7 @@ import {
 	Target as TargetProto,
 	TargetInput,
 	Target,
- } from '../proto/common.js';
+} from '../proto/common.js';
 import { Encounter } from '../encounter.js';
 import { Raid } from '../raid.js';
 import { EventID, TypedEvent } from '../typed_event.js';
@@ -469,7 +469,7 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 		this.init();
 	}
 
-	getInputElem(): HTMLElement|null {
+	getInputElem(): HTMLElement | null {
 		return null;
 	}
 	getInputValue(): TargetProto {
@@ -519,8 +519,8 @@ class TargetInputPicker extends Input<Encounter, TargetInput> {
 	private readonly targetIndex: number;
 	private readonly targetInputIndex: number;
 
-	private boolPicker: Input<null, boolean>|null;
-	private numberPicker: Input<null, number>|null;
+	private boolPicker: Input<null, boolean> | null;
+	private numberPicker: Input<null, number> | null;
 
 	private getTargetInput(): TargetInput {
 		return this.encounter.targets[this.targetIndex].targetInputs[this.targetInputIndex] || TargetInput.create();
@@ -537,7 +537,7 @@ class TargetInputPicker extends Input<Encounter, TargetInput> {
 		this.init();
 	}
 
-	getInputElem(): HTMLElement|null {
+	getInputElem(): HTMLElement | null {
 		return this.rootElem;
 	}
 	getInputValue(): TargetInput {
@@ -663,7 +663,7 @@ function makeTargetInputsPicker(parent: HTMLElement, encounter: Encounter, targe
 	});
 }
 
-function equalTargetsIgnoreInputs(target1: TargetProto|undefined, target2: TargetProto|undefined): boolean {
+function equalTargetsIgnoreInputs(target1: TargetProto | undefined, target2: TargetProto | undefined): boolean {
 	if ((target1 == null) != (target2 == null)) {
 		return false;
 	}

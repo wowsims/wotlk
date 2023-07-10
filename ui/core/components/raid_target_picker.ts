@@ -12,7 +12,7 @@ export interface RaidTargetPickerConfig<ModObject> extends InputConfig<ModObject
 
 interface OptionElemOptions {
 	isDropdown?: boolean,
-	player: Player<any>|null,
+	player: Player<any> | null,
 }
 
 // Dropdown menu for selecting a player.
@@ -59,7 +59,7 @@ export class RaidTargetPicker<ModObject> extends Input<ModObject, RaidTarget> {
 	}
 
 	private makeTargetOptions(): Array<OptionElemOptions> {
-		const unassignedOption = {player: null, isDropdown: true}
+		const unassignedOption = { player: null, isDropdown: true }
 		const playerOptions = this.raid.getPlayers().filter(player => player != null).map(player => {
 			return { player: player, isDropdown: true }
 		});
@@ -114,7 +114,7 @@ export class RaidTargetPicker<ModObject> extends Input<ModObject, RaidTarget> {
 		const optionData = this.currentOptions.find(optionData => optionData.player == this.curPlayer);
 
 		if (optionData)
-			this.buttonElem.innerHTML = RaidTargetPicker.makeOptionElem({player: optionData.player}).outerHTML;
+			this.buttonElem.innerHTML = RaidTargetPicker.makeOptionElem({ player: optionData.player }).outerHTML;
 	}
 
 	// static makeOptionElem(data: RaidTargetElemOption): HTMLElement {

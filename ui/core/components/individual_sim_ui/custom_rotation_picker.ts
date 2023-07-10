@@ -56,7 +56,7 @@ class CustomSpellPicker<SpecType extends Spec, T> extends Input<Player<SpecType>
 	private readonly spellIndex: number;
 
 	private readonly spellPicker: Input<null, number>;
-	private readonly cpmPicker: Input<null, number>|null;
+	private readonly cpmPicker: Input<null, number> | null;
 
 	getSpell(): CustomSpell {
 		return this.listPicker.config.getValue(this.player)[this.spellIndex] || CustomSpell.create();

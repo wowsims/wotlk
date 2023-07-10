@@ -310,7 +310,7 @@ export class ActionId {
 				break;
 			case 'Holy Vengeance':
 				if (this.tag == 1) {
-						name += ' (Application)'
+					name += ' (Application)'
 				} else if (this.tag == 2) {
 					name += ' (DoT)'
 				}
@@ -319,7 +319,7 @@ export class ActionId {
 			case 'Bloodlust':
 			case 'Ferocious Inspiration':
 			case 'Innervate':
-      			case 'Focus Magic':
+			case 'Focus Magic':
 			case 'Mana Tide Totem':
 			case 'Power Infusion':
 				if (this.tag != NO_TARGET) {

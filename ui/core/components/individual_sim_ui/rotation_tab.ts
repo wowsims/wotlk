@@ -29,81 +29,81 @@ import * as Tooltips from '../../constants/tooltips.js';
 import { APLRotationPicker } from "./apl_rotation_picker";
 
 export class RotationTab extends SimTab {
-  protected simUI: IndividualSimUI<Spec>;
+	protected simUI: IndividualSimUI<Spec>;
 
-  readonly leftPanel: HTMLElement;
-  readonly rightPanel: HTMLElement;
+	readonly leftPanel: HTMLElement;
+	readonly rightPanel: HTMLElement;
 
-  constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>) {
-    super(parentElem, simUI, {identifier: 'rotation-tab', title: 'Rotation'});
-    this.simUI = simUI;
+	constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>) {
+		super(parentElem, simUI, { identifier: 'rotation-tab', title: 'Rotation' });
+		this.simUI = simUI;
 
-    this.leftPanel = document.createElement('div');
-    this.leftPanel.classList.add('rotation-tab-left', 'tab-panel-left');
+		this.leftPanel = document.createElement('div');
+		this.leftPanel.classList.add('rotation-tab-left', 'tab-panel-left');
 
-    this.rightPanel = document.createElement('div');
-    this.rightPanel.classList.add('rotation-tab-right', 'tab-panel-right');
+		this.rightPanel = document.createElement('div');
+		this.rightPanel.classList.add('rotation-tab-right', 'tab-panel-right');
 
-    this.contentContainer.appendChild(this.leftPanel);
-    this.contentContainer.appendChild(this.rightPanel);
+		this.contentContainer.appendChild(this.leftPanel);
+		this.contentContainer.appendChild(this.rightPanel);
 
-    this.buildTabContent();
+		this.buildTabContent();
 
-	this.updateSections();
-	this.simUI.player.rotationChangeEmitter.on(() => this.updateSections());
-  }
-
-  protected buildTabContent() {
-	this.buildHeader();
-	this.buildContent();
-	this.buildRotationSettings();
-	this.buildCooldownSettings();
-	this.buildSavedDataPickers();
-  }
-
-  private updateSections() {
-	if (this.simUI.player.aplRotation.enabled) {
-		this.rootElem.classList.add('rotation-type-apl');
-		this.rootElem.classList.remove('rotation-type-legacy');
-	} else {
-		this.rootElem.classList.remove('rotation-type-apl');
-		this.rootElem.classList.add('rotation-type-legacy');
+		this.updateSections();
+		this.simUI.player.rotationChangeEmitter.on(() => this.updateSections());
 	}
-  }
 
-  private buildHeader() {
-	const header = document.createElement('div');
-	header.classList.add('rotation-tab-header');
-	this.leftPanel.appendChild(header);
+	protected buildTabContent() {
+		this.buildHeader();
+		this.buildContent();
+		this.buildRotationSettings();
+		this.buildCooldownSettings();
+		this.buildSavedDataPickers();
+	}
 
-	new EnumPicker(header, this.simUI.player, {
-		label: 'Rotation Type',
-		labelTooltip: 'Whether to use the legacy rotation options, or the new APL rotation options.',
-		inline: true,
-		values: [
-			{value: 0, name: 'Legacy'},
-			{value: 1, name: 'APL'},
-		],
-		changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
-		getValue: (player: Player<any>) => Number(player.aplRotation.enabled),
-		setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
-			player.aplRotation.enabled = !!newValue;
-			player.rotationChangeEmitter.emit(eventID);
-		},
-	});
-  }
+	private updateSections() {
+		if (this.simUI.player.aplRotation.enabled) {
+			this.rootElem.classList.add('rotation-type-apl');
+			this.rootElem.classList.remove('rotation-type-legacy');
+		} else {
+			this.rootElem.classList.remove('rotation-type-apl');
+			this.rootElem.classList.add('rotation-type-legacy');
+		}
+	}
 
-  private buildContent() {
-	const content = document.createElement('div');
-	content.classList.add('rotation-tab-main');
-	this.leftPanel.appendChild(content);
+	private buildHeader() {
+		const header = document.createElement('div');
+		header.classList.add('rotation-tab-header');
+		this.leftPanel.appendChild(header);
 
-	new APLRotationPicker(content, this.simUI, this.simUI.player);
-  }
+		new EnumPicker(header, this.simUI.player, {
+			label: 'Rotation Type',
+			labelTooltip: 'Whether to use the legacy rotation options, or the new APL rotation options.',
+			inline: true,
+			values: [
+				{ value: 0, name: 'Legacy' },
+				{ value: 1, name: 'APL' },
+			],
+			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
+			getValue: (player: Player<any>) => Number(player.aplRotation.enabled),
+			setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
+				player.aplRotation.enabled = !!newValue;
+				player.rotationChangeEmitter.emit(eventID);
+			},
+		});
+	}
+
+	private buildContent() {
+		const content = document.createElement('div');
+		content.classList.add('rotation-tab-main');
+		this.leftPanel.appendChild(content);
+
+		new APLRotationPicker(content, this.simUI, this.simUI.player);
+	}
 
 	private buildRotationSettings() {
 		const contentBlock = new ContentBlock(this.leftPanel, 'rotation-settings', {
-			header: {title: 'Rotation'}
+			header: { title: 'Rotation' }
 		});
 
 		const rotationIconGroup = Input.newGroupContainer();
@@ -127,7 +127,7 @@ export class RotationTab extends SimTab {
 
 	private buildCooldownSettings() {
 		const contentBlock = new ContentBlock(this.leftPanel, 'cooldown-settings', {
-			header: {title: 'Cooldowns', tooltip: Tooltips.COOLDOWNS_SECTION}
+			header: { title: 'Cooldowns', tooltip: Tooltips.COOLDOWNS_SECTION }
 		});
 
 		new CooldownsPicker(contentBlock.bodyElement, this.simUI.player);
@@ -138,12 +138,12 @@ export class RotationTab extends SimTab {
 			if (inputConfig.type == 'number') {
 				new NumberPicker(sectionElem, this.simUI.player, inputConfig);
 			} else if (inputConfig.type == 'boolean') {
-				new BooleanPicker(sectionElem, this.simUI.player, {...inputConfig, ...{cssScheme: this.simUI.cssScheme}});
+				new BooleanPicker(sectionElem, this.simUI.player, { ...inputConfig, ...{ cssScheme: this.simUI.cssScheme } });
 			} else if (inputConfig.type == 'enum') {
 				new EnumPicker(sectionElem, this.simUI.player, inputConfig);
 			} else if (inputConfig.type == 'customRotation') {
 				new CustomRotationPicker(sectionElem, this.simUI, this.simUI.player, inputConfig);
-			} else if (inputConfig.type == 'itemSwap'){
+			} else if (inputConfig.type == 'itemSwap') {
 				new ItemSwapPicker(sectionElem, this.simUI, this.simUI.player, inputConfig)
 			}
 		});
@@ -164,7 +164,7 @@ export class RotationTab extends SimTab {
 	private buildSavedDataPickers() {
 		const savedRotationsManager = new SavedDataManager<Player<any>, SavedRotation>(this.rightPanel, this.simUI, this.simUI.player, {
 			label: 'Rotation',
-			header: {title: 'Saved Rotations'},
+			header: { title: 'Saved Rotations' },
 			storageKey: this.simUI.getSavedRotationStorageKey(),
 			getData: (player: Player<any>) => SavedRotation.create({
 				rotation: APLRotation.clone(player.aplRotation),

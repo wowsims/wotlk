@@ -74,7 +74,7 @@ export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfStoneblood,
 	food: Food.FoodDragonfinFilet,
 	defaultPotion: Potions.IndestructiblePotion,
-	prepopPotion:  Potions.IndestructiblePotion,
+	prepopPotion: Potions.IndestructiblePotion,
 });
 
 export const PRERAID_PRESET = {
@@ -394,4 +394,4 @@ export const P2_PRESET = {
 };
 
 
-	
+
