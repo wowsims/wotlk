@@ -57,10 +57,10 @@ export const aplLaunchStatuses: Record<Spec, LaunchStatus> = {
 	[Spec.SpecShadowPriest]: LaunchStatus.Unlaunched,
 	[Spec.SpecSmitePriest]: LaunchStatus.Unlaunched,
 	[Spec.SpecWarlock]: LaunchStatus.Unlaunched,
-	[Spec.SpecWarrior]: LaunchStatus.Unlaunched,
+	[Spec.SpecWarrior]: LaunchStatus.Launched,
 	[Spec.SpecProtectionWarrior]: LaunchStatus.Unlaunched,
-	[Spec.SpecDeathknight]: LaunchStatus.Unlaunched,
-	[Spec.SpecTankDeathknight]: LaunchStatus.Unlaunched,
+	[Spec.SpecDeathknight]: LaunchStatus.Launched,
+	[Spec.SpecTankDeathknight]: LaunchStatus.Launched,
 };
 
 // Meme specs are excluded from title drop-down menu.
