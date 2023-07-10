@@ -78,6 +78,8 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 		return rot.newValueCurrentEnergy(config.GetCurrentEnergy())
 	case *proto.APLValue_CurrentComboPoints:
 		return rot.newValueCurrentComboPoints(config.GetCurrentComboPoints())
+	case *proto.APLValue_CurrentRunicPower:
+		return rot.newValueCurrentRunicPower(config.GetCurrentRunicPower())
 
 	// GCD
 	case *proto.APLValue_GcdIsReady:
