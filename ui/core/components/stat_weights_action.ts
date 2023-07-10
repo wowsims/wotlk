@@ -21,7 +21,7 @@ import { BaseModal } from './base_modal.js';
 import { Tooltip } from 'bootstrap';
 import { ResultsViewer } from './results_viewer.js';
 
-export function addStatWeightsAction(simUI: IndividualSimUI<any>, epStats: Array<Stat>, epPseudoStats: Array<PseudoStat>|undefined, epReferenceStat: Stat) {
+export function addStatWeightsAction(simUI: IndividualSimUI<any>, epStats: Array<Stat>, epPseudoStats: Array<PseudoStat> | undefined, epReferenceStat: Stat) {
 	simUI.addAction('Stat Weights', 'ep-weights-action', () => {
 		new EpWeightsMenu(simUI, epStats, epPseudoStats || [], epReferenceStat);
 	});
@@ -33,7 +33,7 @@ export function addStatWeightsAction(simUI: IndividualSimUI<any>, epStats: Array
 function getModalConfig(simUI: IndividualSimUI<any>) {
 	const baseConfig = { footer: true, scrollContents: true };
 	if (simUI.sim.getShowThreatMetrics() && simUI.sim.getShowExperimental()) {
-		return {size: 'xl' as const, ...baseConfig };
+		return { size: 'xl' as const, ...baseConfig };
 	}
 	return baseConfig;
 }
@@ -257,7 +257,7 @@ class EpWeightsMenu extends BaseModal {
 		selectElem.value = this.statsType;
 		updateType();
 
-		const getNameFromStat = (stat: Stat|undefined) => {
+		const getNameFromStat = (stat: Stat | undefined) => {
 			return stat !== undefined ? getClassStatName(stat, this.simUI.player.getClass()) : '??';
 		};
 
@@ -320,7 +320,7 @@ class EpWeightsMenu extends BaseModal {
 			calcButton.classList.add('disabled');
 			calcButton.style.width = `${calcButton.getBoundingClientRect().width.toFixed(3)}px`;
 			calcButton.innerHTML = `<i class="fa fa-spinner fa-spin"></i>&nbsp;Running`;
-			this.container.scrollTo({top: 0});
+			this.container.scrollTo({ top: 0 });
 			this.container.classList.add('pending');
 			this.resultsViewer.setPending();
 			const iterations = this.simUI.sim.getIterations();
@@ -337,7 +337,7 @@ class EpWeightsMenu extends BaseModal {
 		});
 
 		const colActionButtons = Array.from(this.rootElem.getElementsByClassName('col-action')) as Array<HTMLSelectElement>;
-		const makeUpdateWeights = (button: HTMLElement, labelTooltip: string, tooltip: string, weightsFunc: () => UnitStats|undefined, epRefStat?: () => Stat) => {
+		const makeUpdateWeights = (button: HTMLElement, labelTooltip: string, tooltip: string, weightsFunc: () => UnitStats | undefined, epRefStat?: () => Stat) => {
 			const label = button.previousElementSibling as HTMLElement;
 			const title = () => {
 				if (!epRefStat) return labelTooltip;

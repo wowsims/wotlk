@@ -509,7 +509,7 @@ func (character *Character) FillPlayerStats(playerStats *proto.PlayerStats) {
 
 			IsCastable:      spell.Flags.Matches(SpellFlagAPL),
 			IsMajorCooldown: spell.Flags.Matches(SpellFlagMCD),
-			HasDot:          spell.dots != nil,
+			HasDot:          spell.dots != nil || spell.aoeDot != nil,
 			PrepullOnly:     spell.Flags.Matches(SpellFlagPrepullOnly),
 		}
 	})

@@ -27,7 +27,7 @@ export abstract class Importer extends BaseModal {
 	private readonly includeFile: boolean;
 
 	constructor(parent: HTMLElement, simUI: SimUI, title: string, includeFile: boolean) {
-		super(parent, 'importer', {title: title, footer: true});
+		super(parent, 'importer', { title: title, footer: true });
 		this.includeFile = includeFile;
 		const uploadInputId = 'upload-input-' + title.toLowerCase().replaceAll(' ', '-');
 
@@ -288,8 +288,8 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 			const spellId = 0 +
 				(d.indexOf(glyphStr[cur + 0]) << 15) +
 				(d.indexOf(glyphStr[cur + 1]) << 10) +
-				(d.indexOf(glyphStr[cur + 2]) <<  5) +
-				(d.indexOf(glyphStr[cur + 3]) <<  0);
+				(d.indexOf(glyphStr[cur + 2]) << 5) +
+				(d.indexOf(glyphStr[cur + 3]) << 0);
 			const itemId = this.simUI.sim.db.glyphSpellToItemId(spellId);
 			//console.log(`Glyph position: ${glyphPosition}, spellID: ${spellId}`);
 
@@ -343,7 +343,7 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 
 			for (let gemIdx = 0; gemIdx < numGems; gemIdx++) {
 				const gemPosition = (gearBytes[cur] & 0b11100000) >> 5;
-				const highgemid   = (gearBytes[cur] & 0b00011111);
+				const highgemid = (gearBytes[cur] & 0b00011111);
 				cur++;
 
 				const gemId = (highgemid << 16) + (gearBytes[cur] << 8) + gearBytes[cur + 1];
@@ -424,7 +424,7 @@ export class IndividualAddonImporter<SpecType extends Spec> extends Importer {
 			throw new Error('Could not parse Race!');
 		}
 
-		const professions = (importJson['professions'] as Array<{name: string, level: number}>).map(profData => nameToProfession(profData.name));
+		const professions = (importJson['professions'] as Array<{ name: string, level: number }>).map(profData => nameToProfession(profData.name));
 		professions.forEach((prof, i) => {
 			if (prof == Profession.ProfessionUnknown) {
 				throw new Error(`Could not parse profession '${importJson['professions'][i]}'`);
@@ -435,8 +435,8 @@ export class IndividualAddonImporter<SpecType extends Spec> extends Importer {
 		const glyphsConfig = classGlyphsConfig[charClass];
 
 		const db = await Database.get();
-		const majorGlyphIDs = (importJson['glyphs']['major'] as Array<string|JsonObject>).map(g => glyphToID(g, db, glyphsConfig.majorGlyphs));
-		const minorGlyphIDs = (importJson['glyphs']['minor'] as Array<string|JsonObject>).map(g => glyphToID(g, db, glyphsConfig.minorGlyphs));
+		const majorGlyphIDs = (importJson['glyphs']['major'] as Array<string | JsonObject>).map(g => glyphToID(g, db, glyphsConfig.majorGlyphs));
+		const minorGlyphIDs = (importJson['glyphs']['minor'] as Array<string | JsonObject>).map(g => glyphToID(g, db, glyphsConfig.minorGlyphs));
 
 		const glyphs = Glyphs.create({
 			major1: majorGlyphIDs[0] || 0,
@@ -473,7 +473,7 @@ function glyphNameToID(glyphName: string, glyphsConfig: Record<number, GlyphConf
 	throw new Error(`Unknown glyph name '${glyphName}'`);
 }
 
-function glyphToID(glyph: string|JsonObject, db: Database, glyphsConfig: Record<number, GlyphConfig>): number {
+function glyphToID(glyph: string | JsonObject, db: Database, glyphsConfig: Record<number, GlyphConfig>): number {
 	if (typeof glyph === 'string') {
 		// Legacy version: AddOn exports Glyphs by name (string) only. Names must be in English.
 		return glyphNameToID(glyph, glyphsConfig);

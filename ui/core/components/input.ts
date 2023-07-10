@@ -73,7 +73,7 @@ export abstract class Input<ModObject, T> extends Component {
 
 		if (config.labelTooltip)
 			new Tooltip(label);
-		
+
 		return label;
 	}
 
@@ -107,7 +107,7 @@ export abstract class Input<ModObject, T> extends Component {
 		this.update();
 	}
 
-	abstract getInputElem(): HTMLElement|null;
+	abstract getInputElem(): HTMLElement | null;
 
 	abstract getInputValue(): T;
 

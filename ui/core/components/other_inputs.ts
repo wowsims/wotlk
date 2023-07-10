@@ -212,18 +212,18 @@ export const HpPercentForDefensives = {
 };
 
 export const InspirationUptime = {
-    type: 'number' as const,
-    float: true,
-    label: 'Inspiration % Uptime',
-    labelTooltip: `
+	type: 'number' as const,
+	float: true,
+	label: 'Inspiration % Uptime',
+	labelTooltip: `
 		<p>% average of Encounter Duration, during which you have the Inspiration buff.</p>
 		<p>If set to 0, the buff isn't applied.</p>
 	`,
-    changedEvent: (player: Player<any>) => player.healingModelChangeEmitter,
-    getValue: (player: Player<any>) => player.getHealingModel().inspirationUptime * 100,
-    setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
-        const healingModel = player.getHealingModel();
-        healingModel.inspirationUptime = newValue / 100;
-        player.setHealingModel(eventID, healingModel);
-    },
+	changedEvent: (player: Player<any>) => player.healingModelChangeEmitter,
+	getValue: (player: Player<any>) => player.getHealingModel().inspirationUptime * 100,
+	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
+		const healingModel = player.getHealingModel();
+		healingModel.inspirationUptime = newValue / 100;
+		player.setHealingModel(eventID, healingModel);
+	},
 };

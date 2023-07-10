@@ -24,7 +24,7 @@ import { Input } from './input.js';
 
 export function TotemsSection(parentElem: HTMLElement, simUI: IndividualSimUI<ShamanSpecs>): ContentBlock {
 	let contentBlock = new ContentBlock(parentElem, 'totems-settings', {
-		header: {title: 'Totems'}
+		header: { title: 'Totems' }
 	});
 
 	let totemDropdownGroup = Input.newGroupContainer();
@@ -35,7 +35,7 @@ export function TotemsSection(parentElem: HTMLElement, simUI: IndividualSimUI<Sh
 
 	contentBlock.bodyElement.appendChild(totemDropdownGroup);
 	contentBlock.bodyElement.appendChild(fireElementalContainer);
-	
+
 	const earthTotemPicker = new IconEnumPicker(totemDropdownGroup, simUI.player, {
 		extraCssClasses: [
 			'earth-totem-picker',
@@ -132,7 +132,7 @@ export function TotemsSection(parentElem: HTMLElement, simUI: IndividualSimUI<Sh
 	});
 
 	// Enchancement Shaman uses the Fire Elemental Inputs with custom inputs.
-	if (simUI.player.spec != Spec.SpecEnhancementShaman){
+	if (simUI.player.spec != Spec.SpecEnhancementShaman) {
 		const fireElementalBooleanIconInput = InputHelpers.makeBooleanIconInput<ShamanSpecs, ShamanTotems, Player<ShamanSpecs>>({
 			getModObject: (player: Player<ShamanSpecs>) => player,
 			getValue: (player: Player<ShamanSpecs>) => player.getRotation().totems || ShamanTotems.create(),
@@ -143,7 +143,7 @@ export function TotemsSection(parentElem: HTMLElement, simUI: IndividualSimUI<Sh
 			},
 			changeEmitter: (player: Player<Spec.SpecEnhancementShaman>) => player.rotationChangeEmitter,
 		}, ActionId.fromSpellId(2894), "useFireElemental");
-	
+
 		new IconPicker(fireElementalContainer, simUI.player, fireElementalBooleanIconInput);
 	}
 

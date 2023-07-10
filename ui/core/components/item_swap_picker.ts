@@ -7,7 +7,7 @@ import { SimUI } from '../sim_ui.js';
 import { TypedEvent } from '../typed_event.js';
 import { mapToStyles } from '@popperjs/core/lib/modifiers/computeStyles.js';
 
-export interface ItemSwapPickerConfig<SpecType extends Spec, T> extends InputConfig<Player<SpecType>, T>{
+export interface ItemSwapPickerConfig<SpecType extends Spec, T> extends InputConfig<Player<SpecType>, T> {
 	itemSlots: Array<ItemSlot>;
 }
 
@@ -64,11 +64,11 @@ export class ItemSwapPicker<SpecType extends Spec, T> extends Component {
 		});
 
 		config.itemSlots.forEach(itemSlot => {
-			new IconItemSwapPicker(itemSwapContainer, simUI, player,itemSlot, config);
+			new IconItemSwapPicker(itemSwapContainer, simUI, player, itemSlot, config);
 		});
 	}
 
-	swapWithGear(player : Player<SpecType>, config: ItemSwapPickerConfig<SpecType, T> ) {
+	swapWithGear(player: Player<SpecType>, config: ItemSwapPickerConfig<SpecType, T>) {
 		let gear = player.getGear()
 
 		const gearMap = new Map();
@@ -96,7 +96,7 @@ export class ItemSwapPicker<SpecType extends Spec, T> extends Component {
 		const itemSwap = player.getItemSwapGear().toProto() as unknown as T
 		config.setValue(eventID, player, itemSwap)
 	}
-	
+
 }
 
 

@@ -76,7 +76,7 @@ export const DefaultRotation = WarriorRotation.create({
 
 	msRageThreshold: 35,
 	hsRageThreshold: 30,
-    rendHealthThresholdAbove: 20,
+	rendHealthThresholdAbove: 20,
 	rendRageThresholdBelow: 100,
 	slamRageThreshold: 25,
 	rendCdThreshold: 0,
@@ -106,7 +106,7 @@ export const ArmsRotation = WarriorRotation.create({
 export const DefaultOptions = WarriorOptions.create({
 	startingRage: 0,
 	useRecklessness: true,
-  useShatteringThrow: true,
+	useShatteringThrow: true,
 	shout: WarriorShout.WarriorShoutCommanding,
 });
 

@@ -12,7 +12,7 @@ import {
 	RaidTarget,
 	TristateEffect
 } from '../core/proto/common.js';
-import {SavedTalents} from '../core/proto/ui.js';
+import { SavedTalents } from '../core/proto/ui.js';
 
 import {
 	RestorationDruid_Options as RestorationDruidOptions,
@@ -22,7 +22,7 @@ import {
 } from '../core/proto/druid.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
-import {NO_TARGET} from "../core/proto_utils/utils";
+import { NO_TARGET } from "../core/proto_utils/utils";
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to

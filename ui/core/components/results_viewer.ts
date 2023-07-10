@@ -42,7 +42,7 @@ export class ResultsViewer extends Component {
 		this.contentElem = this.rootElem.getElementsByClassName('results-content')[0] as HTMLElement;
 		this.warningElem = this.rootElem.getElementsByClassName('warning-zone')[0] as HTMLElement;
 
-		
+
 		this.warningsLink = this.addWarningsLink();
 		this.updateWarnings();
 

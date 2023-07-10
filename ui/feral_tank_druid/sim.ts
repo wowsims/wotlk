@@ -153,11 +153,11 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 			rotationInputs: DruidInputs.FeralTankDruidRotationConfig,
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
-					IconInputs.HealthBuff,
-					IconInputs.SpellCritBuff,
-					IconInputs.SpellCritDebuff,
-					IconInputs.SpellHitDebuff,
-					IconInputs.SpellDamageDebuff,
+				IconInputs.HealthBuff,
+				IconInputs.SpellCritBuff,
+				IconInputs.SpellCritDebuff,
+				IconInputs.SpellHitDebuff,
+				IconInputs.SpellDamageDebuff,
 			],
 			excludeBuffDebuffInputs: [
 			],

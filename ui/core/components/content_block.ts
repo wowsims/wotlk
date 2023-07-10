@@ -3,46 +3,46 @@ import { title } from 'process';
 import { Component } from './component.js';
 
 export interface ContentBlockHeaderConfig {
-  title: string,
-  extraCssClasses?: Array<string>,
-  titleTag?: string,
-  tooltip?: string,
+	title: string,
+	extraCssClasses?: Array<string>,
+	titleTag?: string,
+	tooltip?: string,
 }
 
 export interface ContentBlockConfig {
 	bodyClasses?: Array<string>,
-  extraCssClasses?: Array<string>,
-  rootElem?: HTMLElement,
-  header?: ContentBlockHeaderConfig,
+	extraCssClasses?: Array<string>,
+	rootElem?: HTMLElement,
+	header?: ContentBlockHeaderConfig,
 }
 
 export class ContentBlock extends Component {
-  readonly headerElement: HTMLElement|null;
-  readonly bodyElement: HTMLElement;
+	readonly headerElement: HTMLElement | null;
+	readonly bodyElement: HTMLElement;
 
-  readonly config: ContentBlockConfig;
+	readonly config: ContentBlockConfig;
 
 	constructor(parent: HTMLElement, cssClass: string, config: ContentBlockConfig) {
 		super(parent, 'content-block', config.rootElem);
-    this.config = config;
+		this.config = config;
 		this.rootElem.classList.add(cssClass);
 
 		if (config.extraCssClasses) {
 			this.rootElem.classList.add(...config.extraCssClasses);
-    }
+		}
 
-    this.headerElement = this.buildHeader();
-    this.bodyElement = this.buildBody();
-    config.bodyClasses?.forEach((cl) => {
-      this.bodyElement.classList.add(cl);
-    })
+		this.headerElement = this.buildHeader();
+		this.bodyElement = this.buildBody();
+		config.bodyClasses?.forEach((cl) => {
+			this.bodyElement.classList.add(cl);
+		})
 	}
 
-  private buildHeader(): HTMLElement|null {
-    if (this.config.header && Object.keys(this.config.header).length) {
-      let titleTag = this.config.header.titleTag || 'h6';
-      let headerFragment = document.createElement('fragment');
-      headerFragment.innerHTML = `
+	private buildHeader(): HTMLElement | null {
+		if (this.config.header && Object.keys(this.config.header).length) {
+			let titleTag = this.config.header.titleTag || 'h6';
+			let headerFragment = document.createElement('fragment');
+			headerFragment.innerHTML = `
         <div class="content-block-header">
           <${titleTag}
             class="content-block-title"
@@ -53,29 +53,29 @@ export class ContentBlock extends Component {
         </div>
       `;
 
-      let header = headerFragment.children[0] as HTMLElement;
-      
-      if (this.config.header.extraCssClasses) {
-        header.classList.add(...this.config.header.extraCssClasses);
-      }
+			let header = headerFragment.children[0] as HTMLElement;
 
-      if (this.config.header.tooltip)
-        Tooltip.getOrCreateInstance(header.querySelector('.content-block-title') as HTMLElement);
+			if (this.config.header.extraCssClasses) {
+				header.classList.add(...this.config.header.extraCssClasses);
+			}
 
-      this.rootElem.appendChild(header);
+			if (this.config.header.tooltip)
+				Tooltip.getOrCreateInstance(header.querySelector('.content-block-title') as HTMLElement);
 
-      return header;
-    } else {
-      return null;
-    }
-  }
+			this.rootElem.appendChild(header);
 
-  private buildBody(): HTMLElement {
-    let bodyElem = document.createElement('div');
-    bodyElem.classList.add('content-block-body');
+			return header;
+		} else {
+			return null;
+		}
+	}
 
-    this.rootElem.appendChild(bodyElem);
+	private buildBody(): HTMLElement {
+		let bodyElem = document.createElement('div');
+		bodyElem.classList.add('content-block-body');
 
-    return bodyElem;
-  }
+		this.rootElem.appendChild(bodyElem);
+
+		return bodyElem;
+	}
 }

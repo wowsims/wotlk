@@ -1,6 +1,6 @@
-import {Conjured, Consumes, EquipmentSpec, Flask, Food, Glyphs, Potions} from '../core/proto/common.js';
-import {Player} from '../core/player.js';
-import {SavedTalents} from '../core/proto/ui.js';
+import { Conjured, Consumes, EquipmentSpec, Flask, Food, Glyphs, Potions } from '../core/proto/common.js';
+import { Player } from '../core/player.js';
+import { SavedTalents } from '../core/proto/ui.js';
 
 import {
 	Rogue_Options as RogueOptions,
@@ -505,7 +505,7 @@ export const P3_PRESET_ASSASSINATION = {
 			]
 		  }
 		]}`),
-	};
+};
 
 export const P3_PRESET_COMBAT = {
 	name: 'P3 Combat',

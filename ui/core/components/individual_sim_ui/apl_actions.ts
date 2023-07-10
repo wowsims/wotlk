@@ -30,7 +30,7 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 
 	private readonly actionDiv: HTMLElement;
 	private currentType: APLActionType;
-	private actionPicker: Input<Player<any>, any>|null;
+	private actionPicker: Input<Player<any>, any> | null;
 
 	private readonly conditionPicker: AplValues.APLValuePicker;
 
@@ -41,7 +41,7 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 			label: 'If:',
 			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
 			getValue: (player: Player<any>) => this.getSourceValue().condition,
-			setValue: (eventID: EventID, player: Player<any>, newValue: APLValue|undefined) => {
+			setValue: (eventID: EventID, player: Player<any>, newValue: APLValue | undefined) => {
 				this.getSourceValue().condition = newValue;
 				player.rotationChangeEmitter.emit(eventID);
 			},
@@ -56,18 +56,18 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 
 		const allActionTypes = Object.keys(actionTypeFactories) as Array<NonNullable<APLActionType>>;
 		this.typePicker = new TextDropdownPicker(this.actionDiv, player, {
-            defaultLabel: 'Action',
+			defaultLabel: 'Action',
 			values: allActionTypes
 				.filter(actionType => actionTypeFactories[actionType].isPrepull == undefined || actionTypeFactories[actionType].isPrepull === isPrepull)
 				.map(actionType => {
-				const factory = actionTypeFactories[actionType];
-				return {
-					value: actionType,
-					label: factory.label,
-					submenu: factory.submenu,
-					tooltip: factory.fullDescription ? `<p>${factory.shortDescription}</p> ${factory.fullDescription}` : factory.shortDescription,
-				};
-			}),
+					const factory = actionTypeFactories[actionType];
+					return {
+						value: actionType,
+						label: factory.label,
+						submenu: factory.submenu,
+						tooltip: factory.fullDescription ? `<p>${factory.shortDescription}</p> ${factory.fullDescription}` : factory.shortDescription,
+					};
+				}),
 			equals: (a, b) => a == b,
 			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
 			getValue: (player: Player<any>) => this.getSourceValue().action.oneofKind,
@@ -100,9 +100,9 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 		return this.rootElem;
 	}
 
-    getInputValue(): APLAction {
+	getInputValue(): APLAction {
 		const actionType = this.typePicker.getInputValue();
-        return APLAction.create({
+		return APLAction.create({
 			condition: this.conditionPicker.getInputValue(),
 			action: {
 				oneofKind: actionType,
@@ -115,7 +115,7 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 				})()),
 			},
 		})
-    }
+	}
 
 	setInputValue(newValue: APLAction) {
 		if (!newValue) {

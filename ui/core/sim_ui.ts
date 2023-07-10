@@ -125,8 +125,8 @@ export abstract class SimUI extends Component {
 			// always show ratios when they are shown
 			if (this.sim.getShowThreatMetrics()) {
 				this.rootElem.classList.remove('hide-ep-ratios');
-			// This case doesn't currently happen, but who knows
-			// what the future holds...
+				// This case doesn't currently happen, but who knows
+				// what the future holds...
 			} else if (this.sim.getShowDamageMetrics() && this.sim.getShowHealingMetrics()) {
 				this.rootElem.classList.remove('hide-ep-ratios');
 			} else {
@@ -151,7 +151,7 @@ export abstract class SimUI extends Component {
 		this.addKnownIssues(config);
 
 		const titleElem = this.rootElem.querySelector('.sim-title') as HTMLElement;
-		new SimTitleDropdown(titleElem, config.spec, {noDropdown: this.isWithinRaidSim});
+		new SimTitleDropdown(titleElem, config.spec, { noDropdown: this.isWithinRaidSim });
 
 		const resultsViewerElem = this.rootElem.getElementsByClassName('sim-sidebar-results')[0] as HTMLElement;
 		this.resultsViewer = new ResultsViewer(resultsViewerElem);
@@ -331,7 +331,7 @@ export abstract class SimUI extends Component {
 
 class CrashModal extends BaseModal {
 	constructor(parent: HTMLElement, link: string) {
-		super(parent, 'crash', {title: 'Extra Crash Information'});
+		super(parent, 'crash', { title: 'Extra Crash Information' });
 		this.body.innerHTML = `
 			<div class="sim-crash-report">
 				<h3 class="sim-crash-report-header">Please append the following complete link to the issue you just created. This will simplify debugging the issue.</h3>

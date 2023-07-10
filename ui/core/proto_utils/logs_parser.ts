@@ -825,8 +825,8 @@ export class CastLog extends SimLog {
 
 				// Assume cast completed log is the same index because they always come in pairs.
 				// Only exception is final pair, where there might be a cast began without a cast completed.
-				let ccLog: CastCompletedLog|null = null;
-				let nextCcLog: CastCompletedLog|null = null;
+				let ccLog: CastCompletedLog | null = null;
+				let nextCcLog: CastCompletedLog | null = null;
 				if (abilityCastsCompleted && cbIdx < abilityCastsCompleted.length) {
 					ccLog = abilityCastsCompleted[cbIdx];
 					if (cbIdx + 1 < abilityCastsCompleted.length) {

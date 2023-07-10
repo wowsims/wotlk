@@ -31,22 +31,22 @@ export type ReferenceData = {
 };
 
 export interface ResultMetrics {
-	cod:   string,
-	dps:   string,
+	cod: string,
+	dps: string,
 	dpasp: string,
-	dtps:  string,
-	tmi:   string,
-	dur:   string,
-	hps:   string,
-	tps:   string,
-	tto:   string,
+	dtps: string,
+	tmi: string,
+	dur: string,
+	hps: string,
+	tps: string,
+	tto: string,
 }
 
 export interface ResultMetricCategories {
-	damage:  string,
+	damage: string,
 	demo: string,
 	healing: string,
-	threat:  string,
+	threat: string,
 }
 
 export interface ResultsLineArgs {
@@ -56,34 +56,34 @@ export interface ResultsLineArgs {
 }
 
 export class RaidSimResultsManager {
-	static resultMetricCategories: {[ResultMetrics: string]: keyof ResultMetricCategories} = {
-		dps:   'damage',
+	static resultMetricCategories: { [ResultMetrics: string]: keyof ResultMetricCategories } = {
+		dps: 'damage',
 		dpasp: 'demo',
-		tps:   'threat',
-		dtps:  'threat',
-		tmi:   'threat',
-		cod:   'threat',
-		tto:   'healing',
-		hps:   'healing',
+		tps: 'threat',
+		dtps: 'threat',
+		tmi: 'threat',
+		cod: 'threat',
+		tto: 'healing',
+		hps: 'healing',
 	}
 
-	static resultMetricClasses: {[ResultMetrics: string]: string} = {
-		cod:    'results-sim-cod',
-		dps:    'results-sim-dps',
-		dpasp:  'results-sim-dpasp',
-		dtps:   'results-sim-dtps',
-		tmi:    'results-sim-tmi',
-		dur:    'results-sim-dur',
-		hps:    'results-sim-hps',
-		tps:    'results-sim-tps',
-		tto:    'results-sim-tto',
+	static resultMetricClasses: { [ResultMetrics: string]: string } = {
+		cod: 'results-sim-cod',
+		dps: 'results-sim-dps',
+		dpasp: 'results-sim-dpasp',
+		dtps: 'results-sim-dtps',
+		tmi: 'results-sim-tmi',
+		dur: 'results-sim-dur',
+		hps: 'results-sim-hps',
+		tps: 'results-sim-tps',
+		tto: 'results-sim-tto',
 	}
 
-	static metricsClasses: {[ResultMetricCategories: string]: string} = {
-		damage:  'damage-metrics',
+	static metricsClasses: { [ResultMetricCategories: string]: string } = {
+		damage: 'damage-metrics',
 		demo: 'demo-metrics',
 		healing: 'healing-metrics',
-		threat:  'threat-metrics',
+		threat: 'threat-metrics',
 	}
 
 	readonly currentChangeEmitter: TypedEvent<void> = new TypedEvent<void>();
@@ -269,7 +269,7 @@ export class RaidSimResultsManager {
 		}
 	}
 
-	private formatToplineResult(querySelector: string, getMetrics: (result: SimResult) => DistributionMetricsProto|number, precision: number, lowerIsBetter?: boolean) {
+	private formatToplineResult(querySelector: string, getMetrics: (result: SimResult) => DistributionMetricsProto | number, precision: number, lowerIsBetter?: boolean) {
 		const elem = this.simUI.resultsViewer.contentElem.querySelector(querySelector) as HTMLSpanElement;
 		if (!elem) {
 			return;
@@ -293,16 +293,16 @@ export class RaidSimResultsManager {
 
 	private applyZTestTooltip(elem: HTMLElement, n1: number, avg1: number, stdev1: number, n2: number, avg2: number, stdev2: number): boolean {
 		const delta = avg1 - avg2;
-		const err1 = stdev1/Math.sqrt(n1);
-		const err2 = stdev2/Math.sqrt(n2);
+		const err1 = stdev1 / Math.sqrt(n1);
+		const err2 = stdev2 / Math.sqrt(n2);
 		const denom = Math.sqrt(Math.pow(err1, 2) + Math.pow(err2, 2));
-		const z = Math.abs(delta/denom);
+		const z = Math.abs(delta / denom);
 		const isDiff = z > 1.96;
 
 		let significance_str = '';
-		if (isDiff) { 
+		if (isDiff) {
 			significance_str = `Difference is significantly different (Z = ${z.toFixed(3)}).`;
-		} else { 
+		} else {
 			significance_str = `Difference is not significantly different (Z = ${z.toFixed(3)}).`;
 		}
 		tippy(elem, {
@@ -439,7 +439,7 @@ export class RaidSimResultsManager {
 			content += this.buildResultsLine({
 				average: dpsMetrics.avg,
 				stdev: dpsMetrics.stdev,
-				classes:  this.getResultsLineClasses('dps'),
+				classes: this.getResultsLineClasses('dps'),
 			}).outerHTML;
 			//const hpsMetrics = simResult.raidMetrics.hps;
 			//content += this.buildResultsLine({
@@ -476,7 +476,7 @@ export class RaidSimResultsManager {
 					<span class="topline-result-stdev">
 						(<i class="fas fa-plus-minus fa-xs"></i>${args.stdev.toFixed()})
 					</span>` : ''
-				}
+			}
 				<div class="results-reference hide">
 					<span class="results-reference-diff"></span> vs reference
 				</div>
