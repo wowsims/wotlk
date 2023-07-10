@@ -60,6 +60,11 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			if sim.CurrentTime < 0 {
+				// Traps only last 30s.
+				if sim.CurrentTime < time.Second*30 {
+					return
+				}
+
 				// If using this on prepull, the trap effect will go off when the fight starts
 				// instead of immediately.
 				core.StartDelayedAction(sim, core.DelayedActionOptions{
