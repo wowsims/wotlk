@@ -33,7 +33,7 @@ const leftoversUrlBin = '/wotlk/assets/database/leftover_db.bin';
 const READ_JSON = true;
 
 export class Database {
-	private static loadPromise: Promise<Database>|null = null;
+	private static loadPromise: Promise<Database> | null = null;
 	static get(): Promise<Database> {
 		if (Database.loadPromise == null) {
 			if (READ_JSON) {
@@ -147,10 +147,10 @@ export class Database {
 		return gems;
 	}
 
-	getNpc(npcId: number): Npc|null {
+	getNpc(npcId: number): Npc | null {
 		return this.npcs[npcId] || null;
 	}
-	getZone(zoneId: number): Zone|null {
+	getZone(zoneId: number): Zone | null {
 		return this.zones[zoneId] || null;
 	}
 
@@ -168,7 +168,7 @@ export class Database {
 			const slots = getEligibleItemSlots(item);
 			for (let i = 0; i < slots.length; i++) {
 				enchant = (this.enchantsBySlot[slots[i]] || [])
-						.find(enchant => [enchant.effectId, enchant.itemId, enchant.spellId].includes(itemSpec.enchant)) || null;
+					.find(enchant => [enchant.effectId, enchant.itemId, enchant.spellId].includes(itemSpec.enchant)) || null;
 				if (enchant) {
 					break;
 				}

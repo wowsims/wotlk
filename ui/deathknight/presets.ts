@@ -12,9 +12,9 @@ import {
 	RaidTarget,
 	Spec
 } from '../core/proto/common.js';
-import {SavedRotation, SavedTalents} from '../core/proto/ui.js';
-import {Player} from '../core/player.js';
-import {NO_TARGET} from '../core/proto_utils/utils.js';
+import { SavedTalents } from '../core/proto/ui.js';
+import { Player } from '../core/player.js';
+import { NO_TARGET } from '../core/proto_utils/utils.js';
 
 import {
 	Deathknight_Options as DeathKnightOptions,

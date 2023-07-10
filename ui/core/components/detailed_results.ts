@@ -265,7 +265,7 @@ export abstract class DetailedResults extends Component {
 		});
 	}
 
-	abstract postMessage(update: DetailedResultsUpdate) : Promise<void>;
+	abstract postMessage(update: DetailedResultsUpdate): Promise<void>;
 
 	protected async setSimRunData(simRunData: SimRunData) {
 		this.latestRun = simRunData;
@@ -348,7 +348,7 @@ export class WindowedDetailedResults extends DetailedResults {
 	constructor(parent: HTMLElement) {
 		super(parent, null, new URLSearchParams(window.location.search).get("cssScheme") ?? "")
 
-		window.addEventListener('message', 
+		window.addEventListener('message',
 			async (event) => await this.handleMessage(DetailedResultsUpdate.fromJson(event.data))
 		);
 	}
@@ -360,7 +360,7 @@ export class WindowedDetailedResults extends DetailedResults {
 
 export class EmbeddedDetailedResults extends DetailedResults {
 	private tabWindow: Window | null = null;
-	
+
 	constructor(parent: HTMLElement, simUI: SimUI, simResultsManager: RaidSimResultsManager) {
 		super(parent, simUI, simUI.cssScheme)
 

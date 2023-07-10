@@ -40,7 +40,7 @@ export class BaseModal extends Component {
 
 	constructor(parent: HTMLElement, cssClass: string, config: BaseModalConfig = {}) {
 		super(parent, 'modal');
-		this.modalConfig = {...DEFAULT_CONFIG, ...config};
+		this.modalConfig = { ...DEFAULT_CONFIG, ...config };
 
 		const modalSizeKlass = this.modalConfig.size && this.modalConfig.size != 'md' ? `modal-${this.modalConfig.size}` : '';
 
@@ -83,7 +83,7 @@ export class BaseModal extends Component {
 
 		this.modal = new Modal(this.rootElem);
 		this.open();
-		
+
 		this.rootElem.addEventListener('hidden.bs.modal', (event) => {
 			this.rootElem.remove();
 		})

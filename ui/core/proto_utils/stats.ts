@@ -6,10 +6,10 @@ const STATS_LEN = getEnumValues(Stat).length;
 const PSEUDOSTATS_LEN = getEnumValues(PseudoStat).length;
 
 export class UnitStat {
-	private readonly stat: Stat|null;
-	private readonly pseudoStat: PseudoStat|null;
+	private readonly stat: Stat | null;
+	private readonly pseudoStat: PseudoStat | null;
 
-	private constructor(stat: Stat|null, pseudoStat: PseudoStat|null) {
+	private constructor(stat: Stat | null, pseudoStat: PseudoStat | null) {
 		this.stat = stat;
 		this.pseudoStat = pseudoStat;
 	}
@@ -109,7 +109,7 @@ export class Stats {
 
 	equals(other: Stats): boolean {
 		return this.stats.every((newStat, statIdx) => newStat == other.getStat(statIdx)) &&
-				this.pseudoStats.every((newStat, statIdx) => newStat == other.getPseudoStat(statIdx))
+			this.pseudoStats.every((newStat, statIdx) => newStat == other.getPseudoStat(statIdx))
 	}
 
 	getStat(stat: Stat): number {

@@ -440,7 +440,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: MagePresets.FireTalents.data,
 		specOptions: MagePresets.DefaultFireOptions,
 		consumes: MagePresets.DefaultFireConsumes,
-		otherDefaults: MagePresets.OtherDefaults,		
+		otherDefaults: MagePresets.OtherDefaults,
 		defaultName: 'TTW Fire',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,
@@ -469,7 +469,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		talents: MagePresets.FrostfireTalents.data,
 		specOptions: MagePresets.DefaultFFBOptions,
 		consumes: MagePresets.DefaultFireConsumes,
-		otherDefaults: MagePresets.OtherDefaults,		
+		otherDefaults: MagePresets.OtherDefaults,
 		defaultName: 'FFB Fire',
 		defaultFactionRaces: {
 			[Faction.Unknown]: Race.RaceUnknown,

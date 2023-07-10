@@ -496,7 +496,7 @@ interface WrappedItemSwapInputConfig<SpecType extends Spec> {
 export function MakeItemSwapInput<SpecType extends Spec>(config: WrappedItemSwapInputConfig<SpecType>): TypedItemSwapPickerConfig<SpecType, ItemSwap> {
 	return {
 		type: 'itemSwap',
-		getValue: config.getValue || ((player: Player<SpecType>) =>  (player.getRotation()[config.fieldName] as unknown as ItemSwap) || ItemSwap.create()),
+		getValue: config.getValue || ((player: Player<SpecType>) => (player.getRotation()[config.fieldName] as unknown as ItemSwap) || ItemSwap.create()),
 		setValue: config.setValue || ((eventID: EventID, player: Player<SpecType>, newValue: ItemSwap) => {
 			const options = player.getRotation();
 			(options[config.fieldName] as unknown as ItemSwap) = newValue;

@@ -497,12 +497,12 @@ export class SelectorModal extends BaseModal {
 	// Could be 'Items' 'Enchants' or 'Gem1'-'Gem3'
 	openTabName(name: string) {
 		Array.from(this.tabsElem.getElementsByClassName("selector-modal-item-tab")).forEach(elem => {
-			if (elem.getAttribute("data-content-id") == name+"-tab") {
+			if (elem.getAttribute("data-content-id") == name + "-tab") {
 				(elem as HTMLElement).click();
-			}			
+			}
 		});
 	}
-	
+
 	openTab(idx: number) {
 		const elems = this.tabsElem.getElementsByClassName("selector-modal-item-tab");
 		(elems[idx] as HTMLElement).click();
@@ -743,8 +743,8 @@ export class SelectorModal extends BaseModal {
 			},
 		)
 
-		let invokeUpdate = () => {ilist.updateSelected()}
-		let applyFilter = () => {ilist.applyFilters()}
+		let invokeUpdate = () => { ilist.updateSelected() }
+		let applyFilter = () => { ilist.applyFilters() }
 		// Add event handlers
 		gearData.changeEvent.on(invokeUpdate);
 
@@ -1076,13 +1076,13 @@ export class ItemList<T> {
 			this.listItemElems.forEach(elem => elem.classList.remove('active'));
 			onRemove(TypedEvent.nextEventID());
 		});
-		
+
 		if (label.startsWith("Enchants")) {
 			removeButton.textContent = 'Remove Enchant';
 		} else if (label.startsWith("Gem")) {
 			removeButton.textContent = 'Remove Gem';
 		}
-		
+
 		this.updateSelected();
 
 		this.searchInput = tabContent.getElementsByClassName('selector-modal-search')[0] as HTMLInputElement;
@@ -1110,15 +1110,15 @@ export class ItemList<T> {
 				if (simUI instanceof IndividualSimUI) {
 					let itemSpecs = Array<ItemSpec>();
 					const isRangedOrTrinket = this.slot == ItemSlot.ItemSlotRanged ||
-					this.slot == ItemSlot.ItemSlotTrinket1 ||
-					this.slot == ItemSlot.ItemSlotTrinket2
+						this.slot == ItemSlot.ItemSlotTrinket1 ||
+						this.slot == ItemSlot.ItemSlotTrinket2
 
 					const curItem = this.equippedToItemFn(this.player.getEquippedItem(this.slot));
 					let curEP = 0;
 					if (curItem != null) {
 						curEP = this.computeEP(curItem);
 					}
-					
+
 					this.listItemElems.forEach((elem, index) => {
 						// skip items already filtered out.
 						if (elem.classList.contains('hidden')) {
@@ -1126,15 +1126,15 @@ export class ItemList<T> {
 						}
 
 						const idata = this.itemData[index];
-						if (!isRangedOrTrinket && curEP > 0 && idata.baseEP < (curEP / 2) ) {
+						if (!isRangedOrTrinket && curEP > 0 && idata.baseEP < (curEP / 2)) {
 							return; // If we have EPs on current item, dont sim items with less than half the EP.
 						}
 
 						// Add any item that is either >0 EP or a trinket/ranged item.
-						if ( idata.baseEP > 0 || isRangedOrTrinket ) {
+						if (idata.baseEP > 0 || isRangedOrTrinket) {
 							itemSpecs.push(ItemSpec.create({ id: idata.id }));
 						}
-						
+
 					});
 
 					simUI.bt.addItems(itemSpecs);
