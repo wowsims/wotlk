@@ -183,6 +183,8 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 				rotations: [
 					Presets.BLOOD_ROTATION_PRESET_LEGACY_DEFAULT,
 					Presets.BLOOD_PESTI_ROTATION_PRESET_DEFAULT,
+					Presets.FROST_ROTATION_PRESET_LEGACY_DEFAULT,
+					Presets.FROST_BL_PESTI_ROTATION_PRESET_DEFAULT,
 					Presets.UNHOLY_DW_ROTATION_PRESET_LEGACY_DEFAULT,
 					Presets.UNHOLY_DW_ROTATION_PRESET_DEFAULT,
 				],

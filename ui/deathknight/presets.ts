@@ -175,6 +175,7 @@ export const DefaultFrostRotation = DeathKnightRotation.create({
 	avgAmsHit: 10000.0,
 	drwDiseases: Deathknight_Rotation_DrwDiseases.Pestilence,
   	frostRotationType: Deathknight_Rotation_FrostRotationType.SingleTarget,
+	armyOfTheDead: Deathknight_Rotation_ArmyOfTheDead.PreCast,
   	frostCustomRotation: CustomRotation.create({
 		spells: [
 			CustomSpell.create({ spell: CustomSpellOption.CustomDeathAndDecay }),
@@ -374,6 +375,134 @@ export const BLOOD_PESTI_ROTATION_PRESET_DEFAULT = {
 				"action": {
 				  "condition": {"not":{"val":{"spellIsReady":{"spellId":{"spellId":49028}}}}},
 				  "castSpell": {"spellId":{"spellId":49895}}
+				}
+			  }
+			]
+		}`),
+	}),
+}
+
+export const FROST_ROTATION_PRESET_LEGACY_DEFAULT = {
+	name: 'Frost Legacy',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultFrostRotation),
+	}),
+}
+
+export const FROST_BL_PESTI_ROTATION_PRESET_DEFAULT = {
+	name: 'Frost BL Pesti APL',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultFrostRotation),
+		rotation: APLRotation.fromJsonString(`{
+			"enabled": true,
+			"prepullActions": [
+			  {
+				"action": {
+				  "castSpell": {"spellId":{"spellId":48265}}
+				},
+				"doAt": "-20s"
+			  },
+			  {
+				"action": {
+				  "castSpell": {"spellId":{"spellId":42650}}
+				},
+				"doAt": "-10s"
+			  },
+			  {
+				"action": {
+				  "castSpell": {"spellId":{"spellId":50689}}
+				},
+				"doAt": "-6s"
+			  },
+			  {
+				"action": {
+				  "castSpell": {"spellId":{"itemId":40211}}
+				},
+				"doAt": "-1s"
+			  }
+			],
+			"priorityList": [
+			  {
+				"action": {
+				  "autocastOtherCooldowns": {}
+				}
+			  },
+			  {
+				"action": {
+				  "sequence": {"name":"Opener","actions":[{"castSpell":{"spellId":{"spellId":59131}}},{"castSpell":{"spellId":{"tag":1,"spellId":49921}}},{"castSpell":{"spellId":{"spellId":51271}}},{"castSpell":{"spellId":{"spellId":54758}}},{"castSpell":{"spellId":{"spellId":33697}}},{"castSpell":{"spellId":{"spellId":45529}}},{"castSpell":{"spellId":{"tag":1,"spellId":51425}}},{"castSpell":{"spellId":{"tag":1,"spellId":55268}}},{"castSpell":{"spellId":{"spellId":50842}}},{"castSpell":{"spellId":{"spellId":47568}}},{"castSpell":{"spellId":{"tag":1,"spellId":51425}}},{"castSpell":{"spellId":{"tag":1,"spellId":55268}}},{"castSpell":{"spellId":{"tag":1,"spellId":51425}}},{"castSpell":{"spellId":{"tag":1,"spellId":51425}}},{"castSpell":{"spellId":{"spellId":46584}}}]}
+				}
+			  },
+			  {
+				"action": {
+				  "condition": {"not":{"val":{"dotIsActive":{"spellId":{"spellId":55095}}}}},
+				  "castSpell": {"spellId":{"spellId":59131}}
+				}
+			  },
+			  {
+				"action": {
+				  "condition": {"not":{"val":{"dotIsActive":{"spellId":{"spellId":55078}}}}},
+				  "castSpell": {"spellId":{"tag":1,"spellId":49921}}
+				}
+			  },
+			  {
+				"action": {
+				  "condition": {"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"const":{"val":"1.5s"}}}},
+				  "castSpell": {"spellId":{"spellId":50842}}
+				}
+			  },
+			  {
+				"action": {
+				  "condition": {"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":51271}}},{"spellCanCast":{"spellId":{"spellId":51271}}}]}},
+				  "castSpell": {"spellId":{"spellId":33697}}
+				}
+			  },
+			  {
+				"action": {
+				  "condition": {"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":51271}}},{"spellCanCast":{"spellId":{"spellId":51271}}}]}},
+				  "castSpell": {"spellId":{"spellId":54758}}
+				}
+			  },
+			  {
+				"action": {
+				  "condition": {"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":51271}}},{"spellCanCast":{"spellId":{"spellId":51271}}}]}},
+				  "castSpell": {"spellId":{"itemId":40211}}
+				}
+			  },
+			  {
+				"action": {
+				  "strictSequence": {"actions":[{"castSpell":{"spellId":{"spellId":51271}}},{"castSpell":{"spellId":{"spellId":45529}}}]}
+				}
+			  },
+			  {
+				"action": {
+				  "condition": {"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"const":{"val":"6s"}}}},
+				  "castSpell": {"spellId":{"spellId":50842}}
+				}
+			  },
+			  {
+				"action": {
+				  "condition": {"auraIsActive":{"auraId":{"spellId":59057}}},
+				  "castSpell": {"spellId":{"spellId":51411}}
+				}
+			  },
+			  {
+				"action": {
+				  "castSpell": {"spellId":{"tag":1,"spellId":51425}}
+				}
+			  },
+			  {
+				"action": {
+				  "castSpell": {"spellId":{"spellId":46584}}
+				}
+			  },
+			  {
+				"action": {
+				  "castSpell": {"spellId":{"tag":1,"spellId":49930}}
+				}
+			  },
+			  {
+				"action": {
+				  "castSpell": {"spellId":{"tag":1,"spellId":55268}}
 				}
 			  }
 			]
