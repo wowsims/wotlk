@@ -15,6 +15,7 @@ func (dk *Deathknight) registerGhoulFrenzySpell() {
 		ActionID:    core.ActionID{SpellID: 63560},
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellHealing,
+		Flags:       core.SpellFlagAPL,
 
 		RuneCost: core.RuneCostOptions{
 			UnholyRuneCost: 1,

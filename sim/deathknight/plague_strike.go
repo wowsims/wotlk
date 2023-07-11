@@ -66,6 +66,8 @@ func (dk *Deathknight) newPlagueStrikeSpell(isMH bool) *core.Spell {
 	if !isMH { // only MH has cost & gcd
 		conf.RuneCost = core.RuneCostOptions{}
 		conf.Cast = core.CastConfig{}
+	} else {
+		conf.Flags |= core.SpellFlagAPL
 	}
 
 	return dk.RegisterSpell(conf)

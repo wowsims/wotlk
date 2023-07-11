@@ -33,7 +33,7 @@ func (dk *Deathknight) registerIceboundFortitudeSpell() {
 
 	dk.IceboundFortitude = dk.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
-		Flags:    core.SpellFlagNoOnCastComplete,
+		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagAPL,
 
 		RuneCost: core.RuneCostOptions{
 			RunicPowerCost: 20,

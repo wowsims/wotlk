@@ -20,6 +20,7 @@ func (dk *Deathknight) registerSummonGargoyleCD() {
 
 	dk.SummonGargoyle = dk.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 49206},
+		Flags:    core.SpellFlagAPL,
 
 		RuneCost: core.RuneCostOptions{
 			RunicPowerCost: 60,
