@@ -119,9 +119,11 @@ type Deathknight struct {
 	HeartStrike       *core.Spell
 	HeartStrikeOffHit *core.Spell
 
-	RuneStrike     *core.Spell
-	RuneStrikeOh   *core.Spell
-	RuneStrikeAura *core.Aura
+	RuneStrikeQueued bool
+	RuneStrikeQueue  *core.Spell
+	RuneStrike       *core.Spell
+	RuneStrikeOh     *core.Spell
+	RuneStrikeAura   *core.Aura
 
 	GhoulFrenzy *core.Spell
 	// Dummy aura for timeline metrics
@@ -404,15 +406,10 @@ func NewDeathknight(character core.Character, inputs DeathknightInputs, talents 
 	maxRunicPower := 100.0 + 15.0*float64(dk.Talents.RunicPowerMastery)
 	currentRunicPower := math.Min(maxRunicPower, dk.Inputs.StartingRunicPower+core.TernaryFloat64(dk.Inputs.PrecastHornOfWinter, 10.0, 0.0))
 
-	runeCD := 10 * time.Second
-	if dk.Talents.ImprovedUnholyPresence > 0 {
-		runeCD = time.Duration(float64(runeCD) * (1.0 - 0.05*float64(dk.Talents.ImprovedUnholyPresence)))
-	}
-
 	dk.EnableRunicPowerBar(
 		currentRunicPower,
 		maxRunicPower,
-		runeCD,
+		10*time.Second,
 		func(sim *core.Simulation) {
 			if dk.onRuneSpendT10 != nil {
 				dk.onRuneSpendT10(sim)

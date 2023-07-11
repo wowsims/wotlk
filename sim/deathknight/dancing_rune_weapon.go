@@ -35,6 +35,8 @@ func (dk *Deathknight) registerDancingRuneWeaponCD() {
 				dk.RuneWeapon.BloodStrike.Cast(sim, spell.Unit.CurrentTarget)
 			case dk.HeartStrike:
 				dk.RuneWeapon.HeartStrike.Cast(sim, spell.Unit.CurrentTarget)
+			case dk.RuneStrike:
+				dk.RuneWeapon.RuneStrike.Cast(sim, spell.Unit.CurrentTarget)
 			case dk.DeathCoil:
 				dk.RuneWeapon.DeathCoil.Cast(sim, spell.Unit.CurrentTarget)
 			case dk.Pestilence:
@@ -89,6 +91,8 @@ type RuneWeaponPet struct {
 	HeartStrike       *core.Spell
 	HeartStrikeOffHit *core.Spell
 
+	RuneStrike *core.Spell
+
 	Pestilence *core.Spell
 	BloodBoil  *core.Spell
 
@@ -108,6 +112,7 @@ func (runeWeapon *RuneWeaponPet) Initialize() {
 	runeWeapon.dkOwner.registerDrwBloodStrikeSpell()
 	runeWeapon.dkOwner.registerDrwHeartStrikeSpell()
 	runeWeapon.dkOwner.registerDrwDeathCoilSpell()
+	runeWeapon.dkOwner.registerDrwRuneStrikeSpell()
 }
 
 func (dk *Deathknight) DrwWeaponDamage(sim *core.Simulation, spell *core.Spell) float64 {
