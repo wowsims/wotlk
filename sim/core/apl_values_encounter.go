@@ -61,3 +61,17 @@ func (value *APLValueRemainingTimePercent) Type() proto.APLValueType {
 func (value *APLValueRemainingTimePercent) GetFloat(sim *Simulation) float64 {
 	return sim.GetRemainingDurationPercent()
 }
+
+type APLValueNumberTargets struct {
+	defaultAPLValueImpl
+}
+
+func (rot *APLRotation) newValueNumberTargets(config *proto.APLValueNumberTargets) APLValue {
+	return &APLValueNumberTargets{}
+}
+func (value *APLValueNumberTargets) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeInt
+}
+func (value *APLValueNumberTargets) GetInt(sim *Simulation) int32 {
+	return sim.GetNumTargets()
+}
