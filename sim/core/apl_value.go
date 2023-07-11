@@ -90,6 +90,8 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 	// Resources Runes
 	case *proto.APLValue_CurrentRuneCount:
 		return rot.newValueCurrentRuneCount(config.GetCurrentRuneCount())
+	case *proto.APLValue_CurrentNonDeathRuneCount:
+		return rot.newValueCurrentNonDeathRuneCount(config.GetCurrentNonDeathRuneCount())
 	case *proto.APLValue_CurrentRuneActive:
 		return rot.newValueCurrentRuneActive(config.GetCurrentRuneActive())
 	case *proto.APLValue_CurrentRuneDeath:

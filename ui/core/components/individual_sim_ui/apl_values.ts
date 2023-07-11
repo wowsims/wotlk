@@ -34,6 +34,7 @@ import {
 	APLValueRuneCooldown,
 	APLValueNextRuneCooldown,
 	APLValueNumberTargets,
+	APLValueCurrentNonDeathRuneCount,
 } from '../../proto/apl.js';
 
 import { EventID, TypedEvent } from '../../typed_event.js';
@@ -447,10 +448,18 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 		label: 'Num Runes',
 		submenu: ['Resources', 'Runes'],
 		shortDescription: 'Amount of currently available Runes of certain type.<br><b>Ignore Death:</b> If checked will count only non death runes',
-		newValue: APLValueCurrentRunicPower.create,
+		newValue: APLValueCurrentRuneCount.create,
 		fields: [
 			AplHelpers.runeTypeFieldConfig('runeType'),
-			AplHelpers.booleanFieldConfig('ignoreDeath', 'Ignore Death'),
+		],
+	}),
+	['currentNonDeathRuneCount']: inputBuilder({
+		label: 'Num Non Death Runes',
+		submenu: ['Resources', 'Runes'],
+		shortDescription: 'Amount of currently available Runes of certain type ignoring them if they are converted to Death',
+		newValue: APLValueCurrentNonDeathRuneCount.create,
+		fields: [
+			AplHelpers.runeTypeFieldConfig('runeType'),
 		],
 	}),
 	['currentRuneActive']: inputBuilder({
@@ -466,7 +475,7 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 		label: 'Rune Death',
 		submenu: ['Resources', 'Runes'],
 		shortDescription: 'Is the rune of a certain slot currently converted to Death.',
-		newValue: APLValueCurrentRuneCount.create,
+		newValue: APLValueCurrentRuneDeath.create,
 		fields: [
 			AplHelpers.runeSlotFieldConfig('runeSlot'),
 		],
