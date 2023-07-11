@@ -169,11 +169,16 @@ function considerItemReplacement(itemLink)
 		return false
 	end
 
-	local _, _, itemRarity, itemLevel = GetItemInfo(itemLink)
+	local _, _, itemRarity, itemLevel, _, _, _, _, invType = GetItemInfo(itemLink)
 
 	-- Ignore TBC items like Rocket Boots Xtreme (Lite). The ilvl limit is intentionally set low
 	-- to limit accidental filtering.
 	if itemLevel <= 112 then
+		return false
+	end
+
+	-- Ignore ammunition.
+	if invType and _G[invType] and _G[invType] == INVTYPE_AMMO then
 		return false
 	end
 
