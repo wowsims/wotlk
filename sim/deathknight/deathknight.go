@@ -119,9 +119,11 @@ type Deathknight struct {
 	HeartStrike       *core.Spell
 	HeartStrikeOffHit *core.Spell
 
-	RuneStrike     *core.Spell
-	RuneStrikeOh   *core.Spell
-	RuneStrikeAura *core.Aura
+	RuneStrikeQueued bool
+	RuneStrikeQueue  *core.Spell
+	RuneStrike       *core.Spell
+	RuneStrikeOh     *core.Spell
+	RuneStrikeAura   *core.Aura
 
 	GhoulFrenzy *core.Spell
 	// Dummy aura for timeline metrics
