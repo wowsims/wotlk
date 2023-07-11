@@ -10,7 +10,7 @@ import (
 const fireTotemDuration time.Duration = time.Second * 120
 
 func (shaman *Shaman) registerFireElementalTotem() {
-	if !shaman.Totems.UseFireElemental {
+	if !shaman.Totems.UseFireElemental && !shaman.IsUsingAPL {
 		return
 	}
 

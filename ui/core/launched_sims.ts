@@ -44,7 +44,7 @@ export const aplLaunchStatuses: Record<Spec, LaunchStatus> = {
 	[Spec.SpecFeralDruid]: LaunchStatus.Unlaunched,
 	[Spec.SpecFeralTankDruid]: LaunchStatus.Unlaunched,
 	[Spec.SpecRestorationDruid]: LaunchStatus.Unlaunched,
-	[Spec.SpecElementalShaman]: LaunchStatus.Unlaunched,
+	[Spec.SpecElementalShaman]: LaunchStatus.Alpha,
 	[Spec.SpecEnhancementShaman]: LaunchStatus.Unlaunched,
 	[Spec.SpecRestorationShaman]: LaunchStatus.Unlaunched,
 	[Spec.SpecHunter]: LaunchStatus.Alpha,

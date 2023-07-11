@@ -29,11 +29,15 @@ func (shaman *Shaman) newElectricSpellConfig(actionID core.ActionID, baseCost fl
 	if isLightningOverload {
 		mask = core.ProcMaskProc
 	}
+	flags := SpellFlagElectric | SpellFlagFocusable
+	if !isLightningOverload {
+		flags |= core.SpellFlagAPL
+	}
 	spell := core.SpellConfig{
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolNature,
 		ProcMask:     mask,
-		Flags:        SpellFlagElectric | SpellFlagFocusable,
+		Flags:        flags,
 		MetricSplits: 6,
 
 		ManaCost: core.ManaCostOptions{

@@ -5,19 +5,20 @@ import { Flask } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
 import { Glyphs } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
-import { SavedTalents } from '../core/proto/ui.js';
+import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
 import { Spec } from '../core/proto/common.js';
 import { Player } from '../core/player.js';
+import { APLRotation } from '../core/proto/apl.js';
 
 import { ElementalShaman_Rotation as ElementalShamanRotation, ElementalShaman_Options as ElementalShamanOptions, ShamanShield, ShamanMajorGlyph, ShamanMinorGlyph } from '../core/proto/shaman.js';
 import { ElementalShaman_Rotation_RotationType as RotationType } from '../core/proto/shaman.js';
 
 import {
-	AirTotem,
-	EarthTotem,
-	FireTotem,
-	WaterTotem,
-	ShamanTotems,
+  AirTotem,
+  EarthTotem,
+  FireTotem,
+  WaterTotem,
+  ShamanTotems,
 } from '../core/proto/shaman.js';
 
 
@@ -31,44 +32,45 @@ import { Faction } from '../core/proto/common.js';
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
 export const StandardTalents = {
-	name: 'Standard',
-	data: SavedTalents.create({
-		talentsString: '0532001523212351322301351-005052031',
-		glyphs: Glyphs.create({
-			major1: ShamanMajorGlyph.GlyphOfLava,
-			major2: ShamanMajorGlyph.GlyphOfTotemOfWrath,
-			major3: ShamanMajorGlyph.GlyphOfLightningBolt,
-			minor1: ShamanMinorGlyph.GlyphOfThunderstorm,
-			minor2: ShamanMinorGlyph.GlyphOfWaterShield,
-			minor3: ShamanMinorGlyph.GlyphOfGhostWolf,
-		}),
-	}),
+  name: 'Standard',
+  data: SavedTalents.create({
+    talentsString: '0532001523212351322301351-005052031',
+    glyphs: Glyphs.create({
+      major1: ShamanMajorGlyph.GlyphOfLava,
+      major2: ShamanMajorGlyph.GlyphOfTotemOfWrath,
+      major3: ShamanMajorGlyph.GlyphOfLightningBolt,
+      minor1: ShamanMinorGlyph.GlyphOfThunderstorm,
+      minor2: ShamanMinorGlyph.GlyphOfWaterShield,
+      minor3: ShamanMinorGlyph.GlyphOfGhostWolf,
+    }),
+  }),
 };
 
 export const DefaultRotation = ElementalShamanRotation.create({
-	totems: ShamanTotems.create({
-		earth: EarthTotem.StrengthOfEarthTotem,
-		air: AirTotem.WrathOfAirTotem,
-		fire: FireTotem.TotemOfWrath,
-		water: WaterTotem.ManaSpringTotem,
-	}),
-	type: RotationType.Adaptive,
-	fnMinManaPer: 66,
-	clMinManaPer: 33,
-	useChainLightning: false,
-	useFireNova: false,
-	useThunderstorm: true,
+  totems: ShamanTotems.create({
+    earth: EarthTotem.StrengthOfEarthTotem,
+    air: AirTotem.WrathOfAirTotem,
+    fire: FireTotem.TotemOfWrath,
+    water: WaterTotem.ManaSpringTotem,
+    useFireElemental: true,
+  }),
+  type: RotationType.Adaptive,
+  fnMinManaPer: 66,
+  clMinManaPer: 33,
+  useChainLightning: false,
+  useFireNova: false,
+  useThunderstorm: true,
 });
 
 export const DefaultOptions = ElementalShamanOptions.create({
-	shield: ShamanShield.WaterShield,
-	bloodlust: true,
+  shield: ShamanShield.WaterShield,
+  bloodlust: true,
 });
 
 export const DefaultConsumes = Consumes.create({
-	defaultPotion: Potions.RunicManaInjector,
-	flask: Flask.FlaskOfTheFrostWyrm,
-	food: Food.FoodFishFeast,
+  defaultPotion: Potions.PotionOfWildMagic,
+  flask: Flask.FlaskOfTheFrostWyrm,
+  food: Food.FoodFishFeast,
 });
 
 export const PRE_RAID_PRESET = {
@@ -193,4 +195,39 @@ export const P3_PRESET_ALLI = {
         {"id":47666}
       ]
     }`),
+};
+
+export const ROTATION_PRESET_BUILTIN = {
+  name: "Legacy",
+  rotation: SavedRotation.create({
+    specRotationOptionsJson: ElementalShamanRotation.toJsonString(DefaultRotation),
+  }),
+}
+
+export const ROTATION_PRESET_BASIC_APL = {
+  name: 'Basic APL',
+  rotation: SavedRotation.create({
+    specRotationOptionsJson: ElementalShamanRotation.toJsonString(DefaultRotation),
+    rotation: APLRotation.fromJsonString(`{
+      "enabled": true,
+      "prepullActions": [
+        {"action":{"castSpell":{"spellId":{"spellId":58704}}},"doAt":"-2s"},
+        {"action":{"castSpell":{"spellId":{"spellId":57722}}},"doAt":"-3s"},
+        {"action":{"castSpell":{"spellId":{"spellId":58774}}},"doAt":"-4s"},
+        {"action":{"castSpell":{"spellId":{"spellId":58643}}},"doAt":"-5s"},
+        {"action":{"castSpell":{"spellId":{"spellId":3738}}},"doAt":"-6s"}
+      ],
+      "priorityList": [
+        {"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpGe","lhs":{"currentTime":{}},"rhs":{"const":{"val":"2s"}}}},{"spellIsReady":{"spellId":{"tag":-1,"spellId":2825}}}]}},"castSpell":{"spellId":{"tag":-1,"spellId":2825}}}},
+        {"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpGe","lhs":{"currentTime":{}},"rhs":{"const":{"val":"2s"}}}},{"spellIsReady":{"spellId":{"spellId":2825}}}]}},"castSpell":{"spellId":{"spellId":2825}}}},
+        {"action":{"condition":{"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":26297}}},{"spellIsReady":{"spellId":{"spellId":16166}}}]}},"strictSequence":{"actions":[{"castSpell":{"spellId":{"spellId":26297}}},{"castSpell":{"spellId":{"spellId":16166}}}]}}},
+        {"action":{"condition":{"and":{"vals":[{"not":{"val":{"spellIsReady":{"spellId":{"spellId":26297}}}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":16166}}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":64701}}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":26297}}}}}]}},"castSpell":{"spellId":{"spellId":54758}}}},
+        {"action":{"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":2894}}}}},{"not":{"val":{"dotIsActive":{"spellId":{"spellId":58704}}}}}]}},"castSpell":{"spellId":{"spellId":58704}}}},
+        {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":49233}}}}},"castSpell":{"spellId":{"spellId":49233}}}},
+        {"action":{"condition":{"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":2894}}},{"or":{"vals":[{"auraIsActive":{"auraId":{"itemId":40255}}},{"auraIsActive":{"auraId":{"itemId":40682}}},{"auraIsActive":{"auraId":{"itemId":37660}}},{"auraIsActive":{"auraId":{"itemId":45518}}},{"auraIsActive":{"auraId":{"itemId":54572}}},{"auraIsActive":{"auraId":{"itemId":54588}}},{"auraIsActive":{"auraId":{"itemId":47213}}},{"auraIsActive":{"auraId":{"itemId":45490}}},{"auraIsActive":{"auraId":{"itemId":50348}}},{"auraIsActive":{"auraId":{"itemId":50353}}},{"auraIsActive":{"auraId":{"itemId":50360}}},{"auraIsActive":{"auraId":{"itemId":50365}}},{"auraIsActive":{"auraId":{"itemId":50345}}},{"auraIsActive":{"auraId":{"itemId":50340}}},{"auraIsActive":{"auraId":{"itemId":50398}}},{"cmp":{"op":"OpEq","lhs":{"auraNumStacks":{"auraId":{"itemId":45308}}},"rhs":{"const":{"val":"5"}}}},{"cmp":{"op":"OpEq","lhs":{"auraNumStacks":{"auraId":{"itemId":40432}}},"rhs":{"const":{"val":"10"}}}},{"auraIsActive":{"auraId":{"spellId":55637}}}]}}]}},"strictSequence":{"actions":[{"castSpell":{"spellId":{"spellId":33697}}},{"castSpell":{"spellId":{"itemId":40212}}},{"castSpell":{"spellId":{"itemId":37873}}},{"castSpell":{"spellId":{"itemId":45148}}},{"castSpell":{"spellId":{"itemId":48724}}},{"castSpell":{"spellId":{"itemId":50357}}},{"castSpell":{"spellId":{"spellId":2894}}}]}}},
+        {"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"dotRemainingTime":{"spellId":{"spellId":49233}}},"rhs":{"const":{"val":"2"}}}}]}},"castSpell":{"spellId":{"spellId":60043}}}},
+        {"action":{"castSpell":{"spellId":{"spellId":49238}}}}
+      ]
+    }`),
+  }),
 };

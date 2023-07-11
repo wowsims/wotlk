@@ -4,6 +4,10 @@
     padding: 2px;
 }
 
+.dropdown-picker-item .dropdown-submenu {
+    left: -1px !important;
+}
+
 .dropdown-picker-root .dropdown {
     width: auto;
 }
