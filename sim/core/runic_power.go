@@ -490,6 +490,10 @@ func (rp *RunicPowerBar) RightBloodRuneReady() bool {
 	}
 }
 
+func (rp *RunicPowerBar) RuneIsActive(slot int8) bool {
+	return (rp.runeStates & isSpents[slot]) == 0
+}
+
 func (rp *RunicPowerBar) RuneIsDeath(slot int8) bool {
 	return (rp.runeStates & isDeaths[slot]) != 0
 }
@@ -557,21 +561,6 @@ func (rp *RunicPowerBar) DeathRunesInFU() int8 {
 	return count
 }
 
-func (rp *RunicPowerBar) NormalCurrentBloodRunes() int32 {
-	const unspentBlood1 = isSpent
-	const unspentBlood2 = unspentBlood1 << 2
-
-	var count int32
-	if rp.runeStates&unspentBlood1 == 0 {
-		count++
-	}
-	if rp.runeStates&unspentBlood2 == 0 {
-		count++
-	}
-
-	return count
-}
-
 func (rp *RunicPowerBar) BloodRunesBTSync() bool {
 	const unspentBlood1 = isSpent
 	const unspentBlood2 = unspentBlood1 << 2
@@ -583,15 +572,34 @@ func (rp *RunicPowerBar) BloodRunesBTSync() bool {
 	return false
 }
 
-func (rp *RunicPowerBar) NormalCurrentFrostRunes() int32 {
-	const unspentFrost1 = (isSpent) << 4
-	const unspentFrost2 = unspentFrost1 << 2
+func (rp *RunicPowerBar) NormalCurrentBloodRunes() int32 {
+	const unspentBlood1 = isSpent
+	const unspentBlood2 = unspentBlood1 << 2
+	const deathBlood1 = isDeath
+	const deathBlood2 = deathBlood1 << 2
 
 	var count int32
-	if rp.runeStates&unspentFrost1 == 0 {
+	if rp.runeStates&unspentBlood1 == 0 && rp.runeStates&deathBlood1 == 0 {
 		count++
 	}
-	if rp.runeStates&unspentFrost2 == 0 {
+	if rp.runeStates&unspentBlood2 == 0 && rp.runeStates&deathBlood2 == 0 {
+		count++
+	}
+
+	return count
+}
+
+func (rp *RunicPowerBar) NormalCurrentFrostRunes() int32 {
+	const unspentFrost1 = isSpent << 4
+	const unspentFrost2 = unspentFrost1 << 2
+	const deathFrost1 = isDeath << 4
+	const deathFrost2 = deathFrost1 << 2
+
+	var count int32
+	if rp.runeStates&unspentFrost1 == 0 && rp.runeStates&deathFrost1 == 0 {
+		count++
+	}
+	if rp.runeStates&unspentFrost2 == 0 && rp.runeStates&deathFrost2 == 0 {
 		count++
 	}
 
@@ -599,14 +607,16 @@ func (rp *RunicPowerBar) NormalCurrentFrostRunes() int32 {
 }
 
 func (rp *RunicPowerBar) NormalCurrentUnholyRunes() int32 {
-	const unspentUnholy1 = (isSpent) << 8
+	const unspentUnholy1 = isSpent << 8
 	const unspentUnholy2 = unspentUnholy1 << 2
+	const deathUnholy1 = isDeath << 8
+	const deathUnholy2 = deathUnholy1 << 2
 
 	var count int32
-	if rp.runeStates&unspentUnholy1 == 0 {
+	if rp.runeStates&unspentUnholy1 == 0 && rp.runeStates&deathUnholy1 == 0 {
 		count++
 	}
-	if rp.runeStates&unspentUnholy2 == 0 {
+	if rp.runeStates&unspentUnholy2 == 0 && rp.runeStates&deathUnholy2 == 0 {
 		count++
 	}
 

@@ -8,6 +8,8 @@ import { NumberPicker } from '../number_picker.js';
 import { DropdownPicker, DropdownPickerConfig, DropdownValueConfig, TextDropdownPicker } from '../dropdown_picker.js';
 import { Input, InputConfig } from '../input.js';
 import { ActionID } from '../../proto/common.js';
+import { BooleanPicker } from '../boolean_picker.js';
+import { APLValueRuneSlot, APLValueRuneType } from '../../proto/apl.js';
 
 export type ACTION_ID_SET = 'auras' | 'stackable_auras' | 'castable_spells' | 'dot_spells';
 
@@ -235,6 +237,16 @@ export function actionIdFieldConfig(field: string, actionIdSet: ACTION_ID_SET, o
 	};
 }
 
+export function booleanFieldConfig(field: string, label?:string, options?: Partial<APLPickerBuilderFieldConfig<any, any>>): APLPickerBuilderFieldConfig<any, any> {
+	return {
+		field: field,
+		newValue: () => false,
+		factory: (parent, player, config) => new BooleanPicker(parent, player, config),
+		...(options || {}),
+		label: label,
+	};
+}
+
 export function numberFieldConfig(field: string, options?: Partial<APLPickerBuilderFieldConfig<any, any>>): APLPickerBuilderFieldConfig<any, any> {
 	return {
 		field: field,
@@ -250,6 +262,44 @@ export function stringFieldConfig(field: string, options?: Partial<APLPickerBuil
 		newValue: () => '',
 		factory: (parent, player, config) => new AdaptiveStringPicker(parent, player, config),
 		...(options || {}),
+	};
+}
+
+export function runeTypeFieldConfig(field: string): APLPickerBuilderFieldConfig<any, any> {
+	return {
+		field: field,
+		newValue: () => APLValueRuneType.RuneBlood,
+		factory: (parent, player, config) => new TextDropdownPicker(parent, player, {
+			...config,
+			defaultLabel: 'None',
+			equals: (a, b) => a == b,
+			values: [
+				{ value: APLValueRuneType.RuneBlood, label: 'Blood' },
+				{ value: APLValueRuneType.RuneFrost, label: 'Frost' },
+				{ value: APLValueRuneType.RuneUnholy, label: 'Unholy' },
+				{ value: APLValueRuneType.RuneDeath, label: 'Death' },
+			],
+		}),
+	};
+}
+
+export function runeSlotFieldConfig(field: string): APLPickerBuilderFieldConfig<any, any> {
+	return {
+		field: field,
+		newValue: () => APLValueRuneSlot.SlotLeftBlood,
+		factory: (parent, player, config) => new TextDropdownPicker(parent, player, {
+			...config,
+			defaultLabel: 'None',
+			equals: (a, b) => a == b,
+			values: [
+				{ value: APLValueRuneSlot.SlotLeftBlood, label: 'Blood Left' },
+				{ value: APLValueRuneSlot.SlotRightBlood, label: 'Blood Right' },
+				{ value: APLValueRuneSlot.SlotLeftFrost, label: 'Frost Left' },
+				{ value: APLValueRuneSlot.SlotRightFrost, label: 'Frost Right' },
+				{ value: APLValueRuneSlot.SlotLeftUnholy, label: 'Unholy Left' },
+				{ value: APLValueRuneSlot.SlotRightUnholy, label: 'Unholy Right' },
+			],
+		}),
 	};
 }
 
