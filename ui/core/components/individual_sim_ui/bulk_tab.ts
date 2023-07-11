@@ -43,16 +43,8 @@ export class BulkGearJsonImporter<SpecType extends Spec> extends Importer {
 			const equipment = EquipmentSpec.fromJsonString(data, { ignoreUnknownFields: true });
 			if (equipment?.items?.length > 0) {
 				const db = await Database.loadLeftoversIfNecessary(equipment);
-				const items = equipment.items.filter((spec) => spec.id > 0);
+				const items = equipment.items.filter((spec) => spec.id > 0 && db.lookupItemSpec(spec));
 				if (items.length > 0) {
-					for (const itemSpec of items) {
-						if (itemSpec.id == 0) {
-							continue;
-						}
-						if (!db.lookupItemSpec(itemSpec)) {
-							throw new Error("cannot find item with ID " + itemSpec.id);
-						}
-					}
 					this.bulkUI.addItems(items);
 				}
 			}

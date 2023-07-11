@@ -4,6 +4,48 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
+type APLValueCurrentHealth struct {
+	defaultAPLValueImpl
+	unit *Unit
+}
+
+func (rot *APLRotation) newValueCurrentHealth(config *proto.APLValueCurrentHealth) APLValue {
+	unit := rot.unit
+	if !unit.HasHealthBar() {
+		return nil
+	}
+	return &APLValueCurrentHealth{
+		unit: unit,
+	}
+}
+func (value *APLValueCurrentHealth) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeFloat
+}
+func (value *APLValueCurrentHealth) GetFloat(sim *Simulation) float64 {
+	return value.unit.CurrentHealth()
+}
+
+type APLValueCurrentHealthPercent struct {
+	defaultAPLValueImpl
+	unit *Unit
+}
+
+func (rot *APLRotation) newValueCurrentHealthPercent(config *proto.APLValueCurrentHealthPercent) APLValue {
+	unit := rot.unit
+	if !unit.HasHealthBar() {
+		return nil
+	}
+	return &APLValueCurrentHealthPercent{
+		unit: unit,
+	}
+}
+func (value *APLValueCurrentHealthPercent) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeFloat
+}
+func (value *APLValueCurrentHealthPercent) GetFloat(sim *Simulation) float64 {
+	return value.unit.CurrentHealthPercent()
+}
+
 type APLValueCurrentMana struct {
 	defaultAPLValueImpl
 	unit *Unit

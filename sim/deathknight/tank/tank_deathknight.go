@@ -51,7 +51,7 @@ func NewTankDeathknight(character core.Character, options *proto.Player) *TankDe
 		OffHand:        tankDk.WeaponFromOffHand(tankDk.DefaultMeleeCritMultiplier()),
 		AutoSwingMelee: true,
 		ReplaceMHSwing: func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
-			if tankDk.RuneStrike.CanCast(sim, nil) {
+			if tankDk.RuneStrike.CanCast(sim, nil) && (!tankDk.IsUsingAPL || tankDk.RuneStrikeQueued) {
 				return tankDk.RuneStrike
 			} else {
 				return nil

@@ -107,7 +107,7 @@ export class IndividualJsonExporter<SpecType extends Spec> extends Exporter {
 			}
 
 			if (path[0] == 'player' && path[1] == 'rotation' && ['prepullActions', 'priorityList'].includes(path[2])) {
-				return path[path.length - 2] == 'action';
+				return path.length > 3;
 			}
 
 			return false;

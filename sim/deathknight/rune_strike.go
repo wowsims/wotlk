@@ -72,6 +72,7 @@ func (dk *Deathknight) newRuneStrikeSpell(isMH bool) *core.Spell {
 			if isMH {
 				dk.threatOfThassarianProc(sim, result, dk.RuneStrikeOh)
 				dk.RuneStrikeAura.Deactivate(sim)
+				dk.RuneStrikeQueued = false
 			}
 		},
 	}
@@ -79,14 +80,23 @@ func (dk *Deathknight) newRuneStrikeSpell(isMH bool) *core.Spell {
 		conf.RuneCost = core.RuneCostOptions{}
 		conf.Cast = core.CastConfig{}
 		conf.ExtraCastCondition = nil
-	} else {
-		conf.Flags |= core.SpellFlagAPL
 	}
 
 	return dk.RegisterSpell(conf)
 }
 
 func (dk *Deathknight) registerRuneStrikeSpell() {
+	dk.RuneStrikeQueue = dk.RegisterSpell(core.SpellConfig{
+		ActionID: RuneStrikeActionID.WithTag(0),
+		Flags:    core.SpellFlagAPL,
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			dk.RuneStrikeQueued = true
+		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return dk.RuneStrikeAura.IsActive() && !dk.RuneStrikeQueued
+		},
+	})
 	dk.RuneStrike = dk.newRuneStrikeSpell(true)
 	dk.RuneStrikeOh = dk.newRuneStrikeSpell(false)
 
@@ -105,4 +115,31 @@ func (dk *Deathknight) registerRuneStrikeSpell() {
 			}
 		},
 	}))
+}
+
+func (dk *Deathknight) registerDrwRuneStrikeSpell() {
+	runeStrikeGlyphCritBonus := core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfRuneStrike), 10.0, 0.0)
+
+	dk.RuneWeapon.RuneStrike = dk.RuneWeapon.RegisterSpell(core.SpellConfig{
+		ActionID:    RuneStrikeActionID.WithTag(1),
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
+
+		BonusCritRating: (dk.annihilationCritBonus() + runeStrikeGlyphCritBonus) * core.CritRatingPerCritChance,
+		DamageMultiplier: 1.5 *
+			dk.darkrunedPlateRuneStrikeDamageBonus(),
+		CritMultiplier:   dk.DefaultMeleeCritMultiplier(),
+		ThreatMultiplier: 1.75,
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := 0.15*spell.MeleeAttackPower() + dk.DrwWeaponDamage(sim, spell)
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialNoBlockDodgeParry)
+		},
+	})
+
+	if !dk.Inputs.NewDrw {
+		dk.RuneWeapon.RuneStrike.DamageMultiplier *= 0.5
+		dk.RuneWeapon.RuneStrike.Flags |= core.SpellFlagIgnoreAttackerModifiers
+	}
 }

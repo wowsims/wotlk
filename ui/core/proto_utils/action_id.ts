@@ -359,6 +359,14 @@ export class ActionId {
 				}
 				break;
 			case 'Rune Strike':
+				if (this.tag == 0) {
+					name += ' (Queue)'
+				} else if (this.tag == 1) {
+					name += ' (Main Hand)';
+				} else if (this.tag == 2) {
+					name += ' (Off Hand)';
+				}
+				break;
 			case 'Frost Strike':
 			case 'Plague Strike':
 			case 'Blood Strike':
