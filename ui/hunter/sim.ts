@@ -249,6 +249,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 					Presets.ROTATION_PRESET_BM,
 					Presets.ROTATION_PRESET_MM,
 					Presets.ROTATION_PRESET_SV,
+					Presets.ROTATION_PRESET_AOE,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [

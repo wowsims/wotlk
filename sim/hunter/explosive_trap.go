@@ -61,7 +61,7 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			if sim.CurrentTime < 0 {
 				// Traps only last 30s.
-				if sim.CurrentTime < time.Second*30 {
+				if sim.CurrentTime < -time.Second*30 {
 					return
 				}
 

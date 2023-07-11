@@ -170,6 +170,12 @@ export const ROTATION_PRESET_BM = {
       		    }
       		  },
       		  {
+      		    "hide": true,
+      		    "action": {
+      		      "castSpell": {"spellId":{"spellId":49045}}
+      		    }
+      		  },
+      		  {
       		    "action": {
       		      "castSpell": {"spellId":{"spellId":49052}}
       		    }
@@ -177,7 +183,7 @@ export const ROTATION_PRESET_BM = {
       		]
 		}`),
 	}),
-}
+};
 
 export const ROTATION_PRESET_MM = {
 	name: 'MM',
@@ -248,6 +254,12 @@ export const ROTATION_PRESET_MM = {
       		    }
       		  },
       		  {
+      		    "hide": true,
+      		    "action": {
+      		      "castSpell": {"spellId":{"spellId":49045}}
+      		    }
+      		  },
+      		  {
       		    "action": {
       		      "castSpell": {"spellId":{"spellId":49052}}
       		    }
@@ -255,7 +267,7 @@ export const ROTATION_PRESET_MM = {
       		]
 		}`),
 	}),
-}
+};
 
 export const ROTATION_PRESET_SV = {
 	name: 'SV',
@@ -345,7 +357,64 @@ export const ROTATION_PRESET_SV = {
       		]
 		}`),
 	}),
-}
+};
+
+export const ROTATION_PRESET_AOE = {
+	name: 'AOE',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
+			timeToTrapWeaveMs: 2000,
+		})),
+		rotation: APLRotation.fromJsonString(`{
+      		"enabled": true,
+      		"prepullActions": [
+      		  {
+      		    "action": {
+      		      "castSpell": {"spellId":{"otherId":"OtherActionPotion"}}
+      		    },
+      		    "doAt": "-1s"
+      		  }
+      		],
+      		"priorityList": [
+      		  {
+      		    "action": {
+      		      "condition": {"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"10s"}}}},
+      		      "autocastOtherCooldowns": {}
+      		    }
+      		  },
+      		  {
+      		    "action": {
+      		      "condition": {"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":34074}}}}},{"cmp":{"op":"OpLt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"10%"}}}}]}},
+      		      "castSpell": {"spellId":{"spellId":34074}}
+      		    }
+      		  },
+      		  {
+      		    "action": {
+      		      "condition": {"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":61847}}}}},{"cmp":{"op":"OpGt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"30%"}}}}]}},
+      		      "castSpell": {"spellId":{"spellId":61847}}
+      		    }
+      		  },
+      		  {
+      		    "hide": true,
+      		    "action": {
+      		      "multidot": {"spellId":{"spellId":49001},"maxDots":3,"maxOverlap":{"const":{"val":"0ms"}}}
+      		    }
+      		  },
+      		  {
+      		    "action": {
+      		      "condition": {"not":{"val":{"dotIsActive":{"spellId":{"spellId":49067}}}}},
+      		      "castSpell": {"spellId":{"tag":1,"spellId":49067}}
+      		    }
+      		  },
+      		  {
+      		    "action": {
+      		      "castSpell": {"spellId":{"spellId":58434}}
+      		    }
+      		  }
+      		]
+		}`),
+	}),
+};
 
 export const DefaultOptions = HunterOptions.create({
 	ammo: Ammo.SaroniteRazorheads,
