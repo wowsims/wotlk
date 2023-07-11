@@ -54,6 +54,7 @@ message APLValue {
         APLValueCurrentTimePercent current_time_percent = 8;
         APLValueRemainingTime remaining_time = 9;
         APLValueRemainingTimePercent remaining_time_percent = 10;
+        APLValueNumberTargets number_targets = 28;
 
         // Resource values
         APLValueCurrentHealth current_health = 26;
@@ -83,7 +84,7 @@ message APLValue {
         APLValueDotIsActive dot_is_active = 6;
         APLValueDotRemainingTime dot_remaining_time = 13;
 
-        // Current Last Index - 27
+        // Current Last Index - 28
     }
 }
 
@@ -168,6 +169,7 @@ message APLValueCurrentTime {}
 message APLValueCurrentTimePercent {}
 message APLValueRemainingTime {}
 message APLValueRemainingTimePercent {}
+message APLValueNumberTargets {}
 
 message APLValueCurrentHealth {}
 message APLValueCurrentHealthPercent {}
