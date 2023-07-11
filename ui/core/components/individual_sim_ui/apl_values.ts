@@ -70,15 +70,41 @@ export class APLValuePicker extends Input<Player<any>, APLValue | undefined> {
 			getValue: (player: Player<any>) => this.getSourceValue()?.value.oneofKind,
 			setValue: (eventID: EventID, player: Player<any>, newValue: APLValueType) => {
 				const sourceValue = this.getSourceValue();
-				if (sourceValue?.value.oneofKind == newValue) {
+				const oldValue = sourceValue?.value.oneofKind;
+				if (oldValue == newValue) {
 					return;
 				}
 
 				if (newValue) {
 					const factory = valueTypeFactories[newValue];
-					const obj: any = { oneofKind: newValue };
+					let obj: any = { oneofKind: newValue };
 					obj[newValue] = factory.newValue();
 					if (sourceValue) {
+						// Some pre-fill logic when swapping types.
+						if (oldValue && this.valuePicker) {
+							if (newValue == 'not') {
+								(obj[newValue] as APLValueNot).val = this.makeAPLValue(oldValue, this.valuePicker.getInputValue());
+							} else if (sourceValue.value.oneofKind == 'not' && sourceValue.value.not.val?.value.oneofKind == newValue && !['and', 'or'].includes(newValue)) {
+								obj = sourceValue.value.not.val.value;
+							} else if (newValue == 'and') {
+								if (sourceValue.value.oneofKind == 'or') {
+									(obj[newValue] as APLValueAnd).vals = sourceValue.value.or.vals;
+								} else {
+									(obj[newValue] as APLValueAnd).vals = [this.makeAPLValue(oldValue, this.valuePicker.getInputValue())];
+								}
+							} else if (newValue == 'or') {
+								if (sourceValue.value.oneofKind == 'and') {
+									(obj[newValue] as APLValueOr).vals = sourceValue.value.and.vals;
+								} else {
+									(obj[newValue] as APLValueOr).vals = [this.makeAPLValue(oldValue, this.valuePicker.getInputValue())];
+								}
+							} else if (sourceValue.value.oneofKind == 'and' && sourceValue.value.and.vals?.[0]?.value.oneofKind == newValue) {
+								obj = sourceValue.value.and.vals[0].value;
+							} else if (sourceValue.value.oneofKind == 'or' && sourceValue.value.or.vals?.[0]?.value.oneofKind == newValue) {
+								obj = sourceValue.value.or.vals[0].value;
+							}
+						}
+
 						sourceValue.value = obj;
 					} else {
 						const newSourceValue = APLValue.create();
@@ -129,6 +155,15 @@ export class APLValuePicker extends Input<Player<any>, APLValue | undefined> {
 		if (newValueType && newValue) {
 			this.valuePicker!.setInputValue((newValue.value as any)[newValueType]);
 		}
+	}
+
+	private makeAPLValue(type: APLValueType, implVal: any): APLValue {
+		if (!type) {
+			return APLValue.create();
+		}
+		const obj: any = { oneofKind: type };
+		obj[type] = implVal;
+		return APLValue.create({value: obj});
 	}
 
 	private updateValuePicker(newValueType: APLValueType) {
