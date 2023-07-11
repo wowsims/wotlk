@@ -254,7 +254,7 @@ func (shaman *Shaman) Initialize() {
 
 	shaman.registerBloodlustCD()
 
-	if shaman.Totems.UseFireElemental && enableSnapshot {
+	if shaman.Totems.UseFireElemental && enableSnapshot && !shaman.IsUsingAPL {
 		shaman.fireElementalSnapShot = core.NewSnapshotManager(shaman.GetCharacter())
 		shaman.setupProcTrackers()
 	}

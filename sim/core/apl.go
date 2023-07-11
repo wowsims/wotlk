@@ -103,7 +103,9 @@ func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
 	}
 
 	// If user has a Prepull potion set but does not use it in their APL settings, we enable it here.
+	rotation.parsingPrepull = true
 	prepotSpell := rotation.aplGetSpell(ActionID{OtherID: proto.OtherAction_OtherActionPotion}.ToProto())
+	rotation.parsingPrepull = false
 	if prepotSpell != nil {
 		found := false
 		for _, prepullAction := range rotation.allPrepullActions() {
