@@ -773,94 +773,23 @@ export const P1_BLOOD_BIS_PRESET = {
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
 	gear: EquipmentSpec.fromJsonString(`{   "items": [
-		{
-			"id": 44006,
-			"enchant": 3817,
-			"gems": [
-			  41398,
-			  42702
-			]
-		  },
-		  {
-			"id": 44664,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 40557,
-			"enchant": 3808,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 40403,
-			"enchant": 3831
-		  },
-		  {
-			"id": 40550,
-			"enchant": 3832,
-			"gems": [
-			  42142,
-			  42142
-			]
-		  },
-		  {
-			"id": 40330,
-			"enchant": 3845,
-			"gems": [
-			  42142,
-			  0
-			]
-		  },
-		  {
-			"id": 40552,
-			"enchant": 3604,
-			"gems": [
-			  39996,
-			  0
-			]
-		  },
-		  {
-			"id": 40278,
-			"gems": [
-			  39996,
-			  39996
-			]
-		  },
-		  {
-			"id": 40556,
-			"enchant": 3823,
-			"gems": [
-			  39996,
-			  40037
-			]
-		  },
-		  {
-			"id": 40591,
-			"enchant": 3606
-		  },
-		  {
-			"id": 40075
-		  },
-		  {
-			"id": 39401
-		  },
-		  {
-			"id": 40256
-		  },
-		  {
-			"id": 42987
-		  },
-		  {
-			"id": 40384,
-			"enchant": 3368
-		  },
+		{"id":44006,"enchant":3817,"gems":[41398,42702]},
+		  {"id":44664,"gems":[39996]},
+		  {"id":40557,"enchant":3808,"gems":[39996]},
+		  {"id":40403,"enchant":3831},
+		  {"id":40550,"enchant":3832,"gems":[42142,42142]},
+		  {"id":40330,"enchant":3845,"gems":[42142,0]},
+		  {"id":40552,"enchant":3604,"gems":[39996,0]},
+		  {"id":40278,"gems":[39996,39996]},
+		  {"id":40556,"enchant":3823,"gems":[39996,40037]},
+		  {"id":40591,"enchant":3606},
+		  {"id":40075},
+		  {"id":39401},
+		  {"id":40256},
+		  {"id":42987},
+		  {"id":40384,"enchant":3368},
 		  {},
-		  {
-			"id": 40207
-		  }
+		  {"id":40207}
   ]}`),
 };
 
@@ -869,114 +798,23 @@ export const P2_BLOOD_BIS_PRESET = {
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
 	gear: EquipmentSpec.fromJsonString(`{   "items": [
-		{
-			"id": 46115,
-			"enchant": 3817,
-			"gems": [
-			  41398,
-			  42702
-			]
-		  },
-		  {
-			"id": 45459,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 46117,
-			"enchant": 3808,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 46032,
-			"enchant": 3831,
-			"gems": [
-			  39996,
-			  39996
-			]
-		  },
-		  {
-			"id": 46111,
-			"enchant": 3832,
-			"gems": [
-			  42142,
-			  42142
-			]
-		  },
-		  {
-			"id": 45663,
-			"enchant": 3845,
-			"gems": [
-			  42142,
-			  0
-			]
-		  },
-		  {
-			"id": 46113,
-			"enchant": 3604,
-			"gems": [
-			  39996,
-			  0
-			]
-		  },
-		  {
-			"id": 45241,
-			"gems": [
-			  39996,
-			  45862,
-			  39996
-			]
-		  },
-		  {
-			"id": 45134,
-			"enchant": 3823,
-			"gems": [
-			  39996,
-			  39996,
-			  39996
-			]
-		  },
-		  {
-			"id": 45599,
-			"enchant": 3606,
-			"gems": [
-			  39996,
-			  39996
-			]
-		  },
-		  {
-			"id": 45534,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 46048,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 42987
-		  },
-		  {
-			"id": 45931
-		  },
-		  {
-			"id": 45516,
-			"enchant": 3368,
-			"gems": [
-			  39996,
-			  39996
-			]
-		  },
+		{"id":46115,"enchant":3817,"gems":[41398,42702]},
+		  {"id":45459,"gems":[39996]},
+		  {"id":46117,"enchant":3808,"gems":[39996]},
+		  {"id":46032,"enchant":3831,"gems":[39996,39996]},
+		  {"id":46111,"enchant":3832,"gems":[42142,42142]},
+		  {"id":45663,"enchant":3845,"gems":[42142,0]},
+		  {"id":46113,"enchant":3604,"gems":[39996,0]},
+		  {"id":45241,"gems":[39996,45862,39996]},
+		  {"id":45134,"enchant":3823,"gems":[39996,39996,39996]},
+		  {"id":45599,"enchant":3606,"gems":[39996,39996]},
+		  {"id":45534,"gems":[39996]},
+		  {"id":46048,"gems":[39996]},
+		  {"id":42987},
+		  {"id":45931},
+		  {"id":45516,"enchant":3368,"gems":[39996,39996]},
 		  {},
-		  {
-			"id": 45254
-		  }
+		  {"id":45254}
   ]}`),
 };
 
@@ -985,114 +823,23 @@ export const P3_BLOOD_BIS_PRESET = {
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
 	gear: EquipmentSpec.fromJsonString(`{   "items": [
-		{
-			"id": 48493,
-			"enchant": 3817,
-			"gems": [
-			  41285,
-			  40142
-			]
-		  },
-		  {
-			"id": 47458,
-			"gems": [
-			  40142
-			]
-		  },
-		  {
-			"id": 48495,
-			"enchant": 3808,
-			"gems": [
-			  40111
-			]
-		  },
-		  {
-			"id": 47546,
-			"enchant": 3831,
-			"gems": [
-			  42142
-			]
-		  },
-		  {
-			"id": 47449,
-			"enchant": 3832,
-			"gems": [
-			  49110,
-			  42142,
-			  40142
-			]
-		  },
-		  {
-			"id": 48008,
-			"enchant": 3845,
-			"gems": [
-			  40111,
-			  0
-			]
-		  },
-		  {
-			"id": 48492,
-			"enchant": 3604,
-			"gems": [
-			  40142,
-			  0
-			]
-		  },
-		  {
-			"id": 47429,
-			"gems": [
-			  40142,
-			  40142,
-			  40111
-			]
-		  },
-		  {
-			"id": 48494,
-			"enchant": 3823,
-			"gems": [
-			  40142,
-			  40111
-			]
-		  },
-		  {
-			"id": 45599,
-			"enchant": 3606,
-			"gems": [
-			  40111,
-			  40111
-			]
-		  },
-		  {
-			"id": 47993,
-			"gems": [
-			  40111,
-			  45862
-			]
-		  },
-		  {
-			"id": 47413,
-			"gems": [
-			  40142
-			]
-		  },
-		  {
-			"id": 45931
-		  },
-		  {
-			"id": 47464
-		  },
-		  {
-			"id": 47446,
-			"enchant": 3368,
-			"gems": [
-			  42142,
-			  40141
-			]
-		  },
+		{"id":48493,"enchant":3817,"gems":[41285,40142]},
+		  {"id":47458,"gems":[40142]},
+		  {"id":48495,"enchant":3808,"gems":[40111]},
+		  {"id":47546,"enchant":3831,"gems":[42142]},
+		  {"id":47449,"enchant":3832,"gems":[49110,42142,40142]},
+		  {"id":48008,"enchant":3845,"gems":[40111,0]},
+		  {"id":48492,"enchant":3604,"gems":[40142,0]},
+		  {"id":47429,"gems":[40142,40142,40111]},
+		  {"id":48494,"enchant":3823,"gems":[40142,40111]},
+		  {"id":45599,"enchant":3606,"gems":[40111,40111]},
+		  {"id":47993,"gems":[40111,45862]},
+		  {"id":47413,"gems":[40142]},
+		  {"id":45931},
+		  {"id":47464},
+		  {"id":47446,"enchant":3368,"gems":[42142,40141]},
 		  {},
-		  {
-			"id": 47673
-		  }
+		  {"id":47673}
   ]}`),
 };
 
@@ -1101,94 +848,23 @@ export const P1_UNHOLY_2H_PRERAID_PRESET = {
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2 && player.getTalents().nervesOfColdSteel == 0,
 	gear: EquipmentSpec.fromJsonString(`{ "items": [
-		{
-			"id": 41386,
-			"enchant": 3817,
-			"gems": [
-				41400,
-				49110
-			]
-		},
-		{
-			"id": 37397
-		},
-		{
-			"id": 37627,
-			"enchant": 3808,
-			"gems": [
-				39996
-			]
-		},
-		{
-			"id": 37647,
-			"enchant": 3831
-		},
-		{
-			"id": 39617,
-			"enchant": 3832,
-			"gems": [
-				42142,
-				39996
-			]
-		},
-		{
-			"id": 41355,
-			"enchant": 3845,
-			"gems": [
-				0
-			]
-		},
-		{
-			"id": 39618,
-			"enchant": 3604,
-			"gems": [
-				39996,
-				0
-			]
-		},
-		{
-			"id": 40688,
-			"gems": [
-				39996,
-				42142
-			]
-		},
-		{
-			"id": 37193,
-			"enchant": 3823,
-			"gems": [
-				42142,
-				39996
-			]
-		},
-		{
-			"id": 44306,
-			"enchant": 3606,
-			"gems": [
-				39996,
-				39996
-			]
-		},
-		{
-			"id": 37642
-		},
-		{
-			"id": 44935
-		},
-		{
-			"id": 40684
-		},
-		{
-			"id": 42987
-		},
-		{
-			"id": 41257,
-			"enchant": 3368
-		},
+		{"id":41386,"enchant":3817,"gems":[41400,49110]},
+		{"id":37397},
+		{"id":37627,"enchant":3808,"gems":[39996]},
+		{"id":37647,"enchant":3831},
+		{"id":39617,"enchant":3832,"gems":[42142,39996]},
+		{"id":41355,"enchant":3845,"gems":[0]},
+		{"id":39618,"enchant":3604,"gems":[39996,0]},
+		{"id":40688,"gems":[39996,42142]},
+		{"id":37193,"enchant":3823,"gems":[42142,39996]},
+		{"id":44306,"enchant":3606,"gems":[39996,39996]},
+		{"id":37642},
+		{"id":44935},
+		{"id":40684},
+		{"id":42987},
+		{"id":41257,"enchant":3368},
 		{},
-		{
-			"id": 40867
-		}
+		{"id":40867}
   ]}`),
 };
 
@@ -1197,94 +873,23 @@ export const P1_UNHOLY_2H_BIS_PRESET = {
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2 && player.getTalents().nervesOfColdSteel == 0,
 	gear: EquipmentSpec.fromJsonString(`{ "items": [
-		{
-			"id": 44006,
-			"enchant": 3817,
-			"gems": [
-				41400,
-				49110
-			]
-		},
-		{
-			"id": 44664,
-			"gems": [
-				39996
-			]
-		},
-		{
-			"id": 40557,
-			"enchant": 3808,
-			"gems": [
-				39996
-			]
-		},
-		{
-			"id": 40403,
-			"enchant": 3831
-		},
-		{
-			"id": 40550,
-			"enchant": 3832,
-			"gems": [
-				42142,
-				39996
-			]
-		},
-		{
-			"id": 40330,
-			"enchant": 3845,
-			"gems": [
-				39996,
-				0
-			]
-		},
-		{
-			"id": 40552,
-			"enchant": 3604,
-			"gems": [
-				40038,
-				0
-			]
-		},
-		{
-			"id": 40278,
-			"gems": [
-				42142,
-				42142
-			]
-		},
-		{
-			"id": 40556,
-			"enchant": 3823,
-			"gems": [
-				39996,
-				39996
-			]
-		},
-		{
-			"id": 40591,
-			"enchant": 3606
-		},
-		{
-			"id": 39401
-		},
-		{
-			"id": 40075
-		},
-		{
-			"id": 40256
-		},
-		{
-			"id": 42987
-		},
-		{
-			"id": 40384,
-			"enchant": 3368
-		},
+		{"id":44006,"enchant":3817,"gems":[41400,49110]},
+		{"id":44664,"gems":[39996]},
+		{"id":40557,"enchant":3808,"gems":[39996]},
+		{"id":40403,"enchant":3831},
+		{"id":40550,"enchant":3832,"gems":[42142,39996]},
+		{"id":40330,"enchant":3845,"gems":[39996,0]},
+		{"id":40552,"enchant":3604,"gems":[40038,0]},
+		{"id":40278,"gems":[42142,42142]},
+		{"id":40556,"enchant":3823,"gems":[39996,39996]},
+		{"id":40591,"enchant":3606},
+		{"id":39401},
+		{"id":40075},
+		{"id":40256},
+		{"id":42987},
+		{"id":40384,"enchant":3368},
 		{},
-		{
-			"id": 40207
-		}
+		{"id":40207}
   ]}`),
 };
 
@@ -1293,97 +898,23 @@ export const P1_UNHOLY_DW_PRERAID_PRESET = {
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2 && player.getTalents().nervesOfColdSteel > 0,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 41386,
-			"enchant": 3817,
-			"gems": [
-				41400,
-				49110
-			]
-		},
-		{
-			"id": 37397
-		},
-		{
-			"id": 37627,
-			"enchant": 3808,
-			"gems": [
-				39996
-			]
-		},
-		{
-			"id": 37647,
-			"enchant": 3831
-		},
-		{
-			"id": 39617,
-			"enchant": 3832,
-			"gems": [
-				42142,
-				39996
-			]
-		},
-		{
-			"id": 41355,
-			"enchant": 3845,
-			"gems": [
-				0
-			]
-		},
-		{
-			"id": 39618,
-			"enchant": 3604,
-			"gems": [
-				39996,
-				0
-			]
-		},
-		{
-			"id": 40688,
-			"gems": [
-				39996,
-				42142
-			]
-		},
-		{
-			"id": 37193,
-			"enchant": 3823,
-			"gems": [
-				42142,
-				39996
-			]
-		},
-		{
-			"id": 44306,
-			"enchant": 3606,
-			"gems": [
-				39996,
-				39996
-			]
-		},
-		{
-			"id": 37642
-		},
-		{
-			"id": 44935
-		},
-		{
-			"id": 40684
-		},
-		{
-			"id": 42987
-		},
-		{
-			"id": 41383,
-			"enchant": 3368
-		},
-		{
-			"id": 40703,
-			"enchant": 3368
-		},
-		{
-			"id": 40867
-		}
+		{"id":41386,"enchant":3817,"gems":[41400,49110]},
+		{"id":37397},
+		{"id":37627,"enchant":3808,"gems":[39996]},
+		{"id":37647,"enchant":3831},
+		{"id":39617,"enchant":3832,"gems":[42142,39996]},
+		{"id":41355,"enchant":3845,"gems":[0]},
+		{"id":39618,"enchant":3604,"gems":[39996,0]},
+		{"id":40688,"gems":[39996,42142]},
+		{"id":37193,"enchant":3823,"gems":[42142,39996]},
+		{"id":44306,"enchant":3606,"gems":[39996,39996]},
+		{"id":37642},
+		{"id":44935},
+		{"id":40684},
+		{"id":42987},
+		{"id":41383,"enchant":3368},
+		{"id":40703,"enchant":3368},
+		{"id":40867}
   ]}`),
 };
 
@@ -1392,93 +923,23 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2 && player.getTalents().nervesOfColdSteel > 0,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 44006,
-			"enchant": 3817,
-			"gems": [
-				41398,
-				42702
-			]
-		},
-		{
-			"id": 39421
-		},
-		{
-			"id": 40557,
-			"enchant": 3808,
-			"gems": [
-				39996
-			]
-		},
-		{
-			"id": 40403,
-			"enchant": 3831
-		},
-		{
-			"id": 40550,
-			"enchant": 3832,
-			"gems": [
-				42142,
-				39996
-			]
-		},
-		{
-			"id": 40330,
-			"enchant": 3845,
-			"gems": [
-				39996,
-				0
-			]
-		},
-		{
-			"id": 40347,
-			"enchant": 3604,
-			"gems": [
-				39996,
-				0
-			]
-		},
-		{
-			"id": 40278,
-			"gems": [
-				42142,
-				42142
-			]
-		},
-		{
-			"id": 40294,
-			"enchant": 3823
-		},
-		{
-			"id": 39706,
-			"enchant": 3606,
-			"gems": [
-				39996
-			]
-		},
-		{
-			"id": 39401
-		},
-		{
-			"id": 40075
-		},
-		{
-			"id": 37390
-		},
-		{
-			"id": 42987
-		},
-		{
-			"id": 40402,
-			"enchant": 3368
-		},
-		{
-			"id": 40491,
-			"enchant": 3368
-		},
-		{
-			"id": 42620
-		}
+		{"id":44006,"enchant":3817,"gems":[41398,42702]},
+		{"id":39421},
+		{"id":40557,"enchant":3808,"gems":[39996]},
+		{"id":40403,"enchant":3831},
+		{"id":40550,"enchant":3832,"gems":[42142,39996]},
+		{"id":40330,"enchant":3845,"gems":[39996,0]},
+		{"id":40347,"enchant":3604,"gems":[39996,0]},
+		{"id":40278,"gems":[42142,42142]},
+		{"id":40294,"enchant":3823},
+		{"id":39706,"enchant":3606,"gems":[39996]},
+		{"id":39401},
+		{"id":40075},
+		{"id":37390},
+		{"id":42987},
+		{"id":40402,"enchant":3368},
+		{"id":40491,"enchant":3368},
+		{"id":42620}
   ]}`),
 };
 
@@ -1487,114 +948,23 @@ export const P2_UNHOLY_DW_BIS_PRESET = {
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2 && player.getTalents().nervesOfColdSteel > 0,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 45472,
-			"enchant": 3817,
-			"gems": [
-			  41398,
-			  40041
-			]
-		  },
-		  {
-			"id": 46040,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 46117,
-			"enchant": 3808,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 45588,
-			"enchant": 3831,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 46111,
-			"enchant": 3832,
-			"gems": [
-			  42142,
-			  42142
-			]
-		  },
-		  {
-			"id": 45663,
-			"enchant": 3845,
-			"gems": [
-			  39996,
-			  0
-			]
-		  },
-		  {
-			"id": 45481,
-			"enchant": 3604,
-			"gems": [
-			  0
-			]
-		  },
-		  {
-			"id": 45241,
-			"gems": [
-			  42142,
-			  45862,
-			  39996
-			]
-		  },
-		  {
-			"id": 45134,
-			"enchant": 3823,
-			"gems": [
-			  40041,
-			  39996,
-			  40022
-			]
-		  },
-		  {
-			"id": 45599,
-			"enchant": 3606,
-			"gems": [
-			  39996,
-			  39996
-			]
-		  },
-		  {
-			"id": 45534,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 45250
-		  },
-		  {
-			"id": 45609
-		  },
-		  {
-			"id": 42987
-		  },
-		  {
-			"id": 46097,
-			"enchant": 3368,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 46036,
-			"enchant": 3368,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 45254
-		  }
+		{"id":45472,"enchant":3817,"gems":[41398,40041]},
+		  {"id":46040,"gems":[39996]},
+		  {"id":46117,"enchant":3808,"gems":[39996]},
+		  {"id":45588,"enchant":3831,"gems":[39996]},
+		  {"id":46111,"enchant":3832,"gems":[42142,42142]},
+		  {"id":45663,"enchant":3845,"gems":[39996,0]},
+		  {"id":45481,"enchant":3604,"gems":[0]},
+		  {"id":45241,"gems":[42142,45862,39996]},
+		  {"id":45134,"enchant":3823,"gems":[40041,39996,40022]},
+		  {"id":45599,"enchant":3606,"gems":[39996,39996]},
+		  {"id":45534,"gems":[39996]},
+		  {"id":45250},
+		  {"id":45609},
+		  {"id":42987},
+		  {"id":46097,"enchant":3368,"gems":[39996]},
+		  {"id":46036,"enchant":3368,"gems":[39996]},
+		  {"id":45254}
   ]}`),
 };
 
@@ -1603,118 +973,23 @@ export const P3_UNHOLY_DW_BIS_PRESET = {
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2 && player.getTalents().nervesOfColdSteel > 0,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 48493,
-			"enchant": 3817,
-			"gems": [
-			  41398,
-			  40146
-			]
-		  },
-		  {
-			"id": 47458,
-			"gems": [
-			  40146
-			]
-		  },
-		  {
-			"id": 48495,
-			"enchant": 3808,
-			"gems": [
-			  40111
-			]
-		  },
-		  {
-			"id": 47548,
-			"enchant": 3831,
-			"gems": [
-			  40111
-			]
-		  },
-		  {
-			"id": 48491,
-			"enchant": 3832,
-			"gems": [
-			  42142,
-			  42142
-			]
-		  },
-		  {
-			"id": 45663,
-			"enchant": 3845,
-			"gems": [
-			  40111,
-			  0
-			]
-		  },
-		  {
-			"id": 48492,
-			"enchant": 3604,
-			"gems": [
-			  40146,
-			  0
-			]
-		  },
-		  {
-			"id": 47429,
-			"gems": [
-			  40111,
-			  45862,
-			  40111
-			]
-		  },
-		  {
-			"id": 47465,
-			"enchant": 3823,
-			"gems": [
-			  49110,
-			  40111,
-			  40146
-			]
-		  },
-		  {
-			"id": 45599,
-			"enchant": 3606,
-			"gems": [
-			  40111,
-			  40111
-			]
-		  },
-		  {
-			"id": 47413,
-			"gems": [
-			  40146
-			]
-		  },
-		  {
-			"id": 45534,
-			"gems": [
-			  42142
-			]
-		  },
-		  {
-			"id": 47464
-		  },
-		  {
-			"id": 45609
-		  },
-		  {
-			"id": 47528,
-			"enchant": 3368,
-			"gems": [
-			  40111
-			]
-		  },
-		  {
-			"id": 47528,
-			"enchant": 3368,
-			"gems": [
-			  40111
-			]
-		  },
-		  {
-			"id": 47673
-		  }
+		{"id":48493,"enchant":3817,"gems":[41398,40146]},
+		  {"id":47458,"gems":[40146]},
+		  {"id":48495,"enchant":3808,"gems":[40111]},
+		  {"id":47548,"enchant":3831,"gems":[40111]},
+		  {"id":48491,"enchant":3832,"gems":[42142,42142]},
+		  {"id":45663,"enchant":3845,"gems":[40111,0]},
+		  {"id":48492,"enchant":3604,"gems":[40146,0]},
+		  {"id":47429,"gems":[40111,45862,40111]},
+		  {"id":47465,"enchant":3823,"gems":[49110,40111,40146]},
+		  {"id":45599,"enchant":3606,"gems":[40111,40111]},
+		  {"id":47413,"gems":[40146]},
+		  {"id":45534,"gems":[42142]},
+		  {"id":47464},
+		  {"id":45609},
+		  {"id":47528,"enchant":3368,"gems":[40111]},
+		  {"id":47528,"enchant":3368,"gems":[40111]},
+		  {"id":47673}
   ]}`),
 };
 
@@ -1723,104 +998,23 @@ export const P1_FROST_PRE_BIS_PRESET = {
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
 	gear: EquipmentSpec.fromJsonString(`{   "items": [
-		{
-			"id": 41386,
-			"enchant": 3817,
-			"gems": [
-				41398,
-				49110
-			]
-		},
-		{
-			"id": 42645,
-			"gems": [
-				42142
-			]
-		},
-		{
-			"id": 34388,
-			"enchant": 3808,
-			"gems": [
-				39996,
-				39996
-			]
-		},
-		{
-			"id": 37647,
-			"enchant": 3831
-		},
-		{
-			"id": 39617,
-			"enchant": 3832,
-			"gems": [
-				42142,
-				39996
-			]
-		},
-		{
-			"id": 41355,
-			"enchant": 3845,
-			"gems": [
-				0
-			]
-		},
-		{
-			"id": 39618,
-			"enchant": 3604,
-			"gems": [
-				39996,
-				0
-			]
-		},
-		{
-			"id": 37171,
-			"gems": [
-				39996,
-				39996
-			]
-		},
-		{
-			"id": 37193,
-			"enchant": 3823,
-			"gems": [
-				42142,
-				39996
-			]
-		},
-		{
-			"id": 44306,
-			"enchant": 3606,
-			"gems": [
-				39996,
-				39996
-			]
-		},
-		{
-			"id": 42642,
-			"gems": [
-				39996
-			]
-		},
-		{
-			"id": 44935
-		},
-		{
-			"id": 40684
-		},
-		{
-			"id": 42987
-		},
-		{
-			"id": 41383,
-			"enchant": 3370
-		},
-		{
-			"id": 43611,
-			"enchant": 3368
-		},
-		{
-			"id": 40715
-		}
+		{"id":41386,"enchant":3817,"gems":[41398,49110]},
+		{"id":42645,"gems":[42142]},
+		{"id":34388,"enchant":3808,"gems":[39996,39996]},
+		{"id":37647,"enchant":3831},
+		{"id":39617,"enchant":3832,"gems":[42142,39996]},
+		{"id":41355,"enchant":3845,"gems":[0]},
+		{"id":39618,"enchant":3604,"gems":[39996,0]},
+		{"id":37171,"gems":[39996,39996]},
+		{"id":37193,"enchant":3823,"gems":[42142,39996]},
+		{"id":44306,"enchant":3606,"gems":[39996,39996]},
+		{"id":42642,"gems":[39996]},
+		{"id":44935},
+		{"id":40684},
+		{"id":42987},
+		{"id":41383,"enchant":3370},
+		{"id":43611,"enchant":3368},
+		{"id":40715}
   ]}`),
 };
 
@@ -1829,97 +1023,23 @@ export const P1_FROST_BIS_PRESET = {
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
 	gear: EquipmentSpec.fromJsonString(`{   "items": [
-		{
-			"id": 44006,
-			"enchant": 3817,
-			"gems": [
-				41398,
-				42702
-			]
-		},
-		{
-			"id": 44664,
-			"gems": [
-				39996
-			]
-		},
-		{
-			"id": 40557,
-			"enchant": 3808,
-			"gems": [
-				39996
-			]
-		},
-		{
-			"id": 40403,
-			"enchant": 3831
-		},
-		{
-			"id": 40550,
-			"enchant": 3832,
-			"gems": [
-				42142,
-				39996
-			]
-		},
-		{
-			"id": 40330,
-			"enchant": 3845,
-			"gems": [
-				39996,
-				0
-			]
-		},
-		{
-			"id": 40552,
-			"enchant": 3604,
-			"gems": [
-				39996,
-				0
-			]
-		},
-		{
-			"id": 40278,
-			"gems": [
-				39996,
-				42142
-			]
-		},
-		{
-			"id": 40556,
-			"enchant": 3823,
-			"gems": [
-				42142,
-				39996
-			]
-		},
-		{
-			"id": 40591,
-			"enchant": 3606
-		},
-		{
-			"id": 39401
-		},
-		{
-			"id": 40075
-		},
-		{
-			"id": 40256
-		},
-		{
-			"id": 42987
-		},
-		{
-			"id": 40189,
-			"enchant": 3370
-		},
-		{
-			"id": 40189,
-			"enchant": 3368
-		},
-		{
-			"id": 40207
-		}
+		{"id":44006,"enchant":3817,"gems":[41398,42702]},
+		{"id":44664,"gems":[39996]},
+		{"id":40557,"enchant":3808,"gems":[39996]},
+		{"id":40403,"enchant":3831},
+		{"id":40550,"enchant":3832,"gems":[42142,39996]},
+		{"id":40330,"enchant":3845,"gems":[39996,0]},
+		{"id":40552,"enchant":3604,"gems":[39996,0]},
+		{"id":40278,"gems":[39996,42142]},
+		{"id":40556,"enchant":3823,"gems":[42142,39996]},
+		{"id":40591,"enchant":3606},
+		{"id":39401},
+		{"id":40075},
+		{"id":40256},
+		{"id":42987},
+		{"id":40189,"enchant":3370},
+		{"id":40189,"enchant":3368},
+		{"id":40207}
   ]}`),
 };
 
@@ -1928,119 +1048,23 @@ export const P2_FROST_BIS_PRESET = {
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
 	gear: EquipmentSpec.fromJsonString(`{   "items": [
-		{
-			"id": 46115,
-			"enchant": 3817,
-			"gems": [
-			  41398,
-			  42702
-			]
-		  },
-		  {
-			"id": 45459,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 46117,
-			"enchant": 3808,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 46032,
-			"enchant": 3831,
-			"gems": [
-			  39996,
-			  39996
-			]
-		  },
-		  {
-			"id": 46111,
-			"enchant": 3832,
-			"gems": [
-			  42142,
-			  42142
-			]
-		  },
-		  {
-			"id": 45663,
-			"enchant": 3845,
-			"gems": [
-			  39996,
-			  0
-			]
-		  },
-		  {
-			"id": 46113,
-			"enchant": 3604,
-			"gems": [
-			  39996,
-			  0
-			]
-		  },
-		  {
-			"id": 45241,
-			"gems": [
-			  42142,
-			  45862,
-			  39996
-			]
-		  },
-		  {
-			"id": 45134,
-			"enchant": 3823,
-			"gems": [
-			  39996,
-			  39996,
-			  39996
-			]
-		  },
-		  {
-			"id": 45599,
-			"enchant": 3606,
-			"gems": [
-			  39996,
-			  39996
-			]
-		  },
-		  {
-			"id": 45608,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 45534,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 45931
-		  },
-		  {
-			"id": 42987
-		  },
-		  {
-			"id": 46097,
-			"enchant": 3370,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 46097,
-			"enchant": 3368,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 40207
-		  }
+		{"id":46115,"enchant":3817,"gems":[41398,42702]},
+		  {"id":45459,"gems":[39996]},
+		  {"id":46117,"enchant":3808,"gems":[39996]},
+		  {"id":46032,"enchant":3831,"gems":[39996,39996]},
+		  {"id":46111,"enchant":3832,"gems":[42142,42142]},
+		  {"id":45663,"enchant":3845,"gems":[39996,0]},
+		  {"id":46113,"enchant":3604,"gems":[39996,0]},
+		  {"id":45241,"gems":[42142,45862,39996]},
+		  {"id":45134,"enchant":3823,"gems":[39996,39996,39996]},
+		  {"id":45599,"enchant":3606,"gems":[39996,39996]},
+		  {"id":45608,"gems":[39996]},
+		  {"id":45534,"gems":[39996]},
+		  {"id":45931},
+		  {"id":42987},
+		  {"id":46097,"enchant":3370,"gems":[39996]},
+		  {"id":46097,"enchant":3368,"gems":[39996]},
+		  {"id":40207}
   ]}`),
 };
 
@@ -2049,118 +1073,23 @@ export const P3_FROST_BIS_PRESET = {
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
 	gear: EquipmentSpec.fromJsonString(`{   "items": [
-		{
-			"id": 48493,
-			"enchant": 3817,
-			"gems": [
-			  41398,
-			  40142
-			]
-		  },
-		  {
-			"id": 45459,
-			"gems": [
-			  40111
-			]
-		  },
-		  {
-			"id": 48495,
-			"enchant": 3808,
-			"gems": [
-			  40111
-			]
-		  },
-		  {
-			"id": 47548,
-			"enchant": 3831,
-			"gems": [
-			  40111
-			]
-		  },
-		  {
-			"id": 48491,
-			"enchant": 3832,
-			"gems": [
-			  42142,
-			  42142
-			]
-		  },
-		  {
-			"id": 45663,
-			"enchant": 3845,
-			"gems": [
-			  40111,
-			  0
-			]
-		  },
-		  {
-			"id": 47492,
-			"enchant": 3604,
-			"gems": [
-			  49110,
-			  40111,
-			  0
-			]
-		  },
-		  {
-			"id": 45241,
-			"gems": [
-			  40111,
-			  42142,
-			  40111
-			]
-		  },
-		  {
-			"id": 48494,
-			"enchant": 3823,
-			"gems": [
-			  40142,
-			  40111
-			]
-		  },
-		  {
-			"id": 47473,
-			"enchant": 3606,
-			"gems": [
-			  40142,
-			  40111
-			]
-		  },
-		  {
-			"id": 46966,
-			"gems": [
-			  40111
-			]
-		  },
-		  {
-			"id": 45534,
-			"gems": [
-			  40111
-			]
-		  },
-		  {
-			"id": 47464
-		  },
-		  {
-			"id": 45931
-		  },
-		  {
-			"id": 47528,
-			"enchant": 3370,
-			"gems": [
-			  40111
-			]
-		  },
-		  {
-			"id": 47528,
-			"enchant": 3368,
-			"gems": [
-			  40111
-			]
-		  },
-		  {
-			"id": 40207
-		  }
+		{"id":48493,"enchant":3817,"gems":[41398,40142]},
+		  {"id":45459,"gems":[40111]},
+		  {"id":48495,"enchant":3808,"gems":[40111]},
+		  {"id":47548,"enchant":3831,"gems":[40111]},
+		  {"id":48491,"enchant":3832,"gems":[42142,42142]},
+		  {"id":45663,"enchant":3845,"gems":[40111,0]},
+		  {"id":47492,"enchant":3604,"gems":[49110,40111,0]},
+		  {"id":45241,"gems":[40111,42142,40111]},
+		  {"id":48494,"enchant":3823,"gems":[40142,40111]},
+		  {"id":47473,"enchant":3606,"gems":[40142,40111]},
+		  {"id":46966,"gems":[40111]},
+		  {"id":45534,"gems":[40111]},
+		  {"id":47464},
+		  {"id":45931},
+		  {"id":47528,"enchant":3370,"gems":[40111]},
+		  {"id":47528,"enchant":3368,"gems":[40111]},
+		  {"id":40207}
   ]}`),
 };
 
@@ -2169,96 +1098,22 @@ export const P1_FROSTSUBUNH_BIS_PRESET = {
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
 	gear: EquipmentSpec.fromJsonString(`{   "items": [
-		{
-			"id": 44006,
-			"enchant": 3817,
-			"gems": [
-				41398,
-				42702
-			]
-		},
-		{
-			"id": 44664,
-			"gems": [
-				40003
-			]
-		},
-		{
-			"id": 40557,
-			"enchant": 3808,
-			"gems": [
-				40003
-			]
-		},
-		{
-			"id": 40403,
-			"enchant": 3831
-		},
-		{
-			"id": 40550,
-			"enchant": 3832,
-			"gems": [
-				42142,
-				40003
-			]
-		},
-		{
-			"id": 40330,
-			"enchant": 3845,
-			"gems": [
-				39996,
-				0
-			]
-		},
-		{
-			"id": 40552,
-			"enchant": 3604,
-			"gems": [
-				40058,
-				0
-			]
-		},
-		{
-			"id": 40278,
-			"gems": [
-				39996,
-				42142
-			]
-		},
-		{
-			"id": 40556,
-			"enchant": 3823,
-			"gems": [
-				42142,
-				39996
-			]
-		},
-		{
-			"id": 40591,
-			"enchant": 3606
-		},
-		{
-			"id": 39401
-		},
-		{
-			"id": 40075
-		},
-		{
-			"id": 40256
-		},
-		{
-			"id": 42987
-		},
-		{
-			"id": 40189,
-			"enchant": 3370
-		},
-		{
-			"id": 40189,
-			"enchant": 3368
-		},
-		{
-			"id": 40207
-		}
+		{"id":44006,"enchant":3817,"gems":[41398,42702]},
+		{"id":44664,"gems":[40003]},
+		{"id":40557,"enchant":3808,"gems":[40003]},
+		{"id":40403,"enchant":3831},
+		{"id":40550,"enchant":3832,"gems":[42142,40003]},
+		{"id":40330,"enchant":3845,"gems":[39996,0]},
+		{"id":40552,"enchant":3604,"gems":[40058,0]},
+		{"id":40278,"gems":[39996,42142]},
+		{"id":40556,"enchant":3823,"gems":[42142,39996]},
+		{"id":40591,"enchant":3606},
+		{"id":39401},
+		{"id":40075},
+		{"id":40256},
+		{"id":42987},
+		{"id":40189,"enchant":3370},
+		{"id":40189,"enchant":3368},
+		{"id":40207}
   ]}`),
 };

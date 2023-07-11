@@ -197,89 +197,23 @@ export const ARCANE_PRERAID_PRESET = {
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 42553,
-			"enchant": 3820,
-			"gems": [
-				41285,
-				40049
-			]
-		},
-		{
-			"id": 39472
-		},
-		{
-			"id": 37673,
-			"enchant": 3810,
-			"gems": [
-				39998
-			]
-		},
-		{
-			"id": 41610,
-			"enchant": 3722
-		},
-		{
-			"id": 39492,
-			"enchant": 3832,
-			"gems": [
-				39998,
-				40049
-			]
-		},
-		{
-			"id": 37361,
-			"enchant": 2332,
-			"gems": [
-				0
-			]
-		},
-		{
-			"id": 39495,
-			"enchant": 3604,
-			"gems": [
-				39998,
-				0
-			]
-		},
-		{
-			"id": 40696,
-			"gems": [
-				40049,
-				40026
-			]
-		},
-		{
-			"id": 37854,
-			"enchant": 3719
-		},
-		{
-			"id": 44202,
-			"enchant": 3606,
-			"gems": [
-				40026
-			]
-		},
-		{
-			"id": 40585
-		},
-		{
-			"id": 37694
-		},
-		{
-			"id": 37873
-		},
-		{
-			"id": 40682
-		},
-		{
-			"id": 37360,
-			"enchant": 3854
-		},
+		{"id":42553,"enchant":3820,"gems":[41285,40049]},
+		{"id":39472},
+		{"id":37673,"enchant":3810,"gems":[39998]},
+		{"id":41610,"enchant":3722},
+		{"id":39492,"enchant":3832,"gems":[39998,40049]},
+		{"id":37361,"enchant":2332,"gems":[0]},
+		{"id":39495,"enchant":3604,"gems":[39998,0]},
+		{"id":40696,"gems":[40049,40026]},
+		{"id":37854,"enchant":3719},
+		{"id":44202,"enchant":3606,"gems":[40026]},
+		{"id":40585},
+		{"id":37694},
+		{"id":37873},
+		{"id":40682},
+		{"id":37360,"enchant":3854},
 		{},
-		{
-			"id": 37238
-		}
+		{"id":37238}
 	]}`),
 };
 
@@ -288,95 +222,23 @@ export const FIRE_PRERAID_PRESET = {
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 42553,
-			"enchant": 3820,
-			"gems": [
-				41285,
-				40014
-			]
-		},
-		{
-			"id": 39472
-		},
-		{
-			"id": 34210,
-			"enchant": 3810,
-			"gems": [
-				40049,
-				40014
-			]
-		},
-		{
-			"id": 41610,
-			"enchant": 3859
-		},
-		{
-			"id": 39492,
-			"enchant": 3832,
-			"gems": [
-				40049,
-				40014
-			]
-		},
-		{
-			"id": 37361,
-			"enchant": 2332,
-			"gems": [
-				0
-			]
-		},
-		{
-			"id": 39495,
-			"enchant": 3604,
-			"gems": [
-				40049,
-				0
-			]
-		},
-		{
-			"id": 40696,
-			"gems": [
-				40014,
-				40026
-			]
-		},
-		{
-			"id": 37854,
-			"enchant": 3719
-		},
-		{
-			"id": 44202,
-			"enchant": 3826,
-			"gems": [
-				40026
-			]
-		},
-		{
-			"id": 40585
-		},
-		{
-			"id": 42644,
-			"gems": [
-				40049
-			]
-		},
-		{
-			"id": 37873
-		},
-		{
-			"id": 40682
-		},
-		{
-			"id": 45085,
-			"enchant": 3834
-		},
-		{
-			"id": 40698
-		},
-		{
-			"id": 37177
-		}
+		{"id":42553,"enchant":3820,"gems":[41285,40014]},
+		{"id":39472},
+		{"id":34210,"enchant":3810,"gems":[40049,40014]},
+		{"id":41610,"enchant":3859},
+		{"id":39492,"enchant":3832,"gems":[40049,40014]},
+		{"id":37361,"enchant":2332,"gems":[0]},
+		{"id":39495,"enchant":3604,"gems":[40049,0]},
+		{"id":40696,"gems":[40014,40026]},
+		{"id":37854,"enchant":3719},
+		{"id":44202,"enchant":3826,"gems":[40026]},
+		{"id":40585},
+		{"id":42644,"gems":[40049]},
+		{"id":37873},
+		{"id":40682},
+		{"id":45085,"enchant":3834},
+		{"id":40698},
+		{"id":37177}
 	]}`),
 };
 
@@ -385,98 +247,23 @@ export const ARCANE_P1_PRESET = {
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 40416,
-			"enchant": 3820,
-			"gems": [
-				41285,
-				39998
-			]
-		},
-		{
-			"id": 44661,
-			"gems": [
-				40026
-			]
-		},
-		{
-			"id": 40419,
-			"enchant": 3810,
-			"gems": [
-				40051
-			]
-		},
-		{
-			"id": 44005,
-			"enchant": 3722,
-			"gems": [
-				40026
-			]
-		},
-		{
-			"id": 44002,
-			"enchant": 3832,
-			"gems": [
-				39998,
-				39998
-			]
-		},
-		{
-			"id": 44008,
-			"enchant": 2332,
-			"gems": [
-				39998,
-				0
-			]
-		},
-		{
-			"id": 40415,
-			"enchant": 3604,
-			"gems": [
-				39998,
-				0
-			]
-		},
-		{
-			"id": 40561,
-			"gems": [
-				39998
-			]
-		},
-		{
-			"id": 40417,
-			"enchant": 3719,
-			"gems": [
-				39998,
-				40051
-			]
-		},
-		{
-			"id": 40558,
-			"enchant": 3606
-		},
-		{
-			"id": 40719
-		},
-		{
-			"id": 40399
-		},
-		{
-			"id": 39229
-		},
-		{
-			"id": 40255
-		},
-		{
-			"id": 40396,
-			"enchant": 3834
-		},
-		{
-			"id": 40273
-		},
-		{
-			"id": 39426
-		}
+		{"id":40416,"enchant":3820,"gems":[41285,39998]},
+		{"id":44661,"gems":[40026]},
+		{"id":40419,"enchant":3810,"gems":[40051]},
+		{"id":44005,"enchant":3722,"gems":[40026]},
+		{"id":44002,"enchant":3832,"gems":[39998,39998]},
+		{"id":44008,"enchant":2332,"gems":[39998,0]},
+		{"id":40415,"enchant":3604,"gems":[39998,0]},
+		{"id":40561,"gems":[39998]},
+		{"id":40417,"enchant":3719,"gems":[39998,40051]},
+		{"id":40558,"enchant":3606},
+		{"id":40719},
+		{"id":40399},
+		{"id":39229},
+		{"id":40255},
+		{"id":40396,"enchant":3834},
+		{"id":40273},
+		{"id":39426}
 	]}`),
 };
 
@@ -485,94 +272,23 @@ export const FIRE_P1_PRESET = {
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 40416,
-			"enchant": 3820,
-			"gems": [
-				41285,
-				39998
-			]
-		},
-		{
-			"id": 44661,
-			"gems": [
-				40026
-			]
-		},
-		{
-			"id": 40419,
-			"enchant": 3810,
-			"gems": [
-				40049
-			]
-		},
-		{
-			"id": 44005,
-			"enchant": 3722,
-			"gems": [
-				40026
-			]
-		},
-		{
-			"id": 40418,
-			"enchant": 3832,
-			"gems": [
-				39998,
-				40048
-			]
-		},
-		{
-			"id": 44008,
-			"enchant": 2332,
-			"gems": [
-				39998,
-				0
-			]
-		},
-		{
-			"id": 40415,
-			"enchant": 3604,
-			"gems": [
-				39998,
-				0
-			]
-		},
-		{
-			"id": 40301,
-			"gems": [
-				39998
-			]
-		},
-		{
-			"id": 40560,
-			"enchant": 3719
-		},
-		{
-			"id": 40246,
-			"enchant": 3606
-		},
-		{
-			"id": 40399
-		},
-		{
-			"id": 40719
-		},
-		{
-			"id": 40255
-		},
-		{
-			"id": 40432
-		},
-		{
-			"id": 40396,
-			"enchant": 3834
-		},
-		{
-			"id": 40273
-		},
-		{
-			"id": 39712
-		}
+		{"id":40416,"enchant":3820,"gems":[41285,39998]},
+		{"id":44661,"gems":[40026]},
+		{"id":40419,"enchant":3810,"gems":[40049]},
+		{"id":44005,"enchant":3722,"gems":[40026]},
+		{"id":40418,"enchant":3832,"gems":[39998,40048]},
+		{"id":44008,"enchant":2332,"gems":[39998,0]},
+		{"id":40415,"enchant":3604,"gems":[39998,0]},
+		{"id":40301,"gems":[39998]},
+		{"id":40560,"enchant":3719},
+		{"id":40246,"enchant":3606},
+		{"id":40399},
+		{"id":40719},
+		{"id":40255},
+		{"id":40432},
+		{"id":40396,"enchant":3834},
+		{"id":40273},
+		{"id":39712}
 	]}`),
 };
 
@@ -581,94 +297,23 @@ export const FROST_P1_PRESET = {
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Frost,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 40416,
-			"enchant": 3820,
-			"gems": [
-				41285,
-				39998
-			]
-		},
-		{
-			"id": 44661,
-			"gems": [
-				40026
-			]
-		},
-		{
-			"id": 40419,
-			"enchant": 3810,
-			"gems": [
-				40051
-			]
-		},
-		{
-			"id": 44005,
-			"enchant": 3722,
-			"gems": [
-				40026
-			]
-		},
-		{
-			"id": 40418,
-			"enchant": 3832,
-			"gems": [
-				39998,
-				40048
-			]
-		},
-		{
-			"id": 44008,
-			"enchant": 2332,
-			"gems": [
-				39998,
-				0
-			]
-		},
-		{
-			"id": 40415,
-			"enchant": 3604,
-			"gems": [
-				39998,
-				0
-			]
-		},
-		{
-			"id": 40301,
-			"gems": [
-				39998
-			]
-		},
-		{
-			"id": 40560,
-			"enchant": 3719
-		},
-		{
-			"id": 40558,
-			"enchant": 3606
-		},
-		{
-			"id": 40399
-		},
-		{
-			"id": 40719
-		},
-		{
-			"id": 40255
-		},
-		{
-			"id": 40432
-		},
-		{
-			"id": 40396,
-			"enchant": 3834
-		},
-		{
-			"id": 39766
-		},
-		{
-			"id": 39712
-		}
+		{"id":40416,"enchant":3820,"gems":[41285,39998]},
+		{"id":44661,"gems":[40026]},
+		{"id":40419,"enchant":3810,"gems":[40051]},
+		{"id":44005,"enchant":3722,"gems":[40026]},
+		{"id":40418,"enchant":3832,"gems":[39998,40048]},
+		{"id":44008,"enchant":2332,"gems":[39998,0]},
+		{"id":40415,"enchant":3604,"gems":[39998,0]},
+		{"id":40301,"gems":[39998]},
+		{"id":40560,"enchant":3719},
+		{"id":40558,"enchant":3606},
+		{"id":40399},
+		{"id":40719},
+		{"id":40255},
+		{"id":40432},
+		{"id":40396,"enchant":3834},
+		{"id":39766},
+		{"id":39712}
 	]}`),
 };
 
@@ -677,118 +322,23 @@ export const ARCANE_P2_PRESET = {
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 45497,
-			"enchant": 3820,
-			"gems": [
-				41285,
-				45883
-			]
-		},
-		{
-			"id": 45243,
-			"gems": [
-				39998
-			]
-		},
-		{
-			"id": 46134,
-			"enchant": 3810,
-			"gems": [
-				39998
-			]
-		},
-		{
-			"id": 45618,
-			"enchant": 3722,
-			"gems": [
-				40026
-			]
-		},
-		{
-			"id": 46130,
-			"enchant": 3832,
-			"gems": [
-				39998,
-				39998
-			]
-		},
-		{
-			"id": 45446,
-			"enchant": 2332,
-			"gems": [
-				39998,
-				0
-			]
-		},
-		{
-			"id": 45665,
-			"enchant": 3604,
-			"gems": [
-				39998,
-				39998,
-				0
-			]
-		},
-		{
-			"id": 45619,
-			"gems": [
-				39998,
-				39998,
-				39998
-			]
-		},
-		{
-			"id": 45488,
-			"enchant": 3719,
-			"gems": [
-				39998,
-				40051,
-				40026
-			]
-		},
-		{
-			"id": 45135,
-			"enchant": 3606,
-			"gems": [
-				39998,
-				39998
-			]
-		},
-		{
-			"id": 46046,
-			"gems": [
-				39998
-			]
-		},
-		{
-			"id": 45495,
-			"gems": [
-				39998
-			]
-		},
-		{
-			"id": 45466
-		},
-		{
-			"id": 45518
-		},
-		{
-			"id": 45620,
-			"enchant": 3834,
-			"gems": [
-				39998
-			]
-		},
-		{
-			"id": 45617
-		},
-		{
-			"id": 45294,
-			"gems": [
-				39998
-			]
-		}
+		{"id":45497,"enchant":3820,"gems":[41285,45883]},
+		{"id":45243,"gems":[39998]},
+		{"id":46134,"enchant":3810,"gems":[39998]},
+		{"id":45618,"enchant":3722,"gems":[40026]},
+		{"id":46130,"enchant":3832,"gems":[39998,39998]},
+		{"id":45446,"enchant":2332,"gems":[39998,0]},
+		{"id":45665,"enchant":3604,"gems":[39998,39998,0]},
+		{"id":45619,"gems":[39998,39998,39998]},
+		{"id":45488,"enchant":3719,"gems":[39998,40051,40026]},
+		{"id":45135,"enchant":3606,"gems":[39998,39998]},
+		{"id":46046,"gems":[39998]},
+		{"id":45495,"gems":[39998]},
+		{"id":45466},
+		{"id":45518},
+		{"id":45620,"enchant":3834,"gems":[39998]},
+		{"id":45617},
+		{"id":45294,"gems":[39998]}
 	]}`),
 };
 
@@ -797,117 +347,23 @@ export const FIRE_P2_PRESET = {
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 46129,
-			"enchant": 3820,
-			"gems": [
-				41285,
-				45883
-			]
-		},
-		{
-			"id": 45133,
-			"gems": [
-				40048
-			]
-		},
-		{
-			"id": 46134,
-			"enchant": 3810,
-			"gems": [
-				39998
-			]
-		},
-		{
-			"id": 45242,
-			"enchant": 3722,
-			"gems": [
-				39998
-			]
-		},
-		{
-			"id": 46130,
-			"enchant": 3832,
-			"gems": [
-				39998,
-				39998
-			]
-		},
-		{
-			"id": 45446,
-			"enchant": 2332,
-			"gems": [
-				39998,
-				0
-			]
-		},
-		{
-			"id": 45665,
-			"enchant": 3604,
-			"gems": [
-				40026,
-				40048,
-				0
-			]
-		},
-		{
-			"id": 45619,
-			"gems": [
-				40048,
-				40048,
-				39998
-			]
-		},
-		{
-			"id": 46133,
-			"enchant": 3719,
-			"gems": [
-				39998,
-				39998
-			]
-		},
-		{
-			"id": 45537,
-			"enchant": 3606,
-			"gems": [
-				39998,
-				40026
-			]
-		},
-		{
-			"id": 45495,
-			"gems": [
-				39998
-			]
-		},
-		{
-			"id": 46046,
-			"gems": [
-				39998
-			]
-		},
-		{
-			"id": 45466
-		},
-		{
-			"id": 45518
-		},
-		{
-			"id": 45620,
-			"enchant": 3834,
-			"gems": [
-				39998
-			]
-		},
-		{
-			"id": 45617
-		},
-		{
-			"id": 45294,
-			"gems": [
-				39998
-			]
-		}
+		{"id":46129,"enchant":3820,"gems":[41285,45883]},
+		{"id":45133,"gems":[40048]},
+		{"id":46134,"enchant":3810,"gems":[39998]},
+		{"id":45242,"enchant":3722,"gems":[39998]},
+		{"id":46130,"enchant":3832,"gems":[39998,39998]},
+		{"id":45446,"enchant":2332,"gems":[39998,0]},
+		{"id":45665,"enchant":3604,"gems":[40026,40048,0]},
+		{"id":45619,"gems":[40048,40048,39998]},
+		{"id":46133,"enchant":3719,"gems":[39998,39998]},
+		{"id":45537,"enchant":3606,"gems":[39998,40026]},
+		{"id":45495,"gems":[39998]},
+		{"id":46046,"gems":[39998]},
+		{"id":45466},
+		{"id":45518},
+		{"id":45620,"enchant":3834,"gems":[39998]},
+		{"id":45617},
+		{"id":45294,"gems":[39998]}
 	]}`),
 };
 
@@ -916,118 +372,23 @@ export const FROST_P2_PRESET = {
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Frost,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 45497,
-			"enchant": 3820,
-			"gems": [
-				41285,
-				45883
-			]
-		},
-		{
-			"id": 45133,
-			"gems": [
-				40051
-			]
-		},
-		{
-			"id": 46134,
-			"enchant": 3810,
-			"gems": [
-				39998
-			]
-		},
-		{
-			"id": 45618,
-			"enchant": 3722,
-			"gems": [
-				40026
-			]
-		},
-		{
-			"id": 46130,
-			"enchant": 3832,
-			"gems": [
-				39998,
-				39998
-			]
-		},
-		{
-			"id": 45446,
-			"enchant": 2332,
-			"gems": [
-				39998,
-				0
-			]
-		},
-		{
-			"id": 45665,
-			"enchant": 3604,
-			"gems": [
-				39998,
-				39998,
-				0
-			]
-		},
-		{
-			"id": 45619,
-			"gems": [
-				40049,
-				40049,
-				39998
-			]
-		},
-		{
-			"id": 45488,
-			"enchant": 3719,
-			"gems": [
-				39998,
-				40051,
-				40026
-			]
-		},
-		{
-			"id": 45135,
-			"enchant": 3606,
-			"gems": [
-				39998,
-				40049
-			]
-		},
-		{
-			"id": 46046,
-			"gems": [
-				39998
-			]
-		},
-		{
-			"id": 45495,
-			"gems": [
-				39998
-			]
-		},
-		{
-			"id": 45466
-		},
-		{
-			"id": 45518
-		},
-		{
-			"id": 45620,
-			"enchant": 3834,
-			"gems": [
-				40026
-			]
-		},
-		{
-			"id": 45617
-		},
-		{
-			"id": 45294,
-			"gems": [
-				39998
-			]
-		}
+		{"id":45497,"enchant":3820,"gems":[41285,45883]},
+		{"id":45133,"gems":[40051]},
+		{"id":46134,"enchant":3810,"gems":[39998]},
+		{"id":45618,"enchant":3722,"gems":[40026]},
+		{"id":46130,"enchant":3832,"gems":[39998,39998]},
+		{"id":45446,"enchant":2332,"gems":[39998,0]},
+		{"id":45665,"enchant":3604,"gems":[39998,39998,0]},
+		{"id":45619,"gems":[40049,40049,39998]},
+		{"id":45488,"enchant":3719,"gems":[39998,40051,40026]},
+		{"id":45135,"enchant":3606,"gems":[39998,40049]},
+		{"id":46046,"gems":[39998]},
+		{"id":45495,"gems":[39998]},
+		{"id":45466},
+		{"id":45518},
+		{"id":45620,"enchant":3834,"gems":[40026]},
+		{"id":45617},
+		{"id":45294,"gems":[39998]}
 	]}`),
 };
 
@@ -1036,118 +397,23 @@ export const FFB_P2_PRESET = {
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecMage>) => (player.getTalentTree() == 1 && player.getTalents().icyVeins) || (player.getRotation().type == RotationType.Fire && player.getRotation().primaryFireSpell == PrimaryFireSpell.FrostfireBolt),
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-		  "id": 45497,
-		  "enchant": 3820,
-		  "gems": [
-			41285,
-			45883
-		  ]
-		},
-		{
-		  "id": 45133,
-		  "gems": [
-			40048
-		  ]
-		},
-		{
-		  "id": 46134,
-		  "enchant": 3810,
-		  "gems": [
-			39998
-		  ]
-		},
-		{
-		  "id": 45618,
-		  "enchant": 3722,
-		  "gems": [
-			39998
-		  ]
-		},
-		{
-		  "id": 46130,
-		  "enchant": 3832,
-		  "gems": [
-			39998,
-			39998
-		  ]
-		},
-		{
-		  "id": 45446,
-		  "enchant": 2332,
-		  "gems": [
-			39998,
-			0
-		  ]
-		},
-		{
-		  "id": 45665,
-		  "enchant": 3604,
-		  "gems": [
-			39998,
-			39998,
-			0
-		  ]
-		},
-		{
-		  "id": 45619,
-		  "gems": [
-			40048,
-			40048,
-			39998
-		  ]
-		},
-		{
-		  "id": 45488,
-		  "enchant": 3719,
-		  "gems": [
-			39998,
-			40048,
-			40026
-		  ]
-		},
-		{
-		  "id": 45537,
-		  "enchant": 3606,
-		  "gems": [
-			39998,
-			40026
-		  ]
-		},
-		{
-		  "id": 45495,
-		  "gems": [
-			39998
-		  ]
-		},
-		{
-		  "id": 46046,
-		  "gems": [
-			39998
-		  ]
-		},
-		{
-		  "id": 45466
-		},
-		{
-		  "id": 45518
-		},
-		{
-		  "id": 45620,
-		  "enchant": 3834,
-		  "gems": [
-			39998
-		  ]
-		},
-		{
-		  "id": 45617
-		},
-		{
-		  "id": 45294,
-		  "gems": [
-			39998
-		  ]
-		}
+		{"id":45497,"enchant":3820,"gems":[41285,45883]},
+		{"id":45133,"gems":[40048]},
+		{"id":46134,"enchant":3810,"gems":[39998]},
+		{"id":45618,"enchant":3722,"gems":[39998]},
+		{"id":46130,"enchant":3832,"gems":[39998,39998]},
+		{"id":45446,"enchant":2332,"gems":[39998,0]},
+		{"id":45665,"enchant":3604,"gems":[39998,39998,0]},
+		{"id":45619,"gems":[40048,40048,39998]},
+		{"id":45488,"enchant":3719,"gems":[39998,40048,40026]},
+		{"id":45537,"enchant":3606,"gems":[39998,40026]},
+		{"id":45495,"gems":[39998]},
+		{"id":46046,"gems":[39998]},
+		{"id":45466},
+		{"id":45518},
+		{"id":45620,"enchant":3834,"gems":[39998]},
+		{"id":45617},
+		{"id":45294,"gems":[39998]}
 	  ]}`),
 };
 
@@ -1156,120 +422,23 @@ export const ARCANE_P3_PRESET_HORDE = {
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0 && player.getRotation().type == RotationType.Arcane && player.getFaction() == Faction.Horde,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-        {
-          "id": 47764,
-          "enchant": 3820,
-          "gems": [
-            41285,
-            40133
-          ]
-        },
-        {
-          "id": 47468,
-          "gems": [
-            40155
-          ]
-        },
-        {
-          "id": 47767,
-          "enchant": 3810,
-          "gems": [
-            40133
-          ]
-        },
-        {
-          "id": 47551,
-          "enchant": 3722,
-          "gems": [
-            40113
-          ]
-        },
-        {
-          "id": 47425,
-          "enchant": 3832,
-          "gems": [
-            40133,
-            40113,
-            40155
-          ]
-        },
-        {
-          "id": 47485,
-          "enchant": 2332,
-          "gems": [
-            40133,
-            0
-          ]
-        },
-        {
-          "id": 47763,
-          "enchant": 3604,
-          "gems": [
-            40113,
-            0
-          ]
-        },
-        {
-          "id": 47419,
-          "gems": [
-            40133,
-            40113,
-            40113
-          ]
-        },
-        {
-          "id": 47765,
-          "enchant": 3719,
-          "gems": [
-            40155,
-            40155
-          ]
-        },
-        {
-          "id": 47454,
-          "enchant": 3606,
-          "gems": [
-            40133,
-            40113
-          ]
-        },
-        {
-          "id": 45495,
-          "gems": [
-            40133
-          ]
-        },
-        {
-          "id": 47489,
-          "gems": [
-            40155
-          ]
-        },
-        {
-          "id": 47477
-        },
-        {
-          "id": 45518
-        },
-        {
-          "id": 47422,
-          "enchant": 3834,
-          "gems": [
-            40133
-          ]
-        },
-        {
-          "id": 48032,
-          "gems": [
-            40155
-          ]
-        },
-        {
-          "id": 45294,
-          "gems": [
-            40113
-          ]
-        }
+        {"id":47764,"enchant":3820,"gems":[41285,40133]},
+        {"id":47468,"gems":[40155]},
+        {"id":47767,"enchant":3810,"gems":[40133]},
+        {"id":47551,"enchant":3722,"gems":[40113]},
+        {"id":47425,"enchant":3832,"gems":[40133,40113,40155]},
+        {"id":47485,"enchant":2332,"gems":[40133,0]},
+        {"id":47763,"enchant":3604,"gems":[40113,0]},
+        {"id":47419,"gems":[40133,40113,40113]},
+        {"id":47765,"enchant":3719,"gems":[40155,40155]},
+        {"id":47454,"enchant":3606,"gems":[40133,40113]},
+        {"id":45495,"gems":[40133]},
+        {"id":47489,"gems":[40155]},
+        {"id":47477},
+        {"id":45518},
+        {"id":47422,"enchant":3834,"gems":[40133]},
+        {"id":48032,"gems":[40155]},
+        {"id":45294,"gems":[40113]}
     ]}`),
 };
 
@@ -1278,117 +447,23 @@ export const ARCANE_P3_PRESET_ALLIANCE = {
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0 && player.getRotation().type == RotationType.Arcane && player.getFaction() == Faction.Alliance,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-        {
-          "id": 47761,
-          "enchant": 3820,
-          "gems": [
-            41285,
-            40133
-          ]
-        },
-        {
-          "id": 47144,
-          "gems": [
-            40155
-          ]
-        },
-        {
-          "id": 47758,
-          "enchant": 3810,
-          "gems": [
-            40133
-          ]
-        },
-        {
-          "id": 47552,
-          "enchant": 3722,
-          "gems": [
-            40113
-          ]
-        },
-        {
-          "id": 46993,
-          "enchant": 3832,
-          "gems": [
-            40133,
-            40113,
-            40155
-          ]
-        },
-        {
-          "id": 47208,
-          "enchant": 2332,
-          "gems": [
-            40133,
-            0
-          ]
-        },
-        {
-          "id": 47762,
-          "enchant": 3604,
-          "gems": [
-            40113,
-            0
-          ]
-        },
-        {
-          "id": 46973,
-          "gems": [
-            40133,
-            40113,
-            40113
-          ]
-        },
-        {
-          "id": 47760,
-          "enchant": 3719,
-          "gems": [
-            40155,
-            40155
-          ]
-        },
-        {
-          "id": 47097,
-          "enchant": 3606,
-          "gems": [
-            40133,
-            40113
-          ]
-        },
-        {
-          "id": 45495,
-          "gems": [
-            40133
-          ]
-        },
-        {
-          "id": 47489,
-          "gems": [
-            40155
-          ]
-        },
-        {
-          "id": 47188
-        },
-        {
-          "id": 45518
-        },
-        {
-          "id": 46980,
-          "enchant": 3834,
-          "gems": [
-            40133
-          ]
-        },
-        {
-          "id": 47958,
-          "gems": [
-            40155
-          ]
-        },
-        {
-          "id": 47922
-        }
+        {"id":47761,"enchant":3820,"gems":[41285,40133]},
+        {"id":47144,"gems":[40155]},
+        {"id":47758,"enchant":3810,"gems":[40133]},
+        {"id":47552,"enchant":3722,"gems":[40113]},
+        {"id":46993,"enchant":3832,"gems":[40133,40113,40155]},
+        {"id":47208,"enchant":2332,"gems":[40133,0]},
+        {"id":47762,"enchant":3604,"gems":[40113,0]},
+        {"id":46973,"gems":[40133,40113,40113]},
+        {"id":47760,"enchant":3719,"gems":[40155,40155]},
+        {"id":47097,"enchant":3606,"gems":[40133,40113]},
+        {"id":45495,"gems":[40133]},
+        {"id":47489,"gems":[40155]},
+        {"id":47188},
+        {"id":45518},
+        {"id":46980,"enchant":3834,"gems":[40133]},
+        {"id":47958,"gems":[40155]},
+        {"id":47922}
     ]}`),
 };
 
@@ -1397,120 +472,23 @@ export const FROST_P3_PRESET_HORDE = {
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 2 && player.getRotation().type == RotationType.Frost && player.getFaction() == Faction.Horde,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-        {
-          "id": 47764,
-          "enchant": 3820,
-          "gems": [
-            41285,
-            40133
-          ]
-        },
-        {
-          "id": 47468,
-          "gems": [
-            40155
-          ]
-        },
-        {
-          "id": 47767,
-          "enchant": 3810,
-          "gems": [
-            40133
-          ]
-        },
-        {
-          "id": 47551,
-          "enchant": 3722,
-          "gems": [
-            40113
-          ]
-        },
-        {
-          "id": 47462,
-          "enchant": 3832,
-          "gems": [
-            40133,
-            40155,
-            40155
-          ]
-        },
-        {
-          "id": 47485,
-          "enchant": 2332,
-          "gems": [
-            40155,
-            0
-          ]
-        },
-        {
-          "id": 47763,
-          "enchant": 3604,
-          "gems": [
-            40113,
-            0
-          ]
-        },
-        {
-          "id": 47419,
-          "gems": [
-            40133,
-            40113,
-            40113
-          ]
-        },
-        {
-          "id": 47765,
-          "enchant": 3719,
-          "gems": [
-            40155,
-            40155
-          ]
-        },
-        {
-          "id": 47454,
-          "enchant": 3606,
-          "gems": [
-            40133,
-            40113
-          ]
-        },
-        {
-          "id": 45495,
-          "gems": [
-            40133
-          ]
-        },
-        {
-          "id": 46046,
-          "gems": [
-            40113
-          ]
-        },
-        {
-          "id": 47477
-        },
-        {
-          "id": 45518
-        },
-        {
-          "id": 47422,
-          "enchant": 3834,
-          "gems": [
-            40155
-          ]
-        },
-        {
-          "id": 48032,
-          "gems": [
-            40155
-          ]
-        },
-        {
-          "id": 45294,
-          "gems": [
-            40113
-          ]
-        }
+        {"id":47764,"enchant":3820,"gems":[41285,40133]},
+        {"id":47468,"gems":[40155]},
+        {"id":47767,"enchant":3810,"gems":[40133]},
+        {"id":47551,"enchant":3722,"gems":[40113]},
+        {"id":47462,"enchant":3832,"gems":[40133,40155,40155]},
+        {"id":47485,"enchant":2332,"gems":[40155,0]},
+        {"id":47763,"enchant":3604,"gems":[40113,0]},
+        {"id":47419,"gems":[40133,40113,40113]},
+        {"id":47765,"enchant":3719,"gems":[40155,40155]},
+        {"id":47454,"enchant":3606,"gems":[40133,40113]},
+        {"id":45495,"gems":[40133]},
+        {"id":46046,"gems":[40113]},
+        {"id":47477},
+        {"id":45518},
+        {"id":47422,"enchant":3834,"gems":[40155]},
+        {"id":48032,"gems":[40155]},
+        {"id":45294,"gems":[40113]}
     ]}`),
 };
 
@@ -1519,120 +497,23 @@ export const FROST_P3_PRESET_ALLIANCE = {
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 2 && player.getRotation().type == RotationType.Frost && player.getFaction() == Faction.Alliance,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-        {
-          "id": 47761,
-          "enchant": 3820,
-          "gems": [
-            41285,
-            40133
-          ]
-        },
-        {
-          "id": 47144,
-          "gems": [
-            40155
-          ]
-        },
-        {
-          "id": 47758,
-          "enchant": 3810,
-          "gems": [
-            40133
-          ]
-        },
-        {
-          "id": 47552,
-          "enchant": 3722,
-          "gems": [
-            40113
-          ]
-        },
-        {
-          "id": 47129,
-          "enchant": 3832,
-          "gems": [
-            40133,
-            40153,
-            40155
-          ]
-        },
-        {
-          "id": 47208,
-          "enchant": 2332,
-          "gems": [
-            40155,
-            0
-          ]
-        },
-        {
-          "id": 47762,
-          "enchant": 3604,
-          "gems": [
-            40113,
-            0
-          ]
-        },
-        {
-          "id": 46973,
-          "gems": [
-            40133,
-            40113,
-            40113
-          ]
-        },
-        {
-          "id": 47760,
-          "enchant": 3719,
-          "gems": [
-            40155,
-            40155
-          ]
-        },
-        {
-          "id": 47097,
-          "enchant": 3606,
-          "gems": [
-            40133,
-            40113
-          ]
-        },
-        {
-          "id": 45495,
-          "gems": [
-            40133
-          ]
-        },
-        {
-          "id": 46046,
-          "gems": [
-            40155
-          ]
-        },
-        {
-          "id": 47188
-        },
-        {
-          "id": 45518
-        },
-        {
-          "id": 47517,
-          "enchant": 3834,
-          "gems": [
-            40155
-          ]
-        },
-        {
-          "id": 47958,
-          "gems": [
-            40155
-          ]
-        },
-        {
-          "id": 45294,
-          "gems": [
-            40113
-          ]
-        }
+        {"id":47761,"enchant":3820,"gems":[41285,40133]},
+        {"id":47144,"gems":[40155]},
+        {"id":47758,"enchant":3810,"gems":[40133]},
+        {"id":47552,"enchant":3722,"gems":[40113]},
+        {"id":47129,"enchant":3832,"gems":[40133,40153,40155]},
+        {"id":47208,"enchant":2332,"gems":[40155,0]},
+        {"id":47762,"enchant":3604,"gems":[40113,0]},
+        {"id":46973,"gems":[40133,40113,40113]},
+        {"id":47760,"enchant":3719,"gems":[40155,40155]},
+        {"id":47097,"enchant":3606,"gems":[40133,40113]},
+        {"id":45495,"gems":[40133]},
+        {"id":46046,"gems":[40155]},
+        {"id":47188},
+        {"id":45518},
+        {"id":47517,"enchant":3834,"gems":[40155]},
+        {"id":47958,"gems":[40155]},
+        {"id":45294,"gems":[40113]}
     ]}`),
 };
 
@@ -1641,117 +522,23 @@ export const FIRE_P3_PRESET_HORDE = {
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1 && player.getRotation().type == RotationType.Fire && player.getFaction() == Faction.Horde,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-        {
-          "id": 47764,
-          "enchant": 3820,
-          "gems": [
-            41285,
-            40133
-          ]
-        },
-        {
-          "id": 47468,
-          "gems": [
-            40155
-          ]
-        },
-        {
-          "id": 47767,
-          "enchant": 3810,
-          "gems": [
-            40133
-          ]
-        },
-        {
-          "id": 47551,
-          "enchant": 3722,
-          "gems": [
-            40113
-          ]
-        },
-        {
-          "id": 47462,
-          "enchant": 3832,
-          "gems": [
-            40133,
-            40155,
-            40113
-          ]
-        },
-        {
-          "id": 47467,
-          "enchant": 2332,
-          "gems": [
-            40155,
-            0
-          ]
-        },
-        {
-          "id": 47763,
-          "enchant": 3604,
-          "gems": [
-            40113,
-            0
-          ]
-        },
-        {
-          "id": 47447,
-          "gems": [
-            40133,
-            40113,
-            40113
-          ]
-        },
-        {
-          "id": 47765,
-          "enchant": 3719,
-          "gems": [
-            40155,
-            40155
-          ]
-        },
-        {
-          "id": 47454,
-          "enchant": 3606,
-          "gems": [
-            40133,
-            40113
-          ]
-        },
-        {
-          "id": 45495,
-          "gems": [
-            40133
-          ]
-        },
-        {
-          "id": 47489,
-          "gems": [
-            40155
-          ]
-        },
-        {
-          "id": 47477
-        },
-        {
-          "id": 45518
-        },
-        {
-          "id": 47518,
-          "enchant": 3834,
-          "gems": [
-            40155
-          ]
-        },
-        {
-          "id": 47437
-        },
-        {
-          "id": 45294,
-          "gems": [
-            40113
-          ]
-        }
+        {"id":47764,"enchant":3820,"gems":[41285,40133]},
+        {"id":47468,"gems":[40155]},
+        {"id":47767,"enchant":3810,"gems":[40133]},
+        {"id":47551,"enchant":3722,"gems":[40113]},
+        {"id":47462,"enchant":3832,"gems":[40133,40155,40113]},
+        {"id":47467,"enchant":2332,"gems":[40155,0]},
+        {"id":47763,"enchant":3604,"gems":[40113,0]},
+        {"id":47447,"gems":[40133,40113,40113]},
+        {"id":47765,"enchant":3719,"gems":[40155,40155]},
+        {"id":47454,"enchant":3606,"gems":[40133,40113]},
+        {"id":45495,"gems":[40133]},
+        {"id":47489,"gems":[40155]},
+        {"id":47477},
+        {"id":45518},
+        {"id":47518,"enchant":3834,"gems":[40155]},
+        {"id":47437},
+        {"id":45294,"gems":[40113]}
     ]}`),
 };
 
@@ -1760,117 +547,23 @@ export const FIRE_P3_PRESET_ALLIANCE = {
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1 && player.getRotation().type == RotationType.Fire && player.getFaction() == Faction.Alliance,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{  "items": [
-        {
-          "id": 47761,
-          "enchant": 3820,
-          "gems": [
-            41285,
-            40133
-          ]
-        },
-        {
-          "id": 47144,
-          "gems": [
-            40155
-          ]
-        },
-        {
-          "id": 47758,
-          "enchant": 3810,
-          "gems": [
-            40133
-          ]
-        },
-        {
-          "id": 47552,
-          "enchant": 3722,
-          "gems": [
-            40113
-          ]
-        },
-        {
-          "id": 47129,
-          "enchant": 3832,
-          "gems": [
-            40133,
-            40153,
-            40113
-          ]
-        },
-        {
-          "id": 47208,
-          "enchant": 2332,
-          "gems": [
-            40133,
-            0
-          ]
-        },
-        {
-          "id": 47762,
-          "enchant": 3604,
-          "gems": [
-            40113,
-            0
-          ]
-        },
-        {
-          "id": 47084,
-          "gems": [
-            40133,
-            40113,
-            40113
-          ]
-        },
-        {
-          "id": 47760,
-          "enchant": 3719,
-          "gems": [
-            40155,
-            40155
-          ]
-        },
-        {
-          "id": 47097,
-          "enchant": 3606,
-          "gems": [
-            40133,
-            40113
-          ]
-        },
-        {
-          "id": 45495,
-          "gems": [
-            40133
-          ]
-        },
-        {
-          "id": 47237,
-          "gems": [
-            40155
-          ]
-        },
-        {
-          "id": 47188
-        },
-        {
-          "id": 45518
-        },
-        {
-          "id": 47517,
-          "enchant": 3834,
-          "gems": [
-            40155
-          ]
-        },
-        {
-          "id": 47064
-        },
-        {
-          "id": 45294,
-          "gems": [
-            40153
-          ]
-        }
+        {"id":47761,"enchant":3820,"gems":[41285,40133]},
+        {"id":47144,"gems":[40155]},
+        {"id":47758,"enchant":3810,"gems":[40133]},
+        {"id":47552,"enchant":3722,"gems":[40113]},
+        {"id":47129,"enchant":3832,"gems":[40133,40153,40113]},
+        {"id":47208,"enchant":2332,"gems":[40133,0]},
+        {"id":47762,"enchant":3604,"gems":[40113,0]},
+        {"id":47084,"gems":[40133,40113,40113]},
+        {"id":47760,"enchant":3719,"gems":[40155,40155]},
+        {"id":47097,"enchant":3606,"gems":[40133,40113]},
+        {"id":45495,"gems":[40133]},
+        {"id":47237,"gems":[40155]},
+        {"id":47188},
+        {"id":45518},
+        {"id":47517,"enchant":3834,"gems":[40155]},
+        {"id":47064},
+        {"id":45294,"gems":[40153]}
     ]}`),
 };
 
@@ -1882,117 +575,23 @@ export const FFB_P3_PRESET_HORDE = {
 	enableWhen: (player: Player<Spec.SpecMage>) => ((player.getFaction() == Faction.Horde) && ((player.getTalentTree() == 1 && player.getTalents().icyVeins) || (player.getRotation().type == RotationType.Fire && player.getRotation().primaryFireSpell == PrimaryFireSpell.FrostfireBolt))),
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-        {
-          "id": 47764,
-          "enchant": 3820,
-          "gems": [
-            41285,
-            40133
-          ]
-        },
-        {
-          "id": 47468,
-          "gems": [
-            40155
-          ]
-        },
-        {
-          "id": 47767,
-          "enchant": 3810,
-          "gems": [
-            40133
-          ]
-        },
-        {
-          "id": 47551,
-          "enchant": 3722,
-          "gems": [
-            40113
-          ]
-        },
-        {
-          "id": 47425,
-          "enchant": 3832,
-          "gems": [
-            40133,
-            40113,
-            40155
-          ]
-        },
-        {
-          "id": 47467,
-          "enchant": 2332,
-          "gems": [
-            40155,
-            0
-          ]
-        },
-        {
-          "id": 47763,
-          "enchant": 3604,
-          "gems": [
-            40113,
-            0
-          ]
-        },
-        {
-          "id": 47447,
-          "gems": [
-            40133,
-            40113,
-            40113
-          ]
-        },
-        {
-          "id": 47765,
-          "enchant": 3719,
-          "gems": [
-            40155,
-            40155
-          ]
-        },
-        {
-          "id": 47454,
-          "enchant": 3606,
-          "gems": [
-            40133,
-            40113
-          ]
-        },
-        {
-          "id": 45495,
-          "gems": [
-            40133
-          ]
-        },
-        {
-          "id": 47489,
-          "gems": [
-            40155
-          ]
-        },
-        {
-          "id": 47477
-        },
-        {
-          "id": 45518
-        },
-        {
-          "id": 47518,
-          "enchant": 3834,
-          "gems": [
-            40155
-          ]
-        },
-        {
-          "id": 47437
-        },
-        {
-          "id": 45294,
-          "gems": [
-            40113
-          ]
-        }
+        {"id":47764,"enchant":3820,"gems":[41285,40133]},
+        {"id":47468,"gems":[40155]},
+        {"id":47767,"enchant":3810,"gems":[40133]},
+        {"id":47551,"enchant":3722,"gems":[40113]},
+        {"id":47425,"enchant":3832,"gems":[40133,40113,40155]},
+        {"id":47467,"enchant":2332,"gems":[40155,0]},
+        {"id":47763,"enchant":3604,"gems":[40113,0]},
+        {"id":47447,"gems":[40133,40113,40113]},
+        {"id":47765,"enchant":3719,"gems":[40155,40155]},
+        {"id":47454,"enchant":3606,"gems":[40133,40113]},
+        {"id":45495,"gems":[40133]},
+        {"id":47489,"gems":[40155]},
+        {"id":47477},
+        {"id":45518},
+        {"id":47518,"enchant":3834,"gems":[40155]},
+        {"id":47437},
+        {"id":45294,"gems":[40113]}
     ]}`),
 };
 
@@ -2001,116 +600,22 @@ export const FFB_P3_PRESET_ALLIANCE = {
 	enableWhen: (player: Player<Spec.SpecMage>) => ((player.getFaction() == Faction.Alliance) && ((player.getTalentTree() == 1 && player.getTalents().icyVeins) || (player.getRotation().type == RotationType.Fire && player.getRotation().primaryFireSpell == PrimaryFireSpell.FrostfireBolt))),
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{   "items": [
-        {
-          "id": 47761,
-          "enchant": 3820,
-          "gems": [
-            41285,
-            40133
-          ]
-        },
-        {
-          "id": 47144,
-          "gems": [
-            40155
-          ]
-        },
-        {
-          "id": 47758,
-          "enchant": 3810,
-          "gems": [
-            40133
-          ]
-        },
-        {
-          "id": 47552,
-          "enchant": 3722,
-          "gems": [
-            40113
-          ]
-        },
-        {
-          "id": 46993,
-          "enchant": 3832,
-          "gems": [
-            40133,
-            40113,
-            40153
-          ]
-        },
-        {
-          "id": 47208,
-          "enchant": 2332,
-          "gems": [
-            40133,
-            0
-          ]
-        },
-        {
-          "id": 47762,
-          "enchant": 3604,
-          "gems": [
-            40113,
-            0
-          ]
-        },
-        {
-          "id": 47084,
-          "gems": [
-            40133,
-            40113,
-            40113
-          ]
-        },
-        {
-          "id": 47760,
-          "enchant": 3719,
-          "gems": [
-            40155,
-            40155
-          ]
-        },
-        {
-          "id": 47097,
-          "enchant": 3606,
-          "gems": [
-            40133,
-            40113
-          ]
-        },
-        {
-          "id": 45495,
-          "gems": [
-            40133
-          ]
-        },
-        {
-          "id": 47237,
-          "gems": [
-            40155
-          ]
-        },
-        {
-          "id": 47188
-        },
-        {
-          "id": 45518
-        },
-        {
-          "id": 47517,
-          "enchant": 3834,
-          "gems": [
-            40155
-          ]
-        },
-        {
-          "id": 47064
-        },
-        {
-          "id": 45294,
-          "gems": [
-            40155
-          ]
-        }
+        {"id":47761,"enchant":3820,"gems":[41285,40133]},
+        {"id":47144,"gems":[40155]},
+        {"id":47758,"enchant":3810,"gems":[40133]},
+        {"id":47552,"enchant":3722,"gems":[40113]},
+        {"id":46993,"enchant":3832,"gems":[40133,40113,40153]},
+        {"id":47208,"enchant":2332,"gems":[40133,0]},
+        {"id":47762,"enchant":3604,"gems":[40113,0]},
+        {"id":47084,"gems":[40133,40113,40113]},
+        {"id":47760,"enchant":3719,"gems":[40155,40155]},
+        {"id":47097,"enchant":3606,"gems":[40133,40113]},
+        {"id":45495,"gems":[40133]},
+        {"id":47237,"gems":[40155]},
+        {"id":47188},
+        {"id":45518},
+        {"id":47517,"enchant":3834,"gems":[40155]},
+        {"id":47064},
+        {"id":45294,"gems":[40155]}
     ]}`),
 };
