@@ -10,6 +10,8 @@ import {
 	APLValueCurrentTimePercent,
 	APLValueRemainingTime,
 	APLValueRemainingTimePercent,
+	APLValueCurrentHealth,
+	APLValueCurrentHealthPercent,
 	APLValueCurrentMana,
 	APLValueCurrentManaPercent,
 	APLValueCurrentRage,
@@ -370,6 +372,20 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 	}),
 
 	// Resources
+	['currentHealth']: inputBuilder({
+		label: 'Health',
+		submenu: ['Resources'],
+		shortDescription: 'Amount of currently available Health.',
+		newValue: APLValueCurrentHealth.create,
+		fields: [],
+	}),
+	['currentHealthPercent']: inputBuilder({
+		label: 'Health (%)',
+		submenu: ['Resources'],
+		shortDescription: 'Amount of currently available Health, as a percentage.',
+		newValue: APLValueCurrentHealthPercent.create,
+		fields: [],
+	}),
 	['currentMana']: inputBuilder({
 		label: 'Mana',
 		submenu: ['Resources'],

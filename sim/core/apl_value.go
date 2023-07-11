@@ -68,6 +68,10 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 		return rot.newValueRemainingTimePercent(config.GetRemainingTimePercent())
 
 	// Resources
+	case *proto.APLValue_CurrentHealth:
+		return rot.newValueCurrentHealth(config.GetCurrentHealth())
+	case *proto.APLValue_CurrentHealthPercent:
+		return rot.newValueCurrentHealthPercent(config.GetCurrentHealthPercent())
 	case *proto.APLValue_CurrentMana:
 		return rot.newValueCurrentMana(config.GetCurrentMana())
 	case *proto.APLValue_CurrentManaPercent:
