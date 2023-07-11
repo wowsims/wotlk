@@ -18,6 +18,9 @@ import {
 	APLValueCurrentEnergy,
 	APLValueCurrentComboPoints,
 	APLValueCurrentRunicPower,
+	APLValueCurrentRuneCount,
+	APLValueCurrentRuneDeath,
+	APLValueCurrentRuneActive,
 	APLValueGCDIsReady,
 	APLValueGCDTimeToReady,
 	APLValueSpellCanCast,
@@ -28,6 +31,8 @@ import {
 	APLValueAuraNumStacks,
 	APLValueDotIsActive,
 	APLValueDotRemainingTime,
+	APLValueRuneCooldown,
+	APLValueNextRuneCooldown,
 } from '../../proto/apl.js';
 
 import { EventID, TypedEvent } from '../../typed_event.js';
@@ -427,6 +432,54 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 		shortDescription: 'Amount of currently available Runic Power.',
 		newValue: APLValueCurrentRunicPower.create,
 		fields: [],
+	}),
+
+	// Resources Rune
+	['currentRuneCount']: inputBuilder({
+		label: 'Num Runes',
+		submenu: ['Resources', 'Runes'],
+		shortDescription: 'Amount of currently available Runes of certain type.<br><b>Ignore Death:</b> If checked will count only non death runes',
+		newValue: APLValueCurrentRunicPower.create,
+		fields: [
+			AplHelpers.runeTypeFieldConfig('runeType'),
+			AplHelpers.booleanFieldConfig('ignoreDeath', 'Ignore Death'),
+		],
+	}),
+	['currentRuneActive']: inputBuilder({
+		label: 'Rune Ready',
+		submenu: ['Resources', 'Runes'],
+		shortDescription: 'Is the rune of a certain slot currently available.',
+		newValue: APLValueCurrentRuneActive.create,
+		fields: [
+			AplHelpers.runeSlotFieldConfig('runeSlot'),
+		],
+	}),
+	['currentRuneDeath']: inputBuilder({
+		label: 'Rune Death',
+		submenu: ['Resources', 'Runes'],
+		shortDescription: 'Is the rune of a certain slot currently converted to Death.',
+		newValue: APLValueCurrentRuneCount.create,
+		fields: [
+			AplHelpers.runeSlotFieldConfig('runeSlot'),
+		],
+	}),
+	['runeCooldown']: inputBuilder({
+		label: 'Rune Cooldown',
+		submenu: ['Resources', 'Runes'],
+		shortDescription: 'Amount of time until a rune of certain type is ready to use.<br><b>NOTE:</b> Returns 0 if there is a rune available',
+		newValue: APLValueRuneCooldown.create,
+		fields: [
+			AplHelpers.runeTypeFieldConfig('runeType'),
+		],
+	}),
+	['nextRuneCooldown']: inputBuilder({
+		label: 'Next Rune Cooldown',
+		submenu: ['Resources', 'Runes'],
+		shortDescription: 'Amount of time until a 2nd rune of certain type is ready to use.<br><b>NOTE:</b> Returns 0 if there are 2 runes available',
+		newValue: APLValueNextRuneCooldown.create,
+		fields: [
+			AplHelpers.runeTypeFieldConfig('runeType'),
+		],
 	}),
 
 	// GCD
