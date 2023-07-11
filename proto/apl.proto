@@ -54,6 +54,7 @@ message APLValue {
         APLValueCurrentTimePercent current_time_percent = 8;
         APLValueRemainingTime remaining_time = 9;
         APLValueRemainingTimePercent remaining_time_percent = 10;
+        APLValueNumberTargets number_targets = 28;
 
         // Resource values
         APLValueCurrentHealth current_health = 26;
@@ -66,11 +67,11 @@ message APLValue {
         APLValueCurrentRunicPower current_runic_power = 25;
 
         // Rune Resource values
-        APLValueCurrentRuneCount current_rune_count = 28;
-        APLValueCurrentRuneDeath current_rune_death = 29;
-        APLValueCurrentRuneActive current_rune_active = 30;
-        APLValueRuneCooldown rune_cooldown = 31;
-        APLValueNextRuneCooldown next_rune_cooldown = 32;
+        APLValueCurrentRuneCount current_rune_count = 29;
+        APLValueCurrentRuneDeath current_rune_death = 30;
+        APLValueCurrentRuneActive current_rune_active = 31;
+        APLValueRuneCooldown rune_cooldown = 32;
+        APLValueNextRuneCooldown next_rune_cooldown = 33;
 
         // GCD values
         APLValueGCDIsReady gcd_is_ready = 17;
@@ -173,6 +174,7 @@ message APLValueCurrentTime {}
 message APLValueCurrentTimePercent {}
 message APLValueRemainingTime {}
 message APLValueRemainingTimePercent {}
+message APLValueNumberTargets {}
 
 message APLValueCurrentHealth {}
 message APLValueCurrentHealthPercent {}

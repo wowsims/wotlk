@@ -33,6 +33,7 @@ import {
 	APLValueDotRemainingTime,
 	APLValueRuneCooldown,
 	APLValueNextRuneCooldown,
+	APLValueNumberTargets,
 } from '../../proto/apl.js';
 
 import { EventID, TypedEvent } from '../../typed_event.js';
@@ -373,6 +374,13 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 		submenu: ['Encounter'],
 		shortDescription: 'Elapsed time of the remaining sim iteration, as a percentage.',
 		newValue: APLValueRemainingTimePercent.create,
+		fields: [],
+	}),
+	['numberTargets']: inputBuilder({
+		label: 'Number of Targets',
+		submenu: ['Encounter'],
+		shortDescription: 'Count of targets in the current encounter',
+		newValue: APLValueNumberTargets.create,
 		fields: [],
 	}),
 
