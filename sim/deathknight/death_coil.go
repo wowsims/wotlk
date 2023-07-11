@@ -11,6 +11,7 @@ func (dk *Deathknight) registerDeathCoilSpell() {
 	bonusFlatDamage := 443 + dk.sigilOfTheWildBuckBonus() + dk.sigilOfTheVengefulHeartDeathCoil()
 	dk.DeathCoil = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    DeathCoilActionID,
+		Flags:       core.SpellFlagAPL,
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
 

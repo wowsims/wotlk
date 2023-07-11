@@ -19,7 +19,9 @@
 
 		>* > .list-picker-item-container {
 			background-color: rgba(21, 23, 30, 0.8);
-			padding: 5px;
+			border: 1px solid var(--bs-primary) !important;
+			padding: 0 5px 0 1px;
+			margin: 0 0 5px 0;
 
 			>.list-picker-item {
 				flex-grow: 1;
@@ -49,7 +51,7 @@
 	display: flex;
 	align-items: center;
 	flex-direction: row;
-	margin: 5px;
+	margin: 2px;
 
 	&> :not(:last-child) {
 		margin-right: map.get($spacers, 2);
@@ -66,7 +68,7 @@
 
 .apl-action-picker-root, .apl-value-picker-root {
 	flex-direction: row;
-	margin: 2px;
+	margin: 0;
 
 	.input-root {
 		margin: 0;

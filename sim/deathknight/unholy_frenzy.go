@@ -23,6 +23,7 @@ func (dk *Deathknight) registerUnholyFrenzyCD() {
 
 	dk.UnholyFrenzy = dk.Character.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
+		Flags:    core.SpellFlagAPL,
 
 		Cast: core.CastConfig{
 			CD: core.Cooldown{

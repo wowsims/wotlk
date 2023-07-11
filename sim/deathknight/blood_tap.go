@@ -33,7 +33,7 @@ func (dk *Deathknight) registerBloodTapSpell() {
 
 	dk.BloodTap = dk.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
-		Flags:    core.SpellFlagNoOnCastComplete,
+		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagAPL,
 
 		Cast: core.CastConfig{
 			CD: core.Cooldown{

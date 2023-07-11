@@ -53,6 +53,7 @@ func (dk *Deathknight) registerBloodPresenceAura(timer *core.Timer) {
 
 	dk.BloodPresence = dk.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 50689},
+		Flags:    core.SpellFlagAPL,
 
 		RuneCost: core.RuneCostOptions{
 			BloodRuneCost: 1,
@@ -111,6 +112,7 @@ func (dk *Deathknight) registerFrostPresenceAura(timer *core.Timer) {
 
 	dk.FrostPresence = dk.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 48263},
+		Flags:    core.SpellFlagAPL,
 
 		RuneCost: core.RuneCostOptions{
 			FrostRuneCost: 1,
@@ -171,6 +173,7 @@ func (dk *Deathknight) registerUnholyPresenceAura(timer *core.Timer) {
 
 	dk.UnholyPresence = dk.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 48265},
+		Flags:    core.SpellFlagAPL,
 
 		RuneCost: core.RuneCostOptions{
 			UnholyRuneCost: 1,

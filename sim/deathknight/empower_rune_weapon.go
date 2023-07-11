@@ -14,7 +14,7 @@ func (dk *Deathknight) registerEmpowerRuneWeaponSpell() {
 	rpMetrics := dk.NewRunicPowerMetrics(actionID)
 	dk.EmpowerRuneWeapon = dk.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
-		Flags:    core.SpellFlagNoOnCastComplete,
+		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagAPL,
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    cdTimer,

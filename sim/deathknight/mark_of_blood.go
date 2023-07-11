@@ -18,7 +18,7 @@ func (dk *Deathknight) registerMarkOfBloodSpell() {
 	var markOfBloodAura *core.Aura = nil
 	dk.MarkOfBlood = dk.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
-		Flags:    core.SpellFlagNoOnCastComplete,
+		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagAPL,
 
 		RuneCost: core.RuneCostOptions{
 			BloodRuneCost: 1,

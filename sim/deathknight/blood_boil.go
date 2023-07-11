@@ -11,6 +11,7 @@ func (dk *Deathknight) registerBloodBoilSpell() {
 	//  There is no refund and you only get RP on at least one of the effects hitting.
 	dk.BloodBoil = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    BloodBoilActionID,
+		Flags:       core.SpellFlagAPL,
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
 

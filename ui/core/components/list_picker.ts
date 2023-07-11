@@ -196,8 +196,8 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 			const copyButtonTooltip = Tooltip.getOrCreateInstance(copyButton);
 
 			copyButton.addEventListener('click', event => {
-				const newList = this.config.getValue(this.modObject)
-				newList.push(this.config.copyItem(newList[index]));
+				const newList = this.config.getValue(this.modObject).slice();
+				newList.splice(index, 0, this.config.copyItem(newList[index]));
 				this.config.setValue(TypedEvent.nextEventID(), this.modObject, newList);
 				copyButtonTooltip.hide();
 			});

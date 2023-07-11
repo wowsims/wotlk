@@ -47,7 +47,7 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 		ActionID:    ScourgeStrikeActionID.WithTag(1),
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagAPL,
 
 		RuneCost: core.RuneCostOptions{
 			FrostRuneCost:  1,

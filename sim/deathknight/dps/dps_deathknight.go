@@ -530,6 +530,10 @@ func (dk *DpsDeathknight) Reset(sim *core.Simulation) {
 
 	b, f, u := deathknight.PointsInTalents(dk.Talents)
 
+	if dk.IsUsingAPL {
+		return
+	}
+
 	if f > u && f > b {
 		if dk.Rotation.Presence == proto.Deathknight_Rotation_Blood {
 			dk.ChangePresence(sim, deathknight.BloodPresence)

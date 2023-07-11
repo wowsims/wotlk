@@ -37,7 +37,7 @@ func (dk *Deathknight) registerUnbreakableArmorSpell() {
 
 	dk.UnbreakableArmor = dk.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
-		Flags:    core.SpellFlagNoOnCastComplete,
+		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagAPL,
 
 		RuneCost: core.RuneCostOptions{
 			FrostRuneCost:  1,
