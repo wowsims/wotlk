@@ -34,6 +34,7 @@ import {
 	APLValueRuneCooldown,
 	APLValueNextRuneCooldown,
 	APLValueNumberTargets,
+	APLValueCurrentNonDeathRuneCount,
 } from '../../proto/apl.js';
 
 import { EventID, TypedEvent } from '../../typed_event.js';
@@ -446,11 +447,19 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 	['currentRuneCount']: inputBuilder({
 		label: 'Num Runes',
 		submenu: ['Resources', 'Runes'],
-		shortDescription: 'Amount of currently available Runes of certain type.<br><b>Ignore Death:</b> If checked will count only non death runes',
-		newValue: APLValueCurrentRunicPower.create,
+		shortDescription: 'Amount of currently available Runes of certain type including Death.',
+		newValue: APLValueCurrentRuneCount.create,
 		fields: [
-			AplHelpers.runeTypeFieldConfig('runeType'),
-			AplHelpers.booleanFieldConfig('ignoreDeath', 'Ignore Death'),
+			AplHelpers.runeTypeFieldConfig('runeType', true),
+		],
+	}),
+	['currentNonDeathRuneCount']: inputBuilder({
+		label: 'Num Non Death Runes',
+		submenu: ['Resources', 'Runes'],
+		shortDescription: 'Amount of currently available Runes of certain type ignoring Death',
+		newValue: APLValueCurrentNonDeathRuneCount.create,
+		fields: [
+			AplHelpers.runeTypeFieldConfig('runeType', false),
 		],
 	}),
 	['currentRuneActive']: inputBuilder({
@@ -466,7 +475,7 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 		label: 'Rune Death',
 		submenu: ['Resources', 'Runes'],
 		shortDescription: 'Is the rune of a certain slot currently converted to Death.',
-		newValue: APLValueCurrentRuneCount.create,
+		newValue: APLValueCurrentRuneDeath.create,
 		fields: [
 			AplHelpers.runeSlotFieldConfig('runeSlot'),
 		],
@@ -477,7 +486,7 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 		shortDescription: 'Amount of time until a rune of certain type is ready to use.<br><b>NOTE:</b> Returns 0 if there is a rune available',
 		newValue: APLValueRuneCooldown.create,
 		fields: [
-			AplHelpers.runeTypeFieldConfig('runeType'),
+			AplHelpers.runeTypeFieldConfig('runeType', false),
 		],
 	}),
 	['nextRuneCooldown']: inputBuilder({
@@ -486,7 +495,7 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 		shortDescription: 'Amount of time until a 2nd rune of certain type is ready to use.<br><b>NOTE:</b> Returns 0 if there are 2 runes available',
 		newValue: APLValueNextRuneCooldown.create,
 		fields: [
-			AplHelpers.runeTypeFieldConfig('runeType'),
+			AplHelpers.runeTypeFieldConfig('runeType', false),
 		],
 	}),
 

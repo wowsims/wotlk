@@ -68,6 +68,7 @@ message APLValue {
 
         // Rune Resource values
         APLValueCurrentRuneCount current_rune_count = 29;
+        APLValueCurrentNonDeathRuneCount current_non_death_rune_count = 34;
         APLValueCurrentRuneDeath current_rune_death = 30;
         APLValueCurrentRuneActive current_rune_active = 31;
         APLValueRuneCooldown rune_cooldown = 32;
@@ -203,7 +204,9 @@ enum APLValueRuneSlot {
 }
 
 message APLValueCurrentRuneCount{
-    bool ignore_death = 2;
+    APLValueRuneType rune_type = 1;
+}
+message APLValueCurrentNonDeathRuneCount{
     APLValueRuneType rune_type = 1;
 }
 message APLValueCurrentRuneDeath{

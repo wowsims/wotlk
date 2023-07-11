@@ -8,9 +8,8 @@ import (
 
 type APLValueCurrentRuneCount struct {
 	defaultAPLValueImpl
-	unit        *Unit
-	ignoreDeath bool
-	runeType    proto.APLValueRuneType
+	unit     *Unit
+	runeType proto.APLValueRuneType
 }
 
 func (rot *APLRotation) newValueCurrentRuneCount(config *proto.APLValueCurrentRuneCount) APLValue {
@@ -19,9 +18,8 @@ func (rot *APLRotation) newValueCurrentRuneCount(config *proto.APLValueCurrentRu
 		return nil
 	}
 	return &APLValueCurrentRuneCount{
-		unit:        unit,
-		ignoreDeath: config.IgnoreDeath,
-		runeType:    config.RuneType,
+		unit:     unit,
+		runeType: config.RuneType,
 	}
 }
 func (value *APLValueCurrentRuneCount) Type() proto.APLValueType {
@@ -30,25 +28,44 @@ func (value *APLValueCurrentRuneCount) Type() proto.APLValueType {
 func (value *APLValueCurrentRuneCount) GetInt(sim *Simulation) int32 {
 	switch value.runeType {
 	case proto.APLValueRuneType_RuneBlood:
-		if value.ignoreDeath {
-			return int32(value.unit.NormalCurrentBloodRunes())
-		} else {
-			return int32(value.unit.CurrentBloodRunes())
-		}
+		return int32(value.unit.CurrentBloodRunes())
 	case proto.APLValueRuneType_RuneFrost:
-		if value.ignoreDeath {
-			return int32(value.unit.NormalCurrentFrostRunes())
-		} else {
-			return int32(value.unit.CurrentFrostRunes())
-		}
+		return int32(value.unit.CurrentFrostRunes())
 	case proto.APLValueRuneType_RuneUnholy:
-		if value.ignoreDeath {
-			return int32(value.unit.NormalCurrentUnholyRunes())
-		} else {
-			return int32(value.unit.CurrentUnholyRunes())
-		}
+		return int32(value.unit.CurrentUnholyRunes())
 	case proto.APLValueRuneType_RuneDeath:
 		return int32(value.unit.CurrentDeathRunes())
+	}
+	return 0
+}
+
+type APLValueCurrentNonDeathRuneCount struct {
+	defaultAPLValueImpl
+	unit     *Unit
+	runeType proto.APLValueRuneType
+}
+
+func (rot *APLRotation) newValueCurrentNonDeathRuneCount(config *proto.APLValueCurrentNonDeathRuneCount) APLValue {
+	unit := rot.unit
+	if !unit.HasRunicPowerBar() {
+		return nil
+	}
+	return &APLValueCurrentNonDeathRuneCount{
+		unit:     unit,
+		runeType: config.RuneType,
+	}
+}
+func (value *APLValueCurrentNonDeathRuneCount) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeInt
+}
+func (value *APLValueCurrentNonDeathRuneCount) GetInt(sim *Simulation) int32 {
+	switch value.runeType {
+	case proto.APLValueRuneType_RuneBlood:
+		return int32(value.unit.NormalCurrentBloodRunes())
+	case proto.APLValueRuneType_RuneFrost:
+		return int32(value.unit.NormalCurrentFrostRunes())
+	case proto.APLValueRuneType_RuneUnholy:
+		return int32(value.unit.NormalCurrentUnholyRunes())
 	}
 	return 0
 }
