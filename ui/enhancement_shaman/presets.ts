@@ -196,7 +196,7 @@ export const P2_PRESET_FT = {
         {"id":46097,"enchant":3789,"gems":[40003]},
         {"id":40322}
       ]
-    ]}`),
+    }`),
 };
 
 export const P2_PRESET_WF = {
