@@ -15,6 +15,7 @@ import {
 	APLValueCurrentRage,
 	APLValueCurrentEnergy,
 	APLValueCurrentComboPoints,
+	APLValueCurrentRunicPower,
 	APLValueGCDIsReady,
 	APLValueGCDTimeToReady,
 	APLValueSpellCanCast,
@@ -402,6 +403,13 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 		submenu: ['Resources'],
 		shortDescription: 'Amount of currently available Combo Points.',
 		newValue: APLValueCurrentComboPoints.create,
+		fields: [],
+	}),
+	['currentRunicPower']: inputBuilder({
+		label: 'Runic Power',
+		submenu: ['Resources'],
+		shortDescription: 'Amount of currently available Runic Power.',
+		newValue: APLValueCurrentRunicPower.create,
 		fields: [],
 	}),
 

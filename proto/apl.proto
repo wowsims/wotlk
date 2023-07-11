@@ -61,6 +61,7 @@ message APLValue {
         APLValueCurrentRage current_rage = 14;
         APLValueCurrentEnergy current_energy = 15;
         APLValueCurrentComboPoints current_combo_points = 16;
+        APLValueCurrentRunicPower current_runic_power = 25;
 
         // GCD values
         APLValueGCDIsReady gcd_is_ready = 17;
@@ -169,6 +170,7 @@ message APLValueCurrentManaPercent {}
 message APLValueCurrentRage {}
 message APLValueCurrentEnergy {}
 message APLValueCurrentComboPoints {}
+message APLValueCurrentRunicPower {}
 
 message APLValueGCDIsReady {}
 message APLValueGCDTimeToReady {}
