@@ -100,7 +100,7 @@ export class DropdownPicker<ModObject, T> extends Input<ModObject, T> {
 						animation: false,
 						placement: 'right',
 						fallbackPlacements: ['left', 'bottom'],
-						offset: [0, 10],
+						offset: [0, 1],
 						customClass: 'dropdown-tooltip',
 					});
 				}
