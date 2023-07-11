@@ -66,8 +66,6 @@ func (value *APLValueCurrentNonDeathRuneCount) GetInt(sim *Simulation) int32 {
 		return int32(value.unit.NormalCurrentFrostRunes())
 	case proto.APLValueRuneType_RuneUnholy:
 		return int32(value.unit.NormalCurrentUnholyRunes())
-	case proto.APLValueRuneType_RuneDeath:
-		return int32(value.unit.CurrentDeathRunes())
 	}
 	return 0
 }

@@ -265,7 +265,17 @@ export function stringFieldConfig(field: string, options?: Partial<APLPickerBuil
 	};
 }
 
-export function runeTypeFieldConfig(field: string): APLPickerBuilderFieldConfig<any, any> {
+export function runeTypeFieldConfig(field: string, includeDeath: boolean): APLPickerBuilderFieldConfig<any, any> {
+	let values = [
+		{ value: APLValueRuneType.RuneBlood, label: 'Blood' },
+		{ value: APLValueRuneType.RuneFrost, label: 'Frost' },
+		{ value: APLValueRuneType.RuneUnholy, label: 'Unholy' },
+	]
+
+	if (includeDeath) {
+		values.push({ value: APLValueRuneType.RuneDeath, label: 'Death' })
+	}
+
 	return {
 		field: field,
 		newValue: () => APLValueRuneType.RuneBlood,
@@ -273,12 +283,7 @@ export function runeTypeFieldConfig(field: string): APLPickerBuilderFieldConfig<
 			...config,
 			defaultLabel: 'None',
 			equals: (a, b) => a == b,
-			values: [
-				{ value: APLValueRuneType.RuneBlood, label: 'Blood' },
-				{ value: APLValueRuneType.RuneFrost, label: 'Frost' },
-				{ value: APLValueRuneType.RuneUnholy, label: 'Unholy' },
-				{ value: APLValueRuneType.RuneDeath, label: 'Death' },
-			],
+			values: values,
 		}),
 	};
 }
