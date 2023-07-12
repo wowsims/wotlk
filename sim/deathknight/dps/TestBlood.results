@@ -785,15 +785,15 @@ dps_results: {
 dps_results: {
  key: "TestBlood-AllItems-Thassarian'sBattlegear"
  value: {
-  dps: 7208.59461
-  tps: 3593.68409
+  dps: 7459.60385
+  tps: 3712.41459
  }
 }
 dps_results: {
  key: "TestBlood-AllItems-Thassarian'sPlate"
  value: {
-  dps: 6327.19274
-  tps: 3128.41375
+  dps: 6502.10597
+  tps: 3221.86079
  }
 }
 dps_results: {

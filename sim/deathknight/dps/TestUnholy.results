@@ -870,17 +870,17 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-Thassarian'sBattlegear"
  value: {
-  dps: 7835.61944
-  tps: 5108.03978
-  hps: 279.45657
+  dps: 8131.52999
+  tps: 5310.44753
+  hps: 291.87485
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-Thassarian'sPlate"
  value: {
-  dps: 6781.85072
-  tps: 4312.98757
-  hps: 291.03291
+  dps: 6917.44811
+  tps: 4399.98983
+  hps: 308.37273
  }
 }
 dps_results: {
