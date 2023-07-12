@@ -248,6 +248,27 @@ var ItemDenyList = map[int32]struct{}{
 	34580: {}, // Battlemaster's Perseverence
 	50251: {}, // 'one hand shadows edge'
 	53500: {}, // Tectonic Plate
+
+	48880: {}, // DK's Tier 9 Duplicates
+	48881: {}, // DK's Tier 9 Duplicates
+	48882: {}, // DK's Tier 9 Duplicates
+	48883: {}, // DK's Tier 9 Duplicates
+	48884: {}, // DK's Tier 9 Duplicates
+	48885: {}, // DK's Tier 9 Duplicates
+	48886: {}, // DK's Tier 9 Duplicates
+	48887: {}, // DK's Tier 9 Duplicates
+	48888: {}, // DK's Tier 9 Duplicates
+	48889: {}, // DK's Tier 9 Duplicates
+	48890: {}, // DK's Tier 9 Duplicates
+	48891: {}, // DK's Tier 9 Duplicates
+	48892: {}, // DK's Tier 9 Duplicates
+	48893: {}, // DK's Tier 9 Duplicates
+	48894: {}, // DK's Tier 9 Duplicates
+	48895: {}, // DK's Tier 9 Duplicates
+	48896: {}, // DK's Tier 9 Duplicates
+	48897: {}, // DK's Tier 9 Duplicates
+	48898: {}, // DK's Tier 9 Duplicates
+	48899: {}, // DK's Tier 9 Duplicates
 }
 
 // Item icons to include in the DB, so they don't need to be separately loaded in the UI.
