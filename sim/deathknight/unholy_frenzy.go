@@ -13,11 +13,15 @@ func (dk *Deathknight) registerUnholyFrenzyCD() {
 
 	actionID := core.ActionID{SpellID: 49016, Tag: dk.Index}
 
-	unholyFrenzyTargetAgent := dk.Party.Raid.GetPlayerFromRaidTarget(dk.Inputs.UnholyFrenzyTarget)
-	if unholyFrenzyTargetAgent == nil {
-		return
+	unholyFrenzyTarget := &dk.Character
+	if !dk.IsUsingAPL && dk.Inputs.UnholyFrenzyTarget.TargetIndex == -1 {
+		unholyFrenzyTarget = nil
 	}
-	unholyFrenzyTarget := unholyFrenzyTargetAgent.GetCharacter()
+
+	unholyFrenzyTargetAgent := dk.Party.Raid.GetPlayerFromRaidTarget(dk.Inputs.UnholyFrenzyTarget)
+	if unholyFrenzyTargetAgent != nil {
+		unholyFrenzyTarget = unholyFrenzyTargetAgent.GetCharacter()
+	}
 
 	dk.UnholyFrenzyAura = core.UnholyFrenzyAura(unholyFrenzyTarget, actionID.Tag)
 
