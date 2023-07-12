@@ -242,7 +242,7 @@ export const DefaultConsumes = Consumes.create({
 
 export const BLOOD_ROTATION_PRESET_LEGACY_DEFAULT = {
 	name: 'Blood Legacy',
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
+	//enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultBloodRotation),
 	}),
@@ -250,7 +250,7 @@ export const BLOOD_ROTATION_PRESET_LEGACY_DEFAULT = {
 
 export const FROST_ROTATION_PRESET_LEGACY_DEFAULT = {
 	name: 'Frost Legacy',
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
+	//enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultFrostRotation),
 	}),
@@ -258,7 +258,7 @@ export const FROST_ROTATION_PRESET_LEGACY_DEFAULT = {
 
 export const UNHOLY_DW_ROTATION_PRESET_LEGACY_DEFAULT = {
 	name: 'Unholy DW Legacy',
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
+	//enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultUnholyRotation),
 	}),
@@ -266,7 +266,7 @@ export const UNHOLY_DW_ROTATION_PRESET_LEGACY_DEFAULT = {
 
 export const BLOOD_PESTI_ROTATION_PRESET_DEFAULT = {
 	name: 'Blood Pesti APL',
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
+	//enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultBloodRotation),
 		rotation: APLRotation.fromJsonString(`{
@@ -303,7 +303,7 @@ export const BLOOD_PESTI_ROTATION_PRESET_DEFAULT = {
 
 export const FROST_BL_PESTI_ROTATION_PRESET_DEFAULT = {
 	name: 'Frost BL Pesti APL',
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
+	//enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultFrostRotation),
 		rotation: APLRotation.fromJsonString(`{
@@ -337,7 +337,7 @@ export const FROST_BL_PESTI_ROTATION_PRESET_DEFAULT = {
 
 export const FROST_UH_PESTI_ROTATION_PRESET_DEFAULT = {
 	name: 'Frost UH Pesti APL',
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
+	//enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultFrostRotation),
 		rotation: APLRotation.fromJsonString(`{
@@ -371,7 +371,7 @@ export const FROST_UH_PESTI_ROTATION_PRESET_DEFAULT = {
 
 export const UNHOLY_DW_ROTATION_PRESET_DEFAULT = {
 	name: 'Unholy DW SS APL',
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
+	//enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultUnholyRotation),
 		rotation: APLRotation.fromJsonString(`{
