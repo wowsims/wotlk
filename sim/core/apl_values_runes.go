@@ -83,7 +83,7 @@ func (rot *APLRotation) newValueCurrentRuneActive(config *proto.APLValueCurrentR
 	}
 	return &APLValueCurrentRuneActive{
 		unit:     unit,
-		runeSlot: int8(config.RuneSlot),
+		runeSlot: int8(config.RuneSlot) - 1, // 0 is Unknown
 	}
 }
 func (value *APLValueCurrentRuneActive) Type() proto.APLValueType {
@@ -106,7 +106,7 @@ func (rot *APLRotation) newValueCurrentRuneDeath(config *proto.APLValueCurrentRu
 	}
 	return &APLValueCurrentRuneDeath{
 		unit:     unit,
-		runeSlot: int8(config.RuneSlot),
+		runeSlot: int8(config.RuneSlot) - 1, // 0 is Unknown
 	}
 }
 func (value *APLValueCurrentRuneDeath) Type() proto.APLValueType {
