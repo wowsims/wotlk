@@ -87,6 +87,20 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 	case *proto.APLValue_CurrentRunicPower:
 		return rot.newValueCurrentRunicPower(config.GetCurrentRunicPower())
 
+	// Resources Runes
+	case *proto.APLValue_CurrentRuneCount:
+		return rot.newValueCurrentRuneCount(config.GetCurrentRuneCount())
+	case *proto.APLValue_CurrentNonDeathRuneCount:
+		return rot.newValueCurrentNonDeathRuneCount(config.GetCurrentNonDeathRuneCount())
+	case *proto.APLValue_CurrentRuneActive:
+		return rot.newValueCurrentRuneActive(config.GetCurrentRuneActive())
+	case *proto.APLValue_CurrentRuneDeath:
+		return rot.newValueCurrentRuneDeath(config.GetCurrentRuneDeath())
+	case *proto.APLValue_RuneCooldown:
+		return rot.newValueRuneCooldown(config.GetRuneCooldown())
+	case *proto.APLValue_NextRuneCooldown:
+		return rot.newValueNextRuneCooldown(config.GetNextRuneCooldown())
+
 	// GCD
 	case *proto.APLValue_GcdIsReady:
 		return rot.newValueGCDIsReady(config.GetGcdIsReady())

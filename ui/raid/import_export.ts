@@ -625,6 +625,7 @@ const fullTypeToSpec: Record<string, Spec> = {
 	'DeathKnightBlood': Spec.SpecTankDeathknight,
 	'DeathKnightLichborne': Spec.SpecTankDeathknight,
 	'DeathKnightRuneblade': Spec.SpecDeathknight,
+	'DeathKnightBloodDPS': Spec.SpecDeathknight,
 	'DeathKnightFrost': Spec.SpecDeathknight,
 	'DeathKnightUnholy': Spec.SpecDeathknight,
 	'DruidBalance': Spec.SpecBalanceDruid,
