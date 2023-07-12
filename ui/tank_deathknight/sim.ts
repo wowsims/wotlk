@@ -186,9 +186,16 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 			},
 
 			presets: {
+				// Preset rotations that the user can quickly select.
+				rotations: [
+					Presets.BLOOD_LEGACY_PRESET_LEGACY_DEFAULT,
+					Presets.BLOOD_IT_SPAM_ROTATION_PRESET_DEFAULT,
+					Presets.BLOOD_AGGRO_ROTATION_PRESET_DEFAULT,
+				],
 				// Preset talents that the user can quickly select.
 				talents: [
 					Presets.BloodTalents,
+					Presets.BloodAggroTalents,
 					Presets.DoubleBuffBloodTalents,
 					Presets.FrostTalents,
 					Presets.DoubleBuffFrostTalents,
