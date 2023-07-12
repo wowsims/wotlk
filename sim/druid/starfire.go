@@ -21,7 +21,7 @@ func (druid *Druid) registerStarfireSpell() {
 		ActionID:    core.ActionID{SpellID: 48465},
 		SpellSchool: core.SpellSchoolArcane,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       SpellFlagNaturesGrace | SpellFlagOmenTrigger,
+		Flags:       SpellFlagNaturesGrace | SpellFlagOmenTrigger | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.16,

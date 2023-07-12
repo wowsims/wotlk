@@ -29,6 +29,7 @@ func (druid *Druid) registerFaerieFireSpell() {
 		}
 		flatThreatBonus = 632.
 	}
+	flags |= core.SpellFlagAPL
 
 	druid.FaerieFireAuras = druid.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
 		return core.FaerieFireAura(target, druid.Talents.ImprovedFaerieFire)

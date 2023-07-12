@@ -82,6 +82,7 @@ message APLValue {
         APLValueSpellCanCast spell_can_cast = 19;
         APLValueSpellIsReady spell_is_ready = 20;
         APLValueSpellTimeToReady spell_time_to_ready = 21;
+        APLValueSpellCastTime spell_cast_time = 35;
 
         // Aura values
         APLValueAuraIsActive aura_is_active = 22;
@@ -91,6 +92,8 @@ message APLValue {
         // Dot values
         APLValueDotIsActive dot_is_active = 6;
         APLValueDotRemainingTime dot_remaining_time = 13;
+
+        // Last Index - 35
     }
 }
 
@@ -232,6 +235,9 @@ message APLValueSpellIsReady {
     ActionID spell_id = 1;
 }
 message APLValueSpellTimeToReady {
+    ActionID spell_id = 1;
+}
+message APLValueSpellCastTime {
     ActionID spell_id = 1;
 }
 

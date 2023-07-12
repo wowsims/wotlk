@@ -19,7 +19,7 @@ func (druid *Druid) registerForceOfNatureCD() {
 	})
 	druid.ForceOfNature = druid.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 65861},
-
+		Flags:    core.SpellFlagAPL,
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.12,
 			Multiplier: 1,

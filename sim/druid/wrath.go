@@ -18,7 +18,7 @@ func (druid *Druid) registerWrathSpell() {
 		ActionID:     core.ActionID{SpellID: 48461},
 		SpellSchool:  core.SpellSchoolNature,
 		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagNaturesGrace | SpellFlagOmenTrigger,
+		Flags:        SpellFlagNaturesGrace | SpellFlagOmenTrigger | core.SpellFlagAPL,
 		MissileSpeed: 20,
 
 		ManaCost: core.ManaCostOptions{

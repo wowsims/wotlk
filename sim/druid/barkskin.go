@@ -38,7 +38,7 @@ func (druid *Druid) registerBarkskinCD() {
 
 	druid.Barkskin = druid.RegisterSpell(core.SpellConfig{
 		ActionID: actionId,
-		Flags:    SpellFlagOmenTrigger,
+		Flags:    SpellFlagOmenTrigger | core.SpellFlagAPL,
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    druid.NewTimer(),
