@@ -34,8 +34,12 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 
 	private readonly conditionPicker: AplValues.APLValuePicker;
 
+	private textEditMode: boolean;
+
 	constructor(parent: HTMLElement, player: Player<any>, config: APLActionPickerConfig) {
 		super(parent, 'apl-action-picker-root', player, config);
+		
+		this.textEditMode = false;
 
 		this.conditionPicker = new AplValues.APLValuePicker(this.rootElem, this.modObject, {
 			label: 'If:',
@@ -94,6 +98,10 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 		this.actionPicker = null;
 
 		this.init();
+	}
+
+	toggleTextEdit(value: boolean) {
+		
 	}
 
 	getInputElem(): HTMLElement | null {

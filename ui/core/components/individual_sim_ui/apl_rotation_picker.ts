@@ -135,6 +135,7 @@ class APLPrepullActionPicker extends Input<Player<any>, APLPrepullAction> {
 		if (!newValue) {
 			return;
 		}
+		// this.editModePicker.setInputValue(newValue.hide);
 		this.hidePicker.setInputValue(newValue.hide);
 		this.doAtPicker.setInputValue(newValue.doAt);
 		this.actionPicker.setInputValue(newValue.action || APLAction.create());
@@ -145,6 +146,7 @@ class APLListItemPicker extends Input<Player<any>, APLListItem> {
 	private readonly player: Player<any>;
 
 	private readonly hidePicker: Input<Player<any>, boolean>;
+	private readonly editModePicker: Input<Player<any>, boolean>;
 	private readonly actionPicker: APLActionPicker;
 
 	private getItem(): APLListItem {
@@ -160,6 +162,15 @@ class APLListItemPicker extends Input<Player<any>, APLListItem> {
 
 		const itemHeaderElem = ListPicker.getItemHeaderElem(this);
 		makeListItemWarnings(itemHeaderElem, player, player => player.getCurrentStats().rotationStats?.priorityList[index]?.warnings || []);
+
+		this.editModePicker = new EditModePicker(itemHeaderElem, player, {
+			changedEvent: () => this.player.rotationChangeEmitter,
+			getValue: () => this.getItem().textMode,
+			setValue: (eventID: EventID, player: Player<any>, newValue: boolean) => {
+				this.getItem().textMode = newValue;
+				this.player.rotationChangeEmitter.emit(eventID);
+			},
+		});
 
 		this.hidePicker = new HidePicker(itemHeaderElem, player, {
 			changedEvent: () => this.player.rotationChangeEmitter,
@@ -189,6 +200,7 @@ class APLListItemPicker extends Input<Player<any>, APLListItem> {
 		const item = APLListItem.create({
 			hide: this.hidePicker.getInputValue(),
 			action: this.actionPicker.getInputValue(),
+			textMode: this.editModePicker.getInputValue(),
 		});
 		return item;
 	}
@@ -197,6 +209,7 @@ class APLListItemPicker extends Input<Player<any>, APLListItem> {
 		if (!newValue) {
 			return;
 		}
+		this.editModePicker.setInputValue(newValue.textMode);
 		this.hidePicker.setInputValue(newValue.hide);
 		this.actionPicker.setInputValue(newValue.action || APLAction.create());
 	}
@@ -270,6 +283,48 @@ class HidePicker extends Input<Player<any>, boolean> {
 			this.iconElem.classList.add('fa-eye');
 			this.iconElem.classList.remove('fa-eye-slash');
 			this.tooltip.setContent({ '.tooltip-inner': 'Disable Action' });
+		}
+	}
+}
+
+class EditModePicker extends Input<Player<any>, boolean> {
+	private readonly inputElem: HTMLElement;
+	private readonly iconElem: HTMLElement;
+	private tooltip: Tooltip;
+
+	constructor(parent: HTMLElement, modObject: Player<any>, config: InputConfig<Player<any>, boolean>) {
+		super(parent, 'text-mode-picker-root', modObject, config);
+
+		this.inputElem = ListPicker.makeActionElem('text-mode-picker-button', 'Text Mode', 'fa-input-text');
+		this.iconElem = this.inputElem.childNodes[0] as HTMLElement;
+		this.rootElem.appendChild(this.inputElem);
+		this.tooltip = Tooltip.getOrCreateInstance(this.inputElem);
+
+		this.init();
+
+		this.inputElem.addEventListener('click', event => {
+			this.setInputValue(!this.getInputValue());
+			this.inputChanged(TypedEvent.nextEventID());
+		});
+	}
+
+	getInputElem(): HTMLElement {
+		return this.inputElem;
+	}
+
+	getInputValue(): boolean {
+		return this.iconElem.classList.contains('fa-computer-mouse');
+	}
+
+	setInputValue(newValue: boolean) {
+		if (!newValue) {
+			this.iconElem.classList.add('fa-computer-mouse');
+			this.iconElem.classList.remove('fa-eye');
+			this.tooltip.setContent({ '.tooltip-inner': 'Use Text Mode' });
+		} else {
+			this.iconElem.classList.add('fa-input-text');
+			this.iconElem.classList.remove('fa-computer-mouse');
+			this.tooltip.setContent({ '.tooltip-inner': 'Use UI Mode' });
 		}
 	}
 }

@@ -23,6 +23,7 @@ message APLListItem {
     bool hide = 1;        // Causes this item to be ignored.
     string notes = 2;     // Comments for the reader.
     APLAction action = 3; // The action to be performed.
+    bool text_mode = 4;   // If this item is edited in text mode.
 }
 
 message APLAction {
