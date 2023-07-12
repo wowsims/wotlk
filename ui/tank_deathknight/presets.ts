@@ -1,10 +1,12 @@
-import { Consumes } from '../core/proto/common.js';
+import { Consumes, Spec } from '../core/proto/common.js';
 import { EquipmentSpec } from '../core/proto/common.js';
 import { Flask } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
 import { Glyphs } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
-import { SavedTalents } from '../core/proto/ui.js';
+import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
+import { APLRotation } from '../core/proto/apl.js';
+import { Player } from '../core/player.js';
 
 import {
 	TankDeathknight_Rotation as TankDeathKnightRotation,
@@ -25,6 +27,21 @@ export const BloodTalents = {
 		talentsString: '005512153330030320102013-3050505000023-005',
 		glyphs: Glyphs.create({
 			major1: DeathknightMajorGlyph.GlyphOfDisease,
+			major2: DeathknightMajorGlyph.GlyphOfRuneStrike,
+			major3: DeathknightMajorGlyph.GlyphOfDarkCommand,
+			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
+			minor2: DeathknightMinorGlyph.GlyphOfBloodTap,
+			minor3: DeathknightMinorGlyph.GlyphOfRaiseDead,
+		}),
+	}),
+};
+
+export const BloodAggroTalents = {
+	name: 'Blood Aggro',
+	data: SavedTalents.create({
+		talentsString: '0355220530303303201020131301--0052003050032',
+		glyphs: Glyphs.create({
+			major1: DeathknightMajorGlyph.GlyphOfDancingRuneWeapon,
 			major2: DeathknightMajorGlyph.GlyphOfRuneStrike,
 			major3: DeathknightMajorGlyph.GlyphOfDarkCommand,
 			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
@@ -96,6 +113,79 @@ export const DefaultConsumes = Consumes.create({
 	defaultPotion: Potions.IndestructiblePotion,
 	prepopPotion: Potions.IndestructiblePotion,
 });
+
+export const BLOOD_LEGACY_PRESET_LEGACY_DEFAULT = {
+	name: 'Blood Legacy',
+	enableWhen: (player: Player<Spec.SpecTankDeathknight>) => player.getTalentTree() == 0,
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: TankDeathKnightRotation.toJsonString(DefaultRotation),
+	}),
+}
+
+export const BLOOD_IT_SPAM_ROTATION_PRESET_DEFAULT = {
+	name: 'Blood Icy Touch APL',
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: TankDeathKnightRotation.toJsonString(DefaultRotation),
+		rotation: APLRotation.fromJsonString(`{
+			"enabled": true,
+			"prepullActions": [
+			  {"action":{"castSpell":{"spellId":{"spellId":48263}}},"doAt":"-10s"},
+			  {"action":{"castSpell":{"spellId":{"spellId":42650}}},"doAt":"-6s"}
+			],
+			"priorityList": [
+			  {"action":{"autocastOtherCooldowns":{}}},
+			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"40%"}}}},"castSpell":{"spellId":{"spellId":48792}}}},
+			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"40%"}}}},"castSpell":{"spellId":{"spellId":55233}}}},
+			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"60%"}}}},"castSpell":{"spellId":{"spellId":48982}}}},
+			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"60%"}}}},"castSpell":{"spellId":{"spellId":48707}}}},
+			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"60%"}}}},"castSpell":{"spellId":{"spellId":48743}}}},
+			  {"action":{"condition":{"cmp":{"op":"OpGe","lhs":{"currentRunicPower":{}},"rhs":{"const":{"val":"40"}}}},"castSpell":{"spellId":{"spellId":56815}}}},
+			  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55095}}}}},"castSpell":{"spellId":{"spellId":59131}}}},
+			  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55078}}}}},"castSpell":{"spellId":{"tag":1,"spellId":49921}}}},
+			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55078}}},"rhs":{"const":{"val":"3s"}}}},"castSpell":{"spellId":{"spellId":50842}}}},
+			  {"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"currentNonDeathRuneCount":{"runeType":"RuneFrost"}},"rhs":{"const":{"val":"0"}}}},{"cmp":{"op":"OpGt","lhs":{"currentNonDeathRuneCount":{"runeType":"RuneUnholy"}},"rhs":{"const":{"val":"0"}}}}]}},"castSpell":{"spellId":{"tag":1,"spellId":49924}}}},
+			  {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentRuneCount":{"runeType":"RuneDeath"}},"rhs":{"const":{"val":"0"}}}},"castSpell":{"spellId":{"spellId":59131}}}},
+			  {"action":{"condition":{"or":{"vals":[{"cmp":{"op":"OpGt","lhs":{"currentNonDeathRuneCount":{"runeType":"RuneBlood"}},"rhs":{"const":{"val":"1"}}}},{"spellIsReady":{"spellId":{"spellId":47568}}}]}},"castSpell":{"spellId":{"tag":1,"spellId":49930}}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":46584}}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":47568}}}},
+			  {"action":{"condition":{"cmp":{"op":"OpGe","lhs":{"currentRunicPower":{}},"rhs":{"const":{"val":"80"}}}},"castSpell":{"spellId":{"spellId":49895}}}}
+			]
+		}`),
+	}),
+}
+
+export const BLOOD_AGGRO_ROTATION_PRESET_DEFAULT = {
+	name: 'Blood Aggro APL',
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: TankDeathKnightRotation.toJsonString(DefaultRotation),
+		rotation: APLRotation.fromJsonString(`{
+			"enabled": true,
+			"prepullActions": [
+			  {"action":{"castSpell":{"spellId":{"spellId":48263}}},"doAt":"-10s"},
+			  {"action":{"castSpell":{"spellId":{"spellId":42650}}},"doAt":"-6s"}
+			],
+			"priorityList": [
+			  {"action":{"autocastOtherCooldowns":{}}},
+			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"40%"}}}},"castSpell":{"spellId":{"spellId":48792}}}},
+			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"40%"}}}},"castSpell":{"spellId":{"spellId":55233}}}},
+			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"60%"}}}},"castSpell":{"spellId":{"spellId":48707}}}},
+			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"60%"}}}},"castSpell":{"spellId":{"spellId":48743}}}},
+			  {"action":{"condition":{"or":{"vals":[{"not":{"val":{"spellIsReady":{"spellId":{"spellId":49028}}}}},{"cmp":{"op":"OpGe","lhs":{"currentRunicPower":{}},"rhs":{"const":{"val":"80"}}}}]}},"castSpell":{"spellId":{"spellId":56815}}}},
+			  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55095}}}}},"castSpell":{"spellId":{"spellId":59131}}}},
+			  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55078}}}}},"castSpell":{"spellId":{"tag":1,"spellId":49921}}}},
+			  {"action":{"castSpell":{"spellId":{"tag":-1,"spellId":49016}}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":49028}}}},
+			  {"action":{"castSpell":{"spellId":{"tag":1,"spellId":55262}}}},
+			  {"action":{"castSpell":{"spellId":{"tag":1,"spellId":49924}}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":46584}}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":47568}}}},
+			  {"action":{"condition":{"cmp":{"op":"OpGe","lhs":{"currentRunicPower":{}},"rhs":{"const":{"val":"80"}}}},"castSpell":{"spellId":{"spellId":49895}}}}
+			]
+		}`),
+	}),
+}
 
 export const P1_BLOOD_PRESET = {
 	name: 'P1 Blood',
