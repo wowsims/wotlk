@@ -14,7 +14,7 @@ func (dk *Deathknight) registerUnholyFrenzyCD() {
 	actionID := core.ActionID{SpellID: 49016, Tag: dk.Index}
 
 	unholyFrenzyTarget := &dk.Character
-	if !dk.IsUsingAPL && dk.Inputs.UnholyFrenzyTarget.TargetIndex == -1 {
+	if !dk.IsUsingAPL {
 		unholyFrenzyTarget = nil
 	}
 
