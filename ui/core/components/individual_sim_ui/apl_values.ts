@@ -29,6 +29,7 @@ import {
 	APLValueDotIsActive,
 	APLValueDotRemainingTime,
 	APLValueNumberTargets,
+	APLValueSpellCastTime,
 } from '../../proto/apl.js';
 
 import { EventID, TypedEvent } from '../../typed_event.js';
@@ -480,6 +481,15 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 		submenu: ['Spell'],
 		shortDescription: 'Amount of time remaining before the spell comes off cooldown, or <b>0</b> if it is not on cooldown.',
 		newValue: APLValueSpellTimeToReady.create,
+		fields: [
+			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells'),
+		],
+	}),
+	['spellCastTime']: inputBuilder({
+		label: 'Cast Time',
+		submenu: ['Spell'],
+		shortDescription: 'Amount of time to cast the spell including any haste and spell cast time adjustments.',
+		newValue: APLValueSpellCastTime.create,
 		fields: [
 			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells'),
 		],

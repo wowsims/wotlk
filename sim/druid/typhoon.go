@@ -16,7 +16,7 @@ func (druid *Druid) registerTyphoonSpell() {
 		ActionID:    core.ActionID{SpellID: 61384},
 		SpellSchool: core.SpellSchoolNature,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       SpellFlagOmenTrigger,
+		Flags:       SpellFlagOmenTrigger | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.25,

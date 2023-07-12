@@ -75,3 +75,25 @@ func (value *APLValueSpellTimeToReady) Type() proto.APLValueType {
 func (value *APLValueSpellTimeToReady) GetDuration(sim *Simulation) time.Duration {
 	return value.spell.TimeToReady(sim)
 }
+
+type APLValueSpellCastTime struct {
+	defaultAPLValueImpl
+	spell *Spell
+}
+
+func (rot *APLRotation) newValueSpellCastTime(config *proto.APLValueSpellCastTime) APLValue {
+	unit := rot.unit
+	spell := unit.aplGetSpell(config.SpellId)
+	if spell == nil {
+		return nil
+	}
+	return &APLValueSpellCastTime{
+		spell: spell,
+	}
+}
+func (value *APLValueSpellCastTime) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeDuration
+}
+func (value *APLValueSpellCastTime) GetDuration(sim *Simulation) time.Duration {
+	return value.spell.Unit.ApplyCastSpeedForSpell(value.spell.DefaultCast.CastTime, value.spell)
+}

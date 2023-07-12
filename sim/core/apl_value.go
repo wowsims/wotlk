@@ -100,6 +100,8 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 		return rot.newValueSpellIsReady(config.GetSpellIsReady())
 	case *proto.APLValue_SpellTimeToReady:
 		return rot.newValueSpellTimeToReady(config.GetSpellTimeToReady())
+	case *proto.APLValue_SpellCastTime:
+		return rot.newValueSpellCastTime(config.GetSpellCastTime())
 
 	// Auras
 	case *proto.APLValue_AuraIsActive:

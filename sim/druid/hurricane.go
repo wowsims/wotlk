@@ -11,7 +11,7 @@ func (druid *Druid) registerHurricaneSpell() {
 		ActionID:    core.ActionID{SpellID: 48467},
 		SpellSchool: core.SpellSchoolNature,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagChanneled | SpellFlagOmenTrigger,
+		Flags:       core.SpellFlagChanneled | SpellFlagOmenTrigger | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.81,
