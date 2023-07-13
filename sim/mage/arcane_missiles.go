@@ -16,7 +16,7 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 		ActionID:     core.ActionID{SpellID: 42846},
 		SpellSchool:  core.SpellSchoolArcane,
 		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagMage | core.SpellFlagChanneled,
+		Flags:        SpellFlagMage | core.SpellFlagChanneled | core.SpellFlagAPL,
 		MissileSpeed: 20,
 
 		ManaCost: core.ManaCostOptions{

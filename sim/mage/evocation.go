@@ -29,6 +29,7 @@ func (mage *Mage) registerEvocationCD() {
 
 	evocationSpell := mage.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
+		Flags:    core.SpellFlagAPL,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

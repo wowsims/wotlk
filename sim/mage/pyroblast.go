@@ -21,7 +21,7 @@ func (mage *Mage) registerPyroblastSpell() {
 		ActionID:     core.ActionID{SpellID: 42891},
 		SpellSchool:  core.SpellSchoolFire,
 		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagMage,
+		Flags:        SpellFlagMage | core.SpellFlagAPL,
 		MissileSpeed: 24,
 
 		ManaCost: core.ManaCostOptions{

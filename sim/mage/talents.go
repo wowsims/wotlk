@@ -88,12 +88,18 @@ func (mage *Mage) applyHotStreak() {
 		//},
 	})
 
+	mage.hotStreakCritAura = mage.RegisterAura(core.Aura{
+		Label:     "Hot Streak Proc Aura",
+		ActionID:  core.ActionID{SpellID: 44448, Tag: 1},
+		MaxStacks: 2,
+		Duration:  time.Hour,
+	})
+
 	mage.RegisterAura(core.Aura{
 		Label:    "Hot Streak Trigger",
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
-			mage.heatingUp = false
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !spell.Flags.Matches(HotStreakSpells) {
@@ -101,17 +107,21 @@ func (mage *Mage) applyHotStreak() {
 			}
 
 			if !result.DidCrit() {
-				mage.heatingUp = false
+				mage.hotStreakCritAura.SetStacks(sim, 0)
+				mage.hotStreakCritAura.Deactivate(sim)
 				return
 			}
 
-			if mage.heatingUp {
+			if mage.hotStreakCritAura.GetStacks() == 1 {
 				if procChance == 1 || sim.Proc(procChance, "Hot Streak") {
+					mage.hotStreakCritAura.SetStacks(sim, 0)
+					mage.hotStreakCritAura.Deactivate(sim)
+
 					mage.HotStreakAura.Activate(sim)
-					mage.heatingUp = false
 				}
 			} else {
-				mage.heatingUp = true
+				mage.hotStreakCritAura.Activate(sim)
+				mage.hotStreakCritAura.AddStack(sim)
 			}
 		},
 	})

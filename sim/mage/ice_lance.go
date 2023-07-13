@@ -9,7 +9,7 @@ func (mage *Mage) registerIceLanceSpell() {
 		ActionID:     core.ActionID{SpellID: 42914},
 		SpellSchool:  core.SpellSchoolFrost,
 		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagMage,
+		Flags:        SpellFlagMage | core.SpellFlagAPL,
 		MissileSpeed: 38,
 
 		ManaCost: core.ManaCostOptions{

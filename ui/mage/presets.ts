@@ -9,7 +9,7 @@ import { Potions } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { Faction } from '../core/proto/common.js';
 import { RaidTarget } from '../core/proto/common.js';
-import { SavedTalents } from '../core/proto/ui.js';
+import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
 import { Player } from '../core/player.js';
 import { NO_TARGET } from '../core/proto_utils/utils';
 
@@ -27,6 +27,7 @@ import {
 } from '../core/proto/mage.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
+import { APLRotation } from '../core/proto/apl.js';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -192,10 +193,98 @@ export const OtherDefaults = {
 	distanceFromTarget: 25,
 };
 
+export const ARCANE_ROTATION_PRESET_DEFAULT = {
+	name: 'Arcane APL',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: MageRotation.toJsonString(DefaultArcaneRotation),
+		rotation: APLRotation.fromJsonString(`{
+			"enabled": true,
+			"prepullActions": [
+			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAt":"-1s"}
+			],
+			"priorityList": [
+			  {"action":{"autocastOtherCooldowns":{}}},
+			  {"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":12472}}}}},"castSpell":{"spellId":{"spellId":26297}}}},
+			  {"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":12472}}}}},"castSpell":{"spellId":{"spellId":54758}}}},
+			  {"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":12472}}}}},"castSpell":{"spellId":{"itemId":40211}}}},
+			  {"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"auraNumStacks":{"auraId":{"spellId":36032}}},"rhs":{"const":{"val":"4"}}}},"castSpell":{"spellId":{"spellId":42897}}}},
+			  {"action":{"condition":{"auraIsActive":{"auraId":{"spellId":44401}}},"castSpell":{"spellId":{"spellId":42846}}}},
+			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"25%"}}}},"castSpell":{"spellId":{"spellId":12051}}}},
+			  {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"25%"}}}},"castSpell":{"spellId":{"spellId":42897}}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":42846}}}}
+			]
+		}`)
+	}),
+}
+
+export const FIRE_ROTATION_PRESET_DEFAULT = {
+	name: 'Fire APL',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: MageRotation.toJsonString(DefaultFireRotation),
+		rotation: APLRotation.fromJsonString(`{
+			"enabled": true,
+			"prepullActions": [
+			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAt":"-1s"}
+			],
+			"priorityList": [
+			  {"action":{"autocastOtherCooldowns":{}}},
+			  {"action":{"condition":{"auraIsActive":{"auraId":{"spellId":44448}}},"castSpell":{"spellId":{"spellId":42891}}}},
+			  {"action":{"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55360}}}}},{"cmp":{"op":"OpGt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"12s"}}}}]}},"castSpell":{"spellId":{"spellId":55360}}}},
+			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"remainingTime":{}},"rhs":{"spellCastTime":{"spellId":{"spellId":42859}}}}},"castSpell":{"spellId":{"spellId":42873}}}},
+			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"4s"}}}},"castSpell":{"spellId":{"spellId":42859}}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":42833}}}}
+			]
+		}`),
+	}),
+}
+
+export const FROSTFIRE_ROTATION_PRESET_DEFAULT = {
+	name: 'Frostfire APL',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: MageRotation.toJsonString(DefaultFFBRotation),
+		rotation: APLRotation.fromJsonString(`{
+			"enabled": true,
+			"prepullActions": [
+			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAt":"-1s"}
+			],
+			"priorityList": [
+			  {"action":{"autocastOtherCooldowns":{}}},
+			  {"action":{"condition":{"auraIsActive":{"auraId":{"spellId":44448}}},"castSpell":{"spellId":{"spellId":42891}}}},
+			  {"action":{"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55360}}}}},{"cmp":{"op":"OpGt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"12s"}}}}]}},"castSpell":{"spellId":{"spellId":55360}}}},
+			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"remainingTime":{}},"rhs":{"spellCastTime":{"spellId":{"spellId":42859}}}}},"castSpell":{"spellId":{"spellId":42873}}}},
+			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"3.5s"}}}},"castSpell":{"spellId":{"spellId":42859}}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":47610}}}}
+			]
+		}`),
+	}),
+}
+
+export const FROST_ROTATION_PRESET_DEFAULT = {
+	name: 'Frost APL',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: MageRotation.toJsonString(DefaultFrostRotation),
+		rotation: APLRotation.fromJsonString(`{
+			"enabled": true,
+			"prepullActions": [
+			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAt":"-1s"}
+			],
+			"priorityList": [
+			  {"action":{"autocastOtherCooldowns":{}}},
+			  {"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":12472}}}}},"castSpell":{"spellId":{"spellId":26297}}}},
+			  {"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":12472}}}}},"castSpell":{"spellId":{"spellId":54758}}}},
+			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"25%"}}}},"castSpell":{"spellId":{"spellId":12051}}}},
+			  {"action":{"condition":{"auraIsActive":{"auraId":{"spellId":44545}}},"castSpell":{"spellId":{"spellId":44572}}}},
+			  {"action":{"condition":{"auraIsActive":{"auraId":{"spellId":44549}}},"castSpell":{"spellId":{"spellId":47610}}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":42842}}}}
+			]
+		}`),
+	}),
+}
+
 export const ARCANE_PRERAID_PRESET = {
 	name: "Arcane Preraid Preset",
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":42553,"enchant":3820,"gems":[41285,40049]},
 		{"id":39472},
@@ -220,7 +309,7 @@ export const ARCANE_PRERAID_PRESET = {
 export const FIRE_PRERAID_PRESET = {
 	name: "Fire Preraid Preset",
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":42553,"enchant":3820,"gems":[41285,40014]},
 		{"id":39472},
@@ -245,7 +334,7 @@ export const FIRE_PRERAID_PRESET = {
 export const ARCANE_P1_PRESET = {
 	name: 'Arcane P1 Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":40416,"enchant":3820,"gems":[41285,39998]},
 		{"id":44661,"gems":[40026]},
@@ -270,7 +359,7 @@ export const ARCANE_P1_PRESET = {
 export const FIRE_P1_PRESET = {
 	name: 'Fire P1 Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":40416,"enchant":3820,"gems":[41285,39998]},
 		{"id":44661,"gems":[40026]},
@@ -295,7 +384,7 @@ export const FIRE_P1_PRESET = {
 export const FROST_P1_PRESET = {
 	name: 'Frost P1 Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Frost,
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 2,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":40416,"enchant":3820,"gems":[41285,39998]},
 		{"id":44661,"gems":[40026]},
@@ -320,7 +409,7 @@ export const FROST_P1_PRESET = {
 export const ARCANE_P2_PRESET = {
 	name: 'Arcane P2 Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":45497,"enchant":3820,"gems":[41285,45883]},
 		{"id":45243,"gems":[39998]},
@@ -345,7 +434,7 @@ export const ARCANE_P2_PRESET = {
 export const FIRE_P2_PRESET = {
 	name: 'Fire P2 Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":46129,"enchant":3820,"gems":[41285,45883]},
 		{"id":45133,"gems":[40048]},
@@ -370,7 +459,7 @@ export const FIRE_P2_PRESET = {
 export const FROST_P2_PRESET = {
 	name: 'Frost P2 Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Frost,
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 2,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":45497,"enchant":3820,"gems":[41285,45883]},
 		{"id":45133,"gems":[40051]},
@@ -395,7 +484,7 @@ export const FROST_P2_PRESET = {
 export const FFB_P2_PRESET = {
 	name: 'FFB P2 Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecMage>) => (player.getTalentTree() == 1 && player.getTalents().icyVeins) || (player.getRotation().type == RotationType.Fire && player.getRotation().primaryFireSpell == PrimaryFireSpell.FrostfireBolt),
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1 && player.getTalents().icyVeins,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":45497,"enchant":3820,"gems":[41285,45883]},
 		{"id":45133,"gems":[40048]},
@@ -419,7 +508,7 @@ export const FFB_P2_PRESET = {
 
 export const ARCANE_P3_PRESET_HORDE = {
 	name: 'Arcane P3 Preset Horde',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0 && player.getRotation().type == RotationType.Arcane && player.getFaction() == Faction.Horde,
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0 && player.getFaction() == Faction.Horde,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
         {"id":47764,"enchant":3820,"gems":[41285,40133]},
@@ -444,7 +533,7 @@ export const ARCANE_P3_PRESET_HORDE = {
 
 export const ARCANE_P3_PRESET_ALLIANCE = {
 	name: 'Arcane P3 Preset Alliance',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0 && player.getRotation().type == RotationType.Arcane && player.getFaction() == Faction.Alliance,
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0 && player.getFaction() == Faction.Alliance,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
         {"id":47761,"enchant":3820,"gems":[41285,40133]},
@@ -469,7 +558,7 @@ export const ARCANE_P3_PRESET_ALLIANCE = {
 
 export const FROST_P3_PRESET_HORDE = {
 	name: 'Frost P3 Preset Horde',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 2 && player.getRotation().type == RotationType.Frost && player.getFaction() == Faction.Horde,
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 2 && player.getFaction() == Faction.Horde,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
         {"id":47764,"enchant":3820,"gems":[41285,40133]},
@@ -494,7 +583,7 @@ export const FROST_P3_PRESET_HORDE = {
 
 export const FROST_P3_PRESET_ALLIANCE = {
 	name: 'Frost P3 Preset Alliance',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 2 && player.getRotation().type == RotationType.Frost && player.getFaction() == Faction.Alliance,
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 2 && player.getFaction() == Faction.Alliance,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
         {"id":47761,"enchant":3820,"gems":[41285,40133]},
@@ -519,7 +608,7 @@ export const FROST_P3_PRESET_ALLIANCE = {
 
 export const FIRE_P3_PRESET_HORDE = {
 	name: 'Fire P3 Preset Horde',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1 && player.getRotation().type == RotationType.Fire && player.getFaction() == Faction.Horde,
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1 && !player.getTalents().icyVeins && player.getFaction() == Faction.Horde,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
         {"id":47764,"enchant":3820,"gems":[41285,40133]},
@@ -544,7 +633,7 @@ export const FIRE_P3_PRESET_HORDE = {
 
 export const FIRE_P3_PRESET_ALLIANCE = {
 	name: 'Fire P3 Preset Alliance',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1 && player.getRotation().type == RotationType.Fire && player.getFaction() == Faction.Alliance,
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1 && !player.getTalents().icyVeins && player.getFaction() == Faction.Alliance,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{  "items": [
         {"id":47761,"enchant":3820,"gems":[41285,40133]},
@@ -572,7 +661,7 @@ export const FIRE_P3_PRESET_ALLIANCE = {
 
 export const FFB_P3_PRESET_HORDE = {
 	name: 'FFB P3 Preset Horde',
-	enableWhen: (player: Player<Spec.SpecMage>) => ((player.getFaction() == Faction.Horde) && ((player.getTalentTree() == 1 && player.getTalents().icyVeins) || (player.getRotation().type == RotationType.Fire && player.getRotation().primaryFireSpell == PrimaryFireSpell.FrostfireBolt))),
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getFaction() == Faction.Horde && player.getTalentTree() == 1 && player.getTalents().icyVeins,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
         {"id":47764,"enchant":3820,"gems":[41285,40133]},
@@ -597,7 +686,7 @@ export const FFB_P3_PRESET_HORDE = {
 
 export const FFB_P3_PRESET_ALLIANCE = {
 	name: 'FFB P3 Preset Alliance',
-	enableWhen: (player: Player<Spec.SpecMage>) => ((player.getFaction() == Faction.Alliance) && ((player.getTalentTree() == 1 && player.getTalents().icyVeins) || (player.getRotation().type == RotationType.Fire && player.getRotation().primaryFireSpell == PrimaryFireSpell.FrostfireBolt))),
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getFaction() == Faction.Alliance && player.getTalentTree() == 1 && player.getTalents().icyVeins,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{   "items": [
         {"id":47761,"enchant":3820,"gems":[41285,40133]},

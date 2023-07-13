@@ -11,7 +11,7 @@ func (mage *Mage) registerFlamestrikeSpell() {
 		ActionID:    core.ActionID{SpellID: 42926},
 		SpellSchool: core.SpellSchoolFire,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       SpellFlagMage,
+		Flags:       SpellFlagMage | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.30,

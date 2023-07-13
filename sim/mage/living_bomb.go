@@ -48,7 +48,7 @@ func (mage *Mage) registerLivingBombSpell() {
 		ActionID:    core.ActionID{SpellID: 55360},
 		SpellSchool: core.SpellSchoolFire,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       SpellFlagMage,
+		Flags:       SpellFlagMage | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.22,

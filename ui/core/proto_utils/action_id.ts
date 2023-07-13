@@ -238,6 +238,9 @@ export class ActionId {
 					name += ` (${this.tag - 1} Stacks)`;
 				}
 				break;
+			case 'Hot Streak':
+				if (this.tag) name += ' (Crits)';
+				break;
 			case 'Fireball':
 			case 'Flamestrike':
 			case 'Pyroblast':
