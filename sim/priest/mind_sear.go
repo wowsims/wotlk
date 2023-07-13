@@ -20,7 +20,7 @@ func (priest *Priest) newMindSearSpell(numTicks int32) *core.Spell {
 		ActionID:    core.ActionID{SpellID: 53023, Tag: numTicks},
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagChanneled,
+		Flags:       core.SpellFlagChanneled | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.28,

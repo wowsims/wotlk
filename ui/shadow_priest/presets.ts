@@ -10,8 +10,9 @@ import { RaidBuffs } from '../core/proto/common.js';
 import { IndividualBuffs } from '../core/proto/common.js';
 import { Debuffs } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js';
-import { SavedTalents } from '../core/proto/ui.js';
+import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
 import { Player } from '../core/player.js';
+import { APLRotation } from '../core/proto/apl.js';
 
 import {
 	ShadowPriest_Rotation as Rotation,
@@ -189,3 +190,14 @@ export const P3_PRESET = {
       ]
     }`),
 };
+export const ROTATION_PRESET_BASIC_APL = {
+	name: 'Basic APL',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: Rotation.toJsonString(DefaultRotation),
+		rotation: APLRotation.fromJsonString(`{
+			"enabled": true,
+			"priorityList": [
+			]
+		  }`),
+	}),
+	};
