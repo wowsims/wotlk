@@ -29,7 +29,7 @@ func (priest *Priest) newMindFlaySpell(numTicks int32) *core.Spell {
 		ActionID:    core.ActionID{SpellID: 48156}.WithTag(numTicks),
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagChanneled,
+		Flags:       core.SpellFlagChanneled | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.09,

@@ -13,6 +13,7 @@ func (priest *Priest) registerVampiricTouchSpell() {
 		ActionID:    core.ActionID{SpellID: 48160},
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.16,
