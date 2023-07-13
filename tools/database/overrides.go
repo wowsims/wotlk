@@ -138,6 +138,9 @@ var ItemOverrides = []*proto.UIItem{
 	{Id: 51806, Phase: 2},
 	{Id: 51807, Phase: 2},
 	{Id: 51808, Phase: 2},
+
+	// Cata pre-patch event items
+	{Id: 53492, Phase: 5},
 }
 
 // Keep these sorted by item ID.

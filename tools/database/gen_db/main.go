@@ -183,6 +183,20 @@ func ApplyGlobalFilters(db *database.WowDatabase) {
 		return true
 	})
 
+	// There is an 'unavailable' version of many t9 set pieces, e.g. https://www.wowhead.com/wotlk/item=48842/thralls-hauberk
+	triumphItems := core.FilterMap(db.Items, func(_ int32, item *proto.UIItem) bool {
+		return strings.HasSuffix(item.Name, "of Triumph")
+	})
+	db.Items = core.FilterMap(db.Items, func(_ int32, item *proto.UIItem) bool {
+		nameToMatch := item.Name + " of Triumph"
+		for _, item := range triumphItems {
+			if item.Name == nameToMatch {
+				return false
+			}
+		}
+		return true
+	})
+
 	db.Gems = core.FilterMap(db.Gems, func(_ int32, gem *proto.UIGem) bool {
 		if _, ok := database.GemDenyList[gem.Id]; ok {
 			return false
@@ -192,6 +206,13 @@ func ApplyGlobalFilters(db *database.WowDatabase) {
 			if pattern.MatchString(gem.Name) {
 				return false
 			}
+		}
+		return true
+	})
+
+	db.Gems = core.FilterMap(db.Gems, func(_ int32, gem *proto.UIGem) bool {
+		if strings.HasSuffix(gem.Name, "Stormjewel") {
+			gem.Unique = false
 		}
 		return true
 	})
