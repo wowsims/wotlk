@@ -158,8 +158,8 @@ dps_results: {
 dps_results: {
  key: "TestDemonology-AllItems-Gul'dan'sRegalia"
  value: {
-  dps: 8740.48553
-  tps: 7232.10595
+  dps: 8998.78263
+  tps: 7464.25733
  }
 }
 dps_results: {

@@ -158,8 +158,8 @@ dps_results: {
 dps_results: {
  key: "TestAffliction-AllItems-Gul'dan'sRegalia"
  value: {
-  dps: 9353.58354
-  tps: 8295.00709
+  dps: 9618.60208
+  tps: 8540.40596
  }
 }
 dps_results: {

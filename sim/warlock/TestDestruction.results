@@ -158,8 +158,8 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-AllItems-Gul'dan'sRegalia"
  value: {
-  dps: 9131.20366
-  tps: 7332.74464
+  dps: 9360.94315
+  tps: 7525.53955
  }
 }
 dps_results: {
