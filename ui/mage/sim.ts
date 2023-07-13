@@ -155,6 +155,7 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 				rotations: [
 					Presets.ARCANE_ROTATION_PRESET_DEFAULT,
 					Presets.FIRE_ROTATION_PRESET_DEFAULT,
+					Presets.FROSTFIRE_ROTATION_PRESET_DEFAULT,
 					Presets.FROST_ROTATION_PRESET_DEFAULT,
 				],
 				// Preset talents that the user can quickly select.
