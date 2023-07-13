@@ -29,18 +29,6 @@ export const Armor = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecMage, Ar
 	],
 });
 
-export const IgniteMunching = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecMage>({
-	fieldName: 'igniteMunching',
-	label: 'Ignite Munching',
-	labelTooltip: `
-		<p>When two spells crit at the same time, only the latter spell will count towards ignite.</p>
-		<p>For example when an instant pyroblast lands right after a fireball, or when Living Bomb explodes at the same time as another spell lands on the target.</p>
-		<p>However, this does not affect Hot Streak with Frostfire Bolt due to Frostfire Bolt having a faster travel time. </p>
-	`,
-	showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
-	changeEmitter: (player: Player<Spec.SpecMage>) => player.rotationChangeEmitter,
-});
-
 export const EvocationTicks = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecMage>({
 	fieldName: 'evocationTicks',
 	label: '# Evocation Ticks',

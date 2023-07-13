@@ -138,7 +138,6 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
-					MageInputs.IgniteMunching,
 					MageInputs.EvocationTicks,
 					MageInputs.FocusMagicUptime,
 					MageInputs.ReactionTime,
@@ -152,6 +151,12 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 			},
 
 			presets: {
+				// Preset rotations that the user can quickly select.
+				rotations: [
+					Presets.ARCANE_ROTATION_PRESET_DEFAULT,
+					Presets.FIRE_ROTATION_PRESET_DEFAULT,
+					Presets.FROST_ROTATION_PRESET_DEFAULT,
+				],
 				// Preset talents that the user can quickly select.
 				talents: [
 					Presets.ArcaneTalents,

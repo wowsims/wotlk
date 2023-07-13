@@ -13,7 +13,7 @@ func (mage *Mage) registerBlizzardSpell() {
 		ActionID:    core.ActionID{SpellID: 42939},
 		SpellSchool: core.SpellSchoolFrost,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       SpellFlagMage | core.SpellFlagChanneled,
+		Flags:       SpellFlagMage | core.SpellFlagChanneled | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.74,

@@ -12,6 +12,10 @@ func (mage *Mage) OnGCDReady(sim *core.Simulation) {
 }
 
 func (mage *Mage) tryUseGCD(sim *core.Simulation) {
+	if mage.IsUsingAPL {
+		return
+	}
+
 	spell := mage.chooseSpell(sim)
 	if spell != nil {
 		if success := spell.Cast(sim, mage.CurrentTarget); !success {

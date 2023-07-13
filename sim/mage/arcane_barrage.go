@@ -16,7 +16,7 @@ func (mage *Mage) registerArcaneBarrageSpell() {
 		ActionID:     core.ActionID{SpellID: 44781},
 		SpellSchool:  core.SpellSchoolFrost,
 		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagMage | BarrageSpells,
+		Flags:        SpellFlagMage | BarrageSpells | core.SpellFlagAPL,
 		MissileSpeed: 24,
 
 		ManaCost: core.ManaCostOptions{
