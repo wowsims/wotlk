@@ -986,8 +986,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-Turalyon'sPlate"
  value: {
-  dps: 5461.39048
-  tps: 5559.50427
+  dps: 5594.07015
+  tps: 5692.25061
   dtps: 8.90286
  }
 }

@@ -848,8 +848,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-Turalyon'sPlate"
  value: {
-  dps: 3234.63635
-  tps: 7788.0641
+  dps: 3318.21978
+  tps: 7983.46046
  }
 }
 dps_results: {
