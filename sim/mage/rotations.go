@@ -124,7 +124,7 @@ func (mage *Mage) doFireRotation(sim *core.Simulation) *core.Spell {
 	}
 
 	noBomb := mage.LivingBomb != nil && !mage.LivingBomb.Dot(mage.CurrentTarget).IsActive() && sim.GetRemainingDuration() > time.Second*12
-	if noBomb && !mage.heatingUp {
+	if noBomb && mage.hotStreakCritAura.GetStacks() == 0 {
 		return mage.LivingBomb
 	}
 

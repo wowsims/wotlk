@@ -45,7 +45,6 @@ type Mage struct {
 
 	arcaneBlastStreak int32
 	arcanePowerMCD    *core.MajorCooldown
-	heatingUp         bool
 	delayedPyroAt     time.Duration
 
 	waterElemental *WaterElemental
@@ -81,6 +80,7 @@ type Mage struct {
 	MissileBarrageAura *core.Aura
 	ClearcastingAura   *core.Aura
 	ScorchAuras        core.AuraArray
+	hotStreakCritAura  *core.Aura
 	HotStreakAura      *core.Aura
 	CombustionAura     *core.Aura
 	FingersOfFrostAura *core.Aura
