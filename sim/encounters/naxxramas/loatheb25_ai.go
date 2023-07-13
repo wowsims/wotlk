@@ -26,6 +26,7 @@ func addLoatheb25(bossPrefix string) {
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
 			SwingSpeed:       1.2,
 			MinBaseDamage:    6229,
+			DamageSpread:     0.3333,
 			SuppressDodge:    false,
 			ParryHaste:       false,
 			DualWield:        false,

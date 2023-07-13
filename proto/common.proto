@@ -642,11 +642,12 @@ message Target {
 
 	// Auto attack parameters.
 	double min_base_damage = 7;
+	double damage_spread = 19; // replaces tight_enemy_damage
 	double swing_speed = 8;
 	bool dual_wield = 9;
 	bool dual_wield_penalty = 10;
 	bool parry_haste = 12;
-	bool tight_enemy_damage = 17; // Patchwerk special
+	bool tight_enemy_damage = 17; // deprecated as of 07/12/23
 	bool suppress_dodge = 16; // Sunwell Radiance
 	SpellSchool spell_school = 13; // Allows elemental attacks.
 

@@ -232,7 +232,7 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 	private readonly parryHastePicker: Input<null, boolean>;
 	private readonly spellSchoolPicker: Input<null, number>;
 	private readonly suppressDodgePicker: Input<null, boolean>;
-	private readonly tightDamageRangePicker: Input<null, boolean>;
+	private readonly damageSpreadPicker: Input<null, number>;
 	private readonly targetInputPickers: ListPicker<Encounter, TargetInput>;
 
 	private getTarget(): TargetProto {
@@ -388,6 +388,17 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 				encounter.targetsChangeEmitter.emit(eventID);
 			},
 		});
+		this.damageSpreadPicker = new NumberPicker(section3, null, {
+			label: 'Damage Spread',
+			labelTooltip: 'Fractional spread between the minimum and maximum auto-attack damage from this enemy at 0 Attack Power.',
+			float: true,
+			changedEvent: () => encounter.targetsChangeEmitter,
+			getValue: () => this.getTarget().damageSpread,
+			setValue: (eventID: EventID, _: null, newValue: number) => {
+				this.getTarget().damageSpread = newValue;
+				encounter.targetsChangeEmitter.emit(eventID);
+			},
+		});
 		this.dualWieldPicker = new BooleanPicker(section3, null, {
 			label: 'Dual Wield',
 			labelTooltip: 'Uses 2 separate weapons to attack.',
@@ -453,18 +464,6 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 			},
 			enableWhen: () => this.getTarget().level == Mechanics.BOSS_LEVEL,
 		});
-		this.tightDamageRangePicker = new BooleanPicker(section3, null, {
-			label: 'Tightened Damage Range',
-			labelTooltip: 'Reduces the damage range of this enemy\'s auto-attacks. Observed behavior for Patchwerk.',
-			inline: true,
-			changedEvent: () => encounter.targetsChangeEmitter,
-			getValue: () => this.getTarget().tightEnemyDamage,
-			setValue: (eventID: EventID, _: null, newValue: boolean) => {
-				this.getTarget().tightEnemyDamage = newValue;
-				encounter.targetsChangeEmitter.emit(eventID);
-			},
-			enableWhen: () => this.getTarget().level == Mechanics.BOSS_LEVEL,
-		});
 
 		this.init();
 	}
@@ -485,7 +484,7 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 			dualWieldPenalty: this.dwMissPenaltyPicker.getInputValue(),
 			parryHaste: this.parryHastePicker.getInputValue(),
 			spellSchool: this.spellSchoolPicker.getInputValue(),
-			tightEnemyDamage: this.tightDamageRangePicker.getInputValue(),
+			damageSpread: this.damageSpreadPicker.getInputValue(),
 			stats: this.statPickers
 				.map(picker => picker.getInputValue())
 				.map((statValue, i) => new Stats().withStat(ALL_TARGET_STATS[i].stat, statValue))
@@ -508,7 +507,7 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 		this.dwMissPenaltyPicker.setInputValue(newValue.dualWieldPenalty);
 		this.parryHastePicker.setInputValue(newValue.parryHaste);
 		this.spellSchoolPicker.setInputValue(newValue.spellSchool);
-		this.tightDamageRangePicker.setInputValue(newValue.tightEnemyDamage);
+		this.damageSpreadPicker.setInputValue(newValue.damageSpread);
 		ALL_TARGET_STATS.forEach((statData, i) => this.statPickers[i].setInputValue(newValue.stats[statData.stat]));
 		this.targetInputPickers.setInputValue(newValue.targetInputs);
 	}

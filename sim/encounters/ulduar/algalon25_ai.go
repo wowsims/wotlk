@@ -32,7 +32,7 @@ func addAlgalon25(bossPrefix string) {
 			ParryHaste:       false,
 			DualWield:        true,
 			DualWieldPenalty: false,
-			TightEnemyDamage: true,
+			DamageSpread:     0.1,
 			TargetInputs:     make([]*proto.TargetInput, 0),
 		},
 		AI: NewAlgalon25AI(),

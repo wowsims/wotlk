@@ -336,8 +336,8 @@ type PseudoStats struct {
 	CanBlock bool
 	CanParry bool
 
-	ParryHaste       bool
-	TightEnemyDamage bool
+	ParryHaste   bool
+	DamageSpread float64
 
 	// Avoidance % not affected by Diminishing Returns
 	BaseDodge float64
@@ -401,6 +401,8 @@ func NewPseudoStats() PseudoStats {
 		ArmorMultiplier: 1,
 
 		HealingTakenMultiplier: 1,
+
+		DamageSpread: 0.3333,
 	}
 }
 

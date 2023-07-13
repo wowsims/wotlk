@@ -26,6 +26,7 @@ func addThaddius25(bossPrefix string) {
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
 			SwingSpeed:       1.25,
 			MinBaseDamage:    23442,
+			DamageSpread:     0.3333,
 			SuppressDodge:    false,
 			ParryHaste:       false,
 			DualWield:        false,
