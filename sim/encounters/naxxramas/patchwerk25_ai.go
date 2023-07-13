@@ -32,7 +32,7 @@ func addPatchwerk25(bossPrefix string) {
 			ParryHaste:       false,
 			DualWield:        false,
 			DualWieldPenalty: false,
-			TightEnemyDamage: true,
+			DamageSpread:     0.1,
 			TargetInputs:     make([]*proto.TargetInput, 0),
 		},
 		AI: NewPatchwerk25AI(),

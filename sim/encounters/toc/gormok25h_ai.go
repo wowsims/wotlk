@@ -32,7 +32,7 @@ func addGormok25H(bossPrefix string) {
 			ParryHaste:       false,
 			DualWield:        false,
 			DualWieldPenalty: false,
-			TightEnemyDamage: false,
+			DamageSpread:     0.3333,
 			TargetInputs:     make([]*proto.TargetInput, 0),
 		},
 		AI: NewGormok25HAI(),
@@ -136,7 +136,7 @@ func (ai *Gormok25HAI) registerImpaleSpell(target *core.Target) {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// 150% weapon damage
-			baseDamage := 1.50 * spell.Unit.AutoAttacks.MH.EnemyWeaponDamage(sim, spell.MeleeAttackPower(), false)
+			baseDamage := 1.50 * spell.Unit.AutoAttacks.MH.EnemyWeaponDamage(sim, spell.MeleeAttackPower(), 0.3333)
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeAlwaysHit)
 
 			dot := spell.Dot(target)

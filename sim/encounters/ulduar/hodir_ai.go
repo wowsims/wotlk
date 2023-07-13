@@ -28,6 +28,7 @@ func addHodir10(bossPrefix string) {
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
 			SwingSpeed:       2.4,
 			MinBaseDamage:    25000, // TODO: Find real value
+			DamageSpread:     0.3333,
 			SuppressDodge:    false,
 			ParryHaste:       false,
 			DualWield:        false,
@@ -61,6 +62,7 @@ func addHodir25(bossPrefix string) {
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
 			SwingSpeed:       2.4,
 			MinBaseDamage:    46300, // TODO: Find real value
+			DamageSpread:     0.3333,
 			SuppressDodge:    false,
 			ParryHaste:       false,
 			DualWield:        false,

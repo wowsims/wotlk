@@ -43,6 +43,7 @@ var DefaultTargetProto = &proto.Target{
 	SwingSpeed:    2,
 	MinBaseDamage: 4192.05,
 	ParryHaste:    true,
+	DamageSpread:  0.3333,
 }
 
 var FullRaidBuffs = &proto.RaidBuffs{
