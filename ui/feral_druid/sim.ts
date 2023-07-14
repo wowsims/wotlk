@@ -130,8 +130,6 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 			otherInputs: {
 				inputs: [
 					DruidInputs.LatencyMs,
-					DruidInputs.PrepopOoc,
-					DruidInputs.PrepopBerserk,
 					DruidInputs.AssumeBleedActive,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
@@ -146,6 +144,9 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				// Preset talents that the user can quickly select.
 				talents: [
 					Presets.StandardTalents,
+				],
+				rotations: [
+					Presets.ROTATION_PRESET_LEGACY_DEFAULT,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
