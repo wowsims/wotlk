@@ -319,7 +319,7 @@ type APLValueMath struct {
 }
 
 func (rot *APLRotation) newValueMath(config *proto.APLValueMath) APLValue {
-	lhs, rhs := rot.coerceToSameType(rot.newAPLValue(config.Lhs), rot.newAPLValue(config.Rhs))
+	lhs, rhs := rot.newAPLValue(config.Lhs), rot.newAPLValue(config.Rhs)
 	if lhs == nil || rhs == nil {
 		return nil
 	}
