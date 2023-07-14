@@ -116,6 +116,8 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 		return rot.newValueSpellTimeToReady(config.GetSpellTimeToReady())
 	case *proto.APLValue_SpellCastTime:
 		return rot.newValueSpellCastTime(config.GetSpellCastTime())
+	case *proto.APLValue_SpellChannelTime:
+		return rot.newValueSpellChannelTime(config.GetSpellChannelTime())
 	case *proto.APLValue_SpellTravelTime:
 		return rot.newValueSpellTravelTime(config.GetSpellTravelTime())
 

@@ -37,6 +37,7 @@ import {
 	APLValueSpellCastTime,
 	APLValueCurrentNonDeathRuneCount,
 	APLValueSpellTravelTime,
+	APLValueSpellChannelTime,
 } from '../../proto/apl.js';
 
 import { EventID, TypedEvent } from '../../typed_event.js';
@@ -553,6 +554,15 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 		submenu: ['Spell'],
 		shortDescription: 'Amount of time to cast the spell including any haste and spell cast time adjustments.',
 		newValue: APLValueSpellCastTime.create,
+		fields: [
+			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells'),
+		],
+	}),
+	['spellChannelTime']: inputBuilder({
+		label: 'Channel Time',
+		submenu: ['Spell'],
+		shortDescription: 'Amount of time to channel the spell including any haste and spell cast time adjustments.',
+		newValue: APLValueSpellChannelTime.create,
 		fields: [
 			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells'),
 		],
