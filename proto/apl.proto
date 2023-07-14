@@ -48,6 +48,7 @@ message APLValue {
         APLValueOr or = 3;
         APLValueNot not = 4;
         APLValueCompare cmp = 5;
+        APLValueMath math = 38;
 
         // Encounter values
         APLValueCurrentTime current_time = 7;
@@ -171,6 +172,19 @@ message APLValueCompare {
         OpGe = 6; // Greater than or equal
     }
     ComparisonOperator op = 1;
+
+    APLValue lhs = 2;
+    APLValue rhs = 3;
+}
+message APLValueMath {
+    enum MathOperator {
+        OpUnknown = 0;
+        OpAdd = 1; // Add
+        OpSub = 2; // Subtract
+        OpMul = 3; // Multiply
+        OpDiv = 4; // Divide
+    }
+    MathOperator op = 1;
 
     APLValue lhs = 2;
     APLValue rhs = 3;
