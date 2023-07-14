@@ -56,6 +56,8 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 		return rot.newValueNot(config.GetNot())
 	case *proto.APLValue_Cmp:
 		return rot.newValueCompare(config.GetCmp())
+	case *proto.APLValue_Math:
+		return rot.newValueMath(config.GetMath())
 
 	// Encounter
 	case *proto.APLValue_CurrentTime:

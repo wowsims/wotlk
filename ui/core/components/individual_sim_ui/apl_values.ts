@@ -5,6 +5,7 @@ import {
 	APLValueNot,
 	APLValueCompare,
 	APLValueCompare_ComparisonOperator as ComparisonOperator,
+	APLValueMath_MathOperator as MathOperator,
 	APLValueConst,
 	APLValueCurrentTime,
 	APLValueCurrentTimePercent,
@@ -38,6 +39,7 @@ import {
 	APLValueCurrentNonDeathRuneCount,
 	APLValueSpellTravelTime,
 	APLValueSpellChannelTime,
+	APLValueMath,
 } from '../../proto/apl.js';
 
 import { EventID, TypedEvent } from '../../typed_event.js';
@@ -244,6 +246,24 @@ function comparisonOperatorFieldConfig(field: string): AplHelpers.APLPickerBuild
 	};
 }
 
+function mathOperatorFieldConfig(field: string): AplHelpers.APLPickerBuilderFieldConfig<any, any> {
+	return {
+		field: field,
+		newValue: () => MathOperator.OpAdd,
+		factory: (parent, player, config) => new TextDropdownPicker(parent, player, {
+			...config,
+			defaultLabel: 'None',
+			equals: (a, b) => a == b,
+			values: [
+				{ value: MathOperator.OpAdd, label: '+' },
+				{ value: MathOperator.OpSub, label: '-' },
+				{ value: MathOperator.OpMul, label: '*' },
+				{ value: MathOperator.OpDiv, label: '/' },
+			],
+		}),
+	};
+}
+
 export function valueFieldConfig(field: string, options?: Partial<AplHelpers.APLPickerBuilderFieldConfig<any, any>>): AplHelpers.APLPickerBuilderFieldConfig<any, any> {
 	return {
 		field: field,
@@ -320,6 +340,17 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 		fields: [
 			valueFieldConfig('lhs'),
 			comparisonOperatorFieldConfig('op'),
+			valueFieldConfig('rhs'),
+		],
+	}),
+	['math']: inputBuilder({
+		label: 'Math',
+		submenu: ['Logic'],
+		shortDescription: 'Do basic math on two values.',
+		newValue: APLValueMath.create,
+		fields: [
+			valueFieldConfig('lhs'),
+			mathOperatorFieldConfig('op'),
 			valueFieldConfig('rhs'),
 		],
 	}),
