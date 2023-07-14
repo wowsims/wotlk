@@ -21,6 +21,7 @@ func (rogue *Rogue) registerPreparationCD() {
 
 	rogue.Preparation = rogue.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 14185},
+		Flags: core.SpellFlagAPL,
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    rogue.NewTimer(),
