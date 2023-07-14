@@ -34,7 +34,7 @@ func NewShadowPriest(character core.Character, options *proto.Player) *ShadowPri
 	}
 
 	basePriest := priest.New(character, selfBuffs, options.TalentsString)
-	basePriest.Latency = shadowOptions.Rotation.Latency
+	basePriest.Latency = shadowOptions.Options.Latency
 	spriest := &ShadowPriest{
 		Priest:   basePriest,
 		rotation: shadowOptions.Rotation,

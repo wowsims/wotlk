@@ -28,6 +28,10 @@ func (spriest *ShadowPriest) OnManaTick(sim *core.Simulation) {
 	}
 }
 func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
+	if spriest.IsUsingAPL {
+		return
+	}
+
 	// grab all of the shadow priest spell CDs remaining durations to use in the dps calculation
 	spriest.VTCastTime = spriest.ApplyCastSpeed(time.Millisecond * 1500)
 	spriest.AllCDs = []time.Duration{

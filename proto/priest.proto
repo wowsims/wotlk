@@ -167,6 +167,7 @@ message ShadowPriest {
 		bool use_mind_blast = 4;
 		bool use_shadow_word_death = 5;
 		RaidTarget power_infusion_target = 6;
+		double latency = 7; // Latency between actions
 	}
 	Options options = 3;
 }
