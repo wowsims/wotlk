@@ -36,6 +36,8 @@ import {
 	APLValueNumberTargets,
 	APLValueSpellCastTime,
 	APLValueCurrentNonDeathRuneCount,
+	APLValueSpellTravelTime,
+	APLValueSpellChannelTime,
 } from '../../proto/apl.js';
 
 import { EventID, TypedEvent } from '../../typed_event.js';
@@ -464,7 +466,7 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 		],
 	}),
 	['currentRuneActive']: inputBuilder({
-		label: 'Rune Ready',
+		label: 'Rune Is Ready',
 		submenu: ['Resources', 'Runes'],
 		shortDescription: 'Is the rune of a certain slot currently available.',
 		newValue: APLValueCurrentRuneActive.create,
@@ -473,7 +475,7 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 		],
 	}),
 	['currentRuneDeath']: inputBuilder({
-		label: 'Rune Death',
+		label: 'Rune Is Death',
 		submenu: ['Resources', 'Runes'],
 		shortDescription: 'Is the rune of a certain slot currently converted to Death.',
 		newValue: APLValueCurrentRuneDeath.create,
@@ -552,6 +554,24 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 		submenu: ['Spell'],
 		shortDescription: 'Amount of time to cast the spell including any haste and spell cast time adjustments.',
 		newValue: APLValueSpellCastTime.create,
+		fields: [
+			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells'),
+		],
+	}),
+	['spellChannelTime']: inputBuilder({
+		label: 'Channel Time',
+		submenu: ['Spell'],
+		shortDescription: 'Amount of time to channel the spell including any haste and spell cast time adjustments.',
+		newValue: APLValueSpellChannelTime.create,
+		fields: [
+			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells'),
+		],
+	}),
+	['spellTravelTime']: inputBuilder({
+		label: 'Travel Time',
+		submenu: ['Spell'],
+		shortDescription: 'Amount of time for the spell to travel to the target.',
+		newValue: APLValueSpellTravelTime.create,
 		fields: [
 			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells'),
 		],
