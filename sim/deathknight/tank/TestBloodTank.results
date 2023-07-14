@@ -510,6 +510,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBloodTank-AllItems-PetrifiedScarab-21685"
+ value: {
+  dps: 1408.69904
+  tps: 4326.21647
+ }
+}
+dps_results: {
  key: "TestBloodTank-AllItems-PetrifiedTwilightScale-54571"
  value: {
   dps: 1421.29708

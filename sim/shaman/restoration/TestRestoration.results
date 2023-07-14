@@ -563,6 +563,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRestoration-AllItems-PetrifiedScarab-21685"
+ value: {
+  tps: 56.53866
+  hps: 3669.67242
+ }
+}
+dps_results: {
  key: "TestRestoration-AllItems-PetrifiedTwilightScale-54571"
  value: {
   tps: 56.53866

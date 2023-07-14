@@ -615,6 +615,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeralDoubleArmorPenTrinketsNoDesync-AllItems-PetrifiedScarab-21685"
+ value: {
+  dps: 9656.30557
+  tps: 6919.69519
+ }
+}
+dps_results: {
  key: "TestFeralDoubleArmorPenTrinketsNoDesync-AllItems-PetrifiedTwilightScale-54571"
  value: {
   dps: 9656.30557

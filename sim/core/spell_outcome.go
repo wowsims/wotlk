@@ -548,7 +548,7 @@ func (result *SpellResult) applyEnemyAttackTableMiss(spell *Spell, attackTable *
 }
 
 func (result *SpellResult) applyEnemyAttackTableBlock(spell *Spell, attackTable *AttackTable, roll float64, chance *float64) bool {
-	if !result.Target.PseudoStats.CanBlock {
+	if !result.Target.PseudoStats.CanBlock || result.Target.PseudoStats.Stunned {
 		return false
 	}
 
@@ -567,6 +567,10 @@ func (result *SpellResult) applyEnemyAttackTableBlock(spell *Spell, attackTable 
 }
 
 func (result *SpellResult) applyEnemyAttackTableDodge(spell *Spell, attackTable *AttackTable, roll float64, chance *float64) bool {
+	if result.Target.PseudoStats.Stunned {
+		return false
+	}
+
 	dodgeChance := attackTable.BaseDodgeChance +
 		result.Target.PseudoStats.BaseDodge +
 		result.Target.GetDiminishedDodgeChance() -
@@ -583,7 +587,7 @@ func (result *SpellResult) applyEnemyAttackTableDodge(spell *Spell, attackTable 
 }
 
 func (result *SpellResult) applyEnemyAttackTableParry(spell *Spell, attackTable *AttackTable, roll float64, chance *float64) bool {
-	if !result.Target.PseudoStats.CanParry {
+	if !result.Target.PseudoStats.CanParry || result.Target.PseudoStats.Stunned {
 		return false
 	}
 
