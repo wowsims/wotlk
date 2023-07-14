@@ -23,6 +23,20 @@ var ItemOverrides = []*proto.UIItem{
 	{Id: 48161, SetName: "Malfurion's Regalia"},
 	{Id: 48162, SetName: "Malfurion's Regalia"},
 
+	// Deathknight T9 "of Conquest" Horde set
+	{Id: 48501, SetName: "Koltira's Battlegear"},
+	{Id: 48502, SetName: "Koltira's Battlegear"},
+	{Id: 48503, SetName: "Koltira's Battlegear"},
+	{Id: 48504, SetName: "Koltira's Battlegear"},
+	{Id: 48505, SetName: "Koltira's Battlegear"},
+
+	// Deathknight T9 "of Conquest" Tank Horde set
+	{Id: 48558, SetName: "Koltira's Plate"},
+	{Id: 48559, SetName: "Koltira's Plate"},
+	{Id: 48560, SetName: "Koltira's Plate"},
+	{Id: 48561, SetName: "Koltira's Plate"},
+	{Id: 48562, SetName: "Koltira's Plate"},
+
 	// Valorous T8 Sets
 	{Id: 45375, Phase: 2},
 	{Id: 45381, Phase: 2},
