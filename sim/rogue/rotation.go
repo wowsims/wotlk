@@ -47,6 +47,9 @@ func (rogue *Rogue) OnGCDReady(sim *core.Simulation) {
 }
 
 func (rogue *Rogue) setupRotation(sim *core.Simulation) {
+	if rogue.IsUsingAPL {
+		return
+	}
 	switch {
 	case rogue.Env.GetNumTargets() >= 3:
 		rogue.rotation = &rotation_multi{} // rotation multi will soon be removed

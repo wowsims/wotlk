@@ -50,6 +50,7 @@ func (rogue *Rogue) registerShadowstepCD() {
 
 	rogue.Shadowstep = rogue.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
+		Flags: core.SpellFlagAPL,
 		EnergyCost: core.EnergyCostOptions{
 			Cost:   baseCost,
 			Refund: 0,

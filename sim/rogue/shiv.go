@@ -17,7 +17,7 @@ func (rogue *Rogue) registerShivSpell() {
 		ActionID:    core.ActionID{SpellID: 5938},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeOHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | SpellFlagBuilder,
+		Flags:       core.SpellFlagMeleeMetrics | SpellFlagBuilder | core.SpellFlagAPL,
 
 		EnergyCost: core.EnergyCostOptions{
 			Cost: baseCost,

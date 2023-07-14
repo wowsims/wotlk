@@ -19,7 +19,7 @@ func (rogue *Rogue) registerGarrote() {
 		ActionID:    core.ActionID{SpellID: 48676},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | SpellFlagBuilder,
+		Flags:       core.SpellFlagMeleeMetrics | SpellFlagBuilder | core.SpellFlagAPL,
 
 		EnergyCost: core.EnergyCostOptions{
 			Cost:   rogue.costModifier(50 - 10*float64(rogue.Talents.DirtyDeeds)),
