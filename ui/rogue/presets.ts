@@ -1,6 +1,6 @@
 import { Conjured, Consumes, EquipmentSpec, Flask, Food, Glyphs, Potions } from '../core/proto/common.js';
 import { Player } from '../core/player.js';
-import { SavedTalents } from '../core/proto/ui.js';
+import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
 
 import {
 	Rogue_Options as RogueOptions,
@@ -16,6 +16,7 @@ import {
 } from '../core/proto/rogue.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
+import { APLRotation } from '../core/proto/apl.js';
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
@@ -131,6 +132,14 @@ export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfEndlessRage,
 	food: Food.FoodMegaMammothMeal,
 });
+
+export const ROTATION_APL_PRESET  = {
+	name: 'Basic APL',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: RogueRotation.toJsonString(DefaultRotation),
+		rotation: APLRotation.fromJsonString('{ "enabled": true, "priorityList": [] }')
+	}),
+};
 
 export const P2_PRESET_ASSASSINATION = {
 	name: 'P2 Assassination',
