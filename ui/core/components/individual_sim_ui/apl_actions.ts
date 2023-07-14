@@ -197,7 +197,7 @@ function actionListFieldConfig(field: string): AplHelpers.APLPickerBuilderFieldC
 			copyItem: (oldValue: APLAction) => oldValue ? APLAction.clone(oldValue) : oldValue,
 			newItemPicker: (parent: HTMLElement, listPicker: ListPicker<Player<any>, APLAction>, index: number, config: ListItemPickerConfig<Player<any>, APLAction>) => new APLActionPicker(parent, player, config),
 			horizontalLayout: true,
-			allowedActions: ['create', 'delete'],
+			allowedActions: ['create', 'delete', 'move'],
 		}),
 	};
 }
