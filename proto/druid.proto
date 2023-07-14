@@ -164,7 +164,7 @@ message BalanceDruid {
 		enum IsUsage {
 			NoIs = 0;
 			BeforeSolar = 1;
-			MaximizeIs = 2;
+			OptimizeIs = 2;
 			MultidotIs = 3;
 		}
 		IsUsage is_usage = 3;
