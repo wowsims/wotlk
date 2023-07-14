@@ -87,7 +87,7 @@ func (moonkin *BalanceDruid) Reset(sim *core.Simulation) {
 
 	if moonkin.Rotation.Type == proto.BalanceDruid_Rotation_Default {
 		moonkin.Rotation.MfUsage = proto.BalanceDruid_Rotation_BeforeLunar
-		moonkin.Rotation.IsUsage = proto.BalanceDruid_Rotation_MaximizeIs
+		moonkin.Rotation.IsUsage = proto.BalanceDruid_Rotation_OptimizeIs
 		moonkin.Rotation.WrathUsage = proto.BalanceDruid_Rotation_RegularWrath
 		moonkin.Rotation.UseBattleRes = false
 		moonkin.Rotation.UseStarfire = true
