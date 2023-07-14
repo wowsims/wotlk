@@ -26,6 +26,9 @@ type prio struct {
 }
 
 func (rogue *Rogue) OnEnergyGain(sim *core.Simulation) {
+	if rogue.IsUsingAPL {
+		return
+	}
 	rogue.TryUseCooldowns(sim)
 
 	if !rogue.GCD.IsReady(sim) {
@@ -36,6 +39,9 @@ func (rogue *Rogue) OnEnergyGain(sim *core.Simulation) {
 }
 
 func (rogue *Rogue) OnGCDReady(sim *core.Simulation) {
+	if rogue.IsUsingAPL {
+		return
+	}
 	rogue.TryUseCooldowns(sim)
 
 	if rogue.IsWaitingForEnergy() {
