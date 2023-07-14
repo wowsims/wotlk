@@ -42,22 +42,6 @@ export const LatencyMs = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecFeralD
 	labelTooltip: 'Player latency, in milliseconds. Adds a delay to actions that cannot be spell queued.',
 });
 
-export const PrepopOoc = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecFeralDruid>({
-	fieldName: 'prepopOoc',
-	label: 'Pre-pop Clearcasting',
-	labelTooltip: 'Start fight with clearcasting',
-	showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getTalents().omenOfClarity,
-	changeEmitter: (player: Player<Spec.SpecFeralDruid>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-})
-
-export const PrepopBerserk = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecFeralDruid>({
-	fieldName: 'prePopBerserk',
-	label: 'Pre-pop Berserk',
-	labelTooltip: 'Pre pop berserk 1 sec before fight',
-	showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getTalents().berserk,
-	changeEmitter: (player: Player<Spec.SpecFeralDruid>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-})
-
 export const AssumeBleedActive = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecFeralDruid>({
 	fieldName: 'assumeBleedActive',
 	label: 'Assume Bleed Always Active',
@@ -84,6 +68,20 @@ export const FeralDruidRotationConfig = {
 				{ name: 'Single Target', value: AplType.SingleTarget },
 				{ name: 'AOE', value: AplType.Aoe },
 			],
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
+			fieldName: 'prePopOoc',
+			label: 'Pre-pop Clearcasting',
+			labelTooltip: 'Start fight with clearcasting',
+			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getTalents().omenOfClarity,
+			changeEmitter: (player: Player<Spec.SpecFeralDruid>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
+			fieldName: 'prePopBerserk',
+			label: 'Pre-pop Berserk',
+			labelTooltip: 'Pre pop berserk 1 sec before fight',
+			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getTalents().berserk,
+			changeEmitter: (player: Player<Spec.SpecFeralDruid>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
 			fieldName: 'manualParams',
@@ -136,10 +134,11 @@ export const FeralDruidRotationConfig = {
 			showWhen: ShouldShowAdvParamAoe,
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
+			extraCssClasses: ['used-in-apl'],
 			fieldName: 'raidTargets',
 			label: 'GotW Raid Targets',
 			labelTooltip: 'Raid size to assume for clearcast proc chance (can include pets as well, so 25 man raid potentically can be ~30)',
-			showWhen: (player: Player<Spec.SpecFeralDruid>) => ShouldShowAdvParamAoe(player) && player.getRotation().flowerWeave == true,
+			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.aplRotation.enabled || (ShouldShowAdvParamAoe(player) && player.getRotation().flowerWeave == true),
 		}),
 		// Can be uncommented if/when analytical bite mode is added
 		//InputHelpers.makeRotationEnumInput<Spec.SpecFeralDruid, BiteModeType>({

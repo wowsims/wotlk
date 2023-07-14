@@ -150,7 +150,6 @@ var PlayerOptionsMonoCat = &proto.Player_FeralDruid{
 		Options: &proto.FeralDruid_Options{
 			InnervateTarget:   &proto.RaidTarget{TargetIndex: -1}, // no Innervate
 			LatencyMs:         100,
-			PrepopOoc:         true,
 			AssumeBleedActive: true,
 		},
 		Rotation: &proto.FeralDruid_Rotation{
@@ -170,6 +169,7 @@ var PlayerOptionsMonoCat = &proto.Player_FeralDruid{
 			SnekWeave:          false,
 			FlowerWeave:        false,
 			RaidTargets:        30,
+			PrePopOoc:          true,
 		},
 	},
 }
@@ -179,7 +179,6 @@ var PlayerOptionsMonoCatNoBleed = &proto.Player_FeralDruid{
 		Options: &proto.FeralDruid_Options{
 			InnervateTarget:   &proto.RaidTarget{TargetIndex: -1}, // no Innervate
 			LatencyMs:         100,
-			PrepopOoc:         true,
 			AssumeBleedActive: false,
 		},
 		Rotation: &proto.FeralDruid_Rotation{
@@ -199,6 +198,7 @@ var PlayerOptionsMonoCatNoBleed = &proto.Player_FeralDruid{
 			SnekWeave:          false,
 			FlowerWeave:        false,
 			RaidTargets:        30,
+			PrePopOoc:          true,
 		},
 	},
 }
@@ -208,7 +208,6 @@ var PlayerOptionsFlowerCatAoe = &proto.Player_FeralDruid{
 		Options: &proto.FeralDruid_Options{
 			InnervateTarget:   &proto.RaidTarget{TargetIndex: -1}, // no Innervate
 			LatencyMs:         100,
-			PrepopOoc:         true,
 			AssumeBleedActive: false,
 		},
 		Rotation: &proto.FeralDruid_Rotation{
@@ -228,6 +227,7 @@ var PlayerOptionsFlowerCatAoe = &proto.Player_FeralDruid{
 			SnekWeave:          false,
 			FlowerWeave:        true,
 			RaidTargets:        30,
+			PrePopOoc:          true,
 		},
 	},
 }

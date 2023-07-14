@@ -10,6 +10,10 @@ import (
 )
 
 func (cat *FeralDruid) OnEnergyGain(sim *core.Simulation) {
+	if cat.IsUsingAPL {
+		return
+	}
+
 	cat.TryUseCooldowns(sim)
 	if cat.InForm(druid.Cat) && !cat.readyToShift {
 		cat.doTigersFury(sim)
@@ -17,6 +21,10 @@ func (cat *FeralDruid) OnEnergyGain(sim *core.Simulation) {
 }
 
 func (cat *FeralDruid) OnGCDReady(sim *core.Simulation) {
+	if cat.IsUsingAPL {
+		return
+	}
+
 	cat.TryUseCooldowns(sim)
 	if !cat.GCD.IsReady(sim) {
 		return
@@ -49,6 +57,10 @@ func (cat *FeralDruid) OnGCDReady(sim *core.Simulation) {
 }
 
 func (cat *FeralDruid) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
+	if cat.IsUsingAPL {
+		return
+	}
+
 	if cat.InForm(druid.Humanoid) {
 		panic("auto attack out of form?")
 	}
@@ -81,6 +93,10 @@ func (cat *FeralDruid) NextRotationAction(sim *core.Simulation, kickAt time.Dura
 // Ported from https://github.com/NerdEgghead/WOTLK_cat_sim
 
 func (cat *FeralDruid) checkReplaceMaul(sim *core.Simulation) *core.Spell {
+	if cat.IsUsingAPL {
+		return nil
+	}
+
 	// If we will have enough time and Energy leeway to stay in
 	// Dire Bear Form once the GCD expires, then only Maul if we
 	// will be left with enough Rage to cast Mangle or Lacerate

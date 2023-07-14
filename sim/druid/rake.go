@@ -15,7 +15,7 @@ func (druid *Druid) registerRakeSpell() {
 		ActionID:    core.ActionID{SpellID: 48574},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreResists,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreResists | core.SpellFlagAPL,
 
 		EnergyCost: core.EnergyCostOptions{
 			Cost:   40 - float64(druid.Talents.Ferocity),
