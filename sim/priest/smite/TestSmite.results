@@ -495,6 +495,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSmite-AllItems-PetrifiedScarab-21685"
+ value: {
+  dps: 3406.98177
+  tps: 2894.74693
+ }
+}
+dps_results: {
  key: "TestSmite-AllItems-PetrifiedTwilightScale-54571"
  value: {
   dps: 3406.98177

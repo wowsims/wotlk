@@ -41,12 +41,12 @@ func NewFeralDruid(character core.Character, options *proto.Player) *FeralDruid 
 
 	cat.AssumeBleedActive = feralOptions.Options.AssumeBleedActive
 	cat.maxRipTicks = cat.MaxRipTicks()
-	cat.prepopOoc = feralOptions.Options.PrepopOoc
+	cat.prepopOoc = feralOptions.Rotation.PrePopOoc
 	cat.RaidBuffTargets = int(core.MaxInt32(feralOptions.Rotation.RaidTargets, 1))
 	if !feralOptions.Rotation.ManualParams {
 		cat.RaidBuffTargets = 30
 	}
-	cat.PrePopBerserk = feralOptions.Options.PrePopBerserk
+	cat.PrePopBerserk = feralOptions.Rotation.PrePopBerserk
 	cat.setupRotation(feralOptions.Rotation)
 
 	cat.EnableEnergyBar(100.0, cat.OnEnergyGain)
@@ -99,6 +99,10 @@ func (cat *FeralDruid) MissChance() float64 {
 func (cat *FeralDruid) Initialize() {
 	cat.Druid.Initialize()
 	cat.RegisterFeralCatSpells()
+
+	if cat.IsUsingAPL {
+		return
+	}
 
 	if cat.prepopOoc && cat.Talents.OmenOfClarity {
 		cat.RegisterPrepullAction(-time.Second, func(sim *core.Simulation) {

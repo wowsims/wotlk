@@ -50,6 +50,10 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 		})
 	}
 
+	if raidBuffs.NatureResistanceTotem || raidBuffs.AspectOfTheWild {
+		character.AddStat(stats.NatureResistance, 130-gotwResistAmount)
+	}
+
 	if raidBuffs.Thorns == proto.TristateEffect_TristateEffectImproved {
 		ThornsAura(character, 3)
 	} else if raidBuffs.Thorns == proto.TristateEffect_TristateEffectRegular {

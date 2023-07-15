@@ -56,6 +56,8 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 		return rot.newValueNot(config.GetNot())
 	case *proto.APLValue_Cmp:
 		return rot.newValueCompare(config.GetCmp())
+	case *proto.APLValue_Math:
+		return rot.newValueMath(config.GetMath())
 
 	// Encounter
 	case *proto.APLValue_CurrentTime:
@@ -116,6 +118,10 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 		return rot.newValueSpellTimeToReady(config.GetSpellTimeToReady())
 	case *proto.APLValue_SpellCastTime:
 		return rot.newValueSpellCastTime(config.GetSpellCastTime())
+	case *proto.APLValue_SpellChannelTime:
+		return rot.newValueSpellChannelTime(config.GetSpellChannelTime())
+	case *proto.APLValue_SpellTravelTime:
+		return rot.newValueSpellTravelTime(config.GetSpellTravelTime())
 
 	// Auras
 	case *proto.APLValue_AuraIsActive:
@@ -124,6 +130,8 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 		return rot.newValueAuraRemainingTime(config.GetAuraRemainingTime())
 	case *proto.APLValue_AuraNumStacks:
 		return rot.newValueAuraNumStacks(config.GetAuraNumStacks())
+	case *proto.APLValue_AuraInternalCooldown:
+		return rot.newValueAuraInternalCooldown(config.GetAuraInternalCooldown())
 
 	// Dots
 	case *proto.APLValue_DotIsActive:

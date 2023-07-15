@@ -26,7 +26,7 @@ func (rogue *Rogue) registerEnvenom() {
 		ActionID:     core.ActionID{SpellID: 57993},
 		SpellSchool:  core.SpellSchoolNature,
 		ProcMask:     core.ProcMaskMeleeMHSpecial, // not core.ProcMaskSpellDamage
-		Flags:        core.SpellFlagMeleeMetrics | rogue.finisherFlags() | SpellFlagColdBlooded,
+		Flags:        core.SpellFlagMeleeMetrics | rogue.finisherFlags() | SpellFlagColdBlooded | core.SpellFlagAPL,
 		MetricSplits: 6,
 
 		EnergyCost: core.EnergyCostOptions{

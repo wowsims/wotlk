@@ -96,6 +96,7 @@ func init() {
 			Timer:    shaman.NewTimer(),
 			Duration: time.Second * 30,
 		}
+		procAura.Icd = &icd
 		shaman.RegisterAura(core.Aura{
 			Label:    "Skycall Totem",
 			Duration: core.NeverExpires,
@@ -122,6 +123,7 @@ func init() {
 			Timer:    shaman.NewTimer(),
 			Duration: time.Second * 10,
 		}
+		procAura.Icd = &icd
 		const procChance = 0.5
 
 		shaman.RegisterAura(core.Aura{
@@ -165,7 +167,7 @@ func init() {
 
 		statAura := shaman.NewTemporaryStatsAura("Volcanic Fury", core.ActionID{SpellID: 67391}, stats.Stats{stats.AttackPower: 400}, time.Second*18)
 
-		core.MakeProcTriggerAura(&shaman.Unit, core.ProcTrigger{
+		triggerAura := core.MakeProcTriggerAura(&shaman.Unit, core.ProcTrigger{
 			Name:       "Totem of Quaking Earth Trigger",
 			Callback:   core.CallbackOnSpellHitDealt,
 			ProcMask:   core.ProcMaskMeleeOHSpecial,
@@ -177,6 +179,7 @@ func init() {
 				}
 			},
 		})
+		statAura.Icd = triggerAura.Icd
 	})
 }
 

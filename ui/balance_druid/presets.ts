@@ -86,7 +86,7 @@ export const DefaultRotation = BalanceDruidRotation.create({
 	maintainFaerieFire: true,
 	useSmartCooldowns: true,
 	mfUsage: BalanceDruid_Rotation_MfUsage.BeforeLunar,
-	isUsage: BalanceDruid_Rotation_IsUsage.MaximizeIs,
+	isUsage: BalanceDruid_Rotation_IsUsage.OptimizeIs,
 	wrathUsage: BalanceDruid_Rotation_WrathUsage.RegularWrath,
 	useStarfire: true,
 	useBattleRes: false,

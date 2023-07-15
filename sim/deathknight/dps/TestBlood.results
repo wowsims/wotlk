@@ -510,6 +510,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBlood-AllItems-PetrifiedScarab-21685"
+ value: {
+  dps: 6978.77144
+  tps: 3475.9395
+ }
+}
+dps_results: {
  key: "TestBlood-AllItems-PetrifiedTwilightScale-54571"
  value: {
   dps: 7022.71016

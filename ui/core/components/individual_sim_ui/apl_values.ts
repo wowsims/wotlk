@@ -5,6 +5,8 @@ import {
 	APLValueNot,
 	APLValueCompare,
 	APLValueCompare_ComparisonOperator as ComparisonOperator,
+	APLValueMath,
+	APLValueMath_MathOperator as MathOperator,
 	APLValueConst,
 	APLValueCurrentTime,
 	APLValueCurrentTimePercent,
@@ -21,6 +23,7 @@ import {
 	APLValueCurrentRuneCount,
 	APLValueCurrentRuneDeath,
 	APLValueCurrentRuneActive,
+	APLValueCurrentNonDeathRuneCount,
 	APLValueGCDIsReady,
 	APLValueGCDTimeToReady,
 	APLValueSpellCanCast,
@@ -29,13 +32,15 @@ import {
 	APLValueAuraIsActive,
 	APLValueAuraRemainingTime,
 	APLValueAuraNumStacks,
+	APLValueAuraInternalCooldown,
 	APLValueDotIsActive,
 	APLValueDotRemainingTime,
 	APLValueRuneCooldown,
 	APLValueNextRuneCooldown,
 	APLValueNumberTargets,
 	APLValueSpellCastTime,
-	APLValueCurrentNonDeathRuneCount,
+	APLValueSpellTravelTime,
+	APLValueSpellChannelTime,
 } from '../../proto/apl.js';
 
 import { EventID, TypedEvent } from '../../typed_event.js';
@@ -241,6 +246,24 @@ function comparisonOperatorFieldConfig(field: string): AplHelpers.APLPickerBuild
 	};
 }
 
+function mathOperatorFieldConfig(field: string): AplHelpers.APLPickerBuilderFieldConfig<any, any> {
+	return {
+		field: field,
+		newValue: () => MathOperator.OpAdd,
+		factory: (parent, player, config) => new TextDropdownPicker(parent, player, {
+			...config,
+			defaultLabel: 'None',
+			equals: (a, b) => a == b,
+			values: [
+				{ value: MathOperator.OpAdd, label: '+' },
+				{ value: MathOperator.OpSub, label: '-' },
+				{ value: MathOperator.OpMul, label: '*' },
+				{ value: MathOperator.OpDiv, label: '/' },
+			],
+		}),
+	};
+}
+
 export function valueFieldConfig(field: string, options?: Partial<AplHelpers.APLPickerBuilderFieldConfig<any, any>>): AplHelpers.APLPickerBuilderFieldConfig<any, any> {
 	return {
 		field: field,
@@ -317,6 +340,17 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		fields: [
 			valueFieldConfig('lhs'),
 			comparisonOperatorFieldConfig('op'),
+			valueFieldConfig('rhs'),
+		],
+	}),
+	'math': inputBuilder({
+		label: 'Math',
+		submenu: ['Logic'],
+		shortDescription: 'Do basic math on two values.',
+		newValue: APLValueMath.create,
+		fields: [
+			valueFieldConfig('lhs'),
+			mathOperatorFieldConfig('op'),
 			valueFieldConfig('rhs'),
 		],
 	}),
@@ -463,7 +497,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		],
 	}),
 	'currentRuneActive': inputBuilder({
-		label: 'Rune Ready',
+		label: 'Rune Is Ready',
 		submenu: ['Resources', 'Runes'],
 		shortDescription: 'Is the rune of a certain slot currently available.',
 		newValue: APLValueCurrentRuneActive.create,
@@ -472,7 +506,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		],
 	}),
 	'currentRuneDeath': inputBuilder({
-		label: 'Rune Death',
+		label: 'Rune Is Death',
 		submenu: ['Resources', 'Runes'],
 		shortDescription: 'Is the rune of a certain slot currently converted to Death.',
 		newValue: APLValueCurrentRuneDeath.create,
@@ -555,6 +589,24 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells'),
 		],
 	}),
+	'spellChannelTime': inputBuilder({
+		label: 'Channel Time',
+		submenu: ['Spell'],
+		shortDescription: 'Amount of time to channel the spell including any haste and spell cast time adjustments.',
+		newValue: APLValueSpellChannelTime.create,
+		fields: [
+			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells'),
+		],
+	}),
+	'spellTravelTime': inputBuilder({
+		label: 'Travel Time',
+		submenu: ['Spell'],
+		shortDescription: 'Amount of time for the spell to travel to the target.',
+		newValue: APLValueSpellTravelTime.create,
+		fields: [
+			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells'),
+		],
+	}),
 
 	// Auras
 	'auraIsActive': inputBuilder({
@@ -582,6 +634,15 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		newValue: APLValueAuraNumStacks.create,
 		fields: [
 			AplHelpers.actionIdFieldConfig('auraId', 'stackable_auras'),
+		],
+	}),
+	'auraInternalCooldown': inputBuilder({
+		label: 'Aura Internal Cooldown',
+		submenu: ['Aura'],
+		shortDescription: 'Time remaining before this aura can be applied again.',
+		newValue: APLValueAuraInternalCooldown.create,
+		fields: [
+			AplHelpers.actionIdFieldConfig('auraId', 'icd_auras'),
 		],
 	}),
 

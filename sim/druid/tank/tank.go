@@ -93,4 +93,5 @@ func (bear *FeralTankDruid) Reset(sim *core.Simulation) {
 	bear.Druid.Reset(sim)
 	bear.Druid.ClearForm(sim)
 	bear.BearFormAura.Activate(sim)
+	bear.Druid.PseudoStats.Stunned = false
 }

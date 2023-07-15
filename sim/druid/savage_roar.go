@@ -42,7 +42,7 @@ func (druid *Druid) registerSavageRoarSpell() {
 
 	srSpell := druid.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
-
+		Flags:    core.SpellFlagAPL,
 		EnergyCost: core.EnergyCostOptions{
 			Cost: 25,
 		},

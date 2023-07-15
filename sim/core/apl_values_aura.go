@@ -14,6 +14,14 @@ func (rot *APLRotation) aplGetAura(auraId *proto.ActionID) *Aura {
 	return aura
 }
 
+func (rot *APLRotation) aplGetProcAura(auraId *proto.ActionID) *Aura {
+	aura := rot.unit.GetIcdAuraByID(ProtoToActionID(auraId))
+	if aura == nil {
+		rot.validationWarning("No aura found for: %s", ProtoToActionID(auraId))
+	}
+	return aura
+}
+
 type APLValueAuraIsActive struct {
 	defaultAPLValueImpl
 	aura *Aura
@@ -79,4 +87,25 @@ func (value *APLValueAuraNumStacks) Type() proto.APLValueType {
 }
 func (value *APLValueAuraNumStacks) GetInt(sim *Simulation) int32 {
 	return value.aura.GetStacks()
+}
+
+type APLValueAuraInternalCooldown struct {
+	defaultAPLValueImpl
+	aura *Aura
+}
+
+func (rot *APLRotation) newValueAuraInternalCooldown(config *proto.APLValueAuraInternalCooldown) APLValue {
+	aura := rot.aplGetProcAura(config.AuraId)
+	if aura == nil {
+		return nil
+	}
+	return &APLValueAuraInternalCooldown{
+		aura: aura,
+	}
+}
+func (value *APLValueAuraInternalCooldown) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeDuration
+}
+func (value *APLValueAuraInternalCooldown) GetDuration(sim *Simulation) time.Duration {
+	return value.aura.Icd.TimeToReady(sim)
 }

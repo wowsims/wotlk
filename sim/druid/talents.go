@@ -427,6 +427,7 @@ func (druid *Druid) applyEclipse() {
 	solarProcMultiplier := 1.4 + core.TernaryFloat64(druid.HasSetBonus(ItemSetNightsongGarb, 2), 0.07, 0)
 	druid.SolarICD.Duration = time.Millisecond * 30000
 	druid.SolarEclipseProcAura = druid.RegisterAura(core.Aura{
+		Icd:      &druid.SolarICD,
 		Label:    "Solar Eclipse proc",
 		Duration: time.Millisecond * 15000,
 		ActionID: core.ActionID{SpellID: 48517},
@@ -469,6 +470,7 @@ func (druid *Druid) applyEclipse() {
 	lunarBonusCrit := (40 + core.TernaryFloat64(druid.HasSetBonus(ItemSetNightsongGarb, 2), 7, 0)) * core.CritRatingPerCritChance
 	druid.LunarICD.Duration = time.Millisecond * 30000
 	druid.LunarEclipseProcAura = druid.RegisterAura(core.Aura{
+		Icd:      &druid.LunarICD,
 		Label:    "Lunar Eclipse proc",
 		Duration: time.Millisecond * 15000,
 		ActionID: core.ActionID{SpellID: 48518},
@@ -556,6 +558,7 @@ func (druid *Druid) applyImprovedLotp() {
 	}
 
 	druid.RegisterAura(core.Aura{
+		Icd:      &icd,
 		Label:    "Improved Leader of the Pack",
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {

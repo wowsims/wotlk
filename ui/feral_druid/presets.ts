@@ -4,7 +4,7 @@ import { EquipmentSpec } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
 import { Flask } from '../core/proto/common.js';
 import { Glyphs } from '../core/proto/common.js';
-import { SavedTalents } from '../core/proto/ui.js';
+import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
 
 import {
 	FeralDruid_Rotation as FeralDruidRotation,
@@ -62,11 +62,11 @@ export const DefaultRotation = FeralDruidRotation.create({
 	flowerWeave: false,
 	raidTargets: 30,
 	maxFfDelay: 0.1,
+	prePopOoc: true,
 });
 
 export const DefaultOptions = FeralDruidOptions.create({
 	latencyMs: 100,
-	prepopOoc: true,
 	assumeBleedActive: true,
 });
 
@@ -75,6 +75,13 @@ export const DefaultConsumes = Consumes.create({
 	food: Food.FoodDragonfinFilet,
 	defaultPotion: Potions.PotionOfSpeed,
 });
+
+export const ROTATION_PRESET_LEGACY_DEFAULT = {
+	name: 'Legacy Default',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: FeralDruidRotation.toJsonString(DefaultRotation),
+	}),
+}
 
 export const PreRaid_PRESET = {
 	name: 'PreRaid',

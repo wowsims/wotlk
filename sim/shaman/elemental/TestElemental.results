@@ -610,6 +610,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElemental-AllItems-PetrifiedScarab-21685"
+ value: {
+  dps: 6380.10891
+  tps: 4039.11708
+ }
+}
+dps_results: {
  key: "TestElemental-AllItems-PetrifiedTwilightScale-54571"
  value: {
   dps: 6380.10891

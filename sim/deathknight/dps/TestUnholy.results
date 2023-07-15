@@ -556,6 +556,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestUnholy-AllItems-PetrifiedScarab-21685"
+ value: {
+  dps: 7496.83866
+  tps: 4821.73963
+  hps: 265.91924
+ }
+}
+dps_results: {
  key: "TestUnholy-AllItems-PetrifiedTwilightScale-54571"
  value: {
   dps: 7496.83866

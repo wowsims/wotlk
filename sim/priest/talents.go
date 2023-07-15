@@ -369,6 +369,7 @@ func (priest *Priest) applySurgeOfLight() {
 		Timer:    priest.NewTimer(),
 		Duration: time.Second * 6,
 	}
+	priest.SurgeOfLightProcAura.Icd = &icd
 
 	priest.RegisterAura(core.Aura{
 		Label:    "Surge of Light",
