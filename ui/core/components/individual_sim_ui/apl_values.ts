@@ -5,6 +5,7 @@ import {
 	APLValueNot,
 	APLValueCompare,
 	APLValueCompare_ComparisonOperator as ComparisonOperator,
+	APLValueMath,
 	APLValueMath_MathOperator as MathOperator,
 	APLValueConst,
 	APLValueCurrentTime,
@@ -22,6 +23,7 @@ import {
 	APLValueCurrentRuneCount,
 	APLValueCurrentRuneDeath,
 	APLValueCurrentRuneActive,
+	APLValueCurrentNonDeathRuneCount,
 	APLValueGCDIsReady,
 	APLValueGCDTimeToReady,
 	APLValueSpellCanCast,
@@ -30,16 +32,15 @@ import {
 	APLValueAuraIsActive,
 	APLValueAuraRemainingTime,
 	APLValueAuraNumStacks,
+	APLValueAuraInternalCooldown,
 	APLValueDotIsActive,
 	APLValueDotRemainingTime,
 	APLValueRuneCooldown,
 	APLValueNextRuneCooldown,
 	APLValueNumberTargets,
 	APLValueSpellCastTime,
-	APLValueCurrentNonDeathRuneCount,
 	APLValueSpellTravelTime,
 	APLValueSpellChannelTime,
-	APLValueMath,
 } from '../../proto/apl.js';
 
 import { EventID, TypedEvent } from '../../typed_event.js';
@@ -634,6 +635,15 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 		newValue: APLValueAuraNumStacks.create,
 		fields: [
 			AplHelpers.actionIdFieldConfig('auraId', 'stackable_auras'),
+		],
+	}),
+	['auraInternalCooldown']: inputBuilder({
+		label: 'Aura Internal Cooldown',
+		submenu: ['Aura'],
+		shortDescription: 'Time remaining before this aura can be applied again.',
+		newValue: APLValueAuraInternalCooldown.create,
+		fields: [
+			AplHelpers.actionIdFieldConfig('auraId', 'icd_auras'),
 		],
 	}),
 
