@@ -583,6 +583,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtectionWarrior-AllItems-PetrifiedScarab-21685"
+ value: {
+  dps: 1587.25996
+  tps: 4109.2253
+ }
+}
+dps_results: {
  key: "TestProtectionWarrior-AllItems-PetrifiedTwilightScale-54571"
  value: {
   dps: 1600.88298

@@ -56,7 +56,7 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 				Stat.StatArmorPenetration,
 				Stat.StatDefense,
 				Stat.StatDodge,
-				Stat.StatResilience,
+				Stat.StatNatureResistance,
 			],
 			epPseudoStats: [
 				PseudoStat.PseudoStatMainHandDps,
@@ -81,6 +81,7 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 				Stat.StatDodge,
 				Stat.StatSpellHit,
 				Stat.StatSpellCrit,
+				Stat.StatNatureResistance,
 			],
 
 			defaults: {

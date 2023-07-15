@@ -30,7 +30,7 @@ func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 
 	rogue.TricksOfTheTrade = rogue.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
-		Flags: core.SpellFlagAPL,
+		Flags:    core.SpellFlagAPL,
 
 		EnergyCost: core.EnergyCostOptions{
 			Cost: core.TernaryFloat64(hasShadowblades, 0, energyCost),

@@ -1030,4 +1030,45 @@ func init() {
 			},
 		})
 	})
+
+	core.NewItemEffect(21685, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		statBonusPerStack := stats.Stats{stats.ArcaneResistance: 10, stats.FireResistance: 10, stats.FrostResistance: 10, stats.NatureResistance: 10, stats.ShadowResistance: 10}
+
+		mercurialShieldAura := character.GetOrRegisterAura(core.Aura{
+			Label:     "Mercurial Shield",
+			ActionID:  core.ActionID{SpellID: 26464},
+			Duration:  time.Second * 60,
+			MaxStacks: 10,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				aura.SetStacks(sim, 10)
+			},
+			OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
+				character.AddStatsDynamic(sim, statBonusPerStack.Multiply(float64(newStacks-oldStacks)))
+			},
+			OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if result.Damage > 0 && !spell.SpellSchool.Matches(core.SpellSchoolPhysical) {
+					aura.RemoveStack(sim)
+				}
+			},
+		})
+
+		petrifiedScarabActivation := character.RegisterSpell(core.SpellConfig{
+			ActionID: core.ActionID{ItemID: 21685},
+			Cast: core.CastConfig{
+				CD: core.Cooldown{
+					Timer:    character.NewTimer(),
+					Duration: time.Second * 180,
+				},
+			},
+			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+				mercurialShieldAura.Activate(sim)
+			},
+		})
+
+		character.AddMajorCooldown(core.MajorCooldown{
+			Spell: petrifiedScarabActivation,
+			Type:  core.CooldownTypeSurvival,
+		})
+	})
 }

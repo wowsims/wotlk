@@ -448,6 +448,10 @@ message RaidBuffs {
 
 	// mp5
 	TristateEffect mana_spring_totem = 28;
+
+	// Nature Resistance
+	bool nature_resistance_totem = 45;
+	bool aspect_of_the_wild = 46;
 	
 	// Miscellaneous
 	bool bloodlust = 29;

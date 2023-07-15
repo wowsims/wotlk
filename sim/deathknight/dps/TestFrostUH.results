@@ -510,6 +510,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFrostUH-AllItems-PetrifiedScarab-21685"
+ value: {
+  dps: 7812.64271
+  tps: 5573.23738
+ }
+}
+dps_results: {
  key: "TestFrostUH-AllItems-PetrifiedTwilightScale-54571"
  value: {
   dps: 7812.64271

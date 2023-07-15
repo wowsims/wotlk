@@ -373,6 +373,10 @@ dps_results: {
  value: {}
 }
 dps_results: {
+ key: "TestRestoration-AllItems-PetrifiedScarab-21685"
+ value: {}
+}
+dps_results: {
  key: "TestRestoration-AllItems-PetrifiedTwilightScale-54571"
  value: {}
 }

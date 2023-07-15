@@ -268,6 +268,7 @@ export class SettingsTab extends SimTab {
 			{ item: IconInputs.HastePercentBuff, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
 			{ item: IconInputs.DamagePercentBuff, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower, Stat.StatSpellPower] },
 			{ item: IconInputs.DamageReductionPercentBuff, stats: [Stat.StatArmor] },
+			{ item: IconInputs.NatureResistanceBuff, stats: [Stat.StatNatureResistance] },
 			{ item: IconInputs.DefensiveCooldownBuff, stats: [Stat.StatArmor] },
 			{ item: IconInputs.MP5Buff, stats: [Stat.StatMP5] },
 			{ item: IconInputs.ReplenishmentBuff, stats: [Stat.StatMP5] },

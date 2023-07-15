@@ -15,7 +15,7 @@ func (rogue *Rogue) registerPremeditation() {
 
 	rogue.Premeditation = rogue.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 14183},
-		Flags: core.SpellFlagAPL,
+		Flags:    core.SpellFlagAPL,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
