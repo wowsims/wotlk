@@ -215,7 +215,6 @@ var ItemSetNightsongBattlegear = core.NewItemSet(core.ItemSet{
 				Timer:    druid.NewTimer(),
 				Duration: time.Second * 15,
 			}
-			cca.Icd = &icd
 
 			druid.RegisterAura(core.Aura{
 				Label:    "Nightsong 2pc",
@@ -223,6 +222,7 @@ var ItemSetNightsongBattlegear = core.NewItemSet(core.ItemSet{
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 					cca = druid.GetAura("Clearcasting")
+					cca.Icd = &icd
 					if cca == nil {
 						panic("no valid clearcasting aura")
 					}
