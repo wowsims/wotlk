@@ -20,7 +20,7 @@ const actionIdSets: Record<ACTION_ID_SET, {
 	['auras']: {
 		defaultLabel: 'Aura',
 		getActionIDs: async (player) => {
-			return player.getAuras().filter(aura => !aura.data.hasIcd).map(actionId => {
+			return player.getAuras().map(actionId => {
 				return {
 					value: actionId.id,
 				};
