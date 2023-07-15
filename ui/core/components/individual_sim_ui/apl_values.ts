@@ -49,28 +49,33 @@ import * as AplHelpers from './apl_helpers.js';
 export interface APLValuePickerConfig extends InputConfig<Player<any>, APLValue | undefined> {
 }
 
-export type APLValueType = APLValue['value']['oneofKind'];
+export type APLValueKind = APLValue['value']['oneofKind'];
+type APLValueImplStruct<F extends APLValueKind> = Extract<APLValue['value'], {oneofKind: F}>;
+type APLValueImplTypesUnion = {
+	[f in NonNullable<APLValueKind>]: f extends keyof APLValueImplStruct<f> ? APLValueImplStruct<f>[f] : never;
+};
+export type APLValueImplType = APLValueImplTypesUnion[NonNullable<APLValueKind>]|undefined;
 
 export class APLValuePicker extends Input<Player<any>, APLValue | undefined> {
 
-	private typePicker: TextDropdownPicker<Player<any>, APLValueType>;
+	private kindPicker: TextDropdownPicker<Player<any>, APLValueKind>;
 
-	private currentType: APLValueType;
+	private currentKind: APLValueKind;
 	private valuePicker: Input<Player<any>, any> | null;
 
 	constructor(parent: HTMLElement, player: Player<any>, config: APLValuePickerConfig) {
 		super(parent, 'apl-value-picker-root', player, config);
 
-		const allValueTypes = Object.keys(valueTypeFactories) as Array<NonNullable<APLValueType>>;
-		this.typePicker = new TextDropdownPicker(this.rootElem, player, {
+		const allValueKinds = Object.keys(valueKindFactories) as Array<NonNullable<APLValueKind>>;
+		this.kindPicker = new TextDropdownPicker(this.rootElem, player, {
 			defaultLabel: 'No Condition',
 			values: [{
 				value: undefined,
 				label: '<None>',
-			} as TextDropdownValueConfig<APLValueType>].concat(allValueTypes.map(valueType => {
-				const factory = valueTypeFactories[valueType];
+			} as TextDropdownValueConfig<APLValueKind>].concat(allValueKinds.map(kind => {
+				const factory = valueKindFactories[kind];
 				return {
-					value: valueType,
+					value: kind,
 					label: factory.label,
 					submenu: factory.submenu,
 					tooltip: factory.fullDescription ? `<p>${factory.shortDescription}</p> ${factory.fullDescription}` : factory.shortDescription,
@@ -79,57 +84,51 @@ export class APLValuePicker extends Input<Player<any>, APLValue | undefined> {
 			equals: (a, b) => a == b,
 			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
 			getValue: (player: Player<any>) => this.getSourceValue()?.value.oneofKind,
-			setValue: (eventID: EventID, player: Player<any>, newValue: APLValueType) => {
+			setValue: (eventID: EventID, player: Player<any>, newKind: APLValueKind) => {
 				const sourceValue = this.getSourceValue();
-				const oldValue = sourceValue?.value.oneofKind;
-				if (oldValue == newValue) {
+				const oldKind = sourceValue?.value.oneofKind;
+				if (oldKind == newKind) {
 					return;
 				}
 
-				if (newValue) {
-					const factory = valueTypeFactories[newValue];
-					let obj: any = { oneofKind: newValue };
-					obj[newValue] = factory.newValue();
+				if (newKind) {
+					const factory = valueKindFactories[newKind];
+					let newSourceValue = this.makeAPLValue(newKind, factory.newValue());
 					if (sourceValue) {
-						// Some pre-fill logic when swapping types.
-						if (oldValue && this.valuePicker) {
-							if (newValue == 'not') {
-								(obj[newValue] as APLValueNot).val = this.makeAPLValue(oldValue, this.valuePicker.getInputValue());
-							} else if (sourceValue.value.oneofKind == 'not' && sourceValue.value.not.val?.value.oneofKind == newValue && !['and', 'or'].includes(newValue)) {
-								obj = sourceValue.value.not.val.value;
-							} else if (newValue == 'and') {
+						// Some pre-fill logic when swapping kinds.
+						if (oldKind && this.valuePicker) {
+							if (newKind == 'not') {
+								(newSourceValue.value as APLValueImplStruct<'not'>).not.val = this.makeAPLValue(oldKind, this.valuePicker.getInputValue());
+							} else if (sourceValue.value.oneofKind == 'not' && sourceValue.value.not.val?.value.oneofKind == newKind) {
+								newSourceValue = sourceValue.value.not.val;
+							} else if (newKind == 'and') {
 								if (sourceValue.value.oneofKind == 'or') {
-									(obj[newValue] as APLValueAnd).vals = sourceValue.value.or.vals;
+									(newSourceValue.value as APLValueImplStruct<'and'>).and.vals = sourceValue.value.or.vals;
 								} else {
-									(obj[newValue] as APLValueAnd).vals = [this.makeAPLValue(oldValue, this.valuePicker.getInputValue())];
+									(newSourceValue.value as APLValueImplStruct<'and'>).and.vals = [this.makeAPLValue(oldKind, this.valuePicker.getInputValue())];
 								}
-							} else if (newValue == 'or') {
+							} else if (newKind == 'or') {
 								if (sourceValue.value.oneofKind == 'and') {
-									(obj[newValue] as APLValueOr).vals = sourceValue.value.and.vals;
+									(newSourceValue.value as APLValueImplStruct<'or'>).or.vals = sourceValue.value.and.vals;
 								} else {
-									(obj[newValue] as APLValueOr).vals = [this.makeAPLValue(oldValue, this.valuePicker.getInputValue())];
+									(newSourceValue.value as APLValueImplStruct<'or'>).or.vals = [this.makeAPLValue(oldKind, this.valuePicker.getInputValue())];
 								}
-							} else if (sourceValue.value.oneofKind == 'and' && sourceValue.value.and.vals?.[0]?.value.oneofKind == newValue) {
-								obj = sourceValue.value.and.vals[0].value;
-							} else if (sourceValue.value.oneofKind == 'or' && sourceValue.value.or.vals?.[0]?.value.oneofKind == newValue) {
-								obj = sourceValue.value.or.vals[0].value;
+							} else if (sourceValue.value.oneofKind == 'and' && sourceValue.value.and.vals?.[0]?.value.oneofKind == newKind) {
+								newSourceValue = sourceValue.value.and.vals[0];
+							} else if (sourceValue.value.oneofKind == 'or' && sourceValue.value.or.vals?.[0]?.value.oneofKind == newKind) {
+								newSourceValue = sourceValue.value.or.vals[0];
 							}
 						}
-
-						sourceValue.value = obj;
-					} else {
-						const newSourceValue = APLValue.create();
-						newSourceValue.value = obj;
-						this.setSourceValue(eventID, newSourceValue);
 					}
+					this.setSourceValue(eventID, newSourceValue);
 				} else {
-					this.setSourceValue(eventID, newValue);
+					this.setSourceValue(eventID, undefined);
 				}
 				player.rotationChangeEmitter.emit(eventID);
 			},
 		});
 
-		this.currentType = undefined;
+		this.currentKind = undefined;
 		this.valuePicker = null;
 
 		this.init();
@@ -140,17 +139,17 @@ export class APLValuePicker extends Input<Player<any>, APLValue | undefined> {
 	}
 
 	getInputValue(): APLValue | undefined {
-		const valueType = this.typePicker.getInputValue();
-		if (!valueType) {
+		const kind = this.kindPicker.getInputValue();
+		if (!kind) {
 			return undefined;
 		} else {
 			return APLValue.create({
 				value: {
-					oneofKind: valueType,
+					oneofKind: kind,
 					...((() => {
 						const val: any = {};
-						if (valueType && this.valuePicker) {
-							val[valueType] = this.valuePicker.getInputValue();
+						if (kind && this.valuePicker) {
+							val[kind] = this.valuePicker.getInputValue();
 						}
 						return val;
 					})()),
@@ -160,52 +159,52 @@ export class APLValuePicker extends Input<Player<any>, APLValue | undefined> {
 	}
 
 	setInputValue(newValue: APLValue | undefined) {
-		const newValueType = newValue?.value.oneofKind;
-		this.updateValuePicker(newValueType);
+		const newKind = newValue?.value.oneofKind;
+		this.updateValuePicker(newKind);
 
-		if (newValueType && newValue) {
-			this.valuePicker!.setInputValue((newValue.value as any)[newValueType]);
+		if (newKind && newValue) {
+			this.valuePicker!.setInputValue((newValue.value as any)[newKind]);
 		}
 	}
 
-	private makeAPLValue(type: APLValueType, implVal: any): APLValue {
-		if (!type) {
+	private makeAPLValue<K extends NonNullable<APLValueKind>>(kind: K, implVal: APLValueImplTypesUnion[K]): APLValue {
+		if (!kind) {
 			return APLValue.create();
 		}
-		const obj: any = { oneofKind: type };
-		obj[type] = implVal;
+		const obj: any = { oneofKind: kind };
+		obj[kind] = implVal;
 		return APLValue.create({value: obj});
 	}
 
-	private updateValuePicker(newValueType: APLValueType) {
-		const valueType = this.currentType;
-		if (newValueType == valueType) {
+	private updateValuePicker(newKind: APLValueKind) {
+		const oldKind = this.currentKind;
+		if (newKind == oldKind) {
 			return;
 		}
-		this.currentType = newValueType;
+		this.currentKind = newKind;
 
 		if (this.valuePicker) {
 			this.valuePicker.rootElem.remove();
 			this.valuePicker = null;
 		}
 
-		if (!newValueType) {
+		if (!newKind) {
 			return;
 		}
 
-		this.typePicker.setInputValue(newValueType);
+		this.kindPicker.setInputValue(newKind);
 
-		const factory = valueTypeFactories[newValueType];
+		const factory = valueKindFactories[newKind];
 		this.valuePicker = factory.factory(this.rootElem, this.modObject, {
 			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
 			getValue: () => {
 				const sourceVal = this.getSourceValue();
-				return sourceVal ? (sourceVal.value as any)[newValueType] || factory.newValue() : factory.newValue();
+				return sourceVal ? (sourceVal.value as any)[newKind] || factory.newValue() : factory.newValue();
 			},
 			setValue: (eventID: EventID, player: Player<any>, newValue: any) => {
 				const sourceVal = this.getSourceValue();
 				if (sourceVal) {
-					(sourceVal.value as any)[newValueType] = newValue;
+					(sourceVal.value as any)[newKind] = newValue;
 				}
 				player.rotationChangeEmitter.emit(eventID);
 			},
@@ -213,7 +212,7 @@ export class APLValuePicker extends Input<Player<any>, APLValue | undefined> {
 	}
 }
 
-type ValueTypeConfig<T> = {
+type ValueKindConfig<T> = {
 	label: string,
 	submenu?: Array<string>,
 	shortDescription: string,
@@ -272,14 +271,14 @@ export function valueListFieldConfig(field: string): AplHelpers.APLPickerBuilder
 	};
 }
 
-function inputBuilder<T>(config: {
+function inputBuilder<T extends APLValueImplType>(config: {
 	label: string,
 	submenu?: Array<string>,
 	shortDescription: string,
 	fullDescription?: string,
 	newValue: () => T,
-	fields: Array<AplHelpers.APLPickerBuilderFieldConfig<T, any>>,
-}): ValueTypeConfig<T> {
+	fields: Array<AplHelpers.APLPickerBuilderFieldConfig<T, keyof T>>,
+}): ValueKindConfig<T> {
 	return {
 		label: config.label,
 		submenu: config.submenu,
@@ -290,9 +289,9 @@ function inputBuilder<T>(config: {
 	};
 }
 
-const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>> = {
+const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APLValueImplTypesUnion[f]>} = {
 	// Operators
-	['const']: inputBuilder({
+	'const': inputBuilder({
 		label: 'Const',
 		shortDescription: 'A fixed value.',
 		fullDescription: `
@@ -310,7 +309,7 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 			AplHelpers.stringFieldConfig('val'),
 		],
 	}),
-	['cmp']: inputBuilder({
+	'cmp': inputBuilder({
 		label: 'Compare',
 		submenu: ['Logic'],
 		shortDescription: 'Compares two values.',
@@ -321,7 +320,7 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 			valueFieldConfig('rhs'),
 		],
 	}),
-	['and']: inputBuilder({
+	'and': inputBuilder({
 		label: 'All of',
 		submenu: ['Logic'],
 		shortDescription: 'Returns <b>True</b> if all of the sub-values are <b>True</b>, otherwise <b>False</b>',
@@ -330,7 +329,7 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 			valueListFieldConfig('vals'),
 		],
 	}),
-	['or']: inputBuilder({
+	'or': inputBuilder({
 		label: 'Any of',
 		submenu: ['Logic'],
 		shortDescription: 'Returns <b>True</b> if any of the sub-values are <b>True</b>, otherwise <b>False</b>',
@@ -339,7 +338,7 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 			valueListFieldConfig('vals'),
 		],
 	}),
-	['not']: inputBuilder({
+	'not': inputBuilder({
 		label: 'Not',
 		submenu: ['Logic'],
 		shortDescription: 'Returns the opposite of the inner value, i.e. <b>True</b> if the value is <b>False</b> and vice-versa.',
@@ -350,35 +349,35 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 	}),
 
 	// Encounter
-	['currentTime']: inputBuilder({
+	'currentTime': inputBuilder({
 		label: 'Current Time',
 		submenu: ['Encounter'],
 		shortDescription: 'Elapsed time of the current sim iteration.',
 		newValue: APLValueCurrentTime.create,
 		fields: [],
 	}),
-	['currentTimePercent']: inputBuilder({
+	'currentTimePercent': inputBuilder({
 		label: 'Current Time (%)',
 		submenu: ['Encounter'],
 		shortDescription: 'Elapsed time of the current sim iteration, as a percentage.',
 		newValue: APLValueCurrentTimePercent.create,
 		fields: [],
 	}),
-	['remainingTime']: inputBuilder({
+	'remainingTime': inputBuilder({
 		label: 'Remaining Time',
 		submenu: ['Encounter'],
 		shortDescription: 'Elapsed time of the remaining sim iteration.',
 		newValue: APLValueRemainingTime.create,
 		fields: [],
 	}),
-	['remainingTimePercent']: inputBuilder({
+	'remainingTimePercent': inputBuilder({
 		label: 'Remaining Time (%)',
 		submenu: ['Encounter'],
 		shortDescription: 'Elapsed time of the remaining sim iteration, as a percentage.',
 		newValue: APLValueRemainingTimePercent.create,
 		fields: [],
 	}),
-	['numberTargets']: inputBuilder({
+	'numberTargets': inputBuilder({
 		label: 'Number of Targets',
 		submenu: ['Encounter'],
 		shortDescription: 'Count of targets in the current encounter',
@@ -387,56 +386,56 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 	}),
 
 	// Resources
-	['currentHealth']: inputBuilder({
+	'currentHealth': inputBuilder({
 		label: 'Health',
 		submenu: ['Resources'],
 		shortDescription: 'Amount of currently available Health.',
 		newValue: APLValueCurrentHealth.create,
 		fields: [],
 	}),
-	['currentHealthPercent']: inputBuilder({
+	'currentHealthPercent': inputBuilder({
 		label: 'Health (%)',
 		submenu: ['Resources'],
 		shortDescription: 'Amount of currently available Health, as a percentage.',
 		newValue: APLValueCurrentHealthPercent.create,
 		fields: [],
 	}),
-	['currentMana']: inputBuilder({
+	'currentMana': inputBuilder({
 		label: 'Mana',
 		submenu: ['Resources'],
 		shortDescription: 'Amount of currently available Mana.',
 		newValue: APLValueCurrentMana.create,
 		fields: [],
 	}),
-	['currentManaPercent']: inputBuilder({
+	'currentManaPercent': inputBuilder({
 		label: 'Mana (%)',
 		submenu: ['Resources'],
 		shortDescription: 'Amount of currently available Mana, as a percentage.',
 		newValue: APLValueCurrentManaPercent.create,
 		fields: [],
 	}),
-	['currentRage']: inputBuilder({
+	'currentRage': inputBuilder({
 		label: 'Rage',
 		submenu: ['Resources'],
 		shortDescription: 'Amount of currently available Rage.',
 		newValue: APLValueCurrentRage.create,
 		fields: [],
 	}),
-	['currentEnergy']: inputBuilder({
+	'currentEnergy': inputBuilder({
 		label: 'Energy',
 		submenu: ['Resources'],
 		shortDescription: 'Amount of currently available Energy.',
 		newValue: APLValueCurrentEnergy.create,
 		fields: [],
 	}),
-	['currentComboPoints']: inputBuilder({
+	'currentComboPoints': inputBuilder({
 		label: 'Combo Points',
 		submenu: ['Resources'],
 		shortDescription: 'Amount of currently available Combo Points.',
 		newValue: APLValueCurrentComboPoints.create,
 		fields: [],
 	}),
-	['currentRunicPower']: inputBuilder({
+	'currentRunicPower': inputBuilder({
 		label: 'Runic Power',
 		submenu: ['Resources'],
 		shortDescription: 'Amount of currently available Runic Power.',
@@ -445,7 +444,7 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 	}),
 
 	// Resources Rune
-	['currentRuneCount']: inputBuilder({
+	'currentRuneCount': inputBuilder({
 		label: 'Num Runes',
 		submenu: ['Resources', 'Runes'],
 		shortDescription: 'Amount of currently available Runes of certain type including Death.',
@@ -454,7 +453,7 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 			AplHelpers.runeTypeFieldConfig('runeType', true),
 		],
 	}),
-	['currentNonDeathRuneCount']: inputBuilder({
+	'currentNonDeathRuneCount': inputBuilder({
 		label: 'Num Non Death Runes',
 		submenu: ['Resources', 'Runes'],
 		shortDescription: 'Amount of currently available Runes of certain type ignoring Death',
@@ -463,7 +462,7 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 			AplHelpers.runeTypeFieldConfig('runeType', false),
 		],
 	}),
-	['currentRuneActive']: inputBuilder({
+	'currentRuneActive': inputBuilder({
 		label: 'Rune Ready',
 		submenu: ['Resources', 'Runes'],
 		shortDescription: 'Is the rune of a certain slot currently available.',
@@ -472,7 +471,7 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 			AplHelpers.runeSlotFieldConfig('runeSlot'),
 		],
 	}),
-	['currentRuneDeath']: inputBuilder({
+	'currentRuneDeath': inputBuilder({
 		label: 'Rune Death',
 		submenu: ['Resources', 'Runes'],
 		shortDescription: 'Is the rune of a certain slot currently converted to Death.',
@@ -481,7 +480,7 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 			AplHelpers.runeSlotFieldConfig('runeSlot'),
 		],
 	}),
-	['runeCooldown']: inputBuilder({
+	'runeCooldown': inputBuilder({
 		label: 'Rune Cooldown',
 		submenu: ['Resources', 'Runes'],
 		shortDescription: 'Amount of time until a rune of certain type is ready to use.<br><b>NOTE:</b> Returns 0 if there is a rune available',
@@ -490,7 +489,7 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 			AplHelpers.runeTypeFieldConfig('runeType', false),
 		],
 	}),
-	['nextRuneCooldown']: inputBuilder({
+	'nextRuneCooldown': inputBuilder({
 		label: 'Next Rune Cooldown',
 		submenu: ['Resources', 'Runes'],
 		shortDescription: 'Amount of time until a 2nd rune of certain type is ready to use.<br><b>NOTE:</b> Returns 0 if there are 2 runes available',
@@ -501,14 +500,14 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 	}),
 
 	// GCD
-	['gcdIsReady']: inputBuilder({
+	'gcdIsReady': inputBuilder({
 		label: 'GCD Is Ready',
 		submenu: ['GCD'],
 		shortDescription: '<b>True</b> if the GCD is not on cooldown, otherwise <b>False</b>.',
 		newValue: APLValueGCDIsReady.create,
 		fields: [],
 	}),
-	['gcdTimeToReady']: inputBuilder({
+	'gcdTimeToReady': inputBuilder({
 		label: 'GCD Time To Ready',
 		submenu: ['GCD'],
 		shortDescription: 'Amount of time remaining before the GCD comes off cooldown, or <b>0</b> if it is not on cooldown.',
@@ -517,7 +516,7 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 	}),
 
 	// Spells
-	['spellCanCast']: inputBuilder({
+	'spellCanCast': inputBuilder({
 		label: 'Can Cast',
 		submenu: ['Spell'],
 		shortDescription: '<b>True</b> if all requirements for casting the spell are currently met, otherwise <b>False</b>.',
@@ -529,7 +528,7 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells'),
 		],
 	}),
-	['spellIsReady']: inputBuilder({
+	'spellIsReady': inputBuilder({
 		label: 'Is Ready',
 		submenu: ['Spell'],
 		shortDescription: '<b>True</b> if the spell is not on cooldown, otherwise <b>False</b>.',
@@ -538,7 +537,7 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells'),
 		],
 	}),
-	['spellTimeToReady']: inputBuilder({
+	'spellTimeToReady': inputBuilder({
 		label: 'Time To Ready',
 		submenu: ['Spell'],
 		shortDescription: 'Amount of time remaining before the spell comes off cooldown, or <b>0</b> if it is not on cooldown.',
@@ -547,7 +546,7 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells'),
 		],
 	}),
-	['spellCastTime']: inputBuilder({
+	'spellCastTime': inputBuilder({
 		label: 'Cast Time',
 		submenu: ['Spell'],
 		shortDescription: 'Amount of time to cast the spell including any haste and spell cast time adjustments.',
@@ -558,7 +557,7 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 	}),
 
 	// Auras
-	['auraIsActive']: inputBuilder({
+	'auraIsActive': inputBuilder({
 		label: 'Aura Is Active',
 		submenu: ['Aura'],
 		shortDescription: '<b>True</b> if the aura is currently active on self, otherwise <b>False</b>.',
@@ -567,7 +566,7 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 			AplHelpers.actionIdFieldConfig('auraId', 'auras'),
 		],
 	}),
-	['auraRemainingTime']: inputBuilder({
+	'auraRemainingTime': inputBuilder({
 		label: 'Aura Remaining Time',
 		submenu: ['Aura'],
 		shortDescription: 'Time remaining before this aura will expire, or 0 if the aura is not currently active on self.',
@@ -576,7 +575,7 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 			AplHelpers.actionIdFieldConfig('auraId', 'auras'),
 		],
 	}),
-	['auraNumStacks']: inputBuilder({
+	'auraNumStacks': inputBuilder({
 		label: 'Aura Num Stacks',
 		submenu: ['Aura'],
 		shortDescription: 'Number of stacks of the aura on self.',
@@ -587,7 +586,7 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 	}),
 
 	// DoT
-	['dotIsActive']: inputBuilder({
+	'dotIsActive': inputBuilder({
 		label: 'Dot Is Active',
 		submenu: ['DoT'],
 		shortDescription: '<b>True</b> if the specified dot is currently ticking, otherwise <b>False</b>.',
@@ -596,7 +595,7 @@ const valueTypeFactories: Record<NonNullable<APLValueType>, ValueTypeConfig<any>
 			AplHelpers.actionIdFieldConfig('spellId', 'dot_spells'),
 		],
 	}),
-	['dotRemainingTime']: inputBuilder({
+	'dotRemainingTime': inputBuilder({
 		label: 'Dot Remaining Time',
 		submenu: ['DoT'],
 		shortDescription: 'Time remaining before the last tick of this DoT will occur, or 0 if the DoT is not currently ticking.',

@@ -4,19 +4,19 @@ import { EventID, TypedEvent } from '../typed_event.js';
 
 import { Input, InputConfig } from './input.js';
 
-export interface DropdownValueConfig<T> {
-	value: T,
+export interface DropdownValueConfig<V> {
+	value: V,
 	submenu?: Array<string>,
 	headerText?: string,
 	tooltip?: string,
 	extraCssClasses?: Array<string>,
 }
 
-export interface DropdownPickerConfig<ModObject, T> extends InputConfig<ModObject, T> {
-	values: Array<DropdownValueConfig<T>>;
-	equals: (a: T | undefined, b: T | undefined) => boolean,
-	setOptionContent: (button: HTMLButtonElement, valueConfig: DropdownValueConfig<T>) => void,
-	createMissingValue?: (val: T) => Promise<DropdownValueConfig<T>>,
+export interface DropdownPickerConfig<ModObject, T, V = T> extends InputConfig<ModObject, T, V> {
+	values: Array<DropdownValueConfig<V>>;
+	equals: (a: V | undefined, b: V | undefined) => boolean,
+	setOptionContent: (button: HTMLButtonElement, valueConfig: DropdownValueConfig<V>) => void,
+	createMissingValue?: (val: V) => Promise<DropdownValueConfig<V>>,
 	defaultLabel: string,
 }
 
@@ -27,17 +27,17 @@ interface DropdownSubmenu {
 }
 
 /** UI Input that uses a dropdown menu. */
-export class DropdownPicker<ModObject, T> extends Input<ModObject, T> {
-	private readonly config: DropdownPickerConfig<ModObject, T>;
-	private valueConfigs: Array<DropdownValueConfig<T>>;
+export class DropdownPicker<ModObject, T, V = T> extends Input<ModObject, T, V> {
+	private readonly config: DropdownPickerConfig<ModObject, T, V>;
+	private valueConfigs: Array<DropdownValueConfig<V>>;
 
 	private readonly buttonElem: HTMLButtonElement;
 	private readonly listElem: HTMLUListElement;
 
-	private currentSelection: DropdownValueConfig<T> | null;
+	private currentSelection: DropdownValueConfig<V> | null;
 	private submenus: Array<DropdownSubmenu>;
 
-	constructor(parent: HTMLElement, modObject: ModObject, config: DropdownPickerConfig<ModObject, T>) {
+	constructor(parent: HTMLElement, modObject: ModObject, config: DropdownPickerConfig<ModObject, T, V>) {
 		super(parent, 'dropdown-picker-root', modObject, config);
 		this.config = config;
 		this.valueConfigs = this.config.values.filter(vc => !vc.headerText);
@@ -62,13 +62,13 @@ export class DropdownPicker<ModObject, T> extends Input<ModObject, T> {
 		this.init();
 	}
 
-	setOptions(newValueConfigs: Array<DropdownValueConfig<T>>) {
+	setOptions(newValueConfigs: Array<DropdownValueConfig<V>>) {
 		this.buildDropdown(newValueConfigs);
 		this.valueConfigs = newValueConfigs.filter(vc => !vc.headerText);
 		this.setInputValue(this.getSourceValue());
 	}
 
-	private buildDropdown(valueConfigs: Array<DropdownValueConfig<T>>) {
+	private buildDropdown(valueConfigs: Array<DropdownValueConfig<V>>) {
 		this.listElem.innerHTML = '';
 		this.submenus = [];
 		valueConfigs.forEach(valueConfig => {
@@ -183,10 +183,11 @@ export class DropdownPicker<ModObject, T> extends Input<ModObject, T> {
 	}
 
 	getInputValue(): T {
-		return this.currentSelection?.value as T;
+		return this.valueToSource(this.currentSelection?.value as V);
 	}
 
-	setInputValue(newValue: T) {
+	setInputValue(newSrcValue: T) {
+		const newValue = this.sourceToValue(newSrcValue);
 		const newSelection = this.valueConfigs.find(v => this.config.equals(v.value, newValue))!;
 		if (newSelection) {
 			this.updateValue(newSelection);
@@ -199,7 +200,7 @@ export class DropdownPicker<ModObject, T> extends Input<ModObject, T> {
 		}
 	}
 
-	private updateValue(newValue: DropdownValueConfig<T> | null) {
+	private updateValue(newValue: DropdownValueConfig<V> | null) {
 		this.currentSelection = newValue;
 
 		// Update button
