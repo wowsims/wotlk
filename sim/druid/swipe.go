@@ -22,7 +22,7 @@ func (druid *Druid) registerSwipeBearSpell() {
 		ActionID:    core.ActionID{SpellID: 48562},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagAPL,
 
 		RageCost: core.RageCostOptions{
 			Cost: 20 - float64(druid.Talents.Ferocity),

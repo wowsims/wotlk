@@ -354,6 +354,9 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					Presets.SubtletyTalents,
 					Presets.HemoSubtletyTalents,
 				],
+				rotations: [
+					Presets.ROTATION_APL_PRESET,
+				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.PRERAID_PRESET_ASSASSINATION,

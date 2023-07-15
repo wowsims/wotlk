@@ -41,7 +41,7 @@ export const simLaunchStatuses: Record<Spec, LaunchStatus> = {
 // Alpha and Beta show an info notice at the top of the page.
 export const aplLaunchStatuses: Record<Spec, LaunchStatus> = {
 	[Spec.SpecBalanceDruid]: LaunchStatus.Alpha,
-	[Spec.SpecFeralDruid]: LaunchStatus.Unlaunched,
+	[Spec.SpecFeralDruid]: LaunchStatus.Alpha,
 	[Spec.SpecFeralTankDruid]: LaunchStatus.Unlaunched,
 	[Spec.SpecRestorationDruid]: LaunchStatus.Unlaunched,
 	[Spec.SpecElementalShaman]: LaunchStatus.Alpha,
@@ -49,12 +49,12 @@ export const aplLaunchStatuses: Record<Spec, LaunchStatus> = {
 	[Spec.SpecRestorationShaman]: LaunchStatus.Unlaunched,
 	[Spec.SpecHunter]: LaunchStatus.Alpha,
 	[Spec.SpecMage]: LaunchStatus.Alpha,
-	[Spec.SpecRogue]: LaunchStatus.Unlaunched,
+	[Spec.SpecRogue]: LaunchStatus.Alpha,
 	[Spec.SpecHolyPaladin]: LaunchStatus.Unlaunched,
 	[Spec.SpecProtectionPaladin]: LaunchStatus.Unlaunched,
 	[Spec.SpecRetributionPaladin]: LaunchStatus.Unlaunched,
 	[Spec.SpecHealingPriest]: LaunchStatus.Unlaunched,
-	[Spec.SpecShadowPriest]: LaunchStatus.Unlaunched,
+	[Spec.SpecShadowPriest]: LaunchStatus.Alpha,
 	[Spec.SpecSmitePriest]: LaunchStatus.Unlaunched,
 	[Spec.SpecWarlock]: LaunchStatus.Unlaunched,
 	[Spec.SpecWarrior]: LaunchStatus.Unlaunched,

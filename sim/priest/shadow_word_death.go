@@ -26,6 +26,7 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 		ActionID:    core.ActionID{SpellID: 48158},
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.12,

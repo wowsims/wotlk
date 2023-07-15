@@ -20,7 +20,7 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 			ActionID:    core.ActionID{SpellID: 63675},
 			SpellSchool: core.SpellSchoolShadow,
 			ProcMask:    core.ProcMaskEmpty, // TODO: test if this can proc things
-			Flags:       core.SpellFlagDisease,
+			Flags:       core.SpellFlagDisease | core.SpellFlagAPL,
 
 			BonusHitRating: float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
 			BonusCritRating: 0 +
@@ -49,7 +49,7 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagDisease,
+		Flags:       core.SpellFlagDisease | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.25,

@@ -27,7 +27,15 @@ export interface ListItemPickerConfig<ModObject, ItemType> extends InputConfig<M
 interface ItemPickerPair<ItemType> {
 	elem: HTMLElement,
 	picker: Input<any, ItemType>,
+	idx: number,
 }
+
+interface ListDragData<ModObject, ItemType> {
+	listPicker: ListPicker<ModObject, ItemType>;
+	item: ItemPickerPair<ItemType>;
+}
+
+var curDragData: ListDragData<any, any>|null = null;
 
 export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<ItemType>> {
 	readonly config: ListPickerConfig<ModObject, ItemType>;
@@ -158,36 +166,74 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 			},
 		});
 
+		const item: ItemPickerPair<ItemType> = { elem: itemContainer, picker: itemPicker, idx: index };
+
 		if (this.actionEnabled('move')) {
-			const upButton = ListPicker.makeActionElem('list-picker-item-up', 'Move Up', 'fa-angle-up');
-			itemHeader.appendChild(upButton);
-			const upButtonTooltip = Tooltip.getOrCreateInstance(upButton);
+			const moveButton = ListPicker.makeActionElem('list-picker-item-move', 'Move (Drag+Drop)', 'fa-arrows-up-down');
+			itemHeader.appendChild(moveButton);
 
-			upButton.addEventListener('click', event => {
-				if (index == 0) {
-					return;
-				}
-
-				const newList = this.config.getValue(this.modObject);
-				swap(newList, index, index - 1);
-				this.config.setValue(TypedEvent.nextEventID(), this.modObject, newList);
-				upButtonTooltip.hide();
+			const moveButtonTooltip = Tooltip.getOrCreateInstance(moveButton);
+			moveButton.addEventListener('click', event => {
+				moveButtonTooltip.hide();
 			});
 
-			const downButton = ListPicker.makeActionElem('list-picker-item-down', 'Move Down', 'fa-angle-down');
-			itemHeader.appendChild(downButton);
-			const downButtonTooltip = Tooltip.getOrCreateInstance(downButton);
+			moveButton.draggable = true;
+			moveButton.ondragstart = event => {
+				if (event.target == moveButton) {
+					event.dataTransfer!.dropEffect = 'move';
+					event.dataTransfer!.effectAllowed = 'move';
+					itemContainer.classList.add('dragfrom');
+					curDragData = {
+						listPicker: this,
+						item: item,
+					};
+				}
+			};
 
-			downButton.addEventListener('click', event => {
-				if (index == this.itemPickerPairs.length - 1) {
+			let dragEnterCounter = 0;
+			itemContainer.ondragenter = event => {
+				if (!curDragData || curDragData.listPicker != this) {
 					return;
 				}
+				event.preventDefault();
+				dragEnterCounter++;
+				itemContainer.classList.add('dragto');
+			};
+			itemContainer.ondragleave = event => {
+				if (!curDragData || curDragData.listPicker != this) {
+					return;
+				}
+				event.preventDefault();
+				dragEnterCounter--;
+				if (dragEnterCounter <= 0) {
+					itemContainer.classList.remove('dragto');
+				}
+			};
+			itemContainer.ondragover = event => {
+				if (!curDragData || curDragData.listPicker != this) {
+					return;
+				}
+				event.preventDefault();
+			};
+			itemContainer.ondrop = event => {
+				if (!curDragData || curDragData.listPicker != this) {
+					return;
+				}
+				event.preventDefault();
+				dragEnterCounter = 0;
+				itemContainer.classList.remove('dragto');
+				curDragData.item.elem.classList.remove('dragfrom');
 
+				const srcIdx = curDragData.item.idx;
+				const dstIdx = index;
 				const newList = this.config.getValue(this.modObject);
-				swap(newList, index, index + 1);
+				const arrElem = newList[srcIdx];
+				newList.splice(srcIdx, 1);
+				newList.splice(dstIdx, 0, arrElem);
 				this.config.setValue(TypedEvent.nextEventID(), this.modObject, newList);
-				downButtonTooltip.hide();
-			});
+
+				curDragData = null;
+			};
 		}
 
 		if (this.actionEnabled('copy')) {
@@ -217,7 +263,7 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 			});
 		}
 
-		this.itemPickerPairs.push({ elem: itemContainer, picker: itemPicker });
+		this.itemPickerPairs.push(item);
 	}
 
 	static makeActionElem(cssClass: string, title: string, iconCssClass: string): HTMLElement {

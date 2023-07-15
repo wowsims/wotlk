@@ -114,7 +114,7 @@ var PlayerOptionsAdaptive = &proto.Player_BalanceDruid{
 		Options: &proto.BalanceDruid_Options{},
 		Rotation: &proto.BalanceDruid_Rotation{
 			MfUsage:            proto.BalanceDruid_Rotation_BeforeLunar,
-			IsUsage:            proto.BalanceDruid_Rotation_MaximizeIs,
+			IsUsage:            proto.BalanceDruid_Rotation_OptimizeIs,
 			WrathUsage:         proto.BalanceDruid_Rotation_RegularWrath,
 			UseBattleRes:       false,
 			UseStarfire:        true,
@@ -150,7 +150,7 @@ var PlayerOptionsMultidotMf = &proto.Player_BalanceDruid{
 		Options: &proto.BalanceDruid_Options{},
 		Rotation: &proto.BalanceDruid_Rotation{
 			MfUsage:            proto.BalanceDruid_Rotation_MultidotMf,
-			IsUsage:            proto.BalanceDruid_Rotation_MaximizeIs,
+			IsUsage:            proto.BalanceDruid_Rotation_OptimizeIs,
 			WrathUsage:         proto.BalanceDruid_Rotation_RegularWrath,
 			UseBattleRes:       false,
 			UseStarfire:        true,

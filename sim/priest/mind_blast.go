@@ -20,6 +20,7 @@ func (priest *Priest) registerMindBlastSpell() {
 		ActionID:    core.ActionID{SpellID: 48127},
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.17,

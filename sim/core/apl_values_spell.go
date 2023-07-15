@@ -97,3 +97,47 @@ func (value *APLValueSpellCastTime) Type() proto.APLValueType {
 func (value *APLValueSpellCastTime) GetDuration(sim *Simulation) time.Duration {
 	return value.spell.Unit.ApplyCastSpeedForSpell(value.spell.DefaultCast.CastTime, value.spell)
 }
+
+type APLValueSpellChannelTime struct {
+	defaultAPLValueImpl
+	spell *Spell
+}
+
+func (rot *APLRotation) newValueSpellChannelTime(config *proto.APLValueSpellChannelTime) APLValue {
+	unit := rot.unit
+	spell := unit.aplGetSpell(config.SpellId)
+	if spell == nil {
+		return nil
+	}
+	return &APLValueSpellChannelTime{
+		spell: spell,
+	}
+}
+func (value *APLValueSpellChannelTime) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeDuration
+}
+func (value *APLValueSpellChannelTime) GetDuration(sim *Simulation) time.Duration {
+	return value.spell.Unit.ApplyCastSpeedForSpell(value.spell.DefaultCast.ChannelTime, value.spell)
+}
+
+type APLValueSpellTravelTime struct {
+	defaultAPLValueImpl
+	spell *Spell
+}
+
+func (rot *APLRotation) newValueSpellTravelTime(config *proto.APLValueSpellTravelTime) APLValue {
+	unit := rot.unit
+	spell := unit.aplGetSpell(config.SpellId)
+	if spell == nil {
+		return nil
+	}
+	return &APLValueSpellTravelTime{
+		spell: spell,
+	}
+}
+func (value *APLValueSpellTravelTime) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeDuration
+}
+func (value *APLValueSpellTravelTime) GetDuration(sim *Simulation) time.Duration {
+	return time.Duration(float64(time.Second) * value.spell.Unit.DistanceFromTarget / value.spell.MissileSpeed)
+}

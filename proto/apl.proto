@@ -48,6 +48,7 @@ message APLValue {
         APLValueOr or = 3;
         APLValueNot not = 4;
         APLValueCompare cmp = 5;
+        APLValueMath math = 38;
 
         // Encounter values
         APLValueCurrentTime current_time = 7;
@@ -83,6 +84,8 @@ message APLValue {
         APLValueSpellIsReady spell_is_ready = 20;
         APLValueSpellTimeToReady spell_time_to_ready = 21;
         APLValueSpellCastTime spell_cast_time = 35;
+        APLValueSpellChannelTime spell_channel_time = 36;
+        APLValueSpellTravelTime spell_travel_time = 37;
 
         // Aura values
         APLValueAuraIsActive aura_is_active = 22;
@@ -173,6 +176,19 @@ message APLValueCompare {
     APLValue lhs = 2;
     APLValue rhs = 3;
 }
+message APLValueMath {
+    enum MathOperator {
+        OpUnknown = 0;
+        OpAdd = 1; // Add
+        OpSub = 2; // Subtract
+        OpMul = 3; // Multiply
+        OpDiv = 4; // Divide
+    }
+    MathOperator op = 1;
+
+    APLValue lhs = 2;
+    APLValue rhs = 3;
+}
 
 message APLValueCurrentTime {}
 message APLValueCurrentTimePercent {}
@@ -238,6 +254,12 @@ message APLValueSpellTimeToReady {
     ActionID spell_id = 1;
 }
 message APLValueSpellCastTime {
+    ActionID spell_id = 1;
+}
+message APLValueSpellChannelTime {
+    ActionID spell_id = 1;
+}
+message APLValueSpellTravelTime {
     ActionID spell_id = 1;
 }
 
