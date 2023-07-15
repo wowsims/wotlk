@@ -6,7 +6,7 @@ import { Component } from './component.js';
 /**
  * Data for creating a new input UI element.
  */
-export interface InputConfig<ModObject, T> {
+export interface InputConfig<ModObject, T, V = T> {
 	label?: string,
 	labelTooltip?: string,
 	inline?: boolean,
@@ -29,18 +29,23 @@ export interface InputConfig<ModObject, T> {
 
 	// Overrides the default root element (new div).
 	rootElem?: HTMLElement,
+
+	// Convert between source value and input value types. In most cases this is not needed
+	// because source and input use the same type. These functions must be set if T != V.
+	sourceToValue?: (src: T) => V,
+	valueToSource?: (val: V) => T,
 }
 
 // Shared logic for UI elements that are mapped to a value for some modifiable object.
-export abstract class Input<ModObject, T> extends Component {
-	private readonly inputConfig: InputConfig<ModObject, T>;
+export abstract class Input<ModObject, T, V = T> extends Component {
+	private readonly inputConfig: InputConfig<ModObject, T, V>;
 	readonly modObject: ModObject;
 
 	protected enabled: boolean = true;
 
 	readonly changeEmitter = new TypedEvent<void>();
 
-	constructor(parent: HTMLElement, cssClass: string, modObject: ModObject, config: InputConfig<ModObject, T>) {
+	constructor(parent: HTMLElement, cssClass: string, modObject: ModObject, config: InputConfig<ModObject, T, V>) {
 		super(parent, 'input-root', config.rootElem);
 		this.inputConfig = config;
 		this.modObject = modObject;
@@ -51,12 +56,12 @@ export abstract class Input<ModObject, T> extends Component {
 		if (config.label) this.rootElem.appendChild(this.buildLabel(config));
 
 		config.changedEvent(this.modObject).on(eventID => {
-			this.setInputValue(this.inputConfig.getValue(this.modObject));
+			this.setInputValue(this.getSourceValue());
 			this.update();
 		});
 	}
 
-	private buildLabel(config: InputConfig<ModObject, T>): HTMLElement {
+	private buildLabel(config: InputConfig<ModObject, T, V>): HTMLElement {
 		let fragment = document.createElement('fragment');
 		fragment.innerHTML = `
 			<label
@@ -99,11 +104,8 @@ export abstract class Input<ModObject, T> extends Component {
 
 	// Can't call abstract functions in constructor, so need an init() call.
 	init() {
-		if (this.inputConfig.defaultValue) {
-			this.setInputValue(this.inputConfig.defaultValue);
-		} else {
-			this.setInputValue(this.inputConfig.getValue(this.modObject));
-		}
+		const initialValue = this.inputConfig.defaultValue ? this.inputConfig.defaultValue : this.inputConfig.getValue(this.modObject);
+		this.setInputValue(initialValue);
 		this.update();
 	}
 
@@ -121,9 +123,16 @@ export abstract class Input<ModObject, T> extends Component {
 		this.inputConfig.setValue(eventID, this.modObject, newValue);
 	}
 
+	protected sourceToValue(src: T): V {
+		return this.inputConfig.sourceToValue ? this.inputConfig.sourceToValue(src) : src as unknown as V;
+	}
+	protected valueToSource(val: V): T {
+		return this.inputConfig.valueToSource ? this.inputConfig.valueToSource(val) : val as unknown as T;
+	}
+
 	// Child classes should call this method when the value in the input element changes.
 	inputChanged(eventID: EventID) {
-		this.inputConfig.setValue(eventID, this.modObject, this.getInputValue());
+		this.setSourceValue(eventID, this.getInputValue());
 		this.changeEmitter.emit(eventID);
 	}
 

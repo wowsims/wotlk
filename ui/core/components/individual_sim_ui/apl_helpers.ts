@@ -105,19 +105,19 @@ const actionIdSets: Record<ACTION_ID_SET, {
 	},
 };
 
-export interface APLActionIDPickerConfig<ModObject> extends Omit<DropdownPickerConfig<ModObject, ActionId>, 'defaultLabel' | 'equals' | 'setOptionContent' | 'values' | 'getValue' | 'setValue'> {
+export interface APLActionIDPickerConfig<ModObject> extends Omit<DropdownPickerConfig<ModObject, ActionID, ActionId>, 'defaultLabel' | 'equals' | 'setOptionContent' | 'values' | 'getValue' | 'setValue'> {
 	actionIdSet: ACTION_ID_SET,
 	getValue: (obj: ModObject) => ActionID,
 	setValue: (eventID: EventID, obj: ModObject, newValue: ActionID) => void,
 }
 
-export class APLActionIDPicker extends DropdownPicker<Player<any>, ActionId> {
+export class APLActionIDPicker extends DropdownPicker<Player<any>, ActionID, ActionId> {
 	constructor(parent: HTMLElement, player: Player<any>, config: APLActionIDPickerConfig<Player<any>>) {
 		const actionIdSet = actionIdSets[config.actionIdSet];
 		super(parent, player, {
 			...config,
-			getValue: (player) => ActionId.fromProto(config.getValue(player)),
-			setValue: (eventID: EventID, player: Player<any>, newValue: ActionId) => config.setValue(eventID, player, newValue.toProto()),
+			sourceToValue: (src: ActionID) => ActionId.fromProto(src),
+			valueToSource: (val: ActionId) => val.toProto(),
 			defaultLabel: actionIdSet.defaultLabel,
 			equals: (a, b) => ((a == null) == (b == null)) && (!a || a.equals(b!)),
 			setOptionContent: (button, valueConfig) => {
@@ -149,10 +149,12 @@ export class APLActionIDPicker extends DropdownPicker<Player<any>, ActionId> {
 	}
 }
 
+type APLPickerBuilderFieldFactory<F> = (parent: HTMLElement, player: Player<any>, config: InputConfig<Player<any>, F>) => Input<Player<any>, F>;
+
 export interface APLPickerBuilderFieldConfig<T, F extends keyof T> {
 	field: F,
 	newValue: () => T[F],
-	factory: (parent: HTMLElement, player: Player<any>, config: InputConfig<Player<any>, T[F]>) => Input<Player<any>, T[F]>
+	factory: APLPickerBuilderFieldFactory<T[F]>,
 
 	label?: string,
 	labelTooltip?: string,
@@ -318,7 +320,7 @@ export function runeSlotFieldConfig(field: string): APLPickerBuilderFieldConfig<
 	};
 }
 
-export function aplInputBuilder<T>(newValue: () => T, fields: Array<APLPickerBuilderFieldConfig<T, any>>): (parent: HTMLElement, player: Player<any>, config: InputConfig<Player<any>, any>) => Input<Player<any>, any> {
+export function aplInputBuilder<T>(newValue: () => T, fields: Array<APLPickerBuilderFieldConfig<T, keyof T>>): (parent: HTMLElement, player: Player<any>, config: InputConfig<Player<any>, T>) => Input<Player<any>, T> {
 	return (parent, player, config) => {
 		return new APLPickerBuilder(parent, player, {
 			...config,
