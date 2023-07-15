@@ -58,6 +58,7 @@ var ItemSetScourgestalkerBattlegear = core.NewItemSet(core.ItemSet{
 				Timer:    hunter.NewTimer(),
 				Duration: time.Second * 45,
 			}
+			procAura.Icd = &icd
 
 			hunter.RegisterAura(core.Aura{
 				Label:    "Windrunner 4pc",
@@ -103,6 +104,7 @@ var ItemSetWindrunnersPursuit = core.NewItemSet(core.ItemSet{
 				Timer:    hunter.NewTimer(),
 				Duration: time.Second * 45,
 			}
+			procAura.Icd = &icd
 
 			hunter.RegisterAura(core.Aura{
 				Label:    "Windrunner 4pc",

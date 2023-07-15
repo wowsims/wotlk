@@ -148,7 +148,7 @@ func init() {
 			BonusPerStack: stats.Stats{stats.MeleeCrit: 15, stats.SpellCrit: 15},
 		})
 
-		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+		triggerAura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 			Name:       "Death Knight's Anguish",
 			Callback:   core.CallbackOnSpellHitDealt,
 			ProcMask:   core.ProcMaskMeleeOrRanged,
@@ -160,6 +160,7 @@ func init() {
 				procAura.Activate(sim)
 			},
 		})
+		procAura.Icd = triggerAura.Icd
 	})
 
 	newStackingStatBonusEffect(StackingStatBonusEffect{

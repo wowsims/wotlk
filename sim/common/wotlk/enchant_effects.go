@@ -238,6 +238,7 @@ func init() {
 			Timer:    character.NewTimer(),
 			Duration: time.Second * 35,
 		}
+		procAura.Icd = &icd
 
 		aura := character.GetOrRegisterAura(core.Aura{
 			Label:    "Black Magic",
@@ -352,6 +353,7 @@ func init() {
 			Timer:    character.NewTimer(),
 			Duration: time.Second * 60,
 		}
+		procAura.Icd = &icd
 
 		callback := func(_ *core.Aura, sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
 			if !result.Landed() {
@@ -389,6 +391,7 @@ func init() {
 		}
 
 		character.GetOrRegisterAura(core.Aura{
+			Icd:      &icd,
 			Label:    "Darkglow Embroidery",
 			Duration: core.NeverExpires,
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
@@ -411,6 +414,7 @@ func init() {
 			Timer:    character.NewTimer(),
 			Duration: time.Second * 55,
 		}
+		procAura.Icd = &icd
 
 		character.GetOrRegisterAura(core.Aura{
 			Label:    "Swordguard Embroidery",

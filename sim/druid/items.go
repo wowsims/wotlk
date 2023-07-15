@@ -215,6 +215,7 @@ var ItemSetNightsongBattlegear = core.NewItemSet(core.ItemSet{
 				Timer:    druid.NewTimer(),
 				Duration: time.Second * 15,
 			}
+			cca.Icd = &icd
 
 			druid.RegisterAura(core.Aura{
 				Label:    "Nightsong 2pc",
@@ -450,6 +451,8 @@ func init() {
 			Timer:    druid.NewTimer(),
 			Duration: time.Second * 8,
 		}
+		bearAura.Icd = &icd
+		catAura.Icd = &icd
 		procChance := 0.7
 
 		core.MakePermanent(druid.RegisterAura(core.Aura{
@@ -599,6 +602,7 @@ func init() {
 			Timer:    druid.NewTimer(),
 			Duration: time.Second * 6,
 		}
+		procAura.Icd = &icd
 
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Idol of Lunar Fury",
