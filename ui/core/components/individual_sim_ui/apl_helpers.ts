@@ -11,7 +11,7 @@ import { ActionID } from '../../proto/common.js';
 import { BooleanPicker } from '../boolean_picker.js';
 import { APLValueRuneSlot, APLValueRuneType } from '../../proto/apl.js';
 
-export type ACTION_ID_SET = 'auras' | 'stackable_auras' | 'castable_spells' | 'dot_spells';
+export type ACTION_ID_SET = 'auras' | 'stackable_auras' | 'icd_auras' | 'castable_spells' | 'dot_spells';
 
 const actionIdSets: Record<ACTION_ID_SET, {
 	defaultLabel: string,
@@ -31,6 +31,16 @@ const actionIdSets: Record<ACTION_ID_SET, {
 		defaultLabel: 'Aura',
 		getActionIDs: async (player) => {
 			return player.getAuras().filter(aura => aura.data.maxStacks > 0).map(actionId => {
+				return {
+					value: actionId.id,
+				};
+			});
+		},
+	},
+	['icd_auras']: {
+		defaultLabel: 'Aura',
+		getActionIDs: async (player) => {
+			return player.getAuras().filter(aura => aura.data.hasIcd).map(actionId => {
 				return {
 					value: actionId.id,
 				};

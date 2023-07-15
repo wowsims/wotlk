@@ -546,6 +546,7 @@ func (hunter *Hunter) applyLockAndLoad() {
 	}
 
 	hunter.LockAndLoadAura = hunter.RegisterAura(core.Aura{
+		Icd:       &icd,
 		Label:     "Lock and Load Proc",
 		ActionID:  actionID,
 		Duration:  time.Second * 12,

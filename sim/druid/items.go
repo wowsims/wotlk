@@ -222,6 +222,7 @@ var ItemSetNightsongBattlegear = core.NewItemSet(core.ItemSet{
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 					cca = druid.GetAura("Clearcasting")
+					cca.Icd = &icd
 					if cca == nil {
 						panic("no valid clearcasting aura")
 					}
@@ -450,6 +451,8 @@ func init() {
 			Timer:    druid.NewTimer(),
 			Duration: time.Second * 8,
 		}
+		bearAura.Icd = &icd
+		catAura.Icd = &icd
 		procChance := 0.7
 
 		core.MakePermanent(druid.RegisterAura(core.Aura{
@@ -599,6 +602,7 @@ func init() {
 			Timer:    druid.NewTimer(),
 			Duration: time.Second * 6,
 		}
+		procAura.Icd = &icd
 
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Idol of Lunar Fury",

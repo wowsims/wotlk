@@ -71,6 +71,7 @@ var Tier9 = core.NewItemSet(core.ItemSet{
 				Timer:    rogue.NewTimer(),
 				Duration: time.Second * 15,
 			}
+			procAura.Icd = &icd
 			procChance := 0.02
 			rogue.RegisterAura(core.Aura{
 				Label:    "VanCleef's 2pc",

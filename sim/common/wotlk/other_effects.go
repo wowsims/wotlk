@@ -26,7 +26,7 @@ func init() {
 			}
 		})
 
-		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+		triggerAura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 			Name:       "Essence of Gossamer Trigger",
 			Callback:   core.CallbackOnSpellHitTaken,
 			ProcMask:   core.ProcMaskMelee,
@@ -38,6 +38,7 @@ func init() {
 				procAura.Activate(sim)
 			},
 		})
+		procAura.Icd = triggerAura.Icd
 	})
 	core.NewItemEffect(45507, func(agent core.Agent) {
 		character := agent.GetCharacter()
@@ -55,7 +56,7 @@ func init() {
 			}
 		})
 
-		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+		triggerAura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 			Name:       "The General's Heart Trigger",
 			Callback:   core.CallbackOnSpellHitTaken,
 			ProcMask:   core.ProcMaskMelee,
@@ -67,6 +68,7 @@ func init() {
 				procAura.Activate(sim)
 			},
 		})
+		procAura.Icd = triggerAura.Icd
 	})
 
 	core.NewItemEffect(37734, func(agent core.Agent) {
@@ -175,7 +177,7 @@ func init() {
 				return
 			}
 
-			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+			triggerAura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:       name,
 				Callback:   core.CallbackOnSpellHitDealt,
 				ProcMask:   core.ProcMaskMeleeOrRanged | core.ProcMaskProc,
@@ -194,6 +196,10 @@ func init() {
 					}
 				},
 			})
+
+			for _, aura := range auras {
+				aura.Icd = triggerAura.Icd
+			}
 		})
 	})
 
@@ -446,6 +452,7 @@ func init() {
 				Timer:    character.NewTimer(),
 				Duration: time.Second * 30,
 			}
+			procAura.Icd = &icd
 
 			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:     name + " Trigger",
@@ -487,7 +494,7 @@ func init() {
 				BonusPerStack: stats.Stats{stats.SpellPower: amount},
 			})
 
-			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+			triggerAura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:       name + " Trigger",
 				Callback:   core.CallbackOnSpellHitDealt,
 				ProcMask:   core.ProcMaskSpellOrProc,
@@ -509,6 +516,7 @@ func init() {
 					})
 				},
 			})
+			procAura.Icd = triggerAura.Icd
 		})
 	})
 
@@ -869,6 +877,7 @@ func init() {
 				Timer:    character.NewTimer(),
 				Duration: time.Second * 45,
 			}
+			procAura.Icd = &icd
 
 			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:     name + " Trigger",
