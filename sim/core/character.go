@@ -503,27 +503,12 @@ func (character *Character) FillPlayerStats(playerStats *proto.PlayerStats) {
 	character.clearBuildPhaseAuras(CharacterBuildPhaseAll)
 	playerStats.Sets = character.GetActiveSetBonusNames()
 
-	playerStats.Spells = MapSlice(character.Spellbook, func(spell *Spell) *proto.SpellStats {
-		return &proto.SpellStats{
-			Id: spell.ActionID.ToProto(),
-
-			IsCastable:      spell.Flags.Matches(SpellFlagAPL),
-			IsMajorCooldown: spell.Flags.Matches(SpellFlagMCD),
-			HasDot:          spell.dots != nil || spell.aoeDot != nil,
-			PrepullOnly:     spell.Flags.Matches(SpellFlagPrepullOnly),
-		}
-	})
-
-	aplAuras := FilterSlice(character.auras, func(aura *Aura) bool {
-		return !aura.ActionID.IsEmptyAction()
-	})
-	playerStats.Auras = MapSlice(aplAuras, func(aura *Aura) *proto.AuraStats {
-		return &proto.AuraStats{
-			Id:        aura.ActionID.ToProto(),
-			MaxStacks: aura.MaxStacks,
-			HasIcd:    aura.Icd != nil,
-		}
-	})
+	playerStats.Metadata = character.GetMetadata()
+	for _, petAgent := range character.Pets {
+		playerStats.Pets = append(playerStats.Pets, &proto.PetStats{
+			Metadata: petAgent.GetPet().GetMetadata(),
+		})
+	}
 
 	if character.Rotation != nil {
 		playerStats.RotationStats = character.Rotation.getStats()
