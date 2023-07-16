@@ -20,7 +20,7 @@ export class CooldownsPicker extends Component {
 		this.player = player;
 		this.cooldownPickers = [];
 
-		TypedEvent.onAny([this.player.cooldownsChangeEmitter, this.player.currentSpellsAndAurasEmitter]).on(eventID => {
+		TypedEvent.onAny([this.player.cooldownsChangeEmitter, this.player.sim.unitMetadataEmitter]).on(eventID => {
 			this.update();
 		});
 		this.update();
@@ -127,7 +127,7 @@ export class CooldownsPicker extends Component {
 	}
 
 	private makeActionPicker(parentElem: HTMLElement, cooldownIndex: number): IconEnumPicker<Player<any>, ActionIdProto> {
-		const availableCooldowns = this.player.getSpells().filter(spell => spell.data.isMajorCooldown).map(spell => spell.id);
+		const availableCooldowns = this.player.getMetadata().getSpells().filter(spell => spell.data.isMajorCooldown).map(spell => spell.id);
 
 		const actionPicker = new IconEnumPicker<Player<any>, ActionIdProto>(parentElem, this.player, {
 			extraCssClasses: [

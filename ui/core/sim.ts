@@ -73,6 +73,9 @@ export class Sim {
 	// Emits when any of the settings change (but not the raid / encounter).
 	readonly settingsChangeEmitter: TypedEvent<void>;
 
+	// Emits when any player, target, or pet has metadata changes (spells or auras).
+	readonly unitMetadataEmitter = new TypedEvent<void>('UnitMetadata');
+
 	// Emits when any of the above emitters emit.
 	readonly changeEmitter: TypedEvent<void>;
 
@@ -288,11 +291,27 @@ export class Sim {
 			return;
 		}
 
-		TypedEvent.freezeAllAndDo(() => {
-			result.raidStats!.parties
-				.forEach((partyStats, partyIndex) =>
-					partyStats.players.forEach((playerStats, playerIndex) =>
-						players[partyIndex * 5 + playerIndex]?.setCurrentStats(eventID, playerStats)));
+		TypedEvent.freezeAllAndDo(async () => {
+			const playerUpdatePromises = result.raidStats!.parties
+				.map((partyStats, partyIndex) =>
+					partyStats.players.map((playerStats, playerIndex) => {
+						const player = players[partyIndex * 5 + playerIndex];
+						if (player) {
+							player.setCurrentStats(eventID, playerStats);
+							return player.updateMetadata();
+						} else {
+							return null;
+						}
+					}))
+				.flat()
+				.filter(p => p != null) as Array<Promise<boolean>>;
+			
+			const targetUpdatePromise = this.encounter.targetsMetadata.update(result.encounterStats!.targets.map(t => t.metadata!));
+			
+			const anyUpdates = await Promise.all(playerUpdatePromises.concat([targetUpdatePromise]));
+			if (anyUpdates.some(v => v)) {
+				this.unitMetadataEmitter.emit(eventID);
+			}
 		});
 	}
 
