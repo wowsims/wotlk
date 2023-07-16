@@ -336,13 +336,13 @@ export class Player<SpecType extends Spec> {
 	}
 
 	private async updateSpellsAndAuras(eventID: EventID) {
-		let newSpells = this.currentStats.spells.map(spell => {
+		let newSpells = this.currentStats.metadata!.spells.map(spell => {
 			return {
 				data: spell,
 				id: ActionId.fromProto(spell.id!),
 			};
 		});
-		let newAuras = this.currentStats.auras.map(aura => {
+		let newAuras = this.currentStats.metadata!.auras.map(aura => {
 			return {
 				data: aura,
 				id: ActionId.fromProto(aura.id!),
