@@ -283,7 +283,7 @@ rotation: SavedRotation.create({
 	rotation: APLRotation.fromJsonString(`{
       "enabled": true,
       "prepullActions": [
-        {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAt":"-0.5s"},
+        {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAt":"-0.5s"}
       ],
       "priorityList": [
         {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"5"}}}},"castSpell":{"spellId":{"tag":-1,"spellId":2825}}}},
