@@ -137,7 +137,7 @@ enum WarriorMinorGlyph {
 	GlyphOfEnduringVictory = 43400;
 	GlyphOfMockingBlow = 43398;
 	GlyphOfThunderClap = 43399;
-	GlyphOfShatteringThrow = 414812;
+	GlyphOfShatteringThrow = 206953;
 }
 
 enum WarriorShout {
