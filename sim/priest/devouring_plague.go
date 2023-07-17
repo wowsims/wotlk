@@ -100,7 +100,7 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 			// calculate first, so that if imp. DP procs Shadowy Insight it doesn't influence the dot damage
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if impDevouringPlague != nil {
-				impDevouringPlague.SkipCastAndApplyEffects(sim, target)
+				impDevouringPlague.Cast(sim, target)
 			}
 
 			spell.DealOutcome(sim, result)
