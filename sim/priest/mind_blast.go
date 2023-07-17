@@ -21,6 +21,7 @@ func (priest *Priest) registerMindBlastSpell() {
 		ActionID:    core.ActionID{SpellID: 48301},
 		ProcMask:    core.ProcMaskProc,
 		SpellSchool: core.SpellSchoolShadow,
+		Flags:       core.SpellFlagNoMetrics,
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			MindTraumaAura(target).Activate(sim)
 		},
