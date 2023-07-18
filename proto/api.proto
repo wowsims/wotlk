@@ -314,6 +314,13 @@ message APLStats {
 	repeated APLActionStats prepull_actions = 1;
 	repeated APLActionStats priority_list = 2;
 }
+message UnitMetadata {
+	repeated SpellStats spells = 1;
+	repeated AuraStats auras = 2;
+}
+message PetStats {
+	UnitMetadata metadata = 1;
+}
 message PlayerStats {
 	// Stats
 	UnitStats base_stats = 6;
@@ -326,10 +333,10 @@ message PlayerStats {
 	repeated string sets = 3;
 	IndividualBuffs buffs = 4;
 
-	repeated SpellStats spells = 10;
-	repeated AuraStats auras = 11;
-
+	UnitMetadata metadata = 10;
 	APLStats rotation_stats = 12;
+
+	repeated PetStats pets = 11;
 }
 message PartyStats {
 	repeated PlayerStats players = 1;
@@ -337,8 +344,15 @@ message PartyStats {
 message RaidStats {
 	repeated PartyStats parties = 1;
 }
+message TargetStats {
+	UnitMetadata metadata = 1;
+}
+message EncounterStats {
+	repeated TargetStats targets = 1;
+}
 message ComputeStatsResult {
 	RaidStats raid_stats = 1;
+	EncounterStats encounter_stats = 3;
 	string error_result = 2;
 }
 

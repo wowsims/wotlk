@@ -20,7 +20,7 @@ const actionIdSets: Record<ACTION_ID_SET, {
 	['auras']: {
 		defaultLabel: 'Aura',
 		getActionIDs: async (player) => {
-			return player.getAuras().map(actionId => {
+			return player.getMetadata().getAuras().map(actionId => {
 				return {
 					value: actionId.id,
 				};
@@ -30,7 +30,7 @@ const actionIdSets: Record<ACTION_ID_SET, {
 	['stackable_auras']: {
 		defaultLabel: 'Aura',
 		getActionIDs: async (player) => {
-			return player.getAuras().filter(aura => aura.data.maxStacks > 0).map(actionId => {
+			return player.getMetadata().getAuras().filter(aura => aura.data.maxStacks > 0).map(actionId => {
 				return {
 					value: actionId.id,
 				};
@@ -40,7 +40,7 @@ const actionIdSets: Record<ACTION_ID_SET, {
 	['icd_auras']: {
 		defaultLabel: 'Aura',
 		getActionIDs: async (player) => {
-			return player.getAuras().filter(aura => aura.data.hasIcd).map(actionId => {
+			return player.getMetadata().getAuras().filter(aura => aura.data.hasIcd).map(actionId => {
 				return {
 					value: actionId.id,
 				};
@@ -50,7 +50,7 @@ const actionIdSets: Record<ACTION_ID_SET, {
 	['castable_spells']: {
 		defaultLabel: 'Spell',
 		getActionIDs: async (player) => {
-			const castableSpells = player.getSpells().filter(spell => spell.data.isCastable);
+			const castableSpells = player.getMetadata().getSpells().filter(spell => spell.data.isCastable);
 
 			// Split up non-cooldowns and cooldowns into separate sections for easier browsing.
 			const { 'spells': spells, 'cooldowns': cooldowns } = bucket(castableSpells, spell => spell.data.isMajorCooldown ? 'cooldowns' : 'spells');
@@ -96,7 +96,7 @@ const actionIdSets: Record<ACTION_ID_SET, {
 	['dot_spells']: {
 		defaultLabel: 'DoT Spell',
 		getActionIDs: async (player) => {
-			return player.getSpells().filter(spell => spell.data.hasDot).map(actionId => {
+			return player.getMetadata().getSpells().filter(spell => spell.data.hasDot).map(actionId => {
 				return {
 					value: actionId.id,
 				};
@@ -145,7 +145,7 @@ export class APLActionIDPicker extends DropdownPicker<Player<any>, ActionID, Act
 			this.setOptions(values);
 		};
 		updateValues();
-		player.currentSpellsAndAurasEmitter.on(updateValues);
+		player.sim.unitMetadataEmitter.on(updateValues);
 	}
 }
 

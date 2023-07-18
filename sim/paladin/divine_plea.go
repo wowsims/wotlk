@@ -39,6 +39,7 @@ func (paladin *Paladin) registerDivinePleaSpell() {
 	paladin.DivinePlea = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolHoly,
+		Flags:       core.SpellFlagAPL,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

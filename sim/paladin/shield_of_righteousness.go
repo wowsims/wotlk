@@ -17,7 +17,7 @@ func (paladin *Paladin) registerShieldOfRighteousnessSpell() {
 		ActionID:    core.ActionID{SpellID: 61411},
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.06,

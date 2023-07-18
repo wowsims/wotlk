@@ -42,6 +42,10 @@ func (ret *RetributionPaladin) OnAutoAttack(sim *core.Simulation, spell *core.Sp
 }
 
 func (ret *RetributionPaladin) OnGCDReady(sim *core.Simulation) {
+	if ret.IsUsingAPL {
+		return
+	}
+
 	ret.SelectedRotation(sim)
 	if ret.GCD.IsReady(sim) {
 		ret.DoNothing() // this means we had nothing to do and we are ok
@@ -303,8 +307,7 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 
 func (ret *RetributionPaladin) checkConsecrationClipping(sim *core.Simulation) bool {
 	if ret.AvoidClippingConsecration {
-		// TODO: sim.Duration is the wrong value to check
-		return sim.CurrentTime+ret.Consecration.AOEDot().TickLength*4 <= sim.Duration
+		return ret.Consecration.AOEDot().TickLength*4 <= sim.GetRemainingDuration()
 	} else {
 		// If we're not configured to check, always return success.
 		return true

@@ -27,6 +27,7 @@ import {
 import {
 	AuraStats as AuraStatsProto,
 	SpellStats as SpellStatsProto,
+	UnitMetadata as UnitMetadataProto,
 } from './proto/api.js';
 import {
 	APLRotation,
@@ -96,6 +97,81 @@ export interface SpellStats {
 	id: ActionId,
 }
 
+export class UnitMetadata {
+	private auras: Array<AuraStats>;
+	private spells: Array<SpellStats>;
+
+	constructor() {
+		this.auras = [];
+		this.spells = [];
+	}
+
+	getAuras(): Array<AuraStats> {
+		return this.auras.slice();
+	}
+
+	getSpells(): Array<SpellStats> {
+		return this.spells.slice();
+	}
+
+	// Returns whether any updates were made.
+	async update(metadata: UnitMetadataProto): Promise<boolean> {
+		let newSpells = metadata!.spells.map(spell => {
+			return {
+				data: spell,
+				id: ActionId.fromProto(spell.id!),
+			};
+		});
+		let newAuras = metadata!.auras.map(aura => {
+			return {
+				data: aura,
+				id: ActionId.fromProto(aura.id!),
+			};
+		});
+
+		await Promise.all([...newSpells, ...newAuras].map(newSpell => newSpell.id.fill().then(newId => newSpell.id = newId)));
+
+		newSpells = newSpells.sort((a, b) => stringComparator(a.id.name, b.id.name))
+		newAuras = newAuras.sort((a, b) => stringComparator(a.id.name, b.id.name))
+
+		let anyUpdates = false;
+		if (newSpells.length != this.spells.length || newSpells.some((newSpell, i) => !newSpell.id.equals(this.spells[i].id))) {
+			this.spells = newSpells;
+			anyUpdates = true;
+		}
+		if (newAuras.length != this.auras.length || newAuras.some((newAura, i) => !newAura.id.equals(this.auras[i].id))) {
+			this.auras = newAuras;
+			anyUpdates = true;
+		}
+
+		return anyUpdates;
+	}
+}
+
+export class UnitMetadataList {
+	private metadatas: Array<UnitMetadata>;
+
+	constructor() {
+		this.metadatas = [];
+	}
+
+	async update(newMetadatas: Array<UnitMetadataProto>): Promise<boolean> {
+		const oldLen = this.metadatas.length;
+
+		if (newMetadatas.length > oldLen) {
+			for (let i = oldLen; i < newMetadatas.length; i++) {
+				this.metadatas.push(new UnitMetadata());
+			}
+		} else if (newMetadatas.length < oldLen) {
+			this.metadatas = this.metadatas.slice(0, newMetadatas.length);
+		}
+
+		const anyUpdates = await Promise.all(newMetadatas.map((metadata, i) => this.metadatas[i].update(metadata)));
+
+		return oldLen != this.metadatas.length || anyUpdates.some(v => v);
+	}
+}
+
 // Manages all the gear / consumes / other settings for a single Player.
 export class Player<SpecType extends Spec> {
 	readonly sim: Sim;
@@ -135,8 +211,8 @@ export class Player<SpecType extends Spec> {
 	private epRatios: Array<number> = new Array<number>(Player.numEpRatios).fill(0);
 	private epWeights: Stats = new Stats();
 	private currentStats: PlayerStats = PlayerStats.create();
-	private spells: Array<SpellStats> = [];
-	private auras: Array<AuraStats> = [];
+	private metadata: UnitMetadata = new UnitMetadata();
+	private petMetadatas: UnitMetadataList = new UnitMetadataList();
 
 	readonly nameChangeEmitter = new TypedEvent<void>('PlayerName');
 	readonly buffsChangeEmitter = new TypedEvent<void>('PlayerBuffs');
@@ -156,7 +232,6 @@ export class Player<SpecType extends Spec> {
 	readonly epWeightsChangeEmitter = new TypedEvent<void>('PlayerEpWeights');
 
 	readonly currentStatsEmitter = new TypedEvent<void>('PlayerCurrentStats');
-	readonly currentSpellsAndAurasEmitter = new TypedEvent<void>('PlayerCurrentSpellsAndAuras');
 	readonly epRatiosChangeEmitter = new TypedEvent<void>('PlayerEpRatios');
 
 	// Emits when any of the above emitters emit.
@@ -322,51 +397,19 @@ export class Player<SpecType extends Spec> {
 
 	setCurrentStats(eventID: EventID, newStats: PlayerStats) {
 		this.currentStats = newStats;
-		this.updateSpellsAndAuras(eventID);
-
 		this.currentStatsEmitter.emit(eventID);
 	}
 
-	getSpells(): Array<SpellStats> {
-		return this.spells.slice();
+	getMetadata(): UnitMetadata {
+		return this.metadata;
 	}
 
-	getAuras(): Array<AuraStats> {
-		return this.auras.slice();
-	}
-
-	private async updateSpellsAndAuras(eventID: EventID) {
-		let newSpells = this.currentStats.spells.map(spell => {
-			return {
-				data: spell,
-				id: ActionId.fromProto(spell.id!),
-			};
-		});
-		let newAuras = this.currentStats.auras.map(aura => {
-			return {
-				data: aura,
-				id: ActionId.fromProto(aura.id!),
-			};
-		});
-
-		await Promise.all([...newSpells, ...newAuras].map(newSpell => newSpell.id.fill().then(newId => newSpell.id = newId)));
-
-		newSpells = newSpells.sort((a, b) => stringComparator(a.id.name, b.id.name))
-		newAuras = newAuras.sort((a, b) => stringComparator(a.id.name, b.id.name))
-
-		let anyUpdates = false;
-		if (newSpells.length != this.spells.length || newSpells.some((newSpell, i) => !newSpell.id.equals(this.spells[i].id))) {
-			this.spells = newSpells;
-			anyUpdates = true;
-		}
-		if (newAuras.length != this.auras.length || newAuras.some((newAura, i) => !newAura.id.equals(this.auras[i].id))) {
-			this.auras = newAuras;
-			anyUpdates = true;
-		}
-
-		if (anyUpdates) {
-			this.currentSpellsAndAurasEmitter.emit(eventID);
-		}
+	async updateMetadata(): Promise<boolean> {
+		const playerPromise = this.metadata.update(this.currentStats.metadata!);
+		const petsPromise = this.petMetadatas.update(this.currentStats.pets.map(p => p.metadata!));
+		const playerUpdated = await playerPromise;
+		const petsUpdated = await petsPromise;
+		return playerUpdated || petsUpdated;
 	}
 
 	getName(): string {

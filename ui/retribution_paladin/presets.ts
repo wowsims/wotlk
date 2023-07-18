@@ -8,8 +8,9 @@ import { ItemSpec } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { Faction } from '../core/proto/common.js';
-import { SavedTalents } from '../core/proto/ui.js';
+import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
 import { Player } from '../core/player.js';
+import { APLRotation } from '../core/proto/apl.js';
 
 import {
 	PaladinAura as PaladinAura,
@@ -265,3 +266,26 @@ export const P5_PRESET = {
         	{"id":50455}
 	]}`),
 };
+
+export const ROTATION_PRESET_BASIC_APL = {
+	name: 'Basic APL',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: RetributionPaladinRotation.toJsonString(DefaultRotation),
+		rotation: APLRotation.fromJsonString(`{
+			"enabled": true,
+			"prepullActions": [
+			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAt":"-1s"}
+			],
+			"priorityList": [
+			  {"action":{"autocastOtherCooldowns":{}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":67485}}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":48806}}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":53408}}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":35395}}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":53385}}}},
+			  {"action":{"condition":{"auraIsActive":{"auraId":{"spellId":53488}}},"castSpell":{"spellId":{"spellId":48801}}}},
+			  {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"4s"}}}},"castSpell":{"spellId":{"spellId":48819}}}}
+			]
+		  }`),
+	}),
+	};

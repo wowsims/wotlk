@@ -190,7 +190,7 @@ type Deathknight struct {
 	BloodCakedBladeAura *core.Aura
 	ButcheryAura        *core.Aura
 	ButcheryPA          *core.PendingAction
-	RimeAura            *core.Aura
+	FreezingFogAura     *core.Aura
 	BladeBarrierAura    *core.Aura
 	ScentOfBloodAura    *core.Aura
 	WillOfTheNecropolis *core.Aura

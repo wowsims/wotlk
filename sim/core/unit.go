@@ -495,3 +495,31 @@ func (unit *Unit) GetSpellsMatchingSchool(school SpellSchool) []*Spell {
 	}
 	return spells
 }
+
+func (unit *Unit) GetMetadata() *proto.UnitMetadata {
+	metadata := &proto.UnitMetadata{}
+
+	metadata.Spells = MapSlice(unit.Spellbook, func(spell *Spell) *proto.SpellStats {
+		return &proto.SpellStats{
+			Id: spell.ActionID.ToProto(),
+
+			IsCastable:      spell.Flags.Matches(SpellFlagAPL),
+			IsMajorCooldown: spell.Flags.Matches(SpellFlagMCD),
+			HasDot:          spell.dots != nil || spell.aoeDot != nil,
+			PrepullOnly:     spell.Flags.Matches(SpellFlagPrepullOnly),
+		}
+	})
+
+	aplAuras := FilterSlice(unit.auras, func(aura *Aura) bool {
+		return !aura.ActionID.IsEmptyAction()
+	})
+	metadata.Auras = MapSlice(aplAuras, func(aura *Aura) *proto.AuraStats {
+		return &proto.AuraStats{
+			Id:        aura.ActionID.ToProto(),
+			MaxStacks: aura.MaxStacks,
+			HasIcd:    aura.Icd != nil,
+		}
+	})
+
+	return metadata
+}

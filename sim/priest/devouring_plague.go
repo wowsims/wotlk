@@ -19,8 +19,8 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 		impDevouringPlague = priest.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 63675},
 			SpellSchool: core.SpellSchoolShadow,
-			ProcMask:    core.ProcMaskEmpty, // TODO: test if this can proc things
-			Flags:       core.SpellFlagDisease | core.SpellFlagAPL,
+			ProcMask:    core.ProcMaskProc, // this can proc things like Talisman of Volatile Power
+			Flags:       core.SpellFlagDisease,
 
 			BonusHitRating: float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
 			BonusCritRating: 0 +
@@ -100,7 +100,7 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 			// calculate first, so that if imp. DP procs Shadowy Insight it doesn't influence the dot damage
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if impDevouringPlague != nil {
-				impDevouringPlague.SkipCastAndApplyEffects(sim, target)
+				impDevouringPlague.Cast(sim, target)
 			}
 
 			spell.DealOutcome(sim, result)

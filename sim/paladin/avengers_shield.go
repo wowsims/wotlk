@@ -17,7 +17,7 @@ func (paladin *Paladin) registerAvengersShieldSpell() {
 		ActionID:    core.ActionID{SpellID: 48827},
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.26,

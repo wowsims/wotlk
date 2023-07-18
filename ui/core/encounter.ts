@@ -12,6 +12,7 @@ import { Stats } from './proto_utils/stats.js';
 import * as Mechanics from './constants/mechanics.js';
 
 import { Sim } from './sim.js';
+import { UnitMetadataList } from './player.js';
 import { EventID, TypedEvent } from './typed_event.js';
 
 // Manages all the settings for an Encounter.
@@ -25,6 +26,7 @@ export class Encounter {
 	private executeProportion35: number = 0.35;
 	private useHealth: boolean = false;
 	targets: Array<TargetProto>;
+	targetsMetadata: UnitMetadataList;
 
 	readonly targetsChangeEmitter = new TypedEvent<void>();
 	readonly durationChangeEmitter = new TypedEvent<void>();
@@ -36,6 +38,7 @@ export class Encounter {
 	constructor(sim: Sim) {
 		this.sim = sim;
 		this.targets = [Encounter.defaultTargetProto()];
+		this.targetsMetadata = new UnitMetadataList();
 
 		[
 			this.targetsChangeEmitter,

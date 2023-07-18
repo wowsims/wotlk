@@ -45,7 +45,7 @@ type Environment struct {
 	prepullActions []PrepullAction
 }
 
-func NewEnvironment(raidProto *proto.Raid, encounterProto *proto.Encounter) (*Environment, *proto.RaidStats) {
+func NewEnvironment(raidProto *proto.Raid, encounterProto *proto.Encounter) (*Environment, *proto.RaidStats, *proto.EncounterStats) {
 	env := &Environment{
 		State: Created,
 	}
@@ -54,7 +54,14 @@ func NewEnvironment(raidProto *proto.Raid, encounterProto *proto.Encounter) (*En
 	raidStats := env.initialize(raidProto, encounterProto)
 	env.finalize(raidProto, encounterProto, raidStats)
 
-	return env, raidStats
+	encounterStats := &proto.EncounterStats{}
+	for _, target := range env.Encounter.Targets {
+		encounterStats.Targets = append(encounterStats.Targets, &proto.TargetStats{
+			Metadata: target.GetMetadata(),
+		})
+	}
+
+	return env, raidStats, encounterStats
 }
 
 // The construction phase.

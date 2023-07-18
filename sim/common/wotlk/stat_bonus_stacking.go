@@ -328,8 +328,6 @@ func init() {
 		CD:        time.Minute * 2,
 		Callback:  core.CallbackOnCastComplete,
 		ProcMask:  core.ProcMaskSpellOrProc,
-		Outcome:   core.OutcomeLanded,
-		Harmful:   true,
 	})
 	newStackingStatBonusCD(StackingStatBonusCD{
 		Name:        "Ferver of the Frostborn",
@@ -359,10 +357,8 @@ func init() {
 		MaxStacks: 8,
 		Bonus:     stats.Stats{stats.MeleeHaste: 57, stats.SpellHaste: 57},
 		CD:        time.Minute * 2,
-		Callback:  core.CallbackOnSpellHitDealt,
+		Callback:  core.CallbackOnCastComplete,
 		ProcMask:  core.ProcMaskSpellOrProc,
-		Outcome:   core.OutcomeLanded,
-		Harmful:   true,
 	})
 	newStackingStatBonusCD(StackingStatBonusCD{
 		Name:       "Binding Stone",
@@ -403,10 +399,8 @@ func init() {
 		MaxStacks: 8,
 		Bonus:     stats.Stats{stats.MeleeHaste: 64, stats.SpellHaste: 64},
 		CD:        time.Minute * 2,
-		Callback:  core.CallbackOnSpellHitDealt,
+		Callback:  core.CallbackOnCastComplete,
 		ProcMask:  core.ProcMaskSpellOrProc,
-		Outcome:   core.OutcomeLanded,
-		Harmful:   true,
 	})
 	newStackingStatBonusCD(StackingStatBonusCD{
 		Name:       "Binding Light H",
@@ -447,10 +441,8 @@ func init() {
 		MaxStacks: 8,
 		Bonus:     stats.Stats{stats.MeleeHaste: 64, stats.SpellHaste: 64},
 		CD:        time.Minute * 2,
-		Callback:  core.CallbackOnSpellHitDealt,
+		Callback:  core.CallbackOnCastComplete,
 		ProcMask:  core.ProcMaskSpellOrProc,
-		Outcome:   core.OutcomeLanded,
-		Harmful:   true,
 	})
 	newStackingStatBonusCD(StackingStatBonusCD{
 		Name:       "Binding Stone H",

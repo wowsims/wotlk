@@ -276,23 +276,29 @@ export const P3_PRESET_ALLI = {
 };
 
 
-export const ROTATION_PRESET_BASIC_APL = {
-name: 'Basic APL',
+export const ROTATION_PRESET_P3_APL = {
+name: 'Basic P3 APL',
 rotation: SavedRotation.create({
 	specRotationOptionsJson: BalanceDruidRotation.toJsonString(DefaultRotation),
 	rotation: APLRotation.fromJsonString(`{
-		"enabled": true,
-		"priorityList": [
-		  {"hide":true,"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{}}}}},"castSpell":{"spellId":{"spellId":770}}}},
-		  {"action":{"condition":{"or":{"vals":[{"cmp":{"op":"OpGt","lhs":{"auraRemainingTime":{"auraId":{"spellId":48518}}},"rhs":{"const":{"val":"10s"}}}},{"cmp":{"op":"OpLt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"15s"}}}}]}},"autocastOtherCooldowns":{}}},
-		  {"action":{"condition":{"spellIsReady":{"spellId":{"spellId":65861}}},"castSpell":{"spellId":{"spellId":65861}}}},
-		  {"action":{"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":48518}}}}},{"spellIsReady":{"spellId":{"spellId":53201}}}]}},"castSpell":{"spellId":{"spellId":53201}}}},
-		  {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"numberTargets":{}},"rhs":{"const":{"val":"3"}}}},"castSpell":{"spellId":{"spellId":48467}}}},
-		  {"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"auraRemainingTime":{"auraId":{"spellId":48518}}},"rhs":{"spellCastTime":{"spellId":{"spellId":48465}}}}},"multidot":{"spellId":{"spellId":48463},"maxDots":3,"maxOverlap":{"const":{"val":"0ms"}}}}},
-		  {"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"auraRemainingTime":{"auraId":{"spellId":48518}}},"rhs":{"spellCastTime":{"spellId":{"spellId":48465}}}}},"multidot":{"spellId":{"spellId":48468},"maxDots":3,"maxOverlap":{"const":{"val":"0ms"}}}}},
-		  {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"auraRemainingTime":{"auraId":{"spellId":48517}}},"rhs":{"spellCastTime":{"spellId":{"spellId":48461}}}}},"castSpell":{"spellId":{"spellId":48461}}}},
-		  {"action":{"castSpell":{"spellId":{"spellId":48465}}}}
-		]
-	  }`),
+      "enabled": true,
+      "prepullActions": [
+        {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAt":"-0.5s"}
+      ],
+      "priorityList": [
+        {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"5"}}}},"castSpell":{"spellId":{"tag":-1,"spellId":2825}}}},
+        {"action":{"castSpell":{"spellId":{"itemId":41119}}}},
+        {"action":{"multidot":{"spellId":{"spellId":48463},"maxDots":1,"maxOverlap":{"const":{"val":"0ms"}}}}},
+        {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"auraRemainingTime":{"auraId":{"spellId":48517}}},"rhs":{"const":{"val":"14.5s"}}}},"multidot":{"spellId":{"spellId":48468},"maxDots":1,"maxOverlap":{"const":{"val":"0ms"}}}}},
+        {"action":{"castSpell":{"spellId":{"spellId":65861}}}},
+        {"action":{"castSpell":{"spellId":{"spellId":53201}}}},
+        {"action":{"condition":{"or":{"vals":[{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"auraRemainingTime":{"auraId":{"spellId":48518}}},"rhs":{"const":{"val":"10s"}}}},{"cmp":{"op":"OpLe","lhs":{"auraRemainingTime":{"auraId":{"spellId":48518}}},"rhs":{"const":{"val":"14.8"}}}}]}},{"cmp":{"op":"OpLt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"12s"}}}}]}},"castSpell":{"spellId":{"spellId":54758}}}},
+        {"action":{"condition":{"or":{"vals":[{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"auraRemainingTime":{"auraId":{"spellId":48518}}},"rhs":{"const":{"val":"10s"}}}},{"cmp":{"op":"OpLe","lhs":{"auraRemainingTime":{"auraId":{"spellId":48518}}},"rhs":{"const":{"val":"14.8"}}}}]}},{"cmp":{"op":"OpLt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"15s"}}}}]}},"castSpell":{"spellId":{"itemId":40211}}}},
+        {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":48518}}},{"cmp":{"op":"OpLe","lhs":{"auraRemainingTime":{"auraId":{"spellId":48518}}},"rhs":{"const":{"val":"14.8s"}}}}]}},"castSpell":{"spellId":{"spellId":48465}}}},
+        {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":48517}}},{"cmp":{"op":"OpLe","lhs":{"auraRemainingTime":{"auraId":{"spellId":48517}}},"rhs":{"const":{"val":"14.8s"}}}}]}},"castSpell":{"spellId":{"spellId":48461}}}},
+        {"action":{"condition":{"auraInternalCooldown":{"auraId":{"spellId":48518}}},"castSpell":{"spellId":{"spellId":48465}}}},
+        {"action":{"castSpell":{"spellId":{"spellId":48461}}}}
+      ]
+    }`),
 }),
 };

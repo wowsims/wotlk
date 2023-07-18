@@ -72,7 +72,7 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool) *core.Spell {
 				}
 
 				if sim.RandomFloat("Rime") < dk.rimeHbChanceProc() {
-					dk.RimeAura.Activate(sim)
+					dk.FreezingFogAura.Activate(sim)
 				}
 			}
 
