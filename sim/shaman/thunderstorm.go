@@ -22,6 +22,7 @@ func (shaman *Shaman) registerThunderstormSpell() {
 
 	shaman.Thunderstorm = shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
+		Flags:       core.SpellFlagAPL,
 		SpellSchool: core.SpellSchoolNature,
 		ProcMask:    core.ProcMaskSpellDamage,
 

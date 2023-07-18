@@ -79,6 +79,7 @@ func init() {
 			Timer:    shaman.NewTimer(),
 			Duration: time.Second * 30,
 		}
+		procAura.Icd = &icd
 		shaman.RegisterAura(core.Aura{
 			Label:    "Totem of the Elemental Plane",
 			Duration: core.NeverExpires,
@@ -105,6 +106,7 @@ func init() {
 			Timer:    shaman.NewTimer(),
 			Duration: time.Second * 6,
 		}
+		procAura.Icd = &icd
 		shaman.RegisterAura(core.Aura{
 			Label:    "Totem of Electrifying Wind",
 			Duration: core.NeverExpires,

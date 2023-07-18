@@ -648,6 +648,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRetribution-AllItems-PetrifiedScarab-21685"
+ value: {
+  dps: 6343.84162
+  tps: 6444.80886
+  dtps: 8.19524
+ }
+}
+dps_results: {
  key: "TestRetribution-AllItems-PetrifiedTwilightScale-54571"
  value: {
   dps: 6343.84162

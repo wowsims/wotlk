@@ -118,6 +118,7 @@ func (dk *Deathknight) registerThassariansBattlegearProc() {
 		Timer:    dk.NewTimer(),
 		Duration: time.Second * 45.0,
 	}
+	procAura.Icd = &icd
 
 	core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 		Label: "Unholy Might",
@@ -642,6 +643,7 @@ func init() {
 			Timer:    dk.NewTimer(),
 			Duration: time.Second * 45.0,
 		}
+		procAura.Icd = &icd
 
 		core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 			Label: "Sigil of Haunted Dreams",
@@ -682,6 +684,7 @@ func init() {
 			Timer:    dk.NewTimer(),
 			Duration: time.Second * 10.0,
 		}
+		procAura.Icd = &icd
 
 		core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 			Label: "Sigil of Insolence",
@@ -706,6 +709,7 @@ func init() {
 			Timer:    dk.NewTimer(),
 			Duration: time.Second * 10.0,
 		}
+		procAura.Icd = &icd
 
 		core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 			Label: "Sigil of Virulence",

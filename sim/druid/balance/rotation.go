@@ -41,11 +41,10 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*core.Spell, *core.
 	if rotation.SnapshotMf {
 		flareProc := moonkin.GetAura("Flare of the Heavens Proc")
 		pleaProc := moonkin.GetAura("Pandora's Plea Proc")
-		lightweaveProc := moonkin.GetAura("Lightweave Proc")
 		wildMagicProc := moonkin.GetAura("Potion of Wild Magic")
-		shouldCheckForSnapshot := flareProc.IsActive() || lightweaveProc.IsActive() || pleaProc.IsActive() || (wildMagicProc.IsActive() && sim.CurrentTime > 60*time.Second)
+		shouldCheckForSnapshot := flareProc.IsActive() || pleaProc.IsActive() || (wildMagicProc.IsActive() && sim.CurrentTime > 60*time.Second)
 		if shouldCheckForSnapshot {
-			if moonkin.shouldSnapshotMf(sim, flareProc) || moonkin.shouldSnapshotMf(sim, lightweaveProc) || moonkin.shouldSnapshotMf(sim, wildMagicProc) || moonkin.shouldSnapshotMf(sim, pleaProc) {
+			if moonkin.shouldSnapshotMf(sim, flareProc) || moonkin.shouldSnapshotMf(sim, wildMagicProc) || moonkin.shouldSnapshotMf(sim, pleaProc) {
 				return moonkin.Moonfire, target
 			}
 		}
@@ -81,7 +80,7 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*core.Spell, *core.
 	shouldHoldIs := core.Ternary(moonkin.MoonkinT84PCAura == nil, lunarIsActive, lunarIsActive && moonkin.HasActiveAuraWithTag(core.BloodlustAuraTag))
 
 	// Max IS uptime
-	if rotation.IsUsage == proto.BalanceDruid_Rotation_MaximizeIs && !shouldHoldIs {
+	if rotation.IsUsage == proto.BalanceDruid_Rotation_OptimizeIs && !shouldHoldIs {
 		if moonkin.InsectSwarm.CurDot().RemainingDuration(sim) <= 0 {
 			return moonkin.InsectSwarm, target
 		}
@@ -110,6 +109,7 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*core.Spell, *core.
 	playerLatency := time.Duration(core.MaxInt32(rotation.PlayerLatency, 0)) * time.Millisecond
 	lunarICD := moonkin.LunarICD.Timer.TimeToReady(sim)
 	solarICD := moonkin.SolarICD.Timer.TimeToReady(sim)
+	canExtendMf := rotation.MfExtension == proto.BalanceDruid_Rotation_ExtendAlways || rotation.MfExtension == proto.BalanceDruid_Rotation_ExtendOutsideSolar
 
 	if moonkin.Talents.Eclipse > 0 {
 		solarUptime := moonkin.SolarEclipseProcAura.ExpiresAt() - sim.CurrentTime
@@ -136,7 +136,6 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*core.Spell, *core.
 		// Eclipse
 		if solarIsActive || lunarIsActive {
 			if lunarIsActive {
-				canExtendMf := rotation.MfExtension == proto.BalanceDruid_Rotation_ExtendAlways || rotation.MfExtension == proto.BalanceDruid_Rotation_ExtendOutsideSolar || rotation.MfExtension == proto.BalanceDruid_Rotation_ExtendDuringLunar
 				if canExtendMf && moonkin.ExtendingMoonfireStacks == 0 {
 					if extendTarget := moonkin.tryExtendMoonfire(sim); extendTarget != nil {
 						return moonkin.Moonfire, extendTarget
@@ -157,7 +156,6 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*core.Spell, *core.
 						return moonkin.Starfire, target
 					}
 				}
-				canExtendMf := rotation.MfExtension == proto.BalanceDruid_Rotation_ExtendAlways || rotation.MfExtension == proto.BalanceDruid_Rotation_ExtendDuringSolar
 				if canExtendMf && moonkin.ExtendingMoonfireStacks == 0 {
 					if extendTarget := moonkin.tryExtendMoonfire(sim); extendTarget != nil {
 						return moonkin.Moonfire, extendTarget
@@ -181,20 +179,12 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*core.Spell, *core.
 		}
 	}
 
-	canExtendMf := rotation.MfExtension == proto.BalanceDruid_Rotation_ExtendAlways || rotation.MfExtension == proto.BalanceDruid_Rotation_ExtendOutsideSolar
-
 	fishingForLunar := lunarICD <= solarICD
 	if rotation.EclipsePrio == proto.BalanceDruid_Rotation_Solar {
 		fishingForLunar = lunarICD < solarICD
 	}
 
-	if fishingForLunar && (canExtendMf || rotation.MfExtension == proto.BalanceDruid_Rotation_ExtendFishingForLunar) && moonkin.ExtendingMoonfireStacks == 0 {
-		if extendTarget := moonkin.tryExtendMoonfire(sim); extendTarget != nil {
-			return moonkin.Moonfire, extendTarget
-		}
-	}
-
-	if !fishingForLunar && (canExtendMf || rotation.MfExtension == proto.BalanceDruid_Rotation_ExtendFishingForSolar) && moonkin.ExtendingMoonfireStacks == 0 {
+	if canExtendMf && moonkin.ExtendingMoonfireStacks == 0 {
 		if extendTarget := moonkin.tryExtendMoonfire(sim); extendTarget != nil {
 			return moonkin.Moonfire, extendTarget
 		}

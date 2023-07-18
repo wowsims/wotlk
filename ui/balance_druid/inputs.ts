@@ -81,10 +81,6 @@ export const BalanceDruidRotationConfig = {
 			label: 'Moonfire Extension',
 			labelTooltip: 'When should the rotation try to extend Moonfire on the main target.',
 			values: [
-				{ name: 'Extend fishing for lunar', value: MfExtension.ExtendFishingForLunar },
-				{ name: 'Extend fishing for solar', value: MfExtension.ExtendFishingForSolar },
-				{ name: 'Extend during lunar', value: MfExtension.ExtendDuringLunar },
-				{ name: 'Extend during solar', value: MfExtension.ExtendDuringSolar },
 				{ name: 'Extend always', value: MfExtension.ExtendAlways },
 				{ name: 'Extend outside solar', value: MfExtension.ExtendOutsideSolar },
 				{ name: 'Do not extend', value: MfExtension.DontExtend },
@@ -98,7 +94,7 @@ export const BalanceDruidRotationConfig = {
 			values: [
 				{ name: 'Unused', value: IsUsage.NoIs },
 				{ name: 'Before solar', value: IsUsage.BeforeSolar },
-				{ name: 'Maximize', value: IsUsage.MaximizeIs },
+				{ name: 'Optimize', value: IsUsage.OptimizeIs },
 				{ name: 'Multidot', value: IsUsage.MultidotIs },
 			],
 			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,

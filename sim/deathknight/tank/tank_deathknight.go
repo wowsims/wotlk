@@ -117,6 +117,7 @@ func (dk *TankDeathknight) Reset(sim *core.Simulation) {
 	dk.switchIT = false
 
 	dk.Presence = deathknight.UnsetPresence
+	dk.Deathknight.PseudoStats.Stunned = false
 
 	if dk.IsUsingAPL {
 		return

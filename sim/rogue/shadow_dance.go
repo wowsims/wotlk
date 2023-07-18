@@ -30,7 +30,7 @@ func (rogue *Rogue) registerShadowDanceCD() {
 
 	rogue.ShadowDance = rogue.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
-		Flags: core.SpellFlagAPL,
+		Flags:    core.SpellFlagAPL,
 
 		Cast: core.CastConfig{
 			IgnoreHaste: true,

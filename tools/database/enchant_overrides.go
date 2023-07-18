@@ -29,6 +29,7 @@ var EnchantOverrides = []*proto.UIEnchant{
 	{EffectId: 3878, SpellId: 67839, Name: "Mind Amplification Dish", Quality: proto.ItemQuality_ItemQualityCommon, Stats: stats.Stats{stats.Stamina: 45}.ToFloatArray(), Type: proto.ItemType_ItemTypeHead, RequiredProfession: proto.Profession_Engineering},
 
 	// Shoulder
+	{EffectId: 2998, ItemId: 29187, SpellId: 35441, Name: "Inscription of Endurance", Quality: proto.ItemQuality_ItemQualityUncommon, Stats: stats.Stats{stats.ArcaneResistance: 7, stats.FireResistance: 7, stats.FrostResistance: 7, stats.NatureResistance: 7, stats.ShadowResistance: 7}.ToFloatArray(), Type: proto.ItemType_ItemTypeShoulder},
 	{EffectId: 3793, ItemId: 44067, SpellId: 59771, Name: "Inscription of Triumph", Quality: proto.ItemQuality_ItemQualityRare, Stats: stats.Stats{stats.AttackPower: 40, stats.RangedAttackPower: 40, stats.Resilience: 15}.ToFloatArray(), Type: proto.ItemType_ItemTypeShoulder},
 	{EffectId: 3794, ItemId: 44068, SpellId: 59773, Name: "Inscription of Dominance", Quality: proto.ItemQuality_ItemQualityRare, Stats: stats.Stats{stats.SpellPower: 23, stats.Resilience: 15}.ToFloatArray(), Type: proto.ItemType_ItemTypeShoulder},
 	{EffectId: 3852, ItemId: 44957, SpellId: 62384, Name: "Greater Inscription of the Gladiator", Quality: proto.ItemQuality_ItemQualityEpic, Stats: stats.Stats{stats.Stamina: 30, stats.Resilience: 15}.ToFloatArray(), Type: proto.ItemType_ItemTypeShoulder},

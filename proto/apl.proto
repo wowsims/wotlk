@@ -91,6 +91,7 @@ message APLValue {
         APLValueAuraIsActive aura_is_active = 22;
         APLValueAuraRemainingTime aura_remaining_time = 23;
         APLValueAuraNumStacks aura_num_stacks = 24;
+        APLValueAuraInternalCooldown aura_internal_cooldown = 39;
 
         // Dot values
         APLValueDotIsActive dot_is_active = 6;
@@ -270,6 +271,9 @@ message APLValueAuraRemainingTime {
     ActionID aura_id = 1;
 }
 message APLValueAuraNumStacks {
+    ActionID aura_id = 1;
+}
+message APLValueAuraInternalCooldown {
     ActionID aura_id = 1;
 }
 

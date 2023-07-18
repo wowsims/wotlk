@@ -22,14 +22,19 @@ import * as AplValues from './apl_values.js';
 export interface APLActionPickerConfig extends InputConfig<Player<any>, APLAction> {
 }
 
-export type APLActionType = APLAction['action']['oneofKind'];
+export type APLActionKind = APLAction['action']['oneofKind'];
+type APLActionImplStruct<F extends APLActionKind> = Extract<APLAction['action'], {oneofKind: F}>;
+type APLActionImplTypesUnion = {
+	[f in NonNullable<APLActionKind>]: f extends keyof APLActionImplStruct<f> ? APLActionImplStruct<f>[f] : never;
+};
+export type APLActionImplType = APLActionImplTypesUnion[NonNullable<APLActionKind>]|undefined;
 
 export class APLActionPicker extends Input<Player<any>, APLAction> {
 
-	private typePicker: TextDropdownPicker<Player<any>, APLActionType>;
+	private kindPicker: TextDropdownPicker<Player<any>, APLActionKind>;
 
 	private readonly actionDiv: HTMLElement;
-	private currentType: APLActionType;
+	private currentKind: APLActionKind;
 	private actionPicker: Input<Player<any>, any> | null;
 
 	private readonly conditionPicker: AplValues.APLValuePicker;
@@ -54,15 +59,15 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 
 		const isPrepull = this.rootElem.closest('.apl-prepull-action-picker') != null;
 
-		const allActionTypes = Object.keys(actionTypeFactories) as Array<NonNullable<APLActionType>>;
-		this.typePicker = new TextDropdownPicker(this.actionDiv, player, {
+		const allActionKinds = Object.keys(actionKindFactories) as Array<NonNullable<APLActionKind>>;
+		this.kindPicker = new TextDropdownPicker(this.actionDiv, player, {
 			defaultLabel: 'Action',
-			values: allActionTypes
-				.filter(actionType => actionTypeFactories[actionType].isPrepull == undefined || actionTypeFactories[actionType].isPrepull === isPrepull)
-				.map(actionType => {
-					const factory = actionTypeFactories[actionType];
+			values: allActionKinds
+				.filter(actionKind => actionKindFactories[actionKind].isPrepull == undefined || actionKindFactories[actionKind].isPrepull === isPrepull)
+				.map(actionKind => {
+					const factory = actionKindFactories[actionKind];
 					return {
-						value: actionType,
+						value: actionKind,
 						label: factory.label,
 						submenu: factory.submenu,
 						tooltip: factory.fullDescription ? `<p>${factory.shortDescription}</p> ${factory.fullDescription}` : factory.shortDescription,
@@ -71,26 +76,49 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 			equals: (a, b) => a == b,
 			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
 			getValue: (player: Player<any>) => this.getSourceValue().action.oneofKind,
-			setValue: (eventID: EventID, player: Player<any>, newValue: APLActionType) => {
-				const action = this.getSourceValue();
-				if (action.action.oneofKind == newValue) {
+			setValue: (eventID: EventID, player: Player<any>, newKind: APLActionKind) => {
+				const sourceValue = this.getSourceValue();
+				const oldKind = sourceValue.action.oneofKind;
+				if (oldKind == newKind) {
 					return;
 				}
-				if (newValue) {
-					const factory = actionTypeFactories[newValue];
-					const obj: any = { oneofKind: newValue };
-					obj[newValue] = factory.newValue();
-					action.action = obj;
+
+				if (newKind) {
+					const factory = actionKindFactories[newKind];
+					let newSourceValue = this.makeAPLAction(newKind, factory.newValue());
+					if (sourceValue) {
+						// Some pre-fill logic when swapping kinds.
+						if (oldKind && this.actionPicker) {
+							if (newKind == 'sequence') {
+								if (sourceValue.action.oneofKind == 'strictSequence') {
+									(newSourceValue.action as APLActionImplStruct<'sequence'>).sequence.actions = sourceValue.action.strictSequence.actions;
+								} else {
+									(newSourceValue.action as APLActionImplStruct<'sequence'>).sequence.actions = [this.makeAPLAction(oldKind, this.actionPicker.getInputValue())];
+								}
+							} else if (newKind == 'strictSequence') {
+								if (sourceValue.action.oneofKind == 'sequence') {
+									(newSourceValue.action as APLActionImplStruct<'strictSequence'>).strictSequence.actions = sourceValue.action.sequence.actions;
+								} else {
+									(newSourceValue.action as APLActionImplStruct<'strictSequence'>).strictSequence.actions = [this.makeAPLAction(oldKind, this.actionPicker.getInputValue())];
+								}
+							} else if (sourceValue.action.oneofKind == 'sequence' && sourceValue.action.sequence.actions?.[0]?.action.oneofKind == newKind) {
+								newSourceValue = sourceValue.action.sequence.actions[0];
+							} else if (sourceValue.action.oneofKind == 'strictSequence' && sourceValue.action.strictSequence.actions?.[0]?.action.oneofKind == newKind) {
+								newSourceValue = sourceValue.action.strictSequence.actions[0];
+							}
+						}
+					}
+					this.setSourceValue(eventID, newSourceValue);
 				} else {
-					action.action = {
-						oneofKind: newValue,
+					sourceValue.action = {
+						oneofKind: newKind,
 					};
 				}
 				player.rotationChangeEmitter.emit(eventID);
 			},
 		});
 
-		this.currentType = undefined;
+		this.currentKind = undefined;
 		this.actionPicker = null;
 
 		this.init();
@@ -101,15 +129,15 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 	}
 
 	getInputValue(): APLAction {
-		const actionType = this.typePicker.getInputValue();
+		const actionKind = this.kindPicker.getInputValue();
 		return APLAction.create({
 			condition: this.conditionPicker.getInputValue(),
 			action: {
-				oneofKind: actionType,
+				oneofKind: actionKind,
 				...((() => {
 					const val: any = {};
-					if (actionType && this.actionPicker) {
-						val[actionType] = this.actionPicker.getInputValue();
+					if (actionKind && this.actionPicker) {
+						val[actionKind] = this.actionPicker.getInputValue();
 					}
 					return val;
 				})()),
@@ -124,46 +152,55 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 
 		this.conditionPicker.setInputValue(newValue.condition || APLValue.create());
 
-		const newActionType = newValue.action.oneofKind;
-		this.updateActionPicker(newActionType);
+		const newActionKind = newValue.action.oneofKind;
+		this.updateActionPicker(newActionKind);
 
-		if (newActionType) {
-			this.actionPicker!.setInputValue((newValue.action as any)[newActionType]);
+		if (newActionKind) {
+			this.actionPicker!.setInputValue((newValue.action as any)[newActionKind]);
 		}
 	}
 
-	private updateActionPicker(newActionType: APLActionType) {
-		const actionType = this.currentType;
-		if (newActionType == actionType) {
+	private makeAPLAction<K extends NonNullable<APLActionKind>>(kind: K, implVal: APLActionImplTypesUnion[K]): APLAction {
+		if (!kind) {
+			return APLAction.create();
+		}
+		const obj: any = { oneofKind: kind };
+		obj[kind] = implVal;
+		return APLAction.create({action: obj});
+	}
+
+	private updateActionPicker(newActionKind: APLActionKind) {
+		const actionKind = this.currentKind;
+		if (newActionKind == actionKind) {
 			return;
 		}
-		this.currentType = newActionType;
+		this.currentKind = newActionKind;
 
 		if (this.actionPicker) {
 			this.actionPicker.rootElem.remove();
 			this.actionPicker = null;
 		}
 
-		if (!newActionType) {
+		if (!newActionKind) {
 			return;
 		}
 
-		this.typePicker.setInputValue(newActionType);
+		this.kindPicker.setInputValue(newActionKind);
 
-		const factory = actionTypeFactories[newActionType];
+		const factory = actionKindFactories[newActionKind];
 		this.actionPicker = factory.factory(this.actionDiv, this.modObject, {
 			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
-			getValue: () => (this.getSourceValue().action as any)[newActionType] || factory.newValue(),
+			getValue: () => (this.getSourceValue().action as any)[newActionKind] || factory.newValue(),
 			setValue: (eventID: EventID, player: Player<any>, newValue: any) => {
-				(this.getSourceValue().action as any)[newActionType] = newValue;
+				(this.getSourceValue().action as any)[newActionKind] = newValue;
 				player.rotationChangeEmitter.emit(eventID);
 			},
 		});
-		this.actionPicker.rootElem.classList.add('apl-action-' + newActionType);
+		this.actionPicker.rootElem.classList.add('apl-action-' + newActionKind);
 	}
 }
 
-type ActionTypeConfig<T> = {
+type ActionKindConfig<T> = {
 	label: string,
 	submenu?: Array<string>,
 	shortDescription: string,
@@ -210,7 +247,7 @@ function inputBuilder<T>(config: {
 	isPrepull?: boolean,
 	newValue: () => T,
 	fields: Array<AplHelpers.APLPickerBuilderFieldConfig<T, any>>,
-}): ActionTypeConfig<T> {
+}): ActionKindConfig<T> {
 	return {
 		label: config.label,
 		submenu: config.submenu,
@@ -222,7 +259,7 @@ function inputBuilder<T>(config: {
 	};
 }
 
-export const actionTypeFactories: Record<NonNullable<APLActionType>, ActionTypeConfig<any>> = {
+const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<APLActionImplTypesUnion[f]>} = {
 	['castSpell']: inputBuilder({
 		label: 'Cast',
 		shortDescription: 'Casts the spell if possible, i.e. resource/cooldown/GCD/etc requirements are all met.',

@@ -489,6 +489,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestAssassination-AllItems-PetrifiedScarab-21685"
+ value: {
+  dps: 7409.66177
+  tps: 5260.85986
+ }
+}
+dps_results: {
  key: "TestAssassination-AllItems-PetrifiedTwilightScale-54571"
  value: {
   dps: 7409.66177

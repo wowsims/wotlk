@@ -50,6 +50,7 @@ var ItemSetKirinTorGarb = core.NewItemSet(core.ItemSet{
 				Timer:    agent.GetCharacter().NewTimer(),
 				Duration: time.Second * 45,
 			}
+			procAura.Icd = &icd
 
 			core.MakeProcTriggerAura(&mage.Unit, core.ProcTrigger{
 				Name:       "Mage2pT8",

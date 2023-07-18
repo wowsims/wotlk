@@ -66,7 +66,7 @@ func init() {
 				})
 
 			hsa.Init(character)
-			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+			triggerAura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:       "DMC Greatness",
 				Callback:   core.CallbackOnSpellHitDealt | core.CallbackOnPeriodicDamageDealt | core.CallbackOnHealDealt | core.CallbackOnPeriodicHealDealt,
 				ProcMask:   core.ProcMaskDirect | core.ProcMaskSpellHealing | core.ProcMaskProc,
@@ -78,6 +78,7 @@ func init() {
 					hsa.Get(character).Activate(sim)
 				},
 			})
+			hsa.Get(character).Icd = triggerAura.Icd
 		})
 	}
 	core.AddEffectsToTest = false
@@ -103,7 +104,7 @@ func init() {
 				})
 
 			hsa.Init(character)
-			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+			triggerAura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:       name,
 				Callback:   core.CallbackOnSpellHitDealt | core.CallbackOnPeriodicDamageDealt,
 				ProcMask:   core.ProcMaskDirect | core.ProcMaskProc,
@@ -115,6 +116,7 @@ func init() {
 					hsa.Get(character).Activate(sim)
 				},
 			})
+			hsa.Get(character).Icd = triggerAura.Icd
 		})
 	}
 	core.AddEffectsToTest = false

@@ -556,6 +556,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestHoly-AllItems-PetrifiedScarab-21685"
+ value: {
+  dps: 108.04296
+  tps: 50.38814
+  hps: 5015.75173
+ }
+}
+dps_results: {
  key: "TestHoly-AllItems-PetrifiedTwilightScale-54571"
  value: {
   dps: 108.04296

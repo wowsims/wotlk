@@ -488,6 +488,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestArcane-AllItems-PetrifiedScarab-21685"
+ value: {
+  dps: 7037.80826
+  tps: 4247.64942
+ }
+}
+dps_results: {
  key: "TestArcane-AllItems-PetrifiedTwilightScale-54571"
  value: {
   dps: 7037.80826

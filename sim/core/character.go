@@ -521,6 +521,7 @@ func (character *Character) FillPlayerStats(playerStats *proto.PlayerStats) {
 		return &proto.AuraStats{
 			Id:        aura.ActionID.ToProto(),
 			MaxStacks: aura.MaxStacks,
+			HasIcd:    aura.Icd != nil,
 		}
 	})
 
