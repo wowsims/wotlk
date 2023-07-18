@@ -56,7 +56,7 @@ func (dk *DpsDeathknight) RegularPrioPickSpell(sim *core.Simulation, target *cor
 	canCastSpell := sim.CurrentTime+spGcd <= untilTime
 
 	km := dk.KillingMachineAura.IsActive()
-	rime := dk.RimeAura.IsActive()
+	rime := dk.FreezingFogAura.IsActive()
 	if canCastSpell && dk.RaiseDead.CanCast(sim, nil) && sim.GetRemainingDuration() >= time.Second*30 {
 		return dk.RaiseDead
 	} else if canCastSpell && dk.HowlingBlast.CanCast(sim, nil) && rime {
@@ -100,7 +100,7 @@ func (dk *DpsDeathknight) RotationActionCallback_EndOfFightPrio(sim *core.Simula
 	obAt := core.MaxDuration(frAt, uhAt)
 	fsCost := float64(core.RuneCost(dk.FrostStrike.CurCast.Cost).RunicPower())
 	bothblAt := dk.BloodDeathRuneBothReadyAt()
-	hasRime := dk.RimeAura.IsActive() && dk.Talents.HowlingBlast
+	hasRime := dk.FreezingFogAura.IsActive() && dk.Talents.HowlingBlast
 
 	if bothblAt == core.NeverExpires {
 		bothblAt = 1

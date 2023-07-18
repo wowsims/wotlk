@@ -37,7 +37,7 @@ func (dk *TankDeathknight) DoFrostCast(sim *core.Simulation, target *core.Unit, 
 		return true
 	}
 
-	if dk.Talents.HowlingBlast && dk.RimeAura.IsActive() && dk.HowlingBlast.CanCast(sim, target) {
+	if dk.Talents.HowlingBlast && dk.FreezingFogAura.IsActive() && dk.HowlingBlast.CanCast(sim, target) {
 		dk.HowlingBlast.Cast(sim, target)
 		return true
 	}
