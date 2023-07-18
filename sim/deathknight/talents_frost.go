@@ -122,9 +122,9 @@ func (dk *Deathknight) applyRime() {
 		return
 	}
 
-	dk.RimeAura = dk.RegisterAura(core.Aura{
-		Label:    "Rime",
-		ActionID: core.ActionID{SpellID: 59057},
+	dk.FreezingFogAura = dk.RegisterAura(core.Aura{
+		Label:    "Freezing Fog",
+		ActionID: core.ActionID{SpellID: 59052},
 		Duration: time.Second * 15,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			if dk.HowlingBlast != nil {

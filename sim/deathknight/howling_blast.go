@@ -74,8 +74,8 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 				spell.DealDamage(sim, result)
 			}
 
-			if dk.RimeAura.IsActive() {
-				dk.RimeAura.Deactivate(sim)
+			if dk.FreezingFogAura.IsActive() {
+				dk.FreezingFogAura.Deactivate(sim)
 			}
 			if dk.KillingMachineAura.IsActive() {
 				dk.KillingMachineAura.Deactivate(sim)
