@@ -385,6 +385,14 @@ func (unit *Unit) GetCurrentPowerBar() PowerBarType {
 	return unit.currentPowerBar
 }
 
+func (unit *Unit) GetSpellCritDebuffModifier() float64 {
+	return (unit.PseudoStats.BonusSpellCritRatingTaken + unit.PseudoStats.BonusCritRatingTaken) / (CritRatingPerCritChance * 100)
+}
+
+func (unit *Unit) GetPhysicalCritDebuffModifier() float64 {
+	return unit.PseudoStats.BonusCritRatingTaken / (CritRatingPerCritChance * 100)
+}
+
 func (unit *Unit) finalize() {
 	if unit.Env.IsFinalized() {
 		panic("Unit already finalized!")

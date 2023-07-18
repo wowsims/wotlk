@@ -62,7 +62,7 @@ func (druid *Druid) registerMoonfireSpell() {
 				dot.Spell.DamageMultiplier = baseDamageMultiplier + bonusPeriodicDamageMultiplier
 				dot.SnapshotBaseDamage = 200 + 0.13*dot.Spell.SpellPower()
 				attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
-				dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
+				dot.SnapshottableCritChance = dot.Spell.SnapshottableSpellCritChance(target)
 				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
 				dot.Spell.DamageMultiplier = baseDamageMultiplier - malusInitialDamageMultiplier
 			},

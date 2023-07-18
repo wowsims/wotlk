@@ -50,7 +50,7 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 				for _, aoeTarget := range sim.Encounter.TargetUnits {
 					// DnD recalculates attack multipliers + crit dynamically on every tick so this is here on purpose
 					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[aoeTarget.UnitIndex]) * dk.RoRTSBonus(aoeTarget)
-					dot.SnapshotCritChance = dot.Spell.SpellCritChance(aoeTarget)
+					dot.SnapshottableCritChance = dot.Spell.SnapshottableSpellCritChance(aoeTarget)
 					dot.CalcAndDealPeriodicSnapshotDamage(sim, aoeTarget, dot.OutcomeMagicHitAndSnapshotCrit)
 				}
 			},

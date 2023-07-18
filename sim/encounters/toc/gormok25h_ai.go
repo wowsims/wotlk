@@ -124,7 +124,7 @@ func (ai *Gormok25HAI) registerImpaleSpell(target *core.Target) {
 				if !isRollover {
 					attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
 					dot.Spell.DamageMultiplier = 1
-					dot.SnapshotCritChance = dot.Spell.PhysicalCritChance(target, attackTable)
+					dot.SnapshottableCritChance = dot.Spell.SnapshottablePhysicalCritChance(target, attackTable)
 					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
 				}
 			},

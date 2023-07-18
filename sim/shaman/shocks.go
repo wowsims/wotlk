@@ -95,7 +95,7 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 
 		OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
 			dot.SnapshotBaseDamage = 834/6 + 0.1*dot.Spell.SpellPower()
-			dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
+			dot.SnapshottableCritChance = dot.Spell.SnapshottableSpellCritChance(target)
 
 			dot.Spell.DamageMultiplierAdditive += bonusPeriodicDamageMultiplier
 			dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])

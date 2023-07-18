@@ -105,7 +105,7 @@ func (warlock *Warlock) setupCooldowns(sim *core.Simulation) {
 
 func (warlock *Warlock) calcRelativeCorruptionInc(target *core.Unit) float64 {
 	dot := warlock.Corruption.Dot(target)
-	snapshotCrit := dot.SnapshotCritChance
+	snapshotCrit := dot.CalculateSnapshotCritChance(target)
 	snapshotDmg := dot.SnapshotAttackerMultiplier * (snapshotCrit*(warlock.Corruption.CritMultiplier-1) + 1)
 
 	attackTable := warlock.AttackTables[target.UnitIndex]

@@ -43,7 +43,7 @@ type Dot struct {
 	OnTick     OnTick
 
 	SnapshotBaseDamage         float64
-	SnapshotCritChance         float64
+	SnapshottableCritChance    float64
 	SnapshotAttackerMultiplier float64
 
 	tickAction *PendingAction
@@ -288,4 +288,17 @@ func (spell *Spell) createDots(config DotConfig, isHot bool) {
 			}
 		}
 	}
+}
+
+func (dot *Dot) CalculateSnapshotCritChance(unit *Unit) float64 {
+	debuffModifierCritChance := 0.0
+
+	if dot.Spell.SpellSchool.Matches(SpellSchoolPhysical) {
+		debuffModifierCritChance = unit.GetPhysicalCritDebuffModifier()
+	} else if dot.Spell.SpellSchool.Matches(SpellSchoolMagic) {
+		debuffModifierCritChance = unit.GetSpellCritDebuffModifier()
+	} else {
+		panic("Unknown spell school")
+	}
+	return dot.SnapshottableCritChance + debuffModifierCritChance
 }

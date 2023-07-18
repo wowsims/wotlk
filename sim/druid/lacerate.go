@@ -60,7 +60,7 @@ func (druid *Druid) registerLacerateSpell() {
 				if !isRollover {
 					attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
 					dot.Spell.DamageMultiplier = tickDamageMul
-					dot.SnapshotCritChance = dot.Spell.PhysicalCritChance(target, attackTable)
+					dot.SnapshottableCritChance = dot.Spell.SnapshottablePhysicalCritChance(target, attackTable)
 					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
 				}
 			},

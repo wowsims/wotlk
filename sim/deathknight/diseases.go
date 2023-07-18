@@ -146,7 +146,7 @@ func (dk *Deathknight) registerBloodPlague() {
 				dot.SnapshotBaseDamage = 36.248 + 0.06325*dk.getImpurityBonus(dot.Spell)
 
 				if !isRollover {
-					dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
+					dot.SnapshottableCritChance = dot.Spell.SnapshottableSpellCritChance(target)
 					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
 					dot.SnapshotAttackerMultiplier *= dk.RoRTSBonus(target)
 				}
@@ -240,7 +240,7 @@ func (dk *Deathknight) registerDrwBloodPlague() {
 				dot.SnapshotBaseDamage = 36.248 + 0.06325*dk.getImpurityBonus(dot.Spell)
 
 				if !isRollover {
-					dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
+					dot.SnapshottableCritChance = dot.Spell.SnapshottableSpellCritChance(target)
 					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
 				}
 			},

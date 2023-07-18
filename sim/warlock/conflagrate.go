@@ -55,7 +55,7 @@ func (warlock *Warlock) registerConflagrateSpell() {
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 				dot.SnapshotBaseDamage = (314.0 / 3) + (0.4/3)*dot.Spell.SpellPower()
 				attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
-				dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
+				dot.SnapshottableCritChance = dot.Spell.SnapshottableSpellCritChance(target)
 
 				// DoT does not benefit from firestone and also not from spellstone
 				dot.Spell.DamageMultiplierAdditive -= warlock.GrandFirestoneBonus()

@@ -52,7 +52,7 @@ func (warlock *Warlock) registerCorruptionSpell() {
 				dot.SnapshotBaseDamage = 1080/6 + spellCoeff*dot.Spell.SpellPower()
 				if !isRollover {
 					attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
-					dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
+					dot.SnapshottableCritChance = dot.Spell.SnapshottableSpellCritChance(target)
 					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
 				}
 			},

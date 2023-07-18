@@ -80,7 +80,7 @@ func (mage *Mage) registerLivingBombSpell() {
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
 				dot.SnapshotBaseDamage = 345 + 0.2*dot.Spell.SpellPower()
-				dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
+				dot.SnapshottableCritChance = dot.Spell.SnapshottableSpellCritChance(target)
 				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
 			},
 			OnTick: onTick,
