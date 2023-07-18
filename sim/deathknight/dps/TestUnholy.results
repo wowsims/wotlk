@@ -238,24 +238,24 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-DeathKnight'sAnguish-38212"
  value: {
-  dps: 7576.16034
-  tps: 4898.48364
+  dps: 7577.27117
+  tps: 4900.16273
   hps: 265.91924
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-Deathbringer'sWill-50362"
  value: {
-  dps: 7867.09723
-  tps: 5177.18653
+  dps: 7866.42643
+  tps: 5175.95597
   hps: 271.94125
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-Deathbringer'sWill-50363"
  value: {
-  dps: 7891.46374
-  tps: 5224.79306
+  dps: 7890.28539
+  tps: 5222.72235
   hps: 273.84293
  }
 }
@@ -526,8 +526,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-NevermeltingIceCrystal-50259"
  value: {
-  dps: 7580.84719
-  tps: 4912.7054
+  dps: 7578.35183
+  tps: 4907.52849
   hps: 265.91924
  }
 }
@@ -726,8 +726,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-SigilofHauntedDreams-40715"
  value: {
-  dps: 8015.39896
-  tps: 5105.94015
+  dps: 8014.73148
+  tps: 5104.87561
   hps: 266.87008
  }
 }
@@ -1014,8 +1014,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Settings-Human-Unholy P1 -Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 36820.88911
-  tps: 39683.38793
+  dps: 36273.62948
+  tps: 38807.00848
   hps: 262.91405
  }
 }
@@ -1062,8 +1062,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Settings-Human-Unholy P2-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 47344.6291
-  tps: 51228.40956
+  dps: 46675.01029
+  tps: 50154.38353
   hps: 321.9413
  }
 }
@@ -1110,8 +1110,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Settings-Orc-Unholy P1 -Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 37408.38064
-  tps: 40186.30687
+  dps: 36861.33305
+  tps: 39309.86547
   hps: 263.38366
  }
 }
@@ -1158,8 +1158,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Settings-Orc-Unholy P2-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 47429.93616
-  tps: 51005.51052
+  dps: 46763.45057
+  tps: 49938.90935
   hps: 323.27175
  }
 }
