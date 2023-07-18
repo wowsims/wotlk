@@ -106,6 +106,7 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 	paladin.SealOfRighteousness = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    auraActionID, // Seal of Righteousness self buff.
 		SpellSchool: core.SpellSchoolHoly,
+		Flags:       core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.14,

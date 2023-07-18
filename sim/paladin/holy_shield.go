@@ -55,6 +55,7 @@ func (paladin *Paladin) registerHolyShieldSpell() {
 	paladin.HolyShield = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolHoly,
+		Flags:       core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.10,

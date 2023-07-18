@@ -204,6 +204,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	paladin.SealOfVengeance = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    auraActionID, // Seal of Vengeance self buff.
 		SpellSchool: core.SpellSchoolHoly,
+		Flags:       core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.14,

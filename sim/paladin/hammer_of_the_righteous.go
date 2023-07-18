@@ -15,7 +15,7 @@ func (paladin *Paladin) registerHammerOfTheRighteousSpell() {
 		ActionID:    core.ActionID{SpellID: 53595},
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.06,
