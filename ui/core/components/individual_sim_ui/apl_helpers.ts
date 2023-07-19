@@ -116,7 +116,7 @@ export class APLActionIDPicker extends DropdownPicker<Player<any>, ActionID, Act
 		const actionIdSet = actionIdSets[config.actionIdSet];
 		super(parent, player, {
 			...config,
-			sourceToValue: (src: ActionID) => ActionId.fromProto(src),
+			sourceToValue: (src: ActionID) => src ? ActionId.fromProto(src) : ActionId.fromEmpty(),
 			valueToSource: (val: ActionId) => val.toProto(),
 			defaultLabel: actionIdSet.defaultLabel,
 			equals: (a, b) => ((a == null) == (b == null)) && (!a || a.equals(b!)),
@@ -131,7 +131,7 @@ export class APLActionIDPicker extends DropdownPicker<Player<any>, ActionID, Act
 				const textElem = document.createTextNode(actionId.name);
 				button.appendChild(textElem);
 			},
-			createMissingValue: value => ((value instanceof ActionId) ? value : ActionId.fromProto(value as unknown as ActionID)).fill().then(filledId => {
+			createMissingValue: value => value.fill().then(filledId => {
 				return {
 					value: filledId,
 				};

@@ -1,28 +1,7 @@
+@import "../unit_picker";
+
 .results-filter-root {
 	display: flex;
 	align-items: center;
 	font-size: 20px;
-}
-
-.unit-filter-root {
-	border: 1px solid white;
-	color: white;
-	text-shadow:
-		0 0 3px black,
-		0 0 3px black,
-		0 0 3px black;
-}
-
-.unit-filter-option {
-	height: 30px;
-}
-
-.unit-filter-icon {
-	margin: 2px;
-	height: 25px;
-}
-
-.unit-filter-label {
-	font-size: 14px;
-	margin: 2px;
 }
