@@ -20,7 +20,7 @@ export abstract class ResultComponent extends Component {
 	private lastSimResult: SimResultData | null;
 
 	constructor(config: ResultComponentConfig) {
-		super(config.parent, config.rootCssClass || '');
+		super(config.parent, config.rootCssClass || 'result-component');
 		this.lastSimResult = null;
 
 		config.resultsEmitter.on((eventID, resultData) => {
