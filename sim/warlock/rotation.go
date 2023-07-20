@@ -132,7 +132,10 @@ func aclAppendSimple(acl []ActionCondition, spell *core.Spell, cond func(sim *co
 func (warlock *Warlock) defineRotation() {
 	acl := warlock.acl
 	mainTarget := warlock.CurrentTarget // assumed to be the first element in the target list
-	hauntTravel := time.Duration(float64(time.Second) * warlock.DistanceFromTarget / warlock.Haunt.MissileSpeed)
+	var hauntTravel time.Duration
+	if warlock.Talents.Haunt {
+		hauntTravel = time.Duration(float64(time.Second) * warlock.DistanceFromTarget / warlock.Haunt.MissileSpeed)
+	}
 	critDebuffCat := warlock.GetEnemyExclusiveCategories(core.SpellCritEffectCategory).Get(mainTarget)
 
 	logInfo := func(sim *core.Simulation, msg string, vals ...interface{}) {
@@ -629,6 +632,10 @@ func (warlock *Warlock) getAlternativeAction(sim *core.Simulation, skipIndex int
 }
 
 func (warlock *Warlock) OnGCDReady(sim *core.Simulation) {
+	if warlock.IsUsingAPL {
+		return
+	}
+
 	for _, ac := range warlock.acl {
 		action, target := ac.Condition(sim)
 		if action == ACLNext || !ac.Spell.IsReady(sim) {

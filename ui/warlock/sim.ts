@@ -18,7 +18,9 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			cssClass: 'warlock-sim-ui',
 			cssScheme: 'warlock',
 			// List any known bugs / issues here and they'll be shown on the site.
-			knownIssues: [],
+			knownIssues: [
+				"Drain Soul is currently disabled for APL rotations"
+			],
 
 			// All stats for which EP should be calculated.
 			epStats: [
@@ -134,7 +136,13 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 					Presets.DemonologyTalents,
 					Presets.DestructionTalents,
 				],
-				//Preset gear configurations that the user can quickly select.
+				// Preset rotations that the user can quickly select.
+				rotations: [
+					Presets.APL_Demo_Default,
+					Presets.APL_Destro_Default,
+				],
+
+				// Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.SWP_BIS,
 					Presets.P1_PreBiS_11,

@@ -8,6 +8,10 @@ import (
 )
 
 func (warlock *Warlock) registerChaosBoltSpell() {
+	if !warlock.Talents.ChaosBolt {
+		return
+	}
+
 	spellCoeff := 0.714 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
 
 	// ChaosBolt is affected by level-based partial resists.
@@ -17,6 +21,7 @@ func (warlock *Warlock) registerChaosBoltSpell() {
 		ActionID:    core.ActionID{SpellID: 59172},
 		SpellSchool: core.SpellSchoolFire,
 		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.07,

@@ -9,7 +9,7 @@ import (
 )
 
 func (warlock *Warlock) registerDemonicEmpowermentSpell() {
-	if !warlock.Talents.DemonicEmpowerment {
+	if !warlock.Talents.DemonicEmpowerment && warlock.Options.Summon == proto.Warlock_Options_NoSummon {
 		return
 	}
 
@@ -51,13 +51,10 @@ func (warlock *Warlock) registerDemonicEmpowermentSpell() {
 		}
 	}
 
-	if warlock.Options.Summon != proto.Warlock_Options_NoSummon {
-		warlock.Pet.DemonicEmpowermentAura = warlock.Pet.RegisterAura(petAura)
-	}
+	warlock.Pet.DemonicEmpowermentAura = warlock.Pet.RegisterAura(petAura)
 
 	warlock.DemonicEmpowerment = warlock.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 47193},
-
 		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.06,
 		},
@@ -70,5 +67,10 @@ func (warlock *Warlock) registerDemonicEmpowermentSpell() {
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			warlock.Pet.DemonicEmpowermentAura.Activate(sim)
 		},
+	})
+
+	warlock.AddMajorCooldown(core.MajorCooldown{
+		Spell: warlock.DemonicEmpowerment,
+		Type:  core.CooldownTypeDPS,
 	})
 }

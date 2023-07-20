@@ -10,10 +10,6 @@ import (
 )
 
 func (warlock *Warlock) registerInfernoSpell() {
-	if !warlock.Rotation.UseInfernal {
-		return
-	}
-
 	summonInfernalAura := warlock.RegisterAura(core.Aura{
 		Label:    "Summon Infernal",
 		ActionID: core.ActionID{SpellID: 1122},
@@ -24,6 +20,7 @@ func (warlock *Warlock) registerInfernoSpell() {
 		ActionID:    core.ActionID{SpellID: 1122},
 		SpellSchool: core.SpellSchoolFire,
 		ProcMask:    core.ProcMaskEmpty,
+		Flags:       core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.8,
@@ -64,6 +61,10 @@ func (warlock *Warlock) registerInfernoSpell() {
 		Spell: warlock.Inferno,
 		Type:  core.CooldownTypeDPS,
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
+			if !warlock.Rotation.UseInfernal {
+				return false
+			}
+
 			return sim.GetRemainingDuration() <= 61*time.Second
 		},
 	})

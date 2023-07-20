@@ -19,6 +19,7 @@ func (warlock *Warlock) registerImmolateSpell() {
 		ActionID:    core.ActionID{SpellID: 47811},
 		SpellSchool: core.SpellSchoolFire,
 		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.17,
@@ -46,11 +47,15 @@ func (warlock *Warlock) registerImmolateSpell() {
 			Aura: core.Aura{
 				Label: "Immolate",
 				OnGain: func(aura *core.Aura, sim *core.Simulation) {
-					warlock.ChaosBolt.DamageMultiplierAdditive += fireAndBrimstoneBonus
+					if warlock.Talents.ChaosBolt {
+						warlock.ChaosBolt.DamageMultiplierAdditive += fireAndBrimstoneBonus
+					}
 					warlock.Incinerate.DamageMultiplierAdditive += fireAndBrimstoneBonus
 				},
 				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-					warlock.ChaosBolt.DamageMultiplierAdditive -= fireAndBrimstoneBonus
+					if warlock.Talents.ChaosBolt {
+						warlock.ChaosBolt.DamageMultiplierAdditive -= fireAndBrimstoneBonus
+					}
 					warlock.Incinerate.DamageMultiplierAdditive -= fireAndBrimstoneBonus
 				},
 			},

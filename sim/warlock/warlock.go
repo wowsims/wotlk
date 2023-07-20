@@ -160,6 +160,10 @@ func (warlock *Warlock) Initialize() {
 			})
 		}
 
+		if warlock.IsUsingAPL {
+			return
+		}
+
 		precastSpellAt := -warlock.ApplyCastSpeedForSpell(precastSpell.DefaultCast.CastTime, precastSpell)
 
 		warlock.RegisterPrepullAction(precastSpellAt, func(sim *core.Simulation) {
@@ -225,9 +229,7 @@ func NewWarlock(character core.Character, options *proto.Player) *Warlock {
 		warlock.Pet = warlock.NewWarlockPet()
 	}
 
-	if warlock.Rotation.UseInfernal {
-		warlock.Infernal = warlock.NewInfernal()
-	}
+	warlock.Infernal = warlock.NewInfernal()
 
 	if warlock.Rotation.Type == proto.Warlock_Rotation_Affliction && warlock.Rotation.EnableWeaponSwap {
 		warlock.EnableItemSwap(warlock.Rotation.WeaponSwap, 1, 1, 1)

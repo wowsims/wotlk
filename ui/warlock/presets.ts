@@ -13,7 +13,7 @@ import {
 	Faction,
 	Spec,
 } from '../core/proto/common.js';
-import { SavedTalents } from '../core/proto/ui.js';
+import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
 import { Player } from '../core/player.js';
 
 import {
@@ -23,13 +23,13 @@ import {
 	Warlock_Rotation_SecondaryDot as SecondaryDot,
 	Warlock_Rotation_SpecSpell as SpecSpell,
 	Warlock_Rotation_Curse as Curse,
-	Warlock_Rotation_Type as RotationType,
 	Warlock_Options_WeaponImbue as WeaponImbue,
 	Warlock_Options_Armor as Armor,
 	Warlock_Options_Summon as Summon,
 	WarlockMajorGlyph as MajorGlyph,
 	WarlockMinorGlyph as MinorGlyph,
 } from '../core/proto/warlock.js';
+import { APLRotation } from '../core/proto/apl.js';
 
 export const BIS_TOOLTIP = 'This gear preset is inspired from Zephan\'s Affliction guide: https://www.warcrafttavern.com/wotlk/guides/pve-affliction-warlock/';
 
@@ -215,7 +215,7 @@ export const SWP_BIS = {
 export const P1_PreBiS_11 = {
 	name: 'Pre-Raid Affliction',
 	tooltip: BIS_TOOLTIP,
-	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction,
+	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalentTree() == 0,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":44910,"enchant":3820,"gems":[41285,39998]},
 		{"id":42647,"gems":[39998]},
@@ -239,7 +239,7 @@ export const P1_PreBiS_11 = {
 export const P1_Preset_Demo_Destro = {
 	name: 'P1 Demo / Destro',
 	tooltip: BIS_TOOLTIP,
-	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology || player.getRotation().type == RotationType.Destruction,
+	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalentTree() > 0,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":40421,"enchant":3820,"gems":[41285,40014]},
 		{"id":44661,"gems":[40099]},
@@ -266,7 +266,7 @@ export const P1_Preset_Demo_Destro = {
 export const P1_Preset_Affliction = {
 	name: 'P1 Affliction',
 	tooltip: BIS_TOOLTIP,
-	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction,
+	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalentTree() == 0,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":40421,"enchant":3820,"gems":[41285,40051]},
 		{"id":44661,"gems":[40026]},
@@ -292,7 +292,7 @@ export const P1_Preset_Affliction = {
 export const P1_PreBiS_14 = {
 	name: 'Pre-Raid',
 	tooltip: BIS_TOOLTIP,
-	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology || player.getRotation().type == RotationType.Destruction,
+	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalentTree() > 0,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":44910,"enchant":3820,"gems":[41285,39998]},
 		{"id":42647,"gems":[40049]},
@@ -317,7 +317,7 @@ export const P1_PreBiS_14 = {
 export const P2_Preset_Affliction = {
 	name: 'P2 Affliction',
 	tooltip: BIS_TOOLTIP,
-	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction,
+	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalentTree() == 0,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":45497,"enchant":3820,"gems":[41285,45883]},
 		{"id":45133,"gems":[40051]},
@@ -342,7 +342,7 @@ export const P2_Preset_Affliction = {
 export const P2_Preset_Demo_Destro = {
 	name: 'P2 Demo / Destro',
 	tooltip: BIS_TOOLTIP,
-	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology || player.getRotation().type == RotationType.Destruction,
+	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalentTree() > 0,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":45497,"enchant":3820,"gems":[41285,45883]},
 		{"id":45243,"gems":[39998]},
@@ -367,7 +367,8 @@ export const P2_Preset_Demo_Destro = {
 export const P3_Preset_Affliction_Horde = {
 	name: 'P3 Affliction H',
 	tooltip: BIS_TOOLTIP,
-	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction && player.getFaction() == Faction.Horde,
+	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalentTree() == 0
+			&& player.getFaction() == Faction.Horde,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":47796,"enchant":3820,"gems":[41285,40133]},
 		{"id":47468,"gems":[40155]},
@@ -392,7 +393,8 @@ export const P3_Preset_Affliction_Horde = {
 export const P3_Preset_Affliction_Alliance = {
 	name: 'P3 Affliction A',
 	tooltip: BIS_TOOLTIP,
-	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction && player.getFaction() == Faction.Alliance,
+	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalentTree() == 0
+			&& player.getFaction() == Faction.Alliance,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":47789,"enchant":3820,"gems":[41285,40133]},
 		{"id":47144,"gems":[40155]},
@@ -417,7 +419,8 @@ export const P3_Preset_Affliction_Alliance = {
 export const P3_Preset_Demo_Horde = {
 	name: 'P3 Demo H',
 	tooltip: BIS_TOOLTIP,
-	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology && player.getFaction() == Faction.Horde,
+	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalentTree() == 1
+			&& player.getFaction() == Faction.Horde,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":47796,"enchant":3820,"gems":[41285,40133]},
 		{"id":45133,"gems":[40153]},
@@ -442,7 +445,8 @@ export const P3_Preset_Demo_Horde = {
 export const P3_Preset_Demo_Alliance = {
 	name: 'P3 Demo A',
 	tooltip: BIS_TOOLTIP,
-	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology && player.getFaction() == Faction.Alliance,
+	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalentTree() == 1
+			&& player.getFaction() == Faction.Alliance,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":47789,"enchant":3820,"gems":[41285,40133]},
 		{"id":45243,"gems":[40113]},
@@ -467,7 +471,8 @@ export const P3_Preset_Demo_Alliance = {
 export const P3_Preset_Destro_Horde = {
 	name: 'P3 Destro H',
 	tooltip: BIS_TOOLTIP,
-	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Destruction && player.getFaction() == Faction.Horde,
+	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalentTree() == 2
+			&& player.getFaction() == Faction.Horde,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":47796,"enchant":3820,"gems":[41285,40133]},
 		{"id":47468,"gems":[40153]},
@@ -492,7 +497,8 @@ export const P3_Preset_Destro_Horde = {
 export const P3_Preset_Destro_Alliance = {
 	name: 'P3 Destro A',
 	tooltip: BIS_TOOLTIP,
-	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Destruction && player.getFaction() == Faction.Alliance,
+	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalentTree() == 2
+			&& player.getFaction() == Faction.Alliance,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":47789,"enchant":3820,"gems":[41285,40133]},
 		{"id":47144,"gems":[40155]},
@@ -513,3 +519,125 @@ export const P3_Preset_Destro_Alliance = {
 		{"id":45294,"gems":[40155]}
 	]}`),
 }
+
+export const APL_Demo_Default = {
+	name: 'Demo Default',
+	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalentTree() == 1,
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: WarlockRotation.toJsonString(DemonologyRotation),
+		rotation: APLRotation.fromJsonString(`
+{
+    "enabled": true,
+    "prepullActions": [
+        { "action": { "castSpell": { "spellId": { "spellId": 57946 } } }, "doAt": "-4s" },
+        { "action": { "castSpell": { "spellId": { "otherId": "OtherActionPotion" } } }, "doAt": "-2.5s" },
+        { "action": { "castSpell": { "spellId": { "spellId": 47809 } } }, "doAt": "-2.5s" }
+    ],
+    "priorityList": [
+        { "action": { "autocastOtherCooldowns": {} } },
+        { "action": { "castSpell": { "spellId": { "spellId": 50589 } } } },
+        { "action": { "condition": { "cmp": {
+                        "op": "OpGt",
+                        "lhs": { "remainingTime": {} },
+                        "rhs": { "const": { "val": "60s" } }
+                    } }, "castSpell": { "spellId": { "spellId": 47867 } } } },
+        { "action": { "multidot": { "spellId": { "spellId": 47813 }, "maxDots": 1, "maxOverlap": { "const": { "val": "0ms" } } } } },
+        { "action": { "condition": { "and": {
+                        "vals": [
+                            { "not": { "val": { "dotIsActive": { "spellId": { "spellId": 47867 } } } } },
+                            { "not": { "val": { "dotIsActive": { "spellId": { "spellId": 47864 } } } } },
+                            { "cmp": {
+                                    "op": "OpGt",
+                                    "lhs": { "remainingTime": {} },
+                                    "rhs": { "const": { "val": "22s" } }
+                                } } ] } }, "castSpell": { "spellId": { "spellId": 47864 } } } },
+        { "action": { "condition": { "and": { "vals": [
+                            { "cmp": {
+                                    "op": "OpLt",
+                                    "lhs": { "auraRemainingTime": { "auraId": { "spellId": 63321 } } },
+                                    "rhs": { "const": { "val": "3s" } } } },
+                            { "cmp": {
+                                    "op": "OpGt",
+                                    "lhs": { "remainingTime": {} },
+                                    "rhs": { "const": { "val": "10s" } }
+                                } } ] } }, "castSpell": { "spellId": { "spellId": 57946 } } } },
+        { "action": { "condition": { "and": { "vals": [
+                            { "cmp": {
+                                    "op": "OpLt",
+                                    "lhs": { "dotRemainingTime": { "spellId": { "spellId": 47811 } } },
+                                    "rhs": { "spellCastTime": { "spellId": { "spellId": 47811 } } } } },
+                            { "cmp": {
+                                    "op": "OpGe",
+                                    "lhs": { "remainingTime": {} },
+                                    "rhs": { "const": { "val": "12s" } } } } ]
+                    } }, "castSpell": { "spellId": { "spellId": 47811 } } } },
+        { "action": { "condition": { "auraIsActive": { "auraId": { "spellId": 63167 } } }, "castSpell": { "spellId": { "spellId": 47825 } } } },
+        { "action": { "condition": { "auraIsActive": { "auraId": { "spellId": 71165 } } }, "castSpell": { "spellId": { "spellId": 47838 } } } },
+        { "action": { "castSpell": { "spellId": { "spellId": 47809 } } } },
+        { "action": { "castSpell": { "spellId": { "spellId": 57946 } } } }
+]}`)})}
+
+export const APL_Destro_Default = {
+	name: 'Destro Default',
+	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalentTree() == 2,
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: WarlockRotation.toJsonString(DestructionRotation),
+		rotation: APLRotation.fromJsonString(`
+{
+    "enabled": true,
+    "prepullActions": [
+      { "action": { "castSpell": { "spellId": { "spellId": 57946 } } }, "doAt": "-5s" },
+      { "action": { "castSpell": { "spellId": { "otherId": "OtherActionPotion" } } }, "doAt": "-3.5s" },
+      { "action": { "castSpell": { "spellId": { "spellId": 47825 } } }, "doAt": "-3.5s" }
+    ],
+    "priorityList": [
+      { "action": { "autocastOtherCooldowns": {} } },
+      { "action": { "castSpell": { "spellId": { "spellId": 17962 } } } },
+      { "action": { "condition": {
+            "cmp": {
+              "op": "OpGt", "lhs": { "remainingTime": {} },
+              "rhs": { "const": { "val": "60s" } }
+            }
+          }, "castSpell": { "spellId": { "spellId": 47867 } } } },
+      { "action": { "condition": {
+            "cmp": {
+              "op": "OpLt",
+              "lhs": { "dotRemainingTime": { "spellId": { "spellId": 47811 } } },
+              "rhs": { "spellCastTime": { "spellId": { "spellId": 47811 } } } } },
+          "castSpell": { "spellId": { "spellId": 47811 } } } },
+      { "action": { "condition": {
+            "cmp": {
+              "op": "OpLt",
+              "lhs": { "remainingTime": {} },
+              "rhs": { "const": { "val": "61s" } } }
+          },
+          "castSpell": { "spellId": { "spellId": 1122 } } } },
+      { "action": { "condition": {
+            "and": { "vals": [
+                { "cmp": {
+                    "op": "OpLt",
+                    "lhs": { "auraRemainingTime": { "auraId": { "spellId": 63321 } } },
+                    "rhs": { "const": { "val": "3s" } } } },
+                { "cmp": {
+                    "op": "OpGt",
+                    "lhs": { "remainingTime": {} },
+                    "rhs": { "const": { "val": "10s" } } } }
+            ] } },
+          "castSpell": { "spellId": { "spellId": 57946 } } } },
+      { "action": { "castSpell": { "spellId": { "spellId": 59172 } } } },
+      { "action": { "condition": {
+            "and": {
+              "vals": [
+                { "not": { "val": { "dotIsActive": { "spellId": { "spellId": 47867 } } } } },
+                { "not": { "val": { "dotIsActive": { "spellId": { "spellId": 47864 } } } } },
+                { "cmp": {
+                    "op": "OpGt",
+                    "lhs": { "remainingTime": {} },
+                    "rhs": { "const": { "val": "22s" } } }
+                }
+              ] } },
+          "castSpell": { "spellId": { "spellId": 47864 } } } },
+      { "action": { "castSpell": { "spellId": { "spellId": 47838 } } } },
+      { "action": { "castSpell": { "spellId": { "spellId": 57946 } } } }
+    ]
+}`)})}
