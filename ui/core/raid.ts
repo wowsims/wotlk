@@ -225,6 +225,10 @@ export class Raid {
 
 	fromProto(eventID: EventID, proto: RaidProto) {
 		TypedEvent.freezeAllAndDo(() => {
+			if (proto.tanks) {
+				proto.tanks = proto.tanks.map(tank => (tank.type == 0 && tank.targetIndex != -1) ? UnitReference.create({type: UnitReference_Type.Player, index: tank.targetIndex}) : tank);
+			}
+
 			if (proto.buffs) {
 				if (proto.buffs.demonicPact > 0 && proto.buffs.demonicPactSp == 0) {
 					proto.buffs.demonicPactSp = proto.buffs.demonicPact;

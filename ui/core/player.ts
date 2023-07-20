@@ -23,6 +23,7 @@ import {
 	Stat,
 	UnitStats,
 	WeaponType,
+	UnitReference_Type,
 } from './proto/common.js';
 import {
 	AuraStats as AuraStatsProto,
@@ -1120,6 +1121,20 @@ export class Player<SpecType extends Spec> {
 
 			this.aplRotation = proto.rotation || APLRotation.create();
 			this.rotationChangeEmitter.emit(eventID);
+
+			const options = this.getSpecOptions();
+			for (let key in options) {
+				if ((options[key] as any)?.['targetIndex']) {
+					const targetIndex = (options[key] as any)['targetIndex'] as number;
+					if (targetIndex == -1) {
+						(options[key] as any) = UnitReference.create();
+					} else {
+						(options[key] as any) = UnitReference.create({type: UnitReference_Type.Player, index: targetIndex});
+					}
+					this.setSpecOptions(eventID, options);
+					break;
+				}
+			}
 		});
 	}
 
