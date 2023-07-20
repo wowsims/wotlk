@@ -76,24 +76,23 @@ type InfernalPet struct {
 }
 
 func (warlock *Warlock) NewInfernal() *InfernalPet {
-	statInheritance :=
-		func(ownerStats stats.Stats) stats.Stats {
-			ownerHitChance := math.Floor(ownerStats[stats.SpellHit] / core.SpellHitRatingPerHitChance)
+	statInheritance := func(ownerStats stats.Stats) stats.Stats {
+		ownerHitChance := math.Floor(ownerStats[stats.SpellHit] / core.SpellHitRatingPerHitChance)
 
-			// TODO: account for fire spell damage
-			return stats.Stats{
-				stats.Stamina:          ownerStats[stats.Stamina] * 0.75,
-				stats.Intellect:        ownerStats[stats.Intellect] * 0.3,
-				stats.Armor:            ownerStats[stats.Armor] * 0.35,
-				stats.AttackPower:      ownerStats[stats.SpellPower] * 0.57,
-				stats.SpellPower:       ownerStats[stats.SpellPower] * 0.15,
-				stats.SpellPenetration: ownerStats[stats.SpellPenetration],
-				stats.MeleeHit:         ownerHitChance * core.MeleeHitRatingPerHitChance,
-				stats.SpellHit:         ownerHitChance * core.SpellHitRatingPerHitChance,
-				stats.Expertise: (ownerStats[stats.SpellHit] / core.SpellHitRatingPerHitChance) *
-					PetExpertiseScale * core.ExpertisePerQuarterPercentReduction,
-			}
+		// TODO: account for fire spell damage
+		return stats.Stats{
+			stats.Stamina:          ownerStats[stats.Stamina] * 0.75,
+			stats.Intellect:        ownerStats[stats.Intellect] * 0.3,
+			stats.Armor:            ownerStats[stats.Armor] * 0.35,
+			stats.AttackPower:      ownerStats[stats.SpellPower] * 0.57,
+			stats.SpellPower:       ownerStats[stats.SpellPower] * 0.15,
+			stats.SpellPenetration: ownerStats[stats.SpellPenetration],
+			stats.MeleeHit:         ownerHitChance * core.MeleeHitRatingPerHitChance,
+			stats.SpellHit:         ownerHitChance * core.SpellHitRatingPerHitChance,
+			stats.Expertise: (ownerStats[stats.SpellHit] / core.SpellHitRatingPerHitChance) *
+				PetExpertiseScale * core.ExpertisePerQuarterPercentReduction,
 		}
+	}
 
 	infernal := &InfernalPet{
 		Pet: core.NewPet("Infernal", &warlock.Character, stats.Stats{

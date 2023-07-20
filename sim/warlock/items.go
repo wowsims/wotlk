@@ -112,7 +112,6 @@ var ItemSetGuldansRegalia = core.NewItemSet(core.ItemSet{
 	AlternativeName: "Kel'Thuzad's Regalia",
 	Bonuses: map[int32]core.ApplyEffect{
 		2: func(agent core.Agent) {
-			// TODO: probably doesn't apply to infernal
 			warlock := agent.(WarlockAgent).GetWarlock()
 			if warlock.Pet != nil {
 				warlock.Pet.AddStats(stats.Stats{
@@ -202,7 +201,7 @@ var ItemSetGladiatorsFelshroud = core.NewItemSet(core.ItemSet{
 func init() {
 	core.NewItemEffect(32493, func(agent core.Agent) {
 		warlock := agent.(WarlockAgent).GetWarlock()
-		procAura := warlock.NewTemporaryStatsAura("Asghtongue Talisman Proc", core.ActionID{SpellID: 40478}, stats.Stats{stats.SpellPower: 220}, time.Second*5)
+		procAura := warlock.NewTemporaryStatsAura("Ashtongue Talisman Proc", core.ActionID{SpellID: 40478}, stats.Stats{stats.SpellPower: 220}, time.Second*5)
 
 		warlock.RegisterAura(core.Aura{
 			Label:    "Ashtongue Talisman",

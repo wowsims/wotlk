@@ -18,10 +18,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			cssClass: 'warlock-sim-ui',
 			cssScheme: 'warlock',
 			// List any known bugs / issues here and they'll be shown on the site.
-			knownIssues: [
-				"Several secondary spells need to be implemented.",
-				"Rotations will be optimized.",
-			],
+			knownIssues: [],
 
 			// All stats for which EP should be calculated.
 			epStats: [
