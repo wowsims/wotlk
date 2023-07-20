@@ -13,9 +13,10 @@ import {
 	MobType,
 	Profession,
 	Race,
-	RaidTarget,
+	UnitReference,
 	Spec,
 	Target as TargetProto,
+	UnitReference_Type,
 } from '../core/proto/common';
 import { nameToClass, professionNames, raceNames } from '../core/proto_utils/names';
 import {
@@ -376,7 +377,7 @@ export class RaidWCLImporter extends Importer {
 				const sourcePlayer = wclPlayers.find(player => player.id == event.sourceID);
 				const targetPlayer = wclPlayers.find(player => player.id == event.targetID);
 				if (sourcePlayer && targetPlayer && sourcePlayer.player.getClass() == spell.class) {
-					const specOptions = spell.applyFunc(sourcePlayer.player, targetPlayer.toRaidTarget());
+					const specOptions = spell.applyFunc(sourcePlayer.player, targetPlayer.toUnitReference());
 					sourcePlayer.player.setSpecOptions(eventID, specOptions);
 					console.log(`Inferring player ${sourcePlayer.name} is targeting ${targetPlayer.name} with ${spell.name} from cast event`);
 				}
@@ -510,7 +511,7 @@ export class RaidWCLImporter extends Importer {
 				raid.parties[partyIdx].players[positionInParty] = playerProto;
 
 				if (isTankSpec(playerToSpec(playerProto))) {
-					raid.tanks.push(player.toRaidTarget());
+					raid.tanks.push(player.toUnitReference());
 				}
 			});
 
@@ -606,9 +607,10 @@ class WCLSimPlayer {
 		return matchingPresets[presetIdx];
 	}
 
-	public toRaidTarget(): RaidTarget {
-		return RaidTarget.create({
-			targetIndex: this.raidIndex,
+	public toUnitReference(): UnitReference {
+		return UnitReference.create({
+			type: UnitReference_Type.Player,
+			index: this.raidIndex,
 		});
 	}
 
@@ -691,30 +693,30 @@ const professionSpells: Array<{ id: number, name: string, profession: Profession
 	{ id: 50305, name: 'Skinning', profession: Profession.Skinning },
 ];
 
-const externalCDSpells: Array<{ id: number, name: string, class: Class, applyFunc: (player: Player<any>, raidTarget: RaidTarget) => SpecOptions<any> }> = [
+const externalCDSpells: Array<{ id: number, name: string, class: Class, applyFunc: (player: Player<any>, raidTarget: UnitReference) => SpecOptions<any> }> = [
 	{
-		id: 29166, name: 'Innervate', class: Class.ClassDruid, applyFunc: (player: Player<any>, raidTarget: RaidTarget) => {
+		id: 29166, name: 'Innervate', class: Class.ClassDruid, applyFunc: (player: Player<any>, raidTarget: UnitReference) => {
 			const options = player.getSpecOptions() as SpecOptions<DruidSpecs>;
 			options.innervateTarget = raidTarget;
 			return options;
 		}
 	},
 	{
-		id: 10060, name: 'Power Infusion', class: Class.ClassPriest, applyFunc: (player: Player<any>, raidTarget: RaidTarget) => {
+		id: 10060, name: 'Power Infusion', class: Class.ClassPriest, applyFunc: (player: Player<any>, raidTarget: UnitReference) => {
 			const options = player.getSpecOptions() as SpecOptions<PriestSpecs>;
 			options.powerInfusionTarget = raidTarget;
 			return options;
 		}
 	},
 	{
-		id: 57933, name: 'Tricks of the Trade', class: Class.ClassRogue, applyFunc: (player: Player<any>, raidTarget: RaidTarget) => {
+		id: 57933, name: 'Tricks of the Trade', class: Class.ClassRogue, applyFunc: (player: Player<any>, raidTarget: UnitReference) => {
 			const options = player.getSpecOptions() as SpecOptions<RogueSpecs>;
 			options.tricksOfTheTradeTarget = raidTarget;
 			return options;
 		}
 	},
 	{
-		id: 49016, name: 'Unholy Frenzy', class: Class.ClassDeathknight, applyFunc: (player: Player<any>, raidTarget: RaidTarget) => {
+		id: 49016, name: 'Unholy Frenzy', class: Class.ClassDeathknight, applyFunc: (player: Player<any>, raidTarget: UnitReference) => {
 			const options = player.getSpecOptions() as SpecOptions<DeathknightSpecs>;
 			options.unholyFrenzyTarget = raidTarget;
 			return options;

@@ -34,7 +34,7 @@ func NewFeralDruid(character core.Character, options *proto.Player) *FeralDruid 
 		latency: time.Duration(core.MaxInt32(feralOptions.Options.LatencyMs, 1)) * time.Millisecond,
 	}
 
-	cat.SelfBuffs.InnervateTarget = &proto.RaidTarget{TargetIndex: -1}
+	cat.SelfBuffs.InnervateTarget = &proto.UnitReference{}
 	if feralOptions.Options.InnervateTarget != nil {
 		cat.SelfBuffs.InnervateTarget = feralOptions.Options.InnervateTarget
 	}

@@ -109,7 +109,7 @@ type Druid struct {
 }
 
 type SelfBuffs struct {
-	InnervateTarget *proto.RaidTarget
+	InnervateTarget *proto.UnitReference
 }
 
 func (druid *Druid) GetCharacter() *core.Character {

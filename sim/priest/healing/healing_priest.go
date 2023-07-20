@@ -51,7 +51,7 @@ func NewHealingPriest(character core.Character, options *proto.Player) *HealingP
 		Options:  healingOptions.Options,
 	}
 
-	hpriest.SelfBuffs.PowerInfusionTarget = &proto.RaidTarget{TargetIndex: -1}
+	hpriest.SelfBuffs.PowerInfusionTarget = &proto.UnitReference{}
 	if hpriest.Talents.PowerInfusion && hpriest.Options.PowerInfusionTarget != nil {
 		hpriest.SelfBuffs.PowerInfusionTarget = hpriest.Options.PowerInfusionTarget
 	}

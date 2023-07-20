@@ -255,7 +255,7 @@ message IndividualSimSettings {
 	SimSettings settings = 5;
 	RaidBuffs raid_buffs = 1;
 	Debuffs debuffs = 8;
-	repeated RaidTarget tanks = 7;
+	repeated UnitReference tanks = 7;
 	PartyBuffs party_buffs = 2;
 	Player player = 3;
 	Encounter encounter = 4;

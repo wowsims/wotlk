@@ -13,7 +13,7 @@ import {
 	Profession,
 	PseudoStat,
 	Race,
-	RaidTarget,
+	UnitReference,
 	RangedWeaponType,
 	SimDatabase,
 	SimEnchant,
@@ -67,13 +67,13 @@ import {
 	canEquipEnchant,
 	canEquipItem,
 	classColors,
-	emptyRaidTarget,
+	emptyUnitReference,
 	enchantAppliesToItem,
 	getTalentTree,
 	getTalentTreeIcon,
 	getMetaGemEffectEP,
 	isTankSpec,
-	newRaidTarget,
+	newUnitReference,
 	raceToFaction,
 	specToClass,
 	specToEligibleRaces,
@@ -1052,11 +1052,11 @@ export class Player<SpecType extends Spec> {
 		});
 	}
 
-	makeRaidTarget(): RaidTarget {
+	makeUnitReference(): UnitReference {
 		if (this.party == null) {
-			return emptyRaidTarget();
+			return emptyUnitReference();
 		} else {
-			return newRaidTarget(this.getRaidIndex());
+			return newUnitReference(this.getRaidIndex());
 		}
 	}
 

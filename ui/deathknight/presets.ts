@@ -9,12 +9,11 @@ import {
 	Glyphs,
 	PetFood,
 	Potions,
-	RaidTarget,
+	UnitReference,
 	Spec
 } from '../core/proto/common.js';
 import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
 import { Player } from '../core/player.js';
-import { NO_TARGET } from '../core/proto_utils/utils.js';
 
 import {
 	Deathknight_Options as DeathKnightOptions,
@@ -155,9 +154,7 @@ export const DefaultUnholyOptions = DeathKnightOptions.create({
 	petUptime: 1,
 	precastGhoulFrenzy: false,
 	precastHornOfWinter: true,
-	unholyFrenzyTarget: RaidTarget.create({
-		targetIndex: NO_TARGET, // In an individual sim the 0-indexed player is ourself.
-	}),
+	unholyFrenzyTarget: UnitReference.create(),
 	diseaseDowntime: 2,
 });
 
@@ -196,9 +193,7 @@ export const DefaultFrostOptions = DeathKnightOptions.create({
 	startingRunicPower: 0,
 	petUptime: 1,
 	precastHornOfWinter: true,
-	unholyFrenzyTarget: RaidTarget.create({
-		targetIndex: NO_TARGET, // In an individual sim the 0-indexed player is ourself.
-	}),
+	unholyFrenzyTarget: UnitReference.create(),
 	diseaseDowntime: 0,
 });
 
@@ -221,9 +216,7 @@ export const DefaultBloodOptions = DeathKnightOptions.create({
 	startingRunicPower: 0,
 	petUptime: 1,
 	precastHornOfWinter: true,
-	unholyFrenzyTarget: RaidTarget.create({
-		targetIndex: NO_TARGET, // In an individual sim the 0-indexed player is ourself.
-	}),
+	unholyFrenzyTarget: UnitReference.create(),
 	diseaseDowntime: 0,
 });
 

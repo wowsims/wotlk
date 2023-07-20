@@ -1,11 +1,11 @@
 import { Component } from '../core/components/component.js';
-import { RaidTargetPicker } from '../core/components/raid_target_picker.js';
+import { UnitReferencePicker } from '../core/components/raid_target_picker.js';
 
 import { Player } from '../core/player.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
 
-import { Class, RaidTarget, Spec } from '../core/proto/common.js';
-import { emptyRaidTarget } from '../core/proto_utils/utils.js';
+import { Class, UnitReference, Spec } from '../core/proto/common.js';
+import { emptyUnitReference } from '../core/proto_utils/utils.js';
 
 import { RaidSimUI } from './raid_sim_ui.js';
 
@@ -33,7 +33,7 @@ export class AssignmentsPicker extends Component {
 
 interface AssignmentTargetPicker {
 	player: Player<any>,
-	targetPicker: RaidTargetPicker<Player<any>>,
+	targetPicker: UnitReferencePicker<Player<any>>,
 	targetPlayer: Player<any> | null;
 };
 
@@ -77,7 +77,7 @@ abstract class AssignedBuffPicker extends Component {
 			let sourceElem = document.createElement('div');
 			sourceElem.classList.add('raid-target-picker-root');
 			sourceElem.appendChild(
-				RaidTargetPicker.makeOptionElem({ player: sourcePlayer, isDropdown: false })
+				UnitReferencePicker.makeOptionElem({ player: sourcePlayer, isDropdown: false })
 			);
 			row.appendChild(sourceElem);
 
@@ -85,24 +85,24 @@ abstract class AssignedBuffPicker extends Component {
 			arrow.classList.add('assigned-buff-arrow', 'fa', 'fa-arrow-right');
 			row.appendChild(arrow);
 
-			const raidTargetPicker: RaidTargetPicker<Player<any>> | null = new RaidTargetPicker<Player<any>>(row, this.raidSimUI.sim.raid, sourcePlayer, {
+			const raidTargetPicker: UnitReferencePicker<Player<any>> | null = new UnitReferencePicker<Player<any>>(row, this.raidSimUI.sim.raid, sourcePlayer, {
 				extraCssClasses: ['assigned-buff-target-picker'],
 				noTargetLabel: 'Unassigned',
 				compChangeEmitter: this.raidSimUI.sim.raid.compChangeEmitter,
 
 				changedEvent: (player: Player<any>) => player.specOptionsChangeEmitter,
 				getValue: (player: Player<any>) => this.getPlayerValue(player),
-				setValue: (eventID: EventID, player: Player<any>, newValue: RaidTarget) => this.setPlayerValue(eventID, player, newValue),
+				setValue: (eventID: EventID, player: Player<any>, newValue: UnitReference) => this.setPlayerValue(eventID, player, newValue),
 			});
 
 			const targetPickerData = {
 				player: sourcePlayer,
 				targetPicker: raidTargetPicker!,
-				targetPlayer: this.raidSimUI.sim.raid.getPlayerFromRaidTarget(raidTargetPicker!.getInputValue()),
+				targetPlayer: this.raidSimUI.sim.raid.getPlayerFromUnitReference(raidTargetPicker!.getInputValue()),
 			};
 
 			raidTargetPicker!.changeEmitter.on(eventID => {
-				targetPickerData.targetPlayer = this.raidSimUI.sim.raid.getPlayerFromRaidTarget(raidTargetPicker!.getInputValue());
+				targetPickerData.targetPlayer = this.raidSimUI.sim.raid.getPlayerFromUnitReference(raidTargetPicker!.getInputValue());
 			});
 
 			return targetPickerData;
@@ -112,8 +112,8 @@ abstract class AssignedBuffPicker extends Component {
 	abstract getTitle(): string;
 	abstract getSourcePlayers(): Array<Player<any>>;
 
-	abstract getPlayerValue(player: Player<any>): RaidTarget;
-	abstract setPlayerValue(eventID: EventID, player: Player<any>, newValue: RaidTarget): void;
+	abstract getPlayerValue(player: Player<any>): UnitReference;
+	abstract setPlayerValue(eventID: EventID, player: Player<any>, newValue: UnitReference): void;
 }
 
 class InnervatesPicker extends AssignedBuffPicker {
@@ -125,11 +125,11 @@ class InnervatesPicker extends AssignedBuffPicker {
 		return this.raidSimUI.getActivePlayers().filter(player => player.isClass(Class.ClassDruid));
 	}
 
-	getPlayerValue(player: Player<any>): RaidTarget {
-		return (player as Player<Spec.SpecBalanceDruid>).getSpecOptions().innervateTarget || emptyRaidTarget();
+	getPlayerValue(player: Player<any>): UnitReference {
+		return (player as Player<Spec.SpecBalanceDruid>).getSpecOptions().innervateTarget || emptyUnitReference();
 	}
 
-	setPlayerValue(eventID: EventID, player: Player<any>, newValue: RaidTarget) {
+	setPlayerValue(eventID: EventID, player: Player<any>, newValue: UnitReference) {
 		const newOptions = (player as Player<Spec.SpecBalanceDruid>).getSpecOptions();
 		newOptions.innervateTarget = newValue;
 		player.setSpecOptions(eventID, newOptions);
@@ -145,11 +145,11 @@ class PowerInfusionsPicker extends AssignedBuffPicker {
 		return this.raidSimUI.getActivePlayers().filter(player => player.isClass(Class.ClassPriest) && player.getTalents().powerInfusion);
 	}
 
-	getPlayerValue(player: Player<any>): RaidTarget {
-		return (player as Player<Spec.SpecSmitePriest>).getSpecOptions().powerInfusionTarget || emptyRaidTarget();
+	getPlayerValue(player: Player<any>): UnitReference {
+		return (player as Player<Spec.SpecSmitePriest>).getSpecOptions().powerInfusionTarget || emptyUnitReference();
 	}
 
-	setPlayerValue(eventID: EventID, player: Player<any>, newValue: RaidTarget) {
+	setPlayerValue(eventID: EventID, player: Player<any>, newValue: UnitReference) {
 		const newOptions = (player as Player<Spec.SpecSmitePriest>).getSpecOptions();
 		newOptions.powerInfusionTarget = newValue;
 		player.setSpecOptions(eventID, newOptions);
@@ -165,11 +165,11 @@ class TricksOfTheTradesPicker extends AssignedBuffPicker {
 		return this.raidSimUI.getActivePlayers().filter(player => player.isClass(Class.ClassRogue));
 	}
 
-	getPlayerValue(player: Player<any>): RaidTarget {
-		return (player as Player<Spec.SpecRogue>).getSpecOptions().tricksOfTheTradeTarget || emptyRaidTarget();
+	getPlayerValue(player: Player<any>): UnitReference {
+		return (player as Player<Spec.SpecRogue>).getSpecOptions().tricksOfTheTradeTarget || emptyUnitReference();
 	}
 
-	setPlayerValue(eventID: EventID, player: Player<any>, newValue: RaidTarget) {
+	setPlayerValue(eventID: EventID, player: Player<any>, newValue: UnitReference) {
 		const newOptions = (player as Player<Spec.SpecRogue>).getSpecOptions();
 		newOptions.tricksOfTheTradeTarget = newValue;
 		player.setSpecOptions(eventID, newOptions);
@@ -185,11 +185,11 @@ class UnholyFrenzyPicker extends AssignedBuffPicker {
 		return this.raidSimUI.getActivePlayers().filter(player => player.isClass(Class.ClassDeathknight) && player.getTalents().hysteria);
 	}
 
-	getPlayerValue(player: Player<any>): RaidTarget {
-		return (player as Player<Spec.SpecDeathknight>).getSpecOptions().unholyFrenzyTarget || emptyRaidTarget();
+	getPlayerValue(player: Player<any>): UnitReference {
+		return (player as Player<Spec.SpecDeathknight>).getSpecOptions().unholyFrenzyTarget || emptyUnitReference();
 	}
 
-	setPlayerValue(eventID: EventID, player: Player<any>, newValue: RaidTarget) {
+	setPlayerValue(eventID: EventID, player: Player<any>, newValue: UnitReference) {
 		const newOptions = (player as Player<Spec.SpecDeathknight>).getSpecOptions();
 		newOptions.unholyFrenzyTarget = newValue;
 		player.setSpecOptions(eventID, newOptions);
@@ -205,11 +205,11 @@ class FocusMagicsPicker extends AssignedBuffPicker {
 		return this.raidSimUI.getActivePlayers().filter(player => player.isClass(Class.ClassMage));
 	}
 
-	getPlayerValue(player: Player<any>): RaidTarget {
-		return (player as Player<Spec.SpecMage>).getSpecOptions().focusMagicTarget || emptyRaidTarget();
+	getPlayerValue(player: Player<any>): UnitReference {
+		return (player as Player<Spec.SpecMage>).getSpecOptions().focusMagicTarget || emptyUnitReference();
 	}
 
-	setPlayerValue(eventID: EventID, player: Player<any>, newValue: RaidTarget) {
+	setPlayerValue(eventID: EventID, player: Player<any>, newValue: UnitReference) {
 		const newOptions = (player as Player<Spec.SpecMage>).getSpecOptions();
 		newOptions.focusMagicTarget = newValue;
 		player.setSpecOptions(eventID, newOptions);

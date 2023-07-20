@@ -3,7 +3,6 @@ import { ActionID as ActionIdProto } from '../proto/common.js';
 import { ResourceType } from '../proto/api.js';
 import { OtherAction } from '../proto/common.js';
 import { IconData } from '../proto/ui.js';
-import { NO_TARGET } from '../proto_utils/utils.js';
 import {
 	UIItem as Item,
 } from '../proto/ui.js';
@@ -325,7 +324,7 @@ export class ActionId {
 			case 'Focus Magic':
 			case 'Mana Tide Totem':
 			case 'Power Infusion':
-				if (this.tag != NO_TARGET) {
+				if (this.tag != -1) {
 					if (this.tag === playerIndex) {
 						name += ` (self)`;
 					} else {

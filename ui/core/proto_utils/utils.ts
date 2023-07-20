@@ -7,7 +7,7 @@ import { sum } from '../utils.js';
 
 import { Player } from '../proto/api.js';
 import { ResourceType } from '../proto/api.js';
-import { ArmorType } from '../proto/common.js';
+import { ArmorType, UnitReference_Type } from '../proto/common.js';
 import { Class } from '../proto/common.js';
 import { EnchantType } from '../proto/common.js';
 import { HandType } from '../proto/common.js';
@@ -15,7 +15,7 @@ import { ItemSlot } from '../proto/common.js';
 import { ItemType } from '../proto/common.js';
 import { Race } from '../proto/common.js';
 import { Faction } from '../proto/common.js';
-import { RaidTarget } from '../proto/common.js';
+import { UnitReference } from '../proto/common.js';
 import { RangedWeaponType } from '../proto/common.js';
 import { Spec } from '../proto/common.js';
 import { Stat } from '../proto/common.js';
@@ -1882,16 +1882,15 @@ export function canEquipEnchant(enchant: Enchant, spec: Spec): boolean {
 	return true;
 }
 
-export const NO_TARGET = -1;
-
-export function newRaidTarget(raidIndex: number): RaidTarget {
-	return RaidTarget.create({
-		targetIndex: raidIndex,
+export function newUnitReference(raidIndex: number): UnitReference {
+	return UnitReference.create({
+		type: UnitReference_Type.Player,
+		index: raidIndex,
 	});
 }
 
-export function emptyRaidTarget(): RaidTarget {
-	return newRaidTarget(NO_TARGET);
+export function emptyUnitReference(): UnitReference {
+	return UnitReference.create();
 }
 
 // Makes a new set of assignments with everything 0'd out.

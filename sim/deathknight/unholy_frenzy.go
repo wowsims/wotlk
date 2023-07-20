@@ -17,7 +17,7 @@ func (dk *Deathknight) registerUnholyFrenzyCD() {
 		unholyFrenzyTarget = &dk.Character
 	}
 
-	unholyFrenzyTargetAgent := dk.Party.Raid.GetPlayerFromRaidTarget(dk.Inputs.UnholyFrenzyTarget)
+	unholyFrenzyTargetAgent := dk.Party.Raid.GetPlayerFromUnitReference(dk.Inputs.UnholyFrenzyTarget)
 	if unholyFrenzyTargetAgent != nil {
 		unholyFrenzyTarget = unholyFrenzyTargetAgent.GetCharacter()
 	}

@@ -20,7 +20,7 @@ func (mage *Mage) applyFocusMagic() {
 		return
 	}
 
-	focusMagicTargetAgent := mage.Party.Raid.GetPlayerFromRaidTarget(mage.Options.FocusMagicTarget)
+	focusMagicTargetAgent := mage.Party.Raid.GetPlayerFromUnitReference(mage.Options.FocusMagicTarget)
 	if focusMagicTargetAgent == nil {
 		return
 	} else if focusMagicTargetAgent.GetCharacter() == mage.GetCharacter() {

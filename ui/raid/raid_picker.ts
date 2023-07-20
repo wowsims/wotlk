@@ -13,7 +13,7 @@ import { Glyphs } from '../core/proto/common.js';
 import { cssClassForClass, playerToSpec } from '../core/proto_utils/utils.js';
 import { isTankSpec } from '../core/proto_utils/utils.js';
 import { specToClass } from '../core/proto_utils/utils.js';
-import { newRaidTarget } from '../core/proto_utils/utils.js';
+import { newUnitReference } from '../core/proto_utils/utils.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
 import { formatDeltaTextElem } from '../core/utils.js';
 import { getEnumValues } from '../core/utils.js';
@@ -704,13 +704,13 @@ class NewPlayerPicker extends Component {
 function applyNewPlayerAssignments(eventID: EventID, newPlayer: Player<any>, raid: Raid) {
 	if (isTankSpec(newPlayer.spec)) {
 		const tanks = raid.getTanks();
-		const emptyIdx = tanks.findIndex(tank => raid.getPlayerFromRaidTarget(tank) == null);
+		const emptyIdx = tanks.findIndex(tank => raid.getPlayerFromUnitReference(tank) == null);
 		if (emptyIdx == -1) {
 			if (tanks.length < 3) {
-				raid.setTanks(eventID, tanks.concat([newPlayer.makeRaidTarget()]));
+				raid.setTanks(eventID, tanks.concat([newPlayer.makeUnitReference()]));
 			}
 		} else {
-			tanks[emptyIdx] = newPlayer.makeRaidTarget();
+			tanks[emptyIdx] = newPlayer.makeUnitReference();
 			raid.setTanks(eventID, tanks);
 		}
 	}
@@ -718,15 +718,15 @@ function applyNewPlayerAssignments(eventID: EventID, newPlayer: Player<any>, rai
 	// Spec-specific assignments. For most cases, default to buffing self.
 	if (newPlayer.spec == Spec.SpecBalanceDruid) {
 		const newOptions = newPlayer.getSpecOptions() as BalanceDruidOptions;
-		newOptions.innervateTarget = newRaidTarget(newPlayer.getRaidIndex());
+		newOptions.innervateTarget = newUnitReference(newPlayer.getRaidIndex());
 		newPlayer.setSpecOptions(eventID, newOptions);
 	} else if (newPlayer.spec == Spec.SpecSmitePriest) {
 		const newOptions = newPlayer.getSpecOptions() as SmitePriestOptions;
-		newOptions.powerInfusionTarget = newRaidTarget(newPlayer.getRaidIndex());
+		newOptions.powerInfusionTarget = newUnitReference(newPlayer.getRaidIndex());
 		newPlayer.setSpecOptions(eventID, newOptions);
 	} else if (newPlayer.spec == Spec.SpecMage) {
 		const newOptions = newPlayer.getSpecOptions() as MageOptions;
-		newOptions.focusMagicTarget = newRaidTarget(newPlayer.getRaidIndex());
+		newOptions.focusMagicTarget = newUnitReference(newPlayer.getRaidIndex());
 		newPlayer.setSpecOptions(eventID, newOptions);
 	}
 }

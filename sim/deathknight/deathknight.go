@@ -24,7 +24,7 @@ type DeathknightInputs struct {
 	IsDps  bool
 	NewDrw bool
 
-	UnholyFrenzyTarget *proto.RaidTarget
+	UnholyFrenzyTarget *proto.UnitReference
 
 	StartingRunicPower  float64
 	PrecastGhoulFrenzy  bool

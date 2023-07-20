@@ -11,8 +11,7 @@ import {
 	Warlock_Options_Summon as Summon,
 } from '../core/proto/warlock.js';
 
-import { RaidTarget, Spec, Glyphs, Debuffs, IndividualBuffs, RaidBuffs, ItemSwap, ItemSlot } from '../core/proto/common.js';
-import { NO_TARGET } from '../core/proto_utils/utils.js';
+import { UnitReference, Spec, Glyphs, Debuffs, IndividualBuffs, RaidBuffs, ItemSwap, ItemSlot } from '../core/proto/common.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
