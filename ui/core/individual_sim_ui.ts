@@ -533,7 +533,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				this.sim.applyDefaults(eventID, tankSpec, healingSpec);
 
 				if (tankSpec) {
-					this.sim.raid.setTanks(eventID, [this.player.makeRaidTarget()]);
+					this.sim.raid.setTanks(eventID, [this.player.makeUnitReference()]);
 				} else {
 					this.sim.raid.setTanks(eventID, []);
 				}

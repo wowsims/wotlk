@@ -41,7 +41,7 @@ func NewSmitePriest(character core.Character, options *proto.Player) *SmitePries
 		allowedHFDelay: time.Millisecond * time.Duration(smiteOptions.Rotation.AllowedHolyFireDelayMs),
 	}
 
-	spriest.SelfBuffs.PowerInfusionTarget = &proto.RaidTarget{TargetIndex: -1}
+	spriest.SelfBuffs.PowerInfusionTarget = &proto.UnitReference{}
 	if spriest.Talents.PowerInfusion && smiteOptions.Options.PowerInfusionTarget != nil {
 		spriest.SelfBuffs.PowerInfusionTarget = smiteOptions.Options.PowerInfusionTarget
 	}

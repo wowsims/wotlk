@@ -94,7 +94,7 @@ message Raid {
 	Debuffs debuffs = 5;
 
 	// Players who will be tanking mobs.
-	repeated RaidTarget tanks = 4;
+	repeated UnitReference tanks = 4;
 
 	// Staggers Stormstrike casts across Enhance Shaman to maximize charge usage.
 	bool stagger_stormstrikes = 3;
@@ -364,7 +364,7 @@ message StatWeightsRequest {
 	Debuffs debuffs = 9;
 	Encounter encounter = 4;
 	SimOptions sim_options = 5;
-	repeated RaidTarget tanks = 8;
+	repeated UnitReference tanks = 8;
 
 	repeated Stat stats_to_weigh = 6;
 	repeated PseudoStat pseudo_stats_to_weigh = 10;

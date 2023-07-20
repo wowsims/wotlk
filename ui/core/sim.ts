@@ -1,7 +1,7 @@
-import { ArmorType, SimDatabase } from './proto/common.js';
+import { ArmorType, SimDatabase, UnitReference_Type } from './proto/common.js';
 import { Faction } from './proto/common.js';
 import { Profession } from './proto/common.js';;
-import { RaidTarget } from './proto/common.js';
+import { UnitReference } from './proto/common.js';
 import { Stat, PseudoStat } from './proto/common.js';
 import { RangedWeaponType, WeaponType } from './proto/common.js';
 import { BulkSimRequest, BulkSimResult, BulkSettings, Raid as RaidProto } from './proto/api.js';
@@ -328,8 +328,8 @@ export class Sim {
 			console.warn('Trying to get stat weights without a party!');
 			return StatWeightsResult.create();
 		} else {
-			const tanks = this.raid.getTanks().map(tank => tank.targetIndex).includes(player.getRaidIndex())
-				? [RaidTarget.create({ targetIndex: 0 })]
+			const tanks = this.raid.getTanks().map(tank => tank.index).includes(player.getRaidIndex())
+				? [UnitReference.create({ type: UnitReference_Type.Player, index: 0 })]
 				: [];
 			const request = StatWeightsRequest.create({
 				player: player.toProto(),

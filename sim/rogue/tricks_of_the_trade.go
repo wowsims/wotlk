@@ -15,7 +15,7 @@ func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 
 	hasGlyph := rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfTricksOfTheTrade)
 	if rogue.Options.TricksOfTheTradeTarget != nil {
-		targetAgent := rogue.Env.Raid.GetPlayerFromRaidTarget(rogue.Options.TricksOfTheTradeTarget)
+		targetAgent := rogue.Env.Raid.GetPlayerFromUnitReference(rogue.Options.TricksOfTheTradeTarget)
 		if targetAgent != nil {
 			target := targetAgent.GetCharacter()
 			rogue.TricksOfTheTradeAura = core.TricksOfTheTradeAura(target, rogue.Index, hasGlyph)

@@ -166,7 +166,7 @@ message ShadowPriest {
 		Armor armor = 2;
 		bool use_mind_blast = 4;
 		bool use_shadow_word_death = 5;
-		RaidTarget power_infusion_target = 6;
+		UnitReference power_infusion_target = 6;
 		double latency = 7; // Latency between actions
 	}
 	Options options = 3;
@@ -185,7 +185,7 @@ message SmitePriest {
 	message Options {
 		bool use_inner_fire = 3;
 		bool use_shadowfiend = 1;
-		RaidTarget power_infusion_target = 2;
+		UnitReference power_infusion_target = 2;
 	}
 	Options options = 3;
 }
@@ -218,7 +218,7 @@ message HealingPriest {
 	message Options {
 		bool use_inner_fire = 3;
 		bool use_shadowfiend = 1;
-		RaidTarget power_infusion_target = 2;
+		UnitReference power_infusion_target = 2;
 
 		// Number of times for rapture to proc each minute, ie when a PWS is fully absorbed.
 		double raptures_per_minute = 4;

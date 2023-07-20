@@ -41,7 +41,7 @@ func NewShadowPriest(character core.Character, options *proto.Player) *ShadowPri
 		options:  shadowOptions.Options,
 	}
 
-	spriest.SelfBuffs.PowerInfusionTarget = &proto.RaidTarget{TargetIndex: -1}
+	spriest.SelfBuffs.PowerInfusionTarget = &proto.UnitReference{}
 	if spriest.Talents.PowerInfusion && shadowOptions.Options.PowerInfusionTarget != nil {
 		spriest.SelfBuffs.PowerInfusionTarget = shadowOptions.Options.PowerInfusionTarget
 	}

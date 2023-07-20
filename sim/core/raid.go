@@ -377,21 +377,23 @@ func (raid Raid) GetPlayerFromUnit(unit *Unit) Agent {
 	return nil
 }
 
-func (raid Raid) GetPlayerFromRaidTarget(raidTarget *proto.RaidTarget) Agent {
-	if raidTarget == nil {
-		return nil
-	}
-	raidIndex := raidTarget.TargetIndex
-
-	partyIndex := int(raidIndex / 5)
-	if partyIndex < 0 || partyIndex >= len(raid.Parties) {
+func (raid Raid) GetPlayerFromUnitReference(ref *proto.UnitReference) Agent {
+	if ref == nil {
 		return nil
 	}
 
-	party := raid.Parties[partyIndex]
-	for _, player := range party.Players {
-		if player.GetCharacter().Index == raidIndex {
-			return player
+	if ref.Type == proto.UnitReference_Player {
+		raidIndex := ref.Index
+		partyIndex := int(raidIndex / 5)
+		if partyIndex < 0 || partyIndex >= len(raid.Parties) {
+			return nil
+		}
+
+		party := raid.Parties[partyIndex]
+		for _, player := range party.Players {
+			if player.GetCharacter().Index == raidIndex {
+				return player
+			}
 		}
 	}
 

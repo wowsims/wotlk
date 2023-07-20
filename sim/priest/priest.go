@@ -88,7 +88,7 @@ type SelfBuffs struct {
 	UseShadowfiend bool
 	UseInnerFire   bool
 
-	PowerInfusionTarget *proto.RaidTarget
+	PowerInfusionTarget *proto.UnitReference
 }
 
 func (priest *Priest) GetCharacter() *core.Character {

@@ -9,7 +9,7 @@ import {
 	PartyBuffs,
 	Potions,
 	RaidBuffs,
-	RaidTarget, Spec,
+	UnitReference, Spec,
 	TristateEffect
 } from '../core/proto/common.js';
 import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
@@ -26,7 +26,6 @@ import {
 } from '../core/proto/druid.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
-import { NO_TARGET } from "../core/proto_utils/utils";
 import { Player } from "../core/player";
 import { APLRotation } from '../core/proto/apl.js';
 
@@ -94,9 +93,7 @@ export const DefaultRotation = BalanceDruidRotation.create({
 });
 
 export const DefaultOptions = BalanceDruidOptions.create({
-	innervateTarget: RaidTarget.create({
-		targetIndex: NO_TARGET,
-	}),
+	innervateTarget: UnitReference.create(),
 });
 
 export const DefaultConsumes = Consumes.create({

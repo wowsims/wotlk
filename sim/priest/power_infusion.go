@@ -13,7 +13,7 @@ func (priest *Priest) registerPowerInfusionCD() {
 
 	actionID := core.ActionID{SpellID: 10060, Tag: priest.Index}
 
-	powerInfusionTargetAgent := priest.Party.Raid.GetPlayerFromRaidTarget(priest.SelfBuffs.PowerInfusionTarget)
+	powerInfusionTargetAgent := priest.Party.Raid.GetPlayerFromUnitReference(priest.SelfBuffs.PowerInfusionTarget)
 	if powerInfusionTargetAgent == nil {
 		return
 	}

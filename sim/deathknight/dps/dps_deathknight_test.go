@@ -215,7 +215,7 @@ var frostDesyncRotation = &proto.Deathknight_Rotation{
 }
 
 var deathKnightOptions = &proto.Deathknight_Options{
-	UnholyFrenzyTarget:  &proto.RaidTarget{TargetIndex: 0},
+	UnholyFrenzyTarget:  &proto.UnitReference{Type: proto.UnitReference_Player, Index: 0},
 	DrwPestiApply:       true,
 	StartingRunicPower:  0,
 	PetUptime:           1,
