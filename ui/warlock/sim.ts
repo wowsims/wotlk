@@ -1,33 +1,14 @@
 import {
-	RaidBuffs,
 	PartyBuffs,
-	IndividualBuffs,
-	Debuffs,
 	Spec,
 	Stat,
-	TristateEffect,
-	Race,
 } from '../core/proto/common.js';
 
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
-import { TypedEvent } from '../core/typed_event.js';
-
-import {
-	Warlock,
-	Warlock_Rotation as WarlockRotation,
-	WarlockTalents as WarlockTalents,
-	Warlock_Options as WarlockOptions,
-	Warlock_Options_Armor as Armor,
-	Warlock_Options_Summon as Summon,
-	Warlock_Options_WeaponImbue as WeaponImbue,
-} from '../core/proto/warlock.js';
-
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
-import * as Tooltips from '../core/constants/tooltips.js';
-
 import * as WarlockInputs from './inputs.js';
 import * as Presets from './presets.js';
 
@@ -158,7 +139,6 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				],
 				//Preset gear configurations that the user can quickly select.
 				gear: [
-					// Presets.Naked,
 					Presets.SWP_BIS,
 					Presets.P1_PreBiS_11,
 					Presets.P1_PreBiS_14,

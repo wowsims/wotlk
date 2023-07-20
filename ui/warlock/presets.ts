@@ -31,7 +31,7 @@ import {
 	WarlockMinorGlyph as MinorGlyph,
 } from '../core/proto/warlock.js';
 
-import * as WarlockTooltips from './tooltips.js';
+export const BIS_TOOLTIP = 'This gear preset is inspired from Zephan\'s Affliction guide: https://www.warcrafttavern.com/wotlk/guides/pve-affliction-warlock/';
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
@@ -214,7 +214,7 @@ export const SWP_BIS = {
 };
 export const P1_PreBiS_11 = {
 	name: 'Pre-Raid Affliction',
-	tooltip: WarlockTooltips.BIS_TOOLTIP,
+	tooltip: BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":44910,"enchant":3820,"gems":[41285,39998]},
@@ -238,7 +238,7 @@ export const P1_PreBiS_11 = {
 }
 export const P1_Preset_Demo_Destro = {
 	name: 'P1 Demo / Destro',
-	tooltip: WarlockTooltips.BIS_TOOLTIP,
+	tooltip: BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology || player.getRotation().type == RotationType.Destruction,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":40421,"enchant":3820,"gems":[41285,40014]},
@@ -265,7 +265,7 @@ export const P1_Preset_Demo_Destro = {
 // will have only rare gems, but a Lightweave Embroidery on cloak.
 export const P1_Preset_Affliction = {
 	name: 'P1 Affliction',
-	tooltip: WarlockTooltips.BIS_TOOLTIP,
+	tooltip: BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":40421,"enchant":3820,"gems":[41285,40051]},
@@ -291,7 +291,7 @@ export const P1_Preset_Affliction = {
 
 export const P1_PreBiS_14 = {
 	name: 'Pre-Raid',
-	tooltip: WarlockTooltips.BIS_TOOLTIP,
+	tooltip: BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology || player.getRotation().type == RotationType.Destruction,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":44910,"enchant":3820,"gems":[41285,39998]},
@@ -316,7 +316,7 @@ export const P1_PreBiS_14 = {
 
 export const P2_Preset_Affliction = {
 	name: 'P2 Affliction',
-	tooltip: WarlockTooltips.BIS_TOOLTIP,
+	tooltip: BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":45497,"enchant":3820,"gems":[41285,45883]},
@@ -341,7 +341,7 @@ export const P2_Preset_Affliction = {
 
 export const P2_Preset_Demo_Destro = {
 	name: 'P2 Demo / Destro',
-	tooltip: WarlockTooltips.BIS_TOOLTIP,
+	tooltip: BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology || player.getRotation().type == RotationType.Destruction,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":45497,"enchant":3820,"gems":[41285,45883]},
@@ -366,7 +366,7 @@ export const P2_Preset_Demo_Destro = {
 
 export const P3_Preset_Affliction_Horde = {
 	name: 'P3 Affliction H',
-	tooltip: WarlockTooltips.BIS_TOOLTIP,
+	tooltip: BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction && player.getFaction() == Faction.Horde,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":47796,"enchant":3820,"gems":[41285,40133]},
@@ -391,7 +391,7 @@ export const P3_Preset_Affliction_Horde = {
 
 export const P3_Preset_Affliction_Alliance = {
 	name: 'P3 Affliction A',
-	tooltip: WarlockTooltips.BIS_TOOLTIP,
+	tooltip: BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Affliction && player.getFaction() == Faction.Alliance,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":47789,"enchant":3820,"gems":[41285,40133]},
@@ -416,7 +416,7 @@ export const P3_Preset_Affliction_Alliance = {
 
 export const P3_Preset_Demo_Horde = {
 	name: 'P3 Demo H',
-	tooltip: WarlockTooltips.BIS_TOOLTIP,
+	tooltip: BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology && player.getFaction() == Faction.Horde,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":47796,"enchant":3820,"gems":[41285,40133]},
@@ -441,7 +441,7 @@ export const P3_Preset_Demo_Horde = {
 
 export const P3_Preset_Demo_Alliance = {
 	name: 'P3 Demo A',
-	tooltip: WarlockTooltips.BIS_TOOLTIP,
+	tooltip: BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Demonology && player.getFaction() == Faction.Alliance,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":47789,"enchant":3820,"gems":[41285,40133]},
@@ -466,7 +466,7 @@ export const P3_Preset_Demo_Alliance = {
 
 export const P3_Preset_Destro_Horde = {
 	name: 'P3 Destro H',
-	tooltip: WarlockTooltips.BIS_TOOLTIP,
+	tooltip: BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Destruction && player.getFaction() == Faction.Horde,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":47796,"enchant":3820,"gems":[41285,40133]},
@@ -491,7 +491,7 @@ export const P3_Preset_Destro_Horde = {
 
 export const P3_Preset_Destro_Alliance = {
 	name: 'P3 Destro A',
-	tooltip: WarlockTooltips.BIS_TOOLTIP,
+	tooltip: BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getRotation().type == RotationType.Destruction && player.getFaction() == Faction.Alliance,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":47789,"enchant":3820,"gems":[41285,40133]},
@@ -513,31 +513,3 @@ export const P3_Preset_Destro_Alliance = {
 		{"id":45294,"gems":[40155]}
 	]}`),
 }
-
-export const Naked = {
-	name: 'The Naked Bolt',
-	gear: EquipmentSpec.fromJsonString(`
-    {"items":
-      [
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {},
-        {}
-      ]
-    }
-  `),
-}
-
