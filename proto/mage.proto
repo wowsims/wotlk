@@ -201,7 +201,7 @@ message Mage {
 		// Number of Evocation ticks to use. If 0, use all of them.
 		int32 evocation_ticks = 2;
 		int32 focus_magic_percent_uptime = 3;
-		RaidTarget focus_magic_target = 4;
+		UnitReference focus_magic_target = 4;
 		int32 reaction_time_ms = 5;
 	}
 	Options options = 3;

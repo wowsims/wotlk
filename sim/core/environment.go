@@ -98,7 +98,7 @@ func (env *Environment) construct(raidProto *proto.Raid, encounterProto *proto.E
 			if targetProto.TankIndex >= 0 && targetProto.TankIndex < int32(len(raidProto.Tanks)) {
 				raidTargetProto := raidProto.Tanks[targetProto.TankIndex]
 				if raidTargetProto != nil {
-					raidTarget := env.Raid.GetPlayerFromRaidTarget(raidTargetProto)
+					raidTarget := env.Raid.GetPlayerFromUnitReference(raidTargetProto)
 					if raidTarget != nil {
 						target.CurrentTarget = &raidTarget.GetCharacter().Unit
 					}

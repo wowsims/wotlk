@@ -7,7 +7,7 @@ import (
 // Returns the time to wait before the next action, or 0 if innervate is on CD
 // or disabled.
 func (druid *Druid) registerInnervateCD() {
-	innervateTargetAgent := druid.Party.Raid.GetPlayerFromRaidTarget(druid.SelfBuffs.InnervateTarget)
+	innervateTargetAgent := druid.Party.Raid.GetPlayerFromUnitReference(druid.SelfBuffs.InnervateTarget)
 	if innervateTargetAgent == nil {
 		return
 	}

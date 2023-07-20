@@ -1,11 +1,8 @@
-import { Class } from './proto/common.js';
+import { Class, UnitReference_Type } from './proto/common.js';
 import { Debuffs } from './proto/common.js';
-import { RaidTarget } from './proto/common.js';
+import { UnitReference } from './proto/common.js';
 import { Raid as RaidProto } from './proto/api.js';
-import { RaidStats as RaidStatsProto } from './proto/api.js';
 import { RaidBuffs } from './proto/common.js';
-import { Spec } from './proto/common.js';
-import { NO_TARGET } from './proto_utils/utils.js';
 
 import { Party, MAX_PARTY_SIZE } from './party.js';
 import { Player } from './player.js';
@@ -19,7 +16,7 @@ export const MAX_NUM_PARTIES = 8;
 export class Raid {
 	private buffs: RaidBuffs = RaidBuffs.create();
 	private debuffs: Debuffs = Debuffs.create();
-	private tanks: Array<RaidTarget> = [];
+	private tanks: Array<UnitReference> = [];
 	private targetDummies: number = 0;
 	private numActiveParties: number = 5;
 
@@ -95,11 +92,11 @@ export class Raid {
 		return party.getPlayer(index % MAX_PARTY_SIZE);
 	}
 
-	getPlayerFromRaidTarget(raidTarget: RaidTarget): Player<any> | null {
-		if (raidTarget.targetIndex == NO_TARGET) {
-			return null;
+	getPlayerFromUnitReference(raidTarget: UnitReference): Player<any> | null {
+		if (raidTarget.type == UnitReference_Type.Player) {
+			return this.getPlayer(raidTarget.index);
 		} else {
-			return this.getPlayer(raidTarget.targetIndex);
+			return null;
 		}
 	}
 
@@ -169,17 +166,17 @@ export class Raid {
 		this.debuffsChangeEmitter.emit(eventID);
 	}
 
-	getTanks(): Array<RaidTarget> {
+	getTanks(): Array<UnitReference> {
 		// Make a defensive copy
-		return this.tanks.map(tank => RaidTarget.clone(tank));
+		return this.tanks.map(tank => UnitReference.clone(tank));
 	}
 
-	setTanks(eventID: EventID, newTanks: Array<RaidTarget>) {
-		if (this.tanks.length == newTanks.length && this.tanks.every((tank, i) => RaidTarget.equals(tank, newTanks[i])))
+	setTanks(eventID: EventID, newTanks: Array<UnitReference>) {
+		if (this.tanks.length == newTanks.length && this.tanks.every((tank, i) => UnitReference.equals(tank, newTanks[i])))
 			return;
 
 		// Make a defensive copy
-		this.tanks = newTanks.map(tank => RaidTarget.clone(tank));
+		this.tanks = newTanks.map(tank => UnitReference.clone(tank));
 		this.tanksChangeEmitter.emit(eventID);
 	}
 
@@ -228,6 +225,10 @@ export class Raid {
 
 	fromProto(eventID: EventID, proto: RaidProto) {
 		TypedEvent.freezeAllAndDo(() => {
+			if (proto.tanks) {
+				proto.tanks = proto.tanks.map(tank => (tank.type == 0 && tank.targetIndex != -1) ? UnitReference.create({type: UnitReference_Type.Player, index: tank.targetIndex}) : tank);
+			}
+
 			if (proto.buffs) {
 				if (proto.buffs.demonicPact > 0 && proto.buffs.demonicPactSp == 0) {
 					proto.buffs.demonicPactSp = proto.buffs.demonicPact;

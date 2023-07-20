@@ -206,7 +206,7 @@ message BalanceDruid {
   Rotation rotation = 1;
 
   message Options {
-    RaidTarget innervate_target = 1;
+    UnitReference innervate_target = 1;
 	}
   Options options = 3;
 }
@@ -254,7 +254,7 @@ message FeralDruid {
   Rotation rotation = 1;
 
   message Options {
-    RaidTarget innervate_target = 1;
+    UnitReference innervate_target = 1;
     int32 latency_ms = 2;
     bool assume_bleed_active = 4;
   }
@@ -271,7 +271,7 @@ message FeralTankDruid {
   Rotation rotation = 1;
 
   message Options {
-    RaidTarget innervate_target = 1;
+    UnitReference innervate_target = 1;
 	double starting_rage = 2;
   }
   Options options = 3;
@@ -283,7 +283,7 @@ message RestorationDruid {
   Rotation rotation = 1;
 
   message Options {
-    RaidTarget innervate_target = 1;
+    UnitReference innervate_target = 1;
   }
   Options options = 3;
 }

@@ -2,10 +2,10 @@ import { Input, InputConfig } from '../components/input.js';
 import { Player } from '../player.js';
 import { Raid } from '../raid.js';
 import { EventID, TypedEvent } from '../typed_event.js';
-import { RaidTarget } from '../proto/common.js';
-import { emptyRaidTarget, cssClassForClass } from '../proto_utils/utils.js';
+import { UnitReference } from '../proto/common.js';
+import { emptyUnitReference, cssClassForClass } from '../proto_utils/utils.js';
 
-export interface RaidTargetPickerConfig<ModObject> extends InputConfig<ModObject, RaidTarget> {
+export interface UnitReferencePickerConfig<ModObject> extends InputConfig<ModObject, UnitReference> {
 	noTargetLabel: string,
 	compChangeEmitter: TypedEvent<void>,
 }
@@ -16,25 +16,25 @@ interface OptionElemOptions {
 }
 
 // Dropdown menu for selecting a player.
-export class RaidTargetPicker<ModObject> extends Input<ModObject, RaidTarget> {
-	private readonly config: RaidTargetPickerConfig<ModObject>;
+export class UnitReferencePicker<ModObject> extends Input<ModObject, UnitReference> {
+	private readonly config: UnitReferencePickerConfig<ModObject>;
 	private readonly raid: Raid;
 
 	private curPlayer: Player<any> | null;
-	private curRaidTarget: RaidTarget;
+	private curUnitReference: UnitReference;
 
 	private currentOptions: Array<OptionElemOptions>;
 
 	private readonly buttonElem: HTMLElement;
 	private readonly dropdownElem: HTMLElement;
 
-	constructor(parent: HTMLElement, raid: Raid, modObj: ModObject, config: RaidTargetPickerConfig<ModObject>) {
+	constructor(parent: HTMLElement, raid: Raid, modObj: ModObject, config: UnitReferencePickerConfig<ModObject>) {
 		super(parent, 'raid-target-picker-root', modObj, config);
 		this.rootElem.classList.add('dropdown');
 		this.config = config;
 		this.raid = raid;
-		this.curPlayer = this.raid.getPlayerFromRaidTarget(config.getValue(modObj));
-		this.curRaidTarget = this.getInputValue();
+		this.curPlayer = this.raid.getPlayerFromUnitReference(config.getValue(modObj));
+		this.curUnitReference = this.getInputValue();
 
 		this.rootElem.innerHTML = `
 			<a
@@ -73,22 +73,22 @@ export class RaidTargetPicker<ModObject> extends Input<ModObject, RaidTarget> {
 		this.dropdownElem.innerHTML = '';
 		this.currentOptions.forEach(option => this.dropdownElem.appendChild(this.makeOption(option)));
 
-		const prevRaidTarget = this.curRaidTarget;
-		this.curRaidTarget = this.getInputValue();
-		if (!RaidTarget.equals(prevRaidTarget, this.curRaidTarget)) {
+		const prevUnitReference = this.curUnitReference;
+		this.curUnitReference = this.getInputValue();
+		if (!UnitReference.equals(prevUnitReference, this.curUnitReference)) {
 			this.inputChanged(eventID);
 		} else {
-			this.setInputValue(this.curRaidTarget);
+			this.setInputValue(this.curUnitReference);
 		}
 	}
 
 	private makeOption(data: OptionElemOptions): HTMLElement {
-		const option = RaidTargetPicker.makeOptionElem(data);
+		const option = UnitReferencePicker.makeOptionElem(data);
 
 		option.addEventListener('click', event => {
 			event.preventDefault();
 			this.curPlayer = data.player;
-			this.curRaidTarget = this.getInputValue();
+			this.curUnitReference = this.getInputValue();
 			this.inputChanged(TypedEvent.nextEventID());
 		});
 
@@ -99,51 +99,23 @@ export class RaidTargetPicker<ModObject> extends Input<ModObject, RaidTarget> {
 		return this.buttonElem;
 	}
 
-	getInputValue(): RaidTarget {
+	getInputValue(): UnitReference {
 		if (this.curPlayer) {
-			return this.curPlayer.makeRaidTarget();
+			return this.curPlayer.makeUnitReference();
 		} else {
-			return emptyRaidTarget();
+			return emptyUnitReference();
 		}
 	}
 
-	setInputValue(newValue: RaidTarget) {
-		this.curRaidTarget = RaidTarget.clone(newValue);
-		this.curPlayer = this.raid.getPlayerFromRaidTarget(this.curRaidTarget);
+	setInputValue(newValue: UnitReference) {
+		this.curUnitReference = UnitReference.clone(newValue);
+		this.curPlayer = this.raid.getPlayerFromUnitReference(this.curUnitReference);
 
 		const optionData = this.currentOptions.find(optionData => optionData.player == this.curPlayer);
 
 		if (optionData)
-			this.buttonElem.innerHTML = RaidTargetPicker.makeOptionElem({ player: optionData.player }).outerHTML;
+			this.buttonElem.innerHTML = UnitReferencePicker.makeOptionElem({ player: optionData.player }).outerHTML;
 	}
-
-	// static makeOptionElem(data: RaidTargetElemOption): HTMLElement {
-	// 	const optionContainer = document.createElement('div');
-	// 	optionContainer.classList.add('dropdown-option-container');
-
-	// 	const option = document.createElement('div');
-	// 	option.classList.add('raid-target-picker-option');
-	// 	optionContainer.appendChild(option);
-	// 	if (data.isDropdown) {
-	// 		option.classList.add('dropdown-option');
-	// 	}
-
-	// 	if (data.iconUrl) {
-	// 		const icon = document.createElement('img');
-	// 		icon.src = data.iconUrl;
-	// 		icon.classList.add('raid-target-picker-icon');
-	// 		option.appendChild(icon);
-	// 	}
-
-	// 	if (data.text) {
-	// 		const label = document.createElement('span');
-	// 		label.textContent = data.text;
-	// 		label.classList.add('raid-target-picker-label');
-	// 		option.appendChild(label);
-	// 	}
-
-	// 	return optionContainer;
-	// }
 
 	static makeOptionElem(data: OptionElemOptions): HTMLElement {
 		const classCssClass = data.player ? cssClassForClass(data.player.getClass()) : '';

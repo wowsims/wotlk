@@ -13,7 +13,7 @@ import {
 	Profession,
 	PseudoStat,
 	Race,
-	RaidTarget,
+	UnitReference,
 	RangedWeaponType,
 	SimDatabase,
 	SimEnchant,
@@ -23,6 +23,7 @@ import {
 	Stat,
 	UnitStats,
 	WeaponType,
+	UnitReference_Type,
 } from './proto/common.js';
 import {
 	AuraStats as AuraStatsProto,
@@ -67,13 +68,13 @@ import {
 	canEquipEnchant,
 	canEquipItem,
 	classColors,
-	emptyRaidTarget,
+	emptyUnitReference,
 	enchantAppliesToItem,
 	getTalentTree,
 	getTalentTreeIcon,
 	getMetaGemEffectEP,
 	isTankSpec,
-	newRaidTarget,
+	newUnitReference,
 	raceToFaction,
 	specToClass,
 	specToEligibleRaces,
@@ -1052,11 +1053,11 @@ export class Player<SpecType extends Spec> {
 		});
 	}
 
-	makeRaidTarget(): RaidTarget {
+	makeUnitReference(): UnitReference {
 		if (this.party == null) {
-			return emptyRaidTarget();
+			return emptyUnitReference();
 		} else {
-			return newRaidTarget(this.getRaidIndex());
+			return newUnitReference(this.getRaidIndex());
 		}
 	}
 
@@ -1120,6 +1121,20 @@ export class Player<SpecType extends Spec> {
 
 			this.aplRotation = proto.rotation || APLRotation.create();
 			this.rotationChangeEmitter.emit(eventID);
+
+			const options = this.getSpecOptions();
+			for (let key in options) {
+				if ((options[key] as any)?.['targetIndex']) {
+					const targetIndex = (options[key] as any)['targetIndex'] as number;
+					if (targetIndex == -1) {
+						(options[key] as any) = UnitReference.create();
+					} else {
+						(options[key] as any) = UnitReference.create({type: UnitReference_Type.Player, index: targetIndex});
+					}
+					this.setSpecOptions(eventID, options);
+					break;
+				}
+			}
 		});
 	}
 

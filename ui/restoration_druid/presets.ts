@@ -9,7 +9,7 @@ import {
 	PartyBuffs,
 	Potions,
 	RaidBuffs,
-	RaidTarget,
+	UnitReference,
 	TristateEffect
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
@@ -22,7 +22,6 @@ import {
 } from '../core/proto/druid.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
-import { NO_TARGET } from "../core/proto_utils/utils";
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -63,9 +62,7 @@ export const DefaultRotation = RestorationDruidRotation.create({
 });
 
 export const DefaultOptions = RestorationDruidOptions.create({
-	innervateTarget: RaidTarget.create({
-		targetIndex: NO_TARGET,
-	}),
+	innervateTarget: UnitReference.create(),
 });
 
 export const DefaultConsumes = Consumes.create({

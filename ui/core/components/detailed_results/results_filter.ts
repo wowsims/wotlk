@@ -1,6 +1,6 @@
 import { SimResult, SimResultFilter } from '../../proto_utils/sim_result.js';
 import { EventID, TypedEvent } from '../../typed_event.js';
-import { UnitPicker } from '../../components/unit_picker.js';
+import { UnitPicker, UnitValueConfig } from '../../components/unit_picker.js';
 
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
 
@@ -9,13 +9,6 @@ const ALL_UNITS = -1;
 interface FilterData {
 	player: number,
 	target: number,
-};
-
-interface UnitFilterOption {
-	iconUrl: string,
-	text: string,
-	color: string,
-	value: number,
 };
 
 export class ResultsFilter extends ResultComponent {
@@ -80,7 +73,7 @@ export class ResultsFilter extends ResultComponent {
 		this.changeEmitter.emit(eventID);
 	}
 
-	private getUnitOptions(eventID: EventID, simResult: SimResult, isPlayer: boolean): Array<UnitFilterOption> {
+	private getUnitOptions(eventID: EventID, simResult: SimResult, isPlayer: boolean): Array<UnitValueConfig<number>> {
 		const allUnitsOption = {
 			iconUrl: '',
 			text: isPlayer ? 'All Players' : 'All Targets',

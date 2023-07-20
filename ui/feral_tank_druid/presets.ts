@@ -6,10 +6,9 @@ import { EquipmentSpec } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
 import { Conjured } from '../core/proto/common.js';
 import { Explosive } from '../core/proto/common.js';
-import { RaidTarget } from '../core/proto/common.js';
+import { UnitReference } from '../core/proto/common.js';
 import { Glyphs } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
-import { NO_TARGET } from '../core/proto_utils/utils.js';
 
 import {
 	FeralTankDruid_Rotation as DruidRotation,
@@ -48,9 +47,7 @@ export const DefaultRotation = DruidRotation.create({
 });
 
 export const DefaultOptions = DruidOptions.create({
-	innervateTarget: RaidTarget.create({
-		targetIndex: NO_TARGET,
-	}),
+	innervateTarget: UnitReference.create(),
 	startingRage: 20,
 });
 

@@ -25,14 +25,14 @@ export class UnitPicker<ModObject, T> extends DropdownPicker<ModObject, T> {
                 if (unitConfig.iconUrl) {
                     const icon = document.createElement('img');
                     icon.src = unitConfig.iconUrl;
-                    icon.classList.add('unit-filter-icon');
+                    icon.classList.add('unit-picker-item-icon');
                     button.appendChild(icon);
                 }
 
                 if (unitConfig.text) {
                     const label = document.createElement('span');
                     label.textContent = unitConfig.text;
-                    label.classList.add('unit-filter-label');
+                    label.classList.add('unit-picker-item-label');
                     button.appendChild(label);
                 }
 			}
