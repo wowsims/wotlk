@@ -54,6 +54,7 @@ export const DefaultOptions = Options.create({
 	useShadowfiend: true,
 	useMindBlast: true,
 	useShadowWordDeath: true,
+	latency: 100,
 });
 
 export const DefaultConsumes = Consumes.create({
