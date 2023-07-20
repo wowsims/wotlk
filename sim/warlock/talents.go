@@ -477,7 +477,10 @@ func (warlock *Warlock) setupImprovedSoulLeech() {
 	impSoulLeechProcChance := float64(warlock.Talents.ImprovedSoulLeech) / 2.
 	actionID := core.ActionID{SpellID: 54118}
 	impSoulLeechManaMetric := warlock.NewManaMetrics(actionID)
-	impSoulLeechPetManaMetric := warlock.Pet.NewManaMetrics(actionID)
+	var impSoulLeechPetManaMetric *core.ResourceMetrics
+	if warlock.Pet != nil {
+		impSoulLeechPetManaMetric = warlock.Pet.NewManaMetrics(actionID)
+	}
 	replSrc := warlock.Env.Raid.NewReplenishmentSource(core.ActionID{SpellID: 54118})
 
 	warlock.RegisterAura(core.Aura{
