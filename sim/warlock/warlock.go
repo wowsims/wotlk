@@ -129,6 +129,7 @@ func (warlock *Warlock) Initialize() {
 	warlock.registerShadowBurnSpell()
 	warlock.registerSearingPainSpell()
 	warlock.registerInfernoSpell()
+	warlock.registerBlackBook()
 
 	warlock.defineRotation()
 
