@@ -231,7 +231,7 @@ func (warlock *Warlock) setupPyroclasm() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell == warlock.Conflagrate && result.DidCrit() { // || spell == warlock.SearingPain
+			if (spell == warlock.Conflagrate || spell == warlock.SearingPain) && result.DidCrit() {
 				warlock.PyroclasmAura.Activate(sim)
 			}
 		},
