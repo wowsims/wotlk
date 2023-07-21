@@ -511,6 +511,23 @@ func (warlock *Warlock) setupImprovedSoulLeech() {
 	})
 }
 
+func (warlock *Warlock) updateDPASP(sim *core.Simulation) {
+	dpspCurrent := warlock.DemonicPactAura.ExclusiveEffects[0].Priority
+	currentTimeJump := sim.CurrentTime.Seconds() - warlock.PreviousTime.Seconds()
+
+	if currentTimeJump > 0 {
+		warlock.DPSPAggregate += dpspCurrent * currentTimeJump
+		warlock.Metrics.UpdateDpasp(dpspCurrent * currentTimeJump)
+
+		if sim.Log != nil {
+			warlock.Log(sim, "[Info] Demonic Pact spell power bonus average [%.0f]",
+				warlock.DPSPAggregate/sim.CurrentTime.Seconds())
+		}
+	}
+
+	warlock.PreviousTime = sim.CurrentTime
+}
+
 func (warlock *Warlock) setupDemonicPact() {
 	if warlock.Talents.DemonicPact == 0 {
 		return
@@ -544,7 +561,11 @@ func (warlock *Warlock) setupDemonicPact() {
 		Label:    "Demonic Pact Hidden Aura",
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			warlock.PreviousTime = 0
 			aura.Activate(sim)
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			warlock.updateDPASP(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !result.DidCrit() || !icd.IsReady(sim) {
@@ -566,6 +587,8 @@ func (warlock *Warlock) setupDemonicPact() {
 				newSPBonus > lastBonus
 
 			if shouldRefresh {
+				warlock.updateDPASP(sim)
+
 				icd.Use(sim)
 				for _, dpAura := range demonicPactAuras {
 					if dpAura != nil {

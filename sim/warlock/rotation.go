@@ -629,22 +629,6 @@ func (warlock *Warlock) getAlternativeAction(sim *core.Simulation, skipIndex int
 }
 
 func (warlock *Warlock) OnGCDReady(sim *core.Simulation) {
-	if warlock.Talents.DemonicPact > 0 && sim.CurrentTime != 0 && warlock.Pet != nil {
-		dpspCurrent := warlock.DemonicPactAura.ExclusiveEffects[0].Priority
-		currentTimeJump := sim.CurrentTime.Seconds() - warlock.PreviousTime.Seconds()
-
-		if currentTimeJump > 0 {
-			warlock.DPSPAggregate += dpspCurrent * currentTimeJump
-			warlock.Metrics.UpdateDpasp(dpspCurrent * currentTimeJump)
-		}
-
-		if sim.Log != nil {
-			warlock.Log(sim, "[Info] Demonic Pact spell power bonus average [%.0f]", warlock.DPSPAggregate/sim.CurrentTime.Seconds())
-		}
-
-		warlock.PreviousTime = sim.CurrentTime
-	}
-
 	for _, ac := range warlock.acl {
 		action, target := ac.Condition(sim)
 		if action == ACLNext || !ac.Spell.IsReady(sim) {
