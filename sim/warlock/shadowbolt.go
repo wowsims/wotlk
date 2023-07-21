@@ -20,6 +20,7 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 		ActionID:     core.ActionID{SpellID: 47809},
 		SpellSchool:  core.SpellSchoolShadow,
 		ProcMask:     core.ProcMaskSpellDamage,
+		Flags:        core.SpellFlagAPL,
 		MissileSpeed: 20,
 
 		ManaCost: core.ManaCostOptions{

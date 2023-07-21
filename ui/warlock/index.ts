@@ -9,4 +9,4 @@ const sim = new Sim();
 const player = new Player<Spec.SpecWarlock>(Spec.SpecWarlock, sim);
 sim.raid.setPlayer(TypedEvent.nextEventID(), 0, player);
 
-const simUI = new WarlockSimUI(document.body, player);
+new WarlockSimUI(document.body, player);

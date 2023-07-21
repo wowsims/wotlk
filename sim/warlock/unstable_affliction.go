@@ -15,7 +15,7 @@ func (warlock *Warlock) registerUnstableAfflictionSpell() {
 		ActionID:    core.ActionID{SpellID: 47843},
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagHauntSE,
+		Flags:       core.SpellFlagHauntSE | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.15,

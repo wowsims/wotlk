@@ -23,6 +23,7 @@ func (warlock *Warlock) registerDarkPactSpell() {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskEmpty,
+		Flags:       core.SpellFlagAPL,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

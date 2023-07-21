@@ -45,7 +45,7 @@ func (warlock *Warlock) registerSeedSpell() {
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolShadow,
 		ProcMask:     core.ProcMaskEmpty,
-		Flags:        core.SpellFlagHauntSE,
+		Flags:        core.SpellFlagHauntSE | core.SpellFlagAPL,
 		MissileSpeed: 28,
 
 		ManaCost: core.ManaCostOptions{

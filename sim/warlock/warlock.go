@@ -31,6 +31,7 @@ type Warlock struct {
 	Conflagrate        *core.Spell
 	DrainSoul          *core.Spell
 	Shadowburn         *core.Spell
+	SearingPain        *core.Spell
 
 	CurseOfElements      *core.Spell
 	CurseOfElementsAuras core.AuraArray
@@ -126,7 +127,9 @@ func (warlock *Warlock) Initialize() {
 	warlock.registerMetamorphosisSpell()
 	warlock.registerDarkPactSpell()
 	warlock.registerShadowBurnSpell()
+	warlock.registerSearingPainSpell()
 	warlock.registerInfernoSpell()
+	warlock.registerBlackBook()
 
 	warlock.defineRotation()
 
@@ -144,6 +147,24 @@ func (warlock *Warlock) Initialize() {
 
 			warlock.AddStats(correction)
 			warlock.MultiplyCastSpeed(1.0)
+		}
+
+		if warlock.Options.Summon != proto.Warlock_Options_NoSummon && warlock.Talents.DemonicKnowledge > 0 {
+			warlock.RegisterPrepullAction(-999*time.Second, func(sim *core.Simulation) {
+				// TODO: investigate a better way of handling this like a "reverse inheritance" for pets.
+				// TODO: this will break if we ever get stamina/intellect from procs, but there aren't
+				// many such effects and none that we care about
+				bonus := (warlock.Pet.GetStat(stats.Stamina) + warlock.Pet.GetStat(stats.Intellect)) *
+					(0.04 * float64(warlock.Talents.DemonicKnowledge))
+				if bonus != warlock.petStmBonusSP {
+					warlock.AddStatDynamic(sim, stats.SpellPower, bonus-warlock.petStmBonusSP)
+					warlock.petStmBonusSP = bonus
+				}
+			})
+		}
+
+		if warlock.IsUsingAPL {
+			return
 		}
 
 		precastSpellAt := -warlock.ApplyCastSpeedForSpell(precastSpell.DefaultCast.CastTime, precastSpell)
@@ -211,9 +232,7 @@ func NewWarlock(character core.Character, options *proto.Player) *Warlock {
 		warlock.Pet = warlock.NewWarlockPet()
 	}
 
-	if warlock.Rotation.UseInfernal {
-		warlock.Infernal = warlock.NewInfernal()
-	}
+	warlock.Infernal = warlock.NewInfernal()
 
 	if warlock.Rotation.Type == proto.Warlock_Rotation_Affliction && warlock.Rotation.EnableWeaponSwap {
 		warlock.EnableItemSwap(warlock.Rotation.WeaponSwap, 1, 1, 1)

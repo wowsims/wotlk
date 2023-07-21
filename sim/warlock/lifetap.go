@@ -19,6 +19,7 @@ func (warlock *Warlock) registerLifeTapSpell() {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       core.SpellFlagAPL,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

@@ -8,6 +8,10 @@ import (
 )
 
 func (warlock *Warlock) registerHauntSpell() {
+	if !warlock.Talents.Haunt {
+		return
+	}
+
 	actionID := core.ActionID{SpellID: 59164}
 	debuffMult := core.TernaryFloat64(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfHaunt), 1.23, 1.2)
 
@@ -29,6 +33,7 @@ func (warlock *Warlock) registerHauntSpell() {
 		ActionID:     actionID,
 		SpellSchool:  core.SpellSchoolShadow,
 		ProcMask:     core.ProcMaskSpellDamage,
+		Flags:        core.SpellFlagAPL,
 		MissileSpeed: 20,
 
 		ManaCost: core.ManaCostOptions{

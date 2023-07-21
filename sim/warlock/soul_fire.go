@@ -11,6 +11,7 @@ func (warlock *Warlock) registerSoulFireSpell() {
 		ActionID:     core.ActionID{SpellID: 47825},
 		SpellSchool:  core.SpellSchoolFire,
 		ProcMask:     core.ProcMaskSpellDamage,
+		Flags:        core.SpellFlagAPL,
 		MissileSpeed: 24,
 
 		ManaCost: core.ManaCostOptions{
