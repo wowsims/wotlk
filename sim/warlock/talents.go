@@ -127,7 +127,8 @@ func (warlock *Warlock) setupEmpoweredImp() {
 				warlock.Shadowburn,
 				warlock.SoulFire,
 				warlock.ChaosBolt,
-				// missing: shadowfury, searing pain, shadowflame, seed explosion (not dot)
+				warlock.SearingPain,
+				// missing: shadowfury, shadowflame, seed explosion (not dot)
 				//          rain of fire (consumes proc on cast start, but doesn't increase crit, ticks
 				//          also consume the proc but do seem to benefit from the increaesed crit)
 			}, func(spell *core.Spell) bool { return spell != nil })
@@ -424,6 +425,7 @@ func (warlock *Warlock) setupBackdraft() {
 				warlock.ShadowBolt,
 				warlock.ChaosBolt,
 				warlock.Immolate,
+				warlock.SearingPain,
 			}, func(spell *core.Spell) bool { return spell != nil })
 		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {

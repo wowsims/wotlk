@@ -31,6 +31,7 @@ type Warlock struct {
 	Conflagrate        *core.Spell
 	DrainSoul          *core.Spell
 	Shadowburn         *core.Spell
+	SearingPain        *core.Spell
 
 	CurseOfElements      *core.Spell
 	CurseOfElementsAuras core.AuraArray
@@ -126,6 +127,7 @@ func (warlock *Warlock) Initialize() {
 	warlock.registerMetamorphosisSpell()
 	warlock.registerDarkPactSpell()
 	warlock.registerShadowBurnSpell()
+	warlock.registerSearingPainSpell()
 	warlock.registerInfernoSpell()
 
 	warlock.defineRotation()
