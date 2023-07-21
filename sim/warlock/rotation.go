@@ -383,6 +383,7 @@ func (warlock *Warlock) defineRotation() {
 	}
 
 	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap) {
+		curIndex := len(acl)
 		acl = aclAppendSimple(acl, warlock.LifeTap, func(sim *core.Simulation) (bool, *core.Unit) {
 			// try to keep up the buff for the entire execute phase if possible
 			expiresAt := core.MaxDuration(0, warlock.GlyphOfLifeTapAura.RemainingDuration(sim))
@@ -391,17 +392,15 @@ func (warlock *Warlock) defineRotation() {
 				warlock.CurrentManaPercent() < 0.35 {
 				logInfo(sim, "Casting life tap to keep up GoLT (40s till EOF)")
 				return true, nil
-			} else if sim.GetRemainingDuration() <= 55*time.Second {
-				return false, nil
 			}
 
-			if warlock.GlyphOfLifeTapAura.RemainingDuration(sim) > 1*time.Second ||
-				sim.GetRemainingDuration() <= 10*time.Second {
-				return false, nil
+			if _, dur := warlock.getAlternativeAction(sim, curIndex); dur > expiresAt &&
+				sim.GetRemainingDuration() > 12*time.Second {
+				logInfo(sim, "Casting life tap to keep up GoLT")
+				return true, nil
 			}
 
-			logInfo(sim, "Casting life tap to keep up GoLT")
-			return true, nil
+			return false, nil
 		})
 	}
 
