@@ -146,6 +146,20 @@ func (warlock *Warlock) Initialize() {
 			warlock.MultiplyCastSpeed(1.0)
 		}
 
+		if warlock.Options.Summon != proto.Warlock_Options_NoSummon && warlock.Talents.DemonicKnowledge > 0 {
+			warlock.RegisterPrepullAction(-999*time.Second, func(sim *core.Simulation) {
+				// TODO: investigate a better way of handling this like a "reverse inheritance" for pets.
+				// TODO: this will break if we ever get stamina/intellect from procs, but there aren't
+				// many such effects and none that we care about
+				bonus := (warlock.Pet.GetStat(stats.Stamina) + warlock.Pet.GetStat(stats.Intellect)) *
+					(0.04 * float64(warlock.Talents.DemonicKnowledge))
+				if bonus != warlock.petStmBonusSP {
+					warlock.AddStatDynamic(sim, stats.SpellPower, bonus-warlock.petStmBonusSP)
+					warlock.petStmBonusSP = bonus
+				}
+			})
+		}
+
 		precastSpellAt := -warlock.ApplyCastSpeedForSpell(precastSpell.DefaultCast.CastTime, precastSpell)
 
 		warlock.RegisterPrepullAction(precastSpellAt, func(sim *core.Simulation) {
