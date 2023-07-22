@@ -14,21 +14,21 @@ func (mage *Mage) applyFocusMagic() {
 	// This is used only for the individual sim.
 	if mage.Party.Raid.Size() == 1 {
 		if mage.Options.FocusMagicPercentUptime > 0 {
-			selfAura, _ := core.FocusMagicAura(mage.GetCharacter(), nil)
+			selfAura, _ := core.FocusMagicAura(&mage.Unit, nil)
 			core.ApplyFixedUptimeAura(selfAura, float64(mage.Options.FocusMagicPercentUptime)/100, time.Second*10, 1)
 		}
 		return
 	}
 
-	focusMagicTargetAgent := mage.Party.Raid.GetPlayerFromUnitReference(mage.Options.FocusMagicTarget)
-	if focusMagicTargetAgent == nil {
+	focusMagicTarget := mage.GetUnit(mage.Options.FocusMagicTarget)
+	if focusMagicTarget == nil {
 		return
-	} else if focusMagicTargetAgent.GetCharacter() == mage.GetCharacter() {
+	} else if focusMagicTarget == &mage.Unit {
 		// When self is selected, give permanent self buff.
-		selfAura, _ := core.FocusMagicAura(mage.GetCharacter(), nil)
+		selfAura, _ := core.FocusMagicAura(&mage.Unit, nil)
 		core.MakePermanent(selfAura)
 		return
 	}
 
-	core.FocusMagicAura(mage.GetCharacter(), focusMagicTargetAgent.GetCharacter())
+	core.FocusMagicAura(&mage.Unit, focusMagicTarget)
 }

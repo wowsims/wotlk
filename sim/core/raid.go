@@ -377,29 +377,6 @@ func (raid Raid) GetPlayerFromUnit(unit *Unit) Agent {
 	return nil
 }
 
-func (raid Raid) GetPlayerFromUnitReference(ref *proto.UnitReference) Agent {
-	if ref == nil {
-		return nil
-	}
-
-	if ref.Type == proto.UnitReference_Player {
-		raidIndex := ref.Index
-		partyIndex := int(raidIndex / 5)
-		if partyIndex < 0 || partyIndex >= len(raid.Parties) {
-			return nil
-		}
-
-		party := raid.Parties[partyIndex]
-		for _, player := range party.Players {
-			if player.GetCharacter().Index == raidIndex {
-				return player
-			}
-		}
-	}
-
-	return nil
-}
-
 func (raid Raid) GetFirstNPlayersOrPets(n int32) []*Unit {
 	return raid.AllUnits[:MinInt32(n, int32(len(raid.AllUnits)))]
 }
