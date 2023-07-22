@@ -1,4 +1,3 @@
-import { RaidSimRequest, RaidSimResult } from '../../proto/api.js';
 import { SimResult, SimResultFilter } from '../..//proto_utils/sim_result.js';
 import { Component } from '../../components/component.js';
 import { EventID, TypedEvent } from '../../typed_event.js';
@@ -30,6 +29,10 @@ export abstract class ResultComponent extends Component {
 			this.lastSimResult = resultData;
 			this.onSimResult(resultData);
 		});
+	}
+
+	hasLastSimResult(): boolean {
+		return this.lastSimResult != null;
 	}
 
 	getLastSimResult(): SimResultData {

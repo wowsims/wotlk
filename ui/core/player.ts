@@ -9,20 +9,14 @@ import {
 	HealingModel,
 	IndividualBuffs,
 	ItemSlot,
-	ItemSwap,
 	Profession,
 	PseudoStat,
 	Race,
 	UnitReference,
-	RangedWeaponType,
 	SimDatabase,
-	SimEnchant,
-	SimGem,
-	SimItem,
 	Spec,
 	Stat,
 	UnitStats,
-	WeaponType,
 	UnitReference_Type,
 } from './proto/common.js';
 import {
@@ -170,6 +164,10 @@ export class UnitMetadataList {
 		const anyUpdates = await Promise.all(newMetadatas.map((metadata, i) => this.metadatas[i].update(metadata)));
 
 		return oldLen != this.metadatas.length || anyUpdates.some(v => v);
+	}
+
+	asList(): Array<UnitMetadata> {
+		return this.metadatas.slice();
 	}
 }
 
@@ -1026,7 +1024,7 @@ export class Player<SpecType extends Spec> {
 			return enchantData;
 		}
 
-		const filters = this.sim.getFilters();
+		//const filters = this.sim.getFilters();
 
 		return enchantData.filter(enchantElem => {
 			const enchant = getEnchantFunc(enchantElem);

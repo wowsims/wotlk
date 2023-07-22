@@ -7,7 +7,7 @@ import (
 )
 
 func (rot *APLRotation) aplGetSourceUnit(ref *proto.UnitReference) *Unit {
-	if ref == nil {
+	if ref == nil || ref.Type == proto.UnitReference_Unknown {
 		return rot.unit
 	}
 
@@ -26,7 +26,7 @@ func (rot *APLRotation) aplGetAura(sourceRef *proto.UnitReference, auraId *proto
 
 	aura := sourceUnit.GetAuraByID(ProtoToActionID(auraId))
 	if aura == nil {
-		rot.validationWarning("No aura found for: %s", ProtoToActionID(auraId))
+		rot.validationWarning("No aura found on %s for: %s", sourceUnit.Label, ProtoToActionID(auraId))
 	}
 	return aura
 }

@@ -766,6 +766,8 @@ message UnitReference {
 		Pet = 3;
 		Self = 4;
 		CurrentTarget = 5;
+		AllPlayers = 6;
+		AllTargets = 7;
 	}
 
 	// The type of unit being referenced.

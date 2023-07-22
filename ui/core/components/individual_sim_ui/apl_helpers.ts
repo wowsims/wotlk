@@ -1,11 +1,12 @@
-import { OtherAction } from '../../proto/common.js';
-import { ActionId } from '../../proto_utils/action_id.js';
-import { Player } from '../../player.js';
+import { OtherAction, UnitReference, UnitReference_Type as UnitType } from '../../proto/common.js';
+import { ActionId, defaultTargetIcon } from '../../proto_utils/action_id.js';
+import { Player, UnitMetadata } from '../../player.js';
 import { EventID, TypedEvent } from '../../typed_event.js';
 import { bucket } from '../../utils.js';
 import { AdaptiveStringPicker } from '../string_picker.js';
 import { NumberPicker } from '../number_picker.js';
 import { DropdownPicker, DropdownPickerConfig, DropdownValueConfig, TextDropdownPicker } from '../dropdown_picker.js';
+import { UnitPicker, UnitPickerConfig, UnitValue } from '../unit_picker.js';
 import { Input, InputConfig } from '../input.js';
 import { ActionID } from '../../proto/common.js';
 import { BooleanPicker } from '../boolean_picker.js';
@@ -15,12 +16,12 @@ export type ACTION_ID_SET = 'auras' | 'stackable_auras' | 'icd_auras' | 'castabl
 
 const actionIdSets: Record<ACTION_ID_SET, {
 	defaultLabel: string,
-	getActionIDs: (player: Player<any>) => Promise<Array<DropdownValueConfig<ActionId>>>,
+	getActionIDs: (metadata: UnitMetadata) => Promise<Array<DropdownValueConfig<ActionId>>>,
 }> = {
 	['auras']: {
 		defaultLabel: 'Aura',
-		getActionIDs: async (player) => {
-			return player.getMetadata().getAuras().map(actionId => {
+		getActionIDs: async (metadata) => {
+			return metadata.getAuras().map(actionId => {
 				return {
 					value: actionId.id,
 				};
@@ -29,8 +30,8 @@ const actionIdSets: Record<ACTION_ID_SET, {
 	},
 	['stackable_auras']: {
 		defaultLabel: 'Aura',
-		getActionIDs: async (player) => {
-			return player.getMetadata().getAuras().filter(aura => aura.data.maxStacks > 0).map(actionId => {
+		getActionIDs: async (metadata) => {
+			return metadata.getAuras().filter(aura => aura.data.maxStacks > 0).map(actionId => {
 				return {
 					value: actionId.id,
 				};
@@ -39,8 +40,8 @@ const actionIdSets: Record<ACTION_ID_SET, {
 	},
 	['icd_auras']: {
 		defaultLabel: 'Aura',
-		getActionIDs: async (player) => {
-			return player.getMetadata().getAuras().filter(aura => aura.data.hasIcd).map(actionId => {
+		getActionIDs: async (metadata) => {
+			return metadata.getAuras().filter(aura => aura.data.hasIcd).map(actionId => {
 				return {
 					value: actionId.id,
 				};
@@ -49,8 +50,8 @@ const actionIdSets: Record<ACTION_ID_SET, {
 	},
 	['castable_spells']: {
 		defaultLabel: 'Spell',
-		getActionIDs: async (player) => {
-			const castableSpells = player.getMetadata().getSpells().filter(spell => spell.data.isCastable);
+		getActionIDs: async (metadata) => {
+			const castableSpells = metadata.getSpells().filter(spell => spell.data.isCastable);
 
 			// Split up non-cooldowns and cooldowns into separate sections for easier browsing.
 			const { 'spells': spells, 'cooldowns': cooldowns } = bucket(castableSpells, spell => spell.data.isMajorCooldown ? 'cooldowns' : 'spells');
@@ -95,8 +96,8 @@ const actionIdSets: Record<ACTION_ID_SET, {
 	},
 	['dot_spells']: {
 		defaultLabel: 'DoT Spell',
-		getActionIDs: async (player) => {
-			return player.getMetadata().getSpells().filter(spell => spell.data.hasDot).map(actionId => {
+		getActionIDs: async (metadata) => {
+			return metadata.getSpells().filter(spell => spell.data.hasDot).map(actionId => {
 				return {
 					value: actionId.id,
 				};
@@ -107,6 +108,7 @@ const actionIdSets: Record<ACTION_ID_SET, {
 
 export interface APLActionIDPickerConfig<ModObject> extends Omit<DropdownPickerConfig<ModObject, ActionID, ActionId>, 'defaultLabel' | 'equals' | 'setOptionContent' | 'values' | 'getValue' | 'setValue'> {
 	actionIdSet: ACTION_ID_SET,
+	getUnitRef: (player: Player<any>) => UnitReference,
 	getValue: (obj: ModObject) => ActionID,
 	setValue: (eventID: EventID, obj: ModObject, newValue: ActionID) => void,
 }
@@ -139,17 +141,102 @@ export class APLActionIDPicker extends DropdownPicker<Player<any>, ActionID, Act
 			values: [],
 		});
 
+		const getUnitRef = config.getUnitRef;
 		const getActionIDs = actionIdSet.getActionIDs;
 		const updateValues = async () => {
-			const values = await getActionIDs(player);
-			this.setOptions(values);
+			const unitRef = getUnitRef(player);
+			const metadata = player.sim.getUnitMetadata(unitRef, player, UnitReference.create({type: UnitType.Self}))
+			if (metadata) {
+				const values = await getActionIDs(metadata);
+				this.setOptions(values);
+			}
 		};
 		updateValues();
-		player.sim.unitMetadataEmitter.on(updateValues);
+		TypedEvent.onAny([player.sim.unitMetadataEmitter, player.rotationChangeEmitter]).on(updateValues);
 	}
 }
 
-type APLPickerBuilderFieldFactory<F> = (parent: HTMLElement, player: Player<any>, config: InputConfig<Player<any>, F>) => Input<Player<any>, F>;
+export interface APLUnitPickerConfig extends Omit<UnitPickerConfig<Player<any>>, 'values'> {
+}
+
+export class APLUnitPicker extends UnitPicker<Player<any>> {
+	constructor(parent: HTMLElement, player: Player<any>, config: APLUnitPickerConfig) {
+		super(parent, player, {
+			...config,
+			sourceToValue: (src: UnitReference) => APLUnitPicker.refToValue(src, player),
+			valueToSource: (val: UnitValue) => val.value,
+			values: [],
+		});
+
+		this.updateValues();
+		player.sim.unitMetadataEmitter.on(() => this.updateValues());
+	}
+
+	private static refToValue(ref: UnitReference, thisPlayer: Player<any>): UnitValue {
+		if (ref.type == UnitType.Unknown) {
+			return {
+				value: ref,
+				color: 'black',
+				text: 'fa-user',
+			};
+		} else if (ref.type == UnitType.Self) {
+			return {
+				value: ref,
+				color: 'grey',
+				iconUrl: 'fa-user',
+				text: 'Self',
+			};
+		} else if (ref.type == UnitType.CurrentTarget) {
+			return {
+				value: ref,
+				color: 'grey',
+				iconUrl: 'fa-bullseye',
+				text: 'Current Target',
+			};
+		} else if (ref.type == UnitType.Player) {
+			const player = thisPlayer.sim.raid.getPlayer(ref.index);
+			if (player) {
+				return {
+					value: ref,
+					color: player.getClassColor(),
+					iconUrl: player.getSpecIcon(),
+					text: `Player ${ref.index + 1}`,
+				};
+			}
+		} else if (ref.type == UnitType.Target) {
+			const targetMetadata = thisPlayer.sim.encounter.targetsMetadata.asList()[ref.index]
+			if (targetMetadata) {
+				return {
+					value: ref,
+					color: 'black',
+					iconUrl: defaultTargetIcon,
+					text: `Target ${ref.index + 1}`,
+				};
+			}
+		}
+
+		return {
+			value: ref,
+		};
+	}
+
+	private updateValues() {
+		let values = [
+			UnitReference.create(),
+			UnitReference.create({type: UnitType.Self}),
+			UnitReference.create({type: UnitType.CurrentTarget}),
+			this.modObject.sim.encounter.targetsMetadata.asList().map((targetMetadata, i) => UnitReference.create({type: UnitType.Target, index: i})),
+		].flat();
+
+		this.setOptions(values.map(v => {
+			return {
+				value: APLUnitPicker.refToValue(v, this.modObject),
+			};
+		}));
+	}
+}
+
+type APLPickerBuilderFieldFactory<F> = (parent: HTMLElement, player: Player<any>, config: InputConfig<Player<any>, F>, getParentValue: () => any) => Input<Player<any>, F>;
 
 export interface APLPickerBuilderFieldConfig<T, F extends keyof T> {
 	field: F,
@@ -195,7 +282,7 @@ export class APLPickerBuilder<T> extends Input<Player<any>, T> {
 	}
 
 	private static makeFieldPicker<T, F extends keyof T>(builder: APLPickerBuilder<T>, fieldConfig: APLPickerBuilderFieldConfig<T, F>): APLPickerBuilderField<T, F> {
-		const field: F = fieldConfig.field;
+		const field: F = fieldConfig.field
 		return {
 			...fieldConfig,
 			picker: fieldConfig.factory(builder.rootElem, builder.modObject, {
@@ -214,7 +301,7 @@ export class APLPickerBuilder<T> extends Input<Player<any>, T> {
 					builder.getSourceValue()[field] = newValue;
 					player.rotationChangeEmitter.emit(eventID);
 				},
-			}),
+			}, () => builder.getSourceValue()),
 		};
 	}
 
@@ -237,13 +324,25 @@ export class APLPickerBuilder<T> extends Input<Player<any>, T> {
 	}
 }
 
-export function actionIdFieldConfig(field: string, actionIdSet: ACTION_ID_SET, options?: Partial<APLPickerBuilderFieldConfig<any, any>>): APLPickerBuilderFieldConfig<any, any> {
+export function actionIdFieldConfig(field: string, actionIdSet: ACTION_ID_SET, unitRefField: string, options?: Partial<APLPickerBuilderFieldConfig<any, any>>): APLPickerBuilderFieldConfig<any, any> {
 	return {
 		field: field,
 		newValue: () => ActionID.create(),
-		factory: (parent, player, config) => new APLActionIDPicker(parent, player, {
+		factory: (parent, player, config, getParentValue) => new APLActionIDPicker(parent, player, {
 			...config,
 			actionIdSet: actionIdSet,
+			getUnitRef: () => unitRefField ? getParentValue()[unitRefField] : UnitReference.create(),
+		}),
+		...(options || {}),
+	};
+}
+
+export function unitFieldConfig(field: string, options?: Partial<APLPickerBuilderFieldConfig<any, any>>): APLPickerBuilderFieldConfig<any, any> {
+	return {
+		field: field,
+		newValue: () => UnitReference.create(),
+		factory: (parent, player, config) => new APLUnitPicker(parent, player, {
+			...config,
 		}),
 		...(options || {}),
 	};

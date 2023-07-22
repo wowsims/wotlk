@@ -497,33 +497,7 @@ func (unit *Unit) GetSpellsMatchingSchool(school SpellSchool) []*Spell {
 }
 
 func (unit *Unit) GetUnit(ref *proto.UnitReference) *Unit {
-	if ref == nil {
-		return nil
-	}
-
-	switch ref.Type {
-	case proto.UnitReference_Player:
-		return unit.Env.GetUnit(ref)
-	case proto.UnitReference_Target:
-		return unit.Env.GetUnit(ref)
-	case proto.UnitReference_Pet:
-		ownerAgent := unit.Env.Raid.GetPlayerFromUnit(unit.GetUnit(ref.Owner))
-		if ownerAgent == nil {
-			return nil
-		}
-		pets := ownerAgent.GetCharacter().Pets
-		if int(ref.Index) < len(pets) {
-			return &pets[ref.Index].GetCharacter().Unit
-		} else {
-			return nil
-		}
-	case proto.UnitReference_Self:
-		return unit
-	case proto.UnitReference_CurrentTarget:
-		return unit.CurrentTarget
-	}
-
-	return nil
+	return unit.Env.GetUnit(ref, unit)
 }
 
 func (unit *Unit) GetMetadata() *proto.UnitMetadata {
