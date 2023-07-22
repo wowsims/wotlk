@@ -9,7 +9,7 @@ import (
 )
 
 func (warlock *Warlock) registerDemonicEmpowermentSpell() {
-	if !warlock.Talents.DemonicEmpowerment && warlock.Options.Summon == proto.Warlock_Options_NoSummon {
+	if !warlock.Talents.DemonicEmpowerment || warlock.Options.Summon == proto.Warlock_Options_NoSummon {
 		return
 	}
 
