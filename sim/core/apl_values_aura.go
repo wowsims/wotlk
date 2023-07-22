@@ -6,16 +6,38 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-func (rot *APLRotation) aplGetAura(auraId *proto.ActionID) *Aura {
-	aura := rot.unit.GetAuraByID(ProtoToActionID(auraId))
+func (rot *APLRotation) aplGetSourceUnit(ref *proto.UnitReference) *Unit {
+	if ref == nil {
+		return rot.unit
+	}
+
+	unit := rot.unit.GetUnit(ref)
+	if unit == nil {
+		rot.validationWarning("No unit found matching reference: %s", ref)
+	}
+	return unit
+}
+
+func (rot *APLRotation) aplGetAura(sourceRef *proto.UnitReference, auraId *proto.ActionID) *Aura {
+	sourceUnit := rot.aplGetSourceUnit(sourceRef)
+	if sourceUnit == nil {
+		return nil
+	}
+
+	aura := sourceUnit.GetAuraByID(ProtoToActionID(auraId))
 	if aura == nil {
 		rot.validationWarning("No aura found for: %s", ProtoToActionID(auraId))
 	}
 	return aura
 }
 
-func (rot *APLRotation) aplGetProcAura(auraId *proto.ActionID) *Aura {
-	aura := rot.unit.GetIcdAuraByID(ProtoToActionID(auraId))
+func (rot *APLRotation) aplGetProcAura(sourceRef *proto.UnitReference, auraId *proto.ActionID) *Aura {
+	sourceUnit := rot.aplGetSourceUnit(sourceRef)
+	if sourceUnit == nil {
+		return nil
+	}
+
+	aura := sourceUnit.GetIcdAuraByID(ProtoToActionID(auraId))
 	if aura == nil {
 		rot.validationWarning("No aura found for: %s", ProtoToActionID(auraId))
 	}
@@ -28,7 +50,7 @@ type APLValueAuraIsActive struct {
 }
 
 func (rot *APLRotation) newValueAuraIsActive(config *proto.APLValueAuraIsActive) APLValue {
-	aura := rot.aplGetAura(config.AuraId)
+	aura := rot.aplGetAura(config.SourceUnit, config.AuraId)
 	if aura == nil {
 		return nil
 	}
@@ -49,7 +71,7 @@ type APLValueAuraRemainingTime struct {
 }
 
 func (rot *APLRotation) newValueAuraRemainingTime(config *proto.APLValueAuraRemainingTime) APLValue {
-	aura := rot.aplGetAura(config.AuraId)
+	aura := rot.aplGetAura(config.SourceUnit, config.AuraId)
 	if aura == nil {
 		return nil
 	}
@@ -70,7 +92,7 @@ type APLValueAuraNumStacks struct {
 }
 
 func (rot *APLRotation) newValueAuraNumStacks(config *proto.APLValueAuraNumStacks) APLValue {
-	aura := rot.aplGetAura(config.AuraId)
+	aura := rot.aplGetAura(config.SourceUnit, config.AuraId)
 	if aura == nil {
 		return nil
 	}
@@ -95,7 +117,7 @@ type APLValueAuraInternalCooldown struct {
 }
 
 func (rot *APLRotation) newValueAuraInternalCooldown(config *proto.APLValueAuraInternalCooldown) APLValue {
-	aura := rot.aplGetProcAura(config.AuraId)
+	aura := rot.aplGetProcAura(config.SourceUnit, config.AuraId)
 	if aura == nil {
 		return nil
 	}

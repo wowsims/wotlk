@@ -13,11 +13,10 @@ func (priest *Priest) registerPowerInfusionCD() {
 
 	actionID := core.ActionID{SpellID: 10060, Tag: priest.Index}
 
-	powerInfusionTargetAgent := priest.Party.Raid.GetPlayerFromUnitReference(priest.SelfBuffs.PowerInfusionTarget)
-	if powerInfusionTargetAgent == nil {
+	powerInfusionTarget := priest.GetUnit(priest.SelfBuffs.PowerInfusionTarget)
+	if powerInfusionTarget == nil {
 		return
 	}
-	powerInfusionTarget := powerInfusionTargetAgent.GetCharacter()
 	powerInfusionAura := core.PowerInfusionAura(powerInfusionTarget, actionID.Tag)
 
 	piSpell := priest.RegisterSpell(core.SpellConfig{

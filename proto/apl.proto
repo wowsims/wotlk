@@ -265,15 +265,19 @@ message APLValueSpellTravelTime {
 }
 
 message APLValueAuraIsActive {
+    UnitReference source_unit = 2;
     ActionID aura_id = 1;
 }
 message APLValueAuraRemainingTime {
+    UnitReference source_unit = 2;
     ActionID aura_id = 1;
 }
 message APLValueAuraNumStacks {
+    UnitReference source_unit = 2;
     ActionID aura_id = 1;
 }
 message APLValueAuraInternalCooldown {
+    UnitReference source_unit = 2;
     ActionID aura_id = 1;
 }
 

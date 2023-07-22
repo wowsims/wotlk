@@ -98,9 +98,9 @@ func (env *Environment) construct(raidProto *proto.Raid, encounterProto *proto.E
 			if targetProto.TankIndex >= 0 && targetProto.TankIndex < int32(len(raidProto.Tanks)) {
 				raidTargetProto := raidProto.Tanks[targetProto.TankIndex]
 				if raidTargetProto != nil {
-					raidTarget := env.Raid.GetPlayerFromUnitReference(raidTargetProto)
+					raidTarget := env.GetUnit(raidTargetProto)
 					if raidTarget != nil {
-						target.CurrentTarget = &raidTarget.GetCharacter().Unit
+						target.CurrentTarget = raidTarget
 					}
 				}
 			}
@@ -239,6 +239,49 @@ func (env *Environment) NextTarget(target *Unit) *Target {
 }
 func (env *Environment) NextTargetUnit(target *Unit) *Unit {
 	return &env.NextTarget(target).Unit
+}
+
+func (env *Environment) GetUnit(ref *proto.UnitReference) *Unit {
+	if ref == nil {
+		return nil
+	}
+
+	switch ref.Type {
+	case proto.UnitReference_Player:
+		raidIndex := ref.Index
+		partyIndex := int(raidIndex / 5)
+		if partyIndex < 0 || partyIndex >= len(env.Raid.Parties) {
+			return nil
+		}
+
+		party := env.Raid.Parties[partyIndex]
+		for _, player := range party.Players {
+			if player.GetCharacter().Index == raidIndex {
+				return &player.GetCharacter().Unit
+			}
+		}
+	case proto.UnitReference_Pet:
+		ownerAgent := env.Raid.GetPlayerFromUnit(env.GetUnit(ref.Owner))
+		if ownerAgent == nil {
+			return nil
+		}
+		pets := ownerAgent.GetCharacter().Pets
+		if int(ref.Index) < len(pets) {
+			return &pets[ref.Index].GetCharacter().Unit
+		} else {
+			return nil
+		}
+	case proto.UnitReference_Target:
+		if int(ref.Index) < len(env.Encounter.TargetUnits) {
+			return env.Encounter.TargetUnits[ref.Index]
+		} else {
+			return nil
+		}
+	case proto.UnitReference_Self:
+	case proto.UnitReference_CurrentTarget:
+	}
+
+	return nil
 }
 
 // Registers a callback to this Character which will be invoked after all Units

@@ -296,7 +296,7 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 		character.AddStats(stats.Stats{stats.MeleeCrit: 45, stats.SpellCrit: 45})
 	}
 	if individualBuffs.FocusMagic {
-		FocusMagicAura(nil, character)
+		FocusMagicAura(nil, &character.Unit)
 	}
 }
 
@@ -626,7 +626,7 @@ func registerPowerInfusionCD(agent Agent, numPowerInfusions int32) {
 		return
 	}
 
-	piAura := PowerInfusionAura(agent.GetCharacter(), -1)
+	piAura := PowerInfusionAura(&agent.GetCharacter().Unit, -1)
 
 	registerExternalConsecutiveCDApproximation(
 		agent,
@@ -647,7 +647,7 @@ func registerPowerInfusionCD(agent Agent, numPowerInfusions int32) {
 		numPowerInfusions)
 }
 
-func PowerInfusionAura(character *Character, actionTag int32) *Aura {
+func PowerInfusionAura(character *Unit, actionTag int32) *Aura {
 	actionID := ActionID{SpellID: 10060, Tag: actionTag}
 	aura := character.GetOrRegisterAura(Aura{
 		Label:    "PowerInfusion-" + actionID.String(),
@@ -691,7 +691,7 @@ func registerTricksOfTheTradeCD(agent Agent, numTricksOfTheTrades int32) {
 	}
 
 	// Assuming rogues have Glyph of TotT by default (which might not be the case).
-	TotTAura := TricksOfTheTradeAura(agent.GetCharacter(), -1, true)
+	TotTAura := TricksOfTheTradeAura(&agent.GetCharacter().Unit, -1, true)
 
 	registerExternalConsecutiveCDApproximation(
 		agent,
@@ -711,7 +711,7 @@ func registerTricksOfTheTradeCD(agent Agent, numTricksOfTheTrades int32) {
 		numTricksOfTheTrades)
 }
 
-func TricksOfTheTradeAura(character *Character, actionTag int32, glyphed bool) *Aura {
+func TricksOfTheTradeAura(character *Unit, actionTag int32, glyphed bool) *Aura {
 	actionID := ActionID{SpellID: 57933, Tag: actionTag}
 
 	aura := character.GetOrRegisterAura(Aura{
@@ -741,7 +741,7 @@ func registerUnholyFrenzyCD(agent Agent, numUnholyFrenzy int32) {
 		return
 	}
 
-	ufAura := UnholyFrenzyAura(agent.GetCharacter(), -1)
+	ufAura := UnholyFrenzyAura(&agent.GetCharacter().Unit, -1)
 
 	registerExternalConsecutiveCDApproximation(
 		agent,
@@ -761,7 +761,7 @@ func registerUnholyFrenzyCD(agent Agent, numUnholyFrenzy int32) {
 		numUnholyFrenzy)
 }
 
-func UnholyFrenzyAura(character *Character, actionTag int32) *Aura {
+func UnholyFrenzyAura(character *Unit, actionTag int32) *Aura {
 	actionID := ActionID{SpellID: 49016, Tag: actionTag}
 
 	aura := character.GetOrRegisterAura(Aura{
@@ -1255,7 +1255,7 @@ func spellPowerBonusEffect(aura *Aura, spellPowerBonus float64) *ExclusiveEffect
 	})
 }
 
-func FocusMagicAura(caster *Character, target *Character) (*Aura, *Aura) {
+func FocusMagicAura(caster *Unit, target *Unit) (*Aura, *Aura) {
 	actionID := ActionID{SpellID: 54648}
 
 	var casterAura *Aura
