@@ -43,7 +43,7 @@ import {
 	APLValueSpellChannelTime,
 } from '../../proto/apl.js';
 
-import { EventID, TypedEvent } from '../../typed_event.js';
+import { EventID } from '../../typed_event.js';
 import { Input, InputConfig } from '../input.js';
 import { Player } from '../../player.js';
 import { TextDropdownPicker, TextDropdownValueConfig } from '../dropdown_picker.js';
@@ -88,7 +88,7 @@ export class APLValuePicker extends Input<Player<any>, APLValue | undefined> {
 			})),
 			equals: (a, b) => a == b,
 			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
-			getValue: (player: Player<any>) => this.getSourceValue()?.value.oneofKind,
+			getValue: (_player: Player<any>) => this.getSourceValue()?.value.oneofKind,
 			setValue: (eventID: EventID, player: Player<any>, newKind: APLValueKind) => {
 				const sourceValue = this.getSourceValue();
 				const oldKind = sourceValue?.value.oneofKind;
@@ -559,7 +559,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		`,
 		newValue: APLValueSpellCanCast.create,
 		fields: [
-			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells'),
+			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells', ''),
 		],
 	}),
 	'spellIsReady': inputBuilder({
@@ -568,7 +568,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		shortDescription: '<b>True</b> if the spell is not on cooldown, otherwise <b>False</b>.',
 		newValue: APLValueSpellIsReady.create,
 		fields: [
-			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells'),
+			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells', ''),
 		],
 	}),
 	'spellTimeToReady': inputBuilder({
@@ -577,7 +577,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		shortDescription: 'Amount of time remaining before the spell comes off cooldown, or <b>0</b> if it is not on cooldown.',
 		newValue: APLValueSpellTimeToReady.create,
 		fields: [
-			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells'),
+			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells', ''),
 		],
 	}),
 	'spellCastTime': inputBuilder({
@@ -586,7 +586,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		shortDescription: 'Amount of time to cast the spell including any haste and spell cast time adjustments.',
 		newValue: APLValueSpellCastTime.create,
 		fields: [
-			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells'),
+			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells', ''),
 		],
 	}),
 	'spellChannelTime': inputBuilder({
@@ -595,7 +595,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		shortDescription: 'Amount of time to channel the spell including any haste and spell cast time adjustments.',
 		newValue: APLValueSpellChannelTime.create,
 		fields: [
-			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells'),
+			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells', ''),
 		],
 	}),
 	'spellTravelTime': inputBuilder({
@@ -604,7 +604,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		shortDescription: 'Amount of time for the spell to travel to the target.',
 		newValue: APLValueSpellTravelTime.create,
 		fields: [
-			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells'),
+			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells', ''),
 		],
 	}),
 
@@ -615,7 +615,8 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		shortDescription: '<b>True</b> if the aura is currently active on self, otherwise <b>False</b>.',
 		newValue: APLValueAuraIsActive.create,
 		fields: [
-			AplHelpers.actionIdFieldConfig('auraId', 'auras'),
+			AplHelpers.unitFieldConfig('sourceUnit'),
+			AplHelpers.actionIdFieldConfig('auraId', 'auras', 'sourceUnit'),
 		],
 	}),
 	'auraRemainingTime': inputBuilder({
@@ -624,7 +625,8 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		shortDescription: 'Time remaining before this aura will expire, or 0 if the aura is not currently active on self.',
 		newValue: APLValueAuraRemainingTime.create,
 		fields: [
-			AplHelpers.actionIdFieldConfig('auraId', 'auras'),
+			AplHelpers.unitFieldConfig('sourceUnit'),
+			AplHelpers.actionIdFieldConfig('auraId', 'auras', 'sourceUnit'),
 		],
 	}),
 	'auraNumStacks': inputBuilder({
@@ -633,7 +635,8 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		shortDescription: 'Number of stacks of the aura on self.',
 		newValue: APLValueAuraNumStacks.create,
 		fields: [
-			AplHelpers.actionIdFieldConfig('auraId', 'stackable_auras'),
+			AplHelpers.unitFieldConfig('sourceUnit'),
+			AplHelpers.actionIdFieldConfig('auraId', 'stackable_auras', 'sourceUnit'),
 		],
 	}),
 	'auraInternalCooldown': inputBuilder({
@@ -642,7 +645,8 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		shortDescription: 'Time remaining before this aura can be applied again.',
 		newValue: APLValueAuraInternalCooldown.create,
 		fields: [
-			AplHelpers.actionIdFieldConfig('auraId', 'icd_auras'),
+			AplHelpers.unitFieldConfig('sourceUnit'),
+			AplHelpers.actionIdFieldConfig('auraId', 'icd_auras', 'sourceUnit'),
 		],
 	}),
 
@@ -653,7 +657,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		shortDescription: '<b>True</b> if the specified dot is currently ticking, otherwise <b>False</b>.',
 		newValue: APLValueDotIsActive.create,
 		fields: [
-			AplHelpers.actionIdFieldConfig('spellId', 'dot_spells'),
+			AplHelpers.actionIdFieldConfig('spellId', 'dot_spells', ''),
 		],
 	}),
 	'dotRemainingTime': inputBuilder({
@@ -662,7 +666,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		shortDescription: 'Time remaining before the last tick of this DoT will occur, or 0 if the DoT is not currently ticking.',
 		newValue: APLValueDotRemainingTime.create,
 		fields: [
-			AplHelpers.actionIdFieldConfig('spellId', 'dot_spells'),
+			AplHelpers.actionIdFieldConfig('spellId', 'dot_spells', ''),
 		],
 	}),
 };

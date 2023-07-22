@@ -265,7 +265,7 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 		shortDescription: 'Casts the spell if possible, i.e. resource/cooldown/GCD/etc requirements are all met.',
 		newValue: APLActionCastSpell.create,
 		fields: [
-			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells'),
+			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells', ''),
 		],
 	}),
 	['multidot']: inputBuilder({
@@ -284,7 +284,7 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 			},
 		}),
 		fields: [
-			AplHelpers.actionIdFieldConfig('spellId', 'dot_spells'),
+			AplHelpers.actionIdFieldConfig('spellId', 'dot_spells', ''),
 			AplHelpers.numberFieldConfig('maxDots', {
 				label: 'Max Dots',
 				labelTooltip: 'Maximum number of DoTs to simultaneously apply.',

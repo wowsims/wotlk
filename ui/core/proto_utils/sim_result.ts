@@ -35,7 +35,6 @@ import {
 	SimLog,
 	ThreatLogGroup,
 } from './logs_parser.js';
-import { MAX_PARTY_SIZE } from '../party.js';
 
 export interface SimResultFilter {
 	// Raid index of the player to display, or null for all players.
@@ -135,6 +134,9 @@ export class SimResult {
 
 	getTargetWithIndex(unitIndex: number): UnitMetrics | null {
 		return this.getTargets().find(target => target.unitIndex == unitIndex) || null;
+	}
+	getTargetWithEncounterIndex(index: number): UnitMetrics | null {
+		return this.getTargets().find(target => target.index == index) || null;
 	}
 	getUnitWithIndex(unitIndex: number): UnitMetrics | null {
 		return this.units.find(unit => unit.unitIndex == unitIndex) || null;

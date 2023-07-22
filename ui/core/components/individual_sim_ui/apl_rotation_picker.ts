@@ -247,7 +247,7 @@ class HidePicker extends Input<Player<any>, boolean> {
 
 		this.init();
 
-		this.inputElem.addEventListener('click', event => {
+		this.inputElem.addEventListener('click', () => {
 			this.setInputValue(!this.getInputValue());
 			this.inputChanged(TypedEvent.nextEventID());
 		});

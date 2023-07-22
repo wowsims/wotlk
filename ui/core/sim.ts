@@ -1,11 +1,16 @@
-import { ArmorType, SimDatabase, UnitReference_Type } from './proto/common.js';
-import { Faction } from './proto/common.js';
-import { Profession } from './proto/common.js';;
-import { UnitReference } from './proto/common.js';
-import { Stat, PseudoStat } from './proto/common.js';
-import { RangedWeaponType, WeaponType } from './proto/common.js';
+import {
+	ArmorType,
+	Faction,
+	Profession,
+	SimDatabase,
+	Stat, PseudoStat,
+	RangedWeaponType,
+	WeaponType,
+	UnitReference,
+	UnitReference_Type as UnitType,
+} from './proto/common.js';
 import { BulkSimRequest, BulkSimResult, BulkSettings, Raid as RaidProto } from './proto/api.js';
-import { ComputeStatsRequest, ComputeStatsResult } from './proto/api.js';
+import { ComputeStatsRequest } from './proto/api.js';
 import { RaidSimRequest, RaidSimResult } from './proto/api.js';
 import { SimOptions } from './proto/api.js';
 import { StatWeightsRequest, StatWeightsResult } from './proto/api.js';
@@ -19,7 +24,7 @@ import { Database } from './proto_utils/database.js';
 import { SimResult } from './proto_utils/sim_result.js';
 import { getBrowserLanguageCode, setLanguageCode } from './constants/lang.js';
 import { Encounter } from './encounter.js';
-import { Player } from './player.js';
+import { Player, UnitMetadata } from './player.js';
 import { Raid } from './raid.js';
 import { EventID, TypedEvent } from './typed_event.js';
 import { getEnumValues } from './utils.js';
@@ -329,7 +334,7 @@ export class Sim {
 			return StatWeightsResult.create();
 		} else {
 			const tanks = this.raid.getTanks().map(tank => tank.index).includes(player.getRaidIndex())
-				? [UnitReference.create({ type: UnitReference_Type.Player, index: 0 })]
+				? [UnitReference.create({ type: UnitType.Player, index: 0 })]
 				: [];
 			const request = StatWeightsRequest.create({
 				player: player.toProto(),
@@ -351,6 +356,21 @@ export class Sim {
 			var result = await this.workerPool.statWeightsAsync(request, onProgress);
 			return result;
 		}
+	}
+
+	getUnitMetadata(ref: UnitReference, contextPlayer: Player<any>|null, defaultRef: UnitReference): UnitMetadata|undefined {
+		if (!ref || ref.type == UnitType.Unknown) {
+			return this.getUnitMetadata(defaultRef, contextPlayer, defaultRef);
+		} else if (ref.type == UnitType.Player) {
+			return this.raid.getPlayerFromUnitReference(ref)?.getMetadata();
+		} else if (ref.type == UnitType.Target) {
+			return this.encounter.targetsMetadata.asList()[ref.index];
+		} else if (ref.type == UnitType.Self) {
+			return contextPlayer?.getMetadata();
+		} else if (ref.type == UnitType.CurrentTarget) {
+			return this.encounter.targetsMetadata.asList()[0];
+		}
+		return undefined;
 	}
 
 	getPhase(): number {

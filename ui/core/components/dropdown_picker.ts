@@ -1,6 +1,6 @@
 import { Tooltip } from 'bootstrap';
 
-import { EventID, TypedEvent } from '../typed_event.js';
+import { TypedEvent } from '../typed_event.js';
 
 import { Input, InputConfig } from './input.js';
 
@@ -96,7 +96,7 @@ export class DropdownPicker<ModObject, T, V = T> extends Input<ModObject, T, V> 
 					buttonElem.setAttribute('data-bs-toggle', 'tooltip');
 					buttonElem.setAttribute('data-bs-html', 'true');
 					buttonElem.setAttribute('data-bs-title', valueConfig.tooltip);
-					const tooltip = Tooltip.getOrCreateInstance(buttonElem, {
+					Tooltip.getOrCreateInstance(buttonElem, {
 						animation: false,
 						placement: 'right',
 						fallbackPlacements: ['left', 'bottom'],
@@ -105,7 +105,7 @@ export class DropdownPicker<ModObject, T, V = T> extends Input<ModObject, T, V> 
 					});
 				}
 
-				buttonElem.addEventListener('click', event => {
+				buttonElem.addEventListener('click', () => {
 					this.updateValue(valueConfig);
 					this.inputChanged(TypedEvent.nextEventID());
 				});

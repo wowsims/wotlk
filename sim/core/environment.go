@@ -98,7 +98,7 @@ func (env *Environment) construct(raidProto *proto.Raid, encounterProto *proto.E
 			if targetProto.TankIndex >= 0 && targetProto.TankIndex < int32(len(raidProto.Tanks)) {
 				raidTargetProto := raidProto.Tanks[targetProto.TankIndex]
 				if raidTargetProto != nil {
-					raidTarget := env.GetUnit(raidTargetProto)
+					raidTarget := env.GetUnit(raidTargetProto, nil)
 					if raidTarget != nil {
 						target.CurrentTarget = raidTarget
 					}
@@ -241,7 +241,7 @@ func (env *Environment) NextTargetUnit(target *Unit) *Unit {
 	return &env.NextTarget(target).Unit
 }
 
-func (env *Environment) GetUnit(ref *proto.UnitReference) *Unit {
+func (env *Environment) GetUnit(ref *proto.UnitReference, contextUnit *Unit) *Unit {
 	if ref == nil {
 		return nil
 	}
@@ -261,7 +261,7 @@ func (env *Environment) GetUnit(ref *proto.UnitReference) *Unit {
 			}
 		}
 	case proto.UnitReference_Pet:
-		ownerAgent := env.Raid.GetPlayerFromUnit(env.GetUnit(ref.Owner))
+		ownerAgent := env.Raid.GetPlayerFromUnit(env.GetUnit(ref.Owner, contextUnit))
 		if ownerAgent == nil {
 			return nil
 		}
@@ -278,7 +278,12 @@ func (env *Environment) GetUnit(ref *proto.UnitReference) *Unit {
 			return nil
 		}
 	case proto.UnitReference_Self:
+		return contextUnit
 	case proto.UnitReference_CurrentTarget:
+		if contextUnit == nil {
+			return nil
+		}
+		return contextUnit.CurrentTarget
 	}
 
 	return nil
