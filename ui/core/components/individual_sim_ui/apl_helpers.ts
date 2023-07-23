@@ -176,20 +176,17 @@ export class APLUnitPicker extends UnitPicker<Player<any>> {
 		if (ref.type == UnitType.Unknown) {
 			return {
 				value: ref,
-				color: 'black',
 				text: 'fa-user',
 			};
 		} else if (ref.type == UnitType.Self) {
 			return {
 				value: ref,
-				color: 'grey',
 				iconUrl: 'fa-user',
 				text: 'Self',
 			};
 		} else if (ref.type == UnitType.CurrentTarget) {
 			return {
 				value: ref,
-				color: 'grey',
 				iconUrl: 'fa-bullseye',
 				text: 'Current Target',
 			};
@@ -198,7 +195,7 @@ export class APLUnitPicker extends UnitPicker<Player<any>> {
 			if (player) {
 				return {
 					value: ref,
-					color: player.getClassColor(),
+					//color: player.getClassColor(),
 					iconUrl: player.getSpecIcon(),
 					text: `Player ${ref.index + 1}`,
 				};
@@ -208,7 +205,6 @@ export class APLUnitPicker extends UnitPicker<Player<any>> {
 			if (targetMetadata) {
 				return {
 					value: ref,
-					color: 'black',
 					iconUrl: defaultTargetIcon,
 					text: `Target ${ref.index + 1}`,
 				};
@@ -227,7 +223,6 @@ export class APLUnitPicker extends UnitPicker<Player<any>> {
 			}
 			return {
 				value: ref,
-				color: '#cd853f',
 				iconUrl: icon,
 				text: name,
 			};
