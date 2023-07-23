@@ -95,6 +95,10 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 		ActionID: hunter.ExplosiveTrap.ActionID.WithTag(1),
 		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagNoMetrics | core.SpellFlagNoLogs | core.SpellFlagAPL,
 
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return hunter.ExplosiveTrap.CanCast(sim, target)
+		},
+
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			if sim.CurrentTime < 0 {
 				hunter.mayMoveAt = sim.CurrentTime
