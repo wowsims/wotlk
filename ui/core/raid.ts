@@ -1,8 +1,11 @@
-import { Class, UnitReference_Type } from './proto/common.js';
-import { Debuffs } from './proto/common.js';
-import { UnitReference } from './proto/common.js';
+import {
+	Class,
+	Debuffs,
+	RaidBuffs,
+	UnitReference,
+	UnitReference_Type as UnitType,
+} from './proto/common.js';
 import { Raid as RaidProto } from './proto/api.js';
-import { RaidBuffs } from './proto/common.js';
 
 import { Party, MAX_PARTY_SIZE } from './party.js';
 import { Player } from './player.js';
@@ -92,9 +95,13 @@ export class Raid {
 		return party.getPlayer(index % MAX_PARTY_SIZE);
 	}
 
-	getPlayerFromUnitReference(raidTarget: UnitReference): Player<any> | null {
-		if (raidTarget.type == UnitReference_Type.Player) {
+	getPlayerFromUnitReference(raidTarget: UnitReference|undefined, contextPlayer?: Player<any>|null): Player<any> | null {
+		if (!raidTarget || raidTarget.type == UnitType.Unknown) {
+			return null;
+		} else if (raidTarget.type == UnitType.Player) {
 			return this.getPlayer(raidTarget.index);
+		} else if (raidTarget.type == UnitType.Self) {
+			return contextPlayer || null;
 		} else {
 			return null;
 		}
@@ -226,7 +233,7 @@ export class Raid {
 	fromProto(eventID: EventID, proto: RaidProto) {
 		TypedEvent.freezeAllAndDo(() => {
 			if (proto.tanks) {
-				proto.tanks = proto.tanks.map(tank => (tank.type == 0 && tank.targetIndex != -1) ? UnitReference.create({type: UnitReference_Type.Player, index: tank.targetIndex}) : tank);
+				proto.tanks = proto.tanks.map(tank => (tank.type == 0 && tank.targetIndex != -1) ? UnitReference.create({type: UnitType.Player, index: tank.targetIndex}) : tank);
 			}
 
 			if (proto.buffs) {

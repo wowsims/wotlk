@@ -1,5 +1,5 @@
 import { OtherAction, UnitReference, UnitReference_Type as UnitType } from '../../proto/common.js';
-import { ActionId, defaultTargetIcon } from '../../proto_utils/action_id.js';
+import { ActionId, defaultTargetIcon, getPetIconFromName } from '../../proto_utils/action_id.js';
 import { Player, UnitMetadata } from '../../player.js';
 import { EventID, TypedEvent } from '../../typed_event.js';
 import { bucket } from '../../utils.js';
@@ -213,6 +213,24 @@ export class APLUnitPicker extends UnitPicker<Player<any>> {
 					text: `Target ${ref.index + 1}`,
 				};
 			}
+		} else if (ref.type == UnitType.Pet) {
+			const petMetadata = thisPlayer.sim.getUnitMetadata(ref, thisPlayer, UnitReference.create({type: UnitType.Self}));
+			let name = `Pet ${ref.index + 1}`;
+			let icon: string|ActionId = 'fa-paw';
+			if (petMetadata) {
+				const petName = petMetadata.getName();
+				if (petName) {
+					const rmIdx = petName.indexOf(' - ');
+					name = petName.substring(rmIdx + ' - '.length);
+					icon = getPetIconFromName(name) || icon;
+				}
+			}
+			return {
+				value: ref,
+				color: '#cd853f',
+				iconUrl: icon,
+				text: name,
+			};
 		}
 
 		return {
@@ -224,6 +242,7 @@ export class APLUnitPicker extends UnitPicker<Player<any>> {
 		let values = [
 			UnitReference.create(),
 			UnitReference.create({type: UnitType.Self}),
+			this.modObject.getPetMetadatas().asList().map((petMetadata, i) => UnitReference.create({type: UnitType.Pet, index: i, owner: UnitReference.create({type: UnitType.Self})})),
 			UnitReference.create({type: UnitType.CurrentTarget}),
 			this.modObject.sim.encounter.targetsMetadata.asList().map((targetMetadata, i) => UnitReference.create({type: UnitType.Target, index: i})),
 		].flat();
@@ -231,6 +250,7 @@ export class APLUnitPicker extends UnitPicker<Player<any>> {
 		this.setOptions(values.map(v => {
 			return {
 				value: APLUnitPicker.refToValue(v, this.modObject),
+				submenu: v.type == UnitType.Pet ? [APLUnitPicker.refToValue(v.owner!, this.modObject)] : undefined,
 			};
 		}));
 	}

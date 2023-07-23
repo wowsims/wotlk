@@ -1,10 +1,11 @@
 import { UnitReference } from '../proto/common.js';
+import { ActionId } from '../proto_utils/action_id.js';
 import { DropdownPicker, DropdownPickerConfig, DropdownValueConfig } from './dropdown_picker.js';
 
 export interface UnitValue {
     value: UnitReference,
 	text?: string,
-	iconUrl?: string,
+	iconUrl?: string|ActionId,
 	color?: string,
 }
 
@@ -27,14 +28,23 @@ export class UnitPicker<ModObject> extends DropdownPicker<ModObject, UnitReferen
 
                 if (unitConfig.iconUrl) {
                     let icon = null;
-                    if (unitConfig.iconUrl.startsWith('fa-')) {
-                        icon = document.createElement('span');
-                        icon.classList.add('fa', unitConfig.iconUrl);
-                        icon.classList.add('unit-picker-item-label');
+                    if (unitConfig.iconUrl instanceof ActionId) {
+                        const img = document.createElement('img');
+                        img.classList.add('unit-picker-item-icon');
+                        unitConfig.iconUrl.fill().then(filledId => {
+                            img.src = filledId.iconUrl;
+                        });
+                        icon = img;
+                    } else if (unitConfig.iconUrl.startsWith('fa-')) {
+                        const img = document.createElement('span');
+                        img.classList.add('fa', unitConfig.iconUrl);
+                        img.classList.add('unit-picker-item-label');
+                        icon = img;
                     } else {
-                        icon = document.createElement('img');
-                        icon.src = unitConfig.iconUrl;
-                        icon.classList.add('unit-picker-item-icon');
+                        const img = document.createElement('img');
+                        img.src = unitConfig.iconUrl;
+                        img.classList.add('unit-picker-item-icon');
+                        icon = img;
                     }
                     button.appendChild(icon);
                 }

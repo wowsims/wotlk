@@ -568,9 +568,6 @@ export class ActionId {
 	}
 }
 
-const itemToTooltipDataCache = new Map<number, Promise<any>>();
-const spellToTooltipDataCache = new Map<number, Promise<any>>();
-
 // Some items/spells have weird icons, so use this to show a different icon instead.
 const idOverrides: Record<string, ActionId> = {};
 idOverrides[ActionId.fromSpellId(37212).toProtoString()] = ActionId.fromItemId(29035); // Improved Wrath of Air Totem
@@ -637,6 +634,10 @@ const petNameToIcon: Record<string, string> = {
 	'Wolf': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_wolf.jpg',
 	'Worm': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_worm.jpg',
 };
+
+export function getPetIconFromName(name: string): string|ActionId|undefined {
+	return petNameToActionId[name] || petNameToIcon[name];
+}
 
 export const resourceTypeToIcon: Record<ResourceType, string> = {
 	[ResourceType.ResourceTypeNone]: '',

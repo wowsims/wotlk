@@ -501,7 +501,9 @@ func (unit *Unit) GetUnit(ref *proto.UnitReference) *Unit {
 }
 
 func (unit *Unit) GetMetadata() *proto.UnitMetadata {
-	metadata := &proto.UnitMetadata{}
+	metadata := &proto.UnitMetadata{
+		Name: unit.Label,
+	}
 
 	metadata.Spells = MapSlice(unit.Spellbook, func(spell *Spell) *proto.SpellStats {
 		return &proto.SpellStats{
