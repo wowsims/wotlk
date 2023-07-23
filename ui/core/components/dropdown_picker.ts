@@ -6,7 +6,7 @@ import { Input, InputConfig } from './input.js';
 
 export interface DropdownValueConfig<V> {
 	value: V,
-	submenu?: Array<string>,
+	submenu?: Array<string | V>,
 	headerText?: string,
 	tooltip?: string,
 	extraCssClasses?: Array<string>,
@@ -20,8 +20,8 @@ export interface DropdownPickerConfig<ModObject, T, V = T> extends InputConfig<M
 	defaultLabel: string,
 }
 
-interface DropdownSubmenu {
-	path: Array<string>,
+interface DropdownSubmenu<V> {
+	path: Array<string|V>,
 
 	listElem: HTMLUListElement,
 }
@@ -35,7 +35,7 @@ export class DropdownPicker<ModObject, T, V = T> extends Input<ModObject, T, V> 
 	private readonly listElem: HTMLUListElement;
 
 	private currentSelection: DropdownValueConfig<V> | null;
-	private submenus: Array<DropdownSubmenu>;
+	private submenus: Array<DropdownSubmenu<V>>;
 
 	constructor(parent: HTMLElement, modObject: ModObject, config: DropdownPickerConfig<ModObject, T, V>) {
 		super(parent, 'dropdown-picker-root', modObject, config);
@@ -73,6 +73,7 @@ export class DropdownPicker<ModObject, T, V = T> extends Input<ModObject, T, V> 
 		this.submenus = [];
 		valueConfigs.forEach(valueConfig => {
 			const itemElem = document.createElement('li');
+			const containsSubmenuChildren = valueConfigs.some(vc => vc.submenu?.some(e => !(typeof e == 'string') && this.config.equals(e, valueConfig.value)))
 			if (valueConfig.extraCssClasses) {
 				itemElem.classList.add(...valueConfig.extraCssClasses);
 			}
@@ -90,7 +91,6 @@ export class DropdownPicker<ModObject, T, V = T> extends Input<ModObject, T, V> 
 				buttonElem.classList.add('dropdown-item');
 				buttonElem.type = 'button';
 				this.config.setOptionContent(buttonElem, valueConfig);
-				itemElem.appendChild(buttonElem);
 
 				if (valueConfig.tooltip) {
 					buttonElem.setAttribute('data-bs-toggle', 'tooltip');
@@ -109,52 +109,66 @@ export class DropdownPicker<ModObject, T, V = T> extends Input<ModObject, T, V> 
 					this.updateValue(valueConfig);
 					this.inputChanged(TypedEvent.nextEventID());
 				});
+
+				if (containsSubmenuChildren) {
+					this.createSubmenu((valueConfig.submenu || []).concat([valueConfig.value]), buttonElem, itemElem)
+				} else {
+					itemElem.appendChild(buttonElem);
+				}
 			}
 
-			if (valueConfig.submenu && valueConfig.submenu.length > 0) {
-				this.createSubmenu(valueConfig.submenu);
-			}
-			const submenu = this.getSubmenu(valueConfig.submenu);
-			if (submenu) {
-				submenu.listElem.appendChild(itemElem);
-			} else {
-				this.listElem.appendChild(itemElem);
+			if (!containsSubmenuChildren) {
+				if (valueConfig.submenu && valueConfig.submenu.length > 0) {
+					this.createSubmenu(valueConfig.submenu);
+				}
+				const submenu = this.getSubmenu(valueConfig.submenu);
+				if (submenu) {
+					submenu.listElem.appendChild(itemElem);
+				} else {
+					this.listElem.appendChild(itemElem);
+				}
 			}
 		});
 	}
 
-	private getSubmenu(path: Array<string> | undefined): DropdownSubmenu | null {
+	private getSubmenu(path: Array<string|V> | undefined): DropdownSubmenu<V> | null {
 		if (!path) {
 			return null;
 		}
-		return this.submenus.find(submenu => DropdownPicker.equalPaths(submenu.path, path)) || null;
+		return this.submenus.find(submenu => this.equalPaths(submenu.path, path)) || null;
 	}
 
-	private createSubmenu(path: Array<string>): DropdownSubmenu {
+	private createSubmenu(path: Array<string|V>, buttonElem?: HTMLButtonElement, itemElem?: HTMLLIElement): DropdownSubmenu<V> {
 		const submenu = this.getSubmenu(path);
 		if (submenu) {
 			return submenu;
 		}
 
-		let parent: DropdownSubmenu | null = null;
+		let parent: DropdownSubmenu<V> | null = null;
 		if (path.length > 1) {
 			parent = this.createSubmenu(path.slice(0, path.length - 1));
 		}
 
-		const itemElem = document.createElement('li');
+		if (!itemElem) {
+			itemElem = document.createElement('li');
+		}
 		itemElem.classList.add('dropdown-picker-item');
 
 		const containerElem = document.createElement('div');
 		containerElem.classList.add('dropend');
 		itemElem.appendChild(containerElem);
 
-		const titleElem = document.createElement('button');
-		titleElem.classList.add('dropdown-item');
-		titleElem.setAttribute('data-bs-toggle', 'dropdown');
-		titleElem.setAttribute('role', 'button');
-		titleElem.setAttribute('aria-expanded', 'false');
-		titleElem.textContent = path[path.length - 1] + ' \u00bb';
-		containerElem.appendChild(titleElem);
+		if (!buttonElem) {
+			buttonElem = document.createElement('button');
+		}
+		buttonElem.classList.add('dropdown-item');
+		buttonElem.setAttribute('data-bs-toggle', 'dropdown');
+		buttonElem.setAttribute('role', 'button');
+		buttonElem.setAttribute('aria-expanded', 'false');
+		if (buttonElem.childNodes.length == 0) {
+			buttonElem.textContent = path[path.length - 1] + ' \u00bb';
+		}
+		containerElem.appendChild(buttonElem);
 
 		const listElem = document.createElement('ul');
 		listElem.classList.add('dropdown-submenu', 'dropdown-menu');
@@ -174,8 +188,12 @@ export class DropdownPicker<ModObject, T, V = T> extends Input<ModObject, T, V> 
 		return newSubmenu;
 	}
 
-	private static equalPaths(a: Array<string> | null | undefined, b: Array<string> | null | undefined): boolean {
-		return (a?.length || 0) == (b?.length || 0) && (a || []).every((aVal, i) => aVal == b![i]);
+	private equalPaths(a: Array<string|V> | null | undefined, b: Array<string|V> | null | undefined): boolean {
+		return (a?.length || 0) == (b?.length || 0) &&
+			(a || []).every((aVal, i) =>
+				(typeof aVal == 'string')
+					? aVal == (b![i] as string)
+					: this.config.equals(aVal, b![i] as V));
 	}
 
 	getInputElem(): HTMLElement {

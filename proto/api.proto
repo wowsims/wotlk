@@ -315,6 +315,7 @@ message APLStats {
 	repeated APLActionStats priority_list = 2;
 }
 message UnitMetadata {
+	string name = 3;
 	repeated SpellStats spells = 1;
 	repeated AuraStats auras = 2;
 }

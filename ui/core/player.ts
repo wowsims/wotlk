@@ -93,12 +93,18 @@ export interface SpellStats {
 }
 
 export class UnitMetadata {
+	private name: string;
 	private auras: Array<AuraStats>;
 	private spells: Array<SpellStats>;
 
 	constructor() {
+		this.name = '';
 		this.auras = [];
 		this.spells = [];
+	}
+
+	getName(): string {
+		return this.name;
 	}
 
 	getAuras(): Array<AuraStats> {
@@ -130,6 +136,10 @@ export class UnitMetadata {
 		newAuras = newAuras.sort((a, b) => stringComparator(a.id.name, b.id.name))
 
 		let anyUpdates = false;
+		if (metadata.name != this.name) {
+			this.name = metadata.name;
+			anyUpdates = true;
+		}
 		if (newSpells.length != this.spells.length || newSpells.some((newSpell, i) => !newSpell.id.equals(this.spells[i].id))) {
 			this.spells = newSpells;
 			anyUpdates = true;
@@ -401,6 +411,10 @@ export class Player<SpecType extends Spec> {
 
 	getMetadata(): UnitMetadata {
 		return this.metadata;
+	}
+
+	getPetMetadatas(): UnitMetadataList {
+		return this.petMetadatas;
 	}
 
 	async updateMetadata(): Promise<boolean> {

@@ -358,13 +358,20 @@ export class Sim {
 		}
 	}
 
-	getUnitMetadata(ref: UnitReference, contextPlayer: Player<any>|null, defaultRef: UnitReference): UnitMetadata|undefined {
+	getUnitMetadata(ref: UnitReference|undefined, contextPlayer: Player<any>|null, defaultRef: UnitReference): UnitMetadata|undefined {
 		if (!ref || ref.type == UnitType.Unknown) {
 			return this.getUnitMetadata(defaultRef, contextPlayer, defaultRef);
 		} else if (ref.type == UnitType.Player) {
 			return this.raid.getPlayerFromUnitReference(ref)?.getMetadata();
 		} else if (ref.type == UnitType.Target) {
 			return this.encounter.targetsMetadata.asList()[ref.index];
+		} else if (ref.type == UnitType.Pet) {
+			const owner = this.raid.getPlayerFromUnitReference(ref.owner, contextPlayer);
+			if (owner) {
+				return owner.getPetMetadatas().asList()[ref.index];
+			} else {
+				return undefined;
+			}
 		} else if (ref.type == UnitType.Self) {
 			return contextPlayer?.getMetadata();
 		} else if (ref.type == UnitType.CurrentTarget) {
