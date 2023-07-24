@@ -357,7 +357,7 @@ export const FrostCustomRotation = InputHelpers.makeCustomRotationInput<Spec.Spe
 		{ actionId: ActionId.fromSpellId(50842), value: CustomSpellOption.CustomPestilence },
 		{ actionId: ActionId.fromSpellId(51425), value: CustomSpellOption.CustomObliterate },
 		{ actionId: ActionId.fromSpellId(51411), value: CustomSpellOption.CustomHowlingBlast },
-		{ actionId: ActionId.fromSpellId(59057), value: CustomSpellOption.CustomHowlingBlastRime },
+		{ actionId: ActionId.fromSpellId(59052), value: CustomSpellOption.CustomHowlingBlastRime },
 		{ actionId: ActionId.fromSpellId(49941), value: CustomSpellOption.CustomBloodBoil },
 		{ actionId: ActionId.fromSpellId(49930), value: CustomSpellOption.CustomBloodStrike },
 		{ actionId: ActionId.fromSpellId(49938), value: CustomSpellOption.CustomDeathAndDecay },
