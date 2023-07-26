@@ -10,6 +10,7 @@ import (
 type ProcStatBonusEffect struct {
 	Name       string
 	ID         int32
+	AuraID     int32
 	Bonus      stats.Stats
 	Duration   time.Duration
 	Callback   core.AuraCallback
@@ -27,7 +28,12 @@ type ProcStatBonusEffect struct {
 func newProcStatBonusEffect(config ProcStatBonusEffect) {
 	core.NewItemEffect(config.ID, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		procAura := character.NewTemporaryStatsAura(config.Name+" Proc", core.ActionID{ItemID: config.ID}, config.Bonus, config.Duration)
+
+		procID := core.ActionID{SpellID: config.AuraID}
+		if procID.IsEmptyAction() {
+			procID = core.ActionID{ItemID: config.ID}
+		}
+		procAura := character.NewTemporaryStatsAura(config.Name+" Proc", procID, config.Bonus, config.Duration)
 
 		handler := func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 			procAura.Activate(sim)
@@ -336,6 +342,7 @@ func init() {
 	newProcStatBonusEffect(ProcStatBonusEffect{
 		Name:       "Comet's Trail",
 		ID:         45609,
+		AuraID:     64772,
 		Bonus:      stats.Stats{stats.SpellHaste: 819, stats.MeleeHaste: 819},
 		Duration:   time.Second * 10,
 		Callback:   core.CallbackOnSpellHitDealt,
