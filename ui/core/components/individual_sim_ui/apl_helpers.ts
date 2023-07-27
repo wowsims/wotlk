@@ -163,7 +163,7 @@ export class APLUnitPicker extends UnitPicker<Player<any>> {
 	constructor(parent: HTMLElement, player: Player<any>, config: APLUnitPickerConfig) {
 		super(parent, player, {
 			...config,
-			sourceToValue: (src: UnitReference) => APLUnitPicker.refToValue(src, player),
+			sourceToValue: (src: UnitReference|undefined) => APLUnitPicker.refToValue(src, player),
 			valueToSource: (val: UnitValue) => val.value,
 			values: [],
 		});
@@ -172,8 +172,8 @@ export class APLUnitPicker extends UnitPicker<Player<any>> {
 		player.sim.unitMetadataEmitter.on(() => this.updateValues());
 	}
 
-	private static refToValue(ref: UnitReference, thisPlayer: Player<any>): UnitValue {
-		if (ref.type == UnitType.Unknown) {
+	private static refToValue(ref: UnitReference|undefined, thisPlayer: Player<any>): UnitValue {
+		if (!ref || ref.type == UnitType.Unknown) {
 			return {
 				value: ref,
 				text: 'fa-user',
@@ -235,7 +235,7 @@ export class APLUnitPicker extends UnitPicker<Player<any>> {
 
 	private updateValues() {
 		let values = [
-			UnitReference.create(),
+			undefined,
 			UnitReference.create({type: UnitType.Self}),
 			this.modObject.getPetMetadatas().asList().map((petMetadata, i) => UnitReference.create({type: UnitType.Pet, index: i, owner: UnitReference.create({type: UnitType.Self})})),
 			UnitReference.create({type: UnitType.CurrentTarget}),
@@ -245,7 +245,7 @@ export class APLUnitPicker extends UnitPicker<Player<any>> {
 		this.setOptions(values.map(v => {
 			return {
 				value: APLUnitPicker.refToValue(v, this.modObject),
-				submenu: v.type == UnitType.Pet ? [APLUnitPicker.refToValue(v.owner!, this.modObject)] : undefined,
+				submenu: v?.type == UnitType.Pet ? [APLUnitPicker.refToValue(v.owner!, this.modObject)] : undefined,
 			};
 		}));
 	}
@@ -355,7 +355,7 @@ export function actionIdFieldConfig(field: string, actionIdSet: ACTION_ID_SET, u
 export function unitFieldConfig(field: string, options?: Partial<APLPickerBuilderFieldConfig<any, any>>): APLPickerBuilderFieldConfig<any, any> {
 	return {
 		field: field,
-		newValue: () => UnitReference.create(),
+		newValue: () => undefined,
 		factory: (parent, player, config) => new APLUnitPicker(parent, player, {
 			...config,
 		}),
