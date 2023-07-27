@@ -6,18 +6,13 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-func (unit *Unit) aplGetSpell(spellId *proto.ActionID) *Spell {
-	return unit.GetSpell(ProtoToActionID(spellId))
-}
-
 type APLValueSpellCanCast struct {
 	defaultAPLValueImpl
 	spell *Spell
 }
 
 func (rot *APLRotation) newValueSpellCanCast(config *proto.APLValueSpellCanCast) APLValue {
-	unit := rot.unit
-	spell := unit.aplGetSpell(config.SpellId)
+	spell := rot.aplGetSpell(config.SpellId)
 	if spell == nil {
 		return nil
 	}
@@ -38,8 +33,7 @@ type APLValueSpellIsReady struct {
 }
 
 func (rot *APLRotation) newValueSpellIsReady(config *proto.APLValueSpellIsReady) APLValue {
-	unit := rot.unit
-	spell := unit.aplGetSpell(config.SpellId)
+	spell := rot.aplGetSpell(config.SpellId)
 	if spell == nil {
 		return nil
 	}
@@ -60,8 +54,7 @@ type APLValueSpellTimeToReady struct {
 }
 
 func (rot *APLRotation) newValueSpellTimeToReady(config *proto.APLValueSpellTimeToReady) APLValue {
-	unit := rot.unit
-	spell := unit.aplGetSpell(config.SpellId)
+	spell := rot.aplGetSpell(config.SpellId)
 	if spell == nil {
 		return nil
 	}
@@ -82,8 +75,7 @@ type APLValueSpellCastTime struct {
 }
 
 func (rot *APLRotation) newValueSpellCastTime(config *proto.APLValueSpellCastTime) APLValue {
-	unit := rot.unit
-	spell := unit.aplGetSpell(config.SpellId)
+	spell := rot.aplGetSpell(config.SpellId)
 	if spell == nil {
 		return nil
 	}
@@ -104,8 +96,7 @@ type APLValueSpellChannelTime struct {
 }
 
 func (rot *APLRotation) newValueSpellChannelTime(config *proto.APLValueSpellChannelTime) APLValue {
-	unit := rot.unit
-	spell := unit.aplGetSpell(config.SpellId)
+	spell := rot.aplGetSpell(config.SpellId)
 	if spell == nil {
 		return nil
 	}
@@ -126,8 +117,7 @@ type APLValueSpellTravelTime struct {
 }
 
 func (rot *APLRotation) newValueSpellTravelTime(config *proto.APLValueSpellTravelTime) APLValue {
-	unit := rot.unit
-	spell := unit.aplGetSpell(config.SpellId)
+	spell := rot.aplGetSpell(config.SpellId)
 	if spell == nil {
 		return nil
 	}

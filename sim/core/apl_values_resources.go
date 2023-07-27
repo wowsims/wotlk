@@ -12,6 +12,7 @@ type APLValueCurrentHealth struct {
 func (rot *APLRotation) newValueCurrentHealth(config *proto.APLValueCurrentHealth) APLValue {
 	unit := rot.unit
 	if !unit.HasHealthBar() {
+		rot.validationWarning("%s does not use Health", unit.Label)
 		return nil
 	}
 	return &APLValueCurrentHealth{
@@ -33,6 +34,7 @@ type APLValueCurrentHealthPercent struct {
 func (rot *APLRotation) newValueCurrentHealthPercent(config *proto.APLValueCurrentHealthPercent) APLValue {
 	unit := rot.unit
 	if !unit.HasHealthBar() {
+		rot.validationWarning("%s does not use Health", unit.Label)
 		return nil
 	}
 	return &APLValueCurrentHealthPercent{
@@ -54,6 +56,7 @@ type APLValueCurrentMana struct {
 func (rot *APLRotation) newValueCurrentMana(config *proto.APLValueCurrentMana) APLValue {
 	unit := rot.unit
 	if !unit.HasManaBar() {
+		rot.validationWarning("%s does not use Mana", unit.Label)
 		return nil
 	}
 	return &APLValueCurrentMana{
@@ -75,6 +78,7 @@ type APLValueCurrentManaPercent struct {
 func (rot *APLRotation) newValueCurrentManaPercent(config *proto.APLValueCurrentManaPercent) APLValue {
 	unit := rot.unit
 	if !unit.HasManaBar() {
+		rot.validationWarning("%s does not use Mana", unit.Label)
 		return nil
 	}
 	return &APLValueCurrentManaPercent{
@@ -96,6 +100,7 @@ type APLValueCurrentRage struct {
 func (rot *APLRotation) newValueCurrentRage(config *proto.APLValueCurrentRage) APLValue {
 	unit := rot.unit
 	if !unit.HasRageBar() {
+		rot.validationWarning("%s does not use Rage", unit.Label)
 		return nil
 	}
 	return &APLValueCurrentRage{
@@ -117,6 +122,7 @@ type APLValueCurrentEnergy struct {
 func (rot *APLRotation) newValueCurrentEnergy(config *proto.APLValueCurrentEnergy) APLValue {
 	unit := rot.unit
 	if !unit.HasEnergyBar() {
+		rot.validationWarning("%s does not use Energy", unit.Label)
 		return nil
 	}
 	return &APLValueCurrentEnergy{
@@ -138,6 +144,7 @@ type APLValueCurrentComboPoints struct {
 func (rot *APLRotation) newValueCurrentComboPoints(config *proto.APLValueCurrentComboPoints) APLValue {
 	unit := rot.unit
 	if !unit.HasEnergyBar() {
+		rot.validationWarning("%s does not use Combo Points", unit.Label)
 		return nil
 	}
 	return &APLValueCurrentComboPoints{
@@ -159,6 +166,7 @@ type APLValueCurrentRunicPower struct {
 func (rot *APLRotation) newValueCurrentRunicPower(config *proto.APLValueCurrentRunicPower) APLValue {
 	unit := rot.unit
 	if !unit.HasRunicPowerBar() {
+		rot.validationWarning("%s does not use Runic Power", unit.Label)
 		return nil
 	}
 	return &APLValueCurrentRunicPower{
