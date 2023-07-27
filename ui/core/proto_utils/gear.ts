@@ -145,7 +145,13 @@ export class Gear extends BaseGear {
 	}
 
 	hasRelic(itemId: number): boolean {
-		return this.getEquippedItem(ItemSlot.ItemSlotRanged).item.id == itemId;
+		const relicItem = this.getEquippedItem(ItemSlot.ItemSlotRanged);
+
+		if (!relicItem) {
+			return false;
+		}
+
+		return relicItem!.item.id == itemId;
 	}
 
 	asMap(): InternalGear {

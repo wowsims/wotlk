@@ -299,9 +299,9 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 		if (tearSlot) {
 			const tearSlotItem = gear.getEquippedItem(tearSlot);
 
-			for (const [socketIdx, socketColor] of tearSlotItem.allSocketColors().entries()) {
+			for (const [socketIdx, socketColor] of tearSlotItem!.allSocketColors().entries()) {
 				if (socketColor == GemColor.GemColorBlue) {
-					return gear.withEquippedItem(tearSlot, tearSlotItem.withGem(this.sim.db.lookupGem(49110), socketIdx), true);
+					return gear.withEquippedItem(tearSlot, tearSlotItem!.withGem(this.sim.db.lookupGem(49110), socketIdx), true);
 				}
 			}
 		}
@@ -309,7 +309,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 		return gear;
 	}
 
-	findSocketsByColor(gear: Gear, epWeights: Stats, color: GemColor, tearSlot: ItemSlot): Array<[ItemSlot, number]> {
+	findSocketsByColor(gear: Gear, epWeights: Stats, color: GemColor, tearSlot: ItemSlot | null): Array<[ItemSlot, number]> {
 		const socketList = new Array<[ItemSlot, number]>();
 
 		for (var slot of gear.getItemSlots()) {
@@ -341,7 +341,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 		return socketList;
 	}
 
-	async fillGemsToCaps(gear: Gear, socketList: Array<[ItemSlot, number]>, gemCaps: Array<[number, Stats]>, numPasses: number, firstIdx: number): Gear {
+	async fillGemsToCaps(gear: Gear, socketList: Array<[ItemSlot, number]>, gemCaps: Array<[number, Stats]>, numPasses: number, firstIdx: number): Promise<Gear> {
 		let updatedGear: Gear = gear;
 		let nextGem = this.sim.db.lookupGem(gemCaps[numPasses][0]);
 
