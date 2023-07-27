@@ -3,21 +3,21 @@ import { ActionId } from '../proto_utils/action_id.js';
 import { DropdownPicker, DropdownPickerConfig, DropdownValueConfig } from './dropdown_picker.js';
 
 export interface UnitValue {
-    value: UnitReference,
+    value: UnitReference|undefined,
 	text?: string,
 	iconUrl?: string|ActionId,
 	color?: string,
 }
 
 export interface UnitValueConfig extends DropdownValueConfig<UnitValue> {}
-export interface UnitPickerConfig<ModObject> extends Omit<DropdownPickerConfig<ModObject, UnitReference, UnitValue>, 'equals' | 'setOptionContent' | 'defaultLabel'> {
+export interface UnitPickerConfig<ModObject> extends Omit<DropdownPickerConfig<ModObject, UnitReference|undefined, UnitValue>, 'equals' | 'setOptionContent' | 'defaultLabel'> {
 }
 
-export class UnitPicker<ModObject> extends DropdownPicker<ModObject, UnitReference, UnitValue> {
+export class UnitPicker<ModObject> extends DropdownPicker<ModObject, UnitReference|undefined, UnitValue> {
 	constructor(parent: HTMLElement, modObject: ModObject, config: UnitPickerConfig<ModObject>) {
 		super(parent, modObject, {
 			...config,
-			equals: (a, b) => UnitReference.equals(a?.value, b?.value),
+			equals: (a, b) => UnitReference.equals(a?.value || UnitReference.create(), b?.value || UnitReference.create()),
             defaultLabel: 'Unit',
 			setOptionContent: (button: HTMLButtonElement, valueConfig: DropdownValueConfig<UnitValue>) => {
                 const unitConfig = valueConfig.value;

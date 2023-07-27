@@ -226,6 +226,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 			otherInputs: {
 				inputs: [
 					HunterInputs.PetUptime,
+					HunterInputs.TimeToTrapWeaveMs,
 					HunterInputs.SniperTrainingUptime,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,

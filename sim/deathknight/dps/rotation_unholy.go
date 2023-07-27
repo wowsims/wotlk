@@ -180,6 +180,11 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 								NewAction(dk.RotationActionCallback_UnholyDndRotation)
 						}
 					}
+				} else if dk.CurrentDeathRunes() > 0 {
+					dk.RotationSequence.Clear().
+						NewAction(dk.RotationActionUH_BS).
+						NewAction(dk.RotationActionCallback_UnholyDndRotation)
+					return sim.CurrentTime
 				} else if dk.IcyTouch.CanCast(sim, nil) && dk.PlagueStrike.CanCast(sim, nil) {
 					if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+core.GCDDefault*2+50*time.Millisecond) {
 						dk.uhAfterGargoyleSequence(sim)
@@ -468,7 +473,7 @@ func (dk *DpsDeathknight) RotationActionCallback_MindFreezeFiller(sim *core.Simu
 
 // Custom BS Callback
 func (dk *DpsDeathknight) RotationActionUH_BS(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	if dk.CurrentBloodRunes() == 0 {
+	if dk.CurrentBloodRunes()+dk.CurrentDeathRunes() == 0 {
 		s.Advance()
 		return sim.CurrentTime
 	}

@@ -5,6 +5,7 @@ import { Player } from '../../player.js';
 import { ListItemPickerConfig, ListPicker } from '../list_picker.js';
 import { AdaptiveStringPicker } from '../string_picker.js';
 import {
+	APLRotation,
 	APLListItem,
 	APLAction,
 	APLPrepullAction,

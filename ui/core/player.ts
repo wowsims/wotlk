@@ -1147,6 +1147,15 @@ export class Player<SpecType extends Spec> {
 					break;
 				}
 			}
+
+			if (this.spec == Spec.SpecHunter) {
+				const rot = this.getRotation() as SpecRotation<Spec.SpecHunter>;
+				if (rot.timeToTrapWeaveMs) {
+					const options = this.getSpecOptions() as SpecOptions<Spec.SpecHunter>;
+					options.timeToTrapWeaveMs = rot.timeToTrapWeaveMs;
+					this.setSpecOptions(eventID, options as SpecOptions<SpecType>);
+				}
+			}
 		});
 	}
 
