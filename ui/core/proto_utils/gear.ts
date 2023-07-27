@@ -144,6 +144,10 @@ export class Gear extends BaseGear {
 		return this.getTrinkets().map(t => t?.item.id).includes(itemId);
 	}
 
+	hasRelic(itemId: number): boolean {
+		return this.getEquippedItem(ItemSlot.ItemSlotRanged).item.id == itemId;
+	}
+
 	asMap(): InternalGear {
 		const newInternalGear: Partial<InternalGear> = {};
 		getEnumValues(ItemSlot).map(slot => Number(slot) as ItemSlot).forEach(slot => {
@@ -226,6 +230,30 @@ export class Gear extends BaseGear {
 		return this.getMetaGem() != null && !this.hasActiveMetaGem(isBlacksmithing);
 	}
 
+	withGem(itemSlot: ItemSlot, socketIdx: number, gem: Gem): Gear {
+		const item = this.getEquippedItem(itemSlot);
+
+		if (item) {
+			return this.withEquippedItem(itemSlot, item.withGem(gem, socketIdx), true);
+		}
+
+		return this;
+	}
+
+	withMetaGem(metaGem: Gem): Gear {
+		const headItem = this.getEquippedItem(ItemSlot.ItemSlotHead);
+
+		if (headItem) {
+			for (const [socketIdx, socketColor] of headItem.allSocketColors().entries()) {
+				if (socketColor == GemColor.GemColorMeta) {
+					return this.withEquippedItem(ItemSlot.ItemSlotHead, headItem.withGem(metaGem, socketIdx), true);
+				}
+			}
+		}
+
+		return this;
+	}
+
 	withoutMetaGem(): Gear {
 		const headItem = this.getEquippedItem(ItemSlot.ItemSlotHead);
 		const metaGem = this.getMetaGem();
@@ -234,6 +262,20 @@ export class Gear extends BaseGear {
 		} else {
 			return this;
 		}
+	}
+
+	withoutGems(): Gear {
+		let curGear: Gear = this;
+
+		for (var slot of this.getItemSlots()) {
+			const item = this.getEquippedItem(slot);
+
+			if (item) {
+				curGear = curGear.withEquippedItem(slot, item.removeAllGems(), true);
+			}
+		}
+
+		return curGear;
 	}
 
 	// Removes bonus gems from blacksmith profession bonus.

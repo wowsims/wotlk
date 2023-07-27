@@ -177,6 +177,16 @@ export class Stats {
 		return total;
 	}
 
+	belowCaps(statCaps: Stats): boolean {
+		for (const [idx, stat] of this.stats.entries()) {
+			if ((statCaps.stats[idx] > 0) && (stat > statCaps.stats[idx])) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	asArray(): Array<number> {
 		return this.stats.slice();
 	}
