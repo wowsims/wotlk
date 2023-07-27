@@ -158,6 +158,10 @@ export class Database {
 		return Object.values(this.gems).filter(gem => gemMatchesSocket(gem, socketColor));
 	}
 
+	lookupGem(itemID: number): Gem {
+		return this.gems[itemID]
+	}
+
 	lookupItemSpec(itemSpec: ItemSpec): EquippedItem | null {
 		const item = this.items[itemSpec.id];
 		if (!item)
