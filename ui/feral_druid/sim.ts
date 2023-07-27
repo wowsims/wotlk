@@ -201,10 +201,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 		let startIdx = 0;
 
 		if (this.player.hasProfession(Profession.Jewelcrafting)) {
-			for (const [itemSlot, socketIdx] of redSockets.slice(0, 3)) {
-				optimizedGear = optimizedGear.withGem(itemSlot, socketIdx, this.sim.db.lookupGem(42153));
-			}
-
+			optimizedGear = this.optimizeJcGems(optimizedGear, redSockets);
 			startIdx = 3;
 		}
 
@@ -226,7 +223,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 	}
 
 	calcArpCap(gear: Gear): Stats {
-		let arpCap = 1399;
+		let arpCap = 1400;
 
 		if (gear.hasTrinket(45931)) {
 			arpCap = 659;
@@ -235,6 +232,18 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 		}
 
 		return new Stats().withStat(Stat.StatArmorPenetration, arpCap);
+	}
+
+	calcArpTarget(gear: Gear): number {
+		if (gear.hasTrinket(45931)) {
+			return 648;
+		}
+
+		if (gear.hasTrinket(40256)) {
+			return 787;
+		}
+
+		return 1399;
 	}
 
 	calcCritCap(gear: Gear): Stats {
@@ -378,5 +387,50 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 
 		// Now run a new pass to check whether we've exceeded the next stat cap
 		return await this.fillGemsToCaps(updatedGear, socketList, gemCaps, numPasses + 1, idx + 1);
+	}
+
+	calcDistanceToArpTarget(numJcArpGems: number, passiveArp: number, numRedSockets: number, arpCap: number, arpTarget: number): number {
+		const numNormalArpGems = Math.max(0, Math.min(numRedSockets - 3, Math.floor((arpCap - passiveArp - 34 * numJcArpGems) / 20)));
+		const projectedArp = passiveArp + 34 * numJcArpGems + 20 * numNormalArpGems;
+		return Math.abs(projectedArp - arpTarget);
+	}
+
+	optimizeJcGems(gear: Gear, redSocketList: Array<[ItemSlot, number]>): Gear {
+		const passiveStats = Stats.fromProto(this.player.getCurrentStats().finalStats);
+		const passiveArp = passiveStats.getStat(Stat.StatArmorPenetration);
+		const numRedSockets = redSocketList.length;
+		const arpCap = this.calcArpCap(gear).getStat(Stat.StatArmorPenetration);
+		const arpTarget = this.calcArpTarget(gear);
+
+		// First determine how many of the JC gems should be 34 ArP gems
+		let optimalJcArpGems = 0;
+		let minDistanceToArpTarget = this.calcDistanceToArpTarget(0, passiveArp, numRedSockets, arpCap, arpTarget);
+
+		for (let i = 1; i <= 3; i++) {
+			const distanceToArpTarget = this.calcDistanceToArpTarget(i, passiveArp, numRedSockets, arpCap, arpTarget);
+
+			if (distanceToArpTarget < minDistanceToArpTarget) {
+				optimalJcArpGems = i;
+				minDistanceToArpTarget = distanceToArpTarget;
+			}
+		}
+
+		// Now actually socket the gems
+		const belowCritCap = passiveStats.belowCaps(this.calcCritCap(gear));
+		let updatedGear: Gear = gear;
+
+		for (let i = 0; i < 3; i++) {
+			let gemId = 42142; // Str by default
+
+			if (i < optimalJcArpGems) {
+				gemId = 42153;
+			} else if (belowCritCap) {
+				gemId = 42143;
+			}
+
+			updatedGear = updatedGear.withGem(redSocketList[i][0], redSocketList[i][1], this.sim.db.lookupGem(gemId));
+		}
+
+		return updatedGear;
 	}
 }
