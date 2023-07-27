@@ -80,7 +80,6 @@ export const DefaultRotation = HunterRotation.create({
 	type: RotationType.SingleTarget,
 	sting: StingType.SerpentSting,
 	trapWeave: false,
-	timeToTrapWeaveMs: 2000,
 	viperStartManaPercent: 0.1,
 	viperStopManaPercent: 0.3,
 	multiDotSerpentSting: true,
@@ -110,7 +109,6 @@ export const ROTATION_PRESET_BM = {
 	name: 'BM',
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
-			timeToTrapWeaveMs: 2000,
 		})),
 		rotation: APLRotation.fromJsonString(`{
       		"enabled": true,
@@ -137,7 +135,6 @@ export const ROTATION_PRESET_MM = {
 	name: 'MM',
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
-			timeToTrapWeaveMs: 2000,
 		})),
 		rotation: APLRotation.fromJsonString(`{
       		"enabled": true,
@@ -165,7 +162,6 @@ export const ROTATION_PRESET_SV = {
 	name: 'SV',
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
-			timeToTrapWeaveMs: 2000,
 		})),
 		rotation: APLRotation.fromJsonString(`{
       		"enabled": true,
@@ -194,7 +190,6 @@ export const ROTATION_PRESET_AOE = {
 	name: 'AOE',
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
-			timeToTrapWeaveMs: 2000,
 		})),
 		rotation: APLRotation.fromJsonString(`{
       		"enabled": true,
@@ -220,6 +215,7 @@ export const DefaultOptions = HunterOptions.create({
 	petTalents: ferocityDefault,
 	petUptime: 1,
 	sniperTrainingUptime: 0.9,
+	timeToTrapWeaveMs: 2000,
 });
 
 export const BMDefaultOptions = HunterOptions.create({
@@ -229,6 +225,7 @@ export const BMDefaultOptions = HunterOptions.create({
 	petTalents: ferocityBMDefault,
 	petUptime: 1,
 	sniperTrainingUptime: 0.9,
+	timeToTrapWeaveMs: 2000,
 });
 
 export const DefaultConsumes = Consumes.create({
