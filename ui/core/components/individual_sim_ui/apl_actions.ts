@@ -267,6 +267,7 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 		newValue: APLActionCastSpell.create,
 		fields: [
 			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells', ''),
+			AplHelpers.unitFieldConfig('target', 'targets'),
 		],
 	}),
 	['multidot']: inputBuilder({

@@ -5,7 +5,8 @@ import (
 )
 
 type APLActionCastSpell struct {
-	spell *Spell
+	spell  *Spell
+	target UnitReference
 }
 
 func (rot *APLRotation) newActionCastSpell(config *proto.APLActionCastSpell) APLActionImpl {
@@ -13,18 +14,23 @@ func (rot *APLRotation) newActionCastSpell(config *proto.APLActionCastSpell) APL
 	if spell == nil {
 		return nil
 	}
+	target := rot.getTargetUnit(config.Target)
+	if target.Get() == nil {
+		return nil
+	}
 	return &APLActionCastSpell{
-		spell: spell,
+		spell:  spell,
+		target: target,
 	}
 }
 func (action *APLActionCastSpell) GetInnerActions() []*APLAction { return nil }
 func (action *APLActionCastSpell) Finalize(*APLRotation)         {}
 func (action *APLActionCastSpell) Reset(*Simulation)             {}
 func (action *APLActionCastSpell) IsReady(sim *Simulation) bool {
-	return action.spell.CanCast(sim, action.spell.Unit.CurrentTarget)
+	return action.spell.CanCast(sim, action.target.Get())
 }
 func (action *APLActionCastSpell) Execute(sim *Simulation) {
-	action.spell.Cast(sim, action.spell.Unit.CurrentTarget)
+	action.spell.Cast(sim, action.target.Get())
 }
 
 type APLActionMultidot struct {
