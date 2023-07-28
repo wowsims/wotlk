@@ -7,6 +7,7 @@ import {
 	APLActionMultidot,
 	APLActionAutocastOtherCooldowns,
 	APLActionChangeTarget,
+	APLActionCancelAura,
 	APLActionWait,
 	APLValue,
 } from '../../proto/apl.js';
@@ -378,6 +379,15 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 		newValue: () => APLActionChangeTarget.create(),
 		fields: [
 			AplHelpers.unitFieldConfig('newTarget', 'targets'),
+		],
+	}),
+	['cancelAura']: inputBuilder({
+		label: 'Cancel Aura',
+		submenu: ['Misc'],
+		shortDescription: 'Deactivates an aura, equivalent to /cancelaura.',
+		newValue: () => APLActionCancelAura.create(),
+		fields: [
+			AplHelpers.actionIdFieldConfig('auraId', 'auras'),
 		],
 	}),
 };

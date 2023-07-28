@@ -368,7 +368,7 @@ export class APLPickerBuilder<T> extends Input<Player<any>, T> {
 	}
 }
 
-export function actionIdFieldConfig(field: string, actionIdSet: ACTION_ID_SET, unitRefField: string, options?: Partial<APLPickerBuilderFieldConfig<any, any>>): APLPickerBuilderFieldConfig<any, any> {
+export function actionIdFieldConfig(field: string, actionIdSet: ACTION_ID_SET, unitRefField?: string, options?: Partial<APLPickerBuilderFieldConfig<any, any>>): APLPickerBuilderFieldConfig<any, any> {
 	return {
 		field: field,
 		newValue: () => ActionID.create(),
