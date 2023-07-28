@@ -425,14 +425,18 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		submenu: ['Resources'],
 		shortDescription: 'Amount of currently available Health.',
 		newValue: APLValueCurrentHealth.create,
-		fields: [],
+		fields: [
+			AplHelpers.unitFieldConfig('sourceUnit', 'aura_sources'),
+		],
 	}),
 	'currentHealthPercent': inputBuilder({
 		label: 'Health (%)',
 		submenu: ['Resources'],
 		shortDescription: 'Amount of currently available Health, as a percentage.',
 		newValue: APLValueCurrentHealthPercent.create,
-		fields: [],
+		fields: [
+			AplHelpers.unitFieldConfig('sourceUnit', 'aura_sources'),
+		],
 	}),
 	'currentMana': inputBuilder({
 		label: 'Mana',

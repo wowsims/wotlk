@@ -159,7 +159,8 @@ export class APLActionIDPicker extends DropdownPicker<Player<any>, ActionID, Act
 export type UNIT_SET = 'aura_sources' | 'targets';
 
 const unitSets: Record<UNIT_SET, {
-	targetUI?: boolean, // Uses target icon by default instead of person icon
+	// Uses target icon by default instead of person icon. This should be set to true for inputs that default to CurrentTarget.
+	targetUI?: boolean,
 	getUnits: (player: Player<any>) => Array<UnitReference|undefined>,
 }> = {
 	'aura_sources': {

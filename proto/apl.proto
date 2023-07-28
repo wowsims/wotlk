@@ -210,10 +210,18 @@ message APLValueRemainingTime {}
 message APLValueRemainingTimePercent {}
 message APLValueNumberTargets {}
 
-message APLValueCurrentHealth {}
-message APLValueCurrentHealthPercent {}
-message APLValueCurrentMana {}
-message APLValueCurrentManaPercent {}
+message APLValueCurrentHealth {
+    UnitReference source_unit = 1;
+}
+message APLValueCurrentHealthPercent {
+    UnitReference source_unit = 1;
+}
+message APLValueCurrentMana {
+    UnitReference source_unit = 1;
+}
+message APLValueCurrentManaPercent {
+    UnitReference source_unit = 1;
+}
 message APLValueCurrentRage {}
 message APLValueCurrentEnergy {}
 message APLValueCurrentComboPoints {}
