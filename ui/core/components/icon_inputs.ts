@@ -206,7 +206,7 @@ export const AttackPowerDebuff = InputHelpers.makeMultiIconInput([
 ], 'Atk Pwr');
 
 export const BleedDebuff = InputHelpers.makeMultiIconInput([
-	makeBooleanDebuffInput(ActionId.fromSpellId(33876), 'mangle'),
+	makeBooleanDebuffInput(ActionId.fromSpellId(48564), 'mangle'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(46855), 'trauma'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(57393), 'stampede'),
 ], 'Bleed');

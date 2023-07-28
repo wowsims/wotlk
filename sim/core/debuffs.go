@@ -429,7 +429,7 @@ func GiftOfArthasAura(target *Unit) *Aura {
 func MangleAura(target *Unit) *Aura {
 	return bleedDamageAura(target, Aura{
 		Label:    "Mangle",
-		ActionID: ActionID{SpellID: 33876},
+		ActionID: ActionID{SpellID: 48566},
 		Duration: time.Minute,
 	}, 1.3)
 }
