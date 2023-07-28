@@ -15,7 +15,7 @@ export interface DropdownValueConfig<V> {
 export interface DropdownPickerConfig<ModObject, T, V = T> extends InputConfig<ModObject, T, V> {
 	values: Array<DropdownValueConfig<V>>;
 	equals: (a: V | undefined, b: V | undefined) => boolean,
-	setOptionContent: (button: HTMLButtonElement, valueConfig: DropdownValueConfig<V>) => void,
+	setOptionContent: (button: HTMLButtonElement, valueConfig: DropdownValueConfig<V>, isSelectButton: boolean) => void,
 	createMissingValue?: (val: V) => Promise<DropdownValueConfig<V>>,
 	defaultLabel: string,
 }
@@ -90,7 +90,7 @@ export class DropdownPicker<ModObject, T, V = T> extends Input<ModObject, T, V> 
 				const buttonElem = document.createElement('button');
 				buttonElem.classList.add('dropdown-item');
 				buttonElem.type = 'button';
-				this.config.setOptionContent(buttonElem, valueConfig);
+				this.config.setOptionContent(buttonElem, valueConfig, false);
 
 				if (valueConfig.tooltip) {
 					buttonElem.setAttribute('data-bs-toggle', 'tooltip');
@@ -224,7 +224,7 @@ export class DropdownPicker<ModObject, T, V = T> extends Input<ModObject, T, V> 
 		// Update button
 		if (newValue) {
 			this.buttonElem.innerHTML = '';
-			this.config.setOptionContent(this.buttonElem, newValue);
+			this.config.setOptionContent(this.buttonElem, newValue, true);
 		} else {
 			this.buttonElem.textContent = this.config.defaultLabel;
 		}
