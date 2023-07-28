@@ -35,8 +35,11 @@ message APLAction {
 
         APLActionCastSpell cast_spell = 3;
         APLActionMultidot multidot = 8;
+
+        // Misc
         APLActionAutocastOtherCooldowns autocast_other_cooldowns = 7;
         APLActionChangeTarget change_target = 9;
+        APLActionCancelAura cancel_aura = 10;
         APLActionWait wait = 4;
     }
 }
@@ -136,6 +139,10 @@ message APLActionAutocastOtherCooldowns {
 
 message APLActionChangeTarget {
     UnitReference new_target = 1;
+}
+
+message APLActionCancelAura {
+    ActionID aura_id = 1;
 }
 
 message APLActionWait {
