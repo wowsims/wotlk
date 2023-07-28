@@ -36,6 +36,7 @@ message APLAction {
         APLActionCastSpell cast_spell = 3;
         APLActionMultidot multidot = 8;
         APLActionAutocastOtherCooldowns autocast_other_cooldowns = 7;
+        APLActionChangeTarget change_target = 9;
         APLActionWait wait = 4;
     }
 }
@@ -130,6 +131,10 @@ message APLActionMultidot {
 }
 
 message APLActionAutocastOtherCooldowns {
+}
+
+message APLActionChangeTarget {
+    UnitReference new_target = 1;
 }
 
 message APLActionWait {

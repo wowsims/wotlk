@@ -6,6 +6,7 @@ import {
 	APLActionStrictSequence,
 	APLActionMultidot,
 	APLActionAutocastOtherCooldowns,
+	APLActionChangeTarget,
 	APLActionWait,
 	APLValue,
 } from '../../proto/apl.js';
@@ -367,6 +368,15 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 		}),
 		fields: [
 			AplValues.valueFieldConfig('duration'),
+		],
+	}),
+	['changeTarget']: inputBuilder({
+		label: 'Change Target',
+		submenu: ['Misc'],
+		shortDescription: 'Sets the current target, which is the target of auto attacks and most casts by default.',
+		newValue: () => APLActionChangeTarget.create(),
+		fields: [
+			AplHelpers.unitFieldConfig('newTarget', 'targets'),
 		],
 	}),
 };

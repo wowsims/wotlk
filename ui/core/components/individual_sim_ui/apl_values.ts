@@ -615,7 +615,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		shortDescription: '<b>True</b> if the aura is currently active on self, otherwise <b>False</b>.',
 		newValue: APLValueAuraIsActive.create,
 		fields: [
-			AplHelpers.unitFieldConfig('sourceUnit'),
+			AplHelpers.unitFieldConfig('sourceUnit', 'aura_sources'),
 			AplHelpers.actionIdFieldConfig('auraId', 'auras', 'sourceUnit'),
 		],
 	}),
@@ -625,7 +625,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		shortDescription: 'Time remaining before this aura will expire, or 0 if the aura is not currently active on self.',
 		newValue: APLValueAuraRemainingTime.create,
 		fields: [
-			AplHelpers.unitFieldConfig('sourceUnit'),
+			AplHelpers.unitFieldConfig('sourceUnit', 'aura_sources'),
 			AplHelpers.actionIdFieldConfig('auraId', 'auras', 'sourceUnit'),
 		],
 	}),
@@ -635,7 +635,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		shortDescription: 'Number of stacks of the aura on self.',
 		newValue: APLValueAuraNumStacks.create,
 		fields: [
-			AplHelpers.unitFieldConfig('sourceUnit'),
+			AplHelpers.unitFieldConfig('sourceUnit', 'aura_sources'),
 			AplHelpers.actionIdFieldConfig('auraId', 'stackable_auras', 'sourceUnit'),
 		],
 	}),
@@ -645,7 +645,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		shortDescription: 'Time remaining before this aura can be applied again.',
 		newValue: APLValueAuraInternalCooldown.create,
 		fields: [
-			AplHelpers.unitFieldConfig('sourceUnit'),
+			AplHelpers.unitFieldConfig('sourceUnit', 'aura_sources'),
 			AplHelpers.actionIdFieldConfig('auraId', 'icd_auras', 'sourceUnit'),
 		],
 	}),
