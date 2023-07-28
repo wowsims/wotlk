@@ -11,6 +11,7 @@ export interface UnitValue {
 
 export interface UnitValueConfig extends DropdownValueConfig<UnitValue> {}
 export interface UnitPickerConfig<ModObject> extends Omit<DropdownPickerConfig<ModObject, UnitReference|undefined, UnitValue>, 'equals' | 'setOptionContent' | 'defaultLabel'> {
+    hideLabelWhenDefaultSelected?: boolean,
 }
 
 export class UnitPicker<ModObject> extends DropdownPicker<ModObject, UnitReference|undefined, UnitValue> {
@@ -19,7 +20,7 @@ export class UnitPicker<ModObject> extends DropdownPicker<ModObject, UnitReferen
 			...config,
 			equals: (a, b) => UnitReference.equals(a?.value || UnitReference.create(), b?.value || UnitReference.create()),
             defaultLabel: 'Unit',
-			setOptionContent: (button: HTMLButtonElement, valueConfig: DropdownValueConfig<UnitValue>) => {
+			setOptionContent: (button: HTMLButtonElement, valueConfig: DropdownValueConfig<UnitValue>, isSelectButton: boolean) => {
                 const unitConfig = valueConfig.value;
 
                 if (unitConfig.color) {
@@ -49,7 +50,8 @@ export class UnitPicker<ModObject> extends DropdownPicker<ModObject, UnitReferen
                     button.appendChild(icon);
                 }
 
-                if (unitConfig.text) {
+                const hideLabel = config.hideLabelWhenDefaultSelected && isSelectButton && !unitConfig.value;
+                if (unitConfig.text && !hideLabel) {
                     const label = document.createElement('span');
                     if (unitConfig.text.startsWith('fa-')) {
                         label.classList.add('fa', unitConfig.text);

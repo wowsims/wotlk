@@ -166,7 +166,6 @@ const unitSets: Record<UNIT_SET, {
 		getUnits: (player) => {
 			return [
 				undefined,
-				UnitReference.create({type: UnitType.Self}),
 				player.getPetMetadatas().asList().map((petMetadata, i) => UnitReference.create({type: UnitType.Pet, index: i, owner: UnitReference.create({type: UnitType.Self})})),
 				UnitReference.create({type: UnitType.CurrentTarget}),
 				player.sim.encounter.targetsMetadata.asList().map((targetMetadata, i) => UnitReference.create({type: UnitType.Target, index: i})),
@@ -178,7 +177,6 @@ const unitSets: Record<UNIT_SET, {
 		getUnits: (player) => {
 			return [
 				undefined,
-				UnitReference.create({type: UnitType.CurrentTarget}),
 				player.sim.encounter.targetsMetadata.asList().map((targetMetadata, i) => UnitReference.create({type: UnitType.Target, index: i})),
 			].flat();
 		},
@@ -193,6 +191,7 @@ export class APLUnitPicker extends UnitPicker<Player<any>> {
 	private readonly unitSet: UNIT_SET;
 
 	constructor(parent: HTMLElement, player: Player<any>, config: APLUnitPickerConfig) {
+		config.hideLabelWhenDefaultSelected = true;
 		const targetUI = !!unitSets[config.unitSet].targetUI;
 		super(parent, player, {
 			...config,
@@ -210,7 +209,8 @@ export class APLUnitPicker extends UnitPicker<Player<any>> {
 		if (!ref || ref.type == UnitType.Unknown) {
 			return {
 				value: ref,
-				text: targetUI ? 'fa-bullseye' : 'fa-user',
+				iconUrl: targetUI ? 'fa-bullseye' : 'fa-user',
+				text: targetUI ? 'Current Target' : 'Self',
 			};
 		} else if (ref.type == UnitType.Self) {
 			return {
@@ -272,10 +272,17 @@ export class APLUnitPicker extends UnitPicker<Player<any>> {
 		const values = unitSet.getUnits(this.modObject);
 
 		this.setOptions(values.map(v => {
-			return {
+			const valueConfig: DropdownValueConfig<UnitValue> = {
 				value: APLUnitPicker.refToValue(v, this.modObject, unitSet.targetUI),
-				submenu: v?.type == UnitType.Pet ? [APLUnitPicker.refToValue(v.owner!, this.modObject, unitSet.targetUI)] : undefined,
 			};
+			if (v && v.type == UnitType.Pet) {
+				if (unitSet.targetUI) {
+					valueConfig.submenu = [APLUnitPicker.refToValue(v.owner!, this.modObject, unitSet.targetUI)];
+				} else {
+					valueConfig.submenu = [APLUnitPicker.refToValue(undefined, this.modObject, unitSet.targetUI)];
+				}
+			}
+			return valueConfig;
 		}));
 	}
 }
