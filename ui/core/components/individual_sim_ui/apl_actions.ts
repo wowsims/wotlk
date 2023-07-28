@@ -376,7 +376,7 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 		shortDescription: 'Sets the current target, which is the target of auto attacks and most casts by default.',
 		newValue: () => APLActionChangeTarget.create(),
 		fields: [
-			//AplHelpers.unitFieldConfig('newTarget'),
+			AplHelpers.unitFieldConfig('newTarget', 'targets'),
 		],
 	}),
 };
