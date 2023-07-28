@@ -325,6 +325,9 @@ func (at *auraTracker) GetAura(label string) *Aura {
 	}
 	return nil
 }
+func (at *auraTracker) GetAuras() []*Aura {
+	return at.auras
+}
 func (at *auraTracker) GetAuraByID(actionID ActionID) *Aura {
 	for _, aura := range at.auras {
 		if aura.ActionID.SameAction(actionID) {
