@@ -35,9 +35,9 @@ func NewUnitReference(ref *proto.UnitReference, contextUnit *Unit) UnitReference
 	}
 }
 
-func (rot *APLRotation) getSourceUnit(ref *proto.UnitReference) UnitReference {
+func (rot *APLRotation) getUnit(ref *proto.UnitReference, defaultRef *proto.UnitReference) UnitReference {
 	if ref == nil || ref.Type == proto.UnitReference_Unknown {
-		return NewUnitReference(&proto.UnitReference{Type: proto.UnitReference_Self}, rot.unit)
+		return NewUnitReference(defaultRef, rot.unit)
 	} else {
 		unitRef := NewUnitReference(ref, rot.unit)
 		if unitRef.Get() == nil {
@@ -45,6 +45,12 @@ func (rot *APLRotation) getSourceUnit(ref *proto.UnitReference) UnitReference {
 		}
 		return unitRef
 	}
+}
+func (rot *APLRotation) getSourceUnit(ref *proto.UnitReference) UnitReference {
+	return rot.getUnit(ref, &proto.UnitReference{Type: proto.UnitReference_Self})
+}
+func (rot *APLRotation) getTargetUnit(ref *proto.UnitReference) UnitReference {
+	return rot.getUnit(ref, &proto.UnitReference{Type: proto.UnitReference_CurrentTarget})
 }
 
 type AuraReference struct {

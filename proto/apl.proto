@@ -122,6 +122,7 @@ message APLActionStrictSequence {
 
 message APLActionCastSpell {
     ActionID spell_id = 1;
+    UnitReference target = 2;
 }
 
 message APLActionMultidot {
