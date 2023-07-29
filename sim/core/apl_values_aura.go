@@ -79,7 +79,7 @@ type APLValueAuraInternalCooldown struct {
 }
 
 func (rot *APLRotation) newValueAuraInternalCooldown(config *proto.APLValueAuraInternalCooldown) APLValue {
-	aura := rot.aplGetProcAura(config.SourceUnit, config.AuraId)
+	aura := rot.aplGetICDAura(config.SourceUnit, config.AuraId)
 	if aura.Get() == nil {
 		return nil
 	}
