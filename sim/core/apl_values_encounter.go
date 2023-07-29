@@ -75,3 +75,31 @@ func (value *APLValueNumberTargets) Type() proto.APLValueType {
 func (value *APLValueNumberTargets) GetInt(sim *Simulation) int32 {
 	return sim.GetNumTargets()
 }
+
+type APLValueIsExecutePhase struct {
+	defaultAPLValueImpl
+	threshold proto.APLValueIsExecutePhase_ExecutePhaseThreshold
+}
+
+func (rot *APLRotation) newValueIsExecutePhase(config *proto.APLValueIsExecutePhase) APLValue {
+	if config.Threshold == proto.APLValueIsExecutePhase_Unknown {
+		return nil
+	}
+	return &APLValueIsExecutePhase{
+		threshold: config.Threshold,
+	}
+}
+func (value *APLValueIsExecutePhase) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeBool
+}
+func (value *APLValueIsExecutePhase) GetBool(sim *Simulation) bool {
+	if value.threshold == proto.APLValueIsExecutePhase_E20 {
+		return sim.IsExecutePhase20()
+	} else if value.threshold == proto.APLValueIsExecutePhase_E25 {
+		return sim.IsExecutePhase25()
+	} else if value.threshold == proto.APLValueIsExecutePhase_E35 {
+		return sim.IsExecutePhase35()
+	} else {
+		panic("Should never reach here")
+	}
+}
