@@ -35,11 +35,17 @@ message APLAction {
 
         APLActionCastSpell cast_spell = 3;
         APLActionMultidot multidot = 8;
+
+        // Misc
         APLActionAutocastOtherCooldowns autocast_other_cooldowns = 7;
+        APLActionChangeTarget change_target = 9;
+        APLActionCancelAura cancel_aura = 10;
+        APLActionTriggerICD trigger_icd = 11;
         APLActionWait wait = 4;
     }
 }
 
+// NextIndex: 42
 message APLValue {
     oneof value {
         // Operators
@@ -55,6 +61,7 @@ message APLValue {
         APLValueCurrentTimePercent current_time_percent = 8;
         APLValueRemainingTime remaining_time = 9;
         APLValueRemainingTimePercent remaining_time_percent = 10;
+        APLValueIsExecutePhase is_execute_phase = 41;
         APLValueNumberTargets number_targets = 28;
 
         // Resource values
@@ -79,6 +86,9 @@ message APLValue {
         APLValueGCDIsReady gcd_is_ready = 17;
         APLValueGCDTimeToReady gcd_time_to_ready = 18;
 
+        // Autoattack values
+        APLValueAutoTimeToNext auto_time_to_next = 40;
+
         // Spell values
         APLValueSpellCanCast spell_can_cast = 19;
         APLValueSpellIsReady spell_is_ready = 20;
@@ -96,8 +106,6 @@ message APLValue {
         // Dot values
         APLValueDotIsActive dot_is_active = 6;
         APLValueDotRemainingTime dot_remaining_time = 13;
-
-        // Last Index - 35
     }
 }
 
@@ -121,6 +129,7 @@ message APLActionStrictSequence {
 
 message APLActionCastSpell {
     ActionID spell_id = 1;
+    UnitReference target = 2;
 }
 
 message APLActionMultidot {
@@ -130,6 +139,18 @@ message APLActionMultidot {
 }
 
 message APLActionAutocastOtherCooldowns {
+}
+
+message APLActionChangeTarget {
+    UnitReference new_target = 1;
+}
+
+message APLActionCancelAura {
+    ActionID aura_id = 1;
+}
+
+message APLActionTriggerICD {
+    ActionID aura_id = 1;
 }
 
 message APLActionWait {
@@ -196,11 +217,28 @@ message APLValueCurrentTimePercent {}
 message APLValueRemainingTime {}
 message APLValueRemainingTimePercent {}
 message APLValueNumberTargets {}
+message APLValueIsExecutePhase {
+    enum ExecutePhaseThreshold {
+        Unknown = 0;
+        E20 = 1;
+        E25 = 2;
+        E35 = 3;
+    }
+    ExecutePhaseThreshold threshold = 1;
+}
 
-message APLValueCurrentHealth {}
-message APLValueCurrentHealthPercent {}
-message APLValueCurrentMana {}
-message APLValueCurrentManaPercent {}
+message APLValueCurrentHealth {
+    UnitReference source_unit = 1;
+}
+message APLValueCurrentHealthPercent {
+    UnitReference source_unit = 1;
+}
+message APLValueCurrentMana {
+    UnitReference source_unit = 1;
+}
+message APLValueCurrentManaPercent {
+    UnitReference source_unit = 1;
+}
 message APLValueCurrentRage {}
 message APLValueCurrentEnergy {}
 message APLValueCurrentComboPoints {}
@@ -244,6 +282,8 @@ message APLValueNextRuneCooldown{
 
 message APLValueGCDIsReady {}
 message APLValueGCDTimeToReady {}
+
+message APLValueAutoTimeToNext {}
 
 message APLValueSpellCanCast {
     ActionID spell_id = 1;

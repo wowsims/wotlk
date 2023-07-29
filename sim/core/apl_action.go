@@ -76,6 +76,12 @@ func (rot *APLRotation) newAPLActionImpl(config *proto.APLAction) APLActionImpl 
 		return rot.newActionMultidot(config.GetMultidot())
 	case *proto.APLAction_AutocastOtherCooldowns:
 		return rot.newActionAutocastOtherCooldowns(config.GetAutocastOtherCooldowns())
+	case *proto.APLAction_ChangeTarget:
+		return rot.newActionChangeTarget(config.GetChangeTarget())
+	case *proto.APLAction_CancelAura:
+		return rot.newActionCancelAura(config.GetCancelAura())
+	case *proto.APLAction_TriggerIcd:
+		return rot.newActionTriggerICD(config.GetTriggerIcd())
 	case *proto.APLAction_Wait:
 		return rot.newActionWait(config.GetWait())
 	default:

@@ -272,7 +272,7 @@ export class Sim {
 	}
 
 	// This should be invoked internally whenever stats might have changed.
-	private async updateCharacterStats(eventID: EventID) {
+	async updateCharacterStats(eventID: EventID) {
 		if (eventID == 0) {
 			// Skip the first event ID because it interferes with the loaded stats.
 			return;

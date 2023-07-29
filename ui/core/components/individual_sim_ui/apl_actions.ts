@@ -6,6 +6,9 @@ import {
 	APLActionStrictSequence,
 	APLActionMultidot,
 	APLActionAutocastOtherCooldowns,
+	APLActionChangeTarget,
+	APLActionCancelAura,
+	APLActionTriggerICD,
 	APLActionWait,
 	APLValue,
 } from '../../proto/apl.js';
@@ -266,6 +269,7 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 		newValue: APLActionCastSpell.create,
 		fields: [
 			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells', ''),
+			AplHelpers.unitFieldConfig('target', 'targets'),
 		],
 	}),
 	['multidot']: inputBuilder({
@@ -367,6 +371,34 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 		}),
 		fields: [
 			AplValues.valueFieldConfig('duration'),
+		],
+	}),
+	['changeTarget']: inputBuilder({
+		label: 'Change Target',
+		submenu: ['Misc'],
+		shortDescription: 'Sets the current target, which is the target of auto attacks and most casts by default.',
+		newValue: () => APLActionChangeTarget.create(),
+		fields: [
+			AplHelpers.unitFieldConfig('newTarget', 'targets'),
+		],
+	}),
+	['cancelAura']: inputBuilder({
+		label: 'Cancel Aura',
+		submenu: ['Misc'],
+		shortDescription: 'Deactivates an aura, equivalent to /cancelaura.',
+		newValue: () => APLActionCancelAura.create(),
+		fields: [
+			AplHelpers.actionIdFieldConfig('auraId', 'auras'),
+		],
+	}),
+	['triggerIcd']: inputBuilder({
+		label: 'Trigger ICD',
+		submenu: ['Misc'],
+		shortDescription: 'Triggers an aura\'s ICD, putting it on cooldown. Example usage would be to desync an ICD cooldown before combat starts.',
+		isPrepull: true,
+		newValue: () => APLActionTriggerICD.create(),
+		fields: [
+			AplHelpers.actionIdFieldConfig('auraId', 'icd_auras'),
 		],
 	}),
 };

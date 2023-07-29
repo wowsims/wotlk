@@ -18,7 +18,7 @@ const actionIdSets: Record<ACTION_ID_SET, {
 	defaultLabel: string,
 	getActionIDs: (metadata: UnitMetadata) => Promise<Array<DropdownValueConfig<ActionId>>>,
 }> = {
-	['auras']: {
+	'auras': {
 		defaultLabel: 'Aura',
 		getActionIDs: async (metadata) => {
 			return metadata.getAuras().map(actionId => {
@@ -28,7 +28,7 @@ const actionIdSets: Record<ACTION_ID_SET, {
 			});
 		},
 	},
-	['stackable_auras']: {
+	'stackable_auras': {
 		defaultLabel: 'Aura',
 		getActionIDs: async (metadata) => {
 			return metadata.getAuras().filter(aura => aura.data.maxStacks > 0).map(actionId => {
@@ -38,7 +38,7 @@ const actionIdSets: Record<ACTION_ID_SET, {
 			});
 		},
 	},
-	['icd_auras']: {
+	'icd_auras': {
 		defaultLabel: 'Aura',
 		getActionIDs: async (metadata) => {
 			return metadata.getAuras().filter(aura => aura.data.hasIcd).map(actionId => {
@@ -48,7 +48,7 @@ const actionIdSets: Record<ACTION_ID_SET, {
 			});
 		},
 	},
-	['castable_spells']: {
+	'castable_spells': {
 		defaultLabel: 'Spell',
 		getActionIDs: async (metadata) => {
 			const castableSpells = metadata.getSpells().filter(spell => spell.data.isCastable);
@@ -94,7 +94,7 @@ const actionIdSets: Record<ACTION_ID_SET, {
 			].flat();
 		},
 	},
-	['dot_spells']: {
+	'dot_spells': {
 		defaultLabel: 'DoT Spell',
 		getActionIDs: async (metadata) => {
 			return metadata.getSpells().filter(spell => spell.data.hasDot).map(actionId => {
@@ -156,27 +156,62 @@ export class APLActionIDPicker extends DropdownPicker<Player<any>, ActionID, Act
 	}
 }
 
+export type UNIT_SET = 'aura_sources' | 'targets';
+
+const unitSets: Record<UNIT_SET, {
+	// Uses target icon by default instead of person icon. This should be set to true for inputs that default to CurrentTarget.
+	targetUI?: boolean,
+	getUnits: (player: Player<any>) => Array<UnitReference|undefined>,
+}> = {
+	'aura_sources': {
+		getUnits: (player) => {
+			return [
+				undefined,
+				player.getPetMetadatas().asList().map((petMetadata, i) => UnitReference.create({type: UnitType.Pet, index: i, owner: UnitReference.create({type: UnitType.Self})})),
+				UnitReference.create({type: UnitType.CurrentTarget}),
+				player.sim.encounter.targetsMetadata.asList().map((targetMetadata, i) => UnitReference.create({type: UnitType.Target, index: i})),
+			].flat();
+		},
+	},
+	'targets': {
+		targetUI: true,
+		getUnits: (player) => {
+			return [
+				undefined,
+				player.sim.encounter.targetsMetadata.asList().map((targetMetadata, i) => UnitReference.create({type: UnitType.Target, index: i})),
+			].flat();
+		},
+	},
+};
+
 export interface APLUnitPickerConfig extends Omit<UnitPickerConfig<Player<any>>, 'values'> {
+	unitSet: UNIT_SET,
 }
 
 export class APLUnitPicker extends UnitPicker<Player<any>> {
+	private readonly unitSet: UNIT_SET;
+
 	constructor(parent: HTMLElement, player: Player<any>, config: APLUnitPickerConfig) {
+		config.hideLabelWhenDefaultSelected = true;
+		const targetUI = !!unitSets[config.unitSet].targetUI;
 		super(parent, player, {
 			...config,
-			sourceToValue: (src: UnitReference) => APLUnitPicker.refToValue(src, player),
+			sourceToValue: (src: UnitReference|undefined) => APLUnitPicker.refToValue(src, player, targetUI),
 			valueToSource: (val: UnitValue) => val.value,
 			values: [],
 		});
+		this.unitSet = config.unitSet;
 
 		this.updateValues();
 		player.sim.unitMetadataEmitter.on(() => this.updateValues());
 	}
 
-	private static refToValue(ref: UnitReference, thisPlayer: Player<any>): UnitValue {
-		if (ref.type == UnitType.Unknown) {
+	private static refToValue(ref: UnitReference|undefined, thisPlayer: Player<any>, targetUI: boolean|undefined): UnitValue {
+		if (!ref || ref.type == UnitType.Unknown) {
 			return {
 				value: ref,
-				text: 'fa-user',
+				iconUrl: targetUI ? 'fa-bullseye' : 'fa-user',
+				text: targetUI ? 'Current Target' : 'Self',
 			};
 		} else if (ref.type == UnitType.Self) {
 			return {
@@ -234,19 +269,21 @@ export class APLUnitPicker extends UnitPicker<Player<any>> {
 	}
 
 	private updateValues() {
-		let values = [
-			UnitReference.create(),
-			UnitReference.create({type: UnitType.Self}),
-			this.modObject.getPetMetadatas().asList().map((petMetadata, i) => UnitReference.create({type: UnitType.Pet, index: i, owner: UnitReference.create({type: UnitType.Self})})),
-			UnitReference.create({type: UnitType.CurrentTarget}),
-			this.modObject.sim.encounter.targetsMetadata.asList().map((targetMetadata, i) => UnitReference.create({type: UnitType.Target, index: i})),
-		].flat();
+		const unitSet = unitSets[this.unitSet];
+		const values = unitSet.getUnits(this.modObject);
 
 		this.setOptions(values.map(v => {
-			return {
-				value: APLUnitPicker.refToValue(v, this.modObject),
-				submenu: v.type == UnitType.Pet ? [APLUnitPicker.refToValue(v.owner!, this.modObject)] : undefined,
+			const valueConfig: DropdownValueConfig<UnitValue> = {
+				value: APLUnitPicker.refToValue(v, this.modObject, unitSet.targetUI),
 			};
+			if (v && v.type == UnitType.Pet) {
+				if (unitSet.targetUI) {
+					valueConfig.submenu = [APLUnitPicker.refToValue(v.owner!, this.modObject, unitSet.targetUI)];
+				} else {
+					valueConfig.submenu = [APLUnitPicker.refToValue(undefined, this.modObject, unitSet.targetUI)];
+				}
+			}
+			return valueConfig;
 		}));
 	}
 }
@@ -339,7 +376,7 @@ export class APLPickerBuilder<T> extends Input<Player<any>, T> {
 	}
 }
 
-export function actionIdFieldConfig(field: string, actionIdSet: ACTION_ID_SET, unitRefField: string, options?: Partial<APLPickerBuilderFieldConfig<any, any>>): APLPickerBuilderFieldConfig<any, any> {
+export function actionIdFieldConfig(field: string, actionIdSet: ACTION_ID_SET, unitRefField?: string, options?: Partial<APLPickerBuilderFieldConfig<any, any>>): APLPickerBuilderFieldConfig<any, any> {
 	return {
 		field: field,
 		newValue: () => ActionID.create(),
@@ -352,12 +389,13 @@ export function actionIdFieldConfig(field: string, actionIdSet: ACTION_ID_SET, u
 	};
 }
 
-export function unitFieldConfig(field: string, options?: Partial<APLPickerBuilderFieldConfig<any, any>>): APLPickerBuilderFieldConfig<any, any> {
+export function unitFieldConfig(field: string, unitSet: UNIT_SET, options?: Partial<APLPickerBuilderFieldConfig<any, any>>): APLPickerBuilderFieldConfig<any, any> {
 	return {
 		field: field,
-		newValue: () => UnitReference.create(),
+		newValue: () => undefined,
 		factory: (parent, player, config) => new APLUnitPicker(parent, player, {
 			...config,
+			unitSet: unitSet,
 		}),
 		...(options || {}),
 	};

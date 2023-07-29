@@ -12,6 +12,8 @@ import {
 	APLValueCurrentTimePercent,
 	APLValueRemainingTime,
 	APLValueRemainingTimePercent,
+	APLValueIsExecutePhase,
+	APLValueIsExecutePhase_ExecutePhaseThreshold as ExecutePhaseThreshold,
 	APLValueCurrentHealth,
 	APLValueCurrentHealthPercent,
 	APLValueCurrentMana,
@@ -26,6 +28,7 @@ import {
 	APLValueCurrentNonDeathRuneCount,
 	APLValueGCDIsReady,
 	APLValueGCDTimeToReady,
+	APLValueAutoTimeToNext,
 	APLValueSpellCanCast,
 	APLValueSpellIsReady,
 	APLValueSpellTimeToReady,
@@ -264,6 +267,23 @@ function mathOperatorFieldConfig(field: string): AplHelpers.APLPickerBuilderFiel
 	};
 }
 
+function executePhaseThresholdFieldConfig(field: string): AplHelpers.APLPickerBuilderFieldConfig<any, any> {
+	return {
+		field: field,
+		newValue: () => ExecutePhaseThreshold.E20,
+		factory: (parent, player, config) => new TextDropdownPicker(parent, player, {
+			...config,
+			defaultLabel: 'None',
+			equals: (a, b) => a == b,
+			values: [
+				{ value: ExecutePhaseThreshold.E20, label: '20%' },
+				{ value: ExecutePhaseThreshold.E25, label: '25%' },
+				{ value: ExecutePhaseThreshold.E35, label: '35%' },
+			],
+		}),
+	};
+}
+
 export function valueFieldConfig(field: string, options?: Partial<AplHelpers.APLPickerBuilderFieldConfig<any, any>>): AplHelpers.APLPickerBuilderFieldConfig<any, any> {
 	return {
 		field: field,
@@ -411,6 +431,15 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		newValue: APLValueRemainingTimePercent.create,
 		fields: [],
 	}),
+	'isExecutePhase': inputBuilder({
+		label: 'Is Execute Phase',
+		submenu: ['Encounter'],
+		shortDescription: '<b>True</b> if the encounter is in Execute Phase, meaning the target\'s health is less than the given threshold, otherwise <b>False</b>.',
+		newValue: APLValueIsExecutePhase.create,
+		fields: [
+			executePhaseThresholdFieldConfig('threshold'),
+		],
+	}),
 	'numberTargets': inputBuilder({
 		label: 'Number of Targets',
 		submenu: ['Encounter'],
@@ -425,14 +454,18 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		submenu: ['Resources'],
 		shortDescription: 'Amount of currently available Health.',
 		newValue: APLValueCurrentHealth.create,
-		fields: [],
+		fields: [
+			AplHelpers.unitFieldConfig('sourceUnit', 'aura_sources'),
+		],
 	}),
 	'currentHealthPercent': inputBuilder({
 		label: 'Health (%)',
 		submenu: ['Resources'],
 		shortDescription: 'Amount of currently available Health, as a percentage.',
 		newValue: APLValueCurrentHealthPercent.create,
-		fields: [],
+		fields: [
+			AplHelpers.unitFieldConfig('sourceUnit', 'aura_sources'),
+		],
 	}),
 	'currentMana': inputBuilder({
 		label: 'Mana',
@@ -549,6 +582,15 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		fields: [],
 	}),
 
+	// Auto attacks
+	'autoTimeToNext': inputBuilder({
+		label: 'Time To Next Auto',
+		submenu: ['Auto'],
+		shortDescription: 'Amount of time remaining before the next Main-hand or Off-hand melee attack, or <b>0</b> if autoattacks are not engaged.',
+		newValue: APLValueAutoTimeToNext.create,
+		fields: [],
+	}),
+
 	// Spells
 	'spellCanCast': inputBuilder({
 		label: 'Can Cast',
@@ -615,7 +657,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		shortDescription: '<b>True</b> if the aura is currently active on self, otherwise <b>False</b>.',
 		newValue: APLValueAuraIsActive.create,
 		fields: [
-			AplHelpers.unitFieldConfig('sourceUnit'),
+			AplHelpers.unitFieldConfig('sourceUnit', 'aura_sources'),
 			AplHelpers.actionIdFieldConfig('auraId', 'auras', 'sourceUnit'),
 		],
 	}),
@@ -625,7 +667,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		shortDescription: 'Time remaining before this aura will expire, or 0 if the aura is not currently active on self.',
 		newValue: APLValueAuraRemainingTime.create,
 		fields: [
-			AplHelpers.unitFieldConfig('sourceUnit'),
+			AplHelpers.unitFieldConfig('sourceUnit', 'aura_sources'),
 			AplHelpers.actionIdFieldConfig('auraId', 'auras', 'sourceUnit'),
 		],
 	}),
@@ -635,7 +677,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		shortDescription: 'Number of stacks of the aura on self.',
 		newValue: APLValueAuraNumStacks.create,
 		fields: [
-			AplHelpers.unitFieldConfig('sourceUnit'),
+			AplHelpers.unitFieldConfig('sourceUnit', 'aura_sources'),
 			AplHelpers.actionIdFieldConfig('auraId', 'stackable_auras', 'sourceUnit'),
 		],
 	}),
@@ -645,7 +687,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		shortDescription: 'Time remaining before this aura can be applied again.',
 		newValue: APLValueAuraInternalCooldown.create,
 		fields: [
-			AplHelpers.unitFieldConfig('sourceUnit'),
+			AplHelpers.unitFieldConfig('sourceUnit', 'aura_sources'),
 			AplHelpers.actionIdFieldConfig('auraId', 'icd_auras', 'sourceUnit'),
 		],
 	}),

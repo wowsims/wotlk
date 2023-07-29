@@ -213,8 +213,7 @@ var basicRotation = &proto.Hunter_Rotation{
 }
 
 var aoeRotation = &proto.Hunter_Rotation{
-	TrapWeave:         true,
-	TimeToTrapWeaveMs: 2000,
+	TrapWeave: true,
 
 	ViperStartManaPercent: 0.2,
 	ViperStopManaPercent:  0.3,
@@ -226,6 +225,7 @@ var basicOptions = &proto.Hunter_Options{
 	PetTalents: FerocityTalents,
 	PetUptime:  0.9,
 
+	TimeToTrapWeaveMs:    2000,
 	SniperTrainingUptime: 0.8,
 	UseHuntersMark:       true,
 }

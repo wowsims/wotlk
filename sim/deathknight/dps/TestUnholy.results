@@ -246,9 +246,9 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-Deathbringer'sWill-50362"
  value: {
-  dps: 7866.42643
-  tps: 5175.95597
-  hps: 271.94125
+  dps: 7884.91581
+  tps: 5188.51623
+  hps: 274.15988
  }
 }
 dps_results: {
@@ -326,9 +326,9 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-EphemeralSnowflake-50260"
  value: {
-  dps: 7629.38183
-  tps: 4847.40665
-  hps: 266.55313
+  dps: 7647.62838
+  tps: 4839.58739
+  hps: 268.13787
  }
 }
 dps_results: {
@@ -974,9 +974,9 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
-  dps: 6409.14352
-  tps: 4146.33974
-  hps: 232.2799
+  dps: 6418.21376
+  tps: 4164.24933
+  hps: 231.7262
  }
 }
 dps_results: {
@@ -1006,9 +1006,9 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Average-Default"
  value: {
-  dps: 8074.51648
-  tps: 5161.44829
-  hps: 266.89722
+  dps: 8073.74693
+  tps: 5161.07521
+  hps: 266.85634
  }
 }
 dps_results: {

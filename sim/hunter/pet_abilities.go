@@ -351,6 +351,20 @@ func (hp *HunterPet) newFuriousHowl() *core.Spell {
 		},
 	})
 
+	hp.hunterOwner.RegisterSpell(core.SpellConfig{
+		ActionID: actionID,
+		Flags:    core.SpellFlagAPL | core.SpellFlagMCD,
+		Cast: core.CastConfig{
+			CD: howlSpell.CD,
+		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return howlSpell.CanCast(sim, target)
+		},
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, _ *core.Spell) {
+			howlSpell.Cast(sim, target)
+		},
+	})
+
 	hp.hunterOwner.AddMajorCooldown(core.MajorCooldown{
 		Spell: howlSpell,
 		Type:  core.CooldownTypeDPS,

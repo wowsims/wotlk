@@ -9,7 +9,6 @@ import (
 
 func (mage *Mage) registerArcaneMissilesSpell() {
 	spellCoeff := 1/3.5 + 0.03*float64(mage.Talents.ArcaneEmpowerment)
-	t10ProcAura := mage.BloodmagesRegalia2pcAura()
 	hasT8_4pc := mage.HasSetBonus(ItemSetKirinTorGarb, 4)
 
 	mage.ArcaneMissiles = mage.RegisterSpell(core.SpellConfig{
@@ -27,13 +26,6 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 			DefaultCast: core.Cast{
 				GCD:         core.GCDDefault,
 				ChannelTime: time.Second * 5,
-			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				if mage.MissileBarrageAura.IsActive() {
-					if t10ProcAura != nil {
-						t10ProcAura.Activate(sim)
-					}
-				}
 			},
 		},
 

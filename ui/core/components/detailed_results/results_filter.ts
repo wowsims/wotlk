@@ -34,10 +34,10 @@ export class ResultsFilter extends ResultComponent {
 				'player-filter-root',
 			],
 			changedEvent: (_filterData: FilterData) => this.changeEmitter,
-			sourceToValue: (src: UnitReference) => this.refToValue(src),
+			sourceToValue: (src: UnitReference|undefined) => this.refToValue(src),
 			valueToSource: (val: UnitValue) => val.value,
 			getValue: (filterData: FilterData) => this.numToRef(filterData.player, true),
-			setValue: (eventID: EventID, filterData: FilterData, newValue: UnitReference) => this.setPlayer(eventID, this.refToNum(newValue)),
+			setValue: (eventID: EventID, filterData: FilterData, newValue: UnitReference|undefined) => this.setPlayer(eventID, this.refToNum(newValue)),
 			values: [],
 		});
 
@@ -46,10 +46,10 @@ export class ResultsFilter extends ResultComponent {
 				'target-filter-root',
 			],
 			changedEvent: (_filterData: FilterData) => this.changeEmitter,
-			sourceToValue: (src: UnitReference) => this.refToValue(src),
+			sourceToValue: (src: UnitReference|undefined) => this.refToValue(src),
 			valueToSource: (val: UnitValue) => val.value,
 			getValue: (filterData: FilterData) => this.numToRef(filterData.target, false),
-			setValue: (eventID: EventID, filterData: FilterData, newValue: UnitReference) => this.setTarget(eventID, this.refToNum(newValue)),
+			setValue: (eventID: EventID, filterData: FilterData, newValue: UnitReference|undefined) => this.setTarget(eventID, this.refToNum(newValue)),
 			values: [],
 		});
 	}
@@ -76,8 +76,12 @@ export class ResultsFilter extends ResultComponent {
 		this.changeEmitter.emit(eventID);
 	}
 
-	private refToValue(ref: UnitReference): UnitValue {
-		if (ref.type == UnitType.AllPlayers) {
+	private refToValue(ref: UnitReference|undefined): UnitValue {
+		if (!ref || ref.type == UnitType.Unknown) {
+			return {
+				value: ref,
+			};
+		} else if (ref.type == UnitType.AllPlayers) {
 			return {
 				iconUrl: '',
 				text: 'All Players',
@@ -114,8 +118,8 @@ export class ResultsFilter extends ResultComponent {
 		};
 	}
 
-	private refToNum(ref: UnitReference): number {
-		return (ref.type == UnitType.AllPlayers || ref.type == UnitType.AllTargets) ? ALL_UNITS : ref.index;
+	private refToNum(ref: UnitReference|undefined): number {
+		return (!ref || ref.type == UnitType.AllPlayers || ref.type == UnitType.AllTargets) ? ALL_UNITS : ref.index;
 	}
 
 	private numToRef(idx: number, isPlayer: boolean): UnitReference {

@@ -6,12 +6,16 @@ import (
 
 type APLValueCurrentHealth struct {
 	defaultAPLValueImpl
-	unit *Unit
+	unit UnitReference
 }
 
 func (rot *APLRotation) newValueCurrentHealth(config *proto.APLValueCurrentHealth) APLValue {
-	unit := rot.unit
-	if !unit.HasHealthBar() {
+	unit := rot.getSourceUnit(config.SourceUnit)
+	if unit.Get() == nil {
+		return nil
+	}
+	if !unit.Get().HasHealthBar() {
+		rot.validationWarning("%s does not use Health", unit.Get().Label)
 		return nil
 	}
 	return &APLValueCurrentHealth{
@@ -22,17 +26,21 @@ func (value *APLValueCurrentHealth) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeFloat
 }
 func (value *APLValueCurrentHealth) GetFloat(sim *Simulation) float64 {
-	return value.unit.CurrentHealth()
+	return value.unit.Get().CurrentHealth()
 }
 
 type APLValueCurrentHealthPercent struct {
 	defaultAPLValueImpl
-	unit *Unit
+	unit UnitReference
 }
 
 func (rot *APLRotation) newValueCurrentHealthPercent(config *proto.APLValueCurrentHealthPercent) APLValue {
-	unit := rot.unit
-	if !unit.HasHealthBar() {
+	unit := rot.getSourceUnit(config.SourceUnit)
+	if unit.Get() == nil {
+		return nil
+	}
+	if !unit.Get().HasHealthBar() {
+		rot.validationWarning("%s does not use Health", unit.Get().Label)
 		return nil
 	}
 	return &APLValueCurrentHealthPercent{
@@ -43,17 +51,21 @@ func (value *APLValueCurrentHealthPercent) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeFloat
 }
 func (value *APLValueCurrentHealthPercent) GetFloat(sim *Simulation) float64 {
-	return value.unit.CurrentHealthPercent()
+	return value.unit.Get().CurrentHealthPercent()
 }
 
 type APLValueCurrentMana struct {
 	defaultAPLValueImpl
-	unit *Unit
+	unit UnitReference
 }
 
 func (rot *APLRotation) newValueCurrentMana(config *proto.APLValueCurrentMana) APLValue {
-	unit := rot.unit
-	if !unit.HasManaBar() {
+	unit := rot.getSourceUnit(config.SourceUnit)
+	if unit.Get() == nil {
+		return nil
+	}
+	if !unit.Get().HasManaBar() {
+		rot.validationWarning("%s does not use Mana", unit.Get().Label)
 		return nil
 	}
 	return &APLValueCurrentMana{
@@ -64,17 +76,21 @@ func (value *APLValueCurrentMana) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeFloat
 }
 func (value *APLValueCurrentMana) GetFloat(sim *Simulation) float64 {
-	return value.unit.CurrentMana()
+	return value.unit.Get().CurrentMana()
 }
 
 type APLValueCurrentManaPercent struct {
 	defaultAPLValueImpl
-	unit *Unit
+	unit UnitReference
 }
 
 func (rot *APLRotation) newValueCurrentManaPercent(config *proto.APLValueCurrentManaPercent) APLValue {
-	unit := rot.unit
-	if !unit.HasManaBar() {
+	unit := rot.getSourceUnit(config.SourceUnit)
+	if unit.Get() == nil {
+		return nil
+	}
+	if !unit.Get().HasManaBar() {
+		rot.validationWarning("%s does not use Mana", unit.Get().Label)
 		return nil
 	}
 	return &APLValueCurrentManaPercent{
@@ -85,7 +101,7 @@ func (value *APLValueCurrentManaPercent) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeFloat
 }
 func (value *APLValueCurrentManaPercent) GetFloat(sim *Simulation) float64 {
-	return value.unit.CurrentManaPercent()
+	return value.unit.Get().CurrentManaPercent()
 }
 
 type APLValueCurrentRage struct {
@@ -96,6 +112,7 @@ type APLValueCurrentRage struct {
 func (rot *APLRotation) newValueCurrentRage(config *proto.APLValueCurrentRage) APLValue {
 	unit := rot.unit
 	if !unit.HasRageBar() {
+		rot.validationWarning("%s does not use Rage", unit.Label)
 		return nil
 	}
 	return &APLValueCurrentRage{
@@ -117,6 +134,7 @@ type APLValueCurrentEnergy struct {
 func (rot *APLRotation) newValueCurrentEnergy(config *proto.APLValueCurrentEnergy) APLValue {
 	unit := rot.unit
 	if !unit.HasEnergyBar() {
+		rot.validationWarning("%s does not use Energy", unit.Label)
 		return nil
 	}
 	return &APLValueCurrentEnergy{
@@ -138,6 +156,7 @@ type APLValueCurrentComboPoints struct {
 func (rot *APLRotation) newValueCurrentComboPoints(config *proto.APLValueCurrentComboPoints) APLValue {
 	unit := rot.unit
 	if !unit.HasEnergyBar() {
+		rot.validationWarning("%s does not use Combo Points", unit.Label)
 		return nil
 	}
 	return &APLValueCurrentComboPoints{
@@ -159,6 +178,7 @@ type APLValueCurrentRunicPower struct {
 func (rot *APLRotation) newValueCurrentRunicPower(config *proto.APLValueCurrentRunicPower) APLValue {
 	unit := rot.unit
 	if !unit.HasRunicPowerBar() {
+		rot.validationWarning("%s does not use Runic Power", unit.Label)
 		return nil
 	}
 	return &APLValueCurrentRunicPower{
