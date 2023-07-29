@@ -189,8 +189,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralDoubleArmorPenTrinketsWithDesync-AllItems-DeathKnight'sAnguish-38212"
  value: {
-  dps: 9746.14218
-  tps: 6983.32962
+  dps: 9794.67709
+  tps: 7018.01376
  }
 }
 dps_results: {

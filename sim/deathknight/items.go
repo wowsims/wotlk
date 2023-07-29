@@ -407,7 +407,7 @@ func init() {
 		procMask := core.GetMeleeProcMaskForHands(mh, oh)
 		ppmm := character.AutoAttacks.NewPPMManager(2.0, procMask)
 
-		rfcAura := newRuneOfTheFallenCrusaderAura(character, "Rune Of The Fallen Crusader Proc", core.ActionID{SpellID: 53344})
+		rfcAura := newRuneOfTheFallenCrusaderAura(character, "Rune Of The Fallen Crusader Proc", core.ActionID{SpellID: 53365})
 
 		aura := character.GetOrRegisterAura(core.Aura{
 			Label:    "Rune Of The Fallen Crusader",
@@ -703,7 +703,7 @@ func init() {
 
 	core.NewItemEffect(47673, func(agent core.Agent) {
 		dk := agent.(DeathKnightAgent).GetDeathKnight()
-		procAura := dk.NewTemporaryStatsAura("Sigil of Virulence Proc", core.ActionID{ItemID: 47673}, stats.Stats{stats.Strength: 200.0}, time.Second*20)
+		procAura := dk.NewTemporaryStatsAura("Sigil of Virulence Proc", core.ActionID{SpellID: 67383}, stats.Stats{stats.Strength: 200.0}, time.Second*20)
 
 		icd := core.Cooldown{
 			Timer:    dk.NewTimer(),
