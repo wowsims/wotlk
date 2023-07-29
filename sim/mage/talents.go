@@ -70,6 +70,7 @@ func (mage *Mage) applyHotStreak() {
 	}
 
 	procChance := float64(mage.Talents.HotStreak) / 3
+	t10ProcAura := mage.BloodmagesRegalia2pcAura()
 
 	mage.HotStreakAura = mage.RegisterAura(core.Aura{
 		Label:    "HotStreak",
@@ -81,11 +82,14 @@ func (mage *Mage) applyHotStreak() {
 		//		mage.Pyroblast.CastTimeMultiplier -= 1
 		//	}
 		//},
-		//OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-		//	if mage.Pyroblast != nil {
-		//		mage.Pyroblast.CastTimeMultiplier += 1
-		//	}
-		//},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			//if mage.Pyroblast != nil {
+			//	mage.Pyroblast.CastTimeMultiplier += 1
+			//}
+			if t10ProcAura != nil {
+				t10ProcAura.Activate(sim)
+			}
+		},
 	})
 
 	mage.hotStreakCritAura = mage.RegisterAura(core.Aura{
@@ -223,6 +227,8 @@ func (mage *Mage) applyMissileBarrage() {
 		return
 	}
 
+	t10ProcAura := mage.BloodmagesRegalia2pcAura()
+
 	procChance := float64(mage.Talents.MissileBarrage) * .04
 	mage.MissileBarrageAura = mage.RegisterAura(core.Aura{
 		Label:    "Missile Barrage Proc",
@@ -235,6 +241,9 @@ func (mage *Mage) applyMissileBarrage() {
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			mage.ArcaneMissiles.CostMultiplier += 100
 			mage.ArcaneMissiles.CastTimeMultiplier *= 2
+			if t10ProcAura != nil {
+				t10ProcAura.Activate(sim)
+			}
 		},
 	})
 
@@ -701,14 +710,14 @@ func (mage *Mage) applyBrainFreeze() {
 			mage.Fireball.CastTimeMultiplier += 1
 			mage.FrostfireBolt.CostMultiplier += 100
 			mage.FrostfireBolt.CastTimeMultiplier += 1
+			if t10ProcAura != nil {
+				t10ProcAura.Activate(sim)
+			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell == mage.FrostfireBolt || spell == mage.Fireball {
 				if !hasT8_4pc || sim.RandomFloat("MageT84PC") > T84PcProcChance {
 					aura.Deactivate(sim)
-				}
-				if t10ProcAura != nil {
-					t10ProcAura.Activate(sim)
 				}
 			}
 		},
