@@ -56,3 +56,29 @@ func (action *APLActionCancelAura) Execute(sim *Simulation) {
 	}
 	action.aura.Deactivate(sim)
 }
+
+type APLActionTriggerICD struct {
+	aura *Aura
+}
+
+func (rot *APLRotation) newActionTriggerICD(config *proto.APLActionTriggerICD) APLActionImpl {
+	aura := rot.aplGetICDAura(&proto.UnitReference{Type: proto.UnitReference_Self}, config.AuraId)
+	if aura.Get() == nil {
+		return nil
+	}
+	return &APLActionTriggerICD{
+		aura: aura.Get(),
+	}
+}
+func (action *APLActionTriggerICD) GetInnerActions() []*APLAction { return nil }
+func (action *APLActionTriggerICD) Finalize(*APLRotation)         {}
+func (action *APLActionTriggerICD) Reset(*Simulation)             {}
+func (action *APLActionTriggerICD) IsReady(sim *Simulation) bool {
+	return action.aura.IsActive()
+}
+func (action *APLActionTriggerICD) Execute(sim *Simulation) {
+	if sim.Log != nil {
+		action.aura.Unit.Log(sim, "Triggering ICD %s", action.aura.ActionID)
+	}
+	action.aura.Icd.Use(sim)
+}

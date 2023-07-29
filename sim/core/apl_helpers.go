@@ -108,7 +108,7 @@ func (rot *APLRotation) aplGetAura(sourceRef *proto.UnitReference, auraId *proto
 	return aura
 }
 
-func (rot *APLRotation) aplGetProcAura(sourceRef *proto.UnitReference, auraId *proto.ActionID) AuraReference {
+func (rot *APLRotation) aplGetICDAura(sourceRef *proto.UnitReference, auraId *proto.ActionID) AuraReference {
 	sourceUnit := rot.getSourceUnit(sourceRef)
 	if sourceUnit.Get() == nil {
 		return AuraReference{}

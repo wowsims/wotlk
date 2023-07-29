@@ -80,6 +80,8 @@ func (rot *APLRotation) newAPLActionImpl(config *proto.APLAction) APLActionImpl 
 		return rot.newActionChangeTarget(config.GetChangeTarget())
 	case *proto.APLAction_CancelAura:
 		return rot.newActionCancelAura(config.GetCancelAura())
+	case *proto.APLAction_TriggerIcd:
+		return rot.newActionTriggerICD(config.GetTriggerIcd())
 	case *proto.APLAction_Wait:
 		return rot.newActionWait(config.GetWait())
 	default:

@@ -8,6 +8,7 @@ import {
 	APLActionAutocastOtherCooldowns,
 	APLActionChangeTarget,
 	APLActionCancelAura,
+	APLActionTriggerICD,
 	APLActionWait,
 	APLValue,
 } from '../../proto/apl.js';
@@ -388,6 +389,16 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 		newValue: () => APLActionCancelAura.create(),
 		fields: [
 			AplHelpers.actionIdFieldConfig('auraId', 'auras'),
+		],
+	}),
+	['triggerIcd']: inputBuilder({
+		label: 'Trigger ICD',
+		submenu: ['Misc'],
+		shortDescription: 'Triggers an aura\'s ICD, putting it on cooldown. Example usage would be to desync an ICD cooldown before combat starts.',
+		isPrepull: true,
+		newValue: () => APLActionTriggerICD.create(),
+		fields: [
+			AplHelpers.actionIdFieldConfig('auraId', 'icd_auras'),
 		],
 	}),
 };
