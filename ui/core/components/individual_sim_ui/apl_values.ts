@@ -12,6 +12,8 @@ import {
 	APLValueCurrentTimePercent,
 	APLValueRemainingTime,
 	APLValueRemainingTimePercent,
+	APLValueIsExecutePhase,
+	APLValueIsExecutePhase_ExecutePhaseThreshold as ExecutePhaseThreshold,
 	APLValueCurrentHealth,
 	APLValueCurrentHealthPercent,
 	APLValueCurrentMana,
@@ -265,6 +267,23 @@ function mathOperatorFieldConfig(field: string): AplHelpers.APLPickerBuilderFiel
 	};
 }
 
+function executePhaseThresholdFieldConfig(field: string): AplHelpers.APLPickerBuilderFieldConfig<any, any> {
+	return {
+		field: field,
+		newValue: () => ExecutePhaseThreshold.E20,
+		factory: (parent, player, config) => new TextDropdownPicker(parent, player, {
+			...config,
+			defaultLabel: 'None',
+			equals: (a, b) => a == b,
+			values: [
+				{ value: ExecutePhaseThreshold.E20, label: '20%' },
+				{ value: ExecutePhaseThreshold.E25, label: '25%' },
+				{ value: ExecutePhaseThreshold.E35, label: '35%' },
+			],
+		}),
+	};
+}
+
 export function valueFieldConfig(field: string, options?: Partial<AplHelpers.APLPickerBuilderFieldConfig<any, any>>): AplHelpers.APLPickerBuilderFieldConfig<any, any> {
 	return {
 		field: field,
@@ -411,6 +430,15 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		shortDescription: 'Elapsed time of the remaining sim iteration, as a percentage.',
 		newValue: APLValueRemainingTimePercent.create,
 		fields: [],
+	}),
+	'isExecutePhase': inputBuilder({
+		label: 'Is Execute Phase',
+		submenu: ['Encounter'],
+		shortDescription: '<b>True</b> if the encounter is in Execute Phase, meaning the target\'s health is less than the given threshold, otherwise <b>False</b>.',
+		newValue: APLValueIsExecutePhase.create,
+		fields: [
+			executePhaseThresholdFieldConfig('threshold'),
+		],
 	}),
 	'numberTargets': inputBuilder({
 		label: 'Number of Targets',

@@ -45,6 +45,7 @@ message APLAction {
     }
 }
 
+// NextIndex: 42
 message APLValue {
     oneof value {
         // Operators
@@ -60,6 +61,7 @@ message APLValue {
         APLValueCurrentTimePercent current_time_percent = 8;
         APLValueRemainingTime remaining_time = 9;
         APLValueRemainingTimePercent remaining_time_percent = 10;
+        APLValueIsExecutePhase is_execute_phase = 41;
         APLValueNumberTargets number_targets = 28;
 
         // Resource values
@@ -104,8 +106,6 @@ message APLValue {
         // Dot values
         APLValueDotIsActive dot_is_active = 6;
         APLValueDotRemainingTime dot_remaining_time = 13;
-
-        // Last Index - 35
     }
 }
 
@@ -217,6 +217,15 @@ message APLValueCurrentTimePercent {}
 message APLValueRemainingTime {}
 message APLValueRemainingTimePercent {}
 message APLValueNumberTargets {}
+message APLValueIsExecutePhase {
+    enum ExecutePhaseThreshold {
+        Unknown = 0;
+        E20 = 1;
+        E25 = 2;
+        E35 = 3;
+    }
+    ExecutePhaseThreshold threshold = 1;
+}
 
 message APLValueCurrentHealth {
     UnitReference source_unit = 1;
