@@ -83,6 +83,9 @@ message APLValue {
         APLValueGCDIsReady gcd_is_ready = 17;
         APLValueGCDTimeToReady gcd_time_to_ready = 18;
 
+        // Autoattack values
+        APLValueAutoTimeToNext auto_time_to_next = 40;
+
         // Spell values
         APLValueSpellCanCast spell_can_cast = 19;
         APLValueSpellIsReady spell_is_ready = 20;
@@ -265,6 +268,8 @@ message APLValueNextRuneCooldown{
 
 message APLValueGCDIsReady {}
 message APLValueGCDTimeToReady {}
+
+message APLValueAutoTimeToNext {}
 
 message APLValueSpellCanCast {
     ActionID spell_id = 1;

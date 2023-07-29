@@ -26,6 +26,7 @@ import {
 	APLValueCurrentNonDeathRuneCount,
 	APLValueGCDIsReady,
 	APLValueGCDTimeToReady,
+	APLValueAutoTimeToNext,
 	APLValueSpellCanCast,
 	APLValueSpellIsReady,
 	APLValueSpellTimeToReady,
@@ -550,6 +551,15 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		submenu: ['GCD'],
 		shortDescription: 'Amount of time remaining before the GCD comes off cooldown, or <b>0</b> if it is not on cooldown.',
 		newValue: APLValueGCDTimeToReady.create,
+		fields: [],
+	}),
+
+	// Auto attacks
+	'autoTimeToNext': inputBuilder({
+		label: 'Time To Next Auto',
+		submenu: ['Auto'],
+		shortDescription: 'Amount of time remaining before the next Main-hand or Off-hand melee attack, or <b>0</b> if autoattacks are not engaged.',
+		newValue: APLValueAutoTimeToNext.create,
 		fields: [],
 	}),
 
