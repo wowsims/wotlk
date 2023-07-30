@@ -215,8 +215,8 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 		yellowGemCaps.push([40125, hitCap]);
 		yellowGemCaps.push([40162, hitCap.add(expCap)]);
 		yellowGemCaps.push([40148, hitCap.add(critCap)]);
-		yellowGemCaps.push([40147, critCap]);
 		yellowGemCaps.push([40143, hitCap]);
+		yellowGemCaps.push([40147, critCap]);
 		yellowGemCaps.push([40142, critCap]);
 		yellowGemCaps.push([40146, new Stats()]);
 		await this.fillGemsToCaps(optimizedGear, yellowSockets, yellowGemCaps, 0, 0);
@@ -273,9 +273,10 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 		return new Stats().withStat(Stat.StatMeleeCrit, (baseCritCapPercentage - agiProcs*1.1*1.06*1.02/83.33) * 45.91);
 	}
 
-	async updateGear(gear: Gear) {
+	async updateGear(gear: Gear): Promise<Stats> {
 		this.player.setGear(TypedEvent.nextEventID(), gear);
 		await this.sim.updateCharacterStats(TypedEvent.nextEventID());
+		return Stats.fromProto(this.player.getCurrentStats().finalStats);
 	}
 
 	findTearSlot(gear: Gear, epWeights: Stats): ItemSlot | null {
@@ -352,41 +353,50 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 
 	async fillGemsToCaps(gear: Gear, socketList: Array<[ItemSlot, number]>, gemCaps: Array<[number, Stats]>, numPasses: number, firstIdx: number): Promise<Gear> {
 		let updatedGear: Gear = gear;
-		let nextGem = this.sim.db.lookupGem(gemCaps[numPasses][0]);
+		const currentGem = this.sim.db.lookupGem(gemCaps[numPasses][0]);
 
 		// On the first pass, we simply fill all sockets with the highest priority gem
 		if (numPasses == 0) {
 			for (const [itemSlot, socketIdx] of socketList.slice(firstIdx)) {
-				updatedGear = updatedGear.withGem(itemSlot, socketIdx, nextGem);
+				updatedGear = updatedGear.withGem(itemSlot, socketIdx, currentGem);
 			}
 		}
 
-		// Update player stats after the last pass
-		await this.updateGear(updatedGear);
-
 		// If we are below the relevant stat cap for the gem we just filled on the last pass, then we are finished.
-		let newStats = Stats.fromProto(this.player.getCurrentStats().finalStats);
+		let newStats = await this.updateGear(updatedGear);
+		const currentCap = gemCaps[numPasses][1];
 
-		if (newStats.belowCaps(gemCaps[numPasses][1]) || (numPasses == gemCaps.length - 1)) {
+		if (newStats.belowCaps(currentCap) || (numPasses == gemCaps.length - 1)) {
 			return updatedGear;
 		}
 
 		// If we exceeded the stat cap, then work backwards through the socket list and replace each gem with the next highest priority option until we are below the cap
-		nextGem = this.sim.db.lookupGem(gemCaps[numPasses + 1][0]);
+		const nextGem = this.sim.db.lookupGem(gemCaps[numPasses + 1][0]);
+		const nextCap = gemCaps[numPasses + 1][1];
+		let capForReplacement = currentCap;
+
+		if ((numPasses > 0) && !currentCap.equals(nextCap)) {
+			capForReplacement = currentCap.subtract(nextCap);
+		}
 
 		for (var idx = socketList.length - 1; idx >= firstIdx; idx--) {
-			if (newStats.belowCaps(gemCaps[numPasses][1])) {
+			if (newStats.belowCaps(capForReplacement)) {
 				break;
 			}
 
 			const [itemSlot, socketIdx] = socketList[idx];
 			updatedGear = updatedGear.withGem(itemSlot, socketIdx, nextGem);
-			await this.updateGear(updatedGear);
-			newStats = Stats.fromProto(this.player.getCurrentStats().finalStats);
+			newStats = await this.updateGear(updatedGear);
 		}
 
 		// Now run a new pass to check whether we've exceeded the next stat cap
-		return await this.fillGemsToCaps(updatedGear, socketList, gemCaps, numPasses + 1, idx + 1);
+		let nextIdx = idx + 1;
+
+		if (!newStats.belowCaps(currentCap)) {
+			nextIdx = firstIdx;
+		}
+
+		return await this.fillGemsToCaps(updatedGear, socketList, gemCaps, numPasses + 1, nextIdx);
 	}
 
 	calcDistanceToArpTarget(numJcArpGems: number, passiveArp: number, numRedSockets: number, arpCap: number, arpTarget: number): number {
