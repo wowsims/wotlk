@@ -113,7 +113,7 @@ export const ROTATION_PRESET_BM = {
 		rotation: APLRotation.fromJsonString(`{
       		"enabled": true,
       		"prepullActions": [
-      		  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAt":"-1s"}
+			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
       		],
       		"priorityList": [
       		  {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"10s"}}}},"autocastOtherCooldowns":{}}},
@@ -139,7 +139,7 @@ export const ROTATION_PRESET_MM = {
 		rotation: APLRotation.fromJsonString(`{
 			"enabled": true,
 			"prepullActions": [
-				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAt":"-1s"}
+				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
 			],
 			"priorityList": [
 				{"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"10s"}}}},"autocastOtherCooldowns":{}}},
@@ -167,7 +167,7 @@ export const ROTATION_PRESET_SV = {
 		rotation: APLRotation.fromJsonString(`{
       		"enabled": true,
       		"prepullActions": [
-      		  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAt":"-1s"}
+			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
       		],
       		"priorityList": [
       		  {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"10s"}}}},"autocastOtherCooldowns":{}}},
@@ -195,7 +195,7 @@ export const ROTATION_PRESET_AOE = {
 		rotation: APLRotation.fromJsonString(`{
       		"enabled": true,
       		"prepullActions": [
-      		  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAt":"-1s"}
+			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
       		],
       		"priorityList": [
       		  {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"10s"}}}},"autocastOtherCooldowns":{}}},

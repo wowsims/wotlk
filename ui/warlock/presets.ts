@@ -525,13 +525,12 @@ export const APL_Demo_Default = {
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalentTree() == 1,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: WarlockRotation.toJsonString(DemonologyRotation),
-		rotation: APLRotation.fromJsonString(`
-{
+		rotation: APLRotation.fromJsonString(`{
     "enabled": true,
     "prepullActions": [
-        { "action": { "castSpell": { "spellId": { "spellId": 57946 } } }, "doAt": "-4s" },
-        { "action": { "castSpell": { "spellId": { "otherId": "OtherActionPotion" } } }, "doAt": "-2.5s" },
-        { "action": { "castSpell": { "spellId": { "spellId": 47809 } } }, "doAt": "-2.5s" }
+	  {"action":{"castSpell":{"spellId":{"spellId":57946}}},"doAtValue":{"const":{"val":"-4s"}}},
+      {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-2.5s"}}},
+      {"action":{"castSpell":{"spellId":{"spellId":47809}}},"doAtValue":{"const":{"val":"-2.5s"}}}
     ],
     "priorityList": [
         { "action": { "autocastOtherCooldowns": {} } },
@@ -582,13 +581,12 @@ export const APL_Destro_Default = {
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalentTree() == 2,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: WarlockRotation.toJsonString(DestructionRotation),
-		rotation: APLRotation.fromJsonString(`
-{
+		rotation: APLRotation.fromJsonString(`{
     "enabled": true,
     "prepullActions": [
-      { "action": { "castSpell": { "spellId": { "spellId": 57946 } } }, "doAt": "-5s" },
-      { "action": { "castSpell": { "spellId": { "otherId": "OtherActionPotion" } } }, "doAt": "-3.5s" },
-      { "action": { "castSpell": { "spellId": { "spellId": 47825 } } }, "doAt": "-3.5s" }
+	  {"action":{"castSpell":{"spellId":{"spellId":57946}}},"doAtValue":{"const":{"val":"-5s"}}},
+      {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-3.5s"}}},
+      {"action":{"castSpell":{"spellId":{"spellId":47825}}},"doAtValue":{"const":{"val":"-3.5s"}}}
     ],
     "priorityList": [
       { "action": { "autocastOtherCooldowns": {} } },
