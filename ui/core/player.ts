@@ -1118,6 +1118,7 @@ export class Player<SpecType extends Spec> {
 					ppa.doAtValue = APLValue.create({
 						value: {oneofKind: 'const', const: { val: ppa.doAt }}
 					});
+					ppa.doAt = '';
 				}
 			});
 		}
@@ -1165,6 +1166,8 @@ export class Player<SpecType extends Spec> {
 					const options = this.getSpecOptions() as SpecOptions<Spec.SpecHunter>;
 					options.timeToTrapWeaveMs = rot.timeToTrapWeaveMs;
 					this.setSpecOptions(eventID, options as SpecOptions<SpecType>);
+					rot.timeToTrapWeaveMs = 0;
+					this.setRotation(eventID, rot as SpecRotation<SpecType>);
 				}
 			}
 		});
