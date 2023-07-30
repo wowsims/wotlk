@@ -191,7 +191,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 		// Rank order red gems to use with their associated stat caps
 		const redGemCaps = new Array<[number, Stats]>();
 		redGemCaps.push([40117, this.calcArpCap(optimizedGear)]);
-		const expCap = new Stats().withStat(Stat.StatExpertise, 6.5 * 32.79);
+		const expCap = new Stats().withStat(Stat.StatExpertise, 6.5 * 32.79 + 4);
 		redGemCaps.push([40118, expCap]);
 		const critCap = this.calcCritCap(optimizedGear);
 		redGemCaps.push([40112, critCap]);
@@ -211,7 +211,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 		// Now repeat the process for yellow gems
 		const yellowSockets = this.findSocketsByColor(optimizedGear, epWeights, GemColor.GemColorYellow, tearSlot);
 		const yellowGemCaps = new Array<[number, Stats]>();
-		const hitCap = new Stats().withStat(Stat.StatMeleeHit, 8. * 32.79);
+		const hitCap = new Stats().withStat(Stat.StatMeleeHit, 8. * 32.79 + 4);
 		yellowGemCaps.push([40125, hitCap]);
 		yellowGemCaps.push([40162, hitCap.add(expCap)]);
 		yellowGemCaps.push([40148, hitCap.add(critCap)]);
@@ -223,7 +223,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 	}
 
 	calcArpCap(gear: Gear): Stats {
-		let arpCap = 1400;
+		let arpCap = 1404;
 
 		if (gear.hasTrinket(45931)) {
 			arpCap = 659;
