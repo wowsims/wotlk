@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -26,6 +27,9 @@ func (value *APLValueSpellCanCast) Type() proto.APLValueType {
 func (value *APLValueSpellCanCast) GetBool(sim *Simulation) bool {
 	return value.spell.CanCast(sim, value.spell.Unit.CurrentTarget)
 }
+func (value *APLValueSpellCanCast) String() string {
+	return fmt.Sprintf("Can Cast(%s)", value.spell.ActionID)
+}
 
 type APLValueSpellIsReady struct {
 	defaultAPLValueImpl
@@ -46,6 +50,9 @@ func (value *APLValueSpellIsReady) Type() proto.APLValueType {
 }
 func (value *APLValueSpellIsReady) GetBool(sim *Simulation) bool {
 	return value.spell.IsReady(sim)
+}
+func (value *APLValueSpellIsReady) String() string {
+	return fmt.Sprintf("Is Ready(%s)", value.spell.ActionID)
 }
 
 type APLValueSpellTimeToReady struct {
@@ -68,6 +75,9 @@ func (value *APLValueSpellTimeToReady) Type() proto.APLValueType {
 func (value *APLValueSpellTimeToReady) GetDuration(sim *Simulation) time.Duration {
 	return value.spell.TimeToReady(sim)
 }
+func (value *APLValueSpellTimeToReady) String() string {
+	return fmt.Sprintf("Time To Ready(%s)", value.spell.ActionID)
+}
 
 type APLValueSpellCastTime struct {
 	defaultAPLValueImpl
@@ -88,6 +98,9 @@ func (value *APLValueSpellCastTime) Type() proto.APLValueType {
 }
 func (value *APLValueSpellCastTime) GetDuration(sim *Simulation) time.Duration {
 	return value.spell.Unit.ApplyCastSpeedForSpell(value.spell.DefaultCast.CastTime, value.spell)
+}
+func (value *APLValueSpellCastTime) String() string {
+	return fmt.Sprintf("Cast Time(%s)", value.spell.ActionID)
 }
 
 type APLValueSpellChannelTime struct {
@@ -110,6 +123,9 @@ func (value *APLValueSpellChannelTime) Type() proto.APLValueType {
 func (value *APLValueSpellChannelTime) GetDuration(sim *Simulation) time.Duration {
 	return value.spell.Unit.ApplyCastSpeedForSpell(value.spell.DefaultCast.ChannelTime, value.spell)
 }
+func (value *APLValueSpellChannelTime) String() string {
+	return fmt.Sprintf("Channel Time(%s)", value.spell.ActionID)
+}
 
 type APLValueSpellTravelTime struct {
 	defaultAPLValueImpl
@@ -130,4 +146,7 @@ func (value *APLValueSpellTravelTime) Type() proto.APLValueType {
 }
 func (value *APLValueSpellTravelTime) GetDuration(sim *Simulation) time.Duration {
 	return time.Duration(float64(time.Second) * value.spell.Unit.DistanceFromTarget / value.spell.MissileSpeed)
+}
+func (value *APLValueSpellTravelTime) String() string {
+	return fmt.Sprintf("Travel Time(%s)", value.spell.ActionID)
 }

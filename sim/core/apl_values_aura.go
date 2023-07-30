@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -26,6 +27,9 @@ func (value *APLValueAuraIsActive) Type() proto.APLValueType {
 func (value *APLValueAuraIsActive) GetBool(sim *Simulation) bool {
 	return value.aura.Get().IsActive()
 }
+func (value *APLValueAuraIsActive) String() string {
+	return fmt.Sprintf("Aura Is Active(%s)", value.aura.String())
+}
 
 type APLValueAuraRemainingTime struct {
 	defaultAPLValueImpl
@@ -46,6 +50,9 @@ func (value *APLValueAuraRemainingTime) Type() proto.APLValueType {
 }
 func (value *APLValueAuraRemainingTime) GetDuration(sim *Simulation) time.Duration {
 	return value.aura.Get().RemainingDuration(sim)
+}
+func (value *APLValueAuraRemainingTime) String() string {
+	return fmt.Sprintf("Aura Remaining Time(%s)", value.aura.String())
 }
 
 type APLValueAuraNumStacks struct {
@@ -72,6 +79,9 @@ func (value *APLValueAuraNumStacks) Type() proto.APLValueType {
 func (value *APLValueAuraNumStacks) GetInt(sim *Simulation) int32 {
 	return value.aura.Get().GetStacks()
 }
+func (value *APLValueAuraNumStacks) String() string {
+	return fmt.Sprintf("Aura Num Stacks(%s)", value.aura.String())
+}
 
 type APLValueAuraInternalCooldown struct {
 	defaultAPLValueImpl
@@ -92,4 +102,7 @@ func (value *APLValueAuraInternalCooldown) Type() proto.APLValueType {
 }
 func (value *APLValueAuraInternalCooldown) GetDuration(sim *Simulation) time.Duration {
 	return value.aura.Get().Icd.TimeToReady(sim)
+}
+func (value *APLValueAuraInternalCooldown) String() string {
+	return fmt.Sprintf("Aura ICD(%s)", value.aura.String())
 }

@@ -1,10 +1,13 @@
 package core
 
 import (
+	"fmt"
+
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 type APLActionChangeTarget struct {
+	defaultAPLActionImpl
 	unit      *Unit
 	newTarget UnitReference
 }
@@ -18,9 +21,6 @@ func (rot *APLRotation) newActionChangeTarget(config *proto.APLActionChangeTarge
 		newTarget: newTarget,
 	}
 }
-func (action *APLActionChangeTarget) GetInnerActions() []*APLAction { return nil }
-func (action *APLActionChangeTarget) Finalize(*APLRotation)         {}
-func (action *APLActionChangeTarget) Reset(*Simulation)             {}
 func (action *APLActionChangeTarget) IsReady(sim *Simulation) bool {
 	return action.unit.CurrentTarget != action.newTarget.Get()
 }
@@ -30,8 +30,12 @@ func (action *APLActionChangeTarget) Execute(sim *Simulation) {
 	}
 	action.unit.CurrentTarget = action.newTarget.Get()
 }
+func (action *APLActionChangeTarget) String() string {
+	return fmt.Sprintf("Change Target(%s)", action.newTarget.Get().Label)
+}
 
 type APLActionCancelAura struct {
+	defaultAPLActionImpl
 	aura *Aura
 }
 
@@ -44,9 +48,6 @@ func (rot *APLRotation) newActionCancelAura(config *proto.APLActionCancelAura) A
 		aura: aura.Get(),
 	}
 }
-func (action *APLActionCancelAura) GetInnerActions() []*APLAction { return nil }
-func (action *APLActionCancelAura) Finalize(*APLRotation)         {}
-func (action *APLActionCancelAura) Reset(*Simulation)             {}
 func (action *APLActionCancelAura) IsReady(sim *Simulation) bool {
 	return action.aura.IsActive()
 }
@@ -56,8 +57,12 @@ func (action *APLActionCancelAura) Execute(sim *Simulation) {
 	}
 	action.aura.Deactivate(sim)
 }
+func (action *APLActionCancelAura) String() string {
+	return fmt.Sprintf("Cancel Aura(%s)", action.aura.ActionID)
+}
 
 type APLActionTriggerICD struct {
+	defaultAPLActionImpl
 	aura *Aura
 }
 
@@ -70,9 +75,6 @@ func (rot *APLRotation) newActionTriggerICD(config *proto.APLActionTriggerICD) A
 		aura: aura.Get(),
 	}
 }
-func (action *APLActionTriggerICD) GetInnerActions() []*APLAction { return nil }
-func (action *APLActionTriggerICD) Finalize(*APLRotation)         {}
-func (action *APLActionTriggerICD) Reset(*Simulation)             {}
 func (action *APLActionTriggerICD) IsReady(sim *Simulation) bool {
 	return action.aura.IsActive()
 }
@@ -81,4 +83,7 @@ func (action *APLActionTriggerICD) Execute(sim *Simulation) {
 		action.aura.Unit.Log(sim, "Triggering ICD %s", action.aura.ActionID)
 	}
 	action.aura.Icd.Use(sim)
+}
+func (action *APLActionTriggerICD) String() string {
+	return fmt.Sprintf("Trigger ICD(%s)", action.aura.ActionID)
 }

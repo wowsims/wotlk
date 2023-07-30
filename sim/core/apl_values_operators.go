@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -72,6 +73,9 @@ func (value *APLValueConst) GetDuration(sim *Simulation) time.Duration {
 	return value.durationVal
 }
 func (value *APLValueConst) GetString(sim *Simulation) string {
+	return value.stringVal
+}
+func (value *APLValueConst) String() string {
 	return value.stringVal
 }
 
@@ -165,6 +169,9 @@ func (value APLValueCoerced) GetString(sim *Simulation) string {
 		return value.inner.GetString(sim)
 	}
 	return ""
+}
+func (value *APLValueCoerced) String() string {
+	return value.inner.String()
 }
 
 // Wraps a value so that it is converted into a Boolean.
@@ -310,6 +317,9 @@ func (value *APLValueCompare) GetBool(sim *Simulation) bool {
 	}
 	return false
 }
+func (value *APLValueCompare) String() string {
+	return fmt.Sprintf("%s %s %s", value.lhs, value.op, value.rhs)
+}
 
 type APLValueMath struct {
 	defaultAPLValueImpl
@@ -404,6 +414,9 @@ func (value *APLValueMath) GetDuration(sim *Simulation) time.Duration {
 	}
 	return 0
 }
+func (value *APLValueMath) String() string {
+	return fmt.Sprintf("%s %s %s", value.lhs, value.op, value.rhs)
+}
 
 type APLValueAnd struct {
 	defaultAPLValueImpl
@@ -432,6 +445,9 @@ func (value *APLValueAnd) GetBool(sim *Simulation) bool {
 		}
 	}
 	return true
+}
+func (value *APLValueAnd) String() string {
+	return strings.Join(MapSlice(value.vals, func(subvalue APLValue) string { return fmt.Sprintf("(%s)", subvalue) }), " AND ")
 }
 
 type APLValueOr struct {
@@ -462,6 +478,9 @@ func (value *APLValueOr) GetBool(sim *Simulation) bool {
 	}
 	return false
 }
+func (value *APLValueOr) String() string {
+	return strings.Join(MapSlice(value.vals, func(subvalue APLValue) string { return fmt.Sprintf("(%s)", subvalue) }), " OR ")
+}
 
 type APLValueNot struct {
 	defaultAPLValueImpl
@@ -482,4 +501,7 @@ func (value *APLValueNot) Type() proto.APLValueType {
 }
 func (value *APLValueNot) GetBool(sim *Simulation) bool {
 	return !value.val.GetBool(sim)
+}
+func (value *APLValueNot) String() string {
+	return fmt.Sprintf("Not(%s)", value.val)
 }

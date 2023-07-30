@@ -17,6 +17,9 @@ type APLValue interface {
 	GetFloat(*Simulation) float64
 	GetDuration(*Simulation) time.Duration
 	GetString(*Simulation) string
+
+	// Pretty-print string for debugging.
+	String() string
 }
 
 // Provides empty implementations for the GetX() value interface functions.

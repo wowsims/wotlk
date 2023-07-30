@@ -1,6 +1,8 @@
 package core
 
 import (
+	"fmt"
+
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
@@ -24,6 +26,14 @@ func (action *APLAction) GetAllActions() []*APLAction {
 	return actions
 }
 
+func (action *APLAction) String() string {
+	if action.condition == nil {
+		return fmt.Sprintf("ACTION = %s", action.impl)
+	} else {
+		return fmt.Sprintf("IF = %s\nACTION = %s", action.condition, action.impl)
+	}
+}
+
 type APLActionImpl interface {
 	// Returns all inner Actions.
 	GetInnerActions() []*APLAction
@@ -39,7 +49,18 @@ type APLActionImpl interface {
 
 	// Performs the action.
 	Execute(*Simulation)
+
+	// Pretty-print string for debugging.
+	String() string
 }
+
+// Provides empty implementations for the action impl interface functions.
+type defaultAPLActionImpl struct {
+}
+
+func (impl defaultAPLActionImpl) GetInnerActions() []*APLAction { return nil }
+func (impl defaultAPLActionImpl) Finalize(*APLRotation)         {}
+func (impl defaultAPLActionImpl) Reset(*Simulation)             {}
 
 func (rot *APLRotation) newAPLAction(config *proto.APLAction) *APLAction {
 	if config == nil {

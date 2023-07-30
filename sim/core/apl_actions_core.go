@@ -1,10 +1,13 @@
 package core
 
 import (
+	"fmt"
+
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 type APLActionCastSpell struct {
+	defaultAPLActionImpl
 	spell  *Spell
 	target UnitReference
 }
@@ -23,17 +26,18 @@ func (rot *APLRotation) newActionCastSpell(config *proto.APLActionCastSpell) APL
 		target: target,
 	}
 }
-func (action *APLActionCastSpell) GetInnerActions() []*APLAction { return nil }
-func (action *APLActionCastSpell) Finalize(*APLRotation)         {}
-func (action *APLActionCastSpell) Reset(*Simulation)             {}
 func (action *APLActionCastSpell) IsReady(sim *Simulation) bool {
 	return action.spell.CanCast(sim, action.target.Get())
 }
 func (action *APLActionCastSpell) Execute(sim *Simulation) {
 	action.spell.Cast(sim, action.target.Get())
 }
+func (action *APLActionCastSpell) String() string {
+	return fmt.Sprintf("Cast Spell(%s)", action.spell.ActionID)
+}
 
 type APLActionMultidot struct {
+	defaultAPLActionImpl
 	spell      *Spell
 	maxDots    int32
 	maxOverlap APLValue
@@ -67,8 +71,6 @@ func (rot *APLRotation) newActionMultidot(config *proto.APLActionMultidot) APLAc
 		maxOverlap: maxOverlap,
 	}
 }
-func (action *APLActionMultidot) GetInnerActions() []*APLAction { return nil }
-func (action *APLActionMultidot) Finalize(*APLRotation)         {}
 func (action *APLActionMultidot) Reset(*Simulation) {
 	action.nextTarget = nil
 }
@@ -88,8 +90,12 @@ func (action *APLActionMultidot) IsReady(sim *Simulation) bool {
 func (action *APLActionMultidot) Execute(sim *Simulation) {
 	action.spell.Cast(sim, action.nextTarget)
 }
+func (action *APLActionMultidot) String() string {
+	return fmt.Sprintf("Multidot(%s)", action.spell.ActionID)
+}
 
 type APLActionAutocastOtherCooldowns struct {
+	defaultAPLActionImpl
 	character *Character
 
 	nextReadyMCD *MajorCooldown
@@ -101,8 +107,6 @@ func (rot *APLRotation) newActionAutocastOtherCooldowns(config *proto.APLActionA
 		character: unit.Env.Raid.GetPlayerFromUnit(unit).GetCharacter(),
 	}
 }
-func (action *APLActionAutocastOtherCooldowns) GetInnerActions() []*APLAction { return nil }
-func (action *APLActionAutocastOtherCooldowns) Finalize(*APLRotation)         {}
 func (action *APLActionAutocastOtherCooldowns) Reset(*Simulation) {
 	action.nextReadyMCD = nil
 }
@@ -114,8 +118,12 @@ func (action *APLActionAutocastOtherCooldowns) Execute(sim *Simulation) {
 	action.nextReadyMCD.tryActivateHelper(sim, action.character)
 	action.character.UpdateMajorCooldowns()
 }
+func (action *APLActionAutocastOtherCooldowns) String() string {
+	return fmt.Sprintf("Autocast Other Cooldowns")
+}
 
 type APLActionWait struct {
+	defaultAPLActionImpl
 	unit     *Unit
 	duration APLValue
 }
@@ -127,12 +135,12 @@ func (rot *APLRotation) newActionWait(config *proto.APLActionWait) APLActionImpl
 		duration: rot.coerceTo(rot.newAPLValue(config.Duration), proto.APLValueType_ValueTypeDuration),
 	}
 }
-func (action *APLActionWait) GetInnerActions() []*APLAction { return nil }
-func (action *APLActionWait) Finalize(*APLRotation)         {}
-func (action *APLActionWait) Reset(*Simulation)             {}
 func (action *APLActionWait) IsReady(sim *Simulation) bool {
 	return action.duration != nil
 }
 func (action *APLActionWait) Execute(sim *Simulation) {
 	action.unit.WaitUntil(sim, sim.CurrentTime+action.duration.GetDuration(sim))
+}
+func (action *APLActionWait) String() string {
+	return fmt.Sprintf("Wait(%s)", action.duration)
 }
