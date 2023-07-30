@@ -24,6 +24,10 @@ type APLRotation struct {
 	curWarnings          []string
 	prepullWarnings      [][]string
 	priorityListWarnings [][]string
+
+	// Used for detecting infinite loops.
+	prevTime                time.Duration
+	actionsWithoutAdvancing int
 }
 
 func (rot *APLRotation) validationWarning(message string, vals ...interface{}) {
@@ -141,6 +145,8 @@ func (rot *APLRotation) allPrepullActions() []*APLAction {
 
 func (rot *APLRotation) reset(sim *Simulation) {
 	rot.strictSequence = nil
+	rot.actionsWithoutAdvancing = 0
+	rot.prevTime = 0
 	for _, action := range rot.allAPLActions() {
 		action.impl.Reset(sim)
 	}
@@ -157,6 +163,18 @@ func (apl *APLRotation) DoNextAction(sim *Simulation) {
 				if apl.unit.GCD.IsReady(sim) {
 					apl.unit.WaitUntil(sim, sim.CurrentTime)
 				}
+
+				// Detect infinite loops.
+				if sim.CurrentTime == apl.prevTime {
+					apl.actionsWithoutAdvancing++
+					if apl.actionsWithoutAdvancing > 1000 {
+						panic(fmt.Sprintf("[USER_ERROR] Infinite loop detected, current action:\n%s", action))
+					}
+				} else {
+					apl.prevTime = sim.CurrentTime
+					apl.actionsWithoutAdvancing = 0
+				}
+
 				return
 			}
 		}

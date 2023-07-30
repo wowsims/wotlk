@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -26,6 +27,9 @@ func (value *APLValueDotIsActive) Type() proto.APLValueType {
 func (value *APLValueDotIsActive) GetBool(sim *Simulation) bool {
 	return value.dot.IsActive()
 }
+func (value *APLValueDotIsActive) String() string {
+	return fmt.Sprintf("Dot Is Active(%s)", value.dot.Spell.ActionID)
+}
 
 type APLValueDotRemainingTime struct {
 	defaultAPLValueImpl
@@ -46,4 +50,7 @@ func (value *APLValueDotRemainingTime) Type() proto.APLValueType {
 }
 func (value *APLValueDotRemainingTime) GetDuration(sim *Simulation) time.Duration {
 	return value.dot.RemainingDuration(sim)
+}
+func (value *APLValueDotRemainingTime) String() string {
+	return fmt.Sprintf("Dot Remaining Time(%s)", value.dot.Spell.ActionID)
 }

@@ -1,6 +1,8 @@
 package core
 
 import (
+	"fmt"
+
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
@@ -28,6 +30,9 @@ func (value *APLValueCurrentHealth) Type() proto.APLValueType {
 func (value *APLValueCurrentHealth) GetFloat(sim *Simulation) float64 {
 	return value.unit.Get().CurrentHealth()
 }
+func (value *APLValueCurrentHealth) String() string {
+	return fmt.Sprintf("Current Health")
+}
 
 type APLValueCurrentHealthPercent struct {
 	defaultAPLValueImpl
@@ -52,6 +57,9 @@ func (value *APLValueCurrentHealthPercent) Type() proto.APLValueType {
 }
 func (value *APLValueCurrentHealthPercent) GetFloat(sim *Simulation) float64 {
 	return value.unit.Get().CurrentHealthPercent()
+}
+func (value *APLValueCurrentHealthPercent) String() string {
+	return fmt.Sprintf("Current Health %")
 }
 
 type APLValueCurrentMana struct {
@@ -78,6 +86,9 @@ func (value *APLValueCurrentMana) Type() proto.APLValueType {
 func (value *APLValueCurrentMana) GetFloat(sim *Simulation) float64 {
 	return value.unit.Get().CurrentMana()
 }
+func (value *APLValueCurrentMana) String() string {
+	return fmt.Sprintf("Current Mana")
+}
 
 type APLValueCurrentManaPercent struct {
 	defaultAPLValueImpl
@@ -103,6 +114,9 @@ func (value *APLValueCurrentManaPercent) Type() proto.APLValueType {
 func (value *APLValueCurrentManaPercent) GetFloat(sim *Simulation) float64 {
 	return value.unit.Get().CurrentManaPercent()
 }
+func (value *APLValueCurrentManaPercent) String() string {
+	return fmt.Sprintf("Current Mana %")
+}
 
 type APLValueCurrentRage struct {
 	defaultAPLValueImpl
@@ -124,6 +138,9 @@ func (value *APLValueCurrentRage) Type() proto.APLValueType {
 }
 func (value *APLValueCurrentRage) GetFloat(sim *Simulation) float64 {
 	return value.unit.CurrentRage()
+}
+func (value *APLValueCurrentRage) String() string {
+	return fmt.Sprintf("Current Rage")
 }
 
 type APLValueCurrentEnergy struct {
@@ -147,6 +164,9 @@ func (value *APLValueCurrentEnergy) Type() proto.APLValueType {
 func (value *APLValueCurrentEnergy) GetFloat(sim *Simulation) float64 {
 	return value.unit.CurrentEnergy()
 }
+func (value *APLValueCurrentEnergy) String() string {
+	return fmt.Sprintf("Current Energy")
+}
 
 type APLValueCurrentComboPoints struct {
 	defaultAPLValueImpl
@@ -169,6 +189,9 @@ func (value *APLValueCurrentComboPoints) Type() proto.APLValueType {
 func (value *APLValueCurrentComboPoints) GetInt(sim *Simulation) int32 {
 	return value.unit.ComboPoints()
 }
+func (value *APLValueCurrentComboPoints) String() string {
+	return fmt.Sprintf("Current Combo Points")
+}
 
 type APLValueCurrentRunicPower struct {
 	defaultAPLValueImpl
@@ -190,4 +213,7 @@ func (value *APLValueCurrentRunicPower) Type() proto.APLValueType {
 }
 func (value *APLValueCurrentRunicPower) GetInt(sim *Simulation) int32 {
 	return int32(value.unit.CurrentRunicPower())
+}
+func (value *APLValueCurrentRunicPower) String() string {
+	return fmt.Sprintf("Current Runic Power")
 }

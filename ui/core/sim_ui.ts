@@ -277,6 +277,12 @@ export abstract class SimUI extends Component {
 		}
 
 		const errorStr = (error as SimError).errorStr;
+		if (errorStr.startsWith('[USER_ERROR] ')) {
+			const alertStr = errorStr.substring('[USER_ERROR] '.length);
+			alert(alertStr);
+			return;
+		}
+
 		if (window.confirm('Simulation Failure:\n' + errorStr + '\nPress Ok to file crash report')) {
 			// Splice out just the line numbers
 			const hash = this.hashCode(errorStr);
