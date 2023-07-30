@@ -26,6 +26,7 @@ import {
 } from './proto/api.js';
 import {
 	APLRotation,
+	APLValue,
 } from './proto/apl.js';
 import {
 	DungeonDifficulty,
@@ -1111,6 +1112,16 @@ export class Player<SpecType extends Spec> {
 	}
 
 	fromProto(eventID: EventID, proto: PlayerProto) {
+		if (proto.rotation) {
+			proto.rotation.prepullActions.forEach(ppa => {
+				if (ppa.doAt) {
+					ppa.doAtValue = APLValue.create({
+						value: {oneofKind: 'const', const: { val: ppa.doAt }}
+					});
+				}
+			});
+		}
+
 		TypedEvent.freezeAllAndDo(() => {
 			this.setName(eventID, proto.name);
 			this.setRace(eventID, proto.race);

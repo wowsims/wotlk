@@ -44,19 +44,19 @@ func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
 	rotation.parsingPrepull = true
 	for _, prepullItem := range config.PrepullActions {
 		if !prepullItem.Hide {
-			doAt := time.Duration(1)
-			if durVal, err := time.ParseDuration(prepullItem.DoAt); err == nil {
-				doAt = durVal
-			}
-			if doAt > 0 {
-				rotation.validationWarning("Invalid time for 'Do At', ignoring this Prepull Action")
-			} else {
-				action := rotation.newAPLAction(prepullItem.Action)
-				if action != nil {
-					rotation.prepullActions = append(rotation.prepullActions, action)
-					unit.RegisterPrepullAction(doAt, func(sim *Simulation) {
-						action.Execute(sim)
-					})
+			doAtVal := rotation.newAPLValue(prepullItem.DoAtValue)
+			if doAtVal != nil {
+				doAt := doAtVal.GetDuration(nil)
+				if doAt > 0 {
+					rotation.validationWarning("Invalid time for 'Do At', ignoring this Prepull Action")
+				} else {
+					action := rotation.newAPLAction(prepullItem.Action)
+					if action != nil {
+						rotation.prepullActions = append(rotation.prepullActions, action)
+						unit.RegisterPrepullAction(doAt, func(sim *Simulation) {
+							action.Execute(sim)
+						})
+					}
 				}
 			}
 		}
