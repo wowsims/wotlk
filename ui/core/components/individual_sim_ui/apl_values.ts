@@ -58,7 +58,7 @@ export interface APLValuePickerConfig extends InputConfig<Player<any>, APLValue 
 }
 
 export type APLValueKind = APLValue['value']['oneofKind'];
-type APLValueImplStruct<F extends APLValueKind> = Extract<APLValue['value'], {oneofKind: F}>;
+export type APLValueImplStruct<F extends APLValueKind> = Extract<APLValue['value'], {oneofKind: F}>;
 type APLValueImplTypesUnion = {
 	[f in NonNullable<APLValueKind>]: f extends keyof APLValueImplStruct<f> ? APLValueImplStruct<f>[f] : never;
 };
