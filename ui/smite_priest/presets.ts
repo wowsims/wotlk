@@ -3,16 +3,14 @@ import { EquipmentSpec } from '../core/proto/common.js';
 import { Flask } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
 import { Glyphs } from '../core/proto/common.js';
-import { ItemSpec } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
-import { Faction } from '../core/proto/common.js';
 import { RaidBuffs } from '../core/proto/common.js';
 import { IndividualBuffs } from '../core/proto/common.js';
 import { Debuffs } from '../core/proto/common.js';
 import { UnitReference } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js';
-import { SavedTalents } from '../core/proto/ui.js';
-import { Player } from '../core/player.js';
+import { APLRotation } from '../core/proto/apl.js';
+import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
 
 import {
 	SmitePriest_Rotation as Rotation,
@@ -49,6 +47,39 @@ export const DefaultRotation = Rotation.create({
 	useShadowWordDeath: false,
 	useMindBlast: false,
 });
+export const ROTATION_PRESET_LEGACY_DEFAULT = {
+	name: 'Legacy Default',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: Rotation.toJsonString(DefaultRotation),
+	}),
+}
+export const ROTATION_PRESET_APL = {
+	name: 'APL',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: Rotation.toJsonString(Rotation.create()),
+		rotation: APLRotation.fromJsonString(`{
+      		"enabled": true,
+      		"prepullActions": [
+			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
+      		],
+      		"priorityList": [
+				{"action":{"autocastOtherCooldowns":{}}},
+				{"action":{"condition":{"and":{"vals":[{"dotIsActive":{"spellId":{"spellId":48135}}},{"cmp":{"op":"OpLe","lhs":{"spellCastTime":{"spellId":{"spellId":48123}}},"rhs":{"dotRemainingTime":{"spellId":{"spellId":48135}}}}}]}},"castSpell":{"spellId":{"spellId":14751}}}},
+				{"action":{"condition":{"and":{"vals":[{"dotIsActive":{"spellId":{"spellId":48135}}},{"cmp":{"op":"OpLe","lhs":{"spellCastTime":{"spellId":{"spellId":48123}}},"rhs":{"dotRemainingTime":{"spellId":{"spellId":48135}}}}}]}},"castSpell":{"spellId":{"spellId":48123}}}},
+				{"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":48300}}}}},"castSpell":{"spellId":{"spellId":48300}}}},
+				{"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":48125}}}}},"castSpell":{"spellId":{"spellId":48125}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":48135}}}},
+				{"action":{"condition":{"and":{"vals":[{"not":{"val":{"spellIsReady":{"spellId":{"spellId":48135}}}}},{"cmp":{"op":"OpLe","lhs":{"spellTimeToReady":{"spellId":{"spellId":48135}}},"rhs":{"const":{"val":"50ms"}}}}]}},"wait":{"duration":{"spellTimeToReady":{"spellId":{"spellId":48135}}}}}},
+				{"hide":true,"action":{"condition":{"auraIsActive":{"auraId":{"spellId":59000}}},"castSpell":{"spellId":{"spellId":48123}}}},
+				{"hide":true,"action":{"castSpell":{"spellId":{"spellId":53007}}}},
+				{"hide":true,"action":{"castSpell":{"spellId":{"spellId":48158}}}},
+				{"hide":true,"action":{"castSpell":{"spellId":{"spellId":48127}}}},
+				{"hide":true,"action":{"castSpell":{"spellId":{"tag":3,"spellId":48156}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":48123}}}}
+      		]
+		}`),
+	}),
+};
 
 export const DefaultOptions = Options.create({
 	useInnerFire: true,

@@ -111,7 +111,11 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 							}
 						}
 					}
-					this.setSourceValue(eventID, newSourceValue);
+					if (sourceValue) {
+						sourceValue.action = newSourceValue.action;
+					} else {
+						this.setSourceValue(eventID, newSourceValue);
+					}
 				} else {
 					sourceValue.action = {
 						oneofKind: newKind,

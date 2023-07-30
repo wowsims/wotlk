@@ -14,6 +14,7 @@ func (priest *Priest) RegisterHolyFireSpell(memeDream bool) {
 		ActionID:    core.ActionID{SpellID: 48135},
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.11,
