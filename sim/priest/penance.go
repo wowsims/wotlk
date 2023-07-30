@@ -21,7 +21,7 @@ func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 	}
 
 	var procMask core.ProcMask
-	flags := core.SpellFlagChanneled
+	flags := core.SpellFlagChanneled | core.SpellFlagAPL
 	if isHeal {
 		flags |= core.SpellFlagHelpful
 		procMask = core.ProcMaskSpellHealing

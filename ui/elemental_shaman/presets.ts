@@ -211,11 +211,12 @@ export const ROTATION_PRESET_BASIC_APL = {
     rotation: APLRotation.fromJsonString(`{
       "enabled": true,
       "prepullActions": [
-        {"action":{"castSpell":{"spellId":{"spellId":58704}}},"doAt":"-2s"},
-        {"action":{"castSpell":{"spellId":{"spellId":57722}}},"doAt":"-3s"},
-        {"action":{"castSpell":{"spellId":{"spellId":58774}}},"doAt":"-4s"},
-        {"action":{"castSpell":{"spellId":{"spellId":58643}}},"doAt":"-5s"},
-        {"action":{"castSpell":{"spellId":{"spellId":3738}}},"doAt":"-6s"}
+			  {"action":{"castSpell":{"spellId":{"spellId":3738}}},"doAtValue":{"const":{"val":"-6s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":58643}}},"doAtValue":{"const":{"val":"-5s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":58774}}},"doAtValue":{"const":{"val":"-4s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":57722}}},"doAtValue":{"const":{"val":"-3s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":58704}}},"doAtValue":{"const":{"val":"-2s"}}},
+			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
       ],
       "priorityList": [
         {"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpGe","lhs":{"currentTime":{}},"rhs":{"const":{"val":"2s"}}}},{"spellIsReady":{"spellId":{"tag":-1,"spellId":2825}}}]}},"castSpell":{"spellId":{"tag":-1,"spellId":2825}}}},
