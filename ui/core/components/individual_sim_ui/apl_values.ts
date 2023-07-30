@@ -128,7 +128,11 @@ export class APLValuePicker extends Input<Player<any>, APLValue | undefined> {
 							}
 						}
 					}
-					this.setSourceValue(eventID, newSourceValue);
+					if (sourceValue) {
+						sourceValue.value = newSourceValue.value;
+					} else {
+						this.setSourceValue(eventID, newSourceValue);
+					}
 				} else {
 					this.setSourceValue(eventID, undefined);
 				}

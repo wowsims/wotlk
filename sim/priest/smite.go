@@ -11,6 +11,7 @@ func (priest *Priest) RegisterSmiteSpell(memeDream bool) {
 		ActionID:    core.ActionID{SpellID: 48123},
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.15,

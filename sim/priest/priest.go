@@ -54,7 +54,6 @@ type Priest struct {
 	ShadowWordDeath *core.Spell
 	Shadowfiend     *core.Spell
 	Smite           *core.Spell
-	Starshards      *core.Spell
 	VampiricTouch   *core.Spell
 	Dispersion      *core.Spell
 
@@ -130,7 +129,6 @@ func (priest *Priest) Initialize() {
 	priest.registerMindBlastSpell()
 	priest.registerShadowWordDeathSpell()
 	priest.registerShadowfiendSpell()
-	priest.registerStarshardsSpell()
 	priest.registerVampiricTouchSpell()
 	priest.registerDispersionSpell()
 
