@@ -21,6 +21,10 @@ func (ur UnitReference) Get() *Unit {
 	}
 }
 
+func (ur *UnitReference) String() string {
+	return ur.Get().Label
+}
+
 func NewUnitReference(ref *proto.UnitReference, contextUnit *Unit) UnitReference {
 	if ref == nil || ref.Type == proto.UnitReference_Unknown {
 		return UnitReference{}
@@ -68,6 +72,10 @@ func (ar *AuraReference) Get() *Aura {
 	} else {
 		return nil
 	}
+}
+
+func (ar *AuraReference) String() string {
+	return ar.Get().ActionID.String()
 }
 
 func newAuraReferenceHelper(sourceUnit UnitReference, auraId *proto.ActionID, auraGetter func(*Unit, ActionID) *Aura) AuraReference {

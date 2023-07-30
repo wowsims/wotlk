@@ -38,7 +38,7 @@ func (value *APLValueCurrentTimePercent) GetFloat(sim *Simulation) float64 {
 	return sim.CurrentTime.Seconds() / sim.Duration.Seconds()
 }
 func (value *APLValueCurrentTimePercent) String() string {
-	return fmt.Sprintf("Current Time %")
+	return fmt.Sprintf("Current Time %%")
 }
 
 type APLValueRemainingTime struct {
@@ -72,7 +72,7 @@ func (value *APLValueRemainingTimePercent) GetFloat(sim *Simulation) float64 {
 	return sim.GetRemainingDurationPercent()
 }
 func (value *APLValueRemainingTimePercent) String() string {
-	return fmt.Sprintf("Remaining Time %")
+	return fmt.Sprintf("Remaining Time %%")
 }
 
 type APLValueNumberTargets struct {

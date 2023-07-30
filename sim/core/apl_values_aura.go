@@ -28,7 +28,7 @@ func (value *APLValueAuraIsActive) GetBool(sim *Simulation) bool {
 	return value.aura.Get().IsActive()
 }
 func (value *APLValueAuraIsActive) String() string {
-	return fmt.Sprintf("Aura Is Active(%s)", value.aura)
+	return fmt.Sprintf("Aura Is Active(%s)", value.aura.String())
 }
 
 type APLValueAuraRemainingTime struct {
@@ -52,7 +52,7 @@ func (value *APLValueAuraRemainingTime) GetDuration(sim *Simulation) time.Durati
 	return value.aura.Get().RemainingDuration(sim)
 }
 func (value *APLValueAuraRemainingTime) String() string {
-	return fmt.Sprintf("Aura Remaining Time(%s)", value.aura)
+	return fmt.Sprintf("Aura Remaining Time(%s)", value.aura.String())
 }
 
 type APLValueAuraNumStacks struct {
@@ -80,7 +80,7 @@ func (value *APLValueAuraNumStacks) GetInt(sim *Simulation) int32 {
 	return value.aura.Get().GetStacks()
 }
 func (value *APLValueAuraNumStacks) String() string {
-	return fmt.Sprintf("Aura Num Stacks(%s)", value.aura)
+	return fmt.Sprintf("Aura Num Stacks(%s)", value.aura.String())
 }
 
 type APLValueAuraInternalCooldown struct {
@@ -104,5 +104,5 @@ func (value *APLValueAuraInternalCooldown) GetDuration(sim *Simulation) time.Dur
 	return value.aura.Get().Icd.TimeToReady(sim)
 }
 func (value *APLValueAuraInternalCooldown) String() string {
-	return fmt.Sprintf("Aura ICD(%s)", value.aura)
+	return fmt.Sprintf("Aura ICD(%s)", value.aura.String())
 }

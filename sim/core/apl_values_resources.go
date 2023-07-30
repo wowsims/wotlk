@@ -59,7 +59,7 @@ func (value *APLValueCurrentHealthPercent) GetFloat(sim *Simulation) float64 {
 	return value.unit.Get().CurrentHealthPercent()
 }
 func (value *APLValueCurrentHealthPercent) String() string {
-	return fmt.Sprintf("Current Health %")
+	return fmt.Sprintf("Current Health %%")
 }
 
 type APLValueCurrentMana struct {
@@ -115,7 +115,7 @@ func (value *APLValueCurrentManaPercent) GetFloat(sim *Simulation) float64 {
 	return value.unit.Get().CurrentManaPercent()
 }
 func (value *APLValueCurrentManaPercent) String() string {
-	return fmt.Sprintf("Current Mana %")
+	return fmt.Sprintf("Current Mana %%")
 }
 
 type APLValueCurrentRage struct {
