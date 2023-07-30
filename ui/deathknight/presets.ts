@@ -269,9 +269,9 @@ export const BLOOD_PESTI_ROTATION_PRESET_DEFAULT = {
 			  {"action":{"castSpell":{"spellId":{"spellId":42650}}},"doAtValue":{"const":{"val":"-10s"}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":50689}}},"doAtValue":{"const":{"val":"-6s"}}},
 			  {"action":{"castSpell":{"spellId":{"itemId":40211}}},"doAtValue":{"const":{"val":"-1s"}}},
-			  {"action":{"castSpell":{"spellId":{"spellId":49016}}},"doAtValue":{"const":{"val":"0s"}}"},
-			  {"action":{"castSpell":{"spellId":{"spellId":54758}}},"doAtValue":{"const":{"val":"0s"}}"},
-			  {"action":{"castSpell":{"spellId":{"spellId":26297}}},"doAtValue":{"const":{"val":"0s"}}"}
+			  {"action":{"castSpell":{"spellId":{"spellId":49016}}},"doAtValue":{"const":{"val":"0s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":54758}}},"doAtValue":{"const":{"val":"0s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":26297}}},"doAtValue":{"const":{"val":"0s"}}}
 			],
 			"priorityList": [
 			  {"action":{"autocastOtherCooldowns":{}}},
