@@ -346,7 +346,7 @@ func (rogue *Rogue) applyWeaponSpecializations() {
 			})
 		case proto.WeaponType_WeaponTypeMace:
 			rogue.OnSpellRegistered(func(spell *core.Spell) {
-				if spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
+				if spell.ProcMask.Matches(core.ProcMaskMeleeMH) || spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
 					spell.BonusArmorPenRating += 3 * core.ArmorPenPerPercentArmor * float64(rogue.Talents.MaceSpecialization)
 				}
 			})
@@ -364,7 +364,7 @@ func (rogue *Rogue) applyWeaponSpecializations() {
 			})
 		case proto.WeaponType_WeaponTypeMace:
 			rogue.OnSpellRegistered(func(spell *core.Spell) {
-				if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
+				if spell.ProcMask.Matches(core.ProcMaskMeleeOH) || spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
 					spell.BonusArmorPenRating += 3 * core.ArmorPenPerPercentArmor * float64(rogue.Talents.MaceSpecialization)
 				}
 			})
