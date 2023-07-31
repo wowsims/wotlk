@@ -575,6 +575,9 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			encounter: this.sim.encounter.toProto(),
 			epWeightsStats: this.player.getEpWeights().toProto(),
 			epRatios: this.player.getEpRatios(),
+			dpsRefStat: this.dpsRefStat,
+			healRefStat: this.healRefStat,
+			tankRefStat: this.tankRefStat,
 			targetDummies: this.sim.raid.getTargetDummies(),
 		});
 	}
@@ -616,6 +619,16 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				this.player.setEpRatios(eventID, settings.epRatios.concat(missingRatios));
 			} else {
 				this.player.setEpRatios(eventID, defaultRatios);
+			}
+
+			if (settings.dpsRefStat) {
+				this.dpsRefStat = settings.dpsRefStat;
+			}
+			if (settings.healRefStat) {
+				this.healRefStat = settings.healRefStat;
+			}
+			if (settings.tankRefStat) {
+				this.tankRefStat = settings.tankRefStat;
 			}
 
 			this.sim.raid.setBuffs(eventID, settings.raidBuffs || RaidBuffs.create());
