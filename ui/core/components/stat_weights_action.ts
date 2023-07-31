@@ -272,6 +272,7 @@ class EpWeightsMenu extends BaseModal {
 		};
 
 		const updateEpRefStat = () => {
+			this.simUI.player.epRefStatChangeEmitter.emit(TypedEvent.nextEventID())
 			this.simUI.prevEpSimResult = this.calculateEp(this.getPrevSimResult());
 			this.updateTable(this.simUI.prevEpIterations || 1, this.getPrevSimResult());
 		};

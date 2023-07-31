@@ -243,6 +243,7 @@ export class Player<SpecType extends Spec> {
 
 	readonly currentStatsEmitter = new TypedEvent<void>('PlayerCurrentStats');
 	readonly epRatiosChangeEmitter = new TypedEvent<void>('PlayerEpRatios');
+	readonly epRefStatChangeEmitter = new TypedEvent<void>('PlayerEpRefStat');
 
 	// Emits when any of the above emitters emit.
 	readonly changeEmitter: TypedEvent<void>;
@@ -276,6 +277,7 @@ export class Player<SpecType extends Spec> {
 			this.healingModelChangeEmitter,
 			this.epWeightsChangeEmitter,
 			this.epRatiosChangeEmitter,
+			this.epRefStatChangeEmitter,
 		], 'PlayerChange');
 	}
 

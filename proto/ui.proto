@@ -264,6 +264,9 @@ message IndividualSimSettings {
 	repeated double ep_weights = 6;
 	UnitStats ep_weights_stats = 10;
 	repeated double ep_ratios = 11;
+	Stat dps_ref_stat = 12;
+	Stat heal_ref_stat = 13;
+	Stat tank_ref_stat = 14;
 }
 
 // Local storage data for gear settings.
