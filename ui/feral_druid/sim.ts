@@ -321,6 +321,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 
 	findSocketsByColor(gear: Gear, epWeights: Stats, color: GemColor, tearSlot: ItemSlot | null): Array<[ItemSlot, number]> {
 		const socketList = new Array<[ItemSlot, number]>();
+		const isBlacksmithing = this.player.isBlacksmithing();
 
 		for (var slot of gear.getItemSlots()) {
 			const item = gear.getEquippedItem(slot);
@@ -331,7 +332,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 
 			const ignoreYellowSockets = ((item!.numSocketsOfColor(GemColor.GemColorBlue) > 0) && (slot != tearSlot))
 
-			for (const [socketIdx, socketColor] of item!.allSocketColors().entries()) {
+			for (const [socketIdx, socketColor] of item!.curSocketColors(isBlacksmithing).entries()) {
 				if (item!.hasSocketedGem(socketIdx)) {
 					continue;
 				}
