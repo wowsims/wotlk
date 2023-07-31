@@ -54,21 +54,21 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Obli(sim *core.S
 	waitTime := time.Duration(-1)
 
 	if dk.canCastAbilityBeforeDiseasesExpire(sim, target) {
-		if dk.Obliterate.CanCast(sim, nil) {
+		if dk.canCastFrostUnholySpell(sim, target) {
 			if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
 				dk.Deathchill.Cast(sim, target)
 			}
-			casted = dk.Obliterate.Cast(sim, target)
+			casted = dk.castFrostUnholySpell(sim, target)
 			advance = dk.LastOutcome.Matches(core.OutcomeLanded)
 		}
 
 		s.ConditionalAdvance(casted && advance)
 	} else {
-		if dk.Obliterate.CanCast(sim, nil) {
+		if dk.canCastFrostUnholySpell(sim, target) {
 			if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
 				dk.Deathchill.Cast(sim, target)
 			}
-			casted = dk.Obliterate.Cast(sim, target)
+			casted = dk.castFrostUnholySpell(sim, target)
 			advance = dk.LastOutcome.Matches(core.OutcomeLanded)
 
 			if casted && advance {

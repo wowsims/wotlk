@@ -226,6 +226,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 			otherInputs: {
 				inputs: [
 					HunterInputs.PetUptime,
+					HunterInputs.TimeToTrapWeaveMs,
 					HunterInputs.SniperTrainingUptime,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
@@ -243,14 +244,26 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 					Presets.MarksmanTalents,
 					Presets.SurvivalTalents,
 				],
+				// Preset rotations that the user can quickly select.
+				rotations: [
+					Presets.ROTATION_PRESET_LEGACY_DEFAULT,
+					Presets.ROTATION_PRESET_BM,
+					Presets.ROTATION_PRESET_MM,
+					Presets.ROTATION_PRESET_SV,
+					Presets.ROTATION_PRESET_AOE,
+				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.MM_PRERAID_PRESET,
 					Presets.MM_P1_PRESET,
 					Presets.MM_P2_PRESET,
+					Presets.MM_P3_PRESET,
+					Presets.MM_P4_PRESET,
 					Presets.SV_PRERAID_PRESET,
 					Presets.SV_P1_PRESET,
 					Presets.SV_P2_PRESET,
+					Presets.SV_P3_PRESET,
+					Presets.SV_P4_PRESET,
 				],
 			},
 		});

@@ -8,21 +8,16 @@ import (
 )
 
 func (warlock *Warlock) registerConflagrateSpell() {
+	if !warlock.Talents.Conflagrate {
+		return
+	}
+
 	hasGlyphOfConflag := warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfConflagrate)
-
-	directFlatDamage := 0.6 * 785 / 5 * float64(warlock.Immolate.CurDot().NumberOfTicks)
-	directSpellCoeff := 0.6 * 0.2 * float64(warlock.Immolate.CurDot().NumberOfTicks)
-	dotFlatDamage := 0.4 / 3 * 785 / 5 * float64(warlock.Immolate.CurDot().NumberOfTicks)
-	dotSpellCoeff := 0.4 / 3 * 0.2 * float64(warlock.Immolate.CurDot().NumberOfTicks)
-
-	bonusPeriodicDamageMultiplier := 0 +
-		warlock.GrandSpellstoneBonus() -
-		warlock.GrandFirestoneBonus()
-
 	warlock.Conflagrate = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 17962},
 		SpellSchool: core.SpellSchoolFire,
 		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.16,
@@ -49,7 +44,9 @@ func (warlock *Warlock) registerConflagrateSpell() {
 			0.03*float64(warlock.Talents.Emberstorm) +
 			0.03*float64(warlock.Talents.Aftermath) +
 			0.1*float64(warlock.Talents.ImprovedImmolate) +
-			core.TernaryFloat64(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfImmolate), 0.1, 0),
+			core.TernaryFloat64(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfImmolate), 0.1, 0) +
+			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDeathbringerGarb, 2), 0.1, 0) +
+			core.TernaryFloat64(warlock.HasSetBonus(ItemSetGuldansRegalia, 4), 0.1, 0),
 		CritMultiplier:   warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
 		ThreatMultiplier: 1 - 0.1*float64(warlock.Talents.DestructiveReach),
 
@@ -61,13 +58,14 @@ func (warlock *Warlock) registerConflagrateSpell() {
 			TickLength:    time.Second * 2,
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-				dot.SnapshotBaseDamage = dotFlatDamage + dotSpellCoeff*dot.Spell.SpellPower()
+				dot.SnapshotBaseDamage = (314.0 / 3) + (0.4/3)*dot.Spell.SpellPower()
 				attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
 				dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
 
-				dot.Spell.DamageMultiplierAdditive += bonusPeriodicDamageMultiplier
+				// DoT does not benefit from firestone and also not from spellstone
+				dot.Spell.DamageMultiplierAdditive -= warlock.GrandFirestoneBonus()
 				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
-				dot.Spell.DamageMultiplierAdditive -= bonusPeriodicDamageMultiplier
+				dot.Spell.DamageMultiplierAdditive += warlock.GrandFirestoneBonus()
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
@@ -75,7 +73,8 @@ func (warlock *Warlock) registerConflagrateSpell() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := directFlatDamage + directSpellCoeff*spell.SpellPower()
+			// takes the SP of the immolate (or shadowflame) dot on the target
+			baseDamage := 471.0 + 0.6*warlock.Immolate.Dot(target).Spell.SpellPower()
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if !result.Landed() {
 				return

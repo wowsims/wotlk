@@ -1,15 +1,15 @@
 import { IndividualSimUI } from "../../individual_sim_ui";
 import {
-  BattleElixir,
-  Class,
-  Conjured,
-  Flask,
-  Food,
-  GuardianElixir,
-  Potions,
-  Profession,
-  Spec,
-  Stat
+	BattleElixir,
+	Class,
+	Conjured,
+	Flask,
+	Food,
+	GuardianElixir,
+	Potions,
+	Profession,
+	Spec,
+	Stat
 } from "../../proto/common";
 import { Component } from "../component";
 import { IconEnumPicker } from "../icon_enum_picker";
@@ -19,24 +19,24 @@ import { buildIconInput } from "../icon_inputs.js";
 import { SettingsTab } from "./settings_tab";
 
 export class ConsumesPicker extends Component {
-  protected settingsTab: SettingsTab;
-  protected simUI: IndividualSimUI<Spec>;
+	protected settingsTab: SettingsTab;
+	protected simUI: IndividualSimUI<Spec>;
 
-  constructor(parentElem: HTMLElement, settingsTab: SettingsTab, simUI: IndividualSimUI<Spec>) {
-    super(parentElem, 'consumes-picker-root');
-    this.settingsTab = settingsTab;
-    this.simUI = simUI;
+	constructor(parentElem: HTMLElement, settingsTab: SettingsTab, simUI: IndividualSimUI<Spec>) {
+		super(parentElem, 'consumes-picker-root');
+		this.settingsTab = settingsTab;
+		this.simUI = simUI;
 
-    this.buildPotionsPicker();
-    this.buildElixirsPicker();
-    this.buildFoodPicker();
-    this.buildEngPicker();
-    this.buildPetPicker();
-  }
+		this.buildPotionsPicker();
+		this.buildElixirsPicker();
+		this.buildFoodPicker();
+		this.buildEngPicker();
+		this.buildPetPicker();
+	}
 
-  private buildPotionsPicker() {
-    let fragment = document.createElement('fragment');
-    fragment.innerHTML = `
+	private buildPotionsPicker() {
+		let fragment = document.createElement('fragment');
+		fragment.innerHTML = `
       <div class="consumes-row input-root input-inline">
         <label class="form-label">Potions</label>
         <div class="consumes-row-inputs">
@@ -47,9 +47,9 @@ export class ConsumesPicker extends Component {
       </div>
     `;
 
-    this.rootElem.appendChild(fragment.children[0] as HTMLElement);
+		this.rootElem.appendChild(fragment.children[0] as HTMLElement);
 
-    const prepopPotionOptions = this.simUI.splitRelevantOptions([
+		const prepopPotionOptions = this.simUI.splitRelevantOptions([
 			// This list is smaller because some potions don't make sense to use as prepot.
 			// E.g. healing/mana potions.
 			{ item: Potions.IndestructiblePotion, stats: [Stat.StatArmor] },
@@ -61,11 +61,11 @@ export class ConsumesPicker extends Component {
 		if (prepopPotionOptions.length) {
 			const elem = this.rootElem.querySelector('.consumes-prepot') as HTMLElement;
 			new IconEnumPicker(
-        elem,
-        this.simUI.player,
-        IconInputs.makePrepopPotionsInput(prepopPotionOptions, 'Prepop Potion (1s before combat)')
-      );
-    }
+				elem,
+				this.simUI.player,
+				IconInputs.makePrepopPotionsInput(prepopPotionOptions, 'Prepop Potion (1s before combat)')
+			);
+		}
 
 		const potionOptions = this.simUI.splitRelevantOptions([
 			{ item: Potions.RunicHealingPotion, stats: [Stat.StatStamina] },
@@ -81,10 +81,10 @@ export class ConsumesPicker extends Component {
 		if (potionOptions.length) {
 			const elem = this.rootElem.querySelector('.consumes-potions') as HTMLElement;
 			new IconEnumPicker(
-        elem,
-        this.simUI.player,
-        IconInputs.makePotionsInput(potionOptions, 'Combat Potion')
-      );
+				elem,
+				this.simUI.player,
+				IconInputs.makePotionsInput(potionOptions, 'Combat Potion')
+			);
 		}
 
 		const conjuredOptions = this.simUI.splitRelevantOptions([
@@ -97,11 +97,11 @@ export class ConsumesPicker extends Component {
 			const elem = this.rootElem.querySelector('.consumes-conjured') as HTMLElement;
 			new IconEnumPicker(elem, this.simUI.player, IconInputs.makeConjuredInput(conjuredOptions));
 		}
-  }
+	}
 
-  private buildElixirsPicker() {
-    let fragment = document.createElement('fragment');
-    fragment.innerHTML = `
+	private buildElixirsPicker() {
+		let fragment = document.createElement('fragment');
+		fragment.innerHTML = `
       <div class="consumes-row input-root input-inline">
         <label class="form-label">Elixirs</label>
         <div class="consumes-row-inputs">
@@ -113,9 +113,9 @@ export class ConsumesPicker extends Component {
       </div>
     `;
 
-    this.rootElem.appendChild(fragment.children[0] as HTMLElement);
+		this.rootElem.appendChild(fragment.children[0] as HTMLElement);
 
-    const flaskOptions = this.simUI.splitRelevantOptions([
+		const flaskOptions = this.simUI.splitRelevantOptions([
 			{ item: Flask.FlaskOfTheFrostWyrm, stats: [Stat.StatSpellPower] },
 			{ item: Flask.FlaskOfEndlessRage, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
 			{ item: Flask.FlaskOfPureMojo, stats: [Stat.StatMP5] },
@@ -126,10 +126,10 @@ export class ConsumesPicker extends Component {
 		if (flaskOptions.length) {
 			const elem = this.rootElem.querySelector('.consumes-flasks') as HTMLElement;
 			new IconEnumPicker(
-        elem,
-        this.simUI.player,
-        IconInputs.makeFlasksInput(flaskOptions, 'Flask')
-      );
+				elem,
+				this.simUI.player,
+				IconInputs.makeFlasksInput(flaskOptions, 'Flask')
+			);
 		}
 
 		const battleElixirOptions = this.simUI.splitRelevantOptions([
@@ -145,16 +145,16 @@ export class ConsumesPicker extends Component {
 			{ item: BattleElixir.WrathElixir, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
 		]);
 
-    const battleElixirsContainer = this.rootElem.querySelector('.consumes-battle-elixirs') as HTMLElement;
+		const battleElixirsContainer = this.rootElem.querySelector('.consumes-battle-elixirs') as HTMLElement;
 		if (battleElixirOptions.length) {
 			new IconEnumPicker(
-        battleElixirsContainer,
-        this.simUI.player,
-        IconInputs.makeBattleElixirsInput(battleElixirOptions, 'Battle Elixir')
-      );
+				battleElixirsContainer,
+				this.simUI.player,
+				IconInputs.makeBattleElixirsInput(battleElixirOptions, 'Battle Elixir')
+			);
 		} else {
-      battleElixirsContainer.remove();
-    }
+			battleElixirsContainer.remove();
+		}
 
 		const guardianElixirOptions = this.simUI.splitRelevantOptions([
 			{ item: GuardianElixir.ElixirOfMightyDefense, stats: [Stat.StatDefense] },
@@ -166,22 +166,22 @@ export class ConsumesPicker extends Component {
 			{ item: GuardianElixir.GiftOfArthas, stats: [Stat.StatStamina] },
 		]);
 
-    const guardianElixirsContainer = this.rootElem.querySelector('.consumes-guardian-elixirs') as HTMLElement;
+		const guardianElixirsContainer = this.rootElem.querySelector('.consumes-guardian-elixirs') as HTMLElement;
 		if (guardianElixirOptions.length) {
 			const guardianElixirsContainer = this.rootElem.querySelector('.consumes-guardian-elixirs') as HTMLElement;
 			new IconEnumPicker(
-        guardianElixirsContainer,
-        this.simUI.player,
-        IconInputs.makeGuardianElixirsInput(guardianElixirOptions, 'Guardian Elixir')
-      );
+				guardianElixirsContainer,
+				this.simUI.player,
+				IconInputs.makeGuardianElixirsInput(guardianElixirOptions, 'Guardian Elixir')
+			);
 		} else {
-      guardianElixirsContainer.remove();
-    }
-  }
+			guardianElixirsContainer.remove();
+		}
+	}
 
-  private buildFoodPicker() {
-    let fragment = document.createElement('fragment');
-    fragment.innerHTML = `
+	private buildFoodPicker() {
+		let fragment = document.createElement('fragment');
+		fragment.innerHTML = `
       <div class="consumes-row input-root input-inline">
         <label class="form-label">Food</label>
         <div class="consumes-row-inputs">
@@ -190,9 +190,9 @@ export class ConsumesPicker extends Component {
       </div>
     `;
 
-    this.rootElem.appendChild(fragment.children[0] as HTMLElement);
+		this.rootElem.appendChild(fragment.children[0] as HTMLElement);
 
-    const foodOptions = this.simUI.splitRelevantOptions([
+		const foodOptions = this.simUI.splitRelevantOptions([
 			{ item: Food.FoodFishFeast, stats: [Stat.StatStamina, Stat.StatAttackPower, Stat.StatRangedAttackPower, Stat.StatSpellPower] },
 			{ item: Food.FoodGreatFeast, stats: [Stat.StatStamina, Stat.StatAttackPower, Stat.StatRangedAttackPower, Stat.StatSpellPower] },
 			{ item: Food.FoodBlackenedDragonfin, stats: [Stat.StatAgility] },
@@ -211,20 +211,20 @@ export class ConsumesPicker extends Component {
 			const elem = this.rootElem.querySelector('.consumes-food') as HTMLElement;
 			new IconEnumPicker(elem, this.simUI.player, IconInputs.makeFoodInput(foodOptions));
 		}
-  }
+	}
 
-  private buildEngPicker() {
-    let fragment = document.createElement('fragment');
-    fragment.innerHTML = `
+	private buildEngPicker() {
+		let fragment = document.createElement('fragment');
+		fragment.innerHTML = `
       <div class="consumes-row input-root input-inline">
         <label class="form-label">Engineering</label>
         <div class="consumes-row-inputs consumes-trade"></div>
       </div>
     `;
 
-    this.rootElem.appendChild(fragment.children[0] as HTMLElement);
+		this.rootElem.appendChild(fragment.children[0] as HTMLElement);
 
-    const tradeConsumesElem = this.rootElem.querySelector('.consumes-trade') as HTMLElement;
+		const tradeConsumesElem = this.rootElem.querySelector('.consumes-trade') as HTMLElement;
 
 		buildIconInput(tradeConsumesElem, this.simUI.player, IconInputs.ThermalSapper);
 		buildIconInput(tradeConsumesElem, this.simUI.player, IconInputs.ExplosiveDecoy);
@@ -238,22 +238,22 @@ export class ConsumesPicker extends Component {
 		};
 		this.simUI.player.professionChangeEmitter.on(updateProfession);
 		updateProfession();
-  }
+	}
 
-  private buildPetPicker() {
-    if (this.simUI.individualConfig.petConsumeInputs?.length) {
-      let fragment = document.createElement('fragment');
-      fragment.innerHTML = `
+	private buildPetPicker() {
+		if (this.simUI.individualConfig.petConsumeInputs?.length) {
+			let fragment = document.createElement('fragment');
+			fragment.innerHTML = `
         <div class="consumes-row input-root input-inline">
           <label class="form-label">Pet</label>
           <div class="consumes-row-inputs consumes-pet"></div>
         </div>
       `;
 
-      this.rootElem.appendChild(fragment.children[0] as HTMLElement);
+			this.rootElem.appendChild(fragment.children[0] as HTMLElement);
 
-      const petConsumesElem = this.rootElem.querySelector('.consumes-pet') as HTMLElement;
+			const petConsumesElem = this.rootElem.querySelector('.consumes-pet') as HTMLElement;
 			this.simUI.individualConfig.petConsumeInputs.map(iconInput => buildIconInput(petConsumesElem, this.simUI.player, iconInput));
 		}
-  }
+	}
 }

@@ -21,10 +21,21 @@ import { BaseModal } from './base_modal.js';
 import { Tooltip } from 'bootstrap';
 import { ResultsViewer } from './results_viewer.js';
 
-export function addStatWeightsAction(simUI: IndividualSimUI<any>, epStats: Array<Stat>, epPseudoStats: Array<PseudoStat>|undefined, epReferenceStat: Stat) {
+export function addStatWeightsAction(simUI: IndividualSimUI<any>, epStats: Array<Stat>, epPseudoStats: Array<PseudoStat> | undefined, epReferenceStat: Stat) {
 	simUI.addAction('Stat Weights', 'ep-weights-action', () => {
 		new EpWeightsMenu(simUI, epStats, epPseudoStats || [], epReferenceStat);
 	});
+}
+
+// Create the config for modal in separate function, as constructor cannot
+// contain any logic before `super' call. Use modal-xl to accommodate the extra
+// TMI & p(death) EP in the UI.
+function getModalConfig(simUI: IndividualSimUI<any>) {
+	const baseConfig = { footer: true, scrollContents: true };
+	if (simUI.sim.getShowThreatMetrics() && simUI.sim.getShowExperimental()) {
+		return { size: 'xl' as const, ...baseConfig };
+	}
+	return baseConfig;
 }
 
 class EpWeightsMenu extends BaseModal {
@@ -41,7 +52,7 @@ class EpWeightsMenu extends BaseModal {
 	private showAllStats: boolean = false;
 
 	constructor(simUI: IndividualSimUI<any>, epStats: Array<Stat>, epPseudoStats: Array<PseudoStat>, epReferenceStat: Stat) {
-		super(simUI.rootElem, 'ep-weights-menu', {footer: true, scrollContents: true});
+		super(simUI.rootElem, 'ep-weights-menu', getModalConfig(simUI));
 		this.simUI = simUI;
 		this.statsType = 'ep';
 		this.epStats = epStats;
@@ -58,6 +69,24 @@ class EpWeightsMenu extends BaseModal {
 					</select>
 				</div>
 				<div class="show-all-stats-container col col-sm-3"></div>
+			</div>
+			<div class="ep-reference-options row experimental">
+				<div class="col col-sm-4 damage-metrics">
+					<span>DPS/TPS reference:</span>
+					<select class="ref-stat-select form-select damage-metrics">
+					</select>
+				</div>
+				<div class="col col-sm-4 healing-metrics">
+					<span>Healing reference:</span>
+					<select class="ref-stat-select form-select healing-metrics">
+					</select>
+				</div>
+				<div class="col col-sm-4 threat-metrics">
+					<span>Mitigation reference:</span>
+					<select class="ref-stat-select form-select threat-metrics">
+					</select>
+				</div>
+				<p>The above stat selectors control which reference stat is used for EP normalisation for the different EP columns.</p>
 			</div>
 			<p>The 'Current EP' column displays the values currently used by the item pickers to sort items.</br>
 			Use the <a href='javascript:void(0)' class="fa fa-copy"></a> icon above the EPs to use newly calculated EPs.</p>
@@ -115,12 +144,69 @@ class EpWeightsMenu extends BaseModal {
 									<i class="fa fa-copy"></i>
 								</a>
 							</th>
-							<th>
+							<th class="threat-metrics type-weight experimental">
+								<span>TMI Weight</span>
+								<a href="javascript:void(0)" role="button" class="col-action">
+									<i class="fa fa-copy"></i>
+								</a>
+							</th>
+							<th class="threat-metrics type-ep experimental">
+								<span>TMI EP</span>
+								<a href="javascript:void(0)" role="button" class="col-action">
+									<i class="fa fa-copy"></i>
+								</a>
+							</th>
+							<th class="threat-metrics type-weight experimental">
+								<span>Death Weight</span>
+								<a href="javascript:void(0)" role="button" class="col-action">
+									<i class="fa fa-copy"></i>
+								</a>
+							</th>
+							<th class="threat-metrics type-ep experimental">
+								<span>Death EP</span>
+								<a href="javascript:void(0)" role="button" class="col-action">
+									<i class="fa fa-copy"></i>
+								</a>
+							</th>
+							<th style="text-align: center">
 								<span>Current EP</span>
 								<a href="javascript:void(0)" role="button" class="col-action">
 									<i class="fas fa-arrows-rotate"></i>
 								</a>
 							</th>
+						</tr>
+						<tr class="ep-ratios">
+							<td>EP Ratio</td>
+							<td class="damage-metrics type-ratio type-weight">
+							</td>
+							<td class="damage-metrics type-ratio type-ep">
+							</td>
+							<td class="healing-metrics type-ratio type-weight">
+							</td>
+							<td class="healing-metrics type-ratio type-ep">
+							</td>
+							<td class="threat-metrics type-ratio type-weight">
+							</td>
+							<td class="threat-metrics type-ratio type-ep">
+							</td>
+							<td class="threat-metrics type-ratio type-weight">
+							</td>
+							<td class="threat-metrics type-ratio type-ep">
+							</td>
+							<td class="threat-metrics type-ratio type-weight experimental">
+							</td>
+							<td class="threat-metrics type-ratio type-ep experimental">
+							</td>
+							<td class="threat-metrics type-ratio type-weight experimental">
+							</td>
+							<td class="threat-metrics type-ratio type-ep experimental">
+							</td>
+							<td style="text-align: center; vertical-align: middle;">
+								<button class="btn btn-primary compute-ep">
+									<i class="fas fa-calculator"></i>
+									<span class="not-tiny">Compute </span>EP
+								</button>
+							</td>
 						</tr>
 					</thead>
 					<tbody></tbody>
@@ -171,6 +257,51 @@ class EpWeightsMenu extends BaseModal {
 		selectElem.value = this.statsType;
 		updateType();
 
+		const getNameFromStat = (stat: Stat | undefined) => {
+			return stat !== undefined ? getClassStatName(stat, this.simUI.player.getClass()) : '??';
+		};
+
+		const getStatFromName = (value: string) => {
+			for (let stat of this.epStats) {
+				if (getNameFromStat(stat) == value) {
+					return stat;
+				}
+			}
+
+			return undefined;
+		};
+
+		const updateEpRefStat = () => {
+			this.simUI.prevEpSimResult = this.calculateEp(this.getPrevSimResult());
+			this.updateTable(this.simUI.prevEpIterations || 1, this.getPrevSimResult());
+		};
+
+		const epRefSelects = this.rootElem.querySelectorAll('.ref-stat-select') as NodeListOf<HTMLSelectElement>;
+		epRefSelects.forEach((epSelect: HTMLSelectElement, idx: number) => {
+			this.epStats.forEach((stat) => {
+				epSelect.options[epSelect.options.length] = new Option(getNameFromStat(stat));
+			});
+			if (epSelect.classList.contains('damage-metrics')) {
+				epSelect.addEventListener('input', event => {
+					this.simUI.dpsRefStat = getStatFromName(epSelect.value);
+					updateEpRefStat();
+				});
+				epSelect.value = getNameFromStat(this.getDpsEpRefStat());
+			} else if (epSelect.classList.contains('healing-metrics')) {
+				epSelect.addEventListener('input', event => {
+					this.simUI.healRefStat = getStatFromName(epSelect.value);
+					updateEpRefStat();
+				});
+				epSelect.value = getNameFromStat(this.getHealEpRefStat());
+			} else if (epSelect.classList.contains('threat-metrics')) {
+				epSelect.addEventListener('input', event => {
+					this.simUI.tankRefStat = getStatFromName(epSelect.value);
+					updateEpRefStat();
+				});
+				epSelect.value = getNameFromStat(this.getTankEpRefStat());
+			}
+		});
+
 		const optimizeGemsButton = this.rootElem.getElementsByClassName('optimize-gems')[0] as HTMLElement;
 		Tooltip.getOrCreateInstance(optimizeGemsButton);
 		optimizeGemsButton.addEventListener('click', async event => {
@@ -189,7 +320,7 @@ class EpWeightsMenu extends BaseModal {
 			calcButton.classList.add('disabled');
 			calcButton.style.width = `${calcButton.getBoundingClientRect().width.toFixed(3)}px`;
 			calcButton.innerHTML = `<i class="fa fa-spinner fa-spin"></i>&nbsp;Running`;
-			this.container.scrollTo({top: 0});
+			this.container.scrollTo({ top: 0 });
 			this.container.classList.add('pending');
 			this.resultsViewer.setPending();
 			const iterations = this.simUI.sim.getIterations();
@@ -201,21 +332,29 @@ class EpWeightsMenu extends BaseModal {
 			calcButton.innerHTML = previousContents;
 			calcButton.classList.remove('disabled');
 			this.simUI.prevEpIterations = iterations;
-			this.simUI.prevEpSimResult = result;
-			this.updateTable(iterations, result);
+			this.simUI.prevEpSimResult = this.calculateEp(result);
+			this.updateTable(iterations, this.simUI.prevEpSimResult);
 		});
 
 		const colActionButtons = Array.from(this.rootElem.getElementsByClassName('col-action')) as Array<HTMLSelectElement>;
-		const makeUpdateWeights = (button: HTMLElement, labelTooltip: string, tooltip: string, weightsFunc: () => UnitStats|undefined) => {
+		const makeUpdateWeights = (button: HTMLElement, labelTooltip: string, tooltip: string, weightsFunc: () => UnitStats | undefined, epRefStat?: () => Stat) => {
 			const label = button.previousElementSibling as HTMLElement;
-			label!.setAttribute('data-bs-toggle', 'tooltip');
-			label!.setAttribute('data-bs-title', labelTooltip);
-			label!.setAttribute('data-bs-html',	'true');
+			const title = () => {
+				if (!epRefStat) return labelTooltip;
+
+				const refStatName = getNameFromStat(epRefStat());
+				return labelTooltip + ` Normalized by ${refStatName}.`;
+			};
+			const labelTooltipConfig = {
+				toggle: 'tooltip',
+				html: true,
+				title: title
+			};
 			button.setAttribute('data-bs-toggle', 'tooltip');
 			button.setAttribute('data-bs-title', tooltip);
 			button.setAttribute('data-bs-html', 'true');
 
-			Tooltip.getOrCreateInstance(label);
+			new Tooltip(label, labelTooltipConfig);
 			Tooltip.getOrCreateInstance(button);
 
 			button.addEventListener('click', event => {
@@ -223,17 +362,19 @@ class EpWeightsMenu extends BaseModal {
 			});
 		};
 
-		const epRefStatName = getClassStatName(this.epReferenceStat, this.simUI.player.getClass());
-		const armorStatName = getClassStatName(Stat.StatArmor, this.simUI.player.getClass());
 		makeUpdateWeights(colActionButtons[0], 'Per-point increase in DPS (Damage Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().dps!.weights);
-		makeUpdateWeights(colActionButtons[1], `EP (Equivalency Points) for DPS (Damage Per Second) for each stat. Normalized by ${epRefStatName}.`, 'Copy to Current EP', () => this.getPrevSimResult().dps!.epValues);
+		makeUpdateWeights(colActionButtons[1], 'EP (Equivalency Points) for DPS (Damage Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().dps!.epValues, () => this.getDpsEpRefStat());
 		makeUpdateWeights(colActionButtons[2], 'Per-point increase in HPS (Healing Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().hps!.weights);
-		makeUpdateWeights(colActionButtons[3], `EP (Equivalency Points) for HPS (Healing Per Second) for each stat. Normalized by ${epRefStatName}.`, 'Copy to Current EP', () => this.getPrevSimResult().hps!.epValues);
+		makeUpdateWeights(colActionButtons[3], 'EP (Equivalency Points) for HPS (Healing Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().hps!.epValues, () => this.getHealEpRefStat());
 		makeUpdateWeights(colActionButtons[4], 'Per-point increase in TPS (Threat Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().tps!.weights);
-		makeUpdateWeights(colActionButtons[5], `EP (Equivalency Points) for TPS (Threat Per Second) for each stat. Normalized by ${epRefStatName}.`, 'Copy to Current EP', () => this.getPrevSimResult().tps!.epValues);
+		makeUpdateWeights(colActionButtons[5], 'EP (Equivalency Points) for TPS (Threat Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().tps!.epValues, () => this.getDpsEpRefStat());
 		makeUpdateWeights(colActionButtons[6], 'Per-point increase in DTPS (Damage Taken Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().dtps!.weights);
-		makeUpdateWeights(colActionButtons[7], `EP (Equivalency Points) for DTPS (Damage Taken Per Second) for each stat. Normalized by ${armorStatName}.`, 'Copy to Current EP', () => this.getPrevSimResult().dtps!.epValues);
-		makeUpdateWeights(colActionButtons[8], 'Current EP Weights. Used to sort the gear selector menus.', 'Restore Default EP', () => this.simUI.individualConfig.defaults.epWeights.toProto());
+		makeUpdateWeights(colActionButtons[7], 'EP (Equivalency Points) for DTPS (Damage Taken Per Second) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().dtps!.epValues, () => this.getTankEpRefStat());
+		makeUpdateWeights(colActionButtons[8], 'Per-point decrease in TMI (Theck-Meloree Index) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().tmi!.weights);
+		makeUpdateWeights(colActionButtons[9], 'EP (Equivalency Points) for TMI (Theck-Meloree Index) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().tmi!.epValues, () => this.getTankEpRefStat());
+		makeUpdateWeights(colActionButtons[10], 'Per-point decrease in p(death) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().pDeath!.weights);
+		makeUpdateWeights(colActionButtons[11], 'EP (Equivalency Points) for p(death) for each stat.', 'Copy to Current EP', () => this.getPrevSimResult().pDeath!.epValues, () => this.getTankEpRefStat());
+		makeUpdateWeights(colActionButtons[12], 'Current EP Weights. Used to sort the gear selector menus.', 'Restore Default EP', () => this.simUI.individualConfig.defaults.epWeights.toProto());
 
 		const showAllStatsContainer = this.rootElem.getElementsByClassName('show-all-stats-container')[0] as HTMLElement;
 		new BooleanPicker(showAllStatsContainer, this, {
@@ -248,6 +389,55 @@ class EpWeightsMenu extends BaseModal {
 		});
 
 		this.updateTable(this.simUI.prevEpIterations || 1, this.getPrevSimResult(), true);
+
+		const makeEpRatioCell = (cell: HTMLElement, idx: number) => {
+			new NumberPicker(cell, this.simUI.player, {
+				float: true,
+				changedEvent: (player: Player<any>) => player.epRatiosChangeEmitter,
+				getValue: (player: Player<any>) => this.simUI.player.getEpRatios()[idx],
+				setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
+					const epRatios = player.getEpRatios();
+					epRatios[idx] = newValue;
+					player.setEpRatios(eventID, epRatios);
+				},
+			});
+		};
+		const epRatioCells = this.body.querySelectorAll('.type-ratio.type-ep') as NodeListOf<HTMLElement>;
+		epRatioCells.forEach(makeEpRatioCell);
+
+		const weightRatioCells = this.body.querySelectorAll('.type-ratio.type-weight') as NodeListOf<HTMLElement>;
+		weightRatioCells.forEach(makeEpRatioCell);
+
+		const updateButton = this.rootElem.getElementsByClassName('compute-ep')[0] as HTMLElement;
+		updateButton.setAttribute('data-bs-toggle', 'tooltip');
+		updateButton.setAttribute('data-bs-title', "Compute Weighted EP");
+		updateButton.setAttribute('data-bs-html', 'true');
+
+		Tooltip.getOrCreateInstance(updateButton);
+
+		updateButton.addEventListener('click', event => {
+			const results = this.getPrevSimResult();
+			const epRatios = this.simUI.player.getEpRatios();
+			if (this.statsType == 'ep') {
+				const scaledDpsEp = Stats.fromProto(results.dps!.epValues).scale(epRatios[0]);
+				const scaledHpsEp = Stats.fromProto(results.hps!.epValues).scale(epRatios[1]);
+				const scaledTpsEp = Stats.fromProto(results.tps!.epValues).scale(epRatios[2]);
+				const scaledDtpsEp = Stats.fromProto(results.dtps!.epValues).scale(epRatios[3]);
+				const scaledTmiEp = Stats.fromProto(results.tmi!.epValues).scale(epRatios[4]);
+				const scaledPDeathEp = Stats.fromProto(results.pDeath!.epValues).scale(epRatios[5]);
+				const newEp = scaledDpsEp.add(scaledHpsEp).add(scaledTpsEp).add(scaledDtpsEp).add(scaledTmiEp).add(scaledPDeathEp);
+				this.simUI.player.setEpWeights(TypedEvent.nextEventID(), newEp);
+			} else {
+				const scaledDpsWeights = Stats.fromProto(results.dps!.weights).scale(epRatios[0]);
+				const scaledHpsWeights = Stats.fromProto(results.hps!.weights).scale(epRatios[1]);
+				const scaledTpsWeights = Stats.fromProto(results.tps!.weights).scale(epRatios[2]);
+				const scaledDtpsWeights = Stats.fromProto(results.dtps!.weights).scale(epRatios[3]);
+				const scaledTmiWeights = Stats.fromProto(results.tmi!.weights).scale(epRatios[4]);
+				const scaledPDeathWeights = Stats.fromProto(results.pDeath!.weights).scale(epRatios[5]);
+				const newWeights = scaledDpsWeights.add(scaledHpsWeights).add(scaledTpsWeights).add(scaledDtpsWeights).add(scaledTmiWeights).add(scaledPDeathWeights);
+				this.simUI.player.setEpWeights(TypedEvent.nextEventID(), newWeights);
+			}
+		});
 	}
 
 	private setSimProgress(progress: ProgressMetrics) {
@@ -317,6 +507,8 @@ class EpWeightsMenu extends BaseModal {
 			${makeWeightAndEpCellHtml(result.hps!, 'healing-metrics')}
 			${makeWeightAndEpCellHtml(result.tps!, 'threat-metrics')}
 			${makeWeightAndEpCellHtml(result.dtps!, 'threat-metrics')}
+			${makeWeightAndEpCellHtml(result.tmi!, 'threat-metrics experimental')}
+			${makeWeightAndEpCellHtml(result.pDeath!, 'threat-metrics experimental')}
 			<td class="current-ep"></td>
 		`;
 
@@ -332,6 +524,46 @@ class EpWeightsMenu extends BaseModal {
 		});
 
 		return row;
+	}
+
+	private calculateEp(weights: StatWeightsResult) {
+		var result = StatWeightsResult.clone(weights);
+		const normaliseValue = (refStat: Stat, values: StatWeightValues) => {
+			const refUnitStat = UnitStat.fromStat(refStat);
+			const refWeight = refUnitStat.getProtoValue(values.weights!);
+			const refStdev = refUnitStat.getProtoValue(values.weightsStdev!);
+			EpWeightsMenu.epUnitStats.forEach(stat => {
+				const value = stat.getProtoValue(values.weights!);
+				stat.setProtoValue(values.epValues!, refWeight == 0 ? 0 : value / refWeight);
+
+				const valueStdev = stat.getProtoValue(values.weightsStdev!);
+				stat.setProtoValue(values.epValuesStdev!, refStdev == 0 ? 0 : valueStdev / refStdev);
+			});
+		};
+
+		if (this.simUI.dpsRefStat !== undefined) {
+			normaliseValue(this.simUI.dpsRefStat, result.dps!);
+			normaliseValue(this.simUI.dpsRefStat, result.tps!);
+		}
+		if (this.simUI.healRefStat !== undefined) normaliseValue(this.simUI.healRefStat, result.hps!);
+		if (this.simUI.tankRefStat !== undefined) {
+			normaliseValue(this.simUI.tankRefStat, result.dtps!);
+			normaliseValue(this.simUI.tankRefStat, result.tmi!);
+			normaliseValue(this.simUI.tankRefStat, result.pDeath!);
+		}
+		return result;
+	}
+
+	private getDpsEpRefStat(): Stat {
+		return this.simUI.dpsRefStat !== undefined ? this.simUI.dpsRefStat : this.epReferenceStat;
+	}
+
+	private getHealEpRefStat(): Stat {
+		return this.simUI.healRefStat !== undefined ? this.simUI.healRefStat : this.epReferenceStat;
+	}
+
+	private getTankEpRefStat(): Stat {
+		return this.simUI.tankRefStat !== undefined ? this.simUI.tankRefStat : Stat.StatArmor;
 	}
 
 	private getPrevSimResult(): StatWeightsResult {
@@ -355,6 +587,18 @@ class EpWeightsMenu extends BaseModal {
 				epValuesStdev: new Stats().toProto(),
 			},
 			dtps: {
+				weights: new Stats().toProto(),
+				weightsStdev: new Stats().toProto(),
+				epValues: new Stats().toProto(),
+				epValuesStdev: new Stats().toProto(),
+			},
+			tmi: {
+				weights: new Stats().toProto(),
+				weightsStdev: new Stats().toProto(),
+				epValues: new Stats().toProto(),
+				epValuesStdev: new Stats().toProto(),
+			},
+			pDeath: {
 				weights: new Stats().toProto(),
 				weightsStdev: new Stats().toProto(),
 				epValues: new Stats().toProto(),

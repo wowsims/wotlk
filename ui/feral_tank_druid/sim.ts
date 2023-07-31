@@ -7,9 +7,8 @@ import { Consumes } from '../core/proto/common.js';
 import { Encounter } from '../core/proto/common.js';
 import { ItemSlot } from '../core/proto/common.js';
 import { MobType } from '../core/proto/common.js';
-import { RaidTarget } from '../core/proto/common.js';
+import { UnitReference } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
-import { NO_TARGET } from '../core/proto_utils/utils.js';
 import { Stat, PseudoStat } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js'
 import { Stats } from '../core/proto_utils/stats.js';
@@ -52,10 +51,11 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 				Stat.StatMeleeCrit,
 				Stat.StatMeleeHaste,
 				Stat.StatArmor,
+				Stat.StatBonusArmor,
 				Stat.StatArmorPenetration,
 				Stat.StatDefense,
 				Stat.StatDodge,
-				Stat.StatResilience,
+				Stat.StatNatureResistance,
 			],
 			epPseudoStats: [
 				PseudoStat.PseudoStatMainHandDps,
@@ -66,6 +66,7 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 			displayStats: [
 				Stat.StatHealth,
 				Stat.StatArmor,
+				Stat.StatBonusArmor,
 				Stat.StatStamina,
 				Stat.StatStrength,
 				Stat.StatAgility,
@@ -79,6 +80,7 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 				Stat.StatDodge,
 				Stat.StatSpellHit,
 				Stat.StatSpellCrit,
+				Stat.StatNatureResistance,
 			],
 
 			defaults: {
@@ -87,6 +89,7 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatArmor]: 3.5665,
+					[Stat.StatBonusArmor]: 0.5187,
 					[Stat.StatStamina]: 7.3021,
 					[Stat.StatStrength]: 2.3786,
 					[Stat.StatAgility]: 4.4974,
@@ -150,11 +153,11 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 			rotationInputs: DruidInputs.FeralTankDruidRotationConfig,
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
-					IconInputs.HealthBuff,
-					IconInputs.SpellCritBuff,
-					IconInputs.SpellCritDebuff,
-					IconInputs.SpellHitDebuff,
-					IconInputs.SpellDamageDebuff,
+				IconInputs.HealthBuff,
+				IconInputs.SpellCritBuff,
+				IconInputs.SpellCritDebuff,
+				IconInputs.SpellHitDebuff,
+				IconInputs.SpellDamageDebuff,
 			],
 			excludeBuffDebuffInputs: [
 			],
@@ -164,6 +167,7 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 					OtherInputs.TankAssignment,
 					OtherInputs.IncomingHps,
 					OtherInputs.HealingCadence,
+					OtherInputs.HealingCadenceVariation,
 					OtherInputs.BurstWindow,
 					OtherInputs.InspirationUptime,
 					OtherInputs.HpPercentForDefensives,

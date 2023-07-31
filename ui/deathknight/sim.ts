@@ -151,6 +151,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
+					DeathKnightInputs.DiseaseDowntime,
 					DeathKnightInputs.DrwPestiApply,
 					DeathKnightInputs.SelfUnholyFrenzy,
 					DeathKnightInputs.StartingRunicPower,
@@ -175,21 +176,37 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 					Presets.FrostTalents,
 					Presets.FrostUnholyTalents,
 					Presets.UnholyDualWieldTalents,
+					Presets.UnholyDualWieldSSTalents,
 					Presets.Unholy2HTalents,
+				],
+				// Preset rotations that the user can quickly select.
+				rotations: [
+					Presets.BLOOD_ROTATION_PRESET_LEGACY_DEFAULT,
+					Presets.FROST_ROTATION_PRESET_LEGACY_DEFAULT,
+					Presets.UNHOLY_DW_ROTATION_PRESET_LEGACY_DEFAULT,
+					Presets.BLOOD_PESTI_ROTATION_PRESET_DEFAULT,
+					Presets.FROST_BL_PESTI_ROTATION_PRESET_DEFAULT,
+					Presets.FROST_UH_PESTI_ROTATION_PRESET_DEFAULT,
+					Presets.UNHOLY_DW_ROTATION_PRESET_DEFAULT,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.P1_BLOOD_BIS_PRESET,
 					Presets.P2_BLOOD_BIS_PRESET,
-					Presets.P1_FROST_PRE_BIS_PRESET,
+					Presets.P3_BLOOD_BIS_PRESET,
 					Presets.P1_FROST_BIS_PRESET,
-					Presets.P1_FROSTSUBUNH_BIS_PRESET,
 					Presets.P2_FROST_BIS_PRESET,
-					Presets.P1_UNHOLY_DW_PRERAID_PRESET,
-					Presets.P1_UNHOLY_2H_PRERAID_PRESET,
+					Presets.P3_FROST_BIS_PRESET,
 					Presets.P1_UNHOLY_DW_BIS_PRESET,
-					Presets.P1_UNHOLY_2H_BIS_PRESET,
 					Presets.P2_UNHOLY_DW_BIS_PRESET,
+					Presets.P3_UNHOLY_DW_BIS_PRESET,
+					// Not needed anymore just filling ui Space
+					// Disabled on purpose
+					//Presets.P1_FROSTSUBUNH_BIS_PRESET,
+					//Presets.P1_FROST_PRE_BIS_PRESET,
+					//Presets.P1_UNHOLY_DW_PRERAID_PRESET,
+					//Presets.P1_UNHOLY_2H_PRERAID_PRESET,
+					//Presets.P1_UNHOLY_2H_BIS_PRESET,
 				],
 			},
 		});

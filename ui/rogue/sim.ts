@@ -10,9 +10,9 @@ import {
 	TristateEffect,
 	WeaponType
 } from '../core/proto/common.js';
-import {Player} from '../core/player.js';
-import {Stats} from '../core/proto_utils/stats.js';
-import {IndividualSimUI} from '../core/individual_sim_ui.js';
+import { Player } from '../core/player.js';
+import { Stats } from '../core/proto_utils/stats.js';
+import { IndividualSimUI } from '../core/individual_sim_ui.js';
 
 import {
 	Rogue_Options_PoisonImbue,
@@ -29,7 +29,7 @@ import * as OtherInputs from '../core/components/other_inputs.js';
 
 import * as RogueInputs from './inputs.js';
 import * as Presets from './presets.js';
-import {DefaultOptions} from './presets.js';
+import { DefaultOptions } from './presets.js';
 
 export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecRogue>) {
@@ -46,8 +46,8 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 						updateOn: simUI.sim.encounter.changeEmitter,
 						getContent: () => {
 							let hasNoArmor = false
-							for (const target of simUI.sim.encounter.getTargets()) {
-								if (target.getStats().getStat(Stat.StatArmor) <= 0) {
+							for (const target of simUI.sim.encounter.targets) {
+								if (new Stats(target.stats).getStat(Stat.StatArmor) <= 0) {
 									hasNoArmor = true
 									break
 								}
@@ -93,9 +93,76 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					return {
 						updateOn: simUI.player.changeEmitter,
 						getContent: () => {
+							if (simUI.player.getTalents().hackAndSlash) {
+								if (simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponType == WeaponType.WeaponTypeSword ||
+									simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponType == WeaponType.WeaponTypeAxe ||
+									simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponType == WeaponType.WeaponTypeSword ||
+									simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponType == WeaponType.WeaponTypeAxe) {
+									return '';
+								} else {
+									return '"Hack and Slash" talent selected, but swords or axes not equipped.';
+								}
+							} else {
+								return '';
+							}
+						},
+					};
+				},
+				(simUI: IndividualSimUI<Spec.SpecRogue>) => {
+					return {
+						updateOn: simUI.player.changeEmitter,
+						getContent: () => {
+							if (simUI.player.getTalents().closeQuartersCombat) {
+								if (simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponType == WeaponType.WeaponTypeFist ||
+									simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponType == WeaponType.WeaponTypeDagger ||
+									simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponType == WeaponType.WeaponTypeFist ||
+									simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponType == WeaponType.WeaponTypeDagger) {
+									return '';
+								} else {
+									return '"Close Quarters Combat" talent selected, but fists or axes not equipped.';
+								}
+							} else {
+								return '';
+							}
+						},
+					};
+				},
+				(simUI: IndividualSimUI<Spec.SpecRogue>) => {
+					return {
+						updateOn: simUI.player.changeEmitter,
+						getContent: () => {
+							if (simUI.player.getTalents().maceSpecialization) {
+								if (simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponType == WeaponType.WeaponTypeMace ||
+									simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponType == WeaponType.WeaponTypeMace) {
+									return '';
+								} else {
+									return '"Mace Specialization" talent selected, but maces not equipped.';
+								}
+							} else {
+								return '';
+							}
+						},
+					};
+				},
+				(simUI: IndividualSimUI<Spec.SpecRogue>) => {
+					return {
+						updateOn: simUI.player.changeEmitter,
+						getContent: () => {
 							if (simUI.player.getInFrontOfTarget() && (simUI.player.getRotation().combatBuilder == CombatBuilder.Backstab ||
 								simUI.player.getRotation().openWithGarrote)) {
 								return 'Option "In Front of Target" selected, but using Backstab or Garrote as builder or opener.';
+							} else {
+								return '';
+							}
+						},
+					};
+				},
+				(simUI: IndividualSimUI<Spec.SpecRogue>) => {
+					return {
+						updateOn: simUI.player.changeEmitter,
+						getContent: () => {
+							if (simUI.player.getRotation().combatBuilder == CombatBuilder.HemorrhageCombat && !simUI.player.getTalents().hemorrhage) {
+								return 'Builder "Hemorrhage" selected, but Hemorrhage is not talented.';
 							} else {
 								return '';
 							}
@@ -192,8 +259,8 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					[Stat.StatAgility]: 1.86,
 					[Stat.StatStrength]: 1.14,
 					[Stat.StatAttackPower]: 1,
-					[Stat.StatSpellCrit] : 0.28,
-					[Stat.StatSpellHit] : 0.08,
+					[Stat.StatSpellCrit]: 0.28,
+					[Stat.StatSpellHit]: 0.08,
 					[Stat.StatMeleeHit]: 1.39,
 					[Stat.StatMeleeCrit]: 1.32,
 					[Stat.StatMeleeHaste]: 1.48,
@@ -208,7 +275,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 				// Default rotation settings.
 				rotation: Presets.DefaultRotation,
 				// Default talents.
-				talents: Presets.AssassinationTalents.data,
+				talents: Presets.AssassinationTalents137.data,
 				// Default spec-specific settings.
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
@@ -265,6 +332,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 			otherInputs: {
 				inputs: [
 					RogueInputs.StartingOverkillDuration,
+					RogueInputs.AssumeBleedActive,
 					RogueInputs.HonorOfThievesCritRate,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
@@ -278,10 +346,16 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 			presets: {
 				// Preset talents that the user can quickly select.
 				talents: [
-					Presets.AssassinationTalents,
-					Presets.CombatTalents,
+					Presets.AssassinationTalents137,
+					Presets.AssassinationTalents182,
+					Presets.AssassinationTalentsBF,
+					Presets.CombatHackTalents,
+					Presets.CombatCQCTalents,
 					Presets.SubtletyTalents,
 					Presets.HemoSubtletyTalents,
+				],
+				rotations: [
+					Presets.ROTATION_APL_PRESET,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
@@ -292,7 +366,11 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					Presets.P1_PRESET_HEMO_SUB,
 					Presets.P2_PRESET_ASSASSINATION,
 					Presets.P2_PRESET_COMBAT,
+					Presets.P3_PRESET_ASSASSINATION,
+					Presets.P3_PRESET_COMBAT,
 					Presets.P2_PRESET_HEMO_SUB,
+					Presets.P3_PRESET_HEMO_SUB,
+					Presets.P3_PRESET_DANCE_SUB,
 				],
 			},
 		})
@@ -334,12 +412,12 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 				if (typeof mhWeaponSpeed == 'undefined' || typeof ohWeaponSpeed == 'undefined') {
 					return
 				}
-				if (encounter.getNumTargets() > 3) {
+				if (encounter.targets.length > 3) {
 					options.mhImbue = Rogue_Options_PoisonImbue.InstantPoison
 					options.ohImbue = Rogue_Options_PoisonImbue.InstantPoison
 				} else {
-					if (mhWeaponSpeed <= ohWeaponSpeed) { 
-						options.mhImbue = Rogue_Options_PoisonImbue.DeadlyPoison 
+					if (mhWeaponSpeed <= ohWeaponSpeed) {
+						options.mhImbue = Rogue_Options_PoisonImbue.DeadlyPoison
 						options.ohImbue = Rogue_Options_PoisonImbue.InstantPoison
 					} else {
 						options.mhImbue = Rogue_Options_PoisonImbue.InstantPoison
@@ -353,7 +431,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 			const rotation = this.player.getRotation()
 			const options = this.player.getSpecOptions()
 			const encounter = this.sim.encounter
-			if (this.sim.encounter.getNumTargets() > 3) {
+			if (this.sim.encounter.targets.length >= 3) {
 				if (rotation.multiTargetSliceFrequency == Frequency.FrequencyUnknown) {
 					rotation.multiTargetSliceFrequency = Presets.DefaultRotation.multiTargetSliceFrequency;
 				}
@@ -367,12 +445,12 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 				if (typeof mhWeaponSpeed == 'undefined' || typeof ohWeaponSpeed == 'undefined') {
 					return
 				}
-				if (encounter.getNumTargets() > 3) {
+				if (encounter.targets.length > 3) {
 					options.mhImbue = Rogue_Options_PoisonImbue.InstantPoison
 					options.ohImbue = Rogue_Options_PoisonImbue.InstantPoison
 				} else {
-					if (mhWeaponSpeed <= ohWeaponSpeed) { 
-						options.mhImbue = Rogue_Options_PoisonImbue.DeadlyPoison 
+					if (mhWeaponSpeed <= ohWeaponSpeed) {
+						options.mhImbue = Rogue_Options_PoisonImbue.DeadlyPoison
 						options.ohImbue = Rogue_Options_PoisonImbue.InstantPoison
 					} else {
 						options.mhImbue = Rogue_Options_PoisonImbue.InstantPoison

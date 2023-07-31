@@ -23,7 +23,7 @@ func (druid *Druid) registerRipSpell() {
 		ActionID:    core.ActionID{SpellID: 49800},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL,
 
 		EnergyCost: core.EnergyCostOptions{
 			Cost:          30 - core.TernaryFloat64(druid.HasSetBonus(ItemSetLasherweaveBattlegear, 2), 10, 0),
@@ -76,6 +76,7 @@ func (druid *Druid) registerRipSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
 			if result.Landed() {
+				spell.SpellMetrics[target.UnitIndex].Hits--
 				dot := spell.Dot(target)
 				dot.NumberOfTicks = ripBaseNumTicks
 				dot.Apply(sim)

@@ -369,6 +369,7 @@ func (priest *Priest) applySurgeOfLight() {
 		Timer:    priest.NewTimer(),
 		Duration: time.Second * 6,
 	}
+	priest.SurgeOfLightProcAura.Icd = &icd
 
 	priest.RegisterAura(core.Aura{
 		Label:    "Surge of Light",
@@ -479,7 +480,7 @@ func (priest *Priest) registerInnerFocus() {
 
 	priest.InnerFocus = priest.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
-		Flags:    core.SpellFlagNoOnCastComplete,
+		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagAPL,
 
 		Cast: core.CastConfig{
 			CD: core.Cooldown{

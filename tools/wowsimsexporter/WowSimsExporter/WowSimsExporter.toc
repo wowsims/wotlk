@@ -1,13 +1,13 @@
-## Title: WowSimsExporter v2.4 |c0000ffffWOTLK|r
-## Version: 2.4
+## Title: WowSimsExporter v2.5 |c0000ffffWOTLK|r
+## Version: 2.5
 ## Author: generalwrex, namreeb
 ## Interface: 30400
 ## Notes: This is an exporter written to quickly export your character to https://wowsims.github.io/wotlk/ for simulations.
 ## SavedVariables: WSEDB
 ## OptionalDeps: Ace3
 
-Libs\LibParse\LibParse.lua
 Libs\LibStub\LibStub.lua
+Libs\LibParse\LibParse.lua
 Libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
 Libs\AceAddon-3.0\AceAddon-3.0.xml
 Libs\AceEvent-3.0\AceEvent-3.0.xml

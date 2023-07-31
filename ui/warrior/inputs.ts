@@ -1,12 +1,7 @@
-import { IconPickerConfig } from '../core/components/icon_picker.js';
-import { RaidTarget } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
-import { NO_TARGET } from '../core/proto_utils/utils.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
-import { Sim } from '../core/sim.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
-import { Target } from '../core/target.js';
 
 import {
 	WarriorShout,
@@ -16,11 +11,13 @@ import {
 	Warrior_Rotation_SunderArmor as SunderArmor,
 	Warrior_Options as WarriorOptions,
 	Warrior_Rotation_StanceOption as StanceOption,
-	Warrior_Rotation_MainGcd as MainGcd
+	Warrior_Rotation_SpellOption as SpellOption,
+	Warrior_Rotation_MainGcd as MainGcd,
 } from '../core/proto/warrior.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
 import * as Presets from './presets.js';
+import { CustomRotationPicker } from 'ui/core/components/individual_sim_ui/custom_rotation_picker.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
@@ -47,6 +44,12 @@ export const Munch = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecWarrior>(
 	labelTooltip: 'Apply "munching" to Deep Wounds',
 });
 
+export const StanceSnapshot = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecWarrior>({
+	fieldName: 'stanceSnapshot',
+	label: 'Stance Snapshot',
+	labelTooltip: 'Ability that is cast at the same time as stance swap will benefit from the bonus of the stance before the swap.',
+});
+
 export const ShoutPicker = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecWarrior, WarriorShout>({
 	fieldName: 'shout',
 	values: [
@@ -63,19 +66,30 @@ export const WarriorRotationConfig = {
 			label: 'Use Mortal Strike',
 			labelTooltip: 'Use Mortal Strike when rage threshold is met.',
 			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().mortalStrike,
+			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalentTree() == 0 && !player.getRotation().customRotationOption,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecWarrior>({
 			fieldName: 'useCleave',
 			label: 'Use Cleave',
 			labelTooltip: 'Use Cleave instead of Heroic Strike.',
+			showWhen: (player: Player<Spec.SpecWarrior>) => !player.getRotation().customRotationOption,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecWarrior>({
 			fieldName: 'useRend',
 			label: 'Use Rend',
 			labelTooltip: 'Use Rend when rage threshold is met and the debuff duration is less than refresh time.',
 			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+			showWhen: (player: Player<Spec.SpecWarrior>) => !player.getRotation().customRotationOption,
 		}),
+
+		InputHelpers.makeRotationBooleanInput<Spec.SpecWarrior>({
+			fieldName: 'useOverpower',
+			label: 'Use Overpower',
+			labelTooltip: 'Use Overpower whenever it is available on an open GCD.',
+			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalentTree() == 1 && !player.getRotation().customRotationOption,
+		}),
+
 		InputHelpers.makeRotationEnumInput<Spec.SpecWarrior, MainGcd>({
 			fieldName: 'mainGcd',
 			label: 'Main GCD',
@@ -86,21 +100,28 @@ export const WarriorRotationConfig = {
 				{ name: 'Whirlwind', value: MainGcd.Whirlwind },
 			],
 			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().bloodthirst,
+			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalentTree() == 1 && !player.getRotation().customRotationOption,
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecWarrior>({
 			fieldName: 'msRageThreshold',
 			label: 'Mortal Strike rage threshold',
 			labelTooltip: 'Mortal Strike when rage is above:',
 			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().mortalStrike,
+			showWhen: (player: Player<Spec.SpecWarrior>) => (player.getRotation().useMs || player.getRotation().customRotationOption) && player.getTalentTree() == 0,
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecWarrior>({
 			fieldName: 'slamRageThreshold',
 			label: 'Slam rage threshold',
 			labelTooltip: 'Slam when rage is above:',
 			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().mortalStrike,
+			showWhen: (player: Player<Spec.SpecWarrior>) => (player.getRotation().useMs || player.getRotation().customRotationOption) && player.getTalentTree() == 0,
+		}),
+		InputHelpers.makeRotationNumberInput<Spec.SpecWarrior>({
+			fieldName: 'bloodsurgeDurationThreshold',
+			label: 'Exp Slam: Bloodsurge duration threshold (s)',
+			labelTooltip: 'Cast Exp Slam when Bloodsurge duration is below (seconds):',
+			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+			showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().customRotationOption && player.getTalentTree() == 1,
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecWarrior>({
 			fieldName: 'hsRageThreshold',
@@ -112,21 +133,21 @@ export const WarriorRotationConfig = {
 			label: 'Rend health threshold (%)',
 			labelTooltip: 'Rend will only be used when boss health is above this value in %.',
 			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-			showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().useRend == true && player.getTalents().bloodthirst,
+			showWhen: (player: Player<Spec.SpecWarrior>) => (player.getRotation().useRend == true || player.getRotation().customRotationOption),
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecWarrior>({
 			fieldName: 'rendRageThresholdBelow',
 			label: 'Rend rage threshold below',
 			labelTooltip: 'Rend will only be used when rage is smaller than this value.',
 			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-			showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().useRend == true && player.getTalents().bloodthirst,
+			showWhen: (player: Player<Spec.SpecWarrior>) => (player.getRotation().useRend == true || player.getRotation().customRotationOption) && player.getTalentTree() == 1,
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecWarrior>({
 			fieldName: 'rendCdThreshold',
-			label: 'Rend Refresh Time',
+			label: 'Rend Refresh Time (s)',
 			labelTooltip: 'Refresh Rend when the remaining duration is less than this amount of time (seconds).',
 			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-			showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().useRend == true,
+			showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().useRend == true || player.getRotation().customRotationOption,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecWarrior>({
 			fieldName: 'useHsDuringExecute',
@@ -138,28 +159,35 @@ export const WarriorRotationConfig = {
 			label: 'BT during Execute Phase',
 			labelTooltip: 'Use Bloodthirst during Execute Phase.',
 			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().bloodthirst,
+			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalentTree() == 1,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecWarrior>({
 			fieldName: 'useWwDuringExecute',
 			label: 'WW during Execute Phase',
 			labelTooltip: 'Use Whirlwind during Execute Phase.',
 			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().bloodthirst,
+			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalentTree() == 1,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecWarrior>({
 			fieldName: 'useSlamOverExecute',
-			label: 'Slam Over Execute',
+			label: 'Slam during Execute Phase',
 			labelTooltip: 'Use Slam Over Execute when Bloodsurge Procs in Execute Phase.',
 			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().bloodthirst,
+			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalentTree() == 1,
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecWarrior>({
+			fieldName: 'executePhaseOverpower',
+			label: 'Overpower in Execute Phase',
+			labelTooltip: 'Use Overpower instead of Execute whenever it is available.',
+			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+			showWhen: (player: Player<Spec.SpecWarrior>) => (player.getRotation().useOverpower == true || player.getRotation().customRotationOption) && player.getTalentTree() == 1,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecWarrior>({
 			fieldName: 'spamExecute',
 			label: 'Spam Execute',
 			labelTooltip: 'Use Execute whenever possible during Execute Phase.',
 			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalents().mortalStrike,
+			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalentTree() == 0,
 		}),
 		InputHelpers.makeRotationEnumInput<Spec.SpecWarrior, SunderArmor>({
 			fieldName: 'sunderArmor',
@@ -189,6 +217,31 @@ export const WarriorRotationConfig = {
 			fieldName: 'maintainThunderClap',
 			label: 'Maintain Thunder Clap',
 			labelTooltip: 'Keep Thunder Clap active on the primary target.',
+		}),
+
+		InputHelpers.makeRotationBooleanInput<Spec.SpecWarrior>({
+			fieldName: 'customRotationOption',
+			label: 'Custom Rotation (Advanced)',
+			labelTooltip: 'Create your own rotation action priority list.',
+			showWhen: (player: Player<Spec.SpecWarrior>) => player.sim.getShowExperimental(),
+			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+		}),
+
+		InputHelpers.makeCustomRotationInput<Spec.SpecWarrior, SpellOption>({
+			fieldName: 'customRotation',
+			numColumns: 3,
+			showWhen: (player: Player<Spec.SpecWarrior>) => player.getRotation().customRotationOption && player.sim.getShowExperimental(),
+			values: [
+				{ actionId: ActionId.fromSpellId(23881), value: SpellOption.BloodthirstCustom },
+				{ actionId: ActionId.fromSpellId(1680), value: SpellOption.WhirlwindCustom },
+				{ actionId: ActionId.fromSpellId(47475), value: SpellOption.SlamCustom },
+				{ actionId: ActionId.fromSpellId(47475), value: SpellOption.SlamExpiring, text: "Exp", showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalentTree() == 1, },
+				{ actionId: ActionId.fromSpellId(47486), value: SpellOption.MortalStrike },
+				{ actionId: ActionId.fromSpellId(47465), value: SpellOption.Rend },
+				{ actionId: ActionId.fromSpellId(7384), value: SpellOption.Overpower },
+				{ actionId: ActionId.fromSpellId(47471), value: SpellOption.Execute },
+				{ actionId: ActionId.fromSpellId(47502), value: SpellOption.ThunderClap },
+			],
 		}),
 	],
 };

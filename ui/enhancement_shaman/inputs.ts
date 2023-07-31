@@ -19,10 +19,6 @@ import {
 import { CustomSpell, Spec, ItemSwap, ItemSlot } from '../core/proto/common.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
-import { Sim } from '../core/sim.js';
-import { IndividualSimUI } from '../core/individual_sim_ui.js';
-import { Target } from '../core/target.js';
-import { EventID, TypedEvent } from '../core/typed_event.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
 
@@ -47,8 +43,8 @@ export const ShamanImbueMH = InputHelpers.makeSpecOptionsEnumIconInput<Spec.Spec
 	values: [
 		{ value: ShamanImbue.NoImbue, tooltip: 'No Main Hand Enchant' },
 		{ actionId: ActionId.fromSpellId(58804), value: ShamanImbue.WindfuryWeapon },
-		{ actionId: ActionId.fromSpellId(58790), value: ShamanImbue.FlametongueWeapon, text: 'R10'},
-		{ actionId: ActionId.fromSpellId(58789), value: ShamanImbue.FlametongueWeaponDownrank, text: 'R9'},
+		{ actionId: ActionId.fromSpellId(58790), value: ShamanImbue.FlametongueWeapon, text: 'R10' },
+		{ actionId: ActionId.fromSpellId(58789), value: ShamanImbue.FlametongueWeaponDownrank, text: 'R9' },
 		{ actionId: ActionId.fromSpellId(58796), value: ShamanImbue.FrostbrandWeapon },
 	],
 });
@@ -58,8 +54,8 @@ export const ShamanImbueOH = InputHelpers.makeSpecOptionsEnumIconInput<Spec.Spec
 	values: [
 		{ value: ShamanImbue.NoImbue, tooltip: 'No Off Hand Enchant' },
 		{ actionId: ActionId.fromSpellId(58804), value: ShamanImbue.WindfuryWeapon },
-		{ actionId: ActionId.fromSpellId(58790), value: ShamanImbue.FlametongueWeapon, text: 'R10'},
-		{ actionId: ActionId.fromSpellId(58789), value: ShamanImbue.FlametongueWeaponDownrank, text: 'R9'},
+		{ actionId: ActionId.fromSpellId(58790), value: ShamanImbue.FlametongueWeapon, text: 'R10' },
+		{ actionId: ActionId.fromSpellId(58789), value: ShamanImbue.FlametongueWeaponDownrank, text: 'R9' },
 		{ actionId: ActionId.fromSpellId(58796), value: ShamanImbue.FrostbrandWeapon },
 	],
 });
@@ -67,8 +63,8 @@ export const ShamanImbueOH = InputHelpers.makeSpecOptionsEnumIconInput<Spec.Spec
 export const SyncTypeInput = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecEnhancementShaman, ShamanSyncType>({
 	fieldName: 'syncType',
 	label: 'Sync/Stagger Setting',
-	labelTooltip: 
-	`Choose your sync or stagger option Perfect
+	labelTooltip:
+		`Choose your sync or stagger option Perfect
 		<ul>
 			<li><div>Auto: Will auto pick sync options based on your weapons attack speeds</div></li>
 			<li><div>None: No Sync or Staggering, used for mismatched weapon speeds</div></li>
@@ -76,7 +72,7 @@ export const SyncTypeInput = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecEnha
 			<li><div>Delayed Offhand: Adds a slight delay to the offhand attacks while staying within the 0.5s flurry ICD window</div></li>
 		</ul>`,
 	values: [
-		{ name: "Automatic", value: ShamanSyncType.Auto},
+		{ name: "Automatic", value: ShamanSyncType.Auto },
 		{ name: 'None', value: ShamanSyncType.NoSync },
 		{ name: 'Perfect Sync', value: ShamanSyncType.SyncMainhandOffhandSwings },
 		{ name: 'Delayed Offhand', value: ShamanSyncType.DelayOffhandSwings },
@@ -96,12 +92,12 @@ export const EnhancmentItemSwapInputs = InputHelpers.MakeItemSwapInput<Spec.Spec
 
 export const EnhancementShamanRotationConfig = {
 	inputs:
-		[	
+		[
 			InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({
 				fieldName: 'enableItemSwap',
 				label: 'Enable Item Swapping',
 				labelTooltip: 'Toggle on/off item swapping',
-				showWhen: (player: Player<Spec.SpecEnhancementShaman>) =>  player.getRotation().totems?.useFireElemental || false
+				showWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().totems?.useFireElemental || false
 			}),
 			EnhancmentItemSwapInputs,
 			InputHelpers.makeRotationEnumInput<Spec.SpecEnhancementShaman, RotationType>({
@@ -125,10 +121,11 @@ export const EnhancementShamanRotationConfig = {
 				fieldName: 'customRotation',
 				numColumns: 2,
 				values: [
-					{ actionId: ActionId.fromSpellId(49238), value: CustomRotationSpell.LightningBolt},
+					{ actionId: ActionId.fromSpellId(49238), value: CustomRotationSpell.LightningBolt },
 					{ actionId: ActionId.fromSpellId(49238), value: CustomRotationSpell.LightningBoltWeave, text: "Weave" },
 					{ actionId: ActionId.fromSpellId(49238), value: CustomRotationSpell.LightningBoltDelayedWeave, text: "Delay" },
-					{ actionId: ActionId.fromSpellId(17364), value: CustomRotationSpell.StormstrikeDebuffMissing, text: "Debuff"  },
+					{ actionId: ActionId.fromSpellId(49271), value: CustomRotationSpell.ChainLightning },
+					{ actionId: ActionId.fromSpellId(17364), value: CustomRotationSpell.StormstrikeDebuffMissing, text: "Debuff" },
 					{ actionId: ActionId.fromSpellId(17364), value: CustomRotationSpell.Stormstrike },
 					{ actionId: ActionId.fromSpellId(49233), value: CustomRotationSpell.FlameShock },
 					{ actionId: ActionId.fromSpellId(49231), value: CustomRotationSpell.EarthShock },
@@ -137,7 +134,7 @@ export const EnhancementShamanRotationConfig = {
 					{ actionId: ActionId.fromSpellId(60103), value: CustomRotationSpell.LavaLash },
 					{ actionId: ActionId.fromSpellId(49281), value: CustomRotationSpell.LightningShield },
 					{ actionId: ActionId.fromSpellId(60043), value: CustomRotationSpell.LavaBurst, text: "Weave" },
-					{ actionId: ActionId.fromSpellId(49236), value: CustomRotationSpell.FrostShock},
+					{ actionId: ActionId.fromSpellId(49236), value: CustomRotationSpell.FrostShock },
 				],
 				showWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().rotationType == RotationType.Custom,
 			}),
@@ -157,19 +154,19 @@ export const EnhancementShamanRotationConfig = {
 				labelTooltip: 'Use Flame Shock whenever the target does not already have the DoT.',
 				showWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().rotationType != RotationType.Custom
 			}),
-            InputHelpers.makeRotationNumberInput<Spec.SpecEnhancementShaman>({
-                fieldName:  'flameShockClipTicks',
-                label:  'Refresh Flame Shock at ticks remaining',
-                labelTooltip: 'Set to 0 to require the debuff be missing. A tick is 3s, affected by spell haste',
-                enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().weaveFlameShock,
-                showWhen: (player: Player<Spec.SpecEnhancementShaman>) => {
-					if (player.getRotation().rotationType == RotationType.Custom){
+			InputHelpers.makeRotationNumberInput<Spec.SpecEnhancementShaman>({
+				fieldName: 'flameShockClipTicks',
+				label: 'Refresh Flame Shock at ticks remaining',
+				labelTooltip: 'Set to 0 to require the debuff be missing. A tick is 3s, affected by spell haste',
+				enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().weaveFlameShock,
+				showWhen: (player: Player<Spec.SpecEnhancementShaman>) => {
+					if (player.getRotation().rotationType == RotationType.Custom) {
 						return player.getRotation().customRotation?.spells.find(customSpell => customSpell.spell == CustomRotationSpell.FlameShock) != undefined
 					}
 
 					return player.getRotation().weaveFlameShock
 				}
-            }),
+			}),
 			InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({
 				fieldName: 'lightningboltWeave',
 				label: 'Enable Weaving Lightning Bolt',
@@ -188,51 +185,51 @@ export const EnhancementShamanRotationConfig = {
 					{ name: '4', value: 4 },
 				],
 				enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => {
-					if (player.getRotation().rotationType == RotationType.Custom){
+					if (player.getRotation().rotationType == RotationType.Custom) {
 						return player.getRotation().customRotation?.spells.find(customSpell => customSpell.spell == CustomRotationSpell.LightningBoltWeave) != undefined
 					}
 
 					return player.getRotation().lightningboltWeave
 				},
 				showWhen: (player: Player<Spec.SpecEnhancementShaman>) => {
-					if (player.getRotation().rotationType == RotationType.Custom){
+					if (player.getRotation().rotationType == RotationType.Custom) {
 						return player.getRotation().customRotation?.spells.find(customSpell => customSpell.spell == CustomRotationSpell.LightningBoltWeave) != undefined
 					}
 
 					return true
 				}
-			}),		
+			}),
 			InputHelpers.makeRotationNumberInput<Spec.SpecEnhancementShaman>({
 				fieldName: 'autoWeaveDelay',
 				label: 'Weaving Delay After Auto Attack',
 				labelTooltip: 'The amount of time to wait after an auto attack before weaveing, in milliseconds',
 				enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => {
-					if (player.getRotation().rotationType == RotationType.Custom){
+					if (player.getRotation().rotationType == RotationType.Custom) {
 						return player.getRotation().customRotation?.spells.find(customSpell => customSpell.spell == CustomRotationSpell.LightningBoltWeave) != undefined
 					}
 
 					return player.getRotation().lightningboltWeave
 				},
-				showWhen:  (player: Player<Spec.SpecEnhancementShaman>) => {
-					if (player.getRotation().rotationType == RotationType.Custom){
+				showWhen: (player: Player<Spec.SpecEnhancementShaman>) => {
+					if (player.getRotation().rotationType == RotationType.Custom) {
 						return player.getRotation().customRotation?.spells.find(customSpell => customSpell.spell == CustomRotationSpell.LightningBoltWeave) != undefined
 					}
 
 					return true
 				},
-			}),InputHelpers.makeRotationNumberInput<Spec.SpecEnhancementShaman>({
+			}), InputHelpers.makeRotationNumberInput<Spec.SpecEnhancementShaman>({
 				fieldName: 'delayGcdWeave',
 				label: 'Delay LL to Weave',
 				labelTooltip: 'The amount of time to hold Lava Lash to weave in milliseconds. Setting to 0 will disable delaying',
 				enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => {
-					if (player.getRotation().rotationType == RotationType.Custom){
+					if (player.getRotation().rotationType == RotationType.Custom) {
 						return false
 					}
 
 					return player.getRotation().lightningboltWeave
 				},
-				showWhen:  (player: Player<Spec.SpecEnhancementShaman>) => {
-					if (player.getRotation().rotationType == RotationType.Custom){
+				showWhen: (player: Player<Spec.SpecEnhancementShaman>) => {
+					if (player.getRotation().rotationType == RotationType.Custom) {
 						return false
 					}
 
@@ -244,21 +241,21 @@ export const EnhancementShamanRotationConfig = {
 				label: 'Delay Weave Time',
 				labelTooltip: 'The amount of time to hold a GCD to weave in milliseconds. Setting to 0 will disable delaying',
 				enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => {
-					if (player.getRotation().rotationType == RotationType.Custom){
+					if (player.getRotation().rotationType == RotationType.Custom) {
 						return player.getRotation().customRotation?.spells.find(customSpell => customSpell.spell == CustomRotationSpell.LightningBoltDelayedWeave) != undefined
 					}
 
 					return false
 				},
-				showWhen:  (player: Player<Spec.SpecEnhancementShaman>) => {
-					if (player.getRotation().rotationType == RotationType.Custom){
+				showWhen: (player: Player<Spec.SpecEnhancementShaman>) => {
+					if (player.getRotation().rotationType == RotationType.Custom) {
 						return player.getRotation().customRotation?.spells.find(customSpell => customSpell.spell == CustomRotationSpell.LightningBoltDelayedWeave) != undefined
 					}
 
 					return false
 				},
 			}),
-			InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({ 
+			InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({
 				fieldName: 'lavaburstWeave',
 				label: 'Enable Weaving Lava Burst',
 				labelTooltip: 'Not particularily useful for dual wield, mostly a 2h option',
@@ -269,8 +266,8 @@ export const EnhancementShamanRotationConfig = {
 				fieldName: 'firenovaManaThreshold',
 				label: 'Minimum mana to cast Fire Nova',
 				labelTooltip: 'Fire Nova will not be cast when mana is below this value. Set this medium-low, it has a bad mana-to-damage ratio',
-				showWhen:  (player: Player<Spec.SpecEnhancementShaman>) => {
-					if (player.getRotation().rotationType == RotationType.Custom){
+				showWhen: (player: Player<Spec.SpecEnhancementShaman>) => {
+					if (player.getRotation().rotationType == RotationType.Custom) {
 						return player.getRotation().customRotation?.spells.find(customSpell => customSpell.spell == CustomRotationSpell.FireNova) != undefined
 					}
 

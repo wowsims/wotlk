@@ -3,7 +3,6 @@ import { ActionID as ActionIdProto } from '../proto/common.js';
 import { ResourceType } from '../proto/api.js';
 import { OtherAction } from '../proto/common.js';
 import { IconData } from '../proto/ui.js';
-import { NO_TARGET } from '../proto_utils/utils.js';
 import {
 	UIItem as Item,
 } from '../proto/ui.js';
@@ -104,6 +103,10 @@ export class ActionId {
 			case OtherAction.OtherActionDeathRuneGain:
 				baseName = 'Death Rune Gain';
 				iconUrl = 'https://wow.zamimg.com/images/wow/icons/medium/spell_deathknight_empowerruneblade.jpg';
+				break;
+			case OtherAction.OtherActionPotion:
+				baseName = 'Potion';
+				iconUrl = 'https://wow.zamimg.com/images/wow/icons/large/inv_alchemy_elixir_04.jpg';
 				break;
 		}
 		this.baseName = baseName;
@@ -213,6 +216,18 @@ export class ActionId {
 		const baseName = tooltipData['name'];
 		let name = baseName;
 		switch (baseName) {
+			case 'Explosive Shot':
+				if (this.spellId == 60053) {
+					name += ' (R4)';
+				} else if (this.spellId == 60052) {
+					name += ' (R3)';
+				}
+				break;
+			case 'Explosive Trap':
+				if (this.tag == 1) {
+					name += ' (Weaving)';
+				}
+				break;
 			case 'Arcane Blast':
 				if (this.tag == 1) {
 					name += ' (No Stacks)';
@@ -221,6 +236,9 @@ export class ActionId {
 				} else if (this.tag > 2) {
 					name += ` (${this.tag - 1} Stacks)`;
 				}
+				break;
+			case 'Hot Streak':
+				if (this.tag) name += ' (Crits)';
 				break;
 			case 'Fireball':
 			case 'Flamestrike':
@@ -292,14 +310,21 @@ export class ActionId {
 					name += ' (DoT)'
 				}
 				break;
+			case 'Holy Vengeance':
+				if (this.tag == 1) {
+					name += ' (Application)'
+				} else if (this.tag == 2) {
+					name += ' (DoT)'
+				}
+				break;
 			// For targetted buffs, tag is the source player's raid index or -1 if none.
 			case 'Bloodlust':
 			case 'Ferocious Inspiration':
 			case 'Innervate':
-      			case 'Focus Magic':
+			case 'Focus Magic':
 			case 'Mana Tide Totem':
 			case 'Power Infusion':
-				if (this.tag != NO_TARGET) {
+				if (this.tag != -1) {
 					if (this.tag === playerIndex) {
 						name += ` (self)`;
 					} else {
@@ -336,6 +361,14 @@ export class ActionId {
 				}
 				break;
 			case 'Rune Strike':
+				if (this.tag == 0) {
+					name += ' (Queue)'
+				} else if (this.tag == 1) {
+					name += ' (Main Hand)';
+				} else if (this.tag == 2) {
+					name += ' (Off Hand)';
+				}
+				break;
 			case 'Frost Strike':
 			case 'Plague Strike':
 			case 'Blood Strike':
@@ -474,21 +507,48 @@ export class ActionId {
 		}
 	}
 
+	private static readonly logRegex = /{((SpellID)|(ItemID)|(OtherID)): (\d+)(, Tag: (-?\d+))?}/;
+	private static readonly logRegexGlobal = new RegExp(ActionId.logRegex, 'g');
+	private static fromMatch(match: RegExpMatchArray): ActionId {
+		const idType = match[1];
+		const id = parseInt(match[5]);
+		return new ActionId(
+			idType == 'ItemID' ? id : 0,
+			idType == 'SpellID' ? id : 0,
+			idType == 'OtherID' ? id : 0,
+			match[7] ? parseInt(match[7]) : 0,
+			'', '', '');
+	}
 	static fromLogString(str: string): ActionId {
-		const match = str.match(/{((SpellID)|(ItemID)|(OtherID)): (\d+)(, Tag: (-?\d+))?}/);
+		const match = str.match(ActionId.logRegex);
 		if (match) {
-			const idType = match[1];
-			const id = parseInt(match[5]);
-			return new ActionId(
-				idType == 'ItemID' ? id : 0,
-				idType == 'SpellID' ? id : 0,
-				idType == 'OtherID' ? id : 0,
-				match[7] ? parseInt(match[7]) : 0,
-				'', '', '');
+			return ActionId.fromMatch(match);
 		} else {
 			console.warn('Failed to parse action id from log: ' + str);
 			return ActionId.fromEmpty();
 		}
+	}
+
+	static async replaceAllInString(str: string): Promise<string> {
+		const matches = [...str.matchAll(ActionId.logRegexGlobal)];
+
+		const replaceData = await Promise.all(matches.map(async match => {
+			const actionId = ActionId.fromMatch(match);
+			const filledId = await actionId.fill();
+			return {
+				firstIndex: match.index || 0,
+				len: match[0].length,
+				actionId: filledId,
+			};
+		}));
+
+		// Loop in reverse order so we can greedily apply the string replacements.
+		for (let i = replaceData.length - 1; i >= 0; i--) {
+			const data = replaceData[i];
+			str = str.substring(0, data.firstIndex) + data.actionId.name + str.substring(data.firstIndex + data.len);
+		}
+
+		return str;
 	}
 
 	private static makeIconUrl(iconLabel: string): string {
@@ -507,9 +567,6 @@ export class ActionId {
 		}
 	}
 }
-
-const itemToTooltipDataCache = new Map<number, Promise<any>>();
-const spellToTooltipDataCache = new Map<number, Promise<any>>();
 
 // Some items/spells have weird icons, so use this to show a different icon instead.
 const idOverrides: Record<string, ActionId> = {};
@@ -530,6 +587,9 @@ const petNameToActionId: Record<string, ActionId> = {
 	'Spirit Wolf 2': ActionId.fromSpellId(51533),
 	'Rune Weapon': ActionId.fromSpellId(49028),
 	'Bloodworm': ActionId.fromSpellId(50452),
+	'Gargoyle': ActionId.fromSpellId(49206),
+	'Ghoul': ActionId.fromSpellId(46584),
+	'Army of the Dead': ActionId.fromSpellId(42650),
 };
 
 // https://wowhead.com/wotlk/hunter-pets
@@ -549,9 +609,6 @@ const petNameToIcon: Record<string, string> = {
 	'Felguard': 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_summonfelguard.jpg',
 	'Felhunter': 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_summonfelhunter.jpg',
 	'Infernal': 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_summoninfernal.jpg',
-	'Gargoyle': 'https://wow.zamimg.com/images/wow/icons/large/ability_hunter_pet_bat.jpg',
-	'Ghoul': 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_raisedead.jpg',
-	'Army of the Dead': 'https://wow.zamimg.com/images/wow/icons/large/spell_deathknight_armyofthedead.jpg',
 	'Gorilla': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_gorilla.jpg',
 	'Hyena': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_hyena.jpg',
 	'Imp': 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_summonimp.jpg',
@@ -577,6 +634,10 @@ const petNameToIcon: Record<string, string> = {
 	'Wolf': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_wolf.jpg',
 	'Worm': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_worm.jpg',
 };
+
+export function getPetIconFromName(name: string): string|ActionId|undefined {
+	return petNameToActionId[name] || petNameToIcon[name];
+}
 
 export const resourceTypeToIcon: Record<ResourceType, string> = {
 	[ResourceType.ResourceTypeNone]: '',

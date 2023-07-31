@@ -92,7 +92,7 @@ func (druid *Druid) registerLacerateSpell() {
 					dot.AddStack(sim)
 					dot.TakeSnapshot(sim, true)
 				} else {
-					dot.Activate(sim)
+					dot.Apply(sim)
 					dot.SetStacks(sim, 1)
 					dot.TakeSnapshot(sim, true)
 				}

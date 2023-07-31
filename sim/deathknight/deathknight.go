@@ -21,9 +21,10 @@ var TalentTreeSizes = [3]int{28, 29, 31}
 
 type DeathknightInputs struct {
 	// Option Vars
-	IsDps bool
+	IsDps  bool
+	NewDrw bool
 
-	UnholyFrenzyTarget *proto.RaidTarget
+	UnholyFrenzyTarget *proto.UnitReference
 
 	StartingRunicPower  float64
 	PrecastGhoulFrenzy  bool
@@ -40,6 +41,8 @@ type DeathknightInputs struct {
 	AvgAMSSuccessRate   float64
 	AvgAMSHit           float64
 	FuStrike            Rotation_FuStrike
+	DiseaseDowntime     float64
+	VirulenceRefresh    float64
 }
 
 type DeathknightCoeffs struct {
@@ -72,11 +75,14 @@ type Deathknight struct {
 
 	Gargoyle                 *GargoylePet
 	SummonGargoyle           *core.Spell
+	SummonGargoyleAura       *core.Aura
 	GargoyleSummonDelay      time.Duration
 	OnGargoyleStartFirstCast func()
 
 	RuneWeapon        *RuneWeaponPet
 	DancingRuneWeapon *core.Spell
+	drwDmgSnapshot    float64
+	drwPhysSnapshot   float64
 
 	ArmyOfTheDead *core.Spell
 	ArmyGhoul     []*GhoulPet
@@ -113,9 +119,11 @@ type Deathknight struct {
 	HeartStrike       *core.Spell
 	HeartStrikeOffHit *core.Spell
 
-	RuneStrike     *core.Spell
-	RuneStrikeOh   *core.Spell
-	RuneStrikeAura *core.Aura
+	RuneStrikeQueued bool
+	RuneStrikeQueue  *core.Spell
+	RuneStrike       *core.Spell
+	RuneStrikeOh     *core.Spell
+	RuneStrikeAura   *core.Aura
 
 	GhoulFrenzy *core.Spell
 	// Dummy aura for timeline metrics
@@ -179,11 +187,10 @@ type Deathknight struct {
 	KillingMachineAura  *core.Aura
 	IcyTalonsAura       *core.Aura
 	DesolationAura      *core.Aura
-	NecrosisAura        *core.Aura
 	BloodCakedBladeAura *core.Aura
 	ButcheryAura        *core.Aura
 	ButcheryPA          *core.PendingAction
-	RimeAura            *core.Aura
+	FreezingFogAura     *core.Aura
 	BladeBarrierAura    *core.Aura
 	ScentOfBloodAura    *core.Aura
 	WillOfTheNecropolis *core.Aura
@@ -192,9 +199,10 @@ type Deathknight struct {
 	LastDiseaseDamage float64
 	LastTickTime      time.Duration
 	WanderingPlague   *core.Spell
-
-	Deathchill     *core.Spell
-	DeathchillAura *core.Aura
+	NecrosisCoeff     float64
+	Necrosis          *core.Spell
+	Deathchill        *core.Spell
+	DeathchillAura    *core.Aura
 
 	// Presences
 	BloodPresence      *core.Spell
@@ -209,6 +217,8 @@ type Deathknight struct {
 	EbonPlagueOrCryptFeverAura []*core.Aura
 
 	RoRTSBonus func(*core.Unit) float64 // is either RoR or TS bonus function based on talents
+
+	MakeTSRoRAssumptions bool
 }
 
 func (dk *Deathknight) ModifyDamageModifier(value float64) {
@@ -370,6 +380,7 @@ func (dk *Deathknight) Reset(sim *core.Simulation) {
 	dk.LastCast = nil
 	dk.NextCast = nil
 	dk.DeathStrikeHeals = dk.DeathStrikeHeals[:0]
+	dk.MakeTSRoRAssumptions = sim.Raid.Size() <= 1
 }
 
 func (dk *Deathknight) IsFuStrike(spell *core.Spell) bool {
@@ -395,15 +406,10 @@ func NewDeathknight(character core.Character, inputs DeathknightInputs, talents 
 	maxRunicPower := 100.0 + 15.0*float64(dk.Talents.RunicPowerMastery)
 	currentRunicPower := math.Min(maxRunicPower, dk.Inputs.StartingRunicPower+core.TernaryFloat64(dk.Inputs.PrecastHornOfWinter, 10.0, 0.0))
 
-	runeCD := 10 * time.Second
-	if dk.Talents.ImprovedUnholyPresence > 0 {
-		runeCD = time.Duration(float64(runeCD) * (1.0 - 0.05*float64(dk.Talents.ImprovedUnholyPresence)))
-	}
-
 	dk.EnableRunicPowerBar(
 		currentRunicPower,
 		maxRunicPower,
-		runeCD,
+		10*time.Second,
 		func(sim *core.Simulation) {
 			if dk.onRuneSpendT10 != nil {
 				dk.onRuneSpendT10(sim)
@@ -428,6 +434,7 @@ func NewDeathknight(character core.Character, inputs DeathknightInputs, talents 
 	dk.AddStatDependency(stats.Agility, stats.Dodge, core.DodgeRatingPerDodgeChance/84.74576271)
 	dk.AddStatDependency(stats.Strength, stats.AttackPower, 2)
 	dk.AddStatDependency(stats.Strength, stats.Parry, 0.25)
+	dk.AddStatDependency(stats.BonusArmor, stats.Armor, 1)
 
 	dk.PseudoStats.CanParry = true
 	dk.PseudoStats.GracefulCastCDFailures = true

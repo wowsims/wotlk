@@ -72,7 +72,7 @@ func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, 
 	ruthlessnessMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 14161})
 	relentlessStrikesMetrics := rogue.NewEnergyMetrics(core.ActionID{SpellID: getRelentlessStrikesSpellID(rogue.Talents.RelentlessStrikes)})
 	var mayhemMetrics *core.ResourceMetrics
-	if rogue.HasSetBonus(ItemSetShadowblades, 4) {
+	if rogue.HasSetBonus(Tier10, 4) {
 		mayhemMetrics = rogue.NewComboPointMetrics(core.ActionID{SpellID: 70802})
 	}
 
@@ -96,7 +96,7 @@ func (rogue *Rogue) makeFinishingMoveEffectApplier() func(sim *core.Simulation, 
 }
 
 func (rogue *Rogue) makeCostModifier() func(baseCost float64) float64 {
-	if rogue.HasSetBonus(ItemSetBonescythe, 4) {
+	if rogue.HasSetBonus(Tier7, 4) {
 		return func(baseCost float64) float64 {
 			return math.RoundToEven(0.95 * baseCost)
 		}
@@ -516,6 +516,12 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 		Type:     core.CooldownTypeDPS,
 		Priority: core.CooldownPriorityDefault,
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
+
+			if rogue.Rotation.MultiTargetSliceFrequency == proto.Rogue_Rotation_Never {
+				// Well let's just cast BF now, no need to optimize around slices that will never be cast
+				return true
+			}
+
 			if sim.GetRemainingDuration() > cooldownDur+dur {
 				// We'll have enough time to cast another BF, so use it immediately to make sure we get the 2nd one.
 				return true
@@ -543,14 +549,14 @@ func (rogue *Rogue) registerAdrenalineRushCD() {
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.ResetEnergyTick(sim)
 			rogue.ApplyEnergyTickMultiplier(1.0)
-			if r, ok := rogue.rotation.(*rotation_generic); ok {
+			if r, ok := rogue.rotation.(*rotation_multi); ok {
 				r.planRotation(sim, rogue)
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.ResetEnergyTick(sim)
 			rogue.ApplyEnergyTickMultiplier(-1.0)
-			if r, ok := rogue.rotation.(*rotation_generic); ok {
+			if r, ok := rogue.rotation.(*rotation_multi); ok {
 				r.planRotation(sim, rogue)
 			}
 		},
@@ -566,7 +572,7 @@ func (rogue *Rogue) registerAdrenalineRushCD() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    rogue.NewTimer(),
-				Duration: time.Minute * 5,
+				Duration: time.Minute * 3,
 			},
 		},
 

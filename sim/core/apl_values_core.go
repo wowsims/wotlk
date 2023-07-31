@@ -1,30 +1,24 @@
 package core
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
-
-func (unit *Unit) aplGetDot(spellId *proto.ActionID) *Dot {
-	spell := unit.GetSpell(ProtoToActionID(spellId))
-	if spell == nil {
-		return nil
-	}
-
-	if spell.AOEDot() != nil {
-		return spell.AOEDot()
-	} else {
-		return spell.CurDot()
-	}
-}
 
 type APLValueDotIsActive struct {
 	defaultAPLValueImpl
 	dot *Dot
 }
 
-func (unit *Unit) newValueDotIsActive(config *proto.APLValueDotIsActive) APLValue {
+func (rot *APLRotation) newValueDotIsActive(config *proto.APLValueDotIsActive) APLValue {
+	dot := rot.aplGetDot(config.SpellId)
+	if dot == nil {
+		return nil
+	}
 	return &APLValueDotIsActive{
-		dot: unit.aplGetDot(config.SpellId),
+		dot: dot,
 	}
 }
 func (value *APLValueDotIsActive) Type() proto.APLValueType {
@@ -32,4 +26,31 @@ func (value *APLValueDotIsActive) Type() proto.APLValueType {
 }
 func (value *APLValueDotIsActive) GetBool(sim *Simulation) bool {
 	return value.dot.IsActive()
+}
+func (value *APLValueDotIsActive) String() string {
+	return fmt.Sprintf("Dot Is Active(%s)", value.dot.Spell.ActionID)
+}
+
+type APLValueDotRemainingTime struct {
+	defaultAPLValueImpl
+	dot *Dot
+}
+
+func (rot *APLRotation) newValueDotRemainingTime(config *proto.APLValueDotRemainingTime) APLValue {
+	dot := rot.aplGetDot(config.SpellId)
+	if dot == nil {
+		return nil
+	}
+	return &APLValueDotRemainingTime{
+		dot: dot,
+	}
+}
+func (value *APLValueDotRemainingTime) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeDuration
+}
+func (value *APLValueDotRemainingTime) GetDuration(sim *Simulation) time.Duration {
+	return value.dot.RemainingDuration(sim)
+}
+func (value *APLValueDotRemainingTime) String() string {
+	return fmt.Sprintf("Dot Remaining Time(%s)", value.dot.Spell.ActionID)
 }

@@ -31,6 +31,7 @@ type Warlock struct {
 	Conflagrate        *core.Spell
 	DrainSoul          *core.Spell
 	Shadowburn         *core.Spell
+	SearingPain        *core.Spell
 
 	CurseOfElements      *core.Spell
 	CurseOfElementsAuras core.AuraArray
@@ -43,6 +44,7 @@ type Warlock struct {
 	Seed                 *core.Spell
 	SeedDamageTracker    []float64
 
+	ShadowEmbraceAuras     core.AuraArray
 	NightfallProcAura      *core.Aura
 	EradicationAura        *core.Aura
 	DemonicEmpowerment     *core.Spell
@@ -64,15 +66,15 @@ type Warlock struct {
 	Infernal *InfernalPet
 	Inferno  *core.Spell
 
-	CritDebuffCategory *core.ExclusiveCategory
-
 	// The sum total of demonic pact spell power * seconds.
 	DPSPAggregate float64
 	PreviousTime  time.Duration
 
 	petStmBonusSP float64
 	acl           []ActionCondition
-	skipList      map[int]struct{}
+
+	// contains for each target the time the last shadowbolt was casted onto them
+	corrRefreshList []time.Duration
 }
 
 type ACLaction int
@@ -125,7 +127,9 @@ func (warlock *Warlock) Initialize() {
 	warlock.registerMetamorphosisSpell()
 	warlock.registerDarkPactSpell()
 	warlock.registerShadowBurnSpell()
+	warlock.registerSearingPainSpell()
 	warlock.registerInfernoSpell()
+	warlock.registerBlackBook()
 
 	warlock.defineRotation()
 
@@ -135,6 +139,34 @@ func (warlock *Warlock) Initialize() {
 	}
 	// Do this post-finalize so cast speed is updated with new stats
 	warlock.Env.RegisterPostFinalizeEffect(func() {
+		// if itemswap is enabled, correct for any possible haste changes
+		var correction stats.Stats
+		if warlock.ItemSwap.IsEnabled() {
+			correction = warlock.ItemSwap.CalcStatChanges([]proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand,
+				proto.ItemSlot_ItemSlotOffHand, proto.ItemSlot_ItemSlotRanged})
+
+			warlock.AddStats(correction)
+			warlock.MultiplyCastSpeed(1.0)
+		}
+
+		if warlock.Options.Summon != proto.Warlock_Options_NoSummon && warlock.Talents.DemonicKnowledge > 0 {
+			warlock.RegisterPrepullAction(-999*time.Second, func(sim *core.Simulation) {
+				// TODO: investigate a better way of handling this like a "reverse inheritance" for pets.
+				// TODO: this will break if we ever get stamina/intellect from procs, but there aren't
+				// many such effects and none that we care about
+				bonus := (warlock.Pet.GetStat(stats.Stamina) + warlock.Pet.GetStat(stats.Intellect)) *
+					(0.04 * float64(warlock.Talents.DemonicKnowledge))
+				if bonus != warlock.petStmBonusSP {
+					warlock.AddStatDynamic(sim, stats.SpellPower, bonus-warlock.petStmBonusSP)
+					warlock.petStmBonusSP = bonus
+				}
+			})
+		}
+
+		if warlock.IsUsingAPL {
+			return
+		}
+
 		precastSpellAt := -warlock.ApplyCastSpeedForSpell(precastSpell.DefaultCast.CastTime, precastSpell)
 
 		warlock.RegisterPrepullAction(precastSpellAt, func(sim *core.Simulation) {
@@ -144,6 +176,10 @@ func (warlock *Warlock) Initialize() {
 			warlock.RegisterPrepullAction(precastSpellAt-warlock.SpellGCD(), func(sim *core.Simulation) {
 				warlock.LifeTap.Cast(sim, nil)
 			})
+		}
+		if warlock.ItemSwap.IsEnabled() {
+			warlock.AddStats(correction.Multiply(-1))
+			warlock.MultiplyCastSpeed(1.0)
 		}
 	})
 }
@@ -165,6 +201,9 @@ func (warlock *Warlock) Reset(sim *core.Simulation) {
 		warlock.petStmBonusSP = 0
 	}
 
+	warlock.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand,
+		proto.ItemSlot_ItemSlotOffHand, proto.ItemSlot_ItemSlotRanged}, false)
+	warlock.corrRefreshList = make([]time.Duration, len(warlock.Env.Encounter.TargetUnits))
 	warlock.setupCooldowns(sim)
 }
 
@@ -193,8 +232,10 @@ func NewWarlock(character core.Character, options *proto.Player) *Warlock {
 		warlock.Pet = warlock.NewWarlockPet()
 	}
 
-	if warlock.Rotation.UseInfernal {
-		warlock.Infernal = warlock.NewInfernal()
+	warlock.Infernal = warlock.NewInfernal()
+
+	if warlock.Rotation.Type == proto.Warlock_Rotation_Affliction && warlock.Rotation.EnableWeaponSwap {
+		warlock.EnableItemSwap(warlock.Rotation.WeaponSwap, 1, 1, 1)
 	}
 
 	warlock.applyWeaponImbue()

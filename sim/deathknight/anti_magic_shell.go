@@ -16,6 +16,7 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 
 	dk.AntiMagicShell = dk.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
+		Flags:    core.SpellFlagAPL,
 
 		RuneCost: core.RuneCostOptions{
 			RunicPowerCost: 20,

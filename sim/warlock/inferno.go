@@ -10,10 +10,6 @@ import (
 )
 
 func (warlock *Warlock) registerInfernoSpell() {
-	if !warlock.Rotation.UseInfernal {
-		return
-	}
-
 	summonInfernalAura := warlock.RegisterAura(core.Aura{
 		Label:    "Summon Infernal",
 		ActionID: core.ActionID{SpellID: 1122},
@@ -24,6 +20,7 @@ func (warlock *Warlock) registerInfernoSpell() {
 		ActionID:    core.ActionID{SpellID: 1122},
 		SpellSchool: core.SpellSchoolFire,
 		ProcMask:    core.ProcMaskEmpty,
+		Flags:       core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.8,
@@ -64,6 +61,10 @@ func (warlock *Warlock) registerInfernoSpell() {
 		Spell: warlock.Inferno,
 		Type:  core.CooldownTypeDPS,
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
+			if !warlock.Rotation.UseInfernal {
+				return false
+			}
+
 			return sim.GetRemainingDuration() <= 61*time.Second
 		},
 	})
@@ -76,24 +77,23 @@ type InfernalPet struct {
 }
 
 func (warlock *Warlock) NewInfernal() *InfernalPet {
-	statInheritance :=
-		func(ownerStats stats.Stats) stats.Stats {
-			ownerHitChance := math.Floor(ownerStats[stats.SpellHit] / core.SpellHitRatingPerHitChance)
+	statInheritance := func(ownerStats stats.Stats) stats.Stats {
+		ownerHitChance := math.Floor(ownerStats[stats.SpellHit] / core.SpellHitRatingPerHitChance)
 
-			// TODO: account for fire spell damage
-			return stats.Stats{
-				stats.Stamina:          ownerStats[stats.Stamina] * 0.75,
-				stats.Intellect:        ownerStats[stats.Intellect] * 0.3,
-				stats.Armor:            ownerStats[stats.Armor] * 0.35,
-				stats.AttackPower:      ownerStats[stats.SpellPower] * 0.57,
-				stats.SpellPower:       ownerStats[stats.SpellPower] * 0.15,
-				stats.SpellPenetration: ownerStats[stats.SpellPenetration],
-				stats.MeleeHit:         ownerHitChance * core.MeleeHitRatingPerHitChance,
-				stats.SpellHit:         ownerHitChance * core.SpellHitRatingPerHitChance,
-				stats.Expertise: (ownerStats[stats.SpellHit] / core.SpellHitRatingPerHitChance) *
-					PetExpertiseScale * core.ExpertisePerQuarterPercentReduction,
-			}
+		// TODO: account for fire spell damage
+		return stats.Stats{
+			stats.Stamina:          ownerStats[stats.Stamina] * 0.75,
+			stats.Intellect:        ownerStats[stats.Intellect] * 0.3,
+			stats.Armor:            ownerStats[stats.Armor] * 0.35,
+			stats.AttackPower:      ownerStats[stats.SpellPower] * 0.57,
+			stats.SpellPower:       ownerStats[stats.SpellPower] * 0.15,
+			stats.SpellPenetration: ownerStats[stats.SpellPenetration],
+			stats.MeleeHit:         ownerHitChance * core.MeleeHitRatingPerHitChance,
+			stats.SpellHit:         ownerHitChance * core.SpellHitRatingPerHitChance,
+			stats.Expertise: (ownerStats[stats.SpellHit] / core.SpellHitRatingPerHitChance) *
+				PetExpertiseScale * core.ExpertisePerQuarterPercentReduction,
 		}
+	}
 
 	infernal := &InfernalPet{
 		Pet: core.NewPet("Infernal", &warlock.Character, stats.Stats{

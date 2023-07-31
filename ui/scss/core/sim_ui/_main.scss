@@ -17,6 +17,19 @@
   }
 }
 
+.sim-crash-report {
+  .sim-crash-report-header {
+    font-size: 1rem;
+    font-family: SimDefaultFont;
+  }
+
+  .sim-crash-report-text {
+		width: 100%;
+		height: 80vh;
+		resize: none;
+  }
+}
+
 @include media-breakpoint-down(lg) {
   .sim-content {
     .sim-main {

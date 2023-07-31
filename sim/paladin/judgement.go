@@ -20,7 +20,7 @@ func (paladin *Paladin) registerJudgementOfWisdomSpell(cdTimer *core.Timer) {
 		ActionID:    core.ActionID{SpellID: 53408},
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskEmpty,
-		Flags:       SpellFlagPrimaryJudgement,
+		Flags:       SpellFlagPrimaryJudgement | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.05,
@@ -58,7 +58,7 @@ func (paladin *Paladin) registerJudgementOfLightSpell(cdTimer *core.Timer) {
 		ActionID:    core.ActionID{SpellID: 20271},
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskEmpty,
-		Flags:       SpellFlagPrimaryJudgement,
+		Flags:       SpellFlagPrimaryJudgement | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.05,

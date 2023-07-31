@@ -1,12 +1,7 @@
-import { CustomRotation } from '../core/proto/common.js';
-import { Race, RaidTarget } from '../core/proto/common.js';
+import { UnitReference, UnitReference_Type as UnitType } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
-import { NO_TARGET } from '../core/proto_utils/utils.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
-import { Sim } from '../core/sim.js';
-import { IndividualSimUI } from '../core/individual_sim_ui.js';
-import { Target } from '../core/target.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
 
 import {
@@ -27,11 +22,12 @@ export const SelfPowerInfusion = InputHelpers.makeSpecOptionsBooleanIconInput<Sp
 	extraCssClasses: [
 		'within-raid-sim-hide',
 	],
-	getValue: (player: Player<Spec.SpecHealingPriest>) => player.getSpecOptions().powerInfusionTarget?.targetIndex != NO_TARGET,
+	getValue: (player: Player<Spec.SpecHealingPriest>) => player.getSpecOptions().powerInfusionTarget?.type == UnitType.Player,
 	setValue: (eventID: EventID, player: Player<Spec.SpecHealingPriest>, newValue: boolean) => {
 		const newOptions = player.getSpecOptions();
-		newOptions.powerInfusionTarget = RaidTarget.create({
-			targetIndex: newValue ? 0 : NO_TARGET,
+		newOptions.powerInfusionTarget = UnitReference.create({
+			type: newValue ? UnitType.Player : UnitType.Unknown,
+			index: 0,
 		});
 		player.setSpecOptions(eventID, newOptions);
 	},

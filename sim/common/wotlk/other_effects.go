@@ -26,17 +26,19 @@ func init() {
 			}
 		})
 
-		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+		triggerAura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 			Name:       "Essence of Gossamer Trigger",
 			Callback:   core.CallbackOnSpellHitTaken,
 			ProcMask:   core.ProcMaskMelee,
 			Harmful:    true,
 			ProcChance: 0.05,
 			ICD:        time.Second * 50,
+			ActionID:   actionID,
 			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 				procAura.Activate(sim)
 			},
 		})
+		procAura.Icd = triggerAura.Icd
 	})
 	core.NewItemEffect(45507, func(agent core.Agent) {
 		character := agent.GetCharacter()
@@ -54,17 +56,19 @@ func init() {
 			}
 		})
 
-		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+		triggerAura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 			Name:       "The General's Heart Trigger",
 			Callback:   core.CallbackOnSpellHitTaken,
 			ProcMask:   core.ProcMaskMelee,
 			Harmful:    true,
 			ProcChance: 0.05,
 			ICD:        time.Second * 50,
+			ActionID:   actionID,
 			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 				procAura.Activate(sim)
 			},
 		})
+		procAura.Icd = triggerAura.Icd
 	})
 
 	core.NewItemEffect(37734, func(agent core.Agent) {
@@ -92,8 +96,7 @@ func init() {
 			Duration: time.Second * 20,
 			Callback: core.CallbackOnHealDealt,
 			Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
-				aura := procAuras[result.Target.UnitIndex]
-				aura.Activate(sim)
+				procAuras[result.Target.UnitIndex].Activate(sim)
 			},
 		})
 
@@ -174,12 +177,13 @@ func init() {
 				return
 			}
 
-			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+			triggerAura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:       name,
 				Callback:   core.CallbackOnSpellHitDealt,
-				ProcMask:   core.ProcMaskMeleeOrRanged,
+				ProcMask:   core.ProcMaskMeleeOrRanged | core.ProcMaskProc,
 				Outcome:    core.OutcomeLanded,
 				ProcChance: 0.35,
+				ActionID:   core.ActionID{ItemID: itemID},
 				ICD:        time.Second * 105,
 				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 					rand := sim.RandomFloat("Deathbringer's Will")
@@ -192,6 +196,10 @@ func init() {
 					}
 				},
 			})
+
+			for _, aura := range auras {
+				aura.Icd = triggerAura.Icd
+			}
 		})
 	})
 
@@ -229,6 +237,7 @@ func init() {
 			Outcome:    core.OutcomeCrit,
 			ProcChance: 0.2,
 			ICD:        time.Second * 45,
+			ActionID:   core.ActionID{ItemID: 40258},
 			Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
 				healSpell.Hot(result.Target).Apply(sim)
 			},
@@ -247,6 +256,7 @@ func init() {
 			Outcome:    core.OutcomeCrit,
 			ProcChance: 0.25,
 			ICD:        time.Second * 45,
+			ActionID:   core.ActionID{ItemID: 40382},
 			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 				character.AddMana(sim, 900, manaMetrics)
 			},
@@ -330,6 +340,7 @@ func init() {
 			Callback:   core.CallbackOnHealDealt | core.CallbackOnPeriodicHealDealt,
 			Harmful:    true, // Better name for this would be, 'nonzero'
 			ProcChance: 0.1,
+			ActionID:   core.ActionID{ItemID: 46017},
 			ICD:        time.Second * 45,
 			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 				activeAura.Activate(sim)
@@ -441,11 +452,13 @@ func init() {
 				Timer:    character.NewTimer(),
 				Duration: time.Second * 30,
 			}
+			procAura.Icd = &icd
 
 			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:     name + " Trigger",
 				Callback: core.CallbackOnSpellHitTaken,
 				ProcMask: core.ProcMaskMelee,
+				ActionID: core.ActionID{ItemID: itemID},
 				Harmful:  true,
 				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 					if icd.IsReady(sim) && character.CurrentHealthPercent() < 0.35 {
@@ -481,12 +494,13 @@ func init() {
 				BonusPerStack: stats.Stats{stats.SpellPower: amount},
 			})
 
-			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+			triggerAura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:       name + " Trigger",
 				Callback:   core.CallbackOnSpellHitDealt,
-				ProcMask:   core.ProcMaskSpellDamage,
+				ProcMask:   core.ProcMaskSpellOrProc,
 				Harmful:    true,
 				ProcChance: 0.10,
+				ActionID:   core.ActionID{ItemID: itemID},
 				ICD:        time.Second * 45,
 				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 					procAura.Activate(sim)
@@ -502,6 +516,7 @@ func init() {
 					})
 				},
 			})
+			procAura.Icd = triggerAura.Icd
 		})
 	})
 
@@ -546,6 +561,7 @@ func init() {
 			SpellFlags: core.SpellFlagHelpful,
 			ProcChance: 0.25,
 			ICD:        time.Second * 45,
+			ActionID:   core.ActionID{ItemID: 47215},
 			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 				character.AddMana(sim, 500, manaMetrics)
 			},
@@ -610,6 +626,7 @@ func init() {
 				Callback: core.CallbackOnSpellHitDealt,
 				ProcMask: core.ProcMaskMelee,
 				PPM:      1,
+				ActionID: core.ActionID{ItemID: itemID},
 				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 					// Deactivate first, to cancel old PA.
 					procAura.Deactivate(sim)
@@ -628,6 +645,7 @@ func init() {
 			Name:     "Ephemeral Snowflake",
 			Callback: core.CallbackOnHealDealt | core.CallbackOnPeriodicHealDealt,
 			ICD:      time.Millisecond * 250,
+			ActionID: actionID,
 			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 				character.AddMana(sim, 11, manaMetrics)
 			},
@@ -692,7 +710,12 @@ func init() {
 				SpellSchool: core.SpellSchoolHoly,
 				ProcMask:    core.ProcMaskSpellHealing,
 				Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagHelpful,
-
+				Cast: core.CastConfig{
+					CD: core.Cooldown{
+						Timer:    character.NewTimer(),
+						Duration: time.Minute * 2,
+					},
+				},
 				DamageMultiplier: 1,
 				ThreatMultiplier: 1,
 				CritMultiplier:   character.DefaultHealingCritMultiplier(),
@@ -749,6 +772,7 @@ func init() {
 				Callback:   core.CallbackOnHealDealt | core.CallbackOnPeriodicHealDealt,
 				ProcChance: 0.3,
 				ICD:        time.Second * 45,
+				ActionID:   core.ActionID{ItemID: itemID},
 				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 					randIndex := int(math.Floor(sim.RandomFloat("Althor's Abacus") * float64(len(eligibleUnits))))
 					healTarget := eligibleUnits[randIndex]
@@ -853,12 +877,14 @@ func init() {
 				Timer:    character.NewTimer(),
 				Duration: time.Second * 45,
 			}
+			procAura.Icd = &icd
 
 			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:     name + " Trigger",
 				Callback: core.CallbackOnSpellHitTaken,
 				ProcMask: core.ProcMaskMelee,
 				Harmful:  true,
+				ActionID: core.ActionID{ItemID: itemID},
 				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 					if icd.IsReady(sim) && character.CurrentHealthPercent() < 0.35 {
 						icd.Use(sim)
@@ -968,6 +994,7 @@ func init() {
 				Callback:   core.CallbackOnSpellHitDealt,
 				ProcMask:   core.ProcMaskMelee,
 				ProcChance: 0.03,
+				ActionID:   core.ActionID{ItemID: itemID},
 				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 					procAura.Activate(sim)
 				},
@@ -1006,9 +1033,51 @@ func init() {
 			Callback:   core.CallbackOnHealDealt,
 			ProcMask:   core.ProcMaskSpellHealing,
 			ProcChance: 0.02,
+			ActionID:   actionID,
 			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 				procAura.Activate(sim)
 			},
+		})
+	})
+
+	core.NewItemEffect(21685, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		statBonusPerStack := stats.Stats{stats.ArcaneResistance: 10, stats.FireResistance: 10, stats.FrostResistance: 10, stats.NatureResistance: 10, stats.ShadowResistance: 10}
+
+		mercurialShieldAura := character.GetOrRegisterAura(core.Aura{
+			Label:     "Mercurial Shield",
+			ActionID:  core.ActionID{SpellID: 26464},
+			Duration:  time.Second * 60,
+			MaxStacks: 10,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				aura.SetStacks(sim, 10)
+			},
+			OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
+				character.AddStatsDynamic(sim, statBonusPerStack.Multiply(float64(newStacks-oldStacks)))
+			},
+			OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if result.Damage > 0 && !spell.SpellSchool.Matches(core.SpellSchoolPhysical) {
+					aura.RemoveStack(sim)
+				}
+			},
+		})
+
+		petrifiedScarabActivation := character.RegisterSpell(core.SpellConfig{
+			ActionID: core.ActionID{ItemID: 21685},
+			Cast: core.CastConfig{
+				CD: core.Cooldown{
+					Timer:    character.NewTimer(),
+					Duration: time.Second * 180,
+				},
+			},
+			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+				mercurialShieldAura.Activate(sim)
+			},
+		})
+
+		character.AddMajorCooldown(core.MajorCooldown{
+			Spell: petrifiedScarabActivation,
+			Type:  core.CooldownTypeSurvival,
 		})
 	})
 }

@@ -15,13 +15,12 @@ func (mage *Mage) registerPyroblastSpell() {
 	tickCoeff := 0.05 + 0.05*float64(mage.Talents.EmpoweredFire)
 
 	hasT8_4pc := mage.HasSetBonus(ItemSetKirinTorGarb, 4)
-	t10ProcAura := mage.BloodmagesRegalia2pcAura()
 
 	mage.Pyroblast = mage.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 42891},
 		SpellSchool:  core.SpellSchoolFire,
 		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagMage,
+		Flags:        SpellFlagMage | core.SpellFlagAPL,
 		MissileSpeed: 24,
 
 		ManaCost: core.ManaCostOptions{
@@ -37,9 +36,6 @@ func (mage *Mage) registerPyroblastSpell() {
 					cast.CastTime = 0
 					if !hasT8_4pc || sim.RandomFloat("MageT84PC") > T84PcProcChance {
 						mage.HotStreakAura.Deactivate(sim)
-					}
-					if t10ProcAura != nil {
-						t10ProcAura.Activate(sim)
 					}
 				}
 			},

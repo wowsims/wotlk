@@ -13,9 +13,10 @@ import {
 	MobType,
 	Profession,
 	Race,
-	RaidTarget,
+	UnitReference,
 	Spec,
 	Target as TargetProto,
+	UnitReference_Type,
 } from '../core/proto/common';
 import { nameToClass, professionNames, raceNames } from '../core/proto_utils/names';
 import {
@@ -35,7 +36,7 @@ import {
 } from '../core/proto_utils/utils';
 import { MAX_NUM_PARTIES } from '../core/raid';
 import { Player } from '../core/player';
-import { Target } from '../core/target';
+import { Encounter } from '../core/encounter';
 import { bucket, distinct, sortByProperty } from '../core/utils';
 
 import { playerPresets, PresetSpecSettings } from './presets';
@@ -260,17 +261,14 @@ export class RaidWCLImporter extends Importer {
 						startTime, endTime, id, name
 					}
 
-					reportCastEvents: events(dataType:Casts, endTime: 99999999, filterExpression: "${
-						[racialSpells, professionSpells].flat().map(spell => spell.id).map(id => `ability.id = ${id}`).join(' OR ')
-					}", limit: 10000) { data }
+					reportCastEvents: events(dataType:Casts, endTime: 99999999, filterExpression: "${[racialSpells, professionSpells].flat().map(spell => spell.id).map(id => `ability.id = ${id}`).join(' OR ')
+			}", limit: 10000) { data }
 
-					fightCastEvents: events(fightIDs: [${urlData.fightID}], dataType:Casts, filterExpression: "${
-						[externalCDSpells].flat().map(spell => spell.id).map(id => `ability.id = ${id}`).join(' OR ')
-					}", limit: 10000) { data }
+					fightCastEvents: events(fightIDs: [${urlData.fightID}], dataType:Casts, filterExpression: "${[externalCDSpells].flat().map(spell => spell.id).map(id => `ability.id = ${id}`).join(' OR ')
+			}", limit: 10000) { data }
 
-					fightHealEvents: events(fightIDs: [${urlData.fightID}], dataType:Healing, filterExpression: "${
-						[samePartyHealingSpells, otherPartyHealingSpells].flat().map(spell => spell.id).map(id => `ability.id = ${id}`).join(' OR ')
-					}", limit: 10000) { data }
+					fightHealEvents: events(fightIDs: [${urlData.fightID}], dataType:Healing, filterExpression: "${[samePartyHealingSpells, otherPartyHealingSpells].flat().map(spell => spell.id).map(id => `ability.id = ${id}`).join(' OR ')
+			}", limit: 10000) { data }
 
 					manaTideTotem: events(fightIDs: [${urlData.fightID}], dataType:Resources, filterExpression: "ability.id = 39609", limit: 100) { data }
 				}
@@ -379,7 +377,7 @@ export class RaidWCLImporter extends Importer {
 				const sourcePlayer = wclPlayers.find(player => player.id == event.sourceID);
 				const targetPlayer = wclPlayers.find(player => player.id == event.targetID);
 				if (sourcePlayer && targetPlayer && sourcePlayer.player.getClass() == spell.class) {
-					const specOptions = spell.applyFunc(sourcePlayer.player, targetPlayer.toRaidTarget());
+					const specOptions = spell.applyFunc(sourcePlayer.player, targetPlayer.toUnitReference());
 					sourcePlayer.player.setSpecOptions(eventID, specOptions);
 					console.log(`Inferring player ${sourcePlayer.name} is targeting ${targetPlayer.name} with ${spell.name} from cast event`);
 				}
@@ -492,7 +490,7 @@ export class RaidWCLImporter extends Importer {
 
 		// Build a manual target list if no preset encounter exists.
 		if (encounter.targets.length === 0) {
-			encounter.targets.push(Target.defaultProto());
+			encounter.targets.push(Encounter.defaultTargetProto());
 		}
 
 		return encounter;
@@ -513,7 +511,7 @@ export class RaidWCLImporter extends Importer {
 				raid.parties[partyIdx].players[positionInParty] = playerProto;
 
 				if (isTankSpec(playerToSpec(playerProto))) {
-					raid.tanks.push(player.toRaidTarget());
+					raid.tanks.push(player.toUnitReference());
 				}
 			});
 
@@ -530,7 +528,7 @@ class WCLSimPlayer {
 
 	private readonly simUI: RaidSimUI;
 	private readonly fullType: string;
-	private readonly spec: Spec|null;
+	private readonly spec: Spec | null;
 
 	readonly player: Player<any>;
 	readonly preset: PresetSpecSettings<any>;
@@ -609,9 +607,10 @@ class WCLSimPlayer {
 		return matchingPresets[presetIdx];
 	}
 
-	public toRaidTarget(): RaidTarget {
-		return RaidTarget.create({
-			targetIndex: this.raidIndex,
+	public toUnitReference(): UnitReference {
+		return UnitReference.create({
+			type: UnitReference_Type.Player,
+			index: this.raidIndex,
 		});
 	}
 
@@ -628,6 +627,7 @@ const fullTypeToSpec: Record<string, Spec> = {
 	'DeathKnightBlood': Spec.SpecTankDeathknight,
 	'DeathKnightLichborne': Spec.SpecTankDeathknight,
 	'DeathKnightRuneblade': Spec.SpecDeathknight,
+	'DeathKnightBloodDPS': Spec.SpecDeathknight,
 	'DeathKnightFrost': Spec.SpecDeathknight,
 	'DeathKnightUnholy': Spec.SpecDeathknight,
 	'DruidBalance': Spec.SpecBalanceDruid,
@@ -672,62 +672,69 @@ interface QuerySpell {
 }
 
 // Spells which imply a specific Race.
-const racialSpells: Array<{id: number, name: string, race: Race}> = [
-	{id: 25046, name: 'Arcane Torrent (Energy)', race: Race.RaceBloodElf},
-	{id: 28730, name: 'Arcane Torrent (Mana)', race: Race.RaceBloodElf},
-	{id: 50613, name: 'Arcane Torrent (Runic Power)', race: Race.RaceBloodElf},
-	{id: 26297, name: 'Berserking', race: Race.RaceTroll},
-	{id: 20572, name: 'Blood Fury (AP)', race: Race.RaceOrc},
-	{id: 33697, name: 'Blood Fury (AP+SP)', race: Race.RaceOrc},
-	{id: 33702, name: 'Blood Fury (SP)', race: Race.RaceOrc},
-	{id: 20589, name: 'Escape Artist', race: Race.RaceGnome},
-	{id: 20594, name: 'Stoneform', race: Race.RaceDwarf},
-	{id: 20549, name: 'War Stomp', race: Race.RaceTauren},
-	{id: 7744, name: 'Will of the Forsaken', race: Race.RaceUndead},
-	{id: 59752, name: 'Will to Survive', race: Race.RaceHuman},
+const racialSpells: Array<{ id: number, name: string, race: Race }> = [
+	{ id: 25046, name: 'Arcane Torrent (Energy)', race: Race.RaceBloodElf },
+	{ id: 28730, name: 'Arcane Torrent (Mana)', race: Race.RaceBloodElf },
+	{ id: 50613, name: 'Arcane Torrent (Runic Power)', race: Race.RaceBloodElf },
+	{ id: 26297, name: 'Berserking', race: Race.RaceTroll },
+	{ id: 20572, name: 'Blood Fury (AP)', race: Race.RaceOrc },
+	{ id: 33697, name: 'Blood Fury (AP+SP)', race: Race.RaceOrc },
+	{ id: 33702, name: 'Blood Fury (SP)', race: Race.RaceOrc },
+	{ id: 20589, name: 'Escape Artist', race: Race.RaceGnome },
+	{ id: 20594, name: 'Stoneform', race: Race.RaceDwarf },
+	{ id: 20549, name: 'War Stomp', race: Race.RaceTauren },
+	{ id: 7744, name: 'Will of the Forsaken', race: Race.RaceUndead },
+	{ id: 59752, name: 'Will to Survive', race: Race.RaceHuman },
 ];
 
 // Spells which imply a specific Profession.
-const professionSpells: Array<{id: number, name: string, profession: Profession}> = [
-	{id: 55503, name: 'Lifeblood', profession: Profession.Herbalism},
-	{id: 50305, name: 'Skinning', profession: Profession.Skinning},
+const professionSpells: Array<{ id: number, name: string, profession: Profession }> = [
+	{ id: 55503, name: 'Lifeblood', profession: Profession.Herbalism },
+	{ id: 50305, name: 'Skinning', profession: Profession.Skinning },
 ];
 
-const externalCDSpells: Array<{id: number, name: string, class: Class, applyFunc: (player: Player<any>, raidTarget: RaidTarget) => SpecOptions<any>}> = [
-	{id: 29166, name: 'Innervate', class: Class.ClassDruid, applyFunc: (player: Player<any>, raidTarget: RaidTarget) => {
-		const options = player.getSpecOptions() as SpecOptions<DruidSpecs>;
-		options.innervateTarget = raidTarget;
-		return options;
-	}},
-	{id: 10060, name: 'Power Infusion', class: Class.ClassPriest, applyFunc: (player: Player<any>, raidTarget: RaidTarget) => {
-		const options = player.getSpecOptions() as SpecOptions<PriestSpecs>;
-		options.powerInfusionTarget = raidTarget;
-		return options;
-	}},
-	{id: 57933, name: 'Tricks of the Trade', class: Class.ClassRogue, applyFunc: (player: Player<any>, raidTarget: RaidTarget) => {
-		const options = player.getSpecOptions() as SpecOptions<RogueSpecs>;
-		options.tricksOfTheTradeTarget = raidTarget;
-		return options;
-	}},
-	{id: 49016, name: 'Unholy Frenzy', class: Class.ClassDeathknight, applyFunc: (player: Player<any>, raidTarget: RaidTarget) => {
-		const options = player.getSpecOptions() as SpecOptions<DeathknightSpecs>;
-		options.unholyFrenzyTarget = raidTarget;
-		return options;
-	}},
+const externalCDSpells: Array<{ id: number, name: string, class: Class, applyFunc: (player: Player<any>, raidTarget: UnitReference) => SpecOptions<any> }> = [
+	{
+		id: 29166, name: 'Innervate', class: Class.ClassDruid, applyFunc: (player: Player<any>, raidTarget: UnitReference) => {
+			const options = player.getSpecOptions() as SpecOptions<DruidSpecs>;
+			options.innervateTarget = raidTarget;
+			return options;
+		}
+	},
+	{
+		id: 10060, name: 'Power Infusion', class: Class.ClassPriest, applyFunc: (player: Player<any>, raidTarget: UnitReference) => {
+			const options = player.getSpecOptions() as SpecOptions<PriestSpecs>;
+			options.powerInfusionTarget = raidTarget;
+			return options;
+		}
+	},
+	{
+		id: 57933, name: 'Tricks of the Trade', class: Class.ClassRogue, applyFunc: (player: Player<any>, raidTarget: UnitReference) => {
+			const options = player.getSpecOptions() as SpecOptions<RogueSpecs>;
+			options.tricksOfTheTradeTarget = raidTarget;
+			return options;
+		}
+	},
+	{
+		id: 49016, name: 'Unholy Frenzy', class: Class.ClassDeathknight, applyFunc: (player: Player<any>, raidTarget: UnitReference) => {
+			const options = player.getSpecOptions() as SpecOptions<DeathknightSpecs>;
+			options.unholyFrenzyTarget = raidTarget;
+			return options;
+		}
+	},
 ];
 
 // Healing spells which only affect the caster's party.
-const samePartyHealingSpells: Array<{id: number, name: string}> = [
-	{id: 54172, name: 'Divine Storm'},
-	{id: 52042, name: 'Healing Stream Totem'},
-	{id: 48076, name: 'Holy Nova'},
-	{id: 48445, name: 'Tranquility'},
-	{id: 15290, name: 'Vampiric Embrace'},
+const samePartyHealingSpells: Array<{ id: number, name: string }> = [
+	{ id: 52042, name: 'Healing Stream Totem' },
+	{ id: 48076, name: 'Holy Nova' },
+	{ id: 48445, name: 'Tranquility' },
+	{ id: 15290, name: 'Vampiric Embrace' },
 ];
 
 // Healing spells which only affect a single party, but not necessarily the caster's party.
-const otherPartyHealingSpells: Array<{id: number, name: string}> = [
-	{id: 48072, name: 'Prayer of Healing'},
+const otherPartyHealingSpells: Array<{ id: number, name: string }> = [
+	{ id: 48072, name: 'Prayer of Healing' },
 ];
 
 interface wclUrlData {

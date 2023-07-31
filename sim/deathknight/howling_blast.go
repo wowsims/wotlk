@@ -19,6 +19,7 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 
 	dk.HowlingBlast = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    HowlingBlastActionID,
+		Flags:       core.SpellFlagAPL,
 		SpellSchool: core.SpellSchoolFrost,
 		ProcMask:    core.ProcMaskSpellDamage,
 
@@ -43,6 +44,8 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			dk.AoESpellNumTargetsHit = 0
+
 			for _, aoeTarget := range sim.Encounter.TargetUnits {
 				baseDamage := (sim.Roll(518, 562) + 0.2*dk.getImpurityBonus(spell)) *
 					dk.glacielRotBonus(aoeTarget) *
@@ -51,6 +54,10 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 					sim.Encounter.AOECapMultiplier()
 
 				result := spell.CalcDamage(sim, aoeTarget, baseDamage, spell.OutcomeMagicHitAndCrit)
+
+				if result.Landed() {
+					dk.AoESpellNumTargetsHit++
+				}
 
 				if aoeTarget == target {
 					spell.SpendRefundableCost(sim, result)
@@ -67,8 +74,8 @@ func (dk *Deathknight) registerHowlingBlastSpell() {
 				spell.DealDamage(sim, result)
 			}
 
-			if dk.RimeAura.IsActive() {
-				dk.RimeAura.Deactivate(sim)
+			if dk.FreezingFogAura.IsActive() {
+				dk.FreezingFogAura.Deactivate(sim)
 			}
 			if dk.KillingMachineAura.IsActive() {
 				dk.KillingMachineAura.Deactivate(sim)

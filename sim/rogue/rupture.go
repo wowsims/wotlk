@@ -17,7 +17,7 @@ func (rogue *Rogue) registerRupture() {
 		ActionID:     core.ActionID{SpellID: RuptureSpellID},
 		SpellSchool:  core.SpellSchoolPhysical,
 		ProcMask:     core.ProcMaskMeleeMHSpecial,
-		Flags:        core.SpellFlagMeleeMetrics | rogue.finisherFlags(),
+		Flags:        core.SpellFlagMeleeMetrics | rogue.finisherFlags() | core.SpellFlagAPL,
 		MetricSplits: 6,
 
 		EnergyCost: core.EnergyCostOptions{
@@ -41,8 +41,8 @@ func (rogue *Rogue) registerRupture() {
 		DamageMultiplier: 1 +
 			0.15*float64(rogue.Talents.BloodSpatter) +
 			0.02*float64(rogue.Talents.FindWeakness) +
-			core.TernaryFloat64(rogue.HasSetBonus(ItemSetBonescythe, 2), 0.1, 0) +
-			core.TernaryFloat64(rogue.HasSetBonus(ItemSetTerrorblade, 4), 0.2, 0) +
+			core.TernaryFloat64(rogue.HasSetBonus(Tier7, 2), 0.1, 0) +
+			core.TernaryFloat64(rogue.HasSetBonus(Tier8, 4), 0.2, 0) +
 			0.1*float64(rogue.Talents.SerratedBlades),
 		CritMultiplier:   rogue.MeleeCritMultiplier(false),
 		ThreatMultiplier: 1,

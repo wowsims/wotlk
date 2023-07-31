@@ -112,6 +112,7 @@ type SettingsCombos struct {
 	Encounters  []EncounterCombo
 	SimOptions  *proto.SimOptions
 	IsHealer    bool
+	Cooldowns   *proto.Cooldowns
 }
 
 func (combos *SettingsCombos) NumTests() int {
@@ -169,6 +170,7 @@ func (combos *SettingsCombos) GetTest(testIdx int) (string, *proto.ComputeStatsR
 				Consumes:      buffsCombo.Consumes,
 				Buffs:         buffsCombo.Player,
 				Profession1:   proto.Profession_Engineering,
+				Cooldowns:     combos.Cooldowns,
 			}, specOptionsCombo.SpecOptions),
 			buffsCombo.Party,
 			buffsCombo.Raid,
@@ -472,6 +474,8 @@ type CharacterSuiteConfig struct {
 
 	StatsToWeigh    []proto.Stat
 	EPReferenceStat proto.Stat
+
+	Cooldowns *proto.Cooldowns
 }
 
 func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator {
@@ -496,6 +500,7 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 			Glyphs:        config.Glyphs,
 			Profession1:   proto.Profession_Engineering,
 			Rotation:      config.Rotation.Rotation,
+			Cooldowns:     config.Cooldowns,
 
 			InFrontOfTarget:    config.InFrontOfTarget,
 			DistanceFromTarget: 30,
@@ -504,7 +509,7 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 
 	defaultRaid := SinglePlayerRaidProto(defaultPlayer, FullPartyBuffs, FullRaidBuffs, FullDebuffs)
 	if config.IsTank {
-		defaultRaid.Tanks = append(defaultRaid.Tanks, &proto.RaidTarget{TargetIndex: 0})
+		defaultRaid.Tanks = append(defaultRaid.Tanks, &proto.UnitReference{Type: proto.UnitReference_Player, Index: 0})
 	}
 	if config.IsHealer {
 		defaultRaid.TargetDummies = 1
@@ -546,6 +551,7 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 					IsHealer:   config.IsHealer,
 					Encounters: MakeDefaultEncounterCombos(),
 					SimOptions: DefaultSimTestOptions,
+					Cooldowns:  config.Cooldowns,
 				},
 			},
 			{

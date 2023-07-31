@@ -28,6 +28,7 @@ type Simulation struct {
 	pendingActions []*PendingAction
 	CurrentTime    time.Duration // duration that has elapsed in the sim since starting
 	Duration       time.Duration // Duration of current iteration
+	NeedsInput     bool          // Sim is in interactive mode and needs input
 
 	ProgressReport func(*proto.ProgressMetrics)
 
@@ -42,7 +43,7 @@ type Simulation struct {
 	executePhaseCallbacks []func(*Simulation, int) // 2nd parameter is 35 for 35%, 25 for 25% and 20 for 20%
 }
 
-func RunSim(rsr *proto.RaidSimRequest, progress chan *proto.ProgressMetrics) (result *proto.RaidSimResult) {
+func RunSim(rsr *proto.RaidSimRequest, progress chan *proto.ProgressMetrics) *proto.RaidSimResult {
 	return runSim(rsr, progress, false)
 }
 
@@ -123,7 +124,7 @@ func NewSim(rsr *proto.RaidSimRequest) *Simulation {
 		rseed = time.Now().UnixNano()
 	}
 
-	env, _ := NewEnvironment(rsr.Raid, rsr.Encounter)
+	env, _, _ := NewEnvironment(rsr.Raid, rsr.Encounter)
 	return &Simulation{
 		Environment: env,
 		Options:     simOptions,
@@ -136,7 +137,7 @@ func NewSim(rsr *proto.RaidSimRequest) *Simulation {
 	}
 }
 
-// Returns a random float.
+// Returns a random float64 between 0.0 (inclusive) and 1.0 (exclusive).
 //
 // In tests, although we can set the initial seed, test results are still very
 // sensitive to the exact order of RandomFloat() calls. To mitigate this, when
@@ -203,6 +204,26 @@ func (sim *Simulation) Reset() {
 	sim.reset()
 }
 
+func (sim *Simulation) Reseed(seed int64) {
+	sim.reseedRands(seed)
+}
+
+func (sim *Simulation) Init() {
+	for _, target := range sim.Encounter.Targets {
+		target.init(sim)
+	}
+	for _, party := range sim.Raid.Parties {
+		for _, player := range party.Players {
+			character := player.GetCharacter()
+			character.init(sim, player)
+
+			for _, petAgent := range character.Pets {
+				petAgent.GetCharacter().init(sim, petAgent)
+			}
+		}
+	}
+}
+
 // Reset will set sim back and erase all current state.
 // This is automatically called before every 'Run'.
 func (sim *Simulation) reset() {
@@ -254,20 +275,7 @@ func (sim *Simulation) run() *proto.RaidSimResult {
 	// 	fmt.Printf(fmt.Sprintf("[%0.1f] "+message+"\n", append([]interface{}{sim.CurrentTime.Seconds()}, vals...)...))
 	// }
 
-	for _, target := range sim.Encounter.Targets {
-		target.init(sim)
-	}
-
-	for _, party := range sim.Raid.Parties {
-		for _, player := range party.Players {
-			character := player.GetCharacter()
-			character.init(sim, player)
-
-			for _, petAgent := range character.Pets {
-				petAgent.GetCharacter().init(sim, petAgent)
-			}
-		}
-	}
+	sim.Init()
 
 	sim.runOnce()
 	firstIterationDuration := sim.Duration
@@ -319,47 +327,14 @@ func (sim *Simulation) run() *proto.RaidSimResult {
 
 func (sim *Simulation) runPendingActions(max time.Duration) {
 	for {
-		if len(sim.pendingActions) == 0 {
+		finished := sim.Step(max)
+		if finished {
 			return
 		}
-
-		last := len(sim.pendingActions) - 1
-		pa := sim.pendingActions[last]
-		sim.pendingActions = sim.pendingActions[:last]
-		if pa.cancelled {
-			continue
-		}
-
-		// Use duration as an end check if not using health.
-		if sim.Encounter.EndFightAtHealth == 0 {
-			if pa.NextActionAt > sim.Duration {
-				break
-			}
-		} else if sim.Encounter.EndFightAtHealth < sim.Encounter.DamageTaken {
-			break
-		}
-
-		if pa.NextActionAt > sim.CurrentTime {
-			if pa.NextActionAt < max {
-				sim.advance(pa.NextActionAt - sim.CurrentTime)
-			} else {
-				sim.pendingActions = append(sim.pendingActions, pa)
-				break
-			}
-		}
-		pa.consumed = true
-
-		if pa.cancelled {
-			continue // pa was cancelled during the advance.
-		}
-		pa.OnAction(sim)
 	}
 }
 
-// RunOnce is the main event loop. It will run the simulation for number of seconds.
-func (sim *Simulation) runOnce() {
-	sim.reset()
-
+func (sim *Simulation) PrePull() {
 	if len(sim.Environment.prepullActions) > 0 {
 		sim.CurrentTime = sim.Environment.prepullActions[0].DoAt
 
@@ -380,9 +355,9 @@ func (sim *Simulation) runOnce() {
 	for _, unit := range sim.Environment.AllUnits {
 		unit.startPull(sim)
 	}
+}
 
-	sim.runPendingActions(NeverExpires)
-
+func (sim *Simulation) Cleanup() {
 	// The last event loop will leave CurrentTime at some value close to but not
 	// quite at the Duration. Explicitly set this so that accesses to CurrentTime
 	// during the doneIteration phase will return the Duration value, which is
@@ -404,6 +379,52 @@ func (sim *Simulation) runOnce() {
 	for _, target := range sim.Encounter.TargetUnits {
 		target.Metrics.doneIteration(target, sim)
 	}
+}
+
+// RunOnce is the main event loop. It will run the simulation for number of seconds.
+func (sim *Simulation) runOnce() {
+	sim.reset()
+	sim.PrePull()
+	sim.runPendingActions(NeverExpires)
+	sim.Cleanup()
+}
+
+func (sim *Simulation) Step(max time.Duration) bool {
+	if len(sim.pendingActions) == 0 {
+		return true
+	}
+
+	last := len(sim.pendingActions) - 1
+	pa := sim.pendingActions[last]
+	sim.pendingActions = sim.pendingActions[:last]
+	if pa.cancelled {
+		return false
+	}
+
+	// Use duration as an end check if not using health.
+	if sim.Encounter.EndFightAtHealth == 0 {
+		if pa.NextActionAt > sim.Duration {
+			return true
+		}
+	} else if sim.Encounter.EndFightAtHealth < sim.Encounter.DamageTaken {
+		return true
+	}
+
+	if pa.NextActionAt > sim.CurrentTime {
+		if pa.NextActionAt < max {
+			sim.advance(pa.NextActionAt - sim.CurrentTime)
+		} else {
+			sim.pendingActions = append(sim.pendingActions, pa)
+			return true
+		}
+	}
+	pa.consumed = true
+
+	if pa.cancelled {
+		return false
+	}
+	pa.OnAction(sim)
+	return false
 }
 
 func (sim *Simulation) AddPendingAction(pa *PendingAction) {

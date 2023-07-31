@@ -112,12 +112,12 @@ func (weapon Weapon) GetSpellSchool() SpellSchool {
 	}
 }
 
-func (weapon Weapon) EnemyWeaponDamage(sim *Simulation, attackPower float64, tightenDamageRange bool) float64 {
+func (weapon Weapon) EnemyWeaponDamage(sim *Simulation, attackPower float64, damageSpread float64) float64 {
 	// Maximum damage range is 133% of minimum damage; AP contribution is % of minimum damage roll
 	// Patchwerk follows special damage range rules.
 	// TODO: Scrape more logs to determine these values more accurately. AP defined in constants.go
 
-	rand := 1 + TernaryFloat64(tightenDamageRange, 0.10, 0.3333)*sim.RandomFloat("Enemy Weapon Damage")
+	rand := 1 + damageSpread*sim.RandomFloat("Enemy Weapon Damage")
 
 	return weapon.BaseDamageMin * (rand + attackPower*EnemyAutoAttackAPCoefficient)
 }
@@ -312,13 +312,13 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 	if unit.Type == EnemyUnit {
 		unit.AutoAttacks.MHConfig.ApplyEffects = func(sim *Simulation, target *Unit, spell *Spell) {
 			ap := MaxFloat(0, spell.Unit.stats[stats.AttackPower])
-			baseDamage := spell.Unit.AutoAttacks.MH.EnemyWeaponDamage(sim, ap, spell.Unit.PseudoStats.TightEnemyDamage)
+			baseDamage := spell.Unit.AutoAttacks.MH.EnemyWeaponDamage(sim, ap, spell.Unit.PseudoStats.DamageSpread)
 
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeEnemyMeleeWhite)
 		}
 		unit.AutoAttacks.OHConfig.ApplyEffects = func(sim *Simulation, target *Unit, spell *Spell) {
 			ap := MaxFloat(0, spell.Unit.stats[stats.AttackPower])
-			baseDamage := spell.Unit.AutoAttacks.MH.EnemyWeaponDamage(sim, ap, spell.Unit.PseudoStats.TightEnemyDamage) * 0.5
+			baseDamage := spell.Unit.AutoAttacks.MH.EnemyWeaponDamage(sim, ap, spell.Unit.PseudoStats.DamageSpread) * 0.5
 
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeEnemyMeleeWhite)
 		}
@@ -505,7 +505,9 @@ func (aa *AutoAttacks) TrySwingMH(sim *Simulation, target *Unit) {
 	aa.MainhandSwingAt = sim.CurrentTime + aa.MainhandSwingSpeed()
 	aa.previousMHSwingAt = sim.CurrentTime
 	aa.PreviousSwingAt = sim.CurrentTime
-	aa.agent.OnAutoAttack(sim, attackSpell)
+	if !sim.Options.Interactive {
+		aa.agent.OnAutoAttack(sim, attackSpell)
+	}
 }
 
 // Optionally replaces the given swing spell with an Agent-specified MH Swing replacer.
@@ -549,7 +551,9 @@ func (aa *AutoAttacks) TrySwingOH(sim *Simulation, target *Unit) {
 	aa.OHAuto.Cast(sim, target)
 	aa.OffhandSwingAt = sim.CurrentTime + aa.OffhandSwingSpeed()
 	aa.PreviousSwingAt = sim.CurrentTime
-	aa.agent.OnAutoAttack(sim, aa.OHAuto)
+	if !sim.Options.Interactive {
+		aa.agent.OnAutoAttack(sim, aa.OHAuto)
+	}
 }
 
 // Performs an autoattack using the ranged weapon, if the ranged CD is ready.
@@ -561,7 +565,9 @@ func (aa *AutoAttacks) TrySwingRanged(sim *Simulation, target *Unit) {
 	aa.RangedAuto.Cast(sim, target)
 	aa.RangedSwingAt = sim.CurrentTime + aa.RangedSwingSpeed()
 	aa.PreviousSwingAt = sim.CurrentTime
-	aa.agent.OnAutoAttack(sim, aa.RangedAuto)
+	if !sim.Options.Interactive {
+		aa.agent.OnAutoAttack(sim, aa.RangedAuto)
+	}
 }
 
 func (aa *AutoAttacks) UpdateSwingTime(sim *Simulation) {
@@ -700,6 +706,8 @@ func (ppmm *PPMManager) Chance(procMask ProcMask) float64 {
 		return ppmm.ohProcChance
 	} else if procMask.Matches(ProcMaskRanged) {
 		return ppmm.rangedProcChance
+	} else if procMask.Matches(ppmm.procMask) {
+		return ppmm.mhProcChance // probably a 'proc from proc' so use main hand.
 	}
 
 	return 0

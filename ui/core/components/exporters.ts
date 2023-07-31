@@ -9,9 +9,10 @@ import { IndividualSimSettings } from '../proto/ui';
 import { classNames, raceNames } from '../proto_utils/names';
 import { UnitStat } from '../proto_utils/stats';
 import { specNames } from '../proto_utils/utils';
-import { downloadString } from '../utils';
+import { downloadString, jsonStringifyWithFlattenedPaths } from '../utils';
 import { BaseModal } from './base_modal';
 import { IndividualWowheadGearPlannerImporter } from './importers';
+import { RaidSimRequest } from '../proto/api';
 
 import * as Mechanics from '../constants/mechanics';
 
@@ -19,7 +20,7 @@ export abstract class Exporter extends BaseModal {
 	private readonly textElem: HTMLElement;
 
 	constructor(parent: HTMLElement, simUI: SimUI, title: string, allowDownload: boolean) {
-		super(parent, 'exporter', {title: title, footer: true});
+		super(parent, 'exporter', { title: title, footer: true });
 
 		this.body.innerHTML = `
 			<textarea class="exporter-textarea form-control"></textarea>
@@ -96,7 +97,21 @@ export class IndividualJsonExporter<SpecType extends Spec> extends Exporter {
 	}
 
 	getData(): string {
-		return JSON.stringify(IndividualSimSettings.toJson(this.simUI.toProto()), null, 2);
+		return jsonStringifyWithFlattenedPaths(IndividualSimSettings.toJson(this.simUI.toProto()), 2, (value, path) => {
+			if (['stats', 'pseudoStats'].includes(path[path.length - 1])) {
+				return true;
+			}
+
+			if (['player', 'equipment', 'items'].every((v, i) => path[i] == v)) {
+				return path.length > 3;
+			}
+
+			if (path[0] == 'player' && path[1] == 'rotation' && ['prepullActions', 'priorityList'].includes(path[2])) {
+				return path.length > 3;
+			}
+
+			return false;
+		});
 	}
 }
 
@@ -144,8 +159,8 @@ export class IndividualWowheadGearPlannerExporter<SpecType extends Spec> extends
 			glyphStr += d[glyphPosition];
 			glyphStr += d[(spellId >> 15) & 0b00011111];
 			glyphStr += d[(spellId >> 10) & 0b00011111];
-			glyphStr += d[(spellId >>  5) & 0b00011111];
-			glyphStr += d[(spellId >>  0) & 0b00011111];
+			glyphStr += d[(spellId >> 5) & 0b00011111];
+			glyphStr += d[(spellId >> 0) & 0b00011111];
 		};
 		addGlyph(glyphs.major1, 0);
 		addGlyph(glyphs.major2, 1);
@@ -172,33 +187,33 @@ export class IndividualWowheadGearPlannerExporter<SpecType extends Spec> extends
 		const gear = player.getGear();
 		const isBlacksmithing = player.isBlacksmithing();
 		gear.getItemSlots()
-				.sort((slot1, slot2) => IndividualWowheadGearPlannerImporter.slotIDs[slot1] - IndividualWowheadGearPlannerImporter.slotIDs[slot2])
-				.forEach(itemSlot => {
-			const item = gear.getEquippedItem(itemSlot);
-			if (!item) {
-				return;
-			}
-
-			let slotId = IndividualWowheadGearPlannerImporter.slotIDs[itemSlot];
-			if (item.enchant) {
-				slotId = slotId | 0b10000000;
-			}
-			bytes.push(slotId);
-			bytes.push(item.curGems(isBlacksmithing).length << 5);
-			bytes = bytes.concat(to2Bytes(item.item.id));
-
-			if (item.enchant) {
-				bytes.push(0);
-				bytes = bytes.concat(to2Bytes(item.enchant.spellId));
-			}
-
-			item.gems.slice(0, item.numSockets(isBlacksmithing)).forEach((gem, i) => {
-				if (gem) {
-					bytes.push(i << 5);
-					bytes = bytes.concat(to2Bytes(gem.id));
+			.sort((slot1, slot2) => IndividualWowheadGearPlannerImporter.slotIDs[slot1] - IndividualWowheadGearPlannerImporter.slotIDs[slot2])
+			.forEach(itemSlot => {
+				const item = gear.getEquippedItem(itemSlot);
+				if (!item) {
+					return;
 				}
+
+				let slotId = IndividualWowheadGearPlannerImporter.slotIDs[itemSlot];
+				if (item.enchant) {
+					slotId = slotId | 0b10000000;
+				}
+				bytes.push(slotId);
+				bytes.push(item.curGems(isBlacksmithing).length << 5);
+				bytes = bytes.concat(to2Bytes(item.item.id));
+
+				if (item.enchant) {
+					bytes.push(0);
+					bytes = bytes.concat(to2Bytes(item.enchant.spellId));
+				}
+
+				item.gems.slice(0, item.numSockets(isBlacksmithing)).forEach((gem, i) => {
+					if (gem) {
+						bytes.push(i << 5);
+						bytes = bytes.concat(to2Bytes(gem.id));
+					}
+				});
 			});
-		});
 
 		//console.log('Hex: ' + buf2hex(new Uint8Array(bytes)));
 		const binaryString = String.fromCharCode(...bytes);
@@ -225,20 +240,20 @@ export class Individual80UEPExporter<SpecType extends Spec> extends Exporter {
 
 		const namesToWeights: Record<string, number> = {};
 		allUnitStats
-		.forEach(stat => {
-			const statName = Individual80UEPExporter.getName(stat);
-			const weight = epValues.getUnitStat(stat);
-			if (weight == 0 || statName == '') {
-				return;
-			}
+			.forEach(stat => {
+				const statName = Individual80UEPExporter.getName(stat);
+				const weight = epValues.getUnitStat(stat);
+				if (weight == 0 || statName == '') {
+					return;
+				}
 
-			// Need to add together stats with the same name (e.g. hit/crit/haste).
-			if (namesToWeights[statName]) {
-				namesToWeights[statName] += weight;
-			} else {
-				namesToWeights[statName] = weight;
-			}
-		});
+				// Need to add together stats with the same name (e.g. hit/crit/haste).
+				if (namesToWeights[statName]) {
+					namesToWeights[statName] += weight;
+				} else {
+					namesToWeights[statName] = weight;
+				}
+			});
 
 		return `https://eightyupgrades.com/ep/import?name=${encodeURIComponent(`${specNames[player.spec]} WoWSims Weights`)}` +
 			Object.keys(namesToWeights)
@@ -289,6 +304,11 @@ export class Individual80UEPExporter<SpecType extends Spec> extends Exporter {
 		[Stat.StatNatureResistance]: 'natureResistance',
 		[Stat.StatShadowResistance]: 'shadowResistance',
 		[Stat.StatBonusArmor]: 'armorBonus',
+		[Stat.StatRunicPower]: 'runicPower',
+		[Stat.StatBloodRune]: 'bloodRune',
+		[Stat.StatFrostRune]: 'frostRune',
+		[Stat.StatUnholyRune]: 'unholyRune',
+		[Stat.StatDeathRune]: 'deathRune',
 	}
 	static pseudoStatNames: Partial<Record<PseudoStat, string>> = {
 		[PseudoStat.PseudoStatMainHandDps]: 'dps',
@@ -312,20 +332,20 @@ export class IndividualPawnEPExporter<SpecType extends Spec> extends Exporter {
 
 		const namesToWeights: Record<string, number> = {};
 		allUnitStats
-		.forEach(stat => {
-			const statName = IndividualPawnEPExporter.getName(stat);
-			const weight = epValues.getUnitStat(stat);
-			if (weight == 0 || statName == '') {
-				return;
-			}
+			.forEach(stat => {
+				const statName = IndividualPawnEPExporter.getName(stat);
+				const weight = epValues.getUnitStat(stat);
+				if (weight == 0 || statName == '') {
+					return;
+				}
 
-			// Need to add together stats with the same name (e.g. hit/crit/haste).
-			if (namesToWeights[statName]) {
-				namesToWeights[statName] += weight;
-			} else {
-				namesToWeights[statName] = weight;
-			}
-		});
+				// Need to add together stats with the same name (e.g. hit/crit/haste).
+				if (namesToWeights[statName]) {
+					namesToWeights[statName] += weight;
+				} else {
+					namesToWeights[statName] = weight;
+				}
+			});
 
 		return `( Pawn: v1: "${specNames[player.spec]} WoWSims Weights": Class=${classNames[player.getClass()]},` +
 			Object.keys(namesToWeights)
@@ -377,9 +397,32 @@ export class IndividualPawnEPExporter<SpecType extends Spec> extends Exporter {
 		[Stat.StatNatureResistance]: 'NatureResistance',
 		[Stat.StatShadowResistance]: 'ShadowResistance',
 		[Stat.StatBonusArmor]: 'Armor2',
+		[Stat.StatRunicPower]: 'RunicPower',
+		[Stat.StatBloodRune]: 'BloodRune',
+		[Stat.StatFrostRune]: 'FrostRune',
+		[Stat.StatUnholyRune]: 'UnholyRune',
+		[Stat.StatDeathRune]: 'DeathRune',
 	}
 	static pseudoStatNames: Partial<Record<PseudoStat, string>> = {
 		[PseudoStat.PseudoStatMainHandDps]: 'MeleeDps',
 		[PseudoStat.PseudoStatRangedDps]: 'RangedDps',
+	}
+}
+
+export class IndividualCLIExporter<SpecType extends Spec> extends Exporter {
+	private readonly simUI: IndividualSimUI<SpecType>;
+
+	constructor(parent: HTMLElement, simUI: IndividualSimUI<SpecType>) {
+		super(parent, simUI, "CLI Export", true);
+		this.simUI = simUI;
+		this.init();
+	}
+
+	getData(): string {
+		const raidSimJson: any = RaidSimRequest.toJson(
+			this.simUI.sim.makeRaidSimRequest(false)
+		);
+		delete raidSimJson.raid?.parties[0]?.players[0]?.database;
+		return JSON.stringify(raidSimJson, null, 2);
 	}
 }

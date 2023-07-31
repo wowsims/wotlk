@@ -1,15 +1,8 @@
 import { Component } from './component';
 import { SettingsMenu } from './settings_menu';
 import { SimUI } from '../sim_ui';
-import { TypedEvent } from '../typed_event';
 import { Tooltip } from 'bootstrap';
 import { SimTab } from './sim_tab';
-
-// Config for displaying a warning to the user whenever a condition is met.
-interface SimWarning {
-	updateOn: TypedEvent<any>,
-	getContent: () => string | Array<string>,
-}
 
 interface ToolbarLinkArgs {
 	parent: HTMLElement,
@@ -22,34 +15,32 @@ interface ToolbarLinkArgs {
 }
 
 export class SimHeader extends Component {
-  private simUI: SimUI;
+	private simUI: SimUI;
 
-  private simTabsContainer: HTMLElement;
+	private simTabsContainer: HTMLElement;
 	private simToolbar: HTMLElement;
-  private warningsLink: HTMLElement;
 	private knownIssuesLink: HTMLElement;
 
-  private warnings: Array<SimWarning> = [];
+	constructor(parentElem: HTMLElement, simUI: SimUI) {
+		super(parentElem, 'sim-header');
 
-  constructor(parentElem: HTMLElement, simUI: SimUI) {
-    super(parentElem, 'sim-header');
+		this.simUI = simUI;
 
-    this.simUI = simUI;
-
-    this.simTabsContainer = this.rootElem.querySelector('.sim-tabs') as HTMLElement;
-		this.simToolbar = this.rootElem.querySelector('.sim-toolbar') as HTMLElement;	
-
-		this.warningsLink = this.addWarningsLink();
-		this.updateWarnings();
+		this.simTabsContainer = this.rootElem.querySelector('.sim-tabs') as HTMLElement;
+		this.simToolbar = this.rootElem.querySelector('.sim-toolbar') as HTMLElement;
 
 		this.knownIssuesLink = this.addKnownIssuesLink();
-    this.addBugReportLink();
-    this.addDownloadBinaryLink();
-    this.addSimOptionsLink();
+		this.addBugReportLink();
+		this.addDownloadBinaryLink();
+		this.addSimOptionsLink();
 		this.addSocialLinks();
-  }
+	}
 
-  addTab(title: string, contentId: string) {
+	activateTab(className: string) {
+		(this.simTabsContainer.getElementsByClassName(className)[0] as HTMLElement).click();
+	}
+
+	addTab(title: string, contentId: string) {
 		const isFirstTab = this.simTabsContainer.children.length == 0;
 
 		const tabFragment = document.createElement('fragment');
@@ -76,16 +67,16 @@ export class SimHeader extends Component {
 		tab.navLink.setAttribute('aria-selected', isFirstTab.toString());
 
 		if (isFirstTab) tab.navLink.classList.add('active', 'show');
-		
+
 		this.simTabsContainer.appendChild(tab.navItem);
 	}
 
 	addImportLink(label: string, onClick: (parent: HTMLElement) => void, hideInRaidSim?: boolean) {
 		this.addImportExportLink('import-dropdown', label, onClick, hideInRaidSim);
-  }
+	}
 	addExportLink(label: string, onClick: (parent: HTMLElement) => void, hideInRaidSim?: boolean) {
 		this.addImportExportLink('export-dropdown', label, onClick, hideInRaidSim);
-  }
+	}
 	private addImportExportLink(cssClass: string, label: string, onClick: (parent: HTMLElement) => void, hideInRaidSim?: boolean) {
 		const dropdownElem = this.rootElem.getElementsByClassName(cssClass)[0] as HTMLElement;
 		const menuElem = dropdownElem.getElementsByClassName('dropdown-menu')[0] as HTMLElement;
@@ -142,44 +133,6 @@ export class SimHeader extends Component {
 		return item;
 	}
 
-	private addWarningsLink(): HTMLElement {
-		return this.addToolbarLink({
-			parent: this.simToolbar,
-			icon: 'fas fa-exclamation-triangle fa-3x',
-			tooltip: "<ul class='text-start ps-3 mb-0'></ul>",
-			classes: 'warnings link-warning'
-		}).children[0] as HTMLElement;
-	}
-
-  addWarning(warning: SimWarning) {
-		this.warnings.push(warning);
-		warning.updateOn.on(() => this.updateWarnings());
-		this.updateWarnings();
-	}
-
-  private updateWarnings() {
-		const activeWarnings = this.warnings.map(warning => warning.getContent()).flat().filter(content => content != '');
-
-    let tooltipFragment = document.createElement('fragment');
-		tooltipFragment.innerHTML = this.warningsLink.getAttribute('data-bs-title') as string;
-		let list = tooltipFragment.children[0] as HTMLElement;
-    list.innerHTML = '';
-		
-		if (activeWarnings.length == 0) {
-			this.warningsLink.parentElement?.classList?.add('hide');
-		} else {
-			this.warningsLink.parentElement?.classList?.remove('hide');
-			activeWarnings.forEach(warning => {
-        let listItem = document.createElement('li');
-        listItem.innerHTML = warning;
-        list.appendChild(listItem);
-      });
-		}
-
-    this.warningsLink.setAttribute('data-bs-title', list.outerHTML);
-    new Tooltip(this.warningsLink);
-	}
-
 	private addKnownIssuesLink(): HTMLElement {
 		return this.addToolbarLink({
 			parent: this.simToolbar,
@@ -189,7 +142,7 @@ export class SimHeader extends Component {
 		}).children[0] as HTMLElement;
 	}
 
-  addKnownIssue(issue: string) {
+	addKnownIssue(issue: string) {
 		let tooltipFragment = document.createElement('fragment');
 		tooltipFragment.innerHTML = this.knownIssuesLink.getAttribute('data-bs-title') as string;
 		let list = tooltipFragment.children[0] as HTMLElement;
@@ -197,10 +150,10 @@ export class SimHeader extends Component {
 		listItem.innerHTML = issue;
 		list.appendChild(listItem);
 		this.knownIssuesLink.setAttribute('data-bs-title', list.outerHTML);
-    new Tooltip(this.knownIssuesLink);
+		new Tooltip(this.knownIssuesLink);
 	}
 
-  private addBugReportLink() {
+	private addBugReportLink() {
 		this.addToolbarLink({
 			href: "https://github.com/wowsims/wotlk/issues/new/choose",
 			parent: this.simToolbar,
@@ -209,7 +162,7 @@ export class SimHeader extends Component {
 		})
 	}
 
-  private addDownloadBinaryLink() {
+	private addDownloadBinaryLink() {
 		let href = "https://github.com/wowsims/wotlk/releases";
 		let icon = "fas fa-gauge-high fa-lg"
 		let parent = this.simToolbar;
@@ -241,9 +194,9 @@ export class SimHeader extends Component {
 				classes: "downbin",
 			})
 		}
-  }
+	}
 
-  private addSimOptionsLink() {
+	private addSimOptionsLink() {
 		this.addToolbarLink({
 			parent: this.simToolbar,
 			icon: "fas fa-cog fa-lg",

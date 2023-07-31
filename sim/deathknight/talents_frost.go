@@ -10,14 +10,16 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+func (dk *Deathknight) ToughnessArmorMultiplier() float64 {
+	return 1.0 + 0.02*float64(dk.Talents.Toughness)
+}
+
 func (dk *Deathknight) ApplyFrostTalents() {
 	// Improved Icy Touch
 	// Implemented outside
 
 	// Toughness
-	if dk.Talents.Toughness > 0 {
-		dk.AddStat(stats.Armor, dk.Equip.Stats()[stats.Armor]*0.02*float64(dk.Talents.Toughness))
-	}
+	dk.ApplyEquipScaling(stats.Armor, dk.ToughnessArmorMultiplier())
 
 	// Icy Reach
 	// Pointless to Implement
@@ -106,7 +108,12 @@ func (dk *Deathknight) mercilessCombatBonus(sim *core.Simulation) float64 {
 func (dk *Deathknight) applyTundaStalker() {
 	bonus := 1.0 + 0.03*float64(dk.Talents.TundraStalker)
 	dk.RoRTSBonus = func(target *core.Unit) float64 {
-		return core.TernaryFloat64(dk.FrostFeverSpell.Dot(target).IsActive(), bonus, 1.0)
+		// assume if external ebon plaguebringer is active, then another DK will always have Frost Fever up
+		if dk.MakeTSRoRAssumptions && target.HasActiveAura("EbonPlaguebringer-1") {
+			return bonus
+		}
+
+		return core.TernaryFloat64(target.HasActiveAuraWithTag("FrostFever"), bonus, 1.0)
 	}
 }
 
@@ -115,9 +122,9 @@ func (dk *Deathknight) applyRime() {
 		return
 	}
 
-	dk.RimeAura = dk.RegisterAura(core.Aura{
-		Label:    "Rime",
-		ActionID: core.ActionID{SpellID: 59057},
+	dk.FreezingFogAura = dk.RegisterAura(core.Aura{
+		Label:    "Freezing Fog",
+		ActionID: core.ActionID{SpellID: 59052},
 		Duration: time.Second * 15,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			if dk.HowlingBlast != nil {

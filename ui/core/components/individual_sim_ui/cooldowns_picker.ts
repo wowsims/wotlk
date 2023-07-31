@@ -1,18 +1,14 @@
 import { Component } from '../component.js';
 import { IconEnumPicker, IconEnumValueConfig } from '../icon_enum_picker.js';
-import { Input, InputConfig } from '../input.js';
 import { NumberListPicker } from '../number_list_picker.js';
 import { Player } from '../../player.js';
 import { EventID, TypedEvent } from '../../typed_event.js';
-import { ActionID as ActionIdProto } from '../../proto/common.js';
-import { Cooldowns } from '../../proto/common.js';
+import { ActionID as ActionIdProto, ItemSlot } from '../../proto/common.js';
 import { Cooldown } from '../../proto/common.js';
 import { ActionId } from '../../proto_utils/action_id.js';
-import { Class } from '../../proto/common.js';
-import { Spec } from '../../proto/common.js';
-import { getEnumValues } from '../../utils.js';
-import { wait } from '../../utils.js';
 import { Tooltip } from 'bootstrap';
+import { NumberPicker } from '../number_picker.js';
+import { Sim } from 'ui/core/sim.js';
 
 export class CooldownsPicker extends Component {
 	readonly player: Player<any>;
@@ -24,7 +20,7 @@ export class CooldownsPicker extends Component {
 		this.player = player;
 		this.cooldownPickers = [];
 
-		TypedEvent.onAny([this.player.currentStatsEmitter]).on(eventID => {
+		TypedEvent.onAny([this.player.cooldownsChangeEmitter, this.player.sim.unitMetadataEmitter]).on(eventID => {
 			this.update();
 		});
 		this.update();
@@ -80,10 +76,58 @@ export class CooldownsPicker extends Component {
 
 			this.cooldownPickers.push(row);
 		}
+
+		this.addTrinketDesyncPicker(ItemSlot.ItemSlotTrinket1);
+		this.addTrinketDesyncPicker(ItemSlot.ItemSlotTrinket2);
+	}
+
+	private addTrinketDesyncPicker(slot: ItemSlot) {
+		const index = slot - ItemSlot.ItemSlotTrinket1 + 1;
+		const picker = new NumberPicker(this.rootElem, this.player.sim, {
+			label: `Desync Proc Trinket ${index}`,
+			labelTooltip: ' Put the trinket on a cooldown before pull by re-equipping it. Must be between 0 and 30 seconds.',
+			extraCssClasses: [
+				'within-raid-sim-hide',
+			],
+			inline: true,
+			changedEvent: (_: Sim) => this.player.cooldownsChangeEmitter,
+			getValue: (_: Sim) => {
+				const cooldowns = this.player.getCooldowns();
+				return (slot == ItemSlot.ItemSlotTrinket1) ? cooldowns.desyncProcTrinket1Seconds : cooldowns.desyncProcTrinket2Seconds;
+			},
+			setValue: (eventID: EventID, _: Sim, newValue: number) => {
+				if (newValue >= 0) {
+					const newCooldowns = this.player.getCooldowns();
+					if (slot == ItemSlot.ItemSlotTrinket1) {
+						newCooldowns.desyncProcTrinket1Seconds = newValue;
+					} else {
+						newCooldowns.desyncProcTrinket2Seconds = newValue
+					}
+					this.player.setCooldowns(eventID, newCooldowns);
+				}
+			},
+			enableWhen: (sim: Sim) => {
+				// TODO(Riotdog-GehennasEU): Only show if the slot is non-empty and the
+				// trinket has a proc effect?
+				return true;
+			},
+		});
+
+		const pickerInput = picker.rootElem.querySelector('.number-picker-input') as HTMLInputElement;
+		pickerInput.type = 'number';
+		pickerInput.min = "0";
+
+		const validator = () => {
+			if (!pickerInput.checkValidity()) {
+				pickerInput.reportValidity();
+			}
+		};
+		pickerInput.addEventListener('change', validator);
+		pickerInput.addEventListener('focusout', validator);
 	}
 
 	private makeActionPicker(parentElem: HTMLElement, cooldownIndex: number): IconEnumPicker<Player<any>, ActionIdProto> {
-		const availableCooldowns = this.player.getCurrentStats().cooldowns;
+		const availableCooldowns = this.player.getMetadata().getSpells().filter(spell => spell.data.isMajorCooldown).map(spell => spell.id);
 
 		const actionPicker = new IconEnumPicker<Player<any>, ActionIdProto>(parentElem, this.player, {
 			extraCssClasses: [
@@ -93,7 +137,7 @@ export class CooldownsPicker extends Component {
 			values: ([
 				{ color: '#grey', value: ActionIdProto.create() },
 			] as Array<IconEnumValueConfig<Player<any>, ActionIdProto>>).concat(availableCooldowns.map(cooldownAction => {
-				return { actionId: ActionId.fromProto(cooldownAction), value: cooldownAction };
+				return { actionId: cooldownAction, value: cooldownAction.toProto() };
 			})),
 			equals: (a: ActionIdProto, b: ActionIdProto) => ActionIdProto.equals(a, b),
 			zeroValue: ActionIdProto.create(),

@@ -5,6 +5,17 @@
 		margin-bottom: $block-spacer;
 	}
 
+	.ep-reference-options {
+		margin-bottom: $block-spacer;
+		span {
+			font-weight: bold;
+		}
+
+		p {
+			margin-top: $block-spacer;
+		}
+	}
+
 	.results-ep-table-container {
 		position: relative;
 
@@ -52,6 +63,32 @@
 				text-align: left;
 			}
 
+			.ep-ratios {
+				background-color: $table-row-even-bg;
+
+				td {
+					padding: $table-cell-padding;
+				}
+
+				.input-root {
+					align-items: flex-end;
+				}
+
+				input {
+					text-align: right;
+					max-width: 100px;
+				}
+
+				.compute-ep {
+					white-space: nowrap;
+					.not-tiny { display: inline; }
+					.fas {
+						display: inline;
+						vertical-align:middle;
+					}
+				}
+			}
+
 			tbody {
 				tr:nth-child(even) {
 					background-color: $table-row-even-bg;	
@@ -63,6 +100,7 @@
 
 				td {
 					padding: $table-cell-padding;
+					.fas { display: inline; }
 				}
 			}
 
@@ -76,6 +114,78 @@
 
 			.col-action {
 				margin-left: map.get($spacers, 1);
+			}
+		}
+	}
+}
+
+// Style overrides for the EP UI in tank mode
+.ep-weights-menu:not(.hide-threat-metrics) {
+	// Compact rendering of EP compute button
+	@mixin compact-button {
+		.results-ep-table-container {
+			.results-ep-table {
+				.not-tiny { display: none !important; }
+			}
+		}
+	}
+
+	// Compact rendering of number pickers
+	@mixin compact-input {
+		input {
+			text-align: center;
+			padding-left: 0;
+			padding-right: 3px;
+		}
+	}
+
+	// Compact table display by shrinking padding
+	@mixin compact-table {
+		.results-ep-table-container {
+			.results-ep-table {
+				padding-right: 0;
+				td {
+					padding-left: 0;
+				}
+			}
+		}
+	}
+
+	// Shorten the compute EP button on very small devices
+	@media (max-width: 471px) { @include compact-button; }
+
+	// More compact EP table on mobile viewports
+	@include media-breakpoint-only(xs) {
+		@include compact-table;
+		.ep-ratios { @include compact-input; }
+	}
+
+	// Padding obscures part of the value on these sizes
+	@include media-breakpoint-between(sm,lg) {
+		.ep-ratios { @include compact-input; }
+	}
+
+	// Avoid awkward line wrapping of table headers
+	@include media-breakpoint-down(lg) {
+		.results-ep-table {
+			th[class*="type-"] {
+				text-align: center;
+			}
+		}
+	}
+
+	// Style overrides for the expanded/experimental EP UI in tank mode
+	&:not(.hide-experimental) {
+		@include media-breakpoint-down(lg) {
+			@include compact-button;
+			@include compact-table;
+			.results-ep-table {
+				@include compact-input;
+			}
+		}
+		@include media-breakpoint-only(lg) {
+			.results-ep-table {
+				th { padding-right: 0; }
 			}
 		}
 	}

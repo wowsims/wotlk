@@ -42,12 +42,14 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 				Stat.StatArmorPenetration,
 				Stat.StatSpellPower,
 				Stat.StatArmor,
+				Stat.StatBonusArmor,
 				Stat.StatDefense,
 				Stat.StatBlock,
 				Stat.StatBlockValue,
 				Stat.StatDodge,
 				Stat.StatParry,
 				Stat.StatResilience,
+				Stat.StatNatureResistance,
 			],
 			epPseudoStats: [
 				PseudoStat.PseudoStatMainHandDps,
@@ -58,6 +60,7 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 			displayStats: [
 				Stat.StatHealth,
 				Stat.StatArmor,
+				Stat.StatBonusArmor,
 				Stat.StatStamina,
 				Stat.StatStrength,
 				Stat.StatAgility,
@@ -75,6 +78,7 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 				Stat.StatDodge,
 				Stat.StatParry,
 				Stat.StatResilience,
+				Stat.StatNatureResistance,
 			],
 			modifyDisplayStats: (player: Player<Spec.SpecProtectionPaladin>) => {
 				let stats = new Stats();
@@ -95,6 +99,7 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatArmor]: 0.07,
+					[Stat.StatBonusArmor]: 0.06,
 					[Stat.StatStamina]: 1.14,
 					[Stat.StatStrength]: 1.00,
 					[Stat.StatAgility]: 0.62,
@@ -174,7 +179,7 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 			rotationInputs: ProtectionPaladinInputs.ProtectionPaladinRotationConfig,
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
-					IconInputs.HealthBuff,
+				IconInputs.HealthBuff,
 			],
 			excludeBuffDebuffInputs: [
 			],
@@ -184,6 +189,7 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 					OtherInputs.TankAssignment,
 					OtherInputs.IncomingHps,
 					OtherInputs.HealingCadence,
+					OtherInputs.HealingCadenceVariation,
 					OtherInputs.BurstWindow,
 					OtherInputs.HpPercentForDefensives,
 					OtherInputs.InspirationUptime,

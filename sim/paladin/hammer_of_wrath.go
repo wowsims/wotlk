@@ -12,7 +12,7 @@ func (paladin *Paladin) registerHammerOfWrathSpell() {
 		ActionID:    core.ActionID{SpellID: 48806},
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.12 * core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfHammerOfWrath), 0, 1),
@@ -27,6 +27,9 @@ func (paladin *Paladin) registerHammerOfWrathSpell() {
 				Timer:    paladin.NewTimer(),
 				Duration: time.Second * 6,
 			},
+		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return sim.IsExecutePhase20()
 		},
 
 		BonusCritRating: 25 * float64(paladin.Talents.SanctifiedWrath) * core.CritRatingPerCritChance,

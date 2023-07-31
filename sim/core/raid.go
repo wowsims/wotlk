@@ -377,27 +377,6 @@ func (raid Raid) GetPlayerFromUnit(unit *Unit) Agent {
 	return nil
 }
 
-func (raid Raid) GetPlayerFromRaidTarget(raidTarget *proto.RaidTarget) Agent {
-	if raidTarget == nil {
-		return nil
-	}
-	raidIndex := raidTarget.TargetIndex
-
-	partyIndex := int(raidIndex / 5)
-	if partyIndex < 0 || partyIndex >= len(raid.Parties) {
-		return nil
-	}
-
-	party := raid.Parties[partyIndex]
-	for _, player := range party.Players {
-		if player.GetCharacter().Index == raidIndex {
-			return player
-		}
-	}
-
-	return nil
-}
-
 func (raid Raid) GetFirstNPlayersOrPets(n int32) []*Unit {
 	return raid.AllUnits[:MinInt32(n, int32(len(raid.AllUnits)))]
 }

@@ -7,7 +7,7 @@ import { Consumes } from '../core/proto/common.js';
 import { Encounter } from '../core/proto/common.js';
 import { ItemSlot } from '../core/proto/common.js';
 import { MobType } from '../core/proto/common.js';
-import { RaidTarget } from '../core/proto/common.js';
+import { UnitReference } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { Stat } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js'
@@ -70,7 +70,7 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P1_PRESET.gear,
+				gear: Presets.P3_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatIntellect]: 0.11,
@@ -126,6 +126,7 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 			otherInputs: {
 				inputs: [
 					OtherInputs.TankAssignment,
+					ShadowPriestInputs.MindFlayLatencyInput,
 				],
 			},
 			encounterPicker: {
@@ -138,11 +139,15 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 				talents: [
 					Presets.StandardTalents,
 				],
+				rotations: [
+					Presets.ROTATION_PRESET_BASIC_APL,
+				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.PreBis_PRESET,
 					Presets.P1_PRESET,
 					Presets.P2_PRESET,
+					Presets.P3_PRESET,
 				],
 			},
 		});

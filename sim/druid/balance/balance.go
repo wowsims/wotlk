@@ -33,7 +33,7 @@ func NewBalanceDruid(character core.Character, options *proto.Player) *BalanceDr
 		Rotation: balanceOptions.Rotation,
 	}
 
-	moonkin.SelfBuffs.InnervateTarget = &proto.RaidTarget{TargetIndex: -1}
+	moonkin.SelfBuffs.InnervateTarget = &proto.UnitReference{}
 	if balanceOptions.Options.InnervateTarget != nil {
 		moonkin.SelfBuffs.InnervateTarget = balanceOptions.Options.InnervateTarget
 	}
@@ -77,9 +77,17 @@ func (moonkin *BalanceDruid) Reset(sim *core.Simulation) {
 	moonkin.Druid.Reset(sim)
 	moonkin.RebirthTiming = moonkin.Env.BaseDuration.Seconds() * sim.RandomFloat("Rebirth Timing")
 
+	if moonkin.Talents.OwlkinFrenzy > 0 {
+		for i := int32(0); i < int32(moonkin.Env.BaseDuration.Minutes()); i++ {
+			if sim.RandomFloat("Owlkin Frenzy Proc") < float64(moonkin.Rotation.OkfPpm) {
+				moonkin.OwlkinFrenzyTimings = append(moonkin.OwlkinFrenzyTimings, sim.RandomFloat("Owlkin Frenzy Timing")*moonkin.Env.BaseDuration.Seconds())
+			}
+		}
+	}
+
 	if moonkin.Rotation.Type == proto.BalanceDruid_Rotation_Default {
 		moonkin.Rotation.MfUsage = proto.BalanceDruid_Rotation_BeforeLunar
-		moonkin.Rotation.IsUsage = proto.BalanceDruid_Rotation_MaximizeIs
+		moonkin.Rotation.IsUsage = proto.BalanceDruid_Rotation_OptimizeIs
 		moonkin.Rotation.WrathUsage = proto.BalanceDruid_Rotation_RegularWrath
 		moonkin.Rotation.UseBattleRes = false
 		moonkin.Rotation.UseStarfire = true

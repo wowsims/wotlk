@@ -35,6 +35,10 @@ func (dk *Deathknight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
 }
 
 func (dk *Deathknight) registerScourgeStrikeSpell() {
+	if !dk.Talents.ScourgeStrike {
+		return
+	}
+
 	shadowDamageSpell := dk.registerScourgeStrikeShadowDamageSpell()
 	bonusBaseDamage := dk.sigilOfAwarenessBonus() + dk.sigilOfArthriticBindingBonus()
 	hasGlyph := dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfScourgeStrike)
@@ -43,7 +47,7 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 		ActionID:    ScourgeStrikeActionID.WithTag(1),
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagAPL,
 
 		RuneCost: core.RuneCostOptions{
 			FrostRuneCost:  1,
@@ -57,15 +61,12 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 			},
 			IgnoreHaste: true,
 		},
-		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return dk.Talents.ScourgeStrike
-		},
 
 		BonusCritRating: (dk.subversionCritBonus() + dk.viciousStrikesCritChanceBonus() + dk.scourgeborneBattlegearCritBonus()) * core.CritRatingPerCritChance,
 
 		DamageMultiplier: .7 *
 			[]float64{1.0, 1.07, 1.13, 1.2}[dk.Talents.Outbreak] *
-			dk.scourgelordsBattlegearDamageBonus(dk.ScourgeStrike),
+			dk.scourgelordsBattlegearDamageBonus(ScourgelordBonusSpellSS),
 
 		CritMultiplier:   dk.bonusCritMultiplier(dk.Talents.ViciousStrikes),
 		ThreatMultiplier: 1,

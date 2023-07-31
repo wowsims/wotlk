@@ -2,6 +2,8 @@
 package core
 
 import (
+	"context"
+
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -10,10 +12,15 @@ import (
  * Returns character stats taking into account gear / buffs / consumes / etc
  */
 func ComputeStats(csr *proto.ComputeStatsRequest) *proto.ComputeStatsResult {
-	_, raidStats := NewEnvironment(csr.Raid, &proto.Encounter{})
+	encounter := csr.Encounter
+	if encounter == nil {
+		encounter = &proto.Encounter{}
+	}
+	_, raidStats, encounterStats := NewEnvironment(csr.Raid, encounter)
 
 	return &proto.ComputeStatsResult{
-		RaidStats: raidStats,
+		RaidStats:      raidStats,
+		EncounterStats: encounterStats,
 	}
 }
 
@@ -43,4 +50,12 @@ func RunRaidSim(request *proto.RaidSimRequest) *proto.RaidSimResult {
 
 func RunRaidSimAsync(request *proto.RaidSimRequest, progress chan *proto.ProgressMetrics) {
 	go RunSim(request, progress)
+}
+
+func RunBulkSim(request *proto.BulkSimRequest) *proto.BulkSimResult {
+	return BulkSim(context.Background(), request, nil)
+}
+
+func RunBulkSimAsync(ctx context.Context, request *proto.BulkSimRequest, progress chan *proto.ProgressMetrics) {
+	go BulkSim(ctx, request, progress)
 }

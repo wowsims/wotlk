@@ -35,7 +35,6 @@ import {
 	SimLog,
 	ThreatLogGroup,
 } from './logs_parser.js';
-import { MAX_PARTY_SIZE } from '../party.js';
 
 export interface SimResultFilter {
 	// Raid index of the player to display, or null for all players.
@@ -135,6 +134,9 @@ export class SimResult {
 
 	getTargetWithIndex(unitIndex: number): UnitMetrics | null {
 		return this.getTargets().find(target => target.unitIndex == unitIndex) || null;
+	}
+	getTargetWithEncounterIndex(index: number): UnitMetrics | null {
+		return this.getTargets().find(target => target.index == index) || null;
 	}
 	getUnitWithIndex(unitIndex: number): UnitMetrics | null {
 		return this.units.find(unit => unit.unitIndex == unitIndex) || null;
@@ -443,12 +445,13 @@ export class UnitMetrics {
 	}
 
 	static async makeNewPlayer(resultData: SimResultData, player: PlayerProto, metrics: UnitMetricsProto, raidIndex: number, isPet: boolean, logs: Array<SimLog>): Promise<UnitMetrics> {
-		const playerLogs = logs.filter(log => log.source && (!log.source.isTarget && (isPet == log.source.isPet) && log.source.index == raidIndex));
+		const playerLogs = logs.filter(log => log.source && (!log.source.isTarget && (isPet == log.source.isPet) && (isPet ? log.source.name == metrics.name : log.source.index == raidIndex)));
+		const petLogs = logs.filter(log => log.source && !log.source.isTarget && log.source.isPet && log.source.index == raidIndex);
 
 		const actionsPromise = Promise.all(metrics.actions.map(actionMetrics => ActionMetrics.makeNew(null, resultData, actionMetrics, raidIndex)));
 		const aurasPromise = Promise.all(metrics.auras.map(auraMetrics => AuraMetrics.makeNew(null, resultData, auraMetrics, raidIndex)));
 		const resourcesPromise = Promise.all(metrics.resources.map(resourceMetrics => ResourceMetrics.makeNew(null, resultData, resourceMetrics, raidIndex)));
-		const petsPromise = Promise.all(metrics.pets.map(petMetrics => UnitMetrics.makeNewPlayer(resultData, player, petMetrics, raidIndex, true, playerLogs)));
+		const petsPromise = Promise.all(metrics.pets.map(petMetrics => UnitMetrics.makeNewPlayer(resultData, player, petMetrics, raidIndex, true, petLogs)));
 
 		let petIdPromise: Promise<ActionId | null> = Promise.resolve(null);
 		if (isPet) {

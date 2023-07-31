@@ -1,4 +1,5 @@
-import { ItemSlot, RaidTarget, Spec } from '../core/proto/common.js';
+import { ItemSlot, Spec } from '../core/proto/common.js';
+import { UnitReference, UnitReference_Type as UnitType } from '../core/proto/common.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 
 import {
@@ -22,7 +23,6 @@ import {
 import * as InputHelpers from '../core/components/input_helpers.js';
 import { Player } from '../core/player';
 import { EventID, TypedEvent } from '../core/typed_event';
-import { NO_TARGET } from '../core/proto_utils/utils.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
@@ -34,11 +34,12 @@ export const SelfUnholyFrenzy = InputHelpers.makeSpecOptionsBooleanInput<Spec.Sp
 	extraCssClasses: [
 		'within-raid-sim-hide',
 	],
-	getValue: (player: Player<Spec.SpecDeathknight>) => player.getSpecOptions().unholyFrenzyTarget?.targetIndex != NO_TARGET,
+	getValue: (player: Player<Spec.SpecDeathknight>) => player.getSpecOptions().unholyFrenzyTarget?.type == UnitType.Player,
 	setValue: (eventID: EventID, player: Player<Spec.SpecDeathknight>, newValue: boolean) => {
 		const newOptions = player.getSpecOptions();
-		newOptions.unholyFrenzyTarget = RaidTarget.create({
-			targetIndex: newValue ? 0 : NO_TARGET,
+		newOptions.unholyFrenzyTarget = UnitReference.create({
+			type: newValue ? UnitType.Player : UnitType.Unknown,
+			index: 0,
 		});
 		player.setSpecOptions(eventID, newOptions);
 	},
@@ -78,7 +79,7 @@ export const DrwPestiApply = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecD
 	fieldName: 'drwPestiApply',
 	label: 'DRW Pestilence Add',
 	labelTooltip: 'There is currently an interaction with DRW and pestilence where you can use pestilence to force DRW to apply diseases if they are already applied by the DK. It only works with Glyph of Disease and if there is an off target. This toggle forces the sim to assume there is an off target.',
-	showWhen: (player: Player<Spec.SpecDeathknight>) => !player.getRotation().autoRotation && player.getTalentTree() == 0 && (player.getGlyphs().major1 == DeathknightMajorGlyph.GlyphOfDisease || player.getGlyphs().major2 == DeathknightMajorGlyph.GlyphOfDisease|| player.getGlyphs().major3 == DeathknightMajorGlyph.GlyphOfDisease),
+	showWhen: (player: Player<Spec.SpecDeathknight>) => !player.getRotation().autoRotation && player.getTalentTree() == 0 && (player.getGlyphs().major1 == DeathknightMajorGlyph.GlyphOfDisease || player.getGlyphs().major2 == DeathknightMajorGlyph.GlyphOfDisease || player.getGlyphs().major3 == DeathknightMajorGlyph.GlyphOfDisease),
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.specOptionsChangeEmitter, player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
 
@@ -92,8 +93,8 @@ export const UseDeathAndDecay = InputHelpers.makeRotationBooleanInput<Spec.SpecD
 	fieldName: 'useDeathAndDecay',
 	label: 'Death and Decay',
 	labelTooltip: 'Use Death and Decay based rotation.',
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && player.getTalents().scourgeStrike && !player.getRotation().autoRotation,
-	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+	showWhen: (player: Player<Spec.SpecDeathknight>) => (player.getTalents().summonGargoyle && player.getTalents().scourgeStrike && !player.getRotation().autoRotation) || (!player.getTalents().epidemic && !player.getRotation().desyncRotation && player.getTalentTree() == 1 && player.sim.encounter.targets.length >= 3),
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter, player.sim.encounter.targetsChangeEmitter]),
 });
 
 export const SetDeathAndDecayPrio = InputHelpers.makeRotationEnumInput<Spec.SpecDeathknight, DeathAndDecayPrio>({
@@ -356,7 +357,7 @@ export const FrostCustomRotation = InputHelpers.makeCustomRotationInput<Spec.Spe
 		{ actionId: ActionId.fromSpellId(50842), value: CustomSpellOption.CustomPestilence },
 		{ actionId: ActionId.fromSpellId(51425), value: CustomSpellOption.CustomObliterate },
 		{ actionId: ActionId.fromSpellId(51411), value: CustomSpellOption.CustomHowlingBlast },
-		{ actionId: ActionId.fromSpellId(59057), value: CustomSpellOption.CustomHowlingBlastRime },
+		{ actionId: ActionId.fromSpellId(59052), value: CustomSpellOption.CustomHowlingBlastRime },
 		{ actionId: ActionId.fromSpellId(49941), value: CustomSpellOption.CustomBloodBoil },
 		{ actionId: ActionId.fromSpellId(49930), value: CustomSpellOption.CustomBloodStrike },
 		{ actionId: ActionId.fromSpellId(49938), value: CustomSpellOption.CustomDeathAndDecay },
@@ -372,7 +373,7 @@ export const FrostCustomRotation = InputHelpers.makeCustomRotationInput<Spec.Spe
 export const EnableWeaponSwap = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
 	fieldName: 'enableWeaponSwap',
 	label: 'Enable Weapon Swapping',
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && player.getRotation().useGargoyle,
+	showWhen: (player: Player<Spec.SpecDeathknight>) => !player.getRotation().autoRotation && player.getTalents().summonGargoyle && player.getRotation().useGargoyle,
 })
 
 export const WeaponSwapInputs = InputHelpers.MakeItemSwapInput<Spec.SpecDeathknight>({
@@ -383,8 +384,31 @@ export const WeaponSwapInputs = InputHelpers.MakeItemSwapInput<Spec.SpecDeathkni
 		//ItemSlot.ItemSlotRanged, Not support yet
 	],
 	labelTooltip: '<b>Berserking</b> will be equipped when FC has procced and Berserking is not active.<br><br><b>Black Magic</b> will be prioed to swap during gargoyle or if gargoyle will be on CD for full BM Icd.',
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && player.getRotation().useGargoyle && player.getRotation().enableWeaponSwap,
+	showWhen: (player: Player<Spec.SpecDeathknight>) => !player.getRotation().autoRotation && player.getTalents().summonGargoyle && player.getRotation().useGargoyle && player.getRotation().enableWeaponSwap,
 })
+
+export const NewDrwInput = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecDeathknight>({
+	fieldName: 'newDrw',
+	label: 'PTR DRW Scaling',
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().dancingRuneWeapon && player.getRotation().useDancingRuneWeapon,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+})
+
+export const DiseaseDowntime = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecDeathknight>({
+	fieldName: 'diseaseDowntime',
+	label: 'Disease Downtime',
+	labelTooltip: 'Maximum allowed downtime between disease applications.',
+	showWhen: (player: Player<Spec.SpecDeathknight>) => !player.getRotation().autoRotation && player.getTalentTree() == 2,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+});
+
+export const VirulenceRefreshTime = InputHelpers.makeRotationNumberInput<Spec.SpecDeathknight>({
+	fieldName: 'virulenceRefresh',
+	label: 'Virulence Refresh',
+	labelTooltip: 'How long to wait after ICD is ready before trying to refresh buff with strike (0-10 seconds range).',
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.sim.getShowExperimental() && !player.getRotation().autoRotation && player.getTalentTree() == 2 && player.getEquippedItem(ItemSlot.ItemSlotRanged)?._item.id == 47673,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter, player.gearChangeEmitter]),
+});
 
 export const DeathKnightRotationConfig = {
 	inputs: [
@@ -406,6 +430,7 @@ export const DeathKnightRotationConfig = {
 		WeaponSwapInputs,
 		UseEmpowerRuneWeapon,
 		UseDancingRuneWeapon,
+		//NewDrwInput,
 		HoldErwArmy,
 		BloodTapInput,
 		BloodSpenderInput,
@@ -425,5 +450,6 @@ export const DeathKnightRotationConfig = {
 		DesyncRotation,
 		FrostCustomRotation,
 		PreNerfedGargoyleInput,
+		VirulenceRefreshTime,
 	],
 };

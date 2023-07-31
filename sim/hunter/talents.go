@@ -68,7 +68,7 @@ func (hunter *Hunter) ApplyTalents() {
 			hunterBonus = 0.1
 			petBonus = 0.2
 		}
-		hunter.AddStat(stats.Armor, hunter.Equip.Stats()[stats.Armor]*hunterBonus)
+		hunter.ApplyEquipScaling(stats.Armor, 1.0+hunterBonus)
 		if hunter.pet != nil {
 			hunter.pet.MultiplyStat(stats.Armor, 1.0+petBonus)
 		}
@@ -117,12 +117,17 @@ func (hunter *Hunter) ApplyTalents() {
 	hunter.registerReadinessCD()
 }
 
-func (hunter *Hunter) critMultiplier(isRanged bool, isMFDSpell bool) float64 {
+func (hunter *Hunter) critMultiplier(isRanged bool, isMFDSpell bool, doubleDipMS bool) float64 {
 	primaryModifier := 1.0
 	secondaryModifier := 0.0
+	mortalShotsFactor := 0.06
+
+	if doubleDipMS {
+		mortalShotsFactor = 0.12
+	}
 
 	if isRanged {
-		secondaryModifier += 0.06 * float64(hunter.Talents.MortalShots)
+		secondaryModifier += mortalShotsFactor * float64(hunter.Talents.MortalShots)
 		if isMFDSpell {
 			secondaryModifier += 0.02 * float64(hunter.Talents.MarkedForDeath)
 		}
@@ -321,7 +326,7 @@ func (hunter *Hunter) applyWildQuiver() {
 		Flags:       core.SpellFlagNoOnCastComplete,
 
 		DamageMultiplier: 0.8,
-		CritMultiplier:   hunter.critMultiplier(false, false),
+		CritMultiplier:   hunter.critMultiplier(false, false, false),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -432,6 +437,7 @@ func (hunter *Hunter) registerBestialWrathCD() {
 			aura.Unit.PseudoStats.CostMultiplier += 0.5
 		},
 	})
+	core.RegisterPercentDamageModifierEffect(bestialWrathAura, 1.1)
 
 	bwSpell := hunter.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
@@ -540,6 +546,7 @@ func (hunter *Hunter) applyLockAndLoad() {
 	}
 
 	hunter.LockAndLoadAura = hunter.RegisterAura(core.Aura{
+		Icd:       &icd,
 		Label:     "Lock and Load Proc",
 		ActionID:  actionID,
 		Duration:  time.Second * 12,

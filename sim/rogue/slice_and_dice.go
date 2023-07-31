@@ -25,7 +25,7 @@ func (rogue *Rogue) registerSliceAndDice() {
 	}
 
 	hasteBonus := 1.4
-	if rogue.HasSetBonus(ItemSetSlayers, 2) {
+	if rogue.HasSetBonus(Tier6, 2) {
 		hasteBonus += 0.05
 	}
 	inverseHasteBonus := 1.0 / hasteBonus
@@ -43,7 +43,7 @@ func (rogue *Rogue) registerSliceAndDice() {
 
 	rogue.SliceAndDice = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:     actionID,
-		Flags:        SpellFlagFinisher,
+		Flags:        SpellFlagFinisher | core.SpellFlagAPL,
 		MetricSplits: 6,
 
 		EnergyCost: core.EnergyCostOptions{

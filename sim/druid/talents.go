@@ -1,9 +1,11 @@
 package druid
 
 import (
+	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -17,9 +19,9 @@ func (druid *Druid) ThickHideMultiplier() float64 {
 	return thickHideMulti
 }
 
-func (druid *Druid) TotalBearArmorMultiplier() float64 {
+func (druid *Druid) BearArmorMultiplier() float64 {
 	sotfMulti := 1.0 + 0.33/3.0*float64(druid.Talents.SurvivalOfTheFittest)
-	return 4.7 * sotfMulti * druid.ThickHideMultiplier()
+	return 4.7 * sotfMulti
 }
 
 func (druid *Druid) ApplyTalents() {
@@ -29,7 +31,7 @@ func (druid *Druid) ApplyTalents() {
 	druid.PseudoStats.DamageDealtMultiplier *= 1 + (float64(druid.Talents.EarthAndMoon) * 0.02)
 	druid.PseudoStats.SpiritRegenRateCasting = float64(druid.Talents.Intensity) * (0.5 / 3)
 	druid.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1 + 0.02*float64(druid.Talents.Naturalist)
-	druid.AddStat(stats.Armor, druid.ScaleBaseArmor(druid.ThickHideMultiplier()-1.0))
+	druid.ApplyEquipScaling(stats.Armor, druid.ThickHideMultiplier())
 
 	if druid.Talents.LunarGuidance > 0 {
 		bonus := 0.04 * float64(druid.Talents.LunarGuidance)
@@ -88,6 +90,7 @@ func (druid *Druid) ApplyTalents() {
 	druid.applyImprovedLotp()
 	druid.applyPredatoryInstincts()
 	druid.applyNaturalReaction()
+	druid.applyOwlkinFrenzy()
 }
 
 func (druid *Druid) setupNaturesGrace() {
@@ -347,6 +350,8 @@ func (druid *Druid) applyOmenOfClarity() {
 		}
 	}
 
+	hasOocGlyph := druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfOmenOfClarity)
+
 	druid.RegisterAura(core.Aura{
 		Label:    "Omen of Clarity",
 		Duration: core.NeverExpires,
@@ -396,8 +401,15 @@ func (druid *Druid) applyOmenOfClarity() {
 			}
 		},
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if spell == druid.FaerieFire && druid.InForm(Cat|Bear) {
+			if spell == druid.FaerieFire && druid.InForm(Cat|Bear) && hasOocGlyph {
 				druid.ProcOoc(sim)
+			}
+			if spell == druid.GiftOfTheWild {
+				// Based on ingame testing by druid discord, subject to change or incorrectness
+				chanceToProc := 1.0 - math.Pow(1.0-0.0875, float64(druid.RaidBuffTargets))
+				if sim.RandomFloat("Clearcasting") <= chanceToProc {
+					druid.ProcOoc(sim)
+				}
 			}
 		},
 	})
@@ -415,6 +427,7 @@ func (druid *Druid) applyEclipse() {
 	solarProcMultiplier := 1.4 + core.TernaryFloat64(druid.HasSetBonus(ItemSetNightsongGarb, 2), 0.07, 0)
 	druid.SolarICD.Duration = time.Millisecond * 30000
 	druid.SolarEclipseProcAura = druid.RegisterAura(core.Aura{
+		Icd:      &druid.SolarICD,
 		Label:    "Solar Eclipse proc",
 		Duration: time.Millisecond * 15000,
 		ActionID: core.ActionID{SpellID: 48517},
@@ -457,6 +470,7 @@ func (druid *Druid) applyEclipse() {
 	lunarBonusCrit := (40 + core.TernaryFloat64(druid.HasSetBonus(ItemSetNightsongGarb, 2), 7, 0)) * core.CritRatingPerCritChance
 	druid.LunarICD.Duration = time.Millisecond * 30000
 	druid.LunarEclipseProcAura = druid.RegisterAura(core.Aura{
+		Icd:      &druid.LunarICD,
 		Label:    "Lunar Eclipse proc",
 		Duration: time.Millisecond * 15000,
 		ActionID: core.ActionID{SpellID: 48518},
@@ -494,6 +508,39 @@ func (druid *Druid) applyEclipse() {
 	})
 }
 
+func (druid *Druid) applyOwlkinFrenzy() {
+	if druid.Talents.OwlkinFrenzy == 0 {
+		return
+	}
+
+	druid.OwlkinFrenzyAura = druid.RegisterAura(core.Aura{
+		Label:    "Owlkin Frenzy proc",
+		ActionID: core.ActionID{SpellID: 48393},
+		Duration: time.Second * 10,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			druid.PseudoStats.DamageDealtMultiplier *= 1.1
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			druid.PseudoStats.DamageDealtMultiplier /= 1.1
+		},
+	})
+	druid.RegisterAura(core.Aura{
+		Label:    "Owlkin Frenzy",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			for i := 0; i < len(druid.OwlkinFrenzyTimings); i++ {
+				if druid.OwlkinFrenzyTimings[i] < sim.CurrentTime.Seconds() && druid.OwlkinFrenzyTimings[i] != 0 {
+					druid.OwlkinFrenzyAura.Activate(sim)
+					druid.OwlkinFrenzyTimings[i] = 0
+				}
+			}
+		},
+	})
+}
+
 func (druid *Druid) applyImprovedLotp() {
 	if druid.Talents.ImprovedLeaderOfThePack == 0 {
 		return
@@ -511,6 +558,7 @@ func (druid *Druid) applyImprovedLotp() {
 	}
 
 	druid.RegisterAura(core.Aura{
+		Icd:      &icd,
 		Label:    "Improved Leader of the Pack",
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {

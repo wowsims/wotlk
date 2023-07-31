@@ -7,7 +7,7 @@ import { Consumes } from '../core/proto/common.js';
 import { Encounter } from '../core/proto/common.js';
 import { ItemSlot } from '../core/proto/common.js';
 import { MobType } from '../core/proto/common.js';
-import { RaidTarget } from '../core/proto/common.js';
+import { UnitReference } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { Stat, PseudoStat } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js'
@@ -47,6 +47,7 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 				Stat.StatMeleeCrit,
 				Stat.StatMeleeHaste,
 				Stat.StatArmor,
+				Stat.StatBonusArmor,
 				Stat.StatArmorPenetration,
 				Stat.StatDefense,
 				Stat.StatBlock,
@@ -54,6 +55,7 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 				Stat.StatDodge,
 				Stat.StatParry,
 				Stat.StatResilience,
+				Stat.StatNatureResistance,
 			],
 			epPseudoStats: [
 				PseudoStat.PseudoStatMainHandDps,
@@ -64,6 +66,7 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 			displayStats: [
 				Stat.StatHealth,
 				Stat.StatArmor,
+				Stat.StatBonusArmor,
 				Stat.StatStamina,
 				Stat.StatStrength,
 				Stat.StatAgility,
@@ -79,6 +82,7 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 				Stat.StatDodge,
 				Stat.StatParry,
 				Stat.StatResilience,
+				Stat.StatNatureResistance,
 			],
 
 			defaults: {
@@ -87,6 +91,7 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatArmor]: 0.174,
+					[Stat.StatBonusArmor]: 0.155,
 					[Stat.StatStamina]: 2.336,
 					[Stat.StatStrength]: 1.555,
 					[Stat.StatAgility]: 2.771,
@@ -158,7 +163,7 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 			rotationInputs: ProtectionWarriorInputs.ProtectionWarriorRotationConfig,
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
-					IconInputs.HealthBuff,
+				IconInputs.HealthBuff,
 			],
 			excludeBuffDebuffInputs: [
 			],
@@ -168,6 +173,7 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 					OtherInputs.TankAssignment,
 					OtherInputs.IncomingHps,
 					OtherInputs.HealingCadence,
+					OtherInputs.HealingCadenceVariation,
 					OtherInputs.BurstWindow,
 					OtherInputs.HpPercentForDefensives,
 					OtherInputs.InspirationUptime,

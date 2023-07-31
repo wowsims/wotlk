@@ -13,22 +13,18 @@ func (priest *Priest) registerShadowfiendSpell() {
 
 	actionID := core.ActionID{SpellID: 34433}
 
+	// For timeline only
 	priest.ShadowfiendAura = priest.RegisterAura(core.Aura{
 		ActionID: actionID,
 		Label:    "Shadowfiend",
 		Duration: time.Second * 15.0,
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			priest.ShadowfiendPet.Enable(sim, priest.ShadowfiendPet)
-		},
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			priest.ShadowfiendPet.Disable(sim)
-		},
 	})
 
 	priest.Shadowfiend = priest.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskEmpty,
+		Flags:       core.SpellFlagAPL,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -41,6 +37,7 @@ func (priest *Priest) registerShadowfiendSpell() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			priest.ShadowfiendPet.EnableWithTimeout(sim, priest.ShadowfiendPet, time.Second*15.0)
 			priest.ShadowfiendAura.Activate(sim)
 		},
 	})

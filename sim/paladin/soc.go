@@ -92,7 +92,7 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 	onSpecialOrSwingProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    onSpecialOrSwingActionID,
 		SpellSchool: core.SpellSchoolHoly,
-		ProcMask:    core.ProcMaskEmpty,
+		ProcMask:    core.ProcMaskEmpty, // unlike SoV, SoC crits don't proc Vengeance
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		DamageMultiplier: 1 *
@@ -159,6 +159,7 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 		ActionID:    auraActionID, // Seal of Command self buff.
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskEmpty,
+		Flags:       core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.14,

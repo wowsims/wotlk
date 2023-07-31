@@ -1,13 +1,6 @@
-import { BooleanPicker } from '../core/components/boolean_picker.js';
-import { EnumPicker } from '../core/components/enum_picker.js';
-import { IconEnumPicker, IconEnumPickerConfig } from '../core/components/icon_enum_picker.js';
-import { IconPickerConfig } from '../core/components/icon_picker.js';
-import { CustomRotation } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
-import { Sim } from '../core/sim.js';
-import { Target } from '../core/target.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
 import { makePetTypeInputConfig } from '../core/talents/hunter_pet.js';
 
@@ -65,6 +58,12 @@ export const SniperTrainingUptime = InputHelpers.makeSpecOptionsNumberInput<Spec
 	changeEmitter: (player: Player<Spec.SpecHunter>) => TypedEvent.onAny([player.specOptionsChangeEmitter, player.talentsChangeEmitter]),
 });
 
+export const TimeToTrapWeaveMs = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecHunter>({
+	fieldName: 'timeToTrapWeaveMs',
+	label: 'Weave Time',
+	labelTooltip: 'Amount of time for Explosive Trap, in milliseconds, between when you start moving towards the boss and when you re-engage your ranged autos.',
+});
+
 export const HunterRotationConfig = {
 	inputs: [
 		InputHelpers.makeRotationEnumInput<Spec.SpecHunter, RotationType>({
@@ -94,16 +93,21 @@ export const HunterRotationConfig = {
 			showWhen: (player: Player<Spec.SpecHunter>) => player.getRotation().type != RotationType.Custom,
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecHunter>({
-			fieldName: 'timeToTrapWeaveMs',
-			label: 'Weave Time',
-			labelTooltip: 'Amount of time, in milliseconds, between when you start moving towards the boss and when you re-engage your ranged autos.',
-			enableWhen: (player: Player<Spec.SpecHunter>) => (player.getRotation().type != RotationType.Custom && player.getRotation().trapWeave) || (player.getRotation().type == RotationType.Custom && player.getRotation().customRotation?.spells.some(spell => spell.spell == SpellOption.ExplosiveTrap) || false),
+			fieldName: 'steadyShotMaxDelay',
+			label: 'Steady Shot Max Delay (ms)',
+			labelTooltip: 'If another higher-priority spell comes off cooldown in the specified time then steady shot is not cast and the rotation waits',
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecHunter>({
 			fieldName: 'allowExplosiveShotDownrank',
 			label: 'Allow ES Downrank',
 			labelTooltip: 'Weaves Explosive Shot Rank 3 during LNL procs. This works because the rank 3 and rank 4 dots can stack.',
 			showWhen: (player: Player<Spec.SpecHunter>) => player.getRotation().type != RotationType.Custom && player.getTalents().explosiveShot && player.getTalents().lockAndLoad > 0,
+			changeEmitter: (player: Player<Spec.SpecHunter>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+		}),
+		InputHelpers.makeRotationBooleanInput<Spec.SpecHunter>({
+			fieldName: 'multiDotSerpentSting',
+			label: 'Multi-Dot Serpent Sting',
+			labelTooltip: 'Casts Serpent Sting on multiple targets',
 			changeEmitter: (player: Player<Spec.SpecHunter>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 		}),
 		InputHelpers.makeCustomRotationInput<Spec.SpecHunter, SpellOption>({

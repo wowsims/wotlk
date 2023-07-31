@@ -7,11 +7,11 @@ import (
 // Returns the time to wait before the next action, or 0 if innervate is on CD
 // or disabled.
 func (druid *Druid) registerInnervateCD() {
-	innervateTargetAgent := druid.Party.Raid.GetPlayerFromRaidTarget(druid.SelfBuffs.InnervateTarget)
-	if innervateTargetAgent == nil {
+	innervateTarget := druid.GetUnit(druid.SelfBuffs.InnervateTarget)
+	if innervateTarget == nil {
 		return
 	}
-	innervateTarget := innervateTargetAgent.GetCharacter()
+	innervateTargetChar := druid.Env.Raid.GetPlayerFromUnit(innervateTarget).GetCharacter()
 
 	actionID := core.ActionID{SpellID: 29166, Tag: druid.Index}
 	var innervateSpell *core.Spell
@@ -21,7 +21,7 @@ func (druid *Druid) registerInnervateCD() {
 	var innervateAura *core.Aura
 	var innervateManaThreshold float64
 	druid.RegisterResetEffect(func(sim *core.Simulation) {
-		if innervateTarget == druid.GetCharacter() {
+		if innervateTarget == &druid.Unit {
 			if druid.StartingForm.Matches(Cat) {
 				// double shift + innervate cost.
 				// Prevents not having enough mana to shift back into form if more powershift are executed
@@ -31,9 +31,9 @@ func (druid *Druid) registerInnervateCD() {
 				innervateManaThreshold = 500
 			}
 		} else {
-			innervateManaThreshold = core.InnervateManaThreshold(innervateTarget)
+			innervateManaThreshold = core.InnervateManaThreshold(innervateTargetChar)
 		}
-		innervateAura = core.InnervateAura(innervateTarget, actionID.Tag)
+		innervateAura = core.InnervateAura(innervateTargetChar, actionID.Tag)
 	})
 
 	innervateSpell = druid.RegisterSpell(core.SpellConfig{

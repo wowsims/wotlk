@@ -117,6 +117,7 @@ enum DruidMajorGlyph {
 	GlyphOfMonsoon = 45622;
 	GlyphOfMoonfire = 40923;
 	GlyphOfNourish = 45603;
+	GlyphOfOmenOfClarity = 206580;
 	GlyphOfRake = 40903;
 	GlyphOfRapidRejuvenation = 50125;
 	GlyphOfRebirth = 40909;
@@ -156,13 +157,14 @@ message BalanceDruid {
 			NoMf = 0;
 			BeforeLunar = 1;
 			MaximizeMf = 2;
+			MultidotMf = 3;
 		}
 		MfUsage mf_usage = 2;
 
 		enum IsUsage {
 			NoIs = 0;
 			BeforeSolar = 1;
-			MaximizeIs = 2;
+			OptimizeIs = 2;
 			MultidotIs = 3;
 		}
 		IsUsage is_usage = 3;
@@ -180,6 +182,7 @@ message BalanceDruid {
 		bool use_smart_cooldowns = 9;
 		bool maintain_faerie_fire = 10;
 		int32 player_latency = 11;
+		float okf_ppm = 14;
 
 		enum EclipsePrio {
 			Lunar = 0;
@@ -187,53 +190,73 @@ message BalanceDruid {
 		}
 		EclipsePrio eclipse_prio = 12;
 		bool eclipse_shuffling = 13;
+
+		enum MfExtension {
+			ExtendFishingForLunar = 0;
+			ExtendFishingForSolar = 1;
+			ExtendDuringLunar = 2;
+			ExtendDuringSolar = 3;
+			ExtendAlways = 4;
+			ExtendOutsideSolar = 5;
+			DontExtend = 6;
+		}
+		MfExtension mf_extension = 15;
+		bool snapshot_mf = 16;
 	}
   Rotation rotation = 1;
 
   message Options {
-    RaidTarget innervate_target = 1;
+    UnitReference innervate_target = 1;
 	}
   Options options = 3;
 }
 
 message FeralDruid {
   message Rotation {
+	enum AplType {
+		SingleTarget = 0;
+		Aoe = 1;
+	}
     enum BearweaveType {
       None = 0;
       Mangle = 1;
       Lacerate = 2;
     }
-		enum BiteModeType {
+    enum BiteModeType {
       Emperical = 0;
       Analytical = 1;
     }
 
     BearweaveType bear_weave_type = 1;
-		bool maintain_faerie_fire = 2;
-		int32 min_combos_for_rip = 3;
-		bool use_rake = 4;
-		bool use_bite = 5;
-		bool mangle_spam = 6;
-		float bite_time = 7;
-		int32 min_combos_for_bite = 8;
-		int32 berserk_bite_thresh = 9;
-		bool powerbear = 10;
-		float min_roar_offset = 11;
-		BiteModeType bite_mode_type = 12;
-		float hot_uptime = 13;
-		bool snek_weave = 14;
-		bool flower_weave = 15;
-		int32 raid_targets = 16;
-		bool manual_params = 17;
+	bool maintain_faerie_fire = 2;
+	int32 min_combos_for_rip = 3;
+	bool use_rake = 4;
+	bool use_bite = 5;
+	bool mangle_spam = 6;
+	float bite_time = 7;
+	int32 min_combos_for_bite = 8;
+	int32 berserk_bite_thresh = 9;
+	int32 berserk_ff_thresh = 18;
+	int32 rip_leeway = 19;
+	bool powerbear = 10;
+	float min_roar_offset = 11;
+	BiteModeType bite_mode_type = 12;
+	float hot_uptime = 13;
+	bool snek_weave = 14;
+	bool flower_weave = 15;
+	int32 raid_targets = 16;
+	bool manual_params = 17;
+	float max_ff_delay = 20;
+	AplType rotation_type = 21;
+	bool pre_pop_berserk = 22;
+	bool pre_pop_ooc = 23;
   }
   Rotation rotation = 1;
 
   message Options {
-    RaidTarget innervate_target = 1;
+    UnitReference innervate_target = 1;
     int32 latency_ms = 2;
-    bool prepop_ooc = 3;
     bool assume_bleed_active = 4;
-    bool pre_pop_berserk = 5;
   }
   Options options = 3;
 }
@@ -248,7 +271,7 @@ message FeralTankDruid {
   Rotation rotation = 1;
 
   message Options {
-    RaidTarget innervate_target = 1;
+    UnitReference innervate_target = 1;
 	double starting_rage = 2;
   }
   Options options = 3;
@@ -260,7 +283,7 @@ message RestorationDruid {
   Rotation rotation = 1;
 
   message Options {
-    RaidTarget innervate_target = 1;
+    UnitReference innervate_target = 1;
   }
   Options options = 3;
 }

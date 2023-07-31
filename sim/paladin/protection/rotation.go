@@ -9,6 +9,10 @@ import (
 )
 
 func (prot *ProtectionPaladin) OnGCDReady(sim *core.Simulation) {
+	if prot.IsUsingAPL {
+		return
+	}
+
 	prot.SelectedRotation(sim)
 
 	if prot.GCD.IsReady(sim) {

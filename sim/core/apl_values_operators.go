@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -18,7 +19,7 @@ type APLValueConst struct {
 	boolVal     bool
 }
 
-func (unit *Unit) newValueConst(config *proto.APLValueConst) APLValue {
+func (rot *APLRotation) newValueConst(config *proto.APLValueConst) APLValue {
 	result := &APLValueConst{
 		valType:   proto.APLValueType_ValueTypeString,
 		stringVal: config.Val,
@@ -37,6 +38,15 @@ func (unit *Unit) newValueConst(config *proto.APLValueConst) APLValue {
 		result.durationVal = DurationFromSeconds(result.floatVal)
 		result.valType = proto.APLValueType_ValueTypeInt
 		return result
+	}
+
+	if len(config.Val) > 1 && config.Val[len(config.Val)-1] == '%' {
+		if floatVal, err := strconv.ParseFloat(config.Val[0:len(config.Val)-1], 64); err == nil {
+			result.floatVal = floatVal / 100.0
+			result.durationVal = DurationFromSeconds(floatVal / 100.0)
+			result.valType = proto.APLValueType_ValueTypeFloat
+			return result
+		}
 	}
 
 	if floatVal, err := strconv.ParseFloat(config.Val, 64); err == nil {
@@ -63,6 +73,9 @@ func (value *APLValueConst) GetDuration(sim *Simulation) time.Duration {
 	return value.durationVal
 }
 func (value *APLValueConst) GetString(sim *Simulation) string {
+	return value.stringVal
+}
+func (value *APLValueConst) String() string {
 	return value.stringVal
 }
 
@@ -157,9 +170,12 @@ func (value APLValueCoerced) GetString(sim *Simulation) string {
 	}
 	return ""
 }
+func (value *APLValueCoerced) String() string {
+	return value.inner.String()
+}
 
 // Wraps a value so that it is converted into a Boolean.
-func (unit *Unit) coerceTo(value APLValue, newType proto.APLValueType) APLValue {
+func (rot *APLRotation) coerceTo(value APLValue, newType proto.APLValueType) APLValue {
 	if value == nil {
 		return nil
 	} else if value.Type() == newType {
@@ -189,14 +205,18 @@ var aplValueTypeOrder = []proto.APLValueType{
 }
 
 // Coerces 2 values into the same type, returning the two new values.
-func (unit *Unit) coerceToSameType(value1 APLValue, value2 APLValue) (APLValue, APLValue) {
+func (rot *APLRotation) coerceToSameType(value1 APLValue, value2 APLValue) (APLValue, APLValue) {
+	if value1 == nil || value2 == nil {
+		return value1, value2
+	}
+
 	var coercionType proto.APLValueType
 	for _, listType := range aplValueTypeOrder {
 		if value1.Type() == listType || value2.Type() == listType {
 			coercionType = listType
 		}
 	}
-	return unit.coerceTo(value1, coercionType), unit.coerceTo(value2, coercionType)
+	return rot.coerceTo(value1, coercionType), rot.coerceTo(value2, coercionType)
 }
 
 type APLValueCompare struct {
@@ -206,10 +226,15 @@ type APLValueCompare struct {
 	rhs APLValue
 }
 
-func (unit *Unit) newValueCompare(config *proto.APLValueCompare) APLValue {
-	lhs, rhs := unit.coerceToSameType(unit.newAPLValue(config.Lhs), unit.newAPLValue(config.Rhs))
+func (rot *APLRotation) newValueCompare(config *proto.APLValueCompare) APLValue {
+	lhs, rhs := rot.coerceToSameType(rot.newAPLValue(config.Lhs), rot.newAPLValue(config.Rhs))
+	if lhs == nil || rhs == nil {
+		return nil
+	}
+
 	if lhs.Type() == proto.APLValueType_ValueTypeBool && !(config.Op == proto.APLValueCompare_OpEq || config.Op == proto.APLValueCompare_OpNe) {
-		validationError("Bool types only allow Equals and NotEquals comparisons!")
+		rot.validationWarning("Bool types only allow Equals and NotEquals comparisons!")
+		return nil
 	}
 	return &APLValueCompare{
 		op:  config.Op,
@@ -292,15 +317,115 @@ func (value *APLValueCompare) GetBool(sim *Simulation) bool {
 	}
 	return false
 }
+func (value *APLValueCompare) String() string {
+	return fmt.Sprintf("%s %s %s", value.lhs, value.op, value.rhs)
+}
+
+type APLValueMath struct {
+	defaultAPLValueImpl
+	op  proto.APLValueMath_MathOperator
+	lhs APLValue
+	rhs APLValue
+}
+
+func (rot *APLRotation) newValueMath(config *proto.APLValueMath) APLValue {
+	lhs, rhs := rot.newAPLValue(config.Lhs), rot.newAPLValue(config.Rhs)
+	if lhs == nil || rhs == nil {
+		return nil
+	}
+
+	if lhs.Type() == proto.APLValueType_ValueTypeBool || rhs.Type() == proto.APLValueType_ValueTypeBool {
+		rot.validationWarning("Bool types not allowed in Math Operations!")
+		return nil
+	}
+
+	if lhs.Type() == proto.APLValueType_ValueTypeString || rhs.Type() == proto.APLValueType_ValueTypeString {
+		rot.validationWarning("String types not allowed in Math Operations!")
+		return nil
+	}
+
+	return &APLValueMath{
+		op:  config.Op,
+		lhs: lhs,
+		rhs: rhs,
+	}
+}
+func (value *APLValueMath) Type() proto.APLValueType {
+	return value.lhs.Type()
+}
+func (value *APLValueMath) GetInt(sim *Simulation) int32 {
+	switch value.op {
+	case proto.APLValueMath_OpAdd:
+		return value.lhs.GetInt(sim) + value.rhs.GetInt(sim)
+	case proto.APLValueMath_OpSub:
+		return value.lhs.GetInt(sim) - value.rhs.GetInt(sim)
+	case proto.APLValueMath_OpMul:
+		return value.lhs.GetInt(sim) * value.rhs.GetInt(sim)
+	case proto.APLValueMath_OpDiv:
+		return value.lhs.GetInt(sim) / value.rhs.GetInt(sim)
+	}
+	return 0
+}
+func (value *APLValueMath) GetFloat(sim *Simulation) float64 {
+	switch value.op {
+	case proto.APLValueMath_OpAdd:
+		return value.lhs.GetFloat(sim) + value.rhs.GetFloat(sim)
+	case proto.APLValueMath_OpSub:
+		return value.lhs.GetFloat(sim) - value.rhs.GetFloat(sim)
+	case proto.APLValueMath_OpMul:
+		return value.lhs.GetFloat(sim) * value.rhs.GetFloat(sim)
+	case proto.APLValueMath_OpDiv:
+		return value.lhs.GetFloat(sim) / value.rhs.GetFloat(sim)
+	}
+	return 0
+}
+func (value *APLValueMath) GetDuration(sim *Simulation) time.Duration {
+	switch value.op {
+	case proto.APLValueMath_OpAdd:
+		return value.lhs.GetDuration(sim) + value.rhs.GetDuration(sim)
+	case proto.APLValueMath_OpSub:
+		return value.lhs.GetDuration(sim) - value.rhs.GetDuration(sim)
+	case proto.APLValueMath_OpMul:
+		left := value.lhs.GetDuration(sim)
+		right := value.rhs.GetDuration(sim)
+
+		switch value.lhs.Type() {
+		case proto.APLValueType_ValueTypeInt:
+			left = time.Duration(value.lhs.GetInt(sim))
+		case proto.APLValueType_ValueTypeFloat:
+			left = time.Duration(value.lhs.GetFloat(sim))
+		}
+
+		switch value.rhs.Type() {
+		case proto.APLValueType_ValueTypeInt:
+			right = time.Duration(value.rhs.GetInt(sim))
+		case proto.APLValueType_ValueTypeFloat:
+			right = time.Duration(value.rhs.GetFloat(sim))
+		}
+		return left * right
+	case proto.APLValueMath_OpDiv:
+		divider := value.rhs.GetDuration(sim)
+		if value.rhs.Type() == proto.APLValueType_ValueTypeFloat {
+			divider = time.Duration(value.rhs.GetFloat(sim))
+		} else if value.rhs.Type() == proto.APLValueType_ValueTypeInt {
+			divider = time.Duration(value.rhs.GetInt(sim))
+		}
+		return value.lhs.GetDuration(sim) / divider
+	}
+	return 0
+}
+func (value *APLValueMath) String() string {
+	return fmt.Sprintf("%s %s %s", value.lhs, value.op, value.rhs)
+}
 
 type APLValueAnd struct {
 	defaultAPLValueImpl
 	vals []APLValue
 }
 
-func (unit *Unit) newValueAnd(config *proto.APLValueAnd) APLValue {
+func (rot *APLRotation) newValueAnd(config *proto.APLValueAnd) APLValue {
 	vals := MapSlice(config.Vals, func(val *proto.APLValue) APLValue {
-		return unit.coerceTo(unit.newAPLValue(val), proto.APLValueType_ValueTypeBool)
+		return rot.coerceTo(rot.newAPLValue(val), proto.APLValueType_ValueTypeBool)
 	})
 	vals = FilterSlice(vals, func(val APLValue) bool { return val != nil })
 	if len(vals) == 0 {
@@ -321,15 +446,18 @@ func (value *APLValueAnd) GetBool(sim *Simulation) bool {
 	}
 	return true
 }
+func (value *APLValueAnd) String() string {
+	return strings.Join(MapSlice(value.vals, func(subvalue APLValue) string { return fmt.Sprintf("(%s)", subvalue) }), " AND ")
+}
 
 type APLValueOr struct {
 	defaultAPLValueImpl
 	vals []APLValue
 }
 
-func (unit *Unit) newValueOr(config *proto.APLValueOr) APLValue {
+func (rot *APLRotation) newValueOr(config *proto.APLValueOr) APLValue {
 	vals := MapSlice(config.Vals, func(val *proto.APLValue) APLValue {
-		return unit.coerceTo(unit.newAPLValue(val), proto.APLValueType_ValueTypeBool)
+		return rot.coerceTo(rot.newAPLValue(val), proto.APLValueType_ValueTypeBool)
 	})
 	vals = FilterSlice(vals, func(val APLValue) bool { return val != nil })
 	if len(vals) == 0 {
@@ -350,14 +478,17 @@ func (value *APLValueOr) GetBool(sim *Simulation) bool {
 	}
 	return false
 }
+func (value *APLValueOr) String() string {
+	return strings.Join(MapSlice(value.vals, func(subvalue APLValue) string { return fmt.Sprintf("(%s)", subvalue) }), " OR ")
+}
 
 type APLValueNot struct {
 	defaultAPLValueImpl
 	val APLValue
 }
 
-func (unit *Unit) newValueNot(config *proto.APLValueNot) APLValue {
-	val := unit.coerceTo(unit.newAPLValue(config.Val), proto.APLValueType_ValueTypeBool)
+func (rot *APLRotation) newValueNot(config *proto.APLValueNot) APLValue {
+	val := rot.coerceTo(rot.newAPLValue(config.Val), proto.APLValueType_ValueTypeBool)
 	if val == nil {
 		return nil
 	}
@@ -370,4 +501,7 @@ func (value *APLValueNot) Type() proto.APLValueType {
 }
 func (value *APLValueNot) GetBool(sim *Simulation) bool {
 	return !value.val.GetBool(sim)
+}
+func (value *APLValueNot) String() string {
+	return fmt.Sprintf("Not(%s)", value.val)
 }

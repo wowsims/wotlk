@@ -159,6 +159,16 @@ export class EquippedItem {
 		return curItem;
 	}
 
+	removeAllGems(): EquippedItem {
+		let curItem: EquippedItem | null = this;
+
+		for (let i = 0; i < curItem._gems.length; i++) {
+			curItem = curItem.withGemHelper(null, i);
+		}
+
+		return curItem;
+	}
+
 	asActionId(): ActionId {
 		return ActionId.fromItemId(this._item.id);
 	}
@@ -203,8 +213,24 @@ export class EquippedItem {
 		return this._item.gemSockets.length + (this.hasExtraSocket(isBlacksmithing) ? 1 : 0);
 	}
 
+	numSocketsOfColor(color: GemColor): number {
+		let numSockets: number = 0;
+
+		for (var socketColor of this._item.gemSockets) {
+			if (socketColor == color) {
+				numSockets += 1;
+			}
+		}
+
+		return numSockets;
+	}
+
 	hasExtraGem(): boolean {
 		return this._gems.length > this.item.gemSockets.length;
+	}
+
+	hasSocketedGem(socketIdx: number): boolean {
+		return this._gems[socketIdx] != null;
 	}
 
 	allSocketColors(): Array<GemColor> {

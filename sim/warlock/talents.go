@@ -1,6 +1,7 @@
 package warlock
 
 import (
+	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -52,7 +53,6 @@ func (warlock *Warlock) ApplyTalents() {
 	}
 
 	warlock.setupNightfall()
-	warlock.setupEverlastingAffliction()
 	warlock.setupShadowEmbrace()
 	warlock.setupEradication()
 	warlock.setupMoltenCore()
@@ -127,7 +127,8 @@ func (warlock *Warlock) setupEmpoweredImp() {
 				warlock.Shadowburn,
 				warlock.SoulFire,
 				warlock.ChaosBolt,
-				// missing: shadowfury, searing pain, shadowflame, seed explosion (not dot)
+				warlock.SearingPain,
+				// missing: shadowfury, shadowflame, seed explosion (not dot)
 				//          rain of fire (consumes proc on cast start, but doesn't increase crit, ticks
 				//          also consume the proc but do seem to benefit from the increaesed crit)
 			}, func(spell *core.Spell) bool { return spell != nil })
@@ -230,7 +231,7 @@ func (warlock *Warlock) setupPyroclasm() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell == warlock.Conflagrate && result.DidCrit() { // || spell == warlock.SearingPain
+			if (spell == warlock.Conflagrate || spell == warlock.SearingPain) && result.DidCrit() {
 				warlock.PyroclasmAura.Activate(sim)
 			}
 		},
@@ -291,7 +292,7 @@ func (warlock *Warlock) setupShadowEmbrace() {
 		return
 	}
 
-	shadowEmbraceAuras := warlock.NewEnemyAuraArray(warlock.ShadowEmbraceDebuffAura)
+	warlock.ShadowEmbraceAuras = warlock.NewEnemyAuraArray(warlock.ShadowEmbraceDebuffAura)
 
 	warlock.RegisterAura(core.Aura{
 		Label:    "Shadow Embrace Talent Hidden Aura",
@@ -300,8 +301,8 @@ func (warlock *Warlock) setupShadowEmbrace() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell == warlock.ShadowBolt || spell == warlock.Haunt {
-				aura := shadowEmbraceAuras.Get(result.Target)
+			if (spell == warlock.ShadowBolt || spell == warlock.Haunt) && result.Landed() {
+				aura := warlock.ShadowEmbraceAuras.Get(result.Target)
 				aura.Activate(sim)
 				aura.AddStack(sim)
 			}
@@ -424,6 +425,7 @@ func (warlock *Warlock) setupBackdraft() {
 				warlock.ShadowBolt,
 				warlock.ChaosBolt,
 				warlock.Immolate,
+				warlock.SearingPain,
 			}, func(spell *core.Spell) bool { return spell != nil })
 		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
@@ -452,7 +454,7 @@ func (warlock *Warlock) setupBackdraft() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell == warlock.Conflagrate {
+			if spell == warlock.Conflagrate && result.Landed() {
 				warlock.BackdraftAura.Activate(sim)
 				warlock.BackdraftAura.SetStacks(sim, 3)
 			}
@@ -468,29 +470,6 @@ func (warlock *Warlock) everlastingAfflictionRefresh(sim *core.Simulation, targe
 	}
 }
 
-func (warlock *Warlock) setupEverlastingAffliction() {
-	if warlock.Talents.EverlastingAffliction <= 0 {
-		return
-	}
-
-	warlock.RegisterAura(core.Aura{
-		Label:    "Everlasting Affliction Hidden Aura",
-		Duration: core.NeverExpires,
-		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Activate(sim)
-		},
-		OnSpellHitDealt: func(_ *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			// TODO: also works on drain life...
-			// drain soul is handled inside the spell itself
-			if (spell != warlock.ShadowBolt && spell != warlock.Haunt) || !result.Landed() {
-				return
-			}
-
-			warlock.everlastingAfflictionRefresh(sim, result.Target)
-		},
-	})
-}
-
 func (warlock *Warlock) setupImprovedSoulLeech() {
 	if warlock.Talents.ImprovedSoulLeech <= 0 {
 		return
@@ -500,7 +479,10 @@ func (warlock *Warlock) setupImprovedSoulLeech() {
 	impSoulLeechProcChance := float64(warlock.Talents.ImprovedSoulLeech) / 2.
 	actionID := core.ActionID{SpellID: 54118}
 	impSoulLeechManaMetric := warlock.NewManaMetrics(actionID)
-	impSoulLeechPetManaMetric := warlock.Pet.NewManaMetrics(actionID)
+	var impSoulLeechPetManaMetric *core.ResourceMetrics
+	if warlock.Pet != nil {
+		impSoulLeechPetManaMetric = warlock.Pet.NewManaMetrics(actionID)
+	}
 	replSrc := warlock.Env.Raid.NewReplenishmentSource(core.ActionID{SpellID: 54118})
 
 	warlock.RegisterAura(core.Aura{
@@ -510,8 +492,8 @@ func (warlock *Warlock) setupImprovedSoulLeech() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell == warlock.Conflagrate || spell == warlock.ShadowBolt || spell == warlock.ChaosBolt ||
-				spell == warlock.SoulFire || spell == warlock.Incinerate {
+			if (spell == warlock.Conflagrate || spell == warlock.ShadowBolt || spell == warlock.ChaosBolt ||
+				spell == warlock.SoulFire || spell == warlock.Incinerate) && result.Landed() {
 				if !sim.Proc(soulLeechProcChance, "SoulLeech") {
 					return
 				}
@@ -531,17 +513,34 @@ func (warlock *Warlock) setupImprovedSoulLeech() {
 	})
 }
 
+func (warlock *Warlock) updateDPASP(sim *core.Simulation) {
+	dpspCurrent := warlock.DemonicPactAura.ExclusiveEffects[0].Priority
+	currentTimeJump := sim.CurrentTime.Seconds() - warlock.PreviousTime.Seconds()
+
+	if currentTimeJump > 0 {
+		warlock.DPSPAggregate += dpspCurrent * currentTimeJump
+		warlock.Metrics.UpdateDpasp(dpspCurrent * currentTimeJump)
+
+		if sim.Log != nil {
+			warlock.Log(sim, "[Info] Demonic Pact spell power bonus average [%.0f]",
+				warlock.DPSPAggregate/sim.CurrentTime.Seconds())
+		}
+	}
+
+	warlock.PreviousTime = sim.CurrentTime
+}
+
 func (warlock *Warlock) setupDemonicPact() {
 	if warlock.Talents.DemonicPact == 0 {
 		return
 	}
 
-	demonicPactMultiplier := 0.02 * float64(warlock.Talents.DemonicPact)
-	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *= 1. + demonicPactMultiplier
-	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFire] *= 1. + demonicPactMultiplier
-	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexArcane] *= 1. + demonicPactMultiplier
-	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexNature] *= 1. + demonicPactMultiplier
-	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly] *= 1. + demonicPactMultiplier
+	dpMult := 0.02 * float64(warlock.Talents.DemonicPact)
+	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *= 1. + dpMult
+	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFire] *= 1. + dpMult
+	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexArcane] *= 1. + dpMult
+	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexNature] *= 1. + dpMult
+	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly] *= 1. + dpMult
 
 	if warlock.Options.Summon == proto.Warlock_Options_NoSummon {
 		return
@@ -560,25 +559,39 @@ func (warlock *Warlock) setupDemonicPact() {
 	}
 	warlock.DemonicPactAura = demonicPactAuras[warlock.Index]
 
-	warlock.Pets[0].GetCharacter().RegisterAura(core.Aura{
+	warlock.Pet.RegisterAura(core.Aura{
 		Label:    "Demonic Pact Hidden Aura",
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			warlock.PreviousTime = 0
 			aura.Activate(sim)
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			warlock.updateDPASP(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !result.DidCrit() || !icd.IsReady(sim) {
 				return
 			}
 
-			icd.Use(sim)
-			newSPBonus := warlock.GetStat(stats.SpellPower) * demonicPactMultiplier
+			lastBonus := 0.0
+			newSPBonus := 0.0
+			if warlock.DemonicPactAura.IsActive() {
+				lastBonus = warlock.DemonicPactAura.ExclusiveEffects[0].Priority
+				newSPBonus = math.Floor(lastBonus*dpMult*dpMult+
+					(1-dpMult)*dpMult*warlock.GetStat(stats.SpellPower)) + 1
+			} else {
+				newSPBonus = math.Floor(warlock.GetStat(stats.SpellPower)*(dpMult+dpMult*dpMult)) + 1
+			}
 
 			shouldRefresh := !warlock.DemonicPactAura.IsActive() ||
 				warlock.DemonicPactAura.RemainingDuration(sim) < time.Second*10 ||
-				newSPBonus > warlock.DemonicPactAura.ExclusiveEffects[0].Priority
+				newSPBonus > lastBonus
 
 			if shouldRefresh {
+				warlock.updateDPASP(sim)
+
+				icd.Use(sim)
 				for _, dpAura := range demonicPactAuras {
 					if dpAura != nil {
 						dpAura.ExclusiveEffects[0].SetPriority(sim, newSPBonus)

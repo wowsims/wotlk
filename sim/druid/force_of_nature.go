@@ -19,7 +19,7 @@ func (druid *Druid) registerForceOfNatureCD() {
 	})
 	druid.ForceOfNature = druid.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 65861},
-
+		Flags:    core.SpellFlagAPL,
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.12,
 			Multiplier: 1,
@@ -41,13 +41,6 @@ func (druid *Druid) registerForceOfNatureCD() {
 
 			forceOfNatureAura.Activate(sim)
 
-			bonusID := core.ActionID{ItemID: 11133}
-			bonusStats := stats.Stats{stats.Strength: druid.GetStat(stats.SpellPower) * 0.5}
-
-			druid.Treant1.NewTemporaryStatsAura("SP Snapshot", bonusID, bonusStats, time.Second*30).Activate(sim)
-			druid.Treant2.NewTemporaryStatsAura("SP Snapshot", bonusID, bonusStats, time.Second*30).Activate(sim)
-			druid.Treant3.NewTemporaryStatsAura("SP Snapshot", bonusID, bonusStats, time.Second*30).Activate(sim)
-
 			// Animation delay, courtesy of our DK friends
 			pa := core.PendingAction{
 				NextActionAt: sim.CurrentTime + time.Second*1,
@@ -63,6 +56,8 @@ func (druid *Druid) registerForceOfNatureCD() {
 type TreantPet struct {
 	core.Pet
 	druidOwner *Druid
+
+	snapshotStat stats.Stats
 }
 
 func (druid *Druid) NewTreant() *TreantPet {
@@ -82,10 +77,13 @@ func (druid *Druid) NewTreant() *TreantPet {
 			BaseDamageMax:  357,
 			SwingSpeed:     2,
 			SwingDuration:  time.Second * 2,
-			CritMultiplier: 2,
+			CritMultiplier: druid.BalanceCritMultiplier(),
 		},
 		AutoSwingMelee: true,
 	})
+
+	treant.Pet.OnPetEnable = treant.enable
+	treant.Pet.OnPetDisable = treant.disable
 
 	druid.AddPet(treant)
 	return treant
@@ -93,6 +91,16 @@ func (druid *Druid) NewTreant() *TreantPet {
 
 func (treant *TreantPet) GetPet() *core.Pet {
 	return &treant.Pet
+}
+
+func (treant *TreantPet) enable(sim *core.Simulation) {
+	// Snapshot spellpower
+	treant.snapshotStat = stats.Stats{stats.Strength: treant.druidOwner.GetStat(stats.SpellPower) * 0.5}
+	treant.AddStatsDynamic(sim, treant.snapshotStat)
+}
+
+func (treant *TreantPet) disable(sim *core.Simulation) {
+	treant.AddStatsDynamic(sim, treant.snapshotStat.Multiply(-1))
 }
 
 func (treant *TreantPet) Initialize() {

@@ -118,6 +118,7 @@ func (dk *Deathknight) registerThassariansBattlegearProc() {
 		Timer:    dk.NewTimer(),
 		Duration: time.Second * 45.0,
 	}
+	procAura.Icd = &icd
 
 	core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 		Label: "Unholy Might",
@@ -184,14 +185,22 @@ var ItemSetScourgelordsBattlegear = core.NewItemSet(core.ItemSet{
 	},
 })
 
-func (dk *Deathknight) scourgelordsBattlegearDamageBonus(spell *core.Spell) float64 {
+type ScourgelordBonusSpell int8
+
+const (
+	ScourgelordBonusSpellOB = iota + 1
+	ScourgelordBonusSpellSS
+	ScourgelordBonusSpellHS
+)
+
+func (dk *Deathknight) scourgelordsBattlegearDamageBonus(spell ScourgelordBonusSpell) float64 {
 	if !dk.HasSetBonus(ItemSetScourgelordsBattlegear, 2) {
 		return 1.0
 	}
 
-	if spell == dk.Obliterate || spell == dk.ScourgeStrike {
+	if spell == ScourgelordBonusSpellOB || spell == ScourgelordBonusSpellSS {
 		return 1.1
-	} else if spell == dk.HeartStrike {
+	} else if spell == ScourgelordBonusSpellHS {
 		return 1.07
 	}
 	return 1.0
@@ -398,7 +407,7 @@ func init() {
 		procMask := core.GetMeleeProcMaskForHands(mh, oh)
 		ppmm := character.AutoAttacks.NewPPMManager(2.0, procMask)
 
-		rfcAura := newRuneOfTheFallenCrusaderAura(character, "Rune Of The Fallen Crusader Proc", core.ActionID{SpellID: 53344})
+		rfcAura := newRuneOfTheFallenCrusaderAura(character, "Rune Of The Fallen Crusader Proc", core.ActionID{SpellID: 53365})
 
 		aura := character.GetOrRegisterAura(core.Aura{
 			Label:    "Rune Of The Fallen Crusader",
@@ -526,7 +535,7 @@ func init() {
 		consumeSpells := [5]core.ActionID{
 			BloodBoilActionID,
 			DeathCoilActionID,
-			FrostStrikeActionID,
+			FrostStrikeMHActionID,
 			HowlingBlastActionID,
 			IcyTouchActionID,
 		}
@@ -550,13 +559,25 @@ func init() {
 				dk.modifyShadowDamageModifier(-0.2)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if spell.ActionID == HowlingBlastActionID || spell.ActionID == BloodBoilActionID {
+					if result.Target.Index == sim.GetNumTargets()-1 {
+						// Last target, consume a stack for every target hit
+						for i := int32(0); i < dk.AoESpellNumTargetsHit; i++ {
+							if aura.IsActive() {
+								aura.RemoveStack(sim)
+							}
+						}
+					}
+					return
+				}
+
 				if !result.Outcome.Matches(core.OutcomeLanded) {
 					return
 				}
 
 				shouldConsume := false
 				for _, consumeSpell := range consumeSpells {
-					if spell.ActionID.SameActionIgnoreTag(consumeSpell) {
+					if spell.ActionID == consumeSpell {
 						shouldConsume = true
 						break
 					}
@@ -622,6 +643,7 @@ func init() {
 			Timer:    dk.NewTimer(),
 			Duration: time.Second * 45.0,
 		}
+		procAura.Icd = &icd
 
 		core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 			Label: "Sigil of Haunted Dreams",
@@ -662,6 +684,7 @@ func init() {
 			Timer:    dk.NewTimer(),
 			Duration: time.Second * 10.0,
 		}
+		procAura.Icd = &icd
 
 		core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 			Label: "Sigil of Insolence",
@@ -680,12 +703,13 @@ func init() {
 
 	core.NewItemEffect(47673, func(agent core.Agent) {
 		dk := agent.(DeathKnightAgent).GetDeathKnight()
-		procAura := dk.NewTemporaryStatsAura("Sigil of Virulence Proc", core.ActionID{ItemID: 47673}, stats.Stats{stats.Strength: 200.0}, time.Second*20)
+		procAura := dk.NewTemporaryStatsAura("Sigil of Virulence Proc", core.ActionID{SpellID: 67383}, stats.Stats{stats.Strength: 200.0}, time.Second*20)
 
 		icd := core.Cooldown{
 			Timer:    dk.NewTimer(),
 			Duration: time.Second * 10.0,
 		}
+		procAura.Icd = &icd
 
 		core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 			Label: "Sigil of Virulence",

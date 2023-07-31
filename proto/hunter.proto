@@ -197,7 +197,9 @@ message Hunter {
 		StingType sting = 5;
 
 		bool trap_weave = 1;
-		double time_to_trap_weave_ms = 2;
+
+		// TODO: Safe to delete after 1 month (after 8/26/2023).
+		double time_to_trap_weave_ms = 2 [deprecated = true];
 
 		enum SpellOption {
 			NoSpell = 0;
@@ -224,6 +226,9 @@ message Hunter {
 
 		// Allow use of Explosive Shot Rank 3 during LNL procs.
 		bool allow_explosive_shot_downrank = 10;
+
+		bool multi_dot_serpent_sting = 11;
+		double steady_shot_max_delay = 12;
 	}
 	Rotation rotation = 1;
 	
@@ -281,6 +286,7 @@ message Hunter {
 		double pet_uptime = 4;
 
 		double sniper_training_uptime = 7;
+		double time_to_trap_weave_ms = 8;
 
 		bool use_hunters_mark = 5;
 	}

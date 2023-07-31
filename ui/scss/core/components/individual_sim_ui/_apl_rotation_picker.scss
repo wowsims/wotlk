@@ -1,0 +1,115 @@
+@import "../dropdown_picker";
+
+@import "./apl_helpers";
+
+.apl-rotation-picker-root {
+	.apl-list-item-picker, .apl-prepull-action-picker {
+		flex-wrap: wrap;
+		align-items: flex-start !important;
+
+		.list-picker-title {
+			width: unset;
+			padding: 0;
+			border: 0;
+		}
+
+		.list-picker-new-button {
+			width: 100%;
+		}
+
+		>* > .list-picker-item-container {
+			background-color: rgba(21, 23, 30, 0.8);
+			border: 1px solid var(--bs-primary) !important;
+			padding: 0 5px 0 1px;
+			margin: 0 0 5px 0;
+
+			>.list-picker-item {
+				flex-grow: 1;
+			}
+		}
+	}
+
+	.apl-list-item-picker .apl-prepull-actions-only, .apl-prepull-action-picker .apl-priority-list-only {
+		display: none;
+	}
+
+	.adaptive-string-picker-root > input {
+		text-align: center;
+	}
+
+	.apl-prepull-actions-doat {
+		width: auto;
+		margin: 3px;
+
+		.form-label {
+			margin: 0 5px 0 0;
+		}
+	}
+}
+
+.apl-list-item-picker-root {
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	margin: 2px;
+
+	&> :not(:last-child) {
+		margin-right: map.get($spacers, 2);
+	}
+
+	.number-picker-input {
+		width: 100% !important;
+	}
+
+	.dropdown-menu {
+		background-color: #696b71;
+	}
+}
+
+.apl-action-picker-root, .apl-value-picker-root {
+	flex-direction: row;
+	margin: 0;
+
+	.input-root {
+		margin: 0;
+		width: auto;
+		align-items: center;
+		border: none;
+	}
+}
+.apl-list-item-picker-root > .apl-action-picker-root {
+	flex-direction: column;
+}
+
+.apl-picker-builder-root {
+	.form-label {
+		margin: 0 1px 0 5px;
+	}
+}
+
+.apl-value-picker-root {
+	* {
+		font-size: calc(var(--bs-btn-font-size) - 0.2rem);
+	}
+
+	.form-label {
+		margin: 0 1px 0 5px;
+	}
+}
+
+.apl-action-picker-action {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.hide-picker-root {
+	margin: 0;
+}
+
+.apl-picker-builder-root.apl-action-sequence .apl-action-condition {
+	display: none;
+}
+.apl-picker-builder-root.apl-action-strictSequence .apl-action-condition {
+	display: none;
+}

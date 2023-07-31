@@ -6,10 +6,10 @@ const STATS_LEN = getEnumValues(Stat).length;
 const PSEUDOSTATS_LEN = getEnumValues(PseudoStat).length;
 
 export class UnitStat {
-	private readonly stat: Stat|null;
-	private readonly pseudoStat: PseudoStat|null;
+	private readonly stat: Stat | null;
+	private readonly pseudoStat: PseudoStat | null;
 
-	private constructor(stat: Stat|null, pseudoStat: PseudoStat|null) {
+	private constructor(stat: Stat | null, pseudoStat: PseudoStat | null) {
 		this.stat = stat;
 		this.pseudoStat = pseudoStat;
 	}
@@ -51,6 +51,14 @@ export class UnitStat {
 			return proto.stats[this.stat!];
 		} else {
 			return proto.pseudoStats[this.pseudoStat!];
+		}
+	}
+
+	setProtoValue(proto: UnitStats, val: number) {
+		if (this.isStat()) {
+			proto.stats[this.stat!] = val;
+		} else {
+			proto.pseudoStats[this.pseudoStat!] = val;
 		}
 	}
 
@@ -101,7 +109,7 @@ export class Stats {
 
 	equals(other: Stats): boolean {
 		return this.stats.every((newStat, statIdx) => newStat == other.getStat(statIdx)) &&
-				this.pseudoStats.every((newStat, statIdx) => newStat == other.getPseudoStat(statIdx))
+			this.pseudoStats.every((newStat, statIdx) => newStat == other.getPseudoStat(statIdx))
 	}
 
 	getStat(stat: Stat): number {
@@ -152,6 +160,12 @@ export class Stats {
 			this.pseudoStats.map((value, stat) => value - other.pseudoStats[stat]));
 	}
 
+	scale(scalar: number): Stats {
+		return new Stats(
+			this.stats.map((value, stat) => value * scalar),
+			this.pseudoStats.map((value, stat) => value * scalar));
+	}
+
 	computeEP(epWeights: Stats): number {
 		let total = 0;
 		this.stats.forEach((stat, idx) => {
@@ -161,6 +175,16 @@ export class Stats {
 			total += stat * epWeights.pseudoStats[idx];
 		});
 		return total;
+	}
+
+	belowCaps(statCaps: Stats): boolean {
+		for (const [idx, stat] of this.stats.entries()) {
+			if ((statCaps.stats[idx] > 0) && (stat > statCaps.stats[idx])) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	asArray(): Array<number> {

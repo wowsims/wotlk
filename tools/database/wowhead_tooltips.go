@@ -210,9 +210,10 @@ var bonusArmorRegex = regexp.MustCompile(`Has ([0-9]+) bonus armor`)
 func (item WowheadItemResponse) GetStats() Stats {
 	sp := float64(item.GetIntValue(spellPowerRegex)) + float64(item.GetIntValue(spellPowerRegex2))
 	baseAP := float64(item.GetIntValue(attackPowerRegex)) + float64(item.GetIntValue(attackPowerRegex2))
+	armor, bonusArmor := item.GetArmorValues()
 	return Stats{
-		proto.Stat_StatArmor:             float64(item.GetIntValue(armorRegex)),
-		proto.Stat_StatBonusArmor:        float64(item.GetIntValue(bonusArmorRegex)),
+		proto.Stat_StatArmor:             float64(armor),
+		proto.Stat_StatBonusArmor:        float64(bonusArmor),
 		proto.Stat_StatStrength:          float64(item.GetIntValue(strengthRegex)),
 		proto.Stat_StatAgility:           float64(item.GetIntValue(agilityRegex)),
 		proto.Stat_StatStamina:           float64(item.GetIntValue(staminaRegex)),
@@ -371,6 +372,38 @@ func (item WowheadItemResponse) GetItemType() proto.ItemType {
 		}
 	}
 	return proto.ItemType_ItemTypeUnknown
+}
+
+func (item WowheadItemResponse) IsScalableArmorSlot() bool {
+	// Special case shields as Base Armor
+	if item.GetWeaponType() == proto.WeaponType_WeaponTypeShield {
+		return true
+	}
+
+	itemType := item.GetItemType()
+	switch itemType {
+	case
+		proto.ItemType_ItemTypeNeck,
+		proto.ItemType_ItemTypeFinger,
+		proto.ItemType_ItemTypeTrinket,
+		proto.ItemType_ItemTypeWeapon:
+		return false
+	}
+	return true
+}
+
+func (item WowheadItemResponse) GetArmorValues() (int, int) {
+	armorValue := item.GetIntValue(armorRegex)
+	bonusArmorValue := item.GetIntValue(bonusArmorRegex)
+
+	if item.IsScalableArmorSlot() {
+		armorValue = armorValue - bonusArmorValue
+	} else {
+		bonusArmorValue = armorValue
+		armorValue = 0
+	}
+
+	return armorValue, bonusArmorValue
 }
 
 var armorTypePatterns = map[proto.ArmorType]*regexp.Regexp{

@@ -135,7 +135,7 @@ class GlyphPicker extends Input<Player<any>, number> {
 
 class GlyphSelectorModal extends BaseModal {
 	constructor(parent: HTMLElement, glyphPicker: GlyphPicker, glyphOptions: Array<GlyphData>) {
-		super(parent, 'glyph-modal', {title: 'Glyphs'});
+		super(parent, 'glyph-modal', { title: 'Glyphs' });
 
 		this.body.innerHTML = `
 			<div class="input-root">

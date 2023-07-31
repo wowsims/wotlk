@@ -16,13 +16,12 @@ func (druid *Druid) registerStarfireSpell() {
 		core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == 40321, 165, 0) // Shooting Star
 
 	hasGlyph := druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfStarfire)
-	maxMoonfireTicks := druid.moonfireTicks() + core.TernaryInt32(hasGlyph, 3, 0)
 
 	druid.Starfire = druid.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48465},
 		SpellSchool: core.SpellSchoolArcane,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       SpellFlagNaturesGrace | SpellFlagOmenTrigger,
+		Flags:       SpellFlagNaturesGrace | SpellFlagOmenTrigger | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.16,
@@ -52,8 +51,8 @@ func (druid *Druid) registerStarfireSpell() {
 					druid.EarthAndMoonAura.Activate(sim)
 				}
 				moonfireDot := druid.Moonfire.Dot(target)
-				if hasGlyph && moonfireDot.IsActive() && moonfireDot.NumberOfTicks < maxMoonfireTicks {
-					moonfireDot.NumberOfTicks += 1
+				if hasGlyph && moonfireDot.IsActive() && druid.ExtendingMoonfireStacks > 0 {
+					druid.ExtendingMoonfireStacks -= 1
 					moonfireDot.UpdateExpires(moonfireDot.ExpiresAt() + time.Second*3)
 				}
 			}

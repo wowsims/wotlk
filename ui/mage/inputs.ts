@@ -1,13 +1,7 @@
-import { IconPickerConfig } from '../core/components/icon_picker.js';
-import { RaidTarget } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
-import { NO_TARGET } from '../core/proto_utils/utils.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
-import { Sim } from '../core/sim.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
-import { IndividualSimUI } from '../core/individual_sim_ui.js';
-import { Target } from '../core/target.js';
 
 import {
 	Mage,
@@ -33,18 +27,6 @@ export const Armor = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecMage, Ar
 		{ actionId: ActionId.fromSpellId(43024), value: ArmorType.MageArmor },
 		{ actionId: ActionId.fromSpellId(43046), value: ArmorType.MoltenArmor },
 	],
-});
-
-export const IgniteMunching = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecMage>({
-	fieldName: 'igniteMunching',
-	label: 'Ignite Munching',
-	labelTooltip: `
-		<p>When two spells crit at the same time, only the latter spell will count towards ignite.</p>
-		<p>For example when an instant pyroblast lands right after a fireball, or when Living Bomb explodes at the same time as another spell lands on the target.</p>
-		<p>However, this does not affect Hot Streak with Frostfire Bolt due to Frostfire Bolt having a faster travel time. </p>
-	`,
-	showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
-	changeEmitter: (player: Player<Spec.SpecMage>) => player.rotationChangeEmitter,
 });
 
 export const EvocationTicks = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecMage>({

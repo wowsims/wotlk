@@ -35,7 +35,7 @@ func (mage *Mage) registerArcaneBlastSpell() {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolArcane,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       SpellFlagMage | BarrageSpells,
+		Flags:       SpellFlagMage | BarrageSpells | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.07,

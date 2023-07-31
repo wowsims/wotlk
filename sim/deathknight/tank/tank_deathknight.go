@@ -51,7 +51,7 @@ func NewTankDeathknight(character core.Character, options *proto.Player) *TankDe
 		OffHand:        tankDk.WeaponFromOffHand(tankDk.DefaultMeleeCritMultiplier()),
 		AutoSwingMelee: true,
 		ReplaceMHSwing: func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
-			if tankDk.RuneStrike.CanCast(sim, nil) {
+			if tankDk.RuneStrike.CanCast(sim, nil) && (!tankDk.IsUsingAPL || tankDk.RuneStrikeQueued) {
 				return tankDk.RuneStrike
 			} else {
 				return nil
@@ -117,6 +117,12 @@ func (dk *TankDeathknight) Reset(sim *core.Simulation) {
 	dk.switchIT = false
 
 	dk.Presence = deathknight.UnsetPresence
+	dk.Deathknight.PseudoStats.Stunned = false
+
+	if dk.IsUsingAPL {
+		return
+	}
+
 	if dk.Rotation.Presence == proto.TankDeathknight_Rotation_Blood {
 		dk.ChangePresence(sim, deathknight.BloodPresence)
 	} else if dk.Rotation.Presence == proto.TankDeathknight_Rotation_Frost {

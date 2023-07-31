@@ -34,14 +34,14 @@ func NewShadowPriest(character core.Character, options *proto.Player) *ShadowPri
 	}
 
 	basePriest := priest.New(character, selfBuffs, options.TalentsString)
-	basePriest.Latency = shadowOptions.Rotation.Latency
+	basePriest.Latency = shadowOptions.Options.Latency
 	spriest := &ShadowPriest{
 		Priest:   basePriest,
 		rotation: shadowOptions.Rotation,
 		options:  shadowOptions.Options,
 	}
 
-	spriest.SelfBuffs.PowerInfusionTarget = &proto.RaidTarget{TargetIndex: -1}
+	spriest.SelfBuffs.PowerInfusionTarget = &proto.UnitReference{}
 	if spriest.Talents.PowerInfusion && shadowOptions.Options.PowerInfusionTarget != nil {
 		spriest.SelfBuffs.PowerInfusionTarget = shadowOptions.Options.PowerInfusionTarget
 	}

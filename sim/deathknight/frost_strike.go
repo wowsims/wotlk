@@ -5,13 +5,20 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-var FrostStrikeActionID = core.ActionID{SpellID: 55268}
+var frostStrikeActionID = core.ActionID{SpellID: 55268}
+var FrostStrikeMHActionID = frostStrikeActionID.WithTag(1)
+var FrostStrikeOHActionID = frostStrikeActionID.WithTag(2)
 
 func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool) *core.Spell {
 	bonusBaseDamage := dk.sigilOfTheVengefulHeartFrostStrike()
 
+	actionID := FrostStrikeMHActionID
+	if !isMH {
+		actionID = FrostStrikeOHActionID
+	}
+
 	conf := core.SpellConfig{
-		ActionID:    FrostStrikeActionID.WithTag(core.TernaryInt32(isMH, 1, 2)),
+		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolFrost,
 		ProcMask:    dk.threatOfThassarianProcMask(isMH),
 		Flags:       core.SpellFlagMeleeMetrics,
@@ -67,6 +74,8 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool) *core.Spell {
 	if !isMH {
 		conf.RuneCost = core.RuneCostOptions{}
 		conf.Cast = core.CastConfig{}
+	} else {
+		conf.Flags |= core.SpellFlagAPL
 	}
 
 	return dk.RegisterSpell(conf)

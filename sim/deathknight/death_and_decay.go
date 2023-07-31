@@ -12,8 +12,9 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 
 	dk.DeathAndDecay = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 49938},
+		Flags:       core.SpellFlagAPL,
 		SpellSchool: core.SpellSchoolShadow,
-		ProcMask:    core.ProcMaskSpellDamage,
+		ProcMask:    core.ProcMaskEmpty, // D&D doesn't seem to proc things in game.
 
 		RuneCost: core.RuneCostOptions{
 			BloodRuneCost:  1,
@@ -43,14 +44,13 @@ func (dk *Deathknight) registerDeathAndDecaySpell() {
 			NumberOfTicks: 10,
 			TickLength:    time.Second * 1,
 			OnSnapshot: func(sim *core.Simulation, _ *core.Unit, dot *core.Dot, _ bool) {
-				target := dk.CurrentTarget
 				dot.SnapshotBaseDamage = 62 + 0.0475*dk.getImpurityBonus(dot.Spell)
-				dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				for _, aoeTarget := range sim.Encounter.TargetUnits {
-					// DnD recalculates attack multipliers dynamically on every tick so this is here on purpose
+					// DnD recalculates attack multipliers + crit dynamically on every tick so this is here on purpose
 					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[aoeTarget.UnitIndex]) * dk.RoRTSBonus(aoeTarget)
+					dot.SnapshotCritChance = dot.Spell.SpellCritChance(aoeTarget)
 					dot.CalcAndDealPeriodicSnapshotDamage(sim, aoeTarget, dot.OutcomeMagicHitAndSnapshotCrit)
 				}
 			},

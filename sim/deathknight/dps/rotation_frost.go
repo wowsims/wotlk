@@ -22,11 +22,22 @@ type FrostRotation struct {
 	onUseTrinkets []*core.MajorCooldown
 
 	oblitRPRegen float64
+
+	fuSpellPriority []*core.Spell
+	bloodSpell      *core.Spell
 }
 
 func (fr *FrostRotation) Initialize(dk *DpsDeathknight) {
 	fr.oblitRPRegen = core.TernaryFloat64(dk.HasSetBonus(deathknight.ItemSetScourgeborneBattlegear, 4), 25.0, 20.0)
 	fr.onUseTrinkets = make([]*core.MajorCooldown, 0)
+
+	if dk.Env.GetNumTargets() > 2 {
+		fr.fuSpellPriority = []*core.Spell{dk.HowlingBlast, dk.Obliterate}
+		fr.bloodSpell = dk.BloodBoil
+	} else {
+		fr.fuSpellPriority = []*core.Spell{dk.Obliterate}
+		fr.bloodSpell = dk.BloodStrike
+	}
 }
 
 func (fr *FrostRotation) Reset(sim *core.Simulation) {
@@ -140,6 +151,9 @@ func (dk *DpsDeathknight) castAllMajorCooldowns(sim *core.Simulation) {
 
 func (dk *DpsDeathknight) RotationActionCallback_UA_Frost(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	if dk.UnbreakableArmor != nil {
+		if !dk.LeftBloodRuneReady() {
+			dk.BloodTap.Cast(sim, nil)
+		}
 		casted := dk.UnbreakableArmor.Cast(sim, target)
 
 		if casted {
@@ -164,7 +178,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UA_Frost(sim *core.Simulation, 
 }
 
 func (dk *DpsDeathknight) RotationActionCallback_Frost_FS_HB(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	if dk.RimeAura.IsActive() && dk.Talents.HowlingBlast {
+	if dk.FreezingFogAura.IsActive() && dk.Talents.HowlingBlast {
 		dk.HowlingBlast.Cast(sim, target)
 	} else if dk.Talents.FrostStrike {
 		dk.FrostStrike.Cast(sim, target)

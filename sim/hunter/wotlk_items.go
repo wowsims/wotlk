@@ -58,6 +58,7 @@ var ItemSetScourgestalkerBattlegear = core.NewItemSet(core.ItemSet{
 				Timer:    hunter.NewTimer(),
 				Duration: time.Second * 45,
 			}
+			procAura.Icd = &icd
 
 			hunter.RegisterAura(core.Aura{
 				Label:    "Windrunner 4pc",
@@ -96,13 +97,14 @@ var ItemSetWindrunnersPursuit = core.NewItemSet(core.ItemSet{
 				return
 			}
 
-			procAura := hunter.pet.NewTemporaryStatsAura("Windrunner 4pc Proc", core.ActionID{SpellID: 67151}, stats.Stats{stats.AttackPower: 600}, time.Second*15)
+			procAura := hunter.pet.NewTemporaryStatsAura("Windrunner 4pc Proc", core.ActionID{SpellID: 68130}, stats.Stats{stats.AttackPower: 600}, time.Second*15)
 			const procChance = 0.35
 
 			icd := core.Cooldown{
 				Timer:    hunter.NewTimer(),
 				Duration: time.Second * 45,
 			}
+			procAura.Icd = &icd
 
 			hunter.RegisterAura(core.Aura{
 				Label:    "Windrunner 4pc",
@@ -244,6 +246,7 @@ func init() {
 				ProcMask:   core.ProcMaskRanged,
 				Outcome:    core.OutcomeLanded,
 				ProcChance: procChance,
+				ActionID:   core.ActionID{ItemID: itemID},
 				Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
 					rangedSpell.Cast(sim, result.Target)
 				},

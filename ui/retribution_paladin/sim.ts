@@ -167,6 +167,7 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 					RetributionPaladinInputs.RetributionPaladinRotationDivinePleaSelection,
 					RetributionPaladinInputs.RetributionPaladinRotationAvoidClippingConsecration,
 					RetributionPaladinInputs.RetributionPaladinRotationHoldLastAvengingWrathUntilExecution,
+					RetributionPaladinInputs.RetributionPaladinRotationCancelChaosBane,
 					RetributionPaladinInputs.RetributionPaladinRotationDivinePleaSelectionAlternate,
 					RetributionPaladinInputs.RetributionPaladinRotationDivinePleaPercentageConfig,
 					RetributionPaladinInputs.RetributionPaladinRotationConsSlackConfig,
@@ -196,6 +197,9 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 			},
 
 			presets: {
+				rotations: [
+					Presets.ROTATION_PRESET_BASIC_APL,
+				],
 				// Preset talents that the user can quickly select.
 				talents: [
 					Presets.AuraMasteryTalents,

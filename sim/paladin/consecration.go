@@ -19,7 +19,7 @@ func (paladin *Paladin) registerConsecrationSpell() {
 		ActionID:    core.ActionID{SpellID: 48819},
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskEmpty,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.22,

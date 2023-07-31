@@ -15,7 +15,7 @@ func (dk *Deathknight) registerDeathPactSpell() {
 
 	dk.DeathPact = dk.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
-		Flags:    core.SpellFlagNoOnCastComplete,
+		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagAPL,
 
 		RuneCost: core.RuneCostOptions{
 			RunicPowerCost: 40,
@@ -34,7 +34,7 @@ func (dk *Deathknight) registerDeathPactSpell() {
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			healthGain := 0.4 * dk.Ghoul.MaxHealth()
-			dk.GainHealth(sim, healthGain, hpMetrics)
+			dk.GainHealth(sim, healthGain*dk.PseudoStats.HealingTakenMultiplier, hpMetrics)
 			dk.Ghoul.Pet.Disable(sim)
 		},
 	})

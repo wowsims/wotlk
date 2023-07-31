@@ -10,11 +10,10 @@ func (warlock *Warlock) registerSeedSpell() {
 	actionID := core.ActionID{SpellID: 47836}
 
 	seedExplosion := warlock.RegisterSpell(core.SpellConfig{
-		ActionID:     actionID.WithTag(1), // actually 47834
-		SpellSchool:  core.SpellSchoolShadow,
-		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        core.SpellFlagHauntSE,
-		MissileSpeed: 28,
+		ActionID:    actionID.WithTag(1), // actually 47834
+		SpellSchool: core.SpellSchoolShadow,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       core.SpellFlagHauntSE | core.SpellFlagNoLogs,
 
 		BonusCritRating: 0 +
 			float64(warlock.Talents.ImprovedCorruption)*core.CritRatingPerCritChance,
@@ -43,10 +42,11 @@ func (warlock *Warlock) registerSeedSpell() {
 	}
 
 	warlock.Seed = warlock.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
-		SpellSchool: core.SpellSchoolShadow,
-		ProcMask:    core.ProcMaskEmpty,
-		Flags:       core.SpellFlagHauntSE,
+		ActionID:     actionID,
+		SpellSchool:  core.SpellSchoolShadow,
+		ProcMask:     core.ProcMaskEmpty,
+		Flags:        core.SpellFlagHauntSE | core.SpellFlagAPL,
+		MissileSpeed: 28,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.34,
@@ -105,6 +105,9 @@ func (warlock *Warlock) registerSeedSpell() {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
 				if result.Landed() {
+					// seed is mutually exclusive with corruption
+					warlock.Corruption.Dot(target).Deactivate(sim)
+
 					if warlock.Rotation.DetonateSeed {
 						seedExplosion.Cast(sim, target)
 					} else {

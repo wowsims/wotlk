@@ -37,7 +37,7 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool) *core.Spell {
 		DamageMultiplier: .8 *
 			core.TernaryFloat64(isMH, 1, dk.nervesOfColdSteelBonus()) *
 			core.TernaryFloat64(dk.HasMajorGlyph(proto.DeathknightMajorGlyph_GlyphOfObliterate), 1.25, 1.0) *
-			dk.scourgelordsBattlegearDamageBonus(dk.Obliterate),
+			dk.scourgelordsBattlegearDamageBonus(ScourgelordBonusSpellOB),
 		CritMultiplier:   dk.bonusCritMultiplier(dk.Talents.GuileOfGorefiend),
 		ThreatMultiplier: 1,
 
@@ -72,7 +72,7 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool) *core.Spell {
 				}
 
 				if sim.RandomFloat("Rime") < dk.rimeHbChanceProc() {
-					dk.RimeAura.Activate(sim)
+					dk.FreezingFogAura.Activate(sim)
 				}
 			}
 
@@ -83,6 +83,8 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool) *core.Spell {
 	if !isMH {
 		conf.RuneCost = core.RuneCostOptions{}
 		conf.Cast = core.CastConfig{}
+	} else {
+		conf.Flags |= core.SpellFlagAPL
 	}
 
 	return dk.RegisterSpell(conf)

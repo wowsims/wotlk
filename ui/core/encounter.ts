@@ -1,13 +1,18 @@
-import { Encounter as EncounterProto } from './proto/common.js';
-import { MobType } from './proto/common.js';
-import { Stat } from './proto/common.js';
-import { Target as TargetProto } from './proto/common.js';
-import { PresetEncounter } from './proto/common.js';
-import { PresetTarget } from './proto/common.js';
-import { Target } from './target.js';
+import {
+	Encounter as EncounterProto,
+	MobType,
+	SpellSchool,
+	Stat,
+	Target as TargetProto,
+	TargetInput,
+	PresetEncounter,
+	PresetTarget,
+} from './proto/common.js';
 import { Stats } from './proto_utils/stats.js';
+import * as Mechanics from './constants/mechanics.js';
 
 import { Sim } from './sim.js';
+import { UnitMetadataList } from './player.js';
 import { EventID, TypedEvent } from './typed_event.js';
 
 // Manages all the settings for an Encounter.
@@ -20,7 +25,8 @@ export class Encounter {
 	private executeProportion25: number = 0.25;
 	private executeProportion35: number = 0.35;
 	private useHealth: boolean = false;
-	private targets: Array<Target>;
+	targets: Array<TargetProto>;
+	targetsMetadata: UnitMetadataList;
 
 	readonly targetsChangeEmitter = new TypedEvent<void>();
 	readonly durationChangeEmitter = new TypedEvent<void>();
@@ -31,7 +37,8 @@ export class Encounter {
 
 	constructor(sim: Sim) {
 		this.sim = sim;
-		this.targets = [Target.fromDefaults(TypedEvent.nextEventID(), sim)];
+		this.targets = [Encounter.defaultTargetProto()];
+		this.targetsMetadata = new UnitMetadataList();
 
 		[
 			this.targetsChangeEmitter,
@@ -40,8 +47,8 @@ export class Encounter {
 		].forEach(emitter => emitter.on(eventID => this.changeEmitter.emit(eventID)));
 	}
 
-	get primaryTarget(): Target {
-		return this.targets[0];
+	get primaryTarget(): TargetProto {
+		return TargetProto.clone(this.targets[0]);
 	}
 
 	getDurationVariation(): number {
@@ -109,41 +116,18 @@ export class Encounter {
 		this.executeProportionChangeEmitter.emit(eventID);
 	}
 
-	getNumTargets(): number {
-		return this.targets.length;
-	}
-
-	getTargets(): Array<Target> {
-		return this.targets.slice();
-	}
-	setTargets(eventID: EventID, newTargets: Array<Target>) {
-		TypedEvent.freezeAllAndDo(() => {
-			if (newTargets.length == 0) {
-				newTargets = [Target.fromDefaults(eventID, this.sim)];
-			}
-			if (newTargets.length == this.targets.length && newTargets.every((target, i) => TargetProto.equals(target.toProto(), this.targets[i].toProto()))) {
-				return;
-			}
-
-			this.targets = newTargets;
-			this.targetsChangeEmitter.emit(eventID);
-		});
-	}
-
 	matchesPreset(preset: PresetEncounter): boolean {
-		return preset.targets.length == this.targets.length && this.targets.every((t, i) => t.matchesPreset(preset.targets[i]));
+		return preset.targets.length == this.targets.length && this.targets.every((t, i) => TargetProto.equals(t, preset.targets[i].target));
 	}
 
 	applyPreset(eventID: EventID, preset: PresetEncounter) {
-		TypedEvent.freezeAllAndDo(() => {
-			let newTargets = this.targets.slice(0, preset.targets.length);
-			while (newTargets.length < preset.targets.length) {
-				newTargets.push(new Target(this.sim));
-			}
+		this.targets = preset.targets.map(presetTarget => presetTarget.target || TargetProto.create());
+		this.targetsChangeEmitter.emit(eventID);
+	}
 
-			newTargets.forEach((nt, i) => nt.applyPreset(eventID, preset.targets[i]));
-			this.setTargets(eventID, newTargets);
-		});
+	applyPresetTarget(eventID: EventID, preset: PresetTarget, index: number) {
+		this.targets[index] = preset.target || TargetProto.create();
+		this.targetsChangeEmitter.emit(eventID);
 	}
 
 	toProto(): EncounterProto {
@@ -154,7 +138,7 @@ export class Encounter {
 			executeProportion25: this.executeProportion25,
 			executeProportion35: this.executeProportion35,
 			useHealth: this.useHealth,
-			targets: this.targets.map(target => target.toProto()),
+			targets: this.targets,
 		});
 	}
 
@@ -166,16 +150,8 @@ export class Encounter {
 			this.setExecuteProportion25(eventID, proto.executeProportion25);
 			this.setExecuteProportion35(eventID, proto.executeProportion35);
 			this.setUseHealth(eventID, proto.useHealth);
-
-			if (proto.targets.length > 0) {
-				this.setTargets(eventID, proto.targets.map(targetProto => {
-					const target = new Target(this.sim);
-					target.fromProto(eventID, targetProto);
-					return target;
-				}));
-			} else {
-				this.setTargets(eventID, [Target.fromDefaults(eventID, this.sim)]);
-			}
+			this.targets = proto.targets;
+			this.targetsChangeEmitter.emit(eventID);
 		});
 	}
 
@@ -186,7 +162,28 @@ export class Encounter {
 			executeProportion20: 0.2,
 			executeProportion25: 0.25,
 			executeProportion35: 0.35,
-			targets: [Target.defaultProto()],
+			targets: [Encounter.defaultTargetProto()],
 		}));
+	}
+
+	static defaultTargetProto(): TargetProto {
+		return TargetProto.create({
+			level: Mechanics.BOSS_LEVEL,
+			mobType: MobType.MobTypeGiant,
+			tankIndex: 0,
+			swingSpeed: 1.5,
+			minBaseDamage: 65000,
+			dualWield: false,
+			dualWieldPenalty: false,
+			suppressDodge: false,
+			parryHaste: true,
+			spellSchool: SpellSchool.SpellSchoolPhysical,
+			stats: Stats.fromMap({
+				[Stat.StatArmor]: 10643,
+				[Stat.StatAttackPower]: 805,
+				[Stat.StatBlockValue]: 76,
+			}).asArray(),
+			targetInputs: new Array<TargetInput>(0),
+		});
 	}
 }

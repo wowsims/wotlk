@@ -50,6 +50,19 @@ type Character struct {
 	// Base stats for this Character.
 	baseStats stats.Stats
 
+	// Handles scaling that only affects stats from items
+	itemStatMultipliers stats.Stats
+	// Used to track if we need to separately apply multipliers, because
+	// equipment was already applied
+	equipStatsApplied bool
+
+	// Bonus stats for this Character, specified in the UI and/or EP
+	// calculator
+	bonusStats     stats.Stats
+	bonusMHDps     float64
+	bonusOHDps     float64
+	bonusRangedDps float64
+
 	professions [2]proto.Profession
 
 	glyphs            [6]int32
@@ -86,6 +99,7 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 			StatDependencyManager: stats.NewStatDependencyManager(),
 
 			DistanceFromTarget: player.DistanceFromTarget,
+			IsUsingAPL:         player.Rotation != nil && player.Rotation.Enabled,
 		},
 
 		Name:  player.Name,
@@ -128,16 +142,22 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 
 	character.AddStats(character.baseStats)
 	character.addUniversalStatDependencies()
+	for i, _ := range character.itemStatMultipliers {
+		character.itemStatMultipliers[i] = 1
+	}
 
 	if player.BonusStats != nil {
 		if player.BonusStats.Stats != nil {
-			character.AddStats(stats.FromFloatArray(player.BonusStats.Stats))
+			character.bonusStats = stats.FromFloatArray(player.BonusStats.Stats)
 		}
 		if player.BonusStats.PseudoStats != nil {
 			ps := player.BonusStats.PseudoStats
-			character.PseudoStats.BonusMHDps += ps[proto.PseudoStat_PseudoStatMainHandDps]
-			character.PseudoStats.BonusOHDps += ps[proto.PseudoStat_PseudoStatOffHandDps]
-			character.PseudoStats.BonusRangedDps += ps[proto.PseudoStat_PseudoStatRangedDps]
+			character.bonusMHDps = ps[proto.PseudoStat_PseudoStatMainHandDps]
+			character.bonusOHDps = ps[proto.PseudoStat_PseudoStatOffHandDps]
+			character.bonusRangedDps = ps[proto.PseudoStat_PseudoStatRangedDps]
+			character.PseudoStats.BonusMHDps += character.bonusMHDps
+			character.PseudoStats.BonusOHDps += character.bonusOHDps
+			character.PseudoStats.BonusRangedDps += character.bonusRangedDps
 		}
 	}
 
@@ -149,6 +169,57 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 	character.PseudoStats.InFrontOfTarget = player.InFrontOfTarget
 
 	return character
+}
+
+func (character *Character) applyEquipScaling(stat stats.Stat, multiplier float64) float64 {
+	var oldValue = character.EquipStats()[stat]
+	character.itemStatMultipliers[stat] *= multiplier
+	var newValue = character.EquipStats()[stat]
+	return (newValue - oldValue)
+}
+
+func (character *Character) ApplyEquipScaling(stat stats.Stat, multiplier float64) {
+	var statDiff stats.Stats
+	statDiff[stat] = character.applyEquipScaling(stat, multiplier)
+	// Equipment stats already applied, so need to manually at the bonus to
+	// the character now to ensure correct values
+	if character.equipStatsApplied {
+		character.AddStats(statDiff)
+	}
+}
+
+func (character *Character) ApplyDynamicEquipScaling(sim *Simulation, stat stats.Stat, multiplier float64) {
+	statDiff := character.applyEquipScaling(stat, multiplier)
+	character.AddStatDynamic(sim, stat, statDiff)
+}
+
+func (character *Character) RemoveEquipScaling(stat stats.Stat, multiplier float64) {
+	var statDiff stats.Stats
+	statDiff[stat] = character.applyEquipScaling(stat, 1/multiplier)
+	// Equipment stats already applied, so need to manually at the bonus to
+	// the character now to ensure correct values
+	if character.equipStatsApplied {
+		character.AddStats(statDiff)
+	}
+}
+
+func (character *Character) RemoveDynamicEquipScaling(sim *Simulation, stat stats.Stat, multiplier float64) {
+	statDiff := character.applyEquipScaling(stat, 1/multiplier)
+	character.AddStatDynamic(sim, stat, statDiff)
+}
+
+func (character *Character) EquipStats() stats.Stats {
+	var baseEquipStats = character.Equip.Stats()
+	var bonusEquipStats = baseEquipStats.Add(character.bonusStats)
+	return bonusEquipStats.DotProduct(character.itemStatMultipliers)
+}
+
+func (character *Character) applyEquipment() {
+	if character.equipStatsApplied {
+		panic("Equipment stats already applied to character!")
+	}
+	character.AddStats(character.EquipStats())
+	character.equipStatsApplied = true
 }
 
 func (character *Character) addUniversalStatDependencies() {
@@ -172,7 +243,7 @@ func (character *Character) applyAllEffects(agent Agent, raidBuffs *proto.RaidBu
 	character.applyBuildPhaseAuras(CharacterBuildPhaseBase)
 	playerStats.BaseStats = measureStats()
 
-	character.AddStats(character.Equip.Stats())
+	character.applyEquipment()
 	character.applyItemEffects(agent)
 	character.applyItemSetBonusEffects(agent)
 	character.applyBuildPhaseAuras(CharacterBuildPhaseGear)
@@ -370,11 +441,22 @@ func (character *Character) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 
 func (character *Character) initialize(agent Agent) {
 	character.majorCooldownManager.initialize(character)
+	if !character.IsUsingAPL {
+		character.DesyncTrinketProcs()
+	}
 
 	character.gcdAction = &PendingAction{
 		Priority: ActionPriorityGCD,
 		OnAction: func(sim *Simulation) {
 			if sim.CurrentTime < 0 {
+				return
+			}
+
+			if sim.Options.Interactive {
+				if character.GCD.IsReady(sim) {
+					sim.NeedsInput = true
+					character.doNothing = false
+				}
 				return
 			}
 
@@ -422,21 +504,17 @@ func (character *Character) FillPlayerStats(playerStats *proto.PlayerStats) {
 	}
 	character.clearBuildPhaseAuras(CharacterBuildPhaseAll)
 	playerStats.Sets = character.GetActiveSetBonusNames()
-	playerStats.Cooldowns = character.GetMajorCooldownIDs()
 
-	aplSpells := FilterSlice(character.Spellbook, func(spell *Spell) bool {
-		return spell.Flags.Matches(SpellFlagAPL)
-	})
-	playerStats.Spells = MapSlice(aplSpells, func(spell *Spell) *proto.ActionID {
-		return spell.ActionID.ToProto()
-	})
+	playerStats.Metadata = character.GetMetadata()
+	for _, petAgent := range character.Pets {
+		playerStats.Pets = append(playerStats.Pets, &proto.PetStats{
+			Metadata: petAgent.GetPet().GetMetadata(),
+		})
+	}
 
-	aplAuras := FilterSlice(character.auras, func(aura *Aura) bool {
-		return !aura.ActionID.IsEmptyAction()
-	})
-	playerStats.Auras = MapSlice(aplAuras, func(aura *Aura) *proto.ActionID {
-		return aura.ActionID.ToProto()
-	})
+	if character.Rotation != nil {
+		playerStats.RotationStats = character.Rotation.getStats()
+	}
 }
 
 func (character *Character) init(sim *Simulation, agent Agent) {

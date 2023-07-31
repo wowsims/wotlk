@@ -28,12 +28,14 @@ func (dk *Deathknight) registerBoneShieldSpell() {
 			dk.BoneShieldAura.SetStacks(sim, dk.BoneShieldAura.MaxStacks)
 		},
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if sim.CurrentTime > stackRemovalCd+2*time.Second {
-				stackRemovalCd = sim.CurrentTime
+			if result.Landed() {
+				if sim.CurrentTime > stackRemovalCd+2*time.Second {
+					stackRemovalCd = sim.CurrentTime
 
-				aura.RemoveStack(sim)
-				if aura.GetStacks() == 0 {
-					aura.Deactivate(sim)
+					aura.RemoveStack(sim)
+					if aura.GetStacks() == 0 {
+						aura.Deactivate(sim)
+					}
 				}
 			}
 		},
@@ -50,7 +52,7 @@ func (dk *Deathknight) registerBoneShieldSpell() {
 
 	dk.BoneShield = dk.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
-		Flags:    core.SpellFlagNoOnCastComplete,
+		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagAPL,
 
 		RuneCost: core.RuneCostOptions{
 			UnholyRuneCost: 1,

@@ -9,14 +9,13 @@ import (
 
 func (mage *Mage) registerArcaneMissilesSpell() {
 	spellCoeff := 1/3.5 + 0.03*float64(mage.Talents.ArcaneEmpowerment)
-	t10ProcAura := mage.BloodmagesRegalia2pcAura()
 	hasT8_4pc := mage.HasSetBonus(ItemSetKirinTorGarb, 4)
 
 	mage.ArcaneMissiles = mage.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 42846},
 		SpellSchool:  core.SpellSchoolArcane,
 		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagMage | core.SpellFlagChanneled,
+		Flags:        SpellFlagMage | core.SpellFlagChanneled | core.SpellFlagAPL,
 		MissileSpeed: 20,
 
 		ManaCost: core.ManaCostOptions{
@@ -27,13 +26,6 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 			DefaultCast: core.Cast{
 				GCD:         core.GCDDefault,
 				ChannelTime: time.Second * 5,
-			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				if mage.MissileBarrageAura.IsActive() {
-					if t10ProcAura != nil {
-						t10ProcAura.Activate(sim)
-					}
-				}
 			},
 		},
 
@@ -74,7 +66,16 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 				baseDamage := 362 + spellCoeff*dot.Spell.SpellPower()
 				result := dot.Spell.CalcDamage(sim, target, baseDamage, dot.Spell.OutcomeMagicHitAndCrit)
 				dot.Spell.WaitTravelTime(sim, func(sim *core.Simulation) {
+					// TODO: THIS IS A HACK TRY TO FIGURE OUT A BETTER WAY TO DO THIS.
+					// Arcane Missiles is like mind flay in that its dmg ticks can proc things like a normal cast would.
+					// However, ticks do not proc JoW. Since the dmg portion and the initial application are the same Spell
+					//  we can't set one without impacting the other.
+					// For now as a hack, set proc mask to prevent JoW, cast the tick dmg, and then unset it.
+					// This also handles trinkets that can proc from proc (or not)
+					oldMask := dot.Spell.ProcMask
+					dot.Spell.ProcMask = core.ProcMaskProc
 					dot.Spell.DealDamage(sim, result)
+					dot.Spell.ProcMask = oldMask
 				})
 			},
 		},

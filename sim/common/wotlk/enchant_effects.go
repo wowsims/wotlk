@@ -143,7 +143,7 @@ func init() {
 			},
 		})
 
-		character.ItemSwap.ReigsterOnSwapItemForEffect(3748, aura)
+		character.ItemSwap.RegisterOnSwapItemForEffect(3748, aura)
 	})
 
 	core.NewEnchantEffect(3247, func(agent core.Agent) {
@@ -172,7 +172,7 @@ func init() {
 		ppmm := character.AutoAttacks.NewPPMManager(1.0, procMask)
 
 		// Modify only gear armor, including from agility
-		fivePercentOfArmor := (character.Equip.Stats()[stats.Armor] + 2.0*character.Equip.Stats()[stats.Agility]) * 0.05
+		fivePercentOfArmor := (character.EquipStats()[stats.Armor] + 2.0*character.EquipStats()[stats.Agility]) * 0.05
 		procAuraMH := character.NewTemporaryStatsAura("Berserking MH Proc", core.ActionID{SpellID: 59620, Tag: 1}, stats.Stats{stats.AttackPower: 400, stats.RangedAttackPower: 400, stats.Armor: -fivePercentOfArmor}, time.Second*15)
 		procAuraOH := character.NewTemporaryStatsAura("Berserking OH Proc", core.ActionID{SpellID: 59620, Tag: 2}, stats.Stats{stats.AttackPower: 400, stats.RangedAttackPower: 400, stats.Armor: -fivePercentOfArmor}, time.Second*15)
 
@@ -222,7 +222,7 @@ func init() {
 				}
 
 				if ppmm.Proc(sim, spell.ProcMask, "Lifeward") {
-					character.GainHealth(sim, 300, healthMetrics)
+					character.GainHealth(sim, 300*character.PseudoStats.HealingTakenMultiplier, healthMetrics)
 				}
 			},
 		})
@@ -238,6 +238,7 @@ func init() {
 			Timer:    character.NewTimer(),
 			Duration: time.Second * 35,
 		}
+		procAura.Icd = &icd
 
 		aura := character.GetOrRegisterAura(core.Aura{
 			Label:    "Black Magic",
@@ -246,8 +247,10 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				isSpell := spell.ActionID.SpellID == 47465 || spell.ActionID.SpellID == 12867 || spell.ActionID.SpellID == 58790 || spell.ActionID.SpellID == 58789
-				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskSpellDamage) && !isSpell {
+				// Special case for spells that aren't spells that can proc black magic.
+				specialCaseSpell := spell.ActionID.SpellID == 47465 || spell.ActionID.SpellID == 12867
+
+				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskSpellDamage|core.ProcMaskWeaponProc) && !specialCaseSpell {
 					return
 				}
 
@@ -258,7 +261,7 @@ func init() {
 			},
 		})
 
-		character.ItemSwap.ReigsterOnSwapItemForEffect(3790, aura)
+		character.ItemSwap.RegisterOnSwapItemForEffect(3790, aura)
 	})
 
 	core.AddWeaponEffect(3843, func(agent core.Agent, _ proto.ItemSlot) {
@@ -350,6 +353,7 @@ func init() {
 			Timer:    character.NewTimer(),
 			Duration: time.Second * 60,
 		}
+		procAura.Icd = &icd
 
 		callback := func(_ *core.Aura, sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
 			if !result.Landed() {
@@ -387,6 +391,7 @@ func init() {
 		}
 
 		character.GetOrRegisterAura(core.Aura{
+			Icd:      &icd,
 			Label:    "Darkglow Embroidery",
 			Duration: core.NeverExpires,
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
@@ -409,6 +414,7 @@ func init() {
 			Timer:    character.NewTimer(),
 			Duration: time.Second * 55,
 		}
+		procAura.Icd = &icd
 
 		character.GetOrRegisterAura(core.Aura{
 			Label:    "Swordguard Embroidery",

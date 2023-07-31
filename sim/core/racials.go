@@ -58,6 +58,14 @@ func applyRaceEffects(agent Agent) {
 			Spell:    spell,
 			Type:     CooldownTypeDPS,
 			Priority: CooldownPriorityLow,
+			ShouldActivate: func(sim *Simulation, character *Character) bool {
+				if spell.Unit.HasRunicPowerBar() {
+					return character.CurrentRunicPower() <= character.maxRunicPower-15
+				} else if spell.Unit.HasEnergyBar() {
+					return character.CurrentEnergy() <= character.maxEnergy-15
+				}
+				return true
+			},
 		})
 	case proto.Race_RaceDraenei:
 		character.PseudoStats.ReducedShadowHitTakenChance += 0.02

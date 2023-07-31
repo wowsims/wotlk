@@ -19,7 +19,7 @@ func (shaman *Shaman) newShockSpellConfig(spellID int32, spellSchool core.SpellS
 		ActionID:    actionID,
 		SpellSchool: spellSchool,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       SpellFlagShock,
+		Flags:       SpellFlagShock | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost: baseCost,

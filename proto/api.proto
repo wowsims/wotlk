@@ -94,7 +94,7 @@ message Raid {
 	Debuffs debuffs = 5;
 
 	// Players who will be tanking mobs.
-	repeated RaidTarget tanks = 4;
+	repeated UnitReference tanks = 4;
 
 	// Staggers Stormstrike casts across Enhance Shaman to maximize charge usage.
 	bool stagger_stormstrikes = 3;
@@ -110,6 +110,7 @@ message SimOptions {
 	bool debug_first_iteration = 6;
 	bool is_test = 5; // Only used internally.
 	bool save_all_values = 7; // Only used internally.
+	bool interactive = 8; // Enables interactive mode.
 }
 
 // The aggregated results from all uses of a particular action.
@@ -291,6 +292,35 @@ message RaidSimResult {
 // RPC ComputeStats
 message ComputeStatsRequest {
 	Raid raid = 1;
+	Encounter encounter = 2;
+}
+message AuraStats {
+	ActionID id = 1;
+	int32 max_stacks = 2;
+	bool has_icd = 3;
+}
+message SpellStats {
+	ActionID id = 1;
+
+	bool is_castable = 2; // Whether this spell may be cast by the APL logic.
+	bool is_major_cooldown = 3; // Whether this spell is a major cooldown.
+	bool has_dot = 4; // Whether this spell applies a DoT effect.
+	bool prepull_only = 5; // Whether this spell may only be cast during prepull.
+}
+message APLActionStats {
+	repeated string warnings = 1;
+}
+message APLStats {
+	repeated APLActionStats prepull_actions = 1;
+	repeated APLActionStats priority_list = 2;
+}
+message UnitMetadata {
+	string name = 3;
+	repeated SpellStats spells = 1;
+	repeated AuraStats auras = 2;
+}
+message PetStats {
+	UnitMetadata metadata = 1;
 }
 message PlayerStats {
 	// Stats
@@ -303,10 +333,11 @@ message PlayerStats {
 
 	repeated string sets = 3;
 	IndividualBuffs buffs = 4;
-	repeated ActionID cooldowns = 5;
 
-	repeated ActionID spells = 10;
-	repeated ActionID auras = 11;
+	UnitMetadata metadata = 10;
+	APLStats rotation_stats = 12;
+
+	repeated PetStats pets = 11;
 }
 message PartyStats {
 	repeated PlayerStats players = 1;
@@ -314,8 +345,15 @@ message PartyStats {
 message RaidStats {
 	repeated PartyStats parties = 1;
 }
+message TargetStats {
+	UnitMetadata metadata = 1;
+}
+message EncounterStats {
+	repeated TargetStats targets = 1;
+}
 message ComputeStatsResult {
 	RaidStats raid_stats = 1;
+	EncounterStats encounter_stats = 3;
 	string error_result = 2;
 }
 
@@ -327,7 +365,7 @@ message StatWeightsRequest {
 	Debuffs debuffs = 9;
 	Encounter encounter = 4;
 	SimOptions sim_options = 5;
-	repeated RaidTarget tanks = 8;
+	repeated UnitReference tanks = 8;
 
 	repeated Stat stats_to_weigh = 6;
 	repeated PseudoStat pseudo_stats_to_weigh = 10;
@@ -338,6 +376,8 @@ message StatWeightsResult {
 	StatWeightValues hps = 4;
 	StatWeightValues tps = 2;
 	StatWeightValues dtps = 3;
+	StatWeightValues tmi = 5;
+	StatWeightValues p_death = 6;
 }
 message StatWeightValues {
 	UnitStats weights = 1;
@@ -365,4 +405,49 @@ message ProgressMetrics {
 	// Final Results
 	RaidSimResult final_raid_result = 6; // only set when completed
 	StatWeightsResult final_weight_result = 7;
+	BulkSimResult final_bulk_result = 10;
+}
+
+// RPC: BulkSim
+message BulkSimRequest {
+    RaidSimRequest base_settings = 1;
+    BulkSettings bulk_settings = 2;
+}
+
+message BulkSettings {
+	repeated ItemSpec items = 1;
+	bool combinations = 2;
+	bool fast_mode = 3; // Used to run with less iterations to start and slowly increase to weed out items faster.
+	// Use current enchant on the slot if not specified by the ItemSpec.
+	// Only works when replacement item is valid target for enchant.
+	bool auto_enchant = 4;
+
+	// Currently not used.
+	// Used to fill out gem slots that are not filled in the ItemSpec
+	bool auto_gem = 5;
+	int32 default_red_gem = 6;
+	int32 default_blue_gem = 7;
+	int32 default_yellow_gem = 8;
+	int32 default_meta_gem = 9;
+	bool ensure_meta_req_met = 10; // ensures that meta requirements are met when auto-gemming.
+
+	// Number of iterations per combo.
+	// If set to 0 the sim core decides the optimal iterations.
+	int32 iterations_per_combo = 11;
+}
+
+message BulkSimResult {
+    repeated BulkComboResult results = 1;
+		BulkComboResult equipped_gear_result = 2;
+    string error_result = 3; // only set if sim failed.
+}
+
+message BulkComboResult {
+    repeated ItemSpecWithSlot items_added = 1;
+    UnitMetrics unit_metrics = 2;
+}
+
+message ItemSpecWithSlot {
+    ItemSpec item = 1;
+    ItemSlot slot = 2;
 }

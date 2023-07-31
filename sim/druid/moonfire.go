@@ -27,7 +27,7 @@ func (druid *Druid) registerMoonfireSpell() {
 		ActionID:    core.ActionID{SpellID: 48463},
 		SpellSchool: core.SpellSchoolArcane,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       SpellFlagNaturesGrace | SpellFlagOmenTrigger,
+		Flags:       SpellFlagNaturesGrace | SpellFlagOmenTrigger | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.21,
@@ -70,7 +70,7 @@ func (druid *Druid) registerMoonfireSpell() {
 				if dotCanCrit {
 					dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
 				} else {
-					dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+					dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTickCounted)
 				}
 			},
 		},
@@ -79,6 +79,7 @@ func (druid *Druid) registerMoonfireSpell() {
 			baseDamage := sim.Roll(406, 476) + 0.15*spell.SpellPower()
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if result.Landed() {
+				druid.ExtendingMoonfireStacks = 3
 				dot := spell.Dot(target)
 				dot.NumberOfTicks = numTicks
 				dot.Apply(sim)

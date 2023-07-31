@@ -1,0 +1,21 @@
+@use "sass:map";
+
+@import "./apl_rotation_picker";
+
+.rotation-tab-left {
+    flex-direction: column;
+}
+
+.rotation-type-legacy {
+    .rotation-tab-main {
+        display: none;
+    }
+}
+.rotation-type-apl {
+    .cooldown-settings {
+        display: none;
+    }
+    .rotation-settings {
+        display: none;
+    }
+}

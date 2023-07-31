@@ -35,6 +35,8 @@ func (dk *Deathknight) registerDancingRuneWeaponCD() {
 				dk.RuneWeapon.BloodStrike.Cast(sim, spell.Unit.CurrentTarget)
 			case dk.HeartStrike:
 				dk.RuneWeapon.HeartStrike.Cast(sim, spell.Unit.CurrentTarget)
+			case dk.RuneStrike:
+				dk.RuneWeapon.RuneStrike.Cast(sim, spell.Unit.CurrentTarget)
 			case dk.DeathCoil:
 				dk.RuneWeapon.DeathCoil.Cast(sim, spell.Unit.CurrentTarget)
 			case dk.Pestilence:
@@ -47,6 +49,7 @@ func (dk *Deathknight) registerDancingRuneWeaponCD() {
 
 	dk.DancingRuneWeapon = dk.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 49028},
+		Flags:    core.SpellFlagAPL,
 
 		RuneCost: core.RuneCostOptions{
 			RunicPowerCost: 60,
@@ -64,23 +67,6 @@ func (dk *Deathknight) registerDancingRuneWeaponCD() {
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			dk.RuneWeapon.EnableWithTimeout(sim, dk.RuneWeapon, duration)
 			dk.RuneWeapon.CancelGCDTimer(sim)
-
-			// RaiN:
-			// Auto attacks snapshot damage dealt multipliers with weird formula
-			// How it works in game is that 3 auras are applied one after the other:
-			// https://wowclassicdb.com/wotlk/spell/51905 / no wowhead entry for some reason...
-			// https://wowclassicdb.com/wotlk/spell/51906 / https://www.wowhead.com/wotlk/spell=51906/death-knight-rune-weapon-scaling-02
-			// From the testing we could do (still more work to be done) it looks like the full
-			// Damage dealt multiplier is transfered from the dk with the first aura (with AP and crit)
-			// and then a 2nd -50% damage dealt multiplier is added from the second aura
-			// Previous iteration we had made the dks full damage multiplier be applied at 50% to the RW
-			// but comparing with logs the damage was way lower then what we saw in-game which lead us to
-			// rething all this and find the above mentioned auras
-			dk.RuneWeapon.PseudoStats.DamageDealtMultiplier = dk.PseudoStats.DamageDealtMultiplier - 0.5
-			// the second aura also transfers the DK owners physical school damage dealt to the Rune weapon
-			// to make sure the dks own physical buffs also affect the rune weapon (tested in game and confirmed they do with UF)
-			dk.RuneWeapon.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] = dk.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical]
-
 			dancingRuneWeaponAura.Activate(sim)
 		},
 	})
@@ -105,6 +91,8 @@ type RuneWeaponPet struct {
 	HeartStrike       *core.Spell
 	HeartStrikeOffHit *core.Spell
 
+	RuneStrike *core.Spell
+
 	Pestilence *core.Spell
 	BloodBoil  *core.Spell
 
@@ -124,6 +112,17 @@ func (runeWeapon *RuneWeaponPet) Initialize() {
 	runeWeapon.dkOwner.registerDrwBloodStrikeSpell()
 	runeWeapon.dkOwner.registerDrwHeartStrikeSpell()
 	runeWeapon.dkOwner.registerDrwDeathCoilSpell()
+	runeWeapon.dkOwner.registerDrwRuneStrikeSpell()
+}
+
+func (dk *Deathknight) DrwWeaponDamage(sim *core.Simulation, spell *core.Spell) float64 {
+	if dk.Inputs.NewDrw {
+		return spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
+			spell.BonusWeaponDamage()
+	} else {
+		return spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+			spell.BonusWeaponDamage()
+	}
 }
 
 func (dk *Deathknight) NewRuneWeapon() *RuneWeaponPet {
@@ -169,13 +168,23 @@ func (dk *Deathknight) NewRuneWeapon() *RuneWeaponPet {
 	runeWeapon.OnPetEnable = runeWeapon.enable
 	runeWeapon.OnPetDisable = runeWeapon.disable
 
+	mhWeapon := dk.WeaponFromMainHand(dk.DefaultMeleeCritMultiplier())
 	runeWeapon.EnableAutoAttacks(runeWeapon, core.AutoAttackOptions{
-		MainHand:       dk.WeaponFromMainHand(dk.DefaultMeleeCritMultiplier()),
+		MainHand:       mhWeapon,
 		AutoSwingMelee: true,
 	})
 
 	runeWeapon.AutoAttacks.MH.SwingSpeed = 3.5
+	runeWeapon.AutoAttacks.MH.NormalizedSwingSpeed = 3.3
+	runeWeapon.AutoAttacks.MH.SwingDuration = time.Duration(runeWeapon.AutoAttacks.MH.SwingSpeed * float64(time.Second))
 	runeWeapon.PseudoStats.DamageTakenMultiplier = 0
+
+	if dk.Inputs.NewDrw {
+		baseDamage := (mhWeapon.BaseDamageMin + mhWeapon.BaseDamageMax) / 2
+		baseDamage = (baseDamage / mhWeapon.SwingSpeed) * 3.5
+		runeWeapon.AutoAttacks.MH.BaseDamageMin = baseDamage - 150
+		runeWeapon.AutoAttacks.MH.BaseDamageMax = baseDamage + 150
+	}
 
 	dk.AddPet(runeWeapon)
 
@@ -198,10 +207,28 @@ func (runeWeapon *RuneWeaponPet) enable(sim *core.Simulation) {
 	// Snapshot extra % speed modifiers from dk owner
 	runeWeapon.PseudoStats.MeleeSpeedMultiplier = 1
 	runeWeapon.MultiplyMeleeSpeed(sim, runeWeapon.dkOwner.PseudoStats.MeleeSpeedMultiplier)
+
+	if runeWeapon.dkOwner.Inputs.NewDrw {
+		runeWeapon.dkOwner.drwDmgSnapshot = runeWeapon.dkOwner.PseudoStats.DamageDealtMultiplier * 0.5
+		runeWeapon.dkOwner.RuneWeapon.PseudoStats.DamageDealtMultiplier *= runeWeapon.dkOwner.drwDmgSnapshot
+	} else {
+		runeWeapon.dkOwner.drwDmgSnapshot = runeWeapon.dkOwner.PseudoStats.DamageDealtMultiplier - 0.5
+		runeWeapon.dkOwner.RuneWeapon.PseudoStats.DamageDealtMultiplier *= runeWeapon.dkOwner.drwDmgSnapshot
+	}
+
+	runeWeapon.dkOwner.drwPhysSnapshot = runeWeapon.dkOwner.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical]
+	runeWeapon.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= runeWeapon.dkOwner.drwPhysSnapshot
+
 }
 
 func (runeWeapon *RuneWeaponPet) disable(sim *core.Simulation) {
 	// Clear snapshot speed
 	runeWeapon.PseudoStats.MeleeSpeedMultiplier = 1
 	runeWeapon.MultiplyMeleeSpeed(sim, 1)
+
+	// Clear snapshot damage multipliers
+	runeWeapon.dkOwner.RuneWeapon.PseudoStats.DamageDealtMultiplier /= runeWeapon.dkOwner.drwDmgSnapshot
+	runeWeapon.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] /= runeWeapon.dkOwner.drwPhysSnapshot
+	runeWeapon.dkOwner.drwPhysSnapshot = 1
+	runeWeapon.dkOwner.drwDmgSnapshot = 1
 }

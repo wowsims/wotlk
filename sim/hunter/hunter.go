@@ -84,7 +84,9 @@ type Hunter struct {
 	ScorpidStingAuras         core.AuraArray
 	TalonOfAlarAura           *core.Aura
 
-	CustomRotation *common.CustomRotation
+	CustomRotation     *common.CustomRotation
+	rotationConditions map[*core.Spell]RotationCondition
+	rotationPriority   []*core.Spell
 }
 
 func (hunter *Hunter) GetCharacter() *core.Character {
@@ -115,9 +117,9 @@ func (hunter *Hunter) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 
 func (hunter *Hunter) Initialize() {
 	// Update auto crit multipliers now that we have the targets.
-	hunter.AutoAttacks.MHConfig.CritMultiplier = hunter.critMultiplier(false, false)
-	hunter.AutoAttacks.OHConfig.CritMultiplier = hunter.critMultiplier(false, false)
-	hunter.AutoAttacks.RangedConfig.CritMultiplier = hunter.critMultiplier(false, false)
+	hunter.AutoAttacks.MHConfig.CritMultiplier = hunter.critMultiplier(false, false, false)
+	hunter.AutoAttacks.OHConfig.CritMultiplier = hunter.critMultiplier(false, false, false)
+	hunter.AutoAttacks.RangedConfig.CritMultiplier = hunter.critMultiplier(false, false, false)
 
 	hunter.registerAspectOfTheDragonhawkSpell()
 	hunter.registerAspectOfTheViperSpell()
@@ -144,8 +146,11 @@ func (hunter *Hunter) Initialize() {
 	hunter.registerKillCommandCD()
 	hunter.registerRapidFireCD()
 
-	hunter.DelayDPSCooldownsForArmorDebuffs(time.Second * 10)
+	if !hunter.IsUsingAPL {
+		hunter.DelayDPSCooldownsForArmorDebuffs(time.Second * 10)
+	}
 
+	hunter.initRotation()
 	hunter.CustomRotation = hunter.makeCustomRotation()
 	if hunter.CustomRotation == nil {
 		hunter.Rotation.Type = proto.Hunter_Rotation_SingleTarget

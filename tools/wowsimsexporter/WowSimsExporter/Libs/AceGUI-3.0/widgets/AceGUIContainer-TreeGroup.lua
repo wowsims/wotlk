@@ -646,7 +646,7 @@ local function Constructor()
 	treeframe:SetBackdropColor(0.1, 0.1, 0.1, 0.5)
 	treeframe:SetBackdropBorderColor(0.4, 0.4, 0.4)
 	treeframe:SetResizable(true)
-	treeframe:SetMinResize(100, 1)
+	treeframe:SetResizeBounds(100, 1) -- https://wowpedia.fandom.com/wiki/API_Frame_SetMinResize replaced in Ulduar patch.
 	treeframe:SetMaxResize(400, 1600)
 	treeframe:SetScript("OnUpdate", FirstFrameUpdate)
 	treeframe:SetScript("OnSizeChanged", Tree_OnSizeChanged)

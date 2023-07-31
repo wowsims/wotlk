@@ -9,12 +9,11 @@ import {
 	Glyphs,
 	PetFood,
 	Potions,
-	RaidTarget,
+	UnitReference,
 	Spec
 } from '../core/proto/common.js';
-import {SavedTalents} from '../core/proto/ui.js';
-import {Player} from '../core/player.js';
-import {NO_TARGET} from '../core/proto_utils/utils.js';
+import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
+import { Player } from '../core/player.js';
 
 import {
 	Deathknight_Options as DeathKnightOptions,
@@ -31,6 +30,7 @@ import {
 } from '../core/proto/deathknight.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
+import { APLRotation } from '../core/proto/apl.js';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -74,7 +74,22 @@ export const UnholyDualWieldTalents = {
 		talentsString: '-320043500002-2300303050032152000150013133051',
 		glyphs: Glyphs.create({
 			major1: DeathknightMajorGlyph.GlyphOfTheGhoul,
-			major2: DeathknightMajorGlyph.GlyphOfDarkDeath,
+			major2: DeathknightMajorGlyph.GlyphOfIcyTouch,
+			major3: DeathknightMajorGlyph.GlyphOfDeathAndDecay,
+			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
+			minor2: DeathknightMinorGlyph.GlyphOfPestilence,
+			minor3: DeathknightMinorGlyph.GlyphOfRaiseDead,
+		}),
+	}),
+};
+
+export const UnholyDualWieldSSTalents = {
+	name: 'Unholy DW SS',
+	data: SavedTalents.create({
+		talentsString: '-320033500002-2301303050032151000150013133151',
+		glyphs: Glyphs.create({
+			major1: DeathknightMajorGlyph.GlyphOfTheGhoul,
+			major2: DeathknightMajorGlyph.GlyphOfIcyTouch,
 			major3: DeathknightMajorGlyph.GlyphOfDeathAndDecay,
 			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
 			minor2: DeathknightMinorGlyph.GlyphOfPestilence,
@@ -101,7 +116,7 @@ export const Unholy2HTalents = {
 export const BloodTalents = {
 	name: 'Blood DPS',
 	data: SavedTalents.create({
-		talentsString: '2305120530003303231023001351--230220305003',
+		talentsString: '2305120530003303231023001351--2302003050032',
 		glyphs: Glyphs.create({
 			major1: DeathknightMajorGlyph.GlyphOfDancingRuneWeapon,
 			major2: DeathknightMajorGlyph.GlyphOfDeathStrike,
@@ -115,7 +130,7 @@ export const BloodTalents = {
 
 export const DefaultUnholyRotation = DeathKnightRotation.create({
 	useDeathAndDecay: true,
-	btGhoulFrenzy: false,
+	btGhoulFrenzy: true,
 	refreshHornOfWinter: false,
 	useGargoyle: true,
 	useEmpowerRuneWeapon: true,
@@ -139,9 +154,8 @@ export const DefaultUnholyOptions = DeathKnightOptions.create({
 	petUptime: 1,
 	precastGhoulFrenzy: false,
 	precastHornOfWinter: true,
-	unholyFrenzyTarget: RaidTarget.create({
-		targetIndex: NO_TARGET, // In an individual sim the 0-indexed player is ourself.
-	}),
+	unholyFrenzyTarget: UnitReference.create(),
+	diseaseDowntime: 2,
 });
 
 export const DefaultFrostRotation = DeathKnightRotation.create({
@@ -158,6 +172,7 @@ export const DefaultFrostRotation = DeathKnightRotation.create({
 	avgAmsHit: 10000.0,
 	drwDiseases: Deathknight_Rotation_DrwDiseases.Pestilence,
   	frostRotationType: Deathknight_Rotation_FrostRotationType.SingleTarget,
+	armyOfTheDead: Deathknight_Rotation_ArmyOfTheDead.PreCast,
   	frostCustomRotation: CustomRotation.create({
 		spells: [
 			CustomSpell.create({ spell: CustomSpellOption.CustomDeathAndDecay }),
@@ -178,9 +193,8 @@ export const DefaultFrostOptions = DeathKnightOptions.create({
 	startingRunicPower: 0,
 	petUptime: 1,
 	precastHornOfWinter: true,
-	unholyFrenzyTarget: RaidTarget.create({
-		targetIndex: NO_TARGET, // In an individual sim the 0-indexed player is ourself.
-	}),
+	unholyFrenzyTarget: UnitReference.create(),
+	diseaseDowntime: 0,
 });
 
 export const DefaultBloodRotation = DeathKnightRotation.create({
@@ -194,7 +208,7 @@ export const DefaultBloodRotation = DeathKnightRotation.create({
 	useAms: false,
 	drwDiseases: Deathknight_Rotation_DrwDiseases.Pestilence,
 	bloodSpender: Deathknight_Rotation_BloodSpell.HS,
-	useDancingRuneWeapon: true
+	useDancingRuneWeapon: true,
 });
 
 export const DefaultBloodOptions = DeathKnightOptions.create({
@@ -202,9 +216,8 @@ export const DefaultBloodOptions = DeathKnightOptions.create({
 	startingRunicPower: 0,
 	petUptime: 1,
 	precastHornOfWinter: true,
-	unholyFrenzyTarget: RaidTarget.create({
-		targetIndex: NO_TARGET, // In an individual sim the 0-indexed player is ourself.
-	}),
+	unholyFrenzyTarget: UnitReference.create(),
+	diseaseDowntime: 0,
 });
 
 export const OtherDefaults = {
@@ -220,99 +233,192 @@ export const DefaultConsumes = Consumes.create({
 	fillerExplosive: Explosive.ExplosiveSaroniteBomb,
 });
 
+export const BLOOD_ROTATION_PRESET_LEGACY_DEFAULT = {
+	name: 'Blood Legacy',
+	//enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultBloodRotation),
+	}),
+}
+
+export const FROST_ROTATION_PRESET_LEGACY_DEFAULT = {
+	name: 'Frost Legacy',
+	//enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultFrostRotation),
+	}),
+}
+
+export const UNHOLY_DW_ROTATION_PRESET_LEGACY_DEFAULT = {
+	name: 'Unholy DW Legacy',
+	//enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultUnholyRotation),
+	}),
+}
+
+export const BLOOD_PESTI_ROTATION_PRESET_DEFAULT = {
+	name: 'Blood Pesti APL',
+	//enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultBloodRotation),
+		rotation: APLRotation.fromJsonString(`{
+			"enabled": true,
+			"prepullActions": [
+			  {"action":{"castSpell":{"spellId":{"spellId":48265}}},"doAtValue":{"const":{"val":"-20s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":42650}}},"doAtValue":{"const":{"val":"-10s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":50689}}},"doAtValue":{"const":{"val":"-6s"}}},
+			  {"action":{"castSpell":{"spellId":{"itemId":40211}}},"doAtValue":{"const":{"val":"-1s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":49016}}},"doAtValue":{"const":{"val":"0s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":54758}}},"doAtValue":{"const":{"val":"0s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":26297}}},"doAtValue":{"const":{"val":"0s"}}}
+			],
+			"priorityList": [
+			  {"action":{"autocastOtherCooldowns":{}}},
+			  {"action":{"sequence":{"name":"Opener","actions":[{"castSpell":{"spellId":{"spellId":59131}}},{"castSpell":{"spellId":{"tag":1,"spellId":49921}}},{"castSpell":{"spellId":{"tag":1,"spellId":49924}}},{"castSpell":{"spellId":{"tag":1,"spellId":55262}}},{"castSpell":{"spellId":{"tag":1,"spellId":55262}}},{"castSpell":{"spellId":{"spellId":47568}}},{"castSpell":{"spellId":{"spellId":46584}}},{"castSpell":{"spellId":{"spellId":49028}}},{"castSpell":{"spellId":{"tag":1,"spellId":49924}}},{"castSpell":{"spellId":{"tag":1,"spellId":55262}}},{"castSpell":{"spellId":{"spellId":45529}}},{"castSpell":{"spellId":{"tag":1,"spellId":55262}}}]}}},
+			  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55095}}}}},"castSpell":{"spellId":{"spellId":59131}}}},
+			  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55078}}}}},"castSpell":{"spellId":{"tag":1,"spellId":49921}}}},
+			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"const":{"val":"1.5s"}}}},"castSpell":{"spellId":{"spellId":50842}}}},
+			  {"action":{"condition":{"spellIsReady":{"spellId":{"spellId":49028}}},"castSpell":{"spellId":{"spellId":49016}}}},
+			  {"action":{"condition":{"spellIsReady":{"spellId":{"spellId":49028}}},"castSpell":{"spellId":{"spellId":26297}}}},
+			  {"action":{"condition":{"spellIsReady":{"spellId":{"spellId":49028}}},"castSpell":{"spellId":{"spellId":54758}}}},
+			  {"action":{"condition":{"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":49028}}},{"or":{"vals":[{"auraIsActive":{"auraId":{"spellId":49016}}},{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49016}}},"rhs":{"remainingTime":{}}}}]}}]}},"castSpell":{"spellId":{"itemId":40211}}}},
+			  {"action":{"condition":{"spellIsReady":{"spellId":{"spellId":49028}}},"castSpell":{"spellId":{"spellId":46584}}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":49028}}}},
+			  {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"nextRuneCooldown":{"runeType":"RuneBlood"}},"rhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}}}},"castSpell":{"spellId":{"spellId":50842}}}},
+			  {"action":{"castSpell":{"spellId":{"tag":1,"spellId":55262}}}},
+			  {"action":{"castSpell":{"spellId":{"tag":1,"spellId":49924}}}},
+			  {"action":{"condition":{"not":{"val":{"spellIsReady":{"spellId":{"spellId":49028}}}}},"castSpell":{"spellId":{"spellId":49895}}}}
+			]
+		}`),
+	}),
+}
+
+export const FROST_BL_PESTI_ROTATION_PRESET_DEFAULT = {
+	name: 'Frost BL Pesti APL',
+	//enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultFrostRotation),
+		rotation: APLRotation.fromJsonString(`{
+			"enabled": true,
+			"prepullActions": [
+			  {"action":{"castSpell":{"spellId":{"spellId":48265}}},"doAtValue":{"const":{"val":"-20s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":42650}}},"doAtValue":{"const":{"val":"-10s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":50689}}},"doAtValue":{"const":{"val":"-6s"}}},
+			  {"action":{"castSpell":{"spellId":{"itemId":40211}}},"doAtValue":{"const":{"val":"-1s"}}}
+			],
+			"priorityList": [
+			  {"action":{"autocastOtherCooldowns":{}}},
+			  {"action":{"sequence":{"name":"Opener","actions":[{"castSpell":{"spellId":{"spellId":59131}}},{"castSpell":{"spellId":{"tag":1,"spellId":49921}}},{"castSpell":{"spellId":{"spellId":51271}}},{"castSpell":{"spellId":{"spellId":54758}}},{"castSpell":{"spellId":{"spellId":33697}}},{"castSpell":{"spellId":{"spellId":45529}}},{"castSpell":{"spellId":{"tag":1,"spellId":51425}}},{"castSpell":{"spellId":{"tag":1,"spellId":55268}}},{"castSpell":{"spellId":{"spellId":50842}}},{"castSpell":{"spellId":{"spellId":47568}}},{"castSpell":{"spellId":{"tag":1,"spellId":51425}}},{"castSpell":{"spellId":{"tag":1,"spellId":55268}}},{"castSpell":{"spellId":{"tag":1,"spellId":51425}}},{"castSpell":{"spellId":{"tag":1,"spellId":51425}}},{"castSpell":{"spellId":{"spellId":46584}}}]}}},
+			  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55095}}}}},"castSpell":{"spellId":{"spellId":59131}}}},
+			  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55078}}}}},"castSpell":{"spellId":{"tag":1,"spellId":49921}}}},
+			  {"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"const":{"val":"1.5s"}}}},{"dotIsActive":{"spellId":{"spellId":55095}}}]}},"castSpell":{"spellId":{"spellId":50842}}}},
+			  {"action":{"condition":{"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":51271}}},{"spellCanCast":{"spellId":{"spellId":51271}}}]}},"castSpell":{"spellId":{"spellId":33697}}}},
+			  {"action":{"condition":{"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":51271}}},{"spellCanCast":{"spellId":{"spellId":51271}}}]}},"castSpell":{"spellId":{"spellId":54758}}}},
+			  {"action":{"condition":{"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":51271}}},{"spellCanCast":{"spellId":{"spellId":51271}}}]}},"castSpell":{"spellId":{"itemId":40211}}}},
+			  {"action":{"strictSequence":{"actions":[{"castSpell":{"spellId":{"spellId":51271}}},{"castSpell":{"spellId":{"spellId":45529}}}]}}},
+			  {"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"const":{"val":"4s"}}}},{"dotIsActive":{"spellId":{"spellId":55095}}}]}},"castSpell":{"spellId":{"spellId":50842}}}},
+			  {"action":{"condition":{"auraIsActive":{"auraId":{"spellId":59052}}},"castSpell":{"spellId":{"spellId":51411}}}},
+			  {"action":{"castSpell":{"spellId":{"tag":1,"spellId":51425}}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":46584}}}},
+			  {"action":{"castSpell":{"spellId":{"tag":1,"spellId":49930}}}},
+			  {"action":{"castSpell":{"spellId":{"tag":1,"spellId":55268}}}}
+			]
+		}`),
+	}),
+}
+
+export const FROST_UH_PESTI_ROTATION_PRESET_DEFAULT = {
+	name: 'Frost UH Pesti APL',
+	//enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultFrostRotation),
+		rotation: APLRotation.fromJsonString(`{
+			"enabled": true,
+			"prepullActions": [
+			  {"action":{"castSpell":{"spellId":{"spellId":48265}}},"doAtValue":{"const":{"val":"-20s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":42650}}},"doAtValue":{"const":{"val":"-10s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":50689}}},"doAtValue":{"const":{"val":"-6s"}}},
+			  {"action":{"castSpell":{"spellId":{"itemId":40211}}},"doAtValue":{"const":{"val":"-1s"}}}
+			],
+			"priorityList": [
+			  {"action":{"autocastOtherCooldowns":{}}},
+			  {"action":{"sequence":{"name":"Opener","actions":[{"castSpell":{"spellId":{"spellId":59131}}},{"castSpell":{"spellId":{"tag":1,"spellId":49921}}},{"castSpell":{"spellId":{"spellId":51271}}},{"castSpell":{"spellId":{"spellId":54758}}},{"castSpell":{"spellId":{"spellId":33697}}},{"castSpell":{"spellId":{"spellId":45529}}},{"castSpell":{"spellId":{"tag":1,"spellId":51425}}},{"castSpell":{"spellId":{"tag":1,"spellId":55268}}},{"castSpell":{"spellId":{"tag":1,"spellId":49930}}},{"castSpell":{"spellId":{"spellId":47568}}},{"castSpell":{"spellId":{"tag":1,"spellId":51425}}},{"castSpell":{"spellId":{"tag":1,"spellId":55268}}},{"castSpell":{"spellId":{"tag":1,"spellId":51425}}},{"castSpell":{"spellId":{"tag":1,"spellId":51425}}},{"castSpell":{"spellId":{"spellId":46584}}}]}}},
+			  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55095}}}}},"castSpell":{"spellId":{"spellId":59131}}}},
+			  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55078}}}}},"castSpell":{"spellId":{"tag":1,"spellId":49921}}}},
+			  {"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"const":{"val":"1.5s"}}}},{"dotIsActive":{"spellId":{"spellId":55095}}}]}},"castSpell":{"spellId":{"spellId":50842}}}},
+			  {"action":{"condition":{"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":51271}}},{"spellCanCast":{"spellId":{"spellId":51271}}}]}},"castSpell":{"spellId":{"spellId":33697}}}},
+			  {"action":{"condition":{"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":51271}}},{"spellCanCast":{"spellId":{"spellId":51271}}}]}},"castSpell":{"spellId":{"spellId":54758}}}},
+			  {"action":{"condition":{"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":51271}}},{"spellCanCast":{"spellId":{"spellId":51271}}}]}},"castSpell":{"spellId":{"itemId":40211}}}},
+			  {"action":{"strictSequence":{"actions":[{"castSpell":{"spellId":{"spellId":51271}}},{"castSpell":{"spellId":{"spellId":45529}}}]}}},
+			  {"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"const":{"val":"8.5s"}}}},{"dotIsActive":{"spellId":{"spellId":55095}}}]}},"castSpell":{"spellId":{"spellId":50842}}}},
+			  {"action":{"condition":{"auraIsActive":{"auraId":{"spellId":59052}}},"castSpell":{"spellId":{"spellId":51411}}}},
+			  {"action":{"castSpell":{"spellId":{"tag":1,"spellId":51425}}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":46584}}}},
+			  {"action":{"castSpell":{"spellId":{"tag":1,"spellId":49930}}}},
+			  {"action":{"castSpell":{"spellId":{"tag":1,"spellId":55268}}}}
+			]
+		}`),
+	}),
+}
+
+export const UNHOLY_DW_ROTATION_PRESET_DEFAULT = {
+	name: 'Unholy DW SS APL',
+	//enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultUnholyRotation),
+		rotation: APLRotation.fromJsonString(`{
+			"enabled": true,
+			"prepullActions": [
+			  {"action":{"castSpell":{"spellId":{"spellId":48265}}},"doAtValue":{"const":{"val":"-10s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":63560}}},"doAtValue":{"const":{"val":"-8s"}}},
+			  {"action":{"castSpell":{"spellId":{"itemId":40211}}},"doAtValue":{"const":{"val":"-1s"}}}
+			],
+			"priorityList": [
+			  {"action":{"autocastOtherCooldowns":{}}},
+			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"const":{"val":"3s"}}}},"castSpell":{"spellId":{"spellId":59131}}}},
+			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55078}}},"rhs":{"const":{"val":"3s"}}}},"castSpell":{"spellId":{"tag":1,"spellId":49921}}}},
+			  {"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":66803}}}}},"castSpell":{"spellId":{"tag":1,"spellId":49930}}}},
+			  {"action":{"condition":{"auraIsActive":{"auraId":{"spellId":49206}}},"castSpell":{"spellId":{"spellId":26297}}}},
+			  {"action":{"condition":{"or":{"vals":[{"auraIsActive":{"auraId":{"spellId":49206}}},{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49206}}},"rhs":{"const":{"val":"50s"}}}}]}},"castSpell":{"spellId":{"spellId":54758}}}},
+			  {"action":{"condition":{"or":{"vals":[{"auraIsActive":{"auraId":{"spellId":49206}}},{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49206}}},"rhs":{"remainingTime":{}}}}]}},"castSpell":{"spellId":{"itemId":40211}}}},
+			  {"action":{"condition":{"auraIsActive":{"auraId":{"spellId":49206}}},"castSpell":{"spellId":{"spellId":47568}}}},
+			  {"action":{"condition":{"auraIsActive":{"auraId":{"spellId":49206}}},"castSpell":{"spellId":{"spellId":42650}}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":49938}}}},
+			  {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49938}}},"rhs":{"const":{"val":"6s"}}}},"strictSequence":{"actions":[{"castSpell":{"spellId":{"tag":1,"spellId":55271}}},{"castSpell":{"spellId":{"tag":1,"spellId":49930}}}]}}},
+			  {"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49938}}},"rhs":{"const":{"val":"6s"}}}},{"cmp":{"op":"OpLt","lhs":{"auraRemainingTime":{"auraId":{"spellId":66803}}},"rhs":{"const":{"val":"10s"}}}}]}},"castSpell":{"spellId":{"tag":1,"spellId":49930}}}},
+			  {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49938}}},"rhs":{"const":{"val":"6s"}}}},"castSpell":{"spellId":{"spellId":49941}}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":49206}}}},
+			  {"action":{"condition":{"not":{"val":{"spellIsReady":{"spellId":{"spellId":49206}}}}},"castSpell":{"spellId":{"spellId":49895}}}},
+			  {"action":{"strictSequence":{"actions":[{"castSpell":{"spellId":{"spellId":45529}}},{"castSpell":{"spellId":{"spellId":63560}}}]}}},
+			  {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":48265}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":49206}}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":49206}}}}}]}},"castSpell":{"spellId":{"spellId":50689}}}}
+			]
+		}`),
+	}),
+}
+
 export const P1_BLOOD_BIS_PRESET = {
 	name: 'P1 Blood',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
 	gear: EquipmentSpec.fromJsonString(`{   "items": [
-		{
-			"id": 44006,
-			"enchant": 3817,
-			"gems": [
-			  41398,
-			  42702
-			]
-		  },
-		  {
-			"id": 44664,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 40557,
-			"enchant": 3808,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 40403,
-			"enchant": 3831
-		  },
-		  {
-			"id": 40550,
-			"enchant": 3832,
-			"gems": [
-			  42142,
-			  42142
-			]
-		  },
-		  {
-			"id": 40330,
-			"enchant": 3845,
-			"gems": [
-			  42142,
-			  0
-			]
-		  },
-		  {
-			"id": 40552,
-			"enchant": 3604,
-			"gems": [
-			  39996,
-			  0
-			]
-		  },
-		  {
-			"id": 40278,
-			"gems": [
-			  39996,
-			  39996
-			]
-		  },
-		  {
-			"id": 40556,
-			"enchant": 3823,
-			"gems": [
-			  39996,
-			  40037
-			]
-		  },
-		  {
-			"id": 40591,
-			"enchant": 3606
-		  },
-		  {
-			"id": 40075
-		  },
-		  {
-			"id": 39401
-		  },
-		  {
-			"id": 40256
-		  },
-		  {
-			"id": 42987
-		  },
-		  {
-			"id": 40384,
-			"enchant": 3368
-		  },
+		{"id":44006,"enchant":3817,"gems":[41398,42702]},
+		  {"id":44664,"gems":[39996]},
+		  {"id":40557,"enchant":3808,"gems":[39996]},
+		  {"id":40403,"enchant":3831},
+		  {"id":40550,"enchant":3832,"gems":[42142,42142]},
+		  {"id":40330,"enchant":3845,"gems":[42142,0]},
+		  {"id":40552,"enchant":3604,"gems":[39996,0]},
+		  {"id":40278,"gems":[39996,39996]},
+		  {"id":40556,"enchant":3823,"gems":[39996,40037]},
+		  {"id":40591,"enchant":3606},
+		  {"id":40075},
+		  {"id":39401},
+		  {"id":40256},
+		  {"id":42987},
+		  {"id":40384,"enchant":3368},
 		  {},
-		  {
-			"id": 40207
-		  }
+		  {"id":40207}
   ]}`),
 };
 
@@ -321,114 +427,48 @@ export const P2_BLOOD_BIS_PRESET = {
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
 	gear: EquipmentSpec.fromJsonString(`{   "items": [
-		{
-			"id": 46115,
-			"enchant": 3817,
-			"gems": [
-			  41398,
-			  42702
-			]
-		  },
-		  {
-			"id": 45459,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 46117,
-			"enchant": 3808,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 46032,
-			"enchant": 3831,
-			"gems": [
-			  39996,
-			  39996
-			]
-		  },
-		  {
-			"id": 46111,
-			"enchant": 3832,
-			"gems": [
-			  42142,
-			  42142
-			]
-		  },
-		  {
-			"id": 45663,
-			"enchant": 3845,
-			"gems": [
-			  42142,
-			  0
-			]
-		  },
-		  {
-			"id": 46113,
-			"enchant": 3604,
-			"gems": [
-			  39996,
-			  0
-			]
-		  },
-		  {
-			"id": 45241,
-			"gems": [
-			  39996,
-			  45862,
-			  39996
-			]
-		  },
-		  {
-			"id": 45134,
-			"enchant": 3823,
-			"gems": [
-			  39996,
-			  39996,
-			  39996
-			]
-		  },
-		  {
-			"id": 45599,
-			"enchant": 3606,
-			"gems": [
-			  39996,
-			  39996
-			]
-		  },
-		  {
-			"id": 45534,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 46048,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 42987
-		  },
-		  {
-			"id": 45931
-		  },
-		  {
-			"id": 45516,
-			"enchant": 3368,
-			"gems": [
-			  39996,
-			  39996
-			]
-		  },
+		{"id":46115,"enchant":3817,"gems":[41398,42702]},
+		  {"id":45459,"gems":[39996]},
+		  {"id":46117,"enchant":3808,"gems":[39996]},
+		  {"id":46032,"enchant":3831,"gems":[39996,39996]},
+		  {"id":46111,"enchant":3832,"gems":[42142,42142]},
+		  {"id":45663,"enchant":3845,"gems":[42142,0]},
+		  {"id":46113,"enchant":3604,"gems":[39996,0]},
+		  {"id":45241,"gems":[39996,45862,39996]},
+		  {"id":45134,"enchant":3823,"gems":[39996,39996,39996]},
+		  {"id":45599,"enchant":3606,"gems":[39996,39996]},
+		  {"id":45534,"gems":[39996]},
+		  {"id":46048,"gems":[39996]},
+		  {"id":42987},
+		  {"id":45931},
+		  {"id":45516,"enchant":3368,"gems":[39996,39996]},
 		  {},
-		  {
-			"id": 45254
-		  }
+		  {"id":45254}
+  ]}`),
+};
+
+export const P3_BLOOD_BIS_PRESET = {
+	name: 'P3 Blood',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
+	gear: EquipmentSpec.fromJsonString(`{   "items": [
+		{"id":48493,"enchant":3817,"gems":[41285,40142]},
+		  {"id":47458,"gems":[40142]},
+		  {"id":48495,"enchant":3808,"gems":[40111]},
+		  {"id":47546,"enchant":3831,"gems":[42142]},
+		  {"id":47449,"enchant":3832,"gems":[49110,42142,40142]},
+		  {"id":48008,"enchant":3845,"gems":[40111,0]},
+		  {"id":48492,"enchant":3604,"gems":[40142,0]},
+		  {"id":47429,"gems":[40142,40142,40111]},
+		  {"id":48494,"enchant":3823,"gems":[40142,40111]},
+		  {"id":45599,"enchant":3606,"gems":[40111,40111]},
+		  {"id":47993,"gems":[40111,45862]},
+		  {"id":47413,"gems":[40142]},
+		  {"id":45931},
+		  {"id":47464},
+		  {"id":47446,"enchant":3368,"gems":[42142,40141]},
+		  {},
+		  {"id":47673}
   ]}`),
 };
 
@@ -437,94 +477,23 @@ export const P1_UNHOLY_2H_PRERAID_PRESET = {
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2 && player.getTalents().nervesOfColdSteel == 0,
 	gear: EquipmentSpec.fromJsonString(`{ "items": [
-		{
-			"id": 41386,
-			"enchant": 3817,
-			"gems": [
-				41400,
-				49110
-			]
-		},
-		{
-			"id": 37397
-		},
-		{
-			"id": 37627,
-			"enchant": 3808,
-			"gems": [
-				39996
-			]
-		},
-		{
-			"id": 37647,
-			"enchant": 3831
-		},
-		{
-			"id": 39617,
-			"enchant": 3832,
-			"gems": [
-				42142,
-				39996
-			]
-		},
-		{
-			"id": 41355,
-			"enchant": 3845,
-			"gems": [
-				0
-			]
-		},
-		{
-			"id": 39618,
-			"enchant": 3604,
-			"gems": [
-				39996,
-				0
-			]
-		},
-		{
-			"id": 40688,
-			"gems": [
-				39996,
-				42142
-			]
-		},
-		{
-			"id": 37193,
-			"enchant": 3823,
-			"gems": [
-				42142,
-				39996
-			]
-		},
-		{
-			"id": 44306,
-			"enchant": 3606,
-			"gems": [
-				39996,
-				39996
-			]
-		},
-		{
-			"id": 37642
-		},
-		{
-			"id": 44935
-		},
-		{
-			"id": 40684
-		},
-		{
-			"id": 42987
-		},
-		{
-			"id": 41257,
-			"enchant": 3368
-		},
+		{"id":41386,"enchant":3817,"gems":[41400,49110]},
+		{"id":37397},
+		{"id":37627,"enchant":3808,"gems":[39996]},
+		{"id":37647,"enchant":3831},
+		{"id":39617,"enchant":3832,"gems":[42142,39996]},
+		{"id":41355,"enchant":3845,"gems":[0]},
+		{"id":39618,"enchant":3604,"gems":[39996,0]},
+		{"id":40688,"gems":[39996,42142]},
+		{"id":37193,"enchant":3823,"gems":[42142,39996]},
+		{"id":44306,"enchant":3606,"gems":[39996,39996]},
+		{"id":37642},
+		{"id":44935},
+		{"id":40684},
+		{"id":42987},
+		{"id":41257,"enchant":3368},
 		{},
-		{
-			"id": 40867
-		}
+		{"id":40867}
   ]}`),
 };
 
@@ -533,94 +502,23 @@ export const P1_UNHOLY_2H_BIS_PRESET = {
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2 && player.getTalents().nervesOfColdSteel == 0,
 	gear: EquipmentSpec.fromJsonString(`{ "items": [
-		{
-			"id": 44006,
-			"enchant": 3817,
-			"gems": [
-				41400,
-				49110
-			]
-		},
-		{
-			"id": 44664,
-			"gems": [
-				39996
-			]
-		},
-		{
-			"id": 40557,
-			"enchant": 3808,
-			"gems": [
-				39996
-			]
-		},
-		{
-			"id": 40403,
-			"enchant": 3831
-		},
-		{
-			"id": 40550,
-			"enchant": 3832,
-			"gems": [
-				42142,
-				39996
-			]
-		},
-		{
-			"id": 40330,
-			"enchant": 3845,
-			"gems": [
-				39996,
-				0
-			]
-		},
-		{
-			"id": 40552,
-			"enchant": 3604,
-			"gems": [
-				40038,
-				0
-			]
-		},
-		{
-			"id": 40278,
-			"gems": [
-				42142,
-				42142
-			]
-		},
-		{
-			"id": 40556,
-			"enchant": 3823,
-			"gems": [
-				39996,
-				39996
-			]
-		},
-		{
-			"id": 40591,
-			"enchant": 3606
-		},
-		{
-			"id": 39401
-		},
-		{
-			"id": 40075
-		},
-		{
-			"id": 40256
-		},
-		{
-			"id": 42987
-		},
-		{
-			"id": 40384,
-			"enchant": 3368
-		},
+		{"id":44006,"enchant":3817,"gems":[41400,49110]},
+		{"id":44664,"gems":[39996]},
+		{"id":40557,"enchant":3808,"gems":[39996]},
+		{"id":40403,"enchant":3831},
+		{"id":40550,"enchant":3832,"gems":[42142,39996]},
+		{"id":40330,"enchant":3845,"gems":[39996,0]},
+		{"id":40552,"enchant":3604,"gems":[40038,0]},
+		{"id":40278,"gems":[42142,42142]},
+		{"id":40556,"enchant":3823,"gems":[39996,39996]},
+		{"id":40591,"enchant":3606},
+		{"id":39401},
+		{"id":40075},
+		{"id":40256},
+		{"id":42987},
+		{"id":40384,"enchant":3368},
 		{},
-		{
-			"id": 40207
-		}
+		{"id":40207}
   ]}`),
 };
 
@@ -629,97 +527,23 @@ export const P1_UNHOLY_DW_PRERAID_PRESET = {
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2 && player.getTalents().nervesOfColdSteel > 0,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 41386,
-			"enchant": 3817,
-			"gems": [
-				41400,
-				49110
-			]
-		},
-		{
-			"id": 37397
-		},
-		{
-			"id": 37627,
-			"enchant": 3808,
-			"gems": [
-				39996
-			]
-		},
-		{
-			"id": 37647,
-			"enchant": 3831
-		},
-		{
-			"id": 39617,
-			"enchant": 3832,
-			"gems": [
-				42142,
-				39996
-			]
-		},
-		{
-			"id": 41355,
-			"enchant": 3845,
-			"gems": [
-				0
-			]
-		},
-		{
-			"id": 39618,
-			"enchant": 3604,
-			"gems": [
-				39996,
-				0
-			]
-		},
-		{
-			"id": 40688,
-			"gems": [
-				39996,
-				42142
-			]
-		},
-		{
-			"id": 37193,
-			"enchant": 3823,
-			"gems": [
-				42142,
-				39996
-			]
-		},
-		{
-			"id": 44306,
-			"enchant": 3606,
-			"gems": [
-				39996,
-				39996
-			]
-		},
-		{
-			"id": 37642
-		},
-		{
-			"id": 44935
-		},
-		{
-			"id": 40684
-		},
-		{
-			"id": 42987
-		},
-		{
-			"id": 41383,
-			"enchant": 3368
-		},
-		{
-			"id": 40703,
-			"enchant": 3368
-		},
-		{
-			"id": 40867
-		}
+		{"id":41386,"enchant":3817,"gems":[41400,49110]},
+		{"id":37397},
+		{"id":37627,"enchant":3808,"gems":[39996]},
+		{"id":37647,"enchant":3831},
+		{"id":39617,"enchant":3832,"gems":[42142,39996]},
+		{"id":41355,"enchant":3845,"gems":[0]},
+		{"id":39618,"enchant":3604,"gems":[39996,0]},
+		{"id":40688,"gems":[39996,42142]},
+		{"id":37193,"enchant":3823,"gems":[42142,39996]},
+		{"id":44306,"enchant":3606,"gems":[39996,39996]},
+		{"id":37642},
+		{"id":44935},
+		{"id":40684},
+		{"id":42987},
+		{"id":41383,"enchant":3368},
+		{"id":40703,"enchant":3368},
+		{"id":40867}
   ]}`),
 };
 
@@ -728,93 +552,23 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2 && player.getTalents().nervesOfColdSteel > 0,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 44006,
-			"enchant": 3817,
-			"gems": [
-				41398,
-				42702
-			]
-		},
-		{
-			"id": 39421
-		},
-		{
-			"id": 40557,
-			"enchant": 3808,
-			"gems": [
-				39996
-			]
-		},
-		{
-			"id": 40403,
-			"enchant": 3831
-		},
-		{
-			"id": 40550,
-			"enchant": 3832,
-			"gems": [
-				42142,
-				39996
-			]
-		},
-		{
-			"id": 40330,
-			"enchant": 3845,
-			"gems": [
-				39996,
-				0
-			]
-		},
-		{
-			"id": 40347,
-			"enchant": 3604,
-			"gems": [
-				39996,
-				0
-			]
-		},
-		{
-			"id": 40278,
-			"gems": [
-				42142,
-				42142
-			]
-		},
-		{
-			"id": 40294,
-			"enchant": 3823
-		},
-		{
-			"id": 39706,
-			"enchant": 3606,
-			"gems": [
-				39996
-			]
-		},
-		{
-			"id": 39401
-		},
-		{
-			"id": 40075
-		},
-		{
-			"id": 37390
-		},
-		{
-			"id": 42987
-		},
-		{
-			"id": 40402,
-			"enchant": 3368
-		},
-		{
-			"id": 40491,
-			"enchant": 3368
-		},
-		{
-			"id": 42620
-		}
+		{"id":44006,"enchant":3817,"gems":[41398,42702]},
+		{"id":39421},
+		{"id":40557,"enchant":3808,"gems":[39996]},
+		{"id":40403,"enchant":3831},
+		{"id":40550,"enchant":3832,"gems":[42142,39996]},
+		{"id":40330,"enchant":3845,"gems":[39996,0]},
+		{"id":40347,"enchant":3604,"gems":[39996,0]},
+		{"id":40278,"gems":[42142,42142]},
+		{"id":40294,"enchant":3823},
+		{"id":39706,"enchant":3606,"gems":[39996]},
+		{"id":39401},
+		{"id":40075},
+		{"id":37390},
+		{"id":42987},
+		{"id":40402,"enchant":3368},
+		{"id":40491,"enchant":3368},
+		{"id":42620}
   ]}`),
 };
 
@@ -823,114 +577,48 @@ export const P2_UNHOLY_DW_BIS_PRESET = {
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2 && player.getTalents().nervesOfColdSteel > 0,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{
-			"id": 45472,
-			"enchant": 3817,
-			"gems": [
-			  41398,
-			  40041
-			]
-		  },
-		  {
-			"id": 46040,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 46117,
-			"enchant": 3808,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 45588,
-			"enchant": 3831,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 46111,
-			"enchant": 3832,
-			"gems": [
-			  42142,
-			  42142
-			]
-		  },
-		  {
-			"id": 45663,
-			"enchant": 3845,
-			"gems": [
-			  39996,
-			  0
-			]
-		  },
-		  {
-			"id": 45481,
-			"enchant": 3604,
-			"gems": [
-			  0
-			]
-		  },
-		  {
-			"id": 45241,
-			"gems": [
-			  42142,
-			  45862,
-			  39996
-			]
-		  },
-		  {
-			"id": 45134,
-			"enchant": 3823,
-			"gems": [
-			  40041,
-			  39996,
-			  40022
-			]
-		  },
-		  {
-			"id": 45599,
-			"enchant": 3606,
-			"gems": [
-			  39996,
-			  39996
-			]
-		  },
-		  {
-			"id": 45534,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 45250
-		  },
-		  {
-			"id": 45609
-		  },
-		  {
-			"id": 42987
-		  },
-		  {
-			"id": 46097,
-			"enchant": 3368,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 46036,
-			"enchant": 3368,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 45254
-		  }
+		{"id":45472,"enchant":3817,"gems":[41398,40041]},
+		  {"id":46040,"gems":[39996]},
+		  {"id":46117,"enchant":3808,"gems":[39996]},
+		  {"id":45588,"enchant":3831,"gems":[39996]},
+		  {"id":46111,"enchant":3832,"gems":[42142,42142]},
+		  {"id":45663,"enchant":3845,"gems":[39996,0]},
+		  {"id":45481,"enchant":3604,"gems":[0]},
+		  {"id":45241,"gems":[42142,45862,39996]},
+		  {"id":45134,"enchant":3823,"gems":[40041,39996,40022]},
+		  {"id":45599,"enchant":3606,"gems":[39996,39996]},
+		  {"id":45534,"gems":[39996]},
+		  {"id":45250},
+		  {"id":45609},
+		  {"id":42987},
+		  {"id":46097,"enchant":3368,"gems":[39996]},
+		  {"id":46036,"enchant":3368,"gems":[39996]},
+		  {"id":45254}
+  ]}`),
+};
+
+export const P3_UNHOLY_DW_BIS_PRESET = {
+	name: 'P3 DW Unholy',
+	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2 && player.getTalents().nervesOfColdSteel > 0,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+		{"id":48493,"enchant":3817,"gems":[41398,40146]},
+		  {"id":47458,"gems":[40146]},
+		  {"id":48495,"enchant":3808,"gems":[40111]},
+		  {"id":47548,"enchant":3831,"gems":[40111]},
+		  {"id":48491,"enchant":3832,"gems":[42142,42142]},
+		  {"id":45663,"enchant":3845,"gems":[40111,0]},
+		  {"id":48492,"enchant":3604,"gems":[40146,0]},
+		  {"id":47429,"gems":[40111,45862,40111]},
+		  {"id":47465,"enchant":3823,"gems":[49110,40111,40146]},
+		  {"id":45599,"enchant":3606,"gems":[40111,40111]},
+		  {"id":47413,"gems":[40146]},
+		  {"id":45534,"gems":[42142]},
+		  {"id":47464},
+		  {"id":45609},
+		  {"id":47528,"enchant":3368,"gems":[40111]},
+		  {"id":47528,"enchant":3368,"gems":[40111]},
+		  {"id":47673}
   ]}`),
 };
 
@@ -939,104 +627,23 @@ export const P1_FROST_PRE_BIS_PRESET = {
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
 	gear: EquipmentSpec.fromJsonString(`{   "items": [
-		{
-			"id": 41386,
-			"enchant": 3817,
-			"gems": [
-				41398,
-				49110
-			]
-		},
-		{
-			"id": 42645,
-			"gems": [
-				42142
-			]
-		},
-		{
-			"id": 34388,
-			"enchant": 3808,
-			"gems": [
-				39996,
-				39996
-			]
-		},
-		{
-			"id": 37647,
-			"enchant": 3831
-		},
-		{
-			"id": 39617,
-			"enchant": 3832,
-			"gems": [
-				42142,
-				39996
-			]
-		},
-		{
-			"id": 41355,
-			"enchant": 3845,
-			"gems": [
-				0
-			]
-		},
-		{
-			"id": 39618,
-			"enchant": 3604,
-			"gems": [
-				39996,
-				0
-			]
-		},
-		{
-			"id": 37171,
-			"gems": [
-				39996,
-				39996
-			]
-		},
-		{
-			"id": 37193,
-			"enchant": 3823,
-			"gems": [
-				42142,
-				39996
-			]
-		},
-		{
-			"id": 44306,
-			"enchant": 3606,
-			"gems": [
-				39996,
-				39996
-			]
-		},
-		{
-			"id": 42642,
-			"gems": [
-				39996
-			]
-		},
-		{
-			"id": 44935
-		},
-		{
-			"id": 40684
-		},
-		{
-			"id": 42987
-		},
-		{
-			"id": 41383,
-			"enchant": 3370
-		},
-		{
-			"id": 43611,
-			"enchant": 3368
-		},
-		{
-			"id": 40715
-		}
+		{"id":41386,"enchant":3817,"gems":[41398,49110]},
+		{"id":42645,"gems":[42142]},
+		{"id":34388,"enchant":3808,"gems":[39996,39996]},
+		{"id":37647,"enchant":3831},
+		{"id":39617,"enchant":3832,"gems":[42142,39996]},
+		{"id":41355,"enchant":3845,"gems":[0]},
+		{"id":39618,"enchant":3604,"gems":[39996,0]},
+		{"id":37171,"gems":[39996,39996]},
+		{"id":37193,"enchant":3823,"gems":[42142,39996]},
+		{"id":44306,"enchant":3606,"gems":[39996,39996]},
+		{"id":42642,"gems":[39996]},
+		{"id":44935},
+		{"id":40684},
+		{"id":42987},
+		{"id":41383,"enchant":3370},
+		{"id":43611,"enchant":3368},
+		{"id":40715}
   ]}`),
 };
 
@@ -1045,97 +652,23 @@ export const P1_FROST_BIS_PRESET = {
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
 	gear: EquipmentSpec.fromJsonString(`{   "items": [
-		{
-			"id": 44006,
-			"enchant": 3817,
-			"gems": [
-				41398,
-				42702
-			]
-		},
-		{
-			"id": 44664,
-			"gems": [
-				39996
-			]
-		},
-		{
-			"id": 40557,
-			"enchant": 3808,
-			"gems": [
-				39996
-			]
-		},
-		{
-			"id": 40403,
-			"enchant": 3831
-		},
-		{
-			"id": 40550,
-			"enchant": 3832,
-			"gems": [
-				42142,
-				39996
-			]
-		},
-		{
-			"id": 40330,
-			"enchant": 3845,
-			"gems": [
-				39996,
-				0
-			]
-		},
-		{
-			"id": 40552,
-			"enchant": 3604,
-			"gems": [
-				39996,
-				0
-			]
-		},
-		{
-			"id": 40278,
-			"gems": [
-				39996,
-				42142
-			]
-		},
-		{
-			"id": 40556,
-			"enchant": 3823,
-			"gems": [
-				42142,
-				39996
-			]
-		},
-		{
-			"id": 40591,
-			"enchant": 3606
-		},
-		{
-			"id": 39401
-		},
-		{
-			"id": 40075
-		},
-		{
-			"id": 40256
-		},
-		{
-			"id": 42987
-		},
-		{
-			"id": 40189,
-			"enchant": 3370
-		},
-		{
-			"id": 40189,
-			"enchant": 3368
-		},
-		{
-			"id": 40207
-		}
+		{"id":44006,"enchant":3817,"gems":[41398,42702]},
+		{"id":44664,"gems":[39996]},
+		{"id":40557,"enchant":3808,"gems":[39996]},
+		{"id":40403,"enchant":3831},
+		{"id":40550,"enchant":3832,"gems":[42142,39996]},
+		{"id":40330,"enchant":3845,"gems":[39996,0]},
+		{"id":40552,"enchant":3604,"gems":[39996,0]},
+		{"id":40278,"gems":[39996,42142]},
+		{"id":40556,"enchant":3823,"gems":[42142,39996]},
+		{"id":40591,"enchant":3606},
+		{"id":39401},
+		{"id":40075},
+		{"id":40256},
+		{"id":42987},
+		{"id":40189,"enchant":3370},
+		{"id":40189,"enchant":3368},
+		{"id":40207}
   ]}`),
 };
 
@@ -1144,119 +677,48 @@ export const P2_FROST_BIS_PRESET = {
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
 	gear: EquipmentSpec.fromJsonString(`{   "items": [
-		{
-			"id": 46115,
-			"enchant": 3817,
-			"gems": [
-			  41398,
-			  42702
-			]
-		  },
-		  {
-			"id": 45459,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 46117,
-			"enchant": 3808,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 46032,
-			"enchant": 3831,
-			"gems": [
-			  39996,
-			  39996
-			]
-		  },
-		  {
-			"id": 46111,
-			"enchant": 3832,
-			"gems": [
-			  42142,
-			  42142
-			]
-		  },
-		  {
-			"id": 45663,
-			"enchant": 3845,
-			"gems": [
-			  39996,
-			  0
-			]
-		  },
-		  {
-			"id": 46113,
-			"enchant": 3604,
-			"gems": [
-			  39996,
-			  0
-			]
-		  },
-		  {
-			"id": 45241,
-			"gems": [
-			  42142,
-			  45862,
-			  39996
-			]
-		  },
-		  {
-			"id": 45134,
-			"enchant": 3823,
-			"gems": [
-			  39996,
-			  39996,
-			  39996
-			]
-		  },
-		  {
-			"id": 45599,
-			"enchant": 3606,
-			"gems": [
-			  39996,
-			  39996
-			]
-		  },
-		  {
-			"id": 45608,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 45534,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 45931
-		  },
-		  {
-			"id": 42987
-		  },
-		  {
-			"id": 46097,
-			"enchant": 3370,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 46097,
-			"enchant": 3368,
-			"gems": [
-			  39996
-			]
-		  },
-		  {
-			"id": 40207
-		  }
+		{"id":46115,"enchant":3817,"gems":[41398,42702]},
+		  {"id":45459,"gems":[39996]},
+		  {"id":46117,"enchant":3808,"gems":[39996]},
+		  {"id":46032,"enchant":3831,"gems":[39996,39996]},
+		  {"id":46111,"enchant":3832,"gems":[42142,42142]},
+		  {"id":45663,"enchant":3845,"gems":[39996,0]},
+		  {"id":46113,"enchant":3604,"gems":[39996,0]},
+		  {"id":45241,"gems":[42142,45862,39996]},
+		  {"id":45134,"enchant":3823,"gems":[39996,39996,39996]},
+		  {"id":45599,"enchant":3606,"gems":[39996,39996]},
+		  {"id":45608,"gems":[39996]},
+		  {"id":45534,"gems":[39996]},
+		  {"id":45931},
+		  {"id":42987},
+		  {"id":46097,"enchant":3370,"gems":[39996]},
+		  {"id":46097,"enchant":3368,"gems":[39996]},
+		  {"id":40207}
+  ]}`),
+};
+
+export const P3_FROST_BIS_PRESET = {
+	name: 'P3 Frost',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
+	gear: EquipmentSpec.fromJsonString(`{   "items": [
+		{"id":48493,"enchant":3817,"gems":[41398,40142]},
+		  {"id":45459,"gems":[40111]},
+		  {"id":48495,"enchant":3808,"gems":[40111]},
+		  {"id":47548,"enchant":3831,"gems":[40111]},
+		  {"id":48491,"enchant":3832,"gems":[42142,42142]},
+		  {"id":45663,"enchant":3845,"gems":[40111,0]},
+		  {"id":47492,"enchant":3604,"gems":[49110,40111,0]},
+		  {"id":45241,"gems":[40111,42142,40111]},
+		  {"id":48494,"enchant":3823,"gems":[40142,40111]},
+		  {"id":47473,"enchant":3606,"gems":[40142,40111]},
+		  {"id":46966,"gems":[40111]},
+		  {"id":45534,"gems":[40111]},
+		  {"id":47464},
+		  {"id":45931},
+		  {"id":47528,"enchant":3370,"gems":[40111]},
+		  {"id":47528,"enchant":3368,"gems":[40111]},
+		  {"id":40207}
   ]}`),
 };
 
@@ -1265,96 +727,22 @@ export const P1_FROSTSUBUNH_BIS_PRESET = {
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
 	gear: EquipmentSpec.fromJsonString(`{   "items": [
-		{
-			"id": 44006,
-			"enchant": 3817,
-			"gems": [
-				41398,
-				42702
-			]
-		},
-		{
-			"id": 44664,
-			"gems": [
-				40003
-			]
-		},
-		{
-			"id": 40557,
-			"enchant": 3808,
-			"gems": [
-				40003
-			]
-		},
-		{
-			"id": 40403,
-			"enchant": 3831
-		},
-		{
-			"id": 40550,
-			"enchant": 3832,
-			"gems": [
-				42142,
-				40003
-			]
-		},
-		{
-			"id": 40330,
-			"enchant": 3845,
-			"gems": [
-				39996,
-				0
-			]
-		},
-		{
-			"id": 40552,
-			"enchant": 3604,
-			"gems": [
-				40058,
-				0
-			]
-		},
-		{
-			"id": 40278,
-			"gems": [
-				39996,
-				42142
-			]
-		},
-		{
-			"id": 40556,
-			"enchant": 3823,
-			"gems": [
-				42142,
-				39996
-			]
-		},
-		{
-			"id": 40591,
-			"enchant": 3606
-		},
-		{
-			"id": 39401
-		},
-		{
-			"id": 40075
-		},
-		{
-			"id": 40256
-		},
-		{
-			"id": 42987
-		},
-		{
-			"id": 40189,
-			"enchant": 3370
-		},
-		{
-			"id": 40189,
-			"enchant": 3368
-		},
-		{
-			"id": 40207
-		}
+		{"id":44006,"enchant":3817,"gems":[41398,42702]},
+		{"id":44664,"gems":[40003]},
+		{"id":40557,"enchant":3808,"gems":[40003]},
+		{"id":40403,"enchant":3831},
+		{"id":40550,"enchant":3832,"gems":[42142,40003]},
+		{"id":40330,"enchant":3845,"gems":[39996,0]},
+		{"id":40552,"enchant":3604,"gems":[40058,0]},
+		{"id":40278,"gems":[39996,42142]},
+		{"id":40556,"enchant":3823,"gems":[42142,39996]},
+		{"id":40591,"enchant":3606},
+		{"id":39401},
+		{"id":40075},
+		{"id":40256},
+		{"id":42987},
+		{"id":40189,"enchant":3370},
+		{"id":40189,"enchant":3368},
+		{"id":40207}
   ]}`),
 };

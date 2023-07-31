@@ -33,7 +33,7 @@ const leftoversUrlBin = '/wotlk/assets/database/leftover_db.bin';
 const READ_JSON = true;
 
 export class Database {
-	private static loadPromise: Promise<Database>|null = null;
+	private static loadPromise: Promise<Database> | null = null;
 	static get(): Promise<Database> {
 		if (Database.loadPromise == null) {
 			if (READ_JSON) {
@@ -62,10 +62,10 @@ export class Database {
 	}
 
 	// Checks if any items in the equipment are missing from the current DB. If so, loads the leftover DB.
-	static async loadLeftoversIfNecessary(equipment: EquipmentSpec): Promise<void> {
+	static async loadLeftoversIfNecessary(equipment: EquipmentSpec): Promise<Database> {
 		const db = await Database.get();
 		if (db.loadedLeftovers) {
-			return;
+			return db;
 		}
 
 		const shouldLoadLeftovers = equipment.items.some(item => item.id != 0 && !db.items[item.id]);
@@ -74,6 +74,7 @@ export class Database {
 			db.loadProto(leftoverDb);
 			db.loadedLeftovers = true;
 		}
+		return db;
 	}
 
 	private readonly items: Record<number, Item> = {};
@@ -126,10 +127,12 @@ export class Database {
 		db.glyphIds.forEach(id => this.glyphIds.push(id));
 	}
 
+	getAllItems(): Array<Item> {
+		return Object.values(this.items);
+	}
+
 	getItems(slot: ItemSlot): Array<Item> {
-		let items = Object.values(this.items);
-		items = items.filter(item => getEligibleItemSlots(item).includes(slot));
-		return items;
+		return this.getAllItems().filter(item => getEligibleItemSlots(item).includes(slot));
 	}
 
 	getEnchants(slot: ItemSlot): Array<Enchant> {
@@ -144,15 +147,19 @@ export class Database {
 		return gems;
 	}
 
-	getNpc(npcId: number): Npc|null {
+	getNpc(npcId: number): Npc | null {
 		return this.npcs[npcId] || null;
 	}
-	getZone(zoneId: number): Zone|null {
+	getZone(zoneId: number): Zone | null {
 		return this.zones[zoneId] || null;
 	}
 
 	getMatchingGems(socketColor: GemColor): Array<Gem> {
 		return Object.values(this.gems).filter(gem => gemMatchesSocket(gem, socketColor));
+	}
+
+	lookupGem(itemID: number): Gem {
+		return this.gems[itemID]
 	}
 
 	lookupItemSpec(itemSpec: ItemSpec): EquippedItem | null {
@@ -165,7 +172,7 @@ export class Database {
 			const slots = getEligibleItemSlots(item);
 			for (let i = 0; i < slots.length; i++) {
 				enchant = (this.enchantsBySlot[slots[i]] || [])
-						.find(enchant => [enchant.effectId, enchant.itemId, enchant.spellId].includes(itemSpec.enchant)) || null;
+					.find(enchant => [enchant.effectId, enchant.itemId, enchant.spellId].includes(itemSpec.enchant)) || null;
 				if (enchant) {
 					break;
 				}

@@ -19,8 +19,8 @@ func (priest *Priest) newMindSearSpell(numTicks int32) *core.Spell {
 	return priest.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 53023, Tag: numTicks},
 		SpellSchool: core.SpellSchoolShadow,
-		ProcMask:    core.ProcMaskEmpty,
-		Flags:       core.SpellFlagChanneled,
+		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       core.SpellFlagChanneled | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.28,
@@ -39,7 +39,7 @@ func (priest *Priest) newMindSearSpell(numTicks int32) *core.Spell {
 			0.02*float64(priest.Talents.Darkness) +
 			0.01*float64(priest.Talents.TwinDisciplines),
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
-
+		CritMultiplier:   priest.DefaultSpellCritMultiplier(),
 		Dot: core.DotConfig{
 			Aura: core.Aura{
 				Label: "MindSear-" + strconv.Itoa(int(numTicks)),
@@ -50,28 +50,38 @@ func (priest *Priest) newMindSearSpell(numTicks int32) *core.Spell {
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
 				dot.SnapshotBaseDamage = sim.Roll(212, 228) + miseryCoeff*dot.Spell.SpellPower()
+				dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
 				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				for _, aoeTarget := range sim.Encounter.TargetUnits {
-					result := dot.CalcAndDealPeriodicSnapshotDamage(sim, aoeTarget, dot.Spell.OutcomeMagicHit)
-					if result.Landed() {
-						priest.AddShadowWeavingStack(sim)
-					}
-					if result.DidCrit() && hasGlyphOfShadow {
-						priest.ShadowyInsightAura.Activate(sim)
-					}
+				result := dot.CalcSnapshotDamage(sim, target, dot.OutcomeMagicHitAndSnapshotCrit)
+				dot.Spell.DealDamage(sim, result)
+
+				if result.Landed() {
+					priest.AddShadowWeavingStack(sim)
+				}
+				if result.DidCrit() && hasGlyphOfShadow {
+					priest.ShadowyInsightAura.Activate(sim)
 				}
 			},
 		},
-
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			for _, aoeTarget := range sim.Encounter.TargetUnits {
-				result := spell.CalcAndDealOutcome(sim, aoeTarget, spell.OutcomeMagicHit)
-				if result.Landed() {
-					spell.Dot(target).Apply(sim)
+				if aoeTarget != sim.Encounter.TargetUnits[0] {
+
+					result := spell.CalcOutcome(sim, aoeTarget, spell.OutcomeMagicHit)
+					if result.Landed() {
+						spell.SpellMetrics[aoeTarget.UnitIndex].Hits--
+						spell.Dot(aoeTarget).Apply(sim)
+					}
+					spell.DealOutcome(sim, result)
 				}
 			}
+		},
+		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
+			baseDamage := sim.Roll(212, 228) + miseryCoeff*spell.SpellPower()
+			baseDamage *= float64(numTicks)
+			return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicCrit)
 		},
 	})
 }

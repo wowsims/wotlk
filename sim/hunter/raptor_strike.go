@@ -11,7 +11,7 @@ func (hunter *Hunter) registerRaptorStrikeSpell() {
 		ActionID:    core.ActionID{SpellID: 48996},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHAuto | core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagAPL,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.04,
@@ -27,7 +27,7 @@ func (hunter *Hunter) registerRaptorStrikeSpell() {
 
 		BonusCritRating:  float64(hunter.Talents.SavageStrikes) * 10 * core.CritRatingPerCritChance,
 		DamageMultiplier: 1,
-		CritMultiplier:   hunter.critMultiplier(false, false),
+		CritMultiplier:   hunter.critMultiplier(false, false, false),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

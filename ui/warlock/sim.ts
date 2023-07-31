@@ -1,33 +1,14 @@
 import {
-	RaidBuffs,
 	PartyBuffs,
-	IndividualBuffs,
-	Debuffs,
 	Spec,
 	Stat,
-	TristateEffect,
-	Race,
 } from '../core/proto/common.js';
 
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
-import { TypedEvent } from '../core/typed_event.js';
-
-import {
-	Warlock,
-	Warlock_Rotation as WarlockRotation,
-	WarlockTalents as WarlockTalents,
-	Warlock_Options as WarlockOptions,
-	Warlock_Options_Armor as Armor,
-	Warlock_Options_Summon as Summon,
-	Warlock_Options_WeaponImbue as WeaponImbue,
-} from '../core/proto/warlock.js';
-
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
-import * as Tooltips from '../core/constants/tooltips.js';
-
 import * as WarlockInputs from './inputs.js';
 import * as Presets from './presets.js';
 
@@ -38,8 +19,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			cssScheme: 'warlock',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"Several secondary spells need to be implemented.",
-				"Rotations will be optimized.",
+				"Drain Soul is currently disabled for APL rotations"
 			],
 
 			// All stats for which EP should be calculated.
@@ -69,7 +49,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P2_Preset_Affliction.gear,
+				gear: Presets.P3_Preset_Affliction_Horde.gear,
 
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
@@ -156,9 +136,14 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 					Presets.DemonologyTalents,
 					Presets.DestructionTalents,
 				],
-				//Preset gear configurations that the user can quickly select.
+				// Preset rotations that the user can quickly select.
+				rotations: [
+					Presets.APL_Demo_Default,
+					Presets.APL_Destro_Default,
+				],
+
+				// Preset gear configurations that the user can quickly select.
 				gear: [
-					// Presets.Naked,
 					Presets.SWP_BIS,
 					Presets.P1_PreBiS_11,
 					Presets.P1_PreBiS_14,
@@ -166,6 +151,12 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 					Presets.P1_Preset_Demo_Destro,
 					Presets.P2_Preset_Affliction,
 					Presets.P2_Preset_Demo_Destro,
+					Presets.P3_Preset_Affliction_Horde,
+					Presets.P3_Preset_Affliction_Alliance,
+					Presets.P3_Preset_Demo_Horde,
+					Presets.P3_Preset_Demo_Alliance,
+					Presets.P3_Preset_Destro_Horde,
+					Presets.P3_Preset_Destro_Alliance,
 				],
 			},
 		});

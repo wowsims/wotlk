@@ -21,7 +21,7 @@ addEventListener('message', async (e) => {
 
 	var content = await response.arrayBuffer();
 	var outputData;
-	if (msg == "raidSimAsync" || msg == "statWeightsAsync") {
+	if (msg == "raidSimAsync" || msg == "statWeightsAsync" || msg == "bulkSimAsync") {
 		while (true) {
 			let progressResponse = await fetch("/asyncProgress", {
 				method: 'POST',

@@ -123,9 +123,7 @@ func (mcd *MajorCooldown) tryActivateInternal(sim *Simulation, character *Charac
 	return mcd.tryActivateHelper(sim, character)
 }
 
-// Activates this MCD, if all the conditions pass.
-// Returns whether the MCD was activated.
-func (mcd *MajorCooldown) tryActivateHelper(sim *Simulation, character *Character) bool {
+func (mcd *MajorCooldown) shouldActivateHelper(sim *Simulation, character *Character) bool {
 	if mcd.Type.Matches(CooldownTypeSurvival) && character.cooldownConfigs.HpPercentForDefensives != 0 {
 		if character.CurrentHealthPercent() > character.cooldownConfigs.HpPercentForDefensives {
 			return false
@@ -136,15 +134,25 @@ func (mcd *MajorCooldown) tryActivateHelper(sim *Simulation, character *Characte
 		return false
 	}
 
-	var shouldActivate bool
 	if mcd.numUsages < len(mcd.timings) {
-		shouldActivate = sim.CurrentTime >= mcd.timings[mcd.numUsages]
+		return sim.CurrentTime >= mcd.timings[mcd.numUsages]
 	} else {
-		shouldActivate = mcd.ShouldActivate(sim, character)
+		return mcd.ShouldActivate(sim, character)
 	}
+}
+
+// Activates this MCD, if all the conditions pass.
+// Returns whether the MCD was activated.
+func (mcd *MajorCooldown) tryActivateHelper(sim *Simulation, character *Character) bool {
+	shouldActivate := mcd.shouldActivateHelper(sim, character)
 
 	if shouldActivate {
-		mcd.Spell.Cast(sim, character.CurrentTarget)
+		if mcd.Spell.Flags.Matches(SpellFlagHelpful) {
+			mcd.Spell.Cast(sim, &character.Unit)
+		} else {
+			mcd.Spell.Cast(sim, character.CurrentTarget)
+		}
+
 		mcd.numUsages++
 		if sim.Log != nil {
 			character.Log(sim, "Major cooldown used: %s", mcd.Spell.ActionID)
@@ -155,8 +163,10 @@ func (mcd *MajorCooldown) tryActivateHelper(sim *Simulation, character *Characte
 }
 
 type cooldownConfigs struct {
-	Cooldowns              []*proto.Cooldown
-	HpPercentForDefensives float64
+	Cooldowns                 []*proto.Cooldown
+	HpPercentForDefensives    float64
+	DesyncProcTrinket1Seconds int32
+	DesyncProcTrinket2Seconds int32
 }
 
 type majorCooldownManager struct {
@@ -185,7 +195,9 @@ func newMajorCooldownManager(cooldowns *proto.Cooldowns) majorCooldownManager {
 	}
 
 	cooldownConfigs := cooldownConfigs{
-		HpPercentForDefensives: cooldowns.HpPercentForDefensives,
+		HpPercentForDefensives:    cooldowns.HpPercentForDefensives,
+		DesyncProcTrinket1Seconds: cooldowns.DesyncProcTrinket1Seconds,
+		DesyncProcTrinket2Seconds: cooldowns.DesyncProcTrinket2Seconds,
 	}
 	for _, cooldownConfig := range cooldowns.Cooldowns {
 		if cooldownConfig.Id != nil {
@@ -264,6 +276,90 @@ func (mcdm *majorCooldownManager) DelayDPSCooldowns(delay time.Duration) {
 	})
 }
 
+func desyncTrinketProcAura(aura *Aura, delay time.Duration) {
+	if cb := aura.OnSpellHitDealt; cb != nil {
+		aura.OnSpellHitDealt = func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
+			if sim.CurrentTime >= delay {
+				cb(aura, sim, spell, result)
+			}
+		}
+	}
+
+	if cb := aura.OnSpellHitTaken; cb != nil {
+		aura.OnSpellHitTaken = func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
+			if sim.CurrentTime >= delay {
+				cb(aura, sim, spell, result)
+			}
+		}
+	}
+
+	if cb := aura.OnPeriodicDamageDealt; cb != nil {
+		aura.OnPeriodicDamageDealt = func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
+			if sim.CurrentTime >= delay {
+				cb(aura, sim, spell, result)
+			}
+		}
+	}
+
+	if cb := aura.OnHealDealt; cb != nil {
+		aura.OnHealDealt = func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
+			if sim.CurrentTime >= delay {
+				cb(aura, sim, spell, result)
+			}
+		}
+	}
+
+	if cb := aura.OnPeriodicHealDealt; cb != nil {
+		aura.OnPeriodicHealDealt = func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
+			if sim.CurrentTime >= delay {
+				cb(aura, sim, spell, result)
+			}
+		}
+	}
+
+	if cb := aura.OnCastComplete; cb != nil {
+		aura.OnCastComplete = func(aura *Aura, sim *Simulation, spell *Spell) {
+			if sim.CurrentTime >= delay {
+				cb(aura, sim, spell)
+			}
+		}
+	}
+}
+
+func findTrinketAura(character *Character, trinketID int32) *Aura {
+	for _, aura := range character.auras {
+		if aura.ActionIDForProc.ItemID == trinketID {
+			return aura
+		}
+	}
+	return nil
+}
+
+// Desyncs trinket procs per configured user settings.
+// Hold the first proc back until some time into the simulation (i.e. because the player
+// un-equipped and re-equipped the trinket before pull).
+func (mcdm *majorCooldownManager) DesyncTrinketProcs() {
+	if delay := time.Duration(mcdm.cooldownConfigs.DesyncProcTrinket1Seconds) * time.Second; delay > 0 {
+		if trinket1 := mcdm.character.Equip[ItemSlotTrinket1]; trinket1.ID > 0 && HasItemEffect(trinket1.ID) {
+			mcdm.character.Env.RegisterPostFinalizeEffect(func() {
+				if aura := findTrinketAura(mcdm.character, trinket1.ID); aura != nil {
+					desyncTrinketProcAura(aura, delay)
+				}
+			})
+		}
+	}
+
+	if delay := time.Duration(mcdm.cooldownConfigs.DesyncProcTrinket2Seconds) * time.Second; delay > 0 {
+		if trinket2 := mcdm.character.Equip[ItemSlotTrinket2]; trinket2.ID > 0 && HasItemEffect(trinket2.ID) {
+			mcdm.character.Env.RegisterPostFinalizeEffect(func() {
+				if aura := findTrinketAura(mcdm.character, trinket2.ID); aura != nil {
+					desyncTrinketProcAura(aura, delay)
+				}
+			})
+		}
+	}
+}
+
 func (mcdm *majorCooldownManager) reset(sim *Simulation) {
 	for i := range mcdm.majorCooldowns {
 		newMCD := &MajorCooldown{}
@@ -304,6 +400,16 @@ func (mcdm *majorCooldownManager) GetInitialMajorCooldown(actionID ActionID) Maj
 	return MajorCooldown{}
 }
 
+func (mcdm *majorCooldownManager) removeInitialMajorCooldown(actionID ActionID) {
+	for i, mcd := range mcdm.initialMajorCooldowns {
+		if mcd.Spell.SameAction(actionID) {
+			mcdm.initialMajorCooldowns = append(mcdm.initialMajorCooldowns[:i], mcdm.initialMajorCooldowns[i+1:]...)
+			mcdm.majorCooldowns = mcdm.majorCooldowns[:len(mcdm.majorCooldowns)-1]
+			return
+		}
+	}
+}
+
 func (mcdm *majorCooldownManager) GetMajorCooldown(actionID ActionID) *MajorCooldown {
 	for _, mcd := range mcdm.majorCooldowns {
 		if mcd.Spell.SameAction(actionID) {
@@ -332,6 +438,23 @@ func (mcdm *majorCooldownManager) GetMajorCooldownIDs() []*proto.ActionID {
 		ids[i] = mcd.Spell.ActionID.ToProto()
 	}
 	return ids
+}
+
+func (mcdm *majorCooldownManager) getFirstReadyMCD(sim *Simulation) *MajorCooldown {
+	if sim.CurrentTime < mcdm.minReady {
+		return nil
+	}
+
+	for _, mcd := range mcdm.majorCooldowns {
+		if !mcd.IsReady(sim) {
+			return nil
+		}
+		if mcd.shouldActivateHelper(sim, mcdm.character) {
+			return mcd
+		}
+	}
+
+	return nil
 }
 
 func (mcdm *majorCooldownManager) TryUseCooldowns(sim *Simulation) {

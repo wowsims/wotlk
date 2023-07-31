@@ -14,6 +14,7 @@ func (warlock *Warlock) registerCurseOfElementsSpell() {
 		ActionID:    core.ActionID{SpellID: 47865},
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskEmpty,
+		Flags:       core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.1,
@@ -37,10 +38,6 @@ func (warlock *Warlock) registerCurseOfElementsSpell() {
 	})
 }
 
-func (warlock *Warlock) ShouldCastCurseOfElements(sim *core.Simulation, target *core.Unit, curse proto.Warlock_Rotation_Curse) bool {
-	return curse == proto.Warlock_Rotation_Elements && !warlock.CurseOfElementsAuras.Get(target).IsActive()
-}
-
 func (warlock *Warlock) registerCurseOfWeaknessSpell() {
 	warlock.CurseOfWeaknessAuras = warlock.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
 		return core.CurseOfWeaknessAura(target, warlock.Talents.ImprovedCurseOfWeakness)
@@ -50,6 +47,7 @@ func (warlock *Warlock) registerCurseOfWeaknessSpell() {
 		ActionID:    core.ActionID{SpellID: 50511},
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskEmpty,
+		Flags:       core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.1,
@@ -89,6 +87,7 @@ func (warlock *Warlock) registerCurseOfTonguesSpell() {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskEmpty,
+		Flags:       core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.04,
@@ -119,7 +118,7 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 	warlock.CurseOfAgony = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47864},
 		SpellSchool: core.SpellSchoolShadow,
-		Flags:       core.SpellFlagHauntSE,
+		Flags:       core.SpellFlagHauntSE | core.SpellFlagAPL,
 		ProcMask:    core.ProcMaskSpellDamage,
 
 		ManaCost: core.ManaCostOptions{
@@ -173,6 +172,7 @@ func (warlock *Warlock) registerCurseOfDoomSpell() {
 		ActionID:    core.ActionID{SpellID: 47867},
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.15,

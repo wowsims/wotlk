@@ -416,6 +416,7 @@ func init() {
 			Timer:    paladin.NewTimer(),
 			Duration: time.Second * 8,
 		}
+		procAura.Icd = &icd
 
 		paladin.RegisterAura(core.Aura{
 			Label:    "Libram Of Valiance",

@@ -76,6 +76,7 @@ enum Profession {
 	Tailoring = 11;
 }
 
+// Keep in sync with sim/core/stats/stats.go.
 enum Stat {
 	StatStrength = 0;
 	StatAgility = 1;
@@ -112,6 +113,11 @@ enum Stat {
 	StatNatureResistance = 32;
 	StatShadowResistance = 33;
 	StatBonusArmor = 34;
+	StatRunicPower = 35; // Placeholder: not used yet.
+	StatBloodRune = 36; // Placeholder: not used yet.
+	StatFrostRune = 37; // Placeholder: not used yet.
+	StatUnholyRune = 38; // Placeholder: not used yet.
+	StatDeathRune = 39; // Placeholder: not used yet.
 	// DO NOT add new stats here without discussing it first; new stats come with
 	// a performance penalty.
 }
@@ -423,8 +429,9 @@ message RaidBuffs {
 	// +Spell Power
 	bool totem_of_wrath = 18;
 	bool flametongue_totem = 19;
-	reserved 20;
-	int32 demonic_pact = 43; // SP buff
+	int32 demonic_pact_old = 20; // old demo SP 
+	int32 demonic_pact = 43; // SP buff -- deprecated.
+	int32 demonic_pact_sp = 44; // SP buff NEW CORRECT
 
 	// +5% Spell Crit and/or +3% Haste
 	bool swift_retribution = 21; //haste only
@@ -441,6 +448,10 @@ message RaidBuffs {
 
 	// mp5
 	TristateEffect mana_spring_totem = 28;
+
+	// Nature Resistance
+	bool nature_resistance_totem = 45;
+	bool aspect_of_the_wild = 46;
 	
 	// Miscellaneous
 	bool bloodlust = 29;
@@ -594,6 +605,8 @@ message Debuffs {
 
 	// 1 = normal, 2 = talented, 3 = talented+glyphed
 	int32 hunters_mark = 35;
+
+	bool crystal_yield = 38;
 }
 
 enum MobType {
@@ -633,11 +646,12 @@ message Target {
 
 	// Auto attack parameters.
 	double min_base_damage = 7;
+	double damage_spread = 19; // replaces tight_enemy_damage
 	double swing_speed = 8;
 	bool dual_wield = 9;
 	bool dual_wield_penalty = 10;
 	bool parry_haste = 12;
-	bool tight_enemy_damage = 17; // Patchwerk special
+	bool tight_enemy_damage = 17; // deprecated as of 07/12/23
 	bool suppress_dodge = 16; // Sunwell Radiance
 	SpellSchool spell_school = 13; // Allows elemental attacks.
 
@@ -744,9 +758,30 @@ message SimGem {
 	repeated double stats = 4;
 }
 
-message RaidTarget {
+message UnitReference {
+	enum Type {
+		Unknown = 0;
+		Player = 1;
+		Target = 2;
+		Pet = 3;
+		Self = 4;
+		CurrentTarget = 5;
+		AllPlayers = 6;
+		AllTargets = 7;
+	}
+
+	// The type of unit being referenced.
+	Type type = 2;
+
+	// Index of the player/target/pet/etc depending on value of type.
+	int32 index = 3;
+
+	// Reference to the owner, only used iff this is a pet.
+	UnitReference owner = 4;
+
 	// Raid index of the player to target. A value of -1 indicates no target.
-	int32 target_index = 1;
+	// TODO: Delete this after 2 months (on or after 9/19/2023)
+	int32 target_index = 1 [deprecated = true];
 }
 
 // ID for actions that aren't spells or items.
@@ -768,6 +803,7 @@ enum OtherAction {
 	OtherActionFrostRuneGain  = 14; // Indicates healing received from healing model.
 	OtherActionUnholyRuneGain  = 15; // Indicates healing received from healing model.
 	OtherActionDeathRuneGain  = 16; // Indicates healing received from healing model.
+	OtherActionPotion = 17; // Used by APL to generically refer to either the prepull or combat potion.
 }
 
 message ActionID {
@@ -809,6 +845,8 @@ message Cooldowns {
 
 	// % HP threshold, below which defensive cooldowns can be used.
 	double hp_percent_for_defensives = 2;
+	int32 desync_proc_trinket1_seconds = 3;
+	int32 desync_proc_trinket2_seconds = 4;
 }
 
 message HealingModel {
@@ -816,6 +854,8 @@ message HealingModel {
 	double hps = 1;
 	// How often healing is applied.
 	double cadence_seconds = 2;
+	// Variation in the cadence.
+	double cadence_variation = 5;
 	// % Inspiration buff uptime
 	double inspiration_uptime = 3;
 	// TMI burst window bin size

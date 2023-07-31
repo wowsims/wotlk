@@ -23,6 +23,7 @@ func (mage *Mage) registerSummonWaterElementalCD() {
 	summonDuration := time.Second*45 + time.Second*5*time.Duration(mage.Talents.EnduringWinter)
 	mage.SummonWaterElemental = mage.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 31687},
+		Flags:    core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.16,

@@ -42,7 +42,7 @@ func (hunter *Hunter) registerArcaneShotSpell(timer *core.Timer) {
 			.05*float64(hunter.Talents.ImprovedArcaneShot),
 		DamageMultiplier: 1 *
 			hunter.markedForDeathMultiplier(),
-		CritMultiplier:   hunter.critMultiplier(true, true),
+		CritMultiplier:   hunter.critMultiplier(true, true, false),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

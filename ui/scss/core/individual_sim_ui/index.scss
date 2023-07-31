@@ -11,6 +11,7 @@
 @import "../components/encounter_picker";
 @import "../components/exporters";
 @import "../components/enum_picker";
+@import "../components/bulk";
 @import "../components/gear_picker";
 @import "../components/icon_enum_picker";
 @import "../components/icon_picker";
@@ -24,8 +25,10 @@
 @import "../components/saved_data_manager";
 @import "../components/settings_menu";
 @import "../components/stat_weights_action";
+@import "../components/unit_picker";
 
 @import "../components/individual_sim_ui/settings_tab";
+@import "../components/individual_sim_ui/rotation_tab";
 
 @import "../talents/hunter_pet";
 @import "../talents/glyphs_picker";

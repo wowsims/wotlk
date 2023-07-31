@@ -93,6 +93,7 @@ func (dk *DpsDeathknight) RotationActionBL_BloodRotation(sim *core.Simulation, t
 			// Use CDs
 			dk.br.activatingDrw = true
 			dk.br.drwSnapshot.ActivateMajorCooldowns(sim)
+			dk.UpdateMajorCooldowns()
 			dk.br.activatingDrw = false
 		}
 		dk.RaiseDead.Cast(sim, target)
@@ -186,6 +187,7 @@ func (dk *DpsDeathknight) RotationActionBL_ResetToBloodMain(sim *core.Simulation
 func (dk *DpsDeathknight) RotationActionBL_DRW_Snapshot(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	dk.br.activatingDrw = true
 	dk.br.drwSnapshot.ActivateMajorCooldowns(sim)
+	dk.UpdateMajorCooldowns()
 	dk.br.activatingDrw = false
 	s.Advance()
 	return sim.CurrentTime
@@ -209,8 +211,9 @@ func (dk *DpsDeathknight) RotationActionBL_BS(sim *core.Simulation, target *core
 	ffRemaining := dk.FrostFeverSpell.Dot(target).RemainingDuration(sim)
 	bpRemaining := dk.BloodPlagueSpell.Dot(target).RemainingDuration(sim)
 	casted := false
+
 	// FF is not active or will drop before Gcd is ready after this cast
-	if !dk.FrostFeverSpell.Dot(target).IsActive() || ffRemaining <= core.GCDDefault || !dk.BloodPlagueSpell.Dot(target).IsActive() || bpRemaining <= core.GCDDefault {
+	if dk.sr.hasGod && (!dk.FrostFeverSpell.Dot(target).IsActive() || ffRemaining <= core.GCDDefault || !dk.BloodPlagueSpell.Dot(target).IsActive() || bpRemaining <= core.GCDDefault) {
 		casted = dk.Pestilence.Cast(sim, target)
 	} else {
 		casted = dk.br.bloodSpell.Cast(sim, target)

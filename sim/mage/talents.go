@@ -70,6 +70,7 @@ func (mage *Mage) applyHotStreak() {
 	}
 
 	procChance := float64(mage.Talents.HotStreak) / 3
+	t10ProcAura := mage.BloodmagesRegalia2pcAura()
 
 	mage.HotStreakAura = mage.RegisterAura(core.Aura{
 		Label:    "HotStreak",
@@ -81,11 +82,21 @@ func (mage *Mage) applyHotStreak() {
 		//		mage.Pyroblast.CastTimeMultiplier -= 1
 		//	}
 		//},
-		//OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-		//	if mage.Pyroblast != nil {
-		//		mage.Pyroblast.CastTimeMultiplier += 1
-		//	}
-		//},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			//if mage.Pyroblast != nil {
+			//	mage.Pyroblast.CastTimeMultiplier += 1
+			//}
+			if t10ProcAura != nil {
+				t10ProcAura.Activate(sim)
+			}
+		},
+	})
+
+	mage.hotStreakCritAura = mage.RegisterAura(core.Aura{
+		Label:     "Hot Streak Proc Aura",
+		ActionID:  core.ActionID{SpellID: 44448, Tag: 1},
+		MaxStacks: 2,
+		Duration:  time.Hour,
 	})
 
 	mage.RegisterAura(core.Aura{
@@ -93,7 +104,6 @@ func (mage *Mage) applyHotStreak() {
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
-			mage.heatingUp = false
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !spell.Flags.Matches(HotStreakSpells) {
@@ -101,17 +111,21 @@ func (mage *Mage) applyHotStreak() {
 			}
 
 			if !result.DidCrit() {
-				mage.heatingUp = false
+				mage.hotStreakCritAura.SetStacks(sim, 0)
+				mage.hotStreakCritAura.Deactivate(sim)
 				return
 			}
 
-			if mage.heatingUp {
+			if mage.hotStreakCritAura.GetStacks() == 1 {
 				if procChance == 1 || sim.Proc(procChance, "Hot Streak") {
+					mage.hotStreakCritAura.SetStacks(sim, 0)
+					mage.hotStreakCritAura.Deactivate(sim)
+
 					mage.HotStreakAura.Activate(sim)
-					mage.heatingUp = false
 				}
 			} else {
-				mage.heatingUp = true
+				mage.hotStreakCritAura.Activate(sim)
+				mage.hotStreakCritAura.AddStack(sim)
 			}
 		},
 	})
@@ -213,6 +227,8 @@ func (mage *Mage) applyMissileBarrage() {
 		return
 	}
 
+	t10ProcAura := mage.BloodmagesRegalia2pcAura()
+
 	procChance := float64(mage.Talents.MissileBarrage) * .04
 	mage.MissileBarrageAura = mage.RegisterAura(core.Aura{
 		Label:    "Missile Barrage Proc",
@@ -225,6 +241,9 @@ func (mage *Mage) applyMissileBarrage() {
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			mage.ArcaneMissiles.CostMultiplier += 100
 			mage.ArcaneMissiles.CastTimeMultiplier *= 2
+			if t10ProcAura != nil {
+				t10ProcAura.Activate(sim)
+			}
 		},
 	})
 
@@ -346,6 +365,7 @@ func (mage *Mage) registerArcanePowerCD() {
 			}
 		},
 	})
+	core.RegisterPercentDamageModifierEffect(mage.ArcanePowerAura, 1.2)
 
 	spell := mage.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
@@ -690,14 +710,14 @@ func (mage *Mage) applyBrainFreeze() {
 			mage.Fireball.CastTimeMultiplier += 1
 			mage.FrostfireBolt.CostMultiplier += 100
 			mage.FrostfireBolt.CastTimeMultiplier += 1
+			if t10ProcAura != nil {
+				t10ProcAura.Activate(sim)
+			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell == mage.FrostfireBolt || spell == mage.Fireball {
 				if !hasT8_4pc || sim.RandomFloat("MageT84PC") > T84PcProcChance {
 					aura.Deactivate(sim)
-				}
-				if t10ProcAura != nil {
-					t10ProcAura.Activate(sim)
 				}
 			}
 		},

@@ -28,7 +28,7 @@ func init() {
 
 	core.NewItemEffect(41380, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		character.AddStat(stats.Armor, character.Equip.Stats()[stats.Armor]*0.02)
+		character.ApplyEquipScaling(stats.Armor, 1.02)
 	})
 
 	core.NewItemEffect(41385, func(agent core.Agent) {
@@ -81,7 +81,7 @@ func init() {
 		character := agent.GetCharacter()
 		procAura := character.NewTemporaryStatsAura("Thundering Skyflare Diamond Proc", core.ActionID{SpellID: 55379}, stats.Stats{stats.MeleeHaste: 480}, time.Second*6)
 
-		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+		triggerAura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 			Name:     "Thundering Skyflare Diamond",
 			Callback: core.CallbackOnSpellHitDealt,
 			// Mask 68, melee or ranged auto attacks.
@@ -93,6 +93,7 @@ func init() {
 				procAura.Activate(sim)
 			},
 		})
+		procAura.Icd = triggerAura.Icd
 	})
 
 	core.NewItemEffect(41401, func(agent core.Agent) {

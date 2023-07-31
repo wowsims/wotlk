@@ -121,20 +121,20 @@ func (wp *WarlockPet) registerShadowBiteSpell() {
 			baseDamage := sim.Roll(97+1, 97+41) + 0.429*spell.SpellPower()
 
 			w := wp.owner
-			dots := []*core.Dot{
-				w.UnstableAffliction.Dot(target),
-				w.Immolate.Dot(target),
-				w.CurseOfAgony.Dot(target),
-				w.CurseOfDoom.Dot(target),
-				w.Corruption.Dot(target),
-				w.Conflagrate.Dot(target),
-				w.Seed.Dot(target),
-				w.DrainSoul.Dot(target),
+			spells := []*core.Spell{
+				w.UnstableAffliction,
+				w.Immolate,
+				w.CurseOfAgony,
+				w.CurseOfDoom,
+				w.Corruption,
+				w.Conflagrate,
+				w.Seed,
+				w.DrainSoul,
 				// missing: drain life, shadowflame
 			}
 			counter := 0
-			for _, dot := range dots {
-				if dot.IsActive() {
+			for _, spell := range spells {
+				if spell != nil && spell.Dot(target).IsActive() {
 					counter++
 				}
 			}

@@ -20,7 +20,7 @@ func (rogue *Rogue) registerGhostlyStrikeSpell() {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBuilder | SpellFlagColdBlooded,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBuilder | SpellFlagColdBlooded | core.SpellFlagAPL,
 		EnergyCost: core.EnergyCostOptions{
 			Cost:   40.0,
 			Refund: 0.8,
@@ -37,8 +37,7 @@ func (rogue *Rogue) registerGhostlyStrikeSpell() {
 			IgnoreHaste: true,
 		},
 
-		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(ItemSetVanCleefs, 4), 5*core.CritRatingPerCritChance, 0) +
-			[]float64{0, 2, 4, 6}[rogue.Talents.TurnTheTables]*core.CritRatingPerCritChance,
+		BonusCritRating: []float64{0, 2, 4, 6}[rogue.Talents.TurnTheTables] * core.CritRatingPerCritChance,
 
 		DamageMultiplier: core.TernaryFloat64(rogue.HasDagger(core.MainHand), 1.8, 1.25) * core.TernaryFloat64(hasGlyph, 1.4, 1) * (1 + 0.02*float64(rogue.Talents.FindWeakness)),
 		CritMultiplier:   rogue.MeleeCritMultiplier(true),

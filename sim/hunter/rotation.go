@@ -1,6 +1,8 @@
 package hunter
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -8,7 +10,9 @@ import (
 
 func (hunter *Hunter) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
 	hunter.mayMoveAt = sim.CurrentTime
-	hunter.TryUseCooldowns(sim)
+	if !hunter.IsUsingAPL {
+		hunter.TryUseCooldowns(sim)
+	}
 	if hunter.GCD.IsReady(sim) {
 		hunter.rotation(sim)
 	}
@@ -19,6 +23,9 @@ func (hunter *Hunter) OnGCDReady(sim *core.Simulation) {
 }
 
 func (hunter *Hunter) rotation(sim *core.Simulation) {
+	if hunter.IsUsingAPL {
+		return
+	}
 	hunter.trySwapAspect(sim)
 
 	if hunter.SilencingShot.IsReady(sim) {
@@ -35,11 +42,16 @@ func (hunter *Hunter) rotation(sim *core.Simulation) {
 			hunter.WaitForMana(sim, spell.CurCast.Cost)
 		}
 	} else {
-		spell := hunter.singleTargetChooseSpell(sim)
-
-		success := spell.Cast(sim, hunter.CurrentTarget)
-		if !success {
-			hunter.WaitForMana(sim, spell.CurCast.Cost)
+		spell, target := hunter.singleTargetChooseSpell(sim)
+		if spell == nil {
+			if hunter.GCD.IsReady(sim) {
+				hunter.WaitUntil(sim, sim.CurrentTime+100*time.Millisecond)
+			}
+		} else {
+			success := spell.Cast(sim, target)
+			if !success {
+				hunter.WaitForMana(sim, spell.CurCast.Cost)
+			}
 		}
 	}
 }
@@ -52,32 +64,19 @@ func (hunter *Hunter) aoeChooseSpell(sim *core.Simulation) *core.Spell {
 	}
 }
 
-func (hunter *Hunter) singleTargetChooseSpell(sim *core.Simulation) *core.Spell {
-	if sim.IsExecutePhase20() && hunter.KillShot.IsReady(sim) {
-		return hunter.KillShot
-	} else if hunter.ExplosiveShotR4.IsReady(sim) && !hunter.ExplosiveShotR4.CurDot().IsActive() {
-		return hunter.ExplosiveShotR4
-	} else if hunter.Rotation.AllowExplosiveShotDownrank && hunter.ExplosiveShotR3.IsReady(sim) && !hunter.ExplosiveShotR3.CurDot().IsActive() {
-		return hunter.ExplosiveShotR3
-	} else if hunter.Rotation.Sting == proto.Hunter_Rotation_ScorpidSting && !hunter.ScorpidStingAuras.Get(hunter.CurrentTarget).IsActive() {
-		return hunter.ScorpidSting
-	} else if hunter.Rotation.Sting == proto.Hunter_Rotation_SerpentSting && !hunter.SerpentSting.CurDot().IsActive() {
-		return hunter.SerpentSting
-	} else if hunter.ChimeraShot.IsReady(sim) {
-		return hunter.ChimeraShot
-	} else if !hunter.Rotation.TrapWeave && hunter.BlackArrow.IsReady(sim) {
-		return hunter.BlackArrow
-	} else if hunter.Rotation.TrapWeave && hunter.ExplosiveTrap.IsReady(sim) && !hunter.ExplosiveTrap.AOEDot().IsActive() {
-		return hunter.TrapWeaveSpell
-	} else if hunter.AimedShot.IsReady(sim) {
-		return hunter.AimedShot
-	} else if hunter.MultiShot.IsReady(sim) {
-		return hunter.MultiShot
-	} else if hunter.ArcaneShot.IsReady(sim) && (hunter.ExplosiveShotR4 == nil || (!hunter.ExplosiveShotR4.CurDot().IsActive() && !hunter.ExplosiveShotR3.CurDot().IsActive())) {
-		return hunter.ArcaneShot
-	} else {
-		return hunter.SteadyShot
+func (hunter *Hunter) singleTargetChooseSpell(sim *core.Simulation) (*core.Spell, *core.Unit) {
+	for _, spell := range hunter.rotationPriority {
+		if spell == nil {
+			continue
+		}
+
+		for i := int32(0); i < hunter.Env.GetNumTargets(); i++ {
+			if hunter.rotationConditions[spell].CanUse(sim, hunter.Env.GetTargetUnit(i)) {
+				return spell, hunter.Env.GetTargetUnit(i)
+			}
+		}
 	}
+	return nil, nil
 }
 
 // Returns whether an aspect was swapped.
@@ -104,6 +103,19 @@ func (hunter *Hunter) trySwapAspect(sim *core.Simulation) bool {
 		return true
 	}
 	return false
+}
+
+func (hunter *Hunter) shouldCastSteadyShot(sim *core.Simulation) bool {
+	for _, spell := range hunter.rotationPriority {
+		if spell == nil {
+			continue
+		}
+		ttr := spell.TimeToReady(sim)
+		if ttr > 0 && ttr < time.Duration(hunter.Rotation.SteadyShotMaxDelay)*time.Millisecond {
+			return false
+		}
+	}
+	return true
 }
 
 func (hunter *Hunter) makeCustomRotation() *common.CustomRotation {
@@ -201,10 +213,26 @@ func (hunter *Hunter) makeCustomRotation() *common.CustomRotation {
 		int32(proto.Hunter_Rotation_SerpentStingSpell): {
 			Action: func(sim *core.Simulation, target *core.Unit) (bool, float64) {
 				cost := hunter.SerpentSting.CurCast.Cost
-				return hunter.SerpentSting.Cast(sim, target), cost
+				for i := int32(0); i < hunter.Env.GetNumTargets(); i++ {
+					target := hunter.Env.GetTargetUnit(i)
+					if !hunter.SerpentSting.Dot(target).IsActive() {
+						return hunter.SerpentSting.Cast(sim, target), cost
+					}
+				}
+				panic("No valid serpent-sting target found")
 			},
 			Condition: func(sim *core.Simulation) bool {
-				return hunter.Rotation.Sting == proto.Hunter_Rotation_SerpentSting && !hunter.SerpentSting.CurDot().IsActive()
+				if hunter.Rotation.Sting != proto.Hunter_Rotation_SerpentSting {
+					return false
+				}
+				if hunter.Rotation.MultiDotSerpentSting {
+					for i := int32(0); i < hunter.Env.GetNumTargets(); i++ {
+						if !hunter.SerpentSting.Dot(hunter.Env.GetTargetUnit(i)).IsActive() {
+							return true
+						}
+					}
+				}
+				return !hunter.SerpentSting.CurDot().IsActive()
 			},
 		},
 		int32(proto.Hunter_Rotation_SteadyShot): {
@@ -213,7 +241,7 @@ func (hunter *Hunter) makeCustomRotation() *common.CustomRotation {
 				return hunter.SteadyShot.Cast(sim, target), cost
 			},
 			Condition: func(sim *core.Simulation) bool {
-				return true
+				return hunter.shouldCastSteadyShot(sim)
 			},
 		},
 		int32(proto.Hunter_Rotation_Volley): {
@@ -226,4 +254,132 @@ func (hunter *Hunter) makeCustomRotation() *common.CustomRotation {
 			},
 		},
 	})
+}
+
+type RotationCondition struct {
+	CanUse func(sim *core.Simulation, target *core.Unit) bool
+}
+
+func (hunter *Hunter) initRotation() {
+	hunter.rotationConditions = map[*core.Spell]RotationCondition{
+		hunter.KillShot: RotationCondition{
+			func(sim *core.Simulation, target *core.Unit) bool {
+				return sim.IsExecutePhase20() && hunter.KillShot.IsReady(sim)
+			},
+		},
+		hunter.ExplosiveShotR4: RotationCondition{
+			func(sim *core.Simulation, target *core.Unit) bool {
+				if target != hunter.CurrentTarget {
+					return false
+				}
+				return hunter.ExplosiveShotR4.IsReady(sim) && !hunter.ExplosiveShotR4.CurDot().IsActive()
+			},
+		},
+		hunter.ExplosiveShotR3: RotationCondition{
+			func(sim *core.Simulation, target *core.Unit) bool {
+				if target != hunter.CurrentTarget {
+					return false
+				}
+				return hunter.Rotation.AllowExplosiveShotDownrank && hunter.ExplosiveShotR3.IsReady(sim) && !hunter.ExplosiveShotR3.CurDot().IsActive()
+			},
+		},
+		hunter.ScorpidSting: RotationCondition{
+			func(sim *core.Simulation, target *core.Unit) bool {
+				if target != hunter.CurrentTarget {
+					return false
+				}
+				return hunter.Rotation.Sting == proto.Hunter_Rotation_ScorpidSting && !hunter.ScorpidStingAuras.Get(hunter.CurrentTarget).IsActive()
+			},
+		},
+		hunter.SerpentSting: RotationCondition{
+			func(sim *core.Simulation, target *core.Unit) bool {
+				if target != hunter.CurrentTarget && !hunter.Rotation.MultiDotSerpentSting {
+					return false
+				}
+				return hunter.Rotation.Sting == proto.Hunter_Rotation_SerpentSting && !hunter.SerpentSting.Dot(target).IsActive()
+			},
+		},
+		hunter.ChimeraShot: RotationCondition{
+			func(sim *core.Simulation, target *core.Unit) bool {
+				return hunter.ChimeraShot.IsReady(sim)
+			},
+		},
+		hunter.BlackArrow: RotationCondition{
+			func(sim *core.Simulation, target *core.Unit) bool {
+				return !hunter.Rotation.TrapWeave && hunter.BlackArrow.IsReady(sim)
+			},
+		},
+		hunter.TrapWeaveSpell: RotationCondition{
+			func(sim *core.Simulation, target *core.Unit) bool {
+				return hunter.Rotation.TrapWeave && hunter.ExplosiveTrap.IsReady(sim) && !hunter.ExplosiveTrap.AOEDot().IsActive()
+			},
+		},
+		hunter.AimedShot: RotationCondition{
+			func(sim *core.Simulation, target *core.Unit) bool {
+				return hunter.AimedShot.IsReady(sim)
+			},
+		},
+		hunter.MultiShot: RotationCondition{
+			func(sim *core.Simulation, target *core.Unit) bool {
+				return hunter.MultiShot.IsReady(sim)
+			},
+		},
+		hunter.ArcaneShot: RotationCondition{
+			func(sim *core.Simulation, target *core.Unit) bool {
+				return hunter.ArcaneShot.IsReady(sim) && (!hunter.ExplosiveShotR4.CurDot().IsActive() && !hunter.ExplosiveShotR3.CurDot().IsActive())
+			},
+		},
+		hunter.SteadyShot: RotationCondition{
+			func(sim *core.Simulation, target *core.Unit) bool {
+				return hunter.SteadyShot.IsReady(sim) && hunter.shouldCastSteadyShot(sim)
+			},
+		},
+	}
+
+	if hunter.PrimaryTalentTree == 0 {
+		// BM
+		hunter.rotationPriority = []*core.Spell{
+			hunter.KillShot,
+			hunter.TrapWeaveSpell,
+			hunter.SerpentSting,
+			hunter.ScorpidSting,
+			hunter.AimedShot,
+			hunter.MultiShot,
+			hunter.SteadyShot,
+		}
+	} else if hunter.PrimaryTalentTree == 1 {
+		// MM
+		hunter.rotationPriority = []*core.Spell{
+			hunter.KillShot,
+			hunter.SerpentSting,
+			hunter.ScorpidSting,
+			hunter.TrapWeaveSpell,
+			hunter.ChimeraShot,
+			hunter.AimedShot,
+			hunter.MultiShot,
+			hunter.SteadyShot,
+		}
+	} else {
+		// SV
+		hunter.rotationPriority = []*core.Spell{
+			hunter.KillShot,
+			hunter.ExplosiveShotR4,
+			hunter.ExplosiveShotR3,
+			hunter.TrapWeaveSpell,
+			hunter.SerpentSting,
+			hunter.ScorpidSting,
+			hunter.BlackArrow,
+			hunter.AimedShot,
+			hunter.MultiShot,
+			hunter.SteadyShot,
+		}
+	}
+
+	if hunter.Env.GetNumTargets() > 1 {
+		for i, spell := range hunter.rotationPriority {
+			if spell == hunter.AimedShot {
+				hunter.rotationPriority[i] = nil
+			}
+		}
+	}
 }

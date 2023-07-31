@@ -18,9 +18,6 @@ import { TristateEffect } from '../proto/common.js';
 import { Party } from '../party.js';
 import { Player } from '../player.js';
 import { Raid } from '../raid.js';
-import { Sim } from '../sim.js';
-import { Target } from '../target.js';
-import { Encounter } from '../encounter.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 
 import { IconPicker, IconPickerConfig } from './icon_picker.js';
@@ -110,6 +107,11 @@ export const DamageReductionPercentBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanIndividualBuffInput(ActionId.fromSpellId(50720), 'vigilance'),
 ], 'Mit %');
 
+export const NatureResistanceBuff = InputHelpers.makeMultiIconInput([
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(58749), 'natureResistanceTotem'),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(49071), 'aspectOfTheWild'),
+], 'NR');
+
 export const HastePercentBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(53648), 'swiftRetribution'),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(48396), 'moonkinAura', TristateEffect.TristateEffectImproved),
@@ -151,7 +153,7 @@ export const SpellCritBuff = InputHelpers.makeMultiIconInput([
 export const SpellHasteBuff = withLabel(makeBooleanRaidBuffInput(ActionId.fromSpellId(3738), 'wrathOfAirTotem'), 'Spell Haste');
 
 export const SpellPowerBuff = InputHelpers.makeMultiIconInput([
-	makeMultistateRaidBuffInput(ActionId.fromSpellId(47240), 1000, 'demonicPact', 20),
+	makeMultistateRaidBuffInput(ActionId.fromSpellId(47240), 2000, 'demonicPactSp', 20),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(57722), 'totemOfWrath'),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(58656), 'flametongueTotem'),
 ], 'Spell Power');
@@ -254,6 +256,7 @@ export const JudgementOfWisdom = withLabel(makeBooleanDebuffInput(ActionId.fromS
 export const JudgementOfLight = makeBooleanDebuffInput(ActionId.fromSpellId(20271), 'judgementOfLight');
 export const ShatteringThrow = makeMultistateIndividualBuffInput(ActionId.fromSpellId(64382), 20, 'shatteringThrows');
 export const GiftOfArthas = makeBooleanDebuffInput(ActionId.fromSpellId(11374), 'giftOfArthas');
+export const CrystalYield = makeBooleanDebuffInput(ActionId.fromSpellId(15235), 'crystalYield');
 
 // Consumes
 export const ThermalSapper = makeBooleanConsumeInput(ActionId.fromItemId(42641), 'thermalSapper');

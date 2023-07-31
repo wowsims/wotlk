@@ -133,6 +133,7 @@ export const statOrder: Array<Stat> = [
 	Stat.StatHealth,
 	Stat.StatMana,
 	Stat.StatArmor,
+	Stat.StatBonusArmor,
 	Stat.StatStamina,
 	Stat.StatStrength,
 	Stat.StatAgility,
@@ -164,6 +165,11 @@ export const statOrder: Array<Stat> = [
 	Stat.StatFrostResistance,
 	Stat.StatNatureResistance,
 	Stat.StatShadowResistance,
+	Stat.StatRunicPower,
+	Stat.StatBloodRune,
+	Stat.StatFrostRune,
+	Stat.StatUnholyRune,
+	Stat.StatDeathRune,
 ];
 
 export const statNames: Record<Stat, string> = {
@@ -202,6 +208,11 @@ export const statNames: Record<Stat, string> = {
 	[Stat.StatNatureResistance]: 'Nature Resistance',
 	[Stat.StatShadowResistance]: 'Shadow Resistance',
 	[Stat.StatBonusArmor]: 'Bonus Armor',
+	[Stat.StatRunicPower]: 'Runic Power',
+	[Stat.StatBloodRune]: 'Blood Rune',
+	[Stat.StatFrostRune]: 'Frost Rune',
+	[Stat.StatUnholyRune]: 'Unholy Rune',
+	[Stat.StatDeathRune]: 'Death Rune',
 };
 
 export const pseudoStatOrder: Array<PseudoStat> = [

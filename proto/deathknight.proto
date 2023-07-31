@@ -269,6 +269,8 @@ message Deathknight {
 		bool use_dancing_rune_weapon = 30;
 
 		BloodSpell blood_spender = 31;
+
+		double virulence_refresh = 32;
 	}
 	Rotation rotation = 1;
 	
@@ -279,9 +281,13 @@ message Deathknight {
 		bool precast_ghoul_frenzy = 3;
 		bool precast_horn_of_winter = 4;
 
-		RaidTarget unholy_frenzy_target = 5;
+		UnitReference unholy_frenzy_target = 5;
 
 		bool drw_pesti_apply = 6;
+
+		bool new_drw = 7;
+
+		double disease_downtime = 8;
 	}
 	Options options = 3;
 }
@@ -326,7 +332,7 @@ message TankDeathknight {
 	
 	message Options {
 		double starting_runic_power = 1;
-		RaidTarget unholy_frenzy_target = 2;
+		UnitReference unholy_frenzy_target = 2;
 		double defensive_delay = 3;
 	}
 	Options options = 3;

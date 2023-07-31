@@ -45,9 +45,6 @@ type Mage struct {
 
 	arcaneBlastStreak int32
 	arcanePowerMCD    *core.MajorCooldown
-	heatingUp         bool
-	igniteMunchDmg    float64
-	igniteMunchTime   time.Duration
 	delayedPyroAt     time.Duration
 
 	waterElemental *WaterElemental
@@ -83,6 +80,7 @@ type Mage struct {
 	MissileBarrageAura *core.Aura
 	ClearcastingAura   *core.Aura
 	ScorchAuras        core.AuraArray
+	hotStreakCritAura  *core.Aura
 	HotStreakAura      *core.Aura
 	CombustionAura     *core.Aura
 	FingersOfFrostAura *core.Aura
@@ -149,8 +147,6 @@ func (mage *Mage) Initialize() {
 func (mage *Mage) Reset(sim *core.Simulation) {
 	mage.arcaneBlastStreak = 0
 	mage.arcanePowerMCD = mage.GetMajorCooldown(core.ActionID{SpellID: 12042})
-	mage.igniteMunchDmg = 0
-	mage.igniteMunchTime = 0
 	mage.delayedPyroAt = 0
 }
 

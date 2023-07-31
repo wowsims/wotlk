@@ -16,6 +16,27 @@ var ItemOverrides = []*proto.UIItem{
 	{ /** Lightning Etched Specs */ Id: 34355, ClassAllowlist: []proto.Class{proto.Class_ClassShaman}},
 	{ /** Annihilator Holo-Gogs */ Id: 34847, ClassAllowlist: []proto.Class{proto.Class_ClassMage, proto.Class_ClassPriest, proto.Class_ClassWarlock}},
 
+	// Balance T9 "of Conquest" Alliance set
+	{Id: 48158, SetName: "Malfurion's Regalia"},
+	{Id: 48159, SetName: "Malfurion's Regalia"},
+	{Id: 48160, SetName: "Malfurion's Regalia"},
+	{Id: 48161, SetName: "Malfurion's Regalia"},
+	{Id: 48162, SetName: "Malfurion's Regalia"},
+
+	// Deathknight T9 "of Conquest" Horde set
+	{Id: 48501, SetName: "Koltira's Battlegear"},
+	{Id: 48502, SetName: "Koltira's Battlegear"},
+	{Id: 48503, SetName: "Koltira's Battlegear"},
+	{Id: 48504, SetName: "Koltira's Battlegear"},
+	{Id: 48505, SetName: "Koltira's Battlegear"},
+
+	// Deathknight T9 "of Conquest" Tank Horde set
+	{Id: 48558, SetName: "Koltira's Plate"},
+	{Id: 48559, SetName: "Koltira's Plate"},
+	{Id: 48560, SetName: "Koltira's Plate"},
+	{Id: 48561, SetName: "Koltira's Plate"},
+	{Id: 48562, SetName: "Koltira's Plate"},
+
 	// Valorous T8 Sets
 	{Id: 45375, Phase: 2},
 	{Id: 45381, Phase: 2},
@@ -131,6 +152,9 @@ var ItemOverrides = []*proto.UIItem{
 	{Id: 51806, Phase: 2},
 	{Id: 51807, Phase: 2},
 	{Id: 51808, Phase: 2},
+
+	// Cata pre-patch event items
+	{Id: 53492, Phase: 5},
 }
 
 // Keep these sorted by item ID.
@@ -147,6 +171,7 @@ var ItemAllowList = map[int32]struct{}{
 	20837: {}, // Sunstrider Axe
 	20966: {}, // Jade Pendant of Blasting
 	21625: {}, // Scarab Brooch
+	21685: {}, // Petrified Scarab
 	24114: {}, // Braided Eternium Chain
 	28572: {}, // Blade of the Unrequited
 	28830: {}, // Dragonspine Trophy
@@ -241,6 +266,27 @@ var ItemDenyList = map[int32]struct{}{
 	34580: {}, // Battlemaster's Perseverence
 	50251: {}, // 'one hand shadows edge'
 	53500: {}, // Tectonic Plate
+
+	48880: {}, // DK's Tier 9 Duplicates
+	48881: {}, // DK's Tier 9 Duplicates
+	48882: {}, // DK's Tier 9 Duplicates
+	48883: {}, // DK's Tier 9 Duplicates
+	48884: {}, // DK's Tier 9 Duplicates
+	48885: {}, // DK's Tier 9 Duplicates
+	48886: {}, // DK's Tier 9 Duplicates
+	48887: {}, // DK's Tier 9 Duplicates
+	48888: {}, // DK's Tier 9 Duplicates
+	48889: {}, // DK's Tier 9 Duplicates
+	48890: {}, // DK's Tier 9 Duplicates
+	48891: {}, // DK's Tier 9 Duplicates
+	48892: {}, // DK's Tier 9 Duplicates
+	48893: {}, // DK's Tier 9 Duplicates
+	48894: {}, // DK's Tier 9 Duplicates
+	48895: {}, // DK's Tier 9 Duplicates
+	48896: {}, // DK's Tier 9 Duplicates
+	48897: {}, // DK's Tier 9 Duplicates
+	48898: {}, // DK's Tier 9 Duplicates
+	48899: {}, // DK's Tier 9 Duplicates
 }
 
 // Item icons to include in the DB, so they don't need to be separately loaded in the UI.

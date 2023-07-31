@@ -12,7 +12,7 @@ func (druid *Druid) registerFakeGotw() {
 
 	druid.GiftOfTheWild = druid.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 48470},
-		Flags:    SpellFlagOmenTrigger | core.SpellFlagHelpful,
+		Flags:    SpellFlagOmenTrigger | core.SpellFlagHelpful | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   baseCost,

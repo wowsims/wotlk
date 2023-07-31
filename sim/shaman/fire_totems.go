@@ -25,7 +25,7 @@ func (shaman *Shaman) registerSearingTotemSpell() {
 		ActionID:    core.ActionID{SpellID: 58704},
 		SpellSchool: core.SpellSchoolFire,
 		ProcMask:    core.ProcMaskEmpty,
-		Flags:       SpellFlagTotem,
+		Flags:       SpellFlagTotem | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.07,
@@ -101,7 +101,7 @@ func (shaman *Shaman) registerMagmaTotemSpell() {
 		ActionID:    core.ActionID{SpellID: 58734},
 		SpellSchool: core.SpellSchoolFire,
 		ProcMask:    core.ProcMaskEmpty,
-		Flags:       SpellFlagTotem,
+		Flags:       SpellFlagTotem | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.27,
