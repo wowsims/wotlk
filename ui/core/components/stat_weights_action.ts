@@ -38,6 +38,17 @@ function getModalConfig(simUI: IndividualSimUI<any>) {
 	return baseConfig;
 }
 
+function scaledEpValue(stat: UnitStat, epRatios: number[], result: StatWeightsResult|null): number {
+	if (!result) return 0;
+
+	return (epRatios[0] * stat.getProtoValue(result.dps?.epValues!))
+		+ (epRatios[1] * stat.getProtoValue(result.hps?.epValues!))
+		+ (epRatios[2] * stat.getProtoValue(result.tps?.epValues!))
+		+ (epRatios[3] * stat.getProtoValue(result.dtps?.epValues!))
+		+ (epRatios[4] * stat.getProtoValue(result.tmi?.epValues!))
+		+ (epRatios[5] * stat.getProtoValue(result.pDeath?.epValues!))
+}
+
 class EpWeightsMenu extends BaseModal {
 	private readonly simUI: IndividualSimUI<any>;
 	private readonly container: HTMLElement;
@@ -474,14 +485,16 @@ class EpWeightsMenu extends BaseModal {
 	private makeTableRow(stat: UnitStat): HTMLElement {
 		const row = document.createElement('tr');
 		const result = this.simUI.prevEpSimResult;
+		const epRatios = this.simUI.player.getEpRatios();
+		const rowTotalEp = scaledEpValue(stat, epRatios, result);
 		row.innerHTML = `
 			<td>${stat.getName(this.simUI.player.getClass())}</td>
-			${this.makeTableRowCells(stat, result?.dps, 'damage-metrics')}
-			${this.makeTableRowCells(stat, result?.hps, 'healing-metrics')}
-			${this.makeTableRowCells(stat, result?.tps, 'threat-metrics')}
-			${this.makeTableRowCells(stat, result?.dtps, 'threat-metrics')}
-			${this.makeTableRowCells(stat, result?.tmi, 'threat-metrics experimental')}
-			${this.makeTableRowCells(stat, result?.pDeath, 'threat-metrics experimental')}
+			${this.makeTableRowCells(stat, result?.dps, 'damage-metrics', rowTotalEp, epRatios[0])}
+			${this.makeTableRowCells(stat, result?.hps, 'healing-metrics', rowTotalEp, epRatios[1])}
+			${this.makeTableRowCells(stat, result?.tps, 'threat-metrics', rowTotalEp, epRatios[2])}
+			${this.makeTableRowCells(stat, result?.dtps, 'threat-metrics', rowTotalEp, epRatios[3])}
+			${this.makeTableRowCells(stat, result?.tmi, 'threat-metrics experimental', rowTotalEp, epRatios[4])}
+			${this.makeTableRowCells(stat, result?.pDeath, 'threat-metrics experimental', rowTotalEp, epRatios[5])}
 			<td class="current-ep"></td>
 		`;
 
@@ -499,8 +512,7 @@ class EpWeightsMenu extends BaseModal {
 		return row;
 	}
 
-	private makeTableRowCells(stat: UnitStat, statWeights: StatWeightValues|undefined, className: string): string {
-
+	private makeTableRowCells(stat: UnitStat, statWeights: StatWeightValues|undefined, className: string, epTotal: number, epRatio: number): string {
 		var weightCell, epCell;
 		if (statWeights) {
 			const weightAvg = stat.getProtoValue(statWeights.weights!);
@@ -525,19 +537,24 @@ class EpWeightsMenu extends BaseModal {
 			</td>
 		`;
 
-		if (statWeights) {
-			const epAvg = stat.getProtoValue(statWeights.epValues!);
-			const epCurrent = this.simUI.player.getEpWeights().getUnitStat(stat);
-			const epAvgElem = template.content.querySelector('.type-ep .results-avg') as HTMLElement;
-			const epDelta = epAvg - epCurrent;
+		if (!statWeights) return template.innerHTML;
 
-			if (epDelta.toFixed(2) == "0.00")
-				epAvgElem // no-op
-			else if (epDelta > 0)
-				epAvgElem.classList.add('positive');
-			else if (epDelta < 0)
-				epAvgElem.classList.add('negative');
+		if (epRatio == 0) {
+			const cells = template.content.querySelectorAll('.stdev-cell')
+			cells.forEach((cell) => cell.classList.add('unused-ep'));
+			return template.innerHTML;
 		}
+
+		const epCurrent = this.simUI.player.getEpWeights().getUnitStat(stat);
+		const epDelta = epTotal - epCurrent;
+
+		const epAvgElem = template.content.querySelector('.type-ep .results-avg') as HTMLElement;
+		if (epDelta.toFixed(2) == "0.00")
+			epAvgElem // no-op
+		else if (epDelta > 0)
+			epAvgElem.classList.add('positive');
+		else if (epDelta < 0)
+			epAvgElem.classList.add('negative');
 
 		return template.innerHTML;
 	};
