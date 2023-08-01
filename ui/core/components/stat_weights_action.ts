@@ -511,7 +511,7 @@ class EpWeightsMenu extends BaseModal {
 			const epStdev = stat.getProtoValue(statWeights.epValuesStdev!)
 			epCell = this.makeTableCellContents(epAvg, epStdev);
 		} else {
-			weightCell = this.makeTableCellContents(0, 0)
+			weightCell = `<span class="results-avg notapplicable">N/A</span>`;
 			epCell = weightCell
 		}
 
