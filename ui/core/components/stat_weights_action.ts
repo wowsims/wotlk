@@ -360,6 +360,7 @@ class EpWeightsMenu extends BaseModal {
 
 			button.addEventListener('click', event => {
 				this.simUI.player.setEpWeights(TypedEvent.nextEventID(), Stats.fromProto(weightsFunc()));
+				this.updateTable();
 			});
 		};
 
@@ -405,6 +406,7 @@ class EpWeightsMenu extends BaseModal {
 		};
 		const epRatioCells = this.body.querySelectorAll('.type-ratio.type-ep') as NodeListOf<HTMLElement>;
 		epRatioCells.forEach(makeEpRatioCell);
+		this.simUI.player.epRatiosChangeEmitter.on(_eventID => this.updateTable());
 
 		const weightRatioCells = this.body.querySelectorAll('.type-ratio.type-weight') as NodeListOf<HTMLElement>;
 		weightRatioCells.forEach(makeEpRatioCell);
@@ -438,6 +440,7 @@ class EpWeightsMenu extends BaseModal {
 				const newWeights = scaledDpsWeights.add(scaledHpsWeights).add(scaledTpsWeights).add(scaledDtpsWeights).add(scaledTmiWeights).add(scaledPDeathWeights);
 				this.simUI.player.setEpWeights(TypedEvent.nextEventID(), newWeights);
 			}
+			this.updateTable();
 		});
 	}
 
