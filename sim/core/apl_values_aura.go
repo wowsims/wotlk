@@ -13,7 +13,7 @@ type APLValueAuraIsActive struct {
 }
 
 func (rot *APLRotation) newValueAuraIsActive(config *proto.APLValueAuraIsActive) APLValue {
-	aura := rot.aplGetAura(config.SourceUnit, config.AuraId)
+	aura := rot.aplGetAura(rot.getSourceUnit(config.SourceUnit), config.AuraId)
 	if aura.Get() == nil {
 		return nil
 	}
@@ -37,7 +37,7 @@ type APLValueAuraRemainingTime struct {
 }
 
 func (rot *APLRotation) newValueAuraRemainingTime(config *proto.APLValueAuraRemainingTime) APLValue {
-	aura := rot.aplGetAura(config.SourceUnit, config.AuraId)
+	aura := rot.aplGetAura(rot.getSourceUnit(config.SourceUnit), config.AuraId)
 	if aura.Get() == nil {
 		return nil
 	}
@@ -61,7 +61,7 @@ type APLValueAuraNumStacks struct {
 }
 
 func (rot *APLRotation) newValueAuraNumStacks(config *proto.APLValueAuraNumStacks) APLValue {
-	aura := rot.aplGetAura(config.SourceUnit, config.AuraId)
+	aura := rot.aplGetAura(rot.getSourceUnit(config.SourceUnit), config.AuraId)
 	if aura.Get() == nil {
 		return nil
 	}
@@ -89,7 +89,7 @@ type APLValueAuraInternalCooldown struct {
 }
 
 func (rot *APLRotation) newValueAuraInternalCooldown(config *proto.APLValueAuraInternalCooldown) APLValue {
-	aura := rot.aplGetICDAura(config.SourceUnit, config.AuraId)
+	aura := rot.aplGetICDAura(rot.getSourceUnit(config.SourceUnit), config.AuraId)
 	if aura.Get() == nil {
 		return nil
 	}
@@ -105,4 +105,36 @@ func (value *APLValueAuraInternalCooldown) GetDuration(sim *Simulation) time.Dur
 }
 func (value *APLValueAuraInternalCooldown) String() string {
 	return fmt.Sprintf("Aura ICD(%s)", value.aura.String())
+}
+
+type APLValueAuraShouldRefresh struct {
+	defaultAPLValueImpl
+	aura       AuraReference
+	maxOverlap APLValue
+}
+
+func (rot *APLRotation) newValueAuraShouldRefresh(config *proto.APLValueAuraShouldRefresh) APLValue {
+	aura := rot.aplGetAura(rot.getTargetUnit(config.SourceUnit), config.AuraId)
+	if aura.Get() == nil {
+		return nil
+	}
+
+	maxOverlap := rot.coerceTo(rot.newAPLValue(config.MaxOverlap), proto.APLValueType_ValueTypeDuration)
+	if maxOverlap == nil {
+		maxOverlap = rot.newValueConst(&proto.APLValueConst{Val: "0ms"})
+	}
+
+	return &APLValueAuraShouldRefresh{
+		aura:       aura,
+		maxOverlap: maxOverlap,
+	}
+}
+func (value *APLValueAuraShouldRefresh) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeBool
+}
+func (value *APLValueAuraShouldRefresh) GetBool(sim *Simulation) bool {
+	return value.aura.Get().ShouldRefreshExclusiveEffects(sim, value.maxOverlap.GetDuration(sim))
+}
+func (value *APLValueAuraShouldRefresh) String() string {
+	return fmt.Sprintf("Should Refresh Aura(%s)", value.aura.String())
 }

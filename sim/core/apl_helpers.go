@@ -103,8 +103,7 @@ func NewIcdAuraReference(sourceUnit UnitReference, auraId *proto.ActionID) AuraR
 	return newAuraReferenceHelper(sourceUnit, auraId, func(unit *Unit, actionID ActionID) *Aura { return unit.GetIcdAuraByID(actionID) })
 }
 
-func (rot *APLRotation) aplGetAura(sourceRef *proto.UnitReference, auraId *proto.ActionID) AuraReference {
-	sourceUnit := rot.getSourceUnit(sourceRef)
+func (rot *APLRotation) aplGetAura(sourceUnit UnitReference, auraId *proto.ActionID) AuraReference {
 	if sourceUnit.Get() == nil {
 		return AuraReference{}
 	}
@@ -116,8 +115,7 @@ func (rot *APLRotation) aplGetAura(sourceRef *proto.UnitReference, auraId *proto
 	return aura
 }
 
-func (rot *APLRotation) aplGetICDAura(sourceRef *proto.UnitReference, auraId *proto.ActionID) AuraReference {
-	sourceUnit := rot.getSourceUnit(sourceRef)
+func (rot *APLRotation) aplGetICDAura(sourceUnit UnitReference, auraId *proto.ActionID) AuraReference {
 	if sourceUnit.Get() == nil {
 		return AuraReference{}
 	}
