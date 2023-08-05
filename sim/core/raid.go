@@ -118,7 +118,8 @@ type Raid struct {
 	dpsMetrics DistributionMetrics
 	hpsMetrics DistributionMetrics
 
-	AllUnits []*Unit // Cached list of all Units (players and pets) in the raid.
+	AllPlayerUnits []*Unit // Cached list of all Players in the raid.
+	AllUnits       []*Unit // Cached list of all Units (players and pets) in the raid.
 
 	nextPetIndex int32
 
@@ -303,8 +304,12 @@ func (raid *Raid) updatePlayersAndPets() {
 	}
 
 	raid.AllUnits = append(raidPlayers, raidPets...)
+	raid.AllPlayerUnits = raidPlayers
 
 	slices.SortFunc(raid.AllUnits, func(u1, u2 *Unit) bool {
+		return u1.Index < u2.Index
+	})
+	slices.SortFunc(raid.AllPlayerUnits, func(u1, u2 *Unit) bool {
 		return u1.Index < u2.Index
 	})
 }

@@ -4,15 +4,14 @@ import { EquipmentSpec } from '../core/proto/common.js';
 import { Flask } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
 import { Glyphs } from '../core/proto/common.js';
-import { ItemSpec } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
-import { Faction } from '../core/proto/common.js';
 import { RaidBuffs } from '../core/proto/common.js';
 import { IndividualBuffs } from '../core/proto/common.js';
 import { Debuffs } from '../core/proto/common.js';
 import { UnitReference } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js';
-import { SavedTalents } from '../core/proto/ui.js';
+import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
+import { APLRotation } from '../core/proto/apl.js';
 import { Player } from '../core/player.js';
 
 import {
@@ -84,6 +83,42 @@ export const HolyDefaultRotation = Rotation.create({
 		],
 	}),
 });
+
+export const ROTATION_PRESET_DISC = {
+	name: 'Disc',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: Rotation.toJsonString(Rotation.create({
+		})),
+		rotation: APLRotation.fromJsonString(`{
+			"enabled": true,
+			"priorityList": [
+				{"action":{"autocastOtherCooldowns":{}}},
+				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":48066}}},"rhs":{"const":{"val":"18"}}}},"castSpell":{"spellId":{"spellId":48066}}}},
+				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":53007}}},"rhs":{"const":{"val":"4"}}}},"castSpell":{"spellId":{"spellId":53007}}}},
+				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":48113}}},"rhs":{"const":{"val":"2"}}}},"castSpell":{"spellId":{"spellId":48113}}}},
+				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":48063}}},"rhs":{"const":{"val":"1"}}}},"castSpell":{"spellId":{"spellId":48063}}}}
+			]
+		}`),
+	}),
+};
+
+export const ROTATION_PRESET_HOLY = {
+	name: 'Holy',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: Rotation.toJsonString(Rotation.create({
+		})),
+		rotation: APLRotation.fromJsonString(`{
+			"enabled": true,
+			"priorityList": [
+				{"action":{"autocastOtherCooldowns":{}}},
+				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":48063}}},"rhs":{"const":{"val":"10"}}}},"castSpell":{"spellId":{"spellId":48063}}}},
+				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":48089}}},"rhs":{"const":{"val":"5"}}}},"castSpell":{"spellId":{"spellId":48089}}}},
+				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":48068}}},"rhs":{"const":{"val":"10"}}}},"multidot":{"spellId":{"spellId":48068},"maxDots":10,"maxOverlap":{"const":{"val":"0ms"}}}}},
+				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":48113}}},"rhs":{"const":{"val":"2"}}}},"castSpell":{"spellId":{"spellId":48113}}}}
+			]
+		}`),
+	}),
+};
 
 export const DefaultOptions = Options.create({
 	useInnerFire: true,

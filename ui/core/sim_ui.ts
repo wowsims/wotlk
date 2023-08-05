@@ -4,6 +4,7 @@ import { ResultsViewer } from './components/results_viewer.js';
 import { SimTitleDropdown } from './components/sim_title_dropdown.js';
 import { SimHeader } from './components/sim_header';
 import { Spec } from './proto/common.js';
+import { ActionId } from './proto_utils/action_id.js';
 import { LaunchStatus } from './launched_sims.js';
 
 import { Sim, SimError } from './sim.js';
@@ -270,7 +271,7 @@ export abstract class SimUI extends Component {
 		}
 	}
 
-	handleCrash(error: any) {
+	async handleCrash(error: any): Promise<void> {
 		if (!(error instanceof SimError)) {
 			alert(error);
 			return;
@@ -278,7 +279,8 @@ export abstract class SimUI extends Component {
 
 		const errorStr = (error as SimError).errorStr;
 		if (errorStr.startsWith('[USER_ERROR] ')) {
-			const alertStr = errorStr.substring('[USER_ERROR] '.length);
+			let alertStr = errorStr.substring('[USER_ERROR] '.length);
+			alertStr = await ActionId.replaceAllInString(alertStr);
 			alert(alertStr);
 			return;
 		}

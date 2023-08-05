@@ -60,6 +60,9 @@ func (rot *APLRotation) newActionMultidot(config *proto.APLActionMultidot) APLAc
 
 	maxDots := config.MaxDots
 	numTargets := unit.Env.GetNumTargets()
+	if spell.Flags.Matches(SpellFlagHelpful) {
+		numTargets = int32(len(unit.Env.Raid.AllPlayerUnits))
+	}
 	if numTargets < maxDots {
 		rot.validationWarning("Encounter only has %d targets. Using that for Max Dots instead of %d", numTargets, maxDots)
 		maxDots = numTargets
@@ -77,12 +80,23 @@ func (action *APLActionMultidot) Reset(*Simulation) {
 func (action *APLActionMultidot) IsReady(sim *Simulation) bool {
 	maxOverlap := action.maxOverlap.GetDuration(sim)
 
-	for i := int32(0); i < action.maxDots; i++ {
-		target := sim.Encounter.TargetUnits[i]
-		dot := action.spell.Dot(target)
-		if (!dot.IsActive() || dot.RemainingDuration(sim) < maxOverlap) && action.spell.CanCast(sim, target) {
-			action.nextTarget = target
-			return true
+	if action.spell.Flags.Matches(SpellFlagHelpful) {
+		for i := int32(0); i < action.maxDots; i++ {
+			target := sim.Raid.AllPlayerUnits[i]
+			dot := action.spell.Dot(target)
+			if (!dot.IsActive() || dot.RemainingDuration(sim) < maxOverlap) && action.spell.CanCast(sim, target) {
+				action.nextTarget = target
+				return true
+			}
+		}
+	} else {
+		for i := int32(0); i < action.maxDots; i++ {
+			target := sim.Encounter.TargetUnits[i]
+			dot := action.spell.Dot(target)
+			if (!dot.IsActive() || dot.RemainingDuration(sim) < maxOverlap) && action.spell.CanCast(sim, target) {
+				action.nextTarget = target
+				return true
+			}
 		}
 	}
 	return false
