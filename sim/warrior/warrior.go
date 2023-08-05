@@ -17,7 +17,6 @@ type WarriorInputs struct {
 	PrecastShoutT2              bool
 	RendCdThreshold             time.Duration
 	BloodsurgeDurationThreshold time.Duration
-	Munch                       bool
 	StanceSnapshot              bool
 }
 
@@ -99,7 +98,6 @@ type Warrior struct {
 	ShieldBlockAura *core.Aura
 
 	DemoralizingShoutAuras core.AuraArray
-	BloodFrenzyAuras       []*core.Aura
 	TraumaAuras            []*core.Aura
 	SunderArmorAuras       core.AuraArray
 	ThunderClapAuras       core.AuraArray

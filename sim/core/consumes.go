@@ -269,10 +269,7 @@ func applyConsumeEffects(agent Agent) {
 				stats.ShadowResistance: 10,
 			})
 
-			debuffAuras := make([]*Aura, len(character.Env.Encounter.TargetUnits))
-			for i, target := range character.Env.Encounter.TargetUnits {
-				debuffAuras[i] = GiftOfArthasAura(target)
-			}
+			debuffAuras := (&character.Unit).NewEnemyAuraArray(GiftOfArthasAura)
 
 			actionID := ActionID{SpellID: 11374}
 			goaProc := character.RegisterSpell(SpellConfig{
@@ -284,7 +281,7 @@ func applyConsumeEffects(agent Agent) {
 				FlatThreatBonus:  90,
 
 				ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
-					debuffAuras[target.Index].Activate(sim)
+					debuffAuras.Get(target).Activate(sim)
 					spell.CalcAndDealOutcome(sim, target, spell.OutcomeAlwaysHit)
 				},
 			})

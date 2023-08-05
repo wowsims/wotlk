@@ -35,6 +35,8 @@ func (warlock *Warlock) registerCurseOfElementsSpell() {
 				warlock.CurseOfElementsAuras.Get(target).Activate(sim)
 			}
 		},
+
+		RelatedAuras: []core.AuraArray{warlock.CurseOfElementsAuras},
 	})
 }
 
@@ -68,6 +70,8 @@ func (warlock *Warlock) registerCurseOfWeaknessSpell() {
 				warlock.CurseOfWeaknessAuras.Get(target).Activate(sim)
 			}
 		},
+
+		RelatedAuras: []core.AuraArray{warlock.CurseOfWeaknessAuras},
 	})
 }
 
@@ -108,6 +112,8 @@ func (warlock *Warlock) registerCurseOfTonguesSpell() {
 				warlock.CurseOfTonguesAuras.Get(target).Activate(sim)
 			}
 		},
+
+		RelatedAuras: []core.AuraArray{warlock.CurseOfTonguesAuras},
 	})
 }
 

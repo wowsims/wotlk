@@ -196,7 +196,32 @@ func (druid *Druid) applyEarthAndMoon() {
 	if druid.Talents.EarthAndMoon == 0 {
 		return
 	}
-	druid.EarthAndMoonAura = core.EarthAndMoonAura(druid.CurrentTarget, druid.Talents.EarthAndMoon)
+
+	eamAuras := druid.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+		return core.EarthAndMoonAura(target, druid.Talents.EarthAndMoon)
+	})
+	druid.Env.RegisterPreFinalizeEffect(func() {
+		if druid.Starfire != nil {
+			druid.Starfire.RelatedAuras = append(druid.Starfire.RelatedAuras, eamAuras)
+		}
+		if druid.Wrath != nil {
+			druid.Wrath.RelatedAuras = append(druid.Wrath.RelatedAuras, eamAuras)
+		}
+	})
+
+	druid.RegisterAura(core.Aura{
+		Label:    "Earth And Moon Talent",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() || (spell != druid.Starfire && spell != druid.Wrath) {
+				return
+			}
+			eamAuras.Get(result.Target).Activate(sim)
+		},
+	})
 }
 
 func (druid *Druid) applyPrimalFury() {

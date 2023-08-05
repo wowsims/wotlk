@@ -28,7 +28,7 @@ func (dk *Deathknight) dkCountActiveDiseases(target *core.Unit) float64 {
 	if dk.BloodPlagueSpell.Dot(target).IsActive() {
 		count++
 	}
-	if dk.EbonPlagueOrCryptFeverAura[target.Index].IsActive() {
+	if dk.Talents.CryptFever > 0 && dk.EbonPlagueOrCryptFeverAura.Get(target).IsActive() {
 		count++
 	}
 	return float64(count)
@@ -84,8 +84,8 @@ func (dk *Deathknight) registerFrostFever() {
 					if dk.IcyTalonsAura != nil {
 						dk.IcyTalonsAura.Activate(sim)
 					}
-					if dk.EbonPlagueOrCryptFeverAura[aura.Unit.Index] != nil {
-						dk.EbonPlagueOrCryptFeverAura[aura.Unit.Index].Activate(sim)
+					if dk.Talents.CryptFever > 0 {
+						dk.EbonPlagueOrCryptFeverAura.Get(aura.Unit).Activate(sim)
 					}
 				},
 			},
@@ -133,8 +133,8 @@ func (dk *Deathknight) registerBloodPlague() {
 				Label: "BloodPlague",
 				Tag:   "BloodPlague",
 				OnGain: func(aura *core.Aura, sim *core.Simulation) {
-					if dk.EbonPlagueOrCryptFeverAura[aura.Unit.Index] != nil {
-						dk.EbonPlagueOrCryptFeverAura[aura.Unit.Index].Activate(sim)
+					if dk.Talents.CryptFever > 0 {
+						dk.EbonPlagueOrCryptFeverAura.Get(aura.Unit).Activate(sim)
 					}
 				},
 			},

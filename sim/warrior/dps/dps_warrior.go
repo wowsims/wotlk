@@ -52,7 +52,6 @@ func NewDpsWarrior(character core.Character, options *proto.Player) *DpsWarrior 
 			ShoutType:                   warOptions.Options.Shout,
 			RendCdThreshold:             core.DurationFromSeconds(warOptions.Rotation.RendCdThreshold),
 			BloodsurgeDurationThreshold: core.DurationFromSeconds(warOptions.Rotation.BloodsurgeDurationThreshold),
-			Munch:                       warOptions.Options.Munch,
 			StanceSnapshot:              warOptions.Options.StanceSnapshot,
 		}),
 		Rotation: warOptions.Rotation,
