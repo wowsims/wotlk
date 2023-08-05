@@ -55,6 +55,8 @@ func (warrior *Warrior) registerThunderClapSpell() {
 				}
 			}
 		},
+
+		RelatedAuras: []core.AuraArray{warrior.ThunderClapAuras},
 	})
 }
 

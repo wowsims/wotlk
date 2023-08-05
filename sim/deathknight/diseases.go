@@ -67,6 +67,10 @@ func (dk *Deathknight) registerDiseaseDots() {
 }
 
 func (dk *Deathknight) registerFrostFever() {
+	dk.FrostFeverDebuffAura = dk.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+		return core.FrostFeverAura(target, dk.Talents.ImprovedIcyTouch, dk.Talents.Epidemic)
+	})
+
 	dk.FrostFeverSpell = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 55095},
 		SpellSchool: core.SpellSchoolFrost,
@@ -109,7 +113,10 @@ func (dk *Deathknight) registerFrostFever() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dot := spell.Dot(target)
 			dot.Apply(sim)
+			dk.FrostFeverDebuffAura.Get(target).Activate(sim)
 		},
+
+		RelatedAuras: []core.AuraArray{dk.FrostFeverDebuffAura},
 	})
 	dk.FrostFeverExtended = make([]int, dk.Env.GetNumTargets())
 }

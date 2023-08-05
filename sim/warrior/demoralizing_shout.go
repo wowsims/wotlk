@@ -37,6 +37,8 @@ func (warrior *Warrior) registerDemoralizingShoutSpell() {
 				}
 			}
 		},
+
+		RelatedAuras: []core.AuraArray{warrior.DemoralizingShoutAuras},
 	})
 }
 

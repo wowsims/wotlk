@@ -63,4 +63,8 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 			})
 		},
 	})
+
+	if ISBProcChance > 0 {
+		warlock.ShadowBolt.RelatedAuras = append(warlock.ShadowBolt.RelatedAuras, shadowMasteryAuras)
+	}
 }

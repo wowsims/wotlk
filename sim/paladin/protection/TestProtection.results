@@ -1150,8 +1150,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 3796.10337
-  tps: 9106.41771
+  dps: 3796.1651
+  tps: 9106.57661
   dtps: 4.75925
  }
 }

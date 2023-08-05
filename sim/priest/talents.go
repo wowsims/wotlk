@@ -391,7 +391,20 @@ func (priest *Priest) applyMisery() {
 		return
 	}
 
-	priest.MiseryAura = core.MiseryAura(priest.CurrentTarget, priest.Talents.Misery)
+	miseryAuras := priest.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+		return core.MiseryAura(target, priest.Talents.Misery)
+	})
+	priest.Env.RegisterPreFinalizeEffect(func() {
+		priest.ShadowWordPain.RelatedAuras = append(priest.ShadowWordPain.RelatedAuras, miseryAuras)
+		if priest.VampiricTouch != nil {
+			priest.VampiricTouch.RelatedAuras = append(priest.VampiricTouch.RelatedAuras, miseryAuras)
+		}
+		if priest.MindFlay[1] != nil {
+			priest.MindFlay[1].RelatedAuras = append(priest.MindFlay[1].RelatedAuras, miseryAuras)
+			priest.MindFlay[2].RelatedAuras = append(priest.MindFlay[2].RelatedAuras, miseryAuras)
+			priest.MindFlay[3].RelatedAuras = append(priest.MindFlay[3].RelatedAuras, miseryAuras)
+		}
+	})
 
 	priest.RegisterAura(core.Aura{
 		Label:    "Priest Shadow Effects",
@@ -405,7 +418,7 @@ func (priest *Priest) applyMisery() {
 			}
 
 			if spell == priest.ShadowWordPain || spell == priest.VampiricTouch || spell.ActionID.SpellID == priest.MindFlay[1].ActionID.SpellID {
-				priest.MiseryAura.Activate(sim)
+				miseryAuras.Get(result.Target).Activate(sim)
 			}
 		},
 	})

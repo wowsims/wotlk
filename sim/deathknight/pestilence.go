@@ -50,7 +50,7 @@ func (dk *Deathknight) registerPestilenceSpell() {
 								if dk.Talents.IcyTalons > 0 {
 									dk.IcyTalonsAura.Activate(sim)
 								}
-								dk.FrostFeverDebuffAura[aoeTarget.Index].Activate(sim)
+								dk.FrostFeverDebuffAura.Get(aoeTarget).Activate(sim)
 							}
 
 							if dk.BloodPlagueSpell.Dot(aoeTarget).IsActive() {

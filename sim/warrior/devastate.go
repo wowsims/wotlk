@@ -67,5 +67,7 @@ func (warrior *Warrior) registerDevastateSpell() {
 				spell.IssueRefund(sim)
 			}
 		},
+
+		RelatedAuras: []core.AuraArray{warrior.SunderArmorAuras},
 	})
 }

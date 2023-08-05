@@ -190,10 +190,9 @@ func (warrior *Warrior) applyTrauma() {
 		return
 	}
 
-	for i := int32(0); i < warrior.Env.GetNumTargets(); i++ {
-		target := warrior.Env.GetTargetUnit(i)
-		warrior.TraumaAuras = append(warrior.TraumaAuras, core.TraumaAura(target, int(warrior.Talents.Trauma)))
-	}
+	traumaAuras := warrior.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+		return core.TraumaAura(target, int(warrior.Talents.Trauma))
+	})
 
 	warrior.RegisterAura(core.Aura{
 		Label:    "Trauma",
@@ -210,7 +209,7 @@ func (warrior *Warrior) applyTrauma() {
 				return
 			}
 
-			proc := warrior.TraumaAuras[result.Target.Index]
+			proc := traumaAuras.Get(result.Target)
 			proc.Duration = time.Minute * 1
 			proc.Activate(sim)
 		},

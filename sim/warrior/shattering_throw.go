@@ -9,6 +9,8 @@ import (
 
 func (warrior *Warrior) RegisterShatteringThrowCD() {
 	hasGlyph := warrior.HasMinorGlyph(proto.WarriorMinorGlyph_GlyphOfShatteringThrow)
+	shattDebuffs := warrior.NewEnemyAuraArray(core.ShatteringThrowAura)
+
 	ShatteringThrowSpell := warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 64382},
 		SpellSchool: core.SpellSchoolPhysical,
@@ -48,13 +50,14 @@ func (warrior *Warrior) RegisterShatteringThrowCD() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-
 			baseDamage := 0.5 * spell.MeleeAttackPower()
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialNoBlockDodgeParry)
 			if result.Landed() {
-				core.ShatteringThrowAura(target).Activate(sim)
+				shattDebuffs.Get(target).Activate(sim)
 			}
 		},
+
+		RelatedAuras: []core.AuraArray{shattDebuffs},
 	})
 
 	warrior.AddMajorCooldown(core.MajorCooldown{
