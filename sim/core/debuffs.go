@@ -137,7 +137,7 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 		MakePermanent(DemoralizingShoutAura(target, 0, GetTristateValueInt32(debuffs.DemoralizingShout, 0, 5)))
 	}
 	if debuffs.Vindication && targetIdx == 0 {
-		MakePermanent(VindicationAura(target))
+		MakePermanent(VindicationAura(target, 2))
 	}
 	if debuffs.DemoralizingScreech {
 		MakePermanent(DemoralizingScreechAura(target))
@@ -148,7 +148,7 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 		MakePermanent(ThunderClapAura(target, GetTristateValueInt32(debuffs.ThunderClap, 0, 3)))
 	}
 	if debuffs.FrostFever != proto.TristateEffect_TristateEffectMissing {
-		MakePermanent(FrostFeverAura(target, GetTristateValueInt32(debuffs.FrostFever, 0, 3)))
+		MakePermanent(FrostFeverAura(target, GetTristateValueInt32(debuffs.FrostFever, 0, 3), 0))
 	}
 	if debuffs.InfectedWounds && targetIdx == 0 {
 		MakePermanent(InfectedWoundsAura(target, 3))
@@ -748,13 +748,13 @@ func DemoralizingShoutAura(target *Unit, boomingVoicePts int32, impDemoShoutPts 
 	return aura
 }
 
-func VindicationAura(target *Unit) *Aura {
+func VindicationAura(target *Unit, points int32) *Aura {
 	aura := target.GetOrRegisterAura(Aura{
 		Label:    "Vindication",
 		ActionID: ActionID{SpellID: 26016},
 		Duration: time.Second * 10,
 	})
-	apReductionEffect(aura, 574)
+	apReductionEffect(aura, 287*float64(points))
 	return aura
 }
 
@@ -813,11 +813,11 @@ func JudgementsOfTheJustAura(target *Unit, points int32) *Aura {
 	return aura
 }
 
-func FrostFeverAura(target *Unit, impIcyTouch int32) *Aura {
+func FrostFeverAura(target *Unit, impIcyTouch int32, epidemic int32) *Aura {
 	aura := target.GetOrRegisterAura(Aura{
 		Label:    "FrostFever",
 		ActionID: ActionID{SpellID: 55095},
-		Duration: time.Second * 15,
+		Duration: time.Second*15 + (time.Second * 3 * time.Duration(epidemic)),
 	})
 	AtkSpeedReductionEffect(aura, 1.14+0.02*float64(impIcyTouch))
 	return aura
@@ -927,12 +927,12 @@ func TotemOfWrathDebuff(target *Unit) *Aura {
 	return minorCritDebuffAura(target, "Totem of Wrath Debuff", ActionID{SpellID: 30708}, time.Minute*5, 3*CritRatingPerCritChance)
 }
 
-func MasterPoisonerDebuff(target *Unit, points float64) *Aura {
-	return minorCritDebuffAura(target, "Master Poisoner", ActionID{SpellID: 58410}, time.Second*20, points*CritRatingPerCritChance)
+func MasterPoisonerDebuff(target *Unit, points int32) *Aura {
+	return minorCritDebuffAura(target, "Master Poisoner", ActionID{SpellID: 58410}, time.Second*20, float64(points)*CritRatingPerCritChance)
 }
 
-func HeartOfTheCrusaderDebuff(target *Unit, points float64) *Aura {
-	return minorCritDebuffAura(target, "Heart of the Crusader", ActionID{SpellID: 20337}, time.Second*20, points*CritRatingPerCritChance)
+func HeartOfTheCrusaderDebuff(target *Unit, points int32) *Aura {
+	return minorCritDebuffAura(target, "Heart of the Crusader", ActionID{SpellID: 20337}, time.Second*20, float64(points)*CritRatingPerCritChance)
 }
 
 func minorCritDebuffAura(target *Unit, label string, actionID ActionID, duration time.Duration, critBonus float64) *Aura {

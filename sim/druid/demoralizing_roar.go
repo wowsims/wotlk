@@ -37,6 +37,8 @@ func (druid *Druid) registerDemoralizingRoarSpell() {
 				}
 			}
 		},
+
+		RelatedAuras: []core.AuraArray{druid.DemoralizingRoarAuras},
 	})
 }
 

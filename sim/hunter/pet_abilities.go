@@ -251,10 +251,7 @@ func (hp *HunterPet) newAcidSpit() *core.Spell {
 }
 
 func (hp *HunterPet) newDemoralizingScreech() *core.Spell {
-	debuffs := make([]*core.Aura, len(hp.Env.Encounter.TargetUnits))
-	for i, target := range hp.Env.Encounter.TargetUnits {
-		debuffs[i] = core.DemoralizingScreechAura(target)
-	}
+	debuffs := hp.NewEnemyAuraArray(core.DemoralizingScreechAura)
 
 	return hp.newSpecialAbility(PetSpecialAbilityConfig{
 		Type:    DemoralizingScreech,
@@ -268,8 +265,8 @@ func (hp *HunterPet) newDemoralizingScreech() *core.Spell {
 		APRatio: 0.07,
 		OnSpellHitDealt: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if result.Landed() {
-				for _, debuff := range debuffs {
-					debuff.Activate(sim)
+				for _, aoeTarget := range sim.Encounter.TargetUnits {
+					debuffs.Get(aoeTarget).Activate(sim)
 				}
 			}
 		},

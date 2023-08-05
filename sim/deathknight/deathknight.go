@@ -213,7 +213,7 @@ type Deathknight struct {
 	UnholyPresenceAura *core.Aura
 
 	// Debuffs
-	FrostFeverDebuffAura       []*core.Aura
+	FrostFeverDebuffAura       core.AuraArray
 	EbonPlagueOrCryptFeverAura core.AuraArray
 
 	RoRTSBonus func(*core.Unit) float64 // is either RoR or TS bonus function based on talents

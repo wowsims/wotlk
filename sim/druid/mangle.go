@@ -61,6 +61,8 @@ func (druid *Druid) registerMangleBearSpell() {
 				spell.CD.Reset()
 			}
 		},
+
+		RelatedAuras: []core.AuraArray{mangleAuras},
 	})
 }
 
@@ -110,6 +112,8 @@ func (druid *Druid) registerMangleCatSpell() {
 				spell.IssueRefund(sim)
 			}
 		},
+
+		RelatedAuras: []core.AuraArray{mangleAuras},
 	})
 }
 

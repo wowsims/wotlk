@@ -22,7 +22,7 @@ func (rogue *Rogue) registerPoisonAuras() {
 	}
 	if rogue.Talents.MasterPoisoner > 0 {
 		rogue.masterPoisonerDebuffAuras = rogue.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
-			aura := core.MasterPoisonerDebuff(target, float64(rogue.Talents.MasterPoisoner))
+			aura := core.MasterPoisonerDebuff(target, rogue.Talents.MasterPoisoner)
 			aura.Duration = core.NeverExpires
 			return aura
 		})

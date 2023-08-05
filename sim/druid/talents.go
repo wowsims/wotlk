@@ -91,6 +91,7 @@ func (druid *Druid) ApplyTalents() {
 	druid.applyPredatoryInstincts()
 	druid.applyNaturalReaction()
 	druid.applyOwlkinFrenzy()
+	druid.applyInfectedWounds()
 }
 
 func (druid *Druid) setupNaturesGrace() {
@@ -216,10 +217,9 @@ func (druid *Druid) applyEarthAndMoon() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !result.Landed() || (spell != druid.Starfire && spell != druid.Wrath) {
-				return
+			if result.Landed() && (spell == druid.Starfire || spell == druid.Wrath) {
+				eamAuras.Get(result.Target).Activate(sim)
 			}
-			eamAuras.Get(result.Target).Activate(sim)
 		},
 	})
 }
@@ -646,6 +646,43 @@ func (druid *Druid) applyNaturalReaction() {
 		Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
 			if druid.InForm(Bear) && result.Outcome.Matches(core.OutcomeDodge) {
 				druid.AddRage(sim, rageAdded, rageMetrics)
+			}
+		},
+	})
+}
+
+func (druid *Druid) applyInfectedWounds() {
+	if druid.Talents.InfectedWounds == 0 {
+		return
+	}
+
+	iwAuras := druid.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+		return core.InfectedWoundsAura(target, druid.Talents.InfectedWounds)
+	})
+	druid.Env.RegisterPreFinalizeEffect(func() {
+		if druid.Shred != nil {
+			druid.Shred.RelatedAuras = append(druid.Shred.RelatedAuras, iwAuras)
+		}
+		if druid.MangleCat != nil {
+			druid.MangleCat.RelatedAuras = append(druid.MangleCat.RelatedAuras, iwAuras)
+		}
+		if druid.MangleBear != nil {
+			druid.MangleBear.RelatedAuras = append(druid.MangleBear.RelatedAuras, iwAuras)
+		}
+		if druid.Maul != nil {
+			druid.Maul.RelatedAuras = append(druid.Maul.RelatedAuras, iwAuras)
+		}
+	})
+
+	druid.RegisterAura(core.Aura{
+		Label:    "Infected Wounds Talent",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Landed() && (spell == druid.Shred || spell == druid.Maul || spell == druid.MangleCat || spell == druid.MangleBear) {
+				iwAuras.Get(result.Target).Activate(sim)
 			}
 		},
 	})

@@ -94,4 +94,8 @@ func (druid *Druid) registerInsectSwarmSpell() {
 			spell.DealOutcome(sim, result)
 		},
 	})
+
+	if !hasGlyph {
+		druid.InsectSwarm.RelatedAuras = append(druid.InsectSwarm.RelatedAuras, missAuras)
+	}
 }

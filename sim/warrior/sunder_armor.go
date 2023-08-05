@@ -32,6 +32,8 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  360,
+
+		RelatedAuras: []core.AuraArray{warrior.SunderArmorAuras},
 	}
 
 	extraStack := isDevastateEffect && warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfDevastate)
