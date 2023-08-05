@@ -506,7 +506,11 @@ func (aa *AutoAttacks) TrySwingMH(sim *Simulation, target *Unit) {
 	aa.previousMHSwingAt = sim.CurrentTime
 	aa.PreviousSwingAt = sim.CurrentTime
 	if !sim.Options.Interactive {
-		aa.agent.OnAutoAttack(sim, attackSpell)
+		if aa.unit.IsUsingAPL {
+			aa.unit.Rotation.DoNextAction(sim)
+		} else {
+			aa.agent.OnAutoAttack(sim, attackSpell)
+		}
 	}
 }
 
@@ -552,7 +556,11 @@ func (aa *AutoAttacks) TrySwingOH(sim *Simulation, target *Unit) {
 	aa.OffhandSwingAt = sim.CurrentTime + aa.OffhandSwingSpeed()
 	aa.PreviousSwingAt = sim.CurrentTime
 	if !sim.Options.Interactive {
-		aa.agent.OnAutoAttack(sim, aa.OHAuto)
+		if aa.unit.IsUsingAPL {
+			aa.unit.Rotation.DoNextAction(sim)
+		} else {
+			aa.agent.OnAutoAttack(sim, aa.OHAuto)
+		}
 	}
 }
 
@@ -566,7 +574,11 @@ func (aa *AutoAttacks) TrySwingRanged(sim *Simulation, target *Unit) {
 	aa.RangedSwingAt = sim.CurrentTime + aa.RangedSwingSpeed()
 	aa.PreviousSwingAt = sim.CurrentTime
 	if !sim.Options.Interactive {
-		aa.agent.OnAutoAttack(sim, aa.RangedAuto)
+		if aa.unit.IsUsingAPL {
+			aa.unit.Rotation.DoNextAction(sim)
+		} else {
+			aa.agent.OnAutoAttack(sim, aa.RangedAuto)
+		}
 	}
 }
 

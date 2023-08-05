@@ -89,6 +89,7 @@ type Spell struct {
 
 	SpellMetrics      []SpellMetrics
 	splitSpellMetrics [][]SpellMetrics // Used to split metrics by some condition.
+	casts             int              // Sum of casts on all targets, for efficient CPM calculation
 
 	// Performs the actions of this spell.
 	ApplyEffects ApplySpellResults
@@ -302,6 +303,16 @@ func (spell *Spell) CurDamagePerCast() float64 {
 	}
 }
 
+// Current casts per minute
+func (spell *Spell) CurCPM(sim *Simulation) float64 {
+	if sim.CurrentTime <= 0 {
+		return 0
+	}
+	casts := float64(spell.casts)
+	minutes := float64(sim.CurrentTime) / float64(time.Minute)
+	return casts / minutes
+}
+
 func (spell *Spell) finalize() {
 	// Assert that user doesn't set dynamic fields during static initialization.
 	if spell.CastTimeMultiplier != 1 {
@@ -333,6 +344,7 @@ func (spell *Spell) reset(_ *Simulation) {
 			spell.splitSpellMetrics[i][j] = SpellMetrics{}
 		}
 	}
+	spell.casts = 0
 
 	// Reset dynamic effects.
 	spell.BonusHitRating = spell.initialBonusHitRating
@@ -467,6 +479,7 @@ func (spell *Spell) applyEffects(sim *Simulation, target *Unit) {
 	// target can still be null in individual sims when the caster is the enemy target
 	if target != nil {
 		spell.SpellMetrics[target.UnitIndex].Casts++
+		spell.casts++
 	}
 	spell.ApplyEffects(sim, target, spell)
 }

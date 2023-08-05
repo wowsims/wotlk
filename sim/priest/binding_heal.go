@@ -13,7 +13,7 @@ func (priest *Priest) registerBindingHealSpell() {
 		ActionID:    core.ActionID{SpellID: 48120},
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskSpellHealing,
-		Flags:       core.SpellFlagHelpful,
+		Flags:       core.SpellFlagHelpful | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.27,

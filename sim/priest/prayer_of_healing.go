@@ -14,7 +14,7 @@ func (priest *Priest) registerPrayerOfHealingSpell() {
 		ActionID:    core.ActionID{SpellID: 48072},
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskSpellHealing,
-		Flags:       core.SpellFlagHelpful,
+		Flags:       core.SpellFlagHelpful | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.48,

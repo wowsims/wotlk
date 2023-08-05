@@ -32,6 +32,10 @@ import {
 	APLValueSpellCanCast,
 	APLValueSpellIsReady,
 	APLValueSpellTimeToReady,
+	APLValueSpellCastTime,
+	APLValueSpellTravelTime,
+	APLValueSpellChannelTime,
+	APLValueSpellCPM,
 	APLValueAuraIsActive,
 	APLValueAuraRemainingTime,
 	APLValueAuraNumStacks,
@@ -41,9 +45,6 @@ import {
 	APLValueRuneCooldown,
 	APLValueNextRuneCooldown,
 	APLValueNumberTargets,
-	APLValueSpellCastTime,
-	APLValueSpellTravelTime,
-	APLValueSpellChannelTime,
 } from '../../proto/apl.js';
 
 import { EventID } from '../../typed_event.js';
@@ -649,6 +650,15 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		submenu: ['Spell'],
 		shortDescription: 'Amount of time for the spell to travel to the target.',
 		newValue: APLValueSpellTravelTime.create,
+		fields: [
+			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells', ''),
+		],
+	}),
+	'spellCpm': inputBuilder({
+		label: 'CPM',
+		submenu: ['Spell'],
+		shortDescription: 'Casts Per Minute for the spell so far in the current iteration.',
+		newValue: APLValueSpellCPM.create,
 		fields: [
 			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells', ''),
 		],

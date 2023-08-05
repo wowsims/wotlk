@@ -1,19 +1,8 @@
-import { RaidBuffs } from '../core/proto/common.js';
 import { PartyBuffs } from '../core/proto/common.js';
-import { IndividualBuffs } from '../core/proto/common.js';
-import { Debuffs } from '../core/proto/common.js';
-import { Class } from '../core/proto/common.js';
-import { Consumes } from '../core/proto/common.js';
-import { Encounter } from '../core/proto/common.js';
-import { ItemSlot } from '../core/proto/common.js';
-import { MobType } from '../core/proto/common.js';
-import { UnitReference } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { Stat } from '../core/proto/common.js';
-import { TristateEffect } from '../core/proto/common.js'
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
-import { Sim } from '../core/sim.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
 
 import {
@@ -121,6 +110,11 @@ export class HealingPriestSimUI extends IndividualSimUI<Spec.SpecHealingPriest> 
 				talents: [
 					Presets.DiscTalents,
 					Presets.HolyTalents,
+				],
+				// Preset rotations that the user can quickly select.
+				rotations: [
+					Presets.ROTATION_PRESET_DISC,
+					Presets.ROTATION_PRESET_HOLY,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [

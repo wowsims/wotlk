@@ -48,7 +48,7 @@ message APLAction {
     }
 }
 
-// NextIndex: 42
+// NextIndex: 43
 message APLValue {
     oneof value {
         // Operators
@@ -99,6 +99,7 @@ message APLValue {
         APLValueSpellCastTime spell_cast_time = 35;
         APLValueSpellChannelTime spell_channel_time = 36;
         APLValueSpellTravelTime spell_travel_time = 37;
+        APLValueSpellCPM spell_cpm = 42;
 
         // Aura values
         APLValueAuraIsActive aura_is_active = 22;
@@ -304,6 +305,9 @@ message APLValueSpellChannelTime {
     ActionID spell_id = 1;
 }
 message APLValueSpellTravelTime {
+    ActionID spell_id = 1;
+}
+message APLValueSpellCPM {
     ActionID spell_id = 1;
 }
 

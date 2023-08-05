@@ -7,10 +7,12 @@ import (
 )
 
 func (hpriest *HealingPriest) OnGCDReady(sim *core.Simulation) {
+	panic("ongcdready")
 	hpriest.tryUseGCD(sim)
 }
 
 func (hpriest *HealingPriest) tryUseGCD(sim *core.Simulation) {
+	panic("tryusegcd")
 	if hpriest.CustomRotation != nil {
 		hpriest.CustomRotation.Cast(sim)
 	} else {

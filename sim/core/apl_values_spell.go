@@ -150,3 +150,27 @@ func (value *APLValueSpellTravelTime) GetDuration(sim *Simulation) time.Duration
 func (value *APLValueSpellTravelTime) String() string {
 	return fmt.Sprintf("Travel Time(%s)", value.spell.ActionID)
 }
+
+type APLValueSpellCPM struct {
+	defaultAPLValueImpl
+	spell *Spell
+}
+
+func (rot *APLRotation) newValueSpellCPM(config *proto.APLValueSpellCPM) APLValue {
+	spell := rot.aplGetSpell(config.SpellId)
+	if spell == nil {
+		return nil
+	}
+	return &APLValueSpellCPM{
+		spell: spell,
+	}
+}
+func (value *APLValueSpellCPM) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeFloat
+}
+func (value *APLValueSpellCPM) GetFloat(sim *Simulation) float64 {
+	return value.spell.CurCPM(sim)
+}
+func (value *APLValueSpellCPM) String() string {
+	return fmt.Sprintf("CPM(%s)", value.spell.ActionID)
+}
