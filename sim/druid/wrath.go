@@ -45,9 +45,6 @@ func (druid *Druid) registerWrathSpell() {
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
 				spell.DealDamage(sim, result)
-				if result.Landed() && druid.EarthAndMoonAura != nil {
-					druid.EarthAndMoonAura.Activate(sim)
-				}
 			})
 		},
 	})

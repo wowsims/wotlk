@@ -60,7 +60,6 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
 			if result.Landed() {
 				spell.Dot(target).Apply(sim)
-				warrior.procBloodFrenzy(sim, result, dotDuration)
 				warrior.RendValidUntil = sim.CurrentTime + dotDuration
 			} else {
 				spell.IssueRefund(sim)

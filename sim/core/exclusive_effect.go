@@ -199,6 +199,13 @@ func (aura *Aura) ShouldRefreshExclusiveEffects(sim *Simulation, refreshWindow t
 			return true
 		}
 
+		if aura.MaxStacks > 0 {
+			maxPriority := ee.Priority / float64(aura.GetStacks()) * float64(aura.MaxStacks)
+			if maxPriority > activeEffect.Priority {
+				return true
+			}
+		}
+
 		if ee.Priority == activeEffect.Priority {
 			anyWithLongRemainingDuration := false
 			for _, effect := range ee.Category.effects {
@@ -210,6 +217,15 @@ func (aura *Aura) ShouldRefreshExclusiveEffects(sim *Simulation, refreshWindow t
 			if !anyWithLongRemainingDuration {
 				return true
 			}
+		}
+	}
+	return false
+}
+func (spell *Spell) ShouldRefreshExclusiveEffects(sim *Simulation, target *Unit, refreshWindow time.Duration) bool {
+	for _, auraArray := range spell.RelatedAuras {
+		aura := auraArray.Get(target)
+		if aura != nil && aura.ShouldRefreshExclusiveEffects(sim, refreshWindow) {
+			return true
 		}
 	}
 	return false

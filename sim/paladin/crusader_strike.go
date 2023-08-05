@@ -11,6 +11,9 @@ func (paladin *Paladin) registerCrusaderStrikeSpell() {
 	bonusDmg := core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 31033, 36, 0) + // Libram of Righteous Power
 		core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 40191, 79, 0) // Libram of Radiance
 
+	jowAuras := paladin.NewEnemyAuraArray(core.JudgementOfWisdomAura)
+	jolAuras := paladin.NewEnemyAuraArray(core.JudgementOfLightAura)
+
 	paladin.CrusaderStrike = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 35395},
 		SpellSchool: core.SpellSchoolPhysical,
@@ -50,12 +53,12 @@ func (paladin *Paladin) registerCrusaderStrikeSpell() {
 
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 
-			jowAura := target.GetAura(core.JudgementOfWisdomAuraLabel)
+			jowAura := jowAuras.Get(target)
 			if jowAura.IsActive() {
 				jowAura.Refresh(sim)
 			}
 
-			jolAura := target.GetAura(core.JudgementOfLightAuraLabel)
+			jolAura := jolAuras.Get(target)
 			if jolAura.IsActive() {
 				jolAura.Refresh(sim)
 			}

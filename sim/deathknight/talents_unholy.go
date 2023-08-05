@@ -189,8 +189,6 @@ func (dk *Deathknight) bloodCakedBladeHit(isMh bool) *core.Spell {
 }
 
 func (dk *Deathknight) applyEbonPlaguebringerOrCryptFever() {
-	dk.EbonPlagueOrCryptFeverAura = make([]*core.Aura, len(dk.Env.Encounter.TargetUnits))
-
 	if dk.Talents.CryptFever == 0 {
 		return
 	}
@@ -199,10 +197,13 @@ func (dk *Deathknight) applyEbonPlaguebringerOrCryptFever() {
 	dk.AddStat(stats.MeleeCrit, ebonPlaguebringerBonusCrit)
 	dk.AddStat(stats.SpellCrit, ebonPlaguebringerBonusCrit)
 
-	for i, target := range dk.Env.Encounter.TargetUnits {
-		epAura := core.EbonPlaguebringerOrCryptFeverAura(dk.GetCharacter(), target, dk.Talents.Epidemic, dk.Talents.CryptFever, dk.Talents.EbonPlaguebringer)
-		dk.EbonPlagueOrCryptFeverAura[i] = epAura
-	}
+	dk.EbonPlagueOrCryptFeverAura = dk.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+		return core.EbonPlaguebringerOrCryptFeverAura(dk.GetCharacter(), target, dk.Talents.Epidemic, dk.Talents.CryptFever, dk.Talents.EbonPlaguebringer)
+	})
+	dk.Env.RegisterPreFinalizeEffect(func() {
+		dk.FrostFeverSpell.RelatedAuras = append(dk.FrostFeverSpell.RelatedAuras, dk.EbonPlagueOrCryptFeverAura)
+		dk.BloodPlagueSpell.RelatedAuras = append(dk.BloodPlagueSpell.RelatedAuras, dk.EbonPlagueOrCryptFeverAura)
+	})
 }
 
 func (dk *Deathknight) applyDesolation() {

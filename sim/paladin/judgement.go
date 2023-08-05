@@ -16,6 +16,8 @@ func (paladin *Paladin) canJudgement(sim *core.Simulation) bool {
 }
 
 func (paladin *Paladin) registerJudgementOfWisdomSpell(cdTimer *core.Timer) {
+	jowAuras := paladin.NewEnemyAuraArray(core.JudgementOfWisdomAura)
+
 	paladin.JudgementOfWisdom = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 53408},
 		SpellSchool: core.SpellSchoolHoly,
@@ -42,18 +44,22 @@ func (paladin *Paladin) registerJudgementOfWisdomSpell(cdTimer *core.Timer) {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// Primary Judgements cannot crit or be dodged, parried, or blocked-- only miss. (Unless target is a hunter.)
-			jow := target.GetAura(core.JudgementOfWisdomAuraLabel)
+			jow := jowAuras.Get(target)
 			if jow.IsActive() {
 				jow.Refresh(sim)
 			} else {
-				core.JudgementOfWisdomAura(target).Activate(sim)
+				jow.Activate(sim)
 			}
 			spell.CalcAndDealOutcome(sim, target, spell.OutcomeRangedHit)
 		},
+
+		RelatedAuras: []core.AuraArray{jowAuras},
 	})
 }
 
 func (paladin *Paladin) registerJudgementOfLightSpell(cdTimer *core.Timer) {
+	jolAuras := paladin.NewEnemyAuraArray(core.JudgementOfLightAura)
+
 	paladin.JudgementOfLight = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 20271},
 		SpellSchool: core.SpellSchoolHoly,
@@ -80,14 +86,16 @@ func (paladin *Paladin) registerJudgementOfLightSpell(cdTimer *core.Timer) {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// Primary Judgements cannot crit or be dodged, parried, or blocked-- only miss. (Unless target is a hunter.)
-			jol := target.GetAura(core.JudgementOfLightAuraLabel)
+			jol := jolAuras.Get(target)
 			if jol.IsActive() {
 				jol.Refresh(sim)
 			} else {
-				core.JudgementOfLightAura(target).Activate(sim)
+				jol.Activate(sim)
 			}
 			spell.CalcAndDealOutcome(sim, target, spell.OutcomeRangedHit)
 		},
+
+		RelatedAuras: []core.AuraArray{jolAuras},
 	})
 }
 

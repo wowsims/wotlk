@@ -52,6 +52,8 @@ type SpellConfig struct {
 
 	Dot DotConfig
 	Hot DotConfig
+
+	RelatedAuras []AuraArray
 }
 
 type Spell struct {
@@ -130,6 +132,9 @@ type Spell struct {
 
 	dots   DotArray
 	aoeDot *Dot
+
+	// Per-target auras that are related to this spell, usually buffs or debuffs applied by the spell.
+	RelatedAuras []AuraArray
 }
 
 func (unit *Unit) OnSpellRegistered(handler SpellRegisteredHandler) {
@@ -185,6 +190,8 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		FlatThreatBonus:  config.FlatThreatBonus,
 
 		splitSpellMetrics: make([][]SpellMetrics, MaxInt(1, config.MetricSplits)),
+
+		RelatedAuras: config.RelatedAuras,
 	}
 
 	if (spell.DamageMultiplier != 0 || spell.ThreatMultiplier != 0) && spell.ProcMask == ProcMaskUnknown {

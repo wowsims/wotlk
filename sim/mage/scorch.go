@@ -51,4 +51,8 @@ func (mage *Mage) registerScorchSpell() {
 			spell.DealDamage(sim, result)
 		},
 	})
+
+	if hasImpScorch {
+		mage.Scorch.RelatedAuras = append(mage.Scorch.RelatedAuras, mage.ScorchAuras)
+	}
 }

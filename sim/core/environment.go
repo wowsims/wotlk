@@ -40,6 +40,7 @@ type Environment struct {
 	DurationVariation time.Duration // variation per duration
 
 	// Effects to invoke when the Env is finalized.
+	preFinalizeEffects  []PostFinalizeEffect
 	postFinalizeEffects []PostFinalizeEffect
 
 	prepullActions []PrepullAction
@@ -140,6 +141,11 @@ func (env *Environment) initialize(raidProto *proto.Raid, encounterProto *proto.
 
 // The finalization phase.
 func (env *Environment) finalize(raidProto *proto.Raid, _ *proto.Encounter, raidStats *proto.RaidStats) {
+	for _, finalizeEffect := range env.preFinalizeEffects {
+		finalizeEffect()
+	}
+	env.preFinalizeEffects = nil
+
 	for _, target := range env.Encounter.Targets {
 		target.finalize()
 	}
@@ -289,11 +295,21 @@ func (env *Environment) GetUnit(ref *proto.UnitReference, contextUnit *Unit) *Un
 	return nil
 }
 
-// Registers a callback to this Character which will be invoked after all Units
+// Registers a callback to this Character which will be invoked BEFORE all Units
+// are finalized, but after they are all initialized and have other effects applied.
+func (env *Environment) RegisterPreFinalizeEffect(preFinalizeEffect PostFinalizeEffect) {
+	if env.IsFinalized() {
+		panic("Pre-Finalize effects may not be added once finalized!")
+	}
+
+	env.preFinalizeEffects = append(env.preFinalizeEffects, preFinalizeEffect)
+}
+
+// Registers a callback to this Character which will be invoked AFTER all Units
 // are finalized.
 func (env *Environment) RegisterPostFinalizeEffect(postFinalizeEffect PostFinalizeEffect) {
 	if env.IsFinalized() {
-		panic("Finalize effects may not be added once finalized!")
+		panic("Post-Finalize effects may not be added once finalized!")
 	}
 
 	env.postFinalizeEffects = append(env.postFinalizeEffects, postFinalizeEffect)

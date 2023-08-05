@@ -1447,15 +1447,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-Default-NoBuffs-LongMultiTarget"
  value: {
-  dps: 8912.87278
-  tps: 10001.93784
+  dps: 8912.80354
+  tps: 10001.8686
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-Default-NoBuffs-LongSingleTarget"
  value: {
-  dps: 6057.6768
-  tps: 5966.60057
+  dps: 6057.62297
+  tps: 5966.54673
  }
 }
 dps_results: {
@@ -1496,8 +1496,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotBoth-NoBuffs-LongSingleTarget"
  value: {
-  dps: 5762.64388
-  tps: 5668.21022
+  dps: 5762.59737
+  tps: 5668.16371
  }
 }
 dps_results: {
@@ -1580,8 +1580,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotMf-NoBuffs-LongSingleTarget"
  value: {
-  dps: 5914.25999
-  tps: 5821.51506
+  dps: 5914.2167
+  tps: 5821.47177
  }
 }
 dps_results: {
