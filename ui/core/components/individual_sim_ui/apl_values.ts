@@ -40,6 +40,7 @@ import {
 	APLValueAuraRemainingTime,
 	APLValueAuraNumStacks,
 	APLValueAuraInternalCooldown,
+	APLValueAuraShouldRefresh,
 	APLValueDotIsActive,
 	APLValueDotRemainingTime,
 	APLValueRuneCooldown,
@@ -703,6 +704,33 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		fields: [
 			AplHelpers.unitFieldConfig('sourceUnit', 'aura_sources'),
 			AplHelpers.actionIdFieldConfig('auraId', 'icd_auras', 'sourceUnit'),
+		],
+	}),
+	'auraShouldRefresh': inputBuilder({
+		label: 'Should Refresh Aura',
+		submenu: ['Aura'],
+		shortDescription: 'Whether this aura should be refreshed, e.g. for the purpose of maintaining a debuff.',
+		fullDescription: `
+		<p>This condition checks not only the specified aura but also any other auras on the same unit, including auras applied by other raid members, which apply the same debuff category.</p>
+		<p>For example, 'Should Refresh Debuff(Sunder Armor)' will return <b>False</b> if the unit has an active Expose Armor aura.</p>
+		`,
+		newValue: () => APLValueAuraShouldRefresh.create({
+			maxOverlap: {
+				value: {
+					oneofKind: 'const',
+					const: {
+						val: '0ms',
+					},
+				},
+			},
+		}),
+		fields: [
+			AplHelpers.unitFieldConfig('sourceUnit', 'targets'),
+			AplHelpers.actionIdFieldConfig('auraId', 'exclusive_effect_auras', 'sourceUnit', 'currentTarget'),
+			valueFieldConfig('maxOverlap', {
+				label: 'Overlap',
+				labelTooltip: 'Maximum amount of time before the aura expires when it may be refreshed.',
+			}),
 		],
 	}),
 

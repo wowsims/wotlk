@@ -12,7 +12,7 @@ import { ActionID } from '../../proto/common.js';
 import { BooleanPicker } from '../boolean_picker.js';
 import { APLValueRuneSlot, APLValueRuneType } from '../../proto/apl.js';
 
-export type ACTION_ID_SET = 'auras' | 'stackable_auras' | 'icd_auras' | 'castable_spells' | 'dot_spells';
+export type ACTION_ID_SET = 'auras' | 'stackable_auras' | 'icd_auras' | 'exclusive_effect_auras' | 'castable_spells' | 'dot_spells';
 
 const actionIdSets: Record<ACTION_ID_SET, {
 	defaultLabel: string,
@@ -42,6 +42,16 @@ const actionIdSets: Record<ACTION_ID_SET, {
 		defaultLabel: 'Aura',
 		getActionIDs: async (metadata) => {
 			return metadata.getAuras().filter(aura => aura.data.hasIcd).map(actionId => {
+				return {
+					value: actionId.id,
+				};
+			});
+		},
+	},
+	'exclusive_effect_auras': {
+		defaultLabel: 'Aura',
+		getActionIDs: async (metadata) => {
+			return metadata.getAuras().filter(aura => aura.data.hasExclusiveEffect).map(actionId => {
 				return {
 					value: actionId.id,
 				};
@@ -106,9 +116,12 @@ const actionIdSets: Record<ACTION_ID_SET, {
 	},
 };
 
+export type DEFAULT_UNIT_REF = 'self' | 'currentTarget';
+
 export interface APLActionIDPickerConfig<ModObject> extends Omit<DropdownPickerConfig<ModObject, ActionID, ActionId>, 'defaultLabel' | 'equals' | 'setOptionContent' | 'values' | 'getValue' | 'setValue'> {
 	actionIdSet: ACTION_ID_SET,
 	getUnitRef: (player: Player<any>) => UnitReference,
+	defaultUnitRef: DEFAULT_UNIT_REF,
 	getValue: (obj: ModObject) => ActionID,
 	setValue: (eventID: EventID, obj: ModObject, newValue: ActionID) => void,
 }
@@ -142,10 +155,11 @@ export class APLActionIDPicker extends DropdownPicker<Player<any>, ActionID, Act
 		});
 
 		const getUnitRef = config.getUnitRef;
+		const defaultRef = config.defaultUnitRef == 'self' ? UnitReference.create({type: UnitType.Self}) : UnitReference.create({type: UnitType.CurrentTarget});
 		const getActionIDs = actionIdSet.getActionIDs;
 		const updateValues = async () => {
 			const unitRef = getUnitRef(player);
-			const metadata = player.sim.getUnitMetadata(unitRef, player, UnitReference.create({type: UnitType.Self}))
+			const metadata = player.sim.getUnitMetadata(unitRef, player, defaultRef)
 			if (metadata) {
 				const values = await getActionIDs(metadata);
 				this.setOptions(values);
@@ -376,7 +390,7 @@ export class APLPickerBuilder<T> extends Input<Player<any>, T> {
 	}
 }
 
-export function actionIdFieldConfig(field: string, actionIdSet: ACTION_ID_SET, unitRefField?: string, options?: Partial<APLPickerBuilderFieldConfig<any, any>>): APLPickerBuilderFieldConfig<any, any> {
+export function actionIdFieldConfig(field: string, actionIdSet: ACTION_ID_SET, unitRefField?: string, defaultUnitRef?: DEFAULT_UNIT_REF, options?: Partial<APLPickerBuilderFieldConfig<any, any>>): APLPickerBuilderFieldConfig<any, any> {
 	return {
 		field: field,
 		newValue: () => ActionID.create(),
@@ -384,6 +398,7 @@ export function actionIdFieldConfig(field: string, actionIdSet: ACTION_ID_SET, u
 			...config,
 			actionIdSet: actionIdSet,
 			getUnitRef: () => unitRefField ? getParentValue()[unitRefField] : UnitReference.create(),
+			defaultUnitRef: defaultUnitRef || 'self',
 		}),
 		...(options || {}),
 	};

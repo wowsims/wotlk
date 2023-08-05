@@ -298,6 +298,7 @@ message AuraStats {
 	ActionID id = 1;
 	int32 max_stacks = 2;
 	bool has_icd = 3;
+	bool has_exclusive_effect = 4;
 }
 message SpellStats {
 	ActionID id = 1;

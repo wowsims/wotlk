@@ -48,7 +48,7 @@ message APLAction {
     }
 }
 
-// NextIndex: 43
+// NextIndex: 44
 message APLValue {
     oneof value {
         // Operators
@@ -106,6 +106,7 @@ message APLValue {
         APLValueAuraRemainingTime aura_remaining_time = 23;
         APLValueAuraNumStacks aura_num_stacks = 24;
         APLValueAuraInternalCooldown aura_internal_cooldown = 39;
+        APLValueAuraShouldRefresh aura_should_refresh = 43;
 
         // Dot values
         APLValueDotIsActive dot_is_active = 6;
@@ -326,6 +327,11 @@ message APLValueAuraNumStacks {
 message APLValueAuraInternalCooldown {
     UnitReference source_unit = 2;
     ActionID aura_id = 1;
+}
+message APLValueAuraShouldRefresh {
+    UnitReference source_unit = 2;
+    ActionID aura_id = 1;
+    APLValue max_overlap = 3;
 }
 
 message APLValueDotIsActive {

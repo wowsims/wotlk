@@ -521,9 +521,10 @@ func (unit *Unit) GetMetadata() *proto.UnitMetadata {
 	})
 	metadata.Auras = MapSlice(aplAuras, func(aura *Aura) *proto.AuraStats {
 		return &proto.AuraStats{
-			Id:        aura.ActionID.ToProto(),
-			MaxStacks: aura.MaxStacks,
-			HasIcd:    aura.Icd != nil,
+			Id:                 aura.ActionID.ToProto(),
+			MaxStacks:          aura.MaxStacks,
+			HasIcd:             aura.Icd != nil,
+			HasExclusiveEffect: len(aura.ExclusiveEffects) > 0,
 		}
 	})
 

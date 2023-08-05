@@ -40,7 +40,7 @@ type APLActionCancelAura struct {
 }
 
 func (rot *APLRotation) newActionCancelAura(config *proto.APLActionCancelAura) APLActionImpl {
-	aura := rot.aplGetAura(&proto.UnitReference{Type: proto.UnitReference_Self}, config.AuraId)
+	aura := rot.aplGetAura(rot.getSourceUnit(&proto.UnitReference{Type: proto.UnitReference_Self}), config.AuraId)
 	if aura.Get() == nil {
 		return nil
 	}
@@ -67,7 +67,7 @@ type APLActionTriggerICD struct {
 }
 
 func (rot *APLRotation) newActionTriggerICD(config *proto.APLActionTriggerICD) APLActionImpl {
-	aura := rot.aplGetICDAura(&proto.UnitReference{Type: proto.UnitReference_Self}, config.AuraId)
+	aura := rot.aplGetICDAura(rot.getSourceUnit(&proto.UnitReference{Type: proto.UnitReference_Self}), config.AuraId)
 	if aura.Get() == nil {
 		return nil
 	}
