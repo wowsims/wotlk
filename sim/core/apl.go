@@ -14,20 +14,19 @@ type APLRotation struct {
 	priorityList   []*APLAction
 
 	// Current strict sequence
-	strictSequence *APLActionStrictSequence
+	strictSequence *APLAction
 
 	// Used inside of actions/value to determine whether they will occur during the prepull or regular rotation.
 	parsingPrepull bool
+
+	// Used to avoid recursive APL loops.
+	inLoop bool
 
 	// Validation warnings that occur during proto parsing.
 	// We return these back to the user for display in the UI.
 	curWarnings          []string
 	prepullWarnings      [][]string
 	priorityListWarnings [][]string
-
-	// Used for detecting infinite loops.
-	prevTime                time.Duration
-	actionsWithoutAdvancing int
 }
 
 func (rot *APLRotation) validationWarning(message string, vals ...interface{}) {
@@ -145,8 +144,7 @@ func (rot *APLRotation) allPrepullActions() []*APLAction {
 
 func (rot *APLRotation) reset(sim *Simulation) {
 	rot.strictSequence = nil
-	rot.actionsWithoutAdvancing = 0
-	rot.prevTime = 0
+	rot.inLoop = false
 	for _, action := range rot.allAPLActions() {
 		action.impl.Reset(sim)
 	}
@@ -156,40 +154,47 @@ func (rot *APLRotation) reset(sim *Simulation) {
 // and leverage the community's existing familiarity.
 // https://github.com/simulationcraft/simc/wiki/ActionLists
 func (apl *APLRotation) DoNextAction(sim *Simulation) {
-	if apl.strictSequence == nil {
-		for _, action := range apl.priorityList {
-			if action.IsReady(sim) {
-				action.Execute(sim)
-				if apl.unit.GCD.IsReady(sim) {
-					apl.unit.WaitUntil(sim, sim.CurrentTime)
-				}
-
-				// Detect infinite loops.
-				if sim.CurrentTime == apl.prevTime {
-					apl.actionsWithoutAdvancing++
-					if apl.actionsWithoutAdvancing > 1000 {
-						panic(fmt.Sprintf("[USER_ERROR] Infinite loop detected, current action:\n%s", action))
-					}
-				} else {
-					apl.prevTime = sim.CurrentTime
-					apl.actionsWithoutAdvancing = 0
-				}
-
-				return
-			}
-		}
-	} else {
-		apl.strictSequence.Execute(sim)
+	if apl.inLoop {
+		return
 	}
 
-	if sim.Log != nil {
+	i := 0
+	apl.inLoop = true
+	for nextAction := apl.getNextAction(sim); nextAction != nil; i, nextAction = i+1, apl.getNextAction(sim) {
+		if i > 1000 {
+			panic(fmt.Sprintf("[USER_ERROR] Infinite loop detected, current action:\n%s", nextAction))
+		}
+
+		nextAction.Execute(sim)
+	}
+	apl.inLoop = false
+
+	if sim.Log != nil && i == 0 {
 		apl.unit.Log(sim, "No available actions!")
 	}
+
 	if apl.unit.GCD.IsReady(sim) {
 		apl.unit.WaitUntil(sim, sim.CurrentTime+time.Millisecond*500)
 	} else {
 		apl.unit.DoNothing()
 	}
+}
+
+func (apl *APLRotation) getNextAction(sim *Simulation) *APLAction {
+	if apl.strictSequence != nil {
+		return apl.strictSequence
+	}
+
+	for _, action := range apl.priorityList {
+		if _, ok := action.impl.(*APLActionStrictSequence); ok {
+			apl.strictSequence = action
+		}
+		if action.IsReady(sim) {
+			return action
+		}
+	}
+
+	return nil
 }
 
 func APLRotationFromJsonString(jsonString string) *proto.APLRotation {
