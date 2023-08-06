@@ -27,7 +27,7 @@ func (rot *APLRotation) newActionCastSpell(config *proto.APLActionCastSpell) APL
 	}
 }
 func (action *APLActionCastSpell) IsReady(sim *Simulation) bool {
-	return action.spell.CanCast(sim, action.target.Get())
+	return action.spell.CanCast(sim, action.target.Get()) && (!action.spell.Flags.Matches(SpellFlagMCD) || action.spell.Unit.GCD.IsReady(sim))
 }
 func (action *APLActionCastSpell) Execute(sim *Simulation) {
 	action.spell.Cast(sim, action.target.Get())
@@ -126,7 +126,11 @@ func (action *APLActionAutocastOtherCooldowns) Reset(*Simulation) {
 }
 func (action *APLActionAutocastOtherCooldowns) IsReady(sim *Simulation) bool {
 	action.nextReadyMCD = action.character.getFirstReadyMCD(sim)
-	return action.nextReadyMCD != nil
+
+	// Explicitly check for GCD because MCDs are usually desired to be cast immediately
+	// before the next spell, rather than immediately after the previous spell. This is
+	// true even for MCDs which do not require the GCD.
+	return action.nextReadyMCD != nil && action.character.GCD.IsReady(sim)
 }
 func (action *APLActionAutocastOtherCooldowns) Execute(sim *Simulation) {
 	action.nextReadyMCD.tryActivateHelper(sim, action.character)

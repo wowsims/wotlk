@@ -42,8 +42,8 @@ func (action *APLActionSequence) IsReady(sim *Simulation) bool {
 	return action.curIdx < len(action.actions) && action.actions[action.curIdx].IsReady(sim)
 }
 func (action *APLActionSequence) Execute(sim *Simulation) {
-	action.actions[action.curIdx].Execute(sim)
 	action.curIdx++
+	action.actions[action.curIdx].Execute(sim)
 }
 func (action *APLActionSequence) String() string {
 	return "Sequence(" + strings.Join(MapSlice(action.actions, func(subaction *APLAction) string { return fmt.Sprintf("(%s)", subaction) }), "+") + ")"
@@ -123,15 +123,14 @@ func (action *APLActionStrictSequence) IsReady(sim *Simulation) bool {
 	return true
 }
 func (action *APLActionStrictSequence) Execute(sim *Simulation) {
-	action.unit.Rotation.strictSequence = action
 	if !action.actions[action.curIdx].IsReady(sim) {
 		action.curIdx = 0
 		action.unit.Rotation.strictSequence = nil
 		return
 	}
 
-	action.actions[action.curIdx].Execute(sim)
 	action.curIdx++
+	action.actions[action.curIdx].Execute(sim)
 
 	if action.curIdx == len(action.actions) {
 		action.curIdx = 0
