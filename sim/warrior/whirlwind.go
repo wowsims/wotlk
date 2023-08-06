@@ -32,7 +32,7 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 		ActionID:    core.ActionID{SpellID: 1680},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBloodsurge,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBloodsurge | core.SpellFlagAPL,
 
 		RageCost: core.RageCostOptions{
 			Cost: 25 - float64(warrior.Talents.FocusedRage),

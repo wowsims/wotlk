@@ -26,7 +26,7 @@ func (druid *Druid) registerLacerateSpell() {
 		ActionID:    core.ActionID{SpellID: 48568},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL,
 
 		RageCost: core.RageCostOptions{
 			Cost:   15 - float64(druid.Talents.ShreddingAttacks),

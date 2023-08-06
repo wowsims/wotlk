@@ -15,7 +15,7 @@ func (warrior *Warrior) registerBloodthirstSpell(cdTimer *core.Timer) {
 		ActionID:    core.ActionID{SpellID: 23881},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBloodsurge,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBloodsurge | core.SpellFlagAPL,
 
 		RageCost: core.RageCostOptions{
 			Cost:   20,
@@ -46,7 +46,9 @@ func (warrior *Warrior) registerBloodthirstSpell(cdTimer *core.Timer) {
 			core.StartDelayedAction(sim, core.DelayedActionOptions{
 				DoAt: sim.CurrentTime + warrior.Bloodthirst.CD.Duration,
 				OnAction: func(_ *core.Simulation) {
-					if warrior.Bloodthirst.CanCast(sim, target) {
+					if warrior.IsUsingAPL {
+						warrior.Rotation.DoNextAction(sim)
+					} else if warrior.Bloodthirst.CanCast(sim, target) {
 						warrior.Bloodthirst.Cast(sim, target)
 					}
 				},
