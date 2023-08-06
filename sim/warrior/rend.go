@@ -20,7 +20,7 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold
 		ActionID:    core.ActionID{SpellID: 47465},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagNoOnCastComplete,
+		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagAPL,
 
 		RageCost: core.RageCostOptions{
 			Cost:   10 - float64(warrior.Talents.FocusedRage),

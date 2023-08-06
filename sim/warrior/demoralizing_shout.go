@@ -15,6 +15,7 @@ func (warrior *Warrior) registerDemoralizingShoutSpell() {
 		ActionID:    core.ActionID{SpellID: 25203},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskEmpty,
+		Flags:       core.SpellFlagAPL,
 
 		RageCost: core.RageCostOptions{
 			Cost: 10 - float64(warrior.Talents.FocusedRage),
