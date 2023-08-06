@@ -385,8 +385,8 @@ func init() {
 
 		procAura := core.MakeStackingAura(paladin.GetCharacter(), core.StackingStatAura{
 			Aura: core.Aura{
-				Label:     "Libram of Three Truths Proc",
-				ActionID:  core.ActionID{SpellID: 71186},
+				Label:     "Formidable",
+				ActionID:  core.ActionID{SpellID: 71187},
 				Duration:  time.Second * 15,
 				MaxStacks: 5,
 			},
