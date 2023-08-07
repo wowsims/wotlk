@@ -20,6 +20,9 @@ func (rot *APLRotation) newActionSequence(config *proto.APLActionSequence) APLAc
 		return rot.newAPLAction(action)
 	})
 	actions = FilterSlice(actions, func(action *APLAction) bool { return action != nil })
+	if len(actions) == 0 {
+		return nil
+	}
 
 	return &APLActionSequence{
 		unit:    rot.unit,
@@ -42,8 +45,8 @@ func (action *APLActionSequence) IsReady(sim *Simulation) bool {
 	return action.curIdx < len(action.actions) && action.actions[action.curIdx].IsReady(sim)
 }
 func (action *APLActionSequence) Execute(sim *Simulation) {
-	action.curIdx++
 	action.actions[action.curIdx].Execute(sim)
+	action.curIdx++
 }
 func (action *APLActionSequence) String() string {
 	return "Sequence(" + strings.Join(MapSlice(action.actions, func(subaction *APLAction) string { return fmt.Sprintf("(%s)", subaction) }), "+") + ")"
@@ -97,6 +100,9 @@ func (rot *APLRotation) newActionStrictSequence(config *proto.APLActionStrictSeq
 		return rot.newAPLAction(action)
 	})
 	actions = FilterSlice(actions, func(action *APLAction) bool { return action != nil })
+	if len(actions) == 0 {
+		return nil
+	}
 
 	return &APLActionStrictSequence{
 		unit:    rot.unit,
@@ -123,14 +129,8 @@ func (action *APLActionStrictSequence) IsReady(sim *Simulation) bool {
 	return true
 }
 func (action *APLActionStrictSequence) Execute(sim *Simulation) {
-	if !action.actions[action.curIdx].IsReady(sim) {
-		action.curIdx = 0
-		action.unit.Rotation.strictSequence = nil
-		return
-	}
-
-	action.curIdx++
 	action.actions[action.curIdx].Execute(sim)
+	action.curIdx++
 
 	if action.curIdx == len(action.actions) {
 		action.curIdx = 0
