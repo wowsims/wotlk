@@ -5,7 +5,6 @@ import (
 )
 
 type procTracker struct {
-	id          int32
 	aura        *Aura
 	didActivate bool
 	isActive    bool
@@ -34,7 +33,6 @@ func (manager *SnapshotManager) AddProc(id int32, label string, isActive bool) b
 	}
 
 	manager.procTrackers = append(manager.procTrackers, &procTracker{
-		id:          id,
 		didActivate: false,
 		isActive:    isActive,
 		expiresAt:   -1,
