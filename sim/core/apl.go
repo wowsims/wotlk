@@ -182,7 +182,18 @@ func (apl *APLRotation) DoNextAction(sim *Simulation) {
 
 func (apl *APLRotation) getNextAction(sim *Simulation) *APLAction {
 	if apl.strictSequence != nil {
-		return apl.strictSequence
+		ss := apl.strictSequence.impl.(*APLActionStrictSequence)
+		if ss.actions[ss.curIdx].IsReady(sim) {
+			return apl.strictSequence
+		} else if apl.unit.GCD.IsReady(sim) {
+			// If the GCD is ready when the next subaction isn't, it means the sequence is bad
+			// so reset and exit the sequence.
+			ss.curIdx = 0
+			apl.strictSequence = nil
+		} else {
+			// Return nil to wait for the GCD to become ready.
+			return nil
+		}
 	}
 
 	for _, action := range apl.priorityList {
