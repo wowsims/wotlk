@@ -76,8 +76,7 @@ type Rogue struct {
 	Premeditation    *core.Spell
 	ShadowDance      *core.Spell
 	ColdBlood        *core.Spell
-	MasterOfSubtlety *core.Spell
-	Overkill         *core.Spell
+	Vanish           *core.Spell
 
 	Envenom      *core.Spell
 	Eviscerate   *core.Spell
@@ -105,6 +104,7 @@ type Rogue struct {
 	ShadowDanceAura      *core.Aura
 	DirtyDeedsAura       *core.Aura
 	HonorAmongThieves    *core.Aura
+	StealthAura          *core.Aura
 
 	masterPoisonerDebuffAuras []*core.Aura
 	savageCombatDebuffAuras   []*core.Aura
@@ -160,6 +160,7 @@ func (rogue *Rogue) Initialize() {
 
 	rogue.costModifier = rogue.makeCostModifier()
 
+	rogue.registerStealthAura()
 	rogue.registerBackstabSpell()
 	rogue.registerDeadlyPoisonSpell()
 	rogue.registerPoisonAuras()
@@ -180,6 +181,12 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerTricksOfTheTradeSpell()
 	rogue.registerAmbushSpell()
 	rogue.registerEnvenom()
+	rogue.registerVanishSpell()
+
+	// Prepull stop attack
+	if rogue.Rotation.OpenWithGarrote || rogue.Rotation.OpenWithPremeditation || rogue.Options.StartingOverkillDuration > 0 {
+		rogue.AutoAttacks.AutoSwingMelee = false
+	}
 
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()
 }
@@ -195,7 +202,8 @@ func (rogue *Rogue) Reset(sim *core.Simulation) {
 	rogue.allMCDsDisabled = true
 
 	// Stealth triggered effects (Overkill and Master of Subtlety) pre-pull activation
-	if rogue.Rotation.OpenWithGarrote || rogue.Options.StartingOverkillDuration > 0 {
+	if rogue.Rotation.OpenWithGarrote || rogue.Rotation.OpenWithPremeditation || rogue.Options.StartingOverkillDuration > 0 {
+		rogue.StealthAura.Activate(sim)
 		dur := time.Duration(rogue.Options.StartingOverkillDuration) * time.Second
 		if rogue.OverkillAura != nil {
 			if maxDur := rogue.OverkillAura.Duration; rogue.Rotation.OpenWithGarrote || dur > maxDur {
@@ -212,6 +220,7 @@ func (rogue *Rogue) Reset(sim *core.Simulation) {
 			rogue.MasterOfSubtletyAura.UpdateExpires(sim.CurrentTime + dur)
 		}
 	}
+	// TODO: Support APL on pull actions
 
 	rogue.setupRotation(sim)
 }
@@ -290,6 +299,16 @@ func (rogue *Rogue) HasDagger(hand core.Hand) bool {
 		return rogue.HasMHWeapon() && rogue.GetMHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger
 	}
 	return rogue.HasOHWeapon() && rogue.GetOHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger
+}
+
+func (rogue *Rogue) IsStealthed() bool {
+	if rogue.StealthAura.IsActive() {
+		return true
+	}
+	if rogue.Talents.ShadowDance && rogue.ShadowDanceAura.IsActive() {
+		return true
+	}
+	return false
 }
 
 func init() {

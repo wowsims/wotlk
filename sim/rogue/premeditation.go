@@ -15,7 +15,7 @@ func (rogue *Rogue) registerPremeditation() {
 
 	rogue.Premeditation = rogue.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 14183},
-		Flags: core.SpellFlagAPL,
+		Flags:    core.SpellFlagAPL,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -27,6 +27,9 @@ func (rogue *Rogue) registerPremeditation() {
 				Timer:    rogue.NewTimer(),
 				Duration: time.Second * 20,
 			},
+		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return rogue.IsStealthed()
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {

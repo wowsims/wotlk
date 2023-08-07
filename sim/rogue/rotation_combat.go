@@ -1,9 +1,10 @@
 package rogue
 
 import (
-	"golang.org/x/exp/slices"
 	"log"
 	"time"
+
+	"golang.org/x/exp/slices"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -78,10 +79,10 @@ func (x *rotation_combat) setup(_ *core.Simulation, rogue *Rogue) {
 	}
 
 	// Garrote
-	if rogue.Rotation.OpenWithGarrote && !rogue.PseudoStats.InFrontOfTarget {
+	if rogue.Rotation.OpenWithGarrote && !rogue.PseudoStats.InFrontOfTarget && rogue.IsStealthed() {
 		x.prios = append(x.prios, prio{
 			func(sim *core.Simulation, rogue *Rogue) PriorityAction {
-				if rogue.CurrentEnergy() > rogue.Garrote.DefaultCast.Cost {
+				if rogue.CurrentEnergy() > rogue.Garrote.DefaultCast.Cost && rogue.IsStealthed() {
 					return Once
 				}
 				return Wait
