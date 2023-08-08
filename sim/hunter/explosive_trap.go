@@ -49,7 +49,7 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 				dot.Spell.DamageMultiplierAdditive += bonusPeriodicDamageMultiplier
 				for _, aoeTarget := range sim.Encounter.TargetUnits {
 					if hasGlyph {
-						dot.Spell.CalcAndDealPeriodicDamage(sim, aoeTarget, baseDamage, dot.Spell.OutcomeRangedHitAndCrit)
+						dot.Spell.CalcAndDealPeriodicDamage(sim, aoeTarget, baseDamage, dot.Spell.OutcomeRangedHitAndCritNoBlock)
 					} else {
 						dot.Spell.CalcAndDealPeriodicDamage(sim, aoeTarget, baseDamage, dot.Spell.OutcomeRangedHit)
 					}
@@ -73,7 +73,7 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 						for _, aoeTarget := range sim.Encounter.TargetUnits {
 							baseDamage := sim.Roll(523, 671) + 0.1*spell.RangedAttackPower(aoeTarget)
 							baseDamage *= sim.Encounter.AOECapMultiplier()
-							spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeRangedHitAndCrit)
+							spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeRangedHitAndCritNoBlock)
 						}
 						hunter.ExplosiveTrap.AOEDot().Apply(sim)
 					},
@@ -82,7 +82,7 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 				for _, aoeTarget := range sim.Encounter.TargetUnits {
 					baseDamage := sim.Roll(523, 671) + 0.1*spell.RangedAttackPower(aoeTarget)
 					baseDamage *= sim.Encounter.AOECapMultiplier()
-					spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeRangedHitAndCrit)
+					spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeRangedHitAndCritNoBlock)
 				}
 				hunter.ExplosiveTrap.AOEDot().Apply(sim)
 			}

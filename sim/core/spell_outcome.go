@@ -367,6 +367,16 @@ func (dot *Dot) OutcomeRangedHitAndCritSnapshot(sim *Simulation, result *SpellRe
 	}
 }
 
+func (spell *Spell) OutcomeRangedHitAndCritNoBlock(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
+	roll := sim.RandomFloat("White Hit Table")
+	chance := 0.0
+
+	if !result.applyAttackTableMissNoDWPenalty(spell, attackTable, roll, &chance) &&
+		!result.applyAttackTableCritSeparateRoll(sim, spell, attackTable) {
+		result.applyAttackTableHit(spell)
+	}
+}
+
 func (spell *Spell) OutcomeRangedCritOnly(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
 	// Block already checks for this, but we can skip the RNG roll which is expensive.
 	if spell.Unit.PseudoStats.InFrontOfTarget {
