@@ -35,7 +35,7 @@ func init() {
 		character := agent.GetCharacter()
 
 		healSpell := character.RegisterSpell(core.SpellConfig{
-			ActionID:    core.ActionID{ItemID: 41385},
+			ActionID:    core.ActionID{SpellID: 55341},
 			SpellSchool: core.SpellSchoolPhysical,
 			ProcMask:    core.ProcMaskSpellHealing,
 			Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagHelpful,
@@ -98,7 +98,7 @@ func init() {
 
 	core.NewItemEffect(41401, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		manaMetrics := character.NewManaMetrics(core.ActionID{ItemID: 41401})
+		manaMetrics := character.NewManaMetrics(core.ActionID{SpellID: 55382})
 
 		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 			Name:       "Insightful Earthsiege Diamond",
