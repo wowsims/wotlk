@@ -306,7 +306,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 	}
 
 	socketTear(gear: Gear, tearSlot: ItemSlot | null): Gear {
-		if (tearSlot) {
+		if (tearSlot != null) {
 			const tearSlotItem = gear.getEquippedItem(tearSlot);
 
 			for (const [socketIdx, socketColor] of tearSlotItem!.allSocketColors().entries()) {
