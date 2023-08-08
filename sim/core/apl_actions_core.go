@@ -108,6 +108,64 @@ func (action *APLActionMultidot) String() string {
 	return fmt.Sprintf("Multidot(%s)", action.spell.ActionID)
 }
 
+type APLActionMultishield struct {
+	defaultAPLActionImpl
+	spell      *Spell
+	maxShields int32
+	maxOverlap APLValue
+
+	nextTarget *Unit
+}
+
+func (rot *APLRotation) newActionMultishield(config *proto.APLActionMultishield) APLActionImpl {
+	unit := rot.unit
+
+	spell := rot.aplGetMultishieldSpell(config.SpellId)
+	if spell == nil {
+		return nil
+	}
+
+	maxOverlap := rot.coerceTo(rot.newAPLValue(config.MaxOverlap), proto.APLValueType_ValueTypeDuration)
+	if maxOverlap == nil {
+		maxOverlap = rot.newValueConst(&proto.APLValueConst{Val: "0ms"})
+	}
+
+	maxShields := config.MaxShields
+	numTargets := int32(len(unit.Env.Raid.AllPlayerUnits))
+	if numTargets < maxShields {
+		rot.validationWarning("Encounter only has %d targets. Using that for Max Shields instead of %d", numTargets, maxShields)
+		maxShields = numTargets
+	}
+
+	return &APLActionMultishield{
+		spell:      spell,
+		maxShields: maxShields,
+		maxOverlap: maxOverlap,
+	}
+}
+func (action *APLActionMultishield) Reset(*Simulation) {
+	action.nextTarget = nil
+}
+func (action *APLActionMultishield) IsReady(sim *Simulation) bool {
+	maxOverlap := action.maxOverlap.GetDuration(sim)
+
+	for i := int32(0); i < action.maxShields; i++ {
+		target := sim.Raid.AllPlayerUnits[i]
+		shield := action.spell.Shield(target)
+		if (!shield.IsActive() || shield.RemainingDuration(sim) < maxOverlap) && action.spell.CanCast(sim, target) {
+			action.nextTarget = target
+			return true
+		}
+	}
+	return false
+}
+func (action *APLActionMultishield) Execute(sim *Simulation) {
+	action.spell.Cast(sim, action.nextTarget)
+}
+func (action *APLActionMultishield) String() string {
+	return fmt.Sprintf("Multishield(%s)", action.spell.ActionID)
+}
+
 type APLActionAutocastOtherCooldowns struct {
 	defaultAPLActionImpl
 	character *Character

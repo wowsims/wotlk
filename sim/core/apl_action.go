@@ -95,6 +95,8 @@ func (rot *APLRotation) newAPLActionImpl(config *proto.APLAction) APLActionImpl 
 		return rot.newActionCastSpell(config.GetCastSpell())
 	case *proto.APLAction_Multidot:
 		return rot.newActionMultidot(config.GetMultidot())
+	case *proto.APLAction_Multishield:
+		return rot.newActionMultishield(config.GetMultishield())
 	case *proto.APLAction_AutocastOtherCooldowns:
 		return rot.newActionAutocastOtherCooldowns(config.GetAutocastOtherCooldowns())
 	case *proto.APLAction_ChangeTarget:

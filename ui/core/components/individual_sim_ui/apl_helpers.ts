@@ -12,7 +12,7 @@ import { ActionID } from '../../proto/common.js';
 import { BooleanPicker } from '../boolean_picker.js';
 import { APLValueRuneSlot, APLValueRuneType } from '../../proto/apl.js';
 
-export type ACTION_ID_SET = 'auras' | 'stackable_auras' | 'icd_auras' | 'exclusive_effect_auras' | 'castable_spells' | 'dot_spells';
+export type ACTION_ID_SET = 'auras' | 'stackable_auras' | 'icd_auras' | 'exclusive_effect_auras' | 'castable_spells' | 'dot_spells' | 'shield_spells';
 
 const actionIdSets: Record<ACTION_ID_SET, {
 	defaultLabel: string,
@@ -108,6 +108,16 @@ const actionIdSets: Record<ACTION_ID_SET, {
 		defaultLabel: 'DoT Spell',
 		getActionIDs: async (metadata) => {
 			return metadata.getSpells().filter(spell => spell.data.hasDot).map(actionId => {
+				return {
+					value: actionId.id,
+				};
+			});
+		},
+	},
+	'shield_spells': {
+		defaultLabel: 'Shield Spell',
+		getActionIDs: async (metadata) => {
+			return metadata.getSpells().filter(spell => spell.data.hasShield).map(actionId => {
 				return {
 					value: actionId.id,
 				};

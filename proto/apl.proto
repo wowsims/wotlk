@@ -28,6 +28,7 @@ message APLListItem {
     APLAction action = 3; // The action to be performed.
 }
 
+// NextIndex: 13
 message APLAction {
     APLValue condition = 1; // If set, action will only execute if value is true or != 0.
 
@@ -38,6 +39,7 @@ message APLAction {
 
         APLActionCastSpell cast_spell = 3;
         APLActionMultidot multidot = 8;
+        APLActionMultishield multishield = 12;
 
         // Misc
         APLActionAutocastOtherCooldowns autocast_other_cooldowns = 7;
@@ -140,6 +142,12 @@ message APLActionCastSpell {
 message APLActionMultidot {
     ActionID spell_id = 1;
     int32 max_dots = 2;
+    APLValue max_overlap = 3;
+}
+
+message APLActionMultishield {
+    ActionID spell_id = 1;
+    int32 max_shields = 2;
     APLValue max_overlap = 3;
 }
 

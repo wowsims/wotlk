@@ -50,8 +50,9 @@ type SpellConfig struct {
 	// Optional field. Calculates expected average damage.
 	ExpectedDamage ExpectedDamageCalculator
 
-	Dot DotConfig
-	Hot DotConfig
+	Dot    DotConfig
+	Hot    DotConfig
+	Shield ShieldConfig
 
 	RelatedAuras []AuraArray
 }
@@ -132,6 +133,9 @@ type Spell struct {
 
 	dots   DotArray
 	aoeDot *Dot
+
+	shields    ShieldArray
+	selfShield *Shield
 
 	// Per-target auras that are related to this spell, usually buffs or debuffs applied by the spell.
 	RelatedAuras []AuraArray
@@ -233,6 +237,7 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 
 	spell.createDots(config.Dot, false)
 	spell.createDots(config.Hot, true)
+	spell.createShields(config.Shield)
 
 	spell.castFn = spell.makeCastFunc(config.Cast, spell.applyEffects)
 
@@ -293,6 +298,12 @@ func (spell *Spell) AOEHot() *Dot {
 }
 func (spell *Spell) SelfHot() *Dot {
 	return spell.aoeDot
+}
+func (spell *Spell) Shield(target *Unit) *Shield {
+	return spell.shields.Get(target)
+}
+func (spell *Spell) SelfShield() *Shield {
+	return spell.selfShield
 }
 
 // Metrics for the current iteration

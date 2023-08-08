@@ -93,7 +93,7 @@ export const ROTATION_PRESET_DISC = {
 			"enabled": true,
 			"priorityList": [
 				{"action":{"autocastOtherCooldowns":{}}},
-				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":48066}}},"rhs":{"const":{"val":"18"}}}},"castSpell":{"spellId":{"spellId":48066}}}},
+				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":48066}}},"rhs":{"const":{"val":"18"}}}},"multishield":{"spellId":{"spellId":48066},"maxShields":10,"maxOverlap":{"const":{"val":"0ms"}}}}},
 				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":53007}}},"rhs":{"const":{"val":"4"}}}},"castSpell":{"spellId":{"spellId":53007}}}},
 				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":48113}}},"rhs":{"const":{"val":"2"}}}},"castSpell":{"spellId":{"spellId":48113}}}},
 				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":48063}}},"rhs":{"const":{"val":"1"}}}},"castSpell":{"spellId":{"spellId":48063}}}}
