@@ -96,6 +96,8 @@ enum DungeonDifficulty {
 	DifficultyUnknown = 0;
 	DifficultyNormal = 1;
 	DifficultyHeroic = 2;
+	DifficultyTitanRuneAlpha = 7;
+	DifficultyTitanRuneBeta = 8;
 	DifficultyRaid10 = 3;
 	DifficultyRaid10H = 4;
 	DifficultyRaid25 = 5;

@@ -328,6 +328,8 @@ export const difficultyNames: Record<DungeonDifficulty, string> = {
 	[DungeonDifficulty.DifficultyUnknown]: 'Unknown',
 	[DungeonDifficulty.DifficultyNormal]: 'N',
 	[DungeonDifficulty.DifficultyHeroic]: 'H',
+	[DungeonDifficulty.DifficultyTitanRuneAlpha]: 'TRA',
+	[DungeonDifficulty.DifficultyTitanRuneBeta]: 'TRB',
 	[DungeonDifficulty.DifficultyRaid10]: '10N',
 	[DungeonDifficulty.DifficultyRaid10H]: '10H',
 	[DungeonDifficulty.DifficultyRaid25]: '25N',
