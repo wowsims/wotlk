@@ -304,6 +304,8 @@ export const sourceNames: Record<SourceFilterOption, string> = {
 	[SourceFilterOption.SourceQuest]: 'Quest',
 	[SourceFilterOption.SourceDungeon]: 'Dungeon',
 	[SourceFilterOption.SourceDungeonH]: 'Dungeon (H)',
+	[SourceFilterOption.SourceDungeonTRA]: 'Dungeon (TRA)',
+	[SourceFilterOption.SourceDungeonTRB]: 'Dungeon (TRB)',
 	[SourceFilterOption.SourceRaid10]: 'Raid (10N)',
 	[SourceFilterOption.SourceRaid10H]: 'Raid (10H)',
 	[SourceFilterOption.SourceRaid25]: 'Raid (25N)',

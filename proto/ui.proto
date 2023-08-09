@@ -190,6 +190,8 @@ enum SourceFilterOption {
 	SourceQuest = 2;
 	SourceDungeon = 3;
 	SourceDungeonH = 4;
+	SourceDungeonTRA = 9;
+	SourceDungeonTRB = 10;
 	SourceRaid10 = 5;
 	SourceRaid10H = 6;
 	SourceRaid25 = 7;
