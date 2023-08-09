@@ -281,7 +281,7 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 	['multidot']: inputBuilder({
 		label: 'Multi Dot',
 		shortDescription: 'Keeps a DoT active on multiple targets by casting the specified spell.',
-		includeIf: (player: Player<any>, isPrepull: boolean) => !isPrepull && !isHealingSpec(player.spec),
+		includeIf: (player: Player<any>, isPrepull: boolean) => !isPrepull,
 		newValue: () => APLActionMultidot.create({
 			maxDots: 3,
 			maxOverlap: {
