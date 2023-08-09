@@ -82,7 +82,7 @@ func readAtlasLootDungeonData(db *WowDatabase, expansion proto.Expansion, srcUrl
 
 	dungeonPattern := regexp.MustCompile(`data\["([^"]+)"] = {.*?\sMapID = (\d+),.*?items = {(.*?)@@@}@@@`)
 	npcNameAndIDPattern := regexp.MustCompile(`^[^@]*?AL\["(.*?)"\]\)?,(.*?(@@@\s*npcID = {?(\d+),))?`)
-	diffItemsPattern := regexp.MustCompile(`\[([A-Z0-9]+_DIFF)\] = {.*?@@@\s*},?@@@`)
+	diffItemsPattern := regexp.MustCompile(`\[([A-Z0-9]+_DIFF)\] = (({.*?@@@\s*},?@@@)|(.*?@@@\s*\),?@@@))`)
 	itemsPattern := regexp.MustCompile(`@@@\s+{(.*?)},`)
 	itemParamPattern := regexp.MustCompile(`AL\["(.*?)"\]`)
 	for _, dungeonMatch := range dungeonPattern.FindAllStringSubmatch(srcTxt, -1) {
@@ -122,7 +122,7 @@ func readAtlasLootDungeonData(db *WowDatabase, expansion proto.Expansion, srcUrl
 			for _, difficultyMatch := range diffItemsPattern.FindAllStringSubmatch(npcSplit, -1) {
 				difficulty, ok := AtlasLootDifficulties[difficultyMatch[1]]
 				if !ok {
-					log.Fatalf("Invalid difficulty: %s", difficultyMatch[1])
+					log.Fatalf("Invalid difficulty for NPC %s: %s", npcName, difficultyMatch[1])
 				}
 
 				curCategory := ""
@@ -164,7 +164,7 @@ func readAtlasLootDungeonData(db *WowDatabase, expansion proto.Expansion, srcUrl
 							dropSource.Category = curCategory
 						}
 
-						item := &proto.UIItem{Id: int32(itemID), Sources: []*proto.UIItemSource{&proto.UIItemSource{
+						item := &proto.UIItem{Id: int32(itemID), Sources: []*proto.UIItemSource{{
 							Source: &proto.UIItemSource_Drop{
 								Drop: dropSource,
 							},
@@ -219,6 +219,8 @@ var AtlasLootProfessionIDs = map[int]proto.Profession{
 var AtlasLootDifficulties = map[string]proto.DungeonDifficulty{
 	"NORMAL_DIFF":  proto.DungeonDifficulty_DifficultyNormal,
 	"HEROIC_DIFF":  proto.DungeonDifficulty_DifficultyHeroic,
+	"ALPHA_DIFF":   proto.DungeonDifficulty_DifficultyTitanRuneAlpha,
+	"BETA_DIFF":    proto.DungeonDifficulty_DifficultyTitanRuneBeta,
 	"RAID10_DIFF":  proto.DungeonDifficulty_DifficultyRaid10,
 	"RAID10H_DIFF": proto.DungeonDifficulty_DifficultyRaid10H,
 	"RAID25_DIFF":  proto.DungeonDifficulty_DifficultyRaid25,
