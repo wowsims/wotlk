@@ -428,31 +428,31 @@ func (spell *Spell) CanCast(sim *Simulation, target *Unit) bool {
 	}
 
 	if spell.ExtraCastCondition != nil && !spell.ExtraCastCondition(sim, target) {
-		if sim.Log != nil {
-			sim.Log("Cant cast because of extra condition")
-		}
+		//if sim.Log != nil {
+		//	sim.Log("Cant cast because of extra condition")
+		//}
 		return false
 	}
 
 	// While casting or channeling, no other action is possible
 	if spell.Unit.Hardcast.Expires > sim.CurrentTime {
-		if sim.Log != nil {
-			sim.Log("Cant cast because already casting/channeling")
-		}
+		//if sim.Log != nil {
+		//	sim.Log("Cant cast because already casting/channeling")
+		//}
 		return false
 	}
 
 	if spell.DefaultCast.GCD > 0 && !spell.Unit.GCD.IsReady(sim) {
-		if sim.Log != nil {
-			sim.Log("Cant cast because of GCD")
-		}
+		//if sim.Log != nil {
+		//	sim.Log("Cant cast because of GCD")
+		//}
 		return false
 	}
 
 	if !BothTimersReady(spell.CD.Timer, spell.SharedCD.Timer, sim) {
-		if sim.Log != nil {
-			sim.Log("Cant cast because of CDs")
-		}
+		//if sim.Log != nil {
+		//	sim.Log("Cant cast because of CDs")
+		//}
 		return false
 	}
 
@@ -460,9 +460,9 @@ func (spell *Spell) CanCast(sim *Simulation, target *Unit) bool {
 		// temp hack
 		spell.CurCast.Cost = spell.DefaultCast.Cost
 		if !spell.Cost.MeetsRequirement(spell) {
-			if sim.Log != nil {
-				sim.Log("Cant cast because of resource cost")
-			}
+			//if sim.Log != nil {
+			//	sim.Log("Cant cast because of resource cost")
+			//}
 			return false
 		}
 	}

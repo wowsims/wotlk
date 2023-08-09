@@ -197,10 +197,10 @@ func (apl *APLRotation) getNextAction(sim *Simulation) *APLAction {
 	}
 
 	for _, action := range apl.priorityList {
-		if _, ok := action.impl.(*APLActionStrictSequence); ok {
-			apl.strictSequence = action
-		}
 		if action.IsReady(sim) {
+			if _, ok := action.impl.(*APLActionStrictSequence); ok {
+				apl.strictSequence = action
+			}
 			return action
 		}
 	}
