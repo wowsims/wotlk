@@ -51,6 +51,19 @@ export function makeShowMatchingGemsSelector(parent: HTMLElement, sim: Sim): Boo
 	});
 }
 
+export function makeShowEPValuesSelector(parent: HTMLElement, sim: Sim): BooleanPicker<Sim> {
+	return new BooleanPicker<Sim>(parent, sim, {
+		extraCssClasses: ['show-ep-values-selector', 'input-inline', 'mb-0'],
+		label: 'Show EP',
+		inline: true,
+		changedEvent: (sim: Sim) => sim.showEPValuesChangeEmitter,
+		getValue: (sim: Sim) => sim.getShowEPValues(),
+		setValue: (eventID: EventID, sim: Sim, newValue: boolean) => {
+			sim.setShowEPValues(eventID, newValue);
+		},
+	});
+}
+
 export function makePhaseSelector(parent: HTMLElement, sim: Sim): EnumPicker<Sim> {
 	return new EnumPicker<Sim>(parent, sim, {
 		extraCssClasses: ['phase-selector'],
