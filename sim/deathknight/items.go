@@ -637,7 +637,7 @@ func init() {
 
 	core.NewItemEffect(40715, func(agent core.Agent) {
 		dk := agent.(DeathKnightAgent).GetDeathKnight()
-		procAura := dk.NewTemporaryStatsAura("Sigil of Haunted Dreams Proc", core.ActionID{ItemID: 40715}, stats.Stats{stats.MeleeCrit: 173.0, stats.SpellCrit: 173.0}, time.Second*10)
+		procAura := dk.NewTemporaryStatsAura("Sigil of Haunted Dreams Proc", core.ActionID{SpellID: 60828}, stats.Stats{stats.MeleeCrit: 173.0, stats.SpellCrit: 173.0}, time.Second*10)
 
 		icd := core.Cooldown{
 			Timer:    dk.NewTimer(),
@@ -733,7 +733,7 @@ func init() {
 		procAura := core.MakeStackingAura(character, core.StackingStatAura{
 			Aura: core.Aura{
 				Label:     "Sigil of the Hanged Man Proc",
-				ActionID:  core.ActionID{ItemID: 50459},
+				ActionID:  core.ActionID{SpellID: 71227},
 				Duration:  time.Second * 15,
 				MaxStacks: 3,
 			},

@@ -179,3 +179,14 @@ func (rot *APLRotation) aplGetMultidotSpell(spellId *proto.ActionID) *Spell {
 	}
 	return spell
 }
+
+func (rot *APLRotation) aplGetMultishieldSpell(spellId *proto.ActionID) *Spell {
+	spell := rot.aplGetSpell(spellId)
+	if spell == nil {
+		return nil
+	} else if spell.Shield(spell.Unit) == nil {
+		rot.validationWarning("Spell %s does not have an associated Shield", ProtoToActionID(spellId))
+		return nil
+	}
+	return spell
+}

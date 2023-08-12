@@ -76,8 +76,8 @@ export class CharacterStats extends Component {
 		const debuffStats = this.getDebuffStats();
 		const bonusStats = player.getBonusStats();
 
-		const baseDelta = baseStats.subtract(bonusStats);
-		const gearDelta = gearStats.subtract(baseStats);
+		const baseDelta = baseStats;
+		const gearDelta = gearStats.subtract(baseStats).subtract(bonusStats);
 		const talentsDelta = talentsStats.subtract(gearStats).add(statMods.talents);
 		const buffsDelta = buffsStats.subtract(talentsStats);
 		const consumesDelta = consumesStats.subtract(buffsStats);

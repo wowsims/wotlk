@@ -218,7 +218,7 @@ func (dot *Dot) basePeriodicOptions() PeriodicActionOptions {
 	}
 }
 
-func NewDot(config Dot) *Dot {
+func newDot(config Dot) *Dot {
 	dot := &Dot{}
 	*dot = config
 
@@ -275,7 +275,7 @@ func (spell *Spell) createDots(config DotConfig, isHot bool) {
 	caster := dot.Spell.Unit
 	if config.IsAOE || config.SelfOnly {
 		dot.Aura = caster.GetOrRegisterAura(auraConfig)
-		spell.aoeDot = NewDot(dot)
+		spell.aoeDot = newDot(dot)
 	} else {
 		auraConfig.Label += "-" + strconv.Itoa(int(caster.UnitIndex))
 		if spell.dots == nil {
@@ -284,7 +284,7 @@ func (spell *Spell) createDots(config DotConfig, isHot bool) {
 		for _, target := range caster.Env.AllUnits {
 			if isHot != caster.IsOpponent(target) {
 				dot.Aura = target.GetOrRegisterAura(auraConfig)
-				spell.dots[target.UnitIndex] = NewDot(dot)
+				spell.dots[target.UnitIndex] = newDot(dot)
 			}
 		}
 	}

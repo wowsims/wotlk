@@ -11,8 +11,10 @@ import {
 	APLActionTriggerICD,
 	APLActionWait,
 	APLValue,
+	APLActionMultishield,
 } from '../../proto/apl.js';
 
+import { isHealingSpec } from '../../proto_utils/utils.js';
 import { EventID } from '../../typed_event.js';
 import { Input, InputConfig } from '../input.js';
 import { Player } from '../../player.js';
@@ -66,7 +68,7 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 		this.kindPicker = new TextDropdownPicker(this.actionDiv, player, {
 			defaultLabel: 'Action',
 			values: allActionKinds
-				.filter(actionKind => actionKindFactories[actionKind].isPrepull == undefined || actionKindFactories[actionKind].isPrepull === isPrepull)
+				.filter(actionKind => actionKindFactories[actionKind].includeIf?.(player, isPrepull) ?? true)
 				.map(actionKind => {
 					const factory = actionKindFactories[actionKind];
 					return {
@@ -212,7 +214,7 @@ type ActionKindConfig<T> = {
 	submenu?: Array<string>,
 	shortDescription: string,
 	fullDescription?: string,
-	isPrepull?: boolean,
+	includeIf?: (player: Player<any>, isPrepull: boolean) => boolean,
 	newValue: () => T,
 	factory: (parent: HTMLElement, player: Player<any>, config: InputConfig<Player<any>, T>) => Input<Player<any>, T>,
 };
@@ -251,7 +253,7 @@ function inputBuilder<T>(config: {
 	submenu?: Array<string>,
 	shortDescription: string,
 	fullDescription?: string,
-	isPrepull?: boolean,
+	includeIf?: (player: Player<any>, isPrepull: boolean) => boolean,
 	newValue: () => T,
 	fields: Array<AplHelpers.APLPickerBuilderFieldConfig<T, any>>,
 }): ActionKindConfig<T> {
@@ -260,7 +262,7 @@ function inputBuilder<T>(config: {
 		submenu: config.submenu,
 		shortDescription: config.shortDescription,
 		fullDescription: config.fullDescription,
-		isPrepull: config.isPrepull,
+		includeIf: config.includeIf,
 		newValue: config.newValue,
 		factory: AplHelpers.aplInputBuilder(config.newValue, config.fields),
 	};
@@ -279,7 +281,7 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 	['multidot']: inputBuilder({
 		label: 'Multi Dot',
 		shortDescription: 'Keeps a DoT active on multiple targets by casting the specified spell.',
-		isPrepull: false,
+		includeIf: (player: Player<any>, isPrepull: boolean) => !isPrepull,
 		newValue: () => APLActionMultidot.create({
 			maxDots: 3,
 			maxOverlap: {
@@ -303,6 +305,33 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 			}),
 		],
 	}),
+	['multishield']: inputBuilder({
+		label: 'Multi Shield',
+		shortDescription: 'Keeps a Shield active on multiple targets by casting the specified spell.',
+		includeIf: (player: Player<any>, isPrepull: boolean) => !isPrepull && isHealingSpec(player.spec),
+		newValue: () => APLActionMultishield.create({
+			maxShields: 3,
+			maxOverlap: {
+				value: {
+					oneofKind: 'const',
+					const: {
+						val: '0ms',
+					},
+				},
+			},
+		}),
+		fields: [
+			AplHelpers.actionIdFieldConfig('spellId', 'shield_spells', ''),
+			AplHelpers.numberFieldConfig('maxShields', {
+				label: 'Max Shields',
+				labelTooltip: 'Maximum number of Shields to simultaneously apply.',
+			}),
+			AplValues.valueFieldConfig('maxOverlap', {
+				label: 'Overlap',
+				labelTooltip: 'Maximum amount of time before a Shield expires when it may be refreshed.',
+			}),
+		],
+	}),
 	['sequence']: inputBuilder({
 		label: 'Sequence',
 		submenu: ['Sequences'],
@@ -311,7 +340,7 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 			<p>Once one of the sub-actions has been performed, the next sub-action will not necessarily be immediately executed next. The system will restart at the beginning of the whole actions list (not the sequence). If the sequence is executed again, it will perform the next sub-action.</p>
 			<p>When all actions have been performed, the sequence does NOT automatically reset; instead, it will be skipped from now on. Use the <b>Reset Sequence</b> action to reset it, if desired.</p>
 		`,
-		isPrepull: false,
+		includeIf: (player: Player<any>, isPrepull: boolean) => !isPrepull,
 		newValue: APLActionSequence.create,
 		fields: [
 			AplHelpers.stringFieldConfig('name'),
@@ -325,7 +354,7 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 		fullDescription: `
 			<p>Use the <b>name</b> field to refer to the sequence to be reset. The desired sequence must have the same (non-empty) value for its <b>name</b>.</p>
 		`,
-		isPrepull: false,
+		includeIf: (player: Player<any>, isPrepull: boolean) => !isPrepull,
 		newValue: APLActionResetSequence.create,
 		fields: [
 			AplHelpers.stringFieldConfig('sequenceName'),
@@ -338,7 +367,7 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 		fullDescription: `
 			<p>Strict Sequences do not begin unless ALL sub-actions are ready.</p>
 		`,
-		isPrepull: false,
+		includeIf: (player: Player<any>, isPrepull: boolean) => !isPrepull,
 		newValue: APLActionStrictSequence.create,
 		fields: [
 			actionListFieldConfig('actions'),
@@ -354,7 +383,7 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 				<li>Cooldowns are usually cast immediately upon becoming ready, but there are some basic smart checks in place, e.g. don't use Mana CDs when near full mana.</li>
 			</ul>
 		`,
-		isPrepull: false,
+		includeIf: (player: Player<any>, isPrepull: boolean) => !isPrepull,
 		newValue: APLActionAutocastOtherCooldowns.create,
 		fields: [],
 	}),
@@ -362,7 +391,7 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 		label: 'Wait',
 		submenu: ['Misc'],
 		shortDescription: 'Pauses the GCD for a specified amount of time.',
-		isPrepull: false,
+		includeIf: (player: Player<any>, isPrepull: boolean) => !isPrepull,
 		newValue: () => APLActionWait.create({
 			duration: {
 				value: {
@@ -399,7 +428,7 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 		label: 'Trigger ICD',
 		submenu: ['Misc'],
 		shortDescription: 'Triggers an aura\'s ICD, putting it on cooldown. Example usage would be to desync an ICD cooldown before combat starts.',
-		isPrepull: true,
+		includeIf: (player: Player<any>, isPrepull: boolean) => isPrepull,
 		newValue: () => APLActionTriggerICD.create(),
 		fields: [
 			AplHelpers.actionIdFieldConfig('auraId', 'icd_auras'),

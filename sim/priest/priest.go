@@ -56,7 +56,6 @@ type Priest struct {
 	VampiricTouch   *core.Spell
 	Dispersion      *core.Spell
 
-	PWSShields    []*core.Shield
 	WeakenedSouls core.AuraArray
 
 	ProcPrayerOfMending core.ApplySpellResults

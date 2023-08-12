@@ -277,27 +277,4 @@ var ItemSetYmirjarLordsBattlegear = core.NewItemSet(core.ItemSet{
 })
 
 func init() {
-
-	core.NewItemEffect(32485, func(agent core.Agent) {
-		warrior := agent.(WarriorAgent).GetWarrior()
-		procAura := warrior.NewTemporaryStatsAura("Ashtongue Talisman Proc", core.ActionID{ItemID: 32485}, stats.Stats{stats.Strength: 55}, time.Second*12)
-
-		warrior.RegisterAura(core.Aura{
-			Label:    "Ashtongue Talisman",
-			Duration: core.NeverExpires,
-			OnReset: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Activate(sim)
-			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if spell != warrior.ShieldSlam && spell != warrior.Bloodthirst && spell != warrior.MortalStrike {
-					return
-				}
-
-				if sim.RandomFloat("AshtongueTalismanOfValor") < 0.25 {
-					procAura.Activate(sim)
-				}
-			},
-		})
-	})
-
 }

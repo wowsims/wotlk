@@ -334,6 +334,7 @@ func (rogue *Rogue) applyWeaponSpecializations() {
 	ohWeapon := rogue.GetOHWeapon()
 	// https://wotlk.wowhead.com/spell=13964/sword-specialization, proc mask = 20.
 	hackAndSlashMask := core.ProcMaskUnknown
+	anyMaceEquipped := false
 	if mhWeapon != nil && mhWeapon.ID != 0 {
 		switch mhWeapon.WeaponType {
 		case proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeAxe:
@@ -345,11 +346,7 @@ func (rogue *Rogue) applyWeaponSpecializations() {
 				}
 			})
 		case proto.WeaponType_WeaponTypeMace:
-			rogue.OnSpellRegistered(func(spell *core.Spell) {
-				if spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
-					spell.BonusArmorPenRating += 3 * core.ArmorPenPerPercentArmor * float64(rogue.Talents.MaceSpecialization)
-				}
-			})
+			anyMaceEquipped = true
 		}
 	}
 	if ohWeapon != nil && ohWeapon.ID != 0 {
@@ -363,14 +360,13 @@ func (rogue *Rogue) applyWeaponSpecializations() {
 				}
 			})
 		case proto.WeaponType_WeaponTypeMace:
-			rogue.OnSpellRegistered(func(spell *core.Spell) {
-				if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
-					spell.BonusArmorPenRating += 3 * core.ArmorPenPerPercentArmor * float64(rogue.Talents.MaceSpecialization)
-				}
-			})
+			anyMaceEquipped = true
 		}
 	}
 
+	if anyMaceEquipped {
+		rogue.AddStat(stats.ArmorPenetration, core.ArmorPenPerPercentArmor*3*float64(rogue.Talents.MaceSpecialization))
+	}
 	rogue.registerHackAndSlash(hackAndSlashMask)
 }
 

@@ -186,8 +186,12 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 		if (this.config.states >= 4 && this.config.improvedId2) {
 			if (this.currentValue > 2) {
 				this.improvedAnchor2.classList.add('active');
+				this.improvedAnchor.hidden = true;
+				this.improvedAnchor2.hidden = false;
 			} else {
 				this.improvedAnchor2.classList.remove('active');
+				this.improvedAnchor.hidden = false;
+				this.improvedAnchor2.hidden = true;
 			}
 		}
 

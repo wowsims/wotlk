@@ -512,6 +512,7 @@ func (unit *Unit) GetMetadata() *proto.UnitMetadata {
 			IsCastable:      spell.Flags.Matches(SpellFlagAPL),
 			IsMajorCooldown: spell.Flags.Matches(SpellFlagMCD),
 			HasDot:          spell.dots != nil || spell.aoeDot != nil,
+			HasShield:       spell.shields != nil || spell.selfShield != nil,
 			PrepullOnly:     spell.Flags.Matches(SpellFlagPrepullOnly),
 		}
 	})

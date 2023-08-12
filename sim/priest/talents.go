@@ -88,22 +88,14 @@ func (priest *Priest) applyDivineAegis() {
 			(0.1 * float64(priest.Talents.DivineAegis)) *
 			core.TernaryFloat64(priest.HasSetBonus(ItemSetZabrasRaiment, 4), 1.1, 1),
 		ThreatMultiplier: 1,
-	})
 
-	shields := make([]*core.Shield, len(priest.Env.AllUnits))
-	for _, unit := range priest.Env.AllUnits {
-		if !priest.IsOpponent(unit) {
-			shield := core.NewShield(core.Shield{
-				Spell: divineAegis,
-				Aura: unit.GetOrRegisterAura(core.Aura{
-					Label:    "Divine Aegis",
-					ActionID: divineAegis.ActionID,
-					Duration: time.Second * 12,
-				}),
-			})
-			shields[unit.UnitIndex] = shield
-		}
-	}
+		Shield: core.ShieldConfig{
+			Aura: core.Aura{
+				Label:    "Divine Aegis",
+				Duration: time.Second * 12,
+			},
+		},
+	})
 
 	priest.RegisterAura(core.Aura{
 		Label:    "Divine Aegis Talent",
@@ -113,8 +105,7 @@ func (priest *Priest) applyDivineAegis() {
 		},
 		OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if result.Outcome.Matches(core.OutcomeCrit) {
-				shield := shields[result.Target.UnitIndex]
-				shield.Apply(sim, result.Damage)
+				divineAegis.Shield(result.Target).Apply(sim, result.Damage)
 			}
 		},
 	})
