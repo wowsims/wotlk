@@ -44,6 +44,7 @@ message APLAction {
         // Misc
         APLActionAutocastOtherCooldowns autocast_other_cooldowns = 7;
         APLActionChangeTarget change_target = 9;
+        APLActionActivateAura activate_aura = 13;
         APLActionCancelAura cancel_aura = 10;
         APLActionTriggerICD trigger_icd = 11;
         APLActionWait wait = 4;
@@ -159,6 +160,10 @@ message APLActionChangeTarget {
 }
 
 message APLActionCancelAura {
+    ActionID aura_id = 1;
+}
+
+message APLActionActivateAura {
     ActionID aura_id = 1;
 }
 

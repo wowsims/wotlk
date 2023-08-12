@@ -2,7 +2,6 @@ package core
 
 import (
 	"fmt"
-
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
@@ -39,6 +38,11 @@ type APLActionCancelAura struct {
 	aura *Aura
 }
 
+type APLActionActivateAura struct {
+	defaultAPLActionImpl
+	aura *Aura
+}
+
 func (rot *APLRotation) newActionCancelAura(config *proto.APLActionCancelAura) APLActionImpl {
 	aura := rot.aplGetAura(rot.getSourceUnit(&proto.UnitReference{Type: proto.UnitReference_Self}), config.AuraId)
 	if aura.Get() == nil {
@@ -48,6 +52,17 @@ func (rot *APLRotation) newActionCancelAura(config *proto.APLActionCancelAura) A
 		aura: aura.Get(),
 	}
 }
+
+func (rot *APLRotation) newActionActivateAura(config *proto.APLActionActivateAura) APLActionImpl {
+	aura := rot.aplGetAura(rot.getSourceUnit(&proto.UnitReference{Type: proto.UnitReference_Self}), config.AuraId)
+	if aura.Get() == nil {
+		return nil
+	}
+	return &APLActionActivateAura{
+		aura: aura.Get(),
+	}
+}
+
 func (action *APLActionCancelAura) IsReady(sim *Simulation) bool {
 	return action.aura.IsActive()
 }
@@ -59,6 +74,21 @@ func (action *APLActionCancelAura) Execute(sim *Simulation) {
 }
 func (action *APLActionCancelAura) String() string {
 	return fmt.Sprintf("Cancel Aura(%s)", action.aura.ActionID)
+}
+
+func (action *APLActionActivateAura) IsReady(sim *Simulation) bool {
+	return true
+}
+
+func (action *APLActionActivateAura) Execute(sim *Simulation) {
+	if sim.Log != nil {
+		action.aura.Unit.Log(sim, "Activating aura %s", action.aura.ActionID)
+	}
+	action.aura.Activate(sim)
+}
+
+func (action *APLActionActivateAura) String() string {
+	return fmt.Sprintf("Activate Aura(%s)", action.aura.ActionID)
 }
 
 type APLActionTriggerICD struct {
