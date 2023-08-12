@@ -18,7 +18,6 @@ import { Faction } from '../proto/common.js';
 import { UnitReference } from '../proto/common.js';
 import { RangedWeaponType } from '../proto/common.js';
 import { Spec } from '../proto/common.js';
-import { Stat } from '../proto/common.js';
 import { WeaponType } from '../proto/common.js';
 import { Blessings } from '../proto/paladin.js';
 import {
@@ -1677,7 +1676,7 @@ export function isBluntWeaponType(weaponType: WeaponType): boolean {
 // Custom functions for determining the EP value of meta gem effects.
 // Default meta effect EP value is 0, so just handle the ones relevant to your spec.
 const metaGemEffectEPs: Partial<Record<Spec, (gem: Gem, playerStats: Stats) => number>> = {
-	[Spec.SpecBalanceDruid]: (gem, playerStats) => {
+	[Spec.SpecBalanceDruid]: (gem, _) => {
 		if (gem.id == Gems.CHAOTIC_SKYFIRE_DIAMOND.id) {
 			// TODO: Fix this
 			return (12 * 0.65) + (3 * 45);
@@ -1687,14 +1686,17 @@ const metaGemEffectEPs: Partial<Record<Spec, (gem: Gem, playerStats: Stats) => n
 		}
 		return 0;
 	},
-	[Spec.SpecElementalShaman]: (gem, playerStats) => {
+	[Spec.SpecElementalShaman]: (gem, _) => {
+		if (gem.id == Gems.CHAOTIC_SKYFLARE_DIAMOND.id) {
+			return 84;
+		}
 		if (gem.id == Gems.CHAOTIC_SKYFIRE_DIAMOND.id) {
-			return (((playerStats.getStat(Stat.StatSpellPower) * 0.795) + 603) * 2 * (playerStats.getStat(Stat.StatSpellCrit) / 2208) * 0.045) / 0.795;
+			return 80;
 		}
 
 		return 0;
 	},
-	[Spec.SpecWarlock]: (gem, playerStats) => {
+	[Spec.SpecWarlock]: (gem, _) => {
 		// TODO: make it gear dependant
 		if (gem.id == Gems.CHAOTIC_SKYFLARE_DIAMOND.id) {
 			return 84;
