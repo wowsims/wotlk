@@ -420,6 +420,7 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 		label: 'Activate Aura',
 		submenu: ['Misc'],
 		shortDescription: 'Activates an aura',
+		includeIf: (player: Player<any>, isPrepull: boolean) => isPrepull,
 		newValue: () => APLActionActivateAura.create(),
 		fields: [
 			AplHelpers.actionIdFieldConfig('auraId', 'auras'),
