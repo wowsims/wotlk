@@ -548,6 +548,7 @@ export class Sim {
 			showThreatMetrics: this.getShowThreatMetrics(),
 			showHealingMetrics: this.getShowHealingMetrics(),
 			showExperimental: this.getShowExperimental(),
+			showEpValues: this.getShowEPValues(),
 			language: this.getLanguage(),
 			faction: this.getFaction(),
 			filters: filters,

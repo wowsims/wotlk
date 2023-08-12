@@ -6,7 +6,8 @@ import { Input, InputConfig } from './input';
 import {
 	makePhaseSelector,
 	makeShow1hWeaponsSelector,
-	makeShow2hWeaponsSelector, makeShowEPValuesSelector,
+	makeShow2hWeaponsSelector,
+	makeShowEPValuesSelector,
 	makeShowMatchingGemsSelector,
 } from './other_inputs';
 
@@ -40,7 +41,6 @@ import {
 	UIItem as Item,
 } from '../proto/ui.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
-import getDocumentElement from "@popperjs/core/lib/dom-utils/getDocumentElement";
 
 declare var tippy: any;
 
