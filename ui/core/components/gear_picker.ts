@@ -6,7 +6,7 @@ import { Input, InputConfig } from './input';
 import {
 	makePhaseSelector,
 	makeShow1hWeaponsSelector,
-	makeShow2hWeaponsSelector,
+	makeShow2hWeaponsSelector, makeShowEPValuesSelector,
 	makeShowMatchingGemsSelector,
 } from './other_inputs';
 
@@ -40,6 +40,7 @@ import {
 	UIItem as Item,
 } from '../proto/ui.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
+import getDocumentElement from "@popperjs/core/lib/dom-utils/getDocumentElement";
 
 declare var tippy: any;
 
@@ -745,6 +746,7 @@ export class SelectorModal extends BaseModal {
 
 		let invokeUpdate = () => { ilist.updateSelected() }
 		let applyFilter = () => { ilist.applyFilters() }
+		let hideOrShowEPValues = () => { ilist.hideOrShowEPValues() }
 		// Add event handlers
 		gearData.changeEvent.on(invokeUpdate);
 
@@ -752,11 +754,13 @@ export class SelectorModal extends BaseModal {
 
 		this.player.sim.phaseChangeEmitter.on(applyFilter);
 		this.player.sim.filtersChangeEmitter.on(applyFilter);
+		this.player.sim.showEPValuesChangeEmitter.on(hideOrShowEPValues);
 		gearData.changeEvent.on(applyFilter);
 
 		this.addOnDisposeCallback(() => {
 			this.player.sim.phaseChangeEmitter.off(applyFilter);
 			this.player.sim.filtersChangeEmitter.off(applyFilter);
+			this.player.sim.showEPValuesChangeEmitter.off(hideOrShowEPValues);
 			gearData.changeEvent.off(applyFilter);
 		});
 
@@ -878,12 +882,13 @@ export class ItemList<T> {
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-1h-weapons"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-2h-weapons"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-matching-gems"></div>
+					<div class="sim-input selector-modal-boolean-option selector-modal-show-ep-values"></div>
 					<button class="selector-modal-simall-button btn btn-warning">Add to Batch Sim</button>
 					<button class="selector-modal-remove-button btn btn-danger">Unequip Item</button>
 				</div>
 				<div style="width: 100%;height: 30px;font-size: 18px;">
 					<span style="float:left">Item</span>
-					${showEPValues ? '<span style="float:right">EP(+/-)<span class="ep-help fas fa-search" style="font-size:10px"></span></span>' : ''}
+					<span id="ep-delta-label" style="float:right">EP(+/-)<span class="ep-help fas fa-search" style="font-size:10px"></span></span>
 				</div>
 				<ul class="selector-modal-list"></ul>
 			</div>
@@ -900,6 +905,8 @@ export class ItemList<T> {
 			(tabContent.getElementsByClassName('selector-modal-show-1h-weapons')[0] as HTMLElement).style.display = 'none';
 			(tabContent.getElementsByClassName('selector-modal-show-2h-weapons')[0] as HTMLElement).style.display = 'none';
 		}
+
+		makeShowEPValuesSelector(tabContent.getElementsByClassName('selector-modal-show-ep-values')[0] as HTMLElement, player.sim);
 
 		const showMatchingGemsSelector = makeShowMatchingGemsSelector(tabContent.getElementsByClassName('selector-modal-show-matching-gems')[0] as HTMLElement, player.sim);
 		if (!label.startsWith('Gem')) {
@@ -927,12 +934,6 @@ export class ItemList<T> {
 
 			listItemElem.dataset.idx = String(itemIdx);
 
-			const epValue = `
-				   <span class="selector-modal-list-item-ep-value">${itemEP < 9.95 ? itemEP.toFixed(1) : Math.round(itemEP)}</span>
-			`
-			const epDelta = `
-				   <span class="selector-modal-list-item-ep-delta"></span>
-			`
 			listItemElem.innerHTML = `
 					<div class="selector-modal-list-label-cell">
 						<a class="selector-modal-list-item-icon"></a>
@@ -944,10 +945,10 @@ export class ItemList<T> {
 						<span class="selector-modal-list-item-favorite fa-star"></span>
 					</div>
 					<div class="selector-modal-list-item-ep">
-						${showEPValues ? epValue : ''}
+						<span class="selector-modal-list-item-ep-value">${itemEP < 9.95 ? itemEP.toFixed(1) : Math.round(itemEP)}</span>
 					</div>
 					<div class="selector-modal-list-item-ep">
-						${showEPValues ? epDelta : ''}
+						<span class="selector-modal-list-item-ep-delta"></span>
 					</div>
 		  `;
 
@@ -1154,6 +1155,7 @@ export class ItemList<T> {
 		}
 
 		this.applyFilters();
+		this.hideOrShowEPValues();
 	}
 
 	public updateSelected() {
@@ -1247,6 +1249,18 @@ export class ItemList<T> {
 		});
 	}
 
+	public hideOrShowEPValues() {
+		const epItems = document.getElementsByClassName("selector-modal-list-item-ep")
+		const display = this.player.sim.getShowEPValues() ? "block" : "none"
+
+		for (let i = 0; i < epItems.length; i++) {
+			const epItem = epItems.item(i) as HTMLElement;
+			epItem.style.display = display
+		}
+
+		document.getElementById("ep-delta-label")!.style.display = display
+	}
+
 	private fillSourceInfo(item: Item, container: HTMLDivElement, sim: Sim) {
 		if (!item.sources || item.sources.length == 0) {
 			return;
@@ -1300,5 +1314,4 @@ export class ItemList<T> {
 				`;
 		}
 	}
-
 }
