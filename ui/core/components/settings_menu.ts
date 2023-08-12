@@ -27,6 +27,7 @@ export class SettingsMenu extends BaseModal {
 			</div>
 			<div class="show-threat-metrics-picker w-50 pe-2"></div>
 			<div class="show-experimental-picker w-50 pe-2"></div>
+			<div class="show-ep-values w-50 pe-2"></div>
 		`;
 		this.footer!.innerHTML = `
 			<button
@@ -103,6 +104,19 @@ export class SettingsMenu extends BaseModal {
 			getValue: (sim: Sim) => sim.getShowExperimental(),
 			setValue: (eventID: EventID, sim: Sim, newValue: boolean) => {
 				sim.setShowExperimental(eventID, newValue);
+			},
+		});
+
+
+		const showEPValues = this.rootElem.getElementsByClassName('show-ep-values')[0] as HTMLElement;
+		new BooleanPicker(showEPValues, this.simUI.sim, {
+			label: 'Show EP Values',
+			labelTooltip: 'Shows EP values in the item picker.',
+			inline: true,
+			changedEvent: (sim: Sim) => sim.showEPValuesChangeEmitter,
+			getValue: (sim: Sim) => sim.getShowEPValues(),
+			setValue: (eventID: EventID, sim: Sim, newValue: boolean) => {
+				sim.setShowEPValues(eventID, newValue);
 			},
 		});
 	}

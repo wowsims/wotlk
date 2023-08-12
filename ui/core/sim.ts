@@ -55,6 +55,7 @@ export class Sim {
 	private showThreatMetrics: boolean = false;
 	private showHealingMetrics: boolean = false;
 	private showExperimental: boolean = false;
+	private showEPValues: boolean = false;
 	private language: string = '';
 
 	readonly raid: Raid;
@@ -72,6 +73,7 @@ export class Sim {
 	readonly showThreatMetricsChangeEmitter = new TypedEvent<void>();
 	readonly showHealingMetricsChangeEmitter = new TypedEvent<void>();
 	readonly showExperimentalChangeEmitter = new TypedEvent<void>();
+	readonly showEPValuesChangeEmitter = new TypedEvent<void>();
 	readonly languageChangeEmitter = new TypedEvent<void>();
 	readonly crashEmitter = new TypedEvent<SimError>();
 
@@ -116,6 +118,7 @@ export class Sim {
 			this.showThreatMetricsChangeEmitter,
 			this.showHealingMetricsChangeEmitter,
 			this.showExperimentalChangeEmitter,
+			this.showEPValuesChangeEmitter,
 			this.languageChangeEmitter,
 		]);
 
@@ -481,6 +484,16 @@ export class Sim {
 		}
 	}
 
+	getShowEPValues(): boolean {
+		return this.showEPValues;
+	}
+	setShowEPValues(eventID: EventID, newShowEPValues: boolean) {
+		if (newShowEPValues != this.showEPValues) {
+			this.showEPValues = newShowEPValues;
+			this.showEPValuesChangeEmitter.emit(eventID);
+		}
+	}
+
 	getLanguage(): string {
 		return this.language;
 	}
@@ -550,6 +563,7 @@ export class Sim {
 			this.setShowThreatMetrics(eventID, proto.showThreatMetrics);
 			this.setShowHealingMetrics(eventID, proto.showHealingMetrics);
 			this.setShowExperimental(eventID, proto.showExperimental);
+			this.setShowEPValues(eventID, proto.showEpValues);
 			this.setLanguage(eventID, proto.language);
 			this.setFaction(eventID, proto.faction || Faction.Alliance)
 
@@ -583,6 +597,7 @@ export class Sim {
 			showHealingMetrics: isHealingSim,
 			language: this.getLanguage(), // Don't change language.
 			filters: Sim.defaultFilters(),
+			showEpValues: false,
 		}));
 	}
 

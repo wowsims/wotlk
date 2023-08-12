@@ -865,6 +865,7 @@ export class ItemList<T> {
 		const selected = label === config.selectedTab;
 
 		const tabContentFragment = document.createElement('fragment');
+		const showEPValues = simUI.sim.getShowEPValues();
 		tabContentFragment.innerHTML = `
 			<div
 				id="${tabContentId}"
@@ -882,7 +883,7 @@ export class ItemList<T> {
 				</div>
 				<div style="width: 100%;height: 30px;font-size: 18px;">
 					<span style="float:left">Item</span>
-					<span style="float:right">EP(+/-)<span class="ep-help fas fa-search" style="font-size:10px"></span></span>
+					${showEPValues ? '<span style="float:right">EP(+/-)<span class="ep-help fas fa-search" style="font-size:10px"></span></span>' : ''}
 				</div>
 				<ul class="selector-modal-list"></ul>
 			</div>
@@ -926,6 +927,12 @@ export class ItemList<T> {
 
 			listItemElem.dataset.idx = String(itemIdx);
 
+			const epValue = `
+				   <span class="selector-modal-list-item-ep-value">${itemEP < 9.95 ? itemEP.toFixed(1) : Math.round(itemEP)}</span>
+			`
+			const epDelta = `
+				   <span class="selector-modal-list-item-ep-delta"></span>
+			`
 			listItemElem.innerHTML = `
 					<div class="selector-modal-list-label-cell">
 						<a class="selector-modal-list-item-icon"></a>
@@ -937,10 +944,10 @@ export class ItemList<T> {
 						<span class="selector-modal-list-item-favorite fa-star"></span>
 					</div>
 					<div class="selector-modal-list-item-ep">
-						<span class="selector-modal-list-item-ep-value">${itemEP < 9.95 ? itemEP.toFixed(1) : Math.round(itemEP)}</span>
+						${showEPValues ? epValue : ''}
 					</div>
 					<div class="selector-modal-list-item-ep">
-						<span class="selector-modal-list-item-ep-delta"></span>
+						${showEPValues ? epDelta : ''}
 					</div>
 		  `;
 
