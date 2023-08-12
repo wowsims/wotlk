@@ -1174,10 +1174,12 @@ export class ItemList<T> {
 			}
 
 			const epDeltaElem = elem.getElementsByClassName('selector-modal-list-item-ep-delta')[0] as HTMLSpanElement;
-			epDeltaElem.textContent = '';
-			if (listItem) {
-				const listItemEP = this.computeEP(listItem);
-				formatDeltaTextElem(epDeltaElem, newEP, listItemEP, 0);
+			if (epDeltaElem) {
+				epDeltaElem.textContent = '';
+				if (listItem) {
+					const listItemEP = this.computeEP(listItem);
+					formatDeltaTextElem(epDeltaElem, newEP, listItemEP, 0);
+				}
 			}
 		});
 	};
