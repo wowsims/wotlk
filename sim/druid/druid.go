@@ -174,6 +174,12 @@ func (druid *Druid) Initialize() {
 	druid.registerFaerieFireSpell()
 	druid.registerRebirthSpell()
 	druid.registerInnervateCD()
+	druid.registerFakeGotw()
+
+	if druid.RaidBuffTargets == 0 {
+		// 17 is an arbitrary compromise between 10 and 25, plus pets
+		druid.RaidBuffTargets = core.MaxInt(17, len(druid.Env.Raid.AllUnits))
+	}
 }
 
 func (druid *Druid) RegisterBalanceSpells() {
@@ -204,7 +210,6 @@ func (druid *Druid) RegisterFeralCatSpells() {
 	druid.registerSwipeBearSpell()
 	druid.registerSwipeCatSpell()
 	druid.registerTigersFurySpell()
-	druid.registerFakeGotw()
 }
 
 func (druid *Druid) RegisterFeralTankSpells(maulRageThreshold float64) {
