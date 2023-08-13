@@ -23,5 +23,8 @@ func (druid *Druid) registerFakeGotw() {
 				GCD: core.GCDDefault,
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return druid.InForm(Humanoid)
+		},
 	})
 }
