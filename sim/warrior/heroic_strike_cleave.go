@@ -43,7 +43,9 @@ func (warrior *Warrior) registerHeroicStrikeSpell() *core.Spell {
 			}
 
 			spell.DealDamage(sim, result)
-			warrior.curQueueAura.Deactivate(sim)
+			if warrior.curQueueAura != nil {
+				warrior.curQueueAura.Deactivate(sim)
+			}
 		},
 	})
 }
@@ -87,7 +89,9 @@ func (warrior *Warrior) registerCleaveSpell() *core.Spell {
 				spell.DealDamage(sim, results[hitIndex])
 				curTarget = sim.Environment.NextTargetUnit(curTarget)
 			}
-			warrior.curQueueAura.Deactivate(sim)
+			if warrior.curQueueAura != nil {
+				warrior.curQueueAura.Deactivate(sim)
+			}
 		},
 	})
 }

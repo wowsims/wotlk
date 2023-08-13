@@ -145,7 +145,7 @@ func (warrior *Warrior) Initialize() {
 
 	warrior.registerBloodrageCD()
 
-	if warrior.Shout != nil && warrior.PrecastShout {
+	if !warrior.IsUsingAPL && warrior.Shout != nil && warrior.PrecastShout {
 		warrior.RegisterPrepullAction(-10*time.Second, func(sim *core.Simulation) {
 			warrior.Shout.SkipCastAndApplyEffects(sim, nil)
 		})
@@ -154,6 +154,8 @@ func (warrior *Warrior) Initialize() {
 
 func (warrior *Warrior) Reset(_ *core.Simulation) {
 	warrior.RendValidUntil = 0
+	warrior.curQueueAura = nil
+	warrior.curQueuedAutoSpell = nil
 }
 
 func NewWarrior(character core.Character, talents string, inputs WarriorInputs) *Warrior {
