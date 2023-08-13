@@ -12,7 +12,7 @@ character_stats_results: {
   final_stats: 1333.07424
   final_stats: 675
   final_stats: 0
-  final_stats: 1676.95
+  final_stats: 1677.5
   final_stats: 294
   final_stats: 1211.12737
   final_stats: 675
@@ -22,7 +22,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 16372.5
-  final_stats: 755.7
+  final_stats: 756.25
   final_stats: 0
   final_stats: 0
   final_stats: 221
@@ -100,13 +100,6 @@ dps_results: {
  value: {
   dps: 6677.40262
   tps: 4225.55941
- }
-}
-dps_results: {
- key: "TestElemental-AllItems-AshtongueTalismanofVision-32491"
- value: {
-  dps: 6380.10891
-  tps: 4039.11708
  }
 }
 dps_results: {

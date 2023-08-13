@@ -36,12 +36,11 @@ func (warrior *Warrior) makeStanceSpell(stance Stance, aura *core.Aura, stanceCD
 				Duration: time.Second,
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return warrior.Stance != stance
+		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			if warrior.Stance == stance {
-				panic("Already in stance " + string(stance))
-			}
-
 			if warrior.CurrentRage() > maxRetainedRage {
 				warrior.SpendRage(sim, warrior.CurrentRage()-maxRetainedRage, rageMetrics)
 			}

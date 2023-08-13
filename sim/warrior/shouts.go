@@ -9,10 +9,10 @@ import (
 
 const ShoutExpirationThreshold = time.Second * 3
 
-func (warrior *Warrior) makeShoutSpellHelper(actionID core.ActionID, extraDuration time.Duration) *core.Spell {
+func (warrior *Warrior) makeShoutSpellHelper(actionID core.ActionID, allyAuras core.AuraArray) *core.Spell {
 	return warrior.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
-		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagAPL,
+		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagAPL | core.SpellFlagHelpful,
 
 		RageCost: core.RageCostOptions{
 			Cost: 10,
@@ -25,24 +25,35 @@ func (warrior *Warrior) makeShoutSpellHelper(actionID core.ActionID, extraDurati
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			// Actual shout effects are handled in core/buffs.go
-			warrior.shoutExpiresAt = sim.CurrentTime + warrior.shoutDuration + extraDuration
+			for _, aura := range allyAuras {
+				if aura != nil {
+					aura.Activate(sim)
+				}
+			}
 		},
+
+		RelatedAuras: []core.AuraArray{allyAuras},
 	})
 }
 
 func (warrior *Warrior) makeShoutSpell() *core.Spell {
+	battleShout := warrior.makeShoutSpellHelper(core.ActionID{SpellID: 47436}, warrior.NewAllyAuraArray(func(unit *core.Unit) *core.Aura {
+		return core.BattleShoutAura(unit, warrior.Talents.CommandingPresence, warrior.Talents.BoomingVoice, warrior.HasMinorGlyph(proto.WarriorMinorGlyph_GlyphOfBattle))
+	}))
+
+	commandingShout := warrior.makeShoutSpellHelper(core.ActionID{SpellID: 47440}, warrior.NewAllyAuraArray(func(unit *core.Unit) *core.Aura {
+		return core.CommandingShoutAura(unit, warrior.Talents.CommandingPresence, warrior.Talents.BoomingVoice, warrior.HasMinorGlyph(proto.WarriorMinorGlyph_GlyphOfCommand))
+	}))
+
 	if warrior.ShoutType == proto.WarriorShout_WarriorShoutBattle {
-		extraDur := core.TernaryDuration(warrior.HasMinorGlyph(proto.WarriorMinorGlyph_GlyphOfBattle), 2*time.Minute, 0)
-		return warrior.makeShoutSpellHelper(core.ActionID{SpellID: 47436}, extraDur)
+		return battleShout
 	} else if warrior.ShoutType == proto.WarriorShout_WarriorShoutCommanding {
-		extraDur := core.TernaryDuration(warrior.HasMinorGlyph(proto.WarriorMinorGlyph_GlyphOfCommand), 2*time.Minute, 0)
-		return warrior.makeShoutSpellHelper(core.ActionID{SpellID: 47440}, extraDur)
+		return commandingShout
 	} else {
 		return nil
 	}
 }
 
 func (warrior *Warrior) ShouldShout(sim *core.Simulation) bool {
-	return warrior.Shout != nil && warrior.CurrentRage() >= warrior.Shout.DefaultCast.Cost && sim.CurrentTime+ShoutExpirationThreshold > warrior.shoutExpiresAt
+	return warrior.Shout != nil && warrior.CurrentRage() >= warrior.Shout.DefaultCast.Cost && warrior.Shout.ShouldRefreshExclusiveEffects(sim, &warrior.Unit, ShoutExpirationThreshold)
 }

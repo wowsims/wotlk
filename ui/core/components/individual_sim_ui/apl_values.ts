@@ -725,7 +725,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 			},
 		}),
 		fields: [
-			AplHelpers.unitFieldConfig('sourceUnit', 'targets'),
+			AplHelpers.unitFieldConfig('sourceUnit', 'aura_sources_targets_first'),
 			AplHelpers.actionIdFieldConfig('auraId', 'exclusive_effect_auras', 'sourceUnit', 'currentTarget'),
 			valueFieldConfig('maxOverlap', {
 				label: 'Overlap',
