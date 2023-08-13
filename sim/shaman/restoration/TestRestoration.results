@@ -58,13 +58,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestRestoration-AllItems-AshtongueTalismanofVision-32491"
- value: {
-  tps: 56.53866
-  hps: 3671.04945
- }
-}
-dps_results: {
  key: "TestRestoration-AllItems-AustereEarthsiegeDiamond"
  value: {
   tps: 52.91057

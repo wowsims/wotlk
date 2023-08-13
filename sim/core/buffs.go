@@ -97,10 +97,11 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 		})
 	}
 
-	if raidBuffs.BloodPact > 0 || raidBuffs.CommandingShout > 0 {
-		health := GetTristateValueFloat(raidBuffs.BloodPact, 1330, 1330*1.3)
-		health2 := GetTristateValueFloat(raidBuffs.CommandingShout, 2255, 2255*1.25)
-		character.AddStat(stats.Health, MaxFloat(health, health2))
+	if raidBuffs.CommandingShout > 0 {
+		MakePermanent(CommandingShoutAura(&character.Unit, GetTristateValueInt32(raidBuffs.CommandingShout, 0, 5), 0, false))
+	}
+	if raidBuffs.BloodPact > 0 {
+		MakePermanent(BloodPactAura(&character.Unit, GetTristateValueInt32(raidBuffs.BloodPact, 0, 3)))
 	}
 
 	if raidBuffs.PowerWordFortitude != proto.TristateEffect_TristateEffectMissing {
@@ -199,12 +200,11 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 		RetributionAura(character, raidBuffs.SanctifiedRetribution)
 	}
 
-	if raidBuffs.BattleShout > 0 || individualBuffs.BlessingOfMight > 0 {
-		bonusAP := 550 * GetTristateValueFloat(MaxTristate(raidBuffs.BattleShout, individualBuffs.BlessingOfMight), 1, 1.25)
-		character.AddStats(stats.Stats{
-			stats.AttackPower:       math.Floor(bonusAP),
-			stats.RangedAttackPower: math.Floor(bonusAP),
-		})
+	if raidBuffs.BattleShout > 0 {
+		MakePermanent(BattleShoutAura(&character.Unit, GetTristateValueInt32(raidBuffs.BattleShout, 0, 5), 0, false))
+	}
+	if individualBuffs.BlessingOfMight > 0 {
+		MakePermanent(BlessingOfMightAura(&character.Unit, GetTristateValueInt32(individualBuffs.BlessingOfMight, 0, 2)))
 	}
 
 	if raidBuffs.FlametongueTotem {
@@ -1250,6 +1250,90 @@ func spellPowerBonusEffect(aura *Aura, spellPowerBonus float64) *ExclusiveEffect
 		OnExpire: func(ee *ExclusiveEffect, sim *Simulation) {
 			ee.Aura.Unit.AddStatsDynamic(sim, stats.Stats{
 				stats.SpellPower: -ee.Priority,
+			})
+		},
+	})
+}
+
+func BattleShoutAura(unit *Unit, commandingPresencePts int32, boomingVoicePts int32, minorGlyph bool) *Aura {
+	aura := unit.GetOrRegisterAura(Aura{
+		Label:      "Battle Shout",
+		ActionID:   ActionID{SpellID: 47436},
+		Duration:   time.Duration(float64(time.Minute*2)*(1+0.25*float64(boomingVoicePts))) + TernaryDuration(minorGlyph, 2*time.Minute, 0),
+		BuildPhase: CharacterBuildPhaseBuffs,
+	})
+	attackPowerBonusEffect(aura, math.Floor(550*(1+0.05*float64(commandingPresencePts))))
+	return aura
+}
+
+func BlessingOfMightAura(unit *Unit, impBomPts int32) *Aura {
+	aura := unit.GetOrRegisterAura(Aura{
+		Label:      "Blessing of Might",
+		ActionID:   ActionID{SpellID: 48932},
+		Duration:   NeverExpires,
+		BuildPhase: CharacterBuildPhaseBuffs,
+		OnReset: func(aura *Aura, sim *Simulation) {
+			aura.Activate(sim)
+		},
+	})
+	attackPowerBonusEffect(aura, math.Floor(550*(1+GetTristateValueFloat(proto.TristateEffect(impBomPts), 0.12, 0.25))))
+	return aura
+}
+
+func attackPowerBonusEffect(aura *Aura, apBonus float64) *ExclusiveEffect {
+	return aura.NewExclusiveEffect("AttackPowerBonus", false, ExclusiveEffect{
+		Priority: apBonus,
+		OnGain: func(ee *ExclusiveEffect, sim *Simulation) {
+			ee.Aura.Unit.AddStatsDynamic(sim, stats.Stats{
+				stats.AttackPower:       ee.Priority,
+				stats.RangedAttackPower: ee.Priority,
+			})
+		},
+		OnExpire: func(ee *ExclusiveEffect, sim *Simulation) {
+			ee.Aura.Unit.AddStatsDynamic(sim, stats.Stats{
+				stats.AttackPower:       -ee.Priority,
+				stats.RangedAttackPower: -ee.Priority,
+			})
+		},
+	})
+}
+
+func CommandingShoutAura(unit *Unit, commandingPresencePts int32, boomingVoicePts int32, minorGlyph bool) *Aura {
+	aura := unit.GetOrRegisterAura(Aura{
+		Label:      "Commanding Shout",
+		ActionID:   ActionID{SpellID: 47440},
+		Duration:   time.Duration(float64(time.Minute*2)*(1+0.25*float64(boomingVoicePts))) + TernaryDuration(minorGlyph, 2*time.Minute, 0),
+		BuildPhase: CharacterBuildPhaseBuffs,
+	})
+	healthBonusEffect(aura, 2255*(1+0.05*float64(commandingPresencePts)))
+	return aura
+}
+
+func BloodPactAura(unit *Unit, impImpPts int32) *Aura {
+	aura := unit.GetOrRegisterAura(Aura{
+		Label:      "Blood Pact",
+		ActionID:   ActionID{SpellID: 47982},
+		Duration:   NeverExpires,
+		BuildPhase: CharacterBuildPhaseBuffs,
+		OnReset: func(aura *Aura, sim *Simulation) {
+			aura.Activate(sim)
+		},
+	})
+	healthBonusEffect(aura, 1330*(1+0.1*float64(impImpPts)))
+	return aura
+}
+
+func healthBonusEffect(aura *Aura, healthBonus float64) *ExclusiveEffect {
+	return aura.NewExclusiveEffect("HealthBonus", false, ExclusiveEffect{
+		Priority: healthBonus,
+		OnGain: func(ee *ExclusiveEffect, sim *Simulation) {
+			ee.Aura.Unit.AddStatsDynamic(sim, stats.Stats{
+				stats.Health: ee.Priority,
+			})
+		},
+		OnExpire: func(ee *ExclusiveEffect, sim *Simulation) {
+			ee.Aura.Unit.AddStatsDynamic(sim, stats.Stats{
+				stats.Health: -ee.Priority,
 			})
 		},
 	})

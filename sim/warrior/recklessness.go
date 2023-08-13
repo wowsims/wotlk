@@ -17,7 +17,8 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 		MaxStacks: 3,
 		OnInit: func(aura *core.Aura, sim *core.Simulation) {
 			affectedSpells = core.FilterSlice([]*core.Spell{
-				warrior.HeroicStrikeOrCleave,
+				warrior.HeroicStrike,
+				warrior.Cleave,
 				warrior.Bloodthirst,
 				warrior.Devastate,
 				warrior.Execute,

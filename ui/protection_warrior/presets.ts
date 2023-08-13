@@ -1,11 +1,11 @@
 import { CustomRotation, CustomSpell } from '../core/proto/common.js';
 import { BattleElixir, Consumes, Explosive, GuardianElixir } from '../core/proto/common.js';
 import { EquipmentSpec } from '../core/proto/common.js';
-import { Flask } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
 import { Glyphs } from '../core/proto/common.js';
-import { SavedTalents } from '../core/proto/ui.js';
+import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
+import { APLRotation } from '../core/proto/apl.js';
 
 import {
 	WarriorShout,
@@ -75,6 +75,31 @@ export const DefaultRotation = ProtectionWarriorRotation.create({
 	thunderClapChoice: ThunderClapChoice.ThunderClapChoiceNone,
 	hsRageThreshold: 30,
 });
+
+export const ROTATION_DEFAULT = {
+	name: 'Default',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: ProtectionWarriorRotation.toJsonString(ProtectionWarriorRotation.create({
+		})),
+		rotation: APLRotation.fromJsonString(`{
+			"enabled": true,
+			"prepullActions": [
+				{"action":{"castSpell":{"spellId":{"spellId":47440}}},"doAtValue":{"const":{"val":"-10s"}}},
+				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
+			],
+			"priorityList": [
+				{"action":{"condition":{"cmp":{"op":"OpGe","lhs":{"currentRage":{}},"rhs":{"const":{"val":"30"}}}},"castSpell":{"spellId":{"tag":1,"spellId":47450}}}},
+				{"action":{"autocastOtherCooldowns":{}}},
+				{"action":{"castSpell":{"spellId":{"spellId":47488}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":57823}}}},
+				{"action":{"condition":{"auraShouldRefresh":{"sourceUnit":{"type":"Self"},"auraId":{"spellId":47440},"maxOverlap":{"const":{"val":"3s"}}}},"castSpell":{"spellId":{"spellId":47440}}}},
+				{"action":{"condition":{"auraShouldRefresh":{"auraId":{"spellId":47502},"maxOverlap":{"const":{"val":"2s"}}}},"castSpell":{"spellId":{"spellId":47502}}}},
+				{"action":{"condition":{"auraShouldRefresh":{"auraId":{"spellId":47437},"maxOverlap":{"const":{"val":"2s"}}}},"castSpell":{"spellId":{"spellId":25203}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":47498}}}}
+			]
+		}`),
+	}),
+};
 
 export const DefaultOptions = ProtectionWarriorOptions.create({
 	shout: WarriorShout.WarriorShoutCommanding,

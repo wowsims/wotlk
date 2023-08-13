@@ -389,6 +389,12 @@ export class ActionId {
 					name += ' (Snapshot)';
 				}
 				break;
+			case 'Heroic Strike':
+			case 'Cleave':
+				if (this.tag == 1) {
+					name += ' (Queue)';
+				}
+				break;
 			case 'Seed of Corruption':
 				if (this.tag == 0) {
 					name += ' (DoT)';

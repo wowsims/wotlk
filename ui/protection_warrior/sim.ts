@@ -184,6 +184,10 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 					Presets.StandardTalents,
 					Presets.UATalents,
 				],
+				// Preset rotations that the user can quickly select.
+				rotations: [
+					Presets.ROTATION_DEFAULT,
+				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.P1_PRERAID_BALANCED_PRESET,

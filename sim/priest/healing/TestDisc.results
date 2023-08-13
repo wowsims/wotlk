@@ -113,14 +113,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestDisc-AllItems-AshtongueTalismanofAcumen-32490"
- value: {
-  dps: 102.42478
-  tps: 82.03424
-  hps: 7146.93554
- }
-}
-dps_results: {
  key: "TestDisc-AllItems-AustereEarthsiegeDiamond"
  value: {
   dps: 105.61962

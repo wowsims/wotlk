@@ -180,7 +180,7 @@ export class APLActionIDPicker extends DropdownPicker<Player<any>, ActionID, Act
 	}
 }
 
-export type UNIT_SET = 'aura_sources' | 'targets';
+export type UNIT_SET = 'aura_sources' | 'aura_sources_targets_first' | 'targets';
 
 const unitSets: Record<UNIT_SET, {
 	// Uses target icon by default instead of person icon. This should be set to true for inputs that default to CurrentTarget.
@@ -194,6 +194,17 @@ const unitSets: Record<UNIT_SET, {
 				player.getPetMetadatas().asList().map((petMetadata, i) => UnitReference.create({type: UnitType.Pet, index: i, owner: UnitReference.create({type: UnitType.Self})})),
 				UnitReference.create({type: UnitType.CurrentTarget}),
 				player.sim.encounter.targetsMetadata.asList().map((targetMetadata, i) => UnitReference.create({type: UnitType.Target, index: i})),
+			].flat();
+		},
+	},
+	'aura_sources_targets_first': {
+		targetUI: true,
+		getUnits: (player) => {
+			return [
+				undefined,
+				player.sim.encounter.targetsMetadata.asList().map((targetMetadata, i) => UnitReference.create({type: UnitType.Target, index: i})),
+				UnitReference.create({type: UnitType.Self}),
+				player.getPetMetadatas().asList().map((petMetadata, i) => UnitReference.create({type: UnitType.Pet, index: i, owner: UnitReference.create({type: UnitType.Self})})),
 			].flat();
 		},
 	},

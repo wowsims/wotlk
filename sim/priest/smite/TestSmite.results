@@ -65,13 +65,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestSmite-AllItems-AshtongueTalismanofAcumen-32490"
- value: {
-  dps: 3444.94005
-  tps: 2926.14927
- }
-}
-dps_results: {
  key: "TestSmite-AllItems-AustereEarthsiegeDiamond"
  value: {
   dps: 3501.862
