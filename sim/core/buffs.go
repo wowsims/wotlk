@@ -1,6 +1,7 @@
 package core
 
 import (
+	"math"
 	"strconv"
 	"time"
 
@@ -1261,7 +1262,7 @@ func BattleShoutAura(unit *Unit, commandingPresencePts int32, boomingVoicePts in
 		Duration:   time.Duration(float64(time.Minute*2)*(1+0.25*float64(boomingVoicePts))) + TernaryDuration(minorGlyph, 2*time.Minute, 0),
 		BuildPhase: CharacterBuildPhaseBuffs,
 	})
-	attackPowerBonusEffect(aura, 550*(1+0.05*float64(commandingPresencePts)))
+	attackPowerBonusEffect(aura, math.Floor(550*(1+0.05*float64(commandingPresencePts))))
 	return aura
 }
 
@@ -1275,7 +1276,7 @@ func BlessingOfMightAura(unit *Unit, impBomPts int32) *Aura {
 			aura.Activate(sim)
 		},
 	})
-	attackPowerBonusEffect(aura, 550*(1+GetTristateValueFloat(proto.TristateEffect(impBomPts), 0.12, 0.25)))
+	attackPowerBonusEffect(aura, math.Floor(550*(1+GetTristateValueFloat(proto.TristateEffect(impBomPts), 0.12, 0.25))))
 	return aura
 }
 
