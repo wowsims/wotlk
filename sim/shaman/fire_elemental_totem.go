@@ -75,6 +75,8 @@ func (shaman *Shaman) registerFireElementalTotem() {
 			if enhTier10Aura != nil && shaman.Totems.EnhTierTenBonus {
 				if enhTier10Aura.IsActive() {
 					success = shaman.fireElementalSnapShot.CanSnapShot(sim, castWindow)
+				} else if sim.CurrentTime+fireTotemDuration > sim.Encounter.Duration {
+					success = true
 				}
 			} else if sim.CurrentTime > 1*time.Second && shaman.fireElementalSnapShot == nil {
 				success = true

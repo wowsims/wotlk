@@ -305,7 +305,6 @@ func (dk *Deathknight) Initialize() {
 	dk.registerArmyOfTheDeadCD()
 	dk.registerDancingRuneWeaponCD()
 	dk.registerDeathPactSpell()
-
 	dk.registerUnholyFrenzyCD()
 
 	dk.RegisterAura(core.Aura{
@@ -470,6 +469,8 @@ func NewDeathknight(character core.Character, inputs DeathknightInputs, talents 
 	}
 
 	dk.RotationSequence = &Sequence{}
+	// done here so enchants that modify stats are applied before stats are calculated
+	dk.registerItems()
 
 	return dk
 }

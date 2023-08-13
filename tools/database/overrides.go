@@ -545,7 +545,7 @@ var SharedSpellsIcons = []int32{
 	16862,
 	55487,
 
-	33876,
+	48566,
 	46855,
 	57393,
 
@@ -579,6 +579,14 @@ var SharedSpellsIcons = []int32{
 	53408,
 
 	11374,
+	15235,
+
+	27013,
+
+	58749,
+	49071,
+
+	30708,
 }
 
 // If any of these match the item name, don't include it.

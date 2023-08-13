@@ -7,6 +7,7 @@ import {
 	APLActionMultidot,
 	APLActionAutocastOtherCooldowns,
 	APLActionChangeTarget,
+	APLActionActivateAura,
 	APLActionCancelAura,
 	APLActionTriggerICD,
 	APLActionWait,
@@ -413,6 +414,16 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 		newValue: () => APLActionChangeTarget.create(),
 		fields: [
 			AplHelpers.unitFieldConfig('newTarget', 'targets'),
+		],
+	}),
+	['activateAura']: inputBuilder({
+		label: 'Activate Aura',
+		submenu: ['Misc'],
+		shortDescription: 'Activates an aura',
+		includeIf: (player: Player<any>, isPrepull: boolean) => isPrepull,
+		newValue: () => APLActionActivateAura.create(),
+		fields: [
+			AplHelpers.actionIdFieldConfig('auraId', 'auras'),
 		],
 	}),
 	['cancelAura']: inputBuilder({
