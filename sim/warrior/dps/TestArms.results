@@ -869,15 +869,15 @@ dps_results: {
 dps_results: {
  key: "TestArms-Average-Default"
  value: {
-  dps: 8268.72856
-  tps: 6800.02326
+  dps: 8270.40233
+  tps: 6801.51512
  }
 }
 dps_results: {
  key: "TestArms-Settings-Human-Arms P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 11041.01743
-  tps: 9421.03228
+  dps: 10954.35625
+  tps: 9348.67522
  }
 }
 dps_results: {
@@ -897,8 +897,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-Settings-Human-Arms P1-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6467.62025
-  tps: 5582.64701
+  dps: 6454.07825
+  tps: 5579.60652
  }
 }
 dps_results: {
@@ -918,8 +918,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-Settings-Orc-Arms P1-Basic-FullBuffs-LongMultiTarget"
  value: {
-  dps: 11047.43622
-  tps: 9429.50611
+  dps: 10983.16579
+  tps: 9377.37994
  }
 }
 dps_results: {
@@ -939,8 +939,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-Settings-Orc-Arms P1-Basic-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6517.74654
-  tps: 5628.68065
+  dps: 6503.9837
+  tps: 5618.15183
  }
 }
 dps_results: {
