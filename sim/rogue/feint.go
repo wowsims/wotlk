@@ -32,6 +32,7 @@ func (rogue *Rogue) registerFeintSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			rogue.BreakStealth(sim)
 			spell.CalcAndDealOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
 		},
 	})

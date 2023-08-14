@@ -28,14 +28,12 @@ func (rogue *Rogue) registerStealthAura() {
 		}, */
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			// Pause auto attacks
-			rogue.AutoAttacks.AutoSwingMelee = false
 			rogue.AutoAttacks.CancelAutoSwing(sim)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			rogue.AutoAttacks.AutoSwingMelee = true
 			rogue.AutoAttacks.EnableAutoSwing(sim)
 		},
 		// Stealth breaks on damage taken (if not absorbed)
 		// This may be desirable later, but not applicable currently
-	})
+	}) 
 }

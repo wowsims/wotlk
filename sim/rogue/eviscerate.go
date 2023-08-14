@@ -43,6 +43,7 @@ func (rogue *Rogue) registerEviscerate() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			rogue.BreakStealth(sim)
 			comboPoints := rogue.ComboPoints()
 			flatBaseDamage := 127 + 370*float64(comboPoints)
 			// tooltip implies 3..7% AP scaling, but testing shows it's fixed at 7% (3.4.0.46158)

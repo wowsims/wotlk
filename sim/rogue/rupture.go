@@ -67,6 +67,7 @@ func (rogue *Rogue) registerRupture() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			rogue.BreakStealth(sim)
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
 			if result.Landed() {
 				numberOfTicks := 3 + rogue.ComboPoints() + glyphTicks

@@ -60,9 +60,7 @@ func (rogue *Rogue) registerGarrote() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			if rogue.StealthAura.IsActive() {
-				rogue.StealthAura.Deactivate(sim)
-			}
+			rogue.BreakStealth(sim)
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialNoBlockDodgeParryNoCrit)
 			if result.Landed() {
 				rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())

@@ -507,6 +507,7 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
+			rogue.BreakStealth(sim)
 			rogue.BladeFlurryAura.Activate(sim)
 		},
 	})
@@ -577,6 +578,7 @@ func (rogue *Rogue) registerAdrenalineRushCD() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
+			rogue.BreakStealth(sim)
 			rogue.AdrenalineRushAura.Activate(sim)
 		},
 	})

@@ -39,6 +39,7 @@ func (rogue *Rogue) registerSinisterStrikeSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			rogue.BreakStealth(sim)
 			baseDamage := 180 +
 				spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
 				spell.BonusWeaponDamage()

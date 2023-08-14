@@ -83,6 +83,7 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, u *core.Unit, s2 *core.Spell) {
+			rogue.BreakStealth(sim)
 			rogue.KillingSpreeAura.Activate(sim)
 		},
 	})

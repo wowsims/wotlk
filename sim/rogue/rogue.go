@@ -135,6 +135,7 @@ func (rogue *Rogue) finisherFlags() core.SpellFlag {
 	return flags
 }
 
+// Apply the effect of successfully casting a finisher to combo points
 func (rogue *Rogue) ApplyFinisher(sim *core.Simulation, spell *core.Spell) {
 	numPoints := rogue.ComboPoints()
 	rogue.SpendComboPoints(sim, spell.ComboPointMetrics())
@@ -182,11 +183,6 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerAmbushSpell()
 	rogue.registerEnvenom()
 	rogue.registerVanishSpell()
-
-	// Prepull stop attack
-	if rogue.Rotation.OpenWithGarrote || rogue.Rotation.OpenWithPremeditation || rogue.Options.StartingOverkillDuration > 0 {
-		rogue.AutoAttacks.AutoSwingMelee = false
-	}
 
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()
 }
@@ -280,6 +276,8 @@ func NewRogue(character core.Character, options *proto.Player) *Rogue {
 	return rogue
 }
 
+// Apply the effects of the Cut to the Chase talent
+// TODO: Put a fresh instance of SnD rather than use the original as per client
 func (rogue *Rogue) ApplyCutToTheChase(sim *core.Simulation) {
 	if rogue.Talents.CutToTheChase > 0 && rogue.SliceAndDiceAura.IsActive() {
 		procChance := float64(rogue.Talents.CutToTheChase) * 0.2
@@ -290,10 +288,21 @@ func (rogue *Rogue) ApplyCutToTheChase(sim *core.Simulation) {
 	}
 }
 
+/* Deactivate Stealth if it is active
+This must be added to all abilities that cause Stealth to fade
+*/
+func (rogue *Rogue) BreakStealth(sim *core.Simulation) {
+	if rogue.StealthAura.IsActive() {
+		rogue.StealthAura.Deactivate(sim)
+	}
+}
+
+// Can the rogue fulfil the weapon equipped requirement for Mutilate?
 func (rogue *Rogue) CanMutilate() bool {
 	return rogue.Talents.Mutilate && rogue.HasDagger(core.MainHand) && rogue.HasDagger(core.OffHand)
 }
 
+// Does the rogue have a dagger equipped in the specified hand (main or offhand)?
 func (rogue *Rogue) HasDagger(hand core.Hand) bool {
 	if hand == core.MainHand {
 		return rogue.HasMHWeapon() && rogue.GetMHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger
@@ -301,6 +310,7 @@ func (rogue *Rogue) HasDagger(hand core.Hand) bool {
 	return rogue.HasOHWeapon() && rogue.GetOHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger
 }
 
+// Check if the rogue is considered in "stealth" for the purpose of casting abilities
 func (rogue *Rogue) IsStealthed() bool {
 	if rogue.StealthAura.IsActive() {
 		return true

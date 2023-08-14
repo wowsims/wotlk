@@ -23,8 +23,6 @@ func (rogue *Rogue) registerVanishSpell() {
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			// Stop auto attacks. Required to prevent breaking of stealth
-			rogue.AutoAttacks.CancelAutoSwing(sim)
 			// Apply stealth
 			rogue.StealthAura.Activate(sim)
 			// Master of Subtlety

@@ -42,6 +42,7 @@ func (rogue *Rogue) registerShadowDanceCD() {
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
+			rogue.BreakStealth(sim)
 			rogue.ShadowDanceAura.Activate(sim)
 		},
 	})
