@@ -17,10 +17,15 @@ func (rogue *Rogue) registerMasterOfSubtletyCD() {
 
 	percent := []float64{1, 1.04, 1.07, 1.1}[rogue.Talents.MasterOfSubtlety]
 
+	effectDuration := time.Second * 6
+	if rogue.StealthAura.IsActive() {
+		effectDuration = core.NeverExpires
+	}
+
 	rogue.MasterOfSubtletyAura = rogue.RegisterAura(core.Aura{
 		Label:    "Master of Subtlety",
 		ActionID: MasterOfSubtletyID,
-		Duration: time.Second * 6,
+		Duration: effectDuration,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.PseudoStats.DamageDealtMultiplier *= percent
 		},

@@ -27,8 +27,6 @@ func (rogue *Rogue) registerVanishSpell() {
 			rogue.StealthAura.Activate(sim)
 			// Master of Subtlety
 			if rogue.Talents.MasterOfSubtlety > 0 {
-				rogue.MasterOfSubtletyAura.Activate(sim)
-
 				_, premedCPs := checkPremediation(sim, rogue)
 				_, garroteCPs := checkGarrote(sim, rogue)
 
@@ -39,10 +37,6 @@ func (rogue *Rogue) registerVanishSpell() {
 				if garroteCPs > 0 {
 					rogue.Garrote.Cast(sim, target)
 				}
-			}
-			// Overkill
-			if rogue.Talents.Overkill {
-				rogue.OverkillAura.Activate(sim)
 			}
 		},
 	})
