@@ -712,15 +712,16 @@ func (dk *Deathknight) registerItems() {
 		}))
 	})
 
+	virulenceProc := dk.NewTemporaryStatsAura("Sigil of Virulence Proc", core.ActionID{SpellID: 67383}, stats.Stats{stats.Strength: 200.0}, time.Second*20)
+
 	addItemEffect(47673, func(agent core.Agent) {
 		dk := agent.(DeathKnightAgent).GetDeathKnight()
-		procAura := dk.NewTemporaryStatsAura("Sigil of Virulence Proc", core.ActionID{SpellID: 67383}, stats.Stats{stats.Strength: 200.0}, time.Second*20)
 
 		icd := core.Cooldown{
 			Timer:    dk.NewTimer(),
 			Duration: time.Second * 10.0,
 		}
-		procAura.Icd = &icd
+		virulenceProc.Icd = &icd
 
 		core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 			Label: "Sigil of Virulence",
@@ -731,7 +732,7 @@ func (dk *Deathknight) registerItems() {
 
 				if sim.RandomFloat("SigilOfVirulence") < 0.80 {
 					icd.Use(sim)
-					procAura.Activate(sim)
+					virulenceProc.Activate(sim)
 				}
 			},
 		}))
