@@ -4,6 +4,7 @@ import (
 	"math"
 	"time"
 
+	"github.com/wowsims/wotlk/sim/common/wotlk"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -330,6 +331,10 @@ func (dk *Deathknight) Initialize() {
 			dk.ArmyOfTheDead.Cast(sim, nil)
 		})
 	}
+
+	// allows us to use these auras in the APL pre-pull actions
+	wotlk.CreateBlackMagicProcAura(&dk.Character)
+	CreateVirulenceProcAura(&dk.Character)
 }
 
 func (dk *Deathknight) registerMindFreeze() {
