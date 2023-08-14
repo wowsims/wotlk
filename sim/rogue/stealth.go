@@ -5,13 +5,7 @@ import (
 )
 
 func (rogue *Rogue) registerStealthAura() {
-	// These spells do NOT break stealth when cast
-	nonbreakingSpells := []*core.Spell{rogue.TricksOfTheTrade, rogue.SliceAndDice}
-
-	if rogue.Talents.Premeditation {
-		nonbreakingSpells = append(nonbreakingSpells, rogue.Premeditation)
-	}
-
+	// TODO: Add Stealth spell for use with prepull in APL
 	rogue.StealthAura = rogue.RegisterAura(core.Aura{
 		Label:    "Stealth",
 		ActionID: core.ActionID{SpellID: 1787},
@@ -50,5 +44,5 @@ func (rogue *Rogue) registerStealthAura() {
 		},
 		// Stealth breaks on damage taken (if not absorbed)
 		// This may be desirable later, but not applicable currently
-	}) 
+	})
 }
