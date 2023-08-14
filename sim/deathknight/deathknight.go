@@ -334,6 +334,7 @@ func (dk *Deathknight) Initialize() {
 
 	// allows us to use these auras in the APL pre-pull actions
 	wotlk.CreateBlackMagicProcAura(&dk.Character)
+	CreateVirulenceProcAura(&dk.Character)
 }
 
 func (dk *Deathknight) registerMindFreeze() {
