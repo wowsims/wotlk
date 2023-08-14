@@ -8,6 +8,10 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+func CreateBlackMagicProcAura(character *core.Character) *core.Aura {
+	return character.NewTemporaryStatsAura("Black Magic Proc", core.ActionID{SpellID: 59626}, stats.Stats{stats.MeleeHaste: 250, stats.SpellHaste: 250}, time.Second*10)
+}
+
 func init() {
 	// Keep these in order by item ID.
 
@@ -233,7 +237,7 @@ func init() {
 	core.NewEnchantEffect(3790, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
-		procAura := character.NewTemporaryStatsAura("Black Magic Proc", core.ActionID{SpellID: 59626}, stats.Stats{stats.MeleeHaste: 250, stats.SpellHaste: 250}, time.Second*10)
+		procAura := CreateBlackMagicProcAura(character)
 		icd := core.Cooldown{
 			Timer:    character.NewTimer(),
 			Duration: time.Second * 35,
