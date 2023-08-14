@@ -38,15 +38,22 @@ func (warrior *Warrior) registerSweepingStrikesCD() {
 			aura.SetStacks(sim, 5)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if aura.GetStacks() == 0 || result.Damage == 0 || !spell.ProcMask.Matches(core.ProcMaskMelee) {
+			if aura.GetStacks() == 0 || result.Damage <= 0 || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 				return
 			}
 
-			// TODO: If the triggering spell is Whirlwind, or an Execute that would sweeping strike a >20% target,
-			//  do a normalized MH hit instead. This is true for Sudden Death procs as well.
+			if spell == warrior.Execute && !sim.IsExecutePhase20() {
+				curDmg = spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+					spell.BonusWeaponDamage()
+			} else if spell == warrior.Whirlwind {
+				curDmg = spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
+					spell.BonusWeaponDamage()
+			} else {
+				curDmg = result.Damage
+			}
 
 			// Undo armor reduction to get the raw damage value.
-			curDmg = result.Damage / result.ResistanceMultiplier
+			curDmg /= result.ResistanceMultiplier
 
 			ssHit.Cast(sim, warrior.Env.NextTargetUnit(result.Target))
 			ssHit.SpellMetrics[result.Target.UnitIndex].Casts--

@@ -61,6 +61,9 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 				Duration: cooldownDur,
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return warrior.OverpowerAura.IsActive()
+		},
 
 		BonusCritRating:  25 * core.CritRatingPerCritChance * float64(warrior.Talents.ImprovedOverpower),
 		DamageMultiplier: 1 + 0.1*float64(warrior.Talents.UnrelentingAssault),
