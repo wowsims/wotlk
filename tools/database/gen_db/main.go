@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/wowsims/wotlk/sim"
@@ -75,7 +76,12 @@ func main() {
 
 	for _, response := range itemTooltips {
 		if response.IsEquippable() {
-			db.MergeItem(response.ToItemProto())
+			// Only included items that are in wowheads gearplanner db
+			// Wowhead doesnt seem to have a field/flag to signify 'not available / in game' but their gearplanner db has them filtered
+			item := response.ToItemProto()
+			if _, ok := wowheadDB.Items[strconv.Itoa(int(item.Id))]; ok {
+				db.MergeItem(item)
+			}
 		} else if response.IsGem() {
 			db.MergeGem(response.ToGemProto())
 		}
