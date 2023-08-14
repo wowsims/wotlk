@@ -264,6 +264,12 @@ var ItemDenyList = map[int32]struct{}{
 	34578: {}, // Battlemaster's Determination
 	34579: {}, // Battlemaster's Audacity
 	34580: {}, // Battlemaster's Perseverence
+
+	// '10 man' onyxia head rewards
+	49312: {},
+	49313: {},
+	49314: {},
+
 	50251: {}, // 'one hand shadows edge'
 	53500: {}, // Tectonic Plate
 
