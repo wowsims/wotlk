@@ -888,7 +888,7 @@ export class ItemList<T> {
 				</div>
 				<div style="width: 100%;height: 30px;font-size: 18px;">
 					<span style="float:left">Item</span>
-					<span id="ep-delta-label" style="float:right">EP(+/-)<span class="ep-help fas fa-search" style="font-size:10px"></span></span>
+					<span class="ep-delta-label" style="float:right">EP(+/-)</span>
 				</div>
 				<ul class="selector-modal-list"></ul>
 			</div>
@@ -1258,7 +1258,12 @@ export class ItemList<T> {
 			epItem.style.display = display
 		}
 
-		document.getElementById("ep-delta-label")!.style.display = display
+		const labels = document.getElementsByClassName("ep-delta-label")
+
+		for (let i = 0; i < labels.length; i++) {
+			const label = labels.item(i) as HTMLElement;
+			label.style.display = display
+		}
 	}
 
 	private fillSourceInfo(item: Item, container: HTMLDivElement, sim: Sim) {
