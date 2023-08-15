@@ -3,10 +3,13 @@
 @import "../components/sim_title_dropdown";
 
 .sim-sidebar {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   background: $body-bg;
+  // This must be larger than the z-index on .sim-content otherwise the dropdown is overlapped
+  z-index: $sidebar-z-index;
 
   .sim-sidebar-content {
     padding-top: $gap-width;
@@ -73,6 +76,8 @@
     .sim-sidebar-content {
       padding-top: $gap-width-sm * 2;
       padding-bottom: $gap-width-sm;
+      padding-left: $gap-width-sm;
+			padding-right: $gap-width-sm;
     }
   }
 }

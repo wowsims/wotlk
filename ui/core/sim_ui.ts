@@ -65,15 +65,17 @@ export abstract class SimUI extends Component {
 			<div class="sim-root">
 				<div class="sim-bg"></div>
 				${config.noticeText ? `<div class="notices-banner alert border-bottom mb-0 text-center">${config.noticeText}</div>` : ''}
-				<aside class="sim-sidebar">
-					<div class="sim-title"></div>
-					<div class="sim-sidebar-content">
-						<div class="sim-sidebar-actions within-raid-sim-hide"></div>
-						<div class="sim-sidebar-results within-raid-sim-hide"></div>
-						<div class="sim-sidebar-footer"></div>
-					</div>
-				</aside>
-				<div class="sim-content container-fluid"></div>
+				<div class="sim-container">
+					<aside class="sim-sidebar">
+						<div class="sim-title"></div>
+						<div class="sim-sidebar-content">
+							<div class="sim-sidebar-actions within-raid-sim-hide"></div>
+							<div class="sim-sidebar-results within-raid-sim-hide"></div>
+							<div class="sim-sidebar-footer"></div>
+						</div>
+					</aside>
+					<div class="sim-content container-fluid"></div>
+				</div>
 			</div>
 		`;
 		this.simContentContainer = this.rootElem.querySelector('.sim-content') as HTMLElement;

@@ -10,11 +10,17 @@ $player-editor-modal-height: calc(100vh - (2 * #{$modal-dialog-margin-y-sm-up}))
 
 	&> .modal-content {
 		height: $player-editor-modal-height;
-		overflow: scroll;
+		overflow: hidden;
 
 		&> .modal-body {
 			padding: 0;
 		}
+	}
+
+	.sim-ui {
+		// Because of the placement of the modal we have to add an extra gap below to be able
+		// to view the full contents of the individual sim ui
+		padding-bottom: calc($modal-dialog-margin-y-sm-up + $gap-width)
 	}
 
 	.sim-bg {

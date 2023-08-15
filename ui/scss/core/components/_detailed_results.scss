@@ -1,4 +1,5 @@
 @import "./detailed_results/dps_histogram";
+@import "./detailed_results/log_runner";
 @import "./detailed_results/player_damage";
 @import "./detailed_results/resource_metrics";
 @import "./detailed_results/results_filter";
@@ -37,19 +38,13 @@
 	padding-right: 10px
 }
 
-.dr-root > .dr-toolbar {
-	border-bottom: 1px solid $border-color;
-}
-
 .dr-root {
 	display: flex;
 	flex-direction: column;
 
 	> {
 		.tab-content {
-			flex-basis: calc(100vh - 17em);
 			padding-top: 1rem;
-			overflow: auto;
 		}
 
 		.tab-content > .tab-pane.dr-tab-content {
@@ -59,17 +54,38 @@
 	}
 }
 
-.new-tab {
-	.dr-root {
-		.tab-content {
-			flex-basis: calc(100vh - 8em);
+.dr-toolbar {
+	position: sticky;
+	top: $sim-header-height;
+	padding-left: var(--container-padding);
+	padding-right: var(--container-padding);
+	margin-left: calc(-1 * var(--container-padding));
+	margin-right: calc(-1 * var(--container-padding));
+	display: flex;
+	transition: background-color .15s ease-in-out;
+	z-index: $header-z-index;
+
+	&::after {
+		content: ' ';
+		position: absolute;
+		bottom: -1px;
+		left: 0;
+		right: 0;
+		width: calc(100% - 2 * var(--container-padding));
+		height: 1px;
+		margin-left: auto;
+		margin-right: auto;
+		background-color: $border-color;
+		transition: width .15s ease-in-out;
+	}
+
+	&.stuck {
+		background: rgba(var(--theme-background-color), var(--theme-background-opacity));
+
+		&::after {
+			width: 100%;
 		}
 	}
-}
-
-
-.dr-toolbar {
-	display: flex;
 
 	& > * {
 		min-height: 0;

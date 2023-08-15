@@ -309,7 +309,7 @@ func (rogue *Rogue) IsStealthed() bool {
 
 func init() {
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassRogue}] = stats.Stats{
-		stats.Health:    3524,
+		stats.Health:    7424,
 		stats.Strength:  110,
 		stats.Agility:   191,
 		stats.Stamina:   105,
@@ -321,7 +321,7 @@ func init() {
 		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarf, Class: proto.Class_ClassRogue}] = stats.Stats{
-		stats.Health:    3524,
+		stats.Health:    7424,
 		stats.Strength:  118,
 		stats.Agility:   185,
 		stats.Stamina:   106,
@@ -333,7 +333,7 @@ func init() {
 		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceGnome, Class: proto.Class_ClassRogue}] = stats.Stats{
-		stats.Health:    3524,
+		stats.Health:    7424,
 		stats.Strength:  108,
 		stats.Agility:   191,
 		stats.Stamina:   105,
@@ -345,10 +345,10 @@ func init() {
 		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassRogue}] = stats.Stats{
-		stats.Health:    3524,
+		stats.Health:    7424,
 		stats.Strength:  113,
 		stats.Agility:   189,
-		stats.Stamina:   107,
+		stats.Stamina:   105,
 		stats.Intellect: 43,
 		stats.Spirit:    69,
 
@@ -357,10 +357,10 @@ func init() {
 		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassRogue}] = stats.Stats{
-		stats.Health:    3524,
+		stats.Health:    7424,
 		stats.Strength:  109,
 		stats.Agility:   193,
-		stats.Stamina:   107,
+		stats.Stamina:   105,
 		stats.Intellect: 43,
 		stats.Spirit:    67,
 
@@ -369,7 +369,7 @@ func init() {
 		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceOrc, Class: proto.Class_ClassRogue}] = stats.Stats{
-		stats.Health:    3524,
+		stats.Health:    7424,
 		stats.Strength:  116,
 		stats.Agility:   186,
 		stats.Stamina:   106,
@@ -381,7 +381,7 @@ func init() {
 		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassRogue}] = stats.Stats{
-		stats.Health:    3524,
+		stats.Health:    7424,
 		stats.Strength:  114,
 		stats.Agility:   191,
 		stats.Stamina:   105,
@@ -393,7 +393,7 @@ func init() {
 		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
 	}
 	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassRogue}] = stats.Stats{
-		stats.Health:    3524,
+		stats.Health:    7424,
 		stats.Strength:  112,
 		stats.Agility:   187,
 		stats.Stamina:   105,

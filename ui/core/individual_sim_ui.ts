@@ -9,7 +9,6 @@ import { EmbeddedDetailedResults } from './components/detailed_results';
 import { EncounterPickerConfig } from './components/encounter_picker';
 import { EnumPicker } from './components/enum_picker';
 import { IconEnumPicker } from './components/icon_enum_picker';
-import { LogRunner } from './components/log_runner';
 import { addRaidSimAction, RaidSimResultsManager } from './components/raid_sim_action';
 import { SavedDataConfig, SavedDataManager } from './components/saved_data_manager';
 import { addStatWeightsAction } from './components/stat_weights_action';
@@ -291,7 +290,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 		if (!this.isWithinRaidSim) {
 			this.addDetailedResultsTab();
-			this.addLogTab();
 		}
 
 		this.addTopbarComponents();
@@ -471,15 +469,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		`);
 
 		const detailedResults = new EmbeddedDetailedResults(this.rootElem.getElementsByClassName('detailed-results')[0] as HTMLElement, this, this.raidSimResultsManager!);
-	}
-
-	private addLogTab() {
-		this.addTab('Log', 'log-tab', `
-			<div class="log-runner">
-			</div>
-		`);
-
-		const logRunner = new LogRunner(this.rootElem.getElementsByClassName('log-runner')[0] as HTMLElement, this);
 	}
 
 	private addTopbarComponents() {

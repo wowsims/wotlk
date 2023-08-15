@@ -29,7 +29,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 0
-  final_stats: 20029.5
+  final_stats: 23929.5
   final_stats: 75
   final_stats: 75
   final_stats: 75
@@ -434,9 +434,9 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-AllItems-InvigoratingEarthsiegeDiamond"
  value: {
-  dps: 8239.53037
-  tps: 5847.21967
-  hps: 10.24843
+  dps: 8335.55854
+  tps: 5914.85086
+  hps: 12.24393
  }
 }
 dps_results: {
