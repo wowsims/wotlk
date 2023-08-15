@@ -200,9 +200,7 @@ func (rogue *Rogue) Reset(sim *core.Simulation) {
 	// Stealth triggered effects (Overkill and Master of Subtlety) pre-pull activation
 	if rogue.Rotation.OpenWithGarrote || rogue.Rotation.OpenWithPremeditation || rogue.Options.StartingOverkillDuration > 0 {
 		rogue.StealthAura.Activate(sim)
-		// TODO: Fix prepull stealth effect durations
 	}
-	// TODO: Support APL on pull actions
 
 	rogue.setupRotation(sim)
 }
