@@ -7,7 +7,9 @@ td, th {
 }
 
 .sim-ui {
-	overflow: auto;
+	// Allow for styled scrolling
+	max-height: 100vh;
+	overflow-y: scroll;
 	scrollbar-color: var(--bs-primary) $body-bg;
 	scrollbar-width: thin;
 
@@ -25,63 +27,45 @@ td, th {
 
 	.sim-root {
 		height: 100%;
+		min-height: 100vh;
 		display: flex;
-		flex-wrap: wrap;
+		flex-direction: column;
 
-		.sim-bg {
-			position: fixed;
-			// These allow the background to fill the page and not be adjusted by browser scrollbars
-			top: 0;
-			left: 0;
-			width: 100vw;
-			height: 100vh;
-			background-image:
-				linear-gradient(
-					rgba(var(--theme-background-color), var(--theme-background-opacity)),
-					rgba(var(--theme-background-color), var(--theme-background-opacity))
-				),
-				var(--theme-background-image);
-			background-repeat: no-repeat;
-			background-size: cover;
-			z-index: -1;
+		.sim-container {
+			display: flex;
+			flex: 1;
 		}
 	
 		.notices-banner {
 			width: 100%;
 			background: lighten($body-bg, 5);
 		}
-	
-		.sim-sidebar, .sim-content {
-			min-height: 100vh;
-		}
 
-		.sim-sidebar {
-			flex: 1;
-			// This must be larger than the z-index on .sim-content otherwise the dropdown is overlapped
-			z-index: 2;
-
-			.sim-title {
-				height: $sim-header-height;
-				border-bottom: 1px solid $border-color;
-	
-				.sim-title-dropdown-root {
-					height: calc(#{$sim-header-height} - 1px);
-				}
-			}
-		}
-	
 		.sim-content {
 			padding-left: var(--container-padding);
 			padding-right: var(--container-padding);
 			flex: 4;
 			z-index: 1;
-	
-			.sim-header {
-				height: $sim-header-height;
-				border-bottom: 1px solid $border-color;
-			}
 		}
 	}
+}
+
+.sim-bg {
+	position: fixed;
+	// These allow the background to fill the page and not be adjusted by browser scrollbars
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background-image:
+		linear-gradient(
+			rgba(var(--theme-background-color), var(--theme-background-opacity)),
+			rgba(var(--theme-background-color), var(--theme-background-opacity))
+		),
+		var(--theme-background-image);
+	background-repeat: no-repeat;
+	background-size: cover;
+	z-index: -1;
 }
 
 // TODO: Move these to an organized partial
@@ -115,11 +99,12 @@ td, th {
 
 	.sim-ui {
 		.sim-root {
-			flex-direction: column;
-			flex-wrap: nowrap;
-
 			.sim-bg {
 				left: 0;
+			}
+
+			.sim-container {
+				flex-direction: column;
 			}
 
 			.sim-sidebar, .sim-content {
@@ -127,28 +112,9 @@ td, th {
 				min-height: unset;
 			}
 
-			.sim-sidebar {
-				.sim-title {
-					height: $sim-header-height;
-		
-					.sim-title-dropdown-root {
-						height: $sim-header-height - 1px;
-					}
-				}
-
-				.sim-sidebarContent {
-					padding-left: $gap-width-sm;
-					padding-right: $gap-width-sm;
-				}
-			}
-
 			.sim-content {
 				padding-left: $gap-width-sm;
 				padding-right: $gap-width-sm;
-
-				.sim-header {
-					height: $sim-header-height;
-				}
 			}
 		}
 	}

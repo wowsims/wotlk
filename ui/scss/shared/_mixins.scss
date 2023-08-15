@@ -1,5 +1,5 @@
 @mixin theme-color($base-color, $opacity, $background-image-url) {
-  $background-color-hex: mix(black, $base-color, 90);
+  $background-color-hex: mix(black, $base-color, 90%);
   $hover-color: shade-color($base-color, $btn-hover-bg-shade-amount);
   $interact-color: shade-color($base-color, $btn-active-bg-shade-amount);
   $text-color: color-contrast($base-color);
@@ -17,7 +17,7 @@
   --bs-primary-rgb: #{to-rgb($base-color)};
 
   // Custom variants we use for styling some components
-  --bs-primary-dampened: #{mix(black, $base-color, 75)};
+  --bs-primary-dampened: #{mix(black, $base-color, 75%)};
 
   .btn-primary {
     --bs-btn-bg:                    #{$base-color};
@@ -32,8 +32,8 @@
     --bs-btn-active-border-color:   #{$interact-color};
     --bs-btn-active-color:          #{$text-color};
 
-    --bs-btn-disabled-bg:           #{mix(gray, $base-color, 50)};
-    --bs-btn-disabled-border-color: #{mix(gray, $base-color, 50)};
+    --bs-btn-disabled-bg:           #{mix(gray, $base-color, 50%)};
+    --bs-btn-disabled-border-color: #{mix(gray, $base-color, 50%)};
     --bs-btn-disabled-color:        #{$text-color};
   }
 

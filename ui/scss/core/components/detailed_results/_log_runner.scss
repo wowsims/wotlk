@@ -1,17 +1,10 @@
 .log-runner-root {
 	display: flex;
 	flex-direction: column;
-	height: 100%;
 }
 
 .log-runner-control-bar {
 	margin-bottom: calc(var(--bs-gap) / 2);
-}
-
-.log-runner-logs {
-	padding: calc(var(--bs-gap) / 2) var(--bs-gap);
-	border: 1px solid white;
-	flex-grow: 1;
 }
 
 .log-runner-logs > span {

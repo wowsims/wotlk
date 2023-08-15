@@ -23,9 +23,7 @@ export class SimHeader extends Component {
 
 	constructor(parentElem: HTMLElement, simUI: SimUI) {
 		super(parentElem, 'sim-header');
-
 		this.simUI = simUI;
-
 		this.simTabsContainer = this.rootElem.querySelector('.sim-tabs') as HTMLElement;
 		this.simToolbar = this.rootElem.querySelector('.sim-toolbar') as HTMLElement;
 
@@ -34,6 +32,12 @@ export class SimHeader extends Component {
 		this.addDownloadBinaryLink();
 		this.addSimOptionsLink();
 		this.addSocialLinks();
+
+		// Allow styling the sticky header
+		new IntersectionObserver(
+			([e]) => e.target.classList.toggle('stuck', e.intersectionRatio < 1),
+			{threshold: [1]}
+		).observe(this.rootElem)
 	}
 
 	activateTab(className: string) {
@@ -250,24 +254,26 @@ export class SimHeader extends Component {
 		let headerFragment = document.createElement('fragment');
 		headerFragment.innerHTML = `
 			<header class="sim-header">
-				<ul class="sim-tabs nav nav-tabs" role="tablist"></ul>
-				<div class="import-export within-raid-sim-hide">
-					<div class="dropdown sim-dropdown-menu import-dropdown">
-						<a href="javascript:void(0)" class="import-link" role="button" data-bs-toggle="dropdown" data-bs-display="dynamic" aria-expanded="false">
-							<i class="fa fa-download"></i>
-							Import
-						</a>
-						<ul class="dropdown-menu"></ul>
+				<div class="sim-header-container">
+					<ul class="sim-tabs nav nav-tabs" role="tablist"></ul>
+					<div class="import-export within-raid-sim-hide">
+						<div class="dropdown sim-dropdown-menu import-dropdown">
+							<a href="javascript:void(0)" class="import-link" role="button" data-bs-toggle="dropdown" data-bs-display="dynamic" aria-expanded="false">
+								<i class="fa fa-download"></i>
+								Import
+							</a>
+							<ul class="dropdown-menu"></ul>
+						</div>
+						<div class="dropdown sim-dropdown-menu export-dropdown">
+							<a href="javascript:void(0)" class="export-link" role="button" data-bs-toggle="dropdown" data-bs-display="dynamic" aria-expanded="false">
+								<i class="fa fa-right-from-bracket"></i>
+								Export
+							</a>
+							<ul class="dropdown-menu"></ul>
+						</div>
 					</div>
-					<div class="dropdown sim-dropdown-menu export-dropdown">
-						<a href="javascript:void(0)" class="export-link" role="button" data-bs-toggle="dropdown" data-bs-display="dynamic" aria-expanded="false">
-							<i class="fa fa-right-from-bracket"></i>
-							Export
-						</a>
-						<ul class="dropdown-menu"></ul>
-					</div>
+					<div class="sim-toolbar"></div>
 				</div>
-				<div class="sim-toolbar"></div>
 			</header>
 		`;
 

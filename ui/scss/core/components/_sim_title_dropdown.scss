@@ -1,11 +1,15 @@
 .sim-title {
+  // Same as sim header
+  position: sticky;
+  top: -1px;
+  height: calc($sim-header-height + 1px);
+	border-bottom: 1px solid $border-color;
+
   .sim-title-dropdown-root {
+    height: calc(#{$sim-header-height} - 1px);
+
     .sim-link-dropdown {
       height: 100%;
-
-      &> .sim-link {
-        height: 100%;
-      }
 
       &> .dropdown-menu {
         width: 100%;
@@ -25,6 +29,7 @@
 
   .sim-link {
     background: $dropdown-bg;
+    height: 100%;
 
     &:hover, &:focus, &.active, &.show {
       background: $dropdown-link-hover-bg;

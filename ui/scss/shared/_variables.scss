@@ -183,3 +183,7 @@ $tooltip-bg: $popover-bg;
 $tooltip-max-width: 15vw;
 $tooltip-max-width-lg: 25vw;
 $tooltip-max-width-sm: 75vw;
+
+// Custom z-index variables
+$header-z-index: 100;
+$sidebar-z-index: 200;
