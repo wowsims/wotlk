@@ -8,14 +8,20 @@ import (
 
 var OverkillActionID = core.ActionID{SpellID: 58426}
 
-func (rogue *Rogue) registerOverkillCD() {
+func (rogue *Rogue) registerOverkill() {
 	if !rogue.Talents.Overkill {
 		return
 	}
+
+	effectDuration := time.Second * 20
+	if rogue.StealthAura.IsActive() {
+		effectDuration = core.NeverExpires
+	}
+
 	rogue.OverkillAura = rogue.RegisterAura(core.Aura{
 		Label:    "Overkill",
 		ActionID: OverkillActionID,
-		Duration: time.Second * 20,
+		Duration: effectDuration,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.ApplyEnergyTickMultiplier(0.3)
 		},
@@ -23,26 +29,4 @@ func (rogue *Rogue) registerOverkillCD() {
 			rogue.ApplyEnergyTickMultiplier(-0.3)
 		},
 	})
-	rogue.Overkill = rogue.RegisterSpell(core.SpellConfig{
-		ActionID: OverkillActionID,
-		Cast: core.CastConfig{
-			CD: core.Cooldown{
-				Timer:    rogue.NewTimer(),
-				Duration: time.Second * time.Duration(180-30*rogue.Talents.Elusiveness),
-			},
-		},
-		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-			rogue.OverkillAura.Activate(sim)
-		},
-	})
-
-	rogue.AddMajorCooldown(core.MajorCooldown{
-		Spell: rogue.Overkill,
-		Type:  core.CooldownTypeDPS,
-
-		ShouldActivate: func(sim *core.Simulation, c *core.Character) bool {
-			return !rogue.OverkillAura.IsActive() && rogue.CurrentEnergy() < 50
-		},
-	})
-
 }

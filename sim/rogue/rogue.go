@@ -76,8 +76,7 @@ type Rogue struct {
 	Premeditation    *core.Spell
 	ShadowDance      *core.Spell
 	ColdBlood        *core.Spell
-	MasterOfSubtlety *core.Spell
-	Overkill         *core.Spell
+	Vanish           *core.Spell
 
 	Envenom      *core.Spell
 	Eviscerate   *core.Spell
@@ -105,6 +104,7 @@ type Rogue struct {
 	ShadowDanceAura      *core.Aura
 	DirtyDeedsAura       *core.Aura
 	HonorAmongThieves    *core.Aura
+	StealthAura          *core.Aura
 
 	masterPoisonerDebuffAuras core.AuraArray
 	savageCombatDebuffAuras   core.AuraArray
@@ -135,6 +135,7 @@ func (rogue *Rogue) finisherFlags() core.SpellFlag {
 	return flags
 }
 
+// Apply the effect of successfully casting a finisher to combo points
 func (rogue *Rogue) ApplyFinisher(sim *core.Simulation, spell *core.Spell) {
 	numPoints := rogue.ComboPoints()
 	rogue.SpendComboPoints(sim, spell.ComboPointMetrics())
@@ -160,6 +161,7 @@ func (rogue *Rogue) Initialize() {
 
 	rogue.costModifier = rogue.makeCostModifier()
 
+	rogue.registerStealthAura()
 	rogue.registerBackstabSpell()
 	rogue.registerDeadlyPoisonSpell()
 	rogue.registerPoisonAuras()
@@ -180,6 +182,7 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerTricksOfTheTradeSpell()
 	rogue.registerAmbushSpell()
 	rogue.registerEnvenom()
+	rogue.registerVanishSpell()
 
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()
 }
@@ -195,22 +198,8 @@ func (rogue *Rogue) Reset(sim *core.Simulation) {
 	rogue.allMCDsDisabled = true
 
 	// Stealth triggered effects (Overkill and Master of Subtlety) pre-pull activation
-	if rogue.Rotation.OpenWithGarrote || rogue.Options.StartingOverkillDuration > 0 {
-		dur := time.Duration(rogue.Options.StartingOverkillDuration) * time.Second
-		if rogue.OverkillAura != nil {
-			if maxDur := rogue.OverkillAura.Duration; rogue.Rotation.OpenWithGarrote || dur > maxDur {
-				dur = maxDur
-			}
-			rogue.OverkillAura.Activate(sim)
-			rogue.OverkillAura.UpdateExpires(sim.CurrentTime + dur)
-		}
-		if rogue.MasterOfSubtletyAura != nil {
-			if maxDur := rogue.MasterOfSubtletyAura.Duration; rogue.Rotation.OpenWithGarrote || dur > maxDur {
-				dur = maxDur
-			}
-			rogue.MasterOfSubtletyAura.Activate(sim)
-			rogue.MasterOfSubtletyAura.UpdateExpires(sim.CurrentTime + dur)
-		}
+	if rogue.Rotation.OpenWithGarrote || rogue.Rotation.OpenWithPremeditation || rogue.Options.StartingOverkillDuration > 0 {
+		rogue.StealthAura.Activate(sim)
 	}
 
 	rogue.setupRotation(sim)
@@ -271,6 +260,8 @@ func NewRogue(character core.Character, options *proto.Player) *Rogue {
 	return rogue
 }
 
+// Apply the effects of the Cut to the Chase talent
+// TODO: Put a fresh instance of SnD rather than use the original as per client
 func (rogue *Rogue) ApplyCutToTheChase(sim *core.Simulation) {
 	if rogue.Talents.CutToTheChase > 0 && rogue.SliceAndDiceAura.IsActive() {
 		procChance := float64(rogue.Talents.CutToTheChase) * 0.2
@@ -281,15 +272,37 @@ func (rogue *Rogue) ApplyCutToTheChase(sim *core.Simulation) {
 	}
 }
 
+/* Deactivate Stealth if it is active
+This must be added to all abilities that cause Stealth to fade
+*/
+func (rogue *Rogue) BreakStealth(sim *core.Simulation) {
+	if rogue.StealthAura.IsActive() {
+		rogue.StealthAura.Deactivate(sim)
+	}
+}
+
+// Can the rogue fulfil the weapon equipped requirement for Mutilate?
 func (rogue *Rogue) CanMutilate() bool {
 	return rogue.Talents.Mutilate && rogue.HasDagger(core.MainHand) && rogue.HasDagger(core.OffHand)
 }
 
+// Does the rogue have a dagger equipped in the specified hand (main or offhand)?
 func (rogue *Rogue) HasDagger(hand core.Hand) bool {
 	if hand == core.MainHand {
 		return rogue.HasMHWeapon() && rogue.GetMHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger
 	}
 	return rogue.HasOHWeapon() && rogue.GetOHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger
+}
+
+// Check if the rogue is considered in "stealth" for the purpose of casting abilities
+func (rogue *Rogue) IsStealthed() bool {
+	if rogue.StealthAura.IsActive() {
+		return true
+	}
+	if rogue.Talents.ShadowDance && rogue.ShadowDanceAura.IsActive() {
+		return true
+	}
+	return false
 }
 
 func init() {

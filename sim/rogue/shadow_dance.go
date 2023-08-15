@@ -1,8 +1,9 @@
 package rogue
 
 import (
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"time"
+
+	"github.com/wowsims/wotlk/sim/core/proto"
 
 	"github.com/wowsims/wotlk/sim/core"
 )
@@ -23,9 +24,8 @@ func (rogue *Rogue) registerShadowDanceCD() {
 		Label:    "Shadow Dance",
 		ActionID: actionID,
 		Duration: duration,
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			// can now cast opening abilities outside of stealth
-		},
+		// Can now cast opening abilities outside of stealth
+		// Covered in rogue.go by IsStealthed()
 	})
 
 	rogue.ShadowDance = rogue.RegisterSpell(core.SpellConfig{
@@ -40,6 +40,7 @@ func (rogue *Rogue) registerShadowDanceCD() {
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
+			rogue.BreakStealth(sim)
 			rogue.ShadowDanceAura.Activate(sim)
 		},
 	})

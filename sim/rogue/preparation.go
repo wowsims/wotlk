@@ -14,7 +14,7 @@ func (rogue *Rogue) registerPreparationCD() {
 
 	// Spells affected by Preparation are: Cold Blood, Shadowstep, Vanish (Overkill/Master of Subtlety), Evasion, Sprint
 	// If Glyph of Preparation is applied, Blade Flurry, Dismantle, and Kick are also affected
-	var affectedSpells = []*core.Spell{rogue.ColdBlood, rogue.Shadowstep, rogue.MasterOfSubtlety, rogue.Overkill}
+	var affectedSpells = []*core.Spell{rogue.ColdBlood, rogue.Shadowstep, rogue.Vanish}
 	if rogue.GetCharacter().HasGlyph(int32(proto.RogueMajorGlyph_GlyphOfPreparation)) {
 		affectedSpells = append(affectedSpells, rogue.BladeFlurry)
 	}
@@ -43,7 +43,7 @@ func (rogue *Rogue) registerPreparationCD() {
 		Type:     core.CooldownTypeDPS,
 		Priority: core.CooldownPriorityDefault,
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return rogue.MasterOfSubtlety != nil && !rogue.MasterOfSubtlety.CD.IsReady(sim)
+			return !rogue.Vanish.CD.IsReady(sim)
 		},
 	})
 }

@@ -28,6 +28,9 @@ func (rogue *Rogue) registerPremeditation() {
 				Duration: time.Second * 20,
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return rogue.IsStealthed()
+		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
 			rogue.AddComboPoints(sim, 2, comboMetrics)

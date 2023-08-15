@@ -49,6 +49,7 @@ func (rogue *Rogue) registerExposeArmorSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			rogue.BreakStealth(sim)
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
 			if result.Landed() {
 				debuffAura := rogue.ExposeArmorAuras.Get(target)

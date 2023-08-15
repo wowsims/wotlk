@@ -40,7 +40,7 @@ func (rogue *Rogue) ApplyTalents() {
 		rogue.MultiplyStat(stats.Agility, 1.0+0.03*float64(rogue.Talents.SinisterCalling))
 	}
 
-	rogue.registerOverkillCD()
+	rogue.registerOverkill()
 	rogue.registerHungerForBlood()
 	rogue.registerColdBloodCD()
 	rogue.registerBladeFlurryCD()
@@ -503,6 +503,7 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
+			rogue.BreakStealth(sim)
 			rogue.BladeFlurryAura.Activate(sim)
 		},
 	})
@@ -573,6 +574,7 @@ func (rogue *Rogue) registerAdrenalineRushCD() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
+			rogue.BreakStealth(sim)
 			rogue.AdrenalineRushAura.Activate(sim)
 		},
 	})

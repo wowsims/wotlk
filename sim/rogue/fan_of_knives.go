@@ -56,6 +56,7 @@ func (rogue *Rogue) registerFanOfKnives() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
+			rogue.BreakStealth(sim)
 			// Calc and apply all OH hits first, because MH hits can benefit from an OH felstriker proc.
 			for i, aoeTarget := range sim.Encounter.TargetUnits {
 				baseDamage := ohSpell.Unit.OHWeaponDamage(sim, ohSpell.MeleeAttackPower())
