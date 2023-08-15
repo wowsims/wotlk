@@ -434,8 +434,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-InvigoratingEarthsiegeDiamond"
  value: {
-  dps: 7614.7383
-  tps: 5406.46419
+  dps: 7615.90746
+  tps: 5407.2943
   hps: 11.11293
  }
 }

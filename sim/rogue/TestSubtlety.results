@@ -434,8 +434,8 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-AllItems-InvigoratingEarthsiegeDiamond"
  value: {
-  dps: 8335.55854
-  tps: 5914.85086
+  dps: 8239.53037
+  tps: 5847.21967
   hps: 12.24393
  }
 }
