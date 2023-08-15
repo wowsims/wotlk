@@ -1,5 +1,5 @@
 import { EmbeddedDetailedResults } from "../core/components/detailed_results.js";
-import { LogRunner } from "../core/components/log_runner.js";
+import { LogRunner } from "../core/components/detailed_results/log_runner.js";
 import { addRaidSimAction, RaidSimResultsManager, ReferenceData } from "../core/components/raid_sim_action.js";
 
 import { Player } from "../core/player.js";
@@ -70,7 +70,6 @@ export class RaidSimUI extends SimUI {
 		this.addRaidTab();
 		this.addSettingsTab();
 		this.addDetailedResultsTab();
-		this.addLogTab();
 	}
 
 	private loadSettings() {
@@ -128,15 +127,6 @@ export class RaidSimUI extends SimUI {
 		`);
 
 		const detailedResults = new EmbeddedDetailedResults(this.rootElem.getElementsByClassName('detailed-results')[0] as HTMLElement, this, this.raidSimResultsManager!);
-	}
-
-	private addLogTab() {
-		this.addTab('Log', 'log-tab', `
-			<div class="log-runner">
-			</div>
-		`);
-
-		const logRunner = new LogRunner(this.rootElem.getElementsByClassName('log-runner')[0] as HTMLElement, this);
 	}
 
 	private recomputeSettingsLayout() {

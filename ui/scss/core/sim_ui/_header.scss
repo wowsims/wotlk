@@ -2,16 +2,54 @@
 @use "sass:math";
 
 .sim-header {
+	position: sticky;
+	top: -1px;
+	height: $sim-header-height;
 	padding-top: $gap-width;
-	display: flex;
-	align-items: stretch;
+	padding-left: var(--container-padding);
+	padding-right: var(--container-padding);
+	margin-left: calc(-1 * var(--container-padding));
+	margin-right: calc(-1 * var(--container-padding));
 	white-space: nowrap;
-	overflow-x: scroll;
-	-ms-overflow-style: none;  /* IE and Edge */
-	scrollbar-width: none;  /* Firefox */
+	transition: background-color .15s ease-in-out; 
+	z-index: $header-z-index;
+	
+	&::after {
+		content: ' ';
+		position: absolute;
+		bottom: -1px;
+		left: 0;
+		right: 0;
+		width: calc(100% - 2 * var(--container-padding));
+		height: 1px;
+		margin-left: auto;
+		margin-right: auto;
+		background-color: $border-color;
+		transition: width .15s ease-in-out;
+	}
 
-	&::-webkit-scrollbar {
-		display: none;
+	&.stuck {
+		background: $body-bg;
+
+		&::after {
+			width: 100%;
+		}
+	}
+
+	.sim-header-container {
+		height: 100%;
+		display: flex;
+		align-items: stretch;
+		flex: 1;
+		// Horizontal scroll for smaller screens
+		// TODO: This is not a good solution
+		overflow-x: scroll;
+		-ms-overflow-style: none;  /* IE and Edge */
+		scrollbar-width: none;  /* Firefox */
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
 	}
 
 	.sim-tabs, .import-export, .sim-toolbar {

@@ -10,16 +10,11 @@ body {
 }
 
 body.new-tab {
-	background-image:
-		linear-gradient(
-			rgba(var(--theme-background-color), var(--theme-background-opacity)),
-			rgba(var(--theme-background-color), var(--theme-background-opacity))
-		),
-		var(--theme-background-image);
-	background-repeat: no-repeat;
-	background-size: cover;
-
 	.dr-root {
 		padding: $gap-width var(--container-padding);
+
+		.dr-toolbar {
+			top: -1px;
+		}
 	}
 }

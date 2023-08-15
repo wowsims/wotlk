@@ -17,6 +17,7 @@ import { PlayerDamageMetricsTable } from './detailed_results/player_damage';
 import { AuraMetricsTable } from './detailed_results/aura_metrics'
 import { DpsHistogram } from './detailed_results/dps_histogram';
 import { Timeline } from './detailed_results/timeline';
+import { LogRunner } from './detailed_results/log_runner';
 import { ToplineResults } from './detailed_results/topline_results';
 
 import { Component } from './component';
@@ -29,7 +30,7 @@ const layoutHTML = `
 	<div class="dr-toolbar">
 		<div class="results-filter"></div>
 		<div class="tabs-filler"></div>
-		<ul class="dr-toolbar nav nav-tabs" role="tablist">
+		<ul class="nav nav-tabs" role="tablist">
 			<li class="nav-item dr-tab-tab damage-metrics" role="presentation">
 				<a
 					class="nav-link active"
@@ -39,7 +40,7 @@ const layoutHTML = `
 					role="tab"
 					aria-controls="damageTab"
 					aria-selected="true"
-				>DAMAGE</a>
+				>Damage</a>
 			</li>
 			<li class="nav-item dr-tab-tab healing-metrics" role="presentation">
 				<a
@@ -50,7 +51,7 @@ const layoutHTML = `
 					role="tab"
 					aria-controls="healingTab"
 					aria-selected="false"
-				>HEALING</a>
+				>Healing</a>
 			</li>
 			<li class="nav-item dr-tab-tab threat-metrics" role="presentation">
 				<a
@@ -61,7 +62,7 @@ const layoutHTML = `
 					role="tab"
 					aria-controls="damageTakenTab"
 					aria-selected="false"
-				>DAMAGE TAKEN</a>
+				>Damage Taken</a>
 			</li>
 			<li class="nav-item dr-tab-tab" role="presentation">
 				<a
@@ -72,7 +73,7 @@ const layoutHTML = `
 					role="tab"
 					aria-controls="buffsTab"
 					aria-selected="false"
-				>BUFFS</a>
+				>Buffs</a>
 			</li>
 			<li class="nav-item dr-tab-tab" role="presentation">
 				<a
@@ -83,7 +84,7 @@ const layoutHTML = `
 					role="tab"
 					aria-controls="debuffsTab"
 					aria-selected="false"
-				>DEBUFFS</a>
+				>Debuffs</a>
 			</li>
 			<li class="nav-item dr-tab-tab" role="presentation">
 				<a
@@ -94,7 +95,7 @@ const layoutHTML = `
 					role="tab"
 					aria-controls="castsTab"
 					aria-selected="false"
-				>CASTS</a>
+				>Casts</a>
 			</li>
 			<li class="nav-item dr-tab-tab" role="presentation">
 				<a
@@ -105,7 +106,7 @@ const layoutHTML = `
 					role="tab"
 					aria-controls="resourcesTab"
 					aria-selected="false"
-				>RESOURCES</a>
+				>Resources</a>
 			</li>
 			<li class="nav-item dr-tab-tab" role="presentation">
 				<a
@@ -117,7 +118,18 @@ const layoutHTML = `
 					role="tab"
 					aria-controls="timelineTab"
 					aria-selected="false"
-				>TIMELINE</a>
+				>Timeline</a>
+			<li class="nav-item dr-tab-tab" role="presentation">
+				<a
+					id="logTabTab"
+					class="nav-link"
+					data-bs-toggle="tab"
+					data-bs-target="#logTab"
+					type="button"
+					role="tab"
+					aria-controls="logTab"
+					aria-selected="false"
+				>Log</a>
 			</li>
 		</ul>
 	</div>
@@ -192,6 +204,12 @@ const layoutHTML = `
 				</div>
 			</div>
 		</div>
+		<div id="logTab" class="tab-pane dr-tab-content log-content fade">
+			<div class="dr-row">
+				<div class="log">
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
 `;
@@ -212,6 +230,20 @@ export abstract class DetailedResults extends Component {
 		this.simUI?.sim.settingsChangeEmitter.on(async () => await this.updateSettings());
 
 		Chart.defaults.color = 'white';
+
+		// Allow styling the sticky toolbar
+		const toolbar = document.querySelector('.dr-toolbar') as HTMLElement;
+		new IntersectionObserver(
+			([e]) => {
+				console.log(e.intersectionRatio)
+				e.target.classList.toggle('stuck', e.intersectionRatio < 1)
+			},
+			{
+				// Intersect with the sim header or top of the separate tab
+				rootMargin: this.simUI ? `-${this.simUI.simHeader.rootElem.offsetHeight + 1}px 0px 0px 0px` : '0px',
+				threshold: [1],
+			}
+		).observe(toolbar)
 
 		this.resultsFilter = new ResultsFilter({
 			parent: this.rootElem.getElementsByClassName('results-filter')[0] as HTMLElement,
@@ -247,6 +279,12 @@ export abstract class DetailedResults extends Component {
 			resultsEmitter: this.resultsEmitter,
 		});
 		document.getElementById('timelineTabTab')?.addEventListener('click', event => timeline.render());
+
+		const log = new LogRunner({
+			parent: this.rootElem.getElementsByClassName('log')[0] as HTMLElement,
+			cssScheme: cssScheme,
+			resultsEmitter: this.resultsEmitter,
+		});
 
 		this.rootElem.classList.add('hide-threat-metrics');
 		this.rootElem.classList.add('hide-healing-metrics');
@@ -351,6 +389,10 @@ export class WindowedDetailedResults extends DetailedResults {
 		window.addEventListener('message',
 			async (event) => await this.handleMessage(DetailedResultsUpdate.fromJson(event.data))
 		);
+
+		this.rootElem.insertAdjacentHTML('beforeend', `
+			<div class="sim-bg"></div>
+		`);
 	}
 
 	async postMessage(update: DetailedResultsUpdate): Promise<void> {

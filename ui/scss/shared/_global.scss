@@ -1,7 +1,13 @@
 @use "sass:map";
 
 :root {
-  --container-padding: 3rem;
+  --container-padding: #{$gap-width-sm};
+}
+
+@include media-breakpoint-up(lg) {
+  :root {
+    --container-padding: 3rem;
+  }
 }
 
 @include media-breakpoint-up(xxl) {

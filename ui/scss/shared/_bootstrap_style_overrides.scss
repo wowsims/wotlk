@@ -150,7 +150,7 @@
 @each $color, $value in $class-colors {
   // Dampened class themes
   .bg-#{$color}-dampened {
-    background: mix(black, $value, 75);
+    background: mix(black, $value, 75%);
   }
 }
 
