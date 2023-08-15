@@ -428,6 +428,7 @@ func (rogue *Rogue) applyFocusedAttacks() {
 }
 
 var BladeFlurryActionID = core.ActionID{SpellID: 13877}
+var BladeFlurryHitID = core.ActionID{SpellID: 22482}
 
 func (rogue *Rogue) registerBladeFlurryCD() {
 	if !rogue.Talents.BladeFlurry {
@@ -436,7 +437,7 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 
 	var curDmg float64
 	bfHit := rogue.RegisterSpell(core.SpellConfig{
-		ActionID:    BladeFlurryActionID,
+		ActionID:    BladeFlurryHitID,
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskEmpty, // No proc mask, so it won't proc itself.
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreAttackerModifiers,
@@ -487,6 +488,7 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 	cooldownDur := time.Minute * 2
 	rogue.BladeFlurry = rogue.RegisterSpell(core.SpellConfig{
 		ActionID: BladeFlurryActionID,
+		Flags: core.SpellFlagAPL,
 
 		EnergyCost: core.EnergyCostOptions{
 			Cost: core.TernaryFloat64(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfBladeFlurry), 0, 25),
