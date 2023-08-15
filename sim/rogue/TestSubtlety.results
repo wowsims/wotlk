@@ -491,8 +491,8 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-AllItems-PetrifiedScarab-21685"
  value: {
-  dps: 8049.6123
-  tps: 5713.6272
+  dps: 7920.81441
+  tps: 5622.56649
  }
 }
 dps_results: {

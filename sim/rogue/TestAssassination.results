@@ -491,8 +491,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-PetrifiedScarab-21685"
  value: {
-  dps: 7409.66177
-  tps: 5260.85986
+  dps: 7396.63368
+  tps: 5251.60991
  }
 }
 dps_results: {
