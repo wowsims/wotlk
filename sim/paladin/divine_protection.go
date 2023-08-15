@@ -28,6 +28,7 @@ func (paladin *Paladin) registerDivineProtectionSpell() {
 
 	paladin.DivineProtection = paladin.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
+		Flags:    core.SpellFlagAPL,
 
 		Cast: core.CastConfig{
 			CD: core.Cooldown{

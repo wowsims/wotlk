@@ -45,7 +45,7 @@ func (priest *Priest) newMindFlaySpell(numTicks int32) *core.Spell {
 				wait := priest.ApplyCastSpeed(channelTime)
 				gcd := core.MaxDuration(core.GCDMin, priest.ApplyCastSpeed(core.GCDDefault))
 				if wait > gcd && priest.Latency > 0 {
-					base := priest.Latency * 0.25
+					base := priest.Latency * 0.67
 					variation := base + sim.RandomFloat("spriest latency")*base // should vary from 0.66 - 1.33 of given latency
 					variation = core.MaxFloat(variation, 10)                    // no player can go under XXXms response time
 					cast.AfterCastDelay += time.Duration(variation) * time.Millisecond
@@ -108,6 +108,8 @@ func (priest *Priest) newMindFlaySpell(numTicks int32) *core.Spell {
 				if priest.ShadowWordPain.Dot(target).IsActive() {
 					if rolloverChance == 1 || sim.RandomFloat("Pain and Suffering") < rolloverChance {
 						priest.ShadowWordPain.Dot(target).Rollover(sim)
+						// trinkets can proc from the re-application
+						priest.OnCastComplete(sim, priest.ShadowWordPain)
 					}
 				}
 				spell.Dot(target).Apply(sim)

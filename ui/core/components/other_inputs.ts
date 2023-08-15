@@ -1,10 +1,10 @@
 import { BooleanPicker } from '../components/boolean_picker.js';
 import { EnumPicker } from '../components/enum_picker.js';
-import { RaidTarget } from '../proto/common.js';
+import { UnitReference } from '../proto/common.js';
 import { Player } from '../player.js';
 import { Sim } from '../sim.js';
 import { EventID, TypedEvent } from '../typed_event.js';
-import { emptyRaidTarget } from '../proto_utils/utils.js';
+import { emptyUnitReference } from '../proto_utils/utils.js';
 
 export function makeShow1hWeaponsSelector(parent: HTMLElement, sim: Sim): BooleanPicker<Sim> {
 	return new BooleanPicker<Sim>(parent, sim, {
@@ -47,6 +47,19 @@ export function makeShowMatchingGemsSelector(parent: HTMLElement, sim: Sim): Boo
 			const filters = sim.getFilters();
 			filters.matchingGemsOnly = newValue;
 			sim.setFilters(eventID, filters);
+		},
+	});
+}
+
+export function makeShowEPValuesSelector(parent: HTMLElement, sim: Sim): BooleanPicker<Sim> {
+	return new BooleanPicker<Sim>(parent, sim, {
+		extraCssClasses: ['show-ep-values-selector', 'input-inline', 'mb-0'],
+		label: 'Show EP',
+		inline: true,
+		changedEvent: (sim: Sim) => sim.showEPValuesChangeEmitter,
+		getValue: (sim: Sim) => sim.getShowEPValues(),
+		setValue: (eventID: EventID, sim: Sim, newValue: boolean) => {
+			sim.setShowEPValues(eventID, newValue);
 		},
 	});
 }
@@ -108,14 +121,14 @@ export const TankAssignment = {
 		{ name: 'Tank 4', value: 3 },
 	],
 	changedEvent: (player: Player<any>) => player.getRaid()!.tanksChangeEmitter,
-	getValue: (player: Player<any>) => (player.getRaid()?.getTanks() || []).findIndex(tank => RaidTarget.equals(tank, player.makeRaidTarget())),
+	getValue: (player: Player<any>) => (player.getRaid()?.getTanks() || []).findIndex(tank => UnitReference.equals(tank, player.makeUnitReference())),
 	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
 		const newTanks = [];
 		if (newValue != -1) {
 			for (let i = 0; i < newValue; i++) {
-				newTanks.push(emptyRaidTarget());
+				newTanks.push(emptyUnitReference());
 			}
-			newTanks.push(player.makeRaidTarget());
+			newTanks.push(player.makeUnitReference());
 		}
 		player.getRaid()!.setTanks(eventID, newTanks);
 	},
@@ -135,7 +148,7 @@ export const IncomingHps = {
 		healingModel.hps = newValue;
 		player.setHealingModel(eventID, healingModel);
 	},
-	enableWhen: (player: Player<any>) => (player.getRaid()?.getTanks() || []).find(tank => RaidTarget.equals(tank, player.makeRaidTarget())) != null,
+	enableWhen: (player: Player<any>) => (player.getRaid()?.getTanks() || []).find(tank => UnitReference.equals(tank, player.makeUnitReference())) != null,
 };
 
 export const HealingCadence = {
@@ -154,7 +167,7 @@ export const HealingCadence = {
 		healingModel.cadenceSeconds = newValue;
 		player.setHealingModel(eventID, healingModel);
 	},
-	enableWhen: (player: Player<any>) => (player.getRaid()?.getTanks() || []).find(tank => RaidTarget.equals(tank, player.makeRaidTarget())) != null,
+	enableWhen: (player: Player<any>) => (player.getRaid()?.getTanks() || []).find(tank => UnitReference.equals(tank, player.makeUnitReference())) != null,
 };
 
 export const HealingCadenceVariation = {
@@ -173,7 +186,7 @@ export const HealingCadenceVariation = {
 		healingModel.cadenceVariation = newValue;
 		player.setHealingModel(eventID, healingModel);
 	},
-	enableWhen: (player: Player<any>) => (player.getRaid()?.getTanks() || []).find(tank => RaidTarget.equals(tank, player.makeRaidTarget())) != null,
+	enableWhen: (player: Player<any>) => (player.getRaid()?.getTanks() || []).find(tank => UnitReference.equals(tank, player.makeUnitReference())) != null,
 };
 
 export const BurstWindow = {
@@ -191,7 +204,7 @@ export const BurstWindow = {
 		healingModel.burstWindow = newValue;
 		player.setHealingModel(eventID, healingModel);
 	},
-	enableWhen: (player: Player<any>) => (player.getRaid()?.getTanks() || []).find(tank => RaidTarget.equals(tank, player.makeRaidTarget())) != null,
+	enableWhen: (player: Player<any>) => (player.getRaid()?.getTanks() || []).find(tank => UnitReference.equals(tank, player.makeUnitReference())) != null,
 };
 
 export const HpPercentForDefensives = {

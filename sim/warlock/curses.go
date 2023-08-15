@@ -14,6 +14,7 @@ func (warlock *Warlock) registerCurseOfElementsSpell() {
 		ActionID:    core.ActionID{SpellID: 47865},
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskEmpty,
+		Flags:       core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.1,
@@ -34,6 +35,8 @@ func (warlock *Warlock) registerCurseOfElementsSpell() {
 				warlock.CurseOfElementsAuras.Get(target).Activate(sim)
 			}
 		},
+
+		RelatedAuras: []core.AuraArray{warlock.CurseOfElementsAuras},
 	})
 }
 
@@ -46,6 +49,7 @@ func (warlock *Warlock) registerCurseOfWeaknessSpell() {
 		ActionID:    core.ActionID{SpellID: 50511},
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskEmpty,
+		Flags:       core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.1,
@@ -66,6 +70,8 @@ func (warlock *Warlock) registerCurseOfWeaknessSpell() {
 				warlock.CurseOfWeaknessAuras.Get(target).Activate(sim)
 			}
 		},
+
+		RelatedAuras: []core.AuraArray{warlock.CurseOfWeaknessAuras},
 	})
 }
 
@@ -85,6 +91,7 @@ func (warlock *Warlock) registerCurseOfTonguesSpell() {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskEmpty,
+		Flags:       core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.04,
@@ -105,6 +112,8 @@ func (warlock *Warlock) registerCurseOfTonguesSpell() {
 				warlock.CurseOfTonguesAuras.Get(target).Activate(sim)
 			}
 		},
+
+		RelatedAuras: []core.AuraArray{warlock.CurseOfTonguesAuras},
 	})
 }
 
@@ -115,7 +124,7 @@ func (warlock *Warlock) registerCurseOfAgonySpell() {
 	warlock.CurseOfAgony = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47864},
 		SpellSchool: core.SpellSchoolShadow,
-		Flags:       core.SpellFlagHauntSE,
+		Flags:       core.SpellFlagHauntSE | core.SpellFlagAPL,
 		ProcMask:    core.ProcMaskSpellDamage,
 
 		ManaCost: core.ManaCostOptions{
@@ -169,6 +178,7 @@ func (warlock *Warlock) registerCurseOfDoomSpell() {
 		ActionID:    core.ActionID{SpellID: 47867},
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.15,

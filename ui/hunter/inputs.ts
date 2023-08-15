@@ -58,6 +58,12 @@ export const SniperTrainingUptime = InputHelpers.makeSpecOptionsNumberInput<Spec
 	changeEmitter: (player: Player<Spec.SpecHunter>) => TypedEvent.onAny([player.specOptionsChangeEmitter, player.talentsChangeEmitter]),
 });
 
+export const TimeToTrapWeaveMs = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecHunter>({
+	fieldName: 'timeToTrapWeaveMs',
+	label: 'Weave Time',
+	labelTooltip: 'Amount of time for Explosive Trap, in milliseconds, between when you start moving towards the boss and when you re-engage your ranged autos.',
+});
+
 export const HunterRotationConfig = {
 	inputs: [
 		InputHelpers.makeRotationEnumInput<Spec.SpecHunter, RotationType>({
@@ -85,13 +91,6 @@ export const HunterRotationConfig = {
 			label: 'Trap Weave',
 			labelTooltip: 'Uses Explosive Trap at appropriate times. Note that selecting this will disable Black Arrow because they share a CD.',
 			showWhen: (player: Player<Spec.SpecHunter>) => player.getRotation().type != RotationType.Custom,
-		}),
-		InputHelpers.makeRotationNumberInput<Spec.SpecHunter>({
-			extraCssClasses: ['used-in-apl'],
-			fieldName: 'timeToTrapWeaveMs',
-			label: 'Weave Time',
-			labelTooltip: 'Amount of time for Explosive Trap, in milliseconds, between when you start moving towards the boss and when you re-engage your ranged autos.',
-			enableWhen: (player: Player<Spec.SpecHunter>) => player.aplRotation.enabled || (player.getRotation().type != RotationType.Custom && player.getRotation().trapWeave) || (player.getRotation().type == RotationType.Custom && player.getRotation().customRotation?.spells.some(spell => spell.spell == SpellOption.ExplosiveTrap) || false),
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecHunter>({
 			fieldName: 'steadyShotMaxDelay',

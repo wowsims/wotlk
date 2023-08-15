@@ -7,6 +7,7 @@ import {
 	makePhaseSelector,
 	makeShow1hWeaponsSelector,
 	makeShow2hWeaponsSelector,
+	makeShowEPValuesSelector,
 	makeShowMatchingGemsSelector,
 } from './other_inputs';
 
@@ -745,6 +746,7 @@ export class SelectorModal extends BaseModal {
 
 		let invokeUpdate = () => { ilist.updateSelected() }
 		let applyFilter = () => { ilist.applyFilters() }
+		let hideOrShowEPValues = () => { ilist.hideOrShowEPValues() }
 		// Add event handlers
 		gearData.changeEvent.on(invokeUpdate);
 
@@ -752,11 +754,13 @@ export class SelectorModal extends BaseModal {
 
 		this.player.sim.phaseChangeEmitter.on(applyFilter);
 		this.player.sim.filtersChangeEmitter.on(applyFilter);
+		this.player.sim.showEPValuesChangeEmitter.on(hideOrShowEPValues);
 		gearData.changeEvent.on(applyFilter);
 
 		this.addOnDisposeCallback(() => {
 			this.player.sim.phaseChangeEmitter.off(applyFilter);
 			this.player.sim.filtersChangeEmitter.off(applyFilter);
+			this.player.sim.showEPValuesChangeEmitter.off(hideOrShowEPValues);
 			gearData.changeEvent.off(applyFilter);
 		});
 
@@ -865,6 +869,7 @@ export class ItemList<T> {
 		const selected = label === config.selectedTab;
 
 		const tabContentFragment = document.createElement('fragment');
+		const showEPValues = simUI.sim.getShowEPValues();
 		tabContentFragment.innerHTML = `
 			<div
 				id="${tabContentId}"
@@ -877,12 +882,13 @@ export class ItemList<T> {
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-1h-weapons"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-2h-weapons"></div>
 					<div class="sim-input selector-modal-boolean-option selector-modal-show-matching-gems"></div>
+					<div class="sim-input selector-modal-boolean-option selector-modal-show-ep-values"></div>
 					<button class="selector-modal-simall-button btn btn-warning">Add to Batch Sim</button>
 					<button class="selector-modal-remove-button btn btn-danger">Unequip Item</button>
 				</div>
 				<div style="width: 100%;height: 30px;font-size: 18px;">
 					<span style="float:left">Item</span>
-					<span style="float:right">EP(+/-)<span class="ep-help fas fa-search" style="font-size:10px"></span></span>
+					<span class="ep-delta-label" style="float:right">EP(+/-)</span>
 				</div>
 				<ul class="selector-modal-list"></ul>
 			</div>
@@ -899,6 +905,8 @@ export class ItemList<T> {
 			(tabContent.getElementsByClassName('selector-modal-show-1h-weapons')[0] as HTMLElement).style.display = 'none';
 			(tabContent.getElementsByClassName('selector-modal-show-2h-weapons')[0] as HTMLElement).style.display = 'none';
 		}
+
+		makeShowEPValuesSelector(tabContent.getElementsByClassName('selector-modal-show-ep-values')[0] as HTMLElement, player.sim);
 
 		const showMatchingGemsSelector = makeShowMatchingGemsSelector(tabContent.getElementsByClassName('selector-modal-show-matching-gems')[0] as HTMLElement, player.sim);
 		if (!label.startsWith('Gem')) {
@@ -1147,6 +1155,7 @@ export class ItemList<T> {
 		}
 
 		this.applyFilters();
+		this.hideOrShowEPValues();
 	}
 
 	public updateSelected() {
@@ -1167,10 +1176,12 @@ export class ItemList<T> {
 			}
 
 			const epDeltaElem = elem.getElementsByClassName('selector-modal-list-item-ep-delta')[0] as HTMLSpanElement;
-			epDeltaElem.textContent = '';
-			if (listItem) {
-				const listItemEP = this.computeEP(listItem);
-				formatDeltaTextElem(epDeltaElem, newEP, listItemEP, 0);
+			if (epDeltaElem) {
+				epDeltaElem.textContent = '';
+				if (listItem) {
+					const listItemEP = this.computeEP(listItem);
+					formatDeltaTextElem(epDeltaElem, newEP, listItemEP, 0);
+				}
 			}
 		});
 	};
@@ -1238,6 +1249,23 @@ export class ItemList<T> {
 		});
 	}
 
+	public hideOrShowEPValues() {
+		const epItems = document.getElementsByClassName("selector-modal-list-item-ep")
+		const display = this.player.sim.getShowEPValues() ? "block" : "none"
+
+		for (let i = 0; i < epItems.length; i++) {
+			const epItem = epItems.item(i) as HTMLElement;
+			epItem.style.display = display
+		}
+
+		const labels = document.getElementsByClassName("ep-delta-label")
+
+		for (let i = 0; i < labels.length; i++) {
+			const label = labels.item(i) as HTMLElement;
+			label.style.display = display
+		}
+	}
+
 	private fillSourceInfo(item: Item, container: HTMLDivElement, sim: Sim) {
 		if (!item.sources || item.sources.length == 0) {
 			return;
@@ -1291,5 +1319,4 @@ export class ItemList<T> {
 				`;
 		}
 	}
-
 }

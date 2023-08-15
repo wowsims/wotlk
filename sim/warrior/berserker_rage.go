@@ -13,6 +13,7 @@ func (warrior *Warrior) registerBerserkerRageSpell() {
 
 	warrior.BerserkerRage = warrior.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
+		Flags:    core.SpellFlagAPL,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

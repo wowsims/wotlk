@@ -20,6 +20,7 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 		ActionID:     core.ActionID{SpellID: 47809},
 		SpellSchool:  core.SpellSchoolShadow,
 		ProcMask:     core.ProcMaskSpellDamage,
+		Flags:        core.SpellFlagAPL,
 		MissileSpeed: 20,
 
 		ManaCost: core.ManaCostOptions{
@@ -62,4 +63,8 @@ func (warlock *Warlock) registerShadowBoltSpell() {
 			})
 		},
 	})
+
+	if ISBProcChance > 0 {
+		warlock.ShadowBolt.RelatedAuras = append(warlock.ShadowBolt.RelatedAuras, shadowMasteryAuras)
+	}
 }

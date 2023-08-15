@@ -1,16 +1,15 @@
 import { ResourceType } from '../../proto/api.js';
 import { OtherAction } from '../../proto/common.js';
-import { UnitMetrics, SimResult, SimResultFilter } from '../../proto_utils/sim_result.js';
+import { UnitMetrics } from '../../proto_utils/sim_result.js';
 import { ActionId, resourceTypeToIcon } from '../../proto_utils/action_id.js';
-import { resourceColors, resourceNames } from '../../proto_utils/names.js';
+import { resourceNames } from '../../proto_utils/names.js';
 import { orderedResourceTypes } from '../../proto_utils/utils.js';
-import { EventID, TypedEvent } from '../../typed_event.js';
-import { bucket, distinct, getEnumValues, maxIndex, stringComparator, sum } from '../../utils.js';
+import { TypedEvent } from '../../typed_event.js';
+import { bucket, distinct, maxIndex, stringComparator } from '../../utils.js';
 
 import {
 	AuraUptimeLog,
 	CastLog,
-	DamageDealtLog,
 	ResourceChangedLogGroup,
 	DpsLog,
 	SimLog,
@@ -20,7 +19,6 @@ import {
 import { actionColors } from './color_settings.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
 
-declare var $: any;
 declare var tippy: any;
 declare var ApexCharts: any;
 
@@ -81,12 +79,12 @@ export class Timeline extends ResultComponent {
 		`;
 
 		const runAgainButton = this.rootElem.getElementsByClassName('timeline-run-again-button')[0] as HTMLElement;
-		runAgainButton.addEventListener('click', event => {
+		runAgainButton.addEventListener('click', () => {
 			(window.opener || window.parent)!.postMessage('runOnce', '*');
 		});
 
 		this.chartPicker = this.rootElem.getElementsByClassName('timeline-chart-picker')[0] as HTMLSelectElement;
-		this.chartPicker.addEventListener('change', event => {
+		this.chartPicker.addEventListener('change', () => {
 			if (this.chartPicker.value == 'rotation') {
 				this.dpsResourcesPlotElem.classList.add('hide');
 				this.rotationPlotElem.classList.remove('hide');
@@ -488,7 +486,7 @@ export class Timeline extends ResultComponent {
 		playerCastsByAbility.forEach(castLogs => this.addCastRow(castLogs, buffsAndDebuffsById, duration));
 
 		if (player.pets.length > 0) {
-			let playerPets = new Map<string, CastLog[][]>();
+			let playerPets = new Map<string, UnitMetrics>();
 			player.pets.forEach(petsLog => {
 				const petCastsByAbility = this.getSortedCastsByAbility(petsLog);
 				if (petCastsByAbility.length > 0) {
@@ -497,15 +495,17 @@ export class Timeline extends ResultComponent {
 					// with the same name. Because of this we can just grab the first pet
 					// of each name and visualize only that.
 					if (!playerPets.has(petsLog.name)) {
-						playerPets.set(petsLog.name, petCastsByAbility);
+						playerPets.set(petsLog.name, petsLog);
 					}
 				}
 			});
 
-			playerPets.forEach(petLogs => {
+			playerPets.forEach(pet => {
 				this.addSeparatorRow(duration);
-				this.addPetRow(petLogs[0][0].source!.name, duration);
-				petLogs.forEach(castLogs => this.addCastRow(castLogs, buffsAndDebuffsById, duration));
+				this.addPetRow(pet.name, duration);
+				orderedResourceTypes.forEach(resourceType => this.addResourceRow(resourceType, pet.groupedResourceLogs[resourceType], duration));
+				const petCastsByAbility = this.getSortedCastsByAbility(pet);
+				petCastsByAbility.forEach(castLogs => this.addCastRow(castLogs, buffsAndDebuffsById, duration));
 			});
 		}
 
@@ -582,7 +582,7 @@ export class Timeline extends ResultComponent {
 			<span class="rotation-label-text">${labelText}</span>
 		`;
 		const hideElem = labelElem.getElementsByClassName('fas')[0] as HTMLElement;
-		hideElem.addEventListener('click', event => {
+		hideElem.addEventListener('click', () => {
 			if (isHiddenLabel) {
 				const index = this.hiddenIds.findIndex(hiddenId => hiddenId.equals(actionId));
 				if (index != -1) {

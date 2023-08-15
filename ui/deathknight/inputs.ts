@@ -1,4 +1,5 @@
-import { ItemSlot, RaidTarget, Spec } from '../core/proto/common.js';
+import { ItemSlot, Spec } from '../core/proto/common.js';
+import { UnitReference, UnitReference_Type as UnitType } from '../core/proto/common.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 
 import {
@@ -22,7 +23,6 @@ import {
 import * as InputHelpers from '../core/components/input_helpers.js';
 import { Player } from '../core/player';
 import { EventID, TypedEvent } from '../core/typed_event';
-import { NO_TARGET } from '../core/proto_utils/utils.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
@@ -34,11 +34,12 @@ export const SelfUnholyFrenzy = InputHelpers.makeSpecOptionsBooleanInput<Spec.Sp
 	extraCssClasses: [
 		'within-raid-sim-hide',
 	],
-	getValue: (player: Player<Spec.SpecDeathknight>) => player.getSpecOptions().unholyFrenzyTarget?.targetIndex != NO_TARGET,
+	getValue: (player: Player<Spec.SpecDeathknight>) => player.getSpecOptions().unholyFrenzyTarget?.type == UnitType.Player,
 	setValue: (eventID: EventID, player: Player<Spec.SpecDeathknight>, newValue: boolean) => {
 		const newOptions = player.getSpecOptions();
-		newOptions.unholyFrenzyTarget = RaidTarget.create({
-			targetIndex: newValue ? 0 : NO_TARGET,
+		newOptions.unholyFrenzyTarget = UnitReference.create({
+			type: newValue ? UnitType.Player : UnitType.Unknown,
+			index: 0,
 		});
 		player.setSpecOptions(eventID, newOptions);
 	},
@@ -356,7 +357,7 @@ export const FrostCustomRotation = InputHelpers.makeCustomRotationInput<Spec.Spe
 		{ actionId: ActionId.fromSpellId(50842), value: CustomSpellOption.CustomPestilence },
 		{ actionId: ActionId.fromSpellId(51425), value: CustomSpellOption.CustomObliterate },
 		{ actionId: ActionId.fromSpellId(51411), value: CustomSpellOption.CustomHowlingBlast },
-		{ actionId: ActionId.fromSpellId(59057), value: CustomSpellOption.CustomHowlingBlastRime },
+		{ actionId: ActionId.fromSpellId(59052), value: CustomSpellOption.CustomHowlingBlastRime },
 		{ actionId: ActionId.fromSpellId(49941), value: CustomSpellOption.CustomBloodBoil },
 		{ actionId: ActionId.fromSpellId(49930), value: CustomSpellOption.CustomBloodStrike },
 		{ actionId: ActionId.fromSpellId(49938), value: CustomSpellOption.CustomDeathAndDecay },

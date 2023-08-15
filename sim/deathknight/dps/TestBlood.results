@@ -208,13 +208,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestBlood-AllItems-DeadlyGladiator'sSigilofStrife-42620"
- value: {
-  dps: 7310.694
-  tps: 3614.97286
- }
-}
-dps_results: {
  key: "TestBlood-AllItems-Death'sChoice-47464"
  value: {
   dps: 7612.7182
@@ -369,13 +362,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestBlood-AllItems-FuriousGladiator'sSigilofStrife-42621"
- value: {
-  dps: 7312.07604
-  tps: 3615.45198
- }
-}
-dps_results: {
  key: "TestBlood-AllItems-FuryoftheFiveFlights-40431"
  value: {
   dps: 7186.88185
@@ -408,13 +394,6 @@ dps_results: {
  value: {
   dps: 7113.54257
   tps: 3551.08226
- }
-}
-dps_results: {
- key: "TestBlood-AllItems-HatefulGladiator'sSigilofStrife-42619"
- value: {
-  dps: 7305.81839
-  tps: 3613.64772
  }
 }
 dps_results: {
@@ -510,6 +489,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBlood-AllItems-PetrifiedScarab-21685"
+ value: {
+  dps: 6978.77144
+  tps: 3475.9395
+ }
+}
+dps_results: {
  key: "TestBlood-AllItems-PetrifiedTwilightScale-54571"
  value: {
   dps: 7022.71016
@@ -566,13 +552,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestBlood-AllItems-RelentlessGladiator'sSigilofStrife-42622"
- value: {
-  dps: 7313.68843
-  tps: 3616.01095
- }
-}
-dps_results: {
  key: "TestBlood-AllItems-RevitalizingSkyflareDiamond"
  value: {
   dps: 7273.87829
@@ -584,13 +563,6 @@ dps_results: {
  value: {
   dps: 6978.77144
   tps: 3475.9395
- }
-}
-dps_results: {
- key: "TestBlood-AllItems-SavageGladiator'sSigilofStrife-42618"
- value: {
-  dps: 7305.58806
-  tps: 3613.52654
  }
 }
 dps_results: {
@@ -640,55 +612,6 @@ dps_results: {
  value: {
   dps: 6978.77144
   tps: 3475.9395
- }
-}
-dps_results: {
- key: "TestBlood-AllItems-SigilofDeflection-45144"
- value: {
-  dps: 7303.78378
-  tps: 3612.57727
- }
-}
-dps_results: {
- key: "TestBlood-AllItems-SigilofHauntedDreams-40715"
- value: {
-  dps: 7331.86443
-  tps: 3628.1546
- }
-}
-dps_results: {
- key: "TestBlood-AllItems-SigilofInsolence-47672"
- value: {
-  dps: 7303.78378
-  tps: 3612.57727
- }
-}
-dps_results: {
- key: "TestBlood-AllItems-SigilofVirulence-47673"
- value: {
-  dps: 7637.06987
-  tps: 3780.59019
- }
-}
-dps_results: {
- key: "TestBlood-AllItems-SigiloftheBoneGryphon-50462"
- value: {
-  dps: 7303.78378
-  tps: 3612.57727
- }
-}
-dps_results: {
- key: "TestBlood-AllItems-SigiloftheHangedMan-50459"
- value: {
-  dps: 7641.29245
-  tps: 3785.73995
- }
-}
-dps_results: {
- key: "TestBlood-AllItems-SigiloftheUnfalteringKnight-40714"
- value: {
-  dps: 7303.78378
-  tps: 3612.57727
  }
 }
 dps_results: {
@@ -885,13 +808,6 @@ dps_results: {
  value: {
   dps: 6978.77144
   tps: 3475.9395
- }
-}
-dps_results: {
- key: "TestBlood-AllItems-WrathfulGladiator'sSigilofStrife-51417"
- value: {
-  dps: 7315.53115
-  tps: 3616.64977
  }
 }
 dps_results: {

@@ -32,7 +32,7 @@ func NewRestorationDruid(character core.Character, options *proto.Player) *Resto
 		Rotation: restoOptions.Rotation,
 	}
 
-	resto.SelfBuffs.InnervateTarget = &proto.RaidTarget{TargetIndex: -1}
+	resto.SelfBuffs.InnervateTarget = &proto.UnitReference{}
 	if restoOptions.Options.InnervateTarget != nil {
 		resto.SelfBuffs.InnervateTarget = restoOptions.Options.InnervateTarget
 	}

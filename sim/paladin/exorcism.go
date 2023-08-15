@@ -12,7 +12,7 @@ func (paladin *Paladin) registerExorcismSpell() {
 		ActionID:    core.ActionID{SpellID: 48801},
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.08,
@@ -29,7 +29,7 @@ func (paladin *Paladin) registerExorcismSpell() {
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
 				if paladin.CurrentMana() >= cast.Cost {
-					castTime := time.Duration(float64(cast.CastTime) * spell.CastTimeMultiplier)
+					castTime := paladin.ApplyCastSpeedForSpell(cast.CastTime, spell)
 					if castTime > 0 {
 						paladin.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+castTime, false)
 					}

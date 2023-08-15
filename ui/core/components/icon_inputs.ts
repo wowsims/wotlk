@@ -107,6 +107,11 @@ export const DamageReductionPercentBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanIndividualBuffInput(ActionId.fromSpellId(50720), 'vigilance'),
 ], 'Mit %');
 
+export const NatureResistanceBuff = InputHelpers.makeMultiIconInput([
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(58749), 'natureResistanceTotem'),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(49071), 'aspectOfTheWild'),
+], 'NR');
+
 export const HastePercentBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(53648), 'swiftRetribution'),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(48396), 'moonkinAura', TristateEffect.TristateEffectImproved),
@@ -201,7 +206,7 @@ export const AttackPowerDebuff = InputHelpers.makeMultiIconInput([
 ], 'Atk Pwr');
 
 export const BleedDebuff = InputHelpers.makeMultiIconInput([
-	makeBooleanDebuffInput(ActionId.fromSpellId(33876), 'mangle'),
+	makeBooleanDebuffInput(ActionId.fromSpellId(48564), 'mangle'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(46855), 'trauma'),
 	makeBooleanDebuffInput(ActionId.fromSpellId(57393), 'stampede'),
 ], 'Bleed');

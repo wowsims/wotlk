@@ -49,6 +49,7 @@ func ApplyProcTriggerCallback(unit *Unit, aura *Aura, config ProcTrigger) {
 			Timer:    unit.NewTimer(),
 			Duration: config.ICD,
 		}
+		aura.Icd = &icd
 	}
 
 	var ppmm PPMManager

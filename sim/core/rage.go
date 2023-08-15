@@ -139,7 +139,11 @@ func (rb *rageBar) AddRage(sim *Simulation, amount float64, metrics *ResourceMet
 
 	rb.currentRage = newRage
 	if !sim.Options.Interactive {
-		rb.onRageGain(sim)
+		if rb.unit.IsUsingAPL {
+			rb.unit.Rotation.DoNextAction(sim)
+		} else {
+			rb.onRageGain(sim)
+		}
 	}
 }
 

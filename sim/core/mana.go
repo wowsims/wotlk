@@ -263,7 +263,11 @@ func (sim *Simulation) initManaTickAction() {
 			char := player.GetCharacter()
 			char.ManaTick(sim)
 			if char.OnManaTick != nil {
-				char.OnManaTick(sim)
+				if char.IsUsingAPL {
+					char.Rotation.DoNextAction(sim)
+				} else {
+					char.OnManaTick(sim)
+				}
 			}
 		}
 		for _, petAgent := range petsWithManaBars {

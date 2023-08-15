@@ -23,17 +23,13 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 			Duration: core.NeverExpires,
 			ActionID: core.ActionID{SpellID: 58398},
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				if warrior.HeroicStrikeOrCleave.SpellID == 47450 {
-					warrior.HeroicStrikeOrCleave.CostMultiplier -= 1
-				}
+				warrior.HeroicStrike.CostMultiplier -= 1
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				if warrior.HeroicStrikeOrCleave.SpellID == 47450 {
-					warrior.HeroicStrikeOrCleave.CostMultiplier += 1
-				}
+				warrior.HeroicStrike.CostMultiplier += 1
 			},
 			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-				if spell == warrior.HeroicStrikeOrCleave && warrior.HeroicStrikeOrCleave.SpellID == 47450 {
+				if spell == warrior.HeroicStrike {
 					aura.Deactivate(sim)
 				}
 			},
@@ -69,7 +65,7 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagAPL,
 
 		RageCost: core.RageCostOptions{
 			Cost:   5 - float64(warrior.Talents.FocusedRage),

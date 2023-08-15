@@ -189,8 +189,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralDoubleArmorPenTrinketsWithDesync-AllItems-DeathKnight'sAnguish-38212"
  value: {
-  dps: 9746.14218
-  tps: 6983.32962
+  dps: 9794.67709
+  tps: 7018.01376
  }
 }
 dps_results: {
@@ -612,6 +612,13 @@ dps_results: {
  value: {
   dps: 9743.7678
   tps: 6984.11177
+ }
+}
+dps_results: {
+ key: "TestFeralDoubleArmorPenTrinketsWithDesync-AllItems-PetrifiedScarab-21685"
+ value: {
+  dps: 9656.30557
+  tps: 6919.69519
  }
 }
 dps_results: {

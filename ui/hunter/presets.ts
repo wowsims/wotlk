@@ -80,7 +80,6 @@ export const DefaultRotation = HunterRotation.create({
 	type: RotationType.SingleTarget,
 	sting: StingType.SerpentSting,
 	trapWeave: false,
-	timeToTrapWeaveMs: 2000,
 	viperStartManaPercent: 0.1,
 	viperStopManaPercent: 0.3,
 	multiDotSerpentSting: true,
@@ -110,12 +109,11 @@ export const ROTATION_PRESET_BM = {
 	name: 'BM',
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
-			timeToTrapWeaveMs: 2000,
 		})),
 		rotation: APLRotation.fromJsonString(`{
       		"enabled": true,
       		"prepullActions": [
-      		  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAt":"-1s"}
+			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
       		],
       		"priorityList": [
       		  {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"10s"}}}},"autocastOtherCooldowns":{}}},
@@ -137,26 +135,26 @@ export const ROTATION_PRESET_MM = {
 	name: 'MM',
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
-			timeToTrapWeaveMs: 2000,
 		})),
 		rotation: APLRotation.fromJsonString(`{
-      		"enabled": true,
-      		"prepullActions": [
-      		  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAt":"-1s"}
-      		],
-      		"priorityList": [
-      		  {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"10s"}}}},"autocastOtherCooldowns":{}}},
-      		  {"action":{"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":34074}}}}},{"cmp":{"op":"OpLt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"10%"}}}}]}},"castSpell":{"spellId":{"spellId":34074}}}},
-      		  {"action":{"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":61847}}}}},{"cmp":{"op":"OpGt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"30%"}}}}]}},"castSpell":{"spellId":{"spellId":61847}}}},
-      		  {"action":{"castSpell":{"spellId":{"spellId":61006}}}},
-      		  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":49001}}}}},"castSpell":{"spellId":{"spellId":49001}}}},
-      		  {"hide":true,"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":49067}}}}},"castSpell":{"spellId":{"tag":1,"spellId":49067}}}},
-      		  {"action":{"castSpell":{"spellId":{"spellId":53209}}}},
-      		  {"action":{"castSpell":{"spellId":{"spellId":49050}}}},
-      		  {"action":{"castSpell":{"spellId":{"spellId":49048}}}},
-      		  {"hide":true,"action":{"castSpell":{"spellId":{"spellId":49045}}}},
-      		  {"action":{"castSpell":{"spellId":{"spellId":49052}}}}
-      		]
+			"enabled": true,
+			"prepullActions": [
+				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
+			],
+			"priorityList": [
+				{"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"10s"}}}},"autocastOtherCooldowns":{}}},
+				{"action":{"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":34074}}}}},{"cmp":{"op":"OpLt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"10%"}}}}]}},"castSpell":{"spellId":{"spellId":34074}}}},
+				{"action":{"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":61847}}}}},{"cmp":{"op":"OpGt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"30%"}}}}]}},"castSpell":{"spellId":{"spellId":61847}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":34490}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":61006}}}},
+				{"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":49001}}}}},"castSpell":{"spellId":{"spellId":49001}}}},
+				{"hide":true,"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":49067}}}}},"castSpell":{"spellId":{"tag":1,"spellId":49067}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":53209}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":49050}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":49048}}}},
+				{"hide":true,"action":{"castSpell":{"spellId":{"spellId":49045}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":49052}}}}
+			]
 		}`),
 	}),
 };
@@ -165,12 +163,11 @@ export const ROTATION_PRESET_SV = {
 	name: 'SV',
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
-			timeToTrapWeaveMs: 2000,
 		})),
 		rotation: APLRotation.fromJsonString(`{
       		"enabled": true,
       		"prepullActions": [
-      		  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAt":"-1s"}
+			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
       		],
       		"priorityList": [
       		  {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"10s"}}}},"autocastOtherCooldowns":{}}},
@@ -194,12 +191,11 @@ export const ROTATION_PRESET_AOE = {
 	name: 'AOE',
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
-			timeToTrapWeaveMs: 2000,
 		})),
 		rotation: APLRotation.fromJsonString(`{
       		"enabled": true,
       		"prepullActions": [
-      		  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAt":"-1s"}
+			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
       		],
       		"priorityList": [
       		  {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"10s"}}}},"autocastOtherCooldowns":{}}},
@@ -220,6 +216,7 @@ export const DefaultOptions = HunterOptions.create({
 	petTalents: ferocityDefault,
 	petUptime: 1,
 	sniperTrainingUptime: 0.9,
+	timeToTrapWeaveMs: 2000,
 });
 
 export const BMDefaultOptions = HunterOptions.create({
@@ -229,6 +226,7 @@ export const BMDefaultOptions = HunterOptions.create({
 	petTalents: ferocityBMDefault,
 	petUptime: 1,
 	sniperTrainingUptime: 0.9,
+	timeToTrapWeaveMs: 2000,
 });
 
 export const DefaultConsumes = Consumes.create({

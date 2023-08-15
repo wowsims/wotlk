@@ -96,6 +96,8 @@ enum DungeonDifficulty {
 	DifficultyUnknown = 0;
 	DifficultyNormal = 1;
 	DifficultyHeroic = 2;
+	DifficultyTitanRuneAlpha = 7;
+	DifficultyTitanRuneBeta = 8;
 	DifficultyRaid10 = 3;
 	DifficultyRaid10H = 4;
 	DifficultyRaid25 = 5;
@@ -188,6 +190,8 @@ enum SourceFilterOption {
 	SourceQuest = 2;
 	SourceDungeon = 3;
 	SourceDungeonH = 4;
+	SourceDungeonTRA = 9;
+	SourceDungeonTRB = 10;
 	SourceRaid10 = 5;
 	SourceRaid10H = 6;
 	SourceRaid25 = 7;
@@ -245,6 +249,7 @@ message SimSettings {
 	bool show_threat_metrics = 4;
 	bool show_healing_metrics = 7;
 	bool show_experimental = 5;
+	bool show_ep_values = 11;
 	string language = 9;
 	Faction faction = 6;
 	DatabaseFilters filters = 10;
@@ -255,7 +260,7 @@ message IndividualSimSettings {
 	SimSettings settings = 5;
 	RaidBuffs raid_buffs = 1;
 	Debuffs debuffs = 8;
-	repeated RaidTarget tanks = 7;
+	repeated UnitReference tanks = 7;
 	PartyBuffs party_buffs = 2;
 	Player player = 3;
 	Encounter encounter = 4;
@@ -264,6 +269,9 @@ message IndividualSimSettings {
 	repeated double ep_weights = 6;
 	UnitStats ep_weights_stats = 10;
 	repeated double ep_ratios = 11;
+	Stat dps_ref_stat = 12;
+	Stat heal_ref_stat = 13;
+	Stat tank_ref_stat = 14;
 }
 
 // Local storage data for gear settings.

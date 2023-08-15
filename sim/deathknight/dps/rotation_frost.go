@@ -178,7 +178,7 @@ func (dk *DpsDeathknight) RotationActionCallback_UA_Frost(sim *core.Simulation, 
 }
 
 func (dk *DpsDeathknight) RotationActionCallback_Frost_FS_HB(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
-	if dk.RimeAura.IsActive() && dk.Talents.HowlingBlast {
+	if dk.FreezingFogAura.IsActive() && dk.Talents.HowlingBlast {
 		dk.HowlingBlast.Cast(sim, target)
 	} else if dk.Talents.FrostStrike {
 		dk.FrostStrike.Cast(sim, target)

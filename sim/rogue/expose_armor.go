@@ -61,5 +61,7 @@ func (rogue *Rogue) registerExposeArmorSpell() {
 			}
 			spell.DealOutcome(sim, result)
 		},
+
+		RelatedAuras: []core.AuraArray{rogue.ExposeArmorAuras},
 	})
 }

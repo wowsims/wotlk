@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -15,6 +16,7 @@ type APLValueCurrentRuneCount struct {
 func (rot *APLRotation) newValueCurrentRuneCount(config *proto.APLValueCurrentRuneCount) APLValue {
 	unit := rot.unit
 	if !unit.HasRunicPowerBar() {
+		rot.validationWarning("%s does not use Runes", unit.Label)
 		return nil
 	}
 	return &APLValueCurrentRuneCount{
@@ -38,6 +40,9 @@ func (value *APLValueCurrentRuneCount) GetInt(sim *Simulation) int32 {
 	}
 	return 0
 }
+func (value *APLValueCurrentRuneCount) String() string {
+	return fmt.Sprintf("Current Rune Count(%s)", value.runeType)
+}
 
 type APLValueCurrentNonDeathRuneCount struct {
 	defaultAPLValueImpl
@@ -48,6 +53,7 @@ type APLValueCurrentNonDeathRuneCount struct {
 func (rot *APLRotation) newValueCurrentNonDeathRuneCount(config *proto.APLValueCurrentNonDeathRuneCount) APLValue {
 	unit := rot.unit
 	if !unit.HasRunicPowerBar() {
+		rot.validationWarning("%s does not use Runes", unit.Label)
 		return nil
 	}
 	return &APLValueCurrentNonDeathRuneCount{
@@ -69,6 +75,9 @@ func (value *APLValueCurrentNonDeathRuneCount) GetInt(sim *Simulation) int32 {
 	}
 	return 0
 }
+func (value *APLValueCurrentNonDeathRuneCount) String() string {
+	return fmt.Sprintf("Current Non-Death Rune Count(%s)", value.runeType)
+}
 
 type APLValueCurrentRuneActive struct {
 	defaultAPLValueImpl
@@ -79,6 +88,7 @@ type APLValueCurrentRuneActive struct {
 func (rot *APLRotation) newValueCurrentRuneActive(config *proto.APLValueCurrentRuneActive) APLValue {
 	unit := rot.unit
 	if !unit.HasRunicPowerBar() {
+		rot.validationWarning("%s does not use Runes", unit.Label)
 		return nil
 	}
 	return &APLValueCurrentRuneActive{
@@ -92,6 +102,9 @@ func (value *APLValueCurrentRuneActive) Type() proto.APLValueType {
 func (value *APLValueCurrentRuneActive) GetBool(sim *Simulation) bool {
 	return value.unit.RuneIsActive(value.runeSlot)
 }
+func (value *APLValueCurrentRuneActive) String() string {
+	return fmt.Sprintf("Current Rune Active(%d)", value.runeSlot)
+}
 
 type APLValueCurrentRuneDeath struct {
 	defaultAPLValueImpl
@@ -102,6 +115,7 @@ type APLValueCurrentRuneDeath struct {
 func (rot *APLRotation) newValueCurrentRuneDeath(config *proto.APLValueCurrentRuneDeath) APLValue {
 	unit := rot.unit
 	if !unit.HasRunicPowerBar() {
+		rot.validationWarning("%s does not use Runes", unit.Label)
 		return nil
 	}
 	return &APLValueCurrentRuneDeath{
@@ -115,6 +129,9 @@ func (value *APLValueCurrentRuneDeath) Type() proto.APLValueType {
 func (value *APLValueCurrentRuneDeath) GetBool(sim *Simulation) bool {
 	return value.unit.RuneIsDeath(int8(value.runeSlot))
 }
+func (value *APLValueCurrentRuneDeath) String() string {
+	return fmt.Sprintf("Current Rune Death(%d)", value.runeSlot)
+}
 
 type APLValueRuneCooldown struct {
 	defaultAPLValueImpl
@@ -125,6 +142,7 @@ type APLValueRuneCooldown struct {
 func (rot *APLRotation) newValueRuneCooldown(config *proto.APLValueRuneCooldown) APLValue {
 	unit := rot.unit
 	if !unit.HasRunicPowerBar() {
+		rot.validationWarning("%s does not use Runes", unit.Label)
 		return nil
 	}
 	return &APLValueRuneCooldown{
@@ -146,6 +164,9 @@ func (value *APLValueRuneCooldown) GetDuration(sim *Simulation) time.Duration {
 	}
 	return 0
 }
+func (value *APLValueRuneCooldown) String() string {
+	return fmt.Sprintf("Rune Cooldoean(%s)", value.runeType)
+}
 
 type APLValueNextRuneCooldown struct {
 	defaultAPLValueImpl
@@ -156,6 +177,7 @@ type APLValueNextRuneCooldown struct {
 func (rot *APLRotation) newValueNextRuneCooldown(config *proto.APLValueNextRuneCooldown) APLValue {
 	unit := rot.unit
 	if !unit.HasRunicPowerBar() {
+		rot.validationWarning("%s does not use Runes", unit.Label)
 		return nil
 	}
 	return &APLValueNextRuneCooldown{
@@ -176,4 +198,7 @@ func (value *APLValueNextRuneCooldown) GetDuration(sim *Simulation) time.Duratio
 		return value.unit.SpentUnholyRuneReadyAt() - sim.CurrentTime
 	}
 	return 0
+}
+func (value *APLValueNextRuneCooldown) String() string {
+	return fmt.Sprintf("Next Rune Cooldoean(%s)", value.runeType)
 }

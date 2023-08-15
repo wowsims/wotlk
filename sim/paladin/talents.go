@@ -66,8 +66,10 @@ func (paladin *Paladin) ApplyTalents() {
 	paladin.applyWeaponSpecialization()
 	paladin.applyVengeance()
 	paladin.applyHeartOfTheCrusader()
+	paladin.applyVindication()
 	paladin.applyArtOfWar()
-	paladin.applyJudgmentsOfTheWise()
+	paladin.applyJudgementsOfTheJust()
+	paladin.applyJudgementsOfTheWise()
 	paladin.applyRighteousVengeance()
 	paladin.applyMinorGlyphOfSenseUndead()
 	paladin.applyGuardedByTheLight()
@@ -403,6 +405,10 @@ func (paladin *Paladin) applyHeartOfTheCrusader() {
 		return
 	}
 
+	hotcAuras := paladin.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+		return core.HeartOfTheCrusaderDebuff(target, paladin.Talents.HeartOfTheCrusader)
+	})
+
 	paladin.RegisterAura(core.Aura{
 		Label:    "Heart of the Crusader",
 		Duration: core.NeverExpires,
@@ -410,11 +416,32 @@ func (paladin *Paladin) applyHeartOfTheCrusader() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !spell.Flags.Matches(SpellFlagSecondaryJudgement) {
-				return
+			if spell.Flags.Matches(SpellFlagSecondaryJudgement) {
+				hotcAuras.Get(result.Target).Activate(sim)
 			}
-			debuffAura := core.HeartOfTheCrusaderDebuff(result.Target, float64(paladin.Talents.HeartOfTheCrusader))
-			debuffAura.Activate(sim)
+		},
+	})
+}
+
+func (paladin *Paladin) applyVindication() {
+	if paladin.Talents.Vindication == 0 {
+		return
+	}
+
+	vindicationAuras := paladin.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+		return core.VindicationAura(target, paladin.Talents.Vindication)
+	})
+	paladin.RegisterAura(core.Aura{
+		Label:    "Vindication Talent",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			// TODO: Replace with actual proc mask / proc chance
+			if result.Landed() && spell.ProcMask.Matches(core.ProcMaskMelee) {
+				vindicationAuras.Get(result.Target).Activate(sim)
+			}
 		},
 	})
 }
@@ -462,7 +489,29 @@ func (paladin *Paladin) applyArtOfWar() {
 	})
 }
 
-func (paladin *Paladin) applyJudgmentsOfTheWise() {
+func (paladin *Paladin) applyJudgementsOfTheJust() {
+	if paladin.Talents.JudgementsOfTheJust == 0 {
+		return
+	}
+
+	jojAuras := paladin.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+		return core.JudgementsOfTheJustAura(target, paladin.Talents.JudgementsOfTheJust)
+	})
+	paladin.RegisterAura(core.Aura{
+		Label:    "Judgements Of The Just Talent",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Landed() && spell.Flags.Matches(SpellFlagPrimaryJudgement|SpellFlagSecondaryJudgement) {
+				jojAuras.Get(result.Target).Activate(sim)
+			}
+		},
+	})
+}
+
+func (paladin *Paladin) applyJudgementsOfTheWise() {
 	if paladin.Talents.JudgementsOfTheWise == 0 {
 		return
 	}

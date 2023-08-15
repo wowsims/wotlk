@@ -40,12 +40,13 @@ type Environment struct {
 	DurationVariation time.Duration // variation per duration
 
 	// Effects to invoke when the Env is finalized.
+	preFinalizeEffects  []PostFinalizeEffect
 	postFinalizeEffects []PostFinalizeEffect
 
 	prepullActions []PrepullAction
 }
 
-func NewEnvironment(raidProto *proto.Raid, encounterProto *proto.Encounter) (*Environment, *proto.RaidStats) {
+func NewEnvironment(raidProto *proto.Raid, encounterProto *proto.Encounter) (*Environment, *proto.RaidStats, *proto.EncounterStats) {
 	env := &Environment{
 		State: Created,
 	}
@@ -54,7 +55,14 @@ func NewEnvironment(raidProto *proto.Raid, encounterProto *proto.Encounter) (*En
 	raidStats := env.initialize(raidProto, encounterProto)
 	env.finalize(raidProto, encounterProto, raidStats)
 
-	return env, raidStats
+	encounterStats := &proto.EncounterStats{}
+	for _, target := range env.Encounter.Targets {
+		encounterStats.Targets = append(encounterStats.Targets, &proto.TargetStats{
+			Metadata: target.GetMetadata(),
+		})
+	}
+
+	return env, raidStats, encounterStats
 }
 
 // The construction phase.
@@ -91,9 +99,9 @@ func (env *Environment) construct(raidProto *proto.Raid, encounterProto *proto.E
 			if targetProto.TankIndex >= 0 && targetProto.TankIndex < int32(len(raidProto.Tanks)) {
 				raidTargetProto := raidProto.Tanks[targetProto.TankIndex]
 				if raidTargetProto != nil {
-					raidTarget := env.Raid.GetPlayerFromRaidTarget(raidTargetProto)
+					raidTarget := env.GetUnit(raidTargetProto, nil)
 					if raidTarget != nil {
-						target.CurrentTarget = &raidTarget.GetCharacter().Unit
+						target.CurrentTarget = raidTarget
 					}
 				}
 			}
@@ -133,6 +141,11 @@ func (env *Environment) initialize(raidProto *proto.Raid, encounterProto *proto.
 
 // The finalization phase.
 func (env *Environment) finalize(raidProto *proto.Raid, _ *proto.Encounter, raidStats *proto.RaidStats) {
+	for _, finalizeEffect := range env.preFinalizeEffects {
+		finalizeEffect()
+	}
+	env.preFinalizeEffects = nil
+
 	for _, target := range env.Encounter.Targets {
 		target.finalize()
 	}
@@ -234,11 +247,69 @@ func (env *Environment) NextTargetUnit(target *Unit) *Unit {
 	return &env.NextTarget(target).Unit
 }
 
-// Registers a callback to this Character which will be invoked after all Units
+func (env *Environment) GetUnit(ref *proto.UnitReference, contextUnit *Unit) *Unit {
+	if ref == nil {
+		return nil
+	}
+
+	switch ref.Type {
+	case proto.UnitReference_Player:
+		raidIndex := ref.Index
+		partyIndex := int(raidIndex / 5)
+		if partyIndex < 0 || partyIndex >= len(env.Raid.Parties) {
+			return nil
+		}
+
+		party := env.Raid.Parties[partyIndex]
+		for _, player := range party.Players {
+			if player.GetCharacter().Index == raidIndex {
+				return &player.GetCharacter().Unit
+			}
+		}
+	case proto.UnitReference_Pet:
+		ownerAgent := env.Raid.GetPlayerFromUnit(env.GetUnit(ref.Owner, contextUnit))
+		if ownerAgent == nil {
+			return nil
+		}
+		pets := ownerAgent.GetCharacter().Pets
+		if int(ref.Index) < len(pets) {
+			return &pets[ref.Index].GetCharacter().Unit
+		} else {
+			return nil
+		}
+	case proto.UnitReference_Target:
+		if int(ref.Index) < len(env.Encounter.TargetUnits) {
+			return env.Encounter.TargetUnits[ref.Index]
+		} else {
+			return nil
+		}
+	case proto.UnitReference_Self:
+		return contextUnit
+	case proto.UnitReference_CurrentTarget:
+		if contextUnit == nil {
+			return nil
+		}
+		return contextUnit.CurrentTarget
+	}
+
+	return nil
+}
+
+// Registers a callback to this Character which will be invoked BEFORE all Units
+// are finalized, but after they are all initialized and have other effects applied.
+func (env *Environment) RegisterPreFinalizeEffect(preFinalizeEffect PostFinalizeEffect) {
+	if env.IsFinalized() {
+		panic("Pre-Finalize effects may not be added once finalized!")
+	}
+
+	env.preFinalizeEffects = append(env.preFinalizeEffects, preFinalizeEffect)
+}
+
+// Registers a callback to this Character which will be invoked AFTER all Units
 // are finalized.
 func (env *Environment) RegisterPostFinalizeEffect(postFinalizeEffect PostFinalizeEffect) {
 	if env.IsFinalized() {
-		panic("Finalize effects may not be added once finalized!")
+		panic("Post-Finalize effects may not be added once finalized!")
 	}
 
 	env.postFinalizeEffects = append(env.postFinalizeEffects, postFinalizeEffect)

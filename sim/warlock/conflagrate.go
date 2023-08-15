@@ -8,11 +8,16 @@ import (
 )
 
 func (warlock *Warlock) registerConflagrateSpell() {
+	if !warlock.Talents.Conflagrate {
+		return
+	}
+
 	hasGlyphOfConflag := warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfConflagrate)
 	warlock.Conflagrate = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 17962},
 		SpellSchool: core.SpellSchoolFire,
 		ProcMask:    core.ProcMaskSpellDamage,
+		Flags:       core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.16,

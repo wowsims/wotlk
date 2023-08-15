@@ -1,11 +1,16 @@
-import { ArmorType, SimDatabase } from './proto/common.js';
-import { Faction } from './proto/common.js';
-import { Profession } from './proto/common.js';;
-import { RaidTarget } from './proto/common.js';
-import { Stat, PseudoStat } from './proto/common.js';
-import { RangedWeaponType, WeaponType } from './proto/common.js';
+import {
+	ArmorType,
+	Faction,
+	Profession,
+	SimDatabase,
+	Stat, PseudoStat,
+	RangedWeaponType,
+	WeaponType,
+	UnitReference,
+	UnitReference_Type as UnitType,
+} from './proto/common.js';
 import { BulkSimRequest, BulkSimResult, BulkSettings, Raid as RaidProto } from './proto/api.js';
-import { ComputeStatsRequest, ComputeStatsResult } from './proto/api.js';
+import { ComputeStatsRequest } from './proto/api.js';
 import { RaidSimRequest, RaidSimResult } from './proto/api.js';
 import { SimOptions } from './proto/api.js';
 import { StatWeightsRequest, StatWeightsResult } from './proto/api.js';
@@ -19,7 +24,7 @@ import { Database } from './proto_utils/database.js';
 import { SimResult } from './proto_utils/sim_result.js';
 import { getBrowserLanguageCode, setLanguageCode } from './constants/lang.js';
 import { Encounter } from './encounter.js';
-import { Player } from './player.js';
+import { Player, UnitMetadata } from './player.js';
 import { Raid } from './raid.js';
 import { EventID, TypedEvent } from './typed_event.js';
 import { getEnumValues } from './utils.js';
@@ -50,6 +55,7 @@ export class Sim {
 	private showThreatMetrics: boolean = false;
 	private showHealingMetrics: boolean = false;
 	private showExperimental: boolean = false;
+	private showEPValues: boolean = false;
 	private language: string = '';
 
 	readonly raid: Raid;
@@ -67,11 +73,15 @@ export class Sim {
 	readonly showThreatMetricsChangeEmitter = new TypedEvent<void>();
 	readonly showHealingMetricsChangeEmitter = new TypedEvent<void>();
 	readonly showExperimentalChangeEmitter = new TypedEvent<void>();
+	readonly showEPValuesChangeEmitter = new TypedEvent<void>();
 	readonly languageChangeEmitter = new TypedEvent<void>();
 	readonly crashEmitter = new TypedEvent<SimError>();
 
 	// Emits when any of the settings change (but not the raid / encounter).
 	readonly settingsChangeEmitter: TypedEvent<void>;
+
+	// Emits when any player, target, or pet has metadata changes (spells or auras).
+	readonly unitMetadataEmitter = new TypedEvent<void>('UnitMetadata');
 
 	// Emits when any of the above emitters emit.
 	readonly changeEmitter: TypedEvent<void>;
@@ -108,6 +118,7 @@ export class Sim {
 			this.showThreatMetricsChangeEmitter,
 			this.showHealingMetricsChangeEmitter,
 			this.showExperimentalChangeEmitter,
+			this.showEPValuesChangeEmitter,
 			this.languageChangeEmitter,
 		]);
 
@@ -264,7 +275,7 @@ export class Sim {
 	}
 
 	// This should be invoked internally whenever stats might have changed.
-	private async updateCharacterStats(eventID: EventID) {
+	async updateCharacterStats(eventID: EventID) {
 		if (eventID == 0) {
 			// Skip the first event ID because it interferes with the loaded stats.
 			return;
@@ -288,11 +299,27 @@ export class Sim {
 			return;
 		}
 
-		TypedEvent.freezeAllAndDo(() => {
-			result.raidStats!.parties
-				.forEach((partyStats, partyIndex) =>
-					partyStats.players.forEach((playerStats, playerIndex) =>
-						players[partyIndex * 5 + playerIndex]?.setCurrentStats(eventID, playerStats)));
+		TypedEvent.freezeAllAndDo(async () => {
+			const playerUpdatePromises = result.raidStats!.parties
+				.map((partyStats, partyIndex) =>
+					partyStats.players.map((playerStats, playerIndex) => {
+						const player = players[partyIndex * 5 + playerIndex];
+						if (player) {
+							player.setCurrentStats(eventID, playerStats);
+							return player.updateMetadata();
+						} else {
+							return null;
+						}
+					}))
+				.flat()
+				.filter(p => p != null) as Array<Promise<boolean>>;
+			
+			const targetUpdatePromise = this.encounter.targetsMetadata.update(result.encounterStats!.targets.map(t => t.metadata!));
+			
+			const anyUpdates = await Promise.all(playerUpdatePromises.concat([targetUpdatePromise]));
+			if (anyUpdates.some(v => v)) {
+				this.unitMetadataEmitter.emit(eventID);
+			}
 		});
 	}
 
@@ -309,8 +336,8 @@ export class Sim {
 			console.warn('Trying to get stat weights without a party!');
 			return StatWeightsResult.create();
 		} else {
-			const tanks = this.raid.getTanks().map(tank => tank.targetIndex).includes(player.getRaidIndex())
-				? [RaidTarget.create({ targetIndex: 0 })]
+			const tanks = this.raid.getTanks().map(tank => tank.index).includes(player.getRaidIndex())
+				? [UnitReference.create({ type: UnitType.Player, index: 0 })]
 				: [];
 			const request = StatWeightsRequest.create({
 				player: player.toProto(),
@@ -332,6 +359,28 @@ export class Sim {
 			var result = await this.workerPool.statWeightsAsync(request, onProgress);
 			return result;
 		}
+	}
+
+	getUnitMetadata(ref: UnitReference|undefined, contextPlayer: Player<any>|null, defaultRef: UnitReference): UnitMetadata|undefined {
+		if (!ref || ref.type == UnitType.Unknown) {
+			return this.getUnitMetadata(defaultRef, contextPlayer, defaultRef);
+		} else if (ref.type == UnitType.Player) {
+			return this.raid.getPlayerFromUnitReference(ref)?.getMetadata();
+		} else if (ref.type == UnitType.Target) {
+			return this.encounter.targetsMetadata.asList()[ref.index];
+		} else if (ref.type == UnitType.Pet) {
+			const owner = this.raid.getPlayerFromUnitReference(ref.owner, contextPlayer);
+			if (owner) {
+				return owner.getPetMetadatas().asList()[ref.index];
+			} else {
+				return undefined;
+			}
+		} else if (ref.type == UnitType.Self) {
+			return contextPlayer?.getMetadata();
+		} else if (ref.type == UnitType.CurrentTarget) {
+			return this.encounter.targetsMetadata.asList()[0];
+		}
+		return undefined;
 	}
 
 	getPhase(): number {
@@ -435,6 +484,16 @@ export class Sim {
 		}
 	}
 
+	getShowEPValues(): boolean {
+		return this.showEPValues;
+	}
+	setShowEPValues(eventID: EventID, newShowEPValues: boolean) {
+		if (newShowEPValues != this.showEPValues) {
+			this.showEPValues = newShowEPValues;
+			this.showEPValuesChangeEmitter.emit(eventID);
+		}
+	}
+
 	getLanguage(): string {
 		return this.language;
 	}
@@ -489,6 +548,7 @@ export class Sim {
 			showThreatMetrics: this.getShowThreatMetrics(),
 			showHealingMetrics: this.getShowHealingMetrics(),
 			showExperimental: this.getShowExperimental(),
+			showEpValues: this.getShowEPValues(),
 			language: this.getLanguage(),
 			faction: this.getFaction(),
 			filters: filters,
@@ -504,6 +564,7 @@ export class Sim {
 			this.setShowThreatMetrics(eventID, proto.showThreatMetrics);
 			this.setShowHealingMetrics(eventID, proto.showHealingMetrics);
 			this.setShowExperimental(eventID, proto.showExperimental);
+			this.setShowEPValues(eventID, proto.showEpValues);
 			this.setLanguage(eventID, proto.language);
 			this.setFaction(eventID, proto.faction || Faction.Alliance)
 
@@ -537,6 +598,7 @@ export class Sim {
 			showHealingMetrics: isHealingSim,
 			language: this.getLanguage(), // Don't change language.
 			filters: Sim.defaultFilters(),
+			showEpValues: false,
 		}));
 	}
 

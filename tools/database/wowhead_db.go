@@ -2,6 +2,7 @@ package database
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"strings"
 
@@ -49,6 +50,8 @@ func ParseWowheadDB(dbContents string) WowheadDatabase {
 			}
 		}
 	}
+
+	fmt.Printf("\n--\nWowhead DB items loaded: %d\n--\n", len(wowheadDB.Items))
 
 	return wowheadDB
 }

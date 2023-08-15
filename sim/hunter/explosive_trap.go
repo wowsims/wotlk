@@ -49,7 +49,7 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 				dot.Spell.DamageMultiplierAdditive += bonusPeriodicDamageMultiplier
 				for _, aoeTarget := range sim.Encounter.TargetUnits {
 					if hasGlyph {
-						dot.Spell.CalcAndDealPeriodicDamage(sim, aoeTarget, baseDamage, dot.Spell.OutcomeRangedHitAndCrit)
+						dot.Spell.CalcAndDealPeriodicDamage(sim, aoeTarget, baseDamage, dot.Spell.OutcomeRangedHitAndCritNoBlock)
 					} else {
 						dot.Spell.CalcAndDealPeriodicDamage(sim, aoeTarget, baseDamage, dot.Spell.OutcomeRangedHit)
 					}
@@ -73,7 +73,7 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 						for _, aoeTarget := range sim.Encounter.TargetUnits {
 							baseDamage := sim.Roll(523, 671) + 0.1*spell.RangedAttackPower(aoeTarget)
 							baseDamage *= sim.Encounter.AOECapMultiplier()
-							spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeRangedHitAndCrit)
+							spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeRangedHitAndCritNoBlock)
 						}
 						hunter.ExplosiveTrap.AOEDot().Apply(sim)
 					},
@@ -82,18 +82,22 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 				for _, aoeTarget := range sim.Encounter.TargetUnits {
 					baseDamage := sim.Roll(523, 671) + 0.1*spell.RangedAttackPower(aoeTarget)
 					baseDamage *= sim.Encounter.AOECapMultiplier()
-					spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeRangedHitAndCrit)
+					spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeRangedHitAndCritNoBlock)
 				}
 				hunter.ExplosiveTrap.AOEDot().Apply(sim)
 			}
 		},
 	})
 
-	timeToTrapWeave := time.Millisecond * time.Duration(hunter.Rotation.TimeToTrapWeaveMs)
+	timeToTrapWeave := time.Millisecond * time.Duration(hunter.Options.TimeToTrapWeaveMs)
 	halfWeaveTime := timeToTrapWeave / 2
 	hunter.TrapWeaveSpell = hunter.RegisterSpell(core.SpellConfig{
 		ActionID: hunter.ExplosiveTrap.ActionID.WithTag(1),
 		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagNoMetrics | core.SpellFlagNoLogs | core.SpellFlagAPL,
+
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return hunter.ExplosiveTrap.CanCast(sim, target)
+		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			if sim.CurrentTime < 0 {

@@ -8,6 +8,10 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+func CreateBlackMagicProcAura(character *core.Character) *core.Aura {
+	return character.NewTemporaryStatsAura("Black Magic Proc", core.ActionID{SpellID: 59626}, stats.Stats{stats.MeleeHaste: 250, stats.SpellHaste: 250}, time.Second*10)
+}
+
 func init() {
 	// Keep these in order by item ID.
 
@@ -233,11 +237,12 @@ func init() {
 	core.NewEnchantEffect(3790, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
-		procAura := character.NewTemporaryStatsAura("Black Magic Proc", core.ActionID{SpellID: 59626}, stats.Stats{stats.MeleeHaste: 250, stats.SpellHaste: 250}, time.Second*10)
+		procAura := CreateBlackMagicProcAura(character)
 		icd := core.Cooldown{
 			Timer:    character.NewTimer(),
 			Duration: time.Second * 35,
 		}
+		procAura.Icd = &icd
 
 		aura := character.GetOrRegisterAura(core.Aura{
 			Label:    "Black Magic",
@@ -352,6 +357,7 @@ func init() {
 			Timer:    character.NewTimer(),
 			Duration: time.Second * 60,
 		}
+		procAura.Icd = &icd
 
 		callback := func(_ *core.Aura, sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
 			if !result.Landed() {
@@ -389,6 +395,7 @@ func init() {
 		}
 
 		character.GetOrRegisterAura(core.Aura{
+			Icd:      &icd,
 			Label:    "Darkglow Embroidery",
 			Duration: core.NeverExpires,
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
@@ -411,6 +418,7 @@ func init() {
 			Timer:    character.NewTimer(),
 			Duration: time.Second * 55,
 		}
+		procAura.Icd = &icd
 
 		character.GetOrRegisterAura(core.Aura{
 			Label:    "Swordguard Embroidery",

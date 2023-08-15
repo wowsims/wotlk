@@ -1,21 +1,12 @@
 package deathknight
 
 import (
-	"time"
-
 	"github.com/wowsims/wotlk/sim/core"
 )
 
 var IcyTouchActionID = core.ActionID{SpellID: 59131}
 
 func (dk *Deathknight) registerIcyTouchSpell() {
-	dk.FrostFeverDebuffAura = make([]*core.Aura, len(dk.Env.Encounter.TargetUnits))
-	for i, target := range dk.Env.Encounter.TargetUnits {
-		ffAura := core.FrostFeverAura(target, dk.Talents.ImprovedIcyTouch)
-		ffAura.Duration = time.Second*15 + (time.Second * 3 * time.Duration(dk.Talents.Epidemic))
-		dk.FrostFeverDebuffAura[i] = ffAura
-	}
-
 	sigilBonus := dk.sigilOfTheFrozenConscienceBonus()
 
 	dk.IcyTouch = dk.RegisterSpell(core.SpellConfig{

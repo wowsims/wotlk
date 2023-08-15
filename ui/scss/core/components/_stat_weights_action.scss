@@ -108,6 +108,11 @@
 				margin-bottom: 0;
 			}
 
+			.results-avg.notapplicable {
+				padding-right: 25px;
+				font-weight: bold;
+			}
+
 			.results-stdev {
 				font-size: .625rem;
 			}
@@ -117,6 +122,10 @@
 			}
 		}
 	}
+}
+
+.unused-ep {
+	color: #B0B0B0 !important;
 }
 
 // Style overrides for the EP UI in tank mode

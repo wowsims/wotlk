@@ -4,6 +4,7 @@ import { ResultsViewer } from './components/results_viewer.js';
 import { SimTitleDropdown } from './components/sim_title_dropdown.js';
 import { SimHeader } from './components/sim_header';
 import { Spec } from './proto/common.js';
+import { ActionId } from './proto_utils/action_id.js';
 import { LaunchStatus } from './launched_sims.js';
 
 import { Sim, SimError } from './sim.js';
@@ -270,13 +271,20 @@ export abstract class SimUI extends Component {
 		}
 	}
 
-	handleCrash(error: any) {
+	async handleCrash(error: any): Promise<void> {
 		if (!(error instanceof SimError)) {
 			alert(error);
 			return;
 		}
 
 		const errorStr = (error as SimError).errorStr;
+		if (errorStr.startsWith('[USER_ERROR] ')) {
+			let alertStr = errorStr.substring('[USER_ERROR] '.length);
+			alertStr = await ActionId.replaceAllInString(alertStr);
+			alert(alertStr);
+			return;
+		}
+
 		if (window.confirm('Simulation Failure:\n' + errorStr + '\nPress Ok to file crash report')) {
 			// Splice out just the line numbers
 			const hash = this.hashCode(errorStr);

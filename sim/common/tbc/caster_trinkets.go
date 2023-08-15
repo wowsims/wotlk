@@ -24,25 +24,22 @@ func init() {
 		character := agent.GetCharacter()
 		actionID := core.ActionID{ItemID: 21625}
 
-		shieldID := core.ActionID{SpellID: 26470}
-		shields := core.NewAllyShieldArray(
-			&character.Unit,
-			core.Shield{
-				Spell: character.GetOrRegisterSpell(core.SpellConfig{
-					ActionID:    shieldID,
-					SpellSchool: core.SpellSchoolNature,
-					ProcMask:    core.ProcMaskSpellHealing,
-					Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagHelpful,
+		shieldSpell := character.GetOrRegisterSpell(core.SpellConfig{
+			ActionID:    core.ActionID{SpellID: 26470},
+			SpellSchool: core.SpellSchoolNature,
+			ProcMask:    core.ProcMaskSpellHealing,
+			Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagHelpful,
 
-					DamageMultiplier: 1,
-					ThreatMultiplier: 1,
-				}),
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
+
+			Shield: core.ShieldConfig{
+				Aura: core.Aura{
+					Label:    "Scarab Brooch Shield",
+					Duration: time.Second * 30,
+				},
 			},
-			core.Aura{
-				Label:    "Scarab Brooch Shield",
-				ActionID: shieldID,
-				Duration: time.Second * 30,
-			})
+		})
 
 		activeAura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 			Name:     "Persistent Shield",
@@ -50,8 +47,7 @@ func init() {
 			Callback: core.CallbackOnHealDealt,
 			Duration: time.Second * 30,
 			Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
-				shield := shields[result.Target.UnitIndex]
-				shield.Apply(sim, result.Damage*0.15)
+				shieldSpell.Shield(result.Target).Apply(sim, result.Damage*0.15)
 			},
 		})
 

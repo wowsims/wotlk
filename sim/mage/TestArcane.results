@@ -104,8 +104,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-Bloodmage'sRegalia"
  value: {
-  dps: 8044.62221
-  tps: 4849.48703
+  dps: 8058.31903
+  tps: 4859.97351
  }
 }
 dps_results: {
@@ -485,6 +485,13 @@ dps_results: {
  value: {
   dps: 7271.4875
   tps: 4383.99377
+ }
+}
+dps_results: {
+ key: "TestArcane-AllItems-PetrifiedScarab-21685"
+ value: {
+  dps: 7037.80826
+  tps: 4247.64942
  }
 }
 dps_results: {

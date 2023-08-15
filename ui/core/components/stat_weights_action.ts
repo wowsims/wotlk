@@ -38,6 +38,17 @@ function getModalConfig(simUI: IndividualSimUI<any>) {
 	return baseConfig;
 }
 
+function scaledEpValue(stat: UnitStat, epRatios: number[], result: StatWeightsResult|null): number {
+	if (!result) return 0;
+
+	return (epRatios[0] * stat.getProtoValue(result.dps?.epValues!))
+		+ (epRatios[1] * stat.getProtoValue(result.hps?.epValues!))
+		+ (epRatios[2] * stat.getProtoValue(result.tps?.epValues!))
+		+ (epRatios[3] * stat.getProtoValue(result.dtps?.epValues!))
+		+ (epRatios[4] * stat.getProtoValue(result.tmi?.epValues!))
+		+ (epRatios[5] * stat.getProtoValue(result.pDeath?.epValues!))
+}
+
 class EpWeightsMenu extends BaseModal {
 	private readonly simUI: IndividualSimUI<any>;
 	private readonly container: HTMLElement;
@@ -204,7 +215,7 @@ class EpWeightsMenu extends BaseModal {
 							<td style="text-align: center; vertical-align: middle;">
 								<button class="btn btn-primary compute-ep">
 									<i class="fas fa-calculator"></i>
-									<span class="not-tiny">Compute </span>EP
+									<span class="not-tiny">Update </span>EP
 								</button>
 							</td>
 						</tr>
@@ -272,8 +283,9 @@ class EpWeightsMenu extends BaseModal {
 		};
 
 		const updateEpRefStat = () => {
+			this.simUI.player.epRefStatChangeEmitter.emit(TypedEvent.nextEventID())
 			this.simUI.prevEpSimResult = this.calculateEp(this.getPrevSimResult());
-			this.updateTable(this.simUI.prevEpIterations || 1, this.getPrevSimResult());
+			this.updateTable();
 		};
 
 		const epRefSelects = this.rootElem.querySelectorAll('.ref-stat-select') as NodeListOf<HTMLSelectElement>;
@@ -333,7 +345,7 @@ class EpWeightsMenu extends BaseModal {
 			calcButton.classList.remove('disabled');
 			this.simUI.prevEpIterations = iterations;
 			this.simUI.prevEpSimResult = this.calculateEp(result);
-			this.updateTable(iterations, this.simUI.prevEpSimResult);
+			this.updateTable();
 		});
 
 		const colActionButtons = Array.from(this.rootElem.getElementsByClassName('col-action')) as Array<HTMLSelectElement>;
@@ -359,6 +371,7 @@ class EpWeightsMenu extends BaseModal {
 
 			button.addEventListener('click', event => {
 				this.simUI.player.setEpWeights(TypedEvent.nextEventID(), Stats.fromProto(weightsFunc()));
+				this.updateTable();
 			});
 		};
 
@@ -384,11 +397,11 @@ class EpWeightsMenu extends BaseModal {
 			getValue: () => this.showAllStats,
 			setValue: (eventID: EventID, menu: EpWeightsMenu, newValue: boolean) => {
 				this.showAllStats = newValue;
-				this.updateTable(this.simUI.prevEpIterations || 1, this.getPrevSimResult());
+				this.updateTable();
 			},
 		});
 
-		this.updateTable(this.simUI.prevEpIterations || 1, this.getPrevSimResult(), true);
+		this.updateTable();
 
 		const makeEpRatioCell = (cell: HTMLElement, idx: number) => {
 			new NumberPicker(cell, this.simUI.player, {
@@ -404,6 +417,7 @@ class EpWeightsMenu extends BaseModal {
 		};
 		const epRatioCells = this.body.querySelectorAll('.type-ratio.type-ep') as NodeListOf<HTMLElement>;
 		epRatioCells.forEach(makeEpRatioCell);
+		this.simUI.player.epRatiosChangeEmitter.on(_eventID => this.updateTable());
 
 		const weightRatioCells = this.body.querySelectorAll('.type-ratio.type-weight') as NodeListOf<HTMLElement>;
 		weightRatioCells.forEach(makeEpRatioCell);
@@ -437,6 +451,7 @@ class EpWeightsMenu extends BaseModal {
 				const newWeights = scaledDpsWeights.add(scaledHpsWeights).add(scaledTpsWeights).add(scaledDtpsWeights).add(scaledTmiWeights).add(scaledPDeathWeights);
 				this.simUI.player.setEpWeights(TypedEvent.nextEventID(), newWeights);
 			}
+			this.updateTable();
 		});
 	}
 
@@ -451,7 +466,7 @@ class EpWeightsMenu extends BaseModal {
 		`);
 	}
 
-	private updateTable(iterations: number, result: StatWeightsResult, skipFormatting: boolean = false) {
+	private updateTable() {
 		this.tableBody.innerHTML = ``;
 
 		EpWeightsMenu.epUnitStats.forEach(stat => {
@@ -462,53 +477,24 @@ class EpWeightsMenu extends BaseModal {
 			)) {
 				return;
 			}
-			const row = this.makeTableRow(stat, iterations, result, skipFormatting);
+			const row = this.makeTableRow(stat);
 			this.tableBody.appendChild(row);
 		});
 	}
-	private makeTableRow(stat: UnitStat, iterations: number, result: StatWeightsResult, skipFormatting: boolean): HTMLElement {
+
+	private makeTableRow(stat: UnitStat): HTMLElement {
 		const row = document.createElement('tr');
-		const makeWeightAndEpCellHtml = (statWeights: StatWeightValues, className: string): string => {
-			const epCurrent = this.simUI.player.getEpWeights().getUnitStat(stat);
-			const epAvg = stat.getProtoValue(statWeights.epValues!);
-
-			let template = document.createElement('template');
-			template.innerHTML = `
-				<td class="stdev-cell ${className} type-weight">
-					<span class="results-avg">${stat.getProtoValue(statWeights.weights!).toFixed(2)}</span>
-					<span class="results-stdev">
-						(<i class="fas fa-plus-minus fa-xs"></i>${stDevToConf90(stat.getProtoValue(statWeights.weightsStdev!), iterations).toFixed(2)})
-					</span>
-				</td>
-				<td class="stdev-cell ${className} type-ep">
-					<span class="results-avg">${epAvg.toFixed(2)}</span>
-					<span class="results-stdev">
-						(<i class="fas fa-plus-minus fa-xs"></i>${stDevToConf90(stat.getProtoValue(statWeights.epValuesStdev!), iterations).toFixed(2)})
-					</span>
-				</td>
-			`;
-
-			const epAvgElem = template.content.querySelector('.type-ep .results-avg') as HTMLElement;
-			const epDelta = epAvg - epCurrent;
-
-			if (skipFormatting || epDelta.toFixed(2) == "0.00")
-				epAvgElem // no-op
-			else if (epDelta > 0)
-				epAvgElem.classList.add('positive');
-			else if (epDelta < 0)
-				epAvgElem.classList.add('negative');
-
-			return template.innerHTML;
-		};
-
+		const result = this.simUI.prevEpSimResult;
+		const epRatios = this.simUI.player.getEpRatios();
+		const rowTotalEp = scaledEpValue(stat, epRatios, result);
 		row.innerHTML = `
 			<td>${stat.getName(this.simUI.player.getClass())}</td>
-			${makeWeightAndEpCellHtml(result.dps!, 'damage-metrics')}
-			${makeWeightAndEpCellHtml(result.hps!, 'healing-metrics')}
-			${makeWeightAndEpCellHtml(result.tps!, 'threat-metrics')}
-			${makeWeightAndEpCellHtml(result.dtps!, 'threat-metrics')}
-			${makeWeightAndEpCellHtml(result.tmi!, 'threat-metrics experimental')}
-			${makeWeightAndEpCellHtml(result.pDeath!, 'threat-metrics experimental')}
+			${this.makeTableRowCells(stat, result?.dps, 'damage-metrics', rowTotalEp, epRatios[0])}
+			${this.makeTableRowCells(stat, result?.hps, 'healing-metrics', rowTotalEp, epRatios[1])}
+			${this.makeTableRowCells(stat, result?.tps, 'threat-metrics', rowTotalEp, epRatios[2])}
+			${this.makeTableRowCells(stat, result?.dtps, 'threat-metrics', rowTotalEp, epRatios[3])}
+			${this.makeTableRowCells(stat, result?.tmi, 'threat-metrics experimental', rowTotalEp, epRatios[4])}
+			${this.makeTableRowCells(stat, result?.pDeath, 'threat-metrics experimental', rowTotalEp, epRatios[5])}
 			<td class="current-ep"></td>
 		`;
 
@@ -524,6 +510,63 @@ class EpWeightsMenu extends BaseModal {
 		});
 
 		return row;
+	}
+
+	private makeTableRowCells(stat: UnitStat, statWeights: StatWeightValues|undefined, className: string, epTotal: number, epRatio: number): string {
+		var weightCell, epCell;
+		if (statWeights) {
+			const weightAvg = stat.getProtoValue(statWeights.weights!);
+			const weightStdev = stat.getProtoValue(statWeights.weightsStdev!)
+			weightCell = this.makeTableCellContents(weightAvg, weightStdev)
+
+			const epAvg = stat.getProtoValue(statWeights.epValues!);
+			const epStdev = stat.getProtoValue(statWeights.epValuesStdev!)
+			epCell = this.makeTableCellContents(epAvg, epStdev);
+		} else {
+			weightCell = `<span class="results-avg notapplicable">N/A</span>`;
+			epCell = weightCell
+		}
+
+		let template = document.createElement('template');
+		template.innerHTML = `
+			<td class="stdev-cell ${className} type-weight">
+				${weightCell}
+			</td>
+			<td class="stdev-cell ${className} type-ep">
+				${epCell}
+			</td>
+		`;
+
+		if (!statWeights) return template.innerHTML;
+
+		if (epRatio == 0) {
+			const cells = template.content.querySelectorAll('.stdev-cell')
+			cells.forEach((cell) => cell.classList.add('unused-ep'));
+			return template.innerHTML;
+		}
+
+		const epCurrent = this.simUI.player.getEpWeights().getUnitStat(stat);
+		const epDelta = epTotal - epCurrent;
+
+		const epAvgElem = template.content.querySelector('.type-ep .results-avg') as HTMLElement;
+		if (epDelta.toFixed(2) == "0.00")
+			epAvgElem // no-op
+		else if (epDelta > 0)
+			epAvgElem.classList.add('positive');
+		else if (epDelta < 0)
+			epAvgElem.classList.add('negative');
+
+		return template.innerHTML;
+	};
+
+	private makeTableCellContents(value: number, stdev: number): string {
+		const iterations = this.simUI.prevEpIterations || 1
+		return `
+			<span class="results-avg">${value.toFixed(2)}</span>
+			<span class="results-stdev">
+				(<i class="fas fa-plus-minus fa-xs"></i>${stDevToConf90(stdev, iterations).toFixed(2)})
+			</span>
+		`;
 	}
 
 	private calculateEp(weights: StatWeightsResult) {

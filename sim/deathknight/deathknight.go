@@ -4,6 +4,7 @@ import (
 	"math"
 	"time"
 
+	"github.com/wowsims/wotlk/sim/common/wotlk"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -24,7 +25,7 @@ type DeathknightInputs struct {
 	IsDps  bool
 	NewDrw bool
 
-	UnholyFrenzyTarget *proto.RaidTarget
+	UnholyFrenzyTarget *proto.UnitReference
 
 	StartingRunicPower  float64
 	PrecastGhoulFrenzy  bool
@@ -190,7 +191,7 @@ type Deathknight struct {
 	BloodCakedBladeAura *core.Aura
 	ButcheryAura        *core.Aura
 	ButcheryPA          *core.PendingAction
-	RimeAura            *core.Aura
+	FreezingFogAura     *core.Aura
 	BladeBarrierAura    *core.Aura
 	ScentOfBloodAura    *core.Aura
 	WillOfTheNecropolis *core.Aura
@@ -213,8 +214,8 @@ type Deathknight struct {
 	UnholyPresenceAura *core.Aura
 
 	// Debuffs
-	FrostFeverDebuffAura       []*core.Aura
-	EbonPlagueOrCryptFeverAura []*core.Aura
+	FrostFeverDebuffAura       core.AuraArray
+	EbonPlagueOrCryptFeverAura core.AuraArray
 
 	RoRTSBonus func(*core.Unit) float64 // is either RoR or TS bonus function based on talents
 
@@ -305,7 +306,6 @@ func (dk *Deathknight) Initialize() {
 	dk.registerArmyOfTheDeadCD()
 	dk.registerDancingRuneWeaponCD()
 	dk.registerDeathPactSpell()
-
 	dk.registerUnholyFrenzyCD()
 
 	dk.RegisterAura(core.Aura{
@@ -331,6 +331,10 @@ func (dk *Deathknight) Initialize() {
 			dk.ArmyOfTheDead.Cast(sim, nil)
 		})
 	}
+
+	// allows us to use these auras in the APL pre-pull actions
+	wotlk.CreateBlackMagicProcAura(&dk.Character)
+	CreateVirulenceProcAura(&dk.Character)
 }
 
 func (dk *Deathknight) registerMindFreeze() {
@@ -470,6 +474,8 @@ func NewDeathknight(character core.Character, inputs DeathknightInputs, talents 
 	}
 
 	dk.RotationSequence = &Sequence{}
+	// done here so enchants that modify stats are applied before stats are calculated
+	dk.registerItems()
 
 	return dk
 }

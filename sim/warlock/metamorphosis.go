@@ -59,6 +59,7 @@ func (warlock *Warlock) registerMetamorphosisSpell() {
 		ActionID:    core.ActionID{SpellID: 50589},
 		SpellSchool: core.SpellSchoolFire,
 		ProcMask:    core.ProcMaskEmpty,
+		Flags:       core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.64,

@@ -190,10 +190,9 @@ func (warrior *Warrior) applyTrauma() {
 		return
 	}
 
-	for i := int32(0); i < warrior.Env.GetNumTargets(); i++ {
-		target := warrior.Env.GetTargetUnit(i)
-		warrior.TraumaAuras = append(warrior.TraumaAuras, core.TraumaAura(target, int(warrior.Talents.Trauma)))
-	}
+	traumaAuras := warrior.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+		return core.TraumaAura(target, int(warrior.Talents.Trauma))
+	})
 
 	warrior.RegisterAura(core.Aura{
 		Label:    "Trauma",
@@ -210,7 +209,7 @@ func (warrior *Warrior) applyTrauma() {
 				return
 			}
 
-			proc := warrior.TraumaAuras[result.Target.Index]
+			proc := traumaAuras.Get(result.Target)
 			proc.Duration = time.Minute * 1
 			proc.Activate(sim)
 		},
@@ -309,22 +308,39 @@ func (warrior *Warrior) applyBloodFrenzy() {
 		return
 	}
 
-	for i := int32(0); i < warrior.Env.GetNumTargets(); i++ {
-		target := warrior.Env.GetTargetUnit(i)
-		warrior.BloodFrenzyAuras = append(warrior.BloodFrenzyAuras, core.BloodFrenzyAura(target, warrior.Talents.BloodFrenzy))
-	}
-
 	warrior.PseudoStats.MeleeSpeedMultiplier *= 1 + 0.05*float64(warrior.Talents.BloodFrenzy)
-}
 
-func (warrior *Warrior) procBloodFrenzy(sim *core.Simulation, result *core.SpellResult, dur time.Duration) {
-	if warrior.Talents.BloodFrenzy == 0 {
-		return
-	}
+	bfAuras := warrior.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+		return core.BloodFrenzyAura(target, warrior.Talents.BloodFrenzy)
+	})
+	warrior.Env.RegisterPreFinalizeEffect(func() {
+		if warrior.Rend != nil {
+			warrior.Rend.RelatedAuras = append(warrior.Rend.RelatedAuras, bfAuras)
+		}
+		if warrior.DeepWounds != nil {
+			warrior.DeepWounds.RelatedAuras = append(warrior.DeepWounds.RelatedAuras, bfAuras)
+		}
+	})
 
-	aura := warrior.BloodFrenzyAuras[result.Target.Index]
-	aura.Duration = dur
-	aura.Activate(sim)
+	warrior.RegisterAura(core.Aura{
+		Label:    "Blood Frenzy Talent",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() {
+				return
+			}
+
+			if spell == warrior.Rend || spell == warrior.DeepWounds {
+				aura := bfAuras.Get(result.Target)
+				dot := warrior.Rend.Dot(result.Target)
+				aura.Duration = dot.TickLength * time.Duration(dot.NumberOfTicks)
+				aura.Activate(sim)
+			}
+		},
+	})
 }
 
 func (warrior *Warrior) applyTitansGrip() {

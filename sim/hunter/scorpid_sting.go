@@ -33,5 +33,7 @@ func (hunter *Hunter) registerScorpidStingSpell() {
 			}
 			spell.DealOutcome(sim, result)
 		},
+
+		RelatedAuras: []core.AuraArray{hunter.ScorpidStingAuras},
 	})
 }

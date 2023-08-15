@@ -45,7 +45,7 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 		ActionID:    core.ActionID{SpellID: 7384},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagAPL,
 
 		RageCost: core.RageCostOptions{
 			Cost:   5 - float64(warrior.Talents.FocusedRage),
@@ -60,6 +60,9 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 				Timer:    cdTimer,
 				Duration: cooldownDur,
 			},
+		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return warrior.OverpowerAura.IsActive()
 		},
 
 		BonusCritRating:  25 * core.CritRatingPerCritChance * float64(warrior.Talents.ImprovedOverpower),

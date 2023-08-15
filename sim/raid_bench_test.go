@@ -22,9 +22,7 @@ var castersWithElemental = &proto.Party{
 						Type: proto.BalanceDruid_Rotation_Default,
 					},
 					Options: &proto.BalanceDruid_Options{
-						InnervateTarget: &proto.RaidTarget{
-							TargetIndex: 0,
-						},
+						InnervateTarget: &proto.UnitReference{},
 					},
 				},
 			},
@@ -128,8 +126,9 @@ var castersWithResto = &proto.Party{
 						Type: proto.BalanceDruid_Rotation_Default,
 					},
 					Options: &proto.BalanceDruid_Options{
-						InnervateTarget: &proto.RaidTarget{
-							TargetIndex: 6,
+						InnervateTarget: &proto.UnitReference{
+							Type:  proto.UnitReference_Player,
+							Index: 6,
 						},
 					},
 				},

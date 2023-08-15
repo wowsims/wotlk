@@ -15,8 +15,11 @@ message APLRotation {
 
 message APLPrepullAction {
     APLAction action = 1;
-    string do_at = 2; // Should be a negative value. Uses the same syntax as APLValueConst.
-    bool hide = 3;    // Causes this item to be ignored.
+    APLValue do_at_value = 4; // When to perform this prepull action. Should be a negative value.
+    bool hide = 3;            // Causes this item to be ignored.
+
+    // TODO: Remove after 1 month (on or after 8/30/2023).
+    string do_at = 2 [deprecated = true];
 }
 
 message APLListItem {
@@ -25,6 +28,7 @@ message APLListItem {
     APLAction action = 3; // The action to be performed.
 }
 
+// NextIndex: 13
 message APLAction {
     APLValue condition = 1; // If set, action will only execute if value is true or != 0.
 
@@ -35,11 +39,19 @@ message APLAction {
 
         APLActionCastSpell cast_spell = 3;
         APLActionMultidot multidot = 8;
+        APLActionMultishield multishield = 12;
+
+        // Misc
         APLActionAutocastOtherCooldowns autocast_other_cooldowns = 7;
+        APLActionChangeTarget change_target = 9;
+        APLActionActivateAura activate_aura = 13;
+        APLActionCancelAura cancel_aura = 10;
+        APLActionTriggerICD trigger_icd = 11;
         APLActionWait wait = 4;
     }
 }
 
+// NextIndex: 44
 message APLValue {
     oneof value {
         // Operators
@@ -48,12 +60,14 @@ message APLValue {
         APLValueOr or = 3;
         APLValueNot not = 4;
         APLValueCompare cmp = 5;
+        APLValueMath math = 38;
 
         // Encounter values
         APLValueCurrentTime current_time = 7;
         APLValueCurrentTimePercent current_time_percent = 8;
         APLValueRemainingTime remaining_time = 9;
         APLValueRemainingTimePercent remaining_time_percent = 10;
+        APLValueIsExecutePhase is_execute_phase = 41;
         APLValueNumberTargets number_targets = 28;
 
         // Resource values
@@ -78,22 +92,28 @@ message APLValue {
         APLValueGCDIsReady gcd_is_ready = 17;
         APLValueGCDTimeToReady gcd_time_to_ready = 18;
 
+        // Autoattack values
+        APLValueAutoTimeToNext auto_time_to_next = 40;
+
         // Spell values
         APLValueSpellCanCast spell_can_cast = 19;
         APLValueSpellIsReady spell_is_ready = 20;
         APLValueSpellTimeToReady spell_time_to_ready = 21;
         APLValueSpellCastTime spell_cast_time = 35;
+        APLValueSpellChannelTime spell_channel_time = 36;
+        APLValueSpellTravelTime spell_travel_time = 37;
+        APLValueSpellCPM spell_cpm = 42;
 
         // Aura values
         APLValueAuraIsActive aura_is_active = 22;
         APLValueAuraRemainingTime aura_remaining_time = 23;
         APLValueAuraNumStacks aura_num_stacks = 24;
+        APLValueAuraInternalCooldown aura_internal_cooldown = 39;
+        APLValueAuraShouldRefresh aura_should_refresh = 43;
 
         // Dot values
         APLValueDotIsActive dot_is_active = 6;
         APLValueDotRemainingTime dot_remaining_time = 13;
-
-        // Last Index - 35
     }
 }
 
@@ -117,6 +137,7 @@ message APLActionStrictSequence {
 
 message APLActionCastSpell {
     ActionID spell_id = 1;
+    UnitReference target = 2;
 }
 
 message APLActionMultidot {
@@ -125,7 +146,29 @@ message APLActionMultidot {
     APLValue max_overlap = 3;
 }
 
+message APLActionMultishield {
+    ActionID spell_id = 1;
+    int32 max_shields = 2;
+    APLValue max_overlap = 3;
+}
+
 message APLActionAutocastOtherCooldowns {
+}
+
+message APLActionChangeTarget {
+    UnitReference new_target = 1;
+}
+
+message APLActionCancelAura {
+    ActionID aura_id = 1;
+}
+
+message APLActionActivateAura {
+    ActionID aura_id = 1;
+}
+
+message APLActionTriggerICD {
+    ActionID aura_id = 1;
 }
 
 message APLActionWait {
@@ -173,17 +216,47 @@ message APLValueCompare {
     APLValue lhs = 2;
     APLValue rhs = 3;
 }
+message APLValueMath {
+    enum MathOperator {
+        OpUnknown = 0;
+        OpAdd = 1; // Add
+        OpSub = 2; // Subtract
+        OpMul = 3; // Multiply
+        OpDiv = 4; // Divide
+    }
+    MathOperator op = 1;
+
+    APLValue lhs = 2;
+    APLValue rhs = 3;
+}
 
 message APLValueCurrentTime {}
 message APLValueCurrentTimePercent {}
 message APLValueRemainingTime {}
 message APLValueRemainingTimePercent {}
 message APLValueNumberTargets {}
+message APLValueIsExecutePhase {
+    enum ExecutePhaseThreshold {
+        Unknown = 0;
+        E20 = 1;
+        E25 = 2;
+        E35 = 3;
+    }
+    ExecutePhaseThreshold threshold = 1;
+}
 
-message APLValueCurrentHealth {}
-message APLValueCurrentHealthPercent {}
-message APLValueCurrentMana {}
-message APLValueCurrentManaPercent {}
+message APLValueCurrentHealth {
+    UnitReference source_unit = 1;
+}
+message APLValueCurrentHealthPercent {
+    UnitReference source_unit = 1;
+}
+message APLValueCurrentMana {
+    UnitReference source_unit = 1;
+}
+message APLValueCurrentManaPercent {
+    UnitReference source_unit = 1;
+}
 message APLValueCurrentRage {}
 message APLValueCurrentEnergy {}
 message APLValueCurrentComboPoints {}
@@ -228,6 +301,8 @@ message APLValueNextRuneCooldown{
 message APLValueGCDIsReady {}
 message APLValueGCDTimeToReady {}
 
+message APLValueAutoTimeToNext {}
+
 message APLValueSpellCanCast {
     ActionID spell_id = 1;
 }
@@ -240,15 +315,36 @@ message APLValueSpellTimeToReady {
 message APLValueSpellCastTime {
     ActionID spell_id = 1;
 }
+message APLValueSpellChannelTime {
+    ActionID spell_id = 1;
+}
+message APLValueSpellTravelTime {
+    ActionID spell_id = 1;
+}
+message APLValueSpellCPM {
+    ActionID spell_id = 1;
+}
 
 message APLValueAuraIsActive {
+    UnitReference source_unit = 2;
     ActionID aura_id = 1;
 }
 message APLValueAuraRemainingTime {
+    UnitReference source_unit = 2;
     ActionID aura_id = 1;
 }
 message APLValueAuraNumStacks {
+    UnitReference source_unit = 2;
     ActionID aura_id = 1;
+}
+message APLValueAuraInternalCooldown {
+    UnitReference source_unit = 2;
+    ActionID aura_id = 1;
+}
+message APLValueAuraShouldRefresh {
+    UnitReference source_unit = 2;
+    ActionID aura_id = 1;
+    APLValue max_overlap = 3;
 }
 
 message APLValueDotIsActive {

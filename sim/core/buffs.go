@@ -50,6 +50,10 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 		})
 	}
 
+	if raidBuffs.NatureResistanceTotem || raidBuffs.AspectOfTheWild {
+		character.AddStat(stats.NatureResistance, 130-gotwResistAmount)
+	}
+
 	if raidBuffs.Thorns == proto.TristateEffect_TristateEffectImproved {
 		ThornsAura(character, 3)
 	} else if raidBuffs.Thorns == proto.TristateEffect_TristateEffectRegular {
@@ -93,10 +97,11 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 		})
 	}
 
-	if raidBuffs.BloodPact > 0 || raidBuffs.CommandingShout > 0 {
-		health := GetTristateValueFloat(raidBuffs.BloodPact, 1330, 1330*1.3)
-		health2 := GetTristateValueFloat(raidBuffs.CommandingShout, 2255, 2255*1.25)
-		character.AddStat(stats.Health, MaxFloat(health, health2))
+	if raidBuffs.CommandingShout > 0 {
+		MakePermanent(CommandingShoutAura(&character.Unit, GetTristateValueInt32(raidBuffs.CommandingShout, 0, 5), 0, false))
+	}
+	if raidBuffs.BloodPact > 0 {
+		MakePermanent(BloodPactAura(&character.Unit, GetTristateValueInt32(raidBuffs.BloodPact, 0, 3)))
 	}
 
 	if raidBuffs.PowerWordFortitude != proto.TristateEffect_TristateEffectMissing {
@@ -195,12 +200,11 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 		RetributionAura(character, raidBuffs.SanctifiedRetribution)
 	}
 
-	if raidBuffs.BattleShout > 0 || individualBuffs.BlessingOfMight > 0 {
-		bonusAP := 550 * GetTristateValueFloat(MaxTristate(raidBuffs.BattleShout, individualBuffs.BlessingOfMight), 1, 1.25)
-		character.AddStats(stats.Stats{
-			stats.AttackPower:       math.Floor(bonusAP),
-			stats.RangedAttackPower: math.Floor(bonusAP),
-		})
+	if raidBuffs.BattleShout > 0 {
+		MakePermanent(BattleShoutAura(&character.Unit, GetTristateValueInt32(raidBuffs.BattleShout, 0, 5), 0, false))
+	}
+	if individualBuffs.BlessingOfMight > 0 {
+		MakePermanent(BlessingOfMightAura(&character.Unit, GetTristateValueInt32(individualBuffs.BlessingOfMight, 0, 2)))
 	}
 
 	if raidBuffs.FlametongueTotem {
@@ -292,7 +296,7 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 		character.AddStats(stats.Stats{stats.MeleeCrit: 45, stats.SpellCrit: 45})
 	}
 	if individualBuffs.FocusMagic {
-		FocusMagicAura(nil, character)
+		FocusMagicAura(nil, &character.Unit)
 	}
 }
 
@@ -622,7 +626,7 @@ func registerPowerInfusionCD(agent Agent, numPowerInfusions int32) {
 		return
 	}
 
-	piAura := PowerInfusionAura(agent.GetCharacter(), -1)
+	piAura := PowerInfusionAura(&agent.GetCharacter().Unit, -1)
 
 	registerExternalConsecutiveCDApproximation(
 		agent,
@@ -643,7 +647,7 @@ func registerPowerInfusionCD(agent Agent, numPowerInfusions int32) {
 		numPowerInfusions)
 }
 
-func PowerInfusionAura(character *Character, actionTag int32) *Aura {
+func PowerInfusionAura(character *Unit, actionTag int32) *Aura {
 	actionID := ActionID{SpellID: 10060, Tag: actionTag}
 	aura := character.GetOrRegisterAura(Aura{
 		Label:    "PowerInfusion-" + actionID.String(),
@@ -687,7 +691,7 @@ func registerTricksOfTheTradeCD(agent Agent, numTricksOfTheTrades int32) {
 	}
 
 	// Assuming rogues have Glyph of TotT by default (which might not be the case).
-	TotTAura := TricksOfTheTradeAura(agent.GetCharacter(), -1, true)
+	TotTAura := TricksOfTheTradeAura(&agent.GetCharacter().Unit, -1, true)
 
 	registerExternalConsecutiveCDApproximation(
 		agent,
@@ -707,7 +711,7 @@ func registerTricksOfTheTradeCD(agent Agent, numTricksOfTheTrades int32) {
 		numTricksOfTheTrades)
 }
 
-func TricksOfTheTradeAura(character *Character, actionTag int32, glyphed bool) *Aura {
+func TricksOfTheTradeAura(character *Unit, actionTag int32, glyphed bool) *Aura {
 	actionID := ActionID{SpellID: 57933, Tag: actionTag}
 
 	aura := character.GetOrRegisterAura(Aura{
@@ -737,7 +741,7 @@ func registerUnholyFrenzyCD(agent Agent, numUnholyFrenzy int32) {
 		return
 	}
 
-	ufAura := UnholyFrenzyAura(agent.GetCharacter(), -1)
+	ufAura := UnholyFrenzyAura(&agent.GetCharacter().Unit, -1)
 
 	registerExternalConsecutiveCDApproximation(
 		agent,
@@ -757,7 +761,7 @@ func registerUnholyFrenzyCD(agent Agent, numUnholyFrenzy int32) {
 		numUnholyFrenzy)
 }
 
-func UnholyFrenzyAura(character *Character, actionTag int32) *Aura {
+func UnholyFrenzyAura(character *Unit, actionTag int32) *Aura {
 	actionID := ActionID{SpellID: 49016, Tag: actionTag}
 
 	aura := character.GetOrRegisterAura(Aura{
@@ -1251,7 +1255,91 @@ func spellPowerBonusEffect(aura *Aura, spellPowerBonus float64) *ExclusiveEffect
 	})
 }
 
-func FocusMagicAura(caster *Character, target *Character) (*Aura, *Aura) {
+func BattleShoutAura(unit *Unit, commandingPresencePts int32, boomingVoicePts int32, minorGlyph bool) *Aura {
+	aura := unit.GetOrRegisterAura(Aura{
+		Label:      "Battle Shout",
+		ActionID:   ActionID{SpellID: 47436},
+		Duration:   time.Duration(float64(time.Minute*2)*(1+0.25*float64(boomingVoicePts))) + TernaryDuration(minorGlyph, 2*time.Minute, 0),
+		BuildPhase: CharacterBuildPhaseBuffs,
+	})
+	attackPowerBonusEffect(aura, math.Floor(550*(1+0.05*float64(commandingPresencePts))))
+	return aura
+}
+
+func BlessingOfMightAura(unit *Unit, impBomPts int32) *Aura {
+	aura := unit.GetOrRegisterAura(Aura{
+		Label:      "Blessing of Might",
+		ActionID:   ActionID{SpellID: 48932},
+		Duration:   NeverExpires,
+		BuildPhase: CharacterBuildPhaseBuffs,
+		OnReset: func(aura *Aura, sim *Simulation) {
+			aura.Activate(sim)
+		},
+	})
+	attackPowerBonusEffect(aura, math.Floor(550*(1+GetTristateValueFloat(proto.TristateEffect(impBomPts), 0.12, 0.25))))
+	return aura
+}
+
+func attackPowerBonusEffect(aura *Aura, apBonus float64) *ExclusiveEffect {
+	return aura.NewExclusiveEffect("AttackPowerBonus", false, ExclusiveEffect{
+		Priority: apBonus,
+		OnGain: func(ee *ExclusiveEffect, sim *Simulation) {
+			ee.Aura.Unit.AddStatsDynamic(sim, stats.Stats{
+				stats.AttackPower:       ee.Priority,
+				stats.RangedAttackPower: ee.Priority,
+			})
+		},
+		OnExpire: func(ee *ExclusiveEffect, sim *Simulation) {
+			ee.Aura.Unit.AddStatsDynamic(sim, stats.Stats{
+				stats.AttackPower:       -ee.Priority,
+				stats.RangedAttackPower: -ee.Priority,
+			})
+		},
+	})
+}
+
+func CommandingShoutAura(unit *Unit, commandingPresencePts int32, boomingVoicePts int32, minorGlyph bool) *Aura {
+	aura := unit.GetOrRegisterAura(Aura{
+		Label:      "Commanding Shout",
+		ActionID:   ActionID{SpellID: 47440},
+		Duration:   time.Duration(float64(time.Minute*2)*(1+0.25*float64(boomingVoicePts))) + TernaryDuration(minorGlyph, 2*time.Minute, 0),
+		BuildPhase: CharacterBuildPhaseBuffs,
+	})
+	healthBonusEffect(aura, 2255*(1+0.05*float64(commandingPresencePts)))
+	return aura
+}
+
+func BloodPactAura(unit *Unit, impImpPts int32) *Aura {
+	aura := unit.GetOrRegisterAura(Aura{
+		Label:      "Blood Pact",
+		ActionID:   ActionID{SpellID: 47982},
+		Duration:   NeverExpires,
+		BuildPhase: CharacterBuildPhaseBuffs,
+		OnReset: func(aura *Aura, sim *Simulation) {
+			aura.Activate(sim)
+		},
+	})
+	healthBonusEffect(aura, 1330*(1+0.1*float64(impImpPts)))
+	return aura
+}
+
+func healthBonusEffect(aura *Aura, healthBonus float64) *ExclusiveEffect {
+	return aura.NewExclusiveEffect("HealthBonus", false, ExclusiveEffect{
+		Priority: healthBonus,
+		OnGain: func(ee *ExclusiveEffect, sim *Simulation) {
+			ee.Aura.Unit.AddStatsDynamic(sim, stats.Stats{
+				stats.Health: ee.Priority,
+			})
+		},
+		OnExpire: func(ee *ExclusiveEffect, sim *Simulation) {
+			ee.Aura.Unit.AddStatsDynamic(sim, stats.Stats{
+				stats.Health: -ee.Priority,
+			})
+		},
+	})
+}
+
+func FocusMagicAura(caster *Unit, target *Unit) (*Aura, *Aura) {
 	actionID := ActionID{SpellID: 54648}
 
 	var casterAura *Aura

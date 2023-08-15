@@ -33,7 +33,7 @@ func NewFeralTankDruid(character core.Character, options *proto.Player) *FeralTa
 		Options:  tankOptions.Options,
 	}
 
-	bear.SelfBuffs.InnervateTarget = &proto.RaidTarget{TargetIndex: -1}
+	bear.SelfBuffs.InnervateTarget = &proto.UnitReference{}
 	if tankOptions.Options.InnervateTarget != nil {
 		bear.SelfBuffs.InnervateTarget = tankOptions.Options.InnervateTarget
 	}
@@ -93,4 +93,5 @@ func (bear *FeralTankDruid) Reset(sim *core.Simulation) {
 	bear.Druid.Reset(sim)
 	bear.Druid.ClearForm(sim)
 	bear.BearFormAura.Activate(sim)
+	bear.Druid.PseudoStats.Stunned = false
 }

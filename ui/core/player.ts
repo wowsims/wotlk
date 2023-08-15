@@ -9,27 +9,24 @@ import {
 	HealingModel,
 	IndividualBuffs,
 	ItemSlot,
-	ItemSwap,
 	Profession,
 	PseudoStat,
 	Race,
-	RaidTarget,
-	RangedWeaponType,
+	UnitReference,
 	SimDatabase,
-	SimEnchant,
-	SimGem,
-	SimItem,
 	Spec,
 	Stat,
 	UnitStats,
-	WeaponType,
+	UnitReference_Type,
 } from './proto/common.js';
 import {
 	AuraStats as AuraStatsProto,
 	SpellStats as SpellStatsProto,
+	UnitMetadata as UnitMetadataProto,
 } from './proto/api.js';
 import {
 	APLRotation,
+	APLValue,
 } from './proto/apl.js';
 import {
 	DungeonDifficulty,
@@ -66,13 +63,13 @@ import {
 	canEquipEnchant,
 	canEquipItem,
 	classColors,
-	emptyRaidTarget,
+	emptyUnitReference,
 	enchantAppliesToItem,
 	getTalentTree,
 	getTalentTreeIcon,
 	getMetaGemEffectEP,
 	isTankSpec,
-	newRaidTarget,
+	newUnitReference,
 	raceToFaction,
 	specToClass,
 	specToEligibleRaces,
@@ -94,6 +91,95 @@ export interface AuraStats {
 export interface SpellStats {
 	data: SpellStatsProto,
 	id: ActionId,
+}
+
+export class UnitMetadata {
+	private name: string;
+	private auras: Array<AuraStats>;
+	private spells: Array<SpellStats>;
+
+	constructor() {
+		this.name = '';
+		this.auras = [];
+		this.spells = [];
+	}
+
+	getName(): string {
+		return this.name;
+	}
+
+	getAuras(): Array<AuraStats> {
+		return this.auras.slice();
+	}
+
+	getSpells(): Array<SpellStats> {
+		return this.spells.slice();
+	}
+
+	// Returns whether any updates were made.
+	async update(metadata: UnitMetadataProto): Promise<boolean> {
+		let newSpells = metadata!.spells.map(spell => {
+			return {
+				data: spell,
+				id: ActionId.fromProto(spell.id!),
+			};
+		});
+		let newAuras = metadata!.auras.map(aura => {
+			return {
+				data: aura,
+				id: ActionId.fromProto(aura.id!),
+			};
+		});
+
+		await Promise.all([...newSpells, ...newAuras].map(newSpell => newSpell.id.fill().then(newId => newSpell.id = newId)));
+
+		newSpells = newSpells.sort((a, b) => stringComparator(a.id.name, b.id.name))
+		newAuras = newAuras.sort((a, b) => stringComparator(a.id.name, b.id.name))
+
+		let anyUpdates = false;
+		if (metadata.name != this.name) {
+			this.name = metadata.name;
+			anyUpdates = true;
+		}
+		if (newSpells.length != this.spells.length || newSpells.some((newSpell, i) => !newSpell.id.equals(this.spells[i].id))) {
+			this.spells = newSpells;
+			anyUpdates = true;
+		}
+		if (newAuras.length != this.auras.length || newAuras.some((newAura, i) => !newAura.id.equals(this.auras[i].id))) {
+			this.auras = newAuras;
+			anyUpdates = true;
+		}
+
+		return anyUpdates;
+	}
+}
+
+export class UnitMetadataList {
+	private metadatas: Array<UnitMetadata>;
+
+	constructor() {
+		this.metadatas = [];
+	}
+
+	async update(newMetadatas: Array<UnitMetadataProto>): Promise<boolean> {
+		const oldLen = this.metadatas.length;
+
+		if (newMetadatas.length > oldLen) {
+			for (let i = oldLen; i < newMetadatas.length; i++) {
+				this.metadatas.push(new UnitMetadata());
+			}
+		} else if (newMetadatas.length < oldLen) {
+			this.metadatas = this.metadatas.slice(0, newMetadatas.length);
+		}
+
+		const anyUpdates = await Promise.all(newMetadatas.map((metadata, i) => this.metadatas[i].update(metadata)));
+
+		return oldLen != this.metadatas.length || anyUpdates.some(v => v);
+	}
+
+	asList(): Array<UnitMetadata> {
+		return this.metadatas.slice();
+	}
 }
 
 // Manages all the gear / consumes / other settings for a single Player.
@@ -135,8 +221,8 @@ export class Player<SpecType extends Spec> {
 	private epRatios: Array<number> = new Array<number>(Player.numEpRatios).fill(0);
 	private epWeights: Stats = new Stats();
 	private currentStats: PlayerStats = PlayerStats.create();
-	private spells: Array<SpellStats> = [];
-	private auras: Array<AuraStats> = [];
+	private metadata: UnitMetadata = new UnitMetadata();
+	private petMetadatas: UnitMetadataList = new UnitMetadataList();
 
 	readonly nameChangeEmitter = new TypedEvent<void>('PlayerName');
 	readonly buffsChangeEmitter = new TypedEvent<void>('PlayerBuffs');
@@ -156,8 +242,8 @@ export class Player<SpecType extends Spec> {
 	readonly epWeightsChangeEmitter = new TypedEvent<void>('PlayerEpWeights');
 
 	readonly currentStatsEmitter = new TypedEvent<void>('PlayerCurrentStats');
-	readonly currentSpellsAndAurasEmitter = new TypedEvent<void>('PlayerCurrentSpellsAndAuras');
 	readonly epRatiosChangeEmitter = new TypedEvent<void>('PlayerEpRatios');
+	readonly epRefStatChangeEmitter = new TypedEvent<void>('PlayerEpRefStat');
 
 	// Emits when any of the above emitters emit.
 	readonly changeEmitter: TypedEvent<void>;
@@ -191,6 +277,7 @@ export class Player<SpecType extends Spec> {
 			this.healingModelChangeEmitter,
 			this.epWeightsChangeEmitter,
 			this.epRatiosChangeEmitter,
+			this.epRefStatChangeEmitter,
 		], 'PlayerChange');
 	}
 
@@ -322,51 +409,23 @@ export class Player<SpecType extends Spec> {
 
 	setCurrentStats(eventID: EventID, newStats: PlayerStats) {
 		this.currentStats = newStats;
-		this.updateSpellsAndAuras(eventID);
-
 		this.currentStatsEmitter.emit(eventID);
 	}
 
-	getSpells(): Array<SpellStats> {
-		return this.spells.slice();
+	getMetadata(): UnitMetadata {
+		return this.metadata;
 	}
 
-	getAuras(): Array<AuraStats> {
-		return this.auras.slice();
+	getPetMetadatas(): UnitMetadataList {
+		return this.petMetadatas;
 	}
 
-	private async updateSpellsAndAuras(eventID: EventID) {
-		let newSpells = this.currentStats.spells.map(spell => {
-			return {
-				data: spell,
-				id: ActionId.fromProto(spell.id!),
-			};
-		});
-		let newAuras = this.currentStats.auras.map(aura => {
-			return {
-				data: aura,
-				id: ActionId.fromProto(aura.id!),
-			};
-		});
-
-		await Promise.all([...newSpells, ...newAuras].map(newSpell => newSpell.id.fill().then(newId => newSpell.id = newId)));
-
-		newSpells = newSpells.sort((a, b) => stringComparator(a.id.name, b.id.name))
-		newAuras = newAuras.sort((a, b) => stringComparator(a.id.name, b.id.name))
-
-		let anyUpdates = false;
-		if (newSpells.length != this.spells.length || newSpells.some((newSpell, i) => !newSpell.id.equals(this.spells[i].id))) {
-			this.spells = newSpells;
-			anyUpdates = true;
-		}
-		if (newAuras.length != this.auras.length || newAuras.some((newAura, i) => !newAura.id.equals(this.auras[i].id))) {
-			this.auras = newAuras;
-			anyUpdates = true;
-		}
-
-		if (anyUpdates) {
-			this.currentSpellsAndAurasEmitter.emit(eventID);
-		}
+	async updateMetadata(): Promise<boolean> {
+		const playerPromise = this.metadata.update(this.currentStats.metadata!);
+		const petsPromise = this.petMetadatas.update(this.currentStats.pets.map(p => p.metadata!));
+		const playerUpdated = await playerPromise;
+		const petsUpdated = await petsPromise;
+		return playerUpdated || petsUpdated;
 	}
 
 	getName(): string {
@@ -982,7 +1041,7 @@ export class Player<SpecType extends Spec> {
 			return enchantData;
 		}
 
-		const filters = this.sim.getFilters();
+		//const filters = this.sim.getFilters();
 
 		return enchantData.filter(enchantElem => {
 			const enchant = getEnchantFunc(enchantElem);
@@ -1009,11 +1068,11 @@ export class Player<SpecType extends Spec> {
 		});
 	}
 
-	makeRaidTarget(): RaidTarget {
+	makeUnitReference(): UnitReference {
 		if (this.party == null) {
-			return emptyRaidTarget();
+			return emptyUnitReference();
 		} else {
-			return newRaidTarget(this.getRaidIndex());
+			return newUnitReference(this.getRaidIndex());
 		}
 	}
 
@@ -1055,6 +1114,17 @@ export class Player<SpecType extends Spec> {
 	}
 
 	fromProto(eventID: EventID, proto: PlayerProto) {
+		if (proto.rotation) {
+			proto.rotation.prepullActions.forEach(ppa => {
+				if (ppa.doAt) {
+					ppa.doAtValue = APLValue.create({
+						value: {oneofKind: 'const', const: { val: ppa.doAt }}
+					});
+					ppa.doAt = '';
+				}
+			});
+		}
+
 		TypedEvent.freezeAllAndDo(() => {
 			this.setName(eventID, proto.name);
 			this.setRace(eventID, proto.race);
@@ -1077,6 +1147,31 @@ export class Player<SpecType extends Spec> {
 
 			this.aplRotation = proto.rotation || APLRotation.create();
 			this.rotationChangeEmitter.emit(eventID);
+
+			const options = this.getSpecOptions();
+			for (let key in options) {
+				if ((options[key] as any)?.['targetIndex']) {
+					const targetIndex = (options[key] as any)['targetIndex'] as number;
+					if (targetIndex == -1) {
+						(options[key] as any) = UnitReference.create();
+					} else {
+						(options[key] as any) = UnitReference.create({type: UnitReference_Type.Player, index: targetIndex});
+					}
+					this.setSpecOptions(eventID, options);
+					break;
+				}
+			}
+
+			if (this.spec == Spec.SpecHunter) {
+				const rot = this.getRotation() as SpecRotation<Spec.SpecHunter>;
+				if (rot.timeToTrapWeaveMs) {
+					const options = this.getSpecOptions() as SpecOptions<Spec.SpecHunter>;
+					options.timeToTrapWeaveMs = rot.timeToTrapWeaveMs;
+					this.setSpecOptions(eventID, options as SpecOptions<SpecType>);
+					rot.timeToTrapWeaveMs = 0;
+					this.setRotation(eventID, rot as SpecRotation<SpecType>);
+				}
+			}
 		});
 	}
 

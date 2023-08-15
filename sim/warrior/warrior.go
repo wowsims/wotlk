@@ -17,7 +17,6 @@ type WarriorInputs struct {
 	PrecastShoutT2              bool
 	RendCdThreshold             time.Duration
 	BloodsurgeDurationThreshold time.Duration
-	Munch                       bool
 	StanceSnapshot              bool
 }
 
@@ -40,20 +39,14 @@ type Warrior struct {
 	Stance               Stance
 	RendValidUntil       time.Duration
 	BloodsurgeValidUntil time.Duration
-	shoutExpiresAt       time.Duration
 	revengeProcAura      *core.Aura
 	Ymirjar4pcProcAura   *core.Aura
-
-	munchedDeepWoundsProcs []*core.PendingAction
 
 	// Reaction time values
 	reactionTime       time.Duration
 	lastBloodsurgeProc time.Duration
 	lastOverpowerProc  time.Duration
 	LastAMTick         time.Duration
-
-	// Cached values
-	shoutDuration time.Duration
 
 	Shout           *core.Spell
 	BattleStance    *core.Spell
@@ -83,8 +76,12 @@ type Warrior struct {
 	Bladestorm           *core.Spell
 	BladestormOH         *core.Spell
 
-	HeroicStrikeOrCleave     *core.Spell
-	HSOrCleaveQueueAura      *core.Aura
+	HeroicStrike         *core.Spell
+	Cleave               *core.Spell
+	hsOrCleaveQueueSpell *core.Spell
+	curQueueAura         *core.Aura
+	curQueuedAutoSpell   *core.Spell
+
 	OverpowerAura            *core.Aura
 	HSRageThreshold          float64
 	RendRageThresholdBelow   float64
@@ -99,8 +96,6 @@ type Warrior struct {
 	ShieldBlockAura *core.Aura
 
 	DemoralizingShoutAuras core.AuraArray
-	BloodFrenzyAuras       []*core.Aura
-	TraumaAuras            []*core.Aura
 	SunderArmorAuras       core.AuraArray
 	ThunderClapAuras       core.AuraArray
 }
@@ -110,18 +105,6 @@ func (warrior *Warrior) GetCharacter() *core.Character {
 }
 
 func (warrior *Warrior) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
-	if warrior.ShoutType == proto.WarriorShout_WarriorShoutBattle {
-		raidBuffs.BattleShout = core.MaxTristate(raidBuffs.BattleShout, proto.TristateEffect_TristateEffectRegular)
-		if warrior.Talents.CommandingPresence == 5 {
-			raidBuffs.BattleShout = proto.TristateEffect_TristateEffectImproved
-		}
-	} else if warrior.ShoutType == proto.WarriorShout_WarriorShoutCommanding {
-		raidBuffs.CommandingShout = core.MaxTristate(raidBuffs.CommandingShout, proto.TristateEffect_TristateEffectRegular)
-		if warrior.Talents.CommandingPresence == 5 {
-			raidBuffs.CommandingShout = proto.TristateEffect_TristateEffectImproved
-		}
-	}
-
 	if warrior.Talents.Rampage {
 		raidBuffs.Rampage = true
 	}
@@ -160,23 +143,19 @@ func (warrior *Warrior) Initialize() {
 	warrior.SunderArmor = warrior.newSunderArmorSpell(false)
 	warrior.SunderArmorDevastate = warrior.newSunderArmorSpell(true)
 
-	warrior.shoutDuration = time.Duration(float64(time.Minute*2) * (1 + 0.1*float64(warrior.Talents.BoomingVoice)))
-
 	warrior.registerBloodrageCD()
 
-	warrior.munchedDeepWoundsProcs = make([]*core.PendingAction, warrior.Env.GetNumTargets())
+	if !warrior.IsUsingAPL && warrior.Shout != nil && warrior.PrecastShout {
+		warrior.RegisterPrepullAction(-10*time.Second, func(sim *core.Simulation) {
+			warrior.Shout.SkipCastAndApplyEffects(sim, nil)
+		})
+	}
 }
 
 func (warrior *Warrior) Reset(_ *core.Simulation) {
 	warrior.RendValidUntil = 0
-
-	warrior.shoutExpiresAt = 0
-	if warrior.Shout != nil && warrior.PrecastShout {
-		warrior.shoutExpiresAt = warrior.shoutDuration - time.Second*10
-	}
-	for i := range warrior.munchedDeepWoundsProcs {
-		warrior.munchedDeepWoundsProcs[i] = nil
-	}
+	warrior.curQueueAura = nil
+	warrior.curQueuedAutoSpell = nil
 }
 
 func NewWarrior(character core.Character, talents string, inputs WarriorInputs) *Warrior {

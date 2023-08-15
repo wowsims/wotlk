@@ -68,6 +68,8 @@ func (druid *Druid) registerFaerieFireSpell() {
 				druid.FaerieFireAuras.Get(target).Activate(sim)
 			}
 		},
+
+		RelatedAuras: []core.AuraArray{druid.FaerieFireAuras},
 	})
 }
 

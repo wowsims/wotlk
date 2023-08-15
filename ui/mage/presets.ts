@@ -4,22 +4,17 @@ import { EquipmentSpec } from '../core/proto/common.js';
 import { Flask } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
 import { Glyphs } from '../core/proto/common.js';
-import { ItemSpec } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { Faction } from '../core/proto/common.js';
-import { RaidTarget } from '../core/proto/common.js';
+import { UnitReference } from '../core/proto/common.js';
 import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
 import { Player } from '../core/player.js';
-import { NO_TARGET } from '../core/proto_utils/utils';
 
 import {
-	Mage,
-	MageTalents as MageTalents,
 	Mage_Rotation as MageRotation,
 	Mage_Rotation_Type as RotationType,
 	Mage_Rotation_PrimaryFireSpell as PrimaryFireSpell,
-	Mage_Rotation_AoeRotation as AoeRotationSpells,
 	Mage_Options as MageOptions,
 	Mage_Options_ArmorType as ArmorType,
 	MageMajorGlyph,
@@ -130,9 +125,7 @@ export const DefaultFFBOptions = MageOptions.create({
 export const DefaultFireOptions = MageOptions.create({
 	armor: ArmorType.MoltenArmor,
 	focusMagicPercentUptime: 99,
-	focusMagicTarget: RaidTarget.create({
-		targetIndex: NO_TARGET,
-	}),
+	focusMagicTarget: UnitReference.create(),
 	reactionTimeMs: 300,
 	igniteMunching: true,
 });
@@ -151,9 +144,7 @@ export const DefaultFrostRotation = MageRotation.create({
 
 export const DefaultFrostOptions = MageOptions.create({
 	armor: ArmorType.MoltenArmor,
-	focusMagicTarget: RaidTarget.create({
-		targetIndex: NO_TARGET,
-	}),
+	focusMagicTarget: UnitReference.create(),
 	reactionTimeMs: 300,
 });
 
@@ -176,9 +167,7 @@ export const DefaultArcaneRotation = MageRotation.create({
 export const DefaultArcaneOptions = MageOptions.create({
 	armor: ArmorType.MoltenArmor,
 	focusMagicPercentUptime: 99,
-	focusMagicTarget: RaidTarget.create({
-		targetIndex: NO_TARGET,
-	}),
+	focusMagicTarget: UnitReference.create(),
 	reactionTimeMs: 300,
 });
 
@@ -200,7 +189,7 @@ export const ARCANE_ROTATION_PRESET_DEFAULT = {
 		rotation: APLRotation.fromJsonString(`{
 			"enabled": true,
 			"prepullActions": [
-			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAt":"-1s"}
+			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
 			],
 			"priorityList": [
 			  {"action":{"autocastOtherCooldowns":{}}},
@@ -224,15 +213,16 @@ export const FIRE_ROTATION_PRESET_DEFAULT = {
 		rotation: APLRotation.fromJsonString(`{
 			"enabled": true,
 			"prepullActions": [
-			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAt":"-1s"}
+				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
 			],
 			"priorityList": [
-			  {"action":{"autocastOtherCooldowns":{}}},
-			  {"action":{"condition":{"auraIsActive":{"auraId":{"spellId":44448}}},"castSpell":{"spellId":{"spellId":42891}}}},
-			  {"action":{"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55360}}}}},{"cmp":{"op":"OpGt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"12s"}}}}]}},"castSpell":{"spellId":{"spellId":55360}}}},
-			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"remainingTime":{}},"rhs":{"spellCastTime":{"spellId":{"spellId":42859}}}}},"castSpell":{"spellId":{"spellId":42873}}}},
-			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"4s"}}}},"castSpell":{"spellId":{"spellId":42859}}}},
-			  {"action":{"castSpell":{"spellId":{"spellId":42833}}}}
+				{"action":{"autocastOtherCooldowns":{}}},
+				{"action":{"condition":{"auraShouldRefresh":{"auraId":{"spellId":12873},"maxOverlap":{"const":{"val":"4s"}}}},"castSpell":{"spellId":{"spellId":42859}}}},
+				{"action":{"condition":{"auraIsActive":{"auraId":{"spellId":44448}}},"castSpell":{"spellId":{"spellId":42891}}}},
+				{"action":{"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55360}}}}},{"cmp":{"op":"OpGt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"12s"}}}}]}},"castSpell":{"spellId":{"spellId":55360}}}},
+				{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"remainingTime":{}},"rhs":{"spellCastTime":{"spellId":{"spellId":42859}}}}},"castSpell":{"spellId":{"spellId":42873}}}},
+				{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"4s"}}}},"castSpell":{"spellId":{"spellId":42859}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":42833}}}}
 			]
 		}`),
 	}),
@@ -245,10 +235,11 @@ export const FROSTFIRE_ROTATION_PRESET_DEFAULT = {
 		rotation: APLRotation.fromJsonString(`{
 			"enabled": true,
 			"prepullActions": [
-			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAt":"-1s"}
+			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
 			],
 			"priorityList": [
 			  {"action":{"autocastOtherCooldowns":{}}},
+			  {"action":{"condition":{"auraShouldRefresh":{"auraId":{"spellId":12873},"maxOverlap":{"const":{"val":"4s"}}}},"castSpell":{"spellId":{"spellId":42859}}}},
 			  {"action":{"condition":{"auraIsActive":{"auraId":{"spellId":44448}}},"castSpell":{"spellId":{"spellId":42891}}}},
 			  {"action":{"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55360}}}}},{"cmp":{"op":"OpGt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"12s"}}}}]}},"castSpell":{"spellId":{"spellId":55360}}}},
 			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"remainingTime":{}},"rhs":{"spellCastTime":{"spellId":{"spellId":42859}}}}},"castSpell":{"spellId":{"spellId":42873}}}},
@@ -266,7 +257,7 @@ export const FROST_ROTATION_PRESET_DEFAULT = {
 		rotation: APLRotation.fromJsonString(`{
 			"enabled": true,
 			"prepullActions": [
-			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAt":"-1s"}
+			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
 			],
 			"priorityList": [
 			  {"action":{"autocastOtherCooldowns":{}}},

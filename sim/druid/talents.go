@@ -91,6 +91,7 @@ func (druid *Druid) ApplyTalents() {
 	druid.applyPredatoryInstincts()
 	druid.applyNaturalReaction()
 	druid.applyOwlkinFrenzy()
+	druid.applyInfectedWounds()
 }
 
 func (druid *Druid) setupNaturesGrace() {
@@ -196,7 +197,31 @@ func (druid *Druid) applyEarthAndMoon() {
 	if druid.Talents.EarthAndMoon == 0 {
 		return
 	}
-	druid.EarthAndMoonAura = core.EarthAndMoonAura(druid.CurrentTarget, druid.Talents.EarthAndMoon)
+
+	eamAuras := druid.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+		return core.EarthAndMoonAura(target, druid.Talents.EarthAndMoon)
+	})
+	druid.Env.RegisterPreFinalizeEffect(func() {
+		if druid.Starfire != nil {
+			druid.Starfire.RelatedAuras = append(druid.Starfire.RelatedAuras, eamAuras)
+		}
+		if druid.Wrath != nil {
+			druid.Wrath.RelatedAuras = append(druid.Wrath.RelatedAuras, eamAuras)
+		}
+	})
+
+	druid.RegisterAura(core.Aura{
+		Label:    "Earth And Moon Talent",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Landed() && (spell == druid.Starfire || spell == druid.Wrath) {
+				eamAuras.Get(result.Target).Activate(sim)
+			}
+		},
+	})
 }
 
 func (druid *Druid) applyPrimalFury() {
@@ -427,6 +452,7 @@ func (druid *Druid) applyEclipse() {
 	solarProcMultiplier := 1.4 + core.TernaryFloat64(druid.HasSetBonus(ItemSetNightsongGarb, 2), 0.07, 0)
 	druid.SolarICD.Duration = time.Millisecond * 30000
 	druid.SolarEclipseProcAura = druid.RegisterAura(core.Aura{
+		Icd:      &druid.SolarICD,
 		Label:    "Solar Eclipse proc",
 		Duration: time.Millisecond * 15000,
 		ActionID: core.ActionID{SpellID: 48517},
@@ -469,6 +495,7 @@ func (druid *Druid) applyEclipse() {
 	lunarBonusCrit := (40 + core.TernaryFloat64(druid.HasSetBonus(ItemSetNightsongGarb, 2), 7, 0)) * core.CritRatingPerCritChance
 	druid.LunarICD.Duration = time.Millisecond * 30000
 	druid.LunarEclipseProcAura = druid.RegisterAura(core.Aura{
+		Icd:      &druid.LunarICD,
 		Label:    "Lunar Eclipse proc",
 		Duration: time.Millisecond * 15000,
 		ActionID: core.ActionID{SpellID: 48518},
@@ -556,6 +583,7 @@ func (druid *Druid) applyImprovedLotp() {
 	}
 
 	druid.RegisterAura(core.Aura{
+		Icd:      &icd,
 		Label:    "Improved Leader of the Pack",
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
@@ -618,6 +646,43 @@ func (druid *Druid) applyNaturalReaction() {
 		Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
 			if druid.InForm(Bear) && result.Outcome.Matches(core.OutcomeDodge) {
 				druid.AddRage(sim, rageAdded, rageMetrics)
+			}
+		},
+	})
+}
+
+func (druid *Druid) applyInfectedWounds() {
+	if druid.Talents.InfectedWounds == 0 {
+		return
+	}
+
+	iwAuras := druid.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+		return core.InfectedWoundsAura(target, druid.Talents.InfectedWounds)
+	})
+	druid.Env.RegisterPreFinalizeEffect(func() {
+		if druid.Shred != nil {
+			druid.Shred.RelatedAuras = append(druid.Shred.RelatedAuras, iwAuras)
+		}
+		if druid.MangleCat != nil {
+			druid.MangleCat.RelatedAuras = append(druid.MangleCat.RelatedAuras, iwAuras)
+		}
+		if druid.MangleBear != nil {
+			druid.MangleBear.RelatedAuras = append(druid.MangleBear.RelatedAuras, iwAuras)
+		}
+		if druid.Maul != nil {
+			druid.Maul.RelatedAuras = append(druid.Maul.RelatedAuras, iwAuras)
+		}
+	})
+
+	druid.RegisterAura(core.Aura{
+		Label:    "Infected Wounds Talent",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Landed() && (spell == druid.Shred || spell == druid.Maul || spell == druid.MangleCat || spell == druid.MangleBear) {
+				iwAuras.Get(result.Target).Activate(sim)
 			}
 		},
 	})

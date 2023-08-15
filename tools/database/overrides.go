@@ -171,6 +171,7 @@ var ItemAllowList = map[int32]struct{}{
 	20837: {}, // Sunstrider Axe
 	20966: {}, // Jade Pendant of Blasting
 	21625: {}, // Scarab Brooch
+	21685: {}, // Petrified Scarab
 	24114: {}, // Braided Eternium Chain
 	28572: {}, // Blade of the Unrequited
 	28830: {}, // Dragonspine Trophy
@@ -263,6 +264,12 @@ var ItemDenyList = map[int32]struct{}{
 	34578: {}, // Battlemaster's Determination
 	34579: {}, // Battlemaster's Audacity
 	34580: {}, // Battlemaster's Perseverence
+
+	// '10 man' onyxia head rewards
+	49312: {},
+	49313: {},
+	49314: {},
+
 	50251: {}, // 'one hand shadows edge'
 	53500: {}, // Tectonic Plate
 
@@ -544,7 +551,7 @@ var SharedSpellsIcons = []int32{
 	16862,
 	55487,
 
-	33876,
+	48566,
 	46855,
 	57393,
 
@@ -578,6 +585,14 @@ var SharedSpellsIcons = []int32{
 	53408,
 
 	11374,
+	15235,
+
+	27013,
+
+	58749,
+	49071,
+
+	30708,
 }
 
 // If any of these match the item name, don't include it.

@@ -124,7 +124,7 @@ func NewSim(rsr *proto.RaidSimRequest) *Simulation {
 		rseed = time.Now().UnixNano()
 	}
 
-	env, _ := NewEnvironment(rsr.Raid, rsr.Encounter)
+	env, _, _ := NewEnvironment(rsr.Raid, rsr.Encounter)
 	return &Simulation{
 		Environment: env,
 		Options:     simOptions,

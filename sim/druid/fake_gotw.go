@@ -12,7 +12,7 @@ func (druid *Druid) registerFakeGotw() {
 
 	druid.GiftOfTheWild = druid.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 48470},
-		Flags:    SpellFlagOmenTrigger | core.SpellFlagHelpful,
+		Flags:    SpellFlagOmenTrigger | core.SpellFlagHelpful | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   baseCost,
@@ -22,6 +22,9 @@ func (druid *Druid) registerFakeGotw() {
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
 			},
+		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return druid.InForm(Humanoid | Moonkin)
 		},
 	})
 }

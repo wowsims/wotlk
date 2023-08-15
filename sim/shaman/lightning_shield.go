@@ -74,6 +74,7 @@ func (shaman *Shaman) registerLightningShieldSpell() {
 
 	shaman.LightningShield = shaman.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
+		Flags:    core.SpellFlagAPL,
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,

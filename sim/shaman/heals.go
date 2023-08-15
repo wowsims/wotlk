@@ -12,7 +12,7 @@ func (shaman *Shaman) registerAncestralHealingSpell() {
 		ActionID:         core.ActionID{SpellID: 52752},
 		SpellSchool:      core.SpellSchoolNature,
 		ProcMask:         core.ProcMaskSpellHealing,
-		Flags:            core.SpellFlagHelpful,
+		Flags:            core.SpellFlagHelpful | core.SpellFlagAPL,
 		DamageMultiplier: 1 * (1 + .02*float64(shaman.Talents.Purification)),
 		CritMultiplier:   1,
 		ThreatMultiplier: 1 - (float64(shaman.Talents.HealingGrace) * 0.05),
@@ -40,7 +40,7 @@ func (shaman *Shaman) registerLesserHealingWaveSpell() {
 		ActionID:    core.ActionID{SpellID: 49276},
 		SpellSchool: core.SpellSchoolNature,
 		ProcMask:    core.ProcMaskSpellHealing,
-		Flags:       core.SpellFlagHelpful,
+		Flags:       core.SpellFlagHelpful | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.15,
@@ -102,7 +102,7 @@ func (shaman *Shaman) registerRiptideSpell() {
 		ActionID:    core.ActionID{SpellID: 61301},
 		SpellSchool: core.SpellSchoolNature,
 		ProcMask:    core.ProcMaskSpellHealing,
-		Flags:       core.SpellFlagHelpful,
+		Flags:       core.SpellFlagHelpful | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.18,
@@ -191,7 +191,7 @@ func (shaman *Shaman) registerHealingWaveSpell() {
 		ActionID:    core.ActionID{SpellID: 49273},
 		SpellSchool: core.SpellSchoolNature,
 		ProcMask:    core.ProcMaskSpellHealing,
-		Flags:       core.SpellFlagHelpful,
+		Flags:       core.SpellFlagHelpful | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.15,
@@ -258,14 +258,17 @@ func (shaman *Shaman) registerEarthShieldSpell() {
 	}
 
 	shaman.EarthShield = shaman.RegisterSpell(core.SpellConfig{
-		ActionID: actionID,
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolNature,
+		ProcMask:    core.ProcMaskEmpty,
+		Flags:       core.SpellFlagHelpful | core.SpellFlagAPL,
+
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
 			},
 		},
-		SpellSchool:      core.SpellSchoolNature,
-		ProcMask:         core.ProcMaskEmpty,
+
 		BonusCritRating:  float64(shaman.Talents.TidalMastery) * 1 * core.CritRatingPerCritChance,
 		DamageMultiplier: 1 + 0.05*float64(shaman.Talents.ImprovedShields) + 0.05*float64(shaman.Talents.ImprovedEarthShield) + bonusHeal,
 		ThreatMultiplier: 1,
@@ -323,7 +326,7 @@ func (shaman *Shaman) registerChainHealSpell() {
 		ActionID:    core.ActionID{SpellID: 55459},
 		SpellSchool: core.SpellSchoolNature,
 		ProcMask:    core.ProcMaskSpellHealing,
-		Flags:       core.SpellFlagHelpful,
+		Flags:       core.SpellFlagHelpful | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			FlatCost: 0.19*shaman.BaseMana - manaDiscount,

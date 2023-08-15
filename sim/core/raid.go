@@ -118,7 +118,8 @@ type Raid struct {
 	dpsMetrics DistributionMetrics
 	hpsMetrics DistributionMetrics
 
-	AllUnits []*Unit // Cached list of all Units (players and pets) in the raid.
+	AllPlayerUnits []*Unit // Cached list of all Players in the raid.
+	AllUnits       []*Unit // Cached list of all Units (players and pets) in the raid.
 
 	nextPetIndex int32
 
@@ -303,8 +304,12 @@ func (raid *Raid) updatePlayersAndPets() {
 	}
 
 	raid.AllUnits = append(raidPlayers, raidPets...)
+	raid.AllPlayerUnits = raidPlayers
 
 	slices.SortFunc(raid.AllUnits, func(u1, u2 *Unit) bool {
+		return u1.Index < u2.Index
+	})
+	slices.SortFunc(raid.AllPlayerUnits, func(u1, u2 *Unit) bool {
 		return u1.Index < u2.Index
 	})
 }
@@ -374,27 +379,6 @@ func (raid Raid) GetPlayerFromUnit(unit *Unit) Agent {
 			}
 		}
 	}
-	return nil
-}
-
-func (raid Raid) GetPlayerFromRaidTarget(raidTarget *proto.RaidTarget) Agent {
-	if raidTarget == nil {
-		return nil
-	}
-	raidIndex := raidTarget.TargetIndex
-
-	partyIndex := int(raidIndex / 5)
-	if partyIndex < 0 || partyIndex >= len(raid.Parties) {
-		return nil
-	}
-
-	party := raid.Parties[partyIndex]
-	for _, player := range party.Players {
-		if player.GetCharacter().Index == raidIndex {
-			return player
-		}
-	}
-
 	return nil
 }
 

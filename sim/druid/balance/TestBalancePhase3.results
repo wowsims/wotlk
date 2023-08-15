@@ -605,6 +605,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBalancePhase3-AllItems-PetrifiedScarab-21685"
+ value: {
+  dps: 11005.69404
+  tps: 10774.58071
+ }
+}
+dps_results: {
  key: "TestBalancePhase3-AllItems-PetrifiedTwilightScale-54571"
  value: {
   dps: 11005.69404
@@ -915,8 +922,8 @@ dps_results: {
 dps_results: {
  key: "TestBalancePhase3-Settings-Tauren-P3-Default-FullBuffs-LongMultiTarget"
  value: {
-  dps: 16644.11888
-  tps: 19482.60859
+  dps: 16601.28562
+  tps: 19435.22438
  }
 }
 dps_results: {
@@ -936,15 +943,15 @@ dps_results: {
 dps_results: {
  key: "TestBalancePhase3-Settings-Tauren-P3-Default-NoBuffs-LongMultiTarget"
  value: {
-  dps: 7653.4313
-  tps: 8600.40001
+  dps: 7637.87683
+  tps: 8596.43727
  }
 }
 dps_results: {
  key: "TestBalancePhase3-Settings-Tauren-P3-Default-NoBuffs-LongSingleTarget"
  value: {
-  dps: 5190.23449
-  tps: 5070.10421
+  dps: 5190.19004
+  tps: 5070.05976
  }
 }
 dps_results: {

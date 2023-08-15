@@ -69,7 +69,7 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 	})
 	killingSpreeSpell := rogue.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 51690},
-		Flags: core.SpellFlagAPL,
+		Flags:    core.SpellFlagAPL,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

@@ -208,7 +208,7 @@ message Rogue {
 	Rotation rotation = 1;
 	
 	message Options {
-		RaidTarget tricks_of_the_trade_target = 1;
+		UnitReference tricks_of_the_trade_target = 1;
 		enum PoisonImbue {
 			NoPoison = 0;
 			InstantPoison = 1;

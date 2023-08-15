@@ -118,6 +118,7 @@ func (dk *Deathknight) registerThassariansBattlegearProc() {
 		Timer:    dk.NewTimer(),
 		Duration: time.Second * 45.0,
 	}
+	procAura.Icd = &icd
 
 	core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 		Label: "Unholy Might",
@@ -299,8 +300,25 @@ func (dk *Deathknight) sigilOfTheVengefulHeartFrostStrike() float64 {
 	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 45254, 218, 0) // (1 / 0.55) * 120
 }
 
-func init() {
+func addEnchantEffect(id int32, effect func(core.Agent)) {
+	if core.HasEnchantEffect(id) {
+		return
+	}
+	core.NewEnchantEffect(id, effect)
+}
 
+func addItemEffect(id int32, effect func(core.Agent)) {
+	if core.HasItemEffect(id) {
+		return
+	}
+	core.NewItemEffect(id, effect)
+}
+
+func CreateVirulenceProcAura(character *core.Character) *core.Aura {
+	return character.NewTemporaryStatsAura("Sigil of Virulence Proc", core.ActionID{SpellID: 67383}, stats.Stats{stats.Strength: 200.0}, time.Second*20)
+}
+
+func (dk *Deathknight) registerItems() {
 	// Rune of Razorice
 	newRazoriceHitSpell := func(character *core.Character, isMH bool) *core.Spell {
 		dmg := 0.0
@@ -327,7 +345,7 @@ func init() {
 		})
 	}
 
-	core.NewEnchantEffect(3370, func(agent core.Agent) {
+	addEnchantEffect(3370, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3370
 		oh := character.HasOHWeapon() && character.Equip[proto.ItemSlot_ItemSlotOffHand].HandType != proto.HandType_HandTypeTwoHand && character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3370
@@ -398,7 +416,7 @@ func init() {
 	// ApplyRuneOfTheFallenCrusader will be applied twice if there is two weapons with this enchant.
 	//   However it will automatically overwrite one of them so it should be ok.
 	//   A single application of the aura will handle both mh and oh procs.
-	core.NewEnchantEffect(3368, func(agent core.Agent) {
+	addEnchantEffect(3368, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3368
 		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3368
@@ -406,7 +424,7 @@ func init() {
 		procMask := core.GetMeleeProcMaskForHands(mh, oh)
 		ppmm := character.AutoAttacks.NewPPMManager(2.0, procMask)
 
-		rfcAura := newRuneOfTheFallenCrusaderAura(character, "Rune Of The Fallen Crusader Proc", core.ActionID{SpellID: 53344})
+		rfcAura := newRuneOfTheFallenCrusaderAura(character, "Rune Of The Fallen Crusader Proc", core.ActionID{SpellID: 53365})
 
 		aura := character.GetOrRegisterAura(core.Aura{
 			Label:    "Rune Of The Fallen Crusader",
@@ -429,7 +447,7 @@ func init() {
 	})
 
 	// Rune of the Nerubian Carapace
-	core.NewEnchantEffect(3883, func(agent core.Agent) {
+	addEnchantEffect(3883, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3883
 		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3883
@@ -442,7 +460,7 @@ func init() {
 	})
 
 	// Rune of the Stoneskin Gargoyle
-	core.NewEnchantEffect(3847, func(agent core.Agent) {
+	addEnchantEffect(3847, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3847
 		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3847
@@ -459,7 +477,7 @@ func init() {
 	})
 
 	// Rune of the Swordbreaking
-	core.NewEnchantEffect(3594, func(agent core.Agent) {
+	addEnchantEffect(3594, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3594
 		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3594
@@ -471,7 +489,7 @@ func init() {
 	})
 
 	// Rune of Swordshattering
-	core.NewEnchantEffect(3365, func(agent core.Agent) {
+	addEnchantEffect(3365, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3365
 		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3365
@@ -487,7 +505,7 @@ func init() {
 	})
 
 	// Rune of the Spellbreaking
-	core.NewEnchantEffect(3595, func(agent core.Agent) {
+	addEnchantEffect(3595, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3595
 		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3595
@@ -500,7 +518,7 @@ func init() {
 	})
 
 	// Rune of Spellshattering
-	core.NewEnchantEffect(3367, func(agent core.Agent) {
+	addEnchantEffect(3367, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3367
 		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3367
@@ -516,8 +534,65 @@ func init() {
 		// Add 4% magic deflection
 	})
 
+	cinderBonusCoeff := 1.2
+
+	consumeSpells := [5]core.ActionID{
+		BloodBoilActionID,
+		DeathCoilActionID,
+		FrostStrikeMHActionID,
+		HowlingBlastActionID,
+		IcyTouchActionID,
+	}
+
+	cinderProcAura := dk.GetOrRegisterAura(core.Aura{
+		ActionID:  core.ActionID{SpellID: 53386},
+		Label:     "Cinderglacier",
+		Duration:  time.Second * 30,
+		MaxStacks: 2,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			aura.SetStacks(sim, aura.MaxStacks)
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *= cinderBonusCoeff
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFrost] *= cinderBonusCoeff
+			dk.modifyShadowDamageModifier(0.2)
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] /= cinderBonusCoeff
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFrost] /= cinderBonusCoeff
+			dk.modifyShadowDamageModifier(-0.2)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if spell.ActionID == HowlingBlastActionID || spell.ActionID == BloodBoilActionID {
+				if result.Target.Index == sim.GetNumTargets()-1 {
+					// Last target, consume a stack for every target hit
+					for i := int32(0); i < dk.AoESpellNumTargetsHit; i++ {
+						if aura.IsActive() {
+							aura.RemoveStack(sim)
+						}
+					}
+				}
+				return
+			}
+
+			if !result.Outcome.Matches(core.OutcomeLanded) {
+				return
+			}
+
+			shouldConsume := false
+			for _, consumeSpell := range consumeSpells {
+				if spell.ActionID == consumeSpell {
+					shouldConsume = true
+					break
+				}
+			}
+
+			if shouldConsume {
+				aura.RemoveStack(sim)
+			}
+		},
+	})
+
 	// Rune of Cinderglacier
-	core.NewEnchantEffect(3369, func(agent core.Agent) {
+	addEnchantEffect(3369, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
 		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3369
@@ -528,65 +603,6 @@ func init() {
 
 		procMask := core.GetMeleeProcMaskForHands(mh, oh)
 		ppmm := character.AutoAttacks.NewPPMManager(1.0, procMask)
-
-		cinderBonusCoeff := 1.2
-
-		consumeSpells := [5]core.ActionID{
-			BloodBoilActionID,
-			DeathCoilActionID,
-			FrostStrikeMHActionID,
-			HowlingBlastActionID,
-			IcyTouchActionID,
-		}
-
-		dk := agent.(DeathKnightAgent).GetDeathKnight()
-
-		cinderProcAura := character.GetOrRegisterAura(core.Aura{
-			ActionID:  core.ActionID{SpellID: 53386},
-			Label:     "Cinderglacier",
-			Duration:  time.Second * 30,
-			MaxStacks: 2,
-			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				aura.SetStacks(sim, aura.MaxStacks)
-				aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *= cinderBonusCoeff
-				aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFrost] *= cinderBonusCoeff
-				dk.modifyShadowDamageModifier(0.2)
-			},
-			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] /= cinderBonusCoeff
-				aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFrost] /= cinderBonusCoeff
-				dk.modifyShadowDamageModifier(-0.2)
-			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if spell.ActionID == HowlingBlastActionID || spell.ActionID == BloodBoilActionID {
-					if result.Target.Index == sim.GetNumTargets()-1 {
-						// Last target, consume a stack for every target hit
-						for i := int32(0); i < dk.AoESpellNumTargetsHit; i++ {
-							if aura.IsActive() {
-								aura.RemoveStack(sim)
-							}
-						}
-					}
-					return
-				}
-
-				if !result.Outcome.Matches(core.OutcomeLanded) {
-					return
-				}
-
-				shouldConsume := false
-				for _, consumeSpell := range consumeSpells {
-					if spell.ActionID == consumeSpell {
-						shouldConsume = true
-						break
-					}
-				}
-
-				if shouldConsume {
-					aura.RemoveStack(sim)
-				}
-			},
-		})
 
 		core.MakePermanent(character.GetOrRegisterAura(core.Aura{
 			Label: "Rune of Cinderglacier",
@@ -618,7 +634,7 @@ func init() {
 
 	// Sigils
 
-	core.NewItemEffect(40714, func(agent core.Agent) {
+	addItemEffect(40714, func(agent core.Agent) {
 		dk := agent.(DeathKnightAgent).GetDeathKnight()
 		procAura := dk.NewTemporaryStatsAura("Sigil of the Unfaltering Knight Proc", core.ActionID{SpellID: 62146}, stats.Stats{stats.Defense: 53.0 / core.DefenseRatingPerDefense}, time.Second*30)
 
@@ -634,14 +650,15 @@ func init() {
 		}))
 	})
 
-	core.NewItemEffect(40715, func(agent core.Agent) {
+	addItemEffect(40715, func(agent core.Agent) {
 		dk := agent.(DeathKnightAgent).GetDeathKnight()
-		procAura := dk.NewTemporaryStatsAura("Sigil of Haunted Dreams Proc", core.ActionID{ItemID: 40715}, stats.Stats{stats.MeleeCrit: 173.0, stats.SpellCrit: 173.0}, time.Second*10)
+		procAura := dk.NewTemporaryStatsAura("Sigil of Haunted Dreams Proc", core.ActionID{SpellID: 60828}, stats.Stats{stats.MeleeCrit: 173.0, stats.SpellCrit: 173.0}, time.Second*10)
 
 		icd := core.Cooldown{
 			Timer:    dk.NewTimer(),
 			Duration: time.Second * 45.0,
 		}
+		procAura.Icd = &icd
 
 		core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 			Label: "Sigil of Haunted Dreams",
@@ -658,7 +675,7 @@ func init() {
 		}))
 	})
 
-	core.NewItemEffect(45144, func(agent core.Agent) {
+	addItemEffect(45144, func(agent core.Agent) {
 		dk := agent.(DeathKnightAgent).GetDeathKnight()
 		procAura := dk.NewTemporaryStatsAura("Sigil of Deflection Proc", core.ActionID{SpellID: 64963}, stats.Stats{stats.Dodge: 144.0}, time.Second*5)
 
@@ -674,7 +691,7 @@ func init() {
 		}))
 	})
 
-	core.NewItemEffect(47672, func(agent core.Agent) {
+	addItemEffect(47672, func(agent core.Agent) {
 		dk := agent.(DeathKnightAgent).GetDeathKnight()
 		procAura := dk.NewTemporaryStatsAura("Sigil of Insolence Proc", core.ActionID{SpellID: 67380}, stats.Stats{stats.Dodge: 200.0}, time.Second*20)
 
@@ -682,6 +699,7 @@ func init() {
 			Timer:    dk.NewTimer(),
 			Duration: time.Second * 10.0,
 		}
+		procAura.Icd = &icd
 
 		core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 			Label: "Sigil of Insolence",
@@ -698,14 +716,15 @@ func init() {
 		}))
 	})
 
-	core.NewItemEffect(47673, func(agent core.Agent) {
+	addItemEffect(47673, func(agent core.Agent) {
 		dk := agent.(DeathKnightAgent).GetDeathKnight()
-		procAura := dk.NewTemporaryStatsAura("Sigil of Virulence Proc", core.ActionID{ItemID: 47673}, stats.Stats{stats.Strength: 200.0}, time.Second*20)
+		procAura := CreateVirulenceProcAura(dk.GetCharacter())
 
 		icd := core.Cooldown{
 			Timer:    dk.NewTimer(),
 			Duration: time.Second * 10.0,
 		}
+		procAura.Icd = &icd
 
 		core.MakePermanent(dk.GetOrRegisterAura(core.Aura{
 			Label: "Sigil of Virulence",
@@ -722,14 +741,14 @@ func init() {
 		}))
 	})
 
-	core.NewItemEffect(50459, func(agent core.Agent) {
+	addItemEffect(50459, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		dk := agent.(DeathKnightAgent).GetDeathKnight()
 
 		procAura := core.MakeStackingAura(character, core.StackingStatAura{
 			Aura: core.Aura{
 				Label:     "Sigil of the Hanged Man Proc",
-				ActionID:  core.ActionID{ItemID: 50459},
+				ActionID:  core.ActionID{SpellID: 71227},
 				Duration:  time.Second * 15,
 				MaxStacks: 3,
 			},
@@ -749,7 +768,7 @@ func init() {
 		}))
 	})
 
-	core.NewItemEffect(50462, func(agent core.Agent) {
+	addItemEffect(50462, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		dk := agent.(DeathKnightAgent).GetDeathKnight()
 
@@ -785,7 +804,7 @@ func init() {
 }
 
 func CreateGladiatorsSigil(id int32, name string, ap float64, seconds time.Duration) {
-	core.NewItemEffect(id, func(agent core.Agent) {
+	addItemEffect(id, func(agent core.Agent) {
 		dk := agent.(DeathKnightAgent).GetDeathKnight()
 		procAura := dk.NewTemporaryStatsAura(name+" Gladiator's Sigil of Strife Proc", core.ActionID{ItemID: id}, stats.Stats{stats.AttackPower: ap}, time.Second*seconds)
 

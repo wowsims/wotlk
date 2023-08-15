@@ -21,7 +21,7 @@ character_stats_results: {
   final_stats: 13610
   final_stats: 0
   final_stats: 0
-  final_stats: 13507.1
+  final_stats: 13486.1
   final_stats: 5949.24
   final_stats: 0
   final_stats: 0
@@ -535,6 +535,13 @@ dps_results: {
  value: {
   dps: 6204.84467
   tps: 4100.13436
+ }
+}
+dps_results: {
+ key: "TestBM-AllItems-PetrifiedScarab-21685"
+ value: {
+  dps: 6114.88893
+  tps: 4037.80642
  }
 }
 dps_results: {

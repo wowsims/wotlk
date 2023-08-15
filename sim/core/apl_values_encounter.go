@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -19,6 +20,9 @@ func (value *APLValueCurrentTime) Type() proto.APLValueType {
 func (value *APLValueCurrentTime) GetDuration(sim *Simulation) time.Duration {
 	return sim.CurrentTime
 }
+func (value *APLValueCurrentTime) String() string {
+	return fmt.Sprintf("Current Time")
+}
 
 type APLValueCurrentTimePercent struct {
 	defaultAPLValueImpl
@@ -32,6 +36,9 @@ func (value *APLValueCurrentTimePercent) Type() proto.APLValueType {
 }
 func (value *APLValueCurrentTimePercent) GetFloat(sim *Simulation) float64 {
 	return sim.CurrentTime.Seconds() / sim.Duration.Seconds()
+}
+func (value *APLValueCurrentTimePercent) String() string {
+	return fmt.Sprintf("Current Time %%")
 }
 
 type APLValueRemainingTime struct {
@@ -47,6 +54,9 @@ func (value *APLValueRemainingTime) Type() proto.APLValueType {
 func (value *APLValueRemainingTime) GetDuration(sim *Simulation) time.Duration {
 	return sim.GetRemainingDuration()
 }
+func (value *APLValueRemainingTime) String() string {
+	return fmt.Sprintf("Remaining Time")
+}
 
 type APLValueRemainingTimePercent struct {
 	defaultAPLValueImpl
@@ -61,6 +71,9 @@ func (value *APLValueRemainingTimePercent) Type() proto.APLValueType {
 func (value *APLValueRemainingTimePercent) GetFloat(sim *Simulation) float64 {
 	return sim.GetRemainingDurationPercent()
 }
+func (value *APLValueRemainingTimePercent) String() string {
+	return fmt.Sprintf("Remaining Time %%")
+}
 
 type APLValueNumberTargets struct {
 	defaultAPLValueImpl
@@ -74,4 +87,38 @@ func (value *APLValueNumberTargets) Type() proto.APLValueType {
 }
 func (value *APLValueNumberTargets) GetInt(sim *Simulation) int32 {
 	return sim.GetNumTargets()
+}
+func (value *APLValueNumberTargets) String() string {
+	return fmt.Sprintf("Num Targets")
+}
+
+type APLValueIsExecutePhase struct {
+	defaultAPLValueImpl
+	threshold proto.APLValueIsExecutePhase_ExecutePhaseThreshold
+}
+
+func (rot *APLRotation) newValueIsExecutePhase(config *proto.APLValueIsExecutePhase) APLValue {
+	if config.Threshold == proto.APLValueIsExecutePhase_Unknown {
+		return nil
+	}
+	return &APLValueIsExecutePhase{
+		threshold: config.Threshold,
+	}
+}
+func (value *APLValueIsExecutePhase) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeBool
+}
+func (value *APLValueIsExecutePhase) GetBool(sim *Simulation) bool {
+	if value.threshold == proto.APLValueIsExecutePhase_E20 {
+		return sim.IsExecutePhase20()
+	} else if value.threshold == proto.APLValueIsExecutePhase_E25 {
+		return sim.IsExecutePhase25()
+	} else if value.threshold == proto.APLValueIsExecutePhase_E35 {
+		return sim.IsExecutePhase35()
+	} else {
+		panic("Should never reach here")
+	}
+}
+func (value *APLValueIsExecutePhase) String() string {
+	return fmt.Sprintf("Is Execute Phase")
 }

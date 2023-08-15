@@ -367,6 +367,16 @@ func (dot *Dot) OutcomeRangedHitAndCritSnapshot(sim *Simulation, result *SpellRe
 	}
 }
 
+func (spell *Spell) OutcomeRangedHitAndCritNoBlock(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
+	roll := sim.RandomFloat("White Hit Table")
+	chance := 0.0
+
+	if !result.applyAttackTableMissNoDWPenalty(spell, attackTable, roll, &chance) &&
+		!result.applyAttackTableCritSeparateRoll(sim, spell, attackTable) {
+		result.applyAttackTableHit(spell)
+	}
+}
+
 func (spell *Spell) OutcomeRangedCritOnly(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
 	// Block already checks for this, but we can skip the RNG roll which is expensive.
 	if spell.Unit.PseudoStats.InFrontOfTarget {
@@ -548,7 +558,7 @@ func (result *SpellResult) applyEnemyAttackTableMiss(spell *Spell, attackTable *
 }
 
 func (result *SpellResult) applyEnemyAttackTableBlock(spell *Spell, attackTable *AttackTable, roll float64, chance *float64) bool {
-	if !result.Target.PseudoStats.CanBlock {
+	if !result.Target.PseudoStats.CanBlock || result.Target.PseudoStats.Stunned {
 		return false
 	}
 
@@ -567,6 +577,10 @@ func (result *SpellResult) applyEnemyAttackTableBlock(spell *Spell, attackTable 
 }
 
 func (result *SpellResult) applyEnemyAttackTableDodge(spell *Spell, attackTable *AttackTable, roll float64, chance *float64) bool {
+	if result.Target.PseudoStats.Stunned {
+		return false
+	}
+
 	dodgeChance := attackTable.BaseDodgeChance +
 		result.Target.PseudoStats.BaseDodge +
 		result.Target.GetDiminishedDodgeChance() -
@@ -583,7 +597,7 @@ func (result *SpellResult) applyEnemyAttackTableDodge(spell *Spell, attackTable 
 }
 
 func (result *SpellResult) applyEnemyAttackTableParry(spell *Spell, attackTable *AttackTable, roll float64, chance *float64) bool {
-	if !result.Target.PseudoStats.CanParry {
+	if !result.Target.PseudoStats.CanParry || result.Target.PseudoStats.Stunned {
 		return false
 	}
 

@@ -137,7 +137,7 @@ enum WarriorMinorGlyph {
 	GlyphOfEnduringVictory = 43400;
 	GlyphOfMockingBlow = 43398;
 	GlyphOfThunderClap = 43399;
-	GlyphOfShatteringThrow = 414812;
+	GlyphOfShatteringThrow = 206953;
 }
 
 enum WarriorShout {
@@ -226,7 +226,6 @@ message Warrior {
 		bool use_recklessness = 2;
 		bool use_shattering_throw = 4;
 		WarriorShout shout = 3;
-		bool munch = 5;
 		bool stance_snapshot = 6;
 	}
 	Options options = 3;
@@ -273,7 +272,6 @@ message ProtectionWarrior {
 
 		WarriorShout shout = 4;
 		bool use_shattering_throw = 8;
-		bool munch = 9;
 	}
 	Options options = 3;
 }

@@ -1,11 +1,11 @@
 import { Component } from '../core/components/component';
-import { RaidTargetPicker } from '../core/components/raid_target_picker';
+import { UnitReferencePicker } from '../core/components/raid_target_picker';
 
 import { Raid } from '../core/raid';
 import { EventID } from '../core/typed_event';
 
-import { RaidTarget } from '../core/proto/common';
-import { emptyRaidTarget } from '../core/proto_utils/utils';
+import { UnitReference } from '../core/proto/common';
+import { emptyUnitReference } from '../core/proto_utils/utils';
 
 import { RaidSimUI } from './raid_sim_ui';
 
@@ -30,18 +30,18 @@ export class TanksPicker extends Component {
 			labelElem.classList.add('tank-picker-label', 'form-label');
 			row.appendChild(labelElem);
 
-			new RaidTargetPicker<Raid>(row, raid, raid, {
+			new UnitReferencePicker<Raid>(row, raid, raid, {
 				extraCssClasses: ['tank-picker'],
 				noTargetLabel: 'Unassigned',
 				compChangeEmitter: raid.compChangeEmitter,
 
 				changedEvent: (raid: Raid) => raid.tanksChangeEmitter,
-				getValue: (raid: Raid) => raid.getTanks()[i] || emptyRaidTarget(),
-				setValue: (eventID: EventID, raid: Raid, newValue: RaidTarget) => {
+				getValue: (raid: Raid) => raid.getTanks()[i] || emptyUnitReference(),
+				setValue: (eventID: EventID, raid: Raid, newValue: UnitReference) => {
 					const tanks = raid.getTanks();
 					for (let j = 0; j < i; j++) {
 						if (!tanks[j]) {
-							tanks.push(emptyRaidTarget());
+							tanks.push(emptyUnitReference());
 						}
 					}
 					tanks[i] = newValue;

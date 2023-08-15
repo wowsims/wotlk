@@ -16,6 +16,17 @@ func (priest *Priest) registerMindBlastSpell() {
 		replSrc = priest.Env.Raid.NewReplenishmentSource(core.ActionID{SpellID: 48160})
 	}
 
+	// From Improved Mind Blast
+	mindTraumaSpell := priest.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: 48301},
+		ProcMask:    core.ProcMaskProc,
+		SpellSchool: core.SpellSchoolShadow,
+		Flags:       core.SpellFlagNoMetrics,
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			MindTraumaAura(target).Activate(sim)
+		},
+	})
+
 	priest.MindBlast = priest.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48127},
 		SpellSchool: core.SpellSchoolShadow,
@@ -65,10 +76,30 @@ func (priest *Priest) registerMindBlastSpell() {
 			if priest.Talents.VampiricTouch && priest.VampiricTouch.CurDot().IsActive() {
 				priest.Env.Raid.ProcReplenishment(sim, replSrc)
 			}
+
+			if priest.Talents.Shadowform && priest.Talents.ImprovedMindBlast > 0 {
+				if sim.RandomFloat("Improved Mind Blast") < 0.2*float64(priest.Talents.ImprovedMindBlast) {
+					mindTraumaSpell.Cast(sim, target)
+				}
+			}
 		},
 		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
 			baseDamage := (997.0+1053.0)/2 + spellCoeff*spell.SpellPower()
 			return spell.CalcDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicHitAndCrit)
+		},
+	})
+}
+
+func MindTraumaAura(target *core.Unit) *core.Aura {
+	return target.GetOrRegisterAura(core.Aura{
+		Label:    "Mind Trauma",
+		ActionID: core.ActionID{SpellID: 48301},
+		Duration: time.Second * 10,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.HealingTakenMultiplier *= 0.8
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.HealingTakenMultiplier /= 0.8
 		},
 	})
 }

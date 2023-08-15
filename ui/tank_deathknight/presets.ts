@@ -130,8 +130,8 @@ export const BLOOD_IT_SPAM_ROTATION_PRESET_DEFAULT = {
 		rotation: APLRotation.fromJsonString(`{
 			"enabled": true,
 			"prepullActions": [
-			  {"action":{"castSpell":{"spellId":{"spellId":48263}}},"doAt":"-10s"},
-			  {"action":{"castSpell":{"spellId":{"spellId":42650}}},"doAt":"-6s"}
+			  {"action":{"castSpell":{"spellId":{"spellId":48263}}},"doAtValue":{"const":{"val":"-10s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":42650}}},"doAtValue":{"const":{"val":"-6s"}}}
 			],
 			"priorityList": [
 			  {"action":{"autocastOtherCooldowns":{}}},
@@ -163,8 +163,8 @@ export const BLOOD_AGGRO_ROTATION_PRESET_DEFAULT = {
 		rotation: APLRotation.fromJsonString(`{
 			"enabled": true,
 			"prepullActions": [
-			  {"action":{"castSpell":{"spellId":{"spellId":48263}}},"doAt":"-10s"},
-			  {"action":{"castSpell":{"spellId":{"spellId":42650}}},"doAt":"-6s"}
+			  {"action":{"castSpell":{"spellId":{"spellId":48263}}},"doAtValue":{"const":{"val":"-10s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":42650}}},"doAtValue":{"const":{"val":"-6s"}}}
 			],
 			"priorityList": [
 			  {"action":{"autocastOtherCooldowns":{}}},

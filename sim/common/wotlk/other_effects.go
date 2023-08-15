@@ -26,7 +26,7 @@ func init() {
 			}
 		})
 
-		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+		triggerAura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 			Name:       "Essence of Gossamer Trigger",
 			Callback:   core.CallbackOnSpellHitTaken,
 			ProcMask:   core.ProcMaskMelee,
@@ -38,6 +38,7 @@ func init() {
 				procAura.Activate(sim)
 			},
 		})
+		procAura.Icd = triggerAura.Icd
 	})
 	core.NewItemEffect(45507, func(agent core.Agent) {
 		character := agent.GetCharacter()
@@ -55,7 +56,7 @@ func init() {
 			}
 		})
 
-		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+		triggerAura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 			Name:       "The General's Heart Trigger",
 			Callback:   core.CallbackOnSpellHitTaken,
 			ProcMask:   core.ProcMaskMelee,
@@ -67,6 +68,7 @@ func init() {
 				procAura.Activate(sim)
 			},
 		})
+		procAura.Icd = triggerAura.Icd
 	})
 
 	core.NewItemEffect(37734, func(agent core.Agent) {
@@ -175,7 +177,7 @@ func init() {
 				return
 			}
 
-			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+			triggerAura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:       name,
 				Callback:   core.CallbackOnSpellHitDealt,
 				ProcMask:   core.ProcMaskMeleeOrRanged | core.ProcMaskProc,
@@ -194,6 +196,10 @@ func init() {
 					}
 				},
 			})
+
+			for _, aura := range auras {
+				aura.Icd = triggerAura.Icd
+			}
 		})
 	})
 
@@ -297,25 +303,22 @@ func init() {
 	core.NewItemEffect(46017, func(agent core.Agent) { // Val'anyr
 		character := agent.GetCharacter()
 
-		shieldID := core.ActionID{SpellID: 64413}
-		shields := core.NewAllyShieldArray(
-			&character.Unit,
-			core.Shield{
-				Spell: character.GetOrRegisterSpell(core.SpellConfig{
-					ActionID:    shieldID,
-					SpellSchool: core.SpellSchoolNature,
-					ProcMask:    core.ProcMaskSpellHealing,
-					Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagHelpful,
+		shieldSpell := character.GetOrRegisterSpell(core.SpellConfig{
+			ActionID:    core.ActionID{SpellID: 64413},
+			SpellSchool: core.SpellSchoolNature,
+			ProcMask:    core.ProcMaskSpellHealing,
+			Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagHelpful,
 
-					DamageMultiplier: 1,
-					ThreatMultiplier: 1,
-				}),
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
+
+			Shield: core.ShieldConfig{
+				Aura: core.Aura{
+					Label:    "Val'anyr Shield",
+					Duration: time.Second * 30,
+				},
 			},
-			core.Aura{
-				Label:    "Val'anyr Shield",
-				ActionID: shieldID,
-				Duration: time.Second * 30,
-			})
+		})
 
 		activeAura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 			Name:     "Blessing of Ancient Kings",
@@ -324,8 +327,7 @@ func init() {
 			Duration: time.Second * 15,
 			Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
 				// TODO: Shield needs to stack with itself up to 20k.
-				shield := shields[result.Target.UnitIndex]
-				shield.Apply(sim, result.Damage*0.15)
+				shieldSpell.Shield(result.Target).Apply(sim, result.Damage*0.15)
 			},
 		})
 
@@ -446,6 +448,7 @@ func init() {
 				Timer:    character.NewTimer(),
 				Duration: time.Second * 30,
 			}
+			procAura.Icd = &icd
 
 			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:     name + " Trigger",
@@ -487,7 +490,7 @@ func init() {
 				BonusPerStack: stats.Stats{stats.SpellPower: amount},
 			})
 
-			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+			triggerAura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:       name + " Trigger",
 				Callback:   core.CallbackOnSpellHitDealt,
 				ProcMask:   core.ProcMaskSpellOrProc,
@@ -509,6 +512,7 @@ func init() {
 					})
 				},
 			})
+			procAura.Icd = triggerAura.Icd
 		})
 	})
 
@@ -648,7 +652,6 @@ func init() {
 		character := agent.GetCharacter()
 		actionID := core.ActionID{SpellID: 71586}
 
-		var shield *core.Shield
 		spell := character.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolHoly,
@@ -665,18 +668,17 @@ func init() {
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 
-			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-				shield.Apply(sim, 6400)
+			Shield: core.ShieldConfig{
+				SelfOnly: true,
+				Aura: core.Aura{
+					Label:    "Hardened Skin",
+					Duration: time.Second * 10,
+				},
 			},
-		})
 
-		shield = core.NewShield(core.Shield{
-			Spell: spell,
-			Aura: character.GetOrRegisterAura(core.Aura{
-				Label:    "Hardened Skin",
-				ActionID: actionID,
-				Duration: time.Second * 10,
-			}),
+			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
+				spell.SelfShield().Apply(sim, 6400)
+			},
 		})
 
 		character.AddMajorCooldown(core.MajorCooldown{
@@ -869,6 +871,7 @@ func init() {
 				Timer:    character.NewTimer(),
 				Duration: time.Second * 45,
 			}
+			procAura.Icd = &icd
 
 			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:     name + " Trigger",
@@ -1028,6 +1031,47 @@ func init() {
 			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 				procAura.Activate(sim)
 			},
+		})
+	})
+
+	core.NewItemEffect(21685, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		statBonusPerStack := stats.Stats{stats.ArcaneResistance: 10, stats.FireResistance: 10, stats.FrostResistance: 10, stats.NatureResistance: 10, stats.ShadowResistance: 10}
+
+		mercurialShieldAura := character.GetOrRegisterAura(core.Aura{
+			Label:     "Mercurial Shield",
+			ActionID:  core.ActionID{SpellID: 26464},
+			Duration:  time.Second * 60,
+			MaxStacks: 10,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				aura.SetStacks(sim, 10)
+			},
+			OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
+				character.AddStatsDynamic(sim, statBonusPerStack.Multiply(float64(newStacks-oldStacks)))
+			},
+			OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if result.Damage > 0 && !spell.SpellSchool.Matches(core.SpellSchoolPhysical) {
+					aura.RemoveStack(sim)
+				}
+			},
+		})
+
+		petrifiedScarabActivation := character.RegisterSpell(core.SpellConfig{
+			ActionID: core.ActionID{ItemID: 21685},
+			Cast: core.CastConfig{
+				CD: core.Cooldown{
+					Timer:    character.NewTimer(),
+					Duration: time.Second * 180,
+				},
+			},
+			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+				mercurialShieldAura.Activate(sim)
+			},
+		})
+
+		character.AddMajorCooldown(core.MajorCooldown{
+			Spell: petrifiedScarabActivation,
+			Type:  core.CooldownTypeSurvival,
 		})
 	})
 }

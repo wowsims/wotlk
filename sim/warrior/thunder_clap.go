@@ -16,7 +16,7 @@ func (warrior *Warrior) registerThunderClapSpell() {
 		ActionID:    core.ActionID{SpellID: 47502},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskRangedSpecial,
-		Flags:       core.SpellFlagIncludeTargetBonusDamage,
+		Flags:       core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagAPL,
 
 		RageCost: core.RageCostOptions{
 			Cost: 20 -
@@ -55,6 +55,8 @@ func (warrior *Warrior) registerThunderClapSpell() {
 				}
 			}
 		},
+
+		RelatedAuras: []core.AuraArray{warrior.ThunderClapAuras},
 	})
 }
 

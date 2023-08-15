@@ -20,7 +20,7 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold
 		ActionID:    core.ActionID{SpellID: 47465},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagNoOnCastComplete,
+		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagAPL,
 
 		RageCost: core.RageCostOptions{
 			Cost:   10 - float64(warrior.Talents.FocusedRage),
@@ -60,7 +60,6 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
 			if result.Landed() {
 				spell.Dot(target).Apply(sim)
-				warrior.procBloodFrenzy(sim, result, dotDuration)
 				warrior.RendValidUntil = sim.CurrentTime + dotDuration
 			} else {
 				spell.IssueRefund(sim)

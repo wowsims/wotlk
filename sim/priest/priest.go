@@ -25,7 +25,6 @@ type Priest struct {
 	// cached cast stuff
 	// TODO: aoe multi-target situations will need multiple spells ticking for each target.
 	InnerFocusAura     *core.Aura
-	MiseryAura         *core.Aura
 	ShadowWeavingAura  *core.Aura
 	ShadowyInsightAura *core.Aura
 	ImprovedSpiritTap  *core.Aura
@@ -54,11 +53,9 @@ type Priest struct {
 	ShadowWordDeath *core.Spell
 	Shadowfiend     *core.Spell
 	Smite           *core.Spell
-	Starshards      *core.Spell
 	VampiricTouch   *core.Spell
 	Dispersion      *core.Spell
 
-	PWSShields    []*core.Shield
 	WeakenedSouls core.AuraArray
 
 	ProcPrayerOfMending core.ApplySpellResults
@@ -88,7 +85,7 @@ type SelfBuffs struct {
 	UseShadowfiend bool
 	UseInnerFire   bool
 
-	PowerInfusionTarget *proto.RaidTarget
+	PowerInfusionTarget *proto.UnitReference
 }
 
 func (priest *Priest) GetCharacter() *core.Character {
@@ -130,7 +127,6 @@ func (priest *Priest) Initialize() {
 	priest.registerMindBlastSpell()
 	priest.registerShadowWordDeathSpell()
 	priest.registerShadowfiendSpell()
-	priest.registerStarshardsSpell()
 	priest.registerVampiricTouchSpell()
 	priest.registerDispersionSpell()
 

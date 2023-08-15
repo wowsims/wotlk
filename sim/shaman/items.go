@@ -65,37 +65,15 @@ var ItemSetSkyshatterHarness = core.NewItemSet(core.ItemSet{
 })
 
 func init() {
-	core.NewItemEffect(32491, func(agent core.Agent) {
-		shaman := agent.(ShamanAgent).GetShaman()
-		procAura := shaman.NewTemporaryStatsAura("Ashtongue Talisman of Vision Proc", core.ActionID{ItemID: 32491}, stats.Stats{stats.AttackPower: 275}, time.Second*10)
-
-		shaman.RegisterAura(core.Aura{
-			Label:    "Ashtongue Talisman of Vision",
-			Duration: core.NeverExpires,
-			OnReset: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Activate(sim)
-			},
-			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-				// Note that shaman.Stormstrike is the first 'fake' SS hit.
-				if spell != shaman.Stormstrike {
-					return
-				}
-				if sim.RandomFloat("Ashtongue Talisman of Vision") > 0.5 {
-					return
-				}
-				procAura.Activate(sim)
-			},
-		})
-	})
-
 	core.NewItemEffect(33506, func(agent core.Agent) {
 		shaman := agent.(ShamanAgent).GetShaman()
-		procAura := shaman.NewTemporaryStatsAura("Skycall Totem Proc", core.ActionID{ItemID: 33506}, stats.Stats{stats.SpellHaste: 101}, time.Second*10)
+		procAura := shaman.NewTemporaryStatsAura("Skycall Totem Proc", core.ActionID{SpellID: 43751}, stats.Stats{stats.SpellHaste: 101}, time.Second*10)
 
 		icd := core.Cooldown{
 			Timer:    shaman.NewTimer(),
 			Duration: time.Second * 30,
 		}
+		procAura.Icd = &icd
 		shaman.RegisterAura(core.Aura{
 			Label:    "Skycall Totem",
 			Duration: core.NeverExpires,
@@ -116,12 +94,13 @@ func init() {
 
 	core.NewItemEffect(33507, func(agent core.Agent) {
 		shaman := agent.(ShamanAgent).GetShaman()
-		procAura := shaman.NewTemporaryStatsAura("Stonebreakers Totem Proc", core.ActionID{ItemID: 33507}, stats.Stats{stats.AttackPower: 110}, time.Second*10)
+		procAura := shaman.NewTemporaryStatsAura("Stonebreakers Totem Proc", core.ActionID{SpellID: 43749}, stats.Stats{stats.AttackPower: 110}, time.Second*10)
 
 		icd := core.Cooldown{
 			Timer:    shaman.NewTimer(),
 			Duration: time.Second * 10,
 		}
+		procAura.Icd = &icd
 		const procChance = 0.5
 
 		shaman.RegisterAura(core.Aura{
@@ -153,19 +132,19 @@ func init() {
 		})
 	})
 
-	registerSpellPVPTotem("Savage Gladiator's Totem of Survival", 42594, 52, 6)
-	registerSpellPVPTotem("Hateful Gladiator's Totem of Survival", 42601, 62, 6)
-	registerSpellPVPTotem("Deadly Gladiator's Totem of Survival", 42602, 70, 10)
-	registerSpellPVPTotem("Furious Gladiator's Totem of Survival", 42603, 84, 10)
-	registerSpellPVPTotem("Relentless Gladiator's Totem of Survival", 42604, 101, 10)
-	registerSpellPVPTotem("Wrathful Gladiator's Totem of Survival", 51513, 119, 10)
+	registerSpellPVPTotem("Savage Gladiator's Totem of Survival", 42594, 60565, 52, 6)
+	registerSpellPVPTotem("Hateful Gladiator's Totem of Survival", 42601, 60566, 62, 6)
+	registerSpellPVPTotem("Deadly Gladiator's Totem of Survival", 42602, 60567, 70, 10)
+	registerSpellPVPTotem("Furious Gladiator's Totem of Survival", 42603, 60568, 84, 10)
+	registerSpellPVPTotem("Relentless Gladiator's Totem of Survival", 42604, 60569, 101, 10)
+	registerSpellPVPTotem("Wrathful Gladiator's Totem of Survival", 51513, 60570, 119, 10)
 
 	core.NewItemEffect(47667, func(agent core.Agent) {
 		shaman := agent.(ShamanAgent).GetShaman()
 
 		statAura := shaman.NewTemporaryStatsAura("Volcanic Fury", core.ActionID{SpellID: 67391}, stats.Stats{stats.AttackPower: 400}, time.Second*18)
 
-		core.MakeProcTriggerAura(&shaman.Unit, core.ProcTrigger{
+		triggerAura := core.MakeProcTriggerAura(&shaman.Unit, core.ProcTrigger{
 			Name:       "Totem of Quaking Earth Trigger",
 			Callback:   core.CallbackOnSpellHitDealt,
 			ProcMask:   core.ProcMaskMeleeOHSpecial,
@@ -177,13 +156,14 @@ func init() {
 				}
 			},
 		})
+		statAura.Icd = triggerAura.Icd
 	})
 }
 
-func registerSpellPVPTotem(name string, id int32, sp float64, seconds float64) {
-	core.NewItemEffect(id, func(agent core.Agent) {
+func registerSpellPVPTotem(name string, itemId int32, spellId int32, sp float64, seconds float64) {
+	core.NewItemEffect(itemId, func(agent core.Agent) {
 		shaman := agent.(ShamanAgent).GetShaman()
-		procAura := shaman.NewTemporaryStatsAura(name+" proc", core.ActionID{ItemID: id}, stats.Stats{stats.SpellPower: sp}, time.Second*time.Duration(seconds))
+		procAura := shaman.NewTemporaryStatsAura(name+" proc", core.ActionID{SpellID: spellId}, stats.Stats{stats.SpellPower: sp}, time.Second*time.Duration(seconds))
 
 		shaman.RegisterAura(core.Aura{
 			Label:    name,

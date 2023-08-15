@@ -132,7 +132,10 @@ func aclAppendSimple(acl []ActionCondition, spell *core.Spell, cond func(sim *co
 func (warlock *Warlock) defineRotation() {
 	acl := warlock.acl
 	mainTarget := warlock.CurrentTarget // assumed to be the first element in the target list
-	hauntTravel := time.Duration(float64(time.Second) * warlock.DistanceFromTarget / warlock.Haunt.MissileSpeed)
+	var hauntTravel time.Duration
+	if warlock.Talents.Haunt {
+		hauntTravel = time.Duration(float64(time.Second) * warlock.DistanceFromTarget / warlock.Haunt.MissileSpeed)
+	}
 	critDebuffCat := warlock.GetEnemyExclusiveCategories(core.SpellCritEffectCategory).Get(mainTarget)
 
 	logInfo := func(sim *core.Simulation, msg string, vals ...interface{}) {
@@ -380,6 +383,7 @@ func (warlock *Warlock) defineRotation() {
 	}
 
 	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap) {
+		curIndex := len(acl)
 		acl = aclAppendSimple(acl, warlock.LifeTap, func(sim *core.Simulation) (bool, *core.Unit) {
 			// try to keep up the buff for the entire execute phase if possible
 			expiresAt := core.MaxDuration(0, warlock.GlyphOfLifeTapAura.RemainingDuration(sim))
@@ -388,17 +392,15 @@ func (warlock *Warlock) defineRotation() {
 				warlock.CurrentManaPercent() < 0.35 {
 				logInfo(sim, "Casting life tap to keep up GoLT (40s till EOF)")
 				return true, nil
-			} else if sim.GetRemainingDuration() <= 55*time.Second {
-				return false, nil
 			}
 
-			if warlock.GlyphOfLifeTapAura.RemainingDuration(sim) > 1*time.Second ||
-				sim.GetRemainingDuration() <= 10*time.Second {
-				return false, nil
+			if _, dur := warlock.getAlternativeAction(sim, curIndex); dur > expiresAt &&
+				sim.GetRemainingDuration() > 12*time.Second {
+				logInfo(sim, "Casting life tap to keep up GoLT")
+				return true, nil
 			}
 
-			logInfo(sim, "Casting life tap to keep up GoLT")
-			return true, nil
+			return false, nil
 		})
 	}
 
@@ -629,29 +631,8 @@ func (warlock *Warlock) getAlternativeAction(sim *core.Simulation, skipIndex int
 }
 
 func (warlock *Warlock) OnGCDReady(sim *core.Simulation) {
-	if warlock.Options.Summon != proto.Warlock_Options_NoSummon && warlock.Talents.DemonicKnowledge > 0 {
-		// TODO: investigate a better way of handling this like a "reverse inheritance" for pets.
-		bonus := (warlock.Pet.GetStat(stats.Stamina) + warlock.Pet.GetStat(stats.Intellect)) * (0.04 * float64(warlock.Talents.DemonicKnowledge))
-		if bonus != warlock.petStmBonusSP {
-			warlock.AddStatDynamic(sim, stats.SpellPower, bonus-warlock.petStmBonusSP)
-			warlock.petStmBonusSP = bonus
-		}
-	}
-
-	if warlock.Talents.DemonicPact > 0 && sim.CurrentTime != 0 && warlock.Pet != nil {
-		dpspCurrent := warlock.DemonicPactAura.ExclusiveEffects[0].Priority
-		currentTimeJump := sim.CurrentTime.Seconds() - warlock.PreviousTime.Seconds()
-
-		if currentTimeJump > 0 {
-			warlock.DPSPAggregate += dpspCurrent * currentTimeJump
-			warlock.Metrics.UpdateDpasp(dpspCurrent * currentTimeJump)
-		}
-
-		if sim.Log != nil {
-			warlock.Log(sim, "[Info] Demonic Pact spell power bonus average [%.0f]", warlock.DPSPAggregate/sim.CurrentTime.Seconds())
-		}
-
-		warlock.PreviousTime = sim.CurrentTime
+	if warlock.IsUsingAPL {
+		return
 	}
 
 	for _, ac := range warlock.acl {

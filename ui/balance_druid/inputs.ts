@@ -1,6 +1,5 @@
-import { RaidTarget } from '../core/proto/common.js';
+import { UnitReference, UnitReference_Type as UnitType } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
-import { NO_TARGET } from '../core/proto_utils/utils.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
@@ -27,11 +26,12 @@ export const SelfInnervate = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.S
 	extraCssClasses: [
 		'within-raid-sim-hide',
 	],
-	getValue: (player: Player<Spec.SpecBalanceDruid>) => player.getSpecOptions().innervateTarget?.targetIndex != NO_TARGET,
+	getValue: (player: Player<Spec.SpecBalanceDruid>) => player.getSpecOptions().innervateTarget?.type == UnitType.Player,
 	setValue: (eventID: EventID, player: Player<Spec.SpecBalanceDruid>, newValue: boolean) => {
 		const newOptions = player.getSpecOptions();
-		newOptions.innervateTarget = RaidTarget.create({
-			targetIndex: newValue ? 0 : NO_TARGET,
+		newOptions.innervateTarget = UnitReference.create({
+			type: newValue ? UnitType.Player : UnitType.Unknown,
+			index: 0,
 		});
 		player.setSpecOptions(eventID, newOptions);
 	},
@@ -81,10 +81,6 @@ export const BalanceDruidRotationConfig = {
 			label: 'Moonfire Extension',
 			labelTooltip: 'When should the rotation try to extend Moonfire on the main target.',
 			values: [
-				{ name: 'Extend fishing for lunar', value: MfExtension.ExtendFishingForLunar },
-				{ name: 'Extend fishing for solar', value: MfExtension.ExtendFishingForSolar },
-				{ name: 'Extend during lunar', value: MfExtension.ExtendDuringLunar },
-				{ name: 'Extend during solar', value: MfExtension.ExtendDuringSolar },
 				{ name: 'Extend always', value: MfExtension.ExtendAlways },
 				{ name: 'Extend outside solar', value: MfExtension.ExtendOutsideSolar },
 				{ name: 'Do not extend', value: MfExtension.DontExtend },
@@ -98,7 +94,7 @@ export const BalanceDruidRotationConfig = {
 			values: [
 				{ name: 'Unused', value: IsUsage.NoIs },
 				{ name: 'Before solar', value: IsUsage.BeforeSolar },
-				{ name: 'Maximize', value: IsUsage.MaximizeIs },
+				{ name: 'Optimize', value: IsUsage.OptimizeIs },
 				{ name: 'Multidot', value: IsUsage.MultidotIs },
 			],
 			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,

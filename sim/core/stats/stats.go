@@ -329,15 +329,18 @@ type PseudoStats struct {
 	// Important when unit is attacker or target
 	BlockValueMultiplier float64
 
+	// Only used for NPCs, governs variance in enemy auto-attack damage
+	DamageSpread float64
+
 	///////////////////////////////////////////////////
 	// Effects that apply when this unit is the target.
 	///////////////////////////////////////////////////
 
 	CanBlock bool
 	CanParry bool
+	Stunned  bool // prevents blocks, dodges, and parries
 
-	ParryHaste   bool
-	DamageSpread float64
+	ParryHaste bool
 
 	// Avoidance % not affected by Diminishing Returns
 	BaseDodge float64
@@ -391,6 +394,8 @@ func NewPseudoStats() PseudoStats {
 
 		BlockValueMultiplier: 1,
 
+		DamageSpread: 0.3333,
+
 		// Target effects.
 		DamageTakenMultiplier:       1,
 		SchoolDamageTakenMultiplier: NewSchoolFloatArray(),
@@ -401,8 +406,6 @@ func NewPseudoStats() PseudoStats {
 		ArmorMultiplier: 1,
 
 		HealingTakenMultiplier: 1,
-
-		DamageSpread: 0.3333,
 	}
 }
 

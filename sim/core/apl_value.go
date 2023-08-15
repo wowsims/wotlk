@@ -17,6 +17,9 @@ type APLValue interface {
 	GetFloat(*Simulation) float64
 	GetDuration(*Simulation) time.Duration
 	GetString(*Simulation) string
+
+	// Pretty-print string for debugging.
+	String() string
 }
 
 // Provides empty implementations for the GetX() value interface functions.
@@ -56,6 +59,8 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 		return rot.newValueNot(config.GetNot())
 	case *proto.APLValue_Cmp:
 		return rot.newValueCompare(config.GetCmp())
+	case *proto.APLValue_Math:
+		return rot.newValueMath(config.GetMath())
 
 	// Encounter
 	case *proto.APLValue_CurrentTime:
@@ -66,6 +71,8 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 		return rot.newValueRemainingTime(config.GetRemainingTime())
 	case *proto.APLValue_RemainingTimePercent:
 		return rot.newValueRemainingTimePercent(config.GetRemainingTimePercent())
+	case *proto.APLValue_IsExecutePhase:
+		return rot.newValueIsExecutePhase(config.GetIsExecutePhase())
 	case *proto.APLValue_NumberTargets:
 		return rot.newValueNumberTargets(config.GetNumberTargets())
 
@@ -107,6 +114,10 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 	case *proto.APLValue_GcdTimeToReady:
 		return rot.newValueGCDTimeToReady(config.GetGcdTimeToReady())
 
+	// Auto attacks
+	case *proto.APLValue_AutoTimeToNext:
+		return rot.newValueAutoTimeToNext(config.GetAutoTimeToNext())
+
 	// Spells
 	case *proto.APLValue_SpellCanCast:
 		return rot.newValueSpellCanCast(config.GetSpellCanCast())
@@ -116,6 +127,12 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 		return rot.newValueSpellTimeToReady(config.GetSpellTimeToReady())
 	case *proto.APLValue_SpellCastTime:
 		return rot.newValueSpellCastTime(config.GetSpellCastTime())
+	case *proto.APLValue_SpellChannelTime:
+		return rot.newValueSpellChannelTime(config.GetSpellChannelTime())
+	case *proto.APLValue_SpellTravelTime:
+		return rot.newValueSpellTravelTime(config.GetSpellTravelTime())
+	case *proto.APLValue_SpellCpm:
+		return rot.newValueSpellCPM(config.GetSpellCpm())
 
 	// Auras
 	case *proto.APLValue_AuraIsActive:
@@ -124,6 +141,10 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 		return rot.newValueAuraRemainingTime(config.GetAuraRemainingTime())
 	case *proto.APLValue_AuraNumStacks:
 		return rot.newValueAuraNumStacks(config.GetAuraNumStacks())
+	case *proto.APLValue_AuraInternalCooldown:
+		return rot.newValueAuraInternalCooldown(config.GetAuraInternalCooldown())
+	case *proto.APLValue_AuraShouldRefresh:
+		return rot.newValueAuraShouldRefresh(config.GetAuraShouldRefresh())
 
 	// Dots
 	case *proto.APLValue_DotIsActive:

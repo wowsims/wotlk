@@ -29,7 +29,7 @@ export const ShoutPicker = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecPr
 	fieldName: 'shout',
 	values: [
 		{ color: 'c79c6e', value: WarriorShout.WarriorShoutNone },
-		{ actionId: ActionId.fromSpellId(2048), value: WarriorShout.WarriorShoutBattle },
+		{ actionId: ActionId.fromSpellId(47436), value: WarriorShout.WarriorShoutBattle },
 		{ actionId: ActionId.fromSpellId(469), value: WarriorShout.WarriorShoutCommanding },
 	],
 });
@@ -39,25 +39,19 @@ export const ShatteringThrow = InputHelpers.makeSpecOptionsBooleanIconInput<Spec
 	id: ActionId.fromSpellId(64382),
 });
 
-export const Munch = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecProtectionWarrior>({
-	fieldName: 'munch',
-	label: 'Munching',
-	labelTooltip: 'Apply "munching" to Deep Wounds',
-});
-
 export const ProtectionWarriorRotationConfig = {
 	inputs: [
 		InputHelpers.makeCustomRotationInput<Spec.SpecProtectionWarrior, SpellOption>({
 			fieldName: 'customRotation',
 			numColumns: 3,
 			values: [
-				{ actionId: ActionId.fromSpellId(30357), value: SpellOption.Revenge },
+				{ actionId: ActionId.fromSpellId(57823), value: SpellOption.Revenge },
 				{ actionId: ActionId.fromSpellId(47488), value: SpellOption.ShieldSlam },
 				{ actionId: ActionId.fromSpellId(47440), value: SpellOption.Shout },
 				{ actionId: ActionId.fromSpellId(47502), value: SpellOption.ThunderClap },
 				{ actionId: ActionId.fromSpellId(25203), value: SpellOption.DemoralizingShout },
-				{ actionId: ActionId.fromSpellId(71552), value: SpellOption.MortalStrike },
-				{ actionId: ActionId.fromSpellId(30022), value: SpellOption.Devastate },
+				{ actionId: ActionId.fromSpellId(47486), value: SpellOption.MortalStrike },
+				{ actionId: ActionId.fromSpellId(47498), value: SpellOption.Devastate },
 				{ actionId: ActionId.fromSpellId(47467), value: SpellOption.SunderArmor },
 				{ actionId: ActionId.fromSpellId(12809), value: SpellOption.ConcussionBlow },
 				{ actionId: ActionId.fromSpellId(46968), value: SpellOption.Shockwave },

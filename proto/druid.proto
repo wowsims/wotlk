@@ -164,7 +164,7 @@ message BalanceDruid {
 		enum IsUsage {
 			NoIs = 0;
 			BeforeSolar = 1;
-			MaximizeIs = 2;
+			OptimizeIs = 2;
 			MultidotIs = 3;
 		}
 		IsUsage is_usage = 3;
@@ -206,7 +206,7 @@ message BalanceDruid {
   Rotation rotation = 1;
 
   message Options {
-    RaidTarget innervate_target = 1;
+    UnitReference innervate_target = 1;
 	}
   Options options = 3;
 }
@@ -248,15 +248,15 @@ message FeralDruid {
 	bool manual_params = 17;
 	float max_ff_delay = 20;
 	AplType rotation_type = 21;
+	bool pre_pop_berserk = 22;
+	bool pre_pop_ooc = 23;
   }
   Rotation rotation = 1;
 
   message Options {
-    RaidTarget innervate_target = 1;
+    UnitReference innervate_target = 1;
     int32 latency_ms = 2;
-    bool prepop_ooc = 3;
     bool assume_bleed_active = 4;
-    bool pre_pop_berserk = 5;
   }
   Options options = 3;
 }
@@ -271,7 +271,7 @@ message FeralTankDruid {
   Rotation rotation = 1;
 
   message Options {
-    RaidTarget innervate_target = 1;
+    UnitReference innervate_target = 1;
 	double starting_rage = 2;
   }
   Options options = 3;
@@ -283,7 +283,7 @@ message RestorationDruid {
   Rotation rotation = 1;
 
   message Options {
-    RaidTarget innervate_target = 1;
+    UnitReference innervate_target = 1;
   }
   Options options = 3;
 }

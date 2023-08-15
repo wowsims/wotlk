@@ -33,7 +33,7 @@ func NewBalanceDruid(character core.Character, options *proto.Player) *BalanceDr
 		Rotation: balanceOptions.Rotation,
 	}
 
-	moonkin.SelfBuffs.InnervateTarget = &proto.RaidTarget{TargetIndex: -1}
+	moonkin.SelfBuffs.InnervateTarget = &proto.UnitReference{}
 	if balanceOptions.Options.InnervateTarget != nil {
 		moonkin.SelfBuffs.InnervateTarget = balanceOptions.Options.InnervateTarget
 	}
@@ -87,7 +87,7 @@ func (moonkin *BalanceDruid) Reset(sim *core.Simulation) {
 
 	if moonkin.Rotation.Type == proto.BalanceDruid_Rotation_Default {
 		moonkin.Rotation.MfUsage = proto.BalanceDruid_Rotation_BeforeLunar
-		moonkin.Rotation.IsUsage = proto.BalanceDruid_Rotation_MaximizeIs
+		moonkin.Rotation.IsUsage = proto.BalanceDruid_Rotation_OptimizeIs
 		moonkin.Rotation.WrathUsage = proto.BalanceDruid_Rotation_RegularWrath
 		moonkin.Rotation.UseBattleRes = false
 		moonkin.Rotation.UseStarfire = true

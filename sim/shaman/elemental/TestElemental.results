@@ -103,13 +103,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestElemental-AllItems-AshtongueTalismanofVision-32491"
- value: {
-  dps: 6380.10891
-  tps: 4039.11708
- }
-}
-dps_results: {
  key: "TestElemental-AllItems-AustereEarthsiegeDiamond"
  value: {
   dps: 6570.72238
@@ -607,6 +600,13 @@ dps_results: {
  value: {
   dps: 6570.72238
   tps: 4141.4038
+ }
+}
+dps_results: {
+ key: "TestElemental-AllItems-PetrifiedScarab-21685"
+ value: {
+  dps: 6380.10891
+  tps: 4039.11708
  }
 }
 dps_results: {

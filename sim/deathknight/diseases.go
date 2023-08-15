@@ -28,7 +28,7 @@ func (dk *Deathknight) dkCountActiveDiseases(target *core.Unit) float64 {
 	if dk.BloodPlagueSpell.Dot(target).IsActive() {
 		count++
 	}
-	if dk.EbonPlagueOrCryptFeverAura[target.Index].IsActive() {
+	if dk.Talents.CryptFever > 0 && dk.EbonPlagueOrCryptFeverAura.Get(target).IsActive() {
 		count++
 	}
 	return float64(count)
@@ -67,6 +67,10 @@ func (dk *Deathknight) registerDiseaseDots() {
 }
 
 func (dk *Deathknight) registerFrostFever() {
+	dk.FrostFeverDebuffAura = dk.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+		return core.FrostFeverAura(target, dk.Talents.ImprovedIcyTouch, dk.Talents.Epidemic)
+	})
+
 	dk.FrostFeverSpell = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 55095},
 		SpellSchool: core.SpellSchoolFrost,
@@ -84,8 +88,8 @@ func (dk *Deathknight) registerFrostFever() {
 					if dk.IcyTalonsAura != nil {
 						dk.IcyTalonsAura.Activate(sim)
 					}
-					if dk.EbonPlagueOrCryptFeverAura[aura.Unit.Index] != nil {
-						dk.EbonPlagueOrCryptFeverAura[aura.Unit.Index].Activate(sim)
+					if dk.Talents.CryptFever > 0 {
+						dk.EbonPlagueOrCryptFeverAura.Get(aura.Unit).Activate(sim)
 					}
 				},
 			},
@@ -109,7 +113,10 @@ func (dk *Deathknight) registerFrostFever() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dot := spell.Dot(target)
 			dot.Apply(sim)
+			dk.FrostFeverDebuffAura.Get(target).Activate(sim)
 		},
+
+		RelatedAuras: []core.AuraArray{dk.FrostFeverDebuffAura},
 	})
 	dk.FrostFeverExtended = make([]int, dk.Env.GetNumTargets())
 }
@@ -133,8 +140,8 @@ func (dk *Deathknight) registerBloodPlague() {
 				Label: "BloodPlague",
 				Tag:   "BloodPlague",
 				OnGain: func(aura *core.Aura, sim *core.Simulation) {
-					if dk.EbonPlagueOrCryptFeverAura[aura.Unit.Index] != nil {
-						dk.EbonPlagueOrCryptFeverAura[aura.Unit.Index].Activate(sim)
+					if dk.Talents.CryptFever > 0 {
+						dk.EbonPlagueOrCryptFeverAura.Get(aura.Unit).Activate(sim)
 					}
 				},
 			},

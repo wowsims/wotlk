@@ -41,7 +41,7 @@ func (druid *Druid) registerEnrageSpell() {
 
 	spell := druid.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
-
+		Flags:    core.SpellFlagAPL,
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
 				Timer:    druid.NewTimer(),

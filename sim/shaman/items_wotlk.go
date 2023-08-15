@@ -73,12 +73,13 @@ var ItemSetFrostWitchRegalia = core.NewItemSet(core.ItemSet{
 func init() {
 	core.NewItemEffect(40708, func(agent core.Agent) {
 		shaman := agent.(ShamanAgent).GetShaman()
-		procAura := shaman.NewTemporaryStatsAura("Totem of the Elemental Plane Proc", core.ActionID{ItemID: 40708}, stats.Stats{stats.SpellHaste: 196, stats.MeleeHaste: 196}, time.Second*10)
+		procAura := shaman.NewTemporaryStatsAura("Totem of the Elemental Plane Proc", core.ActionID{SpellID: 60771}, stats.Stats{stats.SpellHaste: 196, stats.MeleeHaste: 196}, time.Second*10)
 
 		icd := core.Cooldown{
 			Timer:    shaman.NewTimer(),
 			Duration: time.Second * 30,
 		}
+		procAura.Icd = &icd
 		shaman.RegisterAura(core.Aura{
 			Label:    "Totem of the Elemental Plane",
 			Duration: core.NeverExpires,
@@ -105,6 +106,7 @@ func init() {
 			Timer:    shaman.NewTimer(),
 			Duration: time.Second * 6,
 		}
+		procAura.Icd = &icd
 		shaman.RegisterAura(core.Aura{
 			Label:    "Totem of Electrifying Wind",
 			Duration: core.NeverExpires,
