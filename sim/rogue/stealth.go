@@ -10,16 +10,6 @@ func (rogue *Rogue) registerStealthAura() {
 		Label:    "Stealth",
 		ActionID: core.ActionID{SpellID: 1787},
 		Duration: core.NeverExpires,
-		/* OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			// Do not break stealth on certain spell casts
-			for _, nobreak := range nonbreakingSpells {
-				if nobreak.ActionID == spell.ActionID {
-					return
-				}
-			}
-
-			aura.Deactivate(sim)
-		}, */
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			// Pause auto attacks
 			rogue.AutoAttacks.CancelAutoSwing(sim)

@@ -8,7 +8,6 @@ import (
 
 var OverkillActionID = core.ActionID{SpellID: 58426}
 
-// TODO: Infinite length while Stealth aura active
 func (rogue *Rogue) registerOverkill() {
 	if !rogue.Talents.Overkill {
 		return

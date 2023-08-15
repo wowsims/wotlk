@@ -11,7 +11,6 @@ func getMasterOfSubtletySpellID(talentPoints int32) int32 {
 	return []int32{0, 31221, 31222, 31223}[talentPoints]
 }
 
-// TODO: Infinite duration while Stealth aura active
 func (rogue *Rogue) registerMasterOfSubtletyCD() {
 	var MasterOfSubtletyID = core.ActionID{SpellID: getMasterOfSubtletySpellID(rogue.Talents.MasterOfSubtlety)}
 
