@@ -24,10 +24,8 @@ func (rogue *Rogue) registerShadowDanceCD() {
 		Label:    "Shadow Dance",
 		ActionID: actionID,
 		Duration: duration,
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			// Can now cast opening abilities outside of stealth
-			// Covered in rogue.go by IsStealthed()
-		},
+		// Can now cast opening abilities outside of stealth
+		// Covered in rogue.go by IsStealthed()
 	})
 
 	rogue.ShadowDance = rogue.RegisterSpell(core.SpellConfig{
