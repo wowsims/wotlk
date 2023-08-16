@@ -137,6 +137,7 @@ type Unit struct {
 	waitingForEnergy float64
 	waitingForMana   float64
 	waitStartTime    time.Duration
+	waitUntilTime    time.Duration
 
 	// Cached mana return values per tick.
 	manaTickWhileCasting    float64
@@ -451,6 +452,8 @@ func (unit *Unit) reset(sim *Simulation, agent Agent) {
 	if unit.Rotation != nil {
 		unit.Rotation.reset(sim)
 	}
+
+	unit.waitUntilTime = 0
 }
 
 func (unit *Unit) startPull(sim *Simulation) {
