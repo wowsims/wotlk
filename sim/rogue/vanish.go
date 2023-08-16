@@ -23,6 +23,8 @@ func (rogue *Rogue) registerVanishSpell() {
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// Pause auto attacks
+			rogue.AutoAttacks.CancelAutoSwing(sim)
 			// Apply stealth
 			rogue.StealthAura.Activate(sim)
 

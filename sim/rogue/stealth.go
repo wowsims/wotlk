@@ -11,8 +11,6 @@ func (rogue *Rogue) registerStealthAura() {
 		ActionID: core.ActionID{SpellID: 1787},
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			// Pause auto attacks
-			rogue.AutoAttacks.CancelAutoSwing(sim)
 			// Stealth triggered auras
 			if rogue.Talents.Overkill {
 				rogue.OverkillAura.Activate(sim)
@@ -22,7 +20,6 @@ func (rogue *Rogue) registerStealthAura() {
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			rogue.AutoAttacks.EnableAutoSwing(sim)
 			if rogue.Talents.Overkill {
 				rogue.OverkillAura.Deactivate(sim)
 				rogue.OverkillAura.Activate(sim)

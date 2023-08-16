@@ -201,6 +201,7 @@ func (rogue *Rogue) Reset(sim *core.Simulation) {
 	if !rogue.IsUsingAPL {
 		// Stealth triggered effects (Overkill and Master of Subtlety) pre-pull activation
 		if rogue.Rotation.OpenWithGarrote || rogue.Rotation.OpenWithPremeditation {
+			rogue.AutoAttacks.CancelAutoSwing(sim)
 			rogue.StealthAura.Activate(sim)
 		} else {
 			if rogue.Options.StartingOverkillDuration > 0 {
@@ -294,6 +295,7 @@ This must be added to all abilities that cause Stealth to fade
 func (rogue *Rogue) BreakStealth(sim *core.Simulation) {
 	if rogue.StealthAura.IsActive() {
 		rogue.StealthAura.Deactivate(sim)
+		rogue.AutoAttacks.EnableAutoSwing(sim)
 	}
 }
 
