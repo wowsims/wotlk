@@ -11,8 +11,11 @@ import (
 // Then we can properly incur Rebirth cost through additional Moonkin form spell cast
 func (druid *Druid) registerRebirthSpell() {
 	baseCost := 0.68
+	castTime := time.Second * 2
 	if druid.InForm(Moonkin) {
 		baseCost += 0.13
+		baseCost *= 1 - 0.1*float64(druid.Talents.NaturalShapeshifter)
+		castTime = time.Second*3 + time.Millisecond*500
 	}
 
 	druid.Rebirth = druid.RegisterSpell(core.SpellConfig{
@@ -20,13 +23,12 @@ func (druid *Druid) registerRebirthSpell() {
 		Flags:    SpellFlagOmenTrigger | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
-			BaseCost:   baseCost,
-			Multiplier: 1 - 0.1*float64(druid.Talents.NaturalShapeshifter),
+			BaseCost: baseCost,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:      core.GCDDefault,
-				CastTime: time.Second*3 + time.Millisecond*500,
+				CastTime: castTime,
 			},
 			CD: core.Cooldown{
 				Timer:    druid.NewTimer(),
