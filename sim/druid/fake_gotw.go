@@ -10,7 +10,7 @@ import (
 func (druid *Druid) registerFakeGotw() {
 	baseCost := core.TernaryFloat64(druid.HasMinorGlyph(proto.DruidMinorGlyph_GlyphOfTheWild), 0.32, 0.64)
 
-	druid.GiftOfTheWild = druid.RegisterSpell(core.SpellConfig{
+	druid.GiftOfTheWild = druid.RegisterSpell(Humanoid|Moonkin|Tree, core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 48470},
 		Flags:    SpellFlagOmenTrigger | core.SpellFlagHelpful | core.SpellFlagAPL,
 
@@ -22,9 +22,6 @@ func (druid *Druid) registerFakeGotw() {
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
 			},
-		},
-		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return druid.InForm(Humanoid | Moonkin | Tree)
 		},
 	})
 }

@@ -137,7 +137,7 @@ func (druid *Druid) registerNaturesSwiftnessCD() {
 	actionID := core.ActionID{SpellID: 17116}
 
 	var nsAura *core.Aura
-	nsSpell := druid.RegisterSpell(core.SpellConfig{
+	nsSpell := druid.RegisterSpell(Humanoid|Moonkin|Tree, core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete,
 		Cast: core.CastConfig{
@@ -172,7 +172,7 @@ func (druid *Druid) registerNaturesSwiftnessCD() {
 			}
 		},
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if spell != druid.Wrath && spell != druid.Starfire {
+			if !druid.Wrath.IsEqual(spell) && !druid.Starfire.IsEqual(spell) {
 				return
 			}
 
@@ -184,7 +184,7 @@ func (druid *Druid) registerNaturesSwiftnessCD() {
 	})
 
 	druid.AddMajorCooldown(core.MajorCooldown{
-		Spell: nsSpell,
+		Spell: nsSpell.Spell,
 		Type:  core.CooldownTypeDPS,
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 			// Don't use NS unless we're casting a full-length starfire or wrath.
@@ -217,7 +217,7 @@ func (druid *Druid) applyEarthAndMoon() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if result.Landed() && (spell == druid.Starfire || spell == druid.Wrath) {
+			if result.Landed() && (druid.Starfire.IsEqual(spell) || druid.Wrath.IsEqual(spell)) {
 				eamAuras.Get(result.Target).Activate(sim)
 			}
 		},
@@ -248,7 +248,7 @@ func (druid *Druid) applyPrimalFury() {
 					}
 				}
 			} else if druid.InForm(Cat) {
-				if druid.IsMangle(spell) || spell == druid.Shred || spell == druid.Rake {
+				if druid.IsMangle(spell) || druid.Shred.IsEqual(spell) || druid.Rake.IsEqual(spell) {
 					if result.Outcome.Matches(core.OutcomeCrit) {
 						if sim.Proc(procChance, "Primal Fury") {
 							druid.AddComboPoints(sim, 1, cpMetrics)
@@ -308,13 +308,13 @@ func (druid *Druid) applyOmenOfClarity() {
 		})
 	}
 
-	var affectedSpells []*core.Spell
+	var affectedSpells []*DruidSpell
 	druid.ClearcastingAura = druid.RegisterAura(core.Aura{
 		Label:    "Clearcasting",
 		ActionID: core.ActionID{SpellID: 16870},
 		Duration: time.Second * 15,
 		OnInit: func(aura *core.Aura, sim *core.Simulation) {
-			affectedSpells = core.FilterSlice([]*core.Spell{
+			affectedSpells = core.FilterSlice([]*DruidSpell{
 				// Balance
 				druid.Hurricane,
 				druid.InsectSwarm,
@@ -336,7 +336,7 @@ func (druid *Druid) applyOmenOfClarity() {
 				druid.Shred,
 				druid.SwipeBear,
 				druid.SwipeCat,
-			}, func(spell *core.Spell) bool { return spell != nil })
+			}, func(spell *DruidSpell) bool { return spell != nil })
 		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			for _, spell := range affectedSpells {
@@ -356,7 +356,7 @@ func (druid *Druid) applyOmenOfClarity() {
 			}
 
 			for _, as := range affectedSpells {
-				if as == spell {
+				if as.IsEqual(spell) {
 					aura.Deactivate(sim)
 					break
 				}
@@ -385,7 +385,7 @@ func (druid *Druid) applyOmenOfClarity() {
 		},
 		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			// https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1182017571
-			if spell == druid.Hurricane {
+			if druid.Hurricane.IsEqual(spell) {
 				curCastTickSpeed := spell.CurCast.ChannelTime.Seconds() / 10
 				hurricaneCoeff := 1.0 - (7.0 / 9.0)
 				spellCoeff := hurricaneCoeff * curCastTickSpeed
@@ -413,9 +413,9 @@ func (druid *Druid) applyOmenOfClarity() {
 				}
 
 				chanceToProc := (castTime / 60) * 3.5
-				if spell == druid.Typhoon { // Add Typhoon
+				if druid.Typhoon.IsEqual(spell) { // Add Typhoon
 					chanceToProc *= 0.25
-				} else if spell == druid.Moonfire { // Add Moonfire
+				} else if druid.Moonfire.IsEqual(spell) { // Add Moonfire
 					chanceToProc *= 0.076
 				} else {
 					chanceToProc *= 0.666
@@ -426,10 +426,10 @@ func (druid *Druid) applyOmenOfClarity() {
 			}
 		},
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if spell == druid.FaerieFire && druid.InForm(Cat|Bear) && hasOocGlyph {
+			if druid.FaerieFire.IsEqual(spell) && druid.InForm(Cat|Bear) && hasOocGlyph {
 				druid.ProcOoc(sim)
 			}
-			if spell == druid.GiftOfTheWild {
+			if druid.GiftOfTheWild.IsEqual(spell) {
 				// Based on ingame testing by druid discord, subject to change or incorrectness
 				chanceToProc := 1.0 - math.Pow(1.0-0.0875, float64(druid.RaidBuffTargets))
 				if sim.RandomFloat("Clearcasting") <= chanceToProc {
@@ -474,7 +474,7 @@ func (druid *Druid) applyEclipse() {
 			if !result.Outcome.Matches(core.OutcomeCrit) {
 				return
 			}
-			if spell != druid.Starfire {
+			if !druid.Starfire.IsEqual(spell) {
 				return
 			}
 			if !druid.SolarICD.Timer.IsReady(sim) {
@@ -516,7 +516,7 @@ func (druid *Druid) applyEclipse() {
 			if !result.Outcome.Matches(core.OutcomeCrit) {
 				return
 			}
-			if spell != druid.Wrath {
+			if !druid.Wrath.IsEqual(spell) {
 				return
 			}
 			if !druid.LunarICD.Timer.IsReady(sim) {
@@ -681,7 +681,7 @@ func (druid *Druid) applyInfectedWounds() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if result.Landed() && (spell == druid.Shred || spell == druid.Maul || spell == druid.MangleCat || spell == druid.MangleBear) {
+			if result.Landed() && (druid.Shred.IsEqual(spell) || druid.Maul.IsEqual(spell) || druid.MangleCat.IsEqual(spell) || druid.MangleBear.IsEqual(spell)) {
 				iwAuras.Get(result.Target).Activate(sim)
 			}
 		},

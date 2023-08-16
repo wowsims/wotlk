@@ -142,7 +142,7 @@ func (cat *FeralDruid) checkReplaceMaul(sim *core.Simulation) *core.Spell {
 	}
 
 	if cat.CurrentRage() >= maulRageThresh {
-		return cat.Maul
+		return cat.Maul.Spell
 	} else {
 		return nil
 	}

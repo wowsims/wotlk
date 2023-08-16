@@ -29,7 +29,7 @@ func (druid *Druid) registerFrenziedRegenerationCD() {
 		},
 	})
 
-	druid.FrenziedRegeneration = druid.RegisterSpell(core.SpellConfig{
+	druid.FrenziedRegeneration = druid.RegisterSpell(Bear, core.SpellConfig{
 		ActionID: actionID,
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -40,9 +40,6 @@ func (druid *Druid) registerFrenziedRegenerationCD() {
 				Duration: cd,
 			},
 			IgnoreHaste: true,
-		},
-		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return druid.InForm(Bear)
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
@@ -64,7 +61,7 @@ func (druid *Druid) registerFrenziedRegenerationCD() {
 	})
 
 	druid.AddMajorCooldown(core.MajorCooldown{
-		Spell: druid.FrenziedRegeneration,
+		Spell: druid.FrenziedRegeneration.Spell,
 		Type:  core.CooldownTypeSurvival,
 	})
 }

@@ -52,7 +52,7 @@ type BalanceDruid struct {
 
 	Rotation           *proto.BalanceDruid_Rotation
 	CooldownsAvailable []*core.MajorCooldown
-	LastCast           *core.Spell
+	LastCast           *druid.DruidSpell
 
 	// CDS
 	hyperSpeedMCD      *core.MajorCooldown

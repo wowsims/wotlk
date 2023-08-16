@@ -12,13 +12,15 @@ import (
 func (druid *Druid) registerRebirthSpell() {
 	baseCost := 0.68
 	castTime := time.Second * 2
+	forms := Humanoid | Tree
 	if druid.InForm(Moonkin) {
+		forms |= Moonkin
 		baseCost += 0.13
 		baseCost *= 1 - 0.1*float64(druid.Talents.NaturalShapeshifter)
 		castTime = time.Second*3 + time.Millisecond*500
 	}
 
-	druid.Rebirth = druid.RegisterSpell(core.SpellConfig{
+	druid.Rebirth = druid.RegisterSpell(forms, core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 48477},
 		Flags:    SpellFlagOmenTrigger | core.SpellFlagAPL,
 

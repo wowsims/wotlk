@@ -40,7 +40,7 @@ func (druid *Druid) registerSavageRoarSpell() {
 		},
 	})
 
-	srSpell := druid.RegisterSpell(core.SpellConfig{
+	srSpell := druid.RegisterSpell(Cat, core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagAPL,
 		EnergyCost: core.EnergyCostOptions{
@@ -53,7 +53,7 @@ func (druid *Druid) registerSavageRoarSpell() {
 			IgnoreHaste: true,
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return druid.InForm(Cat) && druid.ComboPoints() > 0
+			return druid.ComboPoints() > 0
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {

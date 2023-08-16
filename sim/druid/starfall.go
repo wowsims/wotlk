@@ -16,7 +16,7 @@ func (druid *Druid) registerStarfallSpell() {
 	numberOfTicks := core.TernaryInt32(druid.Env.GetNumTargets() > 1, 20, 10)
 	tickLength := core.TernaryDuration(druid.Env.GetNumTargets() > 1, time.Millisecond*500, time.Millisecond*1000)
 
-	druid.Starfall = druid.RegisterSpell(core.SpellConfig{
+	druid.Starfall = druid.RegisterSpell(Humanoid|Moonkin, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 53201},
 		SpellSchool: core.SpellSchoolArcane,
 		ProcMask:    core.ProcMaskSpellDamage,
@@ -63,7 +63,7 @@ func (druid *Druid) registerStarfallSpell() {
 		},
 	})
 
-	druid.StarfallSplash = druid.RegisterSpell(core.SpellConfig{
+	druid.StarfallSplash = druid.RegisterSpell(Any, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 53190},
 		SpellSchool: core.SpellSchoolArcane,
 		ProcMask:    core.ProcMaskSpellDamage,

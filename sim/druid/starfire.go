@@ -17,7 +17,7 @@ func (druid *Druid) registerStarfireSpell() {
 
 	hasGlyph := druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfStarfire)
 
-	druid.Starfire = druid.RegisterSpell(core.SpellConfig{
+	druid.Starfire = druid.RegisterSpell(Humanoid|Moonkin, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48465},
 		SpellSchool: core.SpellSchoolArcane,
 		ProcMask:    core.ProcMaskSpellDamage,

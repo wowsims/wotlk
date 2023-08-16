@@ -19,7 +19,7 @@ func (druid *Druid) registerRipSpell() {
 		comboPointCoeff += 21
 	}
 
-	druid.Rip = druid.RegisterSpell(core.SpellConfig{
+	druid.Rip = druid.RegisterSpell(Cat, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 49800},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
@@ -37,7 +37,7 @@ func (druid *Druid) registerRipSpell() {
 			IgnoreHaste: true,
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return druid.InForm(Cat) && druid.ComboPoints() > 0
+			return druid.ComboPoints() > 0
 		},
 
 		BonusCritRating:  core.TernaryFloat64(druid.HasSetBonus(ItemSetMalfurionsBattlegear, 4), 5*core.CritRatingPerCritChance, 0.0),

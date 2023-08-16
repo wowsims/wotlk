@@ -16,7 +16,7 @@ func (druid *Druid) registerMangleBearSpell() {
 	durReduction := (0.5) * float64(druid.Talents.ImprovedMangle)
 	glyphBonus := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMangle), 1.1, 1.0)
 
-	druid.MangleBear = druid.RegisterSpell(core.SpellConfig{
+	druid.MangleBear = druid.RegisterSpell(Bear, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48564},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
@@ -35,9 +35,6 @@ func (druid *Druid) registerMangleBearSpell() {
 				Timer:    druid.NewTimer(),
 				Duration: time.Duration(float64(time.Second) * (6 - durReduction)),
 			},
-		},
-		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return druid.InForm(Bear)
 		},
 
 		DamageMultiplier: (1 + 0.1*float64(druid.Talents.SavageFury)) * 1.15 * glyphBonus,
@@ -74,7 +71,7 @@ func (druid *Druid) registerMangleCatSpell() {
 	mangleAuras := druid.NewEnemyAuraArray(core.MangleAura)
 	glyphBonus := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMangle), 1.1, 1.0)
 
-	druid.MangleCat = druid.RegisterSpell(core.SpellConfig{
+	druid.MangleCat = druid.RegisterSpell(Cat, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48566},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
@@ -89,9 +86,6 @@ func (druid *Druid) registerMangleCatSpell() {
 				GCD: time.Second,
 			},
 			IgnoreHaste: true,
-		},
-		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return druid.InForm(Cat)
 		},
 
 		DamageMultiplier: (1 + 0.1*float64(druid.Talents.SavageFury)) * 2.0 * glyphBonus,
@@ -122,9 +116,9 @@ func (druid *Druid) CurrentMangleCatCost() float64 {
 }
 
 func (druid *Druid) IsMangle(spell *core.Spell) bool {
-	if druid.MangleBear != nil && druid.MangleBear == spell {
+	if druid.MangleBear != nil && druid.MangleBear.IsEqual(spell) {
 		return true
-	} else if druid.MangleCat != nil && druid.MangleCat == spell {
+	} else if druid.MangleCat != nil && druid.MangleCat.IsEqual(spell) {
 		return true
 	}
 	return false

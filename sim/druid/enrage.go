@@ -39,7 +39,7 @@ func (druid *Druid) registerEnrageSpell() {
 		},
 	})
 
-	druid.Enrage = druid.RegisterSpell(core.SpellConfig{
+	druid.Enrage = druid.RegisterSpell(Bear, core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagAPL,
 
@@ -49,9 +49,6 @@ func (druid *Druid) registerEnrageSpell() {
 				Duration: time.Minute,
 			},
 			IgnoreHaste: true,
-		},
-		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return druid.InForm(Bear)
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
@@ -72,7 +69,7 @@ func (druid *Druid) registerEnrageSpell() {
 	})
 
 	druid.AddMajorCooldown(core.MajorCooldown{
-		Spell: druid.Enrage,
+		Spell: druid.Enrage.Spell,
 		Type:  core.CooldownTypeDPS,
 	})
 }

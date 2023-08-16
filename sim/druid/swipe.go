@@ -18,7 +18,7 @@ func (druid *Druid) registerSwipeBearSpell() {
 	thdm := core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartHarness, 4), 1.15, 1.0)
 	fidm := 1.0 + 0.1*float64(druid.Talents.FeralInstinct)
 
-	druid.SwipeBear = druid.RegisterSpell(core.SpellConfig{
+	druid.SwipeBear = druid.RegisterSpell(Bear, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48562},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
@@ -32,9 +32,6 @@ func (druid *Druid) registerSwipeBearSpell() {
 				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true,
-		},
-		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return druid.InForm(Bear)
 		},
 
 		DamageMultiplier: lbdm * thdm * fidm,
@@ -55,7 +52,7 @@ func (druid *Druid) registerSwipeCatSpell() {
 	weaponMulti := 2.5
 	fidm := 1.0 + 0.1*float64(druid.Talents.FeralInstinct)
 
-	druid.SwipeCat = druid.RegisterSpell(core.SpellConfig{
+	druid.SwipeCat = druid.RegisterSpell(Cat, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 62078},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
@@ -69,9 +66,6 @@ func (druid *Druid) registerSwipeCatSpell() {
 				GCD: time.Second,
 			},
 			IgnoreHaste: true,
-		},
-		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return druid.InForm(Cat)
 		},
 
 		DamageMultiplier: fidm * weaponMulti,
@@ -93,5 +87,5 @@ func (druid *Druid) CurrentSwipeCatCost() float64 {
 }
 
 func (druid *Druid) IsSwipeSpell(spell *core.Spell) bool {
-	return spell == druid.SwipeBear || spell == druid.SwipeCat
+	return druid.SwipeBear.IsEqual(spell) || druid.SwipeCat.IsEqual(spell)
 }

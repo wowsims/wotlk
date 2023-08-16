@@ -22,7 +22,7 @@ func (druid *Druid) registerLacerateSpell() {
 		core.TernaryFloat64(druid.HasSetBonus(ItemSetLasherweaveBattlegear, 2), 1.2, 1) *
 		core.TernaryFloat64(druid.HasSetBonus(ItemSetMalfurionsBattlegear, 2), 1.05, 1)
 
-	druid.Lacerate = druid.RegisterSpell(core.SpellConfig{
+	druid.Lacerate = druid.RegisterSpell(Bear, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48568},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,

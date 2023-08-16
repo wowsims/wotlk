@@ -14,14 +14,14 @@ func (druid *Druid) registerBerserkCD() {
 
 	actionId := core.ActionID{SpellID: 50334}
 	glyphBonus := core.TernaryDuration(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfBerserk), time.Second*5.0, 0.0)
-	var affectedSpells []*core.Spell
+	var affectedSpells []*DruidSpell
 
 	druid.BerserkAura = druid.RegisterAura(core.Aura{
 		Label:    "Berserk",
 		ActionID: actionId,
 		Duration: (time.Second * 15) + glyphBonus,
 		OnInit: func(aura *core.Aura, sim *core.Simulation) {
-			affectedSpells = core.FilterSlice([]*core.Spell{
+			affectedSpells = core.FilterSlice([]*DruidSpell{
 				druid.MangleCat,
 				druid.FerociousBite,
 				druid.Rake,
@@ -29,7 +29,7 @@ func (druid *Druid) registerBerserkCD() {
 				druid.SavageRoar,
 				druid.SwipeCat,
 				druid.Shred,
-			}, func(spell *core.Spell) bool { return spell != nil })
+			}, func(spell *DruidSpell) bool { return spell != nil })
 		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			for _, spell := range affectedSpells {
@@ -43,7 +43,7 @@ func (druid *Druid) registerBerserkCD() {
 		},
 	})
 
-	druid.Berserk = druid.RegisterSpell(core.SpellConfig{
+	druid.Berserk = druid.RegisterSpell(Cat|Bear, core.SpellConfig{
 		ActionID: actionId,
 		Flags:    core.SpellFlagAPL,
 
@@ -63,7 +63,7 @@ func (druid *Druid) registerBerserkCD() {
 	})
 
 	druid.AddMajorCooldown(core.MajorCooldown{
-		Spell: druid.Berserk,
+		Spell: druid.Berserk.Spell,
 		Type:  core.CooldownTypeDPS,
 	})
 }

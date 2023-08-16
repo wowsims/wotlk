@@ -23,7 +23,7 @@ func (druid *Druid) registerMoonfireSpell() {
 		0.01*float64(druid.Talents.Genesis) +
 		core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMoonfire), 0.75, 0)
 
-	druid.Moonfire = druid.RegisterSpell(core.SpellConfig{
+	druid.Moonfire = druid.RegisterSpell(Humanoid|Moonkin, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48463},
 		SpellSchool: core.SpellSchoolArcane,
 		ProcMask:    core.ProcMaskSpellDamage,

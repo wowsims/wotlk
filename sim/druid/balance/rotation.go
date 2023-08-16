@@ -6,6 +6,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
+	"github.com/wowsims/wotlk/sim/druid"
 )
 
 func (moonkin *BalanceDruid) OnGCDReady(sim *core.Simulation) {
@@ -20,7 +21,7 @@ func (moonkin *BalanceDruid) tryUseGCD(sim *core.Simulation) {
 	moonkin.LastCast = spell
 }
 
-func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*core.Spell, *core.Unit) {
+func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*druid.DruidSpell, *core.Unit) {
 	moonkin.CurrentTarget = sim.Environment.GetTargetUnit(0)
 	rotation := moonkin.Rotation
 	target := moonkin.CurrentTarget
