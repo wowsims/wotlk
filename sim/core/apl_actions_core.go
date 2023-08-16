@@ -217,11 +217,18 @@ func (action *APLActionWait) IsReady(sim *Simulation) bool {
 
 func (action *APLActionWait) Execute(sim *Simulation) {
 	waitUntilTime := sim.CurrentTime + action.duration.GetDuration(sim)
+	action.unit.waitUntilTime = waitUntilTime
+
 	if waitUntilTime > action.unit.GCD.ReadyAt() {
 		action.unit.WaitUntil(sim, waitUntilTime)
 		return
 	}
-	action.unit.waitUntilTime = waitUntilTime
+	pa := &PendingAction{
+		Priority:     ActionPriorityLow,
+		OnAction:     action.unit.gcdAction.OnAction,
+		NextActionAt: waitUntilTime,
+	}
+	sim.AddPendingAction(pa)
 }
 
 func (action *APLActionWait) String() string {
