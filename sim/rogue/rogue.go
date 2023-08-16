@@ -198,20 +198,22 @@ func (rogue *Rogue) Reset(sim *core.Simulation) {
 	}
 	rogue.allMCDsDisabled = true
 
-	// Stealth triggered effects (Overkill and Master of Subtlety) pre-pull activation
-	if rogue.Rotation.OpenWithGarrote || rogue.Rotation.OpenWithPremeditation {
-		rogue.StealthAura.Activate(sim)
-	} else {
-		if rogue.Options.StartingOverkillDuration > 0 {
-			if rogue.Talents.Overkill {
-				duration := time.Second * time.Duration(math.Min(float64(rogue.Options.StartingOverkillDuration), 20))
-				rogue.OverkillAura.Activate(sim)
-				rogue.OverkillAura.UpdateExpires(duration)
-			}
-			if rogue.Talents.MasterOfSubtlety > 0 {
-				duration := time.Second * time.Duration(math.Min(float64(rogue.Options.StartingOverkillDuration), 6))
-				rogue.MasterOfSubtletyAura.Activate(sim)
-				rogue.MasterOfSubtletyAura.UpdateExpires(duration)
+	if !rogue.IsUsingAPL {
+		// Stealth triggered effects (Overkill and Master of Subtlety) pre-pull activation
+		if rogue.Rotation.OpenWithGarrote || rogue.Rotation.OpenWithPremeditation {
+			rogue.StealthAura.Activate(sim)
+		} else {
+			if rogue.Options.StartingOverkillDuration > 0 {
+				if rogue.Talents.Overkill {
+					duration := time.Second * time.Duration(math.Min(float64(rogue.Options.StartingOverkillDuration), 20))
+					rogue.OverkillAura.Activate(sim)
+					rogue.OverkillAura.UpdateExpires(duration)
+				}
+				if rogue.Talents.MasterOfSubtlety > 0 {
+					duration := time.Second * time.Duration(math.Min(float64(rogue.Options.StartingOverkillDuration), 6))
+					rogue.MasterOfSubtletyAura.Activate(sim)
+					rogue.MasterOfSubtletyAura.UpdateExpires(duration)
+				}
 			}
 		}
 	}
