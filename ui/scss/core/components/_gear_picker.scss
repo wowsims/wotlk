@@ -23,7 +23,7 @@
       @include wowhead-background-icon;
       width: 4rem;
       height: 4rem;
-      border: 1px solid $border-color;
+      border: $border-default;
     }
   }
 
@@ -210,52 +210,62 @@
 	align-items: center;
 }
 
+// TODO: Move all of these to a shared file, as they're used in other places too
 .selector-modal-list-item {
-  display: flex;
-  align-items: center;
-  padding: 2px;
-	text-shadow: 2px 2px 3px black;
 	background-color: #111218;
-}
-.selector-modal-list-item.hidden {
-	display: none;
-}
-.selector-modal-list-item.odd {
-  background: #222;
-}
-.selector-modal-list-item:hover {
-  background: #333;
-}
 
-.selector-modal-list-item.active .selector-modal-list-item-icon {
-  border: 3px solid lawngreen;
-}
+  &:nth-child(2n) {
+    background: $table-row-even-bg;
+  }
 
-.selector-modal-list-item-icon {
-  @include wowhead-background-icon;
-  width: 50px;
-  height: 50px;
-  border: 2px solid #888;
-}
+  &:nth-child(2n+1) {
+    background: $table-row-odd-bg;
+  }
 
-.selector-modal-list-item-name {
-  font-size: 18px;
-  cursor: pointer;
-  margin-left: 10px;
-	letter-spacing: normal;
+  &:hover {
+    background: #333;
+  }
+
+  &.active {
+    .selector-modal-list-item-icon {
+      outline: 2px solid $success;
+    }
+  }
+
+  .selector-modal-list-item-link {
+    padding: .5rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .selector-modal-list-item-icon {
+    @include wowhead-background-icon;
+    width: 3rem;
+    height: 3rem;
+    border: $border-default;
+  }
+  
+  .selector-modal-list-item-name {
+    font-size: 1.125rem;
+    margin-left: 1rem;
+    letter-spacing: normal;
+    font-weight: normal;
+    cursor: pointer;
+  }
 }
 
 .selector-modal-list-item-source-container {
-	margin: 0 10px;
+	margin-left: 1rem;
 	width: 300px;
 	font-size: 11px;
 }
 
 .selector-modal-list-item-favorite {
-	margin: 0 10px;
+	margin-left: 1rem;
 	font-size: 22px;
 	color: yellow;
 }
+
 .selector-modal-list-item-favorite:hover {
 	text-shadow:
 		0 0 10px white,
@@ -278,7 +288,7 @@
 
 @include media-breakpoint-down(lg) {
   .item-picker-icon {
-    width: 48px;
-    height: 48px;
+    width: 3rem;
+    height: 3rem;
   }
 }

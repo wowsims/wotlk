@@ -11,7 +11,7 @@
     min-width: 2.5rem;
     width: 2.5rem;
     height: 2.5rem;
-    border: 1px solid $border-color;
+    border: $border-default;
     transition: border-color .15s ease-in-out;
     background-size: cover;
     filter: grayscale(1);

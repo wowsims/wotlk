@@ -139,6 +139,7 @@ export class HunterPetTalentsPicker extends Component {
 			talentsContainer.appendChild(pickerContainer);
 
 			const picker = new TalentsPicker(pickerContainer, player, {
+				klass: player.getClass(),
 				trees: talentsConfig,
 				changedEvent: (player: Player<Spec.SpecHunter>) => player.specOptionsChangeEmitter,
 				getValue: (player: Player<Spec.SpecHunter>) => protoToTalentString(this.getPetTalentsFromPlayer(), talentsConfig),
@@ -178,7 +179,7 @@ export class HunterPetTalentsPicker extends Component {
 				data: protoToTalentString(defaultTalents[i], talentsConfig),
 			});
 			savedTalentsManager.addSavedData({
-				name: 'BM',
+				name: 'Beast Mastery',
 				isPreset: true,
 				data: protoToTalentString(defaultBMTalents[i], talentsConfig),
 			});

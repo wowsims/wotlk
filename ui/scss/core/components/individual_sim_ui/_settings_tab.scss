@@ -7,8 +7,6 @@
 .settings-tab {
   .tab-pane-content-container {
     .tab-panel-left {
-      flex: 4;
-
       .tab-panel-col {
         flex: 2;
 
@@ -16,10 +14,6 @@
           flex: 3;
         }
       }
-    }
-
-    .tab-panel-right {
-      flex: 1;
     }
   }
 

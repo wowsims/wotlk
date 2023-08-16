@@ -1,58 +1,109 @@
-.talents-picker-root {
-  display: flex;
-  flex-wrap: wrap;
-  overflow-y: auto;
-  min-width: 33vh;
-}
+$talent-tree-header-padding-x: $block-spacer;
+$talent-tree-header-padding-y: $block-spacer;
+$talent-tree-header-icon-size: 2rem;
+$talent-tree-header-size: calc($talent-tree-header-icon-size + 2 * $talent-tree-header-padding-y);
 
-.talent-tree-picker-root {
-  border-radius: 6px;
-  margin-right: $block-spacer;
-  flex: 1;
-}
-
-.talent-tree-header {
-  padding: 6px;
-  text-align: center;
-  color: white;
-  background: #444;
-}
-
-.talent-tree-title {
-  display: inline-block;
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.talent-tree-reset {
-  float: right;
-  color: red;
-  font-size: 20px !important;
-  cursor: pointer;
-}
-.talents-picker-root.frozen .talent-tree-reset {
-	display: none;
-}
-
-.talent-tree-main {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  // grid-template-rows: repeat(9, 1fr); // Set in js
-  // height: 72vh; // Set in js
-  // width: 32vh; // Set in js
-  background-size: 100% 100%;
-  border-radius: 4px;
-}
+$talent-icon-size: 2.5rem;
 
 $talent-partial-color: #40BF40;
 $talent-full-color: #ffd100;
 
+.talents-picker-root {
+  width: unset;
+  display: flex;
+  align-items: flex-start;
+  flex: 1;
+
+  #talents-carousel {
+    flex: 1;
+    
+    .carousel-inner {
+      display: flex;
+      overflow: unset;
+      transform: unset;
+    }
+
+    .carousel-item {
+      flex-grow: 1;
+      flex-basis: 33.3%;
+      display: block;
+      margin-right: unset;
+      float: unset;
+      backface-visibility: unset;
+    }
+  }
+}
+
+.talent-tree-picker-root {
+  position: relative;
+  border: $border-default;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
+  &:not(:first-child) {
+    margin-left: -1px;
+  }
+
+  .talent-tree-header {
+    padding: $talent-tree-header-padding-y $talent-tree-header-padding-x;
+    display: flex;
+    align-items: center;
+    color: white;
+    background: black;
+    font-size: 1rem;
+    z-index: 1;
+
+    .talent-tree-icon {
+      width: $talent-tree-header-icon-size;
+      height: $talent-tree-header-icon-size;
+      margin-right: $talent-tree-header-padding-x;
+      border-radius: 100%;
+    }
+
+    .talent-tree-title {
+      margin-right: $talent-tree-header-padding-x;
+      flex: 1;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .talent-tree-points {
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .talent-tree-reset {
+      line-height: 1;
+      margin-right: calc(-1 * $btn-padding-x);
+    }
+  }
+
+  .talent-tree-background {
+    position: absolute;
+    inset: $talent-tree-header-size 0 0 0;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    box-shadow: inset 0 0 $talent-tree-header-size 1rem #000;
+    z-index: 0;
+  }
+
+  .talent-tree-main {
+    display: grid;
+    margin: $block-spacer auto;
+    z-index: 1;
+  }
+}
+
 .talent-picker-root {
   @include wowhead-background-icon;
+  width: $talent-icon-size;
+  height: $talent-icon-size;
+  margin: calc($talent-icon-size / 5);
   border: 1px solid $talent-partial-color;
   border-radius: 4px;
-  margin: 15%;
 }
+
 .talent-picker-root[data-points="0"]:not(.talent-picker-can-add) {
   filter: grayscale(100%);
 }
@@ -68,18 +119,63 @@ $talent-full-color: #ffd100;
   bottom: -8px;
   right: -8px;
   padding: 0px 2px;
+  border-radius: 2px;
   font-size: 13px;
 }
+
 .talent-picker-root[data-points="0"]:not(.talent-picker-can-add) .talent-picker-points {
   filter: grayscale(100%);
 }
+
 .talent-picker-root.talent-full .talent-picker-points {
   color: $talent-full-color;
 }
+
 .talents-picker-root.talents-full .talent-picker-root[data-points="0"] .talent-picker-points {
   display: none;
 }
 
 .icon-input:not(.active), .icon-input-improved:not(.active), .icon-input-counter:not(.active) {
   border-color: dimgray;
+}
+
+@include media-breakpoint-up(xl) {
+  .talents-picker-root {
+    margin-right: $block-spacer;
+  }
+}
+
+@include media-breakpoint-up(lg) {
+  .talents-picker-root {
+    #talents-carousel {
+      .carousel-control-prev, .carousel-control-next {
+        display: none;
+      }
+    }
+  }
+}
+
+@include media-breakpoint-down(lg) {
+  .talents-picker-root {
+    #talents-carousel {
+      width: calc(100vw - 2 * var(--container-padding));
+      display: flex;
+      justify-content: center;
+      overflow-x: hidden;
+
+      .carousel-inner {
+        min-width: 100%;
+        transition: transform .15s ease-in-out;
+      }
+
+      .carousel-item {
+        opacity: 0.5;
+        transition: opacity .15s ease-in-out;
+
+        &.active {
+          opacity: 1;
+        }
+      }
+    }
+  }
 }

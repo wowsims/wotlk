@@ -4,6 +4,10 @@
 // See bootstrap/scss/_variables.scss for a complete list of definitions, or
 // individual component pages in the Bootstrap 5.2 docs for relevant variable usage.
 
+//////////////////////////
+//// Custom variables ////
+//////////////////////////
+
 // Custom theme color mapping
 $death-knight: rgb(194, 46, 70);
 $druid:        rgb(255, 125, 10);
@@ -41,8 +45,6 @@ $custom-colors: (
   "success": $success,
 );
 
-$theme-colors: map-merge($theme-colors, $custom-colors);
-
 $custom-breakpoints: (
   xxxl: 1600px,
   1080p: 1900px,
@@ -50,18 +52,9 @@ $custom-breakpoints: (
   4k: 3800px,
 );
 
-$grid-breakpoints: map-merge($grid-breakpoints, $custom-breakpoints);
-
-//////////////////////////
-//// Custom variables ////
-//////////////////////////
-
-// Spacers
-$block-spacer: .75rem;
-$table-cell-padding: .5rem;
-$content-font-size: .75rem;
-$gap-width: 1.5rem;
-$gap-width-sm: .5rem;
+// Borders
+$border-color: dimgrey;
+$border-default: 1px solid $border-color;
 
 // Colors
 $item-quality-junk:      #9d9d9d;
@@ -88,13 +81,27 @@ $table-row-odd-bg: #2d2f35;
 
 $wrath-blue: #7FCBD8;
 
+// Spacers
+$block-spacer: .75rem;
+$table-cell-padding: .5rem;
+$content-font-size: .75rem;
+$gap-width: 1.5rem;
+$gap-width-sm: .5rem;
+
+// Z-index variables
+$header-z-index: 100;
+$sidebar-z-index: 200;
+
 /////////////////////////////////////////////
 //// Global Bootstrap variable overrides ////
 /////////////////////////////////////////////
 
+// Map overrides
+$theme-colors: map-merge($theme-colors, $custom-colors);
+$grid-breakpoints: map-merge($grid-breakpoints, $custom-breakpoints);
+
 $body-bg: #15171e;
 $body-color: white;
-$border-color: dimgrey;
 $font-size-root: 16px;
 $grid-gutter-width: .75rem;
 
@@ -183,7 +190,3 @@ $tooltip-bg: $popover-bg;
 $tooltip-max-width: 15vw;
 $tooltip-max-width-lg: 25vw;
 $tooltip-max-width-sm: 75vw;
-
-// Custom z-index variables
-$header-z-index: 100;
-$sidebar-z-index: 200;

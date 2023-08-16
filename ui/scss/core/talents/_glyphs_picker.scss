@@ -1,3 +1,5 @@
+@import '../components/icon_picker';
+
 .glyphs-picker-root {
   display: flex;
   flex-direction: column;
@@ -5,50 +7,53 @@
 }
 
 .glyph-picker-root {
-  display: flex;
-  margin: 10px 5px;
-  flex-direction: row;
-  text-align: left;
+  &.minor {
+    .glyph-picker-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+  }
+
+  .glyph-picker-icon {
+    @include wowhead-background-icon;
+    width: 3rem;
+    height: 3rem;
+    border: $border-default;
+  }  
 }
 
-.glyph-picker-icon {
-  @include wowhead-background-icon;
-  width: 8vh;
-  height: 8vh;
-  border: 2px solid dimgray;
-}
-.glyph-picker-root.minor .glyph-picker-icon {
-  width: 6vh;
-  height: 6vh;
+.glyph-modal {
+  .selector-modal-list-item-name {
+    flex: 2;
+  }
+
+  .selector-modal-list-item-description {
+    margin-left: 1rem;
+    letter-spacing: normal;
+    color: $item-quality-junk;
+    flex: 3;
+  }
 }
 
-.glyph-picker-labels-container {
-  padding: 3px;
-	text-shadow: 2px 2px 4px black;
-  flex: 1;
-}
+@include media-breakpoint-down(xl) {
+  .glyphs-picker-root {
+    width: 100%;
+    flex-direction: row;
 
-.glyph-picker-name {
-  display: block;
-  font-size: clamp(16px, 17px, 18px);
-	letter-spacing: normal;
-}
+    .content-block {
+      flex: 1;
 
-.glyph-modal .selector-modal-list-item-icon {
-	flex-shrink: 0;
-}
+      .content-block-body {
+        flex-direction: row;
+      }
+    }
+  }
 
-.glyph-modal .selector-modal-list-item-name {
-	flex-shrink: 0;
-	font-size: 14px;
-	font-weight: bold;
-	width: 250px;
-}
+  .glyph-picker-root {
+    width: unset;
 
-.glyph-modal .selector-modal-list-item-description {
-  font-size: 14px;
-  margin-left: 10px;
-	letter-spacing: normal;
-	color: grey;
-	margin: 5px;
+    &:not(:last-child) {
+      margin-right: $block-spacer;
+    }
+  }
 }

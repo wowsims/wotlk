@@ -7,8 +7,6 @@ import { CharacterStats, StatMods } from './components/character_stats';
 import { ContentBlock } from './components/content_block';
 import { EmbeddedDetailedResults } from './components/detailed_results';
 import { EncounterPickerConfig } from './components/encounter_picker';
-import { EnumPicker } from './components/enum_picker';
-import { IconEnumPicker } from './components/icon_enum_picker';
 import { addRaidSimAction, RaidSimResultsManager } from './components/raid_sim_action';
 import { SavedDataConfig, SavedDataManager } from './components/saved_data_manager';
 import { addStatWeightsAction } from './components/stat_weights_action';
@@ -17,9 +15,9 @@ import { BulkTab } from './components/individual_sim_ui/bulk_tab';
 import { GearTab } from './components/individual_sim_ui/gear_tab';
 import { SettingsTab } from './components/individual_sim_ui/settings_tab';
 import { RotationTab } from './components/individual_sim_ui/rotation_tab';
+import { TalentsTab } from './components/individual_sim_ui/talents_tab';
 
 import {
-	Class,
 	Consumes,
 	Debuffs,
 	Encounter as EncounterProto,
@@ -53,9 +51,6 @@ import {
 	specToEligibleRaces,
 	specToLocalStorageKey,
 } from './proto_utils/utils';
-
-import { HunterPetTalentsPicker, makePetTypeInputConfig } from './talents/hunter_pet';
-import { newGlyphsPicker, newTalentsPicker } from './talents/factory';
 
 import * as Exporters from './components/exporters';
 import * as Importers from './components/importers';
@@ -375,87 +370,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 	}
 
 	private addTalentsTab() {
-		this.addTab('Talents', 'talents-tab', `
-			<div class="talents-content tab-pane-content-container">
-				<div class="talents-tab-content tab-panel-left">
-					<div class="player-pet-toggle hide"></div>
-					<div class="talents-picker"></div>
-					<div class="glyphs-picker">
-						<span>Glyphs</span>
-					</div>
-					<div class="pet-talents-picker hide"></div>
-				</div>
-				<div class="saved-talents-manager tab-panel-right"></div>
-			</div>
-		`);
-
-		const talentsPicker = newTalentsPicker(this.rootElem.getElementsByClassName('talents-picker')[0] as HTMLElement, this.player);
-		const glyphsPicker = newGlyphsPicker(this.rootElem.getElementsByClassName('glyphs-picker')[0] as HTMLElement, this.player);
-
-		this.rootElem.querySelector('#talents-tab-tab')?.classList.add('sim-tab');
-
-		const savedTalentsManager = new SavedDataManager<Player<any>, SavedTalents>(
-			this.rootElem.getElementsByClassName('saved-talents-manager')[0] as HTMLElement, this, this.player, {
-			label: 'Talents',
-			header: { title: 'Saved Talents' },
-			storageKey: this.getSavedTalentsStorageKey(),
-			getData: (player: Player<any>) => SavedTalents.create({
-				talentsString: player.getTalentsString(),
-				glyphs: player.getGlyphs(),
-			}),
-			setData: (eventID: EventID, player: Player<any>, newTalents: SavedTalents) => {
-				TypedEvent.freezeAllAndDo(() => {
-					player.setTalentsString(eventID, newTalents.talentsString);
-					player.setGlyphs(eventID, newTalents.glyphs || Glyphs.create());
-				});
-			},
-			changeEmitters: [this.player.talentsChangeEmitter, this.player.glyphsChangeEmitter],
-			equals: (a: SavedTalents, b: SavedTalents) => SavedTalents.equals(a, b),
-			toJson: (a: SavedTalents) => SavedTalents.toJson(a),
-			fromJson: (obj: any) => SavedTalents.fromJson(obj),
-		}
-		);
-
-		this.sim.waitForInit().then(() => {
-			savedTalentsManager.loadUserData();
-			this.individualConfig.presets.talents.forEach(config => {
-				config.isPreset = true;
-				savedTalentsManager.addSavedData({
-					name: config.name,
-					isPreset: true,
-					data: config.data,
-				});
-			});
-
-			if (this.player.getClass() == Class.ClassHunter) {
-				const petTalentsPicker = new HunterPetTalentsPicker(
-					this.rootElem.getElementsByClassName('pet-talents-picker')[0] as HTMLElement, this, this.player as Player<Spec.SpecHunter>
-				);
-
-				let curShown = 0;
-				const updateToggle = () => {
-					this.rootElem.querySelector('.talents-picker')?.classList.toggle('hide');
-					this.rootElem.querySelector('.glyphs-picker')?.classList.toggle('hide');
-					this.rootElem.querySelector('.pet-talents-picker')?.classList.toggle('hide');
-				}
-
-				const toggleContainer = this.rootElem.getElementsByClassName('player-pet-toggle')[0] as HTMLElement;
-				toggleContainer.classList.remove('hide');
-				const playerPetToggle = new EnumPicker(toggleContainer, this, {
-					values: [
-						{ name: 'Player', value: 0 },
-						{ name: 'Pet', value: 1 },
-					],
-					changedEvent: sim => new TypedEvent(),
-					getValue: sim => curShown,
-					setValue: (eventID, sim, newValue) => {
-						curShown = newValue;
-						updateToggle();
-					},
-				});
-				const petTypeToggle = new IconEnumPicker(toggleContainer, this.player as Player<Spec.SpecHunter>, makePetTypeInputConfig(false));
-			}
-		});
+		new TalentsTab(this.simTabContentsContainer, this);
 	}
 
 	private addRotationTab() {

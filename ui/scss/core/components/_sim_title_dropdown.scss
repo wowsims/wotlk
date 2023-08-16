@@ -3,7 +3,7 @@
   position: sticky;
   top: -1px;
   height: calc($sim-header-height + 1px);
-	border-bottom: 1px solid $border-color;
+	border-bottom: $border-default;
 
   .sim-title-dropdown-root {
     height: calc(#{$sim-header-height} - 1px);

@@ -7,7 +7,7 @@
 	.list-picker-title {
 		width: 100%;
 		padding-bottom: $block-spacer;
-		border-bottom: 1px solid $border-color;
+		border-bottom: $border-default;
 		margin-bottom: $block-spacer;
 	}
 
@@ -42,7 +42,7 @@
 
 			.list-picker-item-header {
 				padding-bottom: $block-spacer;
-				border-bottom: 1px solid $border-color;
+				border-bottom: $border-default;
 				margin-bottom: $block-spacer;
 				display: flex;
 				align-items: center;

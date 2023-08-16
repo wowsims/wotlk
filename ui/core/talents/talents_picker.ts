@@ -1,20 +1,30 @@
+import { Carousel, Tooltip } from 'bootstrap';
 import { Component } from '../components/component.js';
 import { Input, InputConfig } from '../components/input.js';
-import { Spec } from '../proto/common.js';
+import { Class, Spec } from '../proto/common.js';
 import { ActionId } from '../proto_utils/action_id.js';
-import { Player } from '../player.js';
-import { EventID, TypedEvent } from '../typed_event.js';
+import { getSpecIcon } from '../proto_utils/utils.js';
+import { TypedEvent } from '../typed_event.js';
 import { isRightClick } from '../utils.js';
 import { sum } from '../utils.js';
+import { Player } from '../player.js';
+
+const MAX_POINTS_PLAYER = 71;
+const MAX_POINTS_HUNTER_PET = 16;
+const MAX_POINTS_HUNTER_PET_BM = 20;
 
 export interface TalentsPickerConfig<ModObject, TalentsProto> extends InputConfig<ModObject, string> {
+	klass: Class,
 	trees: TalentsConfig<TalentsProto>,
 	pointsPerRow: number,
 	maxPoints: number,
 }
 
 export class TalentsPicker<ModObject, TalentsProto> extends Input<ModObject, string> {
+	private readonly config: TalentsPickerConfig<ModObject, TalentsProto>;
+
 	readonly numRows: number;
+	readonly numCols: number;
 	readonly pointsPerRow: number;
 	maxPoints: number;
 
@@ -22,12 +32,66 @@ export class TalentsPicker<ModObject, TalentsProto> extends Input<ModObject, str
 
 	constructor(parent: HTMLElement, modObject: ModObject, config: TalentsPickerConfig<ModObject, TalentsProto>) {
 		super(parent, 'talents-picker-root', modObject, { ...config, inline: true });
+		this.config = config;
 		this.pointsPerRow = config.pointsPerRow;
 		this.maxPoints = config.maxPoints;
 		this.numRows = Math.max(...config.trees.map(treeConfig => treeConfig.talents.map(talentConfig => talentConfig.location.rowIdx).flat()).flat()) + 1;
+		this.numCols = Math.max(...config.trees.map(treeConfig => treeConfig.talents.map(talentConfig => talentConfig.location.colIdx).flat()).flat()) + 1;
+		this.rootElem.innerHTML = `
+			<div id="talents-carousel" class="carousel slide">
+				<div class="carousel-inner">
+				</div>
+				<button class="carousel-control-prev" type="button">
+					<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+					<span class="visually-hidden">Previous</span>
+				</button>
+				<button class="carousel-control-next" type="button">
+					<span class="carousel-control-next-icon" aria-hidden="true"></span>
+					<span class="visually-hidden">Next</span>
+				</button>
+			</div>
+		`
+		const carouselContainer = this.rootElem.querySelector('.carousel-inner') as HTMLElement;
+		const carouselPrevBtn = this.rootElem.querySelector('.carousel-control-prev') as HTMLButtonElement;
+		const carouselNextBtn = this.rootElem.querySelector('.carousel-control-next') as HTMLButtonElement;
 
-		this.trees = config.trees.map(treeConfig => new TalentTreePicker(this.rootElem, treeConfig, this));
+		this.trees = config.trees.map((treeConfig, i) => {
+			const carouselItem = document.createElement('div');
+			carouselContainer.appendChild(carouselItem);
+
+			carouselItem.classList.add('carousel-item');
+			// Set middle talents active by default for mobile slider
+			if (i === 1) carouselItem.classList.add('active');
+
+			// If using a hunter pet, add 3 to skip the hunter specs
+			if (treeConfig.name === 'Ferocity') i += 3;
+			if (treeConfig.name === 'Tenacity') i += 4;
+			if (treeConfig.name === 'Cunning') i += 5;
+
+			return new TalentTreePicker(carouselItem, treeConfig, this, config.klass, i);
+		});
 		this.trees.forEach(tree => tree.talents.forEach(talent => talent.setPoints(0, false)));
+
+		let carouselitemIdx = 0;
+		const slidePrev = () => {
+			if (carouselitemIdx >= 1) return;
+			carouselitemIdx += 1;
+			carouselContainer.style.transform = `translateX(${33.3 * carouselitemIdx}%)`;
+			carouselContainer.children[Math.abs(carouselitemIdx - 2) % 3]!.classList.remove('active');
+			carouselContainer.children[Math.abs(carouselitemIdx - 1) % 3]!.classList.add('active')
+		}
+		const slideNext = () => {
+			if (carouselitemIdx <= -1) return;
+			carouselitemIdx -= 1;
+			carouselContainer.style.transform = `translateX(${33.3 * carouselitemIdx}%)`;
+			carouselContainer.children[Math.abs(carouselitemIdx) % 3]!.classList.remove('active');
+			carouselContainer.children[Math.abs(carouselitemIdx) + 1 % 3]!.classList.add('active');
+		}
+
+		carouselPrevBtn.addEventListener('click', slidePrev);
+		carouselPrevBtn.addEventListener('touchend', slidePrev);
+		carouselNextBtn.addEventListener('click', slideNext);
+		carouselNextBtn.addEventListener('touchend', slideNext);
 
 		this.init();
 	}
@@ -69,11 +133,16 @@ export class TalentsPicker<ModObject, TalentsProto> extends Input<ModObject, str
 			this.updateTrees();
 		}
 	}
+
+	isHunterPet(): boolean  {
+		return ['Cunning', 'Ferocity', 'Tenacity'].includes(this.config.trees[0].name)
+	}
 }
 
 class TalentTreePicker<TalentsProto> extends Component {
 	private readonly config: TalentTreeConfig<TalentsProto>;
 	private readonly title: HTMLElement;
+	private readonly pointsElem: HTMLElement;
 
 	readonly talents: Array<TalentPicker<TalentsProto>>;
 	readonly picker: TalentsPicker<any, TalentsProto>;
@@ -81,30 +150,44 @@ class TalentTreePicker<TalentsProto> extends Component {
 	// The current number of points in this tree
 	numPoints: number;
 
-	constructor(parent: HTMLElement, config: TalentTreeConfig<TalentsProto>, picker: TalentsPicker<any, TalentsProto>) {
+	constructor(parent: HTMLElement, config: TalentTreeConfig<TalentsProto>, picker: TalentsPicker<any, TalentsProto>, klass: Class, specNumber: number) {
 		super(parent, 'talent-tree-picker-root');
 		this.config = config;
 		this.numPoints = 0;
 		this.picker = picker;
 
 		this.rootElem.innerHTML = `
-    <div class="talent-tree-header">
-      <span class="talent-tree-title"></span>
-      <span class="talent-tree-reset fa fa-times"></span>
-    </div>
-    <div class="talent-tree-main">
-    </div>
+			<div class="talent-tree-header">
+				<img src=${getSpecIcon(klass, specNumber)} class="talent-tree-icon" />
+				<span class="talent-tree-title"></span>
+				<span class="talent-tree-points"></span>
+				<button
+					class="talent-tree-reset btn btn-link link-danger"
+					data-bs-title="Reset talent points"
+					data-bs-toggle="tooltip"
+				>
+					<i class="fa fa-times"></i>
+				</button>
+			</div>
+			<div class="talent-tree-background"></div>
+			<div class="talent-tree-main"></div>
     `;
 
 		this.title = this.rootElem.getElementsByClassName('talent-tree-title')[0] as HTMLElement;
+		this.pointsElem = this.rootElem.querySelector('.talent-tree-points') as HTMLElement;
 
-		const main = this.rootElem.getElementsByClassName('talent-tree-main')[0] as HTMLElement;
-		main.style.backgroundImage = `url('${config.backgroundUrl}')`;
+		const background = this.rootElem.querySelector('.talent-tree-background') as HTMLElement;
+		background.style.backgroundImage = `url('${config.backgroundUrl}')`;
+
+		const main = this.rootElem.querySelector('.talent-tree-main') as HTMLElement;
 		main.style.gridTemplateRows = `repeat(${this.picker.numRows}, 1fr)`;
+		// Add 2 for spacing on the sides
+		main.style.gridTemplateColumns = `repeat(${this.picker.numCols}, 1fr)`;
 
-		const iconSize = Math.min(70 / this.picker.numRows, 10);
-		main.style.height = `${iconSize * this.picker.numRows}vh`
-		main.style.width = `${iconSize * 4}vh`
+		const iconSize = '3.5rem'
+		main.style.height = `calc(${iconSize} * ${this.picker.numRows})`
+		main.style.maxWidth = `calc(${iconSize} * ${this.picker.numCols})`
+		this.rootElem.style.maxWidth = `calc(${iconSize} * ${this.picker.numCols + 2})`
 
 		this.talents = config.talents.map(talent => new TalentPicker(main, talent, this));
 		this.talents.forEach(talent => {
@@ -113,15 +196,17 @@ class TalentTreePicker<TalentsProto> extends Component {
 			}
 		});
 
-		const reset = this.rootElem.getElementsByClassName('talent-tree-reset')[0] as HTMLElement;
-		reset.addEventListener('click', event => {
+		const resetBtn = this.rootElem.querySelector('.talent-tree-reset') as HTMLElement;
+		new Tooltip(resetBtn)
+		resetBtn.addEventListener('click', event => {
 			this.talents.forEach(talent => talent.setPoints(0, false));
 			this.picker.inputChanged(TypedEvent.nextEventID());
 		});
 	}
 
 	update() {
-		this.title.textContent = this.config.name + ' (' + this.numPoints + ')';
+		this.title.innerHTML = this.config.name
+		this.pointsElem.textContent = `${this.numPoints} / ${this.getMaxSpendablePoints()}`
 		this.talents.forEach(talent => talent.update());
 	}
 
@@ -138,6 +223,12 @@ class TalentTreePicker<TalentsProto> extends Component {
 
 	setTalentsString(str: string) {
 		this.talents.forEach((talent, idx) => talent.setPoints(Number(str.charAt(idx)), false));
+	}
+
+	getMaxSpendablePoints() {
+		if (!this.picker.isHunterPet()) return MAX_POINTS_PLAYER;
+		if ((this.picker.modObject as Player<Spec.SpecHunter>).getTalents().beastMastery) return MAX_POINTS_HUNTER_PET_BM;
+		return MAX_POINTS_HUNTER_PET;
 	}
 }
 
@@ -299,7 +390,7 @@ class TalentPicker<TalentsProto> extends Component {
 		if (this.config.spellIds[rank]) {
 			return this.config.spellIds[rank];
 		} else {
-			throw new Error('No rank ' + numPoints + ' for talent ' + this.config.fieldName);
+			throw new Error(`No rank ${numPoints} for talent ${String(this.config.fieldName)}`);
 		}
 	}
 
@@ -352,7 +443,7 @@ export function newTalentsConfig<TalentsProto>(talents: TalentsConfig<TalentsPro
 			if (i != 0) {
 				const prevTalent = tree.talents[i - 1];
 				if (talent.location.rowIdx < prevTalent.location.rowIdx || (talent.location.rowIdx == prevTalent.location.rowIdx && talent.location.colIdx <= prevTalent.location.colIdx)) {
-					throw new Error('Out-of-order talent: ' + talent.fieldName);
+					throw new Error(`Out-of-order talent: ${String(talent.fieldName)}`);
 				}
 			}
 
