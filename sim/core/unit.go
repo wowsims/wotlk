@@ -137,6 +137,7 @@ type Unit struct {
 	waitingForEnergy float64
 	waitingForMana   float64
 	waitStartTime    time.Duration
+	waitUntilTime    time.Duration
 
 	// Cached mana return values per tick.
 	manaTickWhileCasting    float64

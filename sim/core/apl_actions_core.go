@@ -214,9 +214,16 @@ func (rot *APLRotation) newActionWait(config *proto.APLActionWait) APLActionImpl
 func (action *APLActionWait) IsReady(sim *Simulation) bool {
 	return action.duration != nil
 }
+
 func (action *APLActionWait) Execute(sim *Simulation) {
-	action.unit.WaitUntil(sim, sim.CurrentTime+action.duration.GetDuration(sim))
+	waitUntilTime := sim.CurrentTime + action.duration.GetDuration(sim)
+	if waitUntilTime > action.unit.GCD.ReadyAt() {
+		action.unit.WaitUntil(sim, waitUntilTime)
+		return
+	}
+	action.unit.waitUntilTime = waitUntilTime
 }
+
 func (action *APLActionWait) String() string {
 	return fmt.Sprintf("Wait(%s)", action.duration)
 }

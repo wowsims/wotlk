@@ -182,6 +182,12 @@ func (apl *APLRotation) DoNextAction(sim *Simulation) {
 
 func (apl *APLRotation) getNextAction(sim *Simulation) *APLAction {
 	if apl.strictSequence != nil {
+		for _, unit := range sim.AllUnits {
+			if sim.CurrentTime < unit.waitUntilTime {
+				return nil
+			}
+		}
+
 		ss := apl.strictSequence.impl.(*APLActionStrictSequence)
 		if ss.actions[ss.curIdx].IsReady(sim) {
 			return apl.strictSequence
