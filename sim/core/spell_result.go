@@ -91,24 +91,21 @@ func (spell *Spell) ExpertisePercentage() float64 {
 	return expertiseRating / ExpertisePerQuarterPercentReduction / 400
 }
 
-func (spell *Spell) PhysicalHitChance(target *Unit) float64 {
+func (spell *Spell) PhysicalHitChance(attackTable *AttackTable) float64 {
 	hitRating := spell.Unit.stats[stats.MeleeHit] +
 		spell.BonusHitRating +
-		target.PseudoStats.BonusMeleeHitRatingTaken
+		attackTable.Defender.PseudoStats.BonusMeleeHitRatingTaken
 	return hitRating / (MeleeHitRatingPerHitChance * 100)
 }
 
-func (spell *Spell) physicalCritRating(target *Unit) float64 {
-	return spell.Unit.stats[stats.MeleeCrit] +
+func (spell *Spell) PhysicalCritChance(attackTable *AttackTable) float64 {
+	critRating := spell.Unit.stats[stats.MeleeCrit] +
 		spell.BonusCritRating +
-		target.PseudoStats.BonusCritRatingTaken
+		attackTable.Defender.PseudoStats.BonusCritRatingTaken
+	return critRating/(CritRatingPerCritChance*100) - attackTable.CritSuppression
 }
-func (spell *Spell) PhysicalCritChance(target *Unit, attackTable *AttackTable) float64 {
-	critRating := spell.physicalCritRating(target)
-	return (critRating / (CritRatingPerCritChance * 100)) - attackTable.CritSuppression
-}
-func (spell *Spell) PhysicalCritCheck(sim *Simulation, target *Unit, attackTable *AttackTable) bool {
-	return sim.RandomFloat("Physical Crit Roll") < spell.PhysicalCritChance(target, attackTable)
+func (spell *Spell) PhysicalCritCheck(sim *Simulation, attackTable *AttackTable) bool {
+	return sim.RandomFloat("Physical Crit Roll") < spell.PhysicalCritChance(attackTable)
 }
 
 func (spell *Spell) SpellPower() float64 {

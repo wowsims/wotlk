@@ -4,7 +4,6 @@ import (
 	"log"
 	"time"
 
-	"github.com/wowsims/wotlk/sim/core/stats"
 	"golang.org/x/exp/slices"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -30,10 +29,28 @@ func (x *rotation_assassination) setup(sim *core.Simulation, rogue *Rogue) {
 			return 10 * rogue.EnergyTickMultiplier
 		}
 
+		getCritChance := func(spell *core.Spell) float64 {
+			at := rogue.AttackTables[rogue.CurrentTarget.UnitIndex]
+
+			critCap := 1.0 - at.BaseGlanceChance
+			if miss := at.BaseMissChance + 0.19 - spell.PhysicalHitChance(at); miss > 0 {
+				critCap -= miss
+			}
+			if dodge := at.BaseDodgeChance - spell.ExpertisePercentage() - rogue.PseudoStats.DodgeReduction; dodge > 0 {
+				critCap -= dodge
+			}
+
+			critChance := spell.PhysicalCritChance(at)
+			if critChance > critCap {
+				critChance = critCap
+			}
+			return critChance
+		}
+
+		critsPerSecond := getCritChance(rogue.AutoAttacks.MHAuto)/rogue.AutoAttacks.MainhandSwingSpeed().Seconds() +
+			getCritChance(rogue.AutoAttacks.OHAuto)/rogue.AutoAttacks.OffhandSwingSpeed().Seconds()
 		procChance := []float64{0, 0.33, 0.66, 1}[rogue.Talents.FocusedAttacks]
-		critSuppression := rogue.AttackTables[rogue.CurrentTarget.UnitIndex].CritSuppression
-		effectiveCrit := rogue.GetStat(stats.MeleeCrit)/(core.CritRatingPerCritChance*100) - critSuppression
-		critsPerSecond := effectiveCrit * (1/rogue.AutoAttacks.MainhandSwingSpeed().Seconds() + 1/rogue.AutoAttacks.OffhandSwingSpeed().Seconds())
+
 		return 10*rogue.EnergyTickMultiplier + critsPerSecond*procChance*2
 	}
 
