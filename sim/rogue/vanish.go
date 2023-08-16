@@ -38,6 +38,14 @@ func (rogue *Rogue) registerVanishSpell() {
 					rogue.Garrote.Cast(sim, target)
 				}
 			}
+			pa := &core.PendingAction{
+				NextActionAt: sim.CurrentTime + time.Second * time.Duration(rogue.Options.VanishBreakTime),
+				Priority: core.ActionPriorityAuto,
+			}
+			pa.OnAction = func(sim *core.Simulation) {
+				rogue.BreakStealth(sim)
+				rogue.AutoAttacks.EnableAutoSwing(sim)
+			}
 		},
 	})
 

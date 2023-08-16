@@ -122,6 +122,7 @@ export const DefaultOptions = RogueOptions.create({
 	ohImbue: Poison.InstantPoison,
 	applyPoisonsManually: false,
 	startingOverkillDuration: 20,
+	vanishBreakTime: 0.1,
 	honorOfThievesCritRate: 400,
 });
 
