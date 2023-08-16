@@ -23,19 +23,34 @@ func (rogue *Rogue) registerVanishSpell() {
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// Pause auto attacks
+			rogue.AutoAttacks.CancelAutoSwing(sim)
 			// Apply stealth
 			rogue.StealthAura.Activate(sim)
-			// Master of Subtlety
-			if rogue.Talents.MasterOfSubtlety > 0 {
-				_, premedCPs := checkPremediation(sim, rogue)
-				_, garroteCPs := checkGarrote(sim, rogue)
 
-				if premedCPs > 0 && rogue.ComboPoints()+premedCPs+garroteCPs <= 5 {
-					rogue.Premeditation.Cast(sim, target)
+			if !rogue.IsUsingAPL {
+				// Master of Subtlety
+				if rogue.Talents.MasterOfSubtlety > 0 {
+					_, premedCPs := checkPremediation(sim, rogue)
+					_, garroteCPs := checkGarrote(sim, rogue)
+
+					if premedCPs > 0 && rogue.ComboPoints()+premedCPs+garroteCPs <= 5 {
+						rogue.Premeditation.Cast(sim, target)
+					}
+
+					if garroteCPs > 0 {
+						rogue.Garrote.Cast(sim, target)
+					}
 				}
 
-				if garroteCPs > 0 {
-					rogue.Garrote.Cast(sim, target)
+				// Break the Stealth effect automatically after a dely with an auto swing
+				pa := &core.PendingAction{
+					NextActionAt: sim.CurrentTime + time.Second * time.Duration(rogue.Options.VanishBreakTime),
+					Priority: core.ActionPriorityAuto,
+				}
+				pa.OnAction = func(sim *core.Simulation) {
+					rogue.BreakStealth(sim)
+					rogue.AutoAttacks.EnableAutoSwing(sim)
 				}
 			}
 		},

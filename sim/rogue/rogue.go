@@ -2,6 +2,7 @@ package rogue
 
 import (
 	"time"
+	"math"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -197,9 +198,25 @@ func (rogue *Rogue) Reset(sim *core.Simulation) {
 	}
 	rogue.allMCDsDisabled = true
 
-	// Stealth triggered effects (Overkill and Master of Subtlety) pre-pull activation
-	if rogue.Rotation.OpenWithGarrote || rogue.Rotation.OpenWithPremeditation || rogue.Options.StartingOverkillDuration > 0 {
-		rogue.StealthAura.Activate(sim)
+	if !rogue.IsUsingAPL {
+		// Stealth triggered effects (Overkill and Master of Subtlety) pre-pull activation
+		if rogue.Rotation.OpenWithGarrote || rogue.Rotation.OpenWithPremeditation {
+			rogue.AutoAttacks.CancelAutoSwing(sim)
+			rogue.StealthAura.Activate(sim)
+		} else {
+			if rogue.Options.StartingOverkillDuration > 0 {
+				if rogue.Talents.Overkill {
+					duration := time.Second * time.Duration(math.Min(float64(rogue.Options.StartingOverkillDuration), 20))
+					rogue.OverkillAura.Activate(sim)
+					rogue.OverkillAura.UpdateExpires(duration)
+				}
+				if rogue.Talents.MasterOfSubtlety > 0 {
+					duration := time.Second * time.Duration(math.Min(float64(rogue.Options.StartingOverkillDuration), 6))
+					rogue.MasterOfSubtletyAura.Activate(sim)
+					rogue.MasterOfSubtletyAura.UpdateExpires(duration)
+				}
+			}
+		}
 	}
 
 	rogue.setupRotation(sim)
@@ -278,6 +295,7 @@ This must be added to all abilities that cause Stealth to fade
 func (rogue *Rogue) BreakStealth(sim *core.Simulation) {
 	if rogue.StealthAura.IsActive() {
 		rogue.StealthAura.Deactivate(sim)
+		rogue.AutoAttacks.EnableAutoSwing(sim)
 	}
 }
 

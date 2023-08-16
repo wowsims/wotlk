@@ -221,6 +221,7 @@ message Rogue {
 		bool apply_poisons_manually = 5;
 		int32 honor_of_thieves_crit_rate = 6;
 		bool assume_bleed_active = 7;
+		float vanish_break_time = 8;
 	}
 	Options options = 3;
 }
