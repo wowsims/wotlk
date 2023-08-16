@@ -6,7 +6,7 @@
   flex-direction: column;
 
   .content-block-header {
-    border-bottom: 1px solid $border-color;
+    border-bottom: $border-default;
     margin-bottom: $block-spacer;
     display: flex;
 

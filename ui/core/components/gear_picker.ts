@@ -816,7 +816,7 @@ export function getEmptySlotIconUrl(slot: ItemSlot): string {
 }
 
 export class ItemList<T> {
-
+	private listElem: HTMLElement;
 	private listItemElems: HTMLLIElement[];
 	private readonly player: Player<any>;
 	private label: string;
@@ -897,8 +897,8 @@ export class ItemList<T> {
 		const tabContent = tabContentFragment.children[0] as HTMLElement;
 		parent.appendChild(tabContent);
 
-		const helpIcon = tabContent.getElementsByClassName("ep-help").item(0);
-		tippy(helpIcon, { 'content': 'These values are computed using stat weights which can be edited using the "Stat Weights" button.' });
+		// const helpIcon = tabContent.getElementsByClassName("ep-help").item(0);
+		// tippy(helpIcon, { 'content': 'These values are computed using stat weights which can be edited using the "Stat Weights" button.' });
 		const show1hWeaponsSelector = makeShow1hWeaponsSelector(tabContent.getElementsByClassName('selector-modal-show-1h-weapons')[0] as HTMLElement, player.sim);
 		const show2hWeaponsSelector = makeShow2hWeaponsSelector(tabContent.getElementsByClassName('selector-modal-show-2h-weapons')[0] as HTMLElement, player.sim);
 		if (!(label == 'Items' && (slot == ItemSlot.ItemSlotMainHand || (slot == ItemSlot.ItemSlotOffHand && player.getClass() == Class.ClassWarrior)))) {
@@ -920,7 +920,7 @@ export class ItemList<T> {
 			filtersButton.addEventListener('click', () => new FiltersMenu(parent, player, slot));
 		}
 
-		const listElem = tabContent.getElementsByClassName('selector-modal-list')[0] as HTMLElement;
+		this.listElem = tabContent.getElementsByClassName('selector-modal-list')[0] as HTMLElement;
 		const initialFilters = player.sim.getFilters();
 		let lastFavElem: HTMLElement | null = null;
 
@@ -929,15 +929,14 @@ export class ItemList<T> {
 			const itemEP = computeEP(item);
 
 			const listItemElem = document.createElement('li');
+			this.listElem.appendChild(listItemElem);
 			listItemElem.classList.add('selector-modal-list-item');
-			listElem.appendChild(listItemElem);
-
 			listItemElem.dataset.idx = String(itemIdx);
-
 			listItemElem.innerHTML = `
+				<a class="selector-modal-list-item-link">
 					<div class="selector-modal-list-label-cell">
-						<a class="selector-modal-list-item-icon"></a>
-						<a class="selector-modal-list-item-name">${itemData.heroic ? itemData.name + "<span style=\"color:green\">[H]</span>" : itemData.name}</a>
+						<img class="selector-modal-list-item-icon" />
+						<label class="selector-modal-list-item-name">${itemData.heroic ? itemData.name + "<span style=\"color:green\">[H]</span>" : itemData.name}</label>
 					</div>
 					<div class="selector-modal-list-item-source-container">
 					</div>
@@ -950,6 +949,7 @@ export class ItemList<T> {
 					<div class="selector-modal-list-item-ep">
 						<span class="selector-modal-list-item-ep-delta"></span>
 					</div>
+				</a>
 		  `;
 
 			if (slot == ItemSlot.ItemSlotTrinket1 || slot == ItemSlot.ItemSlotTrinket2) {
@@ -957,12 +957,18 @@ export class ItemList<T> {
 				epElem.style.display = 'none';
 			}
 
-			const iconElem = listItemElem.getElementsByClassName('selector-modal-list-item-icon')[0] as HTMLAnchorElement;
+			const anchorElem = listItemElem.children[0] as HTMLAnchorElement;
+			const iconElem = listItemElem.getElementsByClassName('selector-modal-list-item-icon')[0] as HTMLImageElement;
 			const nameElem = listItemElem.getElementsByClassName('selector-modal-list-item-name')[0] as HTMLAnchorElement;
+
+			anchorElem.addEventListener('click', (event: Event) => {
+				event.preventDefault();
+				onItemClick(itemData);
+			});
+
 			itemData.actionId.fill().then(filledId => {
-				filledId.setWowheadHref(iconElem);
-				filledId.setWowheadHref(nameElem);
-				iconElem.style.backgroundImage = `url('${filledId.iconUrl}')`;
+				filledId.setWowheadHref(anchorElem);
+				iconElem.src = filledId.iconUrl;
 			});
 
 			setItemQualityCssClass(nameElem, itemData.quality);
@@ -973,12 +979,6 @@ export class ItemList<T> {
 			} else {
 				sourceElem.remove();
 			}
-			const clickHandle = (event: Event) => {
-				event.preventDefault();
-				onItemClick(itemData);
-			}
-			nameElem.addEventListener('click', clickHandle);
-			iconElem.addEventListener('click', clickHandle);
 
 			const favoriteElem = listItemElem.getElementsByClassName('selector-modal-list-item-favorite')[0] as HTMLElement;
 			tippy(favoriteElem, { 'content': 'Add to Favorites' });
@@ -1018,14 +1018,14 @@ export class ItemList<T> {
 				player.sim.setFilters(TypedEvent.nextEventID(), filters);
 
 				// Reorder and update this element.
-				const curItemElems = Array.from(listElem.children) as Array<HTMLElement>;
+				const curItemElems = Array.from(this.listElem.children) as Array<HTMLElement>;
 				if (isFavorite) {
 					// Use same sorting order (based on idx) among the favorited elems.
 					const nextElem = curItemElems.find(elem => elem.dataset.fav == 'false' || parseInt(elem.dataset.idx!) > itemIdx);
 					if (nextElem) {
-						listElem.insertBefore(listItemElem, nextElem);
+						this.listElem.insertBefore(listItemElem, nextElem);
 					} else {
-						listElem.appendChild(listItemElem);
+						this.listElem.appendChild(listItemElem);
 					}
 
 					favoriteElem.classList.add('fa-solid');
@@ -1042,9 +1042,9 @@ export class ItemList<T> {
 						curIdx++;
 					}
 					if (curIdx == curItemElems.length) {
-						listElem.appendChild(listItemElem);
+						this.listElem.appendChild(listItemElem);
 					} else {
-						listElem.insertBefore(listItemElem, curItemElems[curIdx]);
+						this.listElem.insertBefore(listItemElem, curItemElems[curIdx]);
 					}
 
 					favoriteElem.classList.remove('fa-solid');
@@ -1066,7 +1066,7 @@ export class ItemList<T> {
 				favoriteElem.classList.add('fa-solid');
 				listItemElem.dataset.fav = 'true';
 				if (lastFavElem == null) {
-					listElem.prepend(listItemElem);
+					this.listElem.prepend(listItemElem);
 				} else {
 					lastFavElem.after(listItemElem)
 				}
@@ -1098,9 +1098,6 @@ export class ItemList<T> {
 		this.searchInput.addEventListener("keyup", ev => {
 			if (ev.key == "Enter") {
 				this.listItemElems.find(ele => {
-					if (ele.classList.contains("hidden")) {
-						return false;
-					}
 					const nameElem = ele.getElementsByClassName('selector-modal-list-item-name')[0] as HTMLElement;
 					nameElem.click();
 					return true;
@@ -1128,11 +1125,6 @@ export class ItemList<T> {
 					}
 
 					this.listItemElems.forEach((elem, index) => {
-						// skip items already filtered out.
-						if (elem.classList.contains('hidden')) {
-							return;
-						}
-
 						const idata = this.itemData[index];
 						if (!isRangedOrTrinket && curEP > 0 && idata.baseEP < (curEP / 2)) {
 							return; // If we have EPs on current item, dont sim items with less than half the EP.
@@ -1232,21 +1224,7 @@ export class ItemList<T> {
 
 			return true;
 		});
-
-		let numShown = 0;
-		this.listItemElems.forEach(elem => {
-			if (validItemElems.includes(elem)) {
-				elem.classList.remove('hidden');
-				numShown++;
-				if (numShown % 2 == 0) {
-					elem.classList.remove('odd');
-				} else {
-					elem.classList.add('odd');
-				}
-			} else {
-				elem.classList.add('hidden');
-			}
-		});
+		this.listElem.replaceChildren(...validItemElems);
 	}
 
 	public hideOrShowEPValues() {

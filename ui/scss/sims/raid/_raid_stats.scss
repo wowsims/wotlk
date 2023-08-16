@@ -10,7 +10,7 @@
 
 		.raid-stats-section-content {
 			padding: map.get($spacers, 2);
-			border: 1px solid $border-color;
+			border: $border-default;
 			display: grid;
 			grid-template-columns: repeat(4, 1fr);
 			background-color: rgba(50,50,50,.5);

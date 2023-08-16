@@ -1,5 +1,4 @@
 import { Tooltip } from 'bootstrap';
-import { title } from 'process';
 import { Component } from './component.js';
 
 export interface ContentBlockHeaderConfig {

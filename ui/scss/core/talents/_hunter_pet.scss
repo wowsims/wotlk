@@ -1,32 +1,5 @@
-.player-pet-toggle {
-	width: 100%;
-	margin-bottom: $block-spacer;
-	display: flex;
-	align-items: center;
-
-	.enum-picker-root {
-		width: unset;
-		margin-bottom: 0;
-
-		& +.icon-picker {
-			margin-left: $block-spacer;
-		}
-
-		select {
-			min-width: 10rem;
-			width: unset;
-		}
-	}
-}
-
-@include media-breakpoint-down(xl) {
-	.player-pet-toggle {
-		.input-root {
-			select {
-				width: 100%;
-			}
-		}
-	}
+.hunter-pet-talents-picker {
+  flex-basis: 33%;
 }
 
 .hunter-pet-talents-cunning, .hunter-pet-talents-ferocity, .hunter-pet-talents-tenacity {

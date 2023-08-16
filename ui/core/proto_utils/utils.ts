@@ -227,6 +227,10 @@ export const talentTreeIcons: Record<Class, Array<string>> = {
 		'ability_hunter_beasttaming.jpg',
 		'ability_marksmanship.jpg',
 		'ability_hunter_swiftstrike.jpg',
+		// Pet specializations
+		'ability_druid_swipe.jpg',
+		'ability_hunter_pet_bear.jpg',
+		'ability_hunter_combatexperience.jpg',
 	],
 	[Class.ClassMage]: [
 		'spell_holy_magicalsentry.jpg',

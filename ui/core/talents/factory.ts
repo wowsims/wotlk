@@ -18,27 +18,8 @@ import { shamanTalentsConfig, shamanGlyphsConfig } from './shaman.js';
 import { warlockTalentsConfig, warlockGlyphsConfig } from './warlock.js';
 import { warriorTalentsConfig, warriorGlyphsConfig } from './warrior.js';
 import { deathknightTalentsConfig, deathknightGlyphsConfig } from './deathknight.js';
-import { TalentsConfig, TalentsPicker } from './talents_picker.js';
-import { GlyphsConfig, GlyphsPicker } from './glyphs_picker.js';
-
-import * as Mechanics from '../constants/mechanics.js';
-
-export function newTalentsPicker(parent: HTMLElement, player: Player<any>): TalentsPicker<Player<any>, any> {
-	return new TalentsPicker(parent, player, {
-		trees: classTalentsConfig[player.getClass()],
-		changedEvent: (player: Player<any>) => player.talentsChangeEmitter,
-		getValue: (player: Player<any>) => player.getTalentsString(),
-		setValue: (eventID: EventID, player: Player<any>, newValue: string) => {
-			player.setTalentsString(eventID, newValue);
-		},
-		pointsPerRow: 5,
-		maxPoints: Mechanics.MAX_TALENT_POINTS,
-	});
-}
-
-export function newGlyphsPicker(parent: HTMLElement, player: Player<any>): GlyphsPicker {
-	return new GlyphsPicker(parent, player, classGlyphsConfig[player.getClass()]);
-}
+import { TalentsConfig } from './talents_picker.js';
+import { GlyphsConfig } from './glyphs_picker.js';
 
 export const classTalentsConfig: Record<Class, TalentsConfig<any>> = {
 	[Class.ClassUnknown]: [],

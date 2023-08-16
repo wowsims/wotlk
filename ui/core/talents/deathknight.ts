@@ -2,8 +2,8 @@ import { Spec } from '../proto/common.js';
 import { DeathknightTalents, DeathknightMajorGlyph, DeathknightMinorGlyph } from '../proto/deathknight.js';
 import { Player } from '../player.js';
 
-import { GlyphsConfig, GlyphsPicker } from './glyphs_picker.js';
-import { TalentsConfig, TalentsPicker, newTalentsConfig } from './talents_picker.js';
+import { GlyphsConfig } from './glyphs_picker.js';
+import { TalentsConfig, newTalentsConfig } from './talents_picker.js';
 
 import DkTalentsJson from './trees/deathknight.json';
 

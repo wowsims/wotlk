@@ -105,7 +105,7 @@
 		.sim-toolbar-socials {
 			margin-top: math.div($nav-link-padding-y, 2);
 			margin-bottom: math.div($nav-link-padding-y, 2);
-			border-left: 1px solid $border-color;
+			border-left: $border-default;
 
 			a {
 				margin-top: math.div($nav-link-padding-y, 2);
