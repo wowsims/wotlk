@@ -164,7 +164,8 @@ $talent-full-color: #ffd100;
       overflow-x: hidden;
 
       .carousel-inner {
-        min-width: 100%;
+        width: unset;
+        min-width: unset;
         transition: transform .15s ease-in-out;
       }
 
@@ -176,6 +177,12 @@ $talent-full-color: #ffd100;
           opacity: 1;
         }
       }
+    }
+  }
+
+  .talent-tree-picker-root {
+    .talent-tree-main {
+      margin: $block-spacer $talent-icon-size;
     }
   }
 }
