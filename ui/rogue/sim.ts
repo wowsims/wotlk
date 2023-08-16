@@ -119,7 +119,7 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 									simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponType == WeaponType.WeaponTypeDagger) {
 									return '';
 								} else {
-									return '"Close Quarters Combat" talent selected, but fists or axes not equipped.';
+									return '"Close Quarters Combat" talent selected, but fists or daggers not equipped.';
 								}
 							} else {
 								return '';
@@ -187,6 +187,18 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 						getContent: () => {
 							if (simUI.player.getRotation().useFeint && !simUI.player.getMajorGlyphs().includes(RogueMajorGlyph.GlyphOfFeint)) {
 								return '"Use Feint" selected, but missing Glyph of Feint.';
+							} else {
+								return '';
+							}
+						},
+					};
+				},
+				(simUI: IndividualSimUI<Spec.SpecRogue>) => {
+					return {
+						updateOn: simUI.player.changeEmitter,
+						getContent: () => {
+							if (simUI.player.getRotation().exposeArmorFrequency == 2 && !simUI.player.getMajorGlyphs().includes(RogueMajorGlyph.GlyphOfExposeArmor) && simUI.player.getTalentTree() == 1) {
+								return '"Maintain Expose Armor" selected, but missing Glyph of Expose Armor.';
 							} else {
 								return '';
 							}
