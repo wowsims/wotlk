@@ -51,10 +51,17 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 		this.conditionPicker = new AplValues.APLValuePicker(this.rootElem, this.modObject, {
 			label: 'If:',
 			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
-			getValue: (player: Player<any>) => this.getSourceValue().condition,
+			getValue: (player: Player<any>) => this.getSourceValue()?.condition,
 			setValue: (eventID: EventID, player: Player<any>, newValue: APLValue | undefined) => {
-				this.getSourceValue().condition = newValue;
-				player.rotationChangeEmitter.emit(eventID);
+				const srcVal = this.getSourceValue();
+				if (srcVal) {
+					srcVal.condition = newValue;
+					player.rotationChangeEmitter.emit(eventID);
+				} else {
+					this.setSourceValue(eventID, APLAction.create({
+						condition: newValue,
+					}));
+				}
 			},
 		});
 		this.conditionPicker.rootElem.classList.add('apl-action-condition', 'apl-priority-list-only');

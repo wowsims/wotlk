@@ -391,8 +391,14 @@ export class ActionId {
 				break;
 			case 'Heroic Strike':
 			case 'Cleave':
+			case 'Maul':
 				if (this.tag == 1) {
 					name += ' (Queue)';
+				}
+				break;
+			case 'Whirlwind':
+				if (this.tag == 1) {
+					name += ' (OH)';
 				}
 				break;
 			case 'Seed of Corruption':

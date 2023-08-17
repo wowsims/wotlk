@@ -15,7 +15,7 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 	if warrior.AutoAttacks.IsDualWielding && warrior.GetOHWeapon().WeaponType != proto.WeaponType_WeaponTypeStaff &&
 		warrior.GetOHWeapon().WeaponType != proto.WeaponType_WeaponTypePolearm {
 		warrior.WhirlwindOH = warrior.RegisterSpell(core.SpellConfig{
-			ActionID:    actionID,
+			ActionID:    actionID.WithTag(1),
 			SpellSchool: core.SpellSchoolPhysical,
 			ProcMask:    core.ProcMaskEmpty, // whirlwind offhand hits usually don't proc auras
 			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete | SpellFlagWhirlwindOH,
@@ -29,7 +29,7 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 	}
 
 	warrior.Whirlwind = warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 1680},
+		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | SpellFlagBloodsurge | core.SpellFlagAPL,
