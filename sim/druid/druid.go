@@ -168,9 +168,13 @@ func (druid *Druid) TryMaul(sim *core.Simulation, mhSwingSpell *core.Spell) *cor
 
 func (druid *Druid) RegisterSpell(formMask DruidForm, config core.SpellConfig) *DruidSpell {
 	prev := config.ExtraCastCondition
-	ds := &DruidSpell{Spell: druid.Unit.RegisterSpell(config), FormMask: formMask}
-	ds.ExtraCastCondition = func(sim *core.Simulation, target *core.Unit) bool {
-		if !druid.InForm(ds.FormMask) {
+	prevModify := config.Cast.ModifyCast
+
+	ds := &DruidSpell{FormMask: formMask}
+	config.ExtraCastCondition = func(sim *core.Simulation, target *core.Unit) bool {
+		// Check if we're in allowed form to cast
+		// Allow 'humanoid' auto unshift casts
+		if (ds.FormMask != Any && !druid.InForm(ds.FormMask)) && !ds.FormMask.Matches(Humanoid) {
 			if sim.Log != nil {
 				sim.Log("Failed cast to spell %s, wrong form", ds.ActionID)
 			}
@@ -178,6 +182,16 @@ func (druid *Druid) RegisterSpell(formMask DruidForm, config core.SpellConfig) *
 		}
 		return prev == nil || prev(sim, target)
 	}
+	config.Cast.ModifyCast = func(sim *core.Simulation, s *core.Spell, c *core.Cast) {
+		if !druid.InForm(ds.FormMask) && ds.FormMask.Matches(Humanoid) {
+			druid.ClearForm(sim)
+		}
+		if prevModify != nil {
+			prevModify(sim, s, c)
+		}
+	}
+
+	ds.Spell = druid.Unit.RegisterSpell(config)
 
 	return ds
 }
