@@ -8,6 +8,10 @@ import (
 )
 
 func (rogue *Rogue) registerHemorrhageSpell() {
+	if !rogue.Talents.Hemorrhage {
+		return
+	}
+
 	actionID := core.ActionID{SpellID: 48660}
 
 	var numPlayers int

@@ -145,6 +145,7 @@ func (rogue *Rogue) registerHungerForBlood() {
 
 	rogue.HungerForBlood = rogue.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
+		Flags: core.SpellFlagAPL,
 
 		EnergyCost: core.EnergyCostOptions{
 			Cost: 15,
