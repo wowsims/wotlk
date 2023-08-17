@@ -101,11 +101,11 @@ export const UnholyDualWieldSSTalents = {
 export const Unholy2HTalents = {
 	name: 'Unholy 2H',
 	data: SavedTalents.create({
-		talentsString: '-320050500002-2300303150032152000150013133151',
+		talentsString: '-320050500002-2302003350032052000150013133151',
 		glyphs: Glyphs.create({
 			major1: DeathknightMajorGlyph.GlyphOfTheGhoul,
-			major2: DeathknightMajorGlyph.GlyphOfDarkDeath,
-			major3: DeathknightMajorGlyph.GlyphOfIcyTouch,
+			major2: DeathknightMajorGlyph.GlyphOfIcyTouch,
+			major3: DeathknightMajorGlyph.GlyphOfDarkDeath,
 			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
 			minor2: DeathknightMinorGlyph.GlyphOfPestilence,
 			minor3: DeathknightMinorGlyph.GlyphOfRaiseDead,
@@ -275,9 +275,9 @@ export const BLOOD_PESTI_ROTATION_PRESET_DEFAULT = {
 			],
 			"priorityList": [
 			  {"action":{"autocastOtherCooldowns":{}}},
-			  {"action":{"sequence":{"name":"Opener","actions":[{"castSpell":{"spellId":{"spellId":59131}}},{"castSpell":{"spellId":{"tag":1,"spellId":49921}}},{"castSpell":{"spellId":{"tag":1,"spellId":49924}}},{"castSpell":{"spellId":{"tag":1,"spellId":55262}}},{"castSpell":{"spellId":{"tag":1,"spellId":55262}}},{"castSpell":{"spellId":{"spellId":47568}}},{"castSpell":{"spellId":{"spellId":46584}}},{"castSpell":{"spellId":{"spellId":49028}}},{"castSpell":{"spellId":{"tag":1,"spellId":49924}}},{"castSpell":{"spellId":{"tag":1,"spellId":55262}}},{"castSpell":{"spellId":{"spellId":45529}}},{"castSpell":{"spellId":{"tag":1,"spellId":55262}}}]}}},
+			  {"action":{"sequence":{"name":"Opener","actions":[{"castSpell":{"spellId":{"spellId":59131}}},{"castSpell":{"spellId":{"spellId":49921,"tag":1}}},{"castSpell":{"spellId":{"spellId":49924,"tag":1}}},{"castSpell":{"spellId":{"spellId":55262,"tag":1}}},{"castSpell":{"spellId":{"spellId":55262,"tag":1}}},{"castSpell":{"spellId":{"spellId":46584}}},{"castSpell":{"spellId":{"spellId":47568}}},{"castSpell":{"spellId":{"spellId":49028}}},{"castSpell":{"spellId":{"spellId":49924,"tag":1}}},{"castSpell":{"spellId":{"spellId":55262,"tag":1}}},{"wait":{"duration":{"const":{"val":"1500ms"}}}},{"castSpell":{"spellId":{"spellId":45529}}},{"castSpell":{"spellId":{"spellId":55262,"tag":1}}}]}}},
 			  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55095}}}}},"castSpell":{"spellId":{"spellId":59131}}}},
-			  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55078}}}}},"castSpell":{"spellId":{"tag":1,"spellId":49921}}}},
+			  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55078}}}}},"castSpell":{"spellId":{"spellId":49921,"tag":1}}}},
 			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"const":{"val":"1.5s"}}}},"castSpell":{"spellId":{"spellId":50842}}}},
 			  {"action":{"condition":{"spellIsReady":{"spellId":{"spellId":49028}}},"castSpell":{"spellId":{"spellId":49016}}}},
 			  {"action":{"condition":{"spellIsReady":{"spellId":{"spellId":49028}}},"castSpell":{"spellId":{"spellId":26297}}}},
@@ -286,9 +286,10 @@ export const BLOOD_PESTI_ROTATION_PRESET_DEFAULT = {
 			  {"action":{"condition":{"spellIsReady":{"spellId":{"spellId":49028}}},"castSpell":{"spellId":{"spellId":46584}}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":49028}}}},
 			  {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"nextRuneCooldown":{"runeType":"RuneBlood"}},"rhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}}}},"castSpell":{"spellId":{"spellId":50842}}}},
-			  {"action":{"castSpell":{"spellId":{"tag":1,"spellId":55262}}}},
-			  {"action":{"castSpell":{"spellId":{"tag":1,"spellId":49924}}}},
-			  {"action":{"condition":{"not":{"val":{"spellIsReady":{"spellId":{"spellId":49028}}}}},"castSpell":{"spellId":{"spellId":49895}}}}
+			  {"action":{"castSpell":{"spellId":{"spellId":55262,"tag":1}}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":49924,"tag":1}}}},
+			  {"action":{"condition":{"not":{"val":{"spellIsReady":{"spellId":{"spellId":49028}}}}},"castSpell":{"spellId":{"spellId":49895}}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":57623}}}}
 			]
 		}`),
 	}),
@@ -391,6 +392,40 @@ export const UNHOLY_DW_ROTATION_PRESET_DEFAULT = {
 			  {"action":{"castSpell":{"spellId":{"spellId":49206}}}},
 			  {"action":{"condition":{"not":{"val":{"spellIsReady":{"spellId":{"spellId":49206}}}}},"castSpell":{"spellId":{"spellId":49895}}}},
 			  {"action":{"strictSequence":{"actions":[{"castSpell":{"spellId":{"spellId":45529}}},{"castSpell":{"spellId":{"spellId":63560}}}]}}},
+			  {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":48265}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":49206}}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":49206}}}}}]}},"castSpell":{"spellId":{"spellId":50689}}}}
+			]
+		}`),
+	}),
+}
+
+export const UNHOLY_2H_ROTATION_PRESET_DEFAULT = {
+	name: 'Unholy 2H SS APL',
+	//enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultUnholyRotation),
+		rotation: APLRotation.fromJsonString(`{
+			"enabled": true,
+			"prepullActions": [
+			  {"action":{"castSpell":{"spellId":{"spellId":48265}}},"doAtValue":{"const":{"val":"-10s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":63560}}},"doAtValue":{"const":{"val":"-8s"}}},
+			  {"action":{"castSpell":{"spellId":{"itemId":40211}}},"doAtValue":{"const":{"val":"-1s"}}}
+			],
+			"priorityList": [
+			  {"action":{"autocastOtherCooldowns":{}}},
+			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"const":{"val":"3s"}}}},"castSpell":{"spellId":{"spellId":59131}}}},
+			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55078}}},"rhs":{"const":{"val":"3s"}}}},"castSpell":{"spellId":{"spellId":49921,"tag":1}}}},
+			  {"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":66803}}}}},"castSpell":{"spellId":{"spellId":49930,"tag":1}}}},
+			  {"action":{"condition":{"auraIsActive":{"auraId":{"spellId":49206}}},"castSpell":{"spellId":{"spellId":26297}}}},
+			  {"action":{"condition":{"or":{"vals":[{"auraIsActive":{"auraId":{"spellId":49206}}},{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49206}}},"rhs":{"const":{"val":"50s"}}}}]}},"castSpell":{"spellId":{"spellId":54758}}}},
+			  {"action":{"condition":{"or":{"vals":[{"auraIsActive":{"auraId":{"spellId":49206}}},{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49206}}},"rhs":{"remainingTime":{}}}}]}},"castSpell":{"spellId":{"itemId":40211}}}},
+			  {"action":{"condition":{"auraIsActive":{"auraId":{"spellId":49206}}},"castSpell":{"spellId":{"spellId":47568}}}},
+			  {"action":{"condition":{"auraIsActive":{"auraId":{"spellId":49206}}},"castSpell":{"spellId":{"spellId":42650}}}},
+			  {"action":{"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"sourceUnit":{"type":"Pet","index":1,"owner":{"type":"Self"}},"auraId":{"spellId":63560}}}}},{"not":{"val":{"currentRuneActive":{"runeSlot":"SlotLeftBlood"}}}}]}},"castSpell":{"spellId":{"spellId":45529}}}},
+			  {"action":{"condition":{"and":{"vals":[{"currentRuneDeath":{"runeSlot":"SlotLeftBlood"}},{"not":{"val":{"auraIsActive":{"sourceUnit":{"type":"Pet","index":1,"owner":{"type":"Self"}},"auraId":{"spellId":63560}}}}},{"cmp":{"op":"OpEq","lhs":{"currentNonDeathRuneCount":{"runeType":"RuneUnholy"}},"rhs":{"const":{"val":"0"}}}}]}},"castSpell":{"spellId":{"spellId":63560}}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":55271,"tag":1}}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":49930,"tag":1}}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":49206}}}},
+			  {"action":{"condition":{"not":{"val":{"spellIsReady":{"spellId":{"spellId":49206}}}}},"castSpell":{"spellId":{"spellId":49895}}}},
 			  {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":48265}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":49206}}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":49206}}}}}]}},"castSpell":{"spellId":{"spellId":50689}}}}
 			]
 		}`),
