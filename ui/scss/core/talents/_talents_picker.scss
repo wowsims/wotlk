@@ -12,7 +12,6 @@ $talent-full-color: #ffd100;
   width: unset;
   display: flex;
   align-items: flex-start;
-  flex: 1;
 
   #talents-carousel {
     flex: 1;
@@ -24,9 +23,8 @@ $talent-full-color: #ffd100;
     }
 
     .carousel-item {
-      flex-grow: 1;
-      flex-basis: 33.3%;
       display: block;
+      width: unset;
       margin-right: unset;
       float: unset;
       backface-visibility: unset;
@@ -90,7 +88,7 @@ $talent-full-color: #ffd100;
 
   .talent-tree-main {
     display: grid;
-    margin: $block-spacer auto;
+    margin: $block-spacer 2vw;
     z-index: 1;
   }
 }
