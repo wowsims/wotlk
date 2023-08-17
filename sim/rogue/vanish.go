@@ -59,6 +59,7 @@ func (rogue *Rogue) registerVanishSpell() {
 	rogue.AddMajorCooldown(core.MajorCooldown{
 		Spell: rogue.Vanish,
 		Type:  core.CooldownTypeDPS,
+		Priority: core.CooldownPriorityDrums,
 
 		ShouldActivate: func(s *core.Simulation, c *core.Character) bool {
 			if rogue.Talents.Overkill {

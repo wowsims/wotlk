@@ -57,7 +57,7 @@ func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 		tricksSpell := rogue.TricksOfTheTrade
 		rogue.AddMajorCooldown(core.MajorCooldown{
 			Spell:    tricksSpell,
-			Priority: core.CooldownPriorityDrums,
+			Priority: core.CooldownPriorityBloodlust,
 			Type:     core.CooldownTypeDPS,
 			ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 				if hasShadowblades {
