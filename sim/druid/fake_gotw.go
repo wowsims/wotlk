@@ -24,7 +24,7 @@ func (druid *Druid) registerFakeGotw() {
 			},
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return druid.InForm(Humanoid | Moonkin)
+			return druid.InForm(Humanoid | Moonkin | Tree)
 		},
 	})
 }

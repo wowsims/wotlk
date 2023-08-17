@@ -235,7 +235,7 @@ export abstract class DetailedResults extends Component {
 		const toolbar = document.querySelector('.dr-toolbar') as HTMLElement;
 		new IntersectionObserver(
 			([e]) => {
-				console.log(e.intersectionRatio)
+				//console.log(e.intersectionRatio)
 				e.target.classList.toggle('stuck', e.intersectionRatio < 1)
 			},
 			{

@@ -79,7 +79,7 @@ func (action *APLActionResetSequence) Finalize(rot *APLRotation) {
 	rot.validationWarning("No sequence with name: '%s'", action.name)
 }
 func (action *APLActionResetSequence) IsReady(sim *Simulation) bool {
-	return action.sequence != nil
+	return action.sequence != nil && action.sequence.curIdx != 0
 }
 func (action *APLActionResetSequence) Execute(sim *Simulation) {
 	action.sequence.curIdx = 0
