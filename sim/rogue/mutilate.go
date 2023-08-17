@@ -21,7 +21,7 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    procMask,
-		Flags:       core.SpellFlagMeleeMetrics | SpellFlagBuilder | SpellFlagColdBlooded | core.SpellFlagAPL,
+		Flags:       core.SpellFlagMeleeMetrics | SpellFlagBuilder | SpellFlagColdBlooded,
 
 		BonusCritRating: core.TernaryFloat64(rogue.HasSetBonus(Tier9, 4), 5*core.CritRatingPerCritChance, 0) +
 			[]float64{0, 2, 4, 6}[rogue.Talents.TurnTheTables]*core.CritRatingPerCritChance +
@@ -54,6 +54,10 @@ func (rogue *Rogue) newMutilateHitSpell(isMH bool) *core.Spell {
 }
 
 func (rogue *Rogue) registerMutilateSpell() {
+	if !rogue.Talents.Mutilate {
+		return
+	}
+	
 	rogue.MutilateMH = rogue.newMutilateHitSpell(true)
 	rogue.MutilateOH = rogue.newMutilateHitSpell(false)
 
@@ -61,7 +65,7 @@ func (rogue *Rogue) registerMutilateSpell() {
 		ActionID:    core.ActionID{SpellID: MutilateSpellID},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL,
 
 		EnergyCost: core.EnergyCostOptions{
 			Cost:   rogue.costModifier(60 - core.TernaryFloat64(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfMutilate), 5, 0)),
