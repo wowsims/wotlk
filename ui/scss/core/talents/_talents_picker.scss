@@ -10,6 +10,7 @@ $talent-full-color: #ffd100;
 
 .talents-picker-root {
   width: unset;
+  margin-right: $block-spacer;
   display: flex;
   align-items: flex-start;
 
@@ -137,12 +138,6 @@ $talent-full-color: #ffd100;
   border-color: dimgray;
 }
 
-@include media-breakpoint-up(xl) {
-  .talents-picker-root {
-    margin-right: $block-spacer;
-  }
-}
-
 @include media-breakpoint-up(lg) {
   .talents-picker-root {
     #talents-carousel {
@@ -150,6 +145,30 @@ $talent-full-color: #ffd100;
         display: none;
       }
     }
+  }
+}
+
+@include media-breakpoint-down(xxxl) {
+  .talents-picker-root {
+    width: 100%;
+
+    #talents-carousel {
+      .carousel-item {
+        flex: 1;
+      }
+    }
+  }
+
+  .talent-tree-picker-root {
+    .talent-tree-main {
+      margin: $block-spacer auto;
+    }
+  }
+}
+
+@include media-breakpoint-down(xxl) {
+  .talents-picker-root {
+    margin-right: 0;
   }
 }
 
