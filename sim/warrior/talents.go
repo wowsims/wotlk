@@ -232,6 +232,12 @@ func (warrior *Warrior) applyBloodsurge() {
 		ActionID: core.ActionID{SpellID: 46916},
 		Duration: time.Second * 5,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			if warrior.Ymirjar4pcProcAura.GetStacks() == 2 {
+				warrior.Ymirjar4pcProcAura.Refresh(sim)
+			} else if warrior.Ymirjar4pcProcAura.GetStacks() == 1 {
+				warrior.Ymirjar4pcProcAura.Deactivate(sim)
+			}
+
 			warrior.Slam.DefaultCast.CastTime = 0
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
@@ -256,6 +262,7 @@ func (warrior *Warrior) applyBloodsurge() {
 				if warrior.BloodsurgeAura.IsActive() {
 					warrior.BloodsurgeAura.Deactivate(sim)
 				}
+
 				aura.SetStacks(sim, aura.MaxStacks)
 				warrior.Slam.DefaultCast.CastTime = 0
 				warrior.Slam.DefaultCast.GCD = core.GCDMin
