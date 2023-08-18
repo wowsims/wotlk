@@ -233,8 +233,8 @@ func (warrior *Warrior) applyBloodsurge() {
 		Duration: time.Second * 5,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			if warrior.Ymirjar4pcProcAura.IsActive() {
-				warrior.Ymirjar4pcProcAura.Refresh(sim)
 				aura.Deactivate(sim)
+				warrior.Ymirjar4pcProcAura.Refresh(sim)
 				return
 			}
 
