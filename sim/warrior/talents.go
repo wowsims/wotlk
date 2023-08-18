@@ -253,6 +253,9 @@ func (warrior *Warrior) applyBloodsurge() {
 			Duration:  time.Second * 10,
 			MaxStacks: 2,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				if warrior.BloodsurgeAura.IsActive() {
+					warrior.BloodsurgeAura.Deactivate(sim)
+				}
 				aura.SetStacks(sim, aura.MaxStacks)
 				warrior.Slam.DefaultCast.CastTime = 0
 				warrior.Slam.DefaultCast.GCD = core.GCDMin
