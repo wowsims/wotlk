@@ -10,6 +10,7 @@ $talent-full-color: #ffd100;
 
 .talents-picker-root {
   width: unset;
+  margin-right: $block-spacer;
   display: flex;
   align-items: flex-start;
 
@@ -147,16 +148,21 @@ $talent-full-color: #ffd100;
   }
 }
 
-@include media-breakpoint-up(xxl) {
+@include media-breakpoint-down(xxl) {
   .talents-picker-root {
-    margin-right: $block-spacer;
-  }
-}
+    width: 100%;
+    margin-right: 0;
 
-@include media-breakpoint-down(xxxl) {
+    #talents-carousel {
+      .carousel-item {
+        flex: 1;
+      }
+    }
+  }
+
   .talent-tree-picker-root {
     .talent-tree-main {
-      margin: $block-spacer 1vw;
+      margin: $block-spacer auto;
     }
   }
 }
