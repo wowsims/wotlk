@@ -188,6 +188,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 					Presets.FROST_BL_PESTI_ROTATION_PRESET_DEFAULT,
 					Presets.FROST_UH_PESTI_ROTATION_PRESET_DEFAULT,
 					Presets.UNHOLY_DW_ROTATION_PRESET_DEFAULT,
+					Presets.UNHOLY_2H_ROTATION_PRESET_DEFAULT,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [

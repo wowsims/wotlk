@@ -675,21 +675,6 @@ export class SelectorModal extends BaseModal {
 		}
 
 		const { slot, gearData } = this.config;
-
-		if (slot == ItemSlot.ItemSlotTrinket1 || slot == ItemSlot.ItemSlotTrinket2) {
-			// Trinket EP is weird so just sort by ilvl instead.
-			itemData.sort((dataA, dataB) => (dataB.item as unknown as Item).ilvl - (dataA.item as unknown as Item).ilvl);
-		} else {
-			itemData.sort((dataA, dataB) => {
-				const diff = computeEP(dataB.item) - computeEP(dataA.item);
-				// if EP is same, sort by ilvl
-				if (Math.abs(diff) < 0.01) {
-					return (dataB.item as unknown as Item).ilvl - (dataA.item as unknown as Item).ilvl;
-				}
-				return diff;
-			});
-		}
-
 		const tabContentId = (label + '-tab').split(' ').join('');
 		const selected = label === this.config.selectedTab;
 
@@ -855,20 +840,6 @@ export class ItemList<T> {
 		this.slot = slot;
 		this.gearData = gearData;
 
-		if (slot == ItemSlot.ItemSlotTrinket1 || slot == ItemSlot.ItemSlotTrinket2) {
-			// Trinket EP is weird so just sort by ilvl instead.
-			itemData.sort((dataA, dataB) => (dataB.item as unknown as Item).ilvl - (dataA.item as unknown as Item).ilvl);
-		} else {
-			itemData.sort((dataA, dataB) => {
-				const diff = computeEP(dataB.item) - computeEP(dataA.item);
-				// if EP is same, sort by ilvl
-				if (Math.abs(diff) < 0.01) {
-					return (dataB.item as unknown as Item).ilvl - (dataA.item as unknown as Item).ilvl;
-				}
-				return diff;
-			});
-		}
-
 		const tabContentId = (label + '-tab').split(' ').join('');
 		const selected = label === config.selectedTab;
 
@@ -982,9 +953,11 @@ export class ItemList<T> {
 			const anchorElem = listItemElem.querySelector('.selector-modal-list-item-link') as HTMLAnchorElement;
 			const iconElem = listItemElem.querySelector('.selector-modal-list-item-icon') as HTMLImageElement;
 			const nameElem = listItemElem.querySelector('.selector-modal-list-item-name') as HTMLAnchorElement;
+			const favoriteElem = listItemElem.querySelector('.selector-modal-list-item-favorite') as HTMLElement;
 
 			anchorElem.addEventListener('click', (event: Event) => {
 				event.preventDefault();
+				if (event.target === favoriteElem) return false;
 				onItemClick(itemData);
 			});
 
@@ -1002,9 +975,7 @@ export class ItemList<T> {
 				sourceElem.remove();
 			}
 
-			const favoriteElem = listItemElem.getElementsByClassName('selector-modal-list-item-favorite')[0] as HTMLElement;
 			new Tooltip(favoriteElem);
-
 			const setFavorite = (isFavorite: boolean) => {
 				const filters = player.sim.getFilters();
 				if (label == 'Items') {
@@ -1038,42 +1009,12 @@ export class ItemList<T> {
 						}
 					}
 				}
+				favoriteElem.classList.toggle('fa-solid');
+				favoriteElem.classList.toggle('fa-regular');
+				listItemElem.dataset.fav = isFavorite.toString();
+
 				player.sim.setFilters(TypedEvent.nextEventID(), filters);
-
-				// Reorder and update this element.
-				const curItemElems = Array.from(this.listElem.children) as Array<HTMLElement>;
-				if (isFavorite) {
-					// Use same sorting order (based on idx) among the favorited elems.
-					const nextElem = curItemElems.find(elem => elem.dataset.fav == 'false' || parseInt(elem.dataset.idx!) > itemIdx);
-					if (nextElem) {
-						this.listElem.insertBefore(listItemElem, nextElem);
-					} else {
-						this.listElem.appendChild(listItemElem);
-					}
-
-					favoriteElem.classList.add('fa-solid');
-					favoriteElem.classList.remove('fa-regular');
-					listItemElem.dataset.fav = 'true';
-				} else {
-					// Put back in original spot. itemIdx will usually be a very good starting point for the search.
-					// Need to search in both directions to handle all cases of favorited elems / itemIdx location.
-					let curIdx = itemIdx;
-					while (curIdx > 0 && curItemElems[curIdx].dataset.fav == 'false' && parseInt(curItemElems[curIdx].dataset.idx!) > itemIdx) {
-						curIdx--;
-					}
-					while (curIdx < curItemElems.length && (curItemElems[curIdx].dataset.fav == 'true' || parseInt(curItemElems[curIdx].dataset.idx!) < itemIdx)) {
-						curIdx++;
-					}
-					if (curIdx == curItemElems.length) {
-						this.listElem.appendChild(listItemElem);
-					} else {
-						this.listElem.insertBefore(listItemElem, curItemElems[curIdx]);
-					}
-
-					favoriteElem.classList.remove('fa-solid');
-					favoriteElem.classList.add('fa-regular');
-					listItemElem.dataset.fav = 'false';
-				}
+				this.applyFilters();
 			};
 			favoriteElem.addEventListener('click', () => setFavorite(listItemElem.dataset.fav == 'false'));
 
@@ -1247,6 +1188,30 @@ export class ItemList<T> {
 
 			return true;
 		});
+
+		let sortFn: (itemA: T, itemB: T) => number;
+		if (this.slot == ItemSlot.ItemSlotTrinket1 || this.slot == ItemSlot.ItemSlotTrinket2) {
+			// Trinket EP is weird so just sort by ilvl instead.
+			sortFn = (itemA, itemB) => (itemB as unknown as Item).ilvl - (itemA as unknown as Item).ilvl;
+		} else {
+			sortFn = (itemA, itemB) => {
+				const diff = this.computeEP(itemB) - this.computeEP(itemA);
+				// if EP is same, sort by ilvl
+				if (Math.abs(diff) < 0.01) return (itemB as unknown as Item).ilvl - (itemA as unknown as Item).ilvl;
+				return diff;
+			}
+		}
+		// Trinket EP is weird so just sort by ilvl instead.
+		validItemElems = validItemElems.sort((dataA, dataB) => {
+			if (dataA.dataset.fav === 'true' && dataB.dataset.fav === 'false') return -1;
+			if (dataB.dataset.fav === 'true' && dataA.dataset.fav === 'false') return 1;
+
+			const dataAItem = this.itemData[parseInt(dataA.dataset.idx!)].item;
+			const dataBItem = this.itemData[parseInt(dataB.dataset.idx!)].item;
+
+			return sortFn(dataAItem, dataBItem);
+		});
+
 		this.listElem.replaceChildren(...validItemElems);
 		this.hideOrShowEPValues()
 	}
