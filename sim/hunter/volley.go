@@ -45,7 +45,7 @@ func (hunter *Hunter) registerVolleySpell() {
 				dot.SnapshotBaseDamage *= sim.Encounter.AOECapMultiplier()
 
 				attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
-				dot.SnapshotCritChance = dot.Spell.PhysicalCritChance(target, attackTable)
+				dot.SnapshotCritChance = dot.Spell.PhysicalCritChance(attackTable)
 				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {

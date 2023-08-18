@@ -284,7 +284,7 @@ func (dk *Deathknight) doWanderingPlague(sim *core.Simulation, spell *core.Spell
 	}
 
 	attackTable := dk.AttackTables[result.Target.UnitIndex]
-	physCritChance := spell.PhysicalCritChance(result.Target, attackTable)
+	physCritChance := spell.PhysicalCritChance(attackTable)
 	if sim.RandomFloat("Wandering Plague Roll") < physCritChance {
 		dk.LastTickTime = sim.CurrentTime
 		dk.LastDiseaseDamage = result.Damage / dk.WanderingPlague.TargetDamageMultiplier(attackTable, false)

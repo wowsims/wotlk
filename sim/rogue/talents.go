@@ -1,6 +1,7 @@
 package rogue
 
 import (
+	"golang.org/x/exp/slices"
 	"math"
 	"time"
 
@@ -330,45 +331,49 @@ func (rogue *Rogue) applyInitiative() {
 	})
 }
 
-func (rogue *Rogue) applyWeaponSpecializations() {
-	mhWeapon := rogue.GetMHWeapon()
-	ohWeapon := rogue.GetOHWeapon()
-	// https://wotlk.wowhead.com/spell=13964/sword-specialization, proc mask = 20.
-	hackAndSlashMask := core.ProcMaskUnknown
-	anyMaceEquipped := false
-	if mhWeapon != nil && mhWeapon.ID != 0 {
-		switch mhWeapon.WeaponType {
-		case proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeAxe:
-			hackAndSlashMask |= core.ProcMaskMeleeMH
-		case proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeFist:
-			rogue.OnSpellRegistered(func(spell *core.Spell) {
-				if spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
-					spell.BonusCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.CloseQuartersCombat)
-				}
-			})
-		case proto.WeaponType_WeaponTypeMace:
-			anyMaceEquipped = true
-		}
+func (rogue *Rogue) getMask(wts ...proto.WeaponType) core.ProcMask {
+	mask := core.ProcMaskUnknown
+	if wt := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType; slices.Contains(wts, wt) {
+		mask |= core.ProcMaskMeleeMH
 	}
-	if ohWeapon != nil && ohWeapon.ID != 0 {
-		switch ohWeapon.WeaponType {
-		case proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeAxe:
-			hackAndSlashMask |= core.ProcMaskMeleeOH
-		case proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeFist:
-			rogue.OnSpellRegistered(func(spell *core.Spell) {
-				if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
-					spell.BonusCritRating += 1 * core.CritRatingPerCritChance * float64(rogue.Talents.CloseQuartersCombat)
-				}
-			})
-		case proto.WeaponType_WeaponTypeMace:
-			anyMaceEquipped = true
+	if wt := rogue.Equip[proto.ItemSlot_ItemSlotOffHand].WeaponType; slices.Contains(wts, wt) {
+		mask |= core.ProcMaskMeleeOH
+	}
+	return mask
+}
+
+func (rogue *Rogue) applyWeaponSpecializations() {
+	if hns := rogue.Talents.HackAndSlash; hns > 0 {
+		if mask := rogue.getMask(proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeAxe); mask != core.ProcMaskUnknown {
+			rogue.registerHackAndSlash(mask)
 		}
 	}
 
-	if anyMaceEquipped {
-		rogue.AddStat(stats.ArmorPenetration, core.ArmorPenPerPercentArmor*3*float64(rogue.Talents.MaceSpecialization))
+	if cqc := rogue.Talents.CloseQuartersCombat; cqc > 0 {
+		switch rogue.getMask(proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeFist) {
+		case core.ProcMaskMelee:
+			rogue.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*float64(cqc))
+		case core.ProcMaskMeleeMH:
+			rogue.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*float64(cqc))
+			rogue.OnSpellRegistered(func(spell *core.Spell) {
+				if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
+					spell.BonusCritRating -= core.CritRatingPerCritChance * float64(cqc)
+				}
+			})
+		case core.ProcMaskMeleeOH:
+			rogue.OnSpellRegistered(func(spell *core.Spell) {
+				if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
+					spell.BonusCritRating += core.CritRatingPerCritChance * float64(cqc)
+				}
+			})
+		}
 	}
-	rogue.registerHackAndSlash(hackAndSlashMask)
+
+	if ms := rogue.Talents.MaceSpecialization; ms > 0 {
+		if mask := rogue.getMask(proto.WeaponType_WeaponTypeMace); mask != core.ProcMaskUnknown {
+			rogue.AddStat(stats.ArmorPenetration, core.ArmorPenPerPercentArmor*3*float64(ms))
+		}
+	}
 }
 
 func (rogue *Rogue) applyCombatPotency() {

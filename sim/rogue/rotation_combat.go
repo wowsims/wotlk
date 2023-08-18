@@ -43,17 +43,19 @@ func (x *rotation_combat) setup(_ *core.Simulation, rogue *Rogue) {
 			return 10 * rogue.EnergyTickMultiplier
 		}
 
-		attackTable := rogue.AttackTables[rogue.CurrentTarget.UnitIndex]
 		spell := rogue.AutoAttacks.OHAuto
+		at := rogue.AttackTables[rogue.CurrentTarget.UnitIndex]
 
 		landChance := 1.0
-		if miss := attackTable.BaseMissChance + 0.19 - spell.PhysicalHitChance(rogue.CurrentTarget); miss > 0 {
+		if miss := at.BaseMissChance + 0.19 - spell.PhysicalHitChance(at); miss > 0 {
 			landChance -= miss
 		}
-		if dodge := attackTable.BaseDodgeChance - spell.ExpertisePercentage() - spell.Unit.PseudoStats.DodgeReduction; dodge > 0 {
+		if dodge := at.BaseDodgeChance - spell.ExpertisePercentage() - spell.Unit.PseudoStats.DodgeReduction; dodge > 0 {
 			landChance -= dodge
 		}
-		landsPerSecond := landChance * (1 / rogue.AutoAttacks.OffhandSwingSpeed().Seconds())
+
+		landsPerSecond := landChance / rogue.AutoAttacks.OffhandSwingSpeed().Seconds()
+
 		return 10*rogue.EnergyTickMultiplier + landsPerSecond*0.2*float64(rogue.Talents.CombatPotency)*3
 	}
 
@@ -317,12 +319,12 @@ func (x *rotation_combat) setup(_ *core.Simulation, rogue *Rogue) {
 	bldPerCp := 1.0
 	if x.builder == rogue.SinisterStrike && rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfSinisterStrike) {
 		attackTable := rogue.AttackTables[rogue.CurrentTarget.UnitIndex]
-		crit := rogue.SinisterStrike.PhysicalCritChance(rogue.CurrentTarget, attackTable)
+		crit := rogue.SinisterStrike.PhysicalCritChance(attackTable)
 		bldPerCp = 1 / (1 + crit*(0.5+0.2*float64(rogue.Talents.SealFate)))
 	}
 	if x.builder == rogue.Backstab && rogue.Talents.SealFate > 0 {
 		attackTable := rogue.AttackTables[rogue.CurrentTarget.UnitIndex]
-		crit := rogue.Backstab.PhysicalCritChance(rogue.CurrentTarget, attackTable)
+		crit := rogue.Backstab.PhysicalCritChance(attackTable)
 		bldPerCp = 1 / (1 + crit*(0.2*float64(rogue.Talents.SealFate)))
 	}
 

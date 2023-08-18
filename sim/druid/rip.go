@@ -60,7 +60,7 @@ func (druid *Druid) registerRipSpell() {
 
 				if !isRollover {
 					attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
-					dot.SnapshotCritChance = dot.Spell.PhysicalCritChance(target, attackTable)
+					dot.SnapshotCritChance = dot.Spell.PhysicalCritChance(attackTable)
 					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
 				}
 			},
