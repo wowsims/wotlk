@@ -137,18 +137,26 @@ $talent-full-color: #ffd100;
   border-color: dimgray;
 }
 
-@include media-breakpoint-up(xl) {
-  .talents-picker-root {
-    margin-right: $block-spacer;
-  }
-}
-
 @include media-breakpoint-up(lg) {
   .talents-picker-root {
     #talents-carousel {
       .carousel-control-prev, .carousel-control-next {
         display: none;
       }
+    }
+  }
+}
+
+@include media-breakpoint-up(xxl) {
+  .talents-picker-root {
+    margin-right: $block-spacer;
+  }
+}
+
+@include media-breakpoint-down(xxxl) {
+  .talent-tree-picker-root {
+    .talent-tree-main {
+      margin: $block-spacer 1vw;
     }
   }
 }
