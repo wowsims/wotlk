@@ -148,10 +148,9 @@ $talent-full-color: #ffd100;
   }
 }
 
-@include media-breakpoint-down(xxl) {
+@include media-breakpoint-down(xxxl) {
   .talents-picker-root {
     width: 100%;
-    margin-right: 0;
 
     #talents-carousel {
       .carousel-item {
@@ -164,6 +163,12 @@ $talent-full-color: #ffd100;
     .talent-tree-main {
       margin: $block-spacer auto;
     }
+  }
+}
+
+@include media-breakpoint-down(xxl) {
+  .talents-picker-root {
+    margin-right: 0;
   }
 }
 
