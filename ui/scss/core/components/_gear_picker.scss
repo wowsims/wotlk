@@ -197,7 +197,19 @@
   margin-left: auto;
 }
 
+.selector-modal-list-labels {
+  margin-bottom: map-get($spacers, 2);
+  font-size: 1.125rem;
+
+  .ep-delta-label {
+    display: flex;
+    align-items: center;
+    float: right;
+  }
+}
+
 .selector-modal-list {
+  width: 100%;
 	max-height: 70vh;
 	overflow-y: scroll;
 	overflow-x: hidden;
@@ -205,13 +217,16 @@
 }
 
 .selector-modal-list-label-cell {
-	width: 100%;
+	flex: 1;
 	display: flex;
 	align-items: center;
 }
 
 // TODO: Move all of these to a shared file, as they're used in other places too
 .selector-modal-list-item {
+  padding: .5rem;
+  display: flex;
+  align-items: center;
 	background-color: #111218;
 
   &:nth-child(2n) {
@@ -232,12 +247,6 @@
     }
   }
 
-  .selector-modal-list-item-link {
-    padding: .5rem;
-    display: flex;
-    align-items: center;
-  }
-
   .selector-modal-list-item-icon {
     @include wowhead-background-icon;
     width: 3rem;
@@ -247,7 +256,7 @@
   
   .selector-modal-list-item-name {
     font-size: 1.125rem;
-    margin-left: 1rem;
+    margin-left: map-get($spacers, 3);
     letter-spacing: normal;
     font-weight: normal;
     cursor: pointer;
@@ -255,14 +264,12 @@
 }
 
 .selector-modal-list-item-source-container {
-	margin-left: 1rem;
-	width: 300px;
-	font-size: 11px;
+	margin-left: map-get($spacers, 3);
+	width: 12rem;
 }
 
 .selector-modal-list-item-favorite {
-	margin-left: 1rem;
-	font-size: 22px;
+	margin-left: map-get($spacers, 3);
 	color: yellow;
 }
 
@@ -274,16 +281,20 @@
 
 .selector-modal-list-item-ep {
 	display: flex;
-	font-size: 16px;
+	font-size: 1rem;
 	font-weight: 800;
 }
 
 .selector-modal-list-item-ep > span {
-	display: inline-block;
-	margin: 5px;
+	min-width: 3rem;
+  display: inline-block;
 	color: white;
-	min-width: 50px;
 	text-align: right;
+}
+
+.heroic-label {
+  margin-left: map-get($spacers, 1);
+  color: $item-quality-uncommon;  
 }
 
 @include media-breakpoint-down(lg) {

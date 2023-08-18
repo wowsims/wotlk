@@ -132,14 +132,14 @@ $sim-transitions: .2s ease-in;
 }
 
 .positive {
-	color: lawngreen !important;
+	color: $success !important;
 }
 .negative {
 	color: red !important;
 }
 
 .safe {
-	color: lawngreen;
+	color: $success;
 }
 .warning {
 	color: yellow;
