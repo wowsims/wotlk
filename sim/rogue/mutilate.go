@@ -57,7 +57,7 @@ func (rogue *Rogue) registerMutilateSpell() {
 	if !rogue.Talents.Mutilate {
 		return
 	}
-	
+
 	rogue.MutilateMH = rogue.newMutilateHitSpell(true)
 	rogue.MutilateOH = rogue.newMutilateHitSpell(false)
 

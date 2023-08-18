@@ -31,7 +31,7 @@ func (dot *Dot) OutcomeTickCounted(sim *Simulation, result *SpellResult, attackT
 }
 
 func (dot *Dot) OutcomeTickPhysicalCrit(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
-	if dot.Spell.PhysicalCritCheck(sim, result.Target, attackTable) {
+	if dot.Spell.PhysicalCritCheck(sim, attackTable) {
 		result.Outcome = OutcomeCrit
 		result.Damage *= dot.Spell.CritMultiplier
 	} else {
@@ -415,7 +415,7 @@ func (spell *Spell) fixedCritCheck(sim *Simulation, critChance float64) bool {
 }
 
 func (result *SpellResult) applyAttackTableMiss(spell *Spell, attackTable *AttackTable, roll float64, chance *float64) bool {
-	missChance := attackTable.BaseMissChance - spell.PhysicalHitChance(result.Target)
+	missChance := attackTable.BaseMissChance - spell.PhysicalHitChance(attackTable)
 	if spell.Unit.AutoAttacks.IsDualWielding && !spell.Unit.PseudoStats.DisableDWMissPenalty {
 		missChance += 0.19
 	}
@@ -431,7 +431,7 @@ func (result *SpellResult) applyAttackTableMiss(spell *Spell, attackTable *Attac
 }
 
 func (result *SpellResult) applyAttackTableMissNoDWPenalty(spell *Spell, attackTable *AttackTable, roll float64, chance *float64) bool {
-	missChance := attackTable.BaseMissChance - spell.PhysicalHitChance(result.Target)
+	missChance := attackTable.BaseMissChance - spell.PhysicalHitChance(attackTable)
 	*chance = MaxFloat(0, missChance)
 
 	if roll < *chance {
@@ -500,7 +500,7 @@ func (result *SpellResult) applyAttackTableCrit(spell *Spell, attackTable *Attac
 	if spell.CritMultiplier == 0 {
 		panic("Spell " + spell.ActionID.String() + " missing CritMultiplier")
 	}
-	*chance += spell.PhysicalCritChance(result.Target, attackTable)
+	*chance += spell.PhysicalCritChance(attackTable)
 
 	if roll < *chance {
 		result.Outcome = OutcomeCrit
@@ -515,7 +515,7 @@ func (result *SpellResult) applyAttackTableCritSeparateRoll(sim *Simulation, spe
 	if spell.CritMultiplier == 0 {
 		panic("Spell " + spell.ActionID.String() + " missing CritMultiplier")
 	}
-	if spell.PhysicalCritCheck(sim, result.Target, attackTable) {
+	if spell.PhysicalCritCheck(sim, attackTable) {
 		result.Outcome = OutcomeCrit
 		spell.SpellMetrics[result.Target.UnitIndex].Crits++
 		result.Damage *= spell.CritMultiplier

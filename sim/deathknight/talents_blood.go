@@ -118,9 +118,10 @@ func (dk *Deathknight) applyWillOfTheNecropolis() {
 		Duration: core.NeverExpires,
 	})
 
+	damageMitigation := 1.0 - (0.05 * float64(dk.Talents.WillOfTheNecropolis))
 	dk.AddDynamicDamageTakenModifier(func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
 		if (dk.CurrentHealth()-result.Damage)/dk.MaxHealth() <= 0.35 {
-			result.Damage *= 0.85
+			result.Damage *= damageMitigation
 			if (dk.CurrentHealth()-result.Damage)/dk.MaxHealth() <= 0.35 {
 				dk.WillOfTheNecropolis.Activate(sim)
 				return

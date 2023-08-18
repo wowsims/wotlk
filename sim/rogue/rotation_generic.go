@@ -1,7 +1,6 @@
 package rogue
 
 import (
-	"github.com/wowsims/wotlk/sim/core/stats"
 	"golang.org/x/exp/slices"
 	"log"
 	"time"
@@ -44,24 +43,44 @@ func (x *rotation_generic) setup(_ *core.Simulation, rogue *Rogue) {
 	energyPerSecond := func() float64 {
 		var eps float64
 		if rogue.Talents.CombatPotency > 0 {
-			attackTable := rogue.AttackTables[rogue.CurrentTarget.UnitIndex]
 			spell := rogue.AutoAttacks.OHAuto
+			at := rogue.AttackTables[rogue.CurrentTarget.UnitIndex]
 
 			landChance := 1.0
-			if miss := attackTable.BaseMissChance + 0.19 - spell.PhysicalHitChance(rogue.CurrentTarget); miss > 0 {
+			if miss := at.BaseMissChance + 0.19 - spell.PhysicalHitChance(at); miss > 0 {
 				landChance -= miss
 			}
-			if dodge := attackTable.BaseDodgeChance - spell.ExpertisePercentage() - spell.Unit.PseudoStats.DodgeReduction; dodge > 0 {
+			if dodge := at.BaseDodgeChance - spell.ExpertisePercentage() - spell.Unit.PseudoStats.DodgeReduction; dodge > 0 {
 				landChance -= dodge
 			}
-			landsPerSecond := landChance * (1 / rogue.AutoAttacks.OffhandSwingSpeed().Seconds())
+
+			landsPerSecond := landChance / rogue.AutoAttacks.OffhandSwingSpeed().Seconds()
+
 			eps += landsPerSecond * 0.2 * float64(rogue.Talents.CombatPotency) * 3
 		}
 		if rogue.Talents.FocusedAttacks > 0 {
+			getCritChance := func(spell *core.Spell) float64 {
+				at := rogue.AttackTables[rogue.CurrentTarget.UnitIndex]
+
+				critCap := 1.0 - at.BaseGlanceChance
+				if miss := at.BaseMissChance + 0.19 - spell.PhysicalHitChance(at); miss > 0 {
+					critCap -= miss
+				}
+				if dodge := at.BaseDodgeChance - spell.ExpertisePercentage() - rogue.PseudoStats.DodgeReduction; dodge > 0 {
+					critCap -= dodge
+				}
+
+				critChance := spell.PhysicalCritChance(at)
+				if critChance > critCap {
+					critChance = critCap
+				}
+				return critChance
+			}
+
+			critsPerSecond := getCritChance(rogue.AutoAttacks.MHAuto)/rogue.AutoAttacks.MainhandSwingSpeed().Seconds() +
+				getCritChance(rogue.AutoAttacks.OHAuto)/rogue.AutoAttacks.OffhandSwingSpeed().Seconds()
 			procChance := []float64{0, 0.33, 0.66, 1}[rogue.Talents.FocusedAttacks]
-			critSuppression := rogue.AttackTables[rogue.CurrentTarget.UnitIndex].CritSuppression
-			effectiveCrit := rogue.GetStat(stats.MeleeCrit)/(core.CritRatingPerCritChance*100) - critSuppression
-			critsPerSecond := effectiveCrit * (1/rogue.AutoAttacks.MainhandSwingSpeed().Seconds() + 1/rogue.AutoAttacks.OffhandSwingSpeed().Seconds())
+
 			eps += critsPerSecond * procChance * 2
 		}
 		return 10*rogue.EnergyTickMultiplier + eps
@@ -280,7 +299,7 @@ func (x *rotation_generic) setup(_ *core.Simulation, rogue *Rogue) {
 	bldPerCp := 1.0
 	if x.builder == rogue.SinisterStrike {
 		attackTable := rogue.AttackTables[rogue.CurrentTarget.UnitIndex]
-		crit := rogue.SinisterStrike.PhysicalCritChance(rogue.CurrentTarget, attackTable)
+		crit := rogue.SinisterStrike.PhysicalCritChance(attackTable)
 		var extraChance float64
 		if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfSinisterStrike) {
 			extraChance = 0.5
@@ -289,18 +308,18 @@ func (x *rotation_generic) setup(_ *core.Simulation, rogue *Rogue) {
 	}
 	if x.builder == rogue.Backstab {
 		attackTable := rogue.AttackTables[rogue.CurrentTarget.UnitIndex]
-		crit := rogue.Backstab.PhysicalCritChance(rogue.CurrentTarget, attackTable)
+		crit := rogue.Backstab.PhysicalCritChance(attackTable)
 		bldPerCp = 1 / (1 + crit*(0.2*float64(rogue.Talents.SealFate)))
 	}
 	if x.builder == rogue.Hemorrhage {
 		attackTable := rogue.AttackTables[rogue.CurrentTarget.UnitIndex]
-		crit := rogue.Hemorrhage.PhysicalCritChance(rogue.CurrentTarget, attackTable)
+		crit := rogue.Hemorrhage.PhysicalCritChance(attackTable)
 		bldPerCp = 1 / (1 + crit*(0.2*float64(rogue.Talents.SealFate)))
 	}
 	if x.builder == rogue.Mutilate {
 		attackTable := rogue.AttackTables[rogue.CurrentTarget.UnitIndex]
-		critMH := rogue.MutilateMH.PhysicalCritChance(rogue.CurrentTarget, attackTable)
-		critOH := rogue.MutilateOH.PhysicalCritChance(rogue.CurrentTarget, attackTable)
+		critMH := rogue.MutilateMH.PhysicalCritChance(attackTable)
+		critOH := rogue.MutilateOH.PhysicalCritChance(attackTable)
 		crit := 1 - (1-critMH)*(1-critOH)
 		bldPerCp = 1 / (2 + crit*(0.2*float64(rogue.Talents.SealFate)))
 	}
