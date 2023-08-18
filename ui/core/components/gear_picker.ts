@@ -41,8 +41,14 @@ import {
 	UIItem as Item,
 } from '../proto/ui.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
+import { Tooltip } from 'bootstrap';
 
-declare var tippy: any;
+const EP_TOOLTIP = `
+	EP (Equivalence Points) is way of comparing items by multiplying the raw stats of an item with your current stat weights.
+	More EP does not necessarily mean more DPS, as EP doesn't take into account stat caps and non-linear stat calculations.
+`
+
+const HEROIC_LABEL = `<span class='heroic-label'>[H]</span>`
 
 export class GearPicker extends Component {
 	// ItemSlot is used as the index
@@ -132,11 +138,9 @@ export class ItemRenderer extends Component {
 	update(newItem: EquippedItem) {
 		this.nameElem.textContent = newItem.item.name;
 		if (newItem.item.heroic) {
-			var heroic_span = document.createElement('span');
-			heroic_span.style.color = "green";
-			heroic_span.style.marginLeft = "3px";
-			heroic_span.innerText = "[H]";
-			this.nameElem.appendChild(heroic_span);
+			this.nameElem.insertAdjacentHTML('beforeend', HEROIC_LABEL);
+		} else {
+			this.nameElem.querySelector('.heroic-label')?.remove();
 		}
 
 		setItemQualityCssClass(this.nameElem, newItem.item.quality);
@@ -857,9 +861,20 @@ export class ItemList<T> {
 					<button class="selector-modal-simall-button btn btn-warning">Add to Batch Sim</button>
 					<button class="selector-modal-remove-button btn btn-danger">Unequip Item</button>
 				</div>
-				<div style="width: 100%;height: 30px;font-size: 18px;">
-					<span style="float:left">Item</span>
-					<span class="ep-delta-label" style="float:right">EP(+/-)</span>
+				<div class="selector-modal-list-labels">
+					<label>Item</label>
+					<label class="ep-delta-label">
+						EP
+						<i class="fa-solid fa-plus-minus fa-2xs"></i>
+						<button
+							id="ep-explanation"
+							class="btn btn-link p-0 ms-1"
+							data-bs-toggle="tooltip"
+							data-bs-title="${EP_TOOLTIP}"
+						>
+							<i class="far fa-question-circle fa-lg"></i>
+						</button>
+					</label>
 				</div>
 				<ul class="selector-modal-list"></ul>
 			</div>
@@ -868,8 +883,9 @@ export class ItemList<T> {
 		const tabContent = tabContentFragment.children[0] as HTMLElement;
 		parent.appendChild(tabContent);
 
-		// const helpIcon = tabContent.getElementsByClassName("ep-help").item(0);
-		// tippy(helpIcon, { 'content': 'These values are computed using stat weights which can be edited using the "Stat Weights" button.' });
+		const epExplanationElem = tabContent.querySelector('#ep-explanation') as HTMLElement;
+		new Tooltip(epExplanationElem);
+
 		const show1hWeaponsSelector = makeShow1hWeaponsSelector(tabContent.getElementsByClassName('selector-modal-show-1h-weapons')[0] as HTMLElement, player.sim);
 		const show2hWeaponsSelector = makeShow2hWeaponsSelector(tabContent.getElementsByClassName('selector-modal-show-2h-weapons')[0] as HTMLElement, player.sim);
 		if (!(label == 'Items' && (slot == ItemSlot.ItemSlotMainHand || (slot == ItemSlot.ItemSlotOffHand && player.getClass() == Class.ClassWarrior)))) {
@@ -904,34 +920,40 @@ export class ItemList<T> {
 			listItemElem.classList.add('selector-modal-list-item');
 			listItemElem.dataset.idx = String(itemIdx);
 			listItemElem.innerHTML = `
-				<a class="selector-modal-list-item-link">
-					<div class="selector-modal-list-label-cell">
+				<div class="selector-modal-list-label-cell">
+					<a class="selector-modal-list-item-link">
 						<img class="selector-modal-list-item-icon" />
-						<label class="selector-modal-list-item-name">${itemData.heroic ? itemData.name + "<span style=\"color:green\">[H]</span>" : itemData.name}</label>
-					</div>
-					<div class="selector-modal-list-item-source-container">
-					</div>
-					<div>
-						<span class="selector-modal-list-item-favorite fa-star"></span>
-					</div>
-					<div class="selector-modal-list-item-ep">
-						<span class="selector-modal-list-item-ep-value">${itemEP < 9.95 ? itemEP.toFixed(1) : Math.round(itemEP)}</span>
-					</div>
-					<div class="selector-modal-list-item-ep">
-						<span class="selector-modal-list-item-ep-delta"></span>
-					</div>
-				</a>
+						<label class="selector-modal-list-item-name">${itemData.heroic ? itemData.name + HEROIC_LABEL : itemData.name}</label>
+					</a>
+				</div>
+				<div class="selector-modal-list-item-source-container">
+				</div>
+				<div>
+					<button
+						class="selector-modal-list-item-favorite btn btn-link p-0"
+						data-bs-toggle="tooltip"
+						data-bs-title="Add to favorites"
+					>
+						<i class="far fa-star fa-xl"></i>
+					</button>
+				</div>
+				<div class="selector-modal-list-item-ep">
+					<span class="selector-modal-list-item-ep-value">${itemEP < 9.95 ? itemEP.toFixed(1) : Math.round(itemEP)}</span>
+				</div>
+				<div class="selector-modal-list-item-ep">
+					<span class="selector-modal-list-item-ep-delta"></span>
+				</div>
 		  `;
 
 			if (slot == ItemSlot.ItemSlotTrinket1 || slot == ItemSlot.ItemSlotTrinket2) {
-				const epElem = listItemElem.getElementsByClassName('selector-modal-list-item-ep')[0] as HTMLElement;
+				const epElem = listItemElem.querySelector('.selector-modal-list-item-ep') as HTMLElement;
 				epElem.style.display = 'none';
 			}
 
-			const anchorElem = listItemElem.children[0] as HTMLAnchorElement;
-			const iconElem = listItemElem.getElementsByClassName('selector-modal-list-item-icon')[0] as HTMLImageElement;
-			const nameElem = listItemElem.getElementsByClassName('selector-modal-list-item-name')[0] as HTMLAnchorElement;
-			const favoriteElem = listItemElem.getElementsByClassName('selector-modal-list-item-favorite')[0] as HTMLElement;
+			const anchorElem = listItemElem.querySelector('.selector-modal-list-item-link') as HTMLAnchorElement;
+			const iconElem = listItemElem.querySelector('.selector-modal-list-item-icon') as HTMLImageElement;
+			const nameElem = listItemElem.querySelector('.selector-modal-list-item-name') as HTMLAnchorElement;
+			const favoriteElem = listItemElem.querySelector('.selector-modal-list-item-favorite') as HTMLElement;
 
 			anchorElem.addEventListener('click', (event: Event) => {
 				event.preventDefault();
@@ -953,7 +975,7 @@ export class ItemList<T> {
 				sourceElem.remove();
 			}
 
-			tippy(favoriteElem, { 'content': 'Add to Favorites' });
+			new Tooltip(favoriteElem);
 			const setFavorite = (isFavorite: boolean) => {
 				const filters = player.sim.getFilters();
 				if (label == 'Items') {
@@ -1191,18 +1213,18 @@ export class ItemList<T> {
 		});
 
 		this.listElem.replaceChildren(...validItemElems);
+		this.hideOrShowEPValues()
 	}
 
 	public hideOrShowEPValues() {
+		const labels = document.getElementsByClassName("ep-delta-label")
 		const epItems = document.getElementsByClassName("selector-modal-list-item-ep")
-		const display = this.player.sim.getShowEPValues() ? "block" : "none"
+		const display = this.player.sim.getShowEPValues() ? "" : "none"
 
 		for (let i = 0; i < epItems.length; i++) {
 			const epItem = epItems.item(i) as HTMLElement;
 			epItem.style.display = display
 		}
-
-		const labels = document.getElementsByClassName("ep-delta-label")
 
 		for (let i = 0; i < labels.length; i++) {
 			const label = labels.item(i) as HTMLElement;
@@ -1219,8 +1241,8 @@ export class ItemList<T> {
 		if (source.source.oneofKind == 'crafted') {
 			const src = source.source.crafted;
 			container.innerHTML = `
-					<a href="${ActionId.makeSpellUrl(src.spellId)}">${professionNames[src.profession]}</a>
-				`;
+				<a href="${ActionId.makeSpellUrl(src.spellId)}"><small>${professionNames[src.profession]}</small></a>
+			`;
 		} else if (source.source.oneofKind == 'drop') {
 			const src = source.source.drop;
 			const zone = sim.db.getZone(src.zoneId);
@@ -1230,37 +1252,37 @@ export class ItemList<T> {
 			}
 
 			let innerHTML = `
-					<a href="${ActionId.makeZoneUrl(zone.id)}">${zone.name} (${difficultyNames[src.difficulty]})</a>
-				`;
+				<a href="${ActionId.makeZoneUrl(zone.id)}"><small>${zone.name} (${difficultyNames[src.difficulty]})</small></a>
+			`;
 
 			const category = src.category ? ` - ${src.category}` : '';
 			if (npc) {
 				innerHTML += `
-						<br>
-						<a href="${ActionId.makeNpcUrl(npc.id)}">${npc.name + category}</a>
-					`;
+					<br>
+					<a href="${ActionId.makeNpcUrl(npc.id)}"><small>${npc.name + category}</small></a>
+				`;
 			} else if (src.otherName) {
 				innerHTML += `
-						<br>
-						<a href="${ActionId.makeZoneUrl(zone.id)}>${src.otherName + category}</a>
-					`;
+					<br>
+					<a href="${ActionId.makeZoneUrl(zone.id)}><small>${src.otherName + category}</small></a>
+				`;
 			} else if (category) {
 				innerHTML += `
-						<br>
-						<a href="${ActionId.makeZoneUrl(zone.id)}>${category}</a>
-					`;
+					<br>
+					<a href="${ActionId.makeZoneUrl(zone.id)}><small>${category}</small></a>
+				`;
 			}
 			container.innerHTML = innerHTML;
 		} else if (source.source.oneofKind == 'quest') {
 			const src = source.source.quest;
 			container.innerHTML = `
-					<a href="${ActionId.makeQuestUrl(src.id)}">${src.name}</a>
-				`;
+				<a href="${ActionId.makeQuestUrl(src.id)}"><small>${src.name}</small></a>
+			`;
 		} else if (source.source.oneofKind == 'soldBy') {
 			const src = source.source.soldBy;
 			container.innerHTML = `
-					<a href="${ActionId.makeNpcUrl(src.npcId)}">${src.npcName}</a>
-				`;
+				<a href="${ActionId.makeNpcUrl(src.npcId)}"><small>${src.npcName}</small></a>
+			`;
 		}
 	}
 }

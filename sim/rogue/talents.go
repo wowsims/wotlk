@@ -145,7 +145,7 @@ func (rogue *Rogue) registerHungerForBlood() {
 
 	rogue.HungerForBlood = rogue.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
-		Flags: core.SpellFlagAPL,
+		Flags:    core.SpellFlagAPL,
 
 		EnergyCost: core.EnergyCostOptions{
 			Cost: 15,
@@ -489,7 +489,7 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 	cooldownDur := time.Minute * 2
 	rogue.BladeFlurry = rogue.RegisterSpell(core.SpellConfig{
 		ActionID: BladeFlurryActionID,
-		Flags: core.SpellFlagAPL,
+		Flags:    core.SpellFlagAPL,
 
 		EnergyCost: core.EnergyCostOptions{
 			Cost: core.TernaryFloat64(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfBladeFlurry), 0, 25),
