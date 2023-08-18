@@ -89,9 +89,11 @@ export class TalentsPicker<ModObject, TalentsProto> extends Input<ModObject, str
 		}
 
 		carouselPrevBtn.addEventListener('click', slidePrev);
-		carouselPrevBtn.addEventListener('touchend', slidePrev);
+		carouselPrevBtn.addEventListener('touchstart', slidePrev);
+		carouselPrevBtn.addEventListener('touchend', (e) => e.preventDefault());
 		carouselNextBtn.addEventListener('click', slideNext);
-		carouselNextBtn.addEventListener('touchend', slideNext);
+		carouselNextBtn.addEventListener('touchstart', slideNext);
+		carouselNextBtn.addEventListener('touchend', (e) => e.preventDefault());
 
 		this.init();
 	}
