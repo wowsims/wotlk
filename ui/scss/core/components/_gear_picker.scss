@@ -216,12 +216,6 @@
   padding: 0;
 }
 
-.selector-modal-list-label-cell {
-	flex: 1;
-	display: flex;
-	align-items: center;
-}
-
 // TODO: Move all of these to a shared file, as they're used in other places too
 .selector-modal-list-item {
   padding: .5rem;
@@ -245,6 +239,16 @@
     .selector-modal-list-item-icon {
       outline: 2px solid $success;
     }
+  }
+
+  .selector-modal-list-item-link {
+    display: flex;
+  }
+  
+  .selector-modal-list-label-cell {
+    flex: 1;
+    display: flex;
+    align-items: center;
   }
 
   .selector-modal-list-item-icon {
