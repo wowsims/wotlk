@@ -227,17 +227,13 @@ func (warrior *Warrior) applyBloodsurge() {
 
 	procChance := []float64{0, 0.07, 0.13, 0.2}[warrior.Talents.Bloodsurge]
 
+	ymirjar4Set := warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4)
+
 	warrior.BloodsurgeAura = warrior.RegisterAura(core.Aura{
 		Label:    "Bloodsurge Proc",
 		ActionID: core.ActionID{SpellID: 46916},
 		Duration: time.Second * 5,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			if warrior.Ymirjar4pcProcAura.IsActive() {
-				aura.Deactivate(sim)
-				warrior.Ymirjar4pcProcAura.Refresh(sim)
-				return
-			}
-
 			warrior.Slam.DefaultCast.CastTime = 0
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
@@ -249,8 +245,6 @@ func (warrior *Warrior) applyBloodsurge() {
 			}
 		},
 	})
-
-	ymirjar4Set := warrior.HasSetBonus(ItemSetYmirjarLordsBattlegear, 4)
 
 	if ymirjar4Set {
 		warrior.Ymirjar4pcProcAura = warrior.RegisterAura(core.Aura{
@@ -302,8 +296,10 @@ func (warrior *Warrior) applyBloodsurge() {
 
 			// as per https://www.wowhead.com/wotlk/spell=70847/item-warrior-t10-melee-4p-bonus#comments,
 			//  the improved aura is not overwritten by the regular one, but simply refreshed
-			if ymirjar4Set && (warrior.Ymirjar4pcProcAura.IsActive() || sim.RandomFloat("Ymirjar 4pc") < 0.2) {
+			if ymirjar4Set && (sim.RandomFloat("Ymirjar 4pc") < 0.2 || warrior.Ymirjar4pcProcAura.IsActive()) {
+				warrior.BloodsurgeAura.Deactivate(sim)
 				warrior.Ymirjar4pcProcAura.Activate(sim)
+
 				warrior.BloodsurgeValidUntil = sim.CurrentTime + warrior.Ymirjar4pcProcAura.Duration
 				return
 			}
@@ -674,6 +670,8 @@ func (warrior *Warrior) applySuddenDeath() {
 			// as per https://www.wowhead.com/wotlk/spell=70847/item-warrior-t10-melee-4p-bonus#comments,
 			//  the improved aura is not overwritten by the regular one, but simply refreshed
 			if ymirjar4Set && (warrior.Ymirjar4pcProcAura.IsActive() || sim.RandomFloat("Ymirjar 4pc") < 0.2) {
+				warrior.SuddenDeathAura.Deactivate(sim)
+
 				warrior.Ymirjar4pcProcAura.Activate(sim)
 				return
 			}
