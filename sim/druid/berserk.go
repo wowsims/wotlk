@@ -45,6 +45,8 @@ func (druid *Druid) registerBerserkCD() {
 
 	druid.Berserk = druid.RegisterSpell(core.SpellConfig{
 		ActionID: actionId,
+		Flags:    core.SpellFlagAPL,
+
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: time.Second,
@@ -58,5 +60,10 @@ func (druid *Druid) registerBerserkCD() {
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			druid.BerserkAura.Activate(sim)
 		},
+	})
+
+	druid.AddMajorCooldown(core.MajorCooldown{
+		Spell: druid.Berserk,
+		Type:  core.CooldownTypeDPS,
 	})
 }

@@ -19,7 +19,7 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 		ActionID:    core.ActionID{SpellID: 48480},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete | core.SpellFlagAPL,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete,
 
 		RageCost: core.RageCostOptions{
 			Cost:   15 - float64(druid.Talents.Ferocity),
@@ -60,6 +60,8 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 
 				curTarget = sim.Environment.NextTargetUnit(curTarget)
 			}
+
+			druid.MaulQueueAura.Deactivate(sim)
 		},
 	})
 
@@ -69,17 +71,33 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 		Duration: core.NeverExpires,
 	})
 
+	druid.MaulQueueSpell = druid.RegisterSpell(core.SpellConfig{
+		ActionID:    druid.Maul.WithTag(1),
+		SpellSchool: core.SpellSchoolPhysical,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL,
+
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return !druid.MaulQueueAura.IsActive() &&
+				druid.CurrentRage() >= druid.Maul.DefaultCast.Cost &&
+				sim.CurrentTime >= druid.Hardcast.Expires
+		},
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			druid.MaulQueueAura.Activate(sim)
+		},
+	})
+
 	druid.MaulRageThreshold = core.MaxFloat(druid.Maul.DefaultCast.Cost, rageThreshold)
+	if druid.IsUsingAPL {
+		druid.MaulRageThreshold = 0
+	}
 }
 
 func (druid *Druid) QueueMaul(sim *core.Simulation) {
-	if druid.CurrentRage() < druid.Maul.DefaultCast.Cost {
-		panic("Not enough rage for HS")
+	if druid.MaulQueueSpell.CanCast(sim, druid.CurrentTarget) {
+		druid.MaulQueueSpell.Cast(sim, druid.CurrentTarget)
 	}
-	if druid.MaulQueueAura.IsActive() {
-		return
-	}
-	druid.MaulQueueAura.Activate(sim)
 }
 
 // Returns true if the regular melee swing should be used, false otherwise.
@@ -98,7 +116,6 @@ func (druid *Druid) MaulReplaceMH(sim *core.Simulation, mhSwingSpell *core.Spell
 		}
 	}
 
-	druid.MaulQueueAura.Deactivate(sim)
 	return druid.Maul
 }
 
