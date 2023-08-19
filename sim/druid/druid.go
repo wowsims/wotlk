@@ -48,6 +48,7 @@ type Druid struct {
 	MangleBear           *core.Spell
 	MangleCat            *core.Spell
 	Maul                 *core.Spell
+	MaulQueueSpell       *core.Spell
 	Moonfire             *core.Spell
 	Rebirth              *core.Spell
 	Rake                 *core.Spell
