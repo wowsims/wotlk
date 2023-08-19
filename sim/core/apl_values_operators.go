@@ -10,6 +10,7 @@ import (
 )
 
 type APLValueConst struct {
+	defaultAPLValueImpl
 	valType proto.APLValueType
 
 	intVal      int32
@@ -80,10 +81,14 @@ func (value *APLValueConst) String() string {
 }
 
 type APLValueCoerced struct {
+	defaultAPLValueImpl
 	valueType proto.APLValueType
 	inner     APLValue
 }
 
+func (value *APLValueCoerced) GetInnerValues() []APLValue {
+	return []APLValue{value.inner}
+}
 func (value *APLValueCoerced) Type() proto.APLValueType {
 	return value.valueType
 }
@@ -204,19 +209,34 @@ var aplValueTypeOrder = []proto.APLValueType{
 	proto.APLValueType_ValueTypeBool,
 }
 
-// Coerces 2 values into the same type, returning the two new values.
-func (rot *APLRotation) coerceToSameType(value1 APLValue, value2 APLValue) (APLValue, APLValue) {
-	if value1 == nil || value2 == nil {
-		return value1, value2
-	}
-
-	var coercionType proto.APLValueType
+func higherOrderType(type1 proto.APLValueType, type2 proto.APLValueType) proto.APLValueType {
 	for _, listType := range aplValueTypeOrder {
-		if value1.Type() == listType || value2.Type() == listType {
-			coercionType = listType
+		if listType == type1 {
+			return type2
+		} else if listType == type2 {
+			return type1
 		}
 	}
-	return rot.coerceTo(value1, coercionType), rot.coerceTo(value2, coercionType)
+	return type1
+}
+func highestOrderTypeList(values []APLValue) proto.APLValueType {
+	coercionType := aplValueTypeOrder[0]
+	for _, val := range values {
+		if val != nil {
+			coercionType = higherOrderType(coercionType, val.Type())
+		}
+	}
+	return coercionType
+}
+func (rot *APLRotation) coerceAllToSameType(values []APLValue) []APLValue {
+	coercionType := highestOrderTypeList(values)
+	return MapSlice(values, func(val APLValue) APLValue { return rot.coerceTo(val, coercionType) })
+}
+
+// Coerces 2 values into the same type, returning the two new values.
+func (rot *APLRotation) coerceToSameType(value1 APLValue, value2 APLValue) (APLValue, APLValue) {
+	coerced := rot.coerceAllToSameType([]APLValue{value1, value2})
+	return coerced[0], coerced[1]
 }
 
 type APLValueCompare struct {
@@ -241,6 +261,9 @@ func (rot *APLRotation) newValueCompare(config *proto.APLValueCompare) APLValue 
 		lhs: lhs,
 		rhs: rhs,
 	}
+}
+func (value *APLValueCompare) GetInnerValues() []APLValue {
+	return []APLValue{value.lhs, value.rhs}
 }
 func (value *APLValueCompare) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeBool
@@ -350,6 +373,9 @@ func (rot *APLRotation) newValueMath(config *proto.APLValueMath) APLValue {
 		rhs: rhs,
 	}
 }
+func (value *APLValueMath) GetInnerValues() []APLValue {
+	return []APLValue{value.lhs, value.rhs}
+}
 func (value *APLValueMath) Type() proto.APLValueType {
 	return value.lhs.Type()
 }
@@ -415,7 +441,109 @@ func (value *APLValueMath) GetDuration(sim *Simulation) time.Duration {
 	return 0
 }
 func (value *APLValueMath) String() string {
-	return fmt.Sprintf("%s %s %s", value.lhs, value.op, value.rhs)
+	return fmt.Sprintf("Math(%s %s %s)", value.lhs, value.op, value.rhs)
+}
+
+type APLValueMax struct {
+	defaultAPLValueImpl
+	vals []APLValue
+}
+
+func (rot *APLRotation) newValueMax(config *proto.APLValueMax) APLValue {
+	vals := MapSlice(config.Vals, func(val *proto.APLValue) APLValue {
+		return rot.newAPLValue(val)
+	})
+	vals = rot.coerceAllToSameType(vals)
+	vals = FilterSlice(vals, func(val APLValue) bool { return val != nil })
+	if len(vals) == 0 {
+		return nil
+	} else if len(vals) == 1 {
+		return vals[0]
+	}
+	return &APLValueMax{
+		vals: vals,
+	}
+}
+func (value *APLValueMax) GetInnerValues() []APLValue {
+	return value.vals
+}
+func (value *APLValueMax) Type() proto.APLValueType {
+	return value.vals[0].Type()
+}
+func (value *APLValueMax) GetInt(sim *Simulation) int32 {
+	result := value.vals[0].GetInt(sim)
+	for i := 1; i < len(value.vals); i++ {
+		result = MaxInt32(result, value.vals[i].GetInt(sim))
+	}
+	return result
+}
+func (value *APLValueMax) GetFloat(sim *Simulation) float64 {
+	result := value.vals[0].GetFloat(sim)
+	for i := 1; i < len(value.vals); i++ {
+		result = MaxFloat(result, value.vals[i].GetFloat(sim))
+	}
+	return result
+}
+func (value *APLValueMax) GetDuration(sim *Simulation) time.Duration {
+	result := value.vals[0].GetDuration(sim)
+	for i := 1; i < len(value.vals); i++ {
+		result = MaxDuration(result, value.vals[i].GetDuration(sim))
+	}
+	return result
+}
+func (value *APLValueMax) String() string {
+	return fmt.Sprintf("Max(%s)", strings.Join(MapSlice(value.vals, func(subvalue APLValue) string { return fmt.Sprintf("(%s)", subvalue) }), ", "))
+}
+
+type APLValueMin struct {
+	defaultAPLValueImpl
+	vals []APLValue
+}
+
+func (rot *APLRotation) newValueMin(config *proto.APLValueMin) APLValue {
+	vals := MapSlice(config.Vals, func(val *proto.APLValue) APLValue {
+		return rot.newAPLValue(val)
+	})
+	vals = rot.coerceAllToSameType(vals)
+	vals = FilterSlice(vals, func(val APLValue) bool { return val != nil })
+	if len(vals) == 0 {
+		return nil
+	} else if len(vals) == 1 {
+		return vals[0]
+	}
+	return &APLValueMin{
+		vals: vals,
+	}
+}
+func (value *APLValueMin) GetInnerValues() []APLValue {
+	return value.vals
+}
+func (value *APLValueMin) Type() proto.APLValueType {
+	return value.vals[0].Type()
+}
+func (value *APLValueMin) GetInt(sim *Simulation) int32 {
+	result := value.vals[0].GetInt(sim)
+	for i := 1; i < len(value.vals); i++ {
+		result = MinInt32(result, value.vals[i].GetInt(sim))
+	}
+	return result
+}
+func (value *APLValueMin) GetFloat(sim *Simulation) float64 {
+	result := value.vals[0].GetFloat(sim)
+	for i := 1; i < len(value.vals); i++ {
+		result = MinFloat(result, value.vals[i].GetFloat(sim))
+	}
+	return result
+}
+func (value *APLValueMin) GetDuration(sim *Simulation) time.Duration {
+	result := value.vals[0].GetDuration(sim)
+	for i := 1; i < len(value.vals); i++ {
+		result = MinDuration(result, value.vals[i].GetDuration(sim))
+	}
+	return result
+}
+func (value *APLValueMin) String() string {
+	return fmt.Sprintf("Min(%s)", strings.Join(MapSlice(value.vals, func(subvalue APLValue) string { return fmt.Sprintf("(%s)", subvalue) }), ", "))
 }
 
 type APLValueAnd struct {
@@ -430,10 +558,15 @@ func (rot *APLRotation) newValueAnd(config *proto.APLValueAnd) APLValue {
 	vals = FilterSlice(vals, func(val APLValue) bool { return val != nil })
 	if len(vals) == 0 {
 		return nil
+	} else if len(vals) == 1 {
+		return vals[0]
 	}
 	return &APLValueAnd{
 		vals: vals,
 	}
+}
+func (value *APLValueAnd) GetInnerValues() []APLValue {
+	return value.vals
 }
 func (value *APLValueAnd) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeBool
@@ -462,10 +595,15 @@ func (rot *APLRotation) newValueOr(config *proto.APLValueOr) APLValue {
 	vals = FilterSlice(vals, func(val APLValue) bool { return val != nil })
 	if len(vals) == 0 {
 		return nil
+	} else if len(vals) == 1 {
+		return vals[0]
 	}
 	return &APLValueOr{
 		vals: vals,
 	}
+}
+func (value *APLValueOr) GetInnerValues() []APLValue {
+	return value.vals
 }
 func (value *APLValueOr) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeBool
@@ -495,6 +633,9 @@ func (rot *APLRotation) newValueNot(config *proto.APLValueNot) APLValue {
 	return &APLValueNot{
 		val: val,
 	}
+}
+func (value *APLValueNot) GetInnerValues() []APLValue {
+	return []APLValue{value.val}
 }
 func (value *APLValueNot) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeBool

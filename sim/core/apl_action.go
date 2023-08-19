@@ -2,12 +2,20 @@ package core
 
 import (
 	"fmt"
+
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 type APLAction struct {
 	condition APLValue
 	impl      APLActionImpl
+}
+
+func (action *APLAction) Finalize(rot *APLRotation) {
+	action.impl.Finalize(rot)
+	for _, value := range action.GetAllAPLValues() {
+		value.Finalize(rot)
+	}
 }
 
 func (action *APLAction) IsReady(sim *Simulation) bool {
@@ -25,6 +33,19 @@ func (action *APLAction) GetAllActions() []*APLAction {
 	return actions
 }
 
+// Returns all APLValues used by this action and all of its inner Actions.
+func (action *APLAction) GetAllAPLValues() []APLValue {
+	var values []APLValue
+	for _, a := range action.GetAllActions() {
+		values = append(values, a.impl.GetAPLValues()...)
+		if action.condition != nil {
+			values = append(values, a.condition)
+			values = append(values, a.condition.GetInnerValues()...)
+		}
+	}
+	return FilterSlice(values, func(val APLValue) bool { return val != nil })
+}
+
 func (action *APLAction) String() string {
 	if action.condition == nil {
 		return fmt.Sprintf("ACTION = %s", action.impl)
@@ -34,8 +55,11 @@ func (action *APLAction) String() string {
 }
 
 type APLActionImpl interface {
-	// Returns all inner Actions.
+	// Returns all inner APL Actions.
 	GetInnerActions() []*APLAction
+
+	// Returns all APLValues used by this Action (but not by inner Actions).
+	GetAPLValues() []APLValue
 
 	// Performs optional post-processing.
 	Finalize(*APLRotation)
@@ -58,6 +82,7 @@ type defaultAPLActionImpl struct {
 }
 
 func (impl defaultAPLActionImpl) GetInnerActions() []*APLAction { return nil }
+func (impl defaultAPLActionImpl) GetAPLValues() []APLValue      { return nil }
 func (impl defaultAPLActionImpl) Finalize(*APLRotation)         {}
 func (impl defaultAPLActionImpl) Reset(*Simulation)             {}
 

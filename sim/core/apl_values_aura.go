@@ -129,6 +129,9 @@ func (rot *APLRotation) newValueAuraShouldRefresh(config *proto.APLValueAuraShou
 		maxOverlap: maxOverlap,
 	}
 }
+func (value *APLValueAuraShouldRefresh) GetInnerValues() []APLValue {
+	return []APLValue{value.maxOverlap}
+}
 func (value *APLValueAuraShouldRefresh) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeBool
 }

@@ -7,6 +7,8 @@ import {
 	APLValueCompare_ComparisonOperator as ComparisonOperator,
 	APLValueMath,
 	APLValueMath_MathOperator as MathOperator,
+	APLValueMax,
+	APLValueMin,
 	APLValueConst,
 	APLValueCurrentTime,
 	APLValueCurrentTimePercent,
@@ -43,6 +45,9 @@ import {
 	APLValueAuraShouldRefresh,
 	APLValueDotIsActive,
 	APLValueDotRemainingTime,
+	APLValueSequenceIsComplete,
+	APLValueSequenceIsReady,
+	APLValueSequenceTimeToReady,
 	APLValueRuneCooldown,
 	APLValueNextRuneCooldown,
 	APLValueNumberTargets,
@@ -378,6 +383,24 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 			valueFieldConfig('lhs'),
 			mathOperatorFieldConfig('op'),
 			valueFieldConfig('rhs'),
+		],
+	}),
+	'max': inputBuilder({
+		label: 'Max',
+		submenu: ['Logic'],
+		shortDescription: 'Returns the largest value among the subvalues.',
+		newValue: APLValueMax.create,
+		fields: [
+			valueListFieldConfig('vals'),
+		],
+	}),
+	'min': inputBuilder({
+		label: 'Min',
+		submenu: ['Logic'],
+		shortDescription: 'Returns the smallest value among the subvalues.',
+		newValue: APLValueMin.create,
+		fields: [
+			valueListFieldConfig('vals'),
 		],
 	}),
 	'and': inputBuilder({
@@ -751,6 +774,33 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		newValue: APLValueDotRemainingTime.create,
 		fields: [
 			AplHelpers.actionIdFieldConfig('spellId', 'dot_spells', ''),
+		],
+	}),
+	'sequenceIsComplete': inputBuilder({
+		label: 'Sequence Is Complete',
+		submenu: ['Sequence'],
+		shortDescription: '<b>True</b> if there are no more subactions left to execute in the sequence, otherwise <b>False</b>.',
+		newValue: APLValueSequenceIsComplete.create,
+		fields: [
+			AplHelpers.stringFieldConfig('sequenceName'),
+		],
+	}),
+	'sequenceIsReady': inputBuilder({
+		label: 'Sequence Is Ready',
+		submenu: ['Sequence'],
+		shortDescription: '<b>True</b> if the next subaction in the sequence is ready to be executed, otherwise <b>False</b>.',
+		newValue: APLValueSequenceIsReady.create,
+		fields: [
+			AplHelpers.stringFieldConfig('sequenceName'),
+		],
+	}),
+	'sequenceTimeToReady': inputBuilder({
+		label: 'Sequence Time To Ready',
+		submenu: ['Sequence'],
+		shortDescription: 'Retuens the amount of time remaining until the next subaction in the sequence will be ready.',
+		newValue: APLValueSequenceTimeToReady.create,
+		fields: [
+			AplHelpers.stringFieldConfig('sequenceName'),
 		],
 	}),
 };
