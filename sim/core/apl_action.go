@@ -38,7 +38,7 @@ func (action *APLAction) GetAllAPLValues() []APLValue {
 	var values []APLValue
 	for _, a := range action.GetAllActions() {
 		values = append(values, a.impl.GetAPLValues()...)
-		if action.condition != nil {
+		if a.condition != nil {
 			values = append(values, a.condition)
 			values = append(values, a.condition.GetInnerValues()...)
 		}
