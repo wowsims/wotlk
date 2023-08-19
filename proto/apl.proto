@@ -51,7 +51,7 @@ message APLAction {
     }
 }
 
-// NextIndex: 44
+// NextIndex: 49
 message APLValue {
     oneof value {
         // Operators
@@ -61,6 +61,8 @@ message APLValue {
         APLValueNot not = 4;
         APLValueCompare cmp = 5;
         APLValueMath math = 38;
+        APLValueMax max = 47;
+        APLValueMin min = 48;
 
         // Encounter values
         APLValueCurrentTime current_time = 7;
@@ -114,6 +116,11 @@ message APLValue {
         // Dot values
         APLValueDotIsActive dot_is_active = 6;
         APLValueDotRemainingTime dot_remaining_time = 13;
+
+        // Sequence values
+        APLValueSequenceIsComplete sequence_is_complete = 44;
+        APLValueSequenceIsReady sequence_is_ready = 45;
+        APLValueSequenceTimeToReady sequence_time_to_ready = 46;
     }
 }
 
@@ -228,6 +235,12 @@ message APLValueMath {
 
     APLValue lhs = 2;
     APLValue rhs = 3;
+}
+message APLValueMax {
+    repeated APLValue vals = 1;
+}
+message APLValueMin {
+    repeated APLValue vals = 1;
 }
 
 message APLValueCurrentTime {}
@@ -352,4 +365,14 @@ message APLValueDotIsActive {
 }
 message APLValueDotRemainingTime {
     ActionID spell_id = 1;
+}
+
+message APLValueSequenceIsComplete {
+    string sequence_name = 1;
+}
+message APLValueSequenceIsReady {
+    string sequence_name = 1;
+}
+message APLValueSequenceTimeToReady {
+    string sequence_name = 1;
 }

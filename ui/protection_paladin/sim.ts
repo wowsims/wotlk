@@ -210,6 +210,10 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 				talents: [
 					Presets.GenericAoeTalents,
 				],
+				// Preset rotations that the user can quickly select.
+				rotations: [
+					Presets.ROTATION_DEFAULT,
+				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.PRERAID_PRESET,

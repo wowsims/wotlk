@@ -1,14 +1,12 @@
-import { Conjured, Consumes } from '../core/proto/common.js';
+import { Consumes } from '../core/proto/common.js';
 import { CustomRotation, CustomSpell } from '../core/proto/common.js';
 import { EquipmentSpec } from '../core/proto/common.js';
 import { Flask } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
-import { Glyphs } from '../core/proto/common.js';
-import { ItemSpec } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
-import { Faction } from '../core/proto/common.js';
-import { SavedTalents } from '../core/proto/ui.js';
+import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
+import { APLRotation } from '../core/proto/apl.js';
 import { Player } from '../core/player.js';
 
 import {
@@ -21,7 +19,6 @@ import {
 	ProtectionPaladin_Options as ProtectionPaladinOptions,
 } from '../core/proto/paladin.js';
 
-import * as Gems from '../core/proto_utils/gems.js';
 import * as Tooltips from '../core/constants/tooltips.js';
 
 // Preset options for this spec.
@@ -64,6 +61,32 @@ export const DefaultRotation = ProtectionPaladinRotation.create({
 		],
 	}),
 });
+
+export const ROTATION_DEFAULT = {
+	name: 'Default (969)',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: ProtectionPaladinRotation.toJsonString(ProtectionPaladinRotation.create({
+		})),
+		rotation: APLRotation.fromJsonString(`{
+			"enabled": true,
+			"prepullActions": [
+				{"action":{"castSpell":{"spellId":{"spellId":48952}}},"doAtValue":{"const":{"val":"-3s"}}},
+				{"action":{"castSpell":{"spellId":{"spellId":54428}}},"doAtValue":{"const":{"val":"-1500ms"}}},
+				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
+			],
+			"priorityList": [
+				{"action":{"autocastOtherCooldowns":{}}},
+				{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"spellTimeToReady":{"spellId":{"spellId":53595}}},"rhs":{"const":{"val":"3s"}}}},"castSpell":{"spellId":{"spellId":61411}}}},
+				{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"spellTimeToReady":{"spellId":{"spellId":61411}}},"rhs":{"const":{"val":"3s"}}}},"castSpell":{"spellId":{"spellId":53595}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":48806}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":48819}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":48952}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":53408}}}},
+				{"action":{"condition":{"and":{"vals":[{"gcdIsReady":{}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":61411}}}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":53595}}}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":48819}}}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":48952}}}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":53408}}}}}]}},"wait":{"duration":{"min":{"vals":[{"spellTimeToReady":{"spellId":{"spellId":61411}}},{"spellTimeToReady":{"spellId":{"spellId":53595}}},{"spellTimeToReady":{"spellId":{"spellId":48819}}},{"spellTimeToReady":{"spellId":{"spellId":48952}}},{"spellTimeToReady":{"spellId":{"spellId":53408}}}]}}}}}
+			]
+		}`),
+	}),
+};
 
 export const DefaultOptions = ProtectionPaladinOptions.create({
 	aura: PaladinAura.RetributionAura,
