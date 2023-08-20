@@ -911,6 +911,8 @@ export class ItemList<T> {
 		const initialFilters = player.sim.getFilters();
 		let lastFavElem: HTMLElement | null = null;
 
+		const filters = player.sim.getFilters();
+
 		this.listItemElems = itemData.map((itemData, itemIdx) => {
 			const item = itemData.item;
 			const itemEP = computeEP(item);
@@ -934,7 +936,7 @@ export class ItemList<T> {
 						data-bs-toggle="tooltip"
 						data-bs-title="Add to favorites"
 					>
-						<i class="far fa-star fa-xl"></i>
+						<i class="fa-star fa-xl"></i>
 					</button>
 				</div>
 				<div class="selector-modal-list-item-ep">
@@ -1009,8 +1011,8 @@ export class ItemList<T> {
 						}
 					}
 				}
-				favoriteElem.classList.toggle('fa-solid');
-				favoriteElem.classList.toggle('fa-regular');
+				favoriteElem.children[0].classList.toggle('fas');
+				favoriteElem.children[0].classList.toggle('far');
 				listItemElem.dataset.fav = isFavorite.toString();
 
 				player.sim.setFilters(TypedEvent.nextEventID(), filters);
@@ -1026,8 +1028,9 @@ export class ItemList<T> {
 			} else if (label.startsWith('Gem')) {
 				isFavorite = initialFilters.favoriteGems.includes(itemData.id);
 			}
+			
 			if (isFavorite) {
-				favoriteElem.classList.add('fa-solid');
+				favoriteElem.children[0].classList.add('fas');
 				listItemElem.dataset.fav = 'true';
 				if (lastFavElem == null) {
 					this.listElem.prepend(listItemElem);
@@ -1036,7 +1039,7 @@ export class ItemList<T> {
 				}
 				lastFavElem = listItemElem;
 			} else {
-				favoriteElem.classList.add('fa-regular');
+				favoriteElem.children[0].classList.add('far');
 				listItemElem.dataset.fav = 'false';
 			}
 
