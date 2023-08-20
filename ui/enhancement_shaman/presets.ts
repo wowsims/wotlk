@@ -12,6 +12,8 @@ import {
 	CustomSpell,
 	ItemSwap,
 	ItemSpec,
+	Spec,
+	Faction,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
@@ -31,6 +33,7 @@ import {
 } from '../core/proto/shaman.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
+import { Player } from 'ui/core/player.js';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -226,6 +229,7 @@ export const P2_PRESET_WF = {
 
 export const P3_PRESET_ALLIANCE	 = {
 	name: 'P3 Preset Alliance',
+	enableWhen: (player: Player<Spec.SpecElementalShaman>) => player.getFaction() == Faction.Alliance,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{  "items": [
 		{"id":48353,"enchant":3817,"gems":[41398,40128]},
@@ -251,6 +255,7 @@ export const P3_PRESET_ALLIANCE	 = {
 
 export const P3_PRESET_HORDE = {
 	name: 'P3 Preset Horde',
+	enableWhen: (player: Player<Spec.SpecElementalShaman>) => player.getFaction() == Faction.Horde,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{  "items": [
 		{"id":48358,"enchant":3817,"gems":[41398,40128]},
