@@ -156,6 +156,8 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 					Presets.P1_PRESET,
 					Presets.P2_PRESET_FT,
 					Presets.P2_PRESET_WF,
+					Presets.P3_PRESET_ALLIANCE,
+					Presets.P3_PRESET_HORDE,
 				],
 			},
 		});
