@@ -10,10 +10,9 @@ import {
 	Debuffs,
 	CustomRotation,
 	CustomSpell,
-	ItemSwap,
-	ItemSpec,
 } from '../core/proto/common.js';
-import { SavedTalents } from '../core/proto/ui.js';
+import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
+import { APLRotation } from '../core/proto/apl.js';
 
 import { EnhancementShaman_Rotation as EnhancementShamanRotation, EnhancementShaman_Options as EnhancementShamanOptions, ShamanShield } from '../core/proto/shaman.js';
 import {
@@ -85,6 +84,32 @@ export const DefaultRotation = EnhancementShamanRotation.create({
 		],
 	}),
 });
+
+export const ROTATION_DEFAULT = {
+	name: 'Default',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: EnhancementShamanRotation.toJsonString(EnhancementShamanRotation.create({
+		})),
+		rotation: APLRotation.fromJsonString(`{
+			"enabled": true,
+			"prepullActions": [
+				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
+			],
+			"priorityList": [
+				{"action":{"autocastOtherCooldowns":{}}},
+				{"action":{"condition":{"not":{"val":{"auraIsActive":{"sourceUnit":{"type":"CurrentTarget"},"auraId":{"spellId":17364}}}}},"castSpell":{"spellId":{"spellId":17364}}}},
+				{"action":{"condition":{"cmp":{"op":"OpGe","lhs":{"auraNumStacks":{"auraId":{"spellId":53817}}},"rhs":{"const":{"val":"3"}}}},"castSpell":{"spellId":{"spellId":49238}}}},
+				{"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":58734}}},"rhs":{"const":{"val":"100ms"}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":2894}}}}}]}},"castSpell":{"spellId":{"spellId":58734}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":17364}}}},
+				{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":49233}}},"rhs":{"const":{"val":"0s"}}}},"castSpell":{"spellId":{"spellId":49233}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":49231}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":61657}}}},
+				{"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":49281}}}}},"castSpell":{"spellId":{"spellId":49281}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":60103}}}}
+			]
+		}`),
+	}),
+};
 
 export const DefaultOptions = EnhancementShamanOptions.create({
 	shield: ShamanShield.LightningShield,

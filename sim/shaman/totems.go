@@ -128,6 +128,51 @@ func (shaman *Shaman) registerStoneskinTotemSpell() {
 	shaman.StoneskinTotem = shaman.RegisterSpell(config)
 }
 
+func (shaman *Shaman) registerCallOfTheElements() {
+	airTotem := shaman.getAirTotemSpell(shaman.Totems.Air)
+	earthTotem := shaman.getEarthTotemSpell(shaman.Totems.Earth)
+	fireTotem := shaman.getFireTotemSpell(shaman.Totems.Fire)
+	waterTotem := shaman.getWaterTotemSpell(shaman.Totems.Water)
+
+	totalManaCost := 0.0
+	if airTotem != nil {
+		totalManaCost += airTotem.DefaultCast.Cost
+	}
+	if earthTotem != nil {
+		totalManaCost += earthTotem.DefaultCast.Cost
+	}
+	if fireTotem != nil {
+		totalManaCost += fireTotem.DefaultCast.Cost
+	}
+	if waterTotem != nil {
+		totalManaCost += waterTotem.DefaultCast.Cost
+	}
+
+	shaman.RegisterSpell(core.SpellConfig{
+		ActionID: core.ActionID{SpellID: 66842},
+		Flags:    core.SpellFlagAPL,
+
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return shaman.CurrentMana() >= totalManaCost
+		},
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			if airTotem != nil {
+				airTotem.Cast(sim, target)
+			}
+			if earthTotem != nil {
+				earthTotem.Cast(sim, target)
+			}
+			if fireTotem != nil {
+				fireTotem.Cast(sim, target)
+			}
+			if waterTotem != nil {
+				waterTotem.Cast(sim, target)
+			}
+		},
+	})
+}
+
 func (shaman *Shaman) NextTotemAt(_ *core.Simulation) time.Duration {
 	nextTotemAt := core.MinDuration(
 		core.MinDuration(shaman.NextTotemDrops[0], shaman.NextTotemDrops[1]),
@@ -149,42 +194,13 @@ func (shaman *Shaman) TryDropTotems(sim *core.Simulation) bool {
 		if sim.CurrentTime >= totemExpiration {
 			switch totemTypeIdx {
 			case AirTotem:
-				switch proto.AirTotem(nextDrop) {
-				case proto.AirTotem_WrathOfAirTotem:
-					spell = shaman.WrathOfAirTotem
-				case proto.AirTotem_WindfuryTotem:
-					spell = shaman.WindfuryTotem
-				}
-
+				spell = shaman.getAirTotemSpell(proto.AirTotem(nextDrop))
 			case EarthTotem:
-				switch proto.EarthTotem(nextDrop) {
-				case proto.EarthTotem_StrengthOfEarthTotem:
-					spell = shaman.StrengthOfEarthTotem
-				case proto.EarthTotem_TremorTotem:
-					spell = shaman.TremorTotem
-				case proto.EarthTotem_StoneskinTotem:
-					spell = shaman.StoneskinTotem
-				}
-
+				spell = shaman.getEarthTotemSpell(proto.EarthTotem(nextDrop))
 			case FireTotem:
-				switch proto.FireTotem(nextDrop) {
-				case proto.FireTotem_TotemOfWrath:
-					spell = shaman.TotemOfWrath
-				case proto.FireTotem_SearingTotem:
-					spell = shaman.SearingTotem
-				case proto.FireTotem_MagmaTotem:
-					spell = shaman.MagmaTotem
-				case proto.FireTotem_FlametongueTotem:
-					spell = shaman.FlametongueTotem
-				}
-
+				spell = shaman.getFireTotemSpell(proto.FireTotem(nextDrop))
 			case WaterTotem:
-				switch proto.WaterTotem(nextDrop) {
-				case proto.WaterTotem_ManaSpringTotem:
-					spell = shaman.ManaSpringTotem
-				case proto.WaterTotem_HealingStreamTotem:
-					spell = shaman.HealingStreamTotem
-				}
+				spell = shaman.getWaterTotemSpell(proto.WaterTotem(nextDrop))
 			}
 		}
 		if spell != nil {
@@ -200,4 +216,50 @@ func (shaman *Shaman) TryDropTotems(sim *core.Simulation) bool {
 		shaman.WaitUntil(sim, sim.CurrentTime+time.Second)
 	}
 	return casted
+}
+
+func (shaman *Shaman) getAirTotemSpell(totemType proto.AirTotem) *core.Spell {
+	switch totemType {
+	case proto.AirTotem_WrathOfAirTotem:
+		return shaman.WrathOfAirTotem
+	case proto.AirTotem_WindfuryTotem:
+		return shaman.WindfuryTotem
+	}
+	return nil
+}
+
+func (shaman *Shaman) getEarthTotemSpell(totemType proto.EarthTotem) *core.Spell {
+	switch totemType {
+	case proto.EarthTotem_StrengthOfEarthTotem:
+		return shaman.StrengthOfEarthTotem
+	case proto.EarthTotem_TremorTotem:
+		return shaman.TremorTotem
+	case proto.EarthTotem_StoneskinTotem:
+		return shaman.StoneskinTotem
+	}
+	return nil
+}
+
+func (shaman *Shaman) getFireTotemSpell(totemType proto.FireTotem) *core.Spell {
+	switch totemType {
+	case proto.FireTotem_TotemOfWrath:
+		return shaman.TotemOfWrath
+	case proto.FireTotem_SearingTotem:
+		return shaman.SearingTotem
+	case proto.FireTotem_MagmaTotem:
+		return shaman.MagmaTotem
+	case proto.FireTotem_FlametongueTotem:
+		return shaman.FlametongueTotem
+	}
+	return nil
+}
+
+func (shaman *Shaman) getWaterTotemSpell(totemType proto.WaterTotem) *core.Spell {
+	switch totemType {
+	case proto.WaterTotem_ManaSpringTotem:
+		return shaman.ManaSpringTotem
+	case proto.WaterTotem_HealingStreamTotem:
+		return shaman.HealingStreamTotem
+	}
+	return nil
 }
