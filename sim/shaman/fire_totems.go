@@ -9,7 +9,7 @@ import (
 
 func (shaman *Shaman) registerSearingTotemSpell() {
 	var extraCastCondition core.CanCastCondition
-	if shaman.Totems.Fire == proto.FireTotem_SearingTotem && shaman.Totems.UseFireMcd {
+	if !shaman.IsUsingAPL && shaman.Totems.Fire == proto.FireTotem_SearingTotem && shaman.Totems.UseFireMcd {
 		extraCastCondition = func(sim *core.Simulation, target *core.Unit) bool {
 			if shaman.Totems.Fire != proto.FireTotem_SearingTotem {
 				return false
@@ -85,7 +85,7 @@ func (shaman *Shaman) registerSearingTotemSpell() {
 
 func (shaman *Shaman) registerMagmaTotemSpell() {
 	var extraCastCondition core.CanCastCondition
-	if shaman.Totems.Fire == proto.FireTotem_MagmaTotem && shaman.Totems.UseFireMcd {
+	if !shaman.IsUsingAPL && shaman.Totems.Fire == proto.FireTotem_MagmaTotem && shaman.Totems.UseFireMcd {
 		extraCastCondition = func(sim *core.Simulation, target *core.Unit) bool {
 			if shaman.Totems.Fire != proto.FireTotem_MagmaTotem {
 				return false

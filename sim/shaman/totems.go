@@ -152,23 +152,37 @@ func (shaman *Shaman) registerCallOfTheElements() {
 		ActionID: core.ActionID{SpellID: 66842},
 		Flags:    core.SpellFlagAPL,
 
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				GCD: core.GCDDefault,
+			},
+		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
 			return shaman.CurrentMana() >= totalManaCost
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			// Save GCD timer value, so we can safely reset it between each totem cast.
+			nextGcdAt := shaman.GCD.ReadyAt()
+
 			if airTotem != nil {
+				shaman.GCD.Set(0)
 				airTotem.Cast(sim, target)
 			}
 			if earthTotem != nil {
+				shaman.GCD.Set(0)
 				earthTotem.Cast(sim, target)
 			}
 			if fireTotem != nil {
+				shaman.GCD.Set(0)
 				fireTotem.Cast(sim, target)
 			}
 			if waterTotem != nil {
+				shaman.GCD.Set(0)
 				waterTotem.Cast(sim, target)
 			}
+
+			shaman.GCD.Set(nextGcdAt)
 		},
 	})
 }
