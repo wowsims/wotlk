@@ -74,6 +74,9 @@ func (rot *APLRotation) newActionMultidot(config *proto.APLActionMultidot) APLAc
 		maxOverlap: maxOverlap,
 	}
 }
+func (action *APLActionMultidot) GetAPLValues() []APLValue {
+	return []APLValue{action.maxOverlap}
+}
 func (action *APLActionMultidot) Reset(*Simulation) {
 	action.nextTarget = nil
 }
@@ -143,6 +146,9 @@ func (rot *APLRotation) newActionMultishield(config *proto.APLActionMultishield)
 		maxOverlap: maxOverlap,
 	}
 }
+func (action *APLActionMultishield) GetAPLValues() []APLValue {
+	return []APLValue{action.maxOverlap}
+}
 func (action *APLActionMultishield) Reset(*Simulation) {
 	action.nextTarget = nil
 }
@@ -210,6 +216,9 @@ func (rot *APLRotation) newActionWait(config *proto.APLActionWait) APLActionImpl
 		unit:     unit,
 		duration: rot.coerceTo(rot.newAPLValue(config.Duration), proto.APLValueType_ValueTypeDuration),
 	}
+}
+func (action *APLActionWait) GetAPLValues() []APLValue {
+	return []APLValue{action.duration}
 }
 func (action *APLActionWait) IsReady(sim *Simulation) bool {
 	return action.duration != nil

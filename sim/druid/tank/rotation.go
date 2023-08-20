@@ -30,8 +30,6 @@ func (bear *FeralTankDruid) doRotation(sim *core.Simulation) {
 			if bear.Barkskin.IsReady(sim) {
 				bear.Barkskin.Cast(sim, nil)
 			}
-
-			bear.UpdateMajorCooldowns()
 		} else if bear.MangleBear.CanCast(sim, bear.CurrentTarget) {
 			bear.MangleBear.Cast(sim, bear.CurrentTarget)
 		} else if bear.shouldFaerieFire(sim) {

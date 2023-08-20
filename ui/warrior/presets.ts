@@ -42,7 +42,7 @@ export const ArmsTalents = {
 			major3: WarriorMajorGlyph.GlyphOfExecution,
 			minor1: WarriorMinorGlyph.GlyphOfThunderClap,
 			minor2: WarriorMinorGlyph.GlyphOfCommand,
-			minor3: WarriorMinorGlyph.GlyphOfCharge,
+			minor3: WarriorMinorGlyph.GlyphOfShatteringThrow,
 		}),
 	}),
 };
@@ -55,8 +55,8 @@ export const FuryTalents = {
 			major1: WarriorMajorGlyph.GlyphOfWhirlwind,
 			major2: WarriorMajorGlyph.GlyphOfHeroicStrike,
 			major3: WarriorMajorGlyph.GlyphOfExecution,
-			minor1: WarriorMinorGlyph.GlyphOfBattle,
-			minor2: WarriorMinorGlyph.GlyphOfBloodrage,
+			minor1: WarriorMinorGlyph.GlyphOfCommand,
+			minor2: WarriorMinorGlyph.GlyphOfShatteringThrow,
 			minor3: WarriorMinorGlyph.GlyphOfCharge,
 		}),
 	}),
@@ -64,17 +64,15 @@ export const FuryTalents = {
 
 export const DefaultRotation = WarriorRotation.create({
 	useRend: true,
-	useMs: true,
 	useCleave: false,
 	useOverpower: false,
 	executePhaseOverpower: false,
 
-	mainGcd: MainGcd.Slam,
+	mainGcd: MainGcd.Bloodthirst,
 
 	sunderArmor: SunderArmor.SunderArmorMaintain,
 
-	msRageThreshold: 35,
-	hsRageThreshold: 30,
+	hsRageThreshold: 12,
 	rendHealthThresholdAbove: 20,
 	rendRageThresholdBelow: 100,
 	slamRageThreshold: 25,
@@ -83,7 +81,6 @@ export const DefaultRotation = WarriorRotation.create({
 	useBtDuringExecute: true,
 	useWwDuringExecute: true,
 	useSlamOverExecute: true,
-	spamExecute: true,
 	stanceOption: StanceOption.DefaultStance,
 });
 
@@ -92,7 +89,7 @@ export const ArmsRotation = WarriorRotation.create({
 	useMs: true,
 	useCleave: false,
 	sunderArmor: SunderArmor.SunderArmorMaintain,
-	msRageThreshold: 355,
+	msRageThreshold: 30,
 	slamRageThreshold: 25,
 	hsRageThreshold: 50,
 	rendCdThreshold: 0,

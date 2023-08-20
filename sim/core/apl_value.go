@@ -7,6 +7,9 @@ import (
 )
 
 type APLValue interface {
+	// Returns all inner APLValues.
+	GetInnerValues() []APLValue
+
 	// The type of value that will be returned.
 	Type() proto.APLValueType
 
@@ -18,6 +21,9 @@ type APLValue interface {
 	GetDuration(*Simulation) time.Duration
 	GetString(*Simulation) string
 
+	// Performs optional post-processing.
+	Finalize(*APLRotation)
+
 	// Pretty-print string for debugging.
 	String() string
 }
@@ -25,6 +31,9 @@ type APLValue interface {
 // Provides empty implementations for the GetX() value interface functions.
 type defaultAPLValueImpl struct {
 }
+
+func (impl defaultAPLValueImpl) GetInnerValues() []APLValue { return nil }
+func (impl defaultAPLValueImpl) Finalize(*APLRotation)      {}
 
 func (impl defaultAPLValueImpl) GetBool(sim *Simulation) bool {
 	panic("Unimplemented GetBool")
@@ -61,6 +70,10 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 		return rot.newValueCompare(config.GetCmp())
 	case *proto.APLValue_Math:
 		return rot.newValueMath(config.GetMath())
+	case *proto.APLValue_Max:
+		return rot.newValueMax(config.GetMax())
+	case *proto.APLValue_Min:
+		return rot.newValueMin(config.GetMin())
 
 	// Encounter
 	case *proto.APLValue_CurrentTime:
@@ -151,6 +164,14 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 		return rot.newValueDotIsActive(config.GetDotIsActive())
 	case *proto.APLValue_DotRemainingTime:
 		return rot.newValueDotRemainingTime(config.GetDotRemainingTime())
+
+	// Sequences
+	case *proto.APLValue_SequenceIsComplete:
+		return rot.newValueSequenceIsComplete(config.GetSequenceIsComplete())
+	case *proto.APLValue_SequenceIsReady:
+		return rot.newValueSequenceIsReady(config.GetSequenceIsReady())
+	case *proto.APLValue_SequenceTimeToReady:
+		return rot.newValueSequenceTimeToReady(config.GetSequenceTimeToReady())
 
 	default:
 		return nil

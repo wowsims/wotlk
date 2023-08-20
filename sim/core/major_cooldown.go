@@ -240,6 +240,9 @@ func (mcdm *majorCooldownManager) finalize() {
 //
 // This function should be called from Agent.Init().
 func (mcdm *majorCooldownManager) DelayDPSCooldownsForArmorDebuffs(delay time.Duration) {
+	if mcdm.character.IsUsingAPL {
+		return
+	}
 	mcdm.character.Env.RegisterPostFinalizeEffect(func() {
 		for i := range mcdm.initialMajorCooldowns {
 			mcd := &mcdm.initialMajorCooldowns[i]

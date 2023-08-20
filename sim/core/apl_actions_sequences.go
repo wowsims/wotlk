@@ -54,7 +54,6 @@ func (action *APLActionSequence) String() string {
 
 type APLActionResetSequence struct {
 	defaultAPLActionImpl
-	unit     *Unit
 	name     string
 	sequence *APLActionSequence
 }
@@ -65,7 +64,6 @@ func (rot *APLRotation) newActionResetSequence(config *proto.APLActionResetSeque
 		return nil
 	}
 	return &APLActionResetSequence{
-		unit: rot.unit,
 		name: config.SequenceName,
 	}
 }
