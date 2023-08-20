@@ -128,10 +128,28 @@ export class APLValuePicker extends Input<Player<any>, APLValue | undefined> {
 								} else {
 									(newSourceValue.value as APLValueImplStruct<'or'>).or.vals = [this.makeAPLValue(oldKind, this.valuePicker.getInputValue())];
 								}
+							} else if (newKind == 'min') {
+								if (sourceValue.value.oneofKind == 'max') {
+									(newSourceValue.value as APLValueImplStruct<'min'>).min.vals = sourceValue.value.max.vals;
+								} else {
+									(newSourceValue.value as APLValueImplStruct<'min'>).min.vals = [this.makeAPLValue(oldKind, this.valuePicker.getInputValue())];
+								}
+							} else if (newKind == 'max') {
+								if (sourceValue.value.oneofKind == 'min') {
+									(newSourceValue.value as APLValueImplStruct<'max'>).max.vals = sourceValue.value.min.vals;
+								} else {
+									(newSourceValue.value as APLValueImplStruct<'max'>).max.vals = [this.makeAPLValue(oldKind, this.valuePicker.getInputValue())];
+								}
 							} else if (sourceValue.value.oneofKind == 'and' && sourceValue.value.and.vals?.[0]?.value.oneofKind == newKind) {
 								newSourceValue = sourceValue.value.and.vals[0];
 							} else if (sourceValue.value.oneofKind == 'or' && sourceValue.value.or.vals?.[0]?.value.oneofKind == newKind) {
 								newSourceValue = sourceValue.value.or.vals[0];
+							} else if (sourceValue.value.oneofKind == 'min' && sourceValue.value.min.vals?.[0]?.value.oneofKind == newKind) {
+								newSourceValue = sourceValue.value.min.vals[0];
+							} else if (sourceValue.value.oneofKind == 'max' && sourceValue.value.max.vals?.[0]?.value.oneofKind == newKind) {
+								newSourceValue = sourceValue.value.max.vals[0];
+							} else if (newKind == 'cmp') {
+								(newSourceValue.value as APLValueImplStruct<'cmp'>).cmp.lhs = this.makeAPLValue(oldKind, this.valuePicker.getInputValue());
 							}
 						}
 					}
