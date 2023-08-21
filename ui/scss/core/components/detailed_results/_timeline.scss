@@ -36,25 +36,17 @@ $combo-points-color: #ffa07a;
 }
 
 .timeline-disclaimer {
-	padding-right: 20px;
+	display: flex;
+	align-items: center;
+
+	.timeline-chart-picker {
+		width: 8rem;
+		margin-left: auto;
+	}
 }
 
 .timeline-warning {
-	color: yellow;
-	margin: 0 10px;
-	text-shadow:
-			0 0 10px red,
-			0 0 10px red;
-}
-
-.timeline-run-again-button {
-	margin-left: 10px;
-	display: inline-block;
-	cursor: pointer;
-}
-
-.timeline-chart-picker {
-	float: right;
+	margin-right: map-get($spacers, 2);
 }
 
 .timeline-plots-container {

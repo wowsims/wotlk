@@ -92,11 +92,6 @@
 		.sim-toolbar-item {
 			transition: $link-transition;
 
-			.warnings {
-				margin-top: math.div($nav-link-padding-y, 2);
-				margin-bottom: math.div($nav-link-padding-y, 2);
-			}
-
 			.known-issues {
 				color: #ef9eaa;
 			}

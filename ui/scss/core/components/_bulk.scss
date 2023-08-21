@@ -168,10 +168,8 @@
       flex-direction: row;
     }
   }
-}
 
-.results-sim {
-  margin-top: 5px;
-  flex: 2;
-  margin-right: 2px;
+  .results-sim {
+    margin-right: map-get($spacers, 3);
+  }
 }

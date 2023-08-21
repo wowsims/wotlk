@@ -230,7 +230,7 @@ class APLListItemPicker extends Input<Player<any>, APLListItem> {
 
 function makeListItemWarnings(itemHeaderElem: HTMLElement, player: Player<any>, getWarnings: (player: Player<any>) => Array<string>) {
 	const warningsElem = ListPicker.makeActionElem('apl-warnings', 'Warnings', 'fa-exclamation-triangle');
-	warningsElem.classList.add('warnings', 'link-warning');
+	warningsElem.classList.add('warning', 'link-warning');
 	warningsElem.setAttribute('data-bs-html', 'true');
 	const warningsTooltip = Tooltip.getOrCreateInstance(warningsElem, {
 		customClass: 'dropdown-tooltip',

@@ -44,6 +44,7 @@ export class ResultsFilter extends ResultComponent {
 		this.targetFilter = new UnitPicker(this.rootElem, this.currentFilter, {
 			extraCssClasses: [
 				'target-filter-root',
+				'd-none',
 			],
 			changedEvent: (_filterData: FilterData) => this.changeEmitter,
 			sourceToValue: (src: UnitReference|undefined) => this.refToValue(src),
@@ -64,6 +65,7 @@ export class ResultsFilter extends ResultComponent {
 	onSimResult(resultData: SimResultData) {
 		this.playerFilter.setOptions(this.getUnitOptions(resultData.eventID, resultData.result, true));
 		this.targetFilter.setOptions(this.getUnitOptions(resultData.eventID, resultData.result, false));
+		this.targetFilter.rootElem.classList.remove('d-none');
 	}
 
 	setPlayer(eventID: EventID, newPlayer: number | null) {

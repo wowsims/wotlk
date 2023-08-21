@@ -54,10 +54,9 @@ export class Timeline extends ResultComponent {
 
 		this.rootElem.innerHTML = `
 		<div class="timeline-disclaimer">
-			<span class="timeline-warning fa fa-exclamation-triangle"></span>
+			<span class="warning wanings fa fa-exclamation-triangle fa-xl me-2"></span>
 			<span class="timeline-warning-description">Timeline data visualizes only 1 sim iteration.</span>
-			<div class="timeline-run-again-button btn btn-primary">Sim 1 Iteration</div>
-			<select class="timeline-chart-picker">
+			<select class="timeline-chart-picker form-select">
 				<option class="rotation-option" value="rotation">Rotation</option>
 				<option class="dps-option" value="dps">DPS</option>
 				<option class="threat-option" value="threat">Threat</option>
@@ -77,11 +76,6 @@ export class Timeline extends ResultComponent {
 			</div>
 		</div>
 		`;
-
-		const runAgainButton = this.rootElem.getElementsByClassName('timeline-run-again-button')[0] as HTMLElement;
-		runAgainButton.addEventListener('click', () => {
-			(window.opener || window.parent)!.postMessage('runOnce', '*');
-		});
 
 		this.chartPicker = this.rootElem.getElementsByClassName('timeline-chart-picker')[0] as HTMLSelectElement;
 		this.chartPicker.addEventListener('change', () => {
