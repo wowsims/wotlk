@@ -91,6 +91,8 @@ export class Raid {
 	}
 
 	getPlayer(index: number): Player<any> | null {
+		if (index === -1) return null;
+
 		const party = this.parties[Math.floor(index / MAX_PARTY_SIZE)];
 		return party.getPlayer(index % MAX_PARTY_SIZE);
 	}
