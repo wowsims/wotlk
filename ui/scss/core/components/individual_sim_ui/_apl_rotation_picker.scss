@@ -95,6 +95,10 @@
 		margin: 0;
 		width: auto;
 		border: none;
+
+		&:not(:last-child) {
+			margin-right: map-get($spacers, 2);
+		}
 	}
 
 	.list-picker-new-button {
@@ -108,7 +112,6 @@
 }
 
 .apl-picker-builder-root {
-	padding: 0 map-get($spacers, 2);
 	flex-wrap: wrap;
 
 	.apl-picker-builder-multi {
@@ -137,6 +140,7 @@
 
 			.list-picker-item-header {
 				order: 1;
+				margin-left: map-get($spacers, 2) !important;
 				line-height: map-get($spacers, 4);
 			}
 		}

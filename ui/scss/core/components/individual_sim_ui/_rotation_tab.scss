@@ -5,7 +5,6 @@
 #rotation-tab {
 	&.rotation-type-legacy {
 		.rotation-tab-main {
-			width: 100%;
 			display: none;
 		}
 	
@@ -30,6 +29,10 @@
 	}
 
 	.rotation-tab-header {
+		width: 100%;
+	}
+
+	.rotation-tab-main {
 		width: 100%;
 	}
 
