@@ -785,6 +785,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		shortDescription: '<b>True</b> if the specified dot is currently ticking, otherwise <b>False</b>.',
 		newValue: APLValueDotIsActive.create,
 		fields: [
+			AplHelpers.unitFieldConfig('targetUnit', 'targets'),
 			AplHelpers.actionIdFieldConfig('spellId', 'dot_spells', ''),
 		],
 	}),
@@ -794,6 +795,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		shortDescription: 'Time remaining before the last tick of this DoT will occur, or 0 if the DoT is not currently ticking.',
 		newValue: APLValueDotRemainingTime.create,
 		fields: [
+			AplHelpers.unitFieldConfig('targetUnit', 'targets'),
 			AplHelpers.actionIdFieldConfig('spellId', 'dot_spells', ''),
 		],
 	}),

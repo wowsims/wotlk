@@ -157,7 +157,7 @@ func (rot *APLRotation) aplGetSpell(spellId *proto.ActionID) *Spell {
 	return spell
 }
 
-func (rot *APLRotation) aplGetDot(spellId *proto.ActionID) *Dot {
+func (rot *APLRotation) aplGetDot(targetUnit UnitReference, spellId *proto.ActionID) *Dot {
 	spell := rot.aplGetSpell(spellId)
 
 	if spell == nil {
@@ -165,7 +165,7 @@ func (rot *APLRotation) aplGetDot(spellId *proto.ActionID) *Dot {
 	} else if spell.AOEDot() != nil {
 		return spell.AOEDot()
 	} else {
-		return spell.CurDot()
+		return spell.Dot(targetUnit.Get())
 	}
 }
 
