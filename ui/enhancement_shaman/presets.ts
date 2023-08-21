@@ -10,10 +10,11 @@ import {
 	Debuffs,
 	CustomRotation,
 	CustomSpell,
-	ItemSwap,
-	ItemSpec,
+	Spec,
+	Faction,
 } from '../core/proto/common.js';
-import { SavedTalents } from '../core/proto/ui.js';
+import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
+import { APLRotation } from '../core/proto/apl.js';
 
 import { EnhancementShaman_Rotation as EnhancementShamanRotation, EnhancementShaman_Options as EnhancementShamanOptions, ShamanShield } from '../core/proto/shaman.js';
 import {
@@ -31,6 +32,7 @@ import {
 } from '../core/proto/shaman.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
+import { Player } from 'ui/core/player.js';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -85,6 +87,32 @@ export const DefaultRotation = EnhancementShamanRotation.create({
 		],
 	}),
 });
+
+export const ROTATION_DEFAULT = {
+	name: 'Default',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: EnhancementShamanRotation.toJsonString(EnhancementShamanRotation.create({
+		})),
+		rotation: APLRotation.fromJsonString(`{
+			"enabled": true,
+			"prepullActions": [
+				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
+			],
+			"priorityList": [
+				{"action":{"autocastOtherCooldowns":{}}},
+				{"action":{"condition":{"not":{"val":{"auraIsActive":{"sourceUnit":{"type":"CurrentTarget"},"auraId":{"spellId":17364}}}}},"castSpell":{"spellId":{"spellId":17364}}}},
+				{"action":{"condition":{"cmp":{"op":"OpGe","lhs":{"auraNumStacks":{"auraId":{"spellId":53817}}},"rhs":{"const":{"val":"3"}}}},"castSpell":{"spellId":{"spellId":49238}}}},
+				{"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":58734}}},"rhs":{"const":{"val":"100ms"}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":2894}}}}}]}},"castSpell":{"spellId":{"spellId":58734}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":17364}}}},
+				{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":49233}}},"rhs":{"const":{"val":"0s"}}}},"castSpell":{"spellId":{"spellId":49233}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":49231}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":61657}}}},
+				{"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":49281}}}}},"castSpell":{"spellId":{"spellId":49281}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":60103}}}}
+			]
+		}`),
+	}),
+};
 
 export const DefaultOptions = EnhancementShamanOptions.create({
 	shield: ShamanShield.LightningShield,
@@ -223,3 +251,54 @@ export const P2_PRESET_WF = {
       ]
     }`),
 };
+
+export const P3_PRESET_ALLIANCE	 = {
+	name: 'P3 Preset Alliance',
+	enableWhen: (player: Player<Spec.SpecElementalShaman>) => player.getFaction() == Faction.Alliance,
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`{  "items": [
+		{"id":48353,"enchant":3817,"gems":[41398,40128]},
+		{"id":47060,"gems":[40159]},
+		{"id":48351,"enchant":3808,"gems":[40128]},
+		{"id":47552,"enchant":3722,"gems":[40159]},
+		{"id":46965,"enchant":3832,"gems":[40159,49110,40128]},
+		{"id":47916,"enchant":3845,"gems":[40159,0]},
+		{"id":48354,"enchant":3604,"gems":[40128,0]},
+		{"id":47112,"enchant":3599,"gems":[40128,40159,40128]},
+		{"id":48352,"enchant":3823,"gems":[40128,40128]},
+		{"id":47099,"enchant":3606,"gems":[40128,40128]},
+		{"id":46046,"gems":[40128]},
+		{"id":47075,"gems":[40128]},
+		{"id":47188},
+		{"id":45609},
+		{"id":47206,"enchant":3789},
+		{"id":47156,"enchant":3789,"gems":[40128]},
+		{"id":47666}
+	]}`),
+}
+
+
+export const P3_PRESET_HORDE = {
+	name: 'P3 Preset Horde',
+	enableWhen: (player: Player<Spec.SpecElementalShaman>) => player.getFaction() == Faction.Horde,
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	gear: EquipmentSpec.fromJsonString(`{  "items": [
+		{"id":48358,"enchant":3817,"gems":[41398,40128]},
+		{"id":47433,"gems":[40159]},
+		{"id":48360,"enchant":3808,"gems":[40128]},
+		{"id":47551,"enchant":3722,"gems":[40159]},
+		{"id":47412,"enchant":3832,"gems":[40159,49110,40128]},
+		{"id":47989,"enchant":3845,"gems":[40159,0]},
+		{"id":48357,"enchant":3604,"gems":[40128,0]},
+		{"id":47460,"enchant":3599,"gems":[40128,40159,40128]},
+		{"id":48359,"enchant":3823,"gems":[40128,40128]},
+		{"id":47456,"enchant":3606,"gems":[40128,40128]},
+		{"id":46046,"gems":[40128]},
+		{"id":47443,"gems":[40128]},
+		{"id":47477},
+		{"id":45609},
+		{"id":47483,"enchant":3789},
+		{"id":47475,"enchant":3789,"gems":[40128]},
+		{"id":47666}
+	]}`),
+}

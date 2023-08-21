@@ -150,12 +150,18 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				talents: [
 					Presets.StandardTalents,
 				],
+				// Preset rotations that the user can quickly select.
+				rotations: [
+					Presets.ROTATION_DEFAULT,
+				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.PreRaid_PRESET,
 					Presets.P1_PRESET,
 					Presets.P2_PRESET_FT,
 					Presets.P2_PRESET_WF,
+					Presets.P3_PRESET_ALLIANCE,
+					Presets.P3_PRESET_HORDE,
 				],
 			},
 		});

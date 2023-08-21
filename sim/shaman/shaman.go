@@ -252,6 +252,9 @@ func (shaman *Shaman) Initialize() {
 	shaman.registerWindfuryTotemSpell()
 	shaman.registerWrathOfAirTotemSpell()
 
+	// This registration must come after all the totems are registered
+	shaman.registerCallOfTheElements()
+
 	shaman.registerBloodlustCD()
 
 	if shaman.Totems.UseFireElemental && enableSnapshot && !shaman.IsUsingAPL {
