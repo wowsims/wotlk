@@ -41,6 +41,11 @@ export class NumberPicker<ModObject> extends Input<ModObject, number> {
 		this.inputElem.addEventListener('change', event => {
 			this.inputChanged(TypedEvent.nextEventID());
 		});
+
+		this.inputElem.addEventListener('input', event => {
+			this.updateSize();
+		});
+		this.updateSize();
 	}
 
 	getInputElem(): HTMLElement {
@@ -60,5 +65,11 @@ export class NumberPicker<ModObject> extends Input<ModObject, number> {
 			this.inputElem.value = newValue.toFixed(2);
 		else
 			this.inputElem.value = String(newValue);
+	}
+
+	private updateSize() {
+		const newSize = Math.max(3, this.inputElem.value.length);
+		if (this.inputElem.size != newSize)
+			this.inputElem.size = newSize;
 	}
 }
