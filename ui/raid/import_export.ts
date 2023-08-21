@@ -231,6 +231,7 @@ export class RaidWCLImporter extends Importer {
 		try {
 			await this.doImport(importLink);
 		} catch (error) {
+			console.error(error);
 			alert('Failed import from WCL: ' + error);
 		}
 		this.importButton.disabled = false
