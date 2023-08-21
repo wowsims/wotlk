@@ -233,7 +233,7 @@ export class PartyPicker extends Component {
 				return;
 			}
 
-			dpsResultElem.textContent = partyDps.toFixed(1);
+			dpsResultElem.textContent = `${partyDps.toFixed(1)} DPS`;
 
 			if (!referenceData) {
 				referenceDeltaElem.textContent = '';
@@ -354,7 +354,7 @@ export class PlayerPicker extends Component {
 
 			if (this.player) {
 				this.resultsElem?.classList.remove('hide');
-				(this.dpsResultElem as HTMLElement).textContent = playerDps.toFixed(1);
+				(this.dpsResultElem as HTMLElement).textContent = `${playerDps.toFixed(1)} DPS`;
 
 				if (referenceData)
 					formatDeltaTextElem(this.referenceDeltaElem as HTMLElement, referenceDps, playerDps, 1);
@@ -475,10 +475,9 @@ export class PlayerPicker extends Component {
 			const classCssClass = cssClassForClass(this.player.getClass());
 
 			this.rootElem.className = `player-picker-root player bg-${classCssClass}-dampened`;
-			this.rootElem.setAttribute('draggable', 'true');
 			this.rootElem.innerHTML = `
 				<div class="player-label">
-					<img class="player-icon" src="${this.player.getSpecIcon()}" draggable="false"/>
+					<img class="player-icon" src="${this.player.getSpecIcon()}" />
 					<div class="player-details">
 						<input
 							class="player-name text-${classCssClass}"
@@ -498,7 +497,6 @@ export class PlayerPicker extends Component {
 						href="javascript:void(0)"
 						class="player-edit"
 						role="button"
-						draggable="false"
 						data-bs-toggle="tooltip"
 						data-bs-title="Click to Edit"
 					>
@@ -518,7 +516,6 @@ export class PlayerPicker extends Component {
 						href="javascript:void(0)"
 						class="player-delete link-danger"
 						role="button"
-						draggable="false"
 						data-bs-toggle="tooltip"
 						data-bs-title="Click to Delete"
 					>
@@ -544,12 +541,10 @@ export class PlayerPicker extends Component {
 		});
 
 		this.nameElem?.addEventListener('mousedown', event => {
-			this.rootElem.setAttribute('draggable', 'false')
 			this.partyPicker.rootElem.setAttribute('draggable', 'false')
 		})
 
 		this.nameElem?.addEventListener('mouseup', event => {
-			this.rootElem.setAttribute('draggable', 'true')
 			this.partyPicker.rootElem.setAttribute('draggable', 'true')
 		})
 
@@ -582,16 +577,14 @@ export class PlayerPicker extends Component {
 		const copyElem = this.rootElem.querySelector('.player-copy') as HTMLElement;
 		const deleteElem = this.rootElem.querySelector('.player-delete') as HTMLElement;
 
-		this.rootElem.ondragstart = event => {
-			if (event.target != copyElem) {
-				dragStart(event, DragType.Swap)
-			}
-		}
-
 		const editTooltip = Tooltip.getOrCreateInstance(editElem);
 		const copyTooltip = Tooltip.getOrCreateInstance(copyElem);
 		const deleteTooltip = Tooltip.getOrCreateInstance(deleteElem);
 
+		(this.iconElem as HTMLElement).ondragstart = event => {
+			event.dataTransfer!.setDragImage(this.rootElem, 20, 20);
+			dragStart(event, DragType.Swap)
+		}
 		editElem.onclick = event => {
 			new PlayerEditorModal(this.player as Player<any>);
 		};
