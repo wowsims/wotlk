@@ -178,6 +178,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 					Presets.UnholyDualWieldTalents,
 					Presets.UnholyDualWieldSSTalents,
 					Presets.Unholy2HTalents,
+					Presets.UnholyAoeTalents,
 				],
 				// Preset rotations that the user can quickly select.
 				rotations: [
@@ -189,6 +190,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 					Presets.FROST_UH_PESTI_ROTATION_PRESET_DEFAULT,
 					Presets.UNHOLY_DW_ROTATION_PRESET_DEFAULT,
 					Presets.UNHOLY_2H_ROTATION_PRESET_DEFAULT,
+					Presets.UNHOLY_DND_AOE_ROTATION_PRESET_DEFAULT,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [

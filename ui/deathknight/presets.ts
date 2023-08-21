@@ -113,6 +113,21 @@ export const Unholy2HTalents = {
 	}),
 };
 
+export const UnholyAoeTalents = {
+	name: 'Unholy AOE',
+	data: SavedTalents.create({
+		talentsString: '-320050500002-2302303050032052000150013133151',
+		glyphs: Glyphs.create({
+			major1: DeathknightMajorGlyph.GlyphOfTheGhoul,
+			major2: DeathknightMajorGlyph.GlyphOfIcyTouch,
+			major3: DeathknightMajorGlyph.GlyphOfDeathAndDecay,
+			minor1: DeathknightMinorGlyph.GlyphOfHornOfWinter,
+			minor2: DeathknightMinorGlyph.GlyphOfPestilence,
+			minor3: DeathknightMinorGlyph.GlyphOfRaiseDead,
+		}),
+	}),
+};
+
 export const BloodTalents = {
 	name: 'Blood DPS',
 	data: SavedTalents.create({
@@ -268,6 +283,7 @@ export const BLOOD_PESTI_ROTATION_PRESET_DEFAULT = {
 			  {"action":{"castSpell":{"spellId":{"spellId":48265}}},"doAtValue":{"const":{"val":"-20s"}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":42650}}},"doAtValue":{"const":{"val":"-10s"}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":50689}}},"doAtValue":{"const":{"val":"-6s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":57623}}},"doAtValue":{"const":{"val":"-1.5s"}}},
 			  {"action":{"castSpell":{"spellId":{"itemId":40211}}},"doAtValue":{"const":{"val":"-1s"}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":49016}}},"doAtValue":{"const":{"val":"0s"}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":54758}}},"doAtValue":{"const":{"val":"0s"}}},
@@ -373,6 +389,7 @@ export const UNHOLY_DW_ROTATION_PRESET_DEFAULT = {
 			"prepullActions": [
 			  {"action":{"castSpell":{"spellId":{"spellId":48265}}},"doAtValue":{"const":{"val":"-10s"}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":63560}}},"doAtValue":{"const":{"val":"-8s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":57623}}},"doAtValue":{"const":{"val":"-1.5s"}}},
 			  {"action":{"castSpell":{"spellId":{"itemId":40211}}},"doAtValue":{"const":{"val":"-1s"}}}
 			],
 			"priorityList": [
@@ -393,6 +410,7 @@ export const UNHOLY_DW_ROTATION_PRESET_DEFAULT = {
 			  {"action":{"condition":{"not":{"val":{"spellIsReady":{"spellId":{"spellId":49206}}}}},"castSpell":{"spellId":{"spellId":49895}}}},
 			  {"action":{"strictSequence":{"actions":[{"castSpell":{"spellId":{"spellId":45529}}},{"castSpell":{"spellId":{"spellId":63560}}}]}}},
 			  {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":48265}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":49206}}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":49206}}}}}]}},"castSpell":{"spellId":{"spellId":50689}}}}
+			  {"action":{"castSpell":{"spellId":{"spellId":57623}}}}
 			]
 		}`),
 	}),
@@ -408,6 +426,7 @@ export const UNHOLY_2H_ROTATION_PRESET_DEFAULT = {
 			"prepullActions": [
 			  {"action":{"castSpell":{"spellId":{"spellId":48265}}},"doAtValue":{"const":{"val":"-10s"}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":63560}}},"doAtValue":{"const":{"val":"-8s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":57623}}},"doAtValue":{"const":{"val":"-1.5s"}}},
 			  {"action":{"castSpell":{"spellId":{"itemId":40211}}},"doAtValue":{"const":{"val":"-1s"}}}
 			],
 			"priorityList": [
@@ -427,6 +446,44 @@ export const UNHOLY_2H_ROTATION_PRESET_DEFAULT = {
 			  {"action":{"castSpell":{"spellId":{"spellId":49206}}}},
 			  {"action":{"condition":{"not":{"val":{"spellIsReady":{"spellId":{"spellId":49206}}}}},"castSpell":{"spellId":{"spellId":49895}}}},
 			  {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":48265}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":49206}}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":49206}}}}}]}},"castSpell":{"spellId":{"spellId":50689}}}}
+			  {"action":{"castSpell":{"spellId":{"spellId":57623}}}}
+			]
+		}`),
+	}),
+}
+
+export const UNHOLY_DND_AOE_ROTATION_PRESET_DEFAULT = {
+	name: 'Unholy DND AOE APL',
+	//enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultUnholyRotation),
+		rotation: APLRotation.fromJsonString(`{
+			"enabled": true,
+			"prepullActions": [
+			  {"action":{"castSpell":{"spellId":{"spellId":48265}}},"doAtValue":{"const":{"val":"-10s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":63560}}},"doAtValue":{"const":{"val":"-8s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":57623}}},"doAtValue":{"const":{"val":"-1.5s"}}},
+			  {"action":{"castSpell":{"spellId":{"itemId":40211}}},"doAtValue":{"const":{"val":"-1s"}}}
+			],
+			"priorityList": [
+			  {"action":{"autocastOtherCooldowns":{}}},
+			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"const":{"val":"3s"}}}},"castSpell":{"spellId":{"spellId":59131}}}},
+			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55078}}},"rhs":{"const":{"val":"3s"}}}},"castSpell":{"spellId":{"spellId":49921,"tag":1}}}},
+			  {"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":66803}}}}},"castSpell":{"spellId":{"spellId":49930,"tag":1}}}},
+			  {"action":{"condition":{"auraIsActive":{"auraId":{"spellId":49206}}},"castSpell":{"spellId":{"spellId":26297}}}},
+			  {"action":{"condition":{"or":{"vals":[{"auraIsActive":{"auraId":{"spellId":49206}}},{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49206}}},"rhs":{"const":{"val":"50s"}}}}]}},"castSpell":{"spellId":{"spellId":54758}}}},
+			  {"action":{"condition":{"or":{"vals":[{"auraIsActive":{"auraId":{"spellId":49206}}},{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49206}}},"rhs":{"remainingTime":{}}}}]}},"castSpell":{"spellId":{"itemId":40211}}}},
+			  {"action":{"condition":{"auraIsActive":{"auraId":{"spellId":49206}}},"castSpell":{"spellId":{"spellId":47568}}}},
+			  {"action":{"condition":{"auraIsActive":{"auraId":{"spellId":49206}}},"castSpell":{"spellId":{"spellId":42650}}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":49938}}}},
+			  {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49938}}},"rhs":{"const":{"val":"6s"}}}},"castSpell":{"spellId":{"spellId":55271,"tag":1}}}},
+			  {"action":{"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"targetUnit":{"type":"Target","index":1},"spellId":{"spellId":55095}}}}}]}},"castSpell":{"spellId":{"spellId":50842}}}},
+			  {"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49938}}},"rhs":{"const":{"val":"6s"}}}},{"cmp":{"op":"OpLt","lhs":{"auraRemainingTime":{"auraId":{"spellId":66803}}},"rhs":{"const":{"val":"10s"}}}}]}},"castSpell":{"spellId":{"spellId":49930,"tag":1}}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":49206}}}},
+			  {"action":{"condition":{"not":{"val":{"spellIsReady":{"spellId":{"spellId":49206}}}}},"castSpell":{"spellId":{"spellId":49895}}}},
+			  {"action":{"strictSequence":{"actions":[{"castSpell":{"spellId":{"spellId":45529}}},{"castSpell":{"spellId":{"spellId":63560}}}]}}},
+			  {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":48265}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":49206}}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":49206}}}}}]}},"castSpell":{"spellId":{"spellId":50689}}}}
+			  {"action":{"castSpell":{"spellId":{"spellId":57623}}}}
 			]
 		}`),
 	}),
