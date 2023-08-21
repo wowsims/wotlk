@@ -409,7 +409,7 @@ export const UNHOLY_DW_ROTATION_PRESET_DEFAULT = {
 			  {"action":{"castSpell":{"spellId":{"spellId":49206}}}},
 			  {"action":{"condition":{"not":{"val":{"spellIsReady":{"spellId":{"spellId":49206}}}}},"castSpell":{"spellId":{"spellId":49895}}}},
 			  {"action":{"strictSequence":{"actions":[{"castSpell":{"spellId":{"spellId":45529}}},{"castSpell":{"spellId":{"spellId":63560}}}]}}},
-			  {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":48265}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":49206}}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":49206}}}}}]}},"castSpell":{"spellId":{"spellId":50689}}}}
+			  {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":48265}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":49206}}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":49206}}}}}]}},"castSpell":{"spellId":{"spellId":50689}}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":57623}}}}
 			]
 		}`),
@@ -445,7 +445,7 @@ export const UNHOLY_2H_ROTATION_PRESET_DEFAULT = {
 			  {"action":{"castSpell":{"spellId":{"spellId":49930,"tag":1}}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":49206}}}},
 			  {"action":{"condition":{"not":{"val":{"spellIsReady":{"spellId":{"spellId":49206}}}}},"castSpell":{"spellId":{"spellId":49895}}}},
-			  {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":48265}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":49206}}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":49206}}}}}]}},"castSpell":{"spellId":{"spellId":50689}}}}
+			  {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":48265}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":49206}}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":49206}}}}}]}},"castSpell":{"spellId":{"spellId":50689}}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":57623}}}}
 			]
 		}`),
@@ -482,7 +482,7 @@ export const UNHOLY_DND_AOE_ROTATION_PRESET_DEFAULT = {
 			  {"action":{"castSpell":{"spellId":{"spellId":49206}}}},
 			  {"action":{"condition":{"not":{"val":{"spellIsReady":{"spellId":{"spellId":49206}}}}},"castSpell":{"spellId":{"spellId":49895}}}},
 			  {"action":{"strictSequence":{"actions":[{"castSpell":{"spellId":{"spellId":45529}}},{"castSpell":{"spellId":{"spellId":63560}}}]}}},
-			  {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":48265}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":49206}}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":49206}}}}}]}},"castSpell":{"spellId":{"spellId":50689}}}}
+			  {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":48265}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":49206}}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":49206}}}}}]}},"castSpell":{"spellId":{"spellId":50689}}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":57623}}}}
 			]
 		}`),
