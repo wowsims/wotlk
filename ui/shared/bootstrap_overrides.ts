@@ -1,7 +1,7 @@
 import { Dropdown, Popover, Tooltip } from 'bootstrap';
 import { isDescendant } from './utils';
 
-Dropdown.Default.offset = [0, 0];
+Dropdown.Default.offset = [0, -1];
 //Dropdown.Default.display = "static";
 
 Tooltip.Default.trigger = "hover";

@@ -84,6 +84,7 @@
 
 	.dropdown-picker-button {
 		padding: 0;
+		border: 0;
 	}
 
 	.dropdown-menu {
@@ -96,7 +97,7 @@
 	margin: 0;
 
 	.apl-action-condition {
-		margin-bottom: map-get($spacers, 3) !important;
+		margin-bottom: map-get($spacers, 2) !important;
 	}
 
 	.input-root {
@@ -111,7 +112,8 @@
 
 	.list-picker-new-button {
 		width: unset;
-		font-size: .5rem;
+		font-size: $content-font-size;
+		line-height: 1.5rem;
 	}
 }
 
@@ -143,7 +145,7 @@
 		.list-picker-item-container {
 			padding: 0 !important;
 			border: 0 !important;
-			margin-bottom: map-get($spacers, 2);
+			margin-bottom: 0;
 			display: flex;
 
 			.list-picker-item-header {

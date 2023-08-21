@@ -206,7 +206,7 @@ export abstract class MetricsTable<T> extends ResultComponent {
 			fillCell: (player: UnitMetrics, cellElem: HTMLElement, rowElem: HTMLElement) => {
 				cellElem.innerHTML = `
 				<img class="metrics-action-icon" src="${player.iconUrl}"></img>
-				<span class="metrics-action-name" style="color:${player.classColor}">${player.label}</span>
+				<span class="metrics-action-name text-${player.classColor}">${player.label}</span>
 				`;
 			},
 		};

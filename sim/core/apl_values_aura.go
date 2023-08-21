@@ -28,7 +28,7 @@ func (value *APLValueAuraIsActive) GetBool(sim *Simulation) bool {
 	return value.aura.Get().IsActive()
 }
 func (value *APLValueAuraIsActive) String() string {
-	return fmt.Sprintf("Aura Is Active(%s)", value.aura.String())
+	return fmt.Sprintf("Aura Active(%s)", value.aura.String())
 }
 
 type APLValueAuraRemainingTime struct {
