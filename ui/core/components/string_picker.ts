@@ -49,6 +49,7 @@ export class AdaptiveStringPicker<ModObject> extends Input<ModObject, string> {
 
 		this.inputElem = document.createElement('input');
 		this.inputElem.type = 'text';
+		this.inputElem.classList.add('form-control')
 		this.rootElem.appendChild(this.inputElem);
 
 		this.init();
