@@ -17,7 +17,7 @@ import { Class } from '../proto/common.js';
 import { Spec } from '../proto/common.js';
 import { SimRun } from '../proto/ui.js';
 import { ActionId, defaultTargetIcon } from '../proto_utils/action_id.js';
-import { classColors } from '../proto_utils/utils.js';
+import { classColors, cssClassForClass } from '../proto_utils/utils.js';
 import { getTalentTreeIcon } from '../proto_utils/utils.js';
 import { playerToSpec } from '../proto_utils/utils.js';
 import { specToClass } from '../proto_utils/utils.js';
@@ -329,7 +329,7 @@ export class UnitMetrics {
 		this.petActionId = petActionId;
 		this.iconUrl = this.isPlayer ? getTalentTreeIcon(this.spec, player!.talentsString) :
 			(this.isTarget ? defaultTargetIcon : '');
-		this.classColor = this.isTarget ? 'black' : classColors[specToClass[this.spec]];
+		this.classColor = this.isTarget ? '' : cssClassForClass(specToClass[this.spec]);
 		this.dps = this.metrics.dps!;
 		this.dpasp = this.metrics.dpasp!;
 		this.hps = this.metrics.hps!;

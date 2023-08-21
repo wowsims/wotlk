@@ -711,7 +711,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 
 	// Auras
 	'auraIsActive': inputBuilder({
-		label: 'Aura Is Active',
+		label: 'Aura Active',
 		submenu: ['Aura'],
 		shortDescription: '<b>True</b> if the aura is currently active on self, otherwise <b>False</b>.',
 		newValue: APLValueAuraIsActive.create,

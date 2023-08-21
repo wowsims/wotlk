@@ -24,7 +24,7 @@ export class UnitPicker<ModObject> extends DropdownPicker<ModObject, UnitReferen
                 const unitConfig = valueConfig.value;
 
                 if (unitConfig.color) {
-                    button.style.backgroundColor = unitConfig.color;
+                    button.classList.add(`bg-${unitConfig.color}-dampened`, `text-${unitConfig.color}`);
                 }
 
                 if (unitConfig.iconUrl) {
@@ -37,14 +37,13 @@ export class UnitPicker<ModObject> extends DropdownPicker<ModObject, UnitReferen
                         });
                         icon = img;
                     } else if (unitConfig.iconUrl.startsWith('fa-')) {
-                        const img = document.createElement('span');
-                        img.classList.add('fa', unitConfig.iconUrl);
-                        img.classList.add('unit-picker-item-label');
+                        const img = document.createElement('i');
+                        img.classList.add('fa', unitConfig.iconUrl, 'unit-picker-item-icon');
                         icon = img;
                     } else {
                         const img = document.createElement('img');
-                        img.src = unitConfig.iconUrl;
                         img.classList.add('unit-picker-item-icon');
+                        img.src = unitConfig.iconUrl;
                         icon = img;
                     }
                     button.appendChild(icon);
@@ -52,14 +51,7 @@ export class UnitPicker<ModObject> extends DropdownPicker<ModObject, UnitReferen
 
                 const hideLabel = config.hideLabelWhenDefaultSelected && isSelectButton && !unitConfig.value;
                 if (unitConfig.text && !hideLabel) {
-                    const label = document.createElement('span');
-                    if (unitConfig.text.startsWith('fa-')) {
-                        label.classList.add('fa', unitConfig.text);
-                    } else {
-                        label.textContent = unitConfig.text;
-                    }
-                    label.classList.add('unit-picker-item-label');
-                    button.appendChild(label);
+                    button.insertAdjacentText('beforeend', unitConfig.text);
                 }
 			}
 		});

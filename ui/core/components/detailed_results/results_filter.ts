@@ -32,6 +32,7 @@ export class ResultsFilter extends ResultComponent {
 		this.playerFilter = new UnitPicker(this.rootElem, this.currentFilter, {
 			extraCssClasses: [
 				'player-filter-root',
+				'd-none',
 			],
 			changedEvent: (_filterData: FilterData) => this.changeEmitter,
 			sourceToValue: (src: UnitReference|undefined) => this.refToValue(src),
@@ -65,6 +66,7 @@ export class ResultsFilter extends ResultComponent {
 	onSimResult(resultData: SimResultData) {
 		this.playerFilter.setOptions(this.getUnitOptions(resultData.eventID, resultData.result, true));
 		this.targetFilter.setOptions(this.getUnitOptions(resultData.eventID, resultData.result, false));
+		this.playerFilter.rootElem.classList.remove('d-none');
 		this.targetFilter.rootElem.classList.remove('d-none');
 	}
 
@@ -87,14 +89,12 @@ export class ResultsFilter extends ResultComponent {
 			return {
 				iconUrl: '',
 				text: 'All Players',
-				color: 'black',
 				value: ref,
 			};
 		} else if (ref.type == UnitType.AllTargets) {
 			return {
 				iconUrl: '',
 				text: 'All Targets',
-				color: 'black',
 				value: ref,
 			};
 		} else if (this.hasLastSimResult()) {
@@ -109,7 +109,7 @@ export class ResultsFilter extends ResultComponent {
 				return {
 					iconUrl: unit.iconUrl || '',
 					text: unit.label,
-					color: unit.classColor || 'black',
+					color: unit.classColor || '',
 					value: ref,
 				};
 			}

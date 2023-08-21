@@ -220,7 +220,7 @@ export class Timeline extends ResultComponent {
 			if (this.chartPicker.value == 'dps') {
 				let maxDps = 0;
 				players.forEach(player => {
-					const dpsData = this.addDpsSeries(player, options, player.classColor);
+					const dpsData = this.addDpsSeries(player, options, `var(--bs-${player.classColor}`);
 					maxDps = Math.max(maxDps, dpsData.maxDps);
 					tooltipHandlers.push(dpsData.tooltipHandler);
 				});

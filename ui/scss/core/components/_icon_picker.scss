@@ -8,9 +8,9 @@
 
   .icon-picker-button,
   .icon-dropdown-option {
-    min-width: 2.5rem;
-    width: 2.5rem;
-    height: 2.5rem;
+    min-width: $icon-size-md;
+    width: $icon-size-md;
+    height: $icon-size-md;
     border: $border-default;
     transition: border-color .15s ease-in-out;
     background-size: cover;

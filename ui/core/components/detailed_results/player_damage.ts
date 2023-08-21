@@ -51,7 +51,7 @@ export class PlayerDamageMetricsTable extends MetricsTable<UnitMetrics> {
 							<span>${(player.dps.avg / this.raidDps * 100).toFixed(2)}%</span>
 						</div>
 						<div class="player-damage-bar-container">
-							<div class="player-damage-bar" style="background-color:${player.classColor}; width:${player.dps.avg / this.maxDps * 100}%"></div>
+							<div class="player-damage-bar bg-${player.classColor}" style="width:${player.dps.avg / this.maxDps * 100}%"></div>
 						</div>
 						<div class="player-damage-total">
 							<span>${(player.totalDamage / 1000).toFixed(1)}k</span>

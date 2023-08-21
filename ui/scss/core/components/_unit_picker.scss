@@ -1,22 +1,14 @@
 .unit-picker-root {
-	border: 1px solid white;
-	color: white;
-	text-shadow:
-		0 0 3px black,
-		0 0 3px black,
-		0 0 3px black;
-}
-
-.unit-filter-option {
-	height: 30px;
-}
-
-.unit-picker-item-icon {
-	margin: 2px;
-	height: 1rem;
-}
-
-.unit-picker-item-label {
-	font-size: 14px;
-	margin: 2px;
+	.unit-filter-option {
+		height: 30px;
+	}
+	
+	.unit-picker-item-icon {
+		width: $icon-size-sm;
+		height: $icon-size-sm;
+		margin-right: map-get($spacers, 1);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}	
 }
