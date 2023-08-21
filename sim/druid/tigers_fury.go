@@ -26,7 +26,7 @@ func (druid *Druid) registerTigersFurySpell() {
 		},
 	})
 
-	spell := druid.RegisterSpell(core.SpellConfig{
+	spell := druid.RegisterSpell(Cat, core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagAPL,
 		Cast: core.CastConfig{

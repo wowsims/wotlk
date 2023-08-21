@@ -15,7 +15,7 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 
 	numHits := core.TernaryInt32(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMaul) && druid.Env.GetNumTargets() > 1, 2, 1)
 
-	druid.Maul = druid.RegisterSpell(core.SpellConfig{
+	druid.Maul = druid.RegisterSpell(Bear, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48480},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
@@ -71,7 +71,7 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 		Duration: core.NeverExpires,
 	})
 
-	druid.MaulQueueSpell = druid.RegisterSpell(core.SpellConfig{
+	druid.MaulQueueSpell = druid.RegisterSpell(Bear, core.SpellConfig{
 		ActionID:    druid.Maul.WithTag(1),
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
@@ -116,7 +116,7 @@ func (druid *Druid) MaulReplaceMH(sim *core.Simulation, mhSwingSpell *core.Spell
 		}
 	}
 
-	return druid.Maul
+	return druid.Maul.Spell
 }
 
 func (druid *Druid) ShouldQueueMaul(sim *core.Simulation) bool {

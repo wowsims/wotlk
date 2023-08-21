@@ -11,7 +11,7 @@ func (druid *Druid) registerRakeSpell() {
 	numTicks := 3 + core.TernaryInt32(druid.HasSetBonus(ItemSetMalfurionsBattlegear, 2), 1, 0)
 	dotCanCrit := druid.HasSetBonus(ItemSetLasherweaveBattlegear, 4)
 
-	druid.Rake = druid.RegisterSpell(core.SpellConfig{
+	druid.Rake = druid.RegisterSpell(Cat, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48574},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
@@ -26,9 +26,6 @@ func (druid *Druid) registerRakeSpell() {
 				GCD: time.Second,
 			},
 			IgnoreHaste: true,
-		},
-		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return druid.InForm(Cat)
 		},
 
 		DamageMultiplier: 1 + 0.1*float64(druid.Talents.SavageFury),

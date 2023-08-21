@@ -17,7 +17,7 @@ func (druid *Druid) registerForceOfNatureCD() {
 		ActionID: core.ActionID{SpellID: 65861},
 		Duration: time.Second * 30,
 	})
-	druid.ForceOfNature = druid.RegisterSpell(core.SpellConfig{
+	druid.ForceOfNature = druid.RegisterSpell(Humanoid|Moonkin, core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 65861},
 		Flags:    core.SpellFlagAPL,
 		ManaCost: core.ManaCostOptions{

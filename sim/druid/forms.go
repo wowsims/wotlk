@@ -17,6 +17,7 @@ const (
 	Cat
 	Moonkin
 	Tree
+	Any = Humanoid | Bear | Cat | Moonkin | Tree
 )
 
 // Converts from 0.009327 to 0.0085
@@ -204,7 +205,7 @@ func (druid *Druid) registerCatFormSpell() {
 
 	energyMetrics := druid.NewEnergyMetrics(actionID)
 
-	druid.CatForm = druid.RegisterSpell(core.SpellConfig{
+	druid.CatForm = druid.RegisterSpell(Any, core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagAPL,
 
@@ -340,7 +341,7 @@ func (druid *Druid) registerBearFormSpell() {
 
 	furorProcChance := []float64{0, 0.2, 0.4, 0.6, 0.8, 1}[druid.Talents.Furor]
 
-	druid.BearForm = druid.RegisterSpell(core.SpellConfig{
+	druid.BearForm = druid.RegisterSpell(Any, core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagAPL,
 
@@ -410,7 +411,7 @@ func (druid *Druid) applyMoonkinForm() {
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if result.DidCrit() {
-				if spell == druid.Moonfire || spell == druid.Starfire || spell == druid.Wrath {
+				if druid.Moonfire.IsEqual(spell) || druid.Starfire.IsEqual(spell) || druid.Wrath.IsEqual(spell) {
 					druid.AddMana(sim, 0.02*druid.MaxMana(), manaMetrics)
 				}
 			}

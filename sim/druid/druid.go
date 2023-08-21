@@ -32,41 +32,41 @@ type Druid struct {
 
 	ReplaceBearMHFunc core.ReplaceMHSwing
 
-	Barkskin             *core.Spell
-	Berserk              *core.Spell
-	DemoralizingRoar     *core.Spell
-	Enrage               *core.Spell
-	FaerieFire           *core.Spell
-	FerociousBite        *core.Spell
-	ForceOfNature        *core.Spell
-	FrenziedRegeneration *core.Spell
-	Hurricane            *core.Spell
-	InsectSwarm          *core.Spell
-	GiftOfTheWild        *core.Spell
-	Lacerate             *core.Spell
-	Languish             *core.Spell
-	MangleBear           *core.Spell
-	MangleCat            *core.Spell
-	Maul                 *core.Spell
-	MaulQueueSpell       *core.Spell
-	Moonfire             *core.Spell
-	Rebirth              *core.Spell
-	Rake                 *core.Spell
-	Rip                  *core.Spell
-	SavageRoar           *core.Spell
-	Shred                *core.Spell
-	Starfire             *core.Spell
-	Starfall             *core.Spell
-	StarfallSplash       *core.Spell
-	SurvivalInstincts    *core.Spell
-	SwipeBear            *core.Spell
-	SwipeCat             *core.Spell
-	TigersFury           *core.Spell
-	Typhoon              *core.Spell
-	Wrath                *core.Spell
+	Barkskin             *DruidSpell
+	Berserk              *DruidSpell
+	DemoralizingRoar     *DruidSpell
+	Enrage               *DruidSpell
+	FaerieFire           *DruidSpell
+	FerociousBite        *DruidSpell
+	ForceOfNature        *DruidSpell
+	FrenziedRegeneration *DruidSpell
+	Hurricane            *DruidSpell
+	InsectSwarm          *DruidSpell
+	GiftOfTheWild        *DruidSpell
+	Lacerate             *DruidSpell
+	Languish             *DruidSpell
+	MangleBear           *DruidSpell
+	MangleCat            *DruidSpell
+	Maul                 *DruidSpell
+	MaulQueueSpell       *DruidSpell
+	Moonfire             *DruidSpell
+	Rebirth              *DruidSpell
+	Rake                 *DruidSpell
+	Rip                  *DruidSpell
+	SavageRoar           *DruidSpell
+	Shred                *DruidSpell
+	Starfire             *DruidSpell
+	Starfall             *DruidSpell
+	StarfallSplash       *DruidSpell
+	SurvivalInstincts    *DruidSpell
+	SwipeBear            *DruidSpell
+	SwipeCat             *DruidSpell
+	TigersFury           *DruidSpell
+	Typhoon              *DruidSpell
+	Wrath                *DruidSpell
 
-	CatForm  *core.Spell
-	BearForm *core.Spell
+	CatForm  *DruidSpell
+	BearForm *DruidSpell
 
 	BarkskinAura             *core.Aura
 	BearFormAura             *core.Aura
@@ -164,6 +164,36 @@ func (druid *Druid) HasMinorGlyph(glyph proto.DruidMinorGlyph) bool {
 
 func (druid *Druid) TryMaul(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
 	return druid.MaulReplaceMH(sim, mhSwingSpell)
+}
+
+func (druid *Druid) RegisterSpell(formMask DruidForm, config core.SpellConfig) *DruidSpell {
+	prev := config.ExtraCastCondition
+	prevModify := config.Cast.ModifyCast
+
+	ds := &DruidSpell{FormMask: formMask}
+	config.ExtraCastCondition = func(sim *core.Simulation, target *core.Unit) bool {
+		// Check if we're in allowed form to cast
+		// Allow 'humanoid' auto unshift casts
+		if (ds.FormMask != Any && !druid.InForm(ds.FormMask)) && !ds.FormMask.Matches(Humanoid) {
+			if sim.Log != nil {
+				sim.Log("Failed cast to spell %s, wrong form", ds.ActionID)
+			}
+			return false
+		}
+		return prev == nil || prev(sim, target)
+	}
+	config.Cast.ModifyCast = func(sim *core.Simulation, s *core.Spell, c *core.Cast) {
+		if !druid.InForm(ds.FormMask) && ds.FormMask.Matches(Humanoid) {
+			druid.ClearForm(sim)
+		}
+		if prevModify != nil {
+			prevModify(sim, s, c)
+		}
+	}
+
+	ds.Spell = druid.Unit.RegisterSpell(config)
+
+	return ds
 }
 
 func (druid *Druid) Initialize() {
@@ -297,6 +327,18 @@ func init() {
 		stats.MeleeCrit:   7.48 * core.CritRatingPerCritChance, // 8.51% chance to crit shown on naked character screen
 		stats.AttackPower: -20,
 	}
+}
+
+type DruidSpell struct {
+	*core.Spell
+	FormMask DruidForm
+}
+
+func (ds *DruidSpell) IsEqual(s *core.Spell) bool {
+	if ds == nil || s == nil {
+		return false
+	}
+	return ds.Spell == s
 }
 
 // Agent is a generic way to access underlying druid on any of the agents (for example balance druid.)

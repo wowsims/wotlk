@@ -9,7 +9,7 @@ import (
 func (druid *Druid) registerFerociousBiteSpell() {
 	dmgPerComboPoint := 290.0 + core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == 25667, 14, 0)
 
-	druid.FerociousBite = druid.RegisterSpell(core.SpellConfig{
+	druid.FerociousBite = druid.RegisterSpell(Cat, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48577},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
@@ -27,7 +27,7 @@ func (druid *Druid) registerFerociousBiteSpell() {
 			IgnoreHaste: true,
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return druid.InForm(Cat) && druid.ComboPoints() > 0
+			return druid.ComboPoints() > 0
 		},
 
 		BonusCritRating: 0 +

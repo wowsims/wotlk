@@ -89,7 +89,7 @@ var ItemSetLasherweaveRegalia = core.NewItemSet(core.ItemSet{
 			// Your critical strikes from Starfire and Wrath cause the target to languish for an additional 7% of your spell's damage over 4 sec.
 			druid := agent.(DruidAgent).GetDruid()
 
-			druid.Languish = druid.RegisterSpell(core.SpellConfig{
+			druid.Languish = druid.RegisterSpell(Any, core.SpellConfig{
 				ActionID:         core.ActionID{SpellID: 71023},
 				SpellSchool:      core.SpellSchoolNature,
 				ProcMask:         core.ProcMaskEmpty,
@@ -120,7 +120,7 @@ var ItemSetLasherweaveRegalia = core.NewItemSet(core.ItemSet{
 					aura.Activate(sim)
 				},
 				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-					if spell != druid.Starfire && spell != druid.Wrath {
+					if !druid.Starfire.IsEqual(spell) && !druid.Wrath.IsEqual(spell) {
 						return
 					}
 					if result.DidCrit() {
@@ -163,7 +163,7 @@ var ItemSetGladiatorsWildhide = core.NewItemSet(core.ItemSet{
 					druid.Starfire.CastTimeMultiplier += percentReduction
 				},
 				OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-					if spell == druid.Starfire {
+					if druid.Starfire.IsEqual(spell) {
 						aura.Deactivate(sim)
 					}
 				},
@@ -176,7 +176,7 @@ var ItemSetGladiatorsWildhide = core.NewItemSet(core.ItemSet{
 					aura.Activate(sim)
 				},
 				OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-					if spell == druid.Wrath && sim.RandomFloat("Swift Starfire proc") > 0.85 {
+					if druid.Wrath.IsEqual(spell) && sim.RandomFloat("Swift Starfire proc") > 0.85 {
 						swiftStarfireAura.Activate(sim)
 					}
 				},
@@ -228,7 +228,7 @@ var ItemSetNightsongBattlegear = core.NewItemSet(core.ItemSet{
 					}
 				},
 				OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-					if spell != druid.Rake && spell != druid.Rip && spell != druid.Lacerate {
+					if !druid.Rake.IsEqual(spell) && !druid.Rip.IsEqual(spell) && !druid.Lacerate.IsEqual(spell) {
 						return
 					}
 					if !icd.IsReady(sim) {
@@ -309,7 +309,7 @@ func init() {
 				if !result.Landed() {
 					return
 				}
-				if spell == druid.Starfire {
+				if druid.Starfire.IsEqual(spell) {
 					if sim.RandomFloat("Ashtongue Talisman") < 0.25 {
 						procAura.Activate(sim)
 					}
@@ -353,7 +353,7 @@ func init() {
 					return
 				}
 
-				if spell == druid.Moonfire {
+				if druid.Moonfire.IsEqual(spell) {
 					if sim.RandomFloat("Idol of the Unseen Moon") > 0.5 {
 						return
 					}
@@ -424,9 +424,9 @@ func init() {
 				}
 
 				procChance := 0.0
-				if spell == druid.MangleBear {
+				if druid.MangleBear.IsEqual(spell) {
 					procChance = procChanceBear
-				} else if spell == druid.MangleCat {
+				} else if druid.MangleCat.IsEqual(spell) {
 					procChance = procChanceCat
 				} else {
 					return
@@ -468,11 +468,11 @@ func init() {
 				if sim.RandomFloat("Idol of Mutilation") > procChance {
 					return
 				}
-				if spell == druid.SwipeBear || spell == druid.Lacerate {
+				if druid.SwipeBear.IsEqual(spell) || druid.Lacerate.IsEqual(spell) {
 					icd.Use(sim)
 					bearAura.Activate(sim)
 				}
-				if spell == druid.MangleCat || spell == druid.Shred {
+				if druid.MangleCat.IsEqual(spell) || druid.Shred.IsEqual(spell) {
 					icd.Use(sim)
 					catAura.Activate(sim)
 				}
@@ -495,7 +495,7 @@ func init() {
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Idol of the Crying Moon",
 			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if spell != druid.Rake && spell != druid.Lacerate {
+				if !druid.Rake.IsEqual(spell) && !druid.Lacerate.IsEqual(spell) {
 					return
 				}
 				procAura.Activate(sim)
@@ -546,7 +546,7 @@ func init() {
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Idol of Lunar Fury",
 			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if spell == druid.Moonfire && icd.IsReady(sim) && sim.RandomFloat("lunar fire") < 0.7 {
+				if druid.Moonfire.IsEqual(spell) && icd.IsReady(sim) && sim.RandomFloat("lunar fire") < 0.7 {
 					icd.Use(sim)
 					procAura.Activate(sim)
 				}

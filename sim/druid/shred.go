@@ -16,7 +16,7 @@ func (druid *Druid) registerShredSpell() {
 	hasGlyphofShred := druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfShred)
 	maxRipTicks := druid.MaxRipTicks()
 
-	druid.Shred = druid.RegisterSpell(core.SpellConfig{
+	druid.Shred = druid.RegisterSpell(Cat, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48572},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,

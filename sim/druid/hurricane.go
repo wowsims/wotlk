@@ -7,7 +7,7 @@ import (
 )
 
 func (druid *Druid) registerHurricaneSpell() {
-	druid.Hurricane = druid.RegisterSpell(core.SpellConfig{
+	druid.Hurricane = druid.RegisterSpell(Humanoid|Moonkin, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48467},
 		SpellSchool: core.SpellSchoolNature,
 		ProcMask:    core.ProcMaskSpellDamage,

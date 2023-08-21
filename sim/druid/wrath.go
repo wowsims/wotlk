@@ -14,7 +14,7 @@ func (druid *Druid) registerWrathSpell() {
 	bonusFlatDamage := core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == IdolAvenger, 25, 0) +
 		core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == IdolSteadfastRenewal, 70, 0)
 
-	druid.Wrath = druid.RegisterSpell(core.SpellConfig{
+	druid.Wrath = druid.RegisterSpell(Humanoid|Moonkin, core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 48461},
 		SpellSchool:  core.SpellSchoolNature,
 		ProcMask:     core.ProcMaskSpellDamage,

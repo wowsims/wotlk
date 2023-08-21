@@ -36,7 +36,7 @@ func (druid *Druid) registerBarkskinCD() {
 		},
 	})
 
-	druid.Barkskin = druid.RegisterSpell(core.SpellConfig{
+	druid.Barkskin = druid.RegisterSpell(Any, core.SpellConfig{
 		ActionID: actionId,
 		Flags:    SpellFlagOmenTrigger | core.SpellFlagAPL,
 		Cast: core.CastConfig{
@@ -52,7 +52,7 @@ func (druid *Druid) registerBarkskinCD() {
 	})
 
 	druid.AddMajorCooldown(core.MajorCooldown{
-		Spell: druid.Barkskin,
+		Spell: druid.Barkskin.Spell,
 		Type:  core.CooldownTypeSurvival,
 	})
 }

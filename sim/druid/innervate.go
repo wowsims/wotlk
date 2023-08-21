@@ -14,7 +14,7 @@ func (druid *Druid) registerInnervateCD() {
 	innervateTargetChar := druid.Env.Raid.GetPlayerFromUnit(innervateTarget).GetCharacter()
 
 	actionID := core.ActionID{SpellID: 29166, Tag: druid.Index}
-	var innervateSpell *core.Spell
+	var innervateSpell *DruidSpell
 
 	innervateCD := core.InnervateCD
 
@@ -36,7 +36,7 @@ func (druid *Druid) registerInnervateCD() {
 		innervateAura = core.InnervateAura(innervateTargetChar, actionID.Tag)
 	})
 
-	innervateSpell = druid.RegisterSpell(core.SpellConfig{
+	innervateSpell = druid.RegisterSpell(Humanoid|Moonkin|Tree, core.SpellConfig{
 		ActionID: actionID,
 		Flags:    SpellFlagOmenTrigger,
 
@@ -55,17 +55,8 @@ func (druid *Druid) registerInnervateCD() {
 		},
 
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			// Technically this shouldn't be allowed in bear form either, but bear
-			// doesn't have shifting implemented in its rotation.
-			if druid.InForm(Cat) {
-				return false
-			}
 			// If target already has another innervate, don't cast.
-			if innervateTarget.HasActiveAuraWithTag(core.InnervateAuraTag) {
-				return false
-			}
-
-			return true
+			return innervateTarget.HasActiveAuraWithTag(core.InnervateAuraTag)
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
@@ -74,7 +65,7 @@ func (druid *Druid) registerInnervateCD() {
 	})
 
 	druid.AddMajorCooldown(core.MajorCooldown{
-		Spell: innervateSpell,
+		Spell: innervateSpell.Spell,
 		Type:  core.CooldownTypeMana,
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 			// Innervate needs to be activated as late as possible to maximize DPS. The issue is that
