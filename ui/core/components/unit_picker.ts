@@ -23,8 +23,9 @@ export class UnitPicker<ModObject> extends DropdownPicker<ModObject, UnitReferen
 			setOptionContent: (button: HTMLButtonElement, valueConfig: DropdownValueConfig<UnitValue>, isSelectButton: boolean) => {
                 const unitConfig = valueConfig.value;
 
+                button.className = button.className.replace(/text-[\w]*/, '')
                 if (unitConfig.color) {
-                    button.classList.add(`bg-${unitConfig.color}-dampened`, `text-${unitConfig.color}`);
+                    button.classList.add(`text-${unitConfig.color}`);
                 }
 
                 if (unitConfig.iconUrl) {
