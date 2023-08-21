@@ -321,15 +321,18 @@ func (dk *Deathknight) Initialize() {
 		},
 	})
 
-	if dk.Inputs.PrecastHornOfWinter {
-		dk.RegisterPrepullAction(-1500*time.Millisecond, func(sim *core.Simulation) {
-			dk.HornOfWinter.Cast(sim, nil)
-		})
-	}
-	if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_PreCast {
-		dk.RegisterPrepullAction(-10*time.Second, func(sim *core.Simulation) {
-			dk.ArmyOfTheDead.Cast(sim, nil)
-		})
+	if !dk.IsUsingAPL {
+		if dk.Inputs.PrecastHornOfWinter {
+			dk.RegisterPrepullAction(-1500*time.Millisecond, func(sim *core.Simulation) {
+				dk.HornOfWinter.Cast(sim, nil)
+			})
+		}
+
+		if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_PreCast {
+			dk.RegisterPrepullAction(-10*time.Second, func(sim *core.Simulation) {
+				dk.ArmyOfTheDead.Cast(sim, nil)
+			})
+		}
 	}
 
 	// allows us to use these auras in the APL pre-pull actions
