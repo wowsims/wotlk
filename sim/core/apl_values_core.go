@@ -13,7 +13,7 @@ type APLValueDotIsActive struct {
 }
 
 func (rot *APLRotation) newValueDotIsActive(config *proto.APLValueDotIsActive) APLValue {
-	dot := rot.aplGetDot(config.SpellId)
+	dot := rot.aplGetDot(rot.getTargetUnit(config.TargetUnit), config.SpellId)
 	if dot == nil {
 		return nil
 	}
@@ -37,7 +37,7 @@ type APLValueDotRemainingTime struct {
 }
 
 func (rot *APLRotation) newValueDotRemainingTime(config *proto.APLValueDotRemainingTime) APLValue {
-	dot := rot.aplGetDot(config.SpellId)
+	dot := rot.aplGetDot(rot.getTargetUnit(config.TargetUnit), config.SpellId)
 	if dot == nil {
 		return nil
 	}
