@@ -104,7 +104,6 @@ export class Timeline extends ResultComponent {
 				animations: {
 					enabled: false,
 				},
-				height: '100%',
 			},
 			series: [], // Set dynamically
 			xaxis: {
