@@ -477,7 +477,7 @@ export class PlayerPicker extends Component {
 			this.rootElem.className = `player-picker-root player bg-${classCssClass}-dampened`;
 			this.rootElem.innerHTML = `
 				<div class="player-label">
-					<img class="player-icon" src="${this.player.getSpecIcon()}" />
+					<img class="player-icon" src="${this.player.getSpecIcon()}" draggable="true" />
 					<div class="player-details">
 						<input
 							class="player-name text-${classCssClass}"

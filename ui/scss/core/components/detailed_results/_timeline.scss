@@ -37,7 +37,7 @@ $combo-points-color: #ffa07a;
 
 .timeline-disclaimer {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 
 	.timeline-chart-picker {
 		width: 8rem;
@@ -143,9 +143,6 @@ $combo-points-color: #ffa07a;
 	color: white;
 }
 
-.rotation-plot {
-	margin-top: 2.5rem;
-}
 .rotation-container {
 	color: white;
 	display: flex;

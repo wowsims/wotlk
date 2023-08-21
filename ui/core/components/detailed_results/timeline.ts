@@ -54,8 +54,13 @@ export class Timeline extends ResultComponent {
 
 		this.rootElem.innerHTML = `
 		<div class="timeline-disclaimer">
-			<span class="warning wanings fa fa-exclamation-triangle fa-xl me-2"></span>
-			<span class="timeline-warning-description">Timeline data visualizes only 1 sim iteration.</span>
+			<div class="d-flex flex-column">
+				<p>
+					<i class="warning fa fa-exclamation-triangle fa-xl me-2"></i>
+					Timeline data visualizes only 1 sim iteration.
+				</p>
+				<p>Note: You can move the timeline by holding <kbd>Shift</kbd> while scrolling, or by clicking and dragging.</p>
+			</div>
 			<select class="timeline-chart-picker form-select">
 				<option class="rotation-option" value="rotation">Rotation</option>
 				<option class="dps-option" value="dps">DPS</option>
@@ -68,7 +73,7 @@ export class Timeline extends ResultComponent {
 				<div class="rotation-container">
 					<div class="rotation-labels">
 					</div>
-					<div class="rotation-timeline">
+					<div class="rotation-timeline" draggable="true">
 					</div>
 				</div>
 				<div class="rotation-hidden-ids">
@@ -119,6 +124,33 @@ export class Timeline extends ResultComponent {
 		this.rotationLabels = this.rootElem.getElementsByClassName('rotation-labels')[0] as HTMLElement;
 		this.rotationTimeline = this.rootElem.getElementsByClassName('rotation-timeline')[0] as HTMLElement;
 		this.rotationHiddenIdsContainer = this.rootElem.getElementsByClassName('rotation-hidden-ids')[0] as HTMLElement;
+
+		let isMouseDown = false
+		let startX = 0;
+		let scrollLeft = 0;
+		this.rotationTimeline.ondragstart = (event) => {
+			event.preventDefault();
+		}
+		this.rotationTimeline.onmousedown = (event) => {
+			isMouseDown = true;
+			startX = event.pageX - this.rotationTimeline.offsetLeft;
+  		scrollLeft = this.rotationTimeline.scrollLeft;
+		}
+		this.rotationTimeline.onmouseleave = (event) => {
+			isMouseDown = false;
+			this.rotationTimeline.classList.remove('active');
+		};
+		this.rotationTimeline.onmouseup = (event) => {
+			isMouseDown = false;
+			this.rotationTimeline.classList.remove('active');
+		};
+		this.rotationTimeline.onmousemove = (e) => {
+			if(!isMouseDown) return;
+			e.preventDefault();
+			const x = e.pageX - this.rotationTimeline.offsetLeft;
+			const walk = (x - startX) * 3; //scroll-fast
+			this.rotationTimeline.scrollLeft = scrollLeft - walk;
+		};
 	}
 
 	onSimResult(resultData: SimResultData) {
