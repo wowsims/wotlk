@@ -332,13 +332,16 @@ export function valueListFieldConfig(field: string): AplHelpers.APLPickerBuilder
 			setValue: (eventID: EventID, player: Player<any>, newValue: Array<APLValue | undefined>) => {
 				config.setValue(eventID, player, newValue.map(val => val || APLValue.create()));
 			},
-
 			itemLabel: 'Value',
 			newItem: APLValue.create,
 			copyItem: (oldValue: APLValue | undefined) => oldValue ? APLValue.clone(oldValue) : oldValue,
 			newItemPicker: (parent: HTMLElement, listPicker: ListPicker<Player<any>, APLValue | undefined>, index: number, config: ListItemPickerConfig<Player<any>, APLValue | undefined>) => new APLValuePicker(parent, player, config),
-			horizontalLayout: true,
 			allowedActions: ['create', 'delete'],
+			actions: {
+				create: {
+					useIcon: true,
+				},
+			},
 		}),
 	};
 }

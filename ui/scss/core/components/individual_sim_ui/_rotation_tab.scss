@@ -5,10 +5,12 @@
 #rotation-tab {
 	&.rotation-type-legacy {
 		.rotation-tab-main {
+			width: 100%;
 			display: none;
 		}
 	
-		.enum-picker-selector {
+		.enum-picker-selector,
+		.number-picker-input {
 			width: 8rem;
 		}
 	}

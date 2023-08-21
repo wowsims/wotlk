@@ -245,13 +245,16 @@ function actionListFieldConfig(field: string): AplHelpers.APLPickerBuilderFieldC
 			setValue: (eventID: EventID, player: Player<any>, newValue: Array<APLAction>) => {
 				config.setValue(eventID, player, newValue.map(val => val || APLAction.create()));
 			},
-
 			itemLabel: 'Action',
 			newItem: APLAction.create,
 			copyItem: (oldValue: APLAction) => oldValue ? APLAction.clone(oldValue) : oldValue,
 			newItemPicker: (parent: HTMLElement, listPicker: ListPicker<Player<any>, APLAction>, index: number, config: ListItemPickerConfig<Player<any>, APLAction>) => new APLActionPicker(parent, player, config),
-			horizontalLayout: true,
 			allowedActions: ['create', 'delete', 'move'],
+			actions: {
+				create: {
+					useIcon: true,
+				}
+			}
 		}),
 	};
 }

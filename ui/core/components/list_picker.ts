@@ -6,19 +6,36 @@ import { Input, InputConfig } from './input.js';
 
 export type ListItemAction = 'create' | 'delete' | 'move' | 'copy';
 
+export interface ListPickerActionsConfig {
+	create?: {
+		// Whether or not to use an icon for the create action button
+		// defaults to FALSE
+		useIcon?: boolean	
+	}
+}
+
 export interface ListPickerConfig<ModObject, ItemType> extends InputConfig<ModObject, Array<ItemType>> {
-	title?: string,
-	titleTooltip?: string,
 	itemLabel: string,
 	newItem: () => ItemType,
 	copyItem: (oldItem: ItemType) => ItemType,
 	newItemPicker: (parent: HTMLElement, listPicker: ListPicker<ModObject, ItemType>, index: number, config: ListItemPickerConfig<ModObject, ItemType>) => Input<ModObject, ItemType>,
+	actions?: ListPickerActionsConfig
+	title?: string,
+	titleTooltip?: string,
 	inlineMenuBar?: boolean,
 	hideUi?: boolean,
 	horizontalLayout?: boolean,
 
 	// If set, only actions included in the list are allowed. Otherwise, all actions are allowed.
 	allowedActions?: Array<ListItemAction>,
+}
+
+const DEFAULT_CONFIG = {
+	actions: {
+		create: {
+			useIcon: false,
+		}
+	}
 }
 
 export interface ListItemPickerConfig<ModObject, ItemType> extends InputConfig<ModObject, ItemType> {
@@ -45,7 +62,7 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 
 	constructor(parent: HTMLElement, modObject: ModObject, config: ListPickerConfig<ModObject, ItemType>) {
 		super(parent, 'list-picker-root', modObject, config);
-		this.config = config;
+		this.config = {...DEFAULT_CONFIG, ...config};
 		this.itemPickerPairs = [];
 
 		this.rootElem.innerHTML = `
@@ -60,7 +77,7 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 		`;
 
 		if (this.config.hideUi) {
-			this.rootElem.classList.add('d-none');
+			this.rootElem.classList.add('hide-ui');
 		}
 		if (this.config.horizontalLayout) {
 			this.config.inlineMenuBar = true;
@@ -75,7 +92,7 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 		if (this.actionEnabled('create')) {
 			let newItemButton = null;
 			let newButtonTooltip: Tooltip | null = null;
-			if (this.config.horizontalLayout) {
+			if (this.config.actions?.create?.useIcon) {
 				newItemButton = ListPicker.makeActionElem('link-success', `New ${config.itemLabel}`, 'fa-plus')
 				newButtonTooltip = Tooltip.getOrCreateInstance(newItemButton);
 			} else {
