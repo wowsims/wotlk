@@ -165,7 +165,12 @@ func (rot *APLRotation) aplGetDot(targetUnit UnitReference, spellId *proto.Actio
 	} else if spell.AOEDot() != nil {
 		return spell.AOEDot()
 	} else {
-		return spell.Dot(targetUnit.Get())
+		target := targetUnit.Get()
+		if target != nil {
+			return spell.Dot(target)
+		} else {
+			return spell.CurDot()
+		}
 	}
 }
 
