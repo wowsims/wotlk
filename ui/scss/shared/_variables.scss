@@ -9,6 +9,9 @@
 //////////////////////////
 
 // Custom theme color mapping
+$brand: #e0a335;
+$success: #1eff00;
+
 $death-knight: rgb(194, 46, 70);
 $druid:        rgb(255, 125, 10);
 $hunter:       rgb(171, 212, 115);
@@ -27,17 +30,12 @@ $class-colors: (
   "mage":         $mage,
   "paladin":      $paladin,
   "priest":       $priest,
-  "raid":         $primary,
+  "raid":         $brand,
   "rogue":        $rogue,
   "shaman":       $shaman,
   "warlock":      $warlock,
   "warrior":      $warrior,
 );
-
-$theme-colors: map-merge($theme-colors, $class-colors);
-
-$brand: #e0a335;
-$success: #1eff00;
 
 $custom-colors: (
   "brand": $brand,
@@ -101,6 +99,7 @@ $sidebar-z-index: 200;
 /////////////////////////////////////////////
 
 // Map overrides
+$theme-colors: map-merge($theme-colors, $class-colors);
 $theme-colors: map-merge($theme-colors, $custom-colors);
 $grid-breakpoints: map-merge($grid-breakpoints, $custom-breakpoints);
 
