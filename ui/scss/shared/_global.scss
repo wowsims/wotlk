@@ -107,13 +107,6 @@ p {
   }
 }
 
-.warnings {
-  text-shadow:
-    0 0 10px $danger,
-    0 0 10px $danger,
-    0 0 10px $danger;
-}
-
 [contenteditable="true"]:active,
 [contenteditable="true"]:focus {
   border:none;

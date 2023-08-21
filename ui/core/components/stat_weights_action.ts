@@ -229,7 +229,7 @@ class EpWeightsMenu extends BaseModal {
 				class="btn btn-primary optimize-gems experimental me-2"
 				data-bs-toggle="tooltip"
 				data-bs-title="
-					<p><span class='warnings link-warning'><i class='fa fa-exclamation-triangle'></i> WARNING</span> This feature is experimental, and will not always produce the most optimal gems especially when interacting with soft/hard stat caps.</p>
+					<p><span class='warning link-warning'><i class='fa fa-exclamation-triangle'></i> WARNING</span> This feature is experimental, and will not always produce the most optimal gems especially when interacting with soft/hard stat caps.</p>
 					<p>Optimizes equipped gems to maximize EP, based on the values in <b>Current EP</b>.</p>
 					<p class='mb-0'>Does not change the meta gem, but ensures that its condition is met. Uses JC gems if Jewelcrafting is a selected profession.</p>
 				"

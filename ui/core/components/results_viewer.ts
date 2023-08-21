@@ -89,7 +89,7 @@ export class ResultsViewer extends Component {
 			parent: this.warningElem,
 			icon: 'fas fa-exclamation-triangle fa-3x',
 			tooltip: "<ul class='text-start ps-3 mb-0'></ul>",
-			classes: 'warnings link-warning'
+			classes: 'warning link-warning'
 		}).children[0] as HTMLElement;
 	}
 
@@ -126,12 +126,12 @@ export class ResultsViewer extends Component {
 
 	setPending() {
 		this.contentElem.style.display = 'none';
-		this.pendingElem.style.display = 'initial';
+		this.pendingElem.style.display = 'block';
 	}
 
 	setContent(innerHTML: string) {
 		this.contentElem.innerHTML = innerHTML;
-		this.contentElem.style.display = 'initial';
+		this.contentElem.style.display = 'block';
 		this.pendingElem.style.display = 'none';
 	}
 }

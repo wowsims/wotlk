@@ -374,7 +374,7 @@ export class APLPickerBuilder<T> extends Input<Player<any>, T> {
 			},
 		}, () => builder.getSourceValue())
 
-		if (field === 'vals') {
+		if (field === 'vals' || field === 'actions') {
 			picker.rootElem.classList.add('apl-picker-builder-multi')
 		}
 

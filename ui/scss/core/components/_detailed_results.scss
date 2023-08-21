@@ -16,7 +16,12 @@
 }
 
 .detailed-results-controls-div {
-	padding-bottom: calc(var(--bs-gap) / 2);
+	display: flex;
+	margin-bottom: $block-spacer;
+
+	.detailed-results-new-tab-button {
+		margin-right: $block-spacer;
+	}
 }
 
 .all-players .single-player-only {
@@ -41,6 +46,18 @@
 .dr-root {
 	display: flex;
 	flex-direction: column;
+
+	&.dr-no-results {
+		.dr-row {
+			display: none;
+		}
+	}
+
+	&:not(.dr-no-results) {
+		#noResultsTab {
+			display: none;
+		}
+	}
 
 	> {
 		.tab-content {
@@ -99,6 +116,14 @@
 	.input-root {
 		margin-bottom: 0;
 	}
+}
+
+#noResultsTab {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: calc(map-get($spacers, 3) * 2);
+	font-size: 1rem;
 }
 
 .results-filter {
