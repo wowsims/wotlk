@@ -334,6 +334,20 @@ type DruidSpell struct {
 	FormMask DruidForm
 }
 
+func (ds *DruidSpell) IsReady(sim *core.Simulation) bool {
+	if ds == nil {
+		return false
+	}
+	return ds.Spell.IsReady(sim)
+}
+
+func (ds *DruidSpell) CanCast(sim *core.Simulation, target *core.Unit) bool {
+	if ds == nil {
+		return false
+	}
+	return ds.Spell.CanCast(sim, target)
+}
+
 func (ds *DruidSpell) IsEqual(s *core.Spell) bool {
 	if ds == nil || s == nil {
 		return false
