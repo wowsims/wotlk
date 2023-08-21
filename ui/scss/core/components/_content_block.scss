@@ -1,9 +1,12 @@
 @use "sass:map";
 
 .content-block {
-  margin-bottom: 2 * map.get($spacers, 3);
   display: flex;
   flex-direction: column;
+
+  &:not(:last-child) {
+    margin-bottom: 2 * map.get($spacers, 3);
+  }
 
   .content-block-header {
     border-bottom: $border-default;

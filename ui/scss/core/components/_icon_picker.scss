@@ -94,8 +94,22 @@
   }
 }
 
-.picker-group.icon-group {
-  &> :not(:last-child) {
-    margin-right: map.get($spacers, 1);
+.picker-group {
+  &.icon-group {
+    display: flex;
+    flex-wrap: wrap;
+
+    &> :not(:last-child) {
+      margin-right: map.get($spacers, 1);
+    }
+
+    &> * {
+      margin-bottom: $block-spacer;
+      flex: 0;
+  
+      &:not(:last-child) {
+        margin-right: $block-spacer;
+      }
+    }
   }
 }

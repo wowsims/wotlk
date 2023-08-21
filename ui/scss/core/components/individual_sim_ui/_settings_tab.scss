@@ -32,24 +32,6 @@
   }
 
   .rotation-settings,
-  .player-settings,
-  .custom-section {
-    .icon-group {
-      display: flex;
-      flex-wrap: wrap;
-
-      &> * {
-        margin-bottom: $block-spacer;
-        flex: 0;
-
-        &:not(:last-child) {
-          margin-right: $block-spacer;
-        }
-      }
-    }
-  }
-
-  .rotation-settings,
   .other-settings {
     .input-root {
       label {

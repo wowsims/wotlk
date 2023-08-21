@@ -4,11 +4,17 @@
 	flex-direction: column;
 	align-items: center;
 
+	&:not(:last-child) {
+		margin-bottom: 2 * map.get($spacers, 3);
+	}
+
 	.list-picker-title {
 		width: 100%;
-		padding-bottom: $block-spacer;
+		padding-bottom: map-get($spacers, 2);
 		border-bottom: $border-default;
 		margin-bottom: $block-spacer;
+		font-size: 1rem;
+		font-weight: bold;
 	}
 
 	.list-picker-items {
@@ -53,7 +59,7 @@
 				}
 		
 				.list-picker-item-action {
-					margin-left: map.get($spacers, 3);
+					margin-left: map.get($spacers, 2);
 				}
 			}
 		}

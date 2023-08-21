@@ -2,20 +2,54 @@
 
 @import "./apl_rotation_picker";
 
-.rotation-tab-left {
-    flex-direction: column;
+#rotation-tab {
+	&.rotation-type-legacy {
+		.rotation-tab-main {
+			display: none;
+		}
+	
+		.enum-picker-selector,
+		.number-picker-input {
+			width: 8rem;
+		}
+	}
+
+	&.rotation-type-apl {
+		.cooldown-settings {
+			display: none;
+		}
+	
+		.rotation-settings {
+			display: none;
+		}
+	}
+
+	.rotation-tab-left {
+		flex-wrap: wrap;
+	}
+
+	.rotation-tab-header {
+		width: 100%;
+	}
+
+	.rotation-tab-main {
+		width: 100%;
+	}
+
+	.rotation-settings {
+		flex: 1;
+		margin-right: 2 * map.get($spacers, 3);
+	}
+
+	.cooldown-settings {
+		flex: 1;
+	}
 }
 
-.rotation-type-legacy {
-    .rotation-tab-main {
-        display: none;
-    }
-}
-.rotation-type-apl {
-    .cooldown-settings {
-        display: none;
-    }
-    .rotation-settings {
-        display: none;
-    }
+@include media-breakpoint-down(md) {
+	#rotation-tab {
+		.rotation-settings {
+			margin-right: 0;
+		}
+	}	
 }

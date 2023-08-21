@@ -227,7 +227,6 @@ export class APLUnitPicker extends UnitPicker<Player<any>> {
 	private readonly unitSet: UNIT_SET;
 
 	constructor(parent: HTMLElement, player: Player<any>, config: APLUnitPickerConfig) {
-		config.hideLabelWhenDefaultSelected = true;
 		const targetUI = !!unitSets[config.unitSet].targetUI;
 		super(parent, player, {
 			...config,
@@ -351,44 +350,37 @@ export class APLPickerBuilder<T> extends Input<Player<any>, T> {
 		super(parent, 'apl-picker-builder-root', modObject, config);
 		this.config = config;
 
-		if (config.fields.length > 0) {
-			const openSpan = document.createElement('span');
-			openSpan.textContent = '(';
-			this.rootElem.appendChild(openSpan);
-		}
-
 		this.fieldPickers = config.fields.map(fieldConfig => APLPickerBuilder.makeFieldPicker(this, fieldConfig));
-
-		if (config.fields.length > 0) {
-			const closeSpan = document.createElement('span');
-			closeSpan.textContent = ')';
-			this.rootElem.appendChild(closeSpan);
-		}
 
 		this.init();
 	}
 
 	private static makeFieldPicker<T, F extends keyof T>(builder: APLPickerBuilder<T>, fieldConfig: APLPickerBuilderFieldConfig<T, F>): APLPickerBuilderField<T, F> {
 		const field: F = fieldConfig.field
+		const picker = fieldConfig.factory(builder.rootElem, builder.modObject, {
+			label: fieldConfig.label,
+			labelTooltip: fieldConfig.labelTooltip,
+			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
+			getValue: () => {
+				const source = builder.getSourceValue();
+				if (!source[field]) {
+					source[field] = fieldConfig.newValue();
+				}
+				return source[field];
+			},
+			setValue: (eventID: EventID, player: Player<any>, newValue: any) => {
+				builder.getSourceValue()[field] = newValue;
+				player.rotationChangeEmitter.emit(eventID);
+			},
+		}, () => builder.getSourceValue())
+
+		if (field === 'vals') {
+			picker.rootElem.classList.add('apl-picker-builder-multi')
+		}
+
 		return {
 			...fieldConfig,
-			picker: fieldConfig.factory(builder.rootElem, builder.modObject, {
-				label: fieldConfig.label,
-				labelTooltip: fieldConfig.labelTooltip,
-				inline: true,
-				changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
-				getValue: () => {
-					const source = builder.getSourceValue();
-					if (!source[field]) {
-						source[field] = fieldConfig.newValue();
-					}
-					return source[field];
-				},
-				setValue: (eventID: EventID, player: Player<any>, newValue: any) => {
-					builder.getSourceValue()[field] = newValue;
-					player.rotationChangeEmitter.emit(eventID);
-				},
-			}, () => builder.getSourceValue()),
+			picker: picker,
 		};
 	}
 
