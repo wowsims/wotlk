@@ -88,6 +88,11 @@ p {
   margin-bottom: $block-spacer;
 }
 
+kbd {
+  background: $body-bg;
+  color: white;
+}
+
 .dragto:not(.dragfrom) {
   filter: brightness(.75);
 }
@@ -109,5 +114,5 @@ p {
 }
 
 [draggable="true"] {
-  cursor: pointer;
+  cursor: grab;
 }
