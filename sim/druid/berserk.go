@@ -62,8 +62,10 @@ func (druid *Druid) registerBerserkCD() {
 		},
 	})
 
-	druid.AddMajorCooldown(core.MajorCooldown{
-		Spell: druid.Berserk.Spell,
-		Type:  core.CooldownTypeDPS,
-	})
+	if druid.IsUsingAPL {
+		druid.AddMajorCooldown(core.MajorCooldown{
+			Spell: druid.Berserk.Spell,
+			Type:  core.CooldownTypeDPS,
+		})
+	}
 }
