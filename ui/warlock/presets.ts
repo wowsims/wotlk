@@ -365,7 +365,7 @@ export const P2_Preset_Demo_Destro = {
 }
 
 export const P3_Preset_Affliction_Horde = {
-	name: 'P3 Affliction H',
+	name: 'P3 Affliction [H]',
 	tooltip: BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalentTree() == 0
 			&& player.getFaction() == Faction.Horde,
@@ -391,7 +391,7 @@ export const P3_Preset_Affliction_Horde = {
 }
 
 export const P3_Preset_Affliction_Alliance = {
-	name: 'P3 Affliction A',
+	name: 'P3 Affliction [A]',
 	tooltip: BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalentTree() == 0
 			&& player.getFaction() == Faction.Alliance,
@@ -417,7 +417,7 @@ export const P3_Preset_Affliction_Alliance = {
 }
 
 export const P3_Preset_Demo_Horde = {
-	name: 'P3 Demo H',
+	name: 'P3 Demo [H]',
 	tooltip: BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalentTree() == 1
 			&& player.getFaction() == Faction.Horde,
@@ -443,7 +443,7 @@ export const P3_Preset_Demo_Horde = {
 }
 
 export const P3_Preset_Demo_Alliance = {
-	name: 'P3 Demo A',
+	name: 'P3 Demo [A]',
 	tooltip: BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalentTree() == 1
 			&& player.getFaction() == Faction.Alliance,
@@ -469,7 +469,7 @@ export const P3_Preset_Demo_Alliance = {
 }
 
 export const P3_Preset_Destro_Horde = {
-	name: 'P3 Destro H',
+	name: 'P3 Destro [H]',
 	tooltip: BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalentTree() == 2
 			&& player.getFaction() == Faction.Horde,
@@ -495,7 +495,7 @@ export const P3_Preset_Destro_Horde = {
 }
 
 export const P3_Preset_Destro_Alliance = {
-	name: 'P3 Destro A',
+	name: 'P3 Destro [A]',
 	tooltip: BIS_TOOLTIP,
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalentTree() == 2
 			&& player.getFaction() == Faction.Alliance,
