@@ -587,10 +587,12 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Alliance]: {
 				1: EnhancementShamanPresets.P1_PRESET.gear,
 				2: EnhancementShamanPresets.P2_PRESET_FT.gear,
+				3: EnhancementShamanPresets.P3_PRESET_ALLIANCE.gear,
 			},
 			[Faction.Horde]: {
 				1: EnhancementShamanPresets.P1_PRESET.gear,
 				2: EnhancementShamanPresets.P2_PRESET_FT.gear,
+				3: EnhancementShamanPresets.P3_PRESET_HORDE.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecEnhancementShaman],

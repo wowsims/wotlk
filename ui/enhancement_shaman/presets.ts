@@ -53,6 +53,19 @@ export const StandardTalents = {
 	}),
 };
 
+export const Phase3Talents = {
+	name: 'Phase 3',
+	data: SavedTalents.create({
+		talentsString: '053030152-30505003105001333031131131051',
+		glyphs: Glyphs.create({
+			major1: ShamanMajorGlyph.GlyphOfStormstrike,
+			major2: ShamanMajorGlyph.GlyphOfFlametongueWeapon,
+			major3: ShamanMajorGlyph.GlyphOfFeralSpirit,
+			//minor glyphs dont affect damage done, all convenience/QoL
+		})
+	}),
+};
+
 export const DefaultRotation = EnhancementShamanRotation.create({
 	totems: ShamanTotems.create({
 		earth: EarthTotem.StrengthOfEarthTotem,
@@ -253,7 +266,7 @@ export const P2_PRESET_WF = {
 };
 
 export const P3_PRESET_ALLIANCE	 = {
-	name: 'P3 Preset Alliance',
+	name: 'P3 Preset [A]',
 	enableWhen: (player: Player<Spec.SpecElementalShaman>) => player.getFaction() == Faction.Alliance,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{  "items": [
@@ -275,11 +288,10 @@ export const P3_PRESET_ALLIANCE	 = {
 		{"id":47156,"enchant":3789,"gems":[40128]},
 		{"id":47666}
 	]}`),
-}
-
+};
 
 export const P3_PRESET_HORDE = {
-	name: 'P3 Preset Horde',
+	name: 'P3 Preset [H]',
 	enableWhen: (player: Player<Spec.SpecElementalShaman>) => player.getFaction() == Faction.Horde,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{  "items": [
@@ -301,4 +313,4 @@ export const P3_PRESET_HORDE = {
 		{"id":47475,"enchant":3789,"gems":[40128]},
 		{"id":47666}
 	]}`),
-}
+};

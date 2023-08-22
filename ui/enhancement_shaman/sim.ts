@@ -149,6 +149,7 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				// Preset talents that the user can quickly select.
 				talents: [
 					Presets.StandardTalents,
+					Presets.Phase3Talents,
 				],
 				// Preset rotations that the user can quickly select.
 				rotations: [
