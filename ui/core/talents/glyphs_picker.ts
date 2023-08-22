@@ -229,7 +229,8 @@ class GlyphSelectorModal extends BaseModal {
 				return true;
 			});
 
-			listElem.replaceChildren(...validItemElems);
+			listElem.innerHTML = ``
+			listElem.append(...validItemElems);
 		};
 
 		const searchInput = this.rootElem.getElementsByClassName('selector-modal-search')[0] as HTMLInputElement;

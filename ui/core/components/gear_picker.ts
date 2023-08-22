@@ -1215,7 +1215,8 @@ export class ItemList<T> {
 			return sortFn(dataAItem, dataBItem);
 		});
 
-		this.listElem.replaceChildren(...validItemElems);
+		this.listElem.innerHTML = ``
+		this.listElem.append(...validItemElems);
 		this.hideOrShowEPValues()
 	}
 
