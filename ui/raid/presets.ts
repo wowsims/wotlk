@@ -743,10 +743,12 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Alliance]: {
 				1: WarriorPresets.P1_ARMS_PRESET.gear,
 				2: WarriorPresets.P2_ARMS_PRESET.gear,
+				3: WarriorPresets.P3_ARMS_4P_PRESET_ALLIANCE.gear,
 			},
 			[Faction.Horde]: {
 				1: WarriorPresets.P1_ARMS_PRESET.gear,
 				2: WarriorPresets.P2_ARMS_PRESET.gear,
+				3: WarriorPresets.P3_ARMS_4P_PRESET_HORDE.gear,
 			},
 		},
 		tooltip: 'Arms Warrior',
@@ -769,10 +771,12 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Alliance]: {
 				1: WarriorPresets.P1_FURY_PRESET.gear,
 				2: WarriorPresets.P2_FURY_PRESET.gear,
+				3: WarriorPresets.P3_FURY_PRESET_ALLIANCE.gear,
 			},
 			[Faction.Horde]: {
 				1: WarriorPresets.P1_FURY_PRESET.gear,
 				2: WarriorPresets.P2_FURY_PRESET.gear,
+				3: WarriorPresets.P3_FURY_PRESET_HORDE.gear,
 			},
 		},
 		tooltip: 'Fury Warrior',
