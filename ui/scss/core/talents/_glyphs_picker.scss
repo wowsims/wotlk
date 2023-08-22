@@ -23,6 +23,10 @@
 }
 
 .glyph-modal {
+  .selector-modal-list-item-link {
+    flex: 1;
+  }
+
   .selector-modal-list-item-name {
     flex: 2;
   }
