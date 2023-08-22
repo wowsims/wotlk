@@ -377,6 +377,9 @@ func (druid *Druid) applyOmenOfClarity() {
 
 	hasOocGlyph := druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfOmenOfClarity)
 
+	// Based on ingame testing by druid discord, subject to change or incorrectness
+	chanceToProcGotW := 1.0 - math.Pow(1.0-0.0875, float64(druid.RaidBuffTargets))
+
 	druid.RegisterAura(core.Aura{
 		Label:    "Omen of Clarity",
 		Duration: core.NeverExpires,
@@ -390,7 +393,7 @@ func (druid *Druid) applyOmenOfClarity() {
 				hurricaneCoeff := 1.0 - (7.0 / 9.0)
 				spellCoeff := hurricaneCoeff * curCastTickSpeed
 				chanceToProc := ((1.5 / 60) * 3.5) * spellCoeff
-				if sim.RandomFloat("Clearcasting") <= chanceToProc {
+				if sim.RandomFloat("Clearcasting") < chanceToProc {
 					druid.ProcOoc(sim)
 				}
 			}
@@ -399,9 +402,7 @@ func (druid *Druid) applyOmenOfClarity() {
 			if !result.Landed() {
 				return
 			}
-			// Not ideal to have new ppm manager here, but this needs to account for feral druid bear<->cat swaps
-			ppmm := druid.AutoAttacks.NewPPMManager(3.5, core.ProcMaskMeleeWhiteHit)
-			if ppmm.Proc(sim, spell.ProcMask, "Omen of Clarity") { // Melee
+			if druid.AutoAttacks.PPMProc(sim, 3.5, core.ProcMaskMeleeWhiteHit, "Omen of Clarity", spell) { // Melee
 				druid.ProcOoc(sim)
 			} else if spell.Flags.Matches(SpellFlagOmenTrigger) { // Spells
 				// Heavily based on comment here
@@ -420,7 +421,7 @@ func (druid *Druid) applyOmenOfClarity() {
 				} else {
 					chanceToProc *= 0.666
 				}
-				if sim.RandomFloat("Clearcasting") <= chanceToProc {
+				if sim.RandomFloat("Clearcasting") < chanceToProc {
 					druid.ProcOoc(sim)
 				}
 			}
@@ -430,9 +431,7 @@ func (druid *Druid) applyOmenOfClarity() {
 				druid.ProcOoc(sim)
 			}
 			if druid.GiftOfTheWild.IsEqual(spell) {
-				// Based on ingame testing by druid discord, subject to change or incorrectness
-				chanceToProc := 1.0 - math.Pow(1.0-0.0875, float64(druid.RaidBuffTargets))
-				if sim.RandomFloat("Clearcasting") <= chanceToProc {
+				if sim.RandomFloat("Clearcasting") < chanceToProcGotW {
 					druid.ProcOoc(sim)
 				}
 			}

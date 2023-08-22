@@ -142,7 +142,7 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 
 	character.AddStats(character.baseStats)
 	character.addUniversalStatDependencies()
-	for i, _ := range character.itemStatMultipliers {
+	for i := range character.itemStatMultipliers {
 		character.itemStatMultipliers[i] = 1
 	}
 
@@ -175,7 +175,7 @@ func (character *Character) applyEquipScaling(stat stats.Stat, multiplier float6
 	var oldValue = character.EquipStats()[stat]
 	character.itemStatMultipliers[stat] *= multiplier
 	var newValue = character.EquipStats()[stat]
-	return (newValue - oldValue)
+	return newValue - oldValue
 }
 
 func (character *Character) ApplyEquipScaling(stat stats.Stat, multiplier float64) {
@@ -414,7 +414,7 @@ func (character *Character) DefaultHealingCritMultiplier() float64 {
 	return character.HealingCritMultiplier(1, 0)
 }
 
-func (character *Character) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
+func (character *Character) AddRaidBuffs(_ *proto.RaidBuffs) {
 }
 func (character *Character) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 	if character.Race == proto.Race_RaceDraenei {
@@ -517,7 +517,7 @@ func (character *Character) FillPlayerStats(playerStats *proto.PlayerStats) {
 	}
 }
 
-func (character *Character) init(sim *Simulation, agent Agent) {
+func (character *Character) init(sim *Simulation, _ Agent) {
 	character.Unit.init(sim)
 }
 
@@ -625,21 +625,30 @@ func (character *Character) HasRangedWeapon() bool {
 	return character.GetRangedWeapon() != nil
 }
 
-// Returns the hands that the item is equipped in, as (MH, OH).
-func (character *Character) GetWeaponHands(itemID int32) (bool, bool) {
-	mh := false
-	oh := false
-	if weapon := character.GetMHWeapon(); weapon != nil && weapon.ID == itemID {
-		mh = true
+func (character *Character) GetMeleeProcMaskForEnchant(effectID int32) ProcMask {
+	mask := ProcMaskUnknown
+	if w := &character.Equip[proto.ItemSlot_ItemSlotMainHand]; w.Enchant.EffectID == effectID {
+		mask |= ProcMaskMeleeMH
 	}
-	if weapon := character.GetOHWeapon(); weapon != nil && weapon.ID == itemID {
-		oh = true
+	if w := &character.Equip[proto.ItemSlot_ItemSlotOffHand]; w.Enchant.EffectID == effectID {
+		mask |= ProcMaskMeleeOH
 	}
-	return mh, oh
+	return mask
+}
+
+func (character *Character) GetMeleeProcMaskForItem(itemID int32) ProcMask {
+	mask := ProcMaskUnknown
+	if w := &character.Equip[proto.ItemSlot_ItemSlotMainHand]; w.ID == itemID {
+		mask |= ProcMaskMeleeMH
+	}
+	if w := &character.Equip[proto.ItemSlot_ItemSlotOffHand]; w.ID == itemID {
+		mask |= ProcMaskMeleeOH
+	}
+	return mask
 }
 
 func (character *Character) doneIteration(sim *Simulation) {
-	// Need to do pets first so we can add their results to the owners.
+	// Need to do pets first, so we can add their results to the owners.
 	if len(character.Pets) > 0 {
 		for _, petAgent := range character.Pets {
 			pet := petAgent.GetPet()
@@ -691,7 +700,7 @@ var BaseStats = map[BaseStatsKey]stats.Stats{}
 // Base Spell Crit is calculated by
 //   1. Take as-shown value (troll shaman have 3.5%)
 //   2. Calculate the bonus from int (for troll shaman that would be 104/78.1=1.331% crit)
-//   3. Subtract as-shown from int bouns (3.5-1.331=2.169)
+//   3. Subtract as-shown from int bonus (3.5-1.331=2.169)
 //   4. 2.169*22.08 (rating per crit percent) = 47.89 crit rating.
 
 // Base mana can be looked up here: https://wowwiki-archive.fandom.com/wiki/Base_mana
@@ -736,7 +745,7 @@ func GetPrimaryTalentTreeIndex(talentStr string) uint8 {
 // Uses proto reflection to set fields in a talents proto (e.g. MageTalents,
 // WarriorTalents) based on a talentsStr. treeSizes should contain the number
 // of talents in each tree, usually around 30. This is needed because talent
-// strings truncate 0's at the end of each tree so we can't infer the start index
+// strings truncate 0's at the end of each tree, so we can't infer the start index
 // of the tree from the string.
 func FillTalentsProto(data protoreflect.Message, talentsStr string, treeSizes [3]int) {
 	treeStrs := strings.Split(talentsStr, "-")

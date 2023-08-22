@@ -152,13 +152,13 @@ func (sim *Simulation) labelRand(label string) Rand {
 		return sim.rand
 	}
 
-	labelRand, isPresent := sim.testRands[label]
-	if !isPresent {
-		// Add rseed to the label to we still have run-run variance for stat weights.
-		labelRand = NewSplitMix(uint64(makeTestRandSeed(sim.rseed, label)))
-		sim.testRands[label] = labelRand
+	labelRng, ok := sim.testRands[label]
+	if !ok {
+		// Add rseed to the label, so we still have run-run variance for stat weights.
+		labelRng = NewSplitMix(uint64(makeTestRandSeed(sim.rseed, label)))
+		sim.testRands[label] = labelRng
 	}
-	return labelRand
+	return labelRng
 }
 
 func (sim *Simulation) reseedRands(i int64) {
@@ -166,8 +166,8 @@ func (sim *Simulation) reseedRands(i int64) {
 	sim.rand.Seed(rseed)
 
 	if sim.isTest {
-		for label, rand := range sim.testRands {
-			rand.Seed(makeTestRandSeed(rseed, label))
+		for label, rng := range sim.testRands {
+			rng.Seed(makeTestRandSeed(rseed, label))
 		}
 	}
 }

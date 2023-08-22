@@ -347,8 +347,6 @@ func (dk *Deathknight) registerItems() {
 
 	addEnchantEffect(3370, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3370
-		oh := character.HasOHWeapon() && character.Equip[proto.ItemSlot_ItemSlotOffHand].HandType != proto.HandType_HandTypeTwoHand && character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3370
 
 		actionID := core.ActionID{SpellID: 50401}
 		if spell := character.GetSpell(actionID); spell != nil {
@@ -357,7 +355,8 @@ func (dk *Deathknight) registerItems() {
 			return
 		}
 
-		procMask := core.GetMeleeProcMaskForHands(mh, oh)
+		procMask := character.GetMeleeProcMaskForEnchant(3370)
+
 		vulnAuras := character.NewEnemyAuraArray(core.RuneOfRazoriceVulnerabilityAura)
 		mhRazoriceSpell := newRazoriceHitSpell(character, true)
 		ohRazoriceSpell := newRazoriceHitSpell(character, false)
@@ -386,11 +385,7 @@ func (dk *Deathknight) registerItems() {
 		})
 
 		character.RegisterOnItemSwap(func(sim *core.Simulation) {
-			mh = character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3370
-			oh = character.HasOHWeapon() && character.Equip[proto.ItemSlot_ItemSlotOffHand].HandType != proto.HandType_HandTypeTwoHand && character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3370
-			procMask = core.GetMeleeProcMaskForHands(mh, oh)
-
-			if !mh && !oh {
+			if character.GetMeleeProcMaskForEnchant(3370) == core.ProcMaskUnknown {
 				aura.Deactivate(sim)
 			} else {
 				aura.Activate(sim)
@@ -414,14 +409,12 @@ func (dk *Deathknight) registerItems() {
 	}
 
 	// ApplyRuneOfTheFallenCrusader will be applied twice if there is two weapons with this enchant.
-	//   However it will automatically overwrite one of them so it should be ok.
+	//   However, it will automatically overwrite one of them, so it should be ok.
 	//   A single application of the aura will handle both mh and oh procs.
 	addEnchantEffect(3368, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3368
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3368
 
-		procMask := core.GetMeleeProcMaskForHands(mh, oh)
+		procMask := character.GetMeleeProcMaskForEnchant(3368)
 		ppmm := character.AutoAttacks.NewPPMManager(2.0, procMask)
 
 		rfcAura := newRuneOfTheFallenCrusaderAura(character, "Rune Of The Fallen Crusader Proc", core.ActionID{SpellID: 53365})
@@ -433,7 +426,7 @@ func (dk *Deathknight) registerItems() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
+				if !result.Landed() {
 					return
 				}
 
@@ -449,11 +442,6 @@ func (dk *Deathknight) registerItems() {
 	// Rune of the Nerubian Carapace
 	addEnchantEffect(3883, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3883
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3883
-		if !mh && !oh {
-			return
-		}
 
 		character.AddStat(stats.Defense, 13*core.DefenseRatingPerDefense)
 		character.MultiplyStat(stats.Stamina, 1.01)
@@ -462,15 +450,6 @@ func (dk *Deathknight) registerItems() {
 	// Rune of the Stoneskin Gargoyle
 	addEnchantEffect(3847, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3847
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3847
-		if !mh {
-			return
-		}
-
-		if oh {
-			return
-		}
 
 		character.AddStat(stats.Defense, 25*core.DefenseRatingPerDefense)
 		character.MultiplyStat(stats.Stamina, 1.02)
@@ -479,11 +458,6 @@ func (dk *Deathknight) registerItems() {
 	// Rune of the Swordbreaking
 	addEnchantEffect(3594, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3594
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3594
-		if !mh && !oh {
-			return
-		}
 
 		character.AddStat(stats.Parry, 2*core.ParryRatingPerParryChance)
 	})
@@ -491,45 +465,18 @@ func (dk *Deathknight) registerItems() {
 	// Rune of Swordshattering
 	addEnchantEffect(3365, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3365
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3365
-		if !mh {
-			return
-		}
-
-		if oh {
-			return
-		}
 
 		character.AddStat(stats.Parry, 4*core.ParryRatingPerParryChance)
 	})
 
 	// Rune of the Spellbreaking
 	addEnchantEffect(3595, func(agent core.Agent) {
-		character := agent.GetCharacter()
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3595
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3595
-		if !mh && !oh {
-			return
-		}
-
 		// TODO:
 		// Add 2% magic deflection
 	})
 
 	// Rune of Spellshattering
 	addEnchantEffect(3367, func(agent core.Agent) {
-		character := agent.GetCharacter()
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3367
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3367
-		if !mh {
-			return
-		}
-
-		if oh {
-			return
-		}
-
 		// TODO:
 		// Add 4% magic deflection
 	})
@@ -595,13 +542,7 @@ func (dk *Deathknight) registerItems() {
 	addEnchantEffect(3369, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3369
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3369
-		if !mh && !oh {
-			return
-		}
-
-		procMask := core.GetMeleeProcMaskForHands(mh, oh)
+		procMask := character.GetMeleeProcMaskForEnchant(3369)
 		ppmm := character.AutoAttacks.NewPPMManager(1.0, procMask)
 
 		core.MakePermanent(character.GetOrRegisterAura(core.Aura{
@@ -609,20 +550,6 @@ func (dk *Deathknight) registerItems() {
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if !result.Landed() {
 					return
-				}
-
-				if mh && !oh {
-					if !spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
-						return
-					}
-				} else if oh && !mh {
-					if !spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
-						return
-					}
-				} else if mh && oh {
-					if !spell.ProcMask.Matches(core.ProcMaskMelee) {
-						return
-					}
 				}
 
 				if ppmm.Proc(sim, spell.ProcMask, "rune of cinderglacier") {

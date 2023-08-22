@@ -37,15 +37,14 @@ func (shaman *Shaman) registerShamanisticRageCD() {
 			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			// proc mask: 20
-			if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
+			if !result.Landed() {
 				return
 			}
-			if !ppmm.Proc(sim, spell.ProcMask, "shamanistic rage") {
-				return
+
+			if ppmm.Proc(sim, spell.ProcMask, "shamanistic rage") {
+				mana := aura.Unit.GetStat(stats.AttackPower) * 0.15
+				aura.Unit.AddMana(sim, mana, manaMetrics)
 			}
-			mana := aura.Unit.GetStat(stats.AttackPower) * 0.15
-			aura.Unit.AddMana(sim, mana, manaMetrics)
 		},
 	})
 

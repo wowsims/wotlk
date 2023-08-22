@@ -72,7 +72,7 @@ func init() {
 			Timer:    character.NewTimer(),
 			Duration: time.Second * 40,
 		}
-		ppmm := character.AutoAttacks.NewPPMManager(1.5, core.ProcMaskMeleeOrRanged)
+		ppmm := character.AutoAttacks.NewPPMManager(1.5, core.ProcMaskWhiteHit) // Mask 68, melee or ranged auto attacks.
 
 		character.RegisterAura(core.Aura{
 			Label:    "Thundering Skyfire Diamond",
@@ -81,18 +81,18 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				// Mask 68, melee or ranged auto attacks.
-				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskWhiteHit) {
+				if !result.Landed() {
 					return
 				}
+
 				if !icd.IsReady(sim) {
 					return
 				}
-				if !ppmm.Proc(sim, spell.ProcMask, "Thundering Skyfire Diamond") {
-					return
+
+				if ppmm.Proc(sim, spell.ProcMask, "Thundering Skyfire Diamond") {
+					icd.Use(sim)
+					procAura.Activate(sim)
 				}
-				icd.Use(sim)
-				procAura.Activate(sim)
 			},
 		})
 	})
@@ -106,7 +106,7 @@ func init() {
 		agent.GetCharacter().MultiplyStat(stats.Intellect, 1.02)
 	})
 
-	// These are handled in character.go, but create empty effects so they are included in tests.
+	// These are handled in character.go, but create empty effects, so they are included in tests.
 	core.NewItemEffect(34220, func(_ core.Agent) {}) // Chaotic Skyfire Diamond
 	core.NewItemEffect(32409, func(_ core.Agent) {}) // Relentless Earthstorm Diamond
 

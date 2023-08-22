@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	//"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 type CapacitorHandler func(*core.Simulation)

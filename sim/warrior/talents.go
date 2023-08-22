@@ -480,7 +480,8 @@ func (warrior *Warrior) applyUnbridledWrath() {
 		return
 	}
 
-	ppmm := warrior.AutoAttacks.NewPPMManager(3*float64(warrior.Talents.UnbridledWrath), core.ProcMaskMelee)
+	ppmm := warrior.AutoAttacks.NewPPMManager(3*float64(warrior.Talents.UnbridledWrath), core.ProcMaskMeleeWhiteHit)
+
 	rageMetrics := warrior.NewRageMetrics(core.ActionID{SpellID: 13002})
 
 	warrior.RegisterAura(core.Aura{
@@ -494,15 +495,9 @@ func (warrior *Warrior) applyUnbridledWrath() {
 				return
 			}
 
-			if !spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
-				return
+			if ppmm.Proc(sim, spell.ProcMask, "Unbrided Wrath") {
+				warrior.AddRage(sim, 1, rageMetrics)
 			}
-
-			if !ppmm.Proc(sim, spell.ProcMask, "Unbrided Wrath") {
-				return
-			}
-
-			warrior.AddRage(sim, 1, rageMetrics)
 		},
 	})
 }

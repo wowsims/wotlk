@@ -132,11 +132,19 @@ func (rogue *Rogue) procDeadlyPoison(sim *core.Simulation, spell *core.Spell, re
 	rogue.DeadlyPoison.Cast(sim, result.Target)
 }
 
-func (rogue *Rogue) applyDeadlyPoison() {
-	procMask := core.GetMeleeProcMaskForHands(
-		rogue.Options.MhImbue == proto.Rogue_Options_DeadlyPoison,
-		rogue.Options.OhImbue == proto.Rogue_Options_DeadlyPoison)
+func (rogue *Rogue) getPoisonProcMask(imbue proto.Rogue_Options_PoisonImbue) core.ProcMask {
+	var mask core.ProcMask
+	if rogue.Options.MhImbue == imbue {
+		mask |= core.ProcMaskMeleeMH
+	}
+	if rogue.Options.OhImbue == imbue {
+		mask |= core.ProcMaskMeleeOH
+	}
+	return mask
+}
 
+func (rogue *Rogue) applyDeadlyPoison() {
+	procMask := rogue.getPoisonProcMask(proto.Rogue_Options_DeadlyPoison)
 	if procMask == core.ProcMaskUnknown {
 		return
 	}
@@ -159,10 +167,7 @@ func (rogue *Rogue) applyDeadlyPoison() {
 }
 
 func (rogue *Rogue) applyWoundPoison() {
-	procMask := core.GetMeleeProcMaskForHands(
-		rogue.Options.MhImbue == proto.Rogue_Options_WoundPoison,
-		rogue.Options.OhImbue == proto.Rogue_Options_WoundPoison)
-
+	procMask := rogue.getPoisonProcMask(proto.Rogue_Options_WoundPoison)
 	if procMask == core.ProcMaskUnknown {
 		return
 	}
@@ -180,6 +185,7 @@ func (rogue *Rogue) applyWoundPoison() {
 			if !result.Landed() {
 				return
 			}
+
 			if rogue.woundPoisonPPMM.Proc(sim, spell.ProcMask, "Wound Poison") {
 				rogue.WoundPoison[NormalProc].Cast(sim, result.Target)
 			}
@@ -295,10 +301,7 @@ func (rogue *Rogue) GetDeadlyPoisonProcChance() float64 {
 }
 
 func (rogue *Rogue) UpdateInstantPoisonPPM(bonusChance float64) {
-	procMask := core.GetMeleeProcMaskForHands(
-		rogue.Options.MhImbue == proto.Rogue_Options_InstantPoison,
-		rogue.Options.OhImbue == proto.Rogue_Options_InstantPoison)
-
+	procMask := rogue.getPoisonProcMask(proto.Rogue_Options_InstantPoison)
 	if procMask == core.ProcMaskUnknown {
 		return
 	}
@@ -310,10 +313,7 @@ func (rogue *Rogue) UpdateInstantPoisonPPM(bonusChance float64) {
 }
 
 func (rogue *Rogue) applyInstantPoison() {
-	procMask := core.GetMeleeProcMaskForHands(
-		rogue.Options.MhImbue == proto.Rogue_Options_InstantPoison,
-		rogue.Options.OhImbue == proto.Rogue_Options_InstantPoison)
-
+	procMask := rogue.getPoisonProcMask(proto.Rogue_Options_InstantPoison)
 	if procMask == core.ProcMaskUnknown {
 		return
 	}
@@ -330,6 +330,7 @@ func (rogue *Rogue) applyInstantPoison() {
 			if !result.Landed() {
 				return
 			}
+
 			if rogue.instantPoisonPPMM.Proc(sim, spell.ProcMask, "Instant Poison") {
 				rogue.InstantPoison[NormalProc].Cast(sim, result.Target)
 			}

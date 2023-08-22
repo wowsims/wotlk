@@ -13,11 +13,16 @@ var TotemOfSplintering int32 = 40710
 
 func (shaman *Shaman) RegisterOnItemSwapWithImbue(effectID int32, procMask *core.ProcMask, aura *core.Aura) {
 	shaman.RegisterOnItemSwap(func(sim *core.Simulation) {
-		mh := shaman.Equip[proto.ItemSlot_ItemSlotMainHand].TempEnchant == effectID
-		oh := shaman.Equip[proto.ItemSlot_ItemSlotOffHand].TempEnchant == effectID
-		*procMask = core.GetMeleeProcMaskForHands(mh, oh)
+		mask := core.ProcMaskUnknown
+		if shaman.Equip[proto.ItemSlot_ItemSlotMainHand].TempEnchant == effectID {
+			mask |= core.ProcMaskMeleeMH
+		}
+		if shaman.Equip[proto.ItemSlot_ItemSlotOffHand].TempEnchant == effectID {
+			mask |= core.ProcMaskMeleeOH
+		}
+		*procMask = mask
 
-		if !mh && !oh {
+		if mask == core.ProcMaskUnknown {
 			aura.Deactivate(sim)
 		} else {
 			aura.Activate(sim)
@@ -114,15 +119,14 @@ func (shaman *Shaman) RegisterWindfuryImbue(mh bool, oh bool) {
 				return
 			}
 
-			if sim.RandomFloat("Windfury Imbue") > proc {
-				return
-			}
-			icd.Use(sim)
+			if sim.RandomFloat("Windfury Imbue") < proc {
+				icd.Use(sim)
 
-			if isMHHit {
-				mhSpell.Cast(sim, result.Target)
-			} else {
-				ohSpell.Cast(sim, result.Target)
+				if isMHHit {
+					mhSpell.Cast(sim, result.Target)
+				} else {
+					ohSpell.Cast(sim, result.Target)
+				}
 			}
 		},
 	})
@@ -332,7 +336,7 @@ func (shaman *Shaman) FrostbrandDebuffAura(target *core.Unit) *core.Aura {
 	})
 }
 
-func (shaman *Shaman) newFrostbrandImbueSpell(isMH bool) *core.Spell {
+func (shaman *Shaman) newFrostbrandImbueSpell() *core.Spell {
 	return shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 58796},
 		SpellSchool: core.SpellSchoolFrost,
@@ -355,14 +359,15 @@ func (shaman *Shaman) RegisterFrostbrandImbue(mh bool, oh bool) {
 		return
 	}
 
-	mhSpell := shaman.newFrostbrandImbueSpell(true)
-	ohSpell := shaman.newFrostbrandImbueSpell(false)
+	mhSpell := shaman.newFrostbrandImbueSpell()
+	ohSpell := shaman.newFrostbrandImbueSpell()
 	procMask := core.GetMeleeProcMaskForHands(mh, oh)
 	ppmm := shaman.AutoAttacks.NewPPMManager(9.0, procMask)
 
 	if mh {
 		shaman.Equip[proto.ItemSlot_ItemSlotMainHand].TempEnchant = 3784
-	} else {
+	}
+	if oh {
 		shaman.Equip[proto.ItemSlot_ItemSlotOffHand].TempEnchant = 3784
 	}
 
@@ -375,27 +380,25 @@ func (shaman *Shaman) RegisterFrostbrandImbue(mh bool, oh bool) {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !result.Landed() || !spell.ProcMask.Matches(procMask) {
+			if !result.Landed() {
 				return
 			}
 
-			if !ppmm.Proc(sim, spell.ProcMask, "Frostbrand Weapon") {
-				return
+			if ppmm.Proc(sim, spell.ProcMask, "Frostbrand Weapon") {
+				if spell.IsMH() {
+					mhSpell.Cast(sim, result.Target)
+				} else {
+					ohSpell.Cast(sim, result.Target)
+				}
+				fbDebuffAuras.Get(result.Target).Activate(sim)
 			}
-
-			if spell.IsMH() {
-				mhSpell.Cast(sim, result.Target)
-			} else {
-				ohSpell.Cast(sim, result.Target)
-			}
-			fbDebuffAuras.Get(result.Target).Activate(sim)
 		},
 	})
 
 	shaman.ItemSwap.RegisterOnSwapItemForEffectWithPPMManager(3784, 9.0, &ppmm, aura)
 }
 
-func (shaman *Shaman) newEarthlivingImbueSpell(isMH bool) *core.Spell {
+func (shaman *Shaman) newEarthlivingImbueSpell() *core.Spell {
 	return shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 51994},
 		SpellSchool: core.SpellSchoolNature,
@@ -455,8 +458,8 @@ func (shaman *Shaman) RegisterEarthlivingImbue(mh bool, oh bool) {
 		shaman.ApplyEarthlivingImbueToItem(shaman.GetOHWeapon(), false)
 	}
 
-	mhSpell := shaman.newEarthlivingImbueSpell(true)
-	ohSpell := shaman.newEarthlivingImbueSpell(false)
+	mhSpell := shaman.newEarthlivingImbueSpell()
+	ohSpell := shaman.newEarthlivingImbueSpell()
 
 	procChance := 0.2
 	if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfEarthlivingWeapon) {

@@ -228,12 +228,12 @@ func JudgementOfWisdomAura(target *Unit) *Aura {
 			}
 
 			if spell.ProcMask.Matches(ProcMaskEmpty | ProcMaskProc | ProcMaskWeaponProc) {
-				return // Phantom spells (Romulo's, Lightning Capacitor, etc) don't proc JoW.
+				return // Phantom spells (Romulo's, Lightning Capacitor, etc.) don't proc JoW.
 			}
 
 			if spell.ProcMask.Matches(ProcMaskMeleeOrRanged) {
 				// Apparently ranged/melee can still proc on miss
-				if !unit.AutoAttacks.PPMProc(sim, 15, spell.ProcMask, "jow") {
+				if !unit.AutoAttacks.PPMProc(sim, 15, ProcMaskMeleeOrRanged, "jow", spell) {
 					return
 				}
 			} else { // spell casting
@@ -247,7 +247,7 @@ func JudgementOfWisdomAura(target *Unit) *Aura {
 					// Perhaps this is a bug introduced in classic when converting JoW to wotlk.
 					ct = 0.75
 				}
-				procChance := ct * 0.25 // ct / 60.0 * 15.0PPM (algabra) = ct*0.25
+				procChance := ct * 0.25 // ct / 60.0 * 15.0PPM (algebra) = ct*0.25
 				if sim.RandomFloat("jow") > procChance {
 					return
 				}
