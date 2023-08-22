@@ -147,10 +147,12 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Alliance]: {
 				1: DeathknightPresets.P1_BLOOD_BIS_PRESET.gear,
 				2: DeathknightPresets.P2_BLOOD_BIS_PRESET.gear,
+				3: DeathknightPresets.P3_BLOOD_BIS_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: DeathknightPresets.P1_BLOOD_BIS_PRESET.gear,
 				2: DeathknightPresets.P2_BLOOD_BIS_PRESET.gear,
+				3: DeathknightPresets.P3_BLOOD_BIS_PRESET.gear,
 			},
 		},
 		tooltip: 'Blood DPS Death Knight',
@@ -173,10 +175,12 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Alliance]: {
 				1: DeathknightPresets.P1_FROST_BIS_PRESET.gear,
 				2: DeathknightPresets.P2_FROST_BIS_PRESET.gear,
+				3: DeathknightPresets.P3_FROST_BIS_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: DeathknightPresets.P1_FROST_BIS_PRESET.gear,
 				2: DeathknightPresets.P2_FROST_BIS_PRESET.gear,
+				3: DeathknightPresets.P3_FROST_BIS_PRESET.gear,
 			},
 		},
 		otherDefaults: DeathknightPresets.OtherDefaults,
@@ -200,10 +204,12 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Alliance]: {
 				1: DeathknightPresets.P1_UNHOLY_DW_BIS_PRESET.gear,
 				2: DeathknightPresets.P2_UNHOLY_DW_BIS_PRESET.gear,
+				3: DeathknightPresets.P3_UNHOLY_DW_BIS_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: DeathknightPresets.P1_UNHOLY_DW_BIS_PRESET.gear,
 				2: DeathknightPresets.P2_UNHOLY_DW_BIS_PRESET.gear,
+				3: DeathknightPresets.P3_UNHOLY_DW_BIS_PRESET.gear,
 			},
 		},
 		otherDefaults: DeathknightPresets.OtherDefaults,
@@ -228,10 +234,12 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Alliance]: {
 				1: BalanceDruidPresets.P1_PRESET.gear,
 				2: BalanceDruidPresets.P2_PRESET.gear,
+				3: BalanceDruidPresets.P3_PRESET_ALLI.gear,
 			},
 			[Faction.Horde]: {
 				1: BalanceDruidPresets.P1_PRESET.gear,
 				2: BalanceDruidPresets.P2_PRESET.gear,
+				3: BalanceDruidPresets.P3_PRESET_HORDE.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecBalanceDruid],
@@ -254,10 +262,12 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Alliance]: {
 				1: FeralDruidPresets.P1_PRESET.gear,
 				2: FeralDruidPresets.P2_PRESET.gear,
+				3: FeralDruidPresets.P3_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: FeralDruidPresets.P1_PRESET.gear,
 				2: FeralDruidPresets.P2_PRESET.gear,
+				3: FeralDruidPresets.P3_PRESET.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecFeralDruid],
@@ -509,10 +519,12 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Alliance]: {
 				1: RoguePresets.P1_PRESET_ASSASSINATION.gear,
 				2: RoguePresets.P2_PRESET_ASSASSINATION.gear,
+				3: RoguePresets.P3_PRESET_ASSASSINATION.gear,
 			},
 			[Faction.Horde]: {
 				1: RoguePresets.P1_PRESET_ASSASSINATION.gear,
 				2: RoguePresets.P2_PRESET_ASSASSINATION.gear,
+				3: RoguePresets.P3_PRESET_ASSASSINATION.gear,
 			},
 		},
 		tooltip: 'Assassination Rogue',
@@ -535,10 +547,12 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Alliance]: {
 				1: RoguePresets.P1_PRESET_COMBAT.gear,
 				2: RoguePresets.P2_PRESET_COMBAT.gear,
+				3: RoguePresets.P3_PRESET_COMBAT.gear,
 			},
 			[Faction.Horde]: {
 				1: RoguePresets.P1_PRESET_COMBAT.gear,
 				2: RoguePresets.P2_PRESET_COMBAT.gear,
+				3: RoguePresets.P3_PRESET_COMBAT.gear,
 			},
 		},
 		tooltip: 'Combat Rogue',
@@ -561,10 +575,12 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Alliance]: {
 				1: ElementalShamanPresets.P1_PRESET.gear,
 				2: ElementalShamanPresets.P2_PRESET.gear,
+				3: ElementalShamanPresets.P3_PRESET_ALLI.gear,
 			},
 			[Faction.Horde]: {
 				1: ElementalShamanPresets.P1_PRESET.gear,
 				2: ElementalShamanPresets.P2_PRESET.gear,
+				3: ElementalShamanPresets.P3_PRESET_HORDE.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecElementalShaman],
@@ -691,10 +707,12 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Alliance]: {
 				1: ShadowPriestPresets.P1_PRESET.gear,
 				2: ShadowPriestPresets.P2_PRESET.gear,
+				3: ShadowPriestPresets.P3_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: ShadowPriestPresets.P1_PRESET.gear,
 				2: ShadowPriestPresets.P2_PRESET.gear,
+				3: ShadowPriestPresets.P3_PRESET.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecShadowPriest],
@@ -905,10 +923,12 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Alliance]: {
 				1: WarlockPresets.P1_Preset_Affliction.gear,
 				2: WarlockPresets.P2_Preset_Affliction.gear,
+				3: WarlockPresets.P3_Preset_Affliction_Alliance.gear,
 			},
 			[Faction.Horde]: {
 				1: WarlockPresets.P1_Preset_Affliction.gear,
 				2: WarlockPresets.P2_Preset_Affliction.gear,
+				3: WarlockPresets.P3_Preset_Affliction_Horde.gear,
 			},
 		},
 		otherDefaults: WarlockPresets.OtherDefaults,
@@ -932,10 +952,12 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Alliance]: {
 				1: WarlockPresets.P1_Preset_Demo_Destro.gear,
 				2: WarlockPresets.P2_Preset_Demo_Destro.gear,
+				3: WarlockPresets.P3_Preset_Demo_Alliance.gear,
 			},
 			[Faction.Horde]: {
 				1: WarlockPresets.P1_Preset_Demo_Destro.gear,
 				2: WarlockPresets.P2_Preset_Demo_Destro.gear,
+				3: WarlockPresets.P3_Preset_Demo_Horde.gear,
 			},
 		},
 		otherDefaults: WarlockPresets.OtherDefaults,
@@ -959,10 +981,12 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 			[Faction.Alliance]: {
 				1: WarlockPresets.P1_Preset_Demo_Destro.gear,
 				2: WarlockPresets.P2_Preset_Demo_Destro.gear,
+				3: WarlockPresets.P3_Preset_Destro_Alliance.gear,
 			},
 			[Faction.Horde]: {
 				1: WarlockPresets.P1_Preset_Demo_Destro.gear,
 				2: WarlockPresets.P2_Preset_Demo_Destro.gear,
+				3: WarlockPresets.P3_Preset_Destro_Horde.gear,
 			},
 		},
 		otherDefaults: WarlockPresets.OtherDefaults,

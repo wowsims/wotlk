@@ -221,7 +221,7 @@ export const PRE_RAID_PRESET = {
 };
 
 export const P3_PRESET_HORDE = {
-	name: 'P3 Preset Horde',
+	name: 'P3 Preset [H]',
 	enableWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getFaction() == Faction.Horde,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
@@ -247,7 +247,7 @@ export const P3_PRESET_HORDE = {
 };
 
 export const P3_PRESET_ALLI = {
-	name: 'P3 Preset Alliance',
+	name: 'P3 Preset [A]',
 	enableWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getFaction() == Faction.Alliance,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [

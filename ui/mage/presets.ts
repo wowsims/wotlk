@@ -498,7 +498,7 @@ export const FFB_P2_PRESET = {
 };
 
 export const ARCANE_P3_PRESET_HORDE = {
-	name: 'Arcane P3 Preset Horde',
+	name: 'Arcane P3 Preset [H]',
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0 && player.getFaction() == Faction.Horde,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
@@ -523,7 +523,7 @@ export const ARCANE_P3_PRESET_HORDE = {
 };
 
 export const ARCANE_P3_PRESET_ALLIANCE = {
-	name: 'Arcane P3 Preset Alliance',
+	name: 'Arcane P3 Preset [A]',
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0 && player.getFaction() == Faction.Alliance,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
@@ -548,7 +548,7 @@ export const ARCANE_P3_PRESET_ALLIANCE = {
 };
 
 export const FROST_P3_PRESET_HORDE = {
-	name: 'Frost P3 Preset Horde',
+	name: 'Frost P3 Preset [H]',
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 2 && player.getFaction() == Faction.Horde,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
@@ -573,7 +573,7 @@ export const FROST_P3_PRESET_HORDE = {
 };
 
 export const FROST_P3_PRESET_ALLIANCE = {
-	name: 'Frost P3 Preset Alliance',
+	name: 'Frost P3 Preset [A]',
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 2 && player.getFaction() == Faction.Alliance,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
@@ -598,7 +598,7 @@ export const FROST_P3_PRESET_ALLIANCE = {
 };
 
 export const FIRE_P3_PRESET_HORDE = {
-	name: 'Fire P3 Preset Horde',
+	name: 'Fire P3 Preset [H]',
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1 && !player.getTalents().icyVeins && player.getFaction() == Faction.Horde,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
@@ -623,7 +623,7 @@ export const FIRE_P3_PRESET_HORDE = {
 };
 
 export const FIRE_P3_PRESET_ALLIANCE = {
-	name: 'Fire P3 Preset Alliance',
+	name: 'Fire P3 Preset [A]',
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1 && !player.getTalents().icyVeins && player.getFaction() == Faction.Alliance,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{  "items": [
@@ -651,7 +651,7 @@ export const FIRE_P3_PRESET_ALLIANCE = {
 
 
 export const FFB_P3_PRESET_HORDE = {
-	name: 'FFB P3 Preset Horde',
+	name: 'FFB P3 Preset [H]',
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getFaction() == Faction.Horde && player.getTalentTree() == 1 && player.getTalents().icyVeins,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
@@ -676,7 +676,7 @@ export const FFB_P3_PRESET_HORDE = {
 };
 
 export const FFB_P3_PRESET_ALLIANCE = {
-	name: 'FFB P3 Preset Alliance',
+	name: 'FFB P3 Preset [A]',
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getFaction() == Faction.Alliance && player.getTalentTree() == 1 && player.getTalents().icyVeins,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{   "items": [
