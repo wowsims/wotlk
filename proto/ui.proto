@@ -292,6 +292,7 @@ message SavedSettings {
 	Race race = 5;
 	Cooldowns cooldowns = 6;
 	string rotation_json = 8;
+	repeated Profession professions = 9;
 }
 
 message SavedTalents {

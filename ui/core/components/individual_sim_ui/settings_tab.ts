@@ -393,6 +393,7 @@ export class SettingsTab extends SimTab {
 					debuffs: simUI.sim.raid.getDebuffs(),
 					consumes: player.getConsumes(),
 					race: player.getRace(),
+					professions: player.getProfessions(),
 					cooldowns: aplLaunchStatuses[simUI.player.spec] == LaunchStatus.Unlaunched ? player.getCooldowns() : undefined,
 					rotationJson: aplLaunchStatuses[simUI.player.spec] == LaunchStatus.Unlaunched ? JSON.stringify(player.specTypeFunctions.rotationToJson(player.getRotation())) : undefined,
 				});
@@ -408,6 +409,7 @@ export class SettingsTab extends SimTab {
 					simUI.player.setBuffs(eventID, newSettings.playerBuffs || IndividualBuffs.create());
 					simUI.player.setConsumes(eventID, newSettings.consumes || Consumes.create());
 					simUI.player.setRace(eventID, newSettings.race);
+					simUI.player.setProfessions(eventID, newSettings.professions);
 					if (aplLaunchStatuses[simUI.player.spec] == LaunchStatus.Unlaunched) {
 						simUI.player.setCooldowns(eventID, newSettings.cooldowns || Cooldowns.create());
 						if (newSettings.rotationJson) {
@@ -423,6 +425,7 @@ export class SettingsTab extends SimTab {
 				this.simUI.player.buffsChangeEmitter,
 				this.simUI.player.consumesChangeEmitter,
 				this.simUI.player.raceChangeEmitter,
+				this.simUI.player.professionChangeEmitter,
 			].concat(aplLaunchStatuses[this.simUI.player.spec] == LaunchStatus.Unlaunched ? [
 				this.simUI.player.cooldownsChangeEmitter,
 				this.simUI.player.rotationChangeEmitter,
