@@ -216,7 +216,6 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 		const expCap = new Stats().withStat(Stat.StatExpertise, 6.5 * 32.79 + 4);
 		redGemCaps.push([40118, expCap]);
 		const critCap = this.calcCritCap(optimizedGear);
-		redGemCaps.push([40112, critCap]);
 		redGemCaps.push([40111, new Stats()]);
 
 		// If JC, then socket 34 ArP gems in first three red sockets before proceeding
@@ -236,11 +235,8 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 		const hitCap = new Stats().withStat(Stat.StatMeleeHit, 8. * 32.79 + 4);
 		yellowGemCaps.push([40125, hitCap]);
 		yellowGemCaps.push([40162, hitCap.add(expCap)]);
-		yellowGemCaps.push([40148, hitCap.add(critCap)]);
 		yellowGemCaps.push([40143, hitCap]);
-		yellowGemCaps.push([40147, critCap]);
 		yellowGemCaps.push([40142, critCap]);
-		yellowGemCaps.push([40146, new Stats()]);
 		await this.fillGemsToCaps(optimizedGear, yellowSockets, yellowGemCaps, 0, 0);
 	}
 
@@ -449,7 +445,6 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 		}
 
 		// Now actually socket the gems
-		const belowCritCap = passiveStats.belowCaps(this.calcCritCap(gear));
 		let updatedGear: Gear = gear;
 
 		for (let i = 0; i < 3; i++) {
@@ -457,8 +452,6 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 
 			if (i < optimalJcArpGems) {
 				gemId = 42153;
-			} else if (belowCritCap) {
-				gemId = 42143;
 			}
 
 			updatedGear = updatedGear.withGem(redSocketList[i][0], redSocketList[i][1], this.sim.db.lookupGem(gemId));
