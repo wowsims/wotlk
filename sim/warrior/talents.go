@@ -398,6 +398,7 @@ func (warrior *Warrior) applyWeaponSpecializations() {
 			})
 		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeMace && maceSpecInactive {
 			warrior.AddStat(stats.ArmorPenetration, 3*core.ArmorPenPerPercentArmor*float64(warrior.Talents.MaceSpecialization))
+			maceSpecInactive = false
 		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeSword {
 			swordSpecMask |= core.ProcMaskMeleeMH
 		}
@@ -411,6 +412,7 @@ func (warrior *Warrior) applyWeaponSpecializations() {
 			})
 		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeMace && maceSpecInactive {
 			warrior.AddStat(stats.ArmorPenetration, 3*core.ArmorPenPerPercentArmor*float64(warrior.Talents.MaceSpecialization))
+			maceSpecInactive = false
 		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeSword {
 			swordSpecMask |= core.ProcMaskMeleeOH
 		}
