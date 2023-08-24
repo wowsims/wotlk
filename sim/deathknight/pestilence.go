@@ -41,6 +41,7 @@ func (dk *Deathknight) registerPestilenceSpell() {
 					dk.LastOutcome = result.Outcome
 				}
 				if result.Landed() {
+					refreshCFEP := false
 					// Main target
 					if aoeTarget == target {
 						if hasGlyphOfDisease {
@@ -51,10 +52,18 @@ func (dk *Deathknight) registerPestilenceSpell() {
 									dk.IcyTalonsAura.Activate(sim)
 								}
 								dk.FrostFeverDebuffAura.Get(aoeTarget).Activate(sim)
+
+								if dk.Talents.CryptFever > 0 {
+									refreshCFEP = true
+								}
 							}
 
 							if dk.BloodPlagueSpell.Dot(aoeTarget).IsActive() {
 								dk.BloodPlagueSpell.Dot(aoeTarget).Rollover(sim)
+
+								if dk.Talents.CryptFever > 0 {
+									refreshCFEP = true
+								}
 							}
 						}
 					} else {
@@ -62,11 +71,23 @@ func (dk *Deathknight) registerPestilenceSpell() {
 						if dk.FrostFeverSpell.Dot(target).IsActive() {
 							dk.FrostFeverExtended[aoeTarget.Index] = 0
 							dk.FrostFeverSpell.Dot(aoeTarget).Apply(sim)
+
+							if dk.Talents.CryptFever > 0 {
+								refreshCFEP = true
+							}
 						}
 						if dk.BloodPlagueSpell.Dot(target).IsActive() {
 							dk.BloodPlagueExtended[aoeTarget.Index] = 0
 							dk.BloodPlagueSpell.Dot(aoeTarget).Apply(sim)
+
+							if dk.Talents.CryptFever > 0 {
+								refreshCFEP = true
+							}
 						}
+					}
+
+					if refreshCFEP {
+						dk.EbonPlagueOrCryptFeverAura.Get(aoeTarget).Activate(sim)
 					}
 				}
 			}
