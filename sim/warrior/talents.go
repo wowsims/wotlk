@@ -387,6 +387,8 @@ func (warrior *Warrior) applyOneHandedWeaponSpecialization() {
 
 func (warrior *Warrior) applyWeaponSpecializations() {
 	swordSpecMask := core.ProcMaskUnknown
+	maceSpecInactive := true
+
 	if weapon := warrior.Equip[proto.ItemSlot_ItemSlotMainHand]; weapon.ID != 0 {
 		if weapon.WeaponType == proto.WeaponType_WeaponTypeAxe || weapon.WeaponType == proto.WeaponType_WeaponTypePolearm {
 			warrior.OnSpellRegistered(func(spell *core.Spell) {
@@ -394,12 +396,8 @@ func (warrior *Warrior) applyWeaponSpecializations() {
 					spell.BonusCritRating += 1 * core.CritRatingPerCritChance * float64(warrior.Talents.PoleaxeSpecialization)
 				}
 			})
-		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeMace {
-			warrior.OnSpellRegistered(func(spell *core.Spell) {
-				if spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
-					spell.BonusArmorPenRating += 3 * core.ArmorPenPerPercentArmor * float64(warrior.Talents.MaceSpecialization)
-				}
-			})
+		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeMace && maceSpecInactive {
+			warrior.AddStat(stats.ArmorPenetration, 3*core.ArmorPenPerPercentArmor*float64(warrior.Talents.MaceSpecialization))
 		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeSword {
 			swordSpecMask |= core.ProcMaskMeleeMH
 		}
@@ -411,12 +409,8 @@ func (warrior *Warrior) applyWeaponSpecializations() {
 					spell.BonusCritRating += 1 * core.CritRatingPerCritChance * float64(warrior.Talents.PoleaxeSpecialization)
 				}
 			})
-		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeMace {
-			warrior.OnSpellRegistered(func(spell *core.Spell) {
-				if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
-					spell.BonusArmorPenRating += 3 * core.ArmorPenPerPercentArmor * float64(warrior.Talents.MaceSpecialization)
-				}
-			})
+		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeMace && maceSpecInactive {
+			warrior.AddStat(stats.ArmorPenetration, 3*core.ArmorPenPerPercentArmor*float64(warrior.Talents.MaceSpecialization))
 		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeSword {
 			swordSpecMask |= core.ProcMaskMeleeOH
 		}
