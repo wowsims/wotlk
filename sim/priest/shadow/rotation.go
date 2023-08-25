@@ -606,8 +606,12 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 		return spriest.MindBlast, 0
 	}
 
-	if currentWait > 0 && bestIdx != swpIdx && bestIdx != mfIdx {
+	if currentWait <= gcd/6 && currentWait > 0 && bestIdx != swpIdx && bestIdx != mfIdx {
 		return nil, currentWait
+	}
+
+	if currentWait >= gcd/6 && bestIdx != swpIdx && bestIdx != mfIdx {
+		bestIdx = mfIdx
 	}
 
 	if bestIdx == mbIdx {
@@ -1081,7 +1085,19 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, gcd tim
 				if numTicks == 4 {
 					spriest.PrevTicks = 4
 				}
+
+				if numTicks == 4 {
+					if sim.Log != nil {
+						spriest.Log(sim, "numTicks[%d]", numTicks)
+						spriest.Log(sim, "bestIdx %d", bestIdx)
+						spriest.Log(sim, "nextCD %d", nextCD.Seconds())
+						spriest.Log(sim, "tickLength %d", tickLength.Seconds())
+						spriest.Log(sim, "chosenWait %d", chosenWait.Seconds())
+					}
+				}
+
 				numTicks = 2
+
 			} else if numTicks == 0 {
 				numTicks = 2
 			} else {
@@ -1116,6 +1132,7 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, gcd tim
 	if numTicks >= 3 {
 		numTicks = 3
 	}
+
 	return numTicks
 }
 
