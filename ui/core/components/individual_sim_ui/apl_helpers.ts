@@ -233,6 +233,7 @@ export class APLUnitPicker extends UnitPicker<Player<any>> {
 			sourceToValue: (src: UnitReference|undefined) => APLUnitPicker.refToValue(src, player, targetUI),
 			valueToSource: (val: UnitValue) => val.value,
 			values: [],
+			hideLabelWhenDefaultSelected: true,
 		});
 		this.unitSet = config.unitSet;
 
