@@ -236,6 +236,7 @@ export class APLUnitPicker extends UnitPicker<Player<any>> {
 			hideLabelWhenDefaultSelected: true,
 		});
 		this.unitSet = config.unitSet;
+		this.rootElem.classList.add('apl-unit-picker');
 
 		this.updateValues();
 		player.sim.unitMetadataEmitter.on(() => this.updateValues());
