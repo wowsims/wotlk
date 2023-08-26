@@ -8,12 +8,12 @@ import (
 )
 
 type APLValueSpellCanCast struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	spell *Spell
 }
 
 func (rot *APLRotation) newValueSpellCanCast(config *proto.APLValueSpellCanCast) APLValue {
-	spell := rot.aplGetSpell(config.SpellId)
+	spell := rot.GetAPLSpell(config.SpellId)
 	if spell == nil {
 		return nil
 	}
@@ -32,12 +32,12 @@ func (value *APLValueSpellCanCast) String() string {
 }
 
 type APLValueSpellIsReady struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	spell *Spell
 }
 
 func (rot *APLRotation) newValueSpellIsReady(config *proto.APLValueSpellIsReady) APLValue {
-	spell := rot.aplGetSpell(config.SpellId)
+	spell := rot.GetAPLSpell(config.SpellId)
 	if spell == nil {
 		return nil
 	}
@@ -56,12 +56,12 @@ func (value *APLValueSpellIsReady) String() string {
 }
 
 type APLValueSpellTimeToReady struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	spell *Spell
 }
 
 func (rot *APLRotation) newValueSpellTimeToReady(config *proto.APLValueSpellTimeToReady) APLValue {
-	spell := rot.aplGetSpell(config.SpellId)
+	spell := rot.GetAPLSpell(config.SpellId)
 	if spell == nil {
 		return nil
 	}
@@ -80,12 +80,12 @@ func (value *APLValueSpellTimeToReady) String() string {
 }
 
 type APLValueSpellCastTime struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	spell *Spell
 }
 
 func (rot *APLRotation) newValueSpellCastTime(config *proto.APLValueSpellCastTime) APLValue {
-	spell := rot.aplGetSpell(config.SpellId)
+	spell := rot.GetAPLSpell(config.SpellId)
 	if spell == nil {
 		return nil
 	}
@@ -104,12 +104,12 @@ func (value *APLValueSpellCastTime) String() string {
 }
 
 type APLValueSpellChannelTime struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	spell *Spell
 }
 
 func (rot *APLRotation) newValueSpellChannelTime(config *proto.APLValueSpellChannelTime) APLValue {
-	spell := rot.aplGetSpell(config.SpellId)
+	spell := rot.GetAPLSpell(config.SpellId)
 	if spell == nil {
 		return nil
 	}
@@ -128,12 +128,12 @@ func (value *APLValueSpellChannelTime) String() string {
 }
 
 type APLValueSpellTravelTime struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	spell *Spell
 }
 
 func (rot *APLRotation) newValueSpellTravelTime(config *proto.APLValueSpellTravelTime) APLValue {
-	spell := rot.aplGetSpell(config.SpellId)
+	spell := rot.GetAPLSpell(config.SpellId)
 	if spell == nil {
 		return nil
 	}
@@ -152,12 +152,12 @@ func (value *APLValueSpellTravelTime) String() string {
 }
 
 type APLValueSpellCPM struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	spell *Spell
 }
 
 func (rot *APLRotation) newValueSpellCPM(config *proto.APLValueSpellCPM) APLValue {
-	spell := rot.aplGetSpell(config.SpellId)
+	spell := rot.GetAPLSpell(config.SpellId)
 	if spell == nil {
 		return nil
 	}

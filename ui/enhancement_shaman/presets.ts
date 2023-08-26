@@ -109,6 +109,7 @@ export const ROTATION_DEFAULT = {
 		rotation: APLRotation.fromJsonString(`{
 			"enabled": true,
 			"prepullActions": [
+				{"action":{"castSpell":{"spellId":{"spellId":66842}}},"doAtValue":{"const":{"val":"-3s"}}},
 				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
 			],
 			"priorityList": [
@@ -119,6 +120,7 @@ export const ROTATION_DEFAULT = {
 				{"action":{"castSpell":{"spellId":{"spellId":17364}}}},
 				{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":49233}}},"rhs":{"const":{"val":"0s"}}}},"castSpell":{"spellId":{"spellId":49233}}}},
 				{"action":{"castSpell":{"spellId":{"spellId":49231}}}},
+				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"totemRemainingTime":{"totemType":"Water"}},"rhs":{"const":{"val":"20s"}}}},"castSpell":{"spellId":{"spellId":66842}}}},
 				{"action":{"castSpell":{"spellId":{"spellId":61657}}}},
 				{"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":49281}}}}},"castSpell":{"spellId":{"spellId":49281}}}},
 				{"action":{"castSpell":{"spellId":{"spellId":60103}}}}

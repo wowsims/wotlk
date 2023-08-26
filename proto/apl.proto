@@ -4,6 +4,7 @@ package proto;
 option go_package = "./proto";
 
 import "common.proto";
+import "shaman.proto";
 
 // Rotation options are based heavily on APL. See https://github.com/simulationcraft/simc/wiki/ActionLists.
 
@@ -51,7 +52,7 @@ message APLAction {
     }
 }
 
-// NextIndex: 49
+// NextIndex: 50
 message APLValue {
     oneof value {
         // Operators
@@ -121,6 +122,9 @@ message APLValue {
         APLValueSequenceIsComplete sequence_is_complete = 44;
         APLValueSequenceIsReady sequence_is_ready = 45;
         APLValueSequenceTimeToReady sequence_time_to_ready = 46;
+
+        // Class or Spec-specific values
+        APLValueTotemRemainingTime totem_remaining_time = 49;
     }
 }
 
@@ -377,4 +381,8 @@ message APLValueSequenceIsReady {
 }
 message APLValueSequenceTimeToReady {
     string sequence_name = 1;
+}
+
+message APLValueTotemRemainingTime {
+    ShamanTotems.TotemType totem_type = 1;
 }

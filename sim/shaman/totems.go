@@ -166,19 +166,19 @@ func (shaman *Shaman) registerCallOfTheElements() {
 			nextGcdAt := shaman.GCD.ReadyAt()
 
 			if airTotem != nil {
-				shaman.GCD.Set(0)
+				shaman.GCD.Set(sim.CurrentTime)
 				airTotem.Cast(sim, target)
 			}
 			if earthTotem != nil {
-				shaman.GCD.Set(0)
+				shaman.GCD.Set(sim.CurrentTime)
 				earthTotem.Cast(sim, target)
 			}
 			if fireTotem != nil {
-				shaman.GCD.Set(0)
+				shaman.GCD.Set(sim.CurrentTime)
 				fireTotem.Cast(sim, target)
 			}
 			if waterTotem != nil {
-				shaman.GCD.Set(0)
+				shaman.GCD.Set(sim.CurrentTime)
 				waterTotem.Cast(sim, target)
 			}
 

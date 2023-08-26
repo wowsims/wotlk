@@ -45,15 +45,15 @@ func (rot *APLRotation) getUnit(ref *proto.UnitReference, defaultRef *proto.Unit
 	} else {
 		unitRef := NewUnitReference(ref, rot.unit)
 		if unitRef.Get() == nil {
-			rot.validationWarning("No unit found matching reference: %s", ref)
+			rot.ValidationWarning("No unit found matching reference: %s", ref)
 		}
 		return unitRef
 	}
 }
-func (rot *APLRotation) getSourceUnit(ref *proto.UnitReference) UnitReference {
+func (rot *APLRotation) GetSourceUnit(ref *proto.UnitReference) UnitReference {
 	return rot.getUnit(ref, &proto.UnitReference{Type: proto.UnitReference_Self})
 }
-func (rot *APLRotation) getTargetUnit(ref *proto.UnitReference) UnitReference {
+func (rot *APLRotation) GetTargetUnit(ref *proto.UnitReference) UnitReference {
 	return rot.getUnit(ref, &proto.UnitReference{Type: proto.UnitReference_CurrentTarget})
 }
 
@@ -103,31 +103,31 @@ func NewIcdAuraReference(sourceUnit UnitReference, auraId *proto.ActionID) AuraR
 	return newAuraReferenceHelper(sourceUnit, auraId, func(unit *Unit, actionID ActionID) *Aura { return unit.GetIcdAuraByID(actionID) })
 }
 
-func (rot *APLRotation) aplGetAura(sourceUnit UnitReference, auraId *proto.ActionID) AuraReference {
+func (rot *APLRotation) GetAPLAura(sourceUnit UnitReference, auraId *proto.ActionID) AuraReference {
 	if sourceUnit.Get() == nil {
 		return AuraReference{}
 	}
 
 	aura := NewAuraReference(sourceUnit, auraId)
 	if aura.Get() == nil {
-		rot.validationWarning("No aura found on %s for: %s", sourceUnit.Get().Label, ProtoToActionID(auraId))
+		rot.ValidationWarning("No aura found on %s for: %s", sourceUnit.Get().Label, ProtoToActionID(auraId))
 	}
 	return aura
 }
 
-func (rot *APLRotation) aplGetICDAura(sourceUnit UnitReference, auraId *proto.ActionID) AuraReference {
+func (rot *APLRotation) GetAPLICDAura(sourceUnit UnitReference, auraId *proto.ActionID) AuraReference {
 	if sourceUnit.Get() == nil {
 		return AuraReference{}
 	}
 
 	aura := NewIcdAuraReference(sourceUnit, auraId)
 	if aura.Get() == nil {
-		rot.validationWarning("No aura found on %s for: %s", sourceUnit.Get().Label, ProtoToActionID(auraId))
+		rot.ValidationWarning("No aura found on %s for: %s", sourceUnit.Get().Label, ProtoToActionID(auraId))
 	}
 	return aura
 }
 
-func (rot *APLRotation) aplGetSpell(spellId *proto.ActionID) *Spell {
+func (rot *APLRotation) GetAPLSpell(spellId *proto.ActionID) *Spell {
 	actionID := ProtoToActionID(spellId)
 	var spell *Spell
 
@@ -152,13 +152,13 @@ func (rot *APLRotation) aplGetSpell(spellId *proto.ActionID) *Spell {
 	}
 
 	if spell == nil {
-		rot.validationWarning("%s does not know spell %s", rot.unit.Label, actionID)
+		rot.ValidationWarning("%s does not know spell %s", rot.unit.Label, actionID)
 	}
 	return spell
 }
 
-func (rot *APLRotation) aplGetDot(targetUnit UnitReference, spellId *proto.ActionID) *Dot {
-	spell := rot.aplGetSpell(spellId)
+func (rot *APLRotation) GetAPLDot(targetUnit UnitReference, spellId *proto.ActionID) *Dot {
+	spell := rot.GetAPLSpell(spellId)
 
 	if spell == nil {
 		return nil
@@ -174,23 +174,23 @@ func (rot *APLRotation) aplGetDot(targetUnit UnitReference, spellId *proto.Actio
 	}
 }
 
-func (rot *APLRotation) aplGetMultidotSpell(spellId *proto.ActionID) *Spell {
-	spell := rot.aplGetSpell(spellId)
+func (rot *APLRotation) GetAPLMultidotSpell(spellId *proto.ActionID) *Spell {
+	spell := rot.GetAPLSpell(spellId)
 	if spell == nil {
 		return nil
 	} else if spell.CurDot() == nil {
-		rot.validationWarning("Spell %s does not have an associated DoT", ProtoToActionID(spellId))
+		rot.ValidationWarning("Spell %s does not have an associated DoT", ProtoToActionID(spellId))
 		return nil
 	}
 	return spell
 }
 
-func (rot *APLRotation) aplGetMultishieldSpell(spellId *proto.ActionID) *Spell {
-	spell := rot.aplGetSpell(spellId)
+func (rot *APLRotation) GetAPLMultishieldSpell(spellId *proto.ActionID) *Spell {
+	spell := rot.GetAPLSpell(spellId)
 	if spell == nil {
 		return nil
 	} else if spell.Shield(spell.Unit) == nil {
-		rot.validationWarning("Spell %s does not have an associated Shield", ProtoToActionID(spellId))
+		rot.ValidationWarning("Spell %s does not have an associated Shield", ProtoToActionID(spellId))
 		return nil
 	}
 	return spell

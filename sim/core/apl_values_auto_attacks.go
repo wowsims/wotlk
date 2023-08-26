@@ -8,7 +8,7 @@ import (
 )
 
 type APLValueAutoTimeToNext struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	unit *Unit
 }
 

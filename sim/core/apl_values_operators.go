@@ -10,7 +10,7 @@ import (
 )
 
 type APLValueConst struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	valType proto.APLValueType
 
 	intVal      int32
@@ -81,7 +81,7 @@ func (value *APLValueConst) String() string {
 }
 
 type APLValueCoerced struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	valueType proto.APLValueType
 	inner     APLValue
 }
@@ -240,7 +240,7 @@ func (rot *APLRotation) coerceToSameType(value1 APLValue, value2 APLValue) (APLV
 }
 
 type APLValueCompare struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	op  proto.APLValueCompare_ComparisonOperator
 	lhs APLValue
 	rhs APLValue
@@ -253,7 +253,7 @@ func (rot *APLRotation) newValueCompare(config *proto.APLValueCompare) APLValue 
 	}
 
 	if lhs.Type() == proto.APLValueType_ValueTypeBool && !(config.Op == proto.APLValueCompare_OpEq || config.Op == proto.APLValueCompare_OpNe) {
-		rot.validationWarning("Bool types only allow Equals and NotEquals comparisons!")
+		rot.ValidationWarning("Bool types only allow Equals and NotEquals comparisons!")
 		return nil
 	}
 	return &APLValueCompare{
@@ -345,7 +345,7 @@ func (value *APLValueCompare) String() string {
 }
 
 type APLValueMath struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	op  proto.APLValueMath_MathOperator
 	lhs APLValue
 	rhs APLValue
@@ -358,12 +358,12 @@ func (rot *APLRotation) newValueMath(config *proto.APLValueMath) APLValue {
 	}
 
 	if lhs.Type() == proto.APLValueType_ValueTypeBool || rhs.Type() == proto.APLValueType_ValueTypeBool {
-		rot.validationWarning("Bool types not allowed in Math Operations!")
+		rot.ValidationWarning("Bool types not allowed in Math Operations!")
 		return nil
 	}
 
 	if lhs.Type() == proto.APLValueType_ValueTypeString || rhs.Type() == proto.APLValueType_ValueTypeString {
-		rot.validationWarning("String types not allowed in Math Operations!")
+		rot.ValidationWarning("String types not allowed in Math Operations!")
 		return nil
 	}
 
@@ -445,7 +445,7 @@ func (value *APLValueMath) String() string {
 }
 
 type APLValueMax struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	vals []APLValue
 }
 
@@ -496,7 +496,7 @@ func (value *APLValueMax) String() string {
 }
 
 type APLValueMin struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	vals []APLValue
 }
 
@@ -547,7 +547,7 @@ func (value *APLValueMin) String() string {
 }
 
 type APLValueAnd struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	vals []APLValue
 }
 
@@ -584,7 +584,7 @@ func (value *APLValueAnd) String() string {
 }
 
 type APLValueOr struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	vals []APLValue
 }
 
@@ -621,7 +621,7 @@ func (value *APLValueOr) String() string {
 }
 
 type APLValueNot struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	val APLValue
 }
 

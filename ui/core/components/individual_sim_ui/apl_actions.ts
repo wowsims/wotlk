@@ -72,11 +72,12 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 
 		const isPrepull = this.rootElem.closest('.apl-prepull-action-picker') != null;
 
-		const allActionKinds = Object.keys(actionKindFactories) as Array<NonNullable<APLActionKind>>;
+		const allActionKinds = (Object.keys(actionKindFactories) as Array<NonNullable<APLActionKind>>)
+			.filter(actionKind => actionKindFactories[actionKind].includeIf?.(player, isPrepull) ?? true);
+
 		this.kindPicker = new TextDropdownPicker(this.actionDiv, player, {
 			defaultLabel: 'Action',
 			values: allActionKinds
-				.filter(actionKind => actionKindFactories[actionKind].includeIf?.(player, isPrepull) ?? true)
 				.map(actionKind => {
 					const factory = actionKindFactories[actionKind];
 					return {

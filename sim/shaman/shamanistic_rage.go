@@ -67,12 +67,22 @@ func (shaman *Shaman) registerShamanisticRageCD() {
 		},
 	})
 
-	shaman.AddMajorCooldown(core.MajorCooldown{
-		Spell: spell,
-		Type:  core.CooldownTypeMana,
-		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-			manaReserve := shaman.ShamanisticRageManaThreshold / 100 * shaman.MaxMana()
-			return character.CurrentMana() <= manaReserve
-		},
-	})
+	if shaman.IsUsingAPL {
+		shaman.AddMajorCooldown(core.MajorCooldown{
+			Spell: spell,
+			Type:  core.CooldownTypeMana,
+			ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
+				return character.CurrentManaPercent() <= 0.2
+			},
+		})
+	} else {
+		shaman.AddMajorCooldown(core.MajorCooldown{
+			Spell: spell,
+			Type:  core.CooldownTypeMana,
+			ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
+				manaReserve := shaman.ShamanisticRageManaThreshold / 100 * shaman.MaxMana()
+				return character.CurrentMana() <= manaReserve
+			},
+		})
+	}
 }

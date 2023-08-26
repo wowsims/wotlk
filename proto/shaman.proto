@@ -162,6 +162,15 @@ enum WaterTotem {
 }
 
 message ShamanTotems {
+	// Not used here, but used by APL
+	enum TotemType {
+		TypeUnknown = 0;
+		Earth = 1;
+		Air = 2;
+		Fire = 3;
+		Water = 4;
+	}
+
 	EarthTotem earth = 1;
 	AirTotem air = 2;
 	FireTotem fire = 3;

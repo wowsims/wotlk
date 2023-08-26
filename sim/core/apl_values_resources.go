@@ -7,17 +7,17 @@ import (
 )
 
 type APLValueCurrentHealth struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	unit UnitReference
 }
 
 func (rot *APLRotation) newValueCurrentHealth(config *proto.APLValueCurrentHealth) APLValue {
-	unit := rot.getSourceUnit(config.SourceUnit)
+	unit := rot.GetSourceUnit(config.SourceUnit)
 	if unit.Get() == nil {
 		return nil
 	}
 	if !unit.Get().HasHealthBar() {
-		rot.validationWarning("%s does not use Health", unit.Get().Label)
+		rot.ValidationWarning("%s does not use Health", unit.Get().Label)
 		return nil
 	}
 	return &APLValueCurrentHealth{
@@ -35,17 +35,17 @@ func (value *APLValueCurrentHealth) String() string {
 }
 
 type APLValueCurrentHealthPercent struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	unit UnitReference
 }
 
 func (rot *APLRotation) newValueCurrentHealthPercent(config *proto.APLValueCurrentHealthPercent) APLValue {
-	unit := rot.getSourceUnit(config.SourceUnit)
+	unit := rot.GetSourceUnit(config.SourceUnit)
 	if unit.Get() == nil {
 		return nil
 	}
 	if !unit.Get().HasHealthBar() {
-		rot.validationWarning("%s does not use Health", unit.Get().Label)
+		rot.ValidationWarning("%s does not use Health", unit.Get().Label)
 		return nil
 	}
 	return &APLValueCurrentHealthPercent{
@@ -63,17 +63,17 @@ func (value *APLValueCurrentHealthPercent) String() string {
 }
 
 type APLValueCurrentMana struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	unit UnitReference
 }
 
 func (rot *APLRotation) newValueCurrentMana(config *proto.APLValueCurrentMana) APLValue {
-	unit := rot.getSourceUnit(config.SourceUnit)
+	unit := rot.GetSourceUnit(config.SourceUnit)
 	if unit.Get() == nil {
 		return nil
 	}
 	if !unit.Get().HasManaBar() {
-		rot.validationWarning("%s does not use Mana", unit.Get().Label)
+		rot.ValidationWarning("%s does not use Mana", unit.Get().Label)
 		return nil
 	}
 	return &APLValueCurrentMana{
@@ -91,17 +91,17 @@ func (value *APLValueCurrentMana) String() string {
 }
 
 type APLValueCurrentManaPercent struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	unit UnitReference
 }
 
 func (rot *APLRotation) newValueCurrentManaPercent(config *proto.APLValueCurrentManaPercent) APLValue {
-	unit := rot.getSourceUnit(config.SourceUnit)
+	unit := rot.GetSourceUnit(config.SourceUnit)
 	if unit.Get() == nil {
 		return nil
 	}
 	if !unit.Get().HasManaBar() {
-		rot.validationWarning("%s does not use Mana", unit.Get().Label)
+		rot.ValidationWarning("%s does not use Mana", unit.Get().Label)
 		return nil
 	}
 	return &APLValueCurrentManaPercent{
@@ -119,14 +119,14 @@ func (value *APLValueCurrentManaPercent) String() string {
 }
 
 type APLValueCurrentRage struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	unit *Unit
 }
 
 func (rot *APLRotation) newValueCurrentRage(config *proto.APLValueCurrentRage) APLValue {
 	unit := rot.unit
 	if !unit.HasRageBar() {
-		rot.validationWarning("%s does not use Rage", unit.Label)
+		rot.ValidationWarning("%s does not use Rage", unit.Label)
 		return nil
 	}
 	return &APLValueCurrentRage{
@@ -144,14 +144,14 @@ func (value *APLValueCurrentRage) String() string {
 }
 
 type APLValueCurrentEnergy struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	unit *Unit
 }
 
 func (rot *APLRotation) newValueCurrentEnergy(config *proto.APLValueCurrentEnergy) APLValue {
 	unit := rot.unit
 	if !unit.HasEnergyBar() {
-		rot.validationWarning("%s does not use Energy", unit.Label)
+		rot.ValidationWarning("%s does not use Energy", unit.Label)
 		return nil
 	}
 	return &APLValueCurrentEnergy{
@@ -169,14 +169,14 @@ func (value *APLValueCurrentEnergy) String() string {
 }
 
 type APLValueCurrentComboPoints struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	unit *Unit
 }
 
 func (rot *APLRotation) newValueCurrentComboPoints(config *proto.APLValueCurrentComboPoints) APLValue {
 	unit := rot.unit
 	if !unit.HasEnergyBar() {
-		rot.validationWarning("%s does not use Combo Points", unit.Label)
+		rot.ValidationWarning("%s does not use Combo Points", unit.Label)
 		return nil
 	}
 	return &APLValueCurrentComboPoints{
@@ -194,14 +194,14 @@ func (value *APLValueCurrentComboPoints) String() string {
 }
 
 type APLValueCurrentRunicPower struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	unit *Unit
 }
 
 func (rot *APLRotation) newValueCurrentRunicPower(config *proto.APLValueCurrentRunicPower) APLValue {
 	unit := rot.unit
 	if !unit.HasRunicPowerBar() {
-		rot.validationWarning("%s does not use Runic Power", unit.Label)
+		rot.ValidationWarning("%s does not use Runic Power", unit.Label)
 		return nil
 	}
 	return &APLValueCurrentRunicPower{
