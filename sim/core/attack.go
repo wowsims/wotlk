@@ -1,6 +1,7 @@
 package core
 
 import (
+	"golang.org/x/exp/slices"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -27,17 +28,17 @@ type Weapon struct {
 	SpellSchool                SpellSchool
 }
 
-func (w Weapon) DPS() float64 {
-	if w.SwingSpeed == 0 {
+func (weapon Weapon) DPS() float64 {
+	if weapon.SwingSpeed == 0 {
 		return 0
 	} else {
-		return (w.BaseDamageMin + w.BaseDamageMax) / 2.0 / w.SwingSpeed
+		return (weapon.BaseDamageMin + weapon.BaseDamageMax) / 2.0 / weapon.SwingSpeed
 	}
 }
 
-func (w Weapon) WithBonusDPS(bonusDps float64) Weapon {
-	newWeapon := w
-	bonusSwingDamage := bonusDps * w.SwingSpeed
+func (weapon Weapon) WithBonusDPS(bonusDps float64) Weapon {
+	newWeapon := weapon
+	bonusSwingDamage := bonusDps * weapon.SwingSpeed
 	newWeapon.BaseDamageMin += bonusSwingDamage
 	newWeapon.BaseDamageMax += bonusSwingDamage
 	return newWeapon
@@ -334,7 +335,7 @@ func (aa *AutoAttacks) IsEnabled() bool {
 }
 
 // Empty handler so Agents don't have to provide one if they have no logic to add.
-func (unit *Unit) OnAutoAttack(sim *Simulation, spell *Spell) {}
+func (unit *Unit) OnAutoAttack(_ *Simulation, _ *Spell) {}
 
 func (aa *AutoAttacks) finalize() {
 	if !aa.IsEnabled() {
@@ -370,7 +371,7 @@ func (aa *AutoAttacks) reset(sim *Simulation) {
 		var delay time.Duration
 		var isMHDelay bool
 		if aa.unit.Type == EnemyUnit {
-			delay = time.Duration(float64(aa.MH.SwingDuration / 2))
+			delay = aa.MH.SwingDuration / 2
 			isMHDelay = false
 		} else {
 			delay = time.Duration(sim.RandomFloat("SwingResetDelay") * float64(aa.MH.SwingDuration/2))
@@ -693,35 +694,26 @@ func (aa *AutoAttacks) NextAttackAt() time.Duration {
 }
 
 type PPMManager struct {
-	mhProcChance     float64
-	ohProcChance     float64
-	rangedProcChance float64
-	procMask         ProcMask
+	procMasks   []ProcMask
+	procChances []float64
 }
 
 // Returns whether the effect procced.
 func (ppmm *PPMManager) Proc(sim *Simulation, procMask ProcMask, label string) bool {
-	// Without this procs that can proc only from white attacks
-	// are still procing from specials
-	if !procMask.Matches(ppmm.procMask) {
-		return false
+	for i, m := range ppmm.procMasks {
+		if m.Matches(procMask) {
+			return sim.RandomFloat(label) < ppmm.procChances[i]
+		}
 	}
-
-	chance := ppmm.Chance(procMask)
-	return chance > 0 && sim.RandomFloat(label) < chance
+	return false
 }
 
 func (ppmm *PPMManager) Chance(procMask ProcMask) float64 {
-	if procMask.Matches(ProcMaskMeleeMH) {
-		return ppmm.mhProcChance
-	} else if procMask.Matches(ProcMaskMeleeOH) {
-		return ppmm.ohProcChance
-	} else if procMask.Matches(ProcMaskRanged) {
-		return ppmm.rangedProcChance
-	} else if procMask.Matches(ppmm.procMask) {
-		return ppmm.mhProcChance // probably a 'proc from proc' so use main hand.
+	for i, m := range ppmm.procMasks {
+		if m.Matches(procMask) {
+			return ppmm.procChances[i]
+		}
 	}
-
 	return 0
 }
 
@@ -730,40 +722,50 @@ func (aa *AutoAttacks) NewPPMManager(ppm float64, procMask ProcMask) PPMManager 
 		return PPMManager{}
 	}
 
-	ppmm := PPMManager{}
-	ppmm.procMask = procMask
-	if procMask.Matches(ProcMaskMeleeMH) {
-		ppmm.mhProcChance = ppm * aa.MH.SwingSpeed / 60.0
+	ppmm := PPMManager{procMasks: make([]ProcMask, 0, 2), procChances: make([]float64, 0, 2)}
+
+	mergeOrAppend := func(speed float64, mask ProcMask) {
+		if speed == 0 || mask == 0 {
+			return
+		}
+
+		if i := slices.Index(ppmm.procChances, speed); i != -1 {
+			ppmm.procMasks[i] |= mask
+			return
+		}
+
+		ppmm.procMasks = append(ppmm.procMasks, mask)
+		ppmm.procChances = append(ppmm.procChances, speed)
 	}
-	if procMask.Matches(ProcMaskMeleeOH) {
-		ppmm.ohProcChance = ppm * aa.OH.SwingSpeed / 60.0
-	}
-	if procMask.Matches(ProcMaskRanged) {
-		ppmm.rangedProcChance = ppm * aa.Ranged.SwingSpeed / 60.0
+
+	mergeOrAppend(aa.MH.SwingSpeed, procMask&^ProcMaskRanged&^ProcMaskMeleeOH) // "everything else", even if not explicitly flagged MH
+	mergeOrAppend(aa.OH.SwingSpeed, procMask&ProcMaskMeleeOH)
+	mergeOrAppend(aa.Ranged.SwingSpeed, procMask&ProcMaskRanged)
+
+	for i := range ppmm.procChances {
+		ppmm.procChances[i] *= ppm / 60
 	}
 
 	return ppmm
 }
 
 // Returns whether a PPM-based effect procced.
-//
 // Using NewPPMManager() is preferred; this function should only be used when
 // the attacker is not known at initialization time.
-func (aa *AutoAttacks) PPMProc(sim *Simulation, ppm float64, procMask ProcMask, label string) bool {
+func (aa *AutoAttacks) PPMProc(sim *Simulation, ppm float64, procMask ProcMask, label string, spell *Spell) bool {
 	if !aa.IsEnabled() {
 		return false
 	}
 
-	procChance := 0.0
-	if procMask.Matches(ProcMaskMeleeMH) {
-		procChance = ppm * aa.MH.SwingSpeed / 60.0
-	} else if procMask.Matches(ProcMaskMeleeOH) {
-		procChance = ppm * aa.OH.SwingSpeed / 60.0
-	} else if procMask.Matches(ProcMaskRanged) {
-		procChance = ppm * aa.Ranged.SwingSpeed / 60.0
+	switch {
+	case spell.ProcMask.Matches(procMask &^ ProcMaskMeleeOH &^ ProcMaskRanged):
+		return sim.RandomFloat(label) < ppm*aa.MH.SwingSpeed/60.0
+	case spell.ProcMask.Matches(procMask & ProcMaskMeleeOH):
+		return sim.RandomFloat(label) < ppm*aa.OH.SwingSpeed/60.0
+	case spell.ProcMask.Matches(procMask & ProcMaskRanged):
+		return sim.RandomFloat(label) < ppm*aa.Ranged.SwingSpeed/60.0
 	}
-
-	return procChance > 0 && sim.RandomFloat(label) < procChance
+	return false
 }
 
 func (unit *Unit) applyParryHaste() {

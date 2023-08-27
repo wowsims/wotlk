@@ -56,16 +56,12 @@ func init() {
 	})
 
 	// ApplyCrusaderEffect will be applied twice if there is two weapons with this enchant.
-	//   However it will automatically overwrite one of them so it should be ok.
+	//   However, it will automatically overwrite one of them, so it should be ok.
 	//   A single application of the aura will handle both mh and oh procs.
 	core.NewEnchantEffect(1900, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 1900
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 1900
-		if !mh && !oh {
-			return
-		}
-		procMask := core.GetMeleeProcMaskForHands(mh, oh)
+
+		procMask := character.GetMeleeProcMaskForEnchant(1900)
 		ppmm := character.AutoAttacks.NewPPMManager(1.0, procMask)
 
 		// -4 str per level over 60
@@ -80,7 +76,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
+				if !result.Landed() {
 					return
 				}
 
@@ -102,13 +98,12 @@ func init() {
 	})
 
 	// ApplyMongooseEffect will be applied twice if there is two weapons with this enchant.
-	//   However it will automatically overwrite one of them so it should be ok.
+	//   However, it will automatically overwrite one of them, so it should be ok.
 	//   A single application of the aura will handle both mh and oh procs.
 	core.NewEnchantEffect(2673, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 2673
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 2673
-		procMask := core.GetMeleeProcMaskForHands(mh, oh)
+
+		procMask := character.GetMeleeProcMaskForEnchant(2673)
 		ppmm := character.AutoAttacks.NewPPMManager(0.73, procMask)
 
 		mhAura := character.NewTemporaryStatsAura("Lightning Speed MH", core.ActionID{SpellID: 28093, Tag: 1}, stats.Stats{stats.MeleeHaste: 30.0, stats.Agility: 120}, time.Second*15)
@@ -121,7 +116,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
+				if !result.Landed() {
 					return
 				}
 
@@ -155,12 +150,8 @@ func init() {
 
 	core.NewEnchantEffect(3225, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3225
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3225
-		if !mh && !oh {
-			return
-		}
-		procMask := core.GetMeleeProcMaskForHands(mh, oh)
+
+		procMask := character.GetMeleeProcMaskForEnchant(3225)
 		ppmm := character.AutoAttacks.NewPPMManager(1.0, procMask)
 
 		procAura := character.NewTemporaryStatsAura("Executioner Proc", core.ActionID{SpellID: 42976}, stats.Stats{stats.ArmorPenetration: 120}, time.Second*15)
@@ -172,7 +163,7 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
+				if !result.Landed() {
 					return
 				}
 
@@ -212,16 +203,14 @@ func init() {
 				}
 
 				if spell.ProcMask.Matches(core.ProcMaskMelee) {
-					if !ppmm.Proc(sim, spell.ProcMask, "Deathfrost") {
-						return
+					if ppmm.Proc(sim, spell.ProcMask, "Deathfrost") {
+						procSpell.Cast(sim, result.Target)
 					}
-					procSpell.Cast(sim, result.Target)
 				} else if spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
-					if !icd.IsReady(sim) || sim.RandomFloat("Deathfrost") > 0.5 {
-						return
+					if icd.IsReady(sim) && sim.RandomFloat("Deathfrost") < 0.5 {
+						icd.Use(sim)
+						procSpell.Cast(sim, result.Target)
 					}
-					icd.Use(sim)
-					procSpell.Cast(sim, result.Target)
 				}
 			},
 		})
@@ -230,9 +219,9 @@ func init() {
 	}
 	core.NewEnchantEffect(3273, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == 3273
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == 3273
-		if !mh && !oh {
+
+		procMask := character.GetMeleeProcMaskForEnchant(3273)
+		if procMask == core.ProcMaskUnknown {
 			return
 		}
 
@@ -272,10 +261,10 @@ func init() {
 			},
 		})
 
-		if mh {
+		if procMask.Matches(core.ProcMaskMeleeMH) {
 			applyDeathfrostForWeapon(character, procSpell, true)
 		}
-		if oh {
+		if procMask.Matches(core.ProcMaskMeleeOH) {
 			applyDeathfrostForWeapon(character, procSpell, false)
 		}
 	})

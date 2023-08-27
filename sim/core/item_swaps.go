@@ -58,10 +58,7 @@ func (character *Character) RegisterOnItemSwap(callback OnSwapItem) {
 func (swap *ItemSwap) RegisterOnSwapItemForEffectWithPPMManager(effectID int32, ppm float64, ppmm *PPMManager, aura *Aura) {
 	character := swap.character
 	character.RegisterOnItemSwap(func(sim *Simulation) {
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == effectID
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == effectID
-
-		procMask := GetMeleeProcMaskForHands(mh, oh)
+		procMask := character.GetMeleeProcMaskForEnchant(effectID)
 		*ppmm = character.AutoAttacks.NewPPMManager(ppm, procMask)
 
 		if ppmm.Chance(procMask) == 0 {
@@ -77,10 +74,9 @@ func (swap *ItemSwap) RegisterOnSwapItemForEffectWithPPMManager(effectID int32, 
 func (swap *ItemSwap) RegisterOnSwapItemForEffect(effectID int32, aura *Aura) {
 	character := swap.character
 	character.RegisterOnItemSwap(func(sim *Simulation) {
-		mh := character.Equip[proto.ItemSlot_ItemSlotMainHand].Enchant.EffectID == effectID
-		oh := character.Equip[proto.ItemSlot_ItemSlotOffHand].Enchant.EffectID == effectID
+		procMask := character.GetMeleeProcMaskForEnchant(effectID)
 
-		if !mh && !oh {
+		if procMask == ProcMaskUnknown {
 			aura.Deactivate(sim)
 		} else {
 			aura.Activate(sim)

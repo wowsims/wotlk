@@ -440,14 +440,14 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !spell.ProcMask.Matches(core.ProcMaskMelee) || !result.Landed() {
+			if !result.Landed() {
 				return
 			}
-			if !ppmm.Proc(sim, spell.ProcMask, "Maelstrom Weapon") {
-				return
+
+			if ppmm.Proc(sim, spell.ProcMask, "Maelstrom Weapon") {
+				shaman.MaelstromWeaponAura.Activate(sim)
+				shaman.MaelstromWeaponAura.AddStack(sim)
 			}
-			shaman.MaelstromWeaponAura.Activate(sim)
-			shaman.MaelstromWeaponAura.AddStack(sim)
 		},
 	})
 }

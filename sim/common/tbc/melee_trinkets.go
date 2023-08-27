@@ -92,19 +92,18 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				// mask: 340
-				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+				if !result.Landed() {
 					return
 				}
+
 				if !icd.IsReady(sim) {
 					return
 				}
-				if !ppmm.Proc(sim, spell.ProcMask, "dragonspine") {
-					return
-				}
-				icd.Use(sim)
 
-				procAura.Activate(sim)
+				if ppmm.Proc(sim, spell.ProcMask, "dragonspine") {
+					icd.Use(sim)
+					procAura.Activate(sim)
+				}
 			},
 		})
 	})
@@ -158,15 +157,13 @@ func init() {
 				aura.Activate(sim)
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				// mask 340
-				if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
-					return
-				}
-				if !ppmm.Proc(sim, spell.ProcMask, "Madness of the Betrayer") {
+				if !result.Landed() {
 					return
 				}
 
-				procAura.Activate(sim)
+				if ppmm.Proc(sim, spell.ProcMask, "Madness of the Betrayer") {
+					procAura.Activate(sim)
+				}
 			},
 		})
 	})

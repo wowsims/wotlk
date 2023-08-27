@@ -906,8 +906,8 @@ func init() {
 
 		core.NewItemEffect(itemID, func(agent core.Agent) {
 			character := agent.GetCharacter()
-			mh, oh := character.GetWeaponHands(itemID)
-			procMask := core.GetMeleeProcMaskForHands(mh, oh)
+
+			procMask := character.GetMeleeProcMaskForItem(itemID)
 			ppmm := character.AutoAttacks.NewPPMManager(2.0, procMask)
 
 			procActionID := core.ActionID{ItemID: itemID}
@@ -935,6 +935,7 @@ func init() {
 					if !result.Landed() {
 						return
 					}
+
 					if ppmm.Proc(sim, spell.ProcMask, name) {
 						proc.Cast(sim, result.Target)
 					}

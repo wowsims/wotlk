@@ -30,7 +30,7 @@ var ItemSetFistsOfFury = core.NewItemSet(core.ItemSet{
 				},
 			})
 
-			ppmm := character.AutoAttacks.NewPPMManager(2, core.ProcMaskMelee)
+			ppmm := character.AutoAttacks.NewPPMManager(2.0, core.ProcMaskMelee)
 
 			character.RegisterAura(core.Aura{
 				Label:    "Fists of Fury",
@@ -39,14 +39,13 @@ var ItemSetFistsOfFury = core.NewItemSet(core.ItemSet{
 					aura.Activate(sim)
 				},
 				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-					if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
-						return
-					}
-					if !ppmm.Proc(sim, spell.ProcMask, "The Fists of Fury") {
+					if !result.Landed() {
 						return
 					}
 
-					procSpell.Cast(sim, result.Target)
+					if ppmm.Proc(sim, spell.ProcMask, "The Fists of Fury") {
+						procSpell.Cast(sim, result.Target)
+					}
 				},
 			})
 		},
@@ -157,20 +156,14 @@ var ItemSetTwinBladesOfAzzinoth = core.NewItemSet(core.ItemSet{
 						return
 					}
 
-					// https://wotlk.wowhead.com/spell=41434/the-twin-blades-of-azzinoth, proc mask = 20.
-					if !spell.ProcMask.Matches(core.ProcMaskMelee) {
-						return
-					}
-
 					if !icd.IsReady(sim) {
 						return
 					}
 
-					if !ppmm.Proc(sim, spell.ProcMask, "Twin Blades of Azzinoth") {
-						return
+					if ppmm.Proc(sim, spell.ProcMask, "Twin Blades of Azzinoth") {
+						icd.Use(sim)
+						procAura.Activate(sim)
 					}
-					icd.Use(sim)
-					procAura.Activate(sim)
 				},
 			})
 		},
