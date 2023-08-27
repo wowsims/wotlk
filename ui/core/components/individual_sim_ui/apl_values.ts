@@ -51,6 +51,7 @@ import {
 	APLValueAuraRemainingTime,
 	APLValueAuraNumStacks,
 	APLValueAuraInternalCooldown,
+	APLValueAuraICDOnCooldownWithReactionTime,
 	APLValueAuraShouldRefresh,
 	APLValueDotIsActive,
 	APLValueDotRemainingTime,
@@ -748,7 +749,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 	'auraIsActive': inputBuilder({
 		label: 'Aura Active',
 		submenu: ['Aura'],
-		shortDescription: '<b>True</b> if the aura is currently active on self, otherwise <b>False</b>.',
+		shortDescription: '<b>True</b> if the aura is currently active, otherwise <b>False</b>.',
 		newValue: APLValueAuraIsActive.create,
 		fields: [
 			AplHelpers.unitFieldConfig('sourceUnit', 'aura_sources'),
@@ -758,7 +759,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 	'auraIsActiveWithReactionTime': inputBuilder({
 		label: 'Aura Active (with Reaction Time)',
 		submenu: ['Aura'],
-		shortDescription: '<b>True</b> if the aura is currently active on self AND it has been active for at least as long as the player reaction time (configured in Settings), otherwise <b>False</b>.',
+		shortDescription: '<b>True</b> if the aura is currently active AND it has been active for at least as long as the player reaction time (configured in Settings), otherwise <b>False</b>.',
 		newValue: APLValueAuraIsActiveWithReactionTime.create,
 		fields: [
 			AplHelpers.unitFieldConfig('sourceUnit', 'aura_sources'),
@@ -768,7 +769,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 	'auraRemainingTime': inputBuilder({
 		label: 'Aura Remaining Time',
 		submenu: ['Aura'],
-		shortDescription: 'Time remaining before this aura will expire, or 0 if the aura is not currently active on self.',
+		shortDescription: 'Time remaining before this aura will expire, or 0 if the aura is not currently active.',
 		newValue: APLValueAuraRemainingTime.create,
 		fields: [
 			AplHelpers.unitFieldConfig('sourceUnit', 'aura_sources'),
@@ -778,7 +779,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 	'auraNumStacks': inputBuilder({
 		label: 'Aura Num Stacks',
 		submenu: ['Aura'],
-		shortDescription: 'Number of stacks of the aura on self.',
+		shortDescription: 'Number of stacks of the aura.',
 		newValue: APLValueAuraNumStacks.create,
 		fields: [
 			AplHelpers.unitFieldConfig('sourceUnit', 'aura_sources'),
@@ -786,10 +787,20 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		],
 	}),
 	'auraInternalCooldown': inputBuilder({
-		label: 'Aura Internal Cooldown',
+		label: 'Aura ICD Remaining Time',
 		submenu: ['Aura'],
-		shortDescription: 'Time remaining before this aura can be applied again.',
+		shortDescription: 'Time remaining before this aura\'s internal cooldown will be ready, or <b>0</b> if the ICD is ready now.',
 		newValue: APLValueAuraInternalCooldown.create,
+		fields: [
+			AplHelpers.unitFieldConfig('sourceUnit', 'aura_sources'),
+			AplHelpers.actionIdFieldConfig('auraId', 'icd_auras', 'sourceUnit'),
+		],
+	}),
+	'auraIcdOnCooldownWithReactionTime': inputBuilder({
+		label: 'Aura ICD On Cooldown (with Reaction Time)',
+		submenu: ['Aura'],
+		shortDescription: '<b>True</b> if the aura\'s ICD is currently on cooldown AND it has been active for at least as long as the player reaction time (configured in Settings), otherwise <b>False</b>.',
+		newValue: APLValueAuraICDOnCooldownWithReactionTime.create,
 		fields: [
 			AplHelpers.unitFieldConfig('sourceUnit', 'aura_sources'),
 			AplHelpers.actionIdFieldConfig('auraId', 'icd_auras', 'sourceUnit'),

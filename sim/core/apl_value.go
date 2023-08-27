@@ -163,6 +163,8 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 		return rot.newValueAuraNumStacks(config.GetAuraNumStacks())
 	case *proto.APLValue_AuraInternalCooldown:
 		return rot.newValueAuraInternalCooldown(config.GetAuraInternalCooldown())
+	case *proto.APLValue_AuraIcdOnCooldownWithReactionTime:
+		return rot.newValueAuraICDOnCooldownWithReactionTime(config.GetAuraIcdOnCooldownWithReactionTime())
 	case *proto.APLValue_AuraShouldRefresh:
 		return rot.newValueAuraShouldRefresh(config.GetAuraShouldRefresh())
 
