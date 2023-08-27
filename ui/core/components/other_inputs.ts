@@ -82,6 +82,18 @@ export function makePhaseSelector(parent: HTMLElement, sim: Sim): EnumPicker<Sim
 	});
 }
 
+export const ReactionTime = {
+	type: 'number' as const,
+	label: 'Reaction Time',
+	labelTooltip: 'Reaction time of the player, in milliseconds. Used with certain APL values (such as \'Aura Is Active With Reaction Time\').',
+	changedEvent: (player: Player<any>) => TypedEvent.onAny([player.reactionTimeChangeEmitter, player.rotationChangeEmitter]),
+	getValue: (player: Player<any>) => player.getReactionTime(),
+	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
+		player.setReactionTime(eventID, newValue);
+	},
+	enableWhen: (player: Player<any>) => player.aplRotation.enabled,
+};
+
 export const InFrontOfTarget = {
 	type: 'boolean' as const,
 	label: 'In Front of Target',

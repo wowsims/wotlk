@@ -47,6 +47,7 @@ import {
 	APLValueSpellChannelTime,
 	APLValueSpellCPM,
 	APLValueAuraIsActive,
+	APLValueAuraIsActiveWithReactionTime,
 	APLValueAuraRemainingTime,
 	APLValueAuraNumStacks,
 	APLValueAuraInternalCooldown,
@@ -749,6 +750,16 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		submenu: ['Aura'],
 		shortDescription: '<b>True</b> if the aura is currently active on self, otherwise <b>False</b>.',
 		newValue: APLValueAuraIsActive.create,
+		fields: [
+			AplHelpers.unitFieldConfig('sourceUnit', 'aura_sources'),
+			AplHelpers.actionIdFieldConfig('auraId', 'auras', 'sourceUnit'),
+		],
+	}),
+	'auraIsActiveWithReactionTime': inputBuilder({
+		label: 'Aura Active (with Reaction Time)',
+		submenu: ['Aura'],
+		shortDescription: '<b>True</b> if the aura is currently active on self AND it has been active for at least as long as the player reaction time (configured in Settings), otherwise <b>False</b>.',
+		newValue: APLValueAuraIsActiveWithReactionTime.create,
 		fields: [
 			AplHelpers.unitFieldConfig('sourceUnit', 'aura_sources'),
 			AplHelpers.actionIdFieldConfig('auraId', 'auras', 'sourceUnit'),

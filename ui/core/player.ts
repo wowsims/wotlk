@@ -205,6 +205,7 @@ export class Player<SpecType extends Spec> {
 	private glyphs: Glyphs = Glyphs.create();
 	private specOptions: SpecOptions<SpecType>;
 	private cooldowns: Cooldowns = Cooldowns.create();
+	private reactionTime: number = 0;
 	private inFrontOfTarget: boolean = false;
 	private distanceFromTarget: number = 0;
 	private healingModel: HealingModel = HealingModel.create();
@@ -236,6 +237,7 @@ export class Player<SpecType extends Spec> {
 	readonly glyphsChangeEmitter = new TypedEvent<void>('PlayerGlyphs');
 	readonly specOptionsChangeEmitter = new TypedEvent<void>('PlayerSpecOptions');
 	readonly cooldownsChangeEmitter = new TypedEvent<void>('PlayerCooldowns');
+	readonly reactionTimeChangeEmitter = new TypedEvent<void>('PlayerReactionTime');
 	readonly inFrontOfTargetChangeEmitter = new TypedEvent<void>('PlayerInFrontOfTarget');
 	readonly distanceFromTargetChangeEmitter = new TypedEvent<void>('PlayerDistanceFromTarget');
 	readonly healingModelChangeEmitter = new TypedEvent<void>('PlayerHealingModel');
@@ -272,6 +274,7 @@ export class Player<SpecType extends Spec> {
 			this.glyphsChangeEmitter,
 			this.specOptionsChangeEmitter,
 			this.cooldownsChangeEmitter,
+			this.reactionTimeChangeEmitter,
 			this.inFrontOfTargetChangeEmitter,
 			this.distanceFromTargetChangeEmitter,
 			this.healingModelChangeEmitter,
@@ -715,6 +718,18 @@ export class Player<SpecType extends Spec> {
 		this.specOptionsChangeEmitter.emit(eventID);
 	}
 
+	getReactionTime(): number {
+		return this.reactionTime;
+	}
+
+	setReactionTime(eventID: EventID, newReactionTime: number) {
+		if (newReactionTime == this.reactionTime)
+			return;
+
+		this.reactionTime = newReactionTime;
+		this.reactionTimeChangeEmitter.emit(eventID);
+	}
+
 	getInFrontOfTarget(): boolean {
 		return this.inFrontOfTarget;
 	}
@@ -1104,6 +1119,7 @@ export class Player<SpecType extends Spec> {
 				rotation: this.aplRotation,
 				profession1: this.getProfession1(),
 				profession2: this.getProfession2(),
+				reactionTimeMs: this.getReactionTime(),
 				inFrontOfTarget: this.getInFrontOfTarget(),
 				distanceFromTarget: this.getDistanceFromTarget(),
 				healingModel: this.getHealingModel(),
@@ -1138,6 +1154,7 @@ export class Player<SpecType extends Spec> {
 			this.setGlyphs(eventID, proto.glyphs || Glyphs.create());
 			this.setProfession1(eventID, proto.profession1);
 			this.setProfession2(eventID, proto.profession2);
+			this.setReactionTime(eventID, proto.reactionTimeMs);
 			this.setInFrontOfTarget(eventID, proto.inFrontOfTarget);
 			this.setDistanceFromTarget(eventID, proto.distanceFromTarget);
 			this.setHealingModel(eventID, proto.healingModel || HealingModel.create());
@@ -1183,6 +1200,7 @@ export class Player<SpecType extends Spec> {
 
 	applySharedDefaults(eventID: EventID) {
 		TypedEvent.freezeAllAndDo(() => {
+			this.setReactionTime(eventID, 200);
 			this.setInFrontOfTarget(eventID, isTankSpec(this.spec));
 			this.setHealingModel(eventID, HealingModel.create({
 				burstWindow: isTankSpec(this.spec) ? 6 : 0,

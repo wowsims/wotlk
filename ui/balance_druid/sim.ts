@@ -95,6 +95,7 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 			otherInputs: {
 				inputs: [
 					OtherInputs.TankAssignment,
+					OtherInputs.ReactionTime,
 					OtherInputs.DistanceFromTarget,
 				],
 			},

@@ -52,7 +52,7 @@ message APLAction {
     }
 }
 
-// NextIndex: 50
+// NextIndex: 51
 message APLValue {
     oneof value {
         // Operators
@@ -109,6 +109,7 @@ message APLValue {
 
         // Aura values
         APLValueAuraIsActive aura_is_active = 22;
+        APLValueAuraIsActiveWithReactionTime aura_is_active_with_reaction_time = 50;
         APLValueAuraRemainingTime aura_remaining_time = 23;
         APLValueAuraNumStacks aura_num_stacks = 24;
         APLValueAuraInternalCooldown aura_internal_cooldown = 39;
@@ -343,6 +344,10 @@ message APLValueSpellCPM {
 }
 
 message APLValueAuraIsActive {
+    UnitReference source_unit = 2;
+    ActionID aura_id = 1;
+}
+message APLValueAuraIsActiveWithReactionTime {
     UnitReference source_unit = 2;
     ActionID aura_id = 1;
 }
