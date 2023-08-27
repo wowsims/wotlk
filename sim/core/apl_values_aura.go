@@ -31,6 +31,33 @@ func (value *APLValueAuraIsActive) String() string {
 	return fmt.Sprintf("Aura Active(%s)", value.aura.String())
 }
 
+type APLValueAuraIsActiveWithReactionTime struct {
+	DefaultAPLValueImpl
+	aura         AuraReference
+	reactionTime time.Duration
+}
+
+func (rot *APLRotation) newValueAuraIsActiveWithReactionTime(config *proto.APLValueAuraIsActiveWithReactionTime) APLValue {
+	aura := rot.GetAPLAura(rot.GetSourceUnit(config.SourceUnit), config.AuraId)
+	if aura.Get() == nil {
+		return nil
+	}
+	return &APLValueAuraIsActiveWithReactionTime{
+		aura:         aura,
+		reactionTime: rot.unit.ReactionTime,
+	}
+}
+func (value *APLValueAuraIsActiveWithReactionTime) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeBool
+}
+func (value *APLValueAuraIsActiveWithReactionTime) GetBool(sim *Simulation) bool {
+	aura := value.aura.Get()
+	return aura.IsActive() && aura.TimeActive(sim) >= value.reactionTime
+}
+func (value *APLValueAuraIsActiveWithReactionTime) String() string {
+	return fmt.Sprintf("Aura Active With Reaction Time(%s)", value.aura.String())
+}
+
 type APLValueAuraRemainingTime struct {
 	DefaultAPLValueImpl
 	aura AuraReference

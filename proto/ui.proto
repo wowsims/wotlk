@@ -293,6 +293,11 @@ message SavedSettings {
 	Cooldowns cooldowns = 6;
 	string rotation_json = 8;
 	repeated Profession professions = 9;
+
+	int32 reaction_time_ms = 10;
+	bool in_front_of_target = 11;
+	double distance_from_target = 12;
+	HealingModel healing_model = 13;
 }
 
 message SavedTalents {

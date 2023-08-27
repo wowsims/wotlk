@@ -3,6 +3,7 @@ import {
 	Consumes,
 	Cooldowns,
 	Debuffs,
+	HealingModel,
 	IndividualBuffs,
 	PartyBuffs,
 	Profession,
@@ -394,6 +395,10 @@ export class SettingsTab extends SimTab {
 					consumes: player.getConsumes(),
 					race: player.getRace(),
 					professions: player.getProfessions(),
+					reactionTimeMs: player.getReactionTime(),
+					inFrontOfTarget: player.getInFrontOfTarget(),
+					distanceFromTarget: player.getDistanceFromTarget(),
+					healingModel: player.getHealingModel(),
 					cooldowns: aplLaunchStatuses[simUI.player.spec] == LaunchStatus.Unlaunched ? player.getCooldowns() : undefined,
 					rotationJson: aplLaunchStatuses[simUI.player.spec] == LaunchStatus.Unlaunched ? JSON.stringify(player.specTypeFunctions.rotationToJson(player.getRotation())) : undefined,
 				});
@@ -410,6 +415,10 @@ export class SettingsTab extends SimTab {
 					simUI.player.setConsumes(eventID, newSettings.consumes || Consumes.create());
 					simUI.player.setRace(eventID, newSettings.race);
 					simUI.player.setProfessions(eventID, newSettings.professions);
+					simUI.player.setReactionTime(eventID, newSettings.reactionTimeMs);
+					simUI.player.setInFrontOfTarget(eventID, newSettings.inFrontOfTarget);
+					simUI.player.setDistanceFromTarget(eventID, newSettings.distanceFromTarget);
+					simUI.player.setHealingModel(eventID, newSettings.healingModel || HealingModel.create());
 					if (aplLaunchStatuses[simUI.player.spec] == LaunchStatus.Unlaunched) {
 						simUI.player.setCooldowns(eventID, newSettings.cooldowns || Cooldowns.create());
 						if (newSettings.rotationJson) {
@@ -426,6 +435,10 @@ export class SettingsTab extends SimTab {
 				this.simUI.player.consumesChangeEmitter,
 				this.simUI.player.raceChangeEmitter,
 				this.simUI.player.professionChangeEmitter,
+				this.simUI.player.reactionTimeChangeEmitter,
+				this.simUI.player.inFrontOfTargetChangeEmitter,
+				this.simUI.player.distanceFromTargetChangeEmitter,
+				this.simUI.player.healingModelChangeEmitter,
 			].concat(aplLaunchStatuses[this.simUI.player.spec] == LaunchStatus.Unlaunched ? [
 				this.simUI.player.cooldownsChangeEmitter,
 				this.simUI.player.rotationChangeEmitter,
