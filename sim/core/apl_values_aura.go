@@ -131,7 +131,34 @@ func (value *APLValueAuraInternalCooldown) GetDuration(sim *Simulation) time.Dur
 	return value.aura.Get().Icd.TimeToReady(sim)
 }
 func (value *APLValueAuraInternalCooldown) String() string {
-	return fmt.Sprintf("Aura ICD(%s)", value.aura.String())
+	return fmt.Sprintf("Aura Remaining ICD(%s)", value.aura.String())
+}
+
+type APLValueAuraICDOnCooldownWithReactionTime struct {
+	DefaultAPLValueImpl
+	aura         AuraReference
+	reactionTime time.Duration
+}
+
+func (rot *APLRotation) newValueAuraICDOnCooldownWithReactionTime(config *proto.APLValueAuraICDOnCooldownWithReactionTime) APLValue {
+	aura := rot.GetAPLICDAura(rot.GetSourceUnit(config.SourceUnit), config.AuraId)
+	if aura.Get() == nil {
+		return nil
+	}
+	return &APLValueAuraICDOnCooldownWithReactionTime{
+		aura:         aura,
+		reactionTime: rot.unit.ReactionTime,
+	}
+}
+func (value *APLValueAuraICDOnCooldownWithReactionTime) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeBool
+}
+func (value *APLValueAuraICDOnCooldownWithReactionTime) GetBool(sim *Simulation) bool {
+	aura := value.aura.Get()
+	return !aura.Icd.IsReady(sim) && aura.TimeActive(sim) >= value.reactionTime
+}
+func (value *APLValueAuraICDOnCooldownWithReactionTime) String() string {
+	return fmt.Sprintf("Aura ICD on Cooldown with Reaction Time(%s)", value.aura.String())
 }
 
 type APLValueAuraShouldRefresh struct {
