@@ -13,11 +13,11 @@ type APLActionCastSpell struct {
 }
 
 func (rot *APLRotation) newActionCastSpell(config *proto.APLActionCastSpell) APLActionImpl {
-	spell := rot.aplGetSpell(config.SpellId)
+	spell := rot.GetAPLSpell(config.SpellId)
 	if spell == nil {
 		return nil
 	}
-	target := rot.getTargetUnit(config.Target)
+	target := rot.GetTargetUnit(config.Target)
 	if target.Get() == nil {
 		return nil
 	}
@@ -48,7 +48,7 @@ type APLActionMultidot struct {
 func (rot *APLRotation) newActionMultidot(config *proto.APLActionMultidot) APLActionImpl {
 	unit := rot.unit
 
-	spell := rot.aplGetMultidotSpell(config.SpellId)
+	spell := rot.GetAPLMultidotSpell(config.SpellId)
 	if spell == nil {
 		return nil
 	}
@@ -64,7 +64,7 @@ func (rot *APLRotation) newActionMultidot(config *proto.APLActionMultidot) APLAc
 		numTargets = int32(len(unit.Env.Raid.AllPlayerUnits))
 	}
 	if numTargets < maxDots {
-		rot.validationWarning("Encounter only has %d targets. Using that for Max Dots instead of %d", numTargets, maxDots)
+		rot.ValidationWarning("Encounter only has %d targets. Using that for Max Dots instead of %d", numTargets, maxDots)
 		maxDots = numTargets
 	}
 
@@ -123,7 +123,7 @@ type APLActionMultishield struct {
 func (rot *APLRotation) newActionMultishield(config *proto.APLActionMultishield) APLActionImpl {
 	unit := rot.unit
 
-	spell := rot.aplGetMultishieldSpell(config.SpellId)
+	spell := rot.GetAPLMultishieldSpell(config.SpellId)
 	if spell == nil {
 		return nil
 	}
@@ -136,7 +136,7 @@ func (rot *APLRotation) newActionMultishield(config *proto.APLActionMultishield)
 	maxShields := config.MaxShields
 	numTargets := int32(len(unit.Env.Raid.AllPlayerUnits))
 	if numTargets < maxShields {
-		rot.validationWarning("Encounter only has %d targets. Using that for Max Shields instead of %d", numTargets, maxShields)
+		rot.ValidationWarning("Encounter only has %d targets. Using that for Max Shields instead of %d", numTargets, maxShields)
 		maxShields = numTargets
 	}
 

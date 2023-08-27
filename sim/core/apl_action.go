@@ -108,6 +108,11 @@ func (rot *APLRotation) newAPLActionImpl(config *proto.APLAction) APLActionImpl 
 		return nil
 	}
 
+	customAction := rot.unit.Env.Raid.GetPlayerFromUnit(rot.unit).NewAPLAction(rot, config)
+	if customAction != nil {
+		return customAction
+	}
+
 	switch config.Action.(type) {
 	case *proto.APLAction_Sequence:
 		return rot.newActionSequence(config.GetSequence())
@@ -136,4 +141,9 @@ func (rot *APLRotation) newAPLActionImpl(config *proto.APLAction) APLActionImpl 
 	default:
 		return nil
 	}
+}
+
+// Default implementation of Agent.NewAPLAction so each spec doesn't need this boilerplate.
+func (unit *Unit) NewAPLAction(rot *APLRotation, config *proto.APLAction) APLActionImpl {
+	return nil
 }

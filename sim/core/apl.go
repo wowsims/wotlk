@@ -29,7 +29,7 @@ type APLRotation struct {
 	priorityListWarnings [][]string
 }
 
-func (rot *APLRotation) validationWarning(message string, vals ...interface{}) {
+func (rot *APLRotation) ValidationWarning(message string, vals ...interface{}) {
 	warning := fmt.Sprintf(message, vals...)
 	rot.curWarnings = append(rot.curWarnings, warning)
 }
@@ -51,7 +51,7 @@ func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
 			if doAtVal != nil {
 				doAt := doAtVal.GetDuration(nil)
 				if doAt > 0 {
-					rotation.validationWarning("Invalid time for 'Do At', ignoring this Prepull Action")
+					rotation.ValidationWarning("Invalid time for 'Do At', ignoring this Prepull Action")
 				} else {
 					action := rotation.newAPLAction(prepullItem.Action)
 					if action != nil {
@@ -107,7 +107,7 @@ func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
 
 	// If user has a Prepull potion set but does not use it in their APL settings, we enable it here.
 	rotation.parsingPrepull = true
-	prepotSpell := rotation.aplGetSpell(ActionID{OtherID: proto.OtherAction_OtherActionPotion}.ToProto())
+	prepotSpell := rotation.GetAPLSpell(ActionID{OtherID: proto.OtherAction_OtherActionPotion}.ToProto())
 	rotation.parsingPrepull = false
 	if prepotSpell != nil {
 		found := false

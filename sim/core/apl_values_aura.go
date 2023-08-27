@@ -8,12 +8,12 @@ import (
 )
 
 type APLValueAuraIsActive struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	aura AuraReference
 }
 
 func (rot *APLRotation) newValueAuraIsActive(config *proto.APLValueAuraIsActive) APLValue {
-	aura := rot.aplGetAura(rot.getSourceUnit(config.SourceUnit), config.AuraId)
+	aura := rot.GetAPLAura(rot.GetSourceUnit(config.SourceUnit), config.AuraId)
 	if aura.Get() == nil {
 		return nil
 	}
@@ -32,12 +32,12 @@ func (value *APLValueAuraIsActive) String() string {
 }
 
 type APLValueAuraRemainingTime struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	aura AuraReference
 }
 
 func (rot *APLRotation) newValueAuraRemainingTime(config *proto.APLValueAuraRemainingTime) APLValue {
-	aura := rot.aplGetAura(rot.getSourceUnit(config.SourceUnit), config.AuraId)
+	aura := rot.GetAPLAura(rot.GetSourceUnit(config.SourceUnit), config.AuraId)
 	if aura.Get() == nil {
 		return nil
 	}
@@ -56,17 +56,17 @@ func (value *APLValueAuraRemainingTime) String() string {
 }
 
 type APLValueAuraNumStacks struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	aura AuraReference
 }
 
 func (rot *APLRotation) newValueAuraNumStacks(config *proto.APLValueAuraNumStacks) APLValue {
-	aura := rot.aplGetAura(rot.getSourceUnit(config.SourceUnit), config.AuraId)
+	aura := rot.GetAPLAura(rot.GetSourceUnit(config.SourceUnit), config.AuraId)
 	if aura.Get() == nil {
 		return nil
 	}
 	if aura.Get().MaxStacks == 0 {
-		rot.validationWarning("%s is not a stackable aura", ProtoToActionID(config.AuraId))
+		rot.ValidationWarning("%s is not a stackable aura", ProtoToActionID(config.AuraId))
 		return nil
 	}
 	return &APLValueAuraNumStacks{
@@ -84,12 +84,12 @@ func (value *APLValueAuraNumStacks) String() string {
 }
 
 type APLValueAuraInternalCooldown struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	aura AuraReference
 }
 
 func (rot *APLRotation) newValueAuraInternalCooldown(config *proto.APLValueAuraInternalCooldown) APLValue {
-	aura := rot.aplGetICDAura(rot.getSourceUnit(config.SourceUnit), config.AuraId)
+	aura := rot.GetAPLICDAura(rot.GetSourceUnit(config.SourceUnit), config.AuraId)
 	if aura.Get() == nil {
 		return nil
 	}
@@ -108,13 +108,13 @@ func (value *APLValueAuraInternalCooldown) String() string {
 }
 
 type APLValueAuraShouldRefresh struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	aura       AuraReference
 	maxOverlap APLValue
 }
 
 func (rot *APLRotation) newValueAuraShouldRefresh(config *proto.APLValueAuraShouldRefresh) APLValue {
-	aura := rot.aplGetAura(rot.getTargetUnit(config.SourceUnit), config.AuraId)
+	aura := rot.GetAPLAura(rot.GetTargetUnit(config.SourceUnit), config.AuraId)
 	if aura.Get() == nil {
 		return nil
 	}

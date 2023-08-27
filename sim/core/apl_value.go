@@ -29,31 +29,36 @@ type APLValue interface {
 }
 
 // Provides empty implementations for the GetX() value interface functions.
-type defaultAPLValueImpl struct {
+type DefaultAPLValueImpl struct {
 }
 
-func (impl defaultAPLValueImpl) GetInnerValues() []APLValue { return nil }
-func (impl defaultAPLValueImpl) Finalize(*APLRotation)      {}
+func (impl DefaultAPLValueImpl) GetInnerValues() []APLValue { return nil }
+func (impl DefaultAPLValueImpl) Finalize(*APLRotation)      {}
 
-func (impl defaultAPLValueImpl) GetBool(sim *Simulation) bool {
+func (impl DefaultAPLValueImpl) GetBool(sim *Simulation) bool {
 	panic("Unimplemented GetBool")
 }
-func (impl defaultAPLValueImpl) GetInt(sim *Simulation) int32 {
+func (impl DefaultAPLValueImpl) GetInt(sim *Simulation) int32 {
 	panic("Unimplemented GetInt")
 }
-func (impl defaultAPLValueImpl) GetFloat(sim *Simulation) float64 {
+func (impl DefaultAPLValueImpl) GetFloat(sim *Simulation) float64 {
 	panic("Unimplemented GetFloat")
 }
-func (impl defaultAPLValueImpl) GetDuration(sim *Simulation) time.Duration {
+func (impl DefaultAPLValueImpl) GetDuration(sim *Simulation) time.Duration {
 	panic("Unimplemented GetDuration")
 }
-func (impl defaultAPLValueImpl) GetString(sim *Simulation) string {
+func (impl DefaultAPLValueImpl) GetString(sim *Simulation) string {
 	panic("Unimplemented GetString")
 }
 
 func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 	if config == nil {
 		return nil
+	}
+
+	customValue := rot.unit.Env.Raid.GetPlayerFromUnit(rot.unit).NewAPLValue(rot, config)
+	if customValue != nil {
+		return customValue
 	}
 
 	switch config.Value.(type) {
@@ -176,4 +181,9 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 	default:
 		return nil
 	}
+}
+
+// Default implementation of Agent.NewAPLValue so each spec doesn't need this boilerplate.
+func (unit *Unit) NewAPLValue(rot *APLRotation, config *proto.APLValue) APLValue {
+	return nil
 }

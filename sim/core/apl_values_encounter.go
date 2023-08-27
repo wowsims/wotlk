@@ -8,7 +8,7 @@ import (
 )
 
 type APLValueCurrentTime struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 }
 
 func (rot *APLRotation) newValueCurrentTime(config *proto.APLValueCurrentTime) APLValue {
@@ -25,7 +25,7 @@ func (value *APLValueCurrentTime) String() string {
 }
 
 type APLValueCurrentTimePercent struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 }
 
 func (rot *APLRotation) newValueCurrentTimePercent(config *proto.APLValueCurrentTimePercent) APLValue {
@@ -42,7 +42,7 @@ func (value *APLValueCurrentTimePercent) String() string {
 }
 
 type APLValueRemainingTime struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 }
 
 func (rot *APLRotation) newValueRemainingTime(config *proto.APLValueRemainingTime) APLValue {
@@ -59,7 +59,7 @@ func (value *APLValueRemainingTime) String() string {
 }
 
 type APLValueRemainingTimePercent struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 }
 
 func (rot *APLRotation) newValueRemainingTimePercent(config *proto.APLValueRemainingTimePercent) APLValue {
@@ -76,7 +76,7 @@ func (value *APLValueRemainingTimePercent) String() string {
 }
 
 type APLValueNumberTargets struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 }
 
 func (rot *APLRotation) newValueNumberTargets(config *proto.APLValueNumberTargets) APLValue {
@@ -93,7 +93,7 @@ func (value *APLValueNumberTargets) String() string {
 }
 
 type APLValueIsExecutePhase struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	threshold proto.APLValueIsExecutePhase_ExecutePhaseThreshold
 }
 

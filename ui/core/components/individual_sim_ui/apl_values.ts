@@ -1,4 +1,12 @@
 import {
+	Class,
+} from '../../proto/common.js';
+
+import {
+	ShamanTotems_TotemType as TotemType,
+} from '../../proto/shaman.js';
+
+import {
 	APLValue,
 	APLValueAnd,
 	APLValueOr,
@@ -51,6 +59,7 @@ import {
 	APLValueRuneCooldown,
 	APLValueNextRuneCooldown,
 	APLValueNumberTargets,
+	APLValueTotemRemainingTime,
 } from '../../proto/apl.js';
 
 import { EventID } from '../../typed_event.js';
@@ -81,7 +90,11 @@ export class APLValuePicker extends Input<Player<any>, APLValue | undefined> {
 	constructor(parent: HTMLElement, player: Player<any>, config: APLValuePickerConfig) {
 		super(parent, 'apl-value-picker-root', player, config);
 
-		const allValueKinds = Object.keys(valueKindFactories) as Array<NonNullable<APLValueKind>>;
+		const isPrepull = this.rootElem.closest('.apl-prepull-action-picker') != null;
+
+		const allValueKinds = (Object.keys(valueKindFactories) as Array<NonNullable<APLValueKind>>)
+			.filter(valueKind => valueKindFactories[valueKind].includeIf?.(player, isPrepull) ?? true);
+
 		this.kindPicker = new TextDropdownPicker(this.rootElem, player, {
 			defaultLabel: 'No Condition',
 			values: [{
@@ -255,6 +268,7 @@ type ValueKindConfig<T> = {
 	shortDescription: string,
 	fullDescription?: string,
 	newValue: () => T,
+	includeIf?: (player: Player<any>, isPrepull: boolean) => boolean,
 	factory: (parent: HTMLElement, player: Player<any>, config: InputConfig<Player<any>, T>) => Input<Player<any>, T>,
 };
 
@@ -313,6 +327,24 @@ function executePhaseThresholdFieldConfig(field: string): AplHelpers.APLPickerBu
 	};
 }
 
+function totemTypeFieldConfig(field: string): AplHelpers.APLPickerBuilderFieldConfig<any, any> {
+	return {
+		field: field,
+		newValue: () => TotemType.Water,
+		factory: (parent, player, config) => new TextDropdownPicker(parent, player, {
+			...config,
+			defaultLabel: 'None',
+			equals: (a, b) => a == b,
+			values: [
+				{ value: TotemType.Earth, label: 'Earth' },
+				{ value: TotemType.Air, label: 'Air' },
+				{ value: TotemType.Fire, label: 'Fire' },
+				{ value: TotemType.Water, label: 'Water' },
+			],
+		}),
+	};
+}
+
 export function valueFieldConfig(field: string, options?: Partial<AplHelpers.APLPickerBuilderFieldConfig<any, any>>): AplHelpers.APLPickerBuilderFieldConfig<any, any> {
 	return {
 		field: field,
@@ -352,6 +384,7 @@ function inputBuilder<T extends APLValueImplType>(config: {
 	shortDescription: string,
 	fullDescription?: string,
 	newValue: () => T,
+	includeIf?: (player: Player<any>, isPrepull: boolean) => boolean,
 	fields: Array<AplHelpers.APLPickerBuilderFieldConfig<T, keyof T>>,
 }): ValueKindConfig<T> {
 	return {
@@ -360,6 +393,7 @@ function inputBuilder<T extends APLValueImplType>(config: {
 		shortDescription: config.shortDescription,
 		fullDescription: config.fullDescription,
 		newValue: config.newValue,
+		includeIf: config.includeIf,
 		factory: AplHelpers.aplInputBuilder(config.newValue, config.fields),
 	};
 }
@@ -820,10 +854,22 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 	'sequenceTimeToReady': inputBuilder({
 		label: 'Sequence Time To Ready',
 		submenu: ['Sequence'],
-		shortDescription: 'Retuens the amount of time remaining until the next subaction in the sequence will be ready.',
+		shortDescription: 'Returns the amount of time remaining until the next subaction in the sequence will be ready.',
 		newValue: APLValueSequenceTimeToReady.create,
 		fields: [
 			AplHelpers.stringFieldConfig('sequenceName'),
+		],
+	}),
+
+	// Class/spec specific values
+	'totemRemainingTime': inputBuilder({
+		label: 'Totem Remaining Time',
+		submenu: ['Shaman'],
+		shortDescription: 'Returns the amount of time remaining until the totem will expire.',
+		newValue: APLValueTotemRemainingTime.create,
+		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassShaman,
+		fields: [
+			totemTypeFieldConfig('totemType'),
 		],
 	}),
 };

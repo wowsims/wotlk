@@ -40,6 +40,13 @@ type Agent interface {
 	// everything related to the attack is complete, and it is only invoked for
 	// auto attacks (white hits or white-hit-replacers).
 	OnAutoAttack(sim *Simulation, spell *Spell)
+
+	// Custom factories for APL values and actions, for cases where the value/action
+	// involves class or spec-specific behavior.
+	//
+	// Should return nil when the config doesn't match any custom behaviors.
+	NewAPLValue(rot *APLRotation, config *proto.APLValue) APLValue
+	NewAPLAction(rot *APLRotation, config *proto.APLAction) APLActionImpl
 }
 
 type ActionID struct {

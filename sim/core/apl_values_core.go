@@ -8,12 +8,12 @@ import (
 )
 
 type APLValueDotIsActive struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	dot *Dot
 }
 
 func (rot *APLRotation) newValueDotIsActive(config *proto.APLValueDotIsActive) APLValue {
-	dot := rot.aplGetDot(rot.getTargetUnit(config.TargetUnit), config.SpellId)
+	dot := rot.GetAPLDot(rot.GetTargetUnit(config.TargetUnit), config.SpellId)
 	if dot == nil {
 		return nil
 	}
@@ -32,12 +32,12 @@ func (value *APLValueDotIsActive) String() string {
 }
 
 type APLValueDotRemainingTime struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	dot *Dot
 }
 
 func (rot *APLRotation) newValueDotRemainingTime(config *proto.APLValueDotRemainingTime) APLValue {
-	dot := rot.aplGetDot(rot.getTargetUnit(config.TargetUnit), config.SpellId)
+	dot := rot.GetAPLDot(rot.GetTargetUnit(config.TargetUnit), config.SpellId)
 	if dot == nil {
 		return nil
 	}

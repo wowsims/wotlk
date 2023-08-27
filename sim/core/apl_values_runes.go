@@ -8,7 +8,7 @@ import (
 )
 
 type APLValueCurrentRuneCount struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	unit     *Unit
 	runeType proto.APLValueRuneType
 }
@@ -16,7 +16,7 @@ type APLValueCurrentRuneCount struct {
 func (rot *APLRotation) newValueCurrentRuneCount(config *proto.APLValueCurrentRuneCount) APLValue {
 	unit := rot.unit
 	if !unit.HasRunicPowerBar() {
-		rot.validationWarning("%s does not use Runes", unit.Label)
+		rot.ValidationWarning("%s does not use Runes", unit.Label)
 		return nil
 	}
 	return &APLValueCurrentRuneCount{
@@ -45,7 +45,7 @@ func (value *APLValueCurrentRuneCount) String() string {
 }
 
 type APLValueCurrentNonDeathRuneCount struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	unit     *Unit
 	runeType proto.APLValueRuneType
 }
@@ -53,7 +53,7 @@ type APLValueCurrentNonDeathRuneCount struct {
 func (rot *APLRotation) newValueCurrentNonDeathRuneCount(config *proto.APLValueCurrentNonDeathRuneCount) APLValue {
 	unit := rot.unit
 	if !unit.HasRunicPowerBar() {
-		rot.validationWarning("%s does not use Runes", unit.Label)
+		rot.ValidationWarning("%s does not use Runes", unit.Label)
 		return nil
 	}
 	return &APLValueCurrentNonDeathRuneCount{
@@ -80,7 +80,7 @@ func (value *APLValueCurrentNonDeathRuneCount) String() string {
 }
 
 type APLValueCurrentRuneActive struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	unit     *Unit
 	runeSlot int8
 }
@@ -88,7 +88,7 @@ type APLValueCurrentRuneActive struct {
 func (rot *APLRotation) newValueCurrentRuneActive(config *proto.APLValueCurrentRuneActive) APLValue {
 	unit := rot.unit
 	if !unit.HasRunicPowerBar() {
-		rot.validationWarning("%s does not use Runes", unit.Label)
+		rot.ValidationWarning("%s does not use Runes", unit.Label)
 		return nil
 	}
 	return &APLValueCurrentRuneActive{
@@ -107,7 +107,7 @@ func (value *APLValueCurrentRuneActive) String() string {
 }
 
 type APLValueCurrentRuneDeath struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	unit     *Unit
 	runeSlot int8
 }
@@ -115,7 +115,7 @@ type APLValueCurrentRuneDeath struct {
 func (rot *APLRotation) newValueCurrentRuneDeath(config *proto.APLValueCurrentRuneDeath) APLValue {
 	unit := rot.unit
 	if !unit.HasRunicPowerBar() {
-		rot.validationWarning("%s does not use Runes", unit.Label)
+		rot.ValidationWarning("%s does not use Runes", unit.Label)
 		return nil
 	}
 	return &APLValueCurrentRuneDeath{
@@ -134,7 +134,7 @@ func (value *APLValueCurrentRuneDeath) String() string {
 }
 
 type APLValueRuneCooldown struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	unit     *Unit
 	runeType proto.APLValueRuneType
 }
@@ -142,7 +142,7 @@ type APLValueRuneCooldown struct {
 func (rot *APLRotation) newValueRuneCooldown(config *proto.APLValueRuneCooldown) APLValue {
 	unit := rot.unit
 	if !unit.HasRunicPowerBar() {
-		rot.validationWarning("%s does not use Runes", unit.Label)
+		rot.ValidationWarning("%s does not use Runes", unit.Label)
 		return nil
 	}
 	return &APLValueRuneCooldown{
@@ -169,7 +169,7 @@ func (value *APLValueRuneCooldown) String() string {
 }
 
 type APLValueNextRuneCooldown struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	unit     *Unit
 	runeType proto.APLValueRuneType
 }
@@ -177,7 +177,7 @@ type APLValueNextRuneCooldown struct {
 func (rot *APLRotation) newValueNextRuneCooldown(config *proto.APLValueNextRuneCooldown) APLValue {
 	unit := rot.unit
 	if !unit.HasRunicPowerBar() {
-		rot.validationWarning("%s does not use Runes", unit.Label)
+		rot.ValidationWarning("%s does not use Runes", unit.Label)
 		return nil
 	}
 	return &APLValueNextRuneCooldown{

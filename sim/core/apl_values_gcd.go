@@ -8,7 +8,7 @@ import (
 )
 
 type APLValueGCDIsReady struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	unit *Unit
 }
 
@@ -28,7 +28,7 @@ func (value *APLValueGCDIsReady) String() string {
 }
 
 type APLValueGCDTimeToReady struct {
-	defaultAPLValueImpl
+	DefaultAPLValueImpl
 	unit *Unit
 }
 
