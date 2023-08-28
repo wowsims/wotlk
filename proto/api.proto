@@ -215,9 +215,9 @@ message DistributionMetrics {
 	double avg     = 1;
 	double stdev   = 2;
 	double max     = 3;
-	int64 maxSeed = 5;
+	int64 max_seed = 5;
 	double min     = 6;
-	int64 minSeed = 7;
+	int64 min_seed = 7;
 	map<int32, int32> hist = 4;
 	repeated double all_values = 8;
 }

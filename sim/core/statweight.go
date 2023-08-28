@@ -39,10 +39,10 @@ func (s *UnitStats) Get(stat stats.UnitStat) float64 {
 	}
 }
 
-func (us UnitStats) ToProto() *proto.UnitStats {
+func (s *UnitStats) ToProto() *proto.UnitStats {
 	return &proto.UnitStats{
-		Stats:       us.Stats[:],
-		PseudoStats: us.PseudoStats[:],
+		Stats:       s.Stats[:],
+		PseudoStats: s.PseudoStats[:],
 	}
 }
 
@@ -62,7 +62,7 @@ func NewStatWeightValues() StatWeightValues {
 	}
 }
 
-func (swv StatWeightValues) ToProto() *proto.StatWeightValues {
+func (swv *StatWeightValues) ToProto() *proto.StatWeightValues {
 	return &proto.StatWeightValues{
 		Weights:       swv.Weights.ToProto(),
 		WeightsStdev:  swv.WeightsStdev.ToProto(),
@@ -80,8 +80,8 @@ type StatWeightsResult struct {
 	PDeath StatWeightValues
 }
 
-func NewStatWeightsResult() StatWeightsResult {
-	return StatWeightsResult{
+func NewStatWeightsResult() *StatWeightsResult {
+	return &StatWeightsResult{
 		Dps:    NewStatWeightValues(),
 		Hps:    NewStatWeightValues(),
 		Tps:    NewStatWeightValues(),
@@ -91,7 +91,7 @@ func NewStatWeightsResult() StatWeightsResult {
 	}
 }
 
-func (swr StatWeightsResult) ToProto() *proto.StatWeightsResult {
+func (swr *StatWeightsResult) ToProto() *proto.StatWeightsResult {
 	return &proto.StatWeightsResult{
 		Dps:    swr.Dps.ToProto(),
 		Hps:    swr.Hps.ToProto(),
@@ -102,7 +102,7 @@ func (swr StatWeightsResult) ToProto() *proto.StatWeightsResult {
 	}
 }
 
-func CalcStatWeight(swr *proto.StatWeightsRequest, referenceStat stats.Stat, progress chan *proto.ProgressMetrics) StatWeightsResult {
+func CalcStatWeight(swr *proto.StatWeightsRequest, referenceStat stats.Stat, progress chan *proto.ProgressMetrics) *StatWeightsResult {
 	if swr.Player.BonusStats == nil {
 		swr.Player.BonusStats = &proto.UnitStats{}
 	}
@@ -123,7 +123,7 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, referenceStat stats.Stat, pro
 	// This number needs to be the same for the baseline sim too, so that RNG lines up perfectly.
 	simOptions.Iterations /= 2
 
-	// Make sure a RNG seed is always set because it gives more consistent results.
+	// Make sure an RNG seed is always set because it gives more consistent results.
 	// When there is no user-supplied seed it needs to be a randomly-selected seed
 	// though, so that run-run differences still exist.
 	if simOptions.RandomSeed == 0 {
@@ -146,7 +146,7 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, referenceStat stats.Stat, pro
 	baselineResult := RunRaidSim(baseSimRequest)
 	if baselineResult.ErrorResult != "" {
 		// TODO: get stack trace out.
-		return StatWeightsResult{}
+		return &StatWeightsResult{}
 	}
 
 	var waitGroup sync.WaitGroup
@@ -281,19 +281,21 @@ func CalcStatWeight(swr *proto.StatWeightsRequest, referenceStat stats.Stat, pro
 		}
 
 		calcWeightResults := func(baselineMetrics *proto.DistributionMetrics, modLowMetrics *proto.DistributionMetrics, modHighMetrics *proto.DistributionMetrics, weightResults *StatWeightValues) {
-			var sample []float64
+			var lo, hi aggregator
 			if resultsLow != nil {
 				for i := 0; i < int(simOptions.Iterations); i++ {
-					sample = append(sample, (modLowMetrics.AllValues[i]-baselineMetrics.AllValues[i])/statModsLow[stat])
+					lo.add(modLowMetrics.AllValues[i] - baselineMetrics.AllValues[i])
 				}
+				lo.scale(1 / statModsLow[stat])
 			}
 			if resultsHigh != nil {
 				for i := 0; i < int(simOptions.Iterations); i++ {
-					sample = append(sample, (modHighMetrics.AllValues[i]-baselineMetrics.AllValues[i])/statModsHigh[stat])
+					hi.add(modHighMetrics.AllValues[i] - baselineMetrics.AllValues[i])
 				}
+				hi.scale(1 / statModsHigh[stat])
 			}
 
-			mean, stdev := calcMeanAndStdev(sample)
+			mean, stdev := lo.merge(&hi).meanAndStdDev()
 			weightResults.Weights.AddStat(stat, mean)
 			weightResults.WeightsStdev.AddStat(stat, stdev)
 		}

@@ -72,14 +72,6 @@ func MaxDuration(a time.Duration, b time.Duration) time.Duration {
 	}
 }
 
-func MinTristate(a proto.TristateEffect, b proto.TristateEffect) proto.TristateEffect {
-	if a < b {
-		return a
-	} else {
-		return b
-	}
-}
-
 func MaxTristate(a proto.TristateEffect, b proto.TristateEffect) proto.TristateEffect {
 	if a > b {
 		return a
@@ -90,14 +82,6 @@ func MaxTristate(a proto.TristateEffect, b proto.TristateEffect) proto.TristateE
 
 func DurationFromSeconds(numSeconds float64) time.Duration {
 	return time.Duration(float64(time.Second) * numSeconds)
-}
-
-func DurationFromProto(durProto *proto.Duration) time.Duration {
-	if durProto == nil {
-		return 0
-	} else {
-		return time.Millisecond * time.Duration(durProto.Ms)
-	}
 }
 
 func GetTristateValueInt32(effect proto.TristateEffect, regularValue int32, impValue int32) int32 {
@@ -132,7 +116,7 @@ func MakeTristateValue(hasRegular bool, hasImproved bool) proto.TristateEffect {
 
 func hash(s string) uint32 {
 	h := fnv.New32a()
-	h.Write([]byte(s))
+	_, _ = h.Write([]byte(s))
 	return h.Sum32()
 }
 
@@ -203,7 +187,7 @@ func MapSlice[I any, O any](src []I, f func(I) O) []O {
 
 // Returns a new map by applying f to each key/value pair in src.
 func MapMap[KI comparable, VI any, KO comparable, VO any](src map[KI]VI, f func(KI, VI) (KO, VO)) map[KO]VO {
-	dst := make(map[KO]VO)
+	dst := make(map[KO]VO, len(src))
 	for ki, vi := range src {
 		ko, vo := f(ki, vi)
 		dst[ko] = vo
@@ -213,7 +197,7 @@ func MapMap[KI comparable, VI any, KO comparable, VO any](src map[KI]VI, f func(
 
 // Returns a new slice containing only the elements for which f returns true.
 func FilterSlice[T any](src []T, f func(T) bool) []T {
-	var dst []T
+	dst := make([]T, 0, len(src))
 	for _, e := range src {
 		if f(e) {
 			dst = append(dst, e)
@@ -224,7 +208,7 @@ func FilterSlice[T any](src []T, f func(T) bool) []T {
 
 // Returns a new map containing only the key/value pairs for which f returns true.
 func FilterMap[K comparable, V any](src map[K]V, f func(K, V) bool) map[K]V {
-	dst := make(map[K]V)
+	dst := make(map[K]V, len(src))
 	for k, v := range src {
 		if f(k, v) {
 			dst[k] = v
@@ -235,26 +219,40 @@ func FilterMap[K comparable, V any](src map[K]V, f func(K, V) bool) map[K]V {
 
 // Flattens a 2D slice into a 1D slice.
 func Flatten[T any](src [][]T) []T {
-	var dst []T
+	var n int
+	for _, sublist := range src {
+		n += len(sublist)
+	}
+	dst := make([]T, 0, n)
 	for _, sublist := range src {
 		dst = append(dst, sublist...)
 	}
 	return dst
 }
 
-func calcMeanAndStdev(sample []float64) (float64, float64) {
-	n := len(sample)
-	sum := 0.0
-	sumSq := 0.0
-	for i := 0; i < n; i++ {
-		sum += sample[i]
-		sumSq += sample[i] * sample[i]
-	}
-
-	return calcMeanAndStdevFromSums(n, sum, sumSq)
+type aggregator struct {
+	n     int
+	sum   float64
+	sumSq float64
 }
-func calcMeanAndStdevFromSums(n int, sum float64, sumSq float64) (float64, float64) {
-	mean := sum / float64(n)
-	stdev := math.Abs(math.Sqrt(sumSq/float64(n) - mean*mean))
-	return mean, stdev
+
+func (x *aggregator) add(v float64) {
+	x.n++
+	x.sum += v
+	x.sumSq += v * v
+}
+
+func (x *aggregator) scale(f float64) {
+	x.sum *= f
+	x.sumSq *= f * f
+}
+
+func (x *aggregator) merge(y *aggregator) *aggregator {
+	return &aggregator{n: x.n + y.n, sum: x.sum + y.sum, sumSq: x.sumSq + y.sumSq}
+}
+
+func (x *aggregator) meanAndStdDev() (float64, float64) {
+	mean := x.sum / float64(x.n)
+	stdDev := math.Sqrt(x.sumSq/float64(x.n) - mean*mean)
+	return mean, stdDev
 }
