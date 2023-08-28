@@ -113,7 +113,7 @@ message APLValue {
         APLValueAuraRemainingTime aura_remaining_time = 23;
         APLValueAuraNumStacks aura_num_stacks = 24;
         APLValueAuraInternalCooldown aura_internal_cooldown = 39;
-        APLValueAuraICDOnCooldownWithReactionTime aura_icd_on_cooldown_with_reaction_time = 51;
+        APLValueAuraICDIsReadyWithReactionTime aura_icd_is_ready_with_reaction_time = 51;
         APLValueAuraShouldRefresh aura_should_refresh = 43;
 
         // Dot values
@@ -364,7 +364,7 @@ message APLValueAuraInternalCooldown {
     UnitReference source_unit = 2;
     ActionID aura_id = 1;
 }
-message APLValueAuraICDOnCooldownWithReactionTime {
+message APLValueAuraICDIsReadyWithReactionTime {
     UnitReference source_unit = 2;
     ActionID aura_id = 1;
 }
