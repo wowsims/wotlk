@@ -274,7 +274,7 @@ dps_results: {
  key: "TestFeralTank-AllItems-DreamwalkerGarb"
  value: {
   dps: 2114.05411
-  tps: 4515.38985
+  tps: 4515.36564
   dtps: 6.91076
  }
 }
@@ -418,7 +418,7 @@ dps_results: {
  key: "TestFeralTank-AllItems-Gladiator'sWildhide"
  value: {
   dps: 2086.96108
-  tps: 4439.62262
+  tps: 4439.92105
   dtps: 7.20775
  }
 }
@@ -595,7 +595,7 @@ dps_results: {
  key: "TestFeralTank-AllItems-LasherweaveRegalia"
  value: {
   dps: 2286.14727
-  tps: 4914.27981
+  tps: 4914.44434
   dtps: 7.20775
  }
 }
@@ -627,7 +627,7 @@ dps_results: {
  key: "TestFeralTank-AllItems-Malfurion'sRegalia"
  value: {
   dps: 2132.96209
-  tps: 4575.94641
+  tps: 4576.98525
   dtps: 6.91076
  }
 }
@@ -659,7 +659,7 @@ dps_results: {
  key: "TestFeralTank-AllItems-NightsongGarb"
  value: {
   dps: 2082.14878
-  tps: 4470.70539
+  tps: 4470.9721
   dtps: 6.66421
  }
 }
@@ -931,7 +931,7 @@ dps_results: {
  key: "TestFeralTank-AllItems-ThunderheartRegalia"
  value: {
   dps: 1830.17431
-  tps: 3923.22412
+  tps: 3923.21265
   dtps: 6.66421
  }
 }
