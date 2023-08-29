@@ -12,8 +12,8 @@ func (druid *Druid) registerStarfireSpell() {
 	bonusCoeff := 0.04 * float64(druid.Talents.WrathOfCenarius)
 
 	idolSpellPower := 0 +
-		core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == 27518, 55, 0) + // Ivory Moongoddess
-		core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == 40321, 165, 0) // Shooting Star
+		core.TernaryFloat64(druid.Ranged().ID == 27518, 55, 0) + // Ivory Moongoddess
+		core.TernaryFloat64(druid.Ranged().ID == 40321, 165, 0) // Shooting Star
 
 	hasGlyph := druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfStarfire)
 

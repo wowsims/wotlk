@@ -333,10 +333,10 @@ func (rogue *Rogue) applyInitiative() {
 
 func (rogue *Rogue) getMask(wts ...proto.WeaponType) core.ProcMask {
 	mask := core.ProcMaskUnknown
-	if wt := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType; slices.Contains(wts, wt) {
+	if wt := rogue.MainHand().WeaponType; slices.Contains(wts, wt) {
 		mask |= core.ProcMaskMeleeMH
 	}
-	if wt := rogue.Equip[proto.ItemSlot_ItemSlotOffHand].WeaponType; slices.Contains(wts, wt) {
+	if wt := rogue.OffHand().WeaponType; slices.Contains(wts, wt) {
 		mask |= core.ProcMaskMeleeOH
 	}
 	return mask

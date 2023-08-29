@@ -14,10 +14,10 @@ var TotemOfSplintering int32 = 40710
 func (shaman *Shaman) RegisterOnItemSwapWithImbue(effectID int32, procMask *core.ProcMask, aura *core.Aura) {
 	shaman.RegisterOnItemSwap(func(sim *core.Simulation) {
 		mask := core.ProcMaskUnknown
-		if shaman.Equip[proto.ItemSlot_ItemSlotMainHand].TempEnchant == effectID {
+		if shaman.MainHand().TempEnchant == effectID {
 			mask |= core.ProcMaskMeleeMH
 		}
-		if shaman.Equip[proto.ItemSlot_ItemSlotOffHand].TempEnchant == effectID {
+		if shaman.OffHand().TempEnchant == effectID {
 			mask |= core.ProcMaskMeleeOH
 		}
 		*procMask = mask
@@ -32,9 +32,9 @@ func (shaman *Shaman) RegisterOnItemSwapWithImbue(effectID int32, procMask *core
 
 func (shaman *Shaman) newWindfuryImbueSpell(isMH bool) *core.Spell {
 	apBonus := 1250.0
-	if shaman.Equip[proto.ItemSlot_ItemSlotRanged].ID == TotemOfTheAstralWinds {
+	if shaman.Ranged().ID == TotemOfTheAstralWinds {
 		apBonus += 80
-	} else if shaman.Equip[proto.ItemSlot_ItemSlotRanged].ID == TotemOfSplintering {
+	} else if shaman.Ranged().ID == TotemOfSplintering {
 		apBonus += 212
 	}
 
@@ -95,11 +95,11 @@ func (shaman *Shaman) RegisterWindfuryImbue(mh bool, oh bool) {
 	}
 
 	if mh {
-		shaman.Equip[proto.ItemSlot_ItemSlotMainHand].TempEnchant = 3787
+		shaman.MainHand().TempEnchant = 3787
 	}
 
 	if oh {
-		shaman.Equip[proto.ItemSlot_ItemSlotOffHand].TempEnchant = 3787
+		shaman.OffHand().TempEnchant = 3787
 	}
 
 	procMask := core.GetMeleeProcMaskForHands(mh, oh)
@@ -365,10 +365,10 @@ func (shaman *Shaman) RegisterFrostbrandImbue(mh bool, oh bool) {
 	ppmm := shaman.AutoAttacks.NewPPMManager(9.0, procMask)
 
 	if mh {
-		shaman.Equip[proto.ItemSlot_ItemSlotMainHand].TempEnchant = 3784
+		shaman.MainHand().TempEnchant = 3784
 	}
 	if oh {
-		shaman.Equip[proto.ItemSlot_ItemSlotOffHand].TempEnchant = 3784
+		shaman.OffHand().TempEnchant = 3784
 	}
 
 	fbDebuffAuras := shaman.NewEnemyAuraArray(shaman.FrostbrandDebuffAura)

@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -273,31 +272,31 @@ func (dk *Deathknight) registerScourgelordsPlateProc() {
 }
 
 func (dk *Deathknight) sigilOfTheDarkRiderBonus() float64 {
-	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 39208, 90, 0)
+	return core.TernaryFloat64(dk.Ranged().ID == 39208, 90, 0)
 }
 
 func (dk *Deathknight) sigilOfAwarenessBonus() float64 {
-	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 40207, 420, 0)
+	return core.TernaryFloat64(dk.Ranged().ID == 40207, 420, 0)
 }
 
 func (dk *Deathknight) sigilOfTheFrozenConscienceBonus() float64 {
-	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 40822, 111, 0)
+	return core.TernaryFloat64(dk.Ranged().ID == 40822, 111, 0)
 }
 
 func (dk *Deathknight) sigilOfTheWildBuckBonus() float64 {
-	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 40867, 80, 0)
+	return core.TernaryFloat64(dk.Ranged().ID == 40867, 80, 0)
 }
 
 func (dk *Deathknight) sigilOfArthriticBindingBonus() float64 {
-	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 40875, 203, 0)
+	return core.TernaryFloat64(dk.Ranged().ID == 40875, 203, 0)
 }
 
 func (dk *Deathknight) sigilOfTheVengefulHeartDeathCoil() float64 {
-	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 45254, 403, 0)
+	return core.TernaryFloat64(dk.Ranged().ID == 45254, 403, 0)
 }
 
 func (dk *Deathknight) sigilOfTheVengefulHeartFrostStrike() float64 {
-	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 45254, 218, 0) // (1 / 0.55) * 120
+	return core.TernaryFloat64(dk.Ranged().ID == 45254, 218, 0) // (1 / 0.55) * 120
 }
 
 func addEnchantEffect(id int32, effect func(core.Agent)) {

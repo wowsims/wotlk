@@ -18,22 +18,22 @@ const (
 var (
 	starshardEdge1 = &itemWithSlot{
 		Item:  &proto.ItemSpec{Id: itemStarshardEdge},
-		Slot:  ItemSlotMainHand,
+		Slot:  proto.ItemSlot_ItemSlotMainHand,
 		Index: 0,
 	}
 	ironmender = &itemWithSlot{
 		Item:  &proto.ItemSpec{Id: itemIronmender},
-		Slot:  ItemSlotOffHand,
+		Slot:  proto.ItemSlot_ItemSlotOffHand,
 		Index: 1,
 	}
 	starshardEdge2 = &itemWithSlot{
 		Item:  &proto.ItemSpec{Id: itemStarshardEdge},
-		Slot:  ItemSlotMainHand,
+		Slot:  proto.ItemSlot_ItemSlotMainHand,
 		Index: 2,
 	}
 	pillarOfFortitude = &itemWithSlot{
 		Item:  &proto.ItemSpec{Id: itemPillarOfFortitude},
-		Slot:  ItemSlotMainHand,
+		Slot:  proto.ItemSlot_ItemSlotMainHand,
 		Index: 3,
 	}
 
@@ -75,7 +75,7 @@ func TestIsValidEquipment(t *testing.T) {
 
 func createEquipmentFromItems(items ...*itemWithSlot) *proto.EquipmentSpec {
 	spec := &proto.EquipmentSpec{
-		Items: make([]*proto.ItemSpec, 17),
+		Items: make([]*proto.ItemSpec, len(proto.ItemSlot_name)),
 	}
 	for _, is := range items {
 		spec.Items[is.Slot] = is.Item
@@ -114,7 +114,7 @@ func TestBulkSim(t *testing.T) {
 }
 
 func TestGenerateAllEquipmentSubstitutions(t *testing.T) {
-	baseItems := make([]*proto.ItemSpec, 17)
+	baseItems := make([]*proto.ItemSpec, len(proto.ItemSlot_name))
 	for i := range baseItems {
 		baseItems[i] = &proto.ItemSpec{Id: int32(i) + 1000}
 	}
@@ -146,13 +146,13 @@ func TestGenerateAllEquipmentSubstitutions(t *testing.T) {
 			args: args{
 				combinations: true,
 				distinctItemSlotCombos: []*itemWithSlot{
-					{Item: item1, Slot: ItemSlotHead},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotHead},
 				},
 			},
 			want: []*equipmentSubstitution{
 				{},
 				{Items: []*itemWithSlot{
-					{Item: item1, Slot: ItemSlotHead},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotHead},
 				}},
 			},
 		},
@@ -161,21 +161,21 @@ func TestGenerateAllEquipmentSubstitutions(t *testing.T) {
 			args: args{
 				combinations: true,
 				distinctItemSlotCombos: []*itemWithSlot{
-					{Item: item1, Slot: ItemSlotHead},
-					{Item: item2, Slot: ItemSlotShoulder},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotHead},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotShoulder},
 				},
 			},
 			want: []*equipmentSubstitution{
 				{},
 				{Items: []*itemWithSlot{
-					{Item: item1, Slot: ItemSlotHead},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotHead},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item1, Slot: ItemSlotHead},
-					{Item: item2, Slot: ItemSlotShoulder},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotHead},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotShoulder},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item2, Slot: ItemSlotShoulder},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotShoulder},
 				}},
 			},
 		},
@@ -184,41 +184,41 @@ func TestGenerateAllEquipmentSubstitutions(t *testing.T) {
 			args: args{
 				combinations: true,
 				distinctItemSlotCombos: []*itemWithSlot{
-					{Item: item1, Slot: ItemSlotFinger1},
-					{Item: item1, Slot: ItemSlotFinger2},
-					{Item: item2, Slot: ItemSlotTrinket1},
-					{Item: item2, Slot: ItemSlotTrinket2},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotFinger1},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotFinger2},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotTrinket1},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotTrinket2},
 				},
 			},
 			want: []*equipmentSubstitution{
 				{},
 				{Items: []*itemWithSlot{
-					{Item: item1, Slot: ItemSlotFinger1},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotFinger1},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item1, Slot: ItemSlotFinger1},
-					{Item: item2, Slot: ItemSlotTrinket1},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotFinger1},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotTrinket1},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item1, Slot: ItemSlotFinger1},
-					{Item: item2, Slot: ItemSlotTrinket2},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotFinger1},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotTrinket2},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item1, Slot: ItemSlotFinger2},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotFinger2},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item1, Slot: ItemSlotFinger2},
-					{Item: item2, Slot: ItemSlotTrinket1},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotFinger2},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotTrinket1},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item1, Slot: ItemSlotFinger2},
-					{Item: item2, Slot: ItemSlotTrinket2},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotFinger2},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotTrinket2},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item2, Slot: ItemSlotTrinket1},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotTrinket1},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item2, Slot: ItemSlotTrinket2},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotTrinket2},
 				}},
 			},
 		},
@@ -227,79 +227,79 @@ func TestGenerateAllEquipmentSubstitutions(t *testing.T) {
 			args: args{
 				combinations: true,
 				distinctItemSlotCombos: []*itemWithSlot{
-					{Item: item1, Slot: ItemSlotFinger1},
-					{Item: item1, Slot: ItemSlotFinger2},
-					{Item: item4, Slot: ItemSlotFinger1},
-					{Item: item4, Slot: ItemSlotFinger2},
-					{Item: item2, Slot: ItemSlotTrinket1},
-					{Item: item2, Slot: ItemSlotTrinket2},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotFinger1},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotFinger2},
+					{Item: item4, Slot: proto.ItemSlot_ItemSlotFinger1},
+					{Item: item4, Slot: proto.ItemSlot_ItemSlotFinger2},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotTrinket1},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotTrinket2},
 				},
 			},
 			want: []*equipmentSubstitution{
 				{},
 				{Items: []*itemWithSlot{
-					{Item: item1, Slot: ItemSlotFinger1},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotFinger1},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item1, Slot: ItemSlotFinger1},
-					{Item: item4, Slot: ItemSlotFinger2},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotFinger1},
+					{Item: item4, Slot: proto.ItemSlot_ItemSlotFinger2},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item1, Slot: ItemSlotFinger1},
-					{Item: item4, Slot: ItemSlotFinger2},
-					{Item: item2, Slot: ItemSlotTrinket1},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotFinger1},
+					{Item: item4, Slot: proto.ItemSlot_ItemSlotFinger2},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotTrinket1},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item1, Slot: ItemSlotFinger1},
-					{Item: item4, Slot: ItemSlotFinger2},
-					{Item: item2, Slot: ItemSlotTrinket2},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotFinger1},
+					{Item: item4, Slot: proto.ItemSlot_ItemSlotFinger2},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotTrinket2},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item1, Slot: ItemSlotFinger1},
-					{Item: item2, Slot: ItemSlotTrinket1},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotFinger1},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotTrinket1},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item1, Slot: ItemSlotFinger1},
-					{Item: item2, Slot: ItemSlotTrinket2},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotFinger1},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotTrinket2},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item4, Slot: ItemSlotFinger2},
+					{Item: item4, Slot: proto.ItemSlot_ItemSlotFinger2},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item4, Slot: ItemSlotFinger2},
-					{Item: item2, Slot: ItemSlotTrinket1},
+					{Item: item4, Slot: proto.ItemSlot_ItemSlotFinger2},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotTrinket1},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item4, Slot: ItemSlotFinger2},
-					{Item: item2, Slot: ItemSlotTrinket2},
+					{Item: item4, Slot: proto.ItemSlot_ItemSlotFinger2},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotTrinket2},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item1, Slot: ItemSlotFinger1},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotFinger1},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item1, Slot: ItemSlotFinger1},
-					{Item: item2, Slot: ItemSlotTrinket1},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotFinger1},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotTrinket1},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item1, Slot: ItemSlotFinger1},
-					{Item: item2, Slot: ItemSlotTrinket2},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotFinger1},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotTrinket2},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item4, Slot: ItemSlotFinger2},
+					{Item: item4, Slot: proto.ItemSlot_ItemSlotFinger2},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item4, Slot: ItemSlotFinger2},
-					{Item: item2, Slot: ItemSlotTrinket1},
+					{Item: item4, Slot: proto.ItemSlot_ItemSlotFinger2},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotTrinket1},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item4, Slot: ItemSlotFinger2},
-					{Item: item2, Slot: ItemSlotTrinket2},
+					{Item: item4, Slot: proto.ItemSlot_ItemSlotFinger2},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotTrinket2},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item2, Slot: ItemSlotTrinket1},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotTrinket1},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item2, Slot: ItemSlotTrinket2},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotTrinket2},
 				}},
 			},
 		},
@@ -308,20 +308,20 @@ func TestGenerateAllEquipmentSubstitutions(t *testing.T) {
 			args: args{
 				combinations: false,
 				distinctItemSlotCombos: []*itemWithSlot{
-					{Item: item1, Slot: ItemSlotFinger1},
-					{Item: item1, Slot: ItemSlotFinger2},
-					{Item: item3, Slot: ItemSlotFinger1},
-					{Item: item3, Slot: ItemSlotFinger2},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotFinger1},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotFinger2},
+					{Item: item3, Slot: proto.ItemSlot_ItemSlotFinger1},
+					{Item: item3, Slot: proto.ItemSlot_ItemSlotFinger2},
 				},
 			},
 			want: []*equipmentSubstitution{
 				{},
 				{Items: []*itemWithSlot{
-					{Item: item1, Slot: ItemSlotFinger1},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotFinger1},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item1, Slot: ItemSlotFinger1},
-					{Item: item3, Slot: ItemSlotFinger2},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotFinger1},
+					{Item: item3, Slot: proto.ItemSlot_ItemSlotFinger2},
 				}},
 			},
 		},
@@ -330,29 +330,29 @@ func TestGenerateAllEquipmentSubstitutions(t *testing.T) {
 			args: args{
 				combinations: false,
 				distinctItemSlotCombos: []*itemWithSlot{
-					{Item: item1, Slot: ItemSlotFinger1},
-					{Item: item1, Slot: ItemSlotFinger2},
-					{Item: item2, Slot: ItemSlotFinger1},
-					{Item: item2, Slot: ItemSlotFinger2},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotFinger1},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotFinger2},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotFinger1},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotFinger2},
 				},
 			},
 			want: []*equipmentSubstitution{
 				{},
 				{Items: []*itemWithSlot{
-					{Item: item1, Slot: ItemSlotFinger1},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotFinger1},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item1, Slot: ItemSlotFinger1},
-					{Item: item2, Slot: ItemSlotFinger2},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotFinger1},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotFinger2},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item2, Slot: ItemSlotFinger1},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotFinger1},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item1, Slot: ItemSlotFinger2},
+					{Item: item1, Slot: proto.ItemSlot_ItemSlotFinger2},
 				}},
 				{Items: []*itemWithSlot{
-					{Item: item2, Slot: ItemSlotFinger2},
+					{Item: item2, Slot: proto.ItemSlot_ItemSlotFinger2},
 				}},
 			},
 		},

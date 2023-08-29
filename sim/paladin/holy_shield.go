@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -30,7 +29,7 @@ func (paladin *Paladin) registerHolyShieldSpell() {
 		},
 	})
 
-	blockBonus := 30*core.BlockRatingPerBlockChance + core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 29388, 42, 0)
+	blockBonus := 30*core.BlockRatingPerBlockChance + core.TernaryFloat64(paladin.Ranged().ID == 29388, 42, 0)
 
 	paladin.HolyShieldAura = paladin.RegisterAura(core.Aura{
 		Label:     "Holy Shield",

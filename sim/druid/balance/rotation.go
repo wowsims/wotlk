@@ -53,7 +53,7 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*druid.DruidSpell, 
 
 	var lunarUptime time.Duration
 	shouldRefreshMf := moonkin.Moonfire.CurDot().RemainingDuration(sim) <= 0
-	hasLunarFury := core.Ternary(moonkin.Equip[core.ItemSlotRanged].ID == 47670, true, false)
+	hasLunarFury := core.Ternary(moonkin.Ranged().ID == 47670, true, false)
 	lunarIsActive := moonkin.LunarEclipseProcAura.IsActive()
 	maximizeMf := !(rotation.MfUsage == proto.BalanceDruid_Rotation_NoMf) && !(rotation.MfUsage == proto.BalanceDruid_Rotation_BeforeLunar) && !(rotation.SnapshotMf)
 

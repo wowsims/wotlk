@@ -356,7 +356,7 @@ func (warrior *Warrior) applyTitansGrip() {
 	if !warrior.AutoAttacks.IsDualWielding {
 		return
 	}
-	if warrior.Equip[proto.ItemSlot_ItemSlotMainHand].HandType != proto.HandType_HandTypeTwoHand && warrior.Equip[proto.ItemSlot_ItemSlotOffHand].HandType != proto.HandType_HandTypeTwoHand {
+	if warrior.MainHand().HandType != proto.HandType_HandTypeTwoHand && warrior.OffHand().HandType != proto.HandType_HandTypeTwoHand {
 		return
 	}
 
@@ -367,7 +367,7 @@ func (warrior *Warrior) applyTwoHandedWeaponSpecialization() {
 	if warrior.Talents.TwoHandedWeaponSpecialization == 0 {
 		return
 	}
-	if warrior.Equip[proto.ItemSlot_ItemSlotMainHand].HandType != proto.HandType_HandTypeTwoHand {
+	if warrior.MainHand().HandType != proto.HandType_HandTypeTwoHand {
 		return
 	}
 
@@ -378,7 +378,7 @@ func (warrior *Warrior) applyOneHandedWeaponSpecialization() {
 	if warrior.Talents.OneHandedWeaponSpecialization == 0 {
 		return
 	}
-	if warrior.Equip[proto.ItemSlot_ItemSlotMainHand].HandType == proto.HandType_HandTypeTwoHand {
+	if warrior.MainHand().HandType == proto.HandType_HandTypeTwoHand {
 		return
 	}
 
@@ -389,7 +389,7 @@ func (warrior *Warrior) applyWeaponSpecializations() {
 	swordSpecMask := core.ProcMaskUnknown
 	maceSpecInactive := true
 
-	if weapon := warrior.Equip[proto.ItemSlot_ItemSlotMainHand]; weapon.ID != 0 {
+	if weapon := warrior.MainHand(); weapon.ID != 0 {
 		if weapon.WeaponType == proto.WeaponType_WeaponTypeAxe || weapon.WeaponType == proto.WeaponType_WeaponTypePolearm {
 			warrior.OnSpellRegistered(func(spell *core.Spell) {
 				if spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
@@ -403,7 +403,7 @@ func (warrior *Warrior) applyWeaponSpecializations() {
 			swordSpecMask |= core.ProcMaskMeleeMH
 		}
 	}
-	if weapon := warrior.Equip[proto.ItemSlot_ItemSlotOffHand]; weapon.ID != 0 {
+	if weapon := warrior.OffHand(); weapon.ID != 0 {
 		if weapon.WeaponType == proto.WeaponType_WeaponTypeAxe || weapon.WeaponType == proto.WeaponType_WeaponTypePolearm {
 			warrior.OnSpellRegistered(func(spell *core.Spell) {
 				if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {

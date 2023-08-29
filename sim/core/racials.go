@@ -1,6 +1,7 @@
 package core
 
 import (
+	"golang.org/x/exp/slices"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -74,7 +75,7 @@ func applyRaceEffects(agent Agent) {
 		character.PseudoStats.ReducedFrostHitTakenChance += 0.02
 
 		// Gun specialization (+1% ranged crit when using a gun).
-		if character.Equip[proto.ItemSlot_ItemSlotRanged].RangedWeaponType == proto.RangedWeaponType_RangedWeaponTypeGun {
+		if character.Ranged().RangedWeaponType == proto.RangedWeaponType_RangedWeaponTypeGun {
 			character.AddBonusRangedCritRating(1 * CritRatingPerCritChance)
 		}
 
@@ -170,7 +171,7 @@ func applyRaceEffects(agent Agent) {
 		character.AddStat(stats.Health, character.GetBaseStats()[stats.Health]*0.05)
 	case proto.Race_RaceTroll:
 		// Bow specialization (+1% ranged crit when using a bow).
-		if character.Equip[proto.ItemSlot_ItemSlotRanged].RangedWeaponType == proto.RangedWeaponType_RangedWeaponTypeBow {
+		if character.Ranged().RangedWeaponType == proto.RangedWeaponType_RangedWeaponTypeBow {
 			character.AddBonusRangedCritRating(1 * CritRatingPerCritChance)
 		}
 
@@ -221,41 +222,21 @@ func applyRaceEffects(agent Agent) {
 }
 
 func applyWeaponSpecialization(character *Character, expertiseBonus float64, weaponTypes []proto.WeaponType) {
-	mh := false
-	oh := false
-	isDW := false
-	if weapon := character.Equip[proto.ItemSlot_ItemSlotMainHand]; weapon.ID != 0 {
-		for _, wt := range weaponTypes {
-			if weapon.WeaponType == wt {
-				mh = true
-			}
-		}
+	var mask ProcMask
+	if wt := character.MainHand().WeaponType; slices.Contains(weaponTypes, wt) {
+		mask |= ProcMaskMeleeMH
 	}
-	if weapon := character.Equip[proto.ItemSlot_ItemSlotOffHand]; weapon.ID != 0 && weapon.WeaponType != proto.WeaponType_WeaponTypeShield {
-		isDW = true
-		for _, wt := range weaponTypes {
-			if weapon.WeaponType == wt {
-				oh = true
-			}
-		}
+	if wt := character.OffHand().WeaponType; slices.Contains(weaponTypes, wt) {
+		mask |= ProcMaskMeleeOH
 	}
 
-	if mh && (oh || !isDW) {
+	if mask == ProcMaskMelee || (mask == ProcMaskMeleeMH && !character.HasOHWeapon()) {
 		character.AddStat(stats.Expertise, expertiseBonus)
 	} else {
-		if mh {
-			character.OnSpellRegistered(func(spell *Spell) {
-				if spell.ProcMask.Matches(ProcMaskMeleeMH) {
-					spell.BonusExpertiseRating += expertiseBonus
-				}
-			})
-		}
-		if oh {
-			character.OnSpellRegistered(func(spell *Spell) {
-				if spell.ProcMask.Matches(ProcMaskMeleeOH) {
-					spell.BonusExpertiseRating += expertiseBonus
-				}
-			})
-		}
+		character.OnSpellRegistered(func(spell *Spell) {
+			if spell.ProcMask.Matches(mask) {
+				spell.BonusExpertiseRating += expertiseBonus
+			}
+		})
 	}
 }

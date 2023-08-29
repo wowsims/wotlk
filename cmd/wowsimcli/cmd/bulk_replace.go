@@ -73,7 +73,7 @@ type ItemReplacementInput struct {
 
 type ReplaceIter struct {
 	Items []proto.ItemSpec // List of items to substitute
-	Slots []core.ItemSlot  // Slots for each sub item
+	Slots []proto.ItemSlot // Slots for each sub item
 }
 
 func BulkSim(input *proto.RaidSimRequest, replaceFile string, verbose bool) string {

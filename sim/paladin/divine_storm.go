@@ -4,12 +4,11 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (paladin *Paladin) registerDivineStormSpell() {
-	bonusDmg := core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 45510, 235, 0) + // Libram of Discord
-		core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 38362, 81, 0) // Venture Co. Libram of Retribution
+	bonusDmg := core.TernaryFloat64(paladin.Ranged().ID == 45510, 235, 0) + // Libram of Discord
+		core.TernaryFloat64(paladin.Ranged().ID == 38362, 81, 0) // Venture Co. Libram of Retribution
 	numHits := core.MinInt32(4, paladin.Env.GetNumTargets())
 	results := make([]*core.SpellResult, numHits)
 

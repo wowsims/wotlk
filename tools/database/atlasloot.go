@@ -178,8 +178,8 @@ func readAtlasLootDungeonData(db *WowDatabase, expansion proto.Expansion, srcUrl
 }
 
 func readZoneData(db *WowDatabase) {
-	var zoneIDs []int32
-	for zoneID, _ := range db.Zones {
+	zoneIDs := make([]int32, 0, len(db.Zones))
+	for zoneID := range db.Zones {
 		zoneIDs = append(zoneIDs, zoneID)
 	}
 	zoneIDStrs := core.MapSlice(zoneIDs, func(zoneID int32) string { return strconv.Itoa(int(zoneID)) })

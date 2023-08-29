@@ -33,7 +33,7 @@ func (dk *Deathknight) ApplyBloodTalents() {
 	dk.applyScentOfBlood()
 
 	// Two Handed Specialization
-	if dk.HasMHWeapon() && dk.Equip[proto.ItemSlot_ItemSlotMainHand].HandType == proto.HandType_HandTypeTwoHand {
+	if dk.MainHand().HandType == proto.HandType_HandTypeTwoHand {
 		dk.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1 + 0.02*float64(dk.Talents.TwoHandedWeaponSpecialization)
 	}
 

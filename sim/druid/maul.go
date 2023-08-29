@@ -7,9 +7,9 @@ import (
 
 func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 	flatBaseDamage := 578.0
-	if druid.Equip[core.ItemSlotRanged].ID == 23198 { // Idol of Brutality
+	if druid.Ranged().ID == 23198 { // Idol of Brutality
 		flatBaseDamage += 50
-	} else if druid.Equip[core.ItemSlotRanged].ID == 38365 { // Idol of Perspicacious Attacks
+	} else if druid.Ranged().ID == 38365 { // Idol of Perspicacious Attacks
 		flatBaseDamage += 120
 	}
 

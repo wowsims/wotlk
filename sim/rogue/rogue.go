@@ -1,8 +1,8 @@
 package rogue
 
 import (
-	"time"
 	"math"
+	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -289,9 +289,7 @@ func (rogue *Rogue) ApplyCutToTheChase(sim *core.Simulation) {
 	}
 }
 
-/* Deactivate Stealth if it is active
-This must be added to all abilities that cause Stealth to fade
-*/
+// Deactivate Stealth if it is active. This must be added to all abilities that cause Stealth to fade.
 func (rogue *Rogue) BreakStealth(sim *core.Simulation) {
 	if rogue.StealthAura.IsActive() {
 		rogue.StealthAura.Deactivate(sim)
@@ -307,9 +305,9 @@ func (rogue *Rogue) CanMutilate() bool {
 // Does the rogue have a dagger equipped in the specified hand (main or offhand)?
 func (rogue *Rogue) HasDagger(hand core.Hand) bool {
 	if hand == core.MainHand {
-		return rogue.HasMHWeapon() && rogue.GetMHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger
+		return rogue.MainHand().WeaponType == proto.WeaponType_WeaponTypeDagger
 	}
-	return rogue.HasOHWeapon() && rogue.GetOHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger
+	return rogue.OffHand().WeaponType == proto.WeaponType_WeaponTypeDagger
 }
 
 // Check if the rogue is considered in "stealth" for the purpose of casting abilities
