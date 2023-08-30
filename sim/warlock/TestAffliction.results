@@ -8,13 +8,13 @@ character_stats_results: {
   final_stats: 946
   final_stats: 4123.8
   final_stats: 109
-  final_stats: 369.696
-  final_stats: 1480.93981
+  final_stats: 369.69598
+  final_stats: 1481.01293
   final_stats: 747
   final_stats: 0
-  final_stats: 1195.81
+  final_stats: 1184.81
   final_stats: 291
-  final_stats: 971.55
+  final_stats: 1091.89543
   final_stats: 687
   final_stats: 0
   final_stats: 0
@@ -29,7 +29,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 0
-  final_stats: 24219.5
+  final_stats: 24039.5
   final_stats: 75
   final_stats: 75
   final_stats: 75
@@ -81,8 +81,8 @@ dps_results: {
 dps_results: {
  key: "TestAffliction-AllItems-DarkCoven'sRegalia"
  value: {
-  dps: 10139.33433
-  tps: 9130.61559
+  dps: 10138.17932
+  tps: 9130.0002
  }
 }
 dps_results: {
@@ -179,8 +179,8 @@ dps_results: {
 dps_results: {
  key: "TestAffliction-AllItems-InsightfulEarthsiegeDiamond"
  value: {
-  dps: 10746.70979
-  tps: 9632.61618
+  dps: 10747.38304
+  tps: 9632.64716
  }
 }
 dps_results: {
@@ -242,8 +242,8 @@ dps_results: {
 dps_results: {
  key: "TestAffliction-AllItems-RevitalizingSkyflareDiamond"
  value: {
-  dps: 10742.03489
-  tps: 9628.4319
+  dps: 10740.61603
+  tps: 9626.86927
  }
 }
 dps_results: {
@@ -305,22 +305,22 @@ dps_results: {
 dps_results: {
  key: "TestAffliction-Average-Default"
  value: {
-  dps: 11059.01904
-  tps: 9937.02747
+  dps: 11059.23781
+  tps: 9937.24701
  }
 }
 dps_results: {
  key: "TestAffliction-Settings-Orc-P3-AffItemSwap-FullBuffs-LongMultiTarget"
  value: {
-  dps: 28850.78019
-  tps: 33501.57041
+  dps: 28851.11743
+  tps: 33501.90765
  }
 }
 dps_results: {
  key: "TestAffliction-Settings-Orc-P3-AffItemSwap-FullBuffs-LongSingleTarget"
  value: {
-  dps: 11018.8371
-  tps: 9901.06873
+  dps: 11019.45117
+  tps: 9901.68281
  }
 }
 dps_results: {
@@ -333,15 +333,15 @@ dps_results: {
 dps_results: {
  key: "TestAffliction-Settings-Orc-P3-AffItemSwap-NoBuffs-LongMultiTarget"
  value: {
-  dps: 17186.99835
-  tps: 22157.55033
+  dps: 17187.34168
+  tps: 22157.89366
  }
 }
 dps_results: {
  key: "TestAffliction-Settings-Orc-P3-AffItemSwap-NoBuffs-LongSingleTarget"
  value: {
-  dps: 6339.61601
-  tps: 5938.1853
+  dps: 6340.17164
+  tps: 5938.74092
  }
 }
 dps_results: {
@@ -354,8 +354,8 @@ dps_results: {
 dps_results: {
  key: "TestAffliction-Settings-Orc-P3-Affliction Warlock-FullBuffs-LongMultiTarget"
  value: {
-  dps: 31722.17769
-  tps: 36563.32134
+  dps: 31722.93165
+  tps: 36564.0753
  }
 }
 dps_results: {
@@ -375,15 +375,15 @@ dps_results: {
 dps_results: {
  key: "TestAffliction-Settings-Orc-P3-Affliction Warlock-NoBuffs-LongMultiTarget"
  value: {
-  dps: 19132.82929
-  tps: 24309.1062
+  dps: 19133.57355
+  tps: 24309.85046
  }
 }
 dps_results: {
  key: "TestAffliction-Settings-Orc-P3-Affliction Warlock-NoBuffs-LongSingleTarget"
  value: {
-  dps: 6327.56637
-  tps: 5926.79312
+  dps: 6327.71959
+  tps: 5926.94634
  }
 }
 dps_results: {
