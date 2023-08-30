@@ -354,7 +354,7 @@ func (dk *Deathknight) registerItems() {
 			return
 		}
 
-		procMask := character.GetMeleeProcMaskForEnchant(3370)
+		procMask := character.GetProcMaskForEnchant(3370)
 
 		vulnAuras := character.NewEnemyAuraArray(core.RuneOfRazoriceVulnerabilityAura)
 		mhRazoriceSpell := newRazoriceHitSpell(character, true)
@@ -384,7 +384,7 @@ func (dk *Deathknight) registerItems() {
 		})
 
 		character.RegisterOnItemSwap(func(sim *core.Simulation) {
-			if character.GetMeleeProcMaskForEnchant(3370) == core.ProcMaskUnknown {
+			if character.GetProcMaskForEnchant(3370) == core.ProcMaskUnknown {
 				aura.Deactivate(sim)
 			} else {
 				aura.Activate(sim)
@@ -413,7 +413,7 @@ func (dk *Deathknight) registerItems() {
 	addEnchantEffect(3368, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
-		procMask := character.GetMeleeProcMaskForEnchant(3368)
+		procMask := character.GetProcMaskForEnchant(3368)
 		ppmm := character.AutoAttacks.NewPPMManager(2.0, procMask)
 
 		rfcAura := newRuneOfTheFallenCrusaderAura(character, "Rune Of The Fallen Crusader Proc", core.ActionID{SpellID: 53365})
@@ -541,7 +541,7 @@ func (dk *Deathknight) registerItems() {
 	addEnchantEffect(3369, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
-		procMask := character.GetMeleeProcMaskForEnchant(3369)
+		procMask := character.GetProcMaskForEnchant(3369)
 		ppmm := character.AutoAttacks.NewPPMManager(1.0, procMask)
 
 		core.MakePermanent(character.GetOrRegisterAura(core.Aura{

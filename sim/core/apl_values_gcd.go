@@ -1,7 +1,6 @@
 package core
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -24,7 +23,7 @@ func (value *APLValueGCDIsReady) GetBool(sim *Simulation) bool {
 	return value.unit.GCD.IsReady(sim)
 }
 func (value *APLValueGCDIsReady) String() string {
-	return fmt.Sprintf("GCD Is Ready")
+	return "GCD Is Ready"
 }
 
 type APLValueGCDTimeToReady struct {
@@ -44,5 +43,5 @@ func (value *APLValueGCDTimeToReady) GetDuration(sim *Simulation) time.Duration 
 	return value.unit.GCD.TimeToReady(sim)
 }
 func (value *APLValueGCDTimeToReady) String() string {
-	return fmt.Sprintf("GCD Time To Ready")
+	return "GCD Time To Ready"
 }

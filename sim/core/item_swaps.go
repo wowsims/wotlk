@@ -58,7 +58,7 @@ func (character *Character) RegisterOnItemSwap(callback OnSwapItem) {
 func (swap *ItemSwap) RegisterOnSwapItemForEffectWithPPMManager(effectID int32, ppm float64, ppmm *PPMManager, aura *Aura) {
 	character := swap.character
 	character.RegisterOnItemSwap(func(sim *Simulation) {
-		procMask := character.GetMeleeProcMaskForEnchant(effectID)
+		procMask := character.GetProcMaskForEnchant(effectID)
 		*ppmm = character.AutoAttacks.NewPPMManager(ppm, procMask)
 
 		if ppmm.Chance(procMask) == 0 {
@@ -74,7 +74,7 @@ func (swap *ItemSwap) RegisterOnSwapItemForEffectWithPPMManager(effectID int32, 
 func (swap *ItemSwap) RegisterOnSwapItemForEffect(effectID int32, aura *Aura) {
 	character := swap.character
 	character.RegisterOnItemSwap(func(sim *Simulation) {
-		procMask := character.GetMeleeProcMaskForEnchant(effectID)
+		procMask := character.GetProcMaskForEnchant(effectID)
 
 		if procMask == ProcMaskUnknown {
 			aura.Deactivate(sim)
@@ -198,16 +198,13 @@ func (swap *ItemSwap) swapWeapon(slot proto.ItemSlot) {
 	switch slot {
 	case proto.ItemSlot_ItemSlotMainHand:
 		character.AutoAttacks.MH = character.WeaponFromMainHand(swap.mhCritMultiplier)
-		break
 	case proto.ItemSlot_ItemSlotOffHand:
 		character.AutoAttacks.OH = character.WeaponFromOffHand(swap.ohCritMultiplier)
 		//Special case for when the OHAuto Spell was setup with a non weapon and does not have a crit multiplier.
 		character.AutoAttacks.OHAuto.CritMultiplier = swap.ohCritMultiplier
 		character.PseudoStats.CanBlock = character.OffHand().WeaponType == proto.WeaponType_WeaponTypeShield
-		break
 	case proto.ItemSlot_ItemSlotRanged:
 		character.AutoAttacks.Ranged = character.WeaponFromRanged(swap.rangedCritMultiplier)
-		break
 	}
 
 	character.AutoAttacks.IsDualWielding = character.MainHand().SwingSpeed != 0 && character.OffHand().SwingSpeed != 0

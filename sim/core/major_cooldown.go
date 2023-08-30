@@ -186,7 +186,6 @@ type majorCooldownManager struct {
 	minReady       time.Duration
 
 	tryUsing bool
-	fullSort bool
 }
 
 func newMajorCooldownManager(cooldowns *proto.Cooldowns) majorCooldownManager {
@@ -363,7 +362,7 @@ func (mcdm *majorCooldownManager) DesyncTrinketProcs() {
 	}
 }
 
-func (mcdm *majorCooldownManager) reset(sim *Simulation) {
+func (mcdm *majorCooldownManager) reset(_ *Simulation) {
 	for i := range mcdm.majorCooldowns {
 		newMCD := &MajorCooldown{}
 		*newMCD = mcdm.initialMajorCooldowns[i]

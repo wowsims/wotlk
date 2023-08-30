@@ -380,10 +380,7 @@ func (mage *Mage) registerArcanePowerCD() {
 			mage.ArcanePowerAura.Activate(sim)
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			if mage.ArcanePotencyAura.IsActive() {
-				return false
-			}
-			return true
+			return !mage.ArcanePotencyAura.IsActive()
 		},
 	})
 

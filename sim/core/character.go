@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"golang.org/x/exp/slices"
 	"strconv"
 	"strings"
 	"time"
@@ -625,23 +626,30 @@ func (character *Character) HasRangedWeapon() bool {
 	return character.GetRangedWeapon() != nil
 }
 
-func (character *Character) GetMeleeProcMaskForEnchant(effectID int32) ProcMask {
-	mask := ProcMaskUnknown
-	if w := character.MainHand(); w.Enchant.EffectID == effectID {
-		mask |= ProcMaskMeleeMH
-	}
-	if w := character.OffHand(); w.Enchant.EffectID == effectID {
-		mask |= ProcMaskMeleeOH
-	}
-	return mask
+func (character *Character) GetProcMaskForEnchant(effectID int32) ProcMask {
+	return character.getProcMaskFor(func(weapon *Item) bool {
+		return weapon.Enchant.EffectID == effectID
+	})
 }
 
-func (character *Character) GetMeleeProcMaskForItem(itemID int32) ProcMask {
+func (character *Character) GetProcMaskForItem(itemID int32) ProcMask {
+	return character.getProcMaskFor(func(weapon *Item) bool {
+		return weapon.ID == itemID
+	})
+}
+
+func (character *Character) GetProcMaskForTypes(weaponTypes ...proto.WeaponType) ProcMask {
+	return character.getProcMaskFor(func(weapon *Item) bool {
+		return slices.Contains(weaponTypes, weapon.WeaponType)
+	})
+}
+
+func (character *Character) getProcMaskFor(pred func(weapon *Item) bool) ProcMask {
 	mask := ProcMaskUnknown
-	if w := character.MainHand(); w.ID == itemID {
+	if pred(character.MainHand()) {
 		mask |= ProcMaskMeleeMH
 	}
-	if w := character.OffHand(); w.ID == itemID {
+	if pred(character.OffHand()) {
 		mask |= ProcMaskMeleeOH
 	}
 	return mask

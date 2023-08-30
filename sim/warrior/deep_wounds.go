@@ -6,8 +6,6 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-const munchingWindow = time.Millisecond * 10
-
 func (warrior *Warrior) applyDeepWounds() {
 	if warrior.Talents.DeepWounds == 0 {
 		return

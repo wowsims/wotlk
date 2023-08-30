@@ -42,7 +42,7 @@ func (s *UnitStats) Get(stat stats.UnitStat) float64 {
 func (s *UnitStats) ToProto() *proto.UnitStats {
 	return &proto.UnitStats{
 		Stats:       s.Stats[:],
-		PseudoStats: s.PseudoStats[:],
+		PseudoStats: s.PseudoStats,
 	}
 }
 

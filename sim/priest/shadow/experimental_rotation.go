@@ -386,12 +386,12 @@ func (spriest *ShadowPriest) chooseSpellExperimental(sim *core.Simulation) *core
 	}
 
 	// Subtract opportunity cost of not choosing each spell.
-	for chosenSpellIdx, _ := range spellDamage {
+	for chosenSpellIdx := range spellDamage {
 		if spellDamage[chosenSpellIdx] == 0 {
 			continue
 		}
 
-		for otherSpellIdx, _ := range spellDamage {
+		for otherSpellIdx := range spellDamage {
 			if chosenSpellIdx == otherSpellIdx { //|| otherSpellIdx == MindFlay1Idx || otherSpellIdx == MindFlay3Idx {
 				continue
 			}

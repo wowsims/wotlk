@@ -14,6 +14,7 @@ func (rogue *Rogue) registerHackAndSlash(mask core.ProcMask) {
 		Duration: time.Millisecond * 500,
 	}
 	procChance := 0.01 * float64(rogue.Talents.HackAndSlash)
+
 	rogue.RegisterAura(core.Aura{
 		Label:    "Hack and Slash",
 		Duration: core.NeverExpires,

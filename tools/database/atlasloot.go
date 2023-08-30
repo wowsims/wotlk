@@ -129,7 +129,7 @@ func readAtlasLootDungeonData(db *WowDatabase, expansion proto.Expansion, srcUrl
 				curLocation := 0
 
 				for _, itemMatch := range itemsPattern.FindAllStringSubmatch(difficultyMatch[0], -1) {
-					itemParams := core.MapSlice(strings.Split(itemMatch[1], ","), func(s string) string { return strings.TrimSpace(s) })
+					itemParams := core.MapSlice(strings.Split(itemMatch[1], ","), strings.TrimSpace)
 					location, _ := strconv.Atoi(itemParams[0]) // Location within AtlasLoot's menu.
 
 					idStr := itemParams[1]

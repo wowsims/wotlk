@@ -18,7 +18,7 @@ func init() {
 	core.NewEnchantEffect(3251, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
-		procMask := character.GetMeleeProcMaskForEnchant(3251)
+		procMask := character.GetProcMaskForEnchant(3251)
 		ppmm := character.AutoAttacks.NewPPMManager(4.0, procMask)
 
 		procSpell := character.RegisterSpell(core.SpellConfig{
@@ -62,7 +62,7 @@ func init() {
 	core.NewEnchantEffect(3239, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
-		procMask := character.GetMeleeProcMaskForEnchant(3239)
+		procMask := character.GetProcMaskForEnchant(3239)
 		ppmm := character.AutoAttacks.NewPPMManager(4.0, procMask)
 
 		procSpell := character.RegisterSpell(core.SpellConfig{
@@ -167,7 +167,7 @@ func init() {
 	core.NewEnchantEffect(3789, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
-		procMask := character.GetMeleeProcMaskForEnchant(3789)
+		procMask := character.GetProcMaskForEnchant(3789)
 		ppmm := character.AutoAttacks.NewPPMManager(1.0, procMask)
 
 		// Modify only gear armor, including from agility
@@ -203,7 +203,7 @@ func init() {
 	core.NewEnchantEffect(3241, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
-		procMask := character.GetMeleeProcMaskForEnchant(3241)
+		procMask := character.GetProcMaskForEnchant(3241)
 		ppmm := character.AutoAttacks.NewPPMManager(3.0, procMask)
 
 		healthMetrics := character.NewHealthMetrics(core.ActionID{ItemID: 44494})

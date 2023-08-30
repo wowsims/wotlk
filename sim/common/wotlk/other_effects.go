@@ -907,7 +907,7 @@ func init() {
 		core.NewItemEffect(itemID, func(agent core.Agent) {
 			character := agent.GetCharacter()
 
-			procMask := character.GetMeleeProcMaskForItem(itemID)
+			procMask := character.GetProcMaskForItem(itemID)
 			ppmm := character.AutoAttacks.NewPPMManager(2.0, procMask)
 
 			procActionID := core.ActionID{ItemID: itemID}
