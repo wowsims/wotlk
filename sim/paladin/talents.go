@@ -586,7 +586,7 @@ func (paladin *Paladin) applyRighteousVengeance() {
 	rvSpell := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    dotActionID.WithTag(1),
 		SpellSchool: core.SpellSchoolHoly,
-		ProcMask:    core.ProcMaskEmpty,
+		ProcMask:    core.ProcMaskProc,
 		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
