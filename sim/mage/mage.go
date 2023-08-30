@@ -208,66 +208,12 @@ func NewMage(character core.Character, options *proto.Player) *Mage {
 }
 
 func init() {
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassMage}] = stats.Stats{
-		stats.Health:    3213,
-		stats.Strength:  30,
-		stats.Agility:   41,
-		stats.Stamina:   50,
-		stats.Intellect: 185,
-		stats.Spirit:    173,
-		stats.Mana:      3268,
-		stats.SpellCrit: core.CritRatingPerCritChance * 0.926,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassMage}] = stats.Stats{
-		stats.Health:    3213,
-		stats.Strength:  34,
-		stats.Agility:   36,
-		stats.Stamina:   50,
-		stats.Intellect: 182,
-		stats.Spirit:    176,
-		stats.Mana:      3268,
-		stats.SpellCrit: core.CritRatingPerCritChance * 0.933,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceGnome, Class: proto.Class_ClassMage}] = stats.Stats{
-		stats.Health:    3213,
-		stats.Strength:  28,
-		stats.Agility:   42,
-		stats.Stamina:   50,
-		stats.Intellect: 193, // Gnomes start with 162 int, we assume this include racial so / 1.05
-		stats.Spirit:    174,
-		stats.Mana:      3268,
-		stats.SpellCrit: core.CritRatingPerCritChance * 0.93,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassMage}] = stats.Stats{
-		stats.Health:    3213,
-		stats.Strength:  33,
-		stats.Agility:   39,
-		stats.Stamina:   51,
-		stats.Intellect: 181,
-		stats.Spirit:    179,
-		stats.Mana:      3268,
-		stats.SpellCrit: core.CritRatingPerCritChance * 0.926,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassMage}] = stats.Stats{
-		stats.Health:    3213,
-		stats.Strength:  34,
-		stats.Agility:   41,
-		stats.Stamina:   52,
-		stats.Intellect: 177,
-		stats.Spirit:    175,
-		stats.Mana:      3268,
-		stats.SpellCrit: core.CritRatingPerCritChance * 0.935,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassMage}] = stats.Stats{
-		stats.Health:    3213,
-		stats.Strength:  32,
-		stats.Agility:   37,
-		stats.Stamina:   52,
-		stats.Intellect: 179,
-		stats.Spirit:    179,
-		stats.Mana:      3268,
-		stats.SpellCrit: core.CritRatingPerCritChance * 0.930,
-	}
+	core.AddBaseStatsCombo(proto.Race_RaceBloodElf, proto.Class_ClassMage)
+	core.AddBaseStatsCombo(proto.Race_RaceDraenei, proto.Class_ClassMage)
+	core.AddBaseStatsCombo(proto.Race_RaceGnome, proto.Class_ClassMage)
+	core.AddBaseStatsCombo(proto.Race_RaceHuman, proto.Class_ClassMage)
+	core.AddBaseStatsCombo(proto.Race_RaceTroll, proto.Class_ClassMage)
+	core.AddBaseStatsCombo(proto.Race_RaceUndead, proto.Class_ClassMage)
 }
 
 // Agent is a generic way to access underlying mage on any of the agents.
