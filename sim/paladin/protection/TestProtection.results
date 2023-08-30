@@ -224,15 +224,15 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-Deathbringer'sWill-50362"
  value: {
-  dps: 3233.08363
-  tps: 7706.80728
+  dps: 3224.44335
+  tps: 7687.54053
  }
 }
 dps_results: {
  key: "TestProtection-AllItems-Deathbringer'sWill-50363"
  value: {
-  dps: 3259.32629
-  tps: 7768.47734
+  dps: 3261.71025
+  tps: 7776.91238
  }
 }
 dps_results: {
@@ -792,15 +792,15 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-TinyAbominationinaJar-50351"
  value: {
-  dps: 3272.22255
-  tps: 7786.4825
+  dps: 3356.06799
+  tps: 7970.12118
  }
 }
 dps_results: {
  key: "TestProtection-AllItems-TinyAbominationinaJar-50706"
  value: {
-  dps: 3312.19618
-  tps: 7877.16935
+  dps: 3355.44851
+  tps: 7961.31916
  }
 }
 dps_results: {

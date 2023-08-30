@@ -75,7 +75,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	dotApplicationSpell := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 31803, Tag: 1},
 		SpellSchool: core.SpellSchoolHoly,
-		ProcMask:    core.ProcMaskEmpty, // Might need to be changed later if SOV secondary rolls can proc other things.
+		ProcMask:    core.ProcMaskProc,
 
 		DamageMultiplier: 1 *
 			(1 + paladin.getItemSetLightswornBattlegearBonus4() + paladin.getItemSetAegisPlateBonus2() + paladin.getTalentSealsOfThePureBonus()),
