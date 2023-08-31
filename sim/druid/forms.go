@@ -74,7 +74,7 @@ func (druid *Druid) GetBearWeapon() core.Weapon {
 // Bonus stats for both cat and bear.
 func (druid *Druid) GetFormShiftStats() stats.Stats {
 	s := stats.Stats{
-		stats.AttackPower: float64(druid.Talents.PredatoryStrikes) * 0.5 * float64(core.CharacterLevel),
+		stats.AttackPower: float64(druid.Talents.PredatoryStrikes) * 0.5 * float64(druid.Level),
 		stats.MeleeCrit:   float64(druid.Talents.SharpenedClaws) * 2 * core.CritRatingPerCritChance,
 	}
 
@@ -238,7 +238,7 @@ func (druid *Druid) registerBearFormSpell() {
 	healthMetrics := druid.NewHealthMetrics(actionID)
 
 	statBonus := druid.GetFormShiftStats().Add(stats.Stats{
-		stats.AttackPower: 3 * float64(core.CharacterLevel),
+		stats.AttackPower: 3 * float64(druid.Level),
 	})
 
 	stamDep := druid.NewDynamicMultiplyStat(stats.Stamina, 1.25)

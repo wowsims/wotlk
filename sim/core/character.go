@@ -38,6 +38,7 @@ type Character struct {
 	Name  string // Different from Label, needed for returned results.
 	Race  proto.Race
 	Class proto.Class
+	Spec  proto.Spec
 
 	// Current gear.
 	Equip Equipment
@@ -106,6 +107,7 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 		Name:  player.Name,
 		Race:  player.Race,
 		Class: player.Class,
+		Spec:  PlayerProtoToSpec(player),
 		Equip: ProtoToEquipment(player.Equipment),
 		professions: [2]proto.Profession{
 			player.Profession1,
@@ -224,6 +226,7 @@ func (character *Character) applyEquipment() {
 }
 
 func (character *Character) addUniversalStatDependencies() {
+	character.AddStat(stats.Health, 20-10*20)
 	character.AddStatDependency(stats.Stamina, stats.Health, 10)
 	character.AddStatDependency(stats.Agility, stats.Armor, 2)
 }
@@ -687,26 +690,6 @@ func (character *Character) GetMetricsProto() *proto.UnitMetrics {
 
 	return metrics
 }
-
-type BaseStatsKey struct {
-	Race  proto.Race
-	Class proto.Class
-}
-
-var BaseStats = map[BaseStatsKey]stats.Stats{}
-
-// To calculate base stats, get a naked level 70 of the race/class you want, ideally without any talents to mess up base stats.
-//  Basic stats are as-shown (str/agi/stm/int/spirit)
-
-// Base Spell Crit is calculated by
-//   1. Take as-shown value (troll shaman have 3.5%)
-//   2. Calculate the bonus from int (for troll shaman that would be 104/78.1=1.331% crit)
-//   3. Subtract as-shown from int bonus (3.5-1.331=2.169)
-//   4. 2.169*22.08 (rating per crit percent) = 47.89 crit rating.
-
-// Base mana can be looked up here: https://wowwiki-archive.fandom.com/wiki/Base_mana
-
-// I assume a similar processes can be applied for other stats.
 
 func (character *Character) GetDefensiveTrinketCD() *Timer {
 	return character.GetOrInitTimer(&character.defensiveTrinketCD)

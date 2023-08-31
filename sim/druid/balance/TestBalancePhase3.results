@@ -8,13 +8,13 @@ character_stats_results: {
   final_stats: 741.642
   final_stats: 4076.80147
   final_stats: 109
-  final_stats: 343.928
-  final_stats: 1867.79551
+  final_stats: 343.92797
+  final_stats: 1867.78344
   final_stats: 604
   final_stats: 0
   final_stats: 1643.6772
   final_stats: 239
-  final_stats: 1710.91256
+  final_stats: 1710.63093
   final_stats: 604
   final_stats: 0
   final_stats: 0
@@ -26,10 +26,10 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 0
-  final_stats: 341.26905
+  final_stats: 336.37118
   final_stats: 0
   final_stats: 0
-  final_stats: 24756.63
+  final_stats: 25127.88
   final_stats: 75
   final_stats: 75
   final_stats: 75
@@ -159,8 +159,8 @@ dps_results: {
 dps_results: {
  key: "TestBalancePhase3-AllItems-DarkmoonCard:Death-42990"
  value: {
-  dps: 11124.22204
-  tps: 10895.82436
+  dps: 11124.66631
+  tps: 10896.26863
  }
 }
 dps_results: {
@@ -243,8 +243,8 @@ dps_results: {
 dps_results: {
  key: "TestBalancePhase3-AllItems-DreamwalkerGarb"
  value: {
-  dps: 8919.337
-  tps: 8702.51234
+  dps: 8919.53143
+  tps: 8702.70678
  }
 }
 dps_results: {
@@ -271,8 +271,8 @@ dps_results: {
 dps_results: {
  key: "TestBalancePhase3-AllItems-EnigmaticStarflareDiamond"
  value: {
-  dps: 11158.88766
-  tps: 10921.90365
+  dps: 11167.24707
+  tps: 10930.651
  }
 }
 dps_results: {
@@ -376,8 +376,8 @@ dps_results: {
 dps_results: {
  key: "TestBalancePhase3-AllItems-Gladiator'sWildhide"
  value: {
-  dps: 9525.64391
-  tps: 9285.24602
+  dps: 9525.01354
+  tps: 9284.61303
  }
 }
 dps_results: {
@@ -446,8 +446,8 @@ dps_results: {
 dps_results: {
  key: "TestBalancePhase3-AllItems-IdoloftheLunarEclipse-50457"
  value: {
-  dps: 11605.44514
-  tps: 11371.81031
+  dps: 11605.63679
+  tps: 11372.01658
  }
 }
 dps_results: {
@@ -488,8 +488,8 @@ dps_results: {
 dps_results: {
  key: "TestBalancePhase3-AllItems-ImpassiveStarflareDiamond"
  value: {
-  dps: 11158.88766
-  tps: 10921.90365
+  dps: 11167.24707
+  tps: 10930.651
  }
 }
 dps_results: {
@@ -558,8 +558,8 @@ dps_results: {
 dps_results: {
  key: "TestBalancePhase3-AllItems-MeteoriteWhetstone-37390"
  value: {
-  dps: 11076.91669
-  tps: 10848.04602
+  dps: 11077.2521
+  tps: 10848.38143
  }
 }
 dps_results: {
@@ -579,8 +579,8 @@ dps_results: {
 dps_results: {
  key: "TestBalancePhase3-AllItems-NightsongGarb"
  value: {
-  dps: 9219.3995
-  tps: 8989.65519
+  dps: 9219.38315
+  tps: 8989.63884
  }
 }
 dps_results: {
@@ -740,8 +740,8 @@ dps_results: {
 dps_results: {
  key: "TestBalancePhase3-AllItems-SouloftheDead-40382"
  value: {
-  dps: 11106.99037
-  tps: 10880.73306
+  dps: 11109.48225
+  tps: 10883.12648
  }
 }
 dps_results: {
@@ -761,8 +761,8 @@ dps_results: {
 dps_results: {
  key: "TestBalancePhase3-AllItems-StormshroudArmor"
  value: {
-  dps: 8057.98217
-  tps: 7839.29505
+  dps: 8058.85515
+  tps: 7840.16804
  }
 }
 dps_results: {
@@ -915,15 +915,15 @@ dps_results: {
 dps_results: {
  key: "TestBalancePhase3-Average-Default"
  value: {
-  dps: 11714.74225
-  tps: 11482.09066
+  dps: 11715.01237
+  tps: 11482.33744
  }
 }
 dps_results: {
  key: "TestBalancePhase3-Settings-Tauren-P3-Default-FullBuffs-LongMultiTarget"
  value: {
-  dps: 16601.28562
-  tps: 19435.22438
+  dps: 16601.50305
+  tps: 19435.44181
  }
 }
 dps_results: {
@@ -943,15 +943,15 @@ dps_results: {
 dps_results: {
  key: "TestBalancePhase3-Settings-Tauren-P3-Default-NoBuffs-LongMultiTarget"
  value: {
-  dps: 7637.87683
-  tps: 8596.43727
+  dps: 7637.977
+  tps: 8596.53745
  }
 }
 dps_results: {
  key: "TestBalancePhase3-Settings-Tauren-P3-Default-NoBuffs-LongSingleTarget"
  value: {
-  dps: 5190.19004
-  tps: 5070.05976
+  dps: 5190.64775
+  tps: 5070.51747
  }
 }
 dps_results: {
