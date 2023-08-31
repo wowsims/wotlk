@@ -221,7 +221,7 @@ func NewItem(itemSpec ItemSpec) Item {
 				item.Gems[gemIdx] = gem
 			} else {
 				if gemID != 0 {
-					panic(fmt.Sprintf("No gem with id: %d", gemID))
+					panic(fmt.Sprintf("When parsing item %d, socket %d had gem with id: %d\nThis gem is not in the database.", itemSpec.ID, gemIdx, gemID))
 				}
 			}
 		}
