@@ -38,6 +38,7 @@ type Character struct {
 	Name  string // Different from Label, needed for returned results.
 	Race  proto.Race
 	Class proto.Class
+	Spec  proto.Spec
 
 	// Current gear.
 	Equip Equipment
@@ -106,6 +107,7 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 		Name:  player.Name,
 		Race:  player.Race,
 		Class: player.Class,
+		Spec:  PlayerProtoToSpec(player),
 		Equip: ProtoToEquipment(player.Equipment),
 		professions: [2]proto.Profession{
 			player.Profession1,

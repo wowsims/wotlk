@@ -445,11 +445,18 @@ func registerPotionCD(agent Agent, consumes *proto.Consumes) {
 	defaultPotion := consumes.DefaultPotion
 	startingPotion := consumes.PrepopPotion
 
+	potionCD := character.NewTimer()
+	if character.Spec == proto.Spec_SpecBalanceDruid {
+		// Create both pots spells so they will be selectable in APL UI regardless of settings.
+		speedMCD := makePotionActivation(proto.Potions_PotionOfSpeed, character, potionCD)
+		wildMagicMCD := makePotionActivation(proto.Potions_PotionOfWildMagic, character, potionCD)
+		speedMCD.Spell.Flags |= SpellFlagAPL | SpellFlagMCD
+		wildMagicMCD.Spell.Flags |= SpellFlagAPL | SpellFlagMCD
+	}
+
 	if defaultPotion == proto.Potions_UnknownPotion && startingPotion == proto.Potions_UnknownPotion {
 		return
 	}
-
-	potionCD := character.NewTimer()
 
 	startingMCD := makePotionActivation(startingPotion, character, potionCD)
 	if startingMCD.Spell != nil {
@@ -522,7 +529,7 @@ func makePotionActivationInternal(potionType proto.Potions, character *Character
 		healthMetrics := character.NewHealthMetrics(actionID)
 		return MajorCooldown{
 			Type: CooldownTypeSurvival,
-			Spell: character.RegisterSpell(SpellConfig{
+			Spell: character.GetOrRegisterSpell(SpellConfig{
 				ActionID: actionID,
 				Flags:    SpellFlagNoOnCastComplete,
 				Cast:     potionCast,
@@ -558,7 +565,7 @@ func makePotionActivationInternal(potionType proto.Potions, character *Character
 				}
 				return character.MaxMana()-(character.CurrentMana()+totalRegen) >= manaGain
 			},
-			Spell: character.RegisterSpell(SpellConfig{
+			Spell: character.GetOrRegisterSpell(SpellConfig{
 				ActionID: actionID,
 				Flags:    SpellFlagNoOnCastComplete,
 				Cast:     potionCast,
@@ -578,7 +585,7 @@ func makePotionActivationInternal(potionType proto.Potions, character *Character
 		aura := character.NewTemporaryStatsAura("Indestructible Potion", actionID, stats.Stats{stats.Armor: 3500}, time.Minute*2)
 		return MajorCooldown{
 			Type: CooldownTypeDPS,
-			Spell: character.RegisterSpell(SpellConfig{
+			Spell: character.GetOrRegisterSpell(SpellConfig{
 				ActionID: actionID,
 				Flags:    SpellFlagNoOnCastComplete,
 				Cast:     potionCast,
@@ -592,7 +599,7 @@ func makePotionActivationInternal(potionType proto.Potions, character *Character
 		aura := character.NewTemporaryStatsAura("Potion of Speed", actionID, stats.Stats{stats.MeleeHaste: 500, stats.SpellHaste: 500}, time.Second*15)
 		return MajorCooldown{
 			Type: CooldownTypeDPS,
-			Spell: character.RegisterSpell(SpellConfig{
+			Spell: character.GetOrRegisterSpell(SpellConfig{
 				ActionID: actionID,
 				Flags:    SpellFlagNoOnCastComplete,
 				Cast:     potionCast,
@@ -606,7 +613,7 @@ func makePotionActivationInternal(potionType proto.Potions, character *Character
 		aura := character.NewTemporaryStatsAura("Potion of Wild Magic", actionID, stats.Stats{stats.SpellPower: 200, stats.SpellCrit: 200, stats.MeleeCrit: 200}, time.Second*15)
 		return MajorCooldown{
 			Type: CooldownTypeDPS,
-			Spell: character.RegisterSpell(SpellConfig{
+			Spell: character.GetOrRegisterSpell(SpellConfig{
 				ActionID: actionID,
 				Flags:    SpellFlagNoOnCastComplete,
 				Cast:     potionCast,
@@ -620,7 +627,7 @@ func makePotionActivationInternal(potionType proto.Potions, character *Character
 		aura := character.NewTemporaryStatsAura("Destruction Potion", actionID, stats.Stats{stats.SpellPower: 120, stats.SpellCrit: 2 * CritRatingPerCritChance}, time.Second*15)
 		return MajorCooldown{
 			Type: CooldownTypeDPS,
-			Spell: character.RegisterSpell(SpellConfig{
+			Spell: character.GetOrRegisterSpell(SpellConfig{
 				ActionID: actionID,
 				Flags:    SpellFlagNoOnCastComplete,
 				Cast:     potionCast,
@@ -640,7 +647,7 @@ func makePotionActivationInternal(potionType proto.Potions, character *Character
 				totalRegen := character.ManaRegenPerSecondWhileCasting() * 5
 				return character.MaxMana()-(character.CurrentMana()+totalRegen) >= 3000
 			},
-			Spell: character.RegisterSpell(SpellConfig{
+			Spell: character.GetOrRegisterSpell(SpellConfig{
 				ActionID: actionID,
 				Flags:    SpellFlagNoOnCastComplete,
 				Cast:     potionCast,
@@ -659,7 +666,7 @@ func makePotionActivationInternal(potionType proto.Potions, character *Character
 		aura := character.NewTemporaryStatsAura("Haste Potion", actionID, stats.Stats{stats.MeleeHaste: 400}, time.Second*15)
 		return MajorCooldown{
 			Type: CooldownTypeDPS,
-			Spell: character.RegisterSpell(SpellConfig{
+			Spell: character.GetOrRegisterSpell(SpellConfig{
 				ActionID: actionID,
 				Flags:    SpellFlagNoOnCastComplete,
 				Cast:     potionCast,
@@ -680,7 +687,7 @@ func makePotionActivationInternal(potionType proto.Potions, character *Character
 				}
 				return true
 			},
-			Spell: character.RegisterSpell(SpellConfig{
+			Spell: character.GetOrRegisterSpell(SpellConfig{
 				ActionID: actionID,
 				Flags:    SpellFlagNoOnCastComplete,
 				Cast:     potionCast,
@@ -714,7 +721,7 @@ func makePotionActivationInternal(potionType proto.Potions, character *Character
 				// seconds so we can pop it a little earlier than the full value.
 				return character.MaxMana()-character.CurrentMana() >= 2000
 			},
-			Spell: character.RegisterSpell(SpellConfig{
+			Spell: character.GetOrRegisterSpell(SpellConfig{
 				ActionID: actionID,
 				Flags:    SpellFlagNoOnCastComplete,
 				Cast:     potionCast,
@@ -730,7 +737,7 @@ func makePotionActivationInternal(potionType proto.Potions, character *Character
 		aura := character.NewTemporaryStatsAura("Insane Strength Potion", actionID, stats.Stats{stats.Strength: 120, stats.Defense: -75}, time.Second*15)
 		return MajorCooldown{
 			Type: CooldownTypeDPS,
-			Spell: character.RegisterSpell(SpellConfig{
+			Spell: character.GetOrRegisterSpell(SpellConfig{
 				ActionID: actionID,
 				Flags:    SpellFlagNoOnCastComplete,
 				Cast:     potionCast,
@@ -744,7 +751,7 @@ func makePotionActivationInternal(potionType proto.Potions, character *Character
 		aura := character.NewTemporaryStatsAura("Ironshield Potion", actionID, stats.Stats{stats.Armor: 2500}, time.Minute*2)
 		return MajorCooldown{
 			Type: CooldownTypeDPS,
-			Spell: character.RegisterSpell(SpellConfig{
+			Spell: character.GetOrRegisterSpell(SpellConfig{
 				ActionID: actionID,
 				Flags:    SpellFlagNoOnCastComplete,
 				Cast:     potionCast,
@@ -758,7 +765,7 @@ func makePotionActivationInternal(potionType proto.Potions, character *Character
 		aura := character.NewTemporaryStatsAura("Heroic Potion", actionID, stats.Stats{stats.Strength: 70, stats.Health: 700}, time.Second*15)
 		return MajorCooldown{
 			Type: CooldownTypeDPS,
-			Spell: character.RegisterSpell(SpellConfig{
+			Spell: character.GetOrRegisterSpell(SpellConfig{
 				ActionID: actionID,
 				Flags:    SpellFlagNoOnCastComplete,
 				Cast:     potionCast,
