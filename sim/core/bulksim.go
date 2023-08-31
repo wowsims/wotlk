@@ -134,6 +134,8 @@ func (b *bulkSimRunner) Run(pctx context.Context, progress chan *proto.ProgressM
 					sockets[i] = b.Request.BulkSettings.DefaultYellowGem
 				} else if ColorIntersects(color, proto.GemColor_GemColorBlue) {
 					sockets[i] = b.Request.BulkSettings.DefaultBlueGem
+				} else if ColorIntersects(color, proto.GemColor_GemColorMeta) {
+					sockets[i] = b.Request.BulkSettings.DefaultMetaGem
 				}
 			}
 			replaceItem.Gems = sockets

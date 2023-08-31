@@ -9,15 +9,15 @@ character_stats_results: {
   final_stats: 1507.193
   final_stats: 109
   final_stats: 146
-  final_stats: 774.38718
+  final_stats: 777.37652
   final_stats: 0
   final_stats: 0
   final_stats: 4690.741
   final_stats: 146
-  final_stats: 1078.38676
+  final_stats: 1078.24987
   final_stats: 0
   final_stats: 0
-  final_stats: 228.185
+  final_stats: 228.18498
   final_stats: 7942
   final_stats: 0
   final_stats: 0
@@ -26,7 +26,7 @@ character_stats_results: {
   final_stats: 703
   final_stats: 171
   final_stats: 1708.3275
-  final_stats: 497.91609
+  final_stats: 449.86221
   final_stats: 180
   final_stats: 15
   final_stats: 38291.1784
@@ -139,8 +139,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
-  dps: 2706.12141
-  tps: 6513.68525
+  dps: 2706.12685
+  tps: 6513.69925
  }
 }
 dps_results: {
@@ -196,8 +196,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-DarkmoonCard:Greatness-44255"
  value: {
-  dps: 3267.70957
-  tps: 7845.75807
+  dps: 3267.03366
+  tps: 7844.37804
  }
 }
 dps_results: {
@@ -210,29 +210,29 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-Death'sChoice-47464"
  value: {
-  dps: 3376.28719
-  tps: 8067.01261
+  dps: 3375.43942
+  tps: 8065.01786
  }
 }
 dps_results: {
  key: "TestProtection-AllItems-DeathKnight'sAnguish-38212"
  value: {
-  dps: 3097.78272
-  tps: 7417.88795
+  dps: 3097.68529
+  tps: 7417.63716
  }
 }
 dps_results: {
  key: "TestProtection-AllItems-Deathbringer'sWill-50362"
  value: {
-  dps: 3234.14899
-  tps: 7708.23147
+  dps: 3233.73379
+  tps: 7707.11639
  }
 }
 dps_results: {
  key: "TestProtection-AllItems-Deathbringer'sWill-50363"
  value: {
-  dps: 3251.88351
-  tps: 7753.86291
+  dps: 3250.50812
+  tps: 7749.96539
  }
 }
 dps_results: {
@@ -413,8 +413,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
-  dps: 3068.55358
-  tps: 7350.39726
+  dps: 3071.04859
+  tps: 7356.81943
  }
 }
 dps_results: {
@@ -505,8 +505,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-LightswornBattlegear"
  value: {
-  dps: 3680.26564
-  tps: 8734.5089
+  dps: 3680.26333
+  tps: 8734.50296
  }
 }
 dps_results: {
@@ -526,8 +526,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-MeteoriteWhetstone-37390"
  value: {
-  dps: 3184.30682
-  tps: 7625.52743
+  dps: 3182.40115
+  tps: 7620.2398
  }
 }
 dps_results: {
@@ -603,8 +603,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-RedemptionBattlegear"
  value: {
-  dps: 3141.11035
-  tps: 7469.08181
+  dps: 3141.06809
+  tps: 7468.97302
  }
 }
 dps_results: {
@@ -778,29 +778,29 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-TheTwinBladesofAzzinoth"
  value: {
-  dps: 2908.52765
-  tps: 6985.30826
+  dps: 2909.31147
+  tps: 6987.65539
  }
 }
 dps_results: {
  key: "TestProtection-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 3056.91559
-  tps: 7317.0094
+  dps: 3056.91445
+  tps: 7317.00648
  }
 }
 dps_results: {
  key: "TestProtection-AllItems-TinyAbominationinaJar-50351"
  value: {
-  dps: 3347.23539
-  tps: 7950.05282
+  dps: 3339.25104
+  tps: 7935.2742
  }
 }
 dps_results: {
  key: "TestProtection-AllItems-TinyAbominationinaJar-50706"
  value: {
-  dps: 3357.33933
-  tps: 7965.97052
+  dps: 3353.45017
+  tps: 7954.47678
  }
 }
 dps_results: {
@@ -890,9 +890,9 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Average-Default"
  value: {
-  dps: 3511.94696
-  tps: 8390.3841
-  dtps: 8.38392
+  dps: 3515.10525
+  tps: 8397.4631
+  dtps: 8.6077
  }
 }
 dps_results: {
@@ -1024,8 +1024,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Settings-Human-P1-Protection Paladin SOC-FullBuffs-LongMultiTarget"
  value: {
-  dps: 10550.50568
-  tps: 28250.07461
+  dps: 10550.40972
+  tps: 28249.82761
  }
 }
 dps_results: {
@@ -1150,8 +1150,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 3629.11436
-  tps: 8667.14773
-  dtps: 10.07858
+  dps: 3630.16944
+  tps: 8671.05057
+  dtps: 10.58654
  }
 }

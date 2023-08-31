@@ -10,25 +10,13 @@ const GCDMin = time.Second * 1
 const GCDDefault = time.Millisecond * 1500
 
 const MeleeAttackRatingPerDamage = 14.0
-const ExpertisePerQuarterPercentReduction = 32.79 / 4 // TODO: Does it still cutoff at 1/4 percents?
 const ArmorPenPerPercentArmor = 13.99
 
-const HasteRatingPerHastePercent = 32.79
-const CritRatingPerCritChance = 45.91
-
-const SpellHitRatingPerHitChance = 26.232
-const MeleeHitRatingPerHitChance = 32.79
-
-const DefenseRatingPerDefense = 4.92
-const DodgeRatingPerDodgeChance = 45.25
-const ParryRatingPerParryChance = 45.25
-const BlockRatingPerBlockChance = 16.39
 const MissDodgeParryBlockCritChancePerDefense = 0.04
 
 const DefenseRatingToChanceReduction = (1.0 / DefenseRatingPerDefense) * MissDodgeParryBlockCritChancePerDefense / 100
 
-const ResilienceRatingPerCritReductionChance = 94.27
-const ResilienceRatingPerCritDamageReductionPercent = 94.27 / 2.2
+const ResilienceRatingPerCritDamageReductionPercent = ResilienceRatingPerCritReductionChance / 2.2
 
 // Updated based on formulas supplied by InDebt on WoWSims Discord
 const EnemyAutoAttackAPCoefficient = 1.0 / (14.0 * 177.0)

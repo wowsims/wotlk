@@ -27,7 +27,7 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 	onJudgementProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 20187}, // Judgement of Righteousness.
 		SpellSchool: core.SpellSchoolHoly,
-		ProcMask:    core.ProcMaskMeleeOrRangedSpecial,
+		ProcMask:    core.ProcMaskMeleeSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | SpellFlagSecondaryJudgement,
 
 		BonusCritRating: (6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance) +

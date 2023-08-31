@@ -100,7 +100,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	onJudgementProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 31804}, // Judgement of Vengeance.
 		SpellSchool: core.SpellSchoolHoly,
-		ProcMask:    core.ProcMaskMeleeOrRangedSpecial,
+		ProcMask:    core.ProcMaskMeleeSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | SpellFlagSecondaryJudgement,
 
 		BonusCritRating: (6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance) +
