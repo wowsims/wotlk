@@ -196,8 +196,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-DarkmoonCard:Greatness-44255"
  value: {
-  dps: 3267.70957
-  tps: 7845.75807
+  dps: 3267.03366
+  tps: 7844.37804
  }
 }
 dps_results: {
@@ -210,8 +210,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-Death'sChoice-47464"
  value: {
-  dps: 3376.28719
-  tps: 8067.01261
+  dps: 3375.43942
+  tps: 8065.01786
  }
 }
 dps_results: {
@@ -413,8 +413,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
-  dps: 3068.55358
-  tps: 7350.39726
+  dps: 3071.04859
+  tps: 7356.81943
  }
 }
 dps_results: {
