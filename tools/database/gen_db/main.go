@@ -265,7 +265,9 @@ func simmableItemFilter(_ int32, item *proto.UIItem) bool {
 
 	if item.Quality < proto.ItemQuality_ItemQualityUncommon {
 		return false
-	} else if item.Quality > proto.ItemQuality_ItemQualityLegendary {
+	} else if item.Quality == proto.ItemQuality_ItemQualityArtifact {
+		return false
+	} else if item.Quality > proto.ItemQuality_ItemQualityHeirloom {
 		return false
 	} else if item.Quality < proto.ItemQuality_ItemQualityEpic {
 		if item.Ilvl < 145 {
@@ -276,7 +278,7 @@ func simmableItemFilter(_ int32, item *proto.UIItem) bool {
 		}
 	} else {
 		// Epic and legendary items might come from classic, so use a lower ilvl threshold.
-		if item.Ilvl < 140 {
+		if item.Quality != proto.ItemQuality_ItemQualityHeirloom && item.Ilvl < 140 {
 			return false
 		}
 	}

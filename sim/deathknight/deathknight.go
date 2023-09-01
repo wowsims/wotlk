@@ -437,7 +437,7 @@ func NewDeathknight(character core.Character, inputs DeathknightInputs, talents 
 		},
 	)
 
-	dk.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/62.5)
+	dk.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritPerAgiMaxLevel[character.Class]*core.CritRatingPerCritChance)
 	dk.AddStatDependency(stats.Agility, stats.Dodge, core.DodgeRatingPerDodgeChance/84.74576271)
 	dk.AddStatDependency(stats.Strength, stats.AttackPower, 2)
 	dk.AddStatDependency(stats.Strength, stats.Parry, 0.25)
@@ -520,106 +520,16 @@ func (dk *Deathknight) AverageDSHeal() float64 {
 }
 
 func init() {
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassDeathknight}] = stats.Stats{
-		stats.Health:      7941,
-		stats.Strength:    176,
-		stats.Agility:     109,
-		stats.Stamina:     160,
-		stats.Intellect:   35,
-		stats.Spirit:      61,
-		stats.AttackPower: 220,
-		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarf, Class: proto.Class_ClassDeathknight}] = stats.Stats{
-		stats.Health:      7941,
-		stats.Strength:    180,
-		stats.Agility:     108,
-		stats.Stamina:     161,
-		stats.Intellect:   34,
-		stats.Spirit:      58,
-		stats.AttackPower: 220,
-		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceGnome, Class: proto.Class_ClassDeathknight}] = stats.Stats{
-		stats.Health:      7941,
-		stats.Strength:    170,
-		stats.Agility:     114,
-		stats.Stamina:     160,
-		stats.Intellect:   35,
-		stats.Spirit:      63,
-		stats.AttackPower: 220,
-		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassDeathknight}] = stats.Stats{
-		stats.Health:      7941,
-		stats.Strength:    175,
-		stats.Agility:     112,
-		stats.Stamina:     160,
-		stats.Intellect:   35,
-		stats.Spirit:      63,
-		stats.AttackPower: 220,
-		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassDeathknight}] = stats.Stats{
-		stats.Health:      7941,
-		stats.Strength:    171,
-		stats.Agility:     116,
-		stats.Stamina:     160,
-		stats.Intellect:   35,
-		stats.Spirit:      59,
-		stats.AttackPower: 220,
-		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceOrc, Class: proto.Class_ClassDeathknight}] = stats.Stats{
-		stats.Health:      7941,
-		stats.Strength:    178,
-		stats.Agility:     109,
-		stats.Stamina:     161,
-		stats.Intellect:   32,
-		stats.Spirit:      61,
-		stats.AttackPower: 220,
-		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTauren, Class: proto.Class_ClassDeathknight}] = stats.Stats{
-		stats.Health:      7941,
-		stats.Strength:    180,
-		stats.Agility:     108,
-		stats.Stamina:     161,
-		stats.Intellect:   31,
-		stats.Spirit:      61,
-		stats.AttackPower: 220,
-		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassDeathknight}] = stats.Stats{
-		stats.Health:      7941,
-		stats.Strength:    176,
-		stats.Agility:     114,
-		stats.Stamina:     160,
-		stats.Intellect:   31,
-		stats.Spirit:      60,
-		stats.AttackPower: 220,
-		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassDeathknight}] = stats.Stats{
-		stats.Health:      7941,
-		stats.Strength:    174,
-		stats.Agility:     110,
-		stats.Stamina:     160,
-		stats.Intellect:   33,
-		stats.Spirit:      64,
-		stats.AttackPower: 220,
-		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassDeathknight}] = stats.Stats{
-		stats.Health:      7941,
-		stats.Strength:    172,
-		stats.Agility:     114,
-		stats.Stamina:     160,
-		stats.Intellect:   38,
-		stats.Spirit:      57,
-		stats.AttackPower: 220,
-		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
-	}
+	core.AddBaseStatsCombo(proto.Race_RaceDraenei, proto.Class_ClassDeathknight)
+	core.AddBaseStatsCombo(proto.Race_RaceDwarf, proto.Class_ClassDeathknight)
+	core.AddBaseStatsCombo(proto.Race_RaceGnome, proto.Class_ClassDeathknight)
+	core.AddBaseStatsCombo(proto.Race_RaceHuman, proto.Class_ClassDeathknight)
+	core.AddBaseStatsCombo(proto.Race_RaceNightElf, proto.Class_ClassDeathknight)
+	core.AddBaseStatsCombo(proto.Race_RaceOrc, proto.Class_ClassDeathknight)
+	core.AddBaseStatsCombo(proto.Race_RaceTauren, proto.Class_ClassDeathknight)
+	core.AddBaseStatsCombo(proto.Race_RaceTroll, proto.Class_ClassDeathknight)
+	core.AddBaseStatsCombo(proto.Race_RaceUndead, proto.Class_ClassDeathknight)
+	core.AddBaseStatsCombo(proto.Race_RaceBloodElf, proto.Class_ClassDeathknight)
 }
 
 // Agent is a generic way to access underlying warrior on any of the agents.

@@ -231,9 +231,9 @@ func JudgementOfWisdomAura(target *Unit) *Aura {
 				return // Phantom spells (Romulo's, Lightning Capacitor, etc.) don't proc JoW.
 			}
 
-			if spell.ProcMask.Matches(ProcMaskMeleeOrRanged) {
+			if spell.ProcMask.Matches(ProcMaskWhiteHit | ProcMaskRanged) {
 				// Apparently ranged/melee can still proc on miss
-				if !unit.AutoAttacks.PPMProc(sim, 15, ProcMaskMeleeOrRanged, "jow", spell) {
+				if !unit.AutoAttacks.PPMProc(sim, 15, ProcMaskWhiteHit|ProcMaskRanged, "jow", spell) {
 					return
 				}
 			} else { // spell casting

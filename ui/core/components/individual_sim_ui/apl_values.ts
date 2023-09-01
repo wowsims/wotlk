@@ -51,7 +51,7 @@ import {
 	APLValueAuraRemainingTime,
 	APLValueAuraNumStacks,
 	APLValueAuraInternalCooldown,
-	APLValueAuraICDOnCooldownWithReactionTime,
+	APLValueAuraICDIsReadyWithReactionTime,
 	APLValueAuraShouldRefresh,
 	APLValueDotIsActive,
 	APLValueDotRemainingTime,
@@ -787,7 +787,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		],
 	}),
 	'auraInternalCooldown': inputBuilder({
-		label: 'Aura ICD Remaining Time',
+		label: 'Aura Remaining ICD',
 		submenu: ['Aura'],
 		shortDescription: 'Time remaining before this aura\'s internal cooldown will be ready, or <b>0</b> if the ICD is ready now.',
 		newValue: APLValueAuraInternalCooldown.create,
@@ -796,11 +796,11 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 			AplHelpers.actionIdFieldConfig('auraId', 'icd_auras', 'sourceUnit'),
 		],
 	}),
-	'auraIcdOnCooldownWithReactionTime': inputBuilder({
-		label: 'Aura ICD On Cooldown (with Reaction Time)',
+	'auraIcdIsReadyWithReactionTime': inputBuilder({
+		label: 'Aura ICD Is Ready (with Reaction Time)',
 		submenu: ['Aura'],
-		shortDescription: '<b>True</b> if the aura\'s ICD is currently on cooldown AND it has been active for at least as long as the player reaction time (configured in Settings), otherwise <b>False</b>.',
-		newValue: APLValueAuraICDOnCooldownWithReactionTime.create,
+		shortDescription: '<b>True</b> if the aura\'s ICD is currently ready OR it was put on CD recently, within the player\'s reaction time (configured in Settings), otherwise <b>False</b>.',
+		newValue: APLValueAuraICDIsReadyWithReactionTime.create,
 		fields: [
 			AplHelpers.unitFieldConfig('sourceUnit', 'aura_sources'),
 			AplHelpers.actionIdFieldConfig('auraId', 'icd_auras', 'sourceUnit'),

@@ -261,66 +261,11 @@ func RegisterWarlock() {
 }
 
 func init() {
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassWarlock}] = stats.Stats{
-		stats.Health:    7164,
-		stats.Strength:  56,
-		stats.Agility:   69,
-		stats.Stamina:   89,
-		stats.Intellect: 162,
-		stats.Spirit:    164,
-		stats.Mana:      3856,
-		stats.SpellCrit: 1.697 * core.CritRatingPerCritChance,
-		// Not sure how stats modify the crit chance.
-		// stats.MeleeCrit:   4.43 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceOrc, Class: proto.Class_ClassWarlock}] = stats.Stats{
-		stats.Health:    7164,
-		stats.Strength:  62,
-		stats.Agility:   64,
-		stats.Stamina:   90,
-		stats.Intellect: 156,
-		stats.Spirit:    168,
-		stats.Mana:      3856,
-		stats.SpellCrit: 1.697 * core.CritRatingPerCritChance,
-		// Not sure how stats modify the crit chance.
-		// stats.MeleeCrit:   4.43 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassWarlock}] = stats.Stats{
-		stats.Health:    7164,
-		stats.Strength:  58,
-		stats.Agility:   65,
-		stats.Stamina:   89,
-		stats.Intellect: 157,
-		stats.Spirit:    171,
-		stats.Mana:      3856,
-		stats.SpellCrit: 1.697 * core.CritRatingPerCritChance,
-		// Not sure how stats modify the crit chance.
-		// stats.MeleeCrit:   4.43 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassWarlock}] = stats.Stats{
-		stats.Health:    7164,
-		stats.Strength:  59,
-		stats.Agility:   67,
-		stats.Stamina:   89,
-		stats.Intellect: 159,
-		stats.Spirit:    166, // racial makes this 170
-		stats.Mana:      3856,
-		stats.SpellCrit: 1.697 * core.CritRatingPerCritChance,
-		// Not sure how stats modify the crit chance.
-		// stats.MeleeCrit:   4.43 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceGnome, Class: proto.Class_ClassWarlock}] = stats.Stats{
-		stats.Health:    7164,
-		stats.Strength:  54,
-		stats.Agility:   69,
-		stats.Stamina:   89,
-		stats.Intellect: 162, // racial makes this 170
-		stats.Spirit:    166,
-		stats.Mana:      3856,
-		stats.SpellCrit: 1.697 * core.CritRatingPerCritChance,
-		// Not sure how stats modify the crit chance.
-		// stats.MeleeCrit:   4.43 * core.CritRatingPerCritChance,
-	}
+	core.AddBaseStatsCombo(proto.Race_RaceBloodElf, proto.Class_ClassWarlock)
+	core.AddBaseStatsCombo(proto.Race_RaceOrc, proto.Class_ClassWarlock)
+	core.AddBaseStatsCombo(proto.Race_RaceUndead, proto.Class_ClassWarlock)
+	core.AddBaseStatsCombo(proto.Race_RaceHuman, proto.Class_ClassWarlock)
+	core.AddBaseStatsCombo(proto.Race_RaceGnome, proto.Class_ClassWarlock)
 }
 
 // Agent is a generic way to access underlying warlock on any of the agents.

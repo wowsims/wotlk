@@ -1095,9 +1095,21 @@ export class Player<SpecType extends Spec> {
 		const dbGear = this.getGear().toDatabase()
 		const dbItemSwapGear = this.getItemSwapGear().toDatabase();
 		return SimDatabase.create({
-			items: dbGear.items.concat(dbItemSwapGear.items),
-			enchants: dbGear.enchants.concat(dbItemSwapGear.enchants),
-			gems: dbGear.gems.concat(dbItemSwapGear.gems),
+			items: dbGear.items.concat(dbItemSwapGear.items).filter(function(elem, index, self) {
+				return index === self.findIndex((t) => (
+					t.id === elem.id
+				));
+			}),
+			enchants: dbGear.enchants.concat(dbItemSwapGear.enchants).filter(function(elem, index, self) {
+				return index === self.findIndex((t) => (
+					t.effectId === elem.effectId
+				));
+			}),
+			gems: dbGear.gems.concat(dbItemSwapGear.gems).filter(function(elem, index, self) {
+				return index === self.findIndex((t) => (
+					t.id === elem.id
+				));
+			}),
 		})
 	}
 
