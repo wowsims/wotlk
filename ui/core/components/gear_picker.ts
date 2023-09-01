@@ -911,8 +911,6 @@ export class ItemList<T> {
 		const initialFilters = player.sim.getFilters();
 		let lastFavElem: HTMLElement | null = null;
 
-		const filters = player.sim.getFilters();
-
 		this.listItemElems = itemData.map((itemData, itemIdx) => {
 			const item = itemData.item;
 			const itemEP = computeEP(item);
