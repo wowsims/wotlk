@@ -27,7 +27,7 @@ func NewWowheadItemTooltipManager(filePath string) *WowheadTooltipManager {
 	return &WowheadTooltipManager{
 		TooltipManager{
 			FilePath:   filePath,
-			UrlPattern: "https://nether.wowhead.com/wotlk/tooltip/item/%s",
+			UrlPattern: "https://nether.wowhead.com/wotlk/tooltip/item/%s?lvl=80",
 		},
 	}
 }
@@ -407,10 +407,10 @@ func (item WowheadItemResponse) GetArmorValues() (int, int) {
 }
 
 var armorTypePatterns = map[proto.ArmorType]*regexp.Regexp{
-	proto.ArmorType_ArmorTypeCloth:   regexp.MustCompile(`<span class="q1">Cloth</span>`),
-	proto.ArmorType_ArmorTypeLeather: regexp.MustCompile(`<span class="q1">Leather</span>`),
-	proto.ArmorType_ArmorTypeMail:    regexp.MustCompile(`<span class="q1">Mail</span>`),
-	proto.ArmorType_ArmorTypePlate:   regexp.MustCompile(`<span class="q1">Plate</span>`),
+	proto.ArmorType_ArmorTypeCloth:   regexp.MustCompile(`<span class="q1">(?:<!--asc1-->)?Cloth</span>`),
+	proto.ArmorType_ArmorTypeLeather: regexp.MustCompile(`<span class="q1">(?:<!--asc2-->)?Leather</span>`),
+	proto.ArmorType_ArmorTypeMail:    regexp.MustCompile(`<span class="q1">(?:<!--asc3-->)?Mail</span>`),
+	proto.ArmorType_ArmorTypePlate:   regexp.MustCompile(`<span class="q1">(?:<!--asc4-->)?Plate</span>`),
 }
 
 func (item WowheadItemResponse) GetArmorType() proto.ArmorType {

@@ -228,6 +228,8 @@ enum ItemQuality {
 	ItemQualityRare = 3;
 	ItemQualityEpic = 4;
 	ItemQualityLegendary = 5;
+	ItemQualityArtifact = 6;
+	ItemQualityHeirloom = 7;
 }
 
 enum GemColor {

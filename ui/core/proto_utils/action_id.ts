@@ -8,6 +8,7 @@ import {
 } from '../proto/ui.js';
 
 import { Database } from './database.js';
+import { CHARACTER_LEVEL } from '../constants/mechanics.js';
 
 // If true uses wotlkdb.com, else uses wowhead.com.
 export const USE_WOTLK_DB = false;
@@ -140,7 +141,7 @@ export class ActionId {
 		if (USE_WOTLK_DB) {
 			return 'https://wotlkdb.com/?item=' + id;
 		} else {
-			return `https://wowhead.com/wotlk/${langPrefix}item=${id}`;
+			return `https://wowhead.com/wotlk/${langPrefix}item=${id}?lvl=${CHARACTER_LEVEL}`;
 		}
 	}
 	static makeSpellUrl(id: number): string {
