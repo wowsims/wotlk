@@ -117,7 +117,7 @@ func (swap *ItemSwap) SwapItems(sim *Simulation, slots []proto.ItemSlot, useGCD 
 
 	character := swap.character
 
-	meeleWeaponSwapped := false
+	meleeWeaponSwapped := false
 	newStats := stats.Stats{}
 	has2H := swap.GetItem(proto.ItemSlot_ItemSlotMainHand).HandType == proto.HandType_HandTypeTwoHand
 	for _, slot := range slots {
@@ -128,7 +128,7 @@ func (swap *ItemSwap) SwapItems(sim *Simulation, slots []proto.ItemSlot, useGCD 
 
 		if ok, swapStats := swap.swapItem(slot, has2H); ok {
 			newStats = newStats.Add(swapStats)
-			meeleWeaponSwapped = slot == proto.ItemSlot_ItemSlotMainHand || slot == proto.ItemSlot_ItemSlotOffHand || meeleWeaponSwapped
+			meleeWeaponSwapped = slot == proto.ItemSlot_ItemSlotMainHand || slot == proto.ItemSlot_ItemSlotOffHand || meleeWeaponSwapped
 		}
 	}
 
@@ -142,9 +142,9 @@ func (swap *ItemSwap) SwapItems(sim *Simulation, slots []proto.ItemSlot, useGCD 
 		onSwap(sim)
 	}
 
-	if character.AutoAttacks.IsEnabled() && meeleWeaponSwapped && sim.CurrentTime > 0 {
+	if character.AutoAttacks.AutoSwingMelee && meleeWeaponSwapped && sim.CurrentTime > 0 {
 		character.AutoAttacks.CancelAutoSwing(sim)
-		character.AutoAttacks.restartMelee(sim)
+		character.AutoAttacks.restartMelee(sim, false)
 	}
 
 	if useGCD {
@@ -191,7 +191,7 @@ func (swap *ItemSwap) getItemStats(item Item) stats.Stats {
 
 func (swap *ItemSwap) swapWeapon(slot proto.ItemSlot) {
 	character := swap.character
-	if !character.AutoAttacks.IsEnabled() {
+	if !character.AutoAttacks.AutoSwingMelee && !character.AutoAttacks.AutoSwingRanged {
 		return
 	}
 
@@ -200,7 +200,7 @@ func (swap *ItemSwap) swapWeapon(slot proto.ItemSlot) {
 		character.AutoAttacks.MH = character.WeaponFromMainHand(swap.mhCritMultiplier)
 	case proto.ItemSlot_ItemSlotOffHand:
 		character.AutoAttacks.OH = character.WeaponFromOffHand(swap.ohCritMultiplier)
-		//Special case for when the OHAuto Spell was setup with a non weapon and does not have a crit multiplier.
+		//Special case for when the OHAuto Spell was set up with a non weapon and does not have a crit multiplier.
 		character.AutoAttacks.OHAuto.CritMultiplier = swap.ohCritMultiplier
 		character.PseudoStats.CanBlock = character.OffHand().WeaponType == proto.WeaponType_WeaponTypeShield
 	case proto.ItemSlot_ItemSlotRanged:

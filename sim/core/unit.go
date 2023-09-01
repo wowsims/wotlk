@@ -251,7 +251,7 @@ func (unit *Unit) processDynamicBonus(sim *Simulation, bonus stats.Stats) {
 		unit.UpdateManaRegenRates()
 	}
 	if bonus[stats.MeleeHaste] != 0 {
-		unit.AutoAttacks.UpdateSwingTime(sim)
+		unit.AutoAttacks.UpdateSwingTimers(sim)
 	}
 	if bonus[stats.SpellHaste] != 0 {
 		unit.updateCastSpeed()
@@ -353,18 +353,19 @@ func (unit *Unit) RangedSwingSpeed() float64 {
 // MultiplyMeleeSpeed will alter the attack speed multiplier and change swing speed of all autoattack swings in progress.
 func (unit *Unit) MultiplyMeleeSpeed(sim *Simulation, amount float64) {
 	unit.PseudoStats.MeleeSpeedMultiplier *= amount
-	unit.AutoAttacks.UpdateSwingTime(sim)
+	unit.AutoAttacks.UpdateSwingTimers(sim)
 }
 
 func (unit *Unit) MultiplyRangedSpeed(sim *Simulation, amount float64) {
 	unit.PseudoStats.RangedSpeedMultiplier *= amount
+	unit.AutoAttacks.UpdateSwingTimers(sim)
 }
 
 // Helper for when both MultiplyMeleeSpeed and MultiplyRangedSpeed are needed.
 func (unit *Unit) MultiplyAttackSpeed(sim *Simulation, amount float64) {
 	unit.PseudoStats.MeleeSpeedMultiplier *= amount
 	unit.PseudoStats.RangedSpeedMultiplier *= amount
-	unit.AutoAttacks.UpdateSwingTime(sim)
+	unit.AutoAttacks.UpdateSwingTimers(sim)
 }
 
 func (unit *Unit) AddBonusRangedHitRating(amount float64) {
@@ -427,7 +428,7 @@ func (unit *Unit) init(sim *Simulation) {
 	unit.auraTracker.init(sim)
 }
 
-func (unit *Unit) reset(sim *Simulation, agent Agent) {
+func (unit *Unit) reset(sim *Simulation, _ Agent) {
 	unit.enabled = true
 	unit.resetCDs(sim)
 	unit.Hardcast.Expires = startingCDTime
@@ -469,7 +470,7 @@ func (unit *Unit) startPull(sim *Simulation) {
 }
 
 // Advance moves time forward counting down auras, CDs, mana regen, etc
-func (unit *Unit) advance(sim *Simulation, elapsedTime time.Duration) {
+func (unit *Unit) advance(sim *Simulation, _ time.Duration) {
 	unit.auraTracker.advance(sim)
 
 	if hc := &unit.Hardcast; hc.Expires != startingCDTime && hc.Expires <= sim.CurrentTime {

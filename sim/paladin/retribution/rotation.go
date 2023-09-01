@@ -8,7 +8,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-func (ret *RetributionPaladin) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
+func (ret *RetributionPaladin) OnAutoAttack(sim *core.Simulation, _ *core.Spell) {
 	if ret.SealOfVengeanceAura.IsActive() && core.MinInt32(ret.MaxSoVTargets, ret.Env.GetNumTargets()) > 1 {
 		minVengeanceDotDuration := time.Second * 15
 		var minVengeanceDotDurationTarget *core.Unit
@@ -31,7 +31,7 @@ func (ret *RetributionPaladin) OnAutoAttack(sim *core.Simulation, spell *core.Sp
 			}
 		}
 
-		if minVengeanceDotDuration < ret.WeaponFromMainHand(0).SwingDuration*2 {
+		if minVengeanceDotDuration < core.DurationFromSeconds(ret.AutoAttacks.MH.SwingSpeed*2) {
 			ret.CurrentTarget = minVengeanceDotDurationTarget
 		} else if ret.SovDotSpell.Dot(ret.CurrentTarget).GetStacks() == 5 && minVengeanceDotStacks < 5 {
 			ret.CurrentTarget = minVengeanceDotStacksTarget

@@ -38,7 +38,6 @@ func (shaman *Shaman) NewFireElemental(bonusSpellPower float64) *FireElemental {
 			BaseDamageMin:  1,  // Estimated from base AP
 			BaseDamageMax:  23, // Estimated from base AP
 			SwingSpeed:     2,
-			SwingDuration:  time.Second * 2,
 			CritMultiplier: 2, // Pretty sure this is right.
 			SpellSchool:    core.SpellSchoolFire,
 		},
@@ -86,7 +85,7 @@ func (fireElemental *FireElemental) Initialize() {
 	fireElemental.registerFireShieldAura()
 }
 
-func (fireElemental *FireElemental) Reset(sim *core.Simulation) {
+func (fireElemental *FireElemental) Reset(_ *core.Simulation) {
 
 }
 

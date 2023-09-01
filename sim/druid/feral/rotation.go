@@ -56,7 +56,7 @@ func (cat *FeralDruid) OnGCDReady(sim *core.Simulation) {
 	}
 }
 
-func (cat *FeralDruid) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
+func (cat *FeralDruid) OnAutoAttack(sim *core.Simulation, _ *core.Spell) {
 	if cat.IsUsingAPL {
 		return
 	}
@@ -92,12 +92,12 @@ func (cat *FeralDruid) NextRotationAction(sim *core.Simulation, kickAt time.Dura
 
 // Ported from https://github.com/NerdEgghead/WOTLK_cat_sim
 
-func (cat *FeralDruid) checkReplaceMaul(sim *core.Simulation) *core.Spell {
+func (cat *FeralDruid) checkReplaceMaul(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
 	if cat.IsUsingAPL {
-		return nil
+		return mhSwingSpell
 	}
 
-	// If we will have enough time and Energy leeway to stay in
+	// If we have enough time and Energy leeway to stay in
 	// Dire Bear Form once the GCD expires, then only Maul if we
 	// will be left with enough Rage to cast Mangle or Lacerate
 	// on that global.
@@ -144,7 +144,7 @@ func (cat *FeralDruid) checkReplaceMaul(sim *core.Simulation) *core.Spell {
 	if cat.CurrentRage() >= maulRageThresh {
 		return cat.Maul.Spell
 	} else {
-		return nil
+		return mhSwingSpell
 	}
 }
 

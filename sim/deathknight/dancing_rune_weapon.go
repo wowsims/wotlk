@@ -176,7 +176,6 @@ func (dk *Deathknight) NewRuneWeapon() *RuneWeaponPet {
 
 	runeWeapon.AutoAttacks.MH.SwingSpeed = 3.5
 	runeWeapon.AutoAttacks.MH.NormalizedSwingSpeed = 3.3
-	runeWeapon.AutoAttacks.MH.SwingDuration = time.Duration(runeWeapon.AutoAttacks.MH.SwingSpeed * float64(time.Second))
 	runeWeapon.PseudoStats.DamageTakenMultiplier = 0
 
 	if dk.Inputs.NewDrw {
@@ -195,10 +194,10 @@ func (runeWeapon *RuneWeaponPet) GetPet() *core.Pet {
 	return &runeWeapon.Pet
 }
 
-func (runeWeapon *RuneWeaponPet) Reset(sim *core.Simulation) {
+func (runeWeapon *RuneWeaponPet) Reset(_ *core.Simulation) {
 }
 
-func (runeWeapon *RuneWeaponPet) OnGCDReady(sim *core.Simulation) {
+func (runeWeapon *RuneWeaponPet) OnGCDReady(_ *core.Simulation) {
 	// No GCD system on Rune Weapon
 	runeWeapon.DoNothing()
 }

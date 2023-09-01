@@ -27,9 +27,9 @@ type PendingAction struct {
 	Priority     ActionPriority
 
 	// Action to perform (required).
-	OnAction func(*Simulation)
+	OnAction func(sim *Simulation)
 	// Cleanup when the action is cancelled (optional).
-	CleanUp func(*Simulation)
+	CleanUp func(sim *Simulation)
 
 	cancelled bool
 	consumed  bool

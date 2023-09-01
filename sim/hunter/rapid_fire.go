@@ -22,7 +22,7 @@ func (hunter *Hunter) registerRapidFireCD() {
 		ActionID: actionID,
 		Duration: time.Second * 15,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.RangedSpeedMultiplier *= hasteMultiplier
+			aura.Unit.MultiplyRangedSpeed(sim, hasteMultiplier)
 
 			if manaMetrics != nil {
 				manaPerTick := 0.02 * float64(hunter.Talents.RapidRecuperation) * hunter.MaxMana()
@@ -36,7 +36,7 @@ func (hunter *Hunter) registerRapidFireCD() {
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.RangedSpeedMultiplier /= hasteMultiplier
+			aura.Unit.MultiplyRangedSpeed(sim, 1/hasteMultiplier)
 		},
 	})
 

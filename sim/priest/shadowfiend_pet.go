@@ -69,7 +69,6 @@ func (priest *Priest) NewShadowfiend() *Shadowfiend {
 			BaseDamageMax:        210,
 			SwingSpeed:           1.5,
 			NormalizedSwingSpeed: 1.5,
-			SwingDuration:        time.Millisecond * 1500,
 			CritMultiplier:       2,
 			SpellSchool:          core.SpellSchoolShadow,
 		},
@@ -101,7 +100,7 @@ func (priest *Priest) shadowfiendStatInheritance() core.PetStatInheritance {
 	}
 }
 
-func (shadowfiend *Shadowfiend) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
+func (shadowfiend *Shadowfiend) OnAutoAttack(sim *core.Simulation, _ *core.Spell) {
 	priest := shadowfiend.Priest
 	restoreMana := priest.MaxMana() * 0.05
 

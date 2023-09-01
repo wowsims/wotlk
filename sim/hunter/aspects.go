@@ -21,10 +21,10 @@ func (hunter *Hunter) registerAspectOfTheDragonhawkSpell() {
 			ActionID: core.ActionID{SpellID: 19556},
 			Duration: time.Second * 12,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Unit.PseudoStats.RangedSpeedMultiplier *= improvedHawkBonus
+				aura.Unit.MultiplyRangedSpeed(sim, improvedHawkBonus)
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Unit.PseudoStats.RangedSpeedMultiplier /= improvedHawkBonus
+				aura.Unit.MultiplyRangedSpeed(sim, 1/improvedHawkBonus)
 			},
 		})
 	}
@@ -91,7 +91,7 @@ func (hunter *Hunter) registerAspectOfTheViperSpell() {
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.DamageDealtMultiplier *= damagePenalty
 			if hasCryptstalker4pc {
-				aura.Unit.PseudoStats.RangedSpeedMultiplier *= 1.2
+				aura.Unit.MultiplyRangedSpeed(sim, 1.2)
 			}
 
 			tickPA = core.StartPeriodicAction(sim, core.PeriodicActionOptions{
@@ -104,7 +104,7 @@ func (hunter *Hunter) registerAspectOfTheViperSpell() {
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.DamageDealtMultiplier /= damagePenalty
 			if hasCryptstalker4pc {
-				aura.Unit.PseudoStats.RangedSpeedMultiplier /= 1.2
+				aura.Unit.MultiplyRangedSpeed(sim, 1/1.2)
 			}
 			tickPA.Cancel(sim)
 			tickPA = nil
