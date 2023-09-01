@@ -61,6 +61,8 @@ $item-quality-uncommon:  #1eff00;
 $item-quality-rare:      #0070dd;
 $item-quality-epic:      #a335ee;
 $item-quality-legendary: #ff8000;
+$item-quality-artifact:  #e5cc80;
+$item-quality-heirloom:  #0cf;
 
 $item-qualities: (
   junk:      $item-quality-junk,
@@ -68,7 +70,9 @@ $item-qualities: (
   uncommon:  $item-quality-uncommon,
   rare:      $item-quality-rare,
   epic:      $item-quality-epic,
-  legendary: $item-quality-legendary
+  legendary: $item-quality-legendary,
+  artifact:  $item-quality-artifact,
+  heirloom:  $item-quality-heirloom
 );
 
 $link-danger-color:  #ef9eaa;
