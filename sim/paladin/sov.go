@@ -193,8 +193,21 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 				}
 			}
 
-			// Only white hits, HotR, CS, and DS can trigger this. (SoV dot)
-			if spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) || spell == paladin.HammerOfTheRighteous || spell == paladin.CrusaderStrike || spell == paladin.DivineStorm || spell == paladin.HammerOfWrath {
+			dotApplicableSpells := []*core.Spell{
+				paladin.HammerOfTheRighteous,
+				paladin.CrusaderStrike,
+				paladin.DivineStorm,
+				paladin.HammerOfWrath,
+				paladin.ShieldOfRighteousness,
+			}
+			isApplicableSpell := false
+			for _, validSpell := range dotApplicableSpells {
+				if spell == validSpell {
+					isApplicableSpell = true
+				}
+			}
+
+			if spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) || isApplicableSpell {
 				dotApplicationSpell.Cast(sim, result.Target)
 			}
 		},

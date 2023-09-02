@@ -497,6 +497,15 @@ func (paladin *Paladin) applyJudgementsOfTheJust() {
 	jojAuras := paladin.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
 		return core.JudgementsOfTheJustAura(target, paladin.Talents.JudgementsOfTheJust)
 	})
+	// This application can proc stuff
+	jojApplicationSpell := paladin.RegisterSpell(core.SpellConfig{
+		ActionID: core.ActionID{SpellID: 68055},
+		ProcMask: core.ProcMaskProc,
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			jojAuras.Get(target).Activate(sim)
+		},
+	})
+
 	paladin.RegisterAura(core.Aura{
 		Label:    "Judgements Of The Just Talent",
 		Duration: core.NeverExpires,
@@ -504,8 +513,8 @@ func (paladin *Paladin) applyJudgementsOfTheJust() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if result.Landed() && spell.Flags.Matches(SpellFlagPrimaryJudgement|SpellFlagSecondaryJudgement) {
-				jojAuras.Get(result.Target).Activate(sim)
+			if result.Landed() && spell.Flags.Matches(SpellFlagPrimaryJudgement) {
+				jojApplicationSpell.Cast(sim, result.Target)
 			}
 		},
 	})
