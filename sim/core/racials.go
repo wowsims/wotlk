@@ -74,14 +74,12 @@ func applyRaceEffects(agent Agent) {
 		character.PseudoStats.ReducedFrostHitTakenChance += 0.02
 
 		// Gun specialization (+1% ranged crit when using a gun).
-		if character.Equip[proto.ItemSlot_ItemSlotRanged].RangedWeaponType == proto.RangedWeaponType_RangedWeaponTypeGun {
+		if character.Ranged().RangedWeaponType == proto.RangedWeaponType_RangedWeaponTypeGun {
 			character.AddBonusRangedCritRating(1 * CritRatingPerCritChance)
 		}
 
-		applyWeaponSpecialization(
-			character,
-			5*ExpertisePerQuarterPercentReduction,
-			[]proto.WeaponType{proto.WeaponType_WeaponTypeMace})
+		applyWeaponSpecialization(character, 5*ExpertisePerQuarterPercentReduction,
+			proto.WeaponType_WeaponTypeMace)
 
 		actionID := ActionID{SpellID: 20594}
 
@@ -118,10 +116,8 @@ func applyRaceEffects(agent Agent) {
 		character.MultiplyStat(stats.Intellect, 1.05)
 	case proto.Race_RaceHuman:
 		character.MultiplyStat(stats.Spirit, 1.03)
-		applyWeaponSpecialization(
-			character,
-			3*ExpertisePerQuarterPercentReduction,
-			[]proto.WeaponType{proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeSword})
+		applyWeaponSpecialization(character, 3*ExpertisePerQuarterPercentReduction,
+			proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeSword)
 	case proto.Race_RaceNightElf:
 		character.PseudoStats.ReducedNatureHitTakenChance += 0.02
 		character.PseudoStats.ReducedPhysicalHitTakenChance += 0.02
@@ -161,16 +157,14 @@ func applyRaceEffects(agent Agent) {
 		})
 
 		// Axe specialization
-		applyWeaponSpecialization(
-			character,
-			5*ExpertisePerQuarterPercentReduction,
-			[]proto.WeaponType{proto.WeaponType_WeaponTypeAxe, proto.WeaponType_WeaponTypeFist})
+		applyWeaponSpecialization(character, 5*ExpertisePerQuarterPercentReduction,
+			proto.WeaponType_WeaponTypeAxe, proto.WeaponType_WeaponTypeFist)
 	case proto.Race_RaceTauren:
 		character.PseudoStats.ReducedNatureHitTakenChance += 0.02
 		character.AddStat(stats.Health, character.GetBaseStats()[stats.Health]*0.05)
 	case proto.Race_RaceTroll:
 		// Bow specialization (+1% ranged crit when using a bow).
-		if character.Equip[proto.ItemSlot_ItemSlotRanged].RangedWeaponType == proto.RangedWeaponType_RangedWeaponTypeBow {
+		if character.Ranged().RangedWeaponType == proto.RangedWeaponType_RangedWeaponTypeBow {
 			character.AddBonusRangedCritRating(1 * CritRatingPerCritChance)
 		}
 
@@ -220,42 +214,16 @@ func applyRaceEffects(agent Agent) {
 	}
 }
 
-func applyWeaponSpecialization(character *Character, expertiseBonus float64, weaponTypes []proto.WeaponType) {
-	mh := false
-	oh := false
-	isDW := false
-	if weapon := character.Equip[proto.ItemSlot_ItemSlotMainHand]; weapon.ID != 0 {
-		for _, wt := range weaponTypes {
-			if weapon.WeaponType == wt {
-				mh = true
-			}
-		}
-	}
-	if weapon := character.Equip[proto.ItemSlot_ItemSlotOffHand]; weapon.ID != 0 && weapon.WeaponType != proto.WeaponType_WeaponTypeShield {
-		isDW = true
-		for _, wt := range weaponTypes {
-			if weapon.WeaponType == wt {
-				oh = true
-			}
-		}
-	}
+func applyWeaponSpecialization(character *Character, expertiseBonus float64, weaponTypes ...proto.WeaponType) {
+	mask := character.GetProcMaskForTypes(weaponTypes...)
 
-	if mh && (oh || !isDW) {
+	if mask == ProcMaskMelee || (mask == ProcMaskMeleeMH && !character.HasOHWeapon()) {
 		character.AddStat(stats.Expertise, expertiseBonus)
 	} else {
-		if mh {
-			character.OnSpellRegistered(func(spell *Spell) {
-				if spell.ProcMask.Matches(ProcMaskMeleeMH) {
-					spell.BonusExpertiseRating += expertiseBonus
-				}
-			})
-		}
-		if oh {
-			character.OnSpellRegistered(func(spell *Spell) {
-				if spell.ProcMask.Matches(ProcMaskMeleeOH) {
-					spell.BonusExpertiseRating += expertiseBonus
-				}
-			})
-		}
+		character.OnSpellRegistered(func(spell *Spell) {
+			if spell.ProcMask.Matches(mask) {
+				spell.BonusExpertiseRating += expertiseBonus
+			}
+		})
 	}
 }

@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (rogue *Rogue) registerAmbushSpell() {
@@ -25,7 +24,7 @@ func (rogue *Rogue) registerAmbushSpell() {
 			IgnoreHaste: true,
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return !rogue.PseudoStats.InFrontOfTarget && rogue.GetMHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger && rogue.IsStealthed()
+			return !rogue.PseudoStats.InFrontOfTarget && rogue.HasDagger(core.MainHand) && rogue.IsStealthed()
 		},
 
 		BonusCritRating: []float64{0, 2, 4, 6}[rogue.Talents.TurnTheTables]*core.CritRatingPerCritChance +

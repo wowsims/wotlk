@@ -356,7 +356,7 @@ func (warrior *Warrior) applyTitansGrip() {
 	if !warrior.AutoAttacks.IsDualWielding {
 		return
 	}
-	if warrior.Equip[proto.ItemSlot_ItemSlotMainHand].HandType != proto.HandType_HandTypeTwoHand && warrior.Equip[proto.ItemSlot_ItemSlotOffHand].HandType != proto.HandType_HandTypeTwoHand {
+	if warrior.MainHand().HandType != proto.HandType_HandTypeTwoHand && warrior.OffHand().HandType != proto.HandType_HandTypeTwoHand {
 		return
 	}
 
@@ -367,7 +367,7 @@ func (warrior *Warrior) applyTwoHandedWeaponSpecialization() {
 	if warrior.Talents.TwoHandedWeaponSpecialization == 0 {
 		return
 	}
-	if warrior.Equip[proto.ItemSlot_ItemSlotMainHand].HandType != proto.HandType_HandTypeTwoHand {
+	if warrior.MainHand().HandType != proto.HandType_HandTypeTwoHand {
 		return
 	}
 
@@ -378,7 +378,7 @@ func (warrior *Warrior) applyOneHandedWeaponSpecialization() {
 	if warrior.Talents.OneHandedWeaponSpecialization == 0 {
 		return
 	}
-	if warrior.Equip[proto.ItemSlot_ItemSlotMainHand].HandType == proto.HandType_HandTypeTwoHand {
+	if warrior.MainHand().HandType == proto.HandType_HandTypeTwoHand {
 		return
 	}
 
@@ -386,93 +386,87 @@ func (warrior *Warrior) applyOneHandedWeaponSpecialization() {
 }
 
 func (warrior *Warrior) applyWeaponSpecializations() {
-	swordSpecMask := core.ProcMaskUnknown
-	maceSpecInactive := true
-
-	if weapon := warrior.Equip[proto.ItemSlot_ItemSlotMainHand]; weapon.ID != 0 {
-		if weapon.WeaponType == proto.WeaponType_WeaponTypeAxe || weapon.WeaponType == proto.WeaponType_WeaponTypePolearm {
-			warrior.OnSpellRegistered(func(spell *core.Spell) {
-				if spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
-					spell.BonusCritRating += 1 * core.CritRatingPerCritChance * float64(warrior.Talents.PoleaxeSpecialization)
-				}
-			})
-		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeMace && maceSpecInactive {
-			warrior.AddStat(stats.ArmorPenetration, 3*core.ArmorPenPerPercentArmor*float64(warrior.Talents.MaceSpecialization))
-			maceSpecInactive = false
-		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeSword {
-			swordSpecMask |= core.ProcMaskMeleeMH
+	if ss := warrior.Talents.SwordSpecialization; ss > 0 {
+		if mask := warrior.GetProcMaskForTypes(proto.WeaponType_WeaponTypeSword); mask != core.ProcMaskUnknown {
+			warrior.registerSwordSpecialization(mask)
 		}
 	}
-	if weapon := warrior.Equip[proto.ItemSlot_ItemSlotOffHand]; weapon.ID != 0 {
-		if weapon.WeaponType == proto.WeaponType_WeaponTypeAxe || weapon.WeaponType == proto.WeaponType_WeaponTypePolearm {
+
+	if pas := warrior.Talents.PoleaxeSpecialization; pas > 0 {
+		// the default character pane displays critical strike chance for main hand only
+		switch warrior.GetProcMaskForTypes(proto.WeaponType_WeaponTypeAxe, proto.WeaponType_WeaponTypePolearm) {
+		case core.ProcMaskMelee:
+			warrior.AddStat(stats.MeleeCrit, 1*core.CritRatingPerCritChance*float64(pas))
+		case core.ProcMaskMeleeMH:
+			warrior.AddStat(stats.MeleeCrit, 1*core.CritRatingPerCritChance*float64(pas))
 			warrior.OnSpellRegistered(func(spell *core.Spell) {
 				if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
-					spell.BonusCritRating += 1 * core.CritRatingPerCritChance * float64(warrior.Talents.PoleaxeSpecialization)
+					spell.BonusCritRating -= 1 * core.CritRatingPerCritChance * float64(pas)
 				}
 			})
-		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeMace && maceSpecInactive {
-			warrior.AddStat(stats.ArmorPenetration, 3*core.ArmorPenPerPercentArmor*float64(warrior.Talents.MaceSpecialization))
-			maceSpecInactive = false
-		} else if weapon.WeaponType == proto.WeaponType_WeaponTypeSword {
-			swordSpecMask |= core.ProcMaskMeleeOH
+		case core.ProcMaskMeleeOH:
+			warrior.OnSpellRegistered(func(spell *core.Spell) {
+				if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
+					spell.BonusCritRating += 1 * core.CritRatingPerCritChance * float64(pas)
+				}
+			})
 		}
 	}
 
-	if warrior.Talents.SwordSpecialization > 0 && swordSpecMask != core.ProcMaskUnknown {
-		var swordSpecializationSpell *core.Spell
-		icd := core.Cooldown{
-			Timer:    warrior.NewTimer(),
-			Duration: time.Second * 6,
+	if ms := warrior.Talents.MaceSpecialization; ms > 0 {
+		if mask := warrior.GetProcMaskForTypes(proto.WeaponType_WeaponTypeMace); mask != core.ProcMaskEmpty {
+			warrior.AddStat(stats.ArmorPenetration, 3*core.ArmorPenPerPercentArmor*float64(ms))
 		}
-		procChance := 0.02 * float64(warrior.Talents.SwordSpecialization)
+	}
+}
 
-		warrior.RegisterAura(core.Aura{
-			Label:    "Sword Specialization",
-			Duration: core.NeverExpires,
-			OnInit: func(aura *core.Aura, sim *core.Simulation) {
-				swordSpecializationSpell = warrior.GetOrRegisterSpell(core.SpellConfig{
-					ActionID:    core.ActionID{SpellID: 12281},
-					SpellSchool: core.SpellSchoolPhysical,
-					ProcMask:    core.ProcMaskMeleeMHAuto,
-					Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete,
+func (warrior *Warrior) registerSwordSpecialization(procMask core.ProcMask) {
+	var swordSpecializationSpell *core.Spell
+	icd := core.Cooldown{
+		Timer:    warrior.NewTimer(),
+		Duration: time.Second * 6,
+	}
+	procChance := 0.02 * float64(warrior.Talents.SwordSpecialization)
 
-					DamageMultiplier: 1,
-					CritMultiplier:   warrior.critMultiplier(mh),
-					ThreatMultiplier: 1,
+	warrior.RegisterAura(core.Aura{
+		Label:    "Sword Specialization",
+		Duration: core.NeverExpires,
+		OnInit: func(aura *core.Aura, sim *core.Simulation) {
+			swordSpecializationSpell = warrior.GetOrRegisterSpell(core.SpellConfig{
+				ActionID:    core.ActionID{SpellID: 12281},
+				SpellSchool: core.SpellSchoolPhysical,
+				ProcMask:    core.ProcMaskMeleeMHAuto,
+				Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete,
 
-					ApplyEffects: warrior.AutoAttacks.MHConfig.ApplyEffects,
-				})
-			},
-			OnReset: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Activate(sim)
-			},
-			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				if !result.Landed() {
-					return
-				}
+				DamageMultiplier: 1,
+				CritMultiplier:   warrior.critMultiplier(mh),
+				ThreatMultiplier: 1,
 
-				if !spell.ProcMask.Matches(swordSpecMask) {
-					return
-				}
-
-				if spell == warrior.WhirlwindOH {
-					// OH WW hits cant proc this
-					return
-				}
-
-				if !icd.IsReady(sim) {
-					return
-				}
-
-				if sim.RandomFloat("Sword Specialization") > procChance {
-					return
-				}
+				ApplyEffects: warrior.AutoAttacks.MHConfig.ApplyEffects,
+			})
+		},
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() {
+				return
+			}
+			if !spell.ProcMask.Matches(procMask) {
+				return
+			}
+			if spell == warrior.WhirlwindOH {
+				return // OH WW hits can't proc this
+			}
+			if !icd.IsReady(sim) {
+				return
+			}
+			if sim.RandomFloat("Sword Specialization") < procChance {
 				icd.Use(sim)
-
 				aura.Unit.AutoAttacks.MaybeReplaceMHSwing(sim, swordSpecializationSpell).Cast(sim, result.Target)
-			},
-		})
-	}
+			}
+		},
+	})
 }
 
 func (warrior *Warrior) applyUnbridledWrath() {

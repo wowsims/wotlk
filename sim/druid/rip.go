@@ -13,9 +13,9 @@ func (druid *Druid) registerRipSpell() {
 		core.TernaryInt32(druid.HasSetBonus(ItemSetDreamwalkerBattlegear, 2), 2, 0)
 
 	comboPointCoeff := 93.0
-	if druid.Equip[core.ItemSlotRanged].ID == 28372 { // Idol of Feral Shadows
+	if druid.Ranged().ID == 28372 { // Idol of Feral Shadows
 		comboPointCoeff += 7
-	} else if druid.Equip[core.ItemSlotRanged].ID == 39757 { // Idol of Worship
+	} else if druid.Ranged().ID == 39757 { // Idol of Worship
 		comboPointCoeff += 21
 	}
 

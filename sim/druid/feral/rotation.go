@@ -757,7 +757,7 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 	rotation.BerserkBiteThresh = 25
 	rotation.BearWeaveType = proto.FeralDruid_Rotation_None
 
-	equipedIdol := cat.Equip[core.ItemSlotRanged].ID
+	equipedIdol := cat.Ranged().ID
 
 	cat.Rotation = FeralDruidRotation{
 		RotationType:       rotation.RotationType,

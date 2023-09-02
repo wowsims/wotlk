@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -82,7 +81,7 @@ func (dk *Deathknight) ApplyFrostTalents() {
 }
 
 func (dk *Deathknight) nervesOfColdSteelActive() bool {
-	return dk.HasMHWeapon() && dk.HasOHWeapon() && dk.Equip[proto.ItemSlot_ItemSlotMainHand].HandType == proto.HandType_HandTypeMainHand || dk.Equip[proto.ItemSlot_ItemSlotMainHand].HandType == proto.HandType_HandTypeOneHand
+	return dk.HasMHWeapon() && dk.HasOHWeapon()
 }
 
 func (dk *Deathknight) nervesOfColdSteelBonus() float64 {

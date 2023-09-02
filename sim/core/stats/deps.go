@@ -166,16 +166,12 @@ func (sdm *StatDependencyManager) NewDynamicMultiplyStat(s Stat, amount float64)
 }
 
 func (sdm *StatDependencyManager) sortDeps() {
-	var deps []*StatDependency
+	deps := make([]*StatDependency, 0, len(sdm.deps))
 
 	// By looping through the stats in order of safeDeps, we guarantee proper
 	// sorting of dependencies.
-	for _, srcStat := range safeDepsOrder {
-		for _, dstStat := range safeDepsOrder {
-			if !isValidDep(srcStat, dstStat) {
-				continue
-			}
-
+	for i, srcStat := range safeDepsOrder {
+		for _, dstStat := range safeDepsOrder[i:] {
 			// Combine all static deps into 1 for performance.
 			startAmount := 0.0
 			if srcStat == dstStat {

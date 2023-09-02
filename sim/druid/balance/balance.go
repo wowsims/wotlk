@@ -113,12 +113,12 @@ func (moonkin *BalanceDruid) Reset(sim *core.Simulation) {
 		}
 		moonkin.powerInfusion = moonkin.getBalanceMajorCooldown(core.ActionID{SpellID: 10060})
 		moonkin.onUseTrinket1 = BalanceOnUseTrinket{
-			Cooldown: moonkin.getBalanceMajorCooldown(core.ActionID{ItemID: moonkin.Equip[core.ItemSlotTrinket1].ID}),
-			Stat:     getOnUseTrinketStat(moonkin.Equip[core.ItemSlotTrinket1].ID),
+			Cooldown: moonkin.getBalanceMajorCooldown(core.ActionID{ItemID: moonkin.Trinket1().ID}),
+			Stat:     getOnUseTrinketStat(moonkin.Trinket1().ID),
 		}
 		moonkin.onUseTrinket2 = BalanceOnUseTrinket{
-			Cooldown: moonkin.getBalanceMajorCooldown(core.ActionID{ItemID: moonkin.Equip[core.ItemSlotTrinket2].ID}),
-			Stat:     getOnUseTrinketStat(moonkin.Equip[core.ItemSlotTrinket2].ID),
+			Cooldown: moonkin.getBalanceMajorCooldown(core.ActionID{ItemID: moonkin.Trinket2().ID}),
+			Stat:     getOnUseTrinketStat(moonkin.Trinket2().ID),
 		}
 	}
 }

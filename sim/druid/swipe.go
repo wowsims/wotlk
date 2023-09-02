@@ -8,9 +8,9 @@ import (
 
 func (druid *Druid) registerSwipeBearSpell() {
 	flatBaseDamage := 108.0
-	if druid.Equip[core.ItemSlotRanged].ID == 23198 { // Idol of Brutality
+	if druid.Ranged().ID == 23198 { // Idol of Brutality
 		flatBaseDamage += 10
-	} else if druid.Equip[core.ItemSlotRanged].ID == 38365 { // Idol of Perspicacious Attacks
+	} else if druid.Ranged().ID == 38365 { // Idol of Perspicacious Attacks
 		flatBaseDamage += 24
 	}
 

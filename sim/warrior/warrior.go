@@ -195,7 +195,7 @@ func (warrior *Warrior) autoCritMultiplier(hand hand) float64 {
 
 func primary(warrior *Warrior, hand hand) float64 {
 	if warrior.Talents.PoleaxeSpecialization > 0 {
-		if (hand == mh && isPoleaxe(warrior.GetMHWeapon())) || (hand == oh && isPoleaxe(warrior.GetOHWeapon())) {
+		if (hand == mh && isPoleaxe(warrior.MainHand())) || (hand == oh && isPoleaxe(warrior.OffHand())) {
 			return 1 + 0.01*float64(warrior.Talents.PoleaxeSpecialization)
 		}
 	}
@@ -203,7 +203,7 @@ func primary(warrior *Warrior, hand hand) float64 {
 }
 
 func isPoleaxe(weapon *core.Item) bool {
-	return weapon != nil && (weapon.WeaponType == proto.WeaponType_WeaponTypeAxe || weapon.WeaponType == proto.WeaponType_WeaponTypePolearm)
+	return weapon.WeaponType == proto.WeaponType_WeaponTypeAxe || weapon.WeaponType == proto.WeaponType_WeaponTypePolearm
 }
 
 func (warrior *Warrior) critMultiplier(hand hand) float64 {

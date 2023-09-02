@@ -90,7 +90,7 @@ func (ur *UnholyRotation) Initialize(dk *DpsDeathknight) {
 	}
 
 	// Init Sigil of Virulence Rotation
-	if dk.Equip[core.ItemSlotRanged].ID == 47673 {
+	if dk.Ranged().ID == 47673 {
 		ur.sigil = Sigil_Virulence
 		ur.virulenceAura = dk.GetAura("Sigil of Virulence Proc")
 	}

@@ -18,7 +18,6 @@ import (
 )
 
 const (
-	maxItemCount              = 22
 	defaultIterationsPerCombo = 1000
 )
 
@@ -167,7 +166,7 @@ func (b *bulkSimRunner) Run(pctx context.Context, progress chan *proto.ProgressM
 		for _, slot := range eligibleSlotsForItem(item) {
 			distinctItemSlotCombos = append(distinctItemSlotCombos, &itemWithSlot{
 				Item:  is,
-				Slot:  ItemSlot(slot),
+				Slot:  slot,
 				Index: index,
 			})
 		}
@@ -176,7 +175,7 @@ func (b *bulkSimRunner) Run(pctx context.Context, progress chan *proto.ProgressM
 
 	allCombos := generateAllEquipmentSubstitutions(ctx, baseItems, b.Request.BulkSettings.Combinations, distinctItemSlotCombos)
 
-	validCombos := []singleBulkSim{}
+	var validCombos []singleBulkSim
 	count := 0
 	for sub := range allCombos {
 		count++
@@ -221,7 +220,7 @@ func (b *bulkSimRunner) Run(pctx context.Context, progress chan *proto.ProgressM
 		if err != nil {
 			return nil, err
 		}
-		// keep replacing the base result with more refined base until we don't have base in the ranked results any more.
+		// keep replacing the base result with more refined base until we don't have base in the ranked results anymore.
 		if tempBase != nil {
 			baseResult = tempBase
 		}
@@ -417,37 +416,37 @@ func (es *equipmentSubstitution) HasItemReplacements() bool {
 }
 
 func (es *equipmentSubstitution) CanonicalHash() string {
-	slotToID := map[ItemSlot]int32{}
+	slotToID := map[proto.ItemSlot]int32{}
 	for _, repl := range es.Items {
 		slotToID[repl.Slot] = repl.Item.Id
 	}
 
 	// Canonical representation always has the ring or trinket with smaller item ID in slot1
-	// if the equipment subsitution mentions two rings or trinkets.
-	if ring1, ok := slotToID[ItemSlotFinger1]; ok {
-		if ring2, ok := slotToID[ItemSlotFinger2]; ok {
+	// if the equipment substitution mentions two rings or trinkets.
+	if ring1, ok := slotToID[proto.ItemSlot_ItemSlotFinger1]; ok {
+		if ring2, ok := slotToID[proto.ItemSlot_ItemSlotFinger2]; ok {
 			if ring1 == ring2 {
 				return ""
 			}
 			if ring1 > ring2 {
-				slotToID[ItemSlotFinger1], slotToID[ItemSlotFinger2] = ring2, ring1
+				slotToID[proto.ItemSlot_ItemSlotFinger1], slotToID[proto.ItemSlot_ItemSlotFinger2] = ring2, ring1
 			}
 		}
 	}
-	if trink1, ok := slotToID[ItemSlotTrinket1]; ok {
-		if trink2, ok := slotToID[ItemSlotTrinket2]; ok {
+	if trink1, ok := slotToID[proto.ItemSlot_ItemSlotTrinket1]; ok {
+		if trink2, ok := slotToID[proto.ItemSlot_ItemSlotTrinket2]; ok {
 			if trink1 == trink2 {
 				return ""
 			}
 			if trink1 > trink2 {
-				slotToID[ItemSlotTrinket1], slotToID[ItemSlotTrinket2] = trink2, trink1
+				slotToID[proto.ItemSlot_ItemSlotTrinket1], slotToID[proto.ItemSlot_ItemSlotTrinket2] = trink2, trink1
 			}
 		}
 	}
 
-	var parts []string
-	for i := 0; i < 17; i++ {
-		if id, ok := slotToID[ItemSlot(i)]; ok {
+	parts := make([]string, 0, len(proto.ItemSlot_name))
+	for i := 0; i < len(proto.ItemSlot_name); i++ {
+		if id, ok := slotToID[proto.ItemSlot(i)]; ok {
 			parts = append(parts, fmt.Sprintf("%d=%d", i, id))
 		}
 	}
@@ -455,16 +454,16 @@ func (es *equipmentSubstitution) CanonicalHash() string {
 	return strings.Join(parts, ":")
 }
 
-// isValidEquipment returns true if the specified equipment spec is valid. A equipment spec
+// isValidEquipment returns true if the specified equipment spec is valid. An equipment spec
 // is valid if it does not reference a two-hander and off-hand weapon combo.
 func isValidEquipment(equipment *proto.EquipmentSpec) bool {
 	var usesTwoHander, usesOffhand bool
 
 	// Validate weapons
-	if knownItem, ok := ItemsByID[equipment.Items[ItemSlotMainHand].Id]; ok {
+	if knownItem, ok := ItemsByID[equipment.Items[proto.ItemSlot_ItemSlotMainHand].Id]; ok {
 		usesTwoHander = knownItem.HandType == proto.HandType_HandTypeTwoHand
 	}
-	if knownItem, ok := ItemsByID[equipment.Items[ItemSlotOffHand].Id]; ok {
+	if knownItem, ok := ItemsByID[equipment.Items[proto.ItemSlot_ItemSlotOffHand].Id]; ok {
 		usesOffhand = knownItem.HandType == proto.HandType_HandTypeOffHand
 	}
 	if usesTwoHander && usesOffhand {
@@ -472,22 +471,22 @@ func isValidEquipment(equipment *proto.EquipmentSpec) bool {
 	}
 
 	// Validate trinkets/rings for duplicate IDs
-	if equipment.Items[ItemSlotFinger1].Id == equipment.Items[ItemSlotFinger2].Id && equipment.Items[ItemSlotFinger1].Id != 0 {
+	if equipment.Items[proto.ItemSlot_ItemSlotFinger1].Id == equipment.Items[proto.ItemSlot_ItemSlotFinger2].Id && equipment.Items[proto.ItemSlot_ItemSlotFinger1].Id != 0 {
 		return false
-	} else if equipment.Items[ItemSlotTrinket1].Id == equipment.Items[ItemSlotTrinket2].Id && equipment.Items[ItemSlotTrinket1].Id != 0 {
+	} else if equipment.Items[proto.ItemSlot_ItemSlotTrinket1].Id == equipment.Items[proto.ItemSlot_ItemSlotTrinket2].Id && equipment.Items[proto.ItemSlot_ItemSlotTrinket1].Id != 0 {
 		return false
 	}
 
 	// Validate rings/trinkets for heroic/non-heroic (matching name)
-	f1 := ItemsByID[equipment.Items[ItemSlotFinger1].Id]
-	f2 := ItemsByID[equipment.Items[ItemSlotFinger2].Id]
-	if len(f1.Name) > 0 && f1.Name == f2.Name {
+	f1, ok1 := ItemsByID[equipment.Items[proto.ItemSlot_ItemSlotFinger1].Id]
+	f2, ok2 := ItemsByID[equipment.Items[proto.ItemSlot_ItemSlotFinger2].Id]
+	if ok1 && ok2 && f1.Name == f2.Name {
 		return false
 	}
 
-	t1 := ItemsByID[equipment.Items[ItemSlotTrinket1].Id]
-	t2 := ItemsByID[equipment.Items[ItemSlotTrinket2].Id]
-	if len(t1.Name) > 0 && t1.Name == t2.Name {
+	t1, ok1 := ItemsByID[equipment.Items[proto.ItemSlot_ItemSlotTrinket1].Id]
+	t2, ok2 := ItemsByID[equipment.Items[proto.ItemSlot_ItemSlotTrinket2].Id]
+	if ok1 && ok2 && t1.Name == t2.Name {
 		return false
 	}
 
@@ -498,8 +497,7 @@ func isValidEquipment(equipment *proto.EquipmentSpec) bool {
 // given bulk sim request. Also returns the unchanged equipment ("base equipment set") set as the
 // first result. This ensures that simming over all possible equipment substitutions includes the
 // base case as well.
-func generateAllEquipmentSubstitutions(ctx context.Context, baseItems []*proto.ItemSpec, combinations bool, distinctItemSlotCombos []*itemWithSlot) chan *equipmentSubstitution {
-
+func generateAllEquipmentSubstitutions(_ context.Context, baseItems []*proto.ItemSpec, combinations bool, distinctItemSlotCombos []*itemWithSlot) chan *equipmentSubstitution {
 	results := make(chan *equipmentSubstitution)
 	go func() {
 		defer close(results)
@@ -518,30 +516,30 @@ func generateAllEquipmentSubstitutions(ctx context.Context, baseItems []*proto.I
 			comboChecker := ItemComboChecker{}
 
 			// Pre-seed the existing item combos
-			comboChecker.HasCombo(baseItems[ItemSlotFinger1].Id, baseItems[ItemSlotFinger2].Id)
-			comboChecker.HasCombo(baseItems[ItemSlotTrinket1].Id, baseItems[ItemSlotTrinket2].Id)
+			comboChecker.HasCombo(baseItems[proto.ItemSlot_ItemSlotFinger1].Id, baseItems[proto.ItemSlot_ItemSlotFinger2].Id)
+			comboChecker.HasCombo(baseItems[proto.ItemSlot_ItemSlotTrinket1].Id, baseItems[proto.ItemSlot_ItemSlotTrinket2].Id)
 
 			for slotid, slot := range itemsBySlot {
 				for _, item := range slot {
 					sub := equipmentSubstitution{
-						Items: []*itemWithSlot{{Item: item, Slot: ItemSlot(slotid)}},
+						Items: []*itemWithSlot{{Item: item, Slot: proto.ItemSlot(slotid)}},
 					}
 					// Handle finger/trinket specially to generate combos
 					switch slotid {
-					case int(ItemSlotFinger1), int(ItemSlotTrinket1):
+					case int(proto.ItemSlot_ItemSlotFinger1), int(proto.ItemSlot_ItemSlotTrinket1):
 						if !comboChecker.HasCombo(item.Id, baseItems[slotid+1].Id) {
 							results <- &sub
 						}
 						// Generate extra combos
 						subslot := slotid + 1
 						for _, subitem := range itemsBySlot[subslot] {
-							if shouldSkipCombo(baseItems, subitem, ItemSlot(subslot), comboChecker, sub) {
+							if shouldSkipCombo(baseItems, subitem, proto.ItemSlot(subslot), comboChecker, sub) {
 								continue
 							}
-							miniCombo := createReplacement(sub, &itemWithSlot{Item: subitem, Slot: ItemSlot(subslot)})
+							miniCombo := createReplacement(sub, &itemWithSlot{Item: subitem, Slot: proto.ItemSlot(subslot)})
 							results <- &miniCombo
 						}
-					case int(ItemSlotFinger2), int(ItemSlotTrinket2):
+					case int(proto.ItemSlot_ItemSlotFinger2), int(proto.ItemSlot_ItemSlotTrinket2):
 						// Ensure we don't have this combo with the base equipment.
 						if !comboChecker.HasCombo(item.Id, baseItems[slotid-1].Id) {
 							results <- &sub
@@ -558,7 +556,7 @@ func generateAllEquipmentSubstitutions(ctx context.Context, baseItems []*proto.I
 		// the best set of items in your bags.
 		subComboChecker := SubstitutionComboChecker{}
 		for i := 0; i < len(itemsBySlot); i++ {
-			genSlotCombos(ItemSlot(i), baseItems, equipmentSubstitution{}, itemsBySlot, subComboChecker, results)
+			genSlotCombos(proto.ItemSlot(i), baseItems, equipmentSubstitution{}, itemsBySlot, subComboChecker, results)
 		}
 	}()
 
@@ -573,15 +571,15 @@ func createReplacement(repl equipmentSubstitution, item *itemWithSlot) equipment
 	return repl
 }
 
-func shouldSkipCombo(baseItems []*proto.ItemSpec, item *proto.ItemSpec, slot ItemSlot, comboChecker ItemComboChecker, replacements equipmentSubstitution) bool {
+func shouldSkipCombo(baseItems []*proto.ItemSpec, item *proto.ItemSpec, slot proto.ItemSlot, comboChecker ItemComboChecker, replacements equipmentSubstitution) bool {
 	switch slot {
-	case ItemSlotFinger1, ItemSlotTrinket1:
+	case proto.ItemSlot_ItemSlotFinger1, proto.ItemSlot_ItemSlotTrinket1:
 		return comboChecker.HasCombo(item.Id, baseItems[slot+1].Id)
-	case ItemSlotFinger2, ItemSlotTrinket2:
+	case proto.ItemSlot_ItemSlotFinger2, proto.ItemSlot_ItemSlotTrinket2:
 
 		for _, repl := range replacements.Items {
-			if slot == ItemSlotFinger2 && repl.Slot == ItemSlotFinger1 ||
-				slot == ItemSlotTrinket2 && repl.Slot == ItemSlotTrinket1 {
+			if slot == proto.ItemSlot_ItemSlotFinger2 && repl.Slot == proto.ItemSlot_ItemSlotFinger1 ||
+				slot == proto.ItemSlot_ItemSlotTrinket2 && repl.Slot == proto.ItemSlot_ItemSlotTrinket1 {
 				return comboChecker.HasCombo(repl.Item.Id, item.Id)
 			}
 		}
@@ -591,7 +589,7 @@ func shouldSkipCombo(baseItems []*proto.ItemSpec, item *proto.ItemSpec, slot Ite
 	return false
 }
 
-func genSlotCombos(slot ItemSlot, baseItems []*proto.ItemSpec, baseRepl equipmentSubstitution, replaceBySlot [][]*proto.ItemSpec, comboChecker SubstitutionComboChecker, results chan *equipmentSubstitution) {
+func genSlotCombos(slot proto.ItemSlot, baseItems []*proto.ItemSpec, baseRepl equipmentSubstitution, replaceBySlot [][]*proto.ItemSpec, comboChecker SubstitutionComboChecker, results chan *equipmentSubstitution) {
 	// Iterate all items in this slot, add to the baseRepl, then descend to add all other item combos.
 	for _, item := range replaceBySlot[slot] {
 		// Create a new equipment substitution from the current replacements plus the new item.
@@ -611,7 +609,7 @@ func genSlotCombos(slot ItemSlot, baseItems []*proto.ItemSpec, baseRepl equipmen
 // itemWithSlot pairs an item with its fixed item slot.
 type itemWithSlot struct {
 	Item *proto.ItemSpec
-	Slot ItemSlot
+	Slot proto.ItemSlot
 
 	// This index refers to the item's position in the BulkEquipmentSpec of the player and serves as
 	// a unique item ID. It is used to verify that a valid equipmentSubstitution only references an
@@ -644,13 +642,13 @@ func createNewRequestWithSubstitution(readonlyInputRequest *proto.RaidSimRequest
 
 			changeLog.AddedItems = append(changeLog.AddedItems, &proto.ItemSpecWithSlot{
 				Item: equipment.Items[is.Slot],
-				Slot: proto.ItemSlot(is.Slot),
+				Slot: is.Slot,
 			})
 		} else {
 			equipment.Items[is.Slot] = is.Item
 			changeLog.AddedItems = append(changeLog.AddedItems, &proto.ItemSpecWithSlot{
 				Item: is.Item,
-				Slot: proto.ItemSlot(is.Slot),
+				Slot: is.Slot,
 			})
 		}
 	}

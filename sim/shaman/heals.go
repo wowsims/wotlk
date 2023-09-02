@@ -31,10 +31,10 @@ func (shaman *Shaman) registerLesserHealingWaveSpell() {
 	hasGlyph := shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfLesserHealingWave)
 
 	bonusHeal := 0 +
-		core.TernaryFloat64(shaman.Equip[core.ItemSlotRanged].ID == 42598, 338, 0) +
-		core.TernaryFloat64(shaman.Equip[core.ItemSlotRanged].ID == 42597, 267, 0) +
-		core.TernaryFloat64(shaman.Equip[core.ItemSlotRanged].ID == 42596, 236, 0) +
-		core.TernaryFloat64(shaman.Equip[core.ItemSlotRanged].ID == 42595, 204, 0)
+		core.TernaryFloat64(shaman.Ranged().ID == 42598, 338, 0) +
+		core.TernaryFloat64(shaman.Ranged().ID == 42597, 267, 0) +
+		core.TernaryFloat64(shaman.Ranged().ID == 42596, 236, 0) +
+		core.TernaryFloat64(shaman.Ranged().ID == 42595, 204, 0)
 
 	shaman.LesserHealingWave = shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 49276},
@@ -182,10 +182,10 @@ func (shaman *Shaman) registerHealingWaveSpell() {
 	hasGlyph := shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfLesserHealingWave)
 
 	bonusHeal := 0 +
-		core.TernaryFloat64(shaman.Equip[core.ItemSlotRanged].ID == 42598, 338, 0) +
-		core.TernaryFloat64(shaman.Equip[core.ItemSlotRanged].ID == 42597, 267, 0) +
-		core.TernaryFloat64(shaman.Equip[core.ItemSlotRanged].ID == 42596, 236, 0) +
-		core.TernaryFloat64(shaman.Equip[core.ItemSlotRanged].ID == 42595, 204, 0)
+		core.TernaryFloat64(shaman.Ranged().ID == 42598, 338, 0) +
+		core.TernaryFloat64(shaman.Ranged().ID == 42597, 267, 0) +
+		core.TernaryFloat64(shaman.Ranged().ID == 42596, 236, 0) +
+		core.TernaryFloat64(shaman.Ranged().ID == 42595, 204, 0)
 
 	shaman.HealingWave = shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 49273},
@@ -315,12 +315,12 @@ func (shaman *Shaman) registerChainHealSpell() {
 	numHits := core.MinInt32(core.TernaryInt32(hasGlyph, 4, 3), int32(len(shaman.Env.Raid.AllUnits)))
 
 	bonusHeal := 0 +
-		core.TernaryFloat64(shaman.Equip[core.ItemSlotRanged].ID == 28523, 87, 0) +
-		core.TernaryFloat64(shaman.Equip[core.ItemSlotRanged].ID == 38368, 102, 0) +
-		core.TernaryFloat64(shaman.Equip[core.ItemSlotRanged].ID == 45114, 257, 0)
+		core.TernaryFloat64(shaman.Ranged().ID == 28523, 87, 0) +
+		core.TernaryFloat64(shaman.Ranged().ID == 38368, 102, 0) +
+		core.TernaryFloat64(shaman.Ranged().ID == 45114, 257, 0)
 
 	manaDiscount := 0 +
-		core.TernaryFloat64(shaman.Equip[core.ItemSlotRanged].ID == 40709, 78, 0)
+		core.TernaryFloat64(shaman.Ranged().ID == 40709, 78, 0)
 
 	shaman.ChainHeal = shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 55459},

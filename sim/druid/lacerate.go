@@ -9,7 +9,7 @@ import (
 func (druid *Druid) registerLacerateSpell() {
 	tickDamage := 320.0 / 5
 	initialDamage := 88.0
-	if druid.Equip[core.ItemSlotRanged].ID == 27744 { // Idol of Ursoc
+	if druid.Ranged().ID == 27744 { // Idol of Ursoc
 		tickDamage += 8
 		initialDamage += 8
 	}

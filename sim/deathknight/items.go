@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -273,31 +272,31 @@ func (dk *Deathknight) registerScourgelordsPlateProc() {
 }
 
 func (dk *Deathknight) sigilOfTheDarkRiderBonus() float64 {
-	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 39208, 90, 0)
+	return core.TernaryFloat64(dk.Ranged().ID == 39208, 90, 0)
 }
 
 func (dk *Deathknight) sigilOfAwarenessBonus() float64 {
-	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 40207, 420, 0)
+	return core.TernaryFloat64(dk.Ranged().ID == 40207, 420, 0)
 }
 
 func (dk *Deathknight) sigilOfTheFrozenConscienceBonus() float64 {
-	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 40822, 111, 0)
+	return core.TernaryFloat64(dk.Ranged().ID == 40822, 111, 0)
 }
 
 func (dk *Deathknight) sigilOfTheWildBuckBonus() float64 {
-	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 40867, 80, 0)
+	return core.TernaryFloat64(dk.Ranged().ID == 40867, 80, 0)
 }
 
 func (dk *Deathknight) sigilOfArthriticBindingBonus() float64 {
-	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 40875, 203, 0)
+	return core.TernaryFloat64(dk.Ranged().ID == 40875, 203, 0)
 }
 
 func (dk *Deathknight) sigilOfTheVengefulHeartDeathCoil() float64 {
-	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 45254, 403, 0)
+	return core.TernaryFloat64(dk.Ranged().ID == 45254, 403, 0)
 }
 
 func (dk *Deathknight) sigilOfTheVengefulHeartFrostStrike() float64 {
-	return core.TernaryFloat64(dk.Equip[proto.ItemSlot_ItemSlotRanged].ID == 45254, 218, 0) // (1 / 0.55) * 120
+	return core.TernaryFloat64(dk.Ranged().ID == 45254, 218, 0) // (1 / 0.55) * 120
 }
 
 func addEnchantEffect(id int32, effect func(core.Agent)) {
@@ -355,7 +354,7 @@ func (dk *Deathknight) registerItems() {
 			return
 		}
 
-		procMask := character.GetMeleeProcMaskForEnchant(3370)
+		procMask := character.GetProcMaskForEnchant(3370)
 
 		vulnAuras := character.NewEnemyAuraArray(core.RuneOfRazoriceVulnerabilityAura)
 		mhRazoriceSpell := newRazoriceHitSpell(character, true)
@@ -385,7 +384,7 @@ func (dk *Deathknight) registerItems() {
 		})
 
 		character.RegisterOnItemSwap(func(sim *core.Simulation) {
-			if character.GetMeleeProcMaskForEnchant(3370) == core.ProcMaskUnknown {
+			if character.GetProcMaskForEnchant(3370) == core.ProcMaskUnknown {
 				aura.Deactivate(sim)
 			} else {
 				aura.Activate(sim)
@@ -414,7 +413,7 @@ func (dk *Deathknight) registerItems() {
 	addEnchantEffect(3368, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
-		procMask := character.GetMeleeProcMaskForEnchant(3368)
+		procMask := character.GetProcMaskForEnchant(3368)
 		ppmm := character.AutoAttacks.NewPPMManager(2.0, procMask)
 
 		rfcAura := newRuneOfTheFallenCrusaderAura(character, "Rune Of The Fallen Crusader Proc", core.ActionID{SpellID: 53365})
@@ -542,7 +541,7 @@ func (dk *Deathknight) registerItems() {
 	addEnchantEffect(3369, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
-		procMask := character.GetMeleeProcMaskForEnchant(3369)
+		procMask := character.GetProcMaskForEnchant(3369)
 		ppmm := character.AutoAttacks.NewPPMManager(1.0, procMask)
 
 		core.MakePermanent(character.GetOrRegisterAura(core.Aura{

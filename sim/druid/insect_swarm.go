@@ -12,7 +12,7 @@ const CryingWind int32 = 45270
 func (druid *Druid) registerInsectSwarmSpell() {
 	missAuras := druid.NewEnemyAuraArray(core.InsectSwarmAura)
 	hasGlyph := druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfInsectSwarm)
-	idolSpellPower := core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == CryingWind, 396, 0)
+	idolSpellPower := core.TernaryFloat64(druid.Ranged().ID == CryingWind, 396, 0)
 
 	impISMultiplier := 1 + 0.01*float64(druid.Talents.ImprovedInsectSwarm)
 

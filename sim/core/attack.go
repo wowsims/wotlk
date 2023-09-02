@@ -72,7 +72,7 @@ func newWeaponFromItem(item Item, critMultiplier float64) Weapon {
 		BaseDamageMax:              item.WeaponDamageMax,
 		SwingSpeed:                 item.SwingSpeed,
 		NormalizedSwingSpeed:       normalizedWeaponSpeed,
-		SwingDuration:              time.Duration(item.SwingSpeed * float64(time.Second)),
+		SwingDuration:              DurationFromSeconds(item.SwingSpeed),
 		CritMultiplier:             critMultiplier,
 		MeleeAttackRatingPerDamage: MeleeAttackRatingPerDamage,
 	}

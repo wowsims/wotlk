@@ -110,7 +110,7 @@ func (character *Character) HasSetBonus(itemSet *ItemSet, numItems int32) bool {
 	}
 
 	var count int32
-	for _, item := range character.Equip {
+	for _, item := range character.Equipment {
 		if itemSet.ItemIsInSet(item.ID) {
 			count++
 			if count >= numItems {
@@ -138,7 +138,7 @@ func (character *Character) GetActiveSetBonuses() []ActiveSetBonus {
 	activeBonuses := []ActiveSetBonus{}
 	setItemCount := map[string]int32{}
 
-	for _, i := range character.Equip {
+	for _, i := range character.Equipment {
 		set := itemSetLookup[i.ID]
 		if set != nil {
 			setItemCount[set.Name]++

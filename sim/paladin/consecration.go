@@ -12,8 +12,8 @@ import (
 func (paladin *Paladin) registerConsecrationSpell() {
 	// TODO: Properly implement max rank consecration.
 	bonusSpellPower := 0 +
-		core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 27917, 47*0.8, 0) +
-		core.TernaryFloat64(paladin.Equip[proto.ItemSlot_ItemSlotRanged].ID == 40337, 141, 0) // Libram of Resurgence
+		core.TernaryFloat64(paladin.Ranged().ID == 27917, 47*0.8, 0) +
+		core.TernaryFloat64(paladin.Ranged().ID == 40337, 141, 0) // Libram of Resurgence
 
 	paladin.Consecration = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48819},

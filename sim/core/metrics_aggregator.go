@@ -17,9 +17,7 @@ type DistributionMetrics struct {
 	Total float64
 
 	// Aggregate values. These are updated after each iteration.
-	n       int
-	sum     float64
-	sumSq   float64
+	aggregator
 	max     float64
 	min     float64
 	maxSeed int64
@@ -34,24 +32,23 @@ func (distMetrics *DistributionMetrics) reset() {
 
 // This should be called when a Sim iteration is complete.
 func (distMetrics *DistributionMetrics) doneIteration(sim *Simulation) {
-	distMetrics.n++
-	seed := sim.rand.GetSeed()
-	encounterDurationSeconds := sim.Duration.Seconds()
+	dps := distMetrics.Total / sim.Duration.Seconds()
+	distMetrics.add(dps)
 
-	dps := distMetrics.Total / encounterDurationSeconds
-	distMetrics.sum += dps
-	distMetrics.sumSq += dps * dps
 	if sim.Options.SaveAllValues {
+		if cap(distMetrics.sample) < int(sim.Options.Iterations) {
+			distMetrics.sample = make([]float64, 0, sim.Options.Iterations)
+		}
 		distMetrics.sample = append(distMetrics.sample, dps)
 	}
 
 	if dps > distMetrics.max {
 		distMetrics.max = dps
-		distMetrics.maxSeed = seed
+		distMetrics.maxSeed = sim.rand.GetSeed()
 	}
 	if dps <= distMetrics.min || distMetrics.min < 0 {
 		distMetrics.min = dps
-		distMetrics.minSeed = seed
+		distMetrics.minSeed = sim.rand.GetSeed()
 	}
 
 	dpsRounded := int32(math.Round(dps/10) * 10)
@@ -59,7 +56,7 @@ func (distMetrics *DistributionMetrics) doneIteration(sim *Simulation) {
 }
 
 func (distMetrics *DistributionMetrics) ToProto() *proto.DistributionMetrics {
-	mean, stdev := calcMeanAndStdevFromSums(distMetrics.n, distMetrics.sum, distMetrics.sumSq)
+	mean, stdev := distMetrics.meanAndStdDev()
 
 	return &proto.DistributionMetrics{
 		Avg:       mean,
@@ -103,7 +100,7 @@ type UnitMetrics struct {
 }
 
 // Metrics for the current iteration, for 1 agent. Keep this as a separate
-// struct so its easy to clear.
+// struct, so it's easy to clear.
 type CharacterIterationMetrics struct {
 	Died    bool // Whether this unit died in the current iteration.
 	WentOOM bool // Whether the agent has hit OOM at least once in this iteration.
@@ -129,7 +126,7 @@ type tmiListItem struct {
 }
 
 func (actionMetrics *ActionMetrics) ToProto(actionID ActionID) *proto.ActionMetrics {
-	var targetMetrics []*proto.TargetedActionMetrics
+	targetMetrics := make([]*proto.TargetedActionMetrics, 0, len(actionMetrics.Targets))
 	for _, tam := range actionMetrics.Targets {
 		targetMetrics = append(targetMetrics, tam.ToProto())
 	}
@@ -427,7 +424,6 @@ func (unitMetrics *UnitMetrics) doneIteration(unit *Unit, sim *Simulation) {
 }
 
 func (unitMetrics *UnitMetrics) calculateTMI(unit *Unit, sim *Simulation) float64 {
-
 	if unit.Metrics.tmiList == nil || unitMetrics.tmiBin == 0 {
 		return 0
 	}
@@ -436,10 +432,10 @@ func (unitMetrics *UnitMetrics) calculateTMI(unit *Unit, sim *Simulation) float6
 	firstEvent := 0                // Marks event at start of current bin
 	ev := 0                        // Marks event at end of current bin
 	lastEvent := len(unit.Metrics.tmiList)
-	var buckets []float64 = nil
+	var buckets []float64
 
 	// Traverse event array via marching time bins
-	for tStep := 0; float64(tStep) < float64(sim.Duration.Seconds())-float64(bin); tStep++ {
+	for tStep := 0; float64(tStep) < sim.Duration.Seconds()-float64(bin); tStep++ {
 
 		// Increment event counter until we exceed the bin start
 		for ; firstEvent < lastEvent && unit.Metrics.tmiList[firstEvent].Timestamp.Seconds() < float64(tStep); firstEvent++ {
@@ -513,9 +509,12 @@ func (unitMetrics *UnitMetrics) ToProto() *proto.UnitMetrics {
 		ChanceOfDeath: float64(unitMetrics.numItersDead) / n,
 	}
 
+	protoMetrics.Actions = make([]*proto.ActionMetrics, 0, len(unitMetrics.actions))
 	for actionID, action := range unitMetrics.actions {
 		protoMetrics.Actions = append(protoMetrics.Actions, action.ToProto(actionID))
 	}
+
+	protoMetrics.Resources = make([]*proto.ResourceMetrics, 0, len(unitMetrics.resources))
 	for _, resource := range unitMetrics.resources {
 		if resource.Events > 0 {
 			protoMetrics.Resources = append(protoMetrics.Resources, resource.ToProto())
@@ -533,10 +532,8 @@ type AuraMetrics struct {
 	Procs  int32
 
 	// Aggregate values. These are updated after each iteration.
-	n           int
-	uptimeSum   float64
-	uptimeSumSq float64
-	procsSum    int32
+	aggregator
+	procsSum int32
 }
 
 func (auraMetrics *AuraMetrics) reset() {
@@ -546,14 +543,12 @@ func (auraMetrics *AuraMetrics) reset() {
 
 // This should be called when a Sim iteration is complete.
 func (auraMetrics *AuraMetrics) doneIteration() {
-	auraMetrics.n++
-	auraMetrics.uptimeSum += auraMetrics.Uptime.Seconds()
-	auraMetrics.uptimeSumSq += math.Pow(auraMetrics.Uptime.Seconds(), 2)
+	auraMetrics.add(auraMetrics.Uptime.Seconds())
 	auraMetrics.procsSum += auraMetrics.Procs
 }
 
 func (auraMetrics *AuraMetrics) ToProto() *proto.AuraMetrics {
-	mean, stdev := calcMeanAndStdevFromSums(auraMetrics.n, auraMetrics.uptimeSum, auraMetrics.uptimeSumSq)
+	mean, stdev := auraMetrics.meanAndStdDev()
 
 	return &proto.AuraMetrics{
 		Id: auraMetrics.ID.ToProto(),
@@ -562,38 +557,4 @@ func (auraMetrics *AuraMetrics) ToProto() *proto.AuraMetrics {
 		UptimeSecondsStdev: stdev,
 		ProcsAvg:           float64(auraMetrics.procsSum) / float64(auraMetrics.n),
 	}
-}
-
-// Calculates DPS for an action.
-func GetActionDPS(playerMetrics *proto.UnitMetrics, iterations int32, duration time.Duration, actionID ActionID, ignoreTag bool) float64 {
-	totalDPS := 0.0
-	for _, action := range playerMetrics.Actions {
-		metricsActionID := ProtoToActionID(action.Id)
-		if actionID.SameAction(metricsActionID) || (ignoreTag && actionID.SameActionIgnoreTag(metricsActionID)) {
-			for _, tam := range action.Targets {
-				totalDPS += tam.Damage / float64(iterations) / duration.Seconds()
-			}
-		}
-	}
-	return totalDPS
-}
-
-// Calculates average cast damage for an action.
-func GetActionAvgCast(playerMetrics *proto.UnitMetrics, actionID ActionID) float64 {
-	for _, action := range playerMetrics.Actions {
-		if actionID.SameAction(ProtoToActionID(action.Id)) {
-			casts := int32(0)
-			damage := 0.0
-			for _, tam := range action.Targets {
-				casts += tam.Casts
-				damage += tam.Damage
-			}
-			if casts == 0 {
-				return 0
-			} else {
-				return damage / float64(casts)
-			}
-		}
-	}
-	return 0
 }

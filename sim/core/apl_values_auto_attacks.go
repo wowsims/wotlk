@@ -1,7 +1,6 @@
 package core
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -24,5 +23,5 @@ func (value *APLValueAutoTimeToNext) GetDuration(sim *Simulation) time.Duration 
 	return MaxDuration(0, value.unit.AutoAttacks.NextAttackAt()-sim.CurrentTime)
 }
 func (value *APLValueAutoTimeToNext) String() string {
-	return fmt.Sprintf("Auto Time To Next")
+	return "Auto Time To Next"
 }
