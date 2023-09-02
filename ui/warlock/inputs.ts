@@ -55,10 +55,10 @@ export const PetInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecWarlo
 	changeEmitter: (player: Player<Spec.SpecWarlock>) => player.changeEmitter,
 });
 
-export const NewDPBehaviour = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecWarlock>({
-	fieldName: 'newDPBehaviour',
-	label: 'New DP behaviour',
-	labelTooltip: 'Changes DP to always be 10% of spell power, 1s ICD',
+export const NewDPBehavior = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecWarlock>({
+	fieldName: 'newDPBehavior',
+	label: 'Apply new Demonic Pact behavior introduced in 3.4.3',
+	labelTooltip: 'Updates Demonic Pact calculation to new behavior introduced in 3.4.3: new potential pact is always 10% of spell power and applied on 1 second ICD (rather than 5 seconds)',
 });
 
 export const PrimarySpellInput = InputHelpers.makeRotationEnumIconInput<Spec.SpecWarlock, PrimarySpell>({
