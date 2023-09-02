@@ -499,7 +499,7 @@ func (paladin *Paladin) applyJudgementsOfTheJust() {
 	})
 	// This application can proc stuff
 	jojApplicationSpell := paladin.RegisterSpell(core.SpellConfig{
-		ActionID: core.ActionID{SpellID: 20186},
+		ActionID: core.ActionID{SpellID: 68055},
 		ProcMask: core.ProcMaskProc,
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			jojAuras.Get(target).Activate(sim)
@@ -513,7 +513,7 @@ func (paladin *Paladin) applyJudgementsOfTheJust() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if result.Landed() && spell.Flags.Matches(SpellFlagPrimaryJudgement|SpellFlagSecondaryJudgement) {
+			if result.Landed() && spell.Flags.Matches(SpellFlagPrimaryJudgement) {
 				jojApplicationSpell.Cast(sim, result.Target)
 			}
 		},

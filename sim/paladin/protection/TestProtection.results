@@ -442,7 +442,7 @@ dps_results: {
  key: "TestProtection-AllItems-InsightfulEarthsiegeDiamond"
  value: {
   dps: 3125.71672
-  tps: 7515.01939
+  tps: 7514.82444
  }
 }
 dps_results: {
@@ -715,8 +715,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-SparkofLife-37657"
  value: {
-  dps: 3148.43449
-  tps: 7547.81305
+  dps: 3150.13785
+  tps: 7552.32974
  }
 }
 dps_results: {
