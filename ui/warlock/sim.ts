@@ -122,7 +122,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				inputs: [
 					OtherInputs.DistanceFromTarget,
 					OtherInputs.TankAssignment,
-					WarlockInputs.NewDPBehaviour,
+					WarlockInputs.NewDPBehavior,
 				],
 			},
 			encounterPicker: {
