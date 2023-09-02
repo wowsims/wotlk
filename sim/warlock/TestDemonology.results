@@ -333,15 +333,15 @@ dps_results: {
 dps_results: {
  key: "TestDemonology-Settings-Orc-P2-Demonology Warlock-NoBuffs-LongMultiTarget"
  value: {
-  dps: 21147.78198
-  tps: 26397.77437
+  dps: 21149.97579
+  tps: 26407.76385
  }
 }
 dps_results: {
  key: "TestDemonology-Settings-Orc-P2-Demonology Warlock-NoBuffs-LongSingleTarget"
  value: {
-  dps: 5846.44589
-  tps: 5289.25176
+  dps: 5845.99127
+  tps: 5288.81666
  }
 }
 dps_results: {

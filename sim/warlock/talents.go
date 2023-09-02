@@ -595,7 +595,7 @@ func (warlock *Warlock) setupDemonicPact() {
 
 			shouldRefresh := !warlock.DemonicPactAura.IsActive() ||
 				warlock.DemonicPactAura.RemainingDuration(sim) < time.Second*10 ||
-				newSPBonus > lastBonus
+				newSPBonus >= lastBonus
 
 			if shouldRefresh {
 				warlock.updateDPASP(sim)
