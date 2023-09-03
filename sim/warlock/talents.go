@@ -574,6 +574,8 @@ func (warlock *Warlock) setupDemonicPact() {
 				return
 			}
 
+			icd.Use(sim)
+
 			lastBonus := 0.0
 			newSPBonus := 0.0
 			if warlock.DemonicPactAura.IsActive() {
@@ -593,14 +595,8 @@ func (warlock *Warlock) setupDemonicPact() {
 				}
 			}
 
-			shouldRefresh := !warlock.DemonicPactAura.IsActive() ||
-				warlock.DemonicPactAura.RemainingDuration(sim) < time.Second*10 ||
-				newSPBonus >= lastBonus
-
-			if shouldRefresh {
+			if warlock.DemonicPactAura.RemainingDuration(sim) < 10*time.Second || newSPBonus >= lastBonus {
 				warlock.updateDPASP(sim)
-
-				icd.Use(sim)
 				for _, dpAura := range demonicPactAuras {
 					if dpAura != nil {
 						dpAura.ExclusiveEffects[0].SetPriority(sim, newSPBonus)
