@@ -161,7 +161,6 @@ var staminaRegex = regexp.MustCompile(`<!--stat7-->\+([0-9]+) Stamina`)
 var spellPowerRegex = regexp.MustCompile(`Increases spell power by ([0-9]+)\.`)
 var spellPowerRegex2 = regexp.MustCompile(`Increases spell power by <!--rtg45-->([0-9]+)\.`)
 
-/*
 // Not sure these exist anymore?
 var arcaneSpellPowerRegex = regexp.MustCompile(`Increases Arcane power by ([0-9]+)\.`)
 var fireSpellPowerRegex = regexp.MustCompile(`Increases Fire power by ([0-9]+)\.`)
@@ -169,7 +168,6 @@ var frostSpellPowerRegex = regexp.MustCompile(`Increases Frost power by ([0-9]+)
 var holySpellPowerRegex = regexp.MustCompile(`Increases Holy power by ([0-9]+)\.`)
 var natureSpellPowerRegex = regexp.MustCompile(`Increases Nature power by ([0-9]+)\.`)
 var shadowSpellPowerRegex = regexp.MustCompile(`Increases Shadow power by ([0-9]+)\.`)
-*/
 
 var hitRegex = regexp.MustCompile(`Improves hit rating by <!--rtg31-->([0-9]+)\.`)
 var critRegex = regexp.MustCompile(`Improves critical strike rating by <!--rtg32-->([0-9]+)\.`)
