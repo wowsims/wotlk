@@ -383,10 +383,10 @@ func (shaman *Shaman) RegisterEarthlivingImbue(procMask core.ProcMask) {
 	}
 
 	if procMask.Matches(core.ProcMaskMeleeMH) {
-		shaman.ApplyEarthlivingImbueToItem(shaman.GetMHWeapon())
+		shaman.ApplyEarthlivingImbueToItem(shaman.MainHand())
 	}
 	if procMask.Matches(core.ProcMaskMeleeOH) {
-		shaman.ApplyEarthlivingImbueToItem(shaman.GetOHWeapon())
+		shaman.ApplyEarthlivingImbueToItem(shaman.OffHand())
 	}
 
 	procChance := 0.2
@@ -394,8 +394,7 @@ func (shaman *Shaman) RegisterEarthlivingImbue(procMask core.ProcMask) {
 		procChance += 0.05
 	}
 
-	mhSpell := shaman.newEarthlivingImbueSpell()
-	ohSpell := shaman.newEarthlivingImbueSpell()
+	imbueSpell := shaman.newEarthlivingImbueSpell()
 
 	aura := shaman.RegisterAura(core.Aura{
 		Label:    "Earthliving Imbue",
@@ -408,10 +407,12 @@ func (shaman *Shaman) RegisterEarthlivingImbue(procMask core.ProcMask) {
 				return
 			}
 
-			if sim.RandomFloat("earthliving") < procChance {
-				mhSpell.Cast(sim, result.Target)
-			} else if sim.RandomFloat("earthliving") < procChance {
-				ohSpell.Cast(sim, result.Target)
+			if procMask.Matches(core.ProcMaskMeleeMH) && sim.RandomFloat("earthliving") < procChance {
+				imbueSpell.Cast(sim, result.Target)
+			}
+
+			if procMask.Matches(core.ProcMaskMeleeOH) && sim.RandomFloat("earthliving") < procChance {
+				imbueSpell.Cast(sim, result.Target)
 			}
 		},
 	})
