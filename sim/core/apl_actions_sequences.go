@@ -127,12 +127,28 @@ func (action *APLActionStrictSequence) IsReady(sim *Simulation) bool {
 	return true
 }
 func (action *APLActionStrictSequence) Execute(sim *Simulation) {
-	action.actions[action.curIdx].Execute(sim)
-	action.curIdx++
+	action.unit.Rotation.controllingAction = action
+}
+func (action *APLActionStrictSequence) GetNextAction(sim *Simulation) *APLAction {
+	if action.actions[action.curIdx].IsReady(sim) {
+		nextAction := action.actions[action.curIdx]
 
-	if action.curIdx == len(action.actions) {
+		action.curIdx++
+		if action.curIdx == len(action.actions) {
+			action.curIdx = 0
+			action.unit.Rotation.controllingAction = nil
+		}
+
+		return nextAction
+	} else if action.unit.GCD.IsReady(sim) {
+		// If the GCD is ready when the next subaction isn't, it means the sequence is bad
+		// so reset and exit the sequence.
 		action.curIdx = 0
-		action.unit.Rotation.strictSequence = nil
+		action.unit.Rotation.controllingAction = nil
+		return action.unit.Rotation.getNextAction(sim)
+	} else {
+		// Return nil to wait for the GCD to become ready.
+		return nil
 	}
 }
 func (action *APLActionStrictSequence) String() string {

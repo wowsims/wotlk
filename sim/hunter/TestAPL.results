@@ -810,8 +810,8 @@ dps_results: {
 dps_results: {
  key: "TestAPL-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
-  dps: 5385.71714
-  tps: 4633.2316
+  dps: 5386.46454
+  tps: 4633.99134
  }
 }
 dps_results: {
