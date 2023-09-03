@@ -447,7 +447,7 @@ func (druid *Druid) applyEclipse() {
 	}
 
 	// Delay between eclipses
-	eclipseDuration := time.Millisecond*15000
+	eclipseDuration := time.Millisecond * 15000
 	interEclipseDelay := eclipseDuration - time.Millisecond*500
 
 	// Solar

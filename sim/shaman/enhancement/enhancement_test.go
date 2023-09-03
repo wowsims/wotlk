@@ -22,10 +22,10 @@ func TestEnhancement(t *testing.T) {
 		Talents:     StandardTalents,
 		Glyphs:      StandardGlyphs,
 		Consumes:    FullConsumes,
-		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
+		SpecOptions: core.SpecOptionsCombo{Label: "FT", SpecOptions: PlayerOptionsFTFT},
 		OtherSpecOptions: []core.SpecOptionsCombo{
-			{Label: "EnhFireElemental", SpecOptions: PlayerOptionsFireElemental},
 			{Label: "EnhItemSwap", SpecOptions: PlayerOptionsItemSwap},
+			{Label: "Wf", SpecOptions: PlayerOptionsWFWF},
 		},
 
 		ItemFilter: core.ItemFilter{
@@ -56,7 +56,7 @@ func BenchmarkSimulate(b *testing.B) {
 				TalentsString: StandardTalents,
 				Glyphs:        StandardGlyphs,
 				Consumes:      FullConsumes,
-				Spec:          PlayerOptionsBasic,
+				Spec:          PlayerOptionsFTFT,
 				Buffs:         core.FullIndividualBuffs,
 			},
 			core.FullPartyBuffs,
@@ -76,22 +76,22 @@ func BenchmarkSimulate(b *testing.B) {
 
 var StandardTalents = "053030152-30405003105021333031131031051"
 var StandardGlyphs = &proto.Glyphs{
-	Major1: int32(proto.ShamanMajorGlyph_GlyphOfStormstrike),
+	Major1: int32(proto.ShamanMajorGlyph_GlyphOfFireNova),
 	Major2: int32(proto.ShamanMajorGlyph_GlyphOfFlametongueWeapon),
 	Major3: int32(proto.ShamanMajorGlyph_GlyphOfFeralSpirit),
 }
 
-var PlayerOptionsBasic = &proto.Player_EnhancementShaman{
+var PlayerOptionsWFWF = &proto.Player_EnhancementShaman{
 	EnhancementShaman: &proto.EnhancementShaman{
 		Options:  enhShamWFWF,
 		Rotation: enhShamRotation,
 	},
 }
 
-var PlayerOptionsFireElemental = &proto.Player_EnhancementShaman{
+var PlayerOptionsFTFT = &proto.Player_EnhancementShaman{
 	EnhancementShaman: &proto.EnhancementShaman{
 		Options:  enhShamFTFT,
-		Rotation: enhShamRotationFireElemental,
+		Rotation: enhShamRotation,
 	},
 }
 
@@ -102,28 +102,7 @@ var PlayerOptionsItemSwap = &proto.Player_EnhancementShaman{
 	},
 }
 
-var enhShamRotationFireElemental = &proto.EnhancementShaman_Rotation{
-	Totems: &proto.ShamanTotems{
-		Earth:            proto.EarthTotem_StrengthOfEarthTotem,
-		Air:              proto.AirTotem_WindfuryTotem,
-		Water:            proto.WaterTotem_ManaSpringTotem,
-		Fire:             proto.FireTotem_MagmaTotem,
-		UseFireElemental: true,
-	},
-	RotationType:                 proto.EnhancementShaman_Rotation_Priority,
-	FirenovaManaThreshold:        3000,
-	ShamanisticRageManaThreshold: 25,
-	PrimaryShock:                 proto.EnhancementShaman_Rotation_Earth,
-	WeaveFlameShock:              true,
-}
-
 var enhShamRotation = &proto.EnhancementShaman_Rotation{
-	Totems: &proto.ShamanTotems{
-		Earth: proto.EarthTotem_StrengthOfEarthTotem,
-		Air:   proto.AirTotem_WindfuryTotem,
-		Water: proto.WaterTotem_ManaSpringTotem,
-		Fire:  proto.FireTotem_MagmaTotem,
-	},
 	RotationType:                 proto.EnhancementShaman_Rotation_Priority,
 	FirenovaManaThreshold:        3000,
 	ShamanisticRageManaThreshold: 25,
@@ -132,13 +111,6 @@ var enhShamRotation = &proto.EnhancementShaman_Rotation{
 }
 
 var enhShamRotationItemSwap = &proto.EnhancementShaman_Rotation{
-	Totems: &proto.ShamanTotems{
-		Earth:            proto.EarthTotem_StrengthOfEarthTotem,
-		Air:              proto.AirTotem_WindfuryTotem,
-		Water:            proto.WaterTotem_ManaSpringTotem,
-		Fire:             proto.FireTotem_MagmaTotem,
-		UseFireElemental: true,
-	},
 	RotationType:                 proto.EnhancementShaman_Rotation_Priority,
 	FirenovaManaThreshold:        3000,
 	ShamanisticRageManaThreshold: 25,
@@ -169,15 +141,22 @@ var enhShamFTFT = &proto.EnhancementShaman_Options{
 	Shield:    proto.ShamanShield_LightningShield,
 	Bloodlust: true,
 	SyncType:  proto.ShamanSyncType_Auto,
-	ImbueMh:   proto.ShamanImbue_FlametongueWeaponDownrank, //phase 1 (wraith strike) only
+	ImbueMh:   proto.ShamanImbue_FlametongueWeaponDownrank,
 	ImbueOh:   proto.ShamanImbue_FlametongueWeapon,
+	Totems: &proto.ShamanTotems{
+		Earth:            proto.EarthTotem_StrengthOfEarthTotem,
+		Air:              proto.AirTotem_WindfuryTotem,
+		Water:            proto.WaterTotem_ManaSpringTotem,
+		Fire:             proto.FireTotem_MagmaTotem,
+		UseFireElemental: true,
+	},
 }
 
 var enhShamWFFT = &proto.EnhancementShaman_Options{
 	Shield:    proto.ShamanShield_LightningShield,
 	Bloodlust: true,
 	SyncType:  proto.ShamanSyncType_NoSync,
-	ImbueMh:   proto.ShamanImbue_WindfuryWeapon, //phase 1 (wraith strike) only
+	ImbueMh:   proto.ShamanImbue_WindfuryWeapon,
 	ImbueOh:   proto.ShamanImbue_FlametongueWeapon,
 }
 

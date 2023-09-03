@@ -75,7 +75,9 @@ import {
 	specToEligibleRaces,
 	specTypeFunctions,
 	withSpecProto,
+	ShamanSpecs,
 } from './proto_utils/utils.js';
+
 
 import { getLanguageCode } from './constants/lang.js';
 import { EventID, TypedEvent } from './typed_event.js';
@@ -1198,6 +1200,17 @@ export class Player<SpecType extends Spec> {
 					options.timeToTrapWeaveMs = rot.timeToTrapWeaveMs;
 					this.setSpecOptions(eventID, options as SpecOptions<SpecType>);
 					rot.timeToTrapWeaveMs = 0;
+					this.setRotation(eventID, rot as SpecRotation<SpecType>);
+				}
+			}
+
+			if ([Spec.SpecEnhancementShaman, Spec.SpecRestorationShaman, Spec.SpecElementalShaman].includes(this.spec)) {
+				const rot = this.getRotation() as SpecRotation<ShamanSpecs>;
+				if (rot.totems) {
+					const options = this.getSpecOptions() as SpecOptions<ShamanSpecs>;
+					options.totems = rot.totems;
+					this.setSpecOptions(eventID, options as SpecOptions<SpecType>);
+					rot.totems = undefined;
 					this.setRotation(eventID, rot as SpecRotation<SpecType>);
 				}
 			}

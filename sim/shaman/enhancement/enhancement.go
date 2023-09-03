@@ -37,8 +37,8 @@ func NewEnhancementShaman(character core.Character, options *proto.Player) *Enha
 	}
 
 	totems := &proto.ShamanTotems{}
-	if enhOptions.Rotation.Totems != nil {
-		totems = enhOptions.Rotation.Totems
+	if enhOptions.Options.Totems != nil {
+		totems = enhOptions.Options.Totems
 	}
 
 	enh := &EnhancementShaman{

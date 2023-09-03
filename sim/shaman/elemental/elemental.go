@@ -32,8 +32,8 @@ func NewElementalShaman(character core.Character, options *proto.Player) *Elemen
 	}
 
 	totems := &proto.ShamanTotems{}
-	if eleShamOptions.Rotation.Totems != nil {
-		totems = eleShamOptions.Rotation.Totems
+	if eleShamOptions.Options.Totems != nil {
+		totems = eleShamOptions.Options.Totems
 		totems.UseFireMcd = true // Control fire totems as MCD.
 	}
 

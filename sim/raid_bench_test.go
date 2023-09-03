@@ -65,17 +65,17 @@ var castersWithElemental = &proto.Party{
 			Spec: &proto.Player_ElementalShaman{
 				ElementalShaman: &proto.ElementalShaman{
 					Rotation: &proto.ElementalShaman_Rotation{
+						Type: proto.ElementalShaman_Rotation_Adaptive,
+					},
+					Options: &proto.ElementalShaman_Options{
+						Shield:    proto.ShamanShield_WaterShield,
+						Bloodlust: true,
 						Totems: &proto.ShamanTotems{
 							Earth: proto.EarthTotem_TremorTotem,
 							Air:   proto.AirTotem_WrathOfAirTotem,
 							Fire:  proto.FireTotem_TotemOfWrath,
 							Water: proto.WaterTotem_ManaSpringTotem,
 						},
-						Type: proto.ElementalShaman_Rotation_Adaptive,
-					},
-					Options: &proto.ElementalShaman_Options{
-						Shield:    proto.ShamanShield_WaterShield,
-						Bloodlust: true,
 					},
 				},
 			},
@@ -206,18 +206,17 @@ func BenchmarkSimulate(b *testing.B) {
 							Equipment: EnhancementEquipment,
 							Spec: &proto.Player_EnhancementShaman{
 								EnhancementShaman: &proto.EnhancementShaman{
-									Rotation: &proto.EnhancementShaman_Rotation{
+									Rotation: &proto.EnhancementShaman_Rotation{},
+									Options: &proto.EnhancementShaman_Options{
+										Shield:    proto.ShamanShield_LightningShield,
+										Bloodlust: true,
+										SyncType:  proto.ShamanSyncType_SyncMainhandOffhandSwings,
 										Totems: &proto.ShamanTotems{
 											Earth: proto.EarthTotem_TremorTotem,
 											Air:   proto.AirTotem_WrathOfAirTotem,
 											Fire:  proto.FireTotem_TotemOfWrath,
 											Water: proto.WaterTotem_ManaSpringTotem,
 										},
-									},
-									Options: &proto.EnhancementShaman_Options{
-										Shield:    proto.ShamanShield_LightningShield,
-										Bloodlust: true,
-										SyncType:  proto.ShamanSyncType_SyncMainhandOffhandSwings,
 									},
 								},
 							},
