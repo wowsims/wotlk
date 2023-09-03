@@ -45,7 +45,7 @@ export const StandardTalents = {
 	data: SavedTalents.create({
 		talentsString: '053030152-30405003105021333031131031051',
 		glyphs: Glyphs.create({
-			major1: ShamanMajorGlyph.GlyphOfStormstrike,
+			major1: ShamanMajorGlyph.GlyphOfFireNova,
 			major2: ShamanMajorGlyph.GlyphOfFlametongueWeapon,
 			major3: ShamanMajorGlyph.GlyphOfFeralSpirit,
 			//minor glyphs dont affect damage done, all convenience/QoL
@@ -58,7 +58,7 @@ export const Phase3Talents = {
 	data: SavedTalents.create({
 		talentsString: '053030152-30505003105001333031131131051',
 		glyphs: Glyphs.create({
-			major1: ShamanMajorGlyph.GlyphOfStormstrike,
+			major1: ShamanMajorGlyph.GlyphOfFireNova,
 			major2: ShamanMajorGlyph.GlyphOfFlametongueWeapon,
 			major3: ShamanMajorGlyph.GlyphOfFeralSpirit,
 			//minor glyphs dont affect damage done, all convenience/QoL
@@ -101,8 +101,8 @@ export const DefaultRotation = EnhancementShamanRotation.create({
 	}),
 });
 
-export const ROTATION_DEFAULT = {
-	name: 'Default',
+export const ROTATION_FT_DEFAULT = {
+	name: 'Default FT',
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: EnhancementShamanRotation.toJsonString(EnhancementShamanRotation.create({
 		})),
@@ -114,13 +114,69 @@ export const ROTATION_DEFAULT = {
 			],
 			"priorityList": [
 				{"action":{"autocastOtherCooldowns":{}}},
+				{"action":{"condition":{"cmp":{"op":"OpEq","lhs":{"auraNumStacks":{"auraId":{"spellId":53817}}},"rhs":{"const":{"val":"5"}}}},"castSpell":{"spellId":{"spellId":49238}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":17364}}}},
+				{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":49233}}},"rhs":{"const":{"val":"0s"}}}},"castSpell":{"spellId":{"spellId":49233}}}},
 				{"action":{"condition":{"not":{"val":{"auraIsActive":{"sourceUnit":{"type":"CurrentTarget"},"auraId":{"spellId":17364}}}}},"castSpell":{"spellId":{"spellId":17364}}}},
-				{"action":{"condition":{"cmp":{"op":"OpGe","lhs":{"auraNumStacks":{"auraId":{"spellId":53817}}},"rhs":{"const":{"val":"3"}}}},"castSpell":{"spellId":{"spellId":49238}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":49231}}}},
+				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"totemRemainingTime":{"totemType":"Water"}},"rhs":{"const":{"val":"20s"}}}},"castSpell":{"spellId":{"spellId":66842}}}},
 				{"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":58734}}},"rhs":{"const":{"val":"100ms"}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":2894}}}}}]}},"castSpell":{"spellId":{"spellId":58734}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":61657}}}},
+				{"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":49281}}}}},"castSpell":{"spellId":{"spellId":49281}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":60103}}}}
+			]
+		}`),
+	}),
+};
+
+export const ROTATION_WF_DEFAULT = {
+	name: 'Default WF',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: EnhancementShamanRotation.toJsonString(EnhancementShamanRotation.create({
+		})),
+		rotation: APLRotation.fromJsonString(`{
+			"enabled": true,
+			"prepullActions": [
+				{"action":{"castSpell":{"spellId":{"spellId":66842}}},"doAtValue":{"const":{"val":"-3s"}}},
+				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
+			],
+			"priorityList": [
+				{"action":{"autocastOtherCooldowns":{}}},
+				{"action":{"condition":{"cmp":{"op":"OpEq","lhs":{"auraNumStacks":{"auraId":{"spellId":53817}}},"rhs":{"const":{"val":"5"}}}},"castSpell":{"spellId":{"spellId":49238}}}},
+				{"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpGe","lhs":{"auraNumStacks":{"auraId":{"spellId":53817}}},"rhs":{"const":{"val":"3"}}}},{"cmp":{"op":"OpLt","lhs":{"math":{"op":"OpAdd","lhs":{"const":{"val":"300ms"}},"rhs":{"spellCastTime":{"spellId":{"spellId":49238}}}}},"rhs":{"autoTimeToNext":{}}}}]}},"castSpell":{"spellId":{"spellId":49238}}}},
 				{"action":{"castSpell":{"spellId":{"spellId":17364}}}},
 				{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":49233}}},"rhs":{"const":{"val":"0s"}}}},"castSpell":{"spellId":{"spellId":49233}}}},
 				{"action":{"castSpell":{"spellId":{"spellId":49231}}}},
 				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"totemRemainingTime":{"totemType":"Water"}},"rhs":{"const":{"val":"20s"}}}},"castSpell":{"spellId":{"spellId":66842}}}},
+				{"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":58734}}},"rhs":{"const":{"val":"100ms"}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":2894}}}}}]}},"castSpell":{"spellId":{"spellId":58734}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":61657}}}},
+				{"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":49281}}}}},"castSpell":{"spellId":{"spellId":49281}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":60103}}}}
+			]
+		}`),
+	}),
+};
+
+export const ROTATION_PHASE_3 = {
+	name: 'Phase 3',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: EnhancementShamanRotation.toJsonString(EnhancementShamanRotation.create({
+		})),
+		rotation: APLRotation.fromJsonString(`{
+			"enabled": true,
+			"prepullActions": [
+				{"action":{"castSpell":{"spellId":{"spellId":66842}}},"doAtValue":{"const":{"val":"-3s"}}},
+				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
+			],
+			"priorityList": [
+				{"action":{"autocastOtherCooldowns":{}}},
+				{"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":49233}}},"rhs":{"const":{"val":"0s"}}}},{"cmp":{"op":"OpGe","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"8s"}}}}]}},"castSpell":{"spellId":{"spellId":49233}}}},
+				{"action":{"condition":{"cmp":{"op":"OpEq","lhs":{"auraNumStacks":{"auraId":{"spellId":53817}}},"rhs":{"const":{"val":"5"}}}},"castSpell":{"spellId":{"spellId":49238}}}},
+				{"action":{"condition":{"not":{"val":{"auraIsActive":{"sourceUnit":{"type":"CurrentTarget"},"auraId":{"spellId":17364}}}}},"castSpell":{"spellId":{"spellId":17364}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":49231}}}},
+				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"totemRemainingTime":{"totemType":"Water"}},"rhs":{"const":{"val":"20s"}}}},"castSpell":{"spellId":{"spellId":66842}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":17364}}}},
+				{"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":58734}}},"rhs":{"const":{"val":"100ms"}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":2894}}}}}]}},"castSpell":{"spellId":{"spellId":58734}}}},
 				{"action":{"castSpell":{"spellId":{"spellId":61657}}}},
 				{"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":49281}}}}},"castSpell":{"spellId":{"spellId":49281}}}},
 				{"action":{"castSpell":{"spellId":{"spellId":60103}}}}

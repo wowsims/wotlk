@@ -359,12 +359,12 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 						{
 							label: 'Improved Stoneskin Totem',
 							actionId: ActionId.fromSpellId(16293),
-							playerData: playerClassAndTalent(Class.ClassShaman, 'guardianTotems', player => player.getRotation().totems?.earth == EarthTotem.StoneskinTotem),
+							playerData: playerClassAndTalent(Class.ClassShaman, 'guardianTotems', player => player.getSpecOptions().totems?.earth == EarthTotem.StoneskinTotem),
 						},
 						{
 							label: 'Stoneskin Totem',
 							actionId: ActionId.fromSpellId(58753),
-							playerData: playerClassAndMissingTalent(Class.ClassShaman, 'guardianTotems', player => player.getRotation().totems?.earth == EarthTotem.StoneskinTotem),
+							playerData: playerClassAndMissingTalent(Class.ClassShaman, 'guardianTotems', player => player.getSpecOptions().totems?.earth == EarthTotem.StoneskinTotem),
 						},
 						{
 							label: 'Scroll of Protection',
@@ -399,12 +399,12 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 						{
 							label: 'Improved Strength of Earth Totem',
 							actionId: ActionId.fromSpellId(52456),
-							playerData: playerClassAndTalent(Class.ClassShaman, 'enhancingTotems', player => player.getRotation().totems?.earth == EarthTotem.StrengthOfEarthTotem),
+							playerData: playerClassAndTalent(Class.ClassShaman, 'enhancingTotems', player => player.getSpecOptions().totems?.earth == EarthTotem.StrengthOfEarthTotem),
 						},
 						{
 							label: 'Strength of Earth Totem',
 							actionId: ActionId.fromSpellId(58643),
-							playerData: playerClassAndMissingTalent(Class.ClassShaman, 'enhancingTotems', player => player.getRotation().totems?.earth == EarthTotem.StrengthOfEarthTotem),
+							playerData: playerClassAndMissingTalent(Class.ClassShaman, 'enhancingTotems', player => player.getSpecOptions().totems?.earth == EarthTotem.StrengthOfEarthTotem),
 						},
 						{
 							label: 'Horn of Winter',
@@ -589,12 +589,12 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 						{
 							label: 'Improved Mana Spring Totem',
 							actionId: ActionId.fromSpellId(16206),
-							playerData: playerClassAndTalent(Class.ClassShaman, 'restorativeTotems', player => player.getRotation().totems?.water == WaterTotem.ManaSpringTotem),
+							playerData: playerClassAndTalent(Class.ClassShaman, 'restorativeTotems', player => player.getSpecOptions().totems?.water == WaterTotem.ManaSpringTotem),
 						},
 						{
 							label: 'Mana Spring Totem',
 							actionId: ActionId.fromSpellId(58774),
-							playerData: playerClassAndMissingTalent(Class.ClassShaman, 'restorativeTotems', player => player.getRotation().totems?.water == WaterTotem.ManaSpringTotem),
+							playerData: playerClassAndMissingTalent(Class.ClassShaman, 'restorativeTotems', player => player.getSpecOptions().totems?.water == WaterTotem.ManaSpringTotem),
 						},
 					],
 				},
@@ -624,12 +624,12 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 						{
 							label: 'Improved Windfury Totem',
 							actionId: ActionId.fromSpellId(29193),
-							playerData: playerClassAndTalent(Class.ClassShaman, 'improvedWindfuryTotem', player => player.getRotation().totems?.air == AirTotem.WindfuryTotem),
+							playerData: playerClassAndTalent(Class.ClassShaman, 'improvedWindfuryTotem', player => player.getSpecOptions().totems?.air == AirTotem.WindfuryTotem),
 						},
 						{
 							label: 'Windfury Totem',
 							actionId: ActionId.fromSpellId(65990),
-							playerData: playerClassAndMissingTalent(Class.ClassShaman, 'improvedWindfuryTotem', player => player.getRotation().totems?.air == AirTotem.WindfuryTotem),
+							playerData: playerClassAndMissingTalent(Class.ClassShaman, 'improvedWindfuryTotem', player => player.getSpecOptions().totems?.air == AirTotem.WindfuryTotem),
 						},
 					],
 				},
@@ -644,12 +644,12 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 						{
 							label: 'Totem of Wrath',
 							actionId: ActionId.fromSpellId(57722),
-							playerData: playerClassAndTalent(Class.ClassShaman, 'totemOfWrath', player => player.getRotation().totems?.fire == FireTotem.TotemOfWrath),
+							playerData: playerClassAndTalent(Class.ClassShaman, 'totemOfWrath', player => player.getSpecOptions().totems?.fire == FireTotem.TotemOfWrath),
 						},
 						{
 							label: 'Flametongue Totem',
 							actionId: ActionId.fromSpellId(58656),
-							playerData: playerClass(Class.ClassShaman, player => player.getRotation().totems?.fire == FireTotem.FlametongueTotem),
+							playerData: playerClass(Class.ClassShaman, player => player.getSpecOptions().totems?.fire == FireTotem.FlametongueTotem),
 						},
 					],
 				},
@@ -674,7 +674,7 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 						{
 							label: 'Wrath of Air Totem',
 							actionId: ActionId.fromSpellId(3738),
-							playerData: playerClass(Class.ClassShaman, player => player.getRotation().totems?.air == AirTotem.WrathOfAirTotem),
+							playerData: playerClass(Class.ClassShaman, player => player.getSpecOptions().totems?.air == AirTotem.WrathOfAirTotem),
 						},
 					],
 				},
@@ -900,7 +900,7 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 						{
 							label: 'Totem of Wrath',
 							actionId: ActionId.fromSpellId(30706),
-							playerData: playerClassAndTalent(Class.ClassShaman, 'totemOfWrath', player => player.getRotation().totems?.fire == FireTotem.TotemOfWrath),
+							playerData: playerClassAndTalent(Class.ClassShaman, 'totemOfWrath', player => player.getSpecOptions().totems?.fire == FireTotem.TotemOfWrath),
 						},
 						{
 							label: 'Heart of the Crusader',
