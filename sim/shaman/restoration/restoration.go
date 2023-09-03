@@ -34,8 +34,8 @@ func NewRestorationShaman(character core.Character, options *proto.Player) *Rest
 	}
 
 	totems := &proto.ShamanTotems{}
-	if restoShamOptions.Rotation.Totems != nil {
-		totems = restoShamOptions.Rotation.Totems
+	if restoShamOptions.Options.Totems != nil {
+		totems = restoShamOptions.Options.Totems
 	}
 
 	resto := &RestorationShaman{

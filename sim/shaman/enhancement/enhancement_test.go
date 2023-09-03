@@ -24,7 +24,6 @@ func TestEnhancement(t *testing.T) {
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
 		OtherSpecOptions: []core.SpecOptionsCombo{
-			{Label: "EnhFireElemental", SpecOptions: PlayerOptionsFireElemental},
 			{Label: "EnhItemSwap", SpecOptions: PlayerOptionsItemSwap},
 		},
 
@@ -88,13 +87,6 @@ var PlayerOptionsBasic = &proto.Player_EnhancementShaman{
 	},
 }
 
-var PlayerOptionsFireElemental = &proto.Player_EnhancementShaman{
-	EnhancementShaman: &proto.EnhancementShaman{
-		Options:  enhShamOptions,
-		Rotation: enhShamRotationFireElemental,
-	},
-}
-
 var PlayerOptionsItemSwap = &proto.Player_EnhancementShaman{
 	EnhancementShaman: &proto.EnhancementShaman{
 		Options:  enhShamOptions,
@@ -102,28 +94,7 @@ var PlayerOptionsItemSwap = &proto.Player_EnhancementShaman{
 	},
 }
 
-var enhShamRotationFireElemental = &proto.EnhancementShaman_Rotation{
-	Totems: &proto.ShamanTotems{
-		Earth:            proto.EarthTotem_StrengthOfEarthTotem,
-		Air:              proto.AirTotem_WindfuryTotem,
-		Water:            proto.WaterTotem_ManaSpringTotem,
-		Fire:             proto.FireTotem_MagmaTotem,
-		UseFireElemental: true,
-	},
-	RotationType:                 proto.EnhancementShaman_Rotation_Priority,
-	FirenovaManaThreshold:        3000,
-	ShamanisticRageManaThreshold: 25,
-	PrimaryShock:                 proto.EnhancementShaman_Rotation_Earth,
-	WeaveFlameShock:              true,
-}
-
 var enhShamRotation = &proto.EnhancementShaman_Rotation{
-	Totems: &proto.ShamanTotems{
-		Earth: proto.EarthTotem_StrengthOfEarthTotem,
-		Air:   proto.AirTotem_WindfuryTotem,
-		Water: proto.WaterTotem_ManaSpringTotem,
-		Fire:  proto.FireTotem_MagmaTotem,
-	},
 	RotationType:                 proto.EnhancementShaman_Rotation_Priority,
 	FirenovaManaThreshold:        3000,
 	ShamanisticRageManaThreshold: 25,
@@ -132,13 +103,6 @@ var enhShamRotation = &proto.EnhancementShaman_Rotation{
 }
 
 var enhShamRotationItemSwap = &proto.EnhancementShaman_Rotation{
-	Totems: &proto.ShamanTotems{
-		Earth:            proto.EarthTotem_StrengthOfEarthTotem,
-		Air:              proto.AirTotem_WindfuryTotem,
-		Water:            proto.WaterTotem_ManaSpringTotem,
-		Fire:             proto.FireTotem_MagmaTotem,
-		UseFireElemental: true,
-	},
 	RotationType:                 proto.EnhancementShaman_Rotation_Priority,
 	FirenovaManaThreshold:        3000,
 	ShamanisticRageManaThreshold: 25,
@@ -163,6 +127,13 @@ var enhShamOptions = &proto.EnhancementShaman_Options{
 	SyncType:  proto.ShamanSyncType_SyncMainhandOffhandSwings,
 	ImbueMh:   proto.ShamanImbue_FlametongueWeaponDownrank, //phase 1 (wraith strike) only
 	ImbueOh:   proto.ShamanImbue_FlametongueWeapon,
+	Totems: &proto.ShamanTotems{
+		Earth:            proto.EarthTotem_StrengthOfEarthTotem,
+		Air:              proto.AirTotem_WindfuryTotem,
+		Water:            proto.WaterTotem_ManaSpringTotem,
+		Fire:             proto.FireTotem_MagmaTotem,
+		UseFireElemental: true,
+	},
 }
 
 var FullConsumes = &proto.Consumes{

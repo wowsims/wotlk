@@ -224,7 +224,8 @@ enum ShamanSyncType {
 
 message ElementalShaman {
 	message Rotation {
-		ShamanTotems totems = 3;
+		// Deprecated as of 2023-08-29
+		ShamanTotems totems = 3 [deprecated = true];
 
 		enum RotationType {
 			Unknown = 0;
@@ -249,6 +250,7 @@ message ElementalShaman {
 	message Options {
 		ShamanShield shield = 1;
 		bool bloodlust = 2;
+		ShamanTotems totems = 3;
 	}
 
 	Rotation rotation = 1;
@@ -257,7 +259,8 @@ message ElementalShaman {
 
 message EnhancementShaman {
 	message Rotation {
-		ShamanTotems totems = 1;
+		// Deprecated as of 2023-08-29
+		ShamanTotems totems = 1 [deprecated = true];
 		
 		enum RotationType {
 			Unknown = 0;
@@ -316,6 +319,7 @@ message EnhancementShaman {
 		ShamanSyncType sync_type = 3;
 		ShamanImbue imbue_mh = 4;
 		ShamanImbue imbue_oh = 5;
+		ShamanTotems totems = 6;
 	}
 
 	Rotation rotation = 1;
@@ -331,7 +335,8 @@ enum ShamanHealSpell {
 
 message RestorationShaman {
 	message Rotation {
-		ShamanTotems totems = 1;
+		// Deprecated as of 2023-08-29
+		ShamanTotems totems = 1 [deprecated = true];
 		bool use_earth_shield = 2;
 		ShamanHealSpell primary_heal = 3;
 		bool use_riptide = 4;
@@ -342,6 +347,7 @@ message RestorationShaman {
 		bool bloodlust = 2;
 		ShamanImbue imbue_mh = 4;
 		int32 earth_shield_p_p_m = 5;
+		ShamanTotems totems = 6;
 	}
 
 	Rotation rotation = 1;

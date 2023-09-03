@@ -153,7 +153,9 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				],
 				// Preset rotations that the user can quickly select.
 				rotations: [
-					Presets.ROTATION_DEFAULT,
+					Presets.ROTATION_FT_DEFAULT,
+					Presets.ROTATION_WF_DEFAULT,
+					Presets.ROTATION_PHASE_3,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [

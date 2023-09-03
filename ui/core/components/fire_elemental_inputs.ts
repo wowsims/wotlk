@@ -23,13 +23,13 @@ export function FireElementalSection(parentElem: HTMLElement, simUI: IndividualS
 
 	const fireElementalBooleanIconInput = InputHelpers.makeBooleanIconInput<ShamanSpecs, ShamanTotems, Player<ShamanSpecs>>({
 		getModObject: (player: Player<ShamanSpecs>) => player,
-		getValue: (player: Player<ShamanSpecs>) => player.getRotation().totems || ShamanTotems.create(),
+		getValue: (player: Player<ShamanSpecs>) => player.getSpecOptions().totems || ShamanTotems.create(),
 		setValue: (eventID: EventID, player: Player<ShamanSpecs>, newVal: ShamanTotems) => {
-			const newRotation = player.getRotation();
-			newRotation.totems = newVal;
-			player.setRotation(eventID, newRotation);
+			const newOptions = player.getSpecOptions();
+			newOptions.totems = newVal;
+			player.setSpecOptions(eventID, newOptions);
 		},
-		changeEmitter: (player: Player<ShamanSpecs>) => player.rotationChangeEmitter,
+		changeEmitter: (player: Player<ShamanSpecs>) => player.specOptionsChangeEmitter,
 	}, ActionId.fromSpellId(2894), "useFireElemental");
 
 	new IconPicker(fireElementalIconContainer, simUI.player, fireElementalBooleanIconInput);
@@ -39,32 +39,32 @@ export function FireElementalSection(parentElem: HTMLElement, simUI: IndividualS
 		label: "Bonus spell power",
 		labelTooltip: "Bonus spell power to snapshot Fire Elemental with. Will prioritize dropping Fire Elemental if greater then 0",
 		inline: true,
-		getValue: (player: Player<ShamanSpecs>) => player.getRotation().totems?.bonusSpellpower || 0,
+		getValue: (player: Player<ShamanSpecs>) => player.getSpecOptions().totems?.bonusSpellpower || 0,
 		setValue: (eventID: EventID, player: Player<ShamanSpecs>, newVal: number) => {
-			const newRotation = player.getRotation();
+			const newOptions = player.getSpecOptions();
 
-			if (newRotation.totems) {
-				newRotation.totems.bonusSpellpower = newVal
+			if (newOptions.totems) {
+				newOptions.totems.bonusSpellpower = newVal
 			}
 
-			player.setRotation(eventID, newRotation);
+			player.setSpecOptions(eventID, newOptions);
 		},
-		changedEvent: (player: Player<ShamanSpecs>) => player.rotationChangeEmitter,
+		changedEvent: (player: Player<ShamanSpecs>) => player.specOptionsChangeEmitter,
 	})
 
 	new BooleanPicker(contentBlock.bodyElement, simUI.player, {
 		label: "Use Tier 10 (4pc)",
 		labelTooltip: "Will use Tier 10 (4pc) to snapshot Fire Elemental.",
 		inline: true,
-		getValue: (player: Player<ShamanSpecs>) => player.getRotation().totems?.enhTierTenBonus || false,
+		getValue: (player: Player<ShamanSpecs>) => player.getSpecOptions().totems?.enhTierTenBonus || false,
 		setValue: (eventID: EventID, player: Player<ShamanSpecs>, newVal: boolean) => {
-			const newRotation = player.getRotation();
+			const newOptions = player.getSpecOptions();
 
-			if (newRotation.totems) {
-				newRotation.totems.enhTierTenBonus = newVal
+			if (newOptions.totems) {
+				newOptions.totems.enhTierTenBonus = newVal
 			}
 
-			player.setRotation(eventID, newRotation);
+			player.setSpecOptions(eventID, newOptions);
 		},
 		changedEvent: (player: Player<ShamanSpecs>) => player.currentStatsEmitter,
 		showWhen: (player: Player<ShamanSpecs>) => {
