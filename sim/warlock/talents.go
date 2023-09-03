@@ -548,7 +548,7 @@ func (warlock *Warlock) setupDemonicPact() {
 
 	icd := core.Cooldown{
 		Timer:    warlock.NewTimer(),
-		Duration: time.Second * 5,
+		Duration: core.TernaryDuration(warlock.Options.NewDPBehaviour, 1, 5) * time.Second,
 	}
 
 	var demonicPactAuras [25]*core.Aura
@@ -578,15 +578,24 @@ func (warlock *Warlock) setupDemonicPact() {
 			newSPBonus := 0.0
 			if warlock.DemonicPactAura.IsActive() {
 				lastBonus = warlock.DemonicPactAura.ExclusiveEffects[0].Priority
-				newSPBonus = math.Floor(lastBonus*dpMult*dpMult+
-					(1-dpMult)*dpMult*warlock.GetStat(stats.SpellPower)) + 1
+
+				if warlock.Options.NewDPBehaviour {
+					newSPBonus = math.Round(dpMult * (warlock.GetStat(stats.SpellPower) - lastBonus))
+				} else {
+					newSPBonus = math.Floor(lastBonus*dpMult*dpMult+
+						(1-dpMult)*dpMult*warlock.GetStat(stats.SpellPower)) + 1
+				}
 			} else {
-				newSPBonus = math.Floor(warlock.GetStat(stats.SpellPower)*(dpMult+dpMult*dpMult)) + 1
+				if warlock.Options.NewDPBehaviour {
+					newSPBonus = math.Round(dpMult * warlock.GetStat(stats.SpellPower))
+				} else {
+					newSPBonus = math.Floor(warlock.GetStat(stats.SpellPower)*(dpMult+dpMult*dpMult)) + 1
+				}
 			}
 
 			shouldRefresh := !warlock.DemonicPactAura.IsActive() ||
 				warlock.DemonicPactAura.RemainingDuration(sim) < time.Second*10 ||
-				newSPBonus > lastBonus
+				newSPBonus >= lastBonus
 
 			if shouldRefresh {
 				warlock.updateDPASP(sim)

@@ -83,21 +83,21 @@ var StandardGlyphs = &proto.Glyphs{
 
 var PlayerOptionsBasic = &proto.Player_EnhancementShaman{
 	EnhancementShaman: &proto.EnhancementShaman{
-		Options:  enhShamOptions,
+		Options:  enhShamWFWF,
 		Rotation: enhShamRotation,
 	},
 }
 
 var PlayerOptionsFireElemental = &proto.Player_EnhancementShaman{
 	EnhancementShaman: &proto.EnhancementShaman{
-		Options:  enhShamOptions,
+		Options:  enhShamFTFT,
 		Rotation: enhShamRotationFireElemental,
 	},
 }
 
 var PlayerOptionsItemSwap = &proto.Player_EnhancementShaman{
 	EnhancementShaman: &proto.EnhancementShaman{
-		Options:  enhShamOptions,
+		Options:  enhShamWFFT,
 		Rotation: enhShamRotationItemSwap,
 	},
 }
@@ -157,11 +157,27 @@ var enhShamRotationItemSwap = &proto.EnhancementShaman_Rotation{
 	},
 }
 
-var enhShamOptions = &proto.EnhancementShaman_Options{
+var enhShamWFWF = &proto.EnhancementShaman_Options{
+	Shield:    proto.ShamanShield_WaterShield,
+	Bloodlust: true,
+	SyncType:  proto.ShamanSyncType_DelayOffhandSwings,
+	ImbueMh:   proto.ShamanImbue_WindfuryWeapon,
+	ImbueOh:   proto.ShamanImbue_WindfuryWeapon,
+}
+
+var enhShamFTFT = &proto.EnhancementShaman_Options{
 	Shield:    proto.ShamanShield_LightningShield,
 	Bloodlust: true,
-	SyncType:  proto.ShamanSyncType_SyncMainhandOffhandSwings,
+	SyncType:  proto.ShamanSyncType_Auto,
 	ImbueMh:   proto.ShamanImbue_FlametongueWeaponDownrank, //phase 1 (wraith strike) only
+	ImbueOh:   proto.ShamanImbue_FlametongueWeapon,
+}
+
+var enhShamWFFT = &proto.EnhancementShaman_Options{
+	Shield:    proto.ShamanShield_LightningShield,
+	Bloodlust: true,
+	SyncType:  proto.ShamanSyncType_NoSync,
+	ImbueMh:   proto.ShamanImbue_WindfuryWeapon, //phase 1 (wraith strike) only
 	ImbueOh:   proto.ShamanImbue_FlametongueWeapon,
 }
 
