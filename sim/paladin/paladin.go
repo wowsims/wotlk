@@ -182,20 +182,14 @@ func NewPaladin(character core.Character, talentsStr string) *Paladin {
 	paladin.PseudoStats.CanParry = true
 
 	paladin.EnableManaBar()
-
-	// Paladins get 3 times their level in base AP
-	// then 2 AP per STR, then lose the first 20 AP
 	paladin.AddStatDependency(stats.Strength, stats.AttackPower, 2.0)
-	paladin.AddStat(stats.AttackPower, -20)
+	paladin.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritPerAgiMaxLevel[character.Class]*core.CritRatingPerCritChance)
 
-	// Paladins get 1% crit per 52.08 agil
-	paladin.AddStatDependency(stats.Agility, stats.MeleeCrit, (1.0/52.08)*core.CritRatingPerCritChance)
+	// Paladins get 0.0167 dodge per agi. ~1% per 59.88
+	paladin.AddStatDependency(stats.Agility, stats.Dodge, (1.0/59.88)*core.DodgeRatingPerDodgeChance)
 
-	// Paladins get 1% dodge per 52.08 agil
-	paladin.AddStatDependency(stats.Agility, stats.Dodge, (1.0/52.08)*core.DodgeRatingPerDodgeChance)
-
-	// Paladins get more melee haste from haste than other classes, 25.22/1%
-	paladin.PseudoStats.MeleeHasteRatingPerHastePercent = 25.22
+	// Paladins get more melee haste from haste than other classes
+	paladin.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
 
 	// Paladins get 1 block value per 2 str
 	paladin.AddStatDependency(stats.Strength, stats.BlockValue, .5)
@@ -204,7 +198,7 @@ func NewPaladin(character core.Character, talentsStr string) *Paladin {
 	paladin.AddStatDependency(stats.BonusArmor, stats.Armor, 1)
 
 	// Base dodge is unaffected by Diminishing Returns
-	paladin.PseudoStats.BaseDodge += 0.0327
+	paladin.PseudoStats.BaseDodge += 0.034943
 	paladin.PseudoStats.BaseParry += 0.05
 
 	return paladin
@@ -216,52 +210,8 @@ func (paladin *Paladin) GetMutualLockoutDPAW() *core.Timer {
 }
 
 func init() {
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassPaladin}] = stats.Stats{
-		stats.Health:      6754,
-		stats.Stamina:     143,
-		stats.Intellect:   101,
-		stats.Mana:        4394,
-		stats.Spirit:      103,
-		stats.Strength:    148,
-		stats.AttackPower: 240,
-		stats.Agility:     92,
-		stats.MeleeCrit:   3.269 * core.CritRatingPerCritChance,
-		stats.SpellCrit:   3.269 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassPaladin}] = stats.Stats{
-		stats.Health:      6754,
-		stats.Stamina:     143,
-		stats.Intellect:   98,
-		stats.Mana:        4394,
-		stats.Spirit:      107,
-		stats.Strength:    152,
-		stats.AttackPower: 240,
-		stats.Agility:     87,
-		stats.MeleeCrit:   3.269 * core.CritRatingPerCritChance,
-		stats.SpellCrit:   3.269 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassPaladin}] = stats.Stats{
-		stats.Health:      6754,
-		stats.Stamina:     143,
-		stats.Intellect:   98,
-		stats.Mana:        4394,
-		stats.Spirit:      105,
-		stats.Strength:    151,
-		stats.AttackPower: 240,
-		stats.Agility:     90,
-		stats.MeleeCrit:   3.269 * core.CritRatingPerCritChance,
-		stats.SpellCrit:   3.269 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarf, Class: proto.Class_ClassPaladin}] = stats.Stats{
-		stats.Health:      6754,
-		stats.Stamina:     144,
-		stats.Intellect:   97,
-		stats.Mana:        4394,
-		stats.Spirit:      104,
-		stats.Strength:    156,
-		stats.AttackPower: 240,
-		stats.Agility:     86,
-		stats.MeleeCrit:   3.269 * core.CritRatingPerCritChance,
-		stats.SpellCrit:   3.269 * core.CritRatingPerCritChance,
-	}
+	core.AddBaseStatsCombo(proto.Race_RaceBloodElf, proto.Class_ClassPaladin)
+	core.AddBaseStatsCombo(proto.Race_RaceDraenei, proto.Class_ClassPaladin)
+	core.AddBaseStatsCombo(proto.Race_RaceHuman, proto.Class_ClassPaladin)
+	core.AddBaseStatsCombo(proto.Race_RaceDwarf, proto.Class_ClassPaladin)
 }

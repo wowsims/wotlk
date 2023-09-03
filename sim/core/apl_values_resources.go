@@ -31,7 +31,7 @@ func (value *APLValueCurrentHealth) GetFloat(sim *Simulation) float64 {
 	return value.unit.Get().CurrentHealth()
 }
 func (value *APLValueCurrentHealth) String() string {
-	return fmt.Sprintf("Current Health")
+	return "Current Health"
 }
 
 type APLValueCurrentHealthPercent struct {
@@ -87,7 +87,7 @@ func (value *APLValueCurrentMana) GetFloat(sim *Simulation) float64 {
 	return value.unit.Get().CurrentMana()
 }
 func (value *APLValueCurrentMana) String() string {
-	return fmt.Sprintf("Current Mana")
+	return "Current Mana"
 }
 
 type APLValueCurrentManaPercent struct {
@@ -140,7 +140,7 @@ func (value *APLValueCurrentRage) GetFloat(sim *Simulation) float64 {
 	return value.unit.CurrentRage()
 }
 func (value *APLValueCurrentRage) String() string {
-	return fmt.Sprintf("Current Rage")
+	return "Current Rage"
 }
 
 type APLValueCurrentEnergy struct {
@@ -165,7 +165,7 @@ func (value *APLValueCurrentEnergy) GetFloat(sim *Simulation) float64 {
 	return value.unit.CurrentEnergy()
 }
 func (value *APLValueCurrentEnergy) String() string {
-	return fmt.Sprintf("Current Energy")
+	return "Current Energy"
 }
 
 type APLValueCurrentComboPoints struct {
@@ -190,7 +190,7 @@ func (value *APLValueCurrentComboPoints) GetInt(sim *Simulation) int32 {
 	return value.unit.ComboPoints()
 }
 func (value *APLValueCurrentComboPoints) String() string {
-	return fmt.Sprintf("Current Combo Points")
+	return "Current Combo Points"
 }
 
 type APLValueCurrentRunicPower struct {
@@ -215,5 +215,5 @@ func (value *APLValueCurrentRunicPower) GetInt(sim *Simulation) int32 {
 	return int32(value.unit.CurrentRunicPower())
 }
 func (value *APLValueCurrentRunicPower) String() string {
-	return fmt.Sprintf("Current Runic Power")
+	return "Current Runic Power"
 }

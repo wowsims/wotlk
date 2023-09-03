@@ -265,6 +265,9 @@ var ItemDenyList = map[int32]struct{}{
 	34579: {}, // Battlemaster's Audacity
 	34580: {}, // Battlemaster's Perseverence
 
+	38694: {}, // "Family" Shoulderpads heirloom
+	45084: {}, // 'Book of Crafting Secrets' heirloom
+
 	// '10 man' onyxia head rewards
 	49312: {},
 	49313: {},

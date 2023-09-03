@@ -9,12 +9,12 @@ character_stats_results: {
   final_stats: 4366.583
   final_stats: 109
   final_stats: 366
-  final_stats: 1682.69987
+  final_stats: 1682.76069
   final_stats: 453
   final_stats: 0
-  final_stats: 1195.81
+  final_stats: 1184.81
   final_stats: 366
-  final_stats: 983.55
+  final_stats: 1103.89543
   final_stats: 453
   final_stats: 0
   final_stats: 0
@@ -29,7 +29,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 0
-  final_stats: 28159.9425
+  final_stats: 27974.5425
   final_stats: 75
   final_stats: 75
   final_stats: 75
@@ -193,8 +193,8 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-AllItems-MaleficRaiment"
  value: {
-  dps: 7042.39891
-  tps: 5608.97997
+  dps: 7042.75014
+  tps: 5609.29608
  }
 }
 dps_results: {
@@ -305,15 +305,15 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-Average-Default"
  value: {
-  dps: 10726.68019
-  tps: 8706.45786
+  dps: 10726.96635
+  tps: 8706.7154
  }
 }
 dps_results: {
  key: "TestDestruction-Settings-Orc-P2-Destruction Warlock-FullBuffs-LongMultiTarget"
  value: {
-  dps: 24163.08058
-  tps: 28563.1886
+  dps: 24163.53822
+  tps: 28563.64624
  }
 }
 dps_results: {
@@ -333,8 +333,8 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-Settings-Orc-P2-Destruction Warlock-NoBuffs-LongMultiTarget"
  value: {
-  dps: 14139.22984
-  tps: 19055.59812
+  dps: 14139.59968
+  tps: 19055.96796
  }
 }
 dps_results: {

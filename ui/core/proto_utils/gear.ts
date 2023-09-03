@@ -334,7 +334,7 @@ export class Gear extends BaseGear {
 		return SimDatabase.create({
 			items: distinct(equippedItems.map(ei => Gear.itemToDB(ei.item))),
 			enchants: distinct(equippedItems.filter(ei => ei.enchant).map(ei => Gear.enchantToDB(ei.enchant!))),
-			gems: distinct(equippedItems.map(ei => ei.curGems(true).map(gem => Gear.gemToDB(gem))).flat()),
+			gems: distinct(equippedItems.map(ei => (ei._gems.filter(g => g != null) as Array<Gem>).map(gem => Gear.gemToDB(gem))).flat()),
 		});
 	}
 }

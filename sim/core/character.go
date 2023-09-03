@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"golang.org/x/exp/slices"
 	"strconv"
 	"strings"
 	"time"
@@ -38,9 +39,10 @@ type Character struct {
 	Name  string // Different from Label, needed for returned results.
 	Race  proto.Race
 	Class proto.Class
+	Spec  proto.Spec
 
 	// Current gear.
-	Equip Equipment
+	Equipment
 	//Item Swap Handler
 	ItemSwap ItemSwap
 
@@ -106,7 +108,10 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 		Name:  player.Name,
 		Race:  player.Race,
 		Class: player.Class,
-		Equip: ProtoToEquipment(player.Equipment),
+		Spec:  PlayerProtoToSpec(player),
+
+		Equipment: ProtoToEquipment(player.Equipment),
+
 		professions: [2]proto.Profession{
 			player.Profession1,
 			player.Profession2,
@@ -162,7 +167,7 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 		}
 	}
 
-	if weapon := character.Equip[proto.ItemSlot_ItemSlotOffHand]; weapon.ID != 0 {
+	if weapon := character.OffHand(); weapon.ID != 0 {
 		if weapon.WeaponType == proto.WeaponType_WeaponTypeShield {
 			character.PseudoStats.CanBlock = true
 		}
@@ -210,7 +215,7 @@ func (character *Character) RemoveDynamicEquipScaling(sim *Simulation, stat stat
 }
 
 func (character *Character) EquipStats() stats.Stats {
-	var baseEquipStats = character.Equip.Stats()
+	var baseEquipStats = character.Equipment.Stats()
 	var bonusEquipStats = baseEquipStats.Add(character.bonusStats)
 	return bonusEquipStats.DotProduct(character.itemStatMultipliers)
 }
@@ -224,6 +229,7 @@ func (character *Character) applyEquipment() {
 }
 
 func (character *Character) addUniversalStatDependencies() {
+	character.AddStat(stats.Health, 20-10*20)
 	character.AddStatDependency(stats.Stamina, stats.Health, 10)
 	character.AddStatDependency(stats.Agility, stats.Armor, 2)
 }
@@ -292,7 +298,7 @@ func (character *Character) clearBuildPhaseAuras(phase CharacterBuildPhase) {
 
 // Apply effects from all equipped core.
 func (character *Character) applyItemEffects(agent Agent) {
-	for slot, eq := range character.Equip {
+	for slot, eq := range character.Equipment {
 		if applyItemEffect, ok := itemEffects[eq.ID]; ok {
 			applyItemEffect(agent)
 		}
@@ -422,20 +428,19 @@ func (character *Character) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 		partyBuffs.HeroicPresence = true
 	}
 
-	if character.Equip[ItemSlotMainHand].ID == ItemIDAtieshMage {
+	switch character.MainHand().ID {
+	case ItemIDAtieshMage:
 		partyBuffs.AtieshMage += 1
-	}
-	if character.Equip[ItemSlotMainHand].ID == ItemIDAtieshWarlock {
+	case ItemIDAtieshWarlock:
 		partyBuffs.AtieshWarlock += 1
 	}
 
-	if character.Equip[ItemSlotNeck].ID == ItemIDBraidedEterniumChain {
+	switch character.Neck().ID {
+	case ItemIDBraidedEterniumChain:
 		partyBuffs.BraidedEterniumChain = true
-	}
-	if character.Equip[ItemSlotNeck].ID == ItemIDChainOfTheTwilightOwl {
+	case ItemIDChainOfTheTwilightOwl:
 		partyBuffs.ChainOfTheTwilightOwl = true
-	}
-	if character.Equip[ItemSlotNeck].ID == ItemIDEyeOfTheNight {
+	case ItemIDEyeOfTheNight:
 		partyBuffs.EyeOfTheNight = true
 	}
 }
@@ -563,17 +568,16 @@ func (character *Character) HasGlyph(glyphID int32) bool {
 }
 
 func (character *Character) HasTrinketEquipped(itemID int32) bool {
-	return character.Equip[ItemSlotTrinket1].ID == itemID ||
-		character.Equip[ItemSlotTrinket2].ID == itemID
+	return character.Trinket1().ID == itemID ||
+		character.Trinket2().ID == itemID
 }
 
 func (character *Character) HasRingEquipped(itemID int32) bool {
-	return character.Equip[ItemSlotFinger1].ID == itemID ||
-		character.Equip[ItemSlotFinger2].ID == itemID
+	return character.Finger1().ID == itemID || character.Finger2().ID == itemID
 }
 
 func (character *Character) HasMetaGemEquipped(gemID int32) bool {
-	for _, gem := range character.Equip[ItemSlotHead].Gems {
+	for _, gem := range character.Head().Gems {
 		if gem.ID == gemID {
 			return true
 		}
@@ -583,12 +587,11 @@ func (character *Character) HasMetaGemEquipped(gemID int32) bool {
 
 // Returns the MH weapon if one is equipped, and null otherwise.
 func (character *Character) GetMHWeapon() *Item {
-	weapon := &character.Equip[proto.ItemSlot_ItemSlotMainHand]
+	weapon := character.MainHand()
 	if weapon.ID == 0 {
 		return nil
-	} else {
-		return weapon
 	}
+	return weapon
 }
 func (character *Character) HasMHWeapon() bool {
 	return character.GetMHWeapon() != nil
@@ -597,7 +600,7 @@ func (character *Character) HasMHWeapon() bool {
 // Returns the OH weapon if one is equipped, and null otherwise. Note that
 // shields / Held-in-off-hand items are NOT counted as weapons in this function.
 func (character *Character) GetOHWeapon() *Item {
-	weapon := &character.Equip[proto.ItemSlot_ItemSlotOffHand]
+	weapon := character.OffHand()
 	if weapon.ID == 0 ||
 		weapon.WeaponType == proto.WeaponType_WeaponTypeShield ||
 		weapon.WeaponType == proto.WeaponType_WeaponTypeOffHand {
@@ -612,7 +615,7 @@ func (character *Character) HasOHWeapon() bool {
 
 // Returns the ranged weapon if one is equipped, and null otherwise.
 func (character *Character) GetRangedWeapon() *Item {
-	weapon := &character.Equip[proto.ItemSlot_ItemSlotRanged]
+	weapon := character.Ranged()
 	if weapon.ID == 0 ||
 		weapon.RangedWeaponType == proto.RangedWeaponType_RangedWeaponTypeIdol ||
 		weapon.RangedWeaponType == proto.RangedWeaponType_RangedWeaponTypeLibram ||
@@ -626,23 +629,30 @@ func (character *Character) HasRangedWeapon() bool {
 	return character.GetRangedWeapon() != nil
 }
 
-func (character *Character) GetMeleeProcMaskForEnchant(effectID int32) ProcMask {
-	mask := ProcMaskUnknown
-	if w := &character.Equip[proto.ItemSlot_ItemSlotMainHand]; w.Enchant.EffectID == effectID {
-		mask |= ProcMaskMeleeMH
-	}
-	if w := &character.Equip[proto.ItemSlot_ItemSlotOffHand]; w.Enchant.EffectID == effectID {
-		mask |= ProcMaskMeleeOH
-	}
-	return mask
+func (character *Character) GetProcMaskForEnchant(effectID int32) ProcMask {
+	return character.getProcMaskFor(func(weapon *Item) bool {
+		return weapon.Enchant.EffectID == effectID
+	})
 }
 
-func (character *Character) GetMeleeProcMaskForItem(itemID int32) ProcMask {
+func (character *Character) GetProcMaskForItem(itemID int32) ProcMask {
+	return character.getProcMaskFor(func(weapon *Item) bool {
+		return weapon.ID == itemID
+	})
+}
+
+func (character *Character) GetProcMaskForTypes(weaponTypes ...proto.WeaponType) ProcMask {
+	return character.getProcMaskFor(func(weapon *Item) bool {
+		return slices.Contains(weaponTypes, weapon.WeaponType)
+	})
+}
+
+func (character *Character) getProcMaskFor(pred func(weapon *Item) bool) ProcMask {
 	mask := ProcMaskUnknown
-	if w := &character.Equip[proto.ItemSlot_ItemSlotMainHand]; w.ID == itemID {
+	if pred(character.MainHand()) {
 		mask |= ProcMaskMeleeMH
 	}
-	if w := &character.Equip[proto.ItemSlot_ItemSlotOffHand]; w.ID == itemID {
+	if pred(character.OffHand()) {
 		mask |= ProcMaskMeleeOH
 	}
 	return mask
@@ -687,26 +697,6 @@ func (character *Character) GetMetricsProto() *proto.UnitMetrics {
 
 	return metrics
 }
-
-type BaseStatsKey struct {
-	Race  proto.Race
-	Class proto.Class
-}
-
-var BaseStats = map[BaseStatsKey]stats.Stats{}
-
-// To calculate base stats, get a naked level 70 of the race/class you want, ideally without any talents to mess up base stats.
-//  Basic stats are as-shown (str/agi/stm/int/spirit)
-
-// Base Spell Crit is calculated by
-//   1. Take as-shown value (troll shaman have 3.5%)
-//   2. Calculate the bonus from int (for troll shaman that would be 104/78.1=1.331% crit)
-//   3. Subtract as-shown from int bonus (3.5-1.331=2.169)
-//   4. 2.169*22.08 (rating per crit percent) = 47.89 crit rating.
-
-// Base mana can be looked up here: https://wowwiki-archive.fandom.com/wiki/Base_mana
-
-// I assume a similar processes can be applied for other stats.
 
 func (character *Character) GetDefensiveTrinketCD() *Timer {
 	return character.GetOrInitTimer(&character.defensiveTrinketCD)

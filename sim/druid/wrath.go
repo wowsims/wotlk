@@ -11,8 +11,8 @@ const IdolSteadfastRenewal int32 = 40712
 
 func (druid *Druid) registerWrathSpell() {
 	spellCoeff := 0.571 + (0.02 * float64(druid.Talents.WrathOfCenarius))
-	bonusFlatDamage := core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == IdolAvenger, 25, 0) +
-		core.TernaryFloat64(druid.Equip[core.ItemSlotRanged].ID == IdolSteadfastRenewal, 70, 0)
+	bonusFlatDamage := core.TernaryFloat64(druid.Ranged().ID == IdolAvenger, 25, 0) +
+		core.TernaryFloat64(druid.Ranged().ID == IdolSteadfastRenewal, 70, 0)
 
 	druid.Wrath = druid.RegisterSpell(Humanoid|Moonkin, core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 48461},

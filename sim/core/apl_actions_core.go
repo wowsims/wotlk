@@ -201,7 +201,7 @@ func (action *APLActionAutocastOtherCooldowns) Execute(sim *Simulation) {
 	action.character.UpdateMajorCooldowns()
 }
 func (action *APLActionAutocastOtherCooldowns) String() string {
-	return fmt.Sprintf("Autocast Other Cooldowns")
+	return "Autocast Other Cooldowns"
 }
 
 type APLActionWait struct {

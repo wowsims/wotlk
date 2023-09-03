@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
@@ -221,13 +220,12 @@ func (paladin *Paladin) getItemSetLightswornPlateBonus2() float64 {
 }
 
 func (paladin *Paladin) getItemSetGladiatorsVindicationBonusGloves() float64 {
-	hasGloves := (paladin.Equip[proto.ItemSlot_ItemSlotHands].ID == 40798) || // S5a Hateful
-		(paladin.Equip[proto.ItemSlot_ItemSlotHands].ID == 40802) || // S5b Hateful
-		(paladin.Equip[proto.ItemSlot_ItemSlotHands].ID == 40805) || // S5c Deadly
-		(paladin.Equip[proto.ItemSlot_ItemSlotHands].ID == 40808) || // S6 Furious
-		(paladin.Equip[proto.ItemSlot_ItemSlotHands].ID == 40812) || // S7 Relentless
-		(paladin.Equip[proto.ItemSlot_ItemSlotHands].ID == 51475) // S8 Wrathful
-	return core.TernaryFloat64(hasGloves, .05, 0)
+	switch paladin.Hands().ID {
+	case 40798, 40802, 40805, 40808, 40812, 51475: // S5a Hateful, S5b Hateful, S5c Deadly, S6 Furious, S7 Relentless, S8 Wrathful
+		return 0.05
+	default:
+		return 0
+	}
 }
 
 func init() {

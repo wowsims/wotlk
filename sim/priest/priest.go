@@ -193,76 +193,13 @@ func New(char core.Character, selfBuffs SelfBuffs, talents string) *Priest {
 }
 
 func init() {
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassPriest}] = stats.Stats{
-		stats.Health:    6960,
-		stats.Mana:      3863,
-		stats.Strength:  39,
-		stats.Agility:   45,
-		stats.Stamina:   58,
-		stats.Intellect: 145,
-		stats.Spirit:    166,
-		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarf, Class: proto.Class_ClassPriest}] = stats.Stats{
-		stats.Health:    6960,
-		stats.Mana:      3863,
-		stats.Strength:  41,
-		stats.Agility:   41,
-		stats.Stamina:   61,
-		stats.Intellect: 144,
-		stats.Spirit:    150,
-		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassPriest}] = stats.Stats{
-		stats.Health:    6960,
-		stats.Mana:      3863,
-		stats.Strength:  36,
-		stats.Agility:   50,
-		stats.Stamina:   57,
-		stats.Intellect: 145,
-		stats.Spirit:    151,
-		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassPriest}] = stats.Stats{
-		stats.Health:    6960,
-		stats.Mana:      3863,
-		stats.Strength:  40,
-		stats.Agility:   42,
-		stats.Stamina:   57,
-		stats.Intellect: 146,
-		stats.Spirit:    153,
-		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassPriest}] = stats.Stats{
-		stats.Health:    6960,
-		stats.Mana:      3863,
-		stats.Strength:  42,
-		stats.Agility:   49,
-		stats.Stamina:   67,
-		stats.Intellect: 172,
-		stats.Spirit:    186,
-		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassPriest}] = stats.Stats{
-		stats.Health:    6960,
-		stats.Mana:      3863,
-		stats.Strength:  44,
-		stats.Agility:   53,
-		stats.Stamina:   67,
-		stats.Intellect: 170,
-		stats.Spirit:    182,
-		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassPriest}] = stats.Stats{
-		stats.Health:    6960,
-		stats.Mana:      3863,
-		stats.Strength:  40,
-		stats.Agility:   53,
-		stats.Stamina:   67,
-		stats.Intellect: 177,
-		stats.Spirit:    179,
-		stats.SpellCrit: core.CritRatingPerCritChance * 1.24,
-	}
+	core.AddBaseStatsCombo(proto.Race_RaceHuman, proto.Class_ClassPriest)
+	core.AddBaseStatsCombo(proto.Race_RaceDwarf, proto.Class_ClassPriest)
+	core.AddBaseStatsCombo(proto.Race_RaceNightElf, proto.Class_ClassPriest)
+	core.AddBaseStatsCombo(proto.Race_RaceDraenei, proto.Class_ClassPriest)
+	core.AddBaseStatsCombo(proto.Race_RaceUndead, proto.Class_ClassPriest)
+	core.AddBaseStatsCombo(proto.Race_RaceTroll, proto.Class_ClassPriest)
+	core.AddBaseStatsCombo(proto.Race_RaceBloodElf, proto.Class_ClassPriest)
 }
 
 // Agent is a generic way to access underlying priest on any of the agents.

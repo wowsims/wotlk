@@ -77,7 +77,7 @@ func main() {
 	for _, response := range itemTooltips {
 		if response.IsEquippable() {
 			// Only included items that are in wowheads gearplanner db
-			// Wowhead doesnt seem to have a field/flag to signify 'not available / in game' but their gearplanner db has them filtered
+			// Wowhead doesn't seem to have a field/flag to signify 'not available / in game' but their gearplanner db has them filtered
 			item := response.ToItemProto()
 			if _, ok := wowheadDB.Items[strconv.Itoa(int(item.Id))]; ok {
 				db.MergeItem(item)
@@ -265,7 +265,9 @@ func simmableItemFilter(_ int32, item *proto.UIItem) bool {
 
 	if item.Quality < proto.ItemQuality_ItemQualityUncommon {
 		return false
-	} else if item.Quality > proto.ItemQuality_ItemQualityLegendary {
+	} else if item.Quality == proto.ItemQuality_ItemQualityArtifact {
+		return false
+	} else if item.Quality > proto.ItemQuality_ItemQualityHeirloom {
 		return false
 	} else if item.Quality < proto.ItemQuality_ItemQualityEpic {
 		if item.Ilvl < 145 {
@@ -276,7 +278,7 @@ func simmableItemFilter(_ int32, item *proto.UIItem) bool {
 		}
 	} else {
 		// Epic and legendary items might come from classic, so use a lower ilvl threshold.
-		if item.Ilvl < 140 {
+		if item.Quality != proto.ItemQuality_ItemQualityHeirloom && item.Ilvl < 140 {
 			return false
 		}
 	}
@@ -287,10 +289,7 @@ func simmableItemFilter(_ int32, item *proto.UIItem) bool {
 	return true
 }
 func simmableGemFilter(_ int32, gem *proto.UIGem) bool {
-	if gem.Quality < proto.ItemQuality_ItemQualityUncommon {
-		return false
-	}
-	return true
+	return gem.Quality >= proto.ItemQuality_ItemQualityUncommon
 }
 
 type TalentConfig struct {

@@ -22,9 +22,10 @@ func TestEnhancement(t *testing.T) {
 		Talents:     StandardTalents,
 		Glyphs:      StandardGlyphs,
 		Consumes:    FullConsumes,
-		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
+		SpecOptions: core.SpecOptionsCombo{Label: "FT", SpecOptions: PlayerOptionsFTFT},
 		OtherSpecOptions: []core.SpecOptionsCombo{
 			{Label: "EnhItemSwap", SpecOptions: PlayerOptionsItemSwap},
+			{Label: "Wf", SpecOptions: PlayerOptionsWFWF},
 		},
 
 		ItemFilter: core.ItemFilter{
@@ -55,7 +56,7 @@ func BenchmarkSimulate(b *testing.B) {
 				TalentsString: StandardTalents,
 				Glyphs:        StandardGlyphs,
 				Consumes:      FullConsumes,
-				Spec:          PlayerOptionsBasic,
+				Spec:          PlayerOptionsFTFT,
 				Buffs:         core.FullIndividualBuffs,
 			},
 			core.FullPartyBuffs,
@@ -75,21 +76,28 @@ func BenchmarkSimulate(b *testing.B) {
 
 var StandardTalents = "053030152-30405003105021333031131031051"
 var StandardGlyphs = &proto.Glyphs{
-	Major1: int32(proto.ShamanMajorGlyph_GlyphOfStormstrike),
+	Major1: int32(proto.ShamanMajorGlyph_GlyphOfFireNova),
 	Major2: int32(proto.ShamanMajorGlyph_GlyphOfFlametongueWeapon),
 	Major3: int32(proto.ShamanMajorGlyph_GlyphOfFeralSpirit),
 }
 
-var PlayerOptionsBasic = &proto.Player_EnhancementShaman{
+var PlayerOptionsWFWF = &proto.Player_EnhancementShaman{
 	EnhancementShaman: &proto.EnhancementShaman{
-		Options:  enhShamOptions,
+		Options:  enhShamWFWF,
+		Rotation: enhShamRotation,
+	},
+}
+
+var PlayerOptionsFTFT = &proto.Player_EnhancementShaman{
+	EnhancementShaman: &proto.EnhancementShaman{
+		Options:  enhShamFTFT,
 		Rotation: enhShamRotation,
 	},
 }
 
 var PlayerOptionsItemSwap = &proto.Player_EnhancementShaman{
 	EnhancementShaman: &proto.EnhancementShaman{
-		Options:  enhShamOptions,
+		Options:  enhShamWFFT,
 		Rotation: enhShamRotationItemSwap,
 	},
 }
@@ -121,11 +129,19 @@ var enhShamRotationItemSwap = &proto.EnhancementShaman_Rotation{
 	},
 }
 
-var enhShamOptions = &proto.EnhancementShaman_Options{
+var enhShamWFWF = &proto.EnhancementShaman_Options{
+	Shield:    proto.ShamanShield_WaterShield,
+	Bloodlust: true,
+	SyncType:  proto.ShamanSyncType_DelayOffhandSwings,
+	ImbueMh:   proto.ShamanImbue_WindfuryWeapon,
+	ImbueOh:   proto.ShamanImbue_WindfuryWeapon,
+}
+
+var enhShamFTFT = &proto.EnhancementShaman_Options{
 	Shield:    proto.ShamanShield_LightningShield,
 	Bloodlust: true,
-	SyncType:  proto.ShamanSyncType_SyncMainhandOffhandSwings,
-	ImbueMh:   proto.ShamanImbue_FlametongueWeaponDownrank, //phase 1 (wraith strike) only
+	SyncType:  proto.ShamanSyncType_Auto,
+	ImbueMh:   proto.ShamanImbue_FlametongueWeaponDownrank,
 	ImbueOh:   proto.ShamanImbue_FlametongueWeapon,
 	Totems: &proto.ShamanTotems{
 		Earth:            proto.EarthTotem_StrengthOfEarthTotem,
@@ -134,6 +150,14 @@ var enhShamOptions = &proto.EnhancementShaman_Options{
 		Fire:             proto.FireTotem_MagmaTotem,
 		UseFireElemental: true,
 	},
+}
+
+var enhShamWFFT = &proto.EnhancementShaman_Options{
+	Shield:    proto.ShamanShield_LightningShield,
+	Bloodlust: true,
+	SyncType:  proto.ShamanSyncType_NoSync,
+	ImbueMh:   proto.ShamanImbue_WindfuryWeapon,
+	ImbueOh:   proto.ShamanImbue_FlametongueWeapon,
 }
 
 var FullConsumes = &proto.Consumes{

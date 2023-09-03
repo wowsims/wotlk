@@ -1,7 +1,6 @@
 package rogue
 
 import (
-	"golang.org/x/exp/slices"
 	"math"
 	"time"
 
@@ -331,29 +330,19 @@ func (rogue *Rogue) applyInitiative() {
 	})
 }
 
-func (rogue *Rogue) getMask(wts ...proto.WeaponType) core.ProcMask {
-	mask := core.ProcMaskUnknown
-	if wt := rogue.Equip[proto.ItemSlot_ItemSlotMainHand].WeaponType; slices.Contains(wts, wt) {
-		mask |= core.ProcMaskMeleeMH
-	}
-	if wt := rogue.Equip[proto.ItemSlot_ItemSlotOffHand].WeaponType; slices.Contains(wts, wt) {
-		mask |= core.ProcMaskMeleeOH
-	}
-	return mask
-}
-
 func (rogue *Rogue) applyWeaponSpecializations() {
 	if hns := rogue.Talents.HackAndSlash; hns > 0 {
-		if mask := rogue.getMask(proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeAxe); mask != core.ProcMaskUnknown {
+		if mask := rogue.GetProcMaskForTypes(proto.WeaponType_WeaponTypeSword, proto.WeaponType_WeaponTypeAxe); mask != core.ProcMaskUnknown {
 			rogue.registerHackAndSlash(mask)
 		}
 	}
 
 	if cqc := rogue.Talents.CloseQuartersCombat; cqc > 0 {
-		switch rogue.getMask(proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeFist) {
+		switch rogue.GetProcMaskForTypes(proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypeFist) {
 		case core.ProcMaskMelee:
 			rogue.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*float64(cqc))
 		case core.ProcMaskMeleeMH:
+			// the default character pane displays critical strike chance for main hand only
 			rogue.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*float64(cqc))
 			rogue.OnSpellRegistered(func(spell *core.Spell) {
 				if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
@@ -370,7 +359,7 @@ func (rogue *Rogue) applyWeaponSpecializations() {
 	}
 
 	if ms := rogue.Talents.MaceSpecialization; ms > 0 {
-		if mask := rogue.getMask(proto.WeaponType_WeaponTypeMace); mask != core.ProcMaskUnknown {
+		if mask := rogue.GetProcMaskForTypes(proto.WeaponType_WeaponTypeMace); mask != core.ProcMaskUnknown {
 			rogue.AddStat(stats.ArmorPenetration, core.ArmorPenPerPercentArmor*3*float64(ms))
 		}
 	}

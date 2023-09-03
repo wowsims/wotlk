@@ -446,6 +446,10 @@ func (druid *Druid) applyEclipse() {
 		return
 	}
 
+	// Delay between eclipses
+	eclipseDuration := time.Millisecond * 15000
+	interEclipseDelay := eclipseDuration - time.Millisecond*500
+
 	// Solar
 	solarProcChance := (1.0 / 3.0) * float64(druid.Talents.Eclipse)
 	solarProcMultiplier := 1.4 + core.TernaryFloat64(druid.HasSetBonus(ItemSetNightsongGarb, 2), 0.07, 0)
@@ -453,7 +457,7 @@ func (druid *Druid) applyEclipse() {
 	druid.SolarEclipseProcAura = druid.RegisterAura(core.Aura{
 		Icd:      &druid.SolarICD,
 		Label:    "Solar Eclipse proc",
-		Duration: time.Millisecond * 15000,
+		Duration: eclipseDuration,
 		ActionID: core.ActionID{SpellID: 48517},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			druid.Wrath.DamageMultiplier *= solarProcMultiplier
@@ -479,7 +483,7 @@ func (druid *Druid) applyEclipse() {
 			if !druid.SolarICD.Timer.IsReady(sim) {
 				return
 			}
-			if druid.LunarICD.Timer.TimeToReady(sim) > time.Millisecond*15000 {
+			if druid.LunarICD.Timer.TimeToReady(sim) > interEclipseDelay {
 				return
 			}
 			if sim.RandomFloat("Eclipse (Solar)") < solarProcChance {
@@ -496,7 +500,7 @@ func (druid *Druid) applyEclipse() {
 	druid.LunarEclipseProcAura = druid.RegisterAura(core.Aura{
 		Icd:      &druid.LunarICD,
 		Label:    "Lunar Eclipse proc",
-		Duration: time.Millisecond * 15000,
+		Duration: eclipseDuration,
 		ActionID: core.ActionID{SpellID: 48518},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			druid.Starfire.BonusCritRating += lunarBonusCrit
@@ -521,7 +525,7 @@ func (druid *Druid) applyEclipse() {
 			if !druid.LunarICD.Timer.IsReady(sim) {
 				return
 			}
-			if druid.SolarICD.Timer.TimeToReady(sim) > time.Millisecond*15000 {
+			if druid.SolarICD.Timer.TimeToReady(sim) > interEclipseDelay {
 				return
 			}
 			if sim.RandomFloat("Eclipse (Lunar)") < lunarProcChance {

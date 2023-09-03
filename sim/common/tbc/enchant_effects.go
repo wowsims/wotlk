@@ -61,7 +61,7 @@ func init() {
 	core.NewEnchantEffect(1900, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
-		procMask := character.GetMeleeProcMaskForEnchant(1900)
+		procMask := character.GetProcMaskForEnchant(1900)
 		ppmm := character.AutoAttacks.NewPPMManager(1.0, procMask)
 
 		// -4 str per level over 60
@@ -103,7 +103,7 @@ func init() {
 	core.NewEnchantEffect(2673, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
-		procMask := character.GetMeleeProcMaskForEnchant(2673)
+		procMask := character.GetProcMaskForEnchant(2673)
 		ppmm := character.AutoAttacks.NewPPMManager(0.73, procMask)
 
 		mhAura := character.NewTemporaryStatsAura("Lightning Speed MH", core.ActionID{SpellID: 28093, Tag: 1}, stats.Stats{stats.MeleeHaste: 30.0, stats.Agility: 120}, time.Second*15)
@@ -151,7 +151,7 @@ func init() {
 	core.NewEnchantEffect(3225, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
-		procMask := character.GetMeleeProcMaskForEnchant(3225)
+		procMask := character.GetProcMaskForEnchant(3225)
 		ppmm := character.AutoAttacks.NewPPMManager(1.0, procMask)
 
 		procAura := character.NewTemporaryStatsAura("Executioner Proc", core.ActionID{SpellID: 42976}, stats.Stats{stats.ArmorPenetration: 120}, time.Second*15)
@@ -220,7 +220,7 @@ func init() {
 	core.NewEnchantEffect(3273, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
-		procMask := character.GetMeleeProcMaskForEnchant(3273)
+		procMask := character.GetProcMaskForEnchant(3273)
 		if procMask == core.ProcMaskUnknown {
 			return
 		}

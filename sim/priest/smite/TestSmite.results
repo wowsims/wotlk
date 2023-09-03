@@ -9,12 +9,12 @@ character_stats_results: {
   final_stats: 3167.07258
   final_stats: 128
   final_stats: 346
-  final_stats: 1045.64681
+  final_stats: 1045.46154
   final_stats: 625
   final_stats: 0
   final_stats: 843.7
   final_stats: 346
-  final_stats: 468.55
+  final_stats: 614.3503
   final_stats: 625
   final_stats: 0
   final_stats: 0
@@ -29,7 +29,7 @@ character_stats_results: {
   final_stats: 0
   final_stats: 0
   final_stats: 0
-  final_stats: 21494.52
+  final_stats: 21314.52
   final_stats: 75
   final_stats: 75
   final_stats: 75
@@ -784,8 +784,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-Average-Default"
  value: {
-  dps: 3543.35441
-  tps: 3009.07527
+  dps: 3543.33047
+  tps: 3009.05602
  }
 }
 dps_results: {

@@ -75,7 +75,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	dotApplicationSpell := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 31803, Tag: 1},
 		SpellSchool: core.SpellSchoolHoly,
-		ProcMask:    core.ProcMaskEmpty, // Might need to be changed later if SOV secondary rolls can proc other things.
+		ProcMask:    core.ProcMaskProc,
 
 		DamageMultiplier: 1 *
 			(1 + paladin.getItemSetLightswornBattlegearBonus4() + paladin.getItemSetAegisPlateBonus2() + paladin.getTalentSealsOfThePureBonus()),
@@ -100,7 +100,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	onJudgementProc := paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 31804}, // Judgement of Vengeance.
 		SpellSchool: core.SpellSchoolHoly,
-		ProcMask:    core.ProcMaskMeleeOrRangedSpecial,
+		ProcMask:    core.ProcMaskMeleeSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | SpellFlagSecondaryJudgement,
 
 		BonusCritRating: (6 * float64(paladin.Talents.Fanaticism) * core.CritRatingPerCritChance) +
@@ -193,8 +193,21 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 				}
 			}
 
-			// Only white hits, HotR, CS, and DS can trigger this. (SoV dot)
-			if spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) || spell == paladin.HammerOfTheRighteous || spell == paladin.CrusaderStrike || spell == paladin.DivineStorm {
+			dotApplicableSpells := []*core.Spell{
+				paladin.HammerOfTheRighteous,
+				paladin.CrusaderStrike,
+				paladin.DivineStorm,
+				paladin.HammerOfWrath,
+				paladin.ShieldOfRighteousness,
+			}
+			isApplicableSpell := false
+			for _, validSpell := range dotApplicableSpells {
+				if spell == validSpell {
+					isApplicableSpell = true
+				}
+			}
+
+			if spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) || isApplicableSpell {
 				dotApplicationSpell.Cast(sim, result.Target)
 			}
 		},

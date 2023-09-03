@@ -143,14 +143,14 @@ func AddPresetEncounter(name string, targetPaths []string) {
 	}
 
 	var path string
-	var targetProtos []*proto.PresetTarget
+	targetProtos := make([]*proto.PresetTarget, len(targetPaths))
 
 	for i, targetPath := range targetPaths {
 		presetTarget := GetPresetTargetWithPath(targetPath)
 		if presetTarget == nil {
 			log.Fatalf("No preset target with path: %s", targetPath)
 		}
-		targetProtos = append(targetProtos, presetTarget.ToProto())
+		targetProtos[i] = presetTarget.ToProto()
 
 		if i == 0 {
 			path = presetTarget.PathPrefix + "/" + name

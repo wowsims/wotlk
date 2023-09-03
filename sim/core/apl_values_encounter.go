@@ -21,7 +21,7 @@ func (value *APLValueCurrentTime) GetDuration(sim *Simulation) time.Duration {
 	return sim.CurrentTime
 }
 func (value *APLValueCurrentTime) String() string {
-	return fmt.Sprintf("Current Time")
+	return "Current Time"
 }
 
 type APLValueCurrentTimePercent struct {
@@ -55,7 +55,7 @@ func (value *APLValueRemainingTime) GetDuration(sim *Simulation) time.Duration {
 	return sim.GetRemainingDuration()
 }
 func (value *APLValueRemainingTime) String() string {
-	return fmt.Sprintf("Remaining Time")
+	return "Remaining Time"
 }
 
 type APLValueRemainingTimePercent struct {
@@ -89,7 +89,7 @@ func (value *APLValueNumberTargets) GetInt(sim *Simulation) int32 {
 	return sim.GetNumTargets()
 }
 func (value *APLValueNumberTargets) String() string {
-	return fmt.Sprintf("Num Targets")
+	return "Num Targets"
 }
 
 type APLValueIsExecutePhase struct {
@@ -120,5 +120,5 @@ func (value *APLValueIsExecutePhase) GetBool(sim *Simulation) bool {
 	}
 }
 func (value *APLValueIsExecutePhase) String() string {
-	return fmt.Sprintf("Is Execute Phase")
+	return "Is Execute Phase"
 }

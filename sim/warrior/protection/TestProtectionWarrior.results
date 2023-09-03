@@ -9,24 +9,24 @@ character_stats_results: {
   final_stats: 500
   final_stats: 109
   final_stats: 226
-  final_stats: 254.55
+  final_stats: 254.52994
   final_stats: 0
   final_stats: 0
   final_stats: 5208.29723
   final_stats: 226
-  final_stats: 823.20962
+  final_stats: 823.19035
   final_stats: 0
   final_stats: 0
-  final_stats: 304.1725
+  final_stats: 304.17246
   final_stats: 0
   final_stats: 0
   final_stats: 0
   final_stats: 30174.9
   final_stats: 755.7
   final_stats: 672
-  final_stats: 170.95
+  final_stats: 170.97498
   final_stats: 1433.406
-  final_stats: 379.22343
+  final_stats: 379.22443
   final_stats: 299
   final_stats: 15
   final_stats: 39901.225
@@ -46,7 +46,7 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestProtectionWarrior-StatWeights-Default"
  value: {
-  weights: 0.84377
+  weights: 0.85638
   weights: 0
   weights: 0
   weights: 0
@@ -57,7 +57,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.46632
+  weights: 0.4856
   weights: 0
   weights: 0
   weights: 0
@@ -70,8 +70,8 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.42617
-  weights: 0.00764
+  weights: 0.42649
+  weights: 0.01637
   weights: 0
   weights: 0
   weights: 0
@@ -149,15 +149,15 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-BlackBruise-50035"
  value: {
-  dps: 1657.54584
-  tps: 4232.55885
+  dps: 1658.25566
+  tps: 4234.3594
  }
 }
 dps_results: {
  key: "TestProtectionWarrior-AllItems-BlackBruise-50692"
  value: {
-  dps: 1685.39068
-  tps: 4287.79429
+  dps: 1685.90229
+  tps: 4288.85512
  }
 }
 dps_results: {
@@ -276,8 +276,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-Deathbringer'sWill-50363"
  value: {
-  dps: 1734.2526
-  tps: 4458.70799
+  dps: 1734.56284
+  tps: 4459.35129
  }
 }
 dps_results: {
@@ -304,8 +304,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-DreadnaughtBattlegear"
  value: {
-  dps: 1672.61684
-  tps: 4295.12394
+  dps: 1673.15823
+  tps: 4296.52069
  }
 }
 dps_results: {
@@ -451,8 +451,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-GnomishLightningGenerator-41121"
  value: {
-  dps: 1671.40071
-  tps: 4308.07221
+  dps: 1671.39675
+  tps: 4308.064
  }
 }
 dps_results: {
@@ -907,9 +907,9 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-Average-Default"
  value: {
-  dps: 2940.42741
-  tps: 7171.38983
-  dtps: 128.07466
+  dps: 2940.51509
+  tps: 7171.60715
+  dtps: 128.0697
  }
 }
 dps_results: {

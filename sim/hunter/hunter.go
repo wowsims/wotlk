@@ -233,103 +233,19 @@ func NewHunter(character core.Character, options *proto.Player) *Hunter {
 	hunter.AddStatDependency(stats.Strength, stats.AttackPower, 1)
 	hunter.AddStatDependency(stats.Agility, stats.AttackPower, 1)
 	hunter.AddStatDependency(stats.Agility, stats.RangedAttackPower, 1)
-	hunter.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/83.33)
+	hunter.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritPerAgiMaxLevel[character.Class]*core.CritRatingPerCritChance)
 
 	return hunter
 }
 
 func init() {
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassHunter}] = stats.Stats{
-		stats.Health:    7324,
-		stats.Strength:  71,
-		stats.Agility:   183,
-		stats.Stamina:   126,
-		stats.Intellect: 94,
-		stats.Spirit:    96,
-		stats.Mana:      5046,
-
-		stats.AttackPower:       140,
-		stats.RangedAttackPower: 150,
-		stats.MeleeCrit:         -1.53 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassHunter}] = stats.Stats{
-		stats.Health:    7324,
-		stats.Strength:  75,
-		stats.Agility:   178,
-		stats.Stamina:   127,
-		stats.Intellect: 91,
-		stats.Spirit:    99,
-		stats.Mana:      5046,
-
-		stats.AttackPower:       140,
-		stats.RangedAttackPower: 150,
-		stats.MeleeCrit:         -1.53 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarf, Class: proto.Class_ClassHunter}] = stats.Stats{
-		stats.Health:    7324,
-		stats.Strength:  76,
-		stats.Agility:   177,
-		stats.Stamina:   131,
-		stats.Intellect: 89,
-		stats.Spirit:    96,
-		stats.Mana:      5046,
-
-		stats.AttackPower:       140,
-		stats.RangedAttackPower: 150,
-		stats.MeleeCrit:         -1.53 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassHunter}] = stats.Stats{
-		stats.Health:    7324,
-		stats.Strength:  71,
-		stats.Agility:   193,
-		stats.Stamina:   127,
-		stats.Intellect: 93,
-		stats.Spirit:    97,
-		stats.Mana:      5046,
-
-		stats.AttackPower:       140,
-		stats.RangedAttackPower: 150,
-		stats.MeleeCrit:         -1.53 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceOrc, Class: proto.Class_ClassHunter}] = stats.Stats{
-		stats.Health:    7324,
-		stats.Strength:  77,
-		stats.Agility:   178,
-		stats.Stamina:   130,
-		stats.Intellect: 87,
-		stats.Spirit:    100,
-		stats.Mana:      5046,
-
-		stats.AttackPower:       140,
-		stats.RangedAttackPower: 150,
-		stats.MeleeCrit:         -1.53 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTauren, Class: proto.Class_ClassHunter}] = stats.Stats{
-		stats.Health:    7324,
-		stats.Strength:  79,
-		stats.Agility:   183,
-		stats.Stamina:   130,
-		stats.Intellect: 88,
-		stats.Spirit:    99,
-		stats.Mana:      5046,
-
-		stats.AttackPower:       140,
-		stats.RangedAttackPower: 150,
-		stats.MeleeCrit:         -1.53 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassHunter}] = stats.Stats{
-		stats.Health:    7324,
-		stats.Strength:  75,
-		stats.Agility:   190,
-		stats.Stamina:   129,
-		stats.Intellect: 89,
-		stats.Spirit:    98,
-		stats.Mana:      5046,
-
-		stats.AttackPower:       140,
-		stats.RangedAttackPower: 150,
-		stats.MeleeCrit:         -1.53 * core.CritRatingPerCritChance,
-	}
+	core.AddBaseStatsCombo(proto.Race_RaceBloodElf, proto.Class_ClassHunter)
+	core.AddBaseStatsCombo(proto.Race_RaceDraenei, proto.Class_ClassHunter)
+	core.AddBaseStatsCombo(proto.Race_RaceDwarf, proto.Class_ClassHunter)
+	core.AddBaseStatsCombo(proto.Race_RaceNightElf, proto.Class_ClassHunter)
+	core.AddBaseStatsCombo(proto.Race_RaceOrc, proto.Class_ClassHunter)
+	core.AddBaseStatsCombo(proto.Race_RaceTauren, proto.Class_ClassHunter)
+	core.AddBaseStatsCombo(proto.Race_RaceTroll, proto.Class_ClassHunter)
 }
 
 // Agent is a generic way to access underlying hunter on any of the agents.

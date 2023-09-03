@@ -27,7 +27,7 @@ func NewWowheadItemTooltipManager(filePath string) *WowheadTooltipManager {
 	return &WowheadTooltipManager{
 		TooltipManager{
 			FilePath:   filePath,
-			UrlPattern: "https://nether.wowhead.com/wotlk/tooltip/item/%s",
+			UrlPattern: "https://nether.wowhead.com/wotlk/tooltip/item/%s?lvl=80",
 		},
 	}
 }
@@ -161,6 +161,7 @@ var staminaRegex = regexp.MustCompile(`<!--stat7-->\+([0-9]+) Stamina`)
 var spellPowerRegex = regexp.MustCompile(`Increases spell power by ([0-9]+)\.`)
 var spellPowerRegex2 = regexp.MustCompile(`Increases spell power by <!--rtg45-->([0-9]+)\.`)
 
+/*
 // Not sure these exist anymore?
 var arcaneSpellPowerRegex = regexp.MustCompile(`Increases Arcane power by ([0-9]+)\.`)
 var fireSpellPowerRegex = regexp.MustCompile(`Increases Fire power by ([0-9]+)\.`)
@@ -168,6 +169,7 @@ var frostSpellPowerRegex = regexp.MustCompile(`Increases Frost power by ([0-9]+)
 var holySpellPowerRegex = regexp.MustCompile(`Increases Holy power by ([0-9]+)\.`)
 var natureSpellPowerRegex = regexp.MustCompile(`Increases Nature power by ([0-9]+)\.`)
 var shadowSpellPowerRegex = regexp.MustCompile(`Increases Shadow power by ([0-9]+)\.`)
+*/
 
 var hitRegex = regexp.MustCompile(`Improves hit rating by <!--rtg31-->([0-9]+)\.`)
 var critRegex = regexp.MustCompile(`Improves critical strike rating by <!--rtg32-->([0-9]+)\.`)
@@ -407,10 +409,10 @@ func (item WowheadItemResponse) GetArmorValues() (int, int) {
 }
 
 var armorTypePatterns = map[proto.ArmorType]*regexp.Regexp{
-	proto.ArmorType_ArmorTypeCloth:   regexp.MustCompile(`<span class="q1">Cloth</span>`),
-	proto.ArmorType_ArmorTypeLeather: regexp.MustCompile(`<span class="q1">Leather</span>`),
-	proto.ArmorType_ArmorTypeMail:    regexp.MustCompile(`<span class="q1">Mail</span>`),
-	proto.ArmorType_ArmorTypePlate:   regexp.MustCompile(`<span class="q1">Plate</span>`),
+	proto.ArmorType_ArmorTypeCloth:   regexp.MustCompile(`<span class="q1">(?:<!--asc1-->)?Cloth</span>`),
+	proto.ArmorType_ArmorTypeLeather: regexp.MustCompile(`<span class="q1">(?:<!--asc2-->)?Leather</span>`),
+	proto.ArmorType_ArmorTypeMail:    regexp.MustCompile(`<span class="q1">(?:<!--asc3-->)?Mail</span>`),
+	proto.ArmorType_ArmorTypePlate:   regexp.MustCompile(`<span class="q1">(?:<!--asc4-->)?Plate</span>`),
 }
 
 func (item WowheadItemResponse) GetArmorType() proto.ArmorType {

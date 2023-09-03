@@ -186,7 +186,6 @@ type majorCooldownManager struct {
 	minReady       time.Duration
 
 	tryUsing bool
-	fullSort bool
 }
 
 func newMajorCooldownManager(cooldowns *proto.Cooldowns) majorCooldownManager {
@@ -343,7 +342,7 @@ func findTrinketAura(character *Character, trinketID int32) *Aura {
 // un-equipped and re-equipped the trinket before pull).
 func (mcdm *majorCooldownManager) DesyncTrinketProcs() {
 	if delay := time.Duration(mcdm.cooldownConfigs.DesyncProcTrinket1Seconds) * time.Second; delay > 0 {
-		if trinket1 := mcdm.character.Equip[ItemSlotTrinket1]; trinket1.ID > 0 && HasItemEffect(trinket1.ID) {
+		if trinket1 := mcdm.character.Trinket1(); trinket1.ID > 0 && HasItemEffect(trinket1.ID) {
 			mcdm.character.Env.RegisterPostFinalizeEffect(func() {
 				if aura := findTrinketAura(mcdm.character, trinket1.ID); aura != nil {
 					desyncTrinketProcAura(aura, delay)
@@ -353,7 +352,7 @@ func (mcdm *majorCooldownManager) DesyncTrinketProcs() {
 	}
 
 	if delay := time.Duration(mcdm.cooldownConfigs.DesyncProcTrinket2Seconds) * time.Second; delay > 0 {
-		if trinket2 := mcdm.character.Equip[ItemSlotTrinket2]; trinket2.ID > 0 && HasItemEffect(trinket2.ID) {
+		if trinket2 := mcdm.character.Trinket2(); trinket2.ID > 0 && HasItemEffect(trinket2.ID) {
 			mcdm.character.Env.RegisterPostFinalizeEffect(func() {
 				if aura := findTrinketAura(mcdm.character, trinket2.ID); aura != nil {
 					desyncTrinketProcAura(aura, delay)
@@ -363,7 +362,7 @@ func (mcdm *majorCooldownManager) DesyncTrinketProcs() {
 	}
 }
 
-func (mcdm *majorCooldownManager) reset(sim *Simulation) {
+func (mcdm *majorCooldownManager) reset(_ *Simulation) {
 	for i := range mcdm.majorCooldowns {
 		newMCD := &MajorCooldown{}
 		*newMCD = mcdm.initialMajorCooldowns[i]

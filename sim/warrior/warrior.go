@@ -168,7 +168,7 @@ func NewWarrior(character core.Character, talents string, inputs WarriorInputs) 
 
 	warrior.PseudoStats.CanParry = true
 
-	warrior.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/62.5)
+	warrior.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritPerAgiMaxLevel[character.Class]*core.CritRatingPerCritChance)
 	warrior.AddStatDependency(stats.Agility, stats.Dodge, core.DodgeRatingPerDodgeChance/84.746)
 	warrior.AddStatDependency(stats.Strength, stats.AttackPower, 2)
 	warrior.AddStatDependency(stats.Strength, stats.BlockValue, .5) // 50% block from str
@@ -195,7 +195,7 @@ func (warrior *Warrior) autoCritMultiplier(hand hand) float64 {
 
 func primary(warrior *Warrior, hand hand) float64 {
 	if warrior.Talents.PoleaxeSpecialization > 0 {
-		if (hand == mh && isPoleaxe(warrior.GetMHWeapon())) || (hand == oh && isPoleaxe(warrior.GetOHWeapon())) {
+		if (hand == mh && isPoleaxe(warrior.MainHand())) || (hand == oh && isPoleaxe(warrior.OffHand())) {
 			return 1 + 0.01*float64(warrior.Talents.PoleaxeSpecialization)
 		}
 	}
@@ -203,7 +203,7 @@ func primary(warrior *Warrior, hand hand) float64 {
 }
 
 func isPoleaxe(weapon *core.Item) bool {
-	return weapon != nil && (weapon.WeaponType == proto.WeaponType_WeaponTypeAxe || weapon.WeaponType == proto.WeaponType_WeaponTypePolearm)
+	return weapon.WeaponType == proto.WeaponType_WeaponTypeAxe || weapon.WeaponType == proto.WeaponType_WeaponTypePolearm
 }
 
 func (warrior *Warrior) critMultiplier(hand hand) float64 {
@@ -224,104 +224,15 @@ func (warrior *Warrior) intensifyRageCooldown(baseCd time.Duration) time.Duratio
 }
 
 func init() {
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDraenei, Class: proto.Class_ClassWarrior}] = stats.Stats{
-		stats.Health:      7941,
-		stats.Strength:    175,
-		stats.Agility:     110,
-		stats.Stamina:     159,
-		stats.Intellect:   36,
-		stats.Spirit:      61,
-		stats.AttackPower: 220,
-		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarf, Class: proto.Class_ClassWarrior}] = stats.Stats{
-		stats.Health:      7941,
-		stats.Strength:    179,
-		stats.Agility:     109,
-		stats.Stamina:     160,
-		stats.Intellect:   35,
-		stats.Spirit:      58,
-		stats.AttackPower: 220,
-		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceGnome, Class: proto.Class_ClassWarrior}] = stats.Stats{
-		stats.Health:      7941,
-		stats.Strength:    169,
-		stats.Agility:     115,
-		stats.Stamina:     159,
-		stats.Intellect:   40,
-		stats.Spirit:      59,
-		stats.AttackPower: 220,
-		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassWarrior}] = stats.Stats{
-		stats.Health:      7941,
-		stats.Strength:    174,
-		stats.Agility:     113,
-		stats.Stamina:     159,
-		stats.Intellect:   36,
-		stats.Spirit:      60,
-		stats.AttackPower: 220,
-		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassWarrior}] = stats.Stats{
-		stats.Health:      7941,
-		stats.Strength:    170,
-		stats.Agility:     117,
-		stats.Stamina:     159,
-		stats.Intellect:   36,
-		stats.Spirit:      59,
-		stats.AttackPower: 220,
-		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceOrc, Class: proto.Class_ClassWarrior}] = stats.Stats{
-		stats.Health:      7941,
-		stats.Strength:    177,
-		stats.Agility:     110,
-		stats.Stamina:     160,
-		stats.Intellect:   33,
-		stats.Spirit:      61,
-		stats.AttackPower: 220,
-		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTauren, Class: proto.Class_ClassWarrior}] = stats.Stats{
-		// Ugly hack, should be the same as other races and multiplied
-		// in racial. But stamina conversion in the sim is messed up
-		// (treats stamina as 10 HP, but the first 20 stamina should be
-		// 1 HP.
-		// As a result all base health in this file are actually:
-		// "base health - 180", which messes up the Tauren racial
-		// computation for health. So we back calculate the base health
-		// needed to get to the correct base health after racial...
-		stats.Health:      7950,
-		stats.Strength:    179,
-		stats.Agility:     109,
-		stats.Stamina:     160,
-		stats.Intellect:   32,
-		stats.Spirit:      61,
-		stats.AttackPower: 220,
-		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassWarrior}] = stats.Stats{
-		stats.Health:      7941,
-		stats.Strength:    175,
-		stats.Agility:     115,
-		stats.Stamina:     159,
-		stats.Intellect:   32,
-		stats.Spirit:      60,
-		stats.AttackPower: 220,
-		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassWarrior}] = stats.Stats{
-		stats.Health:      7941,
-		stats.Strength:    173,
-		stats.Agility:     111,
-		stats.Stamina:     159,
-		stats.Intellect:   34,
-		stats.Spirit:      64,
-		stats.AttackPower: 220,
-		stats.MeleeCrit:   3.188 * core.CritRatingPerCritChance,
-	}
+	core.AddBaseStatsCombo(proto.Race_RaceDraenei, proto.Class_ClassWarrior)
+	core.AddBaseStatsCombo(proto.Race_RaceDwarf, proto.Class_ClassWarrior)
+	core.AddBaseStatsCombo(proto.Race_RaceGnome, proto.Class_ClassWarrior)
+	core.AddBaseStatsCombo(proto.Race_RaceHuman, proto.Class_ClassWarrior)
+	core.AddBaseStatsCombo(proto.Race_RaceNightElf, proto.Class_ClassWarrior)
+	core.AddBaseStatsCombo(proto.Race_RaceOrc, proto.Class_ClassWarrior)
+	core.AddBaseStatsCombo(proto.Race_RaceTauren, proto.Class_ClassWarrior)
+	core.AddBaseStatsCombo(proto.Race_RaceTroll, proto.Class_ClassWarrior)
+	core.AddBaseStatsCombo(proto.Race_RaceUndead, proto.Class_ClassWarrior)
 }
 
 // Agent is a generic way to access underlying warrior on any of the agents.

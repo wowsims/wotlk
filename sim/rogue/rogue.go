@@ -1,8 +1,8 @@
 package rogue
 
 import (
-	"time"
 	"math"
+	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -272,7 +272,7 @@ func NewRogue(character core.Character, options *proto.Player) *Rogue {
 
 	rogue.AddStatDependency(stats.Strength, stats.AttackPower, 1)
 	rogue.AddStatDependency(stats.Agility, stats.AttackPower, 1)
-	rogue.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/83.15)
+	rogue.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritPerAgiMaxLevel[character.Class]*core.CritRatingPerCritChance)
 
 	return rogue
 }
@@ -289,9 +289,7 @@ func (rogue *Rogue) ApplyCutToTheChase(sim *core.Simulation) {
 	}
 }
 
-/* Deactivate Stealth if it is active
-This must be added to all abilities that cause Stealth to fade
-*/
+// Deactivate Stealth if it is active. This must be added to all abilities that cause Stealth to fade.
 func (rogue *Rogue) BreakStealth(sim *core.Simulation) {
 	if rogue.StealthAura.IsActive() {
 		rogue.StealthAura.Deactivate(sim)
@@ -307,9 +305,9 @@ func (rogue *Rogue) CanMutilate() bool {
 // Does the rogue have a dagger equipped in the specified hand (main or offhand)?
 func (rogue *Rogue) HasDagger(hand core.Hand) bool {
 	if hand == core.MainHand {
-		return rogue.HasMHWeapon() && rogue.GetMHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger
+		return rogue.MainHand().WeaponType == proto.WeaponType_WeaponTypeDagger
 	}
-	return rogue.HasOHWeapon() && rogue.GetOHWeapon().WeaponType == proto.WeaponType_WeaponTypeDagger
+	return rogue.OffHand().WeaponType == proto.WeaponType_WeaponTypeDagger
 }
 
 // Check if the rogue is considered in "stealth" for the purpose of casting abilities
@@ -324,102 +322,14 @@ func (rogue *Rogue) IsStealthed() bool {
 }
 
 func init() {
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceBloodElf, Class: proto.Class_ClassRogue}] = stats.Stats{
-		stats.Health:    7424,
-		stats.Strength:  110,
-		stats.Agility:   191,
-		stats.Stamina:   105,
-		stats.Intellect: 46,
-		stats.Spirit:    65,
-
-		stats.AttackPower: 140,
-		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
-		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceDwarf, Class: proto.Class_ClassRogue}] = stats.Stats{
-		stats.Health:    7424,
-		stats.Strength:  118,
-		stats.Agility:   185,
-		stats.Stamina:   106,
-		stats.Intellect: 42,
-		stats.Spirit:    66,
-
-		stats.AttackPower: 140,
-		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
-		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceGnome, Class: proto.Class_ClassRogue}] = stats.Stats{
-		stats.Health:    7424,
-		stats.Strength:  108,
-		stats.Agility:   191,
-		stats.Stamina:   105,
-		stats.Intellect: 48,
-		stats.Spirit:    67,
-
-		stats.AttackPower: 140,
-		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
-		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceHuman, Class: proto.Class_ClassRogue}] = stats.Stats{
-		stats.Health:    7424,
-		stats.Strength:  113,
-		stats.Agility:   189,
-		stats.Stamina:   105,
-		stats.Intellect: 43,
-		stats.Spirit:    69,
-
-		stats.AttackPower: 140,
-		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
-		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceNightElf, Class: proto.Class_ClassRogue}] = stats.Stats{
-		stats.Health:    7424,
-		stats.Strength:  109,
-		stats.Agility:   193,
-		stats.Stamina:   105,
-		stats.Intellect: 43,
-		stats.Spirit:    67,
-
-		stats.AttackPower: 140,
-		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
-		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceOrc, Class: proto.Class_ClassRogue}] = stats.Stats{
-		stats.Health:    7424,
-		stats.Strength:  116,
-		stats.Agility:   186,
-		stats.Stamina:   106,
-		stats.Intellect: 40,
-		stats.Spirit:    69,
-
-		stats.AttackPower: 140,
-		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
-		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceTroll, Class: proto.Class_ClassRogue}] = stats.Stats{
-		stats.Health:    7424,
-		stats.Strength:  114,
-		stats.Agility:   191,
-		stats.Stamina:   105,
-		stats.Intellect: 39,
-		stats.Spirit:    68,
-
-		stats.AttackPower: 140,
-		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
-		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
-	}
-	core.BaseStats[core.BaseStatsKey{Race: proto.Race_RaceUndead, Class: proto.Class_ClassRogue}] = stats.Stats{
-		stats.Health:    7424,
-		stats.Strength:  112,
-		stats.Agility:   187,
-		stats.Stamina:   105,
-		stats.Intellect: 41,
-		stats.Spirit:    72,
-
-		stats.AttackPower: 140,
-		stats.MeleeCrit:   -0.3 * core.CritRatingPerCritChance,
-		stats.SpellCrit:   -0.3 * core.CritRatingPerCritChance,
-	}
+	core.AddBaseStatsCombo(proto.Race_RaceBloodElf, proto.Class_ClassRogue)
+	core.AddBaseStatsCombo(proto.Race_RaceDwarf, proto.Class_ClassRogue)
+	core.AddBaseStatsCombo(proto.Race_RaceGnome, proto.Class_ClassRogue)
+	core.AddBaseStatsCombo(proto.Race_RaceHuman, proto.Class_ClassRogue)
+	core.AddBaseStatsCombo(proto.Race_RaceNightElf, proto.Class_ClassRogue)
+	core.AddBaseStatsCombo(proto.Race_RaceOrc, proto.Class_ClassRogue)
+	core.AddBaseStatsCombo(proto.Race_RaceTroll, proto.Class_ClassRogue)
+	core.AddBaseStatsCombo(proto.Race_RaceUndead, proto.Class_ClassRogue)
 }
 
 // Agent is a generic way to access underlying rogue on any of the agents.

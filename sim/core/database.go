@@ -83,16 +83,12 @@ func ItemFromProto(pData *proto.SimItem) Item {
 	}
 }
 
-func (item Item) ToItemSpecProto() *proto.ItemSpec {
-	itemSpec := &proto.ItemSpec{
+func (item *Item) ToItemSpecProto() *proto.ItemSpec {
+	return &proto.ItemSpec{
 		Id:      item.ID,
 		Enchant: item.Enchant.EffectID,
-		Gems:    []int32{},
+		Gems:    MapSlice(item.Gems, func(gem Gem) int32 { return gem.ID }),
 	}
-	for _, gem := range item.Gems {
-		itemSpec.Gems = append(itemSpec.Gems, gem.ID)
-	}
-	return itemSpec
 }
 
 type Enchant struct {
@@ -131,31 +127,71 @@ type ItemSpec struct {
 
 type Equipment [proto.ItemSlot_ItemSlotRanged + 1]Item
 
+func (equipment *Equipment) MainHand() *Item {
+	return &equipment[proto.ItemSlot_ItemSlotMainHand]
+}
+
+func (equipment *Equipment) OffHand() *Item {
+	return &equipment[proto.ItemSlot_ItemSlotOffHand]
+}
+
+func (equipment *Equipment) Ranged() *Item {
+	return &equipment[proto.ItemSlot_ItemSlotRanged]
+}
+
+func (equipment *Equipment) Head() *Item {
+	return &equipment[proto.ItemSlot_ItemSlotHead]
+}
+
+func (equipment *Equipment) Hands() *Item {
+	return &equipment[proto.ItemSlot_ItemSlotHands]
+}
+
+func (equipment *Equipment) Neck() *Item {
+	return &equipment[proto.ItemSlot_ItemSlotNeck]
+}
+
+func (equipment *Equipment) Trinket1() *Item {
+	return &equipment[proto.ItemSlot_ItemSlotTrinket1]
+}
+
+func (equipment *Equipment) Trinket2() *Item {
+	return &equipment[proto.ItemSlot_ItemSlotTrinket2]
+}
+
+func (equipment *Equipment) Finger1() *Item {
+	return &equipment[proto.ItemSlot_ItemSlotFinger1]
+}
+
+func (equipment *Equipment) Finger2() *Item {
+	return &equipment[proto.ItemSlot_ItemSlotFinger2]
+}
+
 func (equipment *Equipment) EquipItem(item Item) {
 	if item.Type == proto.ItemType_ItemTypeFinger {
-		if equipment[ItemSlotFinger1].ID == 0 {
-			equipment[ItemSlotFinger1] = item
+		if equipment.Finger1().ID == 0 {
+			*equipment.Finger1() = item
 		} else {
-			equipment[ItemSlotFinger2] = item
+			*equipment.Finger2() = item
 		}
 	} else if item.Type == proto.ItemType_ItemTypeTrinket {
-		if equipment[ItemSlotTrinket1].ID == 0 {
-			equipment[ItemSlotTrinket1] = item
+		if equipment.Trinket1().ID == 0 {
+			*equipment.Trinket1() = item
 		} else {
-			equipment[ItemSlotTrinket2] = item
+			*equipment.Trinket2() = item
 		}
 	} else if item.Type == proto.ItemType_ItemTypeWeapon {
-		if item.WeaponType == proto.WeaponType_WeaponTypeShield && equipment[ItemSlotMainHand].HandType != proto.HandType_HandTypeTwoHand {
-			equipment[ItemSlotOffHand] = item
+		if item.WeaponType == proto.WeaponType_WeaponTypeShield && equipment.MainHand().HandType != proto.HandType_HandTypeTwoHand {
+			*equipment.OffHand() = item
 		} else if item.HandType == proto.HandType_HandTypeMainHand || item.HandType == proto.HandType_HandTypeUnknown {
-			equipment[ItemSlotMainHand] = item
+			*equipment.MainHand() = item
 		} else if item.HandType == proto.HandType_HandTypeOffHand {
-			equipment[ItemSlotOffHand] = item
+			*equipment.OffHand() = item
 		} else if item.HandType == proto.HandType_HandTypeOneHand || item.HandType == proto.HandType_HandTypeTwoHand {
-			if equipment[ItemSlotMainHand].ID == 0 {
-				equipment[ItemSlotMainHand] = item
-			} else if equipment[ItemSlotOffHand].ID == 0 {
-				equipment[ItemSlotOffHand] = item
+			if equipment.MainHand().ID == 0 {
+				*equipment.MainHand() = item
+			} else if equipment.OffHand().ID == 0 {
+				*equipment.OffHand() = item
 			}
 		}
 	} else {
@@ -164,30 +200,25 @@ func (equipment *Equipment) EquipItem(item Item) {
 }
 
 func (equipment *Equipment) ToEquipmentSpecProto() *proto.EquipmentSpec {
-	equipSpec := &proto.EquipmentSpec{
-		Items: []*proto.ItemSpec{},
+	return &proto.EquipmentSpec{
+		Items: MapSlice(equipment[:], func(item Item) *proto.ItemSpec {
+			return item.ToItemSpecProto()
+		}),
 	}
-	for _, item := range equipment {
-		equipSpec.Items = append(equipSpec.Items, item.ToItemSpecProto())
-	}
-	return equipSpec
 }
 
 // Structs used for looking up items/gems/enchants
 type EquipmentSpec [proto.ItemSlot_ItemSlotRanged + 1]ItemSpec
 
 func ProtoToEquipmentSpec(es *proto.EquipmentSpec) EquipmentSpec {
-	coreEquip := EquipmentSpec{}
-
+	var coreEquip EquipmentSpec
 	for i, item := range es.Items {
-		spec := ItemSpec{
-			ID: item.Id,
+		coreEquip[i] = ItemSpec{
+			ID:      item.Id,
+			Enchant: item.Enchant,
+			Gems:    item.Gems,
 		}
-		spec.Gems = item.Gems
-		spec.Enchant = item.Enchant
-		coreEquip[i] = spec
 	}
-
 	return coreEquip
 }
 
@@ -221,7 +252,7 @@ func NewItem(itemSpec ItemSpec) Item {
 				item.Gems[gemIdx] = gem
 			} else {
 				if gemID != 0 {
-					panic(fmt.Sprintf("No gem with id: %d", gemID))
+					panic(fmt.Sprintf("When parsing item %d, socket %d had gem with id: %d\nThis gem is not in the database.", itemSpec.ID, gemIdx, gemID))
 				}
 			}
 		}
@@ -260,16 +291,7 @@ func EquipmentSpecFromJsonString(jsonString string) *proto.EquipmentSpec {
 	return es
 }
 
-func (equipment Equipment) Clone() Equipment {
-	newEquipment := Equipment{}
-	for idx, item := range equipment {
-		newItem := item
-		newEquipment[idx] = newItem
-	}
-	return newEquipment
-}
-
-func (equipment Equipment) Stats() stats.Stats {
+func (equipment *Equipment) Stats() stats.Stats {
 	equipStats := stats.Stats{}
 	for _, item := range equipment {
 		equipStats = equipStats.Add(item.Stats)
@@ -297,98 +319,36 @@ func (equipment Equipment) Stats() stats.Stats {
 	return equipStats
 }
 
-type ItemSlot byte
-
-const (
-	ItemSlotHead ItemSlot = iota
-	ItemSlotNeck
-	ItemSlotShoulder
-	ItemSlotBack
-	ItemSlotChest
-	ItemSlotWrist
-	ItemSlotHands
-	ItemSlotWaist
-	ItemSlotLegs
-	ItemSlotFeet
-	ItemSlotFinger1
-	ItemSlotFinger2
-	ItemSlotTrinket1
-	ItemSlotTrinket2
-	ItemSlotMainHand // can be 1h or 2h
-	ItemSlotOffHand
-	ItemSlotRanged
-)
-
-func (is ItemSlot) String() string {
-	switch is {
-	case ItemSlotHead:
-		return "Head"
-	case ItemSlotNeck:
-		return "Neck"
-	case ItemSlotShoulder:
-		return "Shoulder"
-	case ItemSlotBack:
-		return "Back"
-	case ItemSlotChest:
-		return "Chest"
-	case ItemSlotWrist:
-		return "Wrist"
-	case ItemSlotHands:
-		return "Hands"
-	case ItemSlotWaist:
-		return "Waist"
-	case ItemSlotLegs:
-		return "Legs"
-	case ItemSlotFeet:
-		return "Feet"
-	case ItemSlotFinger1:
-		return "Finger1"
-	case ItemSlotFinger2:
-		return "Finger2"
-	case ItemSlotTrinket1:
-		return "Trinket1"
-	case ItemSlotTrinket2:
-		return "Trinket2"
-	case ItemSlotMainHand:
-		return "MainHand"
-	case ItemSlotOffHand:
-		return "OffHand"
-	case ItemSlotRanged:
-		return "Ranged"
-	}
-	return "unknown slot"
-}
-
-func ItemTypeToSlot(it proto.ItemType) ItemSlot {
+func ItemTypeToSlot(it proto.ItemType) proto.ItemSlot {
 	switch it {
 	case proto.ItemType_ItemTypeHead:
-		return ItemSlotHead
+		return proto.ItemSlot_ItemSlotHead
 	case proto.ItemType_ItemTypeNeck:
-		return ItemSlotNeck
+		return proto.ItemSlot_ItemSlotNeck
 	case proto.ItemType_ItemTypeShoulder:
-		return ItemSlotShoulder
+		return proto.ItemSlot_ItemSlotShoulder
 	case proto.ItemType_ItemTypeBack:
-		return ItemSlotBack
+		return proto.ItemSlot_ItemSlotBack
 	case proto.ItemType_ItemTypeChest:
-		return ItemSlotChest
+		return proto.ItemSlot_ItemSlotChest
 	case proto.ItemType_ItemTypeWrist:
-		return ItemSlotWrist
+		return proto.ItemSlot_ItemSlotWrist
 	case proto.ItemType_ItemTypeHands:
-		return ItemSlotHands
+		return proto.ItemSlot_ItemSlotHands
 	case proto.ItemType_ItemTypeWaist:
-		return ItemSlotWaist
+		return proto.ItemSlot_ItemSlotWaist
 	case proto.ItemType_ItemTypeLegs:
-		return ItemSlotLegs
+		return proto.ItemSlot_ItemSlotLegs
 	case proto.ItemType_ItemTypeFeet:
-		return ItemSlotFeet
+		return proto.ItemSlot_ItemSlotFeet
 	case proto.ItemType_ItemTypeFinger:
-		return ItemSlotFinger1
+		return proto.ItemSlot_ItemSlotFinger1
 	case proto.ItemType_ItemTypeTrinket:
-		return ItemSlotTrinket1
+		return proto.ItemSlot_ItemSlotTrinket1
 	case proto.ItemType_ItemTypeWeapon:
-		return ItemSlotMainHand
+		return proto.ItemSlot_ItemSlotMainHand
 	case proto.ItemType_ItemTypeRanged:
-		return ItemSlotRanged
+		return proto.ItemSlot_ItemSlotRanged
 	}
 
 	return 255
