@@ -46,6 +46,20 @@ func (action *APLAction) GetAllAPLValues() []APLValue {
 	return FilterSlice(values, func(val APLValue) bool { return val != nil })
 }
 
+func (action *APLAction) GetAllSpells() []*Spell {
+	var spells []*Spell
+	for _, a := range action.GetAllActions() {
+		if impl, ok := a.impl.(*APLActionCastSpell); ok {
+			spells = append(spells, impl.spell)
+		} else if impl, ok := a.impl.(*APLActionMultidot); ok {
+			spells = append(spells, impl.spell)
+		} else if impl, ok := a.impl.(*APLActionMultishield); ok {
+			spells = append(spells, impl.spell)
+		}
+	}
+	return spells
+}
+
 func (action *APLAction) String() string {
 	if action.condition == nil {
 		return fmt.Sprintf("ACTION = %s", action.impl)
