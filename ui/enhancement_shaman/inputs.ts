@@ -87,7 +87,7 @@ export const EnhancmentItemSwapInputs = InputHelpers.MakeItemSwapInput<Spec.Spec
 		//ItemSlot.ItemSlotRanged, Not support yet
 	],
 	labelTooltip: 'Start with the swapped items until Fire Elemntal has been summoned, swap back to normal gear set. Weapons come pre enchanted with FT9 and FT10. If a slot is empty it will not be used in the swap',
-	showWhen: (player: Player<Spec.SpecEnhancementShaman>) => (player.getRotation().totems?.useFireElemental && player.getRotation().enableItemSwap) || false
+	showWhen: (player: Player<Spec.SpecEnhancementShaman>) => (player.getSpecOptions().totems?.useFireElemental && player.getRotation().enableItemSwap) || false
 })
 
 export const EnhancementShamanRotationConfig = {
@@ -97,7 +97,7 @@ export const EnhancementShamanRotationConfig = {
 				fieldName: 'enableItemSwap',
 				label: 'Enable Item Swapping',
 				labelTooltip: 'Toggle on/off item swapping',
-				showWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().totems?.useFireElemental || false
+				showWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getSpecOptions().totems?.useFireElemental || false
 			}),
 			EnhancmentItemSwapInputs,
 			InputHelpers.makeRotationEnumInput<Spec.SpecEnhancementShaman, RotationType>({
