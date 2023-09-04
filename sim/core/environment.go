@@ -331,3 +331,15 @@ func (unit *Unit) RegisterPrepullAction(doAt time.Duration, action func(*Simulat
 		Action: action,
 	})
 }
+
+func (env *Environment) PrepullStartTime() time.Duration {
+	if !env.IsFinalized() {
+		panic("Env not yet finalized")
+	}
+
+	if len(env.prepullActions) == 0 {
+		return 0
+	} else {
+		return env.prepullActions[0].DoAt
+	}
+}
