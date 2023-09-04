@@ -336,7 +336,7 @@ func (sim *Simulation) runPendingActions(max time.Duration) {
 
 func (sim *Simulation) PrePull() {
 	if len(sim.Environment.prepullActions) > 0 {
-		sim.CurrentTime = sim.Environment.prepullActions[0].DoAt
+		sim.CurrentTime = sim.Environment.PrepullStartTime()
 
 		for _, prepullAction := range sim.Environment.prepullActions {
 			if prepullAction.DoAt > sim.CurrentTime {
