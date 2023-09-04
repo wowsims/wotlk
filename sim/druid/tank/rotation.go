@@ -22,14 +22,6 @@ func (bear *FeralTankDruid) doRotation(sim *core.Simulation) {
 			bear.DemoralizingRoar.Cast(sim, bear.CurrentTarget)
 		} else if bear.Berserk.IsReady(sim) {
 			bear.Berserk.Cast(sim, nil)
-
-			// Bundle Enrage + Barkskin with Berserk
-			if bear.Enrage.IsReady(sim) {
-				bear.Enrage.Cast(sim, nil)
-			}
-			if bear.Barkskin.IsReady(sim) {
-				bear.Barkskin.Cast(sim, nil)
-			}
 		} else if bear.MangleBear.CanCast(sim, bear.CurrentTarget) {
 			bear.MangleBear.Cast(sim, bear.CurrentTarget)
 		} else if bear.shouldFaerieFire(sim) {
