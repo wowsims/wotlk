@@ -46,6 +46,20 @@ func (action *APLAction) GetAllAPLValues() []APLValue {
 	return FilterSlice(values, func(val APLValue) bool { return val != nil })
 }
 
+func (action *APLAction) GetAllSpells() []*Spell {
+	var spells []*Spell
+	for _, a := range action.GetAllActions() {
+		if impl, ok := a.impl.(*APLActionCastSpell); ok {
+			spells = append(spells, impl.spell)
+		} else if impl, ok := a.impl.(*APLActionMultidot); ok {
+			spells = append(spells, impl.spell)
+		} else if impl, ok := a.impl.(*APLActionMultishield); ok {
+			spells = append(spells, impl.spell)
+		}
+	}
+	return spells
+}
+
 func (action *APLAction) String() string {
 	if action.condition == nil {
 		return fmt.Sprintf("ACTION = %s", action.impl)
@@ -73,6 +87,9 @@ type APLActionImpl interface {
 	// Performs the action.
 	Execute(*Simulation)
 
+	// Called only while this action is controlling the rotation.
+	GetNextAction(sim *Simulation) *APLAction
+
 	// Pretty-print string for debugging.
 	String() string
 }
@@ -81,10 +98,11 @@ type APLActionImpl interface {
 type defaultAPLActionImpl struct {
 }
 
-func (impl defaultAPLActionImpl) GetInnerActions() []*APLAction { return nil }
-func (impl defaultAPLActionImpl) GetAPLValues() []APLValue      { return nil }
-func (impl defaultAPLActionImpl) Finalize(*APLRotation)         {}
-func (impl defaultAPLActionImpl) Reset(*Simulation)             {}
+func (impl defaultAPLActionImpl) GetInnerActions() []*APLAction        { return nil }
+func (impl defaultAPLActionImpl) GetAPLValues() []APLValue             { return nil }
+func (impl defaultAPLActionImpl) Finalize(*APLRotation)                {}
+func (impl defaultAPLActionImpl) Reset(*Simulation)                    {}
+func (impl defaultAPLActionImpl) GetNextAction(*Simulation) *APLAction { return nil }
 
 func (rot *APLRotation) newAPLAction(config *proto.APLAction) *APLAction {
 	if config == nil {
@@ -138,6 +156,8 @@ func (rot *APLRotation) newAPLActionImpl(config *proto.APLAction) APLActionImpl 
 		return rot.newActionTriggerICD(config.GetTriggerIcd())
 	case *proto.APLAction_Wait:
 		return rot.newActionWait(config.GetWait())
+	case *proto.APLAction_WaitUntil:
+		return rot.newActionWaitUntil(config.GetWaitUntil())
 	default:
 		return nil
 	}

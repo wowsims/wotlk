@@ -13,8 +13,8 @@ type APLRotation struct {
 	prepullActions []*APLAction
 	priorityList   []*APLAction
 
-	// Current strict sequence
-	strictSequence *APLAction
+	// Action currently controlling this rotation (only used for certain actions, such as StrictSequence).
+	controllingAction APLActionImpl
 
 	// Used inside of actions/value to determine whether they will occur during the prepull or regular rotation.
 	parsingPrepull bool
@@ -143,7 +143,7 @@ func (rot *APLRotation) allPrepullActions() []*APLAction {
 }
 
 func (rot *APLRotation) reset(sim *Simulation) {
-	rot.strictSequence = nil
+	rot.controllingAction = nil
 	rot.inLoop = false
 	for _, action := range rot.allAPLActions() {
 		action.impl.Reset(sim)
@@ -174,37 +174,19 @@ func (apl *APLRotation) DoNextAction(sim *Simulation) {
 	}
 
 	if apl.unit.GCD.IsReady(sim) {
-		apl.unit.WaitUntil(sim, sim.CurrentTime+time.Millisecond*500)
+		apl.unit.WaitUntil(sim, sim.CurrentTime+time.Millisecond*50)
 	} else {
 		apl.unit.DoNothing()
 	}
 }
 
 func (apl *APLRotation) getNextAction(sim *Simulation) *APLAction {
-	if sim.CurrentTime < apl.unit.waitUntilTime {
-		return nil
-	}
-
-	if apl.strictSequence != nil {
-		ss := apl.strictSequence.impl.(*APLActionStrictSequence)
-		if ss.actions[ss.curIdx].IsReady(sim) {
-			return apl.strictSequence
-		} else if apl.unit.GCD.IsReady(sim) {
-			// If the GCD is ready when the next subaction isn't, it means the sequence is bad
-			// so reset and exit the sequence.
-			ss.curIdx = 0
-			apl.strictSequence = nil
-		} else {
-			// Return nil to wait for the GCD to become ready.
-			return nil
-		}
+	if apl.controllingAction != nil {
+		return apl.controllingAction.GetNextAction(sim)
 	}
 
 	for _, action := range apl.priorityList {
 		if action.IsReady(sim) {
-			if _, ok := action.impl.(*APLActionStrictSequence); ok {
-				apl.strictSequence = action
-			}
 			return action
 		}
 	}

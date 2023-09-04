@@ -123,7 +123,7 @@ func getItemData(itemId int, accessToken string) BlizzardItemResponse {
 		log.Fatal(err)
 	}
 
-	fmt.Print(string(resultBody))
+	fmt.Printf(string(resultBody))
 	itemResponse := BlizzardItemResponse{}
 	err = json.Unmarshal(resultBody, &itemResponse)
 	if err != nil {
