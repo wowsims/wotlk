@@ -11,6 +11,7 @@ import {
 	APLActionCancelAura,
 	APLActionTriggerICD,
 	APLActionWait,
+	APLActionWaitUntil,
 	APLValue,
 	APLActionMultishield,
 } from '../../proto/apl.js';
@@ -402,7 +403,7 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 	['wait']: inputBuilder({
 		label: 'Wait',
 		submenu: ['Misc'],
-		shortDescription: 'Pauses the GCD for a specified amount of time.',
+		shortDescription: 'Pauses all APL actions for a specified amount of time.',
 		includeIf: (player: Player<any>, isPrepull: boolean) => !isPrepull,
 		newValue: () => APLActionWait.create({
 			duration: {
@@ -416,6 +417,16 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 		}),
 		fields: [
 			AplValues.valueFieldConfig('duration'),
+		],
+	}),
+	['waitUntil']: inputBuilder({
+		label: 'Wait Until',
+		submenu: ['Misc'],
+		shortDescription: 'Pauses all APL actions until the specified condition is <b>True</b>.',
+		includeIf: (player: Player<any>, isPrepull: boolean) => !isPrepull,
+		newValue: () => APLActionWaitUntil.create(),
+		fields: [
+			AplValues.valueFieldConfig('condition'),
 		],
 	}),
 	['changeTarget']: inputBuilder({

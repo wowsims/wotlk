@@ -46,8 +46,8 @@ character_stats_results: {
 dps_results: {
  key: "TestDemonology-AllItems-AshtongueTalismanofShadows-32493"
  value: {
-  dps: 10009.25236
-  tps: 8371.36967
+  dps: 10009.24515
+  tps: 8371.36339
  }
 }
 dps_results: {
@@ -333,22 +333,22 @@ dps_results: {
 dps_results: {
  key: "TestDemonology-Settings-Orc-P2-Demonology Warlock-NoBuffs-LongMultiTarget"
  value: {
-  dps: 21149.97579
-  tps: 26407.76385
+  dps: 21149.91649
+  tps: 26407.75939
  }
 }
 dps_results: {
  key: "TestDemonology-Settings-Orc-P2-Demonology Warlock-NoBuffs-LongSingleTarget"
  value: {
-  dps: 5845.99127
-  tps: 5288.81666
+  dps: 5844.32582
+  tps: 5287.35785
  }
 }
 dps_results: {
  key: "TestDemonology-Settings-Orc-P2-Demonology Warlock-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 6180.0365
-  tps: 5505.27947
+  dps: 6173.79485
+  tps: 5499.90151
  }
 }
 dps_results: {

@@ -29,7 +29,7 @@ message APLListItem {
     APLAction action = 3; // The action to be performed.
 }
 
-// NextIndex: 13
+// NextIndex: 15
 message APLAction {
     APLValue condition = 1; // If set, action will only execute if value is true or != 0.
 
@@ -49,6 +49,7 @@ message APLAction {
         APLActionCancelAura cancel_aura = 10;
         APLActionTriggerICD trigger_icd = 11;
         APLActionWait wait = 4;
+        APLActionWaitUntil wait_until = 14;
     }
 }
 
@@ -186,6 +187,10 @@ message APLActionTriggerICD {
 
 message APLActionWait {
     APLValue duration = 1;
+}
+
+message APLActionWaitUntil {
+    APLValue condition = 1;
 }
 
 ///////////////////////////////////////////////////////////////////////////

@@ -35,7 +35,7 @@ func (value *APLValueSequenceIsComplete) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeBool
 }
 func (value *APLValueSequenceIsComplete) GetBool(sim *Simulation) bool {
-	return value.sequence.curIdx >= len(value.sequence.actions)
+	return value.sequence.curIdx >= len(value.sequence.subactions)
 }
 func (value *APLValueSequenceIsComplete) String() string {
 	return fmt.Sprintf("Sequence Is Complete(%s)", value.name)
@@ -103,9 +103,9 @@ func (value *APLValueSequenceTimeToReady) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeDuration
 }
 func (value *APLValueSequenceTimeToReady) GetDuration(sim *Simulation) time.Duration {
-	if value.sequence.curIdx >= len(value.sequence.actions) {
+	if value.sequence.curIdx >= len(value.sequence.subactions) {
 		return NeverExpires
-	} else if subaction, ok := value.sequence.actions[value.sequence.curIdx].impl.(*APLActionCastSpell); ok {
+	} else if subaction, ok := value.sequence.subactions[value.sequence.curIdx].impl.(*APLActionCastSpell); ok {
 		return subaction.spell.TimeToReady(sim)
 	} else if value.sequence.IsReady(sim) {
 		return 0
