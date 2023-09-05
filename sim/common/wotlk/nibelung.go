@@ -36,7 +36,7 @@ func getSmiteConfig(valkyr *ValkyrPet, spellId int32, damageMin float64, damageM
 	return core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: spellId},
 		SpellSchool: core.SpellSchoolHoly,
-		ProcMask:    core.ProcMaskEmpty,
+		ProcMask:    core.ProcMaskSpellDamage,
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:      time.Second * 30 / 16, // 1.875s (16 casts per 30s)
