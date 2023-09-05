@@ -524,6 +524,22 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestHoly-AllItems-Nibelung-49992"
+ value: {
+  dps: 111.2378
+  tps: 50.43814
+  hps: 5236.62036
+ }
+}
+dps_results: {
+ key: "TestHoly-AllItems-Nibelung-50648"
+ value: {
+  dps: 111.2378
+  tps: 50.43814
+  hps: 5236.62036
+ }
+}
+dps_results: {
  key: "TestHoly-AllItems-OfferingofSacrifice-37638"
  value: {
   dps: 108.04296

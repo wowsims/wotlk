@@ -353,6 +353,14 @@ dps_results: {
  value: {}
 }
 dps_results: {
+ key: "TestRestoration-AllItems-Nibelung-49992"
+ value: {}
+}
+dps_results: {
+ key: "TestRestoration-AllItems-Nibelung-50648"
+ value: {}
+}
+dps_results: {
  key: "TestRestoration-AllItems-NightsongBattlegear"
  value: {}
 }

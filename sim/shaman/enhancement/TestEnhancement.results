@@ -538,6 +538,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-Nibelung-49992"
+ value: {
+  dps: 7672.52563
+  tps: 4221.33363
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-Nibelung-50648"
+ value: {
+  dps: 7672.52563
+  tps: 4221.33363
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-OfferingofSacrifice-37638"
  value: {
   dps: 7433.82436

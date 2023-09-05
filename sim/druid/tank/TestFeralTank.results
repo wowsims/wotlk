@@ -648,6 +648,22 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeralTank-AllItems-Nibelung-49992"
+ value: {
+  dps: 2564.12228
+  tps: 5421.28947
+  dtps: 6.66421
+ }
+}
+dps_results: {
+ key: "TestFeralTank-AllItems-Nibelung-50648"
+ value: {
+  dps: 2564.12228
+  tps: 5421.28947
+  dtps: 6.66421
+ }
+}
+dps_results: {
  key: "TestFeralTank-AllItems-NightsongBattlegear"
  value: {
   dps: 2597.53564

@@ -467,6 +467,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSmite-AllItems-Nibelung-49992"
+ value: {
+  dps: 3552.13543
+  tps: 3014.05797
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-Nibelung-50648"
+ value: {
+  dps: 3552.13543
+  tps: 3014.05797
+ }
+}
+dps_results: {
  key: "TestSmite-AllItems-OfferingofSacrifice-37638"
  value: {
   dps: 3406.98177

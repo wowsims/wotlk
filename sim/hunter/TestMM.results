@@ -517,6 +517,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestMM-AllItems-Nibelung-49992"
+ value: {
+  dps: 7170.30517
+  tps: 6235.72981
+ }
+}
+dps_results: {
+ key: "TestMM-AllItems-Nibelung-50648"
+ value: {
+  dps: 7175.682
+  tps: 6240.55672
+ }
+}
+dps_results: {
  key: "TestMM-AllItems-OfferingofSacrifice-37638"
  value: {
   dps: 6833.65022
