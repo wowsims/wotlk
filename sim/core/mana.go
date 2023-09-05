@@ -240,9 +240,8 @@ func (sim *Simulation) initManaTickAction() {
 				playersWithManaBars = append(playersWithManaBars, player)
 			}
 
-			for _, petAgent := range character.Pets {
-				pet := petAgent.GetPet()
-				if pet.HasManaBar() {
+			for _, petAgent := range character.PetAgents {
+				if petAgent.GetPet().HasManaBar() {
 					petsWithManaBars = append(petsWithManaBars, petAgent)
 				}
 			}
@@ -333,5 +332,4 @@ func (mc *ManaCost) SpendCost(sim *Simulation, spell *Spell) {
 		spell.Unit.PseudoStats.FiveSecondRuleRefreshTime = sim.CurrentTime + time.Second*5
 	}
 }
-func (mc *ManaCost) IssueRefund(sim *Simulation, spell *Spell) {
-}
+func (mc *ManaCost) IssueRefund(_ *Simulation, _ *Spell) {}

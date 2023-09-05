@@ -8,11 +8,11 @@ import (
 func init() {
 	core.NewItemEffect(30892, func(agent core.Agent) {
 		for _, pet := range agent.GetCharacter().Pets {
-			if pet.GetPet().IsGuardian() {
+			if pet.IsGuardian() {
 				continue // not sure if this applies to guardians.
 			}
-			pet.GetCharacter().PseudoStats.DamageDealtMultiplier *= 1.03
-			pet.GetCharacter().AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*2)
+			pet.PseudoStats.DamageDealtMultiplier *= 1.03
+			pet.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*2)
 		}
 	})
 }

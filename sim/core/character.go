@@ -82,6 +82,8 @@ type Character struct {
 	defensiveTrinketCD *Timer
 	offensiveTrinketCD *Timer
 	conjuredCD         *Timer
+
+	Pets []*Pet // cached in AddPet, for advance()
 }
 
 func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character {
@@ -269,7 +271,7 @@ func (character *Character) applyAllEffects(agent Agent, raidBuffs *proto.RaidBu
 	playerStats.ConsumesStats = measureStats()
 	character.clearBuildPhaseAuras(CharacterBuildPhaseAll)
 
-	for _, petAgent := range character.Pets {
+	for _, petAgent := range character.PetAgents {
 		applyPetBuffEffects(petAgent, raidBuffs, partyBuffs, individualBuffs)
 	}
 
@@ -338,45 +340,31 @@ func (character *Character) AddPet(pet PetAgent) {
 		panic("Pets must be added during construction!")
 	}
 
-	character.Pets = append(character.Pets, pet)
-}
-
-func (character *Character) GetPet(name string) PetAgent {
-	for _, petAgent := range character.Pets {
-		if petAgent.GetPet().Name == name {
-			return petAgent
-		}
-	}
-	panic(character.Name + " has no pet with name " + name)
+	character.PetAgents = append(character.PetAgents, pet)
+	character.Pets = append(character.Pets, pet.GetPet())
 }
 
 func (character *Character) MultiplyMeleeSpeed(sim *Simulation, amount float64) {
 	character.Unit.MultiplyMeleeSpeed(sim, amount)
 
-	if len(character.Pets) > 0 {
-		for _, petAgent := range character.Pets {
-			petAgent.OwnerAttackSpeedChanged(sim)
-		}
+	for _, petAgent := range character.PetAgents {
+		petAgent.OwnerAttackSpeedChanged(sim)
 	}
 }
 
 func (character *Character) MultiplyRangedSpeed(sim *Simulation, amount float64) {
 	character.Unit.MultiplyRangedSpeed(sim, amount)
 
-	if len(character.Pets) > 0 {
-		for _, petAgent := range character.Pets {
-			petAgent.OwnerAttackSpeedChanged(sim)
-		}
+	for _, petAgent := range character.PetAgents {
+		petAgent.OwnerAttackSpeedChanged(sim)
 	}
 }
 
 func (character *Character) MultiplyAttackSpeed(sim *Simulation, amount float64) {
 	character.Unit.MultiplyAttackSpeed(sim, amount)
 
-	if len(character.Pets) > 0 {
-		for _, petAgent := range character.Pets {
-			petAgent.OwnerAttackSpeedChanged(sim)
-		}
+	for _, petAgent := range character.PetAgents {
+		petAgent.OwnerAttackSpeedChanged(sim)
 	}
 }
 
@@ -512,9 +500,9 @@ func (character *Character) FillPlayerStats(playerStats *proto.PlayerStats) {
 	playerStats.Sets = character.GetActiveSetBonusNames()
 
 	playerStats.Metadata = character.GetMetadata()
-	for _, petAgent := range character.Pets {
+	for _, pet := range character.Pets {
 		playerStats.Pets = append(playerStats.Pets, &proto.PetStats{
-			Metadata: petAgent.GetPet().GetMetadata(),
+			Metadata: pet.GetMetadata(),
 		})
 	}
 
@@ -523,7 +511,7 @@ func (character *Character) FillPlayerStats(playerStats *proto.PlayerStats) {
 	}
 }
 
-func (character *Character) init(sim *Simulation, _ Agent) {
+func (character *Character) init(sim *Simulation) {
 	character.Unit.init(sim)
 }
 
@@ -535,21 +523,18 @@ func (character *Character) reset(sim *Simulation, agent Agent) {
 
 	agent.Reset(sim)
 
-	for _, petAgent := range character.Pets {
+	for _, petAgent := range character.PetAgents {
 		petAgent.GetPet().reset(sim, petAgent)
 	}
 }
 
 // Advance moves time forward counting down auras, CDs, mana regen, etc
-func (character *Character) advance(sim *Simulation, elapsedTime time.Duration) {
-	character.Unit.advance(sim, elapsedTime)
+func (character *Character) advance(sim *Simulation) {
+	character.Unit.advance(sim)
 
-	if len(character.Pets) > 0 {
-		for _, petAgent := range character.Pets {
-			if !petAgent.GetPet().enabled {
-				continue
-			}
-			petAgent.GetPet().advance(sim, elapsedTime)
+	for _, pet := range character.Pets {
+		if pet.enabled {
+			pet.advance(sim)
 		}
 	}
 }
@@ -660,12 +645,9 @@ func (character *Character) getProcMaskFor(pred func(weapon *Item) bool) ProcMas
 
 func (character *Character) doneIteration(sim *Simulation) {
 	// Need to do pets first, so we can add their results to the owners.
-	if len(character.Pets) > 0 {
-		for _, petAgent := range character.Pets {
-			pet := petAgent.GetPet()
-			pet.doneIteration(sim)
-			character.Metrics.AddFinalPetMetrics(&pet.Metrics)
-		}
+	for _, pet := range character.Pets {
+		pet.doneIteration(sim)
+		character.Metrics.AddFinalPetMetrics(&pet.Metrics)
 	}
 
 	character.Unit.doneIteration(sim)
@@ -690,9 +672,9 @@ func (character *Character) GetMetricsProto() *proto.UnitMetrics {
 	metrics.UnitIndex = character.UnitIndex
 	metrics.Auras = character.auraTracker.GetMetricsProto()
 
-	metrics.Pets = []*proto.UnitMetrics{}
-	for _, petAgent := range character.Pets {
-		metrics.Pets = append(metrics.Pets, petAgent.GetPet().GetMetricsProto())
+	metrics.Pets = make([]*proto.UnitMetrics, len(character.Pets))
+	for i, pet := range character.Pets {
+		metrics.Pets[i] = pet.GetMetricsProto()
 	}
 
 	return metrics

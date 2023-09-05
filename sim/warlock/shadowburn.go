@@ -16,7 +16,7 @@ func (warlock *Warlock) registerShadowBurnSpell() {
 
 	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfShadowburn) {
 		warlock.RegisterResetEffect(func(sim *core.Simulation) {
-			sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {
+			sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int32) {
 				if isExecute == 35 {
 					warlock.Shadowburn.BonusCritRating += 20 * core.CritRatingPerCritChance
 				}
