@@ -2,7 +2,6 @@ package core
 
 import (
 	"fmt"
-	"log"
 	"math"
 	"math/rand"
 	"runtime"
@@ -288,8 +287,6 @@ func (sim *Simulation) run() *proto.RaidSimResult {
 		sim.Log = nil
 	}
 
-	t0 := time.Now()
-
 	var st time.Time
 	for i := int32(1); i < sim.Options.Iterations; i++ {
 		// fmt.Printf("Iteration: %d\n", i)
@@ -324,10 +321,6 @@ func (sim *Simulation) run() *proto.RaidSimResult {
 		sim.ProgressReport(&proto.ProgressMetrics{TotalIterations: sim.Options.Iterations, CompletedIterations: sim.Options.Iterations, Dps: result.RaidMetrics.Dps.Avg, FinalRaidResult: result})
 	}
 
-	if d := sim.Options.Iterations; d > 3000 {
-		log.Printf("running %d iterations took %s\n", d, time.Since(t0))
-	}
-
 	return result
 }
 
@@ -347,14 +340,14 @@ func (sim *Simulation) PrePull() {
 		for _, prepullAction := range sim.Environment.prepullActions {
 			if prepullAction.DoAt > sim.CurrentTime {
 				sim.runPendingActions(prepullAction.DoAt)
-				sim.advance(prepullAction.DoAt - sim.CurrentTime)
+				sim.advance(prepullAction.DoAt)
 			}
 			prepullAction.Action(sim)
 		}
 
 		if sim.CurrentTime < 0 {
 			sim.runPendingActions(0)
-			sim.advance(0 - sim.CurrentTime)
+			sim.advance(0)
 		}
 	}
 
@@ -418,7 +411,7 @@ func (sim *Simulation) Step(max time.Duration) bool {
 
 	if pa.NextActionAt > sim.CurrentTime {
 		if pa.NextActionAt < max {
-			sim.advance(pa.NextActionAt - sim.CurrentTime)
+			sim.advance(pa.NextActionAt)
 		} else {
 			sim.pendingActions = append(sim.pendingActions, pa)
 			return true
@@ -487,8 +480,8 @@ func (sim *Simulation) nextExecutePhase() {
 }
 
 // Advance moves time forward counting down auras, CDs, mana regen, etc
-func (sim *Simulation) advance(elapsedTime time.Duration) {
-	sim.CurrentTime += elapsedTime
+func (sim *Simulation) advance(nextTime time.Duration) {
+	sim.CurrentTime = nextTime
 
 	// this is a loop to handle duplicate ExecuteProportions, e.g. if they're all set to 100%, you reach
 	// execute phases 35%, 25%, and 20% in the first advance() call.

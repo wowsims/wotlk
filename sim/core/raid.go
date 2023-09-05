@@ -353,13 +353,13 @@ func (raid *Raid) applyCharacterEffects(raidConfig *proto.Raid) *proto.RaidStats
 	return raidStats
 }
 
-func (raid Raid) AddStats(s stats.Stats) {
+func (raid *Raid) AddStats(s stats.Stats) {
 	for _, party := range raid.Parties {
 		party.AddStats(s)
 	}
 }
 
-func (raid Raid) GetPlayersOfClass(class proto.Class) []Agent {
+func (raid *Raid) GetPlayersOfClass(class proto.Class) []Agent {
 	classPlayers := []Agent{}
 	for _, party := range raid.Parties {
 		for _, agent := range party.Players {
@@ -371,7 +371,7 @@ func (raid Raid) GetPlayersOfClass(class proto.Class) []Agent {
 	return classPlayers
 }
 
-func (raid Raid) GetPlayerFromUnit(unit *Unit) Agent {
+func (raid *Raid) GetPlayerFromUnit(unit *Unit) Agent {
 	for _, party := range raid.Parties {
 		for _, agent := range party.PlayersAndPets {
 			if &agent.GetCharacter().Unit == unit {
@@ -382,7 +382,7 @@ func (raid Raid) GetPlayerFromUnit(unit *Unit) Agent {
 	return nil
 }
 
-func (raid Raid) GetFirstNPlayersOrPets(n int32) []*Unit {
+func (raid *Raid) GetFirstNPlayersOrPets(n int32) []*Unit {
 	return raid.AllUnits[:MinInt32(n, int32(len(raid.AllUnits)))]
 }
 
