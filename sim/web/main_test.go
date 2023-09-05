@@ -10,6 +10,7 @@ import (
 	"testing"
 	"time"
 
+	_ "github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	googleProto "google.golang.org/protobuf/proto"
