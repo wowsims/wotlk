@@ -124,21 +124,21 @@ func (mcd *MajorCooldown) tryActivateInternal(sim *Simulation, character *Charac
 }
 
 func (mcd *MajorCooldown) shouldActivateHelper(sim *Simulation, character *Character) bool {
-	if mcd.Type.Matches(CooldownTypeSurvival) && character.cooldownConfigs.HpPercentForDefensives != 0 {
-		if character.CurrentHealthPercent() > character.cooldownConfigs.HpPercentForDefensives {
-			return false
-		}
-	}
-
 	if !mcd.Spell.CanCast(sim, character.CurrentTarget) {
 		return false
 	}
 
 	if mcd.numUsages < len(mcd.timings) {
 		return sim.CurrentTime >= mcd.timings[mcd.numUsages]
-	} else {
-		return mcd.ShouldActivate(sim, character)
 	}
+
+	if mcd.Type.Matches(CooldownTypeSurvival) && character.cooldownConfigs.HpPercentForDefensives != 0 {
+		if character.CurrentHealthPercent() > character.cooldownConfigs.HpPercentForDefensives {
+			return false
+		}
+	}
+
+	return mcd.ShouldActivate(sim, character)
 }
 
 // Activates this MCD, if all the conditions pass.
