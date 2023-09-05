@@ -1,6 +1,7 @@
 package warlock
 
 import (
+	"github.com/wowsims/wotlk/sim/common/wotlk"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -239,6 +240,7 @@ func NewWarlock(character core.Character, options *proto.Player) *Warlock {
 	}
 
 	warlock.applyWeaponImbue()
+	wotlk.ConstructValkyrPets(&warlock.Character)
 
 	return warlock
 }

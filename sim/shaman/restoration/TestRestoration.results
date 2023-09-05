@@ -535,6 +535,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRestoration-AllItems-Nibelung-49992"
+ value: {
+  tps: 60.99557
+  hps: 3639.46075
+ }
+}
+dps_results: {
+ key: "TestRestoration-AllItems-Nibelung-50648"
+ value: {
+  tps: 60.99557
+  hps: 3639.46075
+ }
+}
+dps_results: {
  key: "TestRestoration-AllItems-OfferingofSacrifice-37638"
  value: {
   tps: 55.99781
