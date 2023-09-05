@@ -50,10 +50,10 @@ func NewRestorationShaman(character core.Character, options *proto.Player) *Rest
 	resto.EnableResumeAfterManaWait(resto.tryUseGCD)
 
 	if resto.HasMHWeapon() {
-		resto.ApplyEarthlivingImbueToItem(resto.GetMHWeapon(), false)
+		resto.ApplyEarthlivingImbueToItem(resto.GetMHWeapon())
 	}
 	if resto.HasOHWeapon() {
-		resto.ApplyEarthlivingImbueToItem(resto.GetOHWeapon(), false)
+		resto.ApplyEarthlivingImbueToItem(resto.GetOHWeapon())
 	}
 
 	return resto
@@ -89,10 +89,14 @@ func (resto *RestorationShaman) Initialize() {
 	resto.CurrentTarget = resto.GetMainTarget()
 
 	// Has to be here because earthliving can cast hots and needs Env to be set to create the hots.
-	resto.RegisterEarthlivingImbue(
-		resto.HasMHWeapon(),
-		resto.HasOHWeapon(),
-	)
+	procMask := core.ProcMaskUnknown
+	if resto.HasMHWeapon() {
+		procMask |= core.ProcMaskMeleeMH
+	}
+	if resto.HasOHWeapon() {
+		procMask |= core.ProcMaskMeleeOH
+	}
+	resto.RegisterEarthlivingImbue(procMask)
 
 	resto.Shaman.Initialize()
 	resto.Shaman.RegisterHealingSpells()

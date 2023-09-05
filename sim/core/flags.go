@@ -81,24 +81,11 @@ const (
 
 	ProcMaskDirect = ProcMaskMelee | ProcMaskRanged | ProcMaskSpellDamage
 
-	ProcMaskTwoRoll = ProcMaskRanged | ProcMaskMeleeSpecial
-
 	ProcMaskSpecial = ProcMaskMeleeOrRangedSpecial | ProcMaskSpellDamage
 
 	ProcMaskMeleeOrProc = ProcMaskMelee | ProcMaskProc
 	ProcMaskSpellOrProc = ProcMaskSpellDamage | ProcMaskProc
 )
-
-func GetMeleeProcMaskForHands(mh bool, oh bool) ProcMask {
-	mask := ProcMaskUnknown
-	if mh {
-		mask |= ProcMaskMeleeMH
-	}
-	if oh {
-		mask |= ProcMaskMeleeOH
-	}
-	return mask
-}
 
 // Possible outcomes of any hit/damage roll.
 type HitOutcome uint16
