@@ -125,6 +125,9 @@ func (ai *LichKing25HAI) registerSoulReaperSpell(target *core.Target) {
 
 			dot := spell.Dot(target)
 			dot.Apply(sim)
+
+			// Soul Reaper application resets the boss melee swing timer based on log analysis
+			spell.Unit.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime, false)
 		},
 	})
 }
