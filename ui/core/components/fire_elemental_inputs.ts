@@ -28,6 +28,10 @@ export function FireElementalSection(parentElem: HTMLElement, simUI: IndividualS
 			const newOptions = player.getSpecOptions();
 			newOptions.totems = newVal;
 			player.setSpecOptions(eventID, newOptions);
+
+			// Hacky fix ItemSwapping is in the Rotation proto, this will let the Rotation know to update showWhen
+			// TODO move the ItemSwap enabled to a spec option and have the ItemSwap proto be apart of player.
+			player.rotationChangeEmitter.emit(eventID)
 		},
 		changeEmitter: (player: Player<ShamanSpecs>) => player.specOptionsChangeEmitter,
 	}, ActionId.fromSpellId(2894), "useFireElemental");
