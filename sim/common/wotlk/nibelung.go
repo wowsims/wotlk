@@ -49,7 +49,7 @@ func getSmiteConfig(valkyr *ValkyrPet, spellId int32, damageMin float64, damageM
 			baseDamage := sim.Roll(damageMin, damageMax)
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeCritFixedChance(0.05))
 			spell.DealDamage(sim, result)
-			valkyr.GainHealth(sim, result.Damage*0.25, valkyr.healthMetrics)
+			valkyr.GainHealth(sim, valkyr.MaxHealth()*0.25, valkyr.healthMetrics)
 		},
 		CritMultiplier: valkyr.DefaultSpellCritMultiplier(),
 	}
@@ -57,9 +57,9 @@ func getSmiteConfig(valkyr *ValkyrPet, spellId int32, damageMin float64, damageM
 }
 
 func (valkyr *ValkyrPet) registerSmite(isHeroic bool) {
-	spellId := int32(71842)
+	spellId := int32(71841)
 	if isHeroic {
-		spellId = 71841
+		spellId = 71842
 	}
 
 	if valkyr.healthMetrics == nil {
