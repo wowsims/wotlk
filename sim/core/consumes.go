@@ -239,6 +239,11 @@ func applyConsumeEffects(agent Agent) {
 			character.AddStats(stats.Stats{
 				stats.Armor: 800,
 			})
+			if character.HasProfession(proto.Profession_Alchemy) {
+				character.AddStats(stats.Stats{
+					stats.Armor: 280,
+				})
+			}
 		case proto.GuardianElixir_ElixirOfSpirit:
 			character.AddStats(stats.Stats{
 				stats.Spirit: 50,
