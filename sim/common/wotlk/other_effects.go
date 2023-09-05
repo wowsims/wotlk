@@ -1075,4 +1075,15 @@ func init() {
 			Type:  core.CooldownTypeSurvival,
 		})
 	})
+
+	NewItemEffectWithHeroic(func(isHeroic bool) {
+		itemId := int32(49992)
+		if isHeroic {
+			itemId = 50648
+		}
+
+		core.NewItemEffect(itemId, func(agent core.Agent) {
+			MakeNibelungTriggerAura(agent, isHeroic)
+		})
+	})
 }
