@@ -8,8 +8,6 @@ import (
 
 // Time between energy ticks.
 const EnergyTickDuration = time.Millisecond * 100
-
-// Extra 0.2 because Blizzard
 const EnergyPerTick = 1.0
 
 // OnEnergyGain is called any time energy is increased.

@@ -12,17 +12,20 @@ const FanOfKnivesSpellID int32 = 51723
 func (rogue *Rogue) makeFanOfKnivesWeaponHitSpell(isMH bool) *core.Spell {
 	var procMask core.ProcMask
 	var weaponMultiplier float64
+	var actionID core.ActionID
 	if isMH {
+		actionID = core.ActionID{SpellID: FanOfKnivesSpellID}.WithTag(1)
 		weaponMultiplier = core.TernaryFloat64(rogue.HasDagger(core.MainHand), 1.05, 0.7)
 		procMask = core.ProcMaskMeleeMHSpecial
 	} else {
+		actionID = core.ActionID{SpellID: FanOfKnivesSpellID}.WithTag(2)
 		weaponMultiplier = core.TernaryFloat64(rogue.HasDagger(core.OffHand), 1.05, 0.7)
 		weaponMultiplier *= rogue.dwsMultiplier()
 		procMask = core.ProcMaskMeleeOHSpecial
 	}
 
 	return rogue.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: FanOfKnivesSpellID},
+		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    procMask,
 		Flags:       core.SpellFlagMeleeMetrics | SpellFlagColdBlooded,

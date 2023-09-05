@@ -353,6 +353,9 @@ type APLValueMath struct {
 
 func (rot *APLRotation) newValueMath(config *proto.APLValueMath) APLValue {
 	lhs, rhs := rot.newAPLValue(config.Lhs), rot.newAPLValue(config.Rhs)
+	if config.Op == proto.APLValueMath_OpAdd || config.Op == proto.APLValueMath_OpSub {
+		lhs, rhs = rot.coerceToSameType(lhs, rhs)
+	}
 	if lhs == nil || rhs == nil {
 		return nil
 	}
