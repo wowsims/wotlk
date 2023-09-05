@@ -1,6 +1,7 @@
 package mage
 
 import (
+	"github.com/wowsims/wotlk/sim/common/wotlk"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -204,6 +205,7 @@ func NewMage(character core.Character, options *proto.Player) *Mage {
 		mage.waterElemental = mage.NewWaterElemental(mage.Rotation.WaterElementalDisobeyChance)
 	}
 
+	wotlk.ConstructValkyrPets(&mage.Character)
 	return mage
 }
 

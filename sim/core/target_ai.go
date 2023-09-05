@@ -2,10 +2,8 @@ package core
 
 import (
 	"fmt"
-	"log"
-	"time"
-
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"log"
 )
 
 type TargetAI interface {
@@ -25,7 +23,6 @@ func (target *Target) initialize(config *proto.Target) {
 				MainHand: Weapon{
 					BaseDamageMin:  config.MinBaseDamage,
 					SwingSpeed:     config.SwingSpeed,
-					SwingDuration:  time.Duration(float64(time.Second) * config.SwingSpeed),
 					CritMultiplier: 2,
 					SpellSchool:    SpellSchoolFromProto(config.SpellSchool),
 				},
@@ -62,17 +59,17 @@ func (target *Target) initialize(config *proto.Target) {
 }
 
 // Empty Agent interface functions.
-func (target *Target) AddRaidBuffs(raidBuffs *proto.RaidBuffs)    {}
-func (target *Target) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {}
-func (target *Target) ApplyTalents()                              {}
-func (target *Target) GetCharacter() *Character                   { return nil }
-func (target *Target) Initialize()                                {}
+func (target *Target) AddRaidBuffs(_ *proto.RaidBuffs)   {}
+func (target *Target) AddPartyBuffs(_ *proto.PartyBuffs) {}
+func (target *Target) ApplyTalents()                     {}
+func (target *Target) GetCharacter() *Character          { return nil }
+func (target *Target) Initialize()                       {}
 
 func (target *Target) DoNothing() {
 	target.doNothing = true
 }
 
-func (target *Target) OnAutoAttack(sim *Simulation, spell *Spell) {
+func (target *Target) OnAutoAttack(sim *Simulation, _ *Spell) {
 	if target.GCD.IsReady(sim) {
 		if target.AI != nil {
 			target.AI.DoAction(sim)

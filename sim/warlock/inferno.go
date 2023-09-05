@@ -125,7 +125,6 @@ func (warlock *Warlock) NewInfernal() *InfernalPet {
 			BaseDamageMin:  330,
 			BaseDamageMax:  494.9,
 			SwingSpeed:     2,
-			SwingDuration:  time.Second * 2,
 			CritMultiplier: 2,
 		},
 		AutoSwingMelee: true,
@@ -188,7 +187,7 @@ func (infernal *InfernalPet) Initialize() {
 	})
 }
 
-func (infernal *InfernalPet) Reset(sim *core.Simulation) {
+func (infernal *InfernalPet) Reset(_ *core.Simulation) {
 }
 
 func (infernal *InfernalPet) OnGCDReady(sim *core.Simulation) {

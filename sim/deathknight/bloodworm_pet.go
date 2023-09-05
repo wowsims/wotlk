@@ -1,8 +1,6 @@
 package deathknight
 
 import (
-	"time"
-
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -13,7 +11,7 @@ type BloodwormPet struct {
 	dkOwner *Deathknight
 }
 
-func (dk *Deathknight) NewBloodwormPet(index int) *BloodwormPet {
+func (dk *Deathknight) NewBloodwormPet(_ int) *BloodwormPet {
 	bloodworm := &BloodwormPet{
 		Pet:     core.NewPet("Bloodworm", &dk.Character, bloodwormPetBaseStats, dk.bloodwormStatInheritance(), nil, false, true),
 		dkOwner: dk,
@@ -24,7 +22,6 @@ func (dk *Deathknight) NewBloodwormPet(index int) *BloodwormPet {
 			BaseDamageMin:  37,
 			BaseDamageMax:  42,
 			SwingSpeed:     2,
-			SwingDuration:  time.Second * 2,
 			CritMultiplier: 2,
 		},
 		AutoSwingMelee: true,
@@ -57,10 +54,10 @@ func (bloodworm *BloodwormPet) Initialize() {
 
 }
 
-func (bloodworm *BloodwormPet) Reset(sim *core.Simulation) {
+func (bloodworm *BloodwormPet) Reset(_ *core.Simulation) {
 }
 
-func (bloodworm *BloodwormPet) OnGCDReady(sim *core.Simulation) {
+func (bloodworm *BloodwormPet) OnGCDReady(_ *core.Simulation) {
 }
 
 func (bloodworm *BloodwormPet) enable(sim *core.Simulation) {

@@ -1,6 +1,7 @@
 package shadow
 
 import (
+	"github.com/wowsims/wotlk/sim/common/wotlk"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -48,6 +49,7 @@ func NewShadowPriest(character core.Character, options *proto.Player) *ShadowPri
 
 	spriest.EnableResumeAfterManaWait(spriest.tryUseGCD)
 	spriest.CanRolloverSWP = spriest.Talents.MindFlay && spriest.Talents.PainAndSuffering > 0
+	wotlk.ConstructValkyrPets(&spriest.Character)
 
 	return spriest
 }

@@ -374,10 +374,10 @@ func (hunter *Hunter) applyFrenzy() {
 		ActionID: core.ActionID{SpellID: 19625},
 		Duration: time.Second * 8,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.MeleeSpeedMultiplier *= 1.3
+			aura.Unit.MultiplyMeleeSpeed(sim, 1.3)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.MeleeSpeedMultiplier /= 1.3
+			aura.Unit.MultiplyMeleeSpeed(sim, 1/1.3)
 		},
 	})
 

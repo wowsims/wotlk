@@ -603,6 +603,7 @@ const petNameToActionId: Record<string, ActionId> = {
 	'Gargoyle': ActionId.fromSpellId(49206),
 	'Ghoul': ActionId.fromSpellId(46584),
 	'Army of the Dead': ActionId.fromSpellId(42650),
+	'Valkyr': ActionId.fromSpellId(71844),
 };
 
 // https://wowhead.com/wotlk/hunter-pets

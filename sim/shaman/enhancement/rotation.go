@@ -4,7 +4,8 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-func (enh *EnhancementShaman) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
+func (enh *EnhancementShaman) OnAutoAttack(sim *core.Simulation, _ *core.Spell) {
+	enh.previousSwingAt = sim.CurrentTime
 }
 
 func (enh *EnhancementShaman) OnGCDReady(sim *core.Simulation) {

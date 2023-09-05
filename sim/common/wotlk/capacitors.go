@@ -172,7 +172,7 @@ func init() {
 
 		core.NewItemEffect(itemID, func(agent core.Agent) {
 			character := agent.GetCharacter()
-			if !character.AutoAttacks.IsEnabled() {
+			if !character.AutoAttacks.AutoSwingMelee {
 				return
 			}
 

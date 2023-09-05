@@ -570,6 +570,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBalance-AllItems-Nibelung-49992"
+ value: {
+  dps: 8056.53918
+  tps: 7878.0738
+ }
+}
+dps_results: {
+ key: "TestBalance-AllItems-Nibelung-50648"
+ value: {
+  dps: 8056.53918
+  tps: 7878.0738
+ }
+}
+dps_results: {
  key: "TestBalance-AllItems-NightsongBattlegear"
  value: {
   dps: 4675.98136

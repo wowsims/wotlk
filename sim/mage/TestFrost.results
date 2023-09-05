@@ -467,6 +467,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFrost-AllItems-Nibelung-49992"
+ value: {
+  dps: 5473.04742
+  tps: 4364.42179
+ }
+}
+dps_results: {
+ key: "TestFrost-AllItems-Nibelung-50648"
+ value: {
+  dps: 5473.04742
+  tps: 4364.42179
+ }
+}
+dps_results: {
  key: "TestFrost-AllItems-OfferingofSacrifice-37638"
  value: {
   dps: 5192.21914

@@ -103,22 +103,22 @@ func (druid *Druid) QueueMaul(sim *core.Simulation) {
 // Returns true if the regular melee swing should be used, false otherwise.
 func (druid *Druid) MaulReplaceMH(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
 	if !druid.MaulQueueAura.IsActive() {
-		return nil
+		return mhSwingSpell
 	}
 
-	if druid.CurrentRage() < druid.Maul.DefaultCast.Cost {
+	if druid.CurrentRage() < druid.MaulRageThreshold {
 		druid.MaulQueueAura.Deactivate(sim)
-		return nil
-	} else if druid.CurrentRage() < druid.MaulRageThreshold {
-		if mhSwingSpell == druid.AutoAttacks.MHAuto {
-			druid.MaulQueueAura.Deactivate(sim)
-			return nil
-		}
+		return mhSwingSpell
+	}
+
+	if !druid.Maul.Spell.CanCast(sim, druid.CurrentTarget) {
+		druid.MaulQueueAura.Deactivate(sim)
+		return mhSwingSpell
 	}
 
 	return druid.Maul.Spell
 }
 
-func (druid *Druid) ShouldQueueMaul(sim *core.Simulation) bool {
+func (druid *Druid) ShouldQueueMaul(_ *core.Simulation) bool {
 	return druid.CurrentRage() >= druid.MaulRageThreshold
 }

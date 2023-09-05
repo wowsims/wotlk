@@ -10,6 +10,7 @@ import (
 	"testing"
 	"time"
 
+	_ "github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	googleProto "google.golang.org/protobuf/proto"
@@ -28,23 +29,23 @@ var basicSpec = &proto.Player_ElementalShaman{
 
 var p1Equip = &proto.EquipmentSpec{
 	Items: []*proto.ItemSpec{
-		{Id: 29035, Gems: []int32{34220, 24059}, Enchant: 29191},
-		{Id: 28762},
-		{Id: 29037, Gems: []int32{24059, 24059}, Enchant: 28909},
-		{Id: 28766},
-		{Id: 29519},
-		{Id: 29521},
-		{Id: 28780},
-		{Id: 29520},
-		{Id: 30541},
-		{Id: 28810},
-		{Id: 30667},
-		{Id: 28753},
-		{Id: 28785},
-		{Id: 29370},
-		{Id: 28248},
-		{Id: 28770, Enchant: 22555},
-		{Id: 29268},
+		{Id: 40516, Enchant: 3820, Gems: []int32{41285, 40027}},
+		{Id: 44661, Gems: []int32{39998}},
+		{Id: 40286, Enchant: 3810},
+		{Id: 44005, Enchant: 3722, Gems: []int32{40027}},
+		{Id: 40514, Enchant: 3832, Gems: []int32{42144, 42144}},
+		{Id: 40324, Enchant: 2332, Gems: []int32{42144, 0}},
+		{Id: 40302, Enchant: 3246, Gems: []int32{0}},
+		{Id: 40301, Gems: []int32{40014}},
+		{Id: 40560, Enchant: 3721},
+		{Id: 40519, Enchant: 3826},
+		{Id: 37694},
+		{Id: 40399},
+		{Id: 40432},
+		{Id: 40255},
+		{Id: 40395, Enchant: 3834},
+		{Id: 40401, Enchant: 1128},
+		{Id: 40267},
 	},
 }
 

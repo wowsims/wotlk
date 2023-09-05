@@ -216,9 +216,9 @@ enum ShamanImbue {
 }
 
 enum ShamanSyncType {
-    NoSync = 0;
-    SyncMainhandOffhandSwings = 1;
-    DelayOffhandSwings = 2;
+  NoSync = 0;
+  SyncMainhandOffhandSwings = 1;
+  DelayOffhandSwings = 2;
 	Auto = 3;
 }
 
@@ -269,7 +269,7 @@ message EnhancementShaman {
 		}
 		RotationType rotation_type = 2;
 
-		//TODO: add spells here for custom rotation (if nessecary?)
+		//TODO: add spells here for custom rotation (if necessary?)
 		enum CustomRotationSpell {
 			NoSpell = 0;
 			Stormstrike = 1;

@@ -56,7 +56,6 @@ func (shaman *Shaman) NewSpiritWolf(index int) *SpiritWolf {
 			BaseDamageMin:  246,
 			BaseDamageMax:  372,
 			SwingSpeed:     1.5,
-			SwingDuration:  time.Millisecond * 1500,
 			CritMultiplier: 2,
 		},
 		AutoSwingMelee: true,
@@ -94,7 +93,7 @@ func (spiritWolf *SpiritWolf) Initialize() {
 	// Nothing
 }
 
-func (spiritWolf *SpiritWolf) OnGCDReady(sim *core.Simulation) {
+func (spiritWolf *SpiritWolf) OnGCDReady(_ *core.Simulation) {
 	spiritWolf.DoNothing()
 }
 

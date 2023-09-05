@@ -55,12 +55,12 @@ func NewElementalShaman(character core.Character, options *proto.Player) *Elemen
 	}
 	ele.EnableResumeAfterManaWait(ele.tryUseGCD)
 
-	if ele.HasMHWeapon() {
-		ele.ApplyFlametongueImbueToItem(ele.GetMHWeapon(), false)
+	if mh := ele.GetMHWeapon(); mh != nil {
+		ele.ApplyFlametongueImbueToItem(mh, false)
 	}
 
-	if ele.HasOHWeapon() {
-		ele.ApplyFlametongueImbueToItem(ele.GetOHWeapon(), false)
+	if oh := ele.GetOHWeapon(); oh != nil {
+		ele.ApplyFlametongueImbueToItem(oh, false)
 	}
 
 	if ele.Talents.FeralSpirit {

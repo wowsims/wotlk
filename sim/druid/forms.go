@@ -1,12 +1,10 @@
 package druid
 
 import (
-	"math"
-	"time"
-
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
+	"math"
 )
 
 type DruidForm uint8
@@ -49,25 +47,23 @@ func (druid *Druid) ClearForm(sim *core.Simulation) {
 
 func (druid *Druid) GetCatWeapon() core.Weapon {
 	return core.Weapon{
-		BaseDamageMin:              43,
-		BaseDamageMax:              66,
-		SwingSpeed:                 1.0,
-		NormalizedSwingSpeed:       1.0,
-		SwingDuration:              time.Second,
-		CritMultiplier:             druid.MeleeCritMultiplier(Cat),
-		MeleeAttackRatingPerDamage: core.MeleeAttackRatingPerDamage,
+		BaseDamageMin:        43,
+		BaseDamageMax:        66,
+		SwingSpeed:           1.0,
+		NormalizedSwingSpeed: 1.0,
+		CritMultiplier:       druid.MeleeCritMultiplier(Cat),
+		AttackPowerPerDPS:    core.DefaultAttackPowerPerDPS,
 	}
 }
 
 func (druid *Druid) GetBearWeapon() core.Weapon {
 	return core.Weapon{
-		BaseDamageMin:              109,
-		BaseDamageMax:              165,
-		SwingSpeed:                 2.5,
-		NormalizedSwingSpeed:       2.5,
-		SwingDuration:              time.Millisecond * 2500,
-		CritMultiplier:             druid.MeleeCritMultiplier(Bear),
-		MeleeAttackRatingPerDamage: core.MeleeAttackRatingPerDamage,
+		BaseDamageMin:        109,
+		BaseDamageMax:        165,
+		SwingSpeed:           2.5,
+		NormalizedSwingSpeed: 2.5,
+		CritMultiplier:       druid.MeleeCritMultiplier(Bear),
+		AttackPowerPerDPS:    core.DefaultAttackPowerPerDPS,
 	}
 }
 
@@ -139,6 +135,7 @@ func (druid *Druid) registerCatFormSpell() {
 			druid.SetCurrentPowerBar(core.EnergyBar)
 
 			druid.AutoAttacks.MH = clawWeapon
+			druid.AutoAttacks.UpdateMeleeDurations()
 
 			druid.PseudoStats.ThreatMultiplier *= 0.71
 			druid.PseudoStats.SpiritRegenMultiplier *= AnimalSpiritRegenSuppression
@@ -170,7 +167,9 @@ func (druid *Druid) registerCatFormSpell() {
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			druid.form = Humanoid
+
 			druid.AutoAttacks.MH = druid.WeaponFromMainHand(druid.MeleeCritMultiplier(Humanoid))
+			druid.AutoAttacks.UpdateMeleeDurations()
 
 			druid.PseudoStats.ThreatMultiplier /= 0.71
 			druid.PseudoStats.SpiritRegenMultiplier /= AnimalSpiritRegenSuppression
@@ -271,6 +270,8 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.SetCurrentPowerBar(core.RageBar)
 
 			druid.AutoAttacks.MH = clawWeapon
+			druid.AutoAttacks.UpdateMeleeDurations()
+
 			druid.PseudoStats.ThreatMultiplier *= 2.1021
 			druid.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.02*float64(druid.Talents.MasterShapeshifter)
 			druid.PseudoStats.DamageTakenMultiplier *= potpdtm
@@ -304,6 +305,7 @@ func (druid *Druid) registerBearFormSpell() {
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			druid.form = Humanoid
 			druid.AutoAttacks.MH = druid.WeaponFromMainHand(druid.MeleeCritMultiplier(Humanoid))
+			druid.AutoAttacks.UpdateMeleeDurations()
 
 			druid.PseudoStats.ThreatMultiplier /= 2.1021
 			druid.PseudoStats.DamageDealtMultiplier /= 1.0 + 0.02*float64(druid.Talents.MasterShapeshifter)
