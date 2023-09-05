@@ -1,8 +1,6 @@
 package deathknight
 
 import (
-	"time"
-
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -22,7 +20,7 @@ type GhoulPet struct {
 	ownerMeleeMultiplier float64
 }
 
-func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
+func (dk *Deathknight) NewArmyGhoulPet(_ int) *GhoulPet {
 	// Remove any hit that would be given by NocS as it does not translate to pets
 	nocsHit := 0.0
 	if dk.nervesOfColdSteelActive() {
@@ -56,12 +54,11 @@ func (dk *Deathknight) NewArmyGhoulPet(index int) *GhoulPet {
 
 	ghoulPet.EnableAutoAttacks(ghoulPet, core.AutoAttackOptions{
 		MainHand: core.Weapon{
-			BaseDamageMin:              30,
-			BaseDamageMax:              74,
-			SwingSpeed:                 2,
-			SwingDuration:              time.Second * 2,
-			CritMultiplier:             2,
-			MeleeAttackRatingPerDamage: 17.5,
+			BaseDamageMin:     30,
+			BaseDamageMax:     74,
+			SwingSpeed:        2,
+			CritMultiplier:    2,
+			AttackPowerPerDPS: 17.5,
 		},
 		AutoSwingMelee: true,
 	})
@@ -117,12 +114,11 @@ func (dk *Deathknight) NewGhoulPet(permanent bool) *GhoulPet {
 
 	ghoulPet.EnableAutoAttacks(ghoulPet, core.AutoAttackOptions{
 		MainHand: core.Weapon{
-			BaseDamageMin:              50,
-			BaseDamageMax:              90,
-			SwingSpeed:                 2,
-			SwingDuration:              time.Second * 2,
-			CritMultiplier:             2,
-			MeleeAttackRatingPerDamage: 17.5,
+			BaseDamageMin:     50,
+			BaseDamageMax:     90,
+			SwingSpeed:        2,
+			CritMultiplier:    2,
+			AttackPowerPerDPS: 17.5,
 		},
 		AutoSwingMelee: true,
 	})

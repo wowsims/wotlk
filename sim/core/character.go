@@ -673,9 +673,9 @@ func (character *Character) doneIteration(sim *Simulation) {
 
 func (character *Character) GetPseudoStatsProto() []float64 {
 	vals := make([]float64, stats.PseudoStatsLen)
-	vals[proto.PseudoStat_PseudoStatMainHandDps] = character.WeaponFromMainHand(0).DPS()
-	vals[proto.PseudoStat_PseudoStatOffHandDps] = character.WeaponFromOffHand(0).DPS()
-	vals[proto.PseudoStat_PseudoStatRangedDps] = character.WeaponFromRanged(0).DPS()
+	vals[proto.PseudoStat_PseudoStatMainHandDps] = character.AutoAttacks.MH.DPS()
+	vals[proto.PseudoStat_PseudoStatOffHandDps] = character.AutoAttacks.OH.DPS()
+	vals[proto.PseudoStat_PseudoStatRangedDps] = character.AutoAttacks.Ranged.DPS()
 	vals[proto.PseudoStat_PseudoStatBlockValueMultiplier] = character.PseudoStats.BlockValueMultiplier
 	// Base values are modified by Enemy attackTables, but we display for LVL 80 enemy as paperdoll default
 	vals[proto.PseudoStat_PseudoStatDodge] = character.PseudoStats.BaseDodge + character.GetDiminishedDodgeChance()

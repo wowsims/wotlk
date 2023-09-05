@@ -52,7 +52,6 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 			BaseDamageMin:  50,
 			BaseDamageMax:  78,
 			SwingSpeed:     atkSpd,
-			SwingDuration:  core.DurationFromSeconds(atkSpd),
 			CritMultiplier: 2,
 		},
 		AutoSwingMelee: true,
@@ -89,7 +88,7 @@ func (hp *HunterPet) Initialize() {
 	hp.focusDump = hp.NewPetAbility(hp.config.FocusDump, false)
 }
 
-func (hp *HunterPet) Reset(sim *core.Simulation) {
+func (hp *HunterPet) Reset(_ *core.Simulation) {
 	hp.uptimePercent = core.MinFloat(1, core.MaxFloat(0, hp.hunterOwner.Options.PetUptime))
 }
 

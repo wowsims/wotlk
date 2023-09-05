@@ -30,7 +30,7 @@ func (warrior *Warrior) RegisterShatteringThrowCD() {
 				Duration: time.Minute * 5,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				if warrior.AutoAttacks.MainhandSwingSpeed() == warrior.AutoAttacks.OffhandSwingSpeed() {
+				if warrior.AutoAttacks.MH.SwingSpeed == warrior.AutoAttacks.OH.SwingSpeed {
 					warrior.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+cast.CastTime, true)
 				} else {
 					warrior.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+cast.CastTime, false)

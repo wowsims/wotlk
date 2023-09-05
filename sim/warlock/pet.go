@@ -50,7 +50,6 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 				BaseDamageMin:  88.8,
 				BaseDamageMax:  133.3,
 				SwingSpeed:     2,
-				SwingDuration:  time.Second * 2,
 				CritMultiplier: 2,
 			},
 			AutoSwingMelee: true,
@@ -87,7 +86,6 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 				BaseDamageMin:  98,
 				BaseDamageMax:  147,
 				SwingSpeed:     2,
-				SwingDuration:  time.Second * 2,
 				CritMultiplier: 2,
 			},
 			AutoSwingMelee: true,
@@ -110,7 +108,6 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 				BaseDamageMin:  88.8,
 				BaseDamageMax:  133.3,
 				SwingSpeed:     2,
-				SwingDuration:  time.Second * 2,
 				CritMultiplier: 2,
 			},
 			AutoSwingMelee: true,
@@ -298,7 +295,7 @@ func (wp *WarlockPet) Initialize() {
 	}
 }
 
-func (wp *WarlockPet) Reset(sim *core.Simulation) {
+func (wp *WarlockPet) Reset(_ *core.Simulation) {
 }
 
 func (wp *WarlockPet) OnGCDReady(sim *core.Simulation) {

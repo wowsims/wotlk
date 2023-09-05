@@ -112,7 +112,7 @@ func (hunter *Hunter) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 		raidBuffs.FerociousInspiration = true
 	}
 }
-func (hunter *Hunter) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
+func (hunter *Hunter) AddPartyBuffs(_ *proto.PartyBuffs) {
 }
 
 func (hunter *Hunter) Initialize() {
@@ -164,7 +164,7 @@ func (hunter *Hunter) Initialize() {
 	}
 }
 
-func (hunter *Hunter) Reset(sim *core.Simulation) {
+func (hunter *Hunter) Reset(_ *core.Simulation) {
 	hunter.mayMoveAt = 0
 	hunter.manaSpentPerSecondAtFirstAspectSwap = 0
 	hunter.permaHawk = false
@@ -216,8 +216,8 @@ func NewHunter(character core.Character, options *proto.Player) *Hunter {
 		MainHand: hunter.WeaponFromMainHand(0),
 		OffHand:  hunter.WeaponFromOffHand(0),
 		Ranged:   rangedWeapon,
-		ReplaceMHSwing: func(sim *core.Simulation, _ *core.Spell) *core.Spell {
-			return hunter.TryRaptorStrike(sim)
+		ReplaceMHSwing: func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
+			return hunter.TryRaptorStrike(sim, mhSwingSpell)
 		},
 		AutoSwingRanged: true,
 	})
