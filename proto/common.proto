@@ -515,6 +515,8 @@ message IndividualBuffs {
 	int32 tricks_of_the_trades = 19;
 	int32 divine_guardians = 23;
 	int32 pain_suppressions = 24;
+	int32 hand_of_sacrifices = 25;
+	int32 guardian_spirits = 26;
 
 	// Technically a debuff, but only used by individual sims.
 	int32 shattering_throws = 20;

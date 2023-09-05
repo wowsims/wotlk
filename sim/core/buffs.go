@@ -277,7 +277,9 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 	registerManaTideTotemCD(agent, partyBuffs.ManaTideTotems)
 	registerInnervateCD(agent, individualBuffs.Innervates)
 	registerDivineGuardianCD(agent, individualBuffs.DivineGuardians)
+	registerHandOfSacrificeCD(agent, individualBuffs.HandOfSacrifices)
 	registerPainSuppressionCD(agent, individualBuffs.PainSuppressions)
+	registerGuardianSpiritCD(agent, individualBuffs.GuardianSpirits)
 
 	character.AddStats(stats.Stats{
 		stats.SpellCrit: 28 * float64(partyBuffs.AtieshMage),
@@ -834,6 +836,55 @@ func DivineGuardianAura(character *Character, actionTag int32) *Aura {
 	})
 }
 
+var HandOfSacrificeAuraTag = "HandOfSacrifice"
+
+const HandOfSacrificeDuration = time.Millisecond * 10500 // subtract Divine Shield GCD
+const HandOfSacrificeCD = time.Minute * 5                // use Divine Shield CD here
+
+func registerHandOfSacrificeCD(agent Agent, numSacs int32) {
+	if numSacs == 0 {
+		return
+	}
+
+	hosAura := HandOfSacrificeAura(agent.GetCharacter(), -1)
+
+	registerExternalConsecutiveCDApproximation(
+		agent,
+		externalConsecutiveCDApproximation{
+			ActionID:         ActionID{SpellID: 6940, Tag: -1},
+			AuraTag:          HandOfSacrificeAuraTag,
+			CooldownPriority: CooldownPriorityLow,
+			AuraDuration:     HandOfSacrificeDuration,
+			AuraCD:           HandOfSacrificeCD,
+			Type:             CooldownTypeSurvival,
+
+			ShouldActivate: func(sim *Simulation, character *Character) bool {
+				return true
+			},
+			AddAura: func(sim *Simulation, character *Character) {
+				hosAura.Activate(sim)
+			},
+		},
+		numSacs)
+}
+
+func HandOfSacrificeAura(character *Character, actionTag int32) *Aura {
+	actionID := ActionID{SpellID: 6940, Tag: actionTag}
+
+	return character.GetOrRegisterAura(Aura{
+		Label:    "HandOfSacrifice-" + actionID.String(),
+		Tag:      HandOfSacrificeAuraTag,
+		ActionID: actionID,
+		Duration: HandOfSacrificeDuration,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			character.PseudoStats.DamageTakenMultiplier *= 0.7
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			character.PseudoStats.DamageTakenMultiplier /= 0.7
+		},
+	})
+}
+
 var PainSuppressionAuraTag = "PainSuppression"
 
 const PainSuppressionDuration = time.Second * 8
@@ -877,6 +928,65 @@ func PainSuppressionAura(character *Character, actionTag int32) *Aura {
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			character.PseudoStats.DamageTakenMultiplier /= 0.6
+		},
+	})
+}
+
+var GuardianSpiritAuraTag = "GuardianSpirit"
+
+const GuardianSpiritDuration = time.Second * 10
+const GuardianSpiritCD = time.Minute * 3
+
+func registerGuardianSpiritCD(agent Agent, numGuardianSpirits int32) {
+	if numGuardianSpirits == 0 {
+		return
+	}
+
+	character := agent.GetCharacter()
+	gsAura := GuardianSpiritAura(character, -1)
+	healthMetrics := character.NewHealthMetrics(ActionID{SpellID: 47788})
+
+	character.AddDynamicDamageTakenModifier(func(sim *Simulation, _ *Spell, result *SpellResult) {
+		if (result.Damage >= character.CurrentHealth()) && gsAura.IsActive() {
+			result.Damage = character.CurrentHealth()
+			character.GainHealth(sim, 0.5*character.MaxHealth(), healthMetrics)
+			gsAura.Deactivate(sim)
+		}
+	})
+
+	registerExternalConsecutiveCDApproximation(
+		agent,
+		externalConsecutiveCDApproximation{
+			ActionID:         ActionID{SpellID: 47788, Tag: -1},
+			AuraTag:          GuardianSpiritAuraTag,
+			CooldownPriority: CooldownPriorityLow,
+			AuraDuration:     GuardianSpiritDuration,
+			AuraCD:           GuardianSpiritCD,
+			Type:             CooldownTypeSurvival,
+
+			ShouldActivate: func(sim *Simulation, character *Character) bool {
+				return true
+			},
+			AddAura: func(sim *Simulation, character *Character) {
+				gsAura.Activate(sim)
+			},
+		},
+		numGuardianSpirits)
+}
+
+func GuardianSpiritAura(character *Character, actionTag int32) *Aura {
+	actionID := ActionID{SpellID: 47788, Tag: actionTag}
+
+	return character.GetOrRegisterAura(Aura{
+		Label:    "GuardianSpirit-" + actionID.String(),
+		Tag:      GuardianSpiritAuraTag,
+		ActionID: actionID,
+		Duration: GuardianSpiritDuration,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			character.PseudoStats.HealingTakenMultiplier *= 1.4
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			character.PseudoStats.HealingTakenMultiplier /= 1.4
 		},
 	})
 }
