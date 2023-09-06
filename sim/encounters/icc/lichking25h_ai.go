@@ -136,10 +136,14 @@ func (ai *LichKing25HAI) DoAction(sim *core.Simulation) {
 	if ai.Target.GCD.IsReady(sim) {
 		if ai.Target.CurrentTarget != nil {
 			if ai.SoulReaper.IsReady(sim) && sim.CurrentTime >= ai.SoulReaper.CD.Duration {
-				// Based on log analysis, Soul Reaper appears to have a ~40% chance to "proc" on every 1.62 second server tick once it is off cooldown.
+				// Based on log analysis, Soul Reaper appears to have a ~75% chance to "proc" on every 1.62 second server tick once it is off cooldown.
+				// Note that analysis based only on the cast intervals supported a ~40% proc chance fit. However, many of the apparent delays in Soul Reaper casts are
+				// due to Defile and Infest casts that take priority when the cooldowns overlap. Once these CD conflicts are corrected for, the variance in Soul Reaper
+				// cast times is a fair bit lower. A more fleshed out boss AI would directly model the Defile and Infest casts, with more sophisticated APLs for tank CD
+				// usage in order to delay pre-emptive CDs when the player knows that a 2 second cast will take place before any potential Soul Reaper.
 				procRoll := sim.RandomFloat("Soul Reaper AI")
 
-				if procRoll < 0.4 {
+				if procRoll < 0.75 {
 					ai.SoulReaper.Cast(sim, ai.Target.CurrentTarget)
 					return
 				}
