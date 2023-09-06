@@ -448,8 +448,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralDoubleArmorPenTrinketsWithDesync-AllItems-IdoloftheCryingMoon-50456"
  value: {
-  dps: 10056.23303
-  tps: 7206.11165
+  dps: 10023.92346
+  tps: 7182.9475
  }
 }
 dps_results: {
