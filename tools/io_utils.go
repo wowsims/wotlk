@@ -4,7 +4,6 @@ package tools
 import (
 	"bufio"
 	"bytes"
-	"encoding/csv"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -12,8 +11,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"reflect"
-	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -28,17 +25,11 @@ import (
 var readWebThreads = flag.Int("readWebThreads", 8, "number of parallel workers to fetch web pages")
 
 func ReadFile(filePath string) string {
-	bytes, err := os.ReadFile(filePath)
+	b, err := os.ReadFile(filePath)
 	if err != nil {
 		log.Fatalf("Failed to open %s: %s", filePath, err)
 	}
-	return string(bytes)
-}
-func ReadFileLines(filePath string) []string {
-	return readFileLinesInternal(filePath, true)
-}
-func ReadFileLinesOrNil(filePath string) []string {
-	return readFileLinesInternal(filePath, false)
+	return string(b)
 }
 func readFileLinesInternal(filePath string, throwIfMissing bool) []string {
 	file, err := os.Open(filePath)
@@ -60,9 +51,6 @@ func readFileLinesInternal(filePath string, throwIfMissing bool) []string {
 	return lines
 }
 
-func ReadMap(filePath string) map[string]string {
-	return readMapInternal(filePath, true)
-}
 func ReadMapOrNil(filePath string) map[string]string {
 	return readMapInternal(filePath, false)
 }
@@ -98,19 +86,6 @@ func WriteFileLines(filePath string, lines []string) {
 	}
 }
 
-func WriteMap(filePath string, contents map[string]string) {
-	lines := make([]string, len(contents))
-	i := 0
-	for k, v := range contents {
-		lines[i] = fmt.Sprintf("%s,%s", k, v)
-		i++
-	}
-
-	// Sort so the output is stable.
-	sort.Strings(lines)
-
-	WriteFileLines(filePath, lines)
-}
 func WriteMapSortByIntKey(filePath string, contents map[string]string) {
 	WriteMapCustomSort(filePath, contents, func(a, b string) bool {
 		intA, err1 := strconv.Atoi(a)
@@ -149,67 +124,26 @@ func WriteMapCustomSort(filePath string, contents map[string]string, sortFunc fu
 	WriteFileLines(filePath, lines)
 }
 
-func ReadCsvFile(filePath string) [][]string {
-	f, err := os.Open(filePath)
-	if err != nil {
-		log.Fatal("Unable to read input file "+filePath, err)
-	}
-	defer f.Close()
-
-	csvReader := csv.NewReader(f)
-	records, err := csvReader.ReadAll()
-	if err != nil {
-		log.Fatal("Unable to parse file as CSV for "+filePath, err)
-	}
-
-	return records
-}
-
-func WriteProtoArrayToBuilder(arrInterface interface{}, builder *strings.Builder, name string) {
-	arr := InterfaceSlice(arrInterface)
-	builder.WriteString("\"")
-	builder.WriteString(name)
-	builder.WriteString("\":[\n")
+func WriteProtoArrayToBuffer[T googleProto.Message](arr []T, buffer *bytes.Buffer, name string) {
+	buffer.WriteString("\"")
+	buffer.WriteString(name)
+	buffer.WriteString("\":[\n")
 
 	for i, elem := range arr {
-		jsonBytes, err := protojson.MarshalOptions{UseEnumNumbers: true}.Marshal(elem.(googleProto.Message))
+		jsonBytes, err := protojson.MarshalOptions{UseEnumNumbers: true}.Marshal(elem)
 		if err != nil {
 			log.Printf("[ERROR] Failed to marshal: %s", err.Error())
 		}
 
 		// Format using Compact() so we get a stable output (no random diffs for version control).
-		var formatted bytes.Buffer
-		json.Compact(&formatted, jsonBytes)
-		builder.WriteString(string(formatted.Bytes()))
+		json.Compact(buffer, jsonBytes)
 
 		if i != len(arr)-1 {
-			builder.WriteString(",")
+			buffer.WriteString(",")
 		}
-		builder.WriteString("\n")
+		buffer.WriteString("\n")
 	}
-	builder.WriteString("]")
-}
-
-// Needed because Go won't let us cast from []FooProto --> []googleProto.Message
-// https://stackoverflow.com/questions/12753805/type-converting-slices-of-interfaces
-func InterfaceSlice(slice interface{}) []interface{} {
-	s := reflect.ValueOf(slice)
-	if s.Kind() != reflect.Slice {
-		panic("InterfaceSlice() given a non-slice type")
-	}
-
-	// Keep the distinction between nil and empty slice input
-	if s.IsNil() {
-		return nil
-	}
-
-	ret := make([]interface{}, s.Len())
-
-	for i := 0; i < s.Len(); i++ {
-		ret[i] = s.Index(i).Interface()
-	}
-
-	return ret
+	buffer.WriteString("]")
 }
 
 // Fetches web results a single url, and returns the page contents as a string.
@@ -293,7 +227,7 @@ func ReadWebMultiMap[K comparable](keys []K, keyToUrl func(K) string) map[K]stri
 	urls := core.MapSlice(keys, keyToUrl)
 	results := ReadWebMulti(urls)
 
-	mapResults := make(map[K]string)
+	mapResults := make(map[K]string, len(urls))
 	for i := 0; i < len(urls); i++ {
 		mapResults[keys[i]] = results[i]
 	}
