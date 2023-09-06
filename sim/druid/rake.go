@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (druid *Druid) registerRakeSpell() {
@@ -74,23 +73,19 @@ func (druid *Druid) registerRakeSpell() {
 			baseDamage := 176 + 0.01*spell.MeleeAttackPower()
 			potentialTicks := core.MinInt32(numTicks, int32(sim.GetRemainingDuration()/time.Second*3))
 			tickBase := (358 + 0.06*spell.MeleeAttackPower()) * float64(potentialTicks)
-			if druid.BleedCategories.Get(target).AnyActive() {
-				baseDamage *= 1.3
-				tickBase *= 1.3
-			}
 
-			initial := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
-			ticks := spell.CalcDamage(sim, target, tickBase, spell.OutcomeExpectedMagicAlwaysHit)
+			initial := spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
+			ticks := spell.CalcPeriodicDamage(sim, target, tickBase, spell.OutcomeExpectedMagicAlwaysHit)
 
-			critRating := druid.GetStat(stats.MeleeCrit) + spell.BonusCritRating
-			critChance := critRating / (core.CritRatingPerCritChance * 100)
+			attackTable := spell.Unit.AttackTables[target.UnitIndex]
+			critChance := spell.PhysicalCritChance(attackTable)
 			critMod := (critChance * (spell.CritMultiplier - 1))
 
 			if dotCanCrit {
-				ticks.Damage *= critChance * (1 + critMod)
+				ticks.Damage *= 1 + critMod
 			}
 
-			ticks.Damage += initial.Damage * (critChance * (1 + critMod))
+			ticks.Damage += initial.Damage * (1 + critMod)
 			return ticks
 		},
 	})
