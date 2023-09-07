@@ -125,6 +125,9 @@ func (action *APLActionStrictSequence) IsReady(sim *Simulation) bool {
 	if !action.unit.GCD.IsReady(sim) {
 		return false
 	}
+	if !action.subactions[0].IsReady(sim) {
+		return false
+	}
 	for _, spell := range action.subactionSpells {
 		if !spell.IsReady(sim) {
 			return false

@@ -606,6 +606,10 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 		return spriest.MindBlast, 0
 	}
 
+	if remain_fight*math.Pow(10, -9) < 2*float64(gcd.Seconds()) && !spriest.options.UseMindBlast {
+		bestIdx = dpIdx
+	}
+
 	if currentWait <= gcd/6 && currentWait > 0 && bestIdx != swpIdx && bestIdx != mfIdx {
 		return nil, currentWait
 	}
