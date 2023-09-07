@@ -42,7 +42,7 @@ func readFileLinesInternal(filePath string, throwIfMissing bool) []string {
 	}
 	defer file.Close()
 
-	lines := []string{}
+	var lines []string
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		lines = append(lines, scanner.Text())
@@ -148,12 +148,15 @@ func WriteProtoArrayToBuffer[T googleProto.Message](arr []T, buffer *bytes.Buffe
 
 // Fetches web results a single url, and returns the page contents as a string.
 func ReadWeb(url string) (string, error) {
-	client := http.Client{}
-	resp, err := client.Get(url)
+	resp, err := http.Get(url)
 	if err != nil {
 		return "", err
 	}
-	body, _ := io.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	resp.Body.Close()
 	return string(body), nil
 }
 func ReadWebRequired(url string) string {
