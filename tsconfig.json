@@ -6,7 +6,8 @@
         "strict": true,
         "lib": [
             "DOM",
-            "ES2021"
+            "ES2021",
+            "DOM.Iterable"
         ],
         "types": [],
         "outDir": "dist/wotlk",

@@ -214,6 +214,12 @@
 	overflow-y: scroll;
 	overflow-x: hidden;
   padding: 0;
+  
+  &.hide-ep {
+    .selector-modal-list-item-ep {
+      display:none;
+    }
+  }
 }
 
 // TODO: Move all of these to a shared file, as they're used in other places too

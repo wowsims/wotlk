@@ -1112,7 +1112,6 @@ export class ItemList<T> {
 		}
 
 		this.applyFilters();
-		this.hideOrShowEPValues();
 
 		parent.appendChild(this.tabContent);
 	}
@@ -1222,17 +1221,19 @@ export class ItemList<T> {
 
 	public hideOrShowEPValues() {
 		const labels = this.tabContent.getElementsByClassName("ep-delta-label")
-		const epItems = this.tabContent.getElementsByClassName("selector-modal-list-item-ep")
-		const display = this.player.sim.getShowEPValues() ? "" : "none"
+		const container = this.tabContent.getElementsByClassName("selector-modal-list")
+		const show = this.player.sim.getShowEPValues();
+		const display = show ? "" : "none"
 
-		for (let i = 0; i < epItems.length; i++) {
-			const epItem = epItems.item(i) as HTMLElement;
-			epItem.style.display = display
+		for (let label of labels) {
+			(label as HTMLElement).style.display = display;
 		}
 
-		for (let i = 0; i < labels.length; i++) {
-			const label = labels.item(i) as HTMLElement;
-			label.style.display = display
+		for (let c of container) {
+			if (show)
+				c.classList.remove("hide-ep");
+			else
+				c.classList.add("hide-ep");
 		}
 	}
 
