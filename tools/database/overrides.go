@@ -631,12 +631,15 @@ var GemOverrides = []*proto.UIGem{
 }
 var GemDenyList = map[int32]struct{}{
 	// pvp non-unique gems not in game currently.
-	32735: struct{}{},
-	35489: struct{}{},
-	38545: struct{}{},
-	38546: struct{}{},
-	38547: struct{}{},
-	38548: struct{}{},
-	38549: struct{}{},
-	38550: struct{}{},
+	32735: {},
+	34142: {}, // Infinite Sphere
+	34143: {}, // Chromatic Sphere
+	35489: {},
+	37430: {}, // Solid Sky Sapphire (Unused)
+	38545: {},
+	38546: {},
+	38547: {},
+	38548: {},
+	38549: {},
+	38550: {},
 }
