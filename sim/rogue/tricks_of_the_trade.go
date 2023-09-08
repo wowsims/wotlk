@@ -41,7 +41,7 @@ func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 			rogue.TricksOfTheTrade.CD.Set(core.NeverExpires)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			rogue.TricksOfTheTrade.CD.Set(time.Second * time.Duration(30-5*rogue.Talents.FilthyTricks))
+			rogue.TricksOfTheTrade.CD.Set(sim.CurrentTime + time.Second*time.Duration(30-5*rogue.Talents.FilthyTricks))
 		},
 	})
 
@@ -59,7 +59,7 @@ func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    rogue.NewTimer(),
-				Duration: core.NeverExpires, // CD handled by application aura
+				Duration: time.Second * time.Duration(30-5*rogue.Talents.FilthyTricks), // CD is handled by application aura
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
@@ -80,12 +80,8 @@ func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 			ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 				if hasShadowblades {
 					return rogue.CurrentEnergy() <= rogue.maxEnergy-15-rogue.EnergyTickMultiplier*10
-				} else if sim.CurrentTime < (tricksSpell.CD.Duration) {
-					// This assumes you precast a Tricks before combat, and activated it (and the cooldown) at 0.00 on the sim.
-					// This was put intentionally below the hasShadowblades check, because once you have that set a precast is no longer optimal.
-					return false
 				} else {
-					return rogue.CurrentEnergy() >= rogue.TricksOfTheTrade.DefaultCast.Cost
+					return true
 				}
 			},
 		})

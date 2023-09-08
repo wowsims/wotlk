@@ -186,6 +186,12 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerVanishSpell()
 
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()
+
+	if !rogue.HasSetBonus(Tier10, 2) {
+		rogue.RegisterPrepullAction(-10*time.Second, func(sim *core.Simulation) {
+			rogue.TricksOfTheTrade.Cast(sim, nil)
+		})
+	}
 }
 
 func (rogue *Rogue) ApplyEnergyTickMultiplier(multiplier float64) {
