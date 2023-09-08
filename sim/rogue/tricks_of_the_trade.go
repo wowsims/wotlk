@@ -27,6 +27,24 @@ func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 		rogue.TricksOfTheTradeAura.OnExpire = func(aura *core.Aura, sim *core.Simulation) {}
 	}
 
+	tricksOfTheTradeApplicationAura := rogue.GetOrRegisterAura(core.Aura{
+		ActionID: core.ActionID{SpellID: 57934},
+		Label:    "TricksOfTheTradeApplication",
+		Duration: 30 * time.Second,
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.Landed() {
+				rogue.TricksOfTheTradeAura.Activate(sim)
+				aura.Deactivate(sim)
+			}
+		},
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			rogue.TricksOfTheTrade.CD.Set(core.NeverExpires)
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			rogue.TricksOfTheTrade.CD.Set(time.Second * time.Duration(30-5*rogue.Talents.FilthyTricks))
+		},
+	})
+
 	rogue.TricksOfTheTrade = rogue.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagAPL,
@@ -41,11 +59,11 @@ func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    rogue.NewTimer(),
-				Duration: time.Second * time.Duration(30-5*rogue.Talents.FilthyTricks),
+				Duration: core.NeverExpires, // CD handled by application aura
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, spell *core.Spell) {
-			rogue.TricksOfTheTradeAura.Activate(sim)
+			tricksOfTheTradeApplicationAura.Activate(sim)
 			if hasShadowblades {
 				rogue.AddEnergy(sim, 15, energyMetrics)
 			}
