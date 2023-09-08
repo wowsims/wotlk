@@ -155,11 +155,6 @@ func (x *rotation_multi) setup(sim *core.Simulation, rogue *Rogue) {
 }
 
 func (x *rotation_multi) run(sim *core.Simulation, rogue *Rogue) {
-	if rogue.KillingSpreeAura.IsActive() {
-		rogue.DoNothing()
-		return
-	}
-
 	if len(x.rotationItems) < 1 {
 		panic("Rotation is empty")
 	}

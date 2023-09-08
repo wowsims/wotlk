@@ -396,11 +396,6 @@ func (x *rotation_generic) setup(_ *core.Simulation, rogue *Rogue) {
 }
 
 func (x *rotation_generic) run(sim *core.Simulation, rogue *Rogue) {
-	if rogue.KillingSpreeAura.IsActive() {
-		rogue.DoNothing()
-		return
-	}
-
 	for i := 0; i < len(x.prios); i++ {
 		switch p := x.prios[i]; p.check(sim, rogue) {
 		case Skip:
