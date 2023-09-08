@@ -110,7 +110,7 @@ func (eb *energyBar) ResetEnergyTick(sim *Simulation) {
 	eb.addEnergyInternal(sim, partialTickAmount, eb.regenMetrics)
 	eb.onEnergyGain(sim)
 
-	eb.newTickAction(sim, false)
+	eb.newTickAction(sim, false, sim.CurrentTime)
 }
 
 func (eb *energyBar) AddComboPoints(sim *Simulation, pointsToAdd int32, metrics *ResourceMetrics) {
@@ -132,7 +132,7 @@ func (eb *energyBar) SpendComboPoints(sim *Simulation, metrics *ResourceMetrics)
 	eb.comboPoints = 0
 }
 
-func (eb *energyBar) newTickAction(sim *Simulation, randomTickTime bool) {
+func (eb *energyBar) newTickAction(sim *Simulation, randomTickTime bool, startAt time.Duration) {
 	if eb.tickAction != nil {
 		eb.tickAction.Cancel(sim)
 	}
@@ -143,7 +143,7 @@ func (eb *energyBar) newTickAction(sim *Simulation, randomTickTime bool) {
 	}
 
 	pa := &PendingAction{
-		NextActionAt: sim.CurrentTime + nextTickDuration,
+		NextActionAt: startAt + nextTickDuration,
 		Priority:     ActionPriorityRegen,
 	}
 	pa.OnAction = func(sim *Simulation) {
@@ -164,7 +164,7 @@ func (eb *energyBar) reset(sim *Simulation) {
 
 	eb.currentEnergy = eb.maxEnergy
 	eb.comboPoints = 0
-	eb.newTickAction(sim, true)
+	eb.newTickAction(sim, true, sim.Environment.PrepullStartTime())
 }
 
 type EnergyCostOptions struct {
