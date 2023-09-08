@@ -162,15 +162,9 @@ func (eb *energyBar) reset(sim *Simulation) {
 		return
 	}
 
-	startAt := sim.CurrentTime
-	if len(sim.Environment.prepullActions) > 0 {
-		firstAction := sim.Environment.prepullActions[0]
-		startAt = firstAction.DoAt
-	}
-
 	eb.currentEnergy = eb.maxEnergy
 	eb.comboPoints = 0
-	eb.newTickAction(sim, true, startAt)
+	eb.newTickAction(sim, true, sim.Environment.PrepullStartTime())
 }
 
 type EnergyCostOptions struct {
