@@ -187,7 +187,7 @@ func (rogue *Rogue) Initialize() {
 
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()
 
-	if !rogue.HasSetBonus(Tier10, 2) {
+	if rogue.Rotation.TricksOfTheTradeFrequency != proto.Rogue_Rotation_Never && !rogue.HasSetBonus(Tier10, 2) {
 		rogue.RegisterPrepullAction(-10*time.Second, func(sim *core.Simulation) {
 			rogue.TricksOfTheTrade.Cast(sim, nil)
 		})
