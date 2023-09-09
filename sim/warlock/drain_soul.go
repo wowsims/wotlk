@@ -96,7 +96,7 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 	})
 
 	warlock.RegisterResetEffect(func(sim *core.Simulation) {
-		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {
+		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int32) {
 			if isExecute == 25 {
 				mult := (4.0 + 0.04*float64(warlock.Talents.DeathsEmbrace)) / (1 + 0.04*float64(warlock.Talents.DeathsEmbrace))
 				warlock.DrainSoul.DamageMultiplier = mult

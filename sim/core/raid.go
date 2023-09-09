@@ -288,7 +288,7 @@ func (raid *Raid) updatePlayersAndPets() {
 	for _, party := range raid.Parties {
 		party.Pets = []PetAgent{}
 		for _, player := range party.Players {
-			for _, petAgent := range player.GetCharacter().Pets {
+			for _, petAgent := range player.GetCharacter().PetAgents {
 				party.Pets = append(party.Pets, petAgent)
 				raidPets = append(raidPets, &petAgent.GetPet().Unit)
 			}
@@ -342,8 +342,8 @@ func (raid *Raid) applyCharacterEffects(raidConfig *proto.Raid) *proto.RaidStats
 			char.trackChanceOfDeath(playerConfig.HealingModel)
 			partyStats.Players[char.PartyIndex] = char.applyAllEffects(player, raidBuffs, partyBuffs, individualBuffs)
 
-			for _, petAgent := range char.Pets {
-				petAgent.GetCharacter().EnableHealthBar()
+			for _, pet := range char.Pets {
+				pet.EnableHealthBar()
 			}
 		}
 
@@ -353,13 +353,13 @@ func (raid *Raid) applyCharacterEffects(raidConfig *proto.Raid) *proto.RaidStats
 	return raidStats
 }
 
-func (raid Raid) AddStats(s stats.Stats) {
+func (raid *Raid) AddStats(s stats.Stats) {
 	for _, party := range raid.Parties {
 		party.AddStats(s)
 	}
 }
 
-func (raid Raid) GetPlayersOfClass(class proto.Class) []Agent {
+func (raid *Raid) GetPlayersOfClass(class proto.Class) []Agent {
 	classPlayers := []Agent{}
 	for _, party := range raid.Parties {
 		for _, agent := range party.Players {
@@ -371,7 +371,7 @@ func (raid Raid) GetPlayersOfClass(class proto.Class) []Agent {
 	return classPlayers
 }
 
-func (raid Raid) GetPlayerFromUnit(unit *Unit) Agent {
+func (raid *Raid) GetPlayerFromUnit(unit *Unit) Agent {
 	for _, party := range raid.Parties {
 		for _, agent := range party.PlayersAndPets {
 			if &agent.GetCharacter().Unit == unit {
@@ -382,7 +382,7 @@ func (raid Raid) GetPlayerFromUnit(unit *Unit) Agent {
 	return nil
 }
 
-func (raid Raid) GetFirstNPlayersOrPets(n int32) []*Unit {
+func (raid *Raid) GetFirstNPlayersOrPets(n int32) []*Unit {
 	return raid.AllUnits[:MinInt32(n, int32(len(raid.AllUnits)))]
 }
 
@@ -441,18 +441,6 @@ func SinglePlayerRaidProto(player *proto.Player, partyBuffs *proto.PartyBuffs, r
 		Buffs:   raidBuffs,
 		Debuffs: debuffs,
 	}
-}
-
-func RaidPlayersWithSpec(raid *proto.Raid, spec proto.Spec) []*proto.Player {
-	var specPlayers []*proto.Player
-	for _, party := range raid.Parties {
-		for _, player := range party.Players {
-			if player != nil && player.GetSpec() != nil && PlayerProtoToSpec(player) == spec {
-				specPlayers = append(specPlayers, player)
-			}
-		}
-	}
-	return specPlayers
 }
 
 func RaidPlayersWithClass(raid *proto.Raid, class proto.Class) []*proto.Player {

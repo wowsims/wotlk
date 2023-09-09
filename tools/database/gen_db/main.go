@@ -83,7 +83,12 @@ func main() {
 				db.MergeItem(item)
 			}
 		} else if response.IsGem() {
-			db.MergeGem(response.ToGemProto())
+			ilvl := response.GetItemLevel()
+			gem := response.ToGemProto()
+			// Allow green lvl 70 gems, which should filter out most tbc gems
+			if ilvl > 70 || (ilvl == 70 && response.GetQuality() == 2) || gem.Color == proto.GemColor_GemColorMeta {
+				db.MergeGem(gem)
+			}
 		}
 	}
 	for _, wowheadItem := range wowheadDB.Items {

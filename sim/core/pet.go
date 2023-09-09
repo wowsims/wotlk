@@ -86,8 +86,8 @@ func NewPet(name string, owner *Character, baseStats stats.Stats, statInheritanc
 	return pet
 }
 
-// Add a default base if pets dont need this
-func (pet *Pet) OwnerAttackSpeedChanged(sim *Simulation) {}
+// Add a default base if pets don't need this
+func (pet *Pet) OwnerAttackSpeedChanged(_ *Simulation) {}
 
 // Updates the stats for this pet in response to a stat change on the owner.
 // addedStats is the amount of stats added to the owner (will be negative if the
@@ -128,8 +128,8 @@ func (pet *Pet) reset(sim *Simulation, agent PetAgent) {
 		pet.Enable(sim, agent)
 	}
 }
-func (pet *Pet) advance(sim *Simulation, elapsedTime time.Duration) {
-	pet.Character.advance(sim, elapsedTime)
+func (pet *Pet) advance(sim *Simulation) {
+	pet.Character.advance(sim)
 }
 func (pet *Pet) doneIteration(sim *Simulation) {
 	pet.Character.doneIteration(sim)
@@ -248,6 +248,6 @@ func (pet *Pet) EnableWithTimeout(sim *Simulation, petAgent PetAgent, petDuratio
 func (pet *Pet) GetCharacter() *Character {
 	return &pet.Character
 }
-func (pet *Pet) AddRaidBuffs(raidBuffs *proto.RaidBuffs)    {}
-func (pet *Pet) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {}
-func (pet *Pet) ApplyTalents()                              {}
+func (pet *Pet) AddRaidBuffs(_ *proto.RaidBuffs)   {}
+func (pet *Pet) AddPartyBuffs(_ *proto.PartyBuffs) {}
+func (pet *Pet) ApplyTalents()                     {}

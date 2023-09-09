@@ -816,6 +816,7 @@ export class ItemList<T> {
 	private computeEP: (item: T) => number;
 	private equippedToItemFn: (equippedItem: EquippedItem | null) => (T | null | undefined);
 	private gearData: GearData;
+	private tabContent: HTMLElement;
 
 	constructor(
 		parent: HTMLElement,
@@ -843,8 +844,8 @@ export class ItemList<T> {
 		const tabContentId = (label + '-tab').split(' ').join('');
 		const selected = label === config.selectedTab;
 
-		const tabContentFragment = document.createElement('fragment');
-		const showEPValues = simUI.sim.getShowEPValues();
+		const frag = document.createDocumentFragment();
+		const tabContentFragment = frag.appendChild(document.createElement("fragment"))
 		tabContentFragment.innerHTML = `
 			<div
 				id="${tabContentId}"
@@ -880,34 +881,33 @@ export class ItemList<T> {
 			</div>
 		`;
 
-		const tabContent = tabContentFragment.children[0] as HTMLElement;
-		parent.appendChild(tabContent);
+		this.tabContent = tabContentFragment.children[0] as HTMLElement;
 
-		const epExplanationElem = tabContent.querySelector('#ep-explanation') as HTMLElement;
+		const epExplanationElem = this.tabContent.querySelector('#ep-explanation') as HTMLElement;
 		new Tooltip(epExplanationElem);
 
-		const show1hWeaponsSelector = makeShow1hWeaponsSelector(tabContent.getElementsByClassName('selector-modal-show-1h-weapons')[0] as HTMLElement, player.sim);
-		const show2hWeaponsSelector = makeShow2hWeaponsSelector(tabContent.getElementsByClassName('selector-modal-show-2h-weapons')[0] as HTMLElement, player.sim);
+		const show1hWeaponsSelector = makeShow1hWeaponsSelector(this.tabContent.getElementsByClassName('selector-modal-show-1h-weapons')[0] as HTMLElement, player.sim);
+		const show2hWeaponsSelector = makeShow2hWeaponsSelector(this.tabContent.getElementsByClassName('selector-modal-show-2h-weapons')[0] as HTMLElement, player.sim);
 		if (!(label == 'Items' && (slot == ItemSlot.ItemSlotMainHand || (slot == ItemSlot.ItemSlotOffHand && player.getClass() == Class.ClassWarrior)))) {
-			(tabContent.getElementsByClassName('selector-modal-show-1h-weapons')[0] as HTMLElement).style.display = 'none';
-			(tabContent.getElementsByClassName('selector-modal-show-2h-weapons')[0] as HTMLElement).style.display = 'none';
+			(this.tabContent.getElementsByClassName('selector-modal-show-1h-weapons')[0] as HTMLElement).style.display = 'none';
+			(this.tabContent.getElementsByClassName('selector-modal-show-2h-weapons')[0] as HTMLElement).style.display = 'none';
 		}
 
-		makeShowEPValuesSelector(tabContent.getElementsByClassName('selector-modal-show-ep-values')[0] as HTMLElement, player.sim);
+		makeShowEPValuesSelector(this.tabContent.getElementsByClassName('selector-modal-show-ep-values')[0] as HTMLElement, player.sim);
 
-		const showMatchingGemsSelector = makeShowMatchingGemsSelector(tabContent.getElementsByClassName('selector-modal-show-matching-gems')[0] as HTMLElement, player.sim);
+		const showMatchingGemsSelector = makeShowMatchingGemsSelector(this.tabContent.getElementsByClassName('selector-modal-show-matching-gems')[0] as HTMLElement, player.sim);
 		if (!label.startsWith('Gem')) {
-			(tabContent.getElementsByClassName('selector-modal-show-matching-gems')[0] as HTMLElement).style.display = 'none';
+			(this.tabContent.getElementsByClassName('selector-modal-show-matching-gems')[0] as HTMLElement).style.display = 'none';
 		}
 
-		const phaseSelector = makePhaseSelector(tabContent.getElementsByClassName('selector-modal-phase-selector')[0] as HTMLElement, player.sim);
+		const phaseSelector = makePhaseSelector(this.tabContent.getElementsByClassName('selector-modal-phase-selector')[0] as HTMLElement, player.sim);
 
 		if (label == 'Items') {
-			const filtersButton = tabContent.getElementsByClassName('selector-modal-filters-button')[0] as HTMLElement;
+			const filtersButton = this.tabContent.getElementsByClassName('selector-modal-filters-button')[0] as HTMLElement;
 			filtersButton.addEventListener('click', () => new FiltersMenu(parent, player, slot));
 		}
 
-		this.listElem = tabContent.getElementsByClassName('selector-modal-list')[0] as HTMLElement;
+		this.listElem = this.tabContent.getElementsByClassName('selector-modal-list')[0] as HTMLElement;
 		const initialFilters = player.sim.getFilters();
 		let lastFavElem: HTMLElement | null = null;
 
@@ -916,7 +916,6 @@ export class ItemList<T> {
 			const itemEP = computeEP(item);
 
 			const listItemElem = document.createElement('li');
-			this.listElem.appendChild(listItemElem);
 			listItemElem.classList.add('selector-modal-list-item');
 			listItemElem.dataset.idx = String(itemIdx);
 			listItemElem.innerHTML = `
@@ -944,6 +943,7 @@ export class ItemList<T> {
 					<span class="selector-modal-list-item-ep-delta"></span>
 				</div>
 		  `;
+		  	this.listElem.appendChild(listItemElem);
 
 			if (slot == ItemSlot.ItemSlotTrinket1 || slot == ItemSlot.ItemSlotTrinket2) {
 				const epElem = listItemElem.querySelector('.selector-modal-list-item-ep') as HTMLElement;
@@ -1044,7 +1044,7 @@ export class ItemList<T> {
 			return listItemElem;
 		});
 
-		const removeButton = tabContent.getElementsByClassName('selector-modal-remove-button')[0] as HTMLButtonElement;
+		const removeButton = this.tabContent.getElementsByClassName('selector-modal-remove-button')[0] as HTMLButtonElement;
 		removeButton.addEventListener('click', event => {
 			this.listItemElems.forEach(elem => elem.classList.remove('active'));
 			onRemove(TypedEvent.nextEventID());
@@ -1058,7 +1058,7 @@ export class ItemList<T> {
 
 		this.updateSelected();
 
-		this.searchInput = tabContent.getElementsByClassName('selector-modal-search')[0] as HTMLInputElement;
+		this.searchInput = this.tabContent.getElementsByClassName('selector-modal-search')[0] as HTMLInputElement;
 		this.searchInput.addEventListener('input', () => this.applyFilters());
 		this.searchInput.addEventListener("keyup", ev => {
 			if (ev.key == "Enter") {
@@ -1070,7 +1070,7 @@ export class ItemList<T> {
 			}
 		});
 
-		const simAllButton = tabContent.getElementsByClassName('selector-modal-simall-button')[0] as HTMLButtonElement;
+		const simAllButton = this.tabContent.getElementsByClassName('selector-modal-simall-button')[0] as HTMLButtonElement;
 		if (label == "Items") {
 			simAllButton.hidden = !player.sim.getShowExperimental()
 			player.sim.showExperimentalChangeEmitter.on(() => {
@@ -1112,7 +1112,8 @@ export class ItemList<T> {
 		}
 
 		this.applyFilters();
-		this.hideOrShowEPValues();
+
+		parent.appendChild(this.tabContent);
 	}
 
 	public updateSelected() {
@@ -1219,18 +1220,20 @@ export class ItemList<T> {
 	}
 
 	public hideOrShowEPValues() {
-		const labels = document.getElementsByClassName("ep-delta-label")
-		const epItems = document.getElementsByClassName("selector-modal-list-item-ep")
-		const display = this.player.sim.getShowEPValues() ? "" : "none"
+		const labels = this.tabContent.getElementsByClassName("ep-delta-label")
+		const container = this.tabContent.getElementsByClassName("selector-modal-list")
+		const show = this.player.sim.getShowEPValues();
+		const display = show ? "" : "none"
 
-		for (let i = 0; i < epItems.length; i++) {
-			const epItem = epItems.item(i) as HTMLElement;
-			epItem.style.display = display
+		for (let label of labels) {
+			(label as HTMLElement).style.display = display;
 		}
 
-		for (let i = 0; i < labels.length; i++) {
-			const label = labels.item(i) as HTMLElement;
-			label.style.display = display
+		for (let c of container) {
+			if (show)
+				c.classList.remove("hide-ep");
+			else
+				c.classList.add("hide-ep");
 		}
 	}
 

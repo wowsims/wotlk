@@ -109,7 +109,7 @@ func (prot *ProtectionPaladin) Initialize() {
 func (prot *ProtectionPaladin) Reset(sim *core.Simulation) {
 	prot.Paladin.Reset(sim)
 
-	sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {
+	sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int32) {
 		if isExecute == 20 {
 			prot.OnGCDReady(sim)
 		}

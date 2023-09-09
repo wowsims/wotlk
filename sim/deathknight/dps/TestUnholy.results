@@ -508,6 +508,22 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestUnholy-AllItems-LastWord-50179"
+ value: {
+  dps: 8089.51861
+  tps: 5161.56947
+  hps: 265.35448
+ }
+}
+dps_results: {
+ key: "TestUnholy-AllItems-LastWord-50708"
+ value: {
+  dps: 8089.51861
+  tps: 5161.56947
+  hps: 265.35448
+ }
+}
+dps_results: {
  key: "TestUnholy-AllItems-Lavanthor'sTalisman-37872"
  value: {
   dps: 7496.6575

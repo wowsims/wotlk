@@ -513,6 +513,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtectionWarrior-AllItems-LastWord-50179"
+ value: {
+  dps: 1587.68926
+  tps: 4112.21371
+ }
+}
+dps_results: {
+ key: "TestProtectionWarrior-AllItems-LastWord-50708"
+ value: {
+  dps: 1587.68926
+  tps: 4112.21371
+ }
+}
+dps_results: {
  key: "TestProtectionWarrior-AllItems-Lavanthor'sTalisman-37872"
  value: {
   dps: 1600.51153

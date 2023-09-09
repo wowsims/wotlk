@@ -14,6 +14,10 @@ func (cat *FeralDruid) OnEnergyGain(sim *core.Simulation) {
 		return
 	}
 
+	if sim.CurrentTime < 0 {
+		return
+	}
+
 	cat.TryUseCooldowns(sim)
 	if cat.InForm(druid.Cat) && !cat.readyToShift {
 		cat.doTigersFury(sim)
