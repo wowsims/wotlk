@@ -507,6 +507,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRestoration-AllItems-LastWord-50179"
+ value: {
+  tps: 61.04557
+  hps: 3638.48173
+ }
+}
+dps_results: {
+ key: "TestRestoration-AllItems-LastWord-50708"
+ value: {
+  tps: 61.04557
+  hps: 3638.48173
+ }
+}
+dps_results: {
  key: "TestRestoration-AllItems-Lavanthor'sTalisman-37872"
  value: {
   tps: 55.99781

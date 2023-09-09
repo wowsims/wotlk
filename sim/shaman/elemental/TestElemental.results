@@ -554,6 +554,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElemental-AllItems-LastWord-50179"
+ value: {
+  dps: 6778.4636
+  tps: 4273.41619
+ }
+}
+dps_results: {
+ key: "TestElemental-AllItems-LastWord-50708"
+ value: {
+  dps: 6778.4636
+  tps: 4273.41619
+ }
+}
+dps_results: {
  key: "TestElemental-AllItems-Lavanthor'sTalisman-37872"
  value: {
   dps: 6384.929

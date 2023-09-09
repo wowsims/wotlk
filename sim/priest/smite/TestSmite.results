@@ -439,6 +439,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSmite-AllItems-LastWord-50179"
+ value: {
+  dps: 3552.18738
+  tps: 3015.91992
+ }
+}
+dps_results: {
+ key: "TestSmite-AllItems-LastWord-50708"
+ value: {
+  dps: 3552.18738
+  tps: 3015.91992
+ }
+}
+dps_results: {
  key: "TestSmite-AllItems-Lavanthor'sTalisman-37872"
  value: {
   dps: 3407.05625

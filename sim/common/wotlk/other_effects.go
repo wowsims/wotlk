@@ -1086,4 +1086,54 @@ func init() {
 			MakeNibelungTriggerAura(agent, isHeroic)
 		})
 	})
+
+	NewItemEffectWithHeroic(func(isHeroic bool) {
+		itemId := int32(50179)
+		spellId := int32(71870)
+		triggerSpellId := int32(71871)
+		strengthGain := float64(100)
+		healingReceived := float64(300)
+		procName := "Last Word"
+		triggerName := "Last Word Proc Trigger"
+
+		if isHeroic {
+			itemId = 50708
+			spellId = 71872
+			triggerSpellId = 71873
+			strengthGain = 115
+			healingReceived = 340
+			triggerName += " H"
+			procName += " H"
+		}
+
+		core.NewItemEffect(itemId, func(agent core.Agent) {
+			character := agent.GetCharacter()
+
+			procAura := character.GetOrRegisterAura(core.Aura{
+				Label:    procName,
+				ActionID: core.ActionID{SpellID: spellId},
+				Duration: time.Second * 10,
+				OnGain: func(aura *core.Aura, sim *core.Simulation) {
+					aura.Unit.AddStatsDynamic(sim, stats.Stats{stats.Strength: strengthGain})
+					aura.Unit.PseudoStats.BonusHealingTaken += healingReceived
+				},
+				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+					aura.Unit.AddStatsDynamic(sim, stats.Stats{stats.Strength: -strengthGain})
+					aura.Unit.PseudoStats.BonusHealingTaken -= healingReceived
+				},
+			})
+
+			core.MakeProcTriggerAura(&agent.GetCharacter().Unit, core.ProcTrigger{
+				Name:       triggerName,
+				ActionID:   core.ActionID{SpellID: triggerSpellId},
+				Callback:   core.CallbackOnSpellHitDealt,
+				ProcMask:   core.ProcMaskMeleeOrProc,
+				ProcChance: 0.37,
+				Outcome:    core.OutcomeLanded,
+				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
+					procAura.Activate(sim)
+				},
+			})
+		})
+	})
 }

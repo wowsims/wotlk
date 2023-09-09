@@ -538,6 +538,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeralDoubleArmorPenTrinketsWithDesync-AllItems-LastWord-50179"
+ value: {
+  dps: 10124.64806
+  tps: 7254.53675
+ }
+}
+dps_results: {
+ key: "TestFeralDoubleArmorPenTrinketsWithDesync-AllItems-LastWord-50708"
+ value: {
+  dps: 10150.49968
+  tps: 7272.8914
+ }
+}
+dps_results: {
  key: "TestFeralDoubleArmorPenTrinketsWithDesync-AllItems-Lavanthor'sTalisman-37872"
  value: {
   dps: 9660.00901

@@ -520,6 +520,22 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRetribution-AllItems-LastWord-50179"
+ value: {
+  dps: 6823.59398
+  tps: 6922.90641
+  dtps: 9.92959
+ }
+}
+dps_results: {
+ key: "TestRetribution-AllItems-LastWord-50708"
+ value: {
+  dps: 6854.2068
+  tps: 6953.51923
+  dtps: 9.92959
+ }
+}
+dps_results: {
  key: "TestRetribution-AllItems-Lavanthor'sTalisman-37872"
  value: {
   dps: 6367.36914

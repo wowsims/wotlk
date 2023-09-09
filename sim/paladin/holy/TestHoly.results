@@ -287,6 +287,14 @@ dps_results: {
  value: {}
 }
 dps_results: {
+ key: "TestHoly-AllItems-LastWord-50179"
+ value: {}
+}
+dps_results: {
+ key: "TestHoly-AllItems-LastWord-50708"
+ value: {}
+}
+dps_results: {
  key: "TestHoly-AllItems-Lavanthor'sTalisman-37872"
  value: {}
 }
