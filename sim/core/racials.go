@@ -124,11 +124,8 @@ func applyRaceEffects(agent Agent) {
 		// TODO: Shadowmeld?
 	case proto.Race_RaceOrc:
 		// Command (Pet damage +5%)
-		if len(character.Pets) > 0 {
-			for _, petAgent := range character.Pets {
-				pet := petAgent.GetPet()
-				pet.PseudoStats.DamageDealtMultiplier *= 1.05
-			}
+		for _, pet := range character.Pets {
+			pet.PseudoStats.DamageDealtMultiplier *= 1.05
 		}
 
 		// Blood Fury

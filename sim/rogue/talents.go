@@ -178,7 +178,7 @@ func (rogue *Rogue) registerDirtyDeeds() {
 	actionID := core.ActionID{SpellID: 14083}
 
 	rogue.RegisterResetEffect(func(sim *core.Simulation) {
-		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {
+		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int32) {
 			if isExecute == 35 {
 				rogue.DirtyDeedsAura.Activate(sim)
 			}

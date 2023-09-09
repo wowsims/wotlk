@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"math"
 	"math/rand"
 	"runtime"
 	"runtime/debug"
@@ -34,13 +35,12 @@ type Simulation struct {
 
 	Log func(string, ...interface{})
 
-	executePhase20Begins  time.Duration
-	executePhase25Begins  time.Duration
-	executePhase35Begins  time.Duration
-	executePhase20        bool
-	executePhase25        bool
-	executePhase35        bool
-	executePhaseCallbacks []func(*Simulation, int) // 2nd parameter is 35 for 35%, 25 for 25% and 20 for 20%
+	executePhase int32 // 20, 25, or 35 for the respective execute range, 100 otherwise
+
+	executePhaseCallbacks []func(*Simulation, int32) // 2nd parameter is 35 for 35%, 25 for 25% and 20 for 20%
+
+	nextExecuteDuration time.Duration
+	nextExecuteDamage   float64
 }
 
 func RunSim(rsr *proto.RaidSimRequest, progress chan *proto.ProgressMetrics) *proto.RaidSimResult {
@@ -212,14 +212,17 @@ func (sim *Simulation) Init() {
 	for _, target := range sim.Encounter.Targets {
 		target.init(sim)
 	}
+
 	for _, party := range sim.Raid.Parties {
 		for _, player := range party.Players {
 			character := player.GetCharacter()
-			character.init(sim, player)
+			character.init(sim)
 
-			for _, petAgent := range character.Pets {
-				petAgent.GetCharacter().init(sim, petAgent)
+			for _, pet := range character.Pets {
+				pet.init(sim)
 			}
+
+			sim.characters = append(sim.characters, character)
 		}
 	}
 }
@@ -241,16 +244,12 @@ func (sim *Simulation) reset() {
 		variation := sim.DurationVariation * 2
 		sim.Duration += time.Duration(sim.RandomFloat("sim duration")*float64(variation)) - sim.DurationVariation
 	}
-	sim.executePhase20Begins = time.Duration(float64(sim.Duration) * (1.0 - sim.Encounter.ExecuteProportion_20))
-	sim.executePhase25Begins = time.Duration(float64(sim.Duration) * (1.0 - sim.Encounter.ExecuteProportion_25))
-	sim.executePhase35Begins = time.Duration(float64(sim.Duration) * (1.0 - sim.Encounter.ExecuteProportion_35))
 
 	sim.pendingActions = make([]*PendingAction, 0, 64)
 
-	sim.executePhase20 = false
-	sim.executePhase25 = false
-	sim.executePhase35 = false
-	sim.executePhaseCallbacks = []func(*Simulation, int){}
+	sim.executePhase = 0
+	sim.nextExecutePhase()
+	sim.executePhaseCallbacks = nil
 
 	sim.CurrentTime = 0
 
@@ -341,14 +340,14 @@ func (sim *Simulation) PrePull() {
 		for _, prepullAction := range sim.Environment.prepullActions {
 			if prepullAction.DoAt > sim.CurrentTime {
 				sim.runPendingActions(prepullAction.DoAt)
-				sim.advance(prepullAction.DoAt - sim.CurrentTime)
+				sim.advance(prepullAction.DoAt)
 			}
 			prepullAction.Action(sim)
 		}
 
 		if sim.CurrentTime < 0 {
 			sim.runPendingActions(0)
-			sim.advance(0 - sim.CurrentTime)
+			sim.advance(0)
 		}
 	}
 
@@ -412,7 +411,7 @@ func (sim *Simulation) Step(max time.Duration) bool {
 
 	if pa.NextActionAt > sim.CurrentTime {
 		if pa.NextActionAt < max {
-			sim.advance(pa.NextActionAt - sim.CurrentTime)
+			sim.advance(pa.NextActionAt)
 		} else {
 			sim.pendingActions = append(sim.pendingActions, pa)
 			return true
@@ -452,58 +451,67 @@ func (sim *Simulation) AddPendingAction(pa *PendingAction) {
 	sim.pendingActions = append(sim.pendingActions, pa)
 }
 
-// Advance moves time forward counting down auras, CDs, mana regen, etc
-func (sim *Simulation) advance(elapsedTime time.Duration) {
-	sim.CurrentTime += elapsedTime
-
-	if !sim.executePhase35 {
-		if (sim.Encounter.EndFightAtHealth == 0 && sim.CurrentTime >= sim.executePhase35Begins) ||
-			(sim.Encounter.EndFightAtHealth > 0 && sim.GetRemainingDurationPercent() <= 0.35) {
-			sim.executePhase35 = true
-			for _, callback := range sim.executePhaseCallbacks {
-				callback(sim, 35)
-			}
-		}
-	} else if !sim.executePhase25 {
-		if (sim.Encounter.EndFightAtHealth == 0 && sim.CurrentTime >= sim.executePhase25Begins) ||
-			(sim.Encounter.EndFightAtHealth > 0 && sim.GetRemainingDurationPercent() <= 0.25) {
-			sim.executePhase25 = true
-			for _, callback := range sim.executePhaseCallbacks {
-				callback(sim, 25)
-			}
-		}
-	} else if !sim.executePhase20 {
-		if (sim.Encounter.EndFightAtHealth == 0 && sim.CurrentTime >= sim.executePhase20Begins) ||
-			(sim.Encounter.EndFightAtHealth > 0 && sim.GetRemainingDurationPercent() <= 0.2) {
-			sim.executePhase20 = true
-			for _, callback := range sim.executePhaseCallbacks {
-				callback(sim, 20)
-			}
+// nextExecutePhase updates nextExecuteDuration and nextExecuteDamage based on executePhase.
+func (sim *Simulation) nextExecutePhase() {
+	setup := func(phase int32, damage float64, health float64) {
+		sim.executePhase = phase
+		if sim.Encounter.EndFightAtHealth > 0 {
+			sim.nextExecuteDamage = (1 - damage) * sim.Encounter.EndFightAtHealth
+		} else {
+			sim.nextExecuteDuration = time.Duration((1 - health) * float64(sim.Duration))
 		}
 	}
 
-	for _, party := range sim.Raid.Parties {
-		for _, agent := range party.Players {
-			agent.GetCharacter().advance(sim, elapsedTime)
+	sim.nextExecuteDuration = NeverExpires
+	sim.nextExecuteDamage = math.MaxFloat64
+
+	switch sim.executePhase {
+	case 0: // reset, waiting for 35%
+		setup(100, 0.35, sim.Encounter.ExecuteProportion_35)
+	case 100: // at 35%, waiting for 25%
+		setup(35, 0.25, sim.Encounter.ExecuteProportion_25)
+	case 35: // at 25%, waiting for 20%
+		setup(25, 0.20, sim.Encounter.ExecuteProportion_20)
+	case 25: // at 20%, done waiting
+		sim.executePhase = 20 // could also be used for end of fight handling
+	default:
+		panic(fmt.Sprintf("executePhase = %d invalid", sim.executePhase))
+	}
+}
+
+// Advance moves time forward counting down auras, CDs, mana regen, etc
+func (sim *Simulation) advance(nextTime time.Duration) {
+	sim.CurrentTime = nextTime
+
+	// this is a loop to handle duplicate ExecuteProportions, e.g. if they're all set to 100%, you reach
+	// execute phases 35%, 25%, and 20% in the first advance() call.
+	for sim.CurrentTime >= sim.nextExecuteDuration || sim.Encounter.DamageTaken >= sim.nextExecuteDamage {
+		sim.nextExecutePhase()
+		for _, callback := range sim.executePhaseCallbacks {
+			callback(sim, sim.executePhase)
 		}
+	}
+
+	for _, character := range sim.characters {
+		character.advance(sim)
 	}
 
 	for _, target := range sim.Encounter.Targets {
-		target.Advance(sim, elapsedTime)
+		target.Advance(sim)
 	}
 }
 
-func (sim *Simulation) RegisterExecutePhaseCallback(callback func(*Simulation, int)) {
+func (sim *Simulation) RegisterExecutePhaseCallback(callback func(sim *Simulation, isExecute int32)) {
 	sim.executePhaseCallbacks = append(sim.executePhaseCallbacks, callback)
 }
 func (sim *Simulation) IsExecutePhase20() bool {
-	return sim.executePhase20
+	return sim.executePhase <= 20
 }
 func (sim *Simulation) IsExecutePhase25() bool {
-	return sim.executePhase25
+	return sim.executePhase <= 25
 }
 func (sim *Simulation) IsExecutePhase35() bool {
-	return sim.executePhase35
+	return sim.executePhase <= 35
 }
 
 func (sim *Simulation) GetRemainingDuration() time.Duration {

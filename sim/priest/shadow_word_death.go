@@ -10,7 +10,7 @@ import (
 func (priest *Priest) registerShadowWordDeathSpell() {
 	if priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfShadowWordDeath) {
 		priest.RegisterResetEffect(func(sim *core.Simulation) {
-			sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {
+			sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int32) {
 				if isExecute == 35 {
 					priest.ShadowWordDeath.DamageMultiplier *= 1.1
 				}
