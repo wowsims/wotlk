@@ -150,6 +150,8 @@ type Unit struct {
 
 	CurrentTarget *Unit
 	defaultTarget *Unit
+
+	DummyProcSpell *Spell
 }
 
 // Units can be disabled for several reasons:

@@ -219,6 +219,8 @@ func (druid *Druid) applyEarthAndMoon() {
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if result.Landed() && (druid.Starfire.IsEqual(spell) || druid.Wrath.IsEqual(spell)) {
 				eamAuras.Get(result.Target).Activate(sim)
+				// can proc canProcFromProc on-cast trinkets
+				druid.GetDummyProcSpell().Cast(sim, result.Target)
 			}
 		},
 	})
