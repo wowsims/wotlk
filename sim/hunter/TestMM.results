@@ -489,6 +489,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestMM-AllItems-LastWord-50179"
+ value: {
+  dps: 7098.36783
+  tps: 6171.11563
+ }
+}
+dps_results: {
+ key: "TestMM-AllItems-LastWord-50708"
+ value: {
+  dps: 7098.36783
+  tps: 6171.11563
+ }
+}
+dps_results: {
  key: "TestMM-AllItems-Lavanthor'sTalisman-37872"
  value: {
   dps: 6833.65022
