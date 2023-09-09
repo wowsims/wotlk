@@ -82,9 +82,7 @@ func (cat *FeralDruid) doAoeRotation(sim *core.Simulation) (bool, time.Duration)
 
 	pendingPool.sort()
 
-	floatingEnergy := pendingPool.calcFloatingEnergy(sim.CurrentTime, func(refreshTime time.Duration) bool {
-		return cat.tfExpectedBefore(sim, refreshTime)
-	})
+	floatingEnergy := pendingPool.calcFloatingEnergy(cat, sim)
 	excessE := curEnergy - floatingEnergy
 
 	timeToNextAction := time.Duration(0)

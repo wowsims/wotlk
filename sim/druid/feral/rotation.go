@@ -457,11 +457,8 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) (bool, time.Duration) {
 		pendingPool.addAction(ripDot.ExpiresAt(), ripCost)
 		cat.ripRefreshPending = true
 	}
-	if rakeDot.IsActive() && (rakeDot.RemainingDuration(sim) < simTimeRemain-rakeDot.Duration) {
+	if poolForRake && rakeDot.IsActive() && (rakeDot.RemainingDuration(sim) < simTimeRemain-rakeDot.Duration) {
 		rakeCost := core.Ternary(cat.berserkExpectedAt(sim, rakeDot.ExpiresAt()), cat.Rake.DefaultCast.Cost*0.5, cat.Rake.DefaultCast.Cost)
-		if !poolForRake {
-			rakeCost = 0
-		}
 		pendingPool.addAction(rakeDot.ExpiresAt(), rakeCost)
 	}
 	if mangleRefreshPending {
@@ -550,9 +547,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) (bool, time.Duration) {
 		flowershiftNow = flowerEnd+time.Duration(math.Floor(energyToDump/42)*float64(time.Second)) < sim.CurrentTime+simTimeRemain
 	}
 
-	floatingEnergy := pendingPool.calcFloatingEnergy(sim.CurrentTime, func(refreshTime time.Duration) bool {
-		return cat.tfExpectedBefore(sim, refreshTime)
-	})
+	floatingEnergy := pendingPool.calcFloatingEnergy(cat, sim)
 	excessE := curEnergy - floatingEnergy
 
 	timeToNextAction := time.Duration(0)
