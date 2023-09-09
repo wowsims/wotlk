@@ -23,8 +23,8 @@ func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 
 	tricksOfTheTradeThreatTransferAura := rogue.GetOrRegisterAura(core.Aura{
 		ActionID: core.ActionID{SpellID: 59628},
-		Label:    "TricksOfTheTradeThreat",
-		Duration: 6 * time.Second,
+		Label:    "TricksOfTheTradeThreatTransfer",
+		Duration: core.TernaryDuration(hasGlyph, time.Second*10, time.Second*6),
 	})
 
 	tricksOfTheTradeApplicationAura := rogue.GetOrRegisterAura(core.Aura{
