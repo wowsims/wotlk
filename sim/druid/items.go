@@ -90,9 +90,10 @@ var ItemSetLasherweaveRegalia = core.NewItemSet(core.ItemSet{
 			druid := agent.(DruidAgent).GetDruid()
 
 			druid.Languish = druid.RegisterSpell(Any, core.SpellConfig{
-				ActionID:         core.ActionID{SpellID: 71023},
-				SpellSchool:      core.SpellSchoolNature,
-				ProcMask:         core.ProcMaskEmpty,
+				ActionID:    core.ActionID{SpellID: 71023},
+				SpellSchool: core.SpellSchoolNature,
+				// TODO: double check this (use fetish trinket to test), assuming it does since it's like mage's ignite
+				ProcMask:         core.ProcMaskProc,
 				DamageMultiplier: 1,
 				ThreatMultiplier: 1,
 
