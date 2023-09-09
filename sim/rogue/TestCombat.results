@@ -834,8 +834,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-Average-Default"
  value: {
-  dps: 6676.17414
-  tps: 4740.08364
+  dps: 6676.17454
+  tps: 4740.08392
  }
 }
 dps_results: {
