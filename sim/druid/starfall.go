@@ -52,10 +52,7 @@ func (druid *Druid) registerStarfallSpell() {
 				baseDamage := sim.Roll(563, 653) + 0.3*dot.Spell.SpellPower()
 				dot.Spell.CalcAndDealDamage(sim, target, baseDamage, dot.Spell.OutcomeMagicHitAndCrit)
 				// can proc canProcFromProc on-cast trinkets
-				originalProc := dot.Spell.ProcMask
-				dot.Spell.ProcMask = core.ProcMaskProc
-				dot.Unit.OnCastComplete(sim, dot.Spell)
-				dot.Spell.ProcMask = originalProc
+				druid.GetDummyProcSpell().Cast(sim, target)
 			},
 		},
 
@@ -90,10 +87,7 @@ func (druid *Druid) registerStarfallSpell() {
 				for _, aoeTarget := range sim.Encounter.TargetUnits {
 					dot.Spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, dot.Spell.OutcomeMagicHitAndCrit)
 					// can proc canProcFromProc on-cast trinkets
-					originalProc := dot.Spell.ProcMask
-					dot.Spell.ProcMask = core.ProcMaskProc
-					dot.Unit.OnCastComplete(sim, dot.Spell)
-					dot.Spell.ProcMask = originalProc
+					druid.GetDummyProcSpell().Cast(sim, aoeTarget)
 				}
 			},
 		},

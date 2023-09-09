@@ -109,7 +109,7 @@ func (priest *Priest) newMindFlaySpell(numTicks int32) *core.Spell {
 					if rolloverChance == 1 || sim.RandomFloat("Pain and Suffering") < rolloverChance {
 						priest.ShadowWordPain.Dot(target).Rollover(sim)
 						// trinkets can proc from the re-application
-						priest.OnCastComplete(sim, priest.ShadowWordPain)
+						priest.GetDummyProcSpell().Cast(sim, target)
 					}
 				}
 				spell.Dot(target).Apply(sim)

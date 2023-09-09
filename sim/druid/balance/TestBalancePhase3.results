@@ -503,7 +503,7 @@ dps_results: {
  key: "TestBalancePhase3-AllItems-InsightfulEarthsiegeDiamond"
  value: {
   dps: 11178.45129
-  tps: 10945.73405
+  tps: 10945.92525
  }
 }
 dps_results: {
@@ -551,8 +551,8 @@ dps_results: {
 dps_results: {
  key: "TestBalancePhase3-AllItems-MajesticDragonFigurine-40430"
  value: {
-  dps: 11086.1432
-  tps: 10854.13125
+  dps: 11086.68544
+  tps: 10854.67349
  }
 }
 dps_results: {
@@ -776,7 +776,7 @@ dps_results: {
  key: "TestBalancePhase3-AllItems-SparkofLife-37657"
  value: {
   dps: 11032.50053
-  tps: 10802.24409
+  tps: 10802.11195
  }
 }
 dps_results: {

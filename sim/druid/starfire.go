@@ -53,10 +53,7 @@ func (druid *Druid) registerStarfireSpell() {
 					moonfireDot.UpdateExpires(moonfireDot.ExpiresAt() + time.Second*3)
 
 					// can proc canProcFromProc on-cast trinkets
-					originalProc := moonfireDot.Spell.ProcMask
-					moonfireDot.Spell.ProcMask = core.ProcMaskProc
-					spell.Unit.OnCastComplete(sim, moonfireDot.Spell)
-					moonfireDot.Spell.ProcMask = originalProc
+					druid.GetDummyProcSpell().Cast(sim, target)
 				}
 			}
 			spell.DealDamage(sim, result)
