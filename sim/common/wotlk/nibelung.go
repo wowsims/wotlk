@@ -118,7 +118,7 @@ func MakeNibelungTriggerAura(agent core.Agent, isHeroic bool) {
 		ICD:        time.Millisecond * 250,
 		ActionID:   core.ActionID{SpellID: procSpellId},
 		Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
-			for _, pet := range character.Pets {
+			for _, pet := range character.PetAgents {
 				valkyr, ok := pet.(*ValkyrPet)
 				if ok && !valkyr.IsEnabled() {
 					valkyr.registerSmite(isHeroic)
