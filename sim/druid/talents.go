@@ -213,6 +213,7 @@ func (druid *Druid) applyEarthAndMoon() {
 	earthAndMoonSpell := druid.RegisterSpell(Any, core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 48510},
 		ProcMask: core.ProcMaskProc,
+		Flags:    core.SpellFlagNoMetrics | core.SpellFlagNoLogs,
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			eamAuras.Get(target).Activate(sim)
 		},
