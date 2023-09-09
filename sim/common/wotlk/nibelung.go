@@ -123,11 +123,10 @@ func MakeNibelungTriggerAura(agent core.Agent, isHeroic bool) {
 				return
 			}
 
-			for _, pet := range character.PetAgents {
-				valkyr, ok := pet.(*ValkyrPet)
-				if ok && !valkyr.IsEnabled() {
+			for _, petAgent := range character.PetAgents {
+				if valkyr, ok := petAgent.(*ValkyrPet); ok && !valkyr.IsEnabled() {
 					valkyr.registerSmite(isHeroic)
-					valkyr.EnableWithTimeout(sim, pet, valkyrAura.Duration)
+					valkyr.EnableWithTimeout(sim, petAgent, valkyrAura.Duration)
 					break
 				}
 			}

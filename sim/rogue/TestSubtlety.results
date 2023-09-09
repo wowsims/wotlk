@@ -645,8 +645,8 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-AllItems-StormshroudArmor"
  value: {
-  dps: 6056.29374
-  tps: 4298.44325
+  dps: 6074.2182
+  tps: 4311.65208
  }
 }
 dps_results: {

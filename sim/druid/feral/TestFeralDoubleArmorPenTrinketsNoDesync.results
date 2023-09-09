@@ -799,8 +799,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralDoubleArmorPenTrinketsNoDesync-AllItems-StormshroudArmor"
  value: {
-  dps: 7735.08386
-  tps: 5556.37565
+  dps: 7731.2327
+  tps: 5553.94047
  }
 }
 dps_results: {

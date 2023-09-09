@@ -81,11 +81,9 @@ var ItemSetStormshroud = core.NewItemSet(core.ItemSet{
 					if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 						return
 					}
-					chance := 0.05
-					if sim.RandomFloat("Stormshroud Armor 2pc") > chance {
-						return
+					if sim.RandomFloat("Stormshroud Armor 2pc") < 0.05 {
+						proc.Cast(sim, result.Target)
 					}
-					proc.Cast(sim, result.Target)
 				},
 			})
 		},
@@ -113,11 +111,9 @@ var ItemSetStormshroud = core.NewItemSet(core.ItemSet{
 					if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
 						return
 					}
-					chance := 0.02
-					if sim.RandomFloat("Stormshroud Armor 2pc") > chance {
-						return
+					if sim.RandomFloat("Stormshroud Armor 3pc") < 0.02 {
+						proc.Cast(sim, result.Target)
 					}
-					proc.Cast(sim, result.Target)
 				},
 			})
 
