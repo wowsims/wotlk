@@ -14,7 +14,7 @@ func (druid *Druid) registerStarfallSpell() {
 	}
 
 	numberOfTicks := core.TernaryInt32(druid.Env.GetNumTargets() > 1, 20, 10)
-	tickLength := core.TernaryDuration(druid.Env.GetNumTargets() > 1, time.Millisecond*500, time.Millisecond*1000)
+	tickLength := time.Second
 
 	druid.Starfall = druid.RegisterSpell(Humanoid|Moonkin, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 53201},
@@ -51,6 +51,11 @@ func (druid *Druid) registerStarfallSpell() {
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				baseDamage := sim.Roll(563, 653) + 0.3*dot.Spell.SpellPower()
 				dot.Spell.CalcAndDealDamage(sim, target, baseDamage, dot.Spell.OutcomeMagicHitAndCrit)
+				// can proc canProcFromProc on-cast trinkets
+				originalProc := dot.Spell.ProcMask
+				dot.Spell.ProcMask = core.ProcMaskProc
+				dot.Unit.OnCastComplete(sim, dot.Spell)
+				dot.Spell.ProcMask = originalProc
 			},
 		},
 
@@ -84,6 +89,11 @@ func (druid *Druid) registerStarfallSpell() {
 				baseDamage *= sim.Encounter.AOECapMultiplier()
 				for _, aoeTarget := range sim.Encounter.TargetUnits {
 					dot.Spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, dot.Spell.OutcomeMagicHitAndCrit)
+					// can proc canProcFromProc on-cast trinkets
+					originalProc := dot.Spell.ProcMask
+					dot.Spell.ProcMask = core.ProcMaskProc
+					dot.Unit.OnCastComplete(sim, dot.Spell)
+					dot.Spell.ProcMask = originalProc
 				}
 			},
 		},

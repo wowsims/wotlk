@@ -51,6 +51,12 @@ func (druid *Druid) registerStarfireSpell() {
 				if hasGlyph && moonfireDot.IsActive() && druid.ExtendingMoonfireStacks > 0 {
 					druid.ExtendingMoonfireStacks -= 1
 					moonfireDot.UpdateExpires(moonfireDot.ExpiresAt() + time.Second*3)
+
+					// can proc canProcFromProc on-cast trinkets
+					originalProc := moonfireDot.Spell.ProcMask
+					moonfireDot.Spell.ProcMask = core.ProcMaskProc
+					spell.Unit.OnCastComplete(sim, moonfireDot.Spell)
+					moonfireDot.Spell.ProcMask = originalProc
 				}
 			}
 			spell.DealDamage(sim, result)

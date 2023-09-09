@@ -210,6 +210,14 @@ func (druid *Druid) applyEarthAndMoon() {
 		}
 	})
 
+	earthAndMoonSpell := druid.RegisterSpell(Any, core.SpellConfig{
+		ActionID: core.ActionID{SpellID: 48510},
+		ProcMask: core.ProcMaskProc,
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			eamAuras.Get(target).Activate(sim)
+		},
+	})
+
 	druid.RegisterAura(core.Aura{
 		Label:    "Earth And Moon Talent",
 		Duration: core.NeverExpires,
@@ -218,7 +226,8 @@ func (druid *Druid) applyEarthAndMoon() {
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if result.Landed() && (druid.Starfire.IsEqual(spell) || druid.Wrath.IsEqual(spell)) {
-				eamAuras.Get(result.Target).Activate(sim)
+				// can proc canProcFromProc on-cast trinkets
+				earthAndMoonSpell.Cast(sim, result.Target)
 			}
 		},
 	})

@@ -37,6 +37,11 @@ func (mage *Mage) registerLivingBombSpell() {
 
 	onTick := func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 		dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+		// can proc canProcFromProc on-cast trinkets
+		originalProc := dot.Spell.ProcMask
+		dot.Spell.ProcMask = core.ProcMaskProc
+		dot.Unit.OnCastComplete(sim, dot.Spell)
+		dot.Spell.ProcMask = originalProc
 	}
 	if mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfLivingBomb) {
 		onTick = func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
