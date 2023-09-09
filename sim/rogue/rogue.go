@@ -99,7 +99,6 @@ type Rogue struct {
 	KillingSpreeAura     *core.Aura
 	OverkillAura         *core.Aura
 	SliceAndDiceAura     *core.Aura
-	TricksOfTheTradeAura *core.Aura
 	MasterOfSubtletyAura *core.Aura
 	ShadowstepAura       *core.Aura
 	ShadowDanceAura      *core.Aura
