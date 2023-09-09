@@ -514,6 +514,10 @@ func (warlock *Warlock) setupImprovedSoulLeech() {
 }
 
 func (warlock *Warlock) updateDPASP(sim *core.Simulation) {
+	if sim.CurrentTime < 0 {
+		return
+	}
+
 	dpspCurrent := warlock.DemonicPactAura.ExclusiveEffects[0].Priority
 	currentTimeJump := sim.CurrentTime.Seconds() - warlock.PreviousTime.Seconds()
 

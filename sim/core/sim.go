@@ -227,37 +227,6 @@ func (sim *Simulation) Init() {
 	}
 }
 
-// Reset will set sim back and erase all current state.
-// This is automatically called before every 'Run'.
-func (sim *Simulation) reset() {
-	if sim.Log != nil {
-		sim.Log("SIM RESET")
-		sim.Log("----------------------")
-	}
-
-	if sim.Encounter.DurationIsEstimate && sim.CurrentTime != 0 {
-		sim.BaseDuration = sim.CurrentTime
-		sim.Encounter.DurationIsEstimate = false
-	}
-	sim.Duration = sim.BaseDuration
-	if sim.DurationVariation != 0 {
-		variation := sim.DurationVariation * 2
-		sim.Duration += time.Duration(sim.RandomFloat("sim duration")*float64(variation)) - sim.DurationVariation
-	}
-
-	sim.pendingActions = make([]*PendingAction, 0, 64)
-
-	sim.executePhase = 0
-	sim.nextExecutePhase()
-	sim.executePhaseCallbacks = nil
-
-	sim.CurrentTime = 0
-
-	sim.Environment.reset(sim)
-
-	sim.initManaTickAction()
-}
-
 // Run runs the simulation for the configured number of iterations, and
 // collects all the metrics together.
 func (sim *Simulation) run() *proto.RaidSimResult {
@@ -324,13 +293,43 @@ func (sim *Simulation) run() *proto.RaidSimResult {
 	return result
 }
 
-func (sim *Simulation) runPendingActions(max time.Duration) {
-	for {
-		finished := sim.Step(max)
-		if finished {
-			return
-		}
+// RunOnce is the main event loop. It will run the simulation for number of seconds.
+func (sim *Simulation) runOnce() {
+	sim.reset()
+	sim.PrePull()
+	sim.runPendingActions(NeverExpires)
+	sim.Cleanup()
+}
+
+// Reset will set sim back and erase all current state.
+// This is automatically called before every 'Run'.
+func (sim *Simulation) reset() {
+	if sim.Log != nil {
+		sim.Log("SIM RESET")
+		sim.Log("----------------------")
 	}
+
+	if sim.Encounter.DurationIsEstimate && sim.CurrentTime != 0 {
+		sim.BaseDuration = sim.CurrentTime
+		sim.Encounter.DurationIsEstimate = false
+	}
+	sim.Duration = sim.BaseDuration
+	if sim.DurationVariation != 0 {
+		variation := sim.DurationVariation * 2
+		sim.Duration += time.Duration(sim.RandomFloat("sim duration")*float64(variation)) - sim.DurationVariation
+	}
+
+	sim.pendingActions = make([]*PendingAction, 0, 64)
+
+	sim.executePhase = 0
+	sim.nextExecutePhase()
+	sim.executePhaseCallbacks = nil
+
+	sim.CurrentTime = 0
+
+	sim.Environment.reset(sim)
+
+	sim.initManaTickAction()
 }
 
 func (sim *Simulation) PrePull() {
@@ -380,12 +379,13 @@ func (sim *Simulation) Cleanup() {
 	}
 }
 
-// RunOnce is the main event loop. It will run the simulation for number of seconds.
-func (sim *Simulation) runOnce() {
-	sim.reset()
-	sim.PrePull()
-	sim.runPendingActions(NeverExpires)
-	sim.Cleanup()
+func (sim *Simulation) runPendingActions(max time.Duration) {
+	for {
+		finished := sim.Step(max)
+		if finished {
+			return
+		}
+	}
 }
 
 func (sim *Simulation) Step(max time.Duration) bool {
