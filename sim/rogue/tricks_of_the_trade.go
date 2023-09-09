@@ -13,19 +13,17 @@ func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 	hasShadowblades := rogue.HasSetBonus(Tier10, 2)
 	energyCost := 15 - 5*float64(rogue.Talents.FilthyTricks)
 
+	var targetUnit *core.Unit
 	hasGlyph := rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfTricksOfTheTrade)
 	if rogue.Options.TricksOfTheTradeTarget != nil {
-		targetUnit := rogue.GetUnit(rogue.Options.TricksOfTheTradeTarget)
-		if targetUnit != nil {
-			rogue.TricksOfTheTradeAura = core.TricksOfTheTradeAura(targetUnit, rogue.Index, hasGlyph)
-		}
+		targetUnit = rogue.GetUnit(rogue.Options.TricksOfTheTradeTarget)
 	}
-	if rogue.TricksOfTheTradeAura == nil {
-		target := &rogue.GetCharacter().Unit
-		rogue.TricksOfTheTradeAura = core.TricksOfTheTradeAura(target, rogue.Index, hasGlyph)
-		rogue.TricksOfTheTradeAura.OnGain = func(aura *core.Aura, sim *core.Simulation) {}
-		rogue.TricksOfTheTradeAura.OnExpire = func(aura *core.Aura, sim *core.Simulation) {}
-	}
+
+	tricksOfTheTradeThreatTransferAura := rogue.GetOrRegisterAura(core.Aura{
+		ActionID: core.ActionID{SpellID: 59628},
+		Label:    "TricksOfTheTradeThreatTransfer",
+		Duration: core.TernaryDuration(hasGlyph, time.Second*10, time.Second*6),
+	})
 
 	tricksOfTheTradeApplicationAura := rogue.GetOrRegisterAura(core.Aura{
 		ActionID: core.ActionID{SpellID: 57934},
@@ -33,7 +31,10 @@ func (rogue *Rogue) registerTricksOfTheTradeSpell() {
 		Duration: 30 * time.Second,
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if result.Landed() {
-				rogue.TricksOfTheTradeAura.Activate(sim)
+				tricksOfTheTradeThreatTransferAura.Activate(sim)
+				if targetUnit != nil {
+					core.TricksOfTheTradeAura(targetUnit, rogue.Index, hasGlyph).Activate(sim)
+				}
 				aura.Deactivate(sim)
 			}
 		},
