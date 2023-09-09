@@ -503,7 +503,7 @@ dps_results: {
  key: "TestBalancePhase3-AllItems-InsightfulEarthsiegeDiamond"
  value: {
   dps: 11178.45129
-  tps: 10944.58755
+  tps: 10945.92525
  }
 }
 dps_results: {
@@ -551,8 +551,8 @@ dps_results: {
 dps_results: {
  key: "TestBalancePhase3-AllItems-MajesticDragonFigurine-40430"
  value: {
-  dps: 11085.47856
-  tps: 10853.46661
+  dps: 11086.68544
+  tps: 10854.67349
  }
 }
 dps_results: {
@@ -776,7 +776,7 @@ dps_results: {
  key: "TestBalancePhase3-AllItems-SparkofLife-37657"
  value: {
   dps: 11032.50053
-  tps: 10802.5105
+  tps: 10802.11195
  }
 }
 dps_results: {
@@ -950,8 +950,8 @@ dps_results: {
 dps_results: {
  key: "TestBalancePhase3-Settings-Tauren-P3-Default-FullBuffs-LongMultiTarget"
  value: {
-  dps: 16438.636
-  tps: 19244.19992
+  dps: 16247.09519
+  tps: 19082.08476
  }
 }
 dps_results: {
@@ -971,8 +971,8 @@ dps_results: {
 dps_results: {
  key: "TestBalancePhase3-Settings-Tauren-P3-Default-NoBuffs-LongMultiTarget"
  value: {
-  dps: 7565.13021
-  tps: 8530.36091
+  dps: 7598.75872
+  tps: 8557.75778
  }
 }
 dps_results: {

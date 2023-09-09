@@ -42,8 +42,8 @@ func (mage *Mage) applyIgnite() {
 	mage.Ignite = mage.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 12654},
 		SpellSchool: core.SpellSchoolFire,
-		ProcMask:    core.ProcMaskEmpty,
-		Flags:       SpellFlagMage | core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers,
+		ProcMask:    core.ProcMaskProc,
+		Flags:       SpellFlagMage | core.SpellFlagIgnoreModifiers,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.BurningSoul),

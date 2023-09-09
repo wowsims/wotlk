@@ -148,6 +148,17 @@ func (unit *Unit) OnSpellRegistered(handler SpellRegisteredHandler) {
 	unit.spellRegistrationHandlers = append(unit.spellRegistrationHandlers, handler)
 }
 
+func (unit *Unit) GetDummyProcSpell() *Spell {
+	if unit.DummyProcSpell == nil {
+		unit.DummyProcSpell = unit.RegisterSpell(SpellConfig{
+			ActionID: ActionID{SpellID: -1},
+			Flags:    SpellFlagNoLogs | SpellFlagNoMetrics,
+			ProcMask: ProcMaskProc,
+		})
+	}
+	return unit.DummyProcSpell
+}
+
 // Registers a new spell to the unit. Returns the newly created spell.
 func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 	if len(unit.Spellbook) > 100 {
