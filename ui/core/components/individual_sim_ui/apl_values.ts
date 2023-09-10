@@ -1,5 +1,6 @@
 import {
 	Class,
+	Spec,
 } from '../../proto/common.js';
 
 import {
@@ -62,6 +63,7 @@ import {
 	APLValueNextRuneCooldown,
 	APLValueNumberTargets,
 	APLValueTotemRemainingTime,
+	APLValueCatExcessEnergy,
 } from '../../proto/apl.js';
 
 import { EventID } from '../../typed_event.js';
@@ -892,6 +894,15 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassShaman,
 		fields: [
 			totemTypeFieldConfig('totemType'),
+		],
+	}),
+	'catExcessEnergy': inputBuilder({
+		label: 'Excess Energy',
+		submenu: ['Feral Druid'],
+		shortDescription: 'Returns the amount of excess energy available, after subtracting energy that will be needed to maintain DoTs.',
+		newValue: APLValueCatExcessEnergy.create,
+		includeIf: (player: Player<any>, isPrepull: boolean) => player.spec == Spec.SpecFeralDruid,
+		fields: [
 		],
 	}),
 };
