@@ -1,3 +1,5 @@
+import { Tooltip } from 'bootstrap';
+
 import { difficultyNames, professionNames, slotNames } from '../proto_utils/names.js';
 import { BaseModal } from './base_modal';
 import { Component } from './component';
@@ -41,7 +43,7 @@ import {
 	UIItem as Item,
 } from '../proto/ui.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
-import { Tooltip } from 'bootstrap';
+import { initializeGearCompare } from '../../shared/gear_compare.js';
 
 const EP_TOOLTIP = `
 	EP (Equivalence Points) is way of comparing items by multiplying the raw stats of an item with your current stat weights.
@@ -923,7 +925,7 @@ export class ItemList<T> {
 			listItemElem.dataset.idx = String(itemIdx);
 			listItemElem.innerHTML = `
 				<div class="selector-modal-list-label-cell">
-					<a class="selector-modal-list-item-link">
+					<a class="selector-modal-list-item-link" data-gear-compare="true">
 						<img class="selector-modal-list-item-icon" />
 						<label class="selector-modal-list-item-name">${itemData.heroic ? itemData.name + HEROIC_LABEL : itemData.name}</label>
 					</a>
@@ -1045,6 +1047,8 @@ export class ItemList<T> {
 
 			return listItemElem;
 		});
+
+		initializeGearCompare();
 
 		const removeButton = tabContent.getElementsByClassName('selector-modal-remove-button')[0] as HTMLButtonElement;
 		removeButton.addEventListener('click', event => {

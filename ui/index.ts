@@ -3,6 +3,7 @@ import * as bootstrap from 'bootstrap';
 import tippy from 'tippy.js';
 
 import './shared/bootstrap_overrides';
+import './shared/gear_compare';
 
 declare global {
 	interface Window {
