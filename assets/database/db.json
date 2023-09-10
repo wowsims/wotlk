@@ -12109,6 +12109,8 @@
 {"id":51884,"name":"Mental Dexterity","icon":"spell_nature_bloodlust"},
 {"id":51885,"name":"Mental Dexterity","icon":"spell_nature_bloodlust"},
 {"id":51886,"name":"Cleanse Spirit","icon":"ability_shaman_cleansespirit"},
+{"id":51994,"name":"Earthliving Weapon","icon":"spell_shaman_earthlivingweapon"},
+{"id":52000,"name":"Earthliving","icon":"spell_shaman_giftearthmother"},
 {"id":52042,"name":"Healing Stream Totem","icon":"spell_holy_stoicism"},
 {"id":52143,"name":"Master of Ghouls","icon":"spell_shadow_animatedead"},
 {"id":52234,"name":"Cornered","icon":"ability_hunter_survivalinstincts"},
@@ -12988,6 +12990,7 @@
 {"path":"Ulduar 25/Algalon","targets":[{"path":"Ulduar 25/Algalon","target":{"id":32871,"name":"Algalon","level":83,"mobType":4,"stats":[0,0,0,0,0,0,0,0,0,0,0,805,0,0,0,0,0,0,0,0,10643,0,0,0,76,0,0,0,41834998,0,0,0,0,0,0,0,0,0,0,0],"minBaseDamage":63649,"damageSpread":0.1,"swingSpeed":1,"dualWield":true}}]},
 {"path":"ToGC 25/Gormok","targets":[{"path":"ToGC 25/Gormok","target":{"id":34796,"name":"Gormok","level":83,"mobType":6,"stats":[0,0,0,0,0,0,0,0,0,0,0,805,0,0,0,0,0,0,0,0,10643,0,0,0,76,0,0,0,11853250,0,0,0,0,0,0,0,0,0,0,0],"minBaseDamage":39600,"damageSpread":0.3333,"swingSpeed":1.5}}]},
 {"path":"ToGC 25/Anub'arak","targets":[{"path":"ToGC 25/Anub'arak","target":{"id":34564,"name":"Anub'arak","level":83,"mobType":8,"stats":[0,0,0,0,0,0,0,0,0,0,0,805,0,0,0,0,0,0,0,0,10643,0,0,0,76,0,0,0,27192750,0,0,0,0,0,0,0,0,0,0,0],"minBaseDamage":58411,"damageSpread":0.45,"swingSpeed":1.5}}]},
+{"path":"ICC 25/Sindragosa (Heroic)","targets":[{"path":"ICC 25/Sindragosa (Heroic)","target":{"id":36853,"name":"Sindragosa (Heroic)","level":83,"mobType":8,"stats":[0,0,0,0,0,0,0,0,0,0,0,805,0,0,0,0,0,0,0,0,10643,0,0,0,76,0,0,0,46018500,0,0,0,0,0,0,0,0,0,0,0],"minBaseDamage":88072,"damageSpread":0.5,"swingSpeed":1.5,"parryHaste":true,"suppressDodge":true,"targetInputs":[{"label":"Include Mystic Buffet","tooltip":"Model the ramping magic damage taken debuff applied during Phase 3 of the encounter, in addition to the normal Phase 1 mechanics."}]}}]},
 {"path":"ICC 25/Lich King (Heroic)","targets":[{"path":"ICC 25/Lich King (Heroic)","target":{"id":36597,"name":"Lich King (Heroic)","level":83,"mobType":8,"stats":[0,0,0,0,0,0,0,0,0,0,0,805,0,0,0,0,0,0,0,0,10643,0,0,0,76,0,0,0,103151165,0,0,0,0,0,0,0,0,0,0,0],"minBaseDamage":146497,"damageSpread":0.1557,"swingSpeed":1.5,"suppressDodge":true}}]}
 ],
 "glyphIds":[
