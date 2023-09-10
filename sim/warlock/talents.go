@@ -71,7 +71,7 @@ func (warlock *Warlock) applyDeathsEmbrace() {
 
 	multiplier := 1.0 + 0.04*float64(warlock.Talents.DeathsEmbrace)
 	warlock.RegisterResetEffect(func(sim *core.Simulation) {
-		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {
+		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int32) {
 			if isExecute == 35 {
 				warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *= multiplier
 			}
@@ -195,7 +195,7 @@ func (warlock *Warlock) setupDecimation() {
 	})
 
 	warlock.RegisterResetEffect(func(sim *core.Simulation) {
-		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {
+		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int32) {
 			if isExecute == 35 {
 				decimation.Activate(sim)
 			}
@@ -514,6 +514,10 @@ func (warlock *Warlock) setupImprovedSoulLeech() {
 }
 
 func (warlock *Warlock) updateDPASP(sim *core.Simulation) {
+	if sim.CurrentTime < 0 {
+		return
+	}
+
 	dpspCurrent := warlock.DemonicPactAura.ExclusiveEffects[0].Priority
 	currentTimeJump := sim.CurrentTime.Seconds() - warlock.PreviousTime.Seconds()
 

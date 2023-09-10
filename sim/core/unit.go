@@ -108,7 +108,7 @@ type Unit struct {
 	spellRegistrationHandlers []SpellRegisteredHandler
 
 	// Pets owned by this Unit.
-	Pets []PetAgent
+	PetAgents []PetAgent
 
 	// AutoAttacks is the manager for auto attack swings.
 	// Must be enabled to use, with "EnableAutoAttacks()".
@@ -150,6 +150,8 @@ type Unit struct {
 
 	CurrentTarget *Unit
 	defaultTarget *Unit
+
+	DummyProcSpell *Spell
 }
 
 // Units can be disabled for several reasons:
@@ -256,10 +258,8 @@ func (unit *Unit) processDynamicBonus(sim *Simulation, bonus stats.Stats) {
 		unit.updateCastSpeed()
 	}
 
-	if len(unit.Pets) > 0 {
-		for _, petAgent := range unit.Pets {
-			petAgent.GetPet().addOwnerStats(sim, bonus)
-		}
+	for _, petAgent := range unit.PetAgents {
+		petAgent.GetPet().addOwnerStats(sim, bonus)
 	}
 }
 
@@ -467,7 +467,7 @@ func (unit *Unit) startPull(sim *Simulation) {
 }
 
 // Advance moves time forward counting down auras, CDs, mana regen, etc
-func (unit *Unit) advance(sim *Simulation, _ time.Duration) {
+func (unit *Unit) advance(sim *Simulation) {
 	unit.auraTracker.advance(sim)
 
 	if hc := &unit.Hardcast; hc.Expires != startingCDTime && hc.Expires <= sim.CurrentTime {

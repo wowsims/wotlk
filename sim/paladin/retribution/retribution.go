@@ -151,7 +151,7 @@ func (ret *RetributionPaladin) Reset(sim *core.Simulation) {
 		}
 	}
 
-	sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {
+	sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int32) {
 		if isExecute == 20 {
 			ret.OnGCDReady(sim)
 		}

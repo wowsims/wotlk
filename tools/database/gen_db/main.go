@@ -77,13 +77,18 @@ func main() {
 	for _, response := range itemTooltips {
 		if response.IsEquippable() {
 			// Only included items that are in wowheads gearplanner db
-			// Wowhead doesnt seem to have a field/flag to signify 'not available / in game' but their gearplanner db has them filtered
+			// Wowhead doesn't seem to have a field/flag to signify 'not available / in game' but their gearplanner db has them filtered
 			item := response.ToItemProto()
 			if _, ok := wowheadDB.Items[strconv.Itoa(int(item.Id))]; ok {
 				db.MergeItem(item)
 			}
 		} else if response.IsGem() {
-			db.MergeGem(response.ToGemProto())
+			ilvl := response.GetItemLevel()
+			gem := response.ToGemProto()
+			// Allow green lvl 70 gems, which should filter out most tbc gems
+			if ilvl > 70 || (ilvl == 70 && response.GetQuality() == 2) || gem.Color == proto.GemColor_GemColorMeta {
+				db.MergeGem(gem)
+			}
 		}
 	}
 	for _, wowheadItem := range wowheadDB.Items {
@@ -289,10 +294,7 @@ func simmableItemFilter(_ int32, item *proto.UIItem) bool {
 	return true
 }
 func simmableGemFilter(_ int32, gem *proto.UIGem) bool {
-	if gem.Quality < proto.ItemQuality_ItemQualityUncommon {
-		return false
-	}
-	return true
+	return gem.Quality >= proto.ItemQuality_ItemQualityUncommon
 }
 
 type TalentConfig struct {

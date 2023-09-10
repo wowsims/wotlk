@@ -29,6 +29,11 @@ func (rogue *Rogue) OnEnergyGain(sim *core.Simulation) {
 	if rogue.IsUsingAPL {
 		return
 	}
+
+	if sim.CurrentTime < 0 {
+		return
+	}
+
 	rogue.TryUseCooldowns(sim)
 
 	if !rogue.GCD.IsReady(sim) {

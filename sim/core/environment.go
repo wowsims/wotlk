@@ -36,6 +36,8 @@ type Environment struct {
 	Encounter Encounter
 	AllUnits  []*Unit
 
+	characters []*Character // "cached" in init(), for advance()
+
 	BaseDuration      time.Duration // base duration
 	DurationVariation time.Duration // variation per duration
 
@@ -154,8 +156,8 @@ func (env *Environment) finalize(raidProto *proto.Raid, _ *proto.Encounter, raid
 		for _, player := range party.Players {
 			character := player.GetCharacter()
 			character.Finalize()
-			for _, petAgent := range character.Pets {
-				petAgent.GetPet().Finalize()
+			for _, pet := range character.Pets {
+				pet.Finalize()
 			}
 		}
 	}
@@ -271,7 +273,7 @@ func (env *Environment) GetUnit(ref *proto.UnitReference, contextUnit *Unit) *Un
 		if ownerAgent == nil {
 			return nil
 		}
-		pets := ownerAgent.GetCharacter().Pets
+		pets := ownerAgent.GetCharacter().PetAgents
 		if int(ref.Index) < len(pets) {
 			return &pets[ref.Index].GetCharacter().Unit
 		} else {

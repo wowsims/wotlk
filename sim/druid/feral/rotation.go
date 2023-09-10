@@ -14,6 +14,10 @@ func (cat *FeralDruid) OnEnergyGain(sim *core.Simulation) {
 		return
 	}
 
+	if sim.CurrentTime < 0 {
+		return
+	}
+
 	cat.TryUseCooldowns(sim)
 	if cat.InForm(druid.Cat) && !cat.readyToShift {
 		cat.doTigersFury(sim)
@@ -377,7 +381,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) (bool, time.Duration) {
 
 	// Additionally, don't Rake if the current Shred DPE is higher due to
 	// trinket procs etc.
-	if rakeNow {
+	if rotation.RakeDpeCheck && rakeNow {
 		rakeDpe, shredDpe := cat.calcBuilderDpe(sim)
 		rakeNow = (rakeDpe > shredDpe)
 	}
@@ -747,6 +751,7 @@ type FeralDruidRotation struct {
 	LacerateTime       time.Duration
 	SnekWeave          bool
 	FlowerWeave        bool
+	RakeDpeCheck       bool
 
 	AoeMangleBuilder bool
 }
@@ -781,6 +786,7 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 		FlowerWeave:        core.Ternary(rotation.RotationType == proto.FeralDruid_Rotation_Aoe, rotation.FlowerWeave, false),
 		// Use mangle if idol of corruptor or mutilation equipped
 		AoeMangleBuilder: equipedIdol == 45509 || equipedIdol == 47668,
+		RakeDpeCheck:     equipedIdol != 50456,
 	}
 
 	// Use automatic values unless specified

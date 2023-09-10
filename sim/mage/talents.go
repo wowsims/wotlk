@@ -620,7 +620,7 @@ func (mage *Mage) applyMoltenFury() {
 	multiplier := 1.0 + 0.06*float64(mage.Talents.MoltenFury)
 
 	mage.RegisterResetEffect(func(sim *core.Simulation) {
-		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int) {
+		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int32) {
 			mage.GetMajorCooldown(core.ActionID{SpellID: EvocationId}).Disable()
 			if isExecute == 35 {
 				mage.PseudoStats.DamageDealtMultiplier *= multiplier

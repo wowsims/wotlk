@@ -440,6 +440,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBloodTank-AllItems-LastWord-50179"
+ value: {
+  dps: 1638.47346
+  tps: 4849.54454
+ }
+}
+dps_results: {
+ key: "TestBloodTank-AllItems-LastWord-50708"
+ value: {
+  dps: 1658.35389
+  tps: 4896.29524
+ }
+}
+dps_results: {
  key: "TestBloodTank-AllItems-Lavanthor'sTalisman-37872"
  value: {
   dps: 1408.69904

@@ -600,6 +600,22 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeralTank-AllItems-LastWord-50179"
+ value: {
+  dps: 2629.90458
+  tps: 5556.20767
+  dtps: 6.66421
+ }
+}
+dps_results: {
+ key: "TestFeralTank-AllItems-LastWord-50708"
+ value: {
+  dps: 2626.40328
+  tps: 5542.72441
+  dtps: 6.66421
+ }
+}
+dps_results: {
  key: "TestFeralTank-AllItems-Lavanthor'sTalisman-37872"
  value: {
   dps: 2562.69079

@@ -46,6 +46,7 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 		ActionID: core.ActionID{SpellID: 51690},
 		Duration: time.Second*2 + 1,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			rogue.SetGCDTimer(sim, core.NeverExpires)
 			rogue.PseudoStats.DamageDealtMultiplier *= 1.2
 			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
 				Period:          time.Millisecond * 500,
@@ -64,6 +65,7 @@ func (rogue *Rogue) registerKillingSpreeSpell() {
 			})
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			rogue.SetGCDTimer(sim, sim.CurrentTime)
 			rogue.PseudoStats.DamageDealtMultiplier /= 1.2
 		},
 	})

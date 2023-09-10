@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"golang.org/x/exp/slices"
 	"strings"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -16,7 +17,7 @@ type SingleCharacterStatsTestGenerator struct {
 func (generator *SingleCharacterStatsTestGenerator) NumTests() int {
 	return 1
 }
-func (generator *SingleCharacterStatsTestGenerator) GetTest(testIdx int) (string, *proto.ComputeStatsRequest, *proto.StatWeightsRequest, *proto.RaidSimRequest) {
+func (generator *SingleCharacterStatsTestGenerator) GetTest(_ int) (string, *proto.ComputeStatsRequest, *proto.StatWeightsRequest, *proto.RaidSimRequest) {
 	return generator.Name, generator.Request, nil, nil
 }
 
@@ -28,7 +29,7 @@ type SingleStatWeightsTestGenerator struct {
 func (generator *SingleStatWeightsTestGenerator) NumTests() int {
 	return 1
 }
-func (generator *SingleStatWeightsTestGenerator) GetTest(testIdx int) (string, *proto.ComputeStatsRequest, *proto.StatWeightsRequest, *proto.RaidSimRequest) {
+func (generator *SingleStatWeightsTestGenerator) GetTest(_ int) (string, *proto.ComputeStatsRequest, *proto.StatWeightsRequest, *proto.RaidSimRequest) {
 	return generator.Name, nil, generator.Request, nil
 }
 
@@ -40,7 +41,7 @@ type SingleDpsTestGenerator struct {
 func (generator *SingleDpsTestGenerator) NumTests() int {
 	return 1
 }
-func (generator *SingleDpsTestGenerator) GetTest(testIdx int) (string, *proto.ComputeStatsRequest, *proto.StatWeightsRequest, *proto.RaidSimRequest) {
+func (generator *SingleDpsTestGenerator) GetTest(_ int) (string, *proto.ComputeStatsRequest, *proto.StatWeightsRequest, *proto.RaidSimRequest) {
 	return generator.Name, nil, nil, generator.Request
 }
 
@@ -192,7 +193,7 @@ type ItemFilter struct {
 
 	ArmorType proto.ArmorType
 
-	// Blank list allows any value. Otherwise item must match 1 value from the list.
+	// Empty lists allows any value. Otherwise, item must match a value from the list.
 	WeaponTypes       []proto.WeaponType
 	HandTypes         []proto.HandType
 	RangedWeaponTypes []proto.RangedWeaponType
@@ -207,43 +208,15 @@ type ItemFilter struct {
 // the item is equippable.
 func (filter *ItemFilter) Matches(item Item, equipChecksOnly bool) bool {
 	if item.Type == proto.ItemType_ItemTypeWeapon {
-		if len(filter.WeaponTypes) > 0 {
-			found := false
-			for _, weaponType := range filter.WeaponTypes {
-				if weaponType == item.WeaponType {
-					found = true
-					break
-				}
-			}
-			if !found {
-				return false
-			}
+		if len(filter.WeaponTypes) > 0 && !slices.Contains(filter.WeaponTypes, item.WeaponType) {
+			return false
 		}
-
-		if len(filter.HandTypes) > 0 {
-			found := false
-			for _, handType := range filter.HandTypes {
-				if handType == item.HandType {
-					found = true
-					break
-				}
-			}
-			if !found {
-				return false
-			}
+		if len(filter.HandTypes) > 0 && !slices.Contains(filter.HandTypes, item.HandType) {
+			return false
 		}
 	} else if item.Type == proto.ItemType_ItemTypeRanged {
-		if len(filter.RangedWeaponTypes) > 0 {
-			found := false
-			for _, rangedWeaponType := range filter.RangedWeaponTypes {
-				if rangedWeaponType == item.RangedWeaponType {
-					found = true
-					break
-				}
-			}
-			if !found {
-				return false
-			}
+		if len(filter.RangedWeaponTypes) > 0 && !slices.Contains(filter.RangedWeaponTypes, item.RangedWeaponType) {
+			return false
 		}
 	} else {
 		if filter.ArmorType != proto.ArmorType_ArmorTypeUnknown {
@@ -258,12 +231,8 @@ func (filter *ItemFilter) Matches(item Item, equipChecksOnly bool) bool {
 			return false
 		}
 
-		if len(filter.IDBlacklist) > 0 {
-			for _, itemID := range filter.IDBlacklist {
-				if itemID == item.ID {
-					return false
-				}
-			}
+		if slices.Contains(filter.IDBlacklist, item.ID) {
+			return false
 		}
 	}
 
@@ -271,7 +240,7 @@ func (filter *ItemFilter) Matches(item Item, equipChecksOnly bool) bool {
 }
 
 func (filter *ItemFilter) FindAllItems() []Item {
-	filteredItems := []Item{}
+	var filteredItems []Item
 
 	for _, item := range ItemsByID {
 		if filter.Matches(item, false) {
@@ -283,13 +252,11 @@ func (filter *ItemFilter) FindAllItems() []Item {
 }
 
 func (filter *ItemFilter) FindAllSets() []*ItemSet {
-	filteredSets := []*ItemSet{}
+	var filteredSets []*ItemSet
 
-	for _, set := range GetAllItemSets() {
-		itemIDs := set.ItemIDs()
-		if len(itemIDs) > 0 {
-			firstItem := ItemsByID[itemIDs[0]]
-			if filter.Matches(firstItem, true) {
+	for _, set := range sets {
+		if setItems := set.Items(); len(setItems) > 0 {
+			if filter.Matches(setItems[0], true) {
 				filteredSets = append(filteredSets, set)
 			}
 		}
@@ -299,7 +266,7 @@ func (filter *ItemFilter) FindAllSets() []*ItemSet {
 }
 
 func (filter *ItemFilter) FindAllMetaGems() []Gem {
-	filteredGems := []Gem{}
+	var filteredGems []Gem
 
 	for _, gem := range GemsByID {
 		if gem.Color == proto.GemColor_GemColorMeta {
@@ -386,8 +353,7 @@ func (generator *ItemsTestGenerator) GetTest(testIdx int) (string, *proto.Comput
 		label = fmt.Sprintf("%s-%d", strings.ReplaceAll(testItem.Name, " ", ""), testItem.ID)
 	} else if testIdx < len(generator.items)+len(generator.sets) {
 		testSet := generator.sets[testIdx-len(generator.items)]
-		for _, itemID := range testSet.ItemIDs() {
-			setItem := ItemsByID[itemID]
+		for _, setItem := range testSet.Items() {
 			equipment.EquipItem(setItem)
 		}
 		label = strings.ReplaceAll(testSet.Name, " ", "")
@@ -606,7 +572,7 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 		})
 	}
 
-	// Add this separately so it's always last, which makes it easy to find in the
+	// Add this separately, so it's always last, which makes it easy to find in the
 	// displayed test results.
 	generator.subgenerators = append(generator.subgenerators, SubGenerator{
 		name: "Average",
@@ -620,60 +586,5 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 		},
 	})
 
-	return generator
-}
-
-func MakeDefaultBuffCombos(config CharacterSuiteConfig) []BuffsCombo {
-	return []BuffsCombo{
-		{
-			Label: "No Buffs",
-		},
-		{
-			Label:    "Full Buffs",
-			Raid:     FullRaidBuffs,
-			Party:    FullPartyBuffs,
-			Debuffs:  FullDebuffs,
-			Player:   FullIndividualBuffs,
-			Consumes: config.Consumes,
-		},
-	}
-}
-
-func RotationTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator {
-	allSpecOptions := append(config.OtherSpecOptions, config.SpecOptions)
-
-	defaultPlayer := &proto.Player{
-		Class:       config.Class,
-		Race:        config.Race,
-		Equipment:   config.GearSet.GearSet,
-		Consumes:    config.Consumes,
-		Buffs:       FullIndividualBuffs,
-		Glyphs:      config.Glyphs,
-		Profession1: proto.Profession_Engineering,
-
-		InFrontOfTarget:    config.InFrontOfTarget,
-		DistanceFromTarget: 30,
-	}
-
-	generator := &CombinedTestGenerator{
-		subgenerators: []SubGenerator{},
-	}
-	generator.subgenerators = append(generator.subgenerators, SubGenerator{
-		name: "Casts",
-		generator: &RotationCastsTestGenerator{
-			Player:      defaultPlayer,
-			PartyBuffs:  FullPartyBuffs,
-			RaidBuffs:   FullRaidBuffs,
-			Debuffs:     FullDebuffs,
-			SpecOptions: allSpecOptions,
-			Encounter:   MakeSingleTargetEncounter(5),
-			SimOptions: &proto.SimOptions{
-				Iterations: 100,
-				IsTest:     true,
-				Debug:      false,
-				RandomSeed: 101,
-			},
-		},
-	})
 	return generator
 }

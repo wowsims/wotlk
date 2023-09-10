@@ -19,7 +19,7 @@ type Encounter struct {
 	ExecuteProportion_35 float64
 
 	EndFightAtHealth float64
-	// DamgeTaken is used to track health fights instead of duration fights.
+	// DamageTaken is used to track health fights instead of duration fights.
 	//  Once primary target has taken its health worth of damage, fight ends.
 	DamageTaken float64
 	// In health fight: set to true until we get something to base on
@@ -176,8 +176,8 @@ func (target *Target) Reset(sim *Simulation) {
 	}
 }
 
-func (target *Target) Advance(sim *Simulation, elapsedTime time.Duration) {
-	target.Unit.advance(sim, elapsedTime)
+func (target *Target) Advance(sim *Simulation) {
+	target.Unit.advance(sim)
 }
 
 func (target *Target) doneIteration(sim *Simulation) {

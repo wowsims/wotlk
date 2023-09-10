@@ -99,7 +99,6 @@ type Rogue struct {
 	KillingSpreeAura     *core.Aura
 	OverkillAura         *core.Aura
 	SliceAndDiceAura     *core.Aura
-	TricksOfTheTradeAura *core.Aura
 	MasterOfSubtletyAura *core.Aura
 	ShadowstepAura       *core.Aura
 	ShadowDanceAura      *core.Aura
@@ -186,6 +185,12 @@ func (rogue *Rogue) Initialize() {
 	rogue.registerVanishSpell()
 
 	rogue.finishingMoveEffectApplier = rogue.makeFinishingMoveEffectApplier()
+
+	if !rogue.IsUsingAPL && rogue.Rotation.TricksOfTheTradeFrequency != proto.Rogue_Rotation_Never && !rogue.HasSetBonus(Tier10, 2) {
+		rogue.RegisterPrepullAction(-10*time.Second, func(sim *core.Simulation) {
+			rogue.TricksOfTheTrade.Cast(sim, nil)
+		})
+	}
 }
 
 func (rogue *Rogue) ApplyEnergyTickMultiplier(multiplier float64) {

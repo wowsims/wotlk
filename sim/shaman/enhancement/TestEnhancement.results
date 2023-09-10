@@ -517,6 +517,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-LastWord-50179"
+ value: {
+  dps: 7672.52563
+  tps: 4221.33363
+ }
+}
+dps_results: {
+ key: "TestEnhancement-AllItems-LastWord-50708"
+ value: {
+  dps: 7672.52563
+  tps: 4221.33363
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-Lavanthor'sTalisman-37872"
  value: {
   dps: 7433.82436

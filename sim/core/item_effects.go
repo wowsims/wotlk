@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"golang.org/x/exp/slices"
 	"strconv"
 	"time"
 
@@ -15,7 +16,7 @@ import (
 // but there are occasionally class-specific item effects.
 type ApplyEffect func(Agent)
 
-// Function for applying permenent effects to an agent's weapon
+// Function for applying permanent effects to an agent's weapon
 type ApplyWeaponEffect func(Agent, proto.ItemSlot)
 
 var itemEffects = map[int32]ApplyEffect{}
@@ -23,7 +24,7 @@ var weaponEffects = map[int32]ApplyWeaponEffect{}
 var enchantEffects = map[int32]ApplyEffect{}
 
 // IDs of item effects which should be used for tests.
-var itemEffectsForTest = []int32{}
+var itemEffectsForTest []int32
 
 // This value can be set before adding item effects, to control whether they are included in tests.
 var AddEffectsToTest = true
@@ -33,12 +34,7 @@ func HasItemEffect(id int32) bool {
 	return ok
 }
 func HasItemEffectForTest(id int32) bool {
-	for _, itemID := range itemEffectsForTest {
-		if id == itemID {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(itemEffectsForTest, id)
 }
 
 func HasWeaponEffect(id int32) bool {

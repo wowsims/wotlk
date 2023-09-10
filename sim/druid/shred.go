@@ -5,7 +5,6 @@ import (
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (druid *Druid) registerShredSpell() {
@@ -31,6 +30,9 @@ func (druid *Druid) registerShredSpell() {
 				GCD: time.Second,
 			},
 			IgnoreHaste: true,
+		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return !druid.PseudoStats.InFrontOfTarget
 		},
 
 		DamageMultiplier: 2.25,
@@ -82,8 +84,8 @@ func (druid *Druid) registerShredSpell() {
 			baseDamage *= modifier
 			baseres := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
 
-			critRating := druid.GetStat(stats.MeleeCrit) + spell.BonusCritRating
-			critChance := critRating / (core.CritRatingPerCritChance * 100)
+			attackTable := spell.Unit.AttackTables[target.UnitIndex]
+			critChance := spell.PhysicalCritChance(attackTable)
 			critMod := (critChance * (spell.CritMultiplier - 1))
 
 			baseres.Damage *= (1 + critMod)
