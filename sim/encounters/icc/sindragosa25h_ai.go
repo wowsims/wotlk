@@ -93,18 +93,10 @@ func (ai *Sindragosa25HAI) Reset(sim *core.Simulation) {
 
 func (ai *Sindragosa25HAI) registerPermeatingChillAura(target *core.Target) {
 	ai.ChilledToTheBone = target.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 70106},
-		SpellSchool: core.SpellSchoolFrost,
-		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagNone,
-
-		Cast: core.CastConfig{
-			CD: core.Cooldown{
-				Timer:    target.NewTimer(),
-				Duration: time.Second * 2,
-			},
-		},
-
+		ActionID:         core.ActionID{SpellID: 70106},
+		SpellSchool:      core.SpellSchoolFrost,
+		ProcMask:         core.ProcMaskSpellDamage,
+		Flags:            core.SpellFlagNone,
 		DamageMultiplier: 1,
 		CritMultiplier:   1,
 		ThreatMultiplier: 0,
