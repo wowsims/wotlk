@@ -58,6 +58,8 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 				Stat.StatResilience,
 				Stat.StatSpellHit,
 				Stat.StatNatureResistance,
+				Stat.StatShadowResistance,
+				Stat.StatFrostResistance,
 			],
 			epPseudoStats: [
 				PseudoStat.PseudoStatMainHandDps,
@@ -86,6 +88,8 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 				Stat.StatParry,
 				Stat.StatResilience,
 				Stat.StatNatureResistance,
+				Stat.StatShadowResistance,
+				Stat.StatFrostResistance,
 			],
 			defaults: {
 				// Default equipped gear.

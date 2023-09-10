@@ -48,6 +48,8 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 				Stat.StatParry,
 				Stat.StatResilience,
 				Stat.StatNatureResistance,
+				Stat.StatShadowResistance,
+				Stat.StatFrostResistance,
 			],
 			epPseudoStats: [
 				PseudoStat.PseudoStatMainHandDps,
@@ -75,6 +77,8 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 				Stat.StatParry,
 				Stat.StatResilience,
 				Stat.StatNatureResistance,
+				Stat.StatShadowResistance,
+				Stat.StatFrostResistance,
 			],
 
 			defaults: {

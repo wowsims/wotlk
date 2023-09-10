@@ -451,9 +451,12 @@ message RaidBuffs {
 	// mp5
 	TristateEffect mana_spring_totem = 28;
 
-	// Nature Resistance
+	// Resistances
+	bool shadow_protection = 33;
 	bool nature_resistance_totem = 45;
 	bool aspect_of_the_wild = 46;
+	bool frost_resistance_aura = 47;
+	bool frost_resistance_totem = 48;
 	
 	// Miscellaneous
 	bool bloodlust = 29;
@@ -461,7 +464,6 @@ message RaidBuffs {
 	TristateEffect devotion_aura = 31;
 	TristateEffect stoneskin_totem = 42;
 	bool retribution_aura = 32;
-	bool shadow_protection = 33;
 
 	// Drums
 	bool drums_of_forgotten_kings = 34;
