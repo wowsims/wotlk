@@ -107,10 +107,13 @@ export const DamageReductionPercentBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanIndividualBuffInput(ActionId.fromSpellId(50720), 'vigilance'),
 ], 'Mit %');
 
-export const NatureResistanceBuff = InputHelpers.makeMultiIconInput([
+export const ResistanceBuff = InputHelpers.makeMultiIconInput([
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(48170), 'shadowProtection'),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(58749), 'natureResistanceTotem'),
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(49071), 'aspectOfTheWild'),
-], 'NR');
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(48945), 'frostResistanceAura'),
+	makeBooleanRaidBuffInput(ActionId.fromSpellId(58745), 'frostResistanceTotem'),
+], 'Resistances');
 
 export const HastePercentBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(53648), 'swiftRetribution'),
@@ -169,7 +172,6 @@ export const DefensiveCooldownBuff = InputHelpers.makeMultiIconInput([
 
 // Misc Buffs
 export const RetributionAura = makeBooleanRaidBuffInput(ActionId.fromSpellId(54043), 'retributionAura');
-export const ShadowProtection = makeBooleanRaidBuffInput(ActionId.fromSpellId(48170), 'shadowProtection');
 export const BraidedEterniumChain = makeBooleanPartyBuffInput(ActionId.fromSpellId(31025), 'braidedEterniumChain');
 export const ChainOfTheTwilightOwl = makeBooleanPartyBuffInput(ActionId.fromSpellId(31035), 'chainOfTheTwilightOwl');
 export const HeroicPresence = makeBooleanPartyBuffInput(ActionId.fromSpellId(6562), 'heroicPresence');

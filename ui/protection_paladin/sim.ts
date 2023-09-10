@@ -50,6 +50,8 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 				Stat.StatParry,
 				Stat.StatResilience,
 				Stat.StatNatureResistance,
+				Stat.StatShadowResistance,
+				Stat.StatFrostResistance,
 			],
 			epPseudoStats: [
 				PseudoStat.PseudoStatMainHandDps,
@@ -79,6 +81,8 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 				Stat.StatParry,
 				Stat.StatResilience,
 				Stat.StatNatureResistance,
+				Stat.StatShadowResistance,
+				Stat.StatFrostResistance,
 			],
 			modifyDisplayStats: (player: Player<Spec.SpecProtectionPaladin>) => {
 				let stats = new Stats();
