@@ -9,27 +9,27 @@ import (
 
 func (cat *FeralDruid) NewAPLValue(rot *core.APLRotation, config *proto.APLValue) core.APLValue {
 	switch config.Value.(type) {
-	case *proto.APLValue_CatFloatingEnergy:
-		return cat.newValueCatFloatingEnergy(rot, config.GetCatFloatingEnergy())
+	case *proto.APLValue_CatExcessEnergy:
+		return cat.newValueCatExcessEnergy(rot, config.GetCatExcessEnergy())
 	default:
 		return nil
 	}
 }
 
-type APLValueCatFloatingEnergy struct {
+type APLValueCatExcessEnergy struct {
 	core.DefaultAPLValueImpl
 	cat *FeralDruid
 }
 
-func (cat *FeralDruid) newValueCatFloatingEnergy(rot *core.APLRotation, config *proto.APLValueCatFloatingEnergy) core.APLValue {
-	return &APLValueCatFloatingEnergy{
+func (cat *FeralDruid) newValueCatExcessEnergy(rot *core.APLRotation, config *proto.APLValueCatExcessEnergy) core.APLValue {
+	return &APLValueCatExcessEnergy{
 		cat: cat,
 	}
 }
-func (value *APLValueCatFloatingEnergy) Type() proto.APLValueType {
+func (value *APLValueCatExcessEnergy) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeFloat
 }
-func (value *APLValueCatFloatingEnergy) GetFloat(sim *core.Simulation) float64 {
+func (value *APLValueCatExcessEnergy) GetFloat(sim *core.Simulation) float64 {
 	cat := value.cat
 	pendingPool := PoolingActions{}
 	pendingPool.create(4)
@@ -61,8 +61,9 @@ func (value *APLValueCatFloatingEnergy) GetFloat(sim *core.Simulation) float64 {
 
 	pendingPool.sort()
 
-	return pendingPool.calcFloatingEnergy(cat, sim)
+	floatingEnergy := pendingPool.calcFloatingEnergy(cat, sim)
+	return cat.CurrentEnergy() - floatingEnergy
 }
-func (value *APLValueCatFloatingEnergy) String() string {
-	return "Cat Floating Energy()"
+func (value *APLValueCatExcessEnergy) String() string {
+	return "Cat Excess Energy()"
 }

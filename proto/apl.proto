@@ -128,7 +128,7 @@ message APLValue {
 
         // Class or Spec-specific values
         APLValueTotemRemainingTime totem_remaining_time = 49;
-        APLValueCatFloatingEnergy cat_floating_energy = 52;
+        APLValueCatExcessEnergy cat_excess_energy = 52;
     }
 }
 
@@ -402,5 +402,5 @@ message APLValueSequenceTimeToReady {
 message APLValueTotemRemainingTime {
     ShamanTotems.TotemType totem_type = 1;
 }
-message APLValueCatFloatingEnergy {
+message APLValueCatExcessEnergy {
 }
