@@ -413,8 +413,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-InsightfulEarthsiegeDiamond"
  value: {
-  dps: 5325.10886
-  tps: 4232.15504
+  dps: 5325.81681
+  tps: 4232.77343
  }
 }
 dps_results: {

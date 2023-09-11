@@ -427,8 +427,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-InsightfulEarthsiegeDiamond"
  value: {
-  dps: 7384.3913
-  tps: 7309.91454
+  dps: 7382.09209
+  tps: 7306.96825
  }
 }
 dps_results: {

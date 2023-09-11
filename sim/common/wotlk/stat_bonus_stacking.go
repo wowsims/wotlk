@@ -434,7 +434,7 @@ func init() {
 		Bonus:     stats.Stats{stats.MeleeHaste: 57, stats.SpellHaste: 57},
 		CD:        time.Minute * 2,
 		Callback:  core.CallbackOnCastComplete,
-		ProcMask:  core.ProcMaskSpellOrProc,
+		ProcMask:  core.ProcMaskSpellOrProc | core.ProcMaskWeaponProc,
 	})
 	newStackingStatBonusCD(StackingStatBonusCD{
 		Name:      "Fetish of Volatile Power H",
@@ -445,7 +445,7 @@ func init() {
 		Bonus:     stats.Stats{stats.MeleeHaste: 64, stats.SpellHaste: 64},
 		CD:        time.Minute * 2,
 		Callback:  core.CallbackOnCastComplete,
-		ProcMask:  core.ProcMaskSpellOrProc,
+		ProcMask:  core.ProcMaskSpellOrProc | core.ProcMaskWeaponProc,
 	})
 	newStackingStatBonusCD(StackingStatBonusCD{
 		Name:       "Binding Stone",

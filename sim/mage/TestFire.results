@@ -413,8 +413,8 @@ dps_results: {
 dps_results: {
  key: "TestFire-AllItems-InsightfulEarthsiegeDiamond"
  value: {
-  dps: 6621.59069
-  tps: 5305.58456
+  dps: 6599.51739
+  tps: 5283.82983
  }
 }
 dps_results: {

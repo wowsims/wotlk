@@ -505,8 +505,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-InsightfulEarthsiegeDiamond"
  value: {
-  dps: 6473.52938
-  tps: 6573.81541
+  dps: 6471.52365
+  tps: 6570.6448
   dtps: 9.92959
  }
 }
