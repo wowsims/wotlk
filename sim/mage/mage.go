@@ -131,10 +131,13 @@ func (mage *Mage) Initialize() {
 	mage.registerScorchSpell()
 	mage.registerLivingBombSpell()
 	mage.registerFrostfireBoltSpell()
-
-	mage.registerEvocationCD()
+	mage.registerEvocationSpells()
 	mage.registerManaGemsCD()
 	mage.registerMirrorImageCD()
+
+	if !mage.IsUsingAPL {
+		mage.registerEvocationCD()
+	}
 
 	if mirrorImageMCD := mage.GetMajorCooldownIgnoreTag(mage.MirrorImage.ActionID); mirrorImageMCD != nil {
 		if len(mirrorImageMCD.GetTimings()) == 0 {

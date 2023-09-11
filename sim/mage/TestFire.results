@@ -812,8 +812,8 @@ dps_results: {
 dps_results: {
  key: "TestFire-Settings-Troll-P1Fire-FireRotation-FullBuffs-LongMultiTarget"
  value: {
-  dps: 9901.87827
-  tps: 9950.61256
+  dps: 9821.10427
+  tps: 10007.24054
  }
 }
 dps_results: {
