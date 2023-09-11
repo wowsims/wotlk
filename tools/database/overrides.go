@@ -629,6 +629,11 @@ var DenyListNameRegexes = []*regexp.Regexp{
 var GemOverrides = []*proto.UIGem{
 	{Id: 33131, Stats: stats.Stats{stats.AttackPower: 32, stats.RangedAttackPower: 32}.ToFloatArray()},
 }
+var GemAllowList = map[int32]struct{}{
+	22459: {}, // Void Sphere
+	36766: {}, // Bright Dragon's Eye
+	36767: {}, // Solid Dragon's Eye
+}
 var GemDenyList = map[int32]struct{}{
 	// pvp non-unique gems not in game currently.
 	32735: {},

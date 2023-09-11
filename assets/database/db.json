@@ -8363,6 +8363,7 @@
 {"effectId":3883,"spellId":70164,"name":"Rune of the Nerubian Carapace","type":13,"stats":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"quality":2,"phase":1,"classAllowlist":[10]}
 ],
 "gems":[
+{"id":22459,"name":"Void Sphere","icon":"inv_enchant_voidsphere","color":8,"stats":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,4,4,4,4,0],"phase":1,"quality":4},
 {"id":25890,"name":"Destructive Skyfire Diamond","icon":"inv_misc_gem_diamond_07","color":1,"stats":[0,0,0,0,0,0,0,0,14,0,0,0,0,14,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"phase":1,"quality":3},
 {"id":25893,"name":"Mystical Skyfire Diamond","icon":"inv_misc_gem_diamond_07","color":1,"stats":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"phase":1,"quality":3},
 {"id":25894,"name":"Swift Skyfire Diamond","icon":"inv_misc_gem_diamond_07","color":1,"stats":[0,0,0,0,0,0,0,0,0,0,0,24,0,0,0,0,0,0,0,0,0,24,0,0,0,0,0,0,0,0,0,0,0,0,0],"phase":1,"quality":3},
