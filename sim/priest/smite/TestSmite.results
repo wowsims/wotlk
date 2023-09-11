@@ -427,8 +427,8 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-InsightfulEarthsiegeDiamond"
  value: {
-  dps: 3610.55281
-  tps: 3070.04846
+  dps: 3611.48307
+  tps: 3070.92039
  }
 }
 dps_results: {

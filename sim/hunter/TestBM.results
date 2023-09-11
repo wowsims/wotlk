@@ -477,7 +477,7 @@ dps_results: {
  key: "TestBM-AllItems-InsightfulEarthsiegeDiamond"
  value: {
   dps: 6214.86711
-  tps: 4105.86008
+  tps: 4105.64543
  }
 }
 dps_results: {

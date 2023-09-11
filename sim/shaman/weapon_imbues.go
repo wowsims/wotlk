@@ -144,7 +144,6 @@ func (shaman *Shaman) newFlametongueImbueSpell(weapon *core.Item, isDownranked b
 		ActionID:    core.ActionID{SpellID: int32(spellID)},
 		SpellSchool: core.SpellSchoolFire,
 		ProcMask:    core.ProcMaskWeaponProc,
-		Flags:       core.SpellFlagNoOnCastComplete,
 
 		BonusHitRating:   float64(shaman.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance,
 		DamageMultiplier: 1,

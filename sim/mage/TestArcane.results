@@ -413,8 +413,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-InsightfulEarthsiegeDiamond"
  value: {
-  dps: 7347.47302
-  tps: 4433.70302
+  dps: 7350.46598
+  tps: 4435.64652
  }
 }
 dps_results: {

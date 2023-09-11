@@ -413,8 +413,8 @@ dps_results: {
 dps_results: {
  key: "TestDemonology-AllItems-InsightfulEarthsiegeDiamond"
  value: {
-  dps: 10831.91379
-  tps: 9085.23809
+  dps: 10828.15177
+  tps: 9081.32209
  }
 }
 dps_results: {

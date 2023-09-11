@@ -503,7 +503,7 @@ dps_results: {
  key: "TestBalancePhase3-AllItems-InsightfulEarthsiegeDiamond"
  value: {
   dps: 11178.45129
-  tps: 10945.92525
+  tps: 10944.59932
  }
 }
 dps_results: {
