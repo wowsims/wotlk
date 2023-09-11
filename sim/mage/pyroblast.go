@@ -16,7 +16,9 @@ func (mage *Mage) registerPyroblastSpell() {
 
 	hasT8_4pc := mage.HasSetBonus(ItemSetKirinTorGarb, 4)
 
-	mage.Pyroblast = mage.RegisterSpell(core.SpellConfig{
+	var pyroblastDot *core.Spell
+
+	pyroblastConfig := core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: 42891},
 		SpellSchool:  core.SpellSchoolFire,
 		ProcMask:     core.ProcMaskSpellDamage,
@@ -71,10 +73,17 @@ func (mage *Mage) registerPyroblastSpell() {
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
 				if result.Landed() {
-					spell.Dot(target).Apply(sim)
+					pyroblastDot.SpellMetrics[target.UnitIndex].Casts++
+					pyroblastDot.Dot(target).Apply(sim)
 				}
 				spell.DealDamage(sim, result)
 			})
 		},
-	})
+	}
+
+	mage.Pyroblast = mage.RegisterSpell(pyroblastConfig)
+
+	dotConfig := pyroblastConfig
+	dotConfig.ActionID = dotConfig.ActionID.WithTag(1)
+	pyroblastDot = mage.RegisterSpell(dotConfig)
 }

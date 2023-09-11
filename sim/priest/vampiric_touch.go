@@ -57,6 +57,7 @@ func (priest *Priest) registerVampiricTouchSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
+				spell.SpellMetrics[target.UnitIndex].Hits--
 				priest.AddShadowWeavingStack(sim)
 				spell.Dot(target).Apply(sim)
 			}

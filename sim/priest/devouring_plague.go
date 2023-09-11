@@ -105,6 +105,7 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 
 			spell.DealOutcome(sim, result)
 			if result.Landed() {
+				spell.SpellMetrics[target.UnitIndex].Hits--
 				priest.AddShadowWeavingStack(sim)
 				spell.Dot(target).Apply(sim)
 			}
