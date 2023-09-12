@@ -26,6 +26,7 @@
     "dependencies": {
         "@popperjs/core": "^2.11.6",
         "bootstrap": "5.2.3",
-        "tippy.js": "^6.3.7"
+        "tippy.js": "^6.3.7",
+        "tsx-vanilla": "^1.0.0"
     }
 }
