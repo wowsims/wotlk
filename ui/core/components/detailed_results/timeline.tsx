@@ -18,8 +18,9 @@ import {
 
 import { actionColors } from './color_settings.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
+import tippy from 'tippy.js';
+import { element, fragment } from 'tsx-vanilla';
 
-declare var tippy: any;
 declare var ApexCharts: any;
 
 type TooltipHandler = (dataPointIndex: number) => string;
@@ -52,35 +53,37 @@ export class Timeline extends ResultComponent {
 		this.hiddenIds = [];
 		this.hiddenIdsChangeEmitter = new TypedEvent<void>();
 
-		this.rootElem.innerHTML = `
-		<div class="timeline-disclaimer">
-			<div class="d-flex flex-column">
-				<p>
-					<i class="warning fa fa-exclamation-triangle fa-xl me-2"></i>
-					Timeline data visualizes only 1 sim iteration.
-				</p>
-				<p>Note: You can move the timeline by holding <kbd>Shift</kbd> while scrolling, or by clicking and dragging.</p>
+		this.rootElem.appendChild(
+			<div className="timeline-disclaimer">
+				<div className="d-flex flex-column">
+					<p>
+						<i className="warning fa fa-exclamation-triangle fa-xl me-2"></i>
+						Timeline data visualizes only 1 sim iteration.
+					</p>
+					<p>Note: You can move the timeline by holding <kbd>Shift</kbd> while scrolling, or by clicking and dragging.</p>
+				</div>
+				<select className="timeline-chart-picker form-select">
+					<option className="rotation-option" value="rotation">Rotation</option>
+					<option className="dps-option" value="dps">DPS</option>
+					<option className="threat-option" value="threat">Threat</option>
+				</select>
 			</div>
-			<select class="timeline-chart-picker form-select">
-				<option class="rotation-option" value="rotation">Rotation</option>
-				<option class="dps-option" value="dps">DPS</option>
-				<option class="threat-option" value="threat">Threat</option>
-			</select>
-		</div>
-		<div class="timeline-plots-container">
-			<div class="timeline-plot dps-resources-plot hide"></div>
-			<div class="timeline-plot rotation-plot">
-				<div class="rotation-container">
-					<div class="rotation-labels">
+		);
+		this.rootElem.appendChild(
+			<div className="timeline-plots-container">
+				<div className="timeline-plot dps-resources-plot hide"></div>
+				<div className="timeline-plot rotation-plot">
+					<div className="rotation-container">
+						<div className="rotation-labels">
+						</div>
+						<div className="rotation-timeline" draggable={true}>
+						</div>
 					</div>
-					<div class="rotation-timeline" draggable="true">
+					<div className="rotation-hidden-ids">
 					</div>
 				</div>
-				<div class="rotation-hidden-ids">
-				</div>
 			</div>
-		</div>
-		`;
+		)
 
 		this.chartPicker = this.rootElem.getElementsByClassName('timeline-chart-picker')[0] as HTMLSelectElement;
 		this.chartPicker.addEventListener('change', () => {
@@ -472,15 +475,18 @@ export class Timeline extends ResultComponent {
 	}
 
 	private clearRotationChart() {
-		this.rotationLabels.innerHTML = `
-			<div class="rotation-label-header"></div>
-		`;
-		this.rotationTimeline.innerHTML = `
-			<div class="rotation-timeline-header">
-				<canvas class="rotation-timeline-canvas"></canvas>
+		this.rotationLabels.innerText = '';
+		this.rotationLabels.appendChild(
+			<div className="rotation-label-header"></div>
+		);
+
+		this.rotationTimeline.innerText = '';
+		this.rotationTimeline.appendChild(
+			<div className="rotation-timeline-header">
+				<canvas className="rotation-timeline-canvas"></canvas>
 			</div>
-		`;
-		this.rotationHiddenIdsContainer.innerHTML = '';
+		);
+		this.rotationHiddenIdsContainer.innerText = '';
 		this.hiddenIdsChangeEmitter = new TypedEvent<void>();
 	}
 
@@ -594,18 +600,16 @@ export class Timeline extends ResultComponent {
 		return castsByAbility;
 	}
 
-	private makeLabelElem(actionId: ActionId, isHiddenLabel: boolean): HTMLElement {
-		const labelElem = document.createElement('div');
-		labelElem.classList.add('rotation-label', 'rotation-row');
-		if (isHiddenLabel) {
-			labelElem.classList.add('rotation-label-hidden');
-		}
+	private makeLabelElem(actionId: ActionId, isHiddenLabel: boolean): JSX.Element {
 		const labelText = idsToGroupForRotation.includes(actionId.spellId) ? actionId.baseName : actionId.name;
-		labelElem.innerHTML = `
-			<span class="fas fa-eye${isHiddenLabel ? '' : '-slash'}"></span>
-			<a class="rotation-label-icon"></a>
-			<span class="rotation-label-text">${labelText}</span>
-		`;
+
+		let labelElem = (
+			<div className={`rotation-label rotation-row ${isHiddenLabel ? 'rotation-label-hidden' : ''}`}>
+				<span className={`fas fa-eye${isHiddenLabel ? '' : '-slash'}`}></span>
+				<a className="rotation-label-icon"></a>
+				<span className="rotation-label-text">{labelText}</span>
+			</div>
+		);
 		const hideElem = labelElem.getElementsByClassName('fas')[0] as HTMLElement;
 		hideElem.addEventListener('click', () => {
 			if (isHiddenLabel) {
@@ -620,7 +624,6 @@ export class Timeline extends ResultComponent {
 		});
 		tippy(hideElem, {
 			content: isHiddenLabel ? 'Show Row' : 'Hide Row',
-			allowHTML: true,
 		});
 		const updateHidden = () => {
 			if (isHiddenLabel == Boolean(this.hiddenIds.find(hiddenId => hiddenId.equals(actionId)))) {
@@ -636,10 +639,14 @@ export class Timeline extends ResultComponent {
 		return labelElem;
 	}
 
-	private makeRowElem(actionId: ActionId, duration: number): HTMLElement {
-		const rowElem = document.createElement('div');
-		rowElem.classList.add('rotation-timeline-row', 'rotation-row');
-		rowElem.style.width = this.timeToPx(duration);
+	private makeRowElem(actionId: ActionId, duration: number): JSX.Element {
+		const rowElem = (
+			<div className='rotation-timeline-row rotation-row' 
+				 style={{
+					width: this.timeToPx(duration),
+				 }}>
+				</div>
+		)
 
 		const updateHidden = () => {
 			if (this.hiddenIds.find(hiddenId => hiddenId.equals(actionId))) {
@@ -664,10 +671,8 @@ export class Timeline extends ResultComponent {
 			const labelElem = document.createElement('div');
 			labelElem.classList.add('rotation-label', 'rotation-row');
 			const labelText = idsToGroupForRotation.includes(filledActionId.spellId) ? filledActionId.baseName : filledActionId.name;
-			labelElem.innerHTML = `
-				<a class="rotation-label-icon"></a>
-				<span class="rotation-label-text">${labelText}</span>
-			`;
+			labelElem.appendChild(<a className="rotation-label-icon"></a>);
+			labelElem.appendChild(<span className="rotation-label-text">{labelText}</span>);
 			const labelIcon = labelElem.getElementsByClassName('rotation-label-icon')[0] as HTMLAnchorElement;
 			filledActionId.setBackgroundAndHref(labelIcon);
 			iconElem.appendChild(labelElem);
@@ -691,24 +696,36 @@ export class Timeline extends ResultComponent {
 			return;
 		}
 		const startValue = resourceLogs[0].valueBefore;
+		const labelElem = (
+			<div className='rotation-label rotation-row'>
+				<a className="rotation-label-icon" style={{
+					backgroundImage:`url('${resourceTypeToIcon[resourceType]}')`
+				}}></a>
+				<span className="rotation-label-text">{resourceNames[resourceType]}</span>
+			</div>
+		);
 
-		const labelElem = document.createElement('div');
-		labelElem.classList.add('rotation-label', 'rotation-row');
-		labelElem.innerHTML = `
-			<a class="rotation-label-icon" style="background-image:url('${resourceTypeToIcon[resourceType]}')"></a>
-			<span class="rotation-label-text">${resourceNames[resourceType]}</span>
-		`;
 		this.rotationLabels.appendChild(labelElem);
 
-		const rowElem = document.createElement('div');
-		rowElem.classList.add('rotation-timeline-row', 'rotation-row');
-		rowElem.style.width = this.timeToPx(duration);
+		const rowElem = (
+			<div className='rotation-timeline-row rotation-row' 
+				 style={{
+					width: this.timeToPx(duration),
+				 }}>
+			</div>
+		)
 
 		resourceLogs.forEach((resourceLogGroup, i) => {
-			const resourceElem = document.createElement('div');
-			resourceElem.classList.add('rotation-timeline-resource', 'series-color', resourceNames[resourceType].toLowerCase().replaceAll(' ', '-'));
-			resourceElem.style.left = this.timeToPx(resourceLogGroup.timestamp);
-			resourceElem.style.width = this.timeToPx((resourceLogs[i + 1]?.timestamp || duration) - resourceLogGroup.timestamp);
+			const cNames = resourceNames[resourceType].toLowerCase().replaceAll(' ', '-');
+			const resourceElem = (
+				<div className={`rotation-timeline-resource series-color ${cNames}`}
+					style={{
+						left: this.timeToPx(resourceLogGroup.timestamp),
+						width:this.timeToPx((resourceLogs[i + 1]?.timestamp || duration) - resourceLogGroup.timestamp),
+					}}>
+				</div>
+			)
+
 			if (percentageResources.includes(resourceType)) {
 				resourceElem.textContent = (resourceLogGroup.valueAfter / startValue * 100).toFixed(0) + '%';
 			} else {
@@ -724,8 +741,7 @@ export class Timeline extends ResultComponent {
 			rowElem.appendChild(resourceElem);
 
 			tippy(resourceElem, {
-				content: this.resourceTooltip(resourceLogGroup, startValue, false),
-				allowHTML: true,
+				content: this.resourceTooltipElem(resourceLogGroup, startValue, false),
 				placement: 'bottom',
 			});
 		});
@@ -773,20 +789,25 @@ export class Timeline extends ResultComponent {
 			castElem.appendChild(iconElem);
 			const travelTimeStr = castLog.travelTime == 0 ? '' : ` + ${castLog.travelTime.toFixed(2)}s travel time`;
 			const totalDamage = castLog.totalDamage();
-			tippy(castElem, {
-				content: `
-					<span>${castLog.actionId!.name} from ${castLog.timestamp.toFixed(2)}s to ${(castLog.timestamp + castLog.castTime).toFixed(2)}s (${castLog.castTime.toFixed(2)}s, ${castLog.effectiveTime.toFixed(2)}s GCD Time)${travelTimeStr}</span>
-					<ul class="rotation-timeline-cast-damage-list">
-						${castLog.damageDealtLogs.map(ddl => `
-								<li>
-									<span>${ddl.timestamp.toFixed(2)}s - ${ddl.resultString()}</span>
-									${ddl.source?.isTarget ? '' : `<span class="threat-metrics"> (${ddl.threat.toFixed(1)} Threat)</span>`}
-								</li>`)
-						.join('')}
+
+			const tt = (
+				<div>
+					<span>{castLog.actionId!.name} from {castLog.timestamp.toFixed(2)}s to {(castLog.timestamp + castLog.castTime).toFixed(2)}s ({castLog.castTime.toFixed(2)}s, {castLog.effectiveTime.toFixed(2)}s GCD Time){travelTimeStr}</span>
+					<ul className="rotation-timeline-cast-damage-list">
+						{castLog.damageDealtLogs.map(ddl => (
+							<li>
+								<span>{ddl.timestamp.toFixed(2)}s - {ddl.resultString()}</span>
+								{ddl.source?.isTarget && <span className="threat-metrics"> ({ddl.threat.toFixed(1)} Threat)</span>}
+							</li>
+							))
+						}
 					</ul>
-					${totalDamage == 0 ? '' : `<span>Total: ${totalDamage.toFixed(2)} (${(totalDamage / (castLog.effectiveTime || 1)).toFixed(2)} DPET)</span>`}
-				`,
-				allowHTML: true,
+					{totalDamage > 0 && <span>Total: {totalDamage.toFixed(2)} ({(totalDamage / (castLog.effectiveTime || 1)).toFixed(2)} DPET)</span>}
+				</div>
+			);
+
+			tippy(castElem, {
+				content: tt,
 				placement: 'bottom',
 			});
 
@@ -796,12 +817,15 @@ export class Timeline extends ResultComponent {
 				tickElem.style.left = this.timeToPx(ddl.timestamp);
 				rowElem.appendChild(tickElem);
 
+				const tt = (
+					<div>
+						<span>{ddl.timestamp.toFixed(2)}s - {ddl.actionId!.name} {ddl.resultString()}</span>
+						{ddl.source?.isTarget && <span className="threat-metrics"> ({ddl.threat.toFixed(1)} Threat)</span>}
+					</div>
+				);
+
 				tippy(tickElem, {
-					content: `
-						<span>${ddl.timestamp.toFixed(2)}s - ${ddl.actionId!.name} ${ddl.resultString()}</span>
-						${ddl.source?.isTarget ? '' : `<span class="threat-metrics"> (${ddl.threat.toFixed(1)} Threat)</span>`}
-					`,
-					allowHTML: true,
+					content: tt,
 					placement: 'bottom',
 				});
 			});
@@ -826,7 +850,7 @@ export class Timeline extends ResultComponent {
 		this.applyAuraUptimeLogsToRow(auraUptimeLogs, rowElem);
 	}
 
-	private applyAuraUptimeLogsToRow(auraUptimeLogs: Array<AuraUptimeLog>, rowElem: HTMLElement) {
+	private applyAuraUptimeLogsToRow(auraUptimeLogs: Array<AuraUptimeLog>, rowElem: JSX.Element) {
 		auraUptimeLogs.forEach(aul => {
 			const auraElem = document.createElement('div');
 			auraElem.classList.add('rotation-timeline-aura');
@@ -834,11 +858,10 @@ export class Timeline extends ResultComponent {
 			auraElem.style.minWidth = this.timeToPx(aul.fadedAt === aul.gainedAt ? 0.001 : aul.fadedAt - aul.gainedAt);
 			rowElem.appendChild(auraElem);
 
+			const tt = (<span> {aul.actionId!.name}: {aul.gainedAt.toFixed(2)}s - {(aul.fadedAt).toFixed(2)}s</span>);
+
 			tippy(auraElem, {
-				content: `
-					<span>${aul.actionId!.name}: ${aul.gainedAt.toFixed(2)}s - ${(aul.fadedAt).toFixed(2)}s</span>
-				`,
-				allowHTML: true,
+				content: tt
 			});
 
 			aul.stacksChange.forEach((scl, i) => {
@@ -957,75 +980,79 @@ export class Timeline extends ResultComponent {
 		</div>`;
 	}
 
-	private resourceTooltip(log: ResourceChangedLogGroup, maxValue: number, includeAuras: boolean): string {
+	private resourceTooltipElem(log: ResourceChangedLogGroup, maxValue: number, includeAuras: boolean): JSX.Element {
 		const valToDisplayString = percentageResources.includes(log.resourceType)
 			? (val: number) => `${val.toFixed(1)} (${(val / maxValue * 100).toFixed(0)}%)`
 			: (val: number) => `${val.toFixed(1)}`;
 
-		return `<div class="timeline-tooltip ${resourceNames[log.resourceType].toLowerCase().replaceAll(' ', '-')}">
-			<div class="timeline-tooltip-header">
-				<span class="bold">${log.timestamp.toFixed(2)}s</span>
-			</div>
-			<div class="timeline-tooltip-body">
-				<div class="timeline-tooltip-body-row">
-					<span class="series-color">Before: ${valToDisplayString(log.valueBefore)}</span>
+		return (
+			<div className={`timeline-tooltip ${resourceNames[log.resourceType].toLowerCase().replaceAll(' ', '-')}`}>
+				<div className="timeline-tooltip-header">
+					<span className="bold">{log.timestamp.toFixed(2)}s</span>
 				</div>
-				<ul class="timeline-mana-events">
-					${log.logs.map(manaChangedLog => this.tooltipLogItem(manaChangedLog, manaChangedLog.resultString())).join('')}
-				</ul>
-				<div class="timeline-tooltip-body-row">
-					<span class="series-color">After: ${valToDisplayString(log.valueAfter)}</span>
+				<div className="timeline-tooltip-body">
+					<div className="timeline-tooltip-body-row">
+						<span className="series-color">Before: {valToDisplayString(log.valueBefore)}</span>
+					</div>
+					<ul className="timeline-mana-events">
+						{log.logs.map(manaChangedLog => this.tooltipLogItemElem(manaChangedLog, manaChangedLog.resultString()))}
+					</ul>
+					<div className="timeline-tooltip-body-row">
+						<span className="series-color">After: {valToDisplayString(log.valueAfter)}</span>
+					</div>
 				</div>
+				{includeAuras && this.tooltipAurasSectionElem(log)}
 			</div>
-			${includeAuras ? this.tooltipAurasSection(log) : ''}
-		</div>`;
+		);
+	}	
+	
+	private resourceTooltip(log: ResourceChangedLogGroup, maxValue: number, includeAuras: boolean): string {
+		return this.resourceTooltipElem(log, maxValue, includeAuras).outerHTML;
 	}
 
 	private tooltipLogItem(log: SimLog, value: string): string {
-		const valueElem = `<span class="series-color">${value}</span>`;
-		let actionElem = '';
-		if (log.actionId) {
-			let iconElem = '';
-			if (log.actionId.iconUrl) {
-				iconElem = `<img class="timeline-tooltip-icon" src="${log.actionId.iconUrl}">`;
-			}
-			actionElem = `
-			${iconElem}
-			<span>${log.actionId.name}:</span>
-			`;
-		}
-		return `
-		<li>
-			${actionElem}
-			${valueElem}
-		</li>`;
+		return this.tooltipLogItemElem(log, value).outerHTML;
+	}	
+
+	private tooltipLogItemElem(log: SimLog, value: string): JSX.Element {
+		return (
+			<li>
+				{log.actionId && log.actionId.iconUrl && <img className="timeline-tooltip-icon" src={log.actionId.iconUrl}></img>}
+				{log.actionId && <span>{log.actionId.name}</span>}
+				<span className="series-color">{value}</span>
+			</li>
+		);
 	}
 
 	private tooltipAurasSection(log: SimLog): string {
 		if (log.activeAuras.length == 0) {
 			return '';
 		}
+		return this.tooltipAurasSectionElem(log).outerHTML;
+	}
 
-		return `
-		<div class="timeline-tooltip-auras">
-			<div class="timeline-tooltip-body-row">
-				<span class="bold">Active Auras</span>
+	private tooltipAurasSectionElem(log: SimLog): JSX.Element {
+		if (log.activeAuras.length == 0) {
+			return (<div></div>);
+		}
+
+		return (
+			<div className="timeline-tooltip-auras">
+				<div className="timeline-tooltip-body-row">
+					<span className="bold">Active Auras</span>
+				</div>
+				<ul className="timeline-active-auras">
+					{log.activeAuras.map(auraLog => {
+						return (
+							<li>
+								{auraLog.actionId!.iconUrl && <img className="timeline-tooltip-icon" src={`${auraLog.actionId!.iconUrl}`}></img>}
+								<span>{auraLog.actionId!.name}</span>
+							</li>
+						);
+					})}
+				</ul>
 			</div>
-			<ul class="timeline-active-auras">
-				${log.activeAuras.map(auraLog => {
-			let iconElem = '';
-			if (auraLog.actionId!.iconUrl) {
-				iconElem = `<img class="timeline-tooltip-icon" src="${auraLog.actionId!.iconUrl}">`;
-			}
-			return `
-					<li>
-						${iconElem}
-						<span>${auraLog.actionId!.name}</span>
-					</li>`;
-		}).join('')}
-			</ul>
-		</div>
-		`;
+		)
 	}
 
 	render() {
