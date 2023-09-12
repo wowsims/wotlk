@@ -253,7 +253,9 @@ func (dk *Deathknight) Wait(sim *core.Simulation) {
 			if target.AutoAttacks.OffhandSwingAt > sim.CurrentTime {
 				targetSwingAt = core.MinDuration(targetSwingAt, target.AutoAttacks.OffhandSwingAt)
 			}
-			waitUntil = core.MinDuration(waitUntil, targetSwingAt)
+			if targetSwingAt > sim.CurrentTime {
+				waitUntil = core.MinDuration(waitUntil, targetSwingAt)
+			}
 		}
 	}
 
