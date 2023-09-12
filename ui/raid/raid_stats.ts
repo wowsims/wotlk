@@ -213,7 +213,7 @@ function playerClassAndTalentInternal<T extends Class>(clazz: T, talentName: key
 		class: clazz,
 		condition: (player: Player<any>): boolean => {
 			return player.isClass(clazz)
-				&& negateIf(Boolean(player.getTalents()[talentName]), negateTalent)
+				&& negateIf(Boolean((player.getTalents() as any)[talentName]), negateTalent)
 				&& (!extraCondition || extraCondition(player));
 		},
 	};
@@ -229,7 +229,7 @@ function playerSpecAndTalentInternal<T extends Spec>(spec: T, talentName: keyof 
 		class: specToClass[spec],
 		condition: (player: Player<any>): boolean => {
 			return player.isSpec(spec)
-				&& negateIf(Boolean(player.getTalents()[talentName]), negateTalent)
+				&& negateIf(Boolean((player.getTalents() as any)[talentName]), negateTalent)
 				&& (!extraCondition || extraCondition(player));
 		},
 	};

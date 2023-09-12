@@ -8,6 +8,8 @@ import { Class, UnitReference, Spec } from '../core/proto/common.js';
 import { emptyUnitReference } from '../core/proto_utils/utils.js';
 
 import { RaidSimUI } from './raid_sim_ui.js';
+import { PriestTalents } from 'ui/core/proto/priest.js';
+import { DeathknightTalents } from 'ui/core/proto/deathknight.js';
 
 export class AssignmentsPicker extends Component {
 	readonly raidSimUI: RaidSimUI;
@@ -142,7 +144,7 @@ class PowerInfusionsPicker extends AssignedBuffPicker {
 	}
 
 	getSourcePlayers(): Array<Player<any>> {
-		return this.raidSimUI.getActivePlayers().filter(player => player.isClass(Class.ClassPriest) && player.getTalents().powerInfusion);
+		return this.raidSimUI.getActivePlayers().filter(player => player.isClass(Class.ClassPriest) && (player.getTalents() as PriestTalents).powerInfusion);
 	}
 
 	getPlayerValue(player: Player<any>): UnitReference {
@@ -182,7 +184,7 @@ class UnholyFrenzyPicker extends AssignedBuffPicker {
 	}
 
 	getSourcePlayers(): Array<Player<any>> {
-		return this.raidSimUI.getActivePlayers().filter(player => player.isClass(Class.ClassDeathknight) && player.getTalents().hysteria);
+		return this.raidSimUI.getActivePlayers().filter(player => player.isClass(Class.ClassDeathknight) && (player.getTalents() as DeathknightTalents).hysteria);
 	}
 
 	getPlayerValue(player: Player<any>): UnitReference {
