@@ -12,8 +12,6 @@ import { Component } from './component.js';
 
 import { Popover, Tooltip } from 'bootstrap';
 
-declare var tippy: any;
-
 export type StatMods = { talents: Stats };
 
 export class CharacterStats extends Component {

@@ -3,9 +3,9 @@ import { ActionId } from '../../proto_utils/action_id.js';
 import { EventID, TypedEvent } from '../../typed_event.js';
 
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
+import tippy from 'tippy.js'
 
 declare var $: any;
-declare var tippy: any;
 
 export enum ColumnSortType {
 	None,

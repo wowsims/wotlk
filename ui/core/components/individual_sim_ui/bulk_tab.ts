@@ -855,7 +855,7 @@ class GemSelectorModal extends BaseModal {
 			// Add event handlers
 			// this.itemsChangedEmitter.on(invokeUpdate);
 
-			// this.addOnDisposeCallback(() => gearData.changeEvent.off(invokeUpdate));
+			this.addOnDisposeCallback(() => this.ilist?.dispose());
 
 			this.simUI.sim.phaseChangeEmitter.on(applyFilter);
 			this.simUI.sim.filtersChangeEmitter.on(applyFilter);

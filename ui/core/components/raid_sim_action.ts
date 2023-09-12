@@ -8,8 +8,7 @@ import { SimUI } from '../sim_ui.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { formatDeltaTextElem } from '../utils.js';
 import { Tooltip } from 'bootstrap';
-
-declare var tippy: any;
+import tippy from 'tippy.js';
 
 export function addRaidSimAction(simUI: SimUI): RaidSimResultsManager {
 	simUI.addAction('Simulate', 'dps-action', async () => simUI.runSim((progress: ProgressMetrics) => {

@@ -36,12 +36,15 @@ import {
 	ItemType,
 } from '../proto/common';
 import {
+	DatabaseFilters,
 	UIEnchant as Enchant,
 	UIGem as Gem,
 	UIItem as Item,
 } from '../proto/ui.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
 import { Tooltip } from 'bootstrap';
+
+import { Clusterize } from './virtual_scroll/clusterize.js';
 
 const EP_TOOLTIP = `
 	EP (Equivalence Points) is way of comparing items by multiplying the raw stats of an item with your current stat weights.
@@ -476,6 +479,7 @@ export class SelectorModal extends BaseModal {
 	private readonly simUI: SimUI;
 	private player: Player<any>;
 	private config: SelectorModalConfig;
+	private ilists: ItemList<any>[];
 
 	private readonly tabsElem: HTMLElement;
 	private readonly contentElem: HTMLElement;
@@ -486,6 +490,7 @@ export class SelectorModal extends BaseModal {
 		this.simUI = simUI;
 		this.player = player;
 		this.config = config;
+		this.ilists = [];
 
 		window.scrollTo({ top: 0 });
 
@@ -579,6 +584,11 @@ export class SelectorModal extends BaseModal {
 			});
 
 		this.addGemTabs(slot, equippedItem, gearData);
+	}
+
+	protected override onShow(e: Event) {
+		// Only refresh first
+		this.ilists[0].sizeRefresh();
 	}
 
 	private addGemTabs(slot: ItemSlot, equippedItem: EquippedItem | null, gearData: GearData) {
@@ -739,20 +749,23 @@ export class SelectorModal extends BaseModal {
 		// Add event handlers
 		gearData.changeEvent.on(invokeUpdate);
 
-		this.addOnDisposeCallback(() => gearData.changeEvent.off(invokeUpdate));
-
 		this.player.sim.phaseChangeEmitter.on(applyFilter);
 		this.player.sim.filtersChangeEmitter.on(applyFilter);
 		this.player.sim.showEPValuesChangeEmitter.on(hideOrShowEPValues);
-		gearData.changeEvent.on(applyFilter);
 
 		this.addOnDisposeCallback(() => {
+			gearData.changeEvent.off(invokeUpdate)
 			this.player.sim.phaseChangeEmitter.off(applyFilter);
 			this.player.sim.filtersChangeEmitter.off(applyFilter);
 			this.player.sim.showEPValuesChangeEmitter.off(hideOrShowEPValues);
-			gearData.changeEvent.off(applyFilter);
+			ilist.dispose();
 		});
 
+		tabAnchor.addEventListener('shown.bs.tab', (event) => {
+			ilist.sizeRefresh()
+		});
+
+		this.ilists.push(ilist);
 	}
 
 	private removeTabs(labelSubstring: string) {
@@ -760,7 +773,7 @@ export class SelectorModal extends BaseModal {
 			.filter(tab => tab.dataset.label.includes(labelSubstring));
 
 		const contentElems = tabElems
-			.map(tabElem => document.getElementById(tabElem.dataset.contentId!.substring(1)))
+			.map(tabElem => document.getElementById(tabElem.dataset.contentId!))
 			.filter(tabElem => Boolean(tabElem));
 
 		tabElems.forEach(elem => elem.parentElement.remove());
@@ -779,6 +792,11 @@ export interface ItemData<T> {
 	ignoreEPFilter: boolean,
 	heroic: boolean,
 	onEquip: (eventID: EventID, item: T) => void,
+}
+
+interface ItemDataWithIdx<T> {
+	idx: number,
+	data: ItemData<T>,
 }
 
 const emptySlotIcons: Record<ItemSlot, string> = {
@@ -806,17 +824,20 @@ export function getEmptySlotIconUrl(slot: ItemSlot): string {
 
 export class ItemList<T> {
 	private listElem: HTMLElement;
-	private listItemElems: HTMLLIElement[];
 	private readonly player: Player<any>;
 	private label: string;
 	private slot: ItemSlot;
 	private itemData: Array<ItemData<T>>;
+	private itemsToDisplay: Array<number>;
+	private currentFilters: DatabaseFilters;
 	private searchInput: HTMLInputElement;
 	private socketColor: GemColor;
 	private computeEP: (item: T) => number;
 	private equippedToItemFn: (equippedItem: EquippedItem | null) => (T | null | undefined);
 	private gearData: GearData;
 	private tabContent: HTMLElement;
+	private onItemClick: (itemData: ItemData<T>) => void;
+	private scroller: Clusterize;
 
 	constructor(
 		parent: HTMLElement,
@@ -836,10 +857,12 @@ export class ItemList<T> {
 		this.socketColor = socketColor;
 		this.computeEP = computeEP;
 		this.equippedToItemFn = equippedToItemFn;
+		this.onItemClick = onItemClick;
 
 		const { slot, gearData } = config;
 		this.slot = slot;
 		this.gearData = gearData;
+		this.currentFilters = this.player.sim.getFilters();
 
 		const tabContentId = (label + '-tab').split(' ').join('');
 		const selected = label === config.selectedTab;
@@ -882,6 +905,7 @@ export class ItemList<T> {
 		`;
 
 		this.tabContent = tabContentFragment.children[0] as HTMLElement;
+		parent.appendChild(this.tabContent);
 
 		const epExplanationElem = this.tabContent.querySelector('#ep-explanation') as HTMLElement;
 		new Tooltip(epExplanationElem);
@@ -908,145 +932,34 @@ export class ItemList<T> {
 		}
 
 		this.listElem = this.tabContent.getElementsByClassName('selector-modal-list')[0] as HTMLElement;
-		const initialFilters = player.sim.getFilters();
-		let lastFavElem: HTMLElement | null = null;
 
-		this.listItemElems = itemData.map((itemData, itemIdx) => {
-			const item = itemData.item;
-			const itemEP = computeEP(item);
+		this.itemsToDisplay = [];
 
-			const listItemElem = document.createElement('li');
-			listItemElem.classList.add('selector-modal-list-item');
-			listItemElem.dataset.idx = String(itemIdx);
-			listItemElem.innerHTML = `
-				<div class="selector-modal-list-label-cell">
-					<a class="selector-modal-list-item-link">
-						<img class="selector-modal-list-item-icon" />
-						<label class="selector-modal-list-item-name">${itemData.heroic ? itemData.name + HEROIC_LABEL : itemData.name}</label>
-					</a>
-				</div>
-				<div class="selector-modal-list-item-source-container">
-				</div>
-				<div>
-					<button
-						class="selector-modal-list-item-favorite btn btn-link p-0"
-						data-bs-toggle="tooltip"
-						data-bs-title="Add to favorites"
-					>
-						<i class="fa-star fa-xl"></i>
-					</button>
-				</div>
-				<div class="selector-modal-list-item-ep">
-					<span class="selector-modal-list-item-ep-value">${itemEP < 9.95 ? itemEP.toFixed(1) : Math.round(itemEP)}</span>
-				</div>
-				<div class="selector-modal-list-item-ep">
-					<span class="selector-modal-list-item-ep-delta"></span>
-				</div>
-		  `;
-		  	this.listElem.appendChild(listItemElem);
-
-			if (slot == ItemSlot.ItemSlotTrinket1 || slot == ItemSlot.ItemSlotTrinket2) {
-				const epElem = listItemElem.querySelector('.selector-modal-list-item-ep') as HTMLElement;
-				epElem.style.display = 'none';
-			}
-
-			const anchorElem = listItemElem.querySelector('.selector-modal-list-item-link') as HTMLAnchorElement;
-			const iconElem = listItemElem.querySelector('.selector-modal-list-item-icon') as HTMLImageElement;
-			const nameElem = listItemElem.querySelector('.selector-modal-list-item-name') as HTMLAnchorElement;
-			const favoriteElem = listItemElem.querySelector('.selector-modal-list-item-favorite') as HTMLElement;
-
-			anchorElem.addEventListener('click', (event: Event) => {
-				event.preventDefault();
-				if (event.target === favoriteElem) return false;
-				onItemClick(itemData);
-			});
-
-			itemData.actionId.fill().then(filledId => {
-				filledId.setWowheadHref(anchorElem);
-				iconElem.src = filledId.iconUrl;
-			});
-
-			setItemQualityCssClass(nameElem, itemData.quality);
-
-			const sourceElem = listItemElem.getElementsByClassName('selector-modal-list-item-source-container')[0] as HTMLDivElement;
-			if (label == 'Items') {
-				this.fillSourceInfo(item as unknown as Item, sourceElem, player.sim);
-			} else {
-				sourceElem.remove();
-			}
-
-			new Tooltip(favoriteElem);
-			const setFavorite = (isFavorite: boolean) => {
-				const filters = player.sim.getFilters();
-				if (label == 'Items') {
-					const favId = itemData.id;
-					if (isFavorite) {
-						filters.favoriteItems.push(favId);
-					} else {
-						const favIdx = filters.favoriteItems.indexOf(favId);
-						if (favIdx != -1) {
-							filters.favoriteItems.splice(favIdx, 1);
-						}
-					}
-				} else if (label == 'Enchants') {
-					const favId = getUniqueEnchantString(item as unknown as Enchant);
-					if (isFavorite) {
-						filters.favoriteEnchants.push(favId);
-					} else {
-						const favIdx = filters.favoriteEnchants.indexOf(favId);
-						if (favIdx != -1) {
-							filters.favoriteEnchants.splice(favIdx, 1);
-						}
-					}
-				} else if (label.startsWith('Gem')) {
-					const favId = itemData.id;
-					if (isFavorite) {
-						filters.favoriteGems.push(favId);
-					} else {
-						const favIdx = filters.favoriteGems.indexOf(favId);
-						if (favIdx != -1) {
-							filters.favoriteGems.splice(favIdx, 1);
-						}
-					}
+		this.scroller = new Clusterize({
+			getNumberOfRows: () => { return this.itemsToDisplay.length },
+			generateRows: (startIdx, endIdx) => {
+				let items = [];
+				for (let i = startIdx; i < endIdx; ++i) {
+					if (i >= this.itemsToDisplay.length)
+						break;
+					items.push(this.createItemElem({idx:this.itemsToDisplay[i], data:this.itemData[this.itemsToDisplay[i]]}));
 				}
-				favoriteElem.children[0].classList.toggle('fas');
-				favoriteElem.children[0].classList.toggle('far');
-				listItemElem.dataset.fav = isFavorite.toString();
-
-				player.sim.setFilters(TypedEvent.nextEventID(), filters);
-				this.applyFilters();
-			};
-			favoriteElem.addEventListener('click', () => setFavorite(listItemElem.dataset.fav == 'false'));
-
-			let isFavorite = false;
-			if (label == 'Items') {
-				isFavorite = initialFilters.favoriteItems.includes(itemData.id);
-			} else if (label == 'Enchants') {
-				isFavorite = initialFilters.favoriteEnchants.includes(getUniqueEnchantString(item as unknown as Enchant));
-			} else if (label.startsWith('Gem')) {
-				isFavorite = initialFilters.favoriteGems.includes(itemData.id);
+				return items;
 			}
-			
-			if (isFavorite) {
-				favoriteElem.children[0].classList.add('fas');
-				listItemElem.dataset.fav = 'true';
-				if (lastFavElem == null) {
-					this.listElem.prepend(listItemElem);
-				} else {
-					lastFavElem.after(listItemElem)
-				}
-				lastFavElem = listItemElem;
-			} else {
-				favoriteElem.children[0].classList.add('far');
-				listItemElem.dataset.fav = 'false';
-			}
-
-			return listItemElem;
+		}, {
+			rows: [],
+			scroll_elem: this.listElem,
+			content_elem: this.listElem,
+			item_height: 56,
+			show_no_data_row: false,
+			no_data_text: '',
+			tag: 'li',
+			rows_in_block: 16,
+			blocks_in_cluster: 2,
 		});
 
 		const removeButton = this.tabContent.getElementsByClassName('selector-modal-remove-button')[0] as HTMLButtonElement;
 		removeButton.addEventListener('click', event => {
-			this.listItemElems.forEach(elem => elem.classList.remove('active'));
 			onRemove(TypedEvent.nextEventID());
 		});
 
@@ -1060,15 +973,6 @@ export class ItemList<T> {
 
 		this.searchInput = this.tabContent.getElementsByClassName('selector-modal-search')[0] as HTMLInputElement;
 		this.searchInput.addEventListener('input', () => this.applyFilters());
-		this.searchInput.addEventListener("keyup", ev => {
-			if (ev.key == "Enter") {
-				this.listItemElems.find(ele => {
-					const nameElem = ele.getElementsByClassName('selector-modal-list-item-name')[0] as HTMLElement;
-					nameElem.click();
-					return true;
-				});
-			}
-		});
 
 		const simAllButton = this.tabContent.getElementsByClassName('selector-modal-simall-button')[0] as HTMLButtonElement;
 		if (label == "Items") {
@@ -1089,10 +993,10 @@ export class ItemList<T> {
 						curEP = this.computeEP(curItem);
 					}
 
-					this.listItemElems.forEach((elem, index) => {
-						const idata = this.itemData[index];
+					for(let i of this.itemsToDisplay) {
+						const idata = this.itemData[i];
 						if (!isRangedOrTrinket && curEP > 0 && idata.baseEP < (curEP / 2)) {
-							return; // If we have EPs on current item, dont sim items with less than half the EP.
+							continue; // If we have EPs on current item, dont sim items with less than half the EP.
 						}
 
 						// Add any item that is either >0 EP or a trinket/ranged item.
@@ -1100,8 +1004,7 @@ export class ItemList<T> {
 							itemSpecs.push(ItemSpec.create({ id: idata.id }));
 						}
 
-					});
-
+					}
 					simUI.bt.addItems(itemSpecs);
 					// TODO: should we open the bulk sim UI or should we run in the background showing progress, and then sort the items in the picker?
 				}
@@ -1110,10 +1013,15 @@ export class ItemList<T> {
 			// always hide non-items from being added to batch.
 			simAllButton.hidden = true;
 		}
+	}
 
+	public sizeRefresh() {
+		this.scroller.refresh(true);
 		this.applyFilters();
+	}
 
-		parent.appendChild(this.tabContent);
+	public dispose() {
+		this.scroller.dispose();
 	}
 
 	public updateSelected() {
@@ -1123,52 +1031,55 @@ export class ItemList<T> {
 		const newItemId = newItem ? (this.label == 'Enchants' ? (newItem as unknown as Enchant).effectId : (newItem as unknown as Item | Gem).id) : 0;
 		const newEP = newItem ? this.computeEP(newItem) : 0;
 
-		this.listItemElems.forEach(elem => {
-			const listItemIdx = parseInt(elem.dataset.idx!);
-			const listItemData = this.itemData[listItemIdx];
-			const listItem = listItemData.item;
+		this.scroller.elementUpdate((item) => {
+			let idx = (item as HTMLElement).dataset.idx!;
+			const itemData = this.itemData[parseFloat(idx)];
+			if (itemData.id == newItemId)
+				item.classList.add('active');
+			else
+				item.classList.remove('active');
 
-			elem.classList.remove('active');
-			if (listItemData.id == newItemId) {
-				elem.classList.add('active');
-			}
-
-			const epDeltaElem = elem.getElementsByClassName('selector-modal-list-item-ep-delta')[0] as HTMLSpanElement;
+			const epDeltaElem = item.getElementsByClassName('selector-modal-list-item-ep-delta')[0] as HTMLSpanElement;
 			if (epDeltaElem) {
 				epDeltaElem.textContent = '';
-				if (listItem) {
-					const listItemEP = this.computeEP(listItem);
+				if (itemData.item) {
+					const listItemEP = this.computeEP(itemData.item);
 					formatDeltaTextElem(epDeltaElem, newEP, listItemEP, 0);
 				}
 			}
 		});
-	};
+	}
 
 	public applyFilters() {
-		let validItemElems = this.listItemElems;
+		this.currentFilters = this.player.sim.getFilters();
+		let itemIdxs = new Array<number>(this.itemData.length);
+		for (let i = 0; i < this.itemData.length; ++i)  {
+			itemIdxs[i] = i;
+		}
+
 		const currentEquippedItem = this.player.getEquippedItem(this.slot);
 
 		if (this.label == 'Items') {
-			validItemElems = this.player.filterItemData(
-				validItemElems,
-				elem => this.itemData[parseInt(elem.dataset.idx!)].item as unknown as Item,
+			itemIdxs = this.player.filterItemData(
+				itemIdxs,
+				i => this.itemData[i].item as unknown as Item,
 				this.slot);
 		} else if (this.label == 'Enchants') {
-			validItemElems = this.player.filterEnchantData(
-				validItemElems,
-				elem => this.itemData[parseInt(elem.dataset.idx!)].item as unknown as Enchant,
+			itemIdxs = this.player.filterEnchantData(
+				itemIdxs,
+				i => this.itemData[i].item as unknown as Enchant,
 				this.slot,
 				currentEquippedItem);
 		} else if (this.label.startsWith('Gem')) {
-			validItemElems = this.player.filterGemData(
-				validItemElems,
-				elem => this.itemData[parseInt(elem.dataset.idx!)].item as unknown as Gem,
+			itemIdxs = this.player.filterGemData(
+				itemIdxs,
+				i => this.itemData[i].item as unknown as Gem,
 				this.slot,
 				this.socketColor);
 		}
 
-		validItemElems = validItemElems.filter(elem => {
-			const listItemData = this.itemData[parseInt(elem.dataset.idx!)];
+		itemIdxs = itemIdxs.filter(i => {
+			const listItemData = this.itemData[i];
 
 			if (listItemData.phase > this.player.sim.getPhase()) {
 				return false;
@@ -1203,20 +1114,20 @@ export class ItemList<T> {
 				return diff;
 			}
 		}
-		// Trinket EP is weird so just sort by ilvl instead.
-		validItemElems = validItemElems.sort((dataA, dataB) => {
-			if (dataA.dataset.fav === 'true' && dataB.dataset.fav === 'false') return -1;
-			if (dataB.dataset.fav === 'true' && dataA.dataset.fav === 'false') return 1;
 
-			const dataAItem = this.itemData[parseInt(dataA.dataset.idx!)].item;
-			const dataBItem = this.itemData[parseInt(dataB.dataset.idx!)].item;
+		itemIdxs = itemIdxs.sort((dataA, dataB) => {
+			const itemA = this.itemData[dataA];
+			const itemB = this.itemData[dataB];
+			if (this.isItemFavorited(itemA) && !this.isItemFavorited(itemB)) return -1;
+			if (this.isItemFavorited(itemB) && !this.isItemFavorited(itemA)) return 1;
 
-			return sortFn(dataAItem, dataBItem);
+			return sortFn(itemA.item, itemB.item);
 		});
 
-		this.listElem.innerHTML = ``
-		this.listElem.append(...validItemElems);
-		this.hideOrShowEPValues()
+		this.itemsToDisplay = itemIdxs;
+		this.scroller.update();
+
+		this.hideOrShowEPValues();
 	}
 
 	public hideOrShowEPValues() {
@@ -1237,17 +1148,169 @@ export class ItemList<T> {
 		}
 	}
 
-	private fillSourceInfo(item: Item, container: HTMLDivElement, sim: Sim) {
+	private createItemElem(item: ItemDataWithIdx<T>): HTMLElement {
+		const itemData = item.data;
+		const itemEP = this.computeEP(itemData.item);
+
+		const equipedItem = this.equippedToItemFn(this.gearData.getEquippedItem());
+		const equipdItemId = equipedItem ? (this.label == 'Enchants' ? (equipedItem as unknown as Enchant).effectId : (equipedItem as unknown as Item | Gem).id) : 0;
+
+		const listItemElem = document.createElement('li');
+		listItemElem.classList.add('selector-modal-list-item');
+		listItemElem.dataset.idx = item.idx.toString();
+		if (equipdItemId == itemData.id)
+			listItemElem.classList.add('active');
+
+
+		const cellElem = listItemElem.appendChild(document.createElement('div'));
+		cellElem.classList.add('selector-modal-list-label-cell');
+		const anchorElem = cellElem.appendChild(document.createElement('a'));
+		anchorElem.classList.add('selector-modal-list-item-link');
+
+		const iconElem = anchorElem.appendChild(document.createElement('img'));
+		iconElem.classList.add('selector-modal-list-item-icon');
+
+		const nameElem = anchorElem.appendChild(document.createElement('label'));
+		nameElem.classList.add('selector-modal-list-item-name');
+		nameElem.innerText = itemData.name;
+		if (itemData.heroic) {
+			const hlabel = nameElem.appendChild(document.createElement('span'))
+			hlabel.classList.add('heroic-label');
+			hlabel.innerText = '[H]';
+		}
+
+		if (this.label == 'Items') {
+			const srcContainer = document.createElement('div');
+			srcContainer.classList.add('selector-modal-list-item-source-container');
+			srcContainer.append(...this.getSourceInfo(itemData.item as unknown as Item, this.player.sim));
+			listItemElem.appendChild(srcContainer);
+		}
+
+		const favDiv = listItemElem.appendChild(document.createElement('div'));
+		const favoriteElem = favDiv.appendChild(document.createElement('button'));
+		favoriteElem.classList.add("selector-modal-list-item-favorite", "btn", "btn-link", "p-0");
+		favoriteElem.dataset.bsToggle = 'tooltip';
+		favoriteElem.dataset.bsTitle = "Add to favorites";
+		const favIcon = favoriteElem.appendChild(document.createElement('i'));
+		favIcon.classList.add("fa-star", "fa-xl");
+
+		if (this.slot != ItemSlot.ItemSlotTrinket1 && this.slot != ItemSlot.ItemSlotTrinket2) {
+			const itemEpDiv = listItemElem.appendChild(document.createElement('div'));
+			itemEpDiv.classList.add('selector-modal-list-item-ep');
+
+			const itemEpSpan = itemEpDiv.appendChild(document.createElement('span'));
+			itemEpSpan.classList.add('selector-modal-list-item-ep-value');
+			itemEpSpan.innerText = itemEP < 9.95 ? itemEP.toFixed(1).toString() : Math.round(itemEP).toString();
+		}
+
+		const deltaepcont = listItemElem.appendChild(document.createElement('div'));
+		deltaepcont.classList.add('selector-modal-list-item-ep');
+		
+		const epDeltaElem = deltaepcont.appendChild(document.createElement('span'));
+		epDeltaElem.classList.add('selector-modal-list-item-ep-delta');
+
+		epDeltaElem.textContent = '';
+		if (itemData.item) {
+			const listItemEP = equipedItem ? this.computeEP(equipedItem) : 0;
+			formatDeltaTextElem(epDeltaElem, listItemEP, itemEP, 0);
+		}
+
+		anchorElem.addEventListener('click', (event: Event) => {
+			event.preventDefault();
+			if (event.target === favoriteElem) return false;
+			this.onItemClick(itemData);
+		});
+
+		itemData.actionId.fill().then(filledId => {
+			filledId.setWowheadHref(anchorElem);
+			iconElem.src = filledId.iconUrl;
+		});
+
+		setItemQualityCssClass(nameElem, itemData.quality);
+
+		new Tooltip(favoriteElem);
+		const setFavorite = (isFavorite: boolean) => {
+			const filters = this.player.sim.getFilters();
+			if (this.label == 'Items') {
+				const favId = itemData.id;
+				if (isFavorite) {
+					filters.favoriteItems.push(favId);
+				} else {
+					const favIdx = filters.favoriteItems.indexOf(favId);
+					if (favIdx != -1) {
+						filters.favoriteItems.splice(favIdx, 1);
+					}
+				}
+			} else if (this.label == 'Enchants') {
+				const favId = getUniqueEnchantString(itemData.item as unknown as Enchant);
+				if (isFavorite) {
+					filters.favoriteEnchants.push(favId);
+				} else {
+					const favIdx = filters.favoriteEnchants.indexOf(favId);
+					if (favIdx != -1) {
+						filters.favoriteEnchants.splice(favIdx, 1);
+					}
+				}
+			} else if (this.label.startsWith('Gem')) {
+				const favId = itemData.id;
+				if (isFavorite) {
+					filters.favoriteGems.push(favId);
+				} else {
+					const favIdx = filters.favoriteGems.indexOf(favId);
+					if (favIdx != -1) {
+						filters.favoriteGems.splice(favIdx, 1);
+					}
+				}
+			}
+			favoriteElem.children[0].classList.toggle('fas');
+			favoriteElem.children[0].classList.toggle('far');
+			listItemElem.dataset.fav = isFavorite.toString();
+
+			this.player.sim.setFilters(TypedEvent.nextEventID(), filters);
+		};
+		favoriteElem.addEventListener('click', () => setFavorite(listItemElem.dataset.fav == 'false'));
+
+		let isFavorite = this.isItemFavorited(itemData);
+		
+		if (isFavorite) {
+			favoriteElem.children[0].classList.add('fas');
+			listItemElem.dataset.fav = 'true';
+		} else {
+			favoriteElem.children[0].classList.add('far');
+			listItemElem.dataset.fav = 'false';
+		}
+
+		return listItemElem;
+	}
+
+	private isItemFavorited(itemData: ItemData<T>) : boolean {
+		if (this.label == 'Items') {
+			return this.currentFilters.favoriteItems.includes(itemData.id);
+		} else if (this.label == 'Enchants') {
+			return this.currentFilters.favoriteEnchants.includes(getUniqueEnchantString(itemData.item as unknown as Enchant));
+		} else if (this.label.startsWith('Gem')) {
+			return this.currentFilters.favoriteGems.includes(itemData.id);
+		}
+		return false;
+	}
+
+	private getSourceInfo(item: Item, sim: Sim): Element[] {
 		if (!item.sources || item.sources.length == 0) {
-			return;
+			return [];
+		}
+
+		const makeAnchor = (href:string, inner:string) => {
+			const anchor = document.createElement('a');
+			const small = anchor.appendChild(document.createElement('small'));
+			anchor.href = href;
+			small.innerText = inner;
+			return anchor;
 		}
 
 		const source = item.sources[0];
 		if (source.source.oneofKind == 'crafted') {
 			const src = source.source.crafted;
-			container.innerHTML = `
-				<a href="${ActionId.makeSpellUrl(src.spellId)}"><small>${professionNames[src.profession]}</small></a>
-			`;
+			return [makeAnchor( ActionId.makeSpellUrl(src.spellId), professionNames[src.profession])];
 		} else if (source.source.oneofKind == 'drop') {
 			const src = source.source.drop;
 			const zone = sim.db.getZone(src.zoneId);
@@ -1256,38 +1319,31 @@ export class ItemList<T> {
 				throw new Error('No zone found for item: ' + item);
 			}
 
-			let innerHTML = `
-				<a href="${ActionId.makeZoneUrl(zone.id)}"><small>${zone.name} (${difficultyNames[src.difficulty]})</small></a>
-			`;
+			let rtnEl = makeAnchor( ActionId.makeZoneUrl(zone.id), `${zone.name} (${difficultyNames[src.difficulty]})`);
 
 			const category = src.category ? ` - ${src.category}` : '';
 			if (npc) {
-				innerHTML += `
-					<br>
-					<a href="${ActionId.makeNpcUrl(npc.id)}"><small>${npc.name + category}</small></a>
-				`;
+				rtnEl.appendChild(document.createElement('br'));
+				rtnEl.appendChild(makeAnchor(ActionId.makeNpcUrl(npc.id), `${npc.name + category}`));
 			} else if (src.otherName) {
-				innerHTML += `
+				/*innerHTML += `
 					<br>
-					<a href="${ActionId.makeZoneUrl(zone.id)}><small>${src.otherName + category}</small></a>
-				`;
+					<a href="${ActionId.makeZoneUrl(zone.id)}"><small>${src.otherName + category}</small></a>
+				`;*/
 			} else if (category) {
-				innerHTML += `
+				/*innerHTML += `
 					<br>
-					<a href="${ActionId.makeZoneUrl(zone.id)}><small>${category}</small></a>
-				`;
+					<a href="${ActionId.makeZoneUrl(zone.id)}"><small>${category}</small></a>
+				`;*/
 			}
-			container.innerHTML = innerHTML;
+			return [rtnEl];
 		} else if (source.source.oneofKind == 'quest') {
 			const src = source.source.quest;
-			container.innerHTML = `
-				<a href="${ActionId.makeQuestUrl(src.id)}"><small>${src.name}</small></a>
-			`;
+			return [makeAnchor(ActionId.makeQuestUrl(src.id), src.name)];
 		} else if (source.source.oneofKind == 'soldBy') {
 			const src = source.source.soldBy;
-			container.innerHTML = `
-				<a href="${ActionId.makeNpcUrl(src.npcId)}"><small>${src.npcName}</small></a>
-			`;
+			return [makeAnchor(ActionId.makeNpcUrl(src.npcId), src.npcName)];
 		}
+		return [];
 	}
 }

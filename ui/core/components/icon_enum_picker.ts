@@ -4,8 +4,6 @@ import { TypedEvent } from '../typed_event.js';
 
 import { Input, InputConfig } from './input.js';
 
-declare var tippy: any;
-
 export interface IconEnumValueConfig<ModObject, T> {
 	value: T,
 	// One of these should be set. If actionId is set, shows the icon for that id. If

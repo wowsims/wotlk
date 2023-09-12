@@ -213,9 +213,9 @@ export class Player<SpecType extends Spec> {
 	private healingModel: HealingModel = HealingModel.create();
 	private healingEnabled: boolean = false;
 
-	private itemEPCache: Map<number, number> = new Map<number, number>();
-	private gemEPCache: Map<number, number> = new Map<number, number>();
-	private enchantEPCache: Map<number, number> = new Map<number, number>();
+	private itemEPCache = new Array<Map<number, number>>();
+	private gemEPCache = new Map<number, number>();
+	private enchantEPCache = new Map<number, number>();
 	private talents: SpecTalents<SpecType> | null = null;
 
 	readonly specTypeFunctions: SpecTypeFunctions<SpecType>;
@@ -262,6 +262,10 @@ export class Player<SpecType extends Spec> {
 		this.specTypeFunctions = specTypeFunctions[this.spec] as SpecTypeFunctions<SpecType>;
 		this.rotation = this.specTypeFunctions.rotationCreate();
 		this.specOptions = this.specTypeFunctions.optionsCreate();
+
+		for(let i = 0; i < ItemSlot.ItemSlotRanged+1; ++i) {
+			this.itemEPCache[i] = new Map();
+		}
 
 		this.changeEmitter = TypedEvent.onAny([
 			this.nameChangeEmitter,
@@ -374,8 +378,10 @@ export class Player<SpecType extends Spec> {
 		this.epWeightsChangeEmitter.emit(eventID);
 
 		this.gemEPCache = new Map();
-		this.itemEPCache = new Map();
 		this.enchantEPCache = new Map();
+		for(let i = 0; i < ItemSlot.ItemSlotRanged+1; ++i) {
+			this.itemEPCache[i] = new Map();
+		}
 	}
 
 	getDefaultEpRatios(isTankSpec: boolean, isHealingSpec: boolean): Array<number> {
@@ -838,9 +844,9 @@ export class Player<SpecType extends Spec> {
 		if (item == null)
 			return 0;
 
-		if (this.itemEPCache.has(item.id)) {
-			return this.itemEPCache.get(item.id)!;
-		}
+		let cached = this.itemEPCache[slot].get(item.id);
+		if (cached !== undefined)
+			return cached;
 
 		let itemStats = new Stats(item.stats);
 		if (item.weaponSpeed > 0) {
@@ -882,7 +888,7 @@ export class Player<SpecType extends Spec> {
 
 		ep += Math.max(bestGemEPMatchingSockets, bestGemEPNotMatchingSockets);
 
-		this.itemEPCache.set(item.id, ep);
+		this.itemEPCache[slot].set(item.id, ep);
 		return ep;
 	}
 
