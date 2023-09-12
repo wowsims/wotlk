@@ -5,13 +5,11 @@ import { IconItemSwapPicker } from './gear_picker.js'
 import { Input, InputConfig } from './input.js'
 import { SimUI } from '../sim_ui.js';
 import { TypedEvent } from '../typed_event.js';
-import { mapToStyles } from '@popperjs/core/lib/modifiers/computeStyles.js';
+import tippy from 'tippy.js';
 
 export interface ItemSwapPickerConfig<SpecType extends Spec, T> extends InputConfig<Player<SpecType>, T> {
 	itemSlots: Array<ItemSlot>;
 }
-
-declare var tippy: any;
 
 export class ItemSwapPicker<SpecType extends Spec, T> extends Component {
 

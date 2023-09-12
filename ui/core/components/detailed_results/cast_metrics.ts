@@ -3,9 +3,6 @@ import { ActionMetrics, SimResult, SimResultFilter } from '../../proto_utils/sim
 import { ColumnSortType, MetricsTable } from './metrics_table.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
 
-declare var $: any;
-declare var tippy: any;
-
 export class CastMetricsTable extends MetricsTable<ActionMetrics> {
 	constructor(config: ResultComponentConfig) {
 		config.rootCssClass = 'cast-metrics-root';
