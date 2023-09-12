@@ -739,14 +739,13 @@ export class SelectorModal extends BaseModal {
 		// Add event handlers
 		gearData.changeEvent.on(invokeUpdate);
 
-		this.addOnDisposeCallback(() => gearData.changeEvent.off(invokeUpdate));
-
 		this.player.sim.phaseChangeEmitter.on(applyFilter);
 		this.player.sim.filtersChangeEmitter.on(applyFilter);
 		this.player.sim.showEPValuesChangeEmitter.on(hideOrShowEPValues);
 		gearData.changeEvent.on(applyFilter);
 
 		this.addOnDisposeCallback(() => {
+			gearData.changeEvent.off(invokeUpdate)
 			this.player.sim.phaseChangeEmitter.off(applyFilter);
 			this.player.sim.filtersChangeEmitter.off(applyFilter);
 			this.player.sim.showEPValuesChangeEmitter.off(hideOrShowEPValues);
@@ -760,7 +759,7 @@ export class SelectorModal extends BaseModal {
 			.filter(tab => tab.dataset.label.includes(labelSubstring));
 
 		const contentElems = tabElems
-			.map(tabElem => document.getElementById(tabElem.dataset.contentId!.substring(1)))
+			.map(tabElem => document.getElementById(tabElem.dataset.contentId!))
 			.filter(tabElem => Boolean(tabElem));
 
 		tabElems.forEach(elem => elem.parentElement.remove());
