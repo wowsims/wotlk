@@ -42,9 +42,6 @@ import { bucket, distinct, sortByProperty } from '../core/utils';
 import { playerPresets, PresetSpecSettings } from './presets';
 import { RaidSimUI } from './raid_sim_ui';
 
-declare var $: any;
-declare var tippy: any;
-
 export class RaidJsonImporter extends Importer {
 	private readonly simUI: RaidSimUI;
 	constructor(parent: HTMLElement, simUI: RaidSimUI) {
