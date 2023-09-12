@@ -552,6 +552,7 @@ export class SelectorModal extends BaseModal {
 			GemColor.GemColorUnknown,
 			eventID => {
 				gearData.equipItem(eventID, null);
+				this.removeTabs('Gem');
 			});
 
 		this.addTab<Enchant>(
@@ -587,8 +588,15 @@ export class SelectorModal extends BaseModal {
 	}
 
 	protected override onShow(e: Event) {
-		// Only refresh first
-		this.ilists[0].sizeRefresh();
+		// Only refresh opened tab
+		let t = e.target! as HTMLElement;
+		let tab = t.querySelector<HTMLElement>('.active')!.dataset.contentId!;
+		if (tab.includes('Item')) {
+			this.ilists[0].sizeRefresh();
+		}
+		else if (tab.includes('Enchant')) {
+			this.ilists[1].sizeRefresh();
+		}
 	}
 
 	private addGemTabs(slot: ItemSlot, equippedItem: EquippedItem | null, gearData: GearData) {
