@@ -81,17 +81,17 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 3406.77985
-  tps: 2896.4461
-  hps: 89.55387
+  dps: 3412.05219
+  tps: 2900.68099
+  hps: 89.80483
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 3406.77985
-  tps: 2896.4461
-  hps: 89.55387
+  dps: 3412.05219
+  tps: 2900.68099
+  hps: 89.80483
  }
 }
 dps_results: {

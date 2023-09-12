@@ -320,6 +320,12 @@ func (priest *Priest) applySurgeOfLight() {
 		return
 	}
 
+	procHandler := func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+		if spell == priest.Smite || spell == priest.FlashHeal {
+			aura.Deactivate(sim)
+		}
+	}
+
 	priest.SurgeOfLightProcAura = priest.RegisterAura(core.Aura{
 		Label:    "Surge of Light Proc",
 		ActionID: core.ActionID{SpellID: 33154},
@@ -348,11 +354,8 @@ func (priest *Priest) applySurgeOfLight() {
 				priest.FlashHeal.BonusCritRating += 100 * core.CritRatingPerCritChance
 			}
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell == priest.Smite || spell == priest.FlashHeal {
-				aura.Deactivate(sim)
-			}
-		},
+		OnSpellHitDealt: procHandler,
+		OnHealDealt:     procHandler,
 	})
 
 	procChance := 0.25 * float64(priest.Talents.SurgeOfLight)
@@ -362,18 +365,21 @@ func (priest *Priest) applySurgeOfLight() {
 	}
 	priest.SurgeOfLightProcAura.Icd = &icd
 
+	handler := func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+		if icd.IsReady(sim) && result.Outcome.Matches(core.OutcomeCrit) && sim.RandomFloat("SurgeOfLight") < procChance {
+			icd.Use(sim)
+			priest.SurgeOfLightProcAura.Activate(sim)
+		}
+	}
+
 	priest.RegisterAura(core.Aura{
 		Label:    "Surge of Light",
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if icd.IsReady(sim) && result.Outcome.Matches(core.OutcomeCrit) && sim.RandomFloat("SurgeOfLight") < procChance {
-				icd.Use(sim)
-				priest.SurgeOfLightProcAura.Activate(sim)
-			}
-		},
+		OnSpellHitDealt: handler,
+		OnHealDealt:     handler,
 	})
 }
 
