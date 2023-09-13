@@ -6,7 +6,6 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 func (dk *Deathknight) registerAntiMagicShellSpell() {
@@ -39,6 +38,7 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 	spellDmgTakenMult := 0.25
 
 	var targetDummySpell *core.Spell = nil
+	var totalDamageAbsorbed float64
 	dk.AntiMagicShellAura = dk.RegisterAura(core.Aura{
 		Label:    "Anti-Magic Shell",
 		ActionID: actionID,
@@ -75,35 +75,25 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 				sim.AddPendingAction(pa)
 			}
 
-			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexPhysical] *= physDmgTakenMult
-			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexArcane] *= spellDmgTakenMult
-			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFire] *= spellDmgTakenMult
-			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFrost] *= spellDmgTakenMult
-			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexHoly] *= spellDmgTakenMult
-			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexNature] *= spellDmgTakenMult
-			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexShadow] *= spellDmgTakenMult
+			totalDamageAbsorbed = 0.0
 		},
+	})
 
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexPhysical] /= physDmgTakenMult
-			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexArcane] /= spellDmgTakenMult
-			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFire] /= spellDmgTakenMult
-			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFrost] /= spellDmgTakenMult
-			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexHoly] /= spellDmgTakenMult
-			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexNature] /= spellDmgTakenMult
-			dk.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexShadow] /= spellDmgTakenMult
-		},
+	dk.AddDynamicDamageTakenModifier(func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+		if dk.AntiMagicShellAura.IsActive() && (result.Damage > 0) {
+			absorbFrac := 1.0 - core.TernaryFloat64(spell.SpellSchool == core.SpellSchoolPhysical, physDmgTakenMult, spellDmgTakenMult)
+			absorbedDmg := absorbFrac * result.Damage
 
-		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if result.Damage > 0 && physDmgTakenMult != 1.0 {
-				coeff := core.TernaryFloat64(spell.SpellSchool == core.SpellSchoolPhysical, physDmgTakenMult, spellDmgTakenMult)
-				absorbedDmg := (1.0 - coeff) * result.Damage / coeff
+			if absorbedDmg > 0 {
+				result.Damage -= absorbedDmg
 				dk.AddRunicPower(sim, absorbedDmg/69.0, rpMetrics)
-			} else if result.Damage > 0 && spell.SpellSchool != core.SpellSchoolPhysical {
-				absorbedDmg := (1.0 - spellDmgTakenMult) * result.Damage / spellDmgTakenMult
-				dk.AddRunicPower(sim, absorbedDmg/69.0, rpMetrics)
+				totalDamageAbsorbed += absorbedDmg
+
+				if totalDamageAbsorbed >= 0.5*dk.MaxHealth() {
+					dk.AntiMagicShellAura.Deactivate(sim)
+				}
 			}
-		},
+		}
 	})
 
 	if !dk.Inputs.IsDps {
