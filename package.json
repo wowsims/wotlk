@@ -13,7 +13,7 @@
         "eslint-plugin-unused-imports": "^2.0.0",
         "glob": "^8.0.3",
         "http-server": "13.0.1",
-        "sass": "^1.39.0",
+        "sass": "^1.64.2",
         "terser": "^5.14.2",
         "typescript": "5.2.2",
         "typescript-formatter": "^7.2.2",
