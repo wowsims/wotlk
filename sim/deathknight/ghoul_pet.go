@@ -155,7 +155,7 @@ func (ghoulPet *GhoulPet) GetPet() *core.Pet {
 	return &ghoulPet.Pet
 }
 
-func (ghoulPet *GhoulPet) OwnerAttackSpeedChanged(sim *core.Simulation) {
+func (ghoulPet *GhoulPet) OwnerAttackSpeedChanged(sim *core.Simulation, amount float64) {
 	if !ghoulPet.IsPetGhoul() || !ghoulPet.IsEnabled() {
 		return
 	}
@@ -183,7 +183,7 @@ func (ghoulPet *GhoulPet) Reset(sim *core.Simulation) {
 	if ghoulPet.IsPetGhoul() {
 		// Reset dk inherited melee multiplier and reapply current
 		ghoulPet.ownerMeleeMultiplier = 1
-		ghoulPet.OwnerAttackSpeedChanged(sim)
+		ghoulPet.OwnerAttackSpeedChanged(sim, ghoulPet.dkOwner.PseudoStats.MeleeSpeedMultiplier)
 	}
 }
 
@@ -212,7 +212,7 @@ func (ghoulPet *GhoulPet) enable(sim *core.Simulation) {
 		ghoulPet.PseudoStats.MeleeSpeedMultiplier = 1
 		ghoulPet.MultiplyMeleeSpeed(sim, ghoulPet.dkOwner.PseudoStats.MeleeSpeedMultiplier)
 	} else {
-		ghoulPet.OwnerAttackSpeedChanged(sim)
+		ghoulPet.OwnerAttackSpeedChanged(sim, ghoulPet.dkOwner.PseudoStats.MeleeSpeedMultiplier)
 	}
 }
 

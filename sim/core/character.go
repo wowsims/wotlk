@@ -348,7 +348,7 @@ func (character *Character) MultiplyMeleeSpeed(sim *Simulation, amount float64) 
 	character.Unit.MultiplyMeleeSpeed(sim, amount)
 
 	for _, petAgent := range character.PetAgents {
-		petAgent.OwnerAttackSpeedChanged(sim)
+		petAgent.OwnerAttackSpeedChanged(sim, amount)
 	}
 }
 
@@ -356,7 +356,7 @@ func (character *Character) MultiplyRangedSpeed(sim *Simulation, amount float64)
 	character.Unit.MultiplyRangedSpeed(sim, amount)
 
 	for _, petAgent := range character.PetAgents {
-		petAgent.OwnerAttackSpeedChanged(sim)
+		petAgent.OwnerAttackSpeedChanged(sim, amount)
 	}
 }
 
@@ -364,7 +364,7 @@ func (character *Character) MultiplyAttackSpeed(sim *Simulation, amount float64)
 	character.Unit.MultiplyAttackSpeed(sim, amount)
 
 	for _, petAgent := range character.PetAgents {
-		petAgent.OwnerAttackSpeedChanged(sim)
+		petAgent.OwnerAttackSpeedChanged(sim, amount)
 	}
 }
 

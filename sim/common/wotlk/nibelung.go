@@ -77,7 +77,7 @@ func (valkyr *ValkyrPet) registerSmite(isHeroic bool) {
 
 func (valkyr *ValkyrPet) Initialize() {}
 
-func (valkyr *ValkyrPet) Reset(sim *core.Simulation) {}
+func (valkyr *ValkyrPet) Reset(_ *core.Simulation) {}
 
 func (valkyr *ValkyrPet) OnGCDReady(sim *core.Simulation) {
 	target := valkyr.CurrentTarget

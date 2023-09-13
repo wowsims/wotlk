@@ -172,10 +172,10 @@ func (sdm *StatDependencyManager) sortDeps() {
 	// sorting of dependencies.
 	for i, srcStat := range safeDepsOrder {
 		for _, dstStat := range safeDepsOrder[i:] {
-			// Combine all static deps into 1 for performance.
+			// Combine all static deps into one for performance.
 			startAmount := 0.0
 			if srcStat == dstStat {
-				startAmount = 1
+				startAmount += 1
 			}
 
 			amount := startAmount
@@ -233,7 +233,7 @@ func (sdm *StatDependencyManager) IsFinalized() bool {
 
 func (sdm *StatDependencyManager) ApplyStatDependencies(s Stats) Stats {
 	for _, dep := range sdm.deps {
-		if dep.enabled {
+		if dep.enabled { // should be prefiltered
 			if dep.src == dep.dst {
 				s[dep.dst] *= dep.amount
 			} else {
@@ -253,6 +253,15 @@ func (sdm *StatDependencyManager) SortAndApplyStatDependencies(s Stats) Stats {
 func (sdm *StatDependencyManager) EnableDynamicStatDep(dep *StatDependency) bool {
 	if !dep.enabled {
 		dep.enabled = true
+		/* // filter on Enable/Disable, so Apply() is faster
+		sdm.enabledDeps = sdm.enabledDeps[:0]
+		for _, d := range sdm.deps {
+			if d.enabled {
+				sdm.enabledDeps = append(sdm.enabledDeps, d)
+			}
+			sdm.enabledDeps
+		}
+		*/
 		return true
 	}
 	return false

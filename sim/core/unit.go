@@ -231,7 +231,7 @@ func (unit *Unit) AddStatsDynamic(sim *Simulation, bonus stats.Stats) {
 		}
 	}
 
-	unit.statsWithoutDeps = unit.statsWithoutDeps.Add(bonus)
+	unit.statsWithoutDeps.AddInplace(&bonus)
 
 	bonus = unit.ApplyStatDependencies(bonus)
 
@@ -239,14 +239,16 @@ func (unit *Unit) AddStatsDynamic(sim *Simulation, bonus stats.Stats) {
 		unit.Log(sim, "Dynamic stat change: %s", bonus.FlatString())
 	}
 
-	unit.stats = unit.stats.Add(bonus)
+	unit.stats.AddInplace(&bonus)
 	unit.processDynamicBonus(sim, bonus)
 }
+
 func (unit *Unit) AddStatDynamic(sim *Simulation, stat stats.Stat, amount float64) {
 	bonus := stats.Stats{}
 	bonus[stat] = amount
 	unit.AddStatsDynamic(sim, bonus)
 }
+
 func (unit *Unit) processDynamicBonus(sim *Simulation, bonus stats.Stats) {
 	if bonus[stats.MP5] != 0 || bonus[stats.Intellect] != 0 || bonus[stats.Spirit] != 0 {
 		unit.UpdateManaRegenRates()
