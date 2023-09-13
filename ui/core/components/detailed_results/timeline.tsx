@@ -791,7 +791,7 @@ export class Timeline extends ResultComponent {
 			const totalDamage = castLog.totalDamage();
 
 			const tt = (
-				<div>
+				<>
 					<span>{castLog.actionId!.name} from {castLog.timestamp.toFixed(2)}s to {(castLog.timestamp + castLog.castTime).toFixed(2)}s ({castLog.castTime.toFixed(2)}s, {castLog.effectiveTime.toFixed(2)}s GCD Time){travelTimeStr}</span>
 					<ul className="rotation-timeline-cast-damage-list">
 						{castLog.damageDealtLogs.map(ddl => (
@@ -803,7 +803,7 @@ export class Timeline extends ResultComponent {
 						}
 					</ul>
 					{totalDamage > 0 && <span>Total: {totalDamage.toFixed(2)} ({(totalDamage / (castLog.effectiveTime || 1)).toFixed(2)} DPET)</span>}
-				</div>
+				</>
 			);
 
 			tippy(castElem, {
@@ -818,10 +818,10 @@ export class Timeline extends ResultComponent {
 				rowElem.appendChild(tickElem);
 
 				const tt = (
-					<div>
+					<>
 						<span>{ddl.timestamp.toFixed(2)}s - {ddl.actionId!.name} {ddl.resultString()}</span>
 						{ddl.source?.isTarget && <span className="threat-metrics"> ({ddl.threat.toFixed(1)} Threat)</span>}
-					</div>
+					</>
 				);
 
 				tippy(tickElem, {
@@ -1033,7 +1033,7 @@ export class Timeline extends ResultComponent {
 
 	private tooltipAurasSectionElem(log: SimLog): JSX.Element {
 		if (log.activeAuras.length == 0) {
-			return (<div></div>);
+			return (<></>);
 		}
 
 		return (
@@ -1045,7 +1045,7 @@ export class Timeline extends ResultComponent {
 					{log.activeAuras.map(auraLog => {
 						return (
 							<li>
-								{auraLog.actionId!.iconUrl && <img className="timeline-tooltip-icon" src={`${auraLog.actionId!.iconUrl}`}></img>}
+								{auraLog.actionId!.iconUrl && <img className="timeline-tooltip-icon" src={auraLog.actionId!.iconUrl}></img>}
 								<span>{auraLog.actionId!.name}</span>
 							</li>
 						);
