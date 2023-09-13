@@ -39,12 +39,12 @@ func (dk *Deathknight) registerSummonGargoyleCD() {
 			dk.Gargoyle.EnableWithTimeout(sim, dk.Gargoyle, time.Second*30)
 			dk.Gargoyle.CancelGCDTimer(sim)
 
-			snapshottedMeleeSpeedMultipler := dk.PseudoStats.MeleeSpeedMultiplier
+			snapshotMeleeSpeedMultipler := dk.PseudoStats.MeleeSpeedMultiplier
 			dk.Gargoyle.meleeSpeedMultiplier = func() float64 {
 				if dk.Gargoyle.isNerfedGargoyle {
 					return dk.PseudoStats.MeleeSpeedMultiplier
 				}
-				return snapshottedMeleeSpeedMultipler
+				return snapshotMeleeSpeedMultipler
 			}
 			dk.Gargoyle.updateCastSpeed()
 
@@ -69,8 +69,8 @@ func (dk *Deathknight) registerSummonGargoyleCD() {
 		Type:  core.CooldownTypeDPS,
 	})
 	if dk.Inputs.IsDps {
-		// We use this for defining the min cast time of gargoyle
-		// but we dont cast it with the MCD system in the dps sim
+		// We use this for defining the min cast time of gargoyle,
+		// but we don't cast it with the MCD system in the dps sim
 		dk.GetMajorCooldown(dk.SummonGargoyle.ActionID).Disable()
 	}
 }
@@ -89,19 +89,19 @@ type GargoylePet struct {
 
 func (dk *Deathknight) NewGargoyle(nerfedGargoyle bool) *GargoylePet {
 	// Remove any hit that would be given by NocS as it does not translate to pets
-	nocsHit := 0.0
+	var nocsHit float64
 	if dk.nervesOfColdSteelActive() {
-		nocsHit = (float64(dk.Talents.NervesOfColdSteel) / 8.0) * 17.0
+		nocsHit = float64(dk.Talents.NervesOfColdSteel) * core.MeleeHitRatingPerHitChance
 	}
 	if dk.HasDraeneiHitAura {
-		nocsHit = nocsHit + 1.0
+		nocsHit += 1 * core.MeleeHitRatingPerHitChance
 	}
 
-	var gargoyleDynamicStatInheritance core.PetStatInheritance = nil
+	var gargoyleDynamicStatInheritance core.PetStatInheritance
 	if nerfedGargoyle {
 		gargoyleDynamicStatInheritance = func(ownerStats stats.Stats) stats.Stats {
 			return stats.Stats{
-				stats.SpellHaste: (ownerStats[stats.MeleeHaste] / dk.PseudoStats.MeleeHasteRatingPerHastePercent) * core.HasteRatingPerHastePercent,
+				stats.SpellHaste: ownerStats[stats.MeleeHaste] * PetHasteScale,
 			}
 		}
 	}
@@ -112,18 +112,13 @@ func (dk *Deathknight) NewGargoyle(nerfedGargoyle bool) *GargoylePet {
 			&dk.Character,
 			stats.Stats{
 				stats.Stamina:  1000,
-				stats.SpellHit: -nocsHit * core.SpellHitRatingPerHitChance,
+				stats.SpellHit: -nocsHit * PetSpellHitScale,
 			},
 			func(ownerStats stats.Stats) stats.Stats {
-				// Convert dk melee hit to garg spell hit
-				// We convert 8 melee hit to 17 spell hit (as thats how pets scale their hit/expertise)
-				ownerHitChance := (ownerStats[stats.MeleeHit] / core.MeleeHitRatingPerHitChance)
-				hitRatingFromOwner := ((ownerHitChance / 8.0) * 17.0) * core.SpellHitRatingPerHitChance
-
 				return stats.Stats{
 					stats.AttackPower: ownerStats[stats.AttackPower],
-					stats.SpellHit:    hitRatingFromOwner,
-					stats.SpellHaste:  (ownerStats[stats.MeleeHaste] / dk.PseudoStats.MeleeHasteRatingPerHastePercent) * core.HasteRatingPerHastePercent,
+					stats.SpellHit:    ownerStats[stats.MeleeHit] * PetSpellHitScale,
+					stats.SpellHaste:  ownerStats[stats.MeleeHaste] * PetHasteScale,
 				}
 			},
 			gargoyleDynamicStatInheritance,
@@ -136,7 +131,7 @@ func (dk *Deathknight) NewGargoyle(nerfedGargoyle bool) *GargoylePet {
 	}
 
 	// NightOfTheDead
-	gargoyle.PseudoStats.DamageTakenMultiplier *= (1.0 - float64(dk.Talents.NightOfTheDead)*0.45)
+	gargoyle.PseudoStats.DamageTakenMultiplier *= 1.0 - float64(dk.Talents.NightOfTheDead)*0.45
 
 	dk.AddPet(gargoyle)
 

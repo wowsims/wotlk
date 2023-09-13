@@ -18,6 +18,12 @@ const (
 	FuStrike_Obliterate    Rotation_FuStrike = 2
 )
 
+const (
+	PetSpellHitScale  = 17.0 / 8.0 * core.SpellHitRatingPerHitChance / core.MeleeHitRatingPerHitChance    // 1.7
+	PetExpertiseScale = 3.25 * core.ExpertisePerQuarterPercentReduction / core.MeleeHitRatingPerHitChance // 0.8125
+	PetHasteScale     = core.HasteRatingPerHastePercent / (core.HasteRatingPerHastePercent / 1.3)         // 1.3
+)
+
 var TalentTreeSizes = [3]int{28, 29, 31}
 
 type DeathknightInputs struct {
