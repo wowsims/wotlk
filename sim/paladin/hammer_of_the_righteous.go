@@ -31,6 +31,9 @@ func (paladin *Paladin) registerHammerOfTheRighteousSpell() {
 				Duration: time.Second * 6,
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return paladin.MainHand().HandType != proto.HandType_HandTypeTwoHand
+		},
 
 		DamageMultiplierAdditive: 1 + paladin.getItemSetRedemptionPlateBonus2() + paladin.getItemSetT9PlateBonus2() + paladin.getItemSetLightswornPlateBonus2(),
 		CritMultiplier:           paladin.MeleeCritMultiplier(),
