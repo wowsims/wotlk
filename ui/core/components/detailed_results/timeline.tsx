@@ -1045,7 +1045,7 @@ export class Timeline extends ResultComponent {
 					{log.activeAuras.map(auraLog => {
 						return (
 							<li>
-								{auraLog.actionId!.iconUrl && <img className="timeline-tooltip-icon" src={`${auraLog.actionId!.iconUrl}`}></img>}
+								{auraLog.actionId!.iconUrl && <img className="timeline-tooltip-icon" src={auraLog.actionId!.iconUrl}></img>}
 								<span>{auraLog.actionId!.name}</span>
 							</li>
 						);
