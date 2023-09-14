@@ -71,6 +71,7 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 				data-bs-placement="bottom"
 				aria-expanded="false"
 				data-whtticon="false"
+				data-disable-wowhead-touch-tooltip='true'
 			>
 				<span class='icon-picker-label'></span>
 			</a>
@@ -90,6 +91,7 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 
 			const option = document.createElement('a');
 			option.classList.add('icon-picker-button');
+			option.dataset.disableWowheadTouchTooltip='true';
 			optionContainer.appendChild(option);
 			this.setImage(option, valueConfig);
 
