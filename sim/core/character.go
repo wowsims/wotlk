@@ -347,24 +347,30 @@ func (character *Character) AddPet(pet PetAgent) {
 func (character *Character) MultiplyMeleeSpeed(sim *Simulation, amount float64) {
 	character.Unit.MultiplyMeleeSpeed(sim, amount)
 
-	for _, petAgent := range character.PetAgents {
-		petAgent.OwnerAttackSpeedChanged(sim, amount)
+	for _, pet := range character.Pets {
+		if pet.meleeSpeedMultiplierInheritance != nil {
+			pet.meleeSpeedMultiplierInheritance(amount)
+		}
 	}
 }
 
 func (character *Character) MultiplyRangedSpeed(sim *Simulation, amount float64) {
 	character.Unit.MultiplyRangedSpeed(sim, amount)
 
-	for _, petAgent := range character.PetAgents {
-		petAgent.OwnerAttackSpeedChanged(sim, amount)
+	for _, pet := range character.Pets {
+		if pet.meleeSpeedMultiplierInheritance != nil {
+			pet.meleeSpeedMultiplierInheritance(amount)
+		}
 	}
 }
 
 func (character *Character) MultiplyAttackSpeed(sim *Simulation, amount float64) {
 	character.Unit.MultiplyAttackSpeed(sim, amount)
 
-	for _, petAgent := range character.PetAgents {
-		petAgent.OwnerAttackSpeedChanged(sim, amount)
+	for _, pet := range character.Pets {
+		if pet.meleeSpeedMultiplierInheritance != nil {
+			pet.meleeSpeedMultiplierInheritance(amount)
+		}
 	}
 }
 

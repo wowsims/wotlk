@@ -69,7 +69,7 @@ type MirrorImage struct {
 
 func (mage *Mage) NewMirrorImage() *MirrorImage {
 	mirrorImage := &MirrorImage{
-		Pet:       core.NewPet("Mirror Image", &mage.Character, mirrorImageBaseStats, mirrorImageInheritance, nil, false, true),
+		Pet:       core.NewPet("Mirror Image", &mage.Character, mirrorImageBaseStats, mirrorImageInheritance, false, true),
 		mageOwner: mage,
 	}
 	mirrorImage.EnableManaBar()

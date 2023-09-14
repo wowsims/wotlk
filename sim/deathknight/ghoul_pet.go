@@ -42,7 +42,7 @@ func (dk *Deathknight) NewArmyGhoulPet(_ int) *GhoulPet {
 	}
 
 	ghoulPet := &GhoulPet{
-		Pet:     core.NewPet("Army of the Dead", &dk.Character, armyGhoulPetBaseStats, dk.armyGhoulStatInheritance(), nil, false, true),
+		Pet:     core.NewPet("Army of the Dead", &dk.Character, armyGhoulPetBaseStats, dk.armyGhoulStatInheritance(), false, true),
 		dkOwner: dk,
 	}
 
@@ -96,7 +96,7 @@ func (dk *Deathknight) NewGhoulPet(permanent bool) *GhoulPet {
 	}
 
 	ghoulPet := &GhoulPet{
-		Pet:     core.NewPet("Ghoul", &dk.Character, ghoulPetBaseStats, dk.ghoulStatInheritance(), nil, permanent, !permanent),
+		Pet:     core.NewPet("Ghoul", &dk.Character, ghoulPetBaseStats, dk.ghoulStatInheritance(), permanent, !permanent),
 		dkOwner: dk,
 	}
 
@@ -191,6 +191,14 @@ func (ghoulPet *GhoulPet) enable(sim *core.Simulation) {
 
 	if ghoulPet.IsGuardian() {
 		ghoulPet.PseudoStats.MeleeSpeedMultiplier = 1 // guardians are not affected by raid buffs
+	} else {
+		ghoulPet.SetMeleeSpeedMultiplierInheritance(func(ownerMeleeSpeedMultiplier float64) {
+			ghoulPet.MultiplyMeleeSpeed(sim, ownerMeleeSpeedMultiplier)
+
+			if sim.Log != nil {
+				sim.Log("Ghoul MeleeSpeedMultiplier: %f, ownerMeleeMultiplier: %f\n", ghoulPet.Character.PseudoStats.MeleeSpeedMultiplier, ghoulPet.dkOwner.PseudoStats.MeleeSpeedMultiplier)
+			}
+		})
 	}
 
 	// inherit owner's MeleeSpeedMultiplier
@@ -199,6 +207,8 @@ func (ghoulPet *GhoulPet) enable(sim *core.Simulation) {
 
 func (ghoulPet *GhoulPet) disable(sim *core.Simulation) {
 	ghoulPet.focusBar.Disable(sim)
+
+	ghoulPet.SetMeleeSpeedMultiplierInheritance(nil)
 }
 
 func (dk *Deathknight) ghoulStatInheritance() core.PetStatInheritance {

@@ -25,7 +25,7 @@ var baseStats = stats.Stats{
 
 func (priest *Priest) NewShadowfiend() *Shadowfiend {
 	shadowfiend := &Shadowfiend{
-		Pet:    core.NewPet("Shadowfiend", &priest.Character, baseStats, priest.shadowfiendStatInheritance(), nil, false, false),
+		Pet:    core.NewPet("Shadowfiend", &priest.Character, baseStats, priest.shadowfiendStatInheritance(), false, false),
 		Priest: priest,
 	}
 

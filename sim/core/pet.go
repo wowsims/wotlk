@@ -14,7 +14,6 @@ type PetAgent interface {
 
 	// The Pet controlled by this PetAgent.
 	GetPet() *Pet
-	OwnerAttackSpeedChanged(sim *Simulation, amount float64)
 }
 
 type OnPetEnable func(sim *Simulation)
@@ -37,10 +36,12 @@ type Pet struct {
 	// Calculates inherited stats based on owner stats or stat changes.
 	statInheritance PetStatInheritance
 
+	// DK pets also inherit the MeleeSpeedMultiplier. This replace OwnerAttackSpeedChanged.
+	meleeSpeedMultiplierInheritance func(ownerMeleeSpeedMultiplier float64)
+
 	// No-op until finalized to prevent owner stats from affecting pet until we're ready.
-	currentStatInheritance         PetStatInheritance
-	inheritedStats                 stats.Stats
-	guardianDynamicStatInheritance PetStatInheritance
+	currentStatInheritance PetStatInheritance
+	inheritedStats         stats.Stats
 
 	isReset bool
 
@@ -49,7 +50,15 @@ type Pet struct {
 	timeoutAction *PendingAction
 }
 
-func NewPet(name string, owner *Character, baseStats stats.Stats, statInheritance PetStatInheritance, guardianDynamicStatInheritance PetStatInheritance, enabledOnStart bool, isGuardian bool) Pet {
+func (pet *Pet) SetMeleeSpeedMultiplierInheritance(inheritance func(ownerMeleeSpeedMultiplier float64)) {
+	pet.meleeSpeedMultiplierInheritance = inheritance
+}
+
+func (pet *Pet) SetStatInheritance(inheritance PetStatInheritance) {
+	pet.currentStatInheritance = inheritance
+}
+
+func NewPet(name string, owner *Character, baseStats stats.Stats, statInheritance PetStatInheritance, enabledOnStart bool, isGuardian bool) Pet {
 	pet := Pet{
 		Character: Character{
 			Unit: Unit{
@@ -68,11 +77,10 @@ func NewPet(name string, owner *Character, baseStats stats.Stats, statInheritanc
 			PartyIndex: owner.PartyIndex,
 			baseStats:  baseStats,
 		},
-		Owner:                          owner,
-		statInheritance:                statInheritance,
-		guardianDynamicStatInheritance: guardianDynamicStatInheritance,
-		enabledOnStart:                 enabledOnStart,
-		isGuardian:                     isGuardian,
+		Owner:           owner,
+		statInheritance: statInheritance,
+		enabledOnStart:  enabledOnStart,
+		isGuardian:      isGuardian,
 	}
 	pet.GCD = pet.NewTimer()
 	pet.currentStatInheritance = func(ownerStats stats.Stats) stats.Stats {
@@ -86,24 +94,15 @@ func NewPet(name string, owner *Character, baseStats stats.Stats, statInheritanc
 	return pet
 }
 
-// Add a default base if pets don't need this
-func (pet *Pet) OwnerAttackSpeedChanged(_ *Simulation, _ float64) {}
-
 // Updates the stats for this pet in response to a stat change on the owner.
 // addedStats is the amount of stats added to the owner (will be negative if the
 // owner lost stats).
 func (pet *Pet) addOwnerStats(sim *Simulation, addedStats stats.Stats) {
-	// Only gargoyle is a guardian that inherits haste dynamically
-	if (pet.guardianDynamicStatInheritance == nil && pet.isGuardian) || !pet.enabled {
+	if pet.currentStatInheritance == nil {
 		return
 	}
 
-	var inheritedChange stats.Stats
-	if pet.isGuardian {
-		inheritedChange = pet.guardianDynamicStatInheritance(addedStats)
-	} else {
-		inheritedChange = pet.currentStatInheritance(addedStats)
-	}
+	inheritedChange := pet.currentStatInheritance(addedStats)
 
 	pet.inheritedStats.AddInplace(&inheritedChange)
 	pet.AddStatsDynamic(sim, inheritedChange)
@@ -155,9 +154,15 @@ func (pet *Pet) Enable(sim *Simulation, petAgent PetAgent) {
 		pet.reset(sim, petAgent)
 	}
 
+	// to make owner stat inheritance cheaper, it might make sense to not iterate over pets, but over "stat inheritors" instead:
+	//  these would only be filled if (eligible) pets are enabled, and save needless "enabled" or "isGuardian" etc. checks
+
 	pet.inheritedStats = pet.statInheritance(pet.Owner.GetStats())
 	pet.AddStatsDynamic(sim, pet.inheritedStats)
-	pet.currentStatInheritance = pet.statInheritance
+
+	if !pet.isGuardian {
+		pet.currentStatInheritance = pet.statInheritance
+	}
 
 	//reset current mana after applying stats
 	pet.manaBar.reset()
@@ -196,12 +201,12 @@ func (pet *Pet) Disable(sim *Simulation) {
 
 	// Remove inherited stats on dismiss if not permanent
 	if pet.isGuardian || pet.timeoutAction != nil {
+		// CHECKME this could probably be a ~reset call, more or less
 		pet.AddStatsDynamic(sim, pet.inheritedStats.Multiply(-1))
 		pet.inheritedStats = stats.Stats{}
-		pet.currentStatInheritance = func(ownerStats stats.Stats) stats.Stats {
-			return stats.Stats{}
-		}
 	}
+
+	pet.currentStatInheritance = nil
 
 	pet.CancelGCDTimer(sim)
 	pet.focusBar.Cancel(sim)

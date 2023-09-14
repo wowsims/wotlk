@@ -97,34 +97,17 @@ func (dk *Deathknight) NewGargoyle(nerfedGargoyle bool) *GargoylePet {
 		nocsHit += 1 * core.MeleeHitRatingPerHitChance
 	}
 
-	var gargoyleDynamicStatInheritance core.PetStatInheritance
-	if nerfedGargoyle {
-		gargoyleDynamicStatInheritance = func(ownerStats stats.Stats) stats.Stats {
-			return stats.Stats{
-				stats.SpellHaste: ownerStats[stats.MeleeHaste] * PetHasteScale,
-			}
-		}
-	}
-
 	gargoyle := &GargoylePet{
-		Pet: core.NewPet(
-			"Gargoyle",
-			&dk.Character,
-			stats.Stats{
-				stats.Stamina:  1000,
-				stats.SpellHit: -nocsHit * PetSpellHitScale,
-			},
-			func(ownerStats stats.Stats) stats.Stats {
-				return stats.Stats{
-					stats.AttackPower: ownerStats[stats.AttackPower],
-					stats.SpellHit:    ownerStats[stats.MeleeHit] * PetSpellHitScale,
-					stats.SpellHaste:  ownerStats[stats.MeleeHaste] * PetHasteScale,
-				}
-			},
-			gargoyleDynamicStatInheritance,
-			false,
-			true,
-		),
+		Pet: core.NewPet("Gargoyle", &dk.Character, stats.Stats{
+			stats.Stamina:  1000,
+			stats.SpellHit: -nocsHit * PetSpellHitScale,
+		}, func(ownerStats stats.Stats) stats.Stats {
+			return stats.Stats{
+				stats.AttackPower: ownerStats[stats.AttackPower],
+				stats.SpellHit:    ownerStats[stats.MeleeHit] * PetSpellHitScale,
+				stats.SpellHaste:  ownerStats[stats.MeleeHaste] * PetHasteScale,
+			}
+		}, false, true),
 		dkOwner:              dk,
 		isNerfedGargoyle:     nerfedGargoyle,
 		ownerMeleeMultiplier: 1.0,
@@ -132,6 +115,20 @@ func (dk *Deathknight) NewGargoyle(nerfedGargoyle bool) *GargoylePet {
 
 	// NightOfTheDead
 	gargoyle.PseudoStats.DamageTakenMultiplier *= 1.0 - float64(dk.Talents.NightOfTheDead)*0.45
+
+	// guardians only snapshot (using "statInheritance"), while "real" pets snapshot and dynamically update
+
+	gargoyle.OnPetEnable = func(sim *core.Simulation) {
+		// OnPetEnable is called after snapshotting via "statInheritance", and resetting it to "nil" for guardians.
+		// "Nerfed Gargoyle" is the only case where a guardian has dynamic "statInheritance".
+		if gargoyle.isNerfedGargoyle {
+			gargoyle.SetStatInheritance(func(ownerStats stats.Stats) stats.Stats {
+				return stats.Stats{
+					stats.SpellHaste: ownerStats[stats.MeleeHaste] * PetHasteScale,
+				}
+			})
+		}
+	}
 
 	dk.AddPet(gargoyle)
 
@@ -146,20 +143,23 @@ func (garg *GargoylePet) Initialize() {
 	garg.registerGargoyleStrikeSpell()
 }
 
-func (garg *GargoylePet) Reset(sim *core.Simulation) {
+func (garg *GargoylePet) Reset(_ *core.Simulation) {
 	garg.ownerMeleeMultiplier = 1.0
 }
 
-func (garg *GargoylePet) OnGCDReady(sim *core.Simulation) {
-	// Gargoyle has no GCD on his cast so just do nothing here
-	// else we get the error that this unit is not using its gcd
-	garg.DoNothing()
+func (garg *GargoylePet) OnGCDReady(_ *core.Simulation) {
 }
 
 func (garg *GargoylePet) updateCastSpeed() {
-	garg.MultiplyCastSpeed(1.0 / garg.ownerMeleeMultiplier)
-	garg.ownerMeleeMultiplier = garg.meleeSpeedMultiplier()
-	garg.MultiplyCastSpeed(garg.ownerMeleeMultiplier)
+	mOld := garg.ownerMeleeMultiplier
+	mNew := garg.meleeSpeedMultiplier()
+
+	if mOld == mNew {
+		return
+	}
+
+	garg.ownerMeleeMultiplier = mNew
+	garg.MultiplyCastSpeed(mNew / mOld)
 }
 
 func (garg *GargoylePet) registerGargoyleStrikeSpell() {

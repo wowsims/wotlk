@@ -385,9 +385,8 @@ func (spell *Spell) attackerDamageMultiplierInternal(attackTable *AttackTable) f
 		return 1
 	}
 
-	ps := spell.Unit.PseudoStats
-	return ps.DamageDealtMultiplier *
-		ps.SchoolDamageDealtMultiplier[spell.SchoolIndex] *
+	return spell.Unit.PseudoStats.DamageDealtMultiplier *
+		spell.Unit.PseudoStats.SchoolDamageDealtMultiplier[spell.SchoolIndex] *
 		attackTable.DamageDealtMultiplier
 }
 

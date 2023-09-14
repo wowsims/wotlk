@@ -136,28 +136,25 @@ func (dk *Deathknight) NewRuneWeapon() *RuneWeaponPet {
 	}
 
 	runeWeapon := &RuneWeaponPet{
-		Pet: core.NewPet("Rune Weapon", &dk.Character,
-			stats.Stats{
-				stats.Stamina:   100,
-				stats.MeleeHit:  -nocsHit,
-				stats.SpellHit:  -nocsHit * PetSpellHitScale,
-				stats.Expertise: -nocsHit * PetExpertiseScale,
-			},
-			func(ownerStats stats.Stats) stats.Stats {
-				return stats.Stats{
-					stats.AttackPower: ownerStats[stats.AttackPower],
-					stats.MeleeHaste:  ownerStats[stats.MeleeHaste] * PetHasteScale,
+		Pet: core.NewPet("Rune Weapon", &dk.Character, stats.Stats{
+			stats.Stamina:   100,
+			stats.MeleeHit:  -nocsHit,
+			stats.SpellHit:  -nocsHit * PetSpellHitScale,
+			stats.Expertise: -nocsHit * PetExpertiseScale,
+		}, func(ownerStats stats.Stats) stats.Stats {
+			return stats.Stats{
+				stats.AttackPower: ownerStats[stats.AttackPower],
+				stats.MeleeHaste:  ownerStats[stats.MeleeHaste] * PetHasteScale,
 
-					stats.MeleeHit: ownerStats[stats.MeleeHit],
-					stats.SpellHit: ownerStats[stats.MeleeHit] * PetSpellHitScale,
+				stats.MeleeHit: ownerStats[stats.MeleeHit],
+				stats.SpellHit: ownerStats[stats.MeleeHit] * PetSpellHitScale,
 
-					stats.Expertise: ownerStats[stats.MeleeHit] * PetExpertiseScale,
+				stats.Expertise: ownerStats[stats.MeleeHit] * PetExpertiseScale,
 
-					stats.MeleeCrit: ownerStats[stats.MeleeCrit],
-					stats.SpellCrit: ownerStats[stats.SpellCrit],
-				}
-			},
-			nil, false, true),
+				stats.MeleeCrit: ownerStats[stats.MeleeCrit],
+				stats.SpellCrit: ownerStats[stats.SpellCrit],
+			}
+		}, false, true),
 		dkOwner: dk,
 	}
 
