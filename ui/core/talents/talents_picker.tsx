@@ -9,6 +9,8 @@ import { isRightClick } from '../utils.js';
 import { sum } from '../utils.js';
 import { Player } from '../player.js';
 
+import { element, fragment } from 'tsx-vanilla';
+
 const MAX_POINTS_PLAYER = 71;
 const MAX_POINTS_HUNTER_PET = 16;
 const MAX_POINTS_HUNTER_PET_BM = 20;
@@ -37,20 +39,22 @@ export class TalentsPicker<ModObject, TalentsProto> extends Input<ModObject, str
 		this.maxPoints = config.maxPoints;
 		this.numRows = Math.max(...config.trees.map(treeConfig => treeConfig.talents.map(talentConfig => talentConfig.location.rowIdx).flat()).flat()) + 1;
 		this.numCols = Math.max(...config.trees.map(treeConfig => treeConfig.talents.map(talentConfig => talentConfig.location.colIdx).flat()).flat()) + 1;
-		this.rootElem.innerHTML = `
-			<div id="talents-carousel" class="carousel slide">
-				<div class="carousel-inner">
+
+		this.rootElem.appendChild(
+			<div id="talents-carousel" className="carousel slide">
+				<div className="carousel-inner">
 				</div>
-				<button class="carousel-control-prev" type="button">
-					<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-					<span class="visually-hidden">Previous</span>
+				<button className="carousel-control-prev" type="button">
+					<span className="carousel-control-prev-icon" attributes={{'aria-hidden':true}}></span>
+					<span className="visually-hidden">Previous</span>
 				</button>
-				<button class="carousel-control-next" type="button">
-					<span class="carousel-control-next-icon" aria-hidden="true"></span>
-					<span class="visually-hidden">Next</span>
+				<button className="carousel-control-next" type="button">
+					<span className="carousel-control-next-icon" attributes={{'aria-hidden':true}}></span>
+					<span className="visually-hidden">Next</span>
 				</button>
 			</div>
-		`
+		);
+
 		const carouselContainer = this.rootElem.querySelector('.carousel-inner') as HTMLElement;
 		const carouselPrevBtn = this.rootElem.querySelector('.carousel-control-prev') as HTMLButtonElement;
 		const carouselNextBtn = this.rootElem.querySelector('.carousel-control-next') as HTMLButtonElement;
@@ -158,22 +162,26 @@ class TalentTreePicker<TalentsProto> extends Component {
 		this.numPoints = 0;
 		this.picker = picker;
 
-		this.rootElem.innerHTML = `
-			<div class="talent-tree-header">
-				<img src=${getSpecIcon(klass, specNumber)} class="talent-tree-icon" />
-				<span class="talent-tree-title"></span>
-				<span class="talent-tree-points"></span>
-				<button
-					class="talent-tree-reset btn btn-link link-danger"
-					data-bs-title="Reset talent points"
-					data-bs-toggle="tooltip"
-				>
-					<i class="fa fa-times"></i>
-				</button>
-			</div>
-			<div class="talent-tree-background"></div>
-			<div class="talent-tree-main"></div>
-    `;
+		this.rootElem.appendChild(
+			<>
+				<div className="talent-tree-header">
+					<img src={getSpecIcon(klass, specNumber)} className="talent-tree-icon" />
+					<span className="talent-tree-title"></span>
+					<span className="talent-tree-points"></span>
+					<button
+						className="talent-tree-reset btn btn-link link-danger"
+						dataset={{
+							bsTitle:'Reset talent points',
+							bsToggle: 'tooltip'
+						}}
+					>
+						<i className="fa fa-times"></i>
+					</button>
+				</div>
+				<div className="talent-tree-background"></div>
+				<div className="talent-tree-main"></div>
+			</>
+		);
 
 		this.title = this.rootElem.getElementsByClassName('talent-tree-title')[0] as HTMLElement;
 		this.pointsElem = this.rootElem.querySelector('.talent-tree-points') as HTMLElement;
@@ -192,12 +200,31 @@ class TalentTreePicker<TalentsProto> extends Component {
 		this.rootElem.style.maxWidth = `calc(${iconSize} * ${this.picker.numCols + 2})`
 
 		this.talents = config.talents.map(talent => new TalentPicker(main, talent, this));
+		// Process parent<->child mapping
 		this.talents.forEach(talent => {
 			if (talent.config.prereqLocation) {
-				this.getTalent(talent.config.prereqLocation).config.prereqOfLocation = talent.config.location;
+				this.getTalent(talent.config.prereqLocation).config.childLocations!.push(talent.config.location);
 			}
 		});
-
+		// Loop through all and have talent add in divs/items for child dependencies
+		// It'd be nicer to have this in talent constructor but json would have to be updated
+		const recurseCalcIdx = (t: TalentPicker<TalentsProto>, z: number) => {
+			t.initChildReqs();
+			t.zIndex = z;
+			for (const cl of t.config.childLocations!) {
+				const c = this.getTalent(cl);
+				c.parentReq = t.getChildReqArrow(cl);
+				recurseCalcIdx(c, z-2);
+			}
+		}
+		// Start at top of each heirachy chain and recurse down
+		for (const t of this.talents) {
+			if (t.config.childLocations!.length == 0)
+				continue;
+			if (t.config.prereqLocation !== undefined)
+				continue;
+			recurseCalcIdx(t, 20);
+		}
 		const resetBtn = this.rootElem.querySelector('.talent-tree-reset') as HTMLElement;
 		new Tooltip(resetBtn)
 		resetBtn.addEventListener('click', event => {
@@ -234,17 +261,86 @@ class TalentTreePicker<TalentsProto> extends Component {
 	}
 }
 
+
+type ReqDir = 'down' | 'right' | 'left' | 'rightdown' | 'leftdown';
+class TalentReqArrow extends Component {
+	private dir: ReqDir;
+	private zIdx: number;
+	readonly parentLoc: TalentLocation;
+	readonly childLoc: TalentLocation;
+
+	constructor(parent: HTMLElement, parentLoc: TalentLocation, childLoc: TalentLocation) {
+		super(parent, 'talent-picker-req-arrow', document.createElement('div'));
+		this.zIdx = 0;
+		this.parentLoc = parentLoc;
+		this.childLoc = childLoc;
+	
+		this.rootElem.style.gridRow = String(parentLoc.rowIdx + 1);
+		this.rootElem.style.gridColumn = String(parentLoc.colIdx + 1);
+
+		let rowEnd = Math.max(parentLoc.rowIdx, childLoc.rowIdx) + 1;
+		let colEnd = Math.max(parentLoc.colIdx, childLoc.colIdx) + 1;
+
+		// Calculate where we need to 'point'
+		if (parentLoc.rowIdx == childLoc.rowIdx) {
+			this.dir = parentLoc.colIdx < childLoc.colIdx ? 'right' : 'left';
+			this.rootElem.dataset.reqArrowColSize = String(Math.abs(parentLoc.colIdx - childLoc.colIdx));
+			colEnd = this.dir == 'left' ? colEnd+1 : colEnd-1;
+		} else {
+			if (parentLoc.colIdx == childLoc.colIdx) {
+				this.dir = 'down';
+				this.rootElem.dataset.reqArrowRowSize = String(Math.abs(parentLoc.rowIdx - childLoc.rowIdx));
+				rowEnd += 1;
+			}
+			else {
+				this.dir = parentLoc.colIdx < childLoc.colIdx ? 'rightdown' : 'leftdown';
+				this.rootElem.dataset.reqArrowColSize = String(Math.abs(parentLoc.colIdx - childLoc.colIdx));
+				this.rootElem.dataset.reqArrowRowSize = String(Math.abs(parentLoc.rowIdx - childLoc.rowIdx));
+				rowEnd += 1;
+				colEnd = this.dir == 'rightdown' ? colEnd+1 : colEnd-1;
+				this.rootElem.appendChild(<div></div>)
+			}
+		}
+
+		this.rootElem.style.gridRowEnd = String(rowEnd);
+		this.rootElem.style.gridColumnEnd = String(colEnd);
+		this.rootElem.classList.add(`talent-picker-req-arrow-${this.dir}`);
+	}
+
+	get zIndex() {
+		return this.zIdx;
+	}
+
+	set zIndex(z: number) {
+		this.zIdx = z;
+		this.rootElem.style.zIndex = String(z);
+	}
+
+	setReqFufilled(isFufilled: boolean) {
+		if (isFufilled)
+			this.rootElem.dataset.reqActive = 'true';
+		else
+			delete this.rootElem.dataset.reqActive;
+	}
+}
+
 class TalentPicker<TalentsProto> extends Component {
 	readonly config: TalentConfig<TalentsProto>;
 	private readonly tree: TalentTreePicker<TalentsProto>;
 	private readonly pointsDisplay: HTMLElement;
 
 	private longTouchTimer?: number;
+	private childReqs: TalentReqArrow[];
+	private zIdx: number;
+	parentReq: TalentReqArrow | null;
 
 	constructor(parent: HTMLElement, config: TalentConfig<TalentsProto>, tree: TalentTreePicker<TalentsProto>) {
 		super(parent, 'talent-picker-root', document.createElement('a'));
 		this.config = config;
 		this.tree = tree;
+		this.childReqs = [];
+		this.parentReq = null;
+		this.zIdx = 0;
 
 		this.rootElem.style.gridRow = String(this.config.location.rowIdx + 1);
 		this.rootElem.style.gridColumn = String(this.config.location.colIdx + 1);
@@ -294,6 +390,37 @@ class TalentPicker<TalentsProto> extends Component {
 			}
 			this.tree.picker.inputChanged(TypedEvent.nextEventID());
 		});
+	}
+
+	initChildReqs(): void {
+		if (this.config.childLocations!.length == 0)
+			return;
+
+		for (const c of this.config.childLocations!) {
+			this.childReqs.push(new TalentReqArrow(this.rootElem.parentElement!, this.config.location, c));
+		}
+	}
+
+	getChildReqArrow(loc: TalentLocation): TalentReqArrow {
+		for (let c of this.childReqs) {
+			if (c.childLoc === loc) {
+				return c;
+			}
+		}
+		throw Error("missing child prereq?");
+	}
+
+	get zIndex() {
+		return this.zIdx;
+	}
+
+	set zIndex(z: number) {
+		this.zIdx = z;
+		this.rootElem.style.zIndex = String(this.zIdx);
+
+		for (const c of this.childReqs) {
+			c.zIndex = this.zIdx-1;
+		}
 	}
 
 	getRow(): number {
@@ -351,8 +478,8 @@ class TalentPicker<TalentsProto> extends Component {
 				return false;
 			}
 
-			if (this.config.prereqOfLocation) {
-				if (this.tree.getTalent(this.config.prereqOfLocation).getPoints() > 0)
+			for (const c of this.config.childLocations!) {
+				if (this.tree.getTalent(c).getPoints() > 0)
 					return false;
 			}
 		}
@@ -397,10 +524,15 @@ class TalentPicker<TalentsProto> extends Component {
 	}
 
 	update() {
-		if (this.canSetPoints(this.getPoints() + 1)) {
+		let canSetPoints = this.canSetPoints(this.getPoints() + 1);
+		if (canSetPoints) {
 			this.rootElem.classList.add('talent-picker-can-add');
 		} else {
 			this.rootElem.classList.remove('talent-picker-can-add');
+		}
+
+		if (this.parentReq) {
+			this.parentReq.setReqFufilled(canSetPoints || this.isFull());
 		}
 	}
 }
@@ -428,8 +560,8 @@ export type TalentConfig<TalentsProto> = {
 	// Location of a prerequisite talent, if any
 	prereqLocation?: TalentLocation;
 
-	// Reverse of prereqLocation. This is populated automatically.
-	prereqOfLocation?: TalentLocation;
+	// Child talents depending on this talent. This is populated automatically.
+	childLocations?: TalentLocation[];
 
 	// Spell ID for each rank of this talent.
 	// Omitted ranks will be inferred by incrementing from the last provided rank.
@@ -441,6 +573,7 @@ export type TalentConfig<TalentsProto> = {
 export function newTalentsConfig<TalentsProto>(talents: TalentsConfig<TalentsProto>): TalentsConfig<TalentsProto> {
 	talents.forEach(tree => {
 		tree.talents.forEach((talent, i) => {
+			talent.childLocations = [];
 			// Validate that talents are given in the correct order (left-to-right top-to-bottom).
 			if (i != 0) {
 				const prevTalent = tree.talents[i - 1];
