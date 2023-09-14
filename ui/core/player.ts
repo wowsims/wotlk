@@ -912,7 +912,8 @@ export class Player<SpecType extends Spec> {
 			parts.push('sock');
 		}
 
-		elem.setAttribute('data-wowhead', parts.join('&'));
+		elem.dataset.wowhead = parts.join('&');
+		elem.dataset.whtticon = 'false';
 	}
 
 	static ARMOR_SLOTS: Array<ItemSlot> = [

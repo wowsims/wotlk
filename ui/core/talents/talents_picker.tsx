@@ -93,11 +93,7 @@ export class TalentsPicker<ModObject, TalentsProto> extends Input<ModObject, str
 		}
 
 		carouselPrevBtn.addEventListener('click', slidePrev);
-		carouselPrevBtn.addEventListener('touchstart', slidePrev);
-		carouselPrevBtn.addEventListener('touchend', (e) => e.preventDefault());
 		carouselNextBtn.addEventListener('click', slideNext);
-		carouselNextBtn.addEventListener('touchstart', slideNext);
-		carouselNextBtn.addEventListener('touchend', (e) => e.preventDefault());
 
 		this.init();
 	}
@@ -346,7 +342,7 @@ class TalentPicker<TalentsProto> extends Component {
 		this.rootElem.style.gridColumn = String(this.config.location.colIdx + 1);
 
 		this.rootElem.dataset.maxPoints = String(this.config.maxPoints);
-		this.rootElem.dataset.wowhead = 'noimage';
+		this.rootElem.dataset.whtticon = 'false';
 
 		this.pointsDisplay = document.createElement('span');
 		this.pointsDisplay.classList.add('talent-picker-points');
@@ -357,6 +353,12 @@ class TalentPicker<TalentsProto> extends Component {
 		});
 		this.rootElem.addEventListener('contextmenu', event => {
 			event.preventDefault();
+		});
+		this.rootElem.addEventListener('touchmove', event => {
+			if (this.longTouchTimer != undefined) {
+				clearTimeout(this.longTouchTimer);
+				this.longTouchTimer = undefined;
+			}
 		});
 		this.rootElem.addEventListener('touchstart', event => {
 			event.preventDefault();

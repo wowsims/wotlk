@@ -70,6 +70,8 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 				data-bs-toggle="dropdown"
 				data-bs-placement="bottom"
 				aria-expanded="false"
+				data-whtticon="false"
+				data-disable-wowhead-touch-tooltip='true'
 			>
 				<span class='icon-picker-label'></span>
 			</a>
@@ -89,6 +91,7 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 
 			const option = document.createElement('a');
 			option.classList.add('icon-picker-button');
+			option.dataset.disableWowheadTouchTooltip='true';
 			optionContainer.appendChild(option);
 			this.setImage(option, valueConfig);
 
@@ -120,20 +123,6 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 				event.preventDefault();
 				this.currentValue = valueConfig.value;
 				this.inputChanged(TypedEvent.nextEventID());
-
-				// Wowhead tooltips can't seem to detect when an element is hidden while
-				// being moused over, and the tooltip doesn't disappear. Patch this by
-				// dispatching our own mouseout event.
-				option.dispatchEvent(new Event('mouseout'));
-			});
-			option.addEventListener('touchstart', event => {
-				event.preventDefault();
-			});
-			option.addEventListener('touchend', event => {
-				event.preventDefault();
-				this.currentValue = valueConfig.value;
-				this.inputChanged(TypedEvent.nextEventID());
-				dropdownMenu.style.display = "none";
 			});
 		});
 
