@@ -8,15 +8,23 @@ Tooltip.Default.trigger = "hover";
 
 let body = document.querySelector('body') as HTMLElement;
 
-// Custom dropdown event handlers for mouseover dropdowns
-body.addEventListener('mouseover', event => {
-	let target = event.target as HTMLElement;
-	let toggle = target.closest('[data-bs-toggle=dropdown]');
-	if (toggle && !toggle.classList.contains('open-on-click')) {
-		let dropdown = Dropdown.getOrCreateInstance(toggle);
-		dropdown.show();
-	}
-}, true);
+function isTouchDevice() {
+	return ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+}
+
+// Disable 'mouseover' to avoid needed to double click on mobile
+// Leaving 'mouseleave', however still allows dropdown to close when clicking new box
+if (!isTouchDevice()) {
+	// Custom dropdown event handlers for mouseover dropdowns
+	body.addEventListener('mouseover', event => {
+		let target = event.target as HTMLElement;
+		let toggle = target.closest('[data-bs-toggle=dropdown]');
+		if (toggle && !toggle.classList.contains('open-on-click')) {
+			let dropdown = Dropdown.getOrCreateInstance(toggle);
+			dropdown.show();
+		}
+	}, true);
+}
 
 body.addEventListener('mouseleave', event => {
 	let e = event as MouseEvent;
