@@ -47,6 +47,7 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 
 		this.rootAnchor = document.createElement('a');
 		this.rootAnchor.classList.add('icon-picker-button');
+		this.rootAnchor.dataset.whtticon = 'false';
 		this.rootAnchor.target = '_blank';
 		this.rootElem.prepend(this.rootAnchor);
 

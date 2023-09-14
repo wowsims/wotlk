@@ -43,6 +43,7 @@ export class MultiIconPicker<ModObject> extends Component {
 					role="button"
 					data-bs-toggle="dropdown"
 					aria-expanded="false"
+					data-whtticon='false'
 				></a>
 				<ul class="dropdown-menu"></ul>
 			</div>

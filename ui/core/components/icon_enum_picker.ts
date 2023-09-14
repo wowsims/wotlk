@@ -70,6 +70,7 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 				data-bs-toggle="dropdown"
 				data-bs-placement="bottom"
 				aria-expanded="false"
+				data-whtticon="false"
 			>
 				<span class='icon-picker-label'></span>
 			</a>

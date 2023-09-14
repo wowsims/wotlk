@@ -111,7 +111,7 @@ class GlyphPicker extends Input<Player<any>, number> {
 		this.glyphOptions = glyphOptions;
 		this.selectedGlyph = emptyGlyphData;
 
-		this.rootElem.innerHTML = `<a class="glyph-picker-icon"></a>`;
+		this.rootElem.innerHTML = `<a class="glyph-picker-icon" data-whtticon='false'></a>`;
 
 		this.iconElem = this.rootElem.getElementsByClassName('glyph-picker-icon')[0] as HTMLAnchorElement;
 		this.iconElem.addEventListener('click', event => {

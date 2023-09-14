@@ -346,7 +346,7 @@ class TalentPicker<TalentsProto> extends Component {
 		this.rootElem.style.gridColumn = String(this.config.location.colIdx + 1);
 
 		this.rootElem.dataset.maxPoints = String(this.config.maxPoints);
-		this.rootElem.dataset.wowhead = 'noimage';
+		this.rootElem.dataset.whtticon = 'false';
 
 		this.pointsDisplay = document.createElement('span');
 		this.pointsDisplay.classList.add('talent-picker-points');

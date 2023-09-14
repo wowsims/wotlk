@@ -190,11 +190,12 @@ export class ItemRenderer extends Component {
 			// Make enchant text hover have a tooltip.
 			if (newItem.enchant.spellId) {
 				this.enchantElem.href = ActionId.makeSpellUrl(newItem.enchant.spellId);
-				this.enchantElem.setAttribute('data-wowhead', `domain=wotlk&spell=${newItem.enchant.spellId}`);
+				this.enchantElem.dataset.wowhead = `domain=wotlk&spell=${newItem.enchant.spellId}`;
 			} else {
 				this.enchantElem.href = ActionId.makeItemUrl(newItem.enchant.itemId);
-				this.enchantElem.setAttribute('data-wowhead', `domain=wotlk&item=${newItem.enchant.itemId}`);
+				this.enchantElem.dataset.wowhead = `domain=wotlk&item=${newItem.enchant.itemId}`;
 			}
+			this.enchantElem.dataset.whtticon = 'false';
 		}
 
 		newItem.allSocketColors().forEach((socketColor, gemIdx) => {
@@ -1149,7 +1150,7 @@ export class ItemList<T> {
 		const listItemElem = (
 			<li className={`selector-modal-list-item ${equipdItemId == itemData.id ? 'active' : ''}`} dataset={{idx: item.idx.toString()}}>
 				<div className='selector-modal-list-label-cell'>
-					<a className='selector-modal-list-item-link' ref={anchorElem}>
+					<a className='selector-modal-list-item-link' ref={anchorElem} dataset={{whtticon:'false'}}>
 						<img className='selector-modal-list-item-icon' ref={iconElem}></img>
 						<label className='selector-modal-list-item-name' ref={nameElem}>
 							{itemData.name}
