@@ -256,10 +256,10 @@ func (priest *Priest) applyHolyConcentration() {
 		ActionID: core.ActionID{SpellID: 34860},
 		Duration: time.Second * 8,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			priest.MultiplyCastSpeed(multiplier)
+			priest.PseudoStats.SpiritRegenMultiplier *= multiplier
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			priest.MultiplyCastSpeed(1 / multiplier)
+			priest.PseudoStats.SpiritRegenMultiplier /= multiplier
 		},
 	})
 

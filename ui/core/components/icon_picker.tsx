@@ -3,6 +3,7 @@ import { TypedEvent } from '../typed_event.js';
 import { isRightClick } from '../utils.js';
 
 import { Input, InputConfig } from './input.js';
+import { element, ref } from 'tsx-vanilla';
 
 // Data for creating an icon-based input component.
 // 
@@ -60,18 +61,20 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 			this.rootAnchor.classList.add('use-counter');
 		}
 
-		const levelContainer = document.createElement('div');
-		levelContainer.classList.add('icon-input-level-container');
-		this.rootAnchor.appendChild(levelContainer);
-		levelContainer.innerHTML = `
-      <a class="icon-picker-button icon-input-improved icon-input-improved1"></a>
-      <a class="icon-picker-button icon-input-improved icon-input-improved2"></a>
-      <span class="icon-picker-label ${this.config.states > 2 ? '' : 'hide'}"></span>
-    `;
+		let ia = ref<HTMLAnchorElement>();
+		let ia2 = ref<HTMLAnchorElement>();
+		let ce = ref<HTMLSpanElement>();
+		this.rootAnchor.appendChild(
+			<div className='icon-input-level-container'>
+				<a ref={ia} className="icon-picker-button icon-input-improved icon-input-improved1"></a>
+				<a ref={ia2} className="icon-picker-button icon-input-improved icon-input-improved2"></a>
+				<span ref={ce} className={`icon-picker-label ${this.config.states > 2 ? '' : 'hide'}`}></span>
+			</div>
+		);
 
-		this.improvedAnchor = this.rootAnchor.getElementsByClassName('icon-input-improved1')[0] as HTMLAnchorElement;
-		this.improvedAnchor2 = this.rootAnchor.getElementsByClassName('icon-input-improved2')[0] as HTMLAnchorElement;
-		this.counterElem = this.rootAnchor.getElementsByClassName('icon-picker-label')[0] as HTMLElement;
+		this.improvedAnchor = ia.value!;
+		this.improvedAnchor2 = ia2.value!;
+		this.counterElem = ce.value!;
 
 		this.config.id.fillAndSet(this.rootAnchor, true, true);
 
