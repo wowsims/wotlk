@@ -260,7 +260,11 @@
 					31571,
 					31572
 				],
-				"maxPoints": 2
+				"maxPoints": 2,
+				"prereqLocation": {
+					"rowIdx": 4,
+					"colIdx": 1
+				}
 			},
 			{
 				"fieldName": "arcaneEmpowerment",
@@ -991,7 +995,11 @@
 					55091,
 					55092
 				],
-				"maxPoints": 2
+				"maxPoints": 2,
+				"prereqLocation": {
+					"rowIdx": 4,
+					"colIdx": 1
+				}
 			},
 			{
 				"fieldName": "wintersChill",
