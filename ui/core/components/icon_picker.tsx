@@ -89,8 +89,9 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 		this.init();
 
 		this.rootAnchor.addEventListener('click', event => {
-			event.preventDefault();
-		});
+			this.handleLeftClick(event);
+		})
+
 		this.rootAnchor.addEventListener('contextmenu', event => {
 			event.preventDefault();
 		});
@@ -99,16 +100,8 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 
 			if (rightClick) {
 				this.handleRightClick(event)
-			} else {
-				this.handleLeftClick(event)
+				event.preventDefault();
 			}
-		});
-
-		this.rootAnchor.addEventListener('touchstart', event => {
-			this.handleLeftClick(event)
-		});
-		this.rootAnchor.addEventListener('touchend', event => {
-			event.preventDefault();
 		});
 	}
 

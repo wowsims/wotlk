@@ -121,20 +121,6 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 				event.preventDefault();
 				this.currentValue = valueConfig.value;
 				this.inputChanged(TypedEvent.nextEventID());
-
-				// Wowhead tooltips can't seem to detect when an element is hidden while
-				// being moused over, and the tooltip doesn't disappear. Patch this by
-				// dispatching our own mouseout event.
-				option.dispatchEvent(new Event('mouseout'));
-			});
-			option.addEventListener('touchstart', event => {
-				event.preventDefault();
-			});
-			option.addEventListener('touchend', event => {
-				event.preventDefault();
-				this.currentValue = valueConfig.value;
-				this.inputChanged(TypedEvent.nextEventID());
-				dropdownMenu.style.display = "none";
 			});
 		});
 

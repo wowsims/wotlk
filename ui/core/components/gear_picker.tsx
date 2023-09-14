@@ -258,24 +258,10 @@ export class ItemPicker extends Component {
 				event.preventDefault();
 				this.openSelectorModal(SelectorModalTabs.Enchants, gearData);
 			};
-			const onClickEnd = (event: Event) => {
-				event.preventDefault();
-			};
 
-			// Make icon open gear selector
 			this.itemElem.iconElem.addEventListener('click', openGearSelector);
-			this.itemElem.iconElem.addEventListener('touchstart', openGearSelector);
-			this.itemElem.iconElem.addEventListener('touchend', onClickEnd);
-
-			// Make item name open gear selector
 			this.itemElem.nameElem.addEventListener('click', openGearSelector);
-			this.itemElem.nameElem.addEventListener('touchstart', openGearSelector);
-			this.itemElem.nameElem.addEventListener('touchend', onClickEnd);
-
-			// Make enchant name open enchant selector
 			this.itemElem.enchantElem.addEventListener('click', openEnchantSelector);
-			this.itemElem.enchantElem.addEventListener('touchstart', openEnchantSelector);
-			this.itemElem.enchantElem.addEventListener('touchend', onClickEnd);
 		});
 
 		player.gearChangeEmitter.on(() => {
@@ -370,7 +356,6 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 			};
 
 			this.iconAnchor.addEventListener('click', onClickStart);
-			this.iconAnchor.addEventListener('touchstart', onClickStart);
 		}).finally(() => this.init());
 
 	}
