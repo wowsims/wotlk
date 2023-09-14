@@ -51,8 +51,6 @@
     flex-wrap: wrap;
 
     &> * {
-      flex-basis: 50%;
-
       &:nth-child(2n) {
         margin-right: 0 !important;
       }
