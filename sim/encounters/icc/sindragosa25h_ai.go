@@ -240,7 +240,22 @@ func (ai *Sindragosa25HAI) registerFrostAuraSpell(target *core.Target) {
 }
 
 func (ai *Sindragosa25HAI) registerFrostBreathSpell(target *core.Target) {
-	actionID := core.ActionID{SpellID: 69649}
+	// Phase 3 uses an intentionally weaker version of the Frost Breath spell, so set up two variants depending on whether Mystic Buffet is being modeled or not
+	var spellID int32
+	var minRoll float64
+	var maxRoll float64
+
+	if ai.IncludeMysticBuffet {
+		spellID = 73061
+		minRoll = 46250
+		maxRoll = 53750
+	} else {
+		spellID = 69649
+		minRoll = 55500
+		maxRoll = 64500
+	}
+
+	actionID := core.ActionID{SpellID: spellID}
 
 	if ai.Target.CurrentTarget != nil {
 		ai.FrostBreathDebuff = ai.Target.CurrentTarget.GetOrRegisterAura(core.Aura{
@@ -276,7 +291,7 @@ func (ai *Sindragosa25HAI) registerFrostBreathSpell(target *core.Target) {
 		CritMultiplier:   1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := sim.Roll(55500, 64500)
+			baseDamage := sim.Roll(minRoll, maxRoll)
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeAlwaysHit)
 			ai.FrostBreathDebuff.Activate(sim)
 			ai.FrostBreathDebuff.AddStack(sim)
