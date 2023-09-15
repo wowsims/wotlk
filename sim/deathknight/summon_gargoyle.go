@@ -39,15 +39,6 @@ func (dk *Deathknight) registerSummonGargoyleCD() {
 			dk.Gargoyle.EnableWithTimeout(sim, dk.Gargoyle, time.Second*30)
 			dk.Gargoyle.CancelGCDTimer(sim)
 
-			snapshotMeleeSpeedMultipler := dk.PseudoStats.MeleeSpeedMultiplier
-			dk.Gargoyle.meleeSpeedMultiplier = func() float64 {
-				if dk.Gargoyle.isNerfedGargoyle {
-					return dk.PseudoStats.MeleeSpeedMultiplier
-				}
-				return snapshotMeleeSpeedMultipler
-			}
-			dk.Gargoyle.updateCastSpeed()
-
 			// Add a dummy aura to show in metrics
 			dk.SummonGargoyleAura.Activate(sim)
 
@@ -82,9 +73,7 @@ type GargoylePet struct {
 
 	GargoyleStrike *core.Spell
 
-	ownerMeleeMultiplier float64
-	meleeSpeedMultiplier func() float64
-	isNerfedGargoyle     bool
+	isNerfedGargoyle bool
 }
 
 func (dk *Deathknight) NewGargoyle(nerfedGargoyle bool) *GargoylePet {
@@ -108,20 +97,23 @@ func (dk *Deathknight) NewGargoyle(nerfedGargoyle bool) *GargoylePet {
 				stats.SpellHaste:  ownerStats[stats.MeleeHaste] * PetHasteScale,
 			}
 		}, false, true),
-		dkOwner:              dk,
-		isNerfedGargoyle:     nerfedGargoyle,
-		ownerMeleeMultiplier: 1.0,
+		dkOwner:          dk,
+		isNerfedGargoyle: nerfedGargoyle,
 	}
 
 	// NightOfTheDead
 	gargoyle.PseudoStats.DamageTakenMultiplier *= 1.0 - float64(dk.Talents.NightOfTheDead)*0.45
 
-	// guardians only snapshot (using "statInheritance"), while "real" pets snapshot and dynamically update
-
 	gargoyle.OnPetEnable = func(sim *core.Simulation) {
-		// OnPetEnable is called after snapshotting via "statInheritance", and resetting it to "nil" for guardians.
-		// "Nerfed Gargoyle" is the only case where a guardian has dynamic "statInheritance".
+		gargoyle.PseudoStats.CastSpeedMultiplier = 1 // guardians are not affected by raid buffs
+		gargoyle.MultiplyCastSpeed(dk.PseudoStats.MeleeSpeedMultiplier)
+
+		// "Nerfed Gargoyle" dynamically updates with owner's haste and melee speed
 		if gargoyle.isNerfedGargoyle {
+			gargoyle.EnableDynamicMeleeSpeed(func(amount float64) {
+				gargoyle.MultiplyCastSpeed(amount)
+			})
+
 			gargoyle.EnableDynamicStats(func(ownerStats stats.Stats) stats.Stats {
 				return stats.Stats{
 					stats.SpellHaste: ownerStats[stats.MeleeHaste] * PetHasteScale,
@@ -144,22 +136,9 @@ func (garg *GargoylePet) Initialize() {
 }
 
 func (garg *GargoylePet) Reset(_ *core.Simulation) {
-	garg.ownerMeleeMultiplier = 1.0
 }
 
 func (garg *GargoylePet) OnGCDReady(_ *core.Simulation) {
-}
-
-func (garg *GargoylePet) updateCastSpeed() {
-	mOld := garg.ownerMeleeMultiplier
-	mNew := garg.meleeSpeedMultiplier()
-
-	if mOld == mNew {
-		return
-	}
-
-	garg.ownerMeleeMultiplier = mNew
-	garg.MultiplyCastSpeed(mNew / mOld)
 }
 
 func (garg *GargoylePet) registerGargoyleStrikeSpell() {
@@ -176,7 +155,6 @@ func (garg *GargoylePet) registerGargoyleStrikeSpell() {
 				CastTime: time.Millisecond * 2000,
 			},
 			OnCastComplete: func(sim *core.Simulation, spell *core.Spell) {
-				garg.updateCastSpeed()
 				// Gargoyle doesn't use GCD, so we recast the spell over and over
 				garg.GargoyleStrike.Cast(sim, garg.CurrentTarget)
 			},

@@ -179,18 +179,19 @@ func (ghoulPet *GhoulPet) enable(sim *core.Simulation) {
 
 	if ghoulPet.IsGuardian() {
 		ghoulPet.PseudoStats.MeleeSpeedMultiplier = 1 // guardians are not affected by raid buffs
-	} else {
-		ghoulPet.EnableDynamicMeleeSpeed(func(amount float64) {
-			ghoulPet.MultiplyMeleeSpeed(sim, amount)
-
-			if sim.Log != nil {
-				sim.Log("Ghoul MeleeSpeedMultiplier: %f, ownerMeleeMultiplier: %f\n", ghoulPet.Character.PseudoStats.MeleeSpeedMultiplier, ghoulPet.dkOwner.PseudoStats.MeleeSpeedMultiplier)
-			}
-		})
+		ghoulPet.MultiplyMeleeSpeed(sim, ghoulPet.dkOwner.PseudoStats.MeleeSpeedMultiplier)
+		return
 	}
 
-	// inherit owner's MeleeSpeedMultiplier
 	ghoulPet.MultiplyMeleeSpeed(sim, ghoulPet.dkOwner.PseudoStats.MeleeSpeedMultiplier)
+
+	ghoulPet.EnableDynamicMeleeSpeed(func(amount float64) {
+		ghoulPet.MultiplyMeleeSpeed(sim, amount)
+
+		if sim.Log != nil {
+			sim.Log("Ghoul MeleeSpeedMultiplier: %f, ownerMeleeMultiplier: %f\n", ghoulPet.Character.PseudoStats.MeleeSpeedMultiplier, ghoulPet.dkOwner.PseudoStats.MeleeSpeedMultiplier)
+		}
+	})
 }
 
 func (ghoulPet *GhoulPet) disable(sim *core.Simulation) {

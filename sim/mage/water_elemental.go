@@ -84,7 +84,7 @@ func (we *WaterElemental) Initialize() {
 	we.registerWaterboltSpell()
 }
 
-func (we *WaterElemental) Reset(sim *core.Simulation) {
+func (we *WaterElemental) Reset(_ *core.Simulation) {
 }
 
 func (we *WaterElemental) OnGCDReady(sim *core.Simulation) {
@@ -110,11 +110,11 @@ var waterElementalBaseStats = stats.Stats{
 
 var waterElementalStatInheritance = func(ownerStats stats.Stats) stats.Stats {
 	// These numbers are just rough guesses based on looking at some logs.
-	return ownerStats.DotProduct(stats.Stats{
-		stats.Stamina:    0.2,
-		stats.Intellect:  0.3,
-		stats.SpellPower: 0.333,
-	})
+	return stats.Stats{
+		stats.Stamina:    ownerStats[stats.Stamina] * 0.2,
+		stats.Intellect:  ownerStats[stats.Intellect] * 0.3,
+		stats.SpellPower: ownerStats[stats.SpellPower] * 0.333,
+	}
 }
 
 func (we *WaterElemental) registerWaterboltSpell() {

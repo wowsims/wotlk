@@ -88,7 +88,7 @@ func (mi *MirrorImage) Initialize() {
 	mi.registerFrostboltSpell()
 }
 
-func (mi *MirrorImage) Reset(sim *core.Simulation) {
+func (mi *MirrorImage) Reset(_ *core.Simulation) {
 }
 
 func (mi *MirrorImage) OnGCDReady(sim *core.Simulation) {
@@ -107,11 +107,11 @@ var mirrorImageBaseStats = stats.Stats{
 }
 
 var mirrorImageInheritance = func(ownerStats stats.Stats) stats.Stats {
-	return ownerStats.DotProduct(stats.Stats{
-		stats.SpellHit:   1,
-		stats.SpellCrit:  1,
-		stats.SpellPower: 0.33,
-	})
+	return stats.Stats{
+		stats.SpellHit:   ownerStats[stats.SpellHit],
+		stats.SpellCrit:  ownerStats[stats.SpellCrit],
+		stats.SpellPower: ownerStats[stats.SpellPower] * 0.33,
+	}
 }
 
 func (mi *MirrorImage) registerFrostboltSpell() {
