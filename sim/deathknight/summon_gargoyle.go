@@ -122,7 +122,7 @@ func (dk *Deathknight) NewGargoyle(nerfedGargoyle bool) *GargoylePet {
 		// OnPetEnable is called after snapshotting via "statInheritance", and resetting it to "nil" for guardians.
 		// "Nerfed Gargoyle" is the only case where a guardian has dynamic "statInheritance".
 		if gargoyle.isNerfedGargoyle {
-			gargoyle.SetStatInheritance(func(ownerStats stats.Stats) stats.Stats {
+			gargoyle.EnableDynamicStats(func(ownerStats stats.Stats) stats.Stats {
 				return stats.Stats{
 					stats.SpellHaste: ownerStats[stats.MeleeHaste] * PetHasteScale,
 				}

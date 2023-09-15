@@ -2,10 +2,10 @@ package core
 
 import (
 	"fmt"
-	"time"
-
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
+	"golang.org/x/exp/slices"
+	"time"
 )
 
 // Extension of Agent interface, for Pets.
@@ -18,7 +18,9 @@ type PetAgent interface {
 
 type OnPetEnable func(sim *Simulation)
 type OnPetDisable func(sim *Simulation)
+
 type PetStatInheritance func(ownerStats stats.Stats) stats.Stats
+type PetMeleeSpeedInheritance func(amount float64)
 
 // Pet is an extension of Character, for any entity created by a player that can
 // take actions on its own.
@@ -34,28 +36,18 @@ type Pet struct {
 	OnPetDisable OnPetDisable
 
 	// Calculates inherited stats based on owner stats or stat changes.
-	statInheritance PetStatInheritance
-
-	// DK pets also inherit the MeleeSpeedMultiplier. This replace OwnerAttackSpeedChanged.
-	meleeSpeedMultiplierInheritance func(ownerMeleeSpeedMultiplier float64)
-
-	// No-op until finalized to prevent owner stats from affecting pet until we're ready.
-	currentStatInheritance PetStatInheritance
+	statInheritance        PetStatInheritance
+	dynamicStatInheritance PetStatInheritance
 	inheritedStats         stats.Stats
+
+	// DK pets also inherit their owner's MeleeSpeed. This replace OwnerAttackSpeedChanged.
+	dynamicMeleeSpeedInheritance PetMeleeSpeedInheritance
 
 	isReset bool
 
 	// Some pets expire after a certain duration. This is the pending action that disables
 	// the pet on expiration.
 	timeoutAction *PendingAction
-}
-
-func (pet *Pet) SetMeleeSpeedMultiplierInheritance(inheritance func(ownerMeleeSpeedMultiplier float64)) {
-	pet.meleeSpeedMultiplierInheritance = inheritance
-}
-
-func (pet *Pet) SetStatInheritance(inheritance PetStatInheritance) {
-	pet.currentStatInheritance = inheritance
 }
 
 func NewPet(name string, owner *Character, baseStats stats.Stats, statInheritance PetStatInheritance, enabledOnStart bool, isGuardian bool) Pet {
@@ -83,9 +75,6 @@ func NewPet(name string, owner *Character, baseStats stats.Stats, statInheritanc
 		isGuardian:      isGuardian,
 	}
 	pet.GCD = pet.NewTimer()
-	pet.currentStatInheritance = func(ownerStats stats.Stats) stats.Stats {
-		return stats.Stats{}
-	}
 
 	pet.AddStats(baseStats)
 	pet.addUniversalStatDependencies()
@@ -98,18 +87,10 @@ func NewPet(name string, owner *Character, baseStats stats.Stats, statInheritanc
 // addedStats is the amount of stats added to the owner (will be negative if the
 // owner lost stats).
 func (pet *Pet) addOwnerStats(sim *Simulation, addedStats stats.Stats) {
-	if pet.currentStatInheritance == nil {
-		return
-	}
-
-	inheritedChange := pet.currentStatInheritance(addedStats)
+	inheritedChange := pet.dynamicStatInheritance(addedStats)
 
 	pet.inheritedStats.AddInplace(&inheritedChange)
 	pet.AddStatsDynamic(sim, inheritedChange)
-}
-
-func (pet *Pet) Finalize() {
-	pet.Character.Finalize()
 }
 
 func (pet *Pet) reset(sim *Simulation, agent PetAgent) {
@@ -117,6 +98,7 @@ func (pet *Pet) reset(sim *Simulation, agent PetAgent) {
 		return
 	}
 	pet.isReset = true
+
 	pet.Character.reset(sim, agent)
 
 	pet.CancelGCDTimer(sim)
@@ -130,6 +112,7 @@ func (pet *Pet) reset(sim *Simulation, agent PetAgent) {
 func (pet *Pet) advance(sim *Simulation) {
 	pet.Character.advance(sim)
 }
+
 func (pet *Pet) doneIteration(sim *Simulation) {
 	pet.Character.doneIteration(sim)
 	pet.isReset = false
@@ -154,14 +137,12 @@ func (pet *Pet) Enable(sim *Simulation, petAgent PetAgent) {
 		pet.reset(sim, petAgent)
 	}
 
-	// to make owner stat inheritance cheaper, it might make sense to not iterate over pets, but over "stat inheritors" instead:
-	//  these would only be filled if (eligible) pets are enabled, and save needless "enabled" or "isGuardian" etc. checks
-
 	pet.inheritedStats = pet.statInheritance(pet.Owner.GetStats())
 	pet.AddStatsDynamic(sim, pet.inheritedStats)
 
 	if !pet.isGuardian {
-		pet.currentStatInheritance = pet.statInheritance
+		pet.Owner.DynamicStatsPets = append(pet.Owner.DynamicStatsPets, pet)
+		pet.dynamicStatInheritance = pet.statInheritance
 	}
 
 	//reset current mana after applying stats
@@ -191,6 +172,36 @@ func (pet *Pet) Enable(sim *Simulation, petAgent PetAgent) {
 		pet.Log(sim, "Pet summoned")
 	}
 }
+
+// Helper for enabling a pet that will expire after a certain duration.
+func (pet *Pet) EnableWithTimeout(sim *Simulation, petAgent PetAgent, petDuration time.Duration) {
+	pet.Enable(sim, petAgent)
+
+	pet.timeoutAction = &PendingAction{
+		NextActionAt: sim.CurrentTime + petDuration,
+		OnAction: func(sim *Simulation) {
+			pet.Disable(sim)
+		},
+	}
+	sim.AddPendingAction(pet.timeoutAction)
+}
+
+// Enables and possibly updates how the pet inherits its owner's stats. DK use only.
+func (pet *Pet) EnableDynamicStats(inheritance PetStatInheritance) {
+	if !slices.Contains(pet.Owner.DynamicStatsPets, pet) {
+		pet.Owner.DynamicStatsPets = append(pet.Owner.DynamicStatsPets, pet)
+	}
+	pet.dynamicStatInheritance = inheritance
+}
+
+// Enables and possibly updates how the pet inherits its owner's melee speed. DK use only.
+func (pet *Pet) EnableDynamicMeleeSpeed(inheritance PetMeleeSpeedInheritance) {
+	if !slices.Contains(pet.Owner.DynamicMeleeSpeedPets, pet) {
+		pet.Owner.DynamicMeleeSpeedPets = append(pet.Owner.DynamicMeleeSpeedPets, pet)
+	}
+	pet.dynamicMeleeSpeedInheritance = inheritance
+}
+
 func (pet *Pet) Disable(sim *Simulation) {
 	if !pet.enabled {
 		if sim.Log != nil {
@@ -201,12 +212,23 @@ func (pet *Pet) Disable(sim *Simulation) {
 
 	// Remove inherited stats on dismiss if not permanent
 	if pet.isGuardian || pet.timeoutAction != nil {
-		// CHECKME this could probably be a ~reset call, more or less
 		pet.AddStatsDynamic(sim, pet.inheritedStats.Multiply(-1))
 		pet.inheritedStats = stats.Stats{}
 	}
 
-	pet.currentStatInheritance = nil
+	if pet.dynamicStatInheritance != nil {
+		if idx := slices.Index(pet.Owner.DynamicStatsPets, pet); idx != -1 {
+			pet.Owner.DynamicStatsPets = removeBySwappingToBack(pet.Owner.DynamicStatsPets, idx)
+		}
+		pet.dynamicStatInheritance = nil
+	}
+
+	if pet.dynamicMeleeSpeedInheritance != nil {
+		if idx := slices.Index(pet.Owner.DynamicMeleeSpeedPets, pet); idx != -1 {
+			pet.Owner.DynamicMeleeSpeedPets = removeBySwappingToBack(pet.Owner.DynamicMeleeSpeedPets, idx)
+		}
+		pet.dynamicMeleeSpeedInheritance = nil
+	}
 
 	pet.CancelGCDTimer(sim)
 	pet.focusBar.Cancel(sim)
@@ -214,8 +236,7 @@ func (pet *Pet) Disable(sim *Simulation) {
 	pet.enabled = false
 	pet.DoNothing() // mark it is as doing nothing now.
 
-	// If a pet is immediately re-summoned it might try to use GCD, so we need to
-	// clear it.
+	// If a pet is immediately re-summoned it might try to use GCD, so we need to clear it.
 	pet.Hardcast = Hardcast{}
 
 	if pet.timeoutAction != nil {
@@ -234,19 +255,6 @@ func (pet *Pet) Disable(sim *Simulation) {
 			pet.Log(sim, pet.GetStats().String())
 		}
 	}
-}
-
-// Helper for enabling a pet that will expire after a certain duration.
-func (pet *Pet) EnableWithTimeout(sim *Simulation, petAgent PetAgent, petDuration time.Duration) {
-	pet.Enable(sim, petAgent)
-
-	pet.timeoutAction = &PendingAction{
-		NextActionAt: sim.CurrentTime + petDuration,
-		OnAction: func(sim *Simulation) {
-			pet.Disable(sim)
-		},
-	}
-	sim.AddPendingAction(pet.timeoutAction)
 }
 
 // Default implementations for some Agent functions which most Pets don't need.

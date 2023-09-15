@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"golang.org/x/exp/constraints"
 	"math"
 	"strconv"
 	"time"
@@ -749,7 +750,7 @@ func (aura *Aura) Deactivate(sim *Simulation) {
 }
 
 // Constant-time removal from slice by swapping with the last element before removing.
-func removeBySwappingToBack(arr []*Aura, removeIdx int32) []*Aura {
+func removeBySwappingToBack[T any, U constraints.Integer](arr []T, removeIdx U) []T {
 	arr[removeIdx] = arr[len(arr)-1]
 	return arr[:len(arr)-1]
 }

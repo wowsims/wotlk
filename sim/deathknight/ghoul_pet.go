@@ -145,18 +145,6 @@ func (ghoulPet *GhoulPet) GetPet() *core.Pet {
 	return &ghoulPet.Pet
 }
 
-func (ghoulPet *GhoulPet) OwnerAttackSpeedChanged(sim *core.Simulation, amount float64) {
-	if !ghoulPet.IsEnabled() || ghoulPet.IsGuardian() {
-		return
-	}
-
-	ghoulPet.MultiplyMeleeSpeed(sim, amount)
-
-	if sim.Log != nil {
-		sim.Log("Ghoul MeleeSpeedMultiplier: %f, ownerMeleeMultiplier: %f\n", ghoulPet.Character.PseudoStats.MeleeSpeedMultiplier, ghoulPet.dkOwner.PseudoStats.MeleeSpeedMultiplier)
-	}
-}
-
 func (ghoulPet *GhoulPet) Initialize() {
 	ghoulPet.ClawAbility = ghoulPet.NewPetAbility(Claw)
 }
@@ -192,8 +180,8 @@ func (ghoulPet *GhoulPet) enable(sim *core.Simulation) {
 	if ghoulPet.IsGuardian() {
 		ghoulPet.PseudoStats.MeleeSpeedMultiplier = 1 // guardians are not affected by raid buffs
 	} else {
-		ghoulPet.SetMeleeSpeedMultiplierInheritance(func(ownerMeleeSpeedMultiplier float64) {
-			ghoulPet.MultiplyMeleeSpeed(sim, ownerMeleeSpeedMultiplier)
+		ghoulPet.EnableDynamicMeleeSpeed(func(amount float64) {
+			ghoulPet.MultiplyMeleeSpeed(sim, amount)
 
 			if sim.Log != nil {
 				sim.Log("Ghoul MeleeSpeedMultiplier: %f, ownerMeleeMultiplier: %f\n", ghoulPet.Character.PseudoStats.MeleeSpeedMultiplier, ghoulPet.dkOwner.PseudoStats.MeleeSpeedMultiplier)
@@ -207,8 +195,6 @@ func (ghoulPet *GhoulPet) enable(sim *core.Simulation) {
 
 func (ghoulPet *GhoulPet) disable(sim *core.Simulation) {
 	ghoulPet.focusBar.Disable(sim)
-
-	ghoulPet.SetMeleeSpeedMultiplierInheritance(nil)
 }
 
 func (dk *Deathknight) ghoulStatInheritance() core.PetStatInheritance {
