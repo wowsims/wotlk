@@ -1,6 +1,7 @@
 package elemental
 
 import (
+	"github.com/wowsims/wotlk/sim/common/wotlk"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/shaman"
@@ -75,6 +76,7 @@ func NewElementalShaman(character core.Character, options *proto.Player) *Elemen
 		}
 	}
 
+	wotlk.ConstructValkyrPets(&ele.Character)
 	return ele
 }
 
