@@ -1189,6 +1189,10 @@ export class Player<SpecType extends Spec> {
 					ppa.doAt = '';
 				}
 			});
+			if (proto.rotation.enabled) {
+				proto.rotation.enabled = false;
+				proto.rotation.type = APLRotationType.TypeAPL;
+			}
 		}
 
 		TypedEvent.freezeAllAndDo(() => {
