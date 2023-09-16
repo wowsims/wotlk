@@ -213,7 +213,7 @@ export class RotationTab extends SimTab {
 							console.warn('Error parsing rotation spec options: ' + e);
 						}
 					}
-					player.setCooldowns(eventID, Cooldowns.clone(newRotation.cooldowns || Cooldowns.create()));
+					player.setCooldowns(eventID, newRotation.cooldowns || Cooldowns.create());
 				});
 			},
 			changeEmitters: [this.simUI.player.rotationChangeEmitter, this.simUI.player.cooldownsChangeEmitter],
