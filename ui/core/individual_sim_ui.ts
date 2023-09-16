@@ -1,5 +1,5 @@
 import { aplLaunchStatuses, LaunchStatus, simLaunchStatuses } from './launched_sims';
-import { AutoRotationGenerator, Player } from './player';
+import { Player, AutoRotationGenerator, SimpleRotationGenerator } from './player';
 import { SimUI, SimWarning } from './sim_ui';
 import { EventID, TypedEvent } from './typed_event';
 
@@ -138,6 +138,7 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 	},
 
 	autoRotation?: AutoRotationGenerator<SpecType>,
+	simpleRotation?: SimpleRotationGenerator<SpecType>,
 }
 
 export interface GearAndStats {
@@ -204,6 +205,9 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				throw new Error('autoRotation is required for APL beta');
 			}
 			player.setAutoRotationGenerator(config.autoRotation);
+		}
+		if (aplLaunchStatuses[player.spec] == LaunchStatus.Launched && config.simpleRotation) {
+			player.setSimpleRotationGenerator(config.simpleRotation);
 		}
 
 		this.addWarning({
@@ -425,7 +429,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.player.setConsumes(eventID, this.individualConfig.defaults.consumes);
 			if (aplLaunchStatuses[this.player.spec] < LaunchStatus.Beta) {
 				this.player.setRotation(eventID, this.individualConfig.defaults.rotation);
-			} else {
+			} else if (aplLaunchStatuses[this.player.spec] == LaunchStatus.Beta) {
 				this.player.setRotation(eventID, this.player.specTypeFunctions.rotationCreate());
 			}
 			this.player.setTalentsString(eventID, this.individualConfig.defaults.talents.talentsString);

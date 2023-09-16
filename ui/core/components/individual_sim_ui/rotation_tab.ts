@@ -60,10 +60,7 @@ export class RotationTab extends SimTab {
 
 		this.buildAutoContent();
 		this.buildAplContent();
-
-		// Legacy
-		this.buildRotationSettings();
-		this.buildCooldownSettings();
+		this.buildSimpleOrLegacyContent(this.simUI.player.hasSimpleRotationGenerator());
 
 		this.buildSavedDataPickers();
 	}
@@ -100,10 +97,17 @@ export class RotationTab extends SimTab {
 			values: aplLaunchStatus == LaunchStatus.Alpha ? [
 				{ value: APLRotationType.TypeLegacy, name: 'Legacy' },
 				{ value: APLRotationType.TypeAPL, name: 'APL' },
-			] : [
+			] : aplLaunchStatus == LaunchStatus.Beta ? [
 				{ value: APLRotationType.TypeAuto, name: 'Auto' },
 				{ value: APLRotationType.TypeAPL, name: 'APL' },
 				{ value: APLRotationType.TypeLegacy, name: 'Legacy' },
+			] : this.simUI.player.hasSimpleRotationGenerator() ? [
+				{ value: APLRotationType.TypeAuto, name: 'Auto' },
+				{ value: APLRotationType.TypeSimple, name: 'Simple' },
+				{ value: APLRotationType.TypeAPL, name: 'APL' },
+			] : [
+				{ value: APLRotationType.TypeAuto, name: 'Auto' },
+				{ value: APLRotationType.TypeAPL, name: 'APL' },
 			],
 			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
 			getValue: (player: Player<any>) => player.getRotationType(),
@@ -129,11 +133,13 @@ export class RotationTab extends SimTab {
 		new APLRotationPicker(content, this.simUI, this.simUI.player);
 	}
 
-	private buildRotationSettings() {
+	private buildSimpleOrLegacyContent(isSimple: boolean) {
+		const cssClass = isSimple ? 'rotation-tab-simple' : 'rotation-tab-legacy';
+
 		const contentBlock = new ContentBlock(this.leftPanel, 'rotation-settings', {
 			header: { title: 'Rotation' }
 		});
-		contentBlock.rootElem.classList.add('rotation-tab-legacy');
+		contentBlock.rootElem.classList.add(cssClass);
 
 		const rotationIconGroup = Input.newGroupContainer();
 		rotationIconGroup.classList.add('rotation-icon-group', 'icon-group');
@@ -152,15 +158,13 @@ export class RotationTab extends SimTab {
 		contentBlock.bodyElement.querySelectorAll('.input-root').forEach(elem => {
 			elem.classList.add('input-inline');
 		})
-	}
 
-	private buildCooldownSettings() {
-		const contentBlock = new ContentBlock(this.leftPanel, 'cooldown-settings', {
+		const cooldownsContentBlock = new ContentBlock(this.leftPanel, 'cooldown-settings', {
 			header: { title: 'Cooldowns', tooltip: Tooltips.COOLDOWNS_SECTION }
 		});
-		contentBlock.rootElem.classList.add('rotation-tab-legacy');
+		cooldownsContentBlock.rootElem.classList.add(cssClass);
 
-		new CooldownsPicker(contentBlock.bodyElement, this.simUI.player);
+		new CooldownsPicker(cooldownsContentBlock.bodyElement, this.simUI.player);
 	}
 
 	private configureInputSection(sectionElem: HTMLElement, sectionConfig: InputSection) {
@@ -192,28 +196,32 @@ export class RotationTab extends SimTab {
 	}
 
 	private buildSavedDataPickers() {
+		const launchStatus = aplLaunchStatuses[this.simUI.player.spec];
+
 		const savedRotationsManager = new SavedDataManager<Player<any>, SavedRotation>(this.rightPanel, this.simUI, this.simUI.player, {
 			label: 'Rotation',
 			header: { title: 'Saved Rotations' },
 			storageKey: this.simUI.getSavedRotationStorageKey(),
 			getData: (player: Player<any>) => SavedRotation.create({
 				rotation: APLRotation.clone(player.aplRotation),
-				specRotationOptionsJson: JSON.stringify(player.specTypeFunctions.rotationToJson(player.getRotation())),
-				cooldowns: player.getCooldowns(),
+				specRotationOptionsJson: launchStatus == LaunchStatus.Launched ? '' : JSON.stringify(player.specTypeFunctions.rotationToJson(player.getRotation())),
+				cooldowns: LaunchStatus.Launched ? undefined : player.getCooldowns(),
 			}),
 			setData: (eventID: EventID, player: Player<any>, newRotation: SavedRotation) => {
 				TypedEvent.freezeAllAndDo(() => {
 					player.setAplRotation(eventID, newRotation.rotation || APLRotation.create());
-					if (newRotation.specRotationOptionsJson) {
-						try {
-							const json = JSON.parse(newRotation.specRotationOptionsJson);
-							const specRot = player.specTypeFunctions.rotationFromJson(json);
-							player.setRotation(eventID, specRot);
-						} catch (e) {
-							console.warn('Error parsing rotation spec options: ' + e);
+					if (launchStatus != LaunchStatus.Launched) {
+						if (newRotation.specRotationOptionsJson) {
+							try {
+								const json = JSON.parse(newRotation.specRotationOptionsJson);
+								const specRot = player.specTypeFunctions.rotationFromJson(json);
+								player.setRotation(eventID, specRot);
+							} catch (e) {
+								console.warn('Error parsing rotation spec options: ' + e);
+							}
 						}
+						player.setCooldowns(eventID, newRotation.cooldowns || Cooldowns.create());
 					}
-					player.setCooldowns(eventID, newRotation.cooldowns || Cooldowns.create());
 				});
 			},
 			changeEmitters: [this.simUI.player.rotationChangeEmitter, this.simUI.player.cooldownsChangeEmitter],
