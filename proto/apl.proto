@@ -10,8 +10,25 @@ import "shaman.proto";
 
 message APLRotation {
     bool enabled = 20; // If false, use old rotation options.
+
+    enum Type {
+        TypeUnknown = 0;
+        TypeAuto = 1;
+        TypeSimple = 2;
+        TypeAPL = 3;
+        TypeLegacy = 4;
+    }
+    Type type = 3;
+
+    SimpleRotation simple = 4;
+
 	repeated APLPrepullAction prepull_actions = 1;
 	repeated APLListItem priority_list = 2;
+}
+
+message SimpleRotation {
+    string spec_rotation_json = 1;
+	Cooldowns cooldowns = 2;
 }
 
 message APLPrepullAction {

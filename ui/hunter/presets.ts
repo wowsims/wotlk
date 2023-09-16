@@ -111,7 +111,7 @@ export const ROTATION_PRESET_BM = {
 		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
 		})),
 		rotation: APLRotation.fromJsonString(`{
-      		"enabled": true,
+      		"type": "TypeAPL",
       		"prepullActions": [
 			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
       		],
@@ -137,7 +137,7 @@ export const ROTATION_PRESET_MM = {
 		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
 		})),
 		rotation: APLRotation.fromJsonString(`{
-			"enabled": true,
+			"type": "TypeAPL",
 			"prepullActions": [
 				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
 			],
@@ -165,7 +165,7 @@ export const ROTATION_PRESET_SV = {
 		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
 		})),
 		rotation: APLRotation.fromJsonString(`{
-      		"enabled": true,
+      		"type": "TypeAPL",
       		"prepullActions": [
 			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
       		],
@@ -193,7 +193,7 @@ export const ROTATION_PRESET_AOE = {
 		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
 		})),
 		rotation: APLRotation.fromJsonString(`{
-      		"enabled": true,
+      		"type": "TypeAPL",
       		"prepullActions": [
 			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
       		],

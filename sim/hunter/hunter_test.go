@@ -159,7 +159,7 @@ var FerocityTalents = &proto.HunterPetTalents{
 }
 
 var DefaultRotation = core.APLRotationFromJsonString(`{
-	"enabled": true,
+	"type": "TypeAPL",
 	"priorityList": [
 		{"action": {
 			"condition": {"not": {"val": {"dotIsActive": {"spellId": { "spellId": 49001 }}}}},

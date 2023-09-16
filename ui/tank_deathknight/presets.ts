@@ -128,7 +128,7 @@ export const BLOOD_IT_SPAM_ROTATION_PRESET_DEFAULT = {
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: TankDeathKnightRotation.toJsonString(DefaultRotation),
 		rotation: APLRotation.fromJsonString(`{
-			"enabled": true,
+			"type": "TypeAPL",
 			"prepullActions": [
 			  {"action":{"castSpell":{"spellId":{"spellId":48263}}},"doAtValue":{"const":{"val":"-10s"}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":42650}}},"doAtValue":{"const":{"val":"-6s"}}}
@@ -161,7 +161,7 @@ export const BLOOD_AGGRO_ROTATION_PRESET_DEFAULT = {
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: TankDeathKnightRotation.toJsonString(DefaultRotation),
 		rotation: APLRotation.fromJsonString(`{
-			"enabled": true,
+			"type": "TypeAPL",
 			"prepullActions": [
 			  {"action":{"castSpell":{"spellId":{"spellId":48263}}},"doAtValue":{"const":{"val":"-10s"}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":42650}}},"doAtValue":{"const":{"val":"-6s"}}}

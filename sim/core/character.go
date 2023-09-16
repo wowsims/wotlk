@@ -2,10 +2,11 @@ package core
 
 import (
 	"fmt"
-	"golang.org/x/exp/slices"
 	"strconv"
 	"strings"
 	"time"
+
+	"golang.org/x/exp/slices"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -104,7 +105,7 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 
 			ReactionTime:       time.Duration(player.ReactionTimeMs) * time.Millisecond,
 			DistanceFromTarget: player.DistanceFromTarget,
-			IsUsingAPL:         player.Rotation != nil && player.Rotation.Enabled,
+			IsUsingAPL:         player.Rotation != nil && player.Rotation.Type == proto.APLRotation_TypeAPL,
 		},
 
 		Name:  player.Name,

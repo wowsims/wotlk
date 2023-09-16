@@ -1,5 +1,5 @@
 import { aplLaunchStatuses, LaunchStatus, simLaunchStatuses } from './launched_sims';
-import { Player } from './player';
+import { AutoRotationGenerator, Player } from './player';
 import { SimUI, SimWarning } from './sim_ui';
 import { EventID, TypedEvent } from './typed_event';
 
@@ -8,7 +8,7 @@ import { ContentBlock } from './components/content_block';
 import { EmbeddedDetailedResults } from './components/detailed_results';
 import { EncounterPickerConfig } from './components/encounter_picker';
 import { addRaidSimAction, RaidSimResultsManager } from './components/raid_sim_action';
-import { SavedDataConfig, SavedDataManager } from './components/saved_data_manager';
+import { SavedDataConfig } from './components/saved_data_manager';
 import { addStatWeightsAction } from './components/stat_weights_action';
 
 import { BulkTab } from './components/individual_sim_ui/bulk_tab';
@@ -136,6 +136,8 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 		talents: Array<SavedDataConfig<Player<any>, SavedTalents>>,
 		rotations?: Array<PresetRotation>,
 	},
+
+	autoRotation?: AutoRotationGenerator<SpecType>,
 }
 
 export interface GearAndStats {
@@ -188,7 +190,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			spec: player.spec,
 			knownIssues: config.knownIssues,
 			launchStatus: simLaunchStatuses[player.spec],
-			noticeText: aplLaunchStatuses[player.spec] == LaunchStatus.Alpha || aplLaunchStatuses[player.spec] == LaunchStatus.Beta ? 'Rotation settings have been moved to the \'Rotation\' tab, where experimental APL options are also available. Try them out!' : undefined,
+			noticeText: aplLaunchStatuses[player.spec] == LaunchStatus.Alpha ? 'Rotation settings have been moved to the \'Rotation\' tab, where experimental APL options are also available. Try them out!' : undefined,
 		});
 		this.rootElem.classList.add('individual-sim-ui');
 		this.player = player;
@@ -196,6 +198,13 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		this.raidSimResultsManager = null;
 		this.prevEpIterations = 0;
 		this.prevEpSimResult = null;
+
+		if (aplLaunchStatuses[player.spec] >= LaunchStatus.Beta) {
+			if (!config.autoRotation) {
+				throw new Error('autoRotation is required for APL beta');
+			}
+			player.setAutoRotationGenerator(config.autoRotation);
+		}
 
 		this.addWarning({
 			updateOn: this.player.gearChangeEmitter,
@@ -414,7 +423,11 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.player.setRace(eventID, specToEligibleRaces[this.player.spec][0]);
 			this.player.setGear(eventID, this.sim.db.lookupEquipmentSpec(this.individualConfig.defaults.gear));
 			this.player.setConsumes(eventID, this.individualConfig.defaults.consumes);
-			this.player.setRotation(eventID, this.individualConfig.defaults.rotation);
+			if (aplLaunchStatuses[this.player.spec] < LaunchStatus.Beta) {
+				this.player.setRotation(eventID, this.individualConfig.defaults.rotation);
+			} else {
+				this.player.setRotation(eventID, this.player.specTypeFunctions.rotationCreate());
+			}
 			this.player.setTalentsString(eventID, this.individualConfig.defaults.talents.talentsString);
 			this.player.setGlyphs(eventID, this.individualConfig.defaults.talents.glyphs || Glyphs.create());
 			this.player.setSpecOptions(eventID, this.individualConfig.defaults.specOptions);

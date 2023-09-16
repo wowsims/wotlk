@@ -196,7 +196,7 @@ export const ROTATION_PRESET_BASIC_APL = {
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: Rotation.toJsonString(DefaultRotation),
 		rotation: APLRotation.fromJsonString(`{
-			"enabled": true,
+			"type": "TypeAPL",
 			"priorityList": [
 			]
 		  }`),

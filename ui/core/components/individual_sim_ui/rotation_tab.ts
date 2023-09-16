@@ -5,12 +5,14 @@ import {
 } from "../../proto/common";
 import {
 	APLRotation,
+	APLRotation_Type as APLRotationType,
 } from "../../proto/apl";
 import {
 	SavedRotation,
 } from "../../proto/ui";
 import { EventID, TypedEvent } from "../../typed_event";
 import { Player } from "../../player";
+import { aplLaunchStatuses, LaunchStatus } from '../../launched_sims';
 
 import { ContentBlock } from "../content_block";
 import { SimTab } from "../sim_tab";
@@ -55,18 +57,31 @@ export class RotationTab extends SimTab {
 
 	protected buildTabContent() {
 		this.buildHeader();
-		this.buildContent();
+
+		this.buildAutoContent();
+		this.buildAplContent();
+
+		// Legacy
 		this.buildRotationSettings();
 		this.buildCooldownSettings();
+
 		this.buildSavedDataPickers();
 	}
 
 	private updateSections() {
-		if (this.simUI.player.aplRotation.enabled) {
+		this.rootElem.classList.remove('rotation-type-auto');
+		this.rootElem.classList.remove('rotation-type-simple');
+		this.rootElem.classList.remove('rotation-type-apl');
+		this.rootElem.classList.remove('rotation-type-legacy');
+
+		const rotType = this.simUI.player.getRotationType();
+		if (rotType == APLRotationType.TypeAuto) {
+			this.rootElem.classList.add('rotation-type-auto');
+		} else if (rotType == APLRotationType.TypeSimple) {
+			this.rootElem.classList.add('rotation-type-simple');
+		} else if (rotType == APLRotationType.TypeAPL) {
 			this.rootElem.classList.add('rotation-type-apl');
-			this.rootElem.classList.remove('rotation-type-legacy');
-		} else {
-			this.rootElem.classList.remove('rotation-type-apl');
+		} else if (rotType == APLRotationType.TypeLegacy) {
 			this.rootElem.classList.add('rotation-type-legacy');
 		}
 	}
@@ -76,26 +91,39 @@ export class RotationTab extends SimTab {
 		header.classList.add('rotation-tab-header');
 		this.leftPanel.appendChild(header);
 
+		const aplLaunchStatus = aplLaunchStatuses[this.simUI.player.spec];
+
 		new EnumPicker(header, this.simUI.player, {
 			label: 'Rotation Type',
-			labelTooltip: 'Whether to use the legacy rotation options, or the new APL rotation options.',
+			labelTooltip: 'Which set of options to use for specifying the rotation.',
 			inline: true,
-			values: [
-				{ value: 0, name: 'Legacy' },
-				{ value: 1, name: 'APL' },
+			values: aplLaunchStatus == LaunchStatus.Alpha ? [
+				{ value: APLRotationType.TypeLegacy, name: 'Legacy' },
+				{ value: APLRotationType.TypeAPL, name: 'APL' },
+			] : [
+				{ value: APLRotationType.TypeAuto, name: 'Auto' },
+				{ value: APLRotationType.TypeAPL, name: 'APL' },
+				{ value: APLRotationType.TypeLegacy, name: 'Legacy' },
 			],
 			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
-			getValue: (player: Player<any>) => Number(player.aplRotation.enabled),
+			getValue: (player: Player<any>) => player.getRotationType(),
 			setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
-				player.aplRotation.enabled = !!newValue;
+				player.aplRotation.enabled = false;
+				player.aplRotation.type = newValue;
 				player.rotationChangeEmitter.emit(eventID);
 			},
 		});
 	}
 
-	private buildContent() {
+	private buildAutoContent() {
 		const content = document.createElement('div');
-		content.classList.add('rotation-tab-main');
+		content.classList.add('rotation-tab-auto');
+		this.leftPanel.appendChild(content);
+	}
+
+	private buildAplContent() {
+		const content = document.createElement('div');
+		content.classList.add('rotation-tab-apl');
 		this.leftPanel.appendChild(content);
 
 		new APLRotationPicker(content, this.simUI, this.simUI.player);
@@ -105,6 +133,7 @@ export class RotationTab extends SimTab {
 		const contentBlock = new ContentBlock(this.leftPanel, 'rotation-settings', {
 			header: { title: 'Rotation' }
 		});
+		contentBlock.rootElem.classList.add('rotation-tab-legacy');
 
 		const rotationIconGroup = Input.newGroupContainer();
 		rotationIconGroup.classList.add('rotation-icon-group', 'icon-group');
@@ -129,6 +158,7 @@ export class RotationTab extends SimTab {
 		const contentBlock = new ContentBlock(this.leftPanel, 'cooldown-settings', {
 			header: { title: 'Cooldowns', tooltip: Tooltips.COOLDOWNS_SECTION }
 		});
+		contentBlock.rootElem.classList.add('rotation-tab-legacy');
 
 		new CooldownsPicker(contentBlock.bodyElement, this.simUI.player);
 	}

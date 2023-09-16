@@ -2,11 +2,7 @@ import { RaidBuffs } from '../core/proto/common.js';
 import { PartyBuffs } from '../core/proto/common.js';
 import { IndividualBuffs } from '../core/proto/common.js';
 import { Debuffs } from '../core/proto/common.js';
-import { Class } from '../core/proto/common.js';
-import { Consumes } from '../core/proto/common.js';
-import { Encounter } from '../core/proto/common.js';
 import { ItemSlot } from '../core/proto/common.js';
-import { MobType } from '../core/proto/common.js';
 import { Race } from '../core/proto/common.js';
 import { RangedWeaponType } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
@@ -15,7 +11,6 @@ import { TristateEffect } from '../core/proto/common.js'
 import { Player } from '../core/player.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { getTalentPoints } from '../core/proto_utils/utils.js';
-import { Sim } from '../core/sim.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
 import { getPetTalentsConfig } from '../core/talents/hunter_pet.js';
@@ -265,6 +260,17 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 					Presets.SV_P3_PRESET,
 					Presets.SV_P4_PRESET,
 				],
+			},
+
+			autoRotation: (player: Player<Spec.SpecHunter>) => {
+				const talentTree = player.getTalentTree();
+				if (talentTree == 0) {
+					return Presets.ROTATION_PRESET_BM.rotation.rotation!;
+				} else if (talentTree == 1) {
+					return Presets.ROTATION_PRESET_MM.rotation.rotation!;
+				} else {
+					return Presets.ROTATION_PRESET_SV.rotation.rotation!;
+				}
 			},
 		});
 	}

@@ -26,6 +26,7 @@ import {
 } from './proto/api.js';
 import {
 	APLRotation,
+	APLRotation_Type as APLRotationType,
 	APLValue,
 } from './proto/apl.js';
 import {
@@ -44,6 +45,7 @@ import { Player as PlayerProto } from './proto/api.js';
 import { StatWeightsResult } from './proto/api.js';
 import { ActionId } from './proto_utils/action_id.js';
 import { EquippedItem, getWeaponDPS } from './proto_utils/equipped_item.js';
+import { aplLaunchStatuses, LaunchStatus } from './launched_sims';
 
 import { playerTalentStringToProto } from './talents/factory.js';
 import { Gear, ItemSwapGear } from './proto_utils/gear.js';
@@ -184,6 +186,8 @@ export class UnitMetadataList {
 	}
 }
 
+export type AutoRotationGenerator<SpecType extends Spec> = (player: Player<SpecType>) => APLRotation;
+
 // Manages all the gear / consumes / other settings for a single Player.
 export class Player<SpecType extends Spec> {
 	readonly sim: Sim;
@@ -212,6 +216,8 @@ export class Player<SpecType extends Spec> {
 	private distanceFromTarget: number = 0;
 	private healingModel: HealingModel = HealingModel.create();
 	private healingEnabled: boolean = false;
+
+	private autoRotationGenerator: AutoRotationGenerator<SpecType> | null = null;
 
 	private itemEPCache = new Array<Map<number, number>>();
 	private gemEPCache = new Map<number, number>();
@@ -650,6 +656,30 @@ export class Player<SpecType extends Spec> {
 
 		this.aplRotation = APLRotation.clone(newRotation);
 		this.rotationChangeEmitter.emit(eventID);
+	}
+
+	getRotationType(): APLRotationType {
+		if (this.aplRotation.enabled) {
+			return APLRotationType.TypeAPL;
+		} else if (this.aplRotation.type == APLRotationType.TypeUnknown) {
+			return APLRotationType.TypeLegacy;
+		} else {
+			return this.aplRotation.type;
+		}
+	}
+
+	setAutoRotationGenerator(arg: AutoRotationGenerator<SpecType>) {
+		this.autoRotationGenerator = arg;
+	}
+
+	getResolvedAplRotation(): APLRotation {
+		const type = this.getRotationType();
+		if (type == APLRotationType.TypeAuto && this.autoRotationGenerator) {
+			// Clone to avoid modifying preset rotations, which are often returned directly.
+			return APLRotation.clone(this.autoRotationGenerator(this));
+		} else {
+			return this.aplRotation;
+		}
 	}
 
 	getTalents(): SpecTalents<SpecType> {
@@ -1122,7 +1152,7 @@ export class Player<SpecType extends Spec> {
 		})
 	}
 
-	toProto(forExport?: boolean): PlayerProto {
+	toProto(forExport?: boolean, forSimming?: boolean): PlayerProto {
 		const gear = this.getGear();
 		return withSpecProto(
 			this.spec,
@@ -1137,7 +1167,7 @@ export class Player<SpecType extends Spec> {
 				cooldowns: this.getCooldowns(),
 				talentsString: this.getTalentsString(),
 				glyphs: this.getGlyphs(),
-				rotation: this.aplRotation,
+				rotation: forSimming ? this.getResolvedAplRotation() : this.aplRotation,
 				profession1: this.getProfession1(),
 				profession2: this.getProfession2(),
 				reactionTimeMs: this.getReactionTime(),
@@ -1160,6 +1190,10 @@ export class Player<SpecType extends Spec> {
 					ppa.doAt = '';
 				}
 			});
+			if (proto.rotation.enabled) {
+				proto.rotation.enabled = false;
+				proto.rotation.type = APLRotationType.TypeAPL;
+			}
 		}
 
 		TypedEvent.freezeAllAndDo(() => {
@@ -1241,6 +1275,12 @@ export class Player<SpecType extends Spec> {
 				hpPercentForDefensives: isTankSpec(this.spec) ? 0.35 : 0,
 			}));
 			this.setBonusStats(eventID, new Stats());
+
+			if (aplLaunchStatuses[this.spec] >= LaunchStatus.Beta) {
+				this.setAplRotation(eventID, APLRotation.create({
+					type: APLRotationType.TypeAuto,
+				}))
+			}
 		});
 	}
 }

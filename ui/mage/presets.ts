@@ -187,7 +187,7 @@ export const ARCANE_ROTATION_PRESET_DEFAULT = {
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: MageRotation.toJsonString(DefaultArcaneRotation),
 		rotation: APLRotation.fromJsonString(`{
-			"enabled": true,
+			"type": "TypeAPL",
 			"prepullActions": [
 			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
 			],
@@ -210,7 +210,7 @@ export const FIRE_ROTATION_PRESET_DEFAULT = {
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: MageRotation.toJsonString(DefaultFireRotation),
 		rotation: APLRotation.fromJsonString(`{
-			"enabled": true,
+			"type": "TypeAPL",
 			"prepullActions": [
 				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
 			],
@@ -232,7 +232,7 @@ export const FROSTFIRE_ROTATION_PRESET_DEFAULT = {
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: MageRotation.toJsonString(DefaultFFBRotation),
 		rotation: APLRotation.fromJsonString(`{
-			"enabled": true,
+			"type": "TypeAPL",
 			"prepullActions": [
 			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
 			],
@@ -254,7 +254,7 @@ export const FROST_ROTATION_PRESET_DEFAULT = {
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: MageRotation.toJsonString(DefaultFrostRotation),
 		rotation: APLRotation.fromJsonString(`{
-			"enabled": true,
+			"type": "TypeAPL",
 			"prepullActions": [
 			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
 			],

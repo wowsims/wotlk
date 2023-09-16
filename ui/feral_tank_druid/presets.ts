@@ -53,7 +53,7 @@ export const ROTATION_DEFAULT = {
 		specRotationOptionsJson: DruidRotation.toJsonString(DruidRotation.create({
 		})),
 		rotation: APLRotation.fromJsonString(`{
-			"enabled": true,
+			"type": "TypeAPL",
 			"prepullActions": [
 				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
 			],

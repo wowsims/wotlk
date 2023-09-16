@@ -209,7 +209,7 @@ export const ROTATION_PRESET_BASIC_APL = {
   rotation: SavedRotation.create({
     specRotationOptionsJson: ElementalShamanRotation.toJsonString(DefaultRotation),
     rotation: APLRotation.fromJsonString(`{
-      "enabled": true,
+      "type": "TypeAPL",
       "prepullActions": [
 			  {"action":{"castSpell":{"spellId":{"spellId":3738}}},"doAtValue":{"const":{"val":"-6s"}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":58643}}},"doAtValue":{"const":{"val":"-5s"}}},

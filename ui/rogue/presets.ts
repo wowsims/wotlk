@@ -138,7 +138,7 @@ export const ROTATION_APL_PRESET  = {
 	name: 'Basic APL',
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: RogueRotation.toJsonString(DefaultRotation),
-		rotation: APLRotation.fromJsonString('{ "enabled": true, "priorityList": [] }')
+		rotation: APLRotation.fromJsonString('{ "type": "TypeAPL", "priorityList": [] }')
 	}),
 };
 
