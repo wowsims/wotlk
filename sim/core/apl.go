@@ -35,7 +35,7 @@ func (rot *APLRotation) ValidationWarning(message string, vals ...interface{}) {
 }
 
 func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
-	if config == nil || !config.Enabled {
+	if config == nil || config.Type != proto.APLRotation_TypeAPL {
 		return nil
 	}
 

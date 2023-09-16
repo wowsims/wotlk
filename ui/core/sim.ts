@@ -143,7 +143,7 @@ export class Sim {
 		this.modifyRaidProto = newModFn;
 	}
 	getModifiedRaidProto(): RaidProto {
-		const raidProto = this.raid.toProto();
+		const raidProto = this.raid.toProto(false, true);
 		this.modifyRaidProto(raidProto);
 
 		// Remove any inactive meta gems, since the backend doesn't have its own validation.

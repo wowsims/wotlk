@@ -58,7 +58,7 @@ export const ROTATION_PRESET_APL = {
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: Rotation.toJsonString(Rotation.create()),
 		rotation: APLRotation.fromJsonString(`{
-      		"enabled": true,
+      		"type": "TypeAPL",
       		"prepullActions": [
 			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
       		],
