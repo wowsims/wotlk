@@ -1,19 +1,25 @@
 import {
 	APLAction,
+
 	APLActionCastSpell,
+	APLActionMultidot,
+	APLActionMultishield,
+	APLActionAutocastOtherCooldowns,
+
+	APLActionWait,
+	APLActionWaitUntil,
+	APLActionSchedule,
+
 	APLActionSequence,
 	APLActionResetSequence,
 	APLActionStrictSequence,
-	APLActionMultidot,
-	APLActionAutocastOtherCooldowns,
+
 	APLActionChangeTarget,
 	APLActionActivateAura,
 	APLActionCancelAura,
 	APLActionTriggerICD,
-	APLActionWait,
-	APLActionWaitUntil,
+
 	APLValue,
-	APLActionMultishield,
 } from '../../proto/apl.js';
 
 import { isHealingSpec } from '../../proto_utils/utils.js';
@@ -90,7 +96,7 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 				}),
 			equals: (a, b) => a == b,
 			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
-			getValue: (player: Player<any>) => this.getSourceValue().action.oneofKind,
+			getValue: (player: Player<any>) => this.getSourceValue()?.action.oneofKind,
 			setValue: (eventID: EventID, player: Player<any>, newKind: APLActionKind) => {
 				const sourceValue = this.getSourceValue();
 				const oldKind = sourceValue.action.oneofKind;
@@ -293,6 +299,7 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 	}),
 	['multidot']: inputBuilder({
 		label: 'Multi Dot',
+		submenu: ['Casting'],
 		shortDescription: 'Keeps a DoT active on multiple targets by casting the specified spell.',
 		includeIf: (player: Player<any>, isPrepull: boolean) => !isPrepull,
 		newValue: () => APLActionMultidot.create({
@@ -320,6 +327,7 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 	}),
 	['multishield']: inputBuilder({
 		label: 'Multi Shield',
+		submenu: ['Casting'],
 		shortDescription: 'Keeps a Shield active on multiple targets by casting the specified spell.',
 		includeIf: (player: Player<any>, isPrepull: boolean) => !isPrepull && isHealingSpec(player.spec),
 		newValue: () => APLActionMultishield.create({
@@ -343,6 +351,68 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 				label: 'Overlap',
 				labelTooltip: 'Maximum amount of time before a Shield expires when it may be refreshed.',
 			}),
+		],
+	}),
+	['autocastOtherCooldowns']: inputBuilder({
+		label: 'Autocast Other Cooldowns',
+		submenu: ['Casting'],
+		shortDescription: 'Auto-casts cooldowns as soon as they are ready.',
+		fullDescription: `
+			<ul>
+				<li>Does not auto-cast cooldowns which are already controlled by other actions in the priority list.</li>
+				<li>Cooldowns are usually cast immediately upon becoming ready, but there are some basic smart checks in place, e.g. don't use Mana CDs when near full mana.</li>
+			</ul>
+		`,
+		includeIf: (player: Player<any>, isPrepull: boolean) => !isPrepull,
+		newValue: APLActionAutocastOtherCooldowns.create,
+		fields: [],
+	}),
+	['wait']: inputBuilder({
+		label: 'Wait',
+		submenu: ['Timing'],
+		shortDescription: 'Pauses all APL actions for a specified amount of time.',
+		includeIf: (player: Player<any>, isPrepull: boolean) => !isPrepull,
+		newValue: () => APLActionWait.create({
+			duration: {
+				value: {
+					oneofKind: 'const',
+					const: {
+						val: '1000ms',
+					},
+				},
+			},
+		}),
+		fields: [
+			AplValues.valueFieldConfig('duration'),
+		],
+	}),
+	['waitUntil']: inputBuilder({
+		label: 'Wait Until',
+		submenu: ['Timing'],
+		shortDescription: 'Pauses all APL actions until the specified condition is <b>True</b>.',
+		includeIf: (player: Player<any>, isPrepull: boolean) => !isPrepull,
+		newValue: () => APLActionWaitUntil.create(),
+		fields: [
+			AplValues.valueFieldConfig('condition'),
+		],
+	}),
+	['schedule']: inputBuilder({
+		label: 'Scheduled Action',
+		submenu: ['Timing'],
+		shortDescription: 'Executes the inner action once at each specified timing.',
+		includeIf: (player: Player<any>, isPrepull: boolean) => !isPrepull,
+		newValue: () => APLActionSchedule.create({
+			schedule: '0s, 60s',
+			innerAction: {
+				action: {oneofKind: 'castSpell', castSpell: {}},
+			},
+		}),
+		fields: [
+			AplHelpers.stringFieldConfig('schedule', {
+				label: 'Do At',
+				labelTooltip: 'Comma-separated list of timings. The inner action will be performed once at each timing.',
+			}),
+			actionFieldConfig('innerAction'),
 		],
 	}),
 	['sequence']: inputBuilder({
@@ -384,49 +454,6 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 		newValue: APLActionStrictSequence.create,
 		fields: [
 			actionListFieldConfig('actions'),
-		],
-	}),
-	['autocastOtherCooldowns']: inputBuilder({
-		label: 'Autocast Other Cooldowns',
-		submenu: ['Misc'],
-		shortDescription: 'Auto-casts cooldowns as soon as they are ready.',
-		fullDescription: `
-			<ul>
-				<li>Does not auto-cast cooldowns which are already controlled by other actions in the priority list.</li>
-				<li>Cooldowns are usually cast immediately upon becoming ready, but there are some basic smart checks in place, e.g. don't use Mana CDs when near full mana.</li>
-			</ul>
-		`,
-		includeIf: (player: Player<any>, isPrepull: boolean) => !isPrepull,
-		newValue: APLActionAutocastOtherCooldowns.create,
-		fields: [],
-	}),
-	['wait']: inputBuilder({
-		label: 'Wait',
-		submenu: ['Misc'],
-		shortDescription: 'Pauses all APL actions for a specified amount of time.',
-		includeIf: (player: Player<any>, isPrepull: boolean) => !isPrepull,
-		newValue: () => APLActionWait.create({
-			duration: {
-				value: {
-					oneofKind: 'const',
-					const: {
-						val: '1000ms',
-					},
-				},
-			},
-		}),
-		fields: [
-			AplValues.valueFieldConfig('duration'),
-		],
-	}),
-	['waitUntil']: inputBuilder({
-		label: 'Wait Until',
-		submenu: ['Misc'],
-		shortDescription: 'Pauses all APL actions until the specified condition is <b>True</b>.',
-		includeIf: (player: Player<any>, isPrepull: boolean) => !isPrepull,
-		newValue: () => APLActionWaitUntil.create(),
-		fields: [
-			AplValues.valueFieldConfig('condition'),
 		],
 	}),
 	['changeTarget']: inputBuilder({

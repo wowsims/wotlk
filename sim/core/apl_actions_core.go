@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -297,4 +298,63 @@ func (action *APLActionWaitUntil) GetNextAction(sim *Simulation) *APLAction {
 
 func (action *APLActionWaitUntil) String() string {
 	return fmt.Sprintf("WaitUntil(%s)", action.condition)
+}
+
+type APLActionSchedule struct {
+	defaultAPLActionImpl
+	innerAction *APLAction
+
+	timings       []time.Duration
+	nextTimingIdx int
+}
+
+func (rot *APLRotation) newActionSchedule(config *proto.APLActionSchedule) APLActionImpl {
+	innerAction := rot.newAPLAction(config.InnerAction)
+	if innerAction == nil {
+		return nil
+	}
+
+	timingStrs := strings.Split(config.Schedule, ",")
+	if len(timingStrs) == 0 {
+		return nil
+	}
+
+	timings := make([]time.Duration, len(timingStrs))
+	valid := true
+	for i, timingStr := range timingStrs {
+		if durVal, err := time.ParseDuration(strings.TrimSpace(timingStr)); err == nil {
+			timings[i] = durVal
+		} else {
+			rot.ValidationWarning("Invalid duration value '%s'", strings.TrimSpace(timingStr))
+			valid = false
+		}
+	}
+	if !valid {
+		return nil
+	}
+
+	return &APLActionSchedule{
+		innerAction: innerAction,
+		timings:     timings,
+	}
+}
+func (action *APLActionSchedule) Reset(*Simulation) {
+	action.nextTimingIdx = 0
+}
+func (action *APLActionSchedule) GetInnerActions() []*APLAction {
+	return []*APLAction{action.innerAction}
+}
+func (action *APLActionSchedule) IsReady(sim *Simulation) bool {
+	return action.nextTimingIdx < len(action.timings) &&
+		sim.CurrentTime >= action.timings[action.nextTimingIdx] &&
+		action.innerAction.IsReady(sim)
+}
+
+func (action *APLActionSchedule) Execute(sim *Simulation) {
+	action.nextTimingIdx++
+	action.innerAction.Execute(sim)
+}
+
+func (action *APLActionSchedule) String() string {
+	return fmt.Sprintf("Schedule(%s, %s)", action.timings, action.innerAction)
 }

@@ -454,7 +454,10 @@ export function stringFieldConfig(field: string, options?: Partial<APLPickerBuil
 	return {
 		field: field,
 		newValue: () => '',
-		factory: (parent, player, config) => new AdaptiveStringPicker(parent, player, config),
+		factory: (parent, player, config) => {
+			config.extraCssClasses = ['input-inline'].concat(config.extraCssClasses || []);
+			return new AdaptiveStringPicker(parent, player, config);
+		},
 		...(options || {}),
 	};
 }
