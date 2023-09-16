@@ -45,6 +45,7 @@ import { Player as PlayerProto } from './proto/api.js';
 import { StatWeightsResult } from './proto/api.js';
 import { ActionId } from './proto_utils/action_id.js';
 import { EquippedItem, getWeaponDPS } from './proto_utils/equipped_item.js';
+import { aplLaunchStatuses, LaunchStatus } from './launched_sims';
 
 import { playerTalentStringToProto } from './talents/factory.js';
 import { Gear, ItemSwapGear } from './proto_utils/gear.js';
@@ -1274,6 +1275,12 @@ export class Player<SpecType extends Spec> {
 				hpPercentForDefensives: isTankSpec(this.spec) ? 0.35 : 0,
 			}));
 			this.setBonusStats(eventID, new Stats());
+
+			if (aplLaunchStatuses[this.spec] >= LaunchStatus.Beta) {
+				this.setAplRotation(eventID, APLRotation.create({
+					type: APLRotationType.TypeAuto,
+				}))
+			}
 		});
 	}
 }

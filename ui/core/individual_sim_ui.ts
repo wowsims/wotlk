@@ -423,7 +423,11 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.player.setRace(eventID, specToEligibleRaces[this.player.spec][0]);
 			this.player.setGear(eventID, this.sim.db.lookupEquipmentSpec(this.individualConfig.defaults.gear));
 			this.player.setConsumes(eventID, this.individualConfig.defaults.consumes);
-			this.player.setRotation(eventID, this.individualConfig.defaults.rotation);
+			if (aplLaunchStatuses[this.player.spec] < LaunchStatus.Beta) {
+				this.player.setRotation(eventID, this.individualConfig.defaults.rotation);
+			} else {
+				this.player.setRotation(eventID, this.player.specTypeFunctions.rotationCreate());
+			}
 			this.player.setTalentsString(eventID, this.individualConfig.defaults.talents.talentsString);
 			this.player.setGlyphs(eventID, this.individualConfig.defaults.talents.glyphs || Glyphs.create());
 			this.player.setSpecOptions(eventID, this.individualConfig.defaults.specOptions);
