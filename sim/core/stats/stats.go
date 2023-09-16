@@ -197,6 +197,13 @@ func (stats Stats) Add(other Stats) Stats {
 	return newStats
 }
 
+// Adds another to Stats to this, in-place.
+func (stats *Stats) AddInplace(other *Stats) {
+	for k := range stats {
+		stats[k] += other[k]
+	}
+}
+
 // Subtracts another Stats from this one, returning the new Stats.
 func (stats Stats) Subtract(other Stats) Stats {
 	var newStats Stats
@@ -247,11 +254,12 @@ func (stats Stats) String() string {
 	sb.WriteString("\n{\n")
 
 	for statIdx, statValue := range stats {
-		name := Stat(statIdx).StatName()
-		if name == "none" || statValue == 0 {
+		if statValue == 0 {
 			continue
 		}
-		_, _ = fmt.Fprintf(&sb, "\t%s: %0.3f,\n", name, statValue)
+		if name := Stat(statIdx).StatName(); name != "none" {
+			_, _ = fmt.Fprintf(&sb, "\t%s: %0.3f,\n", name, statValue)
+		}
 	}
 
 	sb.WriteString("\n}")
@@ -264,11 +272,12 @@ func (stats Stats) FlatString() string {
 	sb.WriteString("{")
 
 	for statIdx, statValue := range stats {
-		name := Stat(statIdx).StatName()
-		if name == "none" || statValue == 0 {
+		if statValue == 0 {
 			continue
 		}
-		_, _ = fmt.Fprintf(&sb, "\"%s\": %0.3f,", name, statValue)
+		if name := Stat(statIdx).StatName(); name != "none" {
+			_, _ = fmt.Fprintf(&sb, "\"%s\": %0.3f,", name, statValue)
+		}
 	}
 
 	sb.WriteString("}")

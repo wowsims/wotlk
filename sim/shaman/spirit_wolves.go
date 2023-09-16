@@ -47,7 +47,7 @@ var spiritWolfBaseStats = stats.Stats{
 
 func (shaman *Shaman) NewSpiritWolf(index int) *SpiritWolf {
 	spiritWolf := &SpiritWolf{
-		Pet:         core.NewPet("Spirit Wolf "+strconv.Itoa(index), &shaman.Character, spiritWolfBaseStats, shaman.makeStatInheritance(), nil, false, false),
+		Pet:         core.NewPet("Spirit Wolf "+strconv.Itoa(index), &shaman.Character, spiritWolfBaseStats, shaman.makeStatInheritance(), false, false),
 		shamanOwner: shaman,
 	}
 
@@ -73,7 +73,6 @@ func (shaman *Shaman) NewSpiritWolf(index int) *SpiritWolf {
 const PetExpertiseScale = 3.25
 
 func (shaman *Shaman) makeStatInheritance() core.PetStatInheritance {
-
 	return func(ownerStats stats.Stats) stats.Stats {
 		ownerHitChance := ownerStats[stats.MeleeHit] / core.MeleeHitRatingPerHitChance
 		hitRatingFromOwner := math.Floor(ownerHitChance) * core.MeleeHitRatingPerHitChance
@@ -84,7 +83,7 @@ func (shaman *Shaman) makeStatInheritance() core.PetStatInheritance {
 			stats.AttackPower: ownerStats[stats.AttackPower] * (core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfFeralSpirit), 0.61, 0.31)),
 
 			stats.MeleeHit:  hitRatingFromOwner,
-			stats.Expertise: math.Floor((math.Floor(ownerHitChance) * PetExpertiseScale)) * core.ExpertisePerQuarterPercentReduction,
+			stats.Expertise: math.Floor(math.Floor(ownerHitChance)*PetExpertiseScale) * core.ExpertisePerQuarterPercentReduction,
 		}
 	}
 }

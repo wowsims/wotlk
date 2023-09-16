@@ -29,7 +29,7 @@ type FireElemental struct {
 
 func (shaman *Shaman) NewFireElemental(bonusSpellPower float64) *FireElemental {
 	fireElemental := &FireElemental{
-		Pet:         core.NewPet("Greater Fire Elemental", &shaman.Character, fireElementalPetBaseStats, shaman.fireElementalStatInheritance(), nil, false, true),
+		Pet:         core.NewPet("Greater Fire Elemental", &shaman.Character, fireElementalPetBaseStats, shaman.fireElementalStatInheritance(), false, true),
 		shamanOwner: shaman,
 	}
 	fireElemental.EnableManaBar()

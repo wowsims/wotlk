@@ -18,17 +18,9 @@ type ValkyrPet struct {
 
 func newValkyr(character *core.Character) *ValkyrPet {
 	return &ValkyrPet{
-		Pet: core.NewPet(
-			"Valkyr",
-			character,
-			valkyrStats,
-			func(ownerStats stats.Stats) stats.Stats {
-				return stats.Stats{}
-			},
-			nil,
-			false,
-			true,
-		),
+		Pet: core.NewPet("Valkyr", character, valkyrStats, func(ownerStats stats.Stats) stats.Stats {
+			return stats.Stats{}
+		}, false, true),
 	}
 }
 
@@ -77,7 +69,7 @@ func (valkyr *ValkyrPet) registerSmite(isHeroic bool) {
 
 func (valkyr *ValkyrPet) Initialize() {}
 
-func (valkyr *ValkyrPet) Reset(sim *core.Simulation) {}
+func (valkyr *ValkyrPet) Reset(_ *core.Simulation) {}
 
 func (valkyr *ValkyrPet) OnGCDReady(sim *core.Simulation) {
 	target := valkyr.CurrentTarget
