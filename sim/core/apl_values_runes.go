@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
@@ -164,7 +163,7 @@ func (value *APLValueRuneCooldown) GetDuration(sim *Simulation) time.Duration {
 	case proto.APLValueRuneType_RuneUnholy:
 		returnValue = value.unit.UnholyRuneReadyAt(sim) - sim.CurrentTime
 	}
-	return core.MaxDuration(0, returnValue)
+	return MaxDuration(0, returnValue)
 }
 func (value *APLValueRuneCooldown) String() string {
 	return fmt.Sprintf("Rune Cooldown(%s)", value.runeType)
@@ -200,7 +199,7 @@ func (value *APLValueNextRuneCooldown) GetDuration(sim *Simulation) time.Duratio
 	case proto.APLValueRuneType_RuneUnholy:
 		returnValue = value.unit.SpentUnholyRuneReadyAt() - sim.CurrentTime
 	}
-	return core.MaxDuration(0, returnValue)
+	return MaxDuration(0, returnValue)
 }
 func (value *APLValueNextRuneCooldown) String() string {
 	return fmt.Sprintf("Next Rune Cooldown(%s)", value.runeType)
