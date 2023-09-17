@@ -431,6 +431,30 @@ func (rp *RunicPowerBar) UnholyRuneReadyAt(sim *Simulation) time.Duration {
 	return MinDuration(rp.runeMeta[4].regenAt, rp.runeMeta[5].regenAt)
 }
 
+func (rp *RunicPowerBar) NextRuneTypeReadyAt(sim *Simulation, left int8, right int8) time.Duration {
+	if rp.runeStates&isSpents[left] != isSpents[left] && rp.runeStates&isSpents[right] != isSpents[right] {
+		// Both are ready so return current time
+		return sim.CurrentTime
+	} else if rp.runeStates&isSpents[left] == isSpents[left] || rp.runeStates&isSpents[right] == isSpents[right] {
+		// One is spent so return the time it will regen at
+		return MinDuration(rp.runeMeta[left].regenAt, rp.runeMeta[right].regenAt)
+	}
+	// Both are spent so return the last one to regen at
+	return MaxDuration(rp.runeMeta[left].regenAt, rp.runeMeta[right].regenAt)
+}
+
+func (rp *RunicPowerBar) NextBloodRuneReadyAt(sim *Simulation) time.Duration {
+	return rp.NextRuneTypeReadyAt(sim, 0, 1)
+}
+
+func (rp *RunicPowerBar) NextFrostRuneReadyAt(sim *Simulation) time.Duration {
+	return rp.NextRuneTypeReadyAt(sim, 2, 3)
+}
+
+func (rp *RunicPowerBar) NextUnholyRuneReadyAt(sim *Simulation) time.Duration {
+	return rp.NextRuneTypeReadyAt(sim, 4, 5)
+}
+
 // AnySpentRuneReadyAt returns the next time that a rune will regenerate.
 //
 //	It will be NeverExpires if there is no rune pending regeneration.

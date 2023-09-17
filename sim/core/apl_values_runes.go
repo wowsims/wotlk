@@ -193,11 +193,11 @@ func (value *APLValueNextRuneCooldown) GetDuration(sim *Simulation) time.Duratio
 	returnValue := time.Duration(0)
 	switch value.runeType {
 	case proto.APLValueRuneType_RuneBlood:
-		returnValue = value.unit.SpentBloodRuneReadyAt() - sim.CurrentTime
+		returnValue = value.unit.NextBloodRuneReadyAt(sim) - sim.CurrentTime
 	case proto.APLValueRuneType_RuneFrost:
-		returnValue = value.unit.SpentFrostRuneReadyAt() - sim.CurrentTime
+		returnValue = value.unit.NextFrostRuneReadyAt(sim) - sim.CurrentTime
 	case proto.APLValueRuneType_RuneUnholy:
-		returnValue = value.unit.SpentUnholyRuneReadyAt() - sim.CurrentTime
+		returnValue = value.unit.NextUnholyRuneReadyAt(sim) - sim.CurrentTime
 	}
 	return MaxDuration(0, returnValue)
 }
