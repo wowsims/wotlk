@@ -673,7 +673,6 @@ export const P4_BLOOD_BIS_PRESET = {
         {"id":49623,"enchant":3368,"gems":[40117,42153,42153]},
         {},
         {"id":47673}
-      ]
   ]}`),
 };
 
