@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
@@ -154,15 +155,16 @@ func (value *APLValueRuneCooldown) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeDuration
 }
 func (value *APLValueRuneCooldown) GetDuration(sim *Simulation) time.Duration {
+	returnValue := time.Duration(0)
 	switch value.runeType {
 	case proto.APLValueRuneType_RuneBlood:
-		return value.unit.BloodRuneReadyAt(sim) - sim.CurrentTime
+		returnValue = value.unit.BloodRuneReadyAt(sim) - sim.CurrentTime
 	case proto.APLValueRuneType_RuneFrost:
-		return value.unit.FrostRuneReadyAt(sim) - sim.CurrentTime
+		returnValue = value.unit.FrostRuneReadyAt(sim) - sim.CurrentTime
 	case proto.APLValueRuneType_RuneUnholy:
-		return value.unit.UnholyRuneReadyAt(sim) - sim.CurrentTime
+		returnValue = value.unit.UnholyRuneReadyAt(sim) - sim.CurrentTime
 	}
-	return 0
+	return core.MaxDuration(0, returnValue)
 }
 func (value *APLValueRuneCooldown) String() string {
 	return fmt.Sprintf("Rune Cooldown(%s)", value.runeType)
@@ -189,15 +191,16 @@ func (value *APLValueNextRuneCooldown) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeDuration
 }
 func (value *APLValueNextRuneCooldown) GetDuration(sim *Simulation) time.Duration {
+	returnValue := time.Duration(0)
 	switch value.runeType {
 	case proto.APLValueRuneType_RuneBlood:
-		return value.unit.SpentBloodRuneReadyAt() - sim.CurrentTime
+		returnValue = value.unit.SpentBloodRuneReadyAt() - sim.CurrentTime
 	case proto.APLValueRuneType_RuneFrost:
-		return value.unit.SpentFrostRuneReadyAt() - sim.CurrentTime
+		returnValue = value.unit.SpentFrostRuneReadyAt() - sim.CurrentTime
 	case proto.APLValueRuneType_RuneUnholy:
-		return value.unit.SpentUnholyRuneReadyAt() - sim.CurrentTime
+		returnValue = value.unit.SpentUnholyRuneReadyAt() - sim.CurrentTime
 	}
-	return 0
+	return core.MaxDuration(0, returnValue)
 }
 func (value *APLValueNextRuneCooldown) String() string {
 	return fmt.Sprintf("Next Rune Cooldown(%s)", value.runeType)
