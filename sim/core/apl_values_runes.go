@@ -226,7 +226,7 @@ func (value *APLValueRuneSlotCooldown) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeDuration
 }
 func (value *APLValueRuneSlotCooldown) GetDuration(sim *Simulation) time.Duration {
-	return value.unit.RuneReadyAt(sim, value.runeSlot) - sim.CurrentTime
+	return MaxDuration(0, value.unit.RuneReadyAt(sim, value.runeSlot)-sim.CurrentTime)
 }
 func (value *APLValueRuneSlotCooldown) String() string {
 	return fmt.Sprintf("Rune Slot Cooldown(%d)", value.runeSlot)
