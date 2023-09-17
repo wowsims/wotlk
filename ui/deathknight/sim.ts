@@ -3,11 +3,7 @@ import { HandType, RaidBuffs } from '../core/proto/common.js';
 import { PartyBuffs } from '../core/proto/common.js';
 import { IndividualBuffs } from '../core/proto/common.js';
 import { Debuffs } from '../core/proto/common.js';
-import { Class } from '../core/proto/common.js';
-import { Consumes } from '../core/proto/common.js';
-import { Encounter } from '../core/proto/common.js';
 import { ItemSlot } from '../core/proto/common.js';
-import { MobType } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { Stat, PseudoStat } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js'
@@ -23,7 +19,6 @@ import * as Tooltips from '../core/constants/tooltips.js';
 
 import * as DeathKnightInputs from './inputs.js';
 import * as Presets from './presets.js';
-import { numberFieldConfig } from 'ui/core/components/individual_sim_ui/apl_helpers.js';
 
 export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecDeathknight>) {
@@ -134,7 +129,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 
 			autoRotation: (player: Player<Spec.SpecDeathknight>): APLRotation => {
 				const talentTree = player.getTalentTree();
-				const numTargets = player.getRaid()!.sim.encounter.targets.length;
+				const numTargets = player.sim.encounter.targets.length;
 				switch (talentTree) {
 					case 0: 
 						if (player.getSpecOptions().drwPestiApply || numTargets > 1) {
