@@ -75,7 +75,7 @@ message APLAction {
     }
 }
 
-// NextIndex: 53
+// NextIndex: 56
 message APLValue {
     oneof value {
         // Operators
@@ -113,6 +113,9 @@ message APLValue {
         APLValueCurrentRuneActive current_rune_active = 31;
         APLValueRuneCooldown rune_cooldown = 32;
         APLValueNextRuneCooldown next_rune_cooldown = 33;
+        APLValueRuneSlotCooldown rune_slot_cooldown = 53;
+        APLValueRuneGrace rune_grace = 54;
+        APLValueRuneSlotGrace rune_slot_grace = 55;
 
         // GCD values
         APLValueGCDIsReady gcd_is_ready = 17;
@@ -350,6 +353,15 @@ message APLValueRuneCooldown{
 }
 message APLValueNextRuneCooldown{
     APLValueRuneType rune_type = 1;
+}
+message APLValueRuneSlotCooldown{
+    APLValueRuneSlot rune_slot = 1;
+}
+message APLValueRuneGrace{
+    APLValueRuneType rune_type = 1;
+}
+message APLValueRuneSlotGrace{
+    APLValueRuneType rune_slot = 1;
 }
 
 message APLValueGCDIsReady {}

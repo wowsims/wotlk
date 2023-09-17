@@ -154,18 +154,19 @@ func (value *APLValueRuneCooldown) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeDuration
 }
 func (value *APLValueRuneCooldown) GetDuration(sim *Simulation) time.Duration {
+	returnValue := time.Duration(0)
 	switch value.runeType {
 	case proto.APLValueRuneType_RuneBlood:
-		return value.unit.BloodRuneReadyAt(sim) - sim.CurrentTime
+		returnValue = value.unit.BloodRuneReadyAt(sim) - sim.CurrentTime
 	case proto.APLValueRuneType_RuneFrost:
-		return value.unit.FrostRuneReadyAt(sim) - sim.CurrentTime
+		returnValue = value.unit.FrostRuneReadyAt(sim) - sim.CurrentTime
 	case proto.APLValueRuneType_RuneUnholy:
-		return value.unit.UnholyRuneReadyAt(sim) - sim.CurrentTime
+		returnValue = value.unit.UnholyRuneReadyAt(sim) - sim.CurrentTime
 	}
-	return 0
+	return MaxDuration(0, returnValue)
 }
 func (value *APLValueRuneCooldown) String() string {
-	return fmt.Sprintf("Rune Cooldoean(%s)", value.runeType)
+	return fmt.Sprintf("Rune Cooldown(%s)", value.runeType)
 }
 
 type APLValueNextRuneCooldown struct {
@@ -189,16 +190,106 @@ func (value *APLValueNextRuneCooldown) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeDuration
 }
 func (value *APLValueNextRuneCooldown) GetDuration(sim *Simulation) time.Duration {
+	returnValue := time.Duration(0)
 	switch value.runeType {
 	case proto.APLValueRuneType_RuneBlood:
-		return value.unit.SpentBloodRuneReadyAt() - sim.CurrentTime
+		returnValue = value.unit.SpentBloodRuneReadyAt() - sim.CurrentTime
 	case proto.APLValueRuneType_RuneFrost:
-		return value.unit.SpentFrostRuneReadyAt() - sim.CurrentTime
+		returnValue = value.unit.SpentFrostRuneReadyAt() - sim.CurrentTime
 	case proto.APLValueRuneType_RuneUnholy:
-		return value.unit.SpentUnholyRuneReadyAt() - sim.CurrentTime
+		returnValue = value.unit.SpentUnholyRuneReadyAt() - sim.CurrentTime
+	}
+	return MaxDuration(0, returnValue)
+}
+func (value *APLValueNextRuneCooldown) String() string {
+	return fmt.Sprintf("Next Rune Cooldown(%s)", value.runeType)
+}
+
+type APLValueRuneSlotCooldown struct {
+	DefaultAPLValueImpl
+	unit     *Unit
+	runeSlot int8
+}
+
+func (rot *APLRotation) newValueRuneSlotCooldown(config *proto.APLValueRuneSlotCooldown) APLValue {
+	unit := rot.unit
+	if !unit.HasRunicPowerBar() {
+		rot.ValidationWarning("%s does not use Runes", unit.Label)
+		return nil
+	}
+	return &APLValueRuneSlotCooldown{
+		unit:     unit,
+		runeSlot: int8(config.RuneSlot) - 1, // 0 is Unknown
+	}
+}
+func (value *APLValueRuneSlotCooldown) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeDuration
+}
+func (value *APLValueRuneSlotCooldown) GetDuration(sim *Simulation) time.Duration {
+	return MaxDuration(0, value.unit.RuneReadyAt(sim, value.runeSlot)-sim.CurrentTime)
+}
+func (value *APLValueRuneSlotCooldown) String() string {
+	return fmt.Sprintf("Rune Slot Cooldown(%d)", value.runeSlot)
+}
+
+type APLValueRuneGrace struct {
+	DefaultAPLValueImpl
+	unit     *Unit
+	runeType proto.APLValueRuneType
+}
+
+func (rot *APLRotation) newValueRuneGrace(config *proto.APLValueRuneGrace) APLValue {
+	unit := rot.unit
+	if !unit.HasRunicPowerBar() {
+		rot.ValidationWarning("%s does not use Runes", unit.Label)
+		return nil
+	}
+	return &APLValueRuneGrace{
+		unit:     unit,
+		runeType: config.RuneType,
+	}
+}
+func (value *APLValueRuneGrace) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeDuration
+}
+func (value *APLValueRuneGrace) GetDuration(sim *Simulation) time.Duration {
+	switch value.runeType {
+	case proto.APLValueRuneType_RuneBlood:
+		return value.unit.CurrentBloodRuneGrace(sim)
+	case proto.APLValueRuneType_RuneFrost:
+		return value.unit.CurrentFrostRuneGrace(sim)
+	case proto.APLValueRuneType_RuneUnholy:
+		return value.unit.CurrentUnholyRuneGrace(sim)
 	}
 	return 0
 }
-func (value *APLValueNextRuneCooldown) String() string {
-	return fmt.Sprintf("Next Rune Cooldoean(%s)", value.runeType)
+func (value *APLValueRuneGrace) String() string {
+	return fmt.Sprintf("Rune Grace(%s)", value.runeType)
+}
+
+type APLValueRuneSlotGrace struct {
+	DefaultAPLValueImpl
+	unit     *Unit
+	runeSlot int8
+}
+
+func (rot *APLRotation) newValueRuneSlotGrace(config *proto.APLValueRuneSlotGrace) APLValue {
+	unit := rot.unit
+	if !unit.HasRunicPowerBar() {
+		rot.ValidationWarning("%s does not use Runes", unit.Label)
+		return nil
+	}
+	return &APLValueRuneSlotGrace{
+		unit:     unit,
+		runeSlot: int8(config.RuneSlot) - 1, // 0 is Unknown
+	}
+}
+func (value *APLValueRuneSlotGrace) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeDuration
+}
+func (value *APLValueRuneSlotGrace) GetDuration(sim *Simulation) time.Duration {
+	return value.unit.CurrentRuneGrace(sim, value.runeSlot)
+}
+func (value *APLValueRuneSlotGrace) String() string {
+	return fmt.Sprintf("Rune Slot Grace(%d)", value.runeSlot)
 }

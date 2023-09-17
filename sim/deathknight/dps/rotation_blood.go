@@ -322,13 +322,13 @@ func (dk *DpsDeathknight) RotationActionBL_IT_Custom(sim *core.Simulation, targe
 
 func (dk *DpsDeathknight) RotationActionBL_FF_ClipCheck(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	dot := dk.FrostFeverSpell.Dot(target)
-	gracePeriod := dk.CurrentFrostRuneGrace(sim)
+	gracePeriod := dk.FrostRuneGraceRemaining(sim)
 	return dk.RotationActionBL_DiseaseClipCheck(dot, gracePeriod, sim, target, s)
 }
 
 func (dk *DpsDeathknight) RotationActionBL_BP_ClipCheck(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	dot := dk.BloodPlagueSpell.Dot(target)
-	gracePeriod := dk.CurrentUnholyRuneGrace(sim)
+	gracePeriod := dk.UnholyRuneGraceRemaining(sim)
 	return dk.RotationActionBL_DiseaseClipCheck(dot, gracePeriod, sim, target, s)
 }
 

@@ -82,6 +82,10 @@ func (dk *Deathknight) newFrostStrikeHitSpell(isMH bool) *core.Spell {
 }
 
 func (dk *Deathknight) registerFrostStrikeSpell() {
+	if !dk.Talents.FrostStrike {
+		return
+	}
+
 	dk.FrostStrikeMhHit = dk.newFrostStrikeHitSpell(true)
 	dk.FrostStrikeOhHit = dk.newFrostStrikeHitSpell(false)
 	dk.FrostStrike = dk.FrostStrikeMhHit

@@ -257,7 +257,7 @@ func (rp *RunicPowerBar) SpentDeathRuneReadyAt() time.Duration {
 	return readyAt
 }
 
-func (rp *RunicPowerBar) RuneGraceRemaining(sim *Simulation, slot int32) time.Duration {
+func (rp *RunicPowerBar) RuneGraceRemaining(sim *Simulation, slot int8) time.Duration {
 	lastRegenTime := rp.runeMeta[slot].lastRegenTime
 
 	// pre-pull casts should not get rune-grace
@@ -271,21 +271,47 @@ func (rp *RunicPowerBar) RuneGraceRemaining(sim *Simulation, slot int32) time.Du
 	return 0
 }
 
-const anyBloodSpent = 0b0101
-const anyFrostSpent = 0b0101 << 4
-const anyUnholySpent = 0b0101 << 8
+func (rp *RunicPowerBar) CurrentRuneGrace(sim *Simulation, slot int8) time.Duration {
+	lastRegenTime := rp.runeMeta[slot].lastRegenTime
+
+	// pre-pull casts should not get rune-grace
+	if sim.CurrentTime <= 0 || lastRegenTime <= 0 {
+		return 0
+	}
+
+	if lastRegenTime < sim.CurrentTime {
+		return MinDuration(2500*time.Millisecond, sim.CurrentTime-lastRegenTime)
+	}
+	return 0
+}
 
 func (rp *RunicPowerBar) CurrentBloodRuneGrace(sim *Simulation) time.Duration {
-	return MaxDuration(rp.RuneGraceRemaining(sim, 0), rp.RuneGraceRemaining(sim, 1))
+	return MaxDuration(rp.CurrentRuneGrace(sim, 0), rp.CurrentRuneGrace(sim, 1))
 }
 
 func (rp *RunicPowerBar) CurrentFrostRuneGrace(sim *Simulation) time.Duration {
-	return MaxDuration(rp.RuneGraceRemaining(sim, 2), rp.RuneGraceRemaining(sim, 3))
+	return MaxDuration(rp.CurrentRuneGrace(sim, 2), rp.CurrentRuneGrace(sim, 3))
 }
 
 func (rp *RunicPowerBar) CurrentUnholyRuneGrace(sim *Simulation) time.Duration {
+	return MaxDuration(rp.CurrentRuneGrace(sim, 4), rp.CurrentRuneGrace(sim, 5))
+}
+
+func (rp *RunicPowerBar) BloodRuneGraceRemaining(sim *Simulation) time.Duration {
+	return MaxDuration(rp.RuneGraceRemaining(sim, 0), rp.RuneGraceRemaining(sim, 1))
+}
+
+func (rp *RunicPowerBar) FrostRuneGraceRemaining(sim *Simulation) time.Duration {
+	return MaxDuration(rp.RuneGraceRemaining(sim, 2), rp.RuneGraceRemaining(sim, 3))
+}
+
+func (rp *RunicPowerBar) UnholyRuneGraceRemaining(sim *Simulation) time.Duration {
 	return MaxDuration(rp.RuneGraceRemaining(sim, 4), rp.RuneGraceRemaining(sim, 5))
 }
+
+const anyBloodSpent = 0b0101
+const anyFrostSpent = 0b0101 << 4
+const anyUnholySpent = 0b0101 << 8
 
 func (rp *RunicPowerBar) NormalSpentBloodRuneReadyAt(sim *Simulation) time.Duration {
 	readyAt := NeverExpires

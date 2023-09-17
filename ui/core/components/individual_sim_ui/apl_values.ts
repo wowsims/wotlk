@@ -64,6 +64,9 @@ import {
 	APLValueNumberTargets,
 	APLValueTotemRemainingTime,
 	APLValueCatExcessEnergy,
+	APLValueRuneSlotCooldown,
+	APLValueRuneGrace,
+	APLValueRuneSlotGrace,
 } from '../../proto/apl.js';
 
 import { EventID } from '../../typed_event.js';
@@ -651,6 +654,33 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		newValue: APLValueNextRuneCooldown.create,
 		fields: [
 			AplHelpers.runeTypeFieldConfig('runeType', false),
+		],
+	}),
+	'runeSlotCooldown': inputBuilder({
+		label: 'Rune Slot Cooldown',
+		submenu: ['Resources', 'Runes'],
+		shortDescription: 'Amount of time until a rune of certain slot is ready to use.<br><b>NOTE:</b> Returns 0 if rune is ready',
+		newValue: APLValueRuneSlotCooldown.create,
+		fields: [
+			AplHelpers.runeSlotFieldConfig('runeSlot'),
+		],
+	}),
+	'runeGrace': inputBuilder({
+		label: 'Rune Grace Period',
+		submenu: ['Resources', 'Runes'],
+		shortDescription: 'Amount of rune grace period available for certain rune type.',
+		newValue: APLValueRuneGrace.create,
+		fields: [
+			AplHelpers.runeTypeFieldConfig('runeType', false),
+		],
+	}),
+	'runeSlotGrace': inputBuilder({
+		label: 'Rune Slot Grace Period',
+		submenu: ['Resources', 'Runes'],
+		shortDescription: 'Amount of rune grace period available for certain rune slot.',
+		newValue: APLValueRuneSlotGrace.create,
+		fields: [
+			AplHelpers.runeSlotFieldConfig('runeSlot'),
 		],
 	}),
 
