@@ -7,7 +7,7 @@ import { Glyphs } from '../core/proto/common.js';
 import { PetFood } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
 import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
-import { APLRotation } from '../core/proto/apl.js';
+import { APLRotation, APLRotation_Type } from '../core/proto/apl.js';
 import { ferocityDefault, ferocityBMDefault } from '../core/talents/hunter_pet.js';
 import { Player } from '../core/player.js';
 
@@ -84,25 +84,17 @@ export const DefaultRotation = HunterRotation.create({
 	viperStopManaPercent: 0.3,
 	multiDotSerpentSting: true,
 	allowExplosiveShotDownrank: true,
-	steadyShotMaxDelay: 300,
-	customRotation: CustomRotation.create({
-		spells: [
-			CustomSpell.create({ spell: SpellOption.SerpentStingSpell }),
-			CustomSpell.create({ spell: SpellOption.KillShot }),
-			CustomSpell.create({ spell: SpellOption.ChimeraShot }),
-			CustomSpell.create({ spell: SpellOption.BlackArrow }),
-			CustomSpell.create({ spell: SpellOption.ExplosiveShot }),
-			CustomSpell.create({ spell: SpellOption.AimedShot }),
-			CustomSpell.create({ spell: SpellOption.ArcaneShot }),
-			CustomSpell.create({ spell: SpellOption.SteadyShot }),
-		],
-	}),
 });
 
 export const ROTATION_PRESET_LEGACY_DEFAULT = {
-	name: 'Legacy Default',
+	name: 'Simple Default',
 	rotation: SavedRotation.create({
-		specRotationOptionsJson: HunterRotation.toJsonString(DefaultRotation),
+		rotation: {
+			type: APLRotation_Type.TypeSimple,
+			simple: {
+				specRotationJson: HunterRotation.toJsonString(DefaultRotation),
+			},
+		},
 	}),
 }
 export const ROTATION_PRESET_BM = {

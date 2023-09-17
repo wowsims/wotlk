@@ -132,12 +132,7 @@ func (rot *APLRotation) newAPLActionImpl(config *proto.APLAction) APLActionImpl 
 	}
 
 	switch config.Action.(type) {
-	case *proto.APLAction_Sequence:
-		return rot.newActionSequence(config.GetSequence())
-	case *proto.APLAction_ResetSequence:
-		return rot.newActionResetSequence(config.GetResetSequence())
-	case *proto.APLAction_StrictSequence:
-		return rot.newActionStrictSequence(config.GetStrictSequence())
+	// Casting
 	case *proto.APLAction_CastSpell:
 		return rot.newActionCastSpell(config.GetCastSpell())
 	case *proto.APLAction_Multidot:
@@ -146,6 +141,24 @@ func (rot *APLRotation) newAPLActionImpl(config *proto.APLAction) APLActionImpl 
 		return rot.newActionMultishield(config.GetMultishield())
 	case *proto.APLAction_AutocastOtherCooldowns:
 		return rot.newActionAutocastOtherCooldowns(config.GetAutocastOtherCooldowns())
+
+	// Timing
+	case *proto.APLAction_Wait:
+		return rot.newActionWait(config.GetWait())
+	case *proto.APLAction_WaitUntil:
+		return rot.newActionWaitUntil(config.GetWaitUntil())
+	case *proto.APLAction_Schedule:
+		return rot.newActionSchedule(config.GetSchedule())
+
+	// Sequences
+	case *proto.APLAction_Sequence:
+		return rot.newActionSequence(config.GetSequence())
+	case *proto.APLAction_ResetSequence:
+		return rot.newActionResetSequence(config.GetResetSequence())
+	case *proto.APLAction_StrictSequence:
+		return rot.newActionStrictSequence(config.GetStrictSequence())
+
+	// Misc
 	case *proto.APLAction_ChangeTarget:
 		return rot.newActionChangeTarget(config.GetChangeTarget())
 	case *proto.APLAction_ActivateAura:
@@ -154,10 +167,6 @@ func (rot *APLRotation) newAPLActionImpl(config *proto.APLAction) APLActionImpl 
 		return rot.newActionCancelAura(config.GetCancelAura())
 	case *proto.APLAction_TriggerIcd:
 		return rot.newActionTriggerICD(config.GetTriggerIcd())
-	case *proto.APLAction_Wait:
-		return rot.newActionWait(config.GetWait())
-	case *proto.APLAction_WaitUntil:
-		return rot.newActionWaitUntil(config.GetWaitUntil())
 	default:
 		return nil
 	}

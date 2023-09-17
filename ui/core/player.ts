@@ -28,6 +28,7 @@ import {
 	APLRotation,
 	APLRotation_Type as APLRotationType,
 	APLValue,
+	SimpleRotation,
 } from './proto/apl.js';
 import {
 	DungeonDifficulty,
@@ -187,6 +188,7 @@ export class UnitMetadataList {
 }
 
 export type AutoRotationGenerator<SpecType extends Spec> = (player: Player<SpecType>) => APLRotation;
+export type SimpleRotationGenerator<SpecType extends Spec> = (player: Player<SpecType>, simpleRotation: SpecRotation<SpecType>, cooldowns: Cooldowns) => APLRotation;
 
 // Manages all the gear / consumes / other settings for a single Player.
 export class Player<SpecType extends Spec> {
@@ -218,6 +220,7 @@ export class Player<SpecType extends Spec> {
 	private healingEnabled: boolean = false;
 
 	private autoRotationGenerator: AutoRotationGenerator<SpecType> | null = null;
+	private simpleRotationGenerator: SimpleRotationGenerator<SpecType> | null = null;
 
 	private itemEPCache = new Array<Map<number, number>>();
 	private gemEPCache = new Map<number, number>();
@@ -541,15 +544,28 @@ export class Player<SpecType extends Spec> {
 
 	getCooldowns(): Cooldowns {
 		// Make a defensive copy
-		return Cooldowns.clone(this.cooldowns);
+		if (aplLaunchStatuses[this.spec] == LaunchStatus.Launched) {
+			return Cooldowns.clone(this.aplRotation.simple?.cooldowns || Cooldowns.create());
+		} else {
+			return Cooldowns.clone(this.cooldowns);
+		}
 	}
 
 	setCooldowns(eventID: EventID, newCooldowns: Cooldowns) {
-		if (Cooldowns.equals(this.cooldowns, newCooldowns))
+		if (Cooldowns.equals(this.getCooldowns(), newCooldowns))
 			return;
 
-		// Make a defensive copy
-		this.cooldowns = Cooldowns.clone(newCooldowns);
+		if (aplLaunchStatuses[this.spec] == LaunchStatus.Launched) {
+			if (!this.aplRotation.simple) {
+				this.aplRotation.simple = SimpleRotation.create();
+			}
+			this.aplRotation.simple.cooldowns = newCooldowns;
+			this.rotationChangeEmitter.emit(eventID);
+		} else {
+			// Make a defensive copy
+			this.cooldowns = Cooldowns.clone(newCooldowns);
+		}
+
 		this.cooldownsChangeEmitter.emit(eventID);
 	}
 
@@ -639,14 +655,37 @@ export class Player<SpecType extends Spec> {
 	}
 
 	getRotation(): SpecRotation<SpecType> {
-		return this.specTypeFunctions.rotationCopy(this.rotation);
+		if (aplLaunchStatuses[this.spec] == LaunchStatus.Launched) {
+			const jsonStr = this.aplRotation.simple?.specRotationJson || '';
+			if (!jsonStr) {
+				return this.specTypeFunctions.rotationCreate();
+			}
+
+			try {
+				const json = JSON.parse(jsonStr);
+				return this.specTypeFunctions.rotationFromJson(json);
+			} catch (e) {
+				console.warn(`Error parsing rotation spec options: ${e}\n\nSpec options: '${jsonStr}'`);
+				return this.specTypeFunctions.rotationCreate();
+			}
+		} else {
+			return this.specTypeFunctions.rotationCopy(this.rotation);
+		}
 	}
 
 	setRotation(eventID: EventID, newRotation: SpecRotation<SpecType>) {
-		if (this.specTypeFunctions.rotationEquals(newRotation, this.rotation))
+		if (this.specTypeFunctions.rotationEquals(newRotation, this.getRotation()))
 			return;
 
-		this.rotation = this.specTypeFunctions.rotationCopy(newRotation);
+		if (aplLaunchStatuses[this.spec] == LaunchStatus.Launched) {
+			if (!this.aplRotation.simple) {
+				this.aplRotation.simple = SimpleRotation.create();
+			}
+			this.aplRotation.simple.specRotationJson = JSON.stringify(this.specTypeFunctions.rotationToJson(newRotation));
+		} else {
+			this.rotation = this.specTypeFunctions.rotationCopy(newRotation);
+		}
+
 		this.rotationChangeEmitter.emit(eventID);
 	}
 
@@ -668,8 +707,16 @@ export class Player<SpecType extends Spec> {
 		}
 	}
 
-	setAutoRotationGenerator(arg: AutoRotationGenerator<SpecType>) {
-		this.autoRotationGenerator = arg;
+	setAutoRotationGenerator(generator: AutoRotationGenerator<SpecType>) {
+		this.autoRotationGenerator = generator;
+	}
+
+	setSimpleRotationGenerator(generator: SimpleRotationGenerator<SpecType>) {
+		this.simpleRotationGenerator = generator;
+	}
+
+	hasSimpleRotationGenerator(): boolean {
+		return this.simpleRotationGenerator != null;
 	}
 
 	getResolvedAplRotation(): APLRotation {
@@ -677,6 +724,11 @@ export class Player<SpecType extends Spec> {
 		if (type == APLRotationType.TypeAuto && this.autoRotationGenerator) {
 			// Clone to avoid modifying preset rotations, which are often returned directly.
 			return APLRotation.clone(this.autoRotationGenerator(this));
+		} else if (type == APLRotationType.TypeSimple && this.simpleRotationGenerator) {
+			// Clone to avoid modifying preset rotations, which are often returned directly.
+			const rot = APLRotation.clone(this.simpleRotationGenerator(this, this.getRotation(), this.getCooldowns()));
+			rot.type = APLRotationType.TypeAPL; // Set this here for convenience, so the generator functions don't need to.
+			return rot;
 		} else {
 			return this.aplRotation;
 		}
@@ -1153,6 +1205,7 @@ export class Player<SpecType extends Spec> {
 	}
 
 	toProto(forExport?: boolean, forSimming?: boolean): PlayerProto {
+		const aplIsLaunched = aplLaunchStatuses[this.spec] == LaunchStatus.Launched;
 		const gear = this.getGear();
 		return withSpecProto(
 			this.spec,
@@ -1164,7 +1217,7 @@ export class Player<SpecType extends Spec> {
 				consumes: this.getConsumes(),
 				bonusStats: this.getBonusStats().toProto(),
 				buffs: this.getBuffs(),
-				cooldowns: this.getCooldowns(),
+				cooldowns: aplIsLaunched ? Cooldowns.create({ hpPercentForDefensives: this.getCooldowns().hpPercentForDefensives }) : this.getCooldowns(),
 				talentsString: this.getTalentsString(),
 				glyphs: this.getGlyphs(),
 				rotation: forSimming ? this.getResolvedAplRotation() : this.aplRotation,
@@ -1176,7 +1229,7 @@ export class Player<SpecType extends Spec> {
 				healingModel: this.getHealingModel(),
 				database: forExport ? SimDatabase.create() : this.toDatabase(),
 			}),
-			this.getRotation(),
+			aplIsLaunched ? this.specTypeFunctions.rotationCreate() : this.getRotation(),
 			this.getSpecOptions());
 	}
 
@@ -1196,6 +1249,27 @@ export class Player<SpecType extends Spec> {
 			}
 		}
 
+		if (aplLaunchStatuses[this.spec] == LaunchStatus.Launched) {
+			const rot = this.specTypeFunctions.rotationFromPlayer(proto);
+			if (rot && !this.specTypeFunctions.rotationEquals(rot, this.specTypeFunctions.rotationCreate())) {
+				if (proto.rotation?.type == APLRotationType.TypeAPL) {
+					// Do nothing
+				} else if (this.simpleRotationGenerator) {
+					proto.rotation = APLRotation.create({
+						type: APLRotationType.TypeSimple,
+						simple: {
+							specRotationJson: JSON.stringify(this.specTypeFunctions.rotationToJson(rot)),
+							cooldowns: proto.cooldowns,
+						},
+					});
+				} else {
+					proto.rotation = APLRotation.create({
+						type: APLRotationType.TypeAuto,
+					});
+				}
+			}
+		}
+
 		TypedEvent.freezeAllAndDo(() => {
 			this.setName(eventID, proto.name);
 			this.setRace(eventID, proto.race);
@@ -1204,7 +1278,6 @@ export class Player<SpecType extends Spec> {
 			this.setConsumes(eventID, proto.consumes || Consumes.create());
 			this.setBonusStats(eventID, Stats.fromProto(proto.bonusStats || UnitStats.create()));
 			this.setBuffs(eventID, proto.buffs || IndividualBuffs.create());
-			this.setCooldowns(eventID, proto.cooldowns || Cooldowns.create());
 			this.setTalentsString(eventID, proto.talentsString);
 			this.setGlyphs(eventID, proto.glyphs || Glyphs.create());
 			this.setProfession1(eventID, proto.profession1);
@@ -1213,7 +1286,10 @@ export class Player<SpecType extends Spec> {
 			this.setInFrontOfTarget(eventID, proto.inFrontOfTarget);
 			this.setDistanceFromTarget(eventID, proto.distanceFromTarget);
 			this.setHealingModel(eventID, proto.healingModel || HealingModel.create());
-			this.setRotation(eventID, this.specTypeFunctions.rotationFromPlayer(proto));
+			if (aplLaunchStatuses[this.spec] != LaunchStatus.Launched) {
+				this.setCooldowns(eventID, proto.cooldowns || Cooldowns.create());
+				this.setRotation(eventID, this.specTypeFunctions.rotationFromPlayer(proto));
+			}
 			this.setAplRotation(eventID, proto.rotation || APLRotation.create())
 			this.setSpecOptions(eventID, this.specTypeFunctions.optionsFromPlayer(proto));
 

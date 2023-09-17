@@ -2,7 +2,6 @@ package core
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
@@ -203,98 +202,4 @@ func (action *APLActionAutocastOtherCooldowns) Execute(sim *Simulation) {
 }
 func (action *APLActionAutocastOtherCooldowns) String() string {
 	return "Autocast Other Cooldowns"
-}
-
-type APLActionWait struct {
-	defaultAPLActionImpl
-	unit     *Unit
-	duration APLValue
-
-	curWaitTime time.Duration
-}
-
-func (rot *APLRotation) newActionWait(config *proto.APLActionWait) APLActionImpl {
-	unit := rot.unit
-	durationVal := rot.coerceTo(rot.newAPLValue(config.Duration), proto.APLValueType_ValueTypeDuration)
-	if durationVal == nil {
-		return nil
-	}
-
-	return &APLActionWait{
-		unit:     unit,
-		duration: durationVal,
-	}
-}
-func (action *APLActionWait) GetAPLValues() []APLValue {
-	return []APLValue{action.duration}
-}
-func (action *APLActionWait) IsReady(sim *Simulation) bool {
-	return true
-}
-
-func (action *APLActionWait) Execute(sim *Simulation) {
-	action.unit.Rotation.controllingAction = action
-	action.curWaitTime = sim.CurrentTime + action.duration.GetDuration(sim)
-
-	pa := &PendingAction{
-		Priority:     ActionPriorityLow,
-		OnAction:     action.unit.gcdAction.OnAction,
-		NextActionAt: action.curWaitTime,
-	}
-	sim.AddPendingAction(pa)
-}
-
-func (action *APLActionWait) GetNextAction(sim *Simulation) *APLAction {
-	if sim.CurrentTime >= action.curWaitTime {
-		action.unit.Rotation.controllingAction = nil
-		return action.unit.Rotation.getNextAction(sim)
-	} else {
-		return nil
-	}
-}
-
-func (action *APLActionWait) String() string {
-	return fmt.Sprintf("Wait(%s)", action.duration)
-}
-
-type APLActionWaitUntil struct {
-	defaultAPLActionImpl
-	unit      *Unit
-	condition APLValue
-}
-
-func (rot *APLRotation) newActionWaitUntil(config *proto.APLActionWaitUntil) APLActionImpl {
-	unit := rot.unit
-	conditionVal := rot.coerceTo(rot.newAPLValue(config.Condition), proto.APLValueType_ValueTypeBool)
-	if conditionVal == nil {
-		return nil
-	}
-
-	return &APLActionWaitUntil{
-		unit:      unit,
-		condition: conditionVal,
-	}
-}
-func (action *APLActionWaitUntil) GetAPLValues() []APLValue {
-	return []APLValue{action.condition}
-}
-func (action *APLActionWaitUntil) IsReady(sim *Simulation) bool {
-	return !action.condition.GetBool(sim)
-}
-
-func (action *APLActionWaitUntil) Execute(sim *Simulation) {
-	action.unit.Rotation.controllingAction = action
-}
-
-func (action *APLActionWaitUntil) GetNextAction(sim *Simulation) *APLAction {
-	if action.condition.GetBool(sim) {
-		action.unit.Rotation.controllingAction = nil
-		return action.unit.Rotation.getNextAction(sim)
-	} else {
-		return nil
-	}
-}
-
-func (action *APLActionWaitUntil) String() string {
-	return fmt.Sprintf("WaitUntil(%s)", action.condition)
 }
