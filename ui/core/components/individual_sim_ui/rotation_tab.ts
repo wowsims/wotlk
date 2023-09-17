@@ -135,6 +135,9 @@ export class RotationTab extends SimTab {
 	}
 
 	private buildSimpleOrLegacyContent(isSimple: boolean) {
+		if (!isSimple && aplLaunchStatuses[this.simUI.player.spec] == LaunchStatus.Launched) {
+			return;
+		}
 		const cssClass = isSimple ? 'rotation-tab-simple' : 'rotation-tab-legacy';
 
 		const contentBlock = new ContentBlock(this.leftPanel, 'rotation-settings', {

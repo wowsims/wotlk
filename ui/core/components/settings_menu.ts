@@ -32,7 +32,7 @@ export class SettingsMenu extends BaseModal {
 			<button
 				class="restore-defaults-button btn btn-primary"
 				data-bs-toggle="tooltip"
-				data-bs-title="Restores all default settings (gear, consumes, buffs, talents, EP weights, etc)."
+				data-bs-title="Restores all default settings (gear, consumes, buffs, talents, EP weights, etc). Saved settings are preserved."
 			>Restore Defaults</button>
 		`
 

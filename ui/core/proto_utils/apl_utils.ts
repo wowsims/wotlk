@@ -21,7 +21,7 @@ export function autocastCooldownsAction(startAt?: string): APLAction {
 }
 
 export function scheduledCooldownAction(schedule: string, actionId: ActionIdProto): APLAction {
-    return APLAction.fromJsonString(`{"schedule":{"schedule":"${schedule}","innerAction":{"castSpell":{"spellId":${ActionIdProto.toJson(actionId)}}}}}`);
+    return APLAction.fromJsonString(`{"schedule":{"schedule":"${schedule}","innerAction":{"castSpell":{"spellId":${ActionIdProto.toJsonString(actionId)}}}}}`);
 }
 
 export function simpleCooldownActions(cooldowns: Cooldowns): Array<APLAction> {
