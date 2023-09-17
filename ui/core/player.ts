@@ -188,7 +188,7 @@ export class UnitMetadataList {
 }
 
 export type AutoRotationGenerator<SpecType extends Spec> = (player: Player<SpecType>) => APLRotation;
-export type SimpleRotationGenerator<SpecType extends Spec> = (player: Player<SpecType>, simpleRotation: SpecRotation<SpecType>) => APLRotation;
+export type SimpleRotationGenerator<SpecType extends Spec> = (player: Player<SpecType>, simpleRotation: SpecRotation<SpecType>, cooldowns: Cooldowns) => APLRotation;
 
 // Manages all the gear / consumes / other settings for a single Player.
 export class Player<SpecType extends Spec> {
@@ -656,11 +656,16 @@ export class Player<SpecType extends Spec> {
 
 	getRotation(): SpecRotation<SpecType> {
 		if (aplLaunchStatuses[this.spec] == LaunchStatus.Launched) {
+			const jsonStr = this.aplRotation.simple?.specRotationJson || '';
+			if (!jsonStr) {
+				return this.specTypeFunctions.rotationCreate();
+			}
+
 			try {
-				const json = JSON.parse(this.aplRotation.simple?.specRotationJson || '');
+				const json = JSON.parse(jsonStr);
 				return this.specTypeFunctions.rotationFromJson(json);
 			} catch (e) {
-				console.warn('Error parsing rotation spec options: ' + e);
+				console.warn(`Error parsing rotation spec options: ${e}\n\nSpec options: '${jsonStr}'`);
 				return this.specTypeFunctions.rotationCreate();
 			}
 		} else {
@@ -676,7 +681,7 @@ export class Player<SpecType extends Spec> {
 			if (!this.aplRotation.simple) {
 				this.aplRotation.simple = SimpleRotation.create();
 			}
-			this.aplRotation.simple.specRotationJson = this.specTypeFunctions.rotationToJson(newRotation);
+			this.aplRotation.simple.specRotationJson = JSON.stringify(this.specTypeFunctions.rotationToJson(newRotation));
 		} else {
 			this.rotation = this.specTypeFunctions.rotationCopy(newRotation);
 		}
@@ -721,7 +726,7 @@ export class Player<SpecType extends Spec> {
 			return APLRotation.clone(this.autoRotationGenerator(this));
 		} else if (type == APLRotationType.TypeSimple && this.simpleRotationGenerator) {
 			// Clone to avoid modifying preset rotations, which are often returned directly.
-			const rot = APLRotation.clone(this.simpleRotationGenerator(this, this.getRotation()));
+			const rot = APLRotation.clone(this.simpleRotationGenerator(this, this.getRotation(), this.getCooldowns()));
 			rot.type = APLRotationType.TypeAPL; // Set this here for convenience, so the generator functions don't need to.
 			return rot;
 		} else {
@@ -1200,6 +1205,7 @@ export class Player<SpecType extends Spec> {
 	}
 
 	toProto(forExport?: boolean, forSimming?: boolean): PlayerProto {
+		const aplIsLaunched = aplLaunchStatuses[this.spec] == LaunchStatus.Launched;
 		const gear = this.getGear();
 		return withSpecProto(
 			this.spec,
@@ -1211,7 +1217,7 @@ export class Player<SpecType extends Spec> {
 				consumes: this.getConsumes(),
 				bonusStats: this.getBonusStats().toProto(),
 				buffs: this.getBuffs(),
-				cooldowns: this.getCooldowns(),
+				cooldowns: aplIsLaunched ? Cooldowns.create({ hpPercentForDefensives: this.getCooldowns().hpPercentForDefensives }) : this.getCooldowns(),
 				talentsString: this.getTalentsString(),
 				glyphs: this.getGlyphs(),
 				rotation: forSimming ? this.getResolvedAplRotation() : this.aplRotation,
@@ -1223,7 +1229,7 @@ export class Player<SpecType extends Spec> {
 				healingModel: this.getHealingModel(),
 				database: forExport ? SimDatabase.create() : this.toDatabase(),
 			}),
-			this.getRotation(),
+			aplIsLaunched ? this.specTypeFunctions.rotationCreate() : this.getRotation(),
 			this.getSpecOptions());
 	}
 

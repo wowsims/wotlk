@@ -217,7 +217,7 @@ message Hunter {
 			ExplosiveTrap = 11;
 			Volley = 12;
 		}
-		CustomRotation custom_rotation = 8;
+		CustomRotation custom_rotation = 8 [deprecated = true];
 
 		// Switch to Aspect of the Viper when mana goes below this percent.
 		double viper_start_mana_percent = 6;
@@ -228,7 +228,7 @@ message Hunter {
 		bool allow_explosive_shot_downrank = 10;
 
 		bool multi_dot_serpent_sting = 11;
-		double steady_shot_max_delay = 12;
+		double steady_shot_max_delay = 12 [deprecated = true];
 	}
 	Rotation rotation = 1;
 	

@@ -6,6 +6,7 @@ import {
 import {
 	APLRotation,
 	APLRotation_Type as APLRotationType,
+	SimpleRotation,
 } from "../../proto/apl";
 import {
 	SavedRotation,
@@ -196,7 +197,7 @@ export class RotationTab extends SimTab {
 	}
 
 	private buildSavedDataPickers() {
-		const launchStatus = aplLaunchStatuses[this.simUI.player.spec];
+		const aplIsLaunched = aplLaunchStatuses[this.simUI.player.spec] == LaunchStatus.Launched;
 
 		const savedRotationsManager = new SavedDataManager<Player<any>, SavedRotation>(this.rightPanel, this.simUI, this.simUI.player, {
 			label: 'Rotation',
@@ -204,13 +205,13 @@ export class RotationTab extends SimTab {
 			storageKey: this.simUI.getSavedRotationStorageKey(),
 			getData: (player: Player<any>) => SavedRotation.create({
 				rotation: APLRotation.clone(player.aplRotation),
-				specRotationOptionsJson: launchStatus == LaunchStatus.Launched ? '' : JSON.stringify(player.specTypeFunctions.rotationToJson(player.getRotation())),
-				cooldowns: LaunchStatus.Launched ? undefined : player.getCooldowns(),
+				specRotationOptionsJson: aplIsLaunched ? '{}' : JSON.stringify(player.specTypeFunctions.rotationToJson(player.getRotation())),
+				cooldowns: aplIsLaunched ? Cooldowns.create() : player.getCooldowns(),
 			}),
 			setData: (eventID: EventID, player: Player<any>, newRotation: SavedRotation) => {
 				TypedEvent.freezeAllAndDo(() => {
 					player.setAplRotation(eventID, newRotation.rotation || APLRotation.create());
-					if (launchStatus != LaunchStatus.Launched) {
+					if (!aplIsLaunched) {
 						if (newRotation.specRotationOptionsJson) {
 							try {
 								const json = JSON.parse(newRotation.specRotationOptionsJson);
@@ -225,7 +226,11 @@ export class RotationTab extends SimTab {
 				});
 			},
 			changeEmitters: [this.simUI.player.rotationChangeEmitter, this.simUI.player.cooldownsChangeEmitter],
-			equals: (a: SavedRotation, b: SavedRotation) => SavedRotation.equals(a, b),
+			equals: (a: SavedRotation, b: SavedRotation) => {
+				// Uncomment this to debug equivalence checks with preset rotations (e.g. the chip doesn't highlight)
+				//console.log(`Rot A: ${SavedRotation.toJsonString(a, {prettySpaces: 2})}\n\nRot B: ${SavedRotation.toJsonString(b, {prettySpaces: 2})}`);
+				return SavedRotation.equals(a, b);
+			},
 			toJson: (a: SavedRotation) => SavedRotation.toJson(a),
 			fromJson: (obj: any) => SavedRotation.fromJson(obj),
 		});
@@ -236,6 +241,7 @@ export class RotationTab extends SimTab {
 				const rotData = presetRotation.rotation;
 				// Fill default values so the equality checks always work.
 				if (!rotData.cooldowns) rotData.cooldowns = Cooldowns.create();
+				if (!rotData.specRotationOptionsJson) rotData.specRotationOptionsJson = '{}';
 				if (!rotData.rotation) rotData.rotation = APLRotation.create();
 
 				savedRotationsManager.addSavedData({

@@ -28,6 +28,12 @@
 	}
 
 	&.rotation-type-apl {
+		.rotation-tab-auto {
+			display: none;
+		}
+		.rotation-tab-simple {
+			display: none;
+		}
 		.rotation-tab-legacy {
 			display: none;
 		}
