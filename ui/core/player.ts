@@ -70,6 +70,7 @@ import {
 	enchantAppliesToItem,
 	getTalentTree,
 	getTalentTreeIcon,
+	getTalentTreePoints,
 	getMetaGemEffectEP,
 	isTankSpec,
 	newUnitReference,
@@ -756,6 +757,10 @@ export class Player<SpecType extends Spec> {
 
 	getTalentTree(): number {
 		return getTalentTree(this.getTalentsString());
+	}
+
+	getTalentTreePoints(): Array<number> {
+		return getTalentTreePoints(this.getTalentsString())
 	}
 
 	getTalentTreeIcon(): string {
