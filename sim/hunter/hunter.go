@@ -179,6 +179,9 @@ func NewHunter(character core.Character, options *proto.Player) *Hunter {
 		Options:   hunterOptions.Options,
 		Rotation:  hunterOptions.Rotation,
 	}
+	if hunter.Rotation == nil {
+		hunter.Rotation = &proto.Hunter_Rotation{}
+	}
 	core.FillTalentsProto(hunter.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
 	hunter.EnableManaBar()
 

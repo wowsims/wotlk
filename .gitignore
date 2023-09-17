@@ -21,9 +21,7 @@ sim/web/__debug_bin
 wowsimwotlk
 
 # old result file
-TestHunter.results
-TestRotation.results
-TestWarlock.results
+TestAPL.results
 
 #macos
 .DS_Store
