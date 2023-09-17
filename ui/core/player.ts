@@ -1252,11 +1252,13 @@ export class Player<SpecType extends Spec> {
 		if (aplLaunchStatuses[this.spec] == LaunchStatus.Launched) {
 			const rot = this.specTypeFunctions.rotationFromPlayer(proto);
 			if (rot && !this.specTypeFunctions.rotationEquals(rot, this.specTypeFunctions.rotationCreate())) {
-				if (this.simpleRotationGenerator) {
+				if (proto.rotation?.type == APLRotationType.TypeAPL) {
+					// Do nothing
+				} else if (this.simpleRotationGenerator) {
 					proto.rotation = APLRotation.create({
 						type: APLRotationType.TypeSimple,
 						simple: {
-							specRotationJson: this.specTypeFunctions.rotationToJson(rot),
+							specRotationJson: JSON.stringify(this.specTypeFunctions.rotationToJson(rot)),
 							cooldowns: proto.cooldowns,
 						},
 					});
