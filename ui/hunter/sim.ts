@@ -288,7 +288,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 			simpleRotation: (player: Player<Spec.SpecHunter>, simple: HunterRotation, cooldowns: Cooldowns): APLRotation => {
 				let [prepullActions, actions] = AplUtils.standardCooldownDefaults(cooldowns);
 
-				const multiDotSerpentSting = (numTargets: number) => APLAction.fromJsonString(`{"condition":{"cmp":{"op":"OpGt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"6s"}}}},"multidot":{"spellId":{"spellId":49001},"maxDots":${numTargets},"maxOverlap":{"const":{"val":"0ms"}}}}`);
+				const serpentSting = APLAction.fromJsonString(`{"condition":{"cmp":{"op":"OpGt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"6s"}}}},"multidot":{"spellId":{"spellId":49001},"maxDots":${simple.multiDotSerpentSting ? 3 : 1},"maxOverlap":{"const":{"val":"0ms"}}}}`);
 				const scorpidSting = APLAction.fromJsonString(`{"condition":{"auraShouldRefresh":{"auraId":{"spellId":3043},"maxOverlap":{"const":{"val":"0ms"}}}},"castSpell":{"spellId":{"spellId":3043}}}`);
 				const trapWeave = APLAction.fromJsonString(`{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":49067}}}}},"castSpell":{"spellId":{"tag":1,"spellId":49067}}}`);
 				const volley = APLAction.fromJsonString(`{"castSpell":{"spellId":{"spellId":58434}}}`);
@@ -314,7 +314,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				if (simple.type == Hunter_Rotation_RotationType.Aoe) {
 					actions.push(...[
 						simple.sting == StingType.ScorpidSting ? scorpidSting : null,
-						simple.sting == StingType.SerpentSting ? (simple.multiDotSerpentSting ? multiDotSerpentSting(3) : multiDotSerpentSting(1)) : null,
+						simple.sting == StingType.SerpentSting ? serpentSting : null,
 						simple.trapWeave ? trapWeave : null,
 						volley,
 					].filter(a => a) as Array<APLAction>)
@@ -323,7 +323,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 						killShot,
 						simple.trapWeave ? trapWeave : null,
 						simple.sting == StingType.ScorpidSting ? scorpidSting : null,
-						simple.sting == StingType.SerpentSting ? (simple.multiDotSerpentSting ? multiDotSerpentSting(3) : multiDotSerpentSting(1)) : null,
+						simple.sting == StingType.SerpentSting ? serpentSting : null,
 						aimedShot,
 						multiShot,
 						steadyShot,
@@ -333,7 +333,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 						silencingShot,
 						killShot,
 						simple.sting == StingType.ScorpidSting ? scorpidSting : null,
-						simple.sting == StingType.SerpentSting ? (simple.multiDotSerpentSting ? multiDotSerpentSting(3) : multiDotSerpentSting(1)) : null,
+						simple.sting == StingType.SerpentSting ? serpentSting : null,
 						simple.trapWeave ? trapWeave : null,
 						chimeraShot,
 						aimedShot,
@@ -347,7 +347,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 						simple.allowExplosiveShotDownrank ? explosiveShot3 : null,
 						simple.trapWeave ? trapWeave : null,
 						simple.sting == StingType.ScorpidSting ? scorpidSting : null,
-						simple.sting == StingType.SerpentSting ? (simple.multiDotSerpentSting ? multiDotSerpentSting(3) : multiDotSerpentSting(1)) : null,
+						simple.sting == StingType.SerpentSting ? serpentSting : null,
 						blackArrow,
 						aimedShot,
 						multiShot,
