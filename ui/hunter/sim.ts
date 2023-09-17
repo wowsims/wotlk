@@ -1,13 +1,22 @@
-import { RaidBuffs } from '../core/proto/common.js';
-import { PartyBuffs } from '../core/proto/common.js';
-import { IndividualBuffs } from '../core/proto/common.js';
-import { Debuffs } from '../core/proto/common.js';
-import { ItemSlot } from '../core/proto/common.js';
-import { Race } from '../core/proto/common.js';
-import { RangedWeaponType } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { Stat, PseudoStat } from '../core/proto/common.js';
-import { TristateEffect } from '../core/proto/common.js'
+import {
+	Cooldowns,
+	Debuffs,
+	IndividualBuffs,
+	ItemSlot,
+	PartyBuffs,
+	Race,
+	RaidBuffs,
+	RangedWeaponType,
+	Spec,
+	Stat, PseudoStat,
+	TristateEffect,
+} from '../core/proto/common.js';
+import {
+	APLAction,
+	APLListItem,
+	APLPrepullAction,
+	APLRotation,
+} from '../core/proto/apl.js';
 import { Player } from '../core/player.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { getTalentPoints } from '../core/proto_utils/utils.js';
@@ -19,15 +28,18 @@ import { protoToTalentString } from '../core/talents/factory.js';
 import {
 	Hunter,
 	Hunter_Rotation as HunterRotation,
+	Hunter_Rotation_StingType as StingType,
 	Hunter_Options as HunterOptions,
 	Hunter_Options_PetType as PetType,
 	HunterPetTalents,
+	Hunter_Rotation_RotationType,
 } from '../core/proto/hunter.js';
 
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as Mechanics from '../core/constants/mechanics.js';
 import * as Tooltips from '../core/constants/tooltips.js';
+import * as AplUtils from '../core/proto_utils/apl_utils.js';
 
 import * as HunterInputs from './inputs.js';
 import * as Presets from './presets.js';
@@ -262,7 +274,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				],
 			},
 
-			autoRotation: (player: Player<Spec.SpecHunter>) => {
+			autoRotation: (player: Player<Spec.SpecHunter>): APLRotation => {
 				const talentTree = player.getTalentTree();
 				if (talentTree == 0) {
 					return Presets.ROTATION_PRESET_BM.rotation.rotation!;
@@ -271,6 +283,84 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				} else {
 					return Presets.ROTATION_PRESET_SV.rotation.rotation!;
 				}
+			},
+
+			simpleRotation: (player: Player<Spec.SpecHunter>, simple: HunterRotation, cooldowns: Cooldowns): APLRotation => {
+				let [prepullActions, actions] = AplUtils.standardCooldownDefaults(cooldowns);
+
+				const multiDotSerpentSting = (numTargets: number) => APLAction.fromJsonString(`{"condition":{"cmp":{"op":"OpGt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"6s"}}}},"multidot":{"spellId":{"spellId":49001},"maxDots":${numTargets},"maxOverlap":{"const":{"val":"0ms"}}}}`);
+				const scorpidSting = APLAction.fromJsonString(`{"condition":{"auraShouldRefresh":{"auraId":{"spellId":3043},"maxOverlap":{"const":{"val":"0ms"}}}},"castSpell":{"spellId":{"spellId":3043}}}`);
+				const trapWeave = APLAction.fromJsonString(`{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":49067}}}}},"castSpell":{"spellId":{"tag":1,"spellId":49067}}}`);
+				const volley = APLAction.fromJsonString(`{"castSpell":{"spellId":{"spellId":58434}}}`);
+				const killShot = APLAction.fromJsonString(`{"castSpell":{"spellId":{"spellId":61006}}}`);
+				const aimedShot = APLAction.fromJsonString(`{"castSpell":{"spellId":{"spellId":49050}}}`);
+				const multiShot = APLAction.fromJsonString(`{"castSpell":{"spellId":{"spellId":49048}}}`);
+				const steadyShot = APLAction.fromJsonString(`{"castSpell":{"spellId":{"spellId":49052}}}`);
+				const silencingShot = APLAction.fromJsonString(`{"castSpell":{"spellId":{"spellId":34490}}}`);
+				const chimeraShot = APLAction.fromJsonString(`{"castSpell":{"spellId":{"spellId":53209}}}`);
+				const blackArrow = APLAction.fromJsonString(`{"castSpell":{"spellId":{"spellId":63672}}}`);
+				const explosiveShot4 = APLAction.fromJsonString(`{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":60053}}}}},"castSpell":{"spellId":{"spellId":60053}}}`);
+				const explosiveShot3 = APLAction.fromJsonString(`{"condition":{"dotIsActive":{"spellId":{"spellId":60053}}},"castSpell":{"spellId":{"spellId":60052}}}`);
+				//const arcaneShot = APLAction.fromJsonString(`{"castSpell":{"spellId":{"spellId":49045}}}`);
+
+				if (simple.viperStartManaPercent != 0) {
+					actions.push(APLAction.fromJsonString(`{"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":34074}}}}},{"cmp":{"op":"OpLt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"${(simple.viperStartManaPercent * 100).toFixed(0)}%"}}}}]}},"castSpell":{"spellId":{"spellId":34074}}}`));
+				}
+				if (simple.viperStopManaPercent != 0) {
+					actions.push(APLAction.fromJsonString(`{"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":61847}}}}},{"cmp":{"op":"OpGt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"${(simple.viperStopManaPercent * 100).toFixed(0)}%"}}}}]}},"castSpell":{"spellId":{"spellId":61847}}}`));
+				}
+
+				const talentTree = player.getTalentTree();
+				if (simple.type == Hunter_Rotation_RotationType.Aoe) {
+					actions.push(...[
+						simple.sting == StingType.ScorpidSting ? scorpidSting : null,
+						simple.sting == StingType.SerpentSting ? (simple.multiDotSerpentSting ? multiDotSerpentSting(3) : multiDotSerpentSting(1)) : null,
+						simple.trapWeave ? trapWeave : null,
+						volley,
+					].filter(a => a) as Array<APLAction>)
+				} else if (talentTree == 0) { // BM
+					actions.push(...[
+						killShot,
+						simple.trapWeave ? trapWeave : null,
+						simple.sting == StingType.ScorpidSting ? scorpidSting : null,
+						simple.sting == StingType.SerpentSting ? (simple.multiDotSerpentSting ? multiDotSerpentSting(3) : multiDotSerpentSting(1)) : null,
+						aimedShot,
+						multiShot,
+						steadyShot,
+					].filter(a => a) as Array<APLAction>)
+				} else if (talentTree == 1) { // MM
+					actions.push(...[
+						silencingShot,
+						killShot,
+						simple.sting == StingType.ScorpidSting ? scorpidSting : null,
+						simple.sting == StingType.SerpentSting ? (simple.multiDotSerpentSting ? multiDotSerpentSting(3) : multiDotSerpentSting(1)) : null,
+						simple.trapWeave ? trapWeave : null,
+						chimeraShot,
+						aimedShot,
+						multiShot,
+						steadyShot,
+					].filter(a => a) as Array<APLAction>)
+				} else if (talentTree == 2) { // SV
+					actions.push(...[
+						killShot,
+						explosiveShot4,
+						simple.allowExplosiveShotDownrank ? explosiveShot3 : null,
+						simple.trapWeave ? trapWeave : null,
+						simple.sting == StingType.ScorpidSting ? scorpidSting : null,
+						simple.sting == StingType.SerpentSting ? (simple.multiDotSerpentSting ? multiDotSerpentSting(3) : multiDotSerpentSting(1)) : null,
+						blackArrow,
+						aimedShot,
+						multiShot,
+						steadyShot,
+					].filter(a => a) as Array<APLAction>)
+				}
+
+				return APLRotation.create({
+					prepullActions: prepullActions,
+					priorityList: actions.map(action => APLListItem.create({
+						action: action,
+					}))
+				});
 			},
 		});
 	}
