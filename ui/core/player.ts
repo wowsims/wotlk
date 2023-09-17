@@ -1256,7 +1256,7 @@ export class Player<SpecType extends Spec> {
 					proto.rotation = APLRotation.create({
 						type: APLRotationType.TypeSimple,
 						simple: {
-							specRotationJson: this.specTypeFunctions.rotationToJson(rot),
+							specRotationJson: JSON.stringify(this.specTypeFunctions.rotationToJson(rot)),
 							cooldowns: proto.cooldowns,
 						},
 					});
