@@ -276,7 +276,10 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 
 			autoRotation: (player: Player<Spec.SpecHunter>): APLRotation => {
 				const talentTree = player.getTalentTree();
-				if (talentTree == 0) {
+				const numTargets = player.sim.encounter.targets.length;
+				if (numTargets >= 4) {
+					return Presets.ROTATION_PRESET_AOE.rotation.rotation!;
+				} else if (talentTree == 0) {
 					return Presets.ROTATION_PRESET_BM.rotation.rotation!;
 				} else if (talentTree == 1) {
 					return Presets.ROTATION_PRESET_MM.rotation.rotation!;
