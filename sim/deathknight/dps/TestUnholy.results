@@ -1022,8 +1022,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Average-Default"
  value: {
-  dps: 8073.83508
-  tps: 5161.15788
+  dps: 8073.83747
+  tps: 5161.16036
   hps: 265.34082
  }
 }
