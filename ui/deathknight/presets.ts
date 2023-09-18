@@ -511,6 +511,7 @@ export const UNHOLY_2H_ROTATION_PRESET_DEFAULT = {
 		rotation: APLRotation.fromJsonString(`{
 			"type": "TypeAPL",
 			"prepullActions": [
+			  {"action":{"castSpell":{"spellId":{"spellId":49222}}},"doAtValue":{"const":{"val":"-20s"}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":48265}}},"doAtValue":{"const":{"val":"-10s"}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":63560}}},"doAtValue":{"const":{"val":"-8s"}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":57623}}},"doAtValue":{"const":{"val":"-1.5s"}}},
@@ -518,8 +519,8 @@ export const UNHOLY_2H_ROTATION_PRESET_DEFAULT = {
 			],
 			"priorityList": [
 			  {"action":{"autocastOtherCooldowns":{}}},
-			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"const":{"val":"3s"}}}},"castSpell":{"spellId":{"spellId":59131}}}},
-			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55078}}},"rhs":{"const":{"val":"3s"}}}},"castSpell":{"spellId":{"spellId":49921,"tag":1}}}},
+			  {"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"nextRuneCooldown":{"runeType":"RuneFrost"}}}},{"cmp":{"op":"OpGe","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"8s"}}}}]}},"castSpell":{"spellId":{"spellId":59131}}}},
+			  {"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55078}}},"rhs":{"nextRuneCooldown":{"runeType":"RuneUnholy"}}}},{"cmp":{"op":"OpGe","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"8s"}}}}]}},"castSpell":{"spellId":{"spellId":49921,"tag":1}}}},
 			  {"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":66803}}}}},"castSpell":{"spellId":{"spellId":49930,"tag":1}}}},
 			  {"action":{"condition":{"auraIsActive":{"auraId":{"spellId":49206}}},"castSpell":{"spellId":{"spellId":26297}}}},
 			  {"action":{"condition":{"or":{"vals":[{"auraIsActive":{"auraId":{"spellId":49206}}},{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49206}}},"rhs":{"const":{"val":"50s"}}}}]}},"castSpell":{"spellId":{"spellId":54758}}}},
