@@ -53,6 +53,7 @@ type Dot struct {
 	TickCount int32
 
 	lastTickTime time.Duration
+	isChanneled  bool
 }
 
 // TickPeriod is how fast the snapshot dot ticks.
@@ -60,8 +61,12 @@ func (dot *Dot) TickPeriod() time.Duration {
 	return dot.tickPeriod
 }
 
+func (dot *Dot) NextTickAt() time.Duration {
+	return dot.lastTickTime + dot.tickPeriod
+}
+
 func (dot *Dot) TimeUntilNextTick(sim *Simulation) time.Duration {
-	return dot.lastTickTime + dot.tickPeriod - sim.CurrentTime
+	return dot.NextTickAt() - sim.CurrentTime
 }
 
 func (dot *Dot) NumTicksRemaining(sim *Simulation) int {
@@ -181,6 +186,17 @@ func (dot *Dot) TakeSnapshot(sim *Simulation, doRollover bool) {
 func (dot *Dot) TickOnce(sim *Simulation) {
 	dot.lastTickTime = sim.CurrentTime
 	dot.OnTick(sim, dot.Unit, dot)
+
+	if dot.isChanneled && dot.Spell.Unit.IsUsingAPL {
+		// If this was the last tick, no need to do anything.
+		maxTicksRemaining := dot.NumberOfTicks - dot.TickCount
+		if maxTicksRemaining == 0 {
+			return
+		}
+
+		// Give the APL settings a chance to interrupt the channel.
+		dot.Spell.Unit.Rotation.DoNextAction(sim)
+	}
 }
 
 // ManualTick forces the dot forward one tick
@@ -231,11 +247,20 @@ func newDot(config Dot) *Dot {
 		periodicOptions.Period = dot.tickPeriod
 		dot.tickAction = NewPeriodicAction(sim, periodicOptions)
 		sim.AddPendingAction(dot.tickAction)
+		if dot.isChanneled {
+			dot.Spell.Unit.ChanneledDot = dot
+		}
 	})
 	dot.Aura.ApplyOnExpire(func(aura *Aura, sim *Simulation) {
 		if dot.tickAction != nil {
 			dot.tickAction.Cancel(sim)
 			dot.tickAction = nil
+		}
+		if dot.isChanneled {
+			dot.Spell.Unit.ChanneledDot = nil
+			if dot.Spell.Unit.IsUsingAPL {
+				dot.Spell.Unit.Rotation.interruptChannelIf = nil
+			}
 		}
 	})
 
@@ -265,6 +290,8 @@ func (spell *Spell) createDots(config DotConfig, isHot bool) {
 
 		OnSnapshot: config.OnSnapshot,
 		OnTick:     config.OnTick,
+
+		isChanneled: config.Spell.Flags.Matches(SpellFlagChanneled),
 	}
 
 	auraConfig := config.Aura

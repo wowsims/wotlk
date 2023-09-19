@@ -16,6 +16,10 @@ type APLRotation struct {
 	// Action currently controlling this rotation (only used for certain actions, such as StrictSequence).
 	controllingAction APLActionImpl
 
+	// Value that should evaluate to 'true' if the current channel is to be interrupted.
+	// Will be nil when there is no active channel.
+	interruptChannelIf APLValue
+
 	// Used inside of actions/value to determine whether they will occur during the prepull or regular rotation.
 	parsingPrepull bool
 
@@ -157,8 +161,28 @@ func (apl *APLRotation) DoNextAction(sim *Simulation) {
 	if apl.inLoop {
 		return
 	}
-
 	i := 0
+
+	if apl.unit.ChanneledDot != nil {
+		if apl.unit.ChanneledDot.lastTickTime != sim.CurrentTime {
+			// Don't allow interupts between ticks, just continue channeling until next tick.
+			return
+		}
+		if !apl.unit.GCD.IsReady(sim) || apl.interruptChannelIf == nil || !apl.interruptChannelIf.GetBool(sim) {
+			// Continue the channel.
+			return
+		}
+
+		// Allow next action to interrupt the channel, but if the action is the same action then it still needs to continue.
+		nextAction := apl.getNextAction(sim)
+		if channelAction, ok := nextAction.impl.(*APLActionChannelSpell); ok && channelAction.spell == apl.unit.ChanneledDot.Spell {
+			// Newly selected action is channeling the same spell, so continue the channel.
+			return
+		}
+		nextAction.Execute(sim)
+		i++
+	}
+
 	apl.inLoop = true
 	for nextAction := apl.getNextAction(sim); nextAction != nil; i, nextAction = i+1, apl.getNextAction(sim) {
 		if i > 1000 {

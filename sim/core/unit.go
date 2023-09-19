@@ -154,6 +154,9 @@ type Unit struct {
 	CurrentTarget *Unit
 	defaultTarget *Unit
 
+	// The currently-channeled DOT spell, otherwise nil.
+	ChanneledDot *Dot
+
 	DummyProcSpell *Spell
 }
 
@@ -444,6 +447,7 @@ func (unit *Unit) reset(sim *Simulation, _ Agent) {
 	unit.enabled = true
 	unit.resetCDs(sim)
 	unit.Hardcast.Expires = startingCDTime
+	unit.ChanneledDot = nil
 	unit.Metrics.reset()
 	unit.ResetStatDeps()
 	unit.statsWithoutDeps = unit.initialStatsWithoutDeps
@@ -531,6 +535,7 @@ func (unit *Unit) GetMetadata() *proto.UnitMetadata {
 			Id: spell.ActionID.ToProto(),
 
 			IsCastable:      spell.Flags.Matches(SpellFlagAPL),
+			IsChanneled:     spell.Flags.Matches(SpellFlagChanneled),
 			IsMajorCooldown: spell.Flags.Matches(SpellFlagMCD),
 			HasDot:          spell.dots != nil || spell.aoeDot != nil,
 			HasShield:       spell.shields != nil || spell.selfShield != nil,

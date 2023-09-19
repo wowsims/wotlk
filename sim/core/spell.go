@@ -173,6 +173,10 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		config.DamageMultiplier = 1
 	}
 
+	if unit.IsUsingAPL {
+		config.Cast.DefaultCast.ChannelTime = 0
+	}
+
 	spell := &Spell{
 		ActionID:     config.ActionID,
 		Unit:         unit,
@@ -445,10 +449,10 @@ func (spell *Spell) CanCast(sim *Simulation, target *Unit) bool {
 		return false
 	}
 
-	// While casting or channeling, no other action is possible
+	// While casting, no other action is possible
 	if spell.Unit.Hardcast.Expires > sim.CurrentTime {
 		//if sim.Log != nil {
-		//	sim.Log("Cant cast because already casting/channeling")
+		//	sim.Log("Cant cast because already casting")
 		//}
 		return false
 	}
