@@ -262,7 +262,7 @@ export const ROTATION_PRESET_AOE = {
       		  {"action":{"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":61847}}}}},{"cmp":{"op":"OpGt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"30%"}}}}]}},"castSpell":{"spellId":{"spellId":61847}}}},
       		  {"hide":true,"action":{"multidot":{"spellId":{"spellId":49001},"maxDots":3,"maxOverlap":{"const":{"val":"0ms"}}}}},
       		  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":49067}}}}},"castSpell":{"spellId":{"tag":1,"spellId":49067}}}},
-      		  {"action":{"castSpell":{"spellId":{"spellId":58434}}}}
+			  {"action":{"channelSpell":{"spellId":{"spellId":58434},"interruptIf":{"const":{"val":"true"}}}}}
       		]
 		}`),
 	}),

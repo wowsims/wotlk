@@ -179,6 +179,7 @@ func (apl *APLRotation) DoNextAction(sim *Simulation) {
 			// Newly selected action is channeling the same spell, so continue the channel.
 			return
 		}
+		apl.unit.ChanneledDot.Cancel(sim)
 		nextAction.Execute(sim)
 		i++
 	}
