@@ -172,16 +172,20 @@ func (dk *Deathknight) applyKillingMachine() {
 		Duration: time.Second * 30,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			dk.IcyTouch.BonusCritRating += 100 * core.CritRatingPerCritChance
-			dk.FrostStrikeMhHit.BonusCritRating += 100 * core.CritRatingPerCritChance
-			dk.FrostStrikeOhHit.BonusCritRating += 100 * core.CritRatingPerCritChance
+			if dk.Talents.FrostStrike {
+				dk.FrostStrikeMhHit.BonusCritRating += 100 * core.CritRatingPerCritChance
+				dk.FrostStrikeOhHit.BonusCritRating += 100 * core.CritRatingPerCritChance
+			}
 			if dk.HowlingBlast != nil {
 				dk.HowlingBlast.BonusCritRating += 100 * core.CritRatingPerCritChance
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			dk.IcyTouch.BonusCritRating -= 100 * core.CritRatingPerCritChance
-			dk.FrostStrikeMhHit.BonusCritRating -= 100 * core.CritRatingPerCritChance
-			dk.FrostStrikeOhHit.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			if dk.Talents.FrostStrike {
+				dk.FrostStrikeMhHit.BonusCritRating -= 100 * core.CritRatingPerCritChance
+				dk.FrostStrikeOhHit.BonusCritRating -= 100 * core.CritRatingPerCritChance
+			}
 			if dk.HowlingBlast != nil {
 				dk.HowlingBlast.BonusCritRating -= 100 * core.CritRatingPerCritChance
 			}
