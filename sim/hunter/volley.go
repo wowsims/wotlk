@@ -34,6 +34,9 @@ func (hunter *Hunter) registerVolleySpell() {
 			IsAOE: true,
 			Aura: core.Aura{
 				Label: "Volley",
+				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+					hunter.AutoAttacks.DelayRangedUntil(sim, sim.CurrentTime+time.Millisecond*500)
+				},
 			},
 			NumberOfTicks:       6,
 			TickLength:          time.Second * 1,
@@ -52,14 +55,14 @@ func (hunter *Hunter) registerVolleySpell() {
 				for _, aoeTarget := range sim.Encounter.TargetUnits {
 					dot.CalcAndDealPeriodicSnapshotDamage(sim, aoeTarget, dot.OutcomeRangedHitAndCritSnapshot)
 				}
+				hunter.AutoAttacks.DelayRangedUntil(sim, sim.CurrentTime+dot.TickPeriod()+time.Millisecond*500)
 			},
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-			channelDoneAt := sim.CurrentTime + hunter.Volley.CurCast.ChannelTime
-			hunter.mayMoveAt = channelDoneAt
-			hunter.AutoAttacks.DelayRangedUntil(sim, channelDoneAt+time.Millisecond*500)
-			spell.AOEDot().Apply(sim)
+			dot := spell.AOEDot()
+			dot.Apply(sim)
+			hunter.AutoAttacks.CancelAutoSwing(sim)
 		},
 	})
 }

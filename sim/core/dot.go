@@ -69,8 +69,12 @@ func (dot *Dot) TimeUntilNextTick(sim *Simulation) time.Duration {
 	return dot.NextTickAt() - sim.CurrentTime
 }
 
+func (dot *Dot) MaxTicksRemaining() int32 {
+	return dot.NumberOfTicks - dot.TickCount
+}
+
 func (dot *Dot) NumTicksRemaining(sim *Simulation) int {
-	maxTicksRemaining := dot.NumberOfTicks - dot.TickCount
+	maxTicksRemaining := dot.MaxTicksRemaining()
 	finalTickAt := dot.lastTickTime + dot.tickPeriod*time.Duration(maxTicksRemaining)
 	return MaxInt(0, int((finalTickAt-sim.CurrentTime)/dot.tickPeriod)+1)
 }
@@ -188,14 +192,13 @@ func (dot *Dot) TickOnce(sim *Simulation) {
 	dot.OnTick(sim, dot.Unit, dot)
 
 	if dot.isChanneled && dot.Spell.Unit.IsUsingAPL {
-		// If this was the last tick, no need to do anything.
-		maxTicksRemaining := dot.NumberOfTicks - dot.TickCount
-		if maxTicksRemaining == 0 {
-			return
+		if dot.MaxTicksRemaining() == 0 {
+			// If this was the last tick, wait 0ms to call the APL after the channel aura fully fades.
+			dot.Spell.Unit.WaitUntil(sim, sim.CurrentTime)
+		} else {
+			// Give the APL settings a chance to interrupt the channel.
+			dot.Spell.Unit.Rotation.DoNextAction(sim)
 		}
-
-		// Give the APL settings a chance to interrupt the channel.
-		dot.Spell.Unit.Rotation.DoNextAction(sim)
 	}
 }
 
