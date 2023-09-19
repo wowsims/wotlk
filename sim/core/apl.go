@@ -167,30 +167,30 @@ func (apl *APLRotation) DoNextAction(sim *Simulation) {
 	channeledDot := apl.unit.ChanneledDot
 	if channeledDot != nil {
 		if channeledDot.MaxTicksRemaining() == 0 {
+			// Channel has ended, but apl.unit.ChanneledDot hasn't been cleared yet meaning the aura is still active.
 			return
-		} else {
-			if apl.unit.ChanneledDot.lastTickTime != sim.CurrentTime {
-				// Don't allow interupts between ticks, just continue channeling until next tick.
-				return
-			}
-			if !apl.unit.GCD.IsReady(sim) || apl.interruptChannelIf == nil || !apl.interruptChannelIf.GetBool(sim) {
-				// Continue the channel.
-				return
-			}
-
-			// Allow next action to interrupt the channel, but if the action is the same action then it still needs to continue.
-			nextAction := apl.getNextAction(sim)
-			if nextAction == nil {
-				return
-			}
-			if channelAction, ok := nextAction.impl.(*APLActionChannelSpell); ok && channelAction.spell == channeledDot.Spell {
-				// Newly selected action is channeling the same spell, so continue the channel.
-				return
-			}
-			channeledDot.Cancel(sim)
-			nextAction.Execute(sim)
-			i++
 		}
+		if apl.unit.ChanneledDot.lastTickTime != sim.CurrentTime {
+			// Don't allow interupts between ticks, just continue channeling until next tick.
+			return
+		}
+		if !apl.unit.GCD.IsReady(sim) || apl.interruptChannelIf == nil || !apl.interruptChannelIf.GetBool(sim) {
+			// Continue the channel.
+			return
+		}
+
+		// Allow next action to interrupt the channel, but if the action is the same action then it still needs to continue.
+		nextAction := apl.getNextAction(sim)
+		if nextAction == nil {
+			return
+		}
+		if channelAction, ok := nextAction.impl.(*APLActionChannelSpell); ok && channelAction.spell == channeledDot.Spell {
+			// Newly selected action is channeling the same spell, so continue the channel.
+			return
+		}
+		channeledDot.Cancel(sim)
+		nextAction.Execute(sim)
+		i++
 	}
 
 	apl.inLoop = true
