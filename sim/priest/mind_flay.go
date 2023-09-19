@@ -91,12 +91,12 @@ func (priest *Priest) newMindFlaySpell(numTicks int32) *core.Spell {
 
 				if result.Landed() {
 					priest.AddShadowWeavingStack(sim)
-				}
-				if result.DidCrit() && hasGlyphOfShadow {
-					priest.ShadowyInsightAura.Activate(sim)
-				}
-				if result.DidCrit() && priest.ImprovedSpiritTap != nil && sim.RandomFloat("Improved Spirit Tap") > 0.5 {
-					priest.ImprovedSpiritTap.Activate(sim)
+					if result.DidCrit() && hasGlyphOfShadow {
+						priest.ShadowyInsightAura.Activate(sim)
+					}
+					if result.DidCrit() && priest.ImprovedSpiritTap != nil && sim.RandomFloat("Improved Spirit Tap") > 0.5 {
+						priest.ImprovedSpiritTap.Activate(sim)
+					}
 				}
 			},
 		},

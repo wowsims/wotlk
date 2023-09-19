@@ -2,6 +2,7 @@ import {
 	APLAction,
 
 	APLActionCastSpell,
+	APLActionChannelSpell,
 	APLActionMultidot,
 	APLActionMultishield,
 	APLActionAutocastOtherCooldowns,
@@ -350,6 +351,40 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 			AplValues.valueFieldConfig('maxOverlap', {
 				label: 'Overlap',
 				labelTooltip: 'Maximum amount of time before a Shield expires when it may be refreshed.',
+			}),
+		],
+	}),
+	['channelSpell']: inputBuilder({
+		label: 'Channel',
+		submenu: ['Casting'],
+		shortDescription: 'Channels the spell if possible, i.e. resource/cooldown/GCD/etc requirements are all met.',
+		fullDescription: `
+			<p>The difference between channeling a spell vs casting the spell is that channels can be interrupted. If the <b>Interrupt If</b> parameter is empty, this action is equivalent to <b>Cast</b>.</p>
+			<p>The channel will be interrupted only if all of the following are true:</p>
+			<ul>
+				<li>Immediately following a tick of the channel</li>
+				<li>The GCD is ready</li>
+				<li>The <b>Interrupt If</b> condition is <b>True</b></li>
+				<li>A higher-priority action in the APL list is available</li>
+			</ul>
+			<p>Note that if you simply want to allow higher-priority actions to interrupt the channel, set <b>Interrupt If</b> to <b>True</b>.</p>
+		`,
+		newValue: () => APLActionChannelSpell.create({
+			interruptIf: {
+				value: {
+					oneofKind: 'const',
+					const: {
+						val: 'true',
+					}
+				}
+			},
+		}),
+		fields: [
+			AplHelpers.actionIdFieldConfig('spellId', 'channel_spells', ''),
+			AplHelpers.unitFieldConfig('target', 'targets'),
+			AplValues.valueFieldConfig('interruptIf', {
+				label: 'Interrupt If',
+				labelTooltip: 'Condition which must be true to allow the channel to be interrupted.',
 			}),
 		],
 	}),

@@ -305,6 +305,7 @@ message SpellStats {
 	ActionID id = 1;
 
 	bool is_castable = 2; // Whether this spell may be cast by the APL logic.
+	bool is_channeled = 7; // Whether this spell is a channeled spell (Mind Flay, Drain Soul, etc).
 	bool is_major_cooldown = 3; // Whether this spell is a major cooldown.
 	bool has_dot = 4; // Whether this spell applies a DoT effect.
 	bool has_shield = 6; // Whether this spell applies a shield effect.
