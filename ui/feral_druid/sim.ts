@@ -181,8 +181,15 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 
 		// Next, socket a Nightmare Tear in the best blue socket bonus
 		const epWeights = this.player.getEpWeights();
-		const tearSlot = this.findTearSlot(optimizedGear, epWeights);
-		optimizedGear = this.socketTear(optimizedGear, tearSlot);
+		let tearColor = GemColor.GemColorBlue;
+		let tearSlot = this.findBlueTearSlot(optimizedGear, epWeights);
+
+		if (tearSlot == null) {
+			tearColor = GemColor.GemColorYellow;
+			tearSlot = this.findYellowTearSlot(optimizedGear, epWeights);
+		}
+
+		optimizedGear = this.socketTear(optimizedGear, tearSlot, tearColor);
 		await this.updateGear(optimizedGear);
 
 		// Next, identify all sockets where red gems will be placed
@@ -190,7 +197,9 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 
 		// Rank order red gems to use with their associated stat caps
 		const redGemCaps = new Array<[number, Stats]>();
-		redGemCaps.push([40117, this.calcArpCap(optimizedGear)]);
+		const arpTarget = this.calcArpTarget(optimizedGear);
+		const arpCap = new Stats().withStat(Stat.StatArmorPenetration, arpTarget + 11);
+		redGemCaps.push([40117, arpCap]);
 		const expCap = new Stats().withStat(Stat.StatExpertise, 6.5 * 32.79 + 4);
 		redGemCaps.push([40118, expCap]);
 		const critCap = this.calcCritCap(optimizedGear);
@@ -201,7 +210,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 		let startIdx = 0;
 
 		if (this.player.hasProfession(Profession.Jewelcrafting)) {
-			optimizedGear = this.optimizeJcGems(optimizedGear, redSockets);
+			optimizedGear = this.optimizeJcGems(optimizedGear, redSockets, arpTarget, arpCap, critCap);
 			startIdx = 3;
 		}
 
@@ -214,6 +223,15 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 		const hitCap = new Stats().withStat(Stat.StatMeleeHit, 8. * 32.79 + 4);
 		yellowGemCaps.push([40125, hitCap]);
 		yellowGemCaps.push([40162, hitCap.add(expCap)]);
+
+		// If a hard ArP stack configuration is detected, then allow for socketing ArP gems in weaker yellow sockets after capping Hit and Expertise
+		if (this.detectArpStackConfiguration(arpTarget)) {
+			this.sortYellowSockets(optimizedGear, yellowSockets, epWeights, tearSlot);
+			yellowGemCaps.reverse();
+			yellowGemCaps.push([40117, arpCap]);
+		}
+
+		// Continue with the rest of the yellow gems otherwise
 		yellowGemCaps.push([40148, hitCap.add(critCap)]);
 		yellowGemCaps.push([40143, hitCap]);
 		yellowGemCaps.push([40147, critCap]);
@@ -222,28 +240,24 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 		await this.fillGemsToCaps(optimizedGear, yellowSockets, yellowGemCaps, 0, 0);
 	}
 
-	calcArpCap(gear: Gear): Stats {
-		let arpCap = 1404;
-
-		if (gear.hasTrinket(45931)) {
-			arpCap = 659;
-		} else if (gear.hasTrinket(40256)) {
-			arpCap = 798;
-		}
-
-		return new Stats().withStat(Stat.StatArmorPenetration, arpCap);
-	}
-
 	calcArpTarget(gear: Gear): number {
+		let arpTarget = 1399;
+
+		// First handle ArP proc trinkets
 		if (gear.hasTrinket(45931)) {
-			return 648;
+			arpTarget -= 751;
+		} else if (gear.hasTrinket(40256)) {
+			arpTarget -= 612;
 		}
 
-		if (gear.hasTrinket(40256)) {
-			return 787;
+		// Then check for Executioner enchant
+		const weapon = gear.getEquippedItem(ItemSlot.ItemSlotMainHand);
+
+		if ((weapon != null) && (weapon!.enchant != null) && (weapon!.enchant!.effectId == 3225)) {
+			arpTarget -= 120;
 		}
 
-		return 1399;
+		return arpTarget;
 	}
 
 	calcCritCap(gear: Gear): Stats {
@@ -279,7 +293,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 		return Stats.fromProto(this.player.getCurrentStats().finalStats);
 	}
 
-	findTearSlot(gear: Gear, epWeights: Stats): ItemSlot | null {
+	findBlueTearSlot(gear: Gear, epWeights: Stats): ItemSlot | null {
 		let tearSlot: ItemSlot | null = null;
 		let maxBlueSocketBonusEP: number = 1e-8;
 
@@ -305,12 +319,45 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 		return tearSlot;
 	}
 
-	socketTear(gear: Gear, tearSlot: ItemSlot | null): Gear {
+	findYellowTearSlot(gear: Gear, epWeights: Stats): ItemSlot | null {
+		let tearSlot: ItemSlot | null = null;
+		let maxYellowSocketBonusEP: number = 1e-8;
+
+		for (var slot of gear.getItemSlots()) {
+			const item = gear.getEquippedItem(slot);
+
+			if (!item) {
+				continue;
+			}
+
+			if (item!.numSocketsOfColor(GemColor.GemColorBlue) != 0) {
+				continue;
+			}
+
+			const numYellowSockets = item!.numSocketsOfColor(GemColor.GemColorYellow);
+
+			if (numYellowSockets == 0) {
+				continue;
+			}
+
+			const socketBonusEP = new Stats(item.item.socketBonus).computeEP(epWeights);
+			const normalizedEP = socketBonusEP / numYellowSockets;
+
+			if (normalizedEP > maxYellowSocketBonusEP) {
+				tearSlot = slot;
+				maxYellowSocketBonusEP = normalizedEP;
+			}
+		}
+
+		return tearSlot;
+	}
+
+	socketTear(gear: Gear, tearSlot: ItemSlot | null, tearColor: GemColor): Gear {
 		if (tearSlot != null) {
 			const tearSlotItem = gear.getEquippedItem(tearSlot);
 
 			for (const [socketIdx, socketColor] of tearSlotItem!.allSocketColors().entries()) {
-				if (socketColor == GemColor.GemColorBlue) {
+				if (socketColor == tearColor) {
 					return gear.withEquippedItem(tearSlot, tearSlotItem!.withGem(this.sim.db.lookupGem(49110), socketIdx), true);
 				}
 			}
@@ -352,6 +399,34 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 		return socketList;
 	}
 
+	sortYellowSockets(gear: Gear, yellowSocketList: Array<[ItemSlot, number]>, epWeights: Stats, tearSlot: ItemSlot | null) {
+		yellowSocketList.sort((a,b) => {
+			// If both yellow sockets belong to the same item, then treat them equally.
+			const slot1 = a[0];
+			const slot2 = b[0];
+
+			if (slot1 == slot2) {
+				return 0;
+			}
+
+			// If an item already has a Nightmare Tear socketed, then bump up any yellow sockets in it to highest priority.
+			if (slot1 == tearSlot) {
+				return -1;
+			}
+
+			if (slot2 == tearSlot) {
+				return 1;
+			}
+
+			// For all other cases, sort by the ratio of the socket bonus value divided by the number of yellow sockets required to activate it.
+			const item1 = gear.getEquippedItem(slot1);
+			const bonus1 = new Stats(item1!.item.socketBonus).computeEP(epWeights);
+			const item2 = gear.getEquippedItem(slot2);
+			const bonus2 = new Stats(item2!.item.socketBonus).computeEP(epWeights);
+			return bonus2 / item2!.numSocketsOfColor(GemColor.GemColorYellow) - bonus1 / item1!.numSocketsOfColor(GemColor.GemColorYellow);
+		});
+	}
+
 	async fillGemsToCaps(gear: Gear, socketList: Array<[ItemSlot, number]>, gemCaps: Array<[number, Stats]>, numPasses: number, firstIdx: number): Promise<Gear> {
 		let updatedGear: Gear = gear;
 		const currentGem = this.sim.db.lookupGem(gemCaps[numPasses][0]);
@@ -374,10 +449,10 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 		// If we exceeded the stat cap, then work backwards through the socket list and replace each gem with the next highest priority option until we are below the cap
 		const nextGem = this.sim.db.lookupGem(gemCaps[numPasses + 1][0]);
 		const nextCap = gemCaps[numPasses + 1][1];
-		let capForReplacement = currentCap;
+		let capForReplacement = currentCap.subtract(nextCap);
 
-		if ((numPasses > 0) && !currentCap.equals(nextCap)) {
-			capForReplacement = currentCap.subtract(nextCap);
+		if (currentCap.computeEP(capForReplacement) <= 0) {
+			capForReplacement = currentCap;
 		}
 
 		for (var idx = socketList.length - 1; idx >= firstIdx; idx--) {
@@ -406,28 +481,17 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 		return Math.abs(projectedArp - arpTarget);
 	}
 
-	optimizeJcGems(gear: Gear, redSocketList: Array<[ItemSlot, number]>): Gear {
+	optimizeJcGems(gear: Gear, redSocketList: Array<[ItemSlot, number]>, arpTarget: number, arpCap: Stats, critCap: Stats): Gear {
 		const passiveStats = Stats.fromProto(this.player.getCurrentStats().finalStats);
 		const passiveArp = passiveStats.getStat(Stat.StatArmorPenetration);
 		const numRedSockets = redSocketList.length;
-		const arpCap = this.calcArpCap(gear).getStat(Stat.StatArmorPenetration);
-		const arpTarget = this.calcArpTarget(gear);
+		const arpCapValue = arpCap.getStat(Stat.StatArmorPenetration);
 
 		// First determine how many of the JC gems should be 34 ArP gems
-		let optimalJcArpGems = 0;
-		let minDistanceToArpTarget = this.calcDistanceToArpTarget(0, passiveArp, numRedSockets, arpCap, arpTarget);
-
-		for (let i = 1; i <= 3; i++) {
-			const distanceToArpTarget = this.calcDistanceToArpTarget(i, passiveArp, numRedSockets, arpCap, arpTarget);
-
-			if (distanceToArpTarget < minDistanceToArpTarget) {
-				optimalJcArpGems = i;
-				minDistanceToArpTarget = distanceToArpTarget;
-			}
-		}
+		const optimalJcArpGems = [0,1,2,3].reduce((m,x)=> this.calcDistanceToArpTarget(m, passiveArp, numRedSockets, arpCapValue, arpTarget)<this.calcDistanceToArpTarget(x, passiveArp, numRedSockets, arpCapValue, arpTarget) ? m:x);
 
 		// Now actually socket the gems
-		const belowCritCap = passiveStats.belowCaps(this.calcCritCap(gear));
+		const belowCritCap = passiveStats.belowCaps(critCap);
 		let updatedGear: Gear = gear;
 
 		for (let i = 0; i < 3; i++) {
@@ -443,5 +507,10 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 		}
 
 		return updatedGear;
+	}
+
+	detectArpStackConfiguration(arpTarget: number): boolean {
+		const currentArp = Stats.fromProto(this.player.getCurrentStats().finalStats).getStat(Stat.StatArmorPenetration);
+		return (arpTarget > 1000) && (currentArp > 648) && (currentArp + 20 < arpTarget + 11);
 	}
 }
