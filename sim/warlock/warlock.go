@@ -1,8 +1,9 @@
 package warlock
 
 import (
-	"github.com/wowsims/wotlk/sim/common/wotlk"
 	"time"
+
+	"github.com/wowsims/wotlk/sim/common/wotlk"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -260,14 +261,6 @@ func RegisterWarlock() {
 			player.Spec = playerSpec
 		},
 	)
-}
-
-func init() {
-	core.AddBaseStatsCombo(proto.Race_RaceBloodElf, proto.Class_ClassWarlock)
-	core.AddBaseStatsCombo(proto.Race_RaceOrc, proto.Class_ClassWarlock)
-	core.AddBaseStatsCombo(proto.Race_RaceUndead, proto.Class_ClassWarlock)
-	core.AddBaseStatsCombo(proto.Race_RaceHuman, proto.Class_ClassWarlock)
-	core.AddBaseStatsCombo(proto.Race_RaceGnome, proto.Class_ClassWarlock)
 }
 
 // Agent is a generic way to access underlying warlock on any of the agents.

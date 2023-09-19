@@ -192,16 +192,6 @@ func New(char core.Character, selfBuffs SelfBuffs, talents string) *Priest {
 	return priest
 }
 
-func init() {
-	core.AddBaseStatsCombo(proto.Race_RaceHuman, proto.Class_ClassPriest)
-	core.AddBaseStatsCombo(proto.Race_RaceDwarf, proto.Class_ClassPriest)
-	core.AddBaseStatsCombo(proto.Race_RaceNightElf, proto.Class_ClassPriest)
-	core.AddBaseStatsCombo(proto.Race_RaceDraenei, proto.Class_ClassPriest)
-	core.AddBaseStatsCombo(proto.Race_RaceUndead, proto.Class_ClassPriest)
-	core.AddBaseStatsCombo(proto.Race_RaceTroll, proto.Class_ClassPriest)
-	core.AddBaseStatsCombo(proto.Race_RaceBloodElf, proto.Class_ClassPriest)
-}
-
 // Agent is a generic way to access underlying priest on any of the agents.
 type PriestAgent interface {
 	GetPriest() *Priest

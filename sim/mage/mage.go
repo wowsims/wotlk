@@ -1,8 +1,9 @@
 package mage
 
 import (
-	"github.com/wowsims/wotlk/sim/common/wotlk"
 	"time"
+
+	"github.com/wowsims/wotlk/sim/common/wotlk"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -210,15 +211,6 @@ func NewMage(character core.Character, options *proto.Player) *Mage {
 
 	wotlk.ConstructValkyrPets(&mage.Character)
 	return mage
-}
-
-func init() {
-	core.AddBaseStatsCombo(proto.Race_RaceBloodElf, proto.Class_ClassMage)
-	core.AddBaseStatsCombo(proto.Race_RaceDraenei, proto.Class_ClassMage)
-	core.AddBaseStatsCombo(proto.Race_RaceGnome, proto.Class_ClassMage)
-	core.AddBaseStatsCombo(proto.Race_RaceHuman, proto.Class_ClassMage)
-	core.AddBaseStatsCombo(proto.Race_RaceTroll, proto.Class_ClassMage)
-	core.AddBaseStatsCombo(proto.Race_RaceUndead, proto.Class_ClassMage)
 }
 
 // Agent is a generic way to access underlying mage on any of the agents.
