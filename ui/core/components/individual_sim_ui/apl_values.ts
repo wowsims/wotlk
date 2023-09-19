@@ -47,6 +47,8 @@ import {
 	APLValueSpellTravelTime,
 	APLValueSpellChannelTime,
 	APLValueSpellCPM,
+	APLValueSpellIsChanneling,
+	APLValueSpellChanneledTicks,
 	APLValueAuraIsActive,
 	APLValueAuraIsActiveWithReactionTime,
 	APLValueAuraRemainingTime,
@@ -759,15 +761,6 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells', ''),
 		],
 	}),
-	'spellChannelTime': inputBuilder({
-		label: 'Channel Time',
-		submenu: ['Spell'],
-		shortDescription: 'Amount of time to channel the spell including any haste and spell cast time adjustments.',
-		newValue: APLValueSpellChannelTime.create,
-		fields: [
-			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells', ''),
-		],
-	}),
 	'spellTravelTime': inputBuilder({
 		label: 'Travel Time',
 		submenu: ['Spell'],
@@ -784,6 +777,33 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		newValue: APLValueSpellCPM.create,
 		fields: [
 			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells', ''),
+		],
+	}),
+	'spellChannelTime': inputBuilder({
+		label: 'Channel Time',
+		submenu: ['Spell'],
+		shortDescription: 'Amount of time to fully channel the spell including any haste and spell cast time adjustments.',
+		newValue: APLValueSpellChannelTime.create,
+		fields: [
+			AplHelpers.actionIdFieldConfig('spellId', 'channel_spells', ''),
+		],
+	}),
+	'spellIsChanneling': inputBuilder({
+		label: 'Is Channeling',
+		submenu: ['Spell'],
+		shortDescription: '<b>True</b> if this spell is currently being channeled, otherwise <b>False</b>.',
+		newValue: APLValueSpellIsChanneling.create,
+		fields: [
+			AplHelpers.actionIdFieldConfig('spellId', 'channel_spells', ''),
+		],
+	}),
+	'spellChanneledTicks': inputBuilder({
+		label: 'Channeled Ticks',
+		submenu: ['Spell'],
+		shortDescription: 'The number of completed ticks in the current channel of this spell, or <b>0</b> if the spell is not being channeled.',
+		newValue: APLValueSpellChanneledTicks.create,
+		fields: [
+			AplHelpers.actionIdFieldConfig('spellId', 'channel_spells', ''),
 		],
 	}),
 

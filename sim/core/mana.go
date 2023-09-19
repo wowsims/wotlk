@@ -192,6 +192,11 @@ func (unit *Unit) UpdateManaRegenRates() {
 
 // Applies 1 'tick' of mana regen, which worth 2s of regeneration based on mp5/int/spirit/etc.
 func (unit *Unit) ManaTick(sim *Simulation) {
+	if unit.ChanneledDot != nil {
+		// Mana is not regenerated during channels
+		return
+	}
+
 	if sim.CurrentTime < unit.PseudoStats.FiveSecondRuleRefreshTime {
 		regen := unit.manaTickWhileCasting
 		unit.AddMana(sim, MaxFloat(0, regen), unit.manaCastingMetrics)

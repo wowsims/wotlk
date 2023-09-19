@@ -157,6 +157,10 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 		return rot.newValueSpellTravelTime(config.GetSpellTravelTime())
 	case *proto.APLValue_SpellCpm:
 		return rot.newValueSpellCPM(config.GetSpellCpm())
+	case *proto.APLValue_SpellIsChanneling:
+		return rot.newValueSpellIsChanneling(config.GetSpellIsChanneling())
+	case *proto.APLValue_SpellChanneledTicks:
+		return rot.newValueSpellChanneledTicks(config.GetSpellChanneledTicks())
 
 	// Auras
 	case *proto.APLValue_AuraIsActive:

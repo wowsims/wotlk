@@ -36,6 +36,52 @@ func (action *APLActionCastSpell) String() string {
 	return fmt.Sprintf("Cast Spell(%s)", action.spell.ActionID)
 }
 
+type APLActionChannelSpell struct {
+	defaultAPLActionImpl
+	spell       *Spell
+	target      UnitReference
+	interruptIf APLValue
+}
+
+func (rot *APLRotation) newActionChannelSpell(config *proto.APLActionChannelSpell) APLActionImpl {
+	interruptIf := rot.coerceTo(rot.newAPLValue(config.InterruptIf), proto.APLValueType_ValueTypeBool)
+	if interruptIf == nil {
+		return rot.newActionCastSpell(&proto.APLActionCastSpell{
+			SpellId: config.SpellId,
+			Target:  config.Target,
+		})
+	}
+
+	spell := rot.GetAPLSpell(config.SpellId)
+	if spell == nil {
+		return nil
+	}
+	if !spell.Flags.Matches(SpellFlagChanneled) {
+		return nil
+	}
+
+	target := rot.GetTargetUnit(config.Target)
+	if target.Get() == nil {
+		return nil
+	}
+
+	return &APLActionChannelSpell{
+		spell:       spell,
+		target:      target,
+		interruptIf: interruptIf,
+	}
+}
+func (action *APLActionChannelSpell) IsReady(sim *Simulation) bool {
+	return action.spell.CanCast(sim, action.target.Get())
+}
+func (action *APLActionChannelSpell) Execute(sim *Simulation) {
+	action.spell.Cast(sim, action.target.Get())
+	action.spell.Unit.Rotation.interruptChannelIf = action.interruptIf
+}
+func (action *APLActionChannelSpell) String() string {
+	return fmt.Sprintf("Channel Spell(%s, interruptIf=%s)", action.spell.ActionID, action.interruptIf)
+}
+
 type APLActionMultidot struct {
 	defaultAPLActionImpl
 	spell      *Spell
