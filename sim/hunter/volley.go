@@ -55,13 +55,11 @@ func (hunter *Hunter) registerVolleySpell() {
 				for _, aoeTarget := range sim.Encounter.TargetUnits {
 					dot.CalcAndDealPeriodicSnapshotDamage(sim, aoeTarget, dot.OutcomeRangedHitAndCritSnapshot)
 				}
-				hunter.AutoAttacks.DelayRangedUntil(sim, sim.CurrentTime+dot.TickPeriod()+time.Millisecond*500)
 			},
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-			dot := spell.AOEDot()
-			dot.Apply(sim)
+			spell.AOEDot().Apply(sim)
 			hunter.AutoAttacks.CancelAutoSwing(sim)
 		},
 	})
