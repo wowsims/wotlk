@@ -341,7 +341,7 @@ func (ai *HodirAI) registerFrozenBlowSpell(target *core.Target) {
 		if ai.FrozenBlowsAura.IsActive() {
 			return ai.FrozenBlowsAuto
 		} else {
-			return nil
+			return ai.Target.Unit.AutoAttacks.MHAuto
 		}
 	}
 
