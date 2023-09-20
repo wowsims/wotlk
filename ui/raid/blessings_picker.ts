@@ -105,14 +105,12 @@ export class BlessingsPicker extends Component {
 				<img
 					src="${titleIcons[spec]}"
 					class="blessings-spec-icon"
-					data-bs-toggle="tooltip"
-					data-bs-title="${specNames[spec]}"
 				/>
 			</div>
 		`;
 
 		const icon = fragment.querySelector('.blessings-spec-icon') as HTMLElement;
-		Tooltip.getOrCreateInstance(icon);
+		Tooltip.getOrCreateInstance(icon, { title: specNames[spec]});
 
 		return fragment.children[0] as HTMLElement;
 	}

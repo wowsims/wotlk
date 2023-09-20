@@ -164,13 +164,7 @@ class TalentTreePicker<TalentsProto> extends Component {
 					<img src={getSpecIcon(klass, specNumber)} className="talent-tree-icon" />
 					<span className="talent-tree-title"></span>
 					<span className="talent-tree-points"></span>
-					<button
-						className="talent-tree-reset btn btn-link link-danger"
-						dataset={{
-							bsTitle:'Reset talent points',
-							bsToggle: 'tooltip'
-						}}
-					>
+					<button className="talent-tree-reset btn btn-link link-danger">
 						<i className="fa fa-times"></i>
 					</button>
 				</div>
@@ -222,7 +216,9 @@ class TalentTreePicker<TalentsProto> extends Component {
 			recurseCalcIdx(t, 20);
 		}
 		const resetBtn = this.rootElem.querySelector('.talent-tree-reset') as HTMLElement;
-		new Tooltip(resetBtn)
+		new Tooltip(resetBtn, {
+			title: 'Reset talent points',
+		});
 		resetBtn.addEventListener('click', event => {
 			this.talents.forEach(talent => talent.setPoints(0, false));
 			this.picker.inputChanged(TypedEvent.nextEventID());

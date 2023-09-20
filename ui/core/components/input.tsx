@@ -65,25 +65,18 @@ export abstract class Input<ModObject, T, V = T> extends Component {
 
 	private buildLabel(config: InputConfig<ModObject, T, V>): JSX.Element {
 		let dataset = {};
-		if (config.labelTooltip) {
-			dataset={
-				bsToggle: 'tooltip',
-				bsTitle: config.labelTooltip,
-				bsHtml: true,
-			}
-		}
 
 		let label = (
-			<label
-				className="form-label"
-				dataset={dataset}
-			>
-			{config.label}
+			<label className="form-label">
+				{config.label}
 			</label>
 		);
 
 		if (config.labelTooltip)
-			new Tooltip(label);
+			new Tooltip(label, {
+				title: config.labelTooltip,
+				html: true,
+			});
 
 		return label;
 	}

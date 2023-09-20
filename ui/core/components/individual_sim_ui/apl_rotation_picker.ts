@@ -229,11 +229,13 @@ class APLListItemPicker extends Input<Player<any>, APLListItem> {
 }
 
 function makeListItemWarnings(itemHeaderElem: HTMLElement, player: Player<any>, getWarnings: (player: Player<any>) => Array<string>) {
-	const warningsElem = ListPicker.makeActionElem('apl-warnings', 'Warnings', 'fa-exclamation-triangle');
+	const warningsElem = ListPicker.makeActionElem('apl-warnings', 'fa-exclamation-triangle');
 	warningsElem.classList.add('warning', 'link-warning');
 	warningsElem.setAttribute('data-bs-html', 'true');
 	const warningsTooltip = Tooltip.getOrCreateInstance(warningsElem, {
 		customClass: 'dropdown-tooltip',
+		title: 'Warnings',
+		html: true,
 	});
 	itemHeaderElem.appendChild(warningsElem);
 
@@ -266,10 +268,10 @@ class HidePicker extends Input<Player<any>, boolean> {
 	constructor(parent: HTMLElement, modObject: Player<any>, config: InputConfig<Player<any>, boolean>) {
 		super(parent, 'hide-picker-root', modObject, config);
 
-		this.inputElem = ListPicker.makeActionElem('hide-picker-button', 'Enable/Disable', 'fa-eye');
+		this.inputElem = ListPicker.makeActionElem('hide-picker-button', 'fa-eye');
 		this.iconElem = this.inputElem.childNodes[0] as HTMLElement;
 		this.rootElem.appendChild(this.inputElem);
-		this.tooltip = Tooltip.getOrCreateInstance(this.inputElem);
+		this.tooltip = Tooltip.getOrCreateInstance(this.inputElem, { title: 'Enable/Disable' });
 
 		this.init();
 

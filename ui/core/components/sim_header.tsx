@@ -4,12 +4,14 @@ import { SimUI } from '../sim_ui';
 import { Tooltip } from 'bootstrap';
 import { SimTab } from './sim_tab';
 
+import { element, fragment } from 'tsx-vanilla';
+
 interface ToolbarLinkArgs {
 	parent: HTMLElement,
 	href?: string,
 	text?: string,
 	icon?: string,
-	tooltip?: string,
+	tooltip?: string | HTMLElement,
 	classes?: string,
 	onclick?: Function
 }
@@ -20,6 +22,7 @@ export class SimHeader extends Component {
 	private simTabsContainer: HTMLElement;
 	private simToolbar: HTMLElement;
 	private knownIssuesLink: HTMLElement;
+	private knownIssuesContent: HTMLElement;
 
 	constructor(parentElem: HTMLElement, simUI: SimUI) {
 		super(parentElem, 'sim-header');
@@ -27,6 +30,7 @@ export class SimHeader extends Component {
 		this.simTabsContainer = this.rootElem.querySelector('.sim-tabs') as HTMLElement;
 		this.simToolbar = this.rootElem.querySelector('.sim-toolbar') as HTMLElement;
 
+		this.knownIssuesContent = <ul className='text-start ps-3 mb-0'></ul> as HTMLElement;
 		this.knownIssuesLink = this.addKnownIssuesLink();
 		this.addBugReportLink();
 		this.addDownloadBinaryLink();
@@ -47,22 +51,27 @@ export class SimHeader extends Component {
 	addTab(title: string, contentId: string) {
 		const isFirstTab = this.simTabsContainer.children.length == 0;
 
-		const tabFragment = document.createElement('fragment');
-		tabFragment.innerHTML = `
-			<li class="${contentId} nav-item" role="presentation">
-				<a
-					class="nav-link ${isFirstTab ? 'active' : ''}"
-					data-bs-toggle="tab"
-					data-bs-target="#${contentId}"
-					type="button"
-					role="tab"
-					aria-controls="${contentId}"
-					aria-selected="${isFirstTab}"
-				>${title}</a>
+		let classes = `${contentId} nav-item`;
+		let tab = (
+			<li className={classes} attributes={{role:"presentation"}}>
+				<a className={`nav-link ${isFirstTab && 'active'}`}
+					dataset={{
+						bsToggle:'tab',
+						bsTarget: `#${contentId}`,
+					}}
+					attributes={{
+						role:'tab',
+						'aria-selected':isFirstTab,
+					}}
+					type='button'
+					>
+						{title}
+				</a>
 			</li>
-		`;
+		);
+		tab.setAttribute('aria-controls', contentId);
 
-		this.simTabsContainer.appendChild(tabFragment.children[0] as HTMLElement);
+		this.simTabsContainer.appendChild(tab);
 	}
 
 	addSimTabLink(tab: SimTab) {
@@ -85,43 +94,37 @@ export class SimHeader extends Component {
 		const dropdownElem = this.rootElem.getElementsByClassName(cssClass)[0] as HTMLElement;
 		const menuElem = dropdownElem.getElementsByClassName('dropdown-menu')[0] as HTMLElement;
 
-		const itemFragment = document.createElement('fragment');
-		itemFragment.innerHTML = `
+		const itemElem = (
 			<li>
-				<a
-					href="javascript:void(0)"
-					class="dropdown-item"
-					role="button"
-				>${label}</a>
+				<a href="javascript:void(0)"
+					className='dropdown-item'
+					attributes={{
+						role: 'button'
+					}}>
+					{label}
+				</a>
 			</li>
-		`;
-		const itemElem = itemFragment.children[0] as HTMLElement;
-		const linkElem = itemElem.children[0] as HTMLElement;
+		);
+
+		const linkElem = itemElem.children[0];
 		linkElem.addEventListener('click', () => onClick(menuElem));
 		menuElem.appendChild(itemElem);
 	}
 
 	private addToolbarLink(args: ToolbarLinkArgs): HTMLElement {
-		let fragment = document.createElement('fragment');
-		fragment.innerHTML = `
-			<div class="sim-toolbar-item">
-				<a
-					href="${args.href ? args.href : 'javascript:void(0)'}"
-					${args.href ? 'target="_blank"' : ''}
-					class="${args.classes}"
-					${args.tooltip ? 'data-bs-toggle="tooltip"' : ''}
-					${args.tooltip ? 'data-bs-placement="bottom"' : ''}
-					${args.tooltip ? `data-bs-title="${args.tooltip}"` : ''}
-					${args.tooltip ? 'data-bs-html="true"' : ''}
+		let item = (
+			<div className="sim-toolbar-item">
+				<a 
+					href={args.href ? args.href : 'javascript:void(0)'}
+					className={args.classes}
+					target={args.href ? "_blank" : '_self'}
 				>
-					${args.icon ? `<i class="${args.icon}"></i>` : ''}
-					${args.text ? args.text : ''}
+					{args.icon && <i className={args.icon}></i>}
+					{args.text ? ` ${args.text} ` : ''} 
 				</a>
-			</div>
-		`;
+			</div>);
 
-		let item = fragment.children[0] as HTMLElement;
-		let link = item.children[0] as HTMLElement;
+		let link = item.children[0];
 
 		if (args.onclick) {
 			link.addEventListener('click', () => {
@@ -131,30 +134,29 @@ export class SimHeader extends Component {
 			});
 		}
 
-		new Tooltip(link);
-		args.parent.appendChild(item);
+		if (args.tooltip) {
+			new Tooltip(link, {
+				placement: 'bottom',
+				title: args.tooltip,
+				html: true,
+			});
+		}
 
-		return item;
+		return args.parent.appendChild(item) as HTMLElement;
 	}
 
 	private addKnownIssuesLink(): HTMLElement {
 		return this.addToolbarLink({
 			parent: this.simToolbar,
 			text: "Known Issues",
-			tooltip: "<ul class='text-start ps-3 mb-0'></ul>",
+			tooltip: this.knownIssuesContent,
 			classes: "known-issues link-danger"
 		}).children[0] as HTMLElement;
 	}
 
 	addKnownIssue(issue: string) {
-		let tooltipFragment = document.createElement('fragment');
-		tooltipFragment.innerHTML = this.knownIssuesLink.getAttribute('data-bs-title') as string;
-		let list = tooltipFragment.children[0] as HTMLElement;
-		let listItem = document.createElement('li');
-		listItem.innerHTML = issue;
-		list.appendChild(listItem);
-		this.knownIssuesLink.setAttribute('data-bs-title', list.outerHTML);
-		new Tooltip(this.knownIssuesLink);
+		this.knownIssuesContent.appendChild(<li>{issue}</li>);
+		Tooltip.getInstance(this.knownIssuesLink)?.setContent({'.tooltip-inner': this.knownIssuesContent});
 	}
 
 	private addBugReportLink() {
@@ -251,32 +253,29 @@ export class SimHeader extends Component {
 	}
 
 	protected customRootElement(): HTMLElement {
-		let headerFragment = document.createElement('fragment');
-		headerFragment.innerHTML = `
-			<header class="sim-header">
-				<div class="sim-header-container">
-					<ul class="sim-tabs nav nav-tabs" role="tablist"></ul>
-					<div class="import-export within-raid-sim-hide">
-						<div class="dropdown sim-dropdown-menu import-dropdown">
-							<a href="javascript:void(0)" class="import-link" role="button" data-bs-toggle="dropdown" data-bs-display="dynamic" aria-expanded="false">
-								<i class="fa fa-download"></i>
-								Import
+		return (
+			<header className="sim-header">
+				<div className="sim-header-container">
+					<ul className="sim-tabs nav nav-tabs" attributes={{role:"tablist"}}></ul>
+					<div className="import-export within-raid-sim-hide">
+						<div className="dropdown sim-dropdown-menu import-dropdown">
+							<a href="javascript:void(0)" className="import-link" attributes={{role:"button", 'aria-expanded':"false"}} dataset={{bsToggle:'dropdown', bsDisplay:'dynamic'}}>
+								<i className="fa fa-download"></i>
+								{' Import '}
 							</a>
-							<ul class="dropdown-menu"></ul>
+							<ul className="dropdown-menu"></ul>
 						</div>
-						<div class="dropdown sim-dropdown-menu export-dropdown">
-							<a href="javascript:void(0)" class="export-link" role="button" data-bs-toggle="dropdown" data-bs-display="dynamic" aria-expanded="false">
-								<i class="fa fa-right-from-bracket"></i>
-								Export
+						<div className="dropdown sim-dropdown-menu export-dropdown">
+							<a href="javascript:void(0)" className="export-link" attributes={{role:"button", 'aria-expanded':"false"}} dataset={{bsToggle:'dropdown', bsDisplay:'dynamic'}}>
+								<i className="fa fa-right-from-bracket"></i>
+								{' Export '}
 							</a>
-							<ul class="dropdown-menu"></ul>
+							<ul className="dropdown-menu"></ul>
 						</div>
 					</div>
-					<div class="sim-toolbar"></div>
+					<div className="sim-toolbar"></div>
 				</div>
 			</header>
-		`;
-
-		return headerFragment.children[0] as HTMLElement;
+		) as HTMLElement;
 	}
 }

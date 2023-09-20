@@ -113,13 +113,11 @@ class RaidStatsCategory extends Component {
 		if (options.effects.length != 1 || options.effects[0].playerData?.class) {
 			const statsLink = this.rootElem.querySelector('.raid-stats-category') as HTMLElement;
 
-			statsLink.setAttribute('data-bs-toggle', 'tooltip');
-			statsLink.setAttribute('data-bs-placement', 'right');
-			statsLink.setAttribute('data-bs-html', 'true');
-
 			// Using the title option here because outerHTML sanitizes and filters out the img src options
 			Tooltip.getOrCreateInstance(statsLink, {
 				customClass: 'raid-stats-category-tooltip',
+				html: true,
+				placement: 'right',
 				title: this.tooltipElem,
 			})
 		}
