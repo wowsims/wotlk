@@ -624,6 +624,7 @@ export class Timeline extends ResultComponent {
 		});
 		tippy(hideElem, {
 			content: isHiddenLabel ? 'Show Row' : 'Hide Row',
+			ignoreAttributes: true,
 		});
 		const updateHidden = () => {
 			if (isHiddenLabel == Boolean(this.hiddenIds.find(hiddenId => hiddenId.equals(actionId)))) {
@@ -743,6 +744,7 @@ export class Timeline extends ResultComponent {
 			tippy(resourceElem, {
 				content: this.resourceTooltipElem(resourceLogGroup, startValue, false),
 				placement: 'bottom',
+				ignoreAttributes: true,
 			});
 		});
 		this.rotationTimeline.appendChild(rowElem);
@@ -809,6 +811,7 @@ export class Timeline extends ResultComponent {
 			tippy(castElem, {
 				content: tt,
 				placement: 'bottom',
+				ignoreAttributes: true,
 			});
 
 			castLog.damageDealtLogs.filter(ddl => ddl.tick).forEach(ddl => {
@@ -827,6 +830,7 @@ export class Timeline extends ResultComponent {
 				tippy(tickElem, {
 					content: tt,
 					placement: 'bottom',
+					ignoreAttributes: true,
 				});
 			});
 		});
@@ -861,7 +865,8 @@ export class Timeline extends ResultComponent {
 			const tt = (<span> {aul.actionId!.name}: {aul.gainedAt.toFixed(2)}s - {(aul.fadedAt).toFixed(2)}s</span>);
 
 			tippy(auraElem, {
-				content: tt
+				content: tt,
+				ignoreAttributes: true,
 			});
 
 			aul.stacksChange.forEach((scl, i) => {

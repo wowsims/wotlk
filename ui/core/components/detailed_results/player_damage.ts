@@ -36,6 +36,7 @@ export class PlayerDamageMetricsTable extends MetricsTable<UnitMetrics> {
 					tippy(rowElem, {
 						content: 'Loading...',
 						placement: 'bottom',
+						ignoreAttributes: true,
 						onShow(instance: any) {
 							if (!chart) {
 								chart = makeChart();

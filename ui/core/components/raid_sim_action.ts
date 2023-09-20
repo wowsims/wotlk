@@ -227,7 +227,7 @@ export class RaidSimResultsManager {
 		});
 		tippy(simReferenceSwapButton, {
 			'content': 'Swap reference with current',
-			'allowHTML': true,
+			ignoreAttributes: true,
 		});
 
 		const simReferenceDeleteButton = this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-delete')[0] as HTMLSpanElement;
@@ -238,7 +238,7 @@ export class RaidSimResultsManager {
 		});
 		tippy(simReferenceDeleteButton, {
 			'content': 'Remove reference',
-			'allowHTML': true,
+			ignoreAttributes: true,
 		});
 
 		this.updateReference();
@@ -306,7 +306,7 @@ export class RaidSimResultsManager {
 		}
 		tippy(elem, {
 			'content': significance_str,
-			'allowHTML': true,
+			ignoreAttributes: true,
 		});
 
 		return isDiff;

@@ -67,6 +67,7 @@ export abstract class MetricsTable<T> extends ResultComponent {
 			if (columnConfig.tooltip) {
 				tippy(headerCell, {
 					content: columnConfig.tooltip,
+					ignoreAttributes: true,
 				});
 			}
 			headerRowElem.appendChild(headerCell);
