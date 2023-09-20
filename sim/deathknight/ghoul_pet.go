@@ -37,8 +37,6 @@ func (dk *Deathknight) NewArmyGhoulPet(_ int) *GhoulPet {
 
 		stats.MeleeHit:  -nocsHit,
 		stats.Expertise: -nocsHit * PetExpertiseScale,
-
-		stats.MeleeCrit: 3.2 * core.CritRatingPerCritChance,
 	}
 
 	ghoulPet := &GhoulPet{
