@@ -58,14 +58,12 @@ export class CooldownsPicker extends Component {
 					href="javascript:void(0)"
 					class="delete-cooldown link-danger"
 					role="button"
-					data-bs-toggle="tooltip"
-					data-bs-title="Delete Cooldown"
 				>
 					<i class="fa fa-times fa-xl"></i>
 				</a>
 			`
 			const deleteButton = deleteButtonFragment.children[0] as HTMLElement;
-			const deleteButtonTooltip = Tooltip.getOrCreateInstance(deleteButton);
+			const deleteButtonTooltip = Tooltip.getOrCreateInstance(deleteButton, {title: 'Delete Cooldown'});
 			deleteButton.addEventListener('click', event => {
 				const newCooldowns = this.player.getCooldowns();
 				newCooldowns.cooldowns.splice(i, 1);

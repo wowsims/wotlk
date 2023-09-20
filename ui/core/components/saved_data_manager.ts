@@ -112,8 +112,6 @@ export class SavedDataManager<ModObject, T> extends Component {
 					href="javascript:void(0)"
 					class="saved-data-set-delete"
 					role="button"
-					data-bs-toggle="tooltip"
-					data-bs-title="Delete saved ${this.config.label}"
 				>
 					<i class="fa fa-times fa-lg"></i>
 				</a>
@@ -122,7 +120,7 @@ export class SavedDataManager<ModObject, T> extends Component {
 			const deleteButton = deleteFragment.children[0] as HTMLElement;
 			dataElem.appendChild(deleteButton);
 
-			const tooltip = Tooltip.getOrCreateInstance(deleteButton);
+			const tooltip = Tooltip.getOrCreateInstance(deleteButton, {title:`Delete saved ${this.config.label}`});
 
 			deleteButton.addEventListener('click', event => {
 				event.stopPropagation();
@@ -140,11 +138,11 @@ export class SavedDataManager<ModObject, T> extends Component {
 		}
 
 		if (config.tooltip) {
-			dataElem.setAttribute('data-bs-toggle', 'tooltip');
-			dataElem.setAttribute('data-bs-title', config.tooltip);
-			dataElem.setAttribute('data-bs-placement', 'bottom');
-			dataElem.setAttribute('data-bs-html', 'true');
-			Tooltip.getOrCreateInstance(dataElem);
+			Tooltip.getOrCreateInstance(dataElem, {
+				title: config.tooltip,
+				placement: 'bottom',
+				html: true,
+			});
 		}
 
 		const checkActive = () => {

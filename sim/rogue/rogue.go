@@ -326,17 +326,6 @@ func (rogue *Rogue) IsStealthed() bool {
 	return false
 }
 
-func init() {
-	core.AddBaseStatsCombo(proto.Race_RaceBloodElf, proto.Class_ClassRogue)
-	core.AddBaseStatsCombo(proto.Race_RaceDwarf, proto.Class_ClassRogue)
-	core.AddBaseStatsCombo(proto.Race_RaceGnome, proto.Class_ClassRogue)
-	core.AddBaseStatsCombo(proto.Race_RaceHuman, proto.Class_ClassRogue)
-	core.AddBaseStatsCombo(proto.Race_RaceNightElf, proto.Class_ClassRogue)
-	core.AddBaseStatsCombo(proto.Race_RaceOrc, proto.Class_ClassRogue)
-	core.AddBaseStatsCombo(proto.Race_RaceTroll, proto.Class_ClassRogue)
-	core.AddBaseStatsCombo(proto.Race_RaceUndead, proto.Class_ClassRogue)
-}
-
 // Agent is a generic way to access underlying rogue on any of the agents.
 type RogueAgent interface {
 	GetRogue() *Rogue

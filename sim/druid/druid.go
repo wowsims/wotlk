@@ -301,11 +301,6 @@ func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents strin
 	return druid
 }
 
-func init() {
-	core.AddBaseStatsCombo(proto.Race_RaceTauren, proto.Class_ClassDruid)
-	core.AddBaseStatsCombo(proto.Race_RaceNightElf, proto.Class_ClassDruid)
-}
-
 type DruidSpell struct {
 	*core.Spell
 	FormMask DruidForm

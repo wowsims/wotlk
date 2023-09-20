@@ -223,18 +223,6 @@ func (warrior *Warrior) intensifyRageCooldown(baseCd time.Duration) time.Duratio
 	return []time.Duration{baseCd * 100, baseCd * 89, baseCd * 78, baseCd * 67}[warrior.Talents.IntensifyRage]
 }
 
-func init() {
-	core.AddBaseStatsCombo(proto.Race_RaceDraenei, proto.Class_ClassWarrior)
-	core.AddBaseStatsCombo(proto.Race_RaceDwarf, proto.Class_ClassWarrior)
-	core.AddBaseStatsCombo(proto.Race_RaceGnome, proto.Class_ClassWarrior)
-	core.AddBaseStatsCombo(proto.Race_RaceHuman, proto.Class_ClassWarrior)
-	core.AddBaseStatsCombo(proto.Race_RaceNightElf, proto.Class_ClassWarrior)
-	core.AddBaseStatsCombo(proto.Race_RaceOrc, proto.Class_ClassWarrior)
-	core.AddBaseStatsCombo(proto.Race_RaceTauren, proto.Class_ClassWarrior)
-	core.AddBaseStatsCombo(proto.Race_RaceTroll, proto.Class_ClassWarrior)
-	core.AddBaseStatsCombo(proto.Race_RaceUndead, proto.Class_ClassWarrior)
-}
-
 // Agent is a generic way to access underlying warrior on any of the agents.
 type WarriorAgent interface {
 	GetWarrior() *Warrior

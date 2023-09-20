@@ -1,6 +1,8 @@
 import { Tooltip } from 'bootstrap';
 import { Component } from './component.js';
 
+import { element, fragment } from 'tsx-vanilla';
+
 export interface ContentBlockHeaderConfig {
 	title: string,
 	extraCssClasses?: Array<string>,
@@ -39,31 +41,28 @@ export class ContentBlock extends Component {
 
 	private buildHeader(): HTMLElement | null {
 		if (this.config.header && Object.keys(this.config.header).length) {
-			let titleTag = this.config.header.titleTag || 'h6';
-			let headerFragment = document.createElement('fragment');
-			headerFragment.innerHTML = `
-        <div class="content-block-header">
-          <${titleTag}
-            class="content-block-title"
-            ${this.config.header.tooltip ? 'data-bs-toggle="tooltip"' : ''}
-            ${this.config.header.tooltip ? `data-bs-title="${this.config.header.tooltip}"` : ''}
-            ${this.config.header.tooltip ? 'data-bs-html="true"' : ''}
-          >${this.config.header.title}</${titleTag}>
-        </div>
-      `;
-
-			let header = headerFragment.children[0] as HTMLElement;
+			let TitleTag = this.config.header.titleTag || 'h6';
+			let header =(
+				<div className="content-block-header">
+					<TitleTag className="content-block-title">
+						{this.config.header.title}
+					</TitleTag>
+				</div>
+			);
 
 			if (this.config.header.extraCssClasses) {
 				header.classList.add(...this.config.header.extraCssClasses);
 			}
 
 			if (this.config.header.tooltip)
-				Tooltip.getOrCreateInstance(header.querySelector('.content-block-title') as HTMLElement);
+				Tooltip.getOrCreateInstance(header.querySelector('.content-block-title') as HTMLElement,  {
+					html: true,
+					title: this.config.header.tooltip
+				});
 
 			this.rootElem.appendChild(header);
 
-			return header;
+			return header as HTMLElement;
 		} else {
 			return null;
 		}

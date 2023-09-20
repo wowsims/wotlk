@@ -842,6 +842,7 @@ export class ItemList<T> {
 		const tabContentId = (label + '-tab').split(' ').join('');
 		const selected = label === config.selectedTab;
 
+		const epButton = ref<HTMLButtonElement>();
 		this.tabContent = (
 			<div
 				id={tabContentId}
@@ -864,13 +865,8 @@ export class ItemList<T> {
 						EP
 						<i className="fa-solid fa-plus-minus fa-2xs"></i>
 						<button
-							id="ep-explanation"
-							className="btn btn-link p-0 ms-1"
-							dataset={{
-								bsToggle:'tooltip',
-								bsTitle:EP_TOOLTIP
-							}}
-						>
+							ref={epButton}
+							className="btn btn-link p-0 ms-1">
 							<i className="far fa-question-circle fa-lg"></i>
 						</button>
 					</label>
@@ -881,8 +877,9 @@ export class ItemList<T> {
 
 		parent.appendChild(this.tabContent);
 
-		const epExplanationElem = this.tabContent.querySelector('#ep-explanation') as HTMLElement;
-		new Tooltip(epExplanationElem);
+		new Tooltip(epButton.value!, {
+			title: EP_TOOLTIP
+		});
 
 		const show1hWeaponsSelector = makeShow1hWeaponsSelector(this.tabContent.getElementsByClassName('selector-modal-show-1h-weapons')[0] as HTMLElement, player.sim);
 		const show2hWeaponsSelector = makeShow2hWeaponsSelector(this.tabContent.getElementsByClassName('selector-modal-show-2h-weapons')[0] as HTMLElement, player.sim);
@@ -1160,11 +1157,7 @@ export class ItemList<T> {
 			<div>
 				<button className="selector-modal-list-item-favorite btn btn-link p-0"
 						ref={favoriteElem}
-						onclick={() => setFavorite(listItemElem.dataset.fav == 'false')}
-						dataset={{
-							bsToggle: 'tooltip',
-							bsTitle: 'Add to favorites'
-						}}>
+						onclick={() => setFavorite(listItemElem.dataset.fav == 'false')}>
 					<i className='fa-star fa-xl'></i>
 				</button>
 			</div>
@@ -1201,7 +1194,9 @@ export class ItemList<T> {
 
 		setItemQualityCssClass(nameElem.value!, itemData.quality);
 
-		new Tooltip(favoriteElem.value!);
+		new Tooltip(favoriteElem.value!, {
+			title: 'Add to favorites'
+		});
 		const setFavorite = (isFavorite: boolean) => {
 			const filters = this.player.sim.getFilters();
 			if (this.label == 'Items') {

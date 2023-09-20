@@ -241,16 +241,6 @@ func NewHunter(character core.Character, options *proto.Player) *Hunter {
 	return hunter
 }
 
-func init() {
-	core.AddBaseStatsCombo(proto.Race_RaceBloodElf, proto.Class_ClassHunter)
-	core.AddBaseStatsCombo(proto.Race_RaceDraenei, proto.Class_ClassHunter)
-	core.AddBaseStatsCombo(proto.Race_RaceDwarf, proto.Class_ClassHunter)
-	core.AddBaseStatsCombo(proto.Race_RaceNightElf, proto.Class_ClassHunter)
-	core.AddBaseStatsCombo(proto.Race_RaceOrc, proto.Class_ClassHunter)
-	core.AddBaseStatsCombo(proto.Race_RaceTauren, proto.Class_ClassHunter)
-	core.AddBaseStatsCombo(proto.Race_RaceTroll, proto.Class_ClassHunter)
-}
-
 // Agent is a generic way to access underlying hunter on any of the agents.
 type HunterAgent interface {
 	GetHunter() *Hunter

@@ -2,6 +2,8 @@ import { Tooltip } from 'bootstrap';
 import { Component } from '../components/component.js';
 import { TypedEvent } from '../typed_event.js';
 
+import { element, fragment } from 'tsx-vanilla';
+
 // Config for displaying a warning to the user whenever a condition is met.
 interface SimWarning {
 	updateOn: TypedEvent<any>,
@@ -28,16 +30,17 @@ export class ResultsViewer extends Component {
 
 	constructor(parentElem: HTMLElement) {
 		super(parentElem, 'results-viewer');
-		this.rootElem.innerHTML = `
-      <div class="results-pending">
-        <div class="loader"></div>
-      </div>
-      <div class="results-content">
-      </div>
-	  <div class="warning-zone" style="text-align: center">
-	  </div>
-		`;
-
+		this.rootElem.appendChild(
+			<>
+				<div className="results-pending">
+				<div className="loader"></div>
+				</div>
+				<div className="results-content">
+				</div>
+				<div className="warning-zone" style="text-align: center">
+				</div>
+			</>
+		);
 		this.pendingElem = this.rootElem.getElementsByClassName('results-pending')[0] as HTMLElement;
 		this.contentElem = this.rootElem.getElementsByClassName('results-content')[0] as HTMLElement;
 		this.warningElem = this.rootElem.getElementsByClassName('warning-zone')[0] as HTMLElement;
@@ -50,25 +53,19 @@ export class ResultsViewer extends Component {
 	}
 
 	private addWarningLink(args: WarningLinkArgs): HTMLElement {
-		let fragment = document.createElement('fragment');
-		fragment.innerHTML = `
-			<div class="sim-toolbar-item">
+		let item = (
+			<div className="sim-toolbar-item">
 				<a
-					href="${args.href ? args.href : 'javascript:void(0)'}"
-					${args.href ? 'target="_blank"' : ''}
-					class="${args.classes}"
-					${args.tooltip ? 'data-bs-toggle="tooltip"' : ''}
-					${args.tooltip ? 'data-bs-placement="bottom"' : ''}
-					${args.tooltip ? `data-bs-title="${args.tooltip}"` : ''}
-					${args.tooltip ? 'data-bs-html="true"' : ''}
+					href={args.href ? args.href : 'javascript:void(0)'}
+					target={args.href ? '_blank' : '_self'}
+					className={args.classes}
 				>
-					${args.icon ? `<i class="${args.icon}"></i>` : ''}
-					${args.text ? args.text : ''}
+					{args.icon && <i className={args.icon}></i>}
+					{args.text ? args.text : ''}
 				</a>
 			</div>
-		`;
+		);
 
-		let item = fragment.children[0] as HTMLElement;
 		let link = item.children[0] as HTMLElement;
 
 		if (args.onclick) {
@@ -78,10 +75,19 @@ export class ResultsViewer extends Component {
 			});
 		}
 
-		new Tooltip(link);
+		let cfg = {};
+		if (args.tooltip) {
+			cfg = {
+				title: args.tooltip,
+				html: true,
+				placement: 'bottom',
+			};
+			link.setAttribute('data-bs-title', args.tooltip);
+		}
+		new Tooltip(link, cfg);
 		args.parent.appendChild(item);
 
-		return item;
+		return item as HTMLElement;
 	}
 
 	private addWarningsLink(): HTMLElement {
@@ -116,7 +122,11 @@ export class ResultsViewer extends Component {
 			});
 		}
 		this.warningsLink.setAttribute('data-bs-title', list.outerHTML);
-		new Tooltip(this.warningsLink);
+		new Tooltip(this.warningsLink, {
+			title: list.outerHTML,
+			html: true,
+			placement: 'bottom',
+		});
 	}
 
 	hideAll() {

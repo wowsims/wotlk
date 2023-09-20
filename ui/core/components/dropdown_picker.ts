@@ -93,15 +93,14 @@ export class DropdownPicker<ModObject, T, V = T> extends Input<ModObject, T, V> 
 				this.config.setOptionContent(buttonElem, valueConfig, false);
 
 				if (valueConfig.tooltip) {
-					buttonElem.setAttribute('data-bs-toggle', 'tooltip');
-					buttonElem.setAttribute('data-bs-html', 'true');
-					buttonElem.setAttribute('data-bs-title', valueConfig.tooltip);
 					Tooltip.getOrCreateInstance(buttonElem, {
 						animation: false,
 						placement: 'right',
 						fallbackPlacements: ['left', 'bottom'],
 						offset: [0, 10],
 						customClass: 'dropdown-tooltip',
+						html: true,
+						title: valueConfig.tooltip
 					});
 				}
 

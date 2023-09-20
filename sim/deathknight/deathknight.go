@@ -525,19 +525,6 @@ func (dk *Deathknight) AverageDSHeal() float64 {
 	}
 }
 
-func init() {
-	core.AddBaseStatsCombo(proto.Race_RaceDraenei, proto.Class_ClassDeathknight)
-	core.AddBaseStatsCombo(proto.Race_RaceDwarf, proto.Class_ClassDeathknight)
-	core.AddBaseStatsCombo(proto.Race_RaceGnome, proto.Class_ClassDeathknight)
-	core.AddBaseStatsCombo(proto.Race_RaceHuman, proto.Class_ClassDeathknight)
-	core.AddBaseStatsCombo(proto.Race_RaceNightElf, proto.Class_ClassDeathknight)
-	core.AddBaseStatsCombo(proto.Race_RaceOrc, proto.Class_ClassDeathknight)
-	core.AddBaseStatsCombo(proto.Race_RaceTauren, proto.Class_ClassDeathknight)
-	core.AddBaseStatsCombo(proto.Race_RaceTroll, proto.Class_ClassDeathknight)
-	core.AddBaseStatsCombo(proto.Race_RaceUndead, proto.Class_ClassDeathknight)
-	core.AddBaseStatsCombo(proto.Race_RaceBloodElf, proto.Class_ClassDeathknight)
-}
-
 // Agent is a generic way to access underlying warrior on any of the agents.
 
 func (dk *Deathknight) GetDeathKnight() *Deathknight {

@@ -141,8 +141,6 @@ export class RaidSimResultsManager {
 						href="javascript:void(0)"
 						class="results-sim-set-reference"
 						role="button"
-						data-bs-toggle="tooltip"
-						data-bs-title="Use as reference"
 					>
 						<i class="fa fa-map-pin fa-lg text-${this.simUI.cssScheme} me-2"></i>Save as Reference
 					</a>
@@ -161,11 +159,7 @@ export class RaidSimResultsManager {
 		const setResultTooltip = (cssClass: string, tooltip: string) => {
 			const resultDivElem = this.simUI.resultsViewer.contentElem.getElementsByClassName(cssClass)[0] as HTMLElement | undefined;
 			if (resultDivElem) {
-				resultDivElem.setAttribute('data-bs-toggle', 'tooltip');
-				resultDivElem.setAttribute('data-bs-title', tooltip);
-				resultDivElem.setAttribute('data-bs-html', 'true');
-				resultDivElem.setAttribute('data-bs-placement', 'right');
-				Tooltip.getOrCreateInstance(resultDivElem);
+				Tooltip.getOrCreateInstance(resultDivElem, {title: tooltip, html: true, placement: 'right'});
 			}
 		};
 		setResultTooltip('results-sim-dps', 'Damage Per Second');
@@ -205,7 +199,7 @@ export class RaidSimResultsManager {
 			this.referenceChangeEmitter.emit(TypedEvent.nextEventID());
 			this.updateReference();
 		});
-		Tooltip.getOrCreateInstance(simReferenceSetButton);
+		Tooltip.getOrCreateInstance(simReferenceSetButton, {title: "Use as reference"});
 
 		const simReferenceSwapButton = this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-swap')[0] as HTMLSpanElement;
 		simReferenceSwapButton.addEventListener('click', event => {
@@ -227,7 +221,7 @@ export class RaidSimResultsManager {
 		});
 		tippy(simReferenceSwapButton, {
 			'content': 'Swap reference with current',
-			'allowHTML': true,
+			ignoreAttributes: true,
 		});
 
 		const simReferenceDeleteButton = this.simUI.resultsViewer.contentElem.getElementsByClassName('results-sim-reference-delete')[0] as HTMLSpanElement;
@@ -238,7 +232,7 @@ export class RaidSimResultsManager {
 		});
 		tippy(simReferenceDeleteButton, {
 			'content': 'Remove reference',
-			'allowHTML': true,
+			ignoreAttributes: true,
 		});
 
 		this.updateReference();
@@ -306,7 +300,7 @@ export class RaidSimResultsManager {
 		}
 		tippy(elem, {
 			'content': significance_str,
-			'allowHTML': true,
+			ignoreAttributes: true,
 		});
 
 		return isDiff;

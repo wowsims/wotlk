@@ -26,7 +26,7 @@ export class ItemSwapPicker<SpecType extends Spec, T> extends Component {
 		if (config.labelTooltip) {
 			tippy(label, {
 				'content': config.labelTooltip,
-				'allowHTML': true,
+				ignoreAttributes: true,
 			});
 		}
 
