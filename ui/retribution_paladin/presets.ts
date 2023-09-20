@@ -23,6 +23,8 @@ import {
 
 import * as Tooltips from '../core/constants/tooltips.js';
 
+import DefaultApl from './apls/default.json';
+
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
@@ -265,21 +267,6 @@ export const ROTATION_PRESET_DEFAULT = {
 	name: 'Default',
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: RetributionPaladinRotation.toJsonString(DefaultRotation),
-		rotation: APLRotation.fromJsonString(`{
-			"type": "TypeAPL",
-			"prepullActions": [
-			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
-			],
-			"priorityList": [
-			  {"action":{"autocastOtherCooldowns":{}}},
-			  {"action":{"castSpell":{"spellId":{"spellId":67485}}}},
-			  {"action":{"castSpell":{"spellId":{"spellId":48806}}}},
-			  {"action":{"castSpell":{"spellId":{"spellId":53408}}}},
-			  {"action":{"castSpell":{"spellId":{"spellId":35395}}}},
-			  {"action":{"castSpell":{"spellId":{"spellId":53385}}}},
-			  {"action":{"condition":{"auraIsActive":{"auraId":{"spellId":53488}}},"castSpell":{"spellId":{"spellId":48801}}}},
-			  {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"4s"}}}},"castSpell":{"spellId":{"spellId":48819}}}}
-			]
-		}`),
+		rotation: APLRotation.fromJsonString(JSON.stringify(DefaultApl)),
 	}),
 };

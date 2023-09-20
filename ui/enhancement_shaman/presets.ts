@@ -34,6 +34,10 @@ import {
 import * as Tooltips from '../core/constants/tooltips.js';
 import { Player } from 'ui/core/player.js';
 
+import DefaultFt from './apls/default_ft.json';
+import DefaultWf from './apls/default_wf.json';
+import Phase3Apl from './apls/phase_3.json';
+
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
@@ -106,26 +110,7 @@ export const ROTATION_FT_DEFAULT = {
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: EnhancementShamanRotation.toJsonString(EnhancementShamanRotation.create({
 		})),
-		rotation: APLRotation.fromJsonString(`{
-			"type": "TypeAPL",
-			"prepullActions": [
-				{"action":{"castSpell":{"spellId":{"spellId":66842}}},"doAtValue":{"const":{"val":"-3s"}}},
-				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
-			],
-			"priorityList": [
-				{"action":{"autocastOtherCooldowns":{}}},
-				{"action":{"condition":{"cmp":{"op":"OpEq","lhs":{"auraNumStacks":{"auraId":{"spellId":53817}}},"rhs":{"const":{"val":"5"}}}},"castSpell":{"spellId":{"spellId":49238}}}},
-				{"action":{"castSpell":{"spellId":{"spellId":17364}}}},
-				{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":49233}}},"rhs":{"const":{"val":"0s"}}}},"castSpell":{"spellId":{"spellId":49233}}}},
-				{"action":{"condition":{"not":{"val":{"auraIsActive":{"sourceUnit":{"type":"CurrentTarget"},"auraId":{"spellId":17364}}}}},"castSpell":{"spellId":{"spellId":17364}}}},
-				{"action":{"castSpell":{"spellId":{"spellId":49231}}}},
-				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"totemRemainingTime":{"totemType":"Water"}},"rhs":{"const":{"val":"20s"}}}},"castSpell":{"spellId":{"spellId":66842}}}},
-				{"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":58734}}},"rhs":{"const":{"val":"100ms"}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":2894}}}}}]}},"castSpell":{"spellId":{"spellId":58734}}}},
-				{"action":{"castSpell":{"spellId":{"spellId":61657}}}},
-				{"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":49281}}}}},"castSpell":{"spellId":{"spellId":49281}}}},
-				{"action":{"castSpell":{"spellId":{"spellId":60103}}}}
-			]
-		}`),
+		rotation: APLRotation.fromJsonString(JSON.stringify(DefaultFt)),
 	}),
 };
 
@@ -134,26 +119,7 @@ export const ROTATION_WF_DEFAULT = {
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: EnhancementShamanRotation.toJsonString(EnhancementShamanRotation.create({
 		})),
-		rotation: APLRotation.fromJsonString(`{
-			"type": "TypeAPL",
-			"prepullActions": [
-				{"action":{"castSpell":{"spellId":{"spellId":66842}}},"doAtValue":{"const":{"val":"-3s"}}},
-				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
-			],
-			"priorityList": [
-				{"action":{"autocastOtherCooldowns":{}}},
-				{"action":{"condition":{"cmp":{"op":"OpEq","lhs":{"auraNumStacks":{"auraId":{"spellId":53817}}},"rhs":{"const":{"val":"5"}}}},"castSpell":{"spellId":{"spellId":49238}}}},
-				{"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpGe","lhs":{"auraNumStacks":{"auraId":{"spellId":53817}}},"rhs":{"const":{"val":"3"}}}},{"cmp":{"op":"OpLt","lhs":{"math":{"op":"OpAdd","lhs":{"const":{"val":"300ms"}},"rhs":{"spellCastTime":{"spellId":{"spellId":49238}}}}},"rhs":{"autoTimeToNext":{}}}}]}},"castSpell":{"spellId":{"spellId":49238}}}},
-				{"action":{"castSpell":{"spellId":{"spellId":17364}}}},
-				{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":49233}}},"rhs":{"const":{"val":"0s"}}}},"castSpell":{"spellId":{"spellId":49233}}}},
-				{"action":{"castSpell":{"spellId":{"spellId":49231}}}},
-				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"totemRemainingTime":{"totemType":"Water"}},"rhs":{"const":{"val":"20s"}}}},"castSpell":{"spellId":{"spellId":66842}}}},
-				{"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":58734}}},"rhs":{"const":{"val":"100ms"}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":2894}}}}}]}},"castSpell":{"spellId":{"spellId":58734}}}},
-				{"action":{"castSpell":{"spellId":{"spellId":61657}}}},
-				{"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":49281}}}}},"castSpell":{"spellId":{"spellId":49281}}}},
-				{"action":{"castSpell":{"spellId":{"spellId":60103}}}}
-			]
-		}`),
+		rotation: APLRotation.fromJsonString(JSON.stringify(DefaultWf)),
 	}),
 };
 
@@ -162,26 +128,7 @@ export const ROTATION_PHASE_3 = {
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: EnhancementShamanRotation.toJsonString(EnhancementShamanRotation.create({
 		})),
-		rotation: APLRotation.fromJsonString(`{
-			"type": "TypeAPL",
-			"prepullActions": [
-				{"action":{"castSpell":{"spellId":{"spellId":66842}}},"doAtValue":{"const":{"val":"-3s"}}},
-				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
-			],
-			"priorityList": [
-				{"action":{"autocastOtherCooldowns":{}}},
-				{"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":49233}}},"rhs":{"const":{"val":"0s"}}}},{"cmp":{"op":"OpGe","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"8s"}}}}]}},"castSpell":{"spellId":{"spellId":49233}}}},
-				{"action":{"condition":{"cmp":{"op":"OpEq","lhs":{"auraNumStacks":{"auraId":{"spellId":53817}}},"rhs":{"const":{"val":"5"}}}},"castSpell":{"spellId":{"spellId":49238}}}},
-				{"action":{"condition":{"not":{"val":{"auraIsActive":{"sourceUnit":{"type":"CurrentTarget"},"auraId":{"spellId":17364}}}}},"castSpell":{"spellId":{"spellId":17364}}}},
-				{"action":{"castSpell":{"spellId":{"spellId":49231}}}},
-				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"totemRemainingTime":{"totemType":"Water"}},"rhs":{"const":{"val":"20s"}}}},"castSpell":{"spellId":{"spellId":66842}}}},
-				{"action":{"castSpell":{"spellId":{"spellId":17364}}}},
-				{"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":58734}}},"rhs":{"const":{"val":"100ms"}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":2894}}}}}]}},"castSpell":{"spellId":{"spellId":58734}}}},
-				{"action":{"castSpell":{"spellId":{"spellId":61657}}}},
-				{"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":49281}}}}},"castSpell":{"spellId":{"spellId":49281}}}},
-				{"action":{"castSpell":{"spellId":{"spellId":60103}}}}
-			]
-		}`),
+		rotation: APLRotation.fromJsonString(JSON.stringify(Phase3Apl)),
 	}),
 };
 

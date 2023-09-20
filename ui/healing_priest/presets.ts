@@ -25,6 +25,9 @@ import {
 
 import * as Tooltips from '../core/constants/tooltips.js';
 
+import DiscApl from './apls/disc.json';
+import HolyApl from './apls/holy.json';
+
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
@@ -89,16 +92,7 @@ export const ROTATION_PRESET_DISC = {
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: Rotation.toJsonString(Rotation.create({
 		})),
-		rotation: APLRotation.fromJsonString(`{
-			"type": "TypeAPL",
-			"priorityList": [
-				{"action":{"autocastOtherCooldowns":{}}},
-				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":48066}}},"rhs":{"const":{"val":"18"}}}},"multishield":{"spellId":{"spellId":48066},"maxShields":10,"maxOverlap":{"const":{"val":"0ms"}}}}},
-				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":53007}}},"rhs":{"const":{"val":"4"}}}},"castSpell":{"spellId":{"spellId":53007}}}},
-				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":48113}}},"rhs":{"const":{"val":"2"}}}},"castSpell":{"spellId":{"spellId":48113}}}},
-				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":48063}}},"rhs":{"const":{"val":"1"}}}},"castSpell":{"spellId":{"spellId":48063}}}}
-			]
-		}`),
+		rotation: APLRotation.fromJsonString(JSON.stringify(DiscApl)),
 	}),
 };
 
@@ -107,16 +101,7 @@ export const ROTATION_PRESET_HOLY = {
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: Rotation.toJsonString(Rotation.create({
 		})),
-		rotation: APLRotation.fromJsonString(`{
-			"type": "TypeAPL",
-			"priorityList": [
-				{"action":{"autocastOtherCooldowns":{}}},
-				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":48063}}},"rhs":{"const":{"val":"10"}}}},"castSpell":{"spellId":{"spellId":48063}}}},
-				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":48089}}},"rhs":{"const":{"val":"5"}}}},"castSpell":{"spellId":{"spellId":48089}}}},
-				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":48068}}},"rhs":{"const":{"val":"10"}}}},"multidot":{"spellId":{"spellId":48068},"maxDots":10,"maxOverlap":{"const":{"val":"0ms"}}}}},
-				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":48113}}},"rhs":{"const":{"val":"2"}}}},"castSpell":{"spellId":{"spellId":48113}}}}
-			]
-		}`),
+		rotation: APLRotation.fromJsonString(JSON.stringify(HolyApl)),
 	}),
 };
 
