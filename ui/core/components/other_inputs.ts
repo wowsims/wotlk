@@ -5,6 +5,7 @@ import { Player } from '../player.js';
 import { Sim } from '../sim.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { emptyUnitReference } from '../proto_utils/utils.js';
+import { APLRotation_Type } from '../proto/apl.js';
 
 export function makeShow1hWeaponsSelector(parent: HTMLElement, sim: Sim): BooleanPicker<Sim> {
 	return new BooleanPicker<Sim>(parent, sim, {
@@ -86,12 +87,22 @@ export const ReactionTime = {
 	type: 'number' as const,
 	label: 'Reaction Time',
 	labelTooltip: 'Reaction time of the player, in milliseconds. Used with certain APL values (such as \'Aura Is Active With Reaction Time\').',
-	changedEvent: (player: Player<any>) => TypedEvent.onAny([player.reactionTimeChangeEmitter, player.rotationChangeEmitter]),
+	changedEvent: (player: Player<any>) => player.miscOptionsChangeEmitter,
 	getValue: (player: Player<any>) => player.getReactionTime(),
 	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
 		player.setReactionTime(eventID, newValue);
 	},
-	enableWhen: (player: Player<any>) => player.aplRotation.enabled,
+};
+
+export const ChannelClipDelay = {
+	type: 'number' as const,
+	label: 'Channel Clip Delay',
+	labelTooltip: 'Clip delay following channeled spells, in milliseconds. This delay occurs following any full or partial channel ending after the GCD becomes available, due to the player not being able to queue the next spell.',
+	changedEvent: (player: Player<any>) => player.miscOptionsChangeEmitter,
+	getValue: (player: Player<any>) => player.getChannelClipDelay(),
+	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
+		player.setChannelClipDelay(eventID, newValue);
+	},
 };
 
 export const InFrontOfTarget = {

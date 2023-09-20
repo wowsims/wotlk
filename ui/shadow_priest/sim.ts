@@ -126,7 +126,7 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 			otherInputs: {
 				inputs: [
 					OtherInputs.TankAssignment,
-					ShadowPriestInputs.MindFlayLatencyInput,
+					OtherInputs.ChannelClipDelay,
 				],
 			},
 			encounterPicker: {

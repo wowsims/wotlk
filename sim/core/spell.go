@@ -175,6 +175,7 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 
 	if unit.IsUsingAPL {
 		config.Cast.DefaultCast.ChannelTime = 0
+		config.Cast.DefaultCast.AfterCastDelay = 0
 	}
 
 	spell := &Spell{
