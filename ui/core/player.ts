@@ -1343,9 +1343,11 @@ export class Player<SpecType extends Spec> {
 
 			if (this.spec == Spec.SpecShadowPriest) {
 				const options = this.getSpecOptions() as SpecOptions<Spec.SpecShadowPriest>;
-				this.setChannelClipDelay(eventID, options.latency);
-				options.latency = 0;
-				this.setSpecOptions(eventID, options as SpecOptions<SpecType>)
+				if (options.latency) {
+					this.setChannelClipDelay(eventID, options.latency);
+					options.latency = 0;
+					this.setSpecOptions(eventID, options as SpecOptions<SpecType>)
+				}
 			}
 
 			if ([Spec.SpecEnhancementShaman, Spec.SpecRestorationShaman, Spec.SpecElementalShaman].includes(this.spec)) {
