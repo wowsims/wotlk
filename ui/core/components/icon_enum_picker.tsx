@@ -70,8 +70,11 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 					className="icon-picker-button"
 					attributes={{
 						'aria-expanded':"false",
+						role: 'button'
 					}}
 					dataset={{
+						bsToggle: 'dropdown',
+						bsPlacement: 'bottom',
 						whtticon:"false",
 						disableWowheadTouchTooltip:'true'
 					}}
