@@ -154,8 +154,8 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump(sim *core
 
 	casted = dk.RotationActionCallback_LastSecondsCast(sim, target)
 	if !casted {
-		fr := dk.NormalCurrentFrostRunes()
-		uh := dk.NormalCurrentUnholyRunes()
+		fr := dk.CurrentFrostRunes()
+		uh := dk.CurrentUnholyRunes()
 		bAt := dk.BloodRuneReadyAt(sim)
 		frAt := dk.NormalFrostRuneReadyAt(sim)
 		uhAt := dk.NormalUnholyRuneReadyAt(sim)
@@ -252,7 +252,7 @@ func (dk *DpsDeathknight) frCheckForUATime(sim *core.Simulation) FrostSubBloodUA
 	}
 }
 
-func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_UA_Check(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_UA_Check(sim *core.Simulation, _ *core.Unit, s *deathknight.Sequence) time.Duration {
 	uaState := dk.frCheckForUATime(sim)
 
 	if uaState == FrostSubBloodUAState_CD {
@@ -269,7 +269,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_UA_Check(sim *cor
 	return sim.CurrentTime
 }
 
-func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Obli_Check(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Obli_Check(sim *core.Simulation, _ *core.Unit, s *deathknight.Sequence) time.Duration {
 	if dk.BloodTap.IsReady(sim) {
 		s.Clear().
 			NewAction(dk.RotationActionCallback_FrostSubBlood_Dump_UntilBR).
@@ -288,7 +288,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Obli_Check(sim *c
 	return sim.CurrentTime
 }
 
-func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_SequenceRotation(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_SequenceRotation(sim *core.Simulation, _ *core.Unit, s *deathknight.Sequence) time.Duration {
 	s.Clear().
 		NewAction(dk.RotationActionCallback_FrostSubBlood_FS_Dump)
 
@@ -351,7 +351,7 @@ func (dk *DpsDeathknight) setupFrostSubBloodNoERWOpener() {
 		NewAction(dk.RotationActionCallback_FrostSubBlood_SequenceRotation)
 }
 
-func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_RecoverFromPestiMiss(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_RecoverFromPestiMiss(sim *core.Simulation, _ *core.Unit, s *deathknight.Sequence) time.Duration {
 	if dk.LastCast == dk.fr.bloodSpell {
 		s.Clear().
 			NewAction(dk.RotationActionCallback_BS_Frost).

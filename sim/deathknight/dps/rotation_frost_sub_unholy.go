@@ -119,7 +119,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Dump_Until_Death
 	return -1
 }
 
-func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_UA_Check1(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_UA_Check1(sim *core.Simulation, _ *core.Unit, s *deathknight.Sequence) time.Duration {
 	if dk.UnbreakableArmor.CanCast(sim, nil) && dk.BloodTap.CanCast(sim, nil) {
 		s.Clear().
 			NewAction(dk.RotationActionCallback_FrostSubUnholy_Dump_Until_Deaths).
@@ -133,7 +133,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_UA_Check1(sim *c
 	return sim.CurrentTime
 }
 
-func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_UA_Check2(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_UA_Check2(sim *core.Simulation, _ *core.Unit, s *deathknight.Sequence) time.Duration {
 	if dk.UnbreakableArmor.CanCast(sim, nil) && dk.BloodTap.CanCast(sim, nil) {
 		s.Clear().
 			NewAction(dk.RotationActionCallback_UA_Frost).
@@ -145,7 +145,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_UA_Check2(sim *c
 	return sim.CurrentTime
 }
 
-func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_UA_Check3(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_UA_Check3(sim *core.Simulation, _ *core.Unit, s *deathknight.Sequence) time.Duration {
 	if (dk.UnbreakableArmor.TimeToReady(sim) < 2500*time.Millisecond+sim.CurrentTime) && (dk.BloodTap.TimeToReady(sim) < 2500*time.Millisecond+sim.CurrentTime) {
 		s.Clear().
 			NewAction(dk.RotationActionCallback_BT).
@@ -158,7 +158,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_UA_Check3(sim *c
 	return sim.CurrentTime
 }
 
-func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Sequence1(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Sequence1(sim *core.Simulation, _ *core.Unit, s *deathknight.Sequence) time.Duration {
 	s.Clear().
 		NewAction(dk.RotationActionCallback_EndOfFightCheck).
 		NewAction(dk.RotationActionCallback_FrostSubUnholy_FS_Dump).
@@ -190,7 +190,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Pesti(sim *core.
 	return -1
 }
 
-func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Sequence2(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Sequence2(sim *core.Simulation, _ *core.Unit, s *deathknight.Sequence) time.Duration {
 	s.Clear().
 		NewAction(dk.RotationAction_CancelBT).
 		NewAction(dk.RotationActionCallback_EndOfFightCheck).
@@ -206,7 +206,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_Sequence2(sim *c
 	return sim.CurrentTime
 }
 
-func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_RecoverFromPestiMiss(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_RecoverFromPestiMiss(sim *core.Simulation, _ *core.Unit, s *deathknight.Sequence) time.Duration {
 	if dk.LastCast == dk.BloodStrike {
 		s.Clear().
 			NewAction(dk.RotationActionCallback_BS).
@@ -239,8 +239,8 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnholy_FS_Dump(sim *cor
 	casted := false
 	waitUntil := time.Duration(-1)
 
-	fr := dk.NormalCurrentFrostRunes()
-	uh := dk.NormalCurrentUnholyRunes()
+	fr := dk.CurrentFrostRunes()
+	uh := dk.CurrentUnholyRunes()
 
 	if fr > 0 && uh > 0 {
 		s.Advance()
