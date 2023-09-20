@@ -395,6 +395,7 @@ export class SettingsTab extends SimTab {
 					race: player.getRace(),
 					professions: player.getProfessions(),
 					reactionTimeMs: player.getReactionTime(),
+					channelClipDelayMs: player.getChannelClipDelay(),
 					inFrontOfTarget: player.getInFrontOfTarget(),
 					distanceFromTarget: player.getDistanceFromTarget(),
 					healingModel: player.getHealingModel(),
@@ -415,6 +416,7 @@ export class SettingsTab extends SimTab {
 					simUI.player.setRace(eventID, newSettings.race);
 					simUI.player.setProfessions(eventID, newSettings.professions);
 					simUI.player.setReactionTime(eventID, newSettings.reactionTimeMs);
+					simUI.player.setChannelClipDelay(eventID, newSettings.channelClipDelayMs);
 					simUI.player.setInFrontOfTarget(eventID, newSettings.inFrontOfTarget);
 					simUI.player.setDistanceFromTarget(eventID, newSettings.distanceFromTarget);
 					simUI.player.setHealingModel(eventID, newSettings.healingModel || HealingModel.create());
@@ -434,7 +436,7 @@ export class SettingsTab extends SimTab {
 				this.simUI.player.consumesChangeEmitter,
 				this.simUI.player.raceChangeEmitter,
 				this.simUI.player.professionChangeEmitter,
-				this.simUI.player.reactionTimeChangeEmitter,
+				this.simUI.player.miscOptionsChangeEmitter,
 				this.simUI.player.inFrontOfTargetChangeEmitter,
 				this.simUI.player.distanceFromTargetChangeEmitter,
 				this.simUI.player.healingModelChangeEmitter,
