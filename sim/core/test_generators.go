@@ -2,8 +2,9 @@ package core
 
 import (
 	"fmt"
-	"golang.org/x/exp/slices"
 	"strings"
+
+	"golang.org/x/exp/slices"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
 	googleProto "google.golang.org/protobuf/proto"
@@ -163,15 +164,18 @@ func (combos *SettingsCombos) GetTest(testIdx int) (string, *proto.ComputeStatsR
 	rsr := &proto.RaidSimRequest{
 		Raid: SinglePlayerRaidProto(
 			WithSpec(&proto.Player{
-				Race:          race,
-				Class:         combos.Class,
-				Equipment:     gearSetCombo.GearSet,
-				TalentsString: talentSetCombo.Talents,
-				Glyphs:        talentSetCombo.Glyphs,
-				Consumes:      buffsCombo.Consumes,
-				Buffs:         buffsCombo.Player,
-				Profession1:   proto.Profession_Engineering,
-				Cooldowns:     combos.Cooldowns,
+				Race:               race,
+				Class:              combos.Class,
+				Equipment:          gearSetCombo.GearSet,
+				TalentsString:      talentSetCombo.Talents,
+				Glyphs:             talentSetCombo.Glyphs,
+				Consumes:           buffsCombo.Consumes,
+				Buffs:              buffsCombo.Player,
+				Profession1:        proto.Profession_Engineering,
+				Cooldowns:          combos.Cooldowns,
+				DistanceFromTarget: 30,
+				ReactionTimeMs:     150,
+				ChannelClipDelayMs: 50,
 			}, specOptionsCombo.SpecOptions),
 			buffsCombo.Party,
 			buffsCombo.Raid,
@@ -470,6 +474,8 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 
 			InFrontOfTarget:    config.InFrontOfTarget,
 			DistanceFromTarget: 30,
+			ReactionTimeMs:     150,
+			ChannelClipDelayMs: 50,
 		},
 		config.SpecOptions.SpecOptions)
 

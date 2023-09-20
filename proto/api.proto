@@ -63,6 +63,7 @@ message Player {
 	APLRotation rotation = 40;
 
 	int32 reaction_time_ms = 41;
+	int32 channel_clip_delay_ms = 42;
 	bool in_front_of_target = 23;
 	double distance_from_target = 33;
 

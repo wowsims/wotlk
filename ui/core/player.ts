@@ -215,6 +215,7 @@ export class Player<SpecType extends Spec> {
 	private specOptions: SpecOptions<SpecType>;
 	private cooldowns: Cooldowns = Cooldowns.create();
 	private reactionTime: number = 0;
+	private channelClipDelay: number = 0;
 	private inFrontOfTarget: boolean = false;
 	private distanceFromTarget: number = 0;
 	private healingModel: HealingModel = HealingModel.create();
@@ -249,11 +250,11 @@ export class Player<SpecType extends Spec> {
 	readonly glyphsChangeEmitter = new TypedEvent<void>('PlayerGlyphs');
 	readonly specOptionsChangeEmitter = new TypedEvent<void>('PlayerSpecOptions');
 	readonly cooldownsChangeEmitter = new TypedEvent<void>('PlayerCooldowns');
-	readonly reactionTimeChangeEmitter = new TypedEvent<void>('PlayerReactionTime');
 	readonly inFrontOfTargetChangeEmitter = new TypedEvent<void>('PlayerInFrontOfTarget');
 	readonly distanceFromTargetChangeEmitter = new TypedEvent<void>('PlayerDistanceFromTarget');
 	readonly healingModelChangeEmitter = new TypedEvent<void>('PlayerHealingModel');
 	readonly epWeightsChangeEmitter = new TypedEvent<void>('PlayerEpWeights');
+	readonly miscOptionsChangeEmitter = new TypedEvent<void>('PlayerMiscOptions');
 
 	readonly currentStatsEmitter = new TypedEvent<void>('PlayerCurrentStats');
 	readonly epRatiosChangeEmitter = new TypedEvent<void>('PlayerEpRatios');
@@ -290,7 +291,7 @@ export class Player<SpecType extends Spec> {
 			this.glyphsChangeEmitter,
 			this.specOptionsChangeEmitter,
 			this.cooldownsChangeEmitter,
-			this.reactionTimeChangeEmitter,
+			this.miscOptionsChangeEmitter,
 			this.inFrontOfTargetChangeEmitter,
 			this.distanceFromTargetChangeEmitter,
 			this.healingModelChangeEmitter,
@@ -822,7 +823,19 @@ export class Player<SpecType extends Spec> {
 			return;
 
 		this.reactionTime = newReactionTime;
-		this.reactionTimeChangeEmitter.emit(eventID);
+		this.miscOptionsChangeEmitter.emit(eventID);
+	}
+
+	getChannelClipDelay(): number {
+		return this.reactionTime;
+	}
+
+	setChannelClipDelay(eventID: EventID, newChannelClipDelay: number) {
+		if (newChannelClipDelay == this.reactionTime)
+			return;
+
+		this.channelClipDelay = newChannelClipDelay;
+		this.miscOptionsChangeEmitter.emit(eventID);
 	}
 
 	getInFrontOfTarget(): boolean {
@@ -1229,6 +1242,7 @@ export class Player<SpecType extends Spec> {
 				profession1: this.getProfession1(),
 				profession2: this.getProfession2(),
 				reactionTimeMs: this.getReactionTime(),
+				channelClipDelayMs: this.getChannelClipDelay(),
 				inFrontOfTarget: this.getInFrontOfTarget(),
 				distanceFromTarget: this.getDistanceFromTarget(),
 				healingModel: this.getHealingModel(),
@@ -1288,6 +1302,7 @@ export class Player<SpecType extends Spec> {
 			this.setProfession1(eventID, proto.profession1);
 			this.setProfession2(eventID, proto.profession2);
 			this.setReactionTime(eventID, proto.reactionTimeMs);
+			this.setChannelClipDelay(eventID, proto.channelClipDelayMs);
 			this.setInFrontOfTarget(eventID, proto.inFrontOfTarget);
 			this.setDistanceFromTarget(eventID, proto.distanceFromTarget);
 			this.setHealingModel(eventID, proto.healingModel || HealingModel.create());
@@ -1326,6 +1341,15 @@ export class Player<SpecType extends Spec> {
 				}
 			}
 
+			if (this.spec == Spec.SpecShadowPriest) {
+				const options = this.getSpecOptions() as SpecOptions<Spec.SpecShadowPriest>;
+				if (options.latency) {
+					this.setChannelClipDelay(eventID, options.latency);
+					options.latency = 0;
+					this.setSpecOptions(eventID, options as SpecOptions<SpecType>)
+				}
+			}
+
 			if ([Spec.SpecEnhancementShaman, Spec.SpecRestorationShaman, Spec.SpecElementalShaman].includes(this.spec)) {
 				const rot = this.getRotation() as SpecRotation<ShamanSpecs>;
 				if (rot.totems) {
@@ -1348,6 +1372,7 @@ export class Player<SpecType extends Spec> {
 	applySharedDefaults(eventID: EventID) {
 		TypedEvent.freezeAllAndDo(() => {
 			this.setReactionTime(eventID, 200);
+			this.setChannelClipDelay(eventID, this.spec == Spec.SpecShadowPriest ? 100 : 0);
 			this.setInFrontOfTarget(eventID, isTankSpec(this.spec));
 			this.setHealingModel(eventID, HealingModel.create({
 				burstWindow: isTankSpec(this.spec) ? 6 : 0,

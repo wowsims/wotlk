@@ -41,6 +41,9 @@ func (priest *Priest) newMindFlaySpell(numTicks int32) *core.Spell {
 				ChannelTime: channelTime,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				if spell.Unit.IsUsingAPL {
+					return
+				}
 				// if our channel is longer than GCD it will have human latency to end it beause you can't queue the next spell.
 				wait := priest.ApplyCastSpeed(channelTime)
 				gcd := core.MaxDuration(core.GCDMin, priest.ApplyCastSpeed(core.GCDDefault))

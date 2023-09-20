@@ -70,7 +70,6 @@ var PlayerOptionsBasic = &proto.Player_ShadowPriest{
 		},
 		Rotation: &proto.ShadowPriest_Rotation{
 			RotationType: proto.ShadowPriest_Rotation_Basic,
-			Latency:      50,
 		},
 	},
 }
@@ -85,7 +84,6 @@ var PlayerOptionsClipping = &proto.Player_ShadowPriest{
 		Rotation: &proto.ShadowPriest_Rotation{
 			RotationType: proto.ShadowPriest_Rotation_Clipping,
 			PrecastType:  1,
-			Latency:      50,
 		},
 	},
 }
@@ -100,7 +98,6 @@ var PlayerOptionsIdeal = &proto.Player_ShadowPriest{
 		Rotation: &proto.ShadowPriest_Rotation{
 			RotationType: proto.ShadowPriest_Rotation_Ideal,
 			PrecastType:  1,
-			Latency:      50,
 		},
 	},
 }

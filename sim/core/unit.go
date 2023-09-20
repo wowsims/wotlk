@@ -53,6 +53,9 @@ type Unit struct {
 	// Used by certain APL values and actions.
 	ReactionTime time.Duration
 
+	// Amount of time following a post-GCD channel tick, to when the next action can be performed.
+	ChannelClipDelay time.Duration
+
 	// How far this unit is from its target(s). Measured in yards, this is used
 	// for calculating spell travel time for certain spells.
 	DistanceFromTarget float64

@@ -1158,7 +1158,7 @@ func (spriest *ShadowPriest) ClippingMindflayRotation(sim *core.Simulation, gcd 
 	}
 
 	// How many ticks we have time for.
-	numTicks := int((nextCD - time.Duration(spriest.rotation.Latency)) / tickLength)
+	numTicks := int((nextCD - time.Duration(spriest.Latency)) / tickLength)
 	if numTicks == 1 {
 		return 1
 	} else if numTicks == 2 || numTicks == 4 {
