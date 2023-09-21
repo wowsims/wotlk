@@ -56,7 +56,7 @@ func (mage *Mage) registerEvocationCD() {
 
 	manaThreshold := 0.0
 	mage.Env.RegisterPostFinalizeEffect(func() {
-		manaThreshold = mage.MaxMana() * 0.3
+		manaThreshold = mage.MaxMana() * 0.1
 	})
 
 	evocationSpell := mage.registerEvocation(numTicks)
