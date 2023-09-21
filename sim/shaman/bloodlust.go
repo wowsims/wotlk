@@ -12,7 +12,7 @@ func (shaman *Shaman) BloodlustActionID() core.ActionID {
 }
 
 func (shaman *Shaman) registerBloodlustCD() {
-	if !shaman.SelfBuffs.Bloodlust {
+	if !shaman.SelfBuffs.Bloodlust && !shaman.IsUsingAPL {
 		return
 	}
 	actionID := shaman.BloodlustActionID()
@@ -26,6 +26,7 @@ func (shaman *Shaman) registerBloodlustCD() {
 
 	bloodlustSpell := shaman.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
+		Flags:    core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.26,
@@ -60,9 +61,11 @@ func (shaman *Shaman) registerBloodlustCD() {
 		},
 	})
 
-	shaman.AddMajorCooldown(core.MajorCooldown{
-		Spell:    bloodlustSpell,
-		Priority: core.CooldownPriorityBloodlust,
-		Type:     core.CooldownTypeDPS,
-	})
+	if !shaman.IsUsingAPL {
+		shaman.AddMajorCooldown(core.MajorCooldown{
+			Spell:    bloodlustSpell,
+			Priority: core.CooldownPriorityBloodlust,
+			Type:     core.CooldownTypeDPS,
+		})
+	}
 }
