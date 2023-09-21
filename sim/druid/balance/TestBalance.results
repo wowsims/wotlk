@@ -607,8 +607,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-NightsongGarb"
  value: {
-  dps: 7354.04929
-  tps: 7182.98939
+  dps: 7298.92805
+  tps: 7128.67495
  }
 }
 dps_results: {
@@ -1118,22 +1118,22 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-Default-FullBuffs-LongMultiTarget"
  value: {
-  dps: 13901.41626
-  tps: 16177.46721
+  dps: 13898.60913
+  tps: 16213.22241
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-Default-FullBuffs-LongSingleTarget"
  value: {
-  dps: 9761.32099
-  tps: 9566.51621
+  dps: 9668.19517
+  tps: 9472.54508
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-Default-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 10970.45672
-  tps: 10311.163
+  dps: 11000.01252
+  tps: 10341.88441
  }
 }
 dps_results: {
@@ -1251,15 +1251,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-MultidotMf-FullBuffs-LongSingleTarget"
  value: {
-  dps: 9716.05864
-  tps: 9520.89803
+  dps: 9743.41358
+  tps: 9550.78505
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-MultidotMf-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 10964.04237
-  tps: 10306.81211
+  dps: 11004.32923
+  tps: 10348.23961
  }
 }
 dps_results: {
