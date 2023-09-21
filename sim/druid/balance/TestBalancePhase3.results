@@ -523,8 +523,8 @@ dps_results: {
 dps_results: {
  key: "TestBalancePhase3-AllItems-LasherweaveRegalia"
  value: {
-  dps: 10121.88915
-  tps: 9902.7564
+  dps: 10122.42199
+  tps: 9903.28923
  }
 }
 dps_results: {

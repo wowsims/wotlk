@@ -109,8 +109,8 @@ var ItemSetLasherweaveRegalia = core.NewItemSet(core.ItemSet{
 					},
 				},
 				ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+					spell.SpellMetrics[target.UnitIndex].Hits++
 					spell.Dot(target).ApplyOrReset(sim)
-					spell.CalcAndDealOutcome(sim, target, spell.OutcomeAlwaysHit)
 				},
 			})
 
