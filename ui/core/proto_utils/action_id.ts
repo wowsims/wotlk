@@ -339,11 +339,13 @@ export class ActionId {
 			case 'Mana Tide Totem':
 			case 'Power Infusion':
 				if (this.tag != -1) {
-					if (this.tag === playerIndex) {
+					if (this.tag === playerIndex || playerIndex == undefined) {
 						name += ` (self)`;
 					} else {
 						name += ` (from #${this.tag + 1})`;
 					}
+				} else {
+					name += " (raid)"
 				}
 				break;
 			case 'Darkmoon Card: Crusade':
