@@ -1142,11 +1142,11 @@ const hunterRaces = [
 	Race.RaceTroll,
 ];
 const mageRaces = [
+	Race.RaceTroll,
 	Race.RaceBloodElf,
 	Race.RaceDraenei,
 	Race.RaceGnome,
 	Race.RaceHuman,
-	Race.RaceTroll,
 	Race.RaceUndead,
 ];
 const paladinRaces = [
