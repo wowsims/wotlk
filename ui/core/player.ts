@@ -827,11 +827,11 @@ export class Player<SpecType extends Spec> {
 	}
 
 	getChannelClipDelay(): number {
-		return this.reactionTime;
+		return this.channelClipDelay;
 	}
 
 	setChannelClipDelay(eventID: EventID, newChannelClipDelay: number) {
-		if (newChannelClipDelay == this.reactionTime)
+		if (newChannelClipDelay == this.channelClipDelay)
 			return;
 
 		this.channelClipDelay = newChannelClipDelay;
