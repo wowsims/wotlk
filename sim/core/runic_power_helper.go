@@ -5,39 +5,11 @@ import (
 	"time"
 )
 
+// RuneCost's bit layout is: <rrrr_rrrr_dduu_ffbb>. Each part is just a count now (0..3 for runes).
 type RuneCost uint16
 
-func NewRuneCost(rp, blood, frost, unholy, death uint8) RuneCost {
-	value := int16(0)
-	if blood == 1 {
-		value = 1
-	} else if blood == 2 {
-		value = 3
-	}
-
-	if frost == 1 {
-		value += 1 << 2
-	} else if frost == 2 {
-		value += 3 << 2
-	}
-
-	if unholy == 1 {
-		value += 1 << 4
-	} else if unholy == 2 {
-		value += 3 << 4
-	}
-
-	if death == 1 {
-		value += 1 << 6
-	} else if death == 2 {
-		value += 3 << 6
-	} else if death > 2 {
-		value += 3 << 6 // we cant represent more than 2 death runes
-	}
-
-	value += int16(rp) << 8
-
-	return RuneCost(value)
+func NewRuneCost(rp, blood, frost, unholy, death int8) RuneCost {
+	return RuneCost(rp)<<8 | RuneCost((death&0b11)<<6|(unholy&0b11)<<4|(frost&0b11)<<2|blood&0b11)
 }
 
 func (rc RuneCost) String() string {
@@ -45,71 +17,31 @@ func (rc RuneCost) String() string {
 }
 
 // HasRune returns if this cost includes a rune portion.
-//
-//	If any bit is set in the rune bits it means that there is a rune cost.
 func (rc RuneCost) HasRune() bool {
-	const runebits = int16(0b11111111)
-	return runebits&int16(rc) > 0
+	return rc&0b1111_1111 > 0
 }
 
-func (rc RuneCost) RunicPower() uint8 {
-	const rpbits = uint16(0b1111111100000000)
-	return uint8((uint16(rc) & rpbits) >> 8)
+func (rc RuneCost) RunicPower() int8 {
+	return int8(rc >> 8)
 }
 
-func (rc RuneCost) Blood() uint8 {
-	runes := uint16(rc) & 0b11
-	switch runes {
-	case 0b00:
-		return 0
-	case 0b01:
-		return 1
-	case 0b11:
-		return 2
-	}
-	return 0
+func (rc RuneCost) Blood() int8 {
+	return int8(rc & 0b11)
 }
 
-func (rc RuneCost) Frost() uint8 {
-	runes := uint16(rc) & 0b1100
-	switch runes {
-	case 0:
-		return 0
-	case 0b0100:
-		return 1
-	case 0b1100:
-		return 2
-	}
-	return 0
+func (rc RuneCost) Frost() int8 {
+	return int8((rc >> 2) & 0b11)
 }
 
-func (rc RuneCost) Unholy() uint8 {
-	runes := uint16(rc) & 0b110000
-	switch runes {
-	case 0:
-		return 0
-	case 0b010000:
-		return 1
-	case 0b110000:
-		return 2
-	}
-	return 0
+func (rc RuneCost) Unholy() int8 {
+	return int8((rc >> 4) & 0b11)
 }
 
-func (rc RuneCost) Death() uint8 {
-	runes := uint16(rc) & 0b11000000
-	switch runes {
-	case 0:
-		return 0
-	case 0b01000000:
-		return 1
-	case 0b11000000:
-		return 2
-	}
-	return 0
+func (rc RuneCost) Death() int8 {
+	return int8((rc >> 6) & 0b11)
 }
 
-func (rp *RunicPowerBar) GainDeathRuneMetrics(sim *Simulation, spell *Spell, currRunes int32, newRunes int32) {
+func (rp *RunicPowerBar) GainDeathRuneMetrics(sim *Simulation, _ *Spell, currRunes int32, newRunes int32) {
 	if !rp.isACopy {
 		metrics := rp.deathRuneGainMetrics
 		metrics.AddEvent(1, float64(newRunes)-float64(currRunes))
@@ -130,10 +62,9 @@ func (rp *RunicPowerBar) CancelBloodTap(sim *Simulation) {
 	rp.btslot = -1
 }
 
-func (rp *RunicPowerBar) CorrectBloodTapConversion(sim *Simulation, bloodGainMetrics *ResourceMetrics, deathGainMetrics *ResourceMetrics, spell *Spell) {
+func (rp *RunicPowerBar) CorrectBloodTapConversion(sim *Simulation) {
 	// 1. converts a blood rune -> death rune
 	// 2. then convert one inactive blood or death rune -> active
-
 	slot := int8(-1)
 	if rp.runeStates&isDeaths[0] == 0 {
 		slot = 0
@@ -152,7 +83,7 @@ func (rp *RunicPowerBar) CorrectBloodTapConversion(sim *Simulation, bloodGainMet
 		slot = 1
 	}
 	if slot > -1 {
-		rp.RegenRune(sim, sim.CurrentTime, slot)
+		rp.regenRune(sim, sim.CurrentTime, slot)
 	}
 
 	// if PA isn't running, make it run 20s from now to disable BT

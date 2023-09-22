@@ -7,7 +7,7 @@ import (
 	"github.com/wowsims/wotlk/sim/deathknight"
 )
 
-func (dk *TankDeathknight) DoDiseaseChecks(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
+func (dk *TankDeathknight) DoDiseaseChecks(sim *core.Simulation, target *core.Unit, _ *deathknight.Sequence) bool {
 	t := sim.CurrentTime
 	recast := 3 * time.Second // 2 GCDs for miss
 	ff := dk.FrostFeverSpell.Dot(target).ExpiresAt() - t
@@ -31,7 +31,7 @@ func (dk *TankDeathknight) DoDiseaseChecks(sim *core.Simulation, target *core.Un
 	return false
 }
 
-func (dk *TankDeathknight) DoFrostCast(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
+func (dk *TankDeathknight) DoFrostCast(sim *core.Simulation, target *core.Unit, _ *deathknight.Sequence) bool {
 	if dk.Talents.FrostStrike && dk.FrostStrike.CanCast(sim, target) {
 		dk.FrostStrike.Cast(sim, target)
 		return true
@@ -45,12 +45,12 @@ func (dk *TankDeathknight) DoFrostCast(sim *core.Simulation, target *core.Unit, 
 	return false
 }
 
-func (dk *TankDeathknight) DoBloodCast(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
+func (dk *TankDeathknight) DoBloodCast(sim *core.Simulation, target *core.Unit, _ *deathknight.Sequence) bool {
 	t := sim.CurrentTime
 	recast := 3 * time.Second // 2 GCDs for miss
 	ff := dk.FrostFeverSpell.Dot(target).ExpiresAt() - t
 	bp := dk.BloodPlagueSpell.Dot(target).ExpiresAt() - t
-	b, _, _ := dk.NormalCurrentRunes()
+	b := dk.CurrentBloodRunes()
 
 	if b >= 1 {
 		if dk.NormalSpentBloodRuneReadyAt(sim)-t < ff-recast && dk.NormalSpentBloodRuneReadyAt(sim)-t < bp-recast {

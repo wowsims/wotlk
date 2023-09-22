@@ -55,7 +55,7 @@ type UnholyRotation struct {
 	berserkingOh       *core.Aura
 }
 
-func (ur *UnholyRotation) Reset(sim *core.Simulation) {
+func (ur *UnholyRotation) Reset(_ *core.Simulation) {
 	ur.syncTimeFF = 0
 	ur.activatingGargoyle = false
 	ur.gargoyleMaxDelay = -1
@@ -233,12 +233,12 @@ func (dk *DpsDeathknight) uhDiseaseCheck(sim *core.Simulation, target *core.Unit
 	return dk.shDiseaseCheck(sim, target, spell, costRunes, casts, 0)
 }
 
-func (dk *DpsDeathknight) uhSpreadDiseases(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) bool {
+func (dk *DpsDeathknight) uhSpreadDiseases(sim *core.Simulation, target *core.Unit, _ *deathknight.Sequence) bool {
 	if dk.uhDiseaseCheck(sim, target, dk.Pestilence, true, 1) {
 		casted := dk.Pestilence.Cast(sim, target)
 		landed := dk.LastOutcome.Matches(core.OutcomeLanded)
 
-		// Reset flags on succesfull cast
+		// Reset flags on successful cast
 		dk.sr.recastedFF = !(casted && landed)
 		dk.sr.recastedBP = !(casted && landed)
 		return casted
@@ -333,7 +333,7 @@ func (dk *DpsDeathknight) uhEmpoweredRuneWeapon(sim *core.Simulation, target *co
 		return false
 	}
 
-	if dk.CurrentBloodRunes() > 0 || dk.CurrentFrostRunes() > 0 || dk.CurrentUnholyRunes() > 0 || dk.CurrentDeathRunes() > 0 {
+	if !dk.AllRunesSpent() {
 		return false
 	}
 
@@ -426,7 +426,7 @@ func (dk *DpsDeathknight) uhGargoyleCanCast(sim *core.Simulation, castTime time.
 	if sim.CurrentTime < dk.ur.gargoyleMinTime {
 		return false
 	}
-	if !dk.CastCostPossible(sim, 60.0, 0, 0, 0) {
+	if dk.CurrentRunicPower() < 60 {
 		return false
 	}
 	// Setup max delay possible
