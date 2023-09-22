@@ -62,7 +62,7 @@ func (dk *Deathknight) NewArmyGhoulPet(_ int) *GhoulPet {
 
 	ghoulPet.AddStatDependency(stats.Strength, stats.AttackPower, 1)
 	ghoulPet.AddStatDependency(stats.Agility, stats.AttackPower, 1)
-	ghoulPet.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/83.3)
+	ghoulPet.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/85.5)
 
 	// command doesn't apply to army ghoul
 	if dk.Race == proto.Race_RaceOrc {
