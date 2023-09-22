@@ -110,7 +110,7 @@ func (war *DpsWarrior) furyNormalRotation(sim *core.Simulation) {
 	if war.tryMaintainDebuffs(sim) {
 		war.DoNothing()
 	} else if war.Rotation.MainGcd == proto.Warrior_Rotation_Slam && war.ShouldInstantSlam(sim) {
-		war.CastSlam(sim, war.CurrentTarget)
+		war.Slam.Cast(sim, war.CurrentTarget)
 	} else if war.Rotation.MainGcd == proto.Warrior_Rotation_Bloodthirst && war.Bloodthirst.CanCast(sim, war.CurrentTarget) {
 		war.Bloodthirst.Cast(sim, war.CurrentTarget)
 	} else if war.Rotation.MainGcd == proto.Warrior_Rotation_Whirlwind && war.CanWhirlwind(sim) {
@@ -118,7 +118,7 @@ func (war *DpsWarrior) furyNormalRotation(sim *core.Simulation) {
 	} else if war.Rotation.MainGcd != proto.Warrior_Rotation_Bloodthirst && war.Bloodthirst.CanCast(sim, war.CurrentTarget) {
 		war.Bloodthirst.Cast(sim, war.CurrentTarget)
 	} else if war.Rotation.MainGcd != proto.Warrior_Rotation_Slam && war.ShouldInstantSlam(sim) {
-		war.CastSlam(sim, war.CurrentTarget)
+		war.Slam.Cast(sim, war.CurrentTarget)
 	} else if war.Rotation.MainGcd != proto.Warrior_Rotation_Whirlwind && war.CanWhirlwind(sim) {
 		war.Whirlwind.Cast(sim, war.CurrentTarget)
 	} else if war.Rotation.UseRend && war.ShouldRend(sim) {
@@ -164,7 +164,7 @@ func (war *DpsWarrior) armsNormalRotation(sim *core.Simulation) {
 	} else if war.Rotation.UseMs && war.MortalStrike.CanCast(sim, war.CurrentTarget) && war.CurrentRage() >= war.Rotation.MsRageThreshold {
 		war.MortalStrike.Cast(sim, war.CurrentTarget)
 	} else if war.Slam.CanCast(sim, war.CurrentTarget) && war.CurrentRage() >= war.Rotation.SlamRageThreshold {
-		war.CastSlam(sim, war.CurrentTarget)
+		war.Slam.Cast(sim, war.CurrentTarget)
 	}
 }
 
@@ -175,7 +175,7 @@ func (war *DpsWarrior) furyExecuteRotation(sim *core.Simulation) {
 		war.CastExecute(sim, war.CurrentTarget)
 	} else if war.Rotation.MainGcd == proto.Warrior_Rotation_Slam &&
 		war.Rotation.UseSlamOverExecute && war.ShouldInstantSlam(sim) {
-		war.CastSlam(sim, war.CurrentTarget)
+		war.Slam.Cast(sim, war.CurrentTarget)
 	} else if war.Rotation.MainGcd == proto.Warrior_Rotation_Bloodthirst &&
 		war.Rotation.UseBtDuringExecute && war.Bloodthirst.CanCast(sim, war.CurrentTarget) {
 		war.Bloodthirst.Cast(sim, war.CurrentTarget)
@@ -187,7 +187,7 @@ func (war *DpsWarrior) furyExecuteRotation(sim *core.Simulation) {
 		war.Bloodthirst.Cast(sim, war.CurrentTarget)
 	} else if war.Rotation.MainGcd != proto.Warrior_Rotation_Slam &&
 		war.Rotation.UseSlamOverExecute && war.ShouldInstantSlam(sim) {
-		war.CastSlam(sim, war.CurrentTarget)
+		war.Slam.Cast(sim, war.CurrentTarget)
 	} else if war.Rotation.MainGcd != proto.Warrior_Rotation_Whirlwind &&
 		war.Rotation.UseWwDuringExecute && war.CanWhirlwind(sim) {
 		war.Whirlwind.Cast(sim, war.CurrentTarget)
