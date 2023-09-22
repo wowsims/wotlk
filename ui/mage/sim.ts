@@ -1,26 +1,20 @@
-import { RaidBuffs } from '../core/proto/common.js';
-import { PartyBuffs } from '../core/proto/common.js';
-import { IndividualBuffs } from '../core/proto/common.js';
-import { Debuffs } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { Stat } from '../core/proto/common.js';
-import { TristateEffect } from '../core/proto/common.js'
-import { Stats } from '../core/proto_utils/stats.js';
-import { Player } from '../core/player.js';
-import { IndividualSimUI } from '../core/individual_sim_ui.js';
-
 import {
-	Mage,
-	Mage_Rotation as MageRotation,
-	Mage_Rotation_Type as RotationType,
-	MageTalents as MageTalents,
-	Mage_Options as MageOptions,
-} from '../core/proto/mage.js';
+	Debuffs,
+	IndividualBuffs,
+	PartyBuffs,
+	Profession,
+	RaidBuffs,
+	Spec,
+	Stat,
+	TristateEffect
+} from '../core/proto/common.js';
+import {Stats} from '../core/proto_utils/stats.js';
+import {Player} from '../core/player.js';
+import {IndividualSimUI} from '../core/individual_sim_ui.js';
 
-import * as IconInputs from '../core/components/icon_inputs.js';
+import {Mage_Rotation_Type as RotationType,} from '../core/proto/mage.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as Mechanics from '../core/constants/mechanics.js';
-import * as Tooltips from '../core/constants/tooltips.js';
 
 import * as MageInputs from './inputs.js';
 import * as Presets from './presets.js';
@@ -72,7 +66,7 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.ARCANE_P1_PRESET.gear,
+				gear: Presets.FIRE_P3_PRESET_HORDE.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatIntellect]: 0.48,
@@ -84,13 +78,13 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 					[Stat.StatMP5]: 0.09,
 				}),
 				// Default consumes settings.
-				consumes: Presets.DefaultArcaneConsumes,
+				consumes: Presets.DefaultFireConsumes,
 				// Default rotation settings.
-				rotation: Presets.DefaultArcaneRotation,
+				rotation: Presets.DefaultFireRotation,
 				// Default talents.
-				talents: Presets.ArcaneTalents.data,
+				talents: Presets.Phase3FireTalents.data,
 				// Default spec-specific settings.
-				specOptions: Presets.DefaultArcaneOptions,
+				specOptions: Presets.DefaultFireOptions,
 				other: Presets.OtherDefaults,
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
@@ -113,11 +107,12 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 					blessingOfWisdom: TristateEffect.TristateEffectImproved,
 					innervates: 0,
 					vampiricTouch: true,
+					focusMagic: true,
 				}),
 				debuffs: Debuffs.create({
 					judgementOfWisdom: true,
 					misery: true,
-					curseOfElements: true,
+					ebonPlaguebringer: true,
 					shadowMastery: true,
 					heartOfTheCrusader: true,
 				}),

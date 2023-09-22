@@ -1,4 +1,4 @@
-import { Conjured } from '../core/proto/common.js';
+import {Conjured, Profession} from '../core/proto/common.js';
 import { Consumes } from '../core/proto/common.js';
 import { EquipmentSpec } from '../core/proto/common.js';
 import { Flask } from '../core/proto/common.js';
@@ -106,20 +106,18 @@ export const DefaultFireRotation = MageRotation.create({
 	type: RotationType.Fire,
 	primaryFireSpell: PrimaryFireSpell.Fireball,
 	maintainImprovedScorch: false,
-	pyroblastDelayMs: 50,
 });
 
 export const DefaultFFBRotation = MageRotation.create({
 	type: RotationType.Fire,
 	primaryFireSpell: PrimaryFireSpell.FrostfireBolt,
 	maintainImprovedScorch: false,
-	pyroblastDelayMs: 50,
 });
 
 export const DefaultFFBOptions = MageOptions.create({
 	armor: ArmorType.MoltenArmor,
 	reactionTimeMs: 300,
-	igniteMunching: true,
+	evocationTicks: 1,
 });
 
 export const DefaultFireOptions = MageOptions.create({
@@ -127,7 +125,7 @@ export const DefaultFireOptions = MageOptions.create({
 	focusMagicPercentUptime: 99,
 	focusMagicTarget: UnitReference.create(),
 	reactionTimeMs: 300,
-	igniteMunching: true,
+	evocationTicks: 1,
 });
 
 export const DefaultFireConsumes = Consumes.create({
@@ -135,6 +133,7 @@ export const DefaultFireConsumes = Consumes.create({
 	food: Food.FoodFirecrackerSalmon,
 	defaultPotion: Potions.PotionOfSpeed,
 	defaultConjured: Conjured.ConjuredFlameCap,
+	prepopPotion: Potions.PotionOfSpeed,
 });
 
 export const DefaultFrostRotation = MageRotation.create({
@@ -179,7 +178,9 @@ export const DefaultArcaneConsumes = Consumes.create({
 });
 
 export const OtherDefaults = {
-	distanceFromTarget: 25,
+	distanceFromTarget: 20,
+	profession1: Profession.Engineering,
+	profession2: Profession.Tailoring,
 };
 
 export const ARCANE_ROTATION_PRESET_DEFAULT = {
