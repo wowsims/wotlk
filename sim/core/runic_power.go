@@ -364,29 +364,29 @@ func (rp *RunicPowerBar) UnholyRuneReadyAt(sim *Simulation) time.Duration {
 	return MinDuration(rp.runeMeta[4].regenAt, rp.runeMeta[5].regenAt)
 }
 
-func (rp *RunicPowerBar) NextRuneTypeReadyAt(sim *Simulation, left int8, right int8) time.Duration {
-	if rp.runeStates&isSpents[left] != isSpents[left] && rp.runeStates&isSpents[right] != isSpents[right] {
-		// Both are ready so return current time
+func (rp *RunicPowerBar) bothRunesReadyAt(sim *Simulation, slot int8) time.Duration {
+	switch (rp.runeStates >> (2 * slot)) & 0b0101 {
+	case 0b0000:
 		return sim.CurrentTime
-	} else if rp.runeStates&isSpents[left] == isSpents[left] || rp.runeStates&isSpents[right] == isSpents[right] {
-		// One is spent so return the time it will regen at
-		return MinDuration(rp.runeMeta[left].regenAt, rp.runeMeta[right].regenAt)
+	case 0b0001:
+		return rp.runeMeta[slot].regenAt
+	case 0b0100:
+		return rp.runeMeta[slot+1].regenAt
+	default:
+		return MaxDuration(rp.runeMeta[slot].regenAt, rp.runeMeta[slot+1].regenAt)
 	}
-	// Both are spent so return the last one to regen at
-	return MaxDuration(rp.runeMeta[left].regenAt, rp.runeMeta[right].regenAt)
 }
 
-// TODO Can possibly replaced by either BloodRuneReadyAt() or SpentBloodRuneReadyAt() variants, depending on semantics.
 func (rp *RunicPowerBar) NextBloodRuneReadyAt(sim *Simulation) time.Duration {
-	return rp.NextRuneTypeReadyAt(sim, 0, 1)
+	return rp.bothRunesReadyAt(sim, 0)
 }
 
 func (rp *RunicPowerBar) NextFrostRuneReadyAt(sim *Simulation) time.Duration {
-	return rp.NextRuneTypeReadyAt(sim, 2, 3)
+	return rp.bothRunesReadyAt(sim, 2)
 }
 
 func (rp *RunicPowerBar) NextUnholyRuneReadyAt(sim *Simulation) time.Duration {
-	return rp.NextRuneTypeReadyAt(sim, 4, 5)
+	return rp.bothRunesReadyAt(sim, 4)
 }
 
 // AnySpentRuneReadyAt returns the next time that a rune will regenerate.
@@ -477,7 +477,7 @@ var rs2c = []int8{
 }
 
 func (rp *RunicPowerBar) CurrentBloodRunes() int8 {
-	return rs2c[rp.runeStates&0b1111]
+	return rs2c[(rp.runeStates>>0)&0b1111]
 }
 
 func (rp *RunicPowerBar) CurrentFrostRunes() int8 {
@@ -495,11 +495,28 @@ var rs2d = []int8{
 }
 
 func (rp *RunicPowerBar) CurrentDeathRunes() int8 {
-	return rs2d[rp.runeStates&0b1111] + rs2d[(rp.runeStates>>4)&0b1111] + rs2d[(rp.runeStates>>8)&0b1111]
+	return rs2d[(rp.runeStates>>0)&0b1111] + rs2d[(rp.runeStates>>4)&0b1111] + rs2d[(rp.runeStates>>8)&0b1111]
 }
 
 func (rp *RunicPowerBar) DeathRunesInFU() int8 {
 	return rs2d[(rp.runeStates>>4)&0b1111] + rs2d[(rp.runeStates>>8)&0b1111]
+}
+
+// rune state to count of non-spent runes (0bx0), masking death runes
+var rs2cd = [16]int8{
+	0b0000: 2, 0b0001: 1, 0b0100: 1,
+}
+
+func (rp *RunicPowerBar) CurrentBloodOrDeathRunes() int8 {
+	return rs2cd[(rp.runeStates>>0)&0b0101]
+}
+
+func (rp *RunicPowerBar) CurrentFrostOrDeathRunes() int8 {
+	return rs2cd[(rp.runeStates>>4)&0b0101]
+}
+
+func (rp *RunicPowerBar) CurrentUnholyOrDeathRunes() int8 {
+	return rs2cd[(rp.runeStates>>8)&0b0101]
 }
 
 func (rp *RunicPowerBar) AllRunesSpent() bool {

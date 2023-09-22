@@ -30,11 +30,11 @@ func (value *APLValueCurrentRuneCount) Type() proto.APLValueType {
 func (value *APLValueCurrentRuneCount) GetInt(_ *Simulation) int32 {
 	switch value.runeType {
 	case proto.APLValueRuneType_RuneBlood:
-		return int32(value.unit.CurrentBloodRunes()) // TODO these only count non-death runes of the specified kind
+		return int32(value.unit.CurrentBloodOrDeathRunes())
 	case proto.APLValueRuneType_RuneFrost:
-		return int32(value.unit.CurrentFrostRunes())
+		return int32(value.unit.CurrentFrostOrDeathRunes())
 	case proto.APLValueRuneType_RuneUnholy:
-		return int32(value.unit.CurrentUnholyRunes())
+		return int32(value.unit.CurrentUnholyOrDeathRunes())
 	case proto.APLValueRuneType_RuneDeath:
 		return int32(value.unit.CurrentDeathRunes())
 	}
