@@ -27,14 +27,14 @@ func (rot *APLRotation) newValueCurrentRuneCount(config *proto.APLValueCurrentRu
 func (value *APLValueCurrentRuneCount) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeInt
 }
-func (value *APLValueCurrentRuneCount) GetInt(sim *Simulation) int32 {
+func (value *APLValueCurrentRuneCount) GetInt(_ *Simulation) int32 {
 	switch value.runeType {
 	case proto.APLValueRuneType_RuneBlood:
-		return int32(value.unit.CurrentBloodRunes())
+		return int32(value.unit.CurrentBloodOrDeathRunes())
 	case proto.APLValueRuneType_RuneFrost:
-		return int32(value.unit.CurrentFrostRunes())
+		return int32(value.unit.CurrentFrostOrDeathRunes())
 	case proto.APLValueRuneType_RuneUnholy:
-		return int32(value.unit.CurrentUnholyRunes())
+		return int32(value.unit.CurrentUnholyOrDeathRunes())
 	case proto.APLValueRuneType_RuneDeath:
 		return int32(value.unit.CurrentDeathRunes())
 	}
@@ -64,14 +64,14 @@ func (rot *APLRotation) newValueCurrentNonDeathRuneCount(config *proto.APLValueC
 func (value *APLValueCurrentNonDeathRuneCount) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeInt
 }
-func (value *APLValueCurrentNonDeathRuneCount) GetInt(sim *Simulation) int32 {
+func (value *APLValueCurrentNonDeathRuneCount) GetInt(_ *Simulation) int32 {
 	switch value.runeType {
 	case proto.APLValueRuneType_RuneBlood:
-		return int32(value.unit.NormalCurrentBloodRunes())
+		return int32(value.unit.CurrentBloodRunes())
 	case proto.APLValueRuneType_RuneFrost:
-		return int32(value.unit.NormalCurrentFrostRunes())
+		return int32(value.unit.CurrentFrostRunes())
 	case proto.APLValueRuneType_RuneUnholy:
-		return int32(value.unit.NormalCurrentUnholyRunes())
+		return int32(value.unit.CurrentUnholyRunes())
 	}
 	return 0
 }
@@ -99,7 +99,7 @@ func (rot *APLRotation) newValueCurrentRuneActive(config *proto.APLValueCurrentR
 func (value *APLValueCurrentRuneActive) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeBool
 }
-func (value *APLValueCurrentRuneActive) GetBool(sim *Simulation) bool {
+func (value *APLValueCurrentRuneActive) GetBool(_ *Simulation) bool {
 	return value.unit.RuneIsActive(value.runeSlot)
 }
 func (value *APLValueCurrentRuneActive) String() string {
@@ -126,7 +126,7 @@ func (rot *APLRotation) newValueCurrentRuneDeath(config *proto.APLValueCurrentRu
 func (value *APLValueCurrentRuneDeath) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeBool
 }
-func (value *APLValueCurrentRuneDeath) GetBool(sim *Simulation) bool {
+func (value *APLValueCurrentRuneDeath) GetBool(_ *Simulation) bool {
 	return value.unit.RuneIsDeath(int8(value.runeSlot))
 }
 func (value *APLValueCurrentRuneDeath) String() string {

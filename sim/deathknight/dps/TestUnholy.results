@@ -118,8 +118,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-BlessedGarboftheUndeadSlayer"
  value: {
-  dps: 6377.49389
-  tps: 4137.17824
+  dps: 6377.19709
+  tps: 4136.9408
   hps: 224.48378
  }
 }
@@ -278,8 +278,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 7702.76403
-  tps: 4928.59166
+  dps: 7702.76936
+  tps: 4928.59977
   hps: 263.46359
  }
 }
@@ -622,16 +622,16 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 7537.27587
-  tps: 4867.9732
+  dps: 7537.28187
+  tps: 4867.98232
   hps: 265.66963
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 7546.56367
-  tps: 4875.75366
+  dps: 7546.56968
+  tps: 4875.76278
   hps: 265.66963
  }
 }
@@ -678,16 +678,16 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-ScourgeborneBattlegear"
  value: {
-  dps: 7263.63083
-  tps: 4683.02231
+  dps: 7263.64523
+  tps: 4683.04421
   hps: 255.62308
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-ScourgebornePlate"
  value: {
-  dps: 6623.95362
-  tps: 4228.54883
+  dps: 6623.9593
+  tps: 4228.55747
   hps: 270.24427
  }
 }
@@ -942,8 +942,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-TinyAbominationinaJar-50706"
  value: {
-  dps: 7669.65053
-  tps: 4977.51971
+  dps: 7669.65653
+  tps: 4977.52883
   hps: 264.72419
  }
 }
@@ -1022,8 +1022,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Average-Default"
  value: {
-  dps: 8062.85576
-  tps: 5161.16036
+  dps: 8062.85605
+  tps: 5161.16075
   hps: 265.34082
  }
 }

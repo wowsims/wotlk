@@ -231,8 +231,8 @@ dps_results: {
 dps_results: {
  key: "TestSV-AllItems-Death'sChoice-47464"
  value: {
-  dps: 7880.77173
-  tps: 6814.50378
+  dps: 7880.76138
+  tps: 6814.49343
  }
 }
 dps_results: {
@@ -252,8 +252,8 @@ dps_results: {
 dps_results: {
  key: "TestSV-AllItems-Deathbringer'sWill-50363"
  value: {
-  dps: 7772.85604
-  tps: 6725.43792
+  dps: 7772.84569
+  tps: 6725.42758
  }
 }
 dps_results: {
@@ -280,8 +280,8 @@ dps_results: {
 dps_results: {
  key: "TestSV-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 7477.71438
-  tps: 6439.97266
+  dps: 7477.73948
+  tps: 6439.99777
  }
 }
 dps_results: {
@@ -448,8 +448,8 @@ dps_results: {
 dps_results: {
  key: "TestSV-AllItems-IllustrationoftheDragonSoul-40432"
  value: {
-  dps: 7383.20283
-  tps: 6348.82087
+  dps: 7383.19562
+  tps: 6348.81367
  }
 }
 dps_results: {
@@ -483,8 +483,8 @@ dps_results: {
 dps_results: {
  key: "TestSV-AllItems-InvigoratingEarthsiegeDiamond"
  value: {
-  dps: 7564.18391
-  tps: 6511.06832
+  dps: 7564.17656
+  tps: 6511.06097
   hps: 12.062
  }
 }
@@ -568,8 +568,8 @@ dps_results: {
 dps_results: {
  key: "TestSV-AllItems-PetrifiedScarab-21685"
  value: {
-  dps: 7383.18658
-  tps: 6348.80463
+  dps: 7383.19379
+  tps: 6348.81183
  }
 }
 dps_results: {
@@ -841,15 +841,15 @@ dps_results: {
 dps_results: {
  key: "TestSV-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
-  dps: 6183.23266
-  tps: 5325.37788
+  dps: 6183.24271
+  tps: 5325.38792
  }
 }
 dps_results: {
  key: "TestSV-AllItems-Val'anyr,HammerofAncientKings-46017"
  value: {
-  dps: 7357.2312
-  tps: 6329.16741
+  dps: 7357.24155
+  tps: 6329.17776
  }
 }
 dps_results: {
@@ -883,8 +883,8 @@ dps_results: {
 dps_results: {
  key: "TestSV-Average-Default"
  value: {
-  dps: 7677.28314
-  tps: 6628.8889
+  dps: 7677.28347
+  tps: 6628.88924
  }
 }
 dps_results: {

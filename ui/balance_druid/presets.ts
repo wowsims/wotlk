@@ -278,7 +278,7 @@ name: 'Basic P3 APL',
 rotation: SavedRotation.create({
 	specRotationOptionsJson: BalanceDruidRotation.toJsonString(DefaultRotation),
 	rotation: APLRotation.fromJsonString(`{
-      "type": "TypeAPL",
+      "type": 3,
       "prepullActions": [
 		{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1.5s"}}},
 		{"action":{"castSpell":{"spellId":{"spellId":48461}}},"doAtValue":{"const":{"val":"-1.5s"}}}

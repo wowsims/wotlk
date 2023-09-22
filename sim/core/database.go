@@ -2,7 +2,6 @@ package core
 
 import (
 	"fmt"
-
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -397,7 +396,7 @@ func ColorIntersects(g proto.GemColor, o proto.GemColor) bool {
 		return true
 	}
 	if g == proto.GemColor_GemColorMeta {
-		return false // meta gems o nothing.
+		return o == proto.GemColor_GemColorUnknown
 	}
 	if g == proto.GemColor_GemColorRed {
 		return o == proto.GemColor_GemColorOrange || o == proto.GemColor_GemColorPurple

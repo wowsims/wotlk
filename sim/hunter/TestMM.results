@@ -139,8 +139,8 @@ dps_results: {
 dps_results: {
  key: "TestMM-AllItems-BlessedGarboftheUndeadSlayer"
  value: {
-  dps: 6108.57928
-  tps: 5320.79602
+  dps: 6108.57251
+  tps: 5320.78925
  }
 }
 dps_results: {
@@ -841,8 +841,8 @@ dps_results: {
 dps_results: {
  key: "TestMM-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
-  dps: 6066.88495
-  tps: 5285.44464
+  dps: 6066.87836
+  tps: 5285.43806
  }
 }
 dps_results: {
@@ -883,8 +883,8 @@ dps_results: {
 dps_results: {
  key: "TestMM-Average-Default"
  value: {
-  dps: 7285.56076
-  tps: 6369.69972
+  dps: 7285.56113
+  tps: 6369.70008
  }
 }
 dps_results: {

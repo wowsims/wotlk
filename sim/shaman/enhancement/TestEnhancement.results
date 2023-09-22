@@ -118,7 +118,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-BlackBruise-50692"
  value: {
-  dps: 7546.19747
+  dps: 7546.19159
   tps: 4133.63317
  }
 }
@@ -217,7 +217,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-Death'sChoice-47464"
  value: {
-  dps: 7821.58944
+  dps: 7821.58531
   tps: 4272.35185
  }
 }
@@ -497,7 +497,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-IncisorFragment-37723"
  value: {
-  dps: 7557.77686
+  dps: 7557.77391
   tps: 4135.45465
  }
 }
@@ -547,7 +547,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-NevermeltingIceCrystal-50259"
  value: {
-  dps: 7606.65722
+  dps: 7606.6523
   tps: 4168.83959
  }
 }
@@ -729,14 +729,14 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-SliverofPureIce-50339"
  value: {
-  dps: 7593.1934
+  dps: 7593.19955
   tps: 4168.2068
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-SliverofPureIce-50346"
  value: {
-  dps: 7614.0392
+  dps: 7614.04535
   tps: 4179.05119
  }
 }
@@ -750,7 +750,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-SouloftheDead-40382"
  value: {
-  dps: 7558.97534
+  dps: 7558.97799
   tps: 4147.67463
  }
 }
@@ -771,7 +771,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-Stonebreaker'sTotem-33507"
  value: {
-  dps: 7653.49218
+  dps: 7653.4768
   tps: 4207.54069
  }
 }
@@ -813,7 +813,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-TearsoftheVanquished-47215"
  value: {
-  dps: 7550.22201
+  dps: 7550.21585
   tps: 4142.7351
  }
 }
@@ -869,7 +869,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-TinyAbominationinaJar-50706"
  value: {
-  dps: 7689.43328
+  dps: 7689.43622
   tps: 4220.75554
  }
 }
@@ -946,7 +946,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-Val'anyr,HammerofAncientKings-46017"
  value: {
-  dps: 7881.91069
+  dps: 7881.90515
   tps: 4321.52187
  }
 }
@@ -981,7 +981,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Average-Default"
  value: {
-  dps: 7682.97665
+  dps: 7682.97677
   tps: 4218.7695
  }
 }
