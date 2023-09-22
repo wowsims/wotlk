@@ -62,7 +62,7 @@ func (dk *Deathknight) NewArmyGhoulPet(_ int) *GhoulPet {
 
 	ghoulPet.AddStatDependency(stats.Strength, stats.AttackPower, 1)
 	ghoulPet.AddStatDependency(stats.Agility, stats.AttackPower, 1)
-	ghoulPet.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/83.3)
+	ghoulPet.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/85.5)
 
 	// command doesn't apply to army ghoul
 	if dk.Race == proto.Race_RaceOrc {
@@ -89,8 +89,6 @@ func (dk *Deathknight) NewGhoulPet(permanent bool) *GhoulPet {
 
 		stats.MeleeHit:  -nocsHit,
 		stats.Expertise: -nocsHit * PetExpertiseScale,
-
-		stats.MeleeCrit: 3.2 * core.CritRatingPerCritChance,
 	}
 
 	ghoulPet := &GhoulPet{
@@ -117,7 +115,7 @@ func (dk *Deathknight) NewGhoulPet(permanent bool) *GhoulPet {
 
 	ghoulPet.AddStatDependency(stats.Strength, stats.AttackPower, 1)
 	ghoulPet.AddStatDependency(stats.Agility, stats.AttackPower, 1)
-	ghoulPet.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/83.3)
+	ghoulPet.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance/85.5)
 
 	if permanent {
 		core.ApplyPetConsumeEffects(&ghoulPet.Character, dk.Consumes)
