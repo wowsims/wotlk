@@ -154,10 +154,6 @@ func (garg *GargoylePet) registerGargoyleStrikeSpell() {
 			DefaultCast: core.Cast{
 				CastTime: time.Millisecond * 2000,
 			},
-			OnCastComplete: func(sim *core.Simulation, spell *core.Spell) {
-				// Gargoyle doesn't use GCD, so we recast the spell over and over
-				garg.GargoyleStrike.Cast(sim, garg.CurrentTarget)
-			},
 		},
 
 		DamageMultiplier: 1,
@@ -168,6 +164,8 @@ func (garg *GargoylePet) registerGargoyleStrikeSpell() {
 			baseDamage := 2.05*sim.Roll(51, 69) + attackPowerModifier*spell.MeleeAttackPower()
 			result := spell.CalcDamage(sim, target, baseDamage, outcomeApplier)
 			spell.DealDamage(sim, result)
+
+			garg.GargoyleStrike.Cast(sim, garg.CurrentTarget)
 		},
 	})
 	outcomeApplier = garg.GargoyleStrike.OutcomeMagicCritFixedChance(0.05)
