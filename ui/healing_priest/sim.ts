@@ -4,12 +4,9 @@ import { Stat } from '../core/proto/common.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
-
 import {
-	HealingPriest,
-	HealingPriest_Rotation as Rotation,
-	HealingPriest_Options as Options,
-} from '../core/proto/priest.js';
+	APLRotation,
+} from '../core/proto/apl.js';
 
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
@@ -125,6 +122,15 @@ export class HealingPriestSimUI extends IndividualSimUI<Spec.SpecHealingPriest> 
 					Presets.HOLY_P1_PRESET,
 					Presets.HOLY_P2_PRESET,
 				],
+			},
+
+			autoRotation: (player: Player<Spec.SpecHealingPriest>): APLRotation => {
+				const talentTree = player.getTalentTree();
+				if (talentTree == 0) {
+					return Presets.ROTATION_PRESET_DISC.rotation.rotation!;
+				} else {
+					return Presets.ROTATION_PRESET_HOLY.rotation.rotation!;
+				}
 			},
 		});
 	}

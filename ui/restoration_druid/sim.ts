@@ -1,10 +1,11 @@
 import { Spec } from '../core/proto/common.js';
 import { Stat } from '../core/proto/common.js';
+import {
+	APLRotation,
+} from '../core/proto/apl.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
-
-import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 
 import * as DruidInputs from './inputs.js';
@@ -109,6 +110,10 @@ export class RestorationDruidSimUI extends IndividualSimUI<Spec.SpecRestorationD
 					Presets.P1_PRESET,
 					Presets.P2_PRESET,
 				],
+			},
+
+			autoRotation: (_player: Player<Spec.SpecRestorationDruid>): APLRotation => {
+				return APLRotation.create();
 			},
 		});
 	}
