@@ -817,45 +817,45 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestSmite-Settings-Undead-P1-Basic-FullBuffs-LongMultiTarget"
+ key: "TestSmite-Settings-Undead-P1-Basic-Default-FullBuffs-LongMultiTarget"
  value: {
-  dps: 3482.29767
-  tps: 3893.97577
+  dps: 3567.28222
+  tps: 4024.17641
  }
 }
 dps_results: {
- key: "TestSmite-Settings-Undead-P1-Basic-FullBuffs-LongSingleTarget"
+ key: "TestSmite-Settings-Undead-P1-Basic-Default-FullBuffs-LongSingleTarget"
  value: {
-  dps: 3482.29767
-  tps: 2806.69392
+  dps: 3567.28222
+  tps: 2923.4926
  }
 }
 dps_results: {
- key: "TestSmite-Settings-Undead-P1-Basic-FullBuffs-ShortSingleTarget"
+ key: "TestSmite-Settings-Undead-P1-Basic-Default-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 4703.98383
-  tps: 3930.12228
+  dps: 4892.96346
+  tps: 4109.83599
  }
 }
 dps_results: {
- key: "TestSmite-Settings-Undead-P1-Basic-NoBuffs-LongMultiTarget"
+ key: "TestSmite-Settings-Undead-P1-Basic-Default-NoBuffs-LongMultiTarget"
  value: {
-  dps: 1214.87149
-  tps: 1443.29886
+  dps: 1195.49321
+  tps: 1418.57429
  }
 }
 dps_results: {
- key: "TestSmite-Settings-Undead-P1-Basic-NoBuffs-LongSingleTarget"
+ key: "TestSmite-Settings-Undead-P1-Basic-Default-NoBuffs-LongSingleTarget"
  value: {
-  dps: 1214.87149
-  tps: 991.41079
+  dps: 1195.49321
+  tps: 966.68622
  }
 }
 dps_results: {
- key: "TestSmite-Settings-Undead-P1-Basic-NoBuffs-ShortSingleTarget"
+ key: "TestSmite-Settings-Undead-P1-Basic-Default-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 2706.64205
-  tps: 2058.70992
+  dps: 2827.933
+  tps: 2204.06829
  }
 }
 dps_results: {

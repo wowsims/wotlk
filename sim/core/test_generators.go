@@ -145,10 +145,11 @@ func (combos *SettingsCombos) GetTest(testIdx int) (string, *proto.ComputeStatsR
 	specOptionsCombo := combos.SpecOptions[specOptionsIdx]
 	testNameParts = append(testNameParts, specOptionsCombo.Label)
 
-	if len(combos.Rotations) > 1 {
+	rotationsCombo := RotationCombo{Label: "None", Rotation: &proto.APLRotation{}}
+	if len(combos.Rotations) > 0 {
 		rotationsIdx := testIdx % len(combos.Rotations)
 		testIdx /= len(combos.Rotations)
-		rotationsCombo := combos.Rotations[rotationsIdx]
+		rotationsCombo = combos.Rotations[rotationsIdx]
 		testNameParts = append(testNameParts, rotationsCombo.Label)
 	}
 
@@ -173,6 +174,7 @@ func (combos *SettingsCombos) GetTest(testIdx int) (string, *proto.ComputeStatsR
 				Buffs:              buffsCombo.Player,
 				Profession1:        proto.Profession_Engineering,
 				Cooldowns:          combos.Cooldowns,
+				Rotation:           rotationsCombo.Rotation,
 				DistanceFromTarget: 30,
 				ReactionTimeMs:     150,
 				ChannelClipDelayMs: 50,

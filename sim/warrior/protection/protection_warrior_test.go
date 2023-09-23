@@ -23,6 +23,7 @@ func TestProtectionWarrior(t *testing.T) {
 		Glyphs:      DefaultGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
+		Rotation:    core.RotationCombo{Label: "Default", Rotation: DefaultRotation},
 
 		IsTank:          true,
 		InFrontOfTarget: true,
@@ -91,25 +92,7 @@ var DefaultGlyphs = &proto.Glyphs{
 var PlayerOptionsBasic = &proto.Player_ProtectionWarrior{
 	ProtectionWarrior: &proto.ProtectionWarrior{
 		Options:  warriorOptions,
-		Rotation: warriorRotation,
-	},
-}
-
-var warriorRotation = &proto.ProtectionWarrior_Rotation{
-	HsRageThreshold: 30,
-	CustomRotation: &proto.CustomRotation{
-		Spells: []*proto.CustomSpell{
-			&proto.CustomSpell{Spell: int32(proto.ProtectionWarrior_Rotation_ShieldSlam)},
-			&proto.CustomSpell{Spell: int32(proto.ProtectionWarrior_Rotation_Revenge)},
-			&proto.CustomSpell{Spell: int32(proto.ProtectionWarrior_Rotation_Shout)},
-			&proto.CustomSpell{Spell: int32(proto.ProtectionWarrior_Rotation_ThunderClap)},
-			&proto.CustomSpell{Spell: int32(proto.ProtectionWarrior_Rotation_DemoralizingShout)},
-			&proto.CustomSpell{Spell: int32(proto.ProtectionWarrior_Rotation_MortalStrike)},
-			&proto.CustomSpell{Spell: int32(proto.ProtectionWarrior_Rotation_Devastate)},
-			&proto.CustomSpell{Spell: int32(proto.ProtectionWarrior_Rotation_SunderArmor)},
-			&proto.CustomSpell{Spell: int32(proto.ProtectionWarrior_Rotation_ConcussionBlow)},
-			&proto.CustomSpell{Spell: int32(proto.ProtectionWarrior_Rotation_Shockwave)},
-		},
+		Rotation: &proto.ProtectionWarrior_Rotation{},
 	},
 }
 
@@ -123,99 +106,40 @@ var FullConsumes = &proto.Consumes{
 	GuardianElixir: proto.GuardianElixir_GiftOfArthas,
 }
 
+var DefaultRotation = core.APLRotationFromJsonString(`{
+	"type": "TypeAPL",
+	"prepullActions": [
+		{"action":{"castSpell":{"spellId":{"spellId":47440}}},"doAtValue":{"const":{"val":"-10s"}}},
+		{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
+	],
+	"priorityList": [
+		{"action":{"condition":{"cmp":{"op":"OpGe","lhs":{"currentRage":{}},"rhs":{"const":{"val":"30"}}}},"castSpell":{"spellId":{"tag":1,"spellId":47450}}}},
+		{"action":{"autocastOtherCooldowns":{}}},
+		{"action":{"castSpell":{"spellId":{"spellId":47488}}}},
+		{"action":{"castSpell":{"spellId":{"spellId":57823}}}},
+		{"action":{"condition":{"auraShouldRefresh":{"sourceUnit":{"type":"Self"},"auraId":{"spellId":47440},"maxOverlap":{"const":{"val":"3s"}}}},"castSpell":{"spellId":{"spellId":47440}}}},
+		{"action":{"condition":{"auraShouldRefresh":{"auraId":{"spellId":47502},"maxOverlap":{"const":{"val":"2s"}}}},"castSpell":{"spellId":{"spellId":47502}}}},
+		{"action":{"condition":{"auraShouldRefresh":{"auraId":{"spellId":47437},"maxOverlap":{"const":{"val":"2s"}}}},"castSpell":{"spellId":{"spellId":25203}}}},
+		{"action":{"castSpell":{"spellId":{"spellId":47498}}}}
+	]
+}`)
+
 var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
-	{
-		"id": 40546,
-		"enchant": 3818,
-		"gems": [
-			41380,
-			40034
-		]
-	},
-	{
-		"id": 40387
-	},
-	{
-		"id": 39704,
-		"enchant": 3852,
-		"gems": [
-			40034
-		]
-	},
-	{
-		"id": 40722,
-		"enchant": 3605
-	},
-	{
-		"id": 44000,
-		"enchant": 3832,
-		"gems": [
-			40034,
-			40015
-		]
-	},
-	{
-		"id": 39764,
-		"enchant": 3850,
-		"gems": [
-			0
-		]
-	},
-	{
-		"id": 40545,
-		"enchant": 3860,
-		"gems": [
-			40034,
-			0
-		]
-	},
-	{
-		"id": 39759,
-		"enchant": 3601,
-		"gems": [
-			40008,
-			36767
-		]
-	},
-	{
-		"id": 40589,
-		"enchant": 3822
-	},
-	{
-		"id": 39717,
-		"enchant": 3232,
-		"gems": [
-			40089
-		]
-	},
-	{
-		"id": 40370
-	},
-	{
-		"id": 40718
-	},
-	{
-		"id": 40257
-	},
-	{
-		"id": 44063,
-		"gems": [
-			36767,
-			40089
-		]
-	},
-	{
-		"id": 40402,
-		"enchant": 3788
-	},
-	{
-		"id": 40400,
-		"enchant": 3849
-	},
-	{
-		"id": 41168,
-		"gems": [
-			36767
-		]
-	}
+	{"id":40546,"enchant":3818,"gems":[41380,40034]},
+	{"id":40387},
+	{"id":39704,"enchant":3852,"gems":[40034]},
+	{"id":40722,"enchant":3605},
+	{"id":44000,"enchant":3832,"gems":[40034,40015]},
+	{"id":39764,"enchant":3850,"gems":[0]},
+	{"id":40545,"enchant":3860,"gems":[40034,0]},
+	{"id":39759,"enchant":3601,"gems":[40008,36767]},
+	{"id":40589,"enchant":3822},
+	{"id":39717,"enchant":3232,"gems":[40089]},
+	{"id":40370},
+	{"id":40718},
+	{"id":40257},
+	{"id":44063,"gems":[36767,40089]},
+	{"id":40402,"enchant":3788},
+	{"id":40400,"enchant":3849},
+	{"id":41168,"gems":[36767]}
 ]}`)

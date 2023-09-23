@@ -547,51 +547,51 @@ dps_results: {
  value: {}
 }
 dps_results: {
- key: "TestHoly-Settings-BloodElf-P1-Basic-FullBuffs-LongMultiTarget"
+ key: "TestHoly-Settings-BloodElf-P1-Basic-Default-FullBuffs-LongMultiTarget"
  value: {}
 }
 dps_results: {
- key: "TestHoly-Settings-BloodElf-P1-Basic-FullBuffs-LongSingleTarget"
+ key: "TestHoly-Settings-BloodElf-P1-Basic-Default-FullBuffs-LongSingleTarget"
  value: {}
 }
 dps_results: {
- key: "TestHoly-Settings-BloodElf-P1-Basic-FullBuffs-ShortSingleTarget"
+ key: "TestHoly-Settings-BloodElf-P1-Basic-Default-FullBuffs-ShortSingleTarget"
  value: {}
 }
 dps_results: {
- key: "TestHoly-Settings-BloodElf-P1-Basic-NoBuffs-LongMultiTarget"
+ key: "TestHoly-Settings-BloodElf-P1-Basic-Default-NoBuffs-LongMultiTarget"
  value: {}
 }
 dps_results: {
- key: "TestHoly-Settings-BloodElf-P1-Basic-NoBuffs-LongSingleTarget"
+ key: "TestHoly-Settings-BloodElf-P1-Basic-Default-NoBuffs-LongSingleTarget"
  value: {}
 }
 dps_results: {
- key: "TestHoly-Settings-BloodElf-P1-Basic-NoBuffs-ShortSingleTarget"
+ key: "TestHoly-Settings-BloodElf-P1-Basic-Default-NoBuffs-ShortSingleTarget"
  value: {}
 }
 dps_results: {
- key: "TestHoly-Settings-Human-P1-Basic-FullBuffs-LongMultiTarget"
+ key: "TestHoly-Settings-Human-P1-Basic-Default-FullBuffs-LongMultiTarget"
  value: {}
 }
 dps_results: {
- key: "TestHoly-Settings-Human-P1-Basic-FullBuffs-LongSingleTarget"
+ key: "TestHoly-Settings-Human-P1-Basic-Default-FullBuffs-LongSingleTarget"
  value: {}
 }
 dps_results: {
- key: "TestHoly-Settings-Human-P1-Basic-FullBuffs-ShortSingleTarget"
+ key: "TestHoly-Settings-Human-P1-Basic-Default-FullBuffs-ShortSingleTarget"
  value: {}
 }
 dps_results: {
- key: "TestHoly-Settings-Human-P1-Basic-NoBuffs-LongMultiTarget"
+ key: "TestHoly-Settings-Human-P1-Basic-Default-NoBuffs-LongMultiTarget"
  value: {}
 }
 dps_results: {
- key: "TestHoly-Settings-Human-P1-Basic-NoBuffs-LongSingleTarget"
+ key: "TestHoly-Settings-Human-P1-Basic-Default-NoBuffs-LongSingleTarget"
  value: {}
 }
 dps_results: {
- key: "TestHoly-Settings-Human-P1-Basic-NoBuffs-ShortSingleTarget"
+ key: "TestHoly-Settings-Human-P1-Basic-Default-NoBuffs-ShortSingleTarget"
  value: {}
 }
 dps_results: {
