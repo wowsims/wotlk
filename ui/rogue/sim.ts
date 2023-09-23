@@ -10,6 +10,11 @@ import {
 	TristateEffect,
 	WeaponType
 } from '../core/proto/common.js';
+import {
+	APLAction,
+	APLListItem,
+	APLRotation,
+} from '../core/proto/apl.js';
 import { Player } from '../core/player.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
@@ -367,8 +372,17 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					Presets.SubtletyTalents,
 					Presets.HemoSubtletyTalents,
 				],
+				// Preset rotations that the user can quickly select.
 				rotations: [
-					Presets.ROTATION_APL_PRESET,
+					Presets.ROTATION_PRESET_MUTILATE,
+					Presets.ROTATION_PRESET_MUTILATE_EXPOSE,
+					Presets.ROTATION_PRESET_RUPTURE_MUTILATE,
+					Presets.ROTATION_PRESET_RUPTURE_MUTILATE_EXPOSE,
+					Presets.ROTATION_PRESET_COMBAT,
+					Presets.ROTATION_PRESET_COMBAT_EXPOSE,
+					Presets.ROTATION_PRESET_COMBAT_CLEAVE_SND,
+					Presets.ROTATION_PRESET_COMBAT_CLEAVE_SND_EXPOSE,
+					Presets.ROTATION_PRESET_AOE,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
@@ -385,6 +399,21 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					Presets.P3_PRESET_HEMO_SUB,
 					Presets.P3_PRESET_DANCE_SUB,
 				],
+			},
+
+			autoRotation: (player: Player<Spec.SpecRogue>): APLRotation => {
+				const talentTree = player.getTalentTree();
+				const numTargets = player.sim.encounter.targets.length;
+				if (numTargets >= 5) {
+					return Presets.ROTATION_PRESET_AOE.rotation.rotation!;
+				} else if (talentTree == 0) {
+					return Presets.ROTATION_PRESET_MUTILATE_EXPOSE.rotation.rotation!;
+				} else if (talentTree == 1) {
+					return Presets.ROTATION_PRESET_COMBAT_EXPOSE.rotation.rotation!;
+				} else {
+					// TODO: Need a sub rotation here
+					return Presets.ROTATION_PRESET_MUTILATE_EXPOSE.rotation.rotation!;
+				}
 			},
 		})
 		this.player.changeEmitter.on((c) => {

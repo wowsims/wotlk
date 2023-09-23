@@ -100,7 +100,7 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 			getValue: (player: Player<any>) => this.getSourceValue()?.action.oneofKind,
 			setValue: (eventID: EventID, player: Player<any>, newKind: APLActionKind) => {
 				const sourceValue = this.getSourceValue();
-				const oldKind = sourceValue.action.oneofKind;
+				const oldKind = sourceValue?.action.oneofKind;
 				if (oldKind == newKind) {
 					return;
 				}
@@ -216,9 +216,12 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 		const factory = actionKindFactories[newActionKind];
 		this.actionPicker = factory.factory(this.actionDiv, this.modObject, {
 			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
-			getValue: () => (this.getSourceValue().action as any)[newActionKind] || factory.newValue(),
+			getValue: () => (this.getSourceValue()?.action as any)?.[newActionKind] || factory.newValue(),
 			setValue: (eventID: EventID, player: Player<any>, newValue: any) => {
-				(this.getSourceValue().action as any)[newActionKind] = newValue;
+				const sourceValue = this.getSourceValue();
+				if (sourceValue) {
+					(sourceValue?.action as any)[newActionKind] = newValue;
+				}
 				player.rotationChangeEmitter.emit(eventID);
 			},
 		});
