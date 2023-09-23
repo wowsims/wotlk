@@ -107,7 +107,7 @@ const actionIdSets: Record<ACTION_ID_SET, {
 	'channel_spells': {
 		defaultLabel: 'Channeled Spell',
 		getActionIDs: async (metadata) => {
-			return metadata.getSpells().filter(spell => spell.data.isChanneled).map(actionId => {
+			return metadata.getSpells().filter(spell => spell.data.isCastable && spell.data.isChanneled).map(actionId => {
 				return {
 					value: actionId.id,
 				};

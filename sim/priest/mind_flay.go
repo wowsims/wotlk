@@ -11,7 +11,14 @@ import (
 // TODO Mind Flay (48156) now "periodically triggers" Mind Flay (58381), probably to allow haste to work.
 // The first never deals damage, so the latter should probably be used as ActionID here.
 
-func (priest *Priest) newMindFlaySpell(numTicks int32) *core.Spell {
+func (priest *Priest) newMindFlaySpell(numTicksIdx int32) *core.Spell {
+	numTicks := numTicksIdx
+	flags := core.SpellFlagChanneled
+	if numTicksIdx == 0 {
+		numTicks = 3
+		flags |= core.SpellFlagAPL
+	}
+
 	var mfReducTime time.Duration
 	if priest.HasSetBonus(ItemSetCrimsonAcolyte, 4) {
 		mfReducTime = time.Millisecond * 170
@@ -26,10 +33,10 @@ func (priest *Priest) newMindFlaySpell(numTicks int32) *core.Spell {
 	focusedMind := 0.05 * float64(priest.Talents.FocusedMind)
 
 	return priest.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48156}.WithTag(numTicks),
+		ActionID:    core.ActionID{SpellID: 48156}.WithTag(numTicksIdx),
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagChanneled | core.SpellFlagAPL,
+		Flags:       flags,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.09,
@@ -68,7 +75,7 @@ func (priest *Priest) newMindFlaySpell(numTicks int32) *core.Spell {
 
 		Dot: core.DotConfig{
 			Aura: core.Aura{
-				Label: "MindFlay-" + strconv.Itoa(int(numTicks)),
+				Label: "MindFlay-" + strconv.Itoa(int(numTicksIdx)),
 			},
 			NumberOfTicks:       numTicks,
 			TickLength:          tickLength,

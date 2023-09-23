@@ -132,6 +132,11 @@ func (priest *Priest) Initialize() {
 
 	priest.registerPowerInfusionCD()
 
+	if priest.IsUsingAPL {
+		priest.newMindFlaySpell(0)
+		priest.newMindSearSpell(0)
+	}
+
 	priest.MindFlay = []*core.Spell{
 		nil, // So we can use # of ticks as the index
 		priest.newMindFlaySpell(1),
