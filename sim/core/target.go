@@ -247,7 +247,7 @@ func NewAttackTable(attacker *Unit, defender *Unit) *AttackTable {
 
 		table.GlanceMultiplier = UnitLevelFloat64(defender.Level, 0.95, 0.95, 0.85, 0.75)
 		table.MeleeCritSuppression = UnitLevelFloat64(defender.Level, 0, 0.01, 0.02, 0.048)
-		table.SpellCritSuppression = UnitLevelFloat64(defender.Level, 0, 0.01, 0.02, 0.03)
+		table.SpellCritSuppression = UnitLevelFloat64(defender.Level, 0, 0, 0.003, 0.021)
 	} else {
 		// Assumes defender (the Player) is level 80.
 		table.BaseSpellMissChance = 0.05
