@@ -46,1583 +46,1583 @@ character_stats_results: {
 dps_results: {
  key: "TestBalance-AllItems-Althor'sAbacus-50359"
  value: {
-  dps: 8059.50683
-  tps: 7880.9798
+  dps: 7792.86548
+  tps: 7611.29752
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-Althor'sAbacus-50366"
  value: {
-  dps: 8098.72706
-  tps: 7919.2726
+  dps: 7830.7487
+  tps: 7648.2533
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-AshtongueTalismanofEquilibrium-32486"
  value: {
-  dps: 7838.05561
-  tps: 7664.66673
+  dps: 7579.00923
+  tps: 7402.92065
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-AustereEarthsiegeDiamond"
  value: {
-  dps: 7837.75557
-  tps: 7665.59279
+  dps: 7587.20126
+  tps: 7411.67145
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 7740.39672
-  tps: 7569.41567
+  dps: 7484.6339
+  tps: 7310.61192
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 7741.35122
-  tps: 7662.87683
+  dps: 7485.66001
+  tps: 7404.25025
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 7741.35122
-  tps: 7662.87683
+  dps: 7485.66001
+  tps: 7404.25025
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-BeamingEarthsiegeDiamond"
  value: {
-  dps: 7858.74163
-  tps: 7687.06926
+  dps: 7608.0239
+  tps: 7433.20687
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
-  dps: 6153.51491
-  tps: 5974.00883
+  dps: 5855.8573
+  tps: 5670.20906
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-BracingEarthsiegeDiamond"
  value: {
-  dps: 7880.94009
-  tps: 7555.93074
+  dps: 7628.96227
+  tps: 7305.62552
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-BrutalGladiator'sIdolofResolve-35019"
  value: {
-  dps: 7979.09519
-  tps: 7803.87445
+  dps: 7713.72732
+  tps: 7535.46565
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-ChaoticSkyflareDiamond"
  value: {
-  dps: 8085.12785
-  tps: 7909.90711
+  dps: 7817.27857
+  tps: 7639.0169
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-CorpseTongueCoin-50349"
  value: {
-  dps: 7740.39672
-  tps: 7569.41567
+  dps: 7484.6339
+  tps: 7310.61192
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-CorpseTongueCoin-50352"
  value: {
-  dps: 7740.39672
-  tps: 7569.41567
+  dps: 7484.6339
+  tps: 7310.61192
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-CorrodedSkeletonKey-50356"
  value: {
-  dps: 7740.39672
-  tps: 7569.41567
+  dps: 7484.6339
+  tps: 7310.61192
   hps: 64
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-DarkmoonCard:Berserker!-42989"
  value: {
-  dps: 7851.68994
-  tps: 7682.38398
+  dps: 7676.51589
+  tps: 7505.05382
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-DarkmoonCard:Death-42990"
  value: {
-  dps: 7865.50011
-  tps: 7696.50265
+  dps: 7710.51489
+  tps: 7540.74877
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-DarkmoonCard:Greatness-44255"
  value: {
-  dps: 7878.62857
-  tps: 7716.50406
+  dps: 7664.42303
+  tps: 7499.48504
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-DeadlyGladiator'sIdolofResolve-42588"
  value: {
-  dps: 7979.09519
-  tps: 7803.87445
+  dps: 7713.72732
+  tps: 7535.46565
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-Death'sChoice-47464"
  value: {
-  dps: 7740.39672
-  tps: 7569.41567
+  dps: 7484.6339
+  tps: 7310.61192
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-DeathKnight'sAnguish-38212"
  value: {
-  dps: 7766.34047
-  tps: 7595.82015
+  dps: 7529.16205
+  tps: 7356.47981
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-Deathbringer'sWill-50362"
  value: {
-  dps: 7740.39672
-  tps: 7569.41567
+  dps: 7484.6339
+  tps: 7310.61192
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-Deathbringer'sWill-50363"
  value: {
-  dps: 7740.39672
-  tps: 7569.41567
+  dps: 7484.6339
+  tps: 7310.61192
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-Defender'sCode-40257"
  value: {
-  dps: 7740.39672
-  tps: 7569.41567
+  dps: 7484.6339
+  tps: 7310.61192
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-DestructiveSkyflareDiamond"
  value: {
-  dps: 7864.94594
-  tps: 7692.89303
+  dps: 7631.02953
+  tps: 7456.49386
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 8341.30109
-  tps: 8168.64074
+  dps: 8117.97348
+  tps: 7943.22472
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 8308.12864
-  tps: 8138.45474
+  dps: 8095.9742
+  tps: 7922.8876
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-DreamwalkerBattlegear"
  value: {
-  dps: 4477.80016
-  tps: 4292.62214
+  dps: 4252.05918
+  tps: 4063.61289
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-DreamwalkerGarb"
  value: {
-  dps: 6991.27577
-  tps: 6828.37535
+  dps: 6791.00105
+  tps: 6626.38451
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-EffulgentSkyflareDiamond"
  value: {
-  dps: 7837.75557
-  tps: 7665.59279
+  dps: 7587.20126
+  tps: 7411.67145
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-EmberSkyflareDiamond"
  value: {
-  dps: 7896.11346
-  tps: 7723.26898
+  dps: 7641.73827
+  tps: 7465.49306
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-EnigmaticSkyflareDiamond"
  value: {
-  dps: 7858.74163
-  tps: 7686.6769
+  dps: 7608.0239
+  tps: 7432.91572
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-EnigmaticStarflareDiamond"
  value: {
-  dps: 7853.83121
-  tps: 7681.69103
+  dps: 7600.14232
+  tps: 7424.82117
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-EphemeralSnowflake-50260"
  value: {
-  dps: 7791.50443
-  tps: 7620.21809
+  dps: 7610.01127
+  tps: 7438.38098
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-EssenceofGossamer-37220"
  value: {
-  dps: 7740.39672
-  tps: 7569.41567
+  dps: 7484.6339
+  tps: 7310.61192
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-EternalEarthsiegeDiamond"
  value: {
-  dps: 7837.75557
-  tps: 7665.59279
+  dps: 7587.20126
+  tps: 7411.67145
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-ExtractofNecromanticPower-40373"
  value: {
-  dps: 7848.60482
-  tps: 7680.56662
+  dps: 7723.05023
+  tps: 7552.03533
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-EyeoftheBroodmother-45308"
  value: {
-  dps: 8072.2763
-  tps: 7900.1378
+  dps: 7884.83111
+  tps: 7710.32801
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-Figurine-SapphireOwl-42413"
  value: {
-  dps: 7754.90158
-  tps: 7585.23958
+  dps: 7536.71398
+  tps: 7365.02641
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-ForethoughtTalisman-40258"
  value: {
-  dps: 7938.28064
-  tps: 7762.62024
+  dps: 7675.77192
+  tps: 7497.07059
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-ForgeEmber-37660"
  value: {
-  dps: 8006.80956
-  tps: 7833.45226
+  dps: 7772.54968
+  tps: 7597.42603
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-ForlornSkyflareDiamond"
  value: {
-  dps: 7880.94009
-  tps: 7707.73478
+  dps: 7628.96227
+  tps: 7452.38993
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-ForlornStarflareDiamond"
  value: {
-  dps: 7872.30319
-  tps: 7699.30638
+  dps: 7620.61007
+  tps: 7444.24623
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-FuriousGladiator'sIdolofResolve-42589"
  value: {
-  dps: 7979.09519
-  tps: 7803.87445
+  dps: 7713.72732
+  tps: 7535.46565
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-FuryoftheFiveFlights-40431"
  value: {
-  dps: 7740.39672
-  tps: 7569.41567
+  dps: 7484.6339
+  tps: 7310.61192
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-FuturesightRune-38763"
  value: {
-  dps: 7876.16628
-  tps: 7701.26938
+  dps: 7615.83258
+  tps: 7437.89475
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-Gladiator'sSanctuary"
  value: {
-  dps: 4758.01211
-  tps: 4574.90991
+  dps: 4448.21756
+  tps: 4263.05627
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-Gladiator'sWildhide"
  value: {
-  dps: 7396.96314
-  tps: 7212.90671
+  dps: 7225.08492
+  tps: 7037.51387
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-GlowingTwilightScale-54573"
  value: {
-  dps: 8079.11694
-  tps: 7900.1262
+  dps: 7811.80709
+  tps: 7629.77541
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-GlowingTwilightScale-54589"
  value: {
-  dps: 8123.6854
-  tps: 7943.64074
+  dps: 7854.85619
+  tps: 7671.77061
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-GnomishLightningGenerator-41121"
  value: {
-  dps: 7859.91834
-  tps: 7691.84891
+  dps: 7636.80044
+  tps: 7464.72724
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-HatefulGladiator'sIdolofResolve-42587"
  value: {
-  dps: 7979.09519
-  tps: 7803.87445
+  dps: 7713.72732
+  tps: 7535.46565
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-Heartpierce-49982"
  value: {
-  dps: 8085.12785
-  tps: 7909.90711
+  dps: 7817.27857
+  tps: 7639.0169
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-Heartpierce-50641"
  value: {
-  dps: 8085.12785
-  tps: 7909.90711
+  dps: 7817.27857
+  tps: 7639.0169
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-IdolofLunarFury-47670"
  value: {
-  dps: 8158.50746
-  tps: 7985.74321
+  dps: 7944.07338
+  tps: 7768.55634
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-IdolofMutilation-47668"
  value: {
-  dps: 7979.09519
-  tps: 7803.87445
+  dps: 7713.72732
+  tps: 7535.46565
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-IdoloftheCorruptor-45509"
  value: {
-  dps: 7979.09519
-  tps: 7803.87445
+  dps: 7713.72732
+  tps: 7535.46565
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-IdoloftheCryingMoon-50456"
  value: {
-  dps: 7979.09519
-  tps: 7803.87445
+  dps: 7713.72732
+  tps: 7535.46565
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-IdoloftheLunarEclipse-50457"
  value: {
-  dps: 8273.84951
-  tps: 8102.76556
+  dps: 8065.45003
+  tps: 7891.60052
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-IdoloftheRavenGoddess-32387"
  value: {
-  dps: 8020.55973
-  tps: 7845.92334
+  dps: 7774.07182
+  tps: 7596.8992
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-IdoloftheUnseenMoon-33510"
  value: {
-  dps: 8003.98606
-  tps: 7828.62243
+  dps: 7738.28936
+  tps: 7560.02768
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-IdoloftheWhiteStag-32257"
  value: {
-  dps: 7979.09519
-  tps: 7803.87445
+  dps: 7713.72732
+  tps: 7535.46565
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-ImpassiveSkyflareDiamond"
  value: {
-  dps: 7858.74163
-  tps: 7686.6769
+  dps: 7608.0239
+  tps: 7432.91572
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-ImpassiveStarflareDiamond"
  value: {
-  dps: 7853.83121
-  tps: 7681.69103
+  dps: 7600.14232
+  tps: 7424.82117
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-IncisorFragment-37723"
  value: {
-  dps: 7740.39672
-  tps: 7569.41567
+  dps: 7484.6339
+  tps: 7310.61192
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-InsightfulEarthsiegeDiamond"
  value: {
-  dps: 7852.87957
-  tps: 7683.16883
+  dps: 7599.93738
+  tps: 7426.82471
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-InvigoratingEarthsiegeDiamond"
  value: {
-  dps: 7837.75557
-  tps: 7665.59279
+  dps: 7587.20126
+  tps: 7411.67145
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-LasherweaveBattlegear"
  value: {
-  dps: 4477.766
-  tps: 4291.29096
+  dps: 4284.65834
+  tps: 4095.9625
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-LasherweaveRegalia"
  value: {
-  dps: 8292.35477
-  tps: 8125.9311
+  dps: 8022.2352
+  tps: 7852.29285
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-LastWord-50179"
  value: {
-  dps: 8085.12785
-  tps: 7909.90711
+  dps: 7817.27857
+  tps: 7639.0169
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-LastWord-50708"
  value: {
-  dps: 8085.12785
-  tps: 7909.90711
+  dps: 7817.27857
+  tps: 7639.0169
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-Lavanthor'sTalisman-37872"
  value: {
-  dps: 7740.39672
-  tps: 7569.41567
+  dps: 7484.6339
+  tps: 7310.61192
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-MajesticDragonFigurine-40430"
  value: {
-  dps: 7846.39114
-  tps: 7674.0933
+  dps: 7586.95044
+  tps: 7411.61572
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-Malfurion'sBattlegear"
  value: {
-  dps: 4952.91321
-  tps: 4774.281
+  dps: 4673.1354
+  tps: 4487.92629
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-Malfurion'sRegalia"
  value: {
-  dps: 7337.89244
-  tps: 7166.50367
+  dps: 7180.48294
+  tps: 7006.26391
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-MeteoriteWhetstone-37390"
  value: {
-  dps: 7828.81248
-  tps: 7659.16162
+  dps: 7606.78103
+  tps: 7435.09812
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-NevermeltingIceCrystal-50259"
  value: {
-  dps: 7985.7745
-  tps: 7811.19786
+  dps: 7716.1113
+  tps: 7538.14019
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-Nibelung-49992"
  value: {
-  dps: 8085.12785
-  tps: 7909.90711
+  dps: 7817.27857
+  tps: 7639.0169
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-Nibelung-50648"
  value: {
-  dps: 8085.12785
-  tps: 7909.90711
+  dps: 7817.27857
+  tps: 7639.0169
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-NightsongBattlegear"
  value: {
-  dps: 4760.05661
-  tps: 4578.36313
+  dps: 4477.02524
+  tps: 4290.18048
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-NightsongGarb"
  value: {
-  dps: 7298.92805
-  tps: 7128.67495
+  dps: 7112.0856
+  tps: 6939.37718
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-OfferingofSacrifice-37638"
  value: {
-  dps: 7740.39672
-  tps: 7569.41567
+  dps: 7484.6339
+  tps: 7310.61192
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-PersistentEarthshatterDiamond"
  value: {
-  dps: 7837.75557
-  tps: 7665.59279
+  dps: 7587.20126
+  tps: 7411.67145
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-PersistentEarthsiegeDiamond"
  value: {
-  dps: 7837.75557
-  tps: 7665.59279
+  dps: 7587.20126
+  tps: 7411.67145
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-PetrifiedScarab-21685"
  value: {
-  dps: 7740.39672
-  tps: 7569.41567
+  dps: 7484.6339
+  tps: 7310.61192
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-PetrifiedTwilightScale-54571"
  value: {
-  dps: 7740.39672
-  tps: 7569.41567
+  dps: 7484.6339
+  tps: 7310.61192
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-PetrifiedTwilightScale-54591"
  value: {
-  dps: 7740.39672
-  tps: 7569.41567
+  dps: 7484.6339
+  tps: 7310.61192
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-PowerfulEarthshatterDiamond"
  value: {
-  dps: 7837.75557
-  tps: 7665.59279
+  dps: 7587.20126
+  tps: 7411.67145
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-PowerfulEarthsiegeDiamond"
  value: {
-  dps: 7837.75557
-  tps: 7665.59279
+  dps: 7587.20126
+  tps: 7411.67145
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-PurifiedShardoftheGods"
  value: {
-  dps: 7740.39672
-  tps: 7569.41567
+  dps: 7484.6339
+  tps: 7310.61192
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 8180.72583
-  tps: 8003.97868
+  dps: 7963.53878
+  tps: 7785.31951
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 8241.95521
-  tps: 8064.44926
+  dps: 8022.80185
+  tps: 7843.82377
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-RelentlessEarthsiegeDiamond"
  value: {
-  dps: 8062.76851
-  tps: 7887.44972
+  dps: 7795.26416
+  tps: 7616.58085
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-RelentlessGladiator'sIdolofResolve-42591"
  value: {
-  dps: 7979.09519
-  tps: 7803.87445
+  dps: 7713.72732
+  tps: 7535.46565
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-RevitalizingSkyflareDiamond"
  value: {
-  dps: 7837.75557
-  tps: 7664.97034
+  dps: 7587.20126
+  tps: 7411.00133
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-RuneofRepulsion-40372"
  value: {
-  dps: 7740.39672
-  tps: 7569.41567
+  dps: 7484.6339
+  tps: 7310.61192
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-SavageGladiator'sIdolofResolve-42574"
  value: {
-  dps: 7979.09519
-  tps: 7803.87445
+  dps: 7713.72732
+  tps: 7535.46565
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-SealofthePantheon-36993"
  value: {
-  dps: 7740.39672
-  tps: 7569.41567
+  dps: 7484.6339
+  tps: 7310.61192
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-ShinyShardoftheGods"
  value: {
-  dps: 7740.39672
-  tps: 7569.41567
+  dps: 7484.6339
+  tps: 7310.61192
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-Sindragosa'sFlawlessFang-50361"
  value: {
-  dps: 7740.39672
-  tps: 7569.41567
+  dps: 7484.6339
+  tps: 7310.61192
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-SliverofPureIce-50339"
  value: {
-  dps: 8022.06933
-  tps: 7846.97188
+  dps: 7756.70424
+  tps: 7578.70368
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-SliverofPureIce-50346"
  value: {
-  dps: 8057.72409
-  tps: 7882.081
+  dps: 7791.14352
+  tps: 7612.63698
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-SoulPreserver-37111"
  value: {
-  dps: 7874.10207
-  tps: 7699.9593
+  dps: 7613.78121
+  tps: 7436.59751
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-SouloftheDead-40382"
  value: {
-  dps: 7845.12868
-  tps: 7678.73433
+  dps: 7668.87723
+  tps: 7500.19494
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-SparkofLife-37657"
  value: {
-  dps: 7819.68775
-  tps: 7646.61783
+  dps: 7611.33964
+  tps: 7434.97242
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-SphereofRedDragon'sBlood-37166"
  value: {
-  dps: 7740.39672
-  tps: 7569.41567
+  dps: 7484.6339
+  tps: 7310.61192
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-StormshroudArmor"
  value: {
-  dps: 5228.80412
-  tps: 5043.16574
+  dps: 4854.01086
+  tps: 4661.93652
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-SwiftSkyflareDiamond"
  value: {
-  dps: 7837.75557
-  tps: 7665.59279
+  dps: 7587.20126
+  tps: 7411.67145
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-SwiftStarflareDiamond"
  value: {
-  dps: 7837.75557
-  tps: 7665.59279
+  dps: 7587.20126
+  tps: 7411.67145
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-SwiftWindfireDiamond"
  value: {
-  dps: 7837.75557
-  tps: 7665.59279
+  dps: 7587.20126
+  tps: 7411.67145
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-TalismanofTrollDivinity-37734"
  value: {
-  dps: 7784.2018
-  tps: 7612.17175
+  dps: 7526.94566
+  tps: 7351.87632
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-TearsoftheVanquished-47215"
  value: {
-  dps: 7784.61286
-  tps: 7614.77019
+  dps: 7546.94318
+  tps: 7374.91013
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-TheGeneral'sHeart-45507"
  value: {
-  dps: 7740.39672
-  tps: 7569.41567
+  dps: 7484.6339
+  tps: 7310.61192
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-ThunderheartHarness"
  value: {
-  dps: 3597.09718
-  tps: 3417.73262
+  dps: 3394.20322
+  tps: 3210.55542
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-ThunderheartRegalia"
  value: {
-  dps: 5543.02836
-  tps: 5371.94748
+  dps: 5285.82141
+  tps: 5108.93482
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 7837.75557
-  tps: 7665.59279
+  dps: 7587.20126
+  tps: 7411.67145
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-TinyAbominationinaJar-50351"
  value: {
-  dps: 7740.39672
-  tps: 7569.41567
+  dps: 7484.6339
+  tps: 7310.61192
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-TinyAbominationinaJar-50706"
  value: {
-  dps: 7740.39672
-  tps: 7569.41567
+  dps: 7484.6339
+  tps: 7310.61192
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-TirelessSkyflareDiamond"
  value: {
-  dps: 7880.94009
-  tps: 7707.73478
+  dps: 7628.96227
+  tps: 7452.38993
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-TirelessStarflareDiamond"
  value: {
-  dps: 7872.30319
-  tps: 7699.30638
+  dps: 7620.61007
+  tps: 7444.24623
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-TomeofArcanePhenomena-36972"
  value: {
-  dps: 7934.1665
-  tps: 7762.18959
+  dps: 7681.52533
+  tps: 7507.05495
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-TrenchantEarthshatterDiamond"
  value: {
-  dps: 7872.30319
-  tps: 7699.30638
+  dps: 7620.61007
+  tps: 7444.24623
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-TrenchantEarthsiegeDiamond"
  value: {
-  dps: 7880.94009
-  tps: 7707.73478
+  dps: 7628.96227
+  tps: 7452.38993
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-UndeadSlayer'sBlessedArmor"
  value: {
-  dps: 5195.43758
-  tps: 5007.13625
+  dps: 4900.89907
+  tps: 4708.69097
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-Val'anyr,HammerofAncientKings-46017"
  value: {
-  dps: 8370.50473
-  tps: 8192.90514
+  dps: 8140.94664
+  tps: 7961.26176
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-VengefulGladiator'sIdolofResolve-33947"
  value: {
-  dps: 7979.09519
-  tps: 7803.87445
+  dps: 7713.72732
+  tps: 7535.46565
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-WingedTalisman-37844"
  value: {
-  dps: 7881.40027
-  tps: 7703.1678
+  dps: 7621.15201
+  tps: 7439.87861
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-WrathfulGladiator'sIdolofResolve-51429"
  value: {
-  dps: 7979.09519
-  tps: 7803.87445
+  dps: 7713.72732
+  tps: 7535.46565
  }
 }
 dps_results: {
  key: "TestBalance-Average-Default"
  value: {
-  dps: 8149.50453
-  tps: 7976.56069
+  dps: 7950.64092
+  tps: 7775.12942
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-Default-FullBuffs-LongMultiTarget"
  value: {
-  dps: 11526.60968
-  tps: 13647.85752
+  dps: 11194.57877
+  tps: 13231.65908
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-Default-FullBuffs-LongSingleTarget"
  value: {
-  dps: 8085.12785
-  tps: 7909.90711
+  dps: 7817.27857
+  tps: 7639.0169
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-Default-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 8992.04978
-  tps: 8402.66657
+  dps: 8789.4628
+  tps: 8197.76198
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-Default-NoBuffs-LongMultiTarget"
  value: {
-  dps: 4280.66809
-  tps: 4527.30148
+  dps: 4076.3738
+  tps: 4282.06403
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-Default-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2383.47311
-  tps: 2274.54014
+  dps: 2280.86651
+  tps: 2169.86872
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-Default-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 5360.49427
-  tps: 5093.30441
+  dps: 5159.94352
+  tps: 4888.28496
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-MultidotBoth-FullBuffs-LongMultiTarget"
  value: {
-  dps: 12716.89312
-  tps: 13252.98437
+  dps: 12624.43177
+  tps: 13160.52302
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-MultidotBoth-FullBuffs-LongSingleTarget"
  value: {
-  dps: 8082.97131
-  tps: 7909.66978
+  dps: 7916.23663
+  tps: 7741.84335
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-MultidotBoth-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 9013.56435
-  tps: 8423.88254
+  dps: 8808.85504
+  tps: 8215.61188
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-MultidotBoth-NoBuffs-LongMultiTarget"
  value: {
-  dps: 4303.77422
-  tps: 4176.44029
+  dps: 4259.17649
+  tps: 4131.84256
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-MultidotBoth-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2298.55284
-  tps: 2188.33772
+  dps: 2233.57591
+  tps: 2121.86606
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-MultidotBoth-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 5256.46082
-  tps: 4985.79531
+  dps: 5153.46733
+  tps: 4879.32617
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-MultidotIs-FullBuffs-LongMultiTarget"
  value: {
-  dps: 12716.89312
-  tps: 13252.98437
+  dps: 12624.43177
+  tps: 13160.52302
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-MultidotIs-FullBuffs-LongSingleTarget"
  value: {
-  dps: 8090.72863
-  tps: 7915.24291
+  dps: 7898.96784
+  tps: 7720.74372
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-MultidotIs-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 9015.21323
-  tps: 8424.08086
+  dps: 8803.14713
+  tps: 8209.06638
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-MultidotIs-NoBuffs-LongMultiTarget"
  value: {
-  dps: 4303.77422
-  tps: 4176.44029
+  dps: 4259.17649
+  tps: 4131.84256
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-MultidotIs-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2358.07879
-  tps: 2248.29509
+  dps: 2274.37279
+  tps: 2163.16338
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-MultidotIs-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 5212.1088
-  tps: 4940.78125
+  dps: 5102.64465
+  tps: 4828.33798
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-MultidotMf-FullBuffs-LongMultiTarget"
  value: {
-  dps: 7670.51061
-  tps: 8975.24123
+  dps: 7512.63385
+  tps: 8761.73962
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-MultidotMf-FullBuffs-LongSingleTarget"
  value: {
-  dps: 8073.9094
-  tps: 7901.65795
+  dps: 7880.95466
+  tps: 7707.08939
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-MultidotMf-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 8997.91405
-  tps: 8409.79393
+  dps: 8779.65474
+  tps: 8188.57767
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-MultidotMf-NoBuffs-LongMultiTarget"
  value: {
-  dps: 3195.99575
-  tps: 3230.99446
+  dps: 3127.91189
+  tps: 3147.27383
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-MultidotMf-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2325.25244
-  tps: 2216.07563
+  dps: 2208.90896
+  tps: 2097.41936
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-MultidotMf-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 5365.17979
-  tps: 5097.82442
+  dps: 5213.71212
+  tps: 4942.21907
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-Default-FullBuffs-LongMultiTarget"
  value: {
-  dps: 13898.60913
-  tps: 16213.22241
+  dps: 13616.01196
+  tps: 15896.29681
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-Default-FullBuffs-LongSingleTarget"
  value: {
-  dps: 9668.19517
-  tps: 9472.54508
+  dps: 9499.13661
+  tps: 9303.81314
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-Default-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 11000.01252
-  tps: 10341.88441
+  dps: 10734.95179
+  tps: 10074.3613
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-Default-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6311.88778
-  tps: 6866.90083
+  dps: 5963.20333
+  tps: 6432.48922
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-Default-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3496.53748
-  tps: 3380.5883
+  dps: 3290.28031
+  tps: 3169.92927
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-Default-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 6574.07132
-  tps: 6270.27224
+  dps: 6436.40614
+  tps: 6128.20363
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-MultidotBoth-FullBuffs-LongMultiTarget"
  value: {
-  dps: 14710.68951
-  tps: 15334.44599
+  dps: 14592.21359
+  tps: 15214.23267
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-MultidotBoth-FullBuffs-LongSingleTarget"
  value: {
-  dps: 9794.21743
-  tps: 9598.74971
+  dps: 9594.89313
+  tps: 9395.7556
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-MultidotBoth-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 10976.63803
-  tps: 10319.50463
+  dps: 10745.64479
+  tps: 10086.89356
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-MultidotBoth-NoBuffs-LongMultiTarget"
  value: {
-  dps: 5731.47331
-  tps: 5586.46637
+  dps: 5648.7188
+  tps: 5503.75586
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-MultidotBoth-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3462.89789
-  tps: 3347.1573
+  dps: 3236.21147
+  tps: 3116.13261
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-MultidotBoth-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 6578.64729
-  tps: 6274.84821
+  dps: 6437.58283
+  tps: 6129.95468
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-MultidotIs-FullBuffs-LongMultiTarget"
  value: {
-  dps: 14710.68951
-  tps: 15334.44599
+  dps: 14592.21359
+  tps: 15214.23267
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-MultidotIs-FullBuffs-LongSingleTarget"
  value: {
-  dps: 9730.69781
-  tps: 9532.7958
+  dps: 9569.36231
+  tps: 9368.98327
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-MultidotIs-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 11086.20205
-  tps: 10428.28743
+  dps: 10896.60912
+  tps: 10237.3792
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-MultidotIs-NoBuffs-LongMultiTarget"
  value: {
-  dps: 5731.47331
-  tps: 5586.46637
+  dps: 5648.7188
+  tps: 5503.75586
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-MultidotIs-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3496.53748
-  tps: 3380.5883
+  dps: 3290.28031
+  tps: 3169.92927
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-MultidotIs-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 6574.07132
-  tps: 6270.27224
+  dps: 6436.40614
+  tps: 6128.20363
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-MultidotMf-FullBuffs-LongMultiTarget"
  value: {
-  dps: 9865.58715
-  tps: 11828.94008
+  dps: 9646.80496
+  tps: 11500.91786
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-MultidotMf-FullBuffs-LongSingleTarget"
  value: {
-  dps: 9743.41358
-  tps: 9550.78505
+  dps: 9536.91305
+  tps: 9340.95577
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-MultidotMf-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 11004.32923
-  tps: 10348.23961
+  dps: 10763.63436
+  tps: 10105.84332
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-MultidotMf-NoBuffs-LongMultiTarget"
  value: {
-  dps: 4519.75712
-  tps: 4696.68259
+  dps: 4354.24472
+  tps: 4494.41816
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-MultidotMf-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3462.89789
-  tps: 3347.1573
+  dps: 3236.21147
+  tps: 3116.13261
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-MultidotMf-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 6578.64729
-  tps: 6274.84821
+  dps: 6437.58283
+  tps: 6129.95468
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-Default-FullBuffs-LongMultiTarget"
  value: {
-  dps: 14263.73838
-  tps: 16602.97957
+  dps: 13881.33523
+  tps: 16137.86883
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-Default-FullBuffs-LongSingleTarget"
  value: {
-  dps: 9808.726
-  tps: 9609.36036
+  dps: 9611.89264
+  tps: 9410.99834
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-Default-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 11089.40333
-  tps: 10422.89489
+  dps: 10909.4365
+  tps: 10240.68627
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-Default-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6758.96049
-  tps: 7405.57185
+  dps: 6494.70413
+  tps: 7098.14267
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-Default-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3981.57009
-  tps: 3871.5503
+  dps: 3720.24983
+  tps: 3606.08322
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-Default-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 6614.96003
-  tps: 6312.68823
+  dps: 6355.64366
+  tps: 6045.74656
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-MultidotBoth-FullBuffs-LongMultiTarget"
  value: {
-  dps: 14972.57836
-  tps: 15598.54403
+  dps: 14852.36146
+  tps: 15478.32713
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-MultidotBoth-FullBuffs-LongSingleTarget"
  value: {
-  dps: 9834.59776
-  tps: 9632.99676
+  dps: 9623.21774
+  tps: 9420.92874
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-MultidotBoth-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 11023.44921
-  tps: 10356.45252
+  dps: 10891.79326
+  tps: 10223.51259
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-MultidotBoth-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6012.50525
-  tps: 5864.27402
+  dps: 5949.52057
+  tps: 5801.28935
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-MultidotBoth-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3818.63293
-  tps: 3706.04759
+  dps: 3528.40818
+  tps: 3410.11001
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-MultidotBoth-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 6647.40139
-  tps: 6343.56543
+  dps: 6447.88113
+  tps: 6137.98402
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-MultidotIs-FullBuffs-LongMultiTarget"
  value: {
-  dps: 14972.57836
-  tps: 15598.54403
+  dps: 14852.36146
+  tps: 15478.32713
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-MultidotIs-FullBuffs-LongSingleTarget"
  value: {
-  dps: 9775.12774
-  tps: 9572.64325
+  dps: 9625.46138
+  tps: 9421.53525
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-MultidotIs-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 11104.56187
-  tps: 10436.99448
+  dps: 10971.82346
+  tps: 10302.70626
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-MultidotIs-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6012.50525
-  tps: 5864.27402
+  dps: 5949.52057
+  tps: 5801.28935
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-MultidotIs-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3842.74365
-  tps: 3729.686
+  dps: 3585.11805
+  tps: 3467.37279
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-MultidotIs-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 6555.14668
-  tps: 6250.13759
+  dps: 6358.273
+  tps: 6047.20277
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-MultidotMf-FullBuffs-LongMultiTarget"
  value: {
-  dps: 10220.34689
-  tps: 12318.35554
+  dps: 9871.11402
+  tps: 11810.24457
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-MultidotMf-FullBuffs-LongSingleTarget"
  value: {
-  dps: 9805.89401
-  tps: 9610.27794
+  dps: 9571.17489
+  tps: 9372.44481
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-MultidotMf-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 11016.15302
-  tps: 10349.85306
+  dps: 10890.32473
+  tps: 10222.92209
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-MultidotMf-NoBuffs-LongMultiTarget"
  value: {
-  dps: 4663.34639
-  tps: 4890.64581
+  dps: 4609.09242
+  tps: 4806.78329
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-MultidotMf-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3886.87817
-  tps: 3775.94741
+  dps: 3573.98993
+  tps: 3457.24152
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-MultidotMf-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 6644.01154
-  tps: 6342.13079
+  dps: 6371.22159
+  tps: 6061.52001
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-Default-FullBuffs-LongMultiTarget"
  value: {
-  dps: 16032.40775
-  tps: 18498.70034
+  dps: 15703.46815
+  tps: 18116.46802
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-Default-FullBuffs-LongSingleTarget"
  value: {
-  dps: 11236.57786
-  tps: 11038.02733
+  dps: 10957.51831
+  tps: 10756.60984
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-Default-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 12233.60154
-  tps: 11547.82181
+  dps: 11946.48002
+  tps: 11258.68738
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-Default-NoBuffs-LongMultiTarget"
  value: {
-  dps: 8537.04078
-  tps: 9590.75971
+  dps: 8063.77763
+  tps: 8967.56426
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-Default-NoBuffs-LongSingleTarget"
  value: {
-  dps: 5577.9187
-  tps: 5479.45502
+  dps: 5219.48365
+  tps: 5116.42131
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-Default-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 7636.84992
-  tps: 7330.39248
+  dps: 7472.71472
+  tps: 7163.05097
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotBoth-FullBuffs-LongMultiTarget"
  value: {
-  dps: 16432.82492
-  tps: 17373.44851
+  dps: 16288.50731
+  tps: 17227.19726
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotBoth-FullBuffs-LongSingleTarget"
  value: {
-  dps: 11371.42362
-  tps: 11164.30316
+  dps: 11127.74432
+  tps: 10922.55099
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotBoth-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 12372.39525
-  tps: 11660.97868
+  dps: 12142.03239
+  tps: 11428.73575
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotBoth-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6198.85391
-  tps: 6170.45561
+  dps: 6014.48847
+  tps: 5974.55576
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotBoth-NoBuffs-LongSingleTarget"
  value: {
-  dps: 5577.91692
-  tps: 5481.46405
+  dps: 5187.20613
+  tps: 5084.43924
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotBoth-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 7843.24465
-  tps: 7534.9118
+  dps: 7641.01222
+  tps: 7327.76305
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotIs-FullBuffs-LongMultiTarget"
  value: {
-  dps: 16304.27926
-  tps: 16999.80488
+  dps: 16170.41409
+  tps: 16866.93454
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotIs-FullBuffs-LongSingleTarget"
  value: {
-  dps: 11223.99456
-  tps: 11021.65189
+  dps: 10963.68947
+  tps: 10759.24404
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotIs-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 12309.79694
-  tps: 11625.52709
+  dps: 12042.87029
+  tps: 11356.68881
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotIs-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6597.86985
-  tps: 6442.27232
+  dps: 6524.90297
+  tps: 6369.66427
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotIs-NoBuffs-LongSingleTarget"
  value: {
-  dps: 5419.22031
-  tps: 5318.6909
+  dps: 5036.05976
+  tps: 4930.78045
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotIs-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 7741.6518
-  tps: 7434.5531
+  dps: 7550.19379
+  tps: 7239.24753
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotMf-FullBuffs-LongMultiTarget"
  value: {
-  dps: 14864.22032
-  tps: 17909.73274
+  dps: 14254.84514
+  tps: 17099.35713
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotMf-FullBuffs-LongSingleTarget"
  value: {
-  dps: 11504.09353
-  tps: 11302.54634
+  dps: 11161.55104
+  tps: 10958.95368
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotMf-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 12415.10593
-  tps: 11703.36311
+  dps: 12157.23365
+  tps: 11443.89435
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotMf-NoBuffs-LongMultiTarget"
  value: {
-  dps: 5238.81912
-  tps: 5636.28114
+  dps: 5016.35453
+  tps: 5356.2391
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotMf-NoBuffs-LongSingleTarget"
  value: {
-  dps: 5619.21663
-  tps: 5523.70984
+  dps: 5126.4868
+  tps: 5023.41838
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-MultidotMf-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 7792.62158
-  tps: 7485.99875
+  dps: 7629.33218
+  tps: 7316.93802
  }
 }
 dps_results: {
  key: "TestBalance-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 8052.19698
-  tps: 7909.90711
+  dps: 7784.36774
+  tps: 7639.0169
  }
 }

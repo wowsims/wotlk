@@ -213,8 +213,9 @@ type AttackTable struct {
 	BaseParryChance     float64
 	BaseGlanceChance    float64
 
-	GlanceMultiplier float64
-	CritSuppression  float64
+	GlanceMultiplier     float64
+	MeleeCritSuppression float64
+	SpellCritSuppression float64
 
 	DamageDealtMultiplier        float64 // attacker buff, applied in applyAttackerModifiers()
 	DamageTakenMultiplier        float64 // defender debuff, applied in applyTargetModifiers()
@@ -245,7 +246,8 @@ func NewAttackTable(attacker *Unit, defender *Unit) *AttackTable {
 		table.BaseGlanceChance = UnitLevelFloat64(defender.Level, 0.06, 0.12, 0.18, 0.24)
 
 		table.GlanceMultiplier = UnitLevelFloat64(defender.Level, 0.95, 0.95, 0.85, 0.75)
-		table.CritSuppression = UnitLevelFloat64(defender.Level, 0, 0.01, 0.02, 0.048)
+		table.MeleeCritSuppression = UnitLevelFloat64(defender.Level, 0, 0.01, 0.02, 0.048)
+		table.SpellCritSuppression = UnitLevelFloat64(defender.Level, 0, 0.01, 0.02, 0.03)
 	} else {
 		// Assumes defender (the Player) is level 80.
 		table.BaseSpellMissChance = 0.05
