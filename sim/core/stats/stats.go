@@ -359,8 +359,8 @@ type PseudoStats struct {
 	ReducedCritTakenChance float64 // Reduces chance to be crit.
 
 	BonusRangedAttackPowerTaken float64 // Hunters mark
-	BonusSpellCritRatingTaken   float64 // Imp Shadow Bolt / Imp Scorch / Winter's Chill debuff
-	BonusCritRatingTaken        float64 // Totem of Wrath / Master Poisoner / Heart of the Crusader
+	BonusSpellCritRatingTaken   float64 // Imp Shadow Bolt / Imp Scorch / Winter's Chill debuff + Totem of Wrath / Master Poisoner / Heart of the Crusader
+	BonusMeleeCritRatingTaken   float64 // Totem of Wrath / Master Poisoner / Heart of the Crusader
 	BonusMeleeHitRatingTaken    float64 // Formerly Imp FF and SW Radiance;
 	BonusSpellHitRatingTaken    float64 // Imp FF
 
