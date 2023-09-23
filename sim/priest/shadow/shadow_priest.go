@@ -75,7 +75,7 @@ func (spriest *ShadowPriest) GetPriest() *priest.Priest {
 func (spriest *ShadowPriest) Initialize() {
 	spriest.Priest.Initialize()
 
-	if spriest.rotation.PrecastType > 0 {
+	if !spriest.IsUsingAPL && spriest.rotation.PrecastType > 0 {
 		precastSpell := spriest.VampiricTouch
 		if spriest.rotation.PrecastType == 2 {
 			precastSpell = spriest.MindBlast
