@@ -2,12 +2,16 @@ import {
 	Debuffs,
 	IndividualBuffs,
 	PartyBuffs,
-	Profession,
 	RaidBuffs,
 	Spec,
 	Stat,
 	TristateEffect
 } from '../core/proto/common.js';
+import {
+	APLAction,
+	APLListItem,
+	APLRotation,
+} from '../core/proto/apl.js';
 import {Stats} from '../core/proto_utils/stats.js';
 import {Player} from '../core/player.js';
 import {IndividualSimUI} from '../core/individual_sim_ui.js';
@@ -133,9 +137,8 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
-					MageInputs.EvocationTicks,
 					MageInputs.FocusMagicUptime,
-					MageInputs.ReactionTime,
+					OtherInputs.ReactionTime,
 					OtherInputs.DistanceFromTarget,
 					OtherInputs.TankAssignment,
 				],
@@ -152,6 +155,9 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 					Presets.FIRE_ROTATION_PRESET_DEFAULT,
 					Presets.FROSTFIRE_ROTATION_PRESET_DEFAULT,
 					Presets.FROST_ROTATION_PRESET_DEFAULT,
+					Presets.ARCANE_ROTATION_PRESET_AOE,
+					Presets.FIRE_ROTATION_PRESET_AOE,
+					Presets.FROST_ROTATION_PRESET_AOE,
 				],
 				// Preset talents that the user can quickly select.
 				talents: [
@@ -181,6 +187,26 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 					Presets.FFB_P3_PRESET_ALLIANCE,
 					Presets.FFB_P3_PRESET_HORDE,
 				],
+			},
+
+			autoRotation: (player: Player<Spec.SpecMage>): APLRotation => {
+				const talentTree = player.getTalentTree();
+				const numTargets = player.sim.encounter.targets.length;
+				if (numTargets > 3) {
+					if (talentTree == 0) {
+						return Presets.ARCANE_ROTATION_PRESET_AOE.rotation.rotation!;
+					} else if (talentTree == 1) {
+						return Presets.FIRE_ROTATION_PRESET_AOE.rotation.rotation!;
+					} else {
+						return Presets.FROST_ROTATION_PRESET_AOE.rotation.rotation!;
+					}
+				} else if (talentTree == 0) {
+					return Presets.ARCANE_ROTATION_PRESET_DEFAULT.rotation.rotation!;
+				} else if (talentTree == 1) {
+					return Presets.FIRE_ROTATION_PRESET_DEFAULT.rotation.rotation!;
+				} else {
+					return Presets.FROST_ROTATION_PRESET_DEFAULT.rotation.rotation!;
+				}
 			},
 		});
 	}

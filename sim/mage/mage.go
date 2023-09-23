@@ -42,7 +42,6 @@ type Mage struct {
 	Options  *proto.Mage_Options
 	Rotation *proto.Mage_Rotation
 
-	ReactionTime     time.Duration
 	PyroblastDelayMs time.Duration
 
 	arcaneBlastStreak int32
@@ -132,13 +131,9 @@ func (mage *Mage) Initialize() {
 	mage.registerScorchSpell()
 	mage.registerLivingBombSpell()
 	mage.registerFrostfireBoltSpell()
-	mage.registerEvocationSpells()
+	mage.registerEvocation()
 	mage.registerManaGemsCD()
 	mage.registerMirrorImageCD()
-
-	if !mage.IsUsingAPL {
-		mage.registerEvocationCD()
-	}
 
 	if mirrorImageMCD := mage.GetMajorCooldownIgnoreTag(mage.MirrorImage.ActionID); mirrorImageMCD != nil {
 		if len(mirrorImageMCD.GetTimings()) == 0 {
@@ -164,7 +159,6 @@ func NewMage(character core.Character, options *proto.Player) *Mage {
 		Options:   mageOptions.Options,
 		Rotation:  mageOptions.Rotation,
 
-		ReactionTime:     time.Millisecond * time.Duration(mageOptions.Options.ReactionTimeMs),
 		PyroblastDelayMs: time.Millisecond * time.Duration(mageOptions.Rotation.PyroblastDelayMs),
 	}
 	core.FillTalentsProto(mage.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
