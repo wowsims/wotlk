@@ -1,5 +1,10 @@
 import { Spec } from '../core/proto/common.js';
 import { Stat } from '../core/proto/common.js';
+import {
+	APLAction,
+	APLListItem,
+	APLRotation,
+} from '../core/proto/apl.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
@@ -122,6 +127,10 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 					Presets.P3_PRESET_HORDE,
 					Presets.P3_PRESET_ALLI,
 				],
+			},
+
+			autoRotation: (player: Player<Spec.SpecBalanceDruid>): APLRotation => {
+				return Presets.ROTATION_PRESET_P3_APL.rotation.rotation!;
 			},
 		});
 	}
