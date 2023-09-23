@@ -15,7 +15,7 @@ func (priest *Priest) newMindSearSpell(numTicksIdx int32) *core.Spell {
 	numTicks := numTicksIdx
 	flags := core.SpellFlagChanneled
 	if numTicksIdx == 0 {
-		numTicks = 3
+		numTicks = 5
 		flags |= core.SpellFlagAPL
 	}
 
