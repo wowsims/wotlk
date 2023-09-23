@@ -22,6 +22,7 @@ func TestRestoration(t *testing.T) {
 		Glyphs:      StandardGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Standard", SpecOptions: PlayerOptionsStandard},
+		Rotation:    core.RotationCombo{Label: "Default", Rotation: DefaultRotation},
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
@@ -63,92 +64,29 @@ var PlayerOptionsStandard = &proto.Player_RestorationDruid{
 	},
 }
 
+var DefaultRotation = core.APLRotationFromJsonString(`{
+	"type": "TypeAPL",
+	"priorityList": [
+		{"action":{"autocastOtherCooldowns":{}}}
+	]
+}`)
+
 var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
-	{
-		"id": 44007,
-		"enchant": 3819,
-		"gems": [
-			41401,
-			40017
-		]
-	},
-	{
-		"id": 40071
-	},
-	{
-		"id": 39719,
-		"enchant": 3809,
-		"gems": [
-			39998
-		]
-	},
-	{
-		"id": 40723,
-		"enchant": 3859
-	},
-	{
-		"id": 44002,
-		"enchant": 3832,
-		"gems": [
-			39998,
-			40026
-		]
-	},
-	{
-		"id": 44008,
-		"enchant": 2332,
-		"gems": [
-			39998,
-			0
-		]
-	},
-	{
-		"id": 40460,
-		"enchant": 3246,
-		"gems": [
-			40017,
-			0
-		]
-	},
-	{
-		"id": 40561,
-		"enchant": 3601,
-		"gems": [
-			39998
-		]
-	},
-	{
-		"id": 40379,
-		"enchant": 3719,
-		"gems": [
-			39998,
-			40017
-		]
-	},
-	{
-		"id": 40558,
-		"enchant": 3606
-	},
-	{
-		"id": 40719
-	},
-	{
-		"id": 40375
-	},
-	{
-		"id": 37111
-	},
-	{
-		"id": 40432
-	},
-	{
-		"id": 40395,
-		"enchant": 3834
-	},
-	{
-		"id": 39766
-	},
-	{
-		"id": 40342
-	}
+	{"id":44007,"enchant":3819,"gems":[41401,40017]},
+	{"id":40071},
+	{"id":39719,"enchant":3809,"gems":[39998]},
+	{"id":40723,"enchant":3859},
+	{"id":44002,"enchant":3832,"gems":[39998,40026]},
+	{"id":44008,"enchant":2332,"gems":[39998,0]},
+	{"id":40460,"enchant":3246,"gems":[40017,0]},
+	{"id":40561,"enchant":3601,"gems":[39998]},
+	{"id":40379,"enchant":3719,"gems":[39998,40017]},
+	{"id":40558,"enchant":3606},
+	{"id":40719},
+	{"id":40375},
+	{"id":37111},
+	{"id":40432},
+	{"id":40395,"enchant":3834},
+	{"id":39766},
+	{"id":40342}
 ]}`)

@@ -1,13 +1,9 @@
-import { Conjured, Consumes } from '../core/proto/common.js';
-import { CustomRotation, CustomSpell } from '../core/proto/common.js';
+import { Consumes } from '../core/proto/common.js';
 import { EquipmentSpec } from '../core/proto/common.js';
 import { Flask } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
-import { Glyphs } from '../core/proto/common.js';
-import { ItemSpec } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
-import { Faction } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import { Player } from '../core/player.js';
 
@@ -20,7 +16,6 @@ import {
 	HolyPaladin_Options as HolyPaladinOptions,
 } from '../core/proto/paladin.js';
 
-import * as Gems from '../core/proto_utils/gems.js';
 import * as Tooltips from '../core/constants/tooltips.js';
 
 // Preset options for this spec.

@@ -5,6 +5,9 @@ import { Debuffs } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { Stat, PseudoStat } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js'
+import {
+	APLRotation,
+} from '../core/proto/apl.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
@@ -13,8 +16,6 @@ import { EventID, TypedEvent } from '../core/typed_event.js';
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as Mechanics from '../core/constants/mechanics.js';
-
-import { PaladinMajorGlyph } from '../core/proto/paladin.js';
 
 import * as HolyPaladinInputs from './inputs.js';
 import * as Presets from './presets.js';
@@ -152,6 +153,10 @@ export class HolyPaladinSimUI extends IndividualSimUI<Spec.SpecHolyPaladin> {
 					Presets.P1_PRESET,
 					Presets.P2_PRESET,
 				],
+			},
+
+			autoRotation: (_player: Player<Spec.SpecHolyPaladin>): APLRotation => {
+				return APLRotation.create();
 			},
 		});
 	}
