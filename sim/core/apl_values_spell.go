@@ -214,7 +214,7 @@ func (rot *APLRotation) newValueSpellChanneledTicks(config *proto.APLValueSpellC
 	}
 }
 func (value *APLValueSpellChanneledTicks) Type() proto.APLValueType {
-	return proto.APLValueType_ValueTypeBool
+	return proto.APLValueType_ValueTypeInt
 }
 func (value *APLValueSpellChanneledTicks) GetInt(sim *Simulation) int32 {
 	channeledDot := value.spell.Unit.ChanneledDot
