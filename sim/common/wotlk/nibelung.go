@@ -39,7 +39,7 @@ func getSmiteConfig(valkyr *ValkyrPet, spellId int32, damageMin float64, damageM
 		ThreatMultiplier: 1,
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(damageMin, damageMax)
-			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicCrit)
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeCritFixedChance(0.05))
 			spell.DealDamage(sim, result)
 			valkyr.GainHealth(sim, valkyr.MaxHealth()*0.25, valkyr.healthMetrics)
 		},

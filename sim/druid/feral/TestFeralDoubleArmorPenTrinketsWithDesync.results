@@ -74,8 +74,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralDoubleArmorPenTrinketsWithDesync-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 9841.88317
-  tps: 7051.53008
+  dps: 9842.80494
+  tps: 7052.18453
  }
 }
 dps_results: {
@@ -161,8 +161,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralDoubleArmorPenTrinketsWithDesync-AllItems-DarkmoonCard:Death-42990"
  value: {
-  dps: 9840.72966
-  tps: 7050.18758
+  dps: 9842.08506
+  tps: 7051.14991
  }
 }
 dps_results: {
@@ -301,8 +301,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralDoubleArmorPenTrinketsWithDesync-AllItems-ExtractofNecromanticPower-40373"
  value: {
-  dps: 9840.96541
-  tps: 7050.28017
+  dps: 9841.90308
+  tps: 7050.94592
  }
 }
 dps_results: {
@@ -399,8 +399,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralDoubleArmorPenTrinketsWithDesync-AllItems-GnomishLightningGenerator-41121"
  value: {
-  dps: 9818.48807
-  tps: 7034.39605
+  dps: 9819.52613
+  tps: 7035.13307
  }
 }
 dps_results: {
@@ -799,8 +799,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralDoubleArmorPenTrinketsWithDesync-AllItems-StormshroudArmor"
  value: {
-  dps: 7804.10957
-  tps: 5605.23433
+  dps: 7804.1374
+  tps: 5605.25408
  }
 }
 dps_results: {

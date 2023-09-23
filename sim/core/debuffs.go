@@ -384,19 +384,6 @@ func spellDamageEffect(aura *Aura, multiplier float64) *ExclusiveEffect {
 	})
 }
 
-func spellCritBonusEffect(aura *Aura, percent float64) *ExclusiveEffect {
-	bonusSpellCrit := percent * CritRatingPerCritChance
-	return aura.NewExclusiveEffect(SpellCritEffectCategory, true, ExclusiveEffect{
-		Priority: bonusSpellCrit,
-		OnGain: func(ee *ExclusiveEffect, sim *Simulation) {
-			ee.Aura.Unit.PseudoStats.BonusSpellCritRatingTaken += bonusSpellCrit
-		},
-		OnExpire: func(ee *ExclusiveEffect, sim *Simulation) {
-			ee.Aura.Unit.PseudoStats.BonusSpellCritRatingTaken -= bonusSpellCrit
-		},
-	})
-}
-
 func BloodFrenzyAura(target *Unit, points int32) *Aura {
 	return bloodFrenzySavageCombatAura(target, "Blood Frenzy", ActionID{SpellID: 29859}, points)
 }
@@ -524,7 +511,16 @@ func majorSpellCritDebuffAura(target *Unit, label string, actionID ActionID, per
 		Duration: time.Second * 30,
 	})
 
-	spellCritBonusEffect(aura, percent)
+	bonusSpellCrit := percent * CritRatingPerCritChance
+	aura.NewExclusiveEffect(SpellCritEffectCategory, true, ExclusiveEffect{
+		Priority: percent,
+		OnGain: func(ee *ExclusiveEffect, sim *Simulation) {
+			ee.Aura.Unit.PseudoStats.BonusSpellCritRatingTaken += bonusSpellCrit
+		},
+		OnExpire: func(ee *ExclusiveEffect, sim *Simulation) {
+			ee.Aura.Unit.PseudoStats.BonusSpellCritRatingTaken -= bonusSpellCrit
+		},
+	})
 	return aura
 }
 
@@ -928,56 +924,35 @@ func increasedMissEffect(aura *Aura, increasedMissChance float64) *ExclusiveEffe
 }
 
 func TotemOfWrathDebuff(target *Unit) *Aura {
-	return minorCritDebuffAura(target, "Totem of Wrath Debuff", ActionID{SpellID: 30708}, time.Minute*5, 3)
+	return minorCritDebuffAura(target, "Totem of Wrath Debuff", ActionID{SpellID: 30708}, time.Minute*5, 3*CritRatingPerCritChance)
 }
 
 func MasterPoisonerDebuff(target *Unit, points int32) *Aura {
-	return minorCritDebuffAura(target, "Master Poisoner", ActionID{SpellID: 58410}, time.Second*20, float64(points))
+	return minorCritDebuffAura(target, "Master Poisoner", ActionID{SpellID: 58410}, time.Second*20, float64(points)*CritRatingPerCritChance)
 }
 
 func HeartOfTheCrusaderDebuff(target *Unit, points int32) *Aura {
-	return minorCritDebuffAura(target, "Heart of the Crusader", ActionID{SpellID: 20337}, time.Second*20, float64(points))
+	return minorCritDebuffAura(target, "Heart of the Crusader", ActionID{SpellID: 20337}, time.Second*20, float64(points)*CritRatingPerCritChance)
 }
 
-func minorCritDebuffAura(target *Unit, label string, actionID ActionID, duration time.Duration, percent float64) *Aura {
-	meleeAura := target.GetOrRegisterAura(Aura{
-		Label:    label + "-Melee",
-		ActionID: actionID,
-		Duration: duration,
-	})
-	spellAura := target.GetOrRegisterAura(Aura{
-		Label:    label + "-Spell",
-		ActionID: actionID,
-		Duration: duration,
-	})
-	meleeEE := meleeCritBonusEffect(meleeAura, percent)
-	spellEE := spellCritBonusEffect(spellAura, percent)
-
-	compoundAura := target.GetOrRegisterAura(Aura{
+func minorCritDebuffAura(target *Unit, label string, actionID ActionID, duration time.Duration, critBonus float64) *Aura {
+	aura := target.GetOrRegisterAura(Aura{
 		Label:    label,
 		ActionID: actionID,
 		Duration: duration,
-		OnGain: func(aura *Aura, sim *Simulation) {
-			meleeEE.Activate(sim)
-			spellEE.Activate(sim)
-		},
-		OnExpire: func(aura *Aura, sim *Simulation) {
-			meleeEE.Deactivate(sim)
-			spellEE.Deactivate(sim)
-		},
 	})
-	return compoundAura
+	critBonusEffect(aura, critBonus)
+	return aura
 }
 
-func meleeCritBonusEffect(aura *Aura, percent float64) *ExclusiveEffect {
-	critBonus := percent * CritRatingPerCritChance
-	return aura.NewExclusiveEffect("MeleeCritBonus", false, ExclusiveEffect{
+func critBonusEffect(aura *Aura, critBonus float64) *ExclusiveEffect {
+	return aura.NewExclusiveEffect("CritBonus", false, ExclusiveEffect{
 		Priority: critBonus,
 		OnGain: func(ee *ExclusiveEffect, sim *Simulation) {
-			ee.Aura.Unit.PseudoStats.BonusMeleeCritRatingTaken += critBonus
+			ee.Aura.Unit.PseudoStats.BonusCritRatingTaken += critBonus
 		},
 		OnExpire: func(ee *ExclusiveEffect, sim *Simulation) {
-			ee.Aura.Unit.PseudoStats.BonusMeleeCritRatingTaken -= critBonus
+			ee.Aura.Unit.PseudoStats.BonusCritRatingTaken -= critBonus
 		},
 	})
 }

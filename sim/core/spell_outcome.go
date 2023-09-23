@@ -126,6 +126,44 @@ func (spell *Spell) OutcomeHealingCrit(sim *Simulation, result *SpellResult, att
 	}
 }
 
+func (spell *Spell) OutcomeCritFixedChance(critChance float64) OutcomeApplier {
+	return func(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
+		if spell.CritMultiplier == 0 {
+			panic("Spell " + spell.ActionID.String() + " missing CritMultiplier")
+		}
+		if spell.fixedCritCheck(sim, critChance) {
+			result.Outcome = OutcomeCrit
+			result.Damage *= spell.CritMultiplier
+			spell.SpellMetrics[result.Target.UnitIndex].Crits++
+		} else {
+			result.Outcome = OutcomeHit
+			spell.SpellMetrics[result.Target.UnitIndex].Hits++
+		}
+	}
+}
+
+func (spell *Spell) OutcomeMagicCritFixedChance(critChance float64) OutcomeApplier {
+	return func(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
+		if spell.CritMultiplier == 0 {
+			panic("Spell " + spell.ActionID.String() + " missing CritMultiplier")
+		}
+		if spell.MagicHitCheck(sim, attackTable) {
+			if spell.fixedCritCheck(sim, critChance) {
+				result.Outcome = OutcomeCrit
+				result.Damage *= spell.CritMultiplier
+				spell.SpellMetrics[result.Target.UnitIndex].Crits++
+			} else {
+				result.Outcome = OutcomeHit
+				spell.SpellMetrics[result.Target.UnitIndex].Hits++
+			}
+		} else {
+			result.Outcome = OutcomeMiss
+			result.Damage = 0
+			spell.SpellMetrics[result.Target.UnitIndex].Misses++
+		}
+	}
+}
+
 func (spell *Spell) OutcomeTickMagicHit(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
 	if spell.MagicHitCheck(sim, attackTable) {
 		result.Outcome = OutcomeHit
@@ -370,6 +408,10 @@ func (spell *Spell) OutcomeEnemyMeleeWhite(sim *Simulation, result *SpellResult,
 		!result.applyEnemyAttackTableCrit(spell, attackTable, roll, &chance) {
 		result.applyAttackTableHit(spell)
 	}
+}
+
+func (spell *Spell) fixedCritCheck(sim *Simulation, critChance float64) bool {
+	return sim.RandomFloat("Fixed Crit Roll") < critChance
 }
 
 func (result *SpellResult) applyAttackTableMiss(spell *Spell, attackTable *AttackTable, roll float64, chance *float64) bool {

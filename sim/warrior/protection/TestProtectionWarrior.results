@@ -112,8 +112,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 1668.17341
-  tps: 4295.8649
+  dps: 1668.84405
+  tps: 4297.25547
  }
 }
 dps_results: {
@@ -241,8 +241,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-DarkmoonCard:Death-42990"
  value: {
-  dps: 1686.46615
-  tps: 4339.71103
+  dps: 1686.65934
+  tps: 4340.11162
  }
 }
 dps_results: {
@@ -367,8 +367,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-ExtractofNecromanticPower-40373"
  value: {
-  dps: 1667.87542
-  tps: 4299.65824
+  dps: 1668.16351
+  tps: 4300.25559
  }
 }
 dps_results: {
@@ -753,8 +753,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-StormshroudArmor"
  value: {
-  dps: 1252.46024
-  tps: 3268.34029
+  dps: 1252.46799
+  tps: 3268.35635
  }
 }
 dps_results: {
@@ -795,8 +795,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-TheFistsofFury"
  value: {
-  dps: 1140.112
-  tps: 2623.09015
+  dps: 1140.21151
+  tps: 2623.29648
  }
 }
 dps_results: {

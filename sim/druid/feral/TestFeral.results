@@ -74,8 +74,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 7598.58633
-  tps: 5458.11624
+  dps: 7598.90291
+  tps: 5458.34101
  }
 }
 dps_results: {
@@ -161,8 +161,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-DarkmoonCard:Death-42990"
  value: {
-  dps: 7579.68258
-  tps: 5444.32065
+  dps: 7579.8911
+  tps: 5444.46869
  }
 }
 dps_results: {
@@ -301,8 +301,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-ExtractofNecromanticPower-40373"
  value: {
-  dps: 7577.05762
-  tps: 5442.30735
+  dps: 7577.15477
+  tps: 5442.37633
  }
 }
 dps_results: {
@@ -399,8 +399,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-GnomishLightningGenerator-41121"
  value: {
-  dps: 7556.47487
-  tps: 5427.84317
+  dps: 7556.65261
+  tps: 5427.96937
  }
 }
 dps_results: {
@@ -799,8 +799,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-StormshroudArmor"
  value: {
-  dps: 6281.09578
-  tps: 4520.97786
+  dps: 6281.1212
+  tps: 4520.99591
  }
 }
 dps_results: {
