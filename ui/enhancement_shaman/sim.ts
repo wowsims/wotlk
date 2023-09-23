@@ -3,6 +3,12 @@ import { IndividualBuffs } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { Stat, PseudoStat } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js'
+import {
+	APLAction,
+	APLListItem,
+	APLRotation,
+} from '../core/proto/apl.js';
+import { ShamanImbue } from '../core/proto/shaman.js';
 import { Player } from '../core/player.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
@@ -21,8 +27,6 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 			cssScheme: 'shaman',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"Fire Elemental is in a alpha state",
-				"Some things regarding weapon imbues need further testing and changes",
 			],
 
 			// All stats for which EP should be calculated.
@@ -166,6 +170,23 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 					Presets.P3_PRESET_ALLIANCE,
 					Presets.P3_PRESET_HORDE,
 				],
+			},
+
+			autoRotation: (player: Player<Spec.SpecEnhancementShaman>): APLRotation => {
+				const hasT94P = player.getCurrentStats().sets.includes('Triumphant Nobundo\'s Battlegear (4pc)')
+					|| player.getCurrentStats().sets.includes('Nobundo\'s Battlegear (4pc)')
+					|| player.getCurrentStats().sets.includes('Triumphant Thrall\'s Battlegear (4pc)')
+					|| player.getCurrentStats().sets.includes('Thrall\'s Battlegear (4pc)');
+				const options = player.getSpecOptions();
+
+				if (hasT94P) {
+					console.log("has set");
+					return Presets.ROTATION_PHASE_3.rotation.rotation!;
+				} else if (options.imbueMh == ShamanImbue.FlametongueWeapon) {
+					return Presets.ROTATION_FT_DEFAULT.rotation.rotation!;
+				} else {
+					return Presets.ROTATION_WF_DEFAULT.rotation.rotation!;
+				}
 			},
 		});
 	}
