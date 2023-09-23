@@ -565,27 +565,27 @@ dps_results: {
  value: {}
 }
 dps_results: {
- key: "TestRestoration-Settings-Tauren-P1-Standard-FullBuffs-LongMultiTarget"
+ key: "TestRestoration-Settings-Tauren-P1-Standard-Default-FullBuffs-LongMultiTarget"
  value: {}
 }
 dps_results: {
- key: "TestRestoration-Settings-Tauren-P1-Standard-FullBuffs-LongSingleTarget"
+ key: "TestRestoration-Settings-Tauren-P1-Standard-Default-FullBuffs-LongSingleTarget"
  value: {}
 }
 dps_results: {
- key: "TestRestoration-Settings-Tauren-P1-Standard-FullBuffs-ShortSingleTarget"
+ key: "TestRestoration-Settings-Tauren-P1-Standard-Default-FullBuffs-ShortSingleTarget"
  value: {}
 }
 dps_results: {
- key: "TestRestoration-Settings-Tauren-P1-Standard-NoBuffs-LongMultiTarget"
+ key: "TestRestoration-Settings-Tauren-P1-Standard-Default-NoBuffs-LongMultiTarget"
  value: {}
 }
 dps_results: {
- key: "TestRestoration-Settings-Tauren-P1-Standard-NoBuffs-LongSingleTarget"
+ key: "TestRestoration-Settings-Tauren-P1-Standard-Default-NoBuffs-LongSingleTarget"
  value: {}
 }
 dps_results: {
- key: "TestRestoration-Settings-Tauren-P1-Standard-NoBuffs-ShortSingleTarget"
+ key: "TestRestoration-Settings-Tauren-P1-Standard-Default-NoBuffs-ShortSingleTarget"
  value: {}
 }
 dps_results: {

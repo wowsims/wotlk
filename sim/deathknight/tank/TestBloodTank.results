@@ -833,84 +833,84 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestBloodTank-Settings-Human-Blood Tank P1-Basic-FullBuffs-LongMultiTarget"
+ key: "TestBloodTank-Settings-Human-Blood Tank P1-Basic--FullBuffs-LongMultiTarget"
  value: {
   dps: 6393.32756
   tps: 14615.56711
  }
 }
 dps_results: {
- key: "TestBloodTank-Settings-Human-Blood Tank P1-Basic-FullBuffs-LongSingleTarget"
+ key: "TestBloodTank-Settings-Human-Blood Tank P1-Basic--FullBuffs-LongSingleTarget"
  value: {
   dps: 1430.56047
   tps: 4326.3739
  }
 }
 dps_results: {
- key: "TestBloodTank-Settings-Human-Blood Tank P1-Basic-FullBuffs-ShortSingleTarget"
+ key: "TestBloodTank-Settings-Human-Blood Tank P1-Basic--FullBuffs-ShortSingleTarget"
  value: {
   dps: 1625.81162
   tps: 5882.89054
  }
 }
 dps_results: {
- key: "TestBloodTank-Settings-Human-Blood Tank P1-Basic-NoBuffs-LongMultiTarget"
+ key: "TestBloodTank-Settings-Human-Blood Tank P1-Basic--NoBuffs-LongMultiTarget"
  value: {
   dps: 3254.04349
   tps: 7582.96022
  }
 }
 dps_results: {
- key: "TestBloodTank-Settings-Human-Blood Tank P1-Basic-NoBuffs-LongSingleTarget"
+ key: "TestBloodTank-Settings-Human-Blood Tank P1-Basic--NoBuffs-LongSingleTarget"
  value: {
   dps: 806.63371
   tps: 2505.11855
  }
 }
 dps_results: {
- key: "TestBloodTank-Settings-Human-Blood Tank P1-Basic-NoBuffs-ShortSingleTarget"
+ key: "TestBloodTank-Settings-Human-Blood Tank P1-Basic--NoBuffs-ShortSingleTarget"
  value: {
   dps: 832.13872
   tps: 3267.94989
  }
 }
 dps_results: {
- key: "TestBloodTank-Settings-Orc-Blood Tank P1-Basic-FullBuffs-LongMultiTarget"
+ key: "TestBloodTank-Settings-Orc-Blood Tank P1-Basic--FullBuffs-LongMultiTarget"
  value: {
   dps: 6424.01077
   tps: 14700.68249
  }
 }
 dps_results: {
- key: "TestBloodTank-Settings-Orc-Blood Tank P1-Basic-FullBuffs-LongSingleTarget"
+ key: "TestBloodTank-Settings-Orc-Blood Tank P1-Basic--FullBuffs-LongSingleTarget"
  value: {
   dps: 1442.86576
   tps: 4373.53226
  }
 }
 dps_results: {
- key: "TestBloodTank-Settings-Orc-Blood Tank P1-Basic-FullBuffs-ShortSingleTarget"
+ key: "TestBloodTank-Settings-Orc-Blood Tank P1-Basic--FullBuffs-ShortSingleTarget"
  value: {
   dps: 1649.82581
   tps: 6010.87445
  }
 }
 dps_results: {
- key: "TestBloodTank-Settings-Orc-Blood Tank P1-Basic-NoBuffs-LongMultiTarget"
+ key: "TestBloodTank-Settings-Orc-Blood Tank P1-Basic--NoBuffs-LongMultiTarget"
  value: {
   dps: 3281.12903
   tps: 7655.4622
  }
 }
 dps_results: {
- key: "TestBloodTank-Settings-Orc-Blood Tank P1-Basic-NoBuffs-LongSingleTarget"
+ key: "TestBloodTank-Settings-Orc-Blood Tank P1-Basic--NoBuffs-LongSingleTarget"
  value: {
   dps: 814.53719
   tps: 2537.71832
  }
 }
 dps_results: {
- key: "TestBloodTank-Settings-Orc-Blood Tank P1-Basic-NoBuffs-ShortSingleTarget"
+ key: "TestBloodTank-Settings-Orc-Blood Tank P1-Basic--NoBuffs-ShortSingleTarget"
  value: {
   dps: 848.04574
   tps: 3359.79471

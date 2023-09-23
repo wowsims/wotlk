@@ -890,169 +890,169 @@ dps_results: {
 dps_results: {
  key: "TestSV-Settings-Dwarf-P1-Basic-AOE-FullBuffs-LongMultiTarget"
  value: {
-  dps: 7549.27159
-  tps: 7921.71637
+  dps: 31060.39892
+  tps: 31017.21368
  }
 }
 dps_results: {
  key: "TestSV-Settings-Dwarf-P1-Basic-AOE-FullBuffs-LongSingleTarget"
  value: {
-  dps: 6910.27949
-  tps: 5914.8092
+  dps: 3625.22567
+  tps: 2637.0629
  }
 }
 dps_results: {
  key: "TestSV-Settings-Dwarf-P1-Basic-AOE-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 7711.9593
-  tps: 6567.37835
+  dps: 4886.37703
+  tps: 3723.35344
  }
 }
 dps_results: {
  key: "TestSV-Settings-Dwarf-P1-Basic-AOE-NoBuffs-LongMultiTarget"
  value: {
-  dps: 2217.83246
-  tps: 2028.49288
+  dps: 13107.72872
+  tps: 13990.7011
  }
 }
 dps_results: {
  key: "TestSV-Settings-Dwarf-P1-Basic-AOE-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2023.91399
-  tps: 1677.46324
+  dps: 1458.77564
+  tps: 1151.94758
  }
 }
 dps_results: {
  key: "TestSV-Settings-Dwarf-P1-Basic-AOE-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 4183.19947
-  tps: 3787.579
+  dps: 2178.89371
+  tps: 1793.72999
  }
 }
 dps_results: {
  key: "TestSV-Settings-Dwarf-P1-Basic-SV-FullBuffs-LongMultiTarget"
  value: {
-  dps: 7549.27159
-  tps: 7921.71637
+  dps: 20805.93715
+  tps: 21147.06699
  }
 }
 dps_results: {
  key: "TestSV-Settings-Dwarf-P1-Basic-SV-FullBuffs-LongSingleTarget"
  value: {
-  dps: 6910.27949
-  tps: 5914.8092
+  dps: 7674.20379
+  tps: 6678.50957
  }
 }
 dps_results: {
  key: "TestSV-Settings-Dwarf-P1-Basic-SV-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 7711.9593
-  tps: 6567.37835
+  dps: 9035.73531
+  tps: 7873.32996
  }
 }
 dps_results: {
  key: "TestSV-Settings-Dwarf-P1-Basic-SV-NoBuffs-LongMultiTarget"
  value: {
-  dps: 2217.83246
-  tps: 2028.49288
+  dps: 11127.56021
+  tps: 12244.96943
  }
 }
 dps_results: {
  key: "TestSV-Settings-Dwarf-P1-Basic-SV-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2023.91399
-  tps: 1677.46324
+  dps: 3852.4054
+  tps: 3533.31513
  }
 }
 dps_results: {
  key: "TestSV-Settings-Dwarf-P1-Basic-SV-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 4183.19947
-  tps: 3787.579
+  dps: 4784.2999
+  tps: 4385.60063
  }
 }
 dps_results: {
  key: "TestSV-Settings-Orc-P1-Basic-AOE-FullBuffs-LongMultiTarget"
  value: {
-  dps: 7595.41361
-  tps: 7907.62233
+  dps: 31043.87526
+  tps: 30943.98744
  }
 }
 dps_results: {
  key: "TestSV-Settings-Orc-P1-Basic-AOE-FullBuffs-LongSingleTarget"
  value: {
-  dps: 6956.98861
-  tps: 5905.16943
+  dps: 3673.65532
+  tps: 2631.13163
  }
 }
 dps_results: {
  key: "TestSV-Settings-Orc-P1-Basic-AOE-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 7793.84914
-  tps: 6581.64853
+  dps: 4969.11967
+  tps: 3738.27222
  }
 }
 dps_results: {
  key: "TestSV-Settings-Orc-P1-Basic-AOE-NoBuffs-LongMultiTarget"
  value: {
-  dps: 2228.93554
-  tps: 2014.52725
+  dps: 13147.00183
+  tps: 14003.87871
  }
 }
 dps_results: {
  key: "TestSV-Settings-Orc-P1-Basic-AOE-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2020.21312
-  tps: 1655.79076
+  dps: 1479.79057
+  tps: 1153.06491
  }
 }
 dps_results: {
  key: "TestSV-Settings-Orc-P1-Basic-AOE-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 4196.63572
-  tps: 3776.57354
+  dps: 2205.12365
+  tps: 1798.74725
  }
 }
 dps_results: {
  key: "TestSV-Settings-Orc-P1-Basic-SV-FullBuffs-LongMultiTarget"
  value: {
-  dps: 7595.41361
-  tps: 7907.62233
+  dps: 20920.22975
+  tps: 21198.34186
  }
 }
 dps_results: {
  key: "TestSV-Settings-Orc-P1-Basic-SV-FullBuffs-LongSingleTarget"
  value: {
-  dps: 6956.98861
-  tps: 5905.16943
+  dps: 7718.0752
+  tps: 6665.5027
  }
 }
 dps_results: {
  key: "TestSV-Settings-Orc-P1-Basic-SV-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 7793.84914
-  tps: 6581.64853
+  dps: 9101.7618
+  tps: 7870.83539
  }
 }
 dps_results: {
  key: "TestSV-Settings-Orc-P1-Basic-SV-NoBuffs-LongMultiTarget"
  value: {
-  dps: 2228.93554
-  tps: 2014.52725
+  dps: 11197.83185
+  tps: 12302.31472
  }
 }
 dps_results: {
  key: "TestSV-Settings-Orc-P1-Basic-SV-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2020.21312
-  tps: 1655.79076
+  dps: 3878.18028
+  tps: 3537.26158
  }
 }
 dps_results: {
  key: "TestSV-Settings-Orc-P1-Basic-SV-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 4196.63572
-  tps: 3776.57354
+  dps: 4822.03228
+  tps: 4399.80919
  }
 }
 dps_results: {

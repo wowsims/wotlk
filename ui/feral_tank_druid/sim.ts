@@ -5,6 +5,11 @@ import { Debuffs } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { Stat, PseudoStat } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js'
+import {
+	APLAction,
+	APLListItem,
+	APLRotation,
+} from '../core/proto/apl.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
@@ -190,6 +195,10 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 				gear: [
 					Presets.P1_PRESET, Presets.P2_PRESET
 				],
+			},
+
+			autoRotation: (player: Player<Spec.SpecFeralTankDruid>): APLRotation => {
+				return Presets.ROTATION_DEFAULT.rotation.rotation!;
 			},
 		});
 	}

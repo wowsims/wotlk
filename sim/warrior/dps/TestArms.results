@@ -888,84 +888,84 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestArms-Settings-Human-Arms P1-Basic-FullBuffs-LongMultiTarget"
+ key: "TestArms-Settings-Human-Arms P1-Basic--FullBuffs-LongMultiTarget"
  value: {
   dps: 10953.76163
   tps: 9348.18398
  }
 }
 dps_results: {
- key: "TestArms-Settings-Human-Arms P1-Basic-FullBuffs-LongSingleTarget"
+ key: "TestArms-Settings-Human-Arms P1-Basic--FullBuffs-LongSingleTarget"
  value: {
   dps: 8236.95369
   tps: 6775.43002
  }
 }
 dps_results: {
- key: "TestArms-Settings-Human-Arms P1-Basic-FullBuffs-ShortSingleTarget"
+ key: "TestArms-Settings-Human-Arms P1-Basic--FullBuffs-ShortSingleTarget"
  value: {
   dps: 8706.92629
   tps: 7225.34979
  }
 }
 dps_results: {
- key: "TestArms-Settings-Human-Arms P1-Basic-NoBuffs-LongMultiTarget"
+ key: "TestArms-Settings-Human-Arms P1-Basic--NoBuffs-LongMultiTarget"
  value: {
   dps: 6454.01158
   tps: 5579.58854
  }
 }
 dps_results: {
- key: "TestArms-Settings-Human-Arms P1-Basic-NoBuffs-LongSingleTarget"
+ key: "TestArms-Settings-Human-Arms P1-Basic--NoBuffs-LongSingleTarget"
  value: {
   dps: 4621.69863
   tps: 3801.53278
  }
 }
 dps_results: {
- key: "TestArms-Settings-Human-Arms P1-Basic-NoBuffs-ShortSingleTarget"
+ key: "TestArms-Settings-Human-Arms P1-Basic--NoBuffs-ShortSingleTarget"
  value: {
   dps: 4493.11766
   tps: 3731.13021
  }
 }
 dps_results: {
- key: "TestArms-Settings-Orc-Arms P1-Basic-FullBuffs-LongMultiTarget"
+ key: "TestArms-Settings-Orc-Arms P1-Basic--FullBuffs-LongMultiTarget"
  value: {
   dps: 10990.49321
   tps: 9383.25815
  }
 }
 dps_results: {
- key: "TestArms-Settings-Orc-Arms P1-Basic-FullBuffs-LongSingleTarget"
+ key: "TestArms-Settings-Orc-Arms P1-Basic--FullBuffs-LongSingleTarget"
  value: {
   dps: 8275.53697
   tps: 6804.84862
  }
 }
 dps_results: {
- key: "TestArms-Settings-Orc-Arms P1-Basic-FullBuffs-ShortSingleTarget"
+ key: "TestArms-Settings-Orc-Arms P1-Basic--FullBuffs-ShortSingleTarget"
  value: {
   dps: 8802.32736
   tps: 7309.48657
  }
 }
 dps_results: {
- key: "TestArms-Settings-Orc-Arms P1-Basic-NoBuffs-LongMultiTarget"
+ key: "TestArms-Settings-Orc-Arms P1-Basic--NoBuffs-LongMultiTarget"
  value: {
   dps: 6502.53164
   tps: 5617.69354
  }
 }
 dps_results: {
- key: "TestArms-Settings-Orc-Arms P1-Basic-NoBuffs-LongSingleTarget"
+ key: "TestArms-Settings-Orc-Arms P1-Basic--NoBuffs-LongSingleTarget"
  value: {
   dps: 4627.10152
   tps: 3804.72745
  }
 }
 dps_results: {
- key: "TestArms-Settings-Orc-Arms P1-Basic-NoBuffs-ShortSingleTarget"
+ key: "TestArms-Settings-Orc-Arms P1-Basic--NoBuffs-ShortSingleTarget"
  value: {
   dps: 4555.57027
   tps: 3788.06789

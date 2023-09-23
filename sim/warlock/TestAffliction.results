@@ -740,84 +740,84 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestAffliction-Settings-Orc-P3-AffItemSwap-FullBuffs-LongMultiTarget"
+ key: "TestAffliction-Settings-Orc-P3-AffItemSwap--FullBuffs-LongMultiTarget"
  value: {
   dps: 30702.64081
   tps: 35745.75223
  }
 }
 dps_results: {
- key: "TestAffliction-Settings-Orc-P3-AffItemSwap-FullBuffs-LongSingleTarget"
+ key: "TestAffliction-Settings-Orc-P3-AffItemSwap--FullBuffs-LongSingleTarget"
  value: {
   dps: 11748.80892
   tps: 10617.02564
  }
 }
 dps_results: {
- key: "TestAffliction-Settings-Orc-P3-AffItemSwap-FullBuffs-ShortSingleTarget"
+ key: "TestAffliction-Settings-Orc-P3-AffItemSwap--FullBuffs-ShortSingleTarget"
  value: {
   dps: 12745.64043
   tps: 11577.89304
  }
 }
 dps_results: {
- key: "TestAffliction-Settings-Orc-P3-AffItemSwap-NoBuffs-LongMultiTarget"
+ key: "TestAffliction-Settings-Orc-P3-AffItemSwap--NoBuffs-LongMultiTarget"
  value: {
   dps: 18516.05245
   tps: 23877.60621
  }
 }
 dps_results: {
- key: "TestAffliction-Settings-Orc-P3-AffItemSwap-NoBuffs-LongSingleTarget"
+ key: "TestAffliction-Settings-Orc-P3-AffItemSwap--NoBuffs-LongSingleTarget"
  value: {
   dps: 6829.15587
   tps: 6423.7778
  }
 }
 dps_results: {
- key: "TestAffliction-Settings-Orc-P3-AffItemSwap-NoBuffs-ShortSingleTarget"
+ key: "TestAffliction-Settings-Orc-P3-AffItemSwap--NoBuffs-ShortSingleTarget"
  value: {
   dps: 6811.71339
   tps: 6318.22566
  }
 }
 dps_results: {
- key: "TestAffliction-Settings-Orc-P3-Affliction Warlock-FullBuffs-LongMultiTarget"
+ key: "TestAffliction-Settings-Orc-P3-Affliction Warlock--FullBuffs-LongMultiTarget"
  value: {
   dps: 33373.39434
   tps: 38482.88131
  }
 }
 dps_results: {
- key: "TestAffliction-Settings-Orc-P3-Affliction Warlock-FullBuffs-LongSingleTarget"
+ key: "TestAffliction-Settings-Orc-P3-Affliction Warlock--FullBuffs-LongSingleTarget"
  value: {
   dps: 11677.68974
   tps: 10543.24637
  }
 }
 dps_results: {
- key: "TestAffliction-Settings-Orc-P3-Affliction Warlock-FullBuffs-ShortSingleTarget"
+ key: "TestAffliction-Settings-Orc-P3-Affliction Warlock--FullBuffs-ShortSingleTarget"
  value: {
   dps: 12850.02367
   tps: 11691.84173
  }
 }
 dps_results: {
- key: "TestAffliction-Settings-Orc-P3-Affliction Warlock-NoBuffs-LongMultiTarget"
+ key: "TestAffliction-Settings-Orc-P3-Affliction Warlock--NoBuffs-LongMultiTarget"
  value: {
   dps: 20278.25295
   tps: 25714.2092
  }
 }
 dps_results: {
- key: "TestAffliction-Settings-Orc-P3-Affliction Warlock-NoBuffs-LongSingleTarget"
+ key: "TestAffliction-Settings-Orc-P3-Affliction Warlock--NoBuffs-LongSingleTarget"
  value: {
   dps: 6818.67874
   tps: 6411.1851
  }
 }
 dps_results: {
- key: "TestAffliction-Settings-Orc-P3-Affliction Warlock-NoBuffs-ShortSingleTarget"
+ key: "TestAffliction-Settings-Orc-P3-Affliction Warlock--NoBuffs-ShortSingleTarget"
  value: {
   dps: 6788.22378
   tps: 6292.68525

@@ -859,51 +859,45 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestDisc-Settings-Undead-P1-Disc-FullBuffs-LongMultiTarget"
+ key: "TestDisc-Settings-Undead-P1-Disc-Disc-FullBuffs-LongMultiTarget"
  value: {
-  dps: 105.61962
-  tps: 1639.68485
-  hps: 7376.86015
+  tps: 342.42388
+  hps: 3766.83285
  }
 }
 dps_results: {
- key: "TestDisc-Settings-Undead-P1-Disc-FullBuffs-LongSingleTarget"
+ key: "TestDisc-Settings-Undead-P1-Disc-Disc-FullBuffs-LongSingleTarget"
  value: {
-  dps: 105.61962
-  tps: 81.98424
-  hps: 7376.86015
+  tps: 17.12119
+  hps: 3766.83285
  }
 }
 dps_results: {
- key: "TestDisc-Settings-Undead-P1-Disc-FullBuffs-ShortSingleTarget"
+ key: "TestDisc-Settings-Undead-P1-Disc-Disc-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 528.09812
-  tps: 209.21324
-  hps: 9584.60571
+  tps: 18.9551
+  hps: 3705.11041
  }
 }
 dps_results: {
- key: "TestDisc-Settings-Undead-P1-Disc-NoBuffs-LongMultiTarget"
+ key: "TestDisc-Settings-Undead-P1-Disc-Disc-NoBuffs-LongMultiTarget"
  value: {
-  dps: 51.60864
-  tps: 983.80783
-  hps: 4107.09369
+  tps: 371.54798
+  hps: 3123.50578
  }
 }
 dps_results: {
- key: "TestDisc-Settings-Undead-P1-Disc-NoBuffs-LongSingleTarget"
+ key: "TestDisc-Settings-Undead-P1-Disc-Disc-NoBuffs-LongSingleTarget"
  value: {
-  dps: 51.60864
-  tps: 49.19039
-  hps: 4107.09369
+  tps: 18.5774
+  hps: 3123.50578
  }
 }
 dps_results: {
- key: "TestDisc-Settings-Undead-P1-Disc-NoBuffs-ShortSingleTarget"
+ key: "TestDisc-Settings-Undead-P1-Disc-Disc-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 258.04319
-  tps: 123.12939
-  hps: 6317.10078
+  tps: 18.18625
+  hps: 3055.92036
  }
 }
 dps_results: {

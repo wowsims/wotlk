@@ -888,87 +888,87 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestBM-Settings-Dwarf-P1-Basic-FullBuffs-LongMultiTarget"
+ key: "TestBM-Settings-Dwarf-P1-Basic-BM-FullBuffs-LongMultiTarget"
  value: {
-  dps: 6644.89657
-  tps: 5614.18203
+  dps: 6834.41474
+  tps: 5910.65287
  }
 }
 dps_results: {
- key: "TestBM-Settings-Dwarf-P1-Basic-FullBuffs-LongSingleTarget"
+ key: "TestBM-Settings-Dwarf-P1-Basic-BM-FullBuffs-LongSingleTarget"
  value: {
-  dps: 5986.48555
-  tps: 3973.40244
+  dps: 6185.3847
+  tps: 4180.94343
  }
 }
 dps_results: {
- key: "TestBM-Settings-Dwarf-P1-Basic-FullBuffs-ShortSingleTarget"
+ key: "TestBM-Settings-Dwarf-P1-Basic-BM-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 7163.43362
-  tps: 4690.47439
+  dps: 7403.98317
+  tps: 4912.51763
  }
 }
 dps_results: {
- key: "TestBM-Settings-Dwarf-P1-Basic-NoBuffs-LongMultiTarget"
+ key: "TestBM-Settings-Dwarf-P1-Basic-BM-NoBuffs-LongMultiTarget"
  value: {
-  dps: 2102.97983
-  tps: 1461.15178
+  dps: 3443.596
+  tps: 4372.75906
  }
 }
 dps_results: {
- key: "TestBM-Settings-Dwarf-P1-Basic-NoBuffs-LongSingleTarget"
+ key: "TestBM-Settings-Dwarf-P1-Basic-BM-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2006.48569
-  tps: 1363.12906
+  dps: 2997.82987
+  tps: 2351.87602
  }
 }
 dps_results: {
- key: "TestBM-Settings-Dwarf-P1-Basic-NoBuffs-ShortSingleTarget"
+ key: "TestBM-Settings-Dwarf-P1-Basic-BM-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 3413.92935
-  tps: 2606.91741
+  dps: 3419.02418
+  tps: 2660.37536
  }
 }
 dps_results: {
- key: "TestBM-Settings-Orc-P1-Basic-FullBuffs-LongMultiTarget"
+ key: "TestBM-Settings-Orc-P1-Basic-BM-FullBuffs-LongMultiTarget"
  value: {
-  dps: 6747.11976
-  tps: 5599.81351
+  dps: 6947.45215
+  tps: 5911.35362
  }
 }
 dps_results: {
- key: "TestBM-Settings-Orc-P1-Basic-FullBuffs-LongSingleTarget"
+ key: "TestBM-Settings-Orc-P1-Basic-BM-FullBuffs-LongSingleTarget"
  value: {
-  dps: 6084.16735
-  tps: 3956.55582
+  dps: 6274.33576
+  tps: 4160.36986
  }
 }
 dps_results: {
- key: "TestBM-Settings-Orc-P1-Basic-FullBuffs-ShortSingleTarget"
+ key: "TestBM-Settings-Orc-P1-Basic-BM-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 7321.54396
-  tps: 4708.48665
+  dps: 7566.31205
+  tps: 4932.59166
  }
 }
 dps_results: {
- key: "TestBM-Settings-Orc-P1-Basic-NoBuffs-LongMultiTarget"
+ key: "TestBM-Settings-Orc-P1-Basic-BM-NoBuffs-LongMultiTarget"
  value: {
-  dps: 2145.10314
-  tps: 1467.50421
+  dps: 3470.26881
+  tps: 4373.09091
  }
 }
 dps_results: {
- key: "TestBM-Settings-Orc-P1-Basic-NoBuffs-LongSingleTarget"
+ key: "TestBM-Settings-Orc-P1-Basic-BM-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2050.44779
-  tps: 1371.77132
+  dps: 3025.32365
+  tps: 2341.0963
  }
 }
 dps_results: {
- key: "TestBM-Settings-Orc-P1-Basic-NoBuffs-ShortSingleTarget"
+ key: "TestBM-Settings-Orc-P1-Basic-BM-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 3481.22204
-  tps: 2625.92919
+  dps: 3472.3616
+  tps: 2665.48484
  }
 }
 dps_results: {
