@@ -112,8 +112,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 1668.17341
-  tps: 4295.8649
+  dps: 1668.32233
+  tps: 4296.17369
  }
 }
 dps_results: {
@@ -753,8 +753,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-StormshroudArmor"
  value: {
-  dps: 1252.46024
-  tps: 3268.34029
+  dps: 1252.46659
+  tps: 3268.35344
  }
 }
 dps_results: {
@@ -795,8 +795,8 @@ dps_results: {
 dps_results: {
  key: "TestProtectionWarrior-AllItems-TheFistsofFury"
  value: {
-  dps: 1140.112
-  tps: 2623.09015
+  dps: 1140.15775
+  tps: 2623.185
  }
 }
 dps_results: {

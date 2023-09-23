@@ -72,7 +72,7 @@ func (mage *Mage) registerFrostfireBoltSpell() {
 			//  2) Shadow Mastery / Improved Scorch / Winter's Chill
 			// Luckily, each of those effects has its own dedicated pseudostat, so we
 			// can implement this by modifying the crit of this spell before the calc.
-			doubleDipBonus := target.PseudoStats.BonusSpellCritRatingTaken
+			doubleDipBonus := target.PseudoStats.BonusCritRatingTaken + target.PseudoStats.BonusSpellCritRatingTaken
 			spell.BonusCritRating += doubleDipBonus
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			spell.BonusCritRating -= doubleDipBonus

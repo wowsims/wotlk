@@ -74,8 +74,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 7598.58633
-  tps: 5458.11624
+  dps: 7598.7356
+  tps: 5458.22222
  }
 }
 dps_results: {
@@ -799,8 +799,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-StormshroudArmor"
  value: {
-  dps: 6281.09578
-  tps: 4520.97786
+  dps: 6281.10861
+  tps: 4520.98696
  }
 }
 dps_results: {
