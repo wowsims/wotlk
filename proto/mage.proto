@@ -199,10 +199,10 @@ message Mage {
 		bool ignite_munching = 6;
 
 		// Number of Evocation ticks to use. If 0, use all of them.
-		int32 evocation_ticks = 2;
+		int32 evocation_ticks = 2 [deprecated = true];
 		int32 focus_magic_percent_uptime = 3;
 		UnitReference focus_magic_target = 4;
-		int32 reaction_time_ms = 5;
+		int32 reaction_time_ms = 5 [deprecated = true];
 	}
 	Options options = 3;
 }

@@ -184,30 +184,31 @@ export const OtherDefaults = {
 };
 
 export const ARCANE_ROTATION_PRESET_DEFAULT = {
-	name: 'Arcane APL',
+	name: 'Arcane',
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: MageRotation.toJsonString(DefaultArcaneRotation),
 		rotation: APLRotation.fromJsonString(`{
 			"type": "TypeAPL",
 			"prepullActions": [
-			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
+				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
 			],
 			"priorityList": [
-			  {"action":{"autocastOtherCooldowns":{}}},
-			  {"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":12472}}}}},"castSpell":{"spellId":{"spellId":26297}}}},
-			  {"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":12472}}}}},"castSpell":{"spellId":{"spellId":54758}}}},
-			  {"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":12472}}}}},"castSpell":{"spellId":{"itemId":40211}}}},
-			  {"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"auraNumStacks":{"auraId":{"spellId":36032}}},"rhs":{"const":{"val":"4"}}}},"castSpell":{"spellId":{"spellId":42897}}}},
-			  {"action":{"condition":{"auraIsActive":{"auraId":{"spellId":44401}}},"castSpell":{"spellId":{"spellId":42846}}}},
-			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"25%"}}}},"castSpell":{"spellId":{"spellId":12051,"tag":1}}}},			  {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"25%"}}}},"castSpell":{"spellId":{"spellId":42897}}}},
-			  {"action":{"castSpell":{"spellId":{"spellId":42846}}}}
+				{"action":{"autocastOtherCooldowns":{}}},
+				{"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":12472}}}}},"castSpell":{"spellId":{"spellId":26297}}}},
+				{"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":12472}}}}},"castSpell":{"spellId":{"spellId":54758}}}},
+				{"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":12472}}}}},"castSpell":{"spellId":{"itemId":40211}}}},
+				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"auraNumStacks":{"auraId":{"spellId":36032}}},"rhs":{"const":{"val":"4"}}}},"castSpell":{"spellId":{"spellId":42897}}}},
+				{"action":{"condition":{"auraIsActiveWithReactionTime":{"auraId":{"spellId":44401}}},"castSpell":{"spellId":{"spellId":42846}}}},
+				{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"25%"}}}},"castSpell":{"spellId":{"spellId":12051}}}},
+				{"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"25%"}}}},"castSpell":{"spellId":{"spellId":42897}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":42846}}}}
 			]
 		}`)
 	}),
 }
 
 export const FIRE_ROTATION_PRESET_DEFAULT = {
-	name: 'Fire APL',
+	name: 'Fire',
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: MageRotation.toJsonString(DefaultFireRotation),
 		rotation: APLRotation.fromJsonString(`{
@@ -218,7 +219,7 @@ export const FIRE_ROTATION_PRESET_DEFAULT = {
 			"priorityList": [
 				{"action":{"autocastOtherCooldowns":{}}},
 				{"action":{"condition":{"auraShouldRefresh":{"auraId":{"spellId":12873},"maxOverlap":{"const":{"val":"4s"}}}},"castSpell":{"spellId":{"spellId":42859}}}},
-				{"action":{"condition":{"auraIsActive":{"auraId":{"spellId":44448}}},"castSpell":{"spellId":{"spellId":42891}}}},
+				{"action":{"condition":{"auraIsActiveWithReactionTime":{"auraId":{"spellId":44448}}},"castSpell":{"spellId":{"spellId":42891}}}},
 				{"action":{"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55360}}}}},{"cmp":{"op":"OpGt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"12s"}}}}]}},"castSpell":{"spellId":{"spellId":55360}}}},
 				{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"remainingTime":{}},"rhs":{"spellCastTime":{"spellId":{"spellId":42859}}}}},"castSpell":{"spellId":{"spellId":42873}}}},
 				{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"4s"}}}},"castSpell":{"spellId":{"spellId":42859}}}},
@@ -229,7 +230,7 @@ export const FIRE_ROTATION_PRESET_DEFAULT = {
 }
 
 export const FROSTFIRE_ROTATION_PRESET_DEFAULT = {
-	name: 'Frostfire APL',
+	name: 'Frostfire',
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: MageRotation.toJsonString(DefaultFFBRotation),
 		rotation: APLRotation.fromJsonString(`{
@@ -240,7 +241,7 @@ export const FROSTFIRE_ROTATION_PRESET_DEFAULT = {
 			"priorityList": [
 			  {"action":{"autocastOtherCooldowns":{}}},
 			  {"action":{"condition":{"auraShouldRefresh":{"auraId":{"spellId":12873},"maxOverlap":{"const":{"val":"4s"}}}},"castSpell":{"spellId":{"spellId":42859}}}},
-			  {"action":{"condition":{"auraIsActive":{"auraId":{"spellId":44448}}},"castSpell":{"spellId":{"spellId":42891}}}},
+			  {"action":{"condition":{"auraIsActiveWithReactionTime":{"auraId":{"spellId":44448}}},"castSpell":{"spellId":{"spellId":42891}}}},
 			  {"action":{"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55360}}}}},{"cmp":{"op":"OpGt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"12s"}}}}]}},"castSpell":{"spellId":{"spellId":55360}}}},
 			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"remainingTime":{}},"rhs":{"spellCastTime":{"spellId":{"spellId":42859}}}}},"castSpell":{"spellId":{"spellId":42873}}}},
 			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"3.5s"}}}},"castSpell":{"spellId":{"spellId":42859}}}},
@@ -251,7 +252,7 @@ export const FROSTFIRE_ROTATION_PRESET_DEFAULT = {
 }
 
 export const FROST_ROTATION_PRESET_DEFAULT = {
-	name: 'Frost APL',
+	name: 'Frost',
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: MageRotation.toJsonString(DefaultFrostRotation),
 		rotation: APLRotation.fromJsonString(`{
@@ -263,10 +264,61 @@ export const FROST_ROTATION_PRESET_DEFAULT = {
 			  {"action":{"autocastOtherCooldowns":{}}},
 			  {"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":12472}}}}},"castSpell":{"spellId":{"spellId":26297}}}},
 			  {"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":12472}}}}},"castSpell":{"spellId":{"spellId":54758}}}},
-              {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"25%"}}}},"castSpell":{"spellId":{"spellId":12051,"tag":1}}}},
+              {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"25%"}}}},"castSpell":{"spellId":{"spellId":12051}}}},
 			  {"action":{"condition":{"auraIsActive":{"auraId":{"spellId":44545}}},"castSpell":{"spellId":{"spellId":44572}}}},
-			  {"action":{"condition":{"auraIsActive":{"auraId":{"spellId":44549}}},"castSpell":{"spellId":{"spellId":47610}}}},
+			  {"action":{"condition":{"auraIsActiveWithReactionTime":{"auraId":{"spellId":44549}}},"castSpell":{"spellId":{"spellId":47610}}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":42842}}}}
+			]
+		}`),
+	}),
+}
+
+export const ARCANE_ROTATION_PRESET_AOE = {
+	name: 'Arcane AOE',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: MageRotation.toJsonString(DefaultFrostRotation),
+		rotation: APLRotation.fromJsonString(`{
+			"type": "TypeAPL",
+			"prepullActions": [
+				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
+			],
+			"priorityList": [
+				{"action":{"autocastOtherCooldowns":{}}},
+				{"action":{"castSpell":{"spellId":{"spellId":42921}}}}
+			]
+		}`),
+	}),
+}
+
+export const FIRE_ROTATION_PRESET_AOE = {
+	name: 'Fire AOE',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: MageRotation.toJsonString(DefaultFrostRotation),
+		rotation: APLRotation.fromJsonString(`{
+			"type": "TypeAPL",
+			"prepullActions": [
+				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
+			],
+			"priorityList": [
+				{"action":{"autocastOtherCooldowns":{}}},
+				{"action":{"castSpell":{"spellId":{"spellId":42926}}}}
+			]
+		}`),
+	}),
+}
+
+export const FROST_ROTATION_PRESET_AOE = {
+	name: 'Frost AOE',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: MageRotation.toJsonString(DefaultFrostRotation),
+		rotation: APLRotation.fromJsonString(`{
+			"type": "TypeAPL",
+			"prepullActions": [
+				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
+			],
+			"priorityList": [
+				{"action":{"autocastOtherCooldowns":{}}},
+				{"action":{"castSpell":{"spellId":{"spellId":42939}}}}
 			]
 		}`),
 	}),

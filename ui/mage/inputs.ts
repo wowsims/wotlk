@@ -24,23 +24,11 @@ export const Armor = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecMage, Ar
 	],
 });
 
-export const EvocationTicks = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecMage>({
-	fieldName: 'evocationTicks',
-	label: '# Evocation Ticks',
-	labelTooltip: 'The number of ticks of Evocation to use, or 0 to use the full duration.',
-});
-
 export const FocusMagicUptime = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecMage>({
 	fieldName: 'focusMagicPercentUptime',
 	label: 'Focus Magic Percent Uptime',
 	labelTooltip: 'Percent of uptime for Focus Magic Buddy',
 	extraCssClasses: ['within-raid-sim-hide'],
-});
-
-export const ReactionTime = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecMage>({
-	fieldName: 'reactionTimeMs',
-	label: 'Reaction Time (ms)',
-	labelTooltip: 'Duration, in milliseconds, for player reaction time. Only used for a few effects (Missile Barrage / Hot Streak / Brain Freeze).',
 });
 
 export const MageRotationConfig = {
