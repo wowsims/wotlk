@@ -162,37 +162,11 @@ func (apl *APLRotation) DoNextAction(sim *Simulation) {
 		return
 	}
 
-	i := 0
-
-	channeledDot := apl.unit.ChanneledDot
-	if channeledDot != nil {
-		if channeledDot.MaxTicksRemaining() == 0 {
-			// Channel has ended, but apl.unit.ChanneledDot hasn't been cleared yet meaning the aura is still active.
-			return
-		}
-		if apl.unit.ChanneledDot.lastTickTime != sim.CurrentTime {
-			// Don't allow interupts between ticks, just continue channeling until next tick.
-			return
-		}
-		if !apl.unit.GCD.IsReady(sim) || apl.interruptChannelIf == nil || !apl.interruptChannelIf.GetBool(sim) {
-			// Continue the channel.
-			return
-		}
-
-		// Allow next action to interrupt the channel, but if the action is the same action then it still needs to continue.
-		nextAction := apl.getNextAction(sim)
-		if nextAction == nil {
-			return
-		}
-		if channelAction, ok := nextAction.impl.(*APLActionChannelSpell); ok && channelAction.spell == channeledDot.Spell {
-			// Newly selected action is channeling the same spell, so continue the channel.
-			return
-		}
-		channeledDot.Cancel(sim)
-		nextAction.Execute(sim)
-		i++
+	if apl.unit.ChanneledDot != nil {
+		return
 	}
 
+	i := 0
 	apl.inLoop = true
 	for nextAction := apl.getNextAction(sim); nextAction != nil; i, nextAction = i+1, apl.getNextAction(sim) {
 		if i > 1000 {
@@ -226,6 +200,34 @@ func (apl *APLRotation) getNextAction(sim *Simulation) *APLAction {
 	}
 
 	return nil
+}
+
+func (apl *APLRotation) shouldInterruptChannel(sim *Simulation) bool {
+	channeledDot := apl.unit.ChanneledDot
+	if channeledDot.MaxTicksRemaining() == 0 {
+		// Channel has ended, but apl.unit.ChanneledDot hasn't been cleared yet meaning the aura is still active.
+		return false
+	}
+	if apl.unit.ChanneledDot.lastTickTime != sim.CurrentTime {
+		// Don't allow interupts between ticks, just continue channeling until next tick.
+		return false
+	}
+	if !apl.unit.GCD.IsReady(sim) || apl.interruptChannelIf == nil || !apl.interruptChannelIf.GetBool(sim) {
+		// Continue the channel.
+		return false
+	}
+
+	// Allow next action to interrupt the channel, but if the action is the same action then it still needs to continue.
+	nextAction := apl.getNextAction(sim)
+	if nextAction == nil {
+		return false
+	}
+	if channelAction, ok := nextAction.impl.(*APLActionChannelSpell); ok && channelAction.spell == channeledDot.Spell {
+		// Newly selected action is channeling the same spell, so continue the channel.
+		return false
+	}
+
+	return true
 }
 
 func APLRotationFromJsonString(jsonString string) *proto.APLRotation {
