@@ -150,12 +150,13 @@ export class SimHeader extends Component {
 			parent: this.simToolbar,
 			text: "Known Issues",
 			tooltip: this.knownIssuesContent,
-			classes: "known-issues link-danger"
+			classes: "known-issues link-danger hide"
 		}).children[0] as HTMLElement;
 	}
 
 	addKnownIssue(issue: string) {
 		this.knownIssuesContent.appendChild(<li>{issue}</li>);
+		this.knownIssuesLink.classList.remove('hide');
 		Tooltip.getInstance(this.knownIssuesLink)?.setContent({'.tooltip-inner': this.knownIssuesContent});
 	}
 
