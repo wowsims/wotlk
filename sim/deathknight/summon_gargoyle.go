@@ -143,7 +143,6 @@ func (garg *GargoylePet) OnGCDReady(_ *core.Simulation) {
 
 func (garg *GargoylePet) registerGargoyleStrikeSpell() {
 	attackPowerModifier := (1.0 + 0.04*float64(garg.dkOwner.Talents.Impurity)) / 3.0
-	var outcomeApplier core.OutcomeApplier
 
 	garg.GargoyleStrike = garg.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 51963},
@@ -162,11 +161,10 @@ func (garg *GargoylePet) registerGargoyleStrikeSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := 2.05*sim.Roll(51, 69) + attackPowerModifier*spell.MeleeAttackPower()
-			result := spell.CalcDamage(sim, target, baseDamage, outcomeApplier)
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			spell.DealDamage(sim, result)
 
 			garg.GargoyleStrike.Cast(sim, garg.CurrentTarget)
 		},
 	})
-	outcomeApplier = garg.GargoyleStrike.OutcomeMagicCritFixedChance(0.05)
 }
