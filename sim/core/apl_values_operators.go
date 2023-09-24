@@ -27,6 +27,16 @@ func (rot *APLRotation) newValueConst(config *proto.APLValueConst) APLValue {
 		boolVal:   config.Val != "",
 	}
 
+	if strings.ToLower(config.Val) == "true" {
+		result.boolVal = true
+		result.valType = proto.APLValueType_ValueTypeBool
+		return result
+	} else if strings.ToLower(config.Val) == "false" {
+		result.boolVal = false
+		result.valType = proto.APLValueType_ValueTypeBool
+		return result
+	}
+
 	if durVal, err := time.ParseDuration(config.Val); err == nil {
 		result.durationVal = durVal
 		result.valType = proto.APLValueType_ValueTypeDuration

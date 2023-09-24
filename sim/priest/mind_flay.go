@@ -57,8 +57,10 @@ func (priest *Priest) newMindFlaySpell(numTicksIdx int32) *core.Spell {
 				if wait > gcd && priest.Latency > 0 {
 					base := priest.Latency * 0.67
 					variation := base + sim.RandomFloat("spriest latency")*base // should vary from 0.66 - 1.33 of given latency
-					variation = core.MaxFloat(variation, 10)                    // no player can go under XXXms response time
 					cast.AfterCastDelay += time.Duration(variation) * time.Millisecond
+					if sim.Log != nil {
+						priest.Log(sim, "Latency: %0.02f, AfterCastDelay: %s", priest.Latency, cast.AfterCastDelay)
+					}
 				}
 			},
 		},
@@ -151,6 +153,5 @@ func (priest *Priest) AverageMindFlayLatencyDelay(numTicks int, gcd time.Duratio
 
 	base := priest.Latency * 0.25
 	variation := base + 0.5*base
-	variation = core.MaxFloat(variation, 10)
 	return time.Duration(variation) * time.Millisecond
 }

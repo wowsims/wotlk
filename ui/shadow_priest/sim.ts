@@ -140,7 +140,7 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 					Presets.StandardTalents,
 				],
 				rotations: [
-					Presets.ROTATION_PRESET_BASIC_APL,
+					Presets.ROTATION_PRESET_DEFAULT,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [

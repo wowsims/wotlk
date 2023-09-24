@@ -1225,6 +1225,7 @@ export class Player<SpecType extends Spec> {
 	toProto(forExport?: boolean, forSimming?: boolean): PlayerProto {
 		const aplIsLaunched = aplLaunchStatuses[this.spec] == LaunchStatus.Launched;
 		const gear = this.getGear();
+		const aplRotation = forSimming ? this.getResolvedAplRotation() : this.aplRotation;
 		return withSpecProto(
 			this.spec,
 			PlayerProto.create({
@@ -1235,10 +1236,12 @@ export class Player<SpecType extends Spec> {
 				consumes: this.getConsumes(),
 				bonusStats: this.getBonusStats().toProto(),
 				buffs: this.getBuffs(),
-				cooldowns: aplIsLaunched ? Cooldowns.create({ hpPercentForDefensives: this.getCooldowns().hpPercentForDefensives }) : this.getCooldowns(),
+				cooldowns: (aplIsLaunched || (forSimming && aplRotation.type == APLRotationType.TypeAPL))
+					? Cooldowns.create({ hpPercentForDefensives: this.getCooldowns().hpPercentForDefensives })
+					: this.getCooldowns(),
 				talentsString: this.getTalentsString(),
 				glyphs: this.getGlyphs(),
-				rotation: forSimming ? this.getResolvedAplRotation() : this.aplRotation,
+				rotation: aplRotation,
 				profession1: this.getProfession1(),
 				profession2: this.getProfession2(),
 				reactionTimeMs: this.getReactionTime(),
@@ -1248,7 +1251,9 @@ export class Player<SpecType extends Spec> {
 				healingModel: this.getHealingModel(),
 				database: forExport ? SimDatabase.create() : this.toDatabase(),
 			}),
-			aplIsLaunched ? this.specTypeFunctions.rotationCreate() : this.getRotation(),
+			(aplIsLaunched || (forSimming && aplRotation.type == APLRotationType.TypeAPL))
+				? this.specTypeFunctions.rotationCreate()
+				: this.getRotation(),
 			this.getSpecOptions());
 	}
 

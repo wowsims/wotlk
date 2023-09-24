@@ -147,8 +147,8 @@ dps_results: {
 dps_results: {
  key: "TestDisc-AllItems-BlessedRegaliaofUndeadCleansing"
  value: {
-  tps: 16.32773
-  hps: 3210.59379
+  tps: 16.32466
+  hps: 3210.02224
  }
 }
 dps_results: {
@@ -189,15 +189,15 @@ dps_results: {
 dps_results: {
  key: "TestDisc-AllItems-CrimsonAcolyte'sRaiment"
  value: {
-  tps: 15.23724
-  hps: 3617.95922
+  tps: 15.30562
+  hps: 3620.60223
  }
 }
 dps_results: {
  key: "TestDisc-AllItems-CrimsonAcolyte'sRegalia"
  value: {
-  tps: 16.02513
-  hps: 3708.05555
+  tps: 16.02929
+  hps: 3686.08594
  }
 }
 dps_results: {
@@ -266,15 +266,15 @@ dps_results: {
 dps_results: {
  key: "TestDisc-AllItems-DislodgedForeignObject-50348"
  value: {
-  tps: 17.0725
+  tps: 17.0619
   hps: 3621.43778
  }
 }
 dps_results: {
  key: "TestDisc-AllItems-DislodgedForeignObject-50353"
  value: {
-  tps: 17.17594
-  hps: 3638.27588
+  tps: 16.94699
+  hps: 3639.64227
  }
 }
 dps_results: {
@@ -308,7 +308,7 @@ dps_results: {
 dps_results: {
  key: "TestDisc-AllItems-EphemeralSnowflake-50260"
  value: {
-  tps: 18.41134
+  tps: 18.4095
   hps: 3603.63774
  }
 }
@@ -386,7 +386,7 @@ dps_results: {
  key: "TestDisc-AllItems-GarbofFaith"
  value: {
   tps: 14.52615
-  hps: 3418.32699
+  hps: 3418.75382
  }
 }
 dps_results: {
@@ -644,15 +644,15 @@ dps_results: {
 dps_results: {
  key: "TestDisc-AllItems-SanctificationGarb"
  value: {
-  tps: 14.78178
-  hps: 3535.22675
+  tps: 14.79011
+  hps: 3530.40997
  }
 }
 dps_results: {
  key: "TestDisc-AllItems-SanctificationRegalia"
  value: {
-  tps: 14.64321
-  hps: 3507.59616
+  tps: 14.63905
+  hps: 3509.97468
  }
 }
 dps_results: {
@@ -840,15 +840,15 @@ dps_results: {
 dps_results: {
  key: "TestDisc-AllItems-Zabra'sRaiment"
  value: {
-  tps: 14.84923
-  hps: 3708.98145
+  tps: 14.86221
+  hps: 3732.2729
  }
 }
 dps_results: {
  key: "TestDisc-AllItems-Zabra'sRegalia"
  value: {
   tps: 15.08364
-  hps: 3426.15129
+  hps: 3426.83291
  }
 }
 dps_results: {
