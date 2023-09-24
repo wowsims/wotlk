@@ -76,7 +76,7 @@ message APLAction {
     }
 }
 
-// NextIndex: 58
+// NextIndex: 59
 message APLValue {
     oneof value {
         // Operators
@@ -153,6 +153,9 @@ message APLValue {
         APLValueSequenceIsComplete sequence_is_complete = 44;
         APLValueSequenceIsReady sequence_is_ready = 45;
         APLValueSequenceTimeToReady sequence_time_to_ready = 46;
+
+        // Properties
+        APLValueChannelClipDelay channel_clip_delay = 58;
 
         // Class or Spec-specific values
         APLValueTotemRemainingTime totem_remaining_time = 49;
@@ -393,6 +396,8 @@ message APLValueSpellCastTime {
 }
 message APLValueSpellChannelTime {
     ActionID spell_id = 1;
+}
+message APLValueChannelClipDelay {
 }
 message APLValueSpellTravelTime {
     ActionID spell_id = 1;

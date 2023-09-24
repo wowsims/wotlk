@@ -49,6 +49,7 @@ import {
 	APLValueSpellCPM,
 	APLValueSpellIsChanneling,
 	APLValueSpellChanneledTicks,
+	APLValueChannelClipDelay,
 	APLValueAuraIsActive,
 	APLValueAuraIsActiveWithReactionTime,
 	APLValueAuraRemainingTime,
@@ -804,6 +805,14 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		newValue: APLValueSpellChanneledTicks.create,
 		fields: [
 			AplHelpers.actionIdFieldConfig('spellId', 'channel_spells', ''),
+		],
+	}),
+	'channelClipDelay': inputBuilder({
+		label: 'Channel Clip Delay',
+		submenu: ['Spell'],
+		shortDescription: 'The amount of time specified by the <b>Channel Clip Delay</b> setting.',
+		newValue: APLValueChannelClipDelay.create,
+		fields: [
 		],
 	}),
 

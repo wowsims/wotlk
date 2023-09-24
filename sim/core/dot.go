@@ -199,7 +199,9 @@ func (dot *Dot) TickOnce(sim *Simulation) {
 			}
 		} else if dot.Spell.Unit.Rotation.shouldInterruptChannel(sim) {
 			dot.Cancel(sim)
-			dot.Spell.Unit.WaitUntil(sim, sim.CurrentTime+dot.Spell.Unit.ChannelClipDelay)
+			if dot.Spell.Unit.GCD.IsReady(sim) {
+				dot.Spell.Unit.WaitUntil(sim, sim.CurrentTime+dot.Spell.Unit.ChannelClipDelay)
+			}
 		}
 	}
 }

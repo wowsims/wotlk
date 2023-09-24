@@ -212,7 +212,7 @@ func (apl *APLRotation) shouldInterruptChannel(sim *Simulation) bool {
 		// Don't allow interupts between ticks, just continue channeling until next tick.
 		return false
 	}
-	if !apl.unit.GCD.IsReady(sim) || apl.interruptChannelIf == nil || !apl.interruptChannelIf.GetBool(sim) {
+	if apl.interruptChannelIf == nil || !apl.interruptChannelIf.GetBool(sim) {
 		// Continue the channel.
 		return false
 	}
