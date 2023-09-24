@@ -111,9 +111,6 @@ export const DefaultConsumes = Consumes.create({
 	food: Food.FoodDragonfinFilet,
 });
 
-// Maybe use this later if I can figure out the interactive tooltips from tippy
-const RET_BIS_DISCLAIMER = "<p>Please reference <a target=\"_blank\" href=\"https://docs.google.com/spreadsheets/d/1SxO6abYm4k7XRaP1MsxhaqYoukgyZ-cbWDE3ujadjx4/\">Baranor's TBC BiS Lists</a> for more detailed gearing options and information.</p>"
-
 export const PRE_RAID_PRESET = {
 	name: 'Pre-Raid Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
@@ -264,8 +261,8 @@ export const P5_PRESET = {
 	]}`),
 };
 
-export const ROTATION_PRESET_BASIC_APL = {
-	name: 'Basic APL',
+export const ROTATION_PRESET_DEFAULT = {
+	name: 'Default',
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: RetributionPaladinRotation.toJsonString(DefaultRotation),
 		rotation: APLRotation.fromJsonString(`{
@@ -283,6 +280,6 @@ export const ROTATION_PRESET_BASIC_APL = {
 			  {"action":{"condition":{"auraIsActive":{"auraId":{"spellId":53488}}},"castSpell":{"spellId":{"spellId":48801}}}},
 			  {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"4s"}}}},"castSpell":{"spellId":{"spellId":48819}}}}
 			]
-		  }`),
+		}`),
 	}),
-	};
+};

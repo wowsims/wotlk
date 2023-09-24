@@ -5,6 +5,11 @@ import { Debuffs } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { Stat, PseudoStat } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js'
+import {
+	APLAction,
+	APLListItem,
+	APLRotation,
+} from '../core/proto/apl.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
@@ -198,7 +203,7 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 
 			presets: {
 				rotations: [
-					Presets.ROTATION_PRESET_BASIC_APL,
+					Presets.ROTATION_PRESET_DEFAULT,
 				],
 				// Preset talents that the user can quickly select.
 				talents: [
@@ -214,6 +219,10 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 					Presets.P4_PRESET,
 					Presets.P5_PRESET,
 				],
+			},
+
+			autoRotation: (player: Player<Spec.SpecRetributionPaladin>): APLRotation => {
+				return Presets.ROTATION_PRESET_DEFAULT.rotation.rotation!;
 			},
 		});
 	}
