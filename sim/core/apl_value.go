@@ -192,6 +192,10 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 	case *proto.APLValue_SequenceTimeToReady:
 		return rot.newValueSequenceTimeToReady(config.GetSequenceTimeToReady())
 
+	// Properties
+	case *proto.APLValue_ChannelClipDelay:
+		return rot.newValueChannelClipDelay(config.GetChannelClipDelay())
+
 	default:
 		return nil
 	}

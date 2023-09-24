@@ -32,7 +32,7 @@ func (action *APLActionWait) GetAPLValues() []APLValue {
 	return []APLValue{action.duration}
 }
 func (action *APLActionWait) IsReady(sim *Simulation) bool {
-	return true
+	return action.duration.GetDuration(sim) > 0
 }
 
 func (action *APLActionWait) Execute(sim *Simulation) {

@@ -366,7 +366,6 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 			<p>The channel will be interrupted only if all of the following are true:</p>
 			<ul>
 				<li>Immediately following a tick of the channel</li>
-				<li>The GCD is ready</li>
 				<li>The <b>Interrupt If</b> condition is <b>True</b></li>
 				<li>A higher-priority action in the APL list is available</li>
 			</ul>
@@ -375,10 +374,8 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 		newValue: () => APLActionChannelSpell.create({
 			interruptIf: {
 				value: {
-					oneofKind: 'const',
-					const: {
-						val: 'true',
-					}
+					oneofKind: 'gcdIsReady',
+					gcdIsReady: {},
 				}
 			},
 		}),
