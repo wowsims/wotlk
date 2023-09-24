@@ -2,19 +2,17 @@ import { RaidBuffs } from '../core/proto/common.js';
 import { PartyBuffs } from '../core/proto/common.js';
 import { IndividualBuffs } from '../core/proto/common.js';
 import { Debuffs } from '../core/proto/common.js';
-import { Class } from '../core/proto/common.js';
-import { Consumes } from '../core/proto/common.js';
-import { Encounter } from '../core/proto/common.js';
-import { ItemSlot } from '../core/proto/common.js';
-import { MobType } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { Stat, PseudoStat } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js'
+import {
+	APLAction,
+	APLListItem,
+	APLRotation,
+} from '../core/proto/apl.js';
 import { Player } from '../core/player.js';
 import { Stats } from '../core/proto_utils/stats.js';
-import { Sim } from '../core/sim.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
-import { TotemsSection } from '../core/components/totem_inputs.js';
 
 import { TankDeathknight, TankDeathknight_Rotation as DeathKnightRotation, DeathknightTalents as DeathKnightTalents, TankDeathknight_Options as DeathKnightOptions } from '../core/proto/deathknight.js';
 
@@ -213,6 +211,10 @@ export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknig
 					Presets.P2_BLOOD_PRESET,
 					Presets.P2_FROST_PRESET,
 				],
+			},
+
+			autoRotation: (player: Player<Spec.SpecTankDeathknight>): APLRotation => {
+				return Presets.BLOOD_IT_SPAM_ROTATION_PRESET_DEFAULT.rotation.rotation!;
 			},
 		});
 	}
