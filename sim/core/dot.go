@@ -194,7 +194,9 @@ func (dot *Dot) TickOnce(sim *Simulation) {
 	if dot.isChanneled && dot.Spell.Unit.IsUsingAPL {
 		// Note: even if the clip delay is 0ms, need a WaitUntil so that APL is called after the channel aura fully fades.
 		if dot.MaxTicksRemaining() == 0 {
-			dot.Spell.Unit.WaitUntil(sim, sim.CurrentTime+dot.Spell.Unit.ChannelClipDelay)
+			if dot.Spell.Unit.GCD.IsReady(sim) {
+				dot.Spell.Unit.WaitUntil(sim, sim.CurrentTime+dot.Spell.Unit.ChannelClipDelay)
+			}
 		} else if dot.Spell.Unit.Rotation.shouldInterruptChannel(sim) {
 			dot.Cancel(sim)
 			dot.Spell.Unit.WaitUntil(sim, sim.CurrentTime+dot.Spell.Unit.ChannelClipDelay)

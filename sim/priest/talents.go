@@ -397,6 +397,9 @@ func (priest *Priest) applyMisery() {
 			priest.VampiricTouch.RelatedAuras = append(priest.VampiricTouch.RelatedAuras, miseryAuras)
 		}
 		if priest.MindFlay[1] != nil {
+			if priest.IsUsingAPL {
+				priest.MindFlayAPL.RelatedAuras = append(priest.MindFlayAPL.RelatedAuras, miseryAuras)
+			}
 			priest.MindFlay[1].RelatedAuras = append(priest.MindFlay[1].RelatedAuras, miseryAuras)
 			priest.MindFlay[2].RelatedAuras = append(priest.MindFlay[2].RelatedAuras, miseryAuras)
 			priest.MindFlay[3].RelatedAuras = append(priest.MindFlay[3].RelatedAuras, miseryAuras)

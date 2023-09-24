@@ -42,7 +42,9 @@ type Priest struct {
 	ShadowWordPain  *core.Spell
 	MindBlast       *core.Spell
 	MindFlay        []*core.Spell
+	MindFlayAPL     *core.Spell
 	MindSear        []*core.Spell
+	MindSearAPL     *core.Spell
 	Penance         *core.Spell
 	PenanceHeal     *core.Spell
 	PowerWordShield *core.Spell
@@ -133,8 +135,8 @@ func (priest *Priest) Initialize() {
 	priest.registerPowerInfusionCD()
 
 	if priest.IsUsingAPL {
-		priest.newMindFlaySpell(0)
-		priest.newMindSearSpell(0)
+		priest.MindFlayAPL = priest.newMindFlaySpell(0)
+		priest.MindSearAPL = priest.newMindSearSpell(0)
 	}
 
 	priest.MindFlay = []*core.Spell{
