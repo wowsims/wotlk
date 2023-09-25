@@ -1,6 +1,8 @@
 package dps
 
 import (
+	"log"
+	"os"
 	"testing"
 
 	_ "github.com/wowsims/wotlk/sim/common" // imported to get item effects included.
@@ -10,6 +12,16 @@ import (
 
 func init() {
 	RegisterDpsDeathknight()
+}
+
+func GetAplRotation(dir string, file string) core.RotationCombo {
+	filePath := dir + "/" + file + ".json"
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		log.Fatalf("failed to load apl json file: %s, %s", filePath, err)
+	}
+
+	return core.RotationCombo{Label: file, Rotation: core.APLRotationFromJsonString(string(data))}
 }
 
 func TestBlood(t *testing.T) {
@@ -23,16 +35,12 @@ func TestBlood(t *testing.T) {
 		Glyphs:      BloodDefaultGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBlood},
-
-		ItemFilter: core.ItemFilter{
-			ArmorType: proto.ArmorType_ArmorTypePlate,
-
-			WeaponTypes: []proto.WeaponType{
-				proto.WeaponType_WeaponTypeAxe,
-				proto.WeaponType_WeaponTypeSword,
-				proto.WeaponType_WeaponTypeMace,
-			},
+		OtherRotations: []core.RotationCombo{
+			GetAplRotation("../../../ui/deathknight/apls", "blood_pesti"),
+			GetAplRotation("../../../ui/deathknight/apls", "blood_pesti_dd"),
 		},
+
+		ItemFilter: ItemFilter,
 	}))
 }
 
@@ -48,15 +56,13 @@ func TestUnholy(t *testing.T) {
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsUnholy},
 
-		ItemFilter: core.ItemFilter{
-			ArmorType: proto.ArmorType_ArmorTypePlate,
-
-			WeaponTypes: []proto.WeaponType{
-				proto.WeaponType_WeaponTypeAxe,
-				proto.WeaponType_WeaponTypeSword,
-				proto.WeaponType_WeaponTypeMace,
-			},
+		OtherRotations: []core.RotationCombo{
+			GetAplRotation("../../../ui/deathknight/apls", "uh_2h_ss"),
+			GetAplRotation("../../../ui/deathknight/apls", "uh_dnd_aoe"),
+			GetAplRotation("../../../ui/deathknight/apls", "unholy_dw_ss"),
 		},
+
+		ItemFilter: ItemFilter,
 	}))
 }
 
@@ -75,15 +81,12 @@ func TestFrost(t *testing.T) {
 			{Label: "Desync", SpecOptions: PlayerOptionsDesyncFrost},
 		},
 
-		ItemFilter: core.ItemFilter{
-			ArmorType: proto.ArmorType_ArmorTypePlate,
-
-			WeaponTypes: []proto.WeaponType{
-				proto.WeaponType_WeaponTypeAxe,
-				proto.WeaponType_WeaponTypeSword,
-				proto.WeaponType_WeaponTypeMace,
-			},
+		OtherRotations: []core.RotationCombo{
+			GetAplRotation("../../../ui/deathknight/apls", "frost_bl_pesti"),
+			GetAplRotation("../../../ui/deathknight/apls", "frost_uh_pesti"),
 		},
+
+		ItemFilter: ItemFilter,
 	}))
 }
 
@@ -98,16 +101,11 @@ func TestFrostUH(t *testing.T) {
 		Glyphs:      FrostUHDefaultGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsFrost},
-
-		ItemFilter: core.ItemFilter{
-			ArmorType: proto.ArmorType_ArmorTypePlate,
-
-			WeaponTypes: []proto.WeaponType{
-				proto.WeaponType_WeaponTypeAxe,
-				proto.WeaponType_WeaponTypeSword,
-				proto.WeaponType_WeaponTypeMace,
-			},
+		OtherRotations: []core.RotationCombo{
+			GetAplRotation("../../../ui/deathknight/apls", "frost_uh_pesti"),
 		},
+
+		ItemFilter: ItemFilter,
 	}))
 }
 
@@ -219,6 +217,16 @@ var FullConsumes = &proto.Consumes{
 	DefaultPotion: proto.Potions_PotionOfSpeed,
 	PrepopPotion:  proto.Potions_PotionOfSpeed,
 	Food:          proto.Food_FoodDragonfinFilet,
+}
+
+var ItemFilter = core.ItemFilter{
+	ArmorType: proto.ArmorType_ArmorTypePlate,
+
+	WeaponTypes: []proto.WeaponType{
+		proto.WeaponType_WeaponTypeAxe,
+		proto.WeaponType_WeaponTypeSword,
+		proto.WeaponType_WeaponTypeMace,
+	},
 }
 
 var BloodP3Gear = core.EquipmentSpecFromJsonString(`{"items": [
