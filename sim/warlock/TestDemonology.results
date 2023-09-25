@@ -782,6 +782,48 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestDemonology-Settings-Orc-P2-Demonology Warlock-demo-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 14053.25803
+  tps: 13879.46689
+ }
+}
+dps_results: {
+ key: "TestDemonology-Settings-Orc-P2-Demonology Warlock-demo-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 10929.15331
+  tps: 9179.00799
+ }
+}
+dps_results: {
+ key: "TestDemonology-Settings-Orc-P2-Demonology Warlock-demo-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 12443.58454
+  tps: 10469.4423
+ }
+}
+dps_results: {
+ key: "TestDemonology-Settings-Orc-P2-Demonology Warlock-demo-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 8659.76095
+  tps: 10222.74364
+ }
+}
+dps_results: {
+ key: "TestDemonology-Settings-Orc-P2-Demonology Warlock-demo-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 6316.59541
+  tps: 5712.14012
+ }
+}
+dps_results: {
+ key: "TestDemonology-Settings-Orc-P2-Demonology Warlock-demo-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 6647.74354
+  tps: 5918.09956
+ }
+}
+dps_results: {
  key: "TestDemonology-SwitchInFrontOfTarget-Default"
  value: {
   dps: 10783.18993

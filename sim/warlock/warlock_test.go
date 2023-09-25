@@ -1,6 +1,8 @@
 package warlock
 
 import (
+	"log"
+	"os"
 	"testing"
 
 	_ "github.com/wowsims/wotlk/sim/common"
@@ -10,6 +12,16 @@ import (
 
 func init() {
 	RegisterWarlock()
+}
+
+func GetAplRotation(dir string, file string) core.RotationCombo {
+	filePath := dir + "/" + file + ".json"
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		log.Fatalf("failed to load apl json file: %s, %s", filePath, err)
+	}
+
+	return core.RotationCombo{Label: file, Rotation: core.APLRotationFromJsonString(string(data))}
 }
 
 func TestAffliction(t *testing.T) {
@@ -40,6 +52,9 @@ func TestDemonology(t *testing.T) {
 		Glyphs:      DemonologyGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Demonology Warlock", SpecOptions: DefaultDemonologyWarlock},
+		OtherRotations: []core.RotationCombo{
+			GetAplRotation("../../ui/warlock/apls", "demo"),
+		},
 
 		ItemFilter: ItemFilter,
 	}))
@@ -55,7 +70,9 @@ func TestDestruction(t *testing.T) {
 		Glyphs:      DestructionGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Destruction Warlock", SpecOptions: DefaultDestroWarlock},
-
+		OtherRotations: []core.RotationCombo{
+			GetAplRotation("../../ui/warlock/apls", "destro"),
+		},
 		ItemFilter: ItemFilter,
 	}))
 }
@@ -197,350 +214,61 @@ var FullConsumes = &proto.Consumes{
 	Food:          proto.Food_FoodFishFeast,
 }
 
-var P3Gear_affliction = core.EquipmentSpecFromJsonString(`{"items": [
-		{
-			"id": 47796,
-			"enchant": 3820,
-			"gems": [
-				41285,
-				40133
-			]
-		},
-		{
-			"id": 47468,
-			"gems": [
-				40155
-			]
-		},
-		{
-			"id": 47793,
-			"enchant": 3810,
-			"gems": [
-				40155
-			]
-		},
-		{
-			"id": 47551,
-			"enchant": 3722,
-			"gems": [
-				40113
-			]
-		},
-		{
-			"id": 47462,
-			"enchant": 1144,
-			"gems": [
-				40133,
-				40155,
-				40113
-			]
-		},
-		{
-			"id": 47485,
-			"enchant": 2332,
-			"gems": [
-				40113,
-				0
-			]
-		},
-		{
-			"id": 47797,
-			"enchant": 3604,
-			"gems": [
-				40113,
-				0
-			]
-		},
-		{
-			"id": 47419,
-			"enchant": 3599,
-			"gems": [
-				40133,
-				40113,
-				40113
-			]
-		},
-		{
-			"id": 47795,
-			"enchant": 3872,
-			"gems": [
-				40113,
-				40153
-			]
-		},
-		{
-			"id": 47454,
-			"enchant": 3606,
-			"gems": [
-				40133,
-				40113
-			]
-		},
-		{
-			"id": 45495,
-			"gems": [
-				40113
-			]
-		},
-		{
-			"id": 47489,
-			"gems": [
-				40155
-			]
-		},
-		{
-			"id": 45518
-		},
-		{
-			"id": 45466
-		},
-		{
-			"id": 47422,
-			"enchant": 3834,
-			"gems": [
-				40113
-			]
-		},
-		{
-			"id": 48032,
-			"gems": [
-				40155
-			]
-		},
-		{
-			"id": 45294,
-			"gems": [
-				40155
-			]
-		}
+var P3Gear_affliction = core.EquipmentSpecFromJsonString(`{"items":[
+	{"id":47796,"enchant":3820,"gems":[41285,40133]},
+	{"id":47468,"gems":[40155]},
+	{"id":47793,"enchant":3810,"gems":[40155]},
+	{"id":47551,"enchant":3722,"gems":[40113]},
+	{"id":47462,"enchant":1144,"gems":[40133,40155,40113]},
+	{"id":47485,"enchant":2332,"gems":[40113,0]},
+	{"id":47797,"enchant":3604,"gems":[40113,0]},
+	{"id":47419,"enchant":3599,"gems":[40133,40113,40113]},
+	{"id":47795,"enchant":3872,"gems":[40113,40153]},
+	{"id":47454,"enchant":3606,"gems":[40133,40113]},
+	{"id":45495,"gems":[40113]},
+	{"id":47489,"gems":[40155]},
+	{"id":45518},{"id":45466},
+	{"id":47422,"enchant":3834,"gems":[40113]},
+	{"id":48032,"gems":[40155]},
+	{"id":45294,"gems":[40155]}
 ]}`)
 
-var P3Gear_demo = core.EquipmentSpecFromJsonString(`{"items": [
-		{
-			"id": 47796,
-			"enchant": 3820,
-			"gems": [
-				41285,
-				40133
-			]
-		},
-		{
-			"id": 45133,
-			"gems": [
-				40153
-			]
-		},
-		{
-			"id": 47793,
-			"enchant": 3810,
-			"gems": [
-				40113
-			]
-		},
-		{
-			"id": 47554,
-			"enchant": 3722,
-			"gems": [
-				40113
-			]
-		},
-		{
-			"id": 47794,
-			"enchant": 1144,
-			"gems": [
-				40113,
-				40133
-			]
-		},
-		{
-			"id": 47485,
-			"enchant": 2332,
-			"gems": [
-				40133,
-				0
-			]
-		},
-		{
-			"id": 47788,
-			"enchant": 3604,
-			"gems": [
-				40113,
-				0
-			]
-		},
-		{
-			"id": 47419,
-			"enchant": 3599,
-			"gems": [
-				40133,
-				40113,
-				40113
-			]
-		},
-		{
-			"id": 47435,
-			"enchant": 3872,
-			"gems": [
-				40113,
-				40133,
-				40133
-			]
-		},
-		{
-			"id": 47454,
-			"enchant": 3606,
-			"gems": [
-				40133,
-				40113
-			]
-		},
-		{
-			"id": 45495,
-			"gems": [
-				40133
-			]
-		},
-		{
-			"id": 47489,
-			"gems": [
-				40113
-			]
-		},
-		{
-			"id": 45518
-		},
-		{
-			"id": 40255
-		},
-		{
-			"id": 47422,
-			"enchant": 3834,
-			"gems": [
-				40133
-			]
-		},
-		{
-			"id": 47470
-		},
-		{
-			"id": 45294,
-			"gems": [
-				40113
-			]
-		}
+var P3Gear_demo = core.EquipmentSpecFromJsonString(`{"items":[
+	{"id":47796,"enchant":3820,"gems":[41285,40133]},
+	{"id":45133,"gems":[40153]},
+	{"id":47793,"enchant":3810,"gems":[40113]},
+	{"id":47554,"enchant":3722,"gems":[40113]},
+	{"id":47794,"enchant":1144,"gems":[40113,40133]},
+	{"id":47485,"enchant":2332,"gems":[40133,0]},
+	{"id":47788,"enchant":3604,"gems":[40113,0]},
+	{"id":47419,"enchant":3599,"gems":[40133,40113,40113]},
+	{"id":47435,"enchant":3872,"gems":[40113,40133,40133]},
+	{"id":47454,"enchant":3606,"gems":[40133,40113]},
+	{"id":45495,"gems":[40133]},
+	{"id":47489,"gems":[40113]},
+	{"id":45518},
+	{"id":40255},
+	{"id":47422,"enchant":3834,"gems":[40133]},
+	{"id":47470},
+	{"id":45294,"gems":[40113]}
 ]}`)
 
-var P3Gear_destro = core.EquipmentSpecFromJsonString(`{"items": [
-		{
-			"id": 47796,
-			"enchant": 3820,
-			"gems": [
-				41285,
-				40133
-			]
-		},
-		{
-			"id": 47468,
-			"gems": [
-				40153
-			]
-		},
-		{
-			"id": 47793,
-			"enchant": 3810,
-			"gems": [
-				40155
-			]
-		},
-		{
-			"id": 47551,
-			"enchant": 3722,
-			"gems": [
-				40113
-			]
-		},
-		{
-			"id": 47794,
-			"enchant": 1144,
-			"gems": [
-				40113,
-				40133
-			]
-		},
-		{
-			"id": 47467,
-			"enchant": 2332,
-			"gems": [
-				40153,
-				0
-			]
-		},
-		{
-			"id": 47788,
-			"enchant": 3604,
-			"gems": [
-				40113,
-				0
-			]
-		},
-		{
-			"id": 47419,
-			"enchant": 3599,
-			"gems": [
-				40133,
-				40113,
-				40113
-			]
-		},
-		{
-			"id": 47435,
-			"enchant": 3872,
-			"gems": [
-				40113,
-				40133,
-				40133
-			]
-		},
-		{
-			"id": 47454,
-			"enchant": 3606,
-			"gems": [
-				40133,
-				40113
-			]
-		},
-		{
-			"id": 45495,
-			"gems": [
-				40133
-			]
-		},
-		{
-			"id": 47489,
-			"gems": [
-				40155
-			]
-		},
-		{
-			"id": 45518
-		},
-		{
-			"id": 47477
-		},
-		{
-			"id": 47422,
-			"enchant": 3834,
-			"gems": [
-				40133
-			]
-		},
-		{
-			"id": 47437
-		},
-		{
-			"id": 45294,
-			"gems": [
-				40113
-			]
-		}
+var P3Gear_destro = core.EquipmentSpecFromJsonString(`{"items":[
+	{"id":47796,"enchant":3820,"gems":[41285,40133]},
+	{"id":47468,"gems":[40153]},
+	{"id":47793,"enchant":3810,"gems":[40155]},
+	{"id":47551,"enchant":3722,"gems":[40113]},
+	{"id":47794,"enchant":1144,"gems":[40113,40133]},
+	{"id":47467,"enchant":2332,"gems":[40153,0]},
+	{"id":47788,"enchant":3604,"gems":[40113,0]},
+	{"id":47419,"enchant":3599,"gems":[40133,40113,40113]},
+	{"id":47435,"enchant":3872,"gems":[40113,40133,40133]},
+	{"id":47454,"enchant":3606,"gems":[40133,40113]},
+	{"id":45495,"gems":[40133]},
+	{"id":47489,"gems":[40155]},
+	{"id":45518},
+	{"id":47477},
+	{"id":47422,"enchant":3834,"gems":[40133]},
+	{"id":47437},
+	{"id":45294,"gems":[40113]}
 ]}`)
