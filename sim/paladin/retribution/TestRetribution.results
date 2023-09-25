@@ -144,8 +144,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-BlessedGarboftheUndeadSlayer"
  value: {
-  dps: 5351.42133
-  tps: 5434.73119
+  dps: 5352.74783
+  tps: 5436.05037
   dtps: 9.23882
  }
 }
@@ -594,8 +594,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-LightbringerBattlegear"
  value: {
-  dps: 4828.09689
-  tps: 4909.20739
+  dps: 4826.60507
+  tps: 4907.79979
   dtps: 9.23882
  }
 }
@@ -714,8 +714,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-RedemptionBattlegear"
  value: {
-  dps: 5848.79509
-  tps: 5938.10692
+  dps: 5848.02627
+  tps: 5937.34542
   dtps: 9.23882
  }
 }
@@ -1050,8 +1050,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-Average-Default"
  value: {
-  dps: 6668.84767
-  tps: 6753.44996
+  dps: 6668.82111
+  tps: 6753.42361
   dtps: 13.59845
  }
 }
@@ -1262,8 +1262,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-Settings-Draenei-P1-Retribution Paladin SOC-Default-NoBuffs-LongMultiTarget"
  value: {
-  dps: 9508.90842
-  tps: 11073.81636
+  dps: 9509.93182
+  tps: 11074.83976
  }
 }
 dps_results: {
@@ -1442,8 +1442,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-Settings-Dwarf-P1-Retribution Paladin SOC-Default-NoBuffs-LongMultiTarget"
  value: {
-  dps: 9469.50452
-  tps: 11026.86986
+  dps: 9468.88996
+  tps: 11026.10884
  }
 }
 dps_results: {
