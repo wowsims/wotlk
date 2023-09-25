@@ -1,6 +1,8 @@
 package protection
 
 import (
+	"log"
+	"os"
 	"testing"
 
 	_ "github.com/wowsims/wotlk/sim/common" // imported to get item effects included.
@@ -10,6 +12,16 @@ import (
 
 func init() {
 	RegisterProtectionPaladin()
+}
+
+func GetAplRotation(dir string, file string) core.RotationCombo {
+	filePath := dir + "/" + file + ".json"
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		log.Fatalf("failed to load apl json file: %s, %s", filePath, err)
+	}
+
+	return core.RotationCombo{Label: file, Rotation: core.APLRotationFromJsonString(string(data))}
 }
 
 func TestProtection(t *testing.T) {
@@ -51,7 +63,7 @@ func TestProtection(t *testing.T) {
 				},
 			},
 		},
-		Rotation: core.RotationCombo{Label: "Default", Rotation: DefaultRotation},
+		Rotation: GetAplRotation("../../../ui/protection_paladin/apls", "default"),
 
 		IsTank:          true,
 		InFrontOfTarget: true,
@@ -128,26 +140,6 @@ var FullConsumes = &proto.Consumes{
 	PrepopPotion:    proto.Potions_IndestructiblePotion,
 	DefaultConjured: proto.Conjured_ConjuredDarkRune,
 }
-
-var DefaultRotation = core.APLRotationFromJsonString(`{
-	"type": "TypeAPL",
-	"prepullActions": [
-		{"action":{"castSpell":{"spellId":{"spellId":48952}}},"doAtValue":{"const":{"val":"-3s"}}},
-		{"action":{"castSpell":{"spellId":{"spellId":54428}}},"doAtValue":{"const":{"val":"-1500ms"}}},
-		{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
-	],
-	"priorityList": [
-		{"action":{"autocastOtherCooldowns":{}}},
-		{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"spellTimeToReady":{"spellId":{"spellId":53595}}},"rhs":{"const":{"val":"3s"}}}},"castSpell":{"spellId":{"spellId":61411}}}},
-		{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"spellTimeToReady":{"spellId":{"spellId":61411}}},"rhs":{"const":{"val":"3s"}}}},"castSpell":{"spellId":{"spellId":53595}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":48806}}}},
-		{"action":{"condition":{"and":{"vals":[{"gcdIsReady":{}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":61411}}}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":53595}}}}},{"cmp":{"op":"OpLe","lhs":{"min":{"vals":[{"spellTimeToReady":{"spellId":{"spellId":61411}}},{"spellTimeToReady":{"spellId":{"spellId":53595}}}]}},"rhs":{"const":{"val":"350ms"}}}}]}},"wait":{"duration":{"min":{"vals":[{"spellTimeToReady":{"spellId":{"spellId":61411}}},{"spellTimeToReady":{"spellId":{"spellId":53595}}}]}}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":48819}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":48952}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":53408}}}},
-		{"action":{"condition":{"and":{"vals":[{"gcdIsReady":{}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":61411}}}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":53595}}}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":48819}}}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":48952}}}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":53408}}}}}]}},"wait":{"duration":{"min":{"vals":[{"spellTimeToReady":{"spellId":{"spellId":61411}}},{"spellTimeToReady":{"spellId":{"spellId":53595}}},{"spellTimeToReady":{"spellId":{"spellId":48819}}},{"spellTimeToReady":{"spellId":{"spellId":48952}}},{"spellTimeToReady":{"spellId":{"spellId":53408}}}]}}}}}
-	]
-}`)
 
 var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
 	{"id":40581,"enchant":3818,"gems":[41380,36767]},
