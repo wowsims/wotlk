@@ -1,6 +1,8 @@
 package mage
 
 import (
+	"log"
+	"os"
 	"testing"
 
 	_ "github.com/wowsims/wotlk/sim/common"
@@ -10,6 +12,16 @@ import (
 
 func init() {
 	RegisterMage()
+}
+
+func GetAplRotation(dir string, file string) core.RotationCombo {
+	filePath := dir + "/" + file + ".json"
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		log.Fatalf("failed to load apl json file: %s, %s", filePath, err)
+	}
+
+	return core.RotationCombo{Label: file, Rotation: core.APLRotationFromJsonString(string(data))}
 }
 
 func TestArcane(t *testing.T) {
@@ -22,23 +34,12 @@ func TestArcane(t *testing.T) {
 		Glyphs:      ArcaneGlyphs,
 		Consumes:    FullArcaneConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Arcane", SpecOptions: PlayerOptionsArcane},
-		Rotation:    core.RotationCombo{Label: "Arcane", Rotation: ArcaneRotation},
+		Rotation:    GetAplRotation("../../ui/mage/apls", "arcane"),
 		OtherRotations: []core.RotationCombo{
-			{Label: "AOE", Rotation: ArcaneAOERotation},
+			GetAplRotation("../../ui/mage/apls", "arcane_aoe"),
 		},
 
-		ItemFilter: core.ItemFilter{
-			WeaponTypes: []proto.WeaponType{
-				proto.WeaponType_WeaponTypeDagger,
-				proto.WeaponType_WeaponTypeSword,
-				proto.WeaponType_WeaponTypeOffHand,
-				proto.WeaponType_WeaponTypeStaff,
-			},
-			ArmorType: proto.ArmorType_ArmorTypeCloth,
-			RangedWeaponTypes: []proto.RangedWeaponType{
-				proto.RangedWeaponType_RangedWeaponTypeWand,
-			},
-		},
+		ItemFilter: ItemFilter,
 	}))
 }
 
@@ -52,23 +53,12 @@ func TestFire(t *testing.T) {
 		Glyphs:      FireGlyphs,
 		Consumes:    FullFireConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Fire", SpecOptions: PlayerOptionsFire},
-		Rotation:    core.RotationCombo{Label: "Fire", Rotation: FireRotation},
+		Rotation:    GetAplRotation("../../ui/mage/apls", "fire"),
 		OtherRotations: []core.RotationCombo{
-			{Label: "AOE", Rotation: FireAOERotation},
+			GetAplRotation("../../ui/mage/apls", "fire_aoe"),
 		},
 
-		ItemFilter: core.ItemFilter{
-			WeaponTypes: []proto.WeaponType{
-				proto.WeaponType_WeaponTypeDagger,
-				proto.WeaponType_WeaponTypeSword,
-				proto.WeaponType_WeaponTypeOffHand,
-				proto.WeaponType_WeaponTypeStaff,
-			},
-			ArmorType: proto.ArmorType_ArmorTypeCloth,
-			RangedWeaponTypes: []proto.RangedWeaponType{
-				proto.RangedWeaponType_RangedWeaponTypeWand,
-			},
-		},
+		ItemFilter: ItemFilter,
 	}))
 }
 
@@ -82,20 +72,9 @@ func TestFrostFire(t *testing.T) {
 		Glyphs:      FrostFireGlyphs,
 		Consumes:    FullFireConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Fire", SpecOptions: PlayerOptionsFire},
-		Rotation:    core.RotationCombo{Label: "Frostfire", Rotation: FrostfireRotation},
+		Rotation:    GetAplRotation("../../ui/mage/apls", "frostfire"),
 
-		ItemFilter: core.ItemFilter{
-			WeaponTypes: []proto.WeaponType{
-				proto.WeaponType_WeaponTypeDagger,
-				proto.WeaponType_WeaponTypeSword,
-				proto.WeaponType_WeaponTypeOffHand,
-				proto.WeaponType_WeaponTypeStaff,
-			},
-			ArmorType: proto.ArmorType_ArmorTypeCloth,
-			RangedWeaponTypes: []proto.RangedWeaponType{
-				proto.RangedWeaponType_RangedWeaponTypeWand,
-			},
-		},
+		ItemFilter: ItemFilter,
 	}))
 }
 
@@ -109,24 +88,26 @@ func TestFrost(t *testing.T) {
 		Glyphs:      FrostGlyphs,
 		Consumes:    FullFrostConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Frost", SpecOptions: PlayerOptionsFrost},
-		Rotation:    core.RotationCombo{Label: "Frost", Rotation: FrostRotation},
+		Rotation:    GetAplRotation("../../ui/mage/apls", "frost"),
 		OtherRotations: []core.RotationCombo{
-			{Label: "AOE", Rotation: FrostAOERotation},
+			GetAplRotation("../../ui/mage/apls", "frost_aoe"),
 		},
 
-		ItemFilter: core.ItemFilter{
-			WeaponTypes: []proto.WeaponType{
-				proto.WeaponType_WeaponTypeDagger,
-				proto.WeaponType_WeaponTypeSword,
-				proto.WeaponType_WeaponTypeOffHand,
-				proto.WeaponType_WeaponTypeStaff,
-			},
-			ArmorType: proto.ArmorType_ArmorTypeCloth,
-			RangedWeaponTypes: []proto.RangedWeaponType{
-				proto.RangedWeaponType_RangedWeaponTypeWand,
-			},
-		},
+		ItemFilter: ItemFilter,
 	}))
+}
+
+var ItemFilter = core.ItemFilter{
+	WeaponTypes: []proto.WeaponType{
+		proto.WeaponType_WeaponTypeDagger,
+		proto.WeaponType_WeaponTypeSword,
+		proto.WeaponType_WeaponTypeOffHand,
+		proto.WeaponType_WeaponTypeStaff,
+	},
+	ArmorType: proto.ArmorType_ArmorTypeCloth,
+	RangedWeaponTypes: []proto.RangedWeaponType{
+		proto.RangedWeaponType_RangedWeaponTypeWand,
+	},
 }
 
 var ArcaneTalents = "23000513310033015032310250532-03-023303001"
@@ -190,111 +171,6 @@ var FullFireConsumes = &proto.Consumes{
 var FullFrostConsumes = FullFireConsumes
 
 var FullArcaneConsumes = FullFireConsumes
-
-var ArcaneRotation = core.APLRotationFromJsonString(`{
-	"type": "TypeAPL",
-	"prepullActions": [
-		{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
-	],
-	"priorityList": [
-		{"action":{"autocastOtherCooldowns":{}}},
-		{"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":12472}}}}},"castSpell":{"spellId":{"spellId":26297}}}},
-		{"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":12472}}}}},"castSpell":{"spellId":{"spellId":54758}}}},
-		{"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":12472}}}}},"castSpell":{"spellId":{"itemId":40211}}}},
-		{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"auraNumStacks":{"auraId":{"spellId":36032}}},"rhs":{"const":{"val":"4"}}}},"castSpell":{"spellId":{"spellId":42897}}}},
-		{"action":{"condition":{"auraIsActiveWithReactionTime":{"auraId":{"spellId":44401}}},"castSpell":{"spellId":{"spellId":42846}}}},
-		{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"25%"}}}},"castSpell":{"spellId":{"spellId":12051}}}},
-		{"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"25%"}}}},"castSpell":{"spellId":{"spellId":42897}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":42846}}}}
-	]
-}`)
-
-var ArcaneAOERotation = core.APLRotationFromJsonString(`{
-	"type": "TypeAPL",
-	"prepullActions": [
-		{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
-	],
-	"priorityList": [
-		{"action":{"autocastOtherCooldowns":{}}},
-		{"action":{"castSpell":{"spellId":{"spellId":42921}}}}
-	]
-}`)
-
-var FireRotation = core.APLRotationFromJsonString(`{
-	"type": "TypeAPL",
-	"prepullActions": [
-		{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
-	],
-	"priorityList": [
-		{"action":{"autocastOtherCooldowns":{}}},
-		{"action":{"condition":{"auraShouldRefresh":{"auraId":{"spellId":12873},"maxOverlap":{"const":{"val":"4s"}}}},"castSpell":{"spellId":{"spellId":42859}}}},
-		{"action":{"condition":{"auraIsActiveWithReactionTime":{"auraId":{"spellId":44448}}},"castSpell":{"spellId":{"spellId":42891}}}},
-		{"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"12s"}}}}]}},"multidot":{"spellId":{"spellId":55360},"maxDots":10,"maxOverlap":{"const":{"val":"0ms"}}}}},
-		{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"remainingTime":{}},"rhs":{"spellCastTime":{"spellId":{"spellId":42859}}}}},"castSpell":{"spellId":{"spellId":42873}}}},
-		{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"4s"}}}},"castSpell":{"spellId":{"spellId":42859}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":42833}}}}
-	]
-}`)
-
-var FireAOERotation = core.APLRotationFromJsonString(`{
-	"type": "TypeAPL",
-	"prepullActions": [],
-	"priorityList": [
-	   {"action":{"autocastOtherCooldowns":{}}},
-	   {"action":{"condition":{"cmp":{"op":"OpGe","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"12s"}}}},"multidot":{"spellId":{"spellId":55360},"maxDots":10,"maxOverlap":{"const":{"val":"0ms"}}}}},
-	   {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":54741}}},{"not":{"val":{"dotIsActive":{"spellId":{"spellId":42926,"tag":9}}}}}]}},"castSpell":{"spellId":{"spellId":42926,"tag":9}}}},
-	   {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":54741}}},{"not":{"val":{"dotIsActive":{"spellId":{"spellId":42925,"tag":8}}}}}]}},"castSpell":{"spellId":{"spellId":42925,"tag":8}}}},
-	   {"action":{"condition":{"or":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":42926,"tag":9}}}}},{"not":{"val":{"dotIsActive":{"spellId":{"spellId":42925,"tag":8}}}}}]}},"castSpell":{"spellId":{"spellId":42950}}}},
-	   {"action":{"condition":{"or":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":42926,"tag":9}}}}},{"not":{"val":{"dotIsActive":{"spellId":{"spellId":42925,"tag":8}}}}}]}},"castSpell":{"spellId":{"spellId":42945}}}},
-	   {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":42926,"tag":9}}}}},"castSpell":{"spellId":{"spellId":42926,"tag":9}}}},
-	   {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":42925,"tag":8}}}}},"castSpell":{"spellId":{"spellId":42925,"tag":8}}}},
-	   {"action":{"condition":{"auraIsActiveWithReactionTime":{"auraId":{"spellId":44448}}},"castSpell":{"spellId":{"spellId":42891}}}},
-	   {"action":{"castSpell":{"spellId":{"spellId":42921}}}}
-	]
-}`)
-
-var FrostfireRotation = core.APLRotationFromJsonString(`{
-	"type": "TypeAPL",
-	"prepullActions": [
-		{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
-	],
-	"priorityList": [
-		{"action":{"autocastOtherCooldowns":{}}},
-		{"action":{"condition":{"auraShouldRefresh":{"auraId":{"spellId":12873},"maxOverlap":{"const":{"val":"4s"}}}},"castSpell":{"spellId":{"spellId":42859}}}},
-		{"action":{"condition":{"auraIsActiveWithReactionTime":{"auraId":{"spellId":44448}}},"castSpell":{"spellId":{"spellId":42891}}}},
-		{"action":{"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55360}}}}},{"cmp":{"op":"OpGt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"12s"}}}}]}},"castSpell":{"spellId":{"spellId":55360}}}},
-		{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"remainingTime":{}},"rhs":{"spellCastTime":{"spellId":{"spellId":42859}}}}},"castSpell":{"spellId":{"spellId":42873}}}},
-		{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"3.5s"}}}},"castSpell":{"spellId":{"spellId":42859}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":47610}}}}
-	]
-}`)
-
-var FrostRotation = core.APLRotationFromJsonString(`{
-	"type": "TypeAPL",
-	"prepullActions": [
-		{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
-	],
-	"priorityList": [
-		{"action":{"autocastOtherCooldowns":{}}},
-		{"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":12472}}}}},"castSpell":{"spellId":{"spellId":26297}}}},
-		{"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":12472}}}}},"castSpell":{"spellId":{"spellId":54758}}}},
-		{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"25%"}}}},"castSpell":{"spellId":{"spellId":12051}}}},
-		{"action":{"condition":{"auraIsActive":{"auraId":{"spellId":44545}}},"castSpell":{"spellId":{"spellId":44572}}}},
-		{"action":{"condition":{"auraIsActiveWithReactionTime":{"auraId":{"spellId":44549}}},"castSpell":{"spellId":{"spellId":47610}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":42842}}}}
-	]
-}`)
-
-var FrostAOERotation = core.APLRotationFromJsonString(`{
-	"type": "TypeAPL",
-	"prepullActions": [
-		{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
-	],
-	"priorityList": [
-		{"action":{"autocastOtherCooldowns":{}}},
-		{"action":{"castSpell":{"spellId":{"spellId":42939}}}}
-	]
-}`)
 
 var P3FireGear = core.EquipmentSpecFromJsonString(`{"items": [
 		{"id":51281,"enchant":3820,"gems":[41285,40133]},
