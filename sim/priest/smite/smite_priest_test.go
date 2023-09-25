@@ -1,6 +1,8 @@
 package smite
 
 import (
+	"log"
+	"os"
 	"testing"
 
 	_ "github.com/wowsims/wotlk/sim/common" // imported to get caster sets included.
@@ -10,6 +12,16 @@ import (
 
 func init() {
 	RegisterSmitePriest()
+}
+
+func GetAplRotation(dir string, file string) core.RotationCombo {
+	filePath := dir + "/" + file + ".json"
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		log.Fatalf("failed to load apl json file: %s, %s", filePath, err)
+	}
+
+	return core.RotationCombo{Label: file, Rotation: core.APLRotationFromJsonString(string(data))}
 }
 
 func TestSmite(t *testing.T) {
@@ -22,7 +34,7 @@ func TestSmite(t *testing.T) {
 		Glyphs:      DefaultGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
-		Rotation:    core.RotationCombo{Label: "Default", Rotation: DefaultRotation},
+		Rotation:    GetAplRotation("../../../ui/smite_priest/apls", "default"),
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
@@ -63,28 +75,6 @@ var PlayerOptionsBasic = &proto.Player_SmitePriest{
 		Rotation: &proto.SmitePriest_Rotation{},
 	},
 }
-
-var DefaultRotation = core.APLRotationFromJsonString(`{
-	"type": "TypeAPL",
-	"prepullActions": [
-		{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
-	],
-	"priorityList": [
-		{"action":{"autocastOtherCooldowns":{}}},
-		{"action":{"condition":{"and":{"vals":[{"dotIsActive":{"spellId":{"spellId":48135}}},{"cmp":{"op":"OpLe","lhs":{"spellCastTime":{"spellId":{"spellId":48123}}},"rhs":{"dotRemainingTime":{"spellId":{"spellId":48135}}}}}]}},"castSpell":{"spellId":{"spellId":14751}}}},
-		{"action":{"condition":{"and":{"vals":[{"dotIsActive":{"spellId":{"spellId":48135}}},{"cmp":{"op":"OpLe","lhs":{"spellCastTime":{"spellId":{"spellId":48123}}},"rhs":{"dotRemainingTime":{"spellId":{"spellId":48135}}}}}]}},"castSpell":{"spellId":{"spellId":48123}}}},
-		{"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":48300}}}}},"castSpell":{"spellId":{"spellId":48300}}}},
-		{"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":48125}}}}},"castSpell":{"spellId":{"spellId":48125}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":48135}}}},
-		{"action":{"condition":{"and":{"vals":[{"not":{"val":{"spellIsReady":{"spellId":{"spellId":48135}}}}},{"cmp":{"op":"OpLe","lhs":{"spellTimeToReady":{"spellId":{"spellId":48135}}},"rhs":{"const":{"val":"50ms"}}}}]}},"wait":{"duration":{"spellTimeToReady":{"spellId":{"spellId":48135}}}}}},
-		{"hide":true,"action":{"condition":{"auraIsActive":{"auraId":{"spellId":59000}}},"castSpell":{"spellId":{"spellId":48123}}}},
-		{"hide":true,"action":{"castSpell":{"spellId":{"spellId":53007}}}},
-		{"hide":true,"action":{"castSpell":{"spellId":{"spellId":48158}}}},
-		{"hide":true,"action":{"castSpell":{"spellId":{"spellId":48127}}}},
-		{"hide":true,"action":{"castSpell":{"spellId":{"tag":3,"spellId":48156}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":48123}}}}
-	]
-}`)
 
 var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
 	{"id":40562,"enchant":3820,"gems":[41333,42144]},
