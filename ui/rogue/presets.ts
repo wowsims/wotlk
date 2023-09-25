@@ -21,7 +21,7 @@ import { APLRotation } from '../core/proto/apl.js';
 import MutilateApl from './apls/mutilate.json'
 import MutilateExposeApl from './apls/mutilate_expose.json'
 import RuptureMutilateApl from './apls/rupture_mutilate.json'
-import RuptureMutilateExposeApl from './apls/ruptute_mutilate_expose.json'
+import RuptureMutilateExposeApl from './apls/rupture_mutilate_expose.json'
 import CombatApl from './apls/combat.json'
 import CombatExposeApl from './apls/combat_expose.json'
 import CombatCleaveSndApl from './apls/combat_cleave_snd.json'
