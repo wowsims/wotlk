@@ -1,6 +1,8 @@
 package dps
 
 import (
+	"log"
+	"os"
 	"testing"
 
 	_ "github.com/wowsims/wotlk/sim/common" // imported to get item effects included.
@@ -10,6 +12,16 @@ import (
 
 func init() {
 	RegisterDpsWarrior()
+}
+
+func GetAplRotation(dir string, file string) core.RotationCombo {
+	filePath := dir + "/" + file + ".json"
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		log.Fatalf("failed to load apl json file: %s, %s", filePath, err)
+	}
+
+	return core.RotationCombo{Label: file, Rotation: core.APLRotationFromJsonString(string(data))}
 }
 
 func TestFury(t *testing.T) {
@@ -23,6 +35,10 @@ func TestFury(t *testing.T) {
 		GearSet:     core.GearSetCombo{Label: "Fury P1", GearSet: FuryP1Gear},
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsFury},
+
+		OtherRotations: []core.RotationCombo{
+			GetAplRotation("../../../ui/warrior/apls", "fury"),
+		},
 
 		ItemFilter: core.ItemFilter{
 			ArmorType: proto.ArmorType_ArmorTypePlate,
@@ -178,96 +194,22 @@ var FullConsumes = &proto.Consumes{
 	Food:          proto.Food_FoodFishFeast,
 }
 
-var FuryP1Gear = core.EquipmentSpecFromJsonString(`{"items": [
-	{
-		"id": 44006,
-		"enchant": 3817,
-		"gems": [
-			41285,
-			42702
-		]
-	},
-	{
-		"id": 44664,
-		"gems": [
-			39996
-		]
-	},
-	{
-		"id": 40530,
-		"enchant": 3808,
-		"gems": [
-			40037
-		]
-	},
-	{
-		"id": 40403,
-		"enchant": 3605
-	},
-	{
-		"id": 40539,
-		"enchant": 3832,
-		"gems": [
-			42142
-		]
-	},
-	{
-		"id": 39765,
-		"enchant": 3845,
-		"gems": [
-			39996,
-			0
-		]
-	},
-	{
-		"id": 40541,
-		"enchant": 3604,
-		"gems": [
-			0
-		]
-	},
-	{
-		"id": 40205,
-		"gems": [
-			42142
-		]
-	},
-	{
-		"id": 40529,
-		"enchant": 3823,
-		"gems": [
-			39996,
-			40022
-		]
-	},
-	{
-		"id": 40591,
-		"enchant": 3606
-	},
-	{
-		"id": 43993,
-		"gems": [
-			42142
-		]
-	},
-	{
-		"id": 40717
-	},
-	{
-		"id": 42987
-	},
-	{
-		"id": 40256
-	},
-	{
-		"id": 40384,
-		"enchant": 3789
-	},
-	{
-		"id": 40384,
-		"enchant": 3789
-	},
-	{
-		"id": 40385
-	}
+var FuryP1Gear = core.EquipmentSpecFromJsonString(`{"items":[
+	{"id":44006,"enchant":3817,"gems":[41285,42702]},
+	{"id":44664,"gems":[39996]},
+	{"id":40530,"enchant":3808,"gems":[40037]},
+	{"id":40403,"enchant":3605},
+	{"id":40539,"enchant":3832,"gems":[42142]},
+	{"id":39765,"enchant":3845,"gems":[39996,0]},
+	{"id":40541,"enchant":3604,"gems":[0]},
+	{"id":40205,"gems":[42142]},
+	{"id":40529,"enchant":3823,"gems":[39996,40022]},
+	{"id":40591,"enchant":3606},
+	{"id":43993,"gems":[42142]},
+	{"id":40717},
+	{"id":42987},
+	{"id":40256},
+	{"id":40384,"enchant":3789},
+	{"id":40384,"enchant":3789},
+	{"id":40385}
 ]}`)
