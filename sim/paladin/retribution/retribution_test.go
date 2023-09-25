@@ -1,6 +1,8 @@
 package retribution
 
 import (
+	"log"
+	"os"
 	"testing"
 
 	_ "github.com/wowsims/wotlk/sim/common" // imported to get item effects included.
@@ -10,6 +12,16 @@ import (
 
 func init() {
 	RegisterRetributionPaladin()
+}
+
+func GetAplRotation(dir string, file string) core.RotationCombo {
+	filePath := dir + "/" + file + ".json"
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		log.Fatalf("failed to load apl json file: %s, %s", filePath, err)
+	}
+
+	return core.RotationCombo{Label: file, Rotation: core.APLRotationFromJsonString(string(data))}
 }
 
 func TestRetribution(t *testing.T) {
@@ -71,7 +83,7 @@ func TestRetribution(t *testing.T) {
 				},
 			},
 		},
-		Rotation: core.RotationCombo{Label: "Default", Rotation: DefaultRotation},
+		Rotation: GetAplRotation("../../../ui/retribution_paladin/apls", "default"),
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
@@ -144,23 +156,6 @@ var FullConsumes = &proto.Consumes{
 	Food:            proto.Food_FoodRoastedClefthoof,
 	ThermalSapper:   true,
 }
-
-var DefaultRotation = core.APLRotationFromJsonString(`{
-	"type": "TypeAPL",
-	"prepullActions": [
-		{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
-	],
-	"priorityList": [
-		{"action":{"autocastOtherCooldowns":{}}},
-		{"action":{"castSpell":{"spellId":{"spellId":67485}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":48806}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":53408}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":35395}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":53385}}}},
-		{"action":{"condition":{"auraIsActive":{"auraId":{"spellId":53488}}},"castSpell":{"spellId":{"spellId":48801}}}},
-		{"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"4s"}}}},"castSpell":{"spellId":{"spellId":48819}}}}
-	]
-}`)
 
 var Phase1Gear = core.EquipmentSpecFromJsonString(`{"items": [
 	{"id":44006,"enchant":3817,"gems":[41398,49110]},
