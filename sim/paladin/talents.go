@@ -238,7 +238,6 @@ func (paladin *Paladin) applyArdentDefender() {
 	// 540 defense (+140) yields the full heal amount
 	ardentHealAmount := core.MaxFloat(1.0, float64(paladin.GetStat(stats.Defense))/core.DefenseRatingPerDefense/140.0) * 0.10 * float64(paladin.Talents.ArdentDefender)
 
-
 	// TBD? Buff to mark time spent fully below 35% and attribute absorbs
 	// rangeAura := paladin.RegisterAura(core.Aura{
 	// Label:    "Ardent Defender (Active)",
@@ -295,7 +294,7 @@ func (paladin *Paladin) applyArdentDefender() {
 
 			// Now check death save, based on the reduced damage
 			if (result.Damage >= paladin.CurrentHealth()) && !procAura.IsActive() {
-				if (paladin.CurrentHealth() + ardentHealAmount*paladin.MaxHealth() > paladin.MaxHealth()) {
+				if paladin.CurrentHealth()+ardentHealAmount*paladin.MaxHealth() > paladin.MaxHealth() {
 					// We will overheal and wind up at the wrong HP value... Let's work around this
 					// TODO: Find a cleaner way to do this, using absorbs?
 					procHeal.Cast(sim, &paladin.Unit)
@@ -495,6 +494,10 @@ func (paladin *Paladin) applyArtOfWar() {
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !spell.IsMelee() && !spell.Flags.Matches(SpellFlagSecondaryJudgement) {
+				return
+			}
+
+			if spell == paladin.HammerOfWrath {
 				return
 			}
 
