@@ -1,6 +1,8 @@
 package tank
 
 import (
+	"log"
+	"os"
 	"testing"
 
 	_ "github.com/wowsims/wotlk/sim/common"
@@ -10,6 +12,16 @@ import (
 
 func init() {
 	RegisterFeralTankDruid()
+}
+
+func GetAplRotation(dir string, file string) core.RotationCombo {
+	filePath := dir + "/" + file + ".json"
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		log.Fatalf("failed to load apl json file: %s, %s", filePath, err)
+	}
+
+	return core.RotationCombo{Label: file, Rotation: core.APLRotationFromJsonString(string(data))}
 }
 
 func TestFeralTank(t *testing.T) {
@@ -22,7 +34,7 @@ func TestFeralTank(t *testing.T) {
 		Glyphs:      StandardGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Default", SpecOptions: PlayerOptionsDefault},
-		Rotation:    core.RotationCombo{Label: "Default", Rotation: DefaultRotation},
+		Rotation:    GetAplRotation("../../../ui/feral_tank_druid/apls", "default"),
 
 		IsTank:          true,
 		InFrontOfTarget: true,
@@ -96,24 +108,6 @@ var FullConsumes = &proto.Consumes{
 	ThermalSapper:   true,
 	FillerExplosive: proto.Explosive_ExplosiveSaroniteBomb,
 }
-
-var DefaultRotation = core.APLRotationFromJsonString(`{
-	"type": "TypeAPL",
-	"prepullActions": [
-		{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
-	],
-	"priorityList": [
-		{"action":{"autocastOtherCooldowns":{}}},
-		{"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpEq","lhs":{"auraNumStacks":{"sourceUnit":{"type":"CurrentTarget"},"auraId":{"spellId":48568}}},"rhs":{"const":{"val":"5"}}}},{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":48568}}},"rhs":{"const":{"val":"1.5s"}}}}]}},"castSpell":{"spellId":{"spellId":48568}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":48564}}}},
-		{"action":{"condition":{"and":{"vals":[{"gcdIsReady":{}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":48564}}}}},{"cmp":{"op":"OpLe","lhs":{"spellTimeToReady":{"spellId":{"spellId":48564}}},"rhs":{"const":{"val":"1.2s"}}}}]}},"wait":{"duration":{"spellTimeToReady":{"spellId":{"spellId":48564}}}}}},
-		{"action":{"condition":{"auraShouldRefresh":{"auraId":{"spellId":48560},"maxOverlap":{"const":{"val":"1.5s"}}}},"castSpell":{"spellId":{"spellId":48560}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":16857}}}},
-		{"action":{"condition":{"or":{"vals":[{"cmp":{"op":"OpLt","lhs":{"auraNumStacks":{"sourceUnit":{"type":"CurrentTarget"},"auraId":{"spellId":48568}}},"rhs":{"const":{"val":"5"}}}},{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":48568}}},"rhs":{"const":{"val":"8s"}}}}]}},"castSpell":{"spellId":{"spellId":48568}}}},
-		{"action":{"condition":{"cmp":{"op":"OpGe","lhs":{"currentRage":{}},"rhs":{"const":{"val":"40"}}}},"castSpell":{"spellId":{"spellId":48562}}}},
-		{"action":{"condition":{"cmp":{"op":"OpGe","lhs":{"currentRage":{}},"rhs":{"const":{"val":"25"}}}},"castSpell":{"spellId":{"spellId":48480,"tag":1}}}}
-	]
-}`)
 
 var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
 	{"id":40329,"enchant":67839,"gems":[41339,40008]},
