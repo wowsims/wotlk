@@ -11,16 +11,23 @@ import (
 // TODO see Mind Flay: Mind Sear (53023) now "periodically triggers" Mind Sear (53022).
 // Since Mind Flay no longer is a binary spell, Mind Sear likely isn't, either.
 
-func (priest *Priest) newMindSearSpell(numTicks int32) *core.Spell {
+func (priest *Priest) newMindSearSpell(numTicksIdx int32) *core.Spell {
+	numTicks := numTicksIdx
+	flags := core.SpellFlagChanneled
+	if numTicksIdx == 0 {
+		numTicks = 5
+		flags |= core.SpellFlagAPL
+	}
+
 	channelTime := time.Second * time.Duration(numTicks)
 	miseryCoeff := 0.2861 * (1 + 0.05*float64(priest.Talents.Misery))
 	hasGlyphOfShadow := priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow))
 
 	return priest.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 53023, Tag: numTicks},
+		ActionID:    core.ActionID{SpellID: 53023, Tag: numTicksIdx},
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagChanneled | core.SpellFlagAPL,
+		Flags:       flags,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.28,
@@ -42,7 +49,7 @@ func (priest *Priest) newMindSearSpell(numTicks int32) *core.Spell {
 		CritMultiplier:   priest.DefaultSpellCritMultiplier(),
 		Dot: core.DotConfig{
 			Aura: core.Aura{
-				Label: "MindSear-" + strconv.Itoa(int(numTicks)),
+				Label: "MindSear-" + strconv.Itoa(int(numTicksIdx)),
 			},
 			NumberOfTicks:       numTicks,
 			TickLength:          time.Second,

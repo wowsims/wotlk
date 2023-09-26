@@ -1,4 +1,4 @@
-import { difficultyNames, professionNames, slotNames } from '../proto_utils/names.js';
+import { classNames, difficultyNames, professionNames, slotNames } from '../proto_utils/names.js';
 import { BaseModal } from './base_modal';
 import { Component } from './component';
 import { FiltersMenu } from './filters_menu';
@@ -36,19 +36,43 @@ import {
 	ItemType,
 } from '../proto/common';
 import {
+	DatabaseFilters,
 	UIEnchant as Enchant,
 	UIGem as Gem,
 	UIItem as Item,
 } from '../proto/ui.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
 import { Tooltip } from 'bootstrap';
+import { element, fragment, ref } from 'tsx-vanilla';
+
+import { Clusterize } from './virtual_scroll/clusterize.js';
 
 const EP_TOOLTIP = `
 	EP (Equivalence Points) is way of comparing items by multiplying the raw stats of an item with your current stat weights.
 	More EP does not necessarily mean more DPS, as EP doesn't take into account stat caps and non-linear stat calculations.
 `
 
-const HEROIC_LABEL = `<span class='heroic-label'>[H]</span>`
+const createHeroicLabel = () => {
+	return (<span className='heroic-label'>[H]</span>);
+}
+
+const createGemContainer = (socketColor: GemColor ,gem : Gem|null) => {
+	const gemIconElem = ref<HTMLImageElement>();
+	
+	let gemContainer = (
+		<div className="gem-socket-container">
+			<img ref={gemIconElem} className={`gem-icon ${gem == null ? 'hide' : ''}`} />
+			<img className="socket-icon" src={getEmptyGemSocketIconUrl(socketColor)}/>
+		</div>
+	);
+
+	if (gem != null) {
+		ActionId.fromItemId(gem.id).fill().then(filledId => {
+			gemIconElem.value!.src = filledId.iconUrl;
+		});
+	}
+	return gemContainer;
+}
 
 export class GearPicker extends Component {
 	// ItemSlot is used as the index
@@ -104,20 +128,27 @@ export class ItemRenderer extends Component {
 		super(parent, 'item-picker-root');
 		this.player = player;
 
-		this.rootElem.innerHTML = `
-      <a class="item-picker-icon" href="javascript:void(0)" role="button">
-        <div class="item-picker-sockets-container"></div>
-      </a>
-      <div class="item-picker-labels-container">
-        <a class="item-picker-name" href="javascript:void(0)" role="button"></a><br>
-        <a class="item-picker-enchant" href="javascript:void(0)" role="button"></a>
-      </div>
-    `;
+		let iconElem = ref<HTMLAnchorElement>();
+		let nameElem = ref<HTMLAnchorElement>();
+		let enchantElem = ref<HTMLAnchorElement>();
+		let sce = ref<HTMLDivElement>();
+		this.rootElem.appendChild(
+			<>
+				<a ref={iconElem} className="item-picker-icon" href="javascript:void(0)" attributes={{role:"button"}}>
+					<div ref={sce} className="item-picker-sockets-container"></div>
+				</a>
+				<div className="item-picker-labels-container">
+					<a ref={nameElem} className="item-picker-name" href="javascript:void(0)" attributes={{role:"button"}}></a>
+					<br/>
+					<a ref={enchantElem} className="item-picker-enchant" href="javascript:void(0)" attributes={{role:"button"}}></a>
+				</div>
+			</>
+		);
 
-		this.iconElem = this.rootElem.querySelector('.item-picker-icon') as HTMLAnchorElement;
-		this.nameElem = this.rootElem.querySelector('.item-picker-name') as HTMLAnchorElement;
-		this.enchantElem = this.rootElem.querySelector('.item-picker-enchant') as HTMLAnchorElement;
-		this.socketsContainerElem = this.rootElem.querySelector('.item-picker-sockets-container') as HTMLElement;
+		this.iconElem = iconElem.value!;
+		this.nameElem = nameElem.value!;
+		this.enchantElem = enchantElem.value!;
+		this.socketsContainerElem = sce.value!;
 	}
 
 	clear() {
@@ -130,15 +161,15 @@ export class ItemRenderer extends Component {
 		this.iconElem.removeAttribute('href');
 
 		this.iconElem.style.backgroundImage = '';
-		this.enchantElem.innerHTML = '';
-		this.socketsContainerElem.innerHTML = '';
+		this.enchantElem.innerText = '';
+		this.socketsContainerElem.innerText = '';
 		this.nameElem.textContent = '';
 	}
 
 	update(newItem: EquippedItem) {
 		this.nameElem.textContent = newItem.item.name;
 		if (newItem.item.heroic) {
-			this.nameElem.insertAdjacentHTML('beforeend', HEROIC_LABEL);
+			this.nameElem.insertAdjacentElement('beforeend', createHeroicLabel());
 		} else {
 			this.nameElem.querySelector('.heroic-label')?.remove();
 		}
@@ -159,35 +190,16 @@ export class ItemRenderer extends Component {
 			// Make enchant text hover have a tooltip.
 			if (newItem.enchant.spellId) {
 				this.enchantElem.href = ActionId.makeSpellUrl(newItem.enchant.spellId);
-				this.enchantElem.setAttribute('data-wowhead', `domain=wotlk&spell=${newItem.enchant.spellId}`);
+				this.enchantElem.dataset.wowhead = `domain=wotlk&spell=${newItem.enchant.spellId}`;
 			} else {
 				this.enchantElem.href = ActionId.makeItemUrl(newItem.enchant.itemId);
-				this.enchantElem.setAttribute('data-wowhead', `domain=wotlk&item=${newItem.enchant.itemId}`);
+				this.enchantElem.dataset.wowhead = `domain=wotlk&item=${newItem.enchant.itemId}`;
 			}
+			this.enchantElem.dataset.whtticon = 'false';
 		}
 
 		newItem.allSocketColors().forEach((socketColor, gemIdx) => {
-			let gemFragment = document.createElement('fragment');
-			gemFragment.innerHTML = `
-				<div class="gem-socket-container">
-					<img class="gem-icon" />
-					<img class="socket-icon" />
-				</div>
-			`;
-
-			const gemContainer = gemFragment.children[0] as HTMLElement;
-			const gemIconElem = gemContainer.querySelector('.gem-icon') as HTMLImageElement;
-			const socketIconElem = gemContainer.querySelector('.socket-icon') as HTMLImageElement;
-			socketIconElem.src = getEmptyGemSocketIconUrl(socketColor);
-
-			if (newItem.gems[gemIdx] == null) {
-				gemIconElem.classList.add('hide');
-			} else {
-				gemIconElem.classList.remove('hide');
-				ActionId.fromItemId(newItem.gems[gemIdx]!.id).fill().then(filledId => {
-					gemIconElem.src = filledId.iconUrl;
-				});
-			}
+			let gemContainer = createGemContainer(socketColor, newItem.gems[gemIdx]);
 
 			if (gemIdx == newItem.numPossibleSockets - 1 && [ItemType.ItemTypeWrist, ItemType.ItemTypeHands].includes(newItem.item.type)) {
 				const updateProfession = () => {
@@ -200,7 +212,6 @@ export class ItemRenderer extends Component {
 				this.player.professionChangeEmitter.on(updateProfession);
 				updateProfession();
 			}
-
 			this.socketsContainerElem.appendChild(gemContainer);
 		});
 	}
@@ -247,24 +258,10 @@ export class ItemPicker extends Component {
 				event.preventDefault();
 				this.openSelectorModal(SelectorModalTabs.Enchants, gearData);
 			};
-			const onClickEnd = (event: Event) => {
-				event.preventDefault();
-			};
 
-			// Make icon open gear selector
 			this.itemElem.iconElem.addEventListener('click', openGearSelector);
-			this.itemElem.iconElem.addEventListener('touchstart', openGearSelector);
-			this.itemElem.iconElem.addEventListener('touchend', onClickEnd);
-
-			// Make item name open gear selector
 			this.itemElem.nameElem.addEventListener('click', openGearSelector);
-			this.itemElem.nameElem.addEventListener('touchstart', openGearSelector);
-			this.itemElem.nameElem.addEventListener('touchend', onClickEnd);
-
-			// Make enchant name open enchant selector
 			this.itemElem.enchantElem.addEventListener('click', openEnchantSelector);
-			this.itemElem.enchantElem.addEventListener('touchstart', openEnchantSelector);
-			this.itemElem.enchantElem.addEventListener('touchend', onClickEnd);
 		});
 
 		player.gearChangeEmitter.on(() => {
@@ -359,7 +356,6 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 			};
 
 			this.iconAnchor.addEventListener('click', onClickStart);
-			this.iconAnchor.addEventListener('touchstart', onClickStart);
 		}).finally(() => this.init());
 
 	}
@@ -407,7 +403,7 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 		this.iconAnchor.style.backgroundImage = `url('${getEmptySlotIconUrl(this.slot)}')`;
 		this.iconAnchor.removeAttribute('data-wowhead');
 		this.iconAnchor.href = "#";
-		this.socketsContainerElem.innerHTML = '';
+		this.socketsContainerElem.innerText = '';
 
 		const equippedItem = this.gear.getEquippedItem(this.slot);
 		if (equippedItem) {
@@ -417,29 +413,7 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 			this.player.setWowheadData(equippedItem, this.iconAnchor);
 
 			equippedItem.allSocketColors().forEach((socketColor, gemIdx) => {
-				let gemFragment = document.createElement('fragment');
-				gemFragment.innerHTML = `
-					<div class="gem-socket-container">
-						<img class="gem-icon" />
-						<img class="socket-icon" />
-					</div>
-				`;
-
-				const gemContainer = gemFragment.children[0] as HTMLElement;
-				const gemIconElem = gemContainer.querySelector('.gem-icon') as HTMLImageElement;
-				const socketIconElem = gemContainer.querySelector('.socket-icon') as HTMLImageElement;
-				socketIconElem.src = getEmptyGemSocketIconUrl(socketColor);
-
-				if (equippedItem.gems[gemIdx] == null) {
-					gemIconElem.classList.add('hide');
-				} else {
-					gemIconElem.classList.remove('hide');
-					ActionId.fromItemId(equippedItem.gems[gemIdx]!.id).fill().then(filledId => {
-						gemIconElem.src = filledId.iconUrl;
-					});
-				}
-
-				this.socketsContainerElem.appendChild(gemContainer);
+				this.socketsContainerElem.appendChild(createGemContainer(socketColor, equippedItem.gems[gemIdx]));
 			});
 
 		} else {
@@ -476,6 +450,7 @@ export class SelectorModal extends BaseModal {
 	private readonly simUI: SimUI;
 	private player: Player<any>;
 	private config: SelectorModalConfig;
+	private ilists: ItemList<any>[];
 
 	private readonly tabsElem: HTMLElement;
 	private readonly contentElem: HTMLElement;
@@ -486,12 +461,13 @@ export class SelectorModal extends BaseModal {
 		this.simUI = simUI;
 		this.player = player;
 		this.config = config;
+		this.ilists = [];
 
 		window.scrollTo({ top: 0 });
 
-		this.header!.insertAdjacentHTML('afterbegin', `<ul class="nav nav-tabs selector-modal-tabs"></ul>`);
+		this.header!.insertAdjacentElement('afterbegin', <ul className="nav nav-tabs selector-modal-tabs"></ul>);
 
-		this.body.innerHTML = `<div class="tab-content selector-modal-tab-content"></div>`
+		this.body.appendChild(<div className='tab-content selector-modal-tab-content'></div>);
 
 		this.tabsElem = this.rootElem.querySelector('.selector-modal-tabs') as HTMLElement;
 		this.contentElem = this.rootElem.querySelector('.selector-modal-tab-content') as HTMLElement;
@@ -514,8 +490,8 @@ export class SelectorModal extends BaseModal {
 	}
 
 	setData() {
-		this.tabsElem.innerHTML = '';
-		this.contentElem.innerHTML = '';
+		this.tabsElem.innerText = '';
+		this.contentElem.innerText = '';
 
 		const { slot, equippedItem, eligibleItems, eligibleEnchants, gearData } = this.config;
 
@@ -547,6 +523,7 @@ export class SelectorModal extends BaseModal {
 			GemColor.GemColorUnknown,
 			eventID => {
 				gearData.equipItem(eventID, null);
+				this.removeTabs('Gem');
 			});
 
 		this.addTab<Enchant>(
@@ -579,6 +556,18 @@ export class SelectorModal extends BaseModal {
 			});
 
 		this.addGemTabs(slot, equippedItem, gearData);
+	}
+
+	protected override onShow(e: Event) {
+		// Only refresh opened tab
+		let t = e.target! as HTMLElement;
+		let tab = t.querySelector<HTMLElement>('.active')!.dataset.contentId!;
+		if (tab.includes('Item')) {
+			this.ilists[0].sizeRefresh();
+		}
+		else if (tab.includes('Enchant')) {
+			this.ilists[1].sizeRefresh();
+		}
 	}
 
 	private addGemTabs(slot: ItemSlot, equippedItem: EquippedItem | null, gearData: GearData) {
@@ -623,28 +612,24 @@ export class SelectorModal extends BaseModal {
 						gearData.equipItem(eventID, equippedItem.withGem(null, socketIdx));
 				},
 				tabAnchor => {
+					let gemContainer = createGemContainer(socketColor, null);
+					tabAnchor.appendChild(gemContainer);
 					tabAnchor.classList.add('selector-modal-tab-gem');
-					tabAnchor.innerHTML = `
-						<div class="gem-socket-container">
-							<img class="gem-icon" />
-							<img class="socket-icon" />
-						</div>
-					`;
 
 					const gemElem = tabAnchor.querySelector('.gem-icon') as HTMLElement;
-					const socketElem = tabAnchor.querySelector('.socket-icon') as HTMLElement;
 					const emptySocketUrl = getEmptyGemSocketIconUrl(socketColor)
-					socketElem.setAttribute('src', emptySocketUrl);
 
 					const updateGemIcon = () => {
 						const equippedItem = gearData.getEquippedItem();
 						const gem = equippedItem?.gems[socketIdx];
 
 						if (gem) {
+							gemElem.classList.remove('hide');
 							ActionId.fromItemId(gem.id).fill().then(filledId => {
 								gemElem.setAttribute('src', filledId.iconUrl);
 							});
 						} else {
+							gemElem.classList.add('hide');
 							gemElem.setAttribute('src', emptySocketUrl);
 						}
 					};
@@ -678,32 +663,32 @@ export class SelectorModal extends BaseModal {
 		const tabContentId = (label + '-tab').split(' ').join('');
 		const selected = label === this.config.selectedTab;
 
-		const tabFragment = document.createElement('fragment');
-		tabFragment.innerHTML = `
-			<li class="nav-item">
+		const tabAnchor = ref<HTMLAnchorElement>();
+		this.tabsElem.appendChild(
+			<li className="nav-item">
 				<a
-					class="nav-link selector-modal-item-tab ${selected ? 'active' : ''}"
-					data-content-id="${tabContentId}"
-					data-bs-toggle="tab"
-					data-bs-target="#${tabContentId}"
+					ref={tabAnchor}
+					className={`nav-link selector-modal-item-tab ${selected ? 'active' : ''}`}
+					dataset={{
+						label: label,
+						contentId:tabContentId,
+						bsToggle:'tab',
+						bsTarget:`#${tabContentId}`,
+					}}
+					attributes={{
+						role:'tab',
+						'aria-selected':selected,
+					}}
 					type="button"
-					role="tab"
-					aria-controls="${tabContentId}"
-					aria-selected="${selected}"
 				></a>
 			</li>
-		`;
+		);
 
-		const tabElem = tabFragment.children[0] as HTMLElement;
-		const tabAnchor = tabElem.getElementsByClassName('selector-modal-item-tab')[0] as HTMLAnchorElement;
-		tabAnchor.dataset.label = label;
 		if (setTabContent) {
-			setTabContent(tabAnchor);
+			setTabContent(tabAnchor.value!);
 		} else {
-			tabAnchor.textContent = label;
+			tabAnchor.value!.textContent = label;
 		}
-
-		this.tabsElem.appendChild(tabElem);
 
 		// TODO: do we need this check here?
 		if (itemData.length == 0) {
@@ -739,20 +724,23 @@ export class SelectorModal extends BaseModal {
 		// Add event handlers
 		gearData.changeEvent.on(invokeUpdate);
 
-		this.addOnDisposeCallback(() => gearData.changeEvent.off(invokeUpdate));
-
 		this.player.sim.phaseChangeEmitter.on(applyFilter);
 		this.player.sim.filtersChangeEmitter.on(applyFilter);
 		this.player.sim.showEPValuesChangeEmitter.on(hideOrShowEPValues);
-		gearData.changeEvent.on(applyFilter);
 
 		this.addOnDisposeCallback(() => {
+			gearData.changeEvent.off(invokeUpdate)
 			this.player.sim.phaseChangeEmitter.off(applyFilter);
 			this.player.sim.filtersChangeEmitter.off(applyFilter);
 			this.player.sim.showEPValuesChangeEmitter.off(hideOrShowEPValues);
-			gearData.changeEvent.off(applyFilter);
+			ilist.dispose();
 		});
 
+		tabAnchor.value!.addEventListener('shown.bs.tab', (event) => {
+			ilist.sizeRefresh()
+		});
+
+		this.ilists.push(ilist);
 	}
 
 	private removeTabs(labelSubstring: string) {
@@ -760,7 +748,7 @@ export class SelectorModal extends BaseModal {
 			.filter(tab => tab.dataset.label.includes(labelSubstring));
 
 		const contentElems = tabElems
-			.map(tabElem => document.getElementById(tabElem.dataset.contentId!.substring(1)))
+			.map(tabElem => document.getElementById(tabElem.dataset.contentId!))
 			.filter(tabElem => Boolean(tabElem));
 
 		tabElems.forEach(elem => elem.parentElement.remove());
@@ -779,6 +767,11 @@ export interface ItemData<T> {
 	ignoreEPFilter: boolean,
 	heroic: boolean,
 	onEquip: (eventID: EventID, item: T) => void,
+}
+
+interface ItemDataWithIdx<T> {
+	idx: number,
+	data: ItemData<T>,
 }
 
 const emptySlotIcons: Record<ItemSlot, string> = {
@@ -806,17 +799,20 @@ export function getEmptySlotIconUrl(slot: ItemSlot): string {
 
 export class ItemList<T> {
 	private listElem: HTMLElement;
-	private listItemElems: HTMLLIElement[];
 	private readonly player: Player<any>;
 	private label: string;
 	private slot: ItemSlot;
 	private itemData: Array<ItemData<T>>;
+	private itemsToDisplay: Array<number>;
+	private currentFilters: DatabaseFilters;
 	private searchInput: HTMLInputElement;
 	private socketColor: GemColor;
 	private computeEP: (item: T) => number;
 	private equippedToItemFn: (equippedItem: EquippedItem | null) => (T | null | undefined);
 	private gearData: GearData;
-	private tabContent: HTMLElement;
+	private tabContent: Element;
+	private onItemClick: (itemData: ItemData<T>) => void;
+	private scroller: Clusterize;
 
 	constructor(
 		parent: HTMLElement,
@@ -836,55 +832,54 @@ export class ItemList<T> {
 		this.socketColor = socketColor;
 		this.computeEP = computeEP;
 		this.equippedToItemFn = equippedToItemFn;
+		this.onItemClick = onItemClick;
 
 		const { slot, gearData } = config;
 		this.slot = slot;
 		this.gearData = gearData;
+		this.currentFilters = this.player.sim.getFilters();
 
 		const tabContentId = (label + '-tab').split(' ').join('');
 		const selected = label === config.selectedTab;
 
-		const frag = document.createDocumentFragment();
-		const tabContentFragment = frag.appendChild(document.createElement("fragment"))
-		tabContentFragment.innerHTML = `
+		const epButton = ref<HTMLButtonElement>();
+		this.tabContent = (
 			<div
-				id="${tabContentId}"
-				class="selector-modal-tab-pane tab-pane fade ${selected ? 'active show' : ''}"
+				id={tabContentId}
+				className={`selector-modal-tab-pane tab-pane fade ${selected ? 'active show' : ''}`}
 			>
-				<div class="selector-modal-filters">
-					<input class="selector-modal-search form-control" type="text" placeholder="Search...">
-					${label == 'Items' ? '<button class="selector-modal-filters-button btn btn-primary">Filters</button>' : ''}
-					<div class="selector-modal-phase-selector"></div>
-					<div class="sim-input selector-modal-boolean-option selector-modal-show-1h-weapons"></div>
-					<div class="sim-input selector-modal-boolean-option selector-modal-show-2h-weapons"></div>
-					<div class="sim-input selector-modal-boolean-option selector-modal-show-matching-gems"></div>
-					<div class="sim-input selector-modal-boolean-option selector-modal-show-ep-values"></div>
-					<button class="selector-modal-simall-button btn btn-warning">Add to Batch Sim</button>
-					<button class="selector-modal-remove-button btn btn-danger">Unequip Item</button>
+				<div className="selector-modal-filters">
+					<input className="selector-modal-search form-control" type="text" placeholder="Search..."/>
+					{label == 'Items' && <button className="selector-modal-filters-button btn btn-primary">Filters</button>}
+					<div className="selector-modal-phase-selector"></div>
+					<div className="sim-input selector-modal-boolean-option selector-modal-show-1h-weapons"></div>
+					<div className="sim-input selector-modal-boolean-option selector-modal-show-2h-weapons"></div>
+					<div className="sim-input selector-modal-boolean-option selector-modal-show-matching-gems"></div>
+					<div className="sim-input selector-modal-boolean-option selector-modal-show-ep-values"></div>
+					<button className="selector-modal-simall-button btn btn-warning">Add to Batch Sim</button>
+					<button className="selector-modal-remove-button btn btn-danger">Unequip Item</button>
 				</div>
-				<div class="selector-modal-list-labels">
+				<div className="selector-modal-list-labels">
 					<label>Item</label>
-					<label class="ep-delta-label">
+					<label className="ep-delta-label">
 						EP
-						<i class="fa-solid fa-plus-minus fa-2xs"></i>
+						<i className="fa-solid fa-plus-minus fa-2xs"></i>
 						<button
-							id="ep-explanation"
-							class="btn btn-link p-0 ms-1"
-							data-bs-toggle="tooltip"
-							data-bs-title="${EP_TOOLTIP}"
-						>
-							<i class="far fa-question-circle fa-lg"></i>
+							ref={epButton}
+							className="btn btn-link p-0 ms-1">
+							<i className="far fa-question-circle fa-lg"></i>
 						</button>
 					</label>
 				</div>
-				<ul class="selector-modal-list"></ul>
+				<ul className="selector-modal-list"></ul>
 			</div>
-		`;
+		);
 
-		this.tabContent = tabContentFragment.children[0] as HTMLElement;
+		parent.appendChild(this.tabContent);
 
-		const epExplanationElem = this.tabContent.querySelector('#ep-explanation') as HTMLElement;
-		new Tooltip(epExplanationElem);
+		new Tooltip(epButton.value!, {
+			title: EP_TOOLTIP
+		});
 
 		const show1hWeaponsSelector = makeShow1hWeaponsSelector(this.tabContent.getElementsByClassName('selector-modal-show-1h-weapons')[0] as HTMLElement, player.sim);
 		const show2hWeaponsSelector = makeShow2hWeaponsSelector(this.tabContent.getElementsByClassName('selector-modal-show-2h-weapons')[0] as HTMLElement, player.sim);
@@ -908,145 +903,34 @@ export class ItemList<T> {
 		}
 
 		this.listElem = this.tabContent.getElementsByClassName('selector-modal-list')[0] as HTMLElement;
-		const initialFilters = player.sim.getFilters();
-		let lastFavElem: HTMLElement | null = null;
 
-		this.listItemElems = itemData.map((itemData, itemIdx) => {
-			const item = itemData.item;
-			const itemEP = computeEP(item);
+		this.itemsToDisplay = [];
 
-			const listItemElem = document.createElement('li');
-			listItemElem.classList.add('selector-modal-list-item');
-			listItemElem.dataset.idx = String(itemIdx);
-			listItemElem.innerHTML = `
-				<div class="selector-modal-list-label-cell">
-					<a class="selector-modal-list-item-link">
-						<img class="selector-modal-list-item-icon" />
-						<label class="selector-modal-list-item-name">${itemData.heroic ? itemData.name + HEROIC_LABEL : itemData.name}</label>
-					</a>
-				</div>
-				<div class="selector-modal-list-item-source-container">
-				</div>
-				<div>
-					<button
-						class="selector-modal-list-item-favorite btn btn-link p-0"
-						data-bs-toggle="tooltip"
-						data-bs-title="Add to favorites"
-					>
-						<i class="fa-star fa-xl"></i>
-					</button>
-				</div>
-				<div class="selector-modal-list-item-ep">
-					<span class="selector-modal-list-item-ep-value">${itemEP < 9.95 ? itemEP.toFixed(1) : Math.round(itemEP)}</span>
-				</div>
-				<div class="selector-modal-list-item-ep">
-					<span class="selector-modal-list-item-ep-delta"></span>
-				</div>
-		  `;
-		  	this.listElem.appendChild(listItemElem);
-
-			if (slot == ItemSlot.ItemSlotTrinket1 || slot == ItemSlot.ItemSlotTrinket2) {
-				const epElem = listItemElem.querySelector('.selector-modal-list-item-ep') as HTMLElement;
-				epElem.style.display = 'none';
-			}
-
-			const anchorElem = listItemElem.querySelector('.selector-modal-list-item-link') as HTMLAnchorElement;
-			const iconElem = listItemElem.querySelector('.selector-modal-list-item-icon') as HTMLImageElement;
-			const nameElem = listItemElem.querySelector('.selector-modal-list-item-name') as HTMLAnchorElement;
-			const favoriteElem = listItemElem.querySelector('.selector-modal-list-item-favorite') as HTMLElement;
-
-			anchorElem.addEventListener('click', (event: Event) => {
-				event.preventDefault();
-				if (event.target === favoriteElem) return false;
-				onItemClick(itemData);
-			});
-
-			itemData.actionId.fill().then(filledId => {
-				filledId.setWowheadHref(anchorElem);
-				iconElem.src = filledId.iconUrl;
-			});
-
-			setItemQualityCssClass(nameElem, itemData.quality);
-
-			const sourceElem = listItemElem.getElementsByClassName('selector-modal-list-item-source-container')[0] as HTMLDivElement;
-			if (label == 'Items') {
-				this.fillSourceInfo(item as unknown as Item, sourceElem, player.sim);
-			} else {
-				sourceElem.remove();
-			}
-
-			new Tooltip(favoriteElem);
-			const setFavorite = (isFavorite: boolean) => {
-				const filters = player.sim.getFilters();
-				if (label == 'Items') {
-					const favId = itemData.id;
-					if (isFavorite) {
-						filters.favoriteItems.push(favId);
-					} else {
-						const favIdx = filters.favoriteItems.indexOf(favId);
-						if (favIdx != -1) {
-							filters.favoriteItems.splice(favIdx, 1);
-						}
-					}
-				} else if (label == 'Enchants') {
-					const favId = getUniqueEnchantString(item as unknown as Enchant);
-					if (isFavorite) {
-						filters.favoriteEnchants.push(favId);
-					} else {
-						const favIdx = filters.favoriteEnchants.indexOf(favId);
-						if (favIdx != -1) {
-							filters.favoriteEnchants.splice(favIdx, 1);
-						}
-					}
-				} else if (label.startsWith('Gem')) {
-					const favId = itemData.id;
-					if (isFavorite) {
-						filters.favoriteGems.push(favId);
-					} else {
-						const favIdx = filters.favoriteGems.indexOf(favId);
-						if (favIdx != -1) {
-							filters.favoriteGems.splice(favIdx, 1);
-						}
-					}
+		this.scroller = new Clusterize({
+			getNumberOfRows: () => { return this.itemsToDisplay.length },
+			generateRows: (startIdx, endIdx) => {
+				let items = [];
+				for (let i = startIdx; i < endIdx; ++i) {
+					if (i >= this.itemsToDisplay.length)
+						break;
+					items.push(this.createItemElem({idx:this.itemsToDisplay[i], data:this.itemData[this.itemsToDisplay[i]]}));
 				}
-				favoriteElem.children[0].classList.toggle('fas');
-				favoriteElem.children[0].classList.toggle('far');
-				listItemElem.dataset.fav = isFavorite.toString();
-
-				player.sim.setFilters(TypedEvent.nextEventID(), filters);
-				this.applyFilters();
-			};
-			favoriteElem.addEventListener('click', () => setFavorite(listItemElem.dataset.fav == 'false'));
-
-			let isFavorite = false;
-			if (label == 'Items') {
-				isFavorite = initialFilters.favoriteItems.includes(itemData.id);
-			} else if (label == 'Enchants') {
-				isFavorite = initialFilters.favoriteEnchants.includes(getUniqueEnchantString(item as unknown as Enchant));
-			} else if (label.startsWith('Gem')) {
-				isFavorite = initialFilters.favoriteGems.includes(itemData.id);
+				return items;
 			}
-			
-			if (isFavorite) {
-				favoriteElem.children[0].classList.add('fas');
-				listItemElem.dataset.fav = 'true';
-				if (lastFavElem == null) {
-					this.listElem.prepend(listItemElem);
-				} else {
-					lastFavElem.after(listItemElem)
-				}
-				lastFavElem = listItemElem;
-			} else {
-				favoriteElem.children[0].classList.add('far');
-				listItemElem.dataset.fav = 'false';
-			}
-
-			return listItemElem;
+		}, {
+			rows: [],
+			scroll_elem: this.listElem,
+			content_elem: this.listElem,
+			item_height: 56,
+			show_no_data_row: false,
+			no_data_text: '',
+			tag: 'li',
+			rows_in_block: 16,
+			blocks_in_cluster: 2,
 		});
 
 		const removeButton = this.tabContent.getElementsByClassName('selector-modal-remove-button')[0] as HTMLButtonElement;
 		removeButton.addEventListener('click', event => {
-			this.listItemElems.forEach(elem => elem.classList.remove('active'));
 			onRemove(TypedEvent.nextEventID());
 		});
 
@@ -1060,15 +944,6 @@ export class ItemList<T> {
 
 		this.searchInput = this.tabContent.getElementsByClassName('selector-modal-search')[0] as HTMLInputElement;
 		this.searchInput.addEventListener('input', () => this.applyFilters());
-		this.searchInput.addEventListener("keyup", ev => {
-			if (ev.key == "Enter") {
-				this.listItemElems.find(ele => {
-					const nameElem = ele.getElementsByClassName('selector-modal-list-item-name')[0] as HTMLElement;
-					nameElem.click();
-					return true;
-				});
-			}
-		});
 
 		const simAllButton = this.tabContent.getElementsByClassName('selector-modal-simall-button')[0] as HTMLButtonElement;
 		if (label == "Items") {
@@ -1089,10 +964,10 @@ export class ItemList<T> {
 						curEP = this.computeEP(curItem);
 					}
 
-					this.listItemElems.forEach((elem, index) => {
-						const idata = this.itemData[index];
+					for(let i of this.itemsToDisplay) {
+						const idata = this.itemData[i];
 						if (!isRangedOrTrinket && curEP > 0 && idata.baseEP < (curEP / 2)) {
-							return; // If we have EPs on current item, dont sim items with less than half the EP.
+							continue; // If we have EPs on current item, dont sim items with less than half the EP.
 						}
 
 						// Add any item that is either >0 EP or a trinket/ranged item.
@@ -1100,8 +975,7 @@ export class ItemList<T> {
 							itemSpecs.push(ItemSpec.create({ id: idata.id }));
 						}
 
-					});
-
+					}
 					simUI.bt.addItems(itemSpecs);
 					// TODO: should we open the bulk sim UI or should we run in the background showing progress, and then sort the items in the picker?
 				}
@@ -1110,10 +984,15 @@ export class ItemList<T> {
 			// always hide non-items from being added to batch.
 			simAllButton.hidden = true;
 		}
+	}
 
+	public sizeRefresh() {
+		this.scroller.refresh(true);
 		this.applyFilters();
+	}
 
-		parent.appendChild(this.tabContent);
+	public dispose() {
+		this.scroller.dispose();
 	}
 
 	public updateSelected() {
@@ -1123,52 +1002,55 @@ export class ItemList<T> {
 		const newItemId = newItem ? (this.label == 'Enchants' ? (newItem as unknown as Enchant).effectId : (newItem as unknown as Item | Gem).id) : 0;
 		const newEP = newItem ? this.computeEP(newItem) : 0;
 
-		this.listItemElems.forEach(elem => {
-			const listItemIdx = parseInt(elem.dataset.idx!);
-			const listItemData = this.itemData[listItemIdx];
-			const listItem = listItemData.item;
+		this.scroller.elementUpdate((item) => {
+			let idx = (item as HTMLElement).dataset.idx!;
+			const itemData = this.itemData[parseFloat(idx)];
+			if (itemData.id == newItemId)
+				item.classList.add('active');
+			else
+				item.classList.remove('active');
 
-			elem.classList.remove('active');
-			if (listItemData.id == newItemId) {
-				elem.classList.add('active');
-			}
-
-			const epDeltaElem = elem.getElementsByClassName('selector-modal-list-item-ep-delta')[0] as HTMLSpanElement;
+			const epDeltaElem = item.getElementsByClassName('selector-modal-list-item-ep-delta')[0] as HTMLSpanElement;
 			if (epDeltaElem) {
 				epDeltaElem.textContent = '';
-				if (listItem) {
-					const listItemEP = this.computeEP(listItem);
+				if (itemData.item) {
+					const listItemEP = this.computeEP(itemData.item);
 					formatDeltaTextElem(epDeltaElem, newEP, listItemEP, 0);
 				}
 			}
 		});
-	};
+	}
 
 	public applyFilters() {
-		let validItemElems = this.listItemElems;
+		this.currentFilters = this.player.sim.getFilters();
+		let itemIdxs = new Array<number>(this.itemData.length);
+		for (let i = 0; i < this.itemData.length; ++i)  {
+			itemIdxs[i] = i;
+		}
+
 		const currentEquippedItem = this.player.getEquippedItem(this.slot);
 
 		if (this.label == 'Items') {
-			validItemElems = this.player.filterItemData(
-				validItemElems,
-				elem => this.itemData[parseInt(elem.dataset.idx!)].item as unknown as Item,
+			itemIdxs = this.player.filterItemData(
+				itemIdxs,
+				i => this.itemData[i].item as unknown as Item,
 				this.slot);
 		} else if (this.label == 'Enchants') {
-			validItemElems = this.player.filterEnchantData(
-				validItemElems,
-				elem => this.itemData[parseInt(elem.dataset.idx!)].item as unknown as Enchant,
+			itemIdxs = this.player.filterEnchantData(
+				itemIdxs,
+				i => this.itemData[i].item as unknown as Enchant,
 				this.slot,
 				currentEquippedItem);
 		} else if (this.label.startsWith('Gem')) {
-			validItemElems = this.player.filterGemData(
-				validItemElems,
-				elem => this.itemData[parseInt(elem.dataset.idx!)].item as unknown as Gem,
+			itemIdxs = this.player.filterGemData(
+				itemIdxs,
+				i => this.itemData[i].item as unknown as Gem,
 				this.slot,
 				this.socketColor);
 		}
 
-		validItemElems = validItemElems.filter(elem => {
-			const listItemData = this.itemData[parseInt(elem.dataset.idx!)];
+		itemIdxs = itemIdxs.filter(i => {
+			const listItemData = this.itemData[i];
 
 			if (listItemData.phase > this.player.sim.getPhase()) {
 				return false;
@@ -1203,20 +1085,20 @@ export class ItemList<T> {
 				return diff;
 			}
 		}
-		// Trinket EP is weird so just sort by ilvl instead.
-		validItemElems = validItemElems.sort((dataA, dataB) => {
-			if (dataA.dataset.fav === 'true' && dataB.dataset.fav === 'false') return -1;
-			if (dataB.dataset.fav === 'true' && dataA.dataset.fav === 'false') return 1;
 
-			const dataAItem = this.itemData[parseInt(dataA.dataset.idx!)].item;
-			const dataBItem = this.itemData[parseInt(dataB.dataset.idx!)].item;
+		itemIdxs = itemIdxs.sort((dataA, dataB) => {
+			const itemA = this.itemData[dataA];
+			const itemB = this.itemData[dataB];
+			if (this.isItemFavorited(itemA) && !this.isItemFavorited(itemB)) return -1;
+			if (this.isItemFavorited(itemB) && !this.isItemFavorited(itemA)) return 1;
 
-			return sortFn(dataAItem, dataBItem);
+			return sortFn(itemA.item, itemB.item);
 		});
 
-		this.listElem.innerHTML = ``
-		this.listElem.append(...validItemElems);
-		this.hideOrShowEPValues()
+		this.itemsToDisplay = itemIdxs;
+		this.scroller.update();
+
+		this.hideOrShowEPValues();
 	}
 
 	public hideOrShowEPValues() {
@@ -1237,17 +1119,161 @@ export class ItemList<T> {
 		}
 	}
 
-	private fillSourceInfo(item: Item, container: HTMLDivElement, sim: Sim) {
+	private createItemElem(item: ItemDataWithIdx<T>): JSX.Element {
+		const itemData = item.data;
+		const itemEP = this.computeEP(itemData.item);
+
+		const equipedItem = this.equippedToItemFn(this.gearData.getEquippedItem());
+		const equipdItemId = equipedItem ? (this.label == 'Enchants' ? (equipedItem as unknown as Enchant).effectId : (equipedItem as unknown as Item | Gem).id) : 0;
+
+		const nameElem = ref<HTMLLabelElement>();
+		const anchorElem = ref<HTMLAnchorElement>();
+		const iconElem = ref<HTMLImageElement>();
+		const listItemElem = (
+			<li className={`selector-modal-list-item ${equipdItemId == itemData.id ? 'active' : ''}`} dataset={{idx: item.idx.toString()}}>
+				<div className='selector-modal-list-label-cell'>
+					<a className='selector-modal-list-item-link' ref={anchorElem} dataset={{whtticon:'false'}}>
+						<img className='selector-modal-list-item-icon' ref={iconElem}></img>
+						<label className='selector-modal-list-item-name' ref={nameElem}>
+							{itemData.name}
+							{itemData.heroic && createHeroicLabel()}
+						</label>
+					</a>
+				</div>
+			</li>
+		);
+
+		if (this.label == 'Items') {
+			listItemElem.appendChild(
+				<div className='selector-modal-list-item-source-container'>
+					{this.getSourceInfo(itemData.item as unknown as Item, this.player.sim)}
+				</div>
+			)
+		}
+
+		let favoriteElem = ref<HTMLButtonElement>();
+
+		listItemElem.appendChild(
+			<div>
+				<button className="selector-modal-list-item-favorite btn btn-link p-0"
+						ref={favoriteElem}
+						onclick={() => setFavorite(listItemElem.dataset.fav == 'false')}>
+					<i className='fa-star fa-xl'></i>
+				</button>
+			</div>
+		)
+
+
+		if (this.slot != ItemSlot.ItemSlotTrinket1 && this.slot != ItemSlot.ItemSlotTrinket2) {
+			listItemElem.appendChild(
+				<div className='selector-modal-list-item-ep'>
+					<span className='selector-modal-list-item-ep-value'>
+						{itemEP < 9.95 ? itemEP.toFixed(1).toString() : Math.round(itemEP).toString()}
+					</span>
+				</div>
+			);
+		}
+
+		listItemElem.appendChild(
+			<div className='selector-modal-list-item-ep'>
+				<span className='selector-modal-list-item-ep-delta'
+					ref={(e) => itemData.item && formatDeltaTextElem(e, equipedItem ? this.computeEP(equipedItem) : 0, itemEP, 0)}></span>
+			</div>
+		);
+
+		anchorElem.value!.addEventListener('click', (event: Event) => {
+			event.preventDefault();
+			if (event.target === favoriteElem.value) return false;
+			this.onItemClick(itemData);
+		});
+
+		itemData.actionId.fill().then(filledId => {
+			filledId.setWowheadHref(anchorElem.value!);
+			iconElem.value!.src = filledId.iconUrl;
+		});
+
+		setItemQualityCssClass(nameElem.value!, itemData.quality);
+
+		new Tooltip(favoriteElem.value!, {
+			title: 'Add to favorites'
+		});
+		const setFavorite = (isFavorite: boolean) => {
+			const filters = this.player.sim.getFilters();
+			if (this.label == 'Items') {
+				const favId = itemData.id;
+				if (isFavorite) {
+					filters.favoriteItems.push(favId);
+				} else {
+					const favIdx = filters.favoriteItems.indexOf(favId);
+					if (favIdx != -1) {
+						filters.favoriteItems.splice(favIdx, 1);
+					}
+				}
+			} else if (this.label == 'Enchants') {
+				const favId = getUniqueEnchantString(itemData.item as unknown as Enchant);
+				if (isFavorite) {
+					filters.favoriteEnchants.push(favId);
+				} else {
+					const favIdx = filters.favoriteEnchants.indexOf(favId);
+					if (favIdx != -1) {
+						filters.favoriteEnchants.splice(favIdx, 1);
+					}
+				}
+			} else if (this.label.startsWith('Gem')) {
+				const favId = itemData.id;
+				if (isFavorite) {
+					filters.favoriteGems.push(favId);
+				} else {
+					const favIdx = filters.favoriteGems.indexOf(favId);
+					if (favIdx != -1) {
+						filters.favoriteGems.splice(favIdx, 1);
+					}
+				}
+			}
+			favoriteElem.value!.children[0].classList.toggle('fas');
+			favoriteElem.value!.children[0].classList.toggle('far');
+			listItemElem.dataset.fav = isFavorite.toString();
+
+			this.player.sim.setFilters(TypedEvent.nextEventID(), filters);
+		};
+
+		let isFavorite = this.isItemFavorited(itemData);
+		
+		if (isFavorite) {
+			favoriteElem.value!.children[0].classList.add('fas');
+			listItemElem.dataset.fav = 'true';
+		} else {
+			favoriteElem.value!.children[0].classList.add('far');
+			listItemElem.dataset.fav = 'false';
+		}
+
+		return listItemElem;
+	}
+
+	private isItemFavorited(itemData: ItemData<T>) : boolean {
+		if (this.label == 'Items') {
+			return this.currentFilters.favoriteItems.includes(itemData.id);
+		} else if (this.label == 'Enchants') {
+			return this.currentFilters.favoriteEnchants.includes(getUniqueEnchantString(itemData.item as unknown as Enchant));
+		} else if (this.label.startsWith('Gem')) {
+			return this.currentFilters.favoriteGems.includes(itemData.id);
+		}
+		return false;
+	}
+
+	private getSourceInfo(item: Item, sim: Sim): JSX.Element {
 		if (!item.sources || item.sources.length == 0) {
-			return;
+			return <></>;
+		}
+
+		const makeAnchor = (href:string, inner:string) => {
+			return <a href={href}><small>{inner}</small></a>;
 		}
 
 		const source = item.sources[0];
 		if (source.source.oneofKind == 'crafted') {
 			const src = source.source.crafted;
-			container.innerHTML = `
-				<a href="${ActionId.makeSpellUrl(src.spellId)}"><small>${professionNames[src.profession]}</small></a>
-			`;
+			return makeAnchor( ActionId.makeSpellUrl(src.spellId), professionNames[src.profession]);
 		} else if (source.source.oneofKind == 'drop') {
 			const src = source.source.drop;
 			const zone = sim.db.getZone(src.zoneId);
@@ -1256,38 +1282,31 @@ export class ItemList<T> {
 				throw new Error('No zone found for item: ' + item);
 			}
 
-			let innerHTML = `
-				<a href="${ActionId.makeZoneUrl(zone.id)}"><small>${zone.name} (${difficultyNames[src.difficulty]})</small></a>
-			`;
+			let rtnEl = makeAnchor( ActionId.makeZoneUrl(zone.id), `${zone.name} (${difficultyNames[src.difficulty]})`);
 
 			const category = src.category ? ` - ${src.category}` : '';
 			if (npc) {
-				innerHTML += `
-					<br>
-					<a href="${ActionId.makeNpcUrl(npc.id)}"><small>${npc.name + category}</small></a>
-				`;
+				rtnEl.appendChild(document.createElement('br'));
+				rtnEl.appendChild(makeAnchor(ActionId.makeNpcUrl(npc.id), `${npc.name + category}`));
 			} else if (src.otherName) {
-				innerHTML += `
+				/*innerHTML += `
 					<br>
-					<a href="${ActionId.makeZoneUrl(zone.id)}><small>${src.otherName + category}</small></a>
-				`;
+					<a href="${ActionId.makeZoneUrl(zone.id)}"><small>${src.otherName + category}</small></a>
+				`;*/
 			} else if (category) {
-				innerHTML += `
+				/*innerHTML += `
 					<br>
-					<a href="${ActionId.makeZoneUrl(zone.id)}><small>${category}</small></a>
-				`;
+					<a href="${ActionId.makeZoneUrl(zone.id)}"><small>${category}</small></a>
+				`;*/
 			}
-			container.innerHTML = innerHTML;
+			return rtnEl;
 		} else if (source.source.oneofKind == 'quest') {
 			const src = source.source.quest;
-			container.innerHTML = `
-				<a href="${ActionId.makeQuestUrl(src.id)}"><small>${src.name}</small></a>
-			`;
+			return makeAnchor(ActionId.makeQuestUrl(src.id), src.name);
 		} else if (source.source.oneofKind == 'soldBy') {
 			const src = source.source.soldBy;
-			container.innerHTML = `
-				<a href="${ActionId.makeNpcUrl(src.npcId)}"><small>${src.npcName}</small></a>
-			`;
+			return makeAnchor(ActionId.makeNpcUrl(src.npcId), src.npcName);
 		}
+		return <></>;
 	}
 }

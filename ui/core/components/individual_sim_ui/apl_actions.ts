@@ -1,19 +1,26 @@
 import {
 	APLAction,
+
 	APLActionCastSpell,
+	APLActionChannelSpell,
+	APLActionMultidot,
+	APLActionMultishield,
+	APLActionAutocastOtherCooldowns,
+
+	APLActionWait,
+	APLActionWaitUntil,
+	APLActionSchedule,
+
 	APLActionSequence,
 	APLActionResetSequence,
 	APLActionStrictSequence,
-	APLActionMultidot,
-	APLActionAutocastOtherCooldowns,
+
 	APLActionChangeTarget,
 	APLActionActivateAura,
 	APLActionCancelAura,
 	APLActionTriggerICD,
-	APLActionWait,
-	APLActionWaitUntil,
+
 	APLValue,
-	APLActionMultishield,
 } from '../../proto/apl.js';
 
 import { isHealingSpec } from '../../proto_utils/utils.js';
@@ -90,10 +97,10 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 				}),
 			equals: (a, b) => a == b,
 			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
-			getValue: (player: Player<any>) => this.getSourceValue().action.oneofKind,
+			getValue: (player: Player<any>) => this.getSourceValue()?.action.oneofKind,
 			setValue: (eventID: EventID, player: Player<any>, newKind: APLActionKind) => {
 				const sourceValue = this.getSourceValue();
-				const oldKind = sourceValue.action.oneofKind;
+				const oldKind = sourceValue?.action.oneofKind;
 				if (oldKind == newKind) {
 					return;
 				}
@@ -209,9 +216,12 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 		const factory = actionKindFactories[newActionKind];
 		this.actionPicker = factory.factory(this.actionDiv, this.modObject, {
 			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
-			getValue: () => (this.getSourceValue().action as any)[newActionKind] || factory.newValue(),
+			getValue: () => (this.getSourceValue()?.action as any)?.[newActionKind] || factory.newValue(),
 			setValue: (eventID: EventID, player: Player<any>, newValue: any) => {
-				(this.getSourceValue().action as any)[newActionKind] = newValue;
+				const sourceValue = this.getSourceValue();
+				if (sourceValue) {
+					(sourceValue?.action as any)[newActionKind] = newValue;
+				}
 				player.rotationChangeEmitter.emit(eventID);
 			},
 		});
@@ -293,6 +303,7 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 	}),
 	['multidot']: inputBuilder({
 		label: 'Multi Dot',
+		submenu: ['Casting'],
 		shortDescription: 'Keeps a DoT active on multiple targets by casting the specified spell.',
 		includeIf: (player: Player<any>, isPrepull: boolean) => !isPrepull,
 		newValue: () => APLActionMultidot.create({
@@ -320,6 +331,7 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 	}),
 	['multishield']: inputBuilder({
 		label: 'Multi Shield',
+		submenu: ['Casting'],
 		shortDescription: 'Keeps a Shield active on multiple targets by casting the specified spell.',
 		includeIf: (player: Player<any>, isPrepull: boolean) => !isPrepull && isHealingSpec(player.spec),
 		newValue: () => APLActionMultishield.create({
@@ -343,6 +355,103 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 				label: 'Overlap',
 				labelTooltip: 'Maximum amount of time before a Shield expires when it may be refreshed.',
 			}),
+		],
+	}),
+	['channelSpell']: inputBuilder({
+		label: 'Channel',
+		submenu: ['Casting'],
+		shortDescription: 'Channels the spell if possible, i.e. resource/cooldown/GCD/etc requirements are all met.',
+		fullDescription: `
+			<p>The difference between channeling a spell vs casting the spell is that channels can be interrupted. If the <b>Interrupt If</b> parameter is empty, this action is equivalent to <b>Cast</b>.</p>
+			<p>The channel will be interrupted only if all of the following are true:</p>
+			<ul>
+				<li>Immediately following a tick of the channel</li>
+				<li>The <b>Interrupt If</b> condition is <b>True</b></li>
+				<li>A higher-priority action in the APL list is available</li>
+			</ul>
+			<p>Note that if you simply want to allow higher-priority actions to interrupt the channel, set <b>Interrupt If</b> to <b>True</b>.</p>
+		`,
+		newValue: () => APLActionChannelSpell.create({
+			interruptIf: {
+				value: {
+					oneofKind: 'gcdIsReady',
+					gcdIsReady: {},
+				}
+			},
+		}),
+		fields: [
+			AplHelpers.actionIdFieldConfig('spellId', 'channel_spells', ''),
+			AplHelpers.unitFieldConfig('target', 'targets'),
+			AplValues.valueFieldConfig('interruptIf', {
+				label: 'Interrupt If',
+				labelTooltip: 'Condition which must be true to allow the channel to be interrupted.',
+			}),
+			AplValues.valueFieldConfig('maxTicks', {
+				label: 'Max Ticks',
+				labelTooltip: 'Maximum number of ticks to use for the channel, evaluated when casting begins. <b>None</b> or <b>0</b> will allow the full duration.',
+			}),
+		],
+	}),
+	['autocastOtherCooldowns']: inputBuilder({
+		label: 'Autocast Other Cooldowns',
+		submenu: ['Casting'],
+		shortDescription: 'Auto-casts cooldowns as soon as they are ready.',
+		fullDescription: `
+			<ul>
+				<li>Does not auto-cast cooldowns which are already controlled by other actions in the priority list.</li>
+				<li>Cooldowns are usually cast immediately upon becoming ready, but there are some basic smart checks in place, e.g. don't use Mana CDs when near full mana.</li>
+			</ul>
+		`,
+		includeIf: (player: Player<any>, isPrepull: boolean) => !isPrepull,
+		newValue: APLActionAutocastOtherCooldowns.create,
+		fields: [],
+	}),
+	['wait']: inputBuilder({
+		label: 'Wait',
+		submenu: ['Timing'],
+		shortDescription: 'Pauses all APL actions for a specified amount of time.',
+		includeIf: (player: Player<any>, isPrepull: boolean) => !isPrepull,
+		newValue: () => APLActionWait.create({
+			duration: {
+				value: {
+					oneofKind: 'const',
+					const: {
+						val: '1000ms',
+					},
+				},
+			},
+		}),
+		fields: [
+			AplValues.valueFieldConfig('duration'),
+		],
+	}),
+	['waitUntil']: inputBuilder({
+		label: 'Wait Until',
+		submenu: ['Timing'],
+		shortDescription: 'Pauses all APL actions until the specified condition is <b>True</b>.',
+		includeIf: (player: Player<any>, isPrepull: boolean) => !isPrepull,
+		newValue: () => APLActionWaitUntil.create(),
+		fields: [
+			AplValues.valueFieldConfig('condition'),
+		],
+	}),
+	['schedule']: inputBuilder({
+		label: 'Scheduled Action',
+		submenu: ['Timing'],
+		shortDescription: 'Executes the inner action once at each specified timing.',
+		includeIf: (player: Player<any>, isPrepull: boolean) => !isPrepull,
+		newValue: () => APLActionSchedule.create({
+			schedule: '0s, 60s',
+			innerAction: {
+				action: {oneofKind: 'castSpell', castSpell: {}},
+			},
+		}),
+		fields: [
+			AplHelpers.stringFieldConfig('schedule', {
+				label: 'Do At',
+				labelTooltip: 'Comma-separated list of timings. The inner action will be performed once at each timing.',
+			}),
+			actionFieldConfig('innerAction'),
 		],
 	}),
 	['sequence']: inputBuilder({
@@ -384,49 +493,6 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 		newValue: APLActionStrictSequence.create,
 		fields: [
 			actionListFieldConfig('actions'),
-		],
-	}),
-	['autocastOtherCooldowns']: inputBuilder({
-		label: 'Autocast Other Cooldowns',
-		submenu: ['Misc'],
-		shortDescription: 'Auto-casts cooldowns as soon as they are ready.',
-		fullDescription: `
-			<ul>
-				<li>Does not auto-cast cooldowns which are already controlled by other actions in the priority list.</li>
-				<li>Cooldowns are usually cast immediately upon becoming ready, but there are some basic smart checks in place, e.g. don't use Mana CDs when near full mana.</li>
-			</ul>
-		`,
-		includeIf: (player: Player<any>, isPrepull: boolean) => !isPrepull,
-		newValue: APLActionAutocastOtherCooldowns.create,
-		fields: [],
-	}),
-	['wait']: inputBuilder({
-		label: 'Wait',
-		submenu: ['Misc'],
-		shortDescription: 'Pauses all APL actions for a specified amount of time.',
-		includeIf: (player: Player<any>, isPrepull: boolean) => !isPrepull,
-		newValue: () => APLActionWait.create({
-			duration: {
-				value: {
-					oneofKind: 'const',
-					const: {
-						val: '1000ms',
-					},
-				},
-			},
-		}),
-		fields: [
-			AplValues.valueFieldConfig('duration'),
-		],
-	}),
-	['waitUntil']: inputBuilder({
-		label: 'Wait Until',
-		submenu: ['Misc'],
-		shortDescription: 'Pauses all APL actions until the specified condition is <b>True</b>.',
-		includeIf: (player: Player<any>, isPrepull: boolean) => !isPrepull,
-		newValue: () => APLActionWaitUntil.create(),
-		fields: [
-			AplValues.valueFieldConfig('condition'),
 		],
 	}),
 	['changeTarget']: inputBuilder({

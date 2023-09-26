@@ -67,8 +67,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 7954.65643
-  tps: 6529.98852
+  dps: 7953.93663
+  tps: 6529.41268
  }
 }
 dps_results: {
@@ -196,8 +196,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-DarkmoonCard:Death-42990"
  value: {
-  dps: 7912.10221
-  tps: 6501.43503
+  dps: 7911.69793
+  tps: 6501.11161
  }
 }
 dps_results: {
@@ -329,8 +329,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-ExtractofNecromanticPower-40373"
  value: {
-  dps: 7912.31948
-  tps: 6502.05211
+  dps: 7912.04401
+  tps: 6501.83174
  }
 }
 dps_results: {
@@ -413,8 +413,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-GnomishLightningGenerator-41121"
  value: {
-  dps: 7890.67838
-  tps: 6484.24404
+  dps: 7890.33517
+  tps: 6483.96947
  }
 }
 dps_results: {
@@ -715,8 +715,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-StormshroudArmor"
  value: {
-  dps: 6283.86224
-  tps: 5164.02999
+  dps: 6283.8491
+  tps: 5164.01948
  }
 }
 dps_results: {
@@ -757,8 +757,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-TheFistsofFury"
  value: {
-  dps: 4698.98789
-  tps: 3950.71423
+  dps: 4698.76059
+  tps: 3950.53239
  }
 }
 dps_results: {
@@ -888,84 +888,84 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestArms-Settings-Human-Arms P1-Basic-FullBuffs-LongMultiTarget"
+ key: "TestArms-Settings-Human-Arms P1-Basic--FullBuffs-LongMultiTarget"
  value: {
   dps: 10953.76163
   tps: 9348.18398
  }
 }
 dps_results: {
- key: "TestArms-Settings-Human-Arms P1-Basic-FullBuffs-LongSingleTarget"
+ key: "TestArms-Settings-Human-Arms P1-Basic--FullBuffs-LongSingleTarget"
  value: {
   dps: 8236.95369
   tps: 6775.43002
  }
 }
 dps_results: {
- key: "TestArms-Settings-Human-Arms P1-Basic-FullBuffs-ShortSingleTarget"
+ key: "TestArms-Settings-Human-Arms P1-Basic--FullBuffs-ShortSingleTarget"
  value: {
   dps: 8706.92629
   tps: 7225.34979
  }
 }
 dps_results: {
- key: "TestArms-Settings-Human-Arms P1-Basic-NoBuffs-LongMultiTarget"
+ key: "TestArms-Settings-Human-Arms P1-Basic--NoBuffs-LongMultiTarget"
  value: {
   dps: 6454.01158
   tps: 5579.58854
  }
 }
 dps_results: {
- key: "TestArms-Settings-Human-Arms P1-Basic-NoBuffs-LongSingleTarget"
+ key: "TestArms-Settings-Human-Arms P1-Basic--NoBuffs-LongSingleTarget"
  value: {
   dps: 4621.69863
   tps: 3801.53278
  }
 }
 dps_results: {
- key: "TestArms-Settings-Human-Arms P1-Basic-NoBuffs-ShortSingleTarget"
+ key: "TestArms-Settings-Human-Arms P1-Basic--NoBuffs-ShortSingleTarget"
  value: {
   dps: 4493.11766
   tps: 3731.13021
  }
 }
 dps_results: {
- key: "TestArms-Settings-Orc-Arms P1-Basic-FullBuffs-LongMultiTarget"
+ key: "TestArms-Settings-Orc-Arms P1-Basic--FullBuffs-LongMultiTarget"
  value: {
   dps: 10990.49321
   tps: 9383.25815
  }
 }
 dps_results: {
- key: "TestArms-Settings-Orc-Arms P1-Basic-FullBuffs-LongSingleTarget"
+ key: "TestArms-Settings-Orc-Arms P1-Basic--FullBuffs-LongSingleTarget"
  value: {
   dps: 8275.53697
   tps: 6804.84862
  }
 }
 dps_results: {
- key: "TestArms-Settings-Orc-Arms P1-Basic-FullBuffs-ShortSingleTarget"
+ key: "TestArms-Settings-Orc-Arms P1-Basic--FullBuffs-ShortSingleTarget"
  value: {
   dps: 8802.32736
   tps: 7309.48657
  }
 }
 dps_results: {
- key: "TestArms-Settings-Orc-Arms P1-Basic-NoBuffs-LongMultiTarget"
+ key: "TestArms-Settings-Orc-Arms P1-Basic--NoBuffs-LongMultiTarget"
  value: {
   dps: 6502.53164
   tps: 5617.69354
  }
 }
 dps_results: {
- key: "TestArms-Settings-Orc-Arms P1-Basic-NoBuffs-LongSingleTarget"
+ key: "TestArms-Settings-Orc-Arms P1-Basic--NoBuffs-LongSingleTarget"
  value: {
   dps: 4627.10152
   tps: 3804.72745
  }
 }
 dps_results: {
- key: "TestArms-Settings-Orc-Arms P1-Basic-NoBuffs-ShortSingleTarget"
+ key: "TestArms-Settings-Orc-Arms P1-Basic--NoBuffs-ShortSingleTarget"
  value: {
   dps: 4555.57027
   tps: 3788.06789

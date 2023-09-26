@@ -191,15 +191,15 @@ func (ai *Algalon25AI) registerCosmicSmashSpell(target *core.Target) {
 }
 
 func (ai *Algalon25AI) DoAction(sim *core.Simulation) {
-	if ai.BlackHoleExplosion.IsReady(sim) && sim.CurrentTime >= ai.BlackHoleExplosion.CD.Duration {
-		ai.BlackHoleExplosion.Cast(sim, nil)
-	}
-
-	if ai.CosmicSmash.IsReady(sim) && sim.CurrentTime >= ai.CosmicSmash.CD.Duration {
-		ai.CosmicSmash.Cast(sim, nil)
-	}
-
 	if ai.Target.CurrentTarget != nil {
+		if ai.BlackHoleExplosion.IsReady(sim) && sim.CurrentTime >= ai.BlackHoleExplosion.CD.Duration {
+			ai.BlackHoleExplosion.Cast(sim, ai.Target.CurrentTarget)
+		}
+
+		if ai.CosmicSmash.IsReady(sim) && sim.CurrentTime >= ai.CosmicSmash.CD.Duration {
+			ai.CosmicSmash.Cast(sim, ai.Target.CurrentTarget)
+		}
+
 		if ai.PhasePunch.IsReady(sim) && sim.CurrentTime >= ai.PhasePunch.CD.Duration {
 			ai.PhasePunch.Cast(sim, ai.Target.CurrentTarget)
 			return

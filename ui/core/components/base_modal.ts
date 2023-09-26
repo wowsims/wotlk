@@ -86,12 +86,15 @@ export class BaseModal extends Component {
 
 		this.rootElem.addEventListener('hidden.bs.modal', (event) => {
 			this.rootElem.remove();
+			this.dispose();
 		})
 	}
 
 	private addCloseButton() {
 		new CloseButton(this.header ? this.header : this.body, () => this.close(), this.modalConfig.closeButton);
 	}
+
+	protected onShow(e: Event) {}
 
 	open() {
 		// Hacks for better looking multi modals
@@ -110,6 +113,7 @@ export class BaseModal extends Component {
 			}) as HTMLElement;
 			// Then move it from <body> to the parent element
 			this.rootElem.insertAdjacentElement('afterend', backdrop);
+			this.onShow(event);
 		});
 
 		this.rootElem.addEventListener('hide.bs.modal', (event) => {

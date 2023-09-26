@@ -1,9 +1,9 @@
 package shadow
 
 import (
-	"github.com/wowsims/wotlk/sim/common/wotlk"
 	"time"
 
+	"github.com/wowsims/wotlk/sim/common/wotlk"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/priest"
@@ -35,7 +35,7 @@ func NewShadowPriest(character core.Character, options *proto.Player) *ShadowPri
 	}
 
 	basePriest := priest.New(character, selfBuffs, options.TalentsString)
-	basePriest.Latency = shadowOptions.Options.Latency
+	basePriest.Latency = float64(basePriest.ChannelClipDelay.Milliseconds())
 	spriest := &ShadowPriest{
 		Priest:   basePriest,
 		rotation: shadowOptions.Rotation,
@@ -75,7 +75,7 @@ func (spriest *ShadowPriest) GetPriest() *priest.Priest {
 func (spriest *ShadowPriest) Initialize() {
 	spriest.Priest.Initialize()
 
-	if spriest.rotation.PrecastType > 0 {
+	if !spriest.IsUsingAPL && spriest.rotation.PrecastType > 0 {
 		precastSpell := spriest.VampiricTouch
 		if spriest.rotation.PrecastType == 2 {
 			precastSpell = spriest.MindBlast

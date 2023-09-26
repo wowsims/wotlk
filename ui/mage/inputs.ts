@@ -1,21 +1,16 @@
 import { Spec } from '../core/proto/common.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
-import { EventID, TypedEvent } from '../core/typed_event.js';
+import { TypedEvent } from '../core/typed_event.js';
 
 import {
-	Mage,
-	MageTalents as MageTalents,
-	Mage_Rotation as MageRotation,
 	Mage_Rotation_Type as RotationType,
 	Mage_Rotation_PrimaryFireSpell as PrimaryFireSpell,
 	Mage_Rotation_AoeRotation as AoeRotationSpells,
-	Mage_Options as MageOptions,
 	Mage_Options_ArmorType as ArmorType,
 } from '../core/proto/mage.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
-import * as Presets from './presets.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
@@ -29,12 +24,6 @@ export const Armor = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecMage, Ar
 	],
 });
 
-export const EvocationTicks = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecMage>({
-	fieldName: 'evocationTicks',
-	label: '# Evocation Ticks',
-	labelTooltip: 'The number of ticks of Evocation to use, or 0 to use the full duration.',
-});
-
 export const FocusMagicUptime = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecMage>({
 	fieldName: 'focusMagicPercentUptime',
 	label: 'Focus Magic Percent Uptime',
@@ -42,43 +31,8 @@ export const FocusMagicUptime = InputHelpers.makeSpecOptionsNumberInput<Spec.Spe
 	extraCssClasses: ['within-raid-sim-hide'],
 });
 
-export const ReactionTime = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecMage>({
-	fieldName: 'reactionTimeMs',
-	label: 'Reaction Time (ms)',
-	labelTooltip: 'Duration, in milliseconds, for player reaction time. Only used for a few effects (Missile Barrage / Hot Streak / Brain Freeze).',
-});
-
 export const MageRotationConfig = {
 	inputs: [
-		InputHelpers.makeRotationEnumInput<Spec.SpecMage, RotationType>({
-			fieldName: 'type',
-			label: 'Spec',
-			labelTooltip: 'Switches between spec rotation settings. Will also update talents to defaults for the selected spec.',
-			values: [
-				{ name: 'Arcane', value: RotationType.Arcane },
-				{ name: 'Fire', value: RotationType.Fire },
-				{ name: 'Frost', value: RotationType.Frost },
-			],
-			setValue: (eventID: EventID, player: Player<Spec.SpecMage>, newValue: number) => {
-				const newRotation = player.getRotation();
-				newRotation.type = newValue;
-
-				TypedEvent.freezeAllAndDo(() => {
-					if (newRotation.type == RotationType.Arcane) {
-						player.setTalentsString(eventID, Presets.ArcaneTalents.data.talentsString);
-						player.setGlyphs(eventID, Presets.ArcaneTalents.data.glyphs!);
-					} else if (newRotation.type == RotationType.Fire) {
-						player.setTalentsString(eventID, Presets.FireTalents.data.talentsString);
-						player.setGlyphs(eventID, Presets.FireTalents.data.glyphs!);
-					} else if (newRotation.type == RotationType.Frost) {
-						player.setTalentsString(eventID, Presets.FrostTalents.data.talentsString);
-						player.setGlyphs(eventID, Presets.FrostTalents.data.glyphs!);
-					}
-
-					player.setRotation(eventID, newRotation);
-				});
-			},
-		}),
 		// ********************************************************
 		//                        AOE INPUTS
 		// ********************************************************
@@ -104,16 +58,6 @@ export const MageRotationConfig = {
 				{ name: 'Scorch', value: PrimaryFireSpell.Scorch },
 			],
 			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
-		}),
-		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
-			fieldName: 'pyroblastDelayMs',
-			label: 'Pyroblast Delay (ms)',
-			labelTooltip: `
-				<p>Adds a delay to Pyroblast after a Hot Streak to prevent ignite munching. 50ms is a good default for this.</p>
-				<p>There is no way to do this perfectly in-game, but a cqs macro can do this with about 70-90% reliability.</p>
-			`,
-			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire && player.getRotation().primaryFireSpell == PrimaryFireSpell.Fireball && player.getSpecOptions().igniteMunching,
-			changeEmitter: (player: Player<Spec.SpecMage>) => TypedEvent.onAny([player.rotationChangeEmitter, player.specOptionsChangeEmitter]),
 		}),
 		// ********************************************************
 		//                       FROST INPUTS

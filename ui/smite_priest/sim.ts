@@ -1,6 +1,9 @@
 import { PartyBuffs } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { Stat } from '../core/proto/common.js';
+import {
+	APLRotation,
+} from '../core/proto/apl.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
@@ -120,6 +123,10 @@ export class SmitePriestSimUI extends IndividualSimUI<Spec.SpecSmitePriest> {
 					Presets.PRERAID_PRESET,
 					Presets.P1_PRESET,
 				],
+			},
+
+			autoRotation: (_player: Player<Spec.SpecSmitePriest>): APLRotation => {
+				return Presets.ROTATION_PRESET_APL.rotation.rotation!;
 			},
 		});
 	}

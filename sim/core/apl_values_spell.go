@@ -174,3 +174,56 @@ func (value *APLValueSpellCPM) GetFloat(sim *Simulation) float64 {
 func (value *APLValueSpellCPM) String() string {
 	return fmt.Sprintf("CPM(%s)", value.spell.ActionID)
 }
+
+type APLValueSpellIsChanneling struct {
+	DefaultAPLValueImpl
+	spell *Spell
+}
+
+func (rot *APLRotation) newValueSpellIsChanneling(config *proto.APLValueSpellIsChanneling) APLValue {
+	spell := rot.GetAPLSpell(config.SpellId)
+	if spell == nil {
+		return nil
+	}
+	return &APLValueSpellIsChanneling{
+		spell: spell,
+	}
+}
+func (value *APLValueSpellIsChanneling) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeBool
+}
+func (value *APLValueSpellIsChanneling) GetBool(sim *Simulation) bool {
+	return value.spell.Unit.ChanneledDot != nil && value.spell.Unit.ChanneledDot.Spell == value.spell
+}
+func (value *APLValueSpellIsChanneling) String() string {
+	return fmt.Sprintf("IsChanneling(%s)", value.spell.ActionID)
+}
+
+type APLValueSpellChanneledTicks struct {
+	DefaultAPLValueImpl
+	spell *Spell
+}
+
+func (rot *APLRotation) newValueSpellChanneledTicks(config *proto.APLValueSpellChanneledTicks) APLValue {
+	spell := rot.GetAPLSpell(config.SpellId)
+	if spell == nil {
+		return nil
+	}
+	return &APLValueSpellChanneledTicks{
+		spell: spell,
+	}
+}
+func (value *APLValueSpellChanneledTicks) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeInt
+}
+func (value *APLValueSpellChanneledTicks) GetInt(sim *Simulation) int32 {
+	channeledDot := value.spell.Unit.ChanneledDot
+	if channeledDot == nil {
+		return 0
+	} else {
+		return channeledDot.TickCount
+	}
+}
+func (value *APLValueSpellChanneledTicks) String() string {
+	return fmt.Sprintf("ChanneledTicks(%s)", value.spell.ActionID)
+}

@@ -341,7 +341,7 @@ func (ai *HodirAI) registerFrozenBlowSpell(target *core.Target) {
 		if ai.FrozenBlowsAura.IsActive() {
 			return ai.FrozenBlowsAuto
 		} else {
-			return nil
+			return ai.Target.Unit.AutoAttacks.MHAuto
 		}
 	}
 
@@ -504,12 +504,14 @@ func (ai *HodirAI) DoAction(sim *core.Simulation) {
 		}
 	}
 
-	if ai.FrozenBlows.IsReady(sim) && sim.CurrentTime >= ai.FrozenBlows.CD.Duration {
-		ai.FrozenBlows.Cast(sim, nil)
-	}
+	if ai.Target.CurrentTarget != nil {
+		if ai.FrozenBlows.IsReady(sim) && sim.CurrentTime >= ai.FrozenBlows.CD.Duration {
+			ai.FrozenBlows.Cast(sim, nil)
+		}
 
-	if ai.FlashFreeze.IsReady(sim) && sim.CurrentTime >= ai.FlashFreeze.CD.Duration {
-		ai.FlashFreeze.Cast(sim, nil)
+		if ai.FlashFreeze.IsReady(sim) && sim.CurrentTime >= ai.FlashFreeze.CD.Duration {
+			ai.FlashFreeze.Cast(sim, nil)
+		}
 	}
 
 	if ai.Target.GCD.IsReady(sim) {

@@ -23,6 +23,7 @@ func TestHoly(t *testing.T) {
 		Glyphs:      StandardGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: BasicOptions},
+		Rotation:    core.RotationCombo{Label: "Default", Rotation: DefaultRotation},
 
 		IsHealer:        true,
 		InFrontOfTarget: true,
@@ -79,8 +80,6 @@ var StandardGlyphs = &proto.Glyphs{
 	Minor2: int32(proto.PaladinMinorGlyph_GlyphOfSenseUndead),
 }
 
-var defaultProtRotation = &proto.HolyPaladin_Rotation{}
-
 var defaultProtOptions = &proto.HolyPaladin_Options{
 	Judgement: proto.PaladinJudgement_JudgementOfWisdom,
 	Aura:      proto.PaladinAura_DevotionAura,
@@ -89,7 +88,7 @@ var defaultProtOptions = &proto.HolyPaladin_Options{
 var BasicOptions = &proto.Player_HolyPaladin{
 	HolyPaladin: &proto.HolyPaladin{
 		Options:  defaultProtOptions,
-		Rotation: defaultProtRotation,
+		Rotation: &proto.HolyPaladin_Rotation{},
 	},
 }
 
@@ -101,98 +100,29 @@ var FullConsumes = &proto.Consumes{
 	DefaultConjured: proto.Conjured_ConjuredDarkRune,
 }
 
+var DefaultRotation = core.APLRotationFromJsonString(`{
+	"type": "TypeAPL",
+	"priorityList": [
+		{"action":{"autocastOtherCooldowns":{}}}
+	]
+}`)
+
 var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
-	{
-		"id": 40298,
-		"enchant": 3819,
-		"gems": [
-			41401,
-			40012
-		]
-	},
-	{
-		"id": 44662,
-		"gems": [
-			40012
-		]
-	},
-	{
-		"id": 40573,
-		"enchant": 3809,
-		"gems": [
-			40012
-		]
-	},
-	{
-		"id": 44005,
-		"enchant": 3831,
-		"gems": [
-			40012
-		]
-	},
-	{
-		"id": 40569,
-		"enchant": 3832,
-		"gems": [
-			40012,
-			40012
-		]
-	},
-	{
-		"id": 40332,
-		"enchant": 1119,
-		"gems": [
-			40012,
-			0
-		]
-	},
-	{
-		"id": 40570,
-		"enchant": 3604,
-		"gems": [
-			40012,
-			0
-		]
-	},
-	{
-		"id": 40259,
-		"gems": [
-			40012
-		]
-	},
-	{
-		"id": 40572,
-		"enchant": 3721,
-		"gems": [
-			40027,
-			40012
-		]
-	},
-	{
-		"id": 40592,
-		"enchant": 3606
-	},
-	{
-		"id": 40399
-	},
-	{
-		"id": 40375
-	},
-	{
-		"id": 44255
-	},
-	{
-		"id": 37111
-	},
-	{
-		"id": 40395,
-		"enchant": 2666
-	},
-	{
-		"id": 40401,
-		"enchant": 1128
-	},
-	{
-		"id": 40705
-	}
+	{"id":40298,"enchant":3819,"gems":[41401,40012]},
+	{"id":44662,"gems":[40012]},
+	{"id":40573,"enchant":3809,"gems":[40012]},
+	{"id":44005,"enchant":3831,"gems":[40012]},
+	{"id":40569,"enchant":3832,"gems":[40012,40012]},
+	{"id":40332,"enchant":1119,"gems":[40012,0]},
+	{"id":40570,"enchant":3604,"gems":[40012,0]},
+	{"id":40259,"gems":[40012]},
+	{"id":40572,"enchant":3721,"gems":[40027,40012]},
+	{"id":40592,"enchant":3606},
+	{"id":40399},
+	{"id":40375},
+	{"id":44255},
+	{"id":37111},
+	{"id":40395,"enchant":2666},
+	{"id":40401,"enchant":1128},
+	{"id":40705}
 ]}`)

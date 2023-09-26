@@ -12,6 +12,10 @@ import (
 // }
 
 func (eleShaman *ElementalShaman) OnGCDReady(sim *core.Simulation) {
+	if eleShaman.IsUsingAPL {
+		return
+	}
+
 	eleShaman.tryUseGCD(sim)
 }
 

@@ -107,7 +107,7 @@ func (unit *Unit) WaitUntil(sim *Simulation, readyTime time.Duration) {
 	}
 	unit.waitStartTime = sim.CurrentTime
 	unit.SetGCDTimer(sim, readyTime)
-	if sim.Log != nil {
+	if sim.Log != nil && readyTime > sim.CurrentTime {
 		unit.Log(sim, "Pausing GCD for %s due to rotation / CDs.", readyTime-sim.CurrentTime)
 	}
 }

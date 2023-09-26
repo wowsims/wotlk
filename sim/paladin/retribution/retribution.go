@@ -171,6 +171,8 @@ func (ret *RetributionPaladin) Reset(sim *core.Simulation) {
 		ret.SealOfRighteousnessAura.Activate(sim)
 	}
 
-	ret.DivinePleaAura.Activate(sim)
-	ret.DivinePlea.CD.Use(sim)
+	if !ret.IsUsingAPL {
+		ret.DivinePleaAura.Activate(sim)
+		ret.DivinePlea.CD.Use(sim)
+	}
 }

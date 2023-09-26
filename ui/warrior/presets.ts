@@ -105,7 +105,7 @@ export const ROTATION_FURY = {
 		specRotationOptionsJson: WarriorRotation.toJsonString(WarriorRotation.create({
 		})),
 		rotation: APLRotation.fromJsonString(`{
-			"enabled": true,
+			"type": "TypeAPL",
 			"prepullActions": [
 				{"action":{"castSpell":{"spellId":{"spellId":47436}}},"doAtValue":{"const":{"val":"-10s"}}},
 				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}

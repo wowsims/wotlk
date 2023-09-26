@@ -72,7 +72,6 @@ export const HunterRotationConfig = {
 			values: [
 				{ name: 'Single Target', value: RotationType.SingleTarget },
 				{ name: 'AOE', value: RotationType.Aoe },
-				{ name: 'Custom', value: RotationType.Custom },
 			],
 		}),
 		InputHelpers.makeRotationEnumInput<Spec.SpecHunter, StingType>({
@@ -90,12 +89,6 @@ export const HunterRotationConfig = {
 			fieldName: 'trapWeave',
 			label: 'Trap Weave',
 			labelTooltip: 'Uses Explosive Trap at appropriate times. Note that selecting this will disable Black Arrow because they share a CD.',
-			showWhen: (player: Player<Spec.SpecHunter>) => player.getRotation().type != RotationType.Custom,
-		}),
-		InputHelpers.makeRotationNumberInput<Spec.SpecHunter>({
-			fieldName: 'steadyShotMaxDelay',
-			label: 'Steady Shot Max Delay (ms)',
-			labelTooltip: 'If another higher-priority spell comes off cooldown in the specified time then steady shot is not cast and the rotation waits',
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecHunter>({
 			fieldName: 'allowExplosiveShotDownrank',
@@ -109,26 +102,6 @@ export const HunterRotationConfig = {
 			label: 'Multi-Dot Serpent Sting',
 			labelTooltip: 'Casts Serpent Sting on multiple targets',
 			changeEmitter: (player: Player<Spec.SpecHunter>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-		}),
-		InputHelpers.makeCustomRotationInput<Spec.SpecHunter, SpellOption>({
-			fieldName: 'customRotation',
-			numColumns: 2,
-			values: [
-				{ actionId: ActionId.fromSpellId(49052), value: SpellOption.SteadyShot },
-				{ actionId: ActionId.fromSpellId(49045), value: SpellOption.ArcaneShot },
-				{ actionId: ActionId.fromSpellId(49050), value: SpellOption.AimedShot },
-				{ actionId: ActionId.fromSpellId(49048), value: SpellOption.MultiShot },
-				{ actionId: ActionId.fromSpellId(49001), value: SpellOption.SerpentStingSpell },
-				{ actionId: ActionId.fromSpellId(3043), value: SpellOption.ScorpidStingSpell },
-				{ actionId: ActionId.fromSpellId(61006), value: SpellOption.KillShot },
-				{ actionId: ActionId.fromSpellId(63672), value: SpellOption.BlackArrow },
-				{ actionId: ActionId.fromSpellId(53209), value: SpellOption.ChimeraShot },
-				{ actionId: ActionId.fromSpellId(60053), value: SpellOption.ExplosiveShot, text: 'R4' },
-				{ actionId: ActionId.fromSpellId(60052), value: SpellOption.ExplosiveShotDownrank, text: 'R3' },
-				{ actionId: ActionId.fromSpellId(49067), value: SpellOption.ExplosiveTrap },
-				{ actionId: ActionId.fromSpellId(58434), value: SpellOption.Volley },
-			],
-			showWhen: (player: Player<Spec.SpecHunter>) => player.getRotation().type == RotationType.Custom,
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecHunter>({
 			fieldName: 'viperStartManaPercent',

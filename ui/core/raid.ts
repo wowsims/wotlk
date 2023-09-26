@@ -221,9 +221,9 @@ export class Raid {
 		return this.activePlayers;
 	}
 
-	toProto(forExport?: boolean): RaidProto {
+	toProto(forExport?: boolean, forSimming?: boolean): RaidProto {
 		return RaidProto.create({
-			parties: this.parties.map(party => party.toProto(forExport)),
+			parties: this.parties.map(party => party.toProto(forExport, forSimming)),
 			buffs: this.getBuffs(),
 			debuffs: this.getDebuffs(),
 			tanks: this.getTanks(),

@@ -18,6 +18,12 @@ const (
 	FuStrike_Obliterate    Rotation_FuStrike = 2
 )
 
+const (
+	PetSpellHitScale  = 17.0 / 8.0 * core.SpellHitRatingPerHitChance / core.MeleeHitRatingPerHitChance    // 1.7
+	PetExpertiseScale = 3.25 * core.ExpertisePerQuarterPercentReduction / core.MeleeHitRatingPerHitChance // 0.8125
+	PetHasteScale     = core.HasteRatingPerHastePercent / (core.HasteRatingPerHastePercent / 1.3)         // 1.3
+)
+
 var TalentTreeSizes = [3]int{28, 29, 31}
 
 type DeathknightInputs struct {
@@ -517,19 +523,6 @@ func (dk *Deathknight) AverageDSHeal() float64 {
 	} else {
 		return 0
 	}
-}
-
-func init() {
-	core.AddBaseStatsCombo(proto.Race_RaceDraenei, proto.Class_ClassDeathknight)
-	core.AddBaseStatsCombo(proto.Race_RaceDwarf, proto.Class_ClassDeathknight)
-	core.AddBaseStatsCombo(proto.Race_RaceGnome, proto.Class_ClassDeathknight)
-	core.AddBaseStatsCombo(proto.Race_RaceHuman, proto.Class_ClassDeathknight)
-	core.AddBaseStatsCombo(proto.Race_RaceNightElf, proto.Class_ClassDeathknight)
-	core.AddBaseStatsCombo(proto.Race_RaceOrc, proto.Class_ClassDeathknight)
-	core.AddBaseStatsCombo(proto.Race_RaceTauren, proto.Class_ClassDeathknight)
-	core.AddBaseStatsCombo(proto.Race_RaceTroll, proto.Class_ClassDeathknight)
-	core.AddBaseStatsCombo(proto.Race_RaceUndead, proto.Class_ClassDeathknight)
-	core.AddBaseStatsCombo(proto.Race_RaceBloodElf, proto.Class_ClassDeathknight)
 }
 
 // Agent is a generic way to access underlying warrior on any of the agents.

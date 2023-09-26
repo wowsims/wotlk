@@ -63,6 +63,7 @@ message Player {
 	APLRotation rotation = 40;
 
 	int32 reaction_time_ms = 41;
+	int32 channel_clip_delay_ms = 42;
 	bool in_front_of_target = 23;
 	double distance_from_target = 33;
 
@@ -305,6 +306,7 @@ message SpellStats {
 	ActionID id = 1;
 
 	bool is_castable = 2; // Whether this spell may be cast by the APL logic.
+	bool is_channeled = 7; // Whether this spell is a channeled spell (Mind Flay, Drain Soul, etc).
 	bool is_major_cooldown = 3; // Whether this spell is a major cooldown.
 	bool has_dot = 4; // Whether this spell applies a DoT effect.
 	bool has_shield = 6; // Whether this spell applies a shield effect.

@@ -68,7 +68,7 @@ export const ROTATION_DEFAULT = {
 		specRotationOptionsJson: ProtectionPaladinRotation.toJsonString(ProtectionPaladinRotation.create({
 		})),
 		rotation: APLRotation.fromJsonString(`{
-			"enabled": true,
+			"type": "TypeAPL",
 			"prepullActions": [
 				{"action":{"castSpell":{"spellId":{"spellId":48952}}},"doAtValue":{"const":{"val":"-3s"}}},
 				{"action":{"castSpell":{"spellId":{"spellId":54428}}},"doAtValue":{"const":{"val":"-1500ms"}}},

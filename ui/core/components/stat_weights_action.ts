@@ -225,16 +225,7 @@ class EpWeightsMenu extends BaseModal {
 			</div>
 		`;
 		this.footer!.innerHTML = `
-			<button
-				class="btn btn-primary optimize-gems experimental me-2"
-				data-bs-toggle="tooltip"
-				data-bs-title="
-					<p><span class='warning link-warning'><i class='fa fa-exclamation-triangle'></i> WARNING</span> This feature is experimental, and will not always produce the most optimal gems especially when interacting with soft/hard stat caps.</p>
-					<p>Optimizes equipped gems to maximize EP, based on the values in <b>Current EP</b>.</p>
-					<p class='mb-0'>Does not change the meta gem, but ensures that its condition is met. Uses JC gems if Jewelcrafting is a selected profession.</p>
-				"
-				data-bs-html="true"
-			>
+			<button class="btn btn-primary optimize-gems experimental me-2">
 				Optimize Gems
 			</button>
 			<button class="btn btn-primary calc-weights">
@@ -315,7 +306,12 @@ class EpWeightsMenu extends BaseModal {
 		});
 
 		const optimizeGemsButton = this.rootElem.getElementsByClassName('optimize-gems')[0] as HTMLElement;
-		Tooltip.getOrCreateInstance(optimizeGemsButton);
+		Tooltip.getOrCreateInstance(optimizeGemsButton, {
+			html: true,
+			title: `<p><span class='warning link-warning'><i class='fa fa-exclamation-triangle'></i> WARNING</span> This feature is experimental, and will not always produce the most optimal gems especially when interacting with soft/hard stat caps.</p>
+			<p>Optimizes equipped gems to maximize EP, based on the values in <b>Current EP</b>.</p>
+			<p class='mb-0'>Does not change the meta gem, but ensures that its condition is met. Uses JC gems if Jewelcrafting is a selected profession.</p>`
+		});
 		optimizeGemsButton.addEventListener('click', async event => {
 			const previousContents = optimizeGemsButton.innerHTML;
 			optimizeGemsButton.classList.add('disabled');
@@ -362,12 +358,12 @@ class EpWeightsMenu extends BaseModal {
 				html: true,
 				title: title
 			};
-			button.setAttribute('data-bs-toggle', 'tooltip');
-			button.setAttribute('data-bs-title', tooltip);
-			button.setAttribute('data-bs-html', 'true');
 
 			new Tooltip(label, labelTooltipConfig);
-			Tooltip.getOrCreateInstance(button);
+			Tooltip.getOrCreateInstance(button, {
+				title: tooltip,
+				html: true,
+			});
 
 			button.addEventListener('click', event => {
 				this.simUI.player.setEpWeights(TypedEvent.nextEventID(), Stats.fromProto(weightsFunc()));
@@ -423,11 +419,9 @@ class EpWeightsMenu extends BaseModal {
 		weightRatioCells.forEach(makeEpRatioCell);
 
 		const updateButton = this.rootElem.getElementsByClassName('compute-ep')[0] as HTMLElement;
-		updateButton.setAttribute('data-bs-toggle', 'tooltip');
-		updateButton.setAttribute('data-bs-title', "Compute Weighted EP");
-		updateButton.setAttribute('data-bs-html', 'true');
-
-		Tooltip.getOrCreateInstance(updateButton);
+		Tooltip.getOrCreateInstance(updateButton, {
+			title: "Compute Weighted EP"
+		});
 
 		updateButton.addEventListener('click', event => {
 			const results = this.getPrevSimResult();

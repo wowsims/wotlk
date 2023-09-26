@@ -1,12 +1,9 @@
-import { RaidBuffs } from '../core/proto/common.js';
+import { APLRotation } from '../core/proto/apl.js';
+import { HandType, RaidBuffs } from '../core/proto/common.js';
 import { PartyBuffs } from '../core/proto/common.js';
 import { IndividualBuffs } from '../core/proto/common.js';
 import { Debuffs } from '../core/proto/common.js';
-import { Class } from '../core/proto/common.js';
-import { Consumes } from '../core/proto/common.js';
-import { Encounter } from '../core/proto/common.js';
 import { ItemSlot } from '../core/proto/common.js';
-import { MobType } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { Stat, PseudoStat } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js'
@@ -130,6 +127,41 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 				}),
 			},
 
+			autoRotation: (player: Player<Spec.SpecDeathknight>): APLRotation => {
+				const talentTree = player.getTalentTree();
+				const numTargets = player.sim.encounter.targets.length;
+				switch (talentTree) {
+					case 0: 
+						if (player.getSpecOptions().drwPestiApply || numTargets > 1) {
+							if (numTargets > 5) {
+								return Presets.BLOOD_PESTI_AOE_ROTATION_PRESET_DEFAULT.rotation.rotation!;
+							} else {
+								return Presets.BLOOD_PESTI_ROTATION_PRESET_DEFAULT.rotation.rotation!;
+							}
+						} else {
+							return Presets.BLOOD_PESTI_DD_ROTATION_PRESET_DEFAULT.rotation.rotation!;
+						}
+					case 1: 
+						const talentPoints = player.getTalentTreePoints()
+						// TODO: Add Frost AOE rotation
+						if (talentPoints[0] > talentPoints[2]) {
+							return Presets.FROST_BL_PESTI_ROTATION_PRESET_DEFAULT.rotation.rotation!;
+						} else {
+							return Presets.FROST_UH_PESTI_ROTATION_PRESET_DEFAULT.rotation.rotation!;
+						}
+					default: 
+						if (numTargets > 1) {
+							return Presets.UNHOLY_DND_AOE_ROTATION_PRESET_DEFAULT.rotation.rotation!;
+						} else {
+							if (player.getEquippedItem(ItemSlot.ItemSlotMainHand)!.item.handType == HandType.HandTypeTwoHand) {
+								return Presets.UNHOLY_2H_ROTATION_PRESET_DEFAULT.rotation.rotation!;
+							} else {
+								return Presets.UNHOLY_DW_ROTATION_PRESET_DEFAULT.rotation.rotation!;
+							}
+						}
+				}
+			},
+
 			// IconInputs to include in the 'Player' section on the settings tab.
 			playerIconInputs: [
 			],
@@ -186,6 +218,8 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 					Presets.FROST_ROTATION_PRESET_LEGACY_DEFAULT,
 					Presets.UNHOLY_DW_ROTATION_PRESET_LEGACY_DEFAULT,
 					Presets.BLOOD_PESTI_ROTATION_PRESET_DEFAULT,
+					Presets.BLOOD_PESTI_DD_ROTATION_PRESET_DEFAULT,
+					Presets.BLOOD_PESTI_AOE_ROTATION_PRESET_DEFAULT,
 					Presets.FROST_BL_PESTI_ROTATION_PRESET_DEFAULT,
 					Presets.FROST_UH_PESTI_ROTATION_PRESET_DEFAULT,
 					Presets.UNHOLY_DW_ROTATION_PRESET_DEFAULT,
@@ -197,12 +231,16 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 					Presets.P1_BLOOD_BIS_PRESET,
 					Presets.P2_BLOOD_BIS_PRESET,
 					Presets.P3_BLOOD_BIS_PRESET,
+					Presets.P4_BLOOD_BIS_PRESET,
 					Presets.P1_FROST_BIS_PRESET,
 					Presets.P2_FROST_BIS_PRESET,
 					Presets.P3_FROST_BIS_PRESET,
+					Presets.P4_FROST_BIS_PRESET,
 					Presets.P1_UNHOLY_DW_BIS_PRESET,
 					Presets.P2_UNHOLY_DW_BIS_PRESET,
 					Presets.P3_UNHOLY_DW_BIS_PRESET,
+					Presets.P4_UNHOLY_DW_BIS_PRESET,
+					Presets.P4_UNHOLY_2H_BIS_PRESET,
 					// Not needed anymore just filling ui Space
 					// Disabled on purpose
 					//Presets.P1_FROSTSUBUNH_BIS_PRESET,

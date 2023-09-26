@@ -6,9 +6,6 @@ import { orderedResourceTypes } from '../../proto_utils/utils.js';
 import { ColumnSortType, MetricsTable } from './metrics_table.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
 
-declare var $: any;
-declare var tippy: any;
-
 export class ResourceMetricsTable extends ResultComponent {
 	constructor(config: ResultComponentConfig) {
 		config.rootCssClass = 'resource-metrics-root';

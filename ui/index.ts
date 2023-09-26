@@ -1,6 +1,5 @@
 import * as Popper from '@popperjs/core';
 import * as bootstrap from 'bootstrap';
-import tippy from 'tippy.js';
 
 import './shared/bootstrap_overrides';
 
@@ -8,13 +7,11 @@ declare global {
 	interface Window {
 		Popper: any;
 		bootstrap: any;
-		tippy: any;
 	}
 }
 
 window.Popper = Popper;
 window.bootstrap = bootstrap;
-window.tippy = tippy;
 
 // Force scroll to top when refreshing
 if (history.scrollRestoration) {

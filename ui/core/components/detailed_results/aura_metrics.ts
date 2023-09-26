@@ -4,9 +4,6 @@ import { AuraMetrics, SimResult, SimResultFilter } from '../../proto_utils/sim_r
 import { ColumnSortType, MetricsTable } from './metrics_table';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component';
 
-declare var $: any;
-declare var tippy: any;
-
 export class AuraMetricsTable extends MetricsTable<AuraMetrics> {
 	private readonly useDebuffs: boolean;
 

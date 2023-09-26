@@ -152,7 +152,7 @@ message ShadowPriest {
 		}
 		RotationType rotation_type = 1;
 		PreCastOption precast_type = 2;
-		double latency = 3; // Latency between actions
+		double latency = 3 [deprecated = true]; // Latency between actions
 	}
 	Rotation rotation = 1;
 	
@@ -167,7 +167,7 @@ message ShadowPriest {
 		bool use_mind_blast = 4;
 		bool use_shadow_word_death = 5;
 		UnitReference power_infusion_target = 6;
-		double latency = 7; // Latency between actions
+		double latency = 7 [deprecated = true]; // Latency between actions
 	}
 	Options options = 3;
 }

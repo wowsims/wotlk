@@ -168,9 +168,29 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 	// Default the other damage multiplier to 1 if only one or the other is set.
 	if config.DamageMultiplier != 0 && config.DamageMultiplierAdditive == 0 {
 		config.DamageMultiplierAdditive = 1
-	}
-	if config.DamageMultiplierAdditive != 0 && config.DamageMultiplier == 0 {
+	} else if config.DamageMultiplierAdditive != 0 && config.DamageMultiplier == 0 {
 		config.DamageMultiplier = 1
+	}
+
+	if unit.IsUsingAPL {
+		config.Cast.DefaultCast.ChannelTime = 0
+		config.Cast.DefaultCast.AfterCastDelay = 0
+	}
+
+	if (config.DamageMultiplier != 0 || config.ThreatMultiplier != 0) && config.ProcMask == ProcMaskUnknown {
+		panic("ProcMask for spell " + config.ActionID.String() + " not set")
+	}
+
+	if (config.DamageMultiplier != 0 || config.ThreatMultiplier != 0) && config.SpellSchool == SpellSchoolNone {
+		panic("SpellSchool for spell " + config.ActionID.String() + " not set")
+	}
+
+	if config.Cast.CD.Timer != nil && config.Cast.CD.Duration == 0 {
+		panic("Cast.CD w/o Duration specified for spell " + config.ActionID.String())
+	}
+
+	if config.Cast.SharedCD.Timer != nil && config.Cast.SharedCD.Duration == 0 {
+		panic("Cast.SharedCD w/o Duration specified for spell " + config.ActionID.String())
 	}
 
 	spell := &Spell{
@@ -209,14 +229,6 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		RelatedAuras: config.RelatedAuras,
 	}
 
-	if (spell.DamageMultiplier != 0 || spell.ThreatMultiplier != 0) && spell.ProcMask == ProcMaskUnknown {
-		panic("Unknown proc mask on " + spell.ActionID.String())
-	}
-
-	if (spell.DamageMultiplier != 0 || spell.ThreatMultiplier != 0) && spell.SpellSchool == SpellSchoolNone {
-		panic("SpellSchool for spell " + spell.ActionID.String() + " not set")
-	}
-
 	switch {
 	case spell.SpellSchool.Matches(SpellSchoolPhysical):
 		spell.SchoolIndex = stats.SchoolIndexPhysical
@@ -234,6 +246,7 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		spell.SchoolIndex = stats.SchoolIndexShadow
 	}
 
+	// newXXXCost() all update spell.DefaultCast.Cost
 	if config.ManaCost.BaseCost != 0 || config.ManaCost.FlatCost != 0 {
 		spell.Cost = newManaCost(spell, config.ManaCost)
 	} else if config.EnergyCost.Cost != 0 {
@@ -250,7 +263,25 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 	spell.createDots(config.Hot, true)
 	spell.createShields(config.Shield)
 
-	spell.castFn = spell.makeCastFunc(config.Cast, spell.applyEffects)
+	var emptyCast Cast
+
+	if spell.DefaultCast == emptyCast && spell.Cost != nil {
+		panic("Empty DefaultCast with a cost for spell " + config.ActionID.String())
+	}
+
+	if spell.DefaultCast.GCD == 0 && spell.DefaultCast.CastTime == 0 && spell.DefaultCast.ChannelTime == 0 {
+		config.Cast.IgnoreHaste = true
+	}
+
+	if spell.DefaultCast == emptyCast {
+		if config.ExtraCastCondition == nil && config.Cast.CD.Timer == nil && config.Cast.SharedCD.Timer == nil {
+			spell.castFn = spell.makeCastFuncAutosOrProcs()
+		} else {
+			spell.castFn = spell.makeCastFuncSimple()
+		}
+	} else {
+		spell.castFn = spell.makeCastFunc(config.Cast)
+	}
 
 	if spell.ApplyEffects == nil {
 		spell.ApplyEffects = func(*Simulation, *Unit, *Spell) {}
@@ -499,17 +530,9 @@ func (spell *Spell) SkipCastAndApplyEffects(sim *Simulation, target *Unit) {
 }
 
 func (spell *Spell) applyEffects(sim *Simulation, target *Unit) {
-	if spell.SpellMetrics == nil {
-		spell.reset(sim)
-	}
-	if target == nil {
-		target = spell.Unit.CurrentTarget
-	}
-	// target can still be null in individual sims when the caster is the enemy target
-	if target != nil {
-		spell.SpellMetrics[target.UnitIndex].Casts++
-		spell.casts++
-	}
+	spell.SpellMetrics[target.UnitIndex].Casts++
+	spell.casts++
+
 	spell.ApplyEffects(sim, target, spell)
 }
 

@@ -37,12 +37,6 @@ export const ShadowfiendInput = InputHelpers.makeSpecOptionsBooleanIconInput<Spe
 	id: ActionId.fromSpellId(34433),
 });
 
-export const MindFlayLatencyInput = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecShadowPriest>({
-	fieldName: 'latency',
-	label: 'Channeling Latency (ms)',
-	labelTooltip: 'Latency after a channel that lasts longer than GCD. 0 to disable. Has a minimum value of 100ms if set.',
-});
-
 export const ShadowPriestRotationConfig = {
 	inputs: [
 		InputHelpers.makeRotationEnumInput<Spec.SpecShadowPriest, RotationType>({

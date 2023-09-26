@@ -2,7 +2,6 @@ package core
 
 import (
 	"fmt"
-
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -10,26 +9,23 @@ import (
 
 var WITH_DB = false
 
-var ItemsByID map[int32]Item
-var GemsByID map[int32]Gem
-var EnchantsByEffectID map[int32]Enchant
+var ItemsByID = map[int32]Item{}
+var GemsByID = map[int32]Gem{}
+var EnchantsByEffectID = map[int32]Enchant{}
 
 func addToDatabase(newDB *proto.SimDatabase) {
-	ItemsByID = make(map[int32]Item, len(newDB.Items))
 	for _, v := range newDB.Items {
 		if _, ok := ItemsByID[v.Id]; !ok {
 			ItemsByID[v.Id] = ItemFromProto(v)
 		}
 	}
 
-	EnchantsByEffectID = make(map[int32]Enchant, len(newDB.Enchants))
 	for _, v := range newDB.Enchants {
 		if _, ok := EnchantsByEffectID[v.EffectId]; !ok {
 			EnchantsByEffectID[v.EffectId] = EnchantFromProto(v)
 		}
 	}
 
-	GemsByID = make(map[int32]Gem, len(newDB.Gems))
 	for _, v := range newDB.Gems {
 		if _, ok := GemsByID[v.Id]; !ok {
 			GemsByID[v.Id] = GemFromProto(v)
@@ -400,7 +396,7 @@ func ColorIntersects(g proto.GemColor, o proto.GemColor) bool {
 		return true
 	}
 	if g == proto.GemColor_GemColorMeta {
-		return false // meta gems o nothing.
+		return o == proto.GemColor_GemColorUnknown
 	}
 	if g == proto.GemColor_GemColorRed {
 		return o == proto.GemColor_GemColorOrange || o == proto.GemColor_GemColorPurple

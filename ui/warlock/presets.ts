@@ -526,7 +526,7 @@ export const APL_Demo_Default = {
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: WarlockRotation.toJsonString(DemonologyRotation),
 		rotation: APLRotation.fromJsonString(`{
-    "enabled": true,
+    "type": 3,
     "prepullActions": [
 	  {"action":{"castSpell":{"spellId":{"spellId":57946}}},"doAtValue":{"const":{"val":"-4s"}}},
       {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-2.5s"}}},
@@ -582,7 +582,7 @@ export const APL_Destro_Default = {
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: WarlockRotation.toJsonString(DestructionRotation),
 		rotation: APLRotation.fromJsonString(`{
-    "enabled": true,
+    "type": 3,
     "prepullActions": [
 	  {"action":{"castSpell":{"spellId":{"spellId":57946}}},"doAtValue":{"const":{"val":"-5s"}}},
       {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-3.5s"}}},

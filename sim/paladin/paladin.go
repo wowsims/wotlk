@@ -208,10 +208,3 @@ func NewPaladin(character core.Character, talentsStr string) *Paladin {
 func (paladin *Paladin) GetMutualLockoutDPAW() *core.Timer {
 	return paladin.Character.GetOrInitTimer(&paladin.mutualLockoutDPAW)
 }
-
-func init() {
-	core.AddBaseStatsCombo(proto.Race_RaceBloodElf, proto.Class_ClassPaladin)
-	core.AddBaseStatsCombo(proto.Race_RaceDraenei, proto.Class_ClassPaladin)
-	core.AddBaseStatsCombo(proto.Race_RaceHuman, proto.Class_ClassPaladin)
-	core.AddBaseStatsCombo(proto.Race_RaceDwarf, proto.Class_ClassPaladin)
-}

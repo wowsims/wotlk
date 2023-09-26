@@ -457,10 +457,3 @@ func (shaman *Shaman) ElementalCritMultiplier(secondary float64) float64 {
 	critBonus := 0.2*float64(shaman.Talents.ElementalFury) + secondary
 	return shaman.SpellCritMultiplier(1, critBonus)
 }
-
-func init() {
-	core.AddBaseStatsCombo(proto.Race_RaceDraenei, proto.Class_ClassShaman)
-	core.AddBaseStatsCombo(proto.Race_RaceOrc, proto.Class_ClassShaman)
-	core.AddBaseStatsCombo(proto.Race_RaceTauren, proto.Class_ClassShaman)
-	core.AddBaseStatsCombo(proto.Race_RaceTroll, proto.Class_ClassShaman)
-}

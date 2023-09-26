@@ -42,7 +42,9 @@ type Priest struct {
 	ShadowWordPain  *core.Spell
 	MindBlast       *core.Spell
 	MindFlay        []*core.Spell
+	MindFlayAPL     *core.Spell
 	MindSear        []*core.Spell
+	MindSearAPL     *core.Spell
 	Penance         *core.Spell
 	PenanceHeal     *core.Spell
 	PowerWordShield *core.Spell
@@ -132,6 +134,11 @@ func (priest *Priest) Initialize() {
 
 	priest.registerPowerInfusionCD()
 
+	if priest.IsUsingAPL {
+		priest.MindFlayAPL = priest.newMindFlaySpell(0)
+		priest.MindSearAPL = priest.newMindSearSpell(0)
+	}
+
 	priest.MindFlay = []*core.Spell{
 		nil, // So we can use # of ticks as the index
 		priest.newMindFlaySpell(1),
@@ -190,16 +197,6 @@ func New(char core.Character, selfBuffs SelfBuffs, talents string) *Priest {
 	}
 
 	return priest
-}
-
-func init() {
-	core.AddBaseStatsCombo(proto.Race_RaceHuman, proto.Class_ClassPriest)
-	core.AddBaseStatsCombo(proto.Race_RaceDwarf, proto.Class_ClassPriest)
-	core.AddBaseStatsCombo(proto.Race_RaceNightElf, proto.Class_ClassPriest)
-	core.AddBaseStatsCombo(proto.Race_RaceDraenei, proto.Class_ClassPriest)
-	core.AddBaseStatsCombo(proto.Race_RaceUndead, proto.Class_ClassPriest)
-	core.AddBaseStatsCombo(proto.Race_RaceTroll, proto.Class_ClassPriest)
-	core.AddBaseStatsCombo(proto.Race_RaceBloodElf, proto.Class_ClassPriest)
 }
 
 // Agent is a generic way to access underlying priest on any of the agents.

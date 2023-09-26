@@ -6,7 +6,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-func (dk *Deathknight) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
+func (dk *Deathknight) OnAutoAttack(_ *core.Simulation, _ *core.Spell) {
 }
 
 func (dk *Deathknight) OnGCDReady(sim *core.Simulation) {
@@ -218,12 +218,7 @@ func (dk *Deathknight) RotationActionCallback_RD(sim *core.Simulation, target *c
 	return -1
 }
 
-func (dk *Deathknight) RotationActionCallback_Reset(sim *core.Simulation, target *core.Unit, s *Sequence) time.Duration {
-	s.Reset()
-	return -1
-}
-
-func (s *Sequence) DoAction(sim *core.Simulation, target *core.Unit, dk *Deathknight) time.Duration {
+func (s *Sequence) DoAction(sim *core.Simulation, target *core.Unit, _ *Deathknight) time.Duration {
 	action := s.actions[s.idx]
 	return action(sim, target, s)
 }
@@ -253,7 +248,9 @@ func (dk *Deathknight) Wait(sim *core.Simulation) {
 			if target.AutoAttacks.OffhandSwingAt > sim.CurrentTime {
 				targetSwingAt = core.MinDuration(targetSwingAt, target.AutoAttacks.OffhandSwingAt)
 			}
-			waitUntil = core.MinDuration(waitUntil, targetSwingAt)
+			if targetSwingAt > sim.CurrentTime {
+				waitUntil = core.MinDuration(waitUntil, targetSwingAt)
+			}
 		}
 	}
 

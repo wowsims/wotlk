@@ -3,9 +3,10 @@ import { ActionId } from '../../proto_utils/action_id.js';
 import { EventID, TypedEvent } from '../../typed_event.js';
 
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
+import tippy from 'tippy.js'
+import { element, fragment, ref } from 'tsx-vanilla'
 
 declare var $: any;
-declare var tippy: any;
 
 export enum ColumnSortType {
 	None,
@@ -39,15 +40,15 @@ export abstract class MetricsTable<T> extends ResultComponent {
 		super(config);
 		this.columnConfigs = columnConfigs;
 
-		this.rootElem.innerHTML = `
-		<table class="metrics-table tablesorter">
-			<thead class="metrics-table-header">
-				<tr class="metrics-table-header-row"></tr>
-			</thead>
-			<tbody class="metrics-table-body">
-			</tbody>
-		</table>
-		`;
+		this.rootElem.appendChild(
+			<table className="metrics-table tablesorter">
+				<thead className="metrics-table-header">
+					<tr className="metrics-table-header-row"></tr>
+				</thead>
+				<tbody className="metrics-table-body">
+				</tbody>
+			</table>
+		);
 
 		this.tableElem = this.rootElem.getElementsByClassName('metrics-table')[0] as HTMLTableSectionElement;
 		this.bodyElem = this.rootElem.getElementsByClassName('metrics-table-body')[0] as HTMLElement;
@@ -62,11 +63,11 @@ export abstract class MetricsTable<T> extends ResultComponent {
 			if (columnConfig.columnClass) {
 				headerCell.classList.add(columnConfig.columnClass);
 			}
-			headerCell.innerHTML = `<span>${columnConfig.name}</span>`;
+			headerCell.appendChild(<span>{columnConfig.name}</span>);
 			if (columnConfig.tooltip) {
 				tippy(headerCell, {
-					'content': columnConfig.tooltip,
-					'allowHTML': true,
+					content: columnConfig.tooltip,
+					ignoreAttributes: true,
 				});
 			}
 			headerRowElem.appendChild(headerCell);
@@ -187,15 +188,16 @@ export abstract class MetricsTable<T> extends ResultComponent {
 			name: 'Name',
 			fillCell: (metric: T, cellElem: HTMLElement, rowElem: HTMLElement) => {
 				const data = getData(metric);
-				cellElem.innerHTML = `
-				<a class="metrics-action-icon"></a>
-				<span class="metrics-action-name">${data.name}</span>
-				<span class="expand-toggle fa fa-caret-down"></span>
-				<span class="expand-toggle fa fa-caret-right"></span>
-				`;
-
-				const iconElem = cellElem.getElementsByClassName('metrics-action-icon')[0] as HTMLAnchorElement;
-				data.actionId.setBackgroundAndHref(iconElem);
+				const iconElem = ref<HTMLAnchorElement>();
+				cellElem.appendChild(
+					<>
+						<a ref={iconElem} className="metrics-action-icon"></a>
+						<span className="metrics-action-name">{data.name}</span>
+						<span className="expand-toggle fa fa-caret-down"></span>
+						<span className="expand-toggle fa fa-caret-right"></span>
+					</>
+				);
+				data.actionId.setBackgroundAndHref(iconElem.value!);
 			},
 		};
 	}
@@ -204,10 +206,12 @@ export abstract class MetricsTable<T> extends ResultComponent {
 		return {
 			name: 'Name',
 			fillCell: (player: UnitMetrics, cellElem: HTMLElement, rowElem: HTMLElement) => {
-				cellElem.innerHTML = `
-				<img class="metrics-action-icon" src="${player.iconUrl}"></img>
-				<span class="metrics-action-name text-${player.classColor}">${player.label}</span>
-				`;
+				cellElem.appendChild(
+					<>
+						<img className="metrics-action-icon" src={player.iconUrl}></img>
+						<span className={`metrics-action-name text-${player.classColor}`}>player.label</span>
+					</>
+				);
 			},
 		};
 	}

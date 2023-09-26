@@ -14,9 +14,8 @@ import { SimTab } from './components/sim_tab.js';
 import { BaseModal } from './components/base_modal.js';
 
 const URLMAXLEN = 2048;
-const globalKnownIssues = [
-	'Wowhead tooltips may not correctly display Tier 8 set bonuses when combining 10 and 25 player tier pieces.'
-]
+const globalKnownIssues: Array<string> = [
+];
 
 // Config for displaying a warning to the user whenever a condition is met.
 export interface SimWarning {

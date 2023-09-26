@@ -5,6 +5,9 @@ import { Debuffs } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { Stat } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js'
+import {
+	APLRotation,
+} from '../core/proto/apl.js';
 import { Player } from '../core/player.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
@@ -17,7 +20,6 @@ import * as Mechanics from '../core/constants/mechanics.js';
 
 import * as ShamanInputs from './inputs.js';
 import * as Presets from './presets.js';
-import { shamanGlyphsConfig } from '../core/talents/shaman.js';
 
 export class RestorationShamanSimUI extends IndividualSimUI<Spec.SpecRestorationShaman> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecRestorationShaman>) {
@@ -142,6 +144,10 @@ export class RestorationShamanSimUI extends IndividualSimUI<Spec.SpecRestoration
 					Presets.P1_PRESET,
 					Presets.P2_PRESET,
 				],
+			},
+
+			autoRotation: (_player: Player<Spec.SpecRestorationShaman>): APLRotation => {
+				return APLRotation.create();
 			},
 		});
 	}

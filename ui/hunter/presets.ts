@@ -1,4 +1,3 @@
-import { CustomRotation, CustomSpell } from '../core/proto/common.js';
 import { Consumes } from '../core/proto/common.js';
 import { EquipmentSpec } from '../core/proto/common.js';
 import { Flask } from '../core/proto/common.js';
@@ -7,7 +6,7 @@ import { Glyphs } from '../core/proto/common.js';
 import { PetFood } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
 import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
-import { APLRotation } from '../core/proto/apl.js';
+import { APLRotation, APLRotation_Type } from '../core/proto/apl.js';
 import { ferocityDefault, ferocityBMDefault } from '../core/talents/hunter_pet.js';
 import { Player } from '../core/player.js';
 
@@ -15,7 +14,6 @@ import {
 	Hunter_Rotation as HunterRotation,
 	Hunter_Rotation_RotationType as RotationType,
 	Hunter_Rotation_StingType as StingType,
-	Hunter_Rotation_SpellOption as SpellOption,
 	Hunter_Options as HunterOptions,
 	Hunter_Options_Ammo as Ammo,
 	Hunter_Options_PetType as PetType,
@@ -84,25 +82,17 @@ export const DefaultRotation = HunterRotation.create({
 	viperStopManaPercent: 0.3,
 	multiDotSerpentSting: true,
 	allowExplosiveShotDownrank: true,
-	steadyShotMaxDelay: 300,
-	customRotation: CustomRotation.create({
-		spells: [
-			CustomSpell.create({ spell: SpellOption.SerpentStingSpell }),
-			CustomSpell.create({ spell: SpellOption.KillShot }),
-			CustomSpell.create({ spell: SpellOption.ChimeraShot }),
-			CustomSpell.create({ spell: SpellOption.BlackArrow }),
-			CustomSpell.create({ spell: SpellOption.ExplosiveShot }),
-			CustomSpell.create({ spell: SpellOption.AimedShot }),
-			CustomSpell.create({ spell: SpellOption.ArcaneShot }),
-			CustomSpell.create({ spell: SpellOption.SteadyShot }),
-		],
-	}),
 });
 
 export const ROTATION_PRESET_LEGACY_DEFAULT = {
-	name: 'Legacy Default',
+	name: 'Simple Default',
 	rotation: SavedRotation.create({
-		specRotationOptionsJson: HunterRotation.toJsonString(DefaultRotation),
+		rotation: {
+			type: APLRotation_Type.TypeSimple,
+			simple: {
+				specRotationJson: HunterRotation.toJsonString(DefaultRotation),
+			},
+		},
 	}),
 }
 export const ROTATION_PRESET_BM = {
@@ -111,7 +101,7 @@ export const ROTATION_PRESET_BM = {
 		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
 		})),
 		rotation: APLRotation.fromJsonString(`{
-      		"enabled": true,
+      		"type": "TypeAPL",
       		"prepullActions": [
 			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
       		],
@@ -137,7 +127,7 @@ export const ROTATION_PRESET_MM = {
 		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
 		})),
 		rotation: APLRotation.fromJsonString(`{
-			"enabled": true,
+			"type": "TypeAPL",
 			"prepullActions": [
 				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
 			],
@@ -159,13 +149,50 @@ export const ROTATION_PRESET_MM = {
 	}),
 };
 
+export const ROTATION_PRESET_MM_ADVANCED = {
+	name: 'MM (Advanced)',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
+		})),
+		rotation: APLRotation.fromJsonString(`{
+			"type": "TypeAPL",
+			"prepullActions": [
+				{"action":{"castSpell":{"spellId":{"spellId":61847}}},"doAtValue":{"const":{"val":"-25s"}}},
+				{"action":{"castSpell":{"spellId":{"spellId":49067}}},"doAtValue":{"const":{"val":"-20s"}}},
+				{"action":{"castSpell":{"spellId":{"spellId":53517}}},"doAtValue":{"const":{"val":"-3s"}}},
+				{"action":{"castSpell":{"spellId":{"itemId":40211}}},"doAtValue":{"const":{"val":"-1.401s"}}},
+				{"action":{"castSpell":{"spellId":{"spellId":49052}}},"doAtValue":{"const":{"val":"-1.4s"}}}
+			],
+			"priorityList": [
+				{"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"1.35s"}}}},"autocastOtherCooldowns":{}}},
+				{"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"1s"}}}},"castSpell":{"spellId":{"itemId":42641}}}},
+				{"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"61s"}}}},"castSpell":{"spellId":{"itemId":41119}}}},
+				{"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"10s"}}}},"castSpell":{"spellId":{"spellId":34026}}}},
+				{"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"1.35s"}}}},"castSpell":{"spellId":{"spellId":34490}}}},
+				{"action":{"condition":{"cmp":{"op":"OpEq","lhs":{"currentTime":{}},"rhs":{"const":{"val":"0s"}}}},"castSpell":{"spellId":{"itemId":41119}}}},
+				{"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":53209}}},"rhs":{"const":{"val":"6s"}}}},{"or":{"vals":[{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49050}}},"rhs":{"const":{"val":"6s"}}}},{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49048}}},"rhs":{"const":{"val":"6s"}}}}]}},{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":3045}}},"rhs":{"const":{"val":"167s"}}}},{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":34490}}},"rhs":{"const":{"val":"13s"}}}},{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49067}}},"rhs":{"const":{"val":"23s"}}}}]}},"castSpell":{"spellId":{"spellId":23989}}}},
+				{"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"15%"}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":61847}}}}}]}},"castSpell":{"spellId":{"spellId":61847}}}},
+				{"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpLt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"10%"}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":34074}}}}}]}},"castSpell":{"spellId":{"spellId":34074}}}},
+				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"40%"}}}},"castSpell":{"spellId":{"itemId":20520}}}},
+				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellTimeToReady":{"spellId":{"spellId":61006}}},"rhs":{"const":{"val":"0.21s"}}}},"castSpell":{"spellId":{"spellId":61006}}}},
+				{"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":49001}}}}},"castSpell":{"spellId":{"spellId":49001}}}},
+				{"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":49067}}}}},"castSpell":{"spellId":{"spellId":49067}}}},
+				{"action":{"condition":{"or":{"vals":[{"cmp":{"op":"OpLt","lhs":{"spellTimeToReady":{"spellId":{"spellId":53209}}},"rhs":{"const":{"val":"0.15s"}}}},{"spellCanCast":{"spellId":{"spellId":53209}}}]}},"castSpell":{"spellId":{"spellId":53209}}}},
+				{"action":{"condition":{"or":{"vals":[{"cmp":{"op":"OpLt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49050}}},"rhs":{"const":{"val":"0.15s"}}}},{"spellCanCast":{"spellId":{"spellId":49050}}}]}},"castSpell":{"spellId":{"spellId":49050}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":49052}}}},
+				{"hide":true,"action":{"condition":{"or":{"vals":[{"cmp":{"op":"OpLt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49045}}},"rhs":{"const":{"val":"0.2s"}}}},{"spellCanCast":{"spellId":{"spellId":49045}}}]}},"castSpell":{"spellId":{"spellId":49045}}}}
+			]
+		}`),
+	}),
+};
+
 export const ROTATION_PRESET_SV = {
 	name: 'SV',
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
 		})),
 		rotation: APLRotation.fromJsonString(`{
-      		"enabled": true,
+      		"type": "TypeAPL",
       		"prepullActions": [
 			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
       		],
@@ -187,13 +214,45 @@ export const ROTATION_PRESET_SV = {
 	}),
 };
 
+export const ROTATION_PRESET_SV_ADVANCED = {
+	name: 'SV (Advanced)',
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
+		})),
+		rotation: APLRotation.fromJsonString(`{
+			"type": "TypeAPL",
+			"prepullActions": [
+				{"action":{"castSpell":{"spellId":{"spellId":49067}}},"doAtValue":{"const":{"val":"-24s"}}},
+				{"action":{"castSpell":{"spellId":{"spellId":61847}}},"doAtValue":{"const":{"val":"-20s"}}},
+				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1.4s"}}},
+				{"action":{"castSpell":{"spellId":{"spellId":49052}}},"doAtValue":{"const":{"val":"-1.4s"}}}
+			],
+			"priorityList": [
+				{"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"1s"}}}},"autocastOtherCooldowns":{}}},
+				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"40%"}}}},"castSpell":{"spellId":{"itemId":20520}}}},
+				{"action":{"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":61847}}}}},{"cmp":{"op":"OpGt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"30%"}}}}]}},"castSpell":{"spellId":{"spellId":61847}}}},
+				{"action":{"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":34074}}}}},{"cmp":{"op":"OpLt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"10%"}}}}]}},"castSpell":{"spellId":{"spellId":34074}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":61006}}}},
+				{"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":60053}}}}},"castSpell":{"spellId":{"spellId":60053}}}},
+				{"action":{"condition":{"dotIsActive":{"spellId":{"spellId":60053}}},"castSpell":{"spellId":{"spellId":60052}}}},
+				{"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":49067}}}}},"castSpell":{"spellId":{"spellId":49067,"tag":1}}}},
+				{"action":{"condition":{"or":{"vals":[{"cmp":{"op":"OpLt","lhs":{"spellTimeToReady":{"spellId":{"spellId":63672}}},"rhs":{"const":{"val":"0.2s"}}}},{"spellCanCast":{"spellId":{"spellId":63672}}}]}},"castSpell":{"spellId":{"spellId":63672}}}},
+				{"action":{"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":49001}}}}},{"cmp":{"op":"OpGt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"6s"}}}}]}},"castSpell":{"spellId":{"spellId":49001}}}},
+				{"action":{"condition":{"or":{"vals":[{"cmp":{"op":"OpLt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49048}}},"rhs":{"const":{"val":"0.2s"}}}},{"spellCanCast":{"spellId":{"spellId":49048}}}]}},"castSpell":{"spellId":{"spellId":49048}}}},
+				{"hide":true,"action":{"castSpell":{"spellId":{"spellId":49048}}}},
+				{"action":{"castSpell":{"spellId":{"spellId":49052}}}}
+			]
+		}`),
+	}),
+};
+
 export const ROTATION_PRESET_AOE = {
 	name: 'AOE',
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
 		})),
 		rotation: APLRotation.fromJsonString(`{
-      		"enabled": true,
+      		"type": "TypeAPL",
       		"prepullActions": [
 			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
       		],
@@ -361,6 +420,31 @@ export const MM_P4_PRESET = {
 	]}`),
 };
 
+export const MM_P5_PRESET = {
+	name: 'MM P5 Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<any>) => player.getTalentTree() != 2,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+        {"id":51286,"enchant":3817,"gems":[41398,40117]},
+        {"id":50633,"gems":[40117]},
+        {"id":51288,"enchant":3808,"gems":[40117]},
+        {"id":47546,"enchant":3605,"gems":[42153]},
+        {"id":51289,"enchant":3832,"gems":[40112,40112]},
+        {"id":54580,"enchant":3845,"gems":[40117,0]},
+        {"id":51285,"enchant":3604,"gems":[40117,0]},
+        {"id":50688,"enchant":3601,"gems":[40148,42153,42153]},
+        {"id":50645,"enchant":3823,"gems":[49110,40112,40147]},
+        {"id":54577,"enchant":3606,"gems":[40148,40148]},
+        {"id":50618,"gems":[40117]},
+        {"id":54576,"gems":[40148]},
+        {"id":50363},
+        {"id":54590},
+        {"id":50735,"enchant":3247,"gems":[40112,40112,40112]},
+        {},
+        {"id":50733,"enchant":3608,"gems":[40117]}
+	]}`),
+};
+
 export const SV_PRERAID_PRESET = {
 	name: 'SV Preraid Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
@@ -480,6 +564,31 @@ export const SV_P4_PRESET = {
         {"id":50402,"gems":[40148]},
         {"id":50363},
         {"id":47131},
+        {"id":50735,"enchant":3827,"gems":[40112,40112,40112]},
+        {},
+        {"id":50733,"enchant":3608,"gems":[40112]}
+	]}`),
+};
+
+export const SV_P5_PRESET = {
+	name: 'SV P5 Preset',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<any>) => player.getTalentTree() == 2,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+        {"id":51286,"enchant":3817,"gems":[41398,40112]},
+        {"id":50633,"gems":[40112]},
+        {"id":51288,"enchant":3808,"gems":[40112]},
+        {"id":47546,"enchant":3605,"gems":[42143]},
+        {"id":51289,"enchant":3832,"gems":[40112,40112]},
+        {"id":50655,"enchant":3845,"gems":[40112,0]},
+        {"id":51285,"enchant":3604,"gems":[40112,0]},
+        {"id":50688,"enchant":3601,"gems":[40148,42143,42143]},
+        {"id":50645,"enchant":3823,"gems":[49110,40112,40150]},
+        {"id":54577,"enchant":3606,"gems":[40148,40148]},
+        {"id":50618,"gems":[45879]},
+        {"id":54576,"gems":[40148]},
+        {"id":50363},
+        {"id":54590},
         {"id":50735,"enchant":3827,"gems":[40112,40112,40112]},
         {},
         {"id":50733,"enchant":3608,"gems":[40112]}

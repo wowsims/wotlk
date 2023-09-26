@@ -227,13 +227,16 @@ func (paladin *Paladin) applyArdentDefender() {
 
 	var ardentDamageReduction float64
 	switch paladin.Talents.ArdentDefender {
-	case 3:
+	case 1:
 		ardentDamageReduction = 0.07
 	case 2:
 		ardentDamageReduction = 0.13
-	case 1:
+	case 3:
 		ardentDamageReduction = 0.20
 	}
+
+	// 540 defense (+140) yields the full heal amount
+	ardentHealAmount := core.MaxFloat(1.0, float64(paladin.GetStat(stats.Defense))/core.DefenseRatingPerDefense/140.0) * 0.10 * float64(paladin.Talents.ArdentDefender)
 
 	// TBD? Buff to mark time spent fully below 35% and attribute absorbs
 	// rangeAura := paladin.RegisterAura(core.Aura{
@@ -271,8 +274,6 @@ func (paladin *Paladin) applyArdentDefender() {
 		ThreatMultiplier: 0.25,
 		DamageMultiplier: 1,
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			// 540 defense (+140) yields the full heal amount
-			ardentHealAmount := core.MaxFloat(1.0, float64(paladin.GetStat(stats.Defense))/core.DefenseRatingPerDefense/140.0) * 0.10 * float64(paladin.Talents.ArdentDefender)
 			spell.CalcAndDealHealing(sim, &paladin.Unit, ardentHealAmount*paladin.MaxHealth(), spell.OutcomeHealingCrit)
 		},
 	})
@@ -289,10 +290,26 @@ func (paladin *Paladin) applyArdentDefender() {
 				paladin.Log(sim, "Ardent Defender reduced damage by %d", int32(incomingDamage-result.Damage))
 			}
 
+			incomingDamage2 := result.Damage
+
 			// Now check death save, based on the reduced damage
 			if (result.Damage >= paladin.CurrentHealth()) && !procAura.IsActive() {
-				result.Damage = paladin.CurrentHealth()
-				procHeal.Cast(sim, &paladin.Unit)
+				if paladin.CurrentHealth()+ardentHealAmount*paladin.MaxHealth() > paladin.MaxHealth() {
+					// We will overheal and wind up at the wrong HP value... Let's work around this
+					// TODO: Find a cleaner way to do this, using absorbs?
+					procHeal.Cast(sim, &paladin.Unit)
+					result.Damage = paladin.CurrentHealth() - ardentHealAmount*paladin.MaxHealth()
+					if sim.Log != nil {
+						paladin.Log(sim, "Ardent Defender proc reduced overkill damage by %d, compensating for overheal", int32(incomingDamage2-result.Damage))
+					}
+				} else {
+					// Cleanest handling for < 70% HP, includes proper healing amount in metrics
+					result.Damage = paladin.CurrentHealth()
+					procHeal.Cast(sim, &paladin.Unit)
+					if sim.Log != nil {
+						paladin.Log(sim, "Ardent Defender proc reduced overkill damage by %d", int32(incomingDamage2-result.Damage))
+					}
+				}
 				procAura.Activate(sim)
 			}
 		}
@@ -477,6 +494,10 @@ func (paladin *Paladin) applyArtOfWar() {
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !spell.IsMelee() && !spell.Flags.Matches(SpellFlagSecondaryJudgement) {
+				return
+			}
+
+			if spell == paladin.HammerOfWrath {
 				return
 			}
 

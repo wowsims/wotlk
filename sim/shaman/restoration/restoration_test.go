@@ -22,6 +22,7 @@ func TestRestoration(t *testing.T) {
 		Glyphs:      StandardGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Standard", SpecOptions: PlayerOptionsStandard},
+		Rotation:    core.RotationCombo{Label: "Default", Rotation: DefaultRotation},
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
@@ -103,99 +104,29 @@ var FullConsumes = &proto.Consumes{
 	DefaultConjured: proto.Conjured_ConjuredDarkRune,
 }
 
+var DefaultRotation = core.APLRotationFromJsonString(`{
+	"type": "TypeAPL",
+	"priorityList": [
+		{"action":{"autocastOtherCooldowns":{}}}
+	]
+}`)
+
 var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
-	{
-		"id": 40510,
-		"enchant": 3820,
-		"gems": [
-			41401,
-			40051
-		]
-	},
-	{
-		"id": 44662,
-		"gems": [
-			42150
-		]
-	},
-	{
-		"id": 40513,
-		"enchant": 3810,
-		"gems": [
-			40051
-		]
-	},
-	{
-		"id": 44005,
-		"enchant": 3859,
-		"gems": [
-			40105
-		]
-	},
-	{
-		"id": 40508,
-		"enchant": 2381,
-		"gems": [
-			42144,
-			42150
-		]
-	},
-	{
-		"id": 40209,
-		"enchant": 2332,
-		"gems": [
-			0
-		]
-	},
-	{
-		"id": 40564,
-		"enchant": 3604,
-		"gems": [
-			0
-		]
-	},
-	{
-		"id": 40327,
-		"gems": [
-			0
-		]
-	},
-	{
-		"id": 40512,
-		"enchant": 3721,
-		"gems": [
-			40051,
-			40105
-		]
-	},
-	{
-		"id": 40237,
-		"enchant": 3606,
-		"gems": [
-			40105
-		]
-	},
-	{
-		"id": 40399
-	},
-	{
-		"id": 40375
-	},
-	{
-		"id": 40432
-	},
-	{
-		"id": 37111
-	},
-	{
-		"id": 40395,
-		"enchant": 3834
-	},
-	{
-		"id": 40401,
-		"enchant": 1128
-	},
-	{
-		"id": 40709
-	}
+	{"id":40510,"enchant":3820,"gems":[41401,39998]},
+	{"id":44662,"gems":[40051]},
+	{"id":40513,"enchant":3810,"gems":[39998]},
+	{"id":44005,"enchant":3831,"gems":[40027]},
+	{"id":40508,"enchant":2381,"gems":[39998,40051]},
+	{"id":40209,"enchant":2332,"gems":[0]},
+	{"id":40564,"enchant":3246,"gems":[0]},
+	{"id":40327,"gems":[39998]},
+	{"id":40512,"enchant":3721,"gems":[39998,40027]},
+	{"id":39734,"enchant":3244},
+	{"id":40399},
+	{"id":40375},
+	{"id":37111},
+	{"id":40685},
+	{"id":40395,"enchant":3834},
+	{"id":40401,"enchant":1128},
+	{"id":40709}
 ]}`)

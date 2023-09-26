@@ -11,7 +11,14 @@ import (
 // TODO Mind Flay (48156) now "periodically triggers" Mind Flay (58381), probably to allow haste to work.
 // The first never deals damage, so the latter should probably be used as ActionID here.
 
-func (priest *Priest) newMindFlaySpell(numTicks int32) *core.Spell {
+func (priest *Priest) newMindFlaySpell(numTicksIdx int32) *core.Spell {
+	numTicks := numTicksIdx
+	flags := core.SpellFlagChanneled
+	if numTicksIdx == 0 {
+		numTicks = 3
+		flags |= core.SpellFlagAPL
+	}
+
 	var mfReducTime time.Duration
 	if priest.HasSetBonus(ItemSetCrimsonAcolyte, 4) {
 		mfReducTime = time.Millisecond * 170
@@ -26,10 +33,10 @@ func (priest *Priest) newMindFlaySpell(numTicks int32) *core.Spell {
 	focusedMind := 0.05 * float64(priest.Talents.FocusedMind)
 
 	return priest.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48156}.WithTag(numTicks),
+		ActionID:    core.ActionID{SpellID: 48156}.WithTag(numTicksIdx),
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagChanneled | core.SpellFlagAPL,
+		Flags:       flags,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.09,
@@ -41,14 +48,19 @@ func (priest *Priest) newMindFlaySpell(numTicks int32) *core.Spell {
 				ChannelTime: channelTime,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+				if spell.Unit.IsUsingAPL {
+					return
+				}
 				// if our channel is longer than GCD it will have human latency to end it beause you can't queue the next spell.
 				wait := priest.ApplyCastSpeed(channelTime)
 				gcd := core.MaxDuration(core.GCDMin, priest.ApplyCastSpeed(core.GCDDefault))
 				if wait > gcd && priest.Latency > 0 {
 					base := priest.Latency * 0.67
 					variation := base + sim.RandomFloat("spriest latency")*base // should vary from 0.66 - 1.33 of given latency
-					variation = core.MaxFloat(variation, 10)                    // no player can go under XXXms response time
 					cast.AfterCastDelay += time.Duration(variation) * time.Millisecond
+					if sim.Log != nil {
+						priest.Log(sim, "Latency: %0.02f, AfterCastDelay: %s", priest.Latency, cast.AfterCastDelay)
+					}
 				}
 			},
 		},
@@ -65,7 +77,7 @@ func (priest *Priest) newMindFlaySpell(numTicks int32) *core.Spell {
 
 		Dot: core.DotConfig{
 			Aura: core.Aura{
-				Label: "MindFlay-" + strconv.Itoa(int(numTicks)),
+				Label: "MindFlay-" + strconv.Itoa(int(numTicksIdx)),
 			},
 			NumberOfTicks:       numTicks,
 			TickLength:          tickLength,
@@ -91,12 +103,12 @@ func (priest *Priest) newMindFlaySpell(numTicks int32) *core.Spell {
 
 				if result.Landed() {
 					priest.AddShadowWeavingStack(sim)
-				}
-				if result.DidCrit() && hasGlyphOfShadow {
-					priest.ShadowyInsightAura.Activate(sim)
-				}
-				if result.DidCrit() && priest.ImprovedSpiritTap != nil && sim.RandomFloat("Improved Spirit Tap") > 0.5 {
-					priest.ImprovedSpiritTap.Activate(sim)
+					if result.DidCrit() && hasGlyphOfShadow {
+						priest.ShadowyInsightAura.Activate(sim)
+					}
+					if result.DidCrit() && priest.ImprovedSpiritTap != nil && sim.RandomFloat("Improved Spirit Tap") > 0.5 {
+						priest.ImprovedSpiritTap.Activate(sim)
+					}
 				}
 			},
 		},
@@ -141,6 +153,5 @@ func (priest *Priest) AverageMindFlayLatencyDelay(numTicks int, gcd time.Duratio
 
 	base := priest.Latency * 0.25
 	variation := base + 0.5*base
-	variation = core.MaxFloat(variation, 10)
 	return time.Duration(variation) * time.Millisecond
 }

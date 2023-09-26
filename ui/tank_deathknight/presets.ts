@@ -123,12 +123,12 @@ export const BLOOD_LEGACY_PRESET_LEGACY_DEFAULT = {
 }
 
 export const BLOOD_IT_SPAM_ROTATION_PRESET_DEFAULT = {
-	name: 'Blood Icy Touch APL',
+	name: 'Blood Icy Touch',
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
 	rotation: SavedRotation.create({
-		specRotationOptionsJson: TankDeathKnightRotation.toJsonString(DefaultRotation),
+		specRotationOptionsJson: TankDeathKnightRotation.toJsonString(TankDeathKnightRotation.create()),
 		rotation: APLRotation.fromJsonString(`{
-			"enabled": true,
+			"type": "TypeAPL",
 			"prepullActions": [
 			  {"action":{"castSpell":{"spellId":{"spellId":48263}}},"doAtValue":{"const":{"val":"-10s"}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":42650}}},"doAtValue":{"const":{"val":"-6s"}}}
@@ -156,12 +156,12 @@ export const BLOOD_IT_SPAM_ROTATION_PRESET_DEFAULT = {
 }
 
 export const BLOOD_AGGRO_ROTATION_PRESET_DEFAULT = {
-	name: 'Blood Aggro APL',
+	name: 'Blood Aggro',
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
 	rotation: SavedRotation.create({
-		specRotationOptionsJson: TankDeathKnightRotation.toJsonString(DefaultRotation),
+		specRotationOptionsJson: TankDeathKnightRotation.toJsonString(TankDeathKnightRotation.create()),
 		rotation: APLRotation.fromJsonString(`{
-			"enabled": true,
+			"type": "TypeAPL",
 			"prepullActions": [
 			  {"action":{"castSpell":{"spellId":{"spellId":48263}}},"doAtValue":{"const":{"val":"-10s"}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":42650}}},"doAtValue":{"const":{"val":"-6s"}}}

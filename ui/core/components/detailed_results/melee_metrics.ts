@@ -4,9 +4,6 @@ import { bucket } from '../../utils.js';
 import { ColumnSortType, MetricsTable } from './metrics_table.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
 
-declare var $: any;
-declare var tippy: any;
-
 export class MeleeMetricsTable extends MetricsTable<ActionMetrics> {
 	constructor(config: ResultComponentConfig) {
 		config.rootCssClass = 'melee-metrics-root';

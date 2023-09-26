@@ -4,6 +4,8 @@ import { swap } from '../utils.js';
 
 import { Input, InputConfig } from './input.js';
 
+import { element, fragment } from 'tsx-vanilla';
+
 export type ListItemAction = 'create' | 'delete' | 'move' | 'copy';
 
 export interface ListPickerActionsConfig {
@@ -65,16 +67,16 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 		this.config = {...DEFAULT_CONFIG, ...config};
 		this.itemPickerPairs = [];
 
-		this.rootElem.innerHTML = `
-			${config.title ? `
-				<label
-					class="list-picker-title form-label"
-					${this.config.titleTooltip ? 'data-bs-toggle="tooltip"' : ''}
-					${this.config.titleTooltip ? `data-bs-title="${this.config.titleTooltip}"` : ''}
-				>${config.title}</label>` : ''
-			}
-			<div class="list-picker-items"></div>
-		`;
+		this.rootElem.appendChild(
+			<>
+				{config.title &&
+					<label className='list-picker-title form-label'>
+						{config.title}
+					</label>
+				}
+				<div className="list-picker-items"></div>
+			</>
+		)
 
 		if (this.config.hideUi) {
 			this.rootElem.classList.add('hide-ui');
@@ -84,8 +86,12 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 			this.rootElem.classList.add('horizontal');
 		}
 
-		if (this.config.titleTooltip)
-			Tooltip.getOrCreateInstance(this.rootElem.querySelector('.list-picker-title') as HTMLElement);
+		if (this.config.titleTooltip) {
+			let cfg = {
+				title: this.config.titleTooltip
+			}
+			Tooltip.getOrCreateInstance(this.rootElem.querySelector('.list-picker-title') as HTMLElement, cfg);
+		}
 
 		this.itemsDiv = this.rootElem.getElementsByClassName('list-picker-items')[0] as HTMLElement;
 
@@ -93,8 +99,8 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 			let newItemButton = null;
 			let newButtonTooltip: Tooltip | null = null;
 			if (this.config.actions?.create?.useIcon) {
-				newItemButton = ListPicker.makeActionElem('link-success', `New ${config.itemLabel}`, 'fa-plus')
-				newButtonTooltip = Tooltip.getOrCreateInstance(newItemButton);
+				newItemButton = ListPicker.makeActionElem('link-success', 'fa-plus')
+				newButtonTooltip = Tooltip.getOrCreateInstance(newItemButton, {title: `New ${config.itemLabel}`});
 			} else {
 				newItemButton = document.createElement('button');
 				newItemButton.classList.add('btn', 'btn-primary');
@@ -186,10 +192,10 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 		const item: ItemPickerPair<ItemType> = { elem: itemContainer, picker: itemPicker, idx: index };
 
 		if (this.actionEnabled('move')) {
-			const moveButton = ListPicker.makeActionElem('list-picker-item-move', 'Move (Drag+Drop)', 'fa-arrows-up-down');
+			const moveButton = ListPicker.makeActionElem('list-picker-item-move', 'fa-arrows-up-down');
 			itemHeader.appendChild(moveButton);
 
-			const moveButtonTooltip = Tooltip.getOrCreateInstance(moveButton);
+			const moveButtonTooltip = Tooltip.getOrCreateInstance(moveButton, {title: 'Move (Drag+Drop)'});
 			moveButton.addEventListener('click', event => {
 				moveButtonTooltip.hide();
 			});
@@ -254,9 +260,9 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 		}
 
 		if (this.actionEnabled('copy')) {
-			const copyButton = ListPicker.makeActionElem('list-picker-item-copy', `Copy to New ${this.config.itemLabel}`, 'fa-copy');
+			const copyButton = ListPicker.makeActionElem('list-picker-item-copy', 'fa-copy');
 			itemHeader.appendChild(copyButton);
-			const copyButtonTooltip = Tooltip.getOrCreateInstance(copyButton);
+			const copyButtonTooltip = Tooltip.getOrCreateInstance(copyButton, {title: `Copy to New ${this.config.itemLabel}`});
 
 			copyButton.addEventListener('click', event => {
 				const newList = this.config.getValue(this.modObject).slice();
@@ -267,10 +273,10 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 		}
 
 		if (this.actionEnabled('delete')) {
-			const deleteButton = ListPicker.makeActionElem('list-picker-item-delete', `Delete ${this.config.itemLabel}`, 'fa-times');
+			const deleteButton = ListPicker.makeActionElem('list-picker-item-delete', 'fa-times');
 			deleteButton.classList.add('link-danger');
 			itemHeader.appendChild(deleteButton);
-			const deleteButtonTooltip = Tooltip.getOrCreateInstance(deleteButton);
+			const deleteButtonTooltip = Tooltip.getOrCreateInstance(deleteButton, { title: `Delete ${this.config.itemLabel}`});
 
 			deleteButton.addEventListener('click', event => {
 				const newList = this.config.getValue(this.modObject);
@@ -283,13 +289,11 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 		this.itemPickerPairs.push(item);
 	}
 
-	static makeActionElem(cssClass: string, title: string, iconCssClass: string): HTMLElement {
+	static makeActionElem(cssClass: string, iconCssClass: string): HTMLElement {
 		const actionElem = document.createElement('a');
 		actionElem.classList.add('list-picker-item-action', cssClass);
 		actionElem.href = 'javascript:void(0)';
 		actionElem.setAttribute('role', 'button');
-		actionElem.setAttribute('data-bs-toggle', 'tooltip');
-		actionElem.setAttribute('data-bs-title', title);
 
 		const icon = document.createElement('i');
 		icon.classList.add('fa', 'fa-xl', iconCssClass);

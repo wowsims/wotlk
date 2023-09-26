@@ -33,7 +33,7 @@ func TestRetribution(t *testing.T) {
 							Seal:      proto.PaladinSeal_Command,
 							Aura:      proto.PaladinAura_RetributionAura,
 						},
-						Rotation: defaultRetRotation,
+						Rotation: &proto.RetributionPaladin_Rotation{},
 					},
 				},
 			},
@@ -46,7 +46,7 @@ func TestRetribution(t *testing.T) {
 							Seal:      proto.PaladinSeal_Righteousness,
 							Aura:      proto.PaladinAura_RetributionAura,
 						},
-						Rotation: defaultRetRotation,
+						Rotation: &proto.RetributionPaladin_Rotation{},
 					},
 				},
 			},
@@ -71,6 +71,7 @@ func TestRetribution(t *testing.T) {
 				},
 			},
 		},
+		Rotation: core.RotationCombo{Label: "Default", Rotation: DefaultRotation},
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
@@ -125,24 +126,14 @@ var StandardGlyphs = &proto.Glyphs{
 	Minor3: int32(proto.PaladinMinorGlyph_GlyphOfBlessingOfKings),
 }
 
-var defaultRetRotation = &proto.RetributionPaladin_Rotation{
-	ConsSlack:            500,
-	ExoSlack:             500,
-	UseDivinePlea:        true,
-	DivinePleaPercentage: 0.75,
-	HolyWrathThreshold:   4,
-}
-
-var defaultRetOptions = &proto.RetributionPaladin_Options{
-	Judgement: proto.PaladinJudgement_JudgementOfWisdom,
-	Seal:      proto.PaladinSeal_Vengeance,
-	Aura:      proto.PaladinAura_RetributionAura,
-}
-
 var DefaultOptions = &proto.Player_RetributionPaladin{
 	RetributionPaladin: &proto.RetributionPaladin{
-		Options:  defaultRetOptions,
-		Rotation: defaultRetRotation,
+		Options: &proto.RetributionPaladin_Options{
+			Judgement: proto.PaladinJudgement_JudgementOfWisdom,
+			Seal:      proto.PaladinSeal_Vengeance,
+			Aura:      proto.PaladinAura_RetributionAura,
+		},
+		Rotation: &proto.RetributionPaladin_Rotation{},
 	},
 }
 
@@ -154,90 +145,39 @@ var FullConsumes = &proto.Consumes{
 	ThermalSapper:   true,
 }
 
+var DefaultRotation = core.APLRotationFromJsonString(`{
+	"type": "TypeAPL",
+	"prepullActions": [
+		{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
+	],
+	"priorityList": [
+		{"action":{"autocastOtherCooldowns":{}}},
+		{"action":{"castSpell":{"spellId":{"spellId":67485}}}},
+		{"action":{"castSpell":{"spellId":{"spellId":48806}}}},
+		{"action":{"castSpell":{"spellId":{"spellId":53408}}}},
+		{"action":{"castSpell":{"spellId":{"spellId":35395}}}},
+		{"action":{"castSpell":{"spellId":{"spellId":53385}}}},
+		{"action":{"condition":{"auraIsActive":{"auraId":{"spellId":53488}}},"castSpell":{"spellId":{"spellId":48801}}}},
+		{"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"4s"}}}},"castSpell":{"spellId":{"spellId":48819}}}}
+	]
+}`)
+
 var Phase1Gear = core.EquipmentSpecFromJsonString(`{"items": [
-	{
-		"id": 40576,
-		"enchant": 3817,
-		"gems": [
-			41398,
-			40037
-		]
-	},
-	{
-		"id": 44664,
-		"gems": [
-			42142
-		]
-	},
-	{
-		"id": 40578,
-		"enchant": 3808,
-		"gems": [
-			49110
-		]
-	},
-	{
-		"id": 40403,
-		"enchant": 3605
-	},
-	{
-		"id": 40574,
-		"enchant": 3832,
-		"gems": [
-			42142,
-			39996
-		]
-	},
-	{
-		"id": 40186,
-		"enchant": 3845,
-		"gems": [
-			0
-		]
-	},
-	{
-		"id": 40541,
-		"enchant": 3604,
-		"gems": [
-			0
-		]
-	},
-	{
-		"id": 40205,
-		"gems": [
-			39996
-		]
-	},
-	{
-		"id": 40577,
-		"enchant": 3823,
-		"gems": [
-			42142,
-			40038
-		]
-	},
-	{
-		"id": 39701,
-		"enchant": 3606
-	},
-	{
-		"id": 40075
-	},
-	{
-		"id": 40474
-	},
-	{
-		"id": 42987
-	},
-	{
-		"id": 40431
-	},
-	{
-		"id": 40384,
-		"enchant": 3789
-	},
+	{"id":44006,"enchant":3817,"gems":[41398,49110]},
+	{"id":44664,"gems":[42142]},
+	{"id":40578,"enchant":3808,"gems":[39996]},
+	{"id":40403,"enchant":3605},
+	{"id":40574,"enchant":3832,"gems":[42142,39996]},
+	{"id":40330,"enchant":3845,"gems":[39996,0]},
+	{"id":40541,"enchant":3604,"gems":[0]},
+	{"id":40278,"gems":[39996,39996]},
+	{"id":44011,"enchant":3823,"gems":[42142,39996]},
+	{"id":40591,"enchant":3606},
+	{"id":40075},
+	{"id":40474},
+	{"id":42987},
+	{"id":40431},
+	{"id":40384,"enchant":3789},
 	{},
-	{
-		"id": 42852
-	}
+	{"id":42852}
 ]}`)

@@ -37,6 +37,8 @@ type DpsDeathknight struct {
 	CustomRotation *common.CustomRotation
 
 	Rotation *proto.Deathknight_Rotation
+
+	rotationSetup func()
 }
 
 func NewDpsDeathknight(character core.Character, player *proto.Player) *DpsDeathknight {
@@ -154,41 +156,43 @@ func (dk *DpsDeathknight) SetupRotations() {
 	if dk.CustomRotation == nil || dk.Rotation.FrostRotationType == proto.Deathknight_Rotation_SingleTarget {
 		dk.Rotation.FrostRotationType = proto.Deathknight_Rotation_SingleTarget
 		if fr > uh && fr > bl {
-			// AotD as major CD doesnt work well with frost
+			// AotD as major CD doesn't work well with frost
 			if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_AsMajorCd {
 				dk.Inputs.ArmyOfTheDeadType = proto.Deathknight_Rotation_PreCast
 				dk.Rotation.HoldErwArmy = false
 			}
 			if bl > uh {
 				if dk.Rotation.DesyncRotation {
-					dk.setupFrostSubBloodDesyncOpener()
+					dk.rotationSetup = dk.setupFrostSubBloodDesyncOpener
 				} else if dk.Rotation.UseEmpowerRuneWeapon {
-					dk.setupFrostSubBloodERWOpener()
+					dk.rotationSetup = dk.setupFrostSubBloodERWOpener
 				} else {
-					dk.setupFrostSubBloodNoERWOpener()
+					dk.rotationSetup = dk.setupFrostSubBloodNoERWOpener
 				}
 			} else {
 				dk.Rotation.FrostRotationType = proto.Deathknight_Rotation_SingleTarget
 				if dk.Rotation.UseEmpowerRuneWeapon {
-					dk.setupFrostSubUnholyERWOpener()
+					dk.rotationSetup = dk.setupFrostSubUnholyERWOpener
 				} else {
 					// TODO you can't unh sub without ERW in the opener...yet
 					dk.Rotation.UseEmpowerRuneWeapon = true
-					dk.setupFrostSubUnholyERWOpener()
+					dk.rotationSetup = dk.setupFrostSubUnholyERWOpener
 				}
 			}
 		} else if uh > fr && uh > bl {
-			dk.setupUnholyRotations()
+			dk.rotationSetup = dk.setupUnholyRotations
 		} else if bl > fr && bl > uh {
 			if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_AsMajorCd {
 				dk.Inputs.ArmyOfTheDeadType = proto.Deathknight_Rotation_PreCast
 				dk.Rotation.HoldErwArmy = false
 			}
-			dk.setupBloodRotations()
+			dk.rotationSetup = dk.setupBloodRotations
 		}
 	} else {
-		dk.setupCustomRotations()
+		dk.rotationSetup = dk.setupCustomRotations
 	}
+
+	dk.rotationSetup()
 }
 
 func (dk *DpsDeathknight) GetDeathknight() *deathknight.Deathknight {
@@ -202,6 +206,8 @@ func (dk *DpsDeathknight) Initialize() {
 	dk.br.Initialize(dk)
 	dk.fr.Initialize(dk)
 	dk.ur.Initialize(dk)
+
+	dk.SetupRotations()
 }
 
 func (dk *DpsDeathknight) setupGargProcTrackers() {
@@ -517,7 +523,8 @@ func (dk *DpsDeathknight) Reset(sim *core.Simulation) {
 	dk.fr.Reset(sim)
 	dk.ur.Reset(sim)
 
-	dk.SetupRotations()
+	dk.RotationSequence.Clear()
+	dk.rotationSetup()
 
 	dk.Presence = deathknight.UnsetPresence
 

@@ -179,6 +179,9 @@ func NewHunter(character core.Character, options *proto.Player) *Hunter {
 		Options:   hunterOptions.Options,
 		Rotation:  hunterOptions.Rotation,
 	}
+	if hunter.Rotation == nil {
+		hunter.Rotation = &proto.Hunter_Rotation{}
+	}
 	core.FillTalentsProto(hunter.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
 	hunter.EnableManaBar()
 
@@ -236,16 +239,6 @@ func NewHunter(character core.Character, options *proto.Player) *Hunter {
 	hunter.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritPerAgiMaxLevel[character.Class]*core.CritRatingPerCritChance)
 
 	return hunter
-}
-
-func init() {
-	core.AddBaseStatsCombo(proto.Race_RaceBloodElf, proto.Class_ClassHunter)
-	core.AddBaseStatsCombo(proto.Race_RaceDraenei, proto.Class_ClassHunter)
-	core.AddBaseStatsCombo(proto.Race_RaceDwarf, proto.Class_ClassHunter)
-	core.AddBaseStatsCombo(proto.Race_RaceNightElf, proto.Class_ClassHunter)
-	core.AddBaseStatsCombo(proto.Race_RaceOrc, proto.Class_ClassHunter)
-	core.AddBaseStatsCombo(proto.Race_RaceTauren, proto.Class_ClassHunter)
-	core.AddBaseStatsCombo(proto.Race_RaceTroll, proto.Class_ClassHunter)
 }
 
 // Agent is a generic way to access underlying hunter on any of the agents.

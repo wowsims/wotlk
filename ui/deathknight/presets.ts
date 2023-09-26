@@ -278,34 +278,119 @@ export const BLOOD_PESTI_ROTATION_PRESET_DEFAULT = {
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultBloodRotation),
 		rotation: APLRotation.fromJsonString(`{
-			"enabled": true,
+			"type": "TypeAPL",
 			"prepullActions": [
 			  {"action":{"castSpell":{"spellId":{"spellId":48265}}},"doAtValue":{"const":{"val":"-20s"}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":42650}}},"doAtValue":{"const":{"val":"-10s"}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":50689}}},"doAtValue":{"const":{"val":"-6s"}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":57623}}},"doAtValue":{"const":{"val":"-1.5s"}}},
-			  {"action":{"castSpell":{"spellId":{"itemId":40211}}},"doAtValue":{"const":{"val":"-1s"}}},
-			  {"action":{"castSpell":{"spellId":{"spellId":49016}}},"doAtValue":{"const":{"val":"0s"}}},
-			  {"action":{"castSpell":{"spellId":{"spellId":54758}}},"doAtValue":{"const":{"val":"0s"}}},
-			  {"action":{"castSpell":{"spellId":{"spellId":26297}}},"doAtValue":{"const":{"val":"0s"}}}
+			  {"action":{"castSpell":{"spellId":{"itemId":40211}}},"doAtValue":{"const":{"val":"-1s"}}}
 			],
 			"priorityList": [
+			  {"action":{"condition":{"cmp":{"op":"OpGe","lhs":{"currentTime":{}},"rhs":{"const":{"val":"8.5s"}}}},"castSpell":{"spellId":{"spellId":64382,"tag":-1}}}},
 			  {"action":{"autocastOtherCooldowns":{}}},
-			  {"action":{"sequence":{"name":"Opener","actions":[{"castSpell":{"spellId":{"spellId":59131}}},{"castSpell":{"spellId":{"spellId":49921,"tag":1}}},{"castSpell":{"spellId":{"spellId":49924,"tag":1}}},{"castSpell":{"spellId":{"spellId":55262,"tag":1}}},{"castSpell":{"spellId":{"spellId":55262,"tag":1}}},{"castSpell":{"spellId":{"spellId":46584}}},{"castSpell":{"spellId":{"spellId":47568}}},{"castSpell":{"spellId":{"spellId":49028}}},{"castSpell":{"spellId":{"spellId":49924,"tag":1}}},{"castSpell":{"spellId":{"spellId":55262,"tag":1}}},{"wait":{"duration":{"const":{"val":"1500ms"}}}},{"castSpell":{"spellId":{"spellId":45529}}},{"castSpell":{"spellId":{"spellId":55262,"tag":1}}}]}}},
-			  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55095}}}}},"castSpell":{"spellId":{"spellId":59131}}}},
-			  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55078}}}}},"castSpell":{"spellId":{"spellId":49921,"tag":1}}}},
-			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"const":{"val":"1.5s"}}}},"castSpell":{"spellId":{"spellId":50842}}}},
-			  {"action":{"condition":{"spellIsReady":{"spellId":{"spellId":49028}}},"castSpell":{"spellId":{"spellId":49016}}}},
-			  {"action":{"condition":{"spellIsReady":{"spellId":{"spellId":49028}}},"castSpell":{"spellId":{"spellId":26297}}}},
-			  {"action":{"condition":{"spellIsReady":{"spellId":{"spellId":49028}}},"castSpell":{"spellId":{"spellId":54758}}}},
-			  {"action":{"condition":{"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":49028}}},{"or":{"vals":[{"auraIsActive":{"auraId":{"spellId":49016}}},{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49016}}},"rhs":{"remainingTime":{}}}}]}}]}},"castSpell":{"spellId":{"itemId":40211}}}},
-			  {"action":{"condition":{"spellIsReady":{"spellId":{"spellId":49028}}},"castSpell":{"spellId":{"spellId":46584}}}},
-			  {"action":{"castSpell":{"spellId":{"spellId":49028}}}},
-			  {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"nextRuneCooldown":{"runeType":"RuneBlood"}},"rhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}}}},"castSpell":{"spellId":{"spellId":50842}}}},
-			  {"action":{"castSpell":{"spellId":{"spellId":55262,"tag":1}}}},
-			  {"action":{"castSpell":{"spellId":{"spellId":49924,"tag":1}}}},
-			  {"action":{"condition":{"not":{"val":{"spellIsReady":{"spellId":{"spellId":49028}}}}},"castSpell":{"spellId":{"spellId":49895}}}},
-			  {"action":{"castSpell":{"spellId":{"spellId":57623}}}}
+			  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55095}}}}},"resetSequence":{"sequenceName":"IT"}}},
+			  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55078}}}}},"resetSequence":{"sequenceName":"PS"}}},
+			  {"action":{"condition":{"or":{"vals":[{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":49028}}},{"cmp":{"op":"OpEq","lhs":{"runeCooldown":{"runeType":"RuneFrost"}},"rhs":{"const":{"val":"0"}}}},{"cmp":{"op":"OpGe","lhs":{"currentNonDeathRuneCount":{"runeType":"RuneFrost"}},"rhs":{"const":{"val":"1"}}}}]}},{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55095}}}}}]}},"sequence":{"name":"IT","actions":[{"castSpell":{"spellId":{"spellId":59131}}}]}}},
+			  {"action":{"condition":{"or":{"vals":[{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":49028}}},{"cmp":{"op":"OpEq","lhs":{"runeCooldown":{"runeType":"RuneUnholy"}},"rhs":{"const":{"val":"0"}}}},{"cmp":{"op":"OpGe","lhs":{"currentNonDeathRuneCount":{"runeType":"RuneUnholy"}},"rhs":{"const":{"val":"1"}}}}]}},{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55078}}}}}]}},"sequence":{"name":"PS","actions":[{"castSpell":{"spellId":{"spellId":49921,"tag":1}}}]}}},
+			  {"action":{"sequence":{"name":"Opener","actions":[{"castSpell":{"spellId":{"spellId":49016}}},{"castSpell":{"spellId":{"spellId":33697}}},{"castSpell":{"spellId":{"spellId":26297}}},{"castSpell":{"spellId":{"spellId":54758}}},{"castSpell":{"spellId":{"spellId":49924,"tag":1}}},{"castSpell":{"spellId":{"spellId":55262,"tag":1}}},{"castSpell":{"spellId":{"spellId":55262,"tag":1}}}]}}},
+			  {"action":{"condition":{"or":{"vals":[{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"const":{"val":"1.5s"}}}},{"dotIsActive":{"spellId":{"spellId":55095}}},{"dotIsActive":{"spellId":{"spellId":55078}}}]}},{"and":{"vals":[{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"nextRuneCooldown":{"runeType":"RuneBlood"}},"rhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}}}},{"cmp":{"op":"OpEq","lhs":{"currentRuneCount":{"runeType":"RuneDeath"}},"rhs":{"const":{"val":"0"}}}}]}},{"dotIsActive":{"spellId":{"spellId":55095}}},{"dotIsActive":{"spellId":{"spellId":55078}}}]}},{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"math":{"op":"OpAdd","lhs":{"spellTimeToReady":{"spellId":{"spellId":46584}}},"rhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}}}},"rhs":{"math":{"op":"OpAdd","lhs":{"spellTimeToReady":{"spellId":{"spellId":49028}}},"rhs":{"const":{"val":"3s"}}}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":49028}}}}},{"dotIsActive":{"spellId":{"spellId":55095}}},{"dotIsActive":{"spellId":{"spellId":55078}}}]}}]}},"castSpell":{"spellId":{"spellId":50842}}}},
+			  {"action":{"condition":{"and":{"vals":[{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"math":{"op":"OpAdd","lhs":{"auraRemainingTime":{"auraId":{"spellId":49028}}},"rhs":{"const":{"val":"4s"}}}}}},{"cmp":{"op":"OpLe","lhs":{"auraRemainingTime":{"auraId":{"spellId":49028}}},"rhs":{"const":{"val":"2s"}}}},{"auraIsActive":{"auraId":{"spellId":49028}}},{"sequenceIsComplete":{"sequenceName":"IT"}}]}}]}},"strictSequence":{"actions":[{"castSpell":{"spellId":{"spellId":45529}}},{"castSpell":{"spellId":{"spellId":50842}}}]}}},
+			  {"action":{"condition":{"or":{"vals":[{"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":49016}}},{"spellIsReady":{"spellId":{"spellId":46584}}},{"spellIsReady":{"spellId":{"spellId":49028}}},{"gcdIsReady":{}}]}},{"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":46584}}},{"spellIsReady":{"spellId":{"spellId":49028}}},{"cmp":{"op":"OpLt","lhs":{"remainingTime":{}},"rhs":{"math":{"op":"OpAdd","lhs":{"spellTimeToReady":{"spellId":{"spellId":33697}}},"rhs":{"const":{"val":"15"}}}}}},{"cmp":{"op":"OpLt","lhs":{"remainingTime":{}},"rhs":{"math":{"op":"OpAdd","lhs":{"spellTimeToReady":{"spellId":{"spellId":26297}}},"rhs":{"const":{"val":"10"}}}}}}]}},{"cmp":{"op":"OpLt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"15"}}}},{"auraIsActive":{"auraId":{"spellId":33697}}}]}},"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}}},
+			  {"action":{"condition":{"or":{"vals":[{"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":46584}}},{"spellIsReady":{"spellId":{"spellId":49028}}},{"or":{"vals":[{"cmp":{"op":"OpLt","lhs":{"remainingTime":{}},"rhs":{"math":{"op":"OpAdd","lhs":{"spellTimeToReady":{"spellId":{"spellId":33697}}},"rhs":{"const":{"val":"15"}}}}}},{"cmp":{"op":"OpGe","lhs":{"remainingTime":{}},"rhs":{"math":{"op":"OpAdd","lhs":{"spellTimeToReady":{"spellId":{"spellId":49016}}},"rhs":{"const":{"val":"9"}}}}}}]}},{"gcdIsReady":{}}]}},{"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":33697}}},{"spellIsReady":{"spellId":{"spellId":46584}}},{"spellIsReady":{"spellId":{"spellId":49028}}},{"gcdIsReady":{}}]}},{"cmp":{"op":"OpLe","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"12"}}}},{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":33697}}},"rhs":{"const":{"val":"55"}}}},{"cmp":{"op":"OpGt","lhs":{"remainingTime":{}},"rhs":{"math":{"op":"OpAdd","lhs":{"spellTimeToReady":{"spellId":{"spellId":33697}}},"rhs":{"const":{"val":"20"}}}}}},{"cmp":{"op":"OpLt","lhs":{"remainingTime":{}},"rhs":{"math":{"op":"OpAdd","lhs":{"spellTimeToReady":{"spellId":{"spellId":49016}}},"rhs":{"const":{"val":"20"}}}}}},{"gcdIsReady":{}},{"spellIsReady":{"spellId":{"spellId":26297}}}]}}]}},"castSpell":{"spellId":{"spellId":54758}}}},
+			  {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":54758}}},{"gcdIsReady":{}}]}},"castSpell":{"spellId":{"spellId":47568}}}},
+			  {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":54758}}},{"gcdIsReady":{}}]}},"castSpell":{"spellId":{"spellId":49016}}}},
+			  {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":54758}}},{"gcdIsReady":{}}]}},"castSpell":{"spellId":{"spellId":26297}}}},
+			  {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":54758}}},{"gcdIsReady":{}}]}},"castSpell":{"spellId":{"spellId":33697}}}},
+			  {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":54758}}},{"gcdIsReady":{}}]}},"strictSequence":{"actions":[{"castSpell":{"spellId":{"spellId":46584}}},{"castSpell":{"spellId":{"spellId":49028}}}]}}},
+			  {"action":{"condition":{"and":{"vals":[{"not":{"val":{"currentRuneActive":{"runeSlot":"SlotLeftBlood"}}}},{"sequenceIsComplete":{"sequenceName":"Opener"}},{"spellIsReady":{"spellId":{"spellId":45529}}},{"gcdIsReady":{}},{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49028}}},"rhs":{"const":{"val":"40"}}}},{"or":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":49028}}}}},{"cmp":{"op":"OpGt","lhs":{"auraRemainingTime":{"auraId":{"spellId":49028}}},"rhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}}}}]}}]}}]}},"castSpell":{"spellId":{"spellId":45529}}}},
+			  {"action":{"condition":{"and":{"vals":[{"or":{"vals":[{"cmp":{"op":"OpLt","lhs":{"nextRuneCooldown":{"runeType":"RuneBlood"}},"rhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}}}},{"cmp":{"op":"OpGt","lhs":{"nextRuneCooldown":{"runeType":"RuneBlood"}},"rhs":{"const":{"val":"8s"}}}}]}},{"not":{"val":{"or":{"vals":[{"cmp":{"op":"OpGe","lhs":{"nextRuneCooldown":{"runeType":"RuneFrost"}},"rhs":{"auraRemainingTime":{"auraId":{"spellId":71227}}}}},{"cmp":{"op":"OpGe","lhs":{"nextRuneCooldown":{"runeType":"RuneUnholy"}},"rhs":{"auraRemainingTime":{"auraId":{"spellId":71227}}}}}]}}}}]}},"castSpell":{"spellId":{"spellId":55262,"tag":1}}}},
+			  {"action":{"condition":{"not":{"val":{}}},"castSpell":{"spellId":{"spellId":49924,"tag":1}}}},
+			  {"action":{"condition":{"or":{"vals":[{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"runeCooldown":{"runeType":"RuneFrost"}},"rhs":{"const":{"val":"0.5"}}}},{"cmp":{"op":"OpGt","lhs":{"runeCooldown":{"runeType":"RuneUnholy"}},"rhs":{"const":{"val":"0.5"}}}},{"or":{"vals":[{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49028}}},"rhs":{"const":{"val":"10"}}}},{"cmp":{"op":"OpEq","lhs":{"currentRunicPower":{}},"rhs":{"const":{"val":"100"}}}}]}},{"cmp":{"op":"OpGt","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"const":{"val":"1.5s"}}}},{"not":{"val":{"cmp":{"op":"OpLe","lhs":{"auraRemainingTime":{"auraId":{"spellId":71227}}},"rhs":{"const":{"val":"1.5s"}}}}}}]}},{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"runeCooldown":{"runeType":"RuneBlood"}},"rhs":{"const":{"val":"0.3"}}}},{"or":{"vals":[{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49028}}},"rhs":{"const":{"val":"10"}}}},{"cmp":{"op":"OpEq","lhs":{"currentRunicPower":{}},"rhs":{"const":{"val":"100"}}}}]}},{"cmp":{"op":"OpGt","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"const":{"val":"1.5s"}}}},{"not":{"val":{"cmp":{"op":"OpLe","lhs":{"auraRemainingTime":{"auraId":{"spellId":71227}}},"rhs":{"const":{"val":"1.5s"}}}}}}]}}]}},"castSpell":{"spellId":{"spellId":49895}}}},
+			  {"action":{"condition":{"or":{"vals":[{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"runeCooldown":{"runeType":"RuneFrost"}},"rhs":{"const":{"val":"0.5"}}}},{"cmp":{"op":"OpGt","lhs":{"runeCooldown":{"runeType":"RuneUnholy"}},"rhs":{"const":{"val":"0.5"}}}},{"cmp":{"op":"OpGt","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"const":{"val":"1.5s"}}}}]}},{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"runeCooldown":{"runeType":"RuneBlood"}},"rhs":{"const":{"val":"0.5"}}}},{"cmp":{"op":"OpGt","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"const":{"val":"1.5s"}}}}]}}]}},"castSpell":{"spellId":{"spellId":57623}}}}
+			]
+		}`),
+	}),
+}
+
+export const BLOOD_PESTI_DD_ROTATION_PRESET_DEFAULT = {
+	name: 'Blood Pesti DD APL',
+	//enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultBloodRotation),
+		rotation: APLRotation.fromJsonString(`{
+			"type": "TypeAPL",
+			"prepullActions": [
+			  {"action":{"castSpell":{"spellId":{"spellId":48265}}},"doAtValue":{"const":{"val":"-20s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":42650}}},"doAtValue":{"const":{"val":"-10s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":50689}}},"doAtValue":{"const":{"val":"-6s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":57623}}},"doAtValue":{"const":{"val":"-1.5s"}}},
+			  {"action":{"castSpell":{"spellId":{"itemId":40211}}},"doAtValue":{"const":{"val":"-1s"}}}
+			],
+			"priorityList": [
+			  {"action":{"condition":{"cmp":{"op":"OpGe","lhs":{"currentTime":{}},"rhs":{"const":{"val":"8.5s"}}}},"castSpell":{"spellId":{"spellId":64382,"tag":-1}}}},
+			  {"action":{"autocastOtherCooldowns":{}}},
+			  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55095}}}}},"resetSequence":{"sequenceName":"IT"}}},
+			  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55078}}}}},"resetSequence":{"sequenceName":"PS"}}},
+			  {"action":{"condition":{"or":{"vals":[{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":49028}}},{"cmp":{"op":"OpEq","lhs":{"runeCooldown":{"runeType":"RuneFrost"}},"rhs":{"const":{"val":"0"}}}},{"cmp":{"op":"OpGe","lhs":{"currentNonDeathRuneCount":{"runeType":"RuneFrost"}},"rhs":{"const":{"val":"1"}}}}]}},{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55095}}}}}]}},"sequence":{"name":"IT","actions":[{"castSpell":{"spellId":{"spellId":59131}}}]}}},
+			  {"action":{"condition":{"or":{"vals":[{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":49028}}},{"cmp":{"op":"OpEq","lhs":{"runeCooldown":{"runeType":"RuneUnholy"}},"rhs":{"const":{"val":"0"}}}},{"cmp":{"op":"OpGe","lhs":{"currentNonDeathRuneCount":{"runeType":"RuneUnholy"}},"rhs":{"const":{"val":"1"}}}}]}},{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55078}}}}}]}},"sequence":{"name":"PS","actions":[{"castSpell":{"spellId":{"spellId":49921,"tag":1}}}]}}},
+			  {"action":{"sequence":{"name":"Opener","actions":[{"castSpell":{"spellId":{"spellId":49016}}},{"castSpell":{"spellId":{"spellId":33697}}},{"castSpell":{"spellId":{"spellId":26297}}},{"castSpell":{"spellId":{"spellId":54758}}},{"castSpell":{"spellId":{"spellId":49924,"tag":1}}},{"castSpell":{"spellId":{"spellId":55262,"tag":1}}},{"castSpell":{"spellId":{"spellId":55262,"tag":1}}}]}}},
+			  {"action":{"condition":{"or":{"vals":[{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"const":{"val":"1.5s"}}}},{"dotIsActive":{"spellId":{"spellId":55095}}},{"dotIsActive":{"spellId":{"spellId":55078}}}]}},{"and":{"vals":[{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"nextRuneCooldown":{"runeType":"RuneBlood"}},"rhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}}}},{"cmp":{"op":"OpEq","lhs":{"currentRuneCount":{"runeType":"RuneDeath"}},"rhs":{"const":{"val":"0"}}}}]}},{"dotIsActive":{"spellId":{"spellId":55095}}},{"dotIsActive":{"spellId":{"spellId":55078}}}]}},{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"math":{"op":"OpAdd","lhs":{"spellTimeToReady":{"spellId":{"spellId":46584}}},"rhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}}}},"rhs":{"math":{"op":"OpAdd","lhs":{"spellTimeToReady":{"spellId":{"spellId":49028}}},"rhs":{"const":{"val":"3s"}}}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":49028}}}}},{"dotIsActive":{"spellId":{"spellId":55095}}},{"dotIsActive":{"spellId":{"spellId":55078}}}]}}]}},"castSpell":{"spellId":{"spellId":50842}}}},
+			  {"action":{"condition":{"and":{"vals":[{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"math":{"op":"OpAdd","lhs":{"auraRemainingTime":{"auraId":{"spellId":49028}}},"rhs":{"const":{"val":"4s"}}}}}},{"cmp":{"op":"OpLe","lhs":{"auraRemainingTime":{"auraId":{"spellId":49028}}},"rhs":{"const":{"val":"2s"}}}},{"auraIsActive":{"auraId":{"spellId":49028}}},{"sequenceIsComplete":{"sequenceName":"IT"}}]}}]}},"strictSequence":{"actions":[{"castSpell":{"spellId":{"spellId":45529}}},{"castSpell":{"spellId":{"spellId":50842}}}]}}},
+			  {"action":{"condition":{"or":{"vals":[{"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":49016}}},{"spellIsReady":{"spellId":{"spellId":46584}}},{"spellIsReady":{"spellId":{"spellId":49028}}},{"gcdIsReady":{}}]}},{"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":46584}}},{"spellIsReady":{"spellId":{"spellId":49028}}},{"cmp":{"op":"OpLt","lhs":{"remainingTime":{}},"rhs":{"math":{"op":"OpAdd","lhs":{"spellTimeToReady":{"spellId":{"spellId":33697}}},"rhs":{"const":{"val":"15"}}}}}},{"cmp":{"op":"OpLt","lhs":{"remainingTime":{}},"rhs":{"math":{"op":"OpAdd","lhs":{"spellTimeToReady":{"spellId":{"spellId":26297}}},"rhs":{"const":{"val":"10"}}}}}}]}},{"cmp":{"op":"OpLt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"15"}}}},{"auraIsActive":{"auraId":{"spellId":33697}}}]}},"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}}},
+			  {"action":{"condition":{"or":{"vals":[{"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":46584}}},{"spellIsReady":{"spellId":{"spellId":49028}}},{"or":{"vals":[{"cmp":{"op":"OpLt","lhs":{"remainingTime":{}},"rhs":{"math":{"op":"OpAdd","lhs":{"spellTimeToReady":{"spellId":{"spellId":33697}}},"rhs":{"const":{"val":"15"}}}}}},{"cmp":{"op":"OpGe","lhs":{"remainingTime":{}},"rhs":{"math":{"op":"OpAdd","lhs":{"spellTimeToReady":{"spellId":{"spellId":49016}}},"rhs":{"const":{"val":"9"}}}}}}]}},{"gcdIsReady":{}}]}},{"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":33697}}},{"spellIsReady":{"spellId":{"spellId":46584}}},{"spellIsReady":{"spellId":{"spellId":49028}}},{"gcdIsReady":{}}]}},{"cmp":{"op":"OpLe","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"12"}}}},{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":33697}}},"rhs":{"const":{"val":"55"}}}},{"cmp":{"op":"OpGt","lhs":{"remainingTime":{}},"rhs":{"math":{"op":"OpAdd","lhs":{"spellTimeToReady":{"spellId":{"spellId":33697}}},"rhs":{"const":{"val":"20"}}}}}},{"cmp":{"op":"OpLt","lhs":{"remainingTime":{}},"rhs":{"math":{"op":"OpAdd","lhs":{"spellTimeToReady":{"spellId":{"spellId":49016}}},"rhs":{"const":{"val":"20"}}}}}},{"gcdIsReady":{}},{"spellIsReady":{"spellId":{"spellId":26297}}}]}}]}},"castSpell":{"spellId":{"spellId":54758}}}},
+			  {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":54758}}},{"gcdIsReady":{}}]}},"castSpell":{"spellId":{"spellId":47568}}}},
+			  {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":54758}}},{"gcdIsReady":{}}]}},"castSpell":{"spellId":{"spellId":49016}}}},
+			  {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":54758}}},{"gcdIsReady":{}}]}},"castSpell":{"spellId":{"spellId":26297}}}},
+			  {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":54758}}},{"gcdIsReady":{}}]}},"castSpell":{"spellId":{"spellId":33697}}}},
+			  {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":54758}}},{"gcdIsReady":{}}]}},"strictSequence":{"actions":[{"castSpell":{"spellId":{"spellId":46584}}},{"castSpell":{"spellId":{"spellId":49028}}},{"resetSequence":{"sequenceName":"IT"}},{"resetSequence":{"sequenceName":"PS"}}]}}},
+			  {"action":{"condition":{"and":{"vals":[{"not":{"val":{"currentRuneActive":{"runeSlot":"SlotLeftBlood"}}}},{"sequenceIsComplete":{"sequenceName":"Opener"}},{"spellIsReady":{"spellId":{"spellId":45529}}},{"gcdIsReady":{}},{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49028}}},"rhs":{"const":{"val":"40"}}}},{"or":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":49028}}}}},{"cmp":{"op":"OpGt","lhs":{"auraRemainingTime":{"auraId":{"spellId":49028}}},"rhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}}}}]}}]}}]}},"castSpell":{"spellId":{"spellId":45529}}}},
+			  {"action":{"condition":{"and":{"vals":[{"or":{"vals":[{"cmp":{"op":"OpLt","lhs":{"nextRuneCooldown":{"runeType":"RuneBlood"}},"rhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}}}},{"cmp":{"op":"OpGt","lhs":{"nextRuneCooldown":{"runeType":"RuneBlood"}},"rhs":{"const":{"val":"8s"}}}}]}},{"not":{"val":{"or":{"vals":[{"cmp":{"op":"OpGe","lhs":{"nextRuneCooldown":{"runeType":"RuneFrost"}},"rhs":{"auraRemainingTime":{"auraId":{"spellId":71227}}}}},{"cmp":{"op":"OpGe","lhs":{"nextRuneCooldown":{"runeType":"RuneUnholy"}},"rhs":{"auraRemainingTime":{"auraId":{"spellId":71227}}}}}]}}}}]}},"castSpell":{"spellId":{"spellId":55262,"tag":1}}}},
+			  {"action":{"condition":{"not":{"val":{}}},"castSpell":{"spellId":{"spellId":49924,"tag":1}}}},
+			  {"action":{"condition":{"or":{"vals":[{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"runeCooldown":{"runeType":"RuneFrost"}},"rhs":{"const":{"val":"0.5"}}}},{"cmp":{"op":"OpGt","lhs":{"runeCooldown":{"runeType":"RuneUnholy"}},"rhs":{"const":{"val":"0.5"}}}},{"or":{"vals":[{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49028}}},"rhs":{"const":{"val":"10"}}}},{"cmp":{"op":"OpEq","lhs":{"currentRunicPower":{}},"rhs":{"const":{"val":"100"}}}}]}},{"cmp":{"op":"OpGt","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"const":{"val":"1.5s"}}}},{"not":{"val":{"cmp":{"op":"OpLe","lhs":{"auraRemainingTime":{"auraId":{"spellId":71227}}},"rhs":{"const":{"val":"1.5s"}}}}}}]}},{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"runeCooldown":{"runeType":"RuneBlood"}},"rhs":{"const":{"val":"0.3"}}}},{"or":{"vals":[{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49028}}},"rhs":{"const":{"val":"10"}}}},{"cmp":{"op":"OpEq","lhs":{"currentRunicPower":{}},"rhs":{"const":{"val":"100"}}}}]}},{"cmp":{"op":"OpGt","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"const":{"val":"1.5s"}}}},{"not":{"val":{"cmp":{"op":"OpLe","lhs":{"auraRemainingTime":{"auraId":{"spellId":71227}}},"rhs":{"const":{"val":"1.5s"}}}}}}]}}]}},"castSpell":{"spellId":{"spellId":49895}}}},
+			  {"action":{"condition":{"or":{"vals":[{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"runeCooldown":{"runeType":"RuneFrost"}},"rhs":{"const":{"val":"0.5"}}}},{"cmp":{"op":"OpGt","lhs":{"runeCooldown":{"runeType":"RuneUnholy"}},"rhs":{"const":{"val":"0.5"}}}},{"cmp":{"op":"OpGt","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"const":{"val":"1.5s"}}}}]}},{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"runeCooldown":{"runeType":"RuneBlood"}},"rhs":{"const":{"val":"0.5"}}}},{"cmp":{"op":"OpGt","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"const":{"val":"1.5s"}}}}]}}]}},"castSpell":{"spellId":{"spellId":57623}}}}
+			]
+		}`),
+	}),
+}
+
+export const BLOOD_PESTI_AOE_ROTATION_PRESET_DEFAULT = {
+	name: 'Blood Pesti AOE APL',
+	//enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultBloodRotation),
+		rotation: APLRotation.fromJsonString(`{
+			"type": "TypeAPL",
+			"prepullActions": [
+			  {"action":{"castSpell":{"spellId":{"spellId":48265}}},"doAtValue":{"const":{"val":"-20s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":42650}}},"doAtValue":{"const":{"val":"-10s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":50689}}},"doAtValue":{"const":{"val":"-6s"}}},
+			  {"action":{"castSpell":{"spellId":{"spellId":57623}}},"doAtValue":{"const":{"val":"-1.5s"}}},
+			  {"action":{"castSpell":{"spellId":{"itemId":40211}}},"doAtValue":{"const":{"val":"-1s"}}}
+			],
+			"priorityList": [
+			  {"action":{"condition":{"cmp":{"op":"OpGe","lhs":{"currentTime":{}},"rhs":{"const":{"val":"8.5s"}}}},"castSpell":{"spellId":{"spellId":64382,"tag":-1}}}},
+			  {"action":{"autocastOtherCooldowns":{}}},
+			  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55095}}}}},"resetSequence":{"sequenceName":"IT"}}},
+			  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55078}}}}},"resetSequence":{"sequenceName":"PS"}}},
+			  {"action":{"condition":{"or":{"vals":[{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":49028}}},{"cmp":{"op":"OpEq","lhs":{"runeCooldown":{"runeType":"RuneFrost"}},"rhs":{"const":{"val":"0"}}}},{"cmp":{"op":"OpGe","lhs":{"currentNonDeathRuneCount":{"runeType":"RuneFrost"}},"rhs":{"const":{"val":"1"}}}}]}},{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55095}}}}}]}},"sequence":{"name":"IT","actions":[{"castSpell":{"spellId":{"spellId":59131}}}]}}},
+			  {"action":{"condition":{"or":{"vals":[{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":49028}}},{"cmp":{"op":"OpEq","lhs":{"runeCooldown":{"runeType":"RuneUnholy"}},"rhs":{"const":{"val":"0"}}}},{"cmp":{"op":"OpGe","lhs":{"currentNonDeathRuneCount":{"runeType":"RuneUnholy"}},"rhs":{"const":{"val":"1"}}}}]}},{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55078}}}}}]}},"sequence":{"name":"PS","actions":[{"castSpell":{"spellId":{"spellId":49921,"tag":1}}}]}}},
+			  {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":49028}}},{"dotIsActive":{"spellId":{"spellId":55095}}},{"dotIsActive":{"spellId":{"spellId":55078}}}]}},"sequence":{"name":"Pesti","actions":[{"castSpell":{"spellId":{"spellId":50842}}}]}}},
+			  {"action":{"sequence":{"name":"Opener","actions":[{"castSpell":{"spellId":{"spellId":49016}}},{"castSpell":{"spellId":{"spellId":33697}}},{"castSpell":{"spellId":{"spellId":26297}}},{"castSpell":{"spellId":{"spellId":54758}}},{"castSpell":{"spellId":{"spellId":49924,"tag":1}}},{"castSpell":{"spellId":{"spellId":50842}}},{"castSpell":{"spellId":{"spellId":49941}}}]}}},
+			  {"action":{"condition":{"or":{"vals":[{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"const":{"val":"1.5s"}}}},{"dotIsActive":{"spellId":{"spellId":55095}}},{"dotIsActive":{"spellId":{"spellId":55078}}}]}},{"and":{"vals":[{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"nextRuneCooldown":{"runeType":"RuneBlood"}},"rhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}}}},{"cmp":{"op":"OpEq","lhs":{"currentRuneCount":{"runeType":"RuneDeath"}},"rhs":{"const":{"val":"0"}}}}]}},{"dotIsActive":{"spellId":{"spellId":55095}}},{"dotIsActive":{"spellId":{"spellId":55078}}}]}},{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"math":{"op":"OpAdd","lhs":{"spellTimeToReady":{"spellId":{"spellId":46584}}},"rhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}}}},"rhs":{"math":{"op":"OpAdd","lhs":{"spellTimeToReady":{"spellId":{"spellId":49028}}},"rhs":{"const":{"val":"3s"}}}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":49028}}}}},{"dotIsActive":{"spellId":{"spellId":55095}}},{"dotIsActive":{"spellId":{"spellId":55078}}}]}}]}},"castSpell":{"spellId":{"spellId":50842}}}},
+			  {"action":{"condition":{"and":{"vals":[{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"math":{"op":"OpAdd","lhs":{"auraRemainingTime":{"auraId":{"spellId":49028}}},"rhs":{"const":{"val":"4s"}}}}}},{"cmp":{"op":"OpLe","lhs":{"auraRemainingTime":{"auraId":{"spellId":49028}}},"rhs":{"const":{"val":"2s"}}}},{"auraIsActive":{"auraId":{"spellId":49028}}},{"sequenceIsComplete":{"sequenceName":"IT"}}]}}]}},"strictSequence":{"actions":[{"castSpell":{"spellId":{"spellId":45529}}},{"castSpell":{"spellId":{"spellId":50842}}}]}}},
+			  {"action":{"condition":{"or":{"vals":[{"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":49016}}},{"spellIsReady":{"spellId":{"spellId":46584}}},{"spellIsReady":{"spellId":{"spellId":49028}}},{"gcdIsReady":{}}]}},{"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":46584}}},{"spellIsReady":{"spellId":{"spellId":49028}}},{"cmp":{"op":"OpLt","lhs":{"remainingTime":{}},"rhs":{"math":{"op":"OpAdd","lhs":{"spellTimeToReady":{"spellId":{"spellId":33697}}},"rhs":{"const":{"val":"15"}}}}}},{"cmp":{"op":"OpLt","lhs":{"remainingTime":{}},"rhs":{"math":{"op":"OpAdd","lhs":{"spellTimeToReady":{"spellId":{"spellId":26297}}},"rhs":{"const":{"val":"10"}}}}}}]}},{"cmp":{"op":"OpLt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"15"}}}},{"auraIsActive":{"auraId":{"spellId":33697}}}]}},"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}}},
+			  {"action":{"condition":{"or":{"vals":[{"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":46584}}},{"spellIsReady":{"spellId":{"spellId":49028}}},{"or":{"vals":[{"cmp":{"op":"OpLt","lhs":{"remainingTime":{}},"rhs":{"math":{"op":"OpAdd","lhs":{"spellTimeToReady":{"spellId":{"spellId":33697}}},"rhs":{"const":{"val":"15"}}}}}},{"cmp":{"op":"OpGe","lhs":{"remainingTime":{}},"rhs":{"math":{"op":"OpAdd","lhs":{"spellTimeToReady":{"spellId":{"spellId":49016}}},"rhs":{"const":{"val":"9"}}}}}}]}},{"gcdIsReady":{}}]}},{"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":33697}}},{"spellIsReady":{"spellId":{"spellId":46584}}},{"spellIsReady":{"spellId":{"spellId":49028}}},{"gcdIsReady":{}}]}},{"cmp":{"op":"OpLe","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"12"}}}},{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":33697}}},"rhs":{"const":{"val":"55"}}}},{"cmp":{"op":"OpGt","lhs":{"remainingTime":{}},"rhs":{"math":{"op":"OpAdd","lhs":{"spellTimeToReady":{"spellId":{"spellId":33697}}},"rhs":{"const":{"val":"20"}}}}}},{"cmp":{"op":"OpLt","lhs":{"remainingTime":{}},"rhs":{"math":{"op":"OpAdd","lhs":{"spellTimeToReady":{"spellId":{"spellId":49016}}},"rhs":{"const":{"val":"20"}}}}}},{"gcdIsReady":{}},{"spellIsReady":{"spellId":{"spellId":26297}}}]}}]}},"castSpell":{"spellId":{"spellId":54758}}}},
+			  {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":54758}}},{"gcdIsReady":{}}]}},"castSpell":{"spellId":{"spellId":47568}}}},
+			  {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":54758}}},{"gcdIsReady":{}}]}},"castSpell":{"spellId":{"spellId":49016}}}},
+			  {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":54758}}},{"gcdIsReady":{}}]}},"castSpell":{"spellId":{"spellId":26297}}}},
+			  {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":54758}}},{"gcdIsReady":{}}]}},"castSpell":{"spellId":{"spellId":33697}}}},
+			  {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":54758}}},{"gcdIsReady":{}}]}},"strictSequence":{"actions":[{"castSpell":{"spellId":{"spellId":46584}}},{"castSpell":{"spellId":{"spellId":49028}}},{"resetSequence":{"sequenceName":"Pesti"}}]}}},
+			  {"action":{"condition":{"and":{"vals":[{"not":{"val":{"currentRuneActive":{"runeSlot":"SlotLeftBlood"}}}},{"sequenceIsComplete":{"sequenceName":"Opener"}},{"spellIsReady":{"spellId":{"spellId":45529}}},{"gcdIsReady":{}},{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49028}}},"rhs":{"const":{"val":"40"}}}},{"or":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":49028}}}}},{"cmp":{"op":"OpGt","lhs":{"auraRemainingTime":{"auraId":{"spellId":49028}}},"rhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}}}}]}}]}}]}},"castSpell":{"spellId":{"spellId":45529}}}},
+			  {"action":{"condition":{"and":{"vals":[{"or":{"vals":[{"cmp":{"op":"OpLt","lhs":{"nextRuneCooldown":{"runeType":"RuneBlood"}},"rhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}}}},{"cmp":{"op":"OpGt","lhs":{"nextRuneCooldown":{"runeType":"RuneBlood"}},"rhs":{"const":{"val":"8s"}}}}]}},{"not":{"val":{"or":{"vals":[{"cmp":{"op":"OpGe","lhs":{"nextRuneCooldown":{"runeType":"RuneFrost"}},"rhs":{"auraRemainingTime":{"auraId":{"spellId":71227}}}}},{"cmp":{"op":"OpGe","lhs":{"nextRuneCooldown":{"runeType":"RuneUnholy"}},"rhs":{"auraRemainingTime":{"auraId":{"spellId":71227}}}}}]}}}}]}},"castSpell":{"spellId":{"spellId":49941}}}},
+			  {"action":{"condition":{"not":{"val":{}}},"castSpell":{"spellId":{"spellId":49924,"tag":1}}}},
+			  {"action":{"condition":{"or":{"vals":[{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"runeCooldown":{"runeType":"RuneFrost"}},"rhs":{"const":{"val":"0.5"}}}},{"cmp":{"op":"OpGt","lhs":{"runeCooldown":{"runeType":"RuneUnholy"}},"rhs":{"const":{"val":"0.5"}}}},{"or":{"vals":[{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49028}}},"rhs":{"const":{"val":"10"}}}},{"cmp":{"op":"OpEq","lhs":{"currentRunicPower":{}},"rhs":{"const":{"val":"100"}}}}]}},{"cmp":{"op":"OpGt","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"const":{"val":"1.5s"}}}},{"not":{"val":{"cmp":{"op":"OpLe","lhs":{"auraRemainingTime":{"auraId":{"spellId":71227}}},"rhs":{"const":{"val":"1.5s"}}}}}}]}},{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"runeCooldown":{"runeType":"RuneBlood"}},"rhs":{"const":{"val":"0.3"}}}},{"or":{"vals":[{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49028}}},"rhs":{"const":{"val":"10"}}}},{"cmp":{"op":"OpEq","lhs":{"currentRunicPower":{}},"rhs":{"const":{"val":"100"}}}}]}},{"cmp":{"op":"OpGt","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"const":{"val":"1.5s"}}}},{"not":{"val":{"cmp":{"op":"OpLe","lhs":{"auraRemainingTime":{"auraId":{"spellId":71227}}},"rhs":{"const":{"val":"1.5s"}}}}}}]}}]}},"castSpell":{"spellId":{"spellId":49895}}}},
+			  {"action":{"condition":{"or":{"vals":[{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"runeCooldown":{"runeType":"RuneFrost"}},"rhs":{"const":{"val":"0.5"}}}},{"cmp":{"op":"OpGt","lhs":{"runeCooldown":{"runeType":"RuneUnholy"}},"rhs":{"const":{"val":"0.5"}}}},{"cmp":{"op":"OpGt","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"const":{"val":"1.5s"}}}}]}},{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"runeCooldown":{"runeType":"RuneBlood"}},"rhs":{"const":{"val":"0.5"}}}},{"cmp":{"op":"OpGt","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"const":{"val":"1.5s"}}}}]}}]}},"castSpell":{"spellId":{"spellId":57623}}}}
 			]
 		}`),
 	}),
@@ -317,7 +402,7 @@ export const FROST_BL_PESTI_ROTATION_PRESET_DEFAULT = {
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultFrostRotation),
 		rotation: APLRotation.fromJsonString(`{
-			"enabled": true,
+			"type": "TypeAPL",
 			"prepullActions": [
 			  {"action":{"castSpell":{"spellId":{"spellId":48265}}},"doAtValue":{"const":{"val":"-20s"}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":42650}}},"doAtValue":{"const":{"val":"-10s"}}},
@@ -351,7 +436,7 @@ export const FROST_UH_PESTI_ROTATION_PRESET_DEFAULT = {
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultFrostRotation),
 		rotation: APLRotation.fromJsonString(`{
-			"enabled": true,
+			"type": "TypeAPL",
 			"prepullActions": [
 			  {"action":{"castSpell":{"spellId":{"spellId":48265}}},"doAtValue":{"const":{"val":"-20s"}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":42650}}},"doAtValue":{"const":{"val":"-10s"}}},
@@ -385,7 +470,7 @@ export const UNHOLY_DW_ROTATION_PRESET_DEFAULT = {
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultUnholyRotation),
 		rotation: APLRotation.fromJsonString(`{
-			"enabled": true,
+			"type": "TypeAPL",
 			"prepullActions": [
 			  {"action":{"castSpell":{"spellId":{"spellId":48265}}},"doAtValue":{"const":{"val":"-10s"}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":63560}}},"doAtValue":{"const":{"val":"-8s"}}},
@@ -424,8 +509,9 @@ export const UNHOLY_2H_ROTATION_PRESET_DEFAULT = {
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultUnholyRotation),
 		rotation: APLRotation.fromJsonString(`{
-			"enabled": true,
+			"type": "TypeAPL",
 			"prepullActions": [
+			  {"action":{"castSpell":{"spellId":{"spellId":49222}}},"doAtValue":{"const":{"val":"-20s"}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":48265}}},"doAtValue":{"const":{"val":"-10s"}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":63560}}},"doAtValue":{"const":{"val":"-8s"}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":57623}}},"doAtValue":{"const":{"val":"-1.5s"}}},
@@ -433,8 +519,8 @@ export const UNHOLY_2H_ROTATION_PRESET_DEFAULT = {
 			],
 			"priorityList": [
 			  {"action":{"autocastOtherCooldowns":{}}},
-			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"const":{"val":"3s"}}}},"castSpell":{"spellId":{"spellId":59131}}}},
-			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55078}}},"rhs":{"const":{"val":"3s"}}}},"castSpell":{"spellId":{"spellId":49921,"tag":1}}}},
+			  {"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55095}}},"rhs":{"nextRuneCooldown":{"runeType":"RuneFrost"}}}},{"cmp":{"op":"OpGe","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"8s"}}}}]}},"castSpell":{"spellId":{"spellId":59131}}}},
+			  {"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55078}}},"rhs":{"nextRuneCooldown":{"runeType":"RuneUnholy"}}}},{"cmp":{"op":"OpGe","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"8s"}}}}]}},"castSpell":{"spellId":{"spellId":49921,"tag":1}}}},
 			  {"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":66803}}}}},"castSpell":{"spellId":{"spellId":49930,"tag":1}}}},
 			  {"action":{"condition":{"auraIsActive":{"auraId":{"spellId":49206}}},"castSpell":{"spellId":{"spellId":26297}}}},
 			  {"action":{"condition":{"or":{"vals":[{"auraIsActive":{"auraId":{"spellId":49206}}},{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49206}}},"rhs":{"const":{"val":"50s"}}}}]}},"castSpell":{"spellId":{"spellId":54758}}}},
@@ -460,7 +546,7 @@ export const UNHOLY_DND_AOE_ROTATION_PRESET_DEFAULT = {
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultUnholyRotation),
 		rotation: APLRotation.fromJsonString(`{
-			"enabled": true,
+			"type": "TypeAPL",
 			"prepullActions": [
 			  {"action":{"castSpell":{"spellId":{"spellId":48265}}},"doAtValue":{"const":{"val":"-10s"}}},
 			  {"action":{"castSpell":{"spellId":{"spellId":63560}}},"doAtValue":{"const":{"val":"-8s"}}},
@@ -546,7 +632,7 @@ export const P3_BLOOD_BIS_PRESET = {
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
 	gear: EquipmentSpec.fromJsonString(`{   "items": [
-		{"id":48493,"enchant":3817,"gems":[41285,40142]},
+		  {"id":48493,"enchant":3817,"gems":[41285,40142]},
 		  {"id":47458,"gems":[40142]},
 		  {"id":48495,"enchant":3808,"gems":[40111]},
 		  {"id":47546,"enchant":3831,"gems":[42142]},
@@ -566,10 +652,35 @@ export const P3_BLOOD_BIS_PRESET = {
   ]}`),
 };
 
+export const P4_BLOOD_BIS_PRESET = {
+	name: 'P4 Blood',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
+	gear: EquipmentSpec.fromJsonString(`{   "items": [
+        {"id":51312,"enchant":3817,"gems":[41398,40117]},
+        {"id":50728,"gems":[40143]},
+        {"id":51314,"enchant":3808,"gems":[40117]},
+        {"id":50677,"enchant":3831,"gems":[42156]},
+        {"id":51310,"enchant":3832,"gems":[40117,49110]},
+        {"id":50659,"enchant":3845,"gems":[40162,0]},
+        {"id":50675,"enchant":3604,"gems":[40143,40117,0]},
+        {"id":50620,"gems":[40125,40117,40117]},
+        {"id":51313,"enchant":3823,"gems":[40117,40117]},
+        {"id":50639,"enchant":3606,"gems":[40125,40117]},
+        {"id":50693,"gems":[40125]},
+        {"id":52572,"gems":[40125]},
+        {"id":50363},
+        {"id":47464},
+        {"id":49623,"enchant":3368,"gems":[40117,42153,42153]},
+        {},
+        {"id":47673}
+  ]}`),
+};
+
 export const P1_UNHOLY_2H_PRERAID_PRESET = {
 	name: 'Pre-Raid 2H Unholy',
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2 && player.getTalents().nervesOfColdSteel == 0,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
 	gear: EquipmentSpec.fromJsonString(`{ "items": [
 		{"id":41386,"enchant":3817,"gems":[41400,49110]},
 		{"id":37397},
@@ -594,7 +705,7 @@ export const P1_UNHOLY_2H_PRERAID_PRESET = {
 export const P1_UNHOLY_2H_BIS_PRESET = {
 	name: 'P1 2H Unholy',
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2 && player.getTalents().nervesOfColdSteel == 0,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
 	gear: EquipmentSpec.fromJsonString(`{ "items": [
 		{"id":44006,"enchant":3817,"gems":[41400,49110]},
 		{"id":44664,"gems":[39996]},
@@ -613,13 +724,40 @@ export const P1_UNHOLY_2H_BIS_PRESET = {
 		{"id":40384,"enchant":3368},
 		{},
 		{"id":40207}
-  ]}`),
+	  ]
+    }`),
+};
+
+export const P4_UNHOLY_2H_BIS_PRESET = {
+	name: 'P4 2H Unholy',
+	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
+	gear: EquipmentSpec.fromJsonString(`{ "items": [
+        {"id":51312,"enchant":3817,"gems":[41398,40111]},
+        {"id":50647,"gems":[40111]},
+        {"id":51314,"enchant":3808,"gems":[40111]},
+        {"id":50677,"enchant":3831,"gems":[40146]},
+        {"id":51310,"enchant":3832,"gems":[40111,40111]},
+        {"id":50659,"enchant":3845,"gems":[40146,0]},
+        {"id":51311,"enchant":3604,"gems":[40146,0]},
+        {"id":50620,"gems":[40146,40111,40111]},
+        {"id":50624,"enchant":3823,"gems":[40146,40111,49110]},
+        {"id":50639,"enchant":3606,"gems":[40146,40111]},
+        {"id":50693,"gems":[40146]},
+        {"id":52572,"gems":[40146]},
+        {"id":47464},
+        {"id":50363},
+        {"id":49623,"enchant":3368,"gems":[42142,42142,42142]},
+        {},
+        {"id":47673}
+      ]
+	}`),
 };
 
 export const P1_UNHOLY_DW_PRERAID_PRESET = {
 	name: 'Pre-Raid DW Unholy',
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2 && player.getTalents().nervesOfColdSteel > 0,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":41386,"enchant":3817,"gems":[41400,49110]},
 		{"id":37397},
@@ -644,7 +782,7 @@ export const P1_UNHOLY_DW_PRERAID_PRESET = {
 export const P1_UNHOLY_DW_BIS_PRESET = {
 	name: 'P1 DW Unholy',
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2 && player.getTalents().nervesOfColdSteel > 0,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":44006,"enchant":3817,"gems":[41398,42702]},
 		{"id":39421},
@@ -669,7 +807,7 @@ export const P1_UNHOLY_DW_BIS_PRESET = {
 export const P2_UNHOLY_DW_BIS_PRESET = {
 	name: 'P2 DW Unholy',
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2 && player.getTalents().nervesOfColdSteel > 0,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":45472,"enchant":3817,"gems":[41398,40041]},
 		  {"id":46040,"gems":[39996]},
@@ -694,7 +832,7 @@ export const P2_UNHOLY_DW_BIS_PRESET = {
 export const P3_UNHOLY_DW_BIS_PRESET = {
 	name: 'P3 DW Unholy',
 	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2 && player.getTalents().nervesOfColdSteel > 0,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":48493,"enchant":3817,"gems":[41398,40146]},
 		  {"id":47458,"gems":[40146]},
@@ -714,6 +852,31 @@ export const P3_UNHOLY_DW_BIS_PRESET = {
 		  {"id":47528,"enchant":3368,"gems":[40111]},
 		  {"id":47673}
   ]}`),
+};
+
+export const P4_UNHOLY_DW_BIS_PRESET = {
+	name: 'P4 DW Unholy',
+	toolbar: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
+	gear: EquipmentSpec.fromJsonString(`{"items": [
+        {"id":51312,"enchant":3817,"gems":[41398,40111]},
+        {"id":50647,"gems":[40111]},
+        {"id":51314,"enchant":3808,"gems":[40111]},
+        {"id":50677,"enchant":3831,"gems":[40146]},
+        {"id":51310,"enchant":3832,"gems":[42142,49110]},
+        {"id":50659,"enchant":3845,"gems":[40146,0]},
+        {"id":51311,"enchant":3604,"gems":[40146,0]},
+        {"id":50620,"gems":[40146,40111,42142]},
+        {"id":50624,"enchant":3823,"gems":[40111,42142,40111]},
+        {"id":50639,"enchant":3606,"gems":[40146,40111]},
+        {"id":52572,"gems":[40146]},
+        {"id":51855,"gems":[40111]},
+        {"id":47131},
+        {"id":50363},
+        {"id":50737,"enchant":3368,"gems":[40111]},
+        {"id":50737,"enchant":3368,"gems":[40111]},
+        {"id":47673}
+	]}`),
 };
 
 export const P1_FROST_PRE_BIS_PRESET = {
@@ -813,6 +976,31 @@ export const P3_FROST_BIS_PRESET = {
 		  {"id":47528,"enchant":3370,"gems":[40111]},
 		  {"id":47528,"enchant":3368,"gems":[40111]},
 		  {"id":40207}
+  ]}`),
+};
+
+export const P4_FROST_BIS_PRESET = {
+	name: 'P4 Frost',
+	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
+	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
+	gear: EquipmentSpec.fromJsonString(`{   "items": [
+        {"id":51312,"enchant":3817,"gems":[41398,42153]},
+        {"id":50728,"gems":[40117]},
+        {"id":51314,"enchant":3808,"gems":[42153]},
+        {"id":47548,"enchant":3831,"gems":[40117]},
+        {"id":51310,"enchant":3832,"gems":[42153,40117]},
+        {"id":50659,"enchant":3845,"gems":[40117,0]},
+        {"id":51311,"enchant":3604,"gems":[40117,0]},
+        {"id":50620,"enchant":3601,"gems":[40143,40117,40117]},
+        {"id":51817,"enchant":3823,"gems":[49110,40117,40143]},
+        {"id":50639,"enchant":3606,"gems":[40143,40117]},
+        {"id":52572,"gems":[40117]},
+        {"id":50693,"gems":[40117]},
+        {"id":50363},
+        {"id":47464},
+        {"id":50737,"enchant":3370,"gems":[40117]},
+        {"id":50737,"enchant":3368,"gems":[40117]},
+        {"id":40207}
   ]}`),
 };
 

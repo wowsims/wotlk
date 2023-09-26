@@ -125,6 +125,12 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 		return rot.newValueRuneCooldown(config.GetRuneCooldown())
 	case *proto.APLValue_NextRuneCooldown:
 		return rot.newValueNextRuneCooldown(config.GetNextRuneCooldown())
+	case *proto.APLValue_RuneSlotCooldown:
+		return rot.newValueRuneSlotCooldown(config.GetRuneSlotCooldown())
+	case *proto.APLValue_RuneGrace:
+		return rot.newValueRuneGrace(config.GetRuneGrace())
+	case *proto.APLValue_RuneSlotGrace:
+		return rot.newValueRuneSlotGrace(config.GetRuneSlotGrace())
 
 	// GCD
 	case *proto.APLValue_GcdIsReady:
@@ -151,6 +157,10 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 		return rot.newValueSpellTravelTime(config.GetSpellTravelTime())
 	case *proto.APLValue_SpellCpm:
 		return rot.newValueSpellCPM(config.GetSpellCpm())
+	case *proto.APLValue_SpellIsChanneling:
+		return rot.newValueSpellIsChanneling(config.GetSpellIsChanneling())
+	case *proto.APLValue_SpellChanneledTicks:
+		return rot.newValueSpellChanneledTicks(config.GetSpellChanneledTicks())
 
 	// Auras
 	case *proto.APLValue_AuraIsActive:
@@ -181,6 +191,10 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 		return rot.newValueSequenceIsReady(config.GetSequenceIsReady())
 	case *proto.APLValue_SequenceTimeToReady:
 		return rot.newValueSequenceTimeToReady(config.GetSequenceTimeToReady())
+
+	// Properties
+	case *proto.APLValue_ChannelClipDelay:
+		return rot.newValueChannelClipDelay(config.GetChannelClipDelay())
 
 	default:
 		return nil

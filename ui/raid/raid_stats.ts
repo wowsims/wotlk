@@ -113,13 +113,11 @@ class RaidStatsCategory extends Component {
 		if (options.effects.length != 1 || options.effects[0].playerData?.class) {
 			const statsLink = this.rootElem.querySelector('.raid-stats-category') as HTMLElement;
 
-			statsLink.setAttribute('data-bs-toggle', 'tooltip');
-			statsLink.setAttribute('data-bs-placement', 'right');
-			statsLink.setAttribute('data-bs-html', 'true');
-
 			// Using the title option here because outerHTML sanitizes and filters out the img src options
 			Tooltip.getOrCreateInstance(statsLink, {
 				customClass: 'raid-stats-category-tooltip',
+				html: true,
+				placement: 'right',
 				title: this.tooltipElem,
 			})
 		}
@@ -213,7 +211,7 @@ function playerClassAndTalentInternal<T extends Class>(clazz: T, talentName: key
 		class: clazz,
 		condition: (player: Player<any>): boolean => {
 			return player.isClass(clazz)
-				&& negateIf(Boolean(player.getTalents()[talentName]), negateTalent)
+				&& negateIf(Boolean((player.getTalents() as any)[talentName]), negateTalent)
 				&& (!extraCondition || extraCondition(player));
 		},
 	};
@@ -229,7 +227,7 @@ function playerSpecAndTalentInternal<T extends Spec>(spec: T, talentName: keyof 
 		class: specToClass[spec],
 		condition: (player: Player<any>): boolean => {
 			return player.isSpec(spec)
-				&& negateIf(Boolean(player.getTalents()[talentName]), negateTalent)
+				&& negateIf(Boolean((player.getTalents() as any)[talentName]), negateTalent)
 				&& (!extraCondition || extraCondition(player));
 		},
 	};

@@ -51,6 +51,7 @@ func TestProtection(t *testing.T) {
 				},
 			},
 		},
+		Rotation: core.RotationCombo{Label: "Default", Rotation: DefaultRotation},
 
 		IsTank:          true,
 		InFrontOfTarget: true,
@@ -128,96 +129,42 @@ var FullConsumes = &proto.Consumes{
 	DefaultConjured: proto.Conjured_ConjuredDarkRune,
 }
 
+var DefaultRotation = core.APLRotationFromJsonString(`{
+	"type": "TypeAPL",
+	"prepullActions": [
+		{"action":{"castSpell":{"spellId":{"spellId":48952}}},"doAtValue":{"const":{"val":"-3s"}}},
+		{"action":{"castSpell":{"spellId":{"spellId":54428}}},"doAtValue":{"const":{"val":"-1500ms"}}},
+		{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
+	],
+	"priorityList": [
+		{"action":{"autocastOtherCooldowns":{}}},
+		{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"spellTimeToReady":{"spellId":{"spellId":53595}}},"rhs":{"const":{"val":"3s"}}}},"castSpell":{"spellId":{"spellId":61411}}}},
+		{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"spellTimeToReady":{"spellId":{"spellId":61411}}},"rhs":{"const":{"val":"3s"}}}},"castSpell":{"spellId":{"spellId":53595}}}},
+		{"action":{"castSpell":{"spellId":{"spellId":48806}}}},
+		{"action":{"condition":{"and":{"vals":[{"gcdIsReady":{}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":61411}}}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":53595}}}}},{"cmp":{"op":"OpLe","lhs":{"min":{"vals":[{"spellTimeToReady":{"spellId":{"spellId":61411}}},{"spellTimeToReady":{"spellId":{"spellId":53595}}}]}},"rhs":{"const":{"val":"350ms"}}}}]}},"wait":{"duration":{"min":{"vals":[{"spellTimeToReady":{"spellId":{"spellId":61411}}},{"spellTimeToReady":{"spellId":{"spellId":53595}}}]}}}}},
+		{"action":{"castSpell":{"spellId":{"spellId":48819}}}},
+		{"action":{"castSpell":{"spellId":{"spellId":48952}}}},
+		{"action":{"castSpell":{"spellId":{"spellId":53408}}}},
+		{"action":{"condition":{"and":{"vals":[{"gcdIsReady":{}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":61411}}}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":53595}}}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":48819}}}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":48952}}}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":53408}}}}}]}},"wait":{"duration":{"min":{"vals":[{"spellTimeToReady":{"spellId":{"spellId":61411}}},{"spellTimeToReady":{"spellId":{"spellId":53595}}},{"spellTimeToReady":{"spellId":{"spellId":48819}}},{"spellTimeToReady":{"spellId":{"spellId":48952}}},{"spellTimeToReady":{"spellId":{"spellId":53408}}}]}}}}}
+	]
+}`)
+
 var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
-	{
-		"id": 40581,
-		"enchant": 3818,
-		"gems": [
-			41396,
-			36767
-		]
-	},
-	{
-		"id": 40387
-	},
-	{
-		"id": 40584,
-		"enchant": 3852,
-		"gems": [
-			49110
-		]
-	},
-	{
-		"id": 40410,
-		"enchant": 3605
-	},
-	{
-		"id": 40579,
-		"enchant": 3832,
-		"gems": [
-			36767,
-			40022
-		]
-	},
-	{
-		"id": 39764,
-		"enchant": 3850,
-		"gems": [
-			0
-		]
-	},
-	{
-		"id": 40580,
-		"enchant": 3860,
-		"gems": [
-			40008,
-			0
-		]
-	},
-	{
-		"id": 39759,
-		"enchant": 3601,
-		"gems": [
-			40008,
-			40008
-		]
-	},
-	{
-		"id": 40589,
-		"enchant": 3822
-	},
-	{
-		"id": 39717,
-		"enchant": 3606,
-		"gems": [
-			40089
-		]
-	},
-	{
-		"id": 40718
-	},
-	{
-		"id": 40107
-	},
-	{
-		"id": 44063,
-		"gems": [
-			36767,
-			40089
-		]
-	},
-	{
-		"id": 37220
-	},
-	{
-		"id": 40345,
-		"enchant": 3788
-	},
-	{
-		"id": 40400,
-		"enchant": 3849
-	},
-	{
-		"id": 40707
-	}
+	{"id":40581,"enchant":3818,"gems":[41380,36767]},
+	{"id":40387},
+	{"id":40584,"enchant":3852,"gems":[40008]},
+	{"id":40410,"enchant":3605},
+	{"id":40579,"enchant":3832,"gems":[36767,40022]},
+	{"id":39764,"enchant":3850,"gems":[0]},
+	{"id":40580,"enchant":3860,"gems":[40008,0]},
+	{"id":39759,"enchant":3601,"gems":[40008,40008]},
+	{"id":40589,"enchant":3822},
+	{"id":39717,"enchant":3606,"gems":[40089]},
+	{"id":40718},
+	{"id":40107},
+	{"id":44063,"gems":[36767,40089]},
+	{"id":37220},
+	{"id":40345,"enchant":3788},
+	{"id":40400,"enchant":3849},
+	{"id":40707}
 ]}`)

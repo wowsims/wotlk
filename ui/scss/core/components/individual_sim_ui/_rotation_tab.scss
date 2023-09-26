@@ -3,24 +3,56 @@
 @import "./apl_rotation_picker";
 
 #rotation-tab {
+	&.rotation-type-auto {
+		.rotation-tab-simple {
+			display: none;
+		}
+		.rotation-tab-apl {
+			display: none;
+		}
+		.rotation-tab-legacy {
+			display: none;
+		}
+	}
+
+	&.rotation-type-simple {
+		.rotation-tab-auto {
+			display: none;
+		}
+		.rotation-tab-apl {
+			display: none;
+		}
+		.rotation-tab-legacy {
+			display: none;
+		}
+	}
+
+	&.rotation-type-apl {
+		.rotation-tab-auto {
+			display: none;
+		}
+		.rotation-tab-simple {
+			display: none;
+		}
+		.rotation-tab-legacy {
+			display: none;
+		}
+	}
+
 	&.rotation-type-legacy {
-		.rotation-tab-main {
+		.rotation-tab-auto {
+			display: none;
+		}
+		.rotation-tab-simple {
+			display: none;
+		}
+		.rotation-tab-apl {
 			display: none;
 		}
 	
 		.enum-picker-selector,
 		.number-picker-input {
 			width: 8rem;
-		}
-	}
-
-	&.rotation-type-apl {
-		.cooldown-settings {
-			display: none;
-		}
-	
-		.rotation-settings {
-			display: none;
 		}
 	}
 
@@ -32,7 +64,11 @@
 		width: 100%;
 	}
 
-	.rotation-tab-main {
+	.rotation-tab-auto {
+		width: 100%;
+	}
+
+	.rotation-tab-apl {
 		width: 100%;
 	}
 

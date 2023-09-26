@@ -621,7 +621,6 @@ func (mage *Mage) applyMoltenFury() {
 
 	mage.RegisterResetEffect(func(sim *core.Simulation) {
 		sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int32) {
-			mage.GetMajorCooldown(core.ActionID{SpellID: EvocationId}).Disable()
 			if isExecute == 35 {
 				mage.PseudoStats.DamageDealtMultiplier *= multiplier
 				// For some reason Molten Fury doesn't apply to living bomb DoT, so cancel it out.

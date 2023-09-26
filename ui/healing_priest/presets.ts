@@ -90,7 +90,7 @@ export const ROTATION_PRESET_DISC = {
 		specRotationOptionsJson: Rotation.toJsonString(Rotation.create({
 		})),
 		rotation: APLRotation.fromJsonString(`{
-			"enabled": true,
+			"type": "TypeAPL",
 			"priorityList": [
 				{"action":{"autocastOtherCooldowns":{}}},
 				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":48066}}},"rhs":{"const":{"val":"18"}}}},"multishield":{"spellId":{"spellId":48066},"maxShields":10,"maxOverlap":{"const":{"val":"0ms"}}}}},
@@ -108,7 +108,7 @@ export const ROTATION_PRESET_HOLY = {
 		specRotationOptionsJson: Rotation.toJsonString(Rotation.create({
 		})),
 		rotation: APLRotation.fromJsonString(`{
-			"enabled": true,
+			"type": "TypeAPL",
 			"priorityList": [
 				{"action":{"autocastOtherCooldowns":{}}},
 				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":48063}}},"rhs":{"const":{"val":"10"}}}},"castSpell":{"spellId":{"spellId":48063}}}},

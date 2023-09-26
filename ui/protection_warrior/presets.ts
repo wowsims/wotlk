@@ -82,7 +82,7 @@ export const ROTATION_DEFAULT = {
 		specRotationOptionsJson: ProtectionWarriorRotation.toJsonString(ProtectionWarriorRotation.create({
 		})),
 		rotation: APLRotation.fromJsonString(`{
-			"enabled": true,
+			"type": "TypeAPL",
 			"prepullActions": [
 				{"action":{"castSpell":{"spellId":{"spellId":47440}}},"doAtValue":{"const":{"val":"-10s"}}},
 				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}

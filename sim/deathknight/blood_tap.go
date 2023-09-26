@@ -17,10 +17,7 @@ func (dk *Deathknight) registerBloodTapSpell() {
 		ActionID: actionID,
 		Duration: time.Second * 20,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			dk.CorrectBloodTapConversion(sim,
-				dk.BloodRuneGainMetrics(),
-				dk.DeathRuneGainMetrics(),
-				dk.BloodTap)
+			dk.CorrectBloodTapConversion(sim)
 
 			// Gain at the end, to take into account previous effects for callback
 			amountOfRunicPower := 10.0

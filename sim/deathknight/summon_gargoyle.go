@@ -39,15 +39,6 @@ func (dk *Deathknight) registerSummonGargoyleCD() {
 			dk.Gargoyle.EnableWithTimeout(sim, dk.Gargoyle, time.Second*30)
 			dk.Gargoyle.CancelGCDTimer(sim)
 
-			snapshottedMeleeSpeedMultipler := dk.PseudoStats.MeleeSpeedMultiplier
-			dk.Gargoyle.meleeSpeedMultiplier = func() float64 {
-				if dk.Gargoyle.isNerfedGargoyle {
-					return dk.PseudoStats.MeleeSpeedMultiplier
-				}
-				return snapshottedMeleeSpeedMultipler
-			}
-			dk.Gargoyle.updateCastSpeed()
-
 			// Add a dummy aura to show in metrics
 			dk.SummonGargoyleAura.Activate(sim)
 
@@ -69,8 +60,8 @@ func (dk *Deathknight) registerSummonGargoyleCD() {
 		Type:  core.CooldownTypeDPS,
 	})
 	if dk.Inputs.IsDps {
-		// We use this for defining the min cast time of gargoyle
-		// but we dont cast it with the MCD system in the dps sim
+		// We use this for defining the min cast time of gargoyle,
+		// but we don't cast it with the MCD system in the dps sim
 		dk.GetMajorCooldown(dk.SummonGargoyle.ActionID).Disable()
 	}
 }
@@ -82,61 +73,54 @@ type GargoylePet struct {
 
 	GargoyleStrike *core.Spell
 
-	ownerMeleeMultiplier float64
-	meleeSpeedMultiplier func() float64
-	isNerfedGargoyle     bool
+	isNerfedGargoyle bool
 }
 
 func (dk *Deathknight) NewGargoyle(nerfedGargoyle bool) *GargoylePet {
 	// Remove any hit that would be given by NocS as it does not translate to pets
-	nocsHit := 0.0
+	var nocsHit float64
 	if dk.nervesOfColdSteelActive() {
-		nocsHit = (float64(dk.Talents.NervesOfColdSteel) / 8.0) * 17.0
+		nocsHit = float64(dk.Talents.NervesOfColdSteel) * core.MeleeHitRatingPerHitChance
 	}
 	if dk.HasDraeneiHitAura {
-		nocsHit = nocsHit + 1.0
-	}
-
-	var gargoyleDynamicStatInheritance core.PetStatInheritance = nil
-	if nerfedGargoyle {
-		gargoyleDynamicStatInheritance = func(ownerStats stats.Stats) stats.Stats {
-			return stats.Stats{
-				stats.SpellHaste: (ownerStats[stats.MeleeHaste] / dk.PseudoStats.MeleeHasteRatingPerHastePercent) * core.HasteRatingPerHastePercent,
-			}
-		}
+		nocsHit += 1 * core.MeleeHitRatingPerHitChance
 	}
 
 	gargoyle := &GargoylePet{
-		Pet: core.NewPet(
-			"Gargoyle",
-			&dk.Character,
-			stats.Stats{
-				stats.Stamina:  1000,
-				stats.SpellHit: -nocsHit * core.SpellHitRatingPerHitChance,
-			},
-			func(ownerStats stats.Stats) stats.Stats {
-				// Convert dk melee hit to garg spell hit
-				// We convert 8 melee hit to 17 spell hit (as thats how pets scale their hit/expertise)
-				ownerHitChance := (ownerStats[stats.MeleeHit] / core.MeleeHitRatingPerHitChance)
-				hitRatingFromOwner := ((ownerHitChance / 8.0) * 17.0) * core.SpellHitRatingPerHitChance
-
-				return stats.Stats{
-					stats.AttackPower: ownerStats[stats.AttackPower],
-					stats.SpellHit:    hitRatingFromOwner,
-					stats.SpellHaste:  (ownerStats[stats.MeleeHaste] / dk.PseudoStats.MeleeHasteRatingPerHastePercent) * core.HasteRatingPerHastePercent,
-				}
-			},
-			gargoyleDynamicStatInheritance,
-			false,
-			true,
-		),
-		dkOwner:              dk,
-		isNerfedGargoyle:     nerfedGargoyle,
-		ownerMeleeMultiplier: 1.0,
+		Pet: core.NewPet("Gargoyle", &dk.Character, stats.Stats{
+			stats.Stamina:  1000,
+			stats.SpellHit: -nocsHit * PetSpellHitScale,
+		}, func(ownerStats stats.Stats) stats.Stats {
+			return stats.Stats{
+				stats.AttackPower: ownerStats[stats.AttackPower],
+				stats.SpellHit:    ownerStats[stats.MeleeHit] * PetSpellHitScale,
+				stats.SpellHaste:  ownerStats[stats.MeleeHaste] * PetHasteScale,
+			}
+		}, false, true),
+		dkOwner:          dk,
+		isNerfedGargoyle: nerfedGargoyle,
 	}
 
 	// NightOfTheDead
-	gargoyle.PseudoStats.DamageTakenMultiplier *= (1.0 - float64(dk.Talents.NightOfTheDead)*0.45)
+	gargoyle.PseudoStats.DamageTakenMultiplier *= 1.0 - float64(dk.Talents.NightOfTheDead)*0.45
+
+	gargoyle.OnPetEnable = func(sim *core.Simulation) {
+		gargoyle.PseudoStats.CastSpeedMultiplier = 1 // guardians are not affected by raid buffs
+		gargoyle.MultiplyCastSpeed(dk.PseudoStats.MeleeSpeedMultiplier)
+
+		// "Nerfed Gargoyle" dynamically updates with owner's haste and melee speed
+		if gargoyle.isNerfedGargoyle {
+			gargoyle.EnableDynamicMeleeSpeed(func(amount float64) {
+				gargoyle.MultiplyCastSpeed(amount)
+			})
+
+			gargoyle.EnableDynamicStats(func(ownerStats stats.Stats) stats.Stats {
+				return stats.Stats{
+					stats.SpellHaste: ownerStats[stats.MeleeHaste] * PetHasteScale,
+				}
+			})
+		}
+	}
 
 	dk.AddPet(gargoyle)
 
@@ -151,25 +135,14 @@ func (garg *GargoylePet) Initialize() {
 	garg.registerGargoyleStrikeSpell()
 }
 
-func (garg *GargoylePet) Reset(sim *core.Simulation) {
-	garg.ownerMeleeMultiplier = 1.0
+func (garg *GargoylePet) Reset(_ *core.Simulation) {
 }
 
-func (garg *GargoylePet) OnGCDReady(sim *core.Simulation) {
-	// Gargoyle has no GCD on his cast so just do nothing here
-	// else we get the error that this unit is not using its gcd
-	garg.DoNothing()
-}
-
-func (garg *GargoylePet) updateCastSpeed() {
-	garg.MultiplyCastSpeed(1.0 / garg.ownerMeleeMultiplier)
-	garg.ownerMeleeMultiplier = garg.meleeSpeedMultiplier()
-	garg.MultiplyCastSpeed(garg.ownerMeleeMultiplier)
+func (garg *GargoylePet) OnGCDReady(_ *core.Simulation) {
 }
 
 func (garg *GargoylePet) registerGargoyleStrikeSpell() {
 	attackPowerModifier := (1.0 + 0.04*float64(garg.dkOwner.Talents.Impurity)) / 3.0
-	var outcomeApplier core.OutcomeApplier
 
 	garg.GargoyleStrike = garg.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 51963},
@@ -180,11 +153,6 @@ func (garg *GargoylePet) registerGargoyleStrikeSpell() {
 			DefaultCast: core.Cast{
 				CastTime: time.Millisecond * 2000,
 			},
-			OnCastComplete: func(sim *core.Simulation, spell *core.Spell) {
-				garg.updateCastSpeed()
-				// Gargoyle doesn't use GCD, so we recast the spell over and over
-				garg.GargoyleStrike.Cast(sim, garg.CurrentTarget)
-			},
 		},
 
 		DamageMultiplier: 1,
@@ -193,9 +161,10 @@ func (garg *GargoylePet) registerGargoyleStrikeSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := 2.05*sim.Roll(51, 69) + attackPowerModifier*spell.MeleeAttackPower()
-			result := spell.CalcDamage(sim, target, baseDamage, outcomeApplier)
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			spell.DealDamage(sim, result)
+
+			garg.GargoyleStrike.Cast(sim, garg.CurrentTarget)
 		},
 	})
-	outcomeApplier = garg.GargoyleStrike.OutcomeMagicCritFixedChance(0.05)
 }

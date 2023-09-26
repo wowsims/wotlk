@@ -189,23 +189,9 @@ export class BulkItemPicker extends Component {
 				}
 			};
 
-			const onClickEnd = (event: Event) => {
-				event.preventDefault();
-			};
-
-			// Make icon open gear selector
 			this.itemElem.iconElem.addEventListener('click', openEnchantGemSelector);
-			this.itemElem.iconElem.addEventListener('touchstart', openEnchantGemSelector);
-			this.itemElem.iconElem.addEventListener('touchend', onClickEnd);
-
-			// Make item name open gear selector
 			this.itemElem.nameElem.addEventListener('click', openEnchantGemSelector);
-			this.itemElem.nameElem.addEventListener('touchstart', openEnchantGemSelector);
-			this.itemElem.nameElem.addEventListener('touchend', onClickEnd);
-
 			this.itemElem.enchantElem.addEventListener('click', openEnchantGemSelector);
-			this.itemElem.enchantElem.addEventListener('touchstart', openEnchantGemSelector);
-			this.itemElem.enchantElem.addEventListener('touchend', onClickEnd);
 		});
 	}
 
@@ -855,7 +841,7 @@ class GemSelectorModal extends BaseModal {
 			// Add event handlers
 			// this.itemsChangedEmitter.on(invokeUpdate);
 
-			// this.addOnDisposeCallback(() => gearData.changeEvent.off(invokeUpdate));
+			this.addOnDisposeCallback(() => this.ilist?.dispose());
 
 			this.simUI.sim.phaseChangeEmitter.on(applyFilter);
 			this.simUI.sim.filtersChangeEmitter.on(applyFilter);

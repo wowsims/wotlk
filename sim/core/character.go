@@ -2,10 +2,11 @@ package core
 
 import (
 	"fmt"
-	"golang.org/x/exp/slices"
 	"strconv"
 	"strings"
 	"time"
+
+	"golang.org/x/exp/slices"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -102,9 +103,10 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 
 			StatDependencyManager: stats.NewStatDependencyManager(),
 
-			ReactionTime:       time.Duration(player.ReactionTimeMs) * time.Millisecond,
+			ReactionTime:       MaxDuration(0, time.Duration(player.ReactionTimeMs)*time.Millisecond),
+			ChannelClipDelay:   MaxDuration(0, time.Duration(player.ChannelClipDelayMs)*time.Millisecond),
 			DistanceFromTarget: player.DistanceFromTarget,
-			IsUsingAPL:         player.Rotation != nil && player.Rotation.Enabled,
+			IsUsingAPL:         player.Rotation != nil && player.Rotation.Type == proto.APLRotation_TypeAPL,
 		},
 
 		Name:  player.Name,
@@ -346,26 +348,14 @@ func (character *Character) AddPet(pet PetAgent) {
 
 func (character *Character) MultiplyMeleeSpeed(sim *Simulation, amount float64) {
 	character.Unit.MultiplyMeleeSpeed(sim, amount)
-
-	for _, petAgent := range character.PetAgents {
-		petAgent.OwnerAttackSpeedChanged(sim)
-	}
 }
 
 func (character *Character) MultiplyRangedSpeed(sim *Simulation, amount float64) {
 	character.Unit.MultiplyRangedSpeed(sim, amount)
-
-	for _, petAgent := range character.PetAgents {
-		petAgent.OwnerAttackSpeedChanged(sim)
-	}
 }
 
 func (character *Character) MultiplyAttackSpeed(sim *Simulation, amount float64) {
 	character.Unit.MultiplyAttackSpeed(sim, amount)
-
-	for _, petAgent := range character.PetAgents {
-		petAgent.OwnerAttackSpeedChanged(sim)
-	}
 }
 
 func (character *Character) GetBaseStats() stats.Stats {

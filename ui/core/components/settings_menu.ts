@@ -31,13 +31,13 @@ export class SettingsMenu extends BaseModal {
 		this.footer!.innerHTML = `
 			<button
 				class="restore-defaults-button btn btn-primary"
-				data-bs-toggle="tooltip"
-				data-bs-title="Restores all default settings (gear, consumes, buffs, talents, EP weights, etc)."
 			>Restore Defaults</button>
 		`
 
 		const restoreDefaultsButton = this.rootElem.getElementsByClassName('restore-defaults-button')[0] as HTMLElement;
-		Tooltip.getOrCreateInstance(restoreDefaultsButton);
+		Tooltip.getOrCreateInstance(restoreDefaultsButton, {
+			title: "Restores all default settings (gear, consumes, buffs, talents, EP weights, etc). Saved settings are preserved."
+		});
 		restoreDefaultsButton.addEventListener('click', event => {
 			this.simUI.applyDefaults(TypedEvent.nextEventID());
 		});

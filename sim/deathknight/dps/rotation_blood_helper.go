@@ -20,7 +20,7 @@ type BloodRotation struct {
 	dsGlyphed     bool
 }
 
-func (br *BloodRotation) Reset(sim *core.Simulation) {
+func (br *BloodRotation) Reset(_ *core.Simulation) {
 	br.activatingDrw = false
 	if br.drwSnapshot != nil {
 		br.drwSnapshot.ResetProcTrackers()
@@ -114,7 +114,7 @@ func (dk *DpsDeathknight) blDiseaseCheck(sim *core.Simulation, target *core.Unit
 	return true
 }
 
-func (dk *DpsDeathknight) blSpreadDiseases(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+func (dk *DpsDeathknight) blSpreadDiseases(sim *core.Simulation, target *core.Unit, _ *deathknight.Sequence) time.Duration {
 	if dk.blDiseaseCheck(sim, target, dk.Pestilence, true, 1) {
 		casted := dk.Pestilence.Cast(sim, target)
 		landed := dk.LastOutcome.Matches(core.OutcomeLanded)
@@ -133,7 +133,7 @@ func (dk *DpsDeathknight) blSpreadDiseases(sim *core.Simulation, target *core.Un
 func (dk *DpsDeathknight) blDeathCoilCheck(sim *core.Simulation) bool {
 	canCastDrw := dk.Talents.DancingRuneWeapon && dk.DancingRuneWeapon != nil && (dk.DancingRuneWeapon.IsReady(sim) || dk.DancingRuneWeapon.CD.TimeToReady(sim) < 5*time.Second)
 	currentRP := dk.CurrentRunicPower()
-	willCastDS := dk.NormalCurrentFrostRunes() > 0 && dk.NormalCurrentUnholyRunes() > 1 && dk.CurrentBloodRunes() == 0
+	willCastDS := dk.CurrentFrostRunes() > 0 && dk.CurrentUnholyRunes() > 1 && dk.CurrentBloodRunes() == 0
 	return (!canCastDrw && currentRP >= float64(core.TernaryInt(dk.br.dsGlyphed && willCastDS, 65, 40))) || (canCastDrw && currentRP >= 100)
 }
 
@@ -178,7 +178,7 @@ func (dk *DpsDeathknight) blDrwCanCast(sim *core.Simulation, castTime time.Durat
 	if !dk.DancingRuneWeapon.IsReady(sim) {
 		return false
 	}
-	if !dk.CastCostPossible(sim, 60.0, 0, 0, 0) {
+	if dk.CurrentRunicPower() < 60 {
 		return false
 	}
 	// Setup max delay possible

@@ -115,7 +115,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 	}
 
 	wp := &WarlockPet{
-		Pet:   core.NewPet(cfg.Name, &warlock.Character, cfg.Stats, warlock.makeStatInheritance(), nil, true, false),
+		Pet:   core.NewPet(cfg.Name, &warlock.Character, cfg.Stats, warlock.makeStatInheritance(), true, false),
 		owner: warlock,
 	}
 

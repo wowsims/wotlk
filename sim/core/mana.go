@@ -262,7 +262,8 @@ func (sim *Simulation) initManaTickAction() {
 			char := player.GetCharacter()
 			char.ManaTick(sim)
 			if char.OnManaTick != nil {
-				if char.IsUsingAPL {
+				// Only execute APL actions after mana ticks once pre-pull has completed.
+				if char.IsUsingAPL && sim.CurrentTime > 0 {
 					char.Rotation.DoNextAction(sim)
 				} else {
 					char.OnManaTick(sim)
@@ -329,7 +330,7 @@ func (mc *ManaCost) LogCostFailure(sim *Simulation, spell *Spell) {
 func (mc *ManaCost) SpendCost(sim *Simulation, spell *Spell) {
 	if spell.CurCast.Cost > 0 {
 		spell.Unit.SpendMana(sim, spell.CurCast.Cost, mc.ResourceMetrics)
-		spell.Unit.PseudoStats.FiveSecondRuleRefreshTime = sim.CurrentTime + time.Second*5
+		spell.Unit.PseudoStats.FiveSecondRuleRefreshTime = MaxDuration(sim.CurrentTime+time.Second*5, spell.Unit.Hardcast.Expires)
 	}
 }
 func (mc *ManaCost) IssueRefund(_ *Simulation, _ *Spell) {}

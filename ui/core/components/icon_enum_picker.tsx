@@ -4,7 +4,7 @@ import { TypedEvent } from '../typed_event.js';
 
 import { Input, InputConfig } from './input.js';
 
-declare var tippy: any;
+import { element, fragment } from 'tsx-vanilla';
 
 export interface IconEnumValueConfig<ModObject, T> {
 	value: T,
@@ -58,25 +58,32 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 		}
 
 		if (config.tooltip) {
-			this.rootElem.setAttribute('data-bs-toggle', 'tooltip');
-			this.rootElem.setAttribute('data-bs-title', config.tooltip);
-			this.rootElem.setAttribute('data-bs-html', 'true');
-			Tooltip.getOrCreateInstance(this.rootElem);
+			Tooltip.getOrCreateInstance(this.rootElem, {
+				html: true,
+				title: config.tooltip
+			});
 		}
-
-		this.rootElem.innerHTML = `
-			<a
-				href="javascript:void(0)"
-				class="icon-picker-button"
-				role="button"
-				data-bs-toggle="dropdown"
-				data-bs-placement="bottom"
-				aria-expanded="false"
-			>
-				<span class='icon-picker-label'></span>
-			</a>
-			<ul class="dropdown-menu"></ul>
-    `;
+		this.rootElem.appendChild(
+			<>
+				<a
+					href="javascript:void(0)"
+					className="icon-picker-button"
+					attributes={{
+						'aria-expanded':"false",
+						role: 'button'
+					}}
+					dataset={{
+						bsToggle: 'dropdown',
+						bsPlacement: 'bottom',
+						whtticon:"false",
+						disableWowheadTouchTooltip:'true'
+					}}
+				>
+					<span className='icon-picker-label'></span>
+				</a>
+				<ul className="dropdown-menu"></ul>
+			</>
+		)
 
 		this.buttonElem = this.rootElem.querySelector('.icon-picker-button') as HTMLAnchorElement;
 		this.buttonText = this.buttonElem.querySelector('.icon-picker-label') as HTMLElement;
@@ -91,6 +98,7 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 
 			const option = document.createElement('a');
 			option.classList.add('icon-picker-button');
+			option.dataset.disableWowheadTouchTooltip='true';
 			optionContainer.appendChild(option);
 			this.setImage(option, valueConfig);
 
@@ -102,10 +110,10 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 			}
 
 			if (valueConfig.tooltip) {
-				option.setAttribute('data-bs-toggle', 'tooltip');
-				option.setAttribute('data-bs-title', valueConfig.tooltip);
-				option.setAttribute('data-bs-html', 'true');
-				Tooltip.getOrCreateInstance(option);
+				Tooltip.getOrCreateInstance(option, {
+					html: true,
+					title: valueConfig.tooltip
+				});
 			}
 
 			if (valueConfig.showWhen) {
@@ -122,20 +130,6 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 				event.preventDefault();
 				this.currentValue = valueConfig.value;
 				this.inputChanged(TypedEvent.nextEventID());
-
-				// Wowhead tooltips can't seem to detect when an element is hidden while
-				// being moused over, and the tooltip doesn't disappear. Patch this by
-				// dispatching our own mouseout event.
-				option.dispatchEvent(new Event('mouseout'));
-			});
-			option.addEventListener('touchstart', event => {
-				event.preventDefault();
-			});
-			option.addEventListener('touchend', event => {
-				event.preventDefault();
-				this.currentValue = valueConfig.value;
-				this.inputChanged(TypedEvent.nextEventID());
-				dropdownMenu.style.display = "none";
 			});
 		});
 

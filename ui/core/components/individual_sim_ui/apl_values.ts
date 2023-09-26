@@ -47,6 +47,9 @@ import {
 	APLValueSpellTravelTime,
 	APLValueSpellChannelTime,
 	APLValueSpellCPM,
+	APLValueSpellIsChanneling,
+	APLValueSpellChanneledTicks,
+	APLValueChannelClipDelay,
 	APLValueAuraIsActive,
 	APLValueAuraIsActiveWithReactionTime,
 	APLValueAuraRemainingTime,
@@ -64,6 +67,9 @@ import {
 	APLValueNumberTargets,
 	APLValueTotemRemainingTime,
 	APLValueCatExcessEnergy,
+	APLValueRuneSlotCooldown,
+	APLValueRuneGrace,
+	APLValueRuneSlotGrace,
 } from '../../proto/apl.js';
 
 import { EventID } from '../../typed_event.js';
@@ -595,6 +601,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		submenu: ['Resources'],
 		shortDescription: 'Amount of currently available Runic Power.',
 		newValue: APLValueCurrentRunicPower.create,
+		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassDeathknight,
 		fields: [],
 	}),
 
@@ -604,6 +611,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		submenu: ['Resources', 'Runes'],
 		shortDescription: 'Amount of currently available Runes of certain type including Death.',
 		newValue: APLValueCurrentRuneCount.create,
+		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassDeathknight,
 		fields: [
 			AplHelpers.runeTypeFieldConfig('runeType', true),
 		],
@@ -613,6 +621,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		submenu: ['Resources', 'Runes'],
 		shortDescription: 'Amount of currently available Runes of certain type ignoring Death',
 		newValue: APLValueCurrentNonDeathRuneCount.create,
+		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassDeathknight,
 		fields: [
 			AplHelpers.runeTypeFieldConfig('runeType', false),
 		],
@@ -622,6 +631,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		submenu: ['Resources', 'Runes'],
 		shortDescription: 'Is the rune of a certain slot currently available.',
 		newValue: APLValueCurrentRuneActive.create,
+		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassDeathknight,
 		fields: [
 			AplHelpers.runeSlotFieldConfig('runeSlot'),
 		],
@@ -631,6 +641,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		submenu: ['Resources', 'Runes'],
 		shortDescription: 'Is the rune of a certain slot currently converted to Death.',
 		newValue: APLValueCurrentRuneDeath.create,
+		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassDeathknight,
 		fields: [
 			AplHelpers.runeSlotFieldConfig('runeSlot'),
 		],
@@ -640,6 +651,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		submenu: ['Resources', 'Runes'],
 		shortDescription: 'Amount of time until a rune of certain type is ready to use.<br><b>NOTE:</b> Returns 0 if there is a rune available',
 		newValue: APLValueRuneCooldown.create,
+		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassDeathknight,
 		fields: [
 			AplHelpers.runeTypeFieldConfig('runeType', false),
 		],
@@ -649,8 +661,39 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		submenu: ['Resources', 'Runes'],
 		shortDescription: 'Amount of time until a 2nd rune of certain type is ready to use.<br><b>NOTE:</b> Returns 0 if there are 2 runes available',
 		newValue: APLValueNextRuneCooldown.create,
+		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassDeathknight,
 		fields: [
 			AplHelpers.runeTypeFieldConfig('runeType', false),
+		],
+	}),
+	'runeSlotCooldown': inputBuilder({
+		label: 'Rune Slot Cooldown',
+		submenu: ['Resources', 'Runes'],
+		shortDescription: 'Amount of time until a rune of certain slot is ready to use.<br><b>NOTE:</b> Returns 0 if rune is ready',
+		newValue: APLValueRuneSlotCooldown.create,
+		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassDeathknight,
+		fields: [
+			AplHelpers.runeSlotFieldConfig('runeSlot'),
+		],
+	}),
+	'runeGrace': inputBuilder({
+		label: 'Rune Grace Period',
+		submenu: ['Resources', 'Runes'],
+		shortDescription: 'Amount of rune grace period available for certain rune type.',
+		newValue: APLValueRuneGrace.create,
+		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassDeathknight,
+		fields: [
+			AplHelpers.runeTypeFieldConfig('runeType', false),
+		],
+	}),
+	'runeSlotGrace': inputBuilder({
+		label: 'Rune Slot Grace Period',
+		submenu: ['Resources', 'Runes'],
+		shortDescription: 'Amount of rune grace period available for certain rune slot.',
+		newValue: APLValueRuneSlotGrace.create,
+		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassDeathknight,
+		fields: [
+			AplHelpers.runeSlotFieldConfig('runeSlot'),
 		],
 	}),
 
@@ -719,15 +762,6 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells', ''),
 		],
 	}),
-	'spellChannelTime': inputBuilder({
-		label: 'Channel Time',
-		submenu: ['Spell'],
-		shortDescription: 'Amount of time to channel the spell including any haste and spell cast time adjustments.',
-		newValue: APLValueSpellChannelTime.create,
-		fields: [
-			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells', ''),
-		],
-	}),
 	'spellTravelTime': inputBuilder({
 		label: 'Travel Time',
 		submenu: ['Spell'],
@@ -744,6 +778,41 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		newValue: APLValueSpellCPM.create,
 		fields: [
 			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells', ''),
+		],
+	}),
+	'spellChannelTime': inputBuilder({
+		label: 'Channel Time',
+		submenu: ['Spell'],
+		shortDescription: 'Amount of time to fully channel the spell including any haste and spell cast time adjustments.',
+		newValue: APLValueSpellChannelTime.create,
+		fields: [
+			AplHelpers.actionIdFieldConfig('spellId', 'channel_spells', ''),
+		],
+	}),
+	'spellIsChanneling': inputBuilder({
+		label: 'Is Channeling',
+		submenu: ['Spell'],
+		shortDescription: '<b>True</b> if this spell is currently being channeled, otherwise <b>False</b>.',
+		newValue: APLValueSpellIsChanneling.create,
+		fields: [
+			AplHelpers.actionIdFieldConfig('spellId', 'channel_spells', ''),
+		],
+	}),
+	'spellChanneledTicks': inputBuilder({
+		label: 'Channeled Ticks',
+		submenu: ['Spell'],
+		shortDescription: 'The number of completed ticks in the current channel of this spell, or <b>0</b> if the spell is not being channeled.',
+		newValue: APLValueSpellChanneledTicks.create,
+		fields: [
+			AplHelpers.actionIdFieldConfig('spellId', 'channel_spells', ''),
+		],
+	}),
+	'channelClipDelay': inputBuilder({
+		label: 'Channel Clip Delay',
+		submenu: ['Spell'],
+		shortDescription: 'The amount of time specified by the <b>Channel Clip Delay</b> setting.',
+		newValue: APLValueChannelClipDelay.create,
+		fields: [
 		],
 	}),
 

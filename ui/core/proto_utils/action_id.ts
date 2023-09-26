@@ -249,6 +249,19 @@ export class ActionId {
 			case 'Living Bomb':
 				if (this.spellId == 55362) name += ' (Explosion)';
 				break;
+			case 'Evocation':
+				if (this.tag == 1) {
+					name += ' (1 Tick)';
+				} else if (this.tag == 2) {
+					name += ' (2 Tick)';
+				} else if (this.tag == 3) {
+					name += ' (3 Tick)';
+				} else if (this.tag == 4) {
+					name += ' (4 Tick)';
+				} else if (this.tag == 5) {
+					name += ' (5 Tick)';
+				}
+				break;
 			case 'Mind Flay':
 				if (this.tag == 1) {
 					name += ' (1 Tick)';
@@ -326,11 +339,13 @@ export class ActionId {
 			case 'Mana Tide Totem':
 			case 'Power Infusion':
 				if (this.tag != -1) {
-					if (this.tag === playerIndex) {
+					if (this.tag === playerIndex || playerIndex == undefined) {
 						name += ` (self)`;
 					} else {
 						name += ` (from #${this.tag + 1})`;
 					}
+				} else {
+					name += " (raid)"
 				}
 				break;
 			case 'Darkmoon Card: Crusade':

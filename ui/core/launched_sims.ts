@@ -11,7 +11,7 @@ export enum LaunchStatus {
 	Launched,
 }
 
-export const raidSimStatus: LaunchStatus = LaunchStatus.Alpha;
+export const raidSimStatus: LaunchStatus = LaunchStatus.Beta;
 
 // This list controls which links are shown in the top-left dropdown menu.
 export const simLaunchStatuses: Record<Spec, LaunchStatus> = {
@@ -40,27 +40,27 @@ export const simLaunchStatuses: Record<Spec, LaunchStatus> = {
 
 // Alpha and Beta show an info notice at the top of the page.
 export const aplLaunchStatuses: Record<Spec, LaunchStatus> = {
-	[Spec.SpecBalanceDruid]: LaunchStatus.Alpha,
+	[Spec.SpecBalanceDruid]: LaunchStatus.Beta,
 	[Spec.SpecFeralDruid]: LaunchStatus.Alpha,
-	[Spec.SpecFeralTankDruid]: LaunchStatus.Alpha,
-	[Spec.SpecRestorationDruid]: LaunchStatus.Alpha,
-	[Spec.SpecElementalShaman]: LaunchStatus.Alpha,
-	[Spec.SpecEnhancementShaman]: LaunchStatus.Alpha,
-	[Spec.SpecRestorationShaman]: LaunchStatus.Alpha,
-	[Spec.SpecHunter]: LaunchStatus.Alpha,
-	[Spec.SpecMage]: LaunchStatus.Alpha,
-	[Spec.SpecRogue]: LaunchStatus.Alpha,
-	[Spec.SpecHolyPaladin]: LaunchStatus.Alpha,
-	[Spec.SpecProtectionPaladin]: LaunchStatus.Alpha,
-	[Spec.SpecRetributionPaladin]: LaunchStatus.Alpha,
-	[Spec.SpecHealingPriest]: LaunchStatus.Alpha,
+	[Spec.SpecFeralTankDruid]: LaunchStatus.Beta,
+	[Spec.SpecRestorationDruid]: LaunchStatus.Beta,
+	[Spec.SpecElementalShaman]: LaunchStatus.Beta,
+	[Spec.SpecEnhancementShaman]: LaunchStatus.Beta,
+	[Spec.SpecRestorationShaman]: LaunchStatus.Beta,
+	[Spec.SpecHunter]: LaunchStatus.Launched,
+	[Spec.SpecMage]: LaunchStatus.Beta,
+	[Spec.SpecRogue]: LaunchStatus.Beta,
+	[Spec.SpecHolyPaladin]: LaunchStatus.Beta,
+	[Spec.SpecProtectionPaladin]: LaunchStatus.Beta,
+	[Spec.SpecRetributionPaladin]: LaunchStatus.Beta,
+	[Spec.SpecHealingPriest]: LaunchStatus.Beta,
 	[Spec.SpecShadowPriest]: LaunchStatus.Alpha,
-	[Spec.SpecSmitePriest]: LaunchStatus.Alpha,
+	[Spec.SpecSmitePriest]: LaunchStatus.Beta,
 	[Spec.SpecWarlock]: LaunchStatus.Alpha,
 	[Spec.SpecWarrior]: LaunchStatus.Alpha,
-	[Spec.SpecProtectionWarrior]: LaunchStatus.Alpha,
-	[Spec.SpecDeathknight]: LaunchStatus.Alpha,
-	[Spec.SpecTankDeathknight]: LaunchStatus.Alpha,
+	[Spec.SpecProtectionWarrior]: LaunchStatus.Beta,
+	[Spec.SpecDeathknight]: LaunchStatus.Beta,
+	[Spec.SpecTankDeathknight]: LaunchStatus.Beta,
 };
 
 // Meme specs are excluded from title drop-down menu.

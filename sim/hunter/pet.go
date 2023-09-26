@@ -33,7 +33,7 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 	petConfig := PetConfigs[hunter.Options.PetType]
 
 	hp := &HunterPet{
-		Pet:         core.NewPet(petConfig.Name, &hunter.Character, hunterPetBaseStats, hunter.makeStatInheritance(), nil, true, false),
+		Pet:         core.NewPet(petConfig.Name, &hunter.Character, hunterPetBaseStats, hunter.makeStatInheritance(), true, false),
 		config:      petConfig,
 		hunterOwner: hunter,
 

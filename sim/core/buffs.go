@@ -596,6 +596,14 @@ func registerBloodlustCD(agent Agent) {
 
 func BloodlustAura(character *Character, actionTag int32) *Aura {
 	actionID := BloodlustActionID.WithTag(actionTag)
+
+	sated := character.GetOrRegisterAura(Aura{
+		Label:    "Sated-" + actionID.String(),
+		Tag:      BloodlustAuraTag, // tag as bloodlust so lust wont apply again.
+		ActionID: ActionID{SpellID: 57724},
+		Duration: time.Minute * 10,
+	})
+
 	aura := character.GetOrRegisterAura(Aura{
 		Label:    "Bloodlust-" + actionID.String(),
 		Tag:      BloodlustAuraTag,
@@ -612,6 +620,7 @@ func BloodlustAura(character *Character, actionTag int32) *Aura {
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			character.MultiplyAttackSpeed(sim, 1.0/1.3)
+			sated.Activate(sim)
 		},
 	})
 	multiplyCastSpeedEffect(aura, 1.3)

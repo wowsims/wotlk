@@ -69,7 +69,7 @@ export class Database {
 			return db;
 		}
 
-		const shouldLoadLeftovers = equipment.items.some(item => item.id != 0 && !db.items[item.id]);
+		const shouldLoadLeftovers = equipment.items.some(item => item.id != 0 && !db.items.has(item.id));
 		if (shouldLoadLeftovers) {
 			const leftoverDb = await Database.getLeftovers();
 			db.loadProto(leftoverDb);
@@ -78,13 +78,13 @@ export class Database {
 		return db;
 	}
 
-	private readonly items: Record<number, Item> = {};
+	private readonly items = new Map<number, Item>();
 	private readonly enchantsBySlot: Partial<Record<ItemSlot, Enchant[]>> = {};
-	private readonly gems: Record<number, Gem> = {};
-	private readonly npcs: Record<number, Npc> = {};
-	private readonly zones: Record<number, Zone> = {};
-	private readonly presetEncounters: Record<string, PresetEncounter> = {};
-	private readonly presetTargets: Record<string, PresetTarget> = {};
+	private readonly gems = new Map<number, Gem>();
+	private readonly npcs = new Map<number, Npc>();
+	private readonly zones = new Map<number, Zone>();
+	private readonly presetEncounters = new Map<string, PresetEncounter>();
+	private readonly presetTargets = new Map<string, PresetTarget>();
 	private readonly itemIcons: Record<number, Promise<IconData>> = {};
 	private readonly spellIcons: Record<number, Promise<IconData>> = {};
 	private readonly glyphIds: Array<GlyphID> = [];
@@ -96,7 +96,7 @@ export class Database {
 
 	// Add all data from the db proto into this database.
 	private loadProto(db: UIDatabase) {
-		db.items.forEach(item => this.items[item.id] = item);
+		db.items.forEach(item => this.items.set(item.id, item));
 		db.enchants.forEach(enchant => {
 			const slots = getEligibleEnchantSlots(enchant);
 			slots.forEach(slot => {
@@ -106,12 +106,12 @@ export class Database {
 				this.enchantsBySlot[slot]!.push(enchant);
 			});
 		});
-		db.gems.forEach(gem => this.gems[gem.id] = gem);
+		db.gems.forEach(gem => this.gems.set(gem.id, gem));
 
-		db.npcs.forEach(npc => this.npcs[npc.id] = npc);
-		db.zones.forEach(zone => this.zones[zone.id] = zone);
-		db.encounters.forEach(encounter => this.presetEncounters[encounter.path] = encounter);
-		db.encounters.map(e => e.targets).flat().forEach(target => this.presetTargets[target.path] = target);
+		db.npcs.forEach(npc => this.npcs.set(npc.id, npc));
+		db.zones.forEach(zone => this.zones.set(zone.id, zone));
+		db.encounters.forEach(encounter => this.presetEncounters.set(encounter.path, encounter));
+		db.encounters.map(e => e.targets).flat().forEach(target => this.presetTargets.set(target.path, target));
 
 		db.items.forEach(item => this.itemIcons[item.id] = Promise.resolve(IconData.create({
 			id: item.id,
@@ -129,7 +129,7 @@ export class Database {
 	}
 
 	getAllItems(): Array<Item> {
-		return Object.values(this.items);
+		return Array.from(this.items.values());
 	}
 
 	getItems(slot: ItemSlot): Array<Item> {
@@ -141,30 +141,39 @@ export class Database {
 	}
 
 	getGems(socketColor?: GemColor): Array<Gem> {
-		let gems = Object.values(this.gems);
-		if (socketColor) {
-			gems = gems.filter(gem => gemEligibleForSocket(gem, socketColor));
+		if (!socketColor) 
+			return Array.from(this.gems.values());
+
+		let ret = new Array();
+		for (let g of this.gems.values()){
+			if (gemEligibleForSocket(g, socketColor))
+				ret.push(g);
 		}
-		return gems;
+		return ret;
 	}
 
 	getNpc(npcId: number): Npc | null {
-		return this.npcs[npcId] || null;
+		return this.npcs.get(npcId) || null;
 	}
 	getZone(zoneId: number): Zone | null {
-		return this.zones[zoneId] || null;
+		return this.zones.get(zoneId) || null;
 	}
 
 	getMatchingGems(socketColor: GemColor): Array<Gem> {
-		return Object.values(this.gems).filter(gem => gemMatchesSocket(gem, socketColor));
+		let ret = new Array();
+		for (let g of this.gems.values()){
+			if (gemMatchesSocket(g, socketColor))
+				ret.push(g);
+		}
+		return ret;
 	}
 
-	lookupGem(itemID: number): Gem {
-		return this.gems[itemID]
+	lookupGem(itemID: number): Gem | null {
+		return this.gems.get(itemID) || null;
 	}
 
 	lookupItemSpec(itemSpec: ItemSpec): EquippedItem | null {
-		const item = this.items[itemSpec.id];
+		const item = this.items.get(itemSpec.id);
 		if (!item)
 			return null;
 
@@ -180,7 +189,7 @@ export class Database {
 			}
 		}
 
-		const gems = itemSpec.gems.map(gemId => this.gems[gemId] || null);
+		const gems = itemSpec.gems.map(gemId => this.lookupGem(gemId));
 
 		return new EquippedItem(item, enchant, gems);
 	}
@@ -220,16 +229,16 @@ export class Database {
 	}
 
 	getPresetEncounter(path: string): PresetEncounter | null {
-		return this.presetEncounters[path] || null;
+		return this.presetEncounters.get(path) || null;
 	}
 	getPresetTarget(path: string): PresetTarget | null {
-		return this.presetTargets[path] || null;
+		return this.presetTargets.get(path) || null;
 	}
 	getAllPresetEncounters(): Array<PresetEncounter> {
-		return Object.values(this.presetEncounters);
+		return Array.from(this.presetEncounters.values());
 	}
 	getAllPresetTargets(): Array<PresetTarget> {
-		return Object.values(this.presetTargets);
+		return Array.from(this.presetTargets.values());
 	}
 
 	static async getItemIconData(itemId: number): Promise<IconData> {

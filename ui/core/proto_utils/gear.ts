@@ -236,7 +236,7 @@ export class Gear extends BaseGear {
 		return this.getMetaGem() != null && !this.hasActiveMetaGem(isBlacksmithing);
 	}
 
-	withGem(itemSlot: ItemSlot, socketIdx: number, gem: Gem): Gear {
+	withGem(itemSlot: ItemSlot, socketIdx: number, gem: Gem | null): Gear {
 		const item = this.getEquippedItem(itemSlot);
 
 		if (item) {
@@ -246,7 +246,7 @@ export class Gear extends BaseGear {
 		return this;
 	}
 
-	withMetaGem(metaGem: Gem): Gear {
+	withMetaGem(metaGem: Gem | null): Gear {
 		const headItem = this.getEquippedItem(ItemSlot.ItemSlotHead);
 
 		if (headItem) {

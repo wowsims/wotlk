@@ -5,9 +5,7 @@ import { ColumnSortType, MetricsTable } from './metrics_table.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
 import { ResultsFilter } from './results_filter.js';
 import { SourceChart } from './source_chart.js';
-
-declare var $: any;
-declare var tippy: any;
+import tippy from 'tippy.js';
 
 export class PlayerDamageMetricsTable extends MetricsTable<UnitMetrics> {
 	private readonly resultsFilter: ResultsFilter;
@@ -38,6 +36,7 @@ export class PlayerDamageMetricsTable extends MetricsTable<UnitMetrics> {
 					tippy(rowElem, {
 						content: 'Loading...',
 						placement: 'bottom',
+						ignoreAttributes: true,
 						onShow(instance: any) {
 							if (!chart) {
 								chart = makeChart();

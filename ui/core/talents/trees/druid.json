@@ -109,7 +109,11 @@
 				"spellIds": [
 					57865
 				],
-				"maxPoints": 1
+				"maxPoints": 1,
+				"prereqLocation": {
+					"rowIdx": 1,
+					"colIdx": 1
+				}
 			},
 			{
 				"fieldName": "naturesReach",
@@ -282,7 +286,11 @@
 					48392,
 					48393
 				],
-				"maxPoints": 3
+				"maxPoints": 3,
+				"prereqLocation": {
+					"rowIdx": 6,
+					"colIdx": 1
+				}
 			},
 			{
 				"fieldName": "wrathOfCenarius",
@@ -535,7 +543,11 @@
 					48409,
 					48410
 				],
-				"maxPoints": 2
+				"maxPoints": 2,
+				"prereqLocation": {
+					"rowIdx": 2,
+					"colIdx": 2
+				}
 			},
 			{
 				"fieldName": "brutalImpact",
@@ -668,7 +680,11 @@
 					57876,
 					57877
 				],
-				"maxPoints": 3
+				"maxPoints": 3,
+				"prereqLocation": {
+					"rowIdx": 6,
+					"colIdx": 1
+				}
 			},
 			{
 				"fieldName": "predatoryInstincts",

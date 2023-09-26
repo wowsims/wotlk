@@ -251,7 +251,7 @@ export const P3_PRESET_ALLI = {
 	enableWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getFaction() == Faction.Alliance,
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
-         {"id":48171,"enchant":3820,"gems":[41285,40153]},
+        {"id":48171,"enchant":3820,"gems":[41285,40153]},
         {"id":47144,"gems":[40153]},
         {"id":48168,"enchant":3810,"gems":[40153]},
         {"id":47552,"enchant":3722,"gems":[40113]},
@@ -268,17 +268,16 @@ export const P3_PRESET_ALLI = {
         {"id":47206,"enchant":3834},
         {"id":47064},
         {"id":47670}
-      ]
-    }`),
+    ]}`),
 };
 
 
 export const ROTATION_PRESET_P3_APL = {
 name: 'Basic P3 APL',
 rotation: SavedRotation.create({
-	specRotationOptionsJson: BalanceDruidRotation.toJsonString(DefaultRotation),
+	specRotationOptionsJson: BalanceDruidRotation.toJsonString(BalanceDruidRotation.create()),
 	rotation: APLRotation.fromJsonString(`{
-      "enabled": true,
+	  "type": "TypeAPL",
       "prepullActions": [
 		{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1.5s"}}},
 		{"action":{"castSpell":{"spellId":{"spellId":48461}}},"doAtValue":{"const":{"val":"-1.5s"}}}

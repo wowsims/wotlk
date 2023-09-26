@@ -3,6 +3,8 @@ import { EventID, TypedEvent } from '../typed_event.js';
 
 import { Component } from './component.js';
 
+import { element, fragment } from 'tsx-vanilla'
+
 /**
  * Data for creating a new input UI element.
  */
@@ -61,23 +63,20 @@ export abstract class Input<ModObject, T, V = T> extends Component {
 		});
 	}
 
-	private buildLabel(config: InputConfig<ModObject, T, V>): HTMLElement {
-		let fragment = document.createElement('fragment');
-		fragment.innerHTML = `
-			<label
-				class="form-label"
-				${config.labelTooltip ? 'data-bs-toggle="tooltip"' : ''}
-				${config.labelTooltip ? `data-bs-title="${config.labelTooltip}"` : ''}
-				${config.labelTooltip ? 'data-bs-html="true"' : ''}
-			>
-			${config.label}
-			</label>
-		`
+	private buildLabel(config: InputConfig<ModObject, T, V>): JSX.Element {
+		let dataset = {};
 
-		let label = fragment.children[0] as HTMLElement;
+		let label = (
+			<label className="form-label">
+				{config.label}
+			</label>
+		);
 
 		if (config.labelTooltip)
-			new Tooltip(label);
+			new Tooltip(label, {
+				title: config.labelTooltip,
+				html: true,
+			});
 
 		return label;
 	}

@@ -18,17 +18,9 @@ type ValkyrPet struct {
 
 func newValkyr(character *core.Character) *ValkyrPet {
 	return &ValkyrPet{
-		Pet: core.NewPet(
-			"Valkyr",
-			character,
-			valkyrStats,
-			func(ownerStats stats.Stats) stats.Stats {
-				return stats.Stats{}
-			},
-			nil,
-			false,
-			true,
-		),
+		Pet: core.NewPet("Valkyr", character, valkyrStats, func(ownerStats stats.Stats) stats.Stats {
+			return stats.Stats{}
+		}, false, true),
 	}
 }
 
@@ -47,7 +39,7 @@ func getSmiteConfig(valkyr *ValkyrPet, spellId int32, damageMin float64, damageM
 		ThreatMultiplier: 1,
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(damageMin, damageMax)
-			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeCritFixedChance(0.05))
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicCrit)
 			spell.DealDamage(sim, result)
 			valkyr.GainHealth(sim, valkyr.MaxHealth()*0.25, valkyr.healthMetrics)
 		},
@@ -77,7 +69,7 @@ func (valkyr *ValkyrPet) registerSmite(isHeroic bool) {
 
 func (valkyr *ValkyrPet) Initialize() {}
 
-func (valkyr *ValkyrPet) Reset(sim *core.Simulation) {}
+func (valkyr *ValkyrPet) Reset(_ *core.Simulation) {}
 
 func (valkyr *ValkyrPet) OnGCDReady(sim *core.Simulation) {
 	target := valkyr.CurrentTarget

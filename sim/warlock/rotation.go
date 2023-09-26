@@ -94,7 +94,7 @@ func (warlock *Warlock) setupCooldowns(sim *core.Simulation) {
 			}
 
 			if spell.ActionID.SameActionIgnoreTag(core.PowerInfusionActionID) &&
-				(character.HasActiveAuraWithTag(core.BloodlustAuraTag) || lustCD.TimeToNextCast(sim) < runTime) {
+				(character.HasActiveAuraWithTag(core.BloodlustAuraTag) || (lustCD != nil && lustCD.TimeToNextCast(sim) < runTime)) {
 				return false // don't use PI while lust is active or it would overlap
 			}
 

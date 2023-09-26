@@ -5,6 +5,11 @@ import { Debuffs } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { Stat } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js'
+import {
+	APLAction,
+	APLListItem,
+	APLRotation,
+} from '../core/proto/apl.js';
 import { Player } from '../core/player.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
@@ -17,7 +22,6 @@ import * as Mechanics from '../core/constants/mechanics.js';
 
 import * as ShamanInputs from './inputs.js';
 import * as Presets from './presets.js';
-import { shamanGlyphsConfig } from '../core/talents/shaman.js';
 
 export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalShaman> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecElementalShaman>) {
@@ -156,9 +160,8 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				],
 				// Preset rotations that the user can quickly select.
 				rotations: [
-					Presets.ROTATION_PRESET_BASIC_APL,
-					Presets.ROTATION_PRESET_ADVANCED_APL,
-					Presets.ROTATION_PRESET_BUILTIN,
+					Presets.ROTATION_PRESET_DEFAULT,
+					Presets.ROTATION_PRESET_ADVANCED,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
@@ -169,6 +172,10 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 					Presets.P3_PRESET_HORDE,
 					Presets.P4_PRESET,
 				],
+			},
+
+			autoRotation: (player: Player<Spec.SpecElementalShaman>): APLRotation => {
+				return Presets.ROTATION_PRESET_DEFAULT.rotation.rotation!;
 			},
 		});
 	}

@@ -127,41 +127,34 @@ func (dk *Deathknight) DrwWeaponDamage(sim *core.Simulation, spell *core.Spell) 
 
 func (dk *Deathknight) NewRuneWeapon() *RuneWeaponPet {
 	// Remove any hit that would be given by NocS as it does not translate to pets
-	nocsHit := 0.0
-	nocsSpellHit := 0.0
+	var nocsHit float64
 	if dk.nervesOfColdSteelActive() {
-		nocsHit = float64(dk.Talents.NervesOfColdSteel)
-		nocsSpellHit = (float64(dk.Talents.NervesOfColdSteel) / 8.0) * 17.0
+		nocsHit = float64(dk.Talents.NervesOfColdSteel) * core.MeleeHitRatingPerHitChance
 	}
 	if dk.HasDraeneiHitAura {
-		nocsHit = nocsHit + 1.0
-		nocsSpellHit = nocsSpellHit + 1.0
+		nocsHit += 1 * core.MeleeHitRatingPerHitChance
 	}
 
 	runeWeapon := &RuneWeaponPet{
-		Pet: core.NewPet("Rune Weapon", &dk.Character,
-			stats.Stats{
-				stats.Stamina:   100,
-				stats.MeleeHit:  -nocsHit * core.MeleeHitRatingPerHitChance,
-				stats.SpellHit:  -nocsSpellHit * core.SpellHitRatingPerHitChance,
-				stats.Expertise: -nocsHit * PetExpertiseScale * core.ExpertisePerQuarterPercentReduction,
-			},
-			func(ownerStats stats.Stats) stats.Stats {
-				ownerHitChance := ownerStats[stats.MeleeHit] / core.MeleeHitRatingPerHitChance
-				return stats.Stats{
-					stats.AttackPower: ownerStats[stats.AttackPower],
-					stats.MeleeHaste:  (ownerStats[stats.MeleeHaste] / dk.PseudoStats.MeleeHasteRatingPerHastePercent) * core.HasteRatingPerHastePercent,
+		Pet: core.NewPet("Rune Weapon", &dk.Character, stats.Stats{
+			stats.Stamina:   100,
+			stats.MeleeHit:  -nocsHit,
+			stats.SpellHit:  -nocsHit * PetSpellHitScale,
+			stats.Expertise: -nocsHit * PetExpertiseScale,
+		}, func(ownerStats stats.Stats) stats.Stats {
+			return stats.Stats{
+				stats.AttackPower: ownerStats[stats.AttackPower],
+				stats.MeleeHaste:  ownerStats[stats.MeleeHaste] * PetHasteScale,
 
-					stats.MeleeHit: ownerHitChance * core.MeleeHitRatingPerHitChance,
-					stats.SpellHit: ((ownerHitChance / 8.0) * 17.0) * core.SpellHitRatingPerHitChance,
+				stats.MeleeHit: ownerStats[stats.MeleeHit],
+				stats.SpellHit: ownerStats[stats.MeleeHit] * PetSpellHitScale,
 
-					stats.Expertise: ownerHitChance * PetExpertiseScale * core.ExpertisePerQuarterPercentReduction,
+				stats.Expertise: ownerStats[stats.MeleeHit] * PetExpertiseScale,
 
-					stats.MeleeCrit: ownerStats[stats.MeleeCrit],
-					stats.SpellCrit: ownerStats[stats.SpellCrit],
-				}
-			},
-			nil, false, true),
+				stats.MeleeCrit: ownerStats[stats.MeleeCrit],
+				stats.SpellCrit: ownerStats[stats.SpellCrit],
+			}
+		}, false, true),
 		dkOwner: dk,
 	}
 

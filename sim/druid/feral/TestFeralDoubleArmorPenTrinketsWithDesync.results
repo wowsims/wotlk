@@ -74,8 +74,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralDoubleArmorPenTrinketsWithDesync-AllItems-Bandit'sInsignia-40371"
  value: {
-  dps: 9842.80494
-  tps: 7052.18453
+  dps: 9842.05809
+  tps: 7051.65427
  }
 }
 dps_results: {
@@ -161,8 +161,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralDoubleArmorPenTrinketsWithDesync-AllItems-DarkmoonCard:Death-42990"
  value: {
-  dps: 9842.08506
-  tps: 7051.14991
+  dps: 9841.31767
+  tps: 7050.60506
  }
 }
 dps_results: {
@@ -301,8 +301,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralDoubleArmorPenTrinketsWithDesync-AllItems-ExtractofNecromanticPower-40373"
  value: {
-  dps: 9841.90308
-  tps: 7050.94592
+  dps: 9841.45669
+  tps: 7050.62898
  }
 }
 dps_results: {
@@ -399,8 +399,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralDoubleArmorPenTrinketsWithDesync-AllItems-GnomishLightningGenerator-41121"
  value: {
-  dps: 9819.52613
-  tps: 7035.13307
+  dps: 9819.03563
+  tps: 7034.78481
  }
 }
 dps_results: {
@@ -799,8 +799,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralDoubleArmorPenTrinketsWithDesync-AllItems-StormshroudArmor"
  value: {
-  dps: 7804.1374
-  tps: 5605.25408
+  dps: 7804.11298
+  tps: 5605.23675
  }
 }
 dps_results: {
@@ -958,42 +958,42 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestFeralDoubleArmorPenTrinketsWithDesync-Settings-Tauren-P2DoubleArmorPenTrinkets-Default-FullBuffs-LongMultiTarget"
+ key: "TestFeralDoubleArmorPenTrinketsWithDesync-Settings-Tauren-P2DoubleArmorPenTrinkets-Default--FullBuffs-LongMultiTarget"
  value: {
   dps: 9951.78853
   tps: 7131.80648
  }
 }
 dps_results: {
- key: "TestFeralDoubleArmorPenTrinketsWithDesync-Settings-Tauren-P2DoubleArmorPenTrinkets-Default-FullBuffs-LongSingleTarget"
+ key: "TestFeralDoubleArmorPenTrinketsWithDesync-Settings-Tauren-P2DoubleArmorPenTrinkets-Default--FullBuffs-LongSingleTarget"
  value: {
   dps: 9951.78853
   tps: 7131.80648
  }
 }
 dps_results: {
- key: "TestFeralDoubleArmorPenTrinketsWithDesync-Settings-Tauren-P2DoubleArmorPenTrinkets-Default-FullBuffs-ShortSingleTarget"
+ key: "TestFeralDoubleArmorPenTrinketsWithDesync-Settings-Tauren-P2DoubleArmorPenTrinkets-Default--FullBuffs-ShortSingleTarget"
  value: {
   dps: 11394.42151
   tps: 8146.12927
  }
 }
 dps_results: {
- key: "TestFeralDoubleArmorPenTrinketsWithDesync-Settings-Tauren-P2DoubleArmorPenTrinkets-Default-NoBuffs-LongMultiTarget"
+ key: "TestFeralDoubleArmorPenTrinketsWithDesync-Settings-Tauren-P2DoubleArmorPenTrinkets-Default--NoBuffs-LongMultiTarget"
  value: {
   dps: 6170.22357
   tps: 4445.47442
  }
 }
 dps_results: {
- key: "TestFeralDoubleArmorPenTrinketsWithDesync-Settings-Tauren-P2DoubleArmorPenTrinkets-Default-NoBuffs-LongSingleTarget"
+ key: "TestFeralDoubleArmorPenTrinketsWithDesync-Settings-Tauren-P2DoubleArmorPenTrinkets-Default--NoBuffs-LongSingleTarget"
  value: {
   dps: 6170.22357
   tps: 4445.47442
  }
 }
 dps_results: {
- key: "TestFeralDoubleArmorPenTrinketsWithDesync-Settings-Tauren-P2DoubleArmorPenTrinkets-Default-NoBuffs-ShortSingleTarget"
+ key: "TestFeralDoubleArmorPenTrinketsWithDesync-Settings-Tauren-P2DoubleArmorPenTrinkets-Default--NoBuffs-ShortSingleTarget"
  value: {
   dps: 6748.82612
   tps: 4847.38261
