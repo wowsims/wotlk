@@ -177,6 +177,7 @@ message APLActionChannelSpell {
     UnitReference target = 2;
 
     APLValue interrupt_if = 3;
+    APLValue max_ticks = 4;
 }
 
 message APLActionMultidot {
