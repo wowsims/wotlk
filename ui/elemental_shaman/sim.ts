@@ -152,10 +152,12 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				// Preset talents that the user can quickly select.
 				talents: [
 					Presets.StandardTalents,
+					Presets.Phase4Talents,
 				],
 				// Preset rotations that the user can quickly select.
 				rotations: [
 					Presets.ROTATION_PRESET_BASIC_APL,
+					Presets.ROTATION_PRESET_ADVANCED_APL,
 					Presets.ROTATION_PRESET_BUILTIN,
 				],
 				// Preset gear configurations that the user can quickly select.
@@ -165,6 +167,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 					Presets.P2_PRESET,
 					Presets.P3_PRESET_ALLI,
 					Presets.P3_PRESET_HORDE,
+					Presets.P4_PRESET,
 				],
 			},
 		});
