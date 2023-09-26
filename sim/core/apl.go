@@ -20,6 +20,9 @@ type APLRotation struct {
 	// Will be nil when there is no active channel.
 	interruptChannelIf APLValue
 
+	// Max ticks for the current channel, or 0 for no maximum.
+	channelMaxTicks int32
+
 	// Used inside of actions/value to determine whether they will occur during the prepull or regular rotation.
 	parsingPrepull bool
 
@@ -149,6 +152,8 @@ func (rot *APLRotation) allPrepullActions() []*APLAction {
 func (rot *APLRotation) reset(sim *Simulation) {
 	rot.controllingAction = nil
 	rot.inLoop = false
+	rot.interruptChannelIf = nil
+	rot.channelMaxTicks = 0
 	for _, action := range rot.allAPLActions() {
 		action.impl.Reset(sim)
 	}
@@ -208,10 +213,11 @@ func (apl *APLRotation) shouldInterruptChannel(sim *Simulation) bool {
 		// Channel has ended, but apl.unit.ChanneledDot hasn't been cleared yet meaning the aura is still active.
 		return false
 	}
-	if apl.unit.ChanneledDot.lastTickTime != sim.CurrentTime {
-		// Don't allow interupts between ticks, just continue channeling until next tick.
-		return false
+
+	if apl.channelMaxTicks != 0 && channeledDot.TickCount >= apl.channelMaxTicks {
+		return true
 	}
+
 	if apl.interruptChannelIf == nil || !apl.interruptChannelIf.GetBool(sim) {
 		// Continue the channel.
 		return false

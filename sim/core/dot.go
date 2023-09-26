@@ -267,6 +267,7 @@ func newDot(config Dot) *Dot {
 			dot.Spell.Unit.ChanneledDot = nil
 			if dot.Spell.Unit.IsUsingAPL {
 				dot.Spell.Unit.Rotation.interruptChannelIf = nil
+				dot.Spell.Unit.Rotation.channelMaxTicks = 0
 			}
 		}
 	})

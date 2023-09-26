@@ -41,6 +41,7 @@ type APLActionChannelSpell struct {
 	spell       *Spell
 	target      UnitReference
 	interruptIf APLValue
+	maxTicks    APLValue
 }
 
 func (rot *APLRotation) newActionChannelSpell(config *proto.APLActionChannelSpell) APLActionImpl {
@@ -51,6 +52,8 @@ func (rot *APLRotation) newActionChannelSpell(config *proto.APLActionChannelSpel
 			Target:  config.Target,
 		})
 	}
+
+	maxTicks := rot.coerceTo(rot.newAPLValue(config.MaxTicks), proto.APLValueType_ValueTypeInt)
 
 	spell := rot.GetAPLSpell(config.SpellId)
 	if spell == nil {
@@ -69,14 +72,20 @@ func (rot *APLRotation) newActionChannelSpell(config *proto.APLActionChannelSpel
 		spell:       spell,
 		target:      target,
 		interruptIf: interruptIf,
+		maxTicks:    maxTicks,
 	}
 }
 func (action *APLActionChannelSpell) IsReady(sim *Simulation) bool {
 	return action.spell.CanCast(sim, action.target.Get())
 }
 func (action *APLActionChannelSpell) Execute(sim *Simulation) {
+	maxTicks := int32(0)
+	if action.maxTicks != nil {
+		maxTicks = action.maxTicks.GetInt(sim)
+	}
 	action.spell.Cast(sim, action.target.Get())
 	action.spell.Unit.Rotation.interruptChannelIf = action.interruptIf
+	action.spell.Unit.Rotation.channelMaxTicks = maxTicks
 }
 func (action *APLActionChannelSpell) String() string {
 	return fmt.Sprintf("Channel Spell(%s, interruptIf=%s)", action.spell.ActionID, action.interruptIf)
