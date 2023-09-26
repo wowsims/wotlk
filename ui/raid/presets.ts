@@ -576,11 +576,13 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 				1: ElementalShamanPresets.P1_PRESET.gear,
 				2: ElementalShamanPresets.P2_PRESET.gear,
 				3: ElementalShamanPresets.P3_PRESET_ALLI.gear,
+				4: ElementalShamanPresets.P4_PRESET.gear,
 			},
 			[Faction.Horde]: {
 				1: ElementalShamanPresets.P1_PRESET.gear,
 				2: ElementalShamanPresets.P2_PRESET.gear,
 				3: ElementalShamanPresets.P3_PRESET_HORDE.gear,
+				4: ElementalShamanPresets.P4_PRESET.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecElementalShaman],
