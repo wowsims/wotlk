@@ -786,13 +786,17 @@ func (mage *Mage) applyFireStarter() {
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			mage.Flamestrike.CostMultiplier -= 100
 			mage.Flamestrike.CastTimeMultiplier -= 1
+			mage.FlamestrikeRank8.CostMultiplier -= 100
+			mage.FlamestrikeRank8.CastTimeMultiplier -= 1
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			mage.Flamestrike.CostMultiplier += 100
 			mage.Flamestrike.CastTimeMultiplier += 1
+			mage.FlamestrikeRank8.CostMultiplier += 100
+			mage.FlamestrikeRank8.CastTimeMultiplier += 1
 		},
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if spell == mage.Flamestrike {
+			if spell == mage.Flamestrike || spell == mage.FlamestrikeRank8 {
 				aura.Deactivate(sim)
 			}
 		},

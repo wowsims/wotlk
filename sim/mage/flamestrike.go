@@ -76,5 +76,5 @@ func (mage *Mage) registerFlamestrikeSpell(rank8 bool) *core.Spell {
 
 func (mage *Mage) registerFlamestrikeSpells() {
 	mage.Flamestrike = mage.registerFlamestrikeSpell(false)
-	mage.registerFlamestrikeSpell(true)
+	mage.FlamestrikeRank8 = mage.registerFlamestrikeSpell(true)
 }
