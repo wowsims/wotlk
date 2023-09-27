@@ -41,51 +41,109 @@ func (rc RuneCost) Death() int8 {
 	return int8((rc >> 6) & 0b11)
 }
 
-func (rp *RunicPowerBar) GainDeathRuneMetrics(sim *Simulation, _ *Spell, currRunes int32, newRunes int32) {
-	if !rp.isACopy {
-		metrics := rp.deathRuneGainMetrics
-		metrics.AddEvent(1, float64(newRunes)-float64(currRunes))
-
-		if sim.Log != nil {
-			rp.unit.Log(sim, "Gained 1.000 death rune from %s (%d --> %d).", metrics.ActionID, currRunes, newRunes)
-		}
-	}
+type Predictor struct {
+	rp         *runicPowerBar
+	runeStates int16
+	runeMeta   [6]RuneMeta
 }
 
-func (rp *RunicPowerBar) CancelBloodTap(sim *Simulation) {
-	if rp.btslot == -1 {
+func (p *Predictor) SpendRuneCost(sim *Simulation, cost RuneCost) {
+	if !cost.HasRune() {
 		return
 	}
-	rp.ConvertFromDeath(sim, rp.btslot)
-	bloodTapAura := rp.unit.GetAura("Blood Tap")
-	bloodTapAura.Deactivate(sim)
-	rp.btslot = -1
+
+	for i := int8(0); i < cost.Blood(); i++ {
+		p.spendRune(sim, 0)
+	}
+	for i := int8(0); i < cost.Frost(); i++ {
+		p.spendRune(sim, 2)
+	}
+	for i := int8(0); i < cost.Unholy(); i++ {
+		p.spendRune(sim, 4)
+	}
+	for i := int8(0); i < cost.Death(); i++ {
+		p.spendDeathRune(sim)
+	}
 }
 
-func (rp *RunicPowerBar) CorrectBloodTapConversion(sim *Simulation) {
-	// 1. converts a blood rune -> death rune
-	// 2. then convert one inactive blood or death rune -> active
-	slot := int8(-1)
-	if rp.runeStates&isDeaths[0] == 0 {
-		slot = 0
-	} else if rp.runeStates&isDeaths[1] == 0 {
-		slot = 1
+func (p *Predictor) spendRune(sim *Simulation, firstSlot int8) {
+	slot := p.findReadyRune(firstSlot)
+	p.runeStates |= isSpents[slot]
+	p.launchRuneRegen(sim, slot)
+}
+
+func (p *Predictor) findReadyRune(slot int8) int8 {
+	if p.runeStates&isSpentDeath[slot] == 0 {
+		return slot
 	}
-	if slot > -1 {
-		rp.btslot = slot
-		rp.ConvertToDeath(sim, slot, sim.CurrentTime+time.Second*20)
+	if p.runeStates&isSpentDeath[slot+1] == 0 {
+		return slot + 1
+	}
+	panic(fmt.Sprintf("findReadyRune(%d) - no slot found (runeStates = %12b)", slot, p.runeStates))
+}
+
+func (p *Predictor) spendDeathRune(sim *Simulation) {
+	slot := p.findReadyDeathRune()
+	if p.rp.btSlot != slot {
+		p.runeStates ^= isDeaths[slot] // clear death bit to revert.
 	}
 
-	slot = -1
-	if rp.runeStates&isSpents[0] == isSpents[0] {
-		slot = 0
-	} else if rp.runeStates&isSpents[1] == isSpents[1] {
-		slot = 1
-	}
-	if slot > -1 {
-		rp.regenRune(sim, sim.CurrentTime, slot)
-	}
+	// mark spent bit to spend
+	p.runeStates |= isSpents[slot]
+	p.launchRuneRegen(sim, slot)
+}
 
-	// if PA isn't running, make it run 20s from now to disable BT
-	rp.launchPA(sim, sim.CurrentTime+20.0*time.Second)
+func (p *Predictor) findReadyDeathRune() int8 {
+	for _, slot := range []int8{4, 5, 2, 3, 0, 1} { // Death runes are spent in the order Unholy -> Frost -> Blood in-game...
+		if p.runeStates&isSpentDeath[slot] == isDeaths[slot] {
+			return slot
+		}
+	}
+	panic(fmt.Sprintf("findReadyDeathRune() - no slot found (runeStates = %12b)", p.runeStates))
+}
+func (p *Predictor) launchRuneRegen(sim *Simulation, slot int8) {
+	runeGracePeriod := p.runeGraceAt(slot, sim.CurrentTime)
+	p.runeMeta[slot].regenAt = sim.CurrentTime + (p.rp.runeCD - runeGracePeriod)
+}
+
+func (p *Predictor) runeGraceAt(slot int8, at time.Duration) time.Duration {
+	lastRegenTime := p.runeMeta[slot].lastRegenTime
+	// pre-pull casts should not get rune-grace
+	if at <= 0 || lastRegenTime <= 0 {
+		return 0
+	}
+	return MinDuration(time.Millisecond*2500, at-lastRegenTime)
+}
+
+func (p *Predictor) CurrentBloodRunes() int8 {
+	return rs2c[(p.runeStates>>0)&0b1111]
+}
+
+func (p *Predictor) CurrentFrostRunes() int8 {
+	return rs2c[(p.runeStates>>4)&0b1111]
+}
+
+func (p *Predictor) CurrentUnholyRunes() int8 {
+	return rs2c[(p.runeStates>>8)&0b1111]
+}
+
+func (p *Predictor) BloodRuneReadyAt(sim *Simulation) time.Duration {
+	if p.runeStates&anyBloodSpent != anyBloodSpent { // if any are not spent
+		return sim.CurrentTime
+	}
+	return MinDuration(p.runeMeta[0].regenAt, p.runeMeta[1].regenAt)
+}
+
+func (p *Predictor) FrostRuneReadyAt(sim *Simulation) time.Duration {
+	if p.runeStates&anyFrostSpent != anyFrostSpent { // if any are not spent
+		return sim.CurrentTime
+	}
+	return MinDuration(p.runeMeta[2].regenAt, p.runeMeta[3].regenAt)
+}
+
+func (p *Predictor) UnholyRuneReadyAt(sim *Simulation) time.Duration {
+	if p.runeStates&anyUnholySpent != anyUnholySpent { // if any are not spent
+		return sim.CurrentTime
+	}
+	return MinDuration(p.runeMeta[4].regenAt, p.runeMeta[5].regenAt)
 }

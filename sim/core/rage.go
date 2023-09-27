@@ -46,26 +46,17 @@ func (unit *Unit) EnableRageBar(options RageBarOptions, onRageGain OnRageGain) {
 			if result.Outcome.Matches(OutcomeMiss) {
 				return
 			}
-			if !spell.ProcMask.Matches(ProcMaskMelee) {
-				return
-			}
-			if !spell.ProcMask.Matches(ProcMaskWhiteHit) {
-				return
-			}
-
-			// Need separate check to exclude auto replacers (e.g. Heroic Strike and Cleave).
-			if spell.ProcMask.Matches(ProcMaskMeleeMHSpecial) {
-				return
-			}
 
 			var hitFactor float64
 			var speed float64
-			if spell.IsMH() {
+			if spell.ProcMask == ProcMaskMeleeMHAuto {
 				hitFactor = 3.5
 				speed = options.MHSwingSpeed
-			} else {
+			} else if spell.ProcMask == ProcMaskMeleeOHAuto {
 				hitFactor = 1.75
 				speed = options.OHSwingSpeed
+			} else {
+				return
 			}
 
 			if result.Outcome.Matches(OutcomeCrit) {
@@ -162,7 +153,7 @@ func (rb *rageBar) SpendRage(sim *Simulation, amount float64, metrics *ResourceM
 	rb.currentRage = newRage
 }
 
-func (rb *rageBar) reset(sim *Simulation) {
+func (rb *rageBar) reset(_ *Simulation) {
 	if rb.unit == nil {
 		return
 	}

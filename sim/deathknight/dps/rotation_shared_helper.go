@@ -17,7 +17,7 @@ type SharedRotation struct {
 	hasGod  bool
 }
 
-func (sr *SharedRotation) Reset(sim *core.Simulation) {
+func (sr *SharedRotation) Reset(_ *core.Simulation) {
 	sr.recastedFF = false
 	sr.recastedBP = false
 }
@@ -47,10 +47,10 @@ func (dk *DpsDeathknight) shDiseaseCheck(sim *core.Simulation, target *core.Unit
 		ffExpiresAt := ffRemaining + sim.CurrentTime
 		bpExpiresAt := bpRemaining + sim.CurrentTime
 
-		crpb := dk.CopyRunicPowerBar()
-		spellCost := crpb.OptimalRuneCost(core.RuneCost(spell.DefaultCast.Cost))
+		spellCost := dk.OptimalRuneCost(core.RuneCost(spell.DefaultCast.Cost))
 
-		crpb.SpendRuneCost(sim, spell, spellCost)
+		crpb := dk.Predictor()
+		crpb.SpendRuneCost(sim, spellCost)
 
 		afterCastTime := sim.CurrentTime + castGcd
 		currentFrostRunes := crpb.CurrentFrostRunes()
@@ -86,7 +86,7 @@ func (dk *DpsDeathknight) shRecastAvailableCheck(expiresAt time.Duration, afterC
 	return false
 }
 
-func (dk *DpsDeathknight) shShouldSpreadDisease(sim *core.Simulation) bool {
+func (dk *DpsDeathknight) shShouldSpreadDisease(_ *core.Simulation) bool {
 	prioritizeSpread := dk.Env.GetNumTargets() > 1
 
 	// on 2 or 3 targets, we don't want to spread if we have diseases up on all targets already (to maximize Desolation uptime)
@@ -104,7 +104,7 @@ func (dk *DpsDeathknight) shShouldSpreadDisease(sim *core.Simulation) bool {
 	return dk.sr.recastedFF && dk.sr.recastedBP && prioritizeSpread
 }
 
-func (dk *DpsDeathknight) RotationAction_CancelBT(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+func (dk *DpsDeathknight) RotationAction_CancelBT(sim *core.Simulation, _ *core.Unit, s *deathknight.Sequence) time.Duration {
 	dk.BloodTapAura.Deactivate(sim)
 	s.Advance()
 	return sim.CurrentTime

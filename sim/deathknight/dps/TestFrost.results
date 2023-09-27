@@ -631,8 +631,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Scourgelord'sBattlegear"
  value: {
-  dps: 8431.71541
-  tps: 4942.4876
+  dps: 8434.6511
+  tps: 4944.24901
  }
 }
 dps_results: {

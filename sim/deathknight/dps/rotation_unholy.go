@@ -153,7 +153,9 @@ func (dk *DpsDeathknight) RotationActionCallback_UnholyDndRotation(sim *core.Sim
 				dk.uhAfterGargoyleSequence(sim)
 				return sim.CurrentTime
 			}
-			cast = dk.DeathAndDecay.Cast(sim, target)
+			if cast = dk.DeathAndDecay.CanCast(sim, target); cast {
+				dk.DeathAndDecay.Cast(sim, target)
+			}
 		}
 	} else {
 		if dk.uhGargoyleCheck(sim, target, dk.SpellGCD()+core.GCDDefault+50*time.Millisecond) {
@@ -388,14 +390,14 @@ func (dk *DpsDeathknight) uhAfterGargoyleSequence(sim *core.Simulation) {
 	}
 }
 
-func (dk *DpsDeathknight) RotationActionCallback_Haste_Snapshot(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+func (dk *DpsDeathknight) RotationActionCallback_Haste_Snapshot(sim *core.Simulation, _ *core.Unit, s *deathknight.Sequence) time.Duration {
 	dk.ur.gargoyleSnapshot.ActivateMajorCooldowns(sim)
 	dk.UpdateMajorCooldowns()
 	s.Advance()
 	return sim.CurrentTime
 }
 
-func (dk *DpsDeathknight) uhGhoulFrenzySequence(sim *core.Simulation, bloodTap bool) {
+func (dk *DpsDeathknight) uhGhoulFrenzySequence(_ *core.Simulation, bloodTap bool) {
 	if bloodTap {
 		dk.RotationSequence.Clear().
 			NewAction(dk.RotationActionCallback_BT).
@@ -422,7 +424,7 @@ func (dk *DpsDeathknight) uhGhoulFrenzySequence(sim *core.Simulation, bloodTap b
 	}
 }
 
-func (dk *DpsDeathknight) uhRecastDiseasesSequence(sim *core.Simulation) {
+func (dk *DpsDeathknight) uhRecastDiseasesSequence(_ *core.Simulation) {
 	dk.RotationSequence.Clear()
 
 	// If we have glyph of Disease and both dots active try to refresh with pesti
@@ -577,13 +579,13 @@ func (dk *DpsDeathknight) RotationActionCallback_Pesti_Custom(sim *core.Simulati
 	}
 }
 
-func (dk *DpsDeathknight) RotationActionUH_ResetToSsMain(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+func (dk *DpsDeathknight) RotationActionUH_ResetToSsMain(sim *core.Simulation, _ *core.Unit, _ *deathknight.Sequence) time.Duration {
 	dk.RotationSequence.Clear().
 		NewAction(dk.RotationActionCallback_UnholySsRotation)
 	return sim.CurrentTime
 }
 
-func (dk *DpsDeathknight) RotationActionUH_ResetToDndMain(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+func (dk *DpsDeathknight) RotationActionUH_ResetToDndMain(sim *core.Simulation, _ *core.Unit, _ *deathknight.Sequence) time.Duration {
 	dk.RotationSequence.Clear().
 		NewAction(dk.RotationActionCallback_UnholyDndRotation)
 	return sim.CurrentTime
