@@ -71,6 +71,8 @@ type Mage struct {
 	Pyroblast       *core.Spell
 	Scorch          *core.Spell
 	MirrorImage     *core.Spell
+	BlastWave       *core.Spell
+	DragonsBreath   *core.Spell
 
 	IcyVeins             *core.Spell
 	SummonWaterElemental *core.Spell
@@ -124,7 +126,7 @@ func (mage *Mage) Initialize() {
 	mage.registerDeepFreezeSpell()
 	mage.registerFireballSpell()
 	mage.registerFireBlastSpell()
-	mage.registerFlamestrikeSpell()
+	mage.registerFlamestrikeSpells()
 	mage.registerFrostboltSpell()
 	mage.registerIceLanceSpell()
 	mage.registerPyroblastSpell()
@@ -134,6 +136,8 @@ func (mage *Mage) Initialize() {
 	mage.registerEvocation()
 	mage.registerManaGemsCD()
 	mage.registerMirrorImageCD()
+	mage.registerBlastWaveSpell()
+	mage.registerDragonsBreathSpell()
 
 	if mirrorImageMCD := mage.GetMajorCooldownIgnoreTag(mage.MirrorImage.ActionID); mirrorImageMCD != nil {
 		if len(mirrorImageMCD.GetTimings()) == 0 {

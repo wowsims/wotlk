@@ -20,6 +20,8 @@ func (mage *Mage) ApplyTalents() {
 	mage.applyHotStreak()
 	mage.applyFingersOfFrost()
 	mage.applyBrainFreeze()
+	mage.applyFireStarter()
+
 	mage.registerArcanePowerCD()
 	mage.registerPresenceOfMindCD()
 	mage.registerCombustionCD()
@@ -767,6 +769,48 @@ func (mage *Mage) applyWintersChill() {
 				if aura.IsActive() {
 					aura.AddStack(sim)
 				}
+			}
+		},
+	})
+}
+
+func (mage *Mage) applyFireStarter() {
+	if mage.Talents.Firestarter == 0 {
+		return
+	}
+
+	firestarterAura := mage.RegisterAura(core.Aura{
+		Label:    "Firestarter",
+		ActionID: core.ActionID{SpellID: 54741},
+		Duration: 10 * time.Second,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			mage.Flamestrike.CostMultiplier -= 100
+			mage.Flamestrike.CastTimeMultiplier -= 1
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			mage.Flamestrike.CostMultiplier += 100
+			mage.Flamestrike.CastTimeMultiplier += 1
+		},
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if spell == mage.Flamestrike {
+				aura.Deactivate(sim)
+			}
+		},
+	})
+
+	mage.RegisterAura(core.Aura{
+		Label:    "Firestarter talent",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() {
+				return
+			}
+
+			if spell == mage.BlastWave || spell == mage.DragonsBreath {
+				firestarterAura.Activate(sim)
 			}
 		},
 	})
