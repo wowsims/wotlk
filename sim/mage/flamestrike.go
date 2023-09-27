@@ -32,7 +32,7 @@ func (mage *Mage) registerFlamestrikeSpell(rank8 bool) *core.Spell {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:      core.GCDDefault,
-				CastTime: time.Second * 3,
+				CastTime: time.Second * 2,
 			},
 		},
 
