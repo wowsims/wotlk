@@ -38,6 +38,19 @@ export const StartingRage = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecWar
 	labelTooltip: 'Initial rage at the start of each iteration.',
 });
 
+// Allows for auto gemming whilst ignoring expertise cap
+// (Useful for Arms)
+export const DisableExpertiseGemming = {
+	type: 'boolean' as const,
+	label: 'Disable expertise gemming',
+	labelTooltip: 'Disables auto gemming for expertise',
+	changedEvent: (player: Player<any>) => player.disableExpertiseGemmingChangeEmitter,
+	getValue: (player: Player<any>) => player.getDisableExpertiseGemming(),
+	setValue: (eventID: EventID, player: Player<any>, newValue: boolean) => {
+		player.setDisableExpertiseGemming(eventID, newValue);
+	},
+};
+
 export const StanceSnapshot = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecWarrior>({
 	fieldName: 'stanceSnapshot',
 	label: 'Stance Snapshot',
