@@ -410,6 +410,9 @@ func (mage *Mage) applyMasterOfElements() {
 			if spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 				return
 			}
+			if spell.CurCast.Cost == 0 {
+				return
+			}
 			if result.DidCrit() {
 				if refundCoeff < 0 {
 					mage.SpendMana(sim, -1*spell.DefaultCast.Cost*refundCoeff, manaMetrics)
