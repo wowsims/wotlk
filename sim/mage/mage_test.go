@@ -229,7 +229,7 @@ var FireRotation = core.APLRotationFromJsonString(`{
 		{"action":{"autocastOtherCooldowns":{}}},
 		{"action":{"condition":{"auraShouldRefresh":{"auraId":{"spellId":12873},"maxOverlap":{"const":{"val":"4s"}}}},"castSpell":{"spellId":{"spellId":42859}}}},
 		{"action":{"condition":{"auraIsActiveWithReactionTime":{"auraId":{"spellId":44448}}},"castSpell":{"spellId":{"spellId":42891}}}},
-		{"action":{"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55360}}}}},{"cmp":{"op":"OpGt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"12s"}}}}]}},"castSpell":{"spellId":{"spellId":55360}}}},
+		{"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"12s"}}}}]}},"multidot":{"spellId":{"spellId":55360},"maxDots":10,"maxOverlap":{"const":{"val":"0ms"}}}}},
 		{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"remainingTime":{}},"rhs":{"spellCastTime":{"spellId":{"spellId":42859}}}}},"castSpell":{"spellId":{"spellId":42873}}}},
 		{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"4s"}}}},"castSpell":{"spellId":{"spellId":42859}}}},
 		{"action":{"castSpell":{"spellId":{"spellId":42833}}}}
@@ -246,7 +246,7 @@ var FireAOERotation = core.APLRotationFromJsonString(`{
 		  {"action":{"condition":{"or":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":42926,"tag":9}}}}},{"not":{"val":{"dotIsActive":{"spellId":{"spellId":42925,"tag":8}}}}}]}},"castSpell":{"spellId":{"spellId":42950}}}},
 		  {"action":{"condition":{"or":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":42926,"tag":9}}}}},{"not":{"val":{"dotIsActive":{"spellId":{"spellId":42925,"tag":8}}}}}]}},"castSpell":{"spellId":{"spellId":42945}}}},
 		  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":42926,"tag":9}}}}},"castSpell":{"spellId":{"spellId":42926,"tag":9}}}},
-		  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":42926,"tag":9}}}}},"castSpell":{"spellId":{"spellId":42925,"tag":8}}}},
+		  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":42926,"tag":8}}}}},"castSpell":{"spellId":{"spellId":42925,"tag":8}}}},
 		  {"action":{"condition":{"auraIsActiveWithReactionTime":{"auraId":{"spellId":44448}}},"castSpell":{"spellId":{"spellId":42891}}}},
 		  {"action":{"castSpell":{"spellId":{"spellId":42921}}}}
 	]
