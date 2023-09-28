@@ -213,8 +213,8 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 		// Rank order red gems to use with their associated stat caps
 		const redGemCaps = new Array<[number, Stats]>();
 		redGemCaps.push([40117, this.calcArpCap(optimizedGear)]);
-		const expCap = new Stats().withStat(Stat.StatExpertise, 6.5 * 32.79 + 4);
-		redGemCaps.push([40118, expCap]);
+		const expCap = this.calcExpCap();
+    redGemCaps.push([40118, expCap]);
 		const critCap = this.calcCritCap(optimizedGear);
 		redGemCaps.push([40111, new Stats()]);
 
@@ -239,6 +239,19 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 		yellowGemCaps.push([40142, critCap]);
 		await this.fillGemsToCaps(optimizedGear, yellowSockets, yellowGemCaps, 0, 0);
 	}
+
+	calcExpCap(): Stats {
+    let expCap = 6.5 * 32.79 + 4;
+    const weaponMastery = this.player.getTalents().weaponMastery;
+    const hasWeaponMasteryTalent = !!weaponMastery;
+    
+		if (hasWeaponMasteryTalent) {
+      expCap -=
+        weaponMastery * 4 * Mechanics.EXPERTISE_PER_QUARTER_PERCENT_REDUCTION;
+    }
+
+    return new Stats().withStat(Stat.StatExpertise, expCap);
+  }
 
 	calcArpCap(gear: Gear): Stats {
 		let arpCap = 1404;
