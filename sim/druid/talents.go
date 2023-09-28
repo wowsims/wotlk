@@ -388,9 +388,12 @@ func (druid *Druid) applyOmenOfClarity() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
-		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() {
+				return
+			}
 			// https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1182017571
-			if druid.Hurricane.IsEqual(spell) {
+			if druid.HurricaneTickSpell.IsEqual(spell) {
 				curCastTickSpeed := spell.CurCast.ChannelTime.Seconds() / 10
 				hurricaneCoeff := 1.0 - (7.0 / 9.0)
 				spellCoeff := hurricaneCoeff * curCastTickSpeed
@@ -398,13 +401,7 @@ func (druid *Druid) applyOmenOfClarity() {
 				if sim.RandomFloat("Clearcasting") < chanceToProc {
 					druid.ProcOoc(sim)
 				}
-			}
-		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !result.Landed() {
-				return
-			}
-			if druid.AutoAttacks.PPMProc(sim, 3.5, core.ProcMaskMeleeWhiteHit, "Omen of Clarity", spell) { // Melee
+			} else if druid.AutoAttacks.PPMProc(sim, 3.5, core.ProcMaskMeleeWhiteHit, "Omen of Clarity", spell) { // Melee
 				druid.ProcOoc(sim)
 			} else if spell.Flags.Matches(SpellFlagOmenTrigger) { // Spells
 				// Heavily based on comment here
