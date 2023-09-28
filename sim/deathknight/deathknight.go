@@ -70,8 +70,8 @@ type Deathknight struct {
 
 	bonusCoeffs DeathknightCoeffs
 
-	onRuneSpendT10          core.OnRune
-	onRuneSpendBladeBarrier core.OnRune
+	onRuneSpendT10          core.OnRuneChange
+	onRuneSpendBladeBarrier core.OnRuneChange
 
 	Inputs DeathknightInputs
 
@@ -423,24 +423,15 @@ func NewDeathknight(character core.Character, inputs DeathknightInputs, talents 
 		currentRunicPower,
 		maxRunicPower,
 		10*time.Second,
-		func(sim *core.Simulation) {
+		func(sim *core.Simulation, changeType core.RuneChangeType) {
 			if dk.onRuneSpendT10 != nil {
-				dk.onRuneSpendT10(sim)
+				dk.onRuneSpendT10(sim, changeType)
 			}
 			if dk.onRuneSpendBladeBarrier != nil {
-				dk.onRuneSpendBladeBarrier(sim)
+				dk.onRuneSpendBladeBarrier(sim, changeType)
 			}
 		},
-		func(sim *core.Simulation) {
-		},
-		func(sim *core.Simulation) {
-		},
-		func(sim *core.Simulation) {
-		},
-		func(sim *core.Simulation) {
-		},
-		func(sim *core.Simulation) {
-		},
+		nil,
 	)
 
 	dk.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritPerAgiMaxLevel[character.Class]*core.CritRatingPerCritChance)
@@ -450,7 +441,6 @@ func NewDeathknight(character core.Character, inputs DeathknightInputs, talents 
 	dk.AddStatDependency(stats.BonusArmor, stats.Armor, 1)
 
 	dk.PseudoStats.CanParry = true
-	dk.PseudoStats.GracefulCastCDFailures = true
 
 	// Base dodge unaffected by Diminishing Returns
 	dk.PseudoStats.BaseDodge += 0.03664

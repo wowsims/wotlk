@@ -75,10 +75,10 @@ func (dk *DpsDeathknight) blDiseaseCheck(sim *core.Simulation, target *core.Unit
 			return false
 		}
 
-		crpb := dk.CopyRunicPowerBar()
-		spellCost := crpb.OptimalRuneCost(core.RuneCost(spell.DefaultCast.Cost))
+		spellCost := dk.OptimalRuneCost(core.RuneCost(spell.DefaultCast.Cost))
 
-		crpb.SpendRuneCost(sim, spell, spellCost)
+		crpb := dk.Predictor()
+		crpb.SpendRuneCost(sim, spellCost)
 
 		if dk.sr.hasGod {
 			currentBloodRunes := crpb.CurrentBloodRunes()

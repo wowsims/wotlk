@@ -220,8 +220,8 @@ func (dk *Deathknight) registerScourgelordsBattlegearProc() {
 		},
 	})
 
-	dk.onRuneSpendT10 = func(sim *core.Simulation) {
-		if dk.AllRunesSpent() {
+	dk.onRuneSpendT10 = func(sim *core.Simulation, changeType core.RuneChangeType) {
+		if changeType.Matches(core.SpendRune) && dk.AllRunesSpent() {
 			damageAura.Activate(sim)
 		}
 	}

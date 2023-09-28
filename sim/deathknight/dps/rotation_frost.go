@@ -40,7 +40,7 @@ func (fr *FrostRotation) Initialize(dk *DpsDeathknight) {
 	}
 }
 
-func (fr *FrostRotation) Reset(sim *core.Simulation) {
+func (fr *FrostRotation) Reset(_ *core.Simulation) {
 	fr.oblitCount = 0
 
 	fr.hyperSpeedMCD = nil
@@ -151,7 +151,7 @@ func (dk *DpsDeathknight) castAllMajorCooldowns(sim *core.Simulation) {
 
 func (dk *DpsDeathknight) RotationActionCallback_UA_Frost(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
 	if dk.UnbreakableArmor != nil {
-		if !dk.LeftBloodRuneReady() {
+		if !dk.LeftBloodRuneReady() && dk.BloodTap.CanCast(sim, nil) {
 			dk.BloodTap.Cast(sim, nil)
 		}
 		casted := dk.UnbreakableArmor.Cast(sim, target)

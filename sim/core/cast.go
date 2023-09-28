@@ -108,12 +108,6 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 		if config.CD.Timer != nil {
 			// By panicking if spell is on CD, we force each sim to properly check for their own CDs.
 			if !spell.CD.IsReady(sim) {
-				if spell.Unit.PseudoStats.GracefulCastCDFailures {
-					if sim.Log != nil {
-						sim.Log("Failed cast because of CD")
-					}
-					return false
-				}
 				panic(fmt.Sprintf("Trying to cast %s but is still on cooldown for %s, curTime = %s", spell.ActionID, spell.CD.TimeToReady(sim), sim.CurrentTime))
 			}
 			spell.CD.Set(sim.CurrentTime + spell.CurCast.CastTime + spell.CD.Duration)
@@ -122,12 +116,6 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 		if config.SharedCD.Timer != nil {
 			// By panicking if spell is on CD, we force each sim to properly check for their own CDs.
 			if !spell.SharedCD.IsReady(sim) {
-				if spell.Unit.PseudoStats.GracefulCastCDFailures {
-					if sim.Log != nil {
-						sim.Log("Failed cast because of SharedCD")
-					}
-					return false
-				}
 				panic(fmt.Sprintf("Trying to cast %s but is still on shared cooldown for %s, curTime = %s", spell.ActionID, spell.SharedCD.TimeToReady(sim), sim.CurrentTime))
 			}
 			spell.SharedCD.Set(sim.CurrentTime + spell.CurCast.CastTime + spell.SharedCD.Duration)
@@ -221,12 +209,6 @@ func (spell *Spell) makeCastFuncSimple() CastSuccessFunc {
 		if spell.CD.Timer != nil {
 			// By panicking if spell is on CD, we force each sim to properly check for their own CDs.
 			if !spell.CD.IsReady(sim) {
-				if spell.Unit.PseudoStats.GracefulCastCDFailures {
-					if sim.Log != nil {
-						sim.Log("Failed cast because of CD")
-					}
-					return false
-				}
 				panic(fmt.Sprintf("Trying to cast %s but is still on cooldown for %s, curTime = %s", spell.ActionID, spell.CD.TimeToReady(sim), sim.CurrentTime))
 			}
 
@@ -236,12 +218,6 @@ func (spell *Spell) makeCastFuncSimple() CastSuccessFunc {
 		if spell.SharedCD.Timer != nil {
 			// By panicking if spell is on CD, we force each sim to properly check for their own CDs.
 			if !spell.SharedCD.IsReady(sim) {
-				if spell.Unit.PseudoStats.GracefulCastCDFailures {
-					if sim.Log != nil {
-						sim.Log("Failed cast because of SharedCD")
-					}
-					return false
-				}
 				panic(fmt.Sprintf("Trying to cast %s but is still on shared cooldown for %s, curTime = %s", spell.ActionID, spell.SharedCD.TimeToReady(sim), sim.CurrentTime))
 			}
 

@@ -296,8 +296,6 @@ type PseudoStats struct {
 	CostMultiplier float64 // Multiplies spell cost.
 	CostReduction  float64 // Reduces spell cost.
 
-	GracefulCastCDFailures bool
-
 	CastSpeedMultiplier   float64
 	MeleeSpeedMultiplier  float64
 	RangedSpeedMultiplier float64
