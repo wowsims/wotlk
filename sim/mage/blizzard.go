@@ -7,6 +7,25 @@ import (
 )
 
 func (mage *Mage) registerBlizzardSpell() {
+	var improvedBlizzardProcApplication *core.Spell
+	if mage.Talents.ImprovedBlizzard > 0 {
+		auras := mage.NewEnemyAuraArray(func(unit *core.Unit) *core.Aura {
+			return unit.GetOrRegisterAura(core.Aura{
+				ActionID: core.ActionID{SpellID: 12488},
+				Label:    "Improved Blizzard",
+				Duration: time.Millisecond * 1500,
+			})
+		})
+		improvedBlizzardProcApplication = mage.RegisterSpell(core.SpellConfig{
+			ActionID: core.ActionID{SpellID: 12488},
+			ProcMask: core.ProcMaskProc,
+			Flags:    SpellFlagMage | core.SpellFlagNoLogs,
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				auras.Get(target).Activate(sim)
+			},
+		})
+	}
+
 	blizzardTickSpell := mage.RegisterSpell(core.SpellConfig{
 		ActionID:         core.ActionID{SpellID: 42938},
 		SpellSchool:      core.SpellSchoolFrost,
@@ -20,6 +39,10 @@ func (mage *Mage) registerBlizzardSpell() {
 			damage *= sim.Encounter.AOECapMultiplier()
 			for _, aoeTarget := range sim.Encounter.TargetUnits {
 				spell.CalcAndDealDamage(sim, aoeTarget, damage, spell.OutcomeMagicHitAndCrit)
+
+				if improvedBlizzardProcApplication != nil {
+					improvedBlizzardProcApplication.Cast(sim, aoeTarget)
+				}
 			}
 		},
 	})
