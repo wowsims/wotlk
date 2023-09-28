@@ -8,18 +8,15 @@ import { TristateEffect } from '../core/proto/common.js'
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
-import { EventID, TypedEvent } from '../core/typed_event.js';
+import { TypedEvent } from '../core/typed_event.js';
 import { Gear } from '../core/proto_utils/gear.js';
 import { ItemSlot } from '../core/proto/common.js';
 import { GemColor } from '../core/proto/common.js';
 import { Profession } from '../core/proto/common.js';
 
-import { Warrior, Warrior_Rotation as WarriorRotation, WarriorTalents as WarriorTalents, Warrior_Options as WarriorOptions } from '../core/proto/warrior.js';
 
-import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as Mechanics from '../core/constants/mechanics.js';
-import * as Tooltips from '../core/constants/tooltips.js';
 
 import * as WarriorInputs from './inputs.js';
 import * as Presets from './presets.js';
@@ -214,7 +211,7 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 		const redGemCaps = new Array<[number, Stats]>();
 		redGemCaps.push([40117, this.calcArpCap(optimizedGear)]);
 		const expCap = this.calcExpCap();
-    redGemCaps.push([40118, expCap]);
+		redGemCaps.push([40118, expCap]);
 		const critCap = this.calcCritCap(optimizedGear);
 		redGemCaps.push([40111, new Stats()]);
 
@@ -241,17 +238,17 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 	}
 
 	calcExpCap(): Stats {
-    let expCap = 6.5 * 32.79 + 4;
-    const weaponMastery = this.player.getTalents().weaponMastery;
-    const hasWeaponMasteryTalent = !!weaponMastery;
-    
+		let expCap = 6.5 * 32.79 + 4;
+		const weaponMastery = this.player.getTalents().weaponMastery;
+		const hasWeaponMasteryTalent = !!weaponMastery;
+		
 		if (hasWeaponMasteryTalent) {
-      expCap -=
-        weaponMastery * 4 * Mechanics.EXPERTISE_PER_QUARTER_PERCENT_REDUCTION;
-    }
+			expCap -=
+				weaponMastery * 4 * Mechanics.EXPERTISE_PER_QUARTER_PERCENT_REDUCTION;
+		}
 
-    return new Stats().withStat(Stat.StatExpertise, expCap);
-  }
+		return new Stats().withStat(Stat.StatExpertise, expCap);
+	}
 
 	calcArpCap(gear: Gear): Stats {
 		let arpCap = 1404;
