@@ -17,7 +17,7 @@ func TestArcane(t *testing.T) {
 		Class: proto.Class_ClassMage,
 		Race:  proto.Race_RaceTroll,
 
-		GearSet:     core.GearSetCombo{Label: "P1Arcane", GearSet: P1ArcaneGear},
+		GearSet:     core.GearSetCombo{Label: "P3Arcane", GearSet: P3ArcaneGear},
 		Talents:     ArcaneTalents,
 		Glyphs:      ArcaneGlyphs,
 		Consumes:    FullArcaneConsumes,
@@ -47,7 +47,7 @@ func TestFire(t *testing.T) {
 		Class: proto.Class_ClassMage,
 		Race:  proto.Race_RaceTroll,
 
-		GearSet:     core.GearSetCombo{Label: "P1Fire", GearSet: P1FireGear},
+		GearSet:     core.GearSetCombo{Label: "P3Fire", GearSet: P3FireGear},
 		Talents:     FireTalents,
 		Glyphs:      FireGlyphs,
 		Consumes:    FullFireConsumes,
@@ -77,7 +77,7 @@ func TestFrostFire(t *testing.T) {
 		Class: proto.Class_ClassMage,
 		Race:  proto.Race_RaceTroll,
 
-		GearSet:     core.GearSetCombo{Label: "P1FrostFire", GearSet: P1FireGear},
+		GearSet:     core.GearSetCombo{Label: "P3FrostFire", GearSet: P3FireGear},
 		Talents:     FrostFireTalents,
 		Glyphs:      FrostFireGlyphs,
 		Consumes:    FullFireConsumes,
@@ -104,7 +104,7 @@ func TestFrost(t *testing.T) {
 		Class: proto.Class_ClassMage,
 		Race:  proto.Race_RaceTroll,
 
-		GearSet:     core.GearSetCombo{Label: "P1Frost", GearSet: P1FrostGear},
+		GearSet:     core.GearSetCombo{Label: "P3Frost", GearSet: P3FrostGear},
 		Talents:     FrostTalents,
 		Glyphs:      FrostGlyphs,
 		Consumes:    FullFrostConsumes,
@@ -296,24 +296,24 @@ var FrostAOERotation = core.APLRotationFromJsonString(`{
 	]
 }`)
 
-var P1ArcaneGear = core.EquipmentSpecFromJsonString(`{"items": [
-	{"id":40416,"enchant":3820,"gems":[41285,39998]},
-	{"id":44661,"gems":[40026]},
-	{"id":40419,"enchant":3810,"gems":[40051]},
-	{"id":44005,"enchant":3722,"gems":[40026]},
-	{"id":44002,"enchant":3832,"gems":[39998,39998]},
-	{"id":44008,"enchant":2332,"gems":[39998,0]},
-	{"id":40415,"enchant":3604,"gems":[39998,0]},
-	{"id":40561,"gems":[39998]},
-	{"id":40417,"enchant":3719,"gems":[39998,40051]},
-	{"id":40558,"enchant":3606},
-	{"id":40719},
-	{"id":40399},
-	{"id":39229},
-	{"id":40255},
-	{"id":40396,"enchant":3834},
-	{"id":40273},
-	{"id":39426}
+var P3FireGear = core.EquipmentSpecFromJsonString(`{"items": [
+		{"id":51281,"enchant":3820,"gems":[41285,40133]},
+        {"id":50724,"gems":[40133]},
+        {"id":51284,"enchant":3810,"gems":[40153]},
+        {"id":50628,"enchant":3722,"gems":[40153]},
+        {"id":51283,"enchant":3832,"gems":[40113,40133]},
+        {"id":54582,"enchant":2332,"gems":[40155,0]},
+        {"id":50722,"enchant":3604,"gems":[40153,40133,0]},
+        {"id":50613,"enchant":3601,"gems":[40133,40113,40113]},
+        {"id":51282,"enchant":3872,"gems":[40133,40153]},
+        {"id":50699,"enchant":3606,"gems":[40133,40113]},
+        {"id":50664,"gems":[40133]},
+        {"id":50398,"gems":[40153]},
+        {"id":47188},
+        {"id":50348},
+        {"id":50732,"enchant":3834,"gems":[40113]},
+        {"id":50719},
+        {"id":50684,"gems":[40153]}
 ]}`)
-var P1FrostGear = P1ArcaneGear
-var P1FireGear = P1ArcaneGear
+var P3FrostGear = P3FireGear
+var P3ArcaneGear = P3FireGear
