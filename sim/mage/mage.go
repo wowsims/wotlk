@@ -54,23 +54,26 @@ type Mage struct {
 	// Cached values for a few mechanics.
 	bonusCritDamage float64
 
-	ArcaneBarrage   *core.Spell
-	ArcaneBlast     *core.Spell
-	ArcaneExplosion *core.Spell
-	ArcaneMissiles  *core.Spell
-	Blizzard        *core.Spell
-	DeepFreeze      *core.Spell
-	Ignite          *core.Spell
-	LivingBomb      *core.Spell
-	Fireball        *core.Spell
-	FireBlast       *core.Spell
-	Flamestrike     *core.Spell
-	Frostbolt       *core.Spell
-	FrostfireBolt   *core.Spell
-	IceLance        *core.Spell
-	Pyroblast       *core.Spell
-	Scorch          *core.Spell
-	MirrorImage     *core.Spell
+	ArcaneBarrage    *core.Spell
+	ArcaneBlast      *core.Spell
+	ArcaneExplosion  *core.Spell
+	ArcaneMissiles   *core.Spell
+	Blizzard         *core.Spell
+	DeepFreeze       *core.Spell
+	Ignite           *core.Spell
+	LivingBomb       *core.Spell
+	Fireball         *core.Spell
+	FireBlast        *core.Spell
+	Flamestrike      *core.Spell
+	FlamestrikeRank8 *core.Spell
+	Frostbolt        *core.Spell
+	FrostfireBolt    *core.Spell
+	IceLance         *core.Spell
+	Pyroblast        *core.Spell
+	Scorch           *core.Spell
+	MirrorImage      *core.Spell
+	BlastWave        *core.Spell
+	DragonsBreath    *core.Spell
 
 	IcyVeins             *core.Spell
 	SummonWaterElemental *core.Spell
@@ -124,7 +127,7 @@ func (mage *Mage) Initialize() {
 	mage.registerDeepFreezeSpell()
 	mage.registerFireballSpell()
 	mage.registerFireBlastSpell()
-	mage.registerFlamestrikeSpell()
+	mage.registerFlamestrikeSpells()
 	mage.registerFrostboltSpell()
 	mage.registerIceLanceSpell()
 	mage.registerPyroblastSpell()
@@ -134,6 +137,8 @@ func (mage *Mage) Initialize() {
 	mage.registerEvocation()
 	mage.registerManaGemsCD()
 	mage.registerMirrorImageCD()
+	mage.registerBlastWaveSpell()
+	mage.registerDragonsBreathSpell()
 
 	if mirrorImageMCD := mage.GetMajorCooldownIgnoreTag(mage.MirrorImage.ActionID); mirrorImageMCD != nil {
 		if len(mirrorImageMCD.GetTimings()) == 0 {
