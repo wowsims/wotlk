@@ -169,9 +169,9 @@ func (paladin *Paladin) Reset(_ *core.Simulation) {
 }
 
 // maybe need to add stat dependencies
-func NewPaladin(character core.Character, talentsStr string) *Paladin {
+func NewPaladin(character *core.Character, talentsStr string) *Paladin {
 	paladin := &Paladin{
-		Character: character,
+		Character: *character,
 		Talents:   &proto.PaladinTalents{},
 	}
 	core.FillTalentsProto(paladin.Talents.ProtoReflect(), talentsStr, TalentTreeSizes)

@@ -209,11 +209,11 @@ func (warlock *Warlock) Reset(sim *core.Simulation) {
 	warlock.setupCooldowns(sim)
 }
 
-func NewWarlock(character core.Character, options *proto.Player) *Warlock {
+func NewWarlock(character *core.Character, options *proto.Player) *Warlock {
 	warlockOptions := options.GetWarlock()
 
 	warlock := &Warlock{
-		Character: character,
+		Character: *character,
 		Talents:   &proto.WarlockTalents{},
 		Options:   warlockOptions.Options,
 		Rotation:  warlockOptions.Rotation,
@@ -250,7 +250,7 @@ func RegisterWarlock() {
 	core.RegisterAgentFactory(
 		proto.Player_Warlock{},
 		proto.Spec_SpecWarlock,
-		func(character core.Character, options *proto.Player) core.Agent {
+		func(character *core.Character, options *proto.Player) core.Agent {
 			return NewWarlock(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {

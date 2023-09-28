@@ -11,7 +11,7 @@ func RegisterHealingPriest() {
 	core.RegisterAgentFactory(
 		proto.Player_HealingPriest{},
 		proto.Spec_SpecHealingPriest,
-		func(character core.Character, options *proto.Player) core.Agent {
+		func(character *core.Character, options *proto.Player) core.Agent {
 			return NewHealingPriest(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -36,7 +36,7 @@ type HealingPriest struct {
 	nextCycleIndex int
 }
 
-func NewHealingPriest(character core.Character, options *proto.Player) *HealingPriest {
+func NewHealingPriest(character *core.Character, options *proto.Player) *HealingPriest {
 	healingOptions := options.GetHealingPriest()
 
 	selfBuffs := priest.SelfBuffs{

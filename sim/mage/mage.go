@@ -22,7 +22,7 @@ func RegisterMage() {
 	core.RegisterAgentFactory(
 		proto.Player_Mage{},
 		proto.Spec_SpecMage,
-		func(character core.Character, options *proto.Player) core.Agent {
+		func(character *core.Character, options *proto.Player) core.Agent {
 			return NewMage(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -157,11 +157,11 @@ func (mage *Mage) Reset(sim *core.Simulation) {
 	mage.delayedPyroAt = 0
 }
 
-func NewMage(character core.Character, options *proto.Player) *Mage {
+func NewMage(character *core.Character, options *proto.Player) *Mage {
 	mageOptions := options.GetMage()
 
 	mage := &Mage{
-		Character: character,
+		Character: *character,
 		Talents:   &proto.MageTalents{},
 		Options:   mageOptions.Options,
 		Rotation:  mageOptions.Rotation,

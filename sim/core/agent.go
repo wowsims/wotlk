@@ -141,7 +141,7 @@ func ProtoToActionID(protoID *proto.ActionID) ActionID {
 	}
 }
 
-type AgentFactory func(Character, *proto.Player) Agent
+type AgentFactory func(*Character, *proto.Player) Agent
 type SpecSetter func(*proto.Player, interface{})
 
 var agentFactories = make(map[string]AgentFactory)
@@ -175,7 +175,7 @@ func NewAgent(party *Party, partyIndex int, player *proto.Player) Agent {
 	}
 
 	character := NewCharacter(party, partyIndex, player)
-	return factory(character, player)
+	return factory(&character, player)
 }
 
 // Applies the spec options to the given player. This is only necessary because

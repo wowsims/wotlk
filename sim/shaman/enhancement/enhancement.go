@@ -13,7 +13,7 @@ func RegisterEnhancementShaman() {
 	core.RegisterAgentFactory(
 		proto.Player_EnhancementShaman{},
 		proto.Spec_SpecEnhancementShaman,
-		func(character core.Character, options *proto.Player) core.Agent {
+		func(character *core.Character, options *proto.Player) core.Agent {
 			return NewEnhancementShaman(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -26,7 +26,7 @@ func RegisterEnhancementShaman() {
 	)
 }
 
-func NewEnhancementShaman(character core.Character, options *proto.Player) *EnhancementShaman {
+func NewEnhancementShaman(character *core.Character, options *proto.Player) *EnhancementShaman {
 	enhOptions := options.GetEnhancementShaman()
 
 	selfBuffs := shaman.SelfBuffs{

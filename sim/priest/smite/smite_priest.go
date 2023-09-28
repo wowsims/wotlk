@@ -12,7 +12,7 @@ func RegisterSmitePriest() {
 	core.RegisterAgentFactory(
 		proto.Player_SmitePriest{},
 		proto.Spec_SpecSmitePriest,
-		func(character core.Character, options *proto.Player) core.Agent {
+		func(character *core.Character, options *proto.Player) core.Agent {
 			return NewSmitePriest(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -25,7 +25,7 @@ func RegisterSmitePriest() {
 	)
 }
 
-func NewSmitePriest(character core.Character, options *proto.Player) *SmitePriest {
+func NewSmitePriest(character *core.Character, options *proto.Player) *SmitePriest {
 	smiteOptions := options.GetSmitePriest()
 
 	selfBuffs := priest.SelfBuffs{
