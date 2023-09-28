@@ -186,6 +186,12 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 					Presets.FIRE_P3_PRESET_HORDE,
 					Presets.FFB_P3_PRESET_ALLIANCE,
 					Presets.FFB_P3_PRESET_HORDE,
+					Presets.FIRE_P4_PRESET_HORDE,
+					Presets.FIRE_P4_PRESET_ALLIANCE,
+					Presets.FFB_P4_PRESET_HORDE,
+					Presets.FFB_P4_PRESET_ALLIANCE,
+					Presets.ARCANE_P4_PRESET_HORDE,
+					Presets.ARCANE_P4_PRESET_ALLIANCE,
 				],
 			},
 
