@@ -147,6 +147,7 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 				inputs: [
 					WarriorInputs.StartingRage,
 					WarriorInputs.StanceSnapshot,
+					WarriorInputs.DisableExpertiseGemming,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],
@@ -210,8 +211,12 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 		// Rank order red gems to use with their associated stat caps
 		const redGemCaps = new Array<[number, Stats]>();
 		redGemCaps.push([40117, this.calcArpCap(optimizedGear)]);
+		// Should we gem expertise?
+		const enableExpertiseGemming = !this.player.getDisableExpertiseGemming()
 		const expCap = this.calcExpCap();
-		redGemCaps.push([40118, expCap]);
+		if(enableExpertiseGemming){
+			redGemCaps.push([40118, expCap]);
+		}
 		const critCap = this.calcCritCap(optimizedGear);
 		redGemCaps.push([40111, new Stats()]);
 
@@ -231,7 +236,9 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 		const yellowGemCaps = new Array<[number, Stats]>();
 		const hitCap = new Stats().withStat(Stat.StatMeleeHit, 8. * 32.79 + 4);
 		yellowGemCaps.push([40125, hitCap]);
-		yellowGemCaps.push([40162, hitCap.add(expCap)]);
+		if(enableExpertiseGemming){
+			yellowGemCaps.push([40162, hitCap.add(expCap)]);
+		}
 		yellowGemCaps.push([40143, hitCap]);
 		yellowGemCaps.push([40142, critCap]);
 		await this.fillGemsToCaps(optimizedGear, yellowSockets, yellowGemCaps, 0, 0);
