@@ -623,7 +623,11 @@ func init() {
 				ProcMask: core.ProcMaskMelee,
 				PPM:      1,
 				ActionID: core.ActionID{ItemID: itemID},
-				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
+
+				Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
+					if !result.Landed() {
+						return
+					}
 					// Deactivate first, to cancel old PA.
 					procAura.Deactivate(sim)
 					procAura.Activate(sim)
