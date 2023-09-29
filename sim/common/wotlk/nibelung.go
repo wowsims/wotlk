@@ -102,19 +102,15 @@ func MakeNibelungTriggerAura(agent core.Agent, isHeroic bool) {
 	})
 
 	core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
-		Name:       "Nibelung Proc",
-		Callback:   core.CallbackOnCastComplete,
-		ProcMask:   core.ProcMaskSpellOrProc,
-		Harmful:    true,
-		ProcChance: 0.02,
-		ICD:        time.Millisecond * 250,
-		ActionID:   core.ActionID{SpellID: procSpellId},
+		Name:            "Nibelung Proc",
+		Callback:        core.CallbackOnCastComplete,
+		ProcMask:        core.ProcMaskSpellOrProc,
+		ProcMaskExclude: core.ProcMaskNotInSpellbook,
+		Harmful:         true,
+		ProcChance:      0.02,
+		ICD:             time.Millisecond * 250,
+		ActionID:        core.ActionID{SpellID: procSpellId},
 		Handler: func(sim *core.Simulation, spell *core.Spell, _ *core.SpellResult) {
-			// dummy proc spell can't proc nibelung
-			if spell == spell.Unit.GetDummyProcSpell() {
-				return
-			}
-
 			for _, petAgent := range character.PetAgents {
 				if valkyr, ok := petAgent.(*ValkyrPet); ok && !valkyr.IsEnabled() {
 					valkyr.registerSmite(isHeroic)

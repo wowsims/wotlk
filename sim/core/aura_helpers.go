@@ -28,18 +28,19 @@ const (
 type ProcHandler func(sim *Simulation, spell *Spell, result *SpellResult)
 
 type ProcTrigger struct {
-	Name       string
-	ActionID   ActionID
-	Duration   time.Duration
-	Callback   AuraCallback
-	ProcMask   ProcMask
-	SpellFlags SpellFlag
-	Outcome    HitOutcome
-	Harmful    bool
-	ProcChance float64
-	PPM        float64
-	ICD        time.Duration
-	Handler    ProcHandler
+	Name            string
+	ActionID        ActionID
+	Duration        time.Duration
+	Callback        AuraCallback
+	ProcMask        ProcMask
+	ProcMaskExclude ProcMask
+	SpellFlags      SpellFlag
+	Outcome         HitOutcome
+	Harmful         bool
+	ProcChance      float64
+	PPM             float64
+	ICD             time.Duration
+	Handler         ProcHandler
 }
 
 func ApplyProcTriggerCallback(unit *Unit, aura *Aura, config ProcTrigger) {
@@ -60,6 +61,9 @@ func ApplyProcTriggerCallback(unit *Unit, aura *Aura, config ProcTrigger) {
 	handler := config.Handler
 	callback := func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
 		if config.SpellFlags != SpellFlagNone && !spell.Flags.Matches(config.SpellFlags) {
+			return
+		}
+		if config.ProcMaskExclude != ProcMaskUnknown && spell.ProcMask.Matches(config.ProcMaskExclude) {
 			return
 		}
 		if config.ProcMask != ProcMaskUnknown && !spell.ProcMask.Matches(config.ProcMask) {
@@ -111,6 +115,9 @@ func ApplyProcTriggerCallback(unit *Unit, aura *Aura, config ProcTrigger) {
 				return
 			}
 			if config.ProcMask != ProcMaskUnknown && !spell.ProcMask.Matches(config.ProcMask) {
+				return
+			}
+			if config.ProcMaskExclude != ProcMaskUnknown && spell.ProcMask.Matches(config.ProcMaskExclude) {
 				return
 			}
 			if icd.Duration != 0 && !icd.IsReady(sim) {
