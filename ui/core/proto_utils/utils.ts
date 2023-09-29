@@ -1,25 +1,35 @@
-import { REPO_NAME } from '../constants/other.js'
-import { camelToSnakeCase } from '../utils.js';
-import { getEnumValues } from '../utils.js';
-import { intersection } from '../utils.js';
-import { maxIndex } from '../utils.js';
-import { sum } from '../utils.js';
+import {REPO_NAME} from '../constants/other.js'
+import {camelToSnakeCase, getEnumValues, intersection, maxIndex, sum} from '../utils.js';
 
-import { Player } from '../proto/api.js';
-import { ResourceType } from '../proto/api.js';
-import { ArmorType, UnitReference_Type } from '../proto/common.js';
-import { Class } from '../proto/common.js';
-import { EnchantType } from '../proto/common.js';
-import { HandType } from '../proto/common.js';
-import { ItemSlot } from '../proto/common.js';
-import { ItemType } from '../proto/common.js';
-import { Race } from '../proto/common.js';
-import { Faction } from '../proto/common.js';
-import { UnitReference } from '../proto/common.js';
-import { RangedWeaponType } from '../proto/common.js';
-import { Spec } from '../proto/common.js';
-import { WeaponType } from '../proto/common.js';
-import { Blessings } from '../proto/paladin.js';
+import {Player, ResourceType} from '../proto/api.js';
+import {
+	ArmorType,
+	Class,
+	EnchantType,
+	Faction,
+	HandType,
+	ItemSlot,
+	ItemType,
+	Race,
+	RangedWeaponType,
+	Spec,
+	UnitReference,
+	UnitReference_Type,
+	WeaponType
+} from '../proto/common.js';
+import {
+	Blessings,
+	HolyPaladin,
+	HolyPaladin_Options as HolyPaladinOptions,
+	HolyPaladin_Rotation as HolyPaladinRotation,
+	PaladinTalents,
+	ProtectionPaladin,
+	ProtectionPaladin_Options as ProtectionPaladinOptions,
+	ProtectionPaladin_Rotation as ProtectionPaladinRotation,
+	RetributionPaladin,
+	RetributionPaladin_Options as RetributionPaladinOptions,
+	RetributionPaladin_Rotation as RetributionPaladinRotation
+} from '../proto/paladin.js';
 import {
 	BlessingsAssignment,
 	BlessingsAssignments,
@@ -28,7 +38,7 @@ import {
 	UIItem as Item,
 } from '../proto/ui.js';
 
-import { Stats } from './stats.js';
+import {Stats} from './stats.js';
 
 import * as Gems from '../proto_utils/gems.js';
 
@@ -59,21 +69,14 @@ import {
 	RestorationShaman_Rotation as RestorationShamanRotation,
 	ShamanTalents,
 } from '../proto/shaman.js';
-import { Hunter, Hunter_Rotation as HunterRotation, HunterTalents, Hunter_Options as HunterOptions } from '../proto/hunter.js';
-import { Mage, Mage_Rotation as MageRotation, MageTalents, Mage_Options as MageOptions } from '../proto/mage.js';
-import { Rogue, Rogue_Rotation as RogueRotation, RogueTalents, Rogue_Options as RogueOptions } from '../proto/rogue.js';
 import {
-	HolyPaladin,
-	HolyPaladin_Options as HolyPaladinOptions,
-	HolyPaladin_Rotation as HolyPaladinRotation,
-	PaladinTalents,
-	ProtectionPaladin,
-	ProtectionPaladin_Options as ProtectionPaladinOptions,
-	ProtectionPaladin_Rotation as ProtectionPaladinRotation,
-	RetributionPaladin,
-	RetributionPaladin_Options as RetributionPaladinOptions,
-	RetributionPaladin_Rotation as RetributionPaladinRotation,
-} from '../proto/paladin.js';
+	Hunter,
+	Hunter_Options as HunterOptions,
+	Hunter_Rotation as HunterRotation,
+	HunterTalents
+} from '../proto/hunter.js';
+import {Mage, Mage_Options as MageOptions, Mage_Rotation as MageRotation, MageTalents} from '../proto/mage.js';
+import {Rogue, Rogue_Options as RogueOptions, Rogue_Rotation as RogueRotation, RogueTalents} from '../proto/rogue.js';
 import {
 	HealingPriest,
 	HealingPriest_Options as HealingPriestOptions,
@@ -86,11 +89,31 @@ import {
 	SmitePriest_Options as SmitePriestOptions,
 	SmitePriest_Rotation as SmitePriestRotation,
 } from '../proto/priest.js';
-import { Warlock, Warlock_Rotation as WarlockRotation, WarlockTalents, Warlock_Options as WarlockOptions } from '../proto/warlock.js';
-import { Warrior, Warrior_Rotation as WarriorRotation, WarriorTalents, Warrior_Options as WarriorOptions } from '../proto/warrior.js';
-import { Deathknight, Deathknight_Rotation as DeathknightRotation, DeathknightTalents, Deathknight_Options as DeathknightOptions } from '../proto/deathknight.js';
-import { TankDeathknight, TankDeathknight_Rotation as TankDeathknightRotation, TankDeathknight_Options as TankDeathknightOptions } from '../proto/deathknight.js';
-import { ProtectionWarrior, ProtectionWarrior_Rotation as ProtectionWarriorRotation, ProtectionWarrior_Options as ProtectionWarriorOptions } from '../proto/warrior.js';
+import {
+	Warlock,
+	Warlock_Options as WarlockOptions,
+	Warlock_Rotation as WarlockRotation,
+	WarlockTalents
+} from '../proto/warlock.js';
+import {
+	ProtectionWarrior,
+	ProtectionWarrior_Options as ProtectionWarriorOptions,
+	ProtectionWarrior_Rotation as ProtectionWarriorRotation,
+	Warrior,
+	Warrior_Options as WarriorOptions,
+	Warrior_Rotation as WarriorRotation,
+	WarriorTalents
+} from '../proto/warrior.js';
+import {
+	Deathknight,
+	Deathknight_Options as DeathknightOptions,
+	Deathknight_Rotation as DeathknightRotation,
+	DeathknightTalents,
+	TankDeathknight,
+	TankDeathknight_Options as TankDeathknightOptions,
+	TankDeathknight_Rotation as TankDeathknightRotation
+} from '../proto/deathknight.js';
+import {APLRotation_Type} from "../proto/apl";
 
 export type DeathknightSpecs = Spec.SpecDeathknight | Spec.SpecTankDeathknight;
 export type DruidSpecs = Spec.SpecBalanceDruid | Spec.SpecFeralDruid | Spec.SpecFeralTankDruid | Spec.SpecRestorationDruid;
@@ -570,7 +593,7 @@ export const specTypeFunctions: Record<Spec, SpecTypeFunctions<any>> = {
 		rotationToJson: (a) => BalanceDruidRotation.toJson(a as BalanceDruidRotation),
 		rotationFromJson: (obj) => BalanceDruidRotation.fromJson(obj),
 		rotationFromPlayer: (player) => player.spec.oneofKind == 'balanceDruid'
-			? player.spec.balanceDruid.rotation || BalanceDruidRotation.create()
+			? (player.rotation?.type === APLRotation_Type.TypeLegacy ? player.spec.balanceDruid.rotation : player.rotation) || BalanceDruidRotation.create()
 			: BalanceDruidRotation.create(),
 
 		talentsCreate: () => DruidTalents.create(),
@@ -595,7 +618,7 @@ export const specTypeFunctions: Record<Spec, SpecTypeFunctions<any>> = {
 		rotationToJson: (a) => FeralDruidRotation.toJson(a as FeralDruidRotation),
 		rotationFromJson: (obj) => FeralDruidRotation.fromJson(obj),
 		rotationFromPlayer: (player) => player.spec.oneofKind == 'feralDruid'
-			? player.spec.feralDruid.rotation || FeralDruidRotation.create()
+			? (player.rotation?.type == APLRotation_Type.TypeLegacy ? player.spec.feralDruid.rotation : player.rotation) || FeralDruidRotation.create()
 			: FeralDruidRotation.create(),
 
 		talentsCreate: () => DruidTalents.create(),
@@ -620,7 +643,7 @@ export const specTypeFunctions: Record<Spec, SpecTypeFunctions<any>> = {
 		rotationToJson: (a) => FeralTankDruidRotation.toJson(a as FeralTankDruidRotation),
 		rotationFromJson: (obj) => FeralTankDruidRotation.fromJson(obj),
 		rotationFromPlayer: (player) => player.spec.oneofKind == 'feralTankDruid'
-			? player.spec.feralTankDruid.rotation || FeralTankDruidRotation.create()
+			? (player.rotation?.type == APLRotation_Type.TypeLegacy ? player.spec.feralTankDruid.rotation : player.rotation) || FeralTankDruidRotation.create()
 			: FeralTankDruidRotation.create(),
 
 		talentsCreate: () => DruidTalents.create(),
@@ -645,7 +668,7 @@ export const specTypeFunctions: Record<Spec, SpecTypeFunctions<any>> = {
 		rotationToJson: (a) => RestorationDruidRotation.toJson(a as RestorationDruidRotation),
 		rotationFromJson: (obj) => RestorationDruidRotation.fromJson(obj),
 		rotationFromPlayer: (player) => player.spec.oneofKind == 'restorationDruid'
-			? player.spec.restorationDruid.rotation || RestorationDruidRotation.create()
+			? (player.rotation?.type == APLRotation_Type.TypeLegacy ? player.spec.restorationDruid.rotation : player.rotation) || RestorationDruidRotation.create()
 			: RestorationDruidRotation.create(),
 
 		talentsCreate: () => DruidTalents.create(),
@@ -670,7 +693,7 @@ export const specTypeFunctions: Record<Spec, SpecTypeFunctions<any>> = {
 		rotationToJson: (a) => ElementalShamanRotation.toJson(a as ElementalShamanRotation),
 		rotationFromJson: (obj) => ElementalShamanRotation.fromJson(obj),
 		rotationFromPlayer: (player) => player.spec.oneofKind == 'elementalShaman'
-			? player.spec.elementalShaman.rotation || ElementalShamanRotation.create()
+			? (player.rotation?.type == APLRotation_Type.TypeLegacy ? player.spec.elementalShaman.rotation : player.rotation) || ElementalShamanRotation.create()
 			: ElementalShamanRotation.create(),
 
 		talentsCreate: () => ShamanTalents.create(),
@@ -695,7 +718,7 @@ export const specTypeFunctions: Record<Spec, SpecTypeFunctions<any>> = {
 		rotationToJson: (a) => EnhancementShamanRotation.toJson(a as EnhancementShamanRotation),
 		rotationFromJson: (obj) => EnhancementShamanRotation.fromJson(obj),
 		rotationFromPlayer: (player) => player.spec.oneofKind == 'enhancementShaman'
-			? player.spec.enhancementShaman.rotation || EnhancementShamanRotation.create()
+			? (player.rotation?.type == APLRotation_Type.TypeLegacy ? player.spec.enhancementShaman.rotation : player.rotation) || EnhancementShamanRotation.create()
 			: EnhancementShamanRotation.create(),
 
 		talentsCreate: () => ShamanTalents.create(),
@@ -720,7 +743,7 @@ export const specTypeFunctions: Record<Spec, SpecTypeFunctions<any>> = {
 		rotationToJson: (a) => RestorationShamanRotation.toJson(a as RestorationShamanRotation),
 		rotationFromJson: (obj) => RestorationShamanRotation.fromJson(obj),
 		rotationFromPlayer: (player) => player.spec.oneofKind == 'restorationShaman'
-			? player.spec.restorationShaman.rotation || RestorationShamanRotation.create()
+			? (player.rotation?.type == APLRotation_Type.TypeLegacy ? player.spec.restorationShaman.rotation : player.rotation) || RestorationShamanRotation.create()
 			: RestorationShamanRotation.create(),
 
 		talentsCreate: () => ShamanTalents.create(),
@@ -745,7 +768,7 @@ export const specTypeFunctions: Record<Spec, SpecTypeFunctions<any>> = {
 		rotationToJson: (a) => HunterRotation.toJson(a as HunterRotation),
 		rotationFromJson: (obj) => HunterRotation.fromJson(obj),
 		rotationFromPlayer: (player) => player.spec.oneofKind == 'hunter'
-			? player.spec.hunter.rotation || HunterRotation.create()
+			? (player.rotation?.type == APLRotation_Type.TypeLegacy ? player.spec.hunter.rotation : player.rotation) || HunterRotation.create()
 			: HunterRotation.create(),
 
 		talentsCreate: () => HunterTalents.create(),
@@ -770,7 +793,7 @@ export const specTypeFunctions: Record<Spec, SpecTypeFunctions<any>> = {
 		rotationToJson: (a) => MageRotation.toJson(a as MageRotation),
 		rotationFromJson: (obj) => MageRotation.fromJson(obj),
 		rotationFromPlayer: (player) => player.spec.oneofKind == 'mage'
-			? player.spec.mage.rotation || MageRotation.create()
+			? (player.rotation?.type === APLRotation_Type.TypeLegacy ? player.spec.mage.rotation : player.rotation) || MageRotation.create()
 			: MageRotation.create(),
 
 		talentsCreate: () => MageTalents.create(),
