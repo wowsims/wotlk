@@ -220,7 +220,6 @@ export class Player<SpecType extends Spec> {
 	private distanceFromTarget: number = 0;
 	private healingModel: HealingModel = HealingModel.create();
 	private healingEnabled: boolean = false;
-	private disableExpertiseGemming: boolean = false;
 
 	private autoRotationGenerator: AutoRotationGenerator<SpecType> | null = null;
 	private simpleRotationGenerator: SimpleRotationGenerator<SpecType> | null = null;
@@ -254,7 +253,6 @@ export class Player<SpecType extends Spec> {
 	readonly inFrontOfTargetChangeEmitter = new TypedEvent<void>('PlayerInFrontOfTarget');
 	readonly distanceFromTargetChangeEmitter = new TypedEvent<void>('PlayerDistanceFromTarget');
 	readonly healingModelChangeEmitter = new TypedEvent<void>('PlayerHealingModel');
-	readonly disableExpertiseGemmingChangeEmitter = new TypedEvent<void>('DisableExpertiseGemming');
 	readonly epWeightsChangeEmitter = new TypedEvent<void>('PlayerEpWeights');
 	readonly miscOptionsChangeEmitter = new TypedEvent<void>('PlayerMiscOptions');
 
@@ -297,7 +295,6 @@ export class Player<SpecType extends Spec> {
 			this.inFrontOfTargetChangeEmitter,
 			this.distanceFromTargetChangeEmitter,
 			this.healingModelChangeEmitter,
-			this.disableExpertiseGemmingChangeEmitter,
 			this.epWeightsChangeEmitter,
 			this.epRatiosChangeEmitter,
 			this.epRefStatChangeEmitter,
@@ -906,18 +903,6 @@ export class Player<SpecType extends Spec> {
 			this.setDefaultHealingParams(this.healingModel)
 		}
 		this.healingModelChangeEmitter.emit(eventID);
-	}
-
-	getDisableExpertiseGemming(): boolean {
-		return this.disableExpertiseGemming;
-	}
-
-	setDisableExpertiseGemming(eventID: EventID, newDisableExpertiseGemming: boolean) {
-		if (newDisableExpertiseGemming == this.disableExpertiseGemming)
-			return;
-
-		this.disableExpertiseGemming = newDisableExpertiseGemming;
-		this.disableExpertiseGemmingChangeEmitter.emit(eventID);
 	}
 
 	computeStatsEP(stats?: Stats): number {

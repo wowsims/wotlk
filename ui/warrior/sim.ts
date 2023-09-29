@@ -212,7 +212,7 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 		const redGemCaps = new Array<[number, Stats]>();
 		redGemCaps.push([40117, this.calcArpCap(optimizedGear)]);
 		// Should we gem expertise?
-		const enableExpertiseGemming = !this.player.getDisableExpertiseGemming()
+		const enableExpertiseGemming = !this.player.getSpecOptions().disableExpertiseGemming
 		const expCap = this.calcExpCap();
 		if(enableExpertiseGemming){
 			redGemCaps.push([40118, expCap]);
