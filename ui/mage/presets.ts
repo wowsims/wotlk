@@ -190,6 +190,7 @@ export const ARCANE_ROTATION_PRESET_DEFAULT = {
 		rotation: APLRotation.fromJsonString(`{
 			"type": "TypeAPL",
 			"prepullActions": [
+				{"action":{"castSpell":{"spellId":{"spellId":55342}}},"doAtValue":{"const":{"val":"-2s"}}},
 				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
 			],
 			"priorityList": [
@@ -214,6 +215,7 @@ export const FIRE_ROTATION_PRESET_DEFAULT = {
 		rotation: APLRotation.fromJsonString(`{
 			"type": "TypeAPL",
 			"prepullActions": [
+				{"action":{"castSpell":{"spellId":{"spellId":55342}}},"doAtValue":{"const":{"val":"-2s"}}},
 				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
 			],
 			"priorityList": [
@@ -236,7 +238,8 @@ export const FROSTFIRE_ROTATION_PRESET_DEFAULT = {
 		rotation: APLRotation.fromJsonString(`{
 			"type": "TypeAPL",
 			"prepullActions": [
-			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
+				{"action":{"castSpell":{"spellId":{"spellId":55342}}},"doAtValue":{"const":{"val":"-2s"}}},
+			 	{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
 			],
 			"priorityList": [
 			  {"action":{"autocastOtherCooldowns":{}}},
@@ -258,7 +261,8 @@ export const FROST_ROTATION_PRESET_DEFAULT = {
 		rotation: APLRotation.fromJsonString(`{
 			"type": "TypeAPL",
 			"prepullActions": [
-			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
+				{"action":{"castSpell":{"spellId":{"spellId":55342}}},"doAtValue":{"const":{"val":"-2s"}}},
+			 	{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
 			],
 			"priorityList": [
 			  {"action":{"autocastOtherCooldowns":{}}},
@@ -279,9 +283,7 @@ export const ARCANE_ROTATION_PRESET_AOE = {
 		specRotationOptionsJson: MageRotation.toJsonString(DefaultFrostRotation),
 		rotation: APLRotation.fromJsonString(`{
 			"type": "TypeAPL",
-			"prepullActions": [
-				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
-			],
+			"prepullActions": [],
 			"priorityList": [
 				{"action":{"autocastOtherCooldowns":{}}},
 				{"action":{"castSpell":{"spellId":{"spellId":42921}}}}
@@ -319,9 +321,7 @@ export const FROST_ROTATION_PRESET_AOE = {
 		specRotationOptionsJson: MageRotation.toJsonString(DefaultFrostRotation),
 		rotation: APLRotation.fromJsonString(`{
 			"type": "TypeAPL",
-			"prepullActions": [
-				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
-			],
+			"prepullActions": [],
 			"priorityList": [
 				{"action":{"autocastOtherCooldowns":{}}},
 				{"action":{"castSpell":{"spellId":{"spellId":42939}}}}
