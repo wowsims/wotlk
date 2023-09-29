@@ -676,15 +676,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-ReignoftheDead-47316"
  value: {
-  dps: 7992.61762
-  tps: 7768.9
+  dps: 7960.33563
+  tps: 7734.31848
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-ReignoftheDead-47477"
  value: {
-  dps: 8049.3996
-  tps: 7824.82169
+  dps: 8020.19528
+  tps: 7793.31784
  }
 }
 dps_results: {
@@ -1075,43 +1075,43 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-Default-Default-FullBuffs-LongMultiTarget"
  value: {
-  dps: 16136.17325
-  tps: 18650.71165
+  dps: 16073.78456
+  tps: 18564.73994
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-Default-Default-FullBuffs-LongSingleTarget"
  value: {
-  dps: 11200.4262
-  tps: 10947.10608
+  dps: 11292.18427
+  tps: 11038.94976
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-Default-Default-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 12556.82382
-  tps: 11595.47864
+  dps: 12502.93599
+  tps: 11540.33889
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-Default-Default-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6865.06276
-  tps: 7823.12192
+  dps: 7036.35002
+  tps: 8043.58253
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-Default-Default-NoBuffs-LongSingleTarget"
  value: {
-  dps: 4992.11128
-  tps: 4894.80223
+  dps: 5048.77489
+  tps: 4952.3195
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-Default-Default-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 7853.58439
-  tps: 7551.48727
+  dps: 7882.18633
+  tps: 7580.73047
  }
 }
 dps_results: {
