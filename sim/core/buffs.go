@@ -162,7 +162,7 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 		kingsStrStamAmount = 1.1
 	} else if raidBuffs.DrumsOfForgottenKings {
 		kingsAgiIntSpiAmount = 1.08
-		kingsStrStamAmount = MaxFloat(kingsStrStamAmount, 1.08)
+		kingsStrStamAmount = max(kingsStrStamAmount, 1.08)
 	}
 	if kingsStrStamAmount > 0 {
 		character.MultiplyStat(stats.Strength, kingsStrStamAmount)
@@ -379,7 +379,7 @@ func ApplyInspiration(character *Character, uptime float64) {
 	if uptime <= 0 {
 		return
 	}
-	uptime = MinFloat(1, uptime)
+	uptime = min(1, uptime)
 
 	inspirationAura := InspirationAura(&character.Unit, 3)
 

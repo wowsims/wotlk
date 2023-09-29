@@ -9,12 +9,12 @@ import (
 )
 
 func (ret *RetributionPaladin) OnAutoAttack(sim *core.Simulation, _ *core.Spell) {
-	if ret.SealOfVengeanceAura.IsActive() && core.MinInt32(ret.MaxSoVTargets, ret.Env.GetNumTargets()) > 1 {
+	if ret.SealOfVengeanceAura.IsActive() && min(ret.MaxSoVTargets, ret.Env.GetNumTargets()) > 1 {
 		minVengeanceDotDuration := time.Second * 15
 		var minVengeanceDotDurationTarget *core.Unit
 		minVengeanceDotStacks := int32(5)
 		var minVengeanceDotStacksTarget *core.Unit
-		for i := int32(0); i < core.MinInt32(ret.MaxSoVTargets, ret.Env.GetNumTargets()); i++ {
+		for i := int32(0); i < min(ret.MaxSoVTargets, ret.Env.GetNumTargets()); i++ {
 			target := ret.Env.GetTargetUnit(i)
 			dot := ret.SovDotSpell.Dot(target)
 			remainingDuration := dot.RemainingDuration(sim)

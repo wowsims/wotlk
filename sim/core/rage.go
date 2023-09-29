@@ -70,7 +70,7 @@ func (unit *Unit) EnableRageBar(options RageBarOptions, onRageGain OnRageGain) {
 			}
 
 			// generatedRage is capped for very low damage swings
-			generatedRage := MinFloat((damage*7.5/RageFactor+hitFactor*speed)/2, damage*15/RageFactor)
+			generatedRage := min((damage*7.5/RageFactor+hitFactor*speed)/2, damage*15/RageFactor)
 
 			generatedRage *= options.RageMultiplier
 
@@ -101,7 +101,7 @@ func (unit *Unit) EnableRageBar(options RageBarOptions, onRageGain OnRageGain) {
 
 	unit.rageBar = rageBar{
 		unit:         unit,
-		startingRage: MaxFloat(0, MinFloat(options.StartingRage, MaxRage)),
+		startingRage: max(0, min(options.StartingRage, MaxRage)),
 		onRageGain:   onRageGain,
 
 		RageRefundMetrics: unit.NewRageMetrics(ActionID{OtherID: proto.OtherAction_OtherActionRefund}),
@@ -121,7 +121,7 @@ func (rb *rageBar) AddRage(sim *Simulation, amount float64, metrics *ResourceMet
 		panic("Trying to add negative rage!")
 	}
 
-	newRage := MinFloat(rb.currentRage+amount, MaxRage)
+	newRage := min(rb.currentRage+amount, MaxRage)
 	metrics.AddEvent(amount, newRage-rb.currentRage)
 
 	if sim.Log != nil {

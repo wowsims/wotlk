@@ -50,7 +50,7 @@ func (warrior *Warrior) registerDevastateSpell() {
 			sunderBonus := 0.0
 			saStacks := warrior.SunderArmorAuras.Get(target).GetStacks()
 			if saStacks != 0 {
-				sunderBonus = 242 * float64(core.MinInt32(saStacks+1, 5))
+				sunderBonus = 242 * float64(min(saStacks+1, 5))
 			}
 
 			baseDamage := (weaponMulti * spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower())) + sunderBonus

@@ -34,8 +34,8 @@ func (cat *FeralDruid) doAoeRotation(sim *core.Simulation) (bool, time.Duration)
 	if ffNow {
 		simTimeSecs := sim.GetRemainingDuration().Seconds()
 		maxSwipesWithoutFF := (int)((curEnergy + simTimeSecs*10) / cat.SwipeCat.DefaultCast.Cost)
-		numSwipesWithoutFF := core.MinInt(maxSwipesWithoutFF, int(simTimeSecs)+1)
-		numSwipesWithFF := core.MinInt(maxSwipesWithoutFF+1, int(simTimeSecs))
+		numSwipesWithoutFF := min(maxSwipesWithoutFF, int(simTimeSecs)+1)
+		numSwipesWithFF := min(maxSwipesWithoutFF+1, int(simTimeSecs))
 		ffNow = numSwipesWithFF > numSwipesWithoutFF
 	}
 
@@ -44,8 +44,8 @@ func (cat *FeralDruid) doAoeRotation(sim *core.Simulation) (bool, time.Duration)
 	nextFfEnergy := curEnergy + float64((cat.FaerieFire.TimeToReady(sim)+cat.latency)/core.EnergyTickDuration)
 	waitForFf := (cat.FaerieFire.TimeToReady(sim) < time.Second-rotation.MaxFfDelay) && (nextFfEnergy < ffThresh) && !isClearcast
 
-	furorCap := core.MinFloat(20.0*float64(cat.Talents.Furor), 85)
-	flowershiftEnergy := core.MinFloat(furorCap, 75) - 10*cat.SpellGCD().Seconds() - 20*latencySecs
+	furorCap := min(20.0*float64(cat.Talents.Furor), 85)
+	flowershiftEnergy := min(furorCap, 75) - 10*cat.SpellGCD().Seconds() - 20*latencySecs
 
 	flowerEnd := time.Duration(float64(sim.CurrentTime) + float64(cat.SpellGCD()) + (2.5+2*latencySecs)*float64(time.Second))
 	flowerFfDelay := flowerEnd - cat.FaerieFire.ReadyAt()

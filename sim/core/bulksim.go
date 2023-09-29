@@ -12,7 +12,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	goproto "github.com/golang/protobuf/proto"
+	goproto "google.golang.org/protobuf/proto"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
 )

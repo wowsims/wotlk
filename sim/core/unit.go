@@ -353,7 +353,7 @@ func (unit *Unit) BlockValue() float64 {
 }
 
 func (unit *Unit) ArmorPenetrationPercentage(armorPenRating float64) float64 {
-	return MaxFloat(MinFloat(armorPenRating/ArmorPenPerPercentArmor, 100.0)*0.01, 0.0)
+	return max(min(armorPenRating/ArmorPenPerPercentArmor, 100.0)*0.01, 0.0)
 }
 
 func (unit *Unit) RangedSwingSpeed() float64 {

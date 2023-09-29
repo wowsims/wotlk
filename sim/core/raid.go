@@ -206,7 +206,7 @@ func NewRaid(raidConfig *proto.Raid) *Raid {
 		}
 	}
 
-	numDummies := MinInt(24, int(raidConfig.TargetDummies))
+	numDummies := min(24, int(raidConfig.TargetDummies))
 	for i := 0; i < numDummies; i++ {
 		party, partyIndex := raid.GetFirstEmptyRaidIndex()
 		dummy := NewTargetDummy(i, party, partyIndex)
@@ -383,7 +383,7 @@ func (raid *Raid) GetPlayerFromUnit(unit *Unit) Agent {
 }
 
 func (raid *Raid) GetFirstNPlayersOrPets(n int32) []*Unit {
-	return raid.AllUnits[:MinInt32(n, int32(len(raid.AllUnits)))]
+	return raid.AllUnits[:min(n, int32(len(raid.AllUnits)))]
 }
 
 func (raid *Raid) GetPlayerFromUnitIndex(unitIndex int32) Agent {

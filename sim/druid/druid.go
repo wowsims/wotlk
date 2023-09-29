@@ -209,7 +209,7 @@ func (druid *Druid) Initialize() {
 
 	if druid.RaidBuffTargets == 0 {
 		// 17 is an arbitrary compromise between 10 and 25, plus pets
-		druid.RaidBuffTargets = core.MaxInt(17, len(druid.Env.Raid.AllUnits))
+		druid.RaidBuffTargets = max(17, len(druid.Env.Raid.AllUnits))
 	}
 }
 

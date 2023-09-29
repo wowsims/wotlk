@@ -22,7 +22,7 @@ func init() {
 
 		character.AddDynamicDamageTakenModifier(func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if procAura.IsActive() {
-				result.Damage = core.MaxFloat(0, result.Damage-140)
+				result.Damage = max(0, result.Damage-140)
 			}
 		})
 
@@ -52,7 +52,7 @@ func init() {
 
 		character.AddDynamicDamageTakenModifier(func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if procAura.IsActive() {
-				result.Damage = core.MaxFloat(0, result.Damage-205)
+				result.Damage = max(0, result.Damage-205)
 			}
 		})
 

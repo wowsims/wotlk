@@ -65,7 +65,7 @@ func (rogue *Rogue) registerEnvenom() {
 			dp := rogue.DeadlyPoison.Dot(target)
 			// - 215 base is scaled by consumed doses (<= comboPoints)
 			// - apRatio is independent of consumed doses (== comboPoints)
-			consumed := core.MinInt32(dp.GetStacks(), comboPoints)
+			consumed := min(dp.GetStacks(), comboPoints)
 			baseDamage := 215*float64(consumed) + 0.09*float64(comboPoints)*spell.MeleeAttackPower()
 
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)

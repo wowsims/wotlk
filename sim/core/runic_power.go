@@ -156,7 +156,7 @@ func (rp *runicPowerBar) addRunicPowerInterval(sim *Simulation, amount float64, 
 		panic("Trying to add negative runic power!")
 	}
 
-	newRunicPower := MinFloat(rp.currentRunicPower+amount, rp.maxRunicPower)
+	newRunicPower := min(rp.currentRunicPower+amount, rp.maxRunicPower)
 
 	metrics.AddEvent(amount, newRunicPower-rp.currentRunicPower)
 

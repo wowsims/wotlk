@@ -4,9 +4,9 @@ import (
 	"context"
 	"testing"
 
-	goproto "github.com/golang/protobuf/proto"
 	"github.com/google/go-cmp/cmp"
 	"github.com/wowsims/wotlk/sim/core/proto"
+	goproto "google.golang.org/protobuf/proto"
 )
 
 const (

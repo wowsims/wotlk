@@ -2,10 +2,11 @@ package core
 
 import (
 	"fmt"
-	"golang.org/x/exp/constraints"
 	"math"
 	"strconv"
 	"time"
+
+	"golang.org/x/exp/constraints"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -183,7 +184,7 @@ func (aura *Aura) SetStacks(sim *Simulation, newStacks int32) {
 		panic("MaxStacks required to set Aura stacks: " + aura.Label)
 	}
 	oldStacks := aura.stacks
-	newStacks = MinInt32(newStacks, aura.MaxStacks)
+	newStacks = min(newStacks, aura.MaxStacks)
 
 	if oldStacks == newStacks {
 		return

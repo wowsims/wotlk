@@ -139,7 +139,7 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 		if spell.CurCast.CastTime > 0 {
 			if sim.Log != nil && !spell.Flags.Matches(SpellFlagNoLogs) {
 				spell.Unit.Log(sim, "Casting %s (Cost = %0.03f, Cast Time = %s, Effective Time = %s)",
-					spell.ActionID, MaxFloat(0, spell.CurCast.Cost), spell.CurCast.CastTime, spell.CurCast.EffectiveTime())
+					spell.ActionID, max(0, spell.CurCast.Cost), spell.CurCast.CastTime, spell.CurCast.EffectiveTime())
 			}
 
 			spell.Unit.Hardcast = Hardcast{
@@ -177,7 +177,7 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 
 		if sim.Log != nil && !spell.Flags.Matches(SpellFlagNoLogs) {
 			spell.Unit.Log(sim, "Casting %s (Cost = %0.03f, Cast Time = %s, Effective Time = %s)",
-				spell.ActionID, MaxFloat(0, spell.CurCast.Cost), spell.CurCast.CastTime, spell.CurCast.EffectiveTime())
+				spell.ActionID, max(0, spell.CurCast.Cost), spell.CurCast.CastTime, spell.CurCast.EffectiveTime())
 			spell.Unit.Log(sim, "Completed cast %s", spell.ActionID)
 		}
 
@@ -260,6 +260,6 @@ func (spell *Spell) makeCastFuncAutosOrProcs() CastSuccessFunc {
 
 func (spell *Spell) ApplyCostModifiers(cost float64) float64 {
 	cost -= spell.Unit.PseudoStats.CostReduction
-	cost = MaxFloat(0, cost*spell.Unit.PseudoStats.CostMultiplier)
-	return MaxFloat(0, cost*spell.CostMultiplier)
+	cost = max(0, cost*spell.Unit.PseudoStats.CostMultiplier)
+	return max(0, cost*spell.CostMultiplier)
 }

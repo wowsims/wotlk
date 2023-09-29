@@ -36,7 +36,7 @@ func (unit *Unit) EnableEnergyBar(maxEnergy float64, onEnergyGain OnEnergyGain) 
 
 	unit.energyBar = energyBar{
 		unit:      unit,
-		maxEnergy: MaxFloat(100, maxEnergy),
+		maxEnergy: max(100, maxEnergy),
 		onEnergyGain: func(sim *Simulation) {
 			if !sim.Options.Interactive && (!unit.IsWaitingForEnergy() || unit.DoneWaitingForEnergy(sim)) {
 				if unit.IsUsingAPL {
@@ -69,7 +69,7 @@ func (eb *energyBar) addEnergyInternal(sim *Simulation, amount float64, metrics 
 		panic("Trying to add negative energy!")
 	}
 
-	newEnergy := MinFloat(eb.currentEnergy+amount, eb.maxEnergy)
+	newEnergy := min(eb.currentEnergy+amount, eb.maxEnergy)
 	metrics.AddEvent(amount, newEnergy-eb.currentEnergy)
 
 	if sim.Log != nil {
@@ -114,7 +114,7 @@ func (eb *energyBar) ResetEnergyTick(sim *Simulation) {
 }
 
 func (eb *energyBar) AddComboPoints(sim *Simulation, pointsToAdd int32, metrics *ResourceMetrics) {
-	newComboPoints := MinInt32(eb.comboPoints+pointsToAdd, 5)
+	newComboPoints := min(eb.comboPoints+pointsToAdd, 5)
 	metrics.AddEvent(float64(pointsToAdd), float64(newComboPoints-eb.comboPoints))
 
 	if sim.Log != nil {

@@ -68,7 +68,7 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 				pa.NextActionAt = sim.CurrentTime + time.Duration(sim.RandomFloat("ams induced damage")*5.0*float64(time.Second))
 				pa.Priority = core.ActionPriorityAuto
 				pa.OnAction = func(sim *core.Simulation) {
-					if sim.RandomFloat("AMS trigger chance") < core.MinFloat(dk.Inputs.AvgAMSSuccessRate, 1.0) {
+					if sim.RandomFloat("AMS trigger chance") < min(dk.Inputs.AvgAMSSuccessRate, 1.0) {
 						targetDummySpell.Cast(sim, aura.Unit)
 					}
 				}

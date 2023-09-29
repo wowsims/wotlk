@@ -54,7 +54,7 @@ func (warrior *Warrior) registerCleaveSpell() *core.Spell {
 	flatDamageBonus := 222 * (1 + 0.4*float64(warrior.Talents.ImprovedCleave))
 
 	targets := core.TernaryInt32(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfCleaving), 3, 2)
-	numHits := core.MinInt32(targets, warrior.Env.GetNumTargets())
+	numHits := min(targets, warrior.Env.GetNumTargets())
 	results := make([]*core.SpellResult, numHits)
 
 	return warrior.RegisterSpell(core.SpellConfig{
@@ -180,7 +180,7 @@ func (warrior *Warrior) RegisterHSOrCleave(useCleave bool, rageThreshold float64
 		warrior.hsOrCleaveQueueSpell = cleaveQueueSpell
 	}
 
-	warrior.HSRageThreshold = core.MaxFloat(autoSpell.DefaultCast.Cost, rageThreshold)
+	warrior.HSRageThreshold = max(autoSpell.DefaultCast.Cost, rageThreshold)
 	if warrior.IsUsingAPL {
 		warrior.HSRageThreshold = 0
 	}

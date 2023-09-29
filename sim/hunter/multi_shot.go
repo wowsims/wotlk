@@ -8,7 +8,7 @@ import (
 )
 
 func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
-	numHits := core.MinInt32(3, hunter.Env.GetNumTargets())
+	numHits := min(3, hunter.Env.GetNumTargets())
 
 	hunter.MultiShot = hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 49048},

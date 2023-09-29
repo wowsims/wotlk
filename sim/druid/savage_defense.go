@@ -20,7 +20,7 @@ func (druid *Druid) registerSavageDefensePassive() {
 
 	druid.AddDynamicDamageTakenModifier(func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 		if druid.SavageDefenseAura.IsActive() && (result.Damage > 0) && spell.SpellSchool.Matches(core.SpellSchoolPhysical) {
-			result.Damage = core.MaxFloat(0, result.Damage-0.25*druid.GetStat(stats.AttackPower))
+			result.Damage = max(0, result.Damage-0.25*druid.GetStat(stats.AttackPower))
 			druid.SavageDefenseAura.Deactivate(sim)
 		}
 	})

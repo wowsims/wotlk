@@ -80,7 +80,7 @@ func (x *rotation_multi) setup(sim *core.Simulation, rogue *Rogue) {
 		},
 	}
 	if rogue.Rotation.MultiTargetSliceFrequency != proto.Rogue_Rotation_Never {
-		sliceAndDice.MinimumComboPoints = core.MaxInt32(1, rogue.Rotation.MinimumComboPointsMultiTargetSlice)
+		sliceAndDice.MinimumComboPoints = max(1, rogue.Rotation.MinimumComboPointsMultiTargetSlice)
 		if rogue.Rotation.MultiTargetSliceFrequency == proto.Rogue_Rotation_Once {
 			sliceAndDice.MaxCasts = 1
 		}
@@ -374,8 +374,8 @@ func (x *rotation_multi) planRotation(sim *core.Simulation, rogue *Rogue) []rogu
 			}
 			currentTime += item.MaximumBuildDuration
 		} else {
-			cpUsed := core.MaxInt32(0, prio.MinimumComboPoints-comboPoints)
-			energyUsed := core.MaxFloat(0, prio.EnergyCost-currentEnergy)
+			cpUsed := max(0, prio.MinimumComboPoints-comboPoints)
+			energyUsed := max(0, prio.EnergyCost-currentEnergy)
 			minBuildTime := x.timeToBuild(cpUsed, x.builderPoints, eps, energyUsed)
 			if currentTime+minBuildTime <= item.ExpiresAt || !prio.IsFiller {
 				prioStack = append(prioStack, item)

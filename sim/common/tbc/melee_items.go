@@ -55,7 +55,7 @@ func init() {
 			})
 		}
 
-		numHits := core.MinInt32(5, character.Env.GetNumTargets())
+		numHits := min(5, character.Env.GetNumTargets())
 		debuffAuras := make([]*core.Aura, len(character.Env.Encounter.TargetUnits))
 		for i, target := range character.Env.Encounter.TargetUnits {
 			debuffAuras[i] = makeDebuffAura(target)

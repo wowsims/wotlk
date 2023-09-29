@@ -184,8 +184,8 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 	swStacks = float64(spriest.ShadowWeavingAura.GetStacks())
 
 	// Reduce number of DP/VT ticks based on remaining duration
-	num_DP_ticks = core.MinFloat(float64(spriest.DevouringPlague.CurDot().NumberOfTicks), math.Floor(remain_fight/dotTickSpeed))
-	num_VT_ticks = core.MinFloat(float64(spriest.VampiricTouch.CurDot().NumberOfTicks), math.Floor(remain_fight/dotTickSpeed))
+	num_DP_ticks = min(float64(spriest.DevouringPlague.CurDot().NumberOfTicks), math.Floor(remain_fight/dotTickSpeed))
+	num_VT_ticks = min(float64(spriest.VampiricTouch.CurDot().NumberOfTicks), math.Floor(remain_fight/dotTickSpeed))
 
 	// Spell damage numbers that are updated before each cast in order to determine the most optimal next cast based on dps over a finite window
 	// This is needed throughout the code to determine the optimal spell(s) to cast next
