@@ -421,9 +421,9 @@ func (mcdm *majorCooldownManager) GetMajorCooldown(actionID ActionID) *MajorCool
 	return nil
 }
 func (mcdm *majorCooldownManager) GetMajorCooldownIgnoreTag(actionID ActionID) *MajorCooldown {
-	for _, mcd := range mcdm.majorCooldowns {
+	for _, mcd := range mcdm.initialMajorCooldowns {
 		if mcd.Spell.SameActionIgnoreTag(actionID) {
-			return mcd
+			return &mcd
 		}
 	}
 	return nil

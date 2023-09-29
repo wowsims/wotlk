@@ -140,9 +140,9 @@ func (mage *Mage) Initialize() {
 	mage.registerBlastWaveSpell()
 	mage.registerDragonsBreathSpell()
 
-	if mirrorImageMCD := mage.GetMajorCooldownIgnoreTag(mage.MirrorImage.ActionID); mirrorImageMCD != nil {
+	if mirrorImageMCD := mage.GetMajorCooldownIgnoreTag(mage.MirrorImage.ActionID); !mage.IsUsingAPL && mirrorImageMCD != nil {
 		if len(mirrorImageMCD.GetTimings()) == 0 {
-			mage.RegisterPrepullAction(-1500*time.Millisecond, func(sim *core.Simulation) {
+			mage.RegisterPrepullAction(-2000*time.Millisecond, func(sim *core.Simulation) {
 				mage.MirrorImage.Cast(sim, nil)
 			})
 		}
