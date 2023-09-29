@@ -449,7 +449,7 @@ func (mcdm *majorCooldownManager) getFirstReadyMCD(sim *Simulation) *MajorCooldo
 
 	for _, mcd := range mcdm.majorCooldowns {
 		if !mcd.IsReady(sim) {
-			return nil
+			continue
 		}
 		if mcd.shouldActivateHelper(sim, mcdm.character) {
 			return mcd

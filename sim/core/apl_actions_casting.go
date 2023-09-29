@@ -2,7 +2,6 @@ package core
 
 import (
 	"fmt"
-
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
