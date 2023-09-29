@@ -107,7 +107,15 @@ func TestBulkSim(t *testing.T) {
 
 	want := &proto.BulkSimResult{}
 	if diff := cmp.Diff(want, got, cmp.Comparer(func(a, b *proto.BulkSimResult) bool {
-		return goproto.MarshalTextString(a) == goproto.MarshalTextString(b)
+		am, err := goproto.Marshal(a)
+		if err != nil {
+			return false
+		}
+		bm, err := goproto.Marshal(b)
+		if err != nil {
+			return false
+		}
+		return string(am) == string(bm)
 	})); diff != "" {
 		t.Fatalf("BulkSim() returned diff (-want +got):\n%s", diff)
 	}

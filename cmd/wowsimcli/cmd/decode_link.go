@@ -62,6 +62,6 @@ func decodeLink(link string) error {
 		return fmt.Errorf("cannot unmarshal raw proto: %w", err)
 	}
 
-	fmt.Println(protojson.Format(goproto.MessageV2(settings)))
+	fmt.Println(protojson.Format(goproto.Message(settings)))
 	return nil
 }
