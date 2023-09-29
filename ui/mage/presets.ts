@@ -283,10 +283,7 @@ export const ARCANE_ROTATION_PRESET_AOE = {
 		specRotationOptionsJson: MageRotation.toJsonString(DefaultFrostRotation),
 		rotation: APLRotation.fromJsonString(`{
 			"type": "TypeAPL",
-			"prepullActions": [
-				{"action":{"castSpell":{"spellId":{"spellId":55342}}},"doAtValue":{"const":{"val":"-2s"}}},
-				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
-			],
+			"prepullActions": [],
 			"priorityList": [
 				{"action":{"autocastOtherCooldowns":{}}},
 				{"action":{"castSpell":{"spellId":{"spellId":42921}}}}
