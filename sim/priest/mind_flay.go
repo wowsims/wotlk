@@ -31,10 +31,10 @@ func (priest *Priest) getMindFlayTickSpell(numTicks int32) *core.Spell {
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			damage := 588.0/3 + miseryCoeff*spell.SpellPower()
+			damage *= priest.MindFlayModifier
 			result := spell.CalcAndDealDamage(sim, target, damage, spell.OutcomeMagicHitAndCrit)
 
 			if result.Landed() {
-
 				priest.AddShadowWeavingStack(sim)
 				if result.DidCrit() && hasGlyphOfShadow {
 					priest.ShadowyInsightAura.Activate(sim)
