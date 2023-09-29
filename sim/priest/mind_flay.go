@@ -14,6 +14,7 @@ func (priest *Priest) getMiseryCoefficient() float64 {
 
 func (priest *Priest) getMindFlayTickSpell(numTicks int32) *core.Spell {
 	hasGlyphOfShadow := priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow))
+	miseryCoeff := priest.getMiseryCoefficient()
 
 	return priest.GetOrRegisterSpell(core.SpellConfig{
 		ActionID:       core.ActionID{SpellID: 58381}.WithTag(numTicks),
@@ -29,10 +30,11 @@ func (priest *Priest) getMindFlayTickSpell(numTicks int32) *core.Spell {
 		CritMultiplier:   priest.SpellCritMultiplier(1, float64(priest.Talents.ShadowPower)/5),
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			damage := 588.0/3 + priest.getMiseryCoefficient()*spell.SpellPower()
+			damage := 588.0/3 + miseryCoeff*spell.SpellPower()
 			result := spell.CalcAndDealDamage(sim, target, damage, spell.OutcomeMagicHitAndCrit)
 
 			if result.Landed() {
+
 				priest.AddShadowWeavingStack(sim)
 				if result.DidCrit() && hasGlyphOfShadow {
 					priest.ShadowyInsightAura.Activate(sim)
@@ -58,7 +60,7 @@ func (priest *Priest) getPainAndSufferingSpell() *core.Spell {
 
 func (priest *Priest) newMindFlaySpell(numTicksIdx int32) *core.Spell {
 	numTicks := numTicksIdx
-	flags := core.SpellFlagChanneled
+	flags := core.SpellFlagChanneled | core.SpellFlagNoMetrics
 	if numTicksIdx == 0 {
 		numTicks = 3
 		flags |= core.SpellFlagAPL
@@ -74,12 +76,13 @@ func (priest *Priest) newMindFlaySpell(numTicksIdx int32) *core.Spell {
 	rolloverChance := float64(priest.Talents.PainAndSuffering) / 3.0
 	shadowFocus := 0.02 * float64(priest.Talents.ShadowFocus)
 	focusedMind := 0.05 * float64(priest.Talents.FocusedMind)
+	miseryCoeff := priest.getMiseryCoefficient()
 
 	painAndSufferingSpell := priest.getPainAndSufferingSpell()
-	mindFlayTickSpell := priest.getMindFlayTickSpell(numTicks)
+	mindFlayTickSpell := priest.getMindFlayTickSpell(numTicksIdx)
 
 	return priest.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48156},
+		ActionID:    core.ActionID{SpellID: 48156}.WithTag(numTicksIdx),
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       flags,
@@ -126,12 +129,14 @@ func (priest *Priest) newMindFlaySpell(numTicksIdx int32) *core.Spell {
 			AffectedByCastSpeed: true,
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				mindFlayTickSpell.Cast(sim, target)
+				mindFlayTickSpell.SpellMetrics[target.UnitIndex].Casts -= 1
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+			mindFlayTickSpell.SpellMetrics[target.UnitIndex].Casts += 1
+
 			if result.Landed() {
-				spell.SpellMetrics[target.UnitIndex].Hits--
 				if priest.ShadowWordPain.Dot(target).IsActive() {
 					if rolloverChance == 1 || sim.RandomFloat("Pain and Suffering") < rolloverChance {
 						painAndSufferingSpell.Cast(sim, target)
@@ -142,7 +147,7 @@ func (priest *Priest) newMindFlaySpell(numTicksIdx int32) *core.Spell {
 			spell.DealOutcome(sim, result)
 		},
 		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
-			baseDamage := 588.0/3 + priest.getMiseryCoefficient()*spell.SpellPower()
+			baseDamage := 588.0/3 + miseryCoeff*spell.SpellPower()
 			baseDamage *= float64(numTicks)
 
 			if priest.Talents.Shadowform {
