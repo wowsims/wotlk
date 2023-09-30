@@ -48,26 +48,12 @@ func (priest *Priest) registerShadowWordPainSpell() {
 			Aura: core.Aura{
 				Label: "ShadowWordPain",
 				OnGain: func(_ *core.Aura, _ *core.Simulation) {
-					priest.MindBlast.DamageMultiplier *= twistedFaithMultiplier
-					if priest.MindFlayAPL != nil {
-						priest.MindFlayAPL.DamageMultiplier *= mindFlayMod
-					}
-					for _, spell := range priest.MindFlay {
-						if spell != nil {
-							spell.DamageMultiplier *= mindFlayMod
-						}
-					}
+					priest.MindBlastModifier *= twistedFaithMultiplier
+					priest.MindFlayModifier *= mindFlayMod
 				},
 				OnExpire: func(_ *core.Aura, _ *core.Simulation) {
-					priest.MindBlast.DamageMultiplier /= twistedFaithMultiplier
-					if priest.MindFlayAPL != nil {
-						priest.MindFlayAPL.DamageMultiplier /= mindFlayMod
-					}
-					for _, spell := range priest.MindFlay {
-						if spell != nil {
-							spell.DamageMultiplier /= mindFlayMod
-						}
-					}
+					priest.MindBlastModifier /= twistedFaithMultiplier
+					priest.MindFlayModifier /= mindFlayMod
 				},
 			},
 

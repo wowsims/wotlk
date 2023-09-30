@@ -165,8 +165,8 @@ dps_results: {
 dps_results: {
  key: "TestBalancePhase3-AllItems-DarkmoonCard:Greatness-44255"
  value: {
-  dps: 11166.34989
-  tps: 10886.16498
+  dps: 11160.37083
+  tps: 10880.4051
  }
 }
 dps_results: {
@@ -221,15 +221,15 @@ dps_results: {
 dps_results: {
  key: "TestBalancePhase3-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 11673.47762
-  tps: 11378.72128
+  dps: 11620.1212
+  tps: 11327.85975
  }
 }
 dps_results: {
  key: "TestBalancePhase3-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 11520.25694
-  tps: 11228.79499
+  dps: 11488.75579
+  tps: 11196.80515
  }
 }
 dps_results: {
@@ -326,8 +326,8 @@ dps_results: {
 dps_results: {
  key: "TestBalancePhase3-AllItems-ForgeEmber-37660"
  value: {
-  dps: 11299.67463
-  tps: 11006.03567
+  dps: 11282.76588
+  tps: 10991.67413
  }
 }
 dps_results: {
@@ -502,7 +502,7 @@ dps_results: {
  key: "TestBalancePhase3-AllItems-InsightfulEarthsiegeDiamond"
  value: {
   dps: 11165.65857
-  tps: 10871.65393
+  tps: 10873.18602
  }
 }
 dps_results: {
@@ -768,14 +768,14 @@ dps_results: {
  key: "TestBalancePhase3-AllItems-SouloftheDead-40382"
  value: {
   dps: 11159.36656
-  tps: 10876.18353
+  tps: 10875.79974
  }
 }
 dps_results: {
  key: "TestBalancePhase3-AllItems-SparkofLife-37657"
  value: {
   dps: 10981.65364
-  tps: 10688.40163
+  tps: 10688.3534
  }
 }
 dps_results: {

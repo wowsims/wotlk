@@ -60,6 +60,7 @@ func (priest *Priest) registerMindBlastSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(997, 1053) + spellCoeff*spell.SpellPower()
+			baseDamage *= priest.MindBlastModifier
 
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if result.Landed() {

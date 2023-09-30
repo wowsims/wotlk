@@ -59,6 +59,10 @@ const (
 	ProcMaskProc
 	// Mask for FT weapon and rogue poisons, seems to be spell procs from a weapon imbue
 	ProcMaskWeaponProc
+	// Mind Flay
+	ProcMaskNotInSpellbook
+	// Can proc Talisman of Volatile power, but nothing else?
+	ProcMaskSuppressedProc
 )
 
 const (

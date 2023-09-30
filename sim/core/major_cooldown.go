@@ -421,9 +421,9 @@ func (mcdm *majorCooldownManager) GetMajorCooldown(actionID ActionID) *MajorCool
 	return nil
 }
 func (mcdm *majorCooldownManager) GetMajorCooldownIgnoreTag(actionID ActionID) *MajorCooldown {
-	for _, mcd := range mcdm.majorCooldowns {
+	for _, mcd := range mcdm.initialMajorCooldowns {
 		if mcd.Spell.SameActionIgnoreTag(actionID) {
-			return mcd
+			return &mcd
 		}
 	}
 	return nil
@@ -449,7 +449,7 @@ func (mcdm *majorCooldownManager) getFirstReadyMCD(sim *Simulation) *MajorCooldo
 
 	for _, mcd := range mcdm.majorCooldowns {
 		if !mcd.IsReady(sim) {
-			return nil
+			continue
 		}
 		if mcd.shouldActivateHelper(sim, mcdm.character) {
 			return mcd
