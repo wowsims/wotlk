@@ -254,7 +254,6 @@ const fillGemsToCaps = async (sim: Sim, player: Player<AutoGemSpec>, gear: Gear,
   if (!newStats.belowCaps(currentCap)) {
     nextIdx = firstIdx;
   }
-
   return await fillGemsToCaps(sim, player, updatedGear, socketList, gemCaps, numPasses + 1, nextIdx);
 }
 
@@ -263,6 +262,7 @@ const updateGear = async (sim: Sim, player: Player<AutoGemSpec>, gear: Gear): Pr
   await sim.updateCharacterStats(TypedEvent.nextEventID());
   return Stats.fromProto(player.getCurrentStats().finalStats);
 }
+
 const findBlueTearSlot = (gear: Gear, epWeights: Stats): ItemSlot | null => {
   let tearSlot: ItemSlot | null = null;
   let maxBlueSocketBonusEP: number = 1e-8;
@@ -443,7 +443,6 @@ export const optimizeGems = async (sim: Sim, player: Player<AutoGemSpec>) => {
   // Rank order red gems to use with their associated stat caps
   const redGemCaps = new Array<[number, Stats]>();
   redGemCaps.push([GemsByStats.Arp, arpCap]);
-
   if (enableExpertiseGemming) {
     redGemCaps.push([GemsByStats.Exp, expCap]);
   }
@@ -496,7 +495,10 @@ export const optimizeGems = async (sim: Sim, player: Player<AutoGemSpec>) => {
       yellowGemCaps.push([GemsByStats.Str_Haste, new Stats()]);
       break
     case Spec.SpecWarrior:
-      if (enableExpertiseGemming) yellowGemCaps.push([GemsByStats.Exp_Hit, hitCap.add(expCap)]);
+      if (enableExpertiseGemming) {
+        yellowGemCaps.push([GemsByStats.Exp_Hit, hitCap.add(expCap)]);
+        yellowGemCaps.push([GemsByStats.Exp, expCap]);
+      }
 
       // Allow for socketing ArP gems in weaker yellow sockets after capping Hit and Expertise
       // when ArP stacking is detected
