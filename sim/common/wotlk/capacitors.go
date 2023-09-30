@@ -101,7 +101,7 @@ func init() {
 		MaxStacks: 3,
 		Trigger: core.ProcTrigger{
 			Callback: core.CallbackOnSpellHitDealt,
-			ProcMask: core.ProcMaskSpellOrProc | core.ProcMaskWeaponProc,
+			ProcMask: core.ProcMaskSpellOrProc | core.ProcMaskWeaponProc | core.ProcMaskSuppressedProc,
 			Outcome:  core.OutcomeCrit,
 			ICD:      time.Millisecond * 2000,
 			ActionID: core.ActionID{ItemID: 47182},
@@ -116,7 +116,7 @@ func init() {
 		MaxStacks: 3,
 		Trigger: core.ProcTrigger{
 			Callback: core.CallbackOnSpellHitDealt,
-			ProcMask: core.ProcMaskSpellOrProc | core.ProcMaskWeaponProc,
+			ProcMask: core.ProcMaskSpellOrProc | core.ProcMaskWeaponProc | core.ProcMaskSuppressedProc,
 			Outcome:  core.OutcomeCrit,
 			ICD:      time.Millisecond * 2000,
 			ActionID: core.ActionID{ItemID: 47188},
@@ -134,7 +134,7 @@ func init() {
 		MaxStacks: 3,
 		Trigger: core.ProcTrigger{
 			Callback: core.CallbackOnSpellHitDealt,
-			ProcMask: core.ProcMaskSpellOrProc | core.ProcMaskWeaponProc,
+			ProcMask: core.ProcMaskSpellOrProc | core.ProcMaskWeaponProc | core.ProcMaskSuppressedProc,
 			Outcome:  core.OutcomeCrit,
 			ICD:      time.Millisecond * 2000,
 			ActionID: core.ActionID{ItemID: 47316},
@@ -149,7 +149,7 @@ func init() {
 		MaxStacks: 3,
 		Trigger: core.ProcTrigger{
 			Callback: core.CallbackOnSpellHitDealt,
-			ProcMask: core.ProcMaskSpellOrProc | core.ProcMaskWeaponProc,
+			ProcMask: core.ProcMaskSpellOrProc | core.ProcMaskWeaponProc | core.ProcMaskSuppressedProc,
 			Outcome:  core.OutcomeCrit,
 			ICD:      time.Millisecond * 2000,
 			ActionID: core.ActionID{ItemID: 47477},

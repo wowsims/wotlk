@@ -1,17 +1,5 @@
-import {
-	Debuffs,
-	IndividualBuffs,
-	PartyBuffs,
-	RaidBuffs,
-	Spec,
-	Stat,
-	TristateEffect
-} from '../core/proto/common.js';
-import {
-	APLAction,
-	APLListItem,
-	APLRotation,
-} from '../core/proto/apl.js';
+import {Debuffs, IndividualBuffs, PartyBuffs, RaidBuffs, Spec, Stat, TristateEffect} from '../core/proto/common.js';
+import {APLRotation, APLRotation_Type,} from '../core/proto/apl.js';
 import {Stats} from '../core/proto_utils/stats.js';
 import {Player} from '../core/player.js';
 import {IndividualSimUI} from '../core/individual_sim_ui.js';
@@ -59,7 +47,8 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 			],
 			modifyDisplayStats: (player: Player<Spec.SpecMage>) => {
 				let stats = new Stats();
-				if (player.getRotation().type == RotationType.Arcane) {
+
+				if (player.getTalentTree() === 0) {
 					stats = stats.addStat(Stat.StatSpellHit, player.getTalents().arcaneFocus * 1 * Mechanics.SPELL_HIT_RATING_PER_HIT_CHANCE);
 				}
 

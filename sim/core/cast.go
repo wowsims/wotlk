@@ -226,7 +226,7 @@ func (spell *Spell) makeCastFuncSimple() CastSuccessFunc {
 
 		if sim.Log != nil && !spell.Flags.Matches(SpellFlagNoLogs) {
 			spell.Unit.Log(sim, "Casting %s (Cost = %0.03f, Cast Time = %s, Effective Time = %s)",
-				spell.ActionID, 0, 0, 0)
+				spell.ActionID, 0.0, "0s", "0s")
 			spell.Unit.Log(sim, "Completed cast %s", spell.ActionID)
 		}
 
@@ -244,7 +244,7 @@ func (spell *Spell) makeCastFuncAutosOrProcs() CastSuccessFunc {
 	return func(sim *Simulation, target *Unit) bool {
 		if sim.Log != nil && !spell.Flags.Matches(SpellFlagNoLogs) {
 			spell.Unit.Log(sim, "Casting %s (Cost = %0.03f, Cast Time = %s, Effective Time = %s)",
-				spell.ActionID, 0, 0, 0)
+				spell.ActionID, 0.0, "0s", "0s")
 			spell.Unit.Log(sim, "Completed cast %s", spell.ActionID)
 		}
 

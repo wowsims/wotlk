@@ -32,31 +32,33 @@ type Priest struct {
 
 	SurgeOfLightProcAura *core.Aura
 
-	BindingHeal     *core.Spell
-	CircleOfHealing *core.Spell
-	DevouringPlague *core.Spell
-	FlashHeal       *core.Spell
-	GreaterHeal     *core.Spell
-	HolyFire        *core.Spell
-	InnerFocus      *core.Spell
-	ShadowWordPain  *core.Spell
-	MindBlast       *core.Spell
-	MindFlay        []*core.Spell
-	MindFlayAPL     *core.Spell
-	MindSear        []*core.Spell
-	MindSearAPL     *core.Spell
-	Penance         *core.Spell
-	PenanceHeal     *core.Spell
-	PowerWordShield *core.Spell
-	PrayerOfHealing *core.Spell
-	PrayerOfMending *core.Spell
-	Renew           *core.Spell
-	EmpoweredRenew  *core.Spell
-	ShadowWordDeath *core.Spell
-	Shadowfiend     *core.Spell
-	Smite           *core.Spell
-	VampiricTouch   *core.Spell
-	Dispersion      *core.Spell
+	BindingHeal       *core.Spell
+	CircleOfHealing   *core.Spell
+	DevouringPlague   *core.Spell
+	FlashHeal         *core.Spell
+	GreaterHeal       *core.Spell
+	HolyFire          *core.Spell
+	InnerFocus        *core.Spell
+	ShadowWordPain    *core.Spell
+	MindBlast         *core.Spell
+	MindFlay          []*core.Spell
+	MindFlayModifier  float64
+	MindBlastModifier float64
+	MindFlayAPL       *core.Spell
+	MindSear          []*core.Spell
+	MindSearAPL       *core.Spell
+	Penance           *core.Spell
+	PenanceHeal       *core.Spell
+	PowerWordShield   *core.Spell
+	PrayerOfHealing   *core.Spell
+	PrayerOfMending   *core.Spell
+	Renew             *core.Spell
+	EmpoweredRenew    *core.Spell
+	ShadowWordDeath   *core.Spell
+	Shadowfiend       *core.Spell
+	Smite             *core.Spell
+	VampiricTouch     *core.Spell
+	Dispersion        *core.Spell
 
 	WeakenedSouls core.AuraArray
 
@@ -175,6 +177,8 @@ func (priest *Priest) AddShadowWeavingStack(sim *core.Simulation) {
 }
 
 func (priest *Priest) Reset(_ *core.Simulation) {
+	priest.MindFlayModifier = 1
+	priest.MindBlastModifier = 1
 }
 
 func New(char core.Character, selfBuffs SelfBuffs, talents string) *Priest {
