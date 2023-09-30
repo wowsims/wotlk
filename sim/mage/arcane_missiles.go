@@ -38,10 +38,11 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 	})
 
 	mage.ArcaneMissiles = mage.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 42846},
-		SpellSchool: core.SpellSchoolArcane,
-		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       SpellFlagMage | core.SpellFlagChanneled | core.SpellFlagAPL,
+		ActionID:       core.ActionID{SpellID: 42846},
+		SpellSchool:    core.SpellSchoolArcane,
+		ProcMask:       core.ProcMaskSpellDamage,
+		Flags:          SpellFlagMage | core.SpellFlagChanneled | core.SpellFlagAPL,
+		BonusHitRating: float64(mage.Talents.ArcaneFocus) * core.SpellHitRatingPerHitChance,
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.31,
 			Multiplier: 1 - .01*float64(mage.Talents.ArcaneFocus),
@@ -67,6 +68,7 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 					// occur before aura expirations.
 					dot := mage.ArcaneMissiles.Dot(aura.Unit)
 					if dot.TickCount < dot.NumberOfTicks {
+						dot.TickCount++
 						dot.TickOnce(sim)
 					}
 					mage.ArcaneBlastAura.Deactivate(sim)
@@ -82,7 +84,6 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
-				spell.SpellMetrics[target.UnitIndex].Hits--
 				spell.Dot(target).Apply(sim)
 			}
 			spell.DealOutcome(sim, result)
