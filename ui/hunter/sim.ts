@@ -20,15 +20,13 @@ import { Player } from '../core/player.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { getTalentPoints } from '../core/proto_utils/utils.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
-import { EventID, TypedEvent } from '../core/typed_event.js';
+import { TypedEvent } from '../core/typed_event.js';
 import { getPetTalentsConfig } from '../core/talents/hunter_pet.js';
 import { protoToTalentString } from '../core/talents/factory.js';
 
 import {
-	Hunter,
 	Hunter_Rotation as HunterRotation,
 	Hunter_Rotation_StingType as StingType,
-	Hunter_Options as HunterOptions,
 	Hunter_Options_PetType as PetType,
 	HunterPetTalents,
 	Hunter_Rotation_RotationType,
@@ -37,11 +35,11 @@ import {
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as Mechanics from '../core/constants/mechanics.js';
-import * as Tooltips from '../core/constants/tooltips.js';
 import * as AplUtils from '../core/proto_utils/apl_utils.js';
 
 import * as HunterInputs from './inputs.js';
 import * as Presets from './presets.js';
+import { optimizeGems } from '../shared/auto_gem.js';
 
 export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecHunter>) {
@@ -368,6 +366,12 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 					}))
 				});
 			},
+		});
+		this.addOptimizeGemsAction();
+	}
+	addOptimizeGemsAction() {
+		this.addAction('Suggest Gems', 'optimize-gems-action', async () => {
+			optimizeGems(this.sim, this.player);
 		});
 	}
 }
