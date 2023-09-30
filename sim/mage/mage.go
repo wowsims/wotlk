@@ -141,13 +141,13 @@ func (mage *Mage) Initialize() {
 	mage.registerBlastWaveSpell()
 	mage.registerDragonsBreathSpell()
 
-	if mirrorImageMCD := mage.GetMajorCooldownIgnoreTag(mage.MirrorImage.ActionID); !mage.IsUsingAPL && mirrorImageMCD != nil {
-		if len(mirrorImageMCD.GetTimings()) == 0 {
-			mage.RegisterPrepullAction(-2000*time.Millisecond, func(sim *core.Simulation) {
+	mage.RegisterPrepullAction(-2000*time.Millisecond, func(sim *core.Simulation) {
+		if mirrorImageMCD := mage.GetMajorCooldownIgnoreTag(mage.MirrorImage.ActionID); !mage.IsUsingAPL && mirrorImageMCD != nil {
+			if len(mirrorImageMCD.GetTimings()) == 0 {
 				mage.MirrorImage.Cast(sim, nil)
-			})
+			}
 		}
-	}
+	})
 }
 
 func (mage *Mage) Reset(sim *core.Simulation) {
