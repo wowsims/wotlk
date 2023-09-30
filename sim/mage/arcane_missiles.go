@@ -68,6 +68,7 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 					// occur before aura expirations.
 					dot := mage.ArcaneMissiles.Dot(aura.Unit)
 					if dot.TickCount < dot.NumberOfTicks {
+						dot.TickCount++
 						dot.TickOnce(sim)
 					}
 					mage.ArcaneBlastAura.Deactivate(sim)
