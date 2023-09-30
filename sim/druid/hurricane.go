@@ -7,12 +7,30 @@ import (
 )
 
 func (druid *Druid) registerHurricaneSpell() {
+	druid.HurricaneTickSpell = druid.RegisterSpell(Humanoid|Moonkin, core.SpellConfig{
+		ActionID:       core.ActionID{SpellID: 48466},
+		SpellSchool:    core.SpellSchoolNature,
+		ProcMask:       core.ProcMaskProc,
+		Flags:          SpellFlagOmenTrigger,
+		CritMultiplier: 1,
+		DamageMultiplier: 1 +
+			0.15*float64(druid.Talents.GaleWinds) +
+			0.01*float64(druid.Talents.Genesis),
+		ThreatMultiplier: 1,
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			damage := 451 + 0.129*spell.SpellPower()
+			damage *= sim.Encounter.AOECapMultiplier()
+			for _, aoeTarget := range sim.Encounter.TargetUnits {
+				spell.CalcAndDealDamage(sim, aoeTarget, damage, spell.OutcomeMagicHitAndCrit)
+			}
+		},
+	})
+
 	druid.Hurricane = druid.RegisterSpell(Humanoid|Moonkin, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48467},
 		SpellSchool: core.SpellSchoolNature,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagChanneled | SpellFlagOmenTrigger | core.SpellFlagAPL,
-
+		Flags:       core.SpellFlagChanneled | core.SpellFlagAPL,
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.81,
 			Multiplier: 1,
@@ -23,13 +41,6 @@ func (druid *Druid) registerHurricaneSpell() {
 				ChannelTime: time.Second * 10,
 			},
 		},
-
-		DamageMultiplier: 1 +
-			0.15*float64(druid.Talents.GaleWinds) +
-			0.01*float64(druid.Talents.Genesis),
-		ThreatMultiplier: 1,
-		CritMultiplier:   1,
-
 		Dot: core.DotConfig{
 			IsAOE: true,
 			Aura: core.Aura{
@@ -38,19 +49,8 @@ func (druid *Druid) registerHurricaneSpell() {
 			NumberOfTicks:       10,
 			TickLength:          time.Second * 1,
 			AffectedByCastSpeed: true,
-
-			OnSnapshot: func(sim *core.Simulation, _ *core.Unit, dot *core.Dot, _ bool) {
-				target := druid.CurrentTarget
-				dot.SnapshotBaseDamage = 451 + 0.129*dot.Spell.SpellPower()
-				dot.SnapshotBaseDamage *= sim.Encounter.AOECapMultiplier()
-				dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
-				attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]
-				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable)
-			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				for _, aoeTarget := range sim.Encounter.TargetUnits {
-					dot.CalcAndDealPeriodicSnapshotDamage(sim, aoeTarget, dot.OutcomeMagicHitAndSnapshotCrit)
-				}
+				druid.HurricaneTickSpell.Cast(sim, target)
 			},
 		},
 
