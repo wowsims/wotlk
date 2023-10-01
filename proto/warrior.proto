@@ -227,6 +227,7 @@ message Warrior {
 		bool use_shattering_throw = 4;
 		WarriorShout shout = 3;
 		bool stance_snapshot = 6;
+		bool disable_expertise_gemming = 7;
 	}
 	Options options = 3;
 }
