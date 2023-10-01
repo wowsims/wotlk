@@ -139,7 +139,6 @@ func (mage *Mage) applyArcaneConcentration() {
 		return
 	}
 
-	procChance := 0.02 * float64(mage.Talents.ArcaneConcentration)
 	bonusCrit := float64(mage.Talents.ArcanePotency) * 15 * core.CritRatingPerCritChance
 
 	// The result that caused the proc. Used to check we don't deactivate from the same proc.
@@ -184,6 +183,9 @@ func (mage *Mage) applyArcaneConcentration() {
 			if !spell.Flags.Matches(SpellFlagMage) {
 				return
 			}
+			if spell.DefaultCast.Cost == 0 {
+				return
+			}
 			if spell == mage.ArcaneMissiles && mage.MissileBarrageAura.IsActive() {
 				return
 			}
@@ -208,6 +210,13 @@ func (mage *Mage) applyArcaneConcentration() {
 
 			if !result.Landed() {
 				return
+			}
+
+			procChance := 0.02 * float64(mage.Talents.ArcaneConcentration)
+
+			// Arcane Missile ticks can proc CC, just at a low rate of about 1.5% with 5/5 Arcane Concentration
+			if spell == mage.ArcaneMissilesTickSpell {
+				procChance *= 0.15
 			}
 
 			if sim.RandomFloat("Arcane Concentration") > procChance {
@@ -408,6 +417,9 @@ func (mage *Mage) applyMasterOfElements() {
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
+				return
+			}
+			if spell.CurCast.Cost == 0 {
 				return
 			}
 			if result.DidCrit() {

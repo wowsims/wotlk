@@ -17,6 +17,20 @@ func (druid *Druid) registerStarfireSpell() {
 
 	hasGlyph := druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfStarfire)
 
+	starfireGlyphSpell := druid.RegisterSpell(Humanoid|Moonkin, core.SpellConfig{
+		ActionID: core.ActionID{SpellID: 54845},
+		ProcMask: core.ProcMaskSuppressedProc,
+		Flags:    core.SpellFlagNoLogs,
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			moonfireDot := druid.Moonfire.Dot(target)
+
+			if moonfireDot.IsActive() && druid.ExtendingMoonfireStacks > 0 {
+				druid.ExtendingMoonfireStacks -= 1
+				moonfireDot.UpdateExpires(moonfireDot.ExpiresAt() + time.Second*3)
+			}
+		},
+	})
+
 	druid.Starfire = druid.RegisterSpell(Humanoid|Moonkin, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48465},
 		SpellSchool: core.SpellSchoolArcane,
@@ -46,15 +60,8 @@ func (druid *Druid) registerStarfireSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(1038, 1222) + ((spell.SpellPower() + idolSpellPower) * spellCoeff) + (spell.SpellPower() * bonusCoeff)
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
-			if result.Landed() {
-				moonfireDot := druid.Moonfire.Dot(target)
-				if hasGlyph && moonfireDot.IsActive() && druid.ExtendingMoonfireStacks > 0 {
-					druid.ExtendingMoonfireStacks -= 1
-					moonfireDot.UpdateExpires(moonfireDot.ExpiresAt() + time.Second*3)
-
-					// can proc canProcFromProc on-cast trinkets
-					druid.GetDummyProcSpell().Cast(sim, target)
-				}
+			if result.Landed() && hasGlyph {
+				starfireGlyphSpell.Cast(sim, target)
 			}
 			spell.DealDamage(sim, result)
 		},

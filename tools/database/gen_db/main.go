@@ -457,26 +457,31 @@ func GetAllRotationSpellIds() map[string][]int32 {
 		}, &proto.Player_RestorationDruid{RestorationDruid: &proto.RestorationDruid{Options: &proto.RestorationDruid_Options{}, Rotation: &proto.RestorationDruid_Rotation{}}}), nil, nil, nil)},
 		{Name: "elemental", Raid: core.SinglePlayerRaidProto(core.WithSpec(&proto.Player{
 			Class:         proto.Class_ClassShaman,
+			Race:          proto.Race_RaceTroll,
 			Equipment:     &proto.EquipmentSpec{},
 			TalentsString: "0532001523212351322301351-005052031",
 		}, &proto.Player_ElementalShaman{ElementalShaman: &proto.ElementalShaman{Options: &proto.ElementalShaman_Options{}, Rotation: &proto.ElementalShaman_Rotation{}}}), nil, nil, nil)},
 		{Name: "enhance", Raid: core.SinglePlayerRaidProto(core.WithSpec(&proto.Player{
 			Class:         proto.Class_ClassShaman,
+			Race:          proto.Race_RaceTroll,
 			Equipment:     &proto.EquipmentSpec{},
 			TalentsString: "053030152-30405003105021333031131031051",
 		}, &proto.Player_EnhancementShaman{EnhancementShaman: &proto.EnhancementShaman{Options: &proto.EnhancementShaman_Options{}, Rotation: &proto.EnhancementShaman_Rotation{}}}), nil, nil, nil)},
 		{Name: "restosham", Raid: core.SinglePlayerRaidProto(core.WithSpec(&proto.Player{
 			Class:         proto.Class_ClassShaman,
+			Race:          proto.Race_RaceTroll,
 			Equipment:     &proto.EquipmentSpec{},
 			TalentsString: "-3020503-50005331335310501122331251",
 		}, &proto.Player_RestorationShaman{RestorationShaman: &proto.RestorationShaman{Options: &proto.RestorationShaman_Options{}, Rotation: &proto.RestorationShaman_Rotation{}}}), nil, nil, nil)},
 		{Name: "hunter", Raid: core.SinglePlayerRaidProto(core.WithSpec(&proto.Player{
 			Class:         proto.Class_ClassHunter,
+			Race:          proto.Race_RaceTroll,
 			Equipment:     &proto.EquipmentSpec{},
 			TalentsString: "-015305101-5000032500033330532135301311",
 		}, &proto.Player_Hunter{Hunter: &proto.Hunter{Options: &proto.Hunter_Options{}, Rotation: &proto.Hunter_Rotation{}}}), nil, nil, nil)},
 		{Name: "mage", Raid: core.SinglePlayerRaidProto(core.WithSpec(&proto.Player{
 			Class:         proto.Class_ClassMage,
+			Race:          proto.Race_RaceTroll,
 			Equipment:     &proto.EquipmentSpec{},
 			TalentsString: "23000513310033015032310250532-03-023303001",
 		}, &proto.Player_Mage{Mage: &proto.Mage{Options: &proto.Mage_Options{}, Rotation: &proto.Mage_Rotation{}}}), nil, nil, nil)},
@@ -517,6 +522,7 @@ func GetAllRotationSpellIds() map[string][]int32 {
 		}, &proto.Player_ProtectionPaladin{ProtectionPaladin: &proto.ProtectionPaladin{Options: &proto.ProtectionPaladin_Options{}, Rotation: &proto.ProtectionPaladin_Rotation{}}}), nil, nil, nil)},
 		{Name: "ret", Raid: core.SinglePlayerRaidProto(core.WithSpec(&proto.Player{
 			Class:         proto.Class_ClassPaladin,
+			Race:          proto.Race_RaceBloodElf,
 			Equipment:     &proto.EquipmentSpec{},
 			TalentsString: "050501-05-05232051203331302133231331",
 		}, &proto.Player_RetributionPaladin{RetributionPaladin: &proto.RetributionPaladin{Options: &proto.RetributionPaladin_Options{}, Rotation: &proto.RetributionPaladin_Rotation{}}}), nil, nil, nil)},

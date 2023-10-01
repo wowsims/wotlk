@@ -139,6 +139,7 @@ func (warrior *Warrior) Initialize() {
 	warrior.registerWhirlwindSpell()
 	warrior.registerShockwaveSpell()
 	warrior.registerConcussionBlowSpell()
+	warrior.RegisterHeroicThrow()
 
 	warrior.SunderArmor = warrior.newSunderArmorSpell(false)
 	warrior.SunderArmorDevastate = warrior.newSunderArmorSpell(true)

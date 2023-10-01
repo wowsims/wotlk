@@ -38,6 +38,10 @@ func (unit *Unit) EnableEnergyBar(maxEnergy float64, onEnergyGain OnEnergyGain) 
 		unit:      unit,
 		maxEnergy: max(100, maxEnergy),
 		onEnergyGain: func(sim *Simulation) {
+			if sim.CurrentTime < 0 {
+				return
+			}
+
 			if !sim.Options.Interactive && (!unit.IsWaitingForEnergy() || unit.DoneWaitingForEnergy(sim)) {
 				if unit.IsUsingAPL {
 					unit.Rotation.DoNextAction(sim)

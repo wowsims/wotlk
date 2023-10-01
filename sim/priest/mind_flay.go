@@ -8,12 +8,59 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-// TODO Mind Flay (48156) now "periodically triggers" Mind Flay (58381), probably to allow haste to work.
-// The first never deals damage, so the latter should probably be used as ActionID here.
+func (priest *Priest) getMiseryCoefficient() float64 {
+	return 0.257 * (1 + 0.05*float64(priest.Talents.Misery))
+}
+
+func (priest *Priest) getMindFlayTickSpell(numTicks int32) *core.Spell {
+	hasGlyphOfShadow := priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow))
+	miseryCoeff := priest.getMiseryCoefficient()
+
+	return priest.GetOrRegisterSpell(core.SpellConfig{
+		ActionID:       core.ActionID{SpellID: 58381}.WithTag(numTicks),
+		SpellSchool:    core.SpellSchoolShadow,
+		ProcMask:       core.ProcMaskProc | core.ProcMaskNotInSpellbook,
+		BonusHitRating: float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
+		BonusCritRating: 0 +
+			float64(priest.Talents.MindMelt)*2*core.CritRatingPerCritChance +
+			core.TernaryFloat64(priest.HasSetBonus(ItemSetZabras, 4), 5, 0)*core.CritRatingPerCritChance,
+		DamageMultiplier: 1 +
+			0.02*float64(priest.Talents.Darkness) +
+			0.01*float64(priest.Talents.TwinDisciplines),
+		CritMultiplier:   priest.SpellCritMultiplier(1, float64(priest.Talents.ShadowPower)/5),
+		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			damage := 588.0/3 + miseryCoeff*spell.SpellPower()
+			damage *= priest.MindFlayModifier
+			result := spell.CalcAndDealDamage(sim, target, damage, spell.OutcomeMagicHitAndCrit)
+
+			if result.Landed() {
+				priest.AddShadowWeavingStack(sim)
+				if result.DidCrit() && hasGlyphOfShadow {
+					priest.ShadowyInsightAura.Activate(sim)
+				}
+				if result.DidCrit() && priest.ImprovedSpiritTap != nil && sim.RandomFloat("Improved Spirit Tap") > 0.5 {
+					priest.ImprovedSpiritTap.Activate(sim)
+				}
+			}
+		},
+	})
+}
+
+func (priest *Priest) getPainAndSufferingSpell() *core.Spell {
+	return priest.RegisterSpell(core.SpellConfig{
+		ActionID: core.ActionID{SpellID: 47948},
+		ProcMask: core.ProcMaskSuppressedProc,
+		Flags:    core.SpellFlagNoLogs,
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			priest.ShadowWordPain.Dot(target).Rollover(sim)
+		},
+	})
+}
 
 func (priest *Priest) newMindFlaySpell(numTicksIdx int32) *core.Spell {
 	numTicks := numTicksIdx
-	flags := core.SpellFlagChanneled
+	flags := core.SpellFlagChanneled | core.SpellFlagNoMetrics
 	if numTicksIdx == 0 {
 		numTicks = 3
 		flags |= core.SpellFlagAPL
@@ -27,17 +74,18 @@ func (priest *Priest) newMindFlaySpell(numTicksIdx int32) *core.Spell {
 	channelTime := tickLength * time.Duration(numTicks)
 
 	rolloverChance := float64(priest.Talents.PainAndSuffering) / 3.0
-	miseryCoeff := 0.257 * (1 + 0.05*float64(priest.Talents.Misery))
-	hasGlyphOfShadow := priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow))
 	shadowFocus := 0.02 * float64(priest.Talents.ShadowFocus)
 	focusedMind := 0.05 * float64(priest.Talents.FocusedMind)
+	miseryCoeff := priest.getMiseryCoefficient()
+
+	painAndSufferingSpell := priest.getPainAndSufferingSpell()
+	mindFlayTickSpell := priest.getMindFlayTickSpell(numTicksIdx)
 
 	return priest.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48156}.WithTag(numTicksIdx),
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       flags,
-
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.09,
 			Multiplier: 1 - (shadowFocus + focusedMind),
@@ -64,7 +112,6 @@ func (priest *Priest) newMindFlaySpell(numTicksIdx int32) *core.Spell {
 				}
 			},
 		},
-
 		BonusHitRating: float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
 		BonusCritRating: 0 +
 			float64(priest.Talents.MindMelt)*2*core.CritRatingPerCritChance +
@@ -72,9 +119,7 @@ func (priest *Priest) newMindFlaySpell(numTicksIdx int32) *core.Spell {
 		DamageMultiplier: 1 +
 			0.02*float64(priest.Talents.Darkness) +
 			0.01*float64(priest.Talents.TwinDisciplines),
-		CritMultiplier:   priest.SpellCritMultiplier(1, float64(priest.Talents.ShadowPower)/5),
-		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
-
+		CritMultiplier: priest.SpellCritMultiplier(1, float64(priest.Talents.ShadowPower)/5),
 		Dot: core.DotConfig{
 			Aura: core.Aura{
 				Label: "MindFlay-" + strconv.Itoa(int(numTicksIdx)),
@@ -82,46 +127,19 @@ func (priest *Priest) newMindFlaySpell(numTicksIdx int32) *core.Spell {
 			NumberOfTicks:       numTicks,
 			TickLength:          tickLength,
 			AffectedByCastSpeed: true,
-
-			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
-				dot.SnapshotBaseDamage = 588.0/3 + miseryCoeff*dot.Spell.SpellPower()
-				dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
-				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
-			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				result := dot.CalcSnapshotDamage(sim, target, dot.OutcomeMagicHitAndSnapshotCrit)
-
-				// TODO: THIS IS A HACK TRY TO FIGURE OUT A BETTER WAY TO DO THIS.
-				// MF is slightly different than other channeled spells in that its dmg ticks can proc things like a normal cast would.
-				// However, ticks do not proc JoW. Since the dmg portion and the initial application are the same Spell
-				//  we can't set one without impacting the other.
-				// For now as a hack, set proc mask to prevent JoW, cast the tick dmg, and then unset it.
-				oldMask := dot.Spell.ProcMask
-				dot.Spell.ProcMask = core.ProcMaskProc
-				dot.Spell.DealDamage(sim, result)
-				dot.Spell.ProcMask = oldMask
-
-				if result.Landed() {
-					priest.AddShadowWeavingStack(sim)
-					if result.DidCrit() && hasGlyphOfShadow {
-						priest.ShadowyInsightAura.Activate(sim)
-					}
-					if result.DidCrit() && priest.ImprovedSpiritTap != nil && sim.RandomFloat("Improved Spirit Tap") > 0.5 {
-						priest.ImprovedSpiritTap.Activate(sim)
-					}
-				}
+				mindFlayTickSpell.Cast(sim, target)
+				mindFlayTickSpell.SpellMetrics[target.UnitIndex].Casts -= 1
 			},
 		},
-
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+			mindFlayTickSpell.SpellMetrics[target.UnitIndex].Casts += 1
+
 			if result.Landed() {
-				spell.SpellMetrics[target.UnitIndex].Hits--
 				if priest.ShadowWordPain.Dot(target).IsActive() {
 					if rolloverChance == 1 || sim.RandomFloat("Pain and Suffering") < rolloverChance {
-						priest.ShadowWordPain.Dot(target).Rollover(sim)
-						// trinkets can proc from the re-application
-						priest.GetDummyProcSpell().Cast(sim, target)
+						painAndSufferingSpell.Cast(sim, target)
 					}
 				}
 				spell.Dot(target).Apply(sim)

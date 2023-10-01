@@ -159,8 +159,6 @@ type Unit struct {
 
 	// The currently-channeled DOT spell, otherwise nil.
 	ChanneledDot *Dot
-
-	DummyProcSpell *Spell
 }
 
 // Units can be disabled for several reasons:
