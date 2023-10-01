@@ -133,6 +133,7 @@ export const DefaultOptions = WarriorOptions.create({
 	startingRage: 0,
 	useRecklessness: true,
 	useShatteringThrow: true,
+	disableExpertiseGemming: false,
 	shout: WarriorShout.WarriorShoutCommanding,
 });
 
