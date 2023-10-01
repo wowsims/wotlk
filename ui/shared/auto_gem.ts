@@ -5,6 +5,7 @@ import { Stats } from "../core/proto_utils/stats";
 import { Sim } from "../core/sim";
 import { TypedEvent } from "../core/typed_event";
 import * as Mechanics from '../core/constants/mechanics.js';
+import { Warrior_Options as WarriorOptions } from "ui/core/proto/warrior";
 
 /***
  * WARNING: Currently only optimised for Arp/Exp/Hit gemming the following specs;
@@ -436,7 +437,7 @@ export const optimizeGems = async (sim: Sim, player: Player<AutoGemSpec>) => {
   const hitCap = calcHitCap(player);
 
   // Should we gem expertise?
-  const enableExpertiseGemming = player.spec === Spec.SpecFeralDruid || (player.spec === Spec.SpecWarrior && !player.getDisableExpertiseGemming())
+  const enableExpertiseGemming = player.spec === Spec.SpecFeralDruid || (player.spec === Spec.SpecWarrior && !((player.getSpecOptions() as WarriorOptions).disableExpertiseGemming))
 
   // Next, identify all sockets where red gems will be placed
   const redSockets = findSocketsByColor(player, optimizedGear, epWeights, GemColor.GemColorRed, tearSlot);
