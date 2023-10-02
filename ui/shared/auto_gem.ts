@@ -456,7 +456,7 @@ export const optimizeGems = async (sim: Sim, player: Player<AutoGemSpec>) => {
   if (player.spec === Spec.SpecFeralDruid || player.spec === Spec.SpecWarrior) {
     redGemCaps.push([GemsByStats.Str, new Stats()]);
   }
-  // If Hunter swap to Agi when ArP and Crit capped
+  // If Hunter swap to Agi when ArP capped
   if (player.spec === Spec.SpecHunter) {
     redGemCaps.push([GemsByStats.Agi, new Stats()]);
   }
