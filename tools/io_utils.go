@@ -11,12 +11,11 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
-
-	"slices"
 
 	"github.com/wowsims/wotlk/sim/core"
 	protojson "google.golang.org/protobuf/encoding/protojson"

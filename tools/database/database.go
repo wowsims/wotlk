@@ -184,8 +184,8 @@ func mapToSlice[T idKeyed](m map[int32]T) []T {
 	for _, v := range m {
 		vs = append(vs, v)
 	}
-	slices.SortFunc(vs, func(a, b T) bool {
-		return a.GetId() < b.GetId()
+	slices.SortFunc(vs, func(a, b T) int {
+		return int(a.GetId() - b.GetId())
 	})
 	return vs
 }
@@ -195,8 +195,11 @@ func (db *WowDatabase) ToUIProto() *proto.UIDatabase {
 	for _, v := range db.Enchants {
 		enchants = append(enchants, v)
 	}
-	slices.SortFunc(enchants, func(v1, v2 *proto.UIEnchant) bool {
-		return v1.EffectId < v2.EffectId || v1.EffectId == v2.EffectId && v1.Type < v2.Type
+	slices.SortFunc(enchants, func(v1, v2 *proto.UIEnchant) int {
+		if v1.EffectId != v2.EffectId {
+			return int(v1.EffectId - v2.EffectId)
+		}
+		return int(v1.Type - v2.Type)
 	})
 
 	return &proto.UIDatabase{

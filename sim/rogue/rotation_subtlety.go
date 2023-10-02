@@ -2,9 +2,8 @@ package rogue
 
 import (
 	"log"
-	"time"
-
 	"slices"
+	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"

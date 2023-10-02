@@ -1,9 +1,8 @@
 package feral
 
 import (
-	"time"
-
 	"slices"
+	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
 )
