@@ -94,7 +94,7 @@ func (unit *Unit) AddMana(sim *Simulation, amount float64, metrics *ResourceMetr
 	}
 
 	oldMana := unit.CurrentMana()
-	newMana := MinFloat(oldMana+amount, unit.MaxMana())
+	newMana := min(oldMana+amount, unit.MaxMana())
 	metrics.AddEvent(amount, newMana-oldMana)
 
 	if sim.Log != nil {
@@ -194,10 +194,10 @@ func (unit *Unit) UpdateManaRegenRates() {
 func (unit *Unit) ManaTick(sim *Simulation) {
 	if sim.CurrentTime < unit.PseudoStats.FiveSecondRuleRefreshTime {
 		regen := unit.manaTickWhileCasting
-		unit.AddMana(sim, MaxFloat(0, regen), unit.manaCastingMetrics)
+		unit.AddMana(sim, max(0, regen), unit.manaCastingMetrics)
 	} else {
 		regen := unit.manaTickWhileNotCasting
-		unit.AddMana(sim, MaxFloat(0, regen), unit.manaNotCastingMetrics)
+		unit.AddMana(sim, max(0, regen), unit.manaNotCastingMetrics)
 	}
 }
 
@@ -307,7 +307,7 @@ func newManaCost(spell *Spell, options ManaCostOptions) *ManaCost {
 	baseCost := TernaryFloat64(options.FlatCost > 0, options.FlatCost, options.BaseCost*spell.Unit.BaseMana)
 	if player := spell.Unit.Env.Raid.GetPlayerFromUnit(spell.Unit); player != nil {
 		if player.GetCharacter().HasTrinketEquipped(45703) { // Spark of Hope
-			baseCost = MaxFloat(0, baseCost-44)
+			baseCost = max(0, baseCost-44)
 		}
 	}
 

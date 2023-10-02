@@ -161,7 +161,7 @@ func (spell *Spell) ApplyPostOutcomeDamageModifiers(sim *Simulation, result *Spe
 	for i := range result.Target.DynamicDamageTakenModifiers {
 		result.Target.DynamicDamageTakenModifiers[i](sim, spell, result)
 	}
-	result.Damage = MaxFloat(0, result.Damage)
+	result.Damage = max(0, result.Damage)
 }
 
 // For spells that do no damage but still have a hit/miss check.

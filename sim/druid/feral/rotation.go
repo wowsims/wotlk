@@ -108,7 +108,7 @@ func (cat *FeralDruid) checkReplaceMaul(sim *core.Simulation, mhSwingSpell *core
 
 	ripDot := cat.Rip.CurDot()
 
-	furorCap := core.MinFloat(20.0*float64(cat.Talents.Furor), 85.0)
+	furorCap := min(20.0*float64(cat.Talents.Furor), 85.0)
 	ripRefreshPending := ripDot.IsActive() && (ripDot.RemainingDuration(sim) < sim.GetRemainingDuration()-time.Second*10)
 	gcdTimeToRdy := cat.GCD.TimeToReady(sim)
 	energyLeeway := furorCap - 15.0 - float64((gcdTimeToRdy+cat.latency)/core.EnergyTickDuration)
@@ -392,7 +392,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) (bool, time.Duration) {
 		maxRipDur := time.Duration(cat.maxRipTicks) * ripDot.TickLength
 		remainingExt := cat.maxRipTicks - ripDot.NumberOfTicks
 		energyForShreds := curEnergy - cat.CurrentRakeCost() - 30 + float64((ripDot.StartedAt()+maxRipDur-sim.CurrentTime)/core.EnergyTickDuration) + core.Ternary(cat.tfExpectedBefore(sim, ripDot.StartedAt()+maxRipDur), 60.0, 0.0)
-		maxShredsPossible := core.MinFloat(energyForShreds/cat.Shred.DefaultCast.Cost, (ripDot.ExpiresAt() - (sim.CurrentTime + time.Second)).Seconds())
+		maxShredsPossible := min(energyForShreds/cat.Shred.DefaultCast.Cost, (ripDot.ExpiresAt() - (sim.CurrentTime + time.Second)).Seconds())
 		rakeNow = remainingExt == 0 || (maxShredsPossible > float64(remainingExt))
 	}
 
@@ -437,8 +437,8 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) (bool, time.Duration) {
 	if ffNow {
 		simTimeSecs := sim.GetRemainingDuration().Seconds()
 		maxShredsWithoutFF := (int)((curEnergy + simTimeSecs*10) / cat.Shred.DefaultCast.Cost)
-		numShredsWithoutFF := core.MinInt(maxShredsWithoutFF, int(simTimeSecs)+1)
-		numShredsWithFF := core.MinInt(maxShredsWithoutFF+1, int(simTimeSecs))
+		numShredsWithoutFF := min(maxShredsWithoutFF, int(simTimeSecs)+1)
+		numShredsWithFF := min(maxShredsWithoutFF+1, int(simTimeSecs))
 		ffNow = numShredsWithFF > numShredsWithoutFF
 	}
 
@@ -474,7 +474,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) (bool, time.Duration) {
 
 	latencySecs := cat.latency.Seconds()
 	// Allow for bearweaving if the next pending action is >= 4.5s away
-	furorCap := core.MinFloat(20.0*float64(cat.Talents.Furor), 85)
+	furorCap := min(20.0*float64(cat.Talents.Furor), 85)
 	weaveEnergy := furorCap - 30 - 20*latencySecs
 
 	// With 4/5 or 5/5 Furor, force 2-GCD bearweaves whenever possible
@@ -513,7 +513,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) (bool, time.Duration) {
 	// analagous conditions to the above. Only difference is that there is
 	// more available time/Energy leeway for the technique, since
 	// flowershifts take only 3 seconds to execute.
-	flowershiftEnergy := core.MinFloat(furorCap, 75) - 10*cat.SpellGCD().Seconds() - 20*latencySecs
+	flowershiftEnergy := min(furorCap, 75) - 10*cat.SpellGCD().Seconds() - 20*latencySecs
 
 	flowerEnd := time.Duration(float64(sim.CurrentTime) + float64(cat.SpellGCD()) + (2.5+2*latencySecs)*float64(time.Second))
 	flowerFfDelay := flowerEnd - cat.FaerieFire.ReadyAt()

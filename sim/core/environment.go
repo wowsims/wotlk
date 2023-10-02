@@ -1,10 +1,10 @@
 package core
 
 import (
+	"slices"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"golang.org/x/exp/slices"
 )
 
 type EnvironmentState int
@@ -180,8 +180,8 @@ func (env *Environment) finalize(raidProto *proto.Raid, _ *proto.Encounter, raid
 	}
 	env.postFinalizeEffects = nil
 
-	slices.SortStableFunc(env.prepullActions, func(a1, a2 PrepullAction) bool {
-		return a1.DoAt < a2.DoAt
+	slices.SortStableFunc(env.prepullActions, func(a1, a2 PrepullAction) int {
+		return int(a1.DoAt - a2.DoAt)
 	})
 
 	env.setupAttackTables()

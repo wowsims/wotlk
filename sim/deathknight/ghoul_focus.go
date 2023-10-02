@@ -43,7 +43,7 @@ func (fb *focusBar) AddFocus(sim *core.Simulation, amount float64, actionID core
 		panic("Trying to add negative focus!")
 	}
 
-	newFocus := core.MinFloat(fb.currentFocus+amount, MaxFocus)
+	newFocus := min(fb.currentFocus+amount, MaxFocus)
 
 	if sim.Log != nil {
 		fb.ghoulPet.Log(sim, "Gained %0.3f focus from %s (%0.3f --> %0.3f).", amount, actionID, fb.currentFocus, newFocus)

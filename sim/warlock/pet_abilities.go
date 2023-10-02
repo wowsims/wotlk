@@ -8,7 +8,7 @@ import (
 )
 
 func (wp *WarlockPet) registerCleaveSpell() {
-	numHits := core.MinInt32(2, wp.Env.GetNumTargets())
+	numHits := min(2, wp.Env.GetNumTargets())
 
 	wp.primaryAbility = wp.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47994},

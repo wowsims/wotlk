@@ -63,7 +63,7 @@ func (spell *Spell) ResistanceMultiplier(sim *Simulation, isPeriodic bool, attac
 func (at *AttackTable) GetArmorDamageModifier(spell *Spell) float64 {
 	armorConstant := float64(at.Attacker.Level)*467.5 - 22167.5
 	defenderArmor := at.Defender.Armor()
-	reducibleArmor := MinFloat((defenderArmor+armorConstant)/3, defenderArmor)
+	reducibleArmor := min((defenderArmor+armorConstant)/3, defenderArmor)
 	armorPenRating := at.Attacker.stats[stats.ArmorPenetration] + spell.BonusArmorPenRating
 	effectiveArmor := defenderArmor - reducibleArmor*at.Attacker.ArmorPenetrationPercentage(armorPenRating)
 	return 1 - effectiveArmor/(effectiveArmor+armorConstant)

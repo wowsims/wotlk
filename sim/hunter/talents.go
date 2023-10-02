@@ -730,7 +730,7 @@ func (hunter *Hunter) applySniperTraining() {
 	if uptime <= 0 {
 		return
 	}
-	uptime = core.MinFloat(1, uptime)
+	uptime = min(1, uptime)
 
 	dmgMod := .02 * float64(hunter.Talents.SniperTraining)
 

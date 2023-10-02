@@ -381,7 +381,7 @@ func (result *SpellResult) applyAttackTableMiss(spell *Spell, attackTable *Attac
 	if spell.Unit.AutoAttacks.IsDualWielding && !spell.Unit.PseudoStats.DisableDWMissPenalty {
 		missChance += 0.19
 	}
-	*chance = MaxFloat(0, missChance)
+	*chance = max(0, missChance)
 
 	if roll < *chance {
 		result.Outcome = OutcomeMiss
@@ -394,7 +394,7 @@ func (result *SpellResult) applyAttackTableMiss(spell *Spell, attackTable *Attac
 
 func (result *SpellResult) applyAttackTableMissNoDWPenalty(spell *Spell, attackTable *AttackTable, roll float64, chance *float64) bool {
 	missChance := attackTable.BaseMissChance - spell.PhysicalHitChance(attackTable)
-	*chance = MaxFloat(0, missChance)
+	*chance = max(0, missChance)
 
 	if roll < *chance {
 		result.Outcome = OutcomeMiss
@@ -411,7 +411,7 @@ func (result *SpellResult) applyAttackTableBlock(spell *Spell, attackTable *Atta
 	if roll < *chance {
 		result.Outcome |= OutcomeBlock
 		spell.SpellMetrics[result.Target.UnitIndex].Blocks++
-		result.Damage = MaxFloat(0, result.Damage-result.Target.BlockValue())
+		result.Damage = max(0, result.Damage-result.Target.BlockValue())
 		return true
 	}
 	return false
@@ -422,7 +422,7 @@ func (result *SpellResult) applyAttackTableDodge(spell *Spell, attackTable *Atta
 		return false
 	}
 
-	*chance += MaxFloat(0, attackTable.BaseDodgeChance-spell.ExpertisePercentage()-spell.Unit.PseudoStats.DodgeReduction)
+	*chance += max(0, attackTable.BaseDodgeChance-spell.ExpertisePercentage()-spell.Unit.PseudoStats.DodgeReduction)
 
 	if roll < *chance {
 		result.Outcome = OutcomeDodge
@@ -434,7 +434,7 @@ func (result *SpellResult) applyAttackTableDodge(spell *Spell, attackTable *Atta
 }
 
 func (result *SpellResult) applyAttackTableParry(spell *Spell, attackTable *AttackTable, roll float64, chance *float64) bool {
-	*chance += MaxFloat(0, attackTable.BaseParryChance-spell.ExpertisePercentage())
+	*chance += max(0, attackTable.BaseParryChance-spell.ExpertisePercentage())
 
 	if roll < *chance {
 		result.Outcome = OutcomeParry
@@ -508,7 +508,7 @@ func (result *SpellResult) applyEnemyAttackTableMiss(spell *Spell, attackTable *
 	if spell.Unit.AutoAttacks.IsDualWielding && !spell.Unit.PseudoStats.DisableDWMissPenalty {
 		missChance += 0.19
 	}
-	*chance = MaxFloat(0, missChance)
+	*chance = max(0, missChance)
 
 	if roll < *chance {
 		result.Outcome = OutcomeMiss
@@ -527,12 +527,12 @@ func (result *SpellResult) applyEnemyAttackTableBlock(spell *Spell, attackTable 
 	blockChance := attackTable.BaseBlockChance +
 		result.Target.stats[stats.Block]/BlockRatingPerBlockChance/100 +
 		result.Target.stats[stats.Defense]*DefenseRatingToChanceReduction
-	*chance += MaxFloat(0, blockChance)
+	*chance += max(0, blockChance)
 
 	if roll < *chance {
 		result.Outcome |= OutcomeBlock
 		spell.SpellMetrics[result.Target.UnitIndex].Blocks++
-		result.Damage = MaxFloat(0, result.Damage-result.Target.BlockValue())
+		result.Damage = max(0, result.Damage-result.Target.BlockValue())
 		return true
 	}
 	return false
@@ -547,7 +547,7 @@ func (result *SpellResult) applyEnemyAttackTableDodge(spell *Spell, attackTable 
 		result.Target.PseudoStats.BaseDodge +
 		result.Target.GetDiminishedDodgeChance() -
 		spell.Unit.PseudoStats.DodgeReduction
-	*chance += MaxFloat(0, dodgeChance)
+	*chance += max(0, dodgeChance)
 
 	if roll < *chance {
 		result.Outcome = OutcomeDodge
@@ -566,7 +566,7 @@ func (result *SpellResult) applyEnemyAttackTableParry(spell *Spell, attackTable 
 	parryChance := attackTable.BaseParryChance +
 		result.Target.PseudoStats.BaseParry +
 		result.Target.GetDiminishedParryChance()
-	*chance += MaxFloat(0, parryChance)
+	*chance += max(0, parryChance)
 
 	if roll < *chance {
 		result.Outcome = OutcomeParry
@@ -584,7 +584,7 @@ func (result *SpellResult) applyEnemyAttackTableCrit(spell *Spell, _ *AttackTabl
 	critChance -= result.Target.stats[stats.Defense] * DefenseRatingToChanceReduction
 	critChance -= result.Target.stats[stats.Resilience] / ResilienceRatingPerCritReductionChance / 100
 	critChance -= result.Target.PseudoStats.ReducedCritTakenChance
-	*chance += MaxFloat(0, critChance)
+	*chance += max(0, critChance)
 
 	if roll < *chance {
 		result.Outcome = OutcomeCrit

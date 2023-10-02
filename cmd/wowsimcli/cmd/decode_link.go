@@ -8,10 +8,10 @@ import (
 	"fmt"
 	"strings"
 
-	goproto "github.com/golang/protobuf/proto"
 	"github.com/spf13/cobra"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"google.golang.org/protobuf/encoding/protojson"
+	goproto "google.golang.org/protobuf/proto"
 )
 
 var decodeLinkCmd = &cobra.Command{
@@ -62,6 +62,6 @@ func decodeLink(link string) error {
 		return fmt.Errorf("cannot unmarshal raw proto: %w", err)
 	}
 
-	fmt.Println(protojson.Format(goproto.MessageV2(settings)))
+	fmt.Println(protojson.Format(goproto.Message(settings)))
 	return nil
 }

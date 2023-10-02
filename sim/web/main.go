@@ -19,8 +19,8 @@ import (
 	"syscall"
 	"time"
 
+	uuid "github.com/google/uuid"
 	"github.com/pkg/browser"
-	uuid "github.com/satori/go.uuid"
 	dist "github.com/wowsims/wotlk/binary_dist"
 	"github.com/wowsims/wotlk/sim"
 	"github.com/wowsims/wotlk/sim/core"
@@ -136,7 +136,7 @@ type asyncProgress struct {
 }
 
 func (s *server) addNewSim() *asyncProgress {
-	newID := uuid.NewV4().String()
+	newID := uuid.NewString()
 	simProgress := &asyncProgress{
 		id: newID,
 	}

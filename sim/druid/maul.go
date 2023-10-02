@@ -88,7 +88,7 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 		},
 	})
 
-	druid.MaulRageThreshold = core.MaxFloat(druid.Maul.DefaultCast.Cost, rageThreshold)
+	druid.MaulRageThreshold = max(druid.Maul.DefaultCast.Cost, rageThreshold)
 	if druid.IsUsingAPL {
 		druid.MaulRageThreshold = 0
 	}

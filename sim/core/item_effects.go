@@ -2,7 +2,7 @@ package core
 
 import (
 	"fmt"
-	"golang.org/x/exp/slices"
+	"slices"
 	"strconv"
 	"time"
 

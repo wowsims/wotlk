@@ -236,7 +236,7 @@ func (paladin *Paladin) applyArdentDefender() {
 	}
 
 	// 540 defense (+140) yields the full heal amount
-	ardentHealAmount := core.MaxFloat(1.0, float64(paladin.GetStat(stats.Defense))/core.DefenseRatingPerDefense/140.0) * 0.10 * float64(paladin.Talents.ArdentDefender)
+	ardentHealAmount := max(1.0, float64(paladin.GetStat(stats.Defense))/core.DefenseRatingPerDefense/140.0) * 0.10 * float64(paladin.Talents.ArdentDefender)
 
 	// TBD? Buff to mark time spent fully below 35% and attribute absorbs
 	// rangeAura := paladin.RegisterAura(core.Aura{

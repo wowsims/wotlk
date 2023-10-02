@@ -20,16 +20,16 @@ Then unzip the downloaded file, then open the unzipped file to open the sim in y
 Alternatively, you can choose from a specific relase on the [Releases](https://github.com/wowsims/wotlk/releases) page and click the suitable link under "Assets"
 # Local Dev Installation
 
-This project has dependencies on Go >=1.18, protobuf-compiler and the corresponding Go plugins, and node >= 14.0.
+This project has dependencies on Go >=1.21, protobuf-compiler and the corresponding Go plugins, and node >= 14.0.
 
 ## Ubuntu
 Do not use apt to install any dependencies, the versions they install are all too old.
 Script below will curl latest versions and install them.
 ```sh
 # Standard Go installation script
-curl -O https://dl.google.com/go/go1.18.3.linux-amd64.tar.gz
+curl -O https://dl.google.com/go/go1.21.1.linux-amd64.tar.gz
 sudo rm -rf /usr/local/go 
-sudo tar -C /usr/local -xzf go1.18.3.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.21.1.linux-amd64.tar.gz
 echo 'export PATH=$PATH:/usr/local/go/bin' >> $HOME/.bashrc
 echo 'export GOPATH=$HOME/go' >> $HOME/.bashrc
 echo 'export PATH=$PATH:$GOPATH/bin' >> $HOME/.bashrc

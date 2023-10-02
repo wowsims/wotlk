@@ -51,7 +51,7 @@ func (hb *healthBar) GainHealth(sim *Simulation, amount float64, metrics *Resour
 	}
 
 	oldHealth := hb.currentHealth
-	newHealth := MinFloat(oldHealth+amount, hb.unit.MaxHealth())
+	newHealth := min(oldHealth+amount, hb.unit.MaxHealth())
 	metrics.AddEvent(amount, newHealth-oldHealth)
 
 	if sim.Log != nil {
@@ -67,7 +67,7 @@ func (hb *healthBar) RemoveHealth(sim *Simulation, amount float64) {
 	}
 
 	oldHealth := hb.currentHealth
-	newHealth := MaxFloat(oldHealth-amount, 0)
+	newHealth := max(oldHealth-amount, 0)
 	metrics := hb.DamageTakenHealthMetrics
 	metrics.AddEvent(-amount, newHealth-oldHealth)
 
@@ -151,7 +151,7 @@ func (character *Character) applyHealingModel(healingModel *proto.HealingModel) 
 	if medianCadence == 0 {
 		medianCadence = 2.0
 	}
-	minCadence := MaxFloat(0.0, medianCadence-healingModel.CadenceVariation)
+	minCadence := max(0.0, medianCadence-healingModel.CadenceVariation)
 	cadenceVariationLow := medianCadence - minCadence
 
 	healthMetrics := character.NewHealthMetrics(ActionID{OtherID: proto.OtherAction_OtherActionHealingModel})

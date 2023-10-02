@@ -9,7 +9,7 @@ import (
 
 func (warrior *Warrior) registerWhirlwindSpell() {
 	actionID := core.ActionID{SpellID: 1680}
-	numHits := core.MinInt32(4, warrior.Env.GetNumTargets())
+	numHits := min(4, warrior.Env.GetNumTargets())
 	results := make([]*core.SpellResult, numHits)
 
 	if warrior.AutoAttacks.IsDualWielding && warrior.GetOHWeapon().WeaponType != proto.WeaponType_WeaponTypeStaff &&

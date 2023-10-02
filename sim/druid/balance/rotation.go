@@ -107,7 +107,7 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*druid.DruidSpell, 
 	}
 
 	// Player "brain" latency
-	playerLatency := time.Duration(core.MaxInt32(rotation.PlayerLatency, 0)) * time.Millisecond
+	playerLatency := time.Duration(max(rotation.PlayerLatency, 0)) * time.Millisecond
 	lunarICD := moonkin.LunarICD.Timer.TimeToReady(sim)
 	solarICD := moonkin.SolarICD.Timer.TimeToReady(sim)
 	canExtendMf := rotation.MfExtension == proto.BalanceDruid_Rotation_ExtendAlways || rotation.MfExtension == proto.BalanceDruid_Rotation_ExtendOutsideSolar

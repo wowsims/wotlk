@@ -2,9 +2,8 @@ package core
 
 import (
 	"fmt"
+	"slices"
 	"strings"
-
-	"golang.org/x/exp/slices"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
 	googleProto "google.golang.org/protobuf/proto"
@@ -118,7 +117,7 @@ type SettingsCombos struct {
 }
 
 func (combos *SettingsCombos) NumTests() int {
-	return len(combos.Races) * len(combos.GearSets) * len(combos.TalentSets) * len(combos.SpecOptions) * len(combos.Buffs) * len(combos.Encounters) * MaxInt(1, len(combos.Rotations))
+	return len(combos.Races) * len(combos.GearSets) * len(combos.TalentSets) * len(combos.SpecOptions) * len(combos.Buffs) * len(combos.Encounters) * max(1, len(combos.Rotations))
 }
 
 func (combos *SettingsCombos) GetTest(testIdx int) (string, *proto.ComputeStatsRequest, *proto.StatWeightsRequest, *proto.RaidSimRequest) {

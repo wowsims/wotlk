@@ -29,7 +29,7 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 				numActive++
 			}
 		}
-		return 1.0 + float64(core.MinInt(3, numActive))*soulSiphonMultiplier
+		return 1.0 + float64(min(3, numActive))*soulSiphonMultiplier
 	}
 
 	warlock.DrainSoul = warlock.RegisterSpell(core.SpellConfig{

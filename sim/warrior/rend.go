@@ -87,7 +87,7 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold
 	})
 
 	warrior.RendHealthThresholdAbove = healthThreshold / 100
-	warrior.RendRageThresholdBelow = core.MaxFloat(warrior.Rend.DefaultCast.Cost, rageThreshold)
+	warrior.RendRageThresholdBelow = max(warrior.Rend.DefaultCast.Cost, rageThreshold)
 }
 
 func (warrior *Warrior) ShouldRend(sim *core.Simulation) bool {

@@ -24,7 +24,7 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 	 *   - CAN MISS, BE DODGED/PARRIED/BLOCKED.
 	 */
 
-	numHits := core.MinInt32(3, paladin.Env.GetNumTargets()) // primary target + 2 others
+	numHits := min(3, paladin.Env.GetNumTargets()) // primary target + 2 others
 	results := make([]*core.SpellResult, numHits)
 
 	onJudgementProc := paladin.RegisterSpell(core.SpellConfig{

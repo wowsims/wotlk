@@ -1,8 +1,8 @@
 package rogue
 
 import (
-	"golang.org/x/exp/slices"
 	"log"
+	"slices"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -175,7 +175,7 @@ func (x *rotation_generic) setup(_ *core.Simulation, rogue *Rogue) {
 					return Skip
 				}
 				timeLeft := rogue.ExposeArmorAuras.Get(rogue.CurrentTarget).RemainingDuration(sim)
-				minPoints := core.MaxInt32(1, core.MinInt32(rogue.Rotation.MinimumComboPointsExposeArmor, 5))
+				minPoints := max(1, min(rogue.Rotation.MinimumComboPointsExposeArmor, 5))
 				if rogue.Rotation.ExposeArmorFrequency != proto.Rogue_Rotation_Once {
 					minPoints = 1
 				}

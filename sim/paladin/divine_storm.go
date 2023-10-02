@@ -9,7 +9,7 @@ import (
 func (paladin *Paladin) registerDivineStormSpell() {
 	bonusDmg := core.TernaryFloat64(paladin.Ranged().ID == 45510, 235, 0) + // Libram of Discord
 		core.TernaryFloat64(paladin.Ranged().ID == 38362, 81, 0) // Venture Co. Libram of Retribution
-	numHits := core.MinInt32(4, paladin.Env.GetNumTargets())
+	numHits := min(4, paladin.Env.GetNumTargets())
 	results := make([]*core.SpellResult, numHits)
 
 	paladin.DivineStorm = paladin.RegisterSpell(core.SpellConfig{

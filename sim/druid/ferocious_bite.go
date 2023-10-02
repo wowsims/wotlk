@@ -41,7 +41,7 @@ func (druid *Druid) registerFerociousBiteSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			comboPoints := float64(druid.ComboPoints())
 			attackPower := spell.MeleeAttackPower()
-			excessEnergy := core.MinFloat(druid.CurrentEnergy(), 30)
+			excessEnergy := min(druid.CurrentEnergy(), 30)
 
 			baseDamage := 120.0 +
 				sim.RandomFloat("Ferocious Bite")*140.0 +

@@ -152,7 +152,7 @@ func (warlock *Warlock) defineRotation() {
 	}
 
 	var multidotTargets, uaDotTargets []*core.Unit
-	multidotCount := core.MinInt(len(allUnits), 3)
+	multidotCount := min(len(allUnits), 3)
 	if warlock.Rotation.Type == proto.Warlock_Rotation_Affliction {
 		// up to 3 targets: multidot, no seed
 		// 4 targets: corruption+UA 3x, seed on 4th; possibly only 1x UA since it's close in value
@@ -160,7 +160,7 @@ func (warlock *Warlock) defineRotation() {
 		// 6 targets: corruption x2, UA 1x, seed; only 1x corruption + UA is close in value
 		// 7-9 targets: corruption x1, no UA, seed
 		// 10+ targets: no corruption anymore probably
-		uaCount := core.MinInt(len(allUnits), 3)
+		uaCount := min(len(allUnits), 3)
 
 		if len(allUnits) > 4 {
 			uaCount = 1
@@ -174,7 +174,7 @@ func (warlock *Warlock) defineRotation() {
 
 		uaDotTargets = allUnits[:uaCount]
 	} else if warlock.Rotation.Type == proto.Warlock_Rotation_Destruction {
-		multidotCount = core.MinInt(len(allUnits), 4)
+		multidotCount = min(len(allUnits), 4)
 	}
 	multidotTargets = allUnits[:multidotCount]
 
@@ -529,13 +529,13 @@ func (warlock *Warlock) defineRotation() {
 
 			// the amount of ticks we have left, assuming we continue channeling
 			ticksLeft := int(timeUntilRefresh/dsDot.TickPeriod()) + 1
-			ticksLeft = core.MinInt(ticksLeft, int(hauntRefresh/dsDot.TickPeriod()))
-			ticksLeft = core.MinInt(ticksLeft, dsDot.NumTicksRemaining(sim))
+			ticksLeft = min(ticksLeft, int(hauntRefresh/dsDot.TickPeriod()))
+			ticksLeft = min(ticksLeft, dsDot.NumTicksRemaining(sim))
 
 			// amount of ticks we'd get assuming we recast drain soul
 			recastTicks := int(timeUntilRefresh/warlock.ApplyCastSpeed(dsDot.TickLength)) + 1
-			recastTicks = core.MinInt(recastTicks, int(hauntRefresh/warlock.ApplyCastSpeed(dsDot.TickLength)))
-			recastTicks = core.MinInt(recastTicks, int(dsDot.NumberOfTicks))
+			recastTicks = min(recastTicks, int(hauntRefresh/warlock.ApplyCastSpeed(dsDot.TickLength)))
+			recastTicks = min(recastTicks, int(dsDot.NumberOfTicks))
 
 			if ticksLeft <= 0 || recastTicks <= 0 {
 				return ACLCast, mainTarget
