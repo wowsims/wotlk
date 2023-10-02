@@ -49,7 +49,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubUnh_EndOfFight_Obli(sim
 	return core.TernaryDuration(casted, -1, waitTime)
 }
 
-func (dk *DpsDeathknight) RegularPrioPickSpell(sim *core.Simulation, target *core.Unit, untilTime time.Duration) *core.Spell {
+func (dk *DpsDeathknight) RegularPrioPickSpell(sim *core.Simulation, _ *core.Unit, untilTime time.Duration) *core.Spell {
 	abGcd := 1500 * time.Millisecond
 	spGcd := dk.SpellGCD()
 	canCastAbility := sim.CurrentTime+abGcd <= untilTime
@@ -76,7 +76,7 @@ func (dk *DpsDeathknight) RegularPrioPickSpell(sim *core.Simulation, target *cor
 
 //end of fight functions
 
-func (dk *DpsDeathknight) RotationActionCallback_EndOfFightCheck(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+func (dk *DpsDeathknight) RotationActionCallback_EndOfFightCheck(sim *core.Simulation, _ *core.Unit, s *deathknight.Sequence) time.Duration {
 	simDur := sim.CurrentTime + sim.GetRemainingDuration()
 
 	if sim.CurrentTime+7000*time.Millisecond > simDur {
@@ -92,12 +92,12 @@ func (dk *DpsDeathknight) RotationActionCallback_EndOfFightPrio(sim *core.Simula
 	simTimeLeft := sim.GetRemainingDuration()
 	ffExpiresAt := dk.FrostFeverSpell.Dot(target).ExpiresAt()
 	bpExpiresAt := dk.BloodPlagueSpell.Dot(target).ExpiresAt()
-	diseaseExpiresAt := core.MinDuration(ffExpiresAt, bpExpiresAt)
+	diseaseExpiresAt := min(ffExpiresAt, bpExpiresAt)
 	abGcd := 1500 * time.Millisecond
 	spGcd := dk.SpellGCD()
 	frAt := dk.NormalFrostRuneReadyAt(sim)
 	uhAt := dk.NormalUnholyRuneReadyAt(sim)
-	obAt := core.MaxDuration(frAt, uhAt)
+	obAt := max(frAt, uhAt)
 	fsCost := float64(core.RuneCost(dk.FrostStrike.CurCast.Cost).RunicPower())
 	bothblAt := dk.BloodDeathRuneBothReadyAt()
 	hasRime := dk.FreezingFogAura.IsActive() && dk.Talents.HowlingBlast
@@ -110,7 +110,7 @@ func (dk *DpsDeathknight) RotationActionCallback_EndOfFightPrio(sim *core.Simula
 	}
 
 	if dk.Talents.Epidemic == 2 || diseaseExpiresAt >= simDur {
-		obAt = core.MinDuration(obAt, bothblAt)
+		obAt = min(obAt, bothblAt)
 	}
 
 	if diseaseExpiresAt >= simDur { //diseases last until end of fight

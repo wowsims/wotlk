@@ -95,7 +95,7 @@ func (dk *DpsDeathknight) setupFrostSubBloodDesyncNoERWOpener() {
 // otherwise if an unholy rune comes up then we can't continue the Desync rotation without
 // re-casting IT + PS
 func (dk *DpsDeathknight) firstOblitAt(sim *core.Simulation) time.Duration {
-	return core.MaxDuration(dk.RuneReadyAt(sim, 1), dk.RuneReadyAt(sim, 2))
+	return max(dk.RuneReadyAt(sim, 1), dk.RuneReadyAt(sim, 2))
 }
 
 func (dk *DpsDeathknight) RotationActionCallback_Force_Desync(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
@@ -167,7 +167,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Desync_UA(sim *co
 	return -1
 }
 
-func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Detect_Broken_Desync(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Detect_Broken_Desync(sim *core.Simulation, _ *core.Unit, s *deathknight.Sequence) time.Duration {
 	frost := dk.FrostRuneReadyAt(sim)
 	unholy := dk.UnholyRuneReadyAt(sim)
 
@@ -190,7 +190,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Desync_Pesti(sim 
 	return -1
 }
 
-func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Desync_Sequence1(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Desync_Sequence1(sim *core.Simulation, _ *core.Unit, s *deathknight.Sequence) time.Duration {
 	s.Clear().
 		// f1 u1
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Desync_Obli).
@@ -202,7 +202,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Desync_Sequence1(
 	return sim.CurrentTime
 }
 
-func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Desync_Sequence2(sim *core.Simulation, target *core.Unit, s *deathknight.Sequence) time.Duration {
+func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Desync_Sequence2(sim *core.Simulation, _ *core.Unit, s *deathknight.Sequence) time.Duration {
 	s.Clear().
 		NewAction(dk.RotationActionCallback_FrostSubBlood_Detect_Broken_Desync).
 		// d2 f1

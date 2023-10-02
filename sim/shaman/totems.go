@@ -188,11 +188,7 @@ func (shaman *Shaman) registerCallOfTheElements() {
 }
 
 func (shaman *Shaman) NextTotemAt(_ *core.Simulation) time.Duration {
-	nextTotemAt := core.MinDuration(
-		core.MinDuration(shaman.NextTotemDrops[0], shaman.NextTotemDrops[1]),
-		core.MinDuration(shaman.NextTotemDrops[2], shaman.NextTotemDrops[3]))
-
-	return nextTotemAt
+	return min(shaman.NextTotemDrops[0], shaman.NextTotemDrops[1], shaman.NextTotemDrops[2], shaman.NextTotemDrops[3])
 }
 
 // TryDropTotems will check to see if totems need to be re-cast.

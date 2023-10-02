@@ -187,12 +187,12 @@ func (warlock *Warlock) Initialize() {
 }
 
 func (warlock *Warlock) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
-	raidBuffs.BloodPact = core.MaxTristate(raidBuffs.BloodPact, core.MakeTristateValue(
+	raidBuffs.BloodPact = max(raidBuffs.BloodPact, core.MakeTristateValue(
 		warlock.Options.Summon == proto.Warlock_Options_Imp,
 		warlock.Talents.ImprovedImp == 2,
 	))
 
-	raidBuffs.FelIntelligence = core.MaxTristate(raidBuffs.FelIntelligence, core.MakeTristateValue(
+	raidBuffs.FelIntelligence = max(raidBuffs.FelIntelligence, core.MakeTristateValue(
 		warlock.Options.Summon == proto.Warlock_Options_Felhunter,
 		warlock.Talents.ImprovedFelhunter == 2,
 	))

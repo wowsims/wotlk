@@ -20,7 +20,7 @@ func (war *DpsWarrior) OnGCDReady(sim *core.Simulation) {
 	}
 }
 
-func (war *DpsWarrior) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
+func (war *DpsWarrior) OnAutoAttack(sim *core.Simulation, _ *core.Spell) {
 	war.tryQueueHsCleave(sim)
 }
 
@@ -78,7 +78,7 @@ func (war *DpsWarrior) doRotation(sim *core.Simulation) {
 		if war.Rotation.SunderArmor == proto.Warrior_Rotation_SunderArmorMaintain {
 			nextSunderAt := war.lastSunderAt + 30*time.Second - sim.CurrentTime - SunderWindow
 			// TODO looks fishy, nextCD is unused
-			nextCD = core.MinDuration(nextCD, nextSunderAt)
+			nextCD = min(nextCD, nextSunderAt)
 		}
 	}
 }

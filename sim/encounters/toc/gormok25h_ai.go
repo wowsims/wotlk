@@ -70,7 +70,7 @@ func NewGormok25HAI() core.AIFactory {
 	}
 }
 
-func (ai *Gormok25HAI) Initialize(target *core.Target, config *proto.Target) {
+func (ai *Gormok25HAI) Initialize(target *core.Target, _ *proto.Target) {
 	ai.Target = target
 
 	//ai.ValidStompTarget = config.TargetInputs[0].BoolValue
@@ -257,12 +257,12 @@ func (ai *Gormok25HAI) DoAction(sim *core.Simulation) {
 
 		// All possible next events
 		events := []time.Duration{
-			core.MaxDuration(ai.StaggeringStomp.ReadyAt(), ai.StaggeringStomp.CD.Duration),
-			core.MaxDuration(ai.RisingAnger.ReadyAt(), ai.RisingAnger.CD.Duration),
+			max(ai.StaggeringStomp.ReadyAt(), ai.StaggeringStomp.CD.Duration),
+			max(ai.RisingAnger.ReadyAt(), ai.RisingAnger.CD.Duration),
 		}
 
 		if ai.Target.CurrentTarget != nil {
-			events = append(events, core.MaxDuration(ai.Impale.ReadyAt(), ai.Impale.CD.Duration))
+			events = append(events, max(ai.Impale.ReadyAt(), ai.Impale.CD.Duration))
 		}
 
 		for _, elem := range events {

@@ -121,7 +121,7 @@ func (rotation *AdaptiveRotation) DoAction(eleShaman *ElementalShaman, sim *core
 	}
 }
 
-func (rotation *AdaptiveRotation) Reset(eleShaman *ElementalShaman, sim *core.Simulation) {
+func (rotation *AdaptiveRotation) Reset(_ *ElementalShaman, sim *core.Simulation) {
 	rotation.fnmm = 1.0
 	rotation.clmm = 1.0
 	if len(sim.Encounter.Targets) > 4 {
@@ -197,7 +197,7 @@ func (rotation *ManualRotation) DoAction(eleShaman *ElementalShaman, sim *core.S
 	needFS := fsRemain <= 0
 	// Only overwrite if lvb is ready right now.
 	if !needFS && rotation.options.OverwriteFlameshock && eleShaman.LavaBurst.CD.TimeToReady(sim) <= core.GCDDefault {
-		lvbTime := core.MaxDuration(eleShaman.ApplyCastSpeed(eleShaman.LavaBurst.DefaultCast.CastTime), core.GCDMin)
+		lvbTime := max(eleShaman.ApplyCastSpeed(eleShaman.LavaBurst.DefaultCast.CastTime), core.GCDMin)
 		if fsRemain < lvbTime {
 			needFS = true
 		}
@@ -205,7 +205,7 @@ func (rotation *ManualRotation) DoAction(eleShaman *ElementalShaman, sim *core.S
 
 	allowLvB := true
 	if rotation.options.AlwaysCritLvb {
-		lvbTime := core.MaxDuration(eleShaman.ApplyCastSpeed(eleShaman.LavaBurst.DefaultCast.CastTime), core.GCDMin)
+		lvbTime := max(eleShaman.ApplyCastSpeed(eleShaman.LavaBurst.DefaultCast.CastTime), core.GCDMin)
 		if fsRemain <= lvbTime {
 			allowLvB = false
 		}
@@ -222,7 +222,7 @@ func (rotation *ManualRotation) DoAction(eleShaman *ElementalShaman, sim *core.S
 	lvbCD := eleShaman.LavaBurst.CD.TimeToReady(sim)
 	if shouldCL && rotation.options.UseClOnlyGap {
 		shouldCL = false
-		clCast := core.MaxDuration(eleShaman.ApplyCastSpeed(eleShaman.ChainLightning.DefaultCast.CastTime), core.GCDMin)
+		clCast := max(eleShaman.ApplyCastSpeed(eleShaman.ChainLightning.DefaultCast.CastTime), core.GCDMin)
 		// If LvB CD < CL cast time, we should use CL to pass the time until then.
 		// Or if FS is about to expire and we didn't cast LvB.
 		if fsRemain <= clCast || (lvbCD <= clCast) {
@@ -277,7 +277,7 @@ func (rotation *ManualRotation) DoAction(eleShaman *ElementalShaman, sim *core.S
 	}
 }
 
-func (rotation *ManualRotation) Reset(eleShaman *ElementalShaman, sim *core.Simulation) {
+func (rotation *ManualRotation) Reset(_ *ElementalShaman, _ *core.Simulation) {
 }
 
 // func (rotation *ManualRotation) GetPresimOptions() *core.PresimOptions {

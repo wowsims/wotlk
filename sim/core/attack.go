@@ -782,7 +782,7 @@ func (unit *Unit) applyParryHaste() {
 				return
 			}
 
-			parryHasteReduction := MinDuration(defaultReduction, remainingTime-minRemainingTime)
+			parryHasteReduction := min(defaultReduction, remainingTime-minRemainingTime)
 			newReadyAt := aura.Unit.AutoAttacks.MainhandSwingAt - parryHasteReduction
 			if sim.Log != nil {
 				aura.Unit.Log(sim, "MH Swing reduced by %s due to parry haste, will now occur at %s", parryHasteReduction, newReadyAt)

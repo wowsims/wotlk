@@ -233,7 +233,7 @@ func (x *rotation_multi) timeToBuild(points int32, builderPoints int32, eps floa
 	secondsNeeded := energyNeeded / eps
 	globalsNeeded := math.Ceil(float64(points)/float64(builderPoints)) + 1
 	// Return greater of the time it takes to use the globals and the time it takes to build the energy
-	return core.MaxDuration(time.Second*time.Duration(secondsNeeded), time.Second*time.Duration(globalsNeeded))
+	return max(time.Second*time.Duration(secondsNeeded), time.Second*time.Duration(globalsNeeded))
 }
 
 func (x *rotation_multi) shouldCastNextRotationItem(sim *core.Simulation, rogue *Rogue, eps float64) shouldCastRotationItemResult {
@@ -379,7 +379,7 @@ func (x *rotation_multi) planRotation(sim *core.Simulation, rogue *Rogue) []rogu
 			minBuildTime := x.timeToBuild(cpUsed, x.builderPoints, eps, energyUsed)
 			if currentTime+minBuildTime <= item.ExpiresAt || !prio.IsFiller {
 				prioStack = append(prioStack, item)
-				currentTime = core.MaxDuration(item.ExpiresAt, currentTime+minBuildTime)
+				currentTime = max(item.ExpiresAt, currentTime+minBuildTime)
 				currentEnergy = 0
 				if prio.MinimumComboPoints > 0 {
 					comboPoints = 0

@@ -35,10 +35,10 @@ func (spriest *ShadowPriest) tryUseGCD(sim *core.Simulation) {
 	// grab all of the shadow priest spell CDs remaining durations to use in the dps calculation
 	spriest.VTCastTime = spriest.ApplyCastSpeed(time.Millisecond * 1500)
 	spriest.AllCDs = []time.Duration{
-		core.MaxDuration(0, spriest.MindBlast.TimeToReady(sim)),
-		core.MaxDuration(0, spriest.DevouringPlague.CurDot().RemainingDuration(sim)),
-		core.MaxDuration(0, spriest.VampiricTouch.CurDot().RemainingDuration(sim)-spriest.VTCastTime),
-		core.MaxDuration(0, spriest.ShadowWordDeath.TimeToReady(sim)),
+		max(0, spriest.MindBlast.TimeToReady(sim)),
+		max(0, spriest.DevouringPlague.CurDot().RemainingDuration(sim)),
+		max(0, spriest.VampiricTouch.CurDot().RemainingDuration(sim)-spriest.VTCastTime),
+		max(0, spriest.ShadowWordDeath.TimeToReady(sim)),
 		0,
 	}
 
@@ -453,7 +453,7 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 			cdDpso = dpDamage
 		}
 
-		addedgcd := core.MaxDuration(gcd, time.Duration(2)*tickLength)
+		addedgcd := max(gcd, time.Duration(2)*tickLength)
 		addedgcdtime := addedgcd - time.Duration(2)*tickLength
 
 		deltaMf1 := currentWait - gcd
@@ -668,10 +668,10 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 		vtidx := spriest.VampiricTouch.CurDot().RemainingDuration(sim) - spriest.VTCastTime
 		swpidx := spriest.ShadowWordPain.CurDot().RemainingDuration(sim)
 		dpidx := spriest.DevouringPlague.CurDot().RemainingDuration(sim)
-		wait1 = core.MinDuration(mbcd, swdcd)
-		wait2 = core.MinDuration(dpidx, wait1)
-		wait3 = core.MinDuration(vtidx, swpidx)
-		wait = core.MinDuration(wait3, wait2)
+		wait1 = min(mbcd, swdcd)
+		wait2 = min(dpidx, wait1)
+		wait3 = min(vtidx, swpidx)
+		wait = min(wait3, wait2)
 		if wait <= 0 {
 			wait = time.Millisecond * 500
 		}
@@ -680,7 +680,7 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 }
 
 // Returns the number of MF ticks to use, or 0 to wait for next CD.
-func (spriest *ShadowPriest) BasicMindflayRotation(sim *core.Simulation, gcd time.Duration, tickLength time.Duration) int {
+func (spriest *ShadowPriest) BasicMindflayRotation(_ *core.Simulation, gcd time.Duration, _ time.Duration) int {
 	// just do MF3, never clipping
 	nextCD := core.NeverExpires
 	for _, v := range spriest.AllCDs {
@@ -703,15 +703,15 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, gcd tim
 	nextIdx := -1
 
 	newCDs := []time.Duration{
-		core.MaxDuration(0, spriest.AllCDs[1]),
-		core.MaxDuration(0, spriest.AllCDs[2]),
+		max(0, spriest.AllCDs[1]),
+		max(0, spriest.AllCDs[2]),
 	}
 
 	if mbDamage != 0 {
 		newCDs = []time.Duration{
-			core.MaxDuration(0, spriest.AllCDs[0]),
-			core.MaxDuration(0, spriest.AllCDs[1]),
-			core.MaxDuration(0, spriest.AllCDs[2]),
+			max(0, spriest.AllCDs[0]),
+			max(0, spriest.AllCDs[1]),
+			max(0, spriest.AllCDs[2]),
 		}
 	}
 
@@ -762,9 +762,9 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, gcd tim
 	if numTicks < 100 && overwriteDPS == 0 { // if the code entered this loop because mf is the higest dps spell, and the number of ticks that can fit in the remaining cd time is < 1, then just cast a mf3 as it essentially fits perfectly
 		// TODO: Should spriest latency be added to the second option here?
 
-		mfTime := core.MaxDuration(gcd, time.Duration(numTicks)*tickLength)
+		mfTime := max(gcd, time.Duration(numTicks)*tickLength)
 		if numTicks == 0 {
-			mfTime = core.MaxDuration(gcd, time.Duration(numTicks)*tickLength)
+			mfTime = max(gcd, time.Duration(numTicks)*tickLength)
 		}
 
 		if sim.Log != nil {
@@ -775,10 +775,10 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, gcd tim
 		// Amount of gap time after casting mind flay, but before each CD is available.
 
 		cdDiffs := []time.Duration{
-			core.MaxDuration(0, spriest.AllCDs[0]-mfTime),
-			core.MaxDuration(0, spriest.AllCDs[1]-mfTime),
-			core.MaxDuration(0, spriest.AllCDs[2]-mfTime),
-			core.MaxDuration(0, spriest.AllCDs[3]-mfTime),
+			max(0, spriest.AllCDs[0]-mfTime),
+			max(0, spriest.AllCDs[1]-mfTime),
+			max(0, spriest.AllCDs[2]-mfTime),
+			max(0, spriest.AllCDs[3]-mfTime),
 			0,
 		}
 
@@ -842,18 +842,18 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, gcd tim
 				numTicks += 1
 			}
 
-			mfTime = core.MaxDuration(gcd, time.Duration(numTicks)*tickLength)
+			mfTime = max(gcd, time.Duration(numTicks)*tickLength)
 			if numTicks > 3 && numTicks < 5 {
-				addedgcd := core.MaxDuration(gcd, time.Duration(2)*tickLength)
+				addedgcd := max(gcd, time.Duration(2)*tickLength)
 				addedgcdtime := addedgcd - time.Duration(2)*tickLength
-				mfTime = core.MaxDuration(gcd, time.Duration(numTicks)*tickLength+2*addedgcdtime)
+				mfTime = max(gcd, time.Duration(numTicks)*tickLength+2*addedgcdtime)
 			}
 			deltaTime := spriest.AllCDs[bestIdx] - mfTime
 			cdDiffs = []time.Duration{
-				core.MaxDuration(0, spriest.AllCDs[0]-mfTime),
-				core.MaxDuration(0, spriest.AllCDs[1]-mfTime),
-				core.MaxDuration(0, spriest.AllCDs[2]-mfTime),
-				core.MaxDuration(0, spriest.AllCDs[3]-mfTime),
+				max(0, spriest.AllCDs[0]-mfTime),
+				max(0, spriest.AllCDs[1]-mfTime),
+				max(0, spriest.AllCDs[2]-mfTime),
+				max(0, spriest.AllCDs[3]-mfTime),
 				0,
 			}
 			if deltaTime.Seconds() < -0.33 {
@@ -1110,7 +1110,7 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, gcd tim
 		}
 	} else {
 		numTicks = int(nextCD / tickLength)
-		if nextCD-core.MaxDuration(gcd, time.Duration(2)*tickLength) < 0 && numTicks != 0 {
+		if nextCD-max(gcd, time.Duration(2)*tickLength) < 0 && numTicks != 0 {
 			numTicks -= 1
 		}
 		// if sim.Log != nil {
@@ -1140,7 +1140,7 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, gcd tim
 	return numTicks
 }
 
-func (spriest *ShadowPriest) ClippingMindflayRotation(sim *core.Simulation, gcd time.Duration, tickLength time.Duration) int {
+func (spriest *ShadowPriest) ClippingMindflayRotation(_ *core.Simulation, gcd time.Duration, tickLength time.Duration) int {
 	nextCD := core.NeverExpires
 	for _, v := range spriest.AllCDs[1 : len(spriest.AllCDs)-1] {
 		if v < nextCD {

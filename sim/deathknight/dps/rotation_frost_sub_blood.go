@@ -14,7 +14,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_Obli(sim *core.Si
 
 	ffExpiresAt := dk.FrostFeverSpell.Dot(target).ExpiresAt()
 	bpExpiresAt := dk.BloodPlagueSpell.Dot(target).ExpiresAt()
-	if sim.CurrentTime+1500*time.Millisecond < core.MinDuration(ffExpiresAt, bpExpiresAt) {
+	if sim.CurrentTime+1500*time.Millisecond < min(ffExpiresAt, bpExpiresAt) {
 		if dk.canCastFrostUnholySpell(sim, target) {
 			if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
 				dk.Deathchill.Cast(sim, target)
@@ -42,7 +42,7 @@ func (dk *DpsDeathknight) RotationActionCallback_LastSecondsCast(sim *core.Simul
 	fsCost := float64(core.RuneCost(dk.FrostStrike.CurCast.Cost).RunicPower())
 
 	km := dk.KillingMachineAura.IsActive()
-	if core.MinDuration(ffExpiresAt, bpExpiresAt) > sim.CurrentTime+sim.GetRemainingDuration() {
+	if min(ffExpiresAt, bpExpiresAt) > sim.CurrentTime+sim.GetRemainingDuration() {
 		if dk.canCastFrostUnholySpell(sim, target) && ffActive && bpActive {
 			if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
 				dk.Deathchill.Cast(sim, target)
@@ -78,7 +78,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_KM(sim *core.S
 	casted = dk.RotationActionCallback_LastSecondsCast(sim, target)
 	if !casted {
 		km := dk.KillingMachineAura.IsActive()
-		if km && sim.CurrentTime+1500*time.Millisecond < core.MinDuration(ffExpiresAt, bpExpiresAt) {
+		if km && sim.CurrentTime+1500*time.Millisecond < min(ffExpiresAt, bpExpiresAt) {
 			if dk.FrostStrike.CanCast(sim, nil) {
 				dk.FrostStrike.Cast(sim, target)
 			}
@@ -143,8 +143,8 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump_UntilUA(s
 
 func (dk *DpsDeathknight) getOblitDrift(sim *core.Simulation, castIn time.Duration) time.Duration {
 	spendAt := sim.CurrentTime + castIn
-	oblit1 := core.MaxDuration(dk.RuneReadyAt(sim, 2), dk.RuneReadyAt(sim, 3))
-	oblit2 := core.MaxDuration(dk.SpendRuneReadyAt(4, spendAt), dk.SpendRuneReadyAt(5, spendAt))
+	oblit1 := max(dk.RuneReadyAt(sim, 2), dk.RuneReadyAt(sim, 3))
+	oblit2 := max(dk.SpendRuneReadyAt(4, spendAt), dk.SpendRuneReadyAt(5, spendAt))
 	return oblit2 - oblit1
 }
 
@@ -159,7 +159,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump(sim *core
 		bAt := dk.BloodRuneReadyAt(sim)
 		frAt := dk.NormalFrostRuneReadyAt(sim)
 		uhAt := dk.NormalUnholyRuneReadyAt(sim)
-		obAt := core.MaxDuration(frAt, uhAt)
+		obAt := max(frAt, uhAt)
 		abGCD := core.GCDDefault
 		allowedObDrift := 3000 * time.Millisecond
 
@@ -169,7 +169,7 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump(sim *core
 
 			ffExpiresAt := dk.FrostFeverSpell.Dot(target).ExpiresAt()
 			bpExpiresAt := dk.BloodPlagueSpell.Dot(target).ExpiresAt()
-			if sim.CurrentTime+1500*time.Millisecond < core.MinDuration(ffExpiresAt, bpExpiresAt) {
+			if sim.CurrentTime+1500*time.Millisecond < min(ffExpiresAt, bpExpiresAt) {
 				if dk.canCastFrostUnholySpell(sim, target) {
 					if dk.Deathchill != nil && dk.Deathchill.IsReady(sim) {
 						dk.Deathchill.Cast(sim, target)
@@ -190,11 +190,11 @@ func (dk *DpsDeathknight) RotationActionCallback_FrostSubBlood_FS_Dump(sim *core
 			ffExpiresAt := dk.FrostFeverSpell.Dot(target).ExpiresAt()
 			bpExpiresAt := dk.BloodPlagueSpell.Dot(target).ExpiresAt()
 			km := dk.KillingMachineAura.IsActive()
-			if dk.fr.oblitCount == 1 && dk.FrostStrike.CanCast(sim, nil) && km && sim.CurrentTime+1500*time.Millisecond < core.MinDuration(ffExpiresAt, bpExpiresAt) && dk.getOblitDrift(sim, abGCD) <= allowedObDrift {
+			if dk.fr.oblitCount == 1 && dk.FrostStrike.CanCast(sim, nil) && km && sim.CurrentTime+1500*time.Millisecond < min(ffExpiresAt, bpExpiresAt) && dk.getOblitDrift(sim, abGCD) <= allowedObDrift {
 				casted = dk.FrostStrike.Cast(sim, target)
 			} else {
 				if dk.canCastFrostUnholySpell(sim, target) {
-					dndIn := core.MaxDuration(bAt-sim.CurrentTime, dk.DeathAndDecay.TimeToReady(sim))
+					dndIn := max(bAt-sim.CurrentTime, dk.DeathAndDecay.TimeToReady(sim))
 					if dk.Rotation.UseDeathAndDecay && dk.Env.GetNumTargets() >= 3 && dndIn < 3*time.Second && !dk.UnbreakableArmorAura.IsActive() && dk.UnbreakableArmor.TimeToReady(sim) > 8*time.Second {
 						if dk.DeathAndDecay.CanCast(sim, target) {
 							casted = dk.DeathAndDecay.Cast(sim, target)

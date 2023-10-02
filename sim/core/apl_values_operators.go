@@ -71,19 +71,19 @@ func (rot *APLRotation) newValueConst(config *proto.APLValueConst) APLValue {
 func (value *APLValueConst) Type() proto.APLValueType {
 	return value.valType
 }
-func (value *APLValueConst) GetBool(sim *Simulation) bool {
+func (value *APLValueConst) GetBool(_ *Simulation) bool {
 	return value.boolVal
 }
-func (value *APLValueConst) GetInt(sim *Simulation) int32 {
+func (value *APLValueConst) GetInt(_ *Simulation) int32 {
 	return value.intVal
 }
-func (value *APLValueConst) GetFloat(sim *Simulation) float64 {
+func (value *APLValueConst) GetFloat(_ *Simulation) float64 {
 	return value.floatVal
 }
-func (value *APLValueConst) GetDuration(sim *Simulation) time.Duration {
+func (value *APLValueConst) GetDuration(_ *Simulation) time.Duration {
 	return value.durationVal
 }
-func (value *APLValueConst) GetString(sim *Simulation) string {
+func (value *APLValueConst) GetString(_ *Simulation) string {
 	return value.stringVal
 }
 func (value *APLValueConst) String() string {
@@ -500,7 +500,7 @@ func (value *APLValueMax) GetFloat(sim *Simulation) float64 {
 func (value *APLValueMax) GetDuration(sim *Simulation) time.Duration {
 	result := value.vals[0].GetDuration(sim)
 	for i := 1; i < len(value.vals); i++ {
-		result = MaxDuration(result, value.vals[i].GetDuration(sim))
+		result = max(result, value.vals[i].GetDuration(sim))
 	}
 	return result
 }
@@ -536,22 +536,22 @@ func (value *APLValueMin) Type() proto.APLValueType {
 }
 func (value *APLValueMin) GetInt(sim *Simulation) int32 {
 	result := value.vals[0].GetInt(sim)
-	for i := 1; i < len(value.vals); i++ {
-		result = min(result, value.vals[i].GetInt(sim))
+	for _, v := range value.vals[1:] {
+		result = min(result, v.GetInt(sim))
 	}
 	return result
 }
 func (value *APLValueMin) GetFloat(sim *Simulation) float64 {
 	result := value.vals[0].GetFloat(sim)
-	for i := 1; i < len(value.vals); i++ {
-		result = min(result, value.vals[i].GetFloat(sim))
+	for _, v := range value.vals[1:] {
+		result = min(result, v.GetFloat(sim))
 	}
 	return result
 }
 func (value *APLValueMin) GetDuration(sim *Simulation) time.Duration {
 	result := value.vals[0].GetDuration(sim)
-	for i := 1; i < len(value.vals); i++ {
-		result = MinDuration(result, value.vals[i].GetDuration(sim))
+	for _, v := range value.vals[1:] {
+		result = min(result, v.GetDuration(sim))
 	}
 	return result
 }

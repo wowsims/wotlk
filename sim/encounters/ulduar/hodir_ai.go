@@ -200,7 +200,7 @@ func (ai *HodirAI) registerFlashFreeze(target *core.Target) {
 			}
 			sim.AddPendingAction(pa)
 
-			ai.NextStorms = core.MaxDuration(ai.NextStorms, sim.CurrentTime+time.Duration(3+5.0*sim.RandomFloat("HodirAI Next Storm"))*time.Second)
+			ai.NextStorms = max(ai.NextStorms, sim.CurrentTime+time.Duration(3+5.0*sim.RandomFloat("HodirAI Next Storm"))*time.Second)
 		},
 	})
 }
@@ -519,23 +519,23 @@ func (ai *HodirAI) DoAction(sim *core.Simulation) {
 
 		// All possible next events
 		events := []time.Duration{
-			core.MaxDuration(ai.FrozenBlows.ReadyAt(), ai.FrozenBlows.CD.Duration),
-			core.MaxDuration(ai.FlashFreeze.ReadyAt(), ai.FlashFreeze.CD.Duration),
+			max(ai.FrozenBlows.ReadyAt(), ai.FrozenBlows.CD.Duration),
+			max(ai.FlashFreeze.ReadyAt(), ai.FlashFreeze.CD.Duration),
 			ai.NextStorms,
 		}
 
 		if ai.Target.Env.Raid.Size() == 1 {
 			// Individual Sim approximation - taken from some random logs
 			timeBetweenStacks := 400 * time.Millisecond // TODO: Expose this
-			events = append(events, core.MaxDuration(ai.ToastyFireTime, sim.CurrentTime+timeBetweenStacks))
+			events = append(events, max(ai.ToastyFireTime, sim.CurrentTime+timeBetweenStacks))
 		} else {
 			timeBetweenNewCampfires := 3 * time.Second // TODO: Improve on Fires Approximation by actually simulating active campfires
-			events = append(events, core.MaxDuration(ai.ToastyFireTime, sim.CurrentTime+timeBetweenNewCampfires))
+			events = append(events, max(ai.ToastyFireTime, sim.CurrentTime+timeBetweenNewCampfires))
 		}
 
 		// if ai.Target.CurrentTarget != nil {
-		// 	events = append(events, core.MaxDuration(ai.PhasePunch.ReadyAt(), ai.PhasePunch.CD.Duration))
-		// 	events = append(events, core.MaxDuration(ai.QuantumStrike.ReadyAt(), ai.QuantumStrike.CD.Duration))
+		// 	events = append(events, max(ai.PhasePunch.ReadyAt(), ai.PhasePunch.CD.Duration))
+		// 	events = append(events, max(ai.QuantumStrike.ReadyAt(), ai.QuantumStrike.CD.Duration))
 		// }
 
 		for _, elem := range events {

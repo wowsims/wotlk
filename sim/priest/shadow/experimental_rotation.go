@@ -38,7 +38,7 @@ func (spriest *ShadowPriest) chooseSpellExperimental(sim *core.Simulation) *core
 		return spriest.DevouringPlague
 	}
 
-	gcd := core.MaxDuration(core.GCDMin, spriest.ApplyCastSpeed(core.GCDDefault))
+	gcd := max(core.GCDMin, spriest.ApplyCastSpeed(core.GCDDefault))
 	vtCastTime := gcd
 	if spriest.VampiricTouch != nil && (!spriest.VampiricTouch.CurDot().IsActive() || sim.CurrentTime+vtCastTime >= spriest.VampiricTouch.CurDot().ExpiresAt()) {
 		return spriest.VampiricTouch
@@ -94,8 +94,8 @@ func (spriest *ShadowPriest) chooseSpellExperimental(sim *core.Simulation) *core
 	}
 	// When the GCD would become ready again, for each cast.
 	castCompleteAt := [SpellLen]time.Duration{
-		core.MaxDuration(sim.CurrentTime, spriest.MindBlast.ReadyAt()) + gcd,
-		core.MaxDuration(sim.CurrentTime, spriest.ShadowWordDeath.ReadyAt()) + gcd,
+		max(sim.CurrentTime, spriest.MindBlast.ReadyAt()) + gcd,
+		max(sim.CurrentTime, spriest.ShadowWordDeath.ReadyAt()) + gcd,
 		sim.CurrentTime + gcd, // DP
 		sim.CurrentTime + gcd, // VT
 		sim.CurrentTime + gcd, // SWP
@@ -119,10 +119,10 @@ func (spriest *ShadowPriest) chooseSpellExperimental(sim *core.Simulation) *core
 	// Time after which casting the corresponding spell would be a delay of
 	// its cadence.
 	spellDelayStart := [SpellLen]time.Duration{
-		core.MaxDuration(sim.CurrentTime, spriest.MindBlast.ReadyAt()),
-		core.MaxDuration(sim.CurrentTime, spriest.ShadowWordDeath.ReadyAt()),
-		core.MaxDuration(sim.CurrentTime, spriest.DevouringPlague.CurDot().ExpiresAt()),
-		core.MaxDuration(sim.CurrentTime, spriest.VampiricTouch.CurDot().ExpiresAt()-vtCastTime),
+		max(sim.CurrentTime, spriest.MindBlast.ReadyAt()),
+		max(sim.CurrentTime, spriest.ShadowWordDeath.ReadyAt()),
+		max(sim.CurrentTime, spriest.DevouringPlague.CurDot().ExpiresAt()),
+		max(sim.CurrentTime, spriest.VampiricTouch.CurDot().ExpiresAt()-vtCastTime),
 		core.NeverExpires, // SWP rolls over, so it never gets delayed.
 		sim.CurrentTime,   // MF1
 		sim.CurrentTime,   // MF2
@@ -178,7 +178,7 @@ func (spriest *ShadowPriest) chooseSpellExperimental(sim *core.Simulation) *core
 	//// causes the LEAST amount of delay on DP and VT, and record that delay.
 	//dpCastAt := spellDelayStart[DevouringPlagueIdx]
 	//vtCastAt := spellDelayStart[VampiricTouchIdx]
-	//scanUntil := core.MaxDuration(dpCastAt, vtCastAt) + gcd*3
+	//scanUntil := max(dpCastAt, vtCastAt) + gcd*3
 
 	//type PathOption struct {
 	//	Spell   *core.Spell
@@ -312,15 +312,15 @@ func (spriest *ShadowPriest) chooseSpellExperimental(sim *core.Simulation) *core
 		CanMBAt time.Duration // When Mind Blast will be ready on this path.
 	}
 	startingPathOptions := []PathOption{
-		PathOption{
+		{
 			DoneAt:  castCompleteAt[MindBlastIdx],
 			CanMBAt: castCompleteAt[MindBlastIdx] + spriest.MindBlast.CD.Duration,
 		},
-		PathOption{
+		{
 			DoneAt:  castCompleteAt[MindFlay2Idx],
 			CanMBAt: spellDelayStart[MindBlastIdx],
 		},
-		PathOption{
+		{
 			DoneAt:  castCompleteAt[MindFlay3Idx],
 			CanMBAt: spellDelayStart[MindBlastIdx],
 		},
@@ -362,7 +362,7 @@ func (spriest *ShadowPriest) chooseSpellExperimental(sim *core.Simulation) *core
 		}
 
 		delay := cur.DoneAt - dot1DelayAt
-		maxDotDelay = core.MaxDuration(maxDotDelay, delay)
+		maxDotDelay = max(maxDotDelay, delay)
 		if startIdx == 0 {
 			dotDelays[MindBlastIdx] = delay
 		} else if startIdx == 1 {
@@ -404,7 +404,7 @@ func (spriest *ShadowPriest) chooseSpellExperimental(sim *core.Simulation) *core
 					delay = maxDotDelay * 12 / 6
 				}
 			} else {
-				delay = core.MaxDuration(0, castCompleteAt[chosenSpellIdx]-spellDelayStart[otherSpellIdx])
+				delay = max(0, castCompleteAt[chosenSpellIdx]-spellDelayStart[otherSpellIdx])
 			}
 			opportunityCostDmg := spellDPS[otherSpellIdx] * delay.Seconds()
 			//opportunityCostDmg := spellDPCT[otherSpellIdx] * delay.Seconds()
