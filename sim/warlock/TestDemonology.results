@@ -756,7 +756,7 @@ dps_results: {
 dps_results: {
  key: "TestDemonology-Settings-Orc-P2-Demonology Warlock--FullBuffs-ShortSingleTarget"
  value: {
-  dps: 12436.88976
+  dps: 12437.18825
   tps: 10461.28742
  }
 }
