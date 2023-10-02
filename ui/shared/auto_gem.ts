@@ -513,6 +513,14 @@ export const optimizeGems = async (sim: Sim, player: Player<AutoGemSpec>) => {
       break
     case Spec.SpecHunter:
       yellowGemCaps.push([GemsByStats.Agi_Hit, hitCap]);
+
+      // Allow for socketing ArP gems in weaker yellow sockets after capping Hit
+      // when ArP stacking is detected
+      if (detectArpStackConfiguration(player, arpCap.getStat(Stat.StatArmorPenetration), arpTarget)) {
+        sortYellowSockets(optimizedGear, yellowSockets, epWeights, tearSlot);
+        yellowGemCaps.push([GemsByStats.Arp, arpCap]);
+      }
+
       yellowGemCaps.push([GemsByStats.Agi_Crit, critCap]);
       break
   }
