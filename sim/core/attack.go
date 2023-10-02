@@ -1,7 +1,7 @@
 package core
 
 import (
-	"golang.org/x/exp/slices"
+	"slices"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -294,13 +294,13 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 
 	if unit.Type == EnemyUnit {
 		unit.AutoAttacks.MHConfig.ApplyEffects = func(sim *Simulation, target *Unit, spell *Spell) {
-			ap := MaxFloat(0, spell.Unit.stats[stats.AttackPower])
+			ap := max(0, spell.Unit.stats[stats.AttackPower])
 			baseDamage := spell.Unit.AutoAttacks.MH.EnemyWeaponDamage(sim, ap, spell.Unit.PseudoStats.DamageSpread)
 
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeEnemyMeleeWhite)
 		}
 		unit.AutoAttacks.OHConfig.ApplyEffects = func(sim *Simulation, target *Unit, spell *Spell) {
-			ap := MaxFloat(0, spell.Unit.stats[stats.AttackPower])
+			ap := max(0, spell.Unit.stats[stats.AttackPower])
 			baseDamage := spell.Unit.AutoAttacks.MH.EnemyWeaponDamage(sim, ap, spell.Unit.PseudoStats.DamageSpread) * 0.5
 
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeEnemyMeleeWhite)

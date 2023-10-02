@@ -30,15 +30,15 @@ type Encounter struct {
 }
 
 func NewEncounter(options *proto.Encounter) Encounter {
-	options.ExecuteProportion_25 = MaxFloat(options.ExecuteProportion_25, options.ExecuteProportion_20)
-	options.ExecuteProportion_35 = MaxFloat(options.ExecuteProportion_35, options.ExecuteProportion_25)
+	options.ExecuteProportion_25 = max(options.ExecuteProportion_25, options.ExecuteProportion_20)
+	options.ExecuteProportion_35 = max(options.ExecuteProportion_35, options.ExecuteProportion_25)
 
 	encounter := Encounter{
 		Duration:             DurationFromSeconds(options.Duration),
 		DurationVariation:    DurationFromSeconds(options.DurationVariation),
-		ExecuteProportion_20: MaxFloat(options.ExecuteProportion_20, 0),
-		ExecuteProportion_25: MaxFloat(options.ExecuteProportion_25, 0),
-		ExecuteProportion_35: MaxFloat(options.ExecuteProportion_35, 0),
+		ExecuteProportion_20: max(options.ExecuteProportion_20, 0),
+		ExecuteProportion_25: max(options.ExecuteProportion_25, 0),
+		ExecuteProportion_35: max(options.ExecuteProportion_35, 0),
 		Targets:              []*Target{},
 	}
 	// If UseHealth is set, we use the sum of targets health.
@@ -79,7 +79,7 @@ func (encounter *Encounter) AOECapMultiplier() float64 {
 	return encounter.aoeCapMultiplier
 }
 func (encounter *Encounter) updateAOECapMultiplier() {
-	encounter.aoeCapMultiplier = MinFloat(10/float64(len(encounter.Targets)), 1)
+	encounter.aoeCapMultiplier = min(10/float64(len(encounter.Targets)), 1)
 }
 
 func (encounter *Encounter) doneIteration(sim *Simulation) {

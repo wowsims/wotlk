@@ -89,7 +89,7 @@ func (hp *HunterPet) Initialize() {
 }
 
 func (hp *HunterPet) Reset(_ *core.Simulation) {
-	hp.uptimePercent = core.MinFloat(1, core.MaxFloat(0, hp.hunterOwner.Options.PetUptime))
+	hp.uptimePercent = min(1, max(0, hp.hunterOwner.Options.PetUptime))
 }
 
 func (hp *HunterPet) OnGCDReady(sim *core.Simulation) {

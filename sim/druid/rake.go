@@ -71,7 +71,7 @@ func (druid *Druid) registerRakeSpell() {
 
 		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
 			baseDamage := 176 + 0.01*spell.MeleeAttackPower()
-			potentialTicks := core.MinInt32(numTicks, int32(sim.GetRemainingDuration()/time.Second*3))
+			potentialTicks := min(numTicks, int32(sim.GetRemainingDuration()/time.Second*3))
 			tickBase := (358 + 0.06*spell.MeleeAttackPower()) * float64(potentialTicks)
 
 			initial := spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)

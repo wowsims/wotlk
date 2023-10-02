@@ -31,7 +31,7 @@ func NewFeralDruid(character core.Character, options *proto.Player) *FeralDruid 
 
 	cat := &FeralDruid{
 		Druid:   druid.New(character, druid.Cat, selfBuffs, options.TalentsString),
-		latency: time.Duration(core.MaxInt32(feralOptions.Options.LatencyMs, 1)) * time.Millisecond,
+		latency: time.Duration(max(feralOptions.Options.LatencyMs, 1)) * time.Millisecond,
 	}
 
 	cat.SelfBuffs.InnervateTarget = &proto.UnitReference{}

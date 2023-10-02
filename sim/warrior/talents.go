@@ -83,7 +83,7 @@ func (warrior *Warrior) applyCriticalBlock() {
 			procChance := 0.2 * float64(warrior.Talents.CriticalBlock)
 			if sim.RandomFloat("Critical Block Roll") <= procChance {
 				blockValue := warrior.BlockValue()
-				result.Damage = core.MaxFloat(0, result.Damage-blockValue)
+				result.Damage = max(0, result.Damage-blockValue)
 				dummyCriticalBlockSpell.Cast(sim, spell.Unit)
 			}
 		}
@@ -794,7 +794,7 @@ func (warrior *Warrior) RegisterBladestormCD() {
 	}
 
 	actionID := core.ActionID{SpellID: 46924}
-	numHits := core.MinInt32(4, warrior.Env.GetNumTargets())
+	numHits := min(4, warrior.Env.GetNumTargets())
 	results := make([]*core.SpellResult, numHits)
 
 	if warrior.AutoAttacks.IsDualWielding {

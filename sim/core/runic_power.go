@@ -12,10 +12,10 @@ type RuneChangeType int32
 
 const (
 	None             RuneChangeType = 0
-	SpendRune                       = 1
-	GainRune                        = 2
-	ConvertToDeath                  = 4
-	ConvertFromDeath                = 8
+	SpendRune        RuneChangeType = 1
+	GainRune         RuneChangeType = 2
+	ConvertToDeath   RuneChangeType = 4
+	ConvertFromDeath RuneChangeType = 8
 )
 
 func (r RuneChangeType) Matches(other RuneChangeType) bool {
@@ -156,7 +156,7 @@ func (rp *runicPowerBar) addRunicPowerInterval(sim *Simulation, amount float64, 
 		panic("Trying to add negative runic power!")
 	}
 
-	newRunicPower := MinFloat(rp.currentRunicPower+amount, rp.maxRunicPower)
+	newRunicPower := min(rp.currentRunicPower+amount, rp.maxRunicPower)
 
 	metrics.AddEvent(amount, newRunicPower-rp.currentRunicPower)
 

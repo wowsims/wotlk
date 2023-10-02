@@ -213,7 +213,7 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		ThreatMultiplier: config.ThreatMultiplier,
 		FlatThreatBonus:  config.FlatThreatBonus,
 
-		splitSpellMetrics: make([][]SpellMetrics, MaxInt(1, config.MetricSplits)),
+		splitSpellMetrics: make([][]SpellMetrics, max(1, config.MetricSplits)),
 
 		RelatedAuras: config.RelatedAuras,
 	}

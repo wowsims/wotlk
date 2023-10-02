@@ -11,7 +11,7 @@ import {
 	Debuffs,
 	TristateEffect,
 	Faction,
-	Spec,
+	Spec, Profession,
 } from '../core/proto/common.js';
 import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
 import { Player } from '../core/player.js';
@@ -188,6 +188,8 @@ export const DestroDebuffs = Debuffs.create({
 
 export const OtherDefaults = {
 	distanceFromTarget: 25,
+	profession1: Profession.Engineering,
+	profession2: Profession.Tailoring,
 };
 
 export const SWP_BIS = {

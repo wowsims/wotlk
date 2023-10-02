@@ -150,7 +150,7 @@ func (ai *Anub25HAI) registerLeechingSwarmSpell(target *core.Target) {
 			TickLength:    time.Second,
 
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				baseDamage := core.MaxFloat(0.3*target.CurrentHealth(), 250.)
+				baseDamage := max(0.3*target.CurrentHealth(), 250.)
 				result := dot.Spell.CalcAndDealPeriodicDamage(sim, target, baseDamage, dot.Spell.OutcomeAlwaysHit)
 
 				if ai.Target.CurrentTarget != nil && ai.Target.Env.Raid.Size() == 1 {

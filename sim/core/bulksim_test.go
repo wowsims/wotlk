@@ -4,9 +4,9 @@ import (
 	"context"
 	"testing"
 
-	goproto "github.com/golang/protobuf/proto"
 	"github.com/google/go-cmp/cmp"
 	"github.com/wowsims/wotlk/sim/core/proto"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 const (
@@ -107,7 +107,7 @@ func TestBulkSim(t *testing.T) {
 
 	want := &proto.BulkSimResult{}
 	if diff := cmp.Diff(want, got, cmp.Comparer(func(a, b *proto.BulkSimResult) bool {
-		return goproto.MarshalTextString(a) == goproto.MarshalTextString(b)
+		return protojson.Format(a) == protojson.Format(b)
 	})); diff != "" {
 		t.Fatalf("BulkSim() returned diff (-want +got):\n%s", diff)
 	}

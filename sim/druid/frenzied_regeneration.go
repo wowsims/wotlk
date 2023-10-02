@@ -46,7 +46,7 @@ func (druid *Druid) registerFrenziedRegenerationCD() {
 				NumTicks: 10,
 				Period:   time.Second * 1,
 				OnAction: func(sim *core.Simulation) {
-					rageDumped := core.MinFloat(druid.CurrentRage(), 10.0)
+					rageDumped := min(druid.CurrentRage(), 10.0)
 					healthGained := rageDumped * 0.3 / 100 * druid.MaxHealth() * druid.PseudoStats.HealingTakenMultiplier
 
 					if druid.FrenziedRegenerationAura.IsActive() {

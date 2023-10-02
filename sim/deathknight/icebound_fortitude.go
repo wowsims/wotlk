@@ -22,7 +22,7 @@ func (dk *Deathknight) registerIceboundFortitudeSpell() {
 		Duration: time.Second*12 + time.Second*2*time.Duration(float64(dk.Talents.GuileOfGorefiend)) + dk.scourgebornePlateIFDurationBonus(),
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			def := dk.IceboundFortitudeAura.Unit.GetStat(stats.Defense)
-			dmgTakenMult = 1.0 - core.TernaryFloat64(hasGlyph, core.MaxFloat(0.4, 0.3+0.0015*(def-400)), 0.3+0.0015*(def-400))
+			dmgTakenMult = 1.0 - core.TernaryFloat64(hasGlyph, max(0.4, 0.3+0.0015*(def-400)), 0.3+0.0015*(def-400))
 			dk.IceboundFortitudeAura.Unit.PseudoStats.DamageTakenMultiplier *= dmgTakenMult
 		},
 

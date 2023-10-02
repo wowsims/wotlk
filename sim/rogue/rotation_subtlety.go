@@ -2,9 +2,8 @@ package rogue
 
 import (
 	"log"
+	"slices"
 	"time"
-
-	"golang.org/x/exp/slices"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -116,7 +115,7 @@ func (x *rotation_subtlety) setup(sim *core.Simulation, rogue *Rogue) {
 					return Skip
 				}
 				timeLeft := rogue.ExposeArmorAuras.Get(rogue.CurrentTarget).RemainingDuration(sim)
-				minPoints := core.MaxInt32(1, core.MinInt32(rogue.Rotation.MinimumComboPointsExposeArmor, 5))
+				minPoints := max(1, min(rogue.Rotation.MinimumComboPointsExposeArmor, 5))
 				if rogue.Rotation.ExposeArmorFrequency != proto.Rogue_Rotation_Once {
 					minPoints = 1
 				}

@@ -312,7 +312,7 @@ func (shaman *Shaman) registerChainHealSpell() {
 
 	hasGlyph := shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfChainHeal)
 
-	numHits := core.MinInt32(core.TernaryInt32(hasGlyph, 4, 3), int32(len(shaman.Env.Raid.AllUnits)))
+	numHits := min(core.TernaryInt32(hasGlyph, 4, 3), int32(len(shaman.Env.Raid.AllUnits)))
 
 	bonusHeal := 0 +
 		core.TernaryFloat64(shaman.Ranged().ID == 28523, 87, 0) +

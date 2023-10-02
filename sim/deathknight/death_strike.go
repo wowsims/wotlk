@@ -59,7 +59,7 @@ func (dk *Deathknight) newDeathStrikeSpell(isMH bool) *core.Spell {
 			}
 			baseDamage *= dk.RoRTSBonus(target)
 			if hasGlyph {
-				baseDamage *= 1 + 0.01*core.MinFloat(dk.CurrentRunicPower(), 25)
+				baseDamage *= 1 + 0.01*min(dk.CurrentRunicPower(), 25)
 			}
 
 			result := spell.CalcDamage(sim, target, baseDamage, dk.threatOfThassarianOutcomeApplier(spell))
@@ -116,7 +116,7 @@ func (dk *Deathknight) registerDrwDeathStrikeSpell() {
 			baseDamage := 297 + bonusBaseDamage + dk.DrwWeaponDamage(sim, spell)
 
 			if hasGlyph {
-				baseDamage *= 1 + 0.01*core.MinFloat(dk.CurrentRunicPower(), 25)
+				baseDamage *= 1 + 0.01*min(dk.CurrentRunicPower(), 25)
 			}
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 		},

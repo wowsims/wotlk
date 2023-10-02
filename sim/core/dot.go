@@ -76,7 +76,7 @@ func (dot *Dot) MaxTicksRemaining() int32 {
 func (dot *Dot) NumTicksRemaining(sim *Simulation) int {
 	maxTicksRemaining := dot.MaxTicksRemaining()
 	finalTickAt := dot.lastTickTime + dot.tickPeriod*time.Duration(maxTicksRemaining)
-	return MaxInt(0, int((finalTickAt-sim.CurrentTime)/dot.tickPeriod)+1)
+	return max(0, int((finalTickAt-sim.CurrentTime)/dot.tickPeriod)+1)
 }
 
 // Roll over = gets carried over with everlasting refresh and doesn't get applied if triggered when the spell is already up.

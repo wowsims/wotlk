@@ -2,10 +2,10 @@ package core
 
 import (
 	"math"
+	"slices"
 	"strconv"
 	"time"
 
-	"golang.org/x/exp/slices"
 	googleProto "google.golang.org/protobuf/proto"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -162,7 +162,7 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 		kingsStrStamAmount = 1.1
 	} else if raidBuffs.DrumsOfForgottenKings {
 		kingsAgiIntSpiAmount = 1.08
-		kingsStrStamAmount = MaxFloat(kingsStrStamAmount, 1.08)
+		kingsStrStamAmount = max(kingsStrStamAmount, 1.08)
 	}
 	if kingsStrStamAmount > 0 {
 		character.MultiplyStat(stats.Strength, kingsStrStamAmount)
@@ -379,7 +379,7 @@ func ApplyInspiration(character *Character, uptime float64) {
 	if uptime <= 0 {
 		return
 	}
-	uptime = MinFloat(1, uptime)
+	uptime = min(1, uptime)
 
 	inspirationAura := InspirationAura(&character.Unit, 3)
 
@@ -1307,8 +1307,15 @@ func (raid *Raid) ProcReplenishment(sim *Simulation, src ReplenishmentSource) {
 	}
 
 	eligible := append(raid.curReplenishmentUnits[src], raid.leftoverReplenishmentUnits...)
-	slices.SortFunc(eligible, func(v1, v2 *Unit) bool {
-		return v1.CurrentManaPercent() < v2.CurrentManaPercent()
+	slices.SortFunc(eligible, func(v1, v2 *Unit) int {
+		v1Mana := v1.CurrentManaPercent()
+		v2Mana := v2.CurrentManaPercent()
+		if v1Mana > v2Mana {
+			return 1
+		} else if v2Mana > v1Mana {
+			return -1
+		}
+		return 0
 	})
 	raid.curReplenishmentUnits[src] = eligible[:10]
 	raid.leftoverReplenishmentUnits = eligible[10:]

@@ -2,7 +2,7 @@ package core
 
 import (
 	"fmt"
-	"golang.org/x/exp/slices"
+	"slices"
 )
 
 type ItemSet struct {
@@ -27,8 +27,8 @@ func (set ItemSet) Items() []Item {
 		}
 	}
 	// Sort so the order of IDs is always consistent, for tests.
-	slices.SortFunc(items, func(a, b Item) bool {
-		return a.ID < b.ID
+	slices.SortFunc(items, func(a, b Item) int {
+		return int(a.ID - b.ID)
 	})
 	return items
 }

@@ -275,7 +275,7 @@ func (ai *HodirAI) registerBuffsDebuffs(target *core.Target) {
 				},
 			})
 
-			core.ApplyFixedUptimeAura(aura, core.MinFloat(core.MaxFloat(ai.StarlightUptime, 0.0), 100.0)/100.0, time.Second*15, time.Second*10)
+			core.ApplyFixedUptimeAura(aura, min(max(ai.StarlightUptime, 0.0), 100.0)/100.0, time.Second*15, time.Second*10)
 			ai.Starlight = append(ai.Starlight, aura)
 		}
 	}
@@ -423,7 +423,7 @@ func (ai *HodirAI) DoAction(sim *core.Simulation) {
 			storm2 := storm1
 
 			// Set max possible spreads
-			maxBuffs := core.MinInt(6, sim.Raid.Size()-1)
+			maxBuffs := min(6, sim.Raid.Size()-1)
 
 			// 2 storms on 25m
 			if ai.raidSize == 25 {
@@ -433,7 +433,7 @@ func (ai *HodirAI) DoAction(sim *core.Simulation) {
 				}
 
 				// Set max possible spreads
-				maxBuffs = core.MinInt(12, sim.Raid.Size()-2)
+				maxBuffs = min(12, sim.Raid.Size()-2)
 			}
 
 			// Prio order for storm power

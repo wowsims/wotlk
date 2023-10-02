@@ -147,7 +147,7 @@ func (ghoulPet *GhoulPet) Initialize() {
 
 func (ghoulPet *GhoulPet) Reset(_ *core.Simulation) {
 	if !ghoulPet.IsGuardian() {
-		ghoulPet.uptimePercent = core.MinFloat(1, core.MaxFloat(0, ghoulPet.dkOwner.Inputs.PetUptime))
+		ghoulPet.uptimePercent = min(1, max(0, ghoulPet.dkOwner.Inputs.PetUptime))
 	} else {
 		ghoulPet.uptimePercent = 1.0
 	}

@@ -486,14 +486,14 @@ func (value *APLValueMax) Type() proto.APLValueType {
 func (value *APLValueMax) GetInt(sim *Simulation) int32 {
 	result := value.vals[0].GetInt(sim)
 	for i := 1; i < len(value.vals); i++ {
-		result = MaxInt32(result, value.vals[i].GetInt(sim))
+		result = max(result, value.vals[i].GetInt(sim))
 	}
 	return result
 }
 func (value *APLValueMax) GetFloat(sim *Simulation) float64 {
 	result := value.vals[0].GetFloat(sim)
 	for i := 1; i < len(value.vals); i++ {
-		result = MaxFloat(result, value.vals[i].GetFloat(sim))
+		result = max(result, value.vals[i].GetFloat(sim))
 	}
 	return result
 }
@@ -537,14 +537,14 @@ func (value *APLValueMin) Type() proto.APLValueType {
 func (value *APLValueMin) GetInt(sim *Simulation) int32 {
 	result := value.vals[0].GetInt(sim)
 	for i := 1; i < len(value.vals); i++ {
-		result = MinInt32(result, value.vals[i].GetInt(sim))
+		result = min(result, value.vals[i].GetInt(sim))
 	}
 	return result
 }
 func (value *APLValueMin) GetFloat(sim *Simulation) float64 {
 	result := value.vals[0].GetFloat(sim)
 	for i := 1; i < len(value.vals); i++ {
-		result = MinFloat(result, value.vals[i].GetFloat(sim))
+		result = min(result, value.vals[i].GetFloat(sim))
 	}
 	return result
 }

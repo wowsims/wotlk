@@ -46,7 +46,7 @@ func (fb *focusBar) AddFocus(sim *Simulation, amount float64, actionID ActionID)
 		panic("Trying to add negative focus!")
 	}
 
-	newFocus := MinFloat(fb.currentFocus+amount, MaxFocus)
+	newFocus := min(fb.currentFocus+amount, MaxFocus)
 
 	if sim.Log != nil {
 		fb.unit.Log(sim, "Gained %0.3f focus from %s (%0.3f --> %0.3f).", amount, actionID, fb.currentFocus, newFocus)
@@ -119,7 +119,7 @@ func newFocusCost(spell *Spell, options FocusCostOptions) *FocusCost {
 }
 
 func (fc *FocusCost) MeetsRequirement(spell *Spell) bool {
-	spell.CurCast.Cost = MaxFloat(0, spell.CurCast.Cost*spell.Unit.PseudoStats.CostMultiplier)
+	spell.CurCast.Cost = max(0, spell.CurCast.Cost*spell.Unit.PseudoStats.CostMultiplier)
 	return spell.Unit.CurrentFocus() >= spell.CurCast.Cost
 }
 func (fc *FocusCost) LogCostFailure(sim *Simulation, spell *Spell) {
