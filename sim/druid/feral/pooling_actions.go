@@ -3,8 +3,9 @@ package feral
 import (
 	"time"
 
+	"slices"
+
 	"github.com/wowsims/wotlk/sim/core"
-	"golang.org/x/exp/slices"
 )
 
 type PoolingAction struct {
@@ -25,8 +26,8 @@ func (pa *PoolingActions) addAction(t time.Duration, cost float64) {
 }
 
 func (pa *PoolingActions) sort() {
-	slices.SortStableFunc(pa.actions, func(p1, p2 PoolingAction) bool {
-		return p1.refreshTime < p2.refreshTime
+	slices.SortStableFunc(pa.actions, func(p1, p2 PoolingAction) int {
+		return int(p1.refreshTime - p2.refreshTime)
 	})
 }
 

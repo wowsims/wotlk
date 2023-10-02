@@ -1,9 +1,10 @@
 package core
 
 import (
+	"slices"
+
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
-	"golang.org/x/exp/slices"
 	googleProto "google.golang.org/protobuf/proto"
 )
 
@@ -306,11 +307,11 @@ func (raid *Raid) updatePlayersAndPets() {
 	raid.AllUnits = append(raidPlayers, raidPets...)
 	raid.AllPlayerUnits = raidPlayers
 
-	slices.SortFunc(raid.AllUnits, func(u1, u2 *Unit) bool {
-		return u1.Index < u2.Index
+	slices.SortFunc(raid.AllUnits, func(u1, u2 *Unit) int {
+		return int(u1.Index - u2.Index)
 	})
-	slices.SortFunc(raid.AllPlayerUnits, func(u1, u2 *Unit) bool {
-		return u1.Index < u2.Index
+	slices.SortFunc(raid.AllPlayerUnits, func(u1, u2 *Unit) int {
+		return int(u1.Index - u2.Index)
 	})
 }
 

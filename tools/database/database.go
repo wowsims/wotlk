@@ -3,14 +3,15 @@ package database
 import (
 	"bytes"
 	"fmt"
+	"log"
+	"os"
+	"slices"
+
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/tools"
 	"golang.org/x/exp/maps"
-	"golang.org/x/exp/slices"
 	"google.golang.org/protobuf/encoding/protojson"
 	googleProto "google.golang.org/protobuf/proto"
-	"log"
-	"os"
 )
 
 type EnchantDBKey struct {

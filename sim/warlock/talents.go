@@ -4,10 +4,11 @@ import (
 	"math"
 	"time"
 
+	"slices"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
-	"golang.org/x/exp/slices"
 )
 
 func (warlock *Warlock) ApplyTalents() {

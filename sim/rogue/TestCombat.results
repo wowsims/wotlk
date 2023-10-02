@@ -13,7 +13,7 @@ character_stats_results: {
   final_stats: 221
   final_stats: 0
   final_stats: 5725.0336
-  final_stats: 469.94995
+  final_stats: 469.94994
   final_stats: 2164.78757
   final_stats: 221
   final_stats: 94
@@ -855,43 +855,43 @@ dps_results: {
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Deadly OH Deadly-AOE-FullBuffs-LongMultiTarget"
  value: {
-  dps: 20023.48946
-  tps: 14216.67751
+  dps: 19964.05491
+  tps: 14174.47899
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Deadly OH Deadly-AOE-FullBuffs-LongSingleTarget"
  value: {
-  dps: 3311.29596
-  tps: 2351.02014
+  dps: 3313.44221
+  tps: 2352.54397
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Deadly OH Deadly-AOE-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 3988.93449
-  tps: 2832.14349
+  dps: 3991.92162
+  tps: 2834.26435
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Deadly OH Deadly-AOE-NoBuffs-LongMultiTarget"
  value: {
-  dps: 12269.40945
-  tps: 8711.28071
+  dps: 12262.93674
+  tps: 8706.68509
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Deadly OH Deadly-AOE-NoBuffs-LongSingleTarget"
  value: {
-  dps: 1653.4486
-  tps: 1173.94851
+  dps: 1657.73284
+  tps: 1176.99032
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Deadly OH Deadly-AOE-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 1770.86816
-  tps: 1257.3164
+  dps: 1786.0948
+  tps: 1268.1273
  }
 }
 dps_results: {
@@ -981,43 +981,43 @@ dps_results: {
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Deadly OH Instant-AOE-FullBuffs-LongMultiTarget"
  value: {
-  dps: 22130.42742
-  tps: 15712.60347
+  dps: 22139.84114
+  tps: 15719.28721
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Deadly OH Instant-AOE-FullBuffs-LongSingleTarget"
  value: {
-  dps: 4692.58015
-  tps: 3331.73191
+  dps: 4694.75254
+  tps: 3333.2743
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Deadly OH Instant-AOE-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 5609.15241
-  tps: 3982.49821
+  dps: 5613.52841
+  tps: 3985.60517
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Deadly OH Instant-AOE-NoBuffs-LongMultiTarget"
  value: {
-  dps: 13062.09418
-  tps: 9274.08687
+  dps: 13077.28326
+  tps: 9284.87111
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Deadly OH Instant-AOE-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2346.38591
-  tps: 1665.934
+  dps: 2350.77306
+  tps: 1669.04887
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Deadly OH Instant-AOE-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 2455.88884
-  tps: 1743.68107
+  dps: 2474.16775
+  tps: 1756.6591
  }
 }
 dps_results: {
@@ -1107,43 +1107,43 @@ dps_results: {
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Instant OH Deadly-AOE-FullBuffs-LongMultiTarget"
  value: {
-  dps: 21279.34642
-  tps: 15108.33596
+  dps: 21279.20778
+  tps: 15108.23752
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Instant OH Deadly-AOE-FullBuffs-LongSingleTarget"
  value: {
-  dps: 4511.14058
-  tps: 3202.90981
+  dps: 4514.31481
+  tps: 3205.16352
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Instant OH Deadly-AOE-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 5374.78153
-  tps: 3816.09489
+  dps: 5380.1459
+  tps: 3819.90359
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Instant OH Deadly-AOE-NoBuffs-LongMultiTarget"
  value: {
-  dps: 12560.2658
-  tps: 8917.78872
+  dps: 12560.96205
+  tps: 8918.28306
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Instant OH Deadly-AOE-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2252.5829
-  tps: 1599.33386
+  dps: 2255.63213
+  tps: 1601.49881
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Instant OH Deadly-AOE-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 2355.81564
-  tps: 1672.62911
+  dps: 2375.05866
+  tps: 1686.29165
  }
 }
 dps_results: {
@@ -1233,43 +1233,43 @@ dps_results: {
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Instant OH Instant-AOE-FullBuffs-LongMultiTarget"
  value: {
-  dps: 16166.19865
-  tps: 11478.00104
+  dps: 16158.17339
+  tps: 11472.30311
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Instant OH Instant-AOE-FullBuffs-LongSingleTarget"
  value: {
-  dps: 3872.04985
-  tps: 2749.1554
+  dps: 3876.63835
+  tps: 2752.41323
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Instant OH Instant-AOE-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 4816.58036
-  tps: 3419.77206
+  dps: 4819.89686
+  tps: 3422.12677
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Instant OH Instant-AOE-NoBuffs-LongMultiTarget"
  value: {
-  dps: 9297.6474
-  tps: 6601.32965
+  dps: 9296.74144
+  tps: 6600.68642
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Instant OH Instant-AOE-NoBuffs-LongSingleTarget"
  value: {
-  dps: 1821.90344
-  tps: 1293.55144
+  dps: 1824.59621
+  tps: 1295.46331
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Instant OH Instant-AOE-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 1977.03924
-  tps: 1403.69786
+  dps: 1999.57501
+  tps: 1419.69826
  }
 }
 dps_results: {
@@ -1359,43 +1359,43 @@ dps_results: {
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Deadly OH Deadly-AOE-FullBuffs-LongMultiTarget"
  value: {
-  dps: 20179.94697
-  tps: 14327.76235
+  dps: 20119.69231
+  tps: 14284.98154
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Deadly OH Deadly-AOE-FullBuffs-LongSingleTarget"
  value: {
-  dps: 3336.19505
-  tps: 2368.69849
+  dps: 3338.54903
+  tps: 2370.36981
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Deadly OH Deadly-AOE-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 4048.3415
-  tps: 2874.32246
+  dps: 4051.91785
+  tps: 2876.86168
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Deadly OH Deadly-AOE-NoBuffs-LongMultiTarget"
  value: {
-  dps: 12380.22874
-  tps: 8789.9624
+  dps: 12373.17474
+  tps: 8784.95406
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Deadly OH Deadly-AOE-NoBuffs-LongSingleTarget"
  value: {
-  dps: 1668.198
-  tps: 1184.42058
+  dps: 1672.57957
+  tps: 1187.5315
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Deadly OH Deadly-AOE-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 1803.71716
-  tps: 1280.63918
+  dps: 1819.22597
+  tps: 1291.65044
  }
 }
 dps_results: {
@@ -1485,43 +1485,43 @@ dps_results: {
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Deadly OH Instant-AOE-FullBuffs-LongMultiTarget"
  value: {
-  dps: 22300.84128
-  tps: 15833.59731
+  dps: 22308.9295
+  tps: 15839.33995
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Deadly OH Instant-AOE-FullBuffs-LongSingleTarget"
  value: {
-  dps: 4726.43343
-  tps: 3355.76774
+  dps: 4728.88351
+  tps: 3357.50729
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Deadly OH Instant-AOE-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 5688.59118
-  tps: 4038.89973
+  dps: 5693.32269
+  tps: 4042.25911
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Deadly OH Instant-AOE-NoBuffs-LongMultiTarget"
  value: {
-  dps: 13177.70907
-  tps: 9356.17344
+  dps: 13193.15232
+  tps: 9367.13815
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Deadly OH Instant-AOE-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2365.77374
-  tps: 1679.69936
+  dps: 2370.30152
+  tps: 1682.91408
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Deadly OH Instant-AOE-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 2497.40021
-  tps: 1773.15415
+  dps: 2516.19175
+  tps: 1786.49614
  }
 }
 dps_results: {
@@ -1611,43 +1611,43 @@ dps_results: {
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Instant OH Deadly-AOE-FullBuffs-LongMultiTarget"
  value: {
-  dps: 21443.94106
-  tps: 15225.19815
+  dps: 21443.5905
+  tps: 15224.94926
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Instant OH Deadly-AOE-FullBuffs-LongSingleTarget"
  value: {
-  dps: 4544.11626
-  tps: 3226.32254
+  dps: 4547.54204
+  tps: 3228.75485
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Instant OH Deadly-AOE-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 5450.65815
-  tps: 3869.96728
+  dps: 5456.62501
+  tps: 3874.20376
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Instant OH Deadly-AOE-NoBuffs-LongMultiTarget"
  value: {
-  dps: 12671.92334
-  tps: 8997.06557
+  dps: 12672.1339
+  tps: 8997.21507
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Instant OH Deadly-AOE-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2271.72422
-  tps: 1612.9242
+  dps: 2274.84635
+  tps: 1615.14091
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Instant OH Deadly-AOE-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 2396.29409
-  tps: 1701.3688
+  dps: 2415.79647
+  tps: 1715.2155
  }
 }
 dps_results: {
@@ -1737,43 +1737,43 @@ dps_results: {
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Instant OH Instant-AOE-FullBuffs-LongMultiTarget"
  value: {
-  dps: 16307.99693
-  tps: 11578.67782
+  dps: 16299.50983
+  tps: 11572.65198
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Instant OH Instant-AOE-FullBuffs-LongSingleTarget"
  value: {
-  dps: 3901.46098
-  tps: 2770.0373
+  dps: 3906.51958
+  tps: 2773.6289
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Instant OH Instant-AOE-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 4888.5034
-  tps: 3470.83741
+  dps: 4892.63062
+  tps: 3473.76774
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Instant OH Instant-AOE-NoBuffs-LongMultiTarget"
  value: {
-  dps: 9390.87132
-  tps: 6667.51864
+  dps: 9389.79206
+  tps: 6666.75236
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Instant OH Instant-AOE-NoBuffs-LongSingleTarget"
  value: {
-  dps: 1838.10713
-  tps: 1305.05606
+  dps: 1840.97993
+  tps: 1307.09575
  }
 }
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Instant OH Instant-AOE-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 2014.00894
-  tps: 1429.94635
+  dps: 2037.11544
+  tps: 1446.35196
  }
 }
 dps_results: {

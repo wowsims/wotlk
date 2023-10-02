@@ -2,10 +2,11 @@ package core
 
 import (
 	"fmt"
+	"slices"
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
-	"golang.org/x/exp/slices"
-	"time"
 )
 
 // Extension of Agent interface, for Pets.

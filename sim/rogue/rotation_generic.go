@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"golang.org/x/exp/slices"
+	"slices"
 
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"

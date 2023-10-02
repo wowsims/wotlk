@@ -414,7 +414,7 @@ dps_results: {
  key: "TestFury-AllItems-GnomishLightningGenerator-41121"
  value: {
   dps: 6680.09296
-  tps: 4938.37639
+  tps: 4938.4211
  }
 }
 dps_results: {

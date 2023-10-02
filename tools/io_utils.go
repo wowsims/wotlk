@@ -16,8 +16,9 @@ import (
 	"sync"
 	"time"
 
+	"slices"
+
 	"github.com/wowsims/wotlk/sim/core"
-	"golang.org/x/exp/slices"
 	protojson "google.golang.org/protobuf/encoding/protojson"
 	googleProto "google.golang.org/protobuf/proto"
 )
@@ -87,7 +88,7 @@ func WriteFileLines(filePath string, lines []string) {
 }
 
 func WriteMapSortByIntKey(filePath string, contents map[string]string) {
-	WriteMapCustomSort(filePath, contents, func(a, b string) bool {
+	WriteMapCustomSort(filePath, contents, func(a, b string) int {
 		intA, err1 := strconv.Atoi(a)
 		intB, err2 := strconv.Atoi(b)
 		if err1 != nil {
@@ -96,10 +97,10 @@ func WriteMapSortByIntKey(filePath string, contents map[string]string) {
 		if err2 != nil {
 			panic(err2)
 		}
-		return intA < intB
+		return intA - intB
 	})
 }
-func WriteMapCustomSort(filePath string, contents map[string]string, sortFunc func(a, b string) bool) {
+func WriteMapCustomSort(filePath string, contents map[string]string, sortFunc func(a, b string) int) {
 	type Elem struct {
 		key string
 		val string
@@ -113,7 +114,7 @@ func WriteMapCustomSort(filePath string, contents map[string]string, sortFunc fu
 	}
 
 	// Sort so the output is stable.
-	slices.SortStableFunc(elems, func(a, b Elem) bool {
+	slices.SortStableFunc(elems, func(a, b Elem) int {
 		return sortFunc(a.key, b.key)
 	})
 

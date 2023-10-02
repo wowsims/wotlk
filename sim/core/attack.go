@@ -1,9 +1,8 @@
 package core
 
 import (
+	"slices"
 	"time"
-
-	"golang.org/x/exp/slices"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
