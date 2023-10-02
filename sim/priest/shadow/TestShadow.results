@@ -666,7 +666,7 @@ dps_results: {
  key: "TestShadow-AllItems-SparkofLife-37657"
  value: {
   dps: 7086.56572
-  tps: 7009.01372
+  tps: 7009.01865
  }
 }
 dps_results: {

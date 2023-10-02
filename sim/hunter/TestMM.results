@@ -111,8 +111,8 @@ dps_results: {
 dps_results: {
  key: "TestMM-AllItems-Beast-tamer'sShoulders-30892"
  value: {
-  dps: 7108.79088
-  tps: 6196.65079
+  dps: 7108.76757
+  tps: 6196.62748
  }
 }
 dps_results: {
@@ -427,8 +427,8 @@ dps_results: {
 dps_results: {
  key: "TestMM-AllItems-Gronnstalker'sArmor"
  value: {
-  dps: 5571.67926
-  tps: 4823.16176
+  dps: 5571.67248
+  tps: 4823.15498
  }
 }
 dps_results: {
@@ -785,8 +785,8 @@ dps_results: {
 dps_results: {
  key: "TestMM-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 7166.42355
-  tps: 6247.82078
+  dps: 7166.37252
+  tps: 6247.76975
  }
 }
 dps_results: {
@@ -883,8 +883,8 @@ dps_results: {
 dps_results: {
  key: "TestMM-Average-Default"
  value: {
-  dps: 7285.50689
-  tps: 6369.64584
+  dps: 7285.50562
+  tps: 6369.64457
  }
 }
 dps_results: {

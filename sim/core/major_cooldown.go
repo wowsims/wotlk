@@ -508,11 +508,15 @@ func (mcdm *majorCooldownManager) UpdateMajorCooldowns() {
 
 func (mcdm *majorCooldownManager) sort() {
 	slices.SortStableFunc(mcdm.majorCooldowns, func(m1, m2 *MajorCooldown) int {
-		// Since we're just comparing and don't actually care about the remaining CD, ok to use 0 instead of sim.CurrentTime.
-		if m1.ReadyAt() != m2.ReadyAt() {
-			return int(m1.ReadyAt() - m2.ReadyAt())
+		m1r := m1.ReadyAt()
+		m2r := m2.ReadyAt()
+		if m1r != m2r {
+			return int(m1r - m2r)
 		}
-		return int(m1.Priority - m2.Priority)
+		if m1.Priority > m2.Priority {
+			return -1
+		}
+		return 1
 	})
 }
 
