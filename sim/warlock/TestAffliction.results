@@ -756,8 +756,8 @@ dps_results: {
 dps_results: {
  key: "TestAffliction-Settings-Orc-P3-AffItemSwap--FullBuffs-ShortSingleTarget"
  value: {
-  dps: 12745.64043
-  tps: 11577.89304
+  dps: 12744.95769
+  tps: 11577.47449
  }
 }
 dps_results: {
@@ -798,8 +798,8 @@ dps_results: {
 dps_results: {
  key: "TestAffliction-Settings-Orc-P3-Affliction Warlock--FullBuffs-ShortSingleTarget"
  value: {
-  dps: 12850.02367
-  tps: 11691.84173
+  dps: 12848.8498
+  tps: 11691.14478
  }
 }
 dps_results: {

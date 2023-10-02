@@ -22,26 +22,26 @@ func (warlock *Warlock) setupCooldowns(sim *core.Simulation) {
 	}
 
 	// TODO: find a way of getting the duration directly from the spell instead
-	durMap := make(map[int32]time.Duration)
+	durMap := make(map[core.ActionID]time.Duration)
 	if warlock.MetamorphosisAura != nil {
-		durMap[47241] = warlock.MetamorphosisAura.Duration
+		durMap[core.ActionID{SpellID: 47241}] = warlock.MetamorphosisAura.Duration
 	}
-	durMap[33697] = 15 * time.Second
-	durMap[54758] = 12 * time.Second
-	durMap[10060] = 15 * time.Second
-	durMap[40211] = 15 * time.Second
-	durMap[40212] = 15 * time.Second
-	durMap[45466] = 20 * time.Second
-	durMap[45148] = 20 * time.Second
-	durMap[37873] = 20 * time.Second
+	durMap[core.ActionID{SpellID: 33697}] = 15 * time.Second
+	durMap[core.ActionID{SpellID: 54758}] = 12 * time.Second
+	durMap[core.ActionID{SpellID: 10060}.WithTag(-1)] = 15 * time.Second
+	durMap[core.ActionID{ItemID: 40211}] = 15 * time.Second
+	durMap[core.ActionID{ItemID: 40212}] = 15 * time.Second
+	durMap[core.ActionID{ItemID: 45466}] = 20 * time.Second
+	durMap[core.ActionID{ItemID: 45148}] = 20 * time.Second
+	durMap[core.ActionID{ItemID: 37873}] = 20 * time.Second
 
-	ignoredCDs := make(map[int32]struct{})
-	ignoredCDs[42641] = struct{}{}                          // sapper
-	ignoredCDs[41119] = struct{}{}                          // saronite bomb
-	ignoredCDs[40536] = struct{}{}                          // explosive decoy
-	ignoredCDs[core.BloodlustActionID.SpellID] = struct{}{} // don't mess with BL
+	ignoredCDs := make(map[core.ActionID]struct{})
+	ignoredCDs[core.ActionID{ItemID: 42641}] = struct{}{}       // sapper
+	ignoredCDs[core.ActionID{ItemID: 41119}] = struct{}{}       // saronite bomb
+	ignoredCDs[core.ActionID{ItemID: 40536}] = struct{}{}       // explosive decoy
+	ignoredCDs[core.BloodlustActionID.WithTag(-1)] = struct{}{} // don't mess with BL
 	if warlock.Inferno != nil {
-		ignoredCDs[warlock.Inferno.ActionID.SpellID] = struct{}{}
+		ignoredCDs[warlock.Inferno.ActionID] = struct{}{}
 	}
 
 	var executeActive func() bool
@@ -61,12 +61,12 @@ func (warlock *Warlock) setupCooldowns(sim *core.Simulation) {
 	lustCD := warlock.GetMajorCooldownIgnoreTag(core.BloodlustActionID)
 
 	for _, cd := range warlock.GetMajorCooldowns() {
-		if _, ignored := ignoredCDs[cd.Spell.ActionID.SpellID]; ignored {
+		if _, ignored := ignoredCDs[cd.Spell.ActionID]; ignored {
 			continue
 		}
 
 		spellCD := core.MaxDuration(cd.Spell.CD.Duration, cd.Spell.SharedCD.Duration)
-		runTime := time.Duration(float64(durMap[cd.Spell.ActionID.SpellID]) * 0.75)
+		runTime := time.Duration(float64(durMap[cd.Spell.ActionID]) * 0.75)
 		spell := cd.Spell
 
 		cd.ShouldActivate = func(sim *core.Simulation, character *core.Character) bool {
