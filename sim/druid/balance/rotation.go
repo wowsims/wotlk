@@ -78,7 +78,7 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*druid.DruidSpell, 
 		return moonkin.Hurricane, target
 	}
 
-	shouldHoldIs := core.Ternary(moonkin.MoonkinT84PCAura == nil, lunarIsActive, lunarIsActive && moonkin.HasActiveAuraWithTag(core.BloodlustAuraTag))
+	shouldHoldIs := core.Ternary(moonkin.MoonkinT84PCAura == nil, lunarIsActive, lunarIsActive && moonkin.HasActiveAura("Bloodlust-"+core.BloodlustActionID.WithTag(-1).String()))
 
 	// Max IS uptime
 	if rotation.IsUsage == proto.BalanceDruid_Rotation_OptimizeIs && !shouldHoldIs {
@@ -146,7 +146,7 @@ func (moonkin *BalanceDruid) rotation(sim *core.Simulation) (*druid.DruidSpell, 
 					moonkin.castMajorCooldown(moonkin.hyperSpeedMCD, sim, target)
 					moonkin.castMajorCooldown(moonkin.potionSpeedMCD, sim, target)
 					moonkin.useTrinkets(stats.SpellHaste, sim, target)
-					if !moonkin.HasActiveAuraWithTag(core.BloodlustAuraTag) {
+					if !moonkin.HasActiveAura("Bloodlust-" + core.BloodlustActionID.WithTag(-1).String()) {
 						moonkin.castMajorCooldown(moonkin.powerInfusion, sim, target)
 					}
 				}

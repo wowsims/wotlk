@@ -46,7 +46,7 @@ func (shaman *Shaman) registerBloodlustCD() {
 			// major CD ordering issues with the shared bloodlust.
 			for _, party := range shaman.Env.Raid.Parties {
 				for _, partyMember := range party.Players {
-					if partyMember.GetCharacter().HasActiveAuraWithTag(core.BloodlustAuraTag) {
+					if partyMember.GetCharacter().HasActiveAura("Bloodlust-" + core.BloodlustActionID.WithTag(-1).String()) {
 						return false
 					}
 				}
