@@ -445,7 +445,10 @@ export function booleanFieldConfig(field: string, label?:string, options?: Parti
 	return {
 		field: field,
 		newValue: () => false,
-		factory: (parent, player, config) => new BooleanPicker(parent, player, config),
+		factory: (parent, player, config) => {
+			config.extraCssClasses = ['input-inline'].concat(config.extraCssClasses || []);
+			return new BooleanPicker(parent, player, config);
+		},
 		...(options || {}),
 		label: label,
 	};
@@ -455,7 +458,10 @@ export function numberFieldConfig(field: string, options?: Partial<APLPickerBuil
 	return {
 		field: field,
 		newValue: () => 0,
-		factory: (parent, player, config) => new NumberPicker(parent, player, config),
+		factory: (parent, player, config) => {
+			config.extraCssClasses = ['input-inline'].concat(config.extraCssClasses || []);
+			return new NumberPicker(parent, player, config);
+		},
 		...(options || {}),
 	};
 }

@@ -20,8 +20,8 @@ type APLRotation struct {
 	// Will be nil when there is no active channel.
 	interruptChannelIf APLValue
 
-	// Max ticks for the current channel, or 0 for no maximum.
-	channelMaxTicks int32
+	// If true, can recast channel when interrupted.
+	allowChannelRecastOnInterrupt bool
 
 	// Used inside of actions/value to determine whether they will occur during the prepull or regular rotation.
 	parsingPrepull bool
@@ -153,7 +153,7 @@ func (rot *APLRotation) reset(sim *Simulation) {
 	rot.controllingAction = nil
 	rot.inLoop = false
 	rot.interruptChannelIf = nil
-	rot.channelMaxTicks = 0
+	rot.allowChannelRecastOnInterrupt = false
 	for _, action := range rot.allAPLActions() {
 		action.impl.Reset(sim)
 	}
@@ -218,10 +218,6 @@ func (apl *APLRotation) shouldInterruptChannel(sim *Simulation) bool {
 		return false
 	}
 
-	if apl.channelMaxTicks != 0 && channeledDot.TickCount >= apl.channelMaxTicks {
-		return true
-	}
-
 	if apl.interruptChannelIf == nil || !apl.interruptChannelIf.GetBool(sim) {
 		// Continue the channel.
 		return false
@@ -232,9 +228,10 @@ func (apl *APLRotation) shouldInterruptChannel(sim *Simulation) bool {
 	if nextAction == nil {
 		return false
 	}
+
 	if channelAction, ok := nextAction.impl.(*APLActionChannelSpell); ok && channelAction.spell == channeledDot.Spell {
-		// Newly selected action is channeling the same spell, so continue the channel.
-		return false
+		// Newly selected action is channeling the same spell, so continue the channel unless recast is allowed.
+		return apl.allowChannelRecastOnInterrupt
 	}
 
 	return true

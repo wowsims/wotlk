@@ -386,9 +386,8 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 				label: 'Interrupt If',
 				labelTooltip: 'Condition which must be true to allow the channel to be interrupted.',
 			}),
-			AplValues.valueFieldConfig('maxTicks', {
-				label: 'Max Ticks',
-				labelTooltip: 'Maximum number of ticks to use for the channel, evaluated when casting begins. <b>None</b> or <b>0</b> will allow the full duration.',
+			AplHelpers.booleanFieldConfig('allowRecast', 'Recast', {
+				labelTooltip: 'If checked, interrupts of this channel will recast the spell.',
 			}),
 		],
 	}),
