@@ -215,8 +215,9 @@ func (cat *FeralDruid) calcBuilderDpe(sim *core.Simulation) (float64, float64) {
 	// Calculate current damage-per-Energy of Rake vs. Shred. Used to
 	// determine whether Rake is worth casting when player stats change upon a
 	// dynamic proc occurring
-	shredDpc := cat.Shred.ExpectedDamage(sim, cat.CurrentTarget)
-	rakeDpc := cat.Rake.ExpectedDamage(sim, cat.CurrentTarget)
+	shredDpc := cat.Shred.ExpectedInitialDamage(sim, cat.CurrentTarget)
+	potentialRakeTicks := min(cat.Rake.CurDot().NumberOfTicks, int32(sim.GetRemainingDuration()/time.Second*3))
+	rakeDpc := cat.Rake.ExpectedInitialDamage(sim, cat.CurrentTarget) + cat.Rake.ExpectedTickDamage(sim, cat.CurrentTarget)*float64(potentialRakeTicks)
 	return rakeDpc / cat.Rake.DefaultCast.Cost, shredDpc / cat.Shred.DefaultCast.Cost
 }
 

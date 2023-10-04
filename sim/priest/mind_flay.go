@@ -146,9 +146,8 @@ func (priest *Priest) newMindFlaySpell(numTicksIdx int32) *core.Spell {
 			}
 			spell.DealOutcome(sim, result)
 		},
-		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
+		ExpectedTickDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
 			baseDamage := 588.0/3 + miseryCoeff*spell.SpellPower()
-			baseDamage *= float64(numTicks)
 
 			if priest.Talents.Shadowform {
 				return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicCrit)
