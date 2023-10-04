@@ -4,6 +4,7 @@ FROM golang:1.21
 
 WORKDIR /wotlk
 COPY . .
+COPY gitconfig /etc/gitconfig
 
 RUN apt-get update
 RUN apt-get install -y protobuf-compiler

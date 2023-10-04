@@ -48,7 +48,8 @@ type SpellConfig struct {
 	ApplyEffects ApplySpellResults
 
 	// Optional field. Calculates expected average damage.
-	ExpectedDamage ExpectedDamageCalculator
+	ExpectedInitialDamage ExpectedDamageCalculator
+	ExpectedTickDamage    ExpectedDamageCalculator
 
 	Dot    DotConfig
 	Hot    DotConfig
@@ -98,7 +99,8 @@ type Spell struct {
 	ApplyEffects ApplySpellResults
 
 	// Optional field. Calculates expected average damage.
-	expectedDamageInternal ExpectedDamageCalculator
+	expectedInitialDamageInternal ExpectedDamageCalculator
+	expectedTickDamageInternal    ExpectedDamageCalculator
 
 	// The current or most recent cast data.
 	CurCast Cast
@@ -163,7 +165,6 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 
 	if unit.IsUsingAPL {
 		config.Cast.DefaultCast.ChannelTime = 0
-		config.Cast.DefaultCast.AfterCastDelay = 0
 	}
 
 	if (config.DamageMultiplier != 0 || config.ThreatMultiplier != 0) && config.ProcMask == ProcMaskUnknown {
@@ -197,7 +198,8 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 
 		ApplyEffects: config.ApplyEffects,
 
-		expectedDamageInternal: config.ExpectedDamage,
+		expectedInitialDamageInternal: config.ExpectedInitialDamage,
+		expectedTickDamageInternal:    config.ExpectedTickDamage,
 
 		BonusHitRating:           config.BonusHitRating,
 		BonusCritRating:          config.BonusCritRating,
@@ -535,21 +537,28 @@ func (spell *Spell) ApplyAOEThreat(threatAmount float64) {
 	spell.ApplyAOEThreatIgnoreMultipliers(threatAmount * spell.Unit.PseudoStats.ThreatMultiplier)
 }
 
-func (spell *Spell) expectedDamageHelper(sim *Simulation, target *Unit, useSnapshot bool) float64 {
-	result := spell.expectedDamageInternal(sim, target, spell, useSnapshot)
+func (spell *Spell) finalizeExpectedDamage(result *SpellResult) {
 	if !spell.SpellSchool.Matches(SpellSchoolPhysical) {
 		result.Damage /= result.ResistanceMultiplier
 		result.Damage *= AverageMagicPartialResistMultiplier
 		result.ResistanceMultiplier = AverageMagicPartialResistMultiplier
 	}
 	result.inUse = false
+}
+func (spell *Spell) ExpectedInitialDamage(sim *Simulation, target *Unit) float64 {
+	result := spell.expectedInitialDamageInternal(sim, target, spell, false)
+	spell.finalizeExpectedDamage(result)
 	return result.Damage
 }
-func (spell *Spell) ExpectedDamage(sim *Simulation, target *Unit) float64 {
-	return spell.expectedDamageHelper(sim, target, false)
+func (spell *Spell) ExpectedTickDamage(sim *Simulation, target *Unit) float64 {
+	result := spell.expectedTickDamageInternal(sim, target, spell, false)
+	spell.finalizeExpectedDamage(result)
+	return result.Damage
 }
-func (spell *Spell) ExpectedDamageFromCurrentSnapshot(sim *Simulation, target *Unit) float64 {
-	return spell.expectedDamageHelper(sim, target, true)
+func (spell *Spell) ExpectedTickDamageFromCurrentSnapshot(sim *Simulation, target *Unit) float64 {
+	result := spell.expectedTickDamageInternal(sim, target, spell, true)
+	spell.finalizeExpectedDamage(result)
+	return result.Damage
 }
 
 // Time until either the cast is finished or GCD is ready again, whichever is longer

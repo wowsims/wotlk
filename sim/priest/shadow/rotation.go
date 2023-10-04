@@ -196,11 +196,11 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 		if spriest.T8FourSetBonus { //include benefit of 240 haste rating for 4 seconds. This isnt perfect because 1.6 dps per haste is an average and varies throughout the fight
 			impDamage = 1.6 * 240 * 4
 		}
-		mbDamage = spriest.MindBlast.ExpectedDamage(sim, spriest.CurrentTarget) + float64(impDamage)
+		mbDamage = spriest.MindBlast.ExpectedInitialDamage(sim, spriest.CurrentTarget) + float64(impDamage)
 	}
 
 	// DP dmg
-	dpTickDamage := spriest.DevouringPlague.ExpectedDamage(sim, spriest.CurrentTarget)
+	dpTickDamage := spriest.DevouringPlague.ExpectedTickDamage(sim, spriest.CurrentTarget)
 	dpInit := dpTickDamage * spriest.DpInitMultiplier
 	dpDot := dpTickDamage * num_DP_ticks
 	dpDamage = dpInit + dpDot
@@ -220,7 +220,7 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 		dpDamage = 0
 	}
 
-	vtDamage = spriest.VampiricTouch.ExpectedDamage(sim, spriest.CurrentTarget) * num_VT_ticks
+	vtDamage = spriest.VampiricTouch.ExpectedTickDamage(sim, spriest.CurrentTarget) * num_VT_ticks
 
 	// If there is at least 2 VT ticks then it's worth using
 	if timeUntilBLStarts > gcd.Seconds() && numVTbeforeBL < 2 && sim.CurrentTime.Seconds() < float64(spriest.BLUsedAt) {
@@ -230,11 +230,11 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 	// SWD dmg
 	swdDamage = 0
 	if spriest.options.UseShadowWordDeath {
-		swdDamage = spriest.ShadowWordDeath.ExpectedDamage(sim, spriest.CurrentTarget)
+		swdDamage = spriest.ShadowWordDeath.ExpectedInitialDamage(sim, spriest.CurrentTarget)
 	}
 
-	mfDamage = spriest.MindFlay[3].ExpectedDamage(sim, spriest.CurrentTarget)
-	swpTickDamage := spriest.ShadowWordPain.ExpectedDamage(sim, spriest.CurrentTarget)
+	mfDamage = spriest.MindFlay[3].ExpectedTickDamage(sim, spriest.CurrentTarget) * 3
+	swpTickDamage := spriest.ShadowWordPain.ExpectedTickDamage(sim, spriest.CurrentTarget)
 
 	//if spriest.rotation.RotationType == 4 {
 	//	msDamage = spriest.MindSear[5].ExpectedDamage(sim, spriest.CurrentTarget)
@@ -264,7 +264,7 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 		currDotTickSpeed = spriest.DevouringPlague.CurDot().TickPeriod().Seconds()
 		nextTickWait = spriest.DevouringPlague.CurDot().TimeUntilNextTick(sim)
 
-		dpDotCurr := spriest.DevouringPlague.ExpectedDamageFromCurrentSnapshot(sim, spriest.CurrentTarget)
+		dpDotCurr := spriest.DevouringPlague.ExpectedTickDamageFromCurrentSnapshot(sim, spriest.CurrentTarget)
 		dpInitCurr := dpDotCurr * spriest.DpInitMultiplier
 
 		cdDamage := mbDamage

@@ -96,18 +96,15 @@ func (priest *Priest) newMindFlaySpell(numTicksIdx int32) *core.Spell {
 				ChannelTime: channelTime,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				if spell.Unit.IsUsingAPL {
+				if spell.Unit.IsUsingAPL || priest.Latency == 0 {
 					return
 				}
-				// if our channel is longer than GCD it will have human latency to end it beause you can't queue the next spell.
-				wait := priest.ApplyCastSpeed(channelTime)
-				gcd := max(core.GCDMin, priest.ApplyCastSpeed(core.GCDDefault))
-				if wait > gcd && priest.Latency > 0 {
-					base := priest.Latency * 0.67
-					variation := base + sim.RandomFloat("spriest latency")*base // should vary from 0.66 - 1.33 of given latency
-					cast.AfterCastDelay += time.Duration(variation) * time.Millisecond
+				// if our channel is longer than GCD it will have human latency to end it because you can't queue the next spell.
+				if float64(channelTime)*priest.CastSpeed > float64(core.GCDMin) {
+					variation := priest.Latency * (0.66 + sim.RandomFloat("spriest latency")*(1.33-0.66)) // should vary from 0.66 - 1.33 of given latency
+					cast.ChannelTime += time.Duration(variation / priest.CastSpeed * float64(time.Millisecond))
 					if sim.Log != nil {
-						priest.Log(sim, "Latency: %0.02f, AfterCastDelay: %s", priest.Latency, cast.AfterCastDelay)
+						priest.Log(sim, "Latency: %.3f, Applied Latency: %.3f", priest.Latency, variation)
 					}
 				}
 			},
@@ -146,9 +143,8 @@ func (priest *Priest) newMindFlaySpell(numTicksIdx int32) *core.Spell {
 			}
 			spell.DealOutcome(sim, result)
 		},
-		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
+		ExpectedTickDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
 			baseDamage := 588.0/3 + miseryCoeff*spell.SpellPower()
-			baseDamage *= float64(numTicks)
 
 			if priest.Talents.Shadowform {
 				return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicCrit)

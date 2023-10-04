@@ -501,6 +501,11 @@ func (aa *AutoAttacks) TrySwingMH(sim *Simulation, target *Unit) {
 		return
 	}
 
+	if aa.unit.IsUsingAPL {
+		// Need to check APL here to allow last-moment HS queue casts.
+		aa.unit.Rotation.DoNextAction(sim)
+	}
+
 	attackSpell := aa.MaybeReplaceMHSwing(sim, aa.MHAuto)
 
 	attackSpell.Cast(sim, target)

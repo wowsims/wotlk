@@ -47,7 +47,7 @@ func (warlock *Warlock) registerMetamorphosisSpell() {
 			}
 			MetamorphosisNumber := (float64(sim.Duration) + float64(warlock.MetamorphosisAura.Duration)) / float64(warlock.Metamorphosis.CD.Duration)
 			if MetamorphosisNumber < 1 {
-				return character.HasActiveAuraWithTag(core.BloodlustAuraTag) || sim.IsExecutePhase35()
+				return warlock.HasActiveAura("Bloodlust-"+core.BloodlustActionID.WithTag(-1).String()) || sim.IsExecutePhase35()
 			}
 
 			return true

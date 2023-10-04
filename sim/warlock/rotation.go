@@ -349,10 +349,10 @@ func (warlock *Warlock) defineRotation() {
 
 				// check if reapplying corruption is worthwhile
 				relDmgInc := warlock.calcRelativeCorruptionInc(target)
-				snapshotDmg := warlock.Corruption.ExpectedDamageFromCurrentSnapshot(sim, target)
+				snapshotDmg := warlock.Corruption.ExpectedTickDamageFromCurrentSnapshot(sim, target)
 				snapshotDmg *= float64(sim.GetRemainingDuration()) / float64(warlock.Corruption.Dot(target).TickPeriod())
 				snapshotDmg *= (relDmgInc - 1)
-				snapshotDmg -= warlock.Corruption.ExpectedDamageFromCurrentSnapshot(sim, target)
+				snapshotDmg -= warlock.Corruption.ExpectedTickDamageFromCurrentSnapshot(sim, target)
 
 				logInfo(sim, "Relative Corruption Inc: [%.2f], expected dmg gain: [%.2f]", relDmgInc, snapshotDmg)
 
@@ -541,8 +541,8 @@ func (warlock *Warlock) defineRotation() {
 				return ACLCast, mainTarget
 			}
 
-			snapshotDmg := warlock.DrainSoul.ExpectedDamageFromCurrentSnapshot(sim, mainTarget) * float64(ticksLeft)
-			recastDmg := warlock.DrainSoul.ExpectedDamage(sim, mainTarget) * float64(recastTicks)
+			snapshotDmg := warlock.DrainSoul.ExpectedTickDamageFromCurrentSnapshot(sim, mainTarget) * float64(ticksLeft)
+			recastDmg := warlock.DrainSoul.ExpectedTickDamage(sim, mainTarget) * float64(recastTicks)
 			snapshotDPS := snapshotDmg / (float64(ticksLeft) * dsDot.TickPeriod().Seconds())
 			recastDps := recastDmg / (float64(recastTicks)*warlock.ApplyCastSpeed(dsDot.TickLength).Seconds() +
 				humanReactionTime.Seconds())

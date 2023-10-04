@@ -85,9 +85,8 @@ func (priest *Priest) newMindSearSpell(numTicksIdx int32) *core.Spell {
 				}
 			}
 		},
-		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
+		ExpectedTickDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
 			baseDamage := sim.Roll(212, 228) + miseryCoeff*spell.SpellPower()
-			baseDamage *= float64(numTicks)
 			return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicCrit)
 		},
 	})
