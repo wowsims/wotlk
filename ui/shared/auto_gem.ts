@@ -372,8 +372,6 @@ const findSocketsByColor = (player: Player<AutoGemSpec>, gear: Gear, epWeights: 
 
 /**
  * Determine if player is trying to reach hard cap
- * @remarks
- * Used for Feral sim only
  */
 const detectArpStackConfiguration = (player: Player<Spec.SpecFeralDruid>, arpCap: number, arpTarget: number): boolean => {
   const currentArp = Stats.fromProto(player.getCurrentStats().finalStats).getStat(Stat.StatArmorPenetration);
