@@ -52,6 +52,11 @@ const calcArpCap = (arpTarget: number, player: Player<AutoGemSpec>): Stats => {
 const calcArpTarget = (gear: Gear): Stats => {
   let arpCap = 1399;
 
+  // Needle-Encrusted Scorpion
+  if (gear.hasTrinket(50198)) {
+    arpCap -= 678;
+  }
+
   // Mjolnir Runestone
   if (gear.hasTrinket(45931)) {
     arpCap -= 751;
@@ -444,7 +449,15 @@ export const optimizeGems = async (sim: Sim, player: Player<AutoGemSpec>) => {
   const redSockets = findSocketsByColor(player, optimizedGear, epWeights, GemColor.GemColorRed, tearSlot);
   // Rank order red gems to use with their associated stat caps
   const redGemCaps = new Array<[number, Stats]>();
-  redGemCaps.push([GemsByStats.Arp, arpCap]);
+
+  if (
+    player.spec === Spec.SpecFeralDruid ||
+    player.spec === Spec.SpecWarrior ||
+    (Spec.SpecHunter && player.getTalentTree() === 1)
+  ) {
+    redGemCaps.push([GemsByStats.Arp, arpCap]);
+  }
+
   if (enableExpertiseGemming) {
     redGemCaps.push([GemsByStats.Exp, expCap]);
   }
@@ -516,8 +529,8 @@ export const optimizeGems = async (sim: Sim, player: Player<AutoGemSpec>) => {
       yellowGemCaps.push([GemsByStats.Agi_Hit, hitCap]);
 
       // Allow for socketing ArP gems in weaker yellow sockets after capping Hit
-      // when ArP stacking is detected
-      if (detectArpStackConfiguration(player, arpCap.getStat(Stat.StatArmorPenetration), arpTarget)) {
+      // when ArP stacking is detected and spec is Marksman
+      if (player.getTalentTree() === 1 && detectArpStackConfiguration(player, arpCap.getStat(Stat.StatArmorPenetration), arpTarget)) {
         sortYellowSockets(optimizedGear, yellowSockets, epWeights, tearSlot);
         yellowGemCaps.push([GemsByStats.Arp, arpCap]);
       }
