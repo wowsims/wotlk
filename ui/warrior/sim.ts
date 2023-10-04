@@ -184,7 +184,7 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 	}
 	addOptimizeGemsAction() {
 		this.addAction('Suggest Gems', 'optimize-gems-action', async () => {
-			optimizeGems(this.sim, this.player);
+			await optimizeGems(this.sim, this.player);
 		});
 	}
 }

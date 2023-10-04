@@ -164,7 +164,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 
 	addOptimizeGemsAction() {
 		this.addAction('Suggest Gems', 'optimize-gems-action', async () => {
-			optimizeGems(this.sim, this.player);
+			await optimizeGems(this.sim, this.player);
 		});
 	}
 }

@@ -195,11 +195,16 @@ const optimizeJewelCraftingGems = (sim: Sim, player: Player<AutoGemSpec>, gear: 
         break;
     }
 
-
-    if (i < optimalJcArpGems) {
-      gemId = 42153; // ArP
-    } else if ((player.spec === Spec.SpecFeralDruid) && isBelowCritCap) {
-      gemId = 42143; // Below crit swap to Agi
+    if (
+      Spec.SpecWarrior ||
+      Spec.SpecFeralDruid ||
+      Spec.SpecHunter && player.getTalentTree() === 1
+    ) {
+      if (i < optimalJcArpGems) {
+        gemId = 42153; // ArP
+      } else if ((player.spec === Spec.SpecFeralDruid) && isBelowCritCap) {
+        gemId = 42143; // Below crit swap to Agi
+      }
     }
 
     if (gemId) updatedGear = updatedGear.withGem(redSocketList[i][0], redSocketList[i][1], sim.db.lookupGem(gemId));
