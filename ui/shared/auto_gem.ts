@@ -181,10 +181,13 @@ const optimizeJewelCraftingGems = (sim: Sim, player: Player<AutoGemSpec>, gear: 
     switch (player.spec) {
       case Spec.SpecHunter:
         gemId = 42143 // Agi by default
+        break;
       case Spec.SpecWarrior:
         gemId = 42142 // Str by default
+        break;
       case Spec.SpecFeralDruid:
         gemId = 42142 // Str by default
+        break;
     }
 
 
