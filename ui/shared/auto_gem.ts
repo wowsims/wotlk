@@ -196,9 +196,9 @@ const optimizeJewelCraftingGems = (sim: Sim, player: Player<AutoGemSpec>, gear: 
     }
 
     if (
-      Spec.SpecWarrior ||
-      Spec.SpecFeralDruid ||
-      Spec.SpecHunter && player.getTalentTree() === 1
+      player.spec === Spec.SpecWarrior ||
+      player.spec === Spec.SpecFeralDruid ||
+      player.spec === Spec.SpecHunter && player.getTalentTree() === 1
     ) {
       if (i < optimalJcArpGems) {
         gemId = 42153; // ArP
