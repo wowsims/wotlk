@@ -68,7 +68,7 @@ export class FiltersMenu extends BaseModal {
 		const sources = Sim.ALL_SOURCES.filter(s => s != SourceFilterOption.SourceUnknown);
 		sources.forEach(source => {
 			new BooleanPicker<Sim>(section, player.sim, {
-				label: sourceNames[source],
+				label: sourceNames.get(source),
 				inline: true,
 				changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
 				getValue: (sim: Sim) => sim.getFilters().sources.includes(source),
@@ -89,7 +89,7 @@ export class FiltersMenu extends BaseModal {
 		const raids = Sim.ALL_RAIDS.filter(s => s != RaidFilterOption.RaidUnknown);
 		raids.forEach(raid => {
 			new BooleanPicker<Sim>(section, player.sim, {
-				label: raidNames[raid],
+				label: raidNames.get(raid),
 				inline: true,
 				changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
 				getValue: (sim: Sim) => sim.getFilters().raids.includes(raid),
@@ -116,7 +116,7 @@ export class FiltersMenu extends BaseModal {
 
 				armorTypes.forEach(armorType => {
 					new BooleanPicker<Sim>(section, player.sim, {
-						label: armorTypeNames[armorType],
+						label: armorTypeNames.get(armorType),
 						inline: true,
 						changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
 						getValue: (sim: Sim) => sim.getFilters().armorTypes.includes(armorType),
@@ -139,7 +139,7 @@ export class FiltersMenu extends BaseModal {
 
 			weaponTypes.forEach(weaponType => {
 				new BooleanPicker<Sim>(weaponTypeSection, player.sim, {
-					label: weaponTypeNames[weaponType],
+					label: weaponTypeNames.get(weaponType),
 					inline: true,
 					changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
 					getValue: (sim: Sim) => sim.getFilters().weaponTypes.includes(weaponType),
@@ -221,7 +221,7 @@ export class FiltersMenu extends BaseModal {
 
 			rangedWeaponTypes.forEach(rangedWeaponType => {
 				new BooleanPicker<Sim>(rangedWeaponTypeSection, player.sim, {
-					label: rangedWeaponTypeNames[rangedWeaponType],
+					label: rangedWeaponTypeNames.get(rangedWeaponType),
 					inline: true,
 					changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
 					getValue: (sim: Sim) => sim.getFilters().rangedWeaponTypes.includes(rangedWeaponType),

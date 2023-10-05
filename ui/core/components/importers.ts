@@ -76,7 +76,7 @@ export abstract class Importer extends BaseModal {
 	protected async finishIndividualImport<SpecType extends Spec>(simUI: IndividualSimUI<SpecType>, charClass: Class, race: Race, equipmentSpec: EquipmentSpec, talentsStr: string, glyphs: Glyphs | null, professions: Array<Profession>): Promise<void> {
 		const playerClass = simUI.player.getClass();
 		if (charClass != playerClass) {
-			throw new Error(`Wrong Class! Expected ${classNames[playerClass]} but found ${classNames[charClass]}!`);
+			throw new Error(`Wrong Class! Expected ${classNames.get(playerClass)} but found ${classNames.get(charClass)}!`);
 		}
 
 		await Database.loadLeftoversIfNecessary(equipmentSpec);

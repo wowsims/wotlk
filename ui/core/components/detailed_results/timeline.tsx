@@ -702,7 +702,7 @@ export class Timeline extends ResultComponent {
 				<a className="rotation-label-icon" style={{
 					backgroundImage:`url('${resourceTypeToIcon[resourceType]}')`
 				}}></a>
-				<span className="rotation-label-text">{resourceNames[resourceType]}</span>
+				<span className="rotation-label-text">{resourceNames.get(resourceType)}</span>
 			</div>
 		);
 
@@ -717,7 +717,7 @@ export class Timeline extends ResultComponent {
 		)
 
 		resourceLogs.forEach((resourceLogGroup, i) => {
-			const cNames = resourceNames[resourceType].toLowerCase().replaceAll(' ', '-');
+			const cNames = resourceNames.get(resourceType)!.toLowerCase().replaceAll(' ', '-');
 			const resourceElem = (
 				<div className={`rotation-timeline-resource series-color ${cNames}`}
 					style={{
@@ -991,7 +991,7 @@ export class Timeline extends ResultComponent {
 			: (val: number) => `${val.toFixed(1)}`;
 
 		return (
-			<div className={`timeline-tooltip ${resourceNames[log.resourceType].toLowerCase().replaceAll(' ', '-')}`}>
+			<div className={`timeline-tooltip ${resourceNames.get(log.resourceType)!.toLowerCase().replaceAll(' ', '-')}`}>
 				<div className="timeline-tooltip-header">
 					<span className="bold">{log.timestamp.toFixed(2)}s</span>
 				</div>

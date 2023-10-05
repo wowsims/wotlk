@@ -158,7 +158,7 @@ export class SettingsTab extends SimTab {
 			label: 'Race',
 			values: races.map(race => {
 				return {
-					name: raceNames[race],
+					name: raceNames.get(race)!,
 					value: race,
 				};
 			}),
@@ -179,7 +179,7 @@ export class SettingsTab extends SimTab {
 			label: 'Profession 1',
 			values: professions.map(p => {
 				return {
-					name: professionNames[p],
+					name: professionNames.get(p)!,
 					value: p,
 				};
 			}),
@@ -192,7 +192,7 @@ export class SettingsTab extends SimTab {
 			label: 'Profession 2',
 			values: professions.map(p => {
 				return {
-					name: professionNames[p],
+					name: professionNames.get(p)!,
 					value: p,
 				};
 			}),
