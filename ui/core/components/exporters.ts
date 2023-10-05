@@ -23,7 +23,7 @@ export abstract class Exporter extends BaseModal {
 		super(parent, 'exporter', { title: title, footer: true });
 
 		this.body.innerHTML = `
-			<textarea class="exporter-textarea form-control"></textarea>
+			<textarea spellCheck="false" class="exporter-textarea form-control"></textarea>
 		`;
 		this.footer!.innerHTML = `
 			<button class="exporter-button btn btn-primary clipboard-button me-2">

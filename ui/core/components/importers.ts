@@ -33,7 +33,7 @@ export abstract class Importer extends BaseModal {
 
 		this.body.innerHTML = `
 			<div class="import-description"></div>
-			<textarea class="importer-textarea form-control"></textarea>
+			<textarea spellCheck="false" class="importer-textarea form-control"></textarea>
 		`;
 		this.footer!.innerHTML = `
 			${this.includeFile ? `
