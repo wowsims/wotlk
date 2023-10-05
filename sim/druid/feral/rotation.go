@@ -75,7 +75,7 @@ func (cat *FeralDruid) OnAutoAttack(sim *core.Simulation, _ *core.Spell) {
 	if cat.Talents.OmenOfClarity && cat.ClearcastingAura.RemainingDuration(sim) == cat.ClearcastingAura.Duration {
 		// Kick gcd loop, also need to account for any gcd 'left'
 		// otherwise it breaks gcd logic
-		kickTime := core.MaxDuration(cat.NextGCDAt(), sim.CurrentTime+cat.latency)
+		kickTime := max(cat.NextGCDAt(), sim.CurrentTime+cat.latency)
 		cat.NextRotationAction(sim, kickTime)
 	}
 }
@@ -215,8 +215,9 @@ func (cat *FeralDruid) calcBuilderDpe(sim *core.Simulation) (float64, float64) {
 	// Calculate current damage-per-Energy of Rake vs. Shred. Used to
 	// determine whether Rake is worth casting when player stats change upon a
 	// dynamic proc occurring
-	shredDpc := cat.Shred.ExpectedDamage(sim, cat.CurrentTarget)
-	rakeDpc := cat.Rake.ExpectedDamage(sim, cat.CurrentTarget)
+	shredDpc := cat.Shred.ExpectedInitialDamage(sim, cat.CurrentTarget)
+	potentialRakeTicks := min(cat.Rake.CurDot().NumberOfTicks, int32(sim.GetRemainingDuration()/time.Second*3))
+	rakeDpc := cat.Rake.ExpectedInitialDamage(sim, cat.CurrentTarget) + cat.Rake.ExpectedTickDamage(sim, cat.CurrentTarget)*float64(potentialRakeTicks)
 	return rakeDpc / cat.Rake.DefaultCast.Cost, shredDpc / cat.Shred.DefaultCast.Cost
 }
 
@@ -265,7 +266,7 @@ func (cat *FeralDruid) doTigersFury(sim *core.Simulation) {
 	}
 
 	gcdTimeToRdy := cat.GCD.TimeToReady(sim)
-	leewayTime := core.MaxDuration(gcdTimeToRdy, cat.latency)
+	leewayTime := max(gcdTimeToRdy, cat.latency)
 	tfEnergyThresh := 40.0 - 10.0*(leewayTime+core.Ternary(cat.ClearcastingAura.IsActive(), 1*time.Second, 0)).Seconds()
 	tfNow := (cat.CurrentEnergy() < tfEnergyThresh) && !cat.BerserkAura.IsActive()
 
@@ -316,10 +317,10 @@ func (cat *FeralDruid) postRotation(sim *core.Simulation, nextAction time.Durati
 	// Also schedule an action right at Energy cap to make sure we never
 	// accidentally over-cap while waiting on other timers.
 	timeToCap := time.Duration(((100.0 - cat.CurrentEnergy()) / 10.0) * float64(time.Second))
-	nextAction = core.MinDuration(nextAction, sim.CurrentTime+timeToCap)
+	nextAction = min(nextAction, sim.CurrentTime+timeToCap)
 
 	// Schedule an action when Faerie Fire (Feral) is off cooldown next
-	nextAction = core.MinDuration(nextAction, sim.CurrentTime+cat.FaerieFire.TimeToReady(sim))
+	nextAction = min(nextAction, sim.CurrentTime+cat.FaerieFire.TimeToReady(sim))
 
 	nextAction += cat.latency
 
@@ -712,14 +713,14 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) (bool, time.Duration) {
 	nextAction := sim.CurrentTime + timeToNextAction
 	paValid, rt := pendingPool.nextRefreshTime()
 	if paValid {
-		nextAction = core.MinDuration(nextAction, rt)
+		nextAction = min(nextAction, rt)
 	}
 
 	// If Lacerateweaving, then also schedule an action just before Lacerate
 	// expires to ensure we can save it in time.
 	lacRefreshTime := lacerateDot.ExpiresAt() - (1500 * time.Millisecond) - (3 * cat.latency)
 	if rotation.BearweaveType == proto.FeralDruid_Rotation_Lacerate && lacerateDot.IsActive() && lacerateDot.RemainingDuration(sim) < simTimeRemain && (sim.CurrentTime < lacRefreshTime) {
-		nextAction = core.MinDuration(nextAction, lacRefreshTime)
+		nextAction = min(nextAction, lacRefreshTime)
 	}
 
 	return true, nextAction

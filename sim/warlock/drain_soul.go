@@ -36,7 +36,7 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 		ActionID:    core.ActionID{SpellID: 47855},
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagChanneled | core.SpellFlagHauntSE,
+		Flags:       core.SpellFlagChanneled | core.SpellFlagHauntSE | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.14,
@@ -84,7 +84,7 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 				warlock.everlastingAfflictionRefresh(sim, target)
 			}
 		},
-		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, useSnapshot bool) *core.SpellResult {
+		ExpectedTickDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, useSnapshot bool) *core.SpellResult {
 			if useSnapshot {
 				dot := spell.Dot(target)
 				return dot.CalcSnapshotDamage(sim, target, spell.OutcomeExpectedMagicAlwaysHit)

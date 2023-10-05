@@ -193,8 +193,7 @@ func (ret *RetributionPaladin) mainRotation(sim *core.Simulation) {
 	nextSwingAt := ret.AutoAttacks.NextAttackAt()
 	isExecutePhase := sim.IsExecutePhase20()
 
-	nextPrimaryAbility := core.MinDuration(ret.CrusaderStrike.CD.ReadyAt(), ret.DivineStorm.CD.ReadyAt())
-	nextPrimaryAbility = core.MinDuration(nextPrimaryAbility, ret.SelectedJudgement.CD.ReadyAt())
+	nextPrimaryAbility := min(ret.CrusaderStrike.CD.ReadyAt(), ret.DivineStorm.CD.ReadyAt(), ret.SelectedJudgement.CD.ReadyAt())
 	nextPrimaryAbilityDelta := nextPrimaryAbility - sim.CurrentTime
 
 	if ret.HandOfReckoning != nil && ret.HandOfReckoning.IsReady(sim) {

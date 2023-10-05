@@ -457,16 +457,16 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-Heartpierce-49982"
  value: {
-  dps: 2618.68607
-  tps: 5525.00906
+  dps: 2614.42314
+  tps: 5510.61483
   dtps: 6.66421
  }
 }
 dps_results: {
  key: "TestFeralTank-AllItems-Heartpierce-50641"
  value: {
-  dps: 2624.8846
-  tps: 5547.84016
+  dps: 2622.91537
+  tps: 5534.77056
   dtps: 6.66421
  }
 }
@@ -561,8 +561,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-IncisorFragment-37723"
  value: {
-  dps: 2611.85905
-  tps: 5508.49136
+  dps: 2620.32536
+  tps: 5524.52196
   dtps: 6.66421
  }
 }
@@ -658,8 +658,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-NevermeltingIceCrystal-50259"
  value: {
-  dps: 2665.84397
-  tps: 5568.34018
+  dps: 2676.45956
+  tps: 5586.14285
   dtps: 7.74456
  }
 }
@@ -890,8 +890,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-SphereofRedDragon'sBlood-37166"
  value: {
-  dps: 2617.0225
-  tps: 5525.81279
+  dps: 2624.69684
+  tps: 5538.31218
   dtps: 6.66421
  }
 }

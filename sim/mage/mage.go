@@ -145,6 +145,7 @@ func (mage *Mage) Initialize() {
 		if mirrorImageMCD := mage.GetMajorCooldownIgnoreTag(mage.MirrorImage.ActionID); !mage.IsUsingAPL && mirrorImageMCD != nil {
 			if len(mirrorImageMCD.GetTimings()) == 0 {
 				mage.MirrorImage.Cast(sim, nil)
+				mage.UpdateMajorCooldowns()
 			}
 		}
 	})

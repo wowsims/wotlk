@@ -65,7 +65,7 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 			}
 			spell.DealDamage(sim, result)
 		},
-		ExpectedDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
+		ExpectedInitialDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
 			baseDamage := (750.0+870.0)/2 + 0.429*spell.SpellPower()
 			return spell.CalcDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicHitAndCrit)
 		},

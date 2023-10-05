@@ -597,7 +597,7 @@ export class ResourceChangedLog extends SimLog {
 		const isHealth = this.resourceType == ResourceType.ResourceTypeHealth;
 		const verb = isHealth ? (this.isSpend ? 'Lost' : 'Recovered') : (this.isSpend ? 'Spent' : 'Gained');
 
-		return `${this.toStringPrefix()} ${verb} ${signedDiff.toFixed(1)} ${resourceNames[this.resourceType]} from ${this.actionId!.name}. (${this.valueBefore.toFixed(1)} --> ${this.valueAfter.toFixed(1)})`;
+		return `${this.toStringPrefix()} ${verb} ${signedDiff.toFixed(1)} ${resourceNames.get(this.resourceType)} from ${this.actionId!.name}. (${this.valueBefore.toFixed(1)} --> ${this.valueAfter.toFixed(1)})`;
 	}
 
 	resultString(): string {
@@ -638,7 +638,7 @@ export class ResourceChangedLogGroup extends SimLog {
 	}
 
 	toString(): string {
-		return `${this.toStringPrefix()} ${resourceNames[this.resourceType]}: ${this.valueBefore.toFixed(1)} --> ${this.valueAfter.toFixed(1)}`;
+		return `${this.toStringPrefix()} ${resourceNames.get(this.resourceType)}: ${this.valueBefore.toFixed(1)} --> ${this.valueAfter.toFixed(1)}`;
 	}
 
 	static fromLogs(logs: Array<SimLog>): Record<ResourceType, Array<ResourceChangedLogGroup>> {

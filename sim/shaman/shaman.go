@@ -179,7 +179,7 @@ func (shaman *Shaman) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 
 	switch shaman.Totems.Water {
 	case proto.WaterTotem_ManaSpringTotem:
-		raidBuffs.ManaSpringTotem = core.MaxTristate(raidBuffs.ManaSpringTotem, proto.TristateEffect_TristateEffectRegular)
+		raidBuffs.ManaSpringTotem = max(raidBuffs.ManaSpringTotem, proto.TristateEffect_TristateEffectRegular)
 		if shaman.Talents.RestorativeTotems == 5 {
 			raidBuffs.ManaSpringTotem = proto.TristateEffect_TristateEffectImproved
 		}
@@ -193,7 +193,7 @@ func (shaman *Shaman) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 		if shaman.Talents.ImprovedWindfuryTotem > 0 {
 			wfVal = proto.TristateEffect_TristateEffectImproved
 		}
-		raidBuffs.WindfuryTotem = core.MaxTristate(wfVal, raidBuffs.WindfuryTotem)
+		raidBuffs.WindfuryTotem = max(wfVal, raidBuffs.WindfuryTotem)
 	}
 
 	switch shaman.Totems.Earth {
@@ -202,9 +202,9 @@ func (shaman *Shaman) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 		if shaman.Talents.EnhancingTotems == 3 {
 			totem = proto.TristateEffect_TristateEffectImproved
 		}
-		raidBuffs.StrengthOfEarthTotem = core.MaxTristate(raidBuffs.StrengthOfEarthTotem, totem)
+		raidBuffs.StrengthOfEarthTotem = max(raidBuffs.StrengthOfEarthTotem, totem)
 	case proto.EarthTotem_StoneskinTotem:
-		raidBuffs.StoneskinTotem = core.MaxTristate(raidBuffs.StoneskinTotem, core.MakeTristateValue(
+		raidBuffs.StoneskinTotem = max(raidBuffs.StoneskinTotem, core.MakeTristateValue(
 			true,
 			shaman.Talents.GuardianTotems == 2,
 		))

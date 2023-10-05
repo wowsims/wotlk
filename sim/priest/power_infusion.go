@@ -48,7 +48,7 @@ func (priest *Priest) registerPowerInfusionCD() {
 			//if powerInfusionTarget.CurrentMana() < 3000 {
 			//	return false
 			//}
-			return !powerInfusionTarget.HasActiveAuraWithTag(core.BloodlustAuraTag)
+			return !powerInfusionTarget.HasActiveAura("Bloodlust-" + core.BloodlustActionID.WithTag(-1).String())
 		},
 	})
 }

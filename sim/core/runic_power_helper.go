@@ -112,7 +112,7 @@ func (p *Predictor) runeGraceAt(slot int8, at time.Duration) time.Duration {
 	if at <= 0 || lastRegenTime <= 0 {
 		return 0
 	}
-	return MinDuration(time.Millisecond*2500, at-lastRegenTime)
+	return min(time.Millisecond*2500, at-lastRegenTime)
 }
 
 func (p *Predictor) CurrentBloodRunes() int8 {
@@ -131,19 +131,19 @@ func (p *Predictor) BloodRuneReadyAt(sim *Simulation) time.Duration {
 	if p.runeStates&anyBloodSpent != anyBloodSpent { // if any are not spent
 		return sim.CurrentTime
 	}
-	return MinDuration(p.runeMeta[0].regenAt, p.runeMeta[1].regenAt)
+	return min(p.runeMeta[0].regenAt, p.runeMeta[1].regenAt)
 }
 
 func (p *Predictor) FrostRuneReadyAt(sim *Simulation) time.Duration {
 	if p.runeStates&anyFrostSpent != anyFrostSpent { // if any are not spent
 		return sim.CurrentTime
 	}
-	return MinDuration(p.runeMeta[2].regenAt, p.runeMeta[3].regenAt)
+	return min(p.runeMeta[2].regenAt, p.runeMeta[3].regenAt)
 }
 
 func (p *Predictor) UnholyRuneReadyAt(sim *Simulation) time.Duration {
 	if p.runeStates&anyUnholySpent != anyUnholySpent { // if any are not spent
 		return sim.CurrentTime
 	}
-	return MinDuration(p.runeMeta[4].regenAt, p.runeMeta[5].regenAt)
+	return min(p.runeMeta[4].regenAt, p.runeMeta[5].regenAt)
 }

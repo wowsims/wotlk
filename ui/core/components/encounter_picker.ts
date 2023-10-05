@@ -356,7 +356,7 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 			return new NumberPicker(section2, null, {
 				inline: true,
 				extraCssClasses: statData.extraCssClasses,
-				label: statNames[stat],
+				label: statNames.get(stat),
 				labelTooltip: statData.tooltip,
 				changedEvent: () => encounter.targetsChangeEmitter,
 				getValue: () => this.getTarget().stats[stat],

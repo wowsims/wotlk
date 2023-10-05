@@ -137,7 +137,7 @@ func (cat *FeralDruid) doAoeRotation(sim *core.Simulation) (bool, time.Duration)
 	nextAction := sim.CurrentTime + timeToNextAction
 	paValid, rt := pendingPool.nextRefreshTime()
 	if paValid {
-		nextAction = core.MinDuration(nextAction, rt)
+		nextAction = min(nextAction, rt)
 	}
 
 	return true, nextAction

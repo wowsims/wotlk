@@ -243,7 +243,7 @@ func (gs *GCDScheduler) ScheduleMCD(character *core.Character, mcdID core.Action
 	maxDuration := character.Env.GetMaxDuration()
 	i := 0
 	if len(timings) > 0 {
-		curTime = core.MaxDuration(curTime, timings[0])
+		curTime = max(curTime, timings[0])
 	}
 	for curTime <= maxDuration {
 		ability := mcdAction
@@ -256,12 +256,12 @@ func (gs *GCDScheduler) ScheduleMCD(character *core.Character, mcdID core.Action
 		curTime = actualCastAt + mcd.Spell.CD.Duration
 		i++
 		if len(timings) > i {
-			curTime = core.MaxDuration(curTime, timings[i])
+			curTime = max(curTime, timings[i])
 		}
 	}
 }
 
-func (gs *GCDScheduler) Reset(sim *core.Simulation, character *core.Character) {
+func (gs *GCDScheduler) Reset(_ *core.Simulation, character *core.Character) {
 	gs.nextAbilityIndex = 0
 
 	for i, mcdID := range gs.managedMCDIDs {

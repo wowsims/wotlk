@@ -33,7 +33,7 @@ export abstract class Importer extends BaseModal {
 
 		this.body.innerHTML = `
 			<div class="import-description"></div>
-			<textarea class="importer-textarea form-control"></textarea>
+			<textarea spellCheck="false" class="importer-textarea form-control"></textarea>
 		`;
 		this.footer!.innerHTML = `
 			${this.includeFile ? `
@@ -76,7 +76,7 @@ export abstract class Importer extends BaseModal {
 	protected async finishIndividualImport<SpecType extends Spec>(simUI: IndividualSimUI<SpecType>, charClass: Class, race: Race, equipmentSpec: EquipmentSpec, talentsStr: string, glyphs: Glyphs | null, professions: Array<Profession>): Promise<void> {
 		const playerClass = simUI.player.getClass();
 		if (charClass != playerClass) {
-			throw new Error(`Wrong Class! Expected ${classNames[playerClass]} but found ${classNames[charClass]}!`);
+			throw new Error(`Wrong Class! Expected ${classNames.get(playerClass)} but found ${classNames.get(charClass)}!`);
 		}
 
 		await Database.loadLeftoversIfNecessary(equipmentSpec);
@@ -231,12 +231,12 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 		}
 
 		// Parse all the settings.
-		const charClass = nameToClass(match[1].replaceAll('-', ' '));
+		const charClass = nameToClass(match[1].replaceAll('-', ''));
 		if (charClass == Class.ClassUnknown) {
 			throw new Error('Could not parse Class: ' + match[1]);
 		}
 
-		const race = nameToRace(match[2].replaceAll('-', ' '));
+		const race = nameToRace(match[2].replaceAll('-', ''));
 		if (race == Race.RaceUnknown) {
 			throw new Error('Could not parse Race: ' + match[2]);
 		}

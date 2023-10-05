@@ -1,6 +1,7 @@
 package core
 
 import (
+	"cmp"
 	"math"
 	"slices"
 	"strconv"
@@ -29,7 +30,7 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 	}
 
 	if raidBuffs.DrumsOfTheWild {
-		raidBuffs.GiftOfTheWild = MaxTristate(raidBuffs.GiftOfTheWild, proto.TristateEffect_TristateEffectRegular)
+		raidBuffs.GiftOfTheWild = max(raidBuffs.GiftOfTheWild, proto.TristateEffect_TristateEffectRegular)
 	}
 	gotwAmount := GetTristateValueFloat(raidBuffs.GiftOfTheWild, 37, 51)
 	gotwArmorAmount := GetTristateValueFloat(raidBuffs.GiftOfTheWild, 750, 1050)
@@ -236,7 +237,7 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 		character.PseudoStats.CastSpeedMultiplier *= 1.05
 	}
 	if raidBuffs.StrengthOfEarthTotem > 0 || raidBuffs.HornOfWinter {
-		val := MaxTristate(proto.TristateEffect_TristateEffectRegular, raidBuffs.StrengthOfEarthTotem)
+		val := max(proto.TristateEffect_TristateEffectRegular, raidBuffs.StrengthOfEarthTotem)
 		bonus := GetTristateValueFloat(val, 155, 178)
 		character.AddStats(stats.Stats{
 			stats.Strength: bonus,
@@ -257,7 +258,7 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 
 	if individualBuffs.BlessingOfWisdom > 0 || raidBuffs.ManaSpringTotem > 0 {
 		character.AddStats(stats.Stats{
-			stats.MP5: GetTristateValueFloat(MaxTristate(individualBuffs.BlessingOfWisdom, raidBuffs.ManaSpringTotem), 91, 109),
+			stats.MP5: GetTristateValueFloat(max(individualBuffs.BlessingOfWisdom, raidBuffs.ManaSpringTotem), 91, 109),
 		})
 	}
 
@@ -484,7 +485,7 @@ func BlessingOfSanctuaryAura(character *Character) {
 type externalConsecutiveCDApproximation struct {
 	ActionID         ActionID
 	AuraTag          string
-	CooldownPriority float64
+	CooldownPriority int32
 	Type             CooldownType
 	AuraDuration     time.Duration
 	AuraCD           time.Duration
@@ -652,7 +653,7 @@ func registerPowerInfusionCD(agent Agent, numPowerInfusions int32) {
 
 			ShouldActivate: func(sim *Simulation, character *Character) bool {
 				// Haste portion doesn't stack with Bloodlust, so prefer to wait.
-				return !character.HasActiveAuraWithTag(BloodlustAuraTag)
+				return !character.HasActiveAura("Bloodlust-" + BloodlustActionID.WithTag(-1).String())
 			},
 			AddAura: func(sim *Simulation, character *Character) { piAura.Activate(sim) },
 		},
@@ -1161,7 +1162,7 @@ func registerManaTideTotemCD(agent Agent, numManaTideTotems int32) {
 	character := agent.GetCharacter()
 	character.Env.RegisterPostFinalizeEffect(func() {
 		// Use first MTT at 60s, or halfway through the fight, whichever comes first.
-		initialDelay = MinDuration(character.Env.BaseDuration/2, time.Second*60)
+		initialDelay = min(character.Env.BaseDuration/2, time.Second*60)
 		mttAura = ManaTideTotemAura(character, -1)
 	})
 
@@ -1308,14 +1309,7 @@ func (raid *Raid) ProcReplenishment(sim *Simulation, src ReplenishmentSource) {
 
 	eligible := append(raid.curReplenishmentUnits[src], raid.leftoverReplenishmentUnits...)
 	slices.SortFunc(eligible, func(v1, v2 *Unit) int {
-		v1Mana := v1.CurrentManaPercent()
-		v2Mana := v2.CurrentManaPercent()
-		if v1Mana > v2Mana {
-			return 1
-		} else if v2Mana > v1Mana {
-			return -1
-		}
-		return 0
+		return cmp.Compare(v1.CurrentManaPercent(), v2.CurrentManaPercent())
 	})
 	raid.curReplenishmentUnits[src] = eligible[:10]
 	raid.leftoverReplenishmentUnits = eligible[10:]

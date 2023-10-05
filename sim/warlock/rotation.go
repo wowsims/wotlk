@@ -65,13 +65,13 @@ func (warlock *Warlock) setupCooldowns(sim *core.Simulation) {
 			continue
 		}
 
-		spellCD := core.MaxDuration(cd.Spell.CD.Duration, cd.Spell.SharedCD.Duration)
+		spellCD := max(cd.Spell.CD.Duration, cd.Spell.SharedCD.Duration)
 		runTime := time.Duration(float64(durMap[cd.Spell.ActionID]) * 0.75)
 		spell := cd.Spell
 
 		cd.ShouldActivate = func(sim *core.Simulation, character *core.Character) bool {
 			timeLeft := sim.GetRemainingDuration() - runTime
-			timeUntilExecute := core.MaxDuration(0, executePhase-sim.CurrentTime)
+			timeUntilExecute := max(0, executePhase-sim.CurrentTime)
 			lustIsActive := lustCD != nil && character.HasActiveAura("Bloodlust-"+lustCD.Spell.ActionID.String())
 
 			// if time until execute is less than the CD AND remaining time minus time till execute gives
@@ -279,7 +279,7 @@ func (warlock *Warlock) defineRotation() {
 					continue
 				}
 
-				rem := core.MinDuration(warlock.Corruption.Dot(target).RemainingDuration(sim),
+				rem := min(warlock.Corruption.Dot(target).RemainingDuration(sim),
 					warlock.ShadowEmbraceAuras.Get(target).RemainingDuration(sim))
 				targets = append(targets, targetRem{rem: rem, target: target})
 			}
@@ -295,7 +295,7 @@ func (warlock *Warlock) defineRotation() {
 			if warlock.ShadowBolt.CastTimeMultiplier == 0 {
 				// somewhat hacky, breaks if CastTimeMultiplier is ever changed by anything else
 				sbCastTime = time.Duration(float64(warlock.ShadowBolt.DefaultCast.CastTime) * warlock.CastSpeed)
-				sbCastTime = core.MaxDuration(sbCastTime, warlock.SpellGCD())
+				sbCastTime = max(sbCastTime, warlock.SpellGCD())
 
 				if nextSpell == warlock.ShadowBolt {
 					timeAdvance += sbCastTime - warlock.ShadowBolt.EffectiveCastTime()
@@ -349,10 +349,10 @@ func (warlock *Warlock) defineRotation() {
 
 				// check if reapplying corruption is worthwhile
 				relDmgInc := warlock.calcRelativeCorruptionInc(target)
-				snapshotDmg := warlock.Corruption.ExpectedDamageFromCurrentSnapshot(sim, target)
+				snapshotDmg := warlock.Corruption.ExpectedTickDamageFromCurrentSnapshot(sim, target)
 				snapshotDmg *= float64(sim.GetRemainingDuration()) / float64(warlock.Corruption.Dot(target).TickPeriod())
 				snapshotDmg *= (relDmgInc - 1)
-				snapshotDmg -= warlock.Corruption.ExpectedDamageFromCurrentSnapshot(sim, target)
+				snapshotDmg -= warlock.Corruption.ExpectedTickDamageFromCurrentSnapshot(sim, target)
 
 				logInfo(sim, "Relative Corruption Inc: [%.2f], expected dmg gain: [%.2f]", relDmgInc, snapshotDmg)
 
@@ -388,7 +388,7 @@ func (warlock *Warlock) defineRotation() {
 		curIndex := len(acl)
 		acl = aclAppendSimple(acl, warlock.LifeTap, func(sim *core.Simulation) (bool, *core.Unit) {
 			// try to keep up the buff for the entire execute phase if possible
-			expiresAt := core.MaxDuration(0, warlock.GlyphOfLifeTapAura.RemainingDuration(sim))
+			expiresAt := max(0, warlock.GlyphOfLifeTapAura.RemainingDuration(sim))
 			if sim.GetRemainingDuration() <= 40*time.Second &&
 				expiresAt+10*time.Second < sim.GetRemainingDuration() &&
 				warlock.CurrentManaPercent() < 0.35 {
@@ -519,13 +519,13 @@ func (warlock *Warlock) defineRotation() {
 			uaRefresh := warlock.UnstableAffliction.Dot(mainTarget).RemainingDuration(sim) -
 				warlock.UnstableAffliction.CastTime()
 
-			curseRefresh := core.MaxDuration(prefCurse.RemainingDuration(sim),
+			curseRefresh := max(prefCurse.RemainingDuration(sim),
 				warlock.CurseOfDoom.CurDot().RemainingDuration(sim)) - warlock.CurseOfAgony.CastTime()
 
 			hauntRefresh := warlock.HauntDebuffAuras.Get(mainTarget).RemainingDuration(sim) -
 				warlock.Haunt.CastTime() - hauntTravel
 
-			timeUntilRefresh := core.MinDuration(uaRefresh, curseRefresh)
+			timeUntilRefresh := min(uaRefresh, curseRefresh)
 
 			// the amount of ticks we have left, assuming we continue channeling
 			ticksLeft := int(timeUntilRefresh/dsDot.TickPeriod()) + 1
@@ -541,8 +541,8 @@ func (warlock *Warlock) defineRotation() {
 				return ACLCast, mainTarget
 			}
 
-			snapshotDmg := warlock.DrainSoul.ExpectedDamageFromCurrentSnapshot(sim, mainTarget) * float64(ticksLeft)
-			recastDmg := warlock.DrainSoul.ExpectedDamage(sim, mainTarget) * float64(recastTicks)
+			snapshotDmg := warlock.DrainSoul.ExpectedTickDamageFromCurrentSnapshot(sim, mainTarget) * float64(ticksLeft)
+			recastDmg := warlock.DrainSoul.ExpectedTickDamage(sim, mainTarget) * float64(recastTicks)
 			snapshotDPS := snapshotDmg / (float64(ticksLeft) * dsDot.TickPeriod().Seconds())
 			recastDps := recastDmg / (float64(recastTicks)*warlock.ApplyCastSpeed(dsDot.TickLength).Seconds() +
 				humanReactionTime.Seconds())
@@ -629,7 +629,7 @@ func (warlock *Warlock) getAlternativeAction(sim *core.Simulation, skipIndex int
 		nextSpellTime = nextSpell.EffectiveCastTime()
 	}
 
-	return nextSpell, core.MaxDuration(core.GCDMin, nextSpellTime)
+	return nextSpell, max(core.GCDMin, nextSpellTime)
 }
 
 func (warlock *Warlock) OnGCDReady(sim *core.Simulation) {

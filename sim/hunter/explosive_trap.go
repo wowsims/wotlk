@@ -107,7 +107,7 @@ func (hunter *Hunter) registerExplosiveTrapSpell(timer *core.Timer) {
 			// Assume we started running after the most recent ranged auto, so that time
 			// can be subtracted from the run in.
 			reachLocationAt := hunter.mayMoveAt + halfWeaveTime
-			layTrapAt := core.MaxDuration(reachLocationAt, sim.CurrentTime)
+			layTrapAt := max(reachLocationAt, sim.CurrentTime)
 			doneAt := layTrapAt + halfWeaveTime
 
 			hunter.AutoAttacks.DelayRangedUntil(sim, doneAt+time.Millisecond*500)

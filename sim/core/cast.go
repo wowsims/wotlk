@@ -48,20 +48,16 @@ type Cast struct {
 
 	// Additional GCD delay after the cast completes.
 	ChannelTime time.Duration
-
-	// Additional GCD delay after the cast ends. Never affected by cast speed.
-	// This is typically used for latency.
-	AfterCastDelay time.Duration
 }
 
 func (cast *Cast) EffectiveTime() time.Duration {
 	gcd := cast.GCD
 	if cast.GCD != 0 {
 		// TODO: isn't this wrong for spells like shadowfury, that have a reduced GCD?
-		gcd = MaxDuration(GCDMin, gcd)
+		gcd = max(GCDMin, gcd)
 	}
-	fullCastTime := cast.CastTime + cast.ChannelTime + cast.AfterCastDelay
-	return MaxDuration(gcd, fullCastTime)
+	fullCastTime := cast.CastTime + cast.ChannelTime
+	return max(gcd, fullCastTime)
 }
 
 type CastFunc func(*Simulation, *Unit)
