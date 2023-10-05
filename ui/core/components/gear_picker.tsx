@@ -277,7 +277,7 @@ export class ItemPicker extends Component {
 	set item(newItem: EquippedItem | null) {
 		// Clear everything first
 		this.itemElem.clear();
-		this.itemElem.nameElem.textContent = slotNames[this.slot];
+		this.itemElem.nameElem.textContent = slotNames.get(this.slot) ?? '';
 		setItemQualityCssClass(this.itemElem.nameElem, null);
 
 		if (newItem != null) {
@@ -1273,7 +1273,7 @@ export class ItemList<T> {
 		const source = item.sources[0];
 		if (source.source.oneofKind == 'crafted') {
 			const src = source.source.crafted;
-			return makeAnchor( ActionId.makeSpellUrl(src.spellId), professionNames[src.profession]);
+			return makeAnchor( ActionId.makeSpellUrl(src.spellId), professionNames.get(src.profession) ?? 'Unknown');
 		} else if (source.source.oneofKind == 'drop') {
 			const src = source.source.drop;
 			const zone = sim.db.getZone(src.zoneId);
@@ -1282,7 +1282,7 @@ export class ItemList<T> {
 				throw new Error('No zone found for item: ' + item);
 			}
 
-			let rtnEl = makeAnchor( ActionId.makeZoneUrl(zone.id), `${zone.name} (${difficultyNames[src.difficulty]})`);
+			let rtnEl = makeAnchor( ActionId.makeZoneUrl(zone.id), `${zone.name} (${difficultyNames.get(src.difficulty) ?? 'Unknown'})`);
 
 			const category = src.category ? ` - ${src.category}` : '';
 			if (npc) {
