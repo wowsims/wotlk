@@ -29,7 +29,7 @@ import * as Tooltips from '../core/constants/tooltips.js';
 import { Player } from "../core/player";
 import { APLRotation } from '../core/proto/apl.js';
 
-import BasicP3AplJson from './apls/basic_p3.json';
+import BasicP3AplJson from './apls/basic_p3.apl.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to

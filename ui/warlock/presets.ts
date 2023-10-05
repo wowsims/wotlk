@@ -31,8 +31,8 @@ import {
 } from '../core/proto/warlock.js';
 import { APLRotation } from '../core/proto/apl.js';
 
-import DemoApl from './apls/demo.json';
-import DestroApl from './apls/destro.json';
+import DemoApl from './apls/demo.apl.json';
+import DestroApl from './apls/destro.apl.json';
 
 export const BIS_TOOLTIP = 'This gear preset is inspired from Zephan\'s Affliction guide: https://www.warcrafttavern.com/wotlk/guides/pve-affliction-warlock/';
 

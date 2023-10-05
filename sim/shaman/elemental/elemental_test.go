@@ -15,7 +15,7 @@ func init() {
 }
 
 func GetAplRotation(dir string, file string) core.RotationCombo {
-	filePath := dir + "/" + file + ".json"
+	filePath := dir + "/" + file + ".apl.json"
 	data, err := os.ReadFile(filePath)
 	if err != nil {
 		log.Fatalf("failed to load apl json file: %s, %s", filePath, err)

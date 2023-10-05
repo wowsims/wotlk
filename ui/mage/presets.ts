@@ -24,13 +24,13 @@ import {
 import * as Tooltips from '../core/constants/tooltips.js';
 import { APLRotation } from '../core/proto/apl.js';
 
-import ArcaneApl from './apls/arcane.json';
-import FireApl from './apls/fire.json';
-import FrostApl from './apls/frost.json';
-import ArcaneAoeApl from './apls/arcane_aoe.json';
-import FireAoeApl from './apls/fire_aoe.json';
-import FrostAoeApl from './apls/frost_aoe.json';
-import FrostFireApl from './apls/frostfire.json';
+import ArcaneApl from './apls/arcane.apl.json';
+import FireApl from './apls/fire.apl.json';
+import FrostApl from './apls/frost.apl.json';
+import ArcaneAoeApl from './apls/arcane_aoe.apl.json';
+import FireAoeApl from './apls/fire_aoe.apl.json';
+import FrostAoeApl from './apls/frost_aoe.apl.json';
+import FrostFireApl from './apls/frostfire.apl.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to

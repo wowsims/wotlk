@@ -23,15 +23,15 @@ import {
 
 import * as Tooltips from '../core/constants/tooltips.js';
 
-import BmApl from './apls/bm.json';
+import BmApl from './apls/bm.apl.json';
 
-import MmApl from './apls/mm.json';
-import MmAdvApl from './apls/mm_advanced.json';
+import MmApl from './apls/mm.apl.json';
+import MmAdvApl from './apls/mm_advanced.apl.json';
 
-import SvApl from './apls/sv.json';
-import SvAdvApl from './apls/sv_advanced.json';
+import SvApl from './apls/sv.apl.json';
+import SvAdvApl from './apls/sv_advanced.apl.json';
 
-import AoeApl from './apls/aoe.json';
+import AoeApl from './apls/aoe.apl.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to

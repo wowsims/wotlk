@@ -25,8 +25,8 @@ import {
 
 import * as Tooltips from '../core/constants/tooltips.js';
 
-import DiscApl from './apls/disc.json';
-import HolyApl from './apls/holy.json';
+import DiscApl from './apls/disc.apl.json';
+import HolyApl from './apls/holy.apl.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to

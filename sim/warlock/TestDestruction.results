@@ -791,8 +791,8 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-Settings-Orc-P2-Destruction Warlock-destro-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 12289.804
-  tps: 9417.37845
+  dps: 12281.11135
+  tps: 9412.06182
  }
 }
 dps_results: {

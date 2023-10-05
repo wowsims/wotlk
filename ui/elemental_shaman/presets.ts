@@ -25,7 +25,7 @@ import {
 import * as Tooltips from '../core/constants/tooltips.js';
 import { Faction } from '../core/proto/common.js';
 
-import DefaultApl from './apls/default.json';
+import DefaultApl from './apls/default.apl.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to

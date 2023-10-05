@@ -21,8 +21,8 @@ import {
 
 import * as Tooltips from '../core/constants/tooltips.js';
 
-import BloodAggroApl from './apls/blood_aggro.json';
-import BloodIcyTouchApl from './apls/blood_icy_touch.json';
+import BloodAggroApl from './apls/blood_aggro.apl.json';
+import BloodIcyTouchApl from './apls/blood_icy_touch.apl.json';
 
 export const BloodTalents = {
 	name: 'Blood',

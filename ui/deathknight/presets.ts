@@ -32,16 +32,16 @@ import {
 import * as Tooltips from '../core/constants/tooltips.js';
 import { APLRotation } from '../core/proto/apl.js';
 
-import BloodPestiApl from './apls/blood_pesti.json';
-import BloodPestiDDApl from './apls/blood_pesti_dd.json';
-import BloodPestiAoeApl from './apls/blood_pesti_aoe.json';
+import BloodPestiApl from './apls/blood_pesti.apl.json';
+import BloodPestiDDApl from './apls/blood_pesti_dd.apl.json';
+import BloodPestiAoeApl from './apls/blood_pesti_aoe.apl.json';
 
-import FrostBlPestiApl from './apls/frost_bl_pesti.json';
-import FrostUhPestiApl from './apls/frost_uh_pesti.json';
+import FrostBlPestiApl from './apls/frost_bl_pesti.apl.json';
+import FrostUhPestiApl from './apls/frost_uh_pesti.apl.json';
 
-import UhDwSsApl from './apls/unholy_dw_ss.json';
-import Uh2hSsApl from './apls/uh_2h_ss.json';
-import UhDndAoeApl from './apls/uh_dnd_aoe.json';
+import UhDwSsApl from './apls/unholy_dw_ss.apl.json';
+import Uh2hSsApl from './apls/uh_2h_ss.apl.json';
+import UhDndAoeApl from './apls/uh_dnd_aoe.apl.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to

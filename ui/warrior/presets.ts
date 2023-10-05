@@ -25,7 +25,7 @@ import {
 
 import * as Tooltips from '../core/constants/tooltips.js';
 
-import FuryApl from './apls/fury.json';
+import FuryApl from './apls/fury.apl.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to

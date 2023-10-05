@@ -18,15 +18,15 @@ import {
 import * as Tooltips from '../core/constants/tooltips.js';
 import { APLRotation } from '../core/proto/apl.js';
 
-import MutilateApl from './apls/mutilate.json'
-import MutilateExposeApl from './apls/mutilate_expose.json'
-import RuptureMutilateApl from './apls/rupture_mutilate.json'
-import RuptureMutilateExposeApl from './apls/rupture_mutilate_expose.json'
-import CombatApl from './apls/combat.json'
-import CombatExposeApl from './apls/combat_expose.json'
-import CombatCleaveSndApl from './apls/combat_cleave_snd.json'
-import CombatCleaveSndExposeApl from './apls/combat_cleave_snd_expose.json'
-import FanAoeApl from './apls/fan_aoe.json'
+import MutilateApl from './apls/mutilate.apl.json'
+import MutilateExposeApl from './apls/mutilate_expose.apl.json'
+import RuptureMutilateApl from './apls/rupture_mutilate.apl.json'
+import RuptureMutilateExposeApl from './apls/rupture_mutilate_expose.apl.json'
+import CombatApl from './apls/combat.apl.json'
+import CombatExposeApl from './apls/combat_expose.apl.json'
+import CombatCleaveSndApl from './apls/combat_cleave_snd.apl.json'
+import CombatCleaveSndExposeApl from './apls/combat_cleave_snd_expose.apl.json'
+import FanAoeApl from './apls/fan_aoe.apl.json'
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.

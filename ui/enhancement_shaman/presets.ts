@@ -34,9 +34,9 @@ import {
 import * as Tooltips from '../core/constants/tooltips.js';
 import { Player } from 'ui/core/player.js';
 
-import DefaultFt from './apls/default_ft.json';
-import DefaultWf from './apls/default_wf.json';
-import Phase3Apl from './apls/phase_3.json';
+import DefaultFt from './apls/default_ft.apl.json';
+import DefaultWf from './apls/default_wf.apl.json';
+import Phase3Apl from './apls/phase_3.apl.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
