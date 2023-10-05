@@ -413,8 +413,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralDoubleArmorPenTrinketsNoDesync-AllItems-Heartpierce-49982"
  value: {
-  dps: 10066.68564
-  tps: 7213.23385
+  dps: 10065.53824
+  tps: 7212.4192
  }
 }
 dps_results: {
