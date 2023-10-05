@@ -49,7 +49,7 @@ func (shaman *Shaman) registerFeralSpirit() {
 
 	shaman.AddMajorCooldown(core.MajorCooldown{
 		Spell:    shaman.FeralSpirit,
-		Priority: core.CooldownPriorityDrums + 1, // Always prefer to use wolves before bloodlust/drums so wolves gain haste buff
+		Priority: core.CooldownPriorityDrums + 1000, // Always prefer to use wolves before bloodlust/drums so wolves gain haste buff
 		Type:     core.CooldownTypeDPS,
 	})
 }

@@ -10,7 +10,7 @@ func (bear *FeralTankDruid) OnGCDReady(sim *core.Simulation) {
 	bear.doRotation(sim)
 }
 
-func (bear *FeralTankDruid) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {
+func (bear *FeralTankDruid) OnAutoAttack(sim *core.Simulation, _ *core.Spell) {
 	bear.tryQueueMaul(sim)
 }
 
@@ -39,7 +39,7 @@ func (bear *FeralTankDruid) doRotation(sim *core.Simulation) {
 		if bear.MangleBear == nil {
 			bear.WaitUntil(sim, nextAction)
 		} else if !bear.MangleBear.IsReady(sim) {
-			nextAction = core.MaxDuration(nextAction, sim.CurrentTime)
+			nextAction = max(nextAction, sim.CurrentTime)
 			nextMangle := bear.MangleBear.ReadyAt()
 
 			if nextMangle < nextAction+time.Second {

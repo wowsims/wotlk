@@ -228,29 +228,29 @@ func (rp *runicPowerBar) CurrentRuneGrace(sim *Simulation, slot int8) time.Durat
 	}
 
 	if lastRegenTime < sim.CurrentTime {
-		return MinDuration(2500*time.Millisecond, sim.CurrentTime-lastRegenTime)
+		return min(2500*time.Millisecond, sim.CurrentTime-lastRegenTime)
 	}
 	return 0
 }
 
 func (rp *runicPowerBar) CurrentBloodRuneGrace(sim *Simulation) time.Duration {
-	return MaxDuration(rp.CurrentRuneGrace(sim, 0), rp.CurrentRuneGrace(sim, 1))
+	return max(rp.CurrentRuneGrace(sim, 0), rp.CurrentRuneGrace(sim, 1))
 }
 
 func (rp *runicPowerBar) CurrentFrostRuneGrace(sim *Simulation) time.Duration {
-	return MaxDuration(rp.CurrentRuneGrace(sim, 2), rp.CurrentRuneGrace(sim, 3))
+	return max(rp.CurrentRuneGrace(sim, 2), rp.CurrentRuneGrace(sim, 3))
 }
 
 func (rp *runicPowerBar) CurrentUnholyRuneGrace(sim *Simulation) time.Duration {
-	return MaxDuration(rp.CurrentRuneGrace(sim, 4), rp.CurrentRuneGrace(sim, 5))
+	return max(rp.CurrentRuneGrace(sim, 4), rp.CurrentRuneGrace(sim, 5))
 }
 
 func (rp *runicPowerBar) FrostRuneGraceRemaining(sim *Simulation) time.Duration {
-	return MaxDuration(rp.runeGraceRemaining(sim, 2), rp.runeGraceRemaining(sim, 3))
+	return max(rp.runeGraceRemaining(sim, 2), rp.runeGraceRemaining(sim, 3))
 }
 
 func (rp *runicPowerBar) UnholyRuneGraceRemaining(sim *Simulation) time.Duration {
-	return MaxDuration(rp.runeGraceRemaining(sim, 4), rp.runeGraceRemaining(sim, 5))
+	return max(rp.runeGraceRemaining(sim, 4), rp.runeGraceRemaining(sim, 5))
 }
 
 func (rp *runicPowerBar) normalSpentRuneReadyAt(slot int8) time.Duration {
@@ -287,10 +287,10 @@ func (rp *runicPowerBar) NormalUnholyRuneReadyAt(sim *Simulation) time.Duration 
 
 func (rp *runicPowerBar) BloodDeathRuneBothReadyAt() time.Duration {
 	if rp.runeStates&isDeaths[0] != 0 && rp.runeStates&isDeaths[1] != 0 {
-		if MaxDuration(rp.runeMeta[0].regenAt, rp.runeMeta[1].regenAt) > 150000000*time.Minute {
-			return MinDuration(rp.runeMeta[0].regenAt, rp.runeMeta[1].regenAt)
+		if max(rp.runeMeta[0].regenAt, rp.runeMeta[1].regenAt) > 150000000*time.Minute {
+			return min(rp.runeMeta[0].regenAt, rp.runeMeta[1].regenAt)
 		} else {
-			return MaxDuration(rp.runeMeta[0].regenAt, rp.runeMeta[1].regenAt)
+			return max(rp.runeMeta[0].regenAt, rp.runeMeta[1].regenAt)
 		}
 	} else {
 		return -1
@@ -314,21 +314,21 @@ func (rp *runicPowerBar) BloodRuneReadyAt(sim *Simulation) time.Duration {
 	if rp.runeStates&anyBloodSpent != anyBloodSpent { // if any are not spent
 		return sim.CurrentTime
 	}
-	return MinDuration(rp.runeMeta[0].regenAt, rp.runeMeta[1].regenAt)
+	return min(rp.runeMeta[0].regenAt, rp.runeMeta[1].regenAt)
 }
 
 func (rp *runicPowerBar) FrostRuneReadyAt(sim *Simulation) time.Duration {
 	if rp.runeStates&anyFrostSpent != anyFrostSpent { // if any are not spent
 		return sim.CurrentTime
 	}
-	return MinDuration(rp.runeMeta[2].regenAt, rp.runeMeta[3].regenAt)
+	return min(rp.runeMeta[2].regenAt, rp.runeMeta[3].regenAt)
 }
 
 func (rp *runicPowerBar) UnholyRuneReadyAt(sim *Simulation) time.Duration {
 	if rp.runeStates&anyUnholySpent != anyUnholySpent { // if any are not spent
 		return sim.CurrentTime
 	}
-	return MinDuration(rp.runeMeta[4].regenAt, rp.runeMeta[5].regenAt)
+	return min(rp.runeMeta[4].regenAt, rp.runeMeta[5].regenAt)
 }
 
 func (rp *runicPowerBar) bothRunesReadyAt(sim *Simulation, slot int8) time.Duration {
@@ -340,7 +340,7 @@ func (rp *runicPowerBar) bothRunesReadyAt(sim *Simulation, slot int8) time.Durat
 	case 0b0100:
 		return rp.runeMeta[slot+1].regenAt
 	default:
-		return MaxDuration(rp.runeMeta[slot].regenAt, rp.runeMeta[slot+1].regenAt)
+		return max(rp.runeMeta[slot].regenAt, rp.runeMeta[slot+1].regenAt)
 	}
 }
 
@@ -400,7 +400,7 @@ func (rp *runicPowerBar) ConvertToDeath(sim *Simulation, slot int8, revertAt tim
 		rp.runeMeta[slot].revertAt = NeverExpires
 	} else {
 		if rp.runeMeta[slot].revertAt != NeverExpires {
-			rp.runeMeta[slot].revertAt = MaxDuration(rp.runeMeta[slot].revertAt, revertAt)
+			rp.runeMeta[slot].revertAt = max(rp.runeMeta[slot].revertAt, revertAt)
 		} else {
 			rp.runeMeta[slot].revertAt = revertAt
 		}
@@ -663,7 +663,7 @@ func (rp *runicPowerBar) RuneGraceAt(slot int8, at time.Duration) time.Duration 
 	if at <= 0 || lastRegenTime <= 0 {
 		return 0
 	}
-	return MinDuration(time.Millisecond*2500, at-lastRegenTime)
+	return min(time.Millisecond*2500, at-lastRegenTime)
 }
 
 func (rp *runicPowerBar) launchRuneRegen(sim *Simulation, slot int8) {
@@ -692,7 +692,7 @@ func (rp *runicPowerBar) launchPA(sim *Simulation, at time.Duration) {
 			rp.Advance(sim, sim.CurrentTime)
 
 			// Check when we need next check
-			pa.NextActionAt = MinDuration(rp.AnySpentRuneReadyAt(), rp.DeathRuneRevertAt())
+			pa.NextActionAt = min(rp.AnySpentRuneReadyAt(), rp.DeathRuneRevertAt())
 			if pa.NextActionAt < NeverExpires {
 				sim.AddPendingAction(pa)
 			}

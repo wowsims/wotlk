@@ -157,7 +157,7 @@ func (pet *Pet) Enable(sim *Simulation, petAgent PetAgent) {
 		pet.OnPetEnable(sim)
 	}
 
-	pet.SetGCDTimer(sim, MaxDuration(0, sim.CurrentTime))
+	pet.SetGCDTimer(sim, max(0, sim.CurrentTime))
 	if sim.CurrentTime >= 0 {
 		pet.AutoAttacks.EnableAutoSwing(sim)
 	} else {

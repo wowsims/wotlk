@@ -9,10 +9,10 @@ import (
 )
 
 const (
-	CooldownPriorityLow       = -1.0
-	CooldownPriorityDefault   = 0.0
-	CooldownPriorityDrums     = 2.0
-	CooldownPriorityBloodlust = 1.0
+	CooldownPriorityLow       = -1000
+	CooldownPriorityDefault   = 0
+	CooldownPriorityDrums     = 2000
+	CooldownPriorityBloodlust = 1000
 )
 
 type CooldownType byte
@@ -44,7 +44,7 @@ type MajorCooldown struct {
 	// Cooldowns with higher priority get used first. This is important when some
 	// cooldowns have a non-zero cast time. For example, Drums should be used
 	// before Bloodlust.
-	Priority float64
+	Priority int32
 
 	// Internal category, used for filtering. For example, mages want to disable
 	// all DPS cooldowns during their regen rotation.
@@ -83,7 +83,7 @@ func (mcd *MajorCooldown) TimeToReady(sim *Simulation) time.Duration {
 func (mcd *MajorCooldown) TimeToNextCast(sim *Simulation) time.Duration {
 	timeToReady := mcd.TimeToReady(sim)
 	if mcd.numUsages < len(mcd.timings) {
-		timeToReady = MaxDuration(timeToReady, mcd.timings[mcd.numUsages]-sim.CurrentTime)
+		timeToReady = max(timeToReady, mcd.timings[mcd.numUsages]-sim.CurrentTime)
 	}
 	return timeToReady
 }
@@ -507,15 +507,10 @@ func (mcdm *majorCooldownManager) UpdateMajorCooldowns() {
 
 func (mcdm *majorCooldownManager) sort() {
 	slices.SortStableFunc(mcdm.majorCooldowns, func(m1, m2 *MajorCooldown) int {
-		m1r := m1.ReadyAt()
-		m2r := m2.ReadyAt()
-		if m1r != m2r {
-			return int(m1r - m2r)
+		if r1, r2 := m1.ReadyAt(), m2.ReadyAt(); r1 != r2 {
+			return int(r1 - r2)
 		}
-		if m1.Priority > m2.Priority {
-			return -1
-		}
-		return 1
+		return int(m2.Priority - m1.Priority)
 	})
 }
 

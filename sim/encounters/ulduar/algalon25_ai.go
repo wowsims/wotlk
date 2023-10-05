@@ -57,7 +57,7 @@ func NewAlgalon25AI() core.AIFactory {
 	}
 }
 
-func (ai *Algalon25AI) Initialize(target *core.Target, config *proto.Target) {
+func (ai *Algalon25AI) Initialize(target *core.Target, _ *proto.Target) {
 	ai.Target = target
 
 	ai.registerQuantumStrikeSpell(target)
@@ -216,13 +216,13 @@ func (ai *Algalon25AI) DoAction(sim *core.Simulation) {
 
 		// All possible next events
 		events := []time.Duration{
-			core.MaxDuration(ai.BlackHoleExplosion.ReadyAt(), ai.BlackHoleExplosion.CD.Duration),
-			core.MaxDuration(ai.CosmicSmash.ReadyAt(), ai.CosmicSmash.CD.Duration),
+			max(ai.BlackHoleExplosion.ReadyAt(), ai.BlackHoleExplosion.CD.Duration),
+			max(ai.CosmicSmash.ReadyAt(), ai.CosmicSmash.CD.Duration),
 		}
 
 		if ai.Target.CurrentTarget != nil {
-			events = append(events, core.MaxDuration(ai.PhasePunch.ReadyAt(), ai.PhasePunch.CD.Duration))
-			events = append(events, core.MaxDuration(ai.QuantumStrike.ReadyAt(), ai.QuantumStrike.CD.Duration))
+			events = append(events, max(ai.PhasePunch.ReadyAt(), ai.PhasePunch.CD.Duration))
+			events = append(events, max(ai.QuantumStrike.ReadyAt(), ai.QuantumStrike.CD.Duration))
 		}
 
 		for _, elem := range events {

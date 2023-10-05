@@ -320,7 +320,7 @@ func (unit *Unit) InitialCastSpeed() float64 {
 }
 
 func (unit *Unit) SpellGCD() time.Duration {
-	return MaxDuration(GCDMin, unit.ApplyCastSpeed(GCDDefault))
+	return max(GCDMin, unit.ApplyCastSpeed(GCDDefault))
 }
 
 func (unit *Unit) updateCastSpeed() {
@@ -483,7 +483,7 @@ func (unit *Unit) startPull(sim *Simulation) {
 	unit.AutoAttacks.startPull(sim)
 
 	if unit.Type == PlayerUnit {
-		unit.SetGCDTimer(sim, MaxDuration(0, unit.GCD.ReadyAt()))
+		unit.SetGCDTimer(sim, max(0, unit.GCD.ReadyAt()))
 	}
 }
 

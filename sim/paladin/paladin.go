@@ -98,7 +98,7 @@ func (paladin *Paladin) GetPaladin() *Paladin {
 }
 
 func (paladin *Paladin) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
-	raidBuffs.DevotionAura = core.MaxTristate(raidBuffs.DevotionAura, core.MakeTristateValue(
+	raidBuffs.DevotionAura = max(raidBuffs.DevotionAura, core.MakeTristateValue(
 		paladin.PaladinAura == proto.PaladinAura_DevotionAura,
 		paladin.Talents.ImprovedDevotionAura == 5))
 

@@ -228,28 +228,28 @@ func (dk *Deathknight) Wait(sim *core.Simulation) {
 
 	anyRuneAt := dk.AnyRuneReadyAt(sim)
 	if anyRuneAt != sim.CurrentTime {
-		waitUntil = core.MinDuration(waitUntil, anyRuneAt)
+		waitUntil = min(waitUntil, anyRuneAt)
 	} else {
-		waitUntil = core.MinDuration(waitUntil, dk.AnySpentRuneReadyAt())
+		waitUntil = min(waitUntil, dk.AnySpentRuneReadyAt())
 	}
 	if sim.Log != nil {
 		dk.Log(sim, "DK Wait: %s, any at: %s, any spent at: %s", waitUntil, anyRuneAt, dk.AnySpentRuneReadyAt())
 	}
 
 	if dk.ButcheryPA != nil {
-		waitUntil = core.MinDuration(dk.ButcheryPA.NextActionAt, waitUntil)
+		waitUntil = min(dk.ButcheryPA.NextActionAt, waitUntil)
 	}
-	waitUntil = core.MaxDuration(sim.CurrentTime, waitUntil)
+	waitUntil = max(sim.CurrentTime, waitUntil)
 
 	if !dk.Inputs.IsDps {
 		target := dk.CurrentTarget
 		if dk.IsMainTank() {
 			targetSwingAt := target.AutoAttacks.MainhandSwingAt
 			if target.AutoAttacks.OffhandSwingAt > sim.CurrentTime {
-				targetSwingAt = core.MinDuration(targetSwingAt, target.AutoAttacks.OffhandSwingAt)
+				targetSwingAt = min(targetSwingAt, target.AutoAttacks.OffhandSwingAt)
 			}
 			if targetSwingAt > sim.CurrentTime {
-				waitUntil = core.MinDuration(waitUntil, targetSwingAt)
+				waitUntil = min(waitUntil, targetSwingAt)
 			}
 		}
 	}
