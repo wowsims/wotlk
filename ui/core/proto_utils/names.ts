@@ -166,48 +166,48 @@ export const statOrder: Array<Stat> = [
 	Stat.StatDeathRune,
 ];
 
-export const statNames: Record<Stat, string> = {
-	[Stat.StatStrength]: 'Strength',
-	[Stat.StatAgility]: 'Agility',
-	[Stat.StatStamina]: 'Stamina',
-	[Stat.StatIntellect]: 'Intellect',
-	[Stat.StatSpirit]: 'Spirit',
-	[Stat.StatSpellPower]: 'Spell Dmg',
-	[Stat.StatMP5]: 'MP5',
-	[Stat.StatSpellHit]: 'Spell Hit',
-	[Stat.StatSpellCrit]: 'Spell Crit',
-	[Stat.StatSpellHaste]: 'Spell Haste',
-	[Stat.StatSpellPenetration]: 'Spell Pen',
-	[Stat.StatAttackPower]: 'Attack Power',
-	[Stat.StatMeleeHit]: 'Melee Hit',
-	[Stat.StatMeleeCrit]: 'Melee Crit',
-	[Stat.StatMeleeHaste]: 'Melee Haste',
-	[Stat.StatArmorPenetration]: 'Armor Pen',
-	[Stat.StatExpertise]: 'Expertise',
-	[Stat.StatMana]: 'Mana',
-	[Stat.StatEnergy]: 'Energy',
-	[Stat.StatRage]: 'Rage',
-	[Stat.StatArmor]: 'Armor',
-	[Stat.StatRangedAttackPower]: 'Ranged AP',
-	[Stat.StatDefense]: 'Defense',
-	[Stat.StatBlock]: 'Block',
-	[Stat.StatBlockValue]: 'Block Value',
-	[Stat.StatDodge]: 'Dodge',
-	[Stat.StatParry]: 'Parry',
-	[Stat.StatResilience]: 'Resilience',
-	[Stat.StatHealth]: 'Health',
-	[Stat.StatArcaneResistance]: 'Arcane Resistance',
-	[Stat.StatFireResistance]: 'Fire Resistance',
-	[Stat.StatFrostResistance]: 'Frost Resistance',
-	[Stat.StatNatureResistance]: 'Nature Resistance',
-	[Stat.StatShadowResistance]: 'Shadow Resistance',
-	[Stat.StatBonusArmor]: 'Bonus Armor',
-	[Stat.StatRunicPower]: 'Runic Power',
-	[Stat.StatBloodRune]: 'Blood Rune',
-	[Stat.StatFrostRune]: 'Frost Rune',
-	[Stat.StatUnholyRune]: 'Unholy Rune',
-	[Stat.StatDeathRune]: 'Death Rune',
-};
+export const statNames: Map<Stat, string> = new Map([
+	[Stat.StatStrength, 'Strength'],
+	[Stat.StatAgility, 'Agility'],
+	[Stat.StatStamina, 'Stamina'],
+	[Stat.StatIntellect, 'Intellect'],
+	[Stat.StatSpirit, 'Spirit'],
+	[Stat.StatSpellPower, 'Spell Dmg'],
+	[Stat.StatMP5, 'MP5'],
+	[Stat.StatSpellHit, 'Spell Hit'],
+	[Stat.StatSpellCrit, 'Spell Crit'],
+	[Stat.StatSpellHaste, 'Spell Haste'],
+	[Stat.StatSpellPenetration, 'Spell Pen'],
+	[Stat.StatAttackPower, 'Attack Power'],
+	[Stat.StatMeleeHit, 'Melee Hit'],
+	[Stat.StatMeleeCrit, 'Melee Crit'],
+	[Stat.StatMeleeHaste, 'Melee Haste'],
+	[Stat.StatArmorPenetration, 'Armor Pen'],
+	[Stat.StatExpertise, 'Expertise'],
+	[Stat.StatMana, 'Mana'],
+	[Stat.StatEnergy, 'Energy'],
+	[Stat.StatRage, 'Rage'],
+	[Stat.StatArmor, 'Armor'],
+	[Stat.StatRangedAttackPower, 'Ranged AP'],
+	[Stat.StatDefense, 'Defense'],
+	[Stat.StatBlock, 'Block'],
+	[Stat.StatBlockValue, 'Block Value'],
+	[Stat.StatDodge, 'Dodge'],
+	[Stat.StatParry, 'Parry'],
+	[Stat.StatResilience, 'Resilience'],
+	[Stat.StatHealth, 'Health'],
+	[Stat.StatArcaneResistance, 'Arcane Resistance'],
+	[Stat.StatFireResistance, 'Fire Resistance'],
+	[Stat.StatFrostResistance, 'Frost Resistance'],
+	[Stat.StatNatureResistance, 'Nature Resistance'],
+	[Stat.StatShadowResistance, 'Shadow Resistance'],
+	[Stat.StatBonusArmor, 'Bonus Armor'],
+	[Stat.StatRunicPower, 'Runic Power'],
+	[Stat.StatBloodRune, 'Blood Rune'],
+	[Stat.StatFrostRune, 'Frost Rune'],
+	[Stat.StatUnholyRune, 'Unholy Rune'],
+	[Stat.StatDeathRune, 'Death Rune'],
+]);
 
 export const pseudoStatOrder: Array<PseudoStat> = [
 	PseudoStat.PseudoStatMainHandDps,
@@ -225,7 +225,9 @@ export const pseudoStatNames: Map<PseudoStat, string> = new Map([
 ]);
 
 export function getClassStatName(stat: Stat, playerClass: Class): string {
-	const statName = statNames[stat];
+	const statName = statNames.get(stat);
+	if (!statName)
+		return 'UnknownStat';
 	if (playerClass == Class.ClassHunter) {
 		return statName.replace('Melee', 'Ranged');
 	} else {

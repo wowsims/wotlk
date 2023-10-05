@@ -231,12 +231,12 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 		}
 
 		// Parse all the settings.
-		const charClass = nameToClass(match[1].replaceAll('-', ' '));
+		const charClass = nameToClass(match[1].replaceAll('-', ''));
 		if (charClass == Class.ClassUnknown) {
 			throw new Error('Could not parse Class: ' + match[1]);
 		}
 
-		const race = nameToRace(match[2].replaceAll('-', ' '));
+		const race = nameToRace(match[2].replaceAll('-', ''));
 		if (race == Race.RaceUnknown) {
 			throw new Error('Could not parse Race: ' + match[2]);
 		}
