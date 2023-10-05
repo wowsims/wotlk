@@ -47,7 +47,7 @@ export abstract class Input<ModObject, T, V = T> extends Component {
 
 	readonly changeEmitter = new TypedEvent<void>();
 
-	constructor(parent: HTMLElement, cssClass: string, modObject: ModObject, config: InputConfig<ModObject, T, V>) {
+	constructor(parent: HTMLElement | null, cssClass: string, modObject: ModObject, config: InputConfig<ModObject, T, V>) {
 		super(parent, 'input-root', config.rootElem);
 		this.inputConfig = config;
 		this.modObject = modObject;
