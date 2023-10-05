@@ -407,9 +407,9 @@ func (dk *Deathknight) HasMinorGlyph(glyph proto.DeathknightMinorGlyph) bool {
 	return dk.HasGlyph(int32(glyph))
 }
 
-func NewDeathknight(character core.Character, inputs DeathknightInputs, talents string, preNerfedGargoyle bool) *Deathknight {
+func NewDeathknight(character *core.Character, inputs DeathknightInputs, talents string, preNerfedGargoyle bool) *Deathknight {
 	dk := &Deathknight{
-		Character:  character,
+		Character:  *character,
 		Talents:    &proto.DeathknightTalents{},
 		Inputs:     inputs,
 		RoRTSBonus: func(u *core.Unit) float64 { return 1.0 }, // default to no bonus for RoR/TS

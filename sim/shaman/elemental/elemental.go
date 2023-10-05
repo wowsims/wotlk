@@ -11,7 +11,7 @@ func RegisterElementalShaman() {
 	core.RegisterAgentFactory(
 		proto.Player_ElementalShaman{},
 		proto.Spec_SpecElementalShaman,
-		func(character core.Character, options *proto.Player) core.Agent {
+		func(character *core.Character, options *proto.Player) core.Agent {
 			return NewElementalShaman(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -24,7 +24,7 @@ func RegisterElementalShaman() {
 	)
 }
 
-func NewElementalShaman(character core.Character, options *proto.Player) *ElementalShaman {
+func NewElementalShaman(character *core.Character, options *proto.Player) *ElementalShaman {
 	eleShamOptions := options.GetElementalShaman()
 
 	selfBuffs := shaman.SelfBuffs{

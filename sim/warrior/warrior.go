@@ -159,9 +159,9 @@ func (warrior *Warrior) Reset(_ *core.Simulation) {
 	warrior.curQueuedAutoSpell = nil
 }
 
-func NewWarrior(character core.Character, talents string, inputs WarriorInputs) *Warrior {
+func NewWarrior(character *core.Character, talents string, inputs WarriorInputs) *Warrior {
 	warrior := &Warrior{
-		Character:     character,
+		Character:     *character,
 		Talents:       &proto.WarriorTalents{},
 		WarriorInputs: inputs,
 	}

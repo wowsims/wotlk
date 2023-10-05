@@ -13,7 +13,7 @@ func RegisterRogue() {
 	core.RegisterAgentFactory(
 		proto.Player_Rogue{},
 		proto.Spec_SpecRogue,
-		func(character core.Character, options *proto.Player) core.Agent {
+		func(character *core.Character, options *proto.Player) core.Agent {
 			return NewRogue(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -240,11 +240,11 @@ func (rogue *Rogue) SpellCritMultiplier() float64 {
 	return rogue.Character.SpellCritMultiplier(primaryModifier, 0)
 }
 
-func NewRogue(character core.Character, options *proto.Player) *Rogue {
+func NewRogue(character *core.Character, options *proto.Player) *Rogue {
 	rogueOptions := options.GetRogue()
 
 	rogue := &Rogue{
-		Character: character,
+		Character: *character,
 		Talents:   &proto.RogueTalents{},
 		Options:   rogueOptions.Options,
 		Rotation:  rogueOptions.Rotation,
