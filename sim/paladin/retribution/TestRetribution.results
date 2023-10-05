@@ -289,16 +289,16 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 6630.75045
-  tps: 6716.94607
+  dps: 6638.60666
+  tps: 6724.80229
   dtps: 9.92959
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 6598.29953
-  tps: 6684.11381
+  dps: 6606.51859
+  tps: 6692.33287
   dtps: 9.92959
  }
 }
