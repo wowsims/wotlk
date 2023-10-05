@@ -33,6 +33,8 @@ type CastConfig struct {
 
 	CD       Cooldown
 	SharedCD Cooldown
+
+	GetCastTime func(spell *Spell) time.Duration
 }
 
 type Cast struct {
@@ -99,6 +101,10 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 			spell.CurCast.GCD = spell.Unit.ApplyCastSpeed(spell.CurCast.GCD)
 			spell.CurCast.CastTime = spell.Unit.ApplyCastSpeedForSpell(spell.CurCast.CastTime, spell)
 			spell.CurCast.ChannelTime = spell.Unit.ApplyCastSpeedForSpell(spell.CurCast.ChannelTime, spell)
+		}
+
+		if spell.GetCastTime != nil {
+			spell.CurCast.CastTime = spell.GetCastTime(spell)
 		}
 
 		if config.CD.Timer != nil {

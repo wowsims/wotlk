@@ -141,6 +141,8 @@ type Spell struct {
 
 	// Per-target auras that are related to this spell, usually buffs or debuffs applied by the spell.
 	RelatedAuras []AuraArray
+
+	GetCastTime func(spell *Spell) time.Duration
 }
 
 func (unit *Unit) OnSpellRegistered(handler SpellRegisteredHandler) {
@@ -218,6 +220,7 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		splitSpellMetrics: make([][]SpellMetrics, max(1, config.MetricSplits)),
 
 		RelatedAuras: config.RelatedAuras,
+		GetCastTime:  config.Cast.GetCastTime,
 	}
 
 	switch {
