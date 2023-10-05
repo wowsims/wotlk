@@ -224,15 +224,15 @@ dps_results: {
 dps_results: {
  key: "TestAffliction-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 11923.9785
-  tps: 10784.47711
+  dps: 12017.56928
+  tps: 10876.21362
  }
 }
 dps_results: {
  key: "TestAffliction-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 11895.89732
-  tps: 10763.8253
+  dps: 11941.31102
+  tps: 10807.8439
  }
 }
 dps_results: {

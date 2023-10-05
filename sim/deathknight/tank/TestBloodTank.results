@@ -252,15 +252,15 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 2167.25151
-  tps: 6589.41411
+  dps: 2167.45627
+  tps: 6589.92063
  }
 }
 dps_results: {
  key: "TestBloodTank-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 2153.84358
-  tps: 6574.13891
+  dps: 2153.58281
+  tps: 6575.72721
  }
 }
 dps_results: {

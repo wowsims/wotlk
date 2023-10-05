@@ -224,8 +224,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralDoubleArmorPenTrinketsWithDesync-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 9866.98628
-  tps: 7069.12893
+  dps: 9866.66647
+  tps: 7068.90186
  }
 }
 dps_results: {

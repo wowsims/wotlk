@@ -60,7 +60,7 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:      core.GCDDefault,
-				CastTime: 1, // Dummy value so core doesn't optimize the cast away
+				CastTime: time.Millisecond * 2000,
 			},
 			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
 				cast.CastTime = hunter.SteadyShotCastTime()

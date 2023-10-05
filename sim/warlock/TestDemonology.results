@@ -224,15 +224,15 @@ dps_results: {
 dps_results: {
  key: "TestDemonology-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 11141.27121
-  tps: 9410.02604
+  dps: 11180.90993
+  tps: 9445.24037
  }
 }
 dps_results: {
  key: "TestDemonology-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 11045.84246
-  tps: 9319.43534
+  dps: 11094.14922
+  tps: 9362.2556
  }
 }
 dps_results: {

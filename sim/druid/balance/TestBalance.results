@@ -221,15 +221,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 8127.95569
-  tps: 7904.36494
+  dps: 8140.23944
+  tps: 7915.87124
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 8088.47549
-  tps: 7866.38524
+  dps: 8088.72563
+  tps: 7870.09491
  }
 }
 dps_results: {

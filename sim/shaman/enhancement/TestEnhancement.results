@@ -266,7 +266,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 7486.96914
+  dps: 7486.97529
   tps: 4172.59091
  }
 }
