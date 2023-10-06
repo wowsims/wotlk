@@ -209,7 +209,7 @@ export abstract class MetricsTable<T> extends ResultComponent {
 				cellElem.appendChild(
 					<>
 						<img className="metrics-action-icon" src={player.iconUrl}></img>
-						<span className={`metrics-action-name text-${player.classColor}`}>player.label</span>
+						<span className={`metrics-action-name text-${player.classColor}`}>{player.label}</span>
 					</>
 				);
 			},
