@@ -269,6 +269,7 @@ export const ROTATION_PRESET_ADVANCED = {
     specRotationOptionsJson: ElementalShamanRotation.toJsonString(DefaultRotation),
     rotation: APLRotation.fromJsonString(`{
       "enabled": true,
+      "type": "TypeAPL",
       "prepullActions": [
         {"action":{"castSpell":{"spellId":{"spellId":59159}}},"doAtValue":{"const":{"val":"-3.75s"}}},
         {"action":{"castSpell":{"spellId":{"spellId":49238}}},"doAtValue":{"const":{"val":"-2.50s"}}},
