@@ -247,7 +247,7 @@ message ElementalShaman {
 		double lvb_fs_wait_ms = 12;
 		
 		enum BloodlustUse {
-			Unset = 0;
+			UnsetBloodlust = 0;
 			UseBloodlust = 1;
 			NoBloodlust = 2;
 		}
@@ -260,9 +260,9 @@ message ElementalShaman {
 		ShamanTotems totems = 3;
 		
 		enum ThunderstormRange {
-			Unset = 0;
-			InRange = 1;
-			OutofRange = 2;
+			UnsetTSRange = 0;
+			TSInRange = 1;
+			TSOutofRange = 2;
 		}
 		ThunderstormRange thunderstormRange = 4;
 	}
@@ -325,11 +325,18 @@ message EnhancementShaman {
 		double delay_gcd_weave = 13;
 		ItemSwap item_swap = 14;
 		bool enable_item_swap = 15;
+
+		enum BloodlustUse {
+			UnsetBloodlust = 0;
+			UseBloodlust = 1;
+			NoBloodlust = 2;
+		}
+		BloodlustUse bloodlust = 16;
 	}
 
 	message Options {
 		ShamanShield shield = 1;
-		bool bloodlust = 2;
+		bool bloodlust = 2 [deprecated = true];
 		ShamanSyncType sync_type = 3;
 		ShamanImbue imbue_mh = 4;
 		ShamanImbue imbue_oh = 5;
@@ -354,11 +361,18 @@ message RestorationShaman {
 		bool use_earth_shield = 2;
 		ShamanHealSpell primary_heal = 3;
 		bool use_riptide = 4;
+
+		enum BloodlustUse {
+			UnsetBloodlust = 0;
+			UseBloodlust = 1;
+			NoBloodlust = 2;
+		}
+		BloodlustUse bloodlust = 5;
 	}
 
 	message Options {
 		ShamanShield shield = 1;
-		bool bloodlust = 2;
+		bool bloodlust = 2 [deprecated = true];
 		ShamanImbue imbue_mh = 4;
 		int32 earth_shield_p_p_m = 5;
 		ShamanTotems totems = 6;

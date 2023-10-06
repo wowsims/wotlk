@@ -303,7 +303,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		this.addTopbarComponents();
 	}
 
-	loadSettings() {
+	private loadSettings() {
 		const initEventID = TypedEvent.nextEventID();
 		TypedEvent.freezeAllAndDo(() => {
 			let loadedSettings = false;

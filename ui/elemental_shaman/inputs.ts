@@ -17,13 +17,13 @@ export const InThunderstormRange = InputHelpers.makeSpecOptionsBooleanInput<Spec
 	// id: ActionId.fromSpellId(59159),
 	label: "Thunderstorm In Range",
 	labelTooltip: "When set to true, thunderstorm casts will cause damage.",
-	getValue: (player: Player<Spec.SpecElementalShaman>) => player.getSpecOptions().thunderstormRange == ElementalShaman_Options_ThunderstormRange.InRange,
+	getValue: (player: Player<Spec.SpecElementalShaman>) => player.getSpecOptions().thunderstormRange == ElementalShaman_Options_ThunderstormRange.TSInRange,
 	setValue: (eventID: EventID, player: Player<Spec.SpecElementalShaman>, newValue: boolean) => {
 		const newOptions = player.getSpecOptions();
 		if (newValue) {
-			newOptions.thunderstormRange = ElementalShaman_Options_ThunderstormRange.InRange;
+			newOptions.thunderstormRange = ElementalShaman_Options_ThunderstormRange.TSInRange;
 		} else {
-			newOptions.thunderstormRange = ElementalShaman_Options_ThunderstormRange.OutofRange;
+			newOptions.thunderstormRange = ElementalShaman_Options_ThunderstormRange.TSOutofRange;
 		}
 		player.setSpecOptions(eventID, newOptions);
 	},

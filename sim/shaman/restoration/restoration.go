@@ -33,6 +33,10 @@ func NewRestorationShaman(character *core.Character, options *proto.Player) *Res
 		Shield:    restoShamOptions.Options.Shield,
 	}
 
+	if restoShamOptions.Rotation.Bloodlust != proto.RestorationShaman_Rotation_UnsetBloodlust {
+		selfBuffs.Bloodlust = restoShamOptions.Rotation.Bloodlust == proto.RestorationShaman_Rotation_UseBloodlust
+	}
+
 	totems := &proto.ShamanTotems{}
 	if restoShamOptions.Options.Totems != nil {
 		totems = restoShamOptions.Options.Totems

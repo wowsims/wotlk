@@ -109,7 +109,6 @@ export class RestorationShamanSimUI extends IndividualSimUI<Spec.SpecRestoration
 			// IconInputs to include in the 'Player' section on the settings tab.
 			playerIconInputs: [
 				ShamanInputs.ShamanShieldInput,
-				ShamanInputs.Bloodlust,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: ShamanInputs.RestorationShamanRotationConfig,
