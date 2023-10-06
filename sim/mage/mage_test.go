@@ -1,8 +1,6 @@
 package mage
 
 import (
-	"log"
-	"os"
 	"testing"
 
 	_ "github.com/wowsims/wotlk/sim/common"
@@ -12,16 +10,6 @@ import (
 
 func init() {
 	RegisterMage()
-}
-
-func GetAplRotation(dir string, file string) core.RotationCombo {
-	filePath := dir + "/" + file + ".apl.json"
-	data, err := os.ReadFile(filePath)
-	if err != nil {
-		log.Fatalf("failed to load apl json file: %s, %s", filePath, err)
-	}
-
-	return core.RotationCombo{Label: file, Rotation: core.APLRotationFromJsonString(string(data))}
 }
 
 func TestArcane(t *testing.T) {
@@ -34,9 +22,9 @@ func TestArcane(t *testing.T) {
 		Glyphs:      ArcaneGlyphs,
 		Consumes:    FullArcaneConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Arcane", SpecOptions: PlayerOptionsArcane},
-		Rotation:    GetAplRotation("../../ui/mage/apls", "arcane"),
+		Rotation:    core.GetAplRotation("../../ui/mage/apls", "arcane"),
 		OtherRotations: []core.RotationCombo{
-			GetAplRotation("../../ui/mage/apls", "arcane_aoe"),
+			core.GetAplRotation("../../ui/mage/apls", "arcane_aoe"),
 		},
 
 		ItemFilter: ItemFilter,
@@ -53,9 +41,9 @@ func TestFire(t *testing.T) {
 		Glyphs:      FireGlyphs,
 		Consumes:    FullFireConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Fire", SpecOptions: PlayerOptionsFire},
-		Rotation:    GetAplRotation("../../ui/mage/apls", "fire"),
+		Rotation:    core.GetAplRotation("../../ui/mage/apls", "fire"),
 		OtherRotations: []core.RotationCombo{
-			GetAplRotation("../../ui/mage/apls", "fire_aoe"),
+			core.GetAplRotation("../../ui/mage/apls", "fire_aoe"),
 		},
 
 		ItemFilter: ItemFilter,
@@ -72,7 +60,7 @@ func TestFrostFire(t *testing.T) {
 		Glyphs:      FrostFireGlyphs,
 		Consumes:    FullFireConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Fire", SpecOptions: PlayerOptionsFire},
-		Rotation:    GetAplRotation("../../ui/mage/apls", "frostfire"),
+		Rotation:    core.GetAplRotation("../../ui/mage/apls", "frostfire"),
 
 		ItemFilter: ItemFilter,
 	}))
@@ -88,9 +76,9 @@ func TestFrost(t *testing.T) {
 		Glyphs:      FrostGlyphs,
 		Consumes:    FullFrostConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Frost", SpecOptions: PlayerOptionsFrost},
-		Rotation:    GetAplRotation("../../ui/mage/apls", "frost"),
+		Rotation:    core.GetAplRotation("../../ui/mage/apls", "frost"),
 		OtherRotations: []core.RotationCombo{
-			GetAplRotation("../../ui/mage/apls", "frost_aoe"),
+			core.GetAplRotation("../../ui/mage/apls", "frost_aoe"),
 		},
 
 		ItemFilter: ItemFilter,

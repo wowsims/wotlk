@@ -1,8 +1,6 @@
 package shadow
 
 import (
-	"log"
-	"os"
 	"testing"
 
 	_ "github.com/wowsims/wotlk/sim/common" // imported to get caster sets included.
@@ -12,16 +10,6 @@ import (
 
 func init() {
 	RegisterShadowPriest()
-}
-
-func GetAplRotation(dir string, file string) core.RotationCombo {
-	filePath := dir + "/" + file + ".apl.json"
-	data, err := os.ReadFile(filePath)
-	if err != nil {
-		log.Fatalf("failed to load apl json file: %s, %s", filePath, err)
-	}
-
-	return core.RotationCombo{Label: file, Rotation: core.APLRotationFromJsonString(string(data))}
 }
 
 func TestShadow(t *testing.T) {
@@ -41,7 +29,7 @@ func TestShadow(t *testing.T) {
 			{Label: "Clipping", SpecOptions: PlayerOptionsClipping},
 		},
 
-		Rotation: GetAplRotation("../../../ui/shadow_priest/apls", "default"),
+		Rotation: core.GetAplRotation("../../../ui/shadow_priest/apls", "default"),
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{

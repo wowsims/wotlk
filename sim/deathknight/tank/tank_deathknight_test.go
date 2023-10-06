@@ -1,8 +1,6 @@
 package tank
 
 import (
-	"log"
-	"os"
 	"testing"
 
 	_ "github.com/wowsims/wotlk/sim/common" // imported to get item effects included.
@@ -12,16 +10,6 @@ import (
 
 func init() {
 	RegisterTankDeathknight()
-}
-
-func GetAplRotation(dir string, file string) core.RotationCombo {
-	filePath := dir + "/" + file + ".apl.json"
-	data, err := os.ReadFile(filePath)
-	if err != nil {
-		log.Fatalf("failed to load apl json file: %s, %s", filePath, err)
-	}
-
-	return core.RotationCombo{Label: file, Rotation: core.APLRotationFromJsonString(string(data))}
 }
 
 func TestBloodTank(t *testing.T) {
@@ -35,9 +23,9 @@ func TestBloodTank(t *testing.T) {
 		Glyphs:      Glyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBloodTank},
-		Rotation:    GetAplRotation("../../../ui/tank_deathknight/apls", "blood_icy_touch"),
+		Rotation:    core.GetAplRotation("../../../ui/tank_deathknight/apls", "blood_icy_touch"),
 		OtherRotations: []core.RotationCombo{
-			GetAplRotation("../../../ui/tank_deathknight/apls", "blood_aggro"),
+			core.GetAplRotation("../../../ui/tank_deathknight/apls", "blood_aggro"),
 		},
 
 		IsTank:          true,

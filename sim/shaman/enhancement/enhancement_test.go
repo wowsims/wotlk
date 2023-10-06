@@ -1,8 +1,6 @@
 package enhancement
 
 import (
-	"log"
-	"os"
 	"testing"
 
 	_ "github.com/wowsims/wotlk/sim/common" // imported to get item effects included.
@@ -12,16 +10,6 @@ import (
 
 func init() {
 	RegisterEnhancementShaman()
-}
-
-func GetAplRotation(dir string, file string) core.RotationCombo {
-	filePath := dir + "/" + file + ".apl.json"
-	data, err := os.ReadFile(filePath)
-	if err != nil {
-		log.Fatalf("failed to load apl json file: %s, %s", filePath, err)
-	}
-
-	return core.RotationCombo{Label: file, Rotation: core.APLRotationFromJsonString(string(data))}
 }
 
 func TestEnhancement(t *testing.T) {
@@ -38,10 +26,10 @@ func TestEnhancement(t *testing.T) {
 		OtherSpecOptions: []core.SpecOptionsCombo{
 			{Label: "WF", SpecOptions: PlayerOptionsWFWF},
 		},
-		Rotation: GetAplRotation("../../../ui/enhancement_shaman/apls", "default_ft"),
+		Rotation: core.GetAplRotation("../../../ui/enhancement_shaman/apls", "default_ft"),
 		OtherRotations: []core.RotationCombo{
-			GetAplRotation("../../../ui/enhancement_shaman/apls", "default_wf"),
-			GetAplRotation("../../../ui/enhancement_shaman/apls", "phase_3"),
+			core.GetAplRotation("../../../ui/enhancement_shaman/apls", "default_wf"),
+			core.GetAplRotation("../../../ui/enhancement_shaman/apls", "phase_3"),
 		},
 
 		ItemFilter: core.ItemFilter{

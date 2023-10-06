@@ -2,6 +2,7 @@ package core
 
 import (
 	"log"
+	"os"
 	"testing"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -233,4 +234,14 @@ func RaidBenchmark(b *testing.B, rsr *proto.RaidSimRequest) {
 			b.Fatalf("RaidBenchmark() at iteration %d failed: %v", i, result.ErrorResult)
 		}
 	}
+}
+
+func GetAplRotation(dir string, file string) RotationCombo {
+	filePath := dir + "/" + file + ".apl.json"
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		log.Fatalf("failed to load apl json file: %s, %s", filePath, err)
+	}
+
+	return RotationCombo{Label: file, Rotation: APLRotationFromJsonString(string(data))}
 }

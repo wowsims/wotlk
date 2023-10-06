@@ -1,8 +1,6 @@
 package protection
 
 import (
-	"log"
-	"os"
 	"testing"
 
 	_ "github.com/wowsims/wotlk/sim/common" // imported to get item effects included.
@@ -12,16 +10,6 @@ import (
 
 func init() {
 	RegisterProtectionWarrior()
-}
-
-func GetAplRotation(dir string, file string) core.RotationCombo {
-	filePath := dir + "/" + file + ".apl.json"
-	data, err := os.ReadFile(filePath)
-	if err != nil {
-		log.Fatalf("failed to load apl json file: %s, %s", filePath, err)
-	}
-
-	return core.RotationCombo{Label: file, Rotation: core.APLRotationFromJsonString(string(data))}
 }
 
 func TestProtectionWarrior(t *testing.T) {
@@ -35,7 +23,7 @@ func TestProtectionWarrior(t *testing.T) {
 		Glyphs:      DefaultGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
-		Rotation:    GetAplRotation("../../../ui/protection_warrior/apls", "default"),
+		Rotation:    core.GetAplRotation("../../../ui/protection_warrior/apls", "default"),
 
 		IsTank:          true,
 		InFrontOfTarget: true,

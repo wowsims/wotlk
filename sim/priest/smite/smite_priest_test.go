@@ -1,8 +1,6 @@
 package smite
 
 import (
-	"log"
-	"os"
 	"testing"
 
 	_ "github.com/wowsims/wotlk/sim/common" // imported to get caster sets included.
@@ -12,16 +10,6 @@ import (
 
 func init() {
 	RegisterSmitePriest()
-}
-
-func GetAplRotation(dir string, file string) core.RotationCombo {
-	filePath := dir + "/" + file + ".apl.json"
-	data, err := os.ReadFile(filePath)
-	if err != nil {
-		log.Fatalf("failed to load apl json file: %s, %s", filePath, err)
-	}
-
-	return core.RotationCombo{Label: file, Rotation: core.APLRotationFromJsonString(string(data))}
 }
 
 func TestSmite(t *testing.T) {
@@ -34,7 +22,7 @@ func TestSmite(t *testing.T) {
 		Glyphs:      DefaultGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
-		Rotation:    GetAplRotation("../../../ui/smite_priest/apls", "default"),
+		Rotation:    core.GetAplRotation("../../../ui/smite_priest/apls", "default"),
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{

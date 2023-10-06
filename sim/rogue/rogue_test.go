@@ -1,8 +1,6 @@
 package rogue
 
 import (
-	"log"
-	"os"
 	"testing"
 
 	_ "github.com/wowsims/wotlk/sim/common" // imported to get item effects included.
@@ -12,16 +10,6 @@ import (
 
 func init() {
 	RegisterRogue()
-}
-
-func GetAplRotation(dir string, file string) core.RotationCombo {
-	filePath := dir + "/" + file + ".apl.json"
-	data, err := os.ReadFile(filePath)
-	if err != nil {
-		log.Fatalf("failed to load apl json file: %s, %s", filePath, err)
-	}
-
-	return core.RotationCombo{Label: file, Rotation: core.APLRotationFromJsonString(string(data))}
 }
 
 func TestCombat(t *testing.T) {
@@ -39,11 +27,11 @@ func TestCombat(t *testing.T) {
 			{Label: "MH Instant OH Instant", SpecOptions: PlayerOptionsCombatII},
 			{Label: "MH Deadly OH Deadly", SpecOptions: PlayerOptionsCombatDD},
 		},
-		Rotation: GetAplRotation("../../ui/rogue/apls", "combat_expose"),
+		Rotation: core.GetAplRotation("../../ui/rogue/apls", "combat_expose"),
 		OtherRotations: []core.RotationCombo{
-			GetAplRotation("../../ui/rogue/apls", "combat_cleave_snd"),
-			GetAplRotation("../../ui/rogue/apls", "combat_cleave_snd_expose"),
-			GetAplRotation("../../ui/rogue/apls", "fan_aoe"),
+			core.GetAplRotation("../../ui/rogue/apls", "combat_cleave_snd"),
+			core.GetAplRotation("../../ui/rogue/apls", "combat_cleave_snd_expose"),
+			core.GetAplRotation("../../ui/rogue/apls", "fan_aoe"),
 		},
 		ItemFilter: core.ItemFilter{
 			ArmorType: proto.ArmorType_ArmorTypeLeather,
@@ -71,11 +59,11 @@ func TestAssassination(t *testing.T) {
 			{Label: "MH Instant OH Instant", SpecOptions: PlayerOptionsAssassinationII},
 			{Label: "MH Deadly OH Deadly", SpecOptions: PlayerOptionsAssassinationDD},
 		},
-		Rotation: GetAplRotation("../../ui/rogue/apls", "rupture_mutilate_expose"),
+		Rotation: core.GetAplRotation("../../ui/rogue/apls", "rupture_mutilate_expose"),
 		OtherRotations: []core.RotationCombo{
-			GetAplRotation("../../ui/rogue/apls", "rupture_mutilate"),
-			GetAplRotation("../../ui/rogue/apls", "mutilate"),
-			GetAplRotation("../../ui/rogue/apls", "mutilate_expose"),
+			core.GetAplRotation("../../ui/rogue/apls", "rupture_mutilate"),
+			core.GetAplRotation("../../ui/rogue/apls", "mutilate"),
+			core.GetAplRotation("../../ui/rogue/apls", "mutilate_expose"),
 		},
 
 		ItemFilter: core.ItemFilter{

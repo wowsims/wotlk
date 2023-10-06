@@ -1,8 +1,6 @@
 package hunter
 
 import (
-	"log"
-	"os"
 	"testing"
 
 	_ "github.com/wowsims/wotlk/sim/common" // imported to get item effects included.
@@ -12,16 +10,6 @@ import (
 
 func init() {
 	RegisterHunter()
-}
-
-func GetAplRotation(dir string, file string) core.RotationCombo {
-	filePath := dir + "/" + file + ".apl.json"
-	data, err := os.ReadFile(filePath)
-	if err != nil {
-		log.Fatalf("failed to load apl json file: %s, %s", filePath, err)
-	}
-
-	return core.RotationCombo{Label: file, Rotation: core.APLRotationFromJsonString(string(data))}
 }
 
 func TestBM(t *testing.T) {
@@ -35,7 +23,7 @@ func TestBM(t *testing.T) {
 		Glyphs:      BMGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
-		Rotation:    GetAplRotation("../../ui/hunter/apls", "bm"),
+		Rotation:    core.GetAplRotation("../../ui/hunter/apls", "bm"),
 
 		ItemFilter: ItemFilter,
 	}))
@@ -52,9 +40,9 @@ func TestMM(t *testing.T) {
 		Glyphs:      MMGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
-		Rotation:    GetAplRotation("../../ui/hunter/apls", "mm"),
+		Rotation:    core.GetAplRotation("../../ui/hunter/apls", "mm"),
 		OtherRotations: []core.RotationCombo{
-			GetAplRotation("../../ui/hunter/apls", "mm_advanced"),
+			core.GetAplRotation("../../ui/hunter/apls", "mm_advanced"),
 		},
 
 		ItemFilter: ItemFilter,
@@ -72,10 +60,10 @@ func TestSV(t *testing.T) {
 		Glyphs:      SVGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
-		Rotation:    GetAplRotation("../../ui/hunter/apls", "sv"),
+		Rotation:    core.GetAplRotation("../../ui/hunter/apls", "sv"),
 		OtherRotations: []core.RotationCombo{
-			GetAplRotation("../../ui/hunter/apls", "sv_advanced"),
-			GetAplRotation("../../ui/hunter/apls", "aoe"),
+			core.GetAplRotation("../../ui/hunter/apls", "sv_advanced"),
+			core.GetAplRotation("../../ui/hunter/apls", "aoe"),
 		},
 
 		ItemFilter: ItemFilter,

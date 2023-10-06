@@ -1,8 +1,6 @@
 package tank
 
 import (
-	"log"
-	"os"
 	"testing"
 
 	_ "github.com/wowsims/wotlk/sim/common"
@@ -12,16 +10,6 @@ import (
 
 func init() {
 	RegisterFeralTankDruid()
-}
-
-func GetAplRotation(dir string, file string) core.RotationCombo {
-	filePath := dir + "/" + file + ".apl.json"
-	data, err := os.ReadFile(filePath)
-	if err != nil {
-		log.Fatalf("failed to load apl json file: %s, %s", filePath, err)
-	}
-
-	return core.RotationCombo{Label: file, Rotation: core.APLRotationFromJsonString(string(data))}
 }
 
 func TestFeralTank(t *testing.T) {
@@ -34,7 +22,7 @@ func TestFeralTank(t *testing.T) {
 		Glyphs:      StandardGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Default", SpecOptions: PlayerOptionsDefault},
-		Rotation:    GetAplRotation("../../../ui/feral_tank_druid/apls", "default"),
+		Rotation:    core.GetAplRotation("../../../ui/feral_tank_druid/apls", "default"),
 
 		IsTank:          true,
 		InFrontOfTarget: true,

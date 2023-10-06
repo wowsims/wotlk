@@ -1,8 +1,6 @@
 package balance
 
 import (
-	"log"
-	"os"
 	"testing"
 
 	_ "github.com/wowsims/wotlk/sim/common" // imported to get caster sets included. (we use spellfire here)
@@ -12,16 +10,6 @@ import (
 
 func init() {
 	RegisterBalanceDruid()
-}
-
-func GetAplRotation(dir string, file string) core.RotationCombo {
-	filePath := dir + "/" + file + ".apl.json"
-	data, err := os.ReadFile(filePath)
-	if err != nil {
-		log.Fatalf("failed to load apl json file: %s, %s", filePath, err)
-	}
-
-	return core.RotationCombo{Label: file, Rotation: core.APLRotationFromJsonString(string(data))}
 }
 
 func TestBalance(t *testing.T) {
@@ -39,7 +27,7 @@ func TestBalance(t *testing.T) {
 		Glyphs:      StandardGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Default", SpecOptions: PlayerOptionsAdaptive},
-		Rotation:    GetAplRotation("../../../ui/balance_druid/apls", "basic_p3"),
+		Rotation:    core.GetAplRotation("../../../ui/balance_druid/apls", "basic_p3"),
 
 		ItemFilter: ItemFilter,
 	}))
@@ -59,7 +47,7 @@ func TestBalancePhase3(t *testing.T) {
 		},
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Default", SpecOptions: PlayerOptionsAdaptive},
-		Rotation:    GetAplRotation("../../../ui/balance_druid/apls", "basic_p3"),
+		Rotation:    core.GetAplRotation("../../../ui/balance_druid/apls", "basic_p3"),
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{

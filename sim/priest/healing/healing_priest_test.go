@@ -1,8 +1,6 @@
 package healing
 
 import (
-	"log"
-	"os"
 	"testing"
 
 	_ "github.com/wowsims/wotlk/sim/common" // imported to get caster sets included.
@@ -12,16 +10,6 @@ import (
 
 func init() {
 	RegisterHealingPriest()
-}
-
-func GetAplRotation(dir string, file string) core.RotationCombo {
-	filePath := dir + "/" + file + ".apl.json"
-	data, err := os.ReadFile(filePath)
-	if err != nil {
-		log.Fatalf("failed to load apl json file: %s, %s", filePath, err)
-	}
-
-	return core.RotationCombo{Label: file, Rotation: core.APLRotationFromJsonString(string(data))}
 }
 
 func TestDisc(t *testing.T) {
@@ -35,7 +23,7 @@ func TestDisc(t *testing.T) {
 		Glyphs:      DiscGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Disc", SpecOptions: PlayerOptionsDisc},
-		Rotation:    GetAplRotation("../../../ui/healing_priest/apls", "disc"),
+		Rotation:    core.GetAplRotation("../../../ui/healing_priest/apls", "disc"),
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
@@ -71,7 +59,7 @@ func TestHoly(t *testing.T) {
 		Glyphs:      HolyGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Holy", SpecOptions: PlayerOptionsHoly},
-		Rotation:    GetAplRotation("../../../ui/healing_priest/apls", "holy"),
+		Rotation:    core.GetAplRotation("../../../ui/healing_priest/apls", "holy"),
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{

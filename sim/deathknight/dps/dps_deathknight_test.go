@@ -1,8 +1,6 @@
 package dps
 
 import (
-	"log"
-	"os"
 	"testing"
 
 	_ "github.com/wowsims/wotlk/sim/common" // imported to get item effects included.
@@ -12,16 +10,6 @@ import (
 
 func init() {
 	RegisterDpsDeathknight()
-}
-
-func GetAplRotation(dir string, file string) core.RotationCombo {
-	filePath := dir + "/" + file + ".apl.json"
-	data, err := os.ReadFile(filePath)
-	if err != nil {
-		log.Fatalf("failed to load apl json file: %s, %s", filePath, err)
-	}
-
-	return core.RotationCombo{Label: file, Rotation: core.APLRotationFromJsonString(string(data))}
 }
 
 func TestBlood(t *testing.T) {
@@ -36,8 +24,8 @@ func TestBlood(t *testing.T) {
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBlood},
 		OtherRotations: []core.RotationCombo{
-			GetAplRotation("../../../ui/deathknight/apls", "blood_pesti"),
-			GetAplRotation("../../../ui/deathknight/apls", "blood_pesti_dd"),
+			core.GetAplRotation("../../../ui/deathknight/apls", "blood_pesti"),
+			core.GetAplRotation("../../../ui/deathknight/apls", "blood_pesti_dd"),
 		},
 
 		ItemFilter: ItemFilter,
@@ -57,9 +45,9 @@ func TestUnholy(t *testing.T) {
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsUnholy},
 
 		OtherRotations: []core.RotationCombo{
-			GetAplRotation("../../../ui/deathknight/apls", "uh_2h_ss"),
-			GetAplRotation("../../../ui/deathknight/apls", "uh_dnd_aoe"),
-			GetAplRotation("../../../ui/deathknight/apls", "unholy_dw_ss"),
+			core.GetAplRotation("../../../ui/deathknight/apls", "uh_2h_ss"),
+			core.GetAplRotation("../../../ui/deathknight/apls", "uh_dnd_aoe"),
+			core.GetAplRotation("../../../ui/deathknight/apls", "unholy_dw_ss"),
 		},
 
 		ItemFilter: ItemFilter,
@@ -82,8 +70,8 @@ func TestFrost(t *testing.T) {
 		},
 
 		OtherRotations: []core.RotationCombo{
-			GetAplRotation("../../../ui/deathknight/apls", "frost_bl_pesti"),
-			GetAplRotation("../../../ui/deathknight/apls", "frost_uh_pesti"),
+			core.GetAplRotation("../../../ui/deathknight/apls", "frost_bl_pesti"),
+			core.GetAplRotation("../../../ui/deathknight/apls", "frost_uh_pesti"),
 		},
 
 		ItemFilter: ItemFilter,
@@ -102,7 +90,7 @@ func TestFrostUH(t *testing.T) {
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsFrost},
 		OtherRotations: []core.RotationCombo{
-			GetAplRotation("../../../ui/deathknight/apls", "frost_uh_pesti"),
+			core.GetAplRotation("../../../ui/deathknight/apls", "frost_uh_pesti"),
 		},
 
 		ItemFilter: ItemFilter,

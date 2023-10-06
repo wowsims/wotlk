@@ -1,8 +1,6 @@
 package elemental
 
 import (
-	"log"
-	"os"
 	"testing"
 
 	_ "github.com/wowsims/wotlk/sim/common"
@@ -12,16 +10,6 @@ import (
 
 func init() {
 	RegisterElementalShaman()
-}
-
-func GetAplRotation(dir string, file string) core.RotationCombo {
-	filePath := dir + "/" + file + ".apl.json"
-	data, err := os.ReadFile(filePath)
-	if err != nil {
-		log.Fatalf("failed to load apl json file: %s, %s", filePath, err)
-	}
-
-	return core.RotationCombo{Label: file, Rotation: core.APLRotationFromJsonString(string(data))}
 }
 
 func TestElemental(t *testing.T) {
@@ -38,7 +26,7 @@ func TestElemental(t *testing.T) {
 		OtherSpecOptions: []core.SpecOptionsCombo{
 			{Label: "EleFireElemental", SpecOptions: PlayerOptionsAdaptiveFireElemental},
 		},
-		Rotation: GetAplRotation("../../../ui/elemental_shaman/apls", "default"),
+		Rotation: core.GetAplRotation("../../../ui/elemental_shaman/apls", "default"),
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{

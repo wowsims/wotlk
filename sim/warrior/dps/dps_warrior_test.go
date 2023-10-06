@@ -1,8 +1,6 @@
 package dps
 
 import (
-	"log"
-	"os"
 	"testing"
 
 	_ "github.com/wowsims/wotlk/sim/common" // imported to get item effects included.
@@ -12,16 +10,6 @@ import (
 
 func init() {
 	RegisterDpsWarrior()
-}
-
-func GetAplRotation(dir string, file string) core.RotationCombo {
-	filePath := dir + "/" + file + ".apl.json"
-	data, err := os.ReadFile(filePath)
-	if err != nil {
-		log.Fatalf("failed to load apl json file: %s, %s", filePath, err)
-	}
-
-	return core.RotationCombo{Label: file, Rotation: core.APLRotationFromJsonString(string(data))}
 }
 
 func TestFury(t *testing.T) {
@@ -37,7 +25,7 @@ func TestFury(t *testing.T) {
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsFury},
 
 		OtherRotations: []core.RotationCombo{
-			GetAplRotation("../../../ui/warrior/apls", "fury"),
+			core.GetAplRotation("../../../ui/warrior/apls", "fury"),
 		},
 
 		ItemFilter: core.ItemFilter{

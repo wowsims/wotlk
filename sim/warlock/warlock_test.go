@@ -1,8 +1,6 @@
 package warlock
 
 import (
-	"log"
-	"os"
 	"testing"
 
 	_ "github.com/wowsims/wotlk/sim/common"
@@ -12,16 +10,6 @@ import (
 
 func init() {
 	RegisterWarlock()
-}
-
-func GetAplRotation(dir string, file string) core.RotationCombo {
-	filePath := dir + "/" + file + ".apl.json"
-	data, err := os.ReadFile(filePath)
-	if err != nil {
-		log.Fatalf("failed to load apl json file: %s, %s", filePath, err)
-	}
-
-	return core.RotationCombo{Label: file, Rotation: core.APLRotationFromJsonString(string(data))}
 }
 
 func TestAffliction(t *testing.T) {
@@ -53,7 +41,7 @@ func TestDemonology(t *testing.T) {
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Demonology Warlock", SpecOptions: DefaultDemonologyWarlock},
 		OtherRotations: []core.RotationCombo{
-			GetAplRotation("../../ui/warlock/apls", "demo"),
+			core.GetAplRotation("../../ui/warlock/apls", "demo"),
 		},
 
 		ItemFilter: ItemFilter,
@@ -71,7 +59,7 @@ func TestDestruction(t *testing.T) {
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Destruction Warlock", SpecOptions: DefaultDestroWarlock},
 		OtherRotations: []core.RotationCombo{
-			GetAplRotation("../../ui/warlock/apls", "destro"),
+			core.GetAplRotation("../../ui/warlock/apls", "destro"),
 		},
 		ItemFilter: ItemFilter,
 	}))
