@@ -71,7 +71,7 @@ func TestRetribution(t *testing.T) {
 				},
 			},
 		},
-		Rotation: core.RotationCombo{Label: "Default", Rotation: DefaultRotation},
+		Rotation: core.GetAplRotation("../../../ui/retribution_paladin/apls", "default"),
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
@@ -144,23 +144,6 @@ var FullConsumes = &proto.Consumes{
 	Food:            proto.Food_FoodRoastedClefthoof,
 	ThermalSapper:   true,
 }
-
-var DefaultRotation = core.APLRotationFromJsonString(`{
-	"type": "TypeAPL",
-	"prepullActions": [
-		{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
-	],
-	"priorityList": [
-		{"action":{"autocastOtherCooldowns":{}}},
-		{"action":{"castSpell":{"spellId":{"spellId":67485}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":48806}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":53408}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":35395}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":53385}}}},
-		{"action":{"condition":{"auraIsActive":{"auraId":{"spellId":53488}}},"castSpell":{"spellId":{"spellId":48801}}}},
-		{"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"4s"}}}},"castSpell":{"spellId":{"spellId":48819}}}}
-	]
-}`)
 
 var Phase1Gear = core.EquipmentSpecFromJsonString(`{"items": [
 	{"id":44006,"enchant":3817,"gems":[41398,49110]},

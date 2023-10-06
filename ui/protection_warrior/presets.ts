@@ -20,6 +20,8 @@ import {
 
 import * as Tooltips from '../core/constants/tooltips.js';
 
+import DefaultApl from './apls/default.apl.json';
+
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
@@ -81,23 +83,7 @@ export const ROTATION_DEFAULT = {
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: ProtectionWarriorRotation.toJsonString(ProtectionWarriorRotation.create({
 		})),
-		rotation: APLRotation.fromJsonString(`{
-			"type": "TypeAPL",
-			"prepullActions": [
-				{"action":{"castSpell":{"spellId":{"spellId":47440}}},"doAtValue":{"const":{"val":"-10s"}}},
-				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
-			],
-			"priorityList": [
-				{"action":{"condition":{"cmp":{"op":"OpGe","lhs":{"currentRage":{}},"rhs":{"const":{"val":"30"}}}},"castSpell":{"spellId":{"tag":1,"spellId":47450}}}},
-				{"action":{"autocastOtherCooldowns":{}}},
-				{"action":{"castSpell":{"spellId":{"spellId":47488}}}},
-				{"action":{"castSpell":{"spellId":{"spellId":57823}}}},
-				{"action":{"condition":{"auraShouldRefresh":{"sourceUnit":{"type":"Self"},"auraId":{"spellId":47440},"maxOverlap":{"const":{"val":"3s"}}}},"castSpell":{"spellId":{"spellId":47440}}}},
-				{"action":{"condition":{"auraShouldRefresh":{"auraId":{"spellId":47502},"maxOverlap":{"const":{"val":"2s"}}}},"castSpell":{"spellId":{"spellId":47502}}}},
-				{"action":{"condition":{"auraShouldRefresh":{"auraId":{"spellId":47437},"maxOverlap":{"const":{"val":"2s"}}}},"castSpell":{"spellId":{"spellId":25203}}}},
-				{"action":{"castSpell":{"spellId":{"spellId":47498}}}}
-			]
-		}`),
+		rotation: APLRotation.fromJsonString(JSON.stringify(DefaultApl)),
 	}),
 };
 

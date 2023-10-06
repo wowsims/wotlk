@@ -21,6 +21,8 @@ import {
 
 import * as Tooltips from '../core/constants/tooltips.js';
 
+import DefaultApl from './apls/default.apl.json'
+
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
@@ -57,27 +59,7 @@ export const ROTATION_PRESET_APL = {
 	name: 'APL',
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: Rotation.toJsonString(Rotation.create()),
-		rotation: APLRotation.fromJsonString(`{
-      		"type": "TypeAPL",
-      		"prepullActions": [
-			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
-      		],
-      		"priorityList": [
-				{"action":{"autocastOtherCooldowns":{}}},
-				{"action":{"condition":{"and":{"vals":[{"dotIsActive":{"spellId":{"spellId":48135}}},{"cmp":{"op":"OpLe","lhs":{"spellCastTime":{"spellId":{"spellId":48123}}},"rhs":{"dotRemainingTime":{"spellId":{"spellId":48135}}}}}]}},"castSpell":{"spellId":{"spellId":14751}}}},
-				{"action":{"condition":{"and":{"vals":[{"dotIsActive":{"spellId":{"spellId":48135}}},{"cmp":{"op":"OpLe","lhs":{"spellCastTime":{"spellId":{"spellId":48123}}},"rhs":{"dotRemainingTime":{"spellId":{"spellId":48135}}}}}]}},"castSpell":{"spellId":{"spellId":48123}}}},
-				{"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":48300}}}}},"castSpell":{"spellId":{"spellId":48300}}}},
-				{"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":48125}}}}},"castSpell":{"spellId":{"spellId":48125}}}},
-				{"action":{"castSpell":{"spellId":{"spellId":48135}}}},
-				{"action":{"condition":{"and":{"vals":[{"not":{"val":{"spellIsReady":{"spellId":{"spellId":48135}}}}},{"cmp":{"op":"OpLe","lhs":{"spellTimeToReady":{"spellId":{"spellId":48135}}},"rhs":{"const":{"val":"50ms"}}}}]}},"wait":{"duration":{"spellTimeToReady":{"spellId":{"spellId":48135}}}}}},
-				{"hide":true,"action":{"condition":{"auraIsActive":{"auraId":{"spellId":59000}}},"castSpell":{"spellId":{"spellId":48123}}}},
-				{"hide":true,"action":{"castSpell":{"spellId":{"spellId":53007}}}},
-				{"hide":true,"action":{"castSpell":{"spellId":{"spellId":48158}}}},
-				{"hide":true,"action":{"castSpell":{"spellId":{"spellId":48127}}}},
-				{"hide":true,"action":{"castSpell":{"spellId":{"tag":3,"spellId":48156}}}},
-				{"action":{"castSpell":{"spellId":{"spellId":48123}}}}
-      		]
-		}`),
+		rotation: APLRotation.fromJsonString(JSON.stringify(DefaultApl)),
 	}),
 };
 

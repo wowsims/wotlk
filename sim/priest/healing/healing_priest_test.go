@@ -23,7 +23,7 @@ func TestDisc(t *testing.T) {
 		Glyphs:      DiscGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Disc", SpecOptions: PlayerOptionsDisc},
-		Rotation:    core.RotationCombo{Label: "Disc", Rotation: DiscRotation},
+		Rotation:    core.GetAplRotation("../../../ui/healing_priest/apls", "disc"),
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
@@ -59,7 +59,7 @@ func TestHoly(t *testing.T) {
 		Glyphs:      HolyGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Holy", SpecOptions: PlayerOptionsHoly},
-		Rotation:    core.RotationCombo{Label: "Holy", Rotation: HolyRotation},
+		Rotation:    core.GetAplRotation("../../../ui/healing_priest/apls", "holy"),
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
@@ -119,28 +119,6 @@ var PlayerOptionsHoly = &proto.Player_HealingPriest{
 		Rotation: &proto.HealingPriest_Rotation{},
 	},
 }
-
-var DiscRotation = core.APLRotationFromJsonString(`{
-	"type": "TypeAPL",
-	"priorityList": [
-		{"action":{"autocastOtherCooldowns":{}}},
-		{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":48066}}},"rhs":{"const":{"val":"18"}}}},"multishield":{"spellId":{"spellId":48066},"maxShields":10,"maxOverlap":{"const":{"val":"0ms"}}}}},
-		{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":53007}}},"rhs":{"const":{"val":"4"}}}},"castSpell":{"spellId":{"spellId":53007}}}},
-		{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":48113}}},"rhs":{"const":{"val":"2"}}}},"castSpell":{"spellId":{"spellId":48113}}}},
-		{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":48063}}},"rhs":{"const":{"val":"1"}}}},"castSpell":{"spellId":{"spellId":48063}}}}
-	]
-}`)
-
-var HolyRotation = core.APLRotationFromJsonString(`{
-	"type": "TypeAPL",
-	"priorityList": [
-		{"action":{"autocastOtherCooldowns":{}}},
-		{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":48063}}},"rhs":{"const":{"val":"10"}}}},"castSpell":{"spellId":{"spellId":48063}}}},
-		{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":48089}}},"rhs":{"const":{"val":"5"}}}},"castSpell":{"spellId":{"spellId":48089}}}},
-		{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":48068}}},"rhs":{"const":{"val":"10"}}}},"multidot":{"spellId":{"spellId":48068},"maxDots":10,"maxOverlap":{"const":{"val":"0ms"}}}}},
-		{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellCpm":{"spellId":{"spellId":48113}}},"rhs":{"const":{"val":"2"}}}},"castSpell":{"spellId":{"spellId":48113}}}}
-	]
-}`)
 
 var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
 	{"id":40456,"enchant":3819,"gems":[41401,39998]},

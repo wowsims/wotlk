@@ -867,6 +867,90 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBlood-Settings-Human-Blood P3 -Basic-blood_pesti-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 29195.40357
+  tps: 15861.54377
+ }
+}
+dps_results: {
+ key: "TestBlood-Settings-Human-Blood P3 -Basic-blood_pesti-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 10273.1784
+  tps: 5429.26092
+ }
+}
+dps_results: {
+ key: "TestBlood-Settings-Human-Blood P3 -Basic-blood_pesti-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 13994.94209
+  tps: 6380.16193
+ }
+}
+dps_results: {
+ key: "TestBlood-Settings-Human-Blood P3 -Basic-blood_pesti-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 15771.96802
+  tps: 8585.72539
+ }
+}
+dps_results: {
+ key: "TestBlood-Settings-Human-Blood P3 -Basic-blood_pesti-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 5892.98116
+  tps: 3137.39582
+ }
+}
+dps_results: {
+ key: "TestBlood-Settings-Human-Blood P3 -Basic-blood_pesti-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 7388.56047
+  tps: 3347.43804
+ }
+}
+dps_results: {
+ key: "TestBlood-Settings-Human-Blood P3 -Basic-blood_pesti_dd-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 27130.40312
+  tps: 15428.40206
+ }
+}
+dps_results: {
+ key: "TestBlood-Settings-Human-Blood P3 -Basic-blood_pesti_dd-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 10277.47466
+  tps: 5431.12909
+ }
+}
+dps_results: {
+ key: "TestBlood-Settings-Human-Blood P3 -Basic-blood_pesti_dd-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 13892.54341
+  tps: 6302.17621
+ }
+}
+dps_results: {
+ key: "TestBlood-Settings-Human-Blood P3 -Basic-blood_pesti_dd-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 14629.55664
+  tps: 8287.54854
+ }
+}
+dps_results: {
+ key: "TestBlood-Settings-Human-Blood P3 -Basic-blood_pesti_dd-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 5857.38104
+  tps: 3103.70429
+ }
+}
+dps_results: {
+ key: "TestBlood-Settings-Human-Blood P3 -Basic-blood_pesti_dd-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 7255.99389
+  tps: 3252.29881
+ }
+}
+dps_results: {
  key: "TestBlood-Settings-Orc-Blood P3 -Basic--FullBuffs-LongMultiTarget"
  value: {
   dps: 32844.91465
@@ -906,6 +990,90 @@ dps_results: {
  value: {
   dps: 7459.94244
   tps: 3315.85124
+ }
+}
+dps_results: {
+ key: "TestBlood-Settings-Orc-Blood P3 -Basic-blood_pesti-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 29460.36768
+  tps: 15906.58952
+ }
+}
+dps_results: {
+ key: "TestBlood-Settings-Orc-Blood P3 -Basic-blood_pesti-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 10384.664
+  tps: 5455.5901
+ }
+}
+dps_results: {
+ key: "TestBlood-Settings-Orc-Blood P3 -Basic-blood_pesti-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 14239.48996
+  tps: 6426.52359
+ }
+}
+dps_results: {
+ key: "TestBlood-Settings-Orc-Blood P3 -Basic-blood_pesti-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 15915.58469
+  tps: 8609.2386
+ }
+}
+dps_results: {
+ key: "TestBlood-Settings-Orc-Blood P3 -Basic-blood_pesti-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 5931.07206
+  tps: 3138.25278
+ }
+}
+dps_results: {
+ key: "TestBlood-Settings-Orc-Blood P3 -Basic-blood_pesti-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 7516.92444
+  tps: 3372.75695
+ }
+}
+dps_results: {
+ key: "TestBlood-Settings-Orc-Blood P3 -Basic-blood_pesti_dd-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 27237.38498
+  tps: 15444.46282
+ }
+}
+dps_results: {
+ key: "TestBlood-Settings-Orc-Blood P3 -Basic-blood_pesti_dd-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 10368.3705
+  tps: 5444.91121
+ }
+}
+dps_results: {
+ key: "TestBlood-Settings-Orc-Blood P3 -Basic-blood_pesti_dd-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 14137.47419
+  tps: 6347.57974
+ }
+}
+dps_results: {
+ key: "TestBlood-Settings-Orc-Blood P3 -Basic-blood_pesti_dd-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 14680.6283
+  tps: 8289.3738
+ }
+}
+dps_results: {
+ key: "TestBlood-Settings-Orc-Blood P3 -Basic-blood_pesti_dd-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 5912.18124
+  tps: 3113.94457
+ }
+}
+dps_results: {
+ key: "TestBlood-Settings-Orc-Blood P3 -Basic-blood_pesti_dd-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 7389.70294
+  tps: 3279.60854
  }
 }
 dps_results: {

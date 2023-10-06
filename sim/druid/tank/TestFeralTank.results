@@ -1080,7 +1080,7 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestFeralTank-Settings-Tauren-P1-Default-Default-FullBuffs-LongMultiTarget"
+ key: "TestFeralTank-Settings-Tauren-P1-Default-default-FullBuffs-LongMultiTarget"
  value: {
   dps: 4596.97168
   tps: 10417.84607
@@ -1088,7 +1088,7 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestFeralTank-Settings-Tauren-P1-Default-Default-FullBuffs-LongSingleTarget"
+ key: "TestFeralTank-Settings-Tauren-P1-Default-default-FullBuffs-LongSingleTarget"
  value: {
   dps: 2674.35053
   tps: 5637.34408
@@ -1096,7 +1096,7 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestFeralTank-Settings-Tauren-P1-Default-Default-FullBuffs-ShortSingleTarget"
+ key: "TestFeralTank-Settings-Tauren-P1-Default-default-FullBuffs-ShortSingleTarget"
  value: {
   dps: 2854.21381
   tps: 6208.75396
@@ -1104,21 +1104,21 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestFeralTank-Settings-Tauren-P1-Default-Default-NoBuffs-LongMultiTarget"
+ key: "TestFeralTank-Settings-Tauren-P1-Default-default-NoBuffs-LongMultiTarget"
  value: {
   dps: 1634.48911
   tps: 3955.54738
  }
 }
 dps_results: {
- key: "TestFeralTank-Settings-Tauren-P1-Default-Default-NoBuffs-LongSingleTarget"
+ key: "TestFeralTank-Settings-Tauren-P1-Default-default-NoBuffs-LongSingleTarget"
  value: {
   dps: 1243.82896
   tps: 2681.45428
  }
 }
 dps_results: {
- key: "TestFeralTank-Settings-Tauren-P1-Default-Default-NoBuffs-ShortSingleTarget"
+ key: "TestFeralTank-Settings-Tauren-P1-Default-default-NoBuffs-ShortSingleTarget"
  value: {
   dps: 1098.16826
   tps: 2482.20882
