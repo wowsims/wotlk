@@ -163,7 +163,7 @@ const calcHitCap = (player: Player<AutoGemSpec>): Stats => {
 /**
  * Determine if player is trying to reach hard cap
  */
-const detectArpStackConfiguration = (player: Player<Spec.SpecFeralDruid>, arpCap: number, arpTarget: number): boolean => {
+const detectArpStackConfiguration = (player: Player<AutoGemSpec>, arpCap: number, arpTarget: number): boolean => {
   const currentArp = getArpValue(Stats.fromProto(player.getCurrentStats().finalStats));
   return (arpTarget > 1000) && (currentArp > 648) && ((currentArp + 20) < arpCap);
 }
@@ -179,6 +179,12 @@ const getArpValue = (stats: Stats) => stats.getStat(Stat.StatArmorPenetration)
 const getItemSocketsEpValue = (item: EquippedItem | null, weights: Stats) => new Stats(item?.item.socketBonus).computeEP(weights)
 
 const isMarksmanship = (player: Player<Spec.SpecHunter>) => player.spec === Spec.SpecHunter && player.getTalentTree() === 1
+
+const isEligibleForArpStacking = (player: Player<AutoGemSpec>, arpCap: number, arpTarget: number) => {
+  return player.spec === Spec.SpecWarrior ||
+    player.spec === Spec.SpecFeralDruid ||
+    isMarksmanship(player) && detectArpStackConfiguration(player, arpCap, arpTarget)
+}
 
 const optimizeJewelCraftingGems = (sim: Sim, player: Player<AutoGemSpec>, gear: Gear, redSocketList: [ItemSlot, number][], arpCap: Stats, arpTarget: number): Gear => {
   const passiveStats = Stats.fromProto(player.getCurrentStats().finalStats);
@@ -217,11 +223,7 @@ const optimizeJewelCraftingGems = (sim: Sim, player: Player<AutoGemSpec>, gear: 
         break;
     }
 
-    if (
-      player.spec === Spec.SpecWarrior ||
-      player.spec === Spec.SpecFeralDruid ||
-      isMarksmanship(player) && detectArpStackConfiguration(player, getArpValue(arpCap), arpTarget)
-    ) {
+    if (isEligibleForArpStacking(player, getArpValue(arpCap), arpTarget)) {
       if (i < optimalJcArpGems) {
         gemId = 42153; // ArP
       } else if ((player.spec === Spec.SpecFeralDruid) && isBelowCritCap) {
@@ -300,22 +302,23 @@ const updateGear = async (sim: Sim, player: Player<AutoGemSpec>, gear: Gear): Pr
   return Stats.fromProto(player.getCurrentStats().finalStats);
 }
 
-const findBlueTearSlot = (gear: Gear, epWeights: Stats): ItemSlot | null => {
+const findBlueTearSlot = (gear: Gear, epWeights: Stats, player: Player<Spec.SpecFeralDruid>, arpCap: number, arpTarget: number): ItemSlot | null => {
   let tearSlot: ItemSlot | null = null;
   let maxBlueSocketBonusEP: number = 1e-8;
+  const isArpStacking = isEligibleForArpStacking(player, arpCap, arpTarget)
 
   for (let slot of gear.getItemSlots()) {
     const item = gear.getEquippedItem(slot);
-    if (!item) {
-      continue;
-    }
 
-    if (item.numSocketsOfColor(GemColor.GemColorBlue) !== 1) {
+    if (
+      !item ||
+      item.numSocketsOfColor(GemColor.GemColorBlue) !== 1 ||
+      (isArpStacking && item.numPossibleSockets === 3 && !!item.numSocketsOfColor(GemColor.GemColorYellow))
+    ) {
       continue;
     }
 
     const socketBonusEP = new Stats(item.item.socketBonus).computeEP(epWeights);
-
     if (socketBonusEP > maxBlueSocketBonusEP) {
       tearSlot = slot;
       maxBlueSocketBonusEP = socketBonusEP;
@@ -332,16 +335,11 @@ const findYellowTearSlot = (gear: Gear, epWeights: Stats): ItemSlot | null => {
   for (let slot of gear.getItemSlots()) {
     const item = gear.getEquippedItem(slot);
 
-    if (!item) {
+    if (!item || item.numSocketsOfColor(GemColor.GemColorBlue) !== 0) {
       continue;
     }
 
-    if (item.numSocketsOfColor(GemColor.GemColorBlue) !== 0) {
-      continue;
-    }
-
-    const numYellowSockets = item!.numSocketsOfColor(GemColor.GemColorYellow);
-
+    const numYellowSockets = item?.numSocketsOfColor(GemColor.GemColorYellow);
     if (numYellowSockets === 0) {
       continue;
     }
@@ -431,10 +429,10 @@ const sortYellowSockets = (gear: Gear, yellowSocketList: Array<[ItemSlot, number
 }
 
 export const optimizeGems = async (sim: Sim, player: Player<AutoGemSpec>) => {
-  // First, clear all existing gems
+  // Clear all gems
   let optimizedGear = player.getGear().withoutGems();
 
-  // Next, socket the meta
+  // Socket meta gem
   switch (player.spec) {
     // Same for all specs
     case Spec.SpecFeralDruid:
@@ -443,10 +441,19 @@ export const optimizeGems = async (sim: Sim, player: Player<AutoGemSpec>) => {
       optimizedGear = optimizedGear.withMetaGem(sim.db.lookupGem(41398));
   }
 
-  // Next, socket a Nightmare Tear in the best socket
   const epWeights = player.getEpWeights();
+  const arpTarget = getArpValue(calcArpTarget(optimizedGear));
+  const arpCap = calcArpCap(arpTarget, player);
+  const expCap = calcExpCap(player);
+  const critCap = calcCritCap(optimizedGear);
+  const hitCap = calcHitCap(player);
+
+  // Should we gem expertise?
+  const enableExpertiseGemming = player.spec === Spec.SpecFeralDruid || (player.spec === Spec.SpecWarrior && !((player.getSpecOptions() as WarriorOptions).disableExpertiseGemming))
+
+  // Next, socket a Nightmare Tear in the best socket (blue, followed by yellow)
   let tearColor = GemColor.GemColorBlue;
-  let tearSlot = findBlueTearSlot(optimizedGear, epWeights);
+  let tearSlot = findBlueTearSlot(optimizedGear, epWeights, player, getArpValue(arpCap), arpTarget);
 
   if (tearSlot === null) {
     tearColor = GemColor.GemColorYellow;
@@ -456,25 +463,12 @@ export const optimizeGems = async (sim: Sim, player: Player<AutoGemSpec>) => {
   optimizedGear = socketTear(sim, optimizedGear, tearSlot, tearColor);
   await updateGear(sim, player, optimizedGear);
 
-  let arpTarget = getArpValue(calcArpTarget(optimizedGear));
-  const arpCap = calcArpCap(arpTarget, player);
-  const expCap = calcExpCap(player);
-  const critCap = calcCritCap(optimizedGear);
-  const hitCap = calcHitCap(player);
-
-  // Should we gem expertise?
-  const enableExpertiseGemming = player.spec === Spec.SpecFeralDruid || (player.spec === Spec.SpecWarrior && !((player.getSpecOptions() as WarriorOptions).disableExpertiseGemming))
-
   // Next, identify all sockets where red gems will be placed
   const redSockets = findSocketsByColor(player, optimizedGear, epWeights, GemColor.GemColorRed, tearSlot);
   // Rank order red gems to use with their associated stat caps
   const redGemCaps = new Array<[number, Stats]>();
 
-  if (
-    player.spec === Spec.SpecFeralDruid ||
-    player.spec === Spec.SpecWarrior ||
-    isMarksmanship(player) && detectArpStackConfiguration(player, getArpValue(arpCap), arpTarget)
-  ) {
+  if (isEligibleForArpStacking(player, getArpValue(arpCap), arpTarget)) {
     redGemCaps.push([GemsByStats.Arp, arpCap]);
   }
 
