@@ -82,6 +82,13 @@ export const DefaultRotation = ElementalShamanRotation.create({
 export const DefaultOptions = ElementalShamanOptions.create({
   shield: ShamanShield.WaterShield,
   bloodlust: true,
+  totems: ShamanTotems.create({
+    earth: EarthTotem.StrengthOfEarthTotem,
+    air: AirTotem.WrathOfAirTotem,
+    fire: FireTotem.TotemOfWrath,
+    water: WaterTotem.ManaSpringTotem,
+    useFireElemental: true,
+  }),
 });
 
 export const DefaultConsumes = Consumes.create({
