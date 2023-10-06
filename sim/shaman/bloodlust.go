@@ -46,7 +46,8 @@ func (shaman *Shaman) registerBloodlustCD() {
 			// major CD ordering issues with the shared bloodlust.
 			for _, party := range shaman.Env.Raid.Parties {
 				for _, partyMember := range party.Players {
-					if partyMember.GetCharacter().HasActiveAura("Bloodlust-" + core.BloodlustActionID.WithTag(-1).String()) {
+					// If anyone currently has bloodlust, don't cast this.
+					if partyMember.GetCharacter().HasActiveAuraWithTag(core.BloodlustAuraTag) {
 						return false
 					}
 				}
@@ -56,7 +57,12 @@ func (shaman *Shaman) registerBloodlustCD() {
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			for _, blAura := range blAuras {
-				blAura.Activate(sim)
+				target := blAura.Unit
+				// Only activate bloodlust on units without bloodlust and without sated.
+				if !target.HasActiveAura(core.SatedAuraLabel) && !target.HasActiveAuraWithTag(core.BloodlustAuraTag) {
+					blAura.Activate(sim)
+				}
+
 			}
 		},
 	})
