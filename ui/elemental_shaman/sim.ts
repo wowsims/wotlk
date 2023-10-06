@@ -181,28 +181,27 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 
 	override loadSettings() {
 		super.loadSettings();
-		
-		// handle converting old values.
+
 		var opt = this.player.getSpecOptions();
 		var rot = this.player.getRotation();
-		
-		var dosave = false;
+
+		var doSave = false;
+		// handle converting old values.
 		if (rot.inThunderstormRange) {
 			opt.thunderstormRange = ElementalShaman_Options_ThunderstormRange.InRange;
 			rot.inThunderstormRange = false;
-			dosave = true;
+			doSave = true;
 		}
 		if (opt.bloodlust) {
 			rot.bloodlust = ElementalShaman_Rotation_BloodlustUse.UseBloodlust;
 			opt.bloodlust = false;
-			dosave = true;
+			doSave = true;
 		}
 
-		if (dosave) {
-			console.log("setting new defaults:", opt, rot);
-			const overrideInitID = TypedEvent.nextEventID();
-			this.player.setSpecOptions(overrideInitID, opt);
-			this.player.setRotation(overrideInitID, rot);
+		if (doSave) {
+			this.player.setRotation(TypedEvent.nextEventID(), rot);
+			this.player.setSpecOptions(TypedEvent.nextEventID(), opt);
+			console.log("Updating ele presets for bloodlust/thunderstorm.");
 		}
 	}
 }
