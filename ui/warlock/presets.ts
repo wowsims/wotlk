@@ -31,6 +31,9 @@ import {
 } from '../core/proto/warlock.js';
 import { APLRotation } from '../core/proto/apl.js';
 
+import DemoApl from './apls/demo.apl.json';
+import DestroApl from './apls/destro.apl.json';
+
 export const BIS_TOOLTIP = 'This gear preset is inspired from Zephan\'s Affliction guide: https://www.warcrafttavern.com/wotlk/guides/pve-affliction-warlock/';
 
 // Default talents. Uses the wowhead calculator format, make the talents on
@@ -527,117 +530,11 @@ export const APL_Demo_Default = {
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalentTree() == 1,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: WarlockRotation.toJsonString(DemonologyRotation),
-		rotation: APLRotation.fromJsonString(`{
-    "type": 3,
-    "prepullActions": [
-	  {"action":{"castSpell":{"spellId":{"spellId":57946}}},"doAtValue":{"const":{"val":"-4s"}}},
-      {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-2.5s"}}},
-      {"action":{"castSpell":{"spellId":{"spellId":47809}}},"doAtValue":{"const":{"val":"-2.5s"}}}
-    ],
-    "priorityList": [
-        { "action": { "autocastOtherCooldowns": {} } },
-        { "action": { "castSpell": { "spellId": { "spellId": 50589 } } } },
-        { "action": { "condition": { "cmp": {
-                        "op": "OpGt",
-                        "lhs": { "remainingTime": {} },
-                        "rhs": { "const": { "val": "60s" } }
-                    } }, "castSpell": { "spellId": { "spellId": 47867 } } } },
-        { "action": { "multidot": { "spellId": { "spellId": 47813 }, "maxDots": 1, "maxOverlap": { "const": { "val": "0ms" } } } } },
-        { "action": { "condition": { "and": {
-                        "vals": [
-                            { "not": { "val": { "dotIsActive": { "spellId": { "spellId": 47867 } } } } },
-                            { "not": { "val": { "dotIsActive": { "spellId": { "spellId": 47864 } } } } },
-                            { "cmp": {
-                                    "op": "OpGt",
-                                    "lhs": { "remainingTime": {} },
-                                    "rhs": { "const": { "val": "22s" } }
-                                } } ] } }, "castSpell": { "spellId": { "spellId": 47864 } } } },
-        { "action": { "condition": { "and": { "vals": [
-                            { "cmp": {
-                                    "op": "OpLt",
-                                    "lhs": { "auraRemainingTime": { "auraId": { "spellId": 63321 } } },
-                                    "rhs": { "const": { "val": "3s" } } } },
-                            { "cmp": {
-                                    "op": "OpGt",
-                                    "lhs": { "remainingTime": {} },
-                                    "rhs": { "const": { "val": "10s" } }
-                                } } ] } }, "castSpell": { "spellId": { "spellId": 57946 } } } },
-        { "action": { "condition": { "and": { "vals": [
-                            { "cmp": {
-                                    "op": "OpLt",
-                                    "lhs": { "dotRemainingTime": { "spellId": { "spellId": 47811 } } },
-                                    "rhs": { "spellCastTime": { "spellId": { "spellId": 47811 } } } } },
-                            { "cmp": {
-                                    "op": "OpGe",
-                                    "lhs": { "remainingTime": {} },
-                                    "rhs": { "const": { "val": "12s" } } } } ]
-                    } }, "castSpell": { "spellId": { "spellId": 47811 } } } },
-        { "action": { "condition": { "auraIsActive": { "auraId": { "spellId": 63167 } } }, "castSpell": { "spellId": { "spellId": 47825 } } } },
-        { "action": { "condition": { "auraIsActive": { "auraId": { "spellId": 71165 } } }, "castSpell": { "spellId": { "spellId": 47838 } } } },
-        { "action": { "castSpell": { "spellId": { "spellId": 47809 } } } },
-        { "action": { "castSpell": { "spellId": { "spellId": 57946 } } } }
-]}`)})}
+		rotation: APLRotation.fromJsonString(JSON.stringify(DemoApl))})}
 
 export const APL_Destro_Default = {
 	name: 'Destro Default',
 	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalentTree() == 2,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: WarlockRotation.toJsonString(DestructionRotation),
-		rotation: APLRotation.fromJsonString(`{
-    "type": 3,
-    "prepullActions": [
-	  {"action":{"castSpell":{"spellId":{"spellId":57946}}},"doAtValue":{"const":{"val":"-5s"}}},
-      {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-3.5s"}}},
-      {"action":{"castSpell":{"spellId":{"spellId":47825}}},"doAtValue":{"const":{"val":"-3.5s"}}}
-    ],
-    "priorityList": [
-      { "action": { "autocastOtherCooldowns": {} } },
-      { "action": { "castSpell": { "spellId": { "spellId": 17962 } } } },
-      { "action": { "condition": {
-            "cmp": {
-              "op": "OpGt", "lhs": { "remainingTime": {} },
-              "rhs": { "const": { "val": "60s" } }
-            }
-          }, "castSpell": { "spellId": { "spellId": 47867 } } } },
-      { "action": { "condition": {
-            "cmp": {
-              "op": "OpLt",
-              "lhs": { "dotRemainingTime": { "spellId": { "spellId": 47811 } } },
-              "rhs": { "spellCastTime": { "spellId": { "spellId": 47811 } } } } },
-          "castSpell": { "spellId": { "spellId": 47811 } } } },
-      { "action": { "condition": {
-            "cmp": {
-              "op": "OpLt",
-              "lhs": { "remainingTime": {} },
-              "rhs": { "const": { "val": "61s" } } }
-          },
-          "castSpell": { "spellId": { "spellId": 1122 } } } },
-      { "action": { "condition": {
-            "and": { "vals": [
-                { "cmp": {
-                    "op": "OpLt",
-                    "lhs": { "auraRemainingTime": { "auraId": { "spellId": 63321 } } },
-                    "rhs": { "const": { "val": "3s" } } } },
-                { "cmp": {
-                    "op": "OpGt",
-                    "lhs": { "remainingTime": {} },
-                    "rhs": { "const": { "val": "10s" } } } }
-            ] } },
-          "castSpell": { "spellId": { "spellId": 57946 } } } },
-      { "action": { "castSpell": { "spellId": { "spellId": 59172 } } } },
-      { "action": { "condition": {
-            "and": {
-              "vals": [
-                { "not": { "val": { "dotIsActive": { "spellId": { "spellId": 47867 } } } } },
-                { "not": { "val": { "dotIsActive": { "spellId": { "spellId": 47864 } } } } },
-                { "cmp": {
-                    "op": "OpGt",
-                    "lhs": { "remainingTime": {} },
-                    "rhs": { "const": { "val": "22s" } } }
-                }
-              ] } },
-          "castSpell": { "spellId": { "spellId": 47864 } } } },
-      { "action": { "castSpell": { "spellId": { "spellId": 47838 } } } },
-      { "action": { "castSpell": { "spellId": { "spellId": 57946 } } } }
-    ]
-}`)})}
+		rotation: APLRotation.fromJsonString(JSON.stringify(DestroApl))})}

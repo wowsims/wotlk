@@ -21,6 +21,9 @@ import {
 
 import * as Tooltips from '../core/constants/tooltips.js';
 
+import BloodAggroApl from './apls/blood_aggro.apl.json';
+import BloodIcyTouchApl from './apls/blood_icy_touch.apl.json';
+
 export const BloodTalents = {
 	name: 'Blood',
 	data: SavedTalents.create({
@@ -126,32 +129,8 @@ export const BLOOD_IT_SPAM_ROTATION_PRESET_DEFAULT = {
 	name: 'Blood Icy Touch',
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
 	rotation: SavedRotation.create({
-		specRotationOptionsJson: TankDeathKnightRotation.toJsonString(TankDeathKnightRotation.create()),
-		rotation: APLRotation.fromJsonString(`{
-			"type": "TypeAPL",
-			"prepullActions": [
-			  {"action":{"castSpell":{"spellId":{"spellId":48263}}},"doAtValue":{"const":{"val":"-10s"}}},
-			  {"action":{"castSpell":{"spellId":{"spellId":42650}}},"doAtValue":{"const":{"val":"-6s"}}}
-			],
-			"priorityList": [
-			  {"action":{"autocastOtherCooldowns":{}}},
-			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"40%"}}}},"castSpell":{"spellId":{"spellId":48792}}}},
-			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"40%"}}}},"castSpell":{"spellId":{"spellId":55233}}}},
-			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"60%"}}}},"castSpell":{"spellId":{"spellId":48982}}}},
-			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"60%"}}}},"castSpell":{"spellId":{"spellId":48707}}}},
-			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"60%"}}}},"castSpell":{"spellId":{"spellId":48743}}}},
-			  {"action":{"condition":{"cmp":{"op":"OpGe","lhs":{"currentRunicPower":{}},"rhs":{"const":{"val":"40"}}}},"castSpell":{"spellId":{"spellId":56815}}}},
-			  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55095}}}}},"castSpell":{"spellId":{"spellId":59131}}}},
-			  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55078}}}}},"castSpell":{"spellId":{"tag":1,"spellId":49921}}}},
-			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55078}}},"rhs":{"const":{"val":"3s"}}}},"castSpell":{"spellId":{"spellId":50842}}}},
-			  {"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"currentNonDeathRuneCount":{"runeType":"RuneFrost"}},"rhs":{"const":{"val":"0"}}}},{"cmp":{"op":"OpGt","lhs":{"currentNonDeathRuneCount":{"runeType":"RuneUnholy"}},"rhs":{"const":{"val":"0"}}}}]}},"castSpell":{"spellId":{"tag":1,"spellId":49924}}}},
-			  {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentRuneCount":{"runeType":"RuneDeath"}},"rhs":{"const":{"val":"0"}}}},"castSpell":{"spellId":{"spellId":59131}}}},
-			  {"action":{"condition":{"or":{"vals":[{"cmp":{"op":"OpGt","lhs":{"currentNonDeathRuneCount":{"runeType":"RuneBlood"}},"rhs":{"const":{"val":"1"}}}},{"spellIsReady":{"spellId":{"spellId":47568}}}]}},"castSpell":{"spellId":{"tag":1,"spellId":49930}}}},
-			  {"action":{"castSpell":{"spellId":{"spellId":46584}}}},
-			  {"action":{"castSpell":{"spellId":{"spellId":47568}}}},
-			  {"action":{"condition":{"cmp":{"op":"OpGe","lhs":{"currentRunicPower":{}},"rhs":{"const":{"val":"80"}}}},"castSpell":{"spellId":{"spellId":49895}}}}
-			]
-		}`),
+		specRotationOptionsJson: TankDeathKnightRotation.toJsonString(DefaultRotation),
+		rotation: APLRotation.fromJsonString(JSON.stringify(BloodIcyTouchApl)),
 	}),
 }
 
@@ -159,31 +138,8 @@ export const BLOOD_AGGRO_ROTATION_PRESET_DEFAULT = {
 	name: 'Blood Aggro',
 	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
 	rotation: SavedRotation.create({
-		specRotationOptionsJson: TankDeathKnightRotation.toJsonString(TankDeathKnightRotation.create()),
-		rotation: APLRotation.fromJsonString(`{
-			"type": "TypeAPL",
-			"prepullActions": [
-			  {"action":{"castSpell":{"spellId":{"spellId":48263}}},"doAtValue":{"const":{"val":"-10s"}}},
-			  {"action":{"castSpell":{"spellId":{"spellId":42650}}},"doAtValue":{"const":{"val":"-6s"}}}
-			],
-			"priorityList": [
-			  {"action":{"autocastOtherCooldowns":{}}},
-			  {"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"40%"}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":55233}}}}}]}},"castSpell":{"spellId":{"spellId":48792}}}},
-			  {"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"40%"}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":48792}}}}}]}},"castSpell":{"spellId":{"spellId":55233}}}},
-			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"60%"}}}},"castSpell":{"spellId":{"spellId":48707}}}},
-			  {"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"60%"}}}},"castSpell":{"spellId":{"spellId":48743}}}},
-			  {"action":{"condition":{"or":{"vals":[{"not":{"val":{"spellIsReady":{"spellId":{"spellId":49028}}}}},{"cmp":{"op":"OpGe","lhs":{"currentRunicPower":{}},"rhs":{"const":{"val":"80"}}}}]}},"castSpell":{"spellId":{"spellId":56815}}}},
-			  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55095}}}}},"castSpell":{"spellId":{"spellId":59131}}}},
-			  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55078}}}}},"castSpell":{"spellId":{"tag":1,"spellId":49921}}}},
-			  {"action":{"castSpell":{"spellId":{"spellId":49016}}}},
-			  {"action":{"castSpell":{"spellId":{"spellId":49028}}}},
-			  {"action":{"castSpell":{"spellId":{"tag":1,"spellId":55262}}}},
-			  {"action":{"castSpell":{"spellId":{"tag":1,"spellId":49924}}}},
-			  {"action":{"castSpell":{"spellId":{"spellId":46584}}}},
-			  {"action":{"castSpell":{"spellId":{"spellId":47568}}}},
-			  {"action":{"condition":{"cmp":{"op":"OpGe","lhs":{"currentRunicPower":{}},"rhs":{"const":{"val":"80"}}}},"castSpell":{"spellId":{"spellId":49895}}}}
-			]
-		}`),
+		specRotationOptionsJson: TankDeathKnightRotation.toJsonString(DefaultRotation),
+		rotation: APLRotation.fromJsonString(JSON.stringify(BloodAggroApl)),
 	}),
 }
 

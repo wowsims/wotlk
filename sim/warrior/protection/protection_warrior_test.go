@@ -23,7 +23,7 @@ func TestProtectionWarrior(t *testing.T) {
 		Glyphs:      DefaultGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
-		Rotation:    core.RotationCombo{Label: "Default", Rotation: DefaultRotation},
+		Rotation:    core.GetAplRotation("../../../ui/protection_warrior/apls", "default"),
 
 		IsTank:          true,
 		InFrontOfTarget: true,
@@ -105,24 +105,6 @@ var FullConsumes = &proto.Consumes{
 	BattleElixir:   proto.BattleElixir_ElixirOfMastery,
 	GuardianElixir: proto.GuardianElixir_GiftOfArthas,
 }
-
-var DefaultRotation = core.APLRotationFromJsonString(`{
-	"type": "TypeAPL",
-	"prepullActions": [
-		{"action":{"castSpell":{"spellId":{"spellId":47440}}},"doAtValue":{"const":{"val":"-10s"}}},
-		{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
-	],
-	"priorityList": [
-		{"action":{"condition":{"cmp":{"op":"OpGe","lhs":{"currentRage":{}},"rhs":{"const":{"val":"30"}}}},"castSpell":{"spellId":{"tag":1,"spellId":47450}}}},
-		{"action":{"autocastOtherCooldowns":{}}},
-		{"action":{"castSpell":{"spellId":{"spellId":47488}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":57823}}}},
-		{"action":{"condition":{"auraShouldRefresh":{"sourceUnit":{"type":"Self"},"auraId":{"spellId":47440},"maxOverlap":{"const":{"val":"3s"}}}},"castSpell":{"spellId":{"spellId":47440}}}},
-		{"action":{"condition":{"auraShouldRefresh":{"auraId":{"spellId":47502},"maxOverlap":{"const":{"val":"2s"}}}},"castSpell":{"spellId":{"spellId":47502}}}},
-		{"action":{"condition":{"auraShouldRefresh":{"auraId":{"spellId":47437},"maxOverlap":{"const":{"val":"2s"}}}},"castSpell":{"spellId":{"spellId":25203}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":47498}}}}
-	]
-}`)
 
 var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
 	{"id":40546,"enchant":3818,"gems":[41380,40034]},

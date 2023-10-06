@@ -947,42 +947,42 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestBalancePhase3-Settings-Tauren-P3-Default-Default-FullBuffs-LongMultiTarget"
+ key: "TestBalancePhase3-Settings-Tauren-P3-Default-basic_p3-FullBuffs-LongMultiTarget"
  value: {
   dps: 16354.42468
   tps: 19005.86958
  }
 }
 dps_results: {
- key: "TestBalancePhase3-Settings-Tauren-P3-Default-Default-FullBuffs-LongSingleTarget"
+ key: "TestBalancePhase3-Settings-Tauren-P3-Default-basic_p3-FullBuffs-LongSingleTarget"
  value: {
   dps: 11569.2566
   tps: 11267.35306
  }
 }
 dps_results: {
- key: "TestBalancePhase3-Settings-Tauren-P3-Default-Default-FullBuffs-ShortSingleTarget"
+ key: "TestBalancePhase3-Settings-Tauren-P3-Default-basic_p3-FullBuffs-ShortSingleTarget"
  value: {
   dps: 12872.95249
   tps: 11755.55684
  }
 }
 dps_results: {
- key: "TestBalancePhase3-Settings-Tauren-P3-Default-Default-NoBuffs-LongMultiTarget"
+ key: "TestBalancePhase3-Settings-Tauren-P3-Default-basic_p3-NoBuffs-LongMultiTarget"
  value: {
   dps: 6156.42751
   tps: 6942.84154
  }
 }
 dps_results: {
- key: "TestBalancePhase3-Settings-Tauren-P3-Default-Default-NoBuffs-LongSingleTarget"
+ key: "TestBalancePhase3-Settings-Tauren-P3-Default-basic_p3-NoBuffs-LongSingleTarget"
  value: {
   dps: 4306.26802
   tps: 4176.7608
  }
 }
 dps_results: {
- key: "TestBalancePhase3-Settings-Tauren-P3-Default-Default-NoBuffs-ShortSingleTarget"
+ key: "TestBalancePhase3-Settings-Tauren-P3-Default-basic_p3-NoBuffs-ShortSingleTarget"
  value: {
   dps: 8092.65959
   tps: 7732.26239

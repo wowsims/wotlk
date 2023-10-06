@@ -26,7 +26,7 @@ func TestElemental(t *testing.T) {
 		OtherSpecOptions: []core.SpecOptionsCombo{
 			{Label: "EleFireElemental", SpecOptions: PlayerOptionsAdaptiveFireElemental},
 		},
-		Rotation: core.RotationCombo{Label: "Default", Rotation: DefaultRotation},
+		Rotation: core.GetAplRotation("../../../ui/elemental_shaman/apls", "default"),
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
@@ -134,29 +134,6 @@ var FullConsumes = &proto.Consumes{
 	PrepopPotion:    proto.Potions_DestructionPotion,
 	DefaultConjured: proto.Conjured_ConjuredDarkRune,
 }
-
-var DefaultRotation = core.APLRotationFromJsonString(`{
-	"type": "TypeAPL",
-	"prepullActions": [
-		{"action":{"castSpell":{"spellId":{"spellId":66842}}},"doAtValue":{"const":{"val":"-3.5s"}}},
-		{"action":{"castSpell":{"spellId":{"spellId":58704}}},"doAtValue":{"const":{"val":"-2s"}}},
-		{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
-	],
-	"priorityList": [
-        {"action":{"autocastOtherCooldowns":{}}},
-		{"action":{"condition":{"cmp":{"op":"OpGe","lhs":{"currentTime":{}},"rhs":{"const":{"val":"2s"}}}},"castSpell":{"spellId":{"spellId":2825,"tag":-1}}}},
-		{"action":{"condition":{"cmp":{"op":"OpGe","lhs":{"currentTime":{}},"rhs":{"const":{"val":"2s"}}}},"castSpell":{"spellId":{"spellId":2825}}}},
-		{"action":{"strictSequence":{"actions":[{"castSpell":{"spellId":{"spellId":26297}}},{"castSpell":{"spellId":{"spellId":16166}}}]}}},
-		{"action":{"condition":{"and":{"vals":[{"not":{"val":{"spellIsReady":{"spellId":{"spellId":26297}}}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":16166}}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":64701}}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":26297}}}}}]}},"castSpell":{"spellId":{"spellId":54758}}}},
-		{"action":{"condition":{"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":2894}}},{"or":{"vals":[{"auraIsActive":{"auraId":{"itemId":40255}}},{"auraIsActive":{"auraId":{"itemId":40682}}},{"auraIsActive":{"auraId":{"itemId":37660}}},{"auraIsActive":{"auraId":{"itemId":45518}}},{"auraIsActive":{"auraId":{"itemId":54572}}},{"auraIsActive":{"auraId":{"itemId":54588}}},{"auraIsActive":{"auraId":{"itemId":47213}}},{"auraIsActive":{"auraId":{"itemId":45490}}},{"auraIsActive":{"auraId":{"itemId":50348}}},{"auraIsActive":{"auraId":{"itemId":50353}}},{"auraIsActive":{"auraId":{"itemId":50360}}},{"auraIsActive":{"auraId":{"itemId":50365}}},{"auraIsActive":{"auraId":{"itemId":50345}}},{"auraIsActive":{"auraId":{"itemId":50340}}},{"auraIsActive":{"auraId":{"itemId":50398}}},{"cmp":{"op":"OpEq","lhs":{"auraNumStacks":{"auraId":{"itemId":45308}}},"rhs":{"const":{"val":"5"}}}},{"cmp":{"op":"OpEq","lhs":{"auraNumStacks":{"auraId":{"itemId":40432}}},"rhs":{"const":{"val":"10"}}}},{"auraIsActive":{"auraId":{"spellId":55637}}}]}}]}},"strictSequence":{"actions":[{"castSpell":{"spellId":{"spellId":33697}}},{"castSpell":{"spellId":{"itemId":40212}}},{"castSpell":{"spellId":{"itemId":37873}}},{"castSpell":{"spellId":{"itemId":45148}}},{"castSpell":{"spellId":{"itemId":48724}}},{"castSpell":{"spellId":{"itemId":50357}}},{"castSpell":{"spellId":{"spellId":2894}}}]}}},
-		{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"totemRemainingTime":{"totemType":"Water"}},"rhs":{"const":{"val":"20s"}}}},"castSpell":{"spellId":{"spellId":66842}}}},
-		{"action":{"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":2894}}}}},{"not":{"val":{"dotIsActive":{"spellId":{"spellId":58704}}}}}]}},"castSpell":{"spellId":{"spellId":58704}}}},
-		{"action":{"multidot":{"spellId":{"spellId":49233},"maxDots":3,"maxOverlap":{"const":{"val":"0ms"}}}}},
-		{"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"numberTargets":{}},"rhs":{"const":{"val":"1"}}}},"castSpell":{"spellId":{"spellId":49271}}}},
-		{"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"dotRemainingTime":{"spellId":{"spellId":49233}}},"rhs":{"const":{"val":"2s"}}}},"castSpell":{"spellId":{"spellId":60043}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":49238}}}}
-	]
-}`)
 
 var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
 	{"id":40516,"enchant":3820,"gems":[41285,40027]},

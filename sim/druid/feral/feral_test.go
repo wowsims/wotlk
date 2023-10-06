@@ -12,6 +12,20 @@ func init() {
 	RegisterFeralDruid()
 }
 
+var FeralItemFilter = core.ItemFilter{
+	WeaponTypes: []proto.WeaponType{
+		proto.WeaponType_WeaponTypeDagger,
+		proto.WeaponType_WeaponTypeMace,
+		proto.WeaponType_WeaponTypeOffHand,
+		proto.WeaponType_WeaponTypeStaff,
+		proto.WeaponType_WeaponTypePolearm,
+	},
+	ArmorType: proto.ArmorType_ArmorTypeLeather,
+	RangedWeaponTypes: []proto.RangedWeaponType{
+		proto.RangedWeaponType_RangedWeaponTypeIdol,
+	},
+}
+
 func TestFeral(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
 		Class: proto.Class_ClassDruid,
@@ -29,20 +43,7 @@ func TestFeral(t *testing.T) {
 			{Label: "Default-NoBleed", SpecOptions: PlayerOptionsMonoCatNoBleed},
 			{Label: "Flower-Aoe", SpecOptions: PlayerOptionsFlowerCatAoe},
 		},
-
-		ItemFilter: core.ItemFilter{
-			WeaponTypes: []proto.WeaponType{
-				proto.WeaponType_WeaponTypeDagger,
-				proto.WeaponType_WeaponTypeMace,
-				proto.WeaponType_WeaponTypeOffHand,
-				proto.WeaponType_WeaponTypeStaff,
-				proto.WeaponType_WeaponTypePolearm,
-			},
-			ArmorType: proto.ArmorType_ArmorTypeLeather,
-			RangedWeaponTypes: []proto.RangedWeaponType{
-				proto.RangedWeaponType_RangedWeaponTypeIdol,
-			},
-		},
+		ItemFilter: FeralItemFilter,
 	}))
 }
 
@@ -55,20 +56,7 @@ func TestFeralDoubleArmorPenTrinketsNoDesync(t *testing.T) {
 		Glyphs:      StandardGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Default", SpecOptions: PlayerOptionsMonoCat},
-
-		ItemFilter: core.ItemFilter{
-			WeaponTypes: []proto.WeaponType{
-				proto.WeaponType_WeaponTypeDagger,
-				proto.WeaponType_WeaponTypeMace,
-				proto.WeaponType_WeaponTypeOffHand,
-				proto.WeaponType_WeaponTypeStaff,
-				proto.WeaponType_WeaponTypePolearm,
-			},
-			ArmorType: proto.ArmorType_ArmorTypeLeather,
-			RangedWeaponTypes: []proto.RangedWeaponType{
-				proto.RangedWeaponType_RangedWeaponTypeIdol,
-			},
-		},
+		ItemFilter:  FeralItemFilter,
 
 		Cooldowns: &proto.Cooldowns{
 			DesyncProcTrinket1Seconds: 0,
@@ -87,19 +75,7 @@ func TestFeralDoubleArmorPenTrinketsWithDesync(t *testing.T) {
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Default", SpecOptions: PlayerOptionsMonoCat},
 
-		ItemFilter: core.ItemFilter{
-			WeaponTypes: []proto.WeaponType{
-				proto.WeaponType_WeaponTypeDagger,
-				proto.WeaponType_WeaponTypeMace,
-				proto.WeaponType_WeaponTypeOffHand,
-				proto.WeaponType_WeaponTypeStaff,
-				proto.WeaponType_WeaponTypePolearm,
-			},
-			ArmorType: proto.ArmorType_ArmorTypeLeather,
-			RangedWeaponTypes: []proto.RangedWeaponType{
-				proto.RangedWeaponType_RangedWeaponTypeIdol,
-			},
-		},
+		ItemFilter: FeralItemFilter,
 
 		Cooldowns: &proto.Cooldowns{
 			DesyncProcTrinket1Seconds: 0,
@@ -240,315 +216,71 @@ var FullConsumes = &proto.Consumes{
 	DefaultConjured: proto.Conjured_ConjuredDarkRune,
 }
 
-var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
-	{
-		"id": 40473,
-		"enchant": 3817,
-		"gems": [
-			41398,
-			39996
-		]
-	},
-	{
-		"id": 44664,
-		"gems": [
-			39996
-		]
-	},
-	{
-		"id": 40494,
-		"enchant": 3808,
-		"gems": [
-			39996
-		]
-	},
-	{
-		"id": 40403,
-		"enchant": 3605
-	},
-	{
-		"id": 40539,
-		"enchant": 3832,
-		"gems": [
-			39996
-		]
-	},
-	{
-		"id": 39765,
-		"enchant": 3845,
-		"gems": [
-			39996,
-			0
-		]
-	},
-	{
-		"id": 40541,
-		"enchant": 3604,
-		"gems": [
-			0
-		]
-	},
-	{
-		"id": 40205,
-		"gems": [
-			39996
-		]
-	},
-	{
-		"id": 44011,
-		"enchant": 3823,
-		"gems": [
-			39996,
-			49110
-		]
-	},
-	{
-		"id": 40243,
-		"enchant": 3606,
-		"gems": [
-			40014
-		]
-	},
-	{
-		"id": 40474
-	},
-	{
-		"id": 40717
-	},
-	{
-		"id": 42987
-	},
-	{
-		"id": 40256
-	},
-	{
-		"id": 40388,
-		"enchant": 3789
-	},
+var P1Gear = core.EquipmentSpecFromJsonString(`
+{
+	"items": [
+	{"id":40473,"enchant":3817,"gems":[41398,39996]},
+	{"id":44664,"gems":[39996]},
+	{"id":40494,"enchant":3808,"gems":[39996]},
+	{"id":40403,"enchant":3605},
+	{"id":40539,"enchant":3832,"gems":[39996]},
+	{"id":39765,"enchant":3845,"gems":[39996,0]},
+	{"id":40541,"enchant":3604,"gems":[0]},
+	{"id":40205,"gems":[39996]},
+	{"id":44011,"enchant":3823,"gems":[39996,49110]},
+	{"id":40243,"enchant":3606,"gems":[40014]},
+	{"id":40474},
+	{"id":40717},
+	{"id":42987},
+	{"id":40256},
+	{"id":40388,"enchant":3789},
 	{},
-	{
-		"id": 39757
-	}
-]}`)
+	{"id":39757}
+  ]
+}`)
 
-var P2Gear = core.EquipmentSpecFromJsonString(`{"items": [
-	{
-		"id": 46161,
-		"enchant": 3817,
-		"gems": [
-			41398,
-			40002
-		]
-	},
-	{
-		"id": 45517,
-		"gems": [
-			40002
-		]
-	},
-	{
-		"id": 45245,
-		"enchant": 3808,
-		"gems": [
-			40002,
-			40002
-		]
-	},
-	{
-		"id": 46032,
-		"enchant": 3605,
-		"gems": [
-			40002,
-			40058
-		]
-	},
-	{
-		"id": 45473,
-		"enchant": 3832,
-		"gems": [
-			40002,
-			40002,
-			40002
-		]
-	},
-	{
-		"id": 45869,
-		"enchant": 3845,
-		"gems": [
-			40037
-		]
-	},
-	{
-		"id": 46158,
-		"enchant": 3604,
-		"gems": [
-			40002
-		]
-	},
-	{
-		"id": 46095,
-		"gems": [
-			40002,
-			40002,
-			40002
-		]
-	},
-	{
-		"id": 45536,
-		"enchant": 3823,
-		"gems": [
-			39996,
-			39996,
-			39996
-		]
-	},
-	{
-		"id": 45564,
-		"enchant": 3606,
-		"gems": [
-			39996,
-			39996
-		]
-	},
-	{
-		"id": 46048,
-		"gems": [
-			45862
-		]
-	},
-	{
-		"id": 45608,
-		"gems": [
-			39996
-		]
-	},
-	{
-		"id": 45931
-	},
-	{
-		"id": 46038
-	},
-	{
-		"id": 45613,
-		"enchant": 3789,
-		"gems": [
-			40037,
-			42702
-		]
-	},
+var P2Gear = core.EquipmentSpecFromJsonString(`
+{
+	"items": [
+	{"id":46161,"enchant":3817,"gems":[41398,40002]},
+	{"id":45517,"gems":[40002]},
+	{"id":45245,"enchant":3808,"gems":[40002,40002]},
+	{"id":46032,"enchant":3605,"gems":[40002,40058]},
+	{"id":45473,"enchant":3832,"gems":[40002,40002,40002]},
+	{"id":45869,"enchant":3845,"gems":[40037,0]},
+	{"id":46158,"enchant":3604,"gems":[40002,0]},
+	{"id":46095,"gems":[40002,40002,40002]},
+	{"id":45536,"enchant":3823,"gems":[39996,39996,39996]},
+	{"id":45564,"enchant":3606,"gems":[39996,39996]},
+	{"id":46048,"gems":[45862]},
+	{"id":45608,"gems":[39996]},
+	{"id":45931},
+	{"id":46038},
+	{"id":45613,"enchant":3789,"gems":[40037,42702]},
 	{},
-	{
-		"id": 40713
-	}
-]}`)
+	{"id":40713}
+  ]
+}`)
 
-var P2GearDoubleArmorPenTrinkets = core.EquipmentSpecFromJsonString(`{"items": [
-	{
-		"id": 46161,
-		"enchant": 3817,
-		"gems": [
-			41398,
-			40002
-		]
-	},
-	{
-		"id": 45517,
-		"gems": [
-			40002
-		]
-	},
-	{
-		"id": 45245,
-		"enchant": 3808,
-		"gems": [
-			40002,
-			40002
-		]
-	},
-	{
-		"id": 46032,
-		"enchant": 3605,
-		"gems": [
-			40002,
-			40058
-		]
-	},
-	{
-		"id": 45473,
-		"enchant": 3832,
-		"gems": [
-			40002,
-			40002,
-			40002
-		]
-	},
-	{
-		"id": 45869,
-		"enchant": 3845,
-		"gems": [
-			40037
-		]
-	},
-	{
-		"id": 46158,
-		"enchant": 3604,
-		"gems": [
-			40002
-		]
-	},
-	{
-		"id": 46095,
-		"gems": [
-			40002,
-			40002,
-			40002
-		]
-	},
-	{
-		"id": 45536,
-		"enchant": 3823,
-		"gems": [
-			39996,
-			39996,
-			39996
-		]
-	},
-	{
-		"id": 45564,
-		"enchant": 3606,
-		"gems": [
-			39996,
-			39996
-		]
-	},
-	{
-		"id": 46048,
-		"gems": [
-			45862
-		]
-	},
-	{
-		"id": 45608,
-		"gems": [
-			39996
-		]
-	},
-	{
-		"id": 45931
-	},
-	{
-		"id": 40256
-	},
-	{
-		"id": 45613,
-		"enchant": 3789,
-		"gems": [
-			40037,
-			42702
-		]
-	},
+var P2GearDoubleArmorPenTrinkets = core.EquipmentSpecFromJsonString(`
+{
+	"items": [
+	{"id":46161,"enchant":3817,"gems":[41398,40002]},
+	{"id":45517,"gems":[40002]},
+	{"id":45245,"enchant":3808,"gems":[40002,40002]},
+	{"id":46032,"enchant":3605,"gems":[40002,40058]},
+	{"id":45473,"enchant":3832,"gems":[40002,40002,40002]},
+	{"id":45869,"enchant":3845,"gems":[40037,0]},
+	{"id":46158,"enchant":3604,"gems":[40002,0]},
+	{"id":46095,"gems":[40002,40002,40002]},
+	{"id":45536,"enchant":3823,"gems":[39996,39996,39996]},
+	{"id":45564,"enchant":3606,"gems":[39996,39996]},
+	{"id":46048,"gems":[45862]},
+	{"id":45608,"gems":[39996]},
+	{"id":45931},
+	{"id":40256},
+	{"id":45613,"enchant":3789,"gems":[40037,42702]},
 	{},
-	{
-		"id": 40713
-	}
-]}`)
+	{"id":40713}
+  ]
+}`)

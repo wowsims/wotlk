@@ -23,8 +23,9 @@ import {
 	Warrior_Rotation_MainGcd as MainGcd,
 } from '../core/proto/warrior.js';
 
-import * as Gems from '../core/proto_utils/gems.js';
 import * as Tooltips from '../core/constants/tooltips.js';
+
+import FuryApl from './apls/fury.apl.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -104,28 +105,7 @@ export const ROTATION_FURY = {
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: WarriorRotation.toJsonString(WarriorRotation.create({
 		})),
-		rotation: APLRotation.fromJsonString(`{
-			"type": "TypeAPL",
-			"prepullActions": [
-				{"action":{"castSpell":{"spellId":{"spellId":47436}}},"doAtValue":{"const":{"val":"-10s"}}},
-				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
-			],
-			"priorityList": [
-				{"action":{"castSpell":{"spellId":{"spellId":2458}}}},
-				{"action":{"condition":{"auraShouldRefresh":{"sourceUnit":{"type":"Self"},"auraId":{"spellId":47436},"maxOverlap":{"const":{"val":"2s"}}}},"castSpell":{"spellId":{"spellId":47436}}}},
-				{"action":{"condition":{"auraShouldRefresh":{"auraId":{"spellId":47467},"maxOverlap":{"const":{"val":"2s"}}}},"castSpell":{"spellId":{"spellId":47467}}}},
-				{"hide":true,"action":{"condition":{"and":{"vals":[{"auraShouldRefresh":{"auraId":{"spellId":47502},"maxOverlap":{"const":{"val":"2s"}}}},{"gcdIsReady":{}},{"cmp":{"op":"OpGe","lhs":{"currentRage":{}},"rhs":{"const":{"val":"20"}}}},{"spellIsReady":{"spellId":{"spellId":47502}}}]}},"sequence":{"name":"TC","actions":[{"castSpell":{"spellId":{"spellId":2457}}},{"castSpell":{"spellId":{"spellId":47502}}}]}}},
-				{"hide":true,"action":{"resetSequence":{"sequenceName":"TC"}}},
-				{"hide":true,"action":{"condition":{"auraShouldRefresh":{"auraId":{"spellId":47437},"maxOverlap":{"const":{"val":"2s"}}}},"castSpell":{"spellId":{"spellId":25203}}}},
-				{"action":{"autocastOtherCooldowns":{}}},
-				{"action":{"condition":{"auraIsActive":{"auraId":{"spellId":46916}}},"castSpell":{"spellId":{"spellId":47475}}}},
-				{"action":{"castSpell":{"spellId":{"spellId":23881}}}},
-				{"action":{"castSpell":{"spellId":{"spellId":1680}}}},
-				{"action":{"condition":{"and":{"vals":[{"not":{"val":{"isExecutePhase":{"threshold":"E20"}}}},{"not":{"val":{"dotIsActive":{"spellId":{"spellId":47465}}}}}]}},"castSpell":{"spellId":{"spellId":47465}}}},
-				{"action":{"castSpell":{"spellId":{"spellId":47471}}}},
-				{"action":{"condition":{"cmp":{"op":"OpGe","lhs":{"currentRage":{}},"rhs":{"const":{"val":"30"}}}},"castSpell":{"spellId":{"spellId":47450,"tag":1}}}}
-			]
-		}`),
+		rotation: APLRotation.fromJsonString(JSON.stringify(FuryApl)),
 	}),
 };
 
