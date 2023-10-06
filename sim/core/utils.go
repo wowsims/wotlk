@@ -8,30 +8,6 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-func MinDuration(a time.Duration, b time.Duration) time.Duration {
-	if a < b {
-		return a
-	} else {
-		return b
-	}
-}
-
-func MaxDuration(a time.Duration, b time.Duration) time.Duration {
-	if a > b {
-		return a
-	} else {
-		return b
-	}
-}
-
-func MaxTristate(a proto.TristateEffect, b proto.TristateEffect) proto.TristateEffect {
-	if a > b {
-		return a
-	} else {
-		return b
-	}
-}
-
 func DurationFromSeconds(numSeconds float64) time.Duration {
 	return time.Duration(float64(time.Second) * numSeconds)
 }

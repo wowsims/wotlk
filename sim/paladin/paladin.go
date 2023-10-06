@@ -98,7 +98,7 @@ func (paladin *Paladin) GetPaladin() *Paladin {
 }
 
 func (paladin *Paladin) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
-	raidBuffs.DevotionAura = core.MaxTristate(raidBuffs.DevotionAura, core.MakeTristateValue(
+	raidBuffs.DevotionAura = max(raidBuffs.DevotionAura, core.MakeTristateValue(
 		paladin.PaladinAura == proto.PaladinAura_DevotionAura,
 		paladin.Talents.ImprovedDevotionAura == 5))
 
@@ -169,9 +169,9 @@ func (paladin *Paladin) Reset(_ *core.Simulation) {
 }
 
 // maybe need to add stat dependencies
-func NewPaladin(character core.Character, talentsStr string) *Paladin {
+func NewPaladin(character *core.Character, talentsStr string) *Paladin {
 	paladin := &Paladin{
-		Character: character,
+		Character: *character,
 		Talents:   &proto.PaladinTalents{},
 	}
 	core.FillTalentsProto(paladin.Talents.ProtoReflect(), talentsStr, TalentTreeSizes)

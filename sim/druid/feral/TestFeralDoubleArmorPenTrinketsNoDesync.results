@@ -224,15 +224,15 @@ dps_results: {
 dps_results: {
  key: "TestFeralDoubleArmorPenTrinketsNoDesync-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 9866.98628
-  tps: 7069.12893
+  dps: 9867.01454
+  tps: 7069.14899
  }
 }
 dps_results: {
  key: "TestFeralDoubleArmorPenTrinketsNoDesync-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 9843.70145
-  tps: 7052.52191
+  dps: 9840.12642
+  tps: 7049.90885
  }
 }
 dps_results: {
@@ -413,8 +413,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralDoubleArmorPenTrinketsNoDesync-AllItems-Heartpierce-49982"
  value: {
-  dps: 10066.68564
-  tps: 7213.23385
+  dps: 10065.53824
+  tps: 7212.4192
  }
 }
 dps_results: {

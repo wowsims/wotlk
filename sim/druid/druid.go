@@ -118,25 +118,25 @@ func (druid *Druid) GetCharacter() *core.Character {
 }
 
 func (druid *Druid) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
-	raidBuffs.GiftOfTheWild = core.MaxTristate(raidBuffs.GiftOfTheWild, proto.TristateEffect_TristateEffectRegular)
+	raidBuffs.GiftOfTheWild = max(raidBuffs.GiftOfTheWild, proto.TristateEffect_TristateEffectRegular)
 	if druid.Talents.ImprovedMarkOfTheWild == 2 { // probably could work on actually calculating the fraction effect later if we care.
 		raidBuffs.GiftOfTheWild = proto.TristateEffect_TristateEffectImproved
 	}
 
-	raidBuffs.Thorns = core.MaxTristate(raidBuffs.Thorns, proto.TristateEffect_TristateEffectRegular)
+	raidBuffs.Thorns = max(raidBuffs.Thorns, proto.TristateEffect_TristateEffectRegular)
 	if druid.Talents.Brambles == 3 {
 		raidBuffs.Thorns = proto.TristateEffect_TristateEffectImproved
 	}
 
 	if druid.InForm(Moonkin) && druid.Talents.MoonkinForm {
-		raidBuffs.MoonkinAura = core.MaxTristate(raidBuffs.MoonkinAura, proto.TristateEffect_TristateEffectRegular)
+		raidBuffs.MoonkinAura = max(raidBuffs.MoonkinAura, proto.TristateEffect_TristateEffectRegular)
 		if druid.Talents.ImprovedMoonkinForm > 0 {
 			// For now, we assume Improved Moonkin Form is maxed-out
 			raidBuffs.MoonkinAura = proto.TristateEffect_TristateEffectImproved
 		}
 	}
 	if druid.InForm(Cat|Bear) && druid.Talents.LeaderOfThePack {
-		raidBuffs.LeaderOfThePack = core.MaxTristate(raidBuffs.LeaderOfThePack, proto.TristateEffect_TristateEffectRegular)
+		raidBuffs.LeaderOfThePack = max(raidBuffs.LeaderOfThePack, proto.TristateEffect_TristateEffectRegular)
 		if druid.Talents.ImprovedLeaderOfThePack > 0 {
 			raidBuffs.LeaderOfThePack = proto.TristateEffect_TristateEffectImproved
 		}
@@ -270,9 +270,9 @@ func (druid *Druid) Reset(_ *core.Simulation) {
 	druid.SolarICD.Timer.Reset()
 }
 
-func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents string) *Druid {
+func New(char *core.Character, form DruidForm, selfBuffs SelfBuffs, talents string) *Druid {
 	druid := &Druid{
-		Character:    char,
+		Character:    *char,
 		SelfBuffs:    selfBuffs,
 		Talents:      &proto.DruidTalents{},
 		StartingForm: form,

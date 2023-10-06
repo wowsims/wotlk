@@ -8,13 +8,17 @@ Tooltip.Default.trigger = "hover";
 
 let body = document.querySelector('body') as HTMLElement;
 
-function isTouchDevice() {
+function hasTouch() {
 	return ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+}
+
+function hasHover() {
+	return window.matchMedia("(any-hover: hover)").matches;
 }
 
 // Disable 'mouseover' to avoid needed to double click on mobile
 // Leaving 'mouseleave', however still allows dropdown to close when clicking new box
-if (!isTouchDevice()) {
+if (!hasTouch() || hasHover()) {
 	// Custom dropdown event handlers for mouseover dropdowns
 	body.addEventListener('mouseover', event => {
 		let target = event.target as HTMLElement;

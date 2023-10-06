@@ -463,7 +463,7 @@ func (at *auraTracker) RegisterResetEffect(resetEffect ResetEffect) {
 	at.resetEffects = append(at.resetEffects, resetEffect)
 }
 
-func (at *auraTracker) init(sim *Simulation) {
+func (at *auraTracker) init(_ *Simulation) {
 	// Auras are initialized later, on their first reset().
 }
 
@@ -646,9 +646,9 @@ func (aura *Aura) Deactivate(sim *Simulation) {
 
 	if !aura.ActionID.IsEmptyAction() {
 		if sim.CurrentTime > aura.expires {
-			aura.metrics.Uptime += aura.expires - MaxDuration(aura.startTime, 0)
+			aura.metrics.Uptime += aura.expires - max(aura.startTime, 0)
 		} else {
-			aura.metrics.Uptime += sim.CurrentTime - MaxDuration(aura.startTime, 0)
+			aura.metrics.Uptime += sim.CurrentTime - max(aura.startTime, 0)
 		}
 	}
 

@@ -17,7 +17,7 @@ func RegisterHunter() {
 	core.RegisterAgentFactory(
 		proto.Player_Hunter{},
 		proto.Spec_SpecHunter,
-		func(character core.Character, options *proto.Player) core.Agent {
+		func(character *core.Character, options *proto.Player) core.Agent {
 			return NewHunter(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -170,11 +170,11 @@ func (hunter *Hunter) Reset(_ *core.Simulation) {
 	hunter.permaHawk = false
 }
 
-func NewHunter(character core.Character, options *proto.Player) *Hunter {
+func NewHunter(character *core.Character, options *proto.Player) *Hunter {
 	hunterOptions := options.GetHunter()
 
 	hunter := &Hunter{
-		Character: character,
+		Character: *character,
 		Talents:   &proto.HunterTalents{},
 		Options:   hunterOptions.Options,
 		Rotation:  hunterOptions.Rotation,

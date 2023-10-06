@@ -13,7 +13,7 @@ func RegisterShadowPriest() {
 	core.RegisterAgentFactory(
 		proto.Player_ShadowPriest{},
 		proto.Spec_SpecShadowPriest,
-		func(character core.Character, options *proto.Player) core.Agent {
+		func(character *core.Character, options *proto.Player) core.Agent {
 			return NewShadowPriest(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -26,7 +26,7 @@ func RegisterShadowPriest() {
 	)
 }
 
-func NewShadowPriest(character core.Character, options *proto.Player) *ShadowPriest {
+func NewShadowPriest(character *core.Character, options *proto.Player) *ShadowPriest {
 	shadowOptions := options.GetShadowPriest()
 
 	selfBuffs := priest.SelfBuffs{

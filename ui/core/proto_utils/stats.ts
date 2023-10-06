@@ -42,7 +42,7 @@ export class UnitStat {
 		if (this.isStat()) {
 			return getClassStatName(this.stat!, clazz);
 		} else {
-			return pseudoStatNames[this.pseudoStat!];
+			return pseudoStatNames.get(this.pseudoStat!)!;
 		}
 	}
 

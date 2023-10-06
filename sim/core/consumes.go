@@ -938,7 +938,7 @@ func registerExplosivesCD(agent Agent, consumes *proto.Consumes) {
 		character.AddMajorCooldown(MajorCooldown{
 			Spell:    character.newThermalSapperSpell(sharedTimer),
 			Type:     CooldownTypeDPS | CooldownTypeExplosive,
-			Priority: CooldownPriorityLow + 0.03,
+			Priority: CooldownPriorityLow + 30,
 		})
 	}
 
@@ -946,7 +946,7 @@ func registerExplosivesCD(agent Agent, consumes *proto.Consumes) {
 		character.AddMajorCooldown(MajorCooldown{
 			Spell:    character.newExplosiveDecoySpell(sharedTimer),
 			Type:     CooldownTypeDPS | CooldownTypeExplosive,
-			Priority: CooldownPriorityLow + 0.02,
+			Priority: CooldownPriorityLow + 20,
 			ShouldActivate: func(sim *Simulation, character *Character) bool {
 				// Decoy puts other explosives on 2m CD, so only use if there won't be enough
 				// time to use another explosive OR there is no filler explosive.
@@ -967,13 +967,13 @@ func registerExplosivesCD(agent Agent, consumes *proto.Consumes) {
 		character.AddMajorCooldown(MajorCooldown{
 			Spell:    filler,
 			Type:     CooldownTypeDPS | CooldownTypeExplosive,
-			Priority: CooldownPriorityLow + 0.01,
+			Priority: CooldownPriorityLow + 10,
 		})
 	}
 }
 
 // Creates a spell object for the common explosive case.
-func (character *Character) newBasicExplosiveSpellConfig(sharedTimer *Timer, actionID ActionID, school SpellSchool, minDamage float64, maxDamage float64, cooldown Cooldown, minSelfDamage float64, maxSelfDamage float64) SpellConfig {
+func (character *Character) newBasicExplosiveSpellConfig(sharedTimer *Timer, actionID ActionID, school SpellSchool, minDamage float64, maxDamage float64, cooldown Cooldown, _ float64, _ float64) SpellConfig {
 	dealSelfDamage := actionID.SameAction(ThermalSapperActionID)
 
 	return SpellConfig{

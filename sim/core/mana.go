@@ -330,7 +330,7 @@ func (mc *ManaCost) LogCostFailure(sim *Simulation, spell *Spell) {
 func (mc *ManaCost) SpendCost(sim *Simulation, spell *Spell) {
 	if spell.CurCast.Cost > 0 {
 		spell.Unit.SpendMana(sim, spell.CurCast.Cost, mc.ResourceMetrics)
-		spell.Unit.PseudoStats.FiveSecondRuleRefreshTime = MaxDuration(sim.CurrentTime+time.Second*5, spell.Unit.Hardcast.Expires)
+		spell.Unit.PseudoStats.FiveSecondRuleRefreshTime = max(sim.CurrentTime+time.Second*5, spell.Unit.Hardcast.Expires)
 	}
 }
 func (mc *ManaCost) IssueRefund(_ *Simulation, _ *Spell) {}

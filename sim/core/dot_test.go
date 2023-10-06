@@ -23,9 +23,9 @@ func init() {
 	)
 }
 
-func NewFakeElementalShaman(char Character, options *proto.Player) Agent {
+func NewFakeElementalShaman(char *Character, options *proto.Player) Agent {
 	fa := &FakeAgent{
-		Character: char,
+		Character: *char,
 	}
 
 	fa.Init = func() {

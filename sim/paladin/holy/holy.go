@@ -10,7 +10,7 @@ func RegisterHolyPaladin() {
 	core.RegisterAgentFactory(
 		proto.Player_HolyPaladin{},
 		proto.Spec_SpecHolyPaladin,
-		func(character core.Character, options *proto.Player) core.Agent {
+		func(character *core.Character, options *proto.Player) core.Agent {
 			return NewHolyPaladin(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -23,7 +23,7 @@ func RegisterHolyPaladin() {
 	)
 }
 
-func NewHolyPaladin(character core.Character, options *proto.Player) *HolyPaladin {
+func NewHolyPaladin(character *core.Character, options *proto.Player) *HolyPaladin {
 	holyOptions := options.GetHolyPaladin()
 
 	holy := &HolyPaladin{

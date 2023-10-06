@@ -13,7 +13,7 @@ func RegisterDpsWarrior() {
 	core.RegisterAgentFactory(
 		proto.Player_Warrior{},
 		proto.Spec_SpecWarrior,
-		func(character core.Character, options *proto.Player) core.Agent {
+		func(character *core.Character, options *proto.Player) core.Agent {
 			return NewDpsWarrior(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -44,7 +44,7 @@ type DpsWarrior struct {
 	castSlamAt time.Duration
 }
 
-func NewDpsWarrior(character core.Character, options *proto.Player) *DpsWarrior {
+func NewDpsWarrior(character *core.Character, options *proto.Player) *DpsWarrior {
 	warOptions := options.GetWarrior()
 
 	war := &DpsWarrior{

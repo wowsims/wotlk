@@ -12,7 +12,7 @@ func RegisterProtectionPaladin() {
 	core.RegisterAgentFactory(
 		proto.Player_ProtectionPaladin{},
 		proto.Spec_SpecProtectionPaladin,
-		func(character core.Character, options *proto.Player) core.Agent {
+		func(character *core.Character, options *proto.Player) core.Agent {
 			return NewProtectionPaladin(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -25,7 +25,7 @@ func RegisterProtectionPaladin() {
 	)
 }
 
-func NewProtectionPaladin(character core.Character, options *proto.Player) *ProtectionPaladin {
+func NewProtectionPaladin(character *core.Character, options *proto.Player) *ProtectionPaladin {
 	protOptions := options.GetProtectionPaladin()
 
 	prot := &ProtectionPaladin{

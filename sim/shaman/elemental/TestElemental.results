@@ -304,15 +304,15 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 7523.49554
-  tps: 4274.75168
+  dps: 7529.31634
+  tps: 4278.59503
  }
 }
 dps_results: {
  key: "TestElemental-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 7459.26892
-  tps: 4224.79477
+  dps: 7460.59951
+  tps: 4225.66587
  }
 }
 dps_results: {

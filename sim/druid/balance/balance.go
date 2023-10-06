@@ -12,7 +12,7 @@ func RegisterBalanceDruid() {
 	core.RegisterAgentFactory(
 		proto.Player_BalanceDruid{},
 		proto.Spec_SpecBalanceDruid,
-		func(character core.Character, options *proto.Player) core.Agent {
+		func(character *core.Character, options *proto.Player) core.Agent {
 			return NewBalanceDruid(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -25,7 +25,7 @@ func RegisterBalanceDruid() {
 	)
 }
 
-func NewBalanceDruid(character core.Character, options *proto.Player) *BalanceDruid {
+func NewBalanceDruid(character *core.Character, options *proto.Player) *BalanceDruid {
 	balanceOptions := options.GetBalanceDruid()
 	selfBuffs := druid.SelfBuffs{}
 

@@ -107,12 +107,12 @@ func (priest *Priest) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	raidBuffs.ShadowProtection = true
 	raidBuffs.DivineSpirit = true
 
-	raidBuffs.PowerWordFortitude = core.MaxTristate(raidBuffs.PowerWordFortitude, core.MakeTristateValue(
+	raidBuffs.PowerWordFortitude = max(raidBuffs.PowerWordFortitude, core.MakeTristateValue(
 		true,
 		priest.Talents.ImprovedPowerWordFortitude == 2))
 }
 
-func (priest *Priest) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
+func (priest *Priest) AddPartyBuffs(_ *proto.PartyBuffs) {
 }
 
 func (priest *Priest) Initialize() {
@@ -181,9 +181,9 @@ func (priest *Priest) Reset(_ *core.Simulation) {
 	priest.MindBlastModifier = 1
 }
 
-func New(char core.Character, selfBuffs SelfBuffs, talents string) *Priest {
+func New(char *core.Character, selfBuffs SelfBuffs, talents string) *Priest {
 	priest := &Priest{
-		Character: char,
+		Character: *char,
 		SelfBuffs: selfBuffs,
 		Talents:   &proto.PriestTalents{},
 	}

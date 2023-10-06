@@ -10,7 +10,7 @@ func RegisterFeralTankDruid() {
 	core.RegisterAgentFactory(
 		proto.Player_FeralTankDruid{},
 		proto.Spec_SpecFeralTankDruid,
-		func(character core.Character, options *proto.Player) core.Agent {
+		func(character *core.Character, options *proto.Player) core.Agent {
 			return NewFeralTankDruid(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -23,7 +23,7 @@ func RegisterFeralTankDruid() {
 	)
 }
 
-func NewFeralTankDruid(character core.Character, options *proto.Player) *FeralTankDruid {
+func NewFeralTankDruid(character *core.Character, options *proto.Player) *FeralTankDruid {
 	tankOptions := options.GetFeralTankDruid()
 	selfBuffs := druid.SelfBuffs{}
 

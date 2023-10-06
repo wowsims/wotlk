@@ -163,7 +163,7 @@ func (value *APLValueRuneCooldown) GetDuration(sim *Simulation) time.Duration {
 	case proto.APLValueRuneType_RuneUnholy:
 		returnValue = value.unit.UnholyRuneReadyAt(sim) - sim.CurrentTime
 	}
-	return MaxDuration(0, returnValue)
+	return max(0, returnValue)
 }
 func (value *APLValueRuneCooldown) String() string {
 	return fmt.Sprintf("Rune Cooldown(%s)", value.runeType)
@@ -199,7 +199,7 @@ func (value *APLValueNextRuneCooldown) GetDuration(sim *Simulation) time.Duratio
 	case proto.APLValueRuneType_RuneUnholy:
 		returnValue = value.unit.NextUnholyRuneReadyAt(sim) - sim.CurrentTime
 	}
-	return MaxDuration(0, returnValue)
+	return max(0, returnValue)
 }
 func (value *APLValueNextRuneCooldown) String() string {
 	return fmt.Sprintf("Next Rune Cooldown(%s)", value.runeType)
@@ -226,7 +226,7 @@ func (value *APLValueRuneSlotCooldown) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeDuration
 }
 func (value *APLValueRuneSlotCooldown) GetDuration(sim *Simulation) time.Duration {
-	return MaxDuration(0, value.unit.RuneReadyAt(sim, value.runeSlot)-sim.CurrentTime)
+	return max(0, value.unit.RuneReadyAt(sim, value.runeSlot)-sim.CurrentTime)
 }
 func (value *APLValueRuneSlotCooldown) String() string {
 	return fmt.Sprintf("Rune Slot Cooldown(%d)", value.runeSlot)

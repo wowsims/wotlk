@@ -60,12 +60,12 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:      core.GCDDefault,
-				CastTime: 1, // Dummy value so core doesn't optimize the cast away
-			},
-			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
-				cast.CastTime = hunter.SteadyShotCastTime()
+				CastTime: time.Millisecond * 2000,
 			},
 			IgnoreHaste: true, // Hunter GCD is locked at 1.5s
+			GetCastTime: func(spell *core.Spell) time.Duration {
+				return time.Duration(float64(spell.DefaultCast.CastTime) / hunter.RangedSwingSpeed())
+			},
 		},
 
 		BonusCritRating: 0 +
@@ -91,8 +91,4 @@ func (hunter *Hunter) registerSteadyShotSpell() {
 			spell.DealDamage(sim, result)
 		},
 	})
-}
-
-func (hunter *Hunter) SteadyShotCastTime() time.Duration {
-	return time.Duration(float64(time.Millisecond*2000) / hunter.RangedSwingSpeed())
 }

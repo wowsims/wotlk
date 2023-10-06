@@ -224,15 +224,15 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 3582.7931
-  tps: 2935.92738
+  dps: 3588.00823
+  tps: 2939.06917
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 3565.20029
-  tps: 2923.44929
+  dps: 3566.84623
+  tps: 2925.67831
  }
 }
 dps_results: {

@@ -10,7 +10,7 @@ func RegisterTankDeathknight() {
 	core.RegisterAgentFactory(
 		proto.Player_TankDeathknight{},
 		proto.Spec_SpecTankDeathknight,
-		func(character core.Character, options *proto.Player) core.Agent {
+		func(character *core.Character, options *proto.Player) core.Agent {
 			return NewTankDeathknight(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -33,7 +33,7 @@ type TankDeathknight struct {
 	Rotation *proto.TankDeathknight_Rotation
 }
 
-func NewTankDeathknight(character core.Character, options *proto.Player) *TankDeathknight {
+func NewTankDeathknight(character *core.Character, options *proto.Player) *TankDeathknight {
 	dkOptions := options.GetTankDeathknight()
 
 	tankDk := &TankDeathknight{

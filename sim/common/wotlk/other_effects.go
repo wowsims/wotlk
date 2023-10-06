@@ -492,7 +492,7 @@ func init() {
 
 			triggerAura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:       name + " Trigger",
-				Callback:   core.CallbackOnSpellHitDealt,
+				Callback:   core.CallbackOnCastComplete,
 				ProcMask:   core.ProcMaskSpellOrProc,
 				Harmful:    true,
 				ProcChance: 0.10,
@@ -623,7 +623,11 @@ func init() {
 				ProcMask: core.ProcMaskMelee,
 				PPM:      1,
 				ActionID: core.ActionID{ItemID: itemID},
-				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
+
+				Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
+					if !result.Landed() {
+						return
+					}
 					// Deactivate first, to cancel old PA.
 					procAura.Deactivate(sim)
 					procAura.Activate(sim)

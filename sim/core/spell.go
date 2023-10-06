@@ -141,6 +141,8 @@ type Spell struct {
 
 	// Per-target auras that are related to this spell, usually buffs or debuffs applied by the spell.
 	RelatedAuras []AuraArray
+
+	GetCastTime func(spell *Spell) time.Duration
 }
 
 func (unit *Unit) OnSpellRegistered(handler SpellRegisteredHandler) {
@@ -218,6 +220,7 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		splitSpellMetrics: make([][]SpellMetrics, max(1, config.MetricSplits)),
 
 		RelatedAuras: config.RelatedAuras,
+		GetCastTime:  config.Cast.GetCastTime,
 	}
 
 	switch {
@@ -564,7 +567,7 @@ func (spell *Spell) ExpectedTickDamageFromCurrentSnapshot(sim *Simulation, targe
 // Time until either the cast is finished or GCD is ready again, whichever is longer
 func (spell *Spell) EffectiveCastTime() time.Duration {
 	// TODO: this is wrong for spells like shadowfury, that have a GCD of less than 1s
-	return MaxDuration(spell.Unit.SpellGCD(),
+	return max(spell.Unit.SpellGCD(),
 		spell.Unit.ApplyCastSpeedForSpell(spell.DefaultCast.EffectiveTime(), spell))
 }
 

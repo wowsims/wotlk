@@ -33,6 +33,8 @@ type CastConfig struct {
 
 	CD       Cooldown
 	SharedCD Cooldown
+
+	GetCastTime func(spell *Spell) time.Duration
 }
 
 type Cast struct {
@@ -54,10 +56,10 @@ func (cast *Cast) EffectiveTime() time.Duration {
 	gcd := cast.GCD
 	if cast.GCD != 0 {
 		// TODO: isn't this wrong for spells like shadowfury, that have a reduced GCD?
-		gcd = MaxDuration(GCDMin, gcd)
+		gcd = max(GCDMin, gcd)
 	}
 	fullCastTime := cast.CastTime + cast.ChannelTime
-	return MaxDuration(gcd, fullCastTime)
+	return max(gcd, fullCastTime)
 }
 
 type CastFunc func(*Simulation, *Unit)
@@ -99,6 +101,10 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 			spell.CurCast.GCD = spell.Unit.ApplyCastSpeed(spell.CurCast.GCD)
 			spell.CurCast.CastTime = spell.Unit.ApplyCastSpeedForSpell(spell.CurCast.CastTime, spell)
 			spell.CurCast.ChannelTime = spell.Unit.ApplyCastSpeedForSpell(spell.CurCast.ChannelTime, spell)
+		}
+
+		if spell.GetCastTime != nil {
+			spell.CurCast.CastTime = spell.GetCastTime(spell)
 		}
 
 		if config.CD.Timer != nil {

@@ -1,6 +1,5 @@
 import { Exporter } from '../core/components/exporters';
 import { Importer } from '../core/components/importers';
-import { MAX_PARTY_SIZE } from '../core/party';
 import { RaidSimSettings } from '../core/proto/ui';
 import { EventID, TypedEvent } from '../core/typed_event';
 import { Party as PartyProto, Player as PlayerProto, Raid as RaidProto } from '../core/proto/api';
@@ -10,7 +9,6 @@ import {
 	EquipmentSpec,
 	Faction,
 	ItemSpec,
-	MobType,
 	Profession,
 	Race,
 	UnitReference,
@@ -18,7 +16,7 @@ import {
 	Target as TargetProto,
 	UnitReference_Type,
 } from '../core/proto/common';
-import { nameToClass, professionNames, raceNames } from '../core/proto_utils/names';
+import { professionNames, raceNames } from '../core/proto_utils/names';
 import {
 	DruidSpecs,
 	DeathknightSpecs,
@@ -29,8 +27,6 @@ import {
 	getTalentTreePoints,
 	makeDefaultBlessings,
 	raceToFaction,
-	specTypeFunctions,
-	withSpecProto,
 	isTankSpec,
 	playerToSpec,
 } from '../core/proto_utils/utils';
@@ -312,7 +308,7 @@ export class RaidWCLImporter extends Importer {
 				.forEach(aura => {
 					const sourcePlayer = wclPlayers.find(player => player.id == aura.source);
 					if (sourcePlayer && sourcePlayer.player.getRace() != Race.RaceDraenei) {
-						console.log(`Inferring player ${sourcePlayer.name} has race ${raceNames[Race.RaceDraenei]} from Heroic Presence aura event`);
+						console.log(`Inferring player ${sourcePlayer.name} has race ${raceNames.get(Race.RaceDraenei)} from Heroic Presence aura event`);
 						sourcePlayer.player.setRace(eventID, Race.RaceDraenei);
 						faction = Faction.Alliance;
 					}
@@ -325,7 +321,7 @@ export class RaidWCLImporter extends Importer {
 			spellEvents.forEach(event => {
 				const sourcePlayer = wclPlayers.find(player => player.id == event.sourceID);
 				if (sourcePlayer) {
-					console.log(`Inferring player ${sourcePlayer.name} has race ${raceNames[spell.race]} from ${spell.name} event`);
+					console.log(`Inferring player ${sourcePlayer.name} has race ${raceNames.get(spell.race)} from ${spell.name} event`);
 					sourcePlayer.player.setRace(eventID, spell.race);
 					faction = raceToFaction[spell.race];
 				}
@@ -346,7 +342,7 @@ export class RaidWCLImporter extends Importer {
 			spellEvents.forEach(event => {
 				const sourcePlayer = wclPlayers.find(player => player.id == event.sourceID);
 				if (sourcePlayer && !sourcePlayer.inferredProfessions.includes(spell.profession)) {
-					console.log(`Inferring player ${sourcePlayer.name} has profession ${professionNames[spell.profession]} from ${spell.name} event`);
+					console.log(`Inferring player ${sourcePlayer.name} has profession ${professionNames.get(spell.profession)} from ${spell.name} event`);
 					sourcePlayer.inferredProfessions.push(spell.profession);
 				}
 			});

@@ -53,7 +53,7 @@ func (mage *Mage) registerMirrorImageCD() {
 
 	mage.AddMajorCooldown(core.MajorCooldown{
 		Spell:    mage.MirrorImage,
-		Priority: core.CooldownPriorityDrums + 1, // Always prefer to cast before drums or lust so the ele gets their benefits.
+		Priority: core.CooldownPriorityDrums + 1000, // Always prefer to cast before drums or lust so the ele gets their benefits.
 		Type:     core.CooldownTypeDPS,
 	})
 }

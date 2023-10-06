@@ -23,7 +23,7 @@ export abstract class Exporter extends BaseModal {
 		super(parent, 'exporter', { title: title, footer: true });
 
 		this.body.innerHTML = `
-			<textarea class="exporter-textarea form-control"></textarea>
+			<textarea spellCheck="false" class="exporter-textarea form-control"></textarea>
 		`;
 		this.footer!.innerHTML = `
 			<button class="exporter-button btn btn-primary clipboard-button me-2">
@@ -127,8 +127,8 @@ export class IndividualWowheadGearPlannerExporter<SpecType extends Spec> extends
 	getData(): string {
 		const player = this.simUI.player;
 
-		const classStr = classNames[player.getClass()].replaceAll(' ', '-').toLowerCase();
-		const raceStr = raceNames[player.getRace()].replaceAll(' ', '-').toLowerCase();
+		const classStr = classNames.get(player.getClass())!.replaceAll(' ', '-').toLowerCase();
+		const raceStr = raceNames.get(player.getRace())!.replaceAll(' ', '-').toLowerCase();
 		let url = `https://www.wowhead.com/wotlk/gear-planner/${classStr}/${raceStr}/`;
 
 		// See comments on the importer for how the binary formatting is structured.
@@ -347,7 +347,7 @@ export class IndividualPawnEPExporter<SpecType extends Spec> extends Exporter {
 				}
 			});
 
-		return `( Pawn: v1: "${specNames[player.spec]} WoWSims Weights": Class=${classNames[player.getClass()]},` +
+		return `( Pawn: v1: "${specNames[player.spec]} WoWSims Weights": Class=${classNames.get(player.getClass())},` +
 			Object.keys(namesToWeights)
 				.map(statName => `${statName}=${namesToWeights[statName].toFixed(3)}`).join(',') +
 			' )';

@@ -35,6 +35,9 @@ func (druid *Druid) registerTigersFurySpell() {
 				Duration: time.Second*30 - cdReduction,
 			},
 		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return !druid.BerserkAura.IsActive()
+		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			druid.AddEnergy(sim, instantEnergy, energyMetrics)

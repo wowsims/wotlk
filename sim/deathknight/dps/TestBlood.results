@@ -245,8 +245,8 @@ dps_results: {
 dps_results: {
  key: "TestBlood-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 10509.9685
-  tps: 5304.35857
+  dps: 10510.12726
+  tps: 5304.48641
  }
 }
 dps_results: {

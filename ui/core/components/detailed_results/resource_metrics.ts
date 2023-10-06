@@ -14,7 +14,7 @@ export class ResourceMetricsTable extends ResultComponent {
 		orderedResourceTypes.forEach(resourceType => {
 			const containerElem = document.createElement('div');
 			containerElem.classList.add('resource-metrics-table-container', 'hide');
-			containerElem.innerHTML = `<span class="resource-metrics-table-title">${resourceNames[resourceType]}</span>`;
+			containerElem.innerHTML = `<span class="resource-metrics-table-title">${resourceNames.get(resourceType)}</span>`;
 			this.rootElem.appendChild(containerElem);
 
 			const childConfig = config;

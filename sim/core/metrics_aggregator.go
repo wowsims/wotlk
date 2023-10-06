@@ -389,7 +389,7 @@ func (unitMetrics *UnitMetrics) doneIteration(unit *Unit, sim *Simulation) {
 			manaSpentPerSecond := (unitMetrics.ManaSpent - unitMetrics.ManaGained) / encounterDurationSeconds
 			remainingTTO := DurationFromSeconds(unit.CurrentMana() / manaSpentPerSecond)
 			timeToOOM = DurationFromSeconds(encounterDurationSeconds) + remainingTTO
-			timeToOOM = MinDuration(timeToOOM, time.Minute*60)
+			timeToOOM = min(timeToOOM, time.Minute*60)
 		}
 
 		if timeToOOM < 0 {
