@@ -233,7 +233,7 @@ message ElementalShaman {
 			Manual = 2;
 		}
 		RotationType type = 1;
-		bool in_thunderstorm_range = 2;
+		bool in_thunderstorm_range = 2 [deprecated = true];
 
 		// These options are used for the manual rotation.
 		bool use_fire_nova = 4;
@@ -245,12 +245,26 @@ message ElementalShaman {
 		bool always_crit_lvb = 7;
 		bool use_thunderstorm = 8;
 		double lvb_fs_wait_ms = 12;
+		
+		enum BloodlustUse {
+			Unset = 0;
+			UseBloodlust = 1;
+			NoBloodlust = 2;
+		}
+		BloodlustUse bloodlust = 13;
 	}
 
 	message Options {
 		ShamanShield shield = 1;
-		bool bloodlust = 2;
+		bool bloodlust = 2 [deprecated = true];
 		ShamanTotems totems = 3;
+		
+		enum ThunderstormRange {
+			Unset = 0;
+			InRange = 1;
+			OutofRange = 2;
+		}
+		ThunderstormRange thunderstormRange = 4;
 	}
 
 	Rotation rotation = 1;

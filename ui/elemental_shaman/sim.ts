@@ -15,13 +15,12 @@ import { Stats } from '../core/proto_utils/stats.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
 import { TotemsSection } from '../core/components/totem_inputs.js';
-
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as Mechanics from '../core/constants/mechanics.js';
-
 import * as ShamanInputs from './inputs.js';
 import * as Presets from './presets.js';
+import { ElementalShaman_Options_ThunderstormRange, ElementalShaman_Rotation_BloodlustUse} from '../core/proto/shaman.js';
 
 export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalShaman> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecElementalShaman>) {
@@ -129,7 +128,6 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 			// IconInputs to include in the 'Player' section on the settings tab.
 			playerIconInputs: [
 				ShamanInputs.ShamanShieldInput,
-				ShamanInputs.Bloodlust,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: ShamanInputs.ElementalShamanRotationConfig,
@@ -141,6 +139,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
+					ShamanInputs.InThunderstormRange,
 					OtherInputs.TankAssignment,
 				],
 			},
@@ -178,5 +177,32 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				return Presets.ROTATION_PRESET_DEFAULT.rotation.rotation!;
 			},
 		});
+	}
+
+	override loadSettings() {
+		super.loadSettings();
+		
+		// handle converting old values.
+		var opt = this.player.getSpecOptions();
+		var rot = this.player.getRotation();
+		
+		var dosave = false;
+		if (rot.inThunderstormRange) {
+			opt.thunderstormRange = ElementalShaman_Options_ThunderstormRange.InRange;
+			rot.inThunderstormRange = false;
+			dosave = true;
+		}
+		if (opt.bloodlust) {
+			rot.bloodlust = ElementalShaman_Rotation_BloodlustUse.UseBloodlust;
+			opt.bloodlust = false;
+			dosave = true;
+		}
+
+		if (dosave) {
+			console.log("setting new defaults:", opt, rot);
+			const overrideInitID = TypedEvent.nextEventID();
+			this.player.setSpecOptions(overrideInitID, opt);
+			this.player.setRotation(overrideInitID, rot);
+		}
 	}
 }

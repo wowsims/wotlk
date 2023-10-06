@@ -1,5 +1,5 @@
 import { IconPickerConfig } from '../core/components/icon_picker.js';
-import { ElementalShaman_Rotation_RotationType as RotationType, ShamanShield } from '../core/proto/shaman.js';
+import { ElementalShaman_Options_ThunderstormRange, ElementalShaman_Rotation_BloodlustUse, ElementalShaman_Rotation_RotationType as RotationType, ShamanShield, ShamanTotems } from '../core/proto/shaman.js';
 import { ElementalShaman_Options as ShamanOptions } from '../core/proto/shaman.js';
 import { AirTotem } from '../core/proto/shaman.js';
 import { Spec } from '../core/proto/common.js';
@@ -7,14 +7,28 @@ import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
+import { EventID, TypedEvent } from 'ui/core/typed_event.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
 
-export const Bloodlust = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.SpecElementalShaman>({
-	fieldName: 'bloodlust',
-	id: ActionId.fromSpellId(2825),
+export const InThunderstormRange = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecElementalShaman>({
+	fieldName: 'thunderstormRange',
+	// id: ActionId.fromSpellId(59159),
+	label: "Thunderstorm In Range",
+	labelTooltip: "When set to true, thunderstorm casts will cause damage.",
+	getValue: (player: Player<Spec.SpecElementalShaman>) => player.getSpecOptions().thunderstormRange == ElementalShaman_Options_ThunderstormRange.InRange,
+	setValue: (eventID: EventID, player: Player<Spec.SpecElementalShaman>, newValue: boolean) => {
+		const newOptions = player.getSpecOptions();
+		if (newValue) {
+			newOptions.thunderstormRange = ElementalShaman_Options_ThunderstormRange.InRange;
+		} else {
+			newOptions.thunderstormRange = ElementalShaman_Options_ThunderstormRange.OutofRange;
+		}
+		player.setSpecOptions(eventID, newOptions);
+	},
 });
+
 export const ShamanShieldInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecElementalShaman, ShamanShield>({
 	fieldName: 'shield',
 	values: [
@@ -41,10 +55,19 @@ export const ElementalShamanRotationConfig = {
 			],
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecElementalShaman>({
-			fieldName: 'inThunderstormRange',
-			label: 'In Thunderstorm Range',
-			labelTooltip: 'Thunderstorm will hit all targets when cast. Ignores knockback.',
-			showWhen: (player: Player<Spec.SpecElementalShaman>) => player.getTalents().thunderstorm,
+			fieldName: 'bloodlust',
+			label: 'Use Bloodlust',
+			labelTooltip: 'Player will cast bloodlust',
+			getValue: (player: Player<Spec.SpecElementalShaman>) => player.getRotation().bloodlust == ElementalShaman_Rotation_BloodlustUse.UseBloodlust,
+			setValue: (eventID: EventID, player: Player<Spec.SpecElementalShaman>, newValue: boolean) => {
+				const newRotation = player.getRotation();
+				if (newValue) {
+					newRotation.bloodlust = ElementalShaman_Rotation_BloodlustUse.UseBloodlust;
+				} else {
+					newRotation.bloodlust = ElementalShaman_Rotation_BloodlustUse.NoBloodlust;
+				}
+				player.setRotation(eventID, newRotation);
+			},
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecElementalShaman>({
 			fieldName: 'lvbFsWaitMs',
