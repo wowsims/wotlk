@@ -32,6 +32,10 @@ func NewElementalShaman(character *core.Character, options *proto.Player) *Eleme
 		Shield:    eleShamOptions.Options.Shield,
 	}
 
+	if eleShamOptions.Rotation.Bloodlust != proto.ElementalShaman_Rotation_UnsetBloodlust {
+		selfBuffs.Bloodlust = eleShamOptions.Rotation.Bloodlust == proto.ElementalShaman_Rotation_UseBloodlust
+	}
+
 	totems := &proto.ShamanTotems{}
 	if eleShamOptions.Options.Totems != nil {
 		totems = eleShamOptions.Options.Totems
@@ -49,8 +53,12 @@ func NewElementalShaman(character *core.Character, options *proto.Player) *Eleme
 		rotation = NewAdaptiveRotation(eleShamOptions.Rotation)
 	}
 
+	inRange := eleShamOptions.Rotation.InThunderstormRange
+	if eleShamOptions.Options.ThunderstormRange != proto.ElementalShaman_Options_UnsetTSRange {
+		inRange = eleShamOptions.Options.ThunderstormRange == proto.ElementalShaman_Options_TSInRange
+	}
 	ele := &ElementalShaman{
-		Shaman:   shaman.NewShaman(character, options.TalentsString, totems, selfBuffs, eleShamOptions.Rotation.InThunderstormRange),
+		Shaman:   shaman.NewShaman(character, options.TalentsString, totems, selfBuffs, inRange),
 		rotation: rotation,
 		has4pT6:  character.HasSetBonus(shaman.ItemSetSkyshatterRegalia, 4),
 	}

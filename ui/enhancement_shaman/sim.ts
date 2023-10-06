@@ -116,7 +116,6 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 			// IconInputs to include in the 'Player' section on the settings tab.
 			playerIconInputs: [
 				ShamanInputs.ShamanShieldInput,
-				ShamanInputs.Bloodlust,
 				ShamanInputs.ShamanImbueMH,
 				ShamanInputs.ShamanImbueOH,
 			],

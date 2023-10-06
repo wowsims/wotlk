@@ -8,5 +8,4 @@ import { ElementalShamanSimUI } from './sim.js';
 const sim = new Sim();
 const player = new Player<Spec.SpecElementalShaman>(Spec.SpecElementalShaman, sim);
 sim.raid.setPlayer(TypedEvent.nextEventID(), 0, player);
-
 const simUI = new ElementalShamanSimUI(document.body, player);

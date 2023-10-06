@@ -15,13 +15,12 @@ import { Stats } from '../core/proto_utils/stats.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
 import { TotemsSection } from '../core/components/totem_inputs.js';
-
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as Mechanics from '../core/constants/mechanics.js';
-
 import * as ShamanInputs from './inputs.js';
 import * as Presets from './presets.js';
+import { ElementalShaman_Options_ThunderstormRange, ElementalShaman_Rotation_BloodlustUse} from '../core/proto/shaman.js';
 
 export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalShaman> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecElementalShaman>) {
@@ -129,7 +128,6 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 			// IconInputs to include in the 'Player' section on the settings tab.
 			playerIconInputs: [
 				ShamanInputs.ShamanShieldInput,
-				ShamanInputs.Bloodlust,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: ShamanInputs.ElementalShamanRotationConfig,
@@ -141,6 +139,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
+					ShamanInputs.InThunderstormRange,
 					OtherInputs.TankAssignment,
 				],
 			},
