@@ -5,7 +5,6 @@ ui/*/index.html
 .dirstamp
 
 # IDE folders
-.vscode
 .idea
 .history
 

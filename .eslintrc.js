@@ -1,12 +1,14 @@
 module.exports = {
+	root: true,
 	parser: '@typescript-eslint/parser',
 	plugins: ['simple-import-sort'],
 	extends: [
-		'plugin:@typescript-eslint/recommended',
 		'plugin:prettier/recommended',
 		'plugin:import/errors',
 		'plugin:import/warnings',
 		'plugin:import/typescript',
+		'plugin:@typescript-eslint/eslint-recommended',
+		'plugin:@typescript-eslint/recommended',
 	],
 	env: {
 		es6: true,
@@ -20,7 +22,6 @@ module.exports = {
 		},
 	},
 	rules: {
-		semi: 'always',
 		'@typescript-eslint/member-delimiter-style': 'off',
 		'@typescript-eslint/explicit-function-return-type': 'off',
 		'@typescript-eslint/explicit-module-boundary-types': 'off',
