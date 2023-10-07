@@ -132,7 +132,7 @@ export class SettingsTab extends SimTab {
 	}
 
 	private buildSavedDataPickers() {
-		const savedEncounterManager = new SavedDataManager<Encounter, SavedEncounter>(this.rightPanel, this.simUI, this.simUI.sim.encounter, {
+		const savedEncounterManager = new SavedDataManager<Encounter, SavedEncounter>(this.rightPanel, this.simUI.sim.encounter, {
 			label: 'Encounter',
 			header: { title: 'Saved Encounters' },
 			storageKey: this.simUI.getSavedEncounterStorageKey(),

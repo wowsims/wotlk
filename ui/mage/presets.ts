@@ -193,6 +193,7 @@ export const OtherDefaults = {
 
 export const ARCANE_ROTATION_PRESET_DEFAULT = {
 	name: 'Arcane',
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: MageRotation.toJsonString(DefaultArcaneRotation),
 		rotation: APLRotation.fromJsonString(JSON.stringify(ArcaneApl))
@@ -201,6 +202,7 @@ export const ARCANE_ROTATION_PRESET_DEFAULT = {
 
 export const FIRE_ROTATION_PRESET_DEFAULT = {
 	name: 'Fire',
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: MageRotation.toJsonString(DefaultFireRotation),
 		rotation: APLRotation.fromJsonString(JSON.stringify(FireApl)),
@@ -209,6 +211,7 @@ export const FIRE_ROTATION_PRESET_DEFAULT = {
 
 export const FROSTFIRE_ROTATION_PRESET_DEFAULT = {
 	name: 'Frostfire',
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: MageRotation.toJsonString(DefaultFFBRotation),
 		rotation: APLRotation.fromJsonString(JSON.stringify(FrostFireApl)),
@@ -217,6 +220,7 @@ export const FROSTFIRE_ROTATION_PRESET_DEFAULT = {
 
 export const FROST_ROTATION_PRESET_DEFAULT = {
 	name: 'Frost',
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 2,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: MageRotation.toJsonString(DefaultFrostRotation),
 		rotation: APLRotation.fromJsonString(JSON.stringify(FrostApl)),
@@ -225,6 +229,7 @@ export const FROST_ROTATION_PRESET_DEFAULT = {
 
 export const ARCANE_ROTATION_PRESET_AOE = {
 	name: 'Arcane AOE',
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: MageRotation.toJsonString(DefaultFrostRotation),
 		rotation: APLRotation.fromJsonString(JSON.stringify(ArcaneAoeApl)),
@@ -233,6 +238,7 @@ export const ARCANE_ROTATION_PRESET_AOE = {
 
 export const FIRE_ROTATION_PRESET_AOE = {
 	name: 'Fire AOE',
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: MageRotation.toJsonString(DefaultFrostRotation),
 		rotation: APLRotation.fromJsonString(JSON.stringify(FireAoeApl)),
@@ -241,6 +247,7 @@ export const FIRE_ROTATION_PRESET_AOE = {
 
 export const FROST_ROTATION_PRESET_AOE = {
 	name: 'Frost AOE',
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 2,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: MageRotation.toJsonString(DefaultFrostRotation),
 		rotation: APLRotation.fromJsonString(JSON.stringify(FrostAoeApl)),

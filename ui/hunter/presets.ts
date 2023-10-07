@@ -1,4 +1,4 @@
-import { Consumes } from '../core/proto/common.js';
+import { Consumes, Spec } from '../core/proto/common.js';
 import { EquipmentSpec } from '../core/proto/common.js';
 import { Flask } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
@@ -107,6 +107,7 @@ export const ROTATION_PRESET_LEGACY_DEFAULT = {
 }
 export const ROTATION_PRESET_BM = {
 	name: 'BM',
+	enableWhen: (player: Player<Spec.SpecHunter>) => player.getTalentTree() == 0,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
 		})),
@@ -116,6 +117,7 @@ export const ROTATION_PRESET_BM = {
 
 export const ROTATION_PRESET_MM = {
 	name: 'MM',
+	enableWhen: (player: Player<Spec.SpecHunter>) => player.getTalentTree() == 1,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
 		})),
@@ -125,6 +127,7 @@ export const ROTATION_PRESET_MM = {
 
 export const ROTATION_PRESET_MM_ADVANCED = {
 	name: 'MM (Advanced)',
+	enableWhen: (player: Player<Spec.SpecHunter>) => player.getTalentTree() == 1,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
 		})),
@@ -134,6 +137,7 @@ export const ROTATION_PRESET_MM_ADVANCED = {
 
 export const ROTATION_PRESET_SV = {
 	name: 'SV',
+	enableWhen: (player: Player<Spec.SpecHunter>) => player.getTalentTree() == 2,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
 		})),
@@ -143,6 +147,7 @@ export const ROTATION_PRESET_SV = {
 
 export const ROTATION_PRESET_SV_ADVANCED = {
 	name: 'SV (Advanced)',
+	enableWhen: (player: Player<Spec.SpecHunter>) => player.getTalentTree() == 2,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
 		})),

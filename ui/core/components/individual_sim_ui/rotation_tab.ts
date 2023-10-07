@@ -202,7 +202,7 @@ export class RotationTab extends SimTab {
 	private buildSavedDataPickers() {
 		const aplIsLaunched = aplLaunchStatuses[this.simUI.player.spec] == LaunchStatus.Launched;
 
-		const savedRotationsManager = new SavedDataManager<Player<any>, SavedRotation>(this.rightPanel, this.simUI, this.simUI.player, {
+		const savedRotationsManager = new SavedDataManager<Player<any>, SavedRotation>(this.rightPanel, this.simUI.player, {
 			label: 'Rotation',
 			header: { title: 'Saved Rotations' },
 			storageKey: this.simUI.getSavedRotationStorageKey(),
@@ -228,7 +228,7 @@ export class RotationTab extends SimTab {
 					}
 				});
 			},
-			changeEmitters: [this.simUI.player.rotationChangeEmitter, this.simUI.player.cooldownsChangeEmitter],
+			changeEmitters: [this.simUI.player.rotationChangeEmitter, this.simUI.player.cooldownsChangeEmitter, this.simUI.player.talentsChangeEmitter],
 			equals: (a: SavedRotation, b: SavedRotation) => {
 				// Uncomment this to debug equivalence checks with preset rotations (e.g. the chip doesn't highlight)
 				//console.log(`Rot A: ${SavedRotation.toJsonString(a, {prettySpaces: 2})}\n\nRot B: ${SavedRotation.toJsonString(b, {prettySpaces: 2})}`);
