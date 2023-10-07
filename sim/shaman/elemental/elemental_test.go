@@ -27,6 +27,9 @@ func TestElemental(t *testing.T) {
 			{Label: "EleFireElemental", SpecOptions: PlayerOptionsAdaptiveFireElemental},
 		},
 		Rotation: core.GetAplRotation("../../../ui/elemental_shaman/apls", "default"),
+		OtherRotations: []core.RotationCombo{
+			core.GetAplRotation("../../../ui/elemental_shaman/apls", "advanced"),
+		},
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
