@@ -14,11 +14,11 @@
 		"format": "npm run prettier:fix && npm run lint:css:fix && npm run lint:js:fix",
         "lint": "npm run lint:js && npm run lint:css",
         "lint:fix": "npm run lint:js:fix && npm run lint:css:fix",
-        "lint:js": "npx eslint ./ui/**/*",
+        "lint:js": "npx eslint \"./ui/**/*\"",
         "lint:js:fix": "npm run lint -- --fix",
-        "lint:css": "stylelint './ui/**/*.scss'",
+        "lint:css": "stylelint \"./ui/**/*.scss\"",
         "lint:css:fix": "npm run lint:css -- --fix",
-		"prettier": "npx prettier './ui/**/*.{js,jsx,ts,tsx,scss,css}' --check",
+		"prettier": "npx prettier \"./ui/**/*.{js,jsx,ts,tsx,scss,css}\" --check",
 		"prettier:fix": "npm run prettier -- --write",
         "type-check": "tsc --noEmit"
 
