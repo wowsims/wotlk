@@ -9,7 +9,6 @@ import { IndividualBuffs } from '../core/proto/common.js';
 import { Debuffs } from '../core/proto/common.js';
 import { TristateEffect } from '../core/proto/common.js';
 import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
-import { Player } from '../core/player.js';
 import { APLRotation } from '../core/proto/apl.js';
 
 import {
@@ -95,6 +94,10 @@ export const DefaultDebuffs = Debuffs.create({
 	heartOfTheCrusader: true,
 	judgementOfWisdom: true,
 });
+
+export const OtherDefaults = {
+	channelClipDelay: 100,
+};
 
 export const PreBis_PRESET = {
 	name: 'PreBis Preset',

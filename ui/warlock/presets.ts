@@ -193,6 +193,7 @@ export const OtherDefaults = {
 	distanceFromTarget: 25,
 	profession1: Profession.Engineering,
 	profession2: Profession.Tailoring,
+	channelClipDelay: 150,
 };
 
 export const SWP_BIS = {

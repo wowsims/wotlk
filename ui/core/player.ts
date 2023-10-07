@@ -1408,7 +1408,6 @@ export class Player<SpecType extends Spec> {
 	applySharedDefaults(eventID: EventID) {
 		TypedEvent.freezeAllAndDo(() => {
 			this.setReactionTime(eventID, 200);
-			this.setChannelClipDelay(eventID, this.spec == Spec.SpecShadowPriest ? 100 : 0);
 			this.setInFrontOfTarget(eventID, isTankSpec(this.spec));
 			this.setHealingModel(eventID, HealingModel.create({
 				burstWindow: isTankSpec(this.spec) ? 6 : 0,
