@@ -498,6 +498,7 @@ func (character *Character) HasAlchStone() bool {
 func makePotionActivation(potionType proto.Potions, character *Character, potionCD *Timer) MajorCooldown {
 	mcd := makePotionActivationInternal(potionType, character, potionCD)
 	if mcd.Spell != nil {
+		mcd.Spell.Flags |= SpellFlagEncounterOnly | SpellFlagPotion
 		oldApplyEffects := mcd.Spell.ApplyEffects
 		mcd.Spell.ApplyEffects = func(sim *Simulation, target *Unit, spell *Spell) {
 			oldApplyEffects(sim, target, spell)

@@ -119,7 +119,8 @@ func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
 	if prepotSpell != nil {
 		found := false
 		for _, prepullAction := range rotation.allPrepullActions() {
-			if castSpellAction, ok := prepullAction.impl.(*APLActionCastSpell); ok && castSpellAction.spell == prepotSpell {
+			if castSpellAction, ok := prepullAction.impl.(*APLActionCastSpell); ok &&
+				(castSpellAction.spell == prepotSpell || castSpellAction.spell.Flags.Matches(SpellFlagPotion)) {
 				found = true
 			}
 		}

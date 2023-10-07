@@ -311,6 +311,7 @@ message SpellStats {
 	bool has_dot = 4; // Whether this spell applies a DoT effect.
 	bool has_shield = 6; // Whether this spell applies a shield effect.
 	bool prepull_only = 5; // Whether this spell may only be cast during prepull.
+	bool encounter_only = 8; // Whether this spell may only be cast during the encounter (not prepull).
 }
 message APLActionStats {
 	repeated string warnings = 1;
