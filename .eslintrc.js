@@ -3,12 +3,12 @@ module.exports = {
 	parser: '@typescript-eslint/parser',
 	plugins: ['simple-import-sort'],
 	extends: [
-		'plugin:prettier/recommended',
 		'plugin:import/errors',
 		'plugin:import/warnings',
 		'plugin:import/typescript',
 		'plugin:@typescript-eslint/eslint-recommended',
 		'plugin:@typescript-eslint/recommended',
+		'plugin:prettier/recommended',
 	],
 	env: {
 		es6: true,
