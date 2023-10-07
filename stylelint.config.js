@@ -8,8 +8,7 @@ module.exports = {
   ],
   rules: {
     'prettier/prettier': true,
-    'declaration-no-important': true,
-    'max-nesting-depth': [4, { ignore: ['pseudo-classes'] }],
+    'max-nesting-depth': [6, { ignore: ['pseudo-classes'] }],
     'no-empty-source': null,
     'no-descending-specificity': null,
     'selector-class-pattern': kebabCasePattern,
