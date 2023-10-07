@@ -78,7 +78,11 @@ const actionIdSets: Record<ACTION_ID_SET, {
 				(spells || []).map(actionId => {
 					return {
 						value: actionId.id,
-						extraCssClasses: (actionId.data.prepullOnly ? ['apl-prepull-actions-only'] : []),
+						extraCssClasses: (actionId.data.prepullOnly
+							? ['apl-prepull-actions-only']
+							: (actionId.data.encounterOnly
+								? ['apl-priority-list-only']
+								: [])),
 					};
 				}),
 				[{
@@ -88,7 +92,11 @@ const actionIdSets: Record<ACTION_ID_SET, {
 				(cooldowns || []).map(actionId => {
 					return {
 						value: actionId.id,
-						extraCssClasses: (actionId.data.prepullOnly ? ['apl-prepull-actions-only'] : []),
+						extraCssClasses: (actionId.data.prepullOnly
+							? ['apl-prepull-actions-only']
+							: (actionId.data.encounterOnly
+								? ['apl-priority-list-only']
+								: [])),
 					};
 				}),
 				[{

@@ -544,6 +544,7 @@ func (unit *Unit) GetMetadata() *proto.UnitMetadata {
 			HasDot:          spell.dots != nil || spell.aoeDot != nil,
 			HasShield:       spell.shields != nil || spell.selfShield != nil,
 			PrepullOnly:     spell.Flags.Matches(SpellFlagPrepullOnly),
+			EncounterOnly:   spell.Flags.Matches(SpellFlagEncounterOnly),
 		}
 	})
 
