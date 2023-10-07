@@ -2,22 +2,11 @@
     "name": "wotlk",
     "version": "0.1.0",
     "private": true,
-    "devDependencies": {
-        "@protobuf-ts/plugin": "^2.0.4",
-        "@protobuf-ts/runtime": "^2.0.4",
-        "@types/bootstrap": "5.2.3",
-        "@types/node": "^18.6.1",
-        "@typescript-eslint/eslint-plugin": "^5.31.0",
-        "@typescript-eslint/parser": "^5.31.0",
-        "eslint": "^8.21.0",
-        "eslint-plugin-unused-imports": "^2.0.0",
-        "glob": "^8.0.3",
-        "http-server": "13.0.1",
-        "sass": "^1.64.2",
-        "terser": "^5.14.2",
-        "typescript": "5.2.2",
-        "typescript-formatter": "^7.2.2",
-        "vite": "^3.0.3"
+    "engines": {
+        "node": ">=18"
+    },
+    "volta": {
+        "node": ">=18"
     },
     "scripts": {
         "build": "bazel build //...",
@@ -28,5 +17,28 @@
         "bootstrap": "5.2.3",
         "tippy.js": "^6.3.7",
         "tsx-vanilla": "^1.0.0"
+    },
+    "devDependencies": {
+        "@protobuf-ts/plugin": "^2.0.4",
+        "@protobuf-ts/runtime": "^2.0.4",
+        "@types/bootstrap": "5.2.3",
+        "@types/node": "^18.16.1",
+        "@typescript-eslint/eslint-plugin": "^5.31.0",
+        "@typescript-eslint/parser": "^5.31.0",
+        "eslint": "^8.21.0",
+        "eslint-plugin-prettier": "^5.0.0",
+        "eslint-plugin-simple-import-sort": "^10.0.0",
+        "eslint-plugin-unused-imports": "^2.0.0",
+        "glob": "^8.0.3",
+        "http-server": "13.0.1",
+        "prettier": "3.0.3",
+        "sass": "^1.64.2",
+        "stylelint": "^15.10.3",
+        "stylelint-prettier": "^4.0.2",
+        "stylelint-scss": "^5.2.1",
+        "terser": "^5.14.2",
+        "typescript": "5.2.2",
+        "typescript-formatter": "^7.2.2",
+        "vite": "^3.0.3"
     }
 }

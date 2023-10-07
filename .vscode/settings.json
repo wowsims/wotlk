@@ -1,4 +1,32 @@
 {
+	"eslint.validate": ["javascript", "typescript"],
+	"eslint.nodePath": "./node_modules",
+	"eslint.workingDirectories": ["."],
+	"files.associations": {
+		"*.js": "javascript",
+		"*.ts": "typescript"
+	},
+	"[typescript]": {
+		"editor.codeActionsOnSave": {
+		"source.fixAll.eslint": true
+		}
+	},
+	"[javascript]": {
+		"editor.codeActionsOnSave": {
+		"source.fixAll.eslint": true
+		}
+	},
+	"[scss]": {
+		"editor.codeActionsOnSave": {
+		"source.fixAll.eslint": true
+		}
+	},
+	"[html]": {
+		"editor.codeActionsOnSave": {
+		"source.fixAll.eslint": false
+		}
+	},
+	"json.format.enable": true,
     "json.schemas": [
         {
             "fileMatch": [

@@ -13,6 +13,8 @@ ui/*/index.html
 dist
 binary_dist
 sim/web/__debug_bin
+/wowsimwotlkcli*
+/wowsimwotlk*
 
 # temporary files
 *.results.tmp
