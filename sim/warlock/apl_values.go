@@ -123,7 +123,7 @@ func (value *APLValueWarlockShouldRefreshCorruption) GetBool(sim *core.Simulatio
 	relDmgInc := curDmg / snapshotMult
 
 	snapshotDmg := warlock.Corruption.ExpectedTickDamageFromCurrentSnapshot(sim, target)
-	snapshotDmg *= float64(sim.GetRemainingDuration()) / float64(warlock.Corruption.Dot(target).TickPeriod())
+	snapshotDmg *= float64(sim.GetRemainingDuration()) / float64(dot.TickPeriod())
 	snapshotDmg *= (relDmgInc - 1)
 	snapshotDmg -= warlock.Corruption.ExpectedTickDamageFromCurrentSnapshot(sim, target)
 
