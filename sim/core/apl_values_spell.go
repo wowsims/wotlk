@@ -145,7 +145,7 @@ func (value *APLValueSpellTravelTime) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeDuration
 }
 func (value *APLValueSpellTravelTime) GetDuration(sim *Simulation) time.Duration {
-	return time.Duration(float64(time.Second) * value.spell.Unit.DistanceFromTarget / value.spell.MissileSpeed)
+	return value.spell.TravelTime()
 }
 func (value *APLValueSpellTravelTime) String() string {
 	return fmt.Sprintf("Travel Time(%s)", value.spell.ActionID)

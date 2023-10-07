@@ -576,6 +576,14 @@ func (spell *Spell) CastTime() time.Duration {
 	return spell.Unit.ApplyCastSpeedForSpell(spell.DefaultCast.CastTime, spell)
 }
 
+func (spell *Spell) TravelTime() time.Duration {
+	if spell.MissileSpeed == 0 {
+		return 0
+	} else {
+		return time.Duration(float64(time.Second) * spell.Unit.DistanceFromTarget / spell.MissileSpeed)
+	}
+}
+
 // Handles computing the cost of spells and checking whether the Unit
 // meets them.
 type SpellCost interface {
