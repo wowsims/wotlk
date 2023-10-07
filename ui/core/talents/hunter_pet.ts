@@ -155,7 +155,7 @@ export class HunterPetTalentsPicker extends Component {
 				maxPoints: 16,
 			});
 
-			const savedTalentsManager = new SavedDataManager<Player<Spec.SpecHunter>, string>(pickerContainer, this.simUI, this.player, {
+			const savedTalentsManager = new SavedDataManager<Player<Spec.SpecHunter>, string>(pickerContainer, this.player, {
 				presetsOnly: true,
 				label: 'Pet Talents',
 				storageKey: '__NEVER_USED__',

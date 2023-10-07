@@ -11,8 +11,6 @@ import { Player } from '../core/player.js';
 
 import {
 	WarriorShout,
-	WarriorTalents as WarriorTalents,
-	Warrior,
 	Warrior_Rotation as WarriorRotation,
 	Warrior_Rotation_SunderArmor as SunderArmor,
 	Warrior_Options as WarriorOptions,
@@ -102,6 +100,7 @@ export const ArmsRotation = WarriorRotation.create({
 
 export const ROTATION_FURY = {
 	name: 'Fury',
+	enableWhen: (player: Player<Spec.SpecWarrior>) => player.getTalentTree() == 1,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: WarriorRotation.toJsonString(WarriorRotation.create({
 		})),

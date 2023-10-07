@@ -5,7 +5,13 @@
 
   .saved-data-container {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+
+    .saved-data-presets,
+    .saved-data-custom {
+      display: flex;
+      flex-wrap: wrap;
+    }
   }
 
   .saved-data-create-container {
