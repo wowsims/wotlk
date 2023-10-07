@@ -1,4 +1,3 @@
-const BEMPattern = /^.[a-z]?([a-z0-9-]+)?(__([a-z0-9]+-?)+)?(--([a-z0-9]+-?)+){0,2}$/
 const kebabCasePattern = /^([a-z][a-z0-9]*)(-[a-z0-9]+)*$/
 
 module.exports = {
@@ -9,19 +8,12 @@ module.exports = {
   ],
   rules: {
     'prettier/prettier': true,
-    'color-hex-case': 'lower',
     'declaration-no-important': true,
-    'declaration-colon-space-after': 'always',
-    'declaration-colon-space-before': 'never',
-    'function-whitespace-after': 'always',
     'max-nesting-depth': [4, { ignore: ['pseudo-classes'] }],
     'no-empty-source': null,
     'no-descending-specificity': null,
     'selector-class-pattern': kebabCasePattern,
     'keyframes-name-pattern': kebabCasePattern,
-    'block-opening-brace-newline-after': 'always-multi-line',
-    'block-opening-brace-space-after': 'always-single-line',
-    'block-opening-brace-space-before': 'always',
     'at-rule-empty-line-before': [
       'always',
       {
