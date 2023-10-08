@@ -844,8 +844,8 @@ func (rc *RuneCostImpl) MeetsRequirement(spell *Spell) bool {
 	return true
 }
 
-func (rc *RuneCostImpl) LogCostFailure(sim *Simulation, spell *Spell) {
-	spell.Unit.Log(sim, "Failed casting %s, not enough RP or runes.", spell.ActionID)
+func (rc *RuneCostImpl) CostFailureReason(sim *Simulation, spell *Spell) string {
+	return "not enough RP or runes"
 }
 
 func (rc *RuneCostImpl) SpendCost(sim *Simulation, spell *Spell) {

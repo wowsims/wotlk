@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"math"
 	"time"
 
@@ -322,10 +323,8 @@ func (mc *ManaCost) MeetsRequirement(spell *Spell) bool {
 	spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
 	return spell.Unit.CurrentMana() >= spell.CurCast.Cost
 }
-func (mc *ManaCost) LogCostFailure(sim *Simulation, spell *Spell) {
-	spell.Unit.Log(sim,
-		"Failed casting %s, not enough mana. (Current Mana = %0.03f, Mana Cost = %0.03f)",
-		spell.ActionID, spell.Unit.CurrentMana(), spell.CurCast.Cost)
+func (mc *ManaCost) CostFailureReason(sim *Simulation, spell *Spell) string {
+	return fmt.Sprintf("not enough mana (Current Mana = %0.03f, Mana Cost = %0.03f)", spell.Unit.CurrentMana(), spell.CurCast.Cost)
 }
 func (mc *ManaCost) SpendCost(sim *Simulation, spell *Spell) {
 	if spell.CurCast.Cost > 0 {

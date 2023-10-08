@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -202,10 +203,8 @@ func (ec *EnergyCost) MeetsRequirement(spell *Spell) bool {
 	spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
 	return spell.Unit.CurrentEnergy() >= spell.CurCast.Cost
 }
-func (ec *EnergyCost) LogCostFailure(sim *Simulation, spell *Spell) {
-	spell.Unit.Log(sim,
-		"Failed casting %s, not enough energy. (Current Energy = %0.03f, Energy Cost = %0.03f)",
-		spell.ActionID, spell.Unit.CurrentEnergy(), spell.CurCast.Cost)
+func (ec *EnergyCost) CostFailureReason(sim *Simulation, spell *Spell) string {
+	return fmt.Sprintf("not enough energy (Current Energy = %0.03f, Energy Cost = %0.03f)", spell.Unit.CurrentEnergy(), spell.CurCast.Cost)
 }
 func (ec *EnergyCost) SpendCost(sim *Simulation, spell *Spell) {
 	if spell.CurCast.Cost > 0 {
