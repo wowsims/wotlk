@@ -119,13 +119,16 @@ func runSim(rsr *proto.RaidSimRequest, progress chan *proto.ProgressMetrics, ski
 }
 
 func NewSim(rsr *proto.RaidSimRequest) *Simulation {
-	simOptions := rsr.SimOptions
+	env, _, _ := NewEnvironment(rsr.Raid, rsr.Encounter, false)
+	return newSimWithEnv(env, rsr.SimOptions)
+}
+
+func newSimWithEnv(env *Environment, simOptions *proto.SimOptions) *Simulation {
 	rseed := simOptions.RandomSeed
 	if rseed == 0 {
 		rseed = time.Now().UnixNano()
 	}
 
-	env, _, _ := NewEnvironment(rsr.Raid, rsr.Encounter)
 	return &Simulation{
 		Environment: env,
 		Options:     simOptions,
