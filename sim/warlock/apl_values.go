@@ -73,7 +73,7 @@ func (value *APLValueWarlockShouldRecastDrainSoul) GetBool(sim *core.Simulation)
 
 	snapshotDmg := warlock.DrainSoul.ExpectedTickDamageFromCurrentSnapshot(sim, warlock.CurrentTarget) * float64(ticksLeft)
 	recastDmg := warlock.DrainSoul.ExpectedTickDamage(sim, warlock.CurrentTarget) * float64(recastTicks)
-	snapshotDPS := snapshotDmg / (float64(ticksLeft) * dsDot.TickPeriod().Seconds())
+	snapshotDPS := snapshotDmg / (time.Duration(ticksLeft) * dsDot.TickPeriod()).Seconds()
 	recastDps := recastDmg / (time.Duration(recastTicks)*warlock.ApplyCastSpeed(dsDot.TickLength) + warlock.ChannelClipDelay).Seconds()
 
 	//if sim.Log != nil {
