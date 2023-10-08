@@ -24,6 +24,15 @@ export const Armor = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecMage, Ar
 	],
 });
 
+export const WaterElementalDisobeyChance = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecMage>({
+	fieldName: 'waterElementalDisobeyChance',
+	percent: true,
+	label: 'Water Ele Disobey %',
+	labelTooltip: 'Percent of Water Elemental actions which will fail. This represents the Water Elemental moving around or standing still instead of casting.',
+	changeEmitter: (player: Player<Spec.SpecMage>) => TypedEvent.onAny([player.specOptionsChangeEmitter, player.talentsChangeEmitter]),
+	showWhen: (player: Player<Spec.SpecMage>) => player.getTalents().summonWaterElemental,
+});
+
 export const FocusMagicUptime = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecMage>({
 	fieldName: 'focusMagicPercentUptime',
 	label: 'Focus Magic Percent Uptime',
@@ -67,15 +76,6 @@ export const MageRotationConfig = {
 			label: 'Use Ice Lance',
 			labelTooltip: 'Casts Ice Lance at the end of Fingers of Frost, after using Deep Freeze.',
 			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Frost,
-		}),
-		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
-			fieldName: 'waterElementalDisobeyChance',
-			percent: true,
-			label: 'Water Ele Disobey %',
-			labelTooltip: 'Percent of Water Elemental actions which will fail. This represents the Water Elemental moving around or standing still instead of casting.',
-			changeEmitter: (player: Player<Spec.SpecMage>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Frost,
-			enableWhen: (player: Player<Spec.SpecMage>) => player.getTalents().summonWaterElemental,
 		}),
 		// ********************************************************
 		//                      ARCANE INPUTS
