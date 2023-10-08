@@ -10,7 +10,7 @@
         {"action":{"castSpell":{"spellId":{"spellId":34490}}}},
         {"action":{"castSpell":{"spellId":{"spellId":61006}}}},
         {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":49001}}}}},"castSpell":{"spellId":{"spellId":49001}}}},
-        {"hide":true,"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":49067}}}}},"castSpell":{"spellId":{"tag":1,"spellId":49067}}}},
+        {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":49067}}}}},"castSpell":{"spellId":{"tag":1,"spellId":49067}}}},
         {"action":{"castSpell":{"spellId":{"spellId":53209}}}},
         {"action":{"castSpell":{"spellId":{"spellId":49050}}}},
         {"action":{"castSpell":{"spellId":{"spellId":49048}}}},

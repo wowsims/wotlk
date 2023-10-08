@@ -87,7 +87,7 @@ export const SurvivalTalents = {
 export const DefaultRotation = HunterRotation.create({
 	type: RotationType.SingleTarget,
 	sting: StingType.SerpentSting,
-	trapWeave: false,
+	trapWeave: true,
 	viperStartManaPercent: 0.1,
 	viperStopManaPercent: 0.3,
 	multiDotSerpentSting: true,
