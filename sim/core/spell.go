@@ -591,8 +591,8 @@ type SpellCost interface {
 	// requirements to cast the spell.
 	MeetsRequirement(*Spell) bool
 
-	// Logs a message for when the cast fails due to lack of resources.
-	LogCostFailure(*Simulation, *Spell)
+	// Returns a message for when the cast fails due to lack of resources.
+	CostFailureReason(*Simulation, *Spell) string
 
 	// Subtracts the resources used from a cast from the Unit.
 	SpendCost(*Simulation, *Spell)

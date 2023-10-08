@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -122,10 +123,8 @@ func (fc *FocusCost) MeetsRequirement(spell *Spell) bool {
 	spell.CurCast.Cost = max(0, spell.CurCast.Cost*spell.Unit.PseudoStats.CostMultiplier)
 	return spell.Unit.CurrentFocus() >= spell.CurCast.Cost
 }
-func (fc *FocusCost) LogCostFailure(sim *Simulation, spell *Spell) {
-	spell.Unit.Log(sim,
-		"Failed casting %s, not enough focus. (Current Focus = %0.03f, Focus Cost = %0.03f)",
-		spell.ActionID, spell.Unit.CurrentFocus(), spell.CurCast.Cost)
+func (fc *FocusCost) CostFailureReason(sim *Simulation, spell *Spell) string {
+	return fmt.Sprintf("not enough focus (Current Focus = %0.03f, Focus Cost = %0.03f)", spell.Unit.CurrentFocus(), spell.CurCast.Cost)
 }
 func (fc *FocusCost) SpendCost(sim *Simulation, spell *Spell) {
 	spell.Unit.SpendFocus(sim, spell.CurCast.Cost, fc.ResourceMetrics)

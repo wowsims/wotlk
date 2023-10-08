@@ -1,6 +1,8 @@
 package core
 
 import (
+	"fmt"
+
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
@@ -223,10 +225,8 @@ func (rc *RageCost) MeetsRequirement(spell *Spell) bool {
 	spell.CurCast.Cost = spell.ApplyCostModifiers(spell.CurCast.Cost)
 	return spell.Unit.CurrentRage() >= spell.CurCast.Cost
 }
-func (rc *RageCost) LogCostFailure(sim *Simulation, spell *Spell) {
-	spell.Unit.Log(sim,
-		"Failed casting %s, not enough rage. (Current Rage = %0.03f, Rage Cost = %0.03f)",
-		spell.ActionID, spell.Unit.CurrentRage(), spell.CurCast.Cost)
+func (rc *RageCost) CostFailureReason(sim *Simulation, spell *Spell) string {
+	return fmt.Sprintf("not enough rage (Current Rage = %0.03f, Rage Cost = %0.03f)", spell.Unit.CurrentRage(), spell.CurCast.Cost)
 }
 func (rc *RageCost) SpendCost(sim *Simulation, spell *Spell) {
 	if spell.CurCast.Cost > 0 {
