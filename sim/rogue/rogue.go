@@ -189,6 +189,7 @@ func (rogue *Rogue) Initialize() {
 	if !rogue.IsUsingAPL && rogue.Rotation.TricksOfTheTradeFrequency != proto.Rogue_Rotation_Never && !rogue.HasSetBonus(Tier10, 2) {
 		rogue.RegisterPrepullAction(-10*time.Second, func(sim *core.Simulation) {
 			rogue.TricksOfTheTrade.Cast(sim, nil)
+			rogue.UpdateMajorCooldowns()
 		})
 	}
 }
