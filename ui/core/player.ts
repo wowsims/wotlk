@@ -1347,6 +1347,17 @@ export class Player<SpecType extends Spec> {
 				}
 			}
 
+			if (this.spec == Spec.SpecMage) {
+				const rot = this.getRotation() as SpecRotation<Spec.SpecMage>;
+				if (rot.waterElementalDisobeyChance) {
+					const options = this.getSpecOptions() as SpecOptions<Spec.SpecMage>;
+					options.waterElementalDisobeyChance = rot.waterElementalDisobeyChance;
+					rot.waterElementalDisobeyChance = 0;
+					this.setSpecOptions(eventID, options as SpecOptions<SpecType>);
+					this.setRotation(eventID, rot as SpecRotation<SpecType>);
+				}
+			}
+
 			if (this.spec == Spec.SpecShadowPriest) {
 				const options = this.getSpecOptions() as SpecOptions<Spec.SpecShadowPriest>;
 				if (options.latency) {

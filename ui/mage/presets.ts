@@ -124,16 +124,12 @@ export const DefaultFFBRotation = MageRotation.create({
 
 export const DefaultFFBOptions = MageOptions.create({
 	armor: ArmorType.MoltenArmor,
-	reactionTimeMs: 300,
-	evocationTicks: 1,
 });
 
 export const DefaultFireOptions = MageOptions.create({
 	armor: ArmorType.MoltenArmor,
 	focusMagicPercentUptime: 99,
 	focusMagicTarget: UnitReference.create(),
-	reactionTimeMs: 300,
-	evocationTicks: 1,
 });
 
 export const DefaultFireConsumes = Consumes.create({
@@ -146,13 +142,12 @@ export const DefaultFireConsumes = Consumes.create({
 
 export const DefaultFrostRotation = MageRotation.create({
 	type: RotationType.Frost,
-	waterElementalDisobeyChance: 0.1,
 });
 
 export const DefaultFrostOptions = MageOptions.create({
 	armor: ArmorType.MoltenArmor,
 	focusMagicTarget: UnitReference.create(),
-	reactionTimeMs: 300,
+	waterElementalDisobeyChance: 0.1,
 });
 
 export const DefaultFrostConsumes = Consumes.create({
@@ -175,7 +170,6 @@ export const DefaultArcaneOptions = MageOptions.create({
 	armor: ArmorType.MoltenArmor,
 	focusMagicPercentUptime: 99,
 	focusMagicTarget: UnitReference.create(),
-	reactionTimeMs: 300,
 });
 
 export const DefaultArcaneConsumes = Consumes.create({

@@ -118,11 +118,6 @@ func (mage *Mage) canBlast(sim *core.Simulation) bool {
 }
 
 func (mage *Mage) doFireRotation(sim *core.Simulation) *core.Spell {
-	if mage.delayedPyroAt != 0 && sim.CurrentTime >= mage.delayedPyroAt {
-		mage.delayedPyroAt = 0
-		return mage.Pyroblast
-	}
-
 	noBomb := mage.LivingBomb != nil && !mage.LivingBomb.Dot(mage.CurrentTarget).IsActive() && sim.GetRemainingDuration() > time.Second*12
 	if noBomb && mage.hotStreakCritAura.GetStacks() == 0 {
 		return mage.LivingBomb
@@ -130,13 +125,7 @@ func (mage *Mage) doFireRotation(sim *core.Simulation) *core.Spell {
 
 	hasHotStreak := mage.HotStreakAura.IsActive() && mage.HotStreakAura.TimeActive(sim) > mage.ReactionTime
 	if hasHotStreak && mage.Pyroblast != nil {
-		if mage.PyroblastDelayMs == 0 {
-			return mage.Pyroblast
-		} else {
-			mage.delayedPyroAt = sim.CurrentTime + mage.PyroblastDelayMs
-			mage.WaitUntil(sim, mage.delayedPyroAt)
-			return nil
-		}
+		return mage.Pyroblast
 	}
 
 	if noBomb {

@@ -171,12 +171,10 @@ message Mage {
 		PrimaryFireSpell primary_fire_spell = 3;
 		
 		bool maintain_improved_scorch = 4;
-		double pyroblast_delay_ms = 19;
 
 		// Frost Options.
-		// Chance for water elemental to disobey, doing nothing rather than cast.
 		bool use_ice_lance = 18;
-		double water_elemental_disobey_chance = 6;
+		double water_elemental_disobey_chance = 6 [deprecated = true];
 
 		// Aoe Options.
 		enum AoeRotation {
@@ -196,13 +194,11 @@ message Mage {
 		}
 		ArmorType armor = 1;
 
-		bool ignite_munching = 6;
-
-		// Number of Evocation ticks to use. If 0, use all of them.
-		int32 evocation_ticks = 2 [deprecated = true];
 		int32 focus_magic_percent_uptime = 3;
 		UnitReference focus_magic_target = 4;
-		int32 reaction_time_ms = 5 [deprecated = true];
+
+		// Chance for water elemental to disobey, doing nothing rather than cast.
+		double water_elemental_disobey_chance = 7;
 	}
 	Options options = 3;
 }

@@ -126,8 +126,7 @@ var FrostGlyphs = &proto.Glyphs{
 var PlayerOptionsFire = &proto.Player_Mage{
 	Mage: &proto.Mage{
 		Options: &proto.Mage_Options{
-			Armor:          proto.Mage_Options_MoltenArmor,
-			IgniteMunching: true,
+			Armor: proto.Mage_Options_MoltenArmor,
 		},
 		Rotation: &proto.Mage_Rotation{},
 	},
