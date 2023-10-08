@@ -1,6 +1,8 @@
 package warlock
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
@@ -72,7 +74,7 @@ func (value *APLValueWarlockShouldRecastDrainSoul) GetBool(sim *core.Simulation)
 	snapshotDmg := warlock.DrainSoul.ExpectedTickDamageFromCurrentSnapshot(sim, warlock.CurrentTarget) * float64(ticksLeft)
 	recastDmg := warlock.DrainSoul.ExpectedTickDamage(sim, warlock.CurrentTarget) * float64(recastTicks)
 	snapshotDPS := snapshotDmg / (float64(ticksLeft) * dsDot.TickPeriod().Seconds())
-	recastDps := recastDmg / (float64(recastTicks) * (warlock.ApplyCastSpeed(dsDot.TickLength) + warlock.ChannelClipDelay).Seconds())
+	recastDps := recastDmg / (time.Duration(recastTicks)*warlock.ApplyCastSpeed(dsDot.TickLength) + warlock.ChannelClipDelay).Seconds()
 
 	//if sim.Log != nil {
 	//	warlock.Log(sim, "Should Recast Drain Soul Calc: %.2f (%d) > %.2f (%d)", recastDps, recastTicks, snapshotDPS, ticksLeft)
