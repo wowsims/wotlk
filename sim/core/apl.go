@@ -65,7 +65,8 @@ func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
 	}
 
 	// Parse prepull actions
-	for prepullIdx, prepullItem := range config.PrepullActions {
+	for i, prepullItem := range config.PrepullActions {
+		prepullIdx := i // Save to local variable for correct lambda capture behavior
 		rotation.doAndRecordWarnings(&rotation.prepullWarnings[prepullIdx], true, func() {
 			if !prepullItem.Hide {
 				doAtVal := rotation.newAPLValue(prepullItem.DoAtValue)
