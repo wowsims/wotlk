@@ -224,15 +224,15 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 7578.87979
-  tps: 5443.75067
+  dps: 7576.55555
+  tps: 5442.10046
  }
 }
 dps_results: {
  key: "TestFeral-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 7585.83338
-  tps: 5448.61292
+  dps: 7586.15472
+  tps: 5448.84108
  }
 }
 dps_results: {

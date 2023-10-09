@@ -13,7 +13,7 @@ func RegisterEnhancementShaman() {
 	core.RegisterAgentFactory(
 		proto.Player_EnhancementShaman{},
 		proto.Spec_SpecEnhancementShaman,
-		func(character core.Character, options *proto.Player) core.Agent {
+		func(character *core.Character, options *proto.Player) core.Agent {
 			return NewEnhancementShaman(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -26,7 +26,7 @@ func RegisterEnhancementShaman() {
 	)
 }
 
-func NewEnhancementShaman(character core.Character, options *proto.Player) *EnhancementShaman {
+func NewEnhancementShaman(character *core.Character, options *proto.Player) *EnhancementShaman {
 	enhOptions := options.GetEnhancementShaman()
 
 	selfBuffs := shaman.SelfBuffs{
@@ -34,6 +34,11 @@ func NewEnhancementShaman(character core.Character, options *proto.Player) *Enha
 		Shield:    enhOptions.Options.Shield,
 		ImbueMH:   enhOptions.Options.ImbueMh,
 		ImbueOH:   enhOptions.Options.ImbueOh,
+	}
+
+	// Override with new rotation option bloodlust.
+	if enhOptions.Rotation.Bloodlust != proto.EnhancementShaman_Rotation_UnsetBloodlust {
+		selfBuffs.Bloodlust = enhOptions.Rotation.Bloodlust == proto.EnhancementShaman_Rotation_UseBloodlust
 	}
 
 	totems := &proto.ShamanTotems{}

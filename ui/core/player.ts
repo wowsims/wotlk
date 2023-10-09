@@ -89,6 +89,7 @@ import { Party, MAX_PARTY_SIZE } from './party.js';
 import { Raid } from './raid.js';
 import { Sim } from './sim.js';
 import { stringComparator, sum } from './utils.js';
+import { ElementalShaman_Options, ElementalShaman_Options_ThunderstormRange, ElementalShaman_Rotation, ElementalShaman_Rotation_BloodlustUse, EnhancementShaman_Rotation, EnhancementShaman_Rotation_BloodlustUse, RestorationShaman_Rotation, RestorationShaman_Rotation_BloodlustUse } from './proto/shaman.js';
 
 export interface AuraStats {
 	data: AuraStatsProto,
@@ -1346,6 +1347,17 @@ export class Player<SpecType extends Spec> {
 				}
 			}
 
+			if (this.spec == Spec.SpecMage) {
+				const rot = this.getRotation() as SpecRotation<Spec.SpecMage>;
+				if (rot.waterElementalDisobeyChance) {
+					const options = this.getSpecOptions() as SpecOptions<Spec.SpecMage>;
+					options.waterElementalDisobeyChance = rot.waterElementalDisobeyChance;
+					rot.waterElementalDisobeyChance = 0;
+					this.setSpecOptions(eventID, options as SpecOptions<SpecType>);
+					this.setRotation(eventID, rot as SpecRotation<SpecType>);
+				}
+			}
+
 			if (this.spec == Spec.SpecShadowPriest) {
 				const options = this.getSpecOptions() as SpecOptions<Spec.SpecShadowPriest>;
 				if (options.latency) {
@@ -1364,6 +1376,36 @@ export class Player<SpecType extends Spec> {
 					rot.totems = undefined;
 					this.setRotation(eventID, rot as SpecRotation<SpecType>);
 				}
+				const opt = this.getSpecOptions() as SpecOptions<ShamanSpecs>;
+				
+				// Update Bloodlust to be part of rotation instead of options to support APL casting bloodlust.
+				if (opt.bloodlust) {
+					opt.bloodlust = false;
+
+					var tRot = this.getRotation();
+					if (this.spec == Spec.SpecElementalShaman) {
+						(tRot as ElementalShaman_Rotation).bloodlust = ElementalShaman_Rotation_BloodlustUse.UseBloodlust;
+					} else if (this.spec == Spec.SpecEnhancementShaman) {
+						(tRot as EnhancementShaman_Rotation).bloodlust = EnhancementShaman_Rotation_BloodlustUse.UseBloodlust;
+					} else if (this.spec == Spec.SpecRestorationShaman) {
+						(tRot as RestorationShaman_Rotation).bloodlust = RestorationShaman_Rotation_BloodlustUse.UseBloodlust;
+					}
+
+					this.setRotation(eventID, tRot as SpecRotation<SpecType>);
+					this.setSpecOptions(eventID, opt as SpecOptions<SpecType>);
+				}
+
+				// Update Ele TS range option.
+				if (this.spec == Spec.SpecElementalShaman) {
+					var eleOpt = this.getSpecOptions() as ElementalShaman_Options;
+					var eleRot = this.getRotation() as ElementalShaman_Rotation;
+					if (eleRot.inThunderstormRange) {
+						eleOpt.thunderstormRange = ElementalShaman_Options_ThunderstormRange.TSInRange;
+						eleRot.inThunderstormRange = false;
+						this.setRotation(eventID, eleRot as SpecRotation<SpecType>);
+						this.setSpecOptions(eventID, eleOpt as SpecOptions<SpecType>);
+					}
+				}
 			}
 		});
 	}
@@ -1377,7 +1419,6 @@ export class Player<SpecType extends Spec> {
 	applySharedDefaults(eventID: EventID) {
 		TypedEvent.freezeAllAndDo(() => {
 			this.setReactionTime(eventID, 200);
-			this.setChannelClipDelay(eventID, this.spec == Spec.SpecShadowPriest ? 100 : 0);
 			this.setInFrontOfTarget(eventID, isTankSpec(this.spec));
 			this.setHealingModel(eventID, HealingModel.create({
 				burstWindow: isTankSpec(this.spec) ? 6 : 0,

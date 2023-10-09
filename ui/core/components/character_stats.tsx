@@ -103,13 +103,10 @@ export class CharacterStats extends Component {
 			let bonusStatValue = bonusStats.getStat(stat);
 
 			if (bonusStatValue == 0) {
-				valueElem.classList.remove('text-success', 'text-danger');
 				valueElem.classList.add('text-white');
 			} else if (bonusStatValue > 0) {
-				valueElem.classList.remove('text-white', 'text-danger');
 				valueElem.classList.add('text-success');
 			} else if (bonusStatValue < 0) {
-				valueElem.classList.remove('text-white', 'text-success');
 				valueElem.classList.add('text-danger');
 			}
 
@@ -240,32 +237,27 @@ export class CharacterStats extends Component {
 			</a>
 		);
 
-		let popover = Popover.getOrCreateInstance(link, {
+		let popover: Popover | null = null;
+
+		let picker = new NumberPicker(null, this.player, {
+			label: `Bonus ${statName}`,
+			extraCssClasses: ['mb-0'],
+			changedEvent: (player: Player<any>) => player.bonusStatsChangeEmitter,
+			getValue: (player: Player<any>) => player.getBonusStats().getStat(stat),
+			setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
+				const bonusStats = player.getBonusStats().withStat(stat, newValue);
+				player.setBonusStats(eventID, bonusStats);
+				popover?.hide();
+			},
+		});
+
+		popover = new Popover(link, {
 			customClass: 'bonus-stats-popover',
 			placement: 'right',
 			fallbackPlacement: ['left'],
 			sanitize: false,
-			content: 
-				<div className='input-root number-picker-root mb-0'>
-					<label className='form-label'>Bonus Health</label>
-					<input type='text' className='form-control number-picker-input' value={this.player.getBonusStats().getStat(stat)} />
-				</div>,
-		});
-
-		link.addEventListener('shown.bs.popover', (event) => {
-			let popoverBody = document.querySelector('.popover.bonus-stats-popover .popover-body') as HTMLElement;
-			popoverBody.innerHTML = '';
-			let picker = new NumberPicker(popoverBody, this.player, {
-				label: `Bonus ${statName}`,
-				extraCssClasses: ['mb-0'],
-				changedEvent: (player: Player<any>) => player.bonusStatsChangeEmitter,
-				getValue: (player: Player<any>) => player.getBonusStats().getStat(stat),
-				setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
-					const bonusStats = player.getBonusStats().withStat(stat, newValue);
-					player.setBonusStats(eventID, bonusStats);
-					popover.hide();
-				},
-			});
+			html:true,
+			content: picker.rootElem,
 		});
 
 		return link as HTMLElement;

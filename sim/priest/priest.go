@@ -181,9 +181,9 @@ func (priest *Priest) Reset(_ *core.Simulation) {
 	priest.MindBlastModifier = 1
 }
 
-func New(char core.Character, selfBuffs SelfBuffs, talents string) *Priest {
+func New(char *core.Character, selfBuffs SelfBuffs, talents string) *Priest {
 	priest := &Priest{
-		Character: char,
+		Character: *char,
 		SelfBuffs: selfBuffs,
 		Talents:   &proto.PriestTalents{},
 	}

@@ -26,9 +26,10 @@ func TestEnhancement(t *testing.T) {
 		OtherSpecOptions: []core.SpecOptionsCombo{
 			{Label: "WF", SpecOptions: PlayerOptionsWFWF},
 		},
-		Rotation: core.RotationCombo{Label: "FT", Rotation: DefaultFTRotation},
+		Rotation: core.GetAplRotation("../../../ui/enhancement_shaman/apls", "default_ft"),
 		OtherRotations: []core.RotationCombo{
-			{Label: "WF", Rotation: DefaultWFRotation},
+			core.GetAplRotation("../../../ui/enhancement_shaman/apls", "default_wf"),
+			core.GetAplRotation("../../../ui/enhancement_shaman/apls", "phase_3"),
 		},
 
 		ItemFilter: core.ItemFilter{
@@ -98,25 +99,6 @@ var PlayerOptionsFTFT = &proto.Player_EnhancementShaman{
 	},
 }
 
-//var enhShamRotationItemSwap = &proto.EnhancementShaman_Rotation{
-//	RotationType:                 proto.EnhancementShaman_Rotation_Priority,
-//	FirenovaManaThreshold:        3000,
-//	ShamanisticRageManaThreshold: 25,
-//	PrimaryShock:                 proto.EnhancementShaman_Rotation_Earth,
-//	WeaveFlameShock:              true,
-//	//Temp to test Item Swap, will switch to a more realistic swap with Phase 2 gear.
-//	EnableItemSwap: true,
-//	ItemSwap: &proto.ItemSwap{
-//		MhItem: &proto.ItemSpec{
-//			Id: 41752,
-//		},
-//		OhItem: &proto.ItemSpec{
-//			Id:      41752,
-//			Enchant: 3790,
-//		},
-//	},
-//}
-
 var enhShamWFWF = &proto.EnhancementShaman_Options{
 	Shield:    proto.ShamanShield_WaterShield,
 	Bloodlust: true,
@@ -151,48 +133,6 @@ var enhShamWFFT = &proto.EnhancementShaman_Options{
 var FullConsumes = &proto.Consumes{
 	DefaultConjured: proto.Conjured_ConjuredFlameCap,
 }
-
-var DefaultFTRotation = core.APLRotationFromJsonString(`{
-	"type": "TypeAPL",
-	"prepullActions": [
-		{"action":{"castSpell":{"spellId":{"spellId":66842}}},"doAtValue":{"const":{"val":"-3s"}}},
-		{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
-	],
-	"priorityList": [
-		{"action":{"autocastOtherCooldowns":{}}},
-		{"action":{"condition":{"cmp":{"op":"OpEq","lhs":{"auraNumStacks":{"auraId":{"spellId":53817}}},"rhs":{"const":{"val":"5"}}}},"castSpell":{"spellId":{"spellId":49238}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":17364}}}},
-		{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":49233}}},"rhs":{"const":{"val":"0s"}}}},"castSpell":{"spellId":{"spellId":49233}}}},
-		{"action":{"condition":{"not":{"val":{"auraIsActive":{"sourceUnit":{"type":"CurrentTarget"},"auraId":{"spellId":17364}}}}},"castSpell":{"spellId":{"spellId":17364}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":49231}}}},
-		{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"totemRemainingTime":{"totemType":"Water"}},"rhs":{"const":{"val":"20s"}}}},"castSpell":{"spellId":{"spellId":66842}}}},
-		{"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":58734}}},"rhs":{"const":{"val":"100ms"}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":2894}}}}}]}},"castSpell":{"spellId":{"spellId":58734}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":61657}}}},
-		{"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":49281}}}}},"castSpell":{"spellId":{"spellId":49281}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":60103}}}}
-	]
-}`)
-
-var DefaultWFRotation = core.APLRotationFromJsonString(`{
-	"type": "TypeAPL",
-	"prepullActions": [
-		{"action":{"castSpell":{"spellId":{"spellId":66842}}},"doAtValue":{"const":{"val":"-3s"}}},
-		{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
-	],
-	"priorityList": [
-		{"action":{"autocastOtherCooldowns":{}}},
-		{"action":{"condition":{"cmp":{"op":"OpEq","lhs":{"auraNumStacks":{"auraId":{"spellId":53817}}},"rhs":{"const":{"val":"5"}}}},"castSpell":{"spellId":{"spellId":49238}}}},
-		{"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpGe","lhs":{"auraNumStacks":{"auraId":{"spellId":53817}}},"rhs":{"const":{"val":"3"}}}},{"cmp":{"op":"OpLt","lhs":{"math":{"op":"OpAdd","lhs":{"const":{"val":"300ms"}},"rhs":{"spellCastTime":{"spellId":{"spellId":49238}}}}},"rhs":{"autoTimeToNext":{}}}}]}},"castSpell":{"spellId":{"spellId":49238}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":17364}}}},
-		{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":49233}}},"rhs":{"const":{"val":"0s"}}}},"castSpell":{"spellId":{"spellId":49233}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":49231}}}},
-		{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"totemRemainingTime":{"totemType":"Water"}},"rhs":{"const":{"val":"20s"}}}},"castSpell":{"spellId":{"spellId":66842}}}},
-		{"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":58734}}},"rhs":{"const":{"val":"100ms"}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":2894}}}}}]}},"castSpell":{"spellId":{"spellId":58734}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":61657}}}},
-		{"action":{"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":49281}}}}},"castSpell":{"spellId":{"spellId":49281}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":60103}}}}
-	]
-}`)
 
 var Phase1Gear = core.EquipmentSpecFromJsonString(`{"items": [
 	{"id":40543,"enchant":3817,"gems":[41398,40014]},

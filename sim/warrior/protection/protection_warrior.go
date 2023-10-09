@@ -11,7 +11,7 @@ func RegisterProtectionWarrior() {
 	core.RegisterAgentFactory(
 		proto.Player_ProtectionWarrior{},
 		proto.Spec_SpecProtectionWarrior,
-		func(character core.Character, options *proto.Player) core.Agent {
+		func(character *core.Character, options *proto.Player) core.Agent {
 			return NewProtectionWarrior(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -33,7 +33,7 @@ type ProtectionWarrior struct {
 	CustomRotation *common.CustomRotation
 }
 
-func NewProtectionWarrior(character core.Character, options *proto.Player) *ProtectionWarrior {
+func NewProtectionWarrior(character *core.Character, options *proto.Player) *ProtectionWarrior {
 	warOptions := options.GetProtectionWarrior()
 
 	war := &ProtectionWarrior{

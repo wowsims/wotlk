@@ -335,6 +335,9 @@ func (unit *Unit) ApplyCastSpeed(dur time.Duration) time.Duration {
 	return time.Duration(float64(dur) * unit.CastSpeed)
 }
 func (unit *Unit) ApplyCastSpeedForSpell(dur time.Duration, spell *Spell) time.Duration {
+	if spell.GetCastTime != nil {
+		return spell.GetCastTime(spell)
+	}
 	return time.Duration(float64(dur) * unit.CastSpeed * spell.CastTimeMultiplier)
 }
 
@@ -541,6 +544,7 @@ func (unit *Unit) GetMetadata() *proto.UnitMetadata {
 			HasDot:          spell.dots != nil || spell.aoeDot != nil,
 			HasShield:       spell.shields != nil || spell.selfShield != nil,
 			PrepullOnly:     spell.Flags.Matches(SpellFlagPrepullOnly),
+			EncounterOnly:   spell.Flags.Matches(SpellFlagEncounterOnly),
 		}
 	})
 

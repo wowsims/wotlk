@@ -136,7 +136,7 @@ func (warlock *Warlock) defineRotation() {
 	mainTarget := warlock.CurrentTarget // assumed to be the first element in the target list
 	var hauntTravel time.Duration
 	if warlock.Talents.Haunt {
-		hauntTravel = time.Duration(float64(time.Second) * warlock.DistanceFromTarget / warlock.Haunt.MissileSpeed)
+		hauntTravel = warlock.Haunt.TravelTime()
 	}
 	critDebuffCat := warlock.GetEnemyExclusiveCategories(core.SpellCritEffectCategory).Get(mainTarget)
 
@@ -253,7 +253,7 @@ func (warlock *Warlock) defineRotation() {
 
 	// refresh corruption with shadow bolt if it's running out
 	if warlock.Talents.EverlastingAffliction == 5 && len(allUnits) > 1 {
-		travel := time.Duration(float64(time.Second) * warlock.DistanceFromTarget / warlock.ShadowBolt.MissileSpeed)
+		travel := warlock.ShadowBolt.TravelTime()
 		curIndex := len(acl)
 
 		acl = aclAppendSimple(acl, warlock.ShadowBolt, func(sim *core.Simulation) (bool, *core.Unit) {

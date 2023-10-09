@@ -270,9 +270,9 @@ func (druid *Druid) Reset(_ *core.Simulation) {
 	druid.SolarICD.Timer.Reset()
 }
 
-func New(char core.Character, form DruidForm, selfBuffs SelfBuffs, talents string) *Druid {
+func New(char *core.Character, form DruidForm, selfBuffs SelfBuffs, talents string) *Druid {
 	druid := &Druid{
-		Character:    char,
+		Character:    *char,
 		SelfBuffs:    selfBuffs,
 		Talents:      &proto.DruidTalents{},
 		StartingForm: form,

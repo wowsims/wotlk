@@ -12,7 +12,7 @@ func RegisterRetributionPaladin() {
 	core.RegisterAgentFactory(
 		proto.Player_RetributionPaladin{},
 		proto.Spec_SpecRetributionPaladin,
-		func(character core.Character, options *proto.Player) core.Agent {
+		func(character *core.Character, options *proto.Player) core.Agent {
 			return NewRetributionPaladin(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -25,7 +25,7 @@ func RegisterRetributionPaladin() {
 	)
 }
 
-func NewRetributionPaladin(character core.Character, options *proto.Player) *RetributionPaladin {
+func NewRetributionPaladin(character *core.Character, options *proto.Player) *RetributionPaladin {
 	retOptions := options.GetRetributionPaladin()
 
 	pal := paladin.NewPaladin(character, options.TalentsString)

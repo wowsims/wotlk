@@ -41,66 +41,81 @@ func (rot *APLRotation) ValidationWarning(message string, vals ...interface{}) {
 	rot.curWarnings = append(rot.curWarnings, warning)
 }
 
+// Invokes the fn function, and attributes all warnings generated during its invocation
+// to the provided warningsList.
+func (rot *APLRotation) doAndRecordWarnings(warningsList *[]string, isPrepull bool, fn func()) {
+	rot.parsingPrepull = isPrepull
+	fn()
+	if warningsList != nil {
+		*warningsList = append(*warningsList, rot.curWarnings...)
+	}
+	rot.curWarnings = nil
+	rot.parsingPrepull = false
+}
+
 func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
 	if config == nil || config.Type != proto.APLRotation_TypeAPL {
 		return nil
 	}
 
 	rotation := &APLRotation{
-		unit: unit,
+		unit:                 unit,
+		prepullWarnings:      make([][]string, len(config.PrepullActions)),
+		priorityListWarnings: make([][]string, len(config.PriorityList)),
 	}
 
 	// Parse prepull actions
-	rotation.parsingPrepull = true
-	for _, prepullItem := range config.PrepullActions {
-		if !prepullItem.Hide {
-			doAtVal := rotation.newAPLValue(prepullItem.DoAtValue)
-			if doAtVal != nil {
-				doAt := doAtVal.GetDuration(nil)
-				if doAt > 0 {
-					rotation.ValidationWarning("Invalid time for 'Do At', ignoring this Prepull Action")
-				} else {
-					action := rotation.newAPLAction(prepullItem.Action)
-					if action != nil {
-						rotation.prepullActions = append(rotation.prepullActions, action)
-						unit.RegisterPrepullAction(doAt, func(sim *Simulation) {
-							action.Execute(sim)
-						})
+	for i, prepullItem := range config.PrepullActions {
+		prepullIdx := i // Save to local variable for correct lambda capture behavior
+		rotation.doAndRecordWarnings(&rotation.prepullWarnings[prepullIdx], true, func() {
+			if !prepullItem.Hide {
+				doAtVal := rotation.newAPLValue(prepullItem.DoAtValue)
+				if doAtVal != nil {
+					doAt := doAtVal.GetDuration(nil)
+					if doAt > 0 {
+						rotation.ValidationWarning("Invalid time for 'Do At', ignoring this Prepull Action")
+					} else {
+						action := rotation.newAPLAction(prepullItem.Action)
+						if action != nil {
+							rotation.prepullActions = append(rotation.prepullActions, action)
+							unit.RegisterPrepullAction(doAt, func(sim *Simulation) {
+								// Warnings for prepull cast failure are detected by running a fake prepull,
+								// so this action.Execute needs to record warnings.
+								rotation.doAndRecordWarnings(&rotation.prepullWarnings[prepullIdx], true, func() {
+									action.Execute(sim)
+								})
+							})
+						}
 					}
 				}
 			}
-		}
-
-		rotation.prepullWarnings = append(rotation.prepullWarnings, rotation.curWarnings)
-		rotation.curWarnings = nil
+		})
 	}
-	rotation.parsingPrepull = false
 
 	// Parse priority list
 	var configIdxs []int
 	for i, aplItem := range config.PriorityList {
-		if !aplItem.Hide {
-			action := rotation.newAPLAction(aplItem.Action)
-			if action != nil {
-				rotation.priorityList = append(rotation.priorityList, action)
-				configIdxs = append(configIdxs, i)
+		rotation.doAndRecordWarnings(&rotation.priorityListWarnings[i], false, func() {
+			if !aplItem.Hide {
+				action := rotation.newAPLAction(aplItem.Action)
+				if action != nil {
+					rotation.priorityList = append(rotation.priorityList, action)
+					configIdxs = append(configIdxs, i)
+				}
 			}
-		}
-
-		rotation.priorityListWarnings = append(rotation.priorityListWarnings, rotation.curWarnings)
-		rotation.curWarnings = nil
+		})
 	}
 
 	// Finalize
-	for _, action := range rotation.prepullActions {
-		action.Finalize(rotation)
-		rotation.curWarnings = nil
+	for i, action := range rotation.prepullActions {
+		rotation.doAndRecordWarnings(&rotation.prepullWarnings[i], true, func() {
+			action.Finalize(rotation)
+		})
 	}
 	for i, action := range rotation.priorityList {
-		action.Finalize(rotation)
-
-		rotation.priorityListWarnings[configIdxs[i]] = append(rotation.priorityListWarnings[configIdxs[i]], rotation.curWarnings...)
-		rotation.curWarnings = nil
+		rotation.doAndRecordWarnings(&rotation.priorityListWarnings[i], false, func() {
+			action.Finalize(rotation)
+		})
 	}
 
 	// Remove MCDs that are referenced by APL actions, so that the Autocast Other Cooldowns
@@ -113,22 +128,23 @@ func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
 	}
 
 	// If user has a Prepull potion set but does not use it in their APL settings, we enable it here.
-	rotation.parsingPrepull = true
-	prepotSpell := rotation.GetAPLSpell(ActionID{OtherID: proto.OtherAction_OtherActionPotion}.ToProto())
-	rotation.parsingPrepull = false
-	if prepotSpell != nil {
-		found := false
-		for _, prepullAction := range rotation.allPrepullActions() {
-			if castSpellAction, ok := prepullAction.impl.(*APLActionCastSpell); ok && castSpellAction.spell == prepotSpell {
-				found = true
+	rotation.doAndRecordWarnings(nil, true, func() {
+		prepotSpell := rotation.GetAPLSpell(ActionID{OtherID: proto.OtherAction_OtherActionPotion}.ToProto())
+		if prepotSpell != nil {
+			found := false
+			for _, prepullAction := range rotation.allPrepullActions() {
+				if castSpellAction, ok := prepullAction.impl.(*APLActionCastSpell); ok &&
+					(castSpellAction.spell == prepotSpell || castSpellAction.spell.Flags.Matches(SpellFlagPotion)) {
+					found = true
+				}
+			}
+			if !found {
+				unit.RegisterPrepullAction(-1*time.Second, func(sim *Simulation) {
+					prepotSpell.Cast(sim, nil)
+				})
 			}
 		}
-		if !found {
-			unit.RegisterPrepullAction(-1*time.Second, func(sim *Simulation) {
-				prepotSpell.Cast(sim, nil)
-			})
-		}
-	}
+	})
 
 	return rotation
 }

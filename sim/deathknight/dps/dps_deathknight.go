@@ -13,7 +13,7 @@ func RegisterDpsDeathknight() {
 	core.RegisterAgentFactory(
 		proto.Player_Deathknight{},
 		proto.Spec_SpecDeathknight,
-		func(character core.Character, options *proto.Player) core.Agent {
+		func(character *core.Character, options *proto.Player) core.Agent {
 			return NewDpsDeathknight(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -41,7 +41,7 @@ type DpsDeathknight struct {
 	rotationSetup func()
 }
 
-func NewDpsDeathknight(character core.Character, player *proto.Player) *DpsDeathknight {
+func NewDpsDeathknight(character *core.Character, player *proto.Player) *DpsDeathknight {
 	dk := player.GetDeathknight()
 
 	dpsDk := &DpsDeathknight{

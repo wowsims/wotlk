@@ -345,18 +345,6 @@ func (character *Character) AddPet(pet PetAgent) {
 	character.Pets = append(character.Pets, pet.GetPet())
 }
 
-func (character *Character) MultiplyMeleeSpeed(sim *Simulation, amount float64) {
-	character.Unit.MultiplyMeleeSpeed(sim, amount)
-}
-
-func (character *Character) MultiplyRangedSpeed(sim *Simulation, amount float64) {
-	character.Unit.MultiplyRangedSpeed(sim, amount)
-}
-
-func (character *Character) MultiplyAttackSpeed(sim *Simulation, amount float64) {
-	character.Unit.MultiplyAttackSpeed(sim, amount)
-}
-
 func (character *Character) GetBaseStats() stats.Stats {
 	return character.baseStats
 }
@@ -523,7 +511,7 @@ func (character *Character) advance(sim *Simulation) {
 
 	for _, pet := range character.Pets {
 		if pet.enabled {
-			pet.advance(sim)
+			pet.Unit.advance(sim)
 		}
 	}
 }

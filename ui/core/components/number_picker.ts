@@ -16,7 +16,7 @@ export class NumberPicker<ModObject> extends Input<ModObject, number> {
 	private float: boolean;
 	private positive: boolean;
 
-	constructor(parent: HTMLElement, modObject: ModObject, config: NumberPickerConfig<ModObject>) {
+	constructor(parent: HTMLElement | null, modObject: ModObject, config: NumberPickerConfig<ModObject>) {
 		super(parent, 'number-picker-root', modObject, config);
 		this.float = config.float || false;
 		this.positive = config.positive || false;

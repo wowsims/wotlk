@@ -20,9 +20,9 @@ const (
 	SpellFlagFocusable = core.SpellFlagAgentReserved4
 )
 
-func NewShaman(character core.Character, talents string, totems *proto.ShamanTotems, selfBuffs SelfBuffs, thunderstormRange bool) *Shaman {
+func NewShaman(character *core.Character, talents string, totems *proto.ShamanTotems, selfBuffs SelfBuffs, thunderstormRange bool) *Shaman {
 	shaman := &Shaman{
-		Character:           character,
+		Character:           *character,
 		Talents:             &proto.ShamanTalents{},
 		Totems:              totems,
 		SelfBuffs:           selfBuffs,

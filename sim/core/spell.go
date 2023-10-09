@@ -141,6 +141,8 @@ type Spell struct {
 
 	// Per-target auras that are related to this spell, usually buffs or debuffs applied by the spell.
 	RelatedAuras []AuraArray
+
+	GetCastTime func(spell *Spell) time.Duration
 }
 
 func (unit *Unit) OnSpellRegistered(handler SpellRegisteredHandler) {
@@ -218,6 +220,7 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		splitSpellMetrics: make([][]SpellMetrics, max(1, config.MetricSplits)),
 
 		RelatedAuras: config.RelatedAuras,
+		GetCastTime:  config.Cast.GetCastTime,
 	}
 
 	switch {
@@ -573,6 +576,14 @@ func (spell *Spell) CastTime() time.Duration {
 	return spell.Unit.ApplyCastSpeedForSpell(spell.DefaultCast.CastTime, spell)
 }
 
+func (spell *Spell) TravelTime() time.Duration {
+	if spell.MissileSpeed == 0 {
+		return 0
+	} else {
+		return time.Duration(float64(time.Second) * spell.Unit.DistanceFromTarget / spell.MissileSpeed)
+	}
+}
+
 // Handles computing the cost of spells and checking whether the Unit
 // meets them.
 type SpellCost interface {
@@ -580,8 +591,8 @@ type SpellCost interface {
 	// requirements to cast the spell.
 	MeetsRequirement(*Spell) bool
 
-	// Logs a message for when the cast fails due to lack of resources.
-	LogCostFailure(*Simulation, *Spell)
+	// Returns a message for when the cast fails due to lack of resources.
+	CostFailureReason(*Simulation, *Spell) string
 
 	// Subtracts the resources used from a cast from the Unit.
 	SpendCost(*Simulation, *Spell)

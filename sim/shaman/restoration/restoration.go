@@ -12,7 +12,7 @@ func RegisterRestorationShaman() {
 	core.RegisterAgentFactory(
 		proto.Player_RestorationShaman{},
 		proto.Spec_SpecRestorationShaman,
-		func(character core.Character, options *proto.Player) core.Agent {
+		func(character *core.Character, options *proto.Player) core.Agent {
 			return NewRestorationShaman(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -25,12 +25,16 @@ func RegisterRestorationShaman() {
 	)
 }
 
-func NewRestorationShaman(character core.Character, options *proto.Player) *RestorationShaman {
+func NewRestorationShaman(character *core.Character, options *proto.Player) *RestorationShaman {
 	restoShamOptions := options.GetRestorationShaman()
 
 	selfBuffs := shaman.SelfBuffs{
 		Bloodlust: restoShamOptions.Options.Bloodlust,
 		Shield:    restoShamOptions.Options.Shield,
+	}
+
+	if restoShamOptions.Rotation.Bloodlust != proto.RestorationShaman_Rotation_UnsetBloodlust {
+		selfBuffs.Bloodlust = restoShamOptions.Rotation.Bloodlust == proto.RestorationShaman_Rotation_UseBloodlust
 	}
 
 	totems := &proto.ShamanTotems{}

@@ -492,7 +492,7 @@ func init() {
 
 			triggerAura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:       name + " Trigger",
-				Callback:   core.CallbackOnSpellHitDealt,
+				Callback:   core.CallbackOnCastComplete,
 				ProcMask:   core.ProcMaskSpellOrProc,
 				Harmful:    true,
 				ProcChance: 0.10,

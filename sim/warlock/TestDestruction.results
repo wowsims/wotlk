@@ -224,15 +224,15 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 11398.72125
-  tps: 9312.27933
+  dps: 11409.33833
+  tps: 9321.46805
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 11346.47571
-  tps: 9267.21569
+  dps: 11351.32108
+  tps: 9271.16465
  }
 }
 dps_results: {
@@ -772,6 +772,48 @@ dps_results: {
  value: {
   dps: 6368.62973
   tps: 5364.44408
+ }
+}
+dps_results: {
+ key: "TestDestruction-Settings-Orc-P2-Destruction Warlock-destro-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 12356.30025
+  tps: 11751.77749
+ }
+}
+dps_results: {
+ key: "TestDestruction-Settings-Orc-P2-Destruction Warlock-destro-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 11320.05232
+  tps: 9124.63069
+ }
+}
+dps_results: {
+ key: "TestDestruction-Settings-Orc-P2-Destruction Warlock-destro-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 12281.11135
+  tps: 9412.06182
+ }
+}
+dps_results: {
+ key: "TestDestruction-Settings-Orc-P2-Destruction Warlock-destro-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 7045.69684
+  tps: 7382.61137
+ }
+}
+dps_results: {
+ key: "TestDestruction-Settings-Orc-P2-Destruction Warlock-destro-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 6333.64271
+  tps: 5282.55665
+ }
+}
+dps_results: {
+ key: "TestDestruction-Settings-Orc-P2-Destruction Warlock-destro-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 6617.52934
+  tps: 5134.52671
  }
 }
 dps_results: {

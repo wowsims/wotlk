@@ -27,21 +27,9 @@ func TestBalance(t *testing.T) {
 		Glyphs:      StandardGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Default", SpecOptions: PlayerOptionsAdaptive},
-		Rotation:    core.RotationCombo{Label: "Default", Rotation: DefaultRotation},
+		Rotation:    core.GetAplRotation("../../../ui/balance_druid/apls", "basic_p3"),
 
-		ItemFilter: core.ItemFilter{
-			WeaponTypes: []proto.WeaponType{
-				proto.WeaponType_WeaponTypeDagger,
-				proto.WeaponType_WeaponTypeMace,
-				proto.WeaponType_WeaponTypeOffHand,
-				proto.WeaponType_WeaponTypeStaff,
-				proto.WeaponType_WeaponTypePolearm,
-			},
-			ArmorType: proto.ArmorType_ArmorTypeLeather,
-			RangedWeaponTypes: []proto.RangedWeaponType{
-				proto.RangedWeaponType_RangedWeaponTypeIdol,
-			},
-		},
+		ItemFilter: ItemFilter,
 	}))
 }
 
@@ -59,7 +47,7 @@ func TestBalancePhase3(t *testing.T) {
 		},
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Default", SpecOptions: PlayerOptionsAdaptive},
-		Rotation:    core.RotationCombo{Label: "Default", Rotation: DefaultRotation},
+		Rotation:    core.GetAplRotation("../../../ui/balance_druid/apls", "basic_p3"),
 
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
@@ -99,27 +87,19 @@ var PlayerOptionsAdaptive = &proto.Player_BalanceDruid{
 	},
 }
 
-var DefaultRotation = core.APLRotationFromJsonString(`{
-  "type": "TypeAPL",
-  "prepullActions": [
-    {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1.5s"}}},
-    {"action":{"castSpell":{"spellId":{"spellId":48461}}},"doAtValue":{"const":{"val":"-1.5s"}}}
-  ],
-  "priorityList": [
-    {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"5"}}}},"castSpell":{"spellId":{"tag":-1,"spellId":2825}}}},
-    {"action":{"castSpell":{"spellId":{"itemId":41119}}}},
-    {"action":{"multidot":{"spellId":{"spellId":48463},"maxDots":1,"maxOverlap":{"const":{"val":"0ms"}}}}},
-    {"action":{"castSpell":{"spellId":{"spellId":53201}}}},
-    {"action":{"castSpell":{"spellId":{"spellId":65861}}}},
-    {"action":{"condition":{"or":{"vals":[{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"auraRemainingTime":{"sourceUnit":{},"auraId":{"spellId":48518}}},"rhs":{"const":{"val":"10s"}}}},{"cmp":{"op":"OpLe","lhs":{"auraRemainingTime":{"sourceUnit":{},"auraId":{"spellId":48518}}},"rhs":{"const":{"val":"14.8"}}}}]}},{"cmp":{"op":"OpLt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"12s"}}}}]}},"castSpell":{"spellId":{"spellId":54758}}}},
-    {"action":{"condition":{"or":{"vals":[{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"auraRemainingTime":{"sourceUnit":{},"auraId":{"spellId":48518}}},"rhs":{"const":{"val":"10s"}}}},{"cmp":{"op":"OpLe","lhs":{"auraRemainingTime":{"sourceUnit":{},"auraId":{"spellId":48518}}},"rhs":{"const":{"val":"14.8"}}}}]}},{"cmp":{"op":"OpLt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"15s"}}}}]}},"castSpell":{"spellId":{"itemId":40211}}}},
-    {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"sourceUnit":{},"auraId":{"spellId":48518}}},{"cmp":{"op":"OpLe","lhs":{"auraRemainingTime":{"sourceUnit":{},"auraId":{"spellId":48518}}},"rhs":{"const":{"val":"14.8s"}}}}]}},"castSpell":{"spellId":{"spellId":48465}}}},
-    {"action":{"condition":{"and":{"vals":[{"auraIsActive":{"sourceUnit":{},"auraId":{"spellId":48517}}},{"cmp":{"op":"OpLe","lhs":{"auraRemainingTime":{"sourceUnit":{},"auraId":{"spellId":48517}}},"rhs":{"const":{"val":"14.8s"}}}}]}},"castSpell":{"spellId":{"spellId":48461}}}},
-    {"action":{"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":48468}}}}},{"auraInternalCooldown":{"auraId":{"spellId":48518}}}]}},"castSpell":{"spellId":{"spellId":48468}}}},
-    {"action":{"condition":{"auraInternalCooldown":{"sourceUnit":{},"auraId":{"spellId":48518}}},"castSpell":{"spellId":{"spellId":48465}}}},
-    {"action":{"castSpell":{"spellId":{"spellId":48461}}}}
-  ]
-}`)
+var ItemFilter = core.ItemFilter{
+	WeaponTypes: []proto.WeaponType{
+		proto.WeaponType_WeaponTypeDagger,
+		proto.WeaponType_WeaponTypeMace,
+		proto.WeaponType_WeaponTypeOffHand,
+		proto.WeaponType_WeaponTypeStaff,
+		proto.WeaponType_WeaponTypePolearm,
+	},
+	ArmorType: proto.ArmorType_ArmorTypeLeather,
+	RangedWeaponTypes: []proto.RangedWeaponType{
+		proto.RangedWeaponType_RangedWeaponTypeIdol,
+	},
+}
 
 var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
   {"id":40467,"enchant":3820,"gems":[41285,42144]},
@@ -161,116 +141,25 @@ var P2Gear = core.EquipmentSpecFromJsonString(`{"items": [
   {"id":40321}
 ]}`)
 
-var P2Gear4P = core.EquipmentSpecFromJsonString(`{"items": [
-    {
-      "id": 46191,
-      "enchant": 3820,
-      "gems": [
-        41285,
-        42144
-      ]
-    },
-    {
-      "id": 45933,
-      "gems": [
-        39998
-      ]
-    },
-    {
-      "id": 46196,
-      "enchant": 3810,
-      "gems": [
-        40026
-      ]
-    },
-    {
-      "id": 45242,
-      "enchant": 3859,
-      "gems": [
-        39998
-      ]
-    },
-    {
-      "id": 46194,
-      "enchant": 3832,
-      "gems": [
-        39998,
-        42144
-      ]
-    },
-    {
-      "id": 45446,
-      "enchant": 2332,
-      "gems": [
-        42144,
-        0
-      ]
-    },
-    {
-      "id": 45665,
-      "enchant": 3604,
-      "gems": [
-        39998,
-        39998,
-        0
-      ]
-    },
-    {
-      "id": 45616,
-      "gems": [
-        39998,
-        39998,
-        39998
-      ]
-    },
-    {
-      "id": 46192,
-      "enchant": 3719,
-      "gems": [
-        39998,
-        39998
-      ]
-    },
-    {
-      "id": 45537,
-      "enchant": 3606,
-      "gems": [
-        39998,
-        40026
-      ]
-    },
-    {
-      "id": 46046,
-      "gems": [
-        39998
-      ]
-    },
-    {
-      "id": 45495,
-      "gems": [
-        39998
-      ]
-    },
-    {
-      "id": 45466
-    },
-    {
-      "id": 45518
-    },
-    {
-      "id": 45620,
-      "enchant": 3834,
-      "gems": [
-        39998
-      ]
-    },
-    {
-      "id": 45617
-    },
-    {
-      "id": 40321
-    }
-]}`)
+var P2Gear4P = core.EquipmentSpecFromJsonString(`{"items":[
+  {"id":46191,"enchant":3820,"gems":[41285,42144]},
+  {"id":45933,"gems":[39998]},
+  {"id":46196,"enchant":3810,"gems":[40026]},
+  {"id":45242,"enchant":3859,"gems":[39998]},
+  {"id":46194,"enchant":3832,"gems":[39998,42144]},
+  {"id":45446,"enchant":2332,"gems":[42144,0]},
+  {"id":45665,"enchant":3604,"gems":[39998,39998,0]},
+  {"id":45616,"gems":[39998,39998,39998]},
+  {"id":46192,"enchant":3719,"gems":[39998,39998]},
+  {"id":45537,"enchant":3606,"gems":[39998,40026]},
+  {"id":46046,"gems":[39998]},
+  {"id":45495,"gems":[39998]},
+  {"id":45466},
+  {"id":45518},
+  {"id":45620,"enchant":3834,"gems":[39998]},
+  {"id":45617},
+  {"id":40321}]
+}`)
 
 var P3Gear = core.EquipmentSpecFromJsonString(`{"items": [
   {"id":48171,"enchant":3820,"gems":[41285,40153]},

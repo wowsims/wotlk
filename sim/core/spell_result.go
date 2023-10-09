@@ -3,7 +3,6 @@ package core
 import (
 	"fmt"
 	"math"
-	"time"
 
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
@@ -367,9 +366,8 @@ func (dot *Dot) CalcAndDealPeriodicSnapshotHealing(sim *Simulation, target *Unit
 }
 
 func (spell *Spell) WaitTravelTime(sim *Simulation, callback func(*Simulation)) {
-	travelTime := time.Duration(float64(time.Second) * spell.Unit.DistanceFromTarget / spell.MissileSpeed)
 	StartDelayedAction(sim, DelayedActionOptions{
-		DoAt:     sim.CurrentTime + travelTime,
+		DoAt:     sim.CurrentTime + spell.TravelTime(),
 		OnAction: callback,
 	})
 }

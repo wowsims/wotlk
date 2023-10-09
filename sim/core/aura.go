@@ -162,7 +162,9 @@ func (aura *Aura) Refresh(sim *Simulation) {
 		aura.expires = NeverExpires
 	} else {
 		aura.expires = sim.CurrentTime + aura.Duration
-		aura.Unit.minExpires = 0
+		if aura.expires < aura.Unit.minExpires {
+			aura.Unit.minExpires = aura.expires
+		}
 	}
 }
 
@@ -285,7 +287,7 @@ type auraTracker struct {
 	// IDs of Auras that may expire and are currently active, in no particular order.
 	activeAuras []*Aura
 
-	// caches the minimum expires time of all active auras; reset to 0 on Activate(), Deactivate(), and Refresh()
+	// caches the minimum expires time of all active auras; might be stale (too low) after Deactivate().
 	minExpires time.Duration
 
 	// Auras that have a non-nil XXX function set and are currently active.
@@ -302,20 +304,9 @@ type auraTracker struct {
 
 func newAuraTracker() auraTracker {
 	return auraTracker{
-		resetEffects:               []ResetEffect{},
-		ExclusiveEffectManager:     &ExclusiveEffectManager{},
-		activeAuras:                make([]*Aura, 0, 16),
-		onCastCompleteAuras:        make([]*Aura, 0, 16),
-		onSpellHitDealtAuras:       make([]*Aura, 0, 16),
-		onSpellHitTakenAuras:       make([]*Aura, 0, 16),
-		onPeriodicDamageDealtAuras: make([]*Aura, 0, 16),
-		onPeriodicDamageTakenAuras: make([]*Aura, 0, 16),
-		onHealDealtAuras:           make([]*Aura, 0, 16),
-		onHealTakenAuras:           make([]*Aura, 0, 16),
-		onPeriodicHealDealtAuras:   make([]*Aura, 0, 16),
-		onPeriodicHealTakenAuras:   make([]*Aura, 0, 16),
-		auras:                      make([]*Aura, 0, 16),
-		aurasByTag:                 make(map[string][]*Aura),
+		resetEffects:           []ResetEffect{},
+		ExclusiveEffectManager: &ExclusiveEffectManager{},
+		aurasByTag:             make(map[string][]*Aura),
 	}
 }
 
@@ -664,8 +655,6 @@ func (aura *Aura) Deactivate(sim *Simulation) {
 			aura.Unit.activeAuras[removeActiveIndex].activeIndex = removeActiveIndex
 		}
 		aura.activeIndex = Inactive
-
-		aura.Unit.minExpires = 0
 	}
 
 	if aura.onCastCompleteIndex != Inactive {

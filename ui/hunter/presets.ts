@@ -1,4 +1,4 @@
-import { Consumes } from '../core/proto/common.js';
+import { Consumes, Spec } from '../core/proto/common.js';
 import { EquipmentSpec } from '../core/proto/common.js';
 import { Flask } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
@@ -22,6 +22,16 @@ import {
 } from '../core/proto/hunter.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
+
+import BmApl from './apls/bm.apl.json';
+
+import MmApl from './apls/mm.apl.json';
+import MmAdvApl from './apls/mm_advanced.apl.json';
+
+import SvApl from './apls/sv.apl.json';
+import SvAdvApl from './apls/sv_advanced.apl.json';
+
+import AoeApl from './apls/aoe.apl.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -77,7 +87,7 @@ export const SurvivalTalents = {
 export const DefaultRotation = HunterRotation.create({
 	type: RotationType.SingleTarget,
 	sting: StingType.SerpentSting,
-	trapWeave: false,
+	trapWeave: true,
 	viperStartManaPercent: 0.1,
 	viperStopManaPercent: 0.3,
 	multiDotSerpentSting: true,
@@ -97,152 +107,51 @@ export const ROTATION_PRESET_LEGACY_DEFAULT = {
 }
 export const ROTATION_PRESET_BM = {
 	name: 'BM',
+	enableWhen: (player: Player<Spec.SpecHunter>) => player.getTalentTree() == 0,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
 		})),
-		rotation: APLRotation.fromJsonString(`{
-      		"type": "TypeAPL",
-      		"prepullActions": [
-			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
-      		],
-      		"priorityList": [
-      		  {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"10s"}}}},"autocastOtherCooldowns":{}}},
-      		  {"action":{"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":34074}}}}},{"cmp":{"op":"OpLt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"10%"}}}}]}},"castSpell":{"spellId":{"spellId":34074}}}},
-      		  {"action":{"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":61847}}}}},{"cmp":{"op":"OpGt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"30%"}}}}]}},"castSpell":{"spellId":{"spellId":61847}}}},
-      		  {"action":{"castSpell":{"spellId":{"spellId":61006}}}},
-      		  {"hide":true,"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":49067}}}}},"castSpell":{"spellId":{"tag":1,"spellId":49067}}}},
-      		  {"action":{"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":49001}}}}},{"cmp":{"op":"OpGt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"6s"}}}}]}},"castSpell":{"spellId":{"spellId":49001}}}},
-      		  {"action":{"castSpell":{"spellId":{"spellId":49050}}}},
-      		  {"action":{"castSpell":{"spellId":{"spellId":49048}}}},
-      		  {"hide":true,"action":{"castSpell":{"spellId":{"spellId":49045}}}},
-      		  {"action":{"castSpell":{"spellId":{"spellId":49052}}}}
-      		]
-		}`),
+		rotation: APLRotation.fromJsonString(JSON.stringify(BmApl)),
 	}),
 };
 
 export const ROTATION_PRESET_MM = {
 	name: 'MM',
+	enableWhen: (player: Player<Spec.SpecHunter>) => player.getTalentTree() == 1,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
 		})),
-		rotation: APLRotation.fromJsonString(`{
-			"type": "TypeAPL",
-			"prepullActions": [
-				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
-			],
-			"priorityList": [
-				{"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"10s"}}}},"autocastOtherCooldowns":{}}},
-				{"action":{"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":34074}}}}},{"cmp":{"op":"OpLt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"10%"}}}}]}},"castSpell":{"spellId":{"spellId":34074}}}},
-				{"action":{"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":61847}}}}},{"cmp":{"op":"OpGt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"30%"}}}}]}},"castSpell":{"spellId":{"spellId":61847}}}},
-				{"action":{"castSpell":{"spellId":{"spellId":34490}}}},
-				{"action":{"castSpell":{"spellId":{"spellId":61006}}}},
-				{"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":49001}}}}},"castSpell":{"spellId":{"spellId":49001}}}},
-				{"hide":true,"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":49067}}}}},"castSpell":{"spellId":{"tag":1,"spellId":49067}}}},
-				{"action":{"castSpell":{"spellId":{"spellId":53209}}}},
-				{"action":{"castSpell":{"spellId":{"spellId":49050}}}},
-				{"action":{"castSpell":{"spellId":{"spellId":49048}}}},
-				{"hide":true,"action":{"castSpell":{"spellId":{"spellId":49045}}}},
-				{"action":{"castSpell":{"spellId":{"spellId":49052}}}}
-			]
-		}`),
+		rotation: APLRotation.fromJsonString(JSON.stringify(MmApl)),
 	}),
 };
 
 export const ROTATION_PRESET_MM_ADVANCED = {
 	name: 'MM (Advanced)',
+	enableWhen: (player: Player<Spec.SpecHunter>) => player.getTalentTree() == 1,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
 		})),
-		rotation: APLRotation.fromJsonString(`{
-			"type": "TypeAPL",
-			"prepullActions": [
-				{"action":{"castSpell":{"spellId":{"spellId":61847}}},"doAtValue":{"const":{"val":"-25s"}}},
-				{"action":{"castSpell":{"spellId":{"spellId":49067}}},"doAtValue":{"const":{"val":"-20s"}}},
-				{"action":{"castSpell":{"spellId":{"spellId":53517}}},"doAtValue":{"const":{"val":"-3s"}}},
-				{"action":{"castSpell":{"spellId":{"itemId":40211}}},"doAtValue":{"const":{"val":"-1.401s"}}},
-				{"action":{"castSpell":{"spellId":{"spellId":49052}}},"doAtValue":{"const":{"val":"-1.4s"}}}
-			],
-			"priorityList": [
-				{"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"1.35s"}}}},"autocastOtherCooldowns":{}}},
-				{"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"1s"}}}},"castSpell":{"spellId":{"itemId":42641}}}},
-				{"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"61s"}}}},"castSpell":{"spellId":{"itemId":41119}}}},
-				{"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"10s"}}}},"castSpell":{"spellId":{"spellId":34026}}}},
-				{"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"1.35s"}}}},"castSpell":{"spellId":{"spellId":34490}}}},
-				{"action":{"condition":{"cmp":{"op":"OpEq","lhs":{"currentTime":{}},"rhs":{"const":{"val":"0s"}}}},"castSpell":{"spellId":{"itemId":41119}}}},
-				{"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":53209}}},"rhs":{"const":{"val":"6s"}}}},{"or":{"vals":[{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49050}}},"rhs":{"const":{"val":"6s"}}}},{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49048}}},"rhs":{"const":{"val":"6s"}}}}]}},{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":3045}}},"rhs":{"const":{"val":"167s"}}}},{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":34490}}},"rhs":{"const":{"val":"13s"}}}},{"cmp":{"op":"OpGt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49067}}},"rhs":{"const":{"val":"23s"}}}}]}},"castSpell":{"spellId":{"spellId":23989}}}},
-				{"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"15%"}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":61847}}}}}]}},"castSpell":{"spellId":{"spellId":61847}}}},
-				{"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpLt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"10%"}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":34074}}}}}]}},"castSpell":{"spellId":{"spellId":34074}}}},
-				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"40%"}}}},"castSpell":{"spellId":{"itemId":20520}}}},
-				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"spellTimeToReady":{"spellId":{"spellId":61006}}},"rhs":{"const":{"val":"0.21s"}}}},"castSpell":{"spellId":{"spellId":61006}}}},
-				{"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":49001}}}}},"castSpell":{"spellId":{"spellId":49001}}}},
-				{"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":49067}}}}},"castSpell":{"spellId":{"spellId":49067}}}},
-				{"action":{"condition":{"or":{"vals":[{"cmp":{"op":"OpLt","lhs":{"spellTimeToReady":{"spellId":{"spellId":53209}}},"rhs":{"const":{"val":"0.15s"}}}},{"spellCanCast":{"spellId":{"spellId":53209}}}]}},"castSpell":{"spellId":{"spellId":53209}}}},
-				{"action":{"condition":{"or":{"vals":[{"cmp":{"op":"OpLt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49050}}},"rhs":{"const":{"val":"0.15s"}}}},{"spellCanCast":{"spellId":{"spellId":49050}}}]}},"castSpell":{"spellId":{"spellId":49050}}}},
-				{"action":{"castSpell":{"spellId":{"spellId":49052}}}},
-				{"hide":true,"action":{"condition":{"or":{"vals":[{"cmp":{"op":"OpLt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49045}}},"rhs":{"const":{"val":"0.2s"}}}},{"spellCanCast":{"spellId":{"spellId":49045}}}]}},"castSpell":{"spellId":{"spellId":49045}}}}
-			]
-		}`),
+		rotation: APLRotation.fromJsonString(JSON.stringify(MmAdvApl)),
 	}),
 };
 
 export const ROTATION_PRESET_SV = {
 	name: 'SV',
+	enableWhen: (player: Player<Spec.SpecHunter>) => player.getTalentTree() == 2,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
 		})),
-		rotation: APLRotation.fromJsonString(`{
-      		"type": "TypeAPL",
-      		"prepullActions": [
-			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
-      		],
-      		"priorityList": [
-      		  {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"10s"}}}},"autocastOtherCooldowns":{}}},
-      		  {"action":{"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":34074}}}}},{"cmp":{"op":"OpLt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"10%"}}}}]}},"castSpell":{"spellId":{"spellId":34074}}}},
-      		  {"action":{"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":61847}}}}},{"cmp":{"op":"OpGt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"30%"}}}}]}},"castSpell":{"spellId":{"spellId":61847}}}},
-      		  {"action":{"castSpell":{"spellId":{"spellId":61006}}}},
-      		  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":60053}}}}},"castSpell":{"spellId":{"spellId":60053}}}},
-      		  {"action":{"condition":{"dotIsActive":{"spellId":{"spellId":60053}}},"castSpell":{"spellId":{"spellId":60052}}}},
-      		  {"hide":true,"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":49067}}}}},"castSpell":{"spellId":{"tag":1,"spellId":49067}}}},
-      		  {"action":{"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":49001}}}}},{"cmp":{"op":"OpGt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"6s"}}}}]}},"castSpell":{"spellId":{"spellId":49001}}}},
-      		  {"action":{"castSpell":{"spellId":{"spellId":63672}}}},
-      		  {"action":{"castSpell":{"spellId":{"spellId":49050}}}},
-      		  {"action":{"castSpell":{"spellId":{"spellId":49048}}}},
-      		  {"action":{"castSpell":{"spellId":{"spellId":49052}}}}
-      		]
-		}`),
+		rotation: APLRotation.fromJsonString(JSON.stringify(SvApl)),
 	}),
 };
 
 export const ROTATION_PRESET_SV_ADVANCED = {
 	name: 'SV (Advanced)',
+	enableWhen: (player: Player<Spec.SpecHunter>) => player.getTalentTree() == 2,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
 		})),
-		rotation: APLRotation.fromJsonString(`{
-			"type": "TypeAPL",
-			"prepullActions": [
-				{"action":{"castSpell":{"spellId":{"spellId":49067}}},"doAtValue":{"const":{"val":"-24s"}}},
-				{"action":{"castSpell":{"spellId":{"spellId":61847}}},"doAtValue":{"const":{"val":"-20s"}}},
-				{"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1.4s"}}},
-				{"action":{"castSpell":{"spellId":{"spellId":49052}}},"doAtValue":{"const":{"val":"-1.4s"}}}
-			],
-			"priorityList": [
-				{"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"1s"}}}},"autocastOtherCooldowns":{}}},
-				{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"40%"}}}},"castSpell":{"spellId":{"itemId":20520}}}},
-				{"action":{"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":61847}}}}},{"cmp":{"op":"OpGt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"30%"}}}}]}},"castSpell":{"spellId":{"spellId":61847}}}},
-				{"action":{"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":34074}}}}},{"cmp":{"op":"OpLt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"10%"}}}}]}},"castSpell":{"spellId":{"spellId":34074}}}},
-				{"action":{"castSpell":{"spellId":{"spellId":61006}}}},
-				{"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":60053}}}}},"castSpell":{"spellId":{"spellId":60053}}}},
-				{"action":{"condition":{"dotIsActive":{"spellId":{"spellId":60053}}},"castSpell":{"spellId":{"spellId":60052}}}},
-				{"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":49067}}}}},"castSpell":{"spellId":{"spellId":49067,"tag":1}}}},
-				{"action":{"condition":{"or":{"vals":[{"cmp":{"op":"OpLt","lhs":{"spellTimeToReady":{"spellId":{"spellId":63672}}},"rhs":{"const":{"val":"0.2s"}}}},{"spellCanCast":{"spellId":{"spellId":63672}}}]}},"castSpell":{"spellId":{"spellId":63672}}}},
-				{"action":{"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":49001}}}}},{"cmp":{"op":"OpGt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"6s"}}}}]}},"castSpell":{"spellId":{"spellId":49001}}}},
-				{"action":{"condition":{"or":{"vals":[{"cmp":{"op":"OpLt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49048}}},"rhs":{"const":{"val":"0.2s"}}}},{"spellCanCast":{"spellId":{"spellId":49048}}}]}},"castSpell":{"spellId":{"spellId":49048}}}},
-				{"hide":true,"action":{"castSpell":{"spellId":{"spellId":49048}}}},
-				{"action":{"castSpell":{"spellId":{"spellId":49052}}}}
-			]
-		}`),
+		rotation: APLRotation.fromJsonString(JSON.stringify(SvAdvApl)),
 	}),
 };
 
@@ -251,20 +160,7 @@ export const ROTATION_PRESET_AOE = {
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
 		})),
-		rotation: APLRotation.fromJsonString(`{
-      		"type": "TypeAPL",
-      		"prepullActions": [
-			  {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
-      		],
-      		"priorityList": [
-      		  {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"10s"}}}},"autocastOtherCooldowns":{}}},
-      		  {"action":{"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":34074}}}}},{"cmp":{"op":"OpLt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"10%"}}}}]}},"castSpell":{"spellId":{"spellId":34074}}}},
-      		  {"action":{"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":61847}}}}},{"cmp":{"op":"OpGt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"30%"}}}}]}},"castSpell":{"spellId":{"spellId":61847}}}},
-      		  {"hide":true,"action":{"multidot":{"spellId":{"spellId":49001},"maxDots":3,"maxOverlap":{"const":{"val":"0ms"}}}}},
-      		  {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":49067}}}}},"castSpell":{"spellId":{"tag":1,"spellId":49067}}}},
-      		  {"action":{"castSpell":{"spellId":{"spellId":58434}}}}
-      		]
-		}`),
+		rotation: APLRotation.fromJsonString(JSON.stringify(AoeApl)),
 	}),
 };
 

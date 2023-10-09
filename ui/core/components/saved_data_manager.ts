@@ -3,8 +3,6 @@ import { ContentBlock, ContentBlockHeaderConfig } from './content_block';
 
 import { Component } from '../components/component.js';
 import { Tooltip } from 'bootstrap';
-import { json } from 'stream/consumers';
-import { SimUI } from '../sim_ui.js';
 
 export type SavedDataManagerConfig<ModObject, T> = {
 	label: string;
@@ -37,20 +35,21 @@ type SavedData<ModObject, T> = {
 };
 
 export class SavedDataManager<ModObject, T> extends Component {
-	private readonly simUI: SimUI;
 	private readonly modObject: ModObject;
 	private readonly config: SavedDataManagerConfig<ModObject, T>;
 
 	private readonly userData: Array<SavedData<ModObject, T>>;
 	private readonly presets: Array<SavedData<ModObject, T>>;
 
-	private readonly savedDataDiv: HTMLElement;
+	private readonly savedDataDiv: HTMLElement
+	private readonly presetDataDiv: HTMLElement;
+	private readonly customDataDiv: HTMLElement;
 	private readonly saveInput?: HTMLInputElement;
+
 	private frozen: boolean;
 
-	constructor(parent: HTMLElement, simUI: SimUI, modObject: ModObject, config: SavedDataManagerConfig<ModObject, T>) {
+	constructor(parent: HTMLElement, modObject: ModObject, config: SavedDataManagerConfig<ModObject, T>) {
 		super(parent, 'saved-data-manager-root');
-		this.simUI = simUI;
 		this.modObject = modObject;
 		this.config = config;
 
@@ -60,8 +59,15 @@ export class SavedDataManager<ModObject, T> extends Component {
 
 		let contentBlock = new ContentBlock(this.rootElem, 'saved-data', { header: config.header });
 
-		contentBlock.bodyElement.innerHTML = `<div class="saved-data-container hide"></div>`;
+		contentBlock.bodyElement.innerHTML = `
+			<div class="saved-data-container hide">
+				<div class="saved-data-presets"></div>
+				<div class="saved-data-custom"></div>
+			</div>
+		`;
 		this.savedDataDiv = contentBlock.bodyElement.querySelector('.saved-data-container') as HTMLElement;
+		this.presetDataDiv = contentBlock.bodyElement.querySelector('.saved-data-presets') as HTMLElement;
+		this.customDataDiv = contentBlock.bodyElement.querySelector('.saved-data-custom') as HTMLElement;
 
 		if (!config.presetsOnly) {
 			contentBlock.bodyElement.appendChild(this.buildCreateContainer());
@@ -77,10 +83,10 @@ export class SavedDataManager<ModObject, T> extends Component {
 		const oldIdx = dataArr.findIndex(data => data.name == config.name);
 
 		if (oldIdx == -1) {
-			if (config.isPreset || this.presets.length == 0) {
-				this.savedDataDiv.appendChild(newData.elem);
+			if (config.isPreset) {
+				this.presetDataDiv.appendChild(newData.elem);
 			} else {
-				this.savedDataDiv.insertBefore(newData.elem, this.presets[0].elem);
+				this.customDataDiv.appendChild(newData.elem);
 			}
 			dataArr.push(newData);
 		} else {

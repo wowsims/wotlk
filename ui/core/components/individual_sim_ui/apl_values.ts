@@ -37,6 +37,9 @@ import {
 	APLValueCurrentRuneDeath,
 	APLValueCurrentRuneActive,
 	APLValueCurrentNonDeathRuneCount,
+	APLValueRuneSlotCooldown,
+	APLValueRuneGrace,
+	APLValueRuneSlotGrace,
 	APLValueGCDIsReady,
 	APLValueGCDTimeToReady,
 	APLValueAutoTimeToNext,
@@ -67,9 +70,8 @@ import {
 	APLValueNumberTargets,
 	APLValueTotemRemainingTime,
 	APLValueCatExcessEnergy,
-	APLValueRuneSlotCooldown,
-	APLValueRuneGrace,
-	APLValueRuneSlotGrace,
+	APLValueWarlockShouldRecastDrainSoul,
+	APLValueWarlockShouldRefreshCorruption,
 } from '../../proto/apl.js';
 
 import { EventID } from '../../typed_event.js';
@@ -972,6 +974,25 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		newValue: APLValueCatExcessEnergy.create,
 		includeIf: (player: Player<any>, isPrepull: boolean) => player.spec == Spec.SpecFeralDruid,
 		fields: [
+		],
+	}),
+	'warlockShouldRecastDrainSoul': inputBuilder({
+		label: 'Should Recast Drain Soul',
+		submenu: ['Warlock'],
+		shortDescription: 'Returns <b>True</b> if the current Drain Soul channel should be immediately recast, to get a better snapshot.',
+		newValue: APLValueWarlockShouldRecastDrainSoul.create,
+		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassWarlock,
+		fields: [
+		],
+	}),
+	'warlockShouldRefreshCorruption': inputBuilder({
+		label: 'Should Refresh Corruption',
+		submenu: ['Warlock'],
+		shortDescription: 'Returns <b>True</b> if the current Corruption has expired, or should be refreshed to get a better snapshot.',
+		newValue: APLValueWarlockShouldRecastDrainSoul.create,
+		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassWarlock,
+		fields: [
+			AplHelpers.unitFieldConfig('targetUnit', 'targets'),
 		],
 	}),
 };

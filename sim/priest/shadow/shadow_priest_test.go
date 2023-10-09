@@ -29,6 +29,8 @@ func TestShadow(t *testing.T) {
 			{Label: "Clipping", SpecOptions: PlayerOptionsClipping},
 		},
 
+		Rotation: core.GetAplRotation("../../../ui/shadow_priest/apls", "default"),
+
 		ItemFilter: core.ItemFilter{
 			WeaponTypes: []proto.WeaponType{
 				proto.WeaponType_WeaponTypeDagger,

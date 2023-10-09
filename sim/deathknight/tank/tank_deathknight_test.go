@@ -23,7 +23,10 @@ func TestBloodTank(t *testing.T) {
 		Glyphs:      Glyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBloodTank},
-		Rotation:    core.RotationCombo{Label: "BloodIT", Rotation: BloodITRotation},
+		Rotation:    core.GetAplRotation("../../../ui/tank_deathknight/apls", "blood_icy_touch"),
+		OtherRotations: []core.RotationCombo{
+			core.GetAplRotation("../../../ui/tank_deathknight/apls", "blood_aggro"),
+		},
 
 		IsTank:          true,
 		InFrontOfTarget: true,
@@ -97,32 +100,6 @@ var FullDebuffs = &proto.Debuffs{
 	EbonPlaguebringer:  true,
 	HeartOfTheCrusader: true,
 }
-
-var BloodITRotation = core.APLRotationFromJsonString(`{
-	"type": "TypeAPL",
-	"prepullActions": [
-		{"action":{"castSpell":{"spellId":{"spellId":48263}}},"doAtValue":{"const":{"val":"-10s"}}},
-		{"action":{"castSpell":{"spellId":{"spellId":42650}}},"doAtValue":{"const":{"val":"-6s"}}}
-	],
-	"priorityList": [
-		{"action":{"autocastOtherCooldowns":{}}},
-		{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"40%"}}}},"castSpell":{"spellId":{"spellId":48792}}}},
-		{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"40%"}}}},"castSpell":{"spellId":{"spellId":55233}}}},
-		{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"60%"}}}},"castSpell":{"spellId":{"spellId":48982}}}},
-		{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"60%"}}}},"castSpell":{"spellId":{"spellId":48707}}}},
-		{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"60%"}}}},"castSpell":{"spellId":{"spellId":48743}}}},
-		{"action":{"condition":{"cmp":{"op":"OpGe","lhs":{"currentRunicPower":{}},"rhs":{"const":{"val":"40"}}}},"castSpell":{"spellId":{"spellId":56815}}}},
-		{"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55095}}}}},"castSpell":{"spellId":{"spellId":59131}}}},
-		{"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":55078}}}}},"castSpell":{"spellId":{"tag":1,"spellId":49921}}}},
-		{"action":{"condition":{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":55078}}},"rhs":{"const":{"val":"3s"}}}},"castSpell":{"spellId":{"spellId":50842}}}},
-		{"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpGt","lhs":{"currentNonDeathRuneCount":{"runeType":"RuneFrost"}},"rhs":{"const":{"val":"0"}}}},{"cmp":{"op":"OpGt","lhs":{"currentNonDeathRuneCount":{"runeType":"RuneUnholy"}},"rhs":{"const":{"val":"0"}}}}]}},"castSpell":{"spellId":{"tag":1,"spellId":49924}}}},
-		{"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentRuneCount":{"runeType":"RuneDeath"}},"rhs":{"const":{"val":"0"}}}},"castSpell":{"spellId":{"spellId":59131}}}},
-		{"action":{"condition":{"or":{"vals":[{"cmp":{"op":"OpGt","lhs":{"currentNonDeathRuneCount":{"runeType":"RuneBlood"}},"rhs":{"const":{"val":"1"}}}},{"spellIsReady":{"spellId":{"spellId":47568}}}]}},"castSpell":{"spellId":{"tag":1,"spellId":49930}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":46584}}}},
-		{"action":{"castSpell":{"spellId":{"spellId":47568}}}},
-		{"action":{"condition":{"cmp":{"op":"OpGe","lhs":{"currentRunicPower":{}},"rhs":{"const":{"val":"80"}}}},"castSpell":{"spellId":{"spellId":49895}}}}
-	]
-}`)
 
 var BloodP1Gear = core.EquipmentSpecFromJsonString(`{"items": [
 	{"id":40565,"enchant":3878,"gems":[41380,36767]},

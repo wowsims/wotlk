@@ -76,7 +76,7 @@ message APLAction {
     }
 }
 
-// NextIndex: 59
+// NextIndex: 61
 message APLValue {
     oneof value {
         // Operators
@@ -160,6 +160,8 @@ message APLValue {
         // Class or Spec-specific values
         APLValueTotemRemainingTime totem_remaining_time = 49;
         APLValueCatExcessEnergy cat_excess_energy = 52;
+        APLValueWarlockShouldRecastDrainSoul warlock_should_recast_drain_soul = 59;
+        APLValueWarlockShouldRefreshCorruption warlock_should_refresh_corruption = 60;
     }
 }
 
@@ -466,4 +468,9 @@ message APLValueTotemRemainingTime {
     ShamanTotems.TotemType totem_type = 1;
 }
 message APLValueCatExcessEnergy {
+}
+message APLValueWarlockShouldRecastDrainSoul {
+}
+message APLValueWarlockShouldRefreshCorruption {
+    UnitReference target_unit = 1;
 }

@@ -23,16 +23,12 @@ func TestBlood(t *testing.T) {
 		Glyphs:      BloodDefaultGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBlood},
-
-		ItemFilter: core.ItemFilter{
-			ArmorType: proto.ArmorType_ArmorTypePlate,
-
-			WeaponTypes: []proto.WeaponType{
-				proto.WeaponType_WeaponTypeAxe,
-				proto.WeaponType_WeaponTypeSword,
-				proto.WeaponType_WeaponTypeMace,
-			},
+		OtherRotations: []core.RotationCombo{
+			core.GetAplRotation("../../../ui/deathknight/apls", "blood_pesti"),
+			core.GetAplRotation("../../../ui/deathknight/apls", "blood_pesti_dd"),
 		},
+
+		ItemFilter: ItemFilter,
 	}))
 }
 
@@ -48,15 +44,13 @@ func TestUnholy(t *testing.T) {
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsUnholy},
 
-		ItemFilter: core.ItemFilter{
-			ArmorType: proto.ArmorType_ArmorTypePlate,
-
-			WeaponTypes: []proto.WeaponType{
-				proto.WeaponType_WeaponTypeAxe,
-				proto.WeaponType_WeaponTypeSword,
-				proto.WeaponType_WeaponTypeMace,
-			},
+		OtherRotations: []core.RotationCombo{
+			core.GetAplRotation("../../../ui/deathknight/apls", "uh_2h_ss"),
+			core.GetAplRotation("../../../ui/deathknight/apls", "uh_dnd_aoe"),
+			core.GetAplRotation("../../../ui/deathknight/apls", "unholy_dw_ss"),
 		},
+
+		ItemFilter: ItemFilter,
 	}))
 }
 
@@ -75,15 +69,12 @@ func TestFrost(t *testing.T) {
 			{Label: "Desync", SpecOptions: PlayerOptionsDesyncFrost},
 		},
 
-		ItemFilter: core.ItemFilter{
-			ArmorType: proto.ArmorType_ArmorTypePlate,
-
-			WeaponTypes: []proto.WeaponType{
-				proto.WeaponType_WeaponTypeAxe,
-				proto.WeaponType_WeaponTypeSword,
-				proto.WeaponType_WeaponTypeMace,
-			},
+		OtherRotations: []core.RotationCombo{
+			core.GetAplRotation("../../../ui/deathknight/apls", "frost_bl_pesti"),
+			core.GetAplRotation("../../../ui/deathknight/apls", "frost_uh_pesti"),
 		},
+
+		ItemFilter: ItemFilter,
 	}))
 }
 
@@ -98,16 +89,11 @@ func TestFrostUH(t *testing.T) {
 		Glyphs:      FrostUHDefaultGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsFrost},
-
-		ItemFilter: core.ItemFilter{
-			ArmorType: proto.ArmorType_ArmorTypePlate,
-
-			WeaponTypes: []proto.WeaponType{
-				proto.WeaponType_WeaponTypeAxe,
-				proto.WeaponType_WeaponTypeSword,
-				proto.WeaponType_WeaponTypeMace,
-			},
+		OtherRotations: []core.RotationCombo{
+			core.GetAplRotation("../../../ui/deathknight/apls", "frost_uh_pesti"),
 		},
+
+		ItemFilter: ItemFilter,
 	}))
 }
 
@@ -219,6 +205,16 @@ var FullConsumes = &proto.Consumes{
 	DefaultPotion: proto.Potions_PotionOfSpeed,
 	PrepopPotion:  proto.Potions_PotionOfSpeed,
 	Food:          proto.Food_FoodDragonfinFilet,
+}
+
+var ItemFilter = core.ItemFilter{
+	ArmorType: proto.ArmorType_ArmorTypePlate,
+
+	WeaponTypes: []proto.WeaponType{
+		proto.WeaponType_WeaponTypeAxe,
+		proto.WeaponType_WeaponTypeSword,
+		proto.WeaponType_WeaponTypeMace,
+	},
 }
 
 var BloodP3Gear = core.EquipmentSpecFromJsonString(`{"items": [

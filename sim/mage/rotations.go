@@ -29,18 +29,16 @@ func (mage *Mage) chooseSpell(sim *core.Simulation) *core.Spell {
 		return mage.Scorch
 	}
 
-	if mage.Rotation.Type == proto.Mage_Rotation_Arcane {
+	if mage.PrimaryTalentTree == 0 {
 		spell := mage.doArcaneRotation(sim)
 		if spell == mage.ArcaneBlast {
 			mage.arcaneBlastStreak++
 		}
 		return spell
-	} else if mage.Rotation.Type == proto.Mage_Rotation_Fire {
+	} else if mage.PrimaryTalentTree == 1 {
 		return mage.doFireRotation(sim)
-	} else if mage.Rotation.Type == proto.Mage_Rotation_Frost {
-		return mage.doFrostRotation(sim)
 	} else {
-		return mage.doAoeRotation(sim)
+		return mage.doFrostRotation(sim)
 	}
 }
 
@@ -118,11 +116,6 @@ func (mage *Mage) canBlast(sim *core.Simulation) bool {
 }
 
 func (mage *Mage) doFireRotation(sim *core.Simulation) *core.Spell {
-	if mage.delayedPyroAt != 0 && sim.CurrentTime >= mage.delayedPyroAt {
-		mage.delayedPyroAt = 0
-		return mage.Pyroblast
-	}
-
 	noBomb := mage.LivingBomb != nil && !mage.LivingBomb.Dot(mage.CurrentTarget).IsActive() && sim.GetRemainingDuration() > time.Second*12
 	if noBomb && mage.hotStreakCritAura.GetStacks() == 0 {
 		return mage.LivingBomb
@@ -130,13 +123,7 @@ func (mage *Mage) doFireRotation(sim *core.Simulation) *core.Spell {
 
 	hasHotStreak := mage.HotStreakAura.IsActive() && mage.HotStreakAura.TimeActive(sim) > mage.ReactionTime
 	if hasHotStreak && mage.Pyroblast != nil {
-		if mage.PyroblastDelayMs == 0 {
-			return mage.Pyroblast
-		} else {
-			mage.delayedPyroAt = sim.CurrentTime + mage.PyroblastDelayMs
-			mage.WaitUntil(sim, mage.delayedPyroAt)
-			return nil
-		}
+		return mage.Pyroblast
 	}
 
 	if noBomb {
@@ -165,14 +152,4 @@ func (mage *Mage) doFrostRotation(sim *core.Simulation) *core.Spell {
 	}
 
 	return mage.Frostbolt
-}
-
-func (mage *Mage) doAoeRotation(sim *core.Simulation) *core.Spell {
-	if mage.Rotation.Aoe == proto.Mage_Rotation_ArcaneExplosion {
-		return mage.ArcaneExplosion
-	} else if mage.Rotation.Aoe == proto.Mage_Rotation_Flamestrike {
-		return mage.Flamestrike
-	} else {
-		return mage.Blizzard
-	}
 }

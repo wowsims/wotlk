@@ -152,55 +152,6 @@ func NewRaid(raidConfig *proto.Raid) *Raid {
 		nextPetIndex: int32(numParties) * 5,
 	}
 
-	// If there is at least 1 Shaman in the raid, disable Bloodlust on all other
-	// Shaman and on the RaidBuffs.
-	allShaman := RaidPlayersWithClass(raidConfig, proto.Class_ClassShaman)
-
-	var luster *proto.Player
-	for _, sham := range allShaman {
-		if ele, ok := sham.Spec.(*proto.Player_ElementalShaman); ok {
-			if ele.ElementalShaman == nil || ele.ElementalShaman.Options == nil {
-				continue
-			}
-			if luster == nil {
-				if ele.ElementalShaman.Options.Bloodlust {
-					luster = sham
-				}
-			} else {
-				ele.ElementalShaman.Options.Bloodlust = false
-			}
-		}
-		if enh, ok := sham.Spec.(*proto.Player_EnhancementShaman); ok {
-			if enh.EnhancementShaman == nil || enh.EnhancementShaman.Options == nil {
-				continue
-			}
-			if luster == nil {
-				if enh.EnhancementShaman.Options.Bloodlust {
-					luster = sham
-				}
-			} else {
-				enh.EnhancementShaman.Options.Bloodlust = false
-			}
-		}
-		if resto, ok := sham.Spec.(*proto.Player_RestorationShaman); ok {
-			if resto.RestorationShaman == nil || resto.RestorationShaman.Options == nil {
-				continue
-			}
-			if luster == nil {
-				if resto.RestorationShaman.Options.Bloodlust {
-					luster = sham
-				}
-			} else {
-				resto.RestorationShaman.Options.Bloodlust = false
-			}
-		}
-	}
-	if luster != nil {
-		if raidConfig.Buffs != nil {
-			raidConfig.Buffs.Bloodlust = false
-		}
-	}
-
 	for partyIndex, partyConfig := range raidConfig.Parties {
 		if partyConfig != nil && partyIndex < numParties {
 			raid.Parties = append(raid.Parties, NewParty(raid, partyIndex, partyConfig))

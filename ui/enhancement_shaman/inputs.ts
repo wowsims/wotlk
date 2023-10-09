@@ -14,21 +14,20 @@ import {
 	ShamanSyncType,
 	EnhancementShaman_Rotation_PrimaryShock as PrimaryShock,
 	EnhancementShaman_Rotation_RotationType as RotationType,
-	EnhancementShaman_Rotation_CustomRotationSpell as CustomRotationSpell
+	EnhancementShaman_Rotation_CustomRotationSpell as CustomRotationSpell,
+	EnhancementShaman_Rotation,
+	EnhancementShaman_Rotation_BloodlustUse
 } from '../core/proto/shaman.js';
 import { CustomSpell, Spec, ItemSwap, ItemSlot } from '../core/proto/common.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
+import { EventID } from 'ui/core/typed_event.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
 
-export const Bloodlust = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.SpecEnhancementShaman>({
-	fieldName: 'bloodlust',
-	id: ActionId.fromSpellId(2825),
-});
 export const ShamanShieldInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecEnhancementShaman, ShamanShield>({
 	fieldName: 'shield',
 	values: [
@@ -278,6 +277,21 @@ export const EnhancementShamanRotationConfig = {
 				fieldName: 'shamanisticRageManaThreshold',
 				label: 'Mana % to use Shamanistic Rage',
 				enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getTalents().shamanisticRage,
+			}),
+			InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({
+				fieldName: 'bloodlust',
+				label: 'Use Bloodlust',
+				labelTooltip: 'Player will cast bloodlust',
+				getValue: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().bloodlust == EnhancementShaman_Rotation_BloodlustUse.UseBloodlust,
+				setValue: (eventID: EventID, player: Player<Spec.SpecEnhancementShaman>, newValue: boolean) => {
+					const newRotation = player.getRotation();
+					if (newValue) {
+						newRotation.bloodlust = EnhancementShaman_Rotation_BloodlustUse.UseBloodlust;
+					} else {
+						newRotation.bloodlust = EnhancementShaman_Rotation_BloodlustUse.NoBloodlust;
+					}
+					player.setRotation(eventID, newRotation);
+				},
 			}),
 		],
 };

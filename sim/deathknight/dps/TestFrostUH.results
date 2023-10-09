@@ -252,15 +252,15 @@ dps_results: {
 dps_results: {
  key: "TestFrostUH-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 11141.8117
-  tps: 7924.62083
+  dps: 11160.77388
+  tps: 7938.63885
  }
 }
 dps_results: {
  key: "TestFrostUH-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 11148.59938
-  tps: 7930.97759
+  dps: 11142.00905
+  tps: 7926.61552
  }
 }
 dps_results: {
@@ -958,6 +958,48 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFrostUH-Settings-Human-Frost P1-Basic-frost_uh_pesti-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 29010.93257
+  tps: 20961.22623
+ }
+}
+dps_results: {
+ key: "TestFrostUH-Settings-Human-Frost P1-Basic-frost_uh_pesti-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 11420.48913
+  tps: 8014.68002
+ }
+}
+dps_results: {
+ key: "TestFrostUH-Settings-Human-Frost P1-Basic-frost_uh_pesti-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 14117.24198
+  tps: 9160.38746
+ }
+}
+dps_results: {
+ key: "TestFrostUH-Settings-Human-Frost P1-Basic-frost_uh_pesti-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 15335.05422
+  tps: 11026.12553
+ }
+}
+dps_results: {
+ key: "TestFrostUH-Settings-Human-Frost P1-Basic-frost_uh_pesti-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 6876.28096
+  tps: 4798.32051
+ }
+}
+dps_results: {
+ key: "TestFrostUH-Settings-Human-Frost P1-Basic-frost_uh_pesti-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 8171.53701
+  tps: 5220.69838
+ }
+}
+dps_results: {
  key: "TestFrostUH-Settings-Orc-Frost P1-Basic--FullBuffs-LongMultiTarget"
  value: {
   dps: 29381.11924
@@ -997,6 +1039,48 @@ dps_results: {
  value: {
   dps: 7552.43194
   tps: 5209.38453
+ }
+}
+dps_results: {
+ key: "TestFrostUH-Settings-Orc-Frost P1-Basic-frost_uh_pesti-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 29113.78926
+  tps: 21023.02172
+ }
+}
+dps_results: {
+ key: "TestFrostUH-Settings-Orc-Frost P1-Basic-frost_uh_pesti-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 11442.57048
+  tps: 8017.68947
+ }
+}
+dps_results: {
+ key: "TestFrostUH-Settings-Orc-Frost P1-Basic-frost_uh_pesti-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 14171.03858
+  tps: 9168.1814
+ }
+}
+dps_results: {
+ key: "TestFrostUH-Settings-Orc-Frost P1-Basic-frost_uh_pesti-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 15477.80377
+  tps: 11122.4023
+ }
+}
+dps_results: {
+ key: "TestFrostUH-Settings-Orc-Frost P1-Basic-frost_uh_pesti-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 6897.10012
+  tps: 4805.94199
+ }
+}
+dps_results: {
+ key: "TestFrostUH-Settings-Orc-Frost P1-Basic-frost_uh_pesti-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 8163.88119
+  tps: 5198.36509
  }
 }
 dps_results: {

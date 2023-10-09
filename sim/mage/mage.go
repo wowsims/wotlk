@@ -22,7 +22,7 @@ func RegisterMage() {
 	core.RegisterAgentFactory(
 		proto.Player_Mage{},
 		proto.Spec_SpecMage,
-		func(character core.Character, options *proto.Player) core.Agent {
+		func(character *core.Character, options *proto.Player) core.Agent {
 			return NewMage(character, options)
 		},
 		func(player *proto.Player, spec interface{}) {
@@ -42,11 +42,8 @@ type Mage struct {
 	Options  *proto.Mage_Options
 	Rotation *proto.Mage_Rotation
 
-	PyroblastDelayMs time.Duration
-
 	arcaneBlastStreak int32
 	arcanePowerMCD    *core.MajorCooldown
-	delayedPyroAt     time.Duration
 
 	waterElemental *WaterElemental
 	mirrorImage    *MirrorImage
@@ -154,19 +151,16 @@ func (mage *Mage) Initialize() {
 func (mage *Mage) Reset(sim *core.Simulation) {
 	mage.arcaneBlastStreak = 0
 	mage.arcanePowerMCD = mage.GetMajorCooldown(core.ActionID{SpellID: 12042})
-	mage.delayedPyroAt = 0
 }
 
-func NewMage(character core.Character, options *proto.Player) *Mage {
+func NewMage(character *core.Character, options *proto.Player) *Mage {
 	mageOptions := options.GetMage()
 
 	mage := &Mage{
-		Character: character,
+		Character: *character,
 		Talents:   &proto.MageTalents{},
 		Options:   mageOptions.Options,
 		Rotation:  mageOptions.Rotation,
-
-		PyroblastDelayMs: time.Millisecond * time.Duration(mageOptions.Rotation.PyroblastDelayMs),
 	}
 	core.FillTalentsProto(mage.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
 
@@ -179,9 +173,6 @@ func NewMage(character core.Character, options *proto.Player) *Mage {
 	}
 	if mage.Talents.ImprovedScorch == 0 {
 		mage.Rotation.MaintainImprovedScorch = false
-	}
-	if !mage.Options.IgniteMunching || mage.Rotation.PrimaryFireSpell != proto.Mage_Rotation_Fireball {
-		mage.PyroblastDelayMs = 0
 	}
 
 	if mage.Options.Armor == proto.Mage_Options_MageArmor {
@@ -207,7 +198,7 @@ func NewMage(character core.Character, options *proto.Player) *Mage {
 	mage.mirrorImage = mage.NewMirrorImage()
 
 	if mage.Talents.SummonWaterElemental {
-		mage.waterElemental = mage.NewWaterElemental(mage.Rotation.WaterElementalDisobeyChance)
+		mage.waterElemental = mage.NewWaterElemental(mage.Options.WaterElementalDisobeyChance)
 	}
 
 	wotlk.ConstructValkyrPets(&mage.Character)

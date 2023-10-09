@@ -35,8 +35,7 @@ export class RaidTab extends SimTab {
 		this.simUI.raidPicker = new RaidPicker(this.leftPanel, this.simUI);
 		new RaidStats(this.leftPanel, this.simUI);
 
-		const savedRaidManager = new SavedDataManager<RaidSimUI, SavedRaid>(
-			this.rightPanel, this.simUI, this.simUI, {
+		const savedRaidManager = new SavedDataManager<RaidSimUI, SavedRaid>(this.rightPanel, this.simUI, {
 			label: 'Raid',
 			header: { title: 'Saved Raid Groups' },
 			storageKey: this.simUI.getSavedRaidStorageKey(),

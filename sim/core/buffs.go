@@ -560,6 +560,7 @@ func registerExternalConsecutiveCDApproximation(agent Agent, config externalCons
 
 var BloodlustActionID = ActionID{SpellID: 2825}
 
+const SatedAuraLabel = "Sated"
 const BloodlustAuraTag = "Bloodlust"
 const BloodlustDuration = time.Second * 40
 const BloodlustCD = time.Minute * 10
@@ -579,8 +580,10 @@ func registerBloodlustCD(agent Agent) {
 			},
 		},
 
-		ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
-			bloodlustAura.Activate(sim)
+		ApplyEffects: func(sim *Simulation, target *Unit, _ *Spell) {
+			if !target.HasActiveAura(SatedAuraLabel) {
+				bloodlustAura.Activate(sim)
+			}
 		},
 	})
 
@@ -590,7 +593,7 @@ func registerBloodlustCD(agent Agent) {
 		Type:     CooldownTypeDPS,
 		ShouldActivate: func(sim *Simulation, character *Character) bool {
 			// Haste portion doesn't stack with Power Infusion, so prefer to wait.
-			return !character.HasActiveAuraWithTag(PowerInfusionAuraTag)
+			return !character.HasActiveAuraWithTag(PowerInfusionAuraTag) && !character.HasActiveAura(SatedAuraLabel)
 		},
 	})
 }
@@ -599,8 +602,7 @@ func BloodlustAura(character *Character, actionTag int32) *Aura {
 	actionID := BloodlustActionID.WithTag(actionTag)
 
 	sated := character.GetOrRegisterAura(Aura{
-		Label:    "Sated-" + actionID.String(),
-		Tag:      BloodlustAuraTag, // tag as bloodlust so lust wont apply again.
+		Label:    SatedAuraLabel,
 		ActionID: ActionID{SpellID: 57724},
 		Duration: time.Minute * 10,
 	})
@@ -612,11 +614,15 @@ func BloodlustAura(character *Character, actionTag int32) *Aura {
 		Duration: BloodlustDuration,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			character.MultiplyAttackSpeed(sim, 1.3)
-
 			for _, pet := range character.Pets {
 				if pet.IsEnabled() && !pet.IsGuardian() {
 					BloodlustAura(&pet.Character, actionTag).Activate(sim)
 				}
+			}
+
+			if character.HasActiveAura(SatedAuraLabel) {
+				aura.Deactivate(sim) // immediately remove it person already has sated.
+				return
 			}
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {

@@ -183,8 +183,6 @@ type majorCooldownManager struct {
 	// the course of the sim.
 	majorCooldowns []*MajorCooldown
 	minReady       time.Duration
-
-	tryUsing bool
 }
 
 func newMajorCooldownManager(cooldowns *proto.Cooldowns) majorCooldownManager {
@@ -463,7 +461,6 @@ func (mcdm *majorCooldownManager) TryUseCooldowns(sim *Simulation) {
 		return
 	}
 
-	mcdm.tryUsing = true
 restart:
 	for _, mcd := range mcdm.majorCooldowns {
 		if !mcd.IsReady(sim) {
@@ -486,17 +483,12 @@ restart:
 			goto restart
 		}
 	}
-	mcdm.tryUsing = false
-
 	mcdm.minReady = mcdm.majorCooldowns[0].ReadyAt()
 }
 
 // This function should be called if the CD for a major cooldown changes outside
 // of the TryActivate() call.
 func (mcdm *majorCooldownManager) UpdateMajorCooldowns() {
-	if mcdm.tryUsing {
-		panic("Do not call UpdateMajorCooldowns while iterating cooldowns in TryUseCooldowns")
-	}
 	if len(mcdm.majorCooldowns) == 0 {
 		mcdm.minReady = NeverExpires
 		return
