@@ -4,7 +4,6 @@ import { Player } from '../core/player.js';
 import { TypedEvent } from '../core/typed_event.js';
 
 import {
-	Mage_Rotation_Type as RotationType,
 	Mage_Rotation_PrimaryFireSpell as PrimaryFireSpell,
 	Mage_Rotation_AoeRotation as AoeRotationSpells,
 	Mage_Options_ArmorType as ArmorType,
