@@ -90,7 +90,7 @@ export class SavedDataManager<ModObject, T> extends Component {
 			}
 			dataArr.push(newData);
 		} else {
-			this.savedDataDiv.replaceChild(newData.elem, dataArr[oldIdx].elem);
+			dataArr[oldIdx].elem.replaceWith(newData.elem)
 			dataArr[oldIdx] = newData;
 		}
 	}
