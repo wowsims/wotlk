@@ -5,7 +5,6 @@ import { TypedEvent } from '../core/typed_event.js';
 
 import {
 	Mage_Rotation_PrimaryFireSpell as PrimaryFireSpell,
-	Mage_Rotation_AoeRotation as AoeRotationSpells,
 	Mage_Options_ArmorType as ArmorType,
 } from '../core/proto/mage.js';
 

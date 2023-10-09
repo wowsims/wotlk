@@ -37,10 +37,8 @@ func (mage *Mage) chooseSpell(sim *core.Simulation) *core.Spell {
 		return spell
 	} else if mage.PrimaryTalentTree == 1 {
 		return mage.doFireRotation(sim)
-	} else if mage.PrimaryTalentTree == 2 {
-		return mage.doFrostRotation(sim)
 	} else {
-		return mage.doAoeRotation(sim)
+		return mage.doFrostRotation(sim)
 	}
 }
 
@@ -154,14 +152,4 @@ func (mage *Mage) doFrostRotation(sim *core.Simulation) *core.Spell {
 	}
 
 	return mage.Frostbolt
-}
-
-func (mage *Mage) doAoeRotation(sim *core.Simulation) *core.Spell {
-	if mage.Rotation.Aoe == proto.Mage_Rotation_ArcaneExplosion {
-		return mage.ArcaneExplosion
-	} else if mage.Rotation.Aoe == proto.Mage_Rotation_Flamestrike {
-		return mage.Flamestrike
-	} else {
-		return mage.Blizzard
-	}
 }

@@ -165,14 +165,6 @@ message Mage {
 		// Frost Options.
 		bool use_ice_lance = 18;
 		double water_elemental_disobey_chance = 6 [deprecated = true];
-
-		// Aoe Options.
-		enum AoeRotation {
-			ArcaneExplosion = 0;
-			Flamestrike = 1;
-			Blizzard = 2;
-		}
-		AoeRotation aoe = 7;
 	}
 	Rotation rotation = 1;
 	
