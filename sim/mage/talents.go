@@ -295,9 +295,9 @@ func (mage *Mage) registerPresenceOfMindCD() {
 	mage.Env.RegisterPostFinalizeEffect(func() {
 		if mage.Pyroblast != nil {
 			spellToUse = mage.Pyroblast
-		} else if mage.Rotation.Type == proto.Mage_Rotation_Fire {
+		} else if mage.PrimaryTalentTree == 1 {
 			spellToUse = mage.Fireball
-		} else if mage.Rotation.Type == proto.Mage_Rotation_Frost {
+		} else if mage.PrimaryTalentTree == 2 {
 			spellToUse = mage.Frostbolt
 		} else {
 			spellToUse = mage.ArcaneBlast

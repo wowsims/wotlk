@@ -19,7 +19,6 @@ import {
 } from '../core/proto_utils/utils.js';
 import { sum } from '../core/utils.js';
 
-import { Mage_Rotation_Type as MageRotationType } from '../core/proto/mage.js';
 import { Hunter_Rotation_StingType as HunterStingType, Hunter_Options_PetType as HunterPetType } from '../core/proto/hunter.js';
 import { PaladinAura } from '../core/proto/paladin.js';
 import { Rogue_Rotation_Frequency as ExposeFrequency } from '../core/proto/rogue.js';
@@ -924,14 +923,13 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 							label: 'Improved Scorch',
 							actionId: ActionId.fromSpellId(12873),
 							playerData: playerClassAndTalent(Class.ClassMage, 'improvedScorch', player => {
-								const rotation = player.getRotation();
-								return rotation.type == MageRotationType.Fire && rotation.maintainImprovedScorch;
+								return player.getTalentTree() == 1 && player.getRotation().maintainImprovedScorch;
 							}),
 						},
 						{
 							label: 'Winter\'s Chill',
 							actionId: ActionId.fromSpellId(28593),
-							playerData: playerClassAndTalent(Class.ClassMage, 'wintersChill', player => player.getRotation().type == MageRotationType.Frost),
+							playerData: playerClassAndTalent(Class.ClassMage, 'wintersChill', player => player.getTalentTree() == 2),
 						},
 					],
 				},
