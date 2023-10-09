@@ -155,8 +155,8 @@ message Mage {
 		Type type = 1;
 
 		// Arcane Options.
-		int32 extra_blasts_during_first_ap = 10;
-		int32 missile_barrage_below_arcane_blast_stacks = 14;
+		int32 extra_blasts_during_first_ap = 10 [deprecated = true];
+		int32 missile_barrage_below_arcane_blast_stacks = 14 [deprecated = true];
 		double missile_barrage_below_mana_percent = 15;
 		double blast_without_missile_barrage_above_mana_percent = 16;
 		double only_3_arcane_blast_stacks_below_mana_percent = 17;
@@ -182,7 +182,7 @@ message Mage {
 			Flamestrike = 1;
 			Blizzard = 2;
 		}
-		AoeRotation aoe = 7;
+		AoeRotation aoe = 7 [deprecated = true];
 	}
 	Rotation rotation = 1;
 	
