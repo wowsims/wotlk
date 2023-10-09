@@ -2,6 +2,7 @@ package deathknight
 
 import (
 	"github.com/wowsims/wotlk/sim/core"
+	"time"
 )
 
 type PetAbilityType int
@@ -61,8 +62,9 @@ func (ghoulPet *GhoulPet) newClaw() PetAbility {
 
 			Cast: core.CastConfig{
 				DefaultCast: core.Cast{
-					GCD: core.GCDDefault,
+					GCD: time.Second,
 				},
+				IgnoreHaste: true,
 			},
 
 			DamageMultiplier: 1.5,
@@ -74,7 +76,10 @@ func (ghoulPet *GhoulPet) newClaw() PetAbility {
 					spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
 					spell.BonusWeaponDamage()
 
-				spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+				result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+				if !result.Landed() {
+					ghoulPet.AddFocus(sim, 32, spell.ActionID)
+				}
 			},
 		}),
 	}
