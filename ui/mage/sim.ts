@@ -4,7 +4,6 @@ import {Stats} from '../core/proto_utils/stats.js';
 import {Player} from '../core/player.js';
 import {IndividualSimUI} from '../core/individual_sim_ui.js';
 
-import {Mage_Rotation_Type as RotationType,} from '../core/proto/mage.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as Mechanics from '../core/constants/mechanics.js';
 
