@@ -65,19 +65,17 @@ func (cast *Cast) EffectiveTime() time.Duration {
 type CastFunc func(*Simulation, *Unit)
 type CastSuccessFunc func(*Simulation, *Unit) bool
 
-func (spell *Spell) castFailureHelper(sim *Simulation, gracefulFailure bool, message string, vals ...interface{}) bool {
-	reason := fmt.Sprintf(spell.ActionID.String()+" failed to cast: "+message, vals...)
+func (spell *Spell) castFailureHelper(sim *Simulation, gracefulFailure bool, message string, vals ...any) bool {
 	if sim.CurrentTime < 0 && spell.Unit.IsUsingAPL {
-		spell.Unit.Rotation.ValidationWarning(reason)
-		return false
+		spell.Unit.Rotation.ValidationWarning(fmt.Sprintf(spell.ActionID.String()+" failed to cast: "+message, vals...))
 	} else if gracefulFailure {
 		if sim.Log != nil && !spell.Flags.Matches(SpellFlagNoLogs) {
-			spell.Unit.Log(sim, reason)
+			spell.Unit.Log(sim, fmt.Sprintf(spell.ActionID.String()+" failed to cast: "+message, vals...))
 		}
-		return false
 	} else {
-		panic(reason)
+		panic(fmt.Sprintf(spell.ActionID.String()+" failed to cast: "+message, vals...))
 	}
+	return false
 }
 
 func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
