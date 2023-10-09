@@ -43,19 +43,6 @@ export const FocusMagicUptime = InputHelpers.makeSpecOptionsNumberInput<Spec.Spe
 export const MageRotationConfig = {
 	inputs: [
 		// ********************************************************
-		//                        AOE INPUTS
-		// ********************************************************
-		InputHelpers.makeRotationEnumInput<Spec.SpecMage, AoeRotationSpells>({
-			fieldName: 'aoe',
-			label: 'Primary Spell',
-			values: [
-				{ name: 'Arcane Explosion', value: AoeRotationSpells.ArcaneExplosion },
-				{ name: 'Flamestrike', value: AoeRotationSpells.Flamestrike },
-				{ name: 'Blizzard', value: AoeRotationSpells.Blizzard },
-			],
-			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Aoe,
-		}),
-		// ********************************************************
 		//                       FIRE INPUTS
 		// ********************************************************
 		InputHelpers.makeRotationEnumInput<Spec.SpecMage, PrimaryFireSpell>({
@@ -66,7 +53,8 @@ export const MageRotationConfig = {
 				{ name: 'Frostfire Bolt', value: PrimaryFireSpell.FrostfireBolt },
 				{ name: 'Scorch', value: PrimaryFireSpell.Scorch },
 			],
-			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Fire,
+			showWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1,
+			changeEmitter: (player: Player<Spec.SpecMage>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 		}),
 		// ********************************************************
 		//                       FROST INPUTS
@@ -75,7 +63,8 @@ export const MageRotationConfig = {
 			fieldName: 'useIceLance',
 			label: 'Use Ice Lance',
 			labelTooltip: 'Casts Ice Lance at the end of Fingers of Frost, after using Deep Freeze.',
-			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Frost,
+			showWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 2,
+			changeEmitter: (player: Player<Spec.SpecMage>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 		}),
 		// ********************************************************
 		//                      ARCANE INPUTS
@@ -85,40 +74,45 @@ export const MageRotationConfig = {
 			percent: true,
 			label: 'Stack Arcane Blast to 3 below mana %',
 			labelTooltip: 'When below this mana %, AM/ABarr will be used at 3 stacks of AB instead of 4.',
-			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
+			showWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0,
+			changeEmitter: (player: Player<Spec.SpecMage>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
 			fieldName: 'blastWithoutMissileBarrageAboveManaPercent',
 			percent: true,
 			label: 'AB without Missile Barrage above mana %',
 			labelTooltip: 'When above this mana %, spam AB until a Missile Barrage proc occurs.',
-			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
+			showWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0,
+			changeEmitter: (player: Player<Spec.SpecMage>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
 			fieldName: 'extraBlastsDuringFirstAp',
 			label: 'Extra ABs during first AP',
 			labelTooltip: 'Extend AB streak by this mana casts, during the first Arcane Power CD duration.',
-			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
+			showWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0,
+			changeEmitter: (player: Player<Spec.SpecMage>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
 			fieldName: 'missileBarrageBelowArcaneBlastStacks',
 			label: 'Use Missile Barrage below n AB stacks',
 			labelTooltip: 'Setting this to 1 or 2 can potentially be a DPS increase with Arcane Barrage rotation or T8 4pc set bonus.',
-			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
+			showWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0,
+			changeEmitter: (player: Player<Spec.SpecMage>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
 			fieldName: 'missileBarrageBelowManaPercent',
 			percent: true,
 			label: 'Use Missile Barrage ASAP below mana %',
 			labelTooltip: 'When below this mana %, use Missile Barrage proc as soon as possible. Can be useful to conserve mana.',
-			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
+			showWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0,
+			changeEmitter: (player: Player<Spec.SpecMage>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecMage>({
 			fieldName: 'useArcaneBarrage',
 			label: 'Use Arcane Barrage',
 			labelTooltip: 'Includes Arcane Barrage in the rotation.',
 			enableWhen: (player: Player<Spec.SpecMage>) => player.getTalents().arcaneBarrage,
-			showWhen: (player: Player<Spec.SpecMage>) => player.getRotation().type == RotationType.Arcane,
+			showWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0,
 			changeEmitter: (player: Player<Spec.SpecMage>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 		}),
 

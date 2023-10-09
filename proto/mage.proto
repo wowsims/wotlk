@@ -144,16 +144,6 @@ enum MageMinorGlyph {
 
 message Mage {
 	message Rotation {
-		// Just used for controlling which options are displayed in the UI. Is not
-		// used by the sim.
-		enum Type {
-			Arcane = 0;
-			Fire = 1;
-			Frost = 2;
-			Aoe = 3;
-		}
-		Type type = 1;
-
 		// Arcane Options.
 		int32 extra_blasts_during_first_ap = 10;
 		int32 missile_barrage_below_arcane_blast_stacks = 14;
