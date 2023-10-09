@@ -109,14 +109,16 @@ export const FrostTalents = {
 	}),
 };
 
-export const DefaultFireRotation = MageRotation.create({
+export const DefaultSimpleRotation = MageRotation.create({
+	only3ArcaneBlastStacksBelowManaPercent: 0.15,
+	blastWithoutMissileBarrageAboveManaPercent: 0.2,
+	missileBarrageBelowManaPercent: 0,
+	useArcaneBarrage: false,
+
 	primaryFireSpell: PrimaryFireSpell.Fireball,
 	maintainImprovedScorch: false,
-});
 
-export const DefaultFFBRotation = MageRotation.create({
-	primaryFireSpell: PrimaryFireSpell.FrostfireBolt,
-	maintainImprovedScorch: false,
+	useIceLance: false,
 });
 
 export const DefaultFFBOptions = MageOptions.create({
@@ -137,9 +139,6 @@ export const DefaultFireConsumes = Consumes.create({
 	prepopPotion: Potions.PotionOfSpeed,
 });
 
-export const DefaultFrostRotation = MageRotation.create({
-});
-
 export const DefaultFrostOptions = MageOptions.create({
 	armor: ArmorType.MoltenArmor,
 	focusMagicTarget: UnitReference.create(),
@@ -151,12 +150,6 @@ export const DefaultFrostConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredFlameCap,
 	flask: Flask.FlaskOfTheFrostWyrm,
 	food: Food.FoodFishFeast,
-});
-
-export const DefaultArcaneRotation = MageRotation.create({
-	only3ArcaneBlastStacksBelowManaPercent: 0.15,
-	blastWithoutMissileBarrageAboveManaPercent: 0.2,
-	missileBarrageBelowManaPercent: 0,
 });
 
 export const DefaultArcaneOptions = MageOptions.create({
@@ -178,14 +171,13 @@ export const OtherDefaults = {
 	profession2: Profession.Tailoring,
 };
 
-export const ARCANE_ROTATION_PRESET_SIMPLE = {
-	name: 'Simple Arcane',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0,
+export const ROTATION_PRESET_SIMPLE = {
+	name: 'Simple Default',
 	rotation: SavedRotation.create({
 		rotation: {
 			type: APLRotation_Type.TypeSimple,
 			simple: {
-				specRotationJson: MageRotation.toJsonString(DefaultArcaneRotation),
+				specRotationJson: MageRotation.toJsonString(DefaultSimpleRotation),
 			},
 		},
 	}),
@@ -195,21 +187,8 @@ export const ARCANE_ROTATION_PRESET_DEFAULT = {
 	name: 'Arcane',
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0,
 	rotation: SavedRotation.create({
-		specRotationOptionsJson: MageRotation.toJsonString(DefaultArcaneRotation),
+		specRotationOptionsJson: MageRotation.toJsonString(MageRotation.create()),
 		rotation: APLRotation.fromJsonString(JSON.stringify(ArcaneApl))
-	}),
-}
-
-export const FIRE_ROTATION_PRESET_SIMPLE = {
-	name: 'Simple Fire',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1,
-	rotation: SavedRotation.create({
-		rotation: {
-			type: APLRotation_Type.TypeSimple,
-			simple: {
-				specRotationJson: MageRotation.toJsonString(DefaultFireRotation),
-			},
-		},
 	}),
 }
 
@@ -217,7 +196,7 @@ export const FIRE_ROTATION_PRESET_DEFAULT = {
 	name: 'Fire',
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1,
 	rotation: SavedRotation.create({
-		specRotationOptionsJson: MageRotation.toJsonString(DefaultFireRotation),
+		specRotationOptionsJson: MageRotation.toJsonString(MageRotation.create()),
 		rotation: APLRotation.fromJsonString(JSON.stringify(FireApl)),
 	}),
 }
@@ -226,21 +205,8 @@ export const FROSTFIRE_ROTATION_PRESET_DEFAULT = {
 	name: 'Frostfire',
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1,
 	rotation: SavedRotation.create({
-		specRotationOptionsJson: MageRotation.toJsonString(DefaultFFBRotation),
+		specRotationOptionsJson: MageRotation.toJsonString(MageRotation.create()),
 		rotation: APLRotation.fromJsonString(JSON.stringify(FrostFireApl)),
-	}),
-}
-
-export const FROST_ROTATION_PRESET_SIMPLE = {
-	name: 'Simple Frost',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 2,
-	rotation: SavedRotation.create({
-		rotation: {
-			type: APLRotation_Type.TypeSimple,
-			simple: {
-				specRotationJson: MageRotation.toJsonString(DefaultFrostRotation),
-			},
-		},
 	}),
 }
 
@@ -248,7 +214,7 @@ export const FROST_ROTATION_PRESET_DEFAULT = {
 	name: 'Frost',
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 2,
 	rotation: SavedRotation.create({
-		specRotationOptionsJson: MageRotation.toJsonString(DefaultFrostRotation),
+		specRotationOptionsJson: MageRotation.toJsonString(MageRotation.create()),
 		rotation: APLRotation.fromJsonString(JSON.stringify(FrostApl)),
 	}),
 }
@@ -257,7 +223,7 @@ export const ARCANE_ROTATION_PRESET_AOE = {
 	name: 'Arcane AOE',
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0,
 	rotation: SavedRotation.create({
-		specRotationOptionsJson: MageRotation.toJsonString(DefaultFrostRotation),
+		specRotationOptionsJson: MageRotation.toJsonString(MageRotation.create()),
 		rotation: APLRotation.fromJsonString(JSON.stringify(ArcaneAoeApl)),
 	}),
 }
@@ -266,7 +232,7 @@ export const FIRE_ROTATION_PRESET_AOE = {
 	name: 'Fire AOE',
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1,
 	rotation: SavedRotation.create({
-		specRotationOptionsJson: MageRotation.toJsonString(DefaultFrostRotation),
+		specRotationOptionsJson: MageRotation.toJsonString(MageRotation.create()),
 		rotation: APLRotation.fromJsonString(JSON.stringify(FireAoeApl)),
 	}),
 }
@@ -275,7 +241,7 @@ export const FROST_ROTATION_PRESET_AOE = {
 	name: 'Frost AOE',
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 2,
 	rotation: SavedRotation.create({
-		specRotationOptionsJson: MageRotation.toJsonString(DefaultFrostRotation),
+		specRotationOptionsJson: MageRotation.toJsonString(MageRotation.create()),
 		rotation: APLRotation.fromJsonString(JSON.stringify(FrostAoeApl)),
 	}),
 }

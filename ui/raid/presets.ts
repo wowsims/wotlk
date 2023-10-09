@@ -417,7 +417,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecMage,
-		rotation: MagePresets.DefaultArcaneRotation,
+		rotation: MagePresets.DefaultSimpleRotation,
 		talents: MagePresets.ArcaneTalents.data,
 		specOptions: MagePresets.DefaultArcaneOptions,
 		consumes: MagePresets.DefaultArcaneConsumes,
@@ -446,7 +446,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecMage,
-		rotation: MagePresets.DefaultFireRotation,
+		rotation: MagePresets.DefaultSimpleRotation,
 		talents: MagePresets.FireTalents.data,
 		specOptions: MagePresets.DefaultFireOptions,
 		consumes: MagePresets.DefaultFireConsumes,
@@ -475,7 +475,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecMage,
-		rotation: MagePresets.DefaultFFBRotation,
+		rotation: MagePresets.DefaultSimpleRotation,
 		talents: MagePresets.FrostfireTalents.data,
 		specOptions: MagePresets.DefaultFFBOptions,
 		consumes: MagePresets.DefaultFireConsumes,

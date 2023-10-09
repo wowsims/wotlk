@@ -77,7 +77,7 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 				// Default consumes settings.
 				consumes: Presets.DefaultFireConsumes,
 				// Default rotation settings.
-				rotation: Presets.DefaultFireRotation,
+				rotation: Presets.DefaultSimpleRotation,
 				// Default talents.
 				talents: Presets.Phase3FireTalents.data,
 				// Default spec-specific settings.
@@ -145,9 +145,7 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 			presets: {
 				// Preset rotations that the user can quickly select.
 				rotations: [
-					Presets.ARCANE_ROTATION_PRESET_SIMPLE,
-					Presets.FIRE_ROTATION_PRESET_SIMPLE,
-					Presets.FROST_ROTATION_PRESET_SIMPLE,
+					Presets.ROTATION_PRESET_SIMPLE,
 					Presets.ARCANE_ROTATION_PRESET_DEFAULT,
 					Presets.FIRE_ROTATION_PRESET_DEFAULT,
 					Presets.FROSTFIRE_ROTATION_PRESET_DEFAULT,
