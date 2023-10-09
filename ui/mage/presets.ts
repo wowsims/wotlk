@@ -21,7 +21,7 @@ import {
 } from '../core/proto/mage.js';
 
 import * as Tooltips from '../core/constants/tooltips.js';
-import { APLRotation } from '../core/proto/apl.js';
+import { APLRotation, APLRotation_Type } from '../core/proto/apl.js';
 
 import ArcaneApl from './apls/arcane.apl.json';
 import FireApl from './apls/fire.apl.json';
@@ -156,8 +156,6 @@ export const DefaultFrostConsumes = Consumes.create({
 export const DefaultArcaneRotation = MageRotation.create({
 	only3ArcaneBlastStacksBelowManaPercent: 0.15,
 	blastWithoutMissileBarrageAboveManaPercent: 0.2,
-	extraBlastsDuringFirstAp: 0,
-	missileBarrageBelowArcaneBlastStacks: 0,
 	missileBarrageBelowManaPercent: 0,
 });
 
@@ -180,12 +178,38 @@ export const OtherDefaults = {
 	profession2: Profession.Tailoring,
 };
 
+export const ARCANE_ROTATION_PRESET_SIMPLE = {
+	name: 'Simple Arcane',
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0,
+	rotation: SavedRotation.create({
+		rotation: {
+			type: APLRotation_Type.TypeSimple,
+			simple: {
+				specRotationJson: MageRotation.toJsonString(DefaultArcaneRotation),
+			},
+		},
+	}),
+}
+
 export const ARCANE_ROTATION_PRESET_DEFAULT = {
 	name: 'Arcane',
 	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0,
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: MageRotation.toJsonString(DefaultArcaneRotation),
 		rotation: APLRotation.fromJsonString(JSON.stringify(ArcaneApl))
+	}),
+}
+
+export const FIRE_ROTATION_PRESET_SIMPLE = {
+	name: 'Simple Fire',
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1,
+	rotation: SavedRotation.create({
+		rotation: {
+			type: APLRotation_Type.TypeSimple,
+			simple: {
+				specRotationJson: MageRotation.toJsonString(DefaultFireRotation),
+			},
+		},
 	}),
 }
 
@@ -204,6 +228,19 @@ export const FROSTFIRE_ROTATION_PRESET_DEFAULT = {
 	rotation: SavedRotation.create({
 		specRotationOptionsJson: MageRotation.toJsonString(DefaultFFBRotation),
 		rotation: APLRotation.fromJsonString(JSON.stringify(FrostFireApl)),
+	}),
+}
+
+export const FROST_ROTATION_PRESET_SIMPLE = {
+	name: 'Simple Frost',
+	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 2,
+	rotation: SavedRotation.create({
+		rotation: {
+			type: APLRotation_Type.TypeSimple,
+			simple: {
+				specRotationJson: MageRotation.toJsonString(DefaultFrostRotation),
+			},
+		},
 	}),
 }
 

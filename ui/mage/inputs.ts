@@ -84,20 +84,6 @@ export const MageRotationConfig = {
 			changeEmitter: (player: Player<Spec.SpecMage>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
-			fieldName: 'extraBlastsDuringFirstAp',
-			label: 'Extra ABs during first AP',
-			labelTooltip: 'Extend AB streak by this mana casts, during the first Arcane Power CD duration.',
-			showWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0,
-			changeEmitter: (player: Player<Spec.SpecMage>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-		}),
-		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
-			fieldName: 'missileBarrageBelowArcaneBlastStacks',
-			label: 'Use Missile Barrage below n AB stacks',
-			labelTooltip: 'Setting this to 1 or 2 can potentially be a DPS increase with Arcane Barrage rotation or T8 4pc set bonus.',
-			showWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0,
-			changeEmitter: (player: Player<Spec.SpecMage>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-		}),
-		InputHelpers.makeRotationNumberInput<Spec.SpecMage>({
 			fieldName: 'missileBarrageBelowManaPercent',
 			percent: true,
 			label: 'Use Missile Barrage ASAP below mana %',
