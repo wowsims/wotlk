@@ -6,7 +6,6 @@ import {IndividualSimUI} from '../core/individual_sim_ui.js';
 import {
 	Mage_Rotation as MageRotation,
 	Mage_Rotation_PrimaryFireSpell as PrimaryFireSpell,
-	Mage_Rotation_Type as RotationType,
 } from '../core/proto/mage.js';
 
 import * as OtherInputs from '../core/components/other_inputs.js';
@@ -249,8 +248,8 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 					actions.push(maintainImpScorch);
 				}
 
-				//const talentTree = player.getTalentTree();
-				if (simple.type == RotationType.Arcane) {
+				const talentTree = player.getTalentTree();
+				if (talentTree == 0) { // Arcane
 					actions.push(...[
 						berserking,
 						hyperspeedAcceleration,
@@ -263,7 +262,7 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 						simple.useArcaneBarrage ? arcaneBarrage : null,
 						arcaneMissiles,
 					].filter(a => a) as Array<APLAction>)
-				} else if (simple.type == RotationType.Fire) {
+				} else if (talentTree == 1) { // Fire
 					actions.push(...[
 						pyroWithHotStreak,
 						livingBomb,
@@ -274,7 +273,7 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 							: (simple.primaryFireSpell == PrimaryFireSpell.FrostfireBolt
 								? frostfireBolt : scorch),
 					].filter(a => a) as Array<APLAction>)
-				} else if (simple.type == RotationType.Frost) {
+				} else if (talentTree == 2) { // Frost
 					actions.push(...[
 						berserking,
 						hyperspeedAcceleration,
