@@ -329,7 +329,7 @@ func (sim *Simulation) reset() {
 		sim.Duration += time.Duration(sim.RandomFloat("sim duration")*float64(variation)) - sim.DurationVariation
 	}
 
-	sim.pendingActions = make([]*PendingAction, 0, 64)
+	sim.pendingActions = sim.pendingActions[:0]
 
 	sim.executePhase = 0
 	sim.nextExecutePhase()
