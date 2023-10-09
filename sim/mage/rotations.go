@@ -29,15 +29,15 @@ func (mage *Mage) chooseSpell(sim *core.Simulation) *core.Spell {
 		return mage.Scorch
 	}
 
-	if mage.Rotation.Type == proto.Mage_Rotation_Arcane {
+	if mage.PrimaryTalentTree == 0 {
 		spell := mage.doArcaneRotation(sim)
 		if spell == mage.ArcaneBlast {
 			mage.arcaneBlastStreak++
 		}
 		return spell
-	} else if mage.Rotation.Type == proto.Mage_Rotation_Fire {
+	} else if mage.PrimaryTalentTree == 1 {
 		return mage.doFireRotation(sim)
-	} else if mage.Rotation.Type == proto.Mage_Rotation_Frost {
+	} else if mage.PrimaryTalentTree == 2 {
 		return mage.doFrostRotation(sim)
 	} else {
 		return mage.doAoeRotation(sim)

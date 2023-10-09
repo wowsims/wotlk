@@ -9,14 +9,12 @@ import { classGlyphsConfig, classTalentsConfig } from "../../talents/factory";
 import { GlyphsPicker } from "../../talents/glyphs_picker";
 import { HunterPetTalentsPicker, makePetTypeInputConfig } from "../../talents/hunter_pet";
 import { TalentsPicker } from "../../talents/talents_picker";
-import {Mage_Rotation, Mage_Rotation_PrimaryFireSpell as PrimaryFireSpell, Mage_Rotation_Type} from "../../proto/mage";
 
 import { IconEnumPicker } from "../icon_enum_picker";
 import { SavedDataManager } from "../saved_data_manager";
 import { SimTab } from "../sim_tab";
 
 import * as Mechanics from '../../constants/mechanics';
-import {SpecTalents} from "../../proto_utils/utils";
 
 export class TalentsTab extends SimTab {
 	protected simUI: IndividualSimUI<Spec>;
@@ -46,28 +44,6 @@ export class TalentsTab extends SimTab {
       this.buildTalentsPicker(this.leftPanel);
       this.buildGlyphsPicker(this.leftPanel);
     }
-
-	if (this.simUI.player.getClass() == Class.ClassMage) {
-		const player = this.simUI.player as Player<Spec.SpecMage>
-		this.simUI.player.talentsChangeEmitter.on(eventID => {
-			const talents = player.getTalents()
-			const rotation = player.getRotation()
-
-			if (talents.missileBarrage) {
-				rotation.type = Mage_Rotation_Type.Arcane
-			} else if (talents.brainFreeze) {
-				rotation.type = Mage_Rotation_Type.Frost
-			} else {
-				rotation.type = Mage_Rotation_Type.Fire
-				if (talents.iceShards > 0) {
-					rotation.primaryFireSpell = PrimaryFireSpell.FrostfireBolt
-				} else {
-					rotation.primaryFireSpell = PrimaryFireSpell.Fireball
-				}
-			}
-			player.setRotation(eventID, rotation)
-		})
-	}
 
     this.buildSavedTalentsPicker();
 	}

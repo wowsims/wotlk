@@ -111,13 +111,11 @@ export const FrostTalents = {
 };
 
 export const DefaultFireRotation = MageRotation.create({
-	type: RotationType.Fire,
 	primaryFireSpell: PrimaryFireSpell.Fireball,
 	maintainImprovedScorch: false,
 });
 
 export const DefaultFFBRotation = MageRotation.create({
-	type: RotationType.Fire,
 	primaryFireSpell: PrimaryFireSpell.FrostfireBolt,
 	maintainImprovedScorch: false,
 });
@@ -141,7 +139,6 @@ export const DefaultFireConsumes = Consumes.create({
 });
 
 export const DefaultFrostRotation = MageRotation.create({
-	type: RotationType.Frost,
 });
 
 export const DefaultFrostOptions = MageOptions.create({
@@ -158,7 +155,6 @@ export const DefaultFrostConsumes = Consumes.create({
 });
 
 export const DefaultArcaneRotation = MageRotation.create({
-	type: RotationType.Arcane,
 	only3ArcaneBlastStacksBelowManaPercent: 0.15,
 	blastWithoutMissileBarrageAboveManaPercent: 0.2,
 	missileBarrageBelowManaPercent: 0,
