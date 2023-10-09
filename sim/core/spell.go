@@ -88,6 +88,8 @@ type Spell struct {
 	SharedCD           Cooldown
 	ExtraCastCondition CanCastCondition
 
+	castTimeFn func(spell *Spell) time.Duration // allows to override CastTime()
+
 	// Performs a cast of this spell.
 	castFn CastSuccessFunc
 
@@ -141,8 +143,6 @@ type Spell struct {
 
 	// Per-target auras that are related to this spell, usually buffs or debuffs applied by the spell.
 	RelatedAuras []AuraArray
-
-	GetCastTime func(spell *Spell) time.Duration
 }
 
 func (unit *Unit) OnSpellRegistered(handler SpellRegisteredHandler) {
@@ -185,6 +185,12 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		panic("Cast.SharedCD w/o Duration specified for spell " + config.ActionID.String())
 	}
 
+	if config.Cast.CastTime == nil {
+		config.Cast.CastTime = func(spell *Spell) time.Duration {
+			return spell.Unit.ApplyCastSpeedForSpell(spell.DefaultCast.CastTime, spell)
+		}
+	}
+
 	spell := &Spell{
 		ActionID:     config.ActionID,
 		Unit:         unit,
@@ -197,6 +203,8 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		CD:                 config.Cast.CD,
 		SharedCD:           config.Cast.SharedCD,
 		ExtraCastCondition: config.ExtraCastCondition,
+
+		castTimeFn: config.Cast.CastTime,
 
 		ApplyEffects: config.ApplyEffects,
 
@@ -220,7 +228,6 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		splitSpellMetrics: make([][]SpellMetrics, max(1, config.MetricSplits)),
 
 		RelatedAuras: config.RelatedAuras,
-		GetCastTime:  config.Cast.GetCastTime,
 	}
 
 	switch {
@@ -573,7 +580,7 @@ func (spell *Spell) EffectiveCastTime() time.Duration {
 
 // Time until the cast is finished (ignoring GCD)
 func (spell *Spell) CastTime() time.Duration {
-	return spell.Unit.ApplyCastSpeedForSpell(spell.DefaultCast.CastTime, spell)
+	return spell.castTimeFn(spell)
 }
 
 func (spell *Spell) TravelTime() time.Duration {
