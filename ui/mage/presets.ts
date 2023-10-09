@@ -13,7 +13,6 @@ import { Player } from '../core/player.js';
 
 import {
 	Mage_Rotation as MageRotation,
-	Mage_Rotation_Type as RotationType,
 	Mage_Rotation_PrimaryFireSpell as PrimaryFireSpell,
 	Mage_Options as MageOptions,
 	Mage_Options_ArmorType as ArmorType,
