@@ -490,7 +490,7 @@ func (dk *Deathknight) registerItems() {
 		IcyTouchActionID,
 	}
 
-	cinderProcAura := dk.GetOrRegisterAura(core.Aura{
+	dk.RegisterAura(core.Aura{
 		ActionID:  core.ActionID{SpellID: 53386},
 		Label:     "Cinderglacier",
 		Duration:  time.Second * 30,
@@ -543,6 +543,8 @@ func (dk *Deathknight) registerItems() {
 
 		procMask := character.GetProcMaskForEnchant(3369)
 		ppmm := character.AutoAttacks.NewPPMManager(1.0, procMask)
+		// have to fetch it dynamically, otherwise aura reference becomes stale? not quite sure why
+		proc := character.GetAura("Cinderglacier")
 
 		core.MakePermanent(character.GetOrRegisterAura(core.Aura{
 			Label: "Rune of Cinderglacier",
@@ -552,7 +554,7 @@ func (dk *Deathknight) registerItems() {
 				}
 
 				if ppmm.Proc(sim, spell.ProcMask, "rune of cinderglacier") {
-					cinderProcAura.Activate(sim)
+					proc.Activate(sim)
 				}
 			},
 		}))
