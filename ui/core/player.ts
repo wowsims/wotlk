@@ -1312,15 +1312,20 @@ export class Player<SpecType extends Spec> {
 			this.setInFrontOfTarget(eventID, proto.inFrontOfTarget);
 			this.setDistanceFromTarget(eventID, proto.distanceFromTarget);
 			this.setHealingModel(eventID, proto.healingModel || HealingModel.create());
-			if (aplLaunchStatuses[this.spec] != LaunchStatus.Launched) {
+			this.setSpecOptions(eventID, this.specTypeFunctions.optionsFromPlayer(proto));
+
+			if (aplLaunchStatuses[this.spec] == LaunchStatus.Launched) {
+				if (proto.rotation?.type == APLRotationType.TypeUnknown || proto.rotation?.type == APLRotationType.TypeLegacy) {
+					if (!proto.rotation) {
+						proto.rotation = APLRotation.create();
+					}
+					proto.rotation.type = APLRotationType.TypeAuto;
+				}
+			} else {
 				this.setCooldowns(eventID, proto.cooldowns || Cooldowns.create());
 				this.setRotation(eventID, this.specTypeFunctions.rotationFromPlayer(proto));
 			}
 			this.setAplRotation(eventID, proto.rotation || APLRotation.create())
-			this.setSpecOptions(eventID, this.specTypeFunctions.optionsFromPlayer(proto));
-
-			this.aplRotation = proto.rotation || APLRotation.create();
-			this.rotationChangeEmitter.emit(eventID);
 
 			const options = this.getSpecOptions();
 			for (let key in options) {
