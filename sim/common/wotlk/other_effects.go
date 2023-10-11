@@ -360,7 +360,7 @@ func init() {
 
 		core.ApplyProcTriggerCallback(&character.Unit, activeAura, core.ProcTrigger{
 			Callback: core.CallbackOnSpellHitDealt,
-			ProcMask: core.ProcMaskSpellDamage,
+			ProcMask: core.ProcMaskSpellOrProc,
 			Outcome:  core.OutcomeCrit,
 			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
 				activeAura.RemoveStack(sim)

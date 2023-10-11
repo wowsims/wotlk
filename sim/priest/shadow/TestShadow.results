@@ -476,8 +476,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-NevermeltingIceCrystal-50259"
  value: {
-  dps: 7384.06723
-  tps: 7120.60249
+  dps: 7232.80061
+  tps: 6969.44196
  }
 }
 dps_results: {
