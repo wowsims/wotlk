@@ -96,8 +96,8 @@ func (rot *APLRotation) newValueSpellCastTime(config *proto.APLValueSpellCastTim
 func (value *APLValueSpellCastTime) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeDuration
 }
-func (value *APLValueSpellCastTime) GetDuration(sim *Simulation) time.Duration {
-	return value.spell.Unit.ApplyCastSpeedForSpell(value.spell.DefaultCast.CastTime, value.spell)
+func (value *APLValueSpellCastTime) GetDuration(_ *Simulation) time.Duration {
+	return value.spell.CastTime()
 }
 func (value *APLValueSpellCastTime) String() string {
 	return fmt.Sprintf("Cast Time(%s)", value.spell.ActionID)
@@ -120,7 +120,7 @@ func (rot *APLRotation) newValueSpellChannelTime(config *proto.APLValueSpellChan
 func (value *APLValueSpellChannelTime) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeDuration
 }
-func (value *APLValueSpellChannelTime) GetDuration(sim *Simulation) time.Duration {
+func (value *APLValueSpellChannelTime) GetDuration(_ *Simulation) time.Duration {
 	return value.spell.Unit.ApplyCastSpeedForSpell(value.spell.DefaultCast.ChannelTime, value.spell)
 }
 func (value *APLValueSpellChannelTime) String() string {
@@ -144,7 +144,7 @@ func (rot *APLRotation) newValueSpellTravelTime(config *proto.APLValueSpellTrave
 func (value *APLValueSpellTravelTime) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeDuration
 }
-func (value *APLValueSpellTravelTime) GetDuration(sim *Simulation) time.Duration {
+func (value *APLValueSpellTravelTime) GetDuration(_ *Simulation) time.Duration {
 	return value.spell.TravelTime()
 }
 func (value *APLValueSpellTravelTime) String() string {
@@ -192,7 +192,7 @@ func (rot *APLRotation) newValueSpellIsChanneling(config *proto.APLValueSpellIsC
 func (value *APLValueSpellIsChanneling) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeBool
 }
-func (value *APLValueSpellIsChanneling) GetBool(sim *Simulation) bool {
+func (value *APLValueSpellIsChanneling) GetBool(_ *Simulation) bool {
 	return value.spell.Unit.ChanneledDot != nil && value.spell.Unit.ChanneledDot.Spell == value.spell
 }
 func (value *APLValueSpellIsChanneling) String() string {
@@ -216,7 +216,7 @@ func (rot *APLRotation) newValueSpellChanneledTicks(config *proto.APLValueSpellC
 func (value *APLValueSpellChanneledTicks) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeInt
 }
-func (value *APLValueSpellChanneledTicks) GetInt(sim *Simulation) int32 {
+func (value *APLValueSpellChanneledTicks) GetInt(_ *Simulation) int32 {
 	channeledDot := value.spell.Unit.ChanneledDot
 	if channeledDot == nil {
 		return 0

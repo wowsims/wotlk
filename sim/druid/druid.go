@@ -103,7 +103,6 @@ type Druid struct {
 	Treant1                 *TreantPet
 	Treant2                 *TreantPet
 	Treant3                 *TreantPet
-	OwlkinFrenzyTimings     []float64
 
 	form         DruidForm
 	disabledMCDs []*core.MajorCooldown

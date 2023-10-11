@@ -162,6 +162,7 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 				// Preset rotations that the user can quickly select.
 				rotations: [
 					Presets.ROTATION_FURY,
+					Presets.ROTATION_FURY_SUNDER,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
