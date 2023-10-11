@@ -463,8 +463,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-NevermeltingIceCrystal-50259"
  value: {
-  dps: 6727.7319
-  tps: 4776.68965
+  dps: 6583.88452
+  tps: 4674.55801
  }
 }
 dps_results: {

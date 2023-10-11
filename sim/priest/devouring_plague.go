@@ -19,7 +19,7 @@ func (priest *Priest) registerDevouringPlagueSpell() {
 		impDevouringPlague = priest.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 63675},
 			SpellSchool: core.SpellSchoolShadow,
-			ProcMask:    core.ProcMaskProc, // this can proc things like Talisman of Volatile Power
+			ProcMask:    core.ProcMaskSuppressedProc, // this can proc things like Talisman of Volatile Power
 			Flags:       core.SpellFlagDisease,
 
 			BonusHitRating: float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,

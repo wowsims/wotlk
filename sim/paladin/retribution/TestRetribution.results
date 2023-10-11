@@ -634,8 +634,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-NevermeltingIceCrystal-50259"
  value: {
-  dps: 6555.96091
-  tps: 6641.44533
+  dps: 6478.3902
+  tps: 6563.87462
   dtps: 10.29273
  }
 }
