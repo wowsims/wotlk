@@ -37,6 +37,13 @@ export const SelfInnervate = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.S
 	},
 });
 
+export const OkfUptime = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecBalanceDruid>({
+	fieldName: 'okfUptime',
+	label: 'Owlkin Frenzy Uptime (%)',
+	labelTooltip: 'Percentage of fight uptime for Owlkin Frenzy',
+	percent: true,
+});
+
 export const BalanceDruidRotationConfig = {
 	inputs: [
 		InputHelpers.makeRotationEnumInput<Spec.SpecBalanceDruid, RotationType>({
@@ -151,14 +158,6 @@ export const BalanceDruidRotationConfig = {
 			label: 'Use Battle Res',
 			labelTooltip: 'Cast Battle Res on an ally sometime during the encounter.',
 			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
-		}),
-		InputHelpers.makeRotationNumberInput<Spec.SpecBalanceDruid>({
-			fieldName: 'okfPpm',
-			label: 'Owlkin Frenzy PPM',
-			labelTooltip: 'Amount of Owlkin Frenzy procs per minute.',
-			showWhen: (player: Player<Spec.SpecBalanceDruid>) => player.getRotation().type == RotationType.Manual,
-			float: true,
-			positive: true,
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecBalanceDruid>({
 			fieldName: 'playerLatency',

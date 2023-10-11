@@ -182,7 +182,7 @@ message BalanceDruid {
 		bool use_smart_cooldowns = 9;
 		bool maintain_faerie_fire = 10;
 		int32 player_latency = 11;
-		float okf_ppm = 14;
+		float okf_ppm = 14 [deprecated = true];
 
 		enum EclipsePrio {
 			Lunar = 0;
@@ -207,7 +207,8 @@ message BalanceDruid {
 
   message Options {
     UnitReference innervate_target = 1;
-	}
+	float okf_uptime = 2;
+  }
   Options options = 3;
 }
 

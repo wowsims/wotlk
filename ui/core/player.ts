@@ -1341,6 +1341,14 @@ export class Player<SpecType extends Spec> {
 				}
 			}
 
+			if (this.spec == Spec.SpecBalanceDruid) {
+				const rot = this.getRotation() as SpecRotation<Spec.SpecBalanceDruid>;
+				if (rot.okfPpm) {
+					rot.okfPpm = 0;
+					this.setRotation(eventID, rot as SpecRotation<SpecType>);
+				}
+			}
+
 			if (this.spec == Spec.SpecHunter) {
 				const rot = this.getRotation() as SpecRotation<Spec.SpecHunter>;
 				if (rot.timeToTrapWeaveMs) {

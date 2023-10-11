@@ -1,6 +1,8 @@
 package balance
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/common/wotlk"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
@@ -31,6 +33,7 @@ func NewBalanceDruid(character *core.Character, options *proto.Player) *BalanceD
 
 	moonkin := &BalanceDruid{
 		Druid:    druid.New(character, druid.Moonkin, selfBuffs, options.TalentsString),
+		Options:  balanceOptions.Options,
 		Rotation: balanceOptions.Rotation,
 	}
 
@@ -52,6 +55,7 @@ type BalanceOnUseTrinket struct {
 type BalanceDruid struct {
 	*druid.Druid
 
+	Options            *proto.BalanceDruid_Options
 	Rotation           *proto.BalanceDruid_Rotation
 	CooldownsAvailable []*core.MajorCooldown
 	LastCast           *druid.DruidSpell
@@ -73,19 +77,17 @@ func (moonkin *BalanceDruid) GetDruid() *druid.Druid {
 func (moonkin *BalanceDruid) Initialize() {
 	moonkin.Druid.Initialize()
 	moonkin.RegisterBalanceSpells()
+
+	moonkin.Env.RegisterPreFinalizeEffect(func() {
+		if moonkin.OwlkinFrenzyAura != nil && moonkin.Options.OkfUptime > 0 {
+			core.ApplyFixedUptimeAura(moonkin.OwlkinFrenzyAura, float64(moonkin.Options.OkfUptime), time.Second*5, 0)
+		}
+	})
 }
 
 func (moonkin *BalanceDruid) Reset(sim *core.Simulation) {
 	moonkin.Druid.Reset(sim)
 	moonkin.RebirthTiming = moonkin.Env.BaseDuration.Seconds() * sim.RandomFloat("Rebirth Timing")
-
-	if moonkin.Talents.OwlkinFrenzy > 0 {
-		for i := int32(0); i < int32(moonkin.Env.BaseDuration.Minutes()); i++ {
-			if sim.RandomFloat("Owlkin Frenzy Proc") < float64(moonkin.Rotation.OkfPpm) {
-				moonkin.OwlkinFrenzyTimings = append(moonkin.OwlkinFrenzyTimings, sim.RandomFloat("Owlkin Frenzy Timing")*moonkin.Env.BaseDuration.Seconds())
-			}
-		}
-	}
 
 	if moonkin.Rotation.Type == proto.BalanceDruid_Rotation_Default {
 		moonkin.Rotation.MfUsage = proto.BalanceDruid_Rotation_BeforeLunar

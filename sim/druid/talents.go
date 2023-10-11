@@ -558,21 +558,6 @@ func (druid *Druid) applyOwlkinFrenzy() {
 			druid.PseudoStats.DamageDealtMultiplier /= 1.1
 		},
 	})
-	druid.RegisterAura(core.Aura{
-		Label:    "Owlkin Frenzy",
-		Duration: core.NeverExpires,
-		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Activate(sim)
-		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			for i := 0; i < len(druid.OwlkinFrenzyTimings); i++ {
-				if druid.OwlkinFrenzyTimings[i] < sim.CurrentTime.Seconds() && druid.OwlkinFrenzyTimings[i] != 0 {
-					druid.OwlkinFrenzyAura.Activate(sim)
-					druid.OwlkinFrenzyTimings[i] = 0
-				}
-			}
-		},
-	})
 }
 
 func (druid *Druid) applyImprovedLotp() {
