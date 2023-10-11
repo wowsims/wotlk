@@ -280,7 +280,7 @@ dps_results: {
 dps_results: {
  key: "TestSV-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 7381.71423
+  dps: 7381.70957
   tps: 6356.6045
  }
 }
@@ -883,7 +883,7 @@ dps_results: {
 dps_results: {
  key: "TestSV-Average-Default"
  value: {
-  dps: 7613.42898
+  dps: 7613.42893
   tps: 6565.95875
  }
 }

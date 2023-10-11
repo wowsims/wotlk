@@ -154,18 +154,14 @@ func (ghoulPet *GhoulPet) Reset(_ *core.Simulation) {
 }
 
 func (ghoulPet *GhoulPet) OnGCDReady(sim *core.Simulation) {
-	// Apply uptime for permanent pet ghoul
-	if !ghoulPet.IsGuardian() {
-		percentRemaining := sim.GetRemainingDurationPercent()
-		if percentRemaining < 1.0-ghoulPet.uptimePercent { // once fight is % completed, disable pet.
+	if ghoulPet.uptimePercent < 1.0 { // Apply uptime for permanent pet ghoul
+		if sim.GetRemainingDurationPercent() < 1.0-ghoulPet.uptimePercent { // once fight is % completed, disable pet.
 			ghoulPet.Pet.Disable(sim)
 			return
 		}
 	}
 
-	target := ghoulPet.CurrentTarget
-
-	if !ghoulPet.ClawAbility.TryCast(sim, target, ghoulPet) {
+	if !ghoulPet.ClawAbility.TryCast(sim, ghoulPet.CurrentTarget, ghoulPet) {
 		ghoulPet.DoNothing()
 	}
 }
