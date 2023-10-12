@@ -221,15 +221,15 @@ dps_results: {
 dps_results: {
  key: "TestBalancePhase3-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 11645.4463
-  tps: 11352.54545
+  dps: 11648.63144
+  tps: 11355.73059
  }
 }
 dps_results: {
  key: "TestBalancePhase3-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 11500.20549
-  tps: 11206.91429
+  dps: 11502.17785
+  tps: 11208.88664
  }
 }
 dps_results: {
@@ -970,8 +970,8 @@ dps_results: {
 dps_results: {
  key: "TestBalancePhase3-Settings-Tauren-P3-Default-basic_p3-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6156.42751
-  tps: 6942.84154
+  dps: 6156.21369
+  tps: 6942.62772
  }
 }
 dps_results: {
