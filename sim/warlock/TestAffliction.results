@@ -147,8 +147,8 @@ dps_results: {
 dps_results: {
  key: "TestAffliction-AllItems-DarkCoven'sRegalia"
  value: {
-  dps: 10726.74648
-  tps: 9701.42129
+  dps: 11571.89745
+  tps: 10515.76953
  }
 }
 dps_results: {

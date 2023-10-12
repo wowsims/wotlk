@@ -702,17 +702,17 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-Scourgelord'sBattlegear"
  value: {
-  dps: 10316.25751
-  tps: 6866.1521
-  hps: 301.93865
+  dps: 11176.76821
+  tps: 7488.5116
+  hps: 337.25075
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-Scourgelord'sPlate"
  value: {
-  dps: 9408.45404
-  tps: 6193.21741
-  hps: 323.53896
+  dps: 9848.12263
+  tps: 6488.55742
+  hps: 361.94891
  }
 }
 dps_results: {

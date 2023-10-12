@@ -158,17 +158,17 @@ dps_results: {
 dps_results: {
  key: "TestHoly-AllItems-CrimsonAcolyte'sRaiment"
  value: {
-  dps: 107.99273
-  tps: 40.99214
-  hps: 5323.10137
+  dps: 114.88597
+  tps: 52.49781
+  hps: 6182.29604
  }
 }
 dps_results: {
  key: "TestHoly-AllItems-CrimsonAcolyte'sRegalia"
  value: {
-  dps: 110.99536
-  tps: 45.22971
-  hps: 4906.69858
+  dps: 120.04569
+  tps: 45.23595
+  hps: 5340.0344
  }
 }
 dps_results: {

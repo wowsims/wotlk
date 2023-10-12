@@ -104,8 +104,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Bloodmage'sRegalia"
  value: {
-  dps: 9096.16315
-  tps: 7517.10841
+  dps: 9796.4471
+  tps: 8125.81506
  }
 }
 dps_results: {

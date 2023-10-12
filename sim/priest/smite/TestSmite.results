@@ -147,15 +147,15 @@ dps_results: {
 dps_results: {
  key: "TestSmite-AllItems-CrimsonAcolyte'sRaiment"
  value: {
-  dps: 3647.28111
-  tps: 3004.00941
+  dps: 4044.12149
+  tps: 3322.15915
  }
 }
 dps_results: {
  key: "TestSmite-AllItems-CrimsonAcolyte'sRegalia"
  value: {
-  dps: 3588.21096
-  tps: 2948.83218
+  dps: 4089.41418
+  tps: 3356.13556
  }
 }
 dps_results: {

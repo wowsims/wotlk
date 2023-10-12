@@ -46,8 +46,8 @@ character_stats_results: {
 dps_results: {
  key: "TestMM-AllItems-Ahn'KaharBloodHunter'sBattlegear"
  value: {
-  dps: 7766.81708
-  tps: 6877.6243
+  dps: 8487.5486
+  tps: 7563.95414
  }
 }
 dps_results: {

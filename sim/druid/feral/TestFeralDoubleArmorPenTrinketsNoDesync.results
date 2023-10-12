@@ -526,15 +526,15 @@ dps_results: {
 dps_results: {
  key: "TestFeralDoubleArmorPenTrinketsNoDesync-AllItems-LasherweaveBattlegear"
  value: {
-  dps: 9912.93809
-  tps: 7102.57736
+  dps: 10803.29164
+  tps: 7735.62582
  }
 }
 dps_results: {
  key: "TestFeralDoubleArmorPenTrinketsNoDesync-AllItems-LasherweaveRegalia"
  value: {
-  dps: 7517.06188
-  tps: 5405.1698
+  dps: 7737.24841
+  tps: 5561.42745
  }
 }
 dps_results: {

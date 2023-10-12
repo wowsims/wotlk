@@ -515,15 +515,15 @@ dps_results: {
 dps_results: {
  key: "TestBalancePhase3-AllItems-LasherweaveBattlegear"
  value: {
-  dps: 6328.57119
-  tps: 6039.4286
+  dps: 6558.24029
+  tps: 6276.56564
  }
 }
 dps_results: {
  key: "TestBalancePhase3-AllItems-LasherweaveRegalia"
  value: {
-  dps: 10135.06327
-  tps: 9857.9292
+  dps: 10923.42073
+  tps: 10639.22141
  }
 }
 dps_results: {
