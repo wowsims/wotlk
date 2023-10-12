@@ -164,6 +164,7 @@ func (aura *Aura) Refresh(sim *Simulation) {
 		aura.expires = sim.CurrentTime + aura.Duration
 		if aura.expires < aura.Unit.minExpires {
 			aura.Unit.minExpires = aura.expires
+			sim.rescheduleTracker(aura.expires)
 		}
 	}
 }
@@ -474,14 +475,16 @@ func (at *auraTracker) reset(sim *Simulation) {
 		resetEffect(sim)
 	}
 
+	at.minExpires = NeverExpires
+
 	for _, aura := range at.auras {
 		aura.reset(sim)
 	}
 }
 
-func (at *auraTracker) advance(sim *Simulation) {
+func (at *auraTracker) advance(sim *Simulation) time.Duration {
 	if at.minExpires > sim.CurrentTime {
-		return
+		return at.minExpires
 	}
 
 restart:
@@ -496,6 +499,7 @@ restart:
 		}
 	}
 	at.minExpires = minExpires
+	return at.minExpires
 }
 
 func (at *auraTracker) doneIteration(sim *Simulation) {

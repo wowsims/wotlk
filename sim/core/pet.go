@@ -110,10 +110,6 @@ func (pet *Pet) reset(sim *Simulation, agent PetAgent) {
 		pet.Enable(sim, agent)
 	}
 }
-func (pet *Pet) advance(sim *Simulation) {
-	pet.Character.advance(sim)
-}
-
 func (pet *Pet) doneIteration(sim *Simulation) {
 	pet.Character.doneIteration(sim)
 	pet.isReset = false
@@ -172,6 +168,8 @@ func (pet *Pet) Enable(sim *Simulation, petAgent PetAgent) {
 		pet.Log(sim, "Pet inherited stats: %s", pet.ApplyStatDependencies(pet.inheritedStats))
 		pet.Log(sim, "Pet summoned")
 	}
+
+	sim.addTracker(&pet.auraTracker)
 }
 
 // Helper for enabling a pet that will expire after a certain duration.
@@ -248,6 +246,8 @@ func (pet *Pet) Disable(sim *Simulation) {
 	if pet.OnPetDisable != nil {
 		pet.OnPetDisable(sim)
 	}
+
+	sim.removeTracker(&pet.auraTracker)
 
 	if sim.Log != nil {
 		pet.Log(sim, "Pet dismissed")

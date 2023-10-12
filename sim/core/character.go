@@ -513,14 +513,16 @@ func (character *Character) reset(sim *Simulation, agent Agent) {
 }
 
 // Advance moves time forward counting down auras, CDs, mana regen, etc
-func (character *Character) advance(sim *Simulation) {
-	character.Unit.advance(sim)
+func (character *Character) advance(sim *Simulation) time.Duration {
+	minExpires := character.Unit.advance(sim)
 
 	for _, pet := range character.Pets {
 		if pet.enabled {
-			pet.Unit.advance(sim)
+			minExpires = min(minExpires, pet.Unit.advance(sim))
 		}
 	}
+
+	return minExpires
 }
 
 func (character *Character) HasProfession(prof proto.Profession) bool {
