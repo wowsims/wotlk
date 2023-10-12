@@ -519,15 +519,15 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-LightswornBattlegear"
  value: {
-  dps: 3773.29497
-  tps: 8987.64901
+  dps: 4233.13748
+  tps: 10048.82838
  }
 }
 dps_results: {
  key: "TestProtection-AllItems-LightswornPlate"
  value: {
-  dps: 3347.57969
-  tps: 8026.3893
+  dps: 3555.27557
+  tps: 8516.12963
  }
 }
 dps_results: {

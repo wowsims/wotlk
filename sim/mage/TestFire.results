@@ -104,8 +104,8 @@ dps_results: {
 dps_results: {
  key: "TestFire-AllItems-Bloodmage'sRegalia"
  value: {
-  dps: 11110.93471
-  tps: 8939.9109
+  dps: 12542.74805
+  tps: 10088.86588
  }
 }
 dps_results: {

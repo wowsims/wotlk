@@ -147,15 +147,15 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-CrimsonAcolyte'sRaiment"
  value: {
-  dps: 6847.16319
-  tps: 6575.10611
+  dps: 7496.02559
+  tps: 7200.5699
  }
 }
 dps_results: {
  key: "TestShadow-AllItems-CrimsonAcolyte'sRegalia"
  value: {
-  dps: 7969.16809
-  tps: 7720.50568
+  dps: 8685.1484
+  tps: 8419.6496
  }
 }
 dps_results: {

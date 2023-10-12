@@ -526,15 +526,15 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-LasherweaveBattlegear"
  value: {
-  dps: 8298.13359
-  tps: 5952.99991
+  dps: 9158.02539
+  tps: 6563.97181
  }
 }
 dps_results: {
  key: "TestFeral-AllItems-LasherweaveRegalia"
  value: {
-  dps: 6188.96419
-  tps: 4502.16764
+  dps: 6353.29055
+  tps: 4624.15413
  }
 }
 dps_results: {

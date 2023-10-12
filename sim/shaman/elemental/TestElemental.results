@@ -427,15 +427,15 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-FrostWitch'sBattlegear"
  value: {
-  dps: 5721.11019
-  tps: 3180.81722
+  dps: 6237.23226
+  tps: 3493.95384
  }
 }
 dps_results: {
  key: "TestElemental-AllItems-FrostWitch'sRegalia"
  value: {
-  dps: 7439.38361
-  tps: 4146.47817
+  dps: 8163.7167
+  tps: 4570.29737
  }
 }
 dps_results: {
