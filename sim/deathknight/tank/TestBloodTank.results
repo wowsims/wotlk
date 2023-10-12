@@ -596,15 +596,15 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-Scourgelord'sBattlegear"
  value: {
-  dps: 2556.55703
-  tps: 7915.65274
+  dps: 2819.12821
+  tps: 8588.61947
  }
 }
 dps_results: {
  key: "TestBloodTank-AllItems-Scourgelord'sPlate"
  value: {
-  dps: 2226.70592
-  tps: 6799.66515
+  dps: 2370.78068
+  tps: 7250.91224
  }
 }
 dps_results: {

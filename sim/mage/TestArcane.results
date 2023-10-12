@@ -104,8 +104,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-Bloodmage'sRegalia"
  value: {
-  dps: 12007.26554
-  tps: 7349.71517
+  dps: 13049.57994
+  tps: 7986.7976
  }
 }
 dps_results: {

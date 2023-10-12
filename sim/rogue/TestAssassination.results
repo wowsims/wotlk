@@ -575,8 +575,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-Shadowblade'sBattlegear"
  value: {
-  dps: 7286.00583
-  tps: 5173.06414
+  dps: 8099.60908
+  tps: 5750.72245
  }
 }
 dps_results: {

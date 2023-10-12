@@ -189,15 +189,15 @@ dps_results: {
 dps_results: {
  key: "TestDisc-AllItems-CrimsonAcolyte'sRaiment"
  value: {
-  tps: 15.30562
-  hps: 3620.60223
+  tps: 15.8222
+  hps: 3832.87641
  }
 }
 dps_results: {
  key: "TestDisc-AllItems-CrimsonAcolyte'sRegalia"
  value: {
-  tps: 16.02929
-  hps: 3686.08594
+  tps: 17.01744
+  hps: 3916.75797
  }
 }
 dps_results: {

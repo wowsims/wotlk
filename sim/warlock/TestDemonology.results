@@ -147,8 +147,8 @@ dps_results: {
 dps_results: {
  key: "TestDemonology-AllItems-DarkCoven'sRegalia"
  value: {
-  dps: 10167.12313
-  tps: 8632.04917
+  dps: 10916.78497
+  tps: 9327.5075
  }
 }
 dps_results: {

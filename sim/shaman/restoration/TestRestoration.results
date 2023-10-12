@@ -338,13 +338,13 @@ dps_results: {
 dps_results: {
  key: "TestRestoration-AllItems-FrostWitch'sBattlegear"
  value: {
-  dps: 394.75407
+  dps: 402.2115
  }
 }
 dps_results: {
  key: "TestRestoration-AllItems-FrostWitch'sRegalia"
  value: {
-  dps: 474.58823
+  dps: 508.326
  }
 }
 dps_results: {
