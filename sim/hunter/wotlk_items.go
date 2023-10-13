@@ -183,7 +183,7 @@ var ItemSetAhnKaharBloodHuntersBattlegear = core.NewItemSet(core.ItemSet{
 					aura.Unit.AddStatsDynamic(sim, curBonus)
 				},
 				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-					aura.Unit.AddStatsDynamic(sim, curBonus.Multiply(-1))
+					aura.Unit.AddStatsDynamic(sim, curBonus.Invert())
 				},
 			})
 

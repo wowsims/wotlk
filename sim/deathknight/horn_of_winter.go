@@ -14,7 +14,7 @@ func (dk *Deathknight) registerHornOfWinterSpell() {
 	rpMetrics := dk.NewRunicPowerMetrics(actionID)
 
 	bonusStats := stats.Stats{stats.Strength: 155.0, stats.Agility: 155.0}
-	negativeStats := bonusStats.Multiply(-1)
+	negativeStats := bonusStats.Invert()
 
 	dk.HornOfWinterAura = dk.RegisterAura(core.Aura{
 		Label:    "Horn of Winter",

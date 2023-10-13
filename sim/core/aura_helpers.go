@@ -222,7 +222,7 @@ func (character *Character) NewTemporaryStatsAuraWrapped(auraLabel string, actio
 			if sim.Log != nil {
 				character.Log(sim, "Lost %s from fading %s.", buffs.FlatString(), actionID)
 			}
-			character.AddStatsDynamic(sim, buffs.Multiply(-1))
+			character.AddStatsDynamic(sim, buffs.Invert())
 		},
 	}
 
