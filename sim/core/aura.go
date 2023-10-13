@@ -488,17 +488,14 @@ func (at *auraTracker) advance(sim *Simulation) time.Duration {
 	}
 
 restart:
-	minExpires := NeverExpires
+	at.minExpires = NeverExpires
 	for _, aura := range at.activeAuras {
 		if aura.expires <= sim.CurrentTime && aura.expires != 0 {
 			aura.Deactivate(sim)
 			goto restart // activeAuras have changed
 		}
-		if aura.expires < minExpires {
-			minExpires = aura.expires
-		}
+		at.minExpires = min(at.minExpires, aura.expires)
 	}
-	at.minExpires = minExpires
 	return at.minExpires
 }
 

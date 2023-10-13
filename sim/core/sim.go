@@ -53,11 +53,8 @@ func (sim *Simulation) rescheduleTracker(trackerTime time.Duration) {
 }
 
 func (sim *Simulation) addTracker(tracker *auraTracker) {
-	if idx := slices.Index(sim.trackers, tracker); idx != -1 {
-		log.Panic("addTracker() adding duplicate tracker")
-	}
 	sim.trackers = append(sim.trackers, tracker)
-	sim.minTrackerTime = min(sim.minTrackerTime, tracker.minExpires)
+	sim.rescheduleTracker(tracker.minExpires)
 }
 
 func (sim *Simulation) removeTracker(tracker *auraTracker) {
@@ -527,83 +524,10 @@ func (sim *Simulation) advance(nextTime time.Duration) {
 		}
 	}
 
-	/*
-		minTrackerTimeShould := NeverExpires
-		trackersShould := make([]*auraTracker, 0, len(sim.trackers))
-		for _, character := range sim.characters {
-			minTrackerTimeShould = min(minTrackerTimeShould, character.minExpires)
-			trackersShould = append(trackersShould, &character.auraTracker)
-
-			for _, pet := range character.Pets {
-				if pet.enabled {
-					minTrackerTimeShould = min(minTrackerTimeShould, pet.minExpires)
-					trackersShould = append(trackersShould, &pet.auraTracker)
-				}
-			}
-		}
-
-		for _, target := range sim.Encounter.Targets {
-			minTrackerTimeShould = min(minTrackerTimeShould, target.minExpires)
-			trackersShould = append(trackersShould, &target.auraTracker)
-		}
-
-		// DEBUG minTrackerTime
-		if sim.minTrackerTime > minTrackerTimeShould {
-			log.Printf("%.3f - minTrackerTime %s > should %s", sim.CurrentTime.Seconds(), sim.minTrackerTime, minTrackerTimeShould)
-
-			for i, character := range sim.characters {
-				log.Printf("character[%d] - %s", i, character.minExpires)
-
-				for j, pet := range character.Pets {
-					if pet.enabled {
-						log.Printf("character[%d].pet[%d] - %s", i, j, pet.minExpires)
-					}
-				}
-			}
-
-			for i, target := range sim.Encounter.Targets {
-				log.Printf("target[%d] - %s", i, target.minExpires)
-			}
-
-			log.Fatalf("%.3f - minTrackerTime %s > should %s", sim.CurrentTime.Seconds(), sim.minTrackerTime, minTrackerTimeShould)
-		}
-
-		// DEBUG trackers
-		if len(sim.trackers) != len(trackersShould) {
-			log.Printf("%.3f - trackers %d, should %d", sim.CurrentTime.Seconds(), len(sim.trackers), len(trackersShould))
-
-			for i, character := range sim.characters {
-				log.Printf("character[%d] - added = %t", i, slices.Contains(sim.trackers, &character.auraTracker))
-
-				for j, pet := range character.Pets {
-					if pet.enabled {
-						log.Printf("character[%d].pet[%d] - added = %t", i, j, slices.Contains(sim.trackers, &pet.auraTracker))
-					}
-				}
-			}
-
-			for i, target := range sim.Encounter.Targets {
-				log.Printf("target[%d] - added = %t", i, slices.Contains(sim.trackers, &target.auraTracker))
-			}
-
-			log.Fatalf("%.3f - trackers %d, should %d", sim.CurrentTime.Seconds(), len(sim.trackers), len(trackersShould))
-		}
-	*/
-
 	if sim.CurrentTime >= sim.minTrackerTime {
-		if true {
-			for _, at := range sim.trackers {
-				sim.minTrackerTime = min(sim.minTrackerTime, at.advance(sim))
-			}
-		} else {
-			sim.minTrackerTime = NeverExpires
-			for _, character := range sim.characters {
-				sim.minTrackerTime = min(sim.minTrackerTime, character.advance(sim))
-			}
-
-			for _, target := range sim.Encounter.Targets {
-				sim.minTrackerTime = min(sim.minTrackerTime, target.advance(sim))
-			}
+		sim.minTrackerTime = sim.trackers[0].advance(sim)
+		for _, at := range sim.trackers[1:] {
+			sim.minTrackerTime = min(sim.minTrackerTime, at.advance(sim))
 		}
 	}
 }

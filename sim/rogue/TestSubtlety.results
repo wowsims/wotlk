@@ -855,8 +855,8 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-Settings-Orc-P2 Subtlety-Subtlety--NoBuffs-LongMultiTarget"
  value: {
-  dps: 19003.30323
-  tps: 13492.34529
+  dps: 19003.33314
+  tps: 13492.36653
  }
 }
 dps_results: {

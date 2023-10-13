@@ -251,10 +251,7 @@ func (pet *Pet) Disable(sim *Simulation) {
 
 	if sim.Log != nil {
 		pet.Log(sim, "Pet dismissed")
-
-		if sim.Log != nil {
-			pet.Log(sim, pet.GetStats().String())
-		}
+		pet.Log(sim, pet.GetStats().String())
 	}
 }
 

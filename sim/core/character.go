@@ -495,10 +495,6 @@ func (character *Character) FillPlayerStats(playerStats *proto.PlayerStats) {
 	}
 }
 
-func (character *Character) init(sim *Simulation) {
-	character.Unit.init(sim)
-}
-
 func (character *Character) reset(sim *Simulation, agent Agent) {
 	character.Unit.reset(sim, agent)
 	character.majorCooldownManager.reset(sim)
@@ -510,19 +506,6 @@ func (character *Character) reset(sim *Simulation, agent Agent) {
 	for _, petAgent := range character.PetAgents {
 		petAgent.GetPet().reset(sim, petAgent)
 	}
-}
-
-// Advance moves time forward counting down auras, CDs, mana regen, etc
-func (character *Character) advance(sim *Simulation) time.Duration {
-	minExpires := character.Unit.advance(sim)
-
-	for _, pet := range character.Pets {
-		if pet.enabled {
-			minExpires = min(minExpires, pet.Unit.advance(sim))
-		}
-	}
-
-	return minExpires
 }
 
 func (character *Character) HasProfession(prof proto.Profession) bool {
