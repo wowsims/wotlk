@@ -487,16 +487,9 @@ func (unit *Unit) startPull(sim *Simulation) {
 	}
 }
 
-// Advance moves time forward counting down auras, CDs, mana regen, etc
+// Advance moves time forward counting down auras, and nothing else, currently.
 func (unit *Unit) advance(sim *Simulation) {
 	unit.auraTracker.advance(sim)
-
-	if hc := &unit.Hardcast; hc.Expires != startingCDTime && hc.Expires <= sim.CurrentTime {
-		hc.Expires = startingCDTime
-		if hc.OnComplete != nil {
-			hc.OnComplete(sim, hc.Target)
-		}
-	}
 }
 
 func (unit *Unit) doneIteration(sim *Simulation) {

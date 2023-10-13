@@ -26,6 +26,7 @@ import * as PresetUtils from '../core/preset_utils.js';
 import * as Tooltips from '../core/constants/tooltips.js';
 
 import FuryApl from './apls/fury.apl.json';
+import FurySunderApl from './apls/fury_sunder.apl.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -101,6 +102,16 @@ export const ArmsRotation = WarriorRotation.create({
 });
 
 export const ROTATION_FURY = PresetUtils.makePresetAPLRotation('Fury', FuryApl, { talentTree: 1 });
+
+export const ROTATION_FURY_SUNDER = {
+	name: 'Fury + Sunder',
+	enableWhen: (player: Player<Spec.SpecWarrior>) => player.getTalentTree() == 1,
+	rotation: SavedRotation.create({
+		specRotationOptionsJson: WarriorRotation.toJsonString(WarriorRotation.create({
+		})),
+		rotation: APLRotation.fromJsonString(JSON.stringify(FurySunderApl)),
+	}),
+};
 
 export const DefaultOptions = WarriorOptions.create({
 	startingRage: 0,

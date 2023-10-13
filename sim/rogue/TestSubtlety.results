@@ -463,8 +463,8 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-AllItems-NevermeltingIceCrystal-50259"
  value: {
-  dps: 8017.0266
-  tps: 5691.33135
+  dps: 7930.30075
+  tps: 5626.91318
  }
 }
 dps_results: {
@@ -575,8 +575,8 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-AllItems-Shadowblade'sBattlegear"
  value: {
-  dps: 7727.98781
-  tps: 5486.07844
+  dps: 8457.71517
+  tps: 6001.34137
  }
 }
 dps_results: {

@@ -147,8 +147,8 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-AllItems-DarkCoven'sRegalia"
  value: {
-  dps: 10134.23021
-  tps: 8306.50491
+  dps: 10872.6253
+  tps: 8955.01924
  }
 }
 dps_results: {
@@ -224,15 +224,15 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 11409.33833
-  tps: 9321.46805
+  dps: 11409.2022
+  tps: 9321.33191
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 11351.32108
-  tps: 9271.16465
+  dps: 11351.28849
+  tps: 9271.13206
  }
 }
 dps_results: {
@@ -763,15 +763,15 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-Settings-Orc-P2-Destruction Warlock--NoBuffs-LongSingleTarget"
  value: {
-  dps: 6304.95062
-  tps: 5337.64562
+  dps: 6304.42609
+  tps: 5337.10721
  }
 }
 dps_results: {
  key: "TestDestruction-Settings-Orc-P2-Destruction Warlock--NoBuffs-ShortSingleTarget"
  value: {
-  dps: 6368.62973
-  tps: 5364.44408
+  dps: 6366.00707
+  tps: 5361.75203
  }
 }
 dps_results: {

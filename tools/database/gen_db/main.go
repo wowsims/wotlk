@@ -210,6 +210,20 @@ func ApplyGlobalFilters(db *database.WowDatabase) {
 		return true
 	})
 
+	// Theres an invalid 251 t10 set for every class
+	// The invalid set has a higher item id than the 'correct' ones
+	t10invalidItems := core.FilterMap(db.Items, func(_ int32, item *proto.UIItem) bool {
+		return item.SetName != "" && item.Ilvl == 251
+	})
+	db.Items = core.FilterMap(db.Items, func(_ int32, item *proto.UIItem) bool {
+		for _, t10item := range t10invalidItems {
+			if t10item.Name == item.Name && item.Ilvl == t10item.Ilvl && item.Id > t10item.Id {
+				return false
+			}
+		}
+		return true
+	})
+
 	db.Gems = core.FilterMap(db.Gems, func(_ int32, gem *proto.UIGem) bool {
 		if _, ok := database.GemDenyList[gem.Id]; ok {
 			return false
@@ -422,7 +436,7 @@ func getGlyphIDsFromJson(infile string) []*proto.GlyphID {
 
 func CreateTempAgent(r *proto.Raid) core.Agent {
 	encounter := core.MakeSingleTargetEncounter(0.0)
-	env, _, _ := core.NewEnvironment(r, encounter)
+	env, _, _ := core.NewEnvironment(r, encounter, false)
 	return env.Raid.Parties[0].Players[0]
 }
 

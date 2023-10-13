@@ -221,15 +221,15 @@ dps_results: {
 dps_results: {
  key: "TestBalancePhase3-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 11645.4463
-  tps: 11352.54545
+  dps: 11648.63144
+  tps: 11355.73059
  }
 }
 dps_results: {
  key: "TestBalancePhase3-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 11500.20549
-  tps: 11206.91429
+  dps: 11502.17785
+  tps: 11208.88664
  }
 }
 dps_results: {
@@ -515,15 +515,15 @@ dps_results: {
 dps_results: {
  key: "TestBalancePhase3-AllItems-LasherweaveBattlegear"
  value: {
-  dps: 6328.57119
-  tps: 6039.4286
+  dps: 6558.24029
+  tps: 6276.56564
  }
 }
 dps_results: {
  key: "TestBalancePhase3-AllItems-LasherweaveRegalia"
  value: {
-  dps: 10135.06327
-  tps: 9857.9292
+  dps: 10923.42073
+  tps: 10639.22141
  }
 }
 dps_results: {
@@ -970,8 +970,8 @@ dps_results: {
 dps_results: {
  key: "TestBalancePhase3-Settings-Tauren-P3-Default-basic_p3-NoBuffs-LongMultiTarget"
  value: {
-  dps: 6156.42751
-  tps: 6942.84154
+  dps: 6156.21369
+  tps: 6942.62772
  }
 }
 dps_results: {

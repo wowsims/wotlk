@@ -221,15 +221,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 8288.3991
-  tps: 8064.0309
+  dps: 8289.76557
+  tps: 8065.39737
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 8237.94461
-  tps: 8019.31389
+  dps: 8239.31187
+  tps: 8020.68115
  }
 }
 dps_results: {
@@ -515,15 +515,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-LasherweaveBattlegear"
  value: {
-  dps: 3789.15168
-  tps: 3543.20044
+  dps: 3961.64237
+  tps: 3720.13171
  }
 }
 dps_results: {
  key: "TestBalance-AllItems-LasherweaveRegalia"
  value: {
-  dps: 8236.91314
-  tps: 8022.37266
+  dps: 9052.58771
+  tps: 8835.21532
  }
 }
 dps_results: {
@@ -970,15 +970,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-Default-basic_p3-NoBuffs-LongMultiTarget"
  value: {
-  dps: 2975.86585
-  tps: 3235.34744
+  dps: 2974.28351
+  tps: 3233.76509
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P1-Default-basic_p3-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2128.15927
-  tps: 2019.4942
+  dps: 2126.32387
+  tps: 2017.6588
  }
 }
 dps_results: {
@@ -1012,15 +1012,15 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-Default-basic_p3-NoBuffs-LongMultiTarget"
  value: {
-  dps: 4706.08483
-  tps: 5252.78548
+  dps: 4706.01284
+  tps: 5252.71349
  }
 }
 dps_results: {
  key: "TestBalance-Settings-Tauren-P2-4P-Default-basic_p3-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3196.59594
-  tps: 3083.16505
+  dps: 3196.44523
+  tps: 3083.01435
  }
 }
 dps_results: {
@@ -1096,8 +1096,8 @@ dps_results: {
 dps_results: {
  key: "TestBalance-Settings-Tauren-P3-Default-basic_p3-NoBuffs-LongMultiTarget"
  value: {
-  dps: 7167.53114
-  tps: 8174.76366
+  dps: 7167.43242
+  tps: 8174.66493
  }
 }
 dps_results: {

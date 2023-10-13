@@ -602,16 +602,16 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-LightswornBattlegear"
  value: {
-  dps: 6995.57926
-  tps: 7082.65728
+  dps: 7651.62614
+  tps: 7739.21381
   dtps: 9.92959
  }
 }
 dps_results: {
  key: "TestRetribution-AllItems-LightswornPlate"
  value: {
-  dps: 5782.62636
-  tps: 5864.68907
+  dps: 6079.41895
+  tps: 6161.75245
   dtps: 8.90286
  }
 }
@@ -634,8 +634,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-AllItems-NevermeltingIceCrystal-50259"
  value: {
-  dps: 6555.96091
-  tps: 6641.44533
+  dps: 6478.3902
+  tps: 6563.87462
   dtps: 10.29273
  }
 }
