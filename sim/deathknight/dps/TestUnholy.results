@@ -918,8 +918,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-TheTwinBladesofAzzinoth"
  value: {
-  dps: 10596.60128
-  tps: 6872.43752
+  dps: 10596.77085
+  tps: 6872.60709
   hps: 304.79181
  }
 }

@@ -20,6 +20,9 @@ func (value *APLValueAutoTimeToNext) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeDuration
 }
 func (value *APLValueAutoTimeToNext) GetDuration(sim *Simulation) time.Duration {
+	if sim.Log != nil {
+		sim.Log("TimeToNextAuto: %s", max(0, value.unit.AutoAttacks.NextAttackAt()-sim.CurrentTime))
+	}
 	return max(0, value.unit.AutoAttacks.NextAttackAt()-sim.CurrentTime)
 }
 func (value *APLValueAutoTimeToNext) String() string {

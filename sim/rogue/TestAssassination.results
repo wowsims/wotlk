@@ -708,8 +708,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 6752.94737
-  tps: 4794.59264
+  dps: 6752.96191
+  tps: 4794.60296
  }
 }
 dps_results: {

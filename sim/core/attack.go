@@ -508,8 +508,10 @@ func (aa *AutoAttacks) TrySwingMH(sim *Simulation, target *Unit) {
 
 	attackSpell := aa.MaybeReplaceMHSwing(sim, aa.MHAuto)
 
-	attackSpell.Cast(sim, target)
+	// Update swing timer BEFORE the cast, so that APL checks for TimeToNextAuto behave correctly
+	// if the attack causes APL evaluations (e.g. from rage gain).
 	aa.MainhandSwingAt = sim.CurrentTime + aa.curMHSwingDuration
+	attackSpell.Cast(sim, target)
 
 	if !sim.Options.Interactive {
 		if aa.unit.IsUsingAPL {
@@ -537,8 +539,10 @@ func (aa *AutoAttacks) TrySwingOH(sim *Simulation, target *Unit) {
 		return
 	}
 
-	aa.OHAuto.Cast(sim, target)
+	// Update swing timer BEFORE the cast, so that APL checks for TimeToNextAuto behave correctly
+	// if the attack causes APL evaluations (e.g. from rage gain).
 	aa.OffhandSwingAt = sim.CurrentTime + aa.curOHSwingDuration
+	aa.OHAuto.Cast(sim, target)
 
 	if !sim.Options.Interactive {
 		if aa.unit.IsUsingAPL {
@@ -555,8 +559,10 @@ func (aa *AutoAttacks) TrySwingRanged(sim *Simulation, target *Unit) {
 		return
 	}
 
-	aa.RangedAuto.Cast(sim, target)
+	// Update swing timer BEFORE the cast, so that APL checks for TimeToNextAuto behave correctly
+	// if the attack causes APL evaluations.
 	aa.RangedSwingAt = sim.CurrentTime + aa.RangedSwingSpeed()
+	aa.RangedAuto.Cast(sim, target)
 
 	if !sim.Options.Interactive {
 		if aa.unit.IsUsingAPL {
