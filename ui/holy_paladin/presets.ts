@@ -1,9 +1,11 @@
-import { Consumes } from '../core/proto/common.js';
-import { EquipmentSpec } from '../core/proto/common.js';
-import { Flask } from '../core/proto/common.js';
-import { Food } from '../core/proto/common.js';
-import { Potions } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
+import {
+	Consumes,
+	EquipmentSpec,
+	Flask,
+	Food,
+	Potions,
+	Spec,
+} from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import { Player } from '../core/player.js';
 

@@ -13,7 +13,7 @@ import {
 	Faction,
 	Spec, Profession,
 } from '../core/proto/common.js';
-import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
+import { SavedTalents } from '../core/proto/ui.js';
 import { Player } from '../core/player.js';
 
 import {
@@ -29,7 +29,8 @@ import {
 	WarlockMajorGlyph as MajorGlyph,
 	WarlockMinorGlyph as MinorGlyph,
 } from '../core/proto/warlock.js';
-import { APLRotation } from '../core/proto/apl.js';
+
+import * as PresetUtils from '../core/preset_utils.js';
 
 import DemoApl from './apls/demo.apl.json';
 import DestroApl from './apls/destro.apl.json';
@@ -526,16 +527,7 @@ export const P3_Preset_Destro_Alliance = {
 	]}`),
 }
 
-export const APL_Demo_Default = {
-	name: 'Demo Default',
-	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalentTree() == 1,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: WarlockRotation.toJsonString(DemonologyRotation),
-		rotation: APLRotation.fromJsonString(JSON.stringify(DemoApl))})}
-
-export const APL_Destro_Default = {
-	name: 'Destro Default',
-	enableWhen: (player: Player<Spec.SpecWarlock>) => player.getTalentTree() == 2,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: WarlockRotation.toJsonString(DestructionRotation),
-		rotation: APLRotation.fromJsonString(JSON.stringify(DestroApl))})}
+export const APL_Demo_Legacy = PresetUtils.makePresetLegacyRotation('Demo Legacy', Spec.SpecWarlock, DemonologyRotation);
+export const APL_Demo_Default = PresetUtils.makePresetAPLRotation('Demo', DemoApl, { talentTree: 1 });
+export const APL_Destro_Legacy = PresetUtils.makePresetLegacyRotation('Destro Legacy', Spec.SpecWarlock, DestructionRotation);
+export const APL_Destro_Default = PresetUtils.makePresetAPLRotation('Destro', DestroApl, { talentTree: 2 });

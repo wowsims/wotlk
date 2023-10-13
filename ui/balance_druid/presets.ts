@@ -12,7 +12,7 @@ import {
 	UnitReference, Spec,
 	TristateEffect
 } from '../core/proto/common.js';
-import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
+import { SavedTalents } from '../core/proto/ui.js';
 
 import {
 	BalanceDruid_Options as BalanceDruidOptions,
@@ -25,9 +25,9 @@ import {
 	DruidMinorGlyph,
 } from '../core/proto/druid.js';
 
+import * as PresetUtils from '../core/preset_utils.js';
 import * as Tooltips from '../core/constants/tooltips.js';
 import { Player } from "../core/player";
-import { APLRotation } from '../core/proto/apl.js';
 
 import BasicP3AplJson from './apls/basic_p3.apl.json';
 
@@ -273,11 +273,4 @@ export const P3_PRESET_ALLI = {
     ]}`),
 };
 
-
-export const ROTATION_PRESET_P3_APL = {
-name: 'Basic P3 APL',
-rotation: SavedRotation.create({
-	specRotationOptionsJson: BalanceDruidRotation.toJsonString(DefaultRotation),
-	rotation: APLRotation.fromJsonString(JSON.stringify(BasicP3AplJson)),
-}),
-};
+export const ROTATION_PRESET_P3_APL = PresetUtils.makePresetAPLRotation('P3', BasicP3AplJson);

@@ -1,17 +1,19 @@
-import { Consumes } from '../core/proto/common.js';
-import { CustomRotation, CustomSpell } from '../core/proto/common.js';
-import { EquipmentSpec } from '../core/proto/common.js';
-import { Flask } from '../core/proto/common.js';
-import { Food } from '../core/proto/common.js';
-import { Glyphs } from '../core/proto/common.js';
-import { Potions } from '../core/proto/common.js';
-import { RaidBuffs } from '../core/proto/common.js';
-import { IndividualBuffs } from '../core/proto/common.js';
-import { Debuffs } from '../core/proto/common.js';
-import { UnitReference } from '../core/proto/common.js';
-import { TristateEffect } from '../core/proto/common.js';
-import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
-import { APLRotation } from '../core/proto/apl.js';
+import {
+	Consumes,
+	CustomRotation,
+	CustomSpell,
+	Debuffs,
+	EquipmentSpec,
+	IndividualBuffs,
+	Flask,
+	Food,
+	Glyphs,
+	Potions,
+	RaidBuffs,
+	TristateEffect,
+	UnitReference,
+} from '../core/proto/common.js';
+import { SavedTalents } from '../core/proto/ui.js';
 import { Player } from '../core/player.js';
 
 import {
@@ -23,6 +25,7 @@ import {
 	PriestMinorGlyph as MinorGlyph,
 } from '../core/proto/priest.js';
 
+import * as PresetUtils from '../core/preset_utils.js';
 import * as Tooltips from '../core/constants/tooltips.js';
 
 import DiscApl from './apls/disc.apl.json';
@@ -87,23 +90,8 @@ export const HolyDefaultRotation = Rotation.create({
 	}),
 });
 
-export const ROTATION_PRESET_DISC = {
-	name: 'Disc',
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: Rotation.toJsonString(Rotation.create({
-		})),
-		rotation: APLRotation.fromJsonString(JSON.stringify(DiscApl)),
-	}),
-};
-
-export const ROTATION_PRESET_HOLY = {
-	name: 'Holy',
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: Rotation.toJsonString(Rotation.create({
-		})),
-		rotation: APLRotation.fromJsonString(JSON.stringify(HolyApl)),
-	}),
-};
+export const ROTATION_PRESET_DISC = PresetUtils.makePresetAPLRotation('Disc', DiscApl);
+export const ROTATION_PRESET_HOLY = PresetUtils.makePresetAPLRotation('Holy', HolyApl);
 
 export const DefaultOptions = Options.create({
 	useInnerFire: true,

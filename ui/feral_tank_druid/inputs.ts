@@ -1,9 +1,4 @@
 import { Spec } from '../core/proto/common.js';
-import { ActionId } from '../core/proto_utils/action_id.js';
-import { Player } from '../core/player.js';
-import { EventID, TypedEvent } from '../core/typed_event.js';
-import { getEnumValues } from '../core/utils.js';
-import { ItemSlot } from '../core/proto/common.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
 

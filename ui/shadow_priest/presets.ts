@@ -1,15 +1,16 @@
-import { Consumes } from '../core/proto/common.js';
-import { EquipmentSpec } from '../core/proto/common.js';
-import { Flask } from '../core/proto/common.js';
-import { Food } from '../core/proto/common.js';
-import { Glyphs } from '../core/proto/common.js';
-import { Potions } from '../core/proto/common.js';
-import { RaidBuffs } from '../core/proto/common.js';
-import { IndividualBuffs } from '../core/proto/common.js';
-import { Debuffs } from '../core/proto/common.js';
-import { TristateEffect } from '../core/proto/common.js';
-import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
-import { APLRotation } from '../core/proto/apl.js';
+import {
+	Consumes,
+	Debuffs,
+	EquipmentSpec,
+	Flask,
+	Food,
+	Glyphs,
+	IndividualBuffs,
+	Potions,
+	RaidBuffs,
+	TristateEffect,
+} from '../core/proto/common.js';
+import { SavedTalents } from '../core/proto/ui.js';
 
 import {
 	ShadowPriest_Rotation as Rotation,
@@ -19,7 +20,7 @@ import {
 	PriestMinorGlyph as MinorGlyph,
 } from '../core/proto/priest.js';
 
-
+import * as PresetUtils from '../core/preset_utils.js';
 import * as Tooltips from '../core/constants/tooltips.js';
 import DefaultApl from './apls/default.apl.json'
 
@@ -194,10 +195,4 @@ export const P3_PRESET = {
     }`),
 };
 
-export const ROTATION_PRESET_DEFAULT = {
-	name: 'Default',
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: Rotation.toJsonString(Rotation.create()),
-		rotation: APLRotation.fromJsonString(JSON.stringify(DefaultApl)),
-	}),
-};
+export const ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Default', DefaultApl);

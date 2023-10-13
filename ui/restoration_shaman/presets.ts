@@ -1,10 +1,11 @@
-import { Consumes } from '../core/proto/common.js';
-
-import { EquipmentSpec } from '../core/proto/common.js';
-import { Flask } from '../core/proto/common.js';
-import { Food } from '../core/proto/common.js';
-import { Glyphs } from '../core/proto/common.js';
-import { Potions } from '../core/proto/common.js';
+import {
+	Consumes,
+	EquipmentSpec,
+	Flask,
+	Food,
+	Glyphs,
+	Potions,
+} from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
 import {
@@ -13,7 +14,6 @@ import {
 	ShamanShield,
 	ShamanMajorGlyph,
 	ShamanMinorGlyph,
-	ShamanHealSpell,
 } from '../core/proto/shaman.js';
 
 import {

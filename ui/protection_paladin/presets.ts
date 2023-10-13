@@ -1,13 +1,13 @@
-import { Consumes } from '../core/proto/common.js';
-import { CustomRotation, CustomSpell } from '../core/proto/common.js';
-import { EquipmentSpec } from '../core/proto/common.js';
-import { Flask } from '../core/proto/common.js';
-import { Food } from '../core/proto/common.js';
-import { Potions } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
-import { APLRotation } from '../core/proto/apl.js';
-import { Player } from '../core/player.js';
+import {
+	Consumes,
+	CustomRotation,
+	CustomSpell,
+	EquipmentSpec,
+	Flask,
+	Food,
+	Potions,
+} from '../core/proto/common.js';
+import { SavedTalents } from '../core/proto/ui.js';
 
 import {
 	PaladinAura as PaladinAura,
@@ -19,6 +19,7 @@ import {
 	ProtectionPaladin_Options as ProtectionPaladinOptions,
 } from '../core/proto/paladin.js';
 
+import * as PresetUtils from '../core/preset_utils.js';
 import * as Tooltips from '../core/constants/tooltips.js';
 
 import DefaultApl from './apls/default.apl.json';
@@ -64,14 +65,7 @@ export const DefaultRotation = ProtectionPaladinRotation.create({
 	}),
 });
 
-export const ROTATION_DEFAULT = {
-	name: 'Default (969)',
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: ProtectionPaladinRotation.toJsonString(ProtectionPaladinRotation.create({
-		})),
-		rotation: APLRotation.fromJsonString(JSON.stringify(DefaultApl)),
-	}),
-};
+export const ROTATION_DEFAULT = PresetUtils.makePresetAPLRotation('Default (969)', DefaultApl);
 
 export const DefaultOptions = ProtectionPaladinOptions.create({
 	aura: PaladinAura.RetributionAura,
@@ -88,7 +82,6 @@ export const DefaultConsumes = Consumes.create({
 export const PRERAID_PRESET = {
 	name: 'Preraid Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecProtectionPaladin>) => true,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":42549,"enchant":3818,"gems":[41396,49110]},
 		{"id":40679},
@@ -113,7 +106,6 @@ export const PRERAID_PRESET = {
 export const P1_PRESET = {
 	name: 'P1 Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecProtectionPaladin>) => true,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":40581,"enchant":3818,"gems":[41380,36767]},
 		{"id":40387},
@@ -138,7 +130,6 @@ export const P1_PRESET = {
 export const P2_PRESET = {
 	name: 'P2 Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecProtectionPaladin>) => true,
 	gear: EquipmentSpec.fromJsonString(`{
       "items": [
         {"id":46175,"enchant":3818,"gems":[41380,40088]},

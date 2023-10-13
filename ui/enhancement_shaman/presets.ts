@@ -13,8 +13,7 @@ import {
 	Spec,
 	Faction,
 } from '../core/proto/common.js';
-import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
-import { APLRotation } from '../core/proto/apl.js';
+import { SavedTalents } from '../core/proto/ui.js';
 
 import { EnhancementShaman_Rotation as EnhancementShamanRotation, EnhancementShaman_Options as EnhancementShamanOptions, ShamanShield } from '../core/proto/shaman.js';
 import {
@@ -31,6 +30,7 @@ import {
 	EnhancementShaman_Rotation_CustomRotationSpell as CustomRotationSpell
 } from '../core/proto/shaman.js';
 
+import * as PresetUtils from '../core/preset_utils.js';
 import * as Tooltips from '../core/constants/tooltips.js';
 import { Player } from 'ui/core/player.js';
 
@@ -105,32 +105,9 @@ export const DefaultRotation = EnhancementShamanRotation.create({
 	}),
 });
 
-export const ROTATION_FT_DEFAULT = {
-	name: 'Default FT',
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: EnhancementShamanRotation.toJsonString(EnhancementShamanRotation.create({
-		})),
-		rotation: APLRotation.fromJsonString(JSON.stringify(DefaultFt)),
-	}),
-};
-
-export const ROTATION_WF_DEFAULT = {
-	name: 'Default WF',
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: EnhancementShamanRotation.toJsonString(EnhancementShamanRotation.create({
-		})),
-		rotation: APLRotation.fromJsonString(JSON.stringify(DefaultWf)),
-	}),
-};
-
-export const ROTATION_PHASE_3 = {
-	name: 'Phase 3',
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: EnhancementShamanRotation.toJsonString(EnhancementShamanRotation.create({
-		})),
-		rotation: APLRotation.fromJsonString(JSON.stringify(Phase3Apl)),
-	}),
-};
+export const ROTATION_FT_DEFAULT = PresetUtils.makePresetAPLRotation('Default FT', DefaultFt);
+export const ROTATION_WF_DEFAULT = PresetUtils.makePresetAPLRotation('Default WF', DefaultWf);
+export const ROTATION_PHASE_3 = PresetUtils.makePresetAPLRotation('Phase 3', Phase3Apl);
 
 export const DefaultOptions = EnhancementShamanOptions.create({
 	shield: ShamanShield.LightningShield,

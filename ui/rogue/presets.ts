@@ -1,6 +1,14 @@
-import { Conjured, Consumes, EquipmentSpec, Flask, Food, Glyphs, Potions, Spec } from '../core/proto/common.js';
+import {
+	Conjured,
+	Consumes,
+	EquipmentSpec,
+	Flask,
+	Food,
+	Glyphs,
+	Potions,
+} from '../core/proto/common.js';
 import { Player } from '../core/player.js';
-import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
+import { SavedTalents } from '../core/proto/ui.js';
 
 import {
 	Rogue_Options as RogueOptions,
@@ -15,8 +23,8 @@ import {
 	RogueMajorGlyph,
 } from '../core/proto/rogue.js';
 
+import * as PresetUtils from '../core/preset_utils.js';
 import * as Tooltips from '../core/constants/tooltips.js';
-import { APLRotation } from '../core/proto/apl.js';
 
 import MutilateApl from './apls/mutilate.apl.json'
 import MutilateExposeApl from './apls/mutilate_expose.apl.json'
@@ -114,85 +122,15 @@ export const HemoSubtletyTalents = {
 	}),
 }
 
-export const ROTATION_PRESET_MUTILATE = {
-	name: 'Mutilate',
-	enableWhen: (player: Player<Spec.SpecRogue>) => player.getTalentTree() == 0,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: RogueRotation.toJsonString(RogueRotation.create()),
-		rotation: APLRotation.fromJsonString(JSON.stringify(MutilateApl)),
-	}),
-};
-
-export const ROTATION_PRESET_RUPTURE_MUTILATE = {
-	name: 'Rupture Mutilate',
-	enableWhen: (player: Player<Spec.SpecRogue>) => player.getTalentTree() == 0,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: RogueRotation.toJsonString(RogueRotation.create()),
-		rotation: APLRotation.fromJsonString(JSON.stringify(RuptureMutilateApl)),
-	}),
-};
-
-export const ROTATION_PRESET_MUTILATE_EXPOSE = {
-	name: 'Mutilate w/ Expose',
-	enableWhen: (player: Player<Spec.SpecRogue>) => player.getTalentTree() == 0,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: RogueRotation.toJsonString(RogueRotation.create()),
-		rotation: APLRotation.fromJsonString(JSON.stringify(MutilateExposeApl)),
-	}),
-};
-
-export const ROTATION_PRESET_RUPTURE_MUTILATE_EXPOSE = {
-	name: 'Rupture Mutilate w/ Expose',
-	enableWhen: (player: Player<Spec.SpecRogue>) => player.getTalentTree() == 0,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: RogueRotation.toJsonString(RogueRotation.create()),
-		rotation: APLRotation.fromJsonString(JSON.stringify(RuptureMutilateExposeApl)),
-	}),
-};
-
-export const ROTATION_PRESET_COMBAT = {
-	name: 'Combat',
-	enableWhen: (player: Player<Spec.SpecRogue>) => player.getTalentTree() == 1,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: RogueRotation.toJsonString(RogueRotation.create()),
-		rotation: APLRotation.fromJsonString(JSON.stringify(CombatApl)),
-	}),
-};
-
-export const ROTATION_PRESET_COMBAT_EXPOSE = {
-	name: 'Combat w/ Expose',
-	enableWhen: (player: Player<Spec.SpecRogue>) => player.getTalentTree() == 1,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: RogueRotation.toJsonString(RogueRotation.create()),
-		rotation: APLRotation.fromJsonString(JSON.stringify(CombatExposeApl)),
-	}),
-};
-
-export const ROTATION_PRESET_COMBAT_CLEAVE_SND = {
-	name: 'Combat Cleave SND',
-	enableWhen: (player: Player<Spec.SpecRogue>) => player.getTalentTree() == 1,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: RogueRotation.toJsonString(RogueRotation.create()),
-		rotation: APLRotation.fromJsonString(JSON.stringify(CombatCleaveSndApl)),
-	}),
-};
-
-export const ROTATION_PRESET_COMBAT_CLEAVE_SND_EXPOSE = {
-	name: 'Combat Cleave SND w/ Expose',
-	enableWhen: (player: Player<Spec.SpecRogue>) => player.getTalentTree() == 1,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: RogueRotation.toJsonString(RogueRotation.create()),
-		rotation: APLRotation.fromJsonString(JSON.stringify(CombatCleaveSndExposeApl)),
-	}),
-};
-
-export const ROTATION_PRESET_AOE = {
-	name: 'Fan AOE',
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: RogueRotation.toJsonString(RogueRotation.create()),
-		rotation: APLRotation.fromJsonString(JSON.stringify(FanAoeApl)),
-	}),
-};
+export const ROTATION_PRESET_MUTILATE = PresetUtils.makePresetAPLRotation('Mutilate', MutilateApl, { talentTree: 0 });
+export const ROTATION_PRESET_RUPTURE_MUTILATE = PresetUtils.makePresetAPLRotation('Rupture Mutilate', RuptureMutilateApl, { talentTree: 0 });
+export const ROTATION_PRESET_MUTILATE_EXPOSE = PresetUtils.makePresetAPLRotation('Mutilate w/ Expose', MutilateExposeApl, { talentTree: 0 });
+export const ROTATION_PRESET_RUPTURE_MUTILATE_EXPOSE = PresetUtils.makePresetAPLRotation('Rupture Mutilate w/ Expose', RuptureMutilateExposeApl, { talentTree: 0 });
+export const ROTATION_PRESET_COMBAT = PresetUtils.makePresetAPLRotation('Combat', CombatApl, { talentTree: 1 });
+export const ROTATION_PRESET_COMBAT_EXPOSE = PresetUtils.makePresetAPLRotation('Combat w/ Expose', CombatExposeApl, { talentTree: 1 });
+export const ROTATION_PRESET_COMBAT_CLEAVE_SND = PresetUtils.makePresetAPLRotation('Combat Cleave SND', CombatCleaveSndApl, { talentTree: 1 });
+export const ROTATION_PRESET_COMBAT_CLEAVE_SND_EXPOSE = PresetUtils.makePresetAPLRotation('Combat Cleave SND w/ Expose', CombatCleaveSndExposeApl, { talentTree: 1 });
+export const ROTATION_PRESET_AOE = PresetUtils.makePresetAPLRotation('Fan AOE', FanAoeApl);
 
 export const DefaultRotation = RogueRotation.create({
 	exposeArmorFrequency: Rogue_Rotation_Frequency.Never,

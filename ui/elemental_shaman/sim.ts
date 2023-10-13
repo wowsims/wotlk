@@ -159,6 +159,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				],
 				// Preset rotations that the user can quickly select.
 				rotations: [
+					Presets.ROTATION_PRESET_LEGACY,
 					Presets.ROTATION_PRESET_DEFAULT,
 					Presets.ROTATION_PRESET_ADVANCED,
 				],

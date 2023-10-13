@@ -1,16 +1,18 @@
-import { Consumes } from '../core/proto/common.js';
-import { EquipmentSpec } from '../core/proto/common.js';
-import { Flask } from '../core/proto/common.js';
-import { Food } from '../core/proto/common.js';
-import { Glyphs } from '../core/proto/common.js';
-import { Potions } from '../core/proto/common.js';
-import { RaidBuffs } from '../core/proto/common.js';
-import { IndividualBuffs } from '../core/proto/common.js';
-import { Debuffs } from '../core/proto/common.js';
-import { UnitReference } from '../core/proto/common.js';
-import { TristateEffect } from '../core/proto/common.js';
-import { APLRotation } from '../core/proto/apl.js';
-import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
+import {
+	Consumes,
+	Debuffs,
+	EquipmentSpec,
+	Flask,
+	Food,
+	Glyphs,
+	IndividualBuffs,
+	Potions,
+	RaidBuffs,
+	Spec,
+	TristateEffect,
+	UnitReference,
+} from '../core/proto/common.js';
+import { SavedTalents } from '../core/proto/ui.js';
 
 import {
 	SmitePriest_Rotation as Rotation,
@@ -19,6 +21,7 @@ import {
 	PriestMinorGlyph as MinorGlyph,
 } from '../core/proto/priest.js';
 
+import * as PresetUtils from '../core/preset_utils.js';
 import * as Tooltips from '../core/constants/tooltips.js';
 
 import DefaultApl from './apls/default.apl.json'
@@ -49,19 +52,8 @@ export const DefaultRotation = Rotation.create({
 	useShadowWordDeath: false,
 	useMindBlast: false,
 });
-export const ROTATION_PRESET_LEGACY_DEFAULT = {
-	name: 'Legacy Default',
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: Rotation.toJsonString(DefaultRotation),
-	}),
-}
-export const ROTATION_PRESET_APL = {
-	name: 'APL',
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: Rotation.toJsonString(Rotation.create()),
-		rotation: APLRotation.fromJsonString(JSON.stringify(DefaultApl)),
-	}),
-};
+export const ROTATION_PRESET_LEGACY_DEFAULT = PresetUtils.makePresetLegacyRotation('Legacy Default', Spec.SpecSmitePriest, DefaultRotation);
+export const ROTATION_PRESET_APL = PresetUtils.makePresetAPLRotation('Default', DefaultApl);
 
 export const DefaultOptions = Options.create({
 	useInnerFire: true,

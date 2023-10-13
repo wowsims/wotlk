@@ -16,8 +16,6 @@ import {
 } from '../core/proto/warrior.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
-import * as Presets from './presets.js';
-import { CustomRotationPicker } from 'ui/core/components/individual_sim_ui/custom_rotation_picker.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
