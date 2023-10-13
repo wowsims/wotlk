@@ -1,12 +1,14 @@
-import { Consumes, Spec } from '../core/proto/common.js';
-import { EquipmentSpec } from '../core/proto/common.js';
-import { Flask } from '../core/proto/common.js';
-import { Food } from '../core/proto/common.js';
-import { Glyphs } from '../core/proto/common.js';
-import { PetFood } from '../core/proto/common.js';
-import { Potions } from '../core/proto/common.js';
-import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
-import { APLRotation, APLRotation_Type } from '../core/proto/apl.js';
+import {
+	Consumes,
+	EquipmentSpec,
+	Flask,
+	Food,
+	Glyphs,
+	PetFood,
+	Potions,
+	Spec,
+} from '../core/proto/common.js';
+import { SavedTalents } from '../core/proto/ui.js';
 import { ferocityDefault, ferocityBMDefault } from '../core/talents/hunter_pet.js';
 import { Player } from '../core/player.js';
 
@@ -21,16 +23,14 @@ import {
 	HunterMinorGlyph as MinorGlyph,
 } from '../core/proto/hunter.js';
 
+import * as PresetUtils from '../core/preset_utils.js';
 import * as Tooltips from '../core/constants/tooltips.js';
 
 import BmApl from './apls/bm.apl.json';
-
 import MmApl from './apls/mm.apl.json';
 import MmAdvApl from './apls/mm_advanced.apl.json';
-
 import SvApl from './apls/sv.apl.json';
 import SvAdvApl from './apls/sv_advanced.apl.json';
-
 import AoeApl from './apls/aoe.apl.json';
 
 // Preset options for this spec.
@@ -94,75 +94,13 @@ export const DefaultRotation = HunterRotation.create({
 	allowExplosiveShotDownrank: true,
 });
 
-export const ROTATION_PRESET_LEGACY_DEFAULT = {
-	name: 'Simple Default',
-	rotation: SavedRotation.create({
-		rotation: {
-			type: APLRotation_Type.TypeSimple,
-			simple: {
-				specRotationJson: HunterRotation.toJsonString(DefaultRotation),
-			},
-		},
-	}),
-}
-export const ROTATION_PRESET_BM = {
-	name: 'BM',
-	enableWhen: (player: Player<Spec.SpecHunter>) => player.getTalentTree() == 0,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
-		})),
-		rotation: APLRotation.fromJsonString(JSON.stringify(BmApl)),
-	}),
-};
-
-export const ROTATION_PRESET_MM = {
-	name: 'MM',
-	enableWhen: (player: Player<Spec.SpecHunter>) => player.getTalentTree() == 1,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
-		})),
-		rotation: APLRotation.fromJsonString(JSON.stringify(MmApl)),
-	}),
-};
-
-export const ROTATION_PRESET_MM_ADVANCED = {
-	name: 'MM (Advanced)',
-	enableWhen: (player: Player<Spec.SpecHunter>) => player.getTalentTree() == 1,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
-		})),
-		rotation: APLRotation.fromJsonString(JSON.stringify(MmAdvApl)),
-	}),
-};
-
-export const ROTATION_PRESET_SV = {
-	name: 'SV',
-	enableWhen: (player: Player<Spec.SpecHunter>) => player.getTalentTree() == 2,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
-		})),
-		rotation: APLRotation.fromJsonString(JSON.stringify(SvApl)),
-	}),
-};
-
-export const ROTATION_PRESET_SV_ADVANCED = {
-	name: 'SV (Advanced)',
-	enableWhen: (player: Player<Spec.SpecHunter>) => player.getTalentTree() == 2,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
-		})),
-		rotation: APLRotation.fromJsonString(JSON.stringify(SvAdvApl)),
-	}),
-};
-
-export const ROTATION_PRESET_AOE = {
-	name: 'AOE',
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
-		})),
-		rotation: APLRotation.fromJsonString(JSON.stringify(AoeApl)),
-	}),
-};
+export const ROTATION_PRESET_SIMPLE_DEFAULT = PresetUtils.makePresetSimpleRotation('Simple Default', Spec.SpecHunter, DefaultRotation);
+export const ROTATION_PRESET_BM = PresetUtils.makePresetAPLRotation('BM', BmApl, { talentTree: 0 });
+export const ROTATION_PRESET_MM = PresetUtils.makePresetAPLRotation('MM', MmApl, { talentTree: 1 });
+export const ROTATION_PRESET_MM_ADVANCED = PresetUtils.makePresetAPLRotation('MM (Advanced)', MmAdvApl, { talentTree: 1 });
+export const ROTATION_PRESET_SV = PresetUtils.makePresetAPLRotation('SV', SvApl, { talentTree: 2 });
+export const ROTATION_PRESET_SV_ADVANCED = PresetUtils.makePresetAPLRotation('SV (Advanced)', SvAdvApl, { talentTree: 2 });
+export const ROTATION_PRESET_AOE = PresetUtils.makePresetAPLRotation('AOE', AoeApl);
 
 export const DefaultOptions = HunterOptions.create({
 	ammo: Ammo.SaroniteRazorheads,

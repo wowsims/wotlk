@@ -5,10 +5,9 @@ import { Flask } from '../core/proto/common.js';
 import { Food } from '../core/proto/common.js';
 import { Glyphs } from '../core/proto/common.js';
 import { Potions } from '../core/proto/common.js';
-import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
+import { SavedTalents } from '../core/proto/ui.js';
 import { Spec } from '../core/proto/common.js';
 import { Player } from '../core/player.js';
-import { APLRotation } from '../core/proto/apl.js';
 
 import { ElementalShaman_Rotation as ElementalShamanRotation, ElementalShaman_Options as ElementalShamanOptions, ShamanShield, ShamanMajorGlyph, ShamanMinorGlyph } from '../core/proto/shaman.js';
 import { ElementalShaman_Rotation_RotationType as RotationType } from '../core/proto/shaman.js';
@@ -21,7 +20,7 @@ import {
   ShamanTotems,
 } from '../core/proto/shaman.js';
 
-
+import * as PresetUtils from '../core/preset_utils.js';
 import * as Tooltips from '../core/constants/tooltips.js';
 import { Faction } from '../core/proto/common.js';
 
@@ -244,18 +243,6 @@ export const P4_PRESET = {
   ]}`),
 };
 
-export const ROTATION_PRESET_DEFAULT = {
-  name: 'Default',
-  rotation: SavedRotation.create({
-    specRotationOptionsJson: ElementalShamanRotation.toJsonString(DefaultRotation),
-    rotation: APLRotation.fromJsonString(JSON.stringify(DefaultApl)),
-  }),
-};
-
-export const ROTATION_PRESET_ADVANCED = {
-  name: 'Advanced APL',
-  rotation: SavedRotation.create({
-    specRotationOptionsJson: ElementalShamanRotation.toJsonString(DefaultRotation),
-    rotation: APLRotation.fromJsonString(JSON.stringify(AdvancedApl)),
-  }),
-}
+export const ROTATION_PRESET_LEGACY = PresetUtils.makePresetLegacyRotation('Legacy', Spec.SpecElementalShaman, DefaultRotation);
+export const ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Default', DefaultApl);
+export const ROTATION_PRESET_ADVANCED = PresetUtils.makePresetAPLRotation('Advanced', AdvancedApl);

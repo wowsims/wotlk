@@ -1,10 +1,13 @@
-import { Consumes } from '../core/proto/common.js';
-import { Food } from '../core/proto/common.js';
-import { EquipmentSpec } from '../core/proto/common.js';
-import { Potions } from '../core/proto/common.js';
-import { Flask } from '../core/proto/common.js';
-import { Glyphs } from '../core/proto/common.js';
-import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
+import {
+	Consumes,
+	Food,
+	EquipmentSpec,
+	Potions,
+	Flask,
+	Glyphs,
+	Spec,
+} from '../core/proto/common.js';
+import { SavedTalents } from '../core/proto/ui.js';
 
 import {
 	FeralDruid_Rotation as FeralDruidRotation,
@@ -16,6 +19,7 @@ import {
 	FeralDruid_Rotation_AplType,
 } from '../core/proto/druid.js';
 
+import * as PresetUtils from '../core/preset_utils.js';
 import * as Tooltips from '../core/constants/tooltips.js';
 
 // Preset options for this spec.
@@ -76,12 +80,7 @@ export const DefaultConsumes = Consumes.create({
 	defaultPotion: Potions.PotionOfSpeed,
 });
 
-export const ROTATION_PRESET_LEGACY_DEFAULT = {
-	name: 'Legacy Default',
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: FeralDruidRotation.toJsonString(DefaultRotation),
-	}),
-}
+export const ROTATION_PRESET_LEGACY_DEFAULT = PresetUtils.makePresetSimpleRotation('Legacy Default', Spec.SpecFeralDruid, DefaultRotation);
 
 export const PreRaid_PRESET = {
 	name: 'PreRaid',

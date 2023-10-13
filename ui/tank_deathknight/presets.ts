@@ -1,12 +1,13 @@
-import { Consumes, Spec } from '../core/proto/common.js';
-import { EquipmentSpec } from '../core/proto/common.js';
-import { Flask } from '../core/proto/common.js';
-import { Food } from '../core/proto/common.js';
-import { Glyphs } from '../core/proto/common.js';
-import { Potions } from '../core/proto/common.js';
-import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
-import { APLRotation } from '../core/proto/apl.js';
-import { Player } from '../core/player.js';
+import {
+	Consumes,
+	EquipmentSpec,
+	Flask,
+	Food,
+	Glyphs,
+	Potions,
+	Spec,
+} from '../core/proto/common.js';
+import { SavedTalents } from '../core/proto/ui.js';
 
 import {
 	TankDeathknight_Rotation as TankDeathKnightRotation,
@@ -19,6 +20,7 @@ import {
 	TankDeathknight_Rotation_Presence as Presence,
 } from '../core/proto/deathknight.js';
 
+import * as PresetUtils from '../core/preset_utils.js';
 import * as Tooltips from '../core/constants/tooltips.js';
 
 import BloodAggroApl from './apls/blood_aggro.apl.json';
@@ -117,31 +119,9 @@ export const DefaultConsumes = Consumes.create({
 	prepopPotion: Potions.IndestructiblePotion,
 });
 
-export const BLOOD_LEGACY_PRESET_LEGACY_DEFAULT = {
-	name: 'Blood Legacy',
-	enableWhen: (player: Player<Spec.SpecTankDeathknight>) => player.getTalentTree() == 0,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: TankDeathKnightRotation.toJsonString(DefaultRotation),
-	}),
-}
-
-export const BLOOD_IT_SPAM_ROTATION_PRESET_DEFAULT = {
-	name: 'Blood Icy Touch',
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: TankDeathKnightRotation.toJsonString(DefaultRotation),
-		rotation: APLRotation.fromJsonString(JSON.stringify(BloodIcyTouchApl)),
-	}),
-}
-
-export const BLOOD_AGGRO_ROTATION_PRESET_DEFAULT = {
-	name: 'Blood Aggro',
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: TankDeathKnightRotation.toJsonString(DefaultRotation),
-		rotation: APLRotation.fromJsonString(JSON.stringify(BloodAggroApl)),
-	}),
-}
+export const BLOOD_LEGACY_PRESET_LEGACY_DEFAULT = PresetUtils.makePresetLegacyRotation('Blood Legacy', Spec.SpecTankDeathknight, DefaultRotation);
+export const BLOOD_IT_SPAM_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Blood Icy Touch', BloodIcyTouchApl);
+export const BLOOD_AGGRO_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Blood Aggro', BloodAggroApl);
 
 export const P1_BLOOD_PRESET = {
 	name: 'P1 Blood',

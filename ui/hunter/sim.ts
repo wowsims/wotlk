@@ -252,7 +252,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				],
 				// Preset rotations that the user can quickly select.
 				rotations: [
-					Presets.ROTATION_PRESET_LEGACY_DEFAULT,
+					Presets.ROTATION_PRESET_SIMPLE_DEFAULT,
 					Presets.ROTATION_PRESET_BM,
 					Presets.ROTATION_PRESET_MM,
 					Presets.ROTATION_PRESET_MM_ADVANCED,

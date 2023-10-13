@@ -1,11 +1,16 @@
-import { CustomRotation, CustomSpell } from '../core/proto/common.js';
-import { BattleElixir, Consumes, Explosive, GuardianElixir } from '../core/proto/common.js';
-import { EquipmentSpec } from '../core/proto/common.js';
-import { Food } from '../core/proto/common.js';
-import { Potions } from '../core/proto/common.js';
-import { Glyphs } from '../core/proto/common.js';
-import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
-import { APLRotation } from '../core/proto/apl.js';
+import {
+	BattleElixir,
+	Consumes,
+	CustomRotation,
+	CustomSpell,
+	EquipmentSpec,
+	Explosive,
+	Food,
+	Glyphs,
+	GuardianElixir,
+	Potions,
+} from '../core/proto/common.js';
+import { SavedTalents } from '../core/proto/ui.js';
 
 import {
 	WarriorShout,
@@ -18,6 +23,7 @@ import {
 	WarriorMinorGlyph,
 } from '../core/proto/warrior.js';
 
+import * as PresetUtils from '../core/preset_utils.js';
 import * as Tooltips from '../core/constants/tooltips.js';
 
 import DefaultApl from './apls/default.apl.json';
@@ -78,14 +84,7 @@ export const DefaultRotation = ProtectionWarriorRotation.create({
 	hsRageThreshold: 30,
 });
 
-export const ROTATION_DEFAULT = {
-	name: 'Default',
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: ProtectionWarriorRotation.toJsonString(ProtectionWarriorRotation.create({
-		})),
-		rotation: APLRotation.fromJsonString(JSON.stringify(DefaultApl)),
-	}),
-};
+export const ROTATION_DEFAULT = PresetUtils.makePresetAPLRotation('Default', DefaultApl);
 
 export const DefaultOptions = ProtectionWarriorOptions.create({
 	shout: WarriorShout.WarriorShoutCommanding,

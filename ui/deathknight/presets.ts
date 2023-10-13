@@ -12,7 +12,7 @@ import {
 	UnitReference,
 	Spec
 } from '../core/proto/common.js';
-import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
+import { SavedTalents } from '../core/proto/ui.js';
 import { Player } from '../core/player.js';
 
 import {
@@ -29,8 +29,8 @@ import {
 	Deathknight_Rotation_BloodSpell,
 } from '../core/proto/deathknight.js';
 
+import * as PresetUtils from '../core/preset_utils.js';
 import * as Tooltips from '../core/constants/tooltips.js';
-import { APLRotation } from '../core/proto/apl.js';
 
 import BloodPestiApl from './apls/blood_pesti.apl.json';
 import BloodPestiDDApl from './apls/blood_pesti_dd.apl.json';
@@ -259,101 +259,18 @@ export const DefaultConsumes = Consumes.create({
 	fillerExplosive: Explosive.ExplosiveSaroniteBomb,
 });
 
-export const BLOOD_ROTATION_PRESET_LEGACY_DEFAULT = {
-	name: 'Blood Legacy',
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultBloodRotation),
-	}),
-}
+export const BLOOD_ROTATION_PRESET_LEGACY_DEFAULT = PresetUtils.makePresetLegacyRotation('Blood Legacy', Spec.SpecDeathknight, DefaultBloodRotation, { talentTree: 0 });
+export const FROST_ROTATION_PRESET_LEGACY_DEFAULT = PresetUtils.makePresetLegacyRotation('Frost Legacy', Spec.SpecDeathknight, DefaultFrostRotation, { talentTree: 1 });
+export const UNHOLY_DW_ROTATION_PRESET_LEGACY_DEFAULT = PresetUtils.makePresetLegacyRotation('Unholy DW Legacy', Spec.SpecDeathknight, DefaultUnholyRotation, { talentTree: 2 });
 
-export const FROST_ROTATION_PRESET_LEGACY_DEFAULT = {
-	name: 'Frost Legacy',
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultFrostRotation),
-	}),
-}
-
-export const UNHOLY_DW_ROTATION_PRESET_LEGACY_DEFAULT = {
-	name: 'Unholy DW Legacy',
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultUnholyRotation),
-	}),
-}
-
-export const BLOOD_PESTI_ROTATION_PRESET_DEFAULT = {
-	name: 'Blood Pesti APL',
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultBloodRotation),
-		rotation: APLRotation.fromJsonString(JSON.stringify(BloodPestiApl)),
-	}),
-}
-
-export const BLOOD_PESTI_DD_ROTATION_PRESET_DEFAULT = {
-	name: 'Blood Pesti DD APL',
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultBloodRotation),
-		rotation: APLRotation.fromJsonString(JSON.stringify(BloodPestiDDApl)),
-	}),
-}
-
-export const BLOOD_PESTI_AOE_ROTATION_PRESET_DEFAULT = {
-	name: 'Blood Pesti AOE APL',
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultBloodRotation),
-		rotation: APLRotation.fromJsonString(JSON.stringify(BloodPestiAoeApl)),
-	}),
-}
-
-export const FROST_BL_PESTI_ROTATION_PRESET_DEFAULT = {
-	name: 'Frost BL Pesti APL',
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultFrostRotation),
-		rotation: APLRotation.fromJsonString(JSON.stringify(FrostBlPestiApl)),
-	}),
-}
-
-export const FROST_UH_PESTI_ROTATION_PRESET_DEFAULT = {
-	name: 'Frost UH Pesti APL',
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 1,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultFrostRotation),
-		rotation: APLRotation.fromJsonString(JSON.stringify(FrostUhPestiApl)),
-	}),
-}
-
-export const UNHOLY_DW_ROTATION_PRESET_DEFAULT = {
-	name: 'Unholy DW SS APL',
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultUnholyRotation),
-		rotation: APLRotation.fromJsonString(JSON.stringify(UhDwSsApl)),
-	}),
-}
-
-export const UNHOLY_2H_ROTATION_PRESET_DEFAULT = {
-	name: 'Unholy 2H SS APL',
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultUnholyRotation),
-		rotation: APLRotation.fromJsonString(JSON.stringify(Uh2hSsApl)),
-	}),
-}
-
-export const UNHOLY_DND_AOE_ROTATION_PRESET_DEFAULT = {
-	name: 'Unholy DND AOE APL',
-	enableWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: DeathKnightRotation.toJsonString(DefaultUnholyRotation),
-		rotation: APLRotation.fromJsonString(JSON.stringify(UhDndAoeApl)),
-	}),
-}
+export const BLOOD_PESTI_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Blood Pesti', BloodPestiApl, { talentTree: 0 });
+export const BLOOD_PESTI_DD_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Blood Pesti DD', BloodPestiDDApl, { talentTree: 0 });
+export const BLOOD_PESTI_AOE_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Blood Pesti AOE', BloodPestiAoeApl, { talentTree: 0 });
+export const FROST_BL_PESTI_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Frost BL Pesti', FrostBlPestiApl, { talentTree: 1 });
+export const FROST_UH_PESTI_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Frost UH Pesti', FrostUhPestiApl, { talentTree: 1 });
+export const UNHOLY_DW_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Unholy DW SS', UhDwSsApl, { talentTree: 2 });
+export const UNHOLY_2H_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Unholy 2H SS', Uh2hSsApl, { talentTree: 2 });
+export const UNHOLY_DND_AOE_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Unholy DND AOE', UhDndAoeApl, { talentTree: 2 });
 
 export const P1_BLOOD_BIS_PRESET = {
 	name: 'P1 Blood',

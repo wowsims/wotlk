@@ -1,12 +1,14 @@
-import { Consumes, Faction } from '../core/proto/common.js';
-import { EquipmentSpec } from '../core/proto/common.js';
-import { Flask } from '../core/proto/common.js';
-import { Food } from '../core/proto/common.js';
-import { Glyphs } from '../core/proto/common.js';
-import { Potions } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
-import { APLRotation } from '../core/proto/apl.js';
+import {
+	Consumes,
+	EquipmentSpec,
+	Faction,
+	Flask,
+	Food,
+	Glyphs,
+	Potions,
+	Spec,
+} from '../core/proto/common.js';
+import { SavedTalents } from '../core/proto/ui.js';
 import { Player } from '../core/player.js';
 
 import {
@@ -17,10 +19,10 @@ import {
 	WarriorMajorGlyph,
 	WarriorMinorGlyph,
 	Warrior_Rotation_StanceOption as StanceOption,
-	ProtectionWarrior_Rotation_SpellOption as SpellOption,
 	Warrior_Rotation_MainGcd as MainGcd,
 } from '../core/proto/warrior.js';
 
+import * as PresetUtils from '../core/preset_utils.js';
 import * as Tooltips from '../core/constants/tooltips.js';
 
 import FuryApl from './apls/fury.apl.json';
@@ -98,15 +100,7 @@ export const ArmsRotation = WarriorRotation.create({
 	stanceOption: StanceOption.DefaultStance,
 });
 
-export const ROTATION_FURY = {
-	name: 'Fury',
-	enableWhen: (player: Player<Spec.SpecWarrior>) => player.getTalentTree() == 1,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: WarriorRotation.toJsonString(WarriorRotation.create({
-		})),
-		rotation: APLRotation.fromJsonString(JSON.stringify(FuryApl)),
-	}),
-};
+export const ROTATION_FURY = PresetUtils.makePresetAPLRotation('Fury', FuryApl, { talentTree: 1 });
 
 export const DefaultOptions = WarriorOptions.create({
 	startingRage: 0,

@@ -1,6 +1,5 @@
 import { Spec } from '../core/proto/common.js';
 
-
 import {
 	DeathknightTalents as DeathknightTalents,
 	Deathknight_Rotation as DeathknightRotation,

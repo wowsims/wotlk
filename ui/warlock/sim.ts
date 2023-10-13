@@ -140,7 +140,9 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				],
 				// Preset rotations that the user can quickly select.
 				rotations: [
+					Presets.APL_Demo_Legacy,
 					Presets.APL_Demo_Default,
+					Presets.APL_Destro_Legacy,
 					Presets.APL_Destro_Default,
 				],
 

@@ -1,15 +1,16 @@
-import { Consumes } from '../core/proto/common.js';
-import { BattleElixir } from '../core/proto/common.js';
-import { GuardianElixir } from '../core/proto/common.js';
-import { Food } from '../core/proto/common.js';
-import { EquipmentSpec } from '../core/proto/common.js';
-import { Potions } from '../core/proto/common.js';
-import { Conjured } from '../core/proto/common.js';
-import { Explosive } from '../core/proto/common.js';
-import { UnitReference } from '../core/proto/common.js';
-import { Glyphs } from '../core/proto/common.js';
-import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
-import { APLRotation } from '../core/proto/apl.js';
+import {
+	BattleElixir,
+	Conjured,
+	Consumes,
+	EquipmentSpec,
+	Explosive,
+	Food,
+	Glyphs,
+	GuardianElixir,
+	Potions,
+	UnitReference,
+} from '../core/proto/common.js';
+import { SavedTalents } from '../core/proto/ui.js';
 
 import {
 	FeralTankDruid_Rotation as DruidRotation,
@@ -18,6 +19,7 @@ import {
 	DruidMinorGlyph,
 } from '../core/proto/druid.js';
 
+import * as PresetUtils from '../core/preset_utils.js';
 import * as Tooltips from '../core/constants/tooltips.js';
 
 import DefaultApl from './apls/default.apl.json';
@@ -49,14 +51,7 @@ export const DefaultRotation = DruidRotation.create({
 	lacerateTime: 8.0,
 });
 
-export const ROTATION_DEFAULT = {
-	name: 'Default',
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: DruidRotation.toJsonString(DruidRotation.create({
-		})),
-		rotation: APLRotation.fromJsonString(JSON.stringify(DefaultApl)),
-	}),
-};
+export const ROTATION_DEFAULT = PresetUtils.makePresetAPLRotation('Default', DefaultApl);
 
 export const DefaultOptions = DruidOptions.create({
 	innervateTarget: UnitReference.create(),

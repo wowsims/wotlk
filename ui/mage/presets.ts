@@ -1,14 +1,17 @@
-import {Conjured, Profession} from '../core/proto/common.js';
-import { Consumes } from '../core/proto/common.js';
-import { EquipmentSpec } from '../core/proto/common.js';
-import { Flask } from '../core/proto/common.js';
-import { Food } from '../core/proto/common.js';
-import { Glyphs } from '../core/proto/common.js';
-import { Potions } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { Faction } from '../core/proto/common.js';
-import { UnitReference } from '../core/proto/common.js';
-import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
+import {
+	Conjured,
+	Consumes,
+	EquipmentSpec,
+	Faction,
+	Flask,
+	Food,
+	Glyphs,
+	Potions,
+	Profession,
+	Spec,
+	UnitReference,
+} from '../core/proto/common.js';
+import { SavedTalents } from '../core/proto/ui.js';
 import { Player } from '../core/player.js';
 
 import {
@@ -20,8 +23,8 @@ import {
 	MageMinorGlyph,
 } from '../core/proto/mage.js';
 
+import * as PresetUtils from '../core/preset_utils.js';
 import * as Tooltips from '../core/constants/tooltips.js';
-import { APLRotation, APLRotation_Type } from '../core/proto/apl.js';
 
 import ArcaneApl from './apls/arcane.apl.json';
 import FireApl from './apls/fire.apl.json';
@@ -171,80 +174,14 @@ export const OtherDefaults = {
 	profession2: Profession.Tailoring,
 };
 
-export const ROTATION_PRESET_SIMPLE = {
-	name: 'Simple Default',
-	rotation: SavedRotation.create({
-		rotation: {
-			type: APLRotation_Type.TypeSimple,
-			simple: {
-				specRotationJson: MageRotation.toJsonString(DefaultSimpleRotation),
-			},
-		},
-	}),
-}
-
-export const ARCANE_ROTATION_PRESET_DEFAULT = {
-	name: 'Arcane',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: MageRotation.toJsonString(MageRotation.create()),
-		rotation: APLRotation.fromJsonString(JSON.stringify(ArcaneApl))
-	}),
-}
-
-export const FIRE_ROTATION_PRESET_DEFAULT = {
-	name: 'Fire',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: MageRotation.toJsonString(MageRotation.create()),
-		rotation: APLRotation.fromJsonString(JSON.stringify(FireApl)),
-	}),
-}
-
-export const FROSTFIRE_ROTATION_PRESET_DEFAULT = {
-	name: 'Frostfire',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: MageRotation.toJsonString(MageRotation.create()),
-		rotation: APLRotation.fromJsonString(JSON.stringify(FrostFireApl)),
-	}),
-}
-
-export const FROST_ROTATION_PRESET_DEFAULT = {
-	name: 'Frost',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 2,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: MageRotation.toJsonString(MageRotation.create()),
-		rotation: APLRotation.fromJsonString(JSON.stringify(FrostApl)),
-	}),
-}
-
-export const ARCANE_ROTATION_PRESET_AOE = {
-	name: 'Arcane AOE',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: MageRotation.toJsonString(MageRotation.create()),
-		rotation: APLRotation.fromJsonString(JSON.stringify(ArcaneAoeApl)),
-	}),
-}
-
-export const FIRE_ROTATION_PRESET_AOE = {
-	name: 'Fire AOE',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: MageRotation.toJsonString(MageRotation.create()),
-		rotation: APLRotation.fromJsonString(JSON.stringify(FireAoeApl)),
-	}),
-}
-
-export const FROST_ROTATION_PRESET_AOE = {
-	name: 'Frost AOE',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 2,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: MageRotation.toJsonString(MageRotation.create()),
-		rotation: APLRotation.fromJsonString(JSON.stringify(FrostAoeApl)),
-	}),
-}
+export const ROTATION_PRESET_SIMPLE = PresetUtils.makePresetSimpleRotation('Simple Default', Spec.SpecMage, DefaultSimpleRotation);
+export const ARCANE_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Arcane', ArcaneApl, { talentTree: 0 });
+export const ARCANE_ROTATION_PRESET_AOE = PresetUtils.makePresetAPLRotation('Arcane AOE', ArcaneAoeApl, { talentTree: 0 });
+export const FIRE_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Fire', FireApl, { talentTree: 1 });
+export const FROSTFIRE_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Frostfire', FrostFireApl, { talentTree: 1 });
+export const FIRE_ROTATION_PRESET_AOE = PresetUtils.makePresetAPLRotation('Fire AOE', FireAoeApl, { talentTree: 1 });
+export const FROST_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Frost', FrostApl, { talentTree: 2 });
+export const FROST_ROTATION_PRESET_AOE = PresetUtils.makePresetAPLRotation('Frost AOE', FrostAoeApl, { talentTree: 2 });
 
 export const ARCANE_PRERAID_PRESET = {
 	name: "Arcane Preraid Preset",

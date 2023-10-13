@@ -203,6 +203,7 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 
 			presets: {
 				rotations: [
+					Presets.ROTATION_PRESET_LEGACY_DEFAULT,
 					Presets.ROTATION_PRESET_DEFAULT,
 				],
 				// Preset talents that the user can quickly select.

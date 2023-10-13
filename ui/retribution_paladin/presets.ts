@@ -1,14 +1,16 @@
-import { Conjured, Consumes } from '../core/proto/common.js';
-import { CustomRotation, CustomSpell } from '../core/proto/common.js';
-import { EquipmentSpec } from '../core/proto/common.js';
-import { Flask } from '../core/proto/common.js';
-import { Food } from '../core/proto/common.js';
-import { Glyphs } from '../core/proto/common.js';
-import { Potions } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
-import { Player } from '../core/player.js';
-import { APLRotation } from '../core/proto/apl.js';
+import {
+	Conjured,
+	Consumes,
+	CustomRotation,
+	CustomSpell,
+	EquipmentSpec,
+	Flask,
+	Food,
+	Glyphs,
+	Potions,
+	Spec,
+} from '../core/proto/common.js';
+import { SavedTalents } from '../core/proto/ui.js';
 
 import {
 	PaladinAura as PaladinAura,
@@ -21,6 +23,7 @@ import {
 	PaladinMinorGlyph,
 } from '../core/proto/paladin.js';
 
+import * as PresetUtils from '../core/preset_utils.js';
 import * as Tooltips from '../core/constants/tooltips.js';
 
 import DefaultApl from './apls/default.apl.json';
@@ -116,7 +119,6 @@ export const DefaultConsumes = Consumes.create({
 export const PRE_RAID_PRESET = {
 	name: 'Pre-Raid Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecRetributionPaladin>) => true,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":41386,"enchant":3817,"gems":[41398,40022]},
 		{"id":40678},
@@ -141,7 +143,6 @@ export const PRE_RAID_PRESET = {
 export const P1_PRESET = {
 	name: 'P1 Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecRetributionPaladin>) => true,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		  {"id":44006,"enchant":3817,"gems":[41398,49110]},
 		  {"id":44664,"gems":[42142]},
@@ -166,7 +167,6 @@ export const P1_PRESET = {
 export const P2_PRESET = {
 	name: 'P2 Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecRetributionPaladin>) => true,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":45472,"enchant":3817,"gems":[41398,42702]},
 		{"id":45517,"gems":[39996]},
@@ -191,7 +191,6 @@ export const P2_PRESET = {
 export const P3_PRESET = {
 	name: 'P3 Mace Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecRetributionPaladin>) => true,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":48614,"enchant":3817,"gems":[41398,40142]},
         	{"id":47110,"gems":[40142]},
@@ -216,7 +215,6 @@ export const P3_PRESET = {
 export const P4_PRESET = {
 	name: 'P4 Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecRetributionPaladin>) => true,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":51277,"enchant":3817,"gems":[41398,40118]},
         	{"id":50633,"gems":[40111]},
@@ -241,7 +239,6 @@ export const P4_PRESET = {
 export const P5_PRESET = {
 	name: 'P5 Preset',
 	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecRetributionPaladin>) => true,
 	gear: EquipmentSpec.fromJsonString(`{"items": [
 		{"id":51277,"enchant":3817,"gems":[41398,40111]},
         	{"id":54581,"gems":[40146]},
@@ -263,10 +260,5 @@ export const P5_PRESET = {
 	]}`),
 };
 
-export const ROTATION_PRESET_DEFAULT = {
-	name: 'Default',
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: RetributionPaladinRotation.toJsonString(DefaultRotation),
-		rotation: APLRotation.fromJsonString(JSON.stringify(DefaultApl)),
-	}),
-};
+export const ROTATION_PRESET_LEGACY_DEFAULT = PresetUtils.makePresetLegacyRotation('Legacy Default', Spec.SpecRetributionPaladin, DefaultRotation);
+export const ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Default', DefaultApl);
