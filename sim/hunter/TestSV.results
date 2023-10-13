@@ -519,8 +519,8 @@ dps_results: {
 dps_results: {
  key: "TestSV-AllItems-MeteoriteWhetstone-37390"
  value: {
-  dps: 7438.75848
-  tps: 6407.91198
+  dps: 7452.23838
+  tps: 6421.76847
  }
 }
 dps_results: {
@@ -785,8 +785,8 @@ dps_results: {
 dps_results: {
  key: "TestSV-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 7463.1309
-  tps: 6410.82178
+  dps: 7462.62688
+  tps: 6411.87337
  }
 }
 dps_results: {

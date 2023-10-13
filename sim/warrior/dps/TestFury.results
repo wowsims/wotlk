@@ -104,15 +104,15 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-BlackBruise-50035"
  value: {
-  dps: 5837.90085
-  tps: 4333.0186
+  dps: 5833.67568
+  tps: 4328.73701
  }
 }
 dps_results: {
  key: "TestFury-AllItems-BlackBruise-50692"
  value: {
-  dps: 5926.92039
-  tps: 4395.38921
+  dps: 5917.54802
+  tps: 4388.85577
  }
 }
 dps_results: {
@@ -757,8 +757,8 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-TheFistsofFury"
  value: {
-  dps: 5014.10292
-  tps: 3714.77686
+  dps: 5006.80751
+  tps: 3709.33453
  }
 }
 dps_results: {
@@ -771,8 +771,8 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-TheTwinBladesofAzzinoth"
  value: {
-  dps: 5359.5552
-  tps: 3970.12359
+  dps: 5359.59122
+  tps: 3970.14881
  }
 }
 dps_results: {
