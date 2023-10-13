@@ -102,16 +102,7 @@ export const ArmsRotation = WarriorRotation.create({
 });
 
 export const ROTATION_FURY = PresetUtils.makePresetAPLRotation('Fury', FuryApl, { talentTree: 1 });
-
-export const ROTATION_FURY_SUNDER = {
-	name: 'Fury + Sunder',
-	enableWhen: (player: Player<Spec.SpecWarrior>) => player.getTalentTree() == 1,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: WarriorRotation.toJsonString(WarriorRotation.create({
-		})),
-		rotation: APLRotation.fromJsonString(JSON.stringify(FurySunderApl)),
-	}),
-};
+export const ROTATION_FURY_SUNDER = PresetUtils.makePresetAPLRotation('Fury + Sunder', FurySunderApl, { talentTree: 1 });
 
 export const DefaultOptions = WarriorOptions.create({
 	startingRage: 0,
