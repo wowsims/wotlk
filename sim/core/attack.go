@@ -686,11 +686,11 @@ func (aa *AutoAttacks) DelayRangedUntil(sim *Simulation, readyAt time.Duration) 
 
 // Returns the time at which the next attack will occur.
 func (aa *AutoAttacks) NextAttackAt() time.Duration {
-	nextAttack := aa.MainhandSwingAt
-	if aa.IsDualWielding && aa.OffhandSwingAt < nextAttack {
-		nextAttack = aa.OffhandSwingAt
+	if aa.IsDualWielding && aa.OffhandSwingAt < aa.MainhandSwingAt {
+		return aa.OffhandSwingAt
+	} else {
+		return aa.MainhandSwingAt
 	}
-	return nextAttack
 }
 
 type PPMManager struct {
