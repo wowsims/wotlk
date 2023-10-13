@@ -5,6 +5,7 @@
         {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1s"}}}
     ],
     "priorityList": [
+        {"action":{"schedule":{"schedule":"29s, 209s","innerAction":{"castSpell":{"spellId":{"spellId":12975}}}}}},
         {"action":{"condition":{"cmp":{"op":"OpGe","lhs":{"currentRage":{}},"rhs":{"const":{"val":"30"}}}},"castSpell":{"spellId":{"tag":1,"spellId":47450}}}},
         {"action":{"autocastOtherCooldowns":{}}},
         {"action":{"castSpell":{"spellId":{"spellId":47488}}}},
