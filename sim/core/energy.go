@@ -164,7 +164,7 @@ func (eb *energyBar) addEnergyInternal(sim *Simulation, amount float64, metrics 
 		eb.unit.Log(sim, "Gained %0.3f energy from %s (%0.3f --> %0.3f).", amount, metrics.ActionID, eb.currentEnergy, newEnergy)
 	}
 
-	crossedThreshold := eb.cumulativeEnergyDecisionThresholds != nil && eb.cumulativeEnergyDecisionThresholds[int(eb.currentEnergy)] != eb.cumulativeEnergyDecisionThresholds[int(newEnergy)]
+	crossedThreshold := eb.cumulativeEnergyDecisionThresholds == nil || eb.cumulativeEnergyDecisionThresholds[int(eb.currentEnergy)] != eb.cumulativeEnergyDecisionThresholds[int(newEnergy)]
 	eb.currentEnergy = newEnergy
 
 	return crossedThreshold
