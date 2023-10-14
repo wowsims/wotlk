@@ -256,6 +256,10 @@ func (eb *energyBar) reset(sim *Simulation) {
 	eb.currentEnergy = eb.maxEnergy
 	eb.comboPoints = 0
 	eb.newTickAction(sim, true, sim.Environment.PrepullStartTime())
+
+	if eb.cumulativeEnergyDecisionThresholds != nil && sim.Log != nil {
+		eb.unit.Log(sim, "[DEBUG] APL Energy decision thresholds: %v", eb.energyDecisionThresholds)
+	}
 }
 
 type EnergyCostOptions struct {
