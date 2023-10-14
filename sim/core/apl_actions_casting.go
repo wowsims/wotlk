@@ -73,6 +73,9 @@ func (rot *APLRotation) newActionChannelSpell(config *proto.APLActionChannelSpel
 		allowRecast: config.AllowRecast,
 	}
 }
+func (action *APLActionChannelSpell) GetAPLValues() []APLValue {
+	return []APLValue{action.interruptIf}
+}
 func (action *APLActionChannelSpell) IsReady(sim *Simulation) bool {
 	return action.spell.CanCast(sim, action.target.Get())
 }

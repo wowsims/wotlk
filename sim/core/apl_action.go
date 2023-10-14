@@ -37,10 +37,16 @@ func (action *APLAction) GetAllActions() []*APLAction {
 func (action *APLAction) GetAllAPLValues() []APLValue {
 	var values []APLValue
 	for _, a := range action.GetAllActions() {
-		values = append(values, a.impl.GetAPLValues()...)
+		unprocessed := a.impl.GetAPLValues()
 		if a.condition != nil {
-			values = append(values, a.condition)
-			values = append(values, a.condition.GetInnerValues()...)
+			unprocessed = append(unprocessed, a.condition)
+		}
+
+		for len(unprocessed) > 0 {
+			next := unprocessed[len(unprocessed)-1]
+			unprocessed = unprocessed[:len(unprocessed)-1]
+			values = append(values, next)
+			unprocessed = append(unprocessed, next.GetInnerValues()...)
 		}
 	}
 	return FilterSlice(values, func(val APLValue) bool { return val != nil })
