@@ -28,7 +28,7 @@ type energyBar struct {
 	// [10, 15, 20, 30, 60, 85]
 	energyDecisionThresholds []int
 
-	// Slice with len == 110 with each index corresponding to an amount of energy. Looks like this:
+	// Slice with len == maxEnergy with each index corresponding to an amount of energy. Looks like this:
 	// [0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, ...]
 	// Increments by 1 at each value of energyDecisionThresholds.
 	cumulativeEnergyDecisionThresholds []int
