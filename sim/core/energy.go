@@ -28,7 +28,7 @@ type energyBar struct {
 	// [10, 15, 20, 30, 60, 85]
 	energyDecisionThresholds []int
 
-	// Slice with len == maxEnergy with each index corresponding to an amount of energy. Looks like this:
+	// Slice with len == maxEnergy+1 with each index corresponding to an amount of energy. Looks like this:
 	// [0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, ...]
 	// Increments by 1 at each value of energyDecisionThresholds.
 	cumulativeEnergyDecisionThresholds []int
@@ -72,6 +72,9 @@ func (unit *Unit) EnableEnergyBar(maxEnergy float64, onEnergyGain OnEnergyGain) 
 
 // Computes the energy thresholds.
 func (eb *energyBar) setupEnergyThresholds() {
+	if eb.unit == nil {
+		return
+	}
 	if !eb.unit.IsUsingAPL {
 		return
 	}
