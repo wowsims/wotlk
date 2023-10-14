@@ -183,21 +183,20 @@ func (s Stat) StatName() string {
 }
 
 func FromFloatArray(values []float64) Stats {
-	stats := Stats{}
+	var stats Stats
 	copy(stats[:], values)
 	return stats
 }
 
 // Adds two Stats together, returning the new Stats.
 func (stats Stats) Add(other Stats) Stats {
-	var newStats Stats
-	for k, v := range stats {
-		newStats[k] = v + other[k]
+	for k := range stats {
+		stats[k] += other[k]
 	}
-	return newStats
+	return stats
 }
 
-// Adds another to Stats to this, in-place.
+// Adds another to Stats to this, in-place. For performance, only.
 func (stats *Stats) AddInplace(other *Stats) {
 	for k := range stats {
 		stats[k] += other[k]
@@ -206,38 +205,37 @@ func (stats *Stats) AddInplace(other *Stats) {
 
 // Subtracts another Stats from this one, returning the new Stats.
 func (stats Stats) Subtract(other Stats) Stats {
-	var newStats Stats
-	for k, v := range stats {
-		newStats[k] = v - other[k]
+	for k := range stats {
+		stats[k] -= other[k]
 	}
-	return newStats
+	return stats
+}
+
+func (stats Stats) Invert() Stats {
+	for k, v := range stats {
+		stats[k] = -v
+	}
+	return stats
 }
 
 func (stats Stats) Multiply(multiplier float64) Stats {
-	var newStats Stats
-	for k, v := range stats {
-		newStats[k] = v * multiplier
+	for k := range stats {
+		stats[k] *= multiplier
 	}
-	return newStats
+	return stats
 }
 
 // Multiplies two Stats together by multiplying the values of corresponding
 // stats, like a dot product operation.
 func (stats Stats) DotProduct(other Stats) Stats {
-	var newStats Stats
-	for k, v := range stats {
-		newStats[k] = v * other[k]
+	for k := range stats {
+		stats[k] *= other[k]
 	}
-	return newStats
+	return stats
 }
 
 func (stats Stats) Equals(other Stats) bool {
-	for k, v := range stats {
-		if v != other[k] {
-			return false
-		}
-	}
-	return true
+	return stats == other
 }
 
 func (stats Stats) EqualsWithTolerance(other Stats, tolerance float64) bool {

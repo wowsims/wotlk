@@ -812,8 +812,8 @@ dps_results: {
 dps_results: {
  key: "TestDemonology-Settings-Orc-P2-Demonology Warlock-demo-NoBuffs-LongSingleTarget"
  value: {
-  dps: 6317.53516
-  tps: 5713.07986
+  dps: 6317.52711
+  tps: 5713.07182
  }
 }
 dps_results: {

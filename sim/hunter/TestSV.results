@@ -139,8 +139,8 @@ dps_results: {
 dps_results: {
  key: "TestSV-AllItems-BlessedGarboftheUndeadSlayer"
  value: {
-  dps: 6190.47799
-  tps: 5332.40349
+  dps: 6190.49223
+  tps: 5332.41384
  }
 }
 dps_results: {
@@ -645,7 +645,7 @@ dps_results: {
 dps_results: {
  key: "TestSV-AllItems-ScourgestalkerBattlegear"
  value: {
-  dps: 7332.71535
+  dps: 7332.76102
   tps: 6334.02364
  }
 }
@@ -722,8 +722,8 @@ dps_results: {
 dps_results: {
  key: "TestSV-AllItems-StormshroudArmor"
  value: {
-  dps: 5749.1606
-  tps: 4917.55842
+  dps: 5749.16653
+  tps: 4917.56435
  }
 }
 dps_results: {
@@ -785,7 +785,7 @@ dps_results: {
 dps_results: {
  key: "TestSV-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 7462.62688
+  dps: 7462.64882
   tps: 6411.87337
  }
 }
@@ -883,8 +883,8 @@ dps_results: {
 dps_results: {
  key: "TestSV-Average-Default"
  value: {
-  dps: 7613.42893
-  tps: 6565.95875
+  dps: 7613.429
+  tps: 6565.95867
  }
 }
 dps_results: {
@@ -960,7 +960,7 @@ dps_results: {
 dps_results: {
  key: "TestSV-Settings-Dwarf-P1-Basic-sv-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3827.28433
+  dps: 3827.28691
   tps: 3506.67975
  }
 }
@@ -1086,7 +1086,7 @@ dps_results: {
 dps_results: {
  key: "TestSV-Settings-Orc-P1-Basic-sv-NoBuffs-LongSingleTarget"
  value: {
-  dps: 3842.06248
+  dps: 3842.06655
   tps: 3499.66519
  }
 }

@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"runtime"
 	"runtime/debug"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -42,6 +43,24 @@ type Simulation struct {
 
 	nextExecuteDuration time.Duration
 	nextExecuteDamage   float64
+
+	minTrackerTime time.Duration
+	trackers       []*auraTracker
+}
+
+func (sim *Simulation) rescheduleTracker(trackerTime time.Duration) {
+	sim.minTrackerTime = min(sim.minTrackerTime, trackerTime)
+}
+
+func (sim *Simulation) addTracker(tracker *auraTracker) {
+	sim.trackers = append(sim.trackers, tracker)
+	sim.rescheduleTracker(tracker.minExpires)
+}
+
+func (sim *Simulation) removeTracker(tracker *auraTracker) {
+	if idx := slices.Index(sim.trackers, tracker); idx != -1 {
+		sim.trackers = removeBySwappingToBack(sim.trackers, idx)
+	}
 }
 
 func RunSim(rsr *proto.RaidSimRequest, progress chan *proto.ProgressMetrics) *proto.RaidSimResult {
@@ -337,6 +356,9 @@ func (sim *Simulation) reset() {
 
 	sim.CurrentTime = 0
 
+	sim.trackers = sim.trackers[:0]
+	sim.minTrackerTime = NeverExpires
+
 	sim.Environment.reset(sim)
 
 	sim.initManaTickAction()
@@ -502,12 +524,11 @@ func (sim *Simulation) advance(nextTime time.Duration) {
 		}
 	}
 
-	for _, character := range sim.characters {
-		character.advance(sim)
-	}
-
-	for _, target := range sim.Encounter.Targets {
-		target.Advance(sim)
+	if sim.CurrentTime >= sim.minTrackerTime {
+		sim.minTrackerTime = sim.trackers[0].advance(sim)
+		for _, at := range sim.trackers[1:] {
+			sim.minTrackerTime = min(sim.minTrackerTime, at.advance(sim))
+		}
 	}
 }
 
