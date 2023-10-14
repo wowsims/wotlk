@@ -160,28 +160,12 @@ func NewTarget(options *proto.Target, targetIndex int32) *Target {
 	return target
 }
 
-func (target *Target) finalize() {
-	target.Unit.finalize()
-}
-
-func (target *Target) init(sim *Simulation) {
-	target.Unit.init(sim)
-}
-
 func (target *Target) Reset(sim *Simulation) {
 	target.Unit.reset(sim, nil)
 	target.SetGCDTimer(sim, 0)
 	if target.AI != nil {
 		target.AI.Reset(sim)
 	}
-}
-
-func (target *Target) Advance(sim *Simulation) {
-	target.Unit.advance(sim)
-}
-
-func (target *Target) doneIteration(sim *Simulation) {
-	target.Unit.doneIteration(sim)
 }
 
 func (target *Target) NextTarget() *Target {

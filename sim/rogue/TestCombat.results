@@ -848,8 +848,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-Average-Default"
  value: {
-  dps: 6248.52893
-  tps: 4436.45554
+  dps: 6248.52854
+  tps: 4436.45526
  }
 }
 dps_results: {
@@ -1317,8 +1317,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-Settings-Human-P1-MH Instant OH Deadly-fan_aoe-FullBuffs-LongMultiTarget"
  value: {
-  dps: 21268.81092
-  tps: 15100.85576
+  dps: 21268.80436
+  tps: 15100.85109
  }
 }
 dps_results: {
@@ -1989,8 +1989,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-Settings-Orc-P1-MH Instant OH Deadly-fan_aoe-FullBuffs-LongMultiTarget"
  value: {
-  dps: 21433.21219
-  tps: 15217.58066
+  dps: 21433.20562
+  tps: 15217.57599
  }
 }
 dps_results: {

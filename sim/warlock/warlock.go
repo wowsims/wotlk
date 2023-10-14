@@ -180,7 +180,7 @@ func (warlock *Warlock) Initialize() {
 			})
 		}
 		if warlock.ItemSwap.IsEnabled() {
-			warlock.AddStats(correction.Multiply(-1))
+			warlock.AddStats(correction.Invert())
 			warlock.MultiplyCastSpeed(1.0)
 		}
 	})

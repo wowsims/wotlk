@@ -488,6 +488,10 @@ func (unit *Unit) reset(sim *Simulation, _ Agent) {
 
 	unit.DynamicStatsPets = unit.DynamicStatsPets[:0]
 	unit.DynamicMeleeSpeedPets = unit.DynamicMeleeSpeedPets[:0]
+
+	if unit.Type != PetUnit {
+		sim.addTracker(&unit.auraTracker)
+	}
 }
 
 func (unit *Unit) startPull(sim *Simulation) {
@@ -499,10 +503,6 @@ func (unit *Unit) startPull(sim *Simulation) {
 }
 
 // Advance moves time forward counting down auras, and nothing else, currently.
-func (unit *Unit) advance(sim *Simulation) {
-	unit.auraTracker.advance(sim)
-}
-
 func (unit *Unit) doneIteration(sim *Simulation) {
 	unit.Hardcast = Hardcast{}
 	unit.doneIterationGCD(sim)
