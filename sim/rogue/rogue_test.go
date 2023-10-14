@@ -195,6 +195,7 @@ func BenchmarkSimulate(b *testing.B) {
 				Consumes:  FullConsumes,
 				Spec:      PlayerOptionsCombatDI,
 				Buffs:     core.FullIndividualBuffs,
+				Rotation:  core.GetAplRotation("../../ui/rogue/apls", "combat_cleave_snd").Rotation,
 			},
 			core.FullPartyBuffs,
 			core.FullRaidBuffs,

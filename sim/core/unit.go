@@ -438,6 +438,17 @@ func (unit *Unit) finalize() {
 	for _, spell := range unit.Spellbook {
 		spell.finalize()
 	}
+
+	if unit.HasEnergyBar() {
+		// For now, restrict this optimization to rogues only. Ferals will require
+		// some extra logic to handle their ExcessEnergy() calc.
+		agent := unit.Env.Raid.GetPlayerFromUnit(unit)
+		if agent != nil && agent.GetCharacter().Class == proto.Class_ClassRogue {
+			unit.Env.RegisterPostFinalizeEffect(func() {
+				unit.energyBar.setupEnergyThresholds()
+			})
+		}
+	}
 }
 
 func (unit *Unit) init(sim *Simulation) {
