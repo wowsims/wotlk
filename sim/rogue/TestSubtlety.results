@@ -820,15 +820,15 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-Settings-BloodElf-P2 Subtlety-Subtlety--NoBuffs-LongSingleTarget"
  value: {
-  dps: 4091.27574
-  tps: 2903.22932
+  dps: 3692.67257
+  tps: 2620.22107
  }
 }
 dps_results: {
  key: "TestSubtlety-Settings-BloodElf-P2 Subtlety-Subtlety--NoBuffs-ShortSingleTarget"
  value: {
-  dps: 3990.28275
-  tps: 2821.77203
+  dps: 3648.83596
+  tps: 2579.3448
  }
 }
 dps_results: {
@@ -862,15 +862,15 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-Settings-Orc-P2 Subtlety-Subtlety--NoBuffs-LongSingleTarget"
  value: {
-  dps: 4064.43692
-  tps: 2883.14709
+  dps: 3663.94836
+  tps: 2599.3704
  }
 }
 dps_results: {
  key: "TestSubtlety-Settings-Orc-P2 Subtlety-Subtlety--NoBuffs-ShortSingleTarget"
  value: {
-  dps: 3954.08906
-  tps: 2798.18684
+  dps: 3622.58722
+  tps: 2562.82053
  }
 }
 dps_results: {

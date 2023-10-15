@@ -23,7 +23,8 @@ type focusBar struct {
 	currentFocus float64
 
 	onFocusGain OnFocusGain
-	tickAction  *PendingAction
+
+	nextFocusTick time.Duration
 }
 
 func (unit *Unit) EnableFocusBar(regenMultiplier float64, onFocusGain OnFocusGain) {
@@ -60,16 +61,15 @@ func (fb *focusBar) AddFocus(sim *Simulation, amount float64, actionID ActionID)
 	}
 }
 
-func (fb *focusBar) SpendFocus(sim *Simulation, amount float64, metrics *ResourceMetrics) {
+func (fb *focusBar) SpendFocus(sim *Simulation, amount float64, actionID ActionID) {
 	if amount < 0 {
 		panic("Trying to spend negative focus!")
 	}
 
 	newFocus := fb.currentFocus - amount
-	metrics.AddEvent(-amount, -amount)
 
 	if sim.Log != nil {
-		fb.unit.Log(sim, "Spent %0.3f focus from %s (%0.3f --> %0.3f).", amount, metrics.ActionID, fb.currentFocus, newFocus)
+		fb.unit.Log(sim, "Spent %0.3f focus from %s (%0.3f --> %0.3f).", amount, actionID, fb.currentFocus, newFocus)
 	}
 
 	fb.currentFocus = newFocus
@@ -82,40 +82,45 @@ func (fb *focusBar) reset(sim *Simulation) {
 
 	fb.currentFocus = MaxFocus
 
-	pa := &PendingAction{
-		Priority:     ActionPriorityRegen,
-		NextActionAt: tickDuration,
+	if fb.unit.Type != PetUnit {
+		fb.enable(sim)
 	}
-	pa.OnAction = func(sim *Simulation) {
-		fb.AddFocus(sim, fb.focusPerTick, ActionID{OtherID: proto.OtherAction_OtherActionFocusRegen})
-
-		pa.NextActionAt = sim.CurrentTime + tickDuration
-		sim.AddPendingAction(pa)
-	}
-	fb.tickAction = pa
-	sim.AddPendingAction(pa)
 }
 
-func (fb *focusBar) Cancel(sim *Simulation) {
-	if fb.tickAction != nil {
-		fb.tickAction.Cancel(sim)
-		fb.tickAction = nil
+func (fb *focusBar) enable(sim *Simulation) {
+	sim.AddTask(fb)
+	fb.nextFocusTick = sim.CurrentTime + tickDuration
+	sim.RescheduleTask(fb.nextFocusTick)
+}
+
+func (fb *focusBar) disable(sim *Simulation) {
+	fb.nextFocusTick = NeverExpires
+	sim.RemoveTask(fb)
+}
+
+func (fb *focusBar) RunTask(sim *Simulation) time.Duration {
+	if sim.CurrentTime < fb.nextFocusTick {
+		return fb.nextFocusTick
 	}
+
+	fb.AddFocus(sim, fb.focusPerTick, ActionID{OtherID: proto.OtherAction_OtherActionFocusRegen})
+
+	fb.nextFocusTick = sim.CurrentTime + tickDuration
+	return fb.nextFocusTick
 }
 
 type FocusCostOptions struct {
-	Cost float64
+	Cost   float64
+	Refund float64
 }
 type FocusCost struct {
-	Refund          float64
-	ResourceMetrics *ResourceMetrics
+	Refund float64
 }
 
 func newFocusCost(spell *Spell, options FocusCostOptions) *FocusCost {
 	spell.DefaultCast.Cost = options.Cost
-
 	return &FocusCost{
-		ResourceMetrics: spell.Unit.NewFocusMetrics(spell.ActionID),
+		Refund: options.Refund,
 	}
 }
 
@@ -123,15 +128,14 @@ func (fc *FocusCost) MeetsRequirement(spell *Spell) bool {
 	spell.CurCast.Cost = max(0, spell.CurCast.Cost*spell.Unit.PseudoStats.CostMultiplier)
 	return spell.Unit.CurrentFocus() >= spell.CurCast.Cost
 }
-func (fc *FocusCost) CostFailureReason(sim *Simulation, spell *Spell) string {
+func (fc *FocusCost) CostFailureReason(_ *Simulation, spell *Spell) string {
 	return fmt.Sprintf("not enough focus (Current Focus = %0.03f, Focus Cost = %0.03f)", spell.Unit.CurrentFocus(), spell.CurCast.Cost)
 }
 func (fc *FocusCost) SpendCost(sim *Simulation, spell *Spell) {
-	spell.Unit.SpendFocus(sim, spell.CurCast.Cost, fc.ResourceMetrics)
+	spell.Unit.SpendFocus(sim, spell.CurCast.Cost, spell.ActionID)
 }
 func (fc *FocusCost) IssueRefund(sim *Simulation, spell *Spell) {
-}
-
-func (spell *Spell) FocusMetrics() *ResourceMetrics {
-	return spell.Cost.(*FocusCost).ResourceMetrics
+	if fc.Refund > 0 {
+		spell.Unit.AddFocus(sim, fc.Refund*spell.CurCast.Cost, spell.ActionID)
+	}
 }

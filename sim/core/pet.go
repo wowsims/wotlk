@@ -170,6 +170,10 @@ func (pet *Pet) Enable(sim *Simulation, petAgent PetAgent) {
 	}
 
 	sim.addTracker(&pet.auraTracker)
+
+	if pet.HasFocusBar() {
+		pet.focusBar.enable(sim)
+	}
 }
 
 // Helper for enabling a pet that will expire after a certain duration.
@@ -230,7 +234,7 @@ func (pet *Pet) Disable(sim *Simulation) {
 	}
 
 	pet.CancelGCDTimer(sim)
-	pet.focusBar.Cancel(sim)
+	pet.focusBar.disable(sim)
 	pet.AutoAttacks.CancelAutoSwing(sim)
 	pet.enabled = false
 	pet.DoNothing() // mark it is as doing nothing now.
@@ -247,6 +251,7 @@ func (pet *Pet) Disable(sim *Simulation) {
 		pet.OnPetDisable(sim)
 	}
 
+	pet.auraTracker.minExpires = NeverExpires
 	sim.removeTracker(&pet.auraTracker)
 
 	if sim.Log != nil {

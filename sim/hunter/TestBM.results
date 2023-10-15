@@ -883,8 +883,8 @@ dps_results: {
 dps_results: {
  key: "TestBM-Average-Default"
  value: {
-  dps: 6433.20298
-  tps: 4349.4617
+  dps: 6433.20289
+  tps: 4349.46161
  }
 }
 dps_results: {

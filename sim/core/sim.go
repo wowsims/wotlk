@@ -15,6 +15,10 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
+type Task interface {
+	RunTask(sim *Simulation) time.Duration
+}
+
 type Simulation struct {
 	*Environment
 
@@ -46,6 +50,9 @@ type Simulation struct {
 
 	minTrackerTime time.Duration
 	trackers       []*auraTracker
+
+	minTaskTime time.Duration
+	tasks       []Task
 }
 
 func (sim *Simulation) rescheduleTracker(trackerTime time.Duration) {
@@ -63,35 +70,51 @@ func (sim *Simulation) removeTracker(tracker *auraTracker) {
 	}
 }
 
+func (sim *Simulation) RescheduleTask(taskTime time.Duration) {
+	sim.minTaskTime = min(sim.minTaskTime, taskTime)
+}
+
+func (sim *Simulation) AddTask(task Task) {
+	sim.tasks = append(sim.tasks, task)
+}
+
+func (sim *Simulation) RemoveTask(task Task) {
+	if idx := slices.Index(sim.tasks, task); idx != -1 {
+		sim.tasks = removeBySwappingToBack(sim.tasks, idx)
+	}
+}
+
 func RunSim(rsr *proto.RaidSimRequest, progress chan *proto.ProgressMetrics) *proto.RaidSimResult {
 	return runSim(rsr, progress, false)
 }
 
 func runSim(rsr *proto.RaidSimRequest, progress chan *proto.ProgressMetrics, skipPresim bool) (result *proto.RaidSimResult) {
-	defer func() {
-		if err := recover(); err != nil {
-			errStr := ""
-			switch errt := err.(type) {
-			case string:
-				errStr = errt
-			case error:
-				errStr = errt.Error()
-			}
+	if !rsr.SimOptions.IsTest {
+		defer func() {
+			if err := recover(); err != nil {
+				errStr := ""
+				switch errt := err.(type) {
+				case string:
+					errStr = errt
+				case error:
+					errStr = errt.Error()
+				}
 
-			errStr += "\nStack Trace:\n" + string(debug.Stack())
-			result = &proto.RaidSimResult{
-				ErrorResult: errStr,
-			}
-			if progress != nil {
-				progress <- &proto.ProgressMetrics{
-					FinalRaidResult: result,
+				errStr += "\nStack Trace:\n" + string(debug.Stack())
+				result = &proto.RaidSimResult{
+					ErrorResult: errStr,
+				}
+				if progress != nil {
+					progress <- &proto.ProgressMetrics{
+						FinalRaidResult: result,
+					}
 				}
 			}
-		}
-		if progress != nil {
-			close(progress)
-		}
-	}()
+			if progress != nil {
+				close(progress)
+			}
+		}()
+	}
 
 	sim := NewSim(rsr)
 
@@ -359,6 +382,9 @@ func (sim *Simulation) reset() {
 	sim.trackers = sim.trackers[:0]
 	sim.minTrackerTime = NeverExpires
 
+	sim.tasks = sim.tasks[:0]
+	sim.minTaskTime = NeverExpires
+
 	sim.Environment.reset(sim)
 
 	sim.initManaTickAction()
@@ -420,6 +446,51 @@ func (sim *Simulation) runPendingActions(max time.Duration) {
 	}
 }
 
+func (sim *Simulation) advanceTasks() bool {
+	// Use duration as an end check if not using health.
+	if sim.Encounter.EndFightAtHealth == 0 {
+		if sim.minTaskTime > sim.Duration {
+			return true
+		}
+	} else if sim.Encounter.EndFightAtHealth < sim.Encounter.DamageTaken {
+		return true
+	}
+
+	if sim.minTaskTime > sim.CurrentTime {
+		sim.advance(sim.minTaskTime)
+	}
+
+	/*
+		var numBars int
+		minTimeBars := NeverExpires
+		for _, u := range sim.AllUnits {
+			if u.enabled && u.HasFocusBar() {
+				numBars++
+				minTimeBars = min(minTimeBars, u.nextFocusTick)
+			}
+			if u.enabled && u.HasEnergyBar() {
+				numBars++
+				minTimeBars = min(minTimeBars, u.nextEnergyTick)
+			}
+		}
+
+		if len(sim.tasks) != numBars {
+			log.Panicf("%.3f - num is %d, should %d", sim.CurrentTime.Seconds(), len(sim.tasks), numBars)
+		}
+
+		if sim.minTaskTime > minTimeBars {
+			log.Panicf("%.3f - min is %s, should %s", sim.CurrentTime.Seconds(), sim.minTaskTime, minTimeBars)
+		}
+	*/
+
+	sim.minTaskTime = NeverExpires
+	for _, t := range sim.tasks {
+		sim.minTaskTime = min(sim.minTaskTime, t.RunTask(sim)) // RunTask() might alter sim.tasks
+	}
+
+	return false
+}
+
 func (sim *Simulation) Step(max time.Duration) bool {
 	if len(sim.pendingActions) == 0 {
 		return true
@@ -427,6 +498,11 @@ func (sim *Simulation) Step(max time.Duration) bool {
 
 	last := len(sim.pendingActions) - 1
 	pa := sim.pendingActions[last]
+
+	if pa.NextActionAt >= sim.minTaskTime {
+		return sim.advanceTasks()
+	}
+
 	sim.pendingActions = sim.pendingActions[:last]
 	if pa.cancelled {
 		return false
@@ -525,11 +601,21 @@ func (sim *Simulation) advance(nextTime time.Duration) {
 	}
 
 	if sim.CurrentTime >= sim.minTrackerTime {
-		sim.minTrackerTime = sim.trackers[0].advance(sim)
-		for _, at := range sim.trackers[1:] {
-			sim.minTrackerTime = min(sim.minTrackerTime, at.advance(sim))
+		sim.minTrackerTime = NeverExpires
+		for _, t := range sim.trackers {
+			sim.minTrackerTime = min(sim.minTrackerTime, t.advance(sim))
 		}
 	}
+
+	/*
+		for _, character := range sim.characters {
+			character.advance(sim)
+		}
+
+		for _, target := range sim.Encounter.Targets {
+			target.Advance(sim)
+		}
+	*/
 }
 
 func (sim *Simulation) RegisterExecutePhaseCallback(callback func(sim *Simulation, isExecute int32)) {

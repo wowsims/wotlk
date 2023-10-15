@@ -981,22 +981,22 @@ dps_results: {
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Default--NoBuffs-LongMultiTarget"
  value: {
-  dps: 4853.83095
-  tps: 3509.33992
+  dps: 4857.20262
+  tps: 3511.80859
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Default--NoBuffs-LongSingleTarget"
  value: {
-  dps: 4853.83095
-  tps: 3509.33992
+  dps: 4857.20262
+  tps: 3511.80859
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Default--NoBuffs-ShortSingleTarget"
  value: {
-  dps: 5098.10689
-  tps: 3674.62409
+  dps: 5100.34705
+  tps: 3676.58854
  }
 }
 dps_results: {
@@ -1023,22 +1023,22 @@ dps_results: {
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Default-NoBleed--NoBuffs-LongMultiTarget"
  value: {
-  dps: 4873.94512
-  tps: 3523.84534
+  dps: 4880.35255
+  tps: 3528.39462
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Default-NoBleed--NoBuffs-LongSingleTarget"
  value: {
-  dps: 4873.94512
-  tps: 3523.84534
+  dps: 4880.35255
+  tps: 3528.39462
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Default-NoBleed--NoBuffs-ShortSingleTarget"
  value: {
-  dps: 5077.18897
-  tps: 3660.52024
+  dps: 5081.01421
+  tps: 3664.35796
  }
 }
 dps_results: {
@@ -1065,22 +1065,22 @@ dps_results: {
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Flower-Aoe--NoBuffs-LongMultiTarget"
  value: {
-  dps: 14733.47866
-  tps: 10879.36617
+  dps: 14739.43751
+  tps: 10886.16858
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Flower-Aoe--NoBuffs-LongSingleTarget"
  value: {
-  dps: 2572.3973
-  tps: 1908.02844
+  dps: 2575.10719
+  tps: 1909.44551
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P1-Flower-Aoe--NoBuffs-ShortSingleTarget"
  value: {
-  dps: 2863.73277
-  tps: 2097.93465
+  dps: 2859.70777
+  tps: 2094.86454
  }
 }
 dps_results: {
@@ -1107,22 +1107,22 @@ dps_results: {
 dps_results: {
  key: "TestFeral-Settings-Tauren-P2-Default--NoBuffs-LongMultiTarget"
  value: {
-  dps: 6291.9379
-  tps: 4529.72278
+  dps: 6309.60379
+  tps: 4542.26556
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P2-Default--NoBuffs-LongSingleTarget"
  value: {
-  dps: 6291.9379
-  tps: 4529.72278
+  dps: 6309.60379
+  tps: 4542.26556
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P2-Default--NoBuffs-ShortSingleTarget"
  value: {
-  dps: 6835.21915
-  tps: 4907.59986
+  dps: 6830.19085
+  tps: 4904.02977
  }
 }
 dps_results: {
@@ -1149,22 +1149,22 @@ dps_results: {
 dps_results: {
  key: "TestFeral-Settings-Tauren-P2-Default-NoBleed--NoBuffs-LongMultiTarget"
  value: {
-  dps: 6309.44618
-  tps: 4542.37801
+  dps: 6290.08028
+  tps: 4528.62823
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P2-Default-NoBleed--NoBuffs-LongSingleTarget"
  value: {
-  dps: 6309.44618
-  tps: 4542.37801
+  dps: 6290.08028
+  tps: 4528.62823
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P2-Default-NoBleed--NoBuffs-ShortSingleTarget"
  value: {
-  dps: 6862.20267
-  tps: 4926.38423
+  dps: 6861.36663
+  tps: 4925.79064
  }
 }
 dps_results: {
@@ -1191,22 +1191,22 @@ dps_results: {
 dps_results: {
  key: "TestFeral-Settings-Tauren-P2-Flower-Aoe--NoBuffs-LongMultiTarget"
  value: {
-  dps: 20666.30314
-  tps: 15082.34738
+  dps: 20698.3359
+  tps: 15097.21105
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P2-Flower-Aoe--NoBuffs-LongSingleTarget"
  value: {
-  dps: 3509.95819
-  tps: 2572.83656
+  dps: 3512.01412
+  tps: 2574.60784
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-P2-Flower-Aoe--NoBuffs-ShortSingleTarget"
  value: {
-  dps: 3961.53462
-  tps: 2877.51848
+  dps: 3961.55142
+  tps: 2878.75012
  }
 }
 dps_results: {
