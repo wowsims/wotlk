@@ -357,10 +357,10 @@ func (sim *Simulation) runOnce() {
 }
 
 var (
-	dummyAction = &PendingAction{
+	sentinelPendingAction = &PendingAction{
 		NextActionAt: NeverExpires,
 		OnAction: func(sim *Simulation) {
-			panic("running dummy action")
+			panic("running sentinel pending action")
 		},
 	}
 )
@@ -384,7 +384,7 @@ func (sim *Simulation) reset() {
 	}
 
 	sim.pendingActions = sim.pendingActions[:0]
-	sim.pendingActions = append(sim.pendingActions, dummyAction)
+	sim.pendingActions = append(sim.pendingActions, sentinelPendingAction)
 
 	sim.executePhase = 0
 	sim.nextExecutePhase()
