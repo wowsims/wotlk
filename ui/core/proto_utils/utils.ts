@@ -1175,8 +1175,8 @@ const rogueRaces = [
 	Race.RaceUndead,
 ];
 const shamanRaces = [
-	Race.RaceDraenei,
 	Race.RaceOrc,
+	Race.RaceDraenei,
 	Race.RaceTauren,
 	Race.RaceTroll,
 ];
