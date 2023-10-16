@@ -30,6 +30,7 @@ import * as Tooltips from '../core/constants/tooltips.js';
 import { Player } from "../core/player";
 
 import BasicP3AplJson from './apls/basic_p3.apl.json';
+import P4AplJson from './apls/p4.apl.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -74,6 +75,21 @@ export const Phase3Talents = {
 		glyphs: Glyphs.create({
 			major1: DruidMajorGlyph.GlyphOfStarfire,
 			major2: DruidMajorGlyph.GlyphOfMoonfire,
+			major3: DruidMajorGlyph.GlyphOfStarfall,
+			minor1: DruidMinorGlyph.GlyphOfTyphoon,
+			minor2: DruidMinorGlyph.GlyphOfUnburdenedRebirth,
+			minor3: DruidMinorGlyph.GlyphOfTheWild,
+		}),
+	}),
+};
+
+export const Phase4Talents = {
+	name: 'Phase 4',
+	data: SavedTalents.create({
+		talentsString: '5102223115331303213305311031--205003012',
+		glyphs: Glyphs.create({
+			major1: DruidMajorGlyph.GlyphOfFocus,
+			major2: DruidMajorGlyph.GlyphOfInsectSwarm,
 			major3: DruidMajorGlyph.GlyphOfStarfall,
 			minor1: DruidMinorGlyph.GlyphOfTyphoon,
 			minor2: DruidMinorGlyph.GlyphOfUnburdenedRebirth,
@@ -274,3 +290,4 @@ export const P3_PRESET_ALLI = {
 };
 
 export const ROTATION_PRESET_P3_APL = PresetUtils.makePresetAPLRotation('P3', BasicP3AplJson);
+export const ROTATION_PRESET_P4_APL = PresetUtils.makePresetAPLRotation('P4', P4AplJson);

@@ -710,8 +710,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-Scourgelord'sPlate"
  value: {
-  dps: 9863.04875
-  tps: 6488.1932
+  dps: 9863.02095
+  tps: 6488.15096
   hps: 360.50688
  }
 }
