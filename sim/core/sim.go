@@ -48,6 +48,9 @@ type Simulation struct {
 	nextExecuteDuration time.Duration
 	nextExecuteDamage   float64
 
+	endOfCombatDuration time.Duration
+	endOfCombatDamage   float64
+
 	minTrackerTime time.Duration
 	trackers       []*auraTracker
 
@@ -353,6 +356,15 @@ func (sim *Simulation) runOnce() {
 	sim.Cleanup()
 }
 
+var (
+	dummyAction = &PendingAction{
+		NextActionAt: NeverExpires,
+		OnAction: func(sim *Simulation) {
+			panic("running dummy action")
+		},
+	}
+)
+
 // Reset will set sim back and erase all current state.
 // This is automatically called before every 'Run'.
 func (sim *Simulation) reset() {
@@ -372,10 +384,19 @@ func (sim *Simulation) reset() {
 	}
 
 	sim.pendingActions = sim.pendingActions[:0]
+	sim.pendingActions = append(sim.pendingActions, dummyAction)
 
 	sim.executePhase = 0
 	sim.nextExecutePhase()
 	sim.executePhaseCallbacks = nil
+
+	// Use duration as an end check if not using health.
+	sim.endOfCombatDuration = sim.Duration
+	sim.endOfCombatDamage = math.MaxFloat64
+	if sim.Encounter.EndFightAtHealth > 0 {
+		sim.endOfCombatDuration = NeverExpires
+		sim.endOfCombatDamage = sim.Encounter.EndFightAtHealth
+	}
 
 	sim.CurrentTime = 0
 
@@ -390,20 +411,28 @@ func (sim *Simulation) reset() {
 	sim.initManaTickAction()
 }
 
+func (sim *Simulation) runPrepullActions(max time.Duration) {
+	for {
+		if finished := len(sim.pendingActions) == 1 || sim.Step(max); finished {
+			return
+		}
+	}
+}
+
 func (sim *Simulation) PrePull() {
 	if len(sim.Environment.prepullActions) > 0 {
 		sim.CurrentTime = sim.Environment.PrepullStartTime()
 
 		for _, prepullAction := range sim.Environment.prepullActions {
 			if prepullAction.DoAt > sim.CurrentTime {
-				sim.runPendingActions(prepullAction.DoAt)
+				sim.runPrepullActions(prepullAction.DoAt)
 				sim.advance(prepullAction.DoAt)
 			}
 			prepullAction.Action(sim)
 		}
 
 		if sim.CurrentTime < 0 {
-			sim.runPendingActions(0)
+			sim.runPrepullActions(0)
 			sim.advance(0)
 		}
 	}
@@ -446,61 +475,27 @@ func (sim *Simulation) runPendingActions(max time.Duration) {
 	}
 }
 
-func (sim *Simulation) advanceTasks() bool {
-	// Use duration as an end check if not using health.
-	if sim.Encounter.EndFightAtHealth == 0 {
-		if sim.minTaskTime > sim.Duration {
-			return true
-		}
-	} else if sim.Encounter.EndFightAtHealth < sim.Encounter.DamageTaken {
-		return true
-	}
-
+func (sim *Simulation) advanceTasks() {
 	if sim.minTaskTime > sim.CurrentTime {
 		sim.advance(sim.minTaskTime)
 	}
-
-	/*
-		var numBars int
-		minTimeBars := NeverExpires
-		for _, u := range sim.AllUnits {
-			if u.enabled && u.HasFocusBar() {
-				numBars++
-				minTimeBars = min(minTimeBars, u.nextFocusTick)
-			}
-			if u.enabled && u.HasEnergyBar() {
-				numBars++
-				minTimeBars = min(minTimeBars, u.nextEnergyTick)
-			}
-		}
-
-		if len(sim.tasks) != numBars {
-			log.Panicf("%.3f - num is %d, should %d", sim.CurrentTime.Seconds(), len(sim.tasks), numBars)
-		}
-
-		if sim.minTaskTime > minTimeBars {
-			log.Panicf("%.3f - min is %s, should %s", sim.CurrentTime.Seconds(), sim.minTaskTime, minTimeBars)
-		}
-	*/
 
 	sim.minTaskTime = NeverExpires
 	for _, t := range sim.tasks {
 		sim.minTaskTime = min(sim.minTaskTime, t.RunTask(sim)) // RunTask() might alter sim.tasks
 	}
-
-	return false
 }
 
 func (sim *Simulation) Step(max time.Duration) bool {
-	if len(sim.pendingActions) == 0 {
-		return true
-	}
-
 	last := len(sim.pendingActions) - 1
 	pa := sim.pendingActions[last]
 
 	if pa.NextActionAt >= sim.minTaskTime {
-		return sim.advanceTasks()
+		if sim.minTaskTime > sim.endOfCombatDuration || sim.Encounter.DamageTaken > sim.endOfCombatDamage {
+			return true
+		}
+		sim.advanceTasks()
+		return false
 	}
 
 	sim.pendingActions = sim.pendingActions[:last]
@@ -508,12 +503,7 @@ func (sim *Simulation) Step(max time.Duration) bool {
 		return false
 	}
 
-	// Use duration as an end check if not using health.
-	if sim.Encounter.EndFightAtHealth == 0 {
-		if pa.NextActionAt > sim.Duration {
-			return true
-		}
-	} else if sim.Encounter.EndFightAtHealth < sim.Encounter.DamageTaken {
+	if pa.NextActionAt > sim.endOfCombatDuration || sim.Encounter.DamageTaken > sim.endOfCombatDamage {
 		return true
 	}
 
@@ -539,7 +529,7 @@ func (sim *Simulation) AddPendingAction(pa *PendingAction) {
 	//	panic(fmt.Sprintf("Cant add action in the past: %s", pa.NextActionAt))
 	//}
 	pa.consumed = false
-	for index, v := range sim.pendingActions {
+	for index, v := range sim.pendingActions[1:] {
 		if v.NextActionAt < pa.NextActionAt || (v.NextActionAt == pa.NextActionAt && v.Priority >= pa.Priority) {
 			//if sim.Log != nil {
 			//	sim.Log("Adding action at index %d for time %s", index - len(sim.pendingActions), pa.NextActionAt)
@@ -548,8 +538,8 @@ func (sim *Simulation) AddPendingAction(pa *PendingAction) {
 			//	}
 			//}
 			sim.pendingActions = append(sim.pendingActions, pa)
-			copy(sim.pendingActions[index+1:], sim.pendingActions[index:])
-			sim.pendingActions[index] = pa
+			copy(sim.pendingActions[index+2:], sim.pendingActions[index+1:])
+			sim.pendingActions[index+1] = pa
 			return
 		}
 	}
@@ -606,16 +596,6 @@ func (sim *Simulation) advance(nextTime time.Duration) {
 			sim.minTrackerTime = min(sim.minTrackerTime, t.advance(sim))
 		}
 	}
-
-	/*
-		for _, character := range sim.characters {
-			character.advance(sim)
-		}
-
-		for _, target := range sim.Encounter.Targets {
-			target.Advance(sim)
-		}
-	*/
 }
 
 func (sim *Simulation) RegisterExecutePhaseCallback(callback func(sim *Simulation, isExecute int32)) {
