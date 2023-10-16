@@ -490,7 +490,7 @@ func (hunter *Hunter) applyGoForTheThroat() {
 			if !hunter.pet.IsEnabled() {
 				return
 			}
-			hunter.pet.AddFocus(sim, amount, core.ActionID{SpellID: 34954})
+			hunter.pet.AddFocus(sim, amount, spell.ResourceMetrics)
 		},
 		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !result.DidCrit() {
@@ -499,7 +499,7 @@ func (hunter *Hunter) applyGoForTheThroat() {
 			if !hunter.pet.IsEnabled() {
 				return
 			}
-			hunter.pet.AddFocus(sim, amount, core.ActionID{SpellID: 34954})
+			hunter.pet.AddFocus(sim, amount, spell.ResourceMetrics)
 		},
 	})
 }

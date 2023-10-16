@@ -25,13 +25,18 @@ type focusBar struct {
 	onFocusGain OnFocusGain
 
 	nextFocusTick time.Duration
+
+	regenMetrics  *ResourceMetrics
+	refundMetrics *ResourceMetrics
 }
 
 func (unit *Unit) EnableFocusBar(regenMultiplier float64, onFocusGain OnFocusGain) {
 	unit.focusBar = focusBar{
-		unit:         unit,
-		focusPerTick: BaseFocusPerTick * regenMultiplier,
-		onFocusGain:  onFocusGain,
+		unit:          unit,
+		focusPerTick:  BaseFocusPerTick * regenMultiplier,
+		onFocusGain:   onFocusGain,
+		regenMetrics:  unit.NewEnergyMetrics(ActionID{OtherID: proto.OtherAction_OtherActionFocusRegen}),
+		refundMetrics: unit.NewEnergyMetrics(ActionID{OtherID: proto.OtherAction_OtherActionRefund}),
 	}
 }
 
@@ -43,15 +48,16 @@ func (fb *focusBar) CurrentFocus() float64 {
 	return fb.currentFocus
 }
 
-func (fb *focusBar) AddFocus(sim *Simulation, amount float64, actionID ActionID) {
+func (fb *focusBar) AddFocus(sim *Simulation, amount float64, metrics *ResourceMetrics) {
 	if amount < 0 {
 		panic("Trying to add negative focus!")
 	}
 
 	newFocus := min(fb.currentFocus+amount, MaxFocus)
+	metrics.AddEvent(amount, newFocus-fb.currentFocus)
 
 	if sim.Log != nil {
-		fb.unit.Log(sim, "Gained %0.3f focus from %s (%0.3f --> %0.3f).", amount, actionID, fb.currentFocus, newFocus)
+		fb.unit.Log(sim, "Gained %0.3f focus from %s (%0.3f --> %0.3f).", amount, metrics.ActionID, fb.currentFocus, newFocus)
 	}
 
 	fb.currentFocus = newFocus
@@ -61,15 +67,16 @@ func (fb *focusBar) AddFocus(sim *Simulation, amount float64, actionID ActionID)
 	}
 }
 
-func (fb *focusBar) SpendFocus(sim *Simulation, amount float64, actionID ActionID) {
+func (fb *focusBar) SpendFocus(sim *Simulation, amount float64, metrics *ResourceMetrics) {
 	if amount < 0 {
 		panic("Trying to spend negative focus!")
 	}
 
 	newFocus := fb.currentFocus - amount
+	metrics.AddEvent(-amount, -amount)
 
 	if sim.Log != nil {
-		fb.unit.Log(sim, "Spent %0.3f focus from %s (%0.3f --> %0.3f).", amount, actionID, fb.currentFocus, newFocus)
+		fb.unit.Log(sim, "Spent %0.3f focus from %s (%0.3f --> %0.3f).", amount, metrics.ActionID, fb.currentFocus, newFocus)
 	}
 
 	fb.currentFocus = newFocus
@@ -103,24 +110,33 @@ func (fb *focusBar) RunTask(sim *Simulation) time.Duration {
 		return fb.nextFocusTick
 	}
 
-	fb.AddFocus(sim, fb.focusPerTick, ActionID{OtherID: proto.OtherAction_OtherActionFocusRegen})
+	fb.AddFocus(sim, fb.focusPerTick, fb.regenMetrics)
 
 	fb.nextFocusTick = sim.CurrentTime + tickDuration
 	return fb.nextFocusTick
 }
 
 type FocusCostOptions struct {
-	Cost   float64
-	Refund float64
+	Cost float64
+
+	Refund        float64
+	RefundMetrics *ResourceMetrics // Optional, will default to unit.FocusRefundMetrics if not supplied
 }
 type FocusCost struct {
-	Refund float64
+	Refund          float64
+	RefundMetrics   *ResourceMetrics
+	ResourceMetrics *ResourceMetrics
 }
 
 func newFocusCost(spell *Spell, options FocusCostOptions) *FocusCost {
 	spell.DefaultCast.Cost = options.Cost
+	if options.Refund > 0 && options.RefundMetrics == nil {
+		options.RefundMetrics = spell.Unit.refundMetrics
+	}
 	return &FocusCost{
-		Refund: options.Refund,
+		Refund:          options.Refund,
+		RefundMetrics:   options.RefundMetrics,
+		ResourceMetrics: spell.Unit.NewFocusMetrics(spell.ActionID),
 	}
 }
 
@@ -132,10 +148,10 @@ func (fc *FocusCost) CostFailureReason(_ *Simulation, spell *Spell) string {
 	return fmt.Sprintf("not enough focus (Current Focus = %0.03f, Focus Cost = %0.03f)", spell.Unit.CurrentFocus(), spell.CurCast.Cost)
 }
 func (fc *FocusCost) SpendCost(sim *Simulation, spell *Spell) {
-	spell.Unit.SpendFocus(sim, spell.CurCast.Cost, spell.ActionID)
+	spell.Unit.SpendFocus(sim, spell.CurCast.Cost, fc.ResourceMetrics)
 }
 func (fc *FocusCost) IssueRefund(sim *Simulation, spell *Spell) {
 	if fc.Refund > 0 {
-		spell.Unit.AddFocus(sim, fc.Refund*spell.CurCast.Cost, spell.ActionID)
+		spell.Unit.AddFocus(sim, fc.Refund*spell.CurCast.Cost, fc.RefundMetrics)
 	}
 }
