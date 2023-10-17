@@ -13,13 +13,11 @@ import {
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
-import { TypedEvent } from '../core/typed_event.js';
 
 import { ProtectionWarrior, ProtectionWarrior_Rotation as ProtectionWarriorRotation, WarriorTalents as WarriorTalents, ProtectionWarrior_Options as ProtectionWarriorOptions } from '../core/proto/warrior.js';
 
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
-import * as Tooltips from '../core/constants/tooltips.js';
 
 import * as ProtectionWarriorInputs from './inputs.js';
 import * as Presets from './presets.js';
@@ -199,7 +197,7 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.P1_PRERAID_BALANCED_PRESET,
+					Presets.PRERAID_BALANCED_PRESET,
 					Presets.P1_BALANCED_PRESET,
 					Presets.P2_SURVIVAL_PRESET,
 				],

@@ -162,7 +162,7 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.PreRaid_PRESET,
+					Presets.PRERAID_PRESET,
 					Presets.P1_PRESET,
 					Presets.P2_PRESET_FT,
 					Presets.P2_PRESET_WF,

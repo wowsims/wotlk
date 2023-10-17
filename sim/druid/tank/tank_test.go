@@ -17,7 +17,7 @@ func TestFeralTank(t *testing.T) {
 		Class: proto.Class_ClassDruid,
 		Race:  proto.Race_RaceTauren,
 
-		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		GearSet:     core.GetGearSet("../../../ui/feral_tank_druid/gear_sets", "p1"),
 		Talents:     StandardTalents,
 		Glyphs:      StandardGlyphs,
 		Consumes:    FullConsumes,
@@ -48,7 +48,7 @@ func BenchmarkSimulate(b *testing.B) {
 			&proto.Player{
 				Race:      proto.Race_RaceTauren,
 				Class:     proto.Class_ClassDruid,
-				Equipment: P1Gear,
+				Equipment: core.GetGearSet("../../../ui/feral_tank_druid/gear_sets", "p1").GearSet,
 				Consumes:  FullConsumes,
 				Spec:      PlayerOptionsDefault,
 				Buffs:     core.FullIndividualBuffs,
@@ -96,23 +96,3 @@ var FullConsumes = &proto.Consumes{
 	ThermalSapper:   true,
 	FillerExplosive: proto.Explosive_ExplosiveSaroniteBomb,
 }
-
-var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
-	{"id":40329,"enchant":67839,"gems":[41339,40008]},
-	{"id":40387},
-	{"id":40494,"enchant":44957,"gems":[40008]},
-	{"id":40252,"enchant":3294},
-	{"id":40471,"enchant":3832,"gems":[42702,40088]},
-	{"id":40186,"enchant":3850,"gems":[40008,0]},
-	{"id":40472,"enchant":63770,"gems":[40008,0]},
-	{"id":43591,"gems":[40008,40008,40008]},
-	{"id":44011,"enchant":38373,"gems":[40008,40008]},
-	{"id":40243,"enchant":55016,"gems":[40008]},
-	{"id":40370},
-	{"id":37784},
-	{"id":44253},
-	{"id":37220},
-	{"id":40280,"enchant":2673},
-	{},
-	{"id":38365}
-]}`)

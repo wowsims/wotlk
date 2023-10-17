@@ -20,7 +20,7 @@ func TestFury(t *testing.T) {
 
 		Talents:     FuryTalents,
 		Glyphs:      FuryGlyphs,
-		GearSet:     core.GearSetCombo{Label: "Fury P1", GearSet: FuryP1Gear},
+		GearSet:     core.GetGearSet("../../../ui/warrior/gear_sets", "p1_fury"),
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsFury},
 
@@ -50,7 +50,7 @@ func TestArms(t *testing.T) {
 
 		Talents:     ArmsTalents,
 		Glyphs:      ArmsGlyphs,
-		GearSet:     core.GearSetCombo{Label: "Arms P1", GearSet: FuryP1Gear},
+		GearSet:     core.GetGearSet("../../../ui/warrior/gear_sets", "p1_arms"),
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsArms},
 
@@ -74,7 +74,7 @@ func BenchmarkSimulate(b *testing.B) {
 			&proto.Player{
 				Race:          proto.Race_RaceOrc,
 				Class:         proto.Class_ClassWarrior,
-				Equipment:     FuryP1Gear,
+				Equipment:     core.GetGearSet("../../../ui/warrior/gear_sets", "p1_fury").GearSet,
 				Consumes:      FullConsumes,
 				Spec:          PlayerOptionsFury,
 				TalentsString: FuryTalents,
@@ -181,23 +181,3 @@ var FullConsumes = &proto.Consumes{
 	PrepopPotion:  proto.Potions_PotionOfSpeed,
 	Food:          proto.Food_FoodFishFeast,
 }
-
-var FuryP1Gear = core.EquipmentSpecFromJsonString(`{"items":[
-	{"id":44006,"enchant":3817,"gems":[41285,42702]},
-	{"id":44664,"gems":[39996]},
-	{"id":40530,"enchant":3808,"gems":[40037]},
-	{"id":40403,"enchant":3605},
-	{"id":40539,"enchant":3832,"gems":[42142]},
-	{"id":39765,"enchant":3845,"gems":[39996,0]},
-	{"id":40541,"enchant":3604,"gems":[0]},
-	{"id":40205,"gems":[42142]},
-	{"id":40529,"enchant":3823,"gems":[39996,40022]},
-	{"id":40591,"enchant":3606},
-	{"id":43993,"gems":[42142]},
-	{"id":40717},
-	{"id":42987},
-	{"id":40256},
-	{"id":40384,"enchant":3789},
-	{"id":40384,"enchant":3789},
-	{"id":40385}
-]}`)
