@@ -127,6 +127,7 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 				// Preset talents that the user can quickly select.
 				talents: [
 					Presets.StandardTalents,
+					Presets.EnlightenmentTalents,
 				],
 				rotations: [
 					Presets.ROTATION_PRESET_DEFAULT,

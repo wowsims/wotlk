@@ -62,6 +62,21 @@ export const StandardTalents = {
 	}),
 };
 
+export const EnlightenmentTalents = {
+	name: 'Enlightenment',
+	data: SavedTalents.create({
+		talentsString: '05032031303005022--3250230012230101231513011',
+		glyphs: Glyphs.create({
+			major1: MajorGlyph.GlyphOfShadow,
+			major2: MajorGlyph.GlyphOfMindFlay,
+			major3: MajorGlyph.GlyphOfShadowWordDeath,
+			minor1: MinorGlyph.GlyphOfFortitude,
+			minor2: MinorGlyph.GlyphOfShadowProtection,
+			minor3: MinorGlyph.GlyphOfShadowfiend,
+		}),
+	}),
+};
+
 export const DefaultOptions = Options.create({
 	useShadowfiend: true,
 	useMindBlast: true,
