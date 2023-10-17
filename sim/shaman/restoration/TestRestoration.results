@@ -853,37 +853,37 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestRestoration-Settings-Troll-P1-Standard-Default-FullBuffs-LongMultiTarget"
+ key: "TestRestoration-Settings-Troll-p1-Standard-Default-FullBuffs-LongMultiTarget"
  value: {
   dps: 1998.26195
  }
 }
 dps_results: {
- key: "TestRestoration-Settings-Troll-P1-Standard-Default-FullBuffs-LongSingleTarget"
+ key: "TestRestoration-Settings-Troll-p1-Standard-Default-FullBuffs-LongSingleTarget"
  value: {
   dps: 441.31659
  }
 }
 dps_results: {
- key: "TestRestoration-Settings-Troll-P1-Standard-Default-FullBuffs-ShortSingleTarget"
+ key: "TestRestoration-Settings-Troll-p1-Standard-Default-FullBuffs-ShortSingleTarget"
  value: {
   dps: 1149.59074
  }
 }
 dps_results: {
- key: "TestRestoration-Settings-Troll-P1-Standard-Default-NoBuffs-LongMultiTarget"
+ key: "TestRestoration-Settings-Troll-p1-Standard-Default-NoBuffs-LongMultiTarget"
  value: {
   dps: 1517.94942
  }
 }
 dps_results: {
- key: "TestRestoration-Settings-Troll-P1-Standard-Default-NoBuffs-LongSingleTarget"
+ key: "TestRestoration-Settings-Troll-p1-Standard-Default-NoBuffs-LongSingleTarget"
  value: {
   dps: 324.78607
  }
 }
 dps_results: {
- key: "TestRestoration-Settings-Troll-P1-Standard-Default-NoBuffs-ShortSingleTarget"
+ key: "TestRestoration-Settings-Troll-p1-Standard-Default-NoBuffs-ShortSingleTarget"
  value: {
   dps: 851.05887
  }

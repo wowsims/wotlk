@@ -18,7 +18,7 @@ func TestProtection(t *testing.T) {
 		Race:       proto.Race_RaceBloodElf,
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
-		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		GearSet:     core.GetGearSet("../../../ui/protection_paladin/gear_sets", "p1"),
 		Talents:     StandardTalents,
 		Glyphs:      StandardGlyphs,
 		Consumes:    FullConsumes,
@@ -77,7 +77,7 @@ func BenchmarkSimulate(b *testing.B) {
 			&proto.Player{
 				Race:      proto.Race_RaceBloodElf,
 				Class:     proto.Class_ClassPaladin,
-				Equipment: P1Gear,
+				Equipment: core.GetGearSet("../../../ui/protection_paladin/gear_sets", "p1").GearSet,
 				Consumes:  FullConsumes,
 				Spec:      DefaultOptions,
 				Buffs:     core.FullIndividualBuffs,
@@ -128,23 +128,3 @@ var FullConsumes = &proto.Consumes{
 	PrepopPotion:    proto.Potions_IndestructiblePotion,
 	DefaultConjured: proto.Conjured_ConjuredDarkRune,
 }
-
-var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
-	{"id":40581,"enchant":3818,"gems":[41380,36767]},
-	{"id":40387},
-	{"id":40584,"enchant":3852,"gems":[40008]},
-	{"id":40410,"enchant":3605},
-	{"id":40579,"enchant":3832,"gems":[36767,40022]},
-	{"id":39764,"enchant":3850,"gems":[0]},
-	{"id":40580,"enchant":3860,"gems":[40008,0]},
-	{"id":39759,"enchant":3601,"gems":[40008,40008]},
-	{"id":40589,"enchant":3822},
-	{"id":39717,"enchant":3606,"gems":[40089]},
-	{"id":40718},
-	{"id":40107},
-	{"id":44063,"gems":[36767,40089]},
-	{"id":37220},
-	{"id":40345,"enchant":3788},
-	{"id":40400,"enchant":3849},
-	{"id":40707}
-]}`)

@@ -49,7 +49,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P3_Preset_Affliction_Horde.gear,
+				gear: Presets.P3_AFFLICTION_HORDE_PRESET.gear,
 
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
@@ -149,18 +149,18 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				// Preset gear configurations that the user can quickly select.
 				gear: [
 					Presets.SWP_BIS,
-					Presets.P1_PreBiS_11,
-					Presets.P1_PreBiS_14,
-					Presets.P1_Preset_Affliction,
-					Presets.P1_Preset_Demo_Destro,
-					Presets.P2_Preset_Affliction,
-					Presets.P2_Preset_Demo_Destro,
-					Presets.P3_Preset_Affliction_Horde,
-					Presets.P3_Preset_Affliction_Alliance,
-					Presets.P3_Preset_Demo_Horde,
-					Presets.P3_Preset_Demo_Alliance,
-					Presets.P3_Preset_Destro_Horde,
-					Presets.P3_Preset_Destro_Alliance,
+					Presets.PRERAID_AFFLICTION_PRESET,
+					Presets.PRERAID_DEMODESTRO_PRESET,
+					Presets.P1_AFFLICTION_PRESET,
+					Presets.P1_DEMODESTRO_PRESET,
+					Presets.P2_AFFLICTION_PRESET,
+					Presets.P2_DEMODESTRO_PRESET,
+					Presets.P3_AFFLICTION_ALLIANCE_PRESET,
+					Presets.P3_AFFLICTION_HORDE_PRESET,
+					Presets.P3_DEMO_ALLIANCE_PRESET,
+					Presets.P3_DEMO_HORDE_PRESET,
+					Presets.P3_DESTRO_ALLIANCE_PRESET,
+					Presets.P3_DESTRO_HORDE_PRESET,
 				],
 			},
 		});

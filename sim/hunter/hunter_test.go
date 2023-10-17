@@ -18,7 +18,7 @@ func TestBM(t *testing.T) {
 		Race:       proto.Race_RaceOrc,
 		OtherRaces: []proto.Race{proto.Race_RaceDwarf},
 
-		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		GearSet:     core.GetGearSet("../../ui/hunter/gear_sets", "p1_sv"),
 		Talents:     BMTalents,
 		Glyphs:      BMGlyphs,
 		Consumes:    FullConsumes,
@@ -35,7 +35,7 @@ func TestMM(t *testing.T) {
 		Race:       proto.Race_RaceOrc,
 		OtherRaces: []proto.Race{proto.Race_RaceDwarf},
 
-		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		GearSet:     core.GetGearSet("../../ui/hunter/gear_sets", "p1_mm"),
 		Talents:     MMTalents,
 		Glyphs:      MMGlyphs,
 		Consumes:    FullConsumes,
@@ -55,7 +55,7 @@ func TestSV(t *testing.T) {
 		Race:       proto.Race_RaceOrc,
 		OtherRaces: []proto.Race{proto.Race_RaceDwarf},
 
-		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		GearSet:     core.GetGearSet("../../ui/hunter/gear_sets", "p1_sv"),
 		Talents:     SVTalents,
 		Glyphs:      SVGlyphs,
 		Consumes:    FullConsumes,
@@ -95,7 +95,7 @@ func BenchmarkSimulate(b *testing.B) {
 			&proto.Player{
 				Race:          proto.Race_RaceOrc,
 				Class:         proto.Class_ClassHunter,
-				Equipment:     P1Gear,
+				Equipment:     core.GetGearSet("../../ui/hunter/gear_sets", "p1_sv").GearSet,
 				Consumes:      FullConsumes,
 				Spec:          PlayerOptionsBasic,
 				Glyphs:        MMGlyphs,
@@ -169,23 +169,3 @@ var PlayerOptionsBasic = &proto.Player_Hunter{
 		},
 	},
 }
-
-var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
-	{"id":40505,"enchant":3817,"gems":[41398,42143]},
-	{"id":44664,"gems":[42143]},
-	{"id":40507,"enchant":3808,"gems":[39997]},
-	{"id":40403,"enchant":3605},
-	{"id":43998,"enchant":3832,"gems":[42143,39997]},
-	{"id":40282,"enchant":3845,"gems":[39997,0]},
-	{"id":40541,"enchant":3604,"gems":[0]},
-	{"id":39762,"enchant":3601,"gems":[39997]},
-	{"id":40331,"enchant":3823,"gems":[39997,49110]},
-	{"id":40549,"enchant":3606},
-	{"id":40074},
-	{"id":40474},
-	{"id":40684},
-	{"id":44253},
-	{"id":40388,"enchant":3827},
-	{},
-	{"id":40385,"enchant":3608}
-]}`)

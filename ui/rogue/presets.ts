@@ -1,13 +1,11 @@
 import {
 	Conjured,
 	Consumes,
-	EquipmentSpec,
 	Flask,
 	Food,
 	Glyphs,
 	Potions,
 } from '../core/proto/common.js';
-import { Player } from '../core/player.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
 import {
@@ -24,7 +22,19 @@ import {
 } from '../core/proto/rogue.js';
 
 import * as PresetUtils from '../core/preset_utils.js';
-import * as Tooltips from '../core/constants/tooltips.js';
+
+import PreraidAssassinationGear from './gear_sets/preraid_assassination.gear.json';
+import P1AssassinationGear from './gear_sets/p1_assassination.gear.json';
+import P2AssassinationGear from './gear_sets/p2_assassination.gear.json';
+import P3AssassinationGear from './gear_sets/p3_assassination.gear.json';
+import PreraidCombatGear from './gear_sets/preraid_combat.gear.json';
+import P1CombatGear from './gear_sets/p1_combat.gear.json';
+import P2CombatGear from './gear_sets/p2_combat.gear.json';
+import P3CombatGear from './gear_sets/p3_combat.gear.json';
+import P1HemoSubGear from './gear_sets/p1_hemosub.gear.json';
+import P2HemoSubGear from './gear_sets/p2_hemosub.gear.json';
+import P3HemoSubGear from './gear_sets/p3_hemosub.gear.json';
+import P3DanceSubGear from './gear_sets/p3_dancesub.gear.json';
 
 import MutilateApl from './apls/mutilate.apl.json'
 import MutilateExposeApl from './apls/mutilate_expose.apl.json'
@@ -35,6 +45,46 @@ import CombatExposeApl from './apls/combat_expose.apl.json'
 import CombatCleaveSndApl from './apls/combat_cleave_snd.apl.json'
 import CombatCleaveSndExposeApl from './apls/combat_cleave_snd_expose.apl.json'
 import FanAoeApl from './apls/fan_aoe.apl.json'
+
+// Preset options for this spec.
+// Eventually we will import these values for the raid sim too, so its good to
+// keep them in a separate file.
+
+export const PRERAID_PRESET_ASSASSINATION = PresetUtils.makePresetGear('PreRaid Assassination', PreraidAssassinationGear, { talentTree: 0 });
+export const P1_PRESET_ASSASSINATION = PresetUtils.makePresetGear('P1 Assassination', P1AssassinationGear, { talentTree: 0 });
+export const P2_PRESET_ASSASSINATION = PresetUtils.makePresetGear('P2 Assassination', P2AssassinationGear, { talentTree: 0 });
+export const P3_PRESET_ASSASSINATION = PresetUtils.makePresetGear('P3 Assassination', P3AssassinationGear, { talentTree: 0 });
+export const PRERAID_PRESET_COMBAT = PresetUtils.makePresetGear('PreRaid Combat', PreraidCombatGear, { talentTree: 1 });
+export const P1_PRESET_COMBAT = PresetUtils.makePresetGear('P1 Combat', P1CombatGear, { talentTree: 1 });
+export const P2_PRESET_COMBAT = PresetUtils.makePresetGear('P2 Combat', P2CombatGear, { talentTree: 1 });
+export const P3_PRESET_COMBAT = PresetUtils.makePresetGear('P3 Combat', P3CombatGear, { talentTree: 1 });
+export const P1_PRESET_HEMO_SUB = PresetUtils.makePresetGear('P1 Hemo Sub', P1HemoSubGear, { talentTree: 2 });
+export const P2_PRESET_HEMO_SUB = PresetUtils.makePresetGear('P2 Hemo Sub', P2HemoSubGear, { talentTree: 2 });
+export const P3_PRESET_HEMO_SUB = PresetUtils.makePresetGear('P3 Hemo Sub', P3HemoSubGear, { talentTree: 2 });
+export const P3_PRESET_DANCE_SUB = PresetUtils.makePresetGear('P3 Dance Sub', P3DanceSubGear, { talentTree: 2 });
+
+export const DefaultRotation = RogueRotation.create({
+	exposeArmorFrequency: Rogue_Rotation_Frequency.Never,
+	minimumComboPointsExposeArmor: 2,
+	tricksOfTheTradeFrequency: Rogue_Rotation_Frequency.Maintain,
+	assassinationFinisherPriority: Rogue_Rotation_AssassinationPriority.EnvenomRupture,
+	combatBuilder: Rogue_Rotation_CombatBuilder.SinisterStrike,
+	combatFinisherPriority: Rogue_Rotation_CombatPriority.RuptureEviscerate,
+	subtletyBuilder: Rogue_Rotation_SubtletyBuilder.Hemorrhage,
+	subtletyFinisherPriority: Rogue_Rotation_SubtletyPriority.SubtletyEviscerate,
+	minimumComboPointsPrimaryFinisher: 4,
+	minimumComboPointsSecondaryFinisher: 4,
+});
+
+export const ROTATION_PRESET_MUTILATE = PresetUtils.makePresetAPLRotation('Mutilate', MutilateApl, { talentTree: 0 });
+export const ROTATION_PRESET_RUPTURE_MUTILATE = PresetUtils.makePresetAPLRotation('Rupture Mutilate', RuptureMutilateApl, { talentTree: 0 });
+export const ROTATION_PRESET_MUTILATE_EXPOSE = PresetUtils.makePresetAPLRotation('Mutilate w/ Expose', MutilateExposeApl, { talentTree: 0 });
+export const ROTATION_PRESET_RUPTURE_MUTILATE_EXPOSE = PresetUtils.makePresetAPLRotation('Rupture Mutilate w/ Expose', RuptureMutilateExposeApl, { talentTree: 0 });
+export const ROTATION_PRESET_COMBAT = PresetUtils.makePresetAPLRotation('Combat', CombatApl, { talentTree: 1 });
+export const ROTATION_PRESET_COMBAT_EXPOSE = PresetUtils.makePresetAPLRotation('Combat w/ Expose', CombatExposeApl, { talentTree: 1 });
+export const ROTATION_PRESET_COMBAT_CLEAVE_SND = PresetUtils.makePresetAPLRotation('Combat Cleave SND', CombatCleaveSndApl, { talentTree: 1 });
+export const ROTATION_PRESET_COMBAT_CLEAVE_SND_EXPOSE = PresetUtils.makePresetAPLRotation('Combat Cleave SND w/ Expose', CombatCleaveSndExposeApl, { talentTree: 1 });
+export const ROTATION_PRESET_AOE = PresetUtils.makePresetAPLRotation('Fan AOE', FanAoeApl);
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
@@ -122,29 +172,6 @@ export const HemoSubtletyTalents = {
 	}),
 }
 
-export const ROTATION_PRESET_MUTILATE = PresetUtils.makePresetAPLRotation('Mutilate', MutilateApl, { talentTree: 0 });
-export const ROTATION_PRESET_RUPTURE_MUTILATE = PresetUtils.makePresetAPLRotation('Rupture Mutilate', RuptureMutilateApl, { talentTree: 0 });
-export const ROTATION_PRESET_MUTILATE_EXPOSE = PresetUtils.makePresetAPLRotation('Mutilate w/ Expose', MutilateExposeApl, { talentTree: 0 });
-export const ROTATION_PRESET_RUPTURE_MUTILATE_EXPOSE = PresetUtils.makePresetAPLRotation('Rupture Mutilate w/ Expose', RuptureMutilateExposeApl, { talentTree: 0 });
-export const ROTATION_PRESET_COMBAT = PresetUtils.makePresetAPLRotation('Combat', CombatApl, { talentTree: 1 });
-export const ROTATION_PRESET_COMBAT_EXPOSE = PresetUtils.makePresetAPLRotation('Combat w/ Expose', CombatExposeApl, { talentTree: 1 });
-export const ROTATION_PRESET_COMBAT_CLEAVE_SND = PresetUtils.makePresetAPLRotation('Combat Cleave SND', CombatCleaveSndApl, { talentTree: 1 });
-export const ROTATION_PRESET_COMBAT_CLEAVE_SND_EXPOSE = PresetUtils.makePresetAPLRotation('Combat Cleave SND w/ Expose', CombatCleaveSndExposeApl, { talentTree: 1 });
-export const ROTATION_PRESET_AOE = PresetUtils.makePresetAPLRotation('Fan AOE', FanAoeApl);
-
-export const DefaultRotation = RogueRotation.create({
-	exposeArmorFrequency: Rogue_Rotation_Frequency.Never,
-	minimumComboPointsExposeArmor: 2,
-	tricksOfTheTradeFrequency: Rogue_Rotation_Frequency.Maintain,
-	assassinationFinisherPriority: Rogue_Rotation_AssassinationPriority.EnvenomRupture,
-	combatBuilder: Rogue_Rotation_CombatBuilder.SinisterStrike,
-	combatFinisherPriority: Rogue_Rotation_CombatPriority.RuptureEviscerate,
-	subtletyBuilder: Rogue_Rotation_SubtletyBuilder.Hemorrhage,
-	subtletyFinisherPriority: Rogue_Rotation_SubtletyPriority.SubtletyEviscerate,
-	minimumComboPointsPrimaryFinisher: 4,
-	minimumComboPointsSecondaryFinisher: 4,
-});
-
 export const DefaultOptions = RogueOptions.create({
 	mhImbue: Poison.DeadlyPoison,
 	ohImbue: Poison.InstantPoison,
@@ -161,310 +188,3 @@ export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfEndlessRage,
 	food: Food.FoodMegaMammothMeal,
 });
-
-export const P2_PRESET_ASSASSINATION = {
-	name: 'P2 Assassination',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getTalentTree() == 0,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":46125,"enchant":3817,"gems":[41398,39999]},
-		  {"id":45517,"gems":[39999]},
-		  {"id":45245,"enchant":3808,"gems":[39999,39999]},
-		  {"id":45461,"enchant":3605,"gems":[40053]},
-		  {"id":45473,"enchant":3832,"gems":[40053,42702,39999]},
-		  {"id":45611,"enchant":3845,"gems":[40053,0]},
-		  {"id":46124,"enchant":3604,"gems":[40003,0]},
-		  {"id":46095,"enchant":3599,"gems":[39999,39999,39999]},
-		  {"id":45536,"enchant":3823,"gems":[39999,39999,39999]},
-		  {"id":45564,"enchant":3606,"gems":[39999,39999]},
-		  {"id":45608,"gems":[39999]},
-		  {"id":45456,"gems":[39999]},
-		  {"id":45609},
-		  {"id":46038},
-		  {"id":45484,"enchant":3789,"gems":[40003]},
-		  {"id":45484,"enchant":3789,"gems":[40003]},
-		  {"id":45570,"enchant":3608}
-	]}`),
-};
-
-export const P2_PRESET_COMBAT = {
-	name: 'P2 Combat',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getTalentTree() == 1,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":46125,"enchant":3817,"gems":[41398,39999]},
-		  {"id":45517,"gems":[39999]},
-		  {"id":46127,"enchant":3808,"gems":[39999]},
-		  {"id":45461,"enchant":3605,"gems":[40053]},
-		  {"id":45473,"enchant":3832,"gems":[40053,42702,39999]},
-		  {"id":45611,"enchant":3845,"gems":[40044,0]},
-		  {"id":46043,"enchant":3604,"gems":[39999,40053,0]},
-		  {"id":46095,"enchant":3599,"gems":[39999,39999,39999]},
-		  {"id":45536,"enchant":3823,"gems":[39999,39999,39999]},
-		  {"id":45564,"enchant":3606,"gems":[39999,39999]},
-		  {"id":45608,"gems":[39999]},
-		  {"id":46048,"gems":[39999]},
-		  {"id":45609},
-		  {"id":45931},
-		  {"id":45132,"enchant":3789,"gems":[40053]},
-		  {"id":45484,"enchant":3789,"gems":[40003]},
-		  {"id":45296,"gems":[40053]}
-	]}`),
-};
-
-export const P3_PRESET_ASSASSINATION = {
-	name: 'P3 Assassination',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getTalentTree() == 0,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		  {"id":48230,"enchant":3817,"gems":[41398,49110]},
-		  {"id":47060,"gems":[40114]},
-		  {"id":48228,"enchant":3808,"gems":[40114]},
-		  {"id":47545,"enchant":3605,"gems":[40114]},
-		  {"id":48232,"enchant":3832,"gems":[40114,40114]},
-		  {"id":47155,"enchant":3845,"gems":[40114,40114,0]},
-		  {"id":48231,"enchant":3604,"gems":[40114,0]},
-		  {"id":47112,"enchant":3599,"gems":[40156,40114,40114]},
-		  {"id":46975,"enchant":3823,"gems":[40118,40118,40118]},
-		  {"id":47077,"enchant":3606,"gems":[40156,40114]},
-		  {"id":47075,"gems":[40114]},
-		  {"id":45608,"gems":[40114]},
-		  {"id":47131},
-		  {"id":45609},
-		  {"id":46969,"enchant":3789,"gems":[40156]},
-		  {"id":46969,"enchant":3789,"gems":[40156]},
-		  {"id":47521,"gems":[40156]}
-		]}`),
-};
-
-export const P3_PRESET_COMBAT = {
-	name: 'P3 Combat',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getTalentTree() == 1,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-        {"id":48230,"enchant":3817,"gems":[41398,49110]},
-        {"id":47060,"gems":[40114]},
-        {"id":48228,"enchant":3808,"gems":[40114]},
-        {"id":47545,"enchant":3605,"gems":[40114]},
-        {"id":48232,"enchant":3832,"gems":[40114,40114]},
-        {"id":47155,"enchant":3845,"gems":[40114,40114,0]},
-        {"id":48231,"enchant":3604,"gems":[40114,0]},
-        {"id":47112,"enchant":3599,"gems":[40157,40114,40114]},
-        {"id":46975,"enchant":3823,"gems":[40114,40114,40114]},
-        {"id":47077,"enchant":3606,"gems":[40157,40114]},
-        {"id":47075,"gems":[40114]},
-        {"id":47934,"gems":[40157]},
-        {"id":47131},
-        {"id":45609},
-        {"id":47156,"enchant":3789,"gems":[40157]},
-        {"id":47001,"enchant":3789,"gems":[40157]},
-        {"id":47521,"gems":[40157]}
-	]}`),
-};
-
-export const PRERAID_PRESET_ASSASSINATION = {
-	name: 'Pre-Raid Assassination',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getTalentTree() == 0,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":42550,"enchant":3817,"gems":[41398,40058]},
-		{"id":40678},
-		{"id":43481,"enchant":3808},
-		{"id":38614,"enchant":3605},
-		{"id":39558,"enchant":3832,"gems":[40003,42702]},
-		{"id":34448,"enchant":3845,"gems":[40003,0]},
-		{"id":39560,"enchant":3604,"gems":[40058,0]},
-		{"id":40694,"gems":[40003,40003]},
-		{"id":37644,"enchant":3823},
-		{"id":34575,"enchant":3606,"gems":[40003]},
-		{"id":40586},
-		{"id":37642},
-		{"id":40684},
-		{"id":44253},
-		{"id":37856,"enchant":3789},
-		{"id":37667,"enchant":3789},
-		{"id":43612}
-  ]}`),
-};
-
-export const PRERAID_PRESET_COMBAT = {
-	name: 'Pre-Raid Combat',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getTalentTree() == 1,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":42550,"enchant":3817,"gems":[41398,40014]},
-		{"id":40678},
-		{"id":37139,"enchant":3808,"gems":[39999]},
-		{"id":34241,"enchant":3605,"gems":[40014]},
-		{"id":39558,"enchant":3832,"gems":[39999,40014]},
-		{"id":34448,"enchant":3845,"gems":[39999,0]},
-		{"id":39560,"enchant":3604,"gems":[40014,0]},
-		{"id":40694,"gems":[42702,39999]},
-		{"id":37644,"enchant":3823},
-		{"id":34575,"enchant":3606,"gems":[39999]},
-		{"id":40586},
-		{"id":37642},
-		{"id":40684},
-		{"id":44253},
-		{"id":37693,"enchant":3789},
-		{"id":37856,"enchant":3789},
-		{"id":44504,"gems":[40053]}
-  ]}`),
-}
-
-export const P1_PRESET_ASSASSINATION = {
-	name: 'P1 Assassination',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getTalentTree() == 0,
-	gear: EquipmentSpec.fromJsonString(`{ "items": [
-		{"id":40499,"enchant":3817,"gems":[41398,42702]},
-		{"id":44664,"gems":[40003]},
-		{"id":40502,"enchant":3808,"gems":[40003]},
-		{"id":40403,"enchant":3605},
-		{"id":40539,"enchant":3832,"gems":[40003]},
-		{"id":39765,"enchant":3845,"gems":[40003,0]},
-		{"id":40496,"enchant":3604,"gems":[40053,0]},
-		{"id":40260,"gems":[39999]},
-		{"id":40500,"enchant":3823,"gems":[40003,40003]},
-		{"id":39701,"enchant":3606},
-		{"id":40074},
-		{"id":40474},
-		{"id":40684},
-		{"id":44253},
-		{"id":39714,"enchant":3789},
-		{"id":40386,"enchant":3789},
-		{"id":40385}
-  ]}`),
-}
-
-export const P1_PRESET_HEMO_SUB = {
-	name: "P1 Hemo Sub",
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getTalentTree() == 2,
-	gear: EquipmentSpec.fromJsonString(`{ "items": [
-		{"id":40499,"enchant":3817,"gems":[41398,42702]},
-		{"id":44664,"gems":[40029]},
-		{"id":40502,"enchant":3808,"gems":[40003]},
-		{"id":40403,"enchant":3605},
-		{"id":40539,"enchant":3832,"gems":[39999]},
-		{"id":40186,"enchant":3845,"gems":[0]},
-		{"id":40541,"enchant":3604,"gems":[0]},
-		{"id":40205,"gems":[40003]},
-		{"id":44011,"enchant":3823,"gems":[40003,40034]},
-		{"id":39701,"enchant":3606},
-		{"id":40074},
-		{"id":40474},
-		{"id":40256},
-		{"id":44253},
-		{"id":40383,"enchant":3789},
-		{"id":39714,"enchant":3789},
-		{"id":40385}
-  ]}`),
-}
-
-export const P1_PRESET_COMBAT = {
-	name: 'P1 Combat',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getTalentTree() == 1,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":40499,"enchant":3817,"gems":[41398,42702]},
-		{"id":44664,"gems":[39999]},
-		{"id":40502,"enchant":3808,"gems":[39999]},
-		{"id":40403,"enchant":3605},
-		{"id":40539,"enchant":3832,"gems":[39999]},
-		{"id":39765,"enchant":3845,"gems":[39999,0]},
-		{"id":40541,"enchant":3604,"gems":[0]},
-		{"id":40205,"gems":[39999]},
-		{"id":44011,"enchant":3823,"gems":[39999,39999]},
-		{"id":39701,"enchant":3606},
-		{"id":40074},
-		{"id":40474},
-		{"id":40684},
-		{"id":44253},
-		{"id":40383,"enchant":3789},
-		{"id":39714,"enchant":3789},
-		{"id":40385}
-  ]}`),
-}
-
-export const P2_PRESET_HEMO_SUB = {
-	name: "P2 Hemo Sub",
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getTalentTree() == 2,
-	gear: EquipmentSpec.fromJsonString(`{ "items": [
-		{"id":46125,"enchant":3817,"gems":[41398,42143]},
-		{"id":45517,"gems":[49110]},
-		{"id":45245,"enchant":3808,"gems":[40023,40003]},
-		{"id":45461,"enchant":3605,"gems":[40044]},
-		{"id":45473,"enchant":3832,"gems":[40044,40023,40003]},
-		{"id":45611,"enchant":3845,"gems":[40044,0]},
-		{"id":46124,"enchant":3604,"gems":[39997,0]},
-		{"id":46095,"enchant":3599,"gems":[42143,42143,39997]},
-		{"id":45536,"enchant":3823,"gems":[40044,39997,40023]},
-		{"id":45564,"enchant":3606,"gems":[40023,40003]},
-		{"id":45608,"gems":[39997]},
-		{"id":46048,"gems":[39997]},
-		{"id":45609},
-		{"id":45931},
-		{"id":45132,"enchant":3789,"gems":[40044]},
-		{"id":45484,"enchant":3789,"gems":[39997]},
-		{"id":45296,"gems":[39997]}
-  ]}`),
-}
-
-export const P3_PRESET_HEMO_SUB = {
-	name: "P3 Hemo Sub",
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getTalentTree() == 2,
-	gear: EquipmentSpec.fromJsonString(`{ "items":[
-		{"id":48235,"enchant":3817,"gems":[41398,49110]},
-		{"id":47060,"gems":[40112]},
-		{"id":48237,"enchant":3808,"gems":[40112]},
-		{"id":47546,"enchant":3605,"gems":[40112]},
-		{"id":47431,"enchant":3832,"gems":[40148,40130,40112]},
-		{"id":45611,"enchant":3845,"gems":[40148,0]},
-		{"id":48234,"enchant":3604,"gems":[40112,0]},
-		{"id":47460,"gems":[40148,40112,40162]},
-		{"id":47420,"enchant":3823,"gems":[40112,40112,40148]},
-		{"id":47445,"enchant":3606,"gems":[40148,40112]},
-		{"id":47443,
-			"gems": [40112]},
-		{"id":46048,"gems":[40112]},
-		{"id":45609},
-		{"id":47131},
-		{"id":47475,"enchant":3789,"gems":[40148]},
-		{"id":47416,"enchant":3789,"gems":[40148]},
-		{"id":45296,"gems":[40112]}
-	]}`),
-}
-
-export const P3_PRESET_DANCE_SUB = {
-	name: "P3 Dance Sub",
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getTalentTree() == 2,
-	gear: EquipmentSpec.fromJsonString(`{ "items":[
-		{"id":48235,"enchant":3817,"gems":[41398,49110]},
-		{"id":47060,"gems":[40112]},
-		{"id":48237,"enchant":3808,"gems":[40112]},
-		{"id":47546,"enchant":3605,"gems":[40112]},
-		{"id":47431,"enchant":3832,"gems":[40148,40130,40112]},
-		{"id":45611,"enchant":3845,"gems":[40148,0]},
-		{"id":48234,
-			"enchant" :3604,
-			"gems": [
-				40112,
-				0
-			]
-		},
-		{"id":47460,"gems":[40148,40112,40162]},
-		{"id":47420,"enchant":3823,"gems":[40112,40112,40148]},
-		{"id":47445,"enchant":3606,"gems":[40148,40112]},
-		{"id":47443,"gems":[40112]},
-		{"id":46048,"gems":[40112]},
-		{"id":45609},
-		{"id":47131},
-		{"id":47416,"enchant":3789,"gems":[40148]},
-		{"id":47416,"enchant":3789,"gems":[40148]},
-		{"id":45296,"gems":[40112]}
-	]}`),
-}

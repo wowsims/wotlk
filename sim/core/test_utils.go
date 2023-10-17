@@ -245,3 +245,13 @@ func GetAplRotation(dir string, file string) RotationCombo {
 
 	return RotationCombo{Label: file, Rotation: APLRotationFromJsonString(string(data))}
 }
+
+func GetGearSet(dir string, file string) GearSetCombo {
+	filePath := dir + "/" + file + ".gear.json"
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		log.Fatalf("failed to load gear json file: %s, %s", filePath, err)
+	}
+
+	return GearSetCombo{Label: file, GearSet: EquipmentSpecFromJsonString(string(data))}
+}

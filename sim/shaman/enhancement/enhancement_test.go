@@ -18,7 +18,7 @@ func TestEnhancement(t *testing.T) {
 		Race:       proto.Race_RaceTroll,
 		OtherRaces: []proto.Race{proto.Race_RaceOrc},
 
-		GearSet:     core.GearSetCombo{Label: "P1", GearSet: Phase1Gear},
+		GearSet:     core.GetGearSet("../../../ui/enhancement_shaman/gear_sets", "p1"),
 		Talents:     StandardTalents,
 		Glyphs:      StandardGlyphs,
 		Consumes:    FullConsumes,
@@ -56,7 +56,7 @@ func BenchmarkSimulate(b *testing.B) {
 			&proto.Player{
 				Race:          proto.Race_RaceOrc,
 				Class:         proto.Class_ClassShaman,
-				Equipment:     Phase1Gear,
+				Equipment:     core.GetGearSet("../../../ui/enhancement_shaman/gear_sets", "p1").GearSet,
 				TalentsString: StandardTalents,
 				Glyphs:        StandardGlyphs,
 				Consumes:      FullConsumes,
@@ -133,23 +133,3 @@ var enhShamWFFT = &proto.EnhancementShaman_Options{
 var FullConsumes = &proto.Consumes{
 	DefaultConjured: proto.Conjured_ConjuredFlameCap,
 }
-
-var Phase1Gear = core.EquipmentSpecFromJsonString(`{"items": [
-	{"id":40543,"enchant":3817,"gems":[41398,40014]},
-	{"id":44661,"gems":[40014]},
-	{"id":40524,"enchant":3808,"gems":[40014]},
-	{"id":40403,"enchant":3605},
-	{"id":40523,"enchant":3832,"gems":[40003,40014]},
-	{"id":40282,"enchant":3845,"gems":[42702,0]},
-	{"id":40520,"enchant":3604,"gems":[42154,0]},
-	{"id":40275,"gems":[42156]},
-	{"id":40522,"enchant":3823,"gems":[39999,42156]},
-	{"id":40367,"enchant":3606,"gems":[40058]},
-	{"id":40474},
-	{"id":40074},
-	{"id":40684},
-	{"id":37390},
-	{"id":39763,"enchant":3789},
-	{"id":39468,"enchant":3789},
-	{"id":40322}
-]}`)
