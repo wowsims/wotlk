@@ -15,7 +15,6 @@ import { Deathknight, Deathknight_Rotation as DeathKnightRotation, DeathknightTa
 
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
-import * as Tooltips from '../core/constants/tooltips.js';
 
 import * as DeathKnightInputs from './inputs.js';
 import * as Presets from './presets.js';
@@ -67,7 +66,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 			],
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P2_UNHOLY_DW_BIS_PRESET.gear,
+				gear: Presets.P2_UNHOLY_DW_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatStrength]: 3.22,
@@ -228,26 +227,26 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.P1_BLOOD_BIS_PRESET,
-					Presets.P2_BLOOD_BIS_PRESET,
-					Presets.P3_BLOOD_BIS_PRESET,
-					Presets.P4_BLOOD_BIS_PRESET,
-					Presets.P1_FROST_BIS_PRESET,
-					Presets.P2_FROST_BIS_PRESET,
-					Presets.P3_FROST_BIS_PRESET,
-					Presets.P4_FROST_BIS_PRESET,
-					Presets.P1_UNHOLY_DW_BIS_PRESET,
-					Presets.P2_UNHOLY_DW_BIS_PRESET,
-					Presets.P3_UNHOLY_DW_BIS_PRESET,
-					Presets.P4_UNHOLY_DW_BIS_PRESET,
-					Presets.P4_UNHOLY_2H_BIS_PRESET,
+					Presets.P1_BLOOD_PRESET,
+					Presets.P2_BLOOD_PRESET,
+					Presets.P3_BLOOD_PRESET,
+					Presets.P4_BLOOD_PRESET,
+					Presets.P1_FROST_PRESET,
+					Presets.P2_FROST_PRESET,
+					Presets.P3_FROST_PRESET,
+					Presets.P4_FROST_PRESET,
+					Presets.P1_UNHOLY_DW_PRESET,
+					Presets.P2_UNHOLY_DW_PRESET,
+					Presets.P3_UNHOLY_DW_PRESET,
+					Presets.P4_UNHOLY_DW_PRESET,
+					Presets.P4_UNHOLY_2H_PRESET,
 					// Not needed anymore just filling ui Space
 					// Disabled on purpose
-					//Presets.P1_FROSTSUBUNH_BIS_PRESET,
+					//Presets.P1_FROSTSUBUNH_PRESET,
 					//Presets.P1_FROST_PRE_BIS_PRESET,
-					//Presets.P1_UNHOLY_DW_PRERAID_PRESET,
-					//Presets.P1_UNHOLY_2H_PRERAID_PRESET,
-					//Presets.P1_UNHOLY_2H_BIS_PRESET,
+					//Presets.PRERAID_UNHOLY_DW_PRESET,
+					//Presets.PRERAID_UNHOLY_2H_PRESET,
+					//Presets.P1_UNHOLY_2H_PRESET,
 				],
 			},
 		});

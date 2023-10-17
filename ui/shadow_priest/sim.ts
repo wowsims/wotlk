@@ -133,7 +133,7 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.PreBis_PRESET,
+					Presets.PRERAID_PRESET,
 					Presets.P1_PRESET,
 					Presets.P2_PRESET,
 					Presets.P3_PRESET,

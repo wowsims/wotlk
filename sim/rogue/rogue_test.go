@@ -17,7 +17,7 @@ func TestCombat(t *testing.T) {
 		Class:       proto.Class_ClassRogue,
 		Race:        proto.Race_RaceHuman,
 		OtherRaces:  []proto.Race{proto.Race_RaceOrc},
-		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		GearSet:     core.GetGearSet("../../ui/rogue/gear_sets", "p1_combat"),
 		Talents:     CombatTalents,
 		Glyphs:      CombatGlyphs,
 		Consumes:    FullConsumes,
@@ -49,7 +49,7 @@ func TestAssassination(t *testing.T) {
 		Class:       proto.Class_ClassRogue,
 		Race:        proto.Race_RaceHuman,
 		OtherRaces:  []proto.Race{proto.Race_RaceOrc},
-		GearSet:     core.GearSetCombo{Label: "P1 Assassination", GearSet: P1Gear},
+		GearSet:     core.GetGearSet("../../ui/rogue/gear_sets", "p1_assassination"),
 		Talents:     AssassinationTalents,
 		Glyphs:      AssassinationGlyphs,
 		Consumes:    FullConsumes,
@@ -86,7 +86,7 @@ func TestSubtlety(t *testing.T) {
 		Class:       proto.Class_ClassRogue,
 		Race:        proto.Race_RaceBloodElf,
 		OtherRaces:  []proto.Race{proto.Race_RaceOrc},
-		GearSet:     core.GearSetCombo{Label: "P2 Subtlety", GearSet: SubtletyP2Gear},
+		GearSet:     core.GetGearSet("../../ui/rogue/gear_sets", "p2_hemosub"),
 		Talents:     SubtletyTalents,
 		Glyphs:      SubtletyGlyphs,
 		Consumes:    FullConsumes,
@@ -191,7 +191,7 @@ func BenchmarkSimulate(b *testing.B) {
 			&proto.Player{
 				Race:      proto.Race_RaceTroll,
 				Class:     proto.Class_ClassRogue,
-				Equipment: P1Gear,
+				Equipment: core.GetGearSet("../../ui/rogue/gear_sets", "p1_combat").GearSet,
 				Consumes:  FullConsumes,
 				Spec:      PlayerOptionsCombatDI,
 				Buffs:     core.FullIndividualBuffs,
@@ -335,25 +335,6 @@ var FullConsumes = &proto.Consumes{
 	DefaultConjured: proto.Conjured_ConjuredRogueThistleTea,
 }
 
-var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
-	{"id":40499,"enchant":3817,"gems":[41398,42702]},
-	{"id":44664,"gems":[40003]},
-	{"id":40502,"enchant":3808,"gems":[40003]},
-	{"id":40403,"enchant":3605},
-	{"id":40539,"enchant":3832,"gems":[40003]},
-	{"id":39765,"enchant":3845,"gems":[40003,0]},
-	{"id":40496,"enchant":3604,"gems":[40053,0]},
-	{"id":40260,"gems":[39999]},
-	{"id":40500,"enchant":3823,"gems":[40003,40003]},
-	{"id":39701,"enchant":3606},
-	{"id":40074},
-	{"id":40474},
-	{"id":40684},
-	{"id":44253},
-	{"id":39714,"enchant":3789},
-	{"id":40386,"enchant":3789},
-	{"id":40385}
-  ]}`)
 var GearWithoutRED = core.EquipmentSpecFromJsonString(`{"items":[
 	{"id":37293,"enchant":3817,"gems":[41339,40088]},
 	{"id":37861},
@@ -391,23 +372,4 @@ var GearWithRED = core.EquipmentSpecFromJsonString(`{"items":[
 	{"id":37693,"enchant":3789},
 	{"id":37856,"enchant":3789},
 	{"id":37191}
-]}`)
-var SubtletyP2Gear = core.EquipmentSpecFromJsonString(`{"items": [
-	{"id":46125,"enchant":3817,"gems":[41398,42143]},
-	{"id":45517,"gems":[49110]},
-	{"id":45245,"enchant":3808,"gems":[40023,40003]},
-	{"id":45461,"enchant":3605,"gems":[40044]},
-	{"id":45473,"enchant":3832,"gems":[40044,40023,40003]},
-	{"id":45611,"enchant":3845,"gems":[40044,0]},
-	{"id":46124,"enchant":3604,"gems":[39997,0]},
-	{"id":46095,"enchant":3599,"gems":[42143,42143,39997]},
-	{"id":45536,"enchant":3823,"gems":[40044,39997,40023]},
-	{"id":45564,"enchant":3606,"gems":[40023,40003]},
-	{"id":45608,"gems":[39997]},
-	{"id":46048,"gems":[39997]},
-	{"id":45609},
-	{"id":45931},
-	{"id":45132,"enchant":3789,"gems":[40044]},
-	{"id":45484,"enchant":3789,"gems":[39997]},
-	{"id":45296,"gems":[39997]}
 ]}`)

@@ -202,7 +202,7 @@ func (dk *Deathknight) ghoulStatInheritance() core.PetStatInheritance {
 			stats.MeleeHit:  ownerStats[stats.MeleeHit],
 			stats.Expertise: ownerStats[stats.MeleeHit] * PetExpertiseScale,
 
-			stats.MeleeHaste: ownerStats[stats.MeleeHaste], // fishy: should use PetHasteScale as well (?)
+			stats.MeleeHaste: ownerStats[stats.MeleeHaste],
 		}
 	}
 }
@@ -216,7 +216,7 @@ func (dk *Deathknight) armyGhoulStatInheritance() core.PetStatInheritance {
 			stats.MeleeHit:  ownerStats[stats.MeleeHit],
 			stats.Expertise: ownerStats[stats.MeleeHit] * PetExpertiseScale,
 
-			stats.MeleeHaste: ownerStats[stats.MeleeHaste], // fishy: should use PetHasteScale as well (?)
+			stats.MeleeHaste: ownerStats[stats.MeleeHaste],
 		}
 	}
 }

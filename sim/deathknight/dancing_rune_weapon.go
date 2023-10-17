@@ -144,7 +144,7 @@ func (dk *Deathknight) NewRuneWeapon() *RuneWeaponPet {
 		}, func(ownerStats stats.Stats) stats.Stats {
 			return stats.Stats{
 				stats.AttackPower: ownerStats[stats.AttackPower],
-				stats.MeleeHaste:  ownerStats[stats.MeleeHaste] * PetHasteScale,
+				stats.MeleeHaste:  ownerStats[stats.MeleeHaste],
 
 				stats.MeleeHit: ownerStats[stats.MeleeHit],
 				stats.SpellHit: ownerStats[stats.MeleeHit] * PetSpellHitScale,

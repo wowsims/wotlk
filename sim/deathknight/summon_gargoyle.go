@@ -94,7 +94,7 @@ func (dk *Deathknight) NewGargoyle(nerfedGargoyle bool) *GargoylePet {
 			return stats.Stats{
 				stats.AttackPower: ownerStats[stats.AttackPower],
 				stats.SpellHit:    ownerStats[stats.MeleeHit] * PetSpellHitScale,
-				stats.SpellHaste:  ownerStats[stats.MeleeHaste] * PetHasteScale,
+				stats.SpellHaste:  ownerStats[stats.MeleeHaste] * PetSpellHasteScale,
 			}
 		}, false, true),
 		dkOwner:          dk,
@@ -116,7 +116,7 @@ func (dk *Deathknight) NewGargoyle(nerfedGargoyle bool) *GargoylePet {
 
 			gargoyle.EnableDynamicStats(func(ownerStats stats.Stats) stats.Stats {
 				return stats.Stats{
-					stats.SpellHaste: ownerStats[stats.MeleeHaste] * PetHasteScale,
+					stats.SpellHaste: ownerStats[stats.MeleeHaste] * PetSpellHasteScale,
 				}
 			})
 		}
