@@ -352,7 +352,7 @@ func (sim *Simulation) run() *proto.RaidSimResult {
 func (sim *Simulation) runOnce() {
 	sim.reset()
 	sim.PrePull()
-	sim.runPendingActions(NeverExpires)
+	sim.runPendingActions()
 	sim.Cleanup()
 }
 
@@ -411,35 +411,28 @@ func (sim *Simulation) reset() {
 	sim.initManaTickAction()
 }
 
-func (sim *Simulation) runPrepullActions(max time.Duration) {
-	for {
-		if finished := len(sim.pendingActions) == 1 || sim.Step(max); finished {
-			return
-		}
-	}
-}
-
 func (sim *Simulation) PrePull() {
-	if len(sim.Environment.prepullActions) > 0 {
-		sim.CurrentTime = sim.Environment.PrepullStartTime()
+	if len(sim.prepullActions) > 0 {
+		sim.CurrentTime = sim.prepullActions[0].DoAt
 
-		for _, prepullAction := range sim.Environment.prepullActions {
-			if prepullAction.DoAt > sim.CurrentTime {
-				sim.runPrepullActions(prepullAction.DoAt)
-				sim.advance(prepullAction.DoAt)
+		for i, ppa := range sim.prepullActions {
+			sim.AddPendingAction(&PendingAction{
+				NextActionAt: ppa.DoAt,
+				Priority:     ActionPriorityPrePull + ActionPriority(len(sim.prepullActions)-i),
+				OnAction:     ppa.Action,
+			})
+		}
+	}
+
+	sim.AddPendingAction(&PendingAction{
+		NextActionAt: 0,
+		Priority:     ActionPriorityPrePull,
+		OnAction: func(sim *Simulation) {
+			for _, unit := range sim.Environment.AllUnits {
+				unit.startPull(sim)
 			}
-			prepullAction.Action(sim)
-		}
-
-		if sim.CurrentTime < 0 {
-			sim.runPrepullActions(0)
-			sim.advance(0)
-		}
-	}
-
-	for _, unit := range sim.Environment.AllUnits {
-		unit.startPull(sim)
-	}
+		},
+	})
 }
 
 func (sim *Simulation) Cleanup() {
@@ -466,27 +459,15 @@ func (sim *Simulation) Cleanup() {
 	}
 }
 
-func (sim *Simulation) runPendingActions(max time.Duration) {
+func (sim *Simulation) runPendingActions() {
 	for {
-		finished := sim.Step(max)
-		if finished {
+		if finished := sim.Step(); finished {
 			return
 		}
 	}
 }
 
-func (sim *Simulation) advanceTasks() {
-	if sim.minTaskTime > sim.CurrentTime {
-		sim.advance(sim.minTaskTime)
-	}
-
-	sim.minTaskTime = NeverExpires
-	for _, t := range sim.tasks {
-		sim.minTaskTime = min(sim.minTaskTime, t.RunTask(sim)) // RunTask() might alter sim.tasks
-	}
-}
-
-func (sim *Simulation) Step(max time.Duration) bool {
+func (sim *Simulation) Step() bool {
 	last := len(sim.pendingActions) - 1
 	pa := sim.pendingActions[last]
 
@@ -508,12 +489,7 @@ func (sim *Simulation) Step(max time.Duration) bool {
 	}
 
 	if pa.NextActionAt > sim.CurrentTime {
-		if pa.NextActionAt < max {
-			sim.advance(pa.NextActionAt)
-		} else {
-			sim.pendingActions = append(sim.pendingActions, pa)
-			return true
-		}
+		sim.advance(pa.NextActionAt)
 	}
 	pa.consumed = true
 
@@ -524,29 +500,36 @@ func (sim *Simulation) Step(max time.Duration) bool {
 	return false
 }
 
-func (sim *Simulation) AddPendingAction(pa *PendingAction) {
-	//if pa.NextActionAt < sim.CurrentTime {
-	//	panic(fmt.Sprintf("Cant add action in the past: %s", pa.NextActionAt))
-	//}
-	pa.consumed = false
-	for index, v := range sim.pendingActions[1:] {
-		if v.NextActionAt < pa.NextActionAt || (v.NextActionAt == pa.NextActionAt && v.Priority >= pa.Priority) {
-			//if sim.Log != nil {
-			//	sim.Log("Adding action at index %d for time %s", index - len(sim.pendingActions), pa.NextActionAt)
-			//	for i := index; i < len(sim.pendingActions); i++ {
-			//		sim.Log("Upcoming action at %s", sim.pendingActions[i].NextActionAt)
-			//	}
-			//}
-			sim.pendingActions = append(sim.pendingActions, pa)
-			copy(sim.pendingActions[index+2:], sim.pendingActions[index+1:])
-			sim.pendingActions[index+1] = pa
-			return
+func (sim *Simulation) advanceTasks() {
+	if sim.minTaskTime > sim.CurrentTime {
+		sim.advance(sim.minTaskTime)
+	}
+
+	sim.minTaskTime = NeverExpires
+	for _, t := range sim.tasks {
+		sim.minTaskTime = min(sim.minTaskTime, t.RunTask(sim)) // RunTask() might alter sim.tasks
+	}
+}
+
+// Advance moves time forward counting down auras, CDs, mana regen, etc
+func (sim *Simulation) advance(nextTime time.Duration) {
+	sim.CurrentTime = nextTime
+
+	// this is a loop to handle duplicate ExecuteProportions, e.g. if they're all set to 100%, you reach
+	// execute phases 35%, 25%, and 20% in the first advance() call.
+	for sim.CurrentTime >= sim.nextExecuteDuration || sim.Encounter.DamageTaken >= sim.nextExecuteDamage {
+		sim.nextExecutePhase()
+		for _, callback := range sim.executePhaseCallbacks {
+			callback(sim, sim.executePhase)
 		}
 	}
-	//if sim.Log != nil {
-	//	sim.Log("Adding action at end for time %s", pa.NextActionAt)
-	//}
-	sim.pendingActions = append(sim.pendingActions, pa)
+
+	if sim.CurrentTime >= sim.minTrackerTime {
+		sim.minTrackerTime = NeverExpires
+		for _, t := range sim.trackers {
+			sim.minTrackerTime = min(sim.minTrackerTime, t.advance(sim))
+		}
+	}
 }
 
 // nextExecutePhase updates nextExecuteDuration and nextExecuteDamage based on executePhase.
@@ -577,25 +560,29 @@ func (sim *Simulation) nextExecutePhase() {
 	}
 }
 
-// Advance moves time forward counting down auras, CDs, mana regen, etc
-func (sim *Simulation) advance(nextTime time.Duration) {
-	sim.CurrentTime = nextTime
-
-	// this is a loop to handle duplicate ExecuteProportions, e.g. if they're all set to 100%, you reach
-	// execute phases 35%, 25%, and 20% in the first advance() call.
-	for sim.CurrentTime >= sim.nextExecuteDuration || sim.Encounter.DamageTaken >= sim.nextExecuteDamage {
-		sim.nextExecutePhase()
-		for _, callback := range sim.executePhaseCallbacks {
-			callback(sim, sim.executePhase)
+func (sim *Simulation) AddPendingAction(pa *PendingAction) {
+	//if pa.NextActionAt < sim.CurrentTime {
+	//	panic(fmt.Sprintf("Cant add action in the past: %s", pa.NextActionAt))
+	//}
+	pa.consumed = false
+	for index, v := range sim.pendingActions[1:] {
+		if v.NextActionAt < pa.NextActionAt || (v.NextActionAt == pa.NextActionAt && v.Priority >= pa.Priority) {
+			//if sim.Log != nil {
+			//	sim.Log("Adding action at index %d for time %s", index - len(sim.pendingActions), pa.NextActionAt)
+			//	for i := index; i < len(sim.pendingActions); i++ {
+			//		sim.Log("Upcoming action at %s", sim.pendingActions[i].NextActionAt)
+			//	}
+			//}
+			sim.pendingActions = append(sim.pendingActions, pa)
+			copy(sim.pendingActions[index+2:], sim.pendingActions[index+1:])
+			sim.pendingActions[index+1] = pa
+			return
 		}
 	}
-
-	if sim.CurrentTime >= sim.minTrackerTime {
-		sim.minTrackerTime = NeverExpires
-		for _, t := range sim.trackers {
-			sim.minTrackerTime = min(sim.minTrackerTime, t.advance(sim))
-		}
-	}
+	//if sim.Log != nil {
+	//	sim.Log("Adding action at end for time %s", pa.NextActionAt)
+	//}
+	sim.pendingActions = append(sim.pendingActions, pa)
 }
 
 func (sim *Simulation) RegisterExecutePhaseCallback(callback func(sim *Simulation, isExecute int32)) {

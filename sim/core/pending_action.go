@@ -20,6 +20,8 @@ const (
 
 	// DOTs need to be higher than anything else so that dots can properly expire before we take other actions.
 	ActionPriorityDOT ActionPriority = 3
+
+	ActionPriorityPrePull ActionPriority = 10
 )
 
 type PendingAction struct {
