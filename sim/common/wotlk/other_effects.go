@@ -912,7 +912,7 @@ func init() {
 			character := agent.GetCharacter()
 
 			procMask := character.GetProcMaskForItem(itemID)
-			ppmm := character.AutoAttacks.NewPPMManager(1.0, procMask)
+			ppmm := character.AutoAttacks.NewPPMManager(2.0, procMask)
 
 			procActionID := core.ActionID{ItemID: itemID}
 
