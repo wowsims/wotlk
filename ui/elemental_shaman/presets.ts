@@ -1,22 +1,13 @@
-<<<<<<< HEAD
 import {
 	Consumes,
+	Faction,
 	Flask,
 	Food,
 	Glyphs,
 	Potions,
-	Faction,
-  Spec
+  Profession,
+	Spec,
 } from '../core/proto/common.js';
-=======
-import {Consumes, Profession} from '../core/proto/common.js';
-
-import { EquipmentSpec } from '../core/proto/common.js';
-import { Flask } from '../core/proto/common.js';
-import { Food } from '../core/proto/common.js';
-import { Glyphs } from '../core/proto/common.js';
-import { Potions } from '../core/proto/common.js';
->>>>>>> 6868808ba6beb98244ee1a4c5a8b70f48c3931c0
 import { SavedTalents } from '../core/proto/ui.js';
 
 import {
