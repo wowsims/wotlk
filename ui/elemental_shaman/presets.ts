@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {
 	Consumes,
 	Flask,
@@ -7,6 +8,15 @@ import {
 	Faction,
   Spec
 } from '../core/proto/common.js';
+=======
+import {Consumes, Profession} from '../core/proto/common.js';
+
+import { EquipmentSpec } from '../core/proto/common.js';
+import { Flask } from '../core/proto/common.js';
+import { Food } from '../core/proto/common.js';
+import { Glyphs } from '../core/proto/common.js';
+import { Potions } from '../core/proto/common.js';
+>>>>>>> 6868808ba6beb98244ee1a4c5a8b70f48c3931c0
 import { SavedTalents } from '../core/proto/ui.js';
 
 import {
@@ -109,6 +119,12 @@ export const DefaultOptions = ElementalShamanOptions.create({
     useFireElemental: true,
   }),
 });
+
+export const OtherDefaults = {
+    distanceFromTarget: 20,
+    profession1: Profession.Engineering,
+    profession2: Profession.Tailoring,
+}
 
 export const DefaultConsumes = Consumes.create({
   defaultPotion: Potions.PotionOfWildMagic,

@@ -83,7 +83,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P1_PRESET.gear,
+				gear: Presets.P3_PRESET_HORDE.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatIntellect]: 0.22,
@@ -100,6 +100,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				talents: Presets.StandardTalents.data,
 				// Default spec-specific settings.
 				specOptions: Presets.DefaultOptions,
+				other: Presets.OtherDefaults,
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					arcaneBrilliance: true,
@@ -108,6 +109,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 					moonkinAura: TristateEffect.TristateEffectImproved,
 					sanctifiedRetribution: true,
 					demonicPact: 500,
+					wrathOfAirTotem: true,
 				}),
 				partyBuffs: PartyBuffs.create({
 				}),
@@ -122,6 +124,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 					misery: true,
 					curseOfElements: true,
 					shadowMastery: true,
+					heartOfTheCrusader: true,
 				}),
 			},
 			// IconInputs to include in the 'Player' section on the settings tab.
