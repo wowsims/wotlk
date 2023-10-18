@@ -74,7 +74,6 @@ func (shaman *Shaman) registerFireElementalTotem() {
 		Spell: shaman.FireElementalTotem,
 		Type:  core.CooldownTypeUnknown,
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-
 			success := false
 			if enhTier10Aura != nil && shaman.Totems.EnhTierTenBonus {
 				if enhTier10Aura.IsActive() {
