@@ -1156,12 +1156,12 @@ const paladinRaces = [
 	Race.RaceHuman,
 ];
 const priestRaces = [
+	Race.RaceTroll,
 	Race.RaceBloodElf,
 	Race.RaceDraenei,
 	Race.RaceDwarf,
 	Race.RaceHuman,
 	Race.RaceNightElf,
-	Race.RaceTroll,
 	Race.RaceUndead,
 ];
 const rogueRaces = [

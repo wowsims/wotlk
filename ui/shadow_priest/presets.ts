@@ -6,12 +6,14 @@ import {
 	Glyphs,
 	IndividualBuffs,
 	Potions,
+	Profession,
 	RaidBuffs,
 	TristateEffect,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
 import {
+	ShadowPriest_Options_Armor as Armor,
 	ShadowPriest_Rotation as Rotation,
 	ShadowPriest_Options as Options,
 	ShadowPriest_Rotation_RotationType,
@@ -64,7 +66,7 @@ export const DefaultOptions = Options.create({
 	useShadowfiend: true,
 	useMindBlast: true,
 	useShadowWordDeath: true,
-	latency: 100,
+	armor: Armor.InnerFire,
 });
 
 export const DefaultConsumes = Consumes.create({
@@ -105,8 +107,11 @@ export const DefaultDebuffs = Debuffs.create({
 	ebonPlaguebringer: true,
 	heartOfTheCrusader: true,
 	judgementOfWisdom: true,
+	shadowMastery: true,
 });
 
 export const OtherDefaults = {
 	channelClipDelay: 100,
+	profession1: Profession.Engineering,
+	profession2: Profession.Tailoring,
 };
