@@ -17,10 +17,13 @@ type Shadowfiend struct {
 }
 
 var baseStats = stats.Stats{
-	stats.Strength:  314,
-	stats.Agility:   90,
-	stats.Stamina:   348,
-	stats.Intellect: 201,
+	stats.Strength:    314,
+	stats.Agility:     90,
+	stats.Stamina:     348,
+	stats.Intellect:   201,
+	stats.AttackPower: -20,
+	// with 3% crit debuff, shadowfiend crits around 9-12% (TODO: verify and narrow down)
+	stats.MeleeCrit: 8 * core.CritRatingPerCritChance,
 }
 
 func (priest *Priest) NewShadowfiend() *Shadowfiend {
@@ -65,8 +68,8 @@ func (priest *Priest) NewShadowfiend() *Shadowfiend {
 
 	shadowfiend.EnableAutoAttacks(shadowfiend, core.AutoAttackOptions{
 		MainHand: core.Weapon{
-			BaseDamageMin:        176,
-			BaseDamageMax:        210,
+			BaseDamageMin:        110,
+			BaseDamageMax:        145,
 			SwingSpeed:           1.5,
 			NormalizedSwingSpeed: 1.5,
 			CritMultiplier:       2,
@@ -75,7 +78,7 @@ func (priest *Priest) NewShadowfiend() *Shadowfiend {
 		AutoSwingMelee: true,
 	})
 
-	shadowfiend.AddStatDependency(stats.Strength, stats.AttackPower, 1.0)
+	shadowfiend.AddStatDependency(stats.Strength, stats.AttackPower, 2.0)
 
 	core.ApplyPetConsumeEffects(&shadowfiend.Character, priest.Consumes)
 
@@ -86,16 +89,20 @@ func (priest *Priest) NewShadowfiend() *Shadowfiend {
 
 func (priest *Priest) shadowfiendStatInheritance() core.PetStatInheritance {
 	return func(ownerStats stats.Stats) stats.Stats {
-		hitPercentage := ownerStats[stats.SpellHit] / core.SpellHitRatingPerHitChance
+		inheritableSP := ownerStats[stats.SpellPower] - 0.04*float64(priest.Talents.TwistedFaith)*ownerStats[stats.Spirit]
+		// Shadow fiend gets a "Spell Bonus" that adds bonus damage to each attack
+		// for simplicity, we will just convert this added damage as if it were AP
+		// Spell Bonus SP coefficient: 30%
+		// Spell Bonus Damage coefficient: 106%
+		// Damage to DPS coefficient: 1/1.5 (1.5 speed weapon)
+		// DPS to AP coefficient: 14
+		spellBonusAPEquivalent := inheritableSP * 0.3 * 1.06 * 14 / 1.5
 
 		return stats.Stats{ //still need to nail down shadow fiend crit scaling, but removing owner crit scaling after further investigation
-			stats.AttackPower: ownerStats[stats.SpellPower] * 5.377,
-			stats.MeleeHit:    hitPercentage * core.MeleeHitRatingPerHitChance,
-			stats.SpellHit:    ownerStats[stats.SpellHit],
-			//stats.MeleeCrit:   ownerStats[stats.SpellCrit],
-			//stats.SpellCrit: ownerStats[stats.SpellCrit],
-			//stats.MeleeHaste:  ownerStats[stats.SpellHaste],
-			//stats.SpellHaste:  ownerStats[stats.SpellHaste],
+			stats.AttackPower: inheritableSP*0.57 + spellBonusAPEquivalent,
+			// never misses
+			stats.MeleeHit:  8 * core.MeleeHitRatingPerHitChance,
+			stats.Expertise: 14 * core.ExpertisePerQuarterPercentReduction * 4,
 		}
 	}
 }
