@@ -251,7 +251,6 @@ func (pet *Pet) Disable(sim *Simulation) {
 		pet.OnPetDisable(sim)
 	}
 
-	pet.auraTracker.minExpires = NeverExpires
 	sim.removeTracker(&pet.auraTracker)
 
 	if sim.Log != nil {
