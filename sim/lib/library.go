@@ -342,7 +342,7 @@ func getSpellMetrics() *C.char {
 
 //export step
 func step() bool {
-	return _active_sim.Step(core.NeverExpires)
+	return _active_sim.Step()
 }
 
 //export needsInput

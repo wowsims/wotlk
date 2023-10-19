@@ -483,7 +483,7 @@ func (at *auraTracker) reset(sim *Simulation) {
 }
 
 func (at *auraTracker) advance(sim *Simulation) time.Duration {
-	if at.minExpires > sim.CurrentTime {
+	if sim.CurrentTime < at.minExpires {
 		return at.minExpires
 	}
 
