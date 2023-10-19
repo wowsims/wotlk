@@ -34,6 +34,8 @@ import P1Gear from './gear_sets/p1.gear.json';
 import P2Gear from './gear_sets/p2.gear.json';
 import P3AllianceGear from './gear_sets/p3_alliance.gear.json';
 import P3HordeGear from './gear_sets/p3_horde.gear.json';
+import P4HordeGear from './gear_sets/p4_horde.gear.json';
+import P4AllianceGear from './gear_sets/p4_alliance.gear.json';
 
 import BasicP3AplJson from './apls/basic_p3.apl.json';
 import P4AplJson from './apls/p4.apl.json';
@@ -47,6 +49,8 @@ export const P1_PRESET = PresetUtils.makePresetGear('P1 Preset', P1Gear);
 export const P2_PRESET = PresetUtils.makePresetGear('P2 Preset', P2Gear);
 export const P3_PRESET_ALLI = PresetUtils.makePresetGear('P3 Preset [A]', P3AllianceGear, { faction: Faction.Alliance });
 export const P3_PRESET_HORDE = PresetUtils.makePresetGear('P3 Preset [H]', P3HordeGear, { faction: Faction.Horde });
+export const P4_PRESET_ALLI = PresetUtils.makePresetGear('P4 Preset [A]', P4AllianceGear, { faction: Faction.Alliance });
+export const P4_PRESET_HORDE = PresetUtils.makePresetGear('P4 Preset [H]', P4HordeGear, { faction: Faction.Horde });
 
 export const ROTATION_PRESET_P3_APL = PresetUtils.makePresetAPLRotation('P3', BasicP3AplJson);
 export const ROTATION_PRESET_P4_APL = PresetUtils.makePresetAPLRotation('P4', P4AplJson);
