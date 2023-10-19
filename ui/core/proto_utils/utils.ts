@@ -1129,8 +1129,8 @@ export const specToClass: Record<Spec, Class> = {
 };
 
 const druidRaces = [
-	Race.RaceNightElf,
 	Race.RaceTauren,
+	Race.RaceNightElf,
 ];
 const hunterRaces = [
 	Race.RaceBloodElf,

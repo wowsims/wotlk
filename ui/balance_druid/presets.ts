@@ -11,7 +11,8 @@ import {
 	RaidBuffs,
 	UnitReference,
 	TristateEffect,
-	Faction
+	Faction,
+	Profession,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
@@ -85,7 +86,7 @@ export const Phase2Talents = {
 export const Phase3Talents = {
 	name: 'Phase 3',
 	data: SavedTalents.create({
-		talentsString: '5102233115331303213305311031--205003002',
+		talentsString: '5102223115331303213305311031--205003012',
 		glyphs: Glyphs.create({
 			major1: DruidMajorGlyph.GlyphOfStarfire,
 			major2: DruidMajorGlyph.GlyphOfMoonfire,
@@ -176,4 +177,6 @@ export const DefaultDebuffs = Debuffs.create({
 
 export const OtherDefaults = {
 	distanceFromTarget: 18,
+	profession1: Profession.Engineering,
+	profession2: Profession.Tailoring,
 };
