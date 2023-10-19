@@ -36,8 +36,6 @@ type Environment struct {
 	Encounter Encounter
 	AllUnits  []*Unit
 
-	characters []*Character // "cached" in init(), for advance()
-
 	BaseDuration      time.Duration // base duration
 	DurationVariation time.Duration // variation per duration
 
@@ -194,7 +192,6 @@ func (env *Environment) finalize(raidProto *proto.Raid, _ *proto.Encounter, raid
 		sim := newSimWithEnv(env, &proto.SimOptions{
 			Iterations: 1,
 		})
-		sim.Init()
 		sim.reset()
 		sim.PrePull()
 		sim.Cleanup()

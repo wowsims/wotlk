@@ -427,8 +427,8 @@ dps_results: {
 dps_results: {
  key: "TestBM-AllItems-Gronnstalker'sArmor"
  value: {
-  dps: 5010.01957
-  tps: 3329.43898
+  dps: 5009.99192
+  tps: 3329.41133
  }
 }
 dps_results: {
@@ -883,8 +883,8 @@ dps_results: {
 dps_results: {
  key: "TestBM-Average-Default"
  value: {
-  dps: 6433.20289
-  tps: 4349.46161
+  dps: 6433.20261
+  tps: 4349.46133
  }
 }
 dps_results: {

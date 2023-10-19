@@ -449,10 +449,6 @@ func (unit *Unit) finalize() {
 	}
 }
 
-func (unit *Unit) init(sim *Simulation) {
-	unit.auraTracker.init(sim)
-}
-
 func (unit *Unit) reset(sim *Simulation, _ Agent) {
 	unit.enabled = true
 	unit.resetCDs(sim)

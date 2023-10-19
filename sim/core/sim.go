@@ -257,25 +257,6 @@ func (sim *Simulation) Reseed(seed int64) {
 	sim.reseedRands(seed)
 }
 
-func (sim *Simulation) Init() {
-	for _, target := range sim.Encounter.Targets {
-		target.init(sim)
-	}
-
-	for _, party := range sim.Raid.Parties {
-		for _, player := range party.Players {
-			character := player.GetCharacter()
-			character.init(sim)
-
-			for _, pet := range character.Pets {
-				pet.init(sim)
-			}
-
-			sim.characters = append(sim.characters, character)
-		}
-	}
-}
-
 // Run runs the simulation for the configured number of iterations, and
 // collects all the metrics together.
 func (sim *Simulation) run() *proto.RaidSimResult {
@@ -293,8 +274,6 @@ func (sim *Simulation) run() *proto.RaidSimResult {
 	// sim.Log = func(message string, vals ...interface{}) {
 	// 	fmt.Printf(fmt.Sprintf("[%0.1f] "+message+"\n", append([]interface{}{sim.CurrentTime.Seconds()}, vals...)...))
 	// }
-
-	sim.Init()
 
 	sim.runOnce()
 	firstIterationDuration := sim.Duration
