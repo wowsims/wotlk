@@ -1,6 +1,7 @@
 package shaman
 
 import (
+	"math"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -60,8 +61,22 @@ var ItemSetFrostWitchRegalia = core.NewItemSet(core.ItemSet{
 				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 					fsDot := shaman.FlameShock.Dot(result.Target)
 					if spell == shaman.LavaBurst && fsDot.IsActive() { // Doesn't have to hit from tooltip
-						// Modify dot to last 6 more seconds than it has left, and refresh aura
-						fsDot.Duration = fsDot.RemainingDuration(sim) + time.Second*6
+						// Find the number of ticks whose duration is closest to 6s.
+						// "our testing confirms that the 4pc t10 setbonus adds to FS the closest number of ticks to 6 seconds always"
+						// https://web.archive.org/web/20100808192139/http://elitistjerks.com/f79/t76510-elemental_patch_3_3_now_more_fire_nova/p25/
+						numTicks := 2
+						period := fsDot.TickPeriod()
+						sixSeconds := time.Second * 6
+
+						for i := 3; i <= 10; i++ {
+							finishesAtCur := time.Duration(numTicks) * period
+							finishesAtNew := time.Duration(i) * period
+
+							if math.Abs(float64(sixSeconds-finishesAtNew)) <= math.Abs(float64(sixSeconds-finishesAtCur)) {
+								numTicks = i
+							}
+						}
+						fsDot.Duration = fsDot.RemainingDuration(sim) + time.Duration(numTicks)*period
 						fsDot.Refresh(sim)
 					}
 				},
