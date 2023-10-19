@@ -74,6 +74,8 @@ var ItemSetFrostWitchRegalia = core.NewItemSet(core.ItemSet{
 
 							if math.Abs(float64(sixSeconds-finishesAtNew)) <= math.Abs(float64(sixSeconds-finishesAtCur)) {
 								numTicks = i
+							} else {
+								break
 							}
 						}
 						fsDot.Duration = fsDot.RemainingDuration(sim) + time.Duration(numTicks)*period
