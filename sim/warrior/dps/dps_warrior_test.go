@@ -54,6 +54,10 @@ func TestArms(t *testing.T) {
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsArms},
 
+		OtherRotations: []core.RotationCombo{
+			core.GetAplRotation("../../../ui/warrior/apls", "arms"),
+		},
+
 		ItemFilter: core.ItemFilter{
 			ArmorType: proto.ArmorType_ArmorTypePlate,
 

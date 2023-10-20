@@ -930,6 +930,48 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestArms-Settings-Human-p1_arms-Basic-arms-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 10652.07342
+  tps: 10007.49125
+ }
+}
+dps_results: {
+ key: "TestArms-Settings-Human-p1_arms-Basic-arms-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 6733.8157
+  tps: 5425.80149
+ }
+}
+dps_results: {
+ key: "TestArms-Settings-Human-p1_arms-Basic-arms-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 7279.26113
+  tps: 5922.37023
+ }
+}
+dps_results: {
+ key: "TestArms-Settings-Human-p1_arms-Basic-arms-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 5528.79397
+  tps: 5348.07684
+ }
+}
+dps_results: {
+ key: "TestArms-Settings-Human-p1_arms-Basic-arms-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 3508.72973
+  tps: 2830.91293
+ }
+}
+dps_results: {
+ key: "TestArms-Settings-Human-p1_arms-Basic-arms-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 3700.71515
+  tps: 3012.98824
+ }
+}
+dps_results: {
  key: "TestArms-Settings-Orc-p1_arms-Basic--FullBuffs-LongMultiTarget"
  value: {
   dps: 8650.48828
@@ -969,6 +1011,48 @@ dps_results: {
  value: {
   dps: 3637.95937
   tps: 2997.17387
+ }
+}
+dps_results: {
+ key: "TestArms-Settings-Orc-p1_arms-Basic-arms-FullBuffs-LongMultiTarget"
+ value: {
+  dps: 10689.87998
+  tps: 10049.09221
+ }
+}
+dps_results: {
+ key: "TestArms-Settings-Orc-p1_arms-Basic-arms-FullBuffs-LongSingleTarget"
+ value: {
+  dps: 6785.38856
+  tps: 5487.0128
+ }
+}
+dps_results: {
+ key: "TestArms-Settings-Orc-p1_arms-Basic-arms-FullBuffs-ShortSingleTarget"
+ value: {
+  dps: 7379.87823
+  tps: 6038.23714
+ }
+}
+dps_results: {
+ key: "TestArms-Settings-Orc-p1_arms-Basic-arms-NoBuffs-LongMultiTarget"
+ value: {
+  dps: 5670.62396
+  tps: 5482.18162
+ }
+}
+dps_results: {
+ key: "TestArms-Settings-Orc-p1_arms-Basic-arms-NoBuffs-LongSingleTarget"
+ value: {
+  dps: 3535.77971
+  tps: 2856.56853
+ }
+}
+dps_results: {
+ key: "TestArms-Settings-Orc-p1_arms-Basic-arms-NoBuffs-ShortSingleTarget"
+ value: {
+  dps: 3767.68859
+  tps: 3083.31246
  }
 }
 dps_results: {
