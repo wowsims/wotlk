@@ -262,9 +262,14 @@ func (sim *Simulation) initManaTickAction() {
 		for _, player := range playersWithManaBars {
 			char := player.GetCharacter()
 			char.ManaTick(sim)
+
 			if char.OnManaTick != nil {
 				// Only execute APL actions after mana ticks once pre-pull has completed.
 				if char.IsUsingAPL && sim.CurrentTime > 0 {
+					if char.IsWaitingForMana() && !char.DoneWaitingForMana(sim) {
+						continue
+					}
+
 					char.Rotation.DoNextAction(sim)
 				} else {
 					char.OnManaTick(sim)

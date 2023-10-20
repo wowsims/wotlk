@@ -159,6 +159,8 @@ type Unit struct {
 
 	// The currently-channeled DOT spell, otherwise nil.
 	ChanneledDot *Dot
+
+	ManaRequired float64
 }
 
 // Units can be disabled for several reasons:
@@ -560,4 +562,17 @@ func (unit *Unit) GetMetadata() *proto.UnitMetadata {
 	})
 
 	return metadata
+}
+
+func (unit *Unit) StartAPLLoop(sim *Simulation) {
+	if unit.HasManaBar() {
+		unit.ManaRequired = 0
+	}
+}
+
+func (unit *Unit) DoneAPLLoop(sim *Simulation, usedGCD bool) {
+	if unit.HasManaBar() && !usedGCD && unit.ManaRequired > 0 {
+		unit.WaitForMana(sim, unit.ManaRequired)
+		unit.ManaRequired = 0
+	}
 }
