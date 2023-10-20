@@ -236,6 +236,7 @@ export class Player<SpecType extends Spec> {
 	private channelClipDelay: number = 0;
 	private inFrontOfTarget: boolean = false;
 	private distanceFromTarget: number = 0;
+	private nibelungAverageCasts: number = 11;
 	private healingModel: HealingModel = HealingModel.create();
 	private healingEnabled: boolean = false;
 
@@ -935,6 +936,19 @@ export class Player<SpecType extends Spec> {
 		this.distanceFromTarget = newDistanceFromTarget;
 		this.distanceFromTargetChangeEmitter.emit(eventID);
 	}
+
+	getNibelungAverageCasts(): number {
+		return this.nibelungAverageCasts;
+	}
+
+	setNibelungAverageCasts(eventID: EventID, newnibelungAverageCasts: number) {
+		if (newnibelungAverageCasts == this.nibelungAverageCasts)
+			return;
+
+		this.nibelungAverageCasts = Math.min(newnibelungAverageCasts, 16);
+		this.miscOptionsChangeEmitter.emit(eventID);
+	}
+
 	setDefaultHealingParams(hm: HealingModel) {
 		var boss = this.sim.encounter.primaryTarget;
 		var dualWield = boss.dualWield;
@@ -1324,6 +1338,7 @@ export class Player<SpecType extends Spec> {
 				distanceFromTarget: this.getDistanceFromTarget(),
 				healingModel: this.getHealingModel(),
 				database: forExport ? SimDatabase.create() : this.toDatabase(),
+				nibelungAverageCasts: this.getNibelungAverageCasts(),
 			}),
 			(aplIsLaunched || (forSimming && aplRotation.type == APLRotationType.TypeAPL))
 				? this.specTypeFunctions.rotationCreate()
@@ -1384,6 +1399,7 @@ export class Player<SpecType extends Spec> {
 			this.setChannelClipDelay(eventID, proto.channelClipDelayMs);
 			this.setInFrontOfTarget(eventID, proto.inFrontOfTarget);
 			this.setDistanceFromTarget(eventID, proto.distanceFromTarget);
+			this.setNibelungAverageCasts(eventID, proto.nibelungAverageCasts);
 			this.setHealingModel(eventID, proto.healingModel || HealingModel.create());
 			this.setSpecOptions(eventID, this.specTypeFunctions.optionsFromPlayer(proto));
 

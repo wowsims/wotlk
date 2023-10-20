@@ -116,6 +116,7 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 				inputs: [
 					OtherInputs.TankAssignment,
 					OtherInputs.ChannelClipDelay,
+					OtherInputs.nibelungAverageCasts,
 				],
 			},
 			encounterPicker: {

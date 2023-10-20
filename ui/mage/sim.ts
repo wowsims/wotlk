@@ -135,6 +135,7 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 					OtherInputs.ReactionTime,
 					OtherInputs.DistanceFromTarget,
 					OtherInputs.TankAssignment,
+					OtherInputs.nibelungAverageCasts,
 				],
 			},
 			encounterPicker: {

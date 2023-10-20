@@ -123,6 +123,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 					OtherInputs.DistanceFromTarget,
 					OtherInputs.TankAssignment,
 					OtherInputs.ChannelClipDelay,
+					OtherInputs.nibelungAverageCasts,
 					WarlockInputs.NewDPBehaviour,
 				],
 			},

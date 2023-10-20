@@ -60,6 +60,9 @@ type Unit struct {
 	// for calculating spell travel time for certain spells.
 	DistanceFromTarget float64
 
+	// How many casts on average a Valkyr will get off during its lifetime.
+	NibelungAverageCasts float64
+
 	// Environment in which this Unit exists. This will be nil until after the
 	// construction phase.
 	Env *Environment

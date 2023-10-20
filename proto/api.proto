@@ -71,6 +71,8 @@ message Player {
 
 	// Items/enchants/gems/etc to include in the database.
 	SimDatabase database = 35;
+
+	double nibelung_average_casts = 43;
 }
 
 message Party {

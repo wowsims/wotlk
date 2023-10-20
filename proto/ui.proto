@@ -299,6 +299,7 @@ message SavedSettings {
 	bool in_front_of_target = 11;
 	double distance_from_target = 12;
 	HealingModel healing_model = 13;
+	double nibelung_average_casts = 15;
 }
 
 message SavedTalents {

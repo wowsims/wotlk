@@ -1,11 +1,10 @@
-import { BooleanPicker } from '../components/boolean_picker.js';
-import { EnumPicker } from '../components/enum_picker.js';
-import { UnitReference } from '../proto/common.js';
-import { Player } from '../player.js';
-import { Sim } from '../sim.js';
-import { EventID, TypedEvent } from '../typed_event.js';
-import { emptyUnitReference } from '../proto_utils/utils.js';
-import { APLRotation_Type } from '../proto/apl.js';
+import {BooleanPicker} from '../components/boolean_picker.js';
+import {EnumPicker} from '../components/enum_picker.js';
+import {ItemSlot, UnitReference} from '../proto/common.js';
+import {Player} from '../player.js';
+import {Sim} from '../sim.js';
+import {EventID} from '../typed_event.js';
+import {emptyUnitReference} from '../proto_utils/utils.js';
 
 export function makeShow1hWeaponsSelector(parent: HTMLElement, sim: Sim): BooleanPicker<Sim> {
 	return new BooleanPicker<Sim>(parent, sim, {
@@ -126,6 +125,18 @@ export const DistanceFromTarget = {
 		player.setDistanceFromTarget(eventID, newValue);
 	},
 };
+
+export const nibelungAverageCasts =  {
+	type: 'number' as const,
+	label: "Nibelung's Valkyr Survival (in # of casts)",
+	labelTooltip: 'Number of casts of Nibelung\'s summoned Valkyrs get out before they die (max 16)',
+	changedEvent: (player: Player<any>) => player.changeEmitter,
+	getValue: (player: Player<any>) => player.getNibelungAverageCasts(),
+	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
+		player.setNibelungAverageCasts(eventID, newValue);
+	},
+	showWhen: (player: Player<any>) => [49992, 50648].includes(player.getEquippedItem(ItemSlot.ItemSlotMainHand)?.id || 0)
+}
 
 export const TankAssignment = {
 	type: 'enum' as const,
