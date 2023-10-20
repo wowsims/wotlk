@@ -506,6 +506,14 @@ func (spell *Spell) CanCast(sim *Simulation, target *Unit) bool {
 			//if sim.Log != nil {
 			//	sim.Log("Cant cast because of resource cost")
 			//}
+			_, isManaCost := spell.Cost.(*ManaCost)
+			if isManaCost && spell.CurCast.Cost > 0 {
+				if spell.Unit.ManaRequired > 0 {
+					spell.Unit.ManaRequired = min(spell.Unit.ManaRequired, spell.CurCast.Cost)
+				} else {
+					spell.Unit.ManaRequired = spell.CurCast.Cost
+				}
+			}
 			return false
 		}
 	}
