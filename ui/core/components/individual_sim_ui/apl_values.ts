@@ -52,7 +52,9 @@ import {
 	APLValueSpellCPM,
 	APLValueSpellIsChanneling,
 	APLValueSpellChanneledTicks,
+	APLValueSpellCurrentCost,
 	APLValueChannelClipDelay,
+	APLValueFrontOfTarget,
 	APLValueAuraIsActive,
 	APLValueAuraIsActiveWithReactionTime,
 	APLValueAuraRemainingTime,
@@ -72,6 +74,7 @@ import {
 	APLValueCatExcessEnergy,
 	APLValueWarlockShouldRecastDrainSoul,
 	APLValueWarlockShouldRefreshCorruption,
+	APLValueCatNewSavageRoarDuration,
 } from '../../proto/apl.js';
 
 import { EventID } from '../../typed_event.js';
@@ -543,6 +546,13 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		newValue: APLValueNumberTargets.create,
 		fields: [],
 	}),
+	'frontOfTarget': inputBuilder({
+		label: 'Front of Target',
+		submenu: ['Encounter'],
+		shortDescription: '<b>True</b> if facing from of target',
+		newValue: APLValueFrontOfTarget.create,
+		fields: [],
+	}),
 
 	// Resources
 	'currentHealth': inputBuilder({
@@ -725,6 +735,15 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 	}),
 
 	// Spells
+	'spellCurrentCost': inputBuilder({
+		label: 'Current Cost',
+		submenu: ['Spell'],
+		shortDescription: 'Returns current resource cost of spell',
+		newValue: APLValueSpellCurrentCost.create,
+		fields: [
+			AplHelpers.actionIdFieldConfig('spellId', 'castable_spells', ''),
+		],
+	}),
 	'spellCanCast': inputBuilder({
 		label: 'Can Cast',
 		submenu: ['Spell'],
@@ -972,6 +991,15 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		submenu: ['Feral Druid'],
 		shortDescription: 'Returns the amount of excess energy available, after subtracting energy that will be needed to maintain DoTs.',
 		newValue: APLValueCatExcessEnergy.create,
+		includeIf: (player: Player<any>, isPrepull: boolean) => player.spec == Spec.SpecFeralDruid,
+		fields: [
+		],
+	}),
+	'catNewSavageRoarDuration': inputBuilder({
+		label: 'New Savage Roar Duration',
+		submenu: ['Feral Druid'],
+		shortDescription: 'Returns duration of savage roar based on current combo points',
+		newValue: APLValueCatNewSavageRoarDuration.create,
 		includeIf: (player: Player<any>, isPrepull: boolean) => player.spec == Spec.SpecFeralDruid,
 		fields: [
 		],
