@@ -110,8 +110,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-BlessedBattlegearofUndeadSlaying"
  value: {
-  dps: 8922.12473
-  tps: 5752.63543
+  dps: 8922.1323
+  tps: 5752.64694
   hps: 259.25488
  }
 }
@@ -454,8 +454,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-HatefulGladiator'sSigilofStrife-42619"
  value: {
-  dps: 11999.96041
-  tps: 7973.39438
+  dps: 11999.9702
+  tps: 7973.40926
   hps: 354.70907
  }
 }
@@ -678,8 +678,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-SavageGladiator'sSigilofStrife-42618"
  value: {
-  dps: 11993.79722
-  tps: 7968.59879
+  dps: 11993.807
+  tps: 7968.61366
   hps: 354.70907
  }
 }
@@ -694,8 +694,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-ScourgebornePlate"
  value: {
-  dps: 8762.55163
-  tps: 5593.55439
+  dps: 8762.55823
+  tps: 5593.56442
   hps: 284.94914
  }
 }
@@ -894,8 +894,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-Thassarian'sBattlegear"
  value: {
-  dps: 10116.60471
-  tps: 6593.78774
+  dps: 10116.61902
+  tps: 6593.8095
   hps: 285.90184
  }
 }
@@ -1022,8 +1022,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Average-Default"
  value: {
-  dps: 12079.79774
-  tps: 7959.30783
+  dps: 12079.79755
+  tps: 7959.30754
   hps: 319.10091
  }
 }
@@ -1038,8 +1038,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Settings-Human-p3_uh_dw-Basic--FullBuffs-LongSingleTarget"
  value: {
-  dps: 11918.71627
-  tps: 7937.39165
+  dps: 11918.70505
+  tps: 7937.3746
   hps: 320.44626
  }
 }
@@ -1222,8 +1222,8 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-Settings-Orc-p3_uh_dw-Basic--FullBuffs-LongMultiTarget"
  value: {
-  dps: 58800.10394
-  tps: 61393.11759
+  dps: 58799.838
+  tps: 61392.71336
   hps: 321.42877
  }
 }

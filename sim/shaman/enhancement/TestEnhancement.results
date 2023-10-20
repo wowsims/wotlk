@@ -104,7 +104,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-Bizuri'sTotemofShatteredIce-50458"
  value: {
-  dps: 7859.68944
+  dps: 7859.6865
   tps: 4335.4831
  }
 }
@@ -434,14 +434,14 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-GlowingTwilightScale-54573"
  value: {
-  dps: 7565.76429
+  dps: 7565.77165
   tps: 4151.9691
  }
 }
 dps_results: {
  key: "TestEnhancement-AllItems-GlowingTwilightScale-54589"
  value: {
-  dps: 7588.63065
+  dps: 7588.63801
   tps: 4165.15337
  }
 }
@@ -848,7 +848,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 7507.02339
+  dps: 7507.02633
   tps: 4125.15935
  }
 }
@@ -869,7 +869,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-TinyAbominationinaJar-50706"
  value: {
-  dps: 7603.46703
+  dps: 7603.47318
   tps: 4178.03518
  }
 }
@@ -981,7 +981,7 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Average-Default"
  value: {
-  dps: 7623.51766
+  dps: 7623.51762
   tps: 4189.17589
  }
 }

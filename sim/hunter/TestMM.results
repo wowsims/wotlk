@@ -118,8 +118,8 @@ dps_results: {
 dps_results: {
  key: "TestMM-AllItems-BlackBowoftheBetrayer-32336"
  value: {
-  dps: 6686.52738
-  tps: 5771.94376
+  dps: 6686.53191
+  tps: 5771.94829
  }
 }
 dps_results: {
@@ -883,8 +883,8 @@ dps_results: {
 dps_results: {
  key: "TestMM-Average-Default"
  value: {
-  dps: 7344.09626
-  tps: 6425.47971
+  dps: 7344.09621
+  tps: 6425.47967
  }
 }
 dps_results: {

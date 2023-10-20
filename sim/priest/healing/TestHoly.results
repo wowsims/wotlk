@@ -768,7 +768,7 @@ dps_results: {
  key: "TestHoly-AllItems-Val'anyr,HammerofAncientKings-46017"
  value: {
   tps: 38.31735
-  hps: 5127.10194
+  hps: 5126.68095
  }
 }
 dps_results: {
