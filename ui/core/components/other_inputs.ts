@@ -133,6 +133,7 @@ export const nibelungAverageCasts =  {
 	changedEvent: (player: Player<any>) => player.changeEmitter,
 	getValue: (player: Player<any>) => player.getNibelungAverageCasts(),
 	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
+		player.setNibelungAverageCastsSet(eventID, true);
 		player.setNibelungAverageCasts(eventID, newValue);
 	},
 	showWhen: (player: Player<any>) => [49992, 50648].includes(player.getEquippedItem(ItemSlot.ItemSlotMainHand)?.id || 0)

@@ -300,6 +300,8 @@ message SavedSettings {
 	double distance_from_target = 12;
 	HealingModel healing_model = 13;
 	double nibelung_average_casts = 15;
+	// hack to set a proper default value
+	bool nibelung_average_casts_set = 16;
 }
 
 message SavedTalents {
