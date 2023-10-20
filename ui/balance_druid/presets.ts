@@ -183,4 +183,5 @@ export const OtherDefaults = {
 	distanceFromTarget: 18,
 	profession1: Profession.Engineering,
 	profession2: Profession.Tailoring,
+	nibelungAverageCasts: 11,
 };

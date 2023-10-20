@@ -50,6 +50,10 @@ export class EquippedItem {
 		return Item.clone(this._item);
 	}
 
+	get id(): number {
+		return this._item.id;
+	}
+
 	get enchant(): Enchant | null {
 		// Make a defensive copy
 		return this._enchant ? Enchant.clone(this._enchant) : null;

@@ -143,6 +143,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				inputs: [
 					ShamanInputs.InThunderstormRange,
 					OtherInputs.TankAssignment,
+					OtherInputs.nibelungAverageCasts,
 				],
 			},
 			customSections: [

@@ -114,7 +114,14 @@ func MakeNibelungTriggerAura(agent core.Agent, isHeroic bool) {
 			for _, petAgent := range character.PetAgents {
 				if valkyr, ok := petAgent.(*ValkyrPet); ok && !valkyr.IsEnabled() {
 					valkyr.registerSmite(isHeroic)
-					valkyr.EnableWithTimeout(sim, petAgent, valkyrAura.Duration)
+
+					averageCasts := character.NibelungAverageCasts
+					duration := min(time.Duration(averageCasts/16*30)*time.Second, time.Second*30)
+					valkyrAura.Duration = max(duration, time.Millisecond*250)
+
+					if averageCasts > 0 {
+						valkyr.EnableWithTimeout(sim, petAgent, valkyrAura.Duration)
+					}
 					break
 				}
 			}

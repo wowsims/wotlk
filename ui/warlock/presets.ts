@@ -226,4 +226,5 @@ export const OtherDefaults = {
 	profession1: Profession.Engineering,
 	profession2: Profession.Tailoring,
 	channelClipDelay: 150,
+	nibelungAverageCasts: 11,
 };

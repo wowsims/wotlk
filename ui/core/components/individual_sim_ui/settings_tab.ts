@@ -399,6 +399,7 @@ export class SettingsTab extends SimTab {
 					inFrontOfTarget: player.getInFrontOfTarget(),
 					distanceFromTarget: player.getDistanceFromTarget(),
 					healingModel: player.getHealingModel(),
+					nibelungAverageCasts: player.getNibelungAverageCasts(),
 					cooldowns: aplLaunchStatuses[simUI.player.spec] == LaunchStatus.Unlaunched ? player.getCooldowns() : undefined,
 					rotationJson: aplLaunchStatuses[simUI.player.spec] == LaunchStatus.Unlaunched ? JSON.stringify(player.specTypeFunctions.rotationToJson(player.getRotation())) : undefined,
 				});
@@ -420,6 +421,7 @@ export class SettingsTab extends SimTab {
 					simUI.player.setInFrontOfTarget(eventID, newSettings.inFrontOfTarget);
 					simUI.player.setDistanceFromTarget(eventID, newSettings.distanceFromTarget);
 					simUI.player.setHealingModel(eventID, newSettings.healingModel || HealingModel.create());
+					simUI.player.setNibelungAverageCasts(eventID, newSettings.nibelungAverageCasts)
 					if (aplLaunchStatuses[simUI.player.spec] == LaunchStatus.Unlaunched) {
 						simUI.player.setCooldowns(eventID, newSettings.cooldowns || Cooldowns.create());
 						if (newSettings.rotationJson) {

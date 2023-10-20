@@ -115,6 +115,7 @@ export const OtherDefaults = {
     distanceFromTarget: 20,
     profession1: Profession.Engineering,
     profession2: Profession.Tailoring,
+    nibelungAverageCasts: 11,
 }
 
 export const DefaultConsumes = Consumes.create({
