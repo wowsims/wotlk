@@ -953,10 +953,6 @@ export class Player<SpecType extends Spec> {
 		if (newnibelungAverageCasts == this.nibelungAverageCasts)
 			return;
 
-		// only set if nibelungAverageCastsSet is true (via UI). Allows us to give a default other than 0
-		if (!this.nibelungAverageCastsSet)
-			return;
-
 		this.nibelungAverageCasts = Math.min(newnibelungAverageCasts, 16);
 		this.miscOptionsChangeEmitter.emit(eventID);
 	}
@@ -1413,7 +1409,9 @@ export class Player<SpecType extends Spec> {
 			this.setInFrontOfTarget(eventID, proto.inFrontOfTarget);
 			this.setDistanceFromTarget(eventID, proto.distanceFromTarget);
 			this.setNibelungAverageCastsSet(eventID, proto.nibelungAverageCastsSet);
-			this.setNibelungAverageCasts(eventID, proto.nibelungAverageCasts);
+			if (this.nibelungAverageCastsSet) {
+				this.setNibelungAverageCasts(eventID, proto.nibelungAverageCasts);
+			}
 			this.setHealingModel(eventID, proto.healingModel || HealingModel.create());
 			this.setSpecOptions(eventID, this.specTypeFunctions.optionsFromPlayer(proto));
 
