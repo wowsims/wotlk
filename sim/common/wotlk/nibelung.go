@@ -117,10 +117,10 @@ func MakeNibelungTriggerAura(agent core.Agent, isHeroic bool) {
 
 					averageCasts := character.NibelungAverageCasts
 					duration := min(time.Duration(averageCasts/16*30)*time.Second, time.Second*30)
-					valkyrAura.Duration = duration
+					valkyrAura.Duration = max(duration, time.Millisecond*250)
 
-					if averageCasts != 0 {
-						valkyr.EnableWithTimeout(sim, petAgent, duration)
+					if averageCasts > 0 {
+						valkyr.EnableWithTimeout(sim, petAgent, valkyrAura.Duration)
 					}
 					break
 				}
