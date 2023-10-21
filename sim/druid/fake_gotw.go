@@ -23,5 +23,8 @@ func (druid *Druid) registerFakeGotw() {
 				GCD: core.GCDDefault,
 			},
 		},
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			spell.CalcAndDealOutcome(sim, target, spell.OutcomeAlwaysHit)
+		},
 	})
 }
