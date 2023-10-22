@@ -367,7 +367,7 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 			<ul>
 				<li>Immediately following a tick of the channel</li>
 				<li>The <b>Interrupt If</b> condition is <b>True</b></li>
-				<li>A higher-priority action in the APL list is available</li>
+				<li>Another action in the APL list is available</li>
 			</ul>
 			<p>Note that if you simply want to allow higher-priority actions to interrupt the channel, set <b>Interrupt If</b> to <b>True</b>.</p>
 		`,
