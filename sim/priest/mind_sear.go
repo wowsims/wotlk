@@ -31,7 +31,7 @@ func (priest *Priest) getMindSearTickSpell(numTicks int32) *core.Spell {
 	miseryCoeff := priest.getMindSearMiseryCoefficient()
 
 	config := priest.getMindSearBaseConfig()
-	config.ActionID = core.ActionID{SpellID: 49821}.WithTag(numTicks)
+	config.ActionID = core.ActionID{SpellID: 53022}.WithTag(numTicks)
 	config.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 		damage := sim.Roll(212, 228) + miseryCoeff*spell.SpellPower()
 		result := spell.CalcAndDealDamage(sim, target, damage, spell.OutcomeMagicHitAndCrit)
@@ -48,7 +48,7 @@ func (priest *Priest) getMindSearTickSpell(numTicks int32) *core.Spell {
 
 func (priest *Priest) newMindSearSpell(numTicksIdx int32) *core.Spell {
 	numTicks := numTicksIdx
-	flags := core.SpellFlagChanneled
+	flags := core.SpellFlagChanneled | core.SpellFlagNoMetrics
 	if numTicksIdx == 0 {
 		numTicks = 5
 		flags |= core.SpellFlagAPL
@@ -82,6 +82,7 @@ func (priest *Priest) newMindSearSpell(numTicksIdx int32) *core.Spell {
 			for _, aoeTarget := range sim.Encounter.TargetUnits {
 				if aoeTarget != target {
 					mindSearTickSpell.Cast(sim, aoeTarget)
+					mindSearTickSpell.SpellMetrics[target.UnitIndex].Casts -= 1
 				}
 			}
 		},
@@ -90,6 +91,7 @@ func (priest *Priest) newMindSearSpell(numTicksIdx int32) *core.Spell {
 		result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
 		if result.Landed() {
 			spell.Dot(target).Apply(sim)
+			mindSearTickSpell.SpellMetrics[target.UnitIndex].Casts += 1
 		}
 	}
 	config.ExpectedTickDamage = func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
