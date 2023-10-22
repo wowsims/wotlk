@@ -234,10 +234,6 @@ func (apl *APLRotation) getNextAction(sim *Simulation) *APLAction {
 
 func (apl *APLRotation) shouldInterruptChannel(sim *Simulation) bool {
 	channeledDot := apl.unit.ChanneledDot
-	if channeledDot == nil {
-		// Cast was started by a different APL action (not Channel) so is non-interruptible.
-		return false
-	}
 
 	if channeledDot.MaxTicksRemaining() == 0 {
 		// Channel has ended, but apl.unit.ChanneledDot hasn't been cleared yet meaning the aura is still active.

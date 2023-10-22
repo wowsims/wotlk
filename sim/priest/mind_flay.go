@@ -20,7 +20,6 @@ func (priest *Priest) getMindFlayTickSpell(numTicks int32) *core.Spell {
 		ActionID:       core.ActionID{SpellID: 58381}.WithTag(numTicks),
 		SpellSchool:    core.SpellSchoolShadow,
 		ProcMask:       core.ProcMaskProc | core.ProcMaskNotInSpellbook,
-		Flags:          core.SpellFlagNoLogs,
 		BonusHitRating: float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
 		BonusCritRating: 0 +
 			float64(priest.Talents.MindMelt)*2*core.CritRatingPerCritChance +
