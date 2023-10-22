@@ -366,10 +366,10 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 			<p>The channel will be interrupted only if all of the following are true:</p>
 			<ul>
 				<li>Immediately following a tick of the channel</li>
-				<li>The <b>Interrupt If</b> condition is <b>True</b></li>
-				<li>A higher-priority action in the APL list is available</li>
+				<li>The <b>Interrupt If</b> condition evaluates to <b>True</b></li>
+				<li>Another action in the APL list is available</li>
 			</ul>
-			<p>Note that if you simply want to allow higher-priority actions to interrupt the channel, set <b>Interrupt If</b> to <b>True</b>.</p>
+			<p>Note that if you simply want to allow other actions to interrupt the channel, set <b>Interrupt If</b> to <b>True</b>.</p>
 		`,
 		newValue: () => APLActionChannelSpell.create({
 			interruptIf: {
