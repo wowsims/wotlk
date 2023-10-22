@@ -519,15 +519,15 @@ dps_results: {
 dps_results: {
  key: "TestProtection-AllItems-LightswornBattlegear"
  value: {
-  dps: 3773.29497
-  tps: 8987.64901
+  dps: 4233.13748
+  tps: 10048.82838
  }
 }
 dps_results: {
  key: "TestProtection-AllItems-LightswornPlate"
  value: {
-  dps: 3347.57969
-  tps: 8026.3893
+  dps: 3555.27557
+  tps: 8516.12963
  }
 }
 dps_results: {
@@ -910,252 +910,252 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestProtection-Settings-BloodElf-P1-Protection Paladin SOC-default-FullBuffs-LongMultiTarget"
+ key: "TestProtection-Settings-BloodElf-p1-Protection Paladin SOC-default-FullBuffs-LongMultiTarget"
  value: {
   dps: 10375.07714
   tps: 27835.71812
  }
 }
 dps_results: {
- key: "TestProtection-Settings-BloodElf-P1-Protection Paladin SOC-default-FullBuffs-LongSingleTarget"
+ key: "TestProtection-Settings-BloodElf-p1-Protection Paladin SOC-default-FullBuffs-LongSingleTarget"
  value: {
   dps: 2946.48266
   tps: 7005.01894
  }
 }
 dps_results: {
- key: "TestProtection-Settings-BloodElf-P1-Protection Paladin SOC-default-FullBuffs-ShortSingleTarget"
+ key: "TestProtection-Settings-BloodElf-p1-Protection Paladin SOC-default-FullBuffs-ShortSingleTarget"
  value: {
   dps: 3181.85593
   tps: 7528.0141
  }
 }
 dps_results: {
- key: "TestProtection-Settings-BloodElf-P1-Protection Paladin SOC-default-NoBuffs-LongMultiTarget"
+ key: "TestProtection-Settings-BloodElf-p1-Protection Paladin SOC-default-NoBuffs-LongMultiTarget"
  value: {
   dps: 3005.78006
   tps: 8743.75503
  }
 }
 dps_results: {
- key: "TestProtection-Settings-BloodElf-P1-Protection Paladin SOC-default-NoBuffs-LongSingleTarget"
+ key: "TestProtection-Settings-BloodElf-p1-Protection Paladin SOC-default-NoBuffs-LongSingleTarget"
  value: {
   dps: 1412.45675
   tps: 3421.27435
  }
 }
 dps_results: {
- key: "TestProtection-Settings-BloodElf-P1-Protection Paladin SOC-default-NoBuffs-ShortSingleTarget"
+ key: "TestProtection-Settings-BloodElf-p1-Protection Paladin SOC-default-NoBuffs-ShortSingleTarget"
  value: {
   dps: 1595.15114
   tps: 3882.79459
  }
 }
 dps_results: {
- key: "TestProtection-Settings-BloodElf-P1-Protection Paladin SOR-default-FullBuffs-LongMultiTarget"
+ key: "TestProtection-Settings-BloodElf-p1-Protection Paladin SOR-default-FullBuffs-LongMultiTarget"
  value: {
   dps: 9291.2557
   tps: 25044.54325
  }
 }
 dps_results: {
- key: "TestProtection-Settings-BloodElf-P1-Protection Paladin SOR-default-FullBuffs-LongSingleTarget"
+ key: "TestProtection-Settings-BloodElf-p1-Protection Paladin SOR-default-FullBuffs-LongSingleTarget"
  value: {
   dps: 2974.38828
   tps: 7081.47024
  }
 }
 dps_results: {
- key: "TestProtection-Settings-BloodElf-P1-Protection Paladin SOR-default-FullBuffs-ShortSingleTarget"
+ key: "TestProtection-Settings-BloodElf-p1-Protection Paladin SOR-default-FullBuffs-ShortSingleTarget"
  value: {
   dps: 3181.02628
   tps: 7530.50826
  }
 }
 dps_results: {
- key: "TestProtection-Settings-BloodElf-P1-Protection Paladin SOR-default-NoBuffs-LongMultiTarget"
+ key: "TestProtection-Settings-BloodElf-p1-Protection Paladin SOR-default-NoBuffs-LongMultiTarget"
  value: {
   dps: 2496.96317
   tps: 7431.6853
  }
 }
 dps_results: {
- key: "TestProtection-Settings-BloodElf-P1-Protection Paladin SOR-default-NoBuffs-LongSingleTarget"
+ key: "TestProtection-Settings-BloodElf-p1-Protection Paladin SOR-default-NoBuffs-LongSingleTarget"
  value: {
   dps: 1373.04785
   tps: 3318.6302
  }
 }
 dps_results: {
- key: "TestProtection-Settings-BloodElf-P1-Protection Paladin SOR-default-NoBuffs-ShortSingleTarget"
+ key: "TestProtection-Settings-BloodElf-p1-Protection Paladin SOR-default-NoBuffs-ShortSingleTarget"
  value: {
   dps: 1560.42529
   tps: 3788.26189
  }
 }
 dps_results: {
- key: "TestProtection-Settings-BloodElf-P1-Protection Paladin SOV-default-FullBuffs-LongMultiTarget"
+ key: "TestProtection-Settings-BloodElf-p1-Protection Paladin SOV-default-FullBuffs-LongMultiTarget"
  value: {
   dps: 10233.63769
   tps: 27462.61742
  }
 }
 dps_results: {
- key: "TestProtection-Settings-BloodElf-P1-Protection Paladin SOV-default-FullBuffs-LongSingleTarget"
+ key: "TestProtection-Settings-BloodElf-p1-Protection Paladin SOV-default-FullBuffs-LongSingleTarget"
  value: {
   dps: 3276.6828
   tps: 7856.39816
  }
 }
 dps_results: {
- key: "TestProtection-Settings-BloodElf-P1-Protection Paladin SOV-default-FullBuffs-ShortSingleTarget"
+ key: "TestProtection-Settings-BloodElf-p1-Protection Paladin SOV-default-FullBuffs-ShortSingleTarget"
  value: {
   dps: 3412.25885
   tps: 8136.77248
  }
 }
 dps_results: {
- key: "TestProtection-Settings-BloodElf-P1-Protection Paladin SOV-default-NoBuffs-LongMultiTarget"
+ key: "TestProtection-Settings-BloodElf-p1-Protection Paladin SOV-default-NoBuffs-LongMultiTarget"
  value: {
   dps: 2953.89002
   tps: 8609.31036
  }
 }
 dps_results: {
- key: "TestProtection-Settings-BloodElf-P1-Protection Paladin SOV-default-NoBuffs-LongSingleTarget"
+ key: "TestProtection-Settings-BloodElf-p1-Protection Paladin SOV-default-NoBuffs-LongSingleTarget"
  value: {
   dps: 1553.86753
   tps: 3785.55397
  }
 }
 dps_results: {
- key: "TestProtection-Settings-BloodElf-P1-Protection Paladin SOV-default-NoBuffs-ShortSingleTarget"
+ key: "TestProtection-Settings-BloodElf-p1-Protection Paladin SOV-default-NoBuffs-ShortSingleTarget"
  value: {
   dps: 1718.87059
   tps: 4201.87948
  }
 }
 dps_results: {
- key: "TestProtection-Settings-Human-P1-Protection Paladin SOC-default-FullBuffs-LongMultiTarget"
+ key: "TestProtection-Settings-Human-p1-Protection Paladin SOC-default-FullBuffs-LongMultiTarget"
  value: {
   dps: 10095.13958
   tps: 27075.19978
  }
 }
 dps_results: {
- key: "TestProtection-Settings-Human-P1-Protection Paladin SOC-default-FullBuffs-LongSingleTarget"
+ key: "TestProtection-Settings-Human-p1-Protection Paladin SOC-default-FullBuffs-LongSingleTarget"
  value: {
   dps: 2923.26782
   tps: 6942.83459
  }
 }
 dps_results: {
- key: "TestProtection-Settings-Human-P1-Protection Paladin SOC-default-FullBuffs-ShortSingleTarget"
+ key: "TestProtection-Settings-Human-p1-Protection Paladin SOC-default-FullBuffs-ShortSingleTarget"
  value: {
   dps: 3185.20366
   tps: 7535.54302
  }
 }
 dps_results: {
- key: "TestProtection-Settings-Human-P1-Protection Paladin SOC-default-NoBuffs-LongMultiTarget"
+ key: "TestProtection-Settings-Human-p1-Protection Paladin SOC-default-NoBuffs-LongMultiTarget"
  value: {
   dps: 2949.55916
   tps: 8550.73924
  }
 }
 dps_results: {
- key: "TestProtection-Settings-Human-P1-Protection Paladin SOC-default-NoBuffs-LongSingleTarget"
+ key: "TestProtection-Settings-Human-p1-Protection Paladin SOC-default-NoBuffs-LongSingleTarget"
  value: {
   dps: 1408.01728
   tps: 3406.22256
  }
 }
 dps_results: {
- key: "TestProtection-Settings-Human-P1-Protection Paladin SOC-default-NoBuffs-ShortSingleTarget"
+ key: "TestProtection-Settings-Human-p1-Protection Paladin SOC-default-NoBuffs-ShortSingleTarget"
  value: {
   dps: 1553.95261
   tps: 3770.02763
  }
 }
 dps_results: {
- key: "TestProtection-Settings-Human-P1-Protection Paladin SOR-default-FullBuffs-LongMultiTarget"
+ key: "TestProtection-Settings-Human-p1-Protection Paladin SOR-default-FullBuffs-LongMultiTarget"
  value: {
   dps: 9098.94879
   tps: 24507.58607
  }
 }
 dps_results: {
- key: "TestProtection-Settings-Human-P1-Protection Paladin SOR-default-FullBuffs-LongSingleTarget"
+ key: "TestProtection-Settings-Human-p1-Protection Paladin SOR-default-FullBuffs-LongSingleTarget"
  value: {
   dps: 2941.4957
   tps: 6995.17776
  }
 }
 dps_results: {
- key: "TestProtection-Settings-Human-P1-Protection Paladin SOR-default-FullBuffs-ShortSingleTarget"
+ key: "TestProtection-Settings-Human-p1-Protection Paladin SOR-default-FullBuffs-ShortSingleTarget"
  value: {
   dps: 3184.67078
   tps: 7538.71366
  }
 }
 dps_results: {
- key: "TestProtection-Settings-Human-P1-Protection Paladin SOR-default-NoBuffs-LongMultiTarget"
+ key: "TestProtection-Settings-Human-p1-Protection Paladin SOR-default-NoBuffs-LongMultiTarget"
  value: {
   dps: 2436.38027
   tps: 7237.77757
  }
 }
 dps_results: {
- key: "TestProtection-Settings-Human-P1-Protection Paladin SOR-default-NoBuffs-LongSingleTarget"
+ key: "TestProtection-Settings-Human-p1-Protection Paladin SOR-default-NoBuffs-LongSingleTarget"
  value: {
   dps: 1360.69881
   tps: 3286.92397
  }
 }
 dps_results: {
- key: "TestProtection-Settings-Human-P1-Protection Paladin SOR-default-NoBuffs-ShortSingleTarget"
+ key: "TestProtection-Settings-Human-p1-Protection Paladin SOR-default-NoBuffs-ShortSingleTarget"
  value: {
   dps: 1537.46619
   tps: 3728.30209
  }
 }
 dps_results: {
- key: "TestProtection-Settings-Human-P1-Protection Paladin SOV-default-FullBuffs-LongMultiTarget"
+ key: "TestProtection-Settings-Human-p1-Protection Paladin SOV-default-FullBuffs-LongMultiTarget"
  value: {
   dps: 9942.66221
   tps: 26670.75909
  }
 }
 dps_results: {
- key: "TestProtection-Settings-Human-P1-Protection Paladin SOV-default-FullBuffs-LongSingleTarget"
+ key: "TestProtection-Settings-Human-p1-Protection Paladin SOV-default-FullBuffs-LongSingleTarget"
  value: {
   dps: 3262.95316
   tps: 7817.60742
  }
 }
 dps_results: {
- key: "TestProtection-Settings-Human-P1-Protection Paladin SOV-default-FullBuffs-ShortSingleTarget"
+ key: "TestProtection-Settings-Human-p1-Protection Paladin SOV-default-FullBuffs-ShortSingleTarget"
  value: {
   dps: 3416.12151
   tps: 8145.54042
  }
 }
 dps_results: {
- key: "TestProtection-Settings-Human-P1-Protection Paladin SOV-default-NoBuffs-LongMultiTarget"
+ key: "TestProtection-Settings-Human-p1-Protection Paladin SOV-default-NoBuffs-LongMultiTarget"
  value: {
   dps: 2904.01714
   tps: 8432.84218
  }
 }
 dps_results: {
- key: "TestProtection-Settings-Human-P1-Protection Paladin SOV-default-NoBuffs-LongSingleTarget"
+ key: "TestProtection-Settings-Human-p1-Protection Paladin SOV-default-NoBuffs-LongSingleTarget"
  value: {
   dps: 1539.91246
   tps: 3745.85622
  }
 }
 dps_results: {
- key: "TestProtection-Settings-Human-P1-Protection Paladin SOV-default-NoBuffs-ShortSingleTarget"
+ key: "TestProtection-Settings-Human-p1-Protection Paladin SOV-default-NoBuffs-ShortSingleTarget"
  value: {
   dps: 1671.15076
   tps: 4074.9337

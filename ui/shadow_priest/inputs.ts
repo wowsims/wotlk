@@ -1,12 +1,9 @@
-import { IndividualSimUI } from '../core/individual_sim_ui.js';
-import { Player } from '../core/player.js';
 import { Spec } from '../core/proto/common.js';
 import {
 	ShadowPriest_Options_Armor as Armor,
 	ShadowPriest_Rotation_RotationType as RotationType,
 	ShadowPriest_Rotation_PreCastOption as precastType
 } from '../core/proto/priest.js';
-import { EventID } from '../core/typed_event.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';

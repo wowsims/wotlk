@@ -52,7 +52,7 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P2_PRESET.gear,
+				gear: Presets.P3_PRESET_HORDE.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatIntellect]: 0.43,
@@ -67,7 +67,7 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 				// Default rotation settings.
 				rotation: Presets.DefaultRotation,
 				// Default talents.
-				talents: Presets.Phase2Talents.data,
+				talents: Presets.Phase3Talents.data,
 				// Default spec-specific settings.
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
@@ -103,6 +103,7 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 					OtherInputs.TankAssignment,
 					OtherInputs.ReactionTime,
 					OtherInputs.DistanceFromTarget,
+					OtherInputs.nibelungAverageCasts,
 				],
 			},
 			encounterPicker: {
@@ -116,17 +117,21 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 					Presets.Phase1Talents,
 					Presets.Phase2Talents,
 					Presets.Phase3Talents,
+					Presets.Phase4Talents,
 				],
 				rotations: [
 					Presets.ROTATION_PRESET_P3_APL,
+					Presets.ROTATION_PRESET_P4_APL,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.PRE_RAID_PRESET,
+					Presets.PRERAID_PRESET,
 					Presets.P1_PRESET,
 					Presets.P2_PRESET,
 					Presets.P3_PRESET_HORDE,
 					Presets.P3_PRESET_ALLI,
+					Presets.P4_PRESET_HORDE,
+					Presets.P4_PRESET_ALLI,
 				],
 			},
 

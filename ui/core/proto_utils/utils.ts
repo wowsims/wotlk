@@ -1129,8 +1129,8 @@ export const specToClass: Record<Spec, Class> = {
 };
 
 const druidRaces = [
-	Race.RaceNightElf,
 	Race.RaceTauren,
+	Race.RaceNightElf,
 ];
 const hunterRaces = [
 	Race.RaceBloodElf,
@@ -1156,12 +1156,12 @@ const paladinRaces = [
 	Race.RaceHuman,
 ];
 const priestRaces = [
+	Race.RaceTroll,
 	Race.RaceBloodElf,
 	Race.RaceDraenei,
 	Race.RaceDwarf,
 	Race.RaceHuman,
 	Race.RaceNightElf,
-	Race.RaceTroll,
 	Race.RaceUndead,
 ];
 const rogueRaces = [
@@ -1175,8 +1175,8 @@ const rogueRaces = [
 	Race.RaceUndead,
 ];
 const shamanRaces = [
-	Race.RaceDraenei,
 	Race.RaceOrc,
+	Race.RaceDraenei,
 	Race.RaceTauren,
 	Race.RaceTroll,
 ];

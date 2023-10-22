@@ -1,14 +1,14 @@
-import { Consumes, Spec } from '../core/proto/common.js';
-import { EquipmentSpec } from '../core/proto/common.js';
-import { Flask } from '../core/proto/common.js';
-import { Food } from '../core/proto/common.js';
-import { Glyphs } from '../core/proto/common.js';
-import { PetFood } from '../core/proto/common.js';
-import { Potions } from '../core/proto/common.js';
-import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
-import { APLRotation, APLRotation_Type } from '../core/proto/apl.js';
+import {
+	Consumes,
+	Flask,
+	Food,
+	Glyphs,
+	PetFood,
+	Potions,
+	Spec,
+} from '../core/proto/common.js';
+import { SavedTalents } from '../core/proto/ui.js';
 import { ferocityDefault, ferocityBMDefault } from '../core/talents/hunter_pet.js';
-import { Player } from '../core/player.js';
 
 import {
 	Hunter_Rotation as HunterRotation,
@@ -21,21 +21,62 @@ import {
 	HunterMinorGlyph as MinorGlyph,
 } from '../core/proto/hunter.js';
 
-import * as Tooltips from '../core/constants/tooltips.js';
+import * as PresetUtils from '../core/preset_utils.js';
+
+import PreraidMMGear from './gear_sets/preraid_mm.gear.json';
+import P1MMGear from './gear_sets/p1_mm.gear.json';
+import P2MMGear from './gear_sets/p2_mm.gear.json';
+import P3MMGear from './gear_sets/p3_mm.gear.json';
+import P4MMGear from './gear_sets/p4_mm.gear.json';
+import P5MMGear from './gear_sets/p5_mm.gear.json';
+import PreraidSVGear from './gear_sets/preraid_sv.gear.json';
+import P1SVGear from './gear_sets/p1_sv.gear.json';
+import P2SVGear from './gear_sets/p2_sv.gear.json';
+import P3SVGear from './gear_sets/p3_sv.gear.json';
+import P4SVGear from './gear_sets/p4_sv.gear.json';
+import P5SVGear from './gear_sets/p5_sv.gear.json';
 
 import BmApl from './apls/bm.apl.json';
-
 import MmApl from './apls/mm.apl.json';
 import MmAdvApl from './apls/mm_advanced.apl.json';
-
 import SvApl from './apls/sv.apl.json';
 import SvAdvApl from './apls/sv_advanced.apl.json';
-
 import AoeApl from './apls/aoe.apl.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
+
+export const MM_PRERAID_PRESET = PresetUtils.makePresetGear('MM PreRaid Preset', PreraidMMGear, { talentTrees: [0, 1] });
+export const MM_P1_PRESET = PresetUtils.makePresetGear('MM P1 Preset', P1MMGear, { talentTrees: [0, 1] });
+export const MM_P2_PRESET = PresetUtils.makePresetGear('MM P2 Preset', P2MMGear, { talentTrees: [0, 1] });
+export const MM_P3_PRESET = PresetUtils.makePresetGear('MM P3 Preset', P3MMGear, { talentTrees: [0, 1] });
+export const MM_P4_PRESET = PresetUtils.makePresetGear('MM P4 Preset', P4MMGear, { talentTrees: [0, 1] });
+export const MM_P5_PRESET = PresetUtils.makePresetGear('MM P5 Preset', P5MMGear, { talentTrees: [0, 1] });
+export const SV_PRERAID_PRESET = PresetUtils.makePresetGear('SV PreRaid Preset', PreraidSVGear, { talentTree: 2 });
+export const SV_P1_PRESET = PresetUtils.makePresetGear('SV P1 Preset', P1SVGear, { talentTree: 2 });
+export const SV_P2_PRESET = PresetUtils.makePresetGear('SV P2 Preset', P2SVGear, { talentTree: 2 });
+export const SV_P3_PRESET = PresetUtils.makePresetGear('SV P3 Preset', P3SVGear, { talentTree: 2 });
+export const SV_P4_PRESET = PresetUtils.makePresetGear('SV P4 Preset', P4SVGear, { talentTree: 2 });
+export const SV_P5_PRESET = PresetUtils.makePresetGear('SV P5 Preset', P5SVGear, { talentTree: 2 });
+
+export const DefaultRotation = HunterRotation.create({
+	type: RotationType.SingleTarget,
+	sting: StingType.SerpentSting,
+	trapWeave: true,
+	viperStartManaPercent: 0.1,
+	viperStopManaPercent: 0.3,
+	multiDotSerpentSting: true,
+	allowExplosiveShotDownrank: true,
+});
+
+export const ROTATION_PRESET_SIMPLE_DEFAULT = PresetUtils.makePresetSimpleRotation('Simple Default', Spec.SpecHunter, DefaultRotation);
+export const ROTATION_PRESET_BM = PresetUtils.makePresetAPLRotation('BM', BmApl, { talentTree: 0 });
+export const ROTATION_PRESET_MM = PresetUtils.makePresetAPLRotation('MM', MmApl, { talentTree: 1 });
+export const ROTATION_PRESET_MM_ADVANCED = PresetUtils.makePresetAPLRotation('MM (Advanced)', MmAdvApl, { talentTree: 1 });
+export const ROTATION_PRESET_SV = PresetUtils.makePresetAPLRotation('SV', SvApl, { talentTree: 2 });
+export const ROTATION_PRESET_SV_ADVANCED = PresetUtils.makePresetAPLRotation('SV (Advanced)', SvAdvApl, { talentTree: 2 });
+export const ROTATION_PRESET_AOE = PresetUtils.makePresetAPLRotation('AOE', AoeApl);
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
@@ -84,86 +125,6 @@ export const SurvivalTalents = {
 	}),
 };
 
-export const DefaultRotation = HunterRotation.create({
-	type: RotationType.SingleTarget,
-	sting: StingType.SerpentSting,
-	trapWeave: true,
-	viperStartManaPercent: 0.1,
-	viperStopManaPercent: 0.3,
-	multiDotSerpentSting: true,
-	allowExplosiveShotDownrank: true,
-});
-
-export const ROTATION_PRESET_LEGACY_DEFAULT = {
-	name: 'Simple Default',
-	rotation: SavedRotation.create({
-		rotation: {
-			type: APLRotation_Type.TypeSimple,
-			simple: {
-				specRotationJson: HunterRotation.toJsonString(DefaultRotation),
-			},
-		},
-	}),
-}
-export const ROTATION_PRESET_BM = {
-	name: 'BM',
-	enableWhen: (player: Player<Spec.SpecHunter>) => player.getTalentTree() == 0,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
-		})),
-		rotation: APLRotation.fromJsonString(JSON.stringify(BmApl)),
-	}),
-};
-
-export const ROTATION_PRESET_MM = {
-	name: 'MM',
-	enableWhen: (player: Player<Spec.SpecHunter>) => player.getTalentTree() == 1,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
-		})),
-		rotation: APLRotation.fromJsonString(JSON.stringify(MmApl)),
-	}),
-};
-
-export const ROTATION_PRESET_MM_ADVANCED = {
-	name: 'MM (Advanced)',
-	enableWhen: (player: Player<Spec.SpecHunter>) => player.getTalentTree() == 1,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
-		})),
-		rotation: APLRotation.fromJsonString(JSON.stringify(MmAdvApl)),
-	}),
-};
-
-export const ROTATION_PRESET_SV = {
-	name: 'SV',
-	enableWhen: (player: Player<Spec.SpecHunter>) => player.getTalentTree() == 2,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
-		})),
-		rotation: APLRotation.fromJsonString(JSON.stringify(SvApl)),
-	}),
-};
-
-export const ROTATION_PRESET_SV_ADVANCED = {
-	name: 'SV (Advanced)',
-	enableWhen: (player: Player<Spec.SpecHunter>) => player.getTalentTree() == 2,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
-		})),
-		rotation: APLRotation.fromJsonString(JSON.stringify(SvAdvApl)),
-	}),
-};
-
-export const ROTATION_PRESET_AOE = {
-	name: 'AOE',
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: HunterRotation.toJsonString(HunterRotation.create({
-		})),
-		rotation: APLRotation.fromJsonString(JSON.stringify(AoeApl)),
-	}),
-};
-
 export const DefaultOptions = HunterOptions.create({
 	ammo: Ammo.SaroniteRazorheads,
 	useHuntersMark: true,
@@ -190,303 +151,3 @@ export const DefaultConsumes = Consumes.create({
 	food: Food.FoodFishFeast,
 	petFood: PetFood.PetFoodSpicedMammothTreats,
 });
-
-export const MM_PRERAID_PRESET = {
-	name: 'MM Preraid Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getTalentTree() != 2,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":42551,"enchant":3817,"gems":[41398,42143]},
-		{"id":40678},
-		{"id":37373,"enchant":3808},
-		{"id":43566,"enchant":3605},
-		{"id":39579,"enchant":3832,"gems":[39997,49110]},
-		{"id":37170,"enchant":3845,"gems":[0]},
-		{"id":39582,"enchant":3604,"gems":[40014,0]},
-		{"id":37407,"enchant":3601,"gems":[42143]},
-		{"id":37669,"enchant":3823},
-		{"id":37167,"enchant":3606,"gems":[42143,39997]},
-		{"id":37685},
-		{"id":42642,"gems":[40044]},
-		{"id":40684},
-		{"id":44253},
-		{"id":44249,"enchant":3827},
-		{},
-		{"id":37191,"enchant":3608}
-	]}`),
-};
-
-export const MM_P1_PRESET = {
-	name: 'MM P1 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getTalentTree() != 2,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":40543,"enchant":3817,"gems":[41398,42143]},
-		{"id":44664,"gems":[42143]},
-		{"id":40507,"enchant":3808,"gems":[39997]},
-		{"id":40403,"enchant":3605},
-		{"id":43998,"enchant":3832,"gems":[42143,39997]},
-		{"id":40282,"enchant":3845,"gems":[39997,0]},
-		{"id":40541,"enchant":3604,"gems":[0]},
-		{"id":40275,"enchant":3601,"gems":[39997]},
-		{"id":40506,"enchant":3823,"gems":[39997,49110]},
-		{"id":40549,"enchant":3606},
-		{"id":40074},
-		{"id":40474},
-		{"id":40684},
-		{"id":44253},
-		{"id":40388,"enchant":3827},
-		{},
-		{"id":40385,"enchant":3608}
-	]}`),
-};
-
-export const MM_P2_PRESET = {
-	name: 'MM P2 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getTalentTree() != 2,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":45610,"enchant":3817,"gems":[41398,42702]},
-		{"id":45517,"gems":[42143]},
-		{"id":45300,"enchant":3808,"gems":[40043]},
-		{"id":46032,"enchant":3605,"gems":[42143,40043]},
-		{"id":45473,"enchant":3832,"gems":[39997,39997,39997]},
-		{"id":45869,"enchant":3845,"gems":[40044,0]},
-		{"id":45444,"enchant":3604,"gems":[42143,39997,0]},
-		{"id":45467,"enchant":3601,"gems":[39997]},
-		{"id":45536,"enchant":3823,"gems":[39997,39997,39997]},
-		{"id":45244,"enchant":3606,"gems":[39997,39997]},
-		{"id":45608,"gems":[39997]},
-		{"id":46322,"gems":[39997]},
-		{"id":45931},
-		{"id":46038},
-		{"id":45613,"enchant":3827,"gems":[45879,39997]},
-		{},
-		{"id":45570,"enchant":3608}
-	]}`),
-};
-
-export const MM_P3_PRESET = {
-	name: 'MM P3 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getTalentTree() != 2,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":48262,"enchant":3817,"gems":[41398,40147]},
-        {"id":47060,"gems":[42143]},
-        {"id":48260,"enchant":3808,"gems":[40112]},
-        {"id":47545,"enchant":3605,"gems":[40112]},
-        {"id":46965,"enchant":3832,"gems":[40112,40112,40112]},
-        {"id":47074,"enchant":3845,"gems":[40147,0]},
-        {"id":48263,"enchant":3604,"gems":[40148,0]},
-        {"id":47153,"gems":[40148,42143,42143]},
-        {"id":48261,"enchant":3823,"gems":[49110,40112]},
-        {"id":47109,"enchant":3606,"gems":[40147,40147]},
-        {"id":47075,"gems":[40112]},
-        {"id":45608,"gems":[40112]},
-        {"id":47131},
-        {"id":45931},
-        {"id":47239,"enchant":3827,"gems":[40147,40112]},
-        {},
-        {"id":47521,"enchant":3608,"gems":[40147]}
-	]}`),
-};
-
-export const MM_P4_PRESET = {
-	name: 'MM P4 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getTalentTree() != 2,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-        {"id":51286,"enchant":3817,"gems":[41398,40117]},
-        {"id":50633,"gems":[40117]},
-        {"id":51288,"enchant":3808,"gems":[40117]},
-        {"id":47546,"enchant":3605,"gems":[42153]},
-        {"id":51289,"enchant":3832,"gems":[40117,40117]},
-        {"id":50655,"enchant":3845,"gems":[40117,0]},
-        {"id":51285,"enchant":3604,"gems":[40117,0]},
-        {"id":50688,"enchant":3601,"gems":[40148,42153,42153]},
-        {"id":50645,"enchant":3823,"gems":[49110,40117,40147]},
-        {"id":50607,"enchant":3606,"gems":[40148,40148]},
-        {"id":50618,"gems":[40117]},
-        {"id":50402,"gems":[40148]},
-        {"id":50363},
-        {"id":47131},
-        {"id":50735,"enchant":3827,"gems":[40117,40117,40117]},
-        {},
-        {"id":50733,"enchant":3608,"gems":[40117]}
-	]}`),
-};
-
-export const MM_P5_PRESET = {
-	name: 'MM P5 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getTalentTree() != 2,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-        {"id":51286,"enchant":3817,"gems":[41398,40117]},
-        {"id":50633,"gems":[40117]},
-        {"id":51288,"enchant":3808,"gems":[40117]},
-        {"id":47546,"enchant":3605,"gems":[42153]},
-        {"id":51289,"enchant":3832,"gems":[40112,40112]},
-        {"id":54580,"enchant":3845,"gems":[40117,0]},
-        {"id":51285,"enchant":3604,"gems":[40117,0]},
-        {"id":50688,"enchant":3601,"gems":[40148,42153,42153]},
-        {"id":50645,"enchant":3823,"gems":[49110,40112,40147]},
-        {"id":54577,"enchant":3606,"gems":[40148,40148]},
-        {"id":50618,"gems":[40117]},
-        {"id":54576,"gems":[40148]},
-        {"id":50363},
-        {"id":54590},
-        {"id":50735,"enchant":3247,"gems":[40112,40112,40112]},
-        {},
-        {"id":50733,"enchant":3608,"gems":[40117]}
-	]}`),
-};
-
-export const SV_PRERAID_PRESET = {
-	name: 'SV Preraid Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getTalentTree() == 2,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":42551,"enchant":3817,"gems":[41398,42143]},
-		{"id":40678},
-		{"id":37373,"enchant":3808},
-		{"id":43406,"enchant":3605},
-		{"id":39579,"enchant":3832,"gems":[39997,49110]},
-		{"id":37170,"enchant":3845,"gems":[0]},
-		{"id":39582,"enchant":3604,"gems":[39997,0]},
-		{"id":37407,"enchant":3601,"gems":[42143]},
-		{"id":37669,"enchant":3823},
-		{"id":37167,"enchant":3606,"gems":[42143,39997]},
-		{"id":37685},
-		{"id":42642,"gems":[39997]},
-		{"id":40684},
-		{"id":44253},
-		{"id":44249,"enchant":3827},
-		{},
-		{"id":37191,"enchant":3608}
-	]}`),
-};
-
-export const SV_P1_PRESET = {
-	name: 'SV P1 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getTalentTree() == 2,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":40505,"enchant":3817,"gems":[41398,42143]},
-		{"id":44664,"gems":[42143]},
-		{"id":40507,"enchant":3808,"gems":[39997]},
-		{"id":40403,"enchant":3605},
-		{"id":43998,"enchant":3832,"gems":[42143,39997]},
-		{"id":40282,"enchant":3845,"gems":[39997,0]},
-		{"id":40541,"enchant":3604,"gems":[0]},
-		{"id":39762,"enchant":3601,"gems":[39997]},
-		{"id":40331,"enchant":3823,"gems":[39997,49110]},
-		{"id":40549,"enchant":3606},
-		{"id":40074},
-		{"id":40474},
-		{"id":40684},
-		{"id":44253},
-		{"id":40388,"enchant":3827},
-		{},
-		{"id":40385,"enchant":3608}
-	]}`),
-};
-
-export const SV_P2_PRESET = {
-	name: 'SV P2 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getTalentTree() == 2,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":45610,"enchant":3817,"gems":[41398,40023]},
-		{"id":45517,"gems":[39997]},
-		{"id":45300,"enchant":3808,"gems":[39997]},
-		{"id":46032,"enchant":3605,"gems":[39997,40044]},
-		{"id":45473,"enchant":3832,"gems":[39997,39997,45879]},
-		{"id":45869,"enchant":3845,"gems":[40043,0]},
-		{"id":45444,"enchant":3604,"gems":[39997,40023,0]},
-		{"id":46095,"gems":[42143,42143,42143]},
-		{"id":45536,"enchant":3823,"gems":[39997,39997,39997]},
-		{"id":45244,"enchant":3606,"gems":[39997,40023]},
-		{"id":45608,"gems":[39997]},
-		{"id":46322,"gems":[39997]},
-		{"id":44253},
-		{"id":45931},
-		{"id":45613,"enchant":3827,"gems":[39997,39997]},
-		{},
-		{"id":45570,"enchant":3608}
-	]}`),
-};
-
-export const SV_P3_PRESET = {
-	name: 'SV P3 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getTalentTree() == 2,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-        {"id":48262,"enchant":3817,"gems":[41398,40147]},
-        {"id":47060,"gems":[42143]},
-        {"id":48260,"enchant":3808,"gems":[40112]},
-        {"id":47545,"enchant":3605,"gems":[40112]},
-        {"id":48264,"enchant":3832,"gems":[40112,40147]},
-        {"id":47074,"enchant":3845,"gems":[40148,0]},
-        {"id":48263,"enchant":3604,"gems":[40148,0]},
-        {"id":47153,"gems":[40147,42143,42143]},
-        {"id":47191,"enchant":3823,"gems":[49110,40147,40112]},
-        {"id":47109,"enchant":3606,"gems":[40112,40112]},
-        {"id":47075,"gems":[40112]},
-        {"id":45608,"gems":[40112]},
-        {"id":47131},
-        {"id":44253},
-        {"id":47239,"enchant":3827,"gems":[40147,40112]},
-        {},
-        {"id":47521,"enchant":3608,"gems":[40112]}
-	]}`),
-};
-
-export const SV_P4_PRESET = {
-	name: 'SV P4 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getTalentTree() == 2,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-        {"id":51286,"enchant":3817,"gems":[41398,40112]},
-        {"id":50633,"gems":[40112]},
-        {"id":51288,"enchant":3808,"gems":[40112]},
-        {"id":47546,"enchant":3605,"gems":[42143]},
-        {"id":51289,"enchant":3832,"gems":[40112,40112]},
-        {"id":50655,"enchant":3845,"gems":[40112,0]},
-        {"id":51285,"enchant":3604,"gems":[40112,0]},
-        {"id":50688,"enchant":3601,"gems":[40148,42143,42143]},
-        {"id":50645,"enchant":3823,"gems":[49110,40112,40150]},
-        {"id":50607,"enchant":3606,"gems":[40148,40148]},
-        {"id":50618,"gems":[45879]},
-        {"id":50402,"gems":[40148]},
-        {"id":50363},
-        {"id":47131},
-        {"id":50735,"enchant":3827,"gems":[40112,40112,40112]},
-        {},
-        {"id":50733,"enchant":3608,"gems":[40112]}
-	]}`),
-};
-
-export const SV_P5_PRESET = {
-	name: 'SV P5 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<any>) => player.getTalentTree() == 2,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-        {"id":51286,"enchant":3817,"gems":[41398,40112]},
-        {"id":50633,"gems":[40112]},
-        {"id":51288,"enchant":3808,"gems":[40112]},
-        {"id":47546,"enchant":3605,"gems":[42143]},
-        {"id":51289,"enchant":3832,"gems":[40112,40112]},
-        {"id":50655,"enchant":3845,"gems":[40112,0]},
-        {"id":51285,"enchant":3604,"gems":[40112,0]},
-        {"id":50688,"enchant":3601,"gems":[40148,42143,42143]},
-        {"id":50645,"enchant":3823,"gems":[49110,40112,40150]},
-        {"id":54577,"enchant":3606,"gems":[40148,40148]},
-        {"id":50618,"gems":[45879]},
-        {"id":54576,"gems":[40148]},
-        {"id":50363},
-        {"id":54590},
-        {"id":50735,"enchant":3827,"gems":[40112,40112,40112]},
-        {},
-        {"id":50733,"enchant":3608,"gems":[40112]}
-	]}`),
-};

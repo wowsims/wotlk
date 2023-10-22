@@ -46,16 +46,16 @@ func main() {
 		db.WriteJson(fmt.Sprintf("%s/atlasloot_db.json", inputsDir))
 		return
 	} else if *genAsset == "wowhead-items" {
-		database.NewWowheadItemTooltipManager(fmt.Sprintf("%s/wowhead_item_tooltips.csv", inputsDir)).Fetch(int32(*minId), int32(*maxId))
+		database.NewWowheadItemTooltipManager(fmt.Sprintf("%s/wowhead_item_tooltips.csv", inputsDir)).Fetch(int32(*minId), int32(*maxId), database.OtherItemIdsToFetch)
 		return
 	} else if *genAsset == "wowhead-spells" {
-		database.NewWowheadSpellTooltipManager(fmt.Sprintf("%s/wowhead_spell_tooltips.csv", inputsDir)).Fetch(int32(*minId), int32(*maxId))
+		database.NewWowheadSpellTooltipManager(fmt.Sprintf("%s/wowhead_spell_tooltips.csv", inputsDir)).Fetch(int32(*minId), int32(*maxId), []string{})
 		return
 	} else if *genAsset == "wowhead-gearplannerdb" {
 		tools.WriteFile(fmt.Sprintf("%s/wowhead_gearplannerdb.txt", inputsDir), tools.ReadWebRequired("https://nether.wowhead.com/wotlk/data/gear-planner?dv=100"))
 		return
 	} else if *genAsset == "wotlk-items" {
-		database.NewWotlkItemTooltipManager(fmt.Sprintf("%s/wotlk_items_tooltips.csv", inputsDir)).Fetch(int32(*minId), int32(*maxId))
+		database.NewWotlkItemTooltipManager(fmt.Sprintf("%s/wotlk_items_tooltips.csv", inputsDir)).Fetch(int32(*minId), int32(*maxId), []string{})
 		return
 	} else if *genAsset == "wago-db2-items" {
 		tools.WriteFile(fmt.Sprintf("%s/wago_db2_items.csv", inputsDir), tools.ReadWebRequired("https://wago.tools/db2/ItemSparse/csv?build=3.4.2.49311"))
@@ -204,6 +204,20 @@ func ApplyGlobalFilters(db *database.WowDatabase) {
 		nameToMatch := item.Name + " of Triumph"
 		for _, item := range triumphItems {
 			if item.Name == nameToMatch {
+				return false
+			}
+		}
+		return true
+	})
+
+	// Theres an invalid 251 t10 set for every class
+	// The invalid set has a higher item id than the 'correct' ones
+	t10invalidItems := core.FilterMap(db.Items, func(_ int32, item *proto.UIItem) bool {
+		return item.SetName != "" && item.Ilvl == 251
+	})
+	db.Items = core.FilterMap(db.Items, func(_ int32, item *proto.UIItem) bool {
+		for _, t10item := range t10invalidItems {
+			if t10item.Name == item.Name && item.Ilvl == t10item.Ilvl && item.Id > t10item.Id {
 				return false
 			}
 		}
@@ -422,7 +436,7 @@ func getGlyphIDsFromJson(infile string) []*proto.GlyphID {
 
 func CreateTempAgent(r *proto.Raid) core.Agent {
 	encounter := core.MakeSingleTargetEncounter(0.0)
-	env, _, _ := core.NewEnvironment(r, encounter)
+	env, _, _ := core.NewEnvironment(r, encounter, false)
 	return env.Raid.Parties[0].Players[0]
 }
 

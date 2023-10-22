@@ -135,6 +135,7 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 					OtherInputs.ReactionTime,
 					OtherInputs.DistanceFromTarget,
 					OtherInputs.TankAssignment,
+					OtherInputs.nibelungAverageCasts,
 				],
 			},
 			encounterPicker: {
@@ -204,6 +205,9 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 				} else if (talentTree == 0) {
 					return Presets.ARCANE_ROTATION_PRESET_DEFAULT.rotation.rotation!;
 				} else if (talentTree == 1) {
+					if (player.getTalents().iceShards > 0) {
+						return Presets.FROSTFIRE_ROTATION_PRESET_DEFAULT.rotation.rotation!;
+					}
 					return Presets.FIRE_ROTATION_PRESET_DEFAULT.rotation.rotation!;
 				} else {
 					return Presets.FROST_ROTATION_PRESET_DEFAULT.rotation.rotation!;

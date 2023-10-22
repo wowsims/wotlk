@@ -60,6 +60,9 @@ type Unit struct {
 	// for calculating spell travel time for certain spells.
 	DistanceFromTarget float64
 
+	// How many casts on average a Valkyr will get off during its lifetime.
+	NibelungAverageCasts float64
+
 	// Environment in which this Unit exists. This will be nil until after the
 	// construction phase.
 	Env *Environment
@@ -159,6 +162,8 @@ type Unit struct {
 
 	// The currently-channeled DOT spell, otherwise nil.
 	ChanneledDot *Dot
+
+	ManaRequired float64
 }
 
 // Units can be disabled for several reasons:
@@ -438,10 +443,15 @@ func (unit *Unit) finalize() {
 	for _, spell := range unit.Spellbook {
 		spell.finalize()
 	}
-}
 
-func (unit *Unit) init(sim *Simulation) {
-	unit.auraTracker.init(sim)
+	// For now, restrict this optimization to rogues only. Ferals will require
+	// some extra logic to handle their ExcessEnergy() calc.
+	agent := unit.Env.Raid.GetPlayerFromUnit(unit)
+	if agent != nil && agent.GetCharacter().Class == proto.Class_ClassRogue {
+		unit.Env.RegisterPostFinalizeEffect(func() {
+			unit.energyBar.setupEnergyThresholds()
+		})
+	}
 }
 
 func (unit *Unit) reset(sim *Simulation, _ Agent) {
@@ -477,6 +487,10 @@ func (unit *Unit) reset(sim *Simulation, _ Agent) {
 
 	unit.DynamicStatsPets = unit.DynamicStatsPets[:0]
 	unit.DynamicMeleeSpeedPets = unit.DynamicMeleeSpeedPets[:0]
+
+	if unit.Type != PetUnit {
+		sim.addTracker(&unit.auraTracker)
+	}
 }
 
 func (unit *Unit) startPull(sim *Simulation) {
@@ -487,18 +501,7 @@ func (unit *Unit) startPull(sim *Simulation) {
 	}
 }
 
-// Advance moves time forward counting down auras, CDs, mana regen, etc
-func (unit *Unit) advance(sim *Simulation) {
-	unit.auraTracker.advance(sim)
-
-	if hc := &unit.Hardcast; hc.Expires != startingCDTime && hc.Expires <= sim.CurrentTime {
-		hc.Expires = startingCDTime
-		if hc.OnComplete != nil {
-			hc.OnComplete(sim, hc.Target)
-		}
-	}
-}
-
+// Advance moves time forward counting down auras, and nothing else, currently.
 func (unit *Unit) doneIteration(sim *Simulation) {
 	unit.Hardcast = Hardcast{}
 	unit.doneIterationGCD(sim)
@@ -558,4 +561,17 @@ func (unit *Unit) GetMetadata() *proto.UnitMetadata {
 	})
 
 	return metadata
+}
+
+func (unit *Unit) StartAPLLoop(sim *Simulation) {
+	if unit.HasManaBar() {
+		unit.ManaRequired = 0
+	}
+}
+
+func (unit *Unit) DoneAPLLoop(sim *Simulation, usedGCD bool) {
+	if unit.HasManaBar() && !usedGCD && unit.ManaRequired > 0 {
+		unit.WaitForMana(sim, unit.ManaRequired)
+		unit.ManaRequired = 0
+	}
 }

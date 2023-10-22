@@ -175,8 +175,8 @@ func (druid *Druid) registerCatFormSpell() {
 			druid.PseudoStats.SpiritRegenMultiplier /= AnimalSpiritRegenSuppression
 			druid.PseudoStats.BaseDodge -= 0.02 * float64(druid.Talents.FeralSwiftness)
 
-			druid.AddStatsDynamic(sim, predBonus.Multiply(-1))
-			druid.AddStatsDynamic(sim, statBonus.Multiply(-1))
+			druid.AddStatsDynamic(sim, predBonus.Invert())
+			druid.AddStatsDynamic(sim, statBonus.Invert())
 			druid.DisableDynamicStatDep(sim, agiApDep)
 			if hotwDep != nil {
 				druid.DisableDynamicStatDep(sim, hotwDep)
@@ -313,8 +313,8 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.PseudoStats.SpiritRegenMultiplier /= AnimalSpiritRegenSuppression
 			druid.PseudoStats.BaseDodge -= 0.02 * float64(druid.Talents.FeralSwiftness+druid.Talents.NaturalReaction)
 
-			druid.AddStatsDynamic(sim, predBonus.Multiply(-1))
-			druid.AddStatsDynamic(sim, statBonus.Multiply(-1))
+			druid.AddStatsDynamic(sim, predBonus.Invert())
+			druid.AddStatsDynamic(sim, statBonus.Invert())
 			druid.RemoveDynamicEquipScaling(sim, stats.Armor, druid.BearArmorMultiplier())
 			if potpDep != nil {
 				druid.DisableDynamicStatDep(sim, potpDep)

@@ -776,7 +776,7 @@ func apReductionEffect(aura *Aura, apReduction float64) *ExclusiveEffect {
 			ee.Aura.Unit.AddStatsDynamic(sim, statReduction)
 		},
 		OnExpire: func(ee *ExclusiveEffect, sim *Simulation) {
-			ee.Aura.Unit.AddStatsDynamic(sim, statReduction.Multiply(-1))
+			ee.Aura.Unit.AddStatsDynamic(sim, statReduction.Invert())
 		},
 	})
 }

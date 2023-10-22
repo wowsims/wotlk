@@ -15,7 +15,6 @@ import { Stats } from '../core/proto_utils/stats.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
 import { TotemsSection } from '../core/components/totem_inputs.js';
-import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as Mechanics from '../core/constants/mechanics.js';
 import * as ShamanInputs from './inputs.js';
@@ -84,7 +83,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P1_PRESET.gear,
+				gear: Presets.P3_PRESET_HORDE.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatIntellect]: 0.22,
@@ -101,6 +100,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				talents: Presets.StandardTalents.data,
 				// Default spec-specific settings.
 				specOptions: Presets.DefaultOptions,
+				other: Presets.OtherDefaults,
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					arcaneBrilliance: true,
@@ -109,6 +109,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 					moonkinAura: TristateEffect.TristateEffectImproved,
 					sanctifiedRetribution: true,
 					demonicPact: 500,
+					wrathOfAirTotem: true,
 				}),
 				partyBuffs: PartyBuffs.create({
 				}),
@@ -123,6 +124,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 					misery: true,
 					curseOfElements: true,
 					shadowMastery: true,
+					heartOfTheCrusader: true,
 				}),
 			},
 			// IconInputs to include in the 'Player' section on the settings tab.
@@ -141,6 +143,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				inputs: [
 					ShamanInputs.InThunderstormRange,
 					OtherInputs.TankAssignment,
+					OtherInputs.nibelungAverageCasts,
 				],
 			},
 			customSections: [
@@ -159,12 +162,13 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				],
 				// Preset rotations that the user can quickly select.
 				rotations: [
+					Presets.ROTATION_PRESET_LEGACY,
 					Presets.ROTATION_PRESET_DEFAULT,
 					Presets.ROTATION_PRESET_ADVANCED,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.PRE_RAID_PRESET,
+					Presets.PRERAID_PRESET,
 					Presets.P1_PRESET,
 					Presets.P2_PRESET,
 					Presets.P3_PRESET_ALLI,

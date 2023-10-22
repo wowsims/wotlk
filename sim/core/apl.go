@@ -193,6 +193,8 @@ func (apl *APLRotation) DoNextAction(sim *Simulation) {
 
 	i := 0
 	apl.inLoop = true
+	apl.unit.StartAPLLoop(sim)
+
 	for nextAction := apl.getNextAction(sim); nextAction != nil; i, nextAction = i+1, apl.getNextAction(sim) {
 		if i > 1000 {
 			panic(fmt.Sprintf("[USER_ERROR] Infinite loop detected, current action:\n%s", nextAction))
@@ -206,11 +208,14 @@ func (apl *APLRotation) DoNextAction(sim *Simulation) {
 		apl.unit.Log(sim, "No available actions!")
 	}
 
-	if apl.unit.GCD.IsReady(sim) {
+	gcdReady := apl.unit.GCD.IsReady(sim)
+	if gcdReady {
 		apl.unit.WaitUntil(sim, sim.CurrentTime+time.Millisecond*50)
 	} else {
 		apl.unit.DoNothing()
 	}
+
+	apl.unit.DoneAPLLoop(sim, gcdReady)
 }
 
 func (apl *APLRotation) getNextAction(sim *Simulation) *APLAction {
@@ -229,6 +234,7 @@ func (apl *APLRotation) getNextAction(sim *Simulation) *APLAction {
 
 func (apl *APLRotation) shouldInterruptChannel(sim *Simulation) bool {
 	channeledDot := apl.unit.ChanneledDot
+
 	if channeledDot.MaxTicksRemaining() == 0 {
 		// Channel has ended, but apl.unit.ChanneledDot hasn't been cleared yet meaning the aura is still active.
 		return false

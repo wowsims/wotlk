@@ -1,17 +1,19 @@
-import { Consumes } from '../core/proto/common.js';
-import { EquipmentSpec } from '../core/proto/common.js';
-import { Flask } from '../core/proto/common.js';
-import { Food } from '../core/proto/common.js';
-import { Glyphs } from '../core/proto/common.js';
-import { Potions } from '../core/proto/common.js';
-import { RaidBuffs } from '../core/proto/common.js';
-import { IndividualBuffs } from '../core/proto/common.js';
-import { Debuffs } from '../core/proto/common.js';
-import { TristateEffect } from '../core/proto/common.js';
-import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
-import { APLRotation } from '../core/proto/apl.js';
+import {
+	Consumes,
+	Debuffs,
+	Flask,
+	Food,
+	Glyphs,
+	IndividualBuffs,
+	Potions,
+	Profession,
+	RaidBuffs,
+	TristateEffect,
+} from '../core/proto/common.js';
+import { SavedTalents } from '../core/proto/ui.js';
 
 import {
+	ShadowPriest_Options_Armor as Armor,
 	ShadowPriest_Rotation as Rotation,
 	ShadowPriest_Options as Options,
 	ShadowPriest_Rotation_RotationType,
@@ -19,13 +21,31 @@ import {
 	PriestMinorGlyph as MinorGlyph,
 } from '../core/proto/priest.js';
 
+import * as PresetUtils from '../core/preset_utils.js';
 
-import * as Tooltips from '../core/constants/tooltips.js';
+import PreraidGear from './gear_sets/preraid.gear.json';
+import P1Gear from './gear_sets/p1.gear.json';
+import P2Gear from './gear_sets/p2.gear.json';
+import P3Gear from './gear_sets/p3.gear.json';
+import P4Gear from './gear_sets/p4.gear.json';
+
 import DefaultApl from './apls/default.apl.json'
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
+
+export const PRERAID_PRESET = PresetUtils.makePresetGear('Preraid Preset', PreraidGear);
+export const P1_PRESET = PresetUtils.makePresetGear('P1 Preset', P1Gear);
+export const P2_PRESET = PresetUtils.makePresetGear('P2 Preset', P2Gear);
+export const P3_PRESET = PresetUtils.makePresetGear('P3 Preset', P3Gear);
+export const P4_PRESET = PresetUtils.makePresetGear('P4 Preset', P4Gear);
+
+export const DefaultRotation = Rotation.create({
+	rotationType: ShadowPriest_Rotation_RotationType.Ideal,
+});
+
+export const ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Default', DefaultApl);
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
@@ -44,15 +64,26 @@ export const StandardTalents = {
 	}),
 };
 
-export const DefaultRotation = Rotation.create({
-	rotationType: ShadowPriest_Rotation_RotationType.Ideal,
-});
+export const EnlightenmentTalents = {
+	name: 'Enlightenment',
+	data: SavedTalents.create({
+		talentsString: '05032031303005022--3250230012230101231513011',
+		glyphs: Glyphs.create({
+			major1: MajorGlyph.GlyphOfShadow,
+			major2: MajorGlyph.GlyphOfMindFlay,
+			major3: MajorGlyph.GlyphOfShadowWordDeath,
+			minor1: MinorGlyph.GlyphOfFortitude,
+			minor2: MinorGlyph.GlyphOfShadowProtection,
+			minor3: MinorGlyph.GlyphOfShadowfiend,
+		}),
+	}),
+};
 
 export const DefaultOptions = Options.create({
 	useShadowfiend: true,
 	useMindBlast: true,
 	useShadowWordDeath: true,
-	latency: 100,
+	armor: Armor.InnerFire,
 });
 
 export const DefaultConsumes = Consumes.create({
@@ -93,111 +124,12 @@ export const DefaultDebuffs = Debuffs.create({
 	ebonPlaguebringer: true,
 	heartOfTheCrusader: true,
 	judgementOfWisdom: true,
+	shadowMastery: true,
 });
 
 export const OtherDefaults = {
 	channelClipDelay: 100,
-};
-
-export const PreBis_PRESET = {
-	name: 'PreBis Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":42553,"enchant":3820,"gems":[41285,40049]},
-		{"id":40680},
-		{"id":34210,"enchant":3810,"gems":[39998,40026]},
-		{"id":41610,"enchant":3722},
-		{"id":43792,"enchant":1144,"gems":[39998,40051]},
-		{"id":37361,"enchant":2332,"gems":[0]},
-		{"id":39530,"enchant":3604,"gems":[40049,0]},
-		{"id":40696,"gems":[40049,39998]},
-		{"id":37854,"enchant":3719},
-		{"id":44202,"enchant":3826,"gems":[40026]},
-		{"id":40585},
-		{"id":37694},
-		{"id":37835},
-		{"id":37873},
-		{"id":41384,"enchant":3834},
-		{"id":40698},
-		{"id":37177}
-  ]}`),
-};
-export const P1_PRESET = {
-	name: 'P1 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(` {"items": [
-		{"id":40562,"enchant":3820,"gems":[41285,39998]},
-		{"id":44661,"gems":[40026]},
-		{"id":40459,"enchant":3810,"gems":[39998]},
-		{"id":44005,"enchant":3722,"gems":[40026]},
-		{"id":44002,"enchant":1144,"gems":[39998,39998]},
-		{"id":44008,"enchant":2332,"gems":[39998,0]},
-		{"id":40454,"enchant":3604,"gems":[40049,0]},
-		{"id":40561,"gems":[39998]},
-		{"id":40560,"enchant":3719},
-		{"id":40558,"enchant":3606},
-		{"id":40719},
-		{"id":40399},
-		{"id":40255},
-		{"id":40432},
-		{"id":40395,"enchant":3834},
-		{"id":40273},
-		{"id":39712}
-  ]}`),
-};
-export const P2_PRESET = {
-	name: 'P2 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{ "items": [
-        {"id":46172,"enchant":3820,"gems":[41285,45883]},
-        {"id":45243,"gems":[39998]},
-        {"id":46165,"enchant":3810,"gems":[39998]},
-        {"id":45242,"enchant":3722,"gems":[40049]},
-        {"id":46168,"enchant":1144,"gems":[39998,39998]},
-        {"id":45446,"enchant":2332,"gems":[39998,0]},
-        {"id":45665,"enchant":3604,"gems":[39998,39998,0]},
-        {"id":45619,"enchant":3601,"gems":[39998,39998,39998]},
-        {"id":46170,"enchant":3719,"gems":[39998,40049]},
-        {"id":45135,"enchant":3606,"gems":[39998,40049]},
-        {"id":45495,"gems":[40026]},
-        {"id":46046,"gems":[39998]},
-        {"id":45518},
-        {"id":45466},
-        {"id":45620,"enchant":3834,"gems":[40026]},
-        {"id":45617},
-        {"id":45294,"gems":[39998]}
-      ]
-    }`),
-};
-export const P3_PRESET = {
-	name: 'P3 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-        {"id":48088,"enchant":3820,"gems":[41285,40133]},
-        {"id":47468,"gems":[40155]},
-        {"id":48091,"enchant":3810,"gems":[40155]},
-        {"id":47551,"enchant":3722,"gems":[40113]},
-        {"id":48090,"enchant":1144,"gems":[40113,40133]},
-        {"id":47467,"enchant":2332,"gems":[40155,0]},
-        {"id":45665,"enchant":3604,"gems":[40113,40113,0]},
-        {"id":47419,"enchant":3601,"gems":[40133,40113,40113]},
-        {"id":48089,"enchant":3719,"gems":[40113,40133]},
-        {"id":47454,"enchant":3606,"gems":[40133,40113]},
-        {"id":47489,"gems":[40155]},
-        {"id":45495,"gems":[40113]},
-        {"id":45518},
-        {"id":47477},
-        {"id":47483,"enchant":3834},
-        {"id":47437},
-        {"id":47995}
-      ]
-    }`),
-};
-
-export const ROTATION_PRESET_DEFAULT = {
-	name: 'Default',
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: Rotation.toJsonString(Rotation.create()),
-		rotation: APLRotation.fromJsonString(JSON.stringify(DefaultApl)),
-	}),
+	profession1: Profession.Engineering,
+	profession2: Profession.Tailoring,
+	nibelungAverageCasts: 11,
 };

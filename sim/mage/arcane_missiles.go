@@ -18,7 +18,7 @@ func (mage *Mage) registerArcaneMissilesSpell() {
 		// such as illustration of the dragon soul
 		// however, it cannot proc Nibelung so we add the ProcMaskNotInSpellbook flag
 		ProcMask:         core.ProcMaskSpellDamage | core.ProcMaskNotInSpellbook,
-		Flags:            SpellFlagMage,
+		Flags:            SpellFlagMage | core.SpellFlagNoLogs,
 		MissileSpeed:     20,
 		BonusHitRating:   float64(mage.Talents.ArcaneFocus) * core.SpellHitRatingPerHitChance,
 		BonusCritRating:  core.TernaryFloat64(mage.HasSetBonus(ItemSetKhadgarsRegalia, 4), 5*core.CritRatingPerCritChance, 0),

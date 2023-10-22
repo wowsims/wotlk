@@ -17,7 +17,7 @@ func TestRestoration(t *testing.T) {
 		Class: proto.Class_ClassShaman,
 		Race:  proto.Race_RaceTroll,
 
-		GearSet:     core.GearSetCombo{Label: "P1", GearSet: P1Gear},
+		GearSet:     core.GetGearSet("../../../ui/restoration_shaman/gear_sets", "p1"),
 		Talents:     StandardTalents,
 		Glyphs:      StandardGlyphs,
 		Consumes:    FullConsumes,
@@ -48,7 +48,7 @@ func BenchmarkSimulate(b *testing.B) {
 			&proto.Player{
 				Race:          proto.Race_RaceOrc,
 				Class:         proto.Class_ClassShaman,
-				Equipment:     P1Gear,
+				Equipment:     core.GetGearSet("../../../ui/restoration_shaman/gear_sets", "p1").GearSet,
 				Consumes:      FullConsumes,
 				Spec:          PlayerOptionsStandard,
 				Buffs:         core.FullIndividualBuffs,
@@ -110,23 +110,3 @@ var DefaultRotation = core.APLRotationFromJsonString(`{
 		{"action":{"autocastOtherCooldowns":{}}}
 	]
 }`)
-
-var P1Gear = core.EquipmentSpecFromJsonString(`{"items": [
-	{"id":40510,"enchant":3820,"gems":[41401,39998]},
-	{"id":44662,"gems":[40051]},
-	{"id":40513,"enchant":3810,"gems":[39998]},
-	{"id":44005,"enchant":3831,"gems":[40027]},
-	{"id":40508,"enchant":2381,"gems":[39998,40051]},
-	{"id":40209,"enchant":2332,"gems":[0]},
-	{"id":40564,"enchant":3246,"gems":[0]},
-	{"id":40327,"gems":[39998]},
-	{"id":40512,"enchant":3721,"gems":[39998,40027]},
-	{"id":39734,"enchant":3244},
-	{"id":40399},
-	{"id":40375},
-	{"id":37111},
-	{"id":40685},
-	{"id":40395,"enchant":3834},
-	{"id":40401,"enchant":1128},
-	{"id":40709}
-]}`)

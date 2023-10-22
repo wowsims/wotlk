@@ -3,18 +3,15 @@ import {
 	Flask,
 	Food,
 	Glyphs,
-	EquipmentSpec,
 	Potions,
 	RaidBuffs,
 	TristateEffect,
 	Debuffs,
 	CustomRotation,
 	CustomSpell,
-	Spec,
 	Faction,
 } from '../core/proto/common.js';
-import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
-import { APLRotation } from '../core/proto/apl.js';
+import { SavedTalents } from '../core/proto/ui.js';
 
 import { EnhancementShaman_Rotation as EnhancementShamanRotation, EnhancementShaman_Options as EnhancementShamanOptions, ShamanShield } from '../core/proto/shaman.js';
 import {
@@ -31,8 +28,14 @@ import {
 	EnhancementShaman_Rotation_CustomRotationSpell as CustomRotationSpell
 } from '../core/proto/shaman.js';
 
-import * as Tooltips from '../core/constants/tooltips.js';
-import { Player } from 'ui/core/player.js';
+import * as PresetUtils from '../core/preset_utils.js';
+
+import PreraidGear from './gear_sets/preraid.gear.json';
+import P1Gear from './gear_sets/p1.gear.json';
+import P2FtGear from './gear_sets/p2_ft.gear.json';
+import P2WfGear from './gear_sets/p2_wf.gear.json';
+import P3AllianceGear from './gear_sets/p3_alliance.gear.json';
+import P3HordeGear from './gear_sets/p3_horde.gear.json';
 
 import DefaultFt from './apls/default_ft.apl.json';
 import DefaultWf from './apls/default_wf.apl.json';
@@ -42,33 +45,12 @@ import Phase3Apl from './apls/phase_3.apl.json';
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
 
-// Default talents. Uses the wowhead calculator format, make the talents on
-// https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
-export const StandardTalents = {
-	name: 'Standard',
-	data: SavedTalents.create({
-		talentsString: '053030152-30405003105021333031131031051',
-		glyphs: Glyphs.create({
-			major1: ShamanMajorGlyph.GlyphOfFireNova,
-			major2: ShamanMajorGlyph.GlyphOfFlametongueWeapon,
-			major3: ShamanMajorGlyph.GlyphOfFeralSpirit,
-			//minor glyphs dont affect damage done, all convenience/QoL
-		})
-	}),
-};
-
-export const Phase3Talents = {
-	name: 'Phase 3',
-	data: SavedTalents.create({
-		talentsString: '053030152-30505003105001333031131131051',
-		glyphs: Glyphs.create({
-			major1: ShamanMajorGlyph.GlyphOfFireNova,
-			major2: ShamanMajorGlyph.GlyphOfFlametongueWeapon,
-			major3: ShamanMajorGlyph.GlyphOfFeralSpirit,
-			//minor glyphs dont affect damage done, all convenience/QoL
-		})
-	}),
-};
+export const PRERAID_PRESET = PresetUtils.makePresetGear('Preraid Preset', PreraidGear);
+export const P1_PRESET = PresetUtils.makePresetGear('P1 Preset', P1Gear);
+export const P2_PRESET_FT = PresetUtils.makePresetGear('P2 Preset FT', P2FtGear);
+export const P2_PRESET_WF = PresetUtils.makePresetGear('P2 Preset WF', P2WfGear);
+export const P3_PRESET_ALLIANCE = PresetUtils.makePresetGear('P3 Preset [A]', P3AllianceGear, { faction: Faction.Alliance });
+export const P3_PRESET_HORDE = PresetUtils.makePresetGear('P3 Preset [H]', P3HordeGear, { faction: Faction.Horde });
 
 export const DefaultRotation = EnhancementShamanRotation.create({
 	totems: ShamanTotems.create({
@@ -105,30 +87,35 @@ export const DefaultRotation = EnhancementShamanRotation.create({
 	}),
 });
 
-export const ROTATION_FT_DEFAULT = {
-	name: 'Default FT',
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: EnhancementShamanRotation.toJsonString(EnhancementShamanRotation.create({
-		})),
-		rotation: APLRotation.fromJsonString(JSON.stringify(DefaultFt)),
+export const ROTATION_FT_DEFAULT = PresetUtils.makePresetAPLRotation('Default FT', DefaultFt);
+export const ROTATION_WF_DEFAULT = PresetUtils.makePresetAPLRotation('Default WF', DefaultWf);
+export const ROTATION_PHASE_3 = PresetUtils.makePresetAPLRotation('Phase 3', Phase3Apl);
+
+// Default talents. Uses the wowhead calculator format, make the talents on
+// https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
+export const StandardTalents = {
+	name: 'Standard',
+	data: SavedTalents.create({
+		talentsString: '053030152-30405003105021333031131031051',
+		glyphs: Glyphs.create({
+			major1: ShamanMajorGlyph.GlyphOfFireNova,
+			major2: ShamanMajorGlyph.GlyphOfFlametongueWeapon,
+			major3: ShamanMajorGlyph.GlyphOfFeralSpirit,
+			//minor glyphs dont affect damage done, all convenience/QoL
+		})
 	}),
 };
 
-export const ROTATION_WF_DEFAULT = {
-	name: 'Default WF',
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: EnhancementShamanRotation.toJsonString(EnhancementShamanRotation.create({
-		})),
-		rotation: APLRotation.fromJsonString(JSON.stringify(DefaultWf)),
-	}),
-};
-
-export const ROTATION_PHASE_3 = {
+export const Phase3Talents = {
 	name: 'Phase 3',
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: EnhancementShamanRotation.toJsonString(EnhancementShamanRotation.create({
-		})),
-		rotation: APLRotation.fromJsonString(JSON.stringify(Phase3Apl)),
+	data: SavedTalents.create({
+		talentsString: '053030152-30505003105001333031131131051',
+		glyphs: Glyphs.create({
+			major1: ShamanMajorGlyph.GlyphOfFireNova,
+			major2: ShamanMajorGlyph.GlyphOfFlametongueWeapon,
+			major3: ShamanMajorGlyph.GlyphOfFeralSpirit,
+			//minor glyphs dont affect damage done, all convenience/QoL
+		})
 	}),
 };
 
@@ -170,152 +157,3 @@ export const DefaultDebuffs = Debuffs.create({
 	totemOfWrath: true,
 	shadowMastery: true,
 });
-
-
-export const PreRaid_PRESET = {
-	name: 'Preraid Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":43311,"enchant":3817,"gems":[41398,42156]},
-		{"id":40678},
-		{"id":37373,"enchant":3808},
-		{"id":37840,"enchant":3605},
-		{"id":39597,"enchant":3832,"gems":[40053,40088]},
-		{"id":43131,"enchant":3845,"gems":[0]},
-		{"id":39601,"enchant":3604,"gems":[40053,0]},
-		{"id":37407,"gems":[42156]},
-		{"id":37669,"enchant":3823},
-		{"id":37167,"enchant":3606,"gems":[40053,42156]},
-		{"id":37685},
-		{"id":37642},
-		{"id":37390},
-		{"id":40684},
-		{"id":41384,"enchant":3789},
-		{"id":40704,"enchant":3789},
-		{"id":33507}
-	]}`),
-}
-
-export const P1_PRESET = {
-	name: 'P1 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":40543,"enchant":3817,"gems":[41398,40014]},
-		{"id":44661,"gems":[40014]},
-		{"id":40524,"enchant":3808,"gems":[40014]},
-		{"id":40403,"enchant":3605},
-		{"id":40523,"enchant":3832,"gems":[40003,40014]},
-		{"id":40282,"enchant":3845,"gems":[42702,0]},
-		{"id":40520,"enchant":3604,"gems":[42154,0]},
-		{"id":40275,"gems":[42156]},
-		{"id":40522,"enchant":3823,"gems":[39999,42156]},
-		{"id":40367,"enchant":3606,"gems":[40058]},
-		{"id":40474},
-		{"id":40074},
-		{"id":40684},
-		{"id":37390},
-		{"id":39763,"enchant":3789},
-		{"id":39468,"enchant":3789},
-		{"id":40322}
-	]}`),
-};
-
-export const P2_PRESET_FT = {
-	name: 'P2 Preset FT',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{ "items": [
-        {"id":45610,"enchant":3817,"gems":[41398,42702]},
-        {"id":45517,"gems":[39999]},
-        {"id":46203,"enchant":3808,"gems":[39999]},
-        {"id":45461,"enchant":3831,"gems":[40014]},
-        {"id":46205,"enchant":3832,"gems":[40058,40053]},
-        {"id":45460,"enchant":3845,"gems":[39999,0]},
-        {"id":46200,"enchant":3604,"gems":[40014,0]},
-        {"id":45553,"gems":[36766,36766,36766]},
-        {"id":46208,"enchant":3823,"gems":[39999,39999]},
-        {"id":45989,"enchant":3606,"gems":[40053,39999]},
-        {"id":45456,"gems":[39999]},
-        {"id":46046,"gems":[40053]},
-        {"id":45609},
-        {"id":46038},
-        {"id":45612,"enchant":3789,"gems":[39999]},
-        {"id":46097,"enchant":3789,"gems":[40003]},
-        {"id":40322}
-      ]
-    }`),
-};
-
-export const P2_PRESET_WF = {
-	name: 'P2 Preset WF',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{  "items": [
-        {"id":45610,"enchant":3817,"gems":[41398,42702]},
-        {"id":45517,"gems":[39999]},
-        {"id":46203,"enchant":3808,"gems":[39999]},
-        {"id":45461,"enchant":3831,"gems":[40052]},
-        {"id":46205,"enchant":3832,"gems":[40052,40052]},
-        {"id":45460,"enchant":3845,"gems":[39999,0]},
-        {"id":46200,"enchant":3604,"gems":[40053,0]},
-        {"id":45553,"gems":[36766,36766,36766]},
-        {"id":46208,"enchant":3823,"gems":[39999,39999]},
-        {"id":45989,"enchant":3606,"gems":[40053,39999]},
-        {"id":45456,"gems":[39999]},
-        {"id":45608,"gems":[39999]},
-        {"id":45609},
-        {"id":46038},
-        {"id":45132,"enchant":3789,"gems":[40052]},
-        {"id":46097,"enchant":3789,"gems":[39999]},
-        {"id":40322}
-      ]
-    }`),
-};
-
-export const P3_PRESET_ALLIANCE	 = {
-	name: 'P3 Preset [A]',
-	enableWhen: (player: Player<Spec.SpecElementalShaman>) => player.getFaction() == Faction.Alliance,
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{  "items": [
-		{"id":48353,"enchant":3817,"gems":[41398,40128]},
-		{"id":47060,"gems":[40159]},
-		{"id":48351,"enchant":3808,"gems":[40128]},
-		{"id":47552,"enchant":3722,"gems":[40159]},
-		{"id":46965,"enchant":3832,"gems":[40159,49110,40128]},
-		{"id":47916,"enchant":3845,"gems":[40159,0]},
-		{"id":48354,"enchant":3604,"gems":[40128,0]},
-		{"id":47112,"enchant":3599,"gems":[40128,40159,40128]},
-		{"id":48352,"enchant":3823,"gems":[40128,40128]},
-		{"id":47099,"enchant":3606,"gems":[40128,40128]},
-		{"id":46046,"gems":[40128]},
-		{"id":47075,"gems":[40128]},
-		{"id":47188},
-		{"id":45609},
-		{"id":47206,"enchant":3789},
-		{"id":47156,"enchant":3789,"gems":[40128]},
-		{"id":47666}
-	]}`),
-};
-
-export const P3_PRESET_HORDE = {
-	name: 'P3 Preset [H]',
-	enableWhen: (player: Player<Spec.SpecElementalShaman>) => player.getFaction() == Faction.Horde,
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{  "items": [
-		{"id":48358,"enchant":3817,"gems":[41398,40128]},
-		{"id":47433,"gems":[40159]},
-		{"id":48360,"enchant":3808,"gems":[40128]},
-		{"id":47551,"enchant":3722,"gems":[40159]},
-		{"id":47412,"enchant":3832,"gems":[40159,49110,40128]},
-		{"id":47989,"enchant":3845,"gems":[40159,0]},
-		{"id":48357,"enchant":3604,"gems":[40128,0]},
-		{"id":47460,"enchant":3599,"gems":[40128,40159,40128]},
-		{"id":48359,"enchant":3823,"gems":[40128,40128]},
-		{"id":47456,"enchant":3606,"gems":[40128,40128]},
-		{"id":46046,"gems":[40128]},
-		{"id":47443,"gems":[40128]},
-		{"id":47477},
-		{"id":45609},
-		{"id":47483,"enchant":3789},
-		{"id":47475,"enchant":3789,"gems":[40128]},
-		{"id":47666}
-	]}`),
-};

@@ -125,8 +125,8 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-AllItems-BonescytheBattlegear"
  value: {
-  dps: 6919.96335
-  tps: 4908.36641
+  dps: 6931.47826
+  tps: 4916.542
  }
 }
 dps_results: {
@@ -203,8 +203,8 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-AllItems-Deathbringer'sWill-50362"
  value: {
-  dps: 8296.08218
-  tps: 5887.32209
+  dps: 8295.24348
+  tps: 5886.72661
  }
 }
 dps_results: {
@@ -273,8 +273,8 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-AllItems-EphemeralSnowflake-50260"
  value: {
-  dps: 7974.95818
-  tps: 5660.21719
+  dps: 7974.95333
+  tps: 5660.21374
  }
 }
 dps_results: {
@@ -357,8 +357,8 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-AllItems-Gladiator'sVestments"
  value: {
-  dps: 7293.01793
-  tps: 5175.63133
+  dps: 7288.31034
+  tps: 5172.32843
  }
 }
 dps_results: {
@@ -456,8 +456,8 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-AllItems-MeteoriteWhetstone-37390"
  value: {
-  dps: 8089.67818
-  tps: 5741.23124
+  dps: 8089.40129
+  tps: 5741.03465
  }
 }
 dps_results: {
@@ -575,8 +575,8 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-AllItems-Shadowblade'sBattlegear"
  value: {
-  dps: 7727.98781
-  tps: 5486.07844
+  dps: 8457.71517
+  tps: 6001.34137
  }
 }
 dps_results: {
@@ -631,8 +631,8 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-AllItems-SparkofLife-37657"
  value: {
-  dps: 7963.11381
-  tps: 5651.4162
+  dps: 7963.37873
+  tps: 5651.60429
  }
 }
 dps_results: {
@@ -694,8 +694,8 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-AllItems-TheFistsofFury"
  value: {
-  dps: 6971.40475
-  tps: 4944.34363
+  dps: 6972.18242
+  tps: 4944.89577
  }
 }
 dps_results: {
@@ -708,8 +708,8 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-AllItems-ThunderingSkyflareDiamond"
  value: {
-  dps: 8175.74959
-  tps: 5801.48507
+  dps: 8175.7533
+  tps: 5801.4877
  }
 }
 dps_results: {
@@ -785,89 +785,89 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-Average-Default"
  value: {
-  dps: 8311.57873
-  tps: 5898.44268
+  dps: 8311.52053
+  tps: 5898.38628
  }
 }
 dps_results: {
- key: "TestSubtlety-Settings-BloodElf-P2 Subtlety-Subtlety--FullBuffs-LongMultiTarget"
+ key: "TestSubtlety-Settings-BloodElf-p2_hemosub-Subtlety--FullBuffs-LongMultiTarget"
  value: {
   dps: 31063.54723
   tps: 22055.11853
  }
 }
 dps_results: {
- key: "TestSubtlety-Settings-BloodElf-P2 Subtlety-Subtlety--FullBuffs-LongSingleTarget"
+ key: "TestSubtlety-Settings-BloodElf-p2_hemosub-Subtlety--FullBuffs-LongSingleTarget"
  value: {
   dps: 8302.87853
   tps: 5893.03954
  }
 }
 dps_results: {
- key: "TestSubtlety-Settings-BloodElf-P2 Subtlety-Subtlety--FullBuffs-ShortSingleTarget"
+ key: "TestSubtlety-Settings-BloodElf-p2_hemosub-Subtlety--FullBuffs-ShortSingleTarget"
  value: {
   dps: 9202.82134
   tps: 6497.37367
  }
 }
 dps_results: {
- key: "TestSubtlety-Settings-BloodElf-P2 Subtlety-Subtlety--NoBuffs-LongMultiTarget"
+ key: "TestSubtlety-Settings-BloodElf-p2_hemosub-Subtlety--NoBuffs-LongMultiTarget"
  value: {
   dps: 19249.68587
   tps: 13667.27697
  }
 }
 dps_results: {
- key: "TestSubtlety-Settings-BloodElf-P2 Subtlety-Subtlety--NoBuffs-LongSingleTarget"
+ key: "TestSubtlety-Settings-BloodElf-p2_hemosub-Subtlety--NoBuffs-LongSingleTarget"
  value: {
   dps: 4091.27574
   tps: 2903.22932
  }
 }
 dps_results: {
- key: "TestSubtlety-Settings-BloodElf-P2 Subtlety-Subtlety--NoBuffs-ShortSingleTarget"
+ key: "TestSubtlety-Settings-BloodElf-p2_hemosub-Subtlety--NoBuffs-ShortSingleTarget"
  value: {
   dps: 3990.28275
   tps: 2821.77203
  }
 }
 dps_results: {
- key: "TestSubtlety-Settings-Orc-P2 Subtlety-Subtlety--FullBuffs-LongMultiTarget"
+ key: "TestSubtlety-Settings-Orc-p2_hemosub-Subtlety--FullBuffs-LongMultiTarget"
  value: {
   dps: 30736.39303
   tps: 21822.83905
  }
 }
 dps_results: {
- key: "TestSubtlety-Settings-Orc-P2 Subtlety-Subtlety--FullBuffs-LongSingleTarget"
+ key: "TestSubtlety-Settings-Orc-p2_hemosub-Subtlety--FullBuffs-LongSingleTarget"
  value: {
   dps: 8260.81378
   tps: 5863.79055
  }
 }
 dps_results: {
- key: "TestSubtlety-Settings-Orc-P2 Subtlety-Subtlety--FullBuffs-ShortSingleTarget"
+ key: "TestSubtlety-Settings-Orc-p2_hemosub-Subtlety--FullBuffs-ShortSingleTarget"
  value: {
   dps: 9119.98395
   tps: 6461.14512
  }
 }
 dps_results: {
- key: "TestSubtlety-Settings-Orc-P2 Subtlety-Subtlety--NoBuffs-LongMultiTarget"
+ key: "TestSubtlety-Settings-Orc-p2_hemosub-Subtlety--NoBuffs-LongMultiTarget"
  value: {
-  dps: 19003.30323
-  tps: 13492.34529
+  dps: 19003.33314
+  tps: 13492.36653
  }
 }
 dps_results: {
- key: "TestSubtlety-Settings-Orc-P2 Subtlety-Subtlety--NoBuffs-LongSingleTarget"
+ key: "TestSubtlety-Settings-Orc-p2_hemosub-Subtlety--NoBuffs-LongSingleTarget"
  value: {
   dps: 4064.43692
   tps: 2883.14709
  }
 }
 dps_results: {
- key: "TestSubtlety-Settings-Orc-P2 Subtlety-Subtlety--NoBuffs-ShortSingleTarget"
+ key: "TestSubtlety-Settings-Orc-p2_hemosub-Subtlety--NoBuffs-ShortSingleTarget"
  value: {
   dps: 3954.08906
   tps: 2798.18684

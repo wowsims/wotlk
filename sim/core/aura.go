@@ -164,6 +164,7 @@ func (aura *Aura) Refresh(sim *Simulation) {
 		aura.expires = sim.CurrentTime + aura.Duration
 		if aura.expires < aura.Unit.minExpires {
 			aura.Unit.minExpires = aura.expires
+			sim.rescheduleTracker(aura.expires)
 		}
 	}
 }
@@ -454,10 +455,6 @@ func (at *auraTracker) RegisterResetEffect(resetEffect ResetEffect) {
 	at.resetEffects = append(at.resetEffects, resetEffect)
 }
 
-func (at *auraTracker) init(_ *Simulation) {
-	// Auras are initialized later, on their first reset().
-}
-
 func (at *auraTracker) reset(sim *Simulation) {
 	at.activeAuras = at.activeAuras[:0]
 	at.onCastCompleteAuras = at.onCastCompleteAuras[:0]
@@ -474,41 +471,46 @@ func (at *auraTracker) reset(sim *Simulation) {
 		resetEffect(sim)
 	}
 
+	at.minExpires = NeverExpires
+
 	for _, aura := range at.auras {
 		aura.reset(sim)
 	}
 }
 
-func (at *auraTracker) advance(sim *Simulation) {
-	if at.minExpires > sim.CurrentTime {
-		return
+func (at *auraTracker) advance(sim *Simulation) time.Duration {
+	if sim.CurrentTime < at.minExpires {
+		return at.minExpires
 	}
 
 restart:
-	minExpires := NeverExpires
+	at.minExpires = NeverExpires
 	for _, aura := range at.activeAuras {
-		if aura.expires <= sim.CurrentTime && aura.expires != 0 {
+		if aura.expires <= sim.CurrentTime {
 			aura.Deactivate(sim)
 			goto restart // activeAuras have changed
 		}
-		if aura.expires < minExpires {
-			minExpires = aura.expires
-		}
+		at.minExpires = min(at.minExpires, aura.expires)
 	}
-	at.minExpires = minExpires
+	return at.minExpires
+}
+
+func (at *auraTracker) expireAll(sim *Simulation) {
+restart:
+	for _, aura := range at.activeAuras {
+		aura.Deactivate(sim)
+		goto restart
+	}
+	at.minExpires = NeverExpires
 }
 
 func (at *auraTracker) doneIteration(sim *Simulation) {
-	// Expire all the remaining auras. Need to keep looping because sometimes
-	// expiring auras can trigger other auras.
-	foundUnexpired := true
-	for foundUnexpired {
-		foundUnexpired = false
-		for _, aura := range at.auras {
-			if aura.IsActive() {
-				foundUnexpired = true
-				aura.Deactivate(sim)
-			}
+	// deactivate all auras, even permanent ones
+restart:
+	for _, aura := range at.auras {
+		if aura.active {
+			aura.Deactivate(sim)
+			goto restart
 		}
 	}
 
@@ -516,7 +518,6 @@ func (at *auraTracker) doneIteration(sim *Simulation) {
 		aura.doneIteration(sim)
 	}
 
-	// Add metrics for any auras that are still active.
 	for _, aura := range at.auras {
 		aura.metrics.doneIteration()
 	}
@@ -611,6 +612,7 @@ func (aura *Aura) Activate(sim *Simulation) {
 		aura.Unit.Log(sim, "Aura gained: %s", aura.ActionID)
 	}
 
+	// don't invoke possible callbacks until the internal state is consistent
 	if aura.OnGain != nil {
 		aura.OnGain(aura, sim)
 	}
@@ -622,18 +624,6 @@ func (aura *Aura) Deactivate(sim *Simulation) {
 		return
 	}
 	aura.active = false
-
-	if aura.stacks != 0 {
-		aura.SetStacks(sim, 0)
-	}
-
-	// Deactivate exclusive effects.
-	for _, ee := range aura.ExclusiveEffects {
-		ee.Deactivate(sim)
-	}
-	if aura.OnExpire != nil {
-		aura.OnExpire(aura, sim)
-	}
 
 	if !aura.ActionID.IsEmptyAction() {
 		if sim.CurrentTime > aura.expires {
@@ -736,6 +726,20 @@ func (aura *Aura) Deactivate(sim *Simulation) {
 			aura.Unit.onPeriodicHealTakenAuras[removeOnPeriodicHealTaken].onPeriodicHealTakenIndex = removeOnPeriodicHealTaken
 		}
 		aura.onPeriodicHealTakenIndex = Inactive
+	}
+
+	// don't invoke possible callbacks until the internal state is consistent
+	if aura.stacks != 0 {
+		aura.SetStacks(sim, 0)
+	}
+
+	// Deactivate exclusive effects.
+	for _, ee := range aura.ExclusiveEffects {
+		ee.Deactivate(sim)
+	}
+
+	if aura.OnExpire != nil {
+		aura.OnExpire(aura, sim)
 	}
 }
 

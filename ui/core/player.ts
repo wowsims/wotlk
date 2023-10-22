@@ -82,7 +82,7 @@ import {
 	ShamanSpecs,
 } from './proto_utils/utils.js';
 
-
+import * as Mechanics from './constants/mechanics.js';
 import { getLanguageCode } from './constants/lang.js';
 import { EventID, TypedEvent } from './typed_event.js';
 import { Party, MAX_PARTY_SIZE } from './party.js';
@@ -189,6 +189,23 @@ export class UnitMetadataList {
 	}
 }
 
+export interface MeleeCritCapInfo {
+	meleeCrit: number,
+	meleeHit: number,
+	expertise: number,
+	suppression: number,
+	glancing: number,
+	debuffCrit: number,
+	hasOffhandWeapon: boolean,
+	meleeHitCap: number,
+	expertiseCap: number,
+	remainingMeleeHitCap: number,
+	remainingExpertiseCap: number,
+	baseCritCap: number,
+	specSpecificOffset: number,
+	playerCritCapDelta: number
+}
+
 export type AutoRotationGenerator<SpecType extends Spec> = (player: Player<SpecType>) => APLRotation;
 export type SimpleRotationGenerator<SpecType extends Spec> = (player: Player<SpecType>, simpleRotation: SpecRotation<SpecType>, cooldowns: Cooldowns) => APLRotation;
 
@@ -219,6 +236,8 @@ export class Player<SpecType extends Spec> {
 	private channelClipDelay: number = 0;
 	private inFrontOfTarget: boolean = false;
 	private distanceFromTarget: number = 0;
+	private nibelungAverageCasts: number = 11;
+	private nibelungAverageCastsSet: boolean = false;
 	private healingModel: HealingModel = HealingModel.create();
 	private healingEnabled: boolean = false;
 
@@ -657,6 +676,62 @@ export class Player<SpecType extends Spec> {
 		this.bonusStatsChangeEmitter.emit(eventID);
 	}
 
+	getMeleeCritCapInfo(): MeleeCritCapInfo {
+		const meleeCrit = (this.currentStats.finalStats?.stats[Stat.StatMeleeCrit] || 0.0) / Mechanics.MELEE_CRIT_RATING_PER_CRIT_CHANCE;
+		const meleeHit = (this.currentStats.finalStats?.stats[Stat.StatMeleeHit] || 0.0) / Mechanics.MELEE_HIT_RATING_PER_HIT_CHANCE;
+		const expertise = (this.currentStats.finalStats?.stats[Stat.StatExpertise] || 0.0) / Mechanics.EXPERTISE_PER_QUARTER_PERCENT_REDUCTION / 4;
+		const agility = (this.currentStats.finalStats?.stats[Stat.StatAgility] || 0.0) / this.getClass();
+		const suppression = 4.8;
+		const glancing = 24.0;
+
+		const hasOffhandWeapon = this.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponSpeed !== undefined;
+		// Due to warrior HS bug, hit cap for crit cap calculation should be 8% instead of 27%
+		const meleeHitCap = hasOffhandWeapon && this.spec != Spec.SpecWarrior ? 27.0 : 8.0;
+		const expertiseCap = this.getInFrontOfTarget() ? 20.5 : 6.5;
+
+		const remainingMeleeHitCap = Math.max(meleeHitCap - meleeHit, 0.0);
+		const remainingExpertiseCap = Math.max(expertiseCap - expertise, 0.0)
+
+		let specSpecificOffset = 0.0;
+
+		if(this.spec === Spec.SpecEnhancementShaman) {
+			// Elemental Devastation uptime is near 100%
+			const ranks = (this as Player<Spec.SpecEnhancementShaman>).getTalents().elementalDevastation;
+			specSpecificOffset = 3.0 * ranks;
+		}
+
+		let debuffCrit = 0.0;
+
+		const debuffs = this.sim.raid.getDebuffs();
+		if (debuffs.totemOfWrath || debuffs.heartOfTheCrusader || debuffs.masterPoisoner) {
+			debuffCrit = 3.0;
+		}
+
+		const baseCritCap = 100.0 - glancing + suppression - remainingMeleeHitCap - remainingExpertiseCap - specSpecificOffset;
+		const playerCritCapDelta = meleeCrit - baseCritCap + debuffCrit;
+
+		return {
+			meleeCrit,
+			meleeHit,
+			expertise,
+			suppression,
+			glancing,
+			debuffCrit,
+			hasOffhandWeapon,
+			meleeHitCap,
+			expertiseCap,
+			remainingMeleeHitCap,
+			remainingExpertiseCap,
+			baseCritCap,
+			specSpecificOffset,
+			playerCritCapDelta
+		};
+	}
+
+	getMeleeCritCap() {
+		return this.getMeleeCritCapInfo().playerCritCapDelta
+	}
+
 	getRotation(): SpecRotation<SpecType> {
 		if (aplLaunchStatuses[this.spec] == LaunchStatus.Launched) {
 			const jsonStr = this.aplRotation.simple?.specRotationJson || '';
@@ -862,6 +937,26 @@ export class Player<SpecType extends Spec> {
 		this.distanceFromTarget = newDistanceFromTarget;
 		this.distanceFromTargetChangeEmitter.emit(eventID);
 	}
+
+	getNibelungAverageCasts(): number {
+		return this.nibelungAverageCasts;
+	}
+
+	setNibelungAverageCastsSet(eventID: EventID, newnibelungAverageCastsSet: boolean) {
+		if (newnibelungAverageCastsSet == this.nibelungAverageCastsSet)
+			return;
+
+		this.nibelungAverageCastsSet = newnibelungAverageCastsSet;
+	}
+
+	setNibelungAverageCasts(eventID: EventID, newnibelungAverageCasts: number) {
+		if (newnibelungAverageCasts == this.nibelungAverageCasts)
+			return;
+
+		this.nibelungAverageCasts = Math.min(newnibelungAverageCasts, 16);
+		this.miscOptionsChangeEmitter.emit(eventID);
+	}
+
 	setDefaultHealingParams(hm: HealingModel) {
 		var boss = this.sim.encounter.primaryTarget;
 		var dualWield = boss.dualWield;
@@ -1251,6 +1346,8 @@ export class Player<SpecType extends Spec> {
 				distanceFromTarget: this.getDistanceFromTarget(),
 				healingModel: this.getHealingModel(),
 				database: forExport ? SimDatabase.create() : this.toDatabase(),
+				nibelungAverageCasts: this.getNibelungAverageCasts(),
+				nibelungAverageCastsSet: this.nibelungAverageCastsSet,
 			}),
 			(aplIsLaunched || (forSimming && aplRotation.type == APLRotationType.TypeAPL))
 				? this.specTypeFunctions.rotationCreate()
@@ -1311,6 +1408,10 @@ export class Player<SpecType extends Spec> {
 			this.setChannelClipDelay(eventID, proto.channelClipDelayMs);
 			this.setInFrontOfTarget(eventID, proto.inFrontOfTarget);
 			this.setDistanceFromTarget(eventID, proto.distanceFromTarget);
+			this.setNibelungAverageCastsSet(eventID, proto.nibelungAverageCastsSet);
+			if (this.nibelungAverageCastsSet) {
+				this.setNibelungAverageCasts(eventID, proto.nibelungAverageCasts);
+			}
 			this.setHealingModel(eventID, proto.healingModel || HealingModel.create());
 			this.setSpecOptions(eventID, this.specTypeFunctions.optionsFromPlayer(proto));
 
@@ -1390,7 +1491,7 @@ export class Player<SpecType extends Spec> {
 					this.setRotation(eventID, rot as SpecRotation<SpecType>);
 				}
 				const opt = this.getSpecOptions() as SpecOptions<ShamanSpecs>;
-				
+
 				// Update Bloodlust to be part of rotation instead of options to support APL casting bloodlust.
 				if (opt.bloodlust) {
 					opt.bloodlust = false;

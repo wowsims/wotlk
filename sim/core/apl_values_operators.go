@@ -249,6 +249,19 @@ func (rot *APLRotation) coerceToSameType(value1 APLValue, value2 APLValue) (APLV
 	return coerced[0], coerced[1]
 }
 
+// Utility function which returns the constant float value of a Const or Coerced(Const) APL value.
+// Returns -1 if the value is not a constant, or does not have a float value.
+func getConstAPLFloatValue(value APLValue) float64 {
+	if constValue, isConst := value.(*APLValueConst); isConst {
+		return constValue.GetFloat(nil)
+	} else if coercedValue, isCoerced := value.(*APLValueCoerced); isCoerced {
+		if _, innerIsConst := coercedValue.inner.(*APLValueConst); innerIsConst {
+			return coercedValue.GetFloat(nil)
+		}
+	}
+	return -1
+}
+
 type APLValueCompare struct {
 	DefaultAPLValueImpl
 	op  proto.APLValueCompare_ComparisonOperator

@@ -99,7 +99,7 @@ func (treant *TreantPet) enable(sim *core.Simulation) {
 }
 
 func (treant *TreantPet) disable(sim *core.Simulation) {
-	treant.AddStatsDynamic(sim, treant.snapshotStat.Multiply(-1))
+	treant.AddStatsDynamic(sim, treant.snapshotStat.Invert())
 }
 
 func (treant *TreantPet) Initialize() {

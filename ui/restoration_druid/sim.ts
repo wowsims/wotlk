@@ -106,7 +106,7 @@ export class RestorationDruidSimUI extends IndividualSimUI<Spec.SpecRestorationD
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.PRE_RAID_PRESET,
+					Presets.PRERAID_PRESET,
 					Presets.P1_PRESET,
 					Presets.P2_PRESET,
 				],

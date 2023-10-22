@@ -277,6 +277,15 @@ export class ActionId {
 					name += ' (3 Tick)';
 				}
 				break;
+			case 'Mind Sear':
+				if (this.tag == 1) {
+					name += ' (1 Tick)';
+				} else if (this.tag == 2) {
+					name += ' (2 Tick)';
+				} else if (this.tag == 3) {
+					name += ' (3 Tick)';
+				}
+				break;
 			case 'Shattering Throw':
 				if (this.tag === playerIndex) {
 					name += ` (self)`;

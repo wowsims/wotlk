@@ -37,6 +37,7 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 			// Which stats to display in the Character Stats section, at the bottom of the left-hand sidebar.
 			displayStats: [
 				Stat.StatHealth,
+				Stat.StatMana,
 				Stat.StatStamina,
 				Stat.StatIntellect,
 				Stat.StatSpirit,
@@ -57,7 +58,7 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P3_PRESET.gear,
+				gear: Presets.P4_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatIntellect]: 0.11,
@@ -116,6 +117,7 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 				inputs: [
 					OtherInputs.TankAssignment,
 					OtherInputs.ChannelClipDelay,
+					OtherInputs.nibelungAverageCasts,
 				],
 			},
 			encounterPicker: {
@@ -127,16 +129,18 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 				// Preset talents that the user can quickly select.
 				talents: [
 					Presets.StandardTalents,
+					Presets.EnlightenmentTalents,
 				],
 				rotations: [
 					Presets.ROTATION_PRESET_DEFAULT,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.PreBis_PRESET,
+					Presets.PRERAID_PRESET,
 					Presets.P1_PRESET,
 					Presets.P2_PRESET,
 					Presets.P3_PRESET,
+					Presets.P4_PRESET,
 				],
 			},
 		});

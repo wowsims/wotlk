@@ -102,10 +102,11 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 
 			StatDependencyManager: stats.NewStatDependencyManager(),
 
-			ReactionTime:       max(0, time.Duration(player.ReactionTimeMs)*time.Millisecond),
-			ChannelClipDelay:   max(0, time.Duration(player.ChannelClipDelayMs)*time.Millisecond),
-			DistanceFromTarget: player.DistanceFromTarget,
-			IsUsingAPL:         player.Rotation != nil && player.Rotation.Type == proto.APLRotation_TypeAPL,
+			ReactionTime:         max(0, time.Duration(player.ReactionTimeMs)*time.Millisecond),
+			ChannelClipDelay:     max(0, time.Duration(player.ChannelClipDelayMs)*time.Millisecond),
+			DistanceFromTarget:   player.DistanceFromTarget,
+			NibelungAverageCasts: player.NibelungAverageCasts,
+			IsUsingAPL:           player.Rotation != nil && player.Rotation.Type == proto.APLRotation_TypeAPL,
 		},
 
 		Name:  player.Name,
@@ -419,6 +420,13 @@ func (character *Character) initialize(agent Agent) {
 	character.gcdAction = &PendingAction{
 		Priority: ActionPriorityGCD,
 		OnAction: func(sim *Simulation) {
+			if hc := &character.Hardcast; hc.Expires != startingCDTime && hc.Expires <= sim.CurrentTime {
+				hc.Expires = startingCDTime
+				if hc.OnComplete != nil {
+					hc.OnComplete(sim, hc.Target)
+				}
+			}
+
 			if sim.CurrentTime < 0 {
 				return
 			}
@@ -488,10 +496,6 @@ func (character *Character) FillPlayerStats(playerStats *proto.PlayerStats) {
 	}
 }
 
-func (character *Character) init(sim *Simulation) {
-	character.Unit.init(sim)
-}
-
 func (character *Character) reset(sim *Simulation, agent Agent) {
 	character.Unit.reset(sim, agent)
 	character.majorCooldownManager.reset(sim)
@@ -502,17 +506,6 @@ func (character *Character) reset(sim *Simulation, agent Agent) {
 
 	for _, petAgent := range character.PetAgents {
 		petAgent.GetPet().reset(sim, petAgent)
-	}
-}
-
-// Advance moves time forward counting down auras, CDs, mana regen, etc
-func (character *Character) advance(sim *Simulation) {
-	character.Unit.advance(sim)
-
-	for _, pet := range character.Pets {
-		if pet.enabled {
-			pet.Unit.advance(sim)
-		}
 	}
 }
 

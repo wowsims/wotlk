@@ -99,6 +99,7 @@ func (warlock *Warlock) newValueWarlockShouldRefreshCorruption(rot *core.APLRota
 
 	return &APLValueWarlockShouldRefreshCorruption{
 		warlock: warlock,
+		target:  target,
 	}
 }
 func (value *APLValueWarlockShouldRefreshCorruption) Type() proto.APLValueType {

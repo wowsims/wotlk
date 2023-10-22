@@ -586,16 +586,16 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-LasherweaveBattlegear"
  value: {
-  dps: 2858.77192
-  tps: 5915.68993
+  dps: 3190.98726
+  tps: 6601.57456
   dtps: 5.8645
  }
 }
 dps_results: {
  key: "TestFeralTank-AllItems-LasherweaveRegalia"
  value: {
-  dps: 2297.57058
-  tps: 4923.21544
+  dps: 2436.97391
+  tps: 5228.10469
   dtps: 7.20775
  }
 }
@@ -1074,13 +1074,13 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-Average-Default"
  value: {
-  dps: 2664.56255
-  tps: 5648.23342
-  dtps: 59.71589
+  dps: 2664.65503
+  tps: 5648.53713
+  dtps: 59.70577
  }
 }
 dps_results: {
- key: "TestFeralTank-Settings-Tauren-P1-Default-default-FullBuffs-LongMultiTarget"
+ key: "TestFeralTank-Settings-Tauren-p1-Default-default-FullBuffs-LongMultiTarget"
  value: {
   dps: 4596.97168
   tps: 10417.84607
@@ -1088,7 +1088,7 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestFeralTank-Settings-Tauren-P1-Default-default-FullBuffs-LongSingleTarget"
+ key: "TestFeralTank-Settings-Tauren-p1-Default-default-FullBuffs-LongSingleTarget"
  value: {
   dps: 2674.35053
   tps: 5637.34408
@@ -1096,7 +1096,7 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestFeralTank-Settings-Tauren-P1-Default-default-FullBuffs-ShortSingleTarget"
+ key: "TestFeralTank-Settings-Tauren-p1-Default-default-FullBuffs-ShortSingleTarget"
  value: {
   dps: 2854.21381
   tps: 6208.75396
@@ -1104,21 +1104,21 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestFeralTank-Settings-Tauren-P1-Default-default-NoBuffs-LongMultiTarget"
+ key: "TestFeralTank-Settings-Tauren-p1-Default-default-NoBuffs-LongMultiTarget"
  value: {
   dps: 1634.48911
   tps: 3955.54738
  }
 }
 dps_results: {
- key: "TestFeralTank-Settings-Tauren-P1-Default-default-NoBuffs-LongSingleTarget"
+ key: "TestFeralTank-Settings-Tauren-p1-Default-default-NoBuffs-LongSingleTarget"
  value: {
   dps: 1243.82896
   tps: 2681.45428
  }
 }
 dps_results: {
- key: "TestFeralTank-Settings-Tauren-P1-Default-default-NoBuffs-ShortSingleTarget"
+ key: "TestFeralTank-Settings-Tauren-p1-Default-default-NoBuffs-ShortSingleTarget"
  value: {
   dps: 1098.16826
   tps: 2482.20882

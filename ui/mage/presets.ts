@@ -1,14 +1,16 @@
-import {Conjured, Profession} from '../core/proto/common.js';
-import { Consumes } from '../core/proto/common.js';
-import { EquipmentSpec } from '../core/proto/common.js';
-import { Flask } from '../core/proto/common.js';
-import { Food } from '../core/proto/common.js';
-import { Glyphs } from '../core/proto/common.js';
-import { Potions } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { Faction } from '../core/proto/common.js';
-import { UnitReference } from '../core/proto/common.js';
-import { SavedRotation, SavedTalents } from '../core/proto/ui.js';
+import {
+	Conjured,
+	Consumes,
+	Faction,
+	Flask,
+	Food,
+	Glyphs,
+	Potions,
+	Profession,
+	Spec,
+	UnitReference,
+} from '../core/proto/common.js';
+import { SavedTalents } from '../core/proto/ui.js';
 import { Player } from '../core/player.js';
 
 import {
@@ -20,8 +22,31 @@ import {
 	MageMinorGlyph,
 } from '../core/proto/mage.js';
 
-import * as Tooltips from '../core/constants/tooltips.js';
-import { APLRotation, APLRotation_Type } from '../core/proto/apl.js';
+import * as PresetUtils from '../core/preset_utils.js';
+
+import PreraidArcaneGear from './gear_sets/preraid_arcane.gear.json';
+import P1ArcaneGear from './gear_sets/p1_arcane.gear.json';
+import P2ArcaneGear from './gear_sets/p2_arcane.gear.json';
+import P3ArcaneAllianceGear from './gear_sets/p3_arcane_alliance.gear.json';
+import P3ArcaneHordeGear from './gear_sets/p3_arcane_horde.gear.json';
+import P4ArcaneAllianceGear from './gear_sets/p4_arcane_alliance.gear.json';
+import P4ArcaneHordeGear from './gear_sets/p4_arcane_horde.gear.json';
+import PreraidFireGear from './gear_sets/preraid_fire.gear.json';
+import P1FireGear from './gear_sets/p1_fire.gear.json';
+import P2FireGear from './gear_sets/p2_fire.gear.json';
+import P3FireAllianceGear from './gear_sets/p3_fire_alliance.gear.json';
+import P3FireHordeGear from './gear_sets/p3_fire_horde.gear.json';
+import P4FireAllianceGear from './gear_sets/p4_fire_alliance.gear.json';
+import P4FireHordeGear from './gear_sets/p4_fire_horde.gear.json';
+import P2FfbGear from './gear_sets/p2_ffb.gear.json';
+import P3FfbAllianceGear from './gear_sets/p3_ffb_alliance.gear.json';
+import P3FfbHordeGear from './gear_sets/p3_ffb_horde.gear.json';
+import P4FfbAllianceGear from './gear_sets/p4_ffb_alliance.gear.json';
+import P4FfbHordeGear from './gear_sets/p4_ffb_horde.gear.json';
+import P1FrostGear from './gear_sets/p1_frost.gear.json';
+import P2FrostGear from './gear_sets/p2_frost.gear.json';
+import P3FrostAllianceGear from './gear_sets/p3_frost_alliance.gear.json';
+import P3FrostHordeGear from './gear_sets/p3_frost_horde.gear.json';
 
 import ArcaneApl from './apls/arcane.apl.json';
 import FireApl from './apls/fire.apl.json';
@@ -34,6 +59,51 @@ import FrostFireApl from './apls/frostfire.apl.json';
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
+
+export const ARCANE_PRERAID_PRESET = PresetUtils.makePresetGear('Arcane Preraid Preset', PreraidArcaneGear, { talentTree: 0 });
+export const ARCANE_P1_PRESET = PresetUtils.makePresetGear('Arcane P1 Preset', P1ArcaneGear, { talentTree: 0 });
+export const ARCANE_P2_PRESET = PresetUtils.makePresetGear('Arcane P2 Preset', P2ArcaneGear, { talentTree: 0 });
+export const ARCANE_P3_PRESET_ALLIANCE = PresetUtils.makePresetGear('Arcane P3 Preset [A]', P3ArcaneAllianceGear, { talentTree: 0, faction: Faction.Alliance });
+export const ARCANE_P3_PRESET_HORDE = PresetUtils.makePresetGear('Arcane P3 Preset [H]', P3ArcaneHordeGear, { talentTree: 0, faction: Faction.Horde });
+export const ARCANE_P4_PRESET_ALLIANCE = PresetUtils.makePresetGear('Arcane P4 Preset [A]', P4ArcaneAllianceGear, { talentTree: 0, faction: Faction.Alliance });
+export const ARCANE_P4_PRESET_HORDE = PresetUtils.makePresetGear('Arcane P4 Preset [H]', P4ArcaneHordeGear, { talentTree: 0, faction: Faction.Horde });
+export const FIRE_PRERAID_PRESET = PresetUtils.makePresetGear('Fire Preraid Preset', PreraidFireGear, { talentTree: 1 });
+export const FIRE_P1_PRESET = PresetUtils.makePresetGear('Fire P1 Preset', P1FireGear, { talentTree: 1 });
+export const FIRE_P2_PRESET = PresetUtils.makePresetGear('Fire P2 Preset', P2FireGear, { talentTree: 1, customCondition: (player: Player<Spec.SpecMage>) => !player.getTalents().icyVeins });
+export const FIRE_P3_PRESET_ALLIANCE = PresetUtils.makePresetGear('Fire P3 Preset [A]', P3FireAllianceGear, { talentTree: 1, faction: Faction.Alliance, customCondition: (player: Player<Spec.SpecMage>) => !player.getTalents().icyVeins });
+export const FIRE_P3_PRESET_HORDE = PresetUtils.makePresetGear('Fire P3 Preset [H]', P3FireHordeGear, { talentTree: 1, faction: Faction.Horde, customCondition: (player: Player<Spec.SpecMage>) => !player.getTalents().icyVeins });
+export const FIRE_P4_PRESET_ALLIANCE = PresetUtils.makePresetGear('Fire P4 Preset [A]', P4FireAllianceGear, { talentTree: 1, faction: Faction.Alliance, customCondition: (player: Player<Spec.SpecMage>) => !player.getTalents().icyVeins });
+export const FIRE_P4_PRESET_HORDE = PresetUtils.makePresetGear('Fire P4 Preset [H]', P4FireHordeGear, { talentTree: 1, faction: Faction.Horde, customCondition: (player: Player<Spec.SpecMage>) => !player.getTalents().icyVeins });
+export const FFB_P2_PRESET = PresetUtils.makePresetGear('FFB P2 Preset', P2FfbGear, { talentTree: 1, customCondition: (player: Player<Spec.SpecMage>) => player.getTalents().icyVeins });
+export const FFB_P3_PRESET_ALLIANCE = PresetUtils.makePresetGear('FFB P3 Preset [A]', P3FfbAllianceGear, { talentTree: 1, customCondition: (player: Player<Spec.SpecMage>) => player.getTalents().icyVeins });
+export const FFB_P3_PRESET_HORDE = PresetUtils.makePresetGear('FFB P3 Preset [H]', P3FfbHordeGear, { talentTree: 1, customCondition: (player: Player<Spec.SpecMage>) => player.getTalents().icyVeins });
+export const FFB_P4_PRESET_ALLIANCE = PresetUtils.makePresetGear('FFB P4 Preset [A]', P4FfbAllianceGear, { talentTree: 1, customCondition: (player: Player<Spec.SpecMage>) => player.getTalents().icyVeins });
+export const FFB_P4_PRESET_HORDE = PresetUtils.makePresetGear('FFB P4 Preset [H]', P4FfbHordeGear, { talentTree: 1, customCondition: (player: Player<Spec.SpecMage>) => player.getTalents().icyVeins });
+export const FROST_P1_PRESET = PresetUtils.makePresetGear('Frost P1 Preset', P1FrostGear, { talentTree: 2 });
+export const FROST_P2_PRESET = PresetUtils.makePresetGear('Frost P2 Preset', P2FrostGear, { talentTree: 2 });
+export const FROST_P3_PRESET_ALLIANCE = PresetUtils.makePresetGear('Frost P3 Preset [A]', P3FrostAllianceGear, { talentTree: 2, faction: Faction.Alliance });
+export const FROST_P3_PRESET_HORDE = PresetUtils.makePresetGear('Frost P3 Preset [H]', P3FrostHordeGear, { talentTree: 2, faction: Faction.Horde });
+
+export const DefaultSimpleRotation = MageRotation.create({
+	only3ArcaneBlastStacksBelowManaPercent: 0.15,
+	blastWithoutMissileBarrageAboveManaPercent: 0.2,
+	missileBarrageBelowManaPercent: 0,
+	useArcaneBarrage: false,
+
+	primaryFireSpell: PrimaryFireSpell.Fireball,
+	maintainImprovedScorch: false,
+
+	useIceLance: false,
+});
+
+export const ROTATION_PRESET_SIMPLE = PresetUtils.makePresetSimpleRotation('Simple Default', Spec.SpecMage, DefaultSimpleRotation);
+export const ARCANE_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Arcane', ArcaneApl, { talentTree: 0 });
+export const ARCANE_ROTATION_PRESET_AOE = PresetUtils.makePresetAPLRotation('Arcane AOE', ArcaneAoeApl, { talentTree: 0 });
+export const FIRE_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Fire', FireApl, { talentTree: 1 });
+export const FROSTFIRE_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Frostfire', FrostFireApl, { talentTree: 1 });
+export const FIRE_ROTATION_PRESET_AOE = PresetUtils.makePresetAPLRotation('Fire AOE', FireAoeApl, { talentTree: 1 });
+export const FROST_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Frost', FrostApl, { talentTree: 2 });
+export const FROST_ROTATION_PRESET_AOE = PresetUtils.makePresetAPLRotation('Frost AOE', FrostAoeApl, { talentTree: 2 });
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
@@ -109,18 +179,6 @@ export const FrostTalents = {
 	}),
 };
 
-export const DefaultSimpleRotation = MageRotation.create({
-	only3ArcaneBlastStacksBelowManaPercent: 0.15,
-	blastWithoutMissileBarrageAboveManaPercent: 0.2,
-	missileBarrageBelowManaPercent: 0,
-	useArcaneBarrage: false,
-
-	primaryFireSpell: PrimaryFireSpell.Fireball,
-	maintainImprovedScorch: false,
-
-	useIceLance: false,
-});
-
 export const DefaultFFBOptions = MageOptions.create({
 	armor: ArmorType.MoltenArmor,
 });
@@ -169,655 +227,5 @@ export const OtherDefaults = {
 	distanceFromTarget: 20,
 	profession1: Profession.Engineering,
 	profession2: Profession.Tailoring,
-};
-
-export const ROTATION_PRESET_SIMPLE = {
-	name: 'Simple Default',
-	rotation: SavedRotation.create({
-		rotation: {
-			type: APLRotation_Type.TypeSimple,
-			simple: {
-				specRotationJson: MageRotation.toJsonString(DefaultSimpleRotation),
-			},
-		},
-	}),
-}
-
-export const ARCANE_ROTATION_PRESET_DEFAULT = {
-	name: 'Arcane',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: MageRotation.toJsonString(MageRotation.create()),
-		rotation: APLRotation.fromJsonString(JSON.stringify(ArcaneApl))
-	}),
-}
-
-export const FIRE_ROTATION_PRESET_DEFAULT = {
-	name: 'Fire',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: MageRotation.toJsonString(MageRotation.create()),
-		rotation: APLRotation.fromJsonString(JSON.stringify(FireApl)),
-	}),
-}
-
-export const FROSTFIRE_ROTATION_PRESET_DEFAULT = {
-	name: 'Frostfire',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: MageRotation.toJsonString(MageRotation.create()),
-		rotation: APLRotation.fromJsonString(JSON.stringify(FrostFireApl)),
-	}),
-}
-
-export const FROST_ROTATION_PRESET_DEFAULT = {
-	name: 'Frost',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 2,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: MageRotation.toJsonString(MageRotation.create()),
-		rotation: APLRotation.fromJsonString(JSON.stringify(FrostApl)),
-	}),
-}
-
-export const ARCANE_ROTATION_PRESET_AOE = {
-	name: 'Arcane AOE',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: MageRotation.toJsonString(MageRotation.create()),
-		rotation: APLRotation.fromJsonString(JSON.stringify(ArcaneAoeApl)),
-	}),
-}
-
-export const FIRE_ROTATION_PRESET_AOE = {
-	name: 'Fire AOE',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: MageRotation.toJsonString(MageRotation.create()),
-		rotation: APLRotation.fromJsonString(JSON.stringify(FireAoeApl)),
-	}),
-}
-
-export const FROST_ROTATION_PRESET_AOE = {
-	name: 'Frost AOE',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 2,
-	rotation: SavedRotation.create({
-		specRotationOptionsJson: MageRotation.toJsonString(MageRotation.create()),
-		rotation: APLRotation.fromJsonString(JSON.stringify(FrostAoeApl)),
-	}),
-}
-
-export const ARCANE_PRERAID_PRESET = {
-	name: "Arcane Preraid Preset",
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":42553,"enchant":3820,"gems":[41285,40049]},
-		{"id":39472},
-		{"id":37673,"enchant":3810,"gems":[39998]},
-		{"id":41610,"enchant":3722},
-		{"id":39492,"enchant":3832,"gems":[39998,40049]},
-		{"id":37361,"enchant":2332,"gems":[0]},
-		{"id":39495,"enchant":3604,"gems":[39998,0]},
-		{"id":40696,"gems":[40049,40026]},
-		{"id":37854,"enchant":3719},
-		{"id":44202,"enchant":3606,"gems":[40026]},
-		{"id":40585},
-		{"id":37694},
-		{"id":37873},
-		{"id":40682},
-		{"id":37360,"enchant":3854},
-		{},
-		{"id":37238}
-	]}`),
-};
-
-export const FIRE_PRERAID_PRESET = {
-	name: "Fire Preraid Preset",
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":42553,"enchant":3820,"gems":[41285,40014]},
-		{"id":39472},
-		{"id":34210,"enchant":3810,"gems":[40049,40014]},
-		{"id":41610,"enchant":3859},
-		{"id":39492,"enchant":3832,"gems":[40049,40014]},
-		{"id":37361,"enchant":2332,"gems":[0]},
-		{"id":39495,"enchant":3604,"gems":[40049,0]},
-		{"id":40696,"gems":[40014,40026]},
-		{"id":37854,"enchant":3719},
-		{"id":44202,"enchant":3826,"gems":[40026]},
-		{"id":40585},
-		{"id":42644,"gems":[40049]},
-		{"id":37873},
-		{"id":40682},
-		{"id":45085,"enchant":3834},
-		{"id":40698},
-		{"id":37177}
-	]}`),
-};
-
-export const ARCANE_P1_PRESET = {
-	name: 'Arcane P1 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":40416,"enchant":3820,"gems":[41285,39998]},
-		{"id":44661,"gems":[40026]},
-		{"id":40419,"enchant":3810,"gems":[40051]},
-		{"id":44005,"enchant":3722,"gems":[40026]},
-		{"id":44002,"enchant":3832,"gems":[39998,39998]},
-		{"id":44008,"enchant":2332,"gems":[39998,0]},
-		{"id":40415,"enchant":3604,"gems":[39998,0]},
-		{"id":40561,"gems":[39998]},
-		{"id":40417,"enchant":3719,"gems":[39998,40051]},
-		{"id":40558,"enchant":3606},
-		{"id":40719},
-		{"id":40399},
-		{"id":39229},
-		{"id":40255},
-		{"id":40396,"enchant":3834},
-		{"id":40273},
-		{"id":39426}
-	]}`),
-};
-
-export const FIRE_P1_PRESET = {
-	name: 'Fire P1 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":40416,"enchant":3820,"gems":[41285,39998]},
-		{"id":44661,"gems":[40026]},
-		{"id":40419,"enchant":3810,"gems":[40049]},
-		{"id":44005,"enchant":3722,"gems":[40026]},
-		{"id":40418,"enchant":3832,"gems":[39998,40048]},
-		{"id":44008,"enchant":2332,"gems":[39998,0]},
-		{"id":40415,"enchant":3604,"gems":[39998,0]},
-		{"id":40301,"gems":[39998]},
-		{"id":40560,"enchant":3719},
-		{"id":40246,"enchant":3606},
-		{"id":40399},
-		{"id":40719},
-		{"id":40255},
-		{"id":40432},
-		{"id":40396,"enchant":3834},
-		{"id":40273},
-		{"id":39712}
-	]}`),
-};
-
-export const FROST_P1_PRESET = {
-	name: 'Frost P1 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 2,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":40416,"enchant":3820,"gems":[41285,39998]},
-		{"id":44661,"gems":[40026]},
-		{"id":40419,"enchant":3810,"gems":[40051]},
-		{"id":44005,"enchant":3722,"gems":[40026]},
-		{"id":40418,"enchant":3832,"gems":[39998,40048]},
-		{"id":44008,"enchant":2332,"gems":[39998,0]},
-		{"id":40415,"enchant":3604,"gems":[39998,0]},
-		{"id":40301,"gems":[39998]},
-		{"id":40560,"enchant":3719},
-		{"id":40558,"enchant":3606},
-		{"id":40399},
-		{"id":40719},
-		{"id":40255},
-		{"id":40432},
-		{"id":40396,"enchant":3834},
-		{"id":39766},
-		{"id":39712}
-	]}`),
-};
-
-export const ARCANE_P2_PRESET = {
-	name: 'Arcane P2 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":45497,"enchant":3820,"gems":[41285,45883]},
-		{"id":45243,"gems":[39998]},
-		{"id":46134,"enchant":3810,"gems":[39998]},
-		{"id":45618,"enchant":3722,"gems":[40026]},
-		{"id":46130,"enchant":3832,"gems":[39998,39998]},
-		{"id":45446,"enchant":2332,"gems":[39998,0]},
-		{"id":45665,"enchant":3604,"gems":[39998,39998,0]},
-		{"id":45619,"gems":[39998,39998,39998]},
-		{"id":45488,"enchant":3719,"gems":[39998,40051,40026]},
-		{"id":45135,"enchant":3606,"gems":[39998,39998]},
-		{"id":46046,"gems":[39998]},
-		{"id":45495,"gems":[39998]},
-		{"id":45466},
-		{"id":45518},
-		{"id":45620,"enchant":3834,"gems":[39998]},
-		{"id":45617},
-		{"id":45294,"gems":[39998]}
-	]}`),
-};
-
-export const FIRE_P2_PRESET = {
-	name: 'Fire P2 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":46129,"enchant":3820,"gems":[41285,45883]},
-		{"id":45133,"gems":[40048]},
-		{"id":46134,"enchant":3810,"gems":[39998]},
-		{"id":45242,"enchant":3722,"gems":[39998]},
-		{"id":46130,"enchant":3832,"gems":[39998,39998]},
-		{"id":45446,"enchant":2332,"gems":[39998,0]},
-		{"id":45665,"enchant":3604,"gems":[40026,40048,0]},
-		{"id":45619,"gems":[40048,40048,39998]},
-		{"id":46133,"enchant":3719,"gems":[39998,39998]},
-		{"id":45537,"enchant":3606,"gems":[39998,40026]},
-		{"id":45495,"gems":[39998]},
-		{"id":46046,"gems":[39998]},
-		{"id":45466},
-		{"id":45518},
-		{"id":45620,"enchant":3834,"gems":[39998]},
-		{"id":45617},
-		{"id":45294,"gems":[39998]}
-	]}`),
-};
-
-export const FROST_P2_PRESET = {
-	name: 'Frost P2 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 2,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":45497,"enchant":3820,"gems":[41285,45883]},
-		{"id":45133,"gems":[40051]},
-		{"id":46134,"enchant":3810,"gems":[39998]},
-		{"id":45618,"enchant":3722,"gems":[40026]},
-		{"id":46130,"enchant":3832,"gems":[39998,39998]},
-		{"id":45446,"enchant":2332,"gems":[39998,0]},
-		{"id":45665,"enchant":3604,"gems":[39998,39998,0]},
-		{"id":45619,"gems":[40049,40049,39998]},
-		{"id":45488,"enchant":3719,"gems":[39998,40051,40026]},
-		{"id":45135,"enchant":3606,"gems":[39998,40049]},
-		{"id":46046,"gems":[39998]},
-		{"id":45495,"gems":[39998]},
-		{"id":45466},
-		{"id":45518},
-		{"id":45620,"enchant":3834,"gems":[40026]},
-		{"id":45617},
-		{"id":45294,"gems":[39998]}
-	]}`),
-};
-
-export const FFB_P2_PRESET = {
-	name: 'FFB P2 Preset',
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1 && player.getTalents().icyVeins,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":45497,"enchant":3820,"gems":[41285,45883]},
-		{"id":45133,"gems":[40048]},
-		{"id":46134,"enchant":3810,"gems":[39998]},
-		{"id":45618,"enchant":3722,"gems":[39998]},
-		{"id":46130,"enchant":3832,"gems":[39998,39998]},
-		{"id":45446,"enchant":2332,"gems":[39998,0]},
-		{"id":45665,"enchant":3604,"gems":[39998,39998,0]},
-		{"id":45619,"gems":[40048,40048,39998]},
-		{"id":45488,"enchant":3719,"gems":[39998,40048,40026]},
-		{"id":45537,"enchant":3606,"gems":[39998,40026]},
-		{"id":45495,"gems":[39998]},
-		{"id":46046,"gems":[39998]},
-		{"id":45466},
-		{"id":45518},
-		{"id":45620,"enchant":3834,"gems":[39998]},
-		{"id":45617},
-		{"id":45294,"gems":[39998]}
-	  ]}`),
-};
-
-export const ARCANE_P3_PRESET_HORDE = {
-	name: 'Arcane P3 Preset [H]',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0 && player.getFaction() == Faction.Horde,
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-        {"id":47764,"enchant":3820,"gems":[41285,40133]},
-        {"id":47468,"gems":[40155]},
-        {"id":47767,"enchant":3810,"gems":[40133]},
-        {"id":47551,"enchant":3722,"gems":[40113]},
-        {"id":47425,"enchant":3832,"gems":[40133,40113,40155]},
-        {"id":47485,"enchant":2332,"gems":[40133,0]},
-        {"id":47763,"enchant":3604,"gems":[40113,0]},
-        {"id":47419,"gems":[40133,40113,40113]},
-        {"id":47765,"enchant":3719,"gems":[40155,40155]},
-        {"id":47454,"enchant":3606,"gems":[40133,40113]},
-        {"id":45495,"gems":[40133]},
-        {"id":47489,"gems":[40155]},
-        {"id":47477},
-        {"id":45518},
-        {"id":47422,"enchant":3834,"gems":[40133]},
-        {"id":48032,"gems":[40155]},
-        {"id":45294,"gems":[40113]}
-    ]}`),
-};
-
-export const ARCANE_P3_PRESET_ALLIANCE = {
-	name: 'Arcane P3 Preset [A]',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0 && player.getFaction() == Faction.Alliance,
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-        {"id":47761,"enchant":3820,"gems":[41285,40133]},
-        {"id":47144,"gems":[40155]},
-        {"id":47758,"enchant":3810,"gems":[40133]},
-        {"id":47552,"enchant":3722,"gems":[40113]},
-        {"id":46993,"enchant":3832,"gems":[40133,40113,40155]},
-        {"id":47208,"enchant":2332,"gems":[40133,0]},
-        {"id":47762,"enchant":3604,"gems":[40113,0]},
-        {"id":46973,"gems":[40133,40113,40113]},
-        {"id":47760,"enchant":3719,"gems":[40155,40155]},
-        {"id":47097,"enchant":3606,"gems":[40133,40113]},
-        {"id":45495,"gems":[40133]},
-        {"id":47489,"gems":[40155]},
-        {"id":47188},
-        {"id":45518},
-        {"id":46980,"enchant":3834,"gems":[40133]},
-        {"id":47958,"gems":[40155]},
-        {"id":47922}
-    ]}`),
-};
-
-export const FROST_P3_PRESET_HORDE = {
-	name: 'Frost P3 Preset [H]',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 2 && player.getFaction() == Faction.Horde,
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-        {"id":47764,"enchant":3820,"gems":[41285,40133]},
-        {"id":47468,"gems":[40155]},
-        {"id":47767,"enchant":3810,"gems":[40133]},
-        {"id":47551,"enchant":3722,"gems":[40113]},
-        {"id":47462,"enchant":3832,"gems":[40133,40155,40155]},
-        {"id":47485,"enchant":2332,"gems":[40155,0]},
-        {"id":47763,"enchant":3604,"gems":[40113,0]},
-        {"id":47419,"gems":[40133,40113,40113]},
-        {"id":47765,"enchant":3719,"gems":[40155,40155]},
-        {"id":47454,"enchant":3606,"gems":[40133,40113]},
-        {"id":45495,"gems":[40133]},
-        {"id":46046,"gems":[40113]},
-        {"id":47477},
-        {"id":45518},
-        {"id":47422,"enchant":3834,"gems":[40155]},
-        {"id":48032,"gems":[40155]},
-        {"id":45294,"gems":[40113]}
-    ]}`),
-};
-
-export const FROST_P3_PRESET_ALLIANCE = {
-	name: 'Frost P3 Preset [A]',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 2 && player.getFaction() == Faction.Alliance,
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-        {"id":47761,"enchant":3820,"gems":[41285,40133]},
-        {"id":47144,"gems":[40155]},
-        {"id":47758,"enchant":3810,"gems":[40133]},
-        {"id":47552,"enchant":3722,"gems":[40113]},
-        {"id":47129,"enchant":3832,"gems":[40133,40153,40155]},
-        {"id":47208,"enchant":2332,"gems":[40155,0]},
-        {"id":47762,"enchant":3604,"gems":[40113,0]},
-        {"id":46973,"gems":[40133,40113,40113]},
-        {"id":47760,"enchant":3719,"gems":[40155,40155]},
-        {"id":47097,"enchant":3606,"gems":[40133,40113]},
-        {"id":45495,"gems":[40133]},
-        {"id":46046,"gems":[40155]},
-        {"id":47188},
-        {"id":45518},
-        {"id":47517,"enchant":3834,"gems":[40155]},
-        {"id":47958,"gems":[40155]},
-        {"id":45294,"gems":[40113]}
-    ]}`),
-};
-
-export const FIRE_P3_PRESET_HORDE = {
-	name: 'Fire P3 Preset [H]',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1 && !player.getTalents().icyVeins && player.getFaction() == Faction.Horde,
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-        {"id":47764,"enchant":3820,"gems":[41285,40133]},
-        {"id":47468,"gems":[40155]},
-        {"id":47767,"enchant":3810,"gems":[40133]},
-        {"id":47551,"enchant":3722,"gems":[40113]},
-        {"id":47462,"enchant":3832,"gems":[40133,40155,40113]},
-        {"id":47467,"enchant":2332,"gems":[40155,0]},
-        {"id":47763,"enchant":3604,"gems":[40113,0]},
-        {"id":47447,"gems":[40133,40113,40113]},
-        {"id":47765,"enchant":3719,"gems":[40155,40155]},
-        {"id":47454,"enchant":3606,"gems":[40133,40113]},
-        {"id":45495,"gems":[40133]},
-        {"id":47489,"gems":[40155]},
-        {"id":47477},
-        {"id":45518},
-        {"id":47518,"enchant":3834,"gems":[40155]},
-        {"id":47437},
-        {"id":45294,"gems":[40113]}
-    ]}`),
-};
-
-export const FIRE_P4_PRESET_ALLIANCE = {
-	name: 'Fire P4 Preset [A]',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1 && !player.getTalents().icyVeins && player.getFaction() == Faction.Alliance,
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":51281,"enchant":3820,"gems":[41285,40133]},
-        {"id":50724,"gems":[40133]},
-        {"id":51284,"enchant":3810,"gems":[40152]},
-        {"id":50628,"enchant":3722,"gems":[40152]},
-        {"id":50629,"enchant":3832,"gems":[40113,40133,40155]},
-        {"id":50686,"enchant":2332,"gems":[40133,0]},
-        {"id":51280,"enchant":3604,"gems":[40133,0]},
-        {"id":50613,"enchant":3601,"gems":[40133,40113,40113]},
-        {"id":51282,"enchant":3872,"gems":[40133,40152]},
-        {"id":50699,"enchant":3606,"gems":[40133,40113]},
-        {"id":50664,"gems":[40133]},
-        {"id":50398,"gems":[40152]},
-        {"id":50365},
-        {"id":50348},
-        {"id":50732,"enchant":3834,"gems":[40113]},
-        {"id":50719},
-        {"id":50684,"gems":[40153]}
-    ]}`),
-};
-
-export const FIRE_P4_PRESET_HORDE = {
-	name: 'Fire P4 Preset [H]',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1 && !player.getTalents().icyVeins && player.getFaction() == Faction.Horde,
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":51281,"enchant":3820,"gems":[41285,40133]},
-        {"id":50724,"gems":[40133]},
-        {"id":51284,"enchant":3810,"gems":[40152]},
-        {"id":50628,"enchant":3722,"gems":[40152]},
-        {"id":50629,"enchant":3832,"gems":[40113,40133,40152]},
-        {"id":50651,"enchant":2332,"gems":[40152,0]},
-        {"id":51280,"enchant":3604,"gems":[40133,0]},
-        {"id":50613,"enchant":3601,"gems":[40133,40113,40113]},
-        {"id":51282,"enchant":3872,"gems":[40133,40152]},
-        {"id":50699,"enchant":3606,"gems":[40133,40113]},
-        {"id":50664,"gems":[40133]},
-        {"id":50398,"gems":[40152]},
-        {"id":50365},
-        {"id":50348},
-        {"id":50732,"enchant":3834,"gems":[40113]},
-        {"id":50719},
-        {"id":50684,"gems":[40152]}
-    ]}`),
-};
-
-export const FIRE_P3_PRESET_ALLIANCE = {
-	name: 'Fire P3 Preset [A]',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 1 && !player.getTalents().icyVeins && player.getFaction() == Faction.Alliance,
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{  "items": [
-        {"id":47761,"enchant":3820,"gems":[41285,40133]},
-        {"id":47144,"gems":[40155]},
-        {"id":47758,"enchant":3810,"gems":[40133]},
-        {"id":47552,"enchant":3722,"gems":[40113]},
-        {"id":47129,"enchant":3832,"gems":[40133,40153,40113]},
-        {"id":47208,"enchant":2332,"gems":[40133,0]},
-        {"id":47762,"enchant":3604,"gems":[40113,0]},
-        {"id":47084,"gems":[40133,40113,40113]},
-        {"id":47760,"enchant":3719,"gems":[40155,40155]},
-        {"id":47097,"enchant":3606,"gems":[40133,40113]},
-        {"id":45495,"gems":[40133]},
-        {"id":47237,"gems":[40155]},
-        {"id":47188},
-        {"id":45518},
-        {"id":47517,"enchant":3834,"gems":[40155]},
-        {"id":47064},
-        {"id":45294,"gems":[40153]}
-    ]}`),
-};
-
-
-export const FFB_P3_PRESET_HORDE = {
-	name: 'FFB P3 Preset [H]',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getFaction() == Faction.Horde && player.getTalentTree() == 1 && player.getTalents().icyVeins,
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-        {"id":47764,"enchant":3820,"gems":[41285,40133]},
-        {"id":47468,"gems":[40155]},
-        {"id":47767,"enchant":3810,"gems":[40133]},
-        {"id":47551,"enchant":3722,"gems":[40113]},
-        {"id":47425,"enchant":3832,"gems":[40133,40113,40155]},
-        {"id":47467,"enchant":2332,"gems":[40155,0]},
-        {"id":47763,"enchant":3604,"gems":[40113,0]},
-        {"id":47447,"gems":[40133,40113,40113]},
-        {"id":47765,"enchant":3719,"gems":[40155,40155]},
-        {"id":47454,"enchant":3606,"gems":[40133,40113]},
-        {"id":45495,"gems":[40133]},
-        {"id":47489,"gems":[40155]},
-        {"id":47477},
-        {"id":45518},
-        {"id":47518,"enchant":3834,"gems":[40155]},
-        {"id":47437},
-        {"id":45294,"gems":[40113]}
-    ]}`),
-};
-
-export const FFB_P3_PRESET_ALLIANCE = {
-	name: 'FFB P3 Preset [A]',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getFaction() == Faction.Alliance && player.getTalentTree() == 1 && player.getTalents().icyVeins,
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{   "items": [
-        {"id":47761,"enchant":3820,"gems":[41285,40133]},
-        {"id":47144,"gems":[40155]},
-        {"id":47758,"enchant":3810,"gems":[40133]},
-        {"id":47552,"enchant":3722,"gems":[40113]},
-        {"id":46993,"enchant":3832,"gems":[40133,40113,40153]},
-        {"id":47208,"enchant":2332,"gems":[40133,0]},
-        {"id":47762,"enchant":3604,"gems":[40113,0]},
-        {"id":47084,"gems":[40133,40113,40113]},
-        {"id":47760,"enchant":3719,"gems":[40155,40155]},
-        {"id":47097,"enchant":3606,"gems":[40133,40113]},
-        {"id":45495,"gems":[40133]},
-        {"id":47237,"gems":[40155]},
-        {"id":47188},
-        {"id":45518},
-        {"id":47517,"enchant":3834,"gems":[40155]},
-        {"id":47064},
-        {"id":45294,"gems":[40155]}
-    ]}`),
-};
-
-export const FFB_P4_PRESET_HORDE = {
-	name: 'FFB P4 Preset [H]',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getFaction() == Faction.Horde && player.getTalentTree() == 1 && player.getTalents().icyVeins,
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":51281,"enchant":3820,"gems":[41285,40133]},
-        {"id":50724,"gems":[40133]},
-        {"id":51284,"enchant":3810,"gems":[40152]},
-        {"id":50628,"enchant":3722,"gems":[40152]},
-        {"id":51283,"enchant":3832,"gems":[40113,40133]},
-        {"id":50651,"enchant":2332,"gems":[40152,0]},
-        {"id":51280,"enchant":3604,"gems":[40133,0]},
-        {"id":50613,"enchant":3601,"gems":[40133,40113,40113]},
-        {"id":51282,"enchant":3872,"gems":[40133,40152]},
-        {"id":50699,"enchant":3606,"gems":[40133,40113]},
-        {"id":50664,"gems":[40133]},
-        {"id":50398,"gems":[40152]},
-        {"id":50365},
-        {"id":50348},
-        {"id":50732,"enchant":3834,"gems":[40113]},
-        {"id":50719},
-        {"id":50684,"gems":[40152]}
-    ]}`),
-};
-
-export const FFB_P4_PRESET_ALLIANCE = {
-	name: 'FFB P4 Preset [A]',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getFaction() == Faction.Alliance && player.getTalentTree() == 1 && player.getTalents().icyVeins,
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":51281,"enchant":3820,"gems":[41285,40133]},
-        {"id":50724,"gems":[40133]},
-        {"id":51284,"enchant":3810,"gems":[40153]},
-        {"id":50628,"enchant":3722,"gems":[40153]},
-        {"id":51283,"enchant":3832,"gems":[40113,40133]},
-        {"id":50686,"enchant":2332,"gems":[40133,0]},
-        {"id":51280,"enchant":3604,"gems":[40133,0]},
-        {"id":50613,"enchant":3601,"gems":[40133,40113,40113]},
-        {"id":51282,"enchant":3872,"gems":[40133,40152]},
-        {"id":50699,"enchant":3606,"gems":[40133,40113]},
-        {"id":50664,"gems":[40133]},
-        {"id":50398,"gems":[40152]},
-        {"id":50365},
-        {"id":50348},
-        {"id":50732,"enchant":3834,"gems":[40113]},
-        {"id":50719},
-        {"id":50684,"gems":[40152]}
-    ]}`),
-};
-
-export const ARCANE_P4_PRESET_HORDE = {
-	name: 'Arcane P4 Preset [H]',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0 && player.getFaction() == Faction.Horde,
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":51281,"enchant":3820,"gems":[41285,40133]},
-        {"id":50724,"gems":[40133]},
-        {"id":51284,"enchant":3810,"gems":[40153]},
-        {"id":50628,"enchant":3722,"gems":[40153]},
-        {"id":51283,"enchant":3832,"gems":[40113,40133]},
-        {"id":54582,"enchant":2332,"gems":[40155,0]},
-        {"id":50722,"enchant":3604,"gems":[40153,40133,0]},
-        {"id":50613,"enchant":3601,"gems":[40133,40113,40113]},
-        {"id":51282,"enchant":3872,"gems":[40133,40153]},
-        {"id":50699,"enchant":3606,"gems":[40133,40113]},
-        {"id":50664,"gems":[40133]},
-        {"id":50398,"gems":[40153]},
-        {"id":47188},
-        {"id":50348},
-        {"id":50732,"enchant":3834,"gems":[40113]},
-        {"id":50719},
-        {"id":50684,"gems":[40153]}
-    ]}`),
-};
-
-export const ARCANE_P4_PRESET_ALLIANCE = {
-	name: 'Arcane P4 Preset [A]',
-	enableWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0 && player.getFaction() == Faction.Alliance,
-	tooltip: Tooltips.BASIC_BIS_DISCLAIMER,
-	gear: EquipmentSpec.fromJsonString(`{"items": [
-		{"id":51281,"enchant":3820,"gems":[41285,40133]},
-        {"id":50724,"gems":[40133]},
-        {"id":51284,"enchant":3810,"gems":[40153]},
-        {"id":50628,"enchant":3722,"gems":[40153]},
-        {"id":51283,"enchant":3832,"gems":[40113,40133]},
-        {"id":54582,"enchant":2332,"gems":[40155,0]},
-        {"id":50722,"enchant":3604,"gems":[40153,40133,0]},
-        {"id":50613,"enchant":3601,"gems":[40133,40113,40113]},
-        {"id":51282,"enchant":3872,"gems":[40133,40155]},
-        {"id":50699,"enchant":3606,"gems":[40133,40113]},
-        {"id":50664,"gems":[40133]},
-        {"id":50398,"gems":[40155]},
-        {"id":47188},
-        {"id":50348},
-        {"id":50732,"enchant":3834,"gems":[40113]},
-        {"id":50719},
-        {"id":50684,"gems":[40155]}
-    ]}`),
+	nibelungAverageCasts: 11,
 };

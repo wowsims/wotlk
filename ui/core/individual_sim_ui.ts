@@ -35,10 +35,9 @@ import {
 	Stat,
 } from './proto/common';
 
-import { IndividualSimSettings, SavedRotation, SavedTalents } from './proto/ui';
+import { IndividualSimSettings, SavedTalents } from './proto/ui';
 import { StatWeightsResult } from './proto/api';
 
-import { Gear } from './proto_utils/gear';
 import { getMetaGemConditionDescription } from './proto_utils/gems';
 import { professionNames } from './proto_utils/names';
 import { Stats } from './proto_utils/stats';
@@ -51,6 +50,8 @@ import {
 	specToEligibleRaces,
 	specToLocalStorageKey,
 } from './proto_utils/utils';
+
+import {PresetGear, PresetRotation} from './preset_utils';
 
 import * as Exporters from './components/exporters';
 import * as Importers from './components/importers';
@@ -84,6 +85,7 @@ export interface OtherDefaults {
 	profession2?: Profession,
 	distanceFromTarget?: number,
 	channelClipDelay?: number,
+	nibelungAverageCasts?: number,
 }
 
 export interface IndividualSimUIConfig<SpecType extends Spec> {
@@ -140,25 +142,6 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 
 	autoRotation?: AutoRotationGenerator<SpecType>,
 	simpleRotation?: SimpleRotationGenerator<SpecType>,
-}
-
-export interface GearAndStats {
-	gear: Gear,
-	bonusStats?: Stats,
-}
-
-export interface PresetGear {
-	name: string;
-	gear: EquipmentSpec;
-	tooltip?: string;
-	enableWhen?: (obj: Player<any>) => boolean;
-}
-
-export interface PresetRotation {
-	name: string;
-	rotation: SavedRotation;
-	tooltip?: string;
-	enableWhen?: (obj: Player<any>) => boolean;
 }
 
 export interface Settings {
@@ -446,6 +429,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.player.setProfession2(eventID, this.individualConfig.defaults.other?.profession2 || Profession.Jewelcrafting);
 			this.player.setDistanceFromTarget(eventID, this.individualConfig.defaults.other?.distanceFromTarget || 0);
 			this.player.setChannelClipDelay(eventID, this.individualConfig.defaults.other?.channelClipDelay || 0);
+			this.player.setNibelungAverageCasts(eventID, this.individualConfig.defaults.other?.nibelungAverageCasts || 11);
 
 			if (this.isWithinRaidSim) {
 				this.sim.raid.setTargetDummies(eventID, 0);

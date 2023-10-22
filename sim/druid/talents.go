@@ -399,6 +399,7 @@ func (druid *Druid) applyOmenOfClarity() {
 			if !result.Landed() {
 				return
 			}
+
 			// https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1182017571
 			if druid.HurricaneTickSpell.IsEqual(spell) {
 				curCastTickSpeed := spell.CurCast.ChannelTime.Seconds() / 10
@@ -424,6 +425,11 @@ func (druid *Druid) applyOmenOfClarity() {
 					chanceToProc *= 0.25
 				} else if druid.Moonfire.IsEqual(spell) { // Add Moonfire
 					chanceToProc *= 0.076
+				} else if druid.GiftOfTheWild.IsEqual(spell) { // Add Gift of the Wild
+					// the above comment says it's 0.0875 * (1-0.924) which apparently is out-dated,
+					// there is no longer an instant suppression factor
+					// we assume 30 targets (25man + pets)
+					chanceToProc = 1 - math.Pow(1-chanceToProc, 30)
 				} else {
 					chanceToProc *= 0.666
 				}

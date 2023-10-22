@@ -16,7 +16,12 @@ func (unit *Unit) newHardcastAction(sim *Simulation) {
 		pa := &PendingAction{
 			NextActionAt: unit.Hardcast.Expires,
 			OnAction: func(sim *Simulation) {
-				// Don't need to do anything, the Advance() call will take care of the hardcast.
+				if hc := &unit.Hardcast; hc.Expires != startingCDTime && hc.Expires <= sim.CurrentTime {
+					hc.Expires = startingCDTime
+					if hc.OnComplete != nil {
+						hc.OnComplete(sim, hc.Target)
+					}
+				}
 			},
 		}
 		unit.hardcastAction = pa
@@ -82,7 +87,7 @@ func (unit *Unit) DoneWaitingForMana(sim *Simulation) bool {
 	return false
 }
 
-func (unit *Unit) DoneWaitingForEnergy(sim *Simulation) bool {
+func (unit *Unit) DoneWaitingForEnergy(_ *Simulation) bool {
 	if unit.CurrentEnergy() >= unit.waitingForEnergy {
 		unit.waitStartTime = 0
 		unit.waitingForEnergy = 0

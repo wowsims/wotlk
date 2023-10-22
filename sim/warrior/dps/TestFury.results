@@ -104,15 +104,15 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-BlackBruise-50035"
  value: {
-  dps: 5837.90085
-  tps: 4333.0186
+  dps: 5833.67568
+  tps: 4328.73701
  }
 }
 dps_results: {
  key: "TestFury-AllItems-BlackBruise-50692"
  value: {
-  dps: 5926.92039
-  tps: 4395.38921
+  dps: 5917.54802
+  tps: 4388.85577
  }
 }
 dps_results: {
@@ -757,8 +757,8 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-TheFistsofFury"
  value: {
-  dps: 5014.10292
-  tps: 3714.77686
+  dps: 5006.80751
+  tps: 3709.33453
  }
 }
 dps_results: {
@@ -771,8 +771,8 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-TheTwinBladesofAzzinoth"
  value: {
-  dps: 5359.5552
-  tps: 3970.12359
+  dps: 5359.59122
+  tps: 3970.14881
  }
 }
 dps_results: {
@@ -869,15 +869,15 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-YmirjarLord'sBattlegear"
  value: {
-  dps: 7115.06093
-  tps: 5260.19674
+  dps: 7963.26815
+  tps: 5876.58334
  }
 }
 dps_results: {
  key: "TestFury-AllItems-YmirjarLord'sPlate"
  value: {
-  dps: 5732.02086
-  tps: 4241.23129
+  dps: 6129.71288
+  tps: 4535.41033
  }
 }
 dps_results: {
@@ -888,168 +888,168 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestFury-Settings-Human-Fury P1-Basic--FullBuffs-LongMultiTarget"
+ key: "TestFury-Settings-Human-p1_fury-Basic--FullBuffs-LongMultiTarget"
  value: {
   dps: 9194.69651
   tps: 7340.72966
  }
 }
 dps_results: {
- key: "TestFury-Settings-Human-Fury P1-Basic--FullBuffs-LongSingleTarget"
+ key: "TestFury-Settings-Human-p1_fury-Basic--FullBuffs-LongSingleTarget"
  value: {
   dps: 6873.32982
   tps: 5081.14527
  }
 }
 dps_results: {
- key: "TestFury-Settings-Human-Fury P1-Basic--FullBuffs-ShortSingleTarget"
+ key: "TestFury-Settings-Human-p1_fury-Basic--FullBuffs-ShortSingleTarget"
  value: {
   dps: 7897.40963
   tps: 5832.12271
  }
 }
 dps_results: {
- key: "TestFury-Settings-Human-Fury P1-Basic--NoBuffs-LongMultiTarget"
+ key: "TestFury-Settings-Human-p1_fury-Basic--NoBuffs-LongMultiTarget"
  value: {
   dps: 4445.2841
   tps: 3606.96156
  }
 }
 dps_results: {
- key: "TestFury-Settings-Human-Fury P1-Basic--NoBuffs-LongSingleTarget"
+ key: "TestFury-Settings-Human-p1_fury-Basic--NoBuffs-LongSingleTarget"
  value: {
   dps: 3130.15371
   tps: 2329.05542
  }
 }
 dps_results: {
- key: "TestFury-Settings-Human-Fury P1-Basic--NoBuffs-ShortSingleTarget"
+ key: "TestFury-Settings-Human-p1_fury-Basic--NoBuffs-ShortSingleTarget"
  value: {
   dps: 3290.38873
   tps: 2452.72883
  }
 }
 dps_results: {
- key: "TestFury-Settings-Human-Fury P1-Basic-fury-FullBuffs-LongMultiTarget"
+ key: "TestFury-Settings-Human-p1_fury-Basic-fury-FullBuffs-LongMultiTarget"
  value: {
   dps: 10335.53844
   tps: 8055.47326
  }
 }
 dps_results: {
- key: "TestFury-Settings-Human-Fury P1-Basic-fury-FullBuffs-LongSingleTarget"
+ key: "TestFury-Settings-Human-p1_fury-Basic-fury-FullBuffs-LongSingleTarget"
  value: {
   dps: 6956.89606
   tps: 5172.37235
  }
 }
 dps_results: {
- key: "TestFury-Settings-Human-Fury P1-Basic-fury-FullBuffs-ShortSingleTarget"
+ key: "TestFury-Settings-Human-p1_fury-Basic-fury-FullBuffs-ShortSingleTarget"
  value: {
   dps: 8334.00253
   tps: 6194.42682
  }
 }
 dps_results: {
- key: "TestFury-Settings-Human-Fury P1-Basic-fury-NoBuffs-LongMultiTarget"
+ key: "TestFury-Settings-Human-p1_fury-Basic-fury-NoBuffs-LongMultiTarget"
  value: {
   dps: 4398.47104
   tps: 3574.68804
  }
 }
 dps_results: {
- key: "TestFury-Settings-Human-Fury P1-Basic-fury-NoBuffs-LongSingleTarget"
+ key: "TestFury-Settings-Human-p1_fury-Basic-fury-NoBuffs-LongSingleTarget"
  value: {
   dps: 2781.44964
   tps: 2099.54141
  }
 }
 dps_results: {
- key: "TestFury-Settings-Human-Fury P1-Basic-fury-NoBuffs-ShortSingleTarget"
+ key: "TestFury-Settings-Human-p1_fury-Basic-fury-NoBuffs-ShortSingleTarget"
  value: {
   dps: 2993.62836
   tps: 2267.44841
  }
 }
 dps_results: {
- key: "TestFury-Settings-Orc-Fury P1-Basic--FullBuffs-LongMultiTarget"
+ key: "TestFury-Settings-Orc-p1_fury-Basic--FullBuffs-LongMultiTarget"
  value: {
   dps: 9277.3113
   tps: 7397.17369
  }
 }
 dps_results: {
- key: "TestFury-Settings-Orc-Fury P1-Basic--FullBuffs-LongSingleTarget"
+ key: "TestFury-Settings-Orc-p1_fury-Basic--FullBuffs-LongSingleTarget"
  value: {
   dps: 6946.09586
   tps: 5135.85557
  }
 }
 dps_results: {
- key: "TestFury-Settings-Orc-Fury P1-Basic--FullBuffs-ShortSingleTarget"
+ key: "TestFury-Settings-Orc-p1_fury-Basic--FullBuffs-ShortSingleTarget"
  value: {
   dps: 7962.43878
   tps: 5883.1142
  }
 }
 dps_results: {
- key: "TestFury-Settings-Orc-Fury P1-Basic--NoBuffs-LongMultiTarget"
+ key: "TestFury-Settings-Orc-p1_fury-Basic--NoBuffs-LongMultiTarget"
  value: {
   dps: 4502.43278
   tps: 3654.6595
  }
 }
 dps_results: {
- key: "TestFury-Settings-Orc-Fury P1-Basic--NoBuffs-LongSingleTarget"
+ key: "TestFury-Settings-Orc-p1_fury-Basic--NoBuffs-LongSingleTarget"
  value: {
   dps: 3103.92467
   tps: 2309.64492
  }
 }
 dps_results: {
- key: "TestFury-Settings-Orc-Fury P1-Basic--NoBuffs-ShortSingleTarget"
+ key: "TestFury-Settings-Orc-p1_fury-Basic--NoBuffs-ShortSingleTarget"
  value: {
   dps: 3297.19798
   tps: 2459.17541
  }
 }
 dps_results: {
- key: "TestFury-Settings-Orc-Fury P1-Basic-fury-FullBuffs-LongMultiTarget"
+ key: "TestFury-Settings-Orc-p1_fury-Basic-fury-FullBuffs-LongMultiTarget"
  value: {
   dps: 10420.27644
   tps: 8119.1797
  }
 }
 dps_results: {
- key: "TestFury-Settings-Orc-Fury P1-Basic-fury-FullBuffs-LongSingleTarget"
+ key: "TestFury-Settings-Orc-p1_fury-Basic-fury-FullBuffs-LongSingleTarget"
  value: {
   dps: 6948.04992
   tps: 5165.92716
  }
 }
 dps_results: {
- key: "TestFury-Settings-Orc-Fury P1-Basic-fury-FullBuffs-ShortSingleTarget"
+ key: "TestFury-Settings-Orc-p1_fury-Basic-fury-FullBuffs-ShortSingleTarget"
  value: {
   dps: 8418.04587
   tps: 6247.66223
  }
 }
 dps_results: {
- key: "TestFury-Settings-Orc-Fury P1-Basic-fury-NoBuffs-LongMultiTarget"
+ key: "TestFury-Settings-Orc-p1_fury-Basic-fury-NoBuffs-LongMultiTarget"
  value: {
   dps: 4441.18536
   tps: 3610.77623
  }
 }
 dps_results: {
- key: "TestFury-Settings-Orc-Fury P1-Basic-fury-NoBuffs-LongSingleTarget"
+ key: "TestFury-Settings-Orc-p1_fury-Basic-fury-NoBuffs-LongSingleTarget"
  value: {
   dps: 2829.25095
   tps: 2134.76157
  }
 }
 dps_results: {
- key: "TestFury-Settings-Orc-Fury P1-Basic-fury-NoBuffs-ShortSingleTarget"
+ key: "TestFury-Settings-Orc-p1_fury-Basic-fury-NoBuffs-ShortSingleTarget"
  value: {
   dps: 3106.30985
   tps: 2350.90578

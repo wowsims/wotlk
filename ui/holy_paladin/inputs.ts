@@ -1,15 +1,8 @@
 import { Spec } from '../core/proto/common.js';
-import { Player } from '../core/player.js';
-import { EventID } from '../core/typed_event.js';
-import { IndividualSimUI } from '../core/individual_sim_ui.js';
-import { ActionId } from '../core/proto_utils/action_id.js';
 
 import {
 	PaladinAura,
-	PaladinSeal,
 	PaladinJudgement,
-	HolyPaladin_Rotation as HolyPaladinRotation,
-	HolyPaladin_Options as HolyPaladinOptions,
 } from '../core/proto/paladin.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
