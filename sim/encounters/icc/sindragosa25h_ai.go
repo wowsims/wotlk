@@ -162,9 +162,12 @@ func (ai *Sindragosa25HAI) registerMysticBuffetAuras() {
 	}
 
 	ai.MysticBuffetAuras = make([]*core.Aura, 0)
+	pendingActions := make([]*core.PendingAction, 50)
+	i := 0
 
 	for _, party := range ai.Target.Env.Raid.Parties {
 		for _, player := range party.PlayersAndPets {
+			i += 1
 			character := player.GetCharacter()
 			aura := character.GetOrRegisterAura(core.Aura{
 				Label:     "Mystic Buffet",
@@ -178,7 +181,12 @@ func (ai *Sindragosa25HAI) registerMysticBuffetAuras() {
 				OnGain: func(aura *core.Aura, sim *core.Simulation) {
 					period := time.Second * 6
 					numTicks := int(sim.GetRemainingDuration() / period)
-					core.StartPeriodicAction(sim, core.PeriodicActionOptions{
+
+					if pendingActions[i-1] != nil {
+						pendingActions[i-1].Cancel(sim)
+					}
+
+					pendingActions[i-1] = core.StartPeriodicAction(sim, core.PeriodicActionOptions{
 						NumTicks: numTicks,
 						Period:   period,
 						OnAction: func(sim *core.Simulation) {
@@ -186,6 +194,14 @@ func (ai *Sindragosa25HAI) registerMysticBuffetAuras() {
 							aura.AddStack(sim)
 						},
 					})
+				},
+				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+					pendingActions[i-1].Cancel(sim)
+				},
+				OnReset: func(aura *core.Aura, sim *core.Simulation) {
+					if pendingActions[i-1] != nil {
+						pendingActions[i-1].Cancel(sim)
+					}
 				},
 			})
 			ai.MysticBuffetAuras = append(ai.MysticBuffetAuras, aura)
