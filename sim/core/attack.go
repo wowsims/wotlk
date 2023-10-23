@@ -501,12 +501,16 @@ func (aa *AutoAttacks) TrySwingMH(sim *Simulation, target *Unit) {
 		return
 	}
 
-	if aa.unit.IsUsingAPL {
-		// Need to check APL here to allow last-moment HS queue casts.
-		aa.unit.Rotation.DoNextAction(sim)
-	}
+	attackSpell := aa.MHAuto
 
-	attackSpell := aa.MaybeReplaceMHSwing(sim, aa.MHAuto)
+	if aa.ReplaceMHSwing != nil {
+		if aa.unit.IsUsingAPL {
+			// Need to check APL here to allow last-moment HS queue casts.
+			aa.unit.Rotation.DoNextAction(sim)
+		}
+		// Allow MH swing to be overridden for abilities like Heroic Strike.
+		attackSpell = aa.ReplaceMHSwing(sim, aa.MHAuto)
+	}
 
 	// Update swing timer BEFORE the cast, so that APL checks for TimeToNextAuto behave correctly
 	// if the attack causes APL evaluations (e.g. from rage gain).
