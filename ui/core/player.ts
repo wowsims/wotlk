@@ -687,10 +687,14 @@ export class Player<SpecType extends Spec> {
 		const hasOffhandWeapon = this.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponSpeed !== undefined;
 		// Due to warrior HS bug, hit cap for crit cap calculation should be 8% instead of 27%
 		const meleeHitCap = hasOffhandWeapon && this.spec != Spec.SpecWarrior ? 27.0 : 8.0;
-		const expertiseCap = this.getInFrontOfTarget() ? 20.5 : 6.5;
+		const dodgeCap = 6.5
+		const parryCap = this.getInFrontOfTarget() ? 14.0 : 0
+		const expertiseCap = dodgeCap + parryCap
 
 		const remainingMeleeHitCap = Math.max(meleeHitCap - meleeHit, 0.0);
-		const remainingExpertiseCap = Math.max(expertiseCap - expertise, 0.0)
+		const remainingDodgeCap = Math.max(dodgeCap - expertise, 0.0)
+		const remainingParryCap = Math.max(parryCap - expertise, 0.0)
+		const remainingExpertiseCap = remainingDodgeCap + remainingParryCap
 
 		let specSpecificOffset = 0.0;
 
