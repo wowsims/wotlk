@@ -316,7 +316,7 @@ func (x *rotation_multi) shouldCastNextRotationItem(sim *core.Simulation, rogue 
 func (x *rotation_multi) getExpectedEnergyPerSecond(rogue *Rogue) float64 {
 	const finishersPerSecond = 1.0 / 6
 	const averageComboPointsSpendOnFinisher = 4.0
-	bonusEnergyPerSecond := float64(rogue.Talents.CombatPotency) * 3 * 0.2 * 1.0 / (rogue.AutoAttacks.OH.SwingSpeed / 1.4)
+	bonusEnergyPerSecond := float64(rogue.Talents.CombatPotency) * 3 * 0.2 * 1.0 / (rogue.AutoAttacks.OH().SwingSpeed / 1.4)
 	bonusEnergyPerSecond += float64(rogue.Talents.FocusedAttacks)
 	bonusEnergyPerSecond += float64(rogue.Talents.RelentlessStrikes) * 0.04 * 25 * finishersPerSecond * averageComboPointsSpendOnFinisher
 	return (core.EnergyPerTick*rogue.EnergyTickMultiplier)/core.EnergyTickDuration.Seconds() + bonusEnergyPerSecond

@@ -162,21 +162,22 @@ func (dk *Deathknight) NewRuneWeapon() *RuneWeaponPet {
 	runeWeapon.OnPetDisable = runeWeapon.disable
 
 	mhWeapon := dk.WeaponFromMainHand(dk.DefaultMeleeCritMultiplier())
+
+	if dk.Inputs.NewDrw {
+		baseDamage := mhWeapon.AverageDamage() / mhWeapon.SwingSpeed * 3.5
+		mhWeapon.BaseDamageMin = baseDamage - 150
+		mhWeapon.BaseDamageMax = baseDamage + 150
+	}
+
+	mhWeapon.SwingSpeed = 3.5
+	mhWeapon.NormalizedSwingSpeed = 3.3
+
 	runeWeapon.EnableAutoAttacks(runeWeapon, core.AutoAttackOptions{
 		MainHand:       mhWeapon,
 		AutoSwingMelee: true,
 	})
 
-	runeWeapon.AutoAttacks.MH.SwingSpeed = 3.5
-	runeWeapon.AutoAttacks.MH.NormalizedSwingSpeed = 3.3
 	runeWeapon.PseudoStats.DamageTakenMultiplier = 0
-
-	if dk.Inputs.NewDrw {
-		baseDamage := (mhWeapon.BaseDamageMin + mhWeapon.BaseDamageMax) / 2
-		baseDamage = (baseDamage / mhWeapon.SwingSpeed) * 3.5
-		runeWeapon.AutoAttacks.MH.BaseDamageMin = baseDamage - 150
-		runeWeapon.AutoAttacks.MH.BaseDamageMax = baseDamage + 150
-	}
 
 	dk.AddPet(runeWeapon)
 

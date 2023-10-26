@@ -57,9 +57,7 @@ func NewFeralTankDruid(character *core.Character, options *proto.Player) *FeralT
 		// Base paw weapon.
 		MainHand:       bear.GetBearWeapon(),
 		AutoSwingMelee: true,
-		ReplaceMHSwing: func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
-			return bear.TryMaul(sim, mhSwingSpell)
-		},
+		ReplaceMHSwing: bear.TryMaul,
 	})
 	bear.ReplaceBearMHFunc = bear.TryMaul
 

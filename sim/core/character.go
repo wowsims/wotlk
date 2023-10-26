@@ -313,7 +313,6 @@ func (character *Character) applyItemEffects(agent Agent) {
 			}
 		}
 
-		// TODO: should we use eq.Enchant.EffectID because some enchants use a spellID instead of itemID?
 		if applyEnchantEffect, ok := enchantEffects[eq.Enchant.EffectID]; ok {
 			applyEnchantEffect(agent)
 		}
@@ -353,6 +352,7 @@ func (character *Character) GetBaseStats() stats.Stats {
 // Returns the crit multiplier for a spell.
 // https://web.archive.org/web/20081014064638/http://elitistjerks.com/f31/t12595-relentless_earthstorm_diamond_-_melee_only/p4/
 // https://github.com/TheGroxEmpire/TBC_DPS_Warrior_Sim/issues/30
+// TODO "primaryModifiers" could be modelled as a PseudoStat, since they're unit-specific. "secondaryModifiers" apply to a specific set of spells.
 func (character *Character) calculateCritMultiplier(normalCritDamage float64, primaryModifiers float64, secondaryModifiers float64) float64 {
 	if character.HasMetaGemEquipped(34220) ||
 		character.HasMetaGemEquipped(32409) ||
@@ -625,9 +625,9 @@ func (character *Character) doneIteration(sim *Simulation) {
 
 func (character *Character) GetPseudoStatsProto() []float64 {
 	vals := make([]float64, stats.PseudoStatsLen)
-	vals[proto.PseudoStat_PseudoStatMainHandDps] = character.AutoAttacks.MH.DPS()
-	vals[proto.PseudoStat_PseudoStatOffHandDps] = character.AutoAttacks.OH.DPS()
-	vals[proto.PseudoStat_PseudoStatRangedDps] = character.AutoAttacks.Ranged.DPS()
+	vals[proto.PseudoStat_PseudoStatMainHandDps] = character.AutoAttacks.MH().DPS()
+	vals[proto.PseudoStat_PseudoStatOffHandDps] = character.AutoAttacks.OH().DPS()
+	vals[proto.PseudoStat_PseudoStatRangedDps] = character.AutoAttacks.Ranged().DPS()
 	vals[proto.PseudoStat_PseudoStatBlockValueMultiplier] = character.PseudoStats.BlockValueMultiplier
 	// Base values are modified by Enemy attackTables, but we display for LVL 80 enemy as paperdoll default
 	vals[proto.PseudoStat_PseudoStatDodge] = character.PseudoStats.BaseDodge + character.GetDiminishedDodgeChance()
