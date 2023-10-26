@@ -353,7 +353,7 @@ func (warrior *Warrior) applyTitansGrip() {
 	if !warrior.Talents.TitansGrip {
 		return
 	}
-	if !warrior.AutoAttacks.DualWielding() {
+	if !warrior.AutoAttacks.IsDualWielding() {
 		return
 	}
 	if warrior.MainHand().HandType != proto.HandType_HandTypeTwoHand && warrior.OffHand().HandType != proto.HandType_HandTypeTwoHand {
@@ -788,7 +788,7 @@ func (warrior *Warrior) RegisterBladestormCD() {
 	numHits := min(4, warrior.Env.GetNumTargets())
 	results := make([]*core.SpellResult, numHits)
 
-	if warrior.AutoAttacks.DualWielding() {
+	if warrior.AutoAttacks.IsDualWielding() {
 		warrior.BladestormOH = warrior.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolPhysical,

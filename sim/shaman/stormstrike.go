@@ -134,7 +134,7 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 
 				mhHit(sim, target, spell)
 
-				if shaman.AutoAttacks.DualWielding() {
+				if shaman.AutoAttacks.IsDualWielding() {
 					ohHit(sim, target, spell)
 				}
 

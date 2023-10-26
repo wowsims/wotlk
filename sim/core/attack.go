@@ -165,7 +165,7 @@ func (spell *Spell) IsMelee() bool {
 	return spell.ProcMask.Matches(ProcMaskMelee)
 }
 
-func (aa *AutoAttacks) DualWielding() bool {
+func (aa *AutoAttacks) IsDualWielding() bool {
 	return aa.isDualWielding
 }
 

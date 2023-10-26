@@ -193,7 +193,7 @@ func init() {
 					},
 				})
 
-				if character.AutoAttacks.DualWielding() {
+				if character.AutoAttacks.IsDualWielding() {
 					ohSpell = character.GetOrRegisterSpell(core.SpellConfig{
 						ActionID:         core.ActionID{SpellID: 71434}, // "Manifest Anger"
 						SpellSchool:      core.SpellSchoolPhysical,
