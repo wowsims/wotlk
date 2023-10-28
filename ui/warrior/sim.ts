@@ -10,6 +10,7 @@ import { Player } from '../core/player.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
 
 
+import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as Mechanics from '../core/constants/mechanics.js';
 
@@ -122,6 +123,7 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 					sunderArmor: true,
 					curseOfWeakness: TristateEffect.TristateEffectRegular,
 					faerieFire: TristateEffect.TristateEffectImproved,
+					ebonPlaguebringer: true,
 				}),
 			},
 
@@ -135,6 +137,9 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 			rotationInputs: WarriorInputs.WarriorRotationConfig,
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
+				// just for Bryntroll
+				IconInputs.SpellDamageDebuff,
+				IconInputs.SpellHitDebuff,
 			],
 			excludeBuffDebuffInputs: [
 			],

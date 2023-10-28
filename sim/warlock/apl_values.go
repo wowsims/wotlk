@@ -45,9 +45,9 @@ func (value *APLValueWarlockShouldRecastDrainSoul) GetBool(sim *core.Simulation)
 	curseRefresh := max(
 		warlock.CurseOfAgony.CurDot().RemainingDuration(sim),
 		warlock.CurseOfDoom.CurDot().RemainingDuration(sim),
-		warlock.CurseOfElements.CurDot().RemainingDuration(sim),
-		warlock.CurseOfTongues.CurDot().RemainingDuration(sim),
-		warlock.CurseOfWeakness.CurDot().RemainingDuration(sim),
+		warlock.CurseOfElementsAuras.Get(warlock.CurrentTarget).RemainingDuration(sim),
+		warlock.CurseOfTonguesAuras.Get(warlock.CurrentTarget).RemainingDuration(sim),
+		warlock.CurseOfWeaknessAuras.Get(warlock.CurrentTarget).RemainingDuration(sim),
 	) - warlock.CurseOfAgony.CastTime()
 
 	hauntRefresh := warlock.HauntDebuffAuras.Get(warlock.CurrentTarget).RemainingDuration(sim) -

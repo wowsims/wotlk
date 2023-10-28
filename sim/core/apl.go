@@ -215,7 +215,7 @@ func (apl *APLRotation) DoNextAction(sim *Simulation) {
 		apl.unit.DoNothing()
 	}
 
-	apl.unit.DoneAPLLoop(sim, gcdReady)
+	apl.unit.DoneAPLLoop(sim, !gcdReady)
 }
 
 func (apl *APLRotation) getNextAction(sim *Simulation) *APLAction {
