@@ -178,6 +178,7 @@ func (dk *Deathknight) NewRuneWeapon() *RuneWeaponPet {
 	})
 
 	runeWeapon.PseudoStats.DamageTakenMultiplier = 0
+	runeWeapon.PseudoStats.MeleeHasteRatingPerHastePercent = dk.PseudoStats.MeleeHasteRatingPerHastePercent
 
 	dk.AddPet(runeWeapon)
 

@@ -133,6 +133,8 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 				],
 				rotations: [
 					Presets.ROTATION_PRESET_DEFAULT,
+					Presets.ROTATION_PRESET_AOE4PLUS,
+					Presets.ROTATION_PRESET_AOE24,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
