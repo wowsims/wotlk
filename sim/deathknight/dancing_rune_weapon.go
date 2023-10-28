@@ -170,6 +170,7 @@ func (dk *Deathknight) NewRuneWeapon() *RuneWeaponPet {
 	runeWeapon.AutoAttacks.MH.SwingSpeed = 3.5
 	runeWeapon.AutoAttacks.MH.NormalizedSwingSpeed = 3.3
 	runeWeapon.PseudoStats.DamageTakenMultiplier = 0
+	runeWeapon.PseudoStats.MeleeHasteRatingPerHastePercent = dk.PseudoStats.MeleeHasteRatingPerHastePercent
 
 	if dk.Inputs.NewDrw {
 		baseDamage := (mhWeapon.BaseDamageMin + mhWeapon.BaseDamageMax) / 2
