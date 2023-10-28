@@ -30,6 +30,8 @@ import P3Gear from './gear_sets/p3.gear.json';
 import P4Gear from './gear_sets/p4.gear.json';
 
 import DefaultApl from './apls/default.apl.json'
+import AOE24Apl from './apls/aoe_2_4.apl.json'
+import AOE4PlusApl from './apls/aoe_4_plus.apl.json'
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -46,6 +48,8 @@ export const DefaultRotation = Rotation.create({
 });
 
 export const ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Default', DefaultApl);
+export const ROTATION_PRESET_AOE24 = PresetUtils.makePresetAPLRotation('AOE (2 to 4 targets)', AOE24Apl);
+export const ROTATION_PRESET_AOE4PLUS = PresetUtils.makePresetAPLRotation('AOE (4+ targets)', AOE4PlusApl);
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
