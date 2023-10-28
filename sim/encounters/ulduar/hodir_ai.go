@@ -340,9 +340,8 @@ func (ai *HodirAI) registerFrozenBlowSpell(target *core.Target) {
 	ai.Target.Unit.AutoAttacks.ReplaceMHSwing = func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
 		if ai.FrozenBlowsAura.IsActive() {
 			return ai.FrozenBlowsAuto
-		} else {
-			return ai.Target.Unit.AutoAttacks.MHAuto
 		}
+		return mhSwingSpell
 	}
 
 	ai.FrozenBlowsAuto = target.GetOrRegisterSpell(core.SpellConfig{
@@ -352,7 +351,7 @@ func (ai *HodirAI) registerFrozenBlowSpell(target *core.Target) {
 		Flags:       core.SpellFlagMeleeMetrics,
 
 		DamageMultiplier: 1,
-		CritMultiplier:   ai.Target.AutoAttacks.MH.CritMultiplier,
+		CritMultiplier:   ai.Target.AutoAttacks.MH().CritMultiplier,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +

@@ -55,7 +55,7 @@ func NewLichKing25HAI() core.AIFactory {
 	}
 }
 
-func (ai *LichKing25HAI) Initialize(target *core.Target, config *proto.Target) {
+func (ai *LichKing25HAI) Initialize(target *core.Target, _ *proto.Target) {
 	ai.Target = target
 	ai.registerSoulReaperSpell(target)
 }
@@ -120,7 +120,7 @@ func (ai *LichKing25HAI) registerSoulReaperSpell(target *core.Target) {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// 50% weapon damage
-			baseDamage := 0.5 * spell.Unit.AutoAttacks.MH.EnemyWeaponDamage(sim, spell.MeleeAttackPower(), 0.1557)
+			baseDamage := 0.5 * spell.Unit.AutoAttacks.MH().EnemyWeaponDamage(sim, spell.MeleeAttackPower(), 0.1557)
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeAlwaysHit)
 
 			dot := spell.Dot(target)

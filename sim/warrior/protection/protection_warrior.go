@@ -67,9 +67,7 @@ func NewProtectionWarrior(character *core.Character, options *proto.Player) *Pro
 		MainHand:       war.WeaponFromMainHand(war.DefaultMeleeCritMultiplier()),
 		OffHand:        war.WeaponFromOffHand(war.DefaultMeleeCritMultiplier()),
 		AutoSwingMelee: true,
-		ReplaceMHSwing: func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
-			return war.TryHSOrCleave(sim, mhSwingSpell)
-		},
+		ReplaceMHSwing: war.TryHSOrCleave,
 	})
 
 	healingModel := options.HealingModel

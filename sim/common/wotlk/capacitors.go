@@ -172,7 +172,7 @@ func init() {
 
 		core.NewItemEffect(itemID, func(agent core.Agent) {
 			character := agent.GetCharacter()
-			if !character.AutoAttacks.AutoSwingMelee {
+			if !character.AutoAttacks.AutoSwingMelee() {
 				return
 			}
 
@@ -193,7 +193,7 @@ func init() {
 					},
 				})
 
-				if character.AutoAttacks.IsDualWielding {
+				if character.AutoAttacks.IsDualWielding() {
 					ohSpell = character.GetOrRegisterSpell(core.SpellConfig{
 						ActionID:         core.ActionID{SpellID: 71434}, // "Manifest Anger"
 						SpellSchool:      core.SpellSchoolPhysical,

@@ -343,7 +343,7 @@ func (hunter *Hunter) applyWildQuiver() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell != hunter.AutoAttacks.RangedAuto {
+			if spell != hunter.AutoAttacks.RangedAuto() {
 				return
 			}
 

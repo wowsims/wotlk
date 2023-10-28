@@ -31,7 +31,7 @@ func (ret *RetributionPaladin) OnAutoAttack(sim *core.Simulation, _ *core.Spell)
 			}
 		}
 
-		if minVengeanceDotDuration < core.DurationFromSeconds(ret.AutoAttacks.MH.SwingSpeed*2) {
+		if minVengeanceDotDuration < core.DurationFromSeconds(ret.AutoAttacks.MH().SwingSpeed*2) {
 			ret.CurrentTarget = minVengeanceDotDurationTarget
 		} else if ret.SovDotSpell.Dot(ret.CurrentTarget).GetStacks() == 5 && minVengeanceDotStacks < 5 {
 			ret.CurrentTarget = minVengeanceDotStacksTarget

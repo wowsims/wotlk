@@ -21,11 +21,11 @@ func (spell *Spell) OutcomeAlwaysMiss(_ *Simulation, result *SpellResult, _ *Att
 }
 
 // A tick always hits, but we don't count them as hits in the metrics.
-func (dot *Dot) OutcomeTick(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
+func (dot *Dot) OutcomeTick(_ *Simulation, result *SpellResult, _ *AttackTable) {
 	result.Outcome = OutcomeHit
 }
 
-func (dot *Dot) OutcomeTickCounted(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
+func (dot *Dot) OutcomeTickCounted(_ *Simulation, result *SpellResult, _ *AttackTable) {
 	result.Outcome = OutcomeHit
 	dot.Spell.SpellMetrics[result.Target.UnitIndex].Hits++
 }
@@ -39,7 +39,7 @@ func (dot *Dot) OutcomeTickPhysicalCrit(sim *Simulation, result *SpellResult, at
 	}
 }
 
-func (dot *Dot) OutcomeSnapshotCrit(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
+func (dot *Dot) OutcomeSnapshotCrit(sim *Simulation, result *SpellResult, _ *AttackTable) {
 	if dot.Spell.CritMultiplier == 0 {
 		panic("Spell " + dot.Spell.ActionID.String() + " missing CritMultiplier")
 	}
@@ -93,7 +93,7 @@ func (spell *Spell) OutcomeMagicHitAndCrit(sim *Simulation, result *SpellResult,
 	}
 }
 
-func (spell *Spell) OutcomeMagicCrit(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
+func (spell *Spell) OutcomeMagicCrit(sim *Simulation, result *SpellResult, _ *AttackTable) {
 	if spell.CritMultiplier == 0 {
 		panic("Spell " + spell.ActionID.String() + " missing CritMultiplier")
 	}
@@ -107,12 +107,12 @@ func (spell *Spell) OutcomeMagicCrit(sim *Simulation, result *SpellResult, attac
 	}
 }
 
-func (spell *Spell) OutcomeHealing(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
+func (spell *Spell) OutcomeHealing(_ *Simulation, result *SpellResult, _ *AttackTable) {
 	result.Outcome = OutcomeHit
 	spell.SpellMetrics[result.Target.UnitIndex].Hits++
 }
 
-func (spell *Spell) OutcomeHealingCrit(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
+func (spell *Spell) OutcomeHealingCrit(sim *Simulation, result *SpellResult, _ *AttackTable) {
 	if spell.CritMultiplier == 0 {
 		panic("Spell " + spell.ActionID.String() + " missing CritMultiplier")
 	}
@@ -378,7 +378,7 @@ func (spell *Spell) fixedCritCheck(sim *Simulation, critChance float64) bool {
 
 func (result *SpellResult) applyAttackTableMiss(spell *Spell, attackTable *AttackTable, roll float64, chance *float64) bool {
 	missChance := attackTable.BaseMissChance - spell.PhysicalHitChance(attackTable)
-	if spell.Unit.AutoAttacks.IsDualWielding && !spell.Unit.PseudoStats.DisableDWMissPenalty {
+	if spell.Unit.AutoAttacks.IsDualWielding() && !spell.Unit.PseudoStats.DisableDWMissPenalty {
 		missChance += 0.19
 	}
 	*chance = max(0, missChance)
@@ -505,7 +505,7 @@ func (result *SpellResult) applyAttackTableHit(spell *Spell) {
 
 func (result *SpellResult) applyEnemyAttackTableMiss(spell *Spell, attackTable *AttackTable, roll float64, chance *float64) bool {
 	missChance := attackTable.BaseMissChance + spell.Unit.PseudoStats.IncreasedMissChance + result.Target.GetDiminishedMissChance() + result.Target.PseudoStats.ReducedPhysicalHitTakenChance
-	if spell.Unit.AutoAttacks.IsDualWielding && !spell.Unit.PseudoStats.DisableDWMissPenalty {
+	if spell.Unit.AutoAttacks.IsDualWielding() && !spell.Unit.PseudoStats.DisableDWMissPenalty {
 		missChance += 0.19
 	}
 	*chance = max(0, missChance)
@@ -597,20 +597,20 @@ func (result *SpellResult) applyEnemyAttackTableCrit(spell *Spell, _ *AttackTabl
 	return false
 }
 
-func (spell *Spell) OutcomeExpectedTick(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
+func (spell *Spell) OutcomeExpectedTick(_ *Simulation, _ *SpellResult, _ *AttackTable) {
 	// result.Damage *= 1
 }
-func (spell *Spell) OutcomeExpectedMagicAlwaysHit(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
+func (spell *Spell) OutcomeExpectedMagicAlwaysHit(_ *Simulation, _ *SpellResult, _ *AttackTable) {
 	// result.Damage *= 1
 }
-func (spell *Spell) OutcomeExpectedMagicHit(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
+func (spell *Spell) OutcomeExpectedMagicHit(_ *Simulation, result *SpellResult, attackTable *AttackTable) {
 	averageMultiplier := 1.0
 	averageMultiplier -= spell.SpellChanceToMiss(attackTable)
 
 	result.Damage *= averageMultiplier
 }
 
-func (spell *Spell) OutcomeExpectedMagicCrit(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
+func (spell *Spell) OutcomeExpectedMagicCrit(_ *Simulation, result *SpellResult, _ *AttackTable) {
 	if spell.CritMultiplier == 0 {
 		panic("Spell " + spell.ActionID.String() + " missing CritMultiplier")
 	}
@@ -621,7 +621,7 @@ func (spell *Spell) OutcomeExpectedMagicCrit(sim *Simulation, result *SpellResul
 	result.Damage *= averageMultiplier
 }
 
-func (spell *Spell) OutcomeExpectedMagicHitAndCrit(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
+func (spell *Spell) OutcomeExpectedMagicHitAndCrit(_ *Simulation, result *SpellResult, attackTable *AttackTable) {
 	if spell.CritMultiplier == 0 {
 		panic("Spell " + spell.ActionID.String() + " missing CritMultiplier")
 	}
@@ -633,7 +633,7 @@ func (spell *Spell) OutcomeExpectedMagicHitAndCrit(sim *Simulation, result *Spel
 	result.Damage *= averageMultiplier
 }
 
-func (dot *Dot) OutcomeExpectedMagicSnapshotCrit(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
+func (dot *Dot) OutcomeExpectedMagicSnapshotCrit(_ *Simulation, result *SpellResult, _ *AttackTable) {
 	if dot.Spell.CritMultiplier == 0 {
 		panic("Spell " + dot.Spell.ActionID.String() + " missing CritMultiplier")
 	}

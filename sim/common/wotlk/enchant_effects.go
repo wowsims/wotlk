@@ -263,7 +263,7 @@ func init() {
 	})
 
 	core.AddWeaponEffect(3843, func(agent core.Agent, _ proto.ItemSlot) {
-		w := &agent.GetCharacter().AutoAttacks.Ranged
+		w := agent.GetCharacter().AutoAttacks.Ranged()
 		w.BaseDamageMin += 15
 		w.BaseDamageMax += 15
 	})

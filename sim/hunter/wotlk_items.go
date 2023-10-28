@@ -158,7 +158,7 @@ var ItemSetAhnKaharBloodHuntersBattlegear = core.NewItemSet(core.ItemSet{
 					aura.Activate(sim)
 				},
 				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-					if spell == hunter.AutoAttacks.RangedAuto && sim.RandomFloat("AhnKahar 2pc") < procChance {
+					if spell == hunter.AutoAttacks.RangedAuto() && sim.RandomFloat("AhnKahar 2pc") < procChance {
 						procAura.Activate(sim)
 					}
 				},

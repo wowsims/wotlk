@@ -42,7 +42,7 @@ func (x *rotation_combat) setup(_ *core.Simulation, rogue *Rogue) {
 			return 10 * rogue.EnergyTickMultiplier
 		}
 
-		spell := rogue.AutoAttacks.OHAuto
+		spell := rogue.AutoAttacks.OHAuto()
 		at := rogue.AttackTables[rogue.CurrentTarget.UnitIndex]
 
 		landChance := 1.0
