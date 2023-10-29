@@ -624,16 +624,15 @@ func (character *Character) doneIteration(sim *Simulation) {
 }
 
 func (character *Character) GetPseudoStatsProto() []float64 {
-	vals := make([]float64, stats.PseudoStatsLen)
-	vals[proto.PseudoStat_PseudoStatMainHandDps] = character.AutoAttacks.MH().DPS()
-	vals[proto.PseudoStat_PseudoStatOffHandDps] = character.AutoAttacks.OH().DPS()
-	vals[proto.PseudoStat_PseudoStatRangedDps] = character.AutoAttacks.Ranged().DPS()
-	vals[proto.PseudoStat_PseudoStatBlockValueMultiplier] = character.PseudoStats.BlockValueMultiplier
-	// Base values are modified by Enemy attackTables, but we display for LVL 80 enemy as paperdoll default
-	vals[proto.PseudoStat_PseudoStatDodge] = character.PseudoStats.BaseDodge + character.GetDiminishedDodgeChance()
-	vals[proto.PseudoStat_PseudoStatParry] = character.PseudoStats.BaseParry + character.GetDiminishedParryChance()
-	//vals[proto.PseudoStat_PseudoStatMiss] = 0.05 + character.GetDiminishedMissChance() + character.PseudoStats.ReducedPhysicalHitTakenChance
-	return vals
+	return []float64{
+		proto.PseudoStat_PseudoStatMainHandDps:          character.AutoAttacks.MH().DPS(),
+		proto.PseudoStat_PseudoStatOffHandDps:           character.AutoAttacks.OH().DPS(),
+		proto.PseudoStat_PseudoStatRangedDps:            character.AutoAttacks.Ranged().DPS(),
+		proto.PseudoStat_PseudoStatBlockValueMultiplier: character.PseudoStats.BlockValueMultiplier,
+		// Base values are modified by Enemy attackTables, but we display for LVL 80 enemy as paperdoll default
+		proto.PseudoStat_PseudoStatDodge: character.PseudoStats.BaseDodge + character.GetDiminishedDodgeChance(),
+		proto.PseudoStat_PseudoStatParry: character.PseudoStats.BaseParry + character.GetDiminishedParryChance(),
+	}
 }
 
 func (character *Character) GetMetricsProto() *proto.UnitMetrics {

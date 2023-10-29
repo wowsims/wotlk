@@ -208,8 +208,6 @@ func (swap *ItemSwap) swapWeapon(slot proto.ItemSlot) {
 			character.AutoAttacks.SetRanged(character.WeaponFromRanged(swap.rangedCritMultiplier))
 		}
 	}
-
-	character.AutoAttacks.isDualWielding = character.MainHand().SwingSpeed != 0 && character.OffHand().SwingSpeed != 0
 }
 
 func (swap *ItemSwap) finalize() {

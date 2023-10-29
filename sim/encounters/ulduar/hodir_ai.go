@@ -337,12 +337,12 @@ func (ai *HodirAI) registerFrozenBlowSpell(target *core.Target) {
 	})
 
 	// Replace MH Hit when under Frozen Blows buff
-	ai.Target.Unit.AutoAttacks.ReplaceMHSwing = func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
+	ai.Target.Unit.AutoAttacks.SetReplaceMHSwing(func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
 		if ai.FrozenBlowsAura.IsActive() {
 			return ai.FrozenBlowsAuto
 		}
 		return mhSwingSpell
-	}
+	})
 
 	ai.FrozenBlowsAuto = target.GetOrRegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: core.TernaryInt32(ai.raidSize == 25, 63511, 62867)}.WithTag(1),

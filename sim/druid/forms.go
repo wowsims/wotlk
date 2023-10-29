@@ -149,7 +149,7 @@ func (druid *Druid) registerCatFormSpell() {
 			}
 
 			if !druid.Env.MeasuringStats {
-				druid.AutoAttacks.ReplaceMHSwing = nil
+				druid.AutoAttacks.SetReplaceMHSwing(nil)
 				druid.AutoAttacks.EnableAutoSwing(sim)
 				druid.manageCooldownsEnabled()
 				druid.UpdateManaRegenRates()
@@ -181,7 +181,7 @@ func (druid *Druid) registerCatFormSpell() {
 			}
 
 			if !druid.Env.MeasuringStats {
-				druid.AutoAttacks.ReplaceMHSwing = nil
+				druid.AutoAttacks.SetReplaceMHSwing(nil)
 				druid.AutoAttacks.EnableAutoSwing(sim)
 				druid.manageCooldownsEnabled()
 				druid.UpdateManaRegenRates()
@@ -292,7 +292,7 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.GainHealth(sim, healthFrac*druid.MaxHealth()-druid.CurrentHealth(), healthMetrics)
 
 			if !druid.Env.MeasuringStats {
-				druid.AutoAttacks.ReplaceMHSwing = druid.ReplaceBearMHFunc
+				druid.AutoAttacks.SetReplaceMHSwing(druid.ReplaceBearMHFunc)
 				druid.AutoAttacks.EnableAutoSwing(sim)
 
 				druid.manageCooldownsEnabled()
@@ -324,7 +324,7 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.RemoveHealth(sim, druid.CurrentHealth()-healthFrac*druid.MaxHealth())
 
 			if !druid.Env.MeasuringStats {
-				druid.AutoAttacks.ReplaceMHSwing = nil
+				druid.AutoAttacks.SetReplaceMHSwing(nil)
 				druid.AutoAttacks.EnableAutoSwing(sim)
 
 				druid.manageCooldownsEnabled()
