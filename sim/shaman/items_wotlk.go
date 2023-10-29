@@ -64,22 +64,10 @@ var ItemSetFrostWitchRegalia = core.NewItemSet(core.ItemSet{
 						// Find the number of ticks whose duration is closest to 6s.
 						// "our testing confirms that the 4pc t10 setbonus adds to FS the closest number of ticks to 6 seconds always"
 						// https://web.archive.org/web/20100808192139/http://elitistjerks.com/f79/t76510-elemental_patch_3_3_now_more_fire_nova/p25/
-						numTicks := 2
-						period := fsDot.TickPeriod()
-						sixSeconds := time.Second * 6
-
-						for i := 3; i <= 10; i++ {
-							finishesAtCur := time.Duration(numTicks) * period
-							finishesAtNew := time.Duration(i) * period
-
-							if math.Abs(float64(sixSeconds-finishesAtNew)) <= math.Abs(float64(sixSeconds-finishesAtCur)) {
-								numTicks = i
-							} else {
-								break
-							}
-						}
-						fsDot.Duration = fsDot.RemainingDuration(sim) + time.Duration(numTicks)*period
-						fsDot.Refresh(sim)
+						fsDot.RecomputeAuraDuration()
+						tickPeriod := fsDot.TickPeriod()
+						numTicks := int32(math.Round(float64(time.Second) * 6 / float64(tickPeriod)))
+						fsDot.RescheduleNextTickAndExtend(sim, numTicks)
 					}
 				},
 			})
