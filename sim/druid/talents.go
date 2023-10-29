@@ -386,9 +386,6 @@ func (druid *Druid) applyOmenOfClarity() {
 
 	hasOocGlyph := druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfOmenOfClarity)
 
-	// Based on ingame testing by druid discord, subject to change or incorrectness
-	chanceToProcGotW := 1.0 - math.Pow(1.0-0.0875, float64(druid.RaidBuffTargets))
-
 	druid.RegisterAura(core.Aura{
 		Label:    "Omen of Clarity",
 		Duration: core.NeverExpires,
@@ -441,11 +438,6 @@ func (druid *Druid) applyOmenOfClarity() {
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 			if druid.FaerieFire.IsEqual(spell) && druid.InForm(Cat|Bear) && hasOocGlyph {
 				druid.ProcOoc(sim)
-			}
-			if druid.GiftOfTheWild.IsEqual(spell) {
-				if sim.RandomFloat("Clearcasting") < chanceToProcGotW {
-					druid.ProcOoc(sim)
-				}
 			}
 		},
 	})

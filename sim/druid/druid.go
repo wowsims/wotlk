@@ -27,7 +27,6 @@ type Druid struct {
 	RebirthTiming     float64
 	BleedsActive      int
 	AssumeBleedActive bool
-	RaidBuffTargets   int
 	PrePopBerserk     bool
 
 	ReplaceBearMHFunc core.ReplaceMHSwing
@@ -206,11 +205,6 @@ func (druid *Druid) Initialize() {
 	druid.registerRebirthSpell()
 	druid.registerInnervateCD()
 	druid.registerFakeGotw()
-
-	if druid.RaidBuffTargets == 0 {
-		// 17 is an arbitrary compromise between 10 and 25, plus pets
-		druid.RaidBuffTargets = max(17, len(druid.Env.Raid.AllUnits))
-	}
 }
 
 func (druid *Druid) RegisterBalanceSpells() {
