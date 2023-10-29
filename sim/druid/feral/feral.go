@@ -42,10 +42,6 @@ func NewFeralDruid(character *core.Character, options *proto.Player) *FeralDruid
 	cat.AssumeBleedActive = feralOptions.Options.AssumeBleedActive
 	cat.maxRipTicks = cat.MaxRipTicks()
 	cat.prepopOoc = feralOptions.Rotation.PrePopOoc
-	cat.RaidBuffTargets = int(feralOptions.Rotation.RaidTargets)
-	if !feralOptions.Rotation.ManualParams {
-		cat.RaidBuffTargets = 30
-	}
 	cat.PrePopBerserk = feralOptions.Rotation.PrePopBerserk
 	cat.setupRotation(feralOptions.Rotation)
 

@@ -1044,15 +1044,15 @@ dps_results: {
 dps_results: {
  key: "TestFeral-Settings-Tauren-p1-Flower-Aoe--FullBuffs-LongMultiTarget"
  value: {
-  dps: 22998.29379
-  tps: 16645.12872
+  dps: 22991.33879
+  tps: 16642.6613
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-p1-Flower-Aoe--FullBuffs-LongSingleTarget"
  value: {
-  dps: 4752.57417
-  tps: 3452.55097
+  dps: 4747.33047
+  tps: 3448.80558
  }
 }
 dps_results: {
@@ -1065,15 +1065,15 @@ dps_results: {
 dps_results: {
  key: "TestFeral-Settings-Tauren-p1-Flower-Aoe--NoBuffs-LongMultiTarget"
  value: {
-  dps: 14726.51057
-  tps: 10871.88145
+  dps: 14733.47866
+  tps: 10879.36617
  }
 }
 dps_results: {
  key: "TestFeral-Settings-Tauren-p1-Flower-Aoe--NoBuffs-LongSingleTarget"
  value: {
-  dps: 2581.1908
-  tps: 1913.92756
+  dps: 2572.3973
+  tps: 1908.02844
  }
 }
 dps_results: {
