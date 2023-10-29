@@ -191,9 +191,6 @@ func (swap *ItemSwap) getItemStats(item Item) stats.Stats {
 
 func (swap *ItemSwap) swapWeapon(slot proto.ItemSlot) {
 	character := swap.character
-	if !character.AutoAttacks.AutoSwingMelee() && !character.AutoAttacks.AutoSwingRanged() {
-		return
-	}
 
 	switch slot {
 	case proto.ItemSlot_ItemSlotMainHand:
