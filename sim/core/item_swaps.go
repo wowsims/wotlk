@@ -191,19 +191,22 @@ func (swap *ItemSwap) getItemStats(item Item) stats.Stats {
 
 func (swap *ItemSwap) swapWeapon(slot proto.ItemSlot) {
 	character := swap.character
-	if !character.AutoAttacks.AutoSwingMelee() && !character.AutoAttacks.AutoSwingRanged() {
-		return
-	}
 
 	switch slot {
 	case proto.ItemSlot_ItemSlotMainHand:
-		character.AutoAttacks.SetMH(character.WeaponFromMainHand(swap.mhCritMultiplier))
+		if character.AutoAttacks.AutoSwingMelee() {
+			character.AutoAttacks.SetMH(character.WeaponFromMainHand(swap.mhCritMultiplier))
+		}
 	case proto.ItemSlot_ItemSlotOffHand:
-		character.AutoAttacks.SetOH(character.WeaponFromOffHand(swap.ohCritMultiplier))
-		//Special case for when the OHAuto Spell was set up with a non weapon and does not have a crit multiplier.
-		character.PseudoStats.CanBlock = character.OffHand().WeaponType == proto.WeaponType_WeaponTypeShield
+		if character.AutoAttacks.AutoSwingMelee() {
+			character.AutoAttacks.SetOH(character.WeaponFromOffHand(swap.ohCritMultiplier))
+			//Special case for when the OHAuto Spell was set up with a non weapon and does not have a crit multiplier.
+			character.PseudoStats.CanBlock = character.OffHand().WeaponType == proto.WeaponType_WeaponTypeShield
+		}
 	case proto.ItemSlot_ItemSlotRanged:
-		character.AutoAttacks.SetRanged(character.WeaponFromRanged(swap.rangedCritMultiplier))
+		if character.AutoAttacks.AutoSwingRanged() {
+			character.AutoAttacks.SetRanged(character.WeaponFromRanged(swap.rangedCritMultiplier))
+		}
 	}
 
 	character.AutoAttacks.isDualWielding = character.MainHand().SwingSpeed != 0 && character.OffHand().SwingSpeed != 0
