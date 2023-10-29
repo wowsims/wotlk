@@ -75,7 +75,7 @@ func (shaman *Shaman) registerFireElementalTotem() {
 		Type:  core.CooldownTypeUnknown,
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 			success := false
-			if enhTier10Aura != nil && shaman.Totems.EnhTierTenBonus {
+			if enhTier10Aura != nil && shaman.Totems.EnhTierTenBonus && shaman.fireElementalSnapShot != nil {
 				if enhTier10Aura.IsActive() {
 					success = shaman.fireElementalSnapShot.CanSnapShot(sim, castWindow)
 				} else if sim.CurrentTime+fireTotemDuration > sim.Encounter.Duration {
