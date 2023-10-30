@@ -111,6 +111,19 @@ func (dot *Dot) Rollover(sim *Simulation) {
 	sim.AddPendingAction(dot.tickAction)
 }
 
+func (dot *Dot) RescheduleNextTick(sim *Simulation) {
+	dot.RecomputeAuraDuration()
+
+	dot.tickAction.Cancel(sim) // remove old PA ticker
+
+	// recreate with new period, resetting the next tick.
+	periodicOptions := dot.basePeriodicOptions()
+	periodicOptions.Period = dot.tickPeriod
+	dot.tickAction = NewPeriodicAction(sim, periodicOptions)
+	dot.tickAction.NextActionAt = dot.lastTickTime + dot.tickPeriod
+	sim.AddPendingAction(dot.tickAction)
+}
+
 func (dot *Dot) Apply(sim *Simulation) {
 	dot.TakeSnapshot(sim, false)
 

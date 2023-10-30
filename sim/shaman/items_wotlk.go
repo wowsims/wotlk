@@ -58,28 +58,22 @@ var ItemSetFrostWitchRegalia = core.NewItemSet(core.ItemSet{
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
-				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-					fsDot := shaman.FlameShock.Dot(result.Target)
+				OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+					fsDot := shaman.FlameShock.Dot(shaman.CurrentTarget)
 					if spell == shaman.LavaBurst && fsDot.IsActive() { // Doesn't have to hit from tooltip
+						// 4p t10 immediately updates the tickPeriod based on current haste
+						fsDot.RescheduleNextTick(sim)
+
 						// Find the number of ticks whose duration is closest to 6s.
 						// "our testing confirms that the 4pc t10 setbonus adds to FS the closest number of ticks to 6 seconds always"
 						// https://web.archive.org/web/20100808192139/http://elitistjerks.com/f79/t76510-elemental_patch_3_3_now_more_fire_nova/p25/
-						numTicks := 2
-						period := fsDot.TickPeriod()
-						sixSeconds := time.Second * 6
+						tickPeriod := fsDot.TickPeriod()
+						numTicks := int32(math.Round(float64(time.Second) * 6 / float64(tickPeriod)))
+						fsDot.NumberOfTicks += numTicks
 
-						for i := 3; i <= 10; i++ {
-							finishesAtCur := time.Duration(numTicks) * period
-							finishesAtNew := time.Duration(i) * period
-
-							if math.Abs(float64(sixSeconds-finishesAtNew)) <= math.Abs(float64(sixSeconds-finishesAtCur)) {
-								numTicks = i
-							} else {
-								break
-							}
-						}
-						fsDot.Duration = fsDot.RemainingDuration(sim) + time.Duration(numTicks)*period
-						fsDot.Refresh(sim)
+						// Set duration to remaining ticks, minus the elapsed time since last tick
+						fsDot.Aura.Duration = time.Duration(fsDot.MaxTicksRemaining())*tickPeriod - (tickPeriod - (fsDot.NextTickAt() - sim.CurrentTime))
+						fsDot.Aura.Refresh(sim) // update aura's duration
 					}
 				},
 			})

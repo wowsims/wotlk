@@ -65,10 +65,12 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 	config.CritMultiplier = shaman.ElementalCritMultiplier(core.TernaryFloat64(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfFlameShock), 0.6, 0))
 	config.DamageMultiplier += 0.1 * float64(shaman.Talents.BoomingEchoes)
 
+	flameShockBaseNumberOfTicks := 6 + core.TernaryInt32(shaman.HasSetBonus(ItemSetThrallsRegalia, 2), 3, 0)
 	config.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 		baseDamage := 500 + 0.214*spell.SpellPower()
 		result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 		if result.Landed() {
+			spell.Dot(target).NumberOfTicks = flameShockBaseNumberOfTicks
 			spell.Dot(target).Apply(sim)
 		}
 		spell.DealDamage(sim, result)
@@ -89,7 +91,7 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 				shaman.LavaBurst.BonusCritRating -= 100 * core.CritRatingPerCritChance
 			},
 		},
-		NumberOfTicks:       6 + core.TernaryInt32(shaman.HasSetBonus(ItemSetThrallsRegalia, 2), 3, 0),
+		NumberOfTicks:       flameShockBaseNumberOfTicks,
 		TickLength:          time.Second * 3,
 		AffectedByCastSpeed: true,
 
