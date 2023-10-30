@@ -58,8 +58,8 @@ var ItemSetFrostWitchRegalia = core.NewItemSet(core.ItemSet{
 				OnReset: func(aura *core.Aura, sim *core.Simulation) {
 					aura.Activate(sim)
 				},
-				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-					fsDot := shaman.FlameShock.Dot(result.Target)
+				OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+					fsDot := shaman.FlameShock.Dot(shaman.CurrentTarget)
 					if spell == shaman.LavaBurst && fsDot.IsActive() { // Doesn't have to hit from tooltip
 						// Find the number of ticks whose duration is closest to 6s.
 						// "our testing confirms that the 4pc t10 setbonus adds to FS the closest number of ticks to 6 seconds always"
