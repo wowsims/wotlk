@@ -111,11 +111,8 @@ func (dot *Dot) Rollover(sim *Simulation) {
 	sim.AddPendingAction(dot.tickAction)
 }
 
-func (dot *Dot) RescheduleNextTickAndExtend(sim *Simulation, numTicks int32) {
-	dot.NumberOfTicks += numTicks
-	// Set duration to remaining ticks, minus the elapsed time since last tick
-	dot.Aura.Duration = time.Duration(dot.MaxTicksRemaining())*dot.tickPeriod - sim.CurrentTime + dot.lastTickTime
-	dot.Aura.Refresh(sim) // update aura's duration
+func (dot *Dot) RescheduleNextTick(sim *Simulation) {
+	dot.RecomputeAuraDuration()
 
 	dot.tickAction.Cancel(sim) // remove old PA ticker
 
