@@ -412,7 +412,8 @@ func (druid *Druid) applyOmenOfClarity() {
 				// Heavily based on comment here
 				// https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1182017571
 				// Instants are treated as 1.5
-				castTime := spell.DefaultCast.CastTime.Seconds()
+				// Uses current cast time rather than default cast time (PPM is constant with haste)
+				castTime := spell.CurCast.CastTime.Seconds()
 				if castTime == 0 {
 					castTime = 1.5
 				}
