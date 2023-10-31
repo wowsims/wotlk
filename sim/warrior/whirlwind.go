@@ -12,7 +12,7 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 	numHits := min(4, warrior.Env.GetNumTargets())
 	results := make([]*core.SpellResult, numHits)
 
-	if warrior.AutoAttacks.IsDualWielding() && warrior.GetOHWeapon().WeaponType != proto.WeaponType_WeaponTypeStaff &&
+	if warrior.AutoAttacks.IsDualWielding && warrior.GetOHWeapon().WeaponType != proto.WeaponType_WeaponTypeStaff &&
 		warrior.GetOHWeapon().WeaponType != proto.WeaponType_WeaponTypePolearm {
 		warrior.WhirlwindOH = warrior.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID.WithTag(1),

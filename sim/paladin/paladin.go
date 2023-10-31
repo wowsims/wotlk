@@ -125,7 +125,7 @@ func (paladin *Paladin) AddPartyBuffs(_ *proto.PartyBuffs) {
 
 func (paladin *Paladin) Initialize() {
 	// Update auto crit multipliers now that we have the targets.
-	paladin.AutoAttacks.MHConfig.CritMultiplier = paladin.MeleeCritMultiplier()
+	paladin.AutoAttacks.MHConfig().CritMultiplier = paladin.MeleeCritMultiplier()
 
 	paladin.registerSealOfVengeanceSpellAndAura()
 	paladin.registerSealOfRighteousnessSpellAndAura()

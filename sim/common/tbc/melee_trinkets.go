@@ -25,7 +25,7 @@ func init() {
 
 	core.NewItemEffect(11815, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		if !character.AutoAttacks.AutoSwingMelee() {
+		if !character.AutoAttacks.AutoSwingMelee {
 			return
 		}
 
@@ -40,7 +40,7 @@ func init() {
 			Label:    "Hand of Justice",
 			Duration: core.NeverExpires,
 			OnInit: func(aura *core.Aura, sim *core.Simulation) {
-				config := character.AutoAttacks.MHConfig
+				config := *character.AutoAttacks.MHConfig()
 				config.ActionID = core.ActionID{ItemID: 11815}
 				handOfJusticeSpell = character.GetOrRegisterSpell(config)
 			},

@@ -478,11 +478,15 @@ func (at *auraTracker) reset(sim *Simulation) {
 	}
 }
 
-func (at *auraTracker) advance(sim *Simulation) time.Duration {
+// inlineable stub for advance
+func (at *auraTracker) tryAdvance(sim *Simulation) time.Duration {
 	if sim.CurrentTime < at.minExpires {
 		return at.minExpires
 	}
+	return at.advance(sim)
+}
 
+func (at *auraTracker) advance(sim *Simulation) time.Duration {
 restart:
 	at.minExpires = NeverExpires
 	for _, aura := range at.activeAuras {

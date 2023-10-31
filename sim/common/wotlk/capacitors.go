@@ -172,7 +172,7 @@ func init() {
 
 		core.NewItemEffect(itemID, func(agent core.Agent) {
 			character := agent.GetCharacter()
-			if !character.AutoAttacks.AutoSwingMelee() {
+			if !character.AutoAttacks.AutoSwingMelee {
 				return
 			}
 
@@ -184,24 +184,24 @@ func init() {
 					SpellSchool:      core.SpellSchoolPhysical,
 					ProcMask:         core.ProcMaskMeleeMHSpecial,
 					Flags:            core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete,
-					DamageMultiplier: character.AutoAttacks.MHConfig.DamageMultiplier * 0.5,
-					CritMultiplier:   character.AutoAttacks.MHConfig.CritMultiplier,
-					ThreatMultiplier: character.AutoAttacks.MHConfig.ThreatMultiplier,
+					DamageMultiplier: character.AutoAttacks.MHConfig().DamageMultiplier * 0.5,
+					CritMultiplier:   character.AutoAttacks.MHConfig().CritMultiplier,
+					ThreatMultiplier: character.AutoAttacks.MHConfig().ThreatMultiplier,
 					ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 						baseDamage := character.MHWeaponDamage(sim, spell.MeleeAttackPower())
 						spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 					},
 				})
 
-				if character.AutoAttacks.IsDualWielding() {
+				if character.AutoAttacks.IsDualWielding {
 					ohSpell = character.GetOrRegisterSpell(core.SpellConfig{
 						ActionID:         core.ActionID{SpellID: 71434}, // "Manifest Anger"
 						SpellSchool:      core.SpellSchoolPhysical,
 						ProcMask:         core.ProcMaskMeleeOHSpecial,
 						Flags:            core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete,
-						DamageMultiplier: character.AutoAttacks.OHConfig.DamageMultiplier * 0.5,
-						CritMultiplier:   character.AutoAttacks.OHConfig.CritMultiplier,
-						ThreatMultiplier: character.AutoAttacks.OHConfig.ThreatMultiplier,
+						DamageMultiplier: character.AutoAttacks.OHConfig().DamageMultiplier * 0.5,
+						CritMultiplier:   character.AutoAttacks.OHConfig().CritMultiplier,
+						ThreatMultiplier: character.AutoAttacks.OHConfig().ThreatMultiplier,
 						ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 							baseDamage := character.OHWeaponDamage(sim, spell.MeleeAttackPower())
 							spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)

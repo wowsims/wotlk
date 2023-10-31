@@ -378,7 +378,7 @@ func (spell *Spell) fixedCritCheck(sim *Simulation, critChance float64) bool {
 
 func (result *SpellResult) applyAttackTableMiss(spell *Spell, attackTable *AttackTable, roll float64, chance *float64) bool {
 	missChance := attackTable.BaseMissChance - spell.PhysicalHitChance(attackTable)
-	if spell.Unit.AutoAttacks.IsDualWielding() && !spell.Unit.PseudoStats.DisableDWMissPenalty {
+	if spell.Unit.AutoAttacks.IsDualWielding && !spell.Unit.PseudoStats.DisableDWMissPenalty {
 		missChance += 0.19
 	}
 	*chance = max(0, missChance)
@@ -505,7 +505,7 @@ func (result *SpellResult) applyAttackTableHit(spell *Spell) {
 
 func (result *SpellResult) applyEnemyAttackTableMiss(spell *Spell, attackTable *AttackTable, roll float64, chance *float64) bool {
 	missChance := attackTable.BaseMissChance + spell.Unit.PseudoStats.IncreasedMissChance + result.Target.GetDiminishedMissChance() + result.Target.PseudoStats.ReducedPhysicalHitTakenChance
-	if spell.Unit.AutoAttacks.IsDualWielding() && !spell.Unit.PseudoStats.DisableDWMissPenalty {
+	if spell.Unit.AutoAttacks.IsDualWielding && !spell.Unit.PseudoStats.DisableDWMissPenalty {
 		missChance += 0.19
 	}
 	*chance = max(0, missChance)

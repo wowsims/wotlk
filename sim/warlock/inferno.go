@@ -129,7 +129,7 @@ func (warlock *Warlock) NewInfernal() *InfernalPet {
 		},
 		AutoSwingMelee: true,
 	})
-	infernal.AutoAttacks.MHConfig.DamageMultiplier *= 3.2
+	infernal.AutoAttacks.MHConfig().DamageMultiplier *= 3.2
 
 	core.ApplyPetConsumeEffects(&infernal.Character, warlock.Consumes)
 
