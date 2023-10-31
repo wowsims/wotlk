@@ -589,8 +589,8 @@ dps_results: {
 dps_results: {
  key: "TestBlood-AllItems-Scourgelord'sBattlegear"
  value: {
-  dps: 10625.29982
-  tps: 5436.49585
+  dps: 10625.9448
+  tps: 5436.88283
  }
 }
 dps_results: {

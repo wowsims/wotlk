@@ -218,6 +218,11 @@ func (dk *Deathknight) registerScourgelordsBattlegearProc() {
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.DamageDealtMultiplier /= bonusCoeff
 		},
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if spell.DefaultCast.GCD > 0 && dk.AllRunesSpent() {
+				aura.Refresh(sim)
+			}
+		},
 	})
 
 	dk.onRuneSpendT10 = func(sim *core.Simulation, changeType core.RuneChangeType) {
