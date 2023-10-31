@@ -300,7 +300,10 @@ export const raidSimLabel: string = 'Full Raid Sim';
 // Converts '1231321-12313123-0' to [40, 21, 0].
 export function getTalentTreePoints(talentsString: string): Array<number> {
 	const trees = talentsString.split('-');
-	return trees.map(tree => sum([...tree].map(char => parseInt(char))));
+	if (trees.length == 2)  {
+		trees.push('0')
+	}
+	return trees.map(tree => sum([...tree].map(char => parseInt(char) || 0)));
 }
 
 export function getTalentPoints(talentsString: string): number {
