@@ -160,25 +160,25 @@ func (enh *EnhancementShaman) ApplySyncType(syncType proto.ShamanSyncType) {
 
 	switch syncType {
 	case proto.ShamanSyncType_SyncMainhandOffhandSwings:
-		enh.AutoAttacks.ReplaceMHSwing = func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
+		enh.AutoAttacks.SetReplaceMHSwing(func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
 			if aa := &enh.AutoAttacks; aa.OffhandSwingAt()-sim.CurrentTime > FlurryICD {
 				if nextMHSwingAt := sim.CurrentTime + aa.MainhandSwingSpeed(); nextMHSwingAt > aa.OffhandSwingAt() {
 					aa.SetOffhandSwingAt(nextMHSwingAt)
 				}
 			}
 			return mhSwingSpell
-		}
+		})
 	case proto.ShamanSyncType_DelayOffhandSwings:
-		enh.AutoAttacks.ReplaceMHSwing = func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
+		enh.AutoAttacks.SetReplaceMHSwing(func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
 			if aa := &enh.AutoAttacks; aa.OffhandSwingAt()-sim.CurrentTime > FlurryICD {
 				if nextMHSwingAt := sim.CurrentTime + aa.MainhandSwingSpeed() + 100*time.Millisecond; nextMHSwingAt > aa.OffhandSwingAt() {
 					aa.SetOffhandSwingAt(nextMHSwingAt)
 				}
 			}
 			return mhSwingSpell
-		}
+		})
 	default:
-		enh.AutoAttacks.ReplaceMHSwing = nil
+		enh.AutoAttacks.SetReplaceMHSwing(nil)
 	}
 }
 

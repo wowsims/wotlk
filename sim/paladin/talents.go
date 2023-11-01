@@ -187,7 +187,7 @@ func (paladin *Paladin) applyReckoning() {
 		Duration:  time.Second * 8,
 		MaxStacks: 4,
 		OnInit: func(aura *core.Aura, sim *core.Simulation) {
-			config := paladin.AutoAttacks.MHConfig
+			config := *paladin.AutoAttacks.MHConfig()
 			config.ActionID = actionID
 			reckoningSpell = paladin.GetOrRegisterSpell(config)
 		},

@@ -19,7 +19,7 @@ func (rogue *Rogue) registerHackAndSlash(mask core.ProcMask) {
 		Label:    "Hack and Slash",
 		Duration: core.NeverExpires,
 		OnInit: func(aura *core.Aura, sim *core.Simulation) {
-			config := rogue.AutoAttacks.MHConfig
+			config := *rogue.AutoAttacks.MHConfig()
 			config.ActionID = core.ActionID{SpellID: 13964}
 			hackAndSlashSpell = rogue.GetOrRegisterSpell(config)
 		},

@@ -142,9 +142,8 @@ func (swap *ItemSwap) SwapItems(sim *Simulation, slots []proto.ItemSlot, useGCD 
 		onSwap(sim)
 	}
 
-	if character.AutoAttacks.AutoSwingMelee() && meleeWeaponSwapped && sim.CurrentTime > 0 {
-		character.AutoAttacks.CancelAutoSwing(sim)
-		character.AutoAttacks.restartMelee(sim, false)
+	if character.AutoAttacks.AutoSwingMelee && meleeWeaponSwapped && sim.CurrentTime > 0 {
+		character.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime, false)
 	}
 
 	if useGCD {
@@ -194,22 +193,20 @@ func (swap *ItemSwap) swapWeapon(slot proto.ItemSlot) {
 
 	switch slot {
 	case proto.ItemSlot_ItemSlotMainHand:
-		if character.AutoAttacks.AutoSwingMelee() {
+		if character.AutoAttacks.AutoSwingMelee {
 			character.AutoAttacks.SetMH(character.WeaponFromMainHand(swap.mhCritMultiplier))
 		}
 	case proto.ItemSlot_ItemSlotOffHand:
-		if character.AutoAttacks.AutoSwingMelee() {
+		if character.AutoAttacks.AutoSwingMelee {
 			character.AutoAttacks.SetOH(character.WeaponFromOffHand(swap.ohCritMultiplier))
 			//Special case for when the OHAuto Spell was set up with a non weapon and does not have a crit multiplier.
 			character.PseudoStats.CanBlock = character.OffHand().WeaponType == proto.WeaponType_WeaponTypeShield
 		}
 	case proto.ItemSlot_ItemSlotRanged:
-		if character.AutoAttacks.AutoSwingRanged() {
+		if character.AutoAttacks.AutoSwingRanged {
 			character.AutoAttacks.SetRanged(character.WeaponFromRanged(swap.rangedCritMultiplier))
 		}
 	}
-
-	character.AutoAttacks.isDualWielding = character.MainHand().SwingSpeed != 0 && character.OffHand().SwingSpeed != 0
 }
 
 func (swap *ItemSwap) finalize() {

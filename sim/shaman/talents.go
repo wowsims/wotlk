@@ -47,8 +47,8 @@ func (shaman *Shaman) ApplyTalents() {
 
 	if shaman.Talents.SpiritWeapons {
 		shaman.PseudoStats.CanParry = true
-		shaman.AutoAttacks.MHConfig.ThreatMultiplier *= 0.7 // TODO this looks fishy
-		shaman.AutoAttacks.OHConfig.ThreatMultiplier *= 0.7
+		shaman.AutoAttacks.MHConfig().ThreatMultiplier *= 0.7 // TODO this looks fishy
+		shaman.AutoAttacks.OHConfig().ThreatMultiplier *= 0.7
 	}
 
 	shaman.applyElementalFocus()

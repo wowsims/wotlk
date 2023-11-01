@@ -19,7 +19,7 @@ func (warrior *Warrior) ApplyTalents() {
 	warrior.PseudoStats.BaseDodge += 0.01 * float64(warrior.Talents.Anticipation)
 	warrior.PseudoStats.BaseParry += 0.01 * float64(warrior.Talents.Deflection)
 	warrior.PseudoStats.DodgeReduction += 0.01 * float64(warrior.Talents.WeaponMastery)
-	warrior.AutoAttacks.OHConfig.DamageMultiplier *= 1 + 0.05*float64(warrior.Talents.DualWieldSpecialization)
+	warrior.AutoAttacks.OHConfig().DamageMultiplier *= 1 + 0.05*float64(warrior.Talents.DualWieldSpecialization)
 
 	if warrior.Talents.ArmoredToTheTeeth > 0 {
 		coeff := float64(warrior.Talents.ArmoredToTheTeeth)
@@ -353,7 +353,7 @@ func (warrior *Warrior) applyTitansGrip() {
 	if !warrior.Talents.TitansGrip {
 		return
 	}
-	if !warrior.AutoAttacks.IsDualWielding() {
+	if !warrior.AutoAttacks.IsDualWielding {
 		return
 	}
 	if warrior.MainHand().HandType != proto.HandType_HandTypeTwoHand && warrior.OffHand().HandType != proto.HandType_HandTypeTwoHand {
@@ -432,7 +432,7 @@ func (warrior *Warrior) registerSwordSpecialization(procMask core.ProcMask) {
 		Label:    "Sword Specialization",
 		Duration: core.NeverExpires,
 		OnInit: func(aura *core.Aura, sim *core.Simulation) {
-			config := warrior.AutoAttacks.MHConfig
+			config := *warrior.AutoAttacks.MHConfig()
 			config.ActionID = core.ActionID{SpellID: 12281}
 			swordSpecializationSpell = warrior.GetOrRegisterSpell(config)
 		},
@@ -788,7 +788,7 @@ func (warrior *Warrior) RegisterBladestormCD() {
 	numHits := min(4, warrior.Env.GetNumTargets())
 	results := make([]*core.SpellResult, numHits)
 
-	if warrior.AutoAttacks.IsDualWielding() {
+	if warrior.AutoAttacks.IsDualWielding {
 		warrior.BladestormOH = warrior.RegisterSpell(core.SpellConfig{
 			ActionID:    actionID,
 			SpellSchool: core.SpellSchoolPhysical,

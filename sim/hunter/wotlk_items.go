@@ -227,7 +227,7 @@ func init() {
 					Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete,
 
 					DamageMultiplier: 0.5,
-					CritMultiplier:   hunter.AutoAttacks.RangedConfig.CritMultiplier,
+					CritMultiplier:   hunter.AutoAttacks.RangedConfig().CritMultiplier,
 					ThreatMultiplier: 1,
 
 					ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
