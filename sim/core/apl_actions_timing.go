@@ -36,7 +36,7 @@ func (action *APLActionWait) IsReady(sim *Simulation) bool {
 }
 
 func (action *APLActionWait) Execute(sim *Simulation) {
-	action.unit.Rotation.controllingAction = action
+	action.unit.Rotation.pushControllingAction(action)
 	action.curWaitTime = sim.CurrentTime + action.duration.GetDuration(sim)
 
 	pa := &PendingAction{
@@ -49,7 +49,7 @@ func (action *APLActionWait) Execute(sim *Simulation) {
 
 func (action *APLActionWait) GetNextAction(sim *Simulation) *APLAction {
 	if sim.CurrentTime >= action.curWaitTime {
-		action.unit.Rotation.controllingAction = nil
+		action.unit.Rotation.popControllingAction(action)
 		return action.unit.Rotation.getNextAction(sim)
 	} else {
 		return nil
@@ -86,12 +86,12 @@ func (action *APLActionWaitUntil) IsReady(sim *Simulation) bool {
 }
 
 func (action *APLActionWaitUntil) Execute(sim *Simulation) {
-	action.unit.Rotation.controllingAction = action
+	action.unit.Rotation.pushControllingAction(action)
 }
 
 func (action *APLActionWaitUntil) GetNextAction(sim *Simulation) *APLAction {
 	if action.condition.GetBool(sim) {
-		action.unit.Rotation.controllingAction = nil
+		action.unit.Rotation.popControllingAction(action)
 		return action.unit.Rotation.getNextAction(sim)
 	} else {
 		return nil
