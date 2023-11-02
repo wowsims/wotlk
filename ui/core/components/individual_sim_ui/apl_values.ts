@@ -1017,7 +1017,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		label: 'Should Refresh Corruption',
 		submenu: ['Warlock'],
 		shortDescription: 'Returns <b>True</b> if the current Corruption has expired, or should be refreshed to get a better snapshot.',
-		newValue: APLValueWarlockShouldRecastDrainSoul.create,
+		newValue: APLValueWarlockShouldRefreshCorruption.create,
 		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassWarlock,
 		fields: [
 			AplHelpers.unitFieldConfig('targetUnit', 'targets'),
