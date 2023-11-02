@@ -353,7 +353,6 @@ export class CharacterStats extends Component {
 		return [
 			Spec.SpecDeathknight,
 			Spec.SpecEnhancementShaman,
-			Spec.SpecFeralDruid,
 			Spec.SpecRetributionPaladin,
 			Spec.SpecRogue,
 			Spec.SpecWarrior

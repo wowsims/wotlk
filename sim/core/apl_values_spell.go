@@ -227,3 +227,28 @@ func (value *APLValueSpellChanneledTicks) GetInt(_ *Simulation) int32 {
 func (value *APLValueSpellChanneledTicks) String() string {
 	return fmt.Sprintf("ChanneledTicks(%s)", value.spell.ActionID)
 }
+
+type APLValueSpellCurrentCost struct {
+	DefaultAPLValueImpl
+	spell *Spell
+}
+
+func (rot *APLRotation) newValueSpellCurrentCost(config *proto.APLValueSpellCurrentCost) APLValue {
+	spell := rot.GetAPLSpell(config.SpellId)
+	if spell == nil {
+		return nil
+	}
+	return &APLValueSpellCurrentCost{
+		spell: spell,
+	}
+}
+func (value *APLValueSpellCurrentCost) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeFloat
+}
+func (value *APLValueSpellCurrentCost) GetFloat(_ *Simulation) float64 {
+	spell := value.spell
+	return spell.ApplyCostModifiers(spell.DefaultCast.Cost)
+}
+func (value *APLValueSpellCurrentCost) String() string {
+	return fmt.Sprintf("CurrentCost(%s)", value.spell.ActionID)
+}

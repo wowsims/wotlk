@@ -11,6 +11,8 @@ func (cat *FeralDruid) NewAPLValue(rot *core.APLRotation, config *proto.APLValue
 	switch config.Value.(type) {
 	case *proto.APLValue_CatExcessEnergy:
 		return cat.newValueCatExcessEnergy(rot, config.GetCatExcessEnergy())
+	case *proto.APLValue_CatNewSavageRoarDuration:
+		return cat.newValueCatNewSavageRoarDuration(rot, config.GetCatNewSavageRoarDuration())
 	default:
 		return nil
 	}
@@ -66,4 +68,25 @@ func (value *APLValueCatExcessEnergy) GetFloat(sim *core.Simulation) float64 {
 }
 func (value *APLValueCatExcessEnergy) String() string {
 	return "Cat Excess Energy()"
+}
+
+type APLValueCatNewSavageRoarDuration struct {
+	core.DefaultAPLValueImpl
+	cat *FeralDruid
+}
+
+func (cat *FeralDruid) newValueCatNewSavageRoarDuration(rot *core.APLRotation, config *proto.APLValueCatNewSavageRoarDuration) core.APLValue {
+	return &APLValueCatNewSavageRoarDuration{
+		cat: cat,
+	}
+}
+func (value *APLValueCatNewSavageRoarDuration) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeDuration
+}
+func (value *APLValueCatNewSavageRoarDuration) GetDuration(sim *core.Simulation) time.Duration {
+	cat := value.cat
+	return cat.SavageRoarDurationTable[cat.ComboPoints()]
+}
+func (value *APLValueCatNewSavageRoarDuration) String() string {
+	return "New Savage Roar Duration()"
 }
