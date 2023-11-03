@@ -344,6 +344,9 @@ func (dk *Deathknight) Initialize() {
 	// allows us to use these auras in the APL pre-pull actions
 	wotlk.CreateBlackMagicProcAura(&dk.Character)
 	CreateVirulenceProcAura(&dk.Character)
+
+	// pre-pull greatness buff (note: ideally should trigger ICD)
+	dk.NewTemporaryStatsAura("DMC Greatness Strength Proc", core.ActionID{SpellID: 60229}, stats.Stats{stats.Strength: 300}, time.Second*15)
 }
 
 func (dk *Deathknight) registerMindFreeze() {
