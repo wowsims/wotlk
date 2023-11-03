@@ -582,8 +582,17 @@ func (rp *runicPowerBar) spendRuneCost(sim *Simulation, spell *Spell, cost RuneC
 	for i := int8(0); i < u; i++ {
 		slots = append(slots, rp.spendRune(sim, 4, spell.UnholyRuneMetrics()))
 	}
-	for i := int8(0); i < d; i++ {
-		slots = append(slots, rp.spendDeathRune(sim, spell.DeathRuneMetrics()))
+	if d > 0 {
+		defaultCost := RuneCost(spell.DefaultCast.Cost)
+		for i, mu := int8(0), defaultCost.Unholy()-u; i < mu; i++ {
+			slots = append(slots, rp.spendDeathRune(sim, []int8{4, 5, 2, 3, 0, 1}, spell.DeathRuneMetrics()))
+		}
+		for i, mf := int8(0), defaultCost.Frost()-f; i < mf; i++ {
+			slots = append(slots, rp.spendDeathRune(sim, []int8{2, 3, 4, 5, 0, 1}, spell.DeathRuneMetrics()))
+		}
+		for i, mb := int8(0), defaultCost.Blood()-b; i < mb; i++ {
+			slots = append(slots, rp.spendDeathRune(sim, []int8{0, 1, 4, 5, 2, 3}, spell.DeathRuneMetrics()))
+		}
 	}
 
 	if rpc := cost.RunicPower(); rpc > 0 {
@@ -748,8 +757,8 @@ func (rp *runicPowerBar) findReadyRune(slot int8) int8 {
 	panic(fmt.Sprintf("findReadyRune(%d) - no slot found (runeStates = %12b)", slot, rp.runeStates))
 }
 
-func (rp *runicPowerBar) spendDeathRune(sim *Simulation, metrics *ResourceMetrics) int8 {
-	slot := rp.findReadyDeathRune()
+func (rp *runicPowerBar) spendDeathRune(sim *Simulation, order []int8, metrics *ResourceMetrics) int8 {
+	slot := rp.findReadyDeathRune(order)
 	if rp.btSlot != slot {
 		rp.runeMeta[slot].revertAt = NeverExpires // disable revert at
 		rp.runeStates ^= isDeaths[slot]           // clear death bit to revert.
@@ -763,9 +772,9 @@ func (rp *runicPowerBar) spendDeathRune(sim *Simulation, metrics *ResourceMetric
 	return slot
 }
 
-// findReadyDeathRune returns the slot of first available death rune.
-func (rp *runicPowerBar) findReadyDeathRune() int8 {
-	for _, slot := range []int8{4, 5, 2, 3, 0, 1} { // Death runes are spent in the order Unholy -> Frost -> Blood in-game...
+// findReadyDeathRune returns the slot of first available death rune in the order given.
+func (rp *runicPowerBar) findReadyDeathRune(order []int8) int8 {
+	for _, slot := range order {
 		if rp.runeStates&isSpentDeath[slot] == isDeaths[slot] {
 			return slot
 		}
@@ -802,7 +811,7 @@ type RuneCostImpl struct {
 }
 
 func newRuneCost(spell *Spell, options RuneCostOptions) *RuneCostImpl {
-	baseCost := float64(NewRuneCost(int8(options.RunicPowerCost), options.BloodRuneCost, options.FrostRuneCost, options.UnholyRuneCost, 0))
+	baseCost := float64(NewRuneCost(int16(options.RunicPowerCost), options.BloodRuneCost, options.FrostRuneCost, options.UnholyRuneCost, 0))
 	spell.DefaultCast.Cost = baseCost
 	spell.CurCast.Cost = baseCost
 
@@ -844,7 +853,7 @@ func (rc *RuneCostImpl) MeetsRequirement(spell *Spell) bool {
 	return true
 }
 
-func (rc *RuneCostImpl) CostFailureReason(sim *Simulation, spell *Spell) string {
+func (rc *RuneCostImpl) CostFailureReason(_ *Simulation, _ *Spell) string {
 	return "not enough RP or runes"
 }
 
