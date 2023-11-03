@@ -93,6 +93,7 @@ var ItemSetLasherweaveRegalia = core.NewItemSet(core.ItemSet{
 				ActionID:         core.ActionID{SpellID: 71023},
 				SpellSchool:      core.SpellSchoolNature,
 				ProcMask:         core.ProcMaskProc | core.ProcMaskNotInSpellbook,
+				Flags:            core.SpellFlagIgnoreModifiers,
 				DamageMultiplier: 1,
 				ThreatMultiplier: 1,
 
