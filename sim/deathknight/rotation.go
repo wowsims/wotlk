@@ -244,11 +244,7 @@ func (dk *Deathknight) Wait(sim *core.Simulation) {
 	if !dk.Inputs.IsDps {
 		target := dk.CurrentTarget
 		if dk.IsMainTank() {
-			targetSwingAt := target.AutoAttacks.MainhandSwingAt
-			if target.AutoAttacks.OffhandSwingAt > sim.CurrentTime {
-				targetSwingAt = min(targetSwingAt, target.AutoAttacks.OffhandSwingAt)
-			}
-			if targetSwingAt > sim.CurrentTime {
+			if targetSwingAt := target.AutoAttacks.NextAttackAt(); targetSwingAt > sim.CurrentTime {
 				waitUntil = min(waitUntil, targetSwingAt)
 			}
 		}

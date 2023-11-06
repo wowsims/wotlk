@@ -19,7 +19,7 @@ func (warrior *Warrior) ApplyTalents() {
 	warrior.PseudoStats.BaseDodge += 0.01 * float64(warrior.Talents.Anticipation)
 	warrior.PseudoStats.BaseParry += 0.01 * float64(warrior.Talents.Deflection)
 	warrior.PseudoStats.DodgeReduction += 0.01 * float64(warrior.Talents.WeaponMastery)
-	warrior.AutoAttacks.OHConfig.DamageMultiplier *= 1 + 0.05*float64(warrior.Talents.DualWieldSpecialization)
+	warrior.AutoAttacks.OHConfig().DamageMultiplier *= 1 + 0.05*float64(warrior.Talents.DualWieldSpecialization)
 
 	if warrior.Talents.ArmoredToTheTeeth > 0 {
 		coeff := float64(warrior.Talents.ArmoredToTheTeeth)
@@ -432,18 +432,9 @@ func (warrior *Warrior) registerSwordSpecialization(procMask core.ProcMask) {
 		Label:    "Sword Specialization",
 		Duration: core.NeverExpires,
 		OnInit: func(aura *core.Aura, sim *core.Simulation) {
-			swordSpecializationSpell = warrior.GetOrRegisterSpell(core.SpellConfig{
-				ActionID:    core.ActionID{SpellID: 12281},
-				SpellSchool: core.SpellSchoolPhysical,
-				ProcMask:    core.ProcMaskMeleeMHAuto,
-				Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete,
-
-				DamageMultiplier: 1,
-				CritMultiplier:   warrior.critMultiplier(mh),
-				ThreatMultiplier: 1,
-
-				ApplyEffects: warrior.AutoAttacks.MHConfig.ApplyEffects,
-			})
+			config := *warrior.AutoAttacks.MHConfig()
+			config.ActionID = core.ActionID{SpellID: 12281}
+			swordSpecializationSpell = warrior.GetOrRegisterSpell(config)
 		},
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)

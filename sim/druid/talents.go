@@ -386,9 +386,6 @@ func (druid *Druid) applyOmenOfClarity() {
 
 	hasOocGlyph := druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfOmenOfClarity)
 
-	// Based on ingame testing by druid discord, subject to change or incorrectness
-	chanceToProcGotW := 1.0 - math.Pow(1.0-0.0875, float64(druid.RaidBuffTargets))
-
 	druid.RegisterAura(core.Aura{
 		Label:    "Omen of Clarity",
 		Duration: core.NeverExpires,
@@ -415,7 +412,8 @@ func (druid *Druid) applyOmenOfClarity() {
 				// Heavily based on comment here
 				// https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1182017571
 				// Instants are treated as 1.5
-				castTime := spell.DefaultCast.CastTime.Seconds()
+				// Uses current cast time rather than default cast time (PPM is constant with haste)
+				castTime := spell.CurCast.CastTime.Seconds()
 				if castTime == 0 {
 					castTime = 1.5
 				}
@@ -441,11 +439,6 @@ func (druid *Druid) applyOmenOfClarity() {
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
 			if druid.FaerieFire.IsEqual(spell) && druid.InForm(Cat|Bear) && hasOocGlyph {
 				druid.ProcOoc(sim)
-			}
-			if druid.GiftOfTheWild.IsEqual(spell) {
-				if sim.RandomFloat("Clearcasting") < chanceToProcGotW {
-					druid.ProcOoc(sim)
-				}
 			}
 		},
 	})

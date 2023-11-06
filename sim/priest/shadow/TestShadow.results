@@ -266,8 +266,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-EphemeralSnowflake-50260"
  value: {
-  dps: 7045.34981
-  tps: 6858.95973
+  dps: 7045.32619
+  tps: 6858.93611
  }
 }
 dps_results: {
@@ -756,8 +756,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-TomeofArcanePhenomena-36972"
  value: {
-  dps: 7100.68007
-  tps: 6908.78989
+  dps: 7100.59501
+  tps: 6908.70483
  }
 }
 dps_results: {

@@ -98,11 +98,11 @@ export const BeastMasteryTalents = {
 export const MarksmanTalents = {
 	name: 'Marksman',
 	data: SavedTalents.create({
-		talentsString: '502-035335131030013233035031051-5000002',
+		talentsString: '502-025335101030013233135031051-5000032',
 		glyphs: Glyphs.create({
 			major1: MajorGlyph.GlyphOfSerpentSting,
 			major2: MajorGlyph.GlyphOfSteadyShot,
-			major3: MajorGlyph.GlyphOfChimeraShot,
+			major3: MajorGlyph.GlyphOfExplosiveTrap,
 			minor1: MinorGlyph.GlyphOfFeignDeath,
 			minor2: MinorGlyph.GlyphOfRevivePet,
 			minor3: MinorGlyph.GlyphOfMendPet,
@@ -113,10 +113,10 @@ export const MarksmanTalents = {
 export const SurvivalTalents = {
 	name: 'Survival',
 	data: SavedTalents.create({
-		talentsString: '-015305101-5000032500033330532135301311',
+		talentsString: '-005305101-5000032500033330531135301331',
 		glyphs: Glyphs.create({
 			major1: MajorGlyph.GlyphOfSerpentSting,
-			major2: MajorGlyph.GlyphOfExplosiveShot,
+			major2: MajorGlyph.GlyphOfExplosiveTrap,
 			major3: MajorGlyph.GlyphOfKillShot,
 			minor1: MinorGlyph.GlyphOfFeignDeath,
 			minor2: MinorGlyph.GlyphOfRevivePet,

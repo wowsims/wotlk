@@ -90,9 +90,7 @@ func NewDpsWarrior(character *core.Character, options *proto.Player) *DpsWarrior
 		MainHand:       war.WeaponFromMainHand(war.DefaultMeleeCritMultiplier()),
 		OffHand:        war.WeaponFromOffHand(war.DefaultMeleeCritMultiplier()),
 		AutoSwingMelee: true,
-		ReplaceMHSwing: func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
-			return war.TryHSOrCleave(sim, mhSwingSpell)
-		},
+		ReplaceMHSwing: war.TryHSOrCleave,
 	})
 
 	return war

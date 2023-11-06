@@ -57,7 +57,7 @@ func NewAnub25HAI() core.AIFactory {
 	}
 }
 
-func (ai *Anub25HAI) Initialize(target *core.Target, config *proto.Target) {
+func (ai *Anub25HAI) Initialize(target *core.Target, _ *proto.Target) {
 	ai.Target = target
 	ai.registerFreezingSlashSpell(target)
 	ai.registerLeechingSwarmSpell(target)
@@ -107,7 +107,7 @@ func (ai *Anub25HAI) registerFreezingSlashSpell(target *core.Target) {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// 25% weapon damage
-			baseDamage := 0.25 * spell.Unit.AutoAttacks.MH.EnemyWeaponDamage(sim, spell.MeleeAttackPower(), 0.45)
+			baseDamage := 0.25 * spell.Unit.AutoAttacks.MH().EnemyWeaponDamage(sim, spell.MeleeAttackPower(), 0.45)
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeAlwaysHit)
 
 			dot := spell.Dot(target)

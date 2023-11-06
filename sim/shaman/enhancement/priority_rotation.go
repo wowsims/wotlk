@@ -406,6 +406,6 @@ func (rotation *PriorityRotation) DoAction(enh *EnhancementShaman, sim *core.Sim
 	}
 }
 
-func (rotation *PriorityRotation) Reset(enh *EnhancementShaman, sim *core.Simulation) {
+func (rotation *PriorityRotation) Reset(_ *EnhancementShaman, _ *core.Simulation) {
 
 }

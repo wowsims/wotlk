@@ -596,6 +596,8 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) (bool, time.Duration) {
 			shiftNow = timeToDump >= simTimeRemain
 		}
 
+		nextSwing := cat.AutoAttacks.NextAttackAt()
+
 		if emergencyLacerate && cat.Lacerate.CanCast(sim, cat.CurrentTarget) {
 			cat.Lacerate.Cast(sim, cat.CurrentTarget)
 			return false, 0
@@ -604,13 +606,13 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) (bool, time.Duration) {
 			// duplicate weapon swap, then do an additional check here to
 			// see whether we can delay the shift until the next bear swing
 			// goes out in order to maximize the gains from the reset.
-			projectedDelay := cat.AutoAttacks.MainhandSwingAt + 2*cat.latency - sim.CurrentTime
+			projectedDelay := nextSwing + 2*cat.latency - sim.CurrentTime
 			ripConflict := cat.ripRefreshPending && (ripDot.ExpiresAt() < sim.CurrentTime+projectedDelay+(1500*time.Millisecond))
 			nextCatSwing := sim.CurrentTime + cat.latency + time.Duration(float64(cat.AutoAttacks.MainhandSwingSpeed())/float64(2500*time.Millisecond))
-			canDelayShift := !ripConflict && cat.Rotation.SnekWeave && (curEnergy+10*projectedDelay.Seconds() <= furorCap) && (cat.AutoAttacks.MainhandSwingAt < nextCatSwing)
+			canDelayShift := !ripConflict && cat.Rotation.SnekWeave && (curEnergy+10*projectedDelay.Seconds() <= furorCap) && (nextSwing < nextCatSwing)
 
 			if canDelayShift {
-				timeToNextAction = cat.AutoAttacks.MainhandSwingAt - sim.CurrentTime
+				timeToNextAction = nextSwing - sim.CurrentTime
 			} else {
 				cat.readyToShift = true
 			}
@@ -626,7 +628,7 @@ func (cat *FeralDruid) doRotation(sim *core.Simulation) (bool, time.Duration) {
 			cat.Lacerate.Cast(sim, cat.CurrentTarget)
 			return false, 0
 		} else {
-			timeToNextAction = cat.AutoAttacks.MainhandSwingAt - sim.CurrentTime
+			timeToNextAction = nextSwing - sim.CurrentTime
 		}
 	} else if emergencyBearweave {
 		cat.readyToShift = true

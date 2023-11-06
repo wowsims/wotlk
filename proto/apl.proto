@@ -76,7 +76,7 @@ message APLAction {
     }
 }
 
-// NextIndex: 61
+// NextIndex: 64
 message APLValue {
     oneof value {
         // Operators
@@ -135,6 +135,7 @@ message APLValue {
         APLValueSpellCPM spell_cpm = 42;
         APLValueSpellIsChanneling spell_is_channeling = 56;
         APLValueSpellChanneledTicks spell_channeled_ticks = 57;
+        APLValueSpellCurrentCost spell_current_cost = 62;
 
         // Aura values
         APLValueAuraIsActive aura_is_active = 22;
@@ -156,10 +157,12 @@ message APLValue {
 
         // Properties
         APLValueChannelClipDelay channel_clip_delay = 58;
+        APLValueFrontOfTarget front_of_target = 63;
 
         // Class or Spec-specific values
         APLValueTotemRemainingTime totem_remaining_time = 49;
         APLValueCatExcessEnergy cat_excess_energy = 52;
+        APLValueCatNewSavageRoarDuration cat_new_savage_roar_duration = 61;
         APLValueWarlockShouldRecastDrainSoul warlock_should_recast_drain_soul = 59;
         APLValueWarlockShouldRefreshCorruption warlock_should_refresh_corruption = 60;
     }
@@ -402,6 +405,9 @@ message APLValueSpellChannelTime {
 }
 message APLValueChannelClipDelay {
 }
+message APLValueFrontOfTarget {
+}
+
 message APLValueSpellTravelTime {
     ActionID spell_id = 1;
 }
@@ -412,6 +418,9 @@ message APLValueSpellIsChanneling {
     ActionID spell_id = 1;
 }
 message APLValueSpellChanneledTicks {
+    ActionID spell_id = 1;
+}
+message APLValueSpellCurrentCost {
     ActionID spell_id = 1;
 }
 
@@ -468,6 +477,8 @@ message APLValueTotemRemainingTime {
     ShamanTotems.TotemType totem_type = 1;
 }
 message APLValueCatExcessEnergy {
+}
+message APLValueCatNewSavageRoarDuration {
 }
 message APLValueWarlockShouldRecastDrainSoul {
 }

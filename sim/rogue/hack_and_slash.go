@@ -19,18 +19,9 @@ func (rogue *Rogue) registerHackAndSlash(mask core.ProcMask) {
 		Label:    "Hack and Slash",
 		Duration: core.NeverExpires,
 		OnInit: func(aura *core.Aura, sim *core.Simulation) {
-			hackAndSlashSpell = rogue.GetOrRegisterSpell(core.SpellConfig{
-				ActionID:    core.ActionID{SpellID: 13964},
-				SpellSchool: core.SpellSchoolPhysical,
-				ProcMask:    core.ProcMaskMeleeMHAuto,
-				Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
-
-				DamageMultiplier: rogue.AutoAttacks.MHConfig.DamageMultiplier,
-				CritMultiplier:   rogue.MeleeCritMultiplier(false),
-				ThreatMultiplier: rogue.AutoAttacks.MHConfig.ThreatMultiplier,
-
-				ApplyEffects: rogue.AutoAttacks.MHConfig.ApplyEffects,
-			})
+			config := *rogue.AutoAttacks.MHConfig()
+			config.ActionID = core.ActionID{SpellID: 13964}
+			hackAndSlashSpell = rogue.GetOrRegisterSpell(config)
 		},
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)

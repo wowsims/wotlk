@@ -46,8 +46,8 @@ func (x *rotation_assassination) setup(sim *core.Simulation, rogue *Rogue) {
 			return critChance
 		}
 
-		critsPerSecond := getCritChance(rogue.AutoAttacks.MHAuto)/rogue.AutoAttacks.MainhandSwingSpeed().Seconds() +
-			getCritChance(rogue.AutoAttacks.OHAuto)/rogue.AutoAttacks.OffhandSwingSpeed().Seconds()
+		critsPerSecond := getCritChance(rogue.AutoAttacks.MHAuto())/rogue.AutoAttacks.MainhandSwingSpeed().Seconds() +
+			getCritChance(rogue.AutoAttacks.OHAuto())/rogue.AutoAttacks.OffhandSwingSpeed().Seconds()
 		procChance := []float64{0, 0.33, 0.66, 1}[rogue.Talents.FocusedAttacks]
 
 		return 10*rogue.EnergyTickMultiplier + critsPerSecond*procChance*2

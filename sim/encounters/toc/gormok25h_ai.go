@@ -136,7 +136,7 @@ func (ai *Gormok25HAI) registerImpaleSpell(target *core.Target) {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// 150% weapon damage
-			baseDamage := 1.50 * spell.Unit.AutoAttacks.MH.EnemyWeaponDamage(sim, spell.MeleeAttackPower(), 0.3333)
+			baseDamage := 1.50 * spell.Unit.AutoAttacks.MH().EnemyWeaponDamage(sim, spell.MeleeAttackPower(), 0.3333)
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeAlwaysHit)
 
 			dot := spell.Dot(target)

@@ -14,7 +14,7 @@ type APLRotation struct {
 	priorityList   []*APLAction
 
 	// Action currently controlling this rotation (only used for certain actions, such as StrictSequence).
-	controllingAction APLActionImpl
+	controllingActions []APLActionImpl
 
 	// Value that should evaluate to 'true' if the current channel is to be interrupted.
 	// Will be nil when there is no active channel.
@@ -166,7 +166,7 @@ func (rot *APLRotation) allPrepullActions() []*APLAction {
 }
 
 func (rot *APLRotation) reset(sim *Simulation) {
-	rot.controllingAction = nil
+	rot.controllingActions = nil
 	rot.inLoop = false
 	rot.interruptChannelIf = nil
 	rot.allowChannelRecastOnInterrupt = false
@@ -219,8 +219,8 @@ func (apl *APLRotation) DoNextAction(sim *Simulation) {
 }
 
 func (apl *APLRotation) getNextAction(sim *Simulation) *APLAction {
-	if apl.controllingAction != nil {
-		return apl.controllingAction.GetNextAction(sim)
+	if len(apl.controllingActions) != 0 {
+		return apl.controllingActions[len(apl.controllingActions)-1].GetNextAction(sim)
 	}
 
 	for _, action := range apl.priorityList {
@@ -230,6 +230,17 @@ func (apl *APLRotation) getNextAction(sim *Simulation) *APLAction {
 	}
 
 	return nil
+}
+
+func (apl *APLRotation) pushControllingAction(ca APLActionImpl) {
+	apl.controllingActions = append(apl.controllingActions, ca)
+}
+
+func (apl *APLRotation) popControllingAction(ca APLActionImpl) {
+	if len(apl.controllingActions) == 0 || apl.controllingActions[len(apl.controllingActions)-1] != ca {
+		panic("Wrong APL controllingAction in pop()")
+	}
+	apl.controllingActions = apl.controllingActions[:len(apl.controllingActions)-1]
 }
 
 func (apl *APLRotation) shouldInterruptChannel(sim *Simulation) bool {

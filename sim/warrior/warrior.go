@@ -114,8 +114,8 @@ func (warrior *Warrior) AddPartyBuffs(_ *proto.PartyBuffs) {
 }
 
 func (warrior *Warrior) Initialize() {
-	warrior.AutoAttacks.MHConfig.CritMultiplier = warrior.autoCritMultiplier(mh)
-	warrior.AutoAttacks.OHConfig.CritMultiplier = warrior.autoCritMultiplier(oh)
+	warrior.AutoAttacks.MHConfig().CritMultiplier = warrior.autoCritMultiplier(mh)
+	warrior.AutoAttacks.OHConfig().CritMultiplier = warrior.autoCritMultiplier(oh)
 
 	warrior.Shout = warrior.makeShoutSpell()
 

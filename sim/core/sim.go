@@ -54,6 +54,9 @@ type Simulation struct {
 	minTrackerTime time.Duration
 	trackers       []*auraTracker
 
+	minWeaponAttackTime time.Duration
+	weaponAttacks       []*WeaponAttack
+
 	minTaskTime time.Duration
 	tasks       []Task
 }
@@ -70,6 +73,20 @@ func (sim *Simulation) addTracker(tracker *auraTracker) {
 func (sim *Simulation) removeTracker(tracker *auraTracker) {
 	if idx := slices.Index(sim.trackers, tracker); idx != -1 {
 		sim.trackers = removeBySwappingToBack(sim.trackers, idx)
+	}
+}
+
+func (sim *Simulation) rescheduleWeaponAttack(weaponAttackTime time.Duration) {
+	sim.minWeaponAttackTime = min(sim.minWeaponAttackTime, weaponAttackTime)
+}
+
+func (sim *Simulation) addWeaponAttack(weaponAttack *WeaponAttack) {
+	sim.weaponAttacks = append(sim.weaponAttacks, weaponAttack)
+}
+
+func (sim *Simulation) removeWeaponAttack(weaponAttack *WeaponAttack) {
+	if idx := slices.Index(sim.weaponAttacks, weaponAttack); idx != -1 {
+		sim.weaponAttacks = removeBySwappingToBack(sim.weaponAttacks, idx)
 	}
 }
 
@@ -382,6 +399,9 @@ func (sim *Simulation) reset() {
 	sim.trackers = sim.trackers[:0]
 	sim.minTrackerTime = NeverExpires
 
+	sim.weaponAttacks = sim.weaponAttacks[:0]
+	sim.minWeaponAttackTime = NeverExpires
+
 	sim.tasks = sim.tasks[:0]
 	sim.minTaskTime = NeverExpires
 
@@ -408,7 +428,9 @@ func (sim *Simulation) PrePull() {
 		Priority:     ActionPriorityPrePull,
 		OnAction: func(sim *Simulation) {
 			for _, unit := range sim.Environment.AllUnits {
-				unit.startPull(sim)
+				if unit.enabled {
+					unit.startPull(sim)
+				}
 			}
 		},
 	})
@@ -450,6 +472,14 @@ func (sim *Simulation) Step() bool {
 	last := len(sim.pendingActions) - 1
 	pa := sim.pendingActions[last]
 
+	if pa.NextActionAt >= sim.minWeaponAttackTime && sim.minWeaponAttackTime <= sim.minTaskTime {
+		if sim.minWeaponAttackTime > sim.endOfCombatDuration || sim.Encounter.DamageTaken > sim.endOfCombatDamage {
+			return true
+		}
+		sim.advanceWeaponAttacks()
+		return false
+	}
+
 	if pa.NextActionAt >= sim.minTaskTime {
 		if sim.minTaskTime > sim.endOfCombatDuration || sim.Encounter.DamageTaken > sim.endOfCombatDamage {
 			return true
@@ -479,6 +509,17 @@ func (sim *Simulation) Step() bool {
 	return false
 }
 
+func (sim *Simulation) advanceWeaponAttacks() {
+	if sim.minWeaponAttackTime > sim.CurrentTime {
+		sim.advance(sim.minWeaponAttackTime)
+	}
+
+	sim.minWeaponAttackTime = NeverExpires
+	for _, wa := range sim.weaponAttacks {
+		sim.minWeaponAttackTime = min(sim.minWeaponAttackTime, wa.trySwing(sim))
+	}
+}
+
 func (sim *Simulation) advanceTasks() {
 	if sim.minTaskTime > sim.CurrentTime {
 		sim.advance(sim.minTaskTime)
@@ -506,7 +547,7 @@ func (sim *Simulation) advance(nextTime time.Duration) {
 	if sim.CurrentTime >= sim.minTrackerTime {
 		sim.minTrackerTime = NeverExpires
 		for _, t := range sim.trackers {
-			sim.minTrackerTime = min(sim.minTrackerTime, t.advance(sim))
+			sim.minTrackerTime = min(sim.minTrackerTime, t.tryAdvance(sim))
 		}
 	}
 }

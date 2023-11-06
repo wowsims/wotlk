@@ -269,8 +269,8 @@ func init() {
 		Duration:  time.Second * 10,
 		MaxStacks: 10,
 		Bonus:     stats.Stats{stats.SpellPower: 18},
-		Callback:  core.CallbackOnSpellHitDealt,
-		ProcMask:  core.ProcMaskSpellOrProc,
+		Callback:  core.CallbackOnSpellHitDealt | core.CallbackOnPeriodicDamageDealt,
+		ProcMask:  core.ProcMaskSpellOrProc | core.ProcMaskWeaponProc | core.ProcMaskSuppressedProc,
 		Harmful:   true,
 	})
 	newStackingStatBonusEffect(StackingStatBonusEffect{
@@ -280,8 +280,8 @@ func init() {
 		Duration:  time.Second * 10,
 		MaxStacks: 10,
 		Bonus:     stats.Stats{stats.SpellPower: 20},
-		Callback:  core.CallbackOnSpellHitDealt,
-		ProcMask:  core.ProcMaskSpellOrProc,
+		Callback:  core.CallbackOnSpellHitDealt | core.CallbackOnPeriodicDamageDealt,
+		ProcMask:  core.ProcMaskSpellOrProc | core.ProcMaskWeaponProc | core.ProcMaskSuppressedProc,
 		Harmful:   true,
 	})
 	newStackingStatBonusEffect(StackingStatBonusEffect{

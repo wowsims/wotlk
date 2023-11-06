@@ -42,7 +42,7 @@ func (hunter *Hunter) registerKillShotSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// 0.2 rap from normalized weapon (2.8/14) and 0.2 from bonus ratio
 			baseDamage := 0.4*spell.RangedAttackPower(target) +
-				hunter.AutoAttacks.Ranged.BaseDamage(sim) +
+				hunter.AutoAttacks.Ranged().BaseDamage(sim) +
 				hunter.AmmoDamageBonus +
 				spell.BonusWeaponDamage() +
 				325

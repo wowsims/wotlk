@@ -40,17 +40,9 @@ func init() {
 			Label:    "Hand of Justice",
 			Duration: core.NeverExpires,
 			OnInit: func(aura *core.Aura, sim *core.Simulation) {
-				handOfJusticeSpell = character.GetOrRegisterSpell(core.SpellConfig{
-					ActionID:     core.ActionID{ItemID: 11815},
-					SpellSchool:  core.SpellSchoolPhysical,
-					ProcMask:     core.ProcMaskMeleeMHAuto,
-					Flags:        core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete,
-					ApplyEffects: character.AutoAttacks.MHConfig.ApplyEffects,
-
-					DamageMultiplier: 1,
-					CritMultiplier:   character.DefaultMeleeCritMultiplier(),
-					ThreatMultiplier: 1,
-				})
+				config := *character.AutoAttacks.MHConfig()
+				config.ActionID = core.ActionID{ItemID: 11815}
+				handOfJusticeSpell = character.GetOrRegisterSpell(config)
 			},
 			OnReset: func(aura *core.Aura, sim *core.Simulation) {
 				aura.Activate(sim)

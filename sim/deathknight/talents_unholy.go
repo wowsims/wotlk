@@ -103,8 +103,8 @@ func (dk *Deathknight) applyNecrosis() {
 
 	// Replace normal melee swing applier with one that also applies necrosis damage.
 	// Doing it this way means you don't see necrosis dmg on the timeline but is faster.
-	dk.AutoAttacks.MHConfig.ApplyEffects = dk.necrosisMHAuto
-	dk.AutoAttacks.OHConfig.ApplyEffects = dk.necrosisOHAuto
+	dk.AutoAttacks.MHConfig().ApplyEffects = dk.necrosisMHAuto
+	dk.AutoAttacks.OHConfig().ApplyEffects = dk.necrosisOHAuto
 }
 
 func (dk *Deathknight) necrosisDamage(damage float64, sim *core.Simulation, target *core.Unit) {

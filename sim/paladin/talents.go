@@ -187,19 +187,12 @@ func (paladin *Paladin) applyReckoning() {
 		Duration:  time.Second * 8,
 		MaxStacks: 4,
 		OnInit: func(aura *core.Aura, sim *core.Simulation) {
-			reckoningSpell = paladin.GetOrRegisterSpell(core.SpellConfig{
-				ActionID:         actionID,
-				SpellSchool:      core.SpellSchoolPhysical,
-				ProcMask:         core.ProcMaskMeleeMH,
-				Flags:            core.SpellFlagMeleeMetrics,
-				CritMultiplier:   paladin.MeleeCritMultiplier(),
-				ThreatMultiplier: 1,
-				DamageMultiplier: 1,
-				ApplyEffects:     paladin.AutoAttacks.MHConfig.ApplyEffects,
-			})
+			config := *paladin.AutoAttacks.MHConfig()
+			config.ActionID = actionID
+			reckoningSpell = paladin.GetOrRegisterSpell(config)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell == paladin.AutoAttacks.MHAuto {
+			if spell == paladin.AutoAttacks.MHAuto() {
 				reckoningSpell.Cast(sim, result.Target)
 			}
 		},

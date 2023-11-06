@@ -22,7 +22,7 @@ func (warrior *Warrior) RegisterHeroicThrow() {
 				Duration: time.Minute * 1,
 			},
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				if warrior.AutoAttacks.MH.SwingSpeed == warrior.AutoAttacks.OH.SwingSpeed {
+				if warrior.AutoAttacks.MH().SwingSpeed == warrior.AutoAttacks.OH().SwingSpeed {
 					warrior.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+cast.CastTime, true)
 				} else {
 					warrior.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+cast.CastTime, false)
