@@ -244,8 +244,11 @@ export class EquippedItem {
 		return this.hasExtraSocket(isBlacksmithing) ? this._item.gemSockets.concat([GemColor.GemColorPrismatic]) : this._item.gemSockets;
 	}
 
-	curGems(isBlacksmithing: boolean): Array<Gem> {
-		return (this._gems.filter(g => g != null) as Array<Gem>).slice(0, this.numSockets(isBlacksmithing));
+	curGems(isBlacksmithing: boolean): Array<Gem|null> {
+		return this._gems.slice(0, this.numSockets(isBlacksmithing));
+	}
+	curEquippedGems(isBlacksmithing: boolean): Array<Gem> {
+		return this.curGems(isBlacksmithing).filter(g => g != null) as Array<Gem>;
 	}
 
 	getProfessionRequirements(): Array<Profession> {

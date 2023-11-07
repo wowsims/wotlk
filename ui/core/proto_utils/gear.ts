@@ -170,7 +170,7 @@ export class Gear extends BaseGear {
 
 	getAllGems(isBlacksmithing: boolean): Array<Gem> {
 		return this.asArray()
-			.map(ei => ei == null ? [] : ei.curGems(isBlacksmithing))
+			.map(ei => ei == null ? [] : ei.curEquippedGems(isBlacksmithing))
 			.flat();
 	}
 
@@ -377,7 +377,7 @@ export class ItemSwapGear extends BaseGear {
 		return SimDatabase.create({
 			items: distinct(equippedItems.map(ei => ItemSwapGear.itemToDB(ei.item))),
 			enchants: distinct(equippedItems.filter(ei => ei.enchant).map(ei => ItemSwapGear.enchantToDB(ei.enchant!))),
-			gems: distinct(equippedItems.map(ei => ei.curGems(true).map(gem => ItemSwapGear.gemToDB(gem))).flat()),
+			gems: distinct(equippedItems.map(ei => ei.curEquippedGems(true).map(gem => ItemSwapGear.gemToDB(gem))).flat()),
 		});
 	}
 }

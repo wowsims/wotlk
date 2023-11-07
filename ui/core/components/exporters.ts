@@ -199,7 +199,7 @@ export class IndividualWowheadGearPlannerExporter<SpecType extends Spec> extends
 					slotId = slotId | 0b10000000;
 				}
 				bytes.push(slotId);
-				bytes.push(item.curGems(isBlacksmithing).length << 5);
+				bytes.push(item.curEquippedGems(isBlacksmithing).length << 5);
 				bytes = bytes.concat(to2Bytes(item.item.id));
 
 				if (item.enchant) {
