@@ -505,8 +505,8 @@ dps_results: {
 dps_results: {
  key: "TestFeralTank-AllItems-IdoloftheLunarEclipse-50457"
  value: {
-  dps: 2491.833
-  tps: 5270.8334
+  dps: 2463.33463
+  tps: 5206.05682
   dtps: 6.66421
  }
 }
