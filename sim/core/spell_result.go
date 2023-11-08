@@ -230,8 +230,10 @@ func (spell *Spell) CalcAndDealOutcome(sim *Simulation, target *Unit, outcomeApp
 
 // Applies the fully computed spell result to the sim.
 func (spell *Spell) dealDamageInternal(sim *Simulation, isPeriodic bool, result *SpellResult) {
-	spell.SpellMetrics[result.Target.UnitIndex].TotalDamage += result.Damage
-	spell.SpellMetrics[result.Target.UnitIndex].TotalThreat += result.Threat
+	if sim.CurrentTime >= 0 {
+		spell.SpellMetrics[result.Target.UnitIndex].TotalDamage += result.Damage
+		spell.SpellMetrics[result.Target.UnitIndex].TotalThreat += result.Threat
+	}
 
 	// Mark total damage done in raid so far for health based fights.
 	// Don't include damage done by EnemyUnits to Players
