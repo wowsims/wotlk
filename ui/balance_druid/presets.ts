@@ -38,7 +38,8 @@ import P4HordeGear from './gear_sets/p4_horde.gear.json';
 import P4AllianceGear from './gear_sets/p4_alliance.gear.json';
 
 import BasicP3AplJson from './apls/basic_p3.apl.json';
-import P4AplJson from './apls/p4.apl.json';
+import P4FocusAplJson from './apls/p4_focus_glyph.apl.json';
+import P4StarfireAplJson from './apls/p4_starfire_glyph.apl.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -53,7 +54,8 @@ export const P4_PRESET_ALLI = PresetUtils.makePresetGear('P4 Preset [A]', P4Alli
 export const P4_PRESET_HORDE = PresetUtils.makePresetGear('P4 Preset [H]', P4HordeGear, { faction: Faction.Horde });
 
 export const ROTATION_PRESET_P3_APL = PresetUtils.makePresetAPLRotation('P3', BasicP3AplJson);
-export const ROTATION_PRESET_P4_APL = PresetUtils.makePresetAPLRotation('P4', P4AplJson);
+export const ROTATION_PRESET_P4_FOCUS_APL = PresetUtils.makePresetAPLRotation('P4 Focus Glyph', P4FocusAplJson);
+export const ROTATION_PRESET_P4_STARFIRE_APL = PresetUtils.makePresetAPLRotation('P4 Starfire Glyph', P4StarfireAplJson);
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.

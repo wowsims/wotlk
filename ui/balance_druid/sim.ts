@@ -121,7 +121,8 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 				],
 				rotations: [
 					Presets.ROTATION_PRESET_P3_APL,
-					Presets.ROTATION_PRESET_P4_APL,
+					Presets.ROTATION_PRESET_P4_FOCUS_APL,
+					Presets.ROTATION_PRESET_P4_STARFIRE_APL,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
