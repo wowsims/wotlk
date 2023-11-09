@@ -55,12 +55,6 @@ export const PetInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecWarlo
 	changeEmitter: (player: Player<Spec.SpecWarlock>) => player.changeEmitter,
 });
 
-export const NewDPBehaviour = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecWarlock>({
-	fieldName: 'newDPBehaviour',
-	label: 'New DP behaviour',
-	labelTooltip: 'Changes DP to always be 10% of spell power, 1s ICD',
-});
-
 export const PrimarySpellInput = InputHelpers.makeRotationEnumIconInput<Spec.SpecWarlock, PrimarySpell>({
 	fieldName: 'primarySpell',
 	values: [
