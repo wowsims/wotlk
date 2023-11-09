@@ -50,9 +50,12 @@ func (value *APLValueWarlockShouldRecastDrainSoul) GetBool(sim *core.Simulation)
 		warlock.CurseOfWeaknessAuras.Get(warlock.CurrentTarget).RemainingDuration(sim),
 	) - warlock.CurseOfAgony.CastTime()
 
-	hauntRefresh := warlock.HauntDebuffAuras.Get(warlock.CurrentTarget).RemainingDuration(sim) -
-		warlock.Haunt.CastTime() -
-		warlock.Haunt.TravelTime()
+	hauntRefresh := 1000 * time.Second
+	if warlock.HauntDebuffAuras != nil {
+		hauntRefresh = warlock.HauntDebuffAuras.Get(warlock.CurrentTarget).RemainingDuration(sim) -
+			warlock.Haunt.CastTime() -
+			warlock.Haunt.TravelTime()
+	}
 
 	timeUntilRefresh := min(uaRefresh, curseRefresh)
 
