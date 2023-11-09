@@ -211,7 +211,7 @@ message Warlock {
 		Armor armor = 1;
 		Summon summon = 2;
 		WeaponImbue weaponImbue = 3;
-		bool newDPBehaviour = 4;
+		bool _oldDPBehaviourOption = 4;
 	}
 	Options options = 3;
 }

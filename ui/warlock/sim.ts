@@ -124,7 +124,6 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 					OtherInputs.TankAssignment,
 					OtherInputs.ChannelClipDelay,
 					OtherInputs.nibelungAverageCasts,
-					WarlockInputs.NewDPBehaviour,
 				],
 			},
 			encounterPicker: {
