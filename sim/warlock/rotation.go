@@ -83,7 +83,7 @@ func (warlock *Warlock) setupCooldowns(sim *core.Simulation) {
 
 			if warlock.Talents.Metamorphosis && spell.ActionID != warlock.Metamorphosis.ActionID {
 				metaCD := warlock.GetMajorCooldown(warlock.Metamorphosis.ActionID)
-				if !warlock.MetamorphosisAura.IsActive() && metaCD.TimeToNextCast(sim) < spellCD+runTime &&
+				if !warlock.MetamorphosisAura.IsActive() && metaCD != nil && metaCD.TimeToNextCast(sim) < spellCD+runTime &&
 					retainUses(timeLeft, spellCD, metaCD.TimeToNextCast(sim)) {
 					return false
 				}
