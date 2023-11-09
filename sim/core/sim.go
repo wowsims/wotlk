@@ -91,6 +91,10 @@ func RunSim(rsr *proto.RaidSimRequest, progress chan *proto.ProgressMetrics) *pr
 	return runSim(rsr, progress, false)
 }
 
+func RunSimParallel(rsr *proto.RaidSimRequest, progress chan *proto.ProgressMetrics) *proto.RaidSimResult {
+	return runSimParallel(rsr, progress)
+}
+
 func runSim(rsr *proto.RaidSimRequest, progress chan *proto.ProgressMetrics, skipPresim bool) (result *proto.RaidSimResult) {
 	if !rsr.SimOptions.IsTest {
 		defer func() {

@@ -104,7 +104,7 @@ var handlers = map[string]apiHandler{
 
 var asyncAPIHandlers = map[string]asyncAPIHandler{
 	"/raidSimAsync": {msg: func() googleProto.Message { return &proto.RaidSimRequest{} }, handle: func(msg googleProto.Message, reporter chan *proto.ProgressMetrics) {
-		core.RunRaidSimAsync(msg.(*proto.RaidSimRequest), reporter)
+		core.RunRaidSimAsyncParallel(msg.(*proto.RaidSimRequest), reporter)
 	}},
 	"/statWeightsAsync": {msg: func() googleProto.Message { return &proto.StatWeightsRequest{} }, handle: func(msg googleProto.Message, reporter chan *proto.ProgressMetrics) {
 		core.StatWeightsAsync(msg.(*proto.StatWeightsRequest), reporter)
