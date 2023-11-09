@@ -11,7 +11,6 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 
 	calcSoulSiphonMult := func(target *core.Unit) float64 {
 		auras := []*core.Aura{
-			warlock.HauntDebuffAuras.Get(target),
 			warlock.UnstableAffliction.Dot(target).Aura,
 			warlock.Corruption.Dot(target).Aura,
 			warlock.Seed.Dot(target).Aura,
@@ -22,6 +21,9 @@ func (warlock *Warlock) registerDrainSoulSpell() {
 			warlock.CurseOfTonguesAuras.Get(target),
 			warlock.ShadowEmbraceDebuffAura(target),
 			// missing: death coil
+		}
+		if warlock.HauntDebuffAuras != nil {
+			auras = append(auras, warlock.HauntDebuffAuras.Get(target))
 		}
 		numActive := 0
 		for _, aura := range auras {
