@@ -17,7 +17,7 @@ func TestAffliction(t *testing.T) {
 		Class: proto.Class_ClassWarlock,
 		Race:  proto.Race_RaceOrc,
 
-		GearSet:     core.GetGearSet("../../ui/warlock/gear_sets", "p3_affliction_alliance"),
+		GearSet:     core.GetGearSet("../../ui/warlock/gear_sets", "p4_affliction"),
 		Talents:     AfflictionTalents,
 		Glyphs:      AfflictionGlyphs,
 		Consumes:    FullConsumes,
@@ -35,7 +35,7 @@ func TestDemonology(t *testing.T) {
 		Class: proto.Class_ClassWarlock,
 		Race:  proto.Race_RaceOrc,
 
-		GearSet:     core.GetGearSet("../../ui/warlock/gear_sets", "p3_demo_alliance"),
+		GearSet:     core.GetGearSet("../../ui/warlock/gear_sets", "p4_demo"),
 		Talents:     DemonologyTalents,
 		Glyphs:      DemonologyGlyphs,
 		Consumes:    FullConsumes,
@@ -53,7 +53,7 @@ func TestDestruction(t *testing.T) {
 		Class: proto.Class_ClassWarlock,
 		Race:  proto.Race_RaceOrc,
 
-		GearSet:     core.GetGearSet("../../ui/warlock/gear_sets", "p3_destro_alliance"),
+		GearSet:     core.GetGearSet("../../ui/warlock/gear_sets", "p4_destro"),
 		Talents:     DestructionTalents,
 		Glyphs:      DestructionGlyphs,
 		Consumes:    FullConsumes,
