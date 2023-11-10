@@ -584,7 +584,7 @@ func (warlock *Warlock) setupDemonicPact() {
 			if warlock.DemonicPactAura.IsActive() {
 				lastBonus = warlock.DemonicPactAura.ExclusiveEffects[0].Priority
 			}
-			newSPBonus := math.Round(dpMult * warlock.GetStat(stats.SpellPower))
+			newSPBonus := math.Round(dpMult*warlock.GetStat(stats.SpellPower)) - lastBonus
 
 			if warlock.DemonicPactAura.RemainingDuration(sim) < 10*time.Second || newSPBonus >= lastBonus {
 				warlock.updateDPASP(sim)
