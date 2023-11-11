@@ -603,8 +603,8 @@ dps_results: {
 dps_results: {
  key: "TestBloodTank-AllItems-Scourgelord'sPlate"
  value: {
-  dps: 2378.234
-  tps: 7409.94516
+  dps: 2369.21163
+  tps: 7920.62357
  }
 }
 dps_results: {
