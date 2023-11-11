@@ -8,6 +8,7 @@ import {
 	Glyphs,
 	GuardianElixir,
 	Potions,
+	Spec,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
@@ -58,7 +59,9 @@ export const DefaultRotation = ProtectionWarriorRotation.create({
 	hsRageThreshold: 30,
 });
 
-export const ROTATION_DEFAULT = PresetUtils.makePresetAPLRotation('Default', DefaultApl);
+export const ROTATION_DEFAULT = PresetUtils.makePresetAPLRotation('Default APL', DefaultApl);
+export const ROTATION_PRESET_SIMPLE = PresetUtils.makePresetSimpleRotation('Simple Cooldowns', Spec.SpecProtectionWarrior, DefaultRotation);
+
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
