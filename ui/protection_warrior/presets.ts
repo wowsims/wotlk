@@ -26,8 +26,11 @@ import {
 import * as PresetUtils from '../core/preset_utils.js';
 
 import PreraidBalancedGear from './gear_sets/preraid_balanced.gear.json';
+import PreraidP4Gear from './gear_sets/p4_preraid.gear.json';
 import P1BalancedGear from './gear_sets/p1_balanced.gear.json';
 import P2SurvivalGear from './gear_sets/p2_survival.gear.json';
+import P3Gear from './gear_sets/p3.gear.json';
+import P4Gear from './gear_sets/p4.gear.json';
 
 import DefaultApl from './apls/default.apl.json';
 
@@ -35,9 +38,12 @@ import DefaultApl from './apls/default.apl.json';
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
 
-export const PRERAID_BALANCED_PRESET = PresetUtils.makePresetGear('PreRaid Balanced', PreraidBalancedGear);
-export const P1_BALANCED_PRESET = PresetUtils.makePresetGear('P1 Balanced Preset', P1BalancedGear);
-export const P2_SURVIVAL_PRESET = PresetUtils.makePresetGear('P2 Survival Preset', P2SurvivalGear);
+export const PRERAID_BALANCED_PRESET = PresetUtils.makePresetGear('P1 PreRaid Preset', PreraidBalancedGear);
+export const P4_PRERAID_PRESET = PresetUtils.makePresetGear('P4 PreRaid Preset', PreraidP4Gear);
+export const P1_BALANCED_PRESET = PresetUtils.makePresetGear('P1 Preset', P1BalancedGear);
+export const P2_SURVIVAL_PRESET = PresetUtils.makePresetGear('P2 Preset', P2SurvivalGear);
+export const P3_PRESET = PresetUtils.makePresetGear('P3 Preset', P3Gear);
+export const P4_PRESET = PresetUtils.makePresetGear('P4 Preset', P4Gear);
 
 export const DefaultRotation = ProtectionWarriorRotation.create({
 	customRotation: CustomRotation.create({
