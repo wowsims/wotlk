@@ -9,4 +9,4 @@ const sim = new Sim();
 const player = new Player<Spec.SpecShadowPriest>(Spec.SpecShadowPriest, sim);
 sim.raid.setPlayer(TypedEvent.nextEventID(), 0, player);
 
-const simUI = new ShadowPriestSimUI(document.body, player);
+new ShadowPriestSimUI(document.body, player);

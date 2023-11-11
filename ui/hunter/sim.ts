@@ -1,43 +1,35 @@
+import { IndividualSimUI } from '../core/individual_sim_ui.js';
+import { Player } from '../core/player.js';
+import {
+	APLAction,
+	APLListItem,
+	APLRotation,
+} from '../core/proto/apl.js';
 import {
 	Cooldowns,
 	Debuffs,
 	IndividualBuffs,
 	ItemSlot,
 	PartyBuffs,
+	PseudoStat,
 	Race,
 	RaidBuffs,
 	RangedWeaponType,
 	Spec,
-	Stat, PseudoStat,
+	Stat,
 	TristateEffect,
 } from '../core/proto/common.js';
-import {
-	APLAction,
-	APLListItem,
-	APLRotation,
-} from '../core/proto/apl.js';
-import { Player } from '../core/player.js';
 import { Stats } from '../core/proto_utils/stats.js';
-import { getTalentPoints } from '../core/proto_utils/utils.js';
-import { IndividualSimUI } from '../core/individual_sim_ui.js';
-import { EventID, TypedEvent } from '../core/typed_event.js';
-import { getPetTalentsConfig } from '../core/talents/hunter_pet.js';
-import { protoToTalentString } from '../core/talents/factory.js';
 
 import {
-	Hunter,
 	Hunter_Rotation as HunterRotation,
-	Hunter_Rotation_StingType as StingType,
-	Hunter_Options as HunterOptions,
-	Hunter_Options_PetType as PetType,
-	HunterPetTalents,
 	Hunter_Rotation_RotationType,
+	Hunter_Rotation_StingType as StingType
 } from '../core/proto/hunter.js';
 
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as Mechanics from '../core/constants/mechanics.js';
-import * as Tooltips from '../core/constants/tooltips.js';
 import * as AplUtils from '../core/proto_utils/apl_utils.js';
 
 import * as HunterInputs from './inputs.js';
@@ -52,56 +44,6 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 			knownIssues: [
 			],
 			warnings: [
-				// Warning when using exotic pet without BM talented.
-				(simUI: IndividualSimUI<Spec.SpecHunter>) => {
-					return {
-						updateOn: TypedEvent.onAny([simUI.player.talentsChangeEmitter, simUI.player.specOptionsChangeEmitter]),
-						getContent: () => {
-							const petIsExotic = [
-								PetType.Chimaera,
-								PetType.CoreHound,
-								PetType.Devilsaur,
-								PetType.Silithid,
-								PetType.SpiritBeast,
-								PetType.Worm,
-							].includes(simUI.player.getSpecOptions().petType);
-
-							const isBM = simUI.player.getTalents().beastMastery;
-
-							if (petIsExotic && !isBM) {
-								return 'Cannot use exotic pets without the Beast Mastery talent.';
-							} else {
-								return '';
-							}
-						},
-					};
-				},
-				// Warning when too many Pet talent points are used without BM talented.
-				(simUI: IndividualSimUI<Spec.SpecHunter>) => {
-					return {
-						updateOn: TypedEvent.onAny([simUI.player.talentsChangeEmitter, simUI.player.specOptionsChangeEmitter]),
-						getContent: () => {
-							const specOptions = simUI.player.getSpecOptions();
-							const petTalents = specOptions.petTalents || HunterPetTalents.create();
-							const petTalentString = protoToTalentString(petTalents, getPetTalentsConfig(specOptions.petType));
-							const talentPoints = getTalentPoints(petTalentString);
-
-							const isBM = simUI.player.getTalents().beastMastery;
-							const maxPoints = isBM ? 20 : 16;
-
-							if (talentPoints == 0) {
-								// Just return here, so we don't show a warning during page load.
-								return '';
-							} else if (talentPoints < maxPoints) {
-								return 'Unspent pet talent points.';
-							} else if (talentPoints > maxPoints) {
-								return 'More than 16 points spent in pet talents, but Beast Mastery is not talented.';
-							} else {
-								return '';
-							}
-						},
-					};
-				},
 			],
 
 			// All stats for which EP should be calculated.
@@ -233,7 +175,6 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				inputs: [
 					HunterInputs.PetUptime,
 					HunterInputs.TimeToTrapWeaveMs,
-					HunterInputs.SniperTrainingUptime,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],

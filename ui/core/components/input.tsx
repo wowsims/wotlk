@@ -3,6 +3,7 @@ import { EventID, TypedEvent } from '../typed_event.js';
 
 import { Component } from './component.js';
 
+// eslint-disable-next-line unused-imports/no-unused-imports
 import { element, fragment } from 'tsx-vanilla'
 
 /**
@@ -57,15 +58,13 @@ export abstract class Input<ModObject, T, V = T> extends Component {
 		if (config.extraCssClasses) this.rootElem.classList.add(...config.extraCssClasses);
 		if (config.label) this.rootElem.appendChild(this.buildLabel(config));
 
-		config.changedEvent(this.modObject).on(eventID => {
+		config.changedEvent(this.modObject).on(_ => {
 			this.setInputValue(this.getSourceValue());
 			this.update();
 		});
 	}
 
 	private buildLabel(config: InputConfig<ModObject, T, V>): JSX.Element {
-		let dataset = {};
-
 		let label = (
 			<label className="form-label">
 				{config.label}

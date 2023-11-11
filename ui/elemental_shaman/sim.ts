@@ -1,25 +1,16 @@
-import { RaidBuffs } from '../core/proto/common.js';
-import { PartyBuffs } from '../core/proto/common.js';
-import { IndividualBuffs } from '../core/proto/common.js';
-import { Debuffs } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { Stat } from '../core/proto/common.js';
-import { TristateEffect } from '../core/proto/common.js'
-import {
-	APLAction,
-	APLListItem,
-	APLRotation,
-} from '../core/proto/apl.js';
-import { Player } from '../core/player.js';
-import { Stats } from '../core/proto_utils/stats.js';
-import { IndividualSimUI } from '../core/individual_sim_ui.js';
-import { EventID, TypedEvent } from '../core/typed_event.js';
-import { TotemsSection } from '../core/components/totem_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
+import { TotemsSection } from '../core/components/totem_inputs.js';
 import * as Mechanics from '../core/constants/mechanics.js';
+import { IndividualSimUI } from '../core/individual_sim_ui.js';
+import { Player } from '../core/player.js';
+import {
+	APLRotation
+} from '../core/proto/apl.js';
+import { Debuffs, IndividualBuffs, PartyBuffs, RaidBuffs, Spec, Stat, TristateEffect } from '../core/proto/common.js';
+import { Stats } from '../core/proto_utils/stats.js';
+import { TypedEvent } from '../core/typed_event.js';
 import * as ShamanInputs from './inputs.js';
 import * as Presets from './presets.js';
-import { ElementalShaman_Options_ThunderstormRange, ElementalShaman_Rotation_BloodlustUse} from '../core/proto/shaman.js';
 
 export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalShaman> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecElementalShaman>) {
@@ -73,7 +64,6 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 			],
 			modifyDisplayStats: (player: Player<Spec.SpecElementalShaman>) => {
 				let stats = new Stats();
-				stats = stats.addStat(Stat.StatSpellHit, player.getTalents().elementalPrecision * Mechanics.SPELL_HIT_RATING_PER_HIT_CHANCE);
 				stats = stats.addStat(Stat.StatSpellCrit,
 					player.getTalents().tidalMastery * 1 * Mechanics.SPELL_CRIT_RATING_PER_CRIT_CHANCE);
 				return {
@@ -177,7 +167,7 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				],
 			},
 
-			autoRotation: (player: Player<Spec.SpecElementalShaman>): APLRotation => {
+			autoRotation: (_: Player<Spec.SpecElementalShaman>): APLRotation => {
 				return Presets.ROTATION_PRESET_DEFAULT.rotation.rotation!;
 			},
 		});

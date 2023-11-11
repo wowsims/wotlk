@@ -13,82 +13,49 @@ import {
 import { SavedTalents } from '../core/proto/ui.js';
 
 import {
-	ShadowPriest_Options_Armor as Armor,
-	ShadowPriest_Rotation as Rotation,
 	ShadowPriest_Options as Options,
-	ShadowPriest_Rotation_RotationType,
 	PriestMajorGlyph as MajorGlyph,
 	PriestMinorGlyph as MinorGlyph,
+	ShadowPriest_Rotation as Rotation,
+	ShadowPriest_Rotation_RotationType,
 } from '../core/proto/priest.js';
 
 import * as PresetUtils from '../core/preset_utils.js';
 
-import PreraidGear from './gear_sets/preraid.gear.json';
-import P1Gear from './gear_sets/p1.gear.json';
-import P2Gear from './gear_sets/p2.gear.json';
-import P3Gear from './gear_sets/p3.gear.json';
-import P4Gear from './gear_sets/p4.gear.json';
+import BlankGear from './gear_sets/blank.gear.json';
 
 import DefaultApl from './apls/default.apl.json'
-import AOE24Apl from './apls/aoe_2_4.apl.json'
-import AOE4PlusApl from './apls/aoe_4_plus.apl.json'
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
 
-export const PRERAID_PRESET = PresetUtils.makePresetGear('Preraid Preset', PreraidGear);
-export const P1_PRESET = PresetUtils.makePresetGear('P1 Preset', P1Gear);
-export const P2_PRESET = PresetUtils.makePresetGear('P2 Preset', P2Gear);
-export const P3_PRESET = PresetUtils.makePresetGear('P3 Preset', P3Gear);
-export const P4_PRESET = PresetUtils.makePresetGear('P4 Preset', P4Gear);
+export const BLANK_GEAR_PRESET = PresetUtils.makePresetGear('Blank', BlankGear);
 
 export const DefaultRotation = Rotation.create({
 	rotationType: ShadowPriest_Rotation_RotationType.Ideal,
 });
 
 export const ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Default', DefaultApl);
-export const ROTATION_PRESET_AOE24 = PresetUtils.makePresetAPLRotation('AOE (2 to 4 targets)', AOE24Apl);
-export const ROTATION_PRESET_AOE4PLUS = PresetUtils.makePresetAPLRotation('AOE (4+ targets)', AOE4PlusApl);
 
 // Default talents. Uses the wowhead calculator format, make the talents on
-// https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
+// https://wowhead.com/classic/talent-calc and copy the numbers in the url.
 export const StandardTalents = {
 	name: 'Standard',
 	data: SavedTalents.create({
-		talentsString: '05032031--325023051223010323151301351',
+		talentsString: '5042001303--5002505103501051',
 		glyphs: Glyphs.create({
-			major1: MajorGlyph.GlyphOfShadow,
-			major2: MajorGlyph.GlyphOfMindFlay,
-			major3: MajorGlyph.GlyphOfDispersion,
-			minor1: MinorGlyph.GlyphOfFortitude,
-			minor2: MinorGlyph.GlyphOfShadowProtection,
-			minor3: MinorGlyph.GlyphOfShadowfiend,
+			major1: MajorGlyph.PriestMajorGlyphNone,
+			major2: MajorGlyph.PriestMajorGlyphNone,
+			major3: MajorGlyph.PriestMajorGlyphNone,
+			minor1: MinorGlyph.PriestMinorGlyphNone,
+			minor2: MinorGlyph.PriestMinorGlyphNone,
+			minor3: MinorGlyph.PriestMinorGlyphNone,
 		}),
 	}),
 };
 
-export const EnlightenmentTalents = {
-	name: 'Enlightenment',
-	data: SavedTalents.create({
-		talentsString: '05032031303005022--3250230012230101231513011',
-		glyphs: Glyphs.create({
-			major1: MajorGlyph.GlyphOfShadow,
-			major2: MajorGlyph.GlyphOfMindFlay,
-			major3: MajorGlyph.GlyphOfShadowWordDeath,
-			minor1: MinorGlyph.GlyphOfFortitude,
-			minor2: MinorGlyph.GlyphOfShadowProtection,
-			minor3: MinorGlyph.GlyphOfShadowfiend,
-		}),
-	}),
-};
-
-export const DefaultOptions = Options.create({
-	useShadowfiend: true,
-	useMindBlast: true,
-	useShadowWordDeath: true,
-	armor: Armor.InnerFire,
-});
+export const DefaultOptions = Options.create({});
 
 export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfTheFrostWyrm,

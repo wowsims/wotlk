@@ -248,7 +248,7 @@ class TalentTreePicker<TalentsProto> extends Component {
 
 	getMaxSpendablePoints() {
 		if (!this.picker.isHunterPet()) return MAX_POINTS_PLAYER;
-		if ((this.picker.modObject as Player<Spec.SpecHunter>).getTalents().beastMastery) return MAX_POINTS_HUNTER_PET_BM;
+		
 		return MAX_POINTS_HUNTER_PET;
 	}
 }
@@ -350,7 +350,7 @@ class TalentPicker<TalentsProto> extends Component {
 		this.rootElem.addEventListener('contextmenu', event => {
 			event.preventDefault();
 		});
-		this.rootElem.addEventListener('touchmove', event => {
+		this.rootElem.addEventListener('touchmove', _ => {
 			if (this.longTouchTimer != undefined) {
 				clearTimeout(this.longTouchTimer);
 				this.longTouchTimer = undefined;

@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (priest *Priest) registerPenanceHealSpell() {
@@ -16,10 +15,6 @@ func (priest *Priest) RegisterPenanceSpell() {
 }
 
 func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
-	if !priest.Talents.Penance {
-		return nil
-	}
-
 	var procMask core.ProcMask
 	flags := core.SpellFlagChanneled | core.SpellFlagAPL
 	if isHeal {
@@ -30,16 +25,13 @@ func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 	}
 
 	return priest.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 53007},
+		ActionID:    core.ActionID{SpellID: 402174},
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    procMask,
 		Flags:       flags,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.16,
-			Multiplier: 1 *
-				(1 - 0.05*float64(priest.Talents.ImprovedHealing)) *
-				(1 - []float64{0, .04, .07, .10}[priest.Talents.MentalAgility]),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -48,18 +40,12 @@ func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 			},
 			CD: core.Cooldown{
 				Timer:    priest.NewTimer(),
-				Duration: time.Duration(float64(time.Second*12-core.TernaryDuration(priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfPenance), time.Second*2, 0)) * (1 - .1*float64(priest.Talents.Aspiration))),
+				Duration: time.Second * 12,
 			},
 		},
 
 		DamageMultiplier: 1 +
-			core.TernaryFloat64(isHeal,
-				1*
-					(1+.02*float64(priest.Talents.SpiritualHealing))*
-					(1+.01*float64(priest.Talents.BlessedResilience))*
-					(1+.02*float64(priest.Talents.FocusedPower)),
-				.05*float64(priest.Talents.SearingLight)) +
-			.01*float64(priest.Talents.TwinDisciplines),
+			core.TernaryFloat64(isHeal, 1+.02*float64(priest.Talents.SpiritualHealing), 0),
 		CritMultiplier:   core.TernaryFloat64(isHeal, priest.DefaultHealingCritMultiplier(), priest.DefaultSpellCritMultiplier()),
 		ThreatMultiplier: 0,
 

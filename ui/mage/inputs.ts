@@ -22,15 +22,6 @@ export const Armor = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecMage, Ar
 	],
 });
 
-export const WaterElementalDisobeyChance = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecMage>({
-	fieldName: 'waterElementalDisobeyChance',
-	percent: true,
-	label: 'Water Ele Disobey %',
-	labelTooltip: 'Percent of Water Elemental actions which will fail. This represents the Water Elemental moving around or standing still instead of casting.',
-	changeEmitter: (player: Player<Spec.SpecMage>) => TypedEvent.onAny([player.specOptionsChangeEmitter, player.talentsChangeEmitter]),
-	showWhen: (player: Player<Spec.SpecMage>) => player.getTalents().summonWaterElemental,
-});
-
 export const FocusMagicUptime = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecMage>({
 	fieldName: 'focusMagicPercentUptime',
 	label: 'Focus Magic Percent Uptime',
@@ -88,14 +79,6 @@ export const MageRotationConfig = {
 			percent: true,
 			label: 'Use Missile Barrage ASAP below mana %',
 			labelTooltip: 'When below this mana %, use Missile Barrage proc as soon as possible. Can be useful to conserve mana.',
-			showWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0,
-			changeEmitter: (player: Player<Spec.SpecMage>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecMage>({
-			fieldName: 'useArcaneBarrage',
-			label: 'Use Arcane Barrage',
-			labelTooltip: 'Includes Arcane Barrage in the rotation.',
-			enableWhen: (player: Player<Spec.SpecMage>) => player.getTalents().arcaneBarrage,
 			showWhen: (player: Player<Spec.SpecMage>) => player.getTalentTree() == 0,
 			changeEmitter: (player: Player<Spec.SpecMage>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 		}),

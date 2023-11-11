@@ -638,7 +638,7 @@ var PowerInfusionActionID = ActionID{SpellID: 10060}
 var PowerInfusionAuraTag = "PowerInfusion"
 
 const PowerInfusionDuration = time.Second * 15
-const PowerInfusionCD = time.Minute * 2
+const PowerInfusionCD = time.Minute * 3
 
 func registerPowerInfusionCD(agent Agent, numPowerInfusions int32) {
 	if numPowerInfusions == 0 {

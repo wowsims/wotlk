@@ -115,50 +115,8 @@ func (druid *Druid) GetCharacter() *core.Character {
 	return &druid.Character
 }
 
-func (druid *Druid) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
-	raidBuffs.GiftOfTheWild = max(raidBuffs.GiftOfTheWild, proto.TristateEffect_TristateEffectRegular)
-	if druid.Talents.ImprovedMarkOfTheWild == 2 { // probably could work on actually calculating the fraction effect later if we care.
-		raidBuffs.GiftOfTheWild = proto.TristateEffect_TristateEffectImproved
-	}
-
-	raidBuffs.Thorns = max(raidBuffs.Thorns, proto.TristateEffect_TristateEffectRegular)
-	if druid.Talents.Brambles == 3 {
-		raidBuffs.Thorns = proto.TristateEffect_TristateEffectImproved
-	}
-
-	if druid.InForm(Moonkin) && druid.Talents.MoonkinForm {
-		raidBuffs.MoonkinAura = max(raidBuffs.MoonkinAura, proto.TristateEffect_TristateEffectRegular)
-		if druid.Talents.ImprovedMoonkinForm > 0 {
-			// For now, we assume Improved Moonkin Form is maxed-out
-			raidBuffs.MoonkinAura = proto.TristateEffect_TristateEffectImproved
-		}
-	}
-	if druid.InForm(Cat|Bear) && druid.Talents.LeaderOfThePack {
-		raidBuffs.LeaderOfThePack = max(raidBuffs.LeaderOfThePack, proto.TristateEffect_TristateEffectRegular)
-		if druid.Talents.ImprovedLeaderOfThePack > 0 {
-			raidBuffs.LeaderOfThePack = proto.TristateEffect_TristateEffectImproved
-		}
-	}
-}
-
 func (druid *Druid) BalanceCritMultiplier() float64 {
 	return druid.SpellCritMultiplier(1, 0.2*float64(druid.Talents.Vengeance))
-}
-
-func (druid *Druid) MeleeCritMultiplier(castedForm DruidForm) float64 {
-	// Assumes that Predatory Instincts is a primary rather than secondary modifier for now, but this needs to confirmed!
-	primaryModifier := 1.0
-	if castedForm.Matches(Cat) {
-		primaryModifier = []float64{1, 1.03, 1.07, 1.10}[druid.Talents.PredatoryInstincts]
-	}
-	return druid.Character.MeleeCritMultiplier(primaryModifier, 0)
-}
-
-func (druid *Druid) HasMajorGlyph(glyph proto.DruidMajorGlyph) bool {
-	return druid.HasGlyph(int32(glyph))
-}
-func (druid *Druid) HasMinorGlyph(glyph proto.DruidMinorGlyph) bool {
-	return druid.HasGlyph(int32(glyph))
 }
 
 func (druid *Druid) TryMaul(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
@@ -196,13 +154,7 @@ func (druid *Druid) RegisterSpell(formMask DruidForm, config core.SpellConfig) *
 }
 
 func (druid *Druid) Initialize() {
-	druid.BleedCategories = druid.GetEnemyExclusiveCategories(core.BleedEffectCategory)
-
-	if druid.Talents.PrimalPrecision > 0 {
-		druid.PrimalPrecisionRecoveryMetrics = druid.NewEnergyMetrics(core.ActionID{SpellID: 48410})
-	}
 	druid.registerFaerieFireSpell()
-	druid.registerRebirthSpell()
 	druid.registerInnervateCD()
 	druid.registerFakeGotw()
 }
@@ -213,9 +165,6 @@ func (druid *Druid) RegisterBalanceSpells() {
 	druid.registerMoonfireSpell()
 	druid.registerStarfireSpell()
 	druid.registerWrathSpell()
-	druid.registerStarfallSpell()
-	druid.registerTyphoonSpell()
-	druid.registerForceOfNatureCD()
 }
 
 func (druid *Druid) RegisterFeralCatSpells() {

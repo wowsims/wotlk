@@ -47,10 +47,6 @@ export const PetInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecWarlo
 		{ actionId: ActionId.fromSpellId(688), value: Summon.Imp },
 		{ actionId: ActionId.fromSpellId(712), value: Summon.Succubus },
 		{ actionId: ActionId.fromSpellId(691), value: Summon.Felhunter },
-		{
-			actionId: ActionId.fromSpellId(30146), value: Summon.Felguard,
-			showWhen: (player: Player<Spec.SpecWarlock>) => player.getTalents().summonFelguard,
-		},
 	],
 	changeEmitter: (player: Player<Spec.SpecWarlock>) => player.changeEmitter,
 });
@@ -78,38 +74,11 @@ export const SecondaryDotInput = InputHelpers.makeRotationEnumIconInput<Spec.Spe
 	values: [
 		{ value: SecondaryDot.NoSecondaryDot },
 		{ actionId: ActionId.fromSpellId(47811), value: SecondaryDot.Immolate },
-		{
-			actionId: ActionId.fromSpellId(47843), value: SecondaryDot.UnstableAffliction,
-			showWhen: (player: Player<Spec.SpecWarlock>) => player.getTalents().unstableAffliction,
-		},
 	],
 	changeEmitter: (player: Player<Spec.SpecWarlock>) => player.changeEmitter,
 	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: number) => {
 		const newRotation = player.getRotation();
 		newRotation.secondaryDot = newValue;
-		newRotation.preset = RotationPreset.Manual;
-		player.setRotation(eventID, newRotation);
-	},
-});
-
-export const SpecSpellInput = InputHelpers.makeRotationEnumIconInput<Spec.SpecWarlock, SpecSpell>({
-	fieldName: 'specSpell',
-	values: [
-		{ value: SpecSpell.NoSpecSpell },
-		{
-			actionId: ActionId.fromSpellId(59164), value: SpecSpell.Haunt,
-			showWhen: (player: Player<Spec.SpecWarlock>) => player.getTalents().haunt,
-		},
-		{
-			actionId: ActionId.fromSpellId(59172), value: SpecSpell.ChaosBolt,
-			showWhen: (player: Player<Spec.SpecWarlock>) => player.getTalents().chaosBolt,
-		},
-	],
-	changeEmitter: (player: Player<Spec.SpecWarlock>) => player.changeEmitter,
-	showWhen: (player: Player<Spec.SpecWarlock>) => player.getTalents().haunt || player.getTalents().chaosBolt,
-	setValue: (eventID: EventID, player: Player<Spec.SpecWarlock>, newValue: number) => {
-		const newRotation = player.getRotation();
-		newRotation.specSpell = newValue;
 		newRotation.preset = RotationPreset.Manual;
 		player.setRotation(eventID, newRotation);
 	},

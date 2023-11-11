@@ -9,6 +9,8 @@ from typing import List
 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 
@@ -22,17 +24,26 @@ def _between(s, start, end):
 
 
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
-driver.implicitly_wait(2)
-
+wait = WebDriverWait(driver, 10)
+element_locator = (By.ID, "data-tree-switcher")
 
 def _get_spell_id_from_link(link):
 	return int(link.split("/")[-2].split("=")[-1])
 
 
 def get_other_spell_ranks(spell_id: int) -> List[int]:
-	driver.get(f"https://wowhead.com/wotlk/spell={spell_id}#see-also-ability")
+	driver.get(f"https://wowhead.com/classic/spell={spell_id}#see-also-ability")
+	wait.until(EC.presence_of_element_located(element_locator))
 
-	see_also = driver.find_element(By.ID, "tab-see-also-ability")  # ordered by rank
+	see_also = driver.find_elements(By.ID, "tab-see-also-ability")  # ordered by rank
+
+	if len(see_also) == 0:
+		see_also = driver.find_elements(By.ID, "tab-see-also-other")
+		if len(see_also) == 0:
+			print(f"Spell {spell_id} missing see-also tab. Manual review required.")
+			return []
+
+	see_also = see_also[0]
 	rows = see_also.find_elements(By.CLASS_NAME, "listview-row")
 	return [_get_spell_id_from_link(row.find_element(By.CLASS_NAME, "listview-cleartext").get_attribute("href"))
 		for row in rows]
@@ -43,13 +54,14 @@ def rowcol(v):
 
 to_export = []
 
-driver.get('https://wowhead.com/wotlk/talent-calc/' + className)
+driver.get('https://wowhead.com/classic/talent-calc/' + className)
+wait.until(EC.presence_of_element_located(element_locator))
 trees = driver.find_elements(By.CLASS_NAME, "ctc-tree")
 for tree in trees:
 	_working_talents = {}
 
 	talents = tree.find_elements(By.CLASS_NAME, "ctc-tree-talent")
-	print("found %d talents\n".format(len(talents)))
+	print(f"found {len(talents)} talents\n")
 	for talent in talents:
 		row, col = int(talent.get_attribute("data-row")), int(talent.get_attribute("data-col"))
 		max_points = int(talent.get_attribute("data-max-points"))
@@ -84,7 +96,8 @@ for tree in trees:
 			"colIdx": prereq_col,
 		}
 
-	title = tree.find_element(By.XPATH, "./div/b").text
+	header = tree.find_element(By.CLASS_NAME, "ctc-tree-header")
+	title = header.find_element(By.CSS_SELECTOR , "b").text
 	background = tree.find_element(By.CLASS_NAME, "ctc-tree-talents-background").get_attribute("style")
 	values = list(_working_talents.values())
 	values.sort(key=rowcol)

@@ -5,42 +5,29 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 )
-
-func (priest *Priest) getMindSearMiseryCoefficient() float64 {
-	return 0.2861 * (1 + 0.05*float64(priest.Talents.Misery))
-}
 
 func (priest *Priest) getMindSearBaseConfig() core.SpellConfig {
 	return core.SpellConfig{
-		SpellSchool:     core.SpellSchoolShadow,
-		ProcMask:        core.ProcMaskProc,
-		BonusHitRating:  float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
-		BonusCritRating: float64(priest.Talents.MindMelt) * 2 * core.CritRatingPerCritChance,
-		DamageMultiplier: 1 +
-			0.02*float64(priest.Talents.Darkness) +
-			0.01*float64(priest.Talents.TwinDisciplines),
+		SpellSchool:      core.SpellSchoolShadow,
+		ProcMask:         core.ProcMaskProc,
+		BonusHitRating:   float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
+		BonusCritRating:  0,
+		DamageMultiplier: 1,
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 		CritMultiplier:   priest.DefaultSpellCritMultiplier(),
 	}
 }
 
 func (priest *Priest) getMindSearTickSpell(numTicks int32) *core.Spell {
-	hasGlyphOfShadow := priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow))
-	miseryCoeff := priest.getMindSearMiseryCoefficient()
-
 	config := priest.getMindSearBaseConfig()
 	config.ActionID = core.ActionID{SpellID: 53022}.WithTag(numTicks)
 	config.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-		damage := sim.Roll(212, 228) + miseryCoeff*spell.SpellPower()
+		damage := sim.Roll(70, 78) + spell.SpellPower()
 		result := spell.CalcAndDealDamage(sim, target, damage, spell.OutcomeMagicHitAndCrit)
 
 		if result.Landed() {
 			priest.AddShadowWeavingStack(sim)
-		}
-		if result.DidCrit() && hasGlyphOfShadow {
-			priest.ShadowyInsightAura.Activate(sim)
 		}
 	}
 	return priest.GetOrRegisterSpell(config)
@@ -55,15 +42,13 @@ func (priest *Priest) newMindSearSpell(numTicksIdx int32) *core.Spell {
 	}
 
 	channelTime := time.Second * time.Duration(numTicks)
-	miseryCoeff := priest.getMindSearMiseryCoefficient()
 	mindSearTickSpell := priest.getMindSearTickSpell(numTicksIdx)
 
 	config := priest.getMindSearBaseConfig()
 	config.ActionID = core.ActionID{SpellID: 53023}.WithTag(numTicksIdx)
 	config.Flags = flags
 	config.ManaCost = core.ManaCostOptions{
-		BaseCost:   0.28,
-		Multiplier: 1 - 0.05*float64(priest.Talents.FocusedMind),
+		BaseCost: 0.28,
 	}
 	config.Cast = core.CastConfig{
 		DefaultCast: core.Cast{
@@ -95,7 +80,7 @@ func (priest *Priest) newMindSearSpell(numTicksIdx int32) *core.Spell {
 		}
 	}
 	config.ExpectedTickDamage = func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
-		baseDamage := sim.Roll(212, 228) + miseryCoeff*spell.SpellPower()
+		baseDamage := sim.Roll(70, 78) + spell.SpellPower()
 		return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicCrit)
 	}
 	return priest.GetOrRegisterSpell(config)

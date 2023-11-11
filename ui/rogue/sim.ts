@@ -11,8 +11,6 @@ import {
 	WeaponType
 } from '../core/proto/common.js';
 import {
-	APLAction,
-	APLListItem,
 	APLRotation,
 } from '../core/proto/apl.js';
 import { Player } from '../core/player.js';
@@ -69,63 +67,9 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					return {
 						updateOn: simUI.player.changeEmitter,
 						getContent: () => {
-							if (
-								simUI.player.getTalents().mutilate &&
-								(simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponType != WeaponType.WeaponTypeDagger ||
-									simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponType != WeaponType.WeaponTypeDagger)
-							) {
-								return '"Mutilate" talent selected, but daggers not equipped in both hands.';
-							} else {
-								return '';
-							}
-						},
-					};
-				},
-				(simUI: IndividualSimUI<Spec.SpecRogue>) => {
-					return {
-						updateOn: simUI.player.changeEmitter,
-						getContent: () => {
 							if (simUI.player.getRotation().combatBuilder == CombatBuilder.Backstab &&
 								simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponType != WeaponType.WeaponTypeDagger) {
 								return 'Builder "Backstab" selected, but no dagger equipped.';
-							} else {
-								return '';
-							}
-						},
-					};
-				},
-				(simUI: IndividualSimUI<Spec.SpecRogue>) => {
-					return {
-						updateOn: simUI.player.changeEmitter,
-						getContent: () => {
-							if (simUI.player.getTalents().hackAndSlash) {
-								if (simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponType == WeaponType.WeaponTypeSword ||
-									simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponType == WeaponType.WeaponTypeAxe ||
-									simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponType == WeaponType.WeaponTypeSword ||
-									simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponType == WeaponType.WeaponTypeAxe) {
-									return '';
-								} else {
-									return '"Hack and Slash" talent selected, but swords or axes not equipped.';
-								}
-							} else {
-								return '';
-							}
-						},
-					};
-				},
-				(simUI: IndividualSimUI<Spec.SpecRogue>) => {
-					return {
-						updateOn: simUI.player.changeEmitter,
-						getContent: () => {
-							if (simUI.player.getTalents().closeQuartersCombat) {
-								if (simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponType == WeaponType.WeaponTypeFist ||
-									simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotMainHand)?.item.weaponType == WeaponType.WeaponTypeDagger ||
-									simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponType == WeaponType.WeaponTypeFist ||
-									simUI.player.getGear().getEquippedItem(ItemSlot.ItemSlotOffHand)?.item.weaponType == WeaponType.WeaponTypeDagger) {
-									return '';
-								} else {
-									return '"Close Quarters Combat" talent selected, but fists or daggers not equipped.';
-								}
 							} else {
 								return '';
 							}
@@ -348,10 +292,6 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
-					RogueInputs.StartingOverkillDuration,
-					RogueInputs.VanishBreakTime,
-					RogueInputs.AssumeBleedActive,
-					RogueInputs.HonorOfThievesCritRate,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],

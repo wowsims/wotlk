@@ -42,7 +42,7 @@ export abstract class Exporter extends BaseModal {
 		this.textElem = this.rootElem.getElementsByClassName('exporter-textarea')[0] as HTMLElement;
 
 		const clipboardButton = this.rootElem.getElementsByClassName('clipboard-button')[0] as HTMLElement;
-		clipboardButton.addEventListener('click', event => {
+		clipboardButton.addEventListener('click', _ => {
 			const data = this.textElem.textContent!;
 			if (navigator.clipboard == undefined) {
 				alert(data);
@@ -59,7 +59,7 @@ export abstract class Exporter extends BaseModal {
 
 		if (allowDownload) {
 			const downloadButton = this.rootElem.getElementsByClassName('download-button')[0] as HTMLElement;
-			downloadButton.addEventListener('click', event => {
+			downloadButton.addEventListener('click', _ => {
 				const data = this.textElem.textContent!;
 				downloadString(data, 'wowsims.json');
 			});
@@ -309,6 +309,7 @@ export class Individual80UEPExporter<SpecType extends Spec> extends Exporter {
 		[Stat.StatFrostRune]: 'frostRune',
 		[Stat.StatUnholyRune]: 'unholyRune',
 		[Stat.StatDeathRune]: 'deathRune',
+		[Stat.StatHealing]: 'Healing',
 	}
 	static pseudoStatNames: Partial<Record<PseudoStat, string>> = {
 		[PseudoStat.PseudoStatMainHandDps]: 'dps',
@@ -402,6 +403,7 @@ export class IndividualPawnEPExporter<SpecType extends Spec> extends Exporter {
 		[Stat.StatFrostRune]: 'FrostRune',
 		[Stat.StatUnholyRune]: 'UnholyRune',
 		[Stat.StatDeathRune]: 'DeathRune',
+		[Stat.StatHealing]: 'Healing',
 	}
 	static pseudoStatNames: Partial<Record<PseudoStat, string>> = {
 		[PseudoStat.PseudoStatMainHandDps]: 'MeleeDps',

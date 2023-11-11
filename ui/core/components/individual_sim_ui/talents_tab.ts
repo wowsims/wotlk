@@ -7,10 +7,8 @@ import { SavedTalents } from "../../proto/ui";
 
 import { classGlyphsConfig, classTalentsConfig } from "../../talents/factory";
 import { GlyphsPicker } from "../../talents/glyphs_picker";
-import { HunterPetTalentsPicker, makePetTypeInputConfig } from "../../talents/hunter_pet";
 import { TalentsPicker } from "../../talents/talents_picker";
 
-import { IconEnumPicker } from "../icon_enum_picker";
 import { SavedDataManager } from "../saved_data_manager";
 import { SimTab } from "../sim_tab";
 
@@ -105,16 +103,9 @@ export class TalentsTab extends SimTab {
     `
 
     const playerTab = this.leftPanel.querySelector('#player-talents-tab') as HTMLElement;
-    const petTab = this.leftPanel.querySelector('#pet-talents-tab') as HTMLElement;
 
     this.buildTalentsPicker(playerTab);
     this.buildGlyphsPicker(playerTab);
-    this.buildHunterPetPicker(petTab);
-  }
-
-  private buildHunterPetPicker(parentElem: HTMLElement) {
-    new HunterPetTalentsPicker(parentElem, this.simUI, this.simUI.player as Player<Spec.SpecHunter>);
-    const petTypeToggle = new IconEnumPicker(parentElem, this.simUI.player as Player<Spec.SpecHunter>, makePetTypeInputConfig(false));
   }
 
   private buildSavedTalentsPicker() {

@@ -1,29 +1,18 @@
-import { BooleanPicker } from '../core/components/boolean_picker.js';
-import { EnumPicker } from '../core/components/enum_picker.js';
-import { IconEnumPicker, IconEnumPickerConfig } from '../core/components/icon_enum_picker.js';
-import { IconPickerConfig } from '../core/components/icon_picker.js';
+import { Player } from '../core/player.js';
+import { ItemSlot, Spec } from '../core/proto/common.js';
 import {
-	AirTotem,
-	EarthTotem,
-	FireTotem,
-	WaterTotem,
-	EnhancementShaman_Options as ShamanOptions,
-	ShamanTotems,
-	ShamanShield,
-	ShamanImbue,
-	ShamanSyncType,
+	EnhancementShaman_Rotation_CustomRotationSpell as CustomRotationSpell,
+	EnhancementShaman_Rotation_BloodlustUse,
 	EnhancementShaman_Rotation_PrimaryShock as PrimaryShock,
 	EnhancementShaman_Rotation_RotationType as RotationType,
-	EnhancementShaman_Rotation_CustomRotationSpell as CustomRotationSpell,
-	EnhancementShaman_Rotation,
-	EnhancementShaman_Rotation_BloodlustUse
+	ShamanImbue,
+	ShamanShield,
+	ShamanSyncType
 } from '../core/proto/shaman.js';
-import { CustomSpell, Spec, ItemSwap, ItemSlot } from '../core/proto/common.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
-import { Player } from '../core/player.js';
 
-import * as InputHelpers from '../core/components/input_helpers.js';
 import { EventID } from 'ui/core/typed_event.js';
+import * as InputHelpers from '../core/components/input_helpers.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
@@ -166,13 +155,6 @@ export const EnhancementShamanRotationConfig = {
 					return player.getRotation().weaveFlameShock
 				}
 			}),
-			InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({
-				fieldName: 'lightningboltWeave',
-				label: 'Enable Weaving Lightning Bolt',
-				labelTooltip: 'Will provide a DPS increase, but is harder to execute',
-				enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getTalents().maelstromWeapon > 0,
-				showWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().rotationType != RotationType.Custom
-			}),
 			InputHelpers.makeRotationEnumInput<Spec.SpecEnhancementShaman, number>({
 				fieldName: 'maelstromweaponMinStack',
 				label: 'Minimum Maelstrom Stacks to Weave',
@@ -272,11 +254,6 @@ export const EnhancementShamanRotationConfig = {
 
 					return true
 				},
-			}),
-			InputHelpers.makeRotationNumberInput<Spec.SpecEnhancementShaman>({
-				fieldName: 'shamanisticRageManaThreshold',
-				label: 'Mana % to use Shamanistic Rage',
-				enableWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getTalents().shamanisticRage,
 			}),
 			InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({
 				fieldName: 'bloodlust',

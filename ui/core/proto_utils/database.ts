@@ -106,7 +106,6 @@ export class Database {
 				this.enchantsBySlot[slot]!.push(enchant);
 			});
 		});
-		db.gems.forEach(gem => this.gems.set(gem.id, gem));
 
 		db.npcs.forEach(npc => this.npcs.set(npc.id, npc));
 		db.zones.forEach(zone => this.zones.set(zone.id, zone));
@@ -118,14 +117,9 @@ export class Database {
 			name: item.name,
 			icon: item.icon,
 		})));
-		db.gems.forEach(gem => this.itemIcons[gem.id] = Promise.resolve(IconData.create({
-			id: gem.id,
-			name: gem.name,
-			icon: gem.icon,
-		})));
+
 		db.itemIcons.forEach(data => this.itemIcons[data.id] = Promise.resolve(data));
 		db.spellIcons.forEach(data => this.spellIcons[data.id] = Promise.resolve(data));
-		db.glyphIds.forEach(id => this.glyphIds.push(id));
 	}
 
 	getAllItems(): Array<Item> {
@@ -257,6 +251,14 @@ export class Database {
 		return await db.spellIcons[spellId];
 	}
 
+	static async getSpellRankData(spellId: number): Promise<IconData> {
+		const db = await Database.get();
+		if (!db.spellIcons[spellId]) {
+			db.spellIcons[spellId] = Database.getWowheadSpellTooltipData(spellId);
+		}
+		return await db.spellIcons[spellId];
+	}
+
 	private static async getWowheadItemTooltipData(id: number): Promise<IconData> {
 		return Database.getWowheadTooltipData(id, 'item');
 	}
@@ -264,7 +266,7 @@ export class Database {
 		return Database.getWowheadTooltipData(id, 'spell');
 	}
 	private static async getWowheadTooltipData(id: number, tooltipPostfix: string): Promise<IconData> {
-		const url = `https://nether.wowhead.com/wotlk/tooltip/${tooltipPostfix}/${id}?lvl=${CHARACTER_LEVEL}`;
+		const url = `https://nether.wowhead.com/classic/tooltip/${tooltipPostfix}/${id}?lvl=${CHARACTER_LEVEL}`;
 		try {
 			const response = await fetch(url);
 			const json = await response.json();

@@ -8,7 +8,6 @@ import {
 	Spec,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
-import { ferocityDefault, ferocityBMDefault } from '../core/talents/hunter_pet.js';
 
 import {
 	Hunter_Rotation as HunterRotation,
@@ -129,7 +128,7 @@ export const DefaultOptions = HunterOptions.create({
 	ammo: Ammo.SaroniteRazorheads,
 	useHuntersMark: true,
 	petType: PetType.Wolf,
-	petTalents: ferocityDefault,
+	petTalents: {},
 	petUptime: 1,
 	sniperTrainingUptime: 0.9,
 	timeToTrapWeaveMs: 2000,
@@ -139,7 +138,7 @@ export const BMDefaultOptions = HunterOptions.create({
 	ammo: Ammo.SaroniteRazorheads,
 	useHuntersMark: true,
 	petType: PetType.Wolf,
-	petTalents: ferocityBMDefault,
+	petTalents: {},
 	petUptime: 1,
 	sniperTrainingUptime: 0.9,
 	timeToTrapWeaveMs: 2000,

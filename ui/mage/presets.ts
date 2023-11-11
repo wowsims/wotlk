@@ -11,7 +11,6 @@ import {
 	UnitReference,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
-import { Player } from '../core/player.js';
 
 import {
 	Mage_Rotation as MageRotation,
@@ -69,16 +68,16 @@ export const ARCANE_P4_PRESET_ALLIANCE = PresetUtils.makePresetGear('Arcane P4 P
 export const ARCANE_P4_PRESET_HORDE = PresetUtils.makePresetGear('Arcane P4 Preset [H]', P4ArcaneHordeGear, { talentTree: 0, faction: Faction.Horde });
 export const FIRE_PRERAID_PRESET = PresetUtils.makePresetGear('Fire Preraid Preset', PreraidFireGear, { talentTree: 1 });
 export const FIRE_P1_PRESET = PresetUtils.makePresetGear('Fire P1 Preset', P1FireGear, { talentTree: 1 });
-export const FIRE_P2_PRESET = PresetUtils.makePresetGear('Fire P2 Preset', P2FireGear, { talentTree: 1, customCondition: (player: Player<Spec.SpecMage>) => !player.getTalents().icyVeins });
-export const FIRE_P3_PRESET_ALLIANCE = PresetUtils.makePresetGear('Fire P3 Preset [A]', P3FireAllianceGear, { talentTree: 1, faction: Faction.Alliance, customCondition: (player: Player<Spec.SpecMage>) => !player.getTalents().icyVeins });
-export const FIRE_P3_PRESET_HORDE = PresetUtils.makePresetGear('Fire P3 Preset [H]', P3FireHordeGear, { talentTree: 1, faction: Faction.Horde, customCondition: (player: Player<Spec.SpecMage>) => !player.getTalents().icyVeins });
-export const FIRE_P4_PRESET_ALLIANCE = PresetUtils.makePresetGear('Fire P4 Preset [A]', P4FireAllianceGear, { talentTree: 1, faction: Faction.Alliance, customCondition: (player: Player<Spec.SpecMage>) => !player.getTalents().icyVeins });
-export const FIRE_P4_PRESET_HORDE = PresetUtils.makePresetGear('Fire P4 Preset [H]', P4FireHordeGear, { talentTree: 1, faction: Faction.Horde, customCondition: (player: Player<Spec.SpecMage>) => !player.getTalents().icyVeins });
-export const FFB_P2_PRESET = PresetUtils.makePresetGear('FFB P2 Preset', P2FfbGear, { talentTree: 1, customCondition: (player: Player<Spec.SpecMage>) => player.getTalents().icyVeins });
-export const FFB_P3_PRESET_ALLIANCE = PresetUtils.makePresetGear('FFB P3 Preset [A]', P3FfbAllianceGear, { talentTree: 1, customCondition: (player: Player<Spec.SpecMage>) => player.getTalents().icyVeins });
-export const FFB_P3_PRESET_HORDE = PresetUtils.makePresetGear('FFB P3 Preset [H]', P3FfbHordeGear, { talentTree: 1, customCondition: (player: Player<Spec.SpecMage>) => player.getTalents().icyVeins });
-export const FFB_P4_PRESET_ALLIANCE = PresetUtils.makePresetGear('FFB P4 Preset [A]', P4FfbAllianceGear, { talentTree: 1, customCondition: (player: Player<Spec.SpecMage>) => player.getTalents().icyVeins });
-export const FFB_P4_PRESET_HORDE = PresetUtils.makePresetGear('FFB P4 Preset [H]', P4FfbHordeGear, { talentTree: 1, customCondition: (player: Player<Spec.SpecMage>) => player.getTalents().icyVeins });
+export const FIRE_P2_PRESET = PresetUtils.makePresetGear('Fire P2 Preset', P2FireGear, { talentTree: 1 });
+export const FIRE_P3_PRESET_ALLIANCE = PresetUtils.makePresetGear('Fire P3 Preset [A]', P3FireAllianceGear, { talentTree: 1, faction: Faction.Alliance });
+export const FIRE_P3_PRESET_HORDE = PresetUtils.makePresetGear('Fire P3 Preset [H]', P3FireHordeGear, { talentTree: 1, faction: Faction.Horde });
+export const FIRE_P4_PRESET_ALLIANCE = PresetUtils.makePresetGear('Fire P4 Preset [A]', P4FireAllianceGear, { talentTree: 1, faction: Faction.Alliance });
+export const FIRE_P4_PRESET_HORDE = PresetUtils.makePresetGear('Fire P4 Preset [H]', P4FireHordeGear, { talentTree: 1, faction: Faction.Horde });
+export const FFB_P2_PRESET = PresetUtils.makePresetGear('FFB P2 Preset', P2FfbGear, { talentTree: 1 });
+export const FFB_P3_PRESET_ALLIANCE = PresetUtils.makePresetGear('FFB P3 Preset [A]', P3FfbAllianceGear, { talentTree: 1 });
+export const FFB_P3_PRESET_HORDE = PresetUtils.makePresetGear('FFB P3 Preset [H]', P3FfbHordeGear, { talentTree: 1 });
+export const FFB_P4_PRESET_ALLIANCE = PresetUtils.makePresetGear('FFB P4 Preset [A]', P4FfbAllianceGear, { talentTree: 1 });
+export const FFB_P4_PRESET_HORDE = PresetUtils.makePresetGear('FFB P4 Preset [H]', P4FfbHordeGear, { talentTree: 1 });
 export const FROST_P1_PRESET = PresetUtils.makePresetGear('Frost P1 Preset', P1FrostGear, { talentTree: 2 });
 export const FROST_P2_PRESET = PresetUtils.makePresetGear('Frost P2 Preset', P2FrostGear, { talentTree: 2 });
 export const FROST_P3_PRESET_ALLIANCE = PresetUtils.makePresetGear('Frost P3 Preset [A]', P3FrostAllianceGear, { talentTree: 2, faction: Faction.Alliance });

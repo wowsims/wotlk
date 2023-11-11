@@ -58,7 +58,7 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P4_PRESET.gear,
+				gear: Presets.BLANK_GEAR_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatIntellect]: 0.11,
@@ -71,8 +71,6 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,
-				// Default rotation settings.
-				rotation: Presets.DefaultRotation,
 				// Default talents.
 				talents: Presets.StandardTalents.data,
 				// Default spec-specific settings.
@@ -95,8 +93,6 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 			],
 			rotationIconInputs: [
 				ShadowPriestInputs.MindBlastInput,
-				ShadowPriestInputs.ShadowWordDeathInput,
-				ShadowPriestInputs.ShadowfiendInput,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: ShadowPriestInputs.ShadowPriestRotationConfig,
@@ -129,20 +125,13 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 				// Preset talents that the user can quickly select.
 				talents: [
 					Presets.StandardTalents,
-					Presets.EnlightenmentTalents,
 				],
 				rotations: [
 					Presets.ROTATION_PRESET_DEFAULT,
-					Presets.ROTATION_PRESET_AOE4PLUS,
-					Presets.ROTATION_PRESET_AOE24,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.PRERAID_PRESET,
-					Presets.P1_PRESET,
-					Presets.P2_PRESET,
-					Presets.P3_PRESET,
-					Presets.P4_PRESET,
+					Presets.BLANK_GEAR_PRESET,
 				],
 			},
 		});

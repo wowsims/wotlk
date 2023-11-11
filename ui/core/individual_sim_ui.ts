@@ -107,7 +107,7 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 		gear: EquipmentSpec,
 		epWeights: Stats,
 		consumes: Consumes,
-		rotation: SpecRotation<SpecType>,
+		rotation?: SpecRotation<SpecType>,
 		talents: SavedTalents,
 		specOptions: SpecOptions<SpecType>,
 
@@ -175,7 +175,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			spec: player.spec,
 			knownIssues: config.knownIssues,
 			launchStatus: simLaunchStatuses[player.spec],
-			noticeText: aplLaunchStatuses[player.spec] == LaunchStatus.Alpha ? 'Rotation settings have been moved to the \'Rotation\' tab, where experimental APL options are also available. Try them out!' : undefined,
+			noticeText: '',
 		});
 		this.rootElem.classList.add('individual-sim-ui');
 		this.player = player;
@@ -330,7 +330,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.player.setName(initEventID, 'Player');
 
 			// This needs to go last so it doesn't re-store things as they are initialized.
-			this.changeEmitter.on(eventID => {
+			this.changeEmitter.on(_ => {
 				const jsonStr = IndividualSimSettings.toJsonString(this.toProto());
 				window.localStorage.setItem(this.getSettingsStorageKey(), jsonStr);
 			});
@@ -341,7 +341,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		this.raidSimResultsManager = addRaidSimAction(this);
 		addStatWeightsAction(this, this.individualConfig.epStats, this.individualConfig.epPseudoStats, this.individualConfig.epReferenceStat);
 
-		const characterStats = new CharacterStats(
+		new CharacterStats(
 			this.rootElem.getElementsByClassName('sim-sidebar-footer')[0] as HTMLElement,
 			this.player,
 			this.individualConfig.displayStats,
@@ -380,7 +380,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			</div>
 		`);
 
-		const detailedResults = new EmbeddedDetailedResults(this.rootElem.getElementsByClassName('detailed-results')[0] as HTMLElement, this, this.raidSimResultsManager!);
+		new EmbeddedDetailedResults(this.rootElem.getElementsByClassName('detailed-results')[0] as HTMLElement, this, this.raidSimResultsManager!);
 	}
 
 	private addTopbarComponents() {
@@ -411,11 +411,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.player.setRace(eventID, specToEligibleRaces[this.player.spec][0]);
 			this.player.setGear(eventID, this.sim.db.lookupEquipmentSpec(this.individualConfig.defaults.gear));
 			this.player.setConsumes(eventID, this.individualConfig.defaults.consumes);
-			if (aplLaunchStatuses[this.player.spec] < LaunchStatus.Beta) {
-				this.player.setRotation(eventID, this.individualConfig.defaults.rotation);
-			} else if (aplLaunchStatuses[this.player.spec] == LaunchStatus.Beta) {
-				this.player.setRotation(eventID, this.player.specTypeFunctions.rotationCreate());
-			}
+			this.player.setRotation(eventID, this.player.specTypeFunctions.rotationCreate());
 			this.player.setTalentsString(eventID, this.individualConfig.defaults.talents.talentsString);
 			this.player.setGlyphs(eventID, this.individualConfig.defaults.talents.glyphs || Glyphs.create());
 			this.player.setSpecOptions(eventID, this.individualConfig.defaults.specOptions);

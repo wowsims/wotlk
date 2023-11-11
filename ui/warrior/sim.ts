@@ -17,7 +17,6 @@ import { Profession } from '../core/proto/common.js';
 
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
-import * as Mechanics from '../core/constants/mechanics.js';
 
 import * as WarriorInputs from './inputs.js';
 import * as Presets from './presets.js';
@@ -63,12 +62,9 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 				Stat.StatArmorPenetration,
 				Stat.StatArmor,
 			],
-			modifyDisplayStats: (player: Player<Spec.SpecWarrior>) => {
+			modifyDisplayStats: (_: Player<Spec.SpecWarrior>) => {
 				let stats = new Stats();
-				if (!player.getInFrontOfTarget()) {
-					// When behind target, dodge is the only outcome affected by Expertise.
-					stats = stats.addStat(Stat.StatExpertise, player.getTalents().weaponMastery * 4 * Mechanics.EXPERTISE_PER_QUARTER_PERCENT_REDUCTION);
-				}
+
 				return {
 					talents: stats,
 				};
@@ -254,13 +250,6 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 
 	calcExpCap(): Stats {
 		let expCap = 6.5 * 32.79 + 4;
-		const weaponMastery = this.player.getTalents().weaponMastery;
-		const hasWeaponMasteryTalent = !!weaponMastery;
-		
-		if (hasWeaponMasteryTalent) {
-			expCap -=
-				weaponMastery * 4 * Mechanics.EXPERTISE_PER_QUARTER_PERCENT_REDUCTION;
-		}
 
 		return new Stats().withStat(Stat.StatExpertise, expCap);
 	}

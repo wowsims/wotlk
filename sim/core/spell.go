@@ -14,12 +14,14 @@ type CanCastCondition func(sim *Simulation, target *Unit) bool
 type SpellConfig struct {
 	// See definition of Spell (below) for comments on these.
 	ActionID
-	SpellSchool  SpellSchool
-	ProcMask     ProcMask
-	Flags        SpellFlag
-	MissileSpeed float64
-	BaseCost     float64
-	MetricSplits int
+	SpellSchool   SpellSchool
+	ProcMask      ProcMask
+	Flags         SpellFlag
+	MissileSpeed  float64
+	BaseCost      float64
+	MetricSplits  int
+	Rank          int
+	RequiredLevel int
 
 	ManaCost   ManaCostOptions
 	EnergyCost EnergyCostOptions
@@ -154,8 +156,8 @@ func (unit *Unit) OnSpellRegistered(handler SpellRegisteredHandler) {
 
 // Registers a new spell to the unit. Returns the newly created spell.
 func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
-	if len(unit.Spellbook) > 100 {
-		panic(fmt.Sprintf("Over 100 registered spells when registering %s! There is probably a spell being registered every iteration.", config.ActionID))
+	if len(unit.Spellbook) > 200 {
+		panic(fmt.Sprintf("Over 200 registered spells when registering %s! There is probably a spell being registered every iteration.", config.ActionID))
 	}
 
 	// Default the other damage multiplier to 1 if only one or the other is set.

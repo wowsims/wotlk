@@ -159,7 +159,9 @@ export class APLActionIDPicker extends DropdownPicker<Player<any>, ActionID, Act
 		const actionIdSet = actionIdSets[config.actionIdSet];
 		super(parent, player, {
 			...config,
-			sourceToValue: (src: ActionID) => src ? ActionId.fromProto(src) : ActionId.fromEmpty(),
+			sourceToValue: (src: ActionID) => {
+				return src ? ActionId.fromProto(src) : ActionId.fromEmpty();
+			},
 			valueToSource: (val: ActionId) => val.toProto(),
 			defaultLabel: actionIdSet.defaultLabel,
 			equals: (a, b) => ((a == null) == (b == null)) && (!a || a.equals(b!)),
@@ -427,12 +429,14 @@ export function actionIdFieldConfig(field: string, actionIdSet: ACTION_ID_SET, u
 	return {
 		field: field,
 		newValue: () => ActionID.create(),
-		factory: (parent, player, config, getParentValue) => new APLActionIDPicker(parent, player, {
-			...config,
-			actionIdSet: actionIdSet,
-			getUnitRef: () => unitRefField ? getParentValue()[unitRefField] : UnitReference.create(),
-			defaultUnitRef: defaultUnitRef || 'self',
-		}),
+		factory: (parent, player, config, getParentValue) => {
+			return new APLActionIDPicker(parent, player, {
+				...config,
+				actionIdSet: actionIdSet,
+				getUnitRef: () => unitRefField ? getParentValue()[unitRefField] : UnitReference.create(),
+				defaultUnitRef: defaultUnitRef || 'self',
+			})
+		},
 		...(options || {}),
 	};
 }

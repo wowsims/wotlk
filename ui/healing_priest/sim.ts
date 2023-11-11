@@ -8,11 +8,6 @@ import {
 	APLRotation,
 } from '../core/proto/apl.js';
 
-import * as IconInputs from '../core/components/icon_inputs.js';
-import * as OtherInputs from '../core/components/other_inputs.js';
-import * as Mechanics from '../core/constants/mechanics.js';
-import * as Tooltips from '../core/constants/tooltips.js';
-
 import * as HealingPriestInputs from './inputs.js';
 import * as Presets from './presets.js';
 
@@ -93,9 +88,7 @@ export class HealingPriestSimUI extends IndividualSimUI<Spec.SpecHealingPriest> 
 			],
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
-				inputs: [
-					HealingPriestInputs.RapturesPerMinute,
-				],
+				inputs: [],
 			},
 			encounterPicker: {
 				// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.

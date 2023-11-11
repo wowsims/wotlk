@@ -1,20 +1,15 @@
 import { Spec } from '../core/proto/common.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
-import { EventID, TypedEvent } from '../core/typed_event.js';
+import { TypedEvent } from '../core/typed_event.js';
 import { makePetTypeInputConfig } from '../core/talents/hunter_pet.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
 
 import {
-	Hunter,
-	Hunter_Rotation as HunterRotation,
 	Hunter_Rotation_RotationType as RotationType,
 	Hunter_Rotation_StingType as StingType,
-	Hunter_Rotation_SpellOption as SpellOption,
-	Hunter_Options as HunterOptions,
 	Hunter_Options_Ammo as Ammo,
-	Hunter_Options_PetType as PetType,
 } from '../core/proto/hunter.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
@@ -49,15 +44,6 @@ export const UseHuntersMark = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.
 	id: ActionId.fromSpellId(53338),
 });
 
-export const SniperTrainingUptime = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecHunter>({
-	fieldName: 'sniperTrainingUptime',
-	label: 'ST Uptime (%)',
-	labelTooltip: 'Uptime for the Sniper Training talent, as a percent of the fight duration.',
-	percent: true,
-	showWhen: (player: Player<Spec.SpecHunter>) => player.getTalents().sniperTraining > 0,
-	changeEmitter: (player: Player<Spec.SpecHunter>) => TypedEvent.onAny([player.specOptionsChangeEmitter, player.talentsChangeEmitter]),
-});
-
 export const TimeToTrapWeaveMs = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecHunter>({
 	fieldName: 'timeToTrapWeaveMs',
 	label: 'Weave Time',
@@ -89,13 +75,6 @@ export const HunterRotationConfig = {
 			fieldName: 'trapWeave',
 			label: 'Trap Weave',
 			labelTooltip: 'Uses Explosive Trap at appropriate times. Note that selecting this will disable Black Arrow because they share a CD.',
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecHunter>({
-			fieldName: 'allowExplosiveShotDownrank',
-			label: 'Allow ES Downrank',
-			labelTooltip: 'Weaves Explosive Shot Rank 3 during LNL procs. This works because the rank 3 and rank 4 dots can stack.',
-			showWhen: (player: Player<Spec.SpecHunter>) => player.getRotation().type != RotationType.Custom && player.getTalents().explosiveShot && player.getTalents().lockAndLoad > 0,
-			changeEmitter: (player: Player<Spec.SpecHunter>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecHunter>({
 			fieldName: 'multiDotSerpentSting',

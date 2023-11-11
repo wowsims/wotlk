@@ -8,7 +8,6 @@ import (
 	"log"
 	"os"
 	"strconv"
-	"strings"
 
 	"github.com/wowsims/wotlk/sim"
 	"github.com/wowsims/wotlk/sim/core"
@@ -28,7 +27,7 @@ import (
 // go run ./tools/database/gen_db -outDir=assets -gen=db
 
 var minId = flag.Int("minid", 1, "Minimum ID to scan for")
-var maxId = flag.Int("maxid", 57000, "Maximum ID to scan for")
+var maxId = flag.Int("maxid", 31000, "Maximum ID to scan for")
 var outDir = flag.String("outDir", "assets", "Path to output directory for writing generated .go files.")
 var genAsset = flag.String("gen", "", "Asset to generate. Valid values are 'db', 'atlasloot', 'wowhead-items', 'wowhead-spells', 'wowhead-itemdb', 'wotlk-items', and 'wago-db2-items'")
 
@@ -52,13 +51,7 @@ func main() {
 		database.NewWowheadSpellTooltipManager(fmt.Sprintf("%s/wowhead_spell_tooltips.csv", inputsDir)).Fetch(int32(*minId), int32(*maxId), []string{})
 		return
 	} else if *genAsset == "wowhead-gearplannerdb" {
-		tools.WriteFile(fmt.Sprintf("%s/wowhead_gearplannerdb.txt", inputsDir), tools.ReadWebRequired("https://nether.wowhead.com/wotlk/data/gear-planner?dv=100"))
-		return
-	} else if *genAsset == "wotlk-items" {
-		database.NewWotlkItemTooltipManager(fmt.Sprintf("%s/wotlk_items_tooltips.csv", inputsDir)).Fetch(int32(*minId), int32(*maxId), []string{})
-		return
-	} else if *genAsset == "wago-db2-items" {
-		tools.WriteFile(fmt.Sprintf("%s/wago_db2_items.csv", inputsDir), tools.ReadWebRequired("https://wago.tools/db2/ItemSparse/csv?build=3.4.2.49311"))
+		tools.WriteFile(fmt.Sprintf("%s/wowhead_gearplannerdb.txt", inputsDir), tools.ReadWebRequired("https://nether.wowhead.com/classic/data/gear-planner?dv=100"))
 		return
 	} else if *genAsset != "db" {
 		panic("Invalid gen value")
@@ -72,7 +65,6 @@ func main() {
 
 	db := database.NewWowDatabase()
 	db.Encounters = core.PresetEncounters
-	db.GlyphIDs = getGlyphIDsFromJson(fmt.Sprintf("%s/glyph_id_map.json", inputsDir))
 
 	for _, response := range itemTooltips {
 		if response.IsEquippable() {
@@ -82,8 +74,6 @@ func main() {
 			if _, ok := wowheadDB.Items[strconv.Itoa(int(item.Id))]; ok {
 				db.MergeItem(item)
 			}
-		} else if response.IsGem() {
-			db.MergeGem(response.ToGemProto())
 		}
 	}
 	for _, wowheadItem := range wowheadDB.Items {
@@ -99,7 +89,6 @@ func main() {
 	}
 
 	db.MergeItems(database.ItemOverrides)
-	db.MergeGems(database.GemOverrides)
 	db.MergeEnchants(database.EnchantOverrides)
 	ApplyGlobalFilters(db)
 	AttachFactionInformation(db, factionRestrictions)
@@ -168,81 +157,19 @@ func ApplyGlobalFilters(db *database.WowDatabase) {
 		return true
 	})
 
-	// There is an 'unavailable' version of every naxx set, e.g. https://www.wowhead.com/wotlk/item=43728/bonescythe-gauntlets
-	heroesItems := core.FilterMap(db.Items, func(_ int32, item *proto.UIItem) bool {
-		return strings.HasPrefix(item.Name, "Heroes' ")
-	})
-	db.Items = core.FilterMap(db.Items, func(_ int32, item *proto.UIItem) bool {
-		nameToMatch := "Heroes' " + item.Name
-		for _, heroItem := range heroesItems {
-			if heroItem.Name == nameToMatch {
-				return false
-			}
-		}
-		return true
-	})
-
-	// There is an 'unavailable' version of many t8 set pieces, e.g. https://www.wowhead.com/wotlk/item=46235/darkruned-gauntlets
-	valorousItems := core.FilterMap(db.Items, func(_ int32, item *proto.UIItem) bool {
-		return strings.HasPrefix(item.Name, "Valorous ")
-	})
-	db.Items = core.FilterMap(db.Items, func(_ int32, item *proto.UIItem) bool {
-		nameToMatch := "Valorous " + item.Name
-		for _, item := range valorousItems {
-			if item.Name == nameToMatch {
-				return false
-			}
-		}
-		return true
-	})
-
-	// There is an 'unavailable' version of many t9 set pieces, e.g. https://www.wowhead.com/wotlk/item=48842/thralls-hauberk
-	triumphItems := core.FilterMap(db.Items, func(_ int32, item *proto.UIItem) bool {
-		return strings.HasSuffix(item.Name, "of Triumph")
-	})
-	db.Items = core.FilterMap(db.Items, func(_ int32, item *proto.UIItem) bool {
-		nameToMatch := item.Name + " of Triumph"
-		for _, item := range triumphItems {
-			if item.Name == nameToMatch {
-				return false
-			}
-		}
-		return true
-	})
-
-	// Theres an invalid 251 t10 set for every class
-	// The invalid set has a higher item id than the 'correct' ones
-	t10invalidItems := core.FilterMap(db.Items, func(_ int32, item *proto.UIItem) bool {
-		return item.SetName != "" && item.Ilvl == 251
-	})
-	db.Items = core.FilterMap(db.Items, func(_ int32, item *proto.UIItem) bool {
-		for _, t10item := range t10invalidItems {
-			if t10item.Name == item.Name && item.Ilvl == t10item.Ilvl && item.Id > t10item.Id {
-				return false
-			}
-		}
-		return true
-	})
-
-	db.Gems = core.FilterMap(db.Gems, func(_ int32, gem *proto.UIGem) bool {
-		if _, ok := database.GemDenyList[gem.Id]; ok {
-			return false
-		}
-
-		for _, pattern := range database.DenyListNameRegexes {
-			if pattern.MatchString(gem.Name) {
-				return false
-			}
-		}
-		return true
-	})
-
-	db.Gems = core.FilterMap(db.Gems, func(_ int32, gem *proto.UIGem) bool {
-		if strings.HasSuffix(gem.Name, "Stormjewel") {
-			gem.Unique = false
-		}
-		return true
-	})
+	// There is an 'unavailable' version of every naxx set, e.g. https://www.wowhead.com/classic/item=43728/bonescythe-gauntlets
+	// heroesItems := core.FilterMap(db.Items, func(_ int32, item *proto.UIItem) bool {
+	// 	return strings.HasPrefix(item.Name, "Heroes' ")
+	// })
+	// db.Items = core.FilterMap(db.Items, func(_ int32, item *proto.UIItem) bool {
+	// 	nameToMatch := "Heroes' " + item.Name
+	// 	for _, heroItem := range heroesItems {
+	// 		if heroItem.Name == nameToMatch {
+	// 			return false
+	// 		}
+	// 	}
+	// 	return true
+	// })
 
 	db.ItemIcons = core.FilterMap(db.ItemIcons, func(_ int32, icon *proto.IconData) bool {
 		return icon.Name != "" && icon.Icon != ""
@@ -262,14 +189,10 @@ func AttachFactionInformation(db *database.WowDatabase, factionRestrictions map[
 // Filters out entities which shouldn't be included in the sim.
 func ApplySimmableFilters(db *database.WowDatabase) {
 	db.Items = core.FilterMap(db.Items, simmableItemFilter)
-	db.Gems = core.FilterMap(db.Gems, simmableGemFilter)
 }
 func ApplyNonSimmableFilters(db *database.WowDatabase) {
 	db.Items = core.FilterMap(db.Items, func(id int32, item *proto.UIItem) bool {
 		return !simmableItemFilter(id, item)
-	})
-	db.Gems = core.FilterMap(db.Gems, func(id int32, gem *proto.UIGem) bool {
-		return !simmableGemFilter(id, gem)
 	})
 }
 func simmableItemFilter(_ int32, item *proto.UIItem) bool {
@@ -284,15 +207,15 @@ func simmableItemFilter(_ int32, item *proto.UIItem) bool {
 	} else if item.Quality > proto.ItemQuality_ItemQualityHeirloom {
 		return false
 	} else if item.Quality < proto.ItemQuality_ItemQualityEpic {
-		if item.Ilvl < 145 {
+		if item.Ilvl < 10 {
 			return false
 		}
-		if item.Ilvl < 149 && item.SetName == "" {
+		if item.Ilvl < 10 && item.SetName == "" {
 			return false
 		}
 	} else {
 		// Epic and legendary items might come from classic, so use a lower ilvl threshold.
-		if item.Quality != proto.ItemQuality_ItemQualityHeirloom && item.Ilvl < 140 {
+		if item.Quality != proto.ItemQuality_ItemQualityHeirloom && item.Ilvl < 10 {
 			return false
 		}
 	}
@@ -376,12 +299,9 @@ func getSpellIdsFromTalentJson(infile *string) []int32 {
 func GetAllTalentSpellIds(inputsDir *string) map[string][]int32 {
 	talentsDir := fmt.Sprintf("%s/../../ui/core/talents/trees", *inputsDir)
 	specFiles := []string{
-		"deathknight.json",
+		// "deathknight.json",
 		"druid.json",
 		"hunter.json",
-		"hunter_cunning.json",
-		"hunter_ferocity.json",
-		"hunter_tenacity.json",
 		"mage.json",
 		"paladin.json",
 		"priest.json",
@@ -400,38 +320,6 @@ func GetAllTalentSpellIds(inputsDir *string) map[string][]int32 {
 
 	return ret_db
 
-}
-
-type GlyphID struct {
-	ItemID  int32 `json:"itemId"`
-	SpellID int32 `json:"spellId"`
-}
-
-func getGlyphIDsFromJson(infile string) []*proto.GlyphID {
-	data, err := os.ReadFile(infile)
-	if err != nil {
-		log.Fatalf("failed to load glyph json file: %s", err)
-	}
-
-	var buf bytes.Buffer
-	err = json.Compact(&buf, []byte(data))
-	if err != nil {
-		log.Fatalf("failed to compact json: %s", err)
-	}
-
-	var glyphIDs []GlyphID
-
-	err = json.Unmarshal(buf.Bytes(), &glyphIDs)
-	if err != nil {
-		log.Fatalf("failed to parse glyph IDs to json %s", err)
-	}
-
-	return core.MapSlice(glyphIDs, func(gid GlyphID) *proto.GlyphID {
-		return &proto.GlyphID{
-			ItemId:  gid.ItemID,
-			SpellId: gid.SpellID,
-		}
-	})
 }
 
 func CreateTempAgent(r *proto.Raid) core.Agent {

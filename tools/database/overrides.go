@@ -9,164 +9,19 @@ import (
 
 var OtherItemIdsToFetch = []string{
 	// Hallow's End Ilvl bumped rings
-	"211817",
-	"211844",
-	"211847",
-	"211850",
-	"211851",
+	// "211817",
+	// "211844",
+	// "211847",
+	// "211850",
+	// "211851",
 }
 
 var ItemOverrides = []*proto.UIItem{
-	{ /** Destruction Holo-gogs */ Id: 32494, ClassAllowlist: []proto.Class{proto.Class_ClassMage, proto.Class_ClassPriest, proto.Class_ClassWarlock}},
-	{ /** Gadgetstorm Goggles */ Id: 32476, ClassAllowlist: []proto.Class{proto.Class_ClassShaman}},
-	{ /** Magnified Moon Specs */ Id: 32480, ClassAllowlist: []proto.Class{proto.Class_ClassDruid}},
-	{ /** Quad Deathblow X44 Goggles */ Id: 34353, ClassAllowlist: []proto.Class{proto.Class_ClassDruid, proto.Class_ClassRogue}},
-	{ /** Hyper-Magnified Moon Specs */ Id: 35182, ClassAllowlist: []proto.Class{proto.Class_ClassDruid}},
-	{ /** Lightning Etched Specs */ Id: 34355, ClassAllowlist: []proto.Class{proto.Class_ClassShaman}},
-	{ /** Annihilator Holo-Gogs */ Id: 34847, ClassAllowlist: []proto.Class{proto.Class_ClassMage, proto.Class_ClassPriest, proto.Class_ClassWarlock}},
-
-	// Balance T9 "of Conquest" Alliance set
-	{Id: 48158, SetName: "Malfurion's Regalia"},
-	{Id: 48159, SetName: "Malfurion's Regalia"},
-	{Id: 48160, SetName: "Malfurion's Regalia"},
-	{Id: 48161, SetName: "Malfurion's Regalia"},
-	{Id: 48162, SetName: "Malfurion's Regalia"},
-
-	// Deathknight T9 "of Conquest" Horde set
-	{Id: 48501, SetName: "Koltira's Battlegear"},
-	{Id: 48502, SetName: "Koltira's Battlegear"},
-	{Id: 48503, SetName: "Koltira's Battlegear"},
-	{Id: 48504, SetName: "Koltira's Battlegear"},
-	{Id: 48505, SetName: "Koltira's Battlegear"},
-
-	// Deathknight T9 "of Conquest" Tank Horde set
-	{Id: 48558, SetName: "Koltira's Plate"},
-	{Id: 48559, SetName: "Koltira's Plate"},
-	{Id: 48560, SetName: "Koltira's Plate"},
-	{Id: 48561, SetName: "Koltira's Plate"},
-	{Id: 48562, SetName: "Koltira's Plate"},
-
-	// Valorous T8 Sets
-	{Id: 45375, Phase: 2},
-	{Id: 45381, Phase: 2},
-	{Id: 45382, Phase: 2},
-	{Id: 45376, Phase: 2},
-	{Id: 45370, Phase: 2},
-	{Id: 45371, Phase: 2},
-	{Id: 45383, Phase: 2},
-	{Id: 45372, Phase: 2},
-	{Id: 45377, Phase: 2},
-	{Id: 45384, Phase: 2},
-	{Id: 45379, Phase: 2},
-	{Id: 45385, Phase: 2},
-	{Id: 45380, Phase: 2},
-	{Id: 45373, Phase: 2},
-	{Id: 45374, Phase: 2},
-	{Id: 45391, Phase: 2},
-	{Id: 45386, Phase: 2},
-	{Id: 45340, Phase: 2},
-	{Id: 45335, Phase: 2},
-	{Id: 45336, Phase: 2},
-	{Id: 45341, Phase: 2},
-	{Id: 45337, Phase: 2},
-	{Id: 45342, Phase: 2},
-	{Id: 45338, Phase: 2},
-	{Id: 45343, Phase: 2},
-	{Id: 45339, Phase: 2},
-	{Id: 45344, Phase: 2},
-	{Id: 45419, Phase: 2},
-	{Id: 45417, Phase: 2},
-	{Id: 45420, Phase: 2},
-	{Id: 45421, Phase: 2},
-	{Id: 45422, Phase: 2},
-	{Id: 45387, Phase: 2},
-	{Id: 45392, Phase: 2},
-	{Id: 46131, Phase: 2},
-	{Id: 45365, Phase: 2},
-	{Id: 45367, Phase: 2},
-	{Id: 45369, Phase: 2},
-	{Id: 45368, Phase: 2},
-	{Id: 45388, Phase: 2},
-	{Id: 45393, Phase: 2},
-	{Id: 46313, Phase: 2},
-	{Id: 45351, Phase: 2},
-	{Id: 45355, Phase: 2},
-	{Id: 45345, Phase: 2},
-	{Id: 45356, Phase: 2},
-	{Id: 45346, Phase: 2},
-	{Id: 45347, Phase: 2},
-	{Id: 45357, Phase: 2},
-	{Id: 45352, Phase: 2},
-	{Id: 45358, Phase: 2},
-	{Id: 45348, Phase: 2},
-	{Id: 45359, Phase: 2},
-	{Id: 45349, Phase: 2},
-	{Id: 45353, Phase: 2},
-	{Id: 45354, Phase: 2},
-	{Id: 45394, Phase: 2},
-	{Id: 45395, Phase: 2},
-	{Id: 45389, Phase: 2},
-	{Id: 45360, Phase: 2},
-	{Id: 45361, Phase: 2},
-	{Id: 45362, Phase: 2},
-	{Id: 45363, Phase: 2},
-	{Id: 45364, Phase: 2},
-	{Id: 45390, Phase: 2},
-	{Id: 45429, Phase: 2},
-	{Id: 45424, Phase: 2},
-	{Id: 45430, Phase: 2},
-	{Id: 45425, Phase: 2},
-	{Id: 45426, Phase: 2},
-	{Id: 45431, Phase: 2},
-	{Id: 45427, Phase: 2},
-	{Id: 45432, Phase: 2},
-	{Id: 45428, Phase: 2},
-	{Id: 45433, Phase: 2},
-	{Id: 45396, Phase: 2},
-	{Id: 45397, Phase: 2},
-	{Id: 45398, Phase: 2},
-	{Id: 45399, Phase: 2},
-	{Id: 45400, Phase: 2},
-	{Id: 45413, Phase: 2},
-	{Id: 45412, Phase: 2},
-	{Id: 45406, Phase: 2},
-	{Id: 45414, Phase: 2},
-	{Id: 45401, Phase: 2},
-	{Id: 45411, Phase: 2},
-	{Id: 45402, Phase: 2},
-	{Id: 45408, Phase: 2},
-	{Id: 45409, Phase: 2},
-	{Id: 45403, Phase: 2},
-	{Id: 45415, Phase: 2},
-	{Id: 45410, Phase: 2},
-	{Id: 45404, Phase: 2},
-	{Id: 45405, Phase: 2},
-	{Id: 45416, Phase: 2},
-
-	// Other items Wowhead has the wrong phase listed for
-	// Ick's loot table from Pit of Saron
-	{Id: 49812, Phase: 4},
-	{Id: 49808, Phase: 4},
-	{Id: 49811, Phase: 4},
-	{Id: 49807, Phase: 4},
-	{Id: 49810, Phase: 4},
-	{Id: 49809, Phase: 4},
-
-	// Drape of Icy Intent
-	{Id: 45461, Phase: 2},
-
 	// Valentine's day event rewards
-	{Id: 51804, Phase: 2},
-	{Id: 51805, Phase: 2},
-	{Id: 51806, Phase: 2},
-	{Id: 51807, Phase: 2},
-	{Id: 51808, Phase: 2},
-
-	// Cata pre-patch event items
-	{Id: 53492, Phase: 5},
+	// {Id: 51804, Phase: 2},
 
 	// Heirloom Dwarven Handcannon, Wowhead partially glitchs out and shows us some other lvl calc for this
-	{Id: 44093, Stats: stats.Stats{stats.MeleeCrit: 30, stats.SpellCrit: 30, stats.Resilience: 13, stats.AttackPower: 34}.ToFloatArray()},
+	// {Id: 44093, Stats: stats.Stats{stats.MeleeCrit: 30, stats.SpellCrit: 30, stats.Resilience: 13, stats.AttackPower: 34}.ToFloatArray()},
 }
 
 // Keep these sorted by item ID.
@@ -262,60 +117,16 @@ var ItemDenyList = map[int32]struct{}{
 	17782: {}, // talisman of the binding shard
 	17783: {}, // talisman of the binding fragment
 	17802: {}, // Deprecated version of Thunderfury
-	18582: {},
-	18583: {},
-	18584: {},
-	24265: {},
-	32384: {},
-	32421: {},
-	32422: {},
-	33482: {},
 	33350: {},
 	34576: {}, // Battlemaster's Cruelty
 	34577: {}, // Battlemaster's Depreavity
 	34578: {}, // Battlemaster's Determination
 	34579: {}, // Battlemaster's Audacity
 	34580: {}, // Battlemaster's Perseverence
-
-	38694: {}, // "Family" Shoulderpads heirloom
-	45084: {}, // 'Book of Crafting Secrets' heirloom
-
-	// '10 man' onyxia head rewards
-	49312: {},
-	49313: {},
-	49314: {},
-
-	50251: {}, // 'one hand shadows edge'
-	53500: {}, // Tectonic Plate
-
-	48880: {}, // DK's Tier 9 Duplicates
-	48881: {}, // DK's Tier 9 Duplicates
-	48882: {}, // DK's Tier 9 Duplicates
-	48883: {}, // DK's Tier 9 Duplicates
-	48884: {}, // DK's Tier 9 Duplicates
-	48885: {}, // DK's Tier 9 Duplicates
-	48886: {}, // DK's Tier 9 Duplicates
-	48887: {}, // DK's Tier 9 Duplicates
-	48888: {}, // DK's Tier 9 Duplicates
-	48889: {}, // DK's Tier 9 Duplicates
-	48890: {}, // DK's Tier 9 Duplicates
-	48891: {}, // DK's Tier 9 Duplicates
-	48892: {}, // DK's Tier 9 Duplicates
-	48893: {}, // DK's Tier 9 Duplicates
-	48894: {}, // DK's Tier 9 Duplicates
-	48895: {}, // DK's Tier 9 Duplicates
-	48896: {}, // DK's Tier 9 Duplicates
-	48897: {}, // DK's Tier 9 Duplicates
-	48898: {}, // DK's Tier 9 Duplicates
-	48899: {}, // DK's Tier 9 Duplicates
 }
 
 // Item icons to include in the DB, so they don't need to be separately loaded in the UI.
 var ExtraItemIcons = []int32{
-	// Pet foods
-	33874,
-	43005,
-
 	// Spellstones
 	41174,
 	41196,
@@ -323,229 +134,206 @@ var ExtraItemIcons = []int32{
 	// Demonic Rune
 	12662,
 
+	// Explosives
+	13180,
+	11566,
+	8956,
+	10646,
+	18641,
+	15993,
+	16040,
+
 	// Food IDs
-	27655,
-	27657,
-	27658,
-	27664,
-	33052,
-	33825,
-	33872,
-	34753,
-	34754,
-	34756,
-	34758,
-	34767,
-	34769,
-	42994,
-	42995,
-	42996,
-	42998,
-	42999,
-	43000,
-	43015,
+	13928,
+	20452,
+	13931,
+	18254,
+	21023,
+	13813,
+	13810,
 
 	// Flask IDs
+	13510,
+	13511,
 	13512,
-	22851,
-	22853,
-	22854,
-	22861,
-	22866,
-	33208,
-	40079,
-	44939,
-	46376,
-	46377,
-	46378,
-	46379,
+	13513,
 
-	// Elixer IDs
-	40072,
-	40078,
-	40097,
-	40109,
-	44328,
-	44332,
+	// Zanza
+	20079,
 
-	// Elixer IDs
+	// Blasted Lands
+	8412,
+	8423,
+	8424,
+	8411,
+
+	// Agility Elixer IDs
 	13452,
+	9187,
+
+	// Single Elixirs
+	20007, // Mana Regen Elixir
+	13445, // Defense
+	20004, // Major Troll's Blood Potion
+	9088,  // Gift of Arthas
+
+	// Strength
+	12451,
+	9206,
+
+	// AP
+	12460,
+	12820,
+
+	// Random
+	5206, // Bogling Root
+
+	// SP
 	13454,
-	22824,
-	22827,
-	22831,
-	22833,
-	22834,
-	22835,
-	22840,
-	28103,
-	28104,
-	31679,
-	32062,
-	32067,
-	32068,
-	39666,
-	40068,
-	40070,
-	40073,
-	40076,
-	44325,
-	44327,
-	44329,
-	44330,
-	44331,
-	9088,
-	9224,
+	9264,
+	21546,
+	17708,
+
+	// Crystal
+	11564, // Armor
+
+	// Alcohol Buff
+	18284,
+	18269,
+	21151,
 
 	// Potions / In Battle Consumes
-	13442,
-	20520,
-	22105,
-	22788,
-	22828,
-	22832,
-	22837,
-	22838,
-	22839,
-	22849,
-	31677,
-	33447,
-	33448,
-	36892,
-	40093,
-	40211,
-	40212,
-	40536,
-	40771,
-	41119,
-	41166,
-	42545,
-	42641,
-
-	// Poisons
-	43231,
-	43233,
-	43235,
+	13444,
 
 	// Thistle Tea
 	7676,
 
-	// Scrolls
-	37094,
-	43466,
-	43464,
-	37092,
-	37098,
-	43468,
-
-	// Drums
-	49633,
-	49634,
+	// Weapon Oils
+	20748,
+	20749,
+	12404,
+	18262,
 }
 
 // Raid buffs / debuffs
 var SharedSpellsIcons = []int32{
-	// Revitalize, Rejuv, WG
-	48545,
-	26982,
-	53251,
+	// World Buffs
+	22888, // Ony / Nef
+	24425, // Spirit
+	16609, // Warchief
+	23768, // DMF Damage
+	23736, // DMF Agi
+	23766, // DMF Int
+	23738, // DMF Spirit
+	23737, // DMF Stam
+
+	22818, // DM Stam
+	22820, // DM Spell Crit
+	22817, // DM AP
+
+	15366, // Songflower
+
+	29534, // Silithus
+
+	18264, // Headmasters
 
 	// Registered CD's
-	49016,
-	57933,
-	64382,
-	10060,
-	16190,
-	29166,
-	53530,
-	33206,
-	2825,
-	54758,
+	10060, // Power Infusion
+	29166, // Innervate
 
-	// Raid Buffs
-	43002,
-	57567,
-	54038,
+	// Mark
+	1126,
+	5232,
+	6756,
+	5234,
+	8907,
+	9884,
+	9885,
+	17055,
 
-	48470,
-	17051,
+	20217, // Kings (Talent)
+	25898, // Greater Kings
+	25899, // Sanctuary
 
-	25898,
-	25899,
+	10293, // Devo Aura
+	20142, // Imp. Devo
 
-	48942,
-	20140,
-	58753,
+	// Stoneskin Totem
+	10408,
 	16293,
 
-	48161,
+	// Fort
+	1243,
+	1244,
+	1245,
+	2791,
+	10937,
+	10938,
 	14767,
 
-	58643,
-	52456,
-	57623,
+	// Spirit
+	14752,
+	14818,
+	14819,
+	27841,
 
-	48073,
+	// Might
+	19740,
+	19834,
+	19835,
+	19836,
+	19837,
+	19838,
+	25291,
+	20048,
 
-	48934,
-	20045,
-	47436,
-
-	53138,
-	30809,
-	19506,
-
-	31869,
-	31583,
-	34460,
-
-	57472,
-	50720,
-
-	53648,
-
-	47440,
+	// Commanding Shout
+	6673,
+	5242,
+	6192,
+	11549,
+	11550,
+	11551,
+	25289,
 	12861,
-	47982,
-	18696,
 
-	48938,
+	// AP
+	30811, // Unleashed Rage
+	19506, // Trueshot
+
+	// Battle Shout
+	6673,
+	5242,
+	6192,
+	11549,
+	11550,
+	11551,
+	25289,
+	12861, // Imp
+
+	// Wisdom
+	19742,
+	19850,
+	19852,
+	19853,
+	19854,
+	25290,
 	20245,
-	58774,
-	16206,
 
-	17007,
-	34300,
-	29801,
+	// Mana Spring
+	5675,
+	10495,
+	10496,
+	10497,
 
-	55610,
-	65990,
-	29193,
+	17007, // Leader of the Pack
+	24858, // Moonkin
 
-	48160,
-	31878,
-	53292,
-	54118,
-	44561,
-
-	24907,
-	48396,
-	51470,
-
-	3738,
-	47240,
-	57722,
-	58656,
-
-	54043,
-	48170,
-	31025,
-	31035,
-	6562,
-	31033,
-	53307,
-	16840,
-	54648,
+	// Windfury
+	8512,
+	10613,
+	10614,
+	29193, // Imp WF
 
 	// Raid Debuffs
 	8647,
@@ -645,18 +433,4 @@ var GemAllowList = map[int32]struct{}{
 	22459: {}, // Void Sphere
 	36766: {}, // Bright Dragon's Eye
 	36767: {}, // Solid Dragon's Eye
-}
-var GemDenyList = map[int32]struct{}{
-	// pvp non-unique gems not in game currently.
-	32735: {},
-	34142: {}, // Infinite Sphere
-	34143: {}, // Chromatic Sphere
-	35489: {},
-	37430: {}, // Solid Sky Sapphire (Unused)
-	38545: {},
-	38546: {},
-	38547: {},
-	38548: {},
-	38549: {},
-	38550: {},
 }

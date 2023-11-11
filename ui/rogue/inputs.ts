@@ -5,11 +5,6 @@ import { Player } from '../core/player.js';
 import * as InputHelpers from '../core/components/input_helpers.js';
 
 import {
-	Rogue_Rotation_AssassinationPriority as AssassinationPriority,
-	Rogue_Rotation_CombatPriority as CombatPriority,
-	Rogue_Rotation_CombatBuilder as CombatBuilder,
-	Rogue_Rotation_SubtletyBuilder as SubtletyBuilder,
-	Rogue_Rotation_SubtletyPriority as SubtletyPriority,
 	Rogue_Rotation_Frequency as Frequency,
 	Rogue_Options_PoisonImbue as Poison,
 } from '../core/proto/rogue.js';
@@ -37,36 +32,6 @@ export const OffHandImbue = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecR
 		{ actionId: ActionId.fromItemId(43231), value: Poison.InstantPoison },
 		{ actionId: ActionId.fromItemId(43235), value: Poison.WoundPoison },
 	],
-});
-
-export const StartingOverkillDuration = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecRogue>({
-	fieldName: 'startingOverkillDuration',
-	label: 'Starting Overkill duration',
-	labelTooltip: 'Initial Overkill buff duration at the start of each iteration.',
-	showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().overkill || player.getTalents().masterOfSubtlety > 0
-});
-
-export const VanishBreakTime = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecRogue>({
-	fieldName: 'vanishBreakTime',
-	label: 'Vanish Break Time',
-	labelTooltip: 'Time it takes to start attacking after casting Vanish.',
-	extraCssClasses: ['experimental'],
-	showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().overkill || player.getTalents().masterOfSubtlety > 0
-})
-
-export const AssumeBleedActive = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecRogue>({
-	fieldName: 'assumeBleedActive',
-	label: 'Assume Bleed Always Active',
-	labelTooltip: 'Assume bleed always exists for \'Hunger for Blood\' activation. Otherwise will only calculate based on own garrote/rupture.',
-	extraCssClasses: ['within-raid-sim-hide'],
-	showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().hungerForBlood
-})
-
-export const HonorOfThievesCritRate = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecRogue>({
-	fieldName: 'honorOfThievesCritRate',
-	label: 'Honor of Thieves Crit Rate',
-	labelTooltip: 'Number of crits other group members generate within 100 seconds',
-	showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().honorAmongThieves > 0
 });
 
 export const ApplyPoisonsManually = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecRogue>({
@@ -102,57 +67,6 @@ export const RogueRotationConfig = {
 				{ name: 'Maintain', value: Frequency.Maintain },
 			],
 		}),
-		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, CombatBuilder>({
-			fieldName: 'combatBuilder',
-			label: "Builder",
-			labelTooltip: 'Use Sinister Strike, Backstab, or Hemorrhage as builder.',
-			values: [
-				{ name: "Sinister Strike", value: CombatBuilder.SinisterStrike },
-				{ name: "Backstab", value: CombatBuilder.Backstab },
-				{ name: "Hemorrhage", value: CombatBuilder.HemorrhageCombat },
-			],
-			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().combatPotency > 0
-		}),
-		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, CombatPriority>({
-			fieldName: 'combatFinisherPriority',
-			label: 'Finisher Priority',
-			labelTooltip: 'The finisher that will be cast with highest priority.',
-			values: [
-				{ name: 'Rupture', value: CombatPriority.RuptureEviscerate },
-				{ name: 'Eviscerate', value: CombatPriority.EviscerateRupture },
-			],
-			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().combatPotency > 0
-		}),
-		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, AssassinationPriority>({
-			fieldName: 'assassinationFinisherPriority',
-			label: 'Finisher Priority',
-			labelTooltip: 'The finisher that will be cast with highest priority.',
-			values: [
-				{ name: 'Rupture', value: AssassinationPriority.RuptureEnvenom },
-				{ name: 'Envenom', value: AssassinationPriority.EnvenomRupture },
-			],
-			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().mutilate
-		}),
-		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, SubtletyBuilder>({
-			fieldName: 'subtletyBuilder',
-			label: "Builder",
-			labelTooltip: 'Use Hemorrhage or Backstab as builder.',
-			values: [
-				{ name: "Hemorrhage", value: SubtletyBuilder.Hemorrhage },
-				{ name: "Backstab", value: SubtletyBuilder.BackstabSub },
-			],
-			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().honorAmongThieves > 0
-		}),
-		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, SubtletyPriority>({
-			fieldName: 'subtletyFinisherPriority',
-			label: "Finisher Priority",
-			labelTooltip: 'The finisher that will be cast with highest priority.',
-			values: [
-				{ name: "Eviscerate", value: SubtletyPriority.SubtletyEviscerate },
-				{ name: "Envenom", value: SubtletyPriority.SubtletyEnvenom },
-			],
-			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().honorAmongThieves > 0
-		}),
 		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, Frequency>({
 			fieldName: 'multiTargetSliceFrequency',
 			label: 'Multi-Target S&D',
@@ -176,12 +90,6 @@ export const RogueRotationConfig = {
 			labelTooltip: 'Open the encounter by casting Garrote.',
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
-			fieldName: 'openWithShadowstep',
-			label: 'Open with Shadowstep',
-			labelTooltip: 'Open the encounter by casting Shadowstep.',
-			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().shadowstep
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
 			fieldName: 'openWithPremeditation',
 			label: 'Open with Premeditation',
 			labelTooltip: 'Open the encounter by casting Premeditation.',
@@ -197,12 +105,6 @@ export const RogueRotationConfig = {
 			label: 'Use Ghostly Strike',
 			labelTooltip: 'Use Ghostly Strike on cooldown. Mainly useful when using the associate glyph.',
 			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().ghostlyStrike
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
-			fieldName: 'ruptureForBleed',
-			label: 'Rupture for Bleed',
-			labelTooltip: 'Cast Rupture as needed to apply a bleed effect for Hunger for Blood',
-			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().hungerForBlood
 		}),
 	],
 };

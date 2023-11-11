@@ -4,33 +4,18 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
 func (priest *Priest) registerShadowWordDeathSpell() {
-	if priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfShadowWordDeath) {
-		priest.RegisterResetEffect(func(sim *core.Simulation) {
-			sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int32) {
-				if isExecute == 35 {
-					priest.ShadowWordDeath.DamageMultiplier *= 1.1
-				}
-			})
-		})
-	}
-
-	hasGlyphOfShadow := priest.HasGlyph(int32(proto.PriestMajorGlyph_GlyphOfShadow))
-	mentalAgility := []float64{0, .04, .07, .10}[priest.Talents.MentalAgility]
-	shadowFocus := 0.02 * float64(priest.Talents.ShadowFocus)
-
 	priest.ShadowWordDeath = priest.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48158},
+		ActionID:    core.ActionID{SpellID: 401955},
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.12,
-			Multiplier: 1 - (shadowFocus + mentalAgility),
+			Multiplier: 1,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -42,12 +27,10 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 			},
 		},
 
-		BonusHitRating:  float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
-		BonusCritRating: 0 + core.TernaryFloat64(priest.HasSetBonus(ItemSetValorous, 4), 10, 0)*core.CritRatingPerCritChance, // might be 0.1?
-		DamageMultiplier: 1 +
-			0.02*float64(priest.Talents.Darkness) +
-			0.01*float64(priest.Talents.TwinDisciplines),
-		CritMultiplier:   priest.SpellCritMultiplier(1, float64(priest.Talents.ShadowPower)/5),
+		BonusHitRating:   float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
+		BonusCritRating:  0,
+		DamageMultiplier: 1,
+		CritMultiplier:   1,
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -56,12 +39,6 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 
 			if result.Landed() {
 				priest.AddShadowWeavingStack(sim)
-			}
-			if result.DidCrit() && hasGlyphOfShadow {
-				priest.ShadowyInsightAura.Activate(sim)
-			}
-			if result.DidCrit() && priest.ImprovedSpiritTap != nil {
-				priest.ImprovedSpiritTap.Activate(sim)
 			}
 			spell.DealDamage(sim, result)
 		},

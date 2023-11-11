@@ -94,7 +94,6 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				WarlockInputs.PrimarySpellInput,
 				WarlockInputs.CorruptionSpell,
 				WarlockInputs.SecondaryDotInput,
-				WarlockInputs.SpecSpellInput,
 			],
 			rotationInputs: WarlockInputs.WarlockRotationConfig,
 

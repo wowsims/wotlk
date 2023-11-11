@@ -131,7 +131,6 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 			otherInputs: {
 				inputs: [
 					MageInputs.FocusMagicUptime,
-					MageInputs.WaterElementalDisobeyChance,
 					OtherInputs.ReactionTime,
 					OtherInputs.DistanceFromTarget,
 					OtherInputs.TankAssignment,

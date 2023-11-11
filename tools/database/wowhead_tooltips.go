@@ -27,7 +27,7 @@ func NewWowheadItemTooltipManager(filePath string) *WowheadTooltipManager {
 	return &WowheadTooltipManager{
 		TooltipManager{
 			FilePath:   filePath,
-			UrlPattern: "https://nether.wowhead.com/wotlk/tooltip/item/%s?lvl=80",
+			UrlPattern: "https://nether.wowhead.com/classic/tooltip/item/%s?lvl=60",
 		},
 	}
 }
@@ -36,12 +36,12 @@ func NewWowheadSpellTooltipManager(filePath string) *WowheadTooltipManager {
 	return &WowheadTooltipManager{
 		TooltipManager{
 			FilePath:   filePath,
-			UrlPattern: "https://nether.wowhead.com/wotlk/tooltip/spell/%s",
+			UrlPattern: "https://nether.wowhead.com/classic/tooltip/spell/%s",
 		},
 	}
 }
 
-type Stats [35]float64
+type Stats [41]float64
 
 type ItemResponse interface {
 	GetName() string
@@ -158,27 +158,26 @@ var strengthRegex = regexp.MustCompile(`<!--stat4-->\+([0-9]+) Strength`)
 var intellectRegex = regexp.MustCompile(`<!--stat5-->\+([0-9]+) Intellect`)
 var spiritRegex = regexp.MustCompile(`<!--stat6-->\+([0-9]+) Spirit`)
 var staminaRegex = regexp.MustCompile(`<!--stat7-->\+([0-9]+) Stamina`)
-var spellPowerRegex = regexp.MustCompile(`Increases spell power by ([0-9]+)\.`)
-var spellPowerRegex2 = regexp.MustCompile(`Increases spell power by <!--rtg45-->([0-9]+)\.`)
+var spellHealingRegex = regexp.MustCompile(`Increases healing done by spells and effects by up to ([0-9]+)\.`)
+var spellPowerRegex = regexp.MustCompile(`Increases damage and healing by magical spells and effects by up to ([0-9]+)\.`)
+var spellPowerRegex2 = regexp.MustCompile(`Increases damage and healing by magical spells and effects by up to <!--rtg45-->([0-9]+)\.`)
 
-/*
-// Not sure these exist anymore?
-var arcaneSpellPowerRegex = regexp.MustCompile(`Increases Arcane power by ([0-9]+)\.`)
-var fireSpellPowerRegex = regexp.MustCompile(`Increases Fire power by ([0-9]+)\.`)
-var frostSpellPowerRegex = regexp.MustCompile(`Increases Frost power by ([0-9]+)\.`)
-var holySpellPowerRegex = regexp.MustCompile(`Increases Holy power by ([0-9]+)\.`)
-var natureSpellPowerRegex = regexp.MustCompile(`Increases Nature power by ([0-9]+)\.`)
-var shadowSpellPowerRegex = regexp.MustCompile(`Increases Shadow power by ([0-9]+)\.`)
-*/
+var arcaneSpellPowerRegex = regexp.MustCompile(`Increases damage done by Arcane spells and effects by up to ([0-9]+)\.`)
+var fireSpellPowerRegex = regexp.MustCompile(`Increases damage done by Fire spells and effects by up to ([0-9]+)\.`)
+var frostSpellPowerRegex = regexp.MustCompile(`Increases damage done by Frost spells and effects by up to ([0-9]+)\.`)
+var holySpellPowerRegex = regexp.MustCompile(`Increases damage done by Holy spells and effects by up to ([0-9]+)\.`)
+var natureSpellPowerRegex = regexp.MustCompile(`Increases damage done by Nature spells and effects by up to ([0-9]+)\.`)
+var shadowSpellPowerRegex = regexp.MustCompile(`Increases damage done by Shadow spells and effects by up to ([0-9]+)\.`)
 
-var hitRegex = regexp.MustCompile(`Improves hit rating by <!--rtg31-->([0-9]+)\.`)
-var critRegex = regexp.MustCompile(`Improves critical strike rating by <!--rtg32-->([0-9]+)\.`)
-var hasteRegex = regexp.MustCompile(`Improves haste rating by <!--rtg36-->([0-9]+)\.`)
+var physicalHitRegex = regexp.MustCompile(`Improves your chance to hit by ([0-9]+)%\.`)
+var spellHitRegex = regexp.MustCompile(`Improves your chance to hit with spells by ([0-9]+)%\.`)
+var critRegex = regexp.MustCompile(`Improves your chance to get a critical strike by ([0-9]+)%\.`)
+var hasteRegex = regexp.MustCompile(`Improves your haste by ([0-9]+)%\.`)
 
 var spellPenetrationRegex = regexp.MustCompile(`Increases your spell penetration by ([0-9]+)\.`)
 var mp5Regex = regexp.MustCompile(`Restores ([0-9]+) mana per 5 sec\.`)
-var attackPowerRegex = regexp.MustCompile(`Increases attack power by ([0-9]+)\.`)
-var attackPowerRegex2 = regexp.MustCompile(`Increases attack power by <!--rtg38-->([0-9]+)\.`)
+var attackPowerRegex = regexp.MustCompile(`\+([0-9]+) Attack Power\.`)
+var attackPowerRegex2 = regexp.MustCompile(`\+<!--rtg38-->([0-9]+) Attack Power\.`)
 
 var rangedAttackPowerRegex = regexp.MustCompile(`Increases ranged attack power by ([0-9]+)\.`)
 var rangedAttackPowerRegex2 = regexp.MustCompile(`Increases ranged attack power by <!--rtg39-->([0-9]+)\.`)
@@ -191,8 +190,7 @@ var weaponDamageRegex = regexp.MustCompile(`<!--dmg-->([0-9]+) - ([0-9]+)`)
 var weaponDamageRegex2 = regexp.MustCompile(`<!--dmg-->([0-9]+) Damage`)
 var weaponSpeedRegex = regexp.MustCompile(`<!--spd-->(([0-9]+).([0-9]+))`)
 
-var defenseRegex = regexp.MustCompile(`Increases defense rating by <!--rtg12-->([0-9]+)\.`)
-var defenseRegex2 = regexp.MustCompile(`Increases defense rating by ([0-9]+)\.`)
+var defenseRegex = regexp.MustCompile(`Increased Defense \+([0-9]+)\.`)
 var blockRegex = regexp.MustCompile(`Increases your shield block rating by <!--rtg15-->([0-9]+)\.`)
 var blockRegex2 = regexp.MustCompile(`Increases your shield block rating by ([0-9]+)\.`)
 var blockValueRegex = regexp.MustCompile(`Increases the block value of your shield by ([0-9]+)\.`)
@@ -222,8 +220,8 @@ func (item WowheadItemResponse) GetStats() Stats {
 		proto.Stat_StatIntellect:         float64(item.GetIntValue(intellectRegex)),
 		proto.Stat_StatSpirit:            float64(item.GetIntValue(spiritRegex)),
 		proto.Stat_StatSpellPower:        sp,
-		proto.Stat_StatSpellHit:          float64(item.GetIntValue(hitRegex)),
-		proto.Stat_StatMeleeHit:          float64(item.GetIntValue(hitRegex)),
+		proto.Stat_StatSpellHit:          float64(item.GetIntValue(spellHitRegex)),
+		proto.Stat_StatMeleeHit:          float64(item.GetIntValue(physicalHitRegex)),
 		proto.Stat_StatSpellCrit:         float64(item.GetIntValue(critRegex)),
 		proto.Stat_StatMeleeCrit:         float64(item.GetIntValue(critRegex)),
 		proto.Stat_StatSpellHaste:        float64(item.GetIntValue(hasteRegex)),
@@ -234,7 +232,7 @@ func (item WowheadItemResponse) GetStats() Stats {
 		proto.Stat_StatRangedAttackPower: baseAP + float64(item.GetIntValue(rangedAttackPowerRegex)) + float64(item.GetIntValue(rangedAttackPowerRegex2)),
 		proto.Stat_StatArmorPenetration:  float64(item.GetIntValue(armorPenetrationRegex) + item.GetIntValue(armorPenetrationRegex2)),
 		proto.Stat_StatExpertise:         float64(item.GetIntValue(expertiseRegex)),
-		proto.Stat_StatDefense:           float64(item.GetIntValue(defenseRegex) + item.GetIntValue(defenseRegex2)),
+		proto.Stat_StatDefense:           float64(item.GetIntValue(defenseRegex)),
 		proto.Stat_StatBlock:             float64(item.GetIntValue(blockRegex) + item.GetIntValue(blockRegex2)),
 		proto.Stat_StatBlockValue:        float64(item.GetIntValue(blockValueRegex) + item.GetIntValue(blockValueRegex2)),
 		proto.Stat_StatDodge:             float64(item.GetIntValue(dodgeRegex) + item.GetIntValue(dodgeRegex2)),
@@ -245,6 +243,7 @@ func (item WowheadItemResponse) GetStats() Stats {
 		proto.Stat_StatFrostResistance:   float64(item.GetIntValue(frostResistanceRegex)),
 		proto.Stat_StatNatureResistance:  float64(item.GetIntValue(natureResistanceRegex)),
 		proto.Stat_StatShadowResistance:  float64(item.GetIntValue(shadowResistanceRegex)),
+		proto.Stat_StatHealing:           float64(item.GetIntValue(shadowResistanceRegex)),
 	}
 }
 
@@ -651,87 +650,6 @@ func (item WowheadItemResponse) ToItemProto() *proto.UIItem {
 		RequiredProfession: item.GetRequiredProfession(),
 		SetName:            item.GetItemSetName(),
 	}
-}
-func (item WowheadItemResponse) ToGemProto() *proto.UIGem {
-	return &proto.UIGem{
-		Id:    item.ID,
-		Name:  item.GetName(),
-		Icon:  item.GetIcon(),
-		Color: item.GetSocketColor(),
-
-		Stats: toSlice(item.GetGemStats()),
-
-		Phase:              int32(item.GetPhase()),
-		Quality:            proto.ItemQuality(item.GetQuality()),
-		Unique:             item.GetUnique(),
-		RequiredProfession: item.GetRequiredProfession(),
-	}
-}
-
-var strengthGemStatRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Strength`), regexp.MustCompile(`\+([0-9]+) (to )?All Stats`)}
-var agilityGemStatRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Agility`), regexp.MustCompile(`\+([0-9]+) (to )?All Stats`)}
-var staminaGemStatRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Stamina`), regexp.MustCompile(`\+([0-9]+) (to )?All Stats`)}
-var intellectGemStatRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Intellect`), regexp.MustCompile(`\+([0-9]+) (to )?All Stats`)}
-var spiritGemStatRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Spirit`), regexp.MustCompile(`\+([0-9]+) (to )?All Stats`)}
-var spellPowerGemStatRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Spell Power`)}
-var hitGemStatRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Hit Rating`)}
-var critGemStatRegexes = []*regexp.Regexp{
-	regexp.MustCompile(`\+([0-9]+) Crit Rating`),
-	regexp.MustCompile(`\+([0-9]+) Critical Strike Rating`),
-	regexp.MustCompile(`\+([0-9]+) Critical`),
-}
-var hasteGemStatRegexes = []*regexp.Regexp{
-	regexp.MustCompile(`\+([0-9]+) Haste Rating`),
-}
-var armorPenetrationGemStatRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Armor Penetration`)}
-var spellPenetrationGemStatRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Spell Penetration`)}
-var mp5GemStatRegexes = []*regexp.Regexp{
-	regexp.MustCompile(`([0-9]+) Mana per 5 sec`),
-	regexp.MustCompile(`([0-9]+) mana per 5 sec`),
-	regexp.MustCompile(`([0-9]+) Mana every 5 seconds`),
-}
-var attackPowerGemStatRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Attack Power`)}
-var expertiseGemStatRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Expertise Rating`)}
-var defenseGemStatRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Defense Rating`)}
-var dodgeGemStatRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Dodge Rating`)}
-var parryGemStatRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Parry Rating`)}
-var resilienceGemStatRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Resilience Rating`)}
-var allResistGemStatRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Resist All`)}
-
-func (item WowheadItemResponse) GetGemStats() Stats {
-	stats := Stats{
-		proto.Stat_StatStrength:  float64(GetBestRegexIntValue(item.Tooltip, strengthGemStatRegexes, 1)),
-		proto.Stat_StatAgility:   float64(GetBestRegexIntValue(item.Tooltip, agilityGemStatRegexes, 1)),
-		proto.Stat_StatStamina:   float64(GetBestRegexIntValue(item.Tooltip, staminaGemStatRegexes, 1)),
-		proto.Stat_StatIntellect: float64(GetBestRegexIntValue(item.Tooltip, intellectGemStatRegexes, 1)),
-		proto.Stat_StatSpirit:    float64(GetBestRegexIntValue(item.Tooltip, spiritGemStatRegexes, 1)),
-
-		proto.Stat_StatSpellHit:   float64(GetBestRegexIntValue(item.Tooltip, hitGemStatRegexes, 1)),
-		proto.Stat_StatMeleeHit:   float64(GetBestRegexIntValue(item.Tooltip, hitGemStatRegexes, 1)),
-		proto.Stat_StatSpellCrit:  float64(GetBestRegexIntValue(item.Tooltip, critGemStatRegexes, 1)),
-		proto.Stat_StatMeleeCrit:  float64(GetBestRegexIntValue(item.Tooltip, critGemStatRegexes, 1)),
-		proto.Stat_StatSpellHaste: float64(GetBestRegexIntValue(item.Tooltip, hasteGemStatRegexes, 1)),
-		proto.Stat_StatMeleeHaste: float64(GetBestRegexIntValue(item.Tooltip, hasteGemStatRegexes, 1)),
-
-		proto.Stat_StatSpellPower:        float64(GetBestRegexIntValue(item.Tooltip, spellPowerGemStatRegexes, 1)),
-		proto.Stat_StatAttackPower:       float64(GetBestRegexIntValue(item.Tooltip, attackPowerGemStatRegexes, 1)),
-		proto.Stat_StatRangedAttackPower: float64(GetBestRegexIntValue(item.Tooltip, attackPowerGemStatRegexes, 1)),
-		proto.Stat_StatArmorPenetration:  float64(GetBestRegexIntValue(item.Tooltip, armorPenetrationGemStatRegexes, 1)),
-		proto.Stat_StatSpellPenetration:  float64(GetBestRegexIntValue(item.Tooltip, spellPenetrationGemStatRegexes, 1)),
-		proto.Stat_StatMP5:               float64(GetBestRegexIntValue(item.Tooltip, mp5GemStatRegexes, 1)),
-		proto.Stat_StatExpertise:         float64(GetBestRegexIntValue(item.Tooltip, expertiseGemStatRegexes, 1)),
-		proto.Stat_StatDefense:           float64(GetBestRegexIntValue(item.Tooltip, defenseGemStatRegexes, 1)),
-		proto.Stat_StatDodge:             float64(GetBestRegexIntValue(item.Tooltip, dodgeGemStatRegexes, 1)),
-		proto.Stat_StatParry:             float64(GetBestRegexIntValue(item.Tooltip, parryGemStatRegexes, 1)),
-		proto.Stat_StatResilience:        float64(GetBestRegexIntValue(item.Tooltip, resilienceGemStatRegexes, 1)),
-		proto.Stat_StatArcaneResistance:  float64(GetBestRegexIntValue(item.Tooltip, allResistGemStatRegexes, 1)),
-		proto.Stat_StatFireResistance:    float64(GetBestRegexIntValue(item.Tooltip, allResistGemStatRegexes, 1)),
-		proto.Stat_StatFrostResistance:   float64(GetBestRegexIntValue(item.Tooltip, allResistGemStatRegexes, 1)),
-		proto.Stat_StatNatureResistance:  float64(GetBestRegexIntValue(item.Tooltip, allResistGemStatRegexes, 1)),
-		proto.Stat_StatShadowResistance:  float64(GetBestRegexIntValue(item.Tooltip, allResistGemStatRegexes, 1)),
-	}
-
-	return stats
 }
 
 var itemSetNameRegex = regexp.MustCompile(`<a href="/wotlk/item-set=-?([0-9]+)/(.*)" class="q">([^<]+)<`)

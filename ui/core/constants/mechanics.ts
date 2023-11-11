@@ -1,4 +1,4 @@
-export const CHARACTER_LEVEL = 80;
+export const CHARACTER_LEVEL = 60;
 export const MAX_TALENT_POINTS = CHARACTER_LEVEL - 9;
 export const BOSS_LEVEL = CHARACTER_LEVEL + 3;
 

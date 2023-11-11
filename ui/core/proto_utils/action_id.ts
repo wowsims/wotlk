@@ -19,15 +19,17 @@ export class ActionId {
 	readonly spellId: number;
 	readonly otherId: OtherAction;
 	readonly tag: number;
+	readonly rank: number;
 
 	readonly baseName: string; // The name without any tag additions.
 	readonly name: string;
 	readonly iconUrl: string;
 
-	private constructor(itemId: number, spellId: number, otherId: OtherAction, tag: number, baseName: string, name: string, iconUrl: string) {
+	private constructor(itemId: number, spellId: number, otherId: OtherAction, tag: number, baseName: string, name: string, iconUrl: string, rank: number) {
 		this.itemId = itemId;
 		this.spellId = spellId;
 		this.otherId = otherId;
+		this.rank = rank,
 		this.tag = tag;
 
 		switch (otherId) {
@@ -139,25 +141,25 @@ export class ActionId {
 	static makeItemUrl(id: number): string {
 		const langPrefix = getWowheadLanguagePrefix();
 		if (USE_WOTLK_DB) {
-			return 'https://wotlkdb.com/?item=' + id;
+			return 'https://classicdb.com/?item=' + id;
 		} else {
-			return `https://wowhead.com/wotlk/${langPrefix}item=${id}?lvl=${CHARACTER_LEVEL}`;
+			return `https://wowhead.com/classic/${langPrefix}item=${id}?lvl=${CHARACTER_LEVEL}`;
 		}
 	}
 	static makeSpellUrl(id: number): string {
 		const langPrefix = getWowheadLanguagePrefix();
 		if (USE_WOTLK_DB) {
-			return 'https://wotlkdb.com/?spell=' + id;
+			return 'https://classicdb.com/?spell=' + id;
 		} else {
-			return `https://wowhead.com/wotlk/${langPrefix}spell=${id}`;
+			return `https://wowhead.com/classic/${langPrefix}spell=${id}`;
 		}
 	}
 	static makeQuestUrl(id: number): string {
 		const langPrefix = getWowheadLanguagePrefix();
 		if (USE_WOTLK_DB) {
-			return 'https://wotlkdb.com/?quest=' + id;
+			return 'https://classicdb.com/?quest=' + id;
 		} else {
-			return `https://wowhead.com/wotlk/${langPrefix}quest=${id}`;
+			return `https://wowhead.com/classic/${langPrefix}quest=${id}`;
 		}
 	}
 	static makeNpcUrl(id: number): string {
@@ -165,7 +167,7 @@ export class ActionId {
 		if (USE_WOTLK_DB) {
 			return 'https://wotlkdb.com/?npc=' + id;
 		} else {
-			return `https://wowhead.com/wotlk/${langPrefix}npc=${id}`;
+			return `https://wowhead.com/classic/${langPrefix}npc=${id}`;
 		}
 	}
 	static makeZoneUrl(id: number): string {
@@ -173,7 +175,7 @@ export class ActionId {
 		if (USE_WOTLK_DB) {
 			return 'https://wotlkdb.com/?zone=' + id;
 		} else {
-			return `https://wowhead.com/wotlk/${langPrefix}zone=${id}`;
+			return `https://wowhead.com/classic/${langPrefix}zone=${id}`;
 		}
 	}
 
@@ -462,7 +464,7 @@ export class ActionId {
 			iconUrl = ActionId.makeIconUrl(overrideTooltipData['icon']);
 		}
 
-		return new ActionId(this.itemId, this.spellId, this.otherId, this.tag, baseName, name, iconUrl);
+		return new ActionId(this.itemId, this.spellId, this.otherId, this.tag, baseName, name, iconUrl, this.rank);
 	}
 
 	toString(): string {
@@ -511,27 +513,27 @@ export class ActionId {
 	}
 
 	withoutTag(): ActionId {
-		return new ActionId(this.itemId, this.spellId, this.otherId, 0, this.baseName, this.baseName, this.iconUrl);
+		return new ActionId(this.itemId, this.spellId, this.otherId, 0, this.baseName, this.baseName, this.iconUrl, this.rank);
 	}
 
 	static fromEmpty(): ActionId {
-		return new ActionId(0, 0, OtherAction.OtherActionNone, 0, '', '', '');
+		return new ActionId(0, 0, OtherAction.OtherActionNone, 0, '', '', '', 0);
 	}
 
 	static fromItemId(itemId: number, tag?: number): ActionId {
-		return new ActionId(itemId, 0, OtherAction.OtherActionNone, tag || 0, '', '', '');
+		return new ActionId(itemId, 0, OtherAction.OtherActionNone, tag || 0, '', '', '', 0);
 	}
 
-	static fromSpellId(spellId: number, tag?: number): ActionId {
-		return new ActionId(0, spellId, OtherAction.OtherActionNone, tag || 0, '', '', '');
+	static fromSpellId(spellId: number, rank = 0, tag?: number): ActionId {
+		return new ActionId(0, spellId, OtherAction.OtherActionNone, tag || 0, '', '', '', rank);
 	}
 
 	static fromOtherId(otherId: OtherAction, tag?: number): ActionId {
-		return new ActionId(0, 0, otherId, tag || 0, '', '', '');
+		return new ActionId(0, 0, otherId, tag || 0, '', '', '', 0);
 	}
 
 	static fromPetName(petName: string): ActionId {
-		return petNameToActionId[petName] || new ActionId(0, 0, OtherAction.OtherActionPet, 0, petName, petName, petNameToIcon[petName] || '');
+		return petNameToActionId[petName] || new ActionId(0, 0, OtherAction.OtherActionPet, 0, petName, petName, petNameToIcon[petName] || '', 0);
 	}
 
 	static fromItem(item: Item): ActionId {
@@ -540,7 +542,8 @@ export class ActionId {
 
 	static fromProto(protoId: ActionIdProto): ActionId {
 		if (protoId.rawId.oneofKind == 'spellId') {
-			return ActionId.fromSpellId(protoId.rawId.spellId, protoId.tag);
+			if(protoId.rank) console.log('Spell Rank: ', protoId.rawId.spellId, protoId.rank);
+			return ActionId.fromSpellId(protoId.rawId.spellId, protoId.rank, protoId.tag);
 		} else if (protoId.rawId.oneofKind == 'itemId') {
 			return ActionId.fromItemId(protoId.rawId.itemId, protoId.tag);
 		} else if (protoId.rawId.oneofKind == 'otherId') {
@@ -560,7 +563,7 @@ export class ActionId {
 			idType == 'SpellID' ? id : 0,
 			idType == 'OtherID' ? id : 0,
 			match[7] ? parseInt(match[7]) : 0,
-			'', '', '');
+			'', '', '', 0);
 	}
 	static fromLogString(str: string): ActionId {
 		const match = str.match(ActionId.logRegex);
@@ -636,7 +639,7 @@ const petNameToActionId: Record<string, ActionId> = {
 	'Valkyr': ActionId.fromSpellId(71844),
 };
 
-// https://wowhead.com/wotlk/hunter-pets
+// https://wowhead.com/classic/hunter-pets
 const petNameToIcon: Record<string, string> = {
 	'Bat': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_bat.jpg',
 	'Bear': 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_pet_bear.jpg',

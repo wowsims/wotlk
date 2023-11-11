@@ -6,7 +6,6 @@ import {
 import {
 	APLRotation,
 	APLRotation_Type as APLRotationType,
-	SimpleRotation,
 } from "../../proto/apl";
 import {
 	SavedRotation,
@@ -92,7 +91,7 @@ export class RotationTab extends SimTab {
 		const aplLaunchStatus = aplLaunchStatuses[this.simUI.player.spec];
 
 		new EnumPicker(header, this.simUI.player, {
-			label: 'Rotation Type',
+			label: 'Rotation Type Test',
 			labelTooltip: 'Which set of options to use for specifying the rotation.',
 			inline: true,
 			values: aplLaunchStatus == LaunchStatus.Alpha ? [

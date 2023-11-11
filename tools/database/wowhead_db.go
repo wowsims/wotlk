@@ -10,7 +10,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-// Example db input file: https://nether.wowhead.com/wotlk/data/gear-planner?dv=100
+// Example db input file: https://nether.wowhead.com/classic/data/gear-planner?dv=100
 
 func ParseWowheadDB(dbContents string) WowheadDatabase {
 	var wowheadDB WowheadDatabase

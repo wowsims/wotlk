@@ -4,14 +4,11 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-func (priest *Priest) RegisterHolyFireSpell(memeDream bool) {
-	hasGlyph := !memeDream && priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfSmite)
-
+func (priest *Priest) RegisterHolyFireSpell() {
 	priest.HolyFire = priest.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48135},
+		ActionID:    core.ActionID{SpellID: 15261},
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       core.SpellFlagAPL,
@@ -38,16 +35,6 @@ func (priest *Priest) RegisterHolyFireSpell(memeDream bool) {
 		Dot: core.DotConfig{
 			Aura: core.Aura{
 				Label: "HolyFire",
-				OnGain: func(aura *core.Aura, sim *core.Simulation) {
-					if hasGlyph {
-						priest.Smite.DamageMultiplier *= 1.2
-					}
-				},
-				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-					if hasGlyph {
-						priest.Smite.DamageMultiplier /= 1.2
-					}
-				},
 			},
 			NumberOfTicks: 7,
 			TickLength:    time.Second * 1,
@@ -61,7 +48,7 @@ func (priest *Priest) RegisterHolyFireSpell(memeDream bool) {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := sim.Roll(900, 1140) + 0.5711*spell.SpellPower()
+			baseDamage := sim.Roll(355, 449) + spell.SpellPower()
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if result.Landed() {
 				spell.Dot(target).Apply(sim)

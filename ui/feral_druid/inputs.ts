@@ -77,13 +77,6 @@ export const FeralDruidRotationConfig = {
 			changeEmitter: (player: Player<Spec.SpecFeralDruid>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
-			fieldName: 'prePopBerserk',
-			label: 'Pre-pop Berserk',
-			labelTooltip: 'Pre pop berserk 1 sec before fight',
-			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getTalents().berserk,
-			changeEmitter: (player: Player<Spec.SpecFeralDruid>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
 			fieldName: 'manualParams',
 			label: 'Manual Advanced Parameters',
 			labelTooltip: 'Manually specify advanced parameters, otherwise will use preset defaults',

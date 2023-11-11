@@ -15,10 +15,10 @@ if len(sys.argv) < 3:
 class_name = sys.argv[1]
 output_file_path = sys.argv[2]
 
-driver = webdriver.Chrome(ChromeDriverManager().install())
-driver.implicitly_wait(2)
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+driver.implicitly_wait(3)
 
-driver.get('https://wowhead.com/wotlk/talent-calc/' + class_name)
+driver.get('https://wowhead.com/classic/talent-calc/' + class_name)
 trees = driver.find_elements(By.CLASS_NAME, "ctc-tree")
 
 with open(output_file_path, "w") as outfile:
@@ -28,7 +28,7 @@ with open(output_file_path, "w") as outfile:
 
 	talent_idx = 1
 	for tree_idx, tree in enumerate(trees):
-		title = tree.find_element(By.XPATH, "./div/b").text
+		title = tree.find_element(By.CSS_SELECTOR, ".ctc-tree-header b").text
 		outfile.write("\t// {}\n".format(title))
 
 		tree_talents_data = []
@@ -37,7 +37,7 @@ with open(output_file_path, "w") as outfile:
 			max_points = int(talent.get_attribute("data-max-points"))
 			field_type = "bool" if max_points == 1 else "int32"
 
-			link = talent.find_element(By.XPATH, "./div/a").get_attribute("href")
+			link = talent.find_element(By.CSS_SELECTOR, "a").get_attribute("href")
 			name = "_".join(word for i, word in enumerate(link.split("/")[-1].split("-")))
 
 			print("Talent: " + name)

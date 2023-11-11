@@ -1,1165 +1,1156 @@
 [
 	{
-		"name": "Blood",
-		"backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/398.jpg",
+		"name": "Arcane",
+		"backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/81.jpg",
 		"talents": [
 			{
-				"fieldName": "butchery",
+				"fieldName": "arcaneSubtlety",
 				"location": {
 					"rowIdx": 0,
 					"colIdx": 0
 				},
 				"spellIds": [
-					48979,
-					49483
+					11210,
+					12592
 				],
 				"maxPoints": 2
 			},
 			{
-				"fieldName": "subversion",
+				"fieldName": "arcaneFocus",
 				"location": {
 					"rowIdx": 0,
 					"colIdx": 1
 				},
 				"spellIds": [
-					48997,
-					49490,
-					49491
+					11222,
+					12839,
+					12840
 				],
 				"maxPoints": 3
 			},
 			{
-				"fieldName": "bladeBarrier",
+				"fieldName": "arcaneStability",
 				"location": {
 					"rowIdx": 0,
 					"colIdx": 2
 				},
 				"spellIds": [
-					49182,
-					49500,
-					49501,
-					55225,
-					55226
+					11237,
+					12463,
+					12464,
+					16769,
+					16770
 				],
 				"maxPoints": 5
 			},
 			{
-				"fieldName": "bladedArmor",
+				"fieldName": "arcaneFortitude",
 				"location": {
 					"rowIdx": 1,
 					"colIdx": 0
 				},
 				"spellIds": [
-					48978,
-					49390,
-					49391,
-					49392,
-					49393
+					28574,
+					54658,
+					54659
 				],
-				"maxPoints": 5
+				"maxPoints": 3
 			},
 			{
-				"fieldName": "scentOfBlood",
+				"fieldName": "magicAbsorption",
 				"location": {
 					"rowIdx": 1,
 					"colIdx": 1
 				},
 				"spellIds": [
-					49004,
-					49508,
-					49509
+					29441,
+					29444
 				],
-				"maxPoints": 3
+				"maxPoints": 2
 			},
 			{
-				"fieldName": "twoHandedWeaponSpecialization",
+				"fieldName": "arcaneConcentration",
 				"location": {
 					"rowIdx": 1,
 					"colIdx": 2
 				},
 				"spellIds": [
-					55107,
-					55108
+					11213,
+					12574,
+					12575,
+					12576,
+					12577
 				],
-				"maxPoints": 2
+				"maxPoints": 5
 			},
 			{
-				"fieldName": "runeTap",
+				"fieldName": "magicAttunement",
 				"location": {
 					"rowIdx": 2,
 					"colIdx": 0
 				},
 				"spellIds": [
-					48982
+					11247,
+					12606
+				],
+				"maxPoints": 2
+			},
+			{
+				"fieldName": "spellImpact",
+				"location": {
+					"rowIdx": 2,
+					"colIdx": 1
+				},
+				"spellIds": [
+					11242,
+					12467,
+					12469
+				],
+				"maxPoints": 3
+			},
+			{
+				"fieldName": "studentOfTheMind",
+				"location": {
+					"rowIdx": 2,
+					"colIdx": 2
+				},
+				"spellIds": [
+					44397,
+					44398,
+					44399
+				],
+				"maxPoints": 3
+			},
+			{
+				"fieldName": "focusMagic",
+				"location": {
+					"rowIdx": 2,
+					"colIdx": 3
+				},
+				"spellIds": [
+					54646
 				],
 				"maxPoints": 1
 			},
 			{
-				"fieldName": "darkConviction",
+				"fieldName": "arcaneShielding",
 				"location": {
-					"rowIdx": 2,
+					"rowIdx": 3,
+					"colIdx": 0
+				},
+				"spellIds": [
+					11252,
+					12605
+				],
+				"maxPoints": 2
+			},
+			{
+				"fieldName": "improvedCounterspell",
+				"location": {
+					"rowIdx": 3,
 					"colIdx": 1
 				},
 				"spellIds": [
-					48987,
-					49477,
-					49478,
-					49479,
-					49480
+					11255,
+					12598
 				],
-				"maxPoints": 5
+				"maxPoints": 2
 			},
 			{
-				"fieldName": "deathRuneMastery",
-				"location": {
-					"rowIdx": 2,
-					"colIdx": 2
-				},
-				"spellIds": [
-					49467,
-					50033,
-					50034
-				],
-				"maxPoints": 3
-			},
-			{
-				"fieldName": "improvedRuneTap",
-				"location": {
-					"rowIdx": 3,
-					"colIdx": 0
-				},
-				"spellIds": [
-					48985,
-					49488,
-					49489
-				],
-				"maxPoints": 3,
-				"prereqLocation": {
-					"rowIdx": 2,
-					"colIdx": 0
-				}
-			},
-			{
-				"fieldName": "spellDeflection",
+				"fieldName": "arcaneMeditation",
 				"location": {
 					"rowIdx": 3,
 					"colIdx": 2
 				},
 				"spellIds": [
-					49145,
-					49495,
-					49497
+					18462,
+					18463,
+					18464
 				],
 				"maxPoints": 3
 			},
 			{
-				"fieldName": "vendetta",
+				"fieldName": "tormentTheWeak",
 				"location": {
 					"rowIdx": 3,
 					"colIdx": 3
 				},
 				"spellIds": [
-					49015,
-					50154,
-					55136
+					29447,
+					55339,
+					55340
 				],
 				"maxPoints": 3
 			},
 			{
-				"fieldName": "bloodyStrikes",
+				"fieldName": "improvedBlink",
 				"location": {
 					"rowIdx": 4,
 					"colIdx": 0
 				},
 				"spellIds": [
-					48977,
-					49394,
-					49395
+					31569,
+					31570
 				],
-				"maxPoints": 3
+				"maxPoints": 2
 			},
 			{
-				"fieldName": "veteranOfTheThirdWar",
+				"fieldName": "presenceOfMind",
 				"location": {
 					"rowIdx": 4,
-					"colIdx": 2
+					"colIdx": 1
 				},
 				"spellIds": [
-					49006,
-					49526,
-					50029
+					12043
 				],
-				"maxPoints": 3
+				"maxPoints": 1
 			},
 			{
-				"fieldName": "markOfBlood",
+				"fieldName": "arcaneMind",
 				"location": {
 					"rowIdx": 4,
 					"colIdx": 3
 				},
 				"spellIds": [
-					49005
+					11232,
+					12500,
+					12501,
+					12502,
+					12503
 				],
-				"maxPoints": 1
+				"maxPoints": 5
 			},
 			{
-				"fieldName": "bloodyVengeance",
+				"fieldName": "prismaticCloak",
+				"location": {
+					"rowIdx": 5,
+					"colIdx": 0
+				},
+				"spellIds": [
+					31574,
+					31575,
+					54354
+				],
+				"maxPoints": 3
+			},
+			{
+				"fieldName": "arcaneInstability",
 				"location": {
 					"rowIdx": 5,
 					"colIdx": 1
 				},
 				"spellIds": [
-					48988,
-					49503,
-					49504
+					15058,
+					15059,
+					15060
 				],
 				"maxPoints": 3,
 				"prereqLocation": {
-					"rowIdx": 2,
+					"rowIdx": 4,
 					"colIdx": 1
 				}
 			},
 			{
-				"fieldName": "abominationsMight",
+				"fieldName": "arcanePotency",
 				"location": {
 					"rowIdx": 5,
 					"colIdx": 2
 				},
 				"spellIds": [
-					53137,
-					53138
+					31571,
+					31572
 				],
-				"maxPoints": 2
+				"maxPoints": 2,
+				"prereqLocation": {
+					"rowIdx": 4,
+					"colIdx": 1
+				}
 			},
 			{
-				"fieldName": "bloodworms",
+				"fieldName": "arcaneEmpowerment",
 				"location": {
 					"rowIdx": 6,
 					"colIdx": 0
 				},
 				"spellIds": [
-					49027,
-					49542,
-					49543
+					31579,
+					31582,
+					31583
 				],
 				"maxPoints": 3
 			},
 			{
-				"fieldName": "hysteria",
+				"fieldName": "arcanePower",
 				"location": {
 					"rowIdx": 6,
 					"colIdx": 1
 				},
 				"spellIds": [
-					49016
+					12042
 				],
-				"maxPoints": 1
+				"maxPoints": 1,
+				"prereqLocation": {
+					"rowIdx": 5,
+					"colIdx": 1
+				}
 			},
 			{
-				"fieldName": "improvedBloodPresence",
+				"fieldName": "incantersAbsorption",
 				"location": {
 					"rowIdx": 6,
 					"colIdx": 2
 				},
 				"spellIds": [
-					50365,
-					50371
+					44394,
+					44395,
+					44396
 				],
-				"maxPoints": 2
+				"maxPoints": 3
 			},
 			{
-				"fieldName": "improvedDeathStrike",
-				"location": {
-					"rowIdx": 7,
-					"colIdx": 0
-				},
-				"spellIds": [
-					62905,
-					62908
-				],
-				"maxPoints": 2
-			},
-			{
-				"fieldName": "suddenDoom",
+				"fieldName": "arcaneFlows",
 				"location": {
 					"rowIdx": 7,
 					"colIdx": 1
 				},
 				"spellIds": [
-					49018,
-					49529,
-					49530
+					44378,
+					44379
 				],
-				"maxPoints": 3
+				"maxPoints": 2,
+				"prereqLocation": {
+					"rowIdx": 6,
+					"colIdx": 1
+				}
 			},
 			{
-				"fieldName": "vampiricBlood",
+				"fieldName": "mindMastery",
 				"location": {
 					"rowIdx": 7,
 					"colIdx": 2
 				},
 				"spellIds": [
-					55233
+					31584,
+					31585,
+					31586,
+					31587,
+					31588
 				],
-				"maxPoints": 1
+				"maxPoints": 5
 			},
 			{
-				"fieldName": "willOfTheNecropolis",
-				"location": {
-					"rowIdx": 8,
-					"colIdx": 0
-				},
-				"spellIds": [
-					49189,
-					50149,
-					50150
-				],
-				"maxPoints": 3
-			},
-			{
-				"fieldName": "heartStrike",
+				"fieldName": "slow",
 				"location": {
 					"rowIdx": 8,
 					"colIdx": 1
 				},
 				"spellIds": [
-					55050
+					31589
 				],
 				"maxPoints": 1
 			},
 			{
-				"fieldName": "mightOfMograine",
+				"fieldName": "missileBarrage",
 				"location": {
 					"rowIdx": 8,
 					"colIdx": 2
 				},
 				"spellIds": [
-					49023,
-					49533,
-					49534
+					44404,
+					54486,
+					54488,
+					54489,
+					54490
 				],
-				"maxPoints": 3
+				"maxPoints": 5
 			},
 			{
-				"fieldName": "bloodGorged",
+				"fieldName": "netherwindPresence",
 				"location": {
 					"rowIdx": 9,
 					"colIdx": 1
 				},
 				"spellIds": [
-					61154,
-					61155,
-					61156,
-					61157,
-					61158
+					44400,
+					44402,
+					44403
 				],
-				"maxPoints": 5
+				"maxPoints": 3
 			},
 			{
-				"fieldName": "dancingRuneWeapon",
+				"fieldName": "spellPower",
+				"location": {
+					"rowIdx": 9,
+					"colIdx": 2
+				},
+				"spellIds": [
+					35578,
+					35581
+				],
+				"maxPoints": 2
+			},
+			{
+				"fieldName": "arcaneBarrage",
 				"location": {
 					"rowIdx": 10,
 					"colIdx": 1
 				},
 				"spellIds": [
-					49028
+					44425
 				],
 				"maxPoints": 1
 			}
-
+		]
+	},
+	{
+		"name": "Fire",
+		"backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/41.jpg",
+		"talents": [
+			{
+				"fieldName": "improvedFireBlast",
+				"location": {
+					"rowIdx": 0,
+					"colIdx": 0
+				},
+				"spellIds": [
+					11078,
+					11080
+				],
+				"maxPoints": 2
+			},
+			{
+				"fieldName": "incineration",
+				"location": {
+					"rowIdx": 0,
+					"colIdx": 1
+				},
+				"spellIds": [
+					18459,
+					18460,
+					54734
+				],
+				"maxPoints": 3
+			},
+			{
+				"fieldName": "improvedFireball",
+				"location": {
+					"rowIdx": 0,
+					"colIdx": 2
+				},
+				"spellIds": [
+					11069,
+					12338,
+					12339,
+					12340,
+					12341
+				],
+				"maxPoints": 5
+			},
+			{
+				"fieldName": "ignite",
+				"location": {
+					"rowIdx": 1,
+					"colIdx": 0
+				},
+				"spellIds": [
+					11119,
+					11120,
+					12846,
+					12847,
+					12848
+				],
+				"maxPoints": 5
+			},
+			{
+				"fieldName": "burningDetermination",
+				"location": {
+					"rowIdx": 1,
+					"colIdx": 1
+				},
+				"spellIds": [
+					54747,
+					54749
+				],
+				"maxPoints": 2
+			},
+			{
+				"fieldName": "worldInFlames",
+				"location": {
+					"rowIdx": 1,
+					"colIdx": 2
+				},
+				"spellIds": [
+					11108,
+					12349,
+					12350
+				],
+				"maxPoints": 3
+			},
+			{
+				"fieldName": "flameThrowing",
+				"location": {
+					"rowIdx": 2,
+					"colIdx": 0
+				},
+				"spellIds": [
+					11100,
+					12353
+				],
+				"maxPoints": 2
+			},
+			{
+				"fieldName": "impact",
+				"location": {
+					"rowIdx": 2,
+					"colIdx": 1
+				},
+				"spellIds": [
+					11103,
+					12357,
+					12358
+				],
+				"maxPoints": 3
+			},
+			{
+				"fieldName": "pyroblast",
+				"location": {
+					"rowIdx": 2,
+					"colIdx": 2
+				},
+				"spellIds": [
+					11366
+				],
+				"maxPoints": 1
+			},
+			{
+				"fieldName": "burningSoul",
+				"location": {
+					"rowIdx": 2,
+					"colIdx": 3
+				},
+				"spellIds": [
+					11083,
+					12351
+				],
+				"maxPoints": 2
+			},
+			{
+				"fieldName": "improvedScorch",
+				"location": {
+					"rowIdx": 3,
+					"colIdx": 0
+				},
+				"spellIds": [
+					11095,
+					12872,
+					12873
+				],
+				"maxPoints": 3
+			},
+			{
+				"fieldName": "moltenShields",
+				"location": {
+					"rowIdx": 3,
+					"colIdx": 1
+				},
+				"spellIds": [
+					11094,
+					13043
+				],
+				"maxPoints": 2
+			},
+			{
+				"fieldName": "masterOfElements",
+				"location": {
+					"rowIdx": 3,
+					"colIdx": 3
+				},
+				"spellIds": [
+					29074,
+					29075,
+					29076
+				],
+				"maxPoints": 3
+			},
+			{
+				"fieldName": "playingWithFire",
+				"location": {
+					"rowIdx": 4,
+					"colIdx": 0
+				},
+				"spellIds": [
+					31638,
+					31639,
+					31640
+				],
+				"maxPoints": 3
+			},
+			{
+				"fieldName": "criticalMass",
+				"location": {
+					"rowIdx": 4,
+					"colIdx": 1
+				},
+				"spellIds": [
+					11115,
+					11367,
+					11368
+				],
+				"maxPoints": 3
+			},
+			{
+				"fieldName": "blastWave",
+				"location": {
+					"rowIdx": 4,
+					"colIdx": 2
+				},
+				"spellIds": [
+					11113
+				],
+				"maxPoints": 1,
+				"prereqLocation": {
+					"rowIdx": 2,
+					"colIdx": 2
+				}
+			},
+			{
+				"fieldName": "blazingSpeed",
+				"location": {
+					"rowIdx": 5,
+					"colIdx": 0
+				},
+				"spellIds": [
+					31641,
+					31642
+				],
+				"maxPoints": 2
+			},
+			{
+				"fieldName": "firePower",
+				"location": {
+					"rowIdx": 5,
+					"colIdx": 2
+				},
+				"spellIds": [
+					11124,
+					12378,
+					12398,
+					12399,
+					12400
+				],
+				"maxPoints": 5
+			},
+			{
+				"fieldName": "pyromaniac",
+				"location": {
+					"rowIdx": 6,
+					"colIdx": 0
+				},
+				"spellIds": [
+					34293,
+					34295,
+					34296
+				],
+				"maxPoints": 3
+			},
+			{
+				"fieldName": "combustion",
+				"location": {
+					"rowIdx": 6,
+					"colIdx": 1
+				},
+				"spellIds": [
+					11129
+				],
+				"maxPoints": 1,
+				"prereqLocation": {
+					"rowIdx": 4,
+					"colIdx": 1
+				}
+			},
+			{
+				"fieldName": "moltenFury",
+				"location": {
+					"rowIdx": 6,
+					"colIdx": 2
+				},
+				"spellIds": [
+					31679,
+					31680
+				],
+				"maxPoints": 2
+			},
+			{
+				"fieldName": "fieryPayback",
+				"location": {
+					"rowIdx": 7,
+					"colIdx": 0
+				},
+				"spellIds": [
+					64353,
+					64357
+				],
+				"maxPoints": 2
+			},
+			{
+				"fieldName": "empoweredFire",
+				"location": {
+					"rowIdx": 7,
+					"colIdx": 2
+				},
+				"spellIds": [
+					31656,
+					31657,
+					31658
+				],
+				"maxPoints": 3
+			},
+			{
+				"fieldName": "firestarter",
+				"location": {
+					"rowIdx": 8,
+					"colIdx": 0
+				},
+				"spellIds": [
+					44442,
+					44443
+				],
+				"maxPoints": 2,
+				"prereqLocation": {
+					"rowIdx": 8,
+					"colIdx": 1
+				}
+			},
+			{
+				"fieldName": "dragonsBreath",
+				"location": {
+					"rowIdx": 8,
+					"colIdx": 1
+				},
+				"spellIds": [
+					31661
+				],
+				"maxPoints": 1,
+				"prereqLocation": {
+					"rowIdx": 6,
+					"colIdx": 1
+				}
+			},
+			{
+				"fieldName": "hotStreak",
+				"location": {
+					"rowIdx": 8,
+					"colIdx": 2
+				},
+				"spellIds": [
+					44445,
+					44446,
+					44448
+				],
+				"maxPoints": 3
+			},
+			{
+				"fieldName": "burnout",
+				"location": {
+					"rowIdx": 9,
+					"colIdx": 1
+				},
+				"spellIds": [
+					44449,
+					44469,
+					44470,
+					44471,
+					44472
+				],
+				"maxPoints": 5
+			},
+			{
+				"fieldName": "livingBomb",
+				"location": {
+					"rowIdx": 10,
+					"colIdx": 1
+				},
+				"spellIds": [
+					44457
+				],
+				"maxPoints": 1
+			}
 		]
 	},
 	{
 		"name": "Frost",
-		"backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/399.jpg",
+		"backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/61.jpg",
 		"talents": [
 			{
-				"fieldName": "improvedIcyTouch",
+				"fieldName": "frostbite",
 				"location": {
 					"rowIdx": 0,
 					"colIdx": 0
 				},
 				"spellIds": [
-					49175,
-					50031,
-					51456
+					11071,
+					12496,
+					12497
 				],
 				"maxPoints": 3
 			},
 			{
-				"fieldName": "runicPowerMastery",
+				"fieldName": "improvedFrostbolt",
 				"location": {
 					"rowIdx": 0,
 					"colIdx": 1
 				},
 				"spellIds": [
-					49455,
-					50147
+					11070,
+					12473,
+					16763,
+					16765,
+					16766
 				],
-				"maxPoints": 2
+				"maxPoints": 5
 			},
 			{
-				"fieldName": "toughness",
+				"fieldName": "iceFloes",
 				"location": {
 					"rowIdx": 0,
 					"colIdx": 2
 				},
 				"spellIds": [
-					49042,
-					49786,
-					49787,
-					49788,
-					49789
+					31670,
+					31672,
+					55094
 				],
-				"maxPoints": 5
+				"maxPoints": 3
 			},
 			{
-				"fieldName": "icyReach",
+				"fieldName": "iceShards",
+				"location": {
+					"rowIdx": 1,
+					"colIdx": 0
+				},
+				"spellIds": [
+					11207,
+					12672,
+					15047
+				],
+				"maxPoints": 3
+			},
+			{
+				"fieldName": "frostWarding",
 				"location": {
 					"rowIdx": 1,
 					"colIdx": 1
 				},
 				"spellIds": [
-					55061,
-					55062
+					11189,
+					28332
 				],
 				"maxPoints": 2
 			},
 			{
-				"fieldName": "blackIce",
+				"fieldName": "precision",
 				"location": {
 					"rowIdx": 1,
 					"colIdx": 2
 				},
 				"spellIds": [
-					49140,
-					49661,
-					49662,
-					49663,
-					49664
+					29438,
+					29439,
+					29440
 				],
-				"maxPoints": 5
+				"maxPoints": 3
 			},
 			{
-				"fieldName": "nervesOfColdSteel",
+				"fieldName": "permafrost",
 				"location": {
 					"rowIdx": 1,
 					"colIdx": 3
 				},
 				"spellIds": [
-					49226,
-					50137,
-					50138
+					11175,
+					12569,
+					12571
 				],
 				"maxPoints": 3
 			},
 			{
-				"fieldName": "icyTalons",
+				"fieldName": "piercingIce",
 				"location": {
 					"rowIdx": 2,
 					"colIdx": 0
 				},
 				"spellIds": [
-					50880,
-					50884,
-					50885,
-					50886,
-					50887
+					11151,
+					12952,
+					12953
 				],
-				"maxPoints": 5,
-				"prereqLocation": {
-					"rowIdx": 0,
-					"colIdx": 0
-				}
+				"maxPoints": 3
 			},
 			{
-				"fieldName": "lichborne",
+				"fieldName": "icyVeins",
 				"location": {
 					"rowIdx": 2,
 					"colIdx": 1
 				},
 				"spellIds": [
-					49039
+					12472
 				],
 				"maxPoints": 1
 			},
 			{
-				"fieldName": "annihilation",
+				"fieldName": "improvedBlizzard",
 				"location": {
 					"rowIdx": 2,
 					"colIdx": 2
 				},
 				"spellIds": [
-					51468,
-					51472,
-					51473
+					11185,
+					12487,
+					12488
 				],
 				"maxPoints": 3
 			},
 			{
-				"fieldName": "killingMachine",
+				"fieldName": "arcticReach",
+				"location": {
+					"rowIdx": 3,
+					"colIdx": 0
+				},
+				"spellIds": [
+					16757,
+					16758
+				],
+				"maxPoints": 2
+			},
+			{
+				"fieldName": "frostChanneling",
 				"location": {
 					"rowIdx": 3,
 					"colIdx": 1
 				},
 				"spellIds": [
-					51123,
-					51127,
-					51128,
-					51129,
-					51130
+					11160,
+					12518,
+					12519
 				],
-				"maxPoints": 5
+				"maxPoints": 3
 			},
 			{
-				"fieldName": "chillOfTheGrave",
+				"fieldName": "shatter",
 				"location": {
 					"rowIdx": 3,
 					"colIdx": 2
 				},
 				"spellIds": [
-					49149,
-					50115
+					11170,
+					12982,
+					12983
 				],
-				"maxPoints": 2
+				"maxPoints": 3
 			},
 			{
-				"fieldName": "endlessWinter",
-				"location": {
-					"rowIdx": 3,
-					"colIdx": 3
-				},
-				"spellIds": [
-					49137,
-					49657
-				],
-				"maxPoints": 2
-			},
-			{
-				"fieldName": "frigidDreadplate",
+				"fieldName": "coldSnap",
 				"location": {
 					"rowIdx": 4,
 					"colIdx": 1
 				},
 				"spellIds": [
-					49186,
-					51108,
-					51109
-				],
-				"maxPoints": 3
-			},
-			{
-				"fieldName": "glacierRot",
-				"location": {
-					"rowIdx": 4,
-					"colIdx": 2
-				},
-				"spellIds": [
-					49471,
-					49790,
-					49791
-				],
-				"maxPoints": 3
-			},
-			{
-				"fieldName": "deathchill",
-				"location": {
-					"rowIdx": 4,
-					"colIdx": 3
-				},
-				"spellIds": [
-					49796
+					11958
 				],
 				"maxPoints": 1
 			},
 			{
-				"fieldName": "improvedIcyTalons",
+				"fieldName": "improvedConeOfCold",
+				"location": {
+					"rowIdx": 4,
+					"colIdx": 2
+				},
+				"spellIds": [
+					11190,
+					12489,
+					12490
+				],
+				"maxPoints": 3
+			},
+			{
+				"fieldName": "frozenCore",
+				"location": {
+					"rowIdx": 4,
+					"colIdx": 3
+				},
+				"spellIds": [
+					31667,
+					31668,
+					31669
+				],
+				"maxPoints": 3
+			},
+			{
+				"fieldName": "coldAsIce",
 				"location": {
 					"rowIdx": 5,
 					"colIdx": 0
 				},
 				"spellIds": [
-					55610
+					55091,
+					55092
+				],
+				"maxPoints": 2,
+				"prereqLocation": {
+					"rowIdx": 4,
+					"colIdx": 1
+				}
+			},
+			{
+				"fieldName": "wintersChill",
+				"location": {
+					"rowIdx": 5,
+					"colIdx": 2
+				},
+				"spellIds": [
+					11180,
+					28592,
+					28593
+				],
+				"maxPoints": 3
+			},
+			{
+				"fieldName": "shatteredBarrier",
+				"location": {
+					"rowIdx": 6,
+					"colIdx": 0
+				},
+				"spellIds": [
+					44745,
+					54787
+				],
+				"maxPoints": 2,
+				"prereqLocation": {
+					"rowIdx": 6,
+					"colIdx": 1
+				}
+			},
+			{
+				"fieldName": "iceBarrier",
+				"location": {
+					"rowIdx": 6,
+					"colIdx": 1
+				},
+				"spellIds": [
+					11426
 				],
 				"maxPoints": 1,
 				"prereqLocation": {
-					"rowIdx": 2,
-					"colIdx": 0
-				}
-			},
-			{
-				"fieldName": "mercilessCombat",
-				"location": {
-					"rowIdx": 5,
-					"colIdx": 1
-				},
-				"spellIds": [
-					49024,
-					49538
-				],
-				"maxPoints": 2
-			},
-			{
-				"fieldName": "rime",
-				"location": {
-					"rowIdx": 5,
-					"colIdx": 2
-				},
-				"spellIds": [
-					49188,
-					56822,
-					59057
-				],
-				"maxPoints": 3
-			},
-			{
-				"fieldName": "chilblains",
-				"location": {
-					"rowIdx": 6,
-					"colIdx": 0
-				},
-				"spellIds": [
-					50040,
-					50041,
-					50043
-				],
-				"maxPoints": 3
-			},
-			{
-				"fieldName": "hungeringCold",
-				"location": {
-					"rowIdx": 6,
-					"colIdx": 1
-				},
-				"spellIds": [
-					49203
-				],
-				"maxPoints": 1
-			},
-			{
-				"fieldName": "improvedFrostPresence",
-				"location": {
-					"rowIdx": 6,
-					"colIdx": 2
-				},
-				"spellIds": [
-					50384,
-					50385
-				],
-				"maxPoints": 2
-			},
-			{
-				"fieldName": "threatOfThassarian",
-				"location": {
-					"rowIdx": 7,
-					"colIdx": 0
-				},
-				"spellIds": [
-					65661,
-					66191,
-					66192
-				],
-				"maxPoints": 3
-			},
-			{
-				"fieldName": "bloodOfTheNorth",
-				"location": {
-					"rowIdx": 7,
-					"colIdx": 1
-				},
-				"spellIds": [
-					54639,
-					54638,
-					54637
-				],
-				"maxPoints": 3
-			},
-			{
-				"fieldName": "unbreakableArmor",
-				"location": {
-					"rowIdx": 7,
-					"colIdx": 2
-				},
-				"spellIds": [
-					51271
-				],
-				"maxPoints": 1
-			},
-			{
-				"fieldName": "acclimation",
-				"location": {
-					"rowIdx": 8,
-					"colIdx": 0
-				},
-				"spellIds": [
-					49200,
-					50151,
-					50152
-				],
-				"maxPoints": 3
-			},
-			{
-				"fieldName": "frostStrike",
-				"location": {
-					"rowIdx": 8,
-					"colIdx": 1
-				},
-				"spellIds": [
-					49143
-				],
-				"maxPoints": 1
-			},
-			{
-				"fieldName": "guileOfGorefiend",
-				"location": {
-					"rowIdx": 8,
-					"colIdx": 2
-				},
-				"spellIds": [
-					50187,
-					50190,
-					50191
-				],
-				"maxPoints": 3
-			},
-			{
-				"fieldName": "tundraStalker",
-				"location": {
-					"rowIdx": 9,
-					"colIdx": 1
-				},
-				"spellIds": [
-					49202,
-					50127,
-					50128,
-					50129,
-					50130
-				],
-				"maxPoints": 5
-			},
-			{
-				"fieldName": "howlingBlast",
-				"location": {
-					"rowIdx": 10,
-					"colIdx": 1
-				},
-				"spellIds": [
-					49184
-				],
-				"maxPoints": 1
-			}
-		]
-	},
-	{
-		"name": "Unholy",
-		"backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/wrath/400.jpg",
-		"talents": [
-			{
-				"fieldName": "viciousStrikes",
-				"location": {
-					"rowIdx": 0,
-					"colIdx": 0
-				},
-				"spellIds": [
-					51745,
-					51746
-				],
-				"maxPoints": 2
-			},
-			{
-				"fieldName": "virulence",
-				"location": {
-					"rowIdx": 0,
-					"colIdx": 1
-				},
-				"spellIds": [
-					48962,
-					49567,
-					49568
-				],
-				"maxPoints": 3
-			},
-			{
-				"fieldName": "anticipation",
-				"location": {
-					"rowIdx": 0,
-					"colIdx": 2
-				},
-				"spellIds": [
-					55129,
-					55130,
-					55131,
-					55132,
-					55133
-				],
-				"maxPoints": 5
-			},
-			{
-				"fieldName": "epidemic",
-				"location": {
-					"rowIdx": 1,
-					"colIdx": 0
-				},
-				"spellIds": [
-					49036,
-					49562
-				],
-				"maxPoints": 2
-			},
-			{
-				"fieldName": "morbidity",
-				"location": {
-					"rowIdx": 1,
-					"colIdx": 1
-				},
-				"spellIds": [
-					48963,
-					49564,
-					49565
-				],
-				"maxPoints": 3
-			},
-			{
-				"fieldName": "unholyCommand",
-				"location": {
-					"rowIdx": 1,
-					"colIdx": 2
-				},
-				"spellIds": [
-					49588,
-					49589
-				],
-				"maxPoints": 2
-			},
-			{
-				"fieldName": "ravenousDead",
-				"location": {
-					"rowIdx": 1,
-					"colIdx": 3
-				},
-				"spellIds": [
-					48965,
-					49571,
-					49572
-				],
-				"maxPoints": 3
-			},
-			{
-				"fieldName": "outbreak",
-				"location": {
-					"rowIdx": 2,
-					"colIdx": 0
-				},
-				"spellIds": [
-					49013,
-					55236,
-					55237
-				],
-				"maxPoints": 3
-			},
-			{
-				"fieldName": "necrosis",
-				"location": {
-					"rowIdx": 2,
-					"colIdx": 1
-				},
-				"spellIds": [
-					51459,
-					51462,
-					51463,
-					51464,
-					51465
-				],
-				"maxPoints": 5
-			},
-			{
-				"fieldName": "corpseExplosion",
-				"location": {
-					"rowIdx": 2,
-					"colIdx": 2
-				},
-				"spellIds": [
-					49158
-				],
-				"maxPoints": 1
-			},
-			{
-				"fieldName": "onAPaleHorse",
-				"location": {
-					"rowIdx": 3,
-					"colIdx": 1
-				},
-				"spellIds": [
-					49146,
-					51267
-				],
-				"maxPoints": 2
-			},
-			{
-				"fieldName": "bloodCakedBlade",
-				"location": {
-					"rowIdx": 3,
-					"colIdx": 2
-				},
-				"spellIds": [
-					49219,
-					49627,
-					49628
-				],
-				"maxPoints": 3
-			},
-			{
-				"fieldName": "nightOfTheDead",
-				"location": {
-					"rowIdx": 3,
-					"colIdx": 3
-				},
-				"spellIds": [
-					55620,
-					55623
-				],
-				"maxPoints": 2
-			},
-			{
-				"fieldName": "unholyBlight",
-				"location": {
-					"rowIdx": 4,
-					"colIdx": 0
-				},
-				"spellIds": [
-					49194
-				],
-				"maxPoints": 1
-			},
-			{
-				"fieldName": "impurity",
-				"location": {
 					"rowIdx": 4,
 					"colIdx": 1
+				}
+			},
+			{
+				"fieldName": "arcticWinds",
+				"location": {
+					"rowIdx": 6,
+					"colIdx": 2
 				},
 				"spellIds": [
-					49220,
-					49633,
-					49635,
-					49636,
-					49638
+					31674,
+					31675,
+					31676,
+					31677,
+					31678
 				],
 				"maxPoints": 5
 			},
 			{
-				"fieldName": "dirge",
-				"location": {
-					"rowIdx": 4,
-					"colIdx": 2
-				},
-				"spellIds": [
-					49223,
-					49599
-				],
-				"maxPoints": 2
-			},
-			{
-				"fieldName": "desecration",
-				"location": {
-					"rowIdx": 5,
-					"colIdx": 0
-				},
-				"spellIds": [
-					55666,
-					55667
-				],
-				"maxPoints": 2
-			},
-			{
-				"fieldName": "magicSuppression",
-				"location": {
-					"rowIdx": 5,
-					"colIdx": 1
-				},
-				"spellIds": [
-					49224,
-					49610,
-					49611
-				],
-				"maxPoints": 3
-			},
-			{
-				"fieldName": "reaping",
-				"location": {
-					"rowIdx": 5,
-					"colIdx": 2
-				},
-				"spellIds": [
-					49208,
-					56834,
-					56835
-				],
-				"maxPoints": 3
-			},
-			{
-				"fieldName": "masterOfGhouls",
-				"location": {
-					"rowIdx": 5,
-					"colIdx": 3
-				},
-				"spellIds": [
-					52143
-				],
-				"maxPoints": 1,
-				"prereqLocation": {
-					"rowIdx": 3,
-					"colIdx": 3
-				}
-			},
-			{
-				"fieldName": "desolation",
-				"location": {
-					"rowIdx": 6,
-					"colIdx": 0
-				},
-				"spellIds": [
-					66799,
-					66814,
-					66815,
-					66816,
-					66817
-				],
-				"maxPoints": 5
-			},
-			{
-				"fieldName": "antiMagicZone",
-				"location": {
-					"rowIdx": 6,
-					"colIdx": 1
-				},
-				"spellIds": [
-					51052
-				],
-				"maxPoints": 1,
-				"prereqLocation": {
-					"rowIdx": 5,
-					"colIdx": 1
-				}
-			},
-			{
-				"fieldName": "improvedUnholyPresence",
-				"location": {
-					"rowIdx": 6,
-					"colIdx": 2
-				},
-				"spellIds": [
-					50391,
-					50392
-				],
-				"maxPoints": 2
-			},
-			{
-				"fieldName": "ghoulFrenzy",
-				"location": {
-					"rowIdx": 6,
-					"colIdx": 3
-				},
-				"spellIds": [
-					63560
-				],
-				"maxPoints": 1,
-				"prereqLocation": {
-					"rowIdx": 5,
-					"colIdx": 3
-				}
-			},
-			{
-				"fieldName": "cryptFever",
+				"fieldName": "empoweredFrostbolt",
 				"location": {
 					"rowIdx": 7,
 					"colIdx": 1
 				},
 				"spellIds": [
-					49032,
-					49631,
-					49632
+					31682,
+					31683
 				],
-				"maxPoints": 3
+				"maxPoints": 2
 			},
 			{
-				"fieldName": "boneShield",
+				"fieldName": "fingersOfFrost",
 				"location": {
 					"rowIdx": 7,
 					"colIdx": 2
 				},
 				"spellIds": [
-					49222
+					44543,
+					44545
+				],
+				"maxPoints": 2
+			},
+			{
+				"fieldName": "brainFreeze",
+				"location": {
+					"rowIdx": 8,
+					"colIdx": 0
+				},
+				"spellIds": [
+					44546,
+					44548,
+					44549
+				],
+				"maxPoints": 3
+			},
+			{
+				"fieldName": "summonWaterElemental",
+				"location": {
+					"rowIdx": 8,
+					"colIdx": 1
+				},
+				"spellIds": [
+					31687
 				],
 				"maxPoints": 1
 			},
 			{
-				"fieldName": "wanderingPlague",
+				"fieldName": "enduringWinter",
 				"location": {
 					"rowIdx": 8,
-					"colIdx": 0
+					"colIdx": 2
 				},
 				"spellIds": [
-					49217,
-					49654,
-					49655
-				],
-				"maxPoints": 3
-			},
-			{
-				"fieldName": "ebonPlaguebringer",
-				"location": {
-					"rowIdx": 8,
-					"colIdx": 1
-				},
-				"spellIds": [
-					51099,
-					51160,
-					51161
+					44557,
+					44560,
+					44561
 				],
 				"maxPoints": 3,
 				"prereqLocation": {
-					"rowIdx": 7,
+					"rowIdx": 8,
 					"colIdx": 1
 				}
 			},
 			{
-				"fieldName": "scourgeStrike",
-				"location": {
-					"rowIdx": 8,
-					"colIdx": 2
-				},
-				"spellIds": [
-					55090
-				],
-				"maxPoints": 1
-			},
-			{
-				"fieldName": "rageOfRivendare",
+				"fieldName": "chilledToTheBone",
 				"location": {
 					"rowIdx": 9,
 					"colIdx": 1
 				},
 				"spellIds": [
-					50117,
-					50118,
-					50119,
-					50120,
-					50121
+					44566,
+					44567,
+					44568,
+					44570,
+					44571
 				],
 				"maxPoints": 5
 			},
 			{
-				"fieldName": "summonGargoyle",
+				"fieldName": "deepFreeze",
 				"location": {
 					"rowIdx": 10,
 					"colIdx": 1
 				},
 				"spellIds": [
-					49206
+					44572
 				],
 				"maxPoints": 1
 			}
-
 		]
 	}
 ]

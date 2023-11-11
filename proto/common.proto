@@ -118,6 +118,7 @@ enum Stat {
 	StatFrostRune = 37; // Placeholder: not used yet.
 	StatUnholyRune = 38; // Placeholder: not used yet.
 	StatDeathRune = 39; // Placeholder: not used yet.
+	StatHealing = 40;
 	// DO NOT add new stats here without discussing it first; new stats come with
 	// a performance penalty.
 }
@@ -823,6 +824,8 @@ message ActionID {
 	// Distinguishes between different versions of the same action.
 	// Currently the only use for this is Shaman Lightning Overload.
 	int32 tag = 4;
+	// Various ranks of spells
+	int32 rank = 5;
 }
 
 message Glyphs {

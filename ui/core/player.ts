@@ -592,7 +592,7 @@ export class Player<SpecType extends Spec> {
 	}
 
 	canDualWield2H(): boolean {
-		return this.getClass() == Class.ClassWarrior && (this.getTalents() as SpecTalents<Spec.SpecWarrior>).titansGrip;
+		return false;
 	}
 
 	equipItem(eventID: EventID, slot: ItemSlot, newItem: EquippedItem | null) {
@@ -680,7 +680,6 @@ export class Player<SpecType extends Spec> {
 		const meleeCrit = (this.currentStats.finalStats?.stats[Stat.StatMeleeCrit] || 0.0) / Mechanics.MELEE_CRIT_RATING_PER_CRIT_CHANCE;
 		const meleeHit = (this.currentStats.finalStats?.stats[Stat.StatMeleeHit] || 0.0) / Mechanics.MELEE_HIT_RATING_PER_HIT_CHANCE;
 		const expertise = (this.currentStats.finalStats?.stats[Stat.StatExpertise] || 0.0) / Mechanics.EXPERTISE_PER_QUARTER_PERCENT_REDUCTION / 4;
-		const agility = (this.currentStats.finalStats?.stats[Stat.StatAgility] || 0.0) / this.getClass();
 		const suppression = 4.8;
 		const glancing = 24.0;
 
@@ -759,14 +758,10 @@ export class Player<SpecType extends Spec> {
 		if (this.specTypeFunctions.rotationEquals(newRotation, this.getRotation()))
 			return;
 
-		if (aplLaunchStatuses[this.spec] == LaunchStatus.Launched) {
-			if (!this.aplRotation.simple) {
-				this.aplRotation.simple = SimpleRotation.create();
-			}
-			this.aplRotation.simple.specRotationJson = JSON.stringify(this.specTypeFunctions.rotationToJson(newRotation));
-		} else {
-			this.rotation = this.specTypeFunctions.rotationCopy(newRotation);
+		if (!this.aplRotation.simple) {
+			this.aplRotation.simple = SimpleRotation.create();
 		}
+		this.aplRotation.simple.specRotationJson = JSON.stringify(this.specTypeFunctions.rotationToJson(newRotation));
 
 		this.rotationChangeEmitter.emit(eventID);
 	}
@@ -1375,24 +1370,22 @@ export class Player<SpecType extends Spec> {
 			}
 		}
 
-		if (aplLaunchStatuses[this.spec] == LaunchStatus.Launched) {
-			const rot = this.specTypeFunctions.rotationFromPlayer(proto);
-			if (rot && !this.specTypeFunctions.rotationEquals(rot, this.specTypeFunctions.rotationCreate())) {
-				if (proto.rotation?.type == APLRotationType.TypeAPL) {
-					// Do nothing
-				} else if (this.simpleRotationGenerator) {
-					proto.rotation = APLRotation.create({
-						type: APLRotationType.TypeSimple,
-						simple: {
-							specRotationJson: JSON.stringify(this.specTypeFunctions.rotationToJson(rot)),
-							cooldowns: proto.cooldowns,
-						},
-					});
-				} else {
-					proto.rotation = APLRotation.create({
-						type: APLRotationType.TypeAuto,
-					});
-				}
+		const rot = this.specTypeFunctions.rotationFromPlayer(proto);
+		if (rot && !this.specTypeFunctions.rotationEquals(rot, this.specTypeFunctions.rotationCreate())) {
+			if (proto.rotation?.type == APLRotationType.TypeAPL) {
+				// Do nothing
+			} else if (this.simpleRotationGenerator) {
+				proto.rotation = APLRotation.create({
+					type: APLRotationType.TypeSimple,
+					simple: {
+						specRotationJson: JSON.stringify(this.specTypeFunctions.rotationToJson(rot)),
+						cooldowns: proto.cooldowns,
+					},
+				});
+			} else {
+				proto.rotation = APLRotation.create({
+					type: APLRotationType.TypeAuto,
+				});
 			}
 		}
 
@@ -1477,12 +1470,7 @@ export class Player<SpecType extends Spec> {
 			}
 
 			if (this.spec == Spec.SpecShadowPriest) {
-				const options = this.getSpecOptions() as SpecOptions<Spec.SpecShadowPriest>;
-				if (options.latency) {
-					this.setChannelClipDelay(eventID, options.latency);
-					options.latency = 0;
-					this.setSpecOptions(eventID, options as SpecOptions<SpecType>)
-				}
+				// no-op
 			}
 
 			if ([Spec.SpecEnhancementShaman, Spec.SpecRestorationShaman, Spec.SpecElementalShaman].includes(this.spec)) {

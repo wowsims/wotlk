@@ -22,7 +22,7 @@ import { sum } from '../core/utils.js';
 import { Hunter_Rotation_StingType as HunterStingType, Hunter_Options_PetType as HunterPetType } from '../core/proto/hunter.js';
 import { PaladinAura } from '../core/proto/paladin.js';
 import { Rogue_Rotation_Frequency as ExposeFrequency } from '../core/proto/rogue.js';
-import { AirTotem, EarthTotem, FireTotem, WaterTotem } from '../core/proto/shaman.js';
+import { EarthTotem, WaterTotem } from '../core/proto/shaman.js';
 import { Warlock_Rotation_Curse as WarlockCurse, Warlock_Options_Summon as WarlockSummon } from '../core/proto/warlock.js';
 import { WarriorShout, Warrior_Rotation_SunderArmor as SunderArmor } from '../core/proto/warrior.js';
 
@@ -78,7 +78,7 @@ export class RaidStats extends Component {
 		});
 		this.categories = categories;
 
-		raidSimUI.changeEmitter.on(eventID => this.categories.forEach(c => c.update()));
+		raidSimUI.changeEmitter.on(_ => this.categories.forEach(c => c.update()));
 	}
 }
 
@@ -429,16 +429,6 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 							playerData: playerClass(Class.ClassMage),
 						},
 						{
-							label: 'Improved Fel Intelligence',
-							actionId: ActionId.fromSpellId(54038),
-							playerData: playerClassAndTalent(Class.ClassWarlock, 'improvedFelhunter', player => player.getSpecOptions().summon == WarlockSummon.Felhunter),
-						},
-						{
-							label: 'Fel Intelligence',
-							actionId: ActionId.fromSpellId(57567),
-							playerData: playerClassAndMissingTalent(Class.ClassWarlock, 'improvedFelhunter', player => player.getSpecOptions().summon == WarlockSummon.Felhunter),
-						},
-						{
 							label: 'Scroll of Intellect',
 							actionId: ActionId.fromItemId(37092),
 							raidData: raidBuff('scrollOfIntellect'),
@@ -454,18 +444,8 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 							playerData: playerClass(Class.ClassPriest),
 						},
 						{
-							label: 'Improved Fel Intelligence',
-							actionId: ActionId.fromSpellId(54038),
-							playerData: playerClassAndTalent(Class.ClassWarlock, 'improvedFelhunter', player => player.getSpecOptions().summon == WarlockSummon.Felhunter),
-						},
-						{
-							label: 'Fel Intelligence',
-							actionId: ActionId.fromSpellId(57567),
-							playerData: playerClassAndMissingTalent(Class.ClassWarlock, 'improvedFelhunter', player => player.getSpecOptions().summon == WarlockSummon.Felhunter),
-						},
-						{
 							label: 'Scroll of Spirit',
-							actionId: ActionId.fromItemId(37098),
+							actionId: ActionId.fromItemId(10306),
 							raidData: raidBuff('scrollOfSpirit'),
 						},
 					],
@@ -486,12 +466,12 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 						{
 							label: 'Improved Battle Shout',
 							actionId: ActionId.fromSpellId(12861),
-							playerData: playerClassAndTalent(Class.ClassWarrior, 'commandingPresence', player => player.getSpecOptions().shout == WarriorShout.WarriorShoutBattle),
+							playerData: playerClassAndTalent(Class.ClassWarrior, 'improvedBattleShout', player => player.getSpecOptions().shout == WarriorShout.WarriorShoutBattle),
 						},
 						{
 							label: 'Battle Shout',
 							actionId: ActionId.fromSpellId(47436),
-							playerData: playerClassAndMissingTalent(Class.ClassWarrior, 'commandingPresence', player => player.getSpecOptions().shout == WarriorShout.WarriorShoutBattle),
+							playerData: playerClassAndMissingTalent(Class.ClassWarrior, 'improvedBattleShout', player => player.getSpecOptions().shout == WarriorShout.WarriorShoutBattle),
 						},
 					],
 				},
@@ -504,11 +484,6 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 							playerData: playerClassAndTalent(Class.ClassDeathknight, 'abominationsMight'),
 						},
 						{
-							label: 'Unleashed Rage',
-							actionId: ActionId.fromSpellId(30809),
-							playerData: playerClassAndTalent(Class.ClassShaman, 'unleashedRage'),
-						},
-						{
 							label: 'Trueshot Aura',
 							actionId: ActionId.fromSpellId(19506),
 							playerData: playerClassAndTalent(Class.ClassHunter, 'trueshotAura'),
@@ -516,58 +491,13 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 					],
 				},
 				{
-					label: 'Damage %',
-					effects: [
-						{
-							label: 'Sanctified Retribution',
-							actionId: ActionId.fromSpellId(31869),
-							playerData: playerClassAndTalent(Class.ClassPaladin, 'sanctifiedRetribution'),
-						},
-						{
-							label: 'Arcane Empowerment',
-							actionId: ActionId.fromSpellId(31583),
-							playerData: playerClassAndTalent(Class.ClassMage, 'arcaneEmpowerment'),
-						},
-						{
-							label: 'Ferocious Inspiration',
-							actionId: ActionId.fromSpellId(34460),
-							playerData: playerClassAndTalent(Class.ClassHunter, 'ferociousInspiration'),
-						},
-					],
-				},
-				{
 					label: 'Mit %',
 					effects: [
-						{
-							label: 'Renewed Hope',
-							actionId: ActionId.fromSpellId(57472),
-							playerData: playerClassAndTalent(Class.ClassPriest, 'renewedHope'),
-						},
 						{
 							label: 'Blessing Of Sanctuary',
 							actionId: ActionId.fromSpellId(25899),
 							playerData: playerClass(Class.ClassPaladin),
-						},
-						{
-							label: 'Vigilance',
-							actionId: ActionId.fromSpellId(50720),
-							playerData: playerClassAndTalent(Class.ClassWarrior, 'vigilance'),
-						},
-					],
-				},
-				{
-					label: 'Haste %',
-					effects: [
-						{
-							label: 'Swift Retribution',
-							actionId: ActionId.fromSpellId(53648),
-							playerData: playerClassAndTalent(Class.ClassPaladin, 'swiftRetribution'),
-						},
-						{
-							label: 'Improved Moonkin Form',
-							actionId: ActionId.fromSpellId(48396),
-							playerData: playerClassAndTalent(Class.ClassDruid, 'improvedMoonkinForm'),
-						},
+						}
 					],
 				},
 				{
@@ -603,11 +533,6 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 							actionId: ActionId.fromSpellId(17007),
 							playerData: playerClassAndTalent(Class.ClassDruid, 'leaderOfThePack'),
 						},
-						{
-							label: 'Rampage',
-							actionId: ActionId.fromSpellId(29801),
-							playerData: playerClassAndTalent(Class.ClassWarrior, 'rampage'),
-						},
 					],
 				},
 				{
@@ -617,36 +542,6 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 							label: 'Improved Icy Talons',
 							actionId: ActionId.fromSpellId(55610),
 							playerData: playerClassAndTalent(Class.ClassDeathknight, 'improvedIcyTalons'),
-						},
-						{
-							label: 'Improved Windfury Totem',
-							actionId: ActionId.fromSpellId(29193),
-							playerData: playerClassAndTalent(Class.ClassShaman, 'improvedWindfuryTotem', player => player.getSpecOptions().totems?.air == AirTotem.WindfuryTotem),
-						},
-						{
-							label: 'Windfury Totem',
-							actionId: ActionId.fromSpellId(65990),
-							playerData: playerClassAndMissingTalent(Class.ClassShaman, 'improvedWindfuryTotem', player => player.getSpecOptions().totems?.air == AirTotem.WindfuryTotem),
-						},
-					],
-				},
-				{
-					label: 'Spell Power',
-					effects: [
-						{
-							label: 'Demonic Pact',
-							actionId: ActionId.fromSpellId(47240),
-							playerData: playerClassAndTalent(Class.ClassWarlock, 'demonicPact'),
-						},
-						{
-							label: 'Totem of Wrath',
-							actionId: ActionId.fromSpellId(57722),
-							playerData: playerClassAndTalent(Class.ClassShaman, 'totemOfWrath', player => player.getSpecOptions().totems?.fire == FireTotem.TotemOfWrath),
-						},
-						{
-							label: 'Flametongue Totem',
-							actionId: ActionId.fromSpellId(58656),
-							playerData: playerClass(Class.ClassShaman, player => player.getSpecOptions().totems?.fire == FireTotem.FlametongueTotem),
 						},
 					],
 				},
@@ -658,36 +553,11 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 							actionId: ActionId.fromSpellId(24907),
 							playerData: playerSpecAndTalent(Spec.SpecBalanceDruid, 'moonkinForm'),
 						},
-						{
-							label: 'Elemental Oath',
-							actionId: ActionId.fromSpellId(51470),
-							playerData: playerClassAndTalent(Class.ClassShaman, 'elementalOath'),
-						},
-					],
-				},
-				{
-					label: 'Spell Haste',
-					effects: [
-						{
-							label: 'Wrath of Air Totem',
-							actionId: ActionId.fromSpellId(3738),
-							playerData: playerClass(Class.ClassShaman, player => player.getSpecOptions().totems?.air == AirTotem.WrathOfAirTotem),
-						},
 					],
 				},
 				{
 					label: 'Health',
 					effects: [
-						{
-							label: 'Improved Commanding Shout',
-							actionId: ActionId.fromSpellId(12861),
-							playerData: playerClassAndTalent(Class.ClassWarrior, 'commandingPresence', player => player.getSpecOptions().shout == WarriorShout.WarriorShoutCommanding),
-						},
-						{
-							label: 'Commanding Shout',
-							actionId: ActionId.fromSpellId(47440),
-							playerData: playerClassAndMissingTalent(Class.ClassWarrior, 'commandingPresence', player => player.getSpecOptions().shout == WarriorShout.WarriorShoutCommanding),
-						},
 						{
 							label: 'Improved Imp',
 							actionId: ActionId.fromSpellId(18696),
@@ -697,36 +567,6 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 							label: 'Blood Pact',
 							actionId: ActionId.fromSpellId(47982),
 							playerData: playerClassAndMissingTalent(Class.ClassWarlock, 'improvedImp', player => player.getSpecOptions().summon == WarlockSummon.Imp),
-						},
-					],
-				},
-				{
-					label: 'Replenishment',
-					effects: [
-						{
-							label: 'Vampiric Touch',
-							actionId: ActionId.fromSpellId(48160),
-							playerData: playerSpecAndTalent(Spec.SpecShadowPriest, 'vampiricTouch'),
-						},
-						{
-							label: 'Judgements of the Wise',
-							actionId: ActionId.fromSpellId(31878),
-							playerData: playerSpecAndTalent(Spec.SpecRetributionPaladin, 'judgementsOfTheWise'),
-						},
-						{
-							label: 'Hunting Party',
-							actionId: ActionId.fromSpellId(53292),
-							playerData: playerSpecAndTalent(Spec.SpecHunter, 'huntingParty'),
-						},
-						{
-							label: 'Improved Soul Leech',
-							actionId: ActionId.fromSpellId(54118),
-							playerData: playerSpecAndTalent(Spec.SpecWarlock, 'improvedSoulLeech'),
-						},
-						{
-							label: 'Enduring Winter',
-							actionId: ActionId.fromSpellId(44561),
-							playerData: playerSpecAndTalent(Spec.SpecMage, 'enduringWinter'),
 						},
 					],
 				},
@@ -752,56 +592,6 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 							label: 'Power Infusion',
 							actionId: ActionId.fromSpellId(10060),
 							playerData: playerClassAndTalent(Class.ClassPriest, 'powerInfusion'),
-						},
-					],
-				},
-				{
-					label: 'Focus Magic',
-					effects: [
-						{
-							label: 'Focus Magic',
-							actionId: ActionId.fromSpellId(54648),
-							playerData: playerClassAndTalent(Class.ClassMage, 'focusMagic'),
-						},
-					],
-				},
-				{
-					label: 'Tricks of the Trade',
-					effects: [
-						{
-							label: 'Tricks of the Trade',
-							actionId: ActionId.fromSpellId(57933),
-							playerData: playerClass(Class.ClassRogue),
-						},
-					],
-				},
-				{
-					label: 'Unholy Frenzy',
-					effects: [
-						{
-							label: 'Unholy Frenzy',
-							actionId: ActionId.fromSpellId(49016),
-							playerData: playerClassAndTalent(Class.ClassDeathknight, 'hysteria'),
-						},
-					],
-				},
-				{
-					label: 'Pain Suppression',
-					effects: [
-						{
-							label: 'Pain Suppression',
-							actionId: ActionId.fromSpellId(33206),
-							playerData: playerClassAndTalent(Class.ClassPriest, 'painSuppression'),
-						},
-					],
-				},
-				{
-					label: 'Divine Guardian',
-					effects: [
-						{
-							label: 'Divine Guardian',
-							actionId: ActionId.fromSpellId(53530),
-							playerData: playerClassAndTalent(Class.ClassPaladin, 'divineGuardian'),
 						},
 					],
 				},
@@ -857,114 +647,12 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 					],
 				},
 				{
-					label: 'Phys Vuln',
-					effects: [
-						{
-							label: 'Blood Frenzy',
-							actionId: ActionId.fromSpellId(29859),
-							playerData: playerClassAndTalent(Class.ClassWarrior, 'bloodFrenzy'),
-						},
-						{
-							label: 'Savage Combat',
-							actionId: ActionId.fromSpellId(58413),
-							playerData: playerClassAndTalent(Class.ClassRogue, 'savageCombat'),
-						},
-					],
-				},
-				{
 					label: 'Bleed',
 					effects: [
 						{
 							label: 'Mangle',
 							actionId: ActionId.fromSpellId(16862),
 							playerData: playerClass(Class.ClassDruid, player => [Spec.SpecFeralDruid, Spec.SpecFeralTankDruid].includes(player.spec)),
-						},
-						{
-							label: 'Trauma',
-							actionId: ActionId.fromSpellId(46855),
-							playerData: playerClassAndTalent(Class.ClassWarrior, 'trauma'),
-						},
-						{
-							label: 'Stampede',
-							actionId: ActionId.fromSpellId(57393),
-							playerData: playerClass(Class.ClassHunter, player => player.getSpecOptions().petType == HunterPetType.Rhino),
-						},
-					],
-				},
-				{
-					label: 'Crit',
-					effects: [
-						{
-							label: 'Totem of Wrath',
-							actionId: ActionId.fromSpellId(30706),
-							playerData: playerClassAndTalent(Class.ClassShaman, 'totemOfWrath', player => player.getSpecOptions().totems?.fire == FireTotem.TotemOfWrath),
-						},
-						{
-							label: 'Heart of the Crusader',
-							actionId: ActionId.fromSpellId(20337),
-							playerData: playerClassAndTalent(Class.ClassPaladin, 'heartOfTheCrusader', player => [Spec.SpecRetributionPaladin, Spec.SpecProtectionPaladin].includes(player.spec)),
-						},
-						{
-							label: 'Master Poisoner',
-							actionId: ActionId.fromSpellId(58410),
-							playerData: playerClassAndTalent(Class.ClassRogue, 'masterPoisoner'),
-						},
-					],
-				},
-				{
-					label: 'Spell Crit',
-					effects: [
-						{
-							label: 'Improved Shadow Bolt',
-							actionId: ActionId.fromSpellId(17803),
-							playerData: playerClassAndTalent(Class.ClassWarlock, 'improvedShadowBolt'),
-						},
-						{
-							label: 'Improved Scorch',
-							actionId: ActionId.fromSpellId(12873),
-							playerData: playerClassAndTalent(Class.ClassMage, 'improvedScorch', player => {
-								return player.getTalentTree() == 1 && player.getRotation().maintainImprovedScorch;
-							}),
-						},
-						{
-							label: 'Winter\'s Chill',
-							actionId: ActionId.fromSpellId(28593),
-							playerData: playerClassAndTalent(Class.ClassMage, 'wintersChill', player => player.getTalentTree() == 2),
-						},
-					],
-				},
-				{
-					label: 'Spell Hit',
-					effects: [
-						{
-							label: 'Misery',
-							actionId: ActionId.fromSpellId(33198),
-							playerData: playerSpecAndTalent(Spec.SpecShadowPriest, 'misery'),
-						},
-						{
-							label: 'Improved Faerie Fire',
-							actionId: ActionId.fromSpellId(33602),
-							playerData: playerSpecAndTalent(Spec.SpecBalanceDruid, 'improvedFaerieFire'),
-						},
-					],
-				},
-				{
-					label: 'Spell Dmg',
-					effects: [
-						{
-							label: 'Ebon Plaguebringer',
-							actionId: ActionId.fromSpellId(51161),
-							playerData: playerClassAndTalent(Class.ClassDeathknight, 'ebonPlaguebringer'),
-						},
-						{
-							label: 'Earth and Moon',
-							actionId: ActionId.fromSpellId(48511),
-							playerData: playerSpecAndTalent(Spec.SpecBalanceDruid, 'earthAndMoon'),
-						},
-						{
-							label: 'Curse of Elements',
-							actionId: ActionId.fromSpellId(47865),
-							playerData: playerClass(Class.ClassWarlock, player => player.getRotation().curse == WarlockCurse.Elements),
 						},
 					],
 				},
@@ -1030,26 +718,6 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 							label: 'Thunder Clap',
 							actionId: ActionId.fromSpellId(47502),
 							playerData: playerClassAndMissingTalent(Class.ClassWarrior, 'improvedThunderClap', player => (player.spec == Spec.SpecWarrior && (player as Player<Spec.SpecWarrior>).getRotation().maintainThunderClap) || (player.spec == Spec.SpecProtectionWarrior && (player as Player<Spec.SpecProtectionWarrior>).getRotation().thunderClapChoice != 0)),
-						},
-						{
-							label: 'Improved Frost Fever',
-							actionId: ActionId.fromSpellId(51456),
-							playerData: playerClassAndTalent(Class.ClassDeathknight, 'improvedIcyTouch'),
-						},
-						{
-							label: 'Frost Fever',
-							actionId: ActionId.fromSpellId(51456),
-							playerData: playerClassAndMissingTalent(Class.ClassDeathknight, 'improvedIcyTouch'),
-						},
-						{
-							label: 'Judgements of the Just',
-							actionId: ActionId.fromSpellId(53696),
-							playerData: playerClassAndTalent(Class.ClassPaladin, 'judgementsOfTheJust'),
-						},
-						{
-							label: 'Infected Wounds',
-							actionId: ActionId.fromSpellId(48485),
-							playerData: playerClassAndTalent(Class.ClassDruid, 'infectedWounds', player => [Spec.SpecFeralDruid, Spec.SpecFeralTankDruid].includes(player.spec)),
 						},
 					],
 				},

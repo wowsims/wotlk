@@ -177,6 +177,7 @@ message IconData {
 	int32 id = 1;
 	string name = 2;
 	string icon = 3;
+	int32 rank = 4;
 }
 
 message GlyphID {

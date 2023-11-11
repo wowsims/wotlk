@@ -15,23 +15,13 @@ export const ArmorInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecSha
 	fieldName: 'armor',
 	values: [
 		{ value: Armor.NoArmor, tooltip: 'No Inner Fire' },
-		{ actionId: ActionId.fromSpellId(48168), value: Armor.InnerFire },
+		{ actionId: ActionId.fromSpellId(10952), value: Armor.InnerFire },
 	],
 });
 
 export const MindBlastInput = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.SpecShadowPriest>({
 	fieldName: 'useMindBlast',
-	id: ActionId.fromSpellId(48127),
-});
-
-export const ShadowWordDeathInput = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.SpecShadowPriest>({
-	fieldName: 'useShadowWordDeath',
-	id: ActionId.fromSpellId(48158),
-});
-
-export const ShadowfiendInput = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.SpecShadowPriest>({
-	fieldName: 'useShadowfiend',
-	id: ActionId.fromSpellId(34433),
+	id: ActionId.fromSpellId(10947),
 });
 
 export const ShadowPriestRotationConfig = {
@@ -39,12 +29,9 @@ export const ShadowPriestRotationConfig = {
 		InputHelpers.makeRotationEnumInput<Spec.SpecShadowPriest, RotationType>({
 			fieldName: 'rotationType',
 			label: 'Rotation Type',
-			labelTooltip: 'Choose how to clip your mindflay. Basic will never clip. Clipping will clip for other spells and use a 2xMF2 when there is time for 4 ticks. Ideal will evaluate the DPS gain of every action to determine MF actions.',
+			labelTooltip: 'Choose how to clip your mindflay. Basic will never clip.',
 			values: [
-				//{ name: 'Basic', value: RotationType.Basic },
-				//{ name: 'Clipping', value: RotationType.Clipping },
-				{ name: 'Ideal', value: RotationType.Ideal },
-				{ name: 'AoE', value: RotationType.AoE },
+				{ name: 'Basic', value: RotationType.Basic },
 			],
 		}),
 		InputHelpers.makeRotationEnumInput<Spec.SpecShadowPriest, precastType>({
@@ -53,7 +40,6 @@ export const ShadowPriestRotationConfig = {
 			labelTooltip: 'Choose which spell you want to Precast',
 			values: [
 				{ name: "None", value: precastType.Nothing },
-				{ name: 'Vampiric Touch', value: precastType.PrecastVt },
 				{ name: 'Mind Blast', value: precastType.PrecastMb },
 			],
 		}),
