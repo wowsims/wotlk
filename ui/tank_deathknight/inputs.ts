@@ -83,7 +83,7 @@ export const TankDeathKnightRotationConfig = {
 			fieldName: 'bloodTapPrio',
 			label: 'Blood Tap',
 			labelTooltip: 'Chose how to use Blood Tap:<br>\
-				<b>Use as Defensive Cooldown</b>: Use as defined in Cooldowns (Requires T9 4pc).<br>\
+				<b>Use as Defensive Cooldown</b>: Use as defined in Cooldowns (Requires T10 4pc).<br>\
 				<b>Offensive</b>: Use Blood Tap for extra Icy Touches.',
 			values: [
 				{ name: 'Use as Defensive Cooldown', value: BloodTapPrio.Defensive },
