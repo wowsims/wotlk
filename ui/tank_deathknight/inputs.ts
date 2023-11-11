@@ -83,10 +83,10 @@ export const TankDeathKnightRotationConfig = {
 			fieldName: 'bloodTapPrio',
 			label: 'Blood Tap',
 			labelTooltip: 'Chose how to use Blood Tap:<br>\
-				<b>Defensive</b>: Save Blood Tap for activating defensive cds.<br>\
+				<b>Use as Defensive Cooldown</b>: Use as defined in Cooldowns (Requires T10 4pc).<br>\
 				<b>Offensive</b>: Use Blood Tap for extra Icy Touches.',
 			values: [
-				{ name: 'Defensive', value: BloodTapPrio.Defensive },
+				{ name: 'Use as Defensive Cooldown', value: BloodTapPrio.Defensive },
 				{ name: 'Offensive', value: BloodTapPrio.Offensive },
 			],
 			changeEmitter: (player: Player<Spec.SpecTankDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
