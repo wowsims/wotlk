@@ -467,6 +467,14 @@ func (character *Character) Finalize() {
 
 	character.Unit.finalize()
 
+	// For now, restrict this optimization to rogues only. Ferals will require
+	// some extra logic to handle their ExcessEnergy() calc.
+	if character.Class == proto.Class_ClassRogue {
+		character.Env.RegisterPostFinalizeEffect(func() {
+			character.energyBar.setupEnergyThresholds()
+		})
+	}
+
 	character.majorCooldownManager.finalize()
 	character.ItemSwap.finalize()
 }
