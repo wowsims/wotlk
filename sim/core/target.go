@@ -141,11 +141,6 @@ func NewTarget(options *proto.Target, targetIndex int32) *Target {
 		target.stats[stats.MeleeCrit] = UnitLevelFloat64(target.Level, 5.0, 5.2, 5.4, 5.6) * CritRatingPerCritChance
 	}
 
-	if target.Level == defaultRaidBossLevel && options.SuppressDodge {
-		// ICC boss Dodge Suppression. -20% dodge only.
-		target.PseudoStats.DodgeReduction += 0.2
-	}
-
 	target.PseudoStats.CanBlock = true
 	target.PseudoStats.CanParry = true
 	target.PseudoStats.ParryHaste = options.ParryHaste

@@ -1,18 +1,16 @@
 import {
 	Consumes,
 	Debuffs,
-	Explosive,
+	Faction,
 	Flask,
 	Food,
 	Glyphs,
 	IndividualBuffs,
 	PartyBuffs,
-	Potions,
-	RaidBuffs,
-	UnitReference,
-	TristateEffect,
-	Faction,
 	Profession,
+	RaidBuffs,
+	TristateEffect,
+	UnitReference
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
@@ -21,21 +19,21 @@ import {
 	BalanceDruid_Rotation as BalanceDruidRotation,
 	BalanceDruid_Rotation_IsUsage,
 	BalanceDruid_Rotation_MfUsage,
-	BalanceDruid_Rotation_Type as RotationType,
 	BalanceDruid_Rotation_WrathUsage,
 	DruidMajorGlyph,
 	DruidMinorGlyph,
+	BalanceDruid_Rotation_Type as RotationType,
 } from '../core/proto/druid.js';
 
 import * as PresetUtils from '../core/preset_utils.js';
 
-import PreraidGear from './gear_sets/preraid.gear.json';
 import P1Gear from './gear_sets/p1.gear.json';
 import P2Gear from './gear_sets/p2.gear.json';
 import P3AllianceGear from './gear_sets/p3_alliance.gear.json';
 import P3HordeGear from './gear_sets/p3_horde.gear.json';
-import P4HordeGear from './gear_sets/p4_horde.gear.json';
 import P4AllianceGear from './gear_sets/p4_alliance.gear.json';
+import P4HordeGear from './gear_sets/p4_horde.gear.json';
+import PreraidGear from './gear_sets/preraid.gear.json';
 
 import BasicP3AplJson from './apls/basic_p3.apl.json';
 import P4FocusAplJson from './apls/p4_focus_glyph.apl.json';
@@ -136,34 +134,22 @@ export const DefaultOptions = BalanceDruidOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	defaultPotion: Potions.PotionOfSpeed,
-	flask: Flask.FlaskOfTheFrostWyrm,
-	food: Food.FoodFishFeast,
-	prepopPotion: Potions.PotionOfWildMagic,
-	fillerExplosive: Explosive.ExplosiveSaroniteBomb,
+	flask: Flask.FlaskUnknown,
+	food: Food.FoodUnknown,
 });
 
 export const DefaultRaidBuffs = RaidBuffs.create({
 	arcaneBrilliance: true,
-	bloodlust: true,
 	divineSpirit: true,
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
-	icyTalons: true,
-	moonkinAura: TristateEffect.TristateEffectImproved,
-	leaderOfThePack: TristateEffect.TristateEffectImproved,
+	moonkinAura: true,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,
-	sanctifiedRetribution: true,
-	strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
-	trueshotAura: true,
-	wrathOfAirTotem: true,
-	demonicPact: 500,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
 	blessingOfKings: true,
 	blessingOfMight: TristateEffect.TristateEffectImproved,
 	blessingOfWisdom: TristateEffect.TristateEffectImproved,
-	vampiricTouch: true,
 });
 
 export const DefaultPartyBuffs = PartyBuffs.create({
@@ -171,14 +157,9 @@ export const DefaultPartyBuffs = PartyBuffs.create({
 });
 
 export const DefaultDebuffs = Debuffs.create({
-	bloodFrenzy: true,
-	ebonPlaguebringer: true,
 	faerieFire: TristateEffect.TristateEffectImproved,
-	heartOfTheCrusader: true,
 	judgementOfWisdom: true,
-	shadowMastery: true,
 	sunderArmor: true,
-	totemOfWrath: true,
 });
 
 export const OtherDefaults = {

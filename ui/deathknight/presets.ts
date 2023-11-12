@@ -6,8 +6,6 @@ import {
 	Flask,
 	Food,
 	Glyphs,
-	PetFood,
-	Potions,
 	UnitReference,
 	Spec
 } from '../core/proto/common.js';
@@ -296,11 +294,7 @@ export const OtherDefaults = {
 };
 
 export const DefaultConsumes = Consumes.create({
-	flask: Flask.FlaskOfEndlessRage,
-	food: Food.FoodDragonfinFilet,
-	defaultPotion: Potions.PotionOfSpeed,
-	petFood: PetFood.PetFoodSpicedMammothTreats,
-	prepopPotion: Potions.PotionOfSpeed,
-	thermalSapper: true,
-	fillerExplosive: Explosive.ExplosiveSaroniteBomb,
+	flask: Flask.FlaskUnknown,
+	food: Food.FoodUnknown,
+	fillerExplosive: Explosive.ExplosiveGoblinSapperCharge,
 });

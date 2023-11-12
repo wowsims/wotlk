@@ -3,8 +3,6 @@ import {
 	Flask,
 	Food,
 	Glyphs,
-	PetFood,
-	Potions,
 	Spec,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
@@ -145,8 +143,6 @@ export const BMDefaultOptions = HunterOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	defaultPotion: Potions.PotionOfSpeed,
 	flask: Flask.FlaskOfEndlessRage,
-	food: Food.FoodFishFeast,
-	petFood: PetFood.PetFoodSpicedMammothTreats,
+	food: Food.FoodUnknown,
 });

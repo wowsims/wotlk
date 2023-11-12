@@ -27,7 +27,6 @@ func addThaddius25(bossPrefix string) {
 			SwingSpeed:       1.25,
 			MinBaseDamage:    23442,
 			DamageSpread:     0.3333,
-			SuppressDodge:    false,
 			ParryHaste:       false,
 			DualWield:        false,
 			DualWieldPenalty: false,

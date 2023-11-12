@@ -16,6 +16,7 @@ func (priest *Priest) getMindFlayTickSpell(numTicks int32) *core.Spell {
 		BonusHitRating:   float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
 		BonusCritRating:  0,
 		DamageMultiplier: 1,
+		CritMultiplier:   1.0,
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			damage := 426.0 / 3

@@ -8,10 +8,8 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
+// TODO: Classic debuffs
 func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, raid *proto.Raid) {
-	if debuffs.Misery && targetIdx == 0 {
-		MakePermanent(MiseryAura(target, 3))
-	}
 
 	if debuffs.JudgementOfWisdom && targetIdx == 0 {
 		MakePermanent(JudgementOfWisdomAura(target))
@@ -23,16 +21,6 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 	if debuffs.CurseOfElements {
 		MakePermanent(CurseOfElementsAura(target))
 	}
-	if debuffs.EbonPlaguebringer {
-		MakePermanent(EbonPlaguebringerOrCryptFeverAura(nil, target, 2, 3, 3))
-	}
-	if debuffs.EarthAndMoon && targetIdx == 0 {
-		MakePermanent(EarthAndMoonAura(target, 3))
-	}
-
-	if debuffs.ShadowMastery && targetIdx == 0 {
-		MakePermanent(ShadowMasteryAura(target))
-	}
 
 	if debuffs.ImprovedScorch && targetIdx == 0 {
 		MakePermanent(ImprovedScorchAura(target))
@@ -42,39 +30,12 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 		MakePermanent(WintersChillAura(target, 5))
 	}
 
-	if debuffs.BloodFrenzy && targetIdx < 4 {
-		MakePermanent(BloodFrenzyAura(target, 2))
-	}
-	if debuffs.SavageCombat {
-		MakePermanent(SavageCombatAura(target, 2))
-	}
-
 	if debuffs.GiftOfArthas {
 		MakePermanent(GiftOfArthasAura(target))
 	}
 
-	if debuffs.SporeCloud {
-		MakePermanent(SporeCloudAura(target))
-	}
-
 	if debuffs.CrystalYield {
 		MakePermanent(CrystalYieldAura(target))
-	}
-
-	if debuffs.Mangle && targetIdx == 0 {
-		MakePermanent(MangleAura(target))
-	} else if debuffs.Trauma && targetIdx == 0 {
-		MakePermanent(TraumaAura(target, 2))
-	} else if debuffs.Stampede && targetIdx == 0 {
-		stampedeAura := StampedeAura(target)
-		target.RegisterResetEffect(func(sim *Simulation) {
-			StartPeriodicAction(sim, PeriodicActionOptions{
-				Period: time.Second * 60,
-				OnAction: func(sim *Simulation) {
-					stampedeAura.Activate(sim)
-				},
-			})
-		})
 	}
 
 	if debuffs.ExposeArmor && targetIdx == 0 {
@@ -104,26 +65,8 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 		}, raid)
 	}
 
-	if debuffs.AcidSpit && targetIdx == 0 {
-		aura := AcidSpitAura(target)
-		ScheduledMajorArmorAura(aura, PeriodicActionOptions{
-			Period:          time.Second * 10,
-			NumTicks:        2,
-			TickImmediately: true,
-			OnAction: func(sim *Simulation) {
-				aura.Activate(sim)
-				if aura.IsActive() {
-					aura.AddStack(sim)
-				}
-			},
-		}, raid)
-	}
-
 	if debuffs.CurseOfWeakness != proto.TristateEffect_TristateEffectMissing {
 		MakePermanent(CurseOfWeaknessAura(target, GetTristateValueInt32(debuffs.CurseOfWeakness, 1, 2)))
-	}
-	if debuffs.Sting && targetIdx == 0 {
-		MakePermanent(StingAura(target))
 	}
 
 	if debuffs.FaerieFire != proto.TristateEffect_TristateEffectMissing {
@@ -136,25 +79,10 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 	if debuffs.DemoralizingShout != proto.TristateEffect_TristateEffectMissing {
 		MakePermanent(DemoralizingShoutAura(target, 0, GetTristateValueInt32(debuffs.DemoralizingShout, 0, 5)))
 	}
-	if debuffs.Vindication && targetIdx == 0 {
-		MakePermanent(VindicationAura(target, 2))
-	}
-	if debuffs.DemoralizingScreech {
-		MakePermanent(DemoralizingScreechAura(target))
-	}
 
 	// Atk spd reduction
 	if debuffs.ThunderClap != proto.TristateEffect_TristateEffectMissing {
 		MakePermanent(ThunderClapAura(target, GetTristateValueInt32(debuffs.ThunderClap, 0, 3)))
-	}
-	if debuffs.FrostFever != proto.TristateEffect_TristateEffectMissing {
-		MakePermanent(FrostFeverAura(target, GetTristateValueInt32(debuffs.FrostFever, 0, 3), 0))
-	}
-	if debuffs.InfectedWounds && targetIdx == 0 {
-		MakePermanent(InfectedWoundsAura(target, 3))
-	}
-	if debuffs.JudgementsOfTheJust && targetIdx == 0 {
-		MakePermanent(JudgementsOfTheJustAura(target, 2))
 	}
 
 	// Miss
@@ -163,18 +91,6 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 	}
 	if debuffs.ScorpidSting && targetIdx == 0 {
 		MakePermanent(ScorpidStingAura(target))
-	}
-
-	if debuffs.TotemOfWrath {
-		MakePermanent(TotemOfWrathDebuff(target))
-	}
-
-	if debuffs.MasterPoisoner {
-		MakePermanent(MasterPoisonerDebuff(target, 3))
-	}
-
-	if debuffs.HeartOfTheCrusader && targetIdx == 0 {
-		MakePermanent(HeartOfTheCrusaderDebuff(target, 3))
 	}
 
 	if debuffs.HuntersMark > 0 && targetIdx == 0 {

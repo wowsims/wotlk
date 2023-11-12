@@ -29,7 +29,6 @@ func addSindragosa25H(bossPrefix string) {
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
 			SwingSpeed:       1.50,
 			MinBaseDamage:    88072, // Est 96282 minimum debuffed Unmit
-			SuppressDodge:    true,
 			ParryHaste:       true,
 			DualWield:        false,
 			DualWieldPenalty: false,

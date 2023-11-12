@@ -1,21 +1,17 @@
 import {
-	BattleElixir,
-	Conjured,
 	Consumes,
-	Explosive,
+	Flask,
 	Food,
 	Glyphs,
-	GuardianElixir,
-	Potions,
-	UnitReference,
+	UnitReference
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
 import {
-	FeralTankDruid_Rotation as DruidRotation,
-	FeralTankDruid_Options as DruidOptions,
 	DruidMajorGlyph,
 	DruidMinorGlyph,
+	FeralTankDruid_Options as DruidOptions,
+	FeralTankDruid_Rotation as DruidRotation,
 } from '../core/proto/druid.js';
 
 import * as PresetUtils from '../core/preset_utils.js';
@@ -63,12 +59,6 @@ export const DefaultOptions = DruidOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	battleElixir: BattleElixir.GurusElixir,
-	guardianElixir: GuardianElixir.GiftOfArthas,
-	food: Food.FoodBlackenedDragonfin,
-	prepopPotion: Potions.IndestructiblePotion,
-	defaultPotion: Potions.IndestructiblePotion,
-	defaultConjured: Conjured.ConjuredHealthstone,
-	thermalSapper: true,
-	fillerExplosive: Explosive.ExplosiveSaroniteBomb,
+	flask: Flask.FlaskUnknown,
+	food: Food.FoodUnknown,
 });

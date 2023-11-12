@@ -1,41 +1,30 @@
 import {
 	Consumes,
+	CustomRotation,
+	CustomSpell,
+	Debuffs,
+	Faction,
 	Flask,
 	Food,
 	Glyphs,
-	Potions,
 	RaidBuffs,
-	TristateEffect,
-	Debuffs,
-	CustomRotation,
-	CustomSpell,
-	Faction,
+	TristateEffect
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
-import { EnhancementShaman_Rotation as EnhancementShamanRotation, EnhancementShaman_Options as EnhancementShamanOptions, ShamanShield } from '../core/proto/shaman.js';
 import {
-	AirTotem,
-	EarthTotem,
-	FireTotem,
-	WaterTotem,
-	ShamanTotems,
-	ShamanImbue,
-	ShamanSyncType,
-	ShamanMajorGlyph,
-	EnhancementShaman_Rotation_PrimaryShock as PrimaryShock,
-	EnhancementShaman_Rotation_RotationType as RotationType,
-	EnhancementShaman_Rotation_CustomRotationSpell as CustomRotationSpell
+	AirTotem, EnhancementShaman_Rotation_CustomRotationSpell as CustomRotationSpell, EarthTotem, EnhancementShaman_Options as EnhancementShamanOptions, EnhancementShaman_Rotation as EnhancementShamanRotation, FireTotem, EnhancementShaman_Rotation_PrimaryShock as PrimaryShock,
+	EnhancementShaman_Rotation_RotationType as RotationType, ShamanImbue, ShamanMajorGlyph, ShamanShield, ShamanSyncType, ShamanTotems, WaterTotem
 } from '../core/proto/shaman.js';
 
 import * as PresetUtils from '../core/preset_utils.js';
 
-import PreraidGear from './gear_sets/preraid.gear.json';
 import P1Gear from './gear_sets/p1.gear.json';
 import P2FtGear from './gear_sets/p2_ft.gear.json';
 import P2WfGear from './gear_sets/p2_wf.gear.json';
 import P3AllianceGear from './gear_sets/p3_alliance.gear.json';
 import P3HordeGear from './gear_sets/p3_horde.gear.json';
+import PreraidGear from './gear_sets/preraid.gear.json';
 
 import DefaultFt from './apls/default_ft.apl.json';
 import DefaultWf from './apls/default_wf.apl.json';
@@ -128,32 +117,23 @@ export const DefaultOptions = EnhancementShamanOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	defaultPotion: Potions.PotionOfSpeed,
-	flask: Flask.FlaskOfEndlessRage,
-	food: Food.FoodFishFeast,
+	flask: Flask.FlaskUnknown,
+	food: Food.FoodUnknown,
 });
 
 export const DefaultRaidBuffs = RaidBuffs.create({
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
 	arcaneBrilliance: true,
-	leaderOfThePack: TristateEffect.TristateEffectImproved,
-	totemOfWrath: true,
-	wrathOfAirTotem: true,
-	moonkinAura: TristateEffect.TristateEffectImproved,
-	sanctifiedRetribution: true,
+	leaderOfThePack: true,
+	moonkinAura: true,
 	divineSpirit: true,
 	battleShout: TristateEffect.TristateEffectImproved,
-	demonicPact: 500,
 });
 
 export const DefaultDebuffs = Debuffs.create({
-	bloodFrenzy: true,
 	sunderArmor: true,
 	curseOfWeakness: TristateEffect.TristateEffectRegular,
 	curseOfElements: true,
 	faerieFire: TristateEffect.TristateEffectImproved,
 	judgementOfWisdom: true,
-	misery: true,
-	totemOfWrath: true,
-	shadowMastery: true,
 });

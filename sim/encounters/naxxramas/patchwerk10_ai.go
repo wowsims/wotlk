@@ -28,7 +28,6 @@ func addPatchwerk10(bossPrefix string) {
 			SwingSpeed:       1.6,
 			MinBaseDamage:    14135,
 			DamageSpread:     0.3333,
-			SuppressDodge:    false,
 			ParryHaste:       false,
 			DualWield:        true,
 			DualWieldPenalty: false,

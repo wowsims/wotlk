@@ -5,7 +5,6 @@ import {
 	Food,
 	Glyphs,
 	IndividualBuffs,
-	Potions,
 	Profession,
 	RaidBuffs,
 	TristateEffect,
@@ -58,10 +57,8 @@ export const StandardTalents = {
 export const DefaultOptions = Options.create({});
 
 export const DefaultConsumes = Consumes.create({
-	flask: Flask.FlaskOfTheFrostWyrm,
-	food: Food.FoodFishFeast,
-	defaultPotion: Potions.PotionOfSpeed,
-	prepopPotion: Potions.PotionOfWildMagic,
+	flask: Flask.FlaskOfSupremePower,
+	food: Food.FoodNightfinSoup,
 });
 
 export const DefaultRaidBuffs = RaidBuffs.create({
@@ -70,37 +67,21 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
 	arcaneBrilliance: true,
 	divineSpirit: true,
-	trueshotAura: true,
-	leaderOfThePack: TristateEffect.TristateEffectImproved,
-	icyTalons: true,
-	totemOfWrath: true,
-	moonkinAura: TristateEffect.TristateEffectImproved,
-	wrathOfAirTotem: true,
-	sanctifiedRetribution: true,
-	bloodlust: true,
-	demonicPact: 500,
+	moonkinAura: true,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
 	blessingOfKings: true,
 	blessingOfWisdom: TristateEffect.TristateEffectImproved,
 	blessingOfMight: TristateEffect.TristateEffectImproved,
-	vampiricTouch: true,
 });
 
 export const DefaultDebuffs = Debuffs.create({
-	sunderArmor: true,
-	faerieFire: TristateEffect.TristateEffectImproved,
-	bloodFrenzy: true,
-	ebonPlaguebringer: true,
-	heartOfTheCrusader: true,
 	judgementOfWisdom: true,
-	shadowMastery: true,
 });
 
 export const OtherDefaults = {
 	channelClipDelay: 100,
 	profession1: Profession.Engineering,
 	profession2: Profession.Tailoring,
-	nibelungAverageCasts: 11,
 };

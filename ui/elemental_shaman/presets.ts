@@ -1,40 +1,39 @@
 import {
-	Consumes,
-	Faction,
-	Flask,
-	Food,
-	Glyphs,
-	Potions,
+  Consumes,
+  Faction,
+  Flask,
+  Food,
+  Glyphs,
   Profession,
-	Spec,
+  Spec
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
 import {
-  ElementalShaman_Rotation_RotationType as RotationType,
-  ElementalShaman_Rotation as ElementalShamanRotation,
-  ElementalShaman_Options as ElementalShamanOptions,
-  ShamanShield,
-  ShamanMajorGlyph,
-  ShamanMinorGlyph,
   AirTotem,
   EarthTotem,
+  ElementalShaman_Options as ElementalShamanOptions,
+  ElementalShaman_Rotation as ElementalShamanRotation,
   FireTotem,
-  WaterTotem,
+  ElementalShaman_Rotation_RotationType as RotationType,
+  ShamanMajorGlyph,
+  ShamanMinorGlyph,
+  ShamanShield,
   ShamanTotems,
+  WaterTotem,
 } from '../core/proto/shaman.js';
 
 import * as PresetUtils from '../core/preset_utils.js';
 
-import PreraidGear from './gear_sets/preraid.gear.json';
 import P1Gear from './gear_sets/p1.gear.json';
 import P2Gear from './gear_sets/p2.gear.json';
 import P3AllianceGear from './gear_sets/p3_alliance.gear.json';
 import P3HordeGear from './gear_sets/p3_horde.gear.json';
 import P4Gear from './gear_sets/p4.gear.json';
+import PreraidGear from './gear_sets/preraid.gear.json';
 
-import DefaultApl from './apls/default.apl.json';
 import AdvancedApl from './apls/advanced.apl.json';
+import DefaultApl from './apls/default.apl.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -119,7 +118,6 @@ export const OtherDefaults = {
 }
 
 export const DefaultConsumes = Consumes.create({
-  defaultPotion: Potions.PotionOfWildMagic,
-  flask: Flask.FlaskOfTheFrostWyrm,
-  food: Food.FoodFishFeast,
+  flask: Flask.FlaskUnknown,
+	food: Food.FoodUnknown,
 });

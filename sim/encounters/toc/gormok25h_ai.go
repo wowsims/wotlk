@@ -28,7 +28,6 @@ func addGormok25H(bossPrefix string) {
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
 			SwingSpeed:       1.50,
 			MinBaseDamage:    39600, // Est 43K minimum debuffed Unmit
-			SuppressDodge:    false,
 			ParryHaste:       false,
 			DualWield:        false,
 			DualWieldPenalty: false,

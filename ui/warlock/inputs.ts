@@ -4,7 +4,6 @@ import {
 	Warlock_Rotation_Preset as RotationPreset,
 	Warlock_Rotation_PrimarySpell as PrimarySpell,
 	Warlock_Rotation_SecondaryDot as SecondaryDot,
-	Warlock_Rotation_SpecSpell as SpecSpell,
 	Warlock_Rotation_Curse as Curse,
 	Warlock_Options_WeaponImbue as WeaponImbue,
 	Warlock_Options_Armor as Armor,

@@ -27,7 +27,6 @@ func addLoatheb25(bossPrefix string) {
 			SwingSpeed:       1.2,
 			MinBaseDamage:    6229,
 			DamageSpread:     0.3333,
-			SuppressDodge:    false,
 			ParryHaste:       false,
 			DualWield:        false,
 			DualWieldPenalty: false,

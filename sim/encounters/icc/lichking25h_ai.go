@@ -28,7 +28,6 @@ func addLichKing25H(bossPrefix string) {
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
 			SwingSpeed:       1.50,
 			MinBaseDamage:    146497, // Est 160154 minimum debuffed Unmit
-			SuppressDodge:    true,
 			ParryHaste:       false,
 			DualWield:        false,
 			DualWieldPenalty: false,

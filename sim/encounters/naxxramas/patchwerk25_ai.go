@@ -28,7 +28,6 @@ func addPatchwerk25(bossPrefix string) {
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
 			SwingSpeed:       0.75,
 			MinBaseDamage:    34964,
-			SuppressDodge:    false,
 			ParryHaste:       false,
 			DualWield:        false,
 			DualWieldPenalty: false,

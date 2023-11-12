@@ -18,6 +18,6 @@
         "baseUrl": ".",
         "jsx": "react",
         "jsxFactory": "element",
-        "jsxFragmentFactory": "fragment"
-    }
+        "jsxFragmentFactory": "fragment",
+    },
 }

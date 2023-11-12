@@ -1,13 +1,10 @@
 import {
-	BattleElixir,
 	Consumes,
 	CustomRotation,
 	CustomSpell,
-	Explosive,
+	Flask,
 	Food,
 	Glyphs,
-	GuardianElixir,
-	Potions,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
@@ -99,11 +96,6 @@ export const DefaultOptions = ProtectionWarriorOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	battleElixir: BattleElixir.ElixirOfExpertise,
-	guardianElixir: GuardianElixir.ElixirOfProtection,
-	food: Food.FoodDragonfinFilet,
-	defaultPotion: Potions.IndestructiblePotion,
-	prepopPotion: Potions.IndestructiblePotion,
-	thermalSapper: true,
-	fillerExplosive: Explosive.ExplosiveSaroniteBomb,
+	flask: Flask.FlaskUnknown,
+	food: Food.FoodUnknown,
 });

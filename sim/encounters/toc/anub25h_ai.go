@@ -29,7 +29,6 @@ func addAnub25H(bossPrefix string) {
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
 			SwingSpeed:       1.50,
 			MinBaseDamage:    58411, // Est 63856 minimum debuffed Unmit
-			SuppressDodge:    false,
 			ParryHaste:       false,
 			DualWield:        false,
 			DualWieldPenalty: false,

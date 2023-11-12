@@ -11,7 +11,6 @@ import {
 	Spec,
 	Stat
 } from "../../proto/common";
-import { ActionId } from "../../proto_utils/action_id";
 import { professionNames, raceNames } from "../../proto_utils/names";
 import { specToEligibleRaces } from "../../proto_utils/utils";
 import { Encounter } from '../../encounter';
@@ -98,9 +97,6 @@ export class SettingsTab extends SimTab {
 		if (!this.simUI.isWithinRaidSim) {
 			this.buildBuffsSettings();
 			this.buildDebuffsSettings();
-		}
-
-		if (!this.simUI.isWithinRaidSim) {
 			this.buildSavedDataPickers();
 		}
 	}
@@ -154,7 +150,7 @@ export class SettingsTab extends SimTab {
 		);
 
 		const races = specToEligibleRaces[this.simUI.player.spec];
-		const racePicker = new EnumPicker(contentBlock.bodyElement, this.simUI.player, {
+		new EnumPicker(contentBlock.bodyElement, this.simUI.player, {
 			label: 'Race',
 			values: races.map(race => {
 				return {
@@ -175,7 +171,7 @@ export class SettingsTab extends SimTab {
 		contentBlock.bodyElement.appendChild(professionGroup);
 
 		const professions = getEnumValues(Profession) as Array<Profession>;
-		const profession1Picker = new EnumPicker(professionGroup, this.simUI.player, {
+		new EnumPicker(professionGroup, this.simUI.player, {
 			label: 'Profession 1',
 			values: professions.map(p => {
 				return {
@@ -188,7 +184,7 @@ export class SettingsTab extends SimTab {
 			setValue: (eventID, sim, newValue) => sim.setProfession1(eventID, newValue),
 		});
 
-		const profession2Picker = new EnumPicker(professionGroup, this.simUI.player, {
+		new EnumPicker(professionGroup, this.simUI.player, {
 			label: 'Profession 2',
 			values: professions.map(p => {
 				return {
@@ -228,7 +224,7 @@ export class SettingsTab extends SimTab {
 	}
 
 	private buildOtherSettings() {
-		const column = this.simUI.isWithinRaidSim ? this.column4 : this.column2;
+		// const column = this.simUI.isWithinRaidSim ? this.column4 : this.column2;
 		const settings = this.simUI.individualConfig.otherInputs?.inputs.filter(inputs =>
 			!inputs.extraCssClasses?.includes('within-raid-sim-hide') || true
 		)
@@ -254,7 +250,8 @@ export class SettingsTab extends SimTab {
 		const buffOptions = this.simUI.splitRelevantOptions([
 			{ item: IconInputs.AllStatsBuff, stats: [] },
 			{ item: IconInputs.AllStatsPercentBuff, stats: [] },
-			{ item: IconInputs.HealthBuff, stats: [Stat.StatHealth] },
+			// TODO: Stam alt buff
+			// { item: IconInputs.HealthBuff, stats: [Stat.StatHealth] },
 			{ item: IconInputs.ArmorBuff, stats: [Stat.StatArmor] },
 			{ item: IconInputs.StaminaBuff, stats: [Stat.StatStamina] },
 			{ item: IconInputs.StrengthAndAgilityBuff, stats: [Stat.StatStrength, Stat.StatAgility] },
@@ -263,16 +260,12 @@ export class SettingsTab extends SimTab {
 			{ item: IconInputs.AttackPowerBuff, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
 			{ item: IconInputs.AttackPowerPercentBuff, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
 			{ item: IconInputs.MeleeCritBuff, stats: [Stat.StatMeleeCrit] },
-			{ item: IconInputs.MeleeHasteBuff, stats: [Stat.StatMeleeHaste] },
-			{ item: IconInputs.SpellPowerBuff, stats: [Stat.StatSpellPower] },
+			// TODO: Rune based Demo Pact
+			// { item: IconInputs.SpellPowerBuff, stats: [Stat.StatSpellPower] },
 			{ item: IconInputs.SpellCritBuff, stats: [Stat.StatSpellCrit] },
-			{ item: IconInputs.HastePercentBuff, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
-			{ item: IconInputs.DamagePercentBuff, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower, Stat.StatSpellPower] },
-			{ item: IconInputs.DamageReductionPercentBuff, stats: [Stat.StatArmor] },
 			{ item: IconInputs.ResistanceBuff, stats: [Stat.StatNatureResistance, Stat.StatShadowResistance, Stat.StatFrostResistance] },
 			{ item: IconInputs.DefensiveCooldownBuff, stats: [Stat.StatArmor] },
 			{ item: IconInputs.MP5Buff, stats: [Stat.StatMP5] },
-			{ item: IconInputs.ReplenishmentBuff, stats: [Stat.StatMP5] },
 		]);
 
 		this.configureIconSection(
@@ -280,38 +273,11 @@ export class SettingsTab extends SimTab {
 			buffOptions.map(multiIconInput => new MultiIconPicker(contentBlock.bodyElement, this.simUI.player, multiIconInput, this.simUI))
 		);
 
-		const otherBuffOptions = this.simUI.splitRelevantOptions([
-			{ item: IconInputs.Bloodlust, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste], inline: true, },
-			{ item: IconInputs.SpellHasteBuff, stats: [Stat.StatSpellHaste] },
-		] as Array<StatOption<IconInputs.IconInputConfig<Player<any>, any>>>);
-		otherBuffOptions.forEach(iconInput => IconInputs.buildIconInput(contentBlock.bodyElement, this.simUI.player, iconInput));
-
-		const revitalizeBuffOptions = this.simUI.splitRelevantOptions([
-			{ item: IconInputs.RevitalizeRejuvination, stats: [] },
-			{ item: IconInputs.RevitalizeWildGrowth, stats: [] },
-		] as Array<StatOption<IconPickerConfig<Player<any>, any>>>);
-		if (revitalizeBuffOptions.length > 0) {
-			new MultiIconPicker(contentBlock.bodyElement, this.simUI.player, {
-				inputs: revitalizeBuffOptions,
-				numColumns: 1,
-				label: 'Revit',
-				categoryId: ActionId.fromSpellId(48545),
-			}, this.simUI);
-		}
-
 		const miscBuffOptions = this.simUI.splitRelevantOptions([
-			{ item: IconInputs.HeroicPresence, stats: [Stat.StatMeleeHit, Stat.StatSpellHit] },
-			{ item: IconInputs.BraidedEterniumChain, stats: [Stat.StatMeleeCrit, Stat.StatSpellCrit] },
-			{ item: IconInputs.ChainOfTheTwilightOwl, stats: [Stat.StatSpellCrit, Stat.StatMeleeCrit] },
-			{ item: IconInputs.FocusMagic, stats: [Stat.StatSpellCrit] },
-			{ item: IconInputs.EyeOfTheNight, stats: [Stat.StatSpellPower] },
 			{ item: IconInputs.Thorns, stats: [Stat.StatArmor] },
 			{ item: IconInputs.RetributionAura, stats: [Stat.StatArmor] },
-			{ item: IconInputs.ManaTideTotem, stats: [Stat.StatMP5] },
 			{ item: IconInputs.Innervate, stats: [Stat.StatMP5] },
 			{ item: IconInputs.PowerInfusion, stats: [Stat.StatMP5, Stat.StatSpellPower] },
-			{ item: IconInputs.TricksOfTheTrade, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower, Stat.StatSpellPower] },
-			{ item: IconInputs.UnholyFrenzy, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
 		] as Array<StatOption<IconPickerConfig<Player<any>, any>>>);
 		if (miscBuffOptions.length > 0) {
 			new MultiIconPicker(contentBlock.bodyElement, this.simUI.player, {
@@ -330,12 +296,8 @@ export class SettingsTab extends SimTab {
 		const debuffOptions = this.simUI.splitRelevantOptions([
 			{ item: IconInputs.MajorArmorDebuff, stats: [Stat.StatArmorPenetration] },
 			{ item: IconInputs.MinorArmorDebuff, stats: [Stat.StatArmorPenetration] },
-			{ item: IconInputs.PhysicalDamageDebuff, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
 			{ item: IconInputs.BleedDebuff, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
-			{ item: IconInputs.SpellDamageDebuff, stats: [Stat.StatSpellPower] },
-			{ item: IconInputs.SpellHitDebuff, stats: [Stat.StatSpellHit] },
-			{ item: IconInputs.SpellCritDebuff, stats: [Stat.StatSpellCrit] },
-			{ item: IconInputs.CritDebuff, stats: [Stat.StatMeleeCrit, Stat.StatSpellCrit] },
+			// { item: IconInputs.SpellDamageDebuff, stats: [Stat.StatSpellPower] },
 			{ item: IconInputs.AttackPowerDebuff, stats: [Stat.StatArmor] },
 			{ item: IconInputs.MeleeAttackSpeedDebuff, stats: [Stat.StatArmor] },
 			{ item: IconInputs.MeleeHitDebuff, stats: [Stat.StatDodge] },
@@ -347,14 +309,13 @@ export class SettingsTab extends SimTab {
 		);
 
 		const otherDebuffOptions = this.simUI.splitRelevantOptions([
-			{ item: IconInputs.JudgementOfWisdom, stats: [Stat.StatMP5, Stat.StatIntellect] },
-			{ item: IconInputs.HuntersMark, stats: [Stat.StatRangedAttackPower] },
+			// { item: IconInputs.JudgementOfWisdom, stats: [Stat.StatMP5, Stat.StatIntellect] },
+			// { item: IconInputs.HuntersMark, stats: [Stat.StatRangedAttackPower] },
 		] as Array<StatOption<TypedIconPickerConfig<Player<any>, any>>>);
 		otherDebuffOptions.forEach(iconInput => IconInputs.buildIconInput(contentBlock.bodyElement, this.simUI.player, iconInput));
 
 		const miscDebuffOptions = this.simUI.splitRelevantOptions([
-			{ item: IconInputs.JudgementOfLight, stats: [Stat.StatStamina] },
-			{ item: IconInputs.ShatteringThrow, stats: [Stat.StatArmorPenetration] },
+			// { item: IconInputs.JudgementOfLight, stats: [Stat.StatStamina] },
 			{ item: IconInputs.GiftOfArthas, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
 			{ item: IconInputs.CrystalYield, stats: [Stat.StatArmorPenetration] },
 		] as Array<StatOption<IconPickerConfig<Player<any>, any>>>);

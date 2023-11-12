@@ -20,7 +20,6 @@ import { statNames } from '../proto_utils/names.js';
 
 import { Component } from './component.js';
 
-import * as Mechanics from '../constants/mechanics.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
 import { SimUI } from '../sim_ui.js';
 import { Input } from './input.js';
@@ -231,7 +230,6 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 	private readonly dwMissPenaltyPicker: Input<null, boolean>;
 	private readonly parryHastePicker: Input<null, boolean>;
 	private readonly spellSchoolPicker: Input<null, number>;
-	private readonly suppressDodgePicker: Input<null, boolean>;
 	private readonly damageSpreadPicker: Input<null, number>;
 	private readonly targetInputPickers: ListPicker<Encounter, TargetInput>;
 
@@ -452,18 +450,6 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 				encounter.targetsChangeEmitter.emit(eventID);
 			},
 		});
-		this.suppressDodgePicker = new BooleanPicker(section3, null, {
-			label: 'Chill of the Throne',
-			labelTooltip: 'Reduces the chance for this enemy\'s attacks to be dodged by 20%. Active in Icecrown Citadel.',
-			inline: true,
-			changedEvent: () => encounter.targetsChangeEmitter,
-			getValue: () => this.getTarget().suppressDodge,
-			setValue: (eventID: EventID, _: null, newValue: boolean) => {
-				this.getTarget().suppressDodge = newValue;
-				encounter.targetsChangeEmitter.emit(eventID);
-			},
-			enableWhen: () => this.getTarget().level == Mechanics.BOSS_LEVEL,
-		});
 
 		this.init();
 	}
@@ -479,7 +465,6 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 			tankIndex: this.tankIndexPicker.getInputValue(),
 			swingSpeed: this.swingSpeedPicker.getInputValue(),
 			minBaseDamage: this.minBaseDamagePicker.getInputValue(),
-			suppressDodge: this.suppressDodgePicker.getInputValue(),
 			dualWield: this.dualWieldPicker.getInputValue(),
 			dualWieldPenalty: this.dwMissPenaltyPicker.getInputValue(),
 			parryHaste: this.parryHastePicker.getInputValue(),
@@ -502,7 +487,6 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 		this.tankIndexPicker.setInputValue(newValue.tankIndex);
 		this.swingSpeedPicker.setInputValue(newValue.swingSpeed);
 		this.minBaseDamagePicker.setInputValue(newValue.minBaseDamage);
-		this.suppressDodgePicker.setInputValue(newValue.suppressDodge);
 		this.dualWieldPicker.setInputValue(newValue.dualWield);
 		this.dwMissPenaltyPicker.setInputValue(newValue.dualWieldPenalty);
 		this.parryHastePicker.setInputValue(newValue.parryHaste);
@@ -595,7 +579,7 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter, s
 		setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
 			encounter.setDuration(eventID, newValue);
 		},
-		enableWhen: (obj) => { return !encounter.getUseHealth() },
+		enableWhen: (_) => { return !encounter.getUseHealth() },
 	});
 	new NumberPicker(durationGroup, encounter, {
 		label: 'Duration +/-',
@@ -605,7 +589,7 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter, s
 		setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
 			encounter.setDurationVariation(eventID, newValue);
 		},
-		enableWhen: (obj) => { return !encounter.getUseHealth() },
+		enableWhen: (_) => { return !encounter.getUseHealth() },
 	});
 
 	if (showExecuteProportion) {
@@ -621,7 +605,7 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter, s
 			setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
 				encounter.setExecuteProportion20(eventID, newValue / 100);
 			},
-			enableWhen: (obj) => { return !encounter.getUseHealth() },
+			enableWhen: (_) => { return !encounter.getUseHealth() },
 		});
 		new NumberPicker(executeGroup, encounter, {
 			label: 'Execute Duration 25 (%)',
@@ -631,7 +615,7 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter, s
 			setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
 				encounter.setExecuteProportion25(eventID, newValue / 100);
 			},
-			enableWhen: (obj) => { return !encounter.getUseHealth() },
+			enableWhen: (_) => { return !encounter.getUseHealth() },
 		});
 		new NumberPicker(executeGroup, encounter, {
 			label: 'Execute Duration 35 (%)',
@@ -641,7 +625,7 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter, s
 			setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
 				encounter.setExecuteProportion35(eventID, newValue / 100);
 			},
-			enableWhen: (obj) => { return !encounter.getUseHealth() },
+			enableWhen: (_) => { return !encounter.getUseHealth() },
 		});
 	}
 }

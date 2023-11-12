@@ -27,7 +27,6 @@ func addKelThuzad25(bossPrefix string) {
 			SwingSpeed:       2.3,
 			MinBaseDamage:    26639,
 			DamageSpread:     0.3333,
-			SuppressDodge:    false,
 			ParryHaste:       false,
 			DualWield:        false,
 			DualWieldPenalty: false,

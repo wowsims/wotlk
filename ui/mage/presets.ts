@@ -1,11 +1,9 @@
 import {
-	Conjured,
 	Consumes,
 	Faction,
 	Flask,
 	Food,
 	Glyphs,
-	Potions,
 	Profession,
 	Spec,
 	UnitReference,
@@ -189,11 +187,8 @@ export const DefaultFireOptions = MageOptions.create({
 });
 
 export const DefaultFireConsumes = Consumes.create({
-	flask: Flask.FlaskOfTheFrostWyrm,
-	food: Food.FoodFirecrackerSalmon,
-	defaultPotion: Potions.PotionOfSpeed,
-	defaultConjured: Conjured.ConjuredFlameCap,
-	prepopPotion: Potions.PotionOfSpeed,
+	flask: Flask.FlaskUnknown,
+	food: Food.FoodUnknown,
 });
 
 export const DefaultFrostOptions = MageOptions.create({
@@ -203,10 +198,8 @@ export const DefaultFrostOptions = MageOptions.create({
 });
 
 export const DefaultFrostConsumes = Consumes.create({
-	defaultPotion: Potions.PotionOfSpeed,
-	defaultConjured: Conjured.ConjuredFlameCap,
-	flask: Flask.FlaskOfTheFrostWyrm,
-	food: Food.FoodFishFeast,
+	flask: Flask.FlaskUnknown,
+	food: Food.FoodUnknown,
 });
 
 export const DefaultArcaneOptions = MageOptions.create({
@@ -216,10 +209,8 @@ export const DefaultArcaneOptions = MageOptions.create({
 });
 
 export const DefaultArcaneConsumes = Consumes.create({
-	defaultPotion: Potions.PotionOfSpeed,
-	defaultConjured: Conjured.ConjuredDarkRune,
-	flask: Flask.FlaskOfTheFrostWyrm,
-	food: Food.FoodFirecrackerSalmon,
+	flask: Flask.FlaskUnknown,
+	food: Food.FoodUnknown,
 });
 
 export const OtherDefaults = {

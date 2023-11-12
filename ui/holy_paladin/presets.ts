@@ -2,7 +2,6 @@ import {
 	Consumes,
 	Flask,
 	Food,
-	Potions,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
@@ -56,7 +55,6 @@ export const DefaultOptions = HolyPaladinOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	defaultPotion: Potions.RunicManaPotion,
 	flask: Flask.FlaskOfTheFrostWyrm,
-	food: Food.FoodFishFeast,
+	food: Food.FoodUnknown,
 });

@@ -12,6 +12,7 @@ import * as Mechanics from '../core/constants/mechanics.js';
 
 import * as ShadowPriestInputs from './inputs.js';
 import * as Presets from './presets.js';
+import { APLRotation } from 'ui/core/proto/apl.js';
 
 export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecShadowPriest>) {
@@ -98,12 +99,7 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 			rotationInputs: ShadowPriestInputs.ShadowPriestRotationConfig,
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
-				IconInputs.ReplenishmentBuff,
-				IconInputs.MeleeHasteBuff,
-				IconInputs.MeleeCritBuff,
 				IconInputs.MP5Buff,
-				IconInputs.AttackPowerPercentBuff,
-				IconInputs.AttackPowerBuff,
 				IconInputs.StaminaBuff,
 			],
 			excludeBuffDebuffInputs: [
@@ -133,6 +129,10 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 				gear: [
 					Presets.BLANK_GEAR_PRESET,
 				],
+			},
+
+			autoRotation: (_: Player<Spec.SpecShadowPriest>): APLRotation => {
+				return Presets.ROTATION_PRESET_DEFAULT.rotation.rotation!;
 			},
 		});
 	}

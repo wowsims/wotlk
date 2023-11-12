@@ -28,7 +28,6 @@ func addAlgalon25(bossPrefix string) {
 			SpellSchool:      proto.SpellSchool_SpellSchoolPhysical,
 			SwingSpeed:       1.00,
 			MinBaseDamage:    63649,
-			SuppressDodge:    false,
 			ParryHaste:       false,
 			DualWield:        true,
 			DualWieldPenalty: false,
