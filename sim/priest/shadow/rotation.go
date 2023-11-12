@@ -643,6 +643,10 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 			numTicks = spriest.IdealMindflayRotation(sim, gcd, tickLength, currentWait, mfDamage, mbDamage, dpDamage, vtDamage, swdDamage, overwriteDPS) //enter the mf optimizaiton routine to optimze mf clips and for next optimal spell
 		}
 
+		if numTicks == 3 && spriest.ShadowWordPain.CurDot().IsActive() && spriest.ShadowWordPain.CurDot().RemainingDuration(sim).Seconds() < tickLength.Seconds()*12 && float64(tickLength.Seconds()*3) >= gcd.Seconds() {
+			numTicks = 2
+		}
+
 		if numTicks == 0 {
 			// Means we'd rather wait for next CD (swp, vt, etc) than start a MF cast.
 			nextCD := core.NeverExpires
