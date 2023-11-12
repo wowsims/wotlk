@@ -136,12 +136,15 @@ func (enh *EnhancementShaman) Initialize() {
 		})
 	}
 	enh.DelayDPSCooldowns(3 * time.Second)
+	enh.RegisterPrepullAction(-time.Second, func(sim *core.Simulation) {
+		enh.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand, proto.ItemSlot_ItemSlotOffHand}, false)
+	})
 }
 
 func (enh *EnhancementShaman) Reset(sim *core.Simulation) {
 	enh.previousSwingAt = 0
 	enh.Shaman.Reset(sim)
-	enh.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand, proto.ItemSlot_ItemSlotOffHand}, false)
+
 }
 
 func (enh *EnhancementShaman) AutoSyncWeapons() proto.ShamanSyncType {
