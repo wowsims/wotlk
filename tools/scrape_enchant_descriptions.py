@@ -41,7 +41,7 @@ for line in input_lines:
 	})
 
 def get_spell_url(item_id):
-	driver.get("https://wowhead.com/wotlk/item=" + str(item_id))
+	driver.get("https://wowhead.com/classic/item=" + str(item_id))
 	tooltips = driver.find_elements(By.CLASS_NAME, "wowhead-tooltip")
 	tooltip = tooltips[0]
 	anchors = tooltip.find_elements(By.TAG_NAME, "a")
@@ -61,7 +61,7 @@ def get_spell_effect_description(spell_url):
 
 def get_enchant_description(enchant):
 	if enchant["is_spell_id"]:
-		return get_spell_effect_description("https://wowhead.com/wotlk/spell={}".format(enchant["id"]))
+		return get_spell_effect_description("https://wowhead.com/classic/spell={}".format(enchant["id"]))
 	else:
 		spell_url = get_spell_url(enchant["id"])
 		return get_spell_effect_description(spell_url)

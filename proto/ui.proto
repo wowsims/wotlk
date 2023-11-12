@@ -50,31 +50,32 @@ message UIItem {
 	WeaponType weapon_type = 6;
 	HandType hand_type = 7;
 	RangedWeaponType ranged_weapon_type = 8;
+	int32 requires_level = 9;
 
-	repeated double stats = 9;
-	repeated GemColor gem_sockets = 10;
-	repeated double socketBonus = 11;
+	repeated double stats = 10;
+	repeated GemColor gem_sockets = 11;
+	repeated double socketBonus = 12;
 
 	// Weapon stats, needed for computing proper EP for melee weapons
-	double weapon_damage_min = 12;
-	double weapon_damage_max = 13;
-	double weapon_speed = 14;
+	double weapon_damage_min = 13;
+	double weapon_damage_max = 14;
+	double weapon_speed = 15;
 
-	int32 ilvl = 15;
-	int32 phase = 16;
-	ItemQuality quality = 17;
-	bool unique = 18;
-	bool heroic = 19;
+	int32 ilvl = 16;
+	int32 phase = 17;
+	ItemQuality quality = 18;
+	bool unique = 19;
+	bool heroic = 20;
 
 	// Classes that are allowed to use the item. Empty indicates no special class restrictions.
-	repeated Class class_allowlist = 20;
-	Profession required_profession = 21;
+	repeated Class class_allowlist = 21;
+	Profession required_profession = 22;
 
 	// Name of the item set to which this item belongs, if any.
-	string set_name = 22;
+	string set_name = 23;
 
 	Expansion expansion = 24;
-	repeated UIItemSource sources = 23;
+	repeated UIItemSource sources = 25;
 
 	enum FactionRestriction {
 		FACTION_RESTRICTION_UNSPECIFIED = 0;
@@ -82,7 +83,7 @@ message UIItem {
 		FACTION_RESTRICTION_HORDE_ONLY = 2;
 	}
 
-	FactionRestriction faction_restriction = 25;
+	FactionRestriction faction_restriction = 26;
 }
 
 enum Expansion {
@@ -178,6 +179,7 @@ message IconData {
 	string name = 2;
 	string icon = 3;
 	int32 rank = 4;
+	int32 requires_level = 5;
 }
 
 message GlyphID {

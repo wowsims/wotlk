@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"regexp"
 	"slices"
-	"strconv"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/tools"
@@ -79,10 +77,6 @@ func (db *WowDatabase) MergeItem(src *proto.UIItem) {
 			dst.Stats = src.Stats
 			src.Stats = nil
 		}
-		if src.SocketBonus != nil {
-			dst.SocketBonus = src.SocketBonus
-			src.SocketBonus = nil
-		}
 		googleProto.Merge(dst, src)
 	} else {
 		db.Items[src.Id] = src
@@ -139,7 +133,12 @@ func (db *WowDatabase) AddItemIcon(id int32, tooltips map[int32]WowheadItemRespo
 		if tooltip.GetName() == "" || tooltip.GetIcon() == "" {
 			return
 		}
-		db.ItemIcons[id] = &proto.IconData{Id: id, Name: tooltip.GetName(), Icon: tooltip.GetIcon()}
+		db.ItemIcons[id] = &proto.IconData{
+			Id:            id,
+			Name:          tooltip.GetName(),
+			Icon:          tooltip.GetIcon(),
+			RequiresLevel: int32(tooltip.GetRequiresLevel()),
+		}
 	} else {
 		panic(fmt.Sprintf("No item tooltip with id %d", id))
 	}
@@ -150,18 +149,14 @@ func (db *WowDatabase) AddSpellIcon(id int32, tooltips map[int32]WowheadItemResp
 		if tooltip.GetName() == "" || tooltip.GetIcon() == "" {
 			return
 		}
-		pattern := `Rank\s(\d+)`
-		re := regexp.MustCompile(pattern)
-		match := re.FindStringSubmatch(tooltip.Tooltip)
-		rank := int32(0)
 
-		if len(match) == 2 {
-			numberStr := match[1]
-			converted, _ := strconv.ParseInt(numberStr, 10, 32)
-			rank = int32(converted)
+		db.SpellIcons[id] = &proto.IconData{
+			Id:            id,
+			Name:          tooltip.GetName(),
+			Icon:          tooltip.GetIcon(),
+			Rank:          int32(tooltip.GetSpellRank()),
+			RequiresLevel: int32(tooltip.GetRequiresLevel()),
 		}
-
-		db.SpellIcons[id] = &proto.IconData{Id: id, Name: tooltip.GetName(), Icon: tooltip.GetIcon(), Rank: rank}
 	} else {
 		println(fmt.Sprintf("No spell tooltip with id %d", id))
 	}

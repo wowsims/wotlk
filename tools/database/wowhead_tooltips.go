@@ -55,6 +55,8 @@ type ItemResponse interface {
 	GetClassAllowlist() []proto.Class
 	IsEquippable() bool
 	GetItemLevel() int
+	GetRequiresLevel() int
+	GetSpellRank() int
 	GetPhase() int
 	GetUnique() bool
 	GetItemType() proto.ItemType
@@ -247,6 +249,26 @@ func (item WowheadItemResponse) GetStats() Stats {
 	}
 }
 
+var reqLevelRegex = regexp.MustCompile(`<!--rlvl-->([0-9]+)`)      // Items level
+var reqLevelRegex2 = regexp.MustCompile(`Requires level ([0-9]+)`) // Spells level
+
+func (item WowheadItemResponse) GetRequiresLevel() int {
+	level := item.GetIntValue(reqLevelRegex)
+
+	if level == 0 {
+		level = item.GetIntValue(reqLevelRegex2)
+	}
+
+	return level
+}
+
+var rankRegex = regexp.MustCompile(`Rank ([0-9]+)`) // Spell rank
+
+func (item WowheadItemResponse) GetSpellRank() int {
+	return item.GetIntValue(rankRegex)
+
+}
+
 type classPattern struct {
 	class   proto.Class
 	pattern *regexp.Regexp
@@ -254,16 +276,16 @@ type classPattern struct {
 
 // Detects class-locked items, e.g. tier sets and pvp gear.
 var classPatternsWowhead = []classPattern{
-	{class: proto.Class_ClassWarrior, pattern: regexp.MustCompile(`<a href="/wotlk/class=1/warrior" class="c1">Warrior</a>`)},
-	{class: proto.Class_ClassPaladin, pattern: regexp.MustCompile(`<a href="/wotlk/class=2/paladin" class="c2">Paladin</a>`)},
-	{class: proto.Class_ClassHunter, pattern: regexp.MustCompile(`<a href="/wotlk/class=3/hunter" class="c3">Hunter</a>`)},
-	{class: proto.Class_ClassRogue, pattern: regexp.MustCompile(`<a href="/wotlk/class=4/rogue" class="c4">Rogue</a>`)},
-	{class: proto.Class_ClassPriest, pattern: regexp.MustCompile(`<a href="/wotlk/class=5/priest" class="c5">Priest</a>`)},
-	{class: proto.Class_ClassDeathknight, pattern: regexp.MustCompile(`<a href="/wotlk/class=6/death-knight" class="c6">Death Knight</a>`)},
-	{class: proto.Class_ClassShaman, pattern: regexp.MustCompile(`<a href="/wotlk/class=7/shaman" class="c7">Shaman</a>`)},
-	{class: proto.Class_ClassMage, pattern: regexp.MustCompile(`<a href="/wotlk/class=8/mage" class="c8">Mage</a>`)},
-	{class: proto.Class_ClassWarlock, pattern: regexp.MustCompile(`<a href="/wotlk/class=9/warlock" class="c9">Warlock</a>`)},
-	{class: proto.Class_ClassDruid, pattern: regexp.MustCompile(`<a href="/wotlk/class=11/druid" class="c11">Druid</a>`)},
+	{class: proto.Class_ClassWarrior, pattern: regexp.MustCompile(`<a href="/classic/class=1/warrior" class="c1">Warrior</a>`)},
+	{class: proto.Class_ClassPaladin, pattern: regexp.MustCompile(`<a href="/classic/class=2/paladin" class="c2">Paladin</a>`)},
+	{class: proto.Class_ClassHunter, pattern: regexp.MustCompile(`<a href="/classic/class=3/hunter" class="c3">Hunter</a>`)},
+	{class: proto.Class_ClassRogue, pattern: regexp.MustCompile(`<a href="/classic/class=4/rogue" class="c4">Rogue</a>`)},
+	{class: proto.Class_ClassPriest, pattern: regexp.MustCompile(`<a href="/classic/class=5/priest" class="c5">Priest</a>`)},
+	{class: proto.Class_ClassDeathknight, pattern: regexp.MustCompile(`<a href="/classic/class=6/death-knight" class="c6">Death Knight</a>`)},
+	{class: proto.Class_ClassShaman, pattern: regexp.MustCompile(`<a href="/classic/class=7/shaman" class="c7">Shaman</a>`)},
+	{class: proto.Class_ClassMage, pattern: regexp.MustCompile(`<a href="/classic/class=8/mage" class="c8">Mage</a>`)},
+	{class: proto.Class_ClassWarlock, pattern: regexp.MustCompile(`<a href="/classic/class=9/warlock" class="c9">Warlock</a>`)},
+	{class: proto.Class_ClassDruid, pattern: regexp.MustCompile(`<a href="/classic/class=11/druid" class="c11">Druid</a>`)},
 }
 
 func (item WowheadItemResponse) GetClassAllowlist() []proto.Class {
@@ -321,22 +343,22 @@ func (item WowheadItemResponse) GetPhase() int {
 		return phase
 	}
 
-	ilvl := item.GetItemLevel()
-	if ilvl <= 164 { // TBC items
-		return 0
-	}
+	// ilvl := item.GetItemLevel()
+	// if ilvl <= 164 { // TBC items
+	// 	return 0
+	// }
 
-	if ilvl < 200 || ilvl == 200 || ilvl == 213 || ilvl == 226 {
-		return 1
-	} else if ilvl == 219 || ilvl == 226 || ilvl == 239 {
-		return 2
-	} else if ilvl == 232 || ilvl == 245 || ilvl == 258 {
-		return 3
-	} else if ilvl == 251 || ilvl == 258 || ilvl == 259 || ilvl == 264 || ilvl == 268 || ilvl == 270 || ilvl == 271 || ilvl == 272 {
-		return 4
-	} else if ilvl == 277 || ilvl == 284 {
-		return 5
-	}
+	// if ilvl < 200 || ilvl == 200 || ilvl == 213 || ilvl == 226 {
+	// 	return 1
+	// } else if ilvl == 219 || ilvl == 226 || ilvl == 239 {
+	// 	return 2
+	// } else if ilvl == 232 || ilvl == 245 || ilvl == 258 {
+	// 	return 3
+	// } else if ilvl == 251 || ilvl == 258 || ilvl == 259 || ilvl == 264 || ilvl == 268 || ilvl == 270 || ilvl == 271 || ilvl == 272 {
+	// 	return 4
+	// } else if ilvl == 277 || ilvl == 284 {
+	// 	return 5
+	// }
 
 	// default to 1
 	return 1
@@ -640,11 +662,12 @@ func (item WowheadItemResponse) ToItemProto() *proto.UIItem {
 		WeaponDamageMax: weaponDamageMax,
 		WeaponSpeed:     item.GetWeaponSpeed(),
 
-		Ilvl:    int32(item.GetItemLevel()),
-		Phase:   int32(item.GetPhase()),
-		Quality: proto.ItemQuality(item.GetQuality()),
-		Unique:  item.GetUnique(),
-		Heroic:  item.IsHeroic(),
+		Ilvl:          int32(item.GetItemLevel()),
+		Phase:         int32(item.GetPhase()),
+		RequiresLevel: int32(item.GetRequiresLevel()),
+		Quality:       proto.ItemQuality(item.GetQuality()),
+		Unique:        item.GetUnique(),
+		Heroic:        item.IsHeroic(),
 
 		ClassAllowlist:     item.GetClassAllowlist(),
 		RequiredProfession: item.GetRequiredProfession(),

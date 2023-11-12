@@ -19,7 +19,7 @@ func ParseWowheadDB(dbContents string) WowheadDatabase {
 	parts := strings.Split(dbContents, "WH.setPageData(")
 
 	for _, dbPart := range parts {
-		//fmt.Printf("Part len: %d\n", len(dbPart))
+		// fmt.Printf("Part len: %d\n", len(dbPart))
 		if len(dbPart) < 10 {
 			continue
 		}
@@ -34,11 +34,11 @@ func ParseWowheadDB(dbContents string) WowheadDatabase {
 			continue
 		}
 		dbName := dbPart[1 : secondQuoteIdx+1]
-		//fmt.Printf("DB name: %s\n", dbName)
+		// fmt.Printf("DB name: %s\n", dbName)
 
 		commaIdx := strings.Index(dbPart, ",")
 		dbContents := dbPart[commaIdx+1:]
-		if dbName == "wow.gearPlanner.wrath.item" {
+		if dbName == "wow.gearPlanner.classic.item" {
 			standardized, err := hujson.Standardize([]byte(dbContents)) // Removes invalid JSON, such as trailing commas
 			if err != nil {
 				log.Fatalf("Failed to standardize json %s\n\n%s\n\n%s", err, dbContents[0:30], dbContents[len(dbContents)-30:])
@@ -65,9 +65,10 @@ type WowheadItem struct {
 	Name string `json:"name"`
 	Icon string `json:"icon"`
 
-	Quality int32 `json:"quality"`
-	Ilvl    int32 `json:"itemLevel"`
-	Phase   int32 `json:"contentPhase"`
+	Quality       int32 `json:"quality"`
+	Ilvl          int32 `json:"itemLevel"`
+	Phase         int32 `json:"contentPhase"`
+	RequiresLevel int32 `json:"reqlevel"`
 
 	Stats WowheadItemStats `json:"stats"`
 
@@ -124,11 +125,12 @@ func (wi WowheadItem) ToProto() *proto.UIItem {
 	}
 
 	return &proto.UIItem{
-		Id:      wi.ID,
-		Name:    wi.Name,
-		Icon:    wi.Icon,
-		Ilvl:    wi.Ilvl,
-		Phase:   wi.Phase,
-		Sources: sources,
+		Id:            wi.ID,
+		Name:          wi.Name,
+		Icon:          wi.Icon,
+		Ilvl:          wi.Ilvl,
+		Phase:         wi.Phase,
+		RequiresLevel: wi.RequiresLevel,
+		Sources:       sources,
 	}
 }
