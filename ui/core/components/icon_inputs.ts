@@ -1,4 +1,4 @@
-import { Consumes, Debuffs, Explosive, Flask, Food, IndividualBuffs, RaidBuffs } from '../proto/common.js';
+import { AgilityElixir, Consumes, Debuffs, Explosive, Flask, Food, IndividualBuffs, RaidBuffs, SpellPowerBuff, StrengthBuff, WeaponBuff } from '../proto/common.js';
 import { ActionId } from '../proto_utils/action_id.js';
 
 import { Player } from '../player.js';
@@ -101,7 +101,7 @@ export const SpellCritBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(24907), 'moonkinAura'),
 ], 'Spell Crit');
 
-export const SpellPowerBuff = InputHelpers.makeMultiIconInput([
+export const SpellIncreaseBuff = InputHelpers.makeMultiIconInput([
 	// makeMultistateRaidBuffInput(ActionId.fromSpellId(47240), 2000, 'demonicPactSp', 20),
 ], 'Spell Power');
 
@@ -146,11 +146,17 @@ export const MeleeHitDebuff = InputHelpers.makeMultiIconInput([
 ], 'Miss');
 
 // TODO: Classic
-// export const SpellCritDebuff = InputHelpers.makeMultiIconInput([
-// 	makeBooleanDebuffInput(ActionId.fromSpellId(17803), 'shadowMastery'),
-// 	makeBooleanDebuffInput(ActionId.fromSpellId(12873), 'improvedScorch'),
-// 	makeBooleanDebuffInput(ActionId.fromSpellId(28593), 'wintersChill'),
-// ], 'Spell Crit');
+export const SpellISBDebuff = InputHelpers.makeMultiIconInput([
+	makeBooleanDebuffInput(ActionId.fromSpellId(17803), 'improvedShadowBolt'),
+], 'ISB');
+
+export const SpellScorchDebuff = InputHelpers.makeMultiIconInput([
+	makeBooleanDebuffInput(ActionId.fromSpellId(12873), 'improvedScorch'),
+], 'Scorch');
+
+export const SpellWintersChillDebuff = InputHelpers.makeMultiIconInput([
+	makeBooleanDebuffInput(ActionId.fromSpellId(28595), 'wintersChill'),
+], 'Winters Chill');
 
 // TODO: Classic
 // export const SpellDamageDebuff = InputHelpers.makeMultiIconInput([
@@ -164,9 +170,8 @@ export const MeleeHitDebuff = InputHelpers.makeMultiIconInput([
 export const GiftOfArthas = makeBooleanDebuffInput(ActionId.fromSpellId(11374), 'giftOfArthas');
 export const CrystalYield = makeBooleanDebuffInput(ActionId.fromSpellId(15235), 'crystalYield');
 
-// TODO: Classic
 // Consumes
-// export const Sapper = makeBooleanConsumeInput(ActionId.fromItemId(10646), 'goblinSapperCharge');
+export const Sapper = makeBooleanConsumeInput(ActionId.fromItemId(10646), 'sapper');
 
 // TODO: Classic
 // export const PetScrollOfAgilityV = makeBooleanConsumeInput(ActionId.fromItemId(27498), 'petScrollOfAgility', 5);
@@ -324,7 +329,6 @@ function makeMultistateIndividualBuffInput(id: ActionId, numStates: number, fiel
 // 	] as Array<IconEnumValueConfig<Player<any>, Conjured>>
 // });
 
-// TODO: Classic
 export const makeFlasksInput = makeConsumeInputFactory({
 	consumesFieldName: 'flask',
 	allOptions: [
@@ -341,7 +345,22 @@ export const makeFlasksInput = makeConsumeInputFactory({
 	}
 });
 
-// TODO: Classic
+export const makeWeaponBuffsInput = makeConsumeInputFactory({
+	consumesFieldName: 'weaponBuff',
+	allOptions: [
+		{ actionId: ActionId.fromItemId(20749), value: WeaponBuff.BrillianWizardOil },
+		{ actionId: ActionId.fromItemId(20748), value: WeaponBuff.BrilliantManaOil },
+		{ actionId: ActionId.fromItemId(12404), value: WeaponBuff.DenseSharpeningStone },
+		{ actionId: ActionId.fromItemId(18262), value: WeaponBuff.ElementalSharpeningStone },
+	] as Array<IconEnumValueConfig<Player<any>, WeaponBuff>>,
+	onSet: (eventID: EventID, player: Player<any>, newValue: WeaponBuff) => {
+		if (newValue) {
+			const newConsumes = player.getConsumes();
+			player.setConsumes(eventID, newConsumes);
+		}
+	}
+});
+
 export const makeFoodInput = makeConsumeInputFactory({
 	consumesFieldName: 'food',
 	allOptions: [
@@ -355,9 +374,24 @@ export const makeFoodInput = makeConsumeInputFactory({
 	] as Array<IconEnumValueConfig<Player<any>, Food>>
 });
 
+export const AgilityBuffInput = makeConsumeInput('agilityElixir', [
+	{ actionId: ActionId.fromItemId(13452), value: AgilityElixir.ElixirOfTheMongoose },
+	{ actionId: ActionId.fromItemId(9187), value: AgilityElixir.ElixirOfGreaterAgility},
+] as Array<IconEnumValueConfig<Player<any>, AgilityElixir>>);
+
+export const StrengthBuffInput = makeConsumeInput('strengthBuff', [
+	{ actionId: ActionId.fromItemId(12451), value: StrengthBuff.JujuPower },
+	{ actionId: ActionId.fromItemId(9206), value: StrengthBuff.ElixirOfGiants },
+] as Array<IconEnumValueConfig<Player<any>, StrengthBuff>>);
+
+export const SpellDamageBuff = makeBooleanConsumeInput(ActionId.fromItemId(13454), 'spellPowerBuff');
+export const ShadowDamageBuff = makeBooleanConsumeInput(ActionId.fromItemId(9264), 'shadowPowerBuff');
+export const FireDamageBuff = makeBooleanConsumeInput(ActionId.fromItemId(21546), 'firePowerBuff');
+export const FrostDamageBuff = makeBooleanConsumeInput(ActionId.fromItemId(17708), 'frostPowerBuff');
+
 export const FillerExplosiveInput = makeConsumeInput('fillerExplosive', [
-	{ actionId: ActionId.fromItemId(41119), value: Explosive.ExplosiveGoblinSapperCharge },
-	{ actionId: ActionId.fromItemId(40771), value: Explosive.ExplosiveDenseDynamite },
+	{ actionId: ActionId.fromItemId(18641), value: Explosive.ExplosiveDenseDynamite },
+	{ actionId: ActionId.fromItemId(15993), value: Explosive.ExplosiveThoriumGrenade },
 ] as Array<IconEnumValueConfig<Player<any>, Explosive>>);
 
 export interface ConsumeInputFactoryArgs<T extends number> {

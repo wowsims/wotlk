@@ -250,7 +250,7 @@ export class SettingsTab extends SimTab {
 		const buffOptions = this.simUI.splitRelevantOptions([
 			{ item: IconInputs.AllStatsBuff, stats: [] },
 			{ item: IconInputs.AllStatsPercentBuff, stats: [] },
-			// TODO: Stam alt buff
+			// TODO: Classic Stam alt buff
 			// { item: IconInputs.HealthBuff, stats: [Stat.StatHealth] },
 			{ item: IconInputs.ArmorBuff, stats: [Stat.StatArmor] },
 			{ item: IconInputs.StaminaBuff, stats: [Stat.StatStamina] },
@@ -260,7 +260,7 @@ export class SettingsTab extends SimTab {
 			{ item: IconInputs.AttackPowerBuff, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
 			{ item: IconInputs.AttackPowerPercentBuff, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
 			{ item: IconInputs.MeleeCritBuff, stats: [Stat.StatMeleeCrit] },
-			// TODO: Rune based Demo Pact
+			// TODO: Classic Rune based Demo Pact
 			// { item: IconInputs.SpellPowerBuff, stats: [Stat.StatSpellPower] },
 			{ item: IconInputs.SpellCritBuff, stats: [Stat.StatSpellCrit] },
 			{ item: IconInputs.ResistanceBuff, stats: [Stat.StatNatureResistance, Stat.StatShadowResistance, Stat.StatFrostResistance] },
@@ -297,7 +297,9 @@ export class SettingsTab extends SimTab {
 			{ item: IconInputs.MajorArmorDebuff, stats: [Stat.StatArmorPenetration] },
 			{ item: IconInputs.MinorArmorDebuff, stats: [Stat.StatArmorPenetration] },
 			{ item: IconInputs.BleedDebuff, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
-			// { item: IconInputs.SpellDamageDebuff, stats: [Stat.StatSpellPower] },
+			{ item: IconInputs.SpellISBDebuff, stats: [Stat.StatSpellPower] },
+			{ item: IconInputs.SpellScorchDebuff, stats: [Stat.StatSpellPower] },
+			{ item: IconInputs.SpellWintersChillDebuff, stats: [Stat.StatSpellPower] },
 			{ item: IconInputs.AttackPowerDebuff, stats: [Stat.StatArmor] },
 			{ item: IconInputs.MeleeAttackSpeedDebuff, stats: [Stat.StatArmor] },
 			{ item: IconInputs.MeleeHitDebuff, stats: [Stat.StatDodge] },

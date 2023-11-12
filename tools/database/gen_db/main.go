@@ -331,11 +331,16 @@ type RotContainer struct {
 
 func GetAllRotationSpellIds() map[string][]int32 {
 	return map[string][]int32{
-		"druid":   {},
-		"hunter":  {},
-		"mage":    {},
-		"paladin": {},
+		"druid":  {},
+		"hunter": {},
+		"mage":   {},
+		"paladin": {
+			// Buffs
+			25290,
+		},
 		"priest": {
+			// Buffs
+			10060, // PI
 			// Mind Blast
 			8092,
 			8102,

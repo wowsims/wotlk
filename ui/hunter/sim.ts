@@ -166,7 +166,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
 				IconInputs.StaminaBuff,
-				IconInputs.SpellDamageDebuff,
+				IconInputs.SpellISBDebuff,
 			],
 			excludeBuffDebuffInputs: [
 			],

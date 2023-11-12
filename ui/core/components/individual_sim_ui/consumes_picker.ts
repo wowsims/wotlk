@@ -4,7 +4,8 @@ import {
 	Food,
 	Profession,
 	Spec,
-	Stat
+	Stat,
+	WeaponBuff,
 } from "../../proto/common";
 import { Component } from "../component";
 import { IconEnumPicker } from "../icon_enum_picker";
@@ -22,77 +23,13 @@ export class ConsumesPicker extends Component {
 		this.settingsTab = settingsTab;
 		this.simUI = simUI;
 
-		this.buildPotionsPicker();
 		this.buildElixirsPicker();
+		this.buildWeaponBuffPicker();
 		this.buildFoodPicker();
+		this.buildPhysicalBuffPicker();
+		this.buildSpellPowerBuffPicker();
 		this.buildEngPicker();
 		this.buildPetPicker();
-	}
-
-	private buildPotionsPicker() {
-		let fragment = document.createElement('fragment');
-		fragment.innerHTML = `
-      <div class="consumes-row input-root input-inline">
-        <label class="form-label">Potions</label>
-        <div class="consumes-row-inputs">
-          <div class="consumes-prepot"></div>
-          <div class="consumes-potions"></div>
-          <div class="consumes-conjured"></div>
-        </div>
-      </div>
-    `;
-
-		this.rootElem.appendChild(fragment.children[0] as HTMLElement);
-
-		// TODO: Classic - Potions aren't really a combat thing minus mana
-		// const prepopPotionOptions = this.simUI.splitRelevantOptions([
-		// 	// This list is smaller because some potions don't make sense to use as prepot.
-		// 	// E.g. healing/mana potions.
-		// 	{ item: Potions.IndestructiblePotion, stats: [Stat.StatArmor] },
-		// 	{ item: Potions.InsaneStrengthPotion, stats: [Stat.StatStrength] },
-		// 	{ item: Potions.HeroicPotion, stats: [Stat.StatStamina] },
-		// 	{ item: Potions.PotionOfSpeed, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
-		// 	{ item: Potions.PotionOfWildMagic, stats: [Stat.StatMeleeCrit, Stat.StatSpellCrit, Stat.StatSpellPower] },
-		// ]);
-		// if (prepopPotionOptions.length) {
-		// 	const elem = this.rootElem.querySelector('.consumes-prepot') as HTMLElement;
-		// 	new IconEnumPicker(
-		// 		elem,
-		// 		this.simUI.player,
-		// 		IconInputs.makePrepopPotionsInput(prepopPotionOptions, 'Prepop Potion (1s before combat)')
-		// 	);
-		// }
-
-		// const potionOptions = this.simUI.splitRelevantOptions([
-		// 	{ item: Potions.RunicHealingPotion, stats: [Stat.StatStamina] },
-		// 	{ item: Potions.RunicHealingInjector, stats: [Stat.StatStamina] },
-		// 	{ item: Potions.RunicManaPotion, stats: [Stat.StatIntellect] },
-		// 	{ item: Potions.RunicManaInjector, stats: [Stat.StatIntellect] },
-		// 	{ item: Potions.IndestructiblePotion, stats: [Stat.StatArmor] },
-		// 	{ item: Potions.InsaneStrengthPotion, stats: [Stat.StatStrength] },
-		// 	{ item: Potions.HeroicPotion, stats: [Stat.StatStamina] },
-		// 	{ item: Potions.PotionOfSpeed, stats: [Stat.StatMeleeHaste, Stat.StatSpellHaste] },
-		// 	{ item: Potions.PotionOfWildMagic, stats: [Stat.StatMeleeCrit, Stat.StatSpellCrit, Stat.StatSpellPower] },
-		// ]);
-		// if (potionOptions.length) {
-		// 	const elem = this.rootElem.querySelector('.consumes-potions') as HTMLElement;
-		// 	new IconEnumPicker(
-		// 		elem,
-		// 		this.simUI.player,
-		// 		IconInputs.makePotionsInput(potionOptions, 'Combat Potion')
-		// 	);
-		// }
-
-		// TODO: Classic Use APL?
-		// const conjuredOptions = this.simUI.splitRelevantOptions([
-		// 	this.simUI.player.getClass() == Class.ClassRogue ? { item: Conjured.ConjuredRogueThistleTea, stats: [] } : null,
-		// 	{ item: Conjured.ConjuredHealthstone, stats: [Stat.StatStamina] },
-		// 	{ item: Conjured.ConjuredDarkRune, stats: [Stat.StatIntellect] },
-		// ]);
-		// if (conjuredOptions.length) {
-		// 	const elem = this.rootElem.querySelector('.consumes-conjured') as HTMLElement;
-		// 	new IconEnumPicker(elem, this.simUI.player, IconInputs.makeConjuredInput(conjuredOptions));
-		// }
 	}
 
 	private buildElixirsPicker() {
@@ -120,6 +57,33 @@ export class ConsumesPicker extends Component {
 				elem,
 				this.simUI.player,
 				IconInputs.makeFlasksInput(flaskOptions, 'Flask')
+			);
+		}
+	}
+
+	private buildWeaponBuffPicker() {
+		let fragment = document.createElement('fragment');
+		fragment.innerHTML = `
+      <div class="consumes-row input-root input-inline">
+        <label class="form-label">Weapon</label>
+        <div class="consumes-row-inputs consumes-weapon"></div>
+      </div>
+    `;
+
+		this.rootElem.appendChild(fragment.children[0] as HTMLElement);
+
+		const weaponOptions = this.simUI.splitRelevantOptions([
+			{ item: WeaponBuff.BrillianWizardOil, stats: [Stat.StatSpellPower] },
+			{ item: WeaponBuff.BrilliantManaOil, stats: [Stat.StatHealing, Stat.StatSpellPower] },
+			{ item: WeaponBuff.DenseSharpeningStone, stats: [Stat.StatAttackPower] },
+			{ item: WeaponBuff.ElementalSharpeningStone, stats: [Stat.StatAttackPower] },
+		]);
+		if (weaponOptions.length) {
+			const elem = this.rootElem.querySelector('.consumes-weapon') as HTMLElement;
+			new IconEnumPicker(
+				elem,
+				this.simUI.player,
+				IconInputs.makeWeaponBuffsInput(weaponOptions, 'WeaponBuff'),
 			);
 		}
 	}
@@ -152,6 +116,40 @@ export class ConsumesPicker extends Component {
 		}
 	}
 
+	private buildPhysicalBuffPicker() {
+		let fragment = document.createElement('fragment');
+		fragment.innerHTML = `
+      <div class="consumes-row input-root input-inline">
+        <label class="form-label">Physical</label>
+        <div class="consumes-row-inputs consumes-physical"></div>
+      </div>
+    `;
+
+		this.rootElem.appendChild(fragment.children[0] as HTMLElement);
+		const physicalConsumesElem = this.rootElem.querySelector('.consumes-physical') as HTMLElement;
+
+		buildIconInput(physicalConsumesElem, this.simUI.player, IconInputs.AgilityBuffInput);
+		buildIconInput(physicalConsumesElem, this.simUI.player, IconInputs.StrengthBuffInput);
+	}
+
+	private buildSpellPowerBuffPicker() {
+		let fragment = document.createElement('fragment');
+		fragment.innerHTML = `
+      <div class="consumes-row input-root input-inline">
+        <label class="form-label">Spells</label>
+        <div class="consumes-row-inputs consumes-spells"></div>
+      </div>
+    `;
+
+		this.rootElem.appendChild(fragment.children[0] as HTMLElement);
+		const spellsCnsumesElem = this.rootElem.querySelector('.consumes-spells') as HTMLElement;
+
+		buildIconInput(spellsCnsumesElem, this.simUI.player, IconInputs.SpellDamageBuff);
+		buildIconInput(spellsCnsumesElem, this.simUI.player, IconInputs.ShadowDamageBuff);
+		buildIconInput(spellsCnsumesElem, this.simUI.player, IconInputs.FireDamageBuff);
+		buildIconInput(spellsCnsumesElem, this.simUI.player, IconInputs.FrostDamageBuff);
+	}
+
 	private buildEngPicker() {
 		let fragment = document.createElement('fragment');
 		fragment.innerHTML = `
@@ -166,7 +164,7 @@ export class ConsumesPicker extends Component {
 		const tradeConsumesElem = this.rootElem.querySelector('.consumes-trade') as HTMLElement;
 
 		// TODO Classic
-		// buildIconInput(tradeConsumesElem, this.simUI.player, IconInputs.Sapper);
+		buildIconInput(tradeConsumesElem, this.simUI.player, IconInputs.Sapper);
 		buildIconInput(tradeConsumesElem, this.simUI.player, IconInputs.FillerExplosiveInput);
 
 		const updateProfession = () => {

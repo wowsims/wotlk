@@ -159,7 +159,7 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 				IconInputs.SpellCritBuff,
 				IconInputs.SpellCritDebuff,
 				IconInputs.SpellHitDebuff,
-				IconInputs.SpellDamageDebuff,
+				IconInputs.SpellISBDebuff,
 			],
 			excludeBuffDebuffInputs: [
 			],

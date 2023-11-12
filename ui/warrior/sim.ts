@@ -138,7 +138,7 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
 				// just for Bryntroll
-				IconInputs.SpellDamageDebuff,
+				IconInputs.SpellISBDebuff,
 				IconInputs.SpellHitDebuff,
 			],
 			excludeBuffDebuffInputs: [

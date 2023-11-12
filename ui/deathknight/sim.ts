@@ -171,7 +171,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 			],
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
-				IconInputs.SpellDamageDebuff,
+				IconInputs.SpellISBDebuff,
 				IconInputs.StaminaBuff,
 			],
 			excludeBuffDebuffInputs: [

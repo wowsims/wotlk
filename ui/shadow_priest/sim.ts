@@ -103,13 +103,14 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 				IconInputs.StaminaBuff,
 			],
 			excludeBuffDebuffInputs: [
+				IconInputs.SpellScorchDebuff,
+				IconInputs.SpellWintersChillDebuff,
 			],
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
 					OtherInputs.TankAssignment,
 					OtherInputs.ChannelClipDelay,
-					OtherInputs.nibelungAverageCasts,
 				],
 			},
 			encounterPicker: {

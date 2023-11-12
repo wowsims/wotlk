@@ -8,6 +8,7 @@ import {
 	Profession,
 	RaidBuffs,
 	TristateEffect,
+	WeaponBuff,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
@@ -24,6 +25,7 @@ import * as PresetUtils from '../core/preset_utils.js';
 import BlankGear from './gear_sets/blank.gear.json';
 
 import DefaultApl from './apls/default.apl.json'
+import { SpellDamageBuff } from 'ui/core/components/icon_inputs.js';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -58,7 +60,10 @@ export const DefaultOptions = Options.create({});
 
 export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfSupremePower,
+	weaponBuff: WeaponBuff.BrillianWizardOil,
 	food: Food.FoodNightfinSoup,
+	spellPowerBuff: true,
+	shadowPowerBuff: true,
 });
 
 export const DefaultRaidBuffs = RaidBuffs.create({

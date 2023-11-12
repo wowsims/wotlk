@@ -263,28 +263,14 @@ enum TristateEffect {
 
 enum Explosive {
 	ExplosiveUnknown = 0;
-	ExplosiveGoblinSapperCharge = 1;
-	ExplosiveDenseDynamite = 2;
+	ExplosiveDenseDynamite = 1;
+	ExplosiveThoriumGrenade = 2;
 }
 
 enum Potions {
 	UnknownPotion = 0;
-	RunicHealingPotion = 1;
-	RunicManaPotion = 2;
-	IndestructiblePotion = 3;
-	PotionOfSpeed = 4;
-	PotionOfWildMagic = 5;
-
-	DestructionPotion = 6;
-	SuperManaPotion = 7;
-	HastePotion = 8;
-	MightyRagePotion = 9;
-	FelManaPotion = 10;
-	InsaneStrengthPotion = 11;
-	IronshieldPotion = 12;
-	HeroicPotion = 13;
-	RunicManaInjector = 14;
-	RunicHealingInjector = 15;
+	MajorManaPotion = 1;
+	MajorHealingPotion = 2;
 }
 
 enum Conjured {
@@ -468,8 +454,18 @@ message Consumes {
 	Flask flask = 1;
 	Food food = 2;
 	Zanza zanza = 3;
-
-	Explosive filler_explosive = 4;
+	BlastedLandsBuff blasted_lands_buff = 4;
+	AgilityElixir agility_elixir = 5;
+	ManaRegenElixir mana_regen_elixir = 6;
+	StrengthBuff strength_buff = 7;
+	AttackPowerBuff attack_power_buff = 8;
+	bool spell_power_buff = 9;
+	bool shadow_power_buff = 10;
+	bool fire_power_buff = 11;
+	bool frost_power_buff = 12;
+	WeaponBuff weapon_buff = 13;
+	bool sapper = 14;
+	Explosive filler_explosive = 15;
 }
 
 message Debuffs {

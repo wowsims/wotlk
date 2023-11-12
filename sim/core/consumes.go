@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
 // Registers all consume-related effects to the Agent.
@@ -405,11 +404,7 @@ func makePotionActivation(potionType proto.Potions, character *Character, potion
 		mcd.Spell.ApplyEffects = func(sim *Simulation, target *Unit, spell *Spell) {
 			oldApplyEffects(sim, target, spell)
 			if sim.CurrentTime < 0 {
-				if potionType == proto.Potions_IndestructiblePotion {
-					potionCD.Set(sim.CurrentTime + 2*time.Minute)
-				} else {
-					potionCD.Set(sim.CurrentTime + time.Minute)
-				}
+				potionCD.Set(sim.CurrentTime + time.Minute)
 				character.UpdateMajorCooldowns()
 			}
 		}
@@ -425,11 +420,8 @@ func makePotionActivationInternal(potionType proto.Potions, character *Character
 		},
 	}
 
-	if potionType == proto.Potions_RunicHealingPotion || potionType == proto.Potions_RunicHealingInjector {
-		itemId := map[proto.Potions]int32{
-			proto.Potions_RunicHealingPotion:   33447,
-			proto.Potions_RunicHealingInjector: 41166,
-		}[potionType]
+	if potionType == proto.Potions_MajorManaPotion {
+		itemId := int32(13444)
 		actionID := ActionID{ItemID: itemId}
 		healthMetrics := character.NewHealthMetrics(actionID)
 		return MajorCooldown{
@@ -445,11 +437,8 @@ func makePotionActivationInternal(potionType proto.Potions, character *Character
 				},
 			}),
 		}
-	} else if potionType == proto.Potions_RunicManaPotion || potionType == proto.Potions_RunicManaInjector {
-		itemId := map[proto.Potions]int32{
-			proto.Potions_RunicManaPotion:   33448,
-			proto.Potions_RunicManaInjector: 42545,
-		}[potionType]
+	} else if potionType == proto.Potions_MajorHealingPotion {
+		itemId := int32(17556)
 		actionID := ActionID{ItemID: itemId}
 		manaMetrics := character.NewManaMetrics(actionID)
 		return MajorCooldown{
@@ -468,192 +457,6 @@ func makePotionActivationInternal(potionType proto.Potions, character *Character
 				ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
 					manaGain := sim.RollWithLabel(4200, 4400, "RunicManaPotion")
 					character.AddMana(sim, manaGain, manaMetrics)
-				},
-			}),
-		}
-	} else if potionType == proto.Potions_IndestructiblePotion {
-		actionID := ActionID{ItemID: 40093}
-		aura := character.NewTemporaryStatsAura("Indestructible Potion", actionID, stats.Stats{stats.Armor: 3500}, time.Minute*2)
-		return MajorCooldown{
-			Type: CooldownTypeDPS,
-			Spell: character.GetOrRegisterSpell(SpellConfig{
-				ActionID: actionID,
-				Flags:    SpellFlagNoOnCastComplete,
-				Cast:     potionCast,
-				ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
-					aura.Activate(sim)
-				},
-			}),
-		}
-	} else if potionType == proto.Potions_PotionOfSpeed {
-		actionID := ActionID{ItemID: 40211}
-		aura := character.NewTemporaryStatsAura("Potion of Speed", actionID, stats.Stats{stats.MeleeHaste: 500, stats.SpellHaste: 500}, time.Second*15)
-		return MajorCooldown{
-			Type: CooldownTypeDPS,
-			Spell: character.GetOrRegisterSpell(SpellConfig{
-				ActionID: actionID,
-				Flags:    SpellFlagNoOnCastComplete,
-				Cast:     potionCast,
-				ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
-					aura.Activate(sim)
-				},
-			}),
-		}
-	} else if potionType == proto.Potions_PotionOfWildMagic {
-		actionID := ActionID{ItemID: 40212}
-		aura := character.NewTemporaryStatsAura("Potion of Wild Magic", actionID, stats.Stats{stats.SpellPower: 200, stats.SpellCrit: 200, stats.MeleeCrit: 200}, time.Second*15)
-		return MajorCooldown{
-			Type: CooldownTypeDPS,
-			Spell: character.GetOrRegisterSpell(SpellConfig{
-				ActionID: actionID,
-				Flags:    SpellFlagNoOnCastComplete,
-				Cast:     potionCast,
-				ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
-					aura.Activate(sim)
-				},
-			}),
-		}
-	} else if potionType == proto.Potions_DestructionPotion {
-		actionID := ActionID{ItemID: 22839}
-		aura := character.NewTemporaryStatsAura("Destruction Potion", actionID, stats.Stats{stats.SpellPower: 120, stats.SpellCrit: 2 * CritRatingPerCritChance}, time.Second*15)
-		return MajorCooldown{
-			Type: CooldownTypeDPS,
-			Spell: character.GetOrRegisterSpell(SpellConfig{
-				ActionID: actionID,
-				Flags:    SpellFlagNoOnCastComplete,
-				Cast:     potionCast,
-				ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
-					aura.Activate(sim)
-				},
-			}),
-		}
-	} else if potionType == proto.Potions_SuperManaPotion {
-		actionID := ActionID{ItemID: 22832}
-		manaMetrics := character.NewManaMetrics(actionID)
-		return MajorCooldown{
-			Type: CooldownTypeMana,
-			ShouldActivate: func(sim *Simulation, character *Character) bool {
-				// Only pop if we have less than the max mana provided by the potion minus 1mp5 tick.
-				totalRegen := character.ManaRegenPerSecondWhileCasting() * 5
-				return character.MaxMana()-(character.CurrentMana()+totalRegen) >= 3000
-			},
-			Spell: character.GetOrRegisterSpell(SpellConfig{
-				ActionID: actionID,
-				Flags:    SpellFlagNoOnCastComplete,
-				Cast:     potionCast,
-				ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
-					// Restores 1800 to 3000 mana. (2 Min Cooldown)
-					manaGain := sim.RollWithLabel(1800, 3000, "super mana")
-					character.AddMana(sim, manaGain, manaMetrics)
-				},
-			}),
-		}
-	} else if potionType == proto.Potions_HastePotion {
-		actionID := ActionID{ItemID: 22838}
-		aura := character.NewTemporaryStatsAura("Haste Potion", actionID, stats.Stats{stats.MeleeHaste: 400}, time.Second*15)
-		return MajorCooldown{
-			Type: CooldownTypeDPS,
-			Spell: character.GetOrRegisterSpell(SpellConfig{
-				ActionID: actionID,
-				Flags:    SpellFlagNoOnCastComplete,
-				Cast:     potionCast,
-				ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
-					aura.Activate(sim)
-				},
-			}),
-		}
-	} else if potionType == proto.Potions_MightyRagePotion {
-		actionID := ActionID{ItemID: 13442}
-		aura := character.NewTemporaryStatsAura("Mighty Rage Potion", actionID, stats.Stats{stats.Strength: 60}, time.Second*15)
-		rageMetrics := character.NewRageMetrics(actionID)
-		return MajorCooldown{
-			Type: CooldownTypeDPS,
-			ShouldActivate: func(sim *Simulation, character *Character) bool {
-				if character.Class == proto.Class_ClassWarrior {
-					return character.CurrentRage() < 25
-				}
-				return true
-			},
-			Spell: character.GetOrRegisterSpell(SpellConfig{
-				ActionID: actionID,
-				Flags:    SpellFlagNoOnCastComplete,
-				Cast:     potionCast,
-				ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
-					aura.Activate(sim)
-					if character.Class == proto.Class_ClassWarrior {
-						bonusRage := sim.RollWithLabel(45, 75, "Mighty Rage Potion")
-						character.AddRage(sim, bonusRage, rageMetrics)
-					}
-				},
-			}),
-		}
-	} else if potionType == proto.Potions_FelManaPotion {
-		actionID := ActionID{ItemID: 31677}
-
-		// Restores 3200 mana over 24 seconds.
-		manaGain := 3200.0
-		mp5 := manaGain / 24 * 5
-
-		buffAura := character.NewTemporaryStatsAura("Fel Mana Potion", actionID, stats.Stats{stats.MP5: mp5}, time.Second*24)
-		debuffAura := character.NewTemporaryStatsAura("Fel Mana Potion Debuff", ActionID{SpellID: 38927}, stats.Stats{stats.SpellPower: -25}, time.Minute*15)
-
-		return MajorCooldown{
-			Type: CooldownTypeMana,
-			ShouldActivate: func(sim *Simulation, character *Character) bool {
-				// Only pop if we have low enough mana. The potion takes effect over 24
-				// seconds so we can pop it a little earlier than the full value.
-				return character.MaxMana()-character.CurrentMana() >= 2000
-			},
-			Spell: character.GetOrRegisterSpell(SpellConfig{
-				ActionID: actionID,
-				Flags:    SpellFlagNoOnCastComplete,
-				Cast:     potionCast,
-				ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
-					buffAura.Activate(sim)
-					debuffAura.Activate(sim)
-					debuffAura.Refresh(sim)
-				},
-			}),
-		}
-	} else if potionType == proto.Potions_InsaneStrengthPotion {
-		actionID := ActionID{ItemID: 22828}
-		aura := character.NewTemporaryStatsAura("Insane Strength Potion", actionID, stats.Stats{stats.Strength: 120, stats.Defense: -75}, time.Second*15)
-		return MajorCooldown{
-			Type: CooldownTypeDPS,
-			Spell: character.GetOrRegisterSpell(SpellConfig{
-				ActionID: actionID,
-				Flags:    SpellFlagNoOnCastComplete,
-				Cast:     potionCast,
-				ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
-					aura.Activate(sim)
-				},
-			}),
-		}
-	} else if potionType == proto.Potions_IronshieldPotion {
-		actionID := ActionID{ItemID: 22849}
-		aura := character.NewTemporaryStatsAura("Ironshield Potion", actionID, stats.Stats{stats.Armor: 2500}, time.Minute*2)
-		return MajorCooldown{
-			Type: CooldownTypeDPS,
-			Spell: character.GetOrRegisterSpell(SpellConfig{
-				ActionID: actionID,
-				Flags:    SpellFlagNoOnCastComplete,
-				Cast:     potionCast,
-				ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
-					aura.Activate(sim)
-				},
-			}),
-		}
-	} else if potionType == proto.Potions_HeroicPotion {
-		actionID := ActionID{ItemID: 22837}
-		aura := character.NewTemporaryStatsAura("Heroic Potion", actionID, stats.Stats{stats.Strength: 70, stats.Health: 700}, time.Second*15)
-		return MajorCooldown{
-			Type: CooldownTypeDPS,
-			Spell: character.GetOrRegisterSpell(SpellConfig{
-				ActionID: actionID,
-				Flags:    SpellFlagNoOnCastComplete,
-				Cast:     potionCast,
-				ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
-					aura.Activate(sim)
 				},
 			}),
 		}
