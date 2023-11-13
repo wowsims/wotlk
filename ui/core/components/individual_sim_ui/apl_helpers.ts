@@ -12,7 +12,7 @@ import { ActionID } from '../../proto/common.js';
 import { BooleanPicker } from '../boolean_picker.js';
 import { APLValueRuneSlot, APLValueRuneType } from '../../proto/apl.js';
 
-export type ACTION_ID_SET = 'auras' | 'stackable_auras' | 'icd_auras' | 'exclusive_effect_auras' | 'castable_spells' | 'channel_spells' | 'dot_spells' | 'shield_spells';
+export type ACTION_ID_SET = 'auras' | 'stackable_auras' | 'icd_auras' | 'exclusive_effect_auras' | 'spells' | 'castable_spells' | 'channel_spells' | 'dot_spells' | 'shield_spells' | 'non_instant_spells';
 
 const actionIdSets: Record<ACTION_ID_SET, {
 	defaultLabel: string,
@@ -58,6 +58,17 @@ const actionIdSets: Record<ACTION_ID_SET, {
 			});
 		},
 	},
+	// Used for non categorized lists
+	'spells': {
+		defaultLabel: 'Spell',
+		getActionIDs: async (metadata) => {
+			return metadata.getSpells().filter(spell => spell.data.isCastable).map(actionId => {
+				return {
+					value: actionId.id,
+				};
+			});
+		},
+	},
 	'castable_spells': {
 		defaultLabel: 'Spell',
 		getActionIDs: async (metadata) => {
@@ -74,10 +85,12 @@ const actionIdSets: Record<ACTION_ID_SET, {
 				[{
 					value: ActionId.fromEmpty(),
 					headerText: 'Spells',
+					submenu: ['Spells'],
 				}],
 				(spells || []).map(actionId => {
 					return {
 						value: actionId.id,
+						submenu: ['Spells'],
 						extraCssClasses: (actionId.data.prepullOnly
 							? ['apl-prepull-actions-only']
 							: (actionId.data.encounterOnly
@@ -88,10 +101,12 @@ const actionIdSets: Record<ACTION_ID_SET, {
 				[{
 					value: ActionId.fromEmpty(),
 					headerText: 'Cooldowns',
+					submenu: ['Cooldowns'],
 				}],
 				(cooldowns || []).map(actionId => {
 					return {
 						value: actionId.id,
+						submenu: ['Cooldowns'],
 						extraCssClasses: (actionId.data.prepullOnly
 							? ['apl-prepull-actions-only']
 							: (actionId.data.encounterOnly
@@ -102,14 +117,26 @@ const actionIdSets: Record<ACTION_ID_SET, {
 				[{
 					value: ActionId.fromEmpty(),
 					headerText: 'Placeholders',
+					submenu: ['Placeholders'],
 				}],
 				placeholders.map(actionId => {
 					return {
 						value: actionId,
+						submenu: ['Placeholders'],
 						tooltip: 'The Prepull Potion if CurrentTime < 0, or the Combat Potion if combat has started.',
 					};
 				}),
 			].flat();
+		},
+	},
+	'non_instant_spells': {
+		defaultLabel: 'Non-instant Spell',
+		getActionIDs: async (metadata) => {
+			return metadata.getSpells().filter(spell => spell.data.isCastable && spell.data.hasCastTime).map(actionId => {
+				return {
+					value: actionId.id,
+				};
+			});
 		},
 	},
 	'channel_spells': {
