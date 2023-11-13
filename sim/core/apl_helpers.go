@@ -157,6 +157,17 @@ func (rot *APLRotation) GetAPLSpell(spellId *proto.ActionID) *Spell {
 	return spell
 }
 
+func (rot *APLRotation) GetTargetAPLSpell(spellId *proto.ActionID, targetUnit UnitReference) *Spell {
+	actionID := ProtoToActionID(spellId)
+	target := targetUnit.Get()
+	spell := target.GetSpell(actionID)
+
+	if spell == nil {
+		rot.ValidationWarning("%s does not know spell %s", target.Label, actionID)
+	}
+	return spell
+}
+
 func (rot *APLRotation) GetAPLDot(targetUnit UnitReference, spellId *proto.ActionID) *Dot {
 	spell := rot.GetAPLSpell(spellId)
 

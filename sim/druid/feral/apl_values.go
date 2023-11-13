@@ -23,7 +23,7 @@ type APLValueCatExcessEnergy struct {
 	cat *FeralDruid
 }
 
-func (cat *FeralDruid) newValueCatExcessEnergy(rot *core.APLRotation, config *proto.APLValueCatExcessEnergy) core.APLValue {
+func (cat *FeralDruid) newValueCatExcessEnergy(_ *core.APLRotation, _ *proto.APLValueCatExcessEnergy) core.APLValue {
 	return &APLValueCatExcessEnergy{
 		cat: cat,
 	}
@@ -36,23 +36,17 @@ func (value *APLValueCatExcessEnergy) GetFloat(sim *core.Simulation) float64 {
 	pendingPool := PoolingActions{}
 	pendingPool.create(4)
 
-	curCp := cat.ComboPoints()
 	simTimeRemain := sim.GetRemainingDuration()
-	rakeDot := cat.Rake.CurDot()
-	ripDot := cat.Rip.CurDot()
-	mangleRefreshPending := cat.bleedAura.IsActive() && cat.bleedAura.RemainingDuration(sim) < (simTimeRemain-time.Second)
-	endThresh := time.Second * 10
-
-	if ripDot.IsActive() && (ripDot.RemainingDuration(sim) < simTimeRemain-endThresh) && curCp == 5 {
+	if ripDot := cat.Rip.CurDot(); ripDot.IsActive() && ripDot.RemainingDuration(sim) < simTimeRemain-time.Second*10 && cat.ComboPoints() == 5 {
 		ripCost := core.Ternary(cat.berserkExpectedAt(sim, ripDot.ExpiresAt()), cat.Rip.DefaultCast.Cost*0.5, cat.Rip.DefaultCast.Cost)
 		pendingPool.addAction(ripDot.ExpiresAt(), ripCost)
 		cat.ripRefreshPending = true
 	}
-	if rakeDot.IsActive() && (rakeDot.RemainingDuration(sim) < simTimeRemain-rakeDot.Duration) {
+	if rakeDot := cat.Rake.CurDot(); rakeDot.IsActive() && rakeDot.RemainingDuration(sim) < simTimeRemain-rakeDot.Duration {
 		rakeCost := core.Ternary(cat.berserkExpectedAt(sim, rakeDot.ExpiresAt()), cat.Rake.DefaultCast.Cost*0.5, cat.Rake.DefaultCast.Cost)
 		pendingPool.addAction(rakeDot.ExpiresAt(), rakeCost)
 	}
-	if mangleRefreshPending {
+	if cat.bleedAura.IsActive() && cat.bleedAura.RemainingDuration(sim) < simTimeRemain-time.Second {
 		mangleCost := core.Ternary(cat.berserkExpectedAt(sim, cat.bleedAura.ExpiresAt()), cat.MangleCat.DefaultCast.Cost*0.5, cat.MangleCat.DefaultCast.Cost)
 		pendingPool.addAction(cat.bleedAura.ExpiresAt(), mangleCost)
 	}
@@ -75,7 +69,7 @@ type APLValueCatNewSavageRoarDuration struct {
 	cat *FeralDruid
 }
 
-func (cat *FeralDruid) newValueCatNewSavageRoarDuration(rot *core.APLRotation, config *proto.APLValueCatNewSavageRoarDuration) core.APLValue {
+func (cat *FeralDruid) newValueCatNewSavageRoarDuration(_ *core.APLRotation, _ *proto.APLValueCatNewSavageRoarDuration) core.APLValue {
 	return &APLValueCatNewSavageRoarDuration{
 		cat: cat,
 	}
@@ -83,7 +77,7 @@ func (cat *FeralDruid) newValueCatNewSavageRoarDuration(rot *core.APLRotation, c
 func (value *APLValueCatNewSavageRoarDuration) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeDuration
 }
-func (value *APLValueCatNewSavageRoarDuration) GetDuration(sim *core.Simulation) time.Duration {
+func (value *APLValueCatNewSavageRoarDuration) GetDuration(_ *core.Simulation) time.Duration {
 	cat := value.cat
 	return cat.SavageRoarDurationTable[cat.ComboPoints()]
 }

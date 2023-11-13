@@ -50,7 +50,6 @@ type Sindragosa25HAI struct {
 	FrostAura         *core.Spell
 	FrostBreath       *core.Spell
 	FrostBreathDebuff *core.Aura
-	FirstBreath       time.Duration
 
 	IncludeMysticBuffet bool
 	MysticBuffetAuras   []*core.Aura
@@ -88,7 +87,9 @@ func (ai *Sindragosa25HAI) Reset(sim *core.Simulation) {
 	breathPeriod := time.Millisecond * 22680
 	maxBreathsPossible := (sim.Duration - time.Millisecond*1500) / breathPeriod
 	latestAllowedBreath := sim.Duration - time.Millisecond*1500 - breathPeriod*maxBreathsPossible - time.Millisecond*1620
-	ai.FirstBreath = core.DurationFromSeconds(sim.RandomFloat("Frost Breath Timing") * latestAllowedBreath.Seconds())
+	firstBreath := core.DurationFromSeconds(sim.RandomFloat("Frost Breath Timing") * latestAllowedBreath.Seconds())
+
+	ai.FrostBreath.CD.Set(firstBreath)
 }
 
 func (ai *Sindragosa25HAI) registerPermeatingChillAura(target *core.Target) {
@@ -290,7 +291,7 @@ func (ai *Sindragosa25HAI) registerFrostBreathSpell(target *core.Target) {
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolFrost,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagNone,
+		Flags:       core.SpellFlagAPL,
 
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
@@ -324,7 +325,7 @@ func (ai *Sindragosa25HAI) DoAction(sim *core.Simulation) {
 		}
 
 		if ai.Target.CurrentTarget != nil {
-			if ai.FrostBreath.IsReady(sim) && sim.CurrentTime >= ai.FirstBreath {
+			if ai.FrostBreath.IsReady(sim) {
 				ai.Target.Unit.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+time.Millisecond*1500, false)
 				ai.FrostBreath.Cast(sim, ai.Target.CurrentTarget)
 				return

@@ -76,7 +76,7 @@ message APLAction {
     }
 }
 
-// NextIndex: 64
+// NextIndex: 66
 message APLValue {
     oneof value {
         // Operators
@@ -96,6 +96,10 @@ message APLValue {
         APLValueRemainingTimePercent remaining_time_percent = 10;
         APLValueIsExecutePhase is_execute_phase = 41;
         APLValueNumberTargets number_targets = 28;
+
+        // Boss values
+        APLValueBossSpellTimeToReady boss_spell_time_to_ready = 64;
+        APLValueBossSpellIsCasting boss_spell_is_casting = 65;
 
         // Resource values
         APLValueCurrentHealth current_health = 26;
@@ -319,6 +323,16 @@ message APLValueIsExecutePhase {
         E35 = 3;
     }
     ExecutePhaseThreshold threshold = 1;
+}
+
+message APLValueBossSpellTimeToReady {
+    UnitReference target_unit = 1;
+    ActionID spell_id = 2;
+}
+
+message APLValueBossSpellIsCasting {
+    UnitReference target_unit = 1;
+    ActionID spell_id = 2;
 }
 
 message APLValueCurrentHealth {

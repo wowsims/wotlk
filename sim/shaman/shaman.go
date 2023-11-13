@@ -262,10 +262,6 @@ func (shaman *Shaman) Initialize() {
 		shaman.setupProcTrackers()
 	}
 
-	if shaman.Talents.SpiritWeapons {
-		shaman.PseudoStats.ThreatMultiplier -= 0.3
-	}
-
 	// Healing stream totem applies a HoT (aura) and so needs to be handled as a pre-pull action
 	// instead of during init/reset.
 	if shaman.Totems.Water == proto.WaterTotem_HealingStreamTotem {
