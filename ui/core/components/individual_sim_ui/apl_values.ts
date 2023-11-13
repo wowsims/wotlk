@@ -75,6 +75,8 @@ import {
 	APLValueWarlockShouldRecastDrainSoul,
 	APLValueWarlockShouldRefreshCorruption,
 	APLValueCatNewSavageRoarDuration,
+	APLValueBossSpellTimeToReady,
+	APLValueBossSpellIsCasting,
 } from '../../proto/apl.js';
 
 import { EventID } from '../../typed_event.js';
@@ -552,6 +554,28 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		shortDescription: '<b>True</b> if facing from of target',
 		newValue: APLValueFrontOfTarget.create,
 		fields: [],
+	}),
+
+	// Boss
+	'bossSpellIsCasting': inputBuilder({
+		label: 'Spell is Casting',
+		submenu: ['Boss'],
+		shortDescription: '',
+		newValue: APLValueBossSpellIsCasting.create,
+		fields: [
+			AplHelpers.unitFieldConfig('targetUnit', 'targets'),
+			AplHelpers.actionIdFieldConfig('spellId', 'non_instant_spells', 'targetUnit', 'currentTarget'),
+		]
+	}),
+	'bossSpellTimeToReady': inputBuilder({
+		label: 'Spell Time to Ready',
+		submenu: ['Boss'],
+		shortDescription: '',
+		newValue: APLValueBossSpellTimeToReady.create,
+		fields: [
+			AplHelpers.unitFieldConfig('targetUnit', 'targets'),
+			AplHelpers.actionIdFieldConfig('spellId', 'spells', 'targetUnit', 'currentTarget'),
+		]
 	}),
 
 	// Resources

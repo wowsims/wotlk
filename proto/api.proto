@@ -316,6 +316,7 @@ message SpellStats {
 	bool has_shield = 6; // Whether this spell applies a shield effect.
 	bool prepull_only = 5; // Whether this spell may only be cast during prepull.
 	bool encounter_only = 8; // Whether this spell may only be cast during the encounter (not prepull).
+	bool has_cast_time = 9; // Whether this spell has a cast time or not.
 }
 message APLActionStats {
 	repeated string warnings = 1;

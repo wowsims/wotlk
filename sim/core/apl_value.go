@@ -94,6 +94,12 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 	case *proto.APLValue_NumberTargets:
 		return rot.newValueNumberTargets(config.GetNumberTargets())
 
+	// Boss
+	case *proto.APLValue_BossSpellIsCasting:
+		return rot.newValueBossSpellIsCasting(config.GetBossSpellIsCasting())
+	case *proto.APLValue_BossSpellTimeToReady:
+		return rot.newValueBossSpellTimeToReady(config.GetBossSpellTimeToReady())
+
 	// Resources
 	case *proto.APLValue_CurrentHealth:
 		return rot.newValueCurrentHealth(config.GetCurrentHealth())
