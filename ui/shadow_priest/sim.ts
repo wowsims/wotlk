@@ -28,6 +28,8 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 				Stat.StatIntellect,
 				Stat.StatSpirit,
 				Stat.StatSpellPower,
+				Stat.StatShadowPower,
+				Stat.StatHolyPower,
 				Stat.StatSpellHit,
 				Stat.StatSpellCrit,
 				Stat.StatSpellHaste,
@@ -104,8 +106,6 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 				IconInputs.StaminaBuff,
 			],
 			excludeBuffDebuffInputs: [
-				IconInputs.SpellScorchDebuff,
-				IconInputs.SpellWintersChillDebuff,
 			],
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {

@@ -250,8 +250,6 @@ export class SettingsTab extends SimTab {
 		const buffOptions = this.simUI.splitRelevantOptions([
 			{ item: IconInputs.AllStatsBuff, stats: [] },
 			{ item: IconInputs.AllStatsPercentBuff, stats: [] },
-			// TODO: Classic Stam alt buff
-			// { item: IconInputs.HealthBuff, stats: [Stat.StatHealth] },
 			{ item: IconInputs.ArmorBuff, stats: [Stat.StatArmor] },
 			{ item: IconInputs.StaminaBuff, stats: [Stat.StatStamina] },
 			{ item: IconInputs.StrengthAndAgilityBuff, stats: [Stat.StatStrength, Stat.StatAgility] },
@@ -297,9 +295,9 @@ export class SettingsTab extends SimTab {
 			{ item: IconInputs.MajorArmorDebuff, stats: [Stat.StatArmorPenetration] },
 			{ item: IconInputs.MinorArmorDebuff, stats: [Stat.StatArmorPenetration] },
 			{ item: IconInputs.BleedDebuff, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
-			{ item: IconInputs.SpellISBDebuff, stats: [Stat.StatSpellPower] },
-			{ item: IconInputs.SpellScorchDebuff, stats: [Stat.StatSpellPower] },
-			{ item: IconInputs.SpellWintersChillDebuff, stats: [Stat.StatSpellPower] },
+			{ item: IconInputs.SpellISBDebuff, stats: [Stat.StatShadowPower] },
+			{ item: IconInputs.SpellScorchDebuff, stats: [Stat.StatFirePower] },
+			{ item: IconInputs.SpellWintersChillDebuff, stats: [Stat.StatFrostPower] },
 			{ item: IconInputs.AttackPowerDebuff, stats: [Stat.StatArmor] },
 			{ item: IconInputs.MeleeAttackSpeedDebuff, stats: [Stat.StatArmor] },
 			{ item: IconInputs.MeleeHitDebuff, stats: [Stat.StatDodge] },
@@ -311,13 +309,13 @@ export class SettingsTab extends SimTab {
 		);
 
 		const otherDebuffOptions = this.simUI.splitRelevantOptions([
-			// { item: IconInputs.JudgementOfWisdom, stats: [Stat.StatMP5, Stat.StatIntellect] },
-			// { item: IconInputs.HuntersMark, stats: [Stat.StatRangedAttackPower] },
+			{ item: IconInputs.JudgementOfWisdom, stats: [Stat.StatMP5, Stat.StatIntellect] },
+			{ item: IconInputs.HuntersMark, stats: [Stat.StatRangedAttackPower] },
 		] as Array<StatOption<TypedIconPickerConfig<Player<any>, any>>>);
 		otherDebuffOptions.forEach(iconInput => IconInputs.buildIconInput(contentBlock.bodyElement, this.simUI.player, iconInput));
 
 		const miscDebuffOptions = this.simUI.splitRelevantOptions([
-			// { item: IconInputs.JudgementOfLight, stats: [Stat.StatStamina] },
+			{ item: IconInputs.JudgementOfLight, stats: [Stat.StatStamina] },
 			{ item: IconInputs.GiftOfArthas, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
 			{ item: IconInputs.CrystalYield, stats: [Stat.StatArmorPenetration] },
 		] as Array<StatOption<IconPickerConfig<Player<any>, any>>>);

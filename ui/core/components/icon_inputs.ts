@@ -1,4 +1,4 @@
-import { AgilityElixir, Consumes, Debuffs, Explosive, Flask, Food, IndividualBuffs, RaidBuffs, SpellPowerBuff, StrengthBuff, WeaponBuff } from '../proto/common.js';
+import { AgilityElixir, Consumes, Debuffs, Explosive, Flask, Food, IndividualBuffs, RaidBuffs, StrengthBuff, WeaponBuff } from '../proto/common.js';
 import { ActionId } from '../proto_utils/action_id.js';
 
 import { Player } from '../player.js';
@@ -85,10 +85,6 @@ export const ResistanceBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(58745), 'frostResistanceTotem'),
 ], 'Resistances');
 
-// export const HealthBuff = InputHelpers.makeMultiIconInput([
-// 	makeTristateRaidBuffInput(ActionId.fromSpellId(47982), ActionId.fromSpellId(18696), 'bloodPact'),
-// ], 'Health');
-
 export const MP5Buff = InputHelpers.makeMultiIconInput([
 	makeTristateIndividualBuffInput(ActionId.fromSpellId(25290), ActionId.fromSpellId(20245), 'blessingOfWisdom'),
 	makeTristateRaidBuffInput(ActionId.fromSpellId(10497), ActionId.fromSpellId(16208), 'manaSpringTotem'),
@@ -102,6 +98,7 @@ export const SpellCritBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanRaidBuffInput(ActionId.fromSpellId(24907), 'moonkinAura'),
 ], 'Spell Crit');
 
+// TODO: Classic rune
 export const SpellIncreaseBuff = InputHelpers.makeMultiIconInput([
 	// makeMultistateRaidBuffInput(ActionId.fromSpellId(47240), 2000, 'demonicPactSp', 20),
 ], 'Spell Power');
@@ -165,9 +162,9 @@ export const SpellWintersChillDebuff = InputHelpers.makeMultiIconInput([
 // ], 'Spell Dmg');
 
 // TODO: Classic
-// export const HuntersMark = withLabel(makeQuadstateDebuffInput(ActionId.fromSpellId(53338), ActionId.fromSpellId(19423), ActionId.fromItemId(42907), 'huntersMark'), 'Mark');
-// export const JudgementOfWisdom = withLabel(makeBooleanDebuffInput(ActionId.fromSpellId(53408), 'judgementOfWisdom'), 'JoW');
-// export const JudgementOfLight = makeBooleanDebuffInput(ActionId.fromSpellId(20271), 'judgementOfLight');
+export const HuntersMark = withLabel(makeTristateDebuffInput(ActionId.fromSpellId(14325), ActionId.fromSpellId(19425), 'huntersMark'), 'Mark');
+export const JudgementOfWisdom = withLabel(makeBooleanDebuffInput(ActionId.fromSpellId(20355), 'judgementOfWisdom'), 'JoW');
+export const JudgementOfLight = makeBooleanDebuffInput(ActionId.fromSpellId(20346), 'judgementOfLight');
 export const GiftOfArthas = makeBooleanDebuffInput(ActionId.fromSpellId(11374), 'giftOfArthas');
 export const CrystalYield = makeBooleanDebuffInput(ActionId.fromSpellId(15235), 'crystalYield');
 
