@@ -6,8 +6,8 @@
 set -e
 
 spell_url_from_item_id() {
-	safe_curl "https://www.wowhead.com/wotlk/item=$1" |
-		grep -o '\/wotlk\/spell=[0-9]\+' |
+	safe_curl "https://www.wowhead.com/classic/item=$1" |
+		grep -o '\/classic\/spell=[0-9]\+' |
 		head -n 1
 }
 
@@ -27,7 +27,7 @@ safe_curl() {
 
 spell_effect_from_url() {
 	safe_curl "https://www.wowhead.com$1" |
-		grep -oP '<th>Effect.*?</th>.*<a href="\/wotlk\/spell=[0-9]+/.*?">\K.*?(?=</a>)|<th>Effect.*?</th>.*<span class="q2">\K.*(?=</span>)'
+		grep -oP '<th>Effect.*?</th>.*<a href="\/classic\/spell=[0-9]+/.*?">\K.*?(?=</a>)|<th>Effect.*?</th>.*<span class="q2">\K.*(?=</span>)'
 }
 
 remove_user_posts() {
@@ -40,7 +40,7 @@ grep '^\s*{' |
 		id=$(echo "$line" | id_from_entry)
 		effect=""
 		if echo "$line" | grep 'IsSpellID: true' >/dev/null; then
-			effect=$(spell_effect_from_url "/wotlk/spell=$id")
+			effect=$(spell_effect_from_url "/classic/spell=$id")
 		else
 			spell_url_suffix=$(spell_url_from_item_id "$id")
 			effect=$(spell_effect_from_url "$spell_url_suffix")

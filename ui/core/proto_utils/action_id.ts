@@ -544,7 +544,6 @@ export class ActionId {
 
 	static fromProto(protoId: ActionIdProto): ActionId {
 		if (protoId.rawId.oneofKind == 'spellId') {
-			if(protoId.rank) console.log('Spell Rank: ', protoId.rawId.spellId, protoId.rank);
 			return ActionId.fromSpellId(protoId.rawId.spellId, protoId.rank, protoId.tag);
 		} else if (protoId.rawId.oneofKind == 'itemId') {
 			return ActionId.fromItemId(protoId.rawId.itemId, protoId.tag);

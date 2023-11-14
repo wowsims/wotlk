@@ -129,24 +129,23 @@ func applyConsumeEffects(agent Agent) {
 		})
 	}
 
-	// TODO: Classic sp for schools
-	// if consumes.ShadowPowerBuff {
-	// 	character.AddStats(stats.Stats{
-	// 		stats.SpellPower: 40,
-	// 	})
-	// }
+	if consumes.ShadowPowerBuff {
+		character.AddStats(stats.Stats{
+			stats.ShadowPower: 40,
+		})
+	}
 
-	// if consumes.FirePowerBuff {
-	// 	character.AddStats(stats.Stats{
-	// 		stats.SpellPower: 40,
-	// 	})
-	// }
+	if consumes.FirePowerBuff {
+		character.AddStats(stats.Stats{
+			stats.FirePower: 40,
+		})
+	}
 
-	// if consumes.FrostPowerBuff {
-	// 	character.AddStats(stats.Stats{
-	// 		stats.SpellPower: 15,
-	// 	})
-	// }
+	if consumes.FrostPowerBuff {
+		character.AddStats(stats.Stats{
+			stats.FrostPower: 15,
+		})
+	}
 
 	// registerPotionCD(agent, consumes)
 	// registerConjuredCD(agent, consumes)

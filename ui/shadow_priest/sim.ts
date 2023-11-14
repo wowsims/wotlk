@@ -43,9 +43,10 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 				Stat.StatIntellect,
 				Stat.StatSpirit,
 				Stat.StatSpellPower,
+				Stat.StatShadowPower,
+				Stat.StatHolyPower,
 				Stat.StatSpellHit,
 				Stat.StatSpellCrit,
-				Stat.StatSpellHaste,
 				Stat.StatMP5,
 			],
 			modifyDisplayStats: (player: Player<Spec.SpecShadowPriest>) => {

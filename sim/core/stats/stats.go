@@ -23,6 +23,12 @@ const (
 	Intellect
 	Spirit
 	SpellPower
+	ArcanePower
+	FirePower
+	FrostPower
+	HolyPower
+	NaturePower
+	ShadowPower
 	MP5
 	SpellHit
 	SpellCrit
@@ -52,12 +58,13 @@ const (
 	NatureResistance
 	ShadowResistance
 	BonusArmor
+	Healing
+	SpellDamage
 	RunicPower
 	BloodRune
 	FrostRune
 	UnholyRune
 	DeathRune
-	Healing
 	// DO NOT add new stats here without discussing it first; new stats come with
 	// a performance penalty.
 

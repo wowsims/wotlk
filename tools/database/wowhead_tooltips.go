@@ -41,7 +41,7 @@ func NewWowheadSpellTooltipManager(filePath string) *WowheadTooltipManager {
 	}
 }
 
-type Stats [41]float64
+type Stats [46]float64
 
 type ItemResponse interface {
 	GetName() string
@@ -222,6 +222,12 @@ func (item WowheadItemResponse) GetStats() Stats {
 		proto.Stat_StatIntellect:         float64(item.GetIntValue(intellectRegex)),
 		proto.Stat_StatSpirit:            float64(item.GetIntValue(spiritRegex)),
 		proto.Stat_StatSpellPower:        sp,
+		proto.Stat_StatArcanePower:       float64(item.GetIntValue(arcaneSpellPowerRegex)),
+		proto.Stat_StatFirePower:         float64(item.GetIntValue(fireSpellPowerRegex)),
+		proto.Stat_StatFrostPower:        float64(item.GetIntValue(frostSpellPowerRegex)),
+		proto.Stat_StatHolyPower:         float64(item.GetIntValue(holySpellPowerRegex)),
+		proto.Stat_StatNaturePower:       float64(item.GetIntValue(natureSpellPowerRegex)),
+		proto.Stat_StatShadowPower:       float64(item.GetIntValue(shadowSpellPowerRegex)),
 		proto.Stat_StatSpellHit:          float64(item.GetIntValue(spellHitRegex)),
 		proto.Stat_StatMeleeHit:          float64(item.GetIntValue(physicalHitRegex)),
 		proto.Stat_StatSpellCrit:         float64(item.GetIntValue(critRegex)),
@@ -245,7 +251,7 @@ func (item WowheadItemResponse) GetStats() Stats {
 		proto.Stat_StatFrostResistance:   float64(item.GetIntValue(frostResistanceRegex)),
 		proto.Stat_StatNatureResistance:  float64(item.GetIntValue(natureResistanceRegex)),
 		proto.Stat_StatShadowResistance:  float64(item.GetIntValue(shadowResistanceRegex)),
-		proto.Stat_StatHealing:           float64(item.GetIntValue(shadowResistanceRegex)),
+		proto.Stat_StatHealing:           float64(item.GetIntValue(spellHealingRegex)),
 	}
 }
 
@@ -675,20 +681,20 @@ func (item WowheadItemResponse) ToItemProto() *proto.UIItem {
 	}
 }
 
-var itemSetNameRegex = regexp.MustCompile(`<a href="/wotlk/item-set=-?([0-9]+)/(.*)" class="q">([^<]+)<`)
+var itemSetNameRegex = regexp.MustCompile(`<a href="/classic/item-set=-?([0-9]+)/(.*)" class="q">([^<]+)<`)
 
 func (item WowheadItemResponse) GetItemSetName() string {
-	original := item.GetTooltipRegexString(itemSetNameRegex, 3)
+	return item.GetTooltipRegexString(itemSetNameRegex, 3)
 
-	// Strip out the 10/25 man prefixes from set names
-	withoutTier := strings.TrimPrefix(strings.TrimPrefix(strings.TrimPrefix(strings.TrimPrefix(strings.TrimPrefix(original, "Heroes' "), "Valorous "), "Conqueror's "), "Triumphant "), "Sanctified ")
-	if original != withoutTier { // if we found a tier prefix, return now.
-		return withoutTier
-	}
+	// // Strip out the 10/25 man prefixes from set names
+	// withoutTier := strings.TrimPrefix(strings.TrimPrefix(strings.TrimPrefix(strings.TrimPrefix(strings.TrimPrefix(original, "Heroes' "), "Valorous "), "Conqueror's "), "Triumphant "), "Sanctified ")
+	// if original != withoutTier { // if we found a tier prefix, return now.
+	// 	return withoutTier
+	// }
 
-	// Now strip out the season prefix from any pvp set names
-	withoutPvp := strings.Replace(strings.Replace(strings.Replace(strings.Replace(strings.Replace(strings.Replace(original, "Savage Glad", "Glad", 1), "Hateful Glad", "Glad", 1), "Deadly Glad", "Glad", 1), "Furious Glad", "Glad", 1), "Relentless Glad", "Glad", 1), "Wrathful Glad", "Glad", 1)
-	return withoutPvp
+	// // Now strip out the season prefix from any pvp set names
+	// withoutPvp := strings.Replace(strings.Replace(strings.Replace(strings.Replace(strings.Replace(strings.Replace(original, "Savage Glad", "Glad", 1), "Hateful Glad", "Glad", 1), "Deadly Glad", "Glad", 1), "Furious Glad", "Glad", 1), "Relentless Glad", "Glad", 1), "Wrathful Glad", "Glad", 1)
+	// return withoutPvp
 }
 
 func (item WowheadItemResponse) IsHeroic() bool {

@@ -1092,7 +1092,7 @@ export class Player<SpecType extends Spec> {
 
 		const lang = getLanguageCode();
 		const langPrefix = lang ? lang + '.' : '';
-		parts.push(`domain=${langPrefix}wotlk`);
+		parts.push(`domain=${langPrefix}classic`);
 
 		const isBlacksmithing = this.hasProfession(Profession.Blacksmithing);
 		if (equippedItem.gems.length > 0) {

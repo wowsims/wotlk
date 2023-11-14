@@ -1,4 +1,4 @@
-import { classNames, difficultyNames, professionNames, slotNames } from '../proto_utils/names.js';
+import { difficultyNames, professionNames, slotNames } from '../proto_utils/names.js';
 import { BaseModal } from './base_modal';
 import { Component } from './component';
 import { FiltersMenu } from './filters_menu';
@@ -43,6 +43,7 @@ import {
 } from '../proto/ui.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
 import { Tooltip } from 'bootstrap';
+// eslint-disable-next-line unused-imports/no-unused-imports
 import { element, fragment, ref } from 'tsx-vanilla';
 
 import { Clusterize } from './virtual_scroll/clusterize.js';
@@ -190,10 +191,10 @@ export class ItemRenderer extends Component {
 			// Make enchant text hover have a tooltip.
 			if (newItem.enchant.spellId) {
 				this.enchantElem.href = ActionId.makeSpellUrl(newItem.enchant.spellId);
-				this.enchantElem.dataset.wowhead = `domain=wotlk&spell=${newItem.enchant.spellId}`;
+				this.enchantElem.dataset.wowhead = `domain=classic&spell=${newItem.enchant.spellId}`;
 			} else {
 				this.enchantElem.href = ActionId.makeItemUrl(newItem.enchant.itemId);
-				this.enchantElem.dataset.wowhead = `domain=wotlk&item=${newItem.enchant.itemId}`;
+				this.enchantElem.dataset.wowhead = `domain=classic&item=${newItem.enchant.itemId}`;
 			}
 			this.enchantElem.dataset.whtticon = 'false';
 		}
@@ -399,7 +400,7 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 		return this.gear.toProto() as unknown as ValueType
 	}
 
-	setInputValue(newValue: ValueType): void {
+	setInputValue(_: ValueType): void {
 		this.iconAnchor.style.backgroundImage = `url('${getEmptySlotIconUrl(this.slot)}')`;
 		this.iconAnchor.removeAttribute('data-wowhead');
 		this.iconAnchor.href = "#";
@@ -736,7 +737,7 @@ export class SelectorModal extends BaseModal {
 			ilist.dispose();
 		});
 
-		tabAnchor.value!.addEventListener('shown.bs.tab', (event) => {
+		tabAnchor.value!.addEventListener('shown.bs.tab', (_) => {
 			ilist.sizeRefresh()
 		});
 
@@ -881,8 +882,9 @@ export class ItemList<T> {
 			title: EP_TOOLTIP
 		});
 
-		const show1hWeaponsSelector = makeShow1hWeaponsSelector(this.tabContent.getElementsByClassName('selector-modal-show-1h-weapons')[0] as HTMLElement, player.sim);
-		const show2hWeaponsSelector = makeShow2hWeaponsSelector(this.tabContent.getElementsByClassName('selector-modal-show-2h-weapons')[0] as HTMLElement, player.sim);
+		makeShow1hWeaponsSelector(this.tabContent.getElementsByClassName('selector-modal-show-1h-weapons')[0] as HTMLElement, player.sim);
+		makeShow2hWeaponsSelector(this.tabContent.getElementsByClassName('selector-modal-show-2h-weapons')[0] as HTMLElement, player.sim);
+		
 		if (!(label == 'Items' && (slot == ItemSlot.ItemSlotMainHand || (slot == ItemSlot.ItemSlotOffHand && player.getClass() == Class.ClassWarrior)))) {
 			(this.tabContent.getElementsByClassName('selector-modal-show-1h-weapons')[0] as HTMLElement).style.display = 'none';
 			(this.tabContent.getElementsByClassName('selector-modal-show-2h-weapons')[0] as HTMLElement).style.display = 'none';
@@ -890,12 +892,13 @@ export class ItemList<T> {
 
 		makeShowEPValuesSelector(this.tabContent.getElementsByClassName('selector-modal-show-ep-values')[0] as HTMLElement, player.sim);
 
-		const showMatchingGemsSelector = makeShowMatchingGemsSelector(this.tabContent.getElementsByClassName('selector-modal-show-matching-gems')[0] as HTMLElement, player.sim);
+		makeShowMatchingGemsSelector(this.tabContent.getElementsByClassName('selector-modal-show-matching-gems')[0] as HTMLElement, player.sim);
+		
 		if (!label.startsWith('Gem')) {
 			(this.tabContent.getElementsByClassName('selector-modal-show-matching-gems')[0] as HTMLElement).style.display = 'none';
 		}
 
-		const phaseSelector = makePhaseSelector(this.tabContent.getElementsByClassName('selector-modal-phase-selector')[0] as HTMLElement, player.sim);
+		makePhaseSelector(this.tabContent.getElementsByClassName('selector-modal-phase-selector')[0] as HTMLElement, player.sim);
 
 		if (label == 'Items') {
 			const filtersButton = this.tabContent.getElementsByClassName('selector-modal-filters-button')[0] as HTMLElement;
@@ -930,7 +933,7 @@ export class ItemList<T> {
 		});
 
 		const removeButton = this.tabContent.getElementsByClassName('selector-modal-remove-button')[0] as HTMLButtonElement;
-		removeButton.addEventListener('click', event => {
+		removeButton.addEventListener('click', _ => {
 			onRemove(TypedEvent.nextEventID());
 		});
 
@@ -951,7 +954,7 @@ export class ItemList<T> {
 			player.sim.showExperimentalChangeEmitter.on(() => {
 				simAllButton.hidden = !player.sim.getShowExperimental();
 			});
-			simAllButton.addEventListener('click', (event) => {
+			simAllButton.addEventListener('click', (_) => {
 				if (simUI instanceof IndividualSimUI) {
 					let itemSpecs = Array<ItemSpec>();
 					const isRangedOrTrinket = this.slot == ItemSlot.ItemSlotRanged ||

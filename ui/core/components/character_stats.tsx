@@ -1,5 +1,4 @@
 import { Stat, Class, PseudoStat, Spec } from '..//proto/common.js';
-import { TristateEffect } from '..//proto/common.js'
 import { getClassStatName, statOrder } from '..//proto_utils/names.js';
 import { Stats } from '..//proto_utils/stats.js';
 import { Player } from '..//player.js';
@@ -12,6 +11,7 @@ import { Component } from './component.js';
 
 import { Popover, Tooltip } from 'bootstrap';
 
+// eslint-disable-next-line unused-imports/no-unused-imports
 import { element, fragment } from 'tsx-vanilla';
 
 export type StatMods = { talents: Stats };
@@ -252,11 +252,22 @@ export class CharacterStats extends Component {
 		let displayStr = String(Math.round(rawValue));
 
 		if (stat == Stat.StatMeleeHit) {
-			displayStr += ` (${(rawValue / Mechanics.MELEE_HIT_RATING_PER_HIT_CHANCE).toFixed(2)}%)`;
+			displayStr = `${(rawValue / Mechanics.MELEE_HIT_RATING_PER_HIT_CHANCE).toFixed(2)}%`;
 		} else if (stat == Stat.StatSpellHit) {
-			displayStr += ` (${(rawValue / Mechanics.SPELL_HIT_RATING_PER_HIT_CHANCE).toFixed(2)}%)`;
+			displayStr = `${(rawValue / Mechanics.SPELL_HIT_RATING_PER_HIT_CHANCE).toFixed(2)}%`;
+		} else if (
+			stat == Stat.StatArcanePower || 
+			stat == Stat.StatFirePower || 
+			stat == Stat.StatFrostPower || 
+			stat == Stat.StatHolyPower || 
+			stat == Stat.StatNaturePower || 
+			stat == Stat.StatShadowPower
+		) {
+			const spDmg = Math.round(rawValue);
+			const baseSp = Math.round(deltaStats.getStat(Stat.StatSpellPower));
+			displayStr = (baseSp + spDmg) + ` (+${spDmg})`;
 		} else if (stat == Stat.StatMeleeCrit || stat == Stat.StatSpellCrit) {
-			displayStr += ` (${(rawValue / Mechanics.SPELL_CRIT_RATING_PER_CRIT_CHANCE).toFixed(2)}%)`;
+			displayStr = `${(rawValue / Mechanics.SPELL_CRIT_RATING_PER_CRIT_CHANCE).toFixed(2)}%`;
 		} else if (stat == Stat.StatMeleeHaste) {
 			if ([Class.ClassDruid, Class.ClassShaman, Class.ClassPaladin, Class.ClassDeathknight].includes(this.player.getClass())) {
 				displayStr += ` (${(rawValue / Mechanics.SPECIAL_MELEE_HASTE_RATING_PER_HASTE_PERCENT).toFixed(2)}%)`;
@@ -264,7 +275,7 @@ export class CharacterStats extends Component {
 				displayStr += ` (${(rawValue / Mechanics.HASTE_RATING_PER_HASTE_PERCENT).toFixed(2)}%)`;
 			}
 		} else if (stat == Stat.StatSpellHaste) {
-			displayStr += ` (${(rawValue / Mechanics.HASTE_RATING_PER_HASTE_PERCENT).toFixed(2)}%)`;
+			displayStr = `${(rawValue / Mechanics.HASTE_RATING_PER_HASTE_PERCENT).toFixed(2)}%`;
 		} else if (stat == Stat.StatArmorPenetration) {
 			displayStr += ` (${(rawValue / Mechanics.ARMOR_PEN_PER_PERCENT_ARMOR).toFixed(2)}%)`;
 		} else if (stat == Stat.StatExpertise) {
@@ -294,17 +305,11 @@ export class CharacterStats extends Component {
 	private getDebuffStats(): Stats {
 		let debuffStats = new Stats();
 
-		const debuffs = this.player.sim.raid.getDebuffs();
-		if (debuffs.misery || debuffs.faerieFire == TristateEffect.TristateEffectImproved) {
-			debuffStats = debuffStats.addStat(Stat.StatSpellHit, 3 * Mechanics.SPELL_HIT_RATING_PER_HIT_CHANCE);
-		}
-		if (debuffs.totemOfWrath || debuffs.heartOfTheCrusader || debuffs.masterPoisoner) {
-			debuffStats = debuffStats.addStat(Stat.StatSpellCrit, 3 * Mechanics.SPELL_CRIT_RATING_PER_CRIT_CHANCE);
-			debuffStats = debuffStats.addStat(Stat.StatMeleeCrit, 3 * Mechanics.MELEE_CRIT_RATING_PER_CRIT_CHANCE);
-		}
-		if (debuffs.improvedScorch || debuffs.wintersChill || debuffs.shadowMastery) {
-			debuffStats = debuffStats.addStat(Stat.StatSpellCrit, 5 * Mechanics.SPELL_CRIT_RATING_PER_CRIT_CHANCE);
-		}
+		// TODO: Classic ui debuffs
+		// const debuffs = this.player.sim.raid.getDebuffs();
+		// if (debuffs.improvedScorch || debuffs.wintersChill || debuffs.shadowMastery) {
+		// 	debuffStats = debuffStats.addStat(Stat.StatSpellCrit, 5 * Mechanics.SPELL_CRIT_RATING_PER_CRIT_CHANCE);
+		// }
 
 		return debuffStats;
 	}
@@ -359,7 +364,7 @@ export class CharacterStats extends Component {
 		].includes(player.spec);
 	}
 
-	private meleeCritCapDisplayString(player: Player<any>, finalStats: Stats): string {
+	private meleeCritCapDisplayString(player: Player<any>, _: Stats): string {
 		const playerCritCapDelta = player.getMeleeCritCap();
 
 		if(playerCritCapDelta === 0.0) {
