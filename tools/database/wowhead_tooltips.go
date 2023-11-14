@@ -161,8 +161,8 @@ var intellectRegex = regexp.MustCompile(`<!--stat5-->\+([0-9]+) Intellect`)
 var spiritRegex = regexp.MustCompile(`<!--stat6-->\+([0-9]+) Spirit`)
 var staminaRegex = regexp.MustCompile(`<!--stat7-->\+([0-9]+) Stamina`)
 var spellHealingRegex = regexp.MustCompile(`Increases healing done by spells and effects by up to ([0-9]+)\.`)
-var spellPowerRegex = regexp.MustCompile(`Increases damage and healing by magical spells and effects by up to ([0-9]+)\.`)
-var spellPowerRegex2 = regexp.MustCompile(`Increases damage and healing by magical spells and effects by up to <!--rtg45-->([0-9]+)\.`)
+var spellPowerRegex = regexp.MustCompile(`Increases damage and healing done by magical spells and effects by up to ([0-9]+)\.`)
+var spellPowerRegex2 = regexp.MustCompile(`Increases damage and healing done by magical spells and effects by up to <!--rtg45-->([0-9]+)\.`)
 
 var arcaneSpellPowerRegex = regexp.MustCompile(`Increases damage done by Arcane spells and effects by up to ([0-9]+)\.`)
 var fireSpellPowerRegex = regexp.MustCompile(`Increases damage done by Fire spells and effects by up to ([0-9]+)\.`)
@@ -173,7 +173,8 @@ var shadowSpellPowerRegex = regexp.MustCompile(`Increases damage done by Shadow 
 
 var physicalHitRegex = regexp.MustCompile(`Improves your chance to hit by ([0-9]+)%\.`)
 var spellHitRegex = regexp.MustCompile(`Improves your chance to hit with spells by ([0-9]+)%\.`)
-var critRegex = regexp.MustCompile(`Improves your chance to get a critical strike by ([0-9]+)%\.`)
+var spellCritRegex = regexp.MustCompile(`Improves your chance to get a critical strike with spells by ([0-9]+)%\.`)
+var meleeCritRegex = regexp.MustCompile(`Improves your chance to get a critical strike by ([0-9]+)%\.`)
 var hasteRegex = regexp.MustCompile(`Improves your haste by ([0-9]+)%\.`)
 
 var spellPenetrationRegex = regexp.MustCompile(`Increases your spell penetration by ([0-9]+)\.`)
@@ -230,8 +231,8 @@ func (item WowheadItemResponse) GetStats() Stats {
 		proto.Stat_StatShadowPower:       float64(item.GetIntValue(shadowSpellPowerRegex)),
 		proto.Stat_StatSpellHit:          float64(item.GetIntValue(spellHitRegex)),
 		proto.Stat_StatMeleeHit:          float64(item.GetIntValue(physicalHitRegex)),
-		proto.Stat_StatSpellCrit:         float64(item.GetIntValue(critRegex)),
-		proto.Stat_StatMeleeCrit:         float64(item.GetIntValue(critRegex)),
+		proto.Stat_StatSpellCrit:         float64(item.GetIntValue(spellCritRegex)),
+		proto.Stat_StatMeleeCrit:         float64(item.GetIntValue(meleeCritRegex)),
 		proto.Stat_StatSpellHaste:        float64(item.GetIntValue(hasteRegex)),
 		proto.Stat_StatMeleeHaste:        float64(item.GetIntValue(hasteRegex)),
 		proto.Stat_StatSpellPenetration:  float64(item.GetIntValue(spellPenetrationRegex)),

@@ -267,7 +267,7 @@ func (db *WowDatabase) WriteJson(jsonFilePath string) {
 	tools.WriteProtoArrayToBuffer(uidb.SpellIcons, buffer, "spellIcons")
 	buffer.WriteString(",\n")
 	tools.WriteProtoArrayToBuffer(uidb.Encounters, buffer, "encounters")
-	buffer.WriteString(",\n")
+	buffer.WriteString("\n")
 
 	buffer.WriteString("}")
 	os.WriteFile(jsonFilePath, buffer.Bytes(), 0666)

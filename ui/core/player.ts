@@ -706,9 +706,6 @@ export class Player<SpecType extends Spec> {
 		let debuffCrit = 0.0;
 
 		const debuffs = this.sim.raid.getDebuffs();
-		if (debuffs.totemOfWrath || debuffs.heartOfTheCrusader || debuffs.masterPoisoner) {
-			debuffCrit = 3.0;
-		}
 
 		const baseCritCap = 100.0 - glancing + suppression - remainingMeleeHitCap - remainingExpertiseCap - specSpecificOffset;
 		const playerCritCapDelta = meleeCrit - baseCritCap + debuffCrit;
