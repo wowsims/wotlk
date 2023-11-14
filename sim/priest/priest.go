@@ -25,10 +25,10 @@ type Priest struct {
 	InnerFocus        *core.Spell
 	ShadowWordPain    *core.Spell
 	MindBlast         *core.Spell
-	MindFlay          []*core.Spell
+	MindFlay          *core.Spell
 	MindFlayModifier  float64
 	MindBlastModifier float64
-	MindSear          []*core.Spell
+	MindSear          *core.Spell
 	Penance           *core.Spell
 	PenanceHeal       *core.Spell
 	PowerWordShield   *core.Spell
@@ -68,9 +68,10 @@ func (priest *Priest) Initialize() {
 	priest.registerSetBonuses()
 	priest.registerMindBlast()
 	priest.registerMindFlay()
-	priest.registerDevouringPlagueSpell()
 	priest.registerShadowWordPainSpell()
-	priest.registerShadowWordDeathSpell()
+	// priest.registerDevouringPlagueSpell()
+	// TODO: Classic runes
+	// priest.registerShadowWordDeathSpell()
 
 	priest.registerPowerInfusionCD()
 }

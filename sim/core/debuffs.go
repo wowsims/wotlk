@@ -131,7 +131,7 @@ func ScheduledMajorArmorAura(aura *Aura, options PeriodicActionOptions, raid *pr
 var JudgementOfWisdomAuraLabel = "Judgement of Wisdom"
 
 func JudgementOfWisdomAura(target *Unit) *Aura {
-	actionID := ActionID{SpellID: 53408}
+	actionID := ActionID{SpellID: 20355}
 
 	return target.GetOrRegisterAura(Aura{
 		Label:    JudgementOfWisdomAuraLabel,

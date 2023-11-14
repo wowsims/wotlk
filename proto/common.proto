@@ -430,14 +430,10 @@ message PartyBuffs {
 	// Item Buffs
 	int32 atiesh_mage = 1;
 	int32 atiesh_warlock = 2;
-
-	bool braided_eternium_chain = 3;
-	bool eye_of_the_night = 4;
-	bool chain_of_the_twilight_owl = 5;
 	
 	// Group buffs
-	int32 mana_tide_totems = 6;
-	bool heroic_presence = 7;
+	int32 mana_tide_totems = 3;
+	bool heroic_presence = 4;
 }
 
 // These are usually individual actions taken by other Characters.

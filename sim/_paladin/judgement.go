@@ -19,7 +19,7 @@ func (paladin *Paladin) registerJudgementOfWisdomSpell(cdTimer *core.Timer) {
 	jowAuras := paladin.NewEnemyAuraArray(core.JudgementOfWisdomAura)
 
 	paladin.JudgementOfWisdom = paladin.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 53408},
+		ActionID:    core.ActionID{SpellID: 20355},
 		SpellSchool: core.SpellSchoolHoly,
 		ProcMask:    core.ProcMaskProc, // can proc TaJ itself and from seal
 		Flags:       SpellFlagPrimaryJudgement | core.SpellFlagAPL,

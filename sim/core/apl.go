@@ -246,6 +246,10 @@ func (apl *APLRotation) popControllingAction(ca APLActionImpl) {
 func (apl *APLRotation) shouldInterruptChannel(sim *Simulation) bool {
 	channeledDot := apl.unit.ChanneledDot
 
+	if channeledDot == nil {
+		return false
+	}
+
 	if channeledDot.MaxTicksRemaining() == 0 {
 		// Channel has ended, but apl.unit.ChanneledDot hasn't been cleared yet meaning the aura is still active.
 		return false

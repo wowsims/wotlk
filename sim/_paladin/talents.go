@@ -541,13 +541,11 @@ func (paladin *Paladin) applyJudgementsOfTheWise() {
 
 	procChance := float64(paladin.Talents.JudgementsOfTheWise) / 3
 	paladin.JowiseManaMetrics = paladin.NewManaMetrics(core.ActionID{SpellID: 31878})
-	replSrc := paladin.Env.Raid.NewReplenishmentSource(core.ActionID{SpellID: 31878})
 
 	procSpell := paladin.RegisterSpell(core.SpellConfig{
 		ActionID: core.ActionID{SpellID: 31878},
 		ApplyEffects: func(sim *core.Simulation, unit *core.Unit, _ *core.Spell) {
 			paladin.AddMana(sim, paladin.BaseMana*0.25, paladin.JowiseManaMetrics)
-			paladin.Env.Raid.ProcReplenishment(sim, replSrc)
 		},
 	})
 

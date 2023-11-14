@@ -115,6 +115,7 @@ export class ActionId {
 		this.baseName = baseName;
 		this.name = name || baseName;
 		this.iconUrl = iconUrl;
+		this.name += rank ? ` (Rank ${rank})` : '';
 	}
 
 	anyId(): number {
@@ -270,15 +271,15 @@ export class ActionId {
 					name += ' (5 Tick)';
 				}
 				break;
-			case 'Mind Flay':
-				if (this.tag == 1) {
-					name += ' (1 Tick)';
-				} else if (this.tag == 2) {
-					name += ' (2 Tick)';
-				} else if (this.tag == 3) {
-					name += ' (3 Tick)';
-				}
-				break;
+			// case 'Mind Flay':
+			// 	if (this.tag == 1) {
+			// 		name += ' (1 Tick)';
+			// 	} else if (this.tag == 2) {
+			// 		name += ' (2 Tick)';
+			// 	} else if (this.tag == 3) {
+			// 		name += ' (3 Tick)';
+			// 	}
+			// 	break;
 			case 'Mind Sear':
 				if (this.tag == 1) {
 					name += ' (1 Tick)';
@@ -464,7 +465,7 @@ export class ActionId {
 			iconUrl = ActionId.makeIconUrl(overrideTooltipData['icon']);
 		}
 
-		return new ActionId(this.itemId, this.spellId, this.otherId, this.tag, baseName, name, iconUrl, this.rank);
+		return new ActionId(this.itemId, this.spellId, this.otherId, this.tag, baseName, name, iconUrl, this.rank || tooltipData['rank']);
 	}
 
 	toString(): string {
@@ -498,6 +499,7 @@ export class ActionId {
 				oneofKind: 'spellId',
 				spellId: this.spellId,
 			};
+			protoId.rank = this.rank;
 		} else if (this.otherId) {
 			protoId.rawId = {
 				oneofKind: 'otherId',

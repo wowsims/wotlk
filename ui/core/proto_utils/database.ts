@@ -32,6 +32,9 @@ const leftoversUrlJson = '/wotlk/assets/database/leftover_db.json';
 const leftoversUrlBin = '/wotlk/assets/database/leftover_db.bin';
 // When changing this value, don't forget to change the html <link> for preloading!
 const READ_JSON = true;
+const RANK_REGEX = /Rank ([0-9]+)/g;
+const REQ_LEVEL_ITEMS_REGEX = /\<!\-\-rlvl\-\-\>([0-9]+)/g;
+const REQ_LEVEL_SPELLS_REGEX = /Requires level ([0-9]+)/g
 
 export class Database {
 	private static loadPromise: Promise<Database> | null = null;
@@ -266,14 +269,31 @@ export class Database {
 		return Database.getWowheadTooltipData(id, 'spell');
 	}
 	private static async getWowheadTooltipData(id: number, tooltipPostfix: string): Promise<IconData> {
+		if (id === 0) return IconData.create();
+
 		const url = `https://nether.wowhead.com/classic/tooltip/${tooltipPostfix}/${id}?lvl=${CHARACTER_LEVEL}`;
 		try {
 			const response = await fetch(url);
 			const json = await response.json();
+			let rank: number = 0
+			let reqLevel: number = 0;
+
+			if (tooltipPostfix === 'spell'){
+				const rankMatches = Array.from(json['tooltip'].matchAll(RANK_REGEX) as RegExpMatchArray[]);
+				const levelMatches = Array.from(json['tooltip'].matchAll(REQ_LEVEL_SPELLS_REGEX) as RegExpMatchArray[]);
+				rank = rankMatches.length ? parseInt(rankMatches[0][1]) : 0;
+				reqLevel = levelMatches.length ? parseInt(levelMatches[0][1]): 0;
+			} else if (tooltipPostfix == 'item'){
+				const levelMatches = Array.from(json['tooltip'].matchAll(REQ_LEVEL_ITEMS_REGEX) as RegExpMatchArray[]);
+				reqLevel = levelMatches.length ? parseInt(levelMatches[0][1]): 0;
+			}
+			
 			return IconData.create({
 				id: id,
 				name: json['name'],
 				icon: json['icon'],
+				rank: rank,
+				requiresLevel: reqLevel,
 			});
 		} catch (e) {
 			console.error('Error while fetching url: ' + url + '\n\n' + e);

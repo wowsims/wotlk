@@ -1,25 +1,23 @@
 import { Tooltip } from 'bootstrap';
 
-import { EventID, TypedEvent } from '../../typed_event.js';
 import { Player } from '../../player.js';
+import {
+	APLAction,
+	APLListItem,
+	APLPrepullAction,
+	APLValue
+} from '../../proto/apl.js';
+import { EventID, TypedEvent } from '../../typed_event.js';
 import { ListItemPickerConfig, ListPicker } from '../list_picker.js';
 import { AdaptiveStringPicker } from '../string_picker.js';
-import {
-	APLRotation,
-	APLListItem,
-	APLAction,
-	APLPrepullAction,
-	APLValue,
-	APLValueConst,
-} from '../../proto/apl.js';
 
-import { Component } from '../component.js';
-import { Input, InputConfig } from '../input.js';
 import { ActionId } from '../../proto_utils/action_id.js';
 import { SimUI } from '../../sim_ui.js';
+import { Component } from '../component.js';
+import { Input, InputConfig } from '../input.js';
 
 import { APLActionPicker } from './apl_actions.js';
-import { APLValuePicker, APLValueImplStruct } from './apl_values.js';
+import { APLValueImplStruct } from './apl_values.js';
 
 export class APLRotationPicker extends Component {
 	constructor(parent: HTMLElement, simUI: SimUI, modPlayer: Player<any>) {

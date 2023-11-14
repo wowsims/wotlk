@@ -400,15 +400,6 @@ func (character *Character) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 	case ItemIDAtieshWarlock:
 		partyBuffs.AtieshWarlock += 1
 	}
-
-	switch character.Neck().ID {
-	case ItemIDBraidedEterniumChain:
-		partyBuffs.BraidedEterniumChain = true
-	case ItemIDChainOfTheTwilightOwl:
-		partyBuffs.ChainOfTheTwilightOwl = true
-	case ItemIDEyeOfTheNight:
-		partyBuffs.EyeOfTheNight = true
-	}
 }
 
 func (character *Character) initialize(agent Agent) {

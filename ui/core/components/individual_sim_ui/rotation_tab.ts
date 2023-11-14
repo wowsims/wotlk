@@ -91,7 +91,7 @@ export class RotationTab extends SimTab {
 		const aplLaunchStatus = aplLaunchStatuses[this.simUI.player.spec];
 
 		new EnumPicker(header, this.simUI.player, {
-			label: 'Rotation Type Test',
+			label: 'Rotation Type',
 			labelTooltip: 'Which set of options to use for specifying the rotation.',
 			inline: true,
 			values: aplLaunchStatus == LaunchStatus.Alpha ? [

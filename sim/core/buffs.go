@@ -1,9 +1,7 @@
 package core
 
 import (
-	"cmp"
 	"math"
-	"slices"
 	"time"
 
 	googleProto "google.golang.org/protobuf/proto"
@@ -13,7 +11,7 @@ import (
 )
 
 // Applies buffs that affect individual players.
-// TODO: Maximum buff based on character level
+// TODO: Classic Maximum buff based on character level
 func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto.PartyBuffs, individualBuffs *proto.IndividualBuffs) {
 	character := agent.GetCharacter()
 
@@ -21,7 +19,7 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 		character.AddStat(stats.Intellect, 31.0)
 	} else if raidBuffs.ScrollOfIntellect {
 		character.AddStats(stats.Stats{
-			stats.Intellect: 48,
+			stats.Intellect: 16,
 		})
 	}
 
@@ -59,12 +57,12 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 	}
 
 	if raidBuffs.MoonkinAura {
-		character.AddStat(stats.SpellCrit, 3)
+		character.AddStat(stats.SpellCrit, 3*SpellCritRatingPerCritChance)
 	}
 
 	if raidBuffs.LeaderOfThePack {
 		character.AddStats(stats.Stats{
-			stats.MeleeCrit: 3,
+			stats.MeleeCrit: 3 * CritRatingPerCritChance,
 		})
 	}
 
@@ -72,38 +70,31 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 		character.AddStat(stats.RangedAttackPower, 100)
 	}
 
-	if partyBuffs.HeroicPresence {
+	if raidBuffs.PowerWordFortitude > 0 {
 		character.AddStats(stats.Stats{
-			stats.MeleeHit: 1 * MeleeHitRatingPerHitChance,
-			stats.SpellHit: 1 * SpellHitRatingPerHitChance,
+			stats.Stamina: GetTristateValueFloat(raidBuffs.PowerWordFortitude, 54, 54*1.3),
 		})
-	}
-
-	if raidBuffs.BloodPact > 0 {
-		MakePermanent(BloodPactAura(&character.Unit, GetTristateValueInt32(raidBuffs.BloodPact, 0, 3)))
-	}
-
-	if raidBuffs.PowerWordFortitude != proto.TristateEffect_TristateEffectMissing {
+	} else if raidBuffs.BloodPact > 0 {
 		character.AddStats(stats.Stats{
-			stats.Stamina: GetTristateValueFloat(raidBuffs.PowerWordFortitude, 165, 165*1.3),
+			stats.Stamina: GetTristateValueFloat(raidBuffs.PowerWordFortitude, 42, 42*1.3),
 		})
 	} else if raidBuffs.ScrollOfStamina {
 		character.AddStats(stats.Stats{
-			stats.Stamina: 132,
+			stats.Stamina: 16,
 		})
 	}
 	if raidBuffs.ShadowProtection {
 		character.AddStats(stats.Stats{
-			stats.ShadowResistance: 130 - gotwResistAmount,
+			stats.ShadowResistance: 60 - gotwResistAmount,
 		})
 	}
 	if raidBuffs.DivineSpirit {
 		character.AddStats(stats.Stats{
-			stats.Spirit: 80.0,
+			stats.Spirit: 40.0,
 		})
 	} else if raidBuffs.ScrollOfSpirit {
 		character.AddStats(stats.Stats{
-			stats.Spirit: 64,
+			stats.Spirit: 15,
 		})
 	}
 
@@ -131,22 +122,15 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 		BlessingOfSanctuaryAura(character)
 	}
 
-	// TODO: Is scroll exclusive to totem?
-	if raidBuffs.StoneskinTotem != proto.TristateEffect_TristateEffectMissing {
-		character.AddStats(stats.Stats{
-			stats.Armor: GetTristateValueFloat(raidBuffs.StoneskinTotem, 1150, 1380),
-		})
-	}
-
 	if raidBuffs.DevotionAura != proto.TristateEffect_TristateEffectMissing {
 		character.AddStats(stats.Stats{
-			stats.Armor: GetTristateValueFloat(raidBuffs.DevotionAura, 1205, 1807.5),
+			stats.Armor: GetTristateValueFloat(raidBuffs.DevotionAura, 735, 735*1.25),
 		})
 	}
 
 	if raidBuffs.ScrollOfProtection && raidBuffs.DevotionAura == proto.TristateEffect_TristateEffectMissing {
 		character.AddStats(stats.Stats{
-			stats.Armor: 750,
+			stats.Armor: 240,
 		})
 	}
 
@@ -156,10 +140,10 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 	// }
 
 	if raidBuffs.BattleShout > 0 {
-		MakePermanent(BattleShoutAura(&character.Unit, GetTristateValueInt32(raidBuffs.BattleShout, 0, 5), 0, false))
+		MakePermanent(BattleShoutAura(&character.Unit, GetTristateValueInt32(raidBuffs.BattleShout, 0, 5), 0))
 	}
 	if individualBuffs.BlessingOfMight > 0 {
-		MakePermanent(BlessingOfMightAura(&character.Unit, GetTristateValueInt32(individualBuffs.BlessingOfMight, 0, 2)))
+		MakePermanent(BlessingOfMightAura(&character.Unit, GetTristateValueInt32(individualBuffs.BlessingOfMight, 0, 5)))
 	}
 
 	// TODO: Rune Demo Pact
@@ -198,9 +182,13 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 		}
 	}
 
-	if individualBuffs.BlessingOfWisdom > 0 || raidBuffs.ManaSpringTotem > 0 {
+	if individualBuffs.BlessingOfWisdom > 0 {
 		character.AddStats(stats.Stats{
-			stats.MP5: GetTristateValueFloat(max(individualBuffs.BlessingOfWisdom, raidBuffs.ManaSpringTotem), 91, 109),
+			stats.MP5: GetTristateValueFloat(individualBuffs.BlessingOfWisdom, 33, 33*1.2),
+		})
+	} else if raidBuffs.ManaSpringTotem > 0 {
+		character.AddStats(stats.Stats{
+			stats.MP5: GetTristateValueFloat(raidBuffs.ManaSpringTotem, 25, 25*1.25),
 		})
 	}
 
@@ -219,16 +207,6 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 	character.AddStats(stats.Stats{
 		stats.SpellPower: 33 * float64(partyBuffs.AtieshWarlock),
 	})
-
-	if partyBuffs.BraidedEterniumChain {
-		character.AddStats(stats.Stats{stats.MeleeCrit: 28, stats.SpellCrit: 28})
-	}
-	if partyBuffs.EyeOfTheNight {
-		character.AddStats(stats.Stats{stats.SpellPower: 34})
-	}
-	if partyBuffs.ChainOfTheTwilightOwl {
-		character.AddStats(stats.Stats{stats.MeleeCrit: 45, stats.SpellCrit: 45})
-	}
 }
 
 // Applies buffs to pets.
@@ -265,9 +243,6 @@ func applyPetBuffEffects(petAgent PetAgent, raidBuffs *proto.RaidBuffs, partyBuf
 		individualBuffs.BlessingOfMight = 0
 		individualBuffs.BlessingOfWisdom = 0
 	}
-
-	// For some reason pets don't benefit from buffs that are ratings, e.g. crit rating or haste rating.
-	partyBuffs.BraidedEterniumChain = false
 
 	applyBuffEffects(petAgent, raidBuffs, partyBuffs, individualBuffs)
 }
@@ -1162,111 +1137,7 @@ func replenishmentAura(unit *Unit, _ ActionID) *Aura {
 	return unit.ReplenishmentAura
 }
 
-type ReplenishmentSource int
-
-// Returns a new aura whose activation will give the Replenishment buff to 10 party/raid members.
-func (raid *Raid) NewReplenishmentSource(actionID ActionID) ReplenishmentSource {
-	newReplSource := ReplenishmentSource(len(raid.curReplenishmentUnits))
-	raid.curReplenishmentUnits = append(raid.curReplenishmentUnits, []*Unit{})
-
-	if raid.replenishmentUnits != nil {
-		return newReplSource
-	}
-
-	// Get the list of all eligible units (party/raid members + their pets, but no guardians).
-	var manaUsers []*Unit
-	for _, party := range raid.Parties {
-		for _, player := range party.Players {
-			character := player.GetCharacter()
-			if character.HasManaBar() {
-				manaUsers = append(manaUsers, &character.Unit)
-			}
-		}
-		for _, petAgent := range party.Pets {
-			pet := petAgent.GetPet()
-			if pet.HasManaBar() && !pet.IsGuardian() {
-				manaUsers = append(manaUsers, &pet.Unit)
-			}
-		}
-	}
-	raid.replenishmentUnits = manaUsers
-
-	// Initialize replenishment aura for all applicable units.
-	for _, unit := range raid.replenishmentUnits {
-		replenishmentAura(unit, actionID)
-	}
-
-	return newReplSource
-}
-
-func (raid *Raid) resetReplenishment(_ *Simulation) {
-	raid.leftoverReplenishmentUnits = raid.replenishmentUnits
-	for i := 0; i < len(raid.curReplenishmentUnits); i++ {
-		raid.curReplenishmentUnits[i] = nil
-	}
-}
-
-func (raid *Raid) ProcReplenishment(sim *Simulation, src ReplenishmentSource) {
-	// If the raid is fully covered by one or more replenishment sources, we can
-	// skip the mana sorting.
-	if len(raid.curReplenishmentUnits)*10 >= len(raid.replenishmentUnits) {
-		if len(raid.curReplenishmentUnits[src]) == 0 {
-			if len(raid.leftoverReplenishmentUnits) > 10 {
-				raid.curReplenishmentUnits[src] = raid.leftoverReplenishmentUnits[:10]
-				raid.leftoverReplenishmentUnits = raid.leftoverReplenishmentUnits[10:]
-			} else {
-				raid.curReplenishmentUnits[src] = raid.leftoverReplenishmentUnits
-				raid.leftoverReplenishmentUnits = nil
-			}
-		}
-		for _, unit := range raid.curReplenishmentUnits[src] {
-			unit.ReplenishmentAura.Activate(sim)
-		}
-		return
-	}
-
-	eligible := append(raid.curReplenishmentUnits[src], raid.leftoverReplenishmentUnits...)
-	slices.SortFunc(eligible, func(v1, v2 *Unit) int {
-		return cmp.Compare(v1.CurrentManaPercent(), v2.CurrentManaPercent())
-	})
-	raid.curReplenishmentUnits[src] = eligible[:10]
-	raid.leftoverReplenishmentUnits = eligible[10:]
-	for _, unit := range raid.curReplenishmentUnits[src] {
-		unit.ReplenishmentAura.Activate(sim)
-	}
-	for _, unit := range raid.leftoverReplenishmentUnits {
-		unit.ReplenishmentAura.Deactivate(sim)
-	}
-}
-
-func TotemOfWrathAura(character *Character) *Aura {
-	aura := character.GetOrRegisterAura(Aura{
-		Label:      "Totem of Wrath",
-		ActionID:   ActionID{SpellID: 57722},
-		Duration:   NeverExpires,
-		BuildPhase: CharacterBuildPhaseBuffs,
-		OnReset: func(aura *Aura, sim *Simulation) {
-			aura.Activate(sim)
-		},
-	})
-	spellPowerBonusEffect(aura, 280)
-	return aura
-}
-
-func FlametongueTotemAura(character *Character) *Aura {
-	aura := character.GetOrRegisterAura(Aura{
-		Label:      "Flametongue Totem",
-		ActionID:   ActionID{SpellID: 58656},
-		Duration:   NeverExpires,
-		BuildPhase: CharacterBuildPhaseBuffs,
-		OnReset: func(aura *Aura, sim *Simulation) {
-			aura.Activate(sim)
-		},
-	})
-	spellPowerBonusEffect(aura, 144)
-	return aura
-}
-
+// TODO: Classic Runes
 func DemonicPactAura(character *Character) *Aura {
 	aura := character.GetOrRegisterAura(Aura{
 		Label:      "Demonic Pact",
@@ -1294,14 +1165,14 @@ func spellPowerBonusEffect(aura *Aura, spellPowerBonus float64) *ExclusiveEffect
 	})
 }
 
-func BattleShoutAura(unit *Unit, commandingPresencePts int32, boomingVoicePts int32, minorGlyph bool) *Aura {
+func BattleShoutAura(unit *Unit, impBattleShout int32, boomingVoicePts int32) *Aura {
 	aura := unit.GetOrRegisterAura(Aura{
 		Label:      "Battle Shout",
-		ActionID:   ActionID{SpellID: 47436},
-		Duration:   time.Duration(float64(time.Minute*2)*(1+0.25*float64(boomingVoicePts))) + TernaryDuration(minorGlyph, 2*time.Minute, 0),
+		ActionID:   ActionID{SpellID: 25289},
+		Duration:   time.Duration(float64(time.Minute*2) * (1 + 0.1*float64(boomingVoicePts))),
 		BuildPhase: CharacterBuildPhaseBuffs,
 	})
-	attackPowerBonusEffect(aura, math.Floor(550*(1+0.05*float64(commandingPresencePts))))
+	attackPowerBonusEffect(aura, math.Floor(232*(1+0.05*float64(impBattleShout))))
 	return aura
 }
 
@@ -1315,7 +1186,7 @@ func BlessingOfMightAura(unit *Unit, impBomPts int32) *Aura {
 			aura.Activate(sim)
 		},
 	})
-	attackPowerBonusEffect(aura, math.Floor(550*(1+GetTristateValueFloat(proto.TristateEffect(impBomPts), 0.12, 0.25))))
+	attackPowerBonusEffect(aura, math.Floor(115*(1+0.4*float64(impBomPts))))
 	return aura
 }
 

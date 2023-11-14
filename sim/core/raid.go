@@ -350,7 +350,6 @@ func (raid *Raid) GetPlayerFromUnitIndex(unitIndex int32) Agent {
 }
 
 func (raid *Raid) reset(sim *Simulation) {
-	raid.resetReplenishment(sim)
 	for _, party := range raid.Parties {
 		party.reset(sim)
 	}

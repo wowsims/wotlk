@@ -7,11 +7,11 @@ import (
 )
 
 func (priest *Priest) getMindBlastBaseConfig(rank int) core.SpellConfig {
-	spellCoeff := 0.429 // 1.5 cast over 3.5 base cast
-	baseDamage := [][]float64{{0}, {42, 46}, {76, 83}, {117, 126}, {174, 184}, {225, 239}, {288, 307}, {356, 377}, {437, 461}, {508, 537}}[rank]
-	spellId := []int32{0, 8092, 8102, 8103, 8104, 8105, 8106, 10945, 10946, 10947}[rank]
-	manaCost := []float64{0, 50, 80, 110, 150, 185, 225, 264, 310, 350}[rank]
-	level := []int{0, 10, 16, 22, 28, 32, 40, 46, 52, 58}[rank]
+	spellCoeff := 0.429 // 1.5 cast over 3.5 reference
+	baseDamage := [10][]float64{{0}, {42, 46}, {76, 83}, {117, 126}, {174, 184}, {225, 239}, {288, 307}, {356, 377}, {437, 461}, {508, 537}}[rank]
+	spellId := [10]int32{0, 8092, 8102, 8103, 8104, 8105, 8106, 10945, 10946, 10947}[rank]
+	manaCost := [10]float64{0, 50, 80, 110, 150, 185, 225, 264, 310, 350}[rank]
+	level := [10]int{0, 10, 16, 22, 28, 32, 40, 46, 52, 58}[rank]
 
 	return core.SpellConfig{
 		ActionID:      core.ActionID{SpellID: spellId},
@@ -35,7 +35,7 @@ func (priest *Priest) getMindBlastBaseConfig(rank int) core.SpellConfig {
 			},
 		},
 
-		BonusHitRating:   0 + float64(priest.Talents.ShadowFocus)*2,
+		BonusHitRating:   float64(priest.Talents.ShadowFocus) * 2 * core.SpellHitRatingPerHitChance,
 		BonusCritRating:  0,
 		DamageMultiplier: 1 + 0.02*float64(priest.Talents.Darkness),
 		CritMultiplier:   1,
@@ -58,14 +58,10 @@ func (priest *Priest) getMindBlastBaseConfig(rank int) core.SpellConfig {
 }
 
 func (priest *Priest) registerMindBlast() {
-	priest.MindBlast = priest.GetOrRegisterSpell(priest.getMindBlastBaseConfig(9))
+	maxRank := 9
+	priest.MindBlast = priest.GetOrRegisterSpell(priest.getMindBlastBaseConfig(maxRank))
 
-	priest.GetOrRegisterSpell(priest.getMindBlastBaseConfig(8))
-	priest.GetOrRegisterSpell(priest.getMindBlastBaseConfig(7))
-	priest.GetOrRegisterSpell(priest.getMindBlastBaseConfig(6))
-	priest.GetOrRegisterSpell(priest.getMindBlastBaseConfig(5))
-	priest.GetOrRegisterSpell(priest.getMindBlastBaseConfig(4))
-	priest.GetOrRegisterSpell(priest.getMindBlastBaseConfig(3))
-	priest.GetOrRegisterSpell(priest.getMindBlastBaseConfig(2))
-	priest.GetOrRegisterSpell(priest.getMindBlastBaseConfig(1))
+	for i := maxRank - 1; i > 0; i-- {
+		priest.GetOrRegisterSpell(priest.getMindBlastBaseConfig(i))
+	}
 }

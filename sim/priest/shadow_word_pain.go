@@ -1,21 +1,29 @@
 package priest
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-func (priest *Priest) registerShadowWordPainSpell() {
-	priest.ShadowWordPain = priest.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 10894},
-		SpellSchool: core.SpellSchoolShadow,
-		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagAPL,
+func (priest *Priest) getShadowWordPainConfig(rank int) core.SpellConfig {
+	spellCoeff := 0.167 // per tick
+	baseDamage := [9]float64{0, 30, 66, 132, 234, 366, 510, 672, 852}[rank]
+	spellId := [9]int32{0, 589, 594, 970, 992, 2767, 10892, 10893, 10894}[rank]
+	manaCost := [9]float64{0, 25, 50, 95, 155, 230, 305, 385, 470}[rank]
+	level := [9]int{0, 4, 10, 18, 26, 34, 42, 50, 58}[rank]
+
+	return core.SpellConfig{
+		ActionID:      core.ActionID{SpellID: spellId},
+		SpellSchool:   core.SpellSchoolShadow,
+		ProcMask:      core.ProcMaskSpellDamage,
+		Flags:         core.SpellFlagAPL,
+		Rank:          rank,
+		RequiredLevel: level,
 
 		ManaCost: core.ManaCostOptions{
-			BaseCost:   0.22,
-			Multiplier: 1,
+			FlatCost: manaCost,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -23,33 +31,25 @@ func (priest *Priest) registerShadowWordPainSpell() {
 			},
 		},
 
-		BonusHitRating:   float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
+		BonusHitRating:   float64(priest.Talents.ShadowFocus) * 2 * core.SpellHitRatingPerHitChance,
 		BonusCritRating:  0,
 		DamageMultiplier: 1,
-		CritMultiplier:   priest.SpellCritMultiplier(1, 1),
+		CritMultiplier:   1,
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 
 		Dot: core.DotConfig{
 			Aura: core.Aura{
-				Label: "ShadowWordPain",
+				Label: "ShadowWordPain-" + strconv.Itoa(rank),
 			},
 
 			NumberOfTicks: 6 + (priest.Talents.ImprovedShadowWordPain),
 			TickLength:    time.Second * 3,
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-				dot.SnapshotBaseDamage = 1380/6 + 0.1833*dot.Spell.SpellPower()
-				if !isRollover {
-					dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
-					dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
-				}
+				dot.SnapshotBaseDamage = baseDamage/6 + dot.Spell.SpellPower()
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				if priest.Talents.Shadowform {
-					dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeSnapshotCrit)
-				} else {
-					dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
-				}
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
 			},
 		},
 
@@ -65,19 +65,20 @@ func (priest *Priest) registerShadowWordPainSpell() {
 		ExpectedTickDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, useSnapshot bool) *core.SpellResult {
 			if useSnapshot {
 				dot := spell.Dot(target)
-				if priest.Talents.Shadowform {
-					return dot.CalcSnapshotDamage(sim, target, dot.OutcomeExpectedMagicSnapshotCrit)
-				} else {
-					return dot.CalcSnapshotDamage(sim, target, spell.OutcomeExpectedMagicAlwaysHit)
-				}
+				return dot.CalcSnapshotDamage(sim, target, dot.Spell.OutcomeExpectedMagicAlwaysHit)
 			} else {
-				baseDamage := 1380/6 + 0.1833*spell.SpellPower()
-				if priest.Talents.Shadowform {
-					return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicCrit)
-				} else {
-					return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
-				}
+				baseDamage := baseDamage/6 + spellCoeff*spell.SpellPower()
+				return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
 			}
 		},
-	})
+	}
+}
+
+func (priest *Priest) registerShadowWordPainSpell() {
+	maxRank := 8
+	priest.MindFlay = priest.GetOrRegisterSpell(priest.getShadowWordPainConfig(maxRank))
+
+	for i := maxRank - 1; i > 0; i-- {
+		priest.GetOrRegisterSpell(priest.getShadowWordPainConfig(i))
+	}
 }

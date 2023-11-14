@@ -43,6 +43,7 @@ export const ArmorBuff = InputHelpers.makeMultiIconInput([
 
 export const StaminaBuff = InputHelpers.makeMultiIconInput([
 	makeTristateRaidBuffInput(ActionId.fromSpellId(10938), ActionId.fromSpellId(14767), 'powerWordFortitude'),
+	makeTristateRaidBuffInput(ActionId.fromSpellId(11767), ActionId.fromSpellId(18696), 'bloodPact'),
 	makeBooleanRaidBuffInput(ActionId.fromItemId(10307), 'scrollOfStamina'),
 ], 'Stamina');
 
@@ -90,7 +91,7 @@ export const ResistanceBuff = InputHelpers.makeMultiIconInput([
 
 export const MP5Buff = InputHelpers.makeMultiIconInput([
 	makeTristateIndividualBuffInput(ActionId.fromSpellId(25290), ActionId.fromSpellId(20245), 'blessingOfWisdom'),
-	makeTristateRaidBuffInput(ActionId.fromSpellId(10494), ActionId.fromSpellId(16208), 'manaSpringTotem'),
+	makeTristateRaidBuffInput(ActionId.fromSpellId(10497), ActionId.fromSpellId(16208), 'manaSpringTotem'),
 ], 'MP5');
 
 export const MeleeCritBuff = InputHelpers.makeMultiIconInput([

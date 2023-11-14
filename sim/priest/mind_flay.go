@@ -7,21 +7,23 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-func (priest *Priest) getMindFlayTickSpell(numTicks int32) *core.Spell {
+func (priest *Priest) getMindFlayTickSpell(rank int, numTicks int32, baseDamage float64) *core.Spell {
+	spellId := [7]int32{0, 16568, 7378, 17316, 17317, 17318, 18808}[rank]
 
 	return priest.GetOrRegisterSpell(core.SpellConfig{
-		ActionID:         core.ActionID{SpellID: 18807}.WithTag(numTicks),
+		ActionID:         core.ActionID{SpellID: spellId},
+		Rank:             rank,
 		SpellSchool:      core.SpellSchoolShadow,
 		ProcMask:         core.ProcMaskProc | core.ProcMaskNotInSpellbook,
-		BonusHitRating:   float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
+		BonusHitRating:   1, // Not an independent hit once initial lands
 		BonusCritRating:  0,
 		DamageMultiplier: 1,
 		CritMultiplier:   1.0,
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			damage := 426.0 / 3
+			damage := baseDamage / 3
 			damage *= priest.MindFlayModifier
-			result := spell.CalcAndDealDamage(sim, target, damage, spell.OutcomeMagicHitAndCrit)
+			result := spell.CalcAndDealDamage(sim, target, damage, spell.OutcomeExpectedMagicAlwaysHit)
 
 			if result.Landed() {
 				priest.AddShadowWeavingStack(sim)
@@ -30,48 +32,40 @@ func (priest *Priest) getMindFlayTickSpell(numTicks int32) *core.Spell {
 	})
 }
 
-func (priest *Priest) newMindFlaySpell(numTicksIdx int32) core.SpellConfig {
-	numTicks := numTicksIdx
-	flags := core.SpellFlagChanneled | core.SpellFlagNoMetrics | core.SpellFlagAPL
+func (priest *Priest) getMindFlaySpellConfig(rank int) core.SpellConfig {
+	numTicks := int32(3)
+	spellCoeff := 0.15 // classic penalty for mf having a slow effect
+	baseDamage := [7]float64{0, 75, 126, 186, 261, 330, 426}[rank]
+	spellId := [7]int32{0, 15407, 17311, 17312, 17313, 17314, 18807}[rank]
+	manaCost := [7]float64{0, 45, 70, 100, 135, 165, 205}[rank]
+	level := [7]int{0, 20, 28, 36, 44, 52, 60}[rank]
 
 	tickLength := time.Second
 	channelTime := tickLength * time.Duration(numTicks)
-	mindFlayTickSpell := priest.getMindFlayTickSpell(numTicksIdx)
+	mindFlayTickSpell := priest.getMindFlayTickSpell(rank, numTicks, baseDamage)
 
 	return core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48156}.WithTag(numTicksIdx),
-		SpellSchool: core.SpellSchoolShadow,
-		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       flags,
+		ActionID:      core.ActionID{SpellID: spellId},
+		SpellSchool:   core.SpellSchoolShadow,
+		ProcMask:      core.ProcMaskSpellDamage,
+		Flags:         core.SpellFlagAPL | core.SpellFlagNoMetrics | core.SpellFlagChanneled,
+		RequiredLevel: level,
 		ManaCost: core.ManaCostOptions{
-			BaseCost: 0.09,
+			FlatCost: manaCost,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:         core.GCDDefault,
 				ChannelTime: channelTime,
 			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				if spell.Unit.IsUsingAPL || priest.Latency == 0 {
-					return
-				}
-				// if our channel is longer than GCD it will have human latency to end it because you can't queue the next spell.
-				if float64(channelTime)*priest.CastSpeed > float64(core.GCDMin) {
-					variation := priest.Latency * (0.66 + sim.RandomFloat("spriest latency")*(1.33-0.66)) // should vary from 0.66 - 1.33 of given latency
-					cast.ChannelTime += time.Duration(variation / priest.CastSpeed * float64(time.Millisecond))
-					if sim.Log != nil {
-						priest.Log(sim, "Latency: %.3f, Applied Latency: %.3f", priest.Latency, variation)
-					}
-				}
-			},
 		},
-		BonusHitRating:   float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
+		BonusHitRating:   float64(priest.Talents.ShadowFocus) * 2 * core.SpellHitRatingPerHitChance,
 		BonusCritRating:  0,
 		DamageMultiplier: 1,
 		CritMultiplier:   1,
 		Dot: core.DotConfig{
 			Aura: core.Aura{
-				Label: "MindFlay-" + strconv.Itoa(int(numTicksIdx)),
+				Label: "MindFlay-" + strconv.Itoa(int(rank)) + "-" + strconv.Itoa(int(numTicks)),
 			},
 			NumberOfTicks:       numTicks,
 			TickLength:          tickLength,
@@ -91,7 +85,7 @@ func (priest *Priest) newMindFlaySpell(numTicksIdx int32) core.SpellConfig {
 			spell.DealOutcome(sim, result)
 		},
 		ExpectedTickDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
-			baseDamage := 426.0/3 + spell.SpellPower()
+			baseDamage := (baseDamage + (spellCoeff * spell.SpellPower())) / 3
 
 			return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
 		},
@@ -102,17 +96,11 @@ func (priest *Priest) MindFlayTickDuration() time.Duration {
 	return priest.ApplyCastSpeed(time.Second)
 }
 
-func (priest *Priest) AverageMindFlayLatencyDelay(numTicks int, gcd time.Duration) time.Duration {
-	wait := priest.ApplyCastSpeed(priest.MindFlay[numTicks].DefaultCast.ChannelTime)
-	if wait <= gcd || priest.Latency == 0 {
-		return 0
-	}
-
-	base := priest.Latency * 0.25
-	variation := base + 0.5*base
-	return time.Duration(variation) * time.Millisecond
-}
-
 func (priest *Priest) registerMindFlay() {
-	priest.MindBlast = priest.GetOrRegisterSpell(priest.newMindFlaySpell(3))
+	maxRank := 6
+	priest.MindFlay = priest.GetOrRegisterSpell(priest.getMindFlaySpellConfig(maxRank))
+
+	for i := maxRank - 1; i > 0; i-- {
+		priest.GetOrRegisterSpell(priest.getMindFlaySpellConfig(i))
+	}
 }

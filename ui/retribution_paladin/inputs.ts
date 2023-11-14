@@ -1,18 +1,13 @@
-import { Spec, ItemSlot } from '../core/proto/common.js';
 import { Player } from '../core/player.js';
-import { EventID } from '../core/typed_event.js';
-import { IndividualSimUI } from '../core/individual_sim_ui.js';
+import { ItemSlot, Spec } from '../core/proto/common.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
-import { CustomRotation } from '../core/proto/common.js';
 
 import {
-	PaladinAura as PaladinAura,
-	RetributionPaladin_Rotation as RetributionPaladinRotation,
-	RetributionPaladin_Options as RetributionPaladinOptions,
-	RetributionPaladin_Rotation_SpellOption as SpellOption,
-	RetributionPaladin_Rotation_RotationType as RotationType,
-	PaladinJudgement as PaladinJudgement,
+	PaladinAura,
+	PaladinJudgement,
 	PaladinSeal,
+	RetributionPaladin_Rotation_RotationType as RotationType,
+	RetributionPaladin_Rotation_SpellOption as SpellOption
 } from '../core/proto/paladin.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
@@ -41,7 +36,7 @@ export const StartingSealSelection = InputHelpers.makeSpecOptionsEnumIconInput<S
 export const JudgementSelection = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecRetributionPaladin, PaladinJudgement>({
 	fieldName: 'judgement',
 	values: [
-		{ actionId: ActionId.fromSpellId(53408), value: PaladinJudgement.JudgementOfWisdom },
+		{ actionId: ActionId.fromSpellId(20355), value: PaladinJudgement.JudgementOfWisdom },
 		{ actionId: ActionId.fromSpellId(20271), value: PaladinJudgement.JudgementOfLight },
 	],
 });

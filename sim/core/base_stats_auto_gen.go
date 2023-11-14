@@ -12,6 +12,8 @@ import (
 const ExpertisePerQuarterPercentReduction = 8.197496
 const HasteRatingPerHastePercent = 32.789989
 const CritRatingPerCritChance = 45.905987
+const RangedRatingPerCritChance = 45.905987
+const SpellCritRatingPerCritChance = 45.905987
 const MeleeHitRatingPerHitChance = 32.789989
 const SpellHitRatingPerHitChance = 26.231993
 const DefenseRatingPerDefense = 4.918498
