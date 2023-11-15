@@ -252,15 +252,15 @@ dps_results: {
 dps_results: {
  key: "TestFrostUH-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 11161.39555
-  tps: 7940.5934
+  dps: 11179.30689
+  tps: 7954.12011
  }
 }
 dps_results: {
  key: "TestFrostUH-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 11092.40836
-  tps: 7894.83816
+  dps: 11092.15512
+  tps: 7894.5297
  }
 }
 dps_results: {

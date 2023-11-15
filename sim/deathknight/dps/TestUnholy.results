@@ -278,16 +278,16 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 11799.1826
-  tps: 7724.64572
+  dps: 11798.98234
+  tps: 7724.62368
   hps: 319.74369
  }
 }
 dps_results: {
  key: "TestUnholy-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 11803.67413
-  tps: 7738.22348
+  dps: 11803.88112
+  tps: 7738.28514
   hps: 318.90115
  }
 }

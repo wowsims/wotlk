@@ -252,15 +252,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 11054.42214
-  tps: 6470.50132
+  dps: 11054.58588
+  tps: 6470.59956
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 11002.10987
-  tps: 6438.46412
+  dps: 11001.03092
+  tps: 6437.82133
  }
 }
 dps_results: {
