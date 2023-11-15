@@ -21,7 +21,7 @@ func (dk *Deathknight) registerScourgeStrikeShadowDamageSpell() *core.Spell {
 	return dk.Unit.RegisterSpell(core.SpellConfig{
 		ActionID:    ScourgeStrikeActionID.WithTag(2),
 		SpellSchool: core.SpellSchoolShadow,
-		ProcMask:    core.ProcMaskSpellDamage,
+		ProcMask:    core.ProcMaskSpellDamage | core.ProcMaskProc,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIgnoreAttackerModifiers,
 
 		DamageMultiplier: 1,
