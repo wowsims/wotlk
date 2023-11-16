@@ -27,7 +27,6 @@ func RegisterShadowPriest() {
 
 func NewShadowPriest(character *core.Character, options *proto.Player) *ShadowPriest {
 	shadowOptions := options.GetShadowPriest()
-
 	basePriest := priest.New(character, options.TalentsString)
 	basePriest.Latency = float64(basePriest.ChannelClipDelay.Milliseconds())
 	spriest := &ShadowPriest{

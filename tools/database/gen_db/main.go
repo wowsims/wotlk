@@ -385,6 +385,13 @@ func GetAllRotationSpellIds() map[string][]int32 {
 			15266,
 			15267,
 			15261,
+			// Devouring Plague
+			2944,
+			19276,
+			19277,
+			19278,
+			19279,
+			19280,
 		},
 		"rogue":   {},
 		"shaman":  {},

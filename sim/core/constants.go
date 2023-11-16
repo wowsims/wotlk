@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-const CharacterLevel = 80
+const CharacterLevel = 60
 
 const GCDMin = time.Second * 1
 const GCDDefault = time.Millisecond * 1500

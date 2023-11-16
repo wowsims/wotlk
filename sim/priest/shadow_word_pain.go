@@ -8,7 +8,7 @@ import (
 )
 
 func (priest *Priest) getShadowWordPainConfig(rank int) core.SpellConfig {
-	spellCoeff := 0.167 // per tick
+	spellCoeff := [9]float64{0, 0.067, 0.104, 0.154, 0.167, 0.167, 0.167, 0.167, 0.167}[rank] // per tick
 	baseDamage := [9]float64{0, 30, 66, 132, 234, 366, 510, 672, 852}[rank]
 	spellId := [9]int32{0, 589, 594, 970, 992, 2767, 10892, 10893, 10894}[rank]
 	manaCost := [9]float64{0, 25, 50, 95, 155, 230, 305, 385, 470}[rank]
@@ -46,7 +46,8 @@ func (priest *Priest) getShadowWordPainConfig(rank int) core.SpellConfig {
 			TickLength:    time.Second * 3,
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-				dot.SnapshotBaseDamage = baseDamage/6 + dot.Spell.SpellPower()
+				dot.SnapshotBaseDamage = baseDamage/6 + (spellCoeff * dot.Spell.SpellPower())
+				dot.SnapshotAttackerMultiplier = 1
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
@@ -67,7 +68,7 @@ func (priest *Priest) getShadowWordPainConfig(rank int) core.SpellConfig {
 				dot := spell.Dot(target)
 				return dot.CalcSnapshotDamage(sim, target, dot.Spell.OutcomeExpectedMagicAlwaysHit)
 			} else {
-				baseDamage := baseDamage/6 + spellCoeff*spell.SpellPower()
+				baseDamage := baseDamage/6 + (spellCoeff * spell.SpellPower())
 				return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
 			}
 		},
@@ -76,7 +77,7 @@ func (priest *Priest) getShadowWordPainConfig(rank int) core.SpellConfig {
 
 func (priest *Priest) registerShadowWordPainSpell() {
 	maxRank := 8
-	priest.MindFlay = priest.GetOrRegisterSpell(priest.getShadowWordPainConfig(maxRank))
+	priest.ShadowWordPain = priest.GetOrRegisterSpell(priest.getShadowWordPainConfig(maxRank))
 
 	for i := maxRank - 1; i > 0; i-- {
 		priest.GetOrRegisterSpell(priest.getShadowWordPainConfig(i))

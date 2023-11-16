@@ -38,6 +38,7 @@ type Priest struct {
 	EmpoweredRenew    *core.Spell
 	ShadowWordDeath   *core.Spell
 	Smite             *core.Spell
+	VoidPlague        *core.Spell
 
 	WeakenedSouls core.AuraArray
 
@@ -69,7 +70,8 @@ func (priest *Priest) Initialize() {
 	priest.registerMindBlast()
 	priest.registerMindFlay()
 	priest.registerShadowWordPainSpell()
-	// priest.registerDevouringPlagueSpell()
+	priest.registerDevouringPlagueSpell()
+	priest.registerVoidPlagueSpell()
 	// TODO: Classic runes
 	// priest.registerShadowWordDeathSpell()
 
@@ -105,7 +107,7 @@ func New(char *core.Character, talents string) *Priest {
 		Character: *char,
 		Talents:   &proto.PriestTalents{},
 	}
-	// core.FillTalentsProto(priest.Talents.ProtoReflect(), talents, TalentTreeSizes)
+	core.FillTalentsProto(priest.Talents.ProtoReflect(), talents, TalentTreeSizes)
 
 	priest.EnableManaBar()
 

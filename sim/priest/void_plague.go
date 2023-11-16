@@ -7,23 +7,21 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-func (priest *Priest) getDevouringPlagueConfig(rank int) core.SpellConfig {
-	spellCoeff := 0.063
-	baseDamage := [7]float64{0, 152, 272, 400, 544, 712, 904}[rank]
-	spellId := [7]int32{0, 2944, 19276, 19277, 19278, 19279, 19280}[rank]
-	manaCost := [7]float64{0, 215, 350, 495, 645, 810, 985}[rank]
-	level := [7]int{0, 20, 28, 36, 44, 52, 60}[rank]
+func (priest *Priest) getVoidPlagueConfig() core.SpellConfig {
+	// TODO: Classic SOD live check
+	spellCoeff := 0.167           // standard 18 sec dot with no penalty
+	baseDamage := float64(39 * 6) // https://www.wowhead.com/classic/news/patch-1-15-build-52124-ptr-datamining-season-of-discovery-runes-336044
 
 	return core.SpellConfig{
-		ActionID:      core.ActionID{SpellID: spellId},
+		ActionID:      core.ActionID{SpellID: 425204},
 		SpellSchool:   core.SpellSchoolShadow,
 		ProcMask:      core.ProcMaskSpellDamage,
 		Flags:         core.SpellFlagAPL,
-		Rank:          rank,
-		RequiredLevel: level,
+		Rank:          1,
+		RequiredLevel: 1,
 
 		ManaCost: core.ManaCostOptions{
-			FlatCost: manaCost,
+			BaseCost: 0.13,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -31,7 +29,7 @@ func (priest *Priest) getDevouringPlagueConfig(rank int) core.SpellConfig {
 			},
 			CD: core.Cooldown{
 				Timer:    priest.NewTimer(),
-				Duration: time.Minute * 3,
+				Duration: time.Second * 6,
 			},
 		},
 
@@ -43,14 +41,14 @@ func (priest *Priest) getDevouringPlagueConfig(rank int) core.SpellConfig {
 
 		Dot: core.DotConfig{
 			Aura: core.Aura{
-				Label: "DevouringPlague-" + strconv.Itoa(rank),
+				Label: "VoidPlague-" + strconv.Itoa(1),
 			},
 
 			NumberOfTicks: 8,
 			TickLength:    time.Second * 3,
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-				dot.SnapshotBaseDamage = baseDamage/8 + (spellCoeff * dot.Spell.SpellPower())
+				dot.SnapshotBaseDamage = baseDamage/6 + (spellCoeff * dot.Spell.SpellPower())
 				dot.SnapshotAttackerMultiplier = 1
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
@@ -73,18 +71,13 @@ func (priest *Priest) getDevouringPlagueConfig(rank int) core.SpellConfig {
 				dot := spell.Dot(target)
 				return dot.CalcSnapshotDamage(sim, target, dot.Spell.OutcomeExpectedMagicAlwaysHit)
 			} else {
-				baseDamage := baseDamage/8 + (spellCoeff * spell.SpellPower())
+				baseDamage := baseDamage/6 + (spellCoeff * spell.SpellPower())
 				return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
 			}
 		},
 	}
 }
 
-func (priest *Priest) registerDevouringPlagueSpell() {
-	maxRank := 6
-	priest.DevouringPlague = priest.GetOrRegisterSpell(priest.getDevouringPlagueConfig(maxRank))
-
-	for i := maxRank - 1; i > 0; i-- {
-		priest.GetOrRegisterSpell(priest.getDevouringPlagueConfig(i))
-	}
+func (priest *Priest) registerVoidPlagueSpell() {
+	priest.VoidPlague = priest.GetOrRegisterSpell(priest.getVoidPlagueConfig())
 }
