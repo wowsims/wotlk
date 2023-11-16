@@ -572,7 +572,7 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 		bestIdx = swpIdx
 	}
 	// Snap shot BL on DP
-	if overwriteDPS2-currDPS2 > 2000 && bestIdx != vtIdx { //Seems to be a dps loss to overwrite a DP to snap shot
+	if overwriteDPS2-currDPS2 > 2500 && bestIdx != vtIdx { //Seems to be a dps loss to overwrite a DP to snap shot
 		bestIdx = dpIdx
 		currentWait = 0
 	}
@@ -634,7 +634,7 @@ func (spriest *ShadowPriest) chooseSpellIdeal(sim *core.Simulation) (*core.Spell
 		if chosenMfs == 1 {
 			numTicks = 1 // determiend above that it's more dps to add MF1, need if it's not better to enter ideal rotation instead
 		} else if (castMf2 == 1 && spriest.DevouringPlague.CurDot().IsActive() && spriest.VampiricTouch.CurDot().IsActive()) || (timeUntilBLStarts < (time.Duration(3)*tickLength).Seconds() && timeUntilBLStarts > 0.2) {
-			if spriest.MindFlayTickDuration()*3 < gcd {
+			if float64(spriest.MindFlayTickDuration().Seconds()*3) < float64(gcd.Seconds()*1.3) {
 				numTicks = 3
 			} else {
 				numTicks = 2
@@ -743,7 +743,7 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, gcd tim
 
 	AlmostAnotherTick := numTicks_Base - numTicks_floored
 
-	if AlmostAnotherTick >= 0.3 {
+	if AlmostAnotherTick >= 0.25 {
 		numTicks += 1
 	}
 
@@ -842,7 +842,7 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, gcd tim
 			}
 			AlmostAnotherTick := numTicks_Base - numTicks_floored
 
-			if AlmostAnotherTick >= 0.3 {
+			if AlmostAnotherTick >= 0.2 {
 				numTicks += 1
 			}
 
@@ -860,7 +860,7 @@ func (spriest *ShadowPriest) IdealMindflayRotation(sim *core.Simulation, gcd tim
 				max(0, spriest.AllCDs[3]-mfTime),
 				0,
 			}
-			if deltaTime.Seconds() < -0.33 {
+			if deltaTime.Seconds() < -1 {
 				numTicks -= 1
 				cdDiffs[bestIdx] += tickLength
 			}
