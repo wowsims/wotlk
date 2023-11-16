@@ -135,7 +135,7 @@ export class IndividualWowheadGearPlannerExporter<SpecType extends Spec> extends
 		let bytes: Array<number> = [];
 		bytes.push(6);
 		bytes.push(0);
-		bytes.push(Mechanics.CHARACTER_LEVEL);
+		bytes.push(Mechanics.MAX_CHARACTER_LEVEL);
 
 		let talentsStr = player.getTalentsString().replaceAll('-', 'f') + 'f';
 		if (talentsStr.length % 2 == 1) {
@@ -274,7 +274,14 @@ export class Individual80UEPExporter<SpecType extends Spec> extends Exporter {
 		[Stat.StatStamina]: 'stamina',
 		[Stat.StatIntellect]: 'intellect',
 		[Stat.StatSpirit]: 'spirit',
-		[Stat.StatSpellPower]: 'spellDamage',
+		[Stat.StatSpellPower]: 'spellPower',
+		[Stat.StatSpellDamage]: 'spellDamage',
+		[Stat.StatArcanePower]: 'arcaneDamage',
+		[Stat.StatHolyPower]: 'holyDamage',
+		[Stat.StatFirePower]: 'fireDamage',
+		[Stat.StatFrostPower]: 'frostDamage',
+		[Stat.StatNaturePower]: 'natureDamage',
+		[Stat.StatShadowPower]: 'shadowDamage',
 		[Stat.StatMP5]: 'mp5',
 		[Stat.StatSpellHit]: 'hitRating',
 		[Stat.StatSpellCrit]: 'critRating',

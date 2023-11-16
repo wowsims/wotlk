@@ -24,7 +24,7 @@ import {
 import { gemEligibleForSocket, gemMatchesSocket } from './gems.js';
 import { EquippedItem } from './equipped_item.js';
 import { Gear } from './gear.js';
-import { CHARACTER_LEVEL } from '../constants/mechanics.js';
+import { MAX_CHARACTER_LEVEL } from '../constants/mechanics.js';
 
 const dbUrlJson = '/wotlk/assets/database/db.json';
 const dbUrlBin = '/wotlk/assets/database/db.bin';
@@ -271,7 +271,7 @@ export class Database {
 	private static async getWowheadTooltipData(id: number, tooltipPostfix: string): Promise<IconData> {
 		if (id === 0) return IconData.create();
 
-		const url = `https://nether.wowhead.com/classic/tooltip/${tooltipPostfix}/${id}?lvl=${CHARACTER_LEVEL}`;
+		const url = `https://nether.wowhead.com/classic/tooltip/${tooltipPostfix}/${id}?lvl=${MAX_CHARACTER_LEVEL}`;
 		try {
 			const response = await fetch(url);
 			const json = await response.json();

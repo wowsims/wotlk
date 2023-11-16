@@ -367,7 +367,7 @@ export class SettingsTab extends SimTab {
 					debuffs: simUI.sim.raid.getDebuffs(),
 					consumes: player.getConsumes(),
 					race: player.getRace(),
-					level: 60,
+					level: player.getLevel(),
 					professions: player.getProfessions(),
 					reactionTimeMs: player.getReactionTime(),
 					channelClipDelayMs: player.getChannelClipDelay(),
@@ -380,6 +380,7 @@ export class SettingsTab extends SimTab {
 			},
 			setData: (eventID: EventID, simUI: IndividualSimUI<any>, newSettings: SavedSettings) => {
 				TypedEvent.freezeAllAndDo(() => {
+					simUI.player.setLevel(eventID, newSettings.level);
 					simUI.sim.raid.setBuffs(eventID, newSettings.raidBuffs || RaidBuffs.create());
 					simUI.sim.raid.setDebuffs(eventID, newSettings.debuffs || Debuffs.create());
 					const party = simUI.player.getParty();

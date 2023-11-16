@@ -404,7 +404,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			//Special case for Totem of Wrath keeps buff and debuff sync'd
 			this.player.applySharedDefaults(eventID);
 			this.player.setRace(eventID, specToEligibleRaces[this.player.spec][0]);
-			this.player.setLevel(eventID, Mechanics.CHARACTER_LEVEL);
+			this.player.setLevel(eventID, Mechanics.MAX_CHARACTER_LEVEL);
 			this.player.setGear(eventID, this.sim.db.lookupEquipmentSpec(this.individualConfig.defaults.gear));
 			this.player.setConsumes(eventID, this.individualConfig.defaults.consumes);
 			this.player.setRotation(eventID, this.player.specTypeFunctions.rotationCreate());

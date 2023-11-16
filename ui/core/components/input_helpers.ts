@@ -345,6 +345,7 @@ function makeNumberIconInput<SpecType extends Spec, Message, ModObject>(config: 
 		id: id,
 		states: 0, // Must be assigned externally.
 		changedEvent: config.changeEmitter,
+		showWhen: config.showWhen,
 		getValue: (modObj: ModObject) => config.getValue(modObj)[fieldName] as unknown as number,
 		setValue: (eventID: EventID, modObj: ModObject, newValue: number) => {
 			const newMessage = config.getValue(modObj);

@@ -8,7 +8,7 @@ import {
 } from '../proto/ui.js';
 
 import { Database } from './database.js';
-import { CHARACTER_LEVEL } from '../constants/mechanics.js';
+import { MAX_CHARACTER_LEVEL } from '../constants/mechanics.js';
 
 // If true uses wotlkdb.com, else uses wowhead.com.
 export const USE_WOTLK_DB = false;
@@ -144,7 +144,7 @@ export class ActionId {
 		if (USE_WOTLK_DB) {
 			return 'https://classicdb.com/?item=' + id;
 		} else {
-			return `https://wowhead.com/classic/${langPrefix}item=${id}?lvl=${CHARACTER_LEVEL}`;
+			return `https://wowhead.com/classic/${langPrefix}item=${id}?lvl=${MAX_CHARACTER_LEVEL}`;
 		}
 	}
 	static makeSpellUrl(id: number): string {

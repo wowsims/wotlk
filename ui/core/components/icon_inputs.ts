@@ -10,6 +10,7 @@ import { IconEnumPicker, IconEnumValueConfig } from './icon_enum_picker.js';
 import { IconPicker } from './icon_picker.js';
 
 import * as InputHelpers from './input_helpers.js';
+import { MAX_CHARACTER_LEVEL } from '../constants/mechanics.js';
 
 // Component Functions
 
@@ -29,73 +30,85 @@ export const buildIconInput = (parent: HTMLElement, player: Player<Spec>, inputC
 // Raid Buffs
 
 export const AllStatsBuff = InputHelpers.makeMultiIconInput([
-	makeTristateRaidBuffInput(ActionId.fromSpellId(21850), ActionId.fromSpellId(17055), 'giftOfTheWild'),
+	makeTristateRaidBuffInput({id: ActionId.fromSpellId(9885), impId: ActionId.fromSpellId(17055), fieldName: 'giftOfTheWild'}),
+	// makeTristateRaidBuffInput({id: ActionId.fromSpellId(9884), impId: ActionId.fromSpellId(17055), fieldName: 'giftOfTheWild', minLevel: 50, maxLevel: 59}),
+	// makeTristateRaidBuffInput({id: ActionId.fromSpellId(8907), impId: ActionId.fromSpellId(17055), fieldName: 'giftOfTheWild', minLevel: 40, maxLevel: 49}),
+	// makeTristateRaidBuffInput({id: ActionId.fromSpellId(5234), impId: ActionId.fromSpellId(17055), fieldName: 'giftOfTheWild', minLevel: 30, maxLevel: 39}),
+	// makeTristateRaidBuffInput({id: ActionId.fromSpellId(6756), impId: ActionId.fromSpellId(17055), fieldName: 'giftOfTheWild', minLevel: 20, maxLevel: 29}),
+	// makeTristateRaidBuffInput({id: ActionId.fromSpellId(5232), impId: ActionId.fromSpellId(17055), fieldName: 'giftOfTheWild', minLevel: 10, maxLevel: 19}),
+	// makeTristateRaidBuffInput({id: ActionId.fromSpellId(1126), impId: ActionId.fromSpellId(17055), fieldName: 'giftOfTheWild', minLevel: 1, maxLevel: 9}),
 ], 'Stats');
 
 export const AllStatsPercentBuff = InputHelpers.makeMultiIconInput([
-	makeBooleanIndividualBuffInput(ActionId.fromSpellId(20217), 'blessingOfKings'),
+	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(20217), fieldName: 'blessingOfKings'}),
 ], 'Stats %');
 
+// TODO: Classic armor buff ranks
 export const ArmorBuff = InputHelpers.makeMultiIconInput([
-	makeTristateRaidBuffInput(ActionId.fromSpellId(10293), ActionId.fromSpellId(20142), 'devotionAura'),
-	makeBooleanRaidBuffInput(ActionId.fromItemId(43468), 'scrollOfProtection'),
+	makeTristateRaidBuffInput({id: ActionId.fromSpellId(10293), impId: ActionId.fromSpellId(20142), fieldName: 'devotionAura'}),
+	makeBooleanRaidBuffInput({id: ActionId.fromItemId(43468), fieldName: 'scrollOfProtection'}),
 ], 'Armor');
 
 export const StaminaBuff = InputHelpers.makeMultiIconInput([
-	makeTristateRaidBuffInput(ActionId.fromSpellId(10938), ActionId.fromSpellId(14767), 'powerWordFortitude'),
-	makeTristateRaidBuffInput(ActionId.fromSpellId(11767), ActionId.fromSpellId(18696), 'bloodPact'),
-	makeBooleanRaidBuffInput(ActionId.fromItemId(10307), 'scrollOfStamina'),
+	makeTristateRaidBuffInput({id: ActionId.fromSpellId(10938), impId: ActionId.fromSpellId(14767), fieldName: 'powerWordFortitude'}),
+	// makeTristateRaidBuffInput({id: ActionId.fromSpellId(10937), impId: ActionId.fromSpellId(14767), fieldName: 'powerWordFortitude', minLevel: 48, maxLevel: 59}),
+	// makeTristateRaidBuffInput({id: ActionId.fromSpellId(2791), impId: ActionId.fromSpellId(14767), fieldName: 'powerWordFortitude', minLevel: 36, maxLevel: 47}),
+	// makeTristateRaidBuffInput({id: ActionId.fromSpellId(1245), impId: ActionId.fromSpellId(14767), fieldName: 'powerWordFortitude', minLevel: 24, maxLevel: 35}),
+	// makeTristateRaidBuffInput({id: ActionId.fromSpellId(1244), impId: ActionId.fromSpellId(14767), fieldName: 'powerWordFortitude', minLevel: 12, maxLevel: 23}),
+	// makeTristateRaidBuffInput({id: ActionId.fromSpellId(1243), impId: ActionId.fromSpellId(14767), fieldName: 'powerWordFortitude', minLevel: 1, maxLevel: 11}),
+	makeTristateRaidBuffInput({id: ActionId.fromSpellId(11767), impId: ActionId.fromSpellId(18696), fieldName: 'bloodPact'}),
+	makeBooleanRaidBuffInput({id: ActionId.fromItemId(10307), fieldName: 'scrollOfStamina'}),
 ], 'Stamina');
 
 // TODO: Breakout Strength / Agi
 export const StrengthAndAgilityBuff = InputHelpers.makeMultiIconInput([
-	makeTristateRaidBuffInput(ActionId.fromSpellId(25361), ActionId.fromSpellId(52456), 'strengthOfEarthTotem'),
-	makeBooleanRaidBuffInput(ActionId.fromItemId(10309), 'scrollOfAgility'),
-	makeBooleanRaidBuffInput(ActionId.fromItemId(10310), 'scrollOfStrength'),
+	makeTristateRaidBuffInput({id: ActionId.fromSpellId(25361), impId: ActionId.fromSpellId(52456), fieldName: 'strengthOfEarthTotem'}),
+	makeBooleanRaidBuffInput({id: ActionId.fromItemId(10309), fieldName: 'scrollOfAgility'}),
+	makeBooleanRaidBuffInput({id: ActionId.fromItemId(10310), fieldName: 'scrollOfStrength'}),
 ], 'Str/Agi');
 
 export const IntellectBuff = InputHelpers.makeMultiIconInput([
-	makeBooleanRaidBuffInput(ActionId.fromSpellId(23028), 'arcaneBrilliance'),
-	makeBooleanRaidBuffInput(ActionId.fromItemId(10308), 'scrollOfIntellect'),
+	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(23028), fieldName: 'arcaneBrilliance'}),
+	makeBooleanRaidBuffInput({id: ActionId.fromItemId(10308), fieldName: 'scrollOfIntellect'}),
 ], 'Int');
 
 export const SpiritBuff = InputHelpers.makeMultiIconInput([
-	makeBooleanRaidBuffInput(ActionId.fromSpellId(27841), 'divineSpirit'),
-	makeBooleanRaidBuffInput(ActionId.fromItemId(10306), 'scrollOfSpirit'),
+	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(27841), fieldName: 'divineSpirit'}),
+	makeBooleanRaidBuffInput({id: ActionId.fromItemId(10306), fieldName: 'scrollOfSpirit'}),
 ], 'Spirit');
 
 export const AttackPowerBuff = InputHelpers.makeMultiIconInput([
 	makeTristateIndividualBuffInput(ActionId.fromSpellId(48934), ActionId.fromSpellId(20045), 'blessingOfMight'),
-	makeTristateRaidBuffInput(ActionId.fromSpellId(47436), ActionId.fromSpellId(12861), 'battleShout'),
-	makeBooleanRaidBuffInput(ActionId.fromSpellId(19506), 'trueshotAura'),
+	makeTristateRaidBuffInput({id: ActionId.fromSpellId(47436), impId: ActionId.fromSpellId(12861), fieldName: 'battleShout'}),
+	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(19506), fieldName: 'trueshotAura'}),
 ], 'AP');
 
 export const AttackPowerPercentBuff = InputHelpers.makeMultiIconInput([
 ], 'Atk Pwr %');
 
 export const DamageReductionPercentBuff = InputHelpers.makeMultiIconInput([
-	makeBooleanIndividualBuffInput(ActionId.fromSpellId(25899), 'blessingOfSanctuary'),
+	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(25899), fieldName: 'blessingOfSanctuary'}),
 ], 'Mit %');
 
 export const ResistanceBuff = InputHelpers.makeMultiIconInput([
-	makeBooleanRaidBuffInput(ActionId.fromSpellId(48170), 'shadowProtection'),
-	makeBooleanRaidBuffInput(ActionId.fromSpellId(58749), 'natureResistanceTotem'),
-	makeBooleanRaidBuffInput(ActionId.fromSpellId(49071), 'aspectOfTheWild'),
-	makeBooleanRaidBuffInput(ActionId.fromSpellId(48945), 'frostResistanceAura'),
-	makeBooleanRaidBuffInput(ActionId.fromSpellId(58745), 'frostResistanceTotem'),
+	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(48170), fieldName: 'shadowProtection'}),
+	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(58749), fieldName: 'natureResistanceTotem'}),
+	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(49071), fieldName: 'aspectOfTheWild'}),
+	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(48945), fieldName: 'frostResistanceAura'}),
+	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(58745), fieldName: 'frostResistanceTotem'}),
 ], 'Resistances');
 
 export const MP5Buff = InputHelpers.makeMultiIconInput([
 	makeTristateIndividualBuffInput(ActionId.fromSpellId(25290), ActionId.fromSpellId(20245), 'blessingOfWisdom'),
-	makeTristateRaidBuffInput(ActionId.fromSpellId(10497), ActionId.fromSpellId(16208), 'manaSpringTotem'),
+	makeTristateRaidBuffInput({id: ActionId.fromSpellId(10497), impId: ActionId.fromSpellId(16208), fieldName: 'manaSpringTotem'}),
 ], 'MP5');
 
 export const MeleeCritBuff = InputHelpers.makeMultiIconInput([
-	makeTristateRaidBuffInput(ActionId.fromSpellId(17007), ActionId.fromSpellId(34300), 'leaderOfThePack'),
+	makeTristateRaidBuffInput({id: ActionId.fromSpellId(17007), impId: ActionId.fromSpellId(34300), fieldName: 'leaderOfThePack'}),
 ], 'Melee Crit');
 
 export const SpellCritBuff = InputHelpers.makeMultiIconInput([
-	makeBooleanRaidBuffInput(ActionId.fromSpellId(24907), 'moonkinAura'),
+	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(24907), fieldName: 'moonkinAura'}),
 ], 'Spell Crit');
 
 // TODO: Classic rune
@@ -107,16 +120,15 @@ export const DefensiveCooldownBuff = InputHelpers.makeMultiIconInput([
 ], 'Defensive CDs');
 
 // Misc Buffs
-export const RetributionAura = makeBooleanRaidBuffInput(ActionId.fromSpellId(10301), 'retributionAura');
-export const Thorns = makeTristateRaidBuffInput(ActionId.fromSpellId(9910), ActionId.fromSpellId(16840), 'thorns');
+export const RetributionAura = makeBooleanRaidBuffInput({id: ActionId.fromSpellId(10301), fieldName: 'retributionAura'});
+export const Thorns = makeTristateRaidBuffInput({id: ActionId.fromSpellId(9910), impId: ActionId.fromSpellId(16840), fieldName: 'thorns'});
 export const Innervate = makeMultistateIndividualBuffInput(ActionId.fromSpellId(29166), 11, 'innervates');
 export const PowerInfusion = makeMultistateIndividualBuffInput(ActionId.fromSpellId(10060), 11, 'powerInfusions');
 
 // Debuffs
-
 export const MajorArmorDebuff = InputHelpers.makeMultiIconInput([
-	makeBooleanDebuffInput(ActionId.fromSpellId(47467), 'sunderArmor'),
-	makeBooleanDebuffInput(ActionId.fromSpellId(8647), 'exposeArmor'),
+	makeBooleanDebuffInput({id: ActionId.fromSpellId(47467), fieldName: 'sunderArmor'}),
+	makeBooleanDebuffInput({id: ActionId.fromSpellId(8647), fieldName: 'exposeArmor'}),
 ], 'Major ArP');
 
 // TODO: Classic
@@ -140,20 +152,20 @@ export const MeleeAttackSpeedDebuff = InputHelpers.makeMultiIconInput([
 ], 'Atk Speed');
 
 export const MeleeHitDebuff = InputHelpers.makeMultiIconInput([
-	makeBooleanDebuffInput(ActionId.fromSpellId(65855), 'insectSwarm'),
+	makeBooleanDebuffInput({id: ActionId.fromSpellId(65855), fieldName: 'insectSwarm'}),
 ], 'Miss');
 
 // TODO: Classic
 export const SpellISBDebuff = InputHelpers.makeMultiIconInput([
-	makeBooleanDebuffInput(ActionId.fromSpellId(17803), 'improvedShadowBolt'),
+	makeBooleanDebuffInput({id: ActionId.fromSpellId(17803), fieldName: 'improvedShadowBolt'}),
 ], 'ISB');
 
 export const SpellScorchDebuff = InputHelpers.makeMultiIconInput([
-	makeBooleanDebuffInput(ActionId.fromSpellId(12873), 'improvedScorch'),
+	makeBooleanDebuffInput({id: ActionId.fromSpellId(12873), fieldName: 'improvedScorch'}),
 ], 'Scorch');
 
 export const SpellWintersChillDebuff = InputHelpers.makeMultiIconInput([
-	makeBooleanDebuffInput(ActionId.fromSpellId(28595), 'wintersChill'),
+	makeBooleanDebuffInput({id: ActionId.fromSpellId(28595), fieldName: 'wintersChill'}),
 ], 'Winters Chill');
 
 // TODO: Classic
@@ -163,10 +175,10 @@ export const SpellWintersChillDebuff = InputHelpers.makeMultiIconInput([
 
 // TODO: Classic
 export const HuntersMark = withLabel(makeTristateDebuffInput(ActionId.fromSpellId(14325), ActionId.fromSpellId(19425), 'huntersMark'), 'Mark');
-export const JudgementOfWisdom = withLabel(makeBooleanDebuffInput(ActionId.fromSpellId(20355), 'judgementOfWisdom'), 'JoW');
-export const JudgementOfLight = makeBooleanDebuffInput(ActionId.fromSpellId(20346), 'judgementOfLight');
-export const GiftOfArthas = makeBooleanDebuffInput(ActionId.fromSpellId(11374), 'giftOfArthas');
-export const CrystalYield = makeBooleanDebuffInput(ActionId.fromSpellId(15235), 'crystalYield');
+export const JudgementOfWisdom = withLabel(makeBooleanDebuffInput({id: ActionId.fromSpellId(20355), fieldName: 'judgementOfWisdom'}), 'JoW');
+export const JudgementOfLight = makeBooleanDebuffInput({id: ActionId.fromSpellId(20346), fieldName: 'judgementOfLight'});
+export const GiftOfArthas = makeBooleanDebuffInput({id: ActionId.fromSpellId(11374), fieldName: 'giftOfArthas'});
+export const CrystalYield = makeBooleanDebuffInput({id: ActionId.fromSpellId(15235), fieldName: 'crystalYield'});
 
 // Consumes
 export const Sapper = makeBooleanConsumeInput({id: ActionId.fromItemId(10646), fieldName: 'sapper', minLevel: 40});
@@ -181,13 +193,22 @@ function withLabel<ModObject, T>(config: InputHelpers.TypedIconPickerConfig<ModO
 	return config;
 }
 
-function makeBooleanRaidBuffInput(id: ActionId, fieldName: keyof RaidBuffs, value?: number): InputHelpers.TypedIconPickerConfig<Player<any>, boolean> {
-	return InputHelpers.makeBooleanIconInput<any, RaidBuffs, Raid>({
-		getModObject: (player: Player<any>) => player.getRaid()!,
-		getValue: (raid: Raid) => raid.getBuffs(),
-		setValue: (eventID: EventID, raid: Raid, newVal: RaidBuffs) => raid.setBuffs(eventID, newVal),
-		changeEmitter: (raid: Raid) => raid.buffsChangeEmitter,
-	}, id, fieldName, value);
+interface BooleanInputConfig<T> {
+	id: ActionId, 
+	fieldName: keyof T, 
+	value?: number, 
+	minLevel?: number,
+	maxLevel?: number,
+}
+
+function makeBooleanRaidBuffInput<SpecType extends Spec>(config: BooleanInputConfig<RaidBuffs>): InputHelpers.TypedIconPickerConfig<Player<any>, boolean> {
+	return InputHelpers.makeBooleanIconInput<any, RaidBuffs, Player<SpecType>>({
+		getModObject: (player: Player<any>) => player,
+		showWhen: (p) => (config.minLevel || 0) <= p.getLevel() && p.getLevel() <= (config.maxLevel || MAX_CHARACTER_LEVEL),
+		getValue: (p) => p.getRaid()!.getBuffs(),
+		setValue: (eventID: EventID, p: Player<SpecType>, newVal: RaidBuffs) => p.getRaid()!.setBuffs(eventID, newVal),
+		changeEmitter: (p) => TypedEvent.onAny([p.getRaid()!.buffsChangeEmitter, p.levelChangeEmitter]),
+	}, config.id, config.fieldName, config.value);
 }
 // function makeBooleanPartyBuffInput(id: ActionId, fieldName: keyof PartyBuffs, value?: number): InputHelpers.TypedIconPickerConfig<Player<any>, boolean> {
 // 	return InputHelpers.makeBooleanIconInput<any, PartyBuffs, Party>({
@@ -197,23 +218,19 @@ function makeBooleanRaidBuffInput(id: ActionId, fieldName: keyof RaidBuffs, valu
 // 		changeEmitter: (party: Party) => party.buffsChangeEmitter,
 // 	}, id, fieldName, value);
 // }
-function makeBooleanIndividualBuffInput(id: ActionId, fieldName: keyof IndividualBuffs, value?: number): InputHelpers.TypedIconPickerConfig<Player<any>, boolean> {
+
+function makeBooleanIndividualBuffInput(config: BooleanInputConfig<IndividualBuffs>): InputHelpers.TypedIconPickerConfig<Player<any>, boolean> {
 	return InputHelpers.makeBooleanIconInput<any, IndividualBuffs, Player<any>>({
 		getModObject: (player: Player<any>) => player,
+		showWhen: (p) => (config.minLevel || 0) <= p.getLevel() && p.getLevel() <= (config.maxLevel || MAX_CHARACTER_LEVEL),
 		getValue: (player: Player<any>) => player.getBuffs(),
 		setValue: (eventID: EventID, player: Player<any>, newVal: IndividualBuffs) => player.setBuffs(eventID, newVal),
 		changeEmitter: (player: Player<any>) => player.buffsChangeEmitter,
-	}, id, fieldName, value);
+	}, config.id, config.fieldName, config.value);
 }
 
-interface BooleanConsumeInputConfig {
-	id: ActionId, 
-	fieldName: keyof Consumes, 
-	value?: number, 
-	minLevel?: number,
-}
 // eslint-disable-next-line unused-imports/no-unused-vars
-function makeBooleanConsumeInput<SpecType extends Spec>(config: BooleanConsumeInputConfig): InputHelpers.TypedIconPickerConfig<Player<SpecType>, boolean> {
+function makeBooleanConsumeInput<SpecType extends Spec>(config: BooleanInputConfig<Consumes>): InputHelpers.TypedIconPickerConfig<Player<SpecType>, boolean> {
 	return InputHelpers.makeBooleanIconInput<any, Consumes, Player<any>>({
 		getModObject: (player: Player<SpecType>) => player,
 		showWhen: (p) => p.getLevel() >= (config.minLevel || 0),
@@ -222,22 +239,32 @@ function makeBooleanConsumeInput<SpecType extends Spec>(config: BooleanConsumeIn
 		changeEmitter: (player: Player<any>) => TypedEvent.onAny([player.consumesChangeEmitter, player.levelChangeEmitter])
 	}, config.id, config.fieldName, config.value);
 }
-function makeBooleanDebuffInput(id: ActionId, fieldName: keyof Debuffs, value?: number): InputHelpers.TypedIconPickerConfig<Player<any>, boolean> {
-	return InputHelpers.makeBooleanIconInput<any, Debuffs, Raid>({
-		getModObject: (player: Player<any>) => player.getRaid()!,
-		getValue: (raid: Raid) => raid.getDebuffs(),
-		setValue: (eventID: EventID, raid: Raid, newVal: Debuffs) => raid.setDebuffs(eventID, newVal),
-		changeEmitter: (raid: Raid) => raid.debuffsChangeEmitter,
-	}, id, fieldName, value);
+function makeBooleanDebuffInput<SpecType extends Spec>(config: BooleanInputConfig<Debuffs>): InputHelpers.TypedIconPickerConfig<Player<any>, boolean> {
+	return InputHelpers.makeBooleanIconInput<any, Debuffs, Player<SpecType>>({
+		getModObject: (player) => player,
+		showWhen: (p) => (config.minLevel || 0) <= p.getLevel() && p.getLevel() <= (config.maxLevel || MAX_CHARACTER_LEVEL),
+		getValue: (p) => p.getRaid()!.getDebuffs(),
+		setValue: (eventID: EventID, p: Player<SpecType>, newVal: Debuffs) => p.getRaid()!.setDebuffs(eventID, newVal),
+		changeEmitter: (p) => TypedEvent.onAny([p.getRaid()!.debuffsChangeEmitter, p.levelChangeEmitter]),
+	}, config.id, config.fieldName, config.value);
 }
 
-function makeTristateRaidBuffInput(id: ActionId, impId: ActionId, fieldName: keyof RaidBuffs): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
-	return InputHelpers.makeTristateIconInput<any, RaidBuffs, Raid>({
-		getModObject: (player: Player<any>) => player.getRaid()!,
-		getValue: (raid: Raid) => raid.getBuffs(),
-		setValue: (eventID: EventID, raid: Raid, newVal: RaidBuffs) => raid.setBuffs(eventID, newVal),
-		changeEmitter: (raid: Raid) => raid.buffsChangeEmitter,
-	}, id, impId, fieldName);
+interface TristateInputConfig<T> {
+	id: ActionId, 
+	impId: ActionId, 
+	fieldName: keyof T,
+	minLevel?: number
+	maxLevel?: number
+}
+
+function makeTristateRaidBuffInput<SpecType extends Spec>(config: TristateInputConfig<RaidBuffs>): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
+	return InputHelpers.makeTristateIconInput<any, RaidBuffs, Player<SpecType>>({
+		getModObject: (player) => player,
+		showWhen: (p) => (config.minLevel || 0) <= p.getLevel() && p.getLevel() <= (config.maxLevel || MAX_CHARACTER_LEVEL),
+		getValue: (p) => p.getRaid()!.getBuffs(),
+		setValue: (eventID: EventID, p: Player<SpecType>, newVal: RaidBuffs) => p.getRaid()!.setBuffs(eventID, newVal),
+		changeEmitter: (p: Player<SpecType>) => TypedEvent.onAny([p.getRaid()!.buffsChangeEmitter, p.levelChangeEmitter]),
+	}, config.id, config.impId, config.fieldName);
 }
 function makeTristateIndividualBuffInput(id: ActionId, impId: ActionId, fieldName: keyof IndividualBuffs): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
 	return InputHelpers.makeTristateIconInput<any, IndividualBuffs, Player<any>>({
@@ -358,13 +385,16 @@ export const makeWeaponBuffsInput = makeConsumeInputFactory({
 export const makeFoodInput = makeConsumeInputFactory({
 	consumesFieldName: 'food',
 	allOptions: [
+		{ actionId: ActionId.fromItemId(15856), value: Food.FoodHotWolfRibs, showWhen: (p) => p.getLevel() >= 25 },
+		{ actionId: ActionId.fromItemId(22480), value: Food.FoodTenderWolfSteak, showWhen: (p) => p.getLevel() >= 40 },
+		{ actionId: ActionId.fromItemId(13931), value: Food.FoodNightfinSoup, showWhen: (p) => p.getLevel() >= 35 },
 		{ actionId: ActionId.fromItemId(13931), value: Food.FoodNightfinSoup, showWhen: (p) => p.getLevel() >= 35 },
 		{ actionId: ActionId.fromItemId(13928), value: Food.FoodGrilledSquid, showWhen: (p) => p.getLevel() >= 35 },
 		{ actionId: ActionId.fromItemId(20452), value: Food.FoodSmokedDesertDumpling, showWhen: (p) => p.getLevel() >= 45 },
 		{ actionId: ActionId.fromItemId(18254), value: Food.FoodRunnTumTuberSurprise, showWhen: (p) => p.getLevel() >= 45 },
-		{ actionId: ActionId.fromItemId(21023), value: Food.FoodDirgesKickChimaerokChops, showWhen: (p) => p.getLevel() >= 55 },
 		{ actionId: ActionId.fromItemId(13813), value: Food.FoodBlessedSunfruitJuice, showWhen: (p) => p.getLevel() >= 45 },
 		{ actionId: ActionId.fromItemId(13810), value: Food.FoodBlessSunfruit, showWhen: (p) => p.getLevel() >= 45 },
+		{ actionId: ActionId.fromItemId(21023), value: Food.FoodDirgesKickChimaerokChops, showWhen: (p) => p.getLevel() >= 55 },
 	] as Array<IconEnumValueConfig<Player<any>, Food>>
 });
 

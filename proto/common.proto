@@ -370,6 +370,8 @@ enum Food {
 	FoodDirgesKickChimaerokChops = 5;
 	FoodBlessedSunfruitJuice = 6;
 	FoodBlessSunfruit = 7;
+	FoodHotWolfRibs = 8;
+	FoodTenderWolfSteak = 9;
 }
 
 // Buffs that affect the entire raid.

@@ -1,11 +1,10 @@
 import { ActionId } from '../proto_utils/action_id.js';
-import { EventID, TypedEvent } from '../typed_event.js';
+import { TypedEvent } from '../typed_event.js';
 import { SimUI } from '../sim_ui.js';
 import { isRightClick } from '../utils.js';
 
 import { Component } from './component.js';
 import { IconPicker, IconPickerConfig } from './icon_picker.js';
-import { Input, InputConfig } from './input.js';
 
 export interface MultiIconPickerItemConfig<ModObject> extends IconPickerConfig<ModObject, any> {
 }
@@ -81,7 +80,7 @@ export class MultiIconPicker<ModObject> extends Component {
 
 		this.buildBlankOption();
 
-		this.pickers = config.inputs.map((pickerConfig, i) => {
+		this.pickers = config.inputs.map((pickerConfig, _) => {
 			const optionContainer = document.createElement('li');
 			optionContainer.classList.add('icon-picker-option', 'dropdown-option');
 			this.dropdownMenu.appendChild(optionContainer);
