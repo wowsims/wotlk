@@ -1081,17 +1081,6 @@ func init() {
 	})
 
 	NewItemEffectWithHeroic(func(isHeroic bool) {
-		itemId := int32(49992)
-		if isHeroic {
-			itemId = 50648
-		}
-
-		core.NewItemEffect(itemId, func(agent core.Agent) {
-			MakeNibelungTriggerAura(agent, isHeroic)
-		})
-	})
-
-	NewItemEffectWithHeroic(func(isHeroic bool) {
 		itemId := int32(50179)
 		spellId := int32(71870)
 		triggerSpellId := int32(71871)

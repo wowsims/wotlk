@@ -106,6 +106,10 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 				IconInputs.StaminaBuff,
 			],
 			excludeBuffDebuffInputs: [
+				IconInputs.AgilityBuffInput,
+				IconInputs.StrengthBuffInput,
+				IconInputs.FireDamageBuff,
+				IconInputs.FrostDamageBuff,
 			],
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {

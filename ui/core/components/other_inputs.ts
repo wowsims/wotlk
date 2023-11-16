@@ -126,19 +126,6 @@ export const DistanceFromTarget = {
 	},
 };
 
-export const nibelungAverageCasts =  {
-	type: 'number' as const,
-	label: "Nibelung's Valkyr Survival (in # of casts)",
-	labelTooltip: 'Number of casts of Nibelung\'s summoned Valkyrs get out before they die (max 16)',
-	changedEvent: (player: Player<any>) => player.changeEmitter,
-	getValue: (player: Player<any>) => player.getNibelungAverageCasts(),
-	setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
-		player.setNibelungAverageCastsSet(eventID, true);
-		player.setNibelungAverageCasts(eventID, newValue);
-	},
-	showWhen: (player: Player<any>) => [49992, 50648].includes(player.getEquippedItem(ItemSlot.ItemSlotMainHand)?.id || 0)
-}
-
 export const TankAssignment = {
 	type: 'enum' as const,
 	extraCssClasses: [

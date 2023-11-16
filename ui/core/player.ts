@@ -224,6 +224,7 @@ export class Player<SpecType extends Spec> {
 	//private bulkEquipmentSpec: BulkEquipmentSpec = BulkEquipmentSpec.create();
 	private itemSwapGear: ItemSwapGear = new ItemSwapGear();
 	private race: Race;
+	private level: number;
 	private profession1: Profession = 0;
 	private profession2: Profession = 0;
 	private rotation: SpecRotation<SpecType>;
@@ -236,8 +237,6 @@ export class Player<SpecType extends Spec> {
 	private channelClipDelay: number = 0;
 	private inFrontOfTarget: boolean = false;
 	private distanceFromTarget: number = 0;
-	private nibelungAverageCasts: number = 11;
-	private nibelungAverageCastsSet: boolean = false;
 	private healingModel: HealingModel = HealingModel.create();
 	private healingEnabled: boolean = false;
 
@@ -265,6 +264,7 @@ export class Player<SpecType extends Spec> {
 	readonly gearChangeEmitter = new TypedEvent<void>('PlayerGear');
 	readonly professionChangeEmitter = new TypedEvent<void>('PlayerProfession');
 	readonly raceChangeEmitter = new TypedEvent<void>('PlayerRace');
+	readonly levelChangeEmitter = new TypedEvent<void>('PlayerLevel');
 	readonly rotationChangeEmitter = new TypedEvent<void>('PlayerRotation');
 	readonly talentsChangeEmitter = new TypedEvent<void>('PlayerTalents');
 	readonly glyphsChangeEmitter = new TypedEvent<void>('PlayerGlyphs');
@@ -290,6 +290,7 @@ export class Player<SpecType extends Spec> {
 
 		this.spec = spec;
 		this.race = specToEligibleRaces[this.spec][0];
+		this.level = Mechanics.CHARACTER_LEVEL;
 		this.specTypeFunctions = specTypeFunctions[this.spec] as SpecTypeFunctions<SpecType>;
 		this.rotation = this.specTypeFunctions.rotationCreate();
 		this.specOptions = this.specTypeFunctions.optionsCreate();
@@ -306,6 +307,7 @@ export class Player<SpecType extends Spec> {
 			this.gearChangeEmitter,
 			this.professionChangeEmitter,
 			this.raceChangeEmitter,
+			this.levelChangeEmitter,
 			this.rotationChangeEmitter,
 			this.talentsChangeEmitter,
 			this.glyphsChangeEmitter,
@@ -495,6 +497,15 @@ export class Player<SpecType extends Spec> {
 		if (newRace != this.race) {
 			this.race = newRace;
 			this.raceChangeEmitter.emit(eventID);
+		}
+	}
+	getLevel(): number {
+		return this.level;
+	}
+	setLevel(eventID: EventID, newLevel: number){
+		if (newLevel != this.level){
+			this.level = newLevel;
+			this.levelChangeEmitter.emit(eventID)
 		}
 	}
 
@@ -705,7 +716,7 @@ export class Player<SpecType extends Spec> {
 
 		let debuffCrit = 0.0;
 
-		const debuffs = this.sim.raid.getDebuffs();
+		this.sim.raid.getDebuffs();
 
 		const baseCritCap = 100.0 - glancing + suppression - remainingMeleeHitCap - remainingExpertiseCap - specSpecificOffset;
 		const playerCritCapDelta = meleeCrit - baseCritCap + debuffCrit;
@@ -932,25 +943,6 @@ export class Player<SpecType extends Spec> {
 
 		this.distanceFromTarget = newDistanceFromTarget;
 		this.distanceFromTargetChangeEmitter.emit(eventID);
-	}
-
-	getNibelungAverageCasts(): number {
-		return this.nibelungAverageCasts;
-	}
-
-	setNibelungAverageCastsSet(eventID: EventID, newnibelungAverageCastsSet: boolean) {
-		if (newnibelungAverageCastsSet == this.nibelungAverageCastsSet)
-			return;
-
-		this.nibelungAverageCastsSet = newnibelungAverageCastsSet;
-	}
-
-	setNibelungAverageCasts(eventID: EventID, newnibelungAverageCasts: number) {
-		if (newnibelungAverageCasts == this.nibelungAverageCasts)
-			return;
-
-		this.nibelungAverageCasts = Math.min(newnibelungAverageCasts, 16);
-		this.miscOptionsChangeEmitter.emit(eventID);
 	}
 
 	setDefaultHealingParams(hm: HealingModel) {
@@ -1323,6 +1315,7 @@ export class Player<SpecType extends Spec> {
 			PlayerProto.create({
 				name: this.getName(),
 				race: this.getRace(),
+				level: this.getLevel(),
 				class: this.getClass(),
 				equipment: gear.asSpec(),
 				consumes: this.getConsumes(),
@@ -1342,8 +1335,6 @@ export class Player<SpecType extends Spec> {
 				distanceFromTarget: this.getDistanceFromTarget(),
 				healingModel: this.getHealingModel(),
 				database: forExport ? SimDatabase.create() : this.toDatabase(),
-				nibelungAverageCasts: this.getNibelungAverageCasts(),
-				nibelungAverageCastsSet: this.nibelungAverageCastsSet,
 			}),
 			(aplIsLaunched || (forSimming && aplRotation.type == APLRotationType.TypeAPL))
 				? this.specTypeFunctions.rotationCreate()
@@ -1389,6 +1380,7 @@ export class Player<SpecType extends Spec> {
 		TypedEvent.freezeAllAndDo(() => {
 			this.setName(eventID, proto.name);
 			this.setRace(eventID, proto.race);
+			this.setLevel(eventID, proto.level);
 			this.setGear(eventID, proto.equipment ? this.sim.db.lookupEquipmentSpec(proto.equipment) : new Gear({}));
 			//this.setBulkEquipmentSpec(eventID, BulkEquipmentSpec.create()); // Do not persist the bulk equipment settings.
 			this.setConsumes(eventID, proto.consumes || Consumes.create());
@@ -1402,10 +1394,6 @@ export class Player<SpecType extends Spec> {
 			this.setChannelClipDelay(eventID, proto.channelClipDelayMs);
 			this.setInFrontOfTarget(eventID, proto.inFrontOfTarget);
 			this.setDistanceFromTarget(eventID, proto.distanceFromTarget);
-			this.setNibelungAverageCastsSet(eventID, proto.nibelungAverageCastsSet);
-			if (this.nibelungAverageCastsSet) {
-				this.setNibelungAverageCasts(eventID, proto.nibelungAverageCasts);
-			}
 			this.setHealingModel(eventID, proto.healingModel || HealingModel.create());
 			this.setSpecOptions(eventID, this.specTypeFunctions.optionsFromPlayer(proto));
 

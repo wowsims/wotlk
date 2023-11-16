@@ -18,63 +18,59 @@ import "warrior.proto";
 
 message Player {
 	// Label used for logging.
-	string name = 16;
+	string name = 1;
 
-	Race race = 1;
-	Class class = 2;
+	Race race = 2;
+	int32 level = 3;
+	Class class = 4;
 
-	EquipmentSpec equipment = 3;
-	Consumes consumes = 4;
-	UnitStats bonus_stats = 36;
+	EquipmentSpec equipment = 5;
+	Consumes consumes = 6;
+	UnitStats bonus_stats = 7;
 
-	IndividualBuffs buffs = 15;
-
-	oneof spec {
-		BalanceDruid balance_druid = 6;
-		FeralDruid feral_druid = 22;
-		FeralTankDruid feral_tank_druid = 26;
-		RestorationDruid restoration_druid = 37;
-		Hunter hunter = 7;
-		Mage mage = 8;
-		RetributionPaladin retribution_paladin = 9;
-		ProtectionPaladin protection_paladin = 25;
-		HolyPaladin holy_paladin = 38;
-		HealingPriest healing_priest = 34;
-		ShadowPriest shadow_priest = 10;
-		SmitePriest smite_priest = 20;
-		Rogue rogue = 11;
-		ElementalShaman elemental_shaman = 12;
-		EnhancementShaman enhancement_shaman = 18;
-		RestorationShaman restoration_shaman = 39;
-		Warlock warlock = 13;
-		Warrior warrior = 14;
-		ProtectionWarrior protection_warrior = 21;
-		Deathknight deathknight = 31;
-		TankDeathknight tank_deathknight = 32;
-	}
+	IndividualBuffs buffs = 8;
 
 	// Talents in wowhead format, e.g. '01102123133-12312312-'
-	string talents_string = 17;
-	Glyphs glyphs = 28;
-	Profession profession1 = 29;
-	Profession profession2 = 30;
-	Cooldowns cooldowns = 19;
+	string talents_string = 9;
+	Profession profession1 = 10;
+	Profession profession2 = 11;
+	Cooldowns cooldowns = 12;
 
-	APLRotation rotation = 40;
+	APLRotation rotation = 13;
 
-	int32 reaction_time_ms = 41;
-	int32 channel_clip_delay_ms = 42;
-	bool in_front_of_target = 23;
-	double distance_from_target = 33;
-
-	HealingModel healing_model = 27;
-
+	int32 reaction_time_ms = 14;
+	int32 channel_clip_delay_ms = 15;
+	bool in_front_of_target = 16;
+	double distance_from_target = 17;
 	// Items/enchants/gems/etc to include in the database.
-	SimDatabase database = 35;
+	SimDatabase database = 18;
+	HealingModel healing_model = 19;
 
-	double nibelung_average_casts = 43;
-	// hack to set a proper default value
-	bool nibelung_average_casts_set = 44;
+	oneof spec {
+		BalanceDruid balance_druid = 20;
+		FeralDruid feral_druid = 21;
+		FeralTankDruid feral_tank_druid = 22;
+		RestorationDruid restoration_druid = 23;
+		Hunter hunter = 24;
+		Mage mage = 25;
+		RetributionPaladin retribution_paladin = 26;
+		ProtectionPaladin protection_paladin = 27;
+		HolyPaladin holy_paladin = 28;
+		HealingPriest healing_priest = 29;
+		ShadowPriest shadow_priest = 30;
+		SmitePriest smite_priest = 31;
+		Rogue rogue = 32;
+		ElementalShaman elemental_shaman = 33;
+		EnhancementShaman enhancement_shaman = 34;
+		RestorationShaman restoration_shaman = 35;
+		Warlock warlock = 36;
+		Warrior warrior = 37;
+		ProtectionWarrior protection_warrior = 38;
+		Deathknight deathknight = 39;
+		TankDeathknight tank_deathknight = 40;
+	}
+	
+	Glyphs glyphs = 41;
 }
 
 message Party {

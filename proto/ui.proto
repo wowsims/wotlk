@@ -289,22 +289,20 @@ message SavedGearSet {
 message SavedSettings {
 	RaidBuffs raid_buffs = 1;
 	PartyBuffs party_buffs = 2;
-	Debuffs debuffs = 7;
-	IndividualBuffs player_buffs = 3;
-	Consumes consumes = 4;
-	Race race = 5;
-	Cooldowns cooldowns = 6;
-	string rotation_json = 8;
-	repeated Profession professions = 9;
+	Debuffs debuffs = 3;
+	IndividualBuffs player_buffs = 4;
+	Consumes consumes = 5;
+	Race race = 6;
+	int32 level = 7;
+	Cooldowns cooldowns = 8;
+	string rotation_json = 9;
+	repeated Profession professions = 10;
 
-	int32 reaction_time_ms = 10;
-	int32 channel_clip_delay_ms = 14;
-	bool in_front_of_target = 11;
-	double distance_from_target = 12;
-	HealingModel healing_model = 13;
-	double nibelung_average_casts = 15;
-	// hack to set a proper default value
-	bool nibelung_average_casts_set = 16;
+	int32 reaction_time_ms = 11;
+	int32 channel_clip_delay_ms = 12;
+	bool in_front_of_target = 13;
+	double distance_from_target = 14;
+	HealingModel healing_model = 15;
 }
 
 message SavedTalents {

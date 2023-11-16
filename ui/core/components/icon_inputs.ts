@@ -169,7 +169,7 @@ export const GiftOfArthas = makeBooleanDebuffInput(ActionId.fromSpellId(11374), 
 export const CrystalYield = makeBooleanDebuffInput(ActionId.fromSpellId(15235), 'crystalYield');
 
 // Consumes
-export const Sapper = makeBooleanConsumeInput(ActionId.fromItemId(10646), 'sapper');
+export const Sapper = makeBooleanConsumeInput({id: ActionId.fromItemId(10646), fieldName: 'sapper', minLevel: 40});
 
 // TODO: Classic
 // export const PetScrollOfAgilityV = makeBooleanConsumeInput(ActionId.fromItemId(27498), 'petScrollOfAgility', 5);
@@ -205,14 +205,22 @@ function makeBooleanIndividualBuffInput(id: ActionId, fieldName: keyof Individua
 		changeEmitter: (player: Player<any>) => player.buffsChangeEmitter,
 	}, id, fieldName, value);
 }
+
+interface BooleanConsumeInputConfig {
+	id: ActionId, 
+	fieldName: keyof Consumes, 
+	value?: number, 
+	minLevel?: number,
+}
 // eslint-disable-next-line unused-imports/no-unused-vars
-function makeBooleanConsumeInput(id: ActionId, fieldName: keyof Consumes, value?: number): InputHelpers.TypedIconPickerConfig<Player<any>, boolean> {
+function makeBooleanConsumeInput<SpecType extends Spec>(config: BooleanConsumeInputConfig): InputHelpers.TypedIconPickerConfig<Player<SpecType>, boolean> {
 	return InputHelpers.makeBooleanIconInput<any, Consumes, Player<any>>({
-		getModObject: (player: Player<any>) => player,
+		getModObject: (player: Player<SpecType>) => player,
+		showWhen: (p) => p.getLevel() >= (config.minLevel || 0),
 		getValue: (player: Player<any>) => player.getConsumes(),
 		setValue: (eventID: EventID, player: Player<any>, newVal: Consumes) => player.setConsumes(eventID, newVal),
-		changeEmitter: (player: Player<any>) => player.consumesChangeEmitter,
-	}, id, fieldName, value);
+		changeEmitter: (player: Player<any>) => TypedEvent.onAny([player.consumesChangeEmitter, player.levelChangeEmitter])
+	}, config.id, config.fieldName, config.value);
 }
 function makeBooleanDebuffInput(id: ActionId, fieldName: keyof Debuffs, value?: number): InputHelpers.TypedIconPickerConfig<Player<any>, boolean> {
 	return InputHelpers.makeBooleanIconInput<any, Debuffs, Raid>({
@@ -335,46 +343,34 @@ export const makeFlasksInput = makeConsumeInputFactory({
 		{ actionId: ActionId.fromItemId(13512), value: Flask.FlaskOfSupremePower },
 		{ actionId: ActionId.fromItemId(13513), value: Flask.FlaskOfChromaticResistance },
 	] as Array<IconEnumValueConfig<Player<any>, Flask>>,
-	onSet: (eventID: EventID, player: Player<any>, newValue: Flask) => {
-		if (newValue) {
-			const newConsumes = player.getConsumes();
-			player.setConsumes(eventID, newConsumes);
-		}
-	}
 });
 
 export const makeWeaponBuffsInput = makeConsumeInputFactory({
 	consumesFieldName: 'weaponBuff',
 	allOptions: [
-		{ actionId: ActionId.fromItemId(20749), value: WeaponBuff.BrillianWizardOil },
-		{ actionId: ActionId.fromItemId(20748), value: WeaponBuff.BrilliantManaOil },
-		{ actionId: ActionId.fromItemId(12404), value: WeaponBuff.DenseSharpeningStone },
-		{ actionId: ActionId.fromItemId(18262), value: WeaponBuff.ElementalSharpeningStone },
+		{ actionId: ActionId.fromItemId(20749), value: WeaponBuff.BrillianWizardOil, showWhen: (p) =>  p.getLevel() >= 45},
+		{ actionId: ActionId.fromItemId(20748), value: WeaponBuff.BrilliantManaOil, showWhen: (p) =>  p.getLevel() >= 45 },
+		{ actionId: ActionId.fromItemId(12404), value: WeaponBuff.DenseSharpeningStone, showWhen: (p) =>  p.getLevel() >= 35 },
+		{ actionId: ActionId.fromItemId(18262), value: WeaponBuff.ElementalSharpeningStone, showWhen: (p) =>  p.getLevel() >= 50 },
 	] as Array<IconEnumValueConfig<Player<any>, WeaponBuff>>,
-	onSet: (eventID: EventID, player: Player<any>, newValue: WeaponBuff) => {
-		if (newValue) {
-			const newConsumes = player.getConsumes();
-			player.setConsumes(eventID, newConsumes);
-		}
-	}
 });
 
 export const makeFoodInput = makeConsumeInputFactory({
 	consumesFieldName: 'food',
 	allOptions: [
-		{ actionId: ActionId.fromItemId(13931), value: Food.FoodNightfinSoup },
-		{ actionId: ActionId.fromItemId(13928), value: Food.FoodGrilledSquid },
-		{ actionId: ActionId.fromItemId(20452), value: Food.FoodSmokedDesertDumpling },
-		{ actionId: ActionId.fromItemId(18254), value: Food.FoodRunnTumTuberSurprise },
-		{ actionId: ActionId.fromItemId(21023), value: Food.FoodDirgesKickChimaerokChops },
-		{ actionId: ActionId.fromItemId(13813), value: Food.FoodBlessedSunfruitJuice },
-		{ actionId: ActionId.fromItemId(13810), value: Food.FoodBlessSunfruit },
+		{ actionId: ActionId.fromItemId(13931), value: Food.FoodNightfinSoup, showWhen: (p) => p.getLevel() >= 35 },
+		{ actionId: ActionId.fromItemId(13928), value: Food.FoodGrilledSquid, showWhen: (p) => p.getLevel() >= 35 },
+		{ actionId: ActionId.fromItemId(20452), value: Food.FoodSmokedDesertDumpling, showWhen: (p) => p.getLevel() >= 45 },
+		{ actionId: ActionId.fromItemId(18254), value: Food.FoodRunnTumTuberSurprise, showWhen: (p) => p.getLevel() >= 45 },
+		{ actionId: ActionId.fromItemId(21023), value: Food.FoodDirgesKickChimaerokChops, showWhen: (p) => p.getLevel() >= 55 },
+		{ actionId: ActionId.fromItemId(13813), value: Food.FoodBlessedSunfruitJuice, showWhen: (p) => p.getLevel() >= 45 },
+		{ actionId: ActionId.fromItemId(13810), value: Food.FoodBlessSunfruit, showWhen: (p) => p.getLevel() >= 45 },
 	] as Array<IconEnumValueConfig<Player<any>, Food>>
 });
 
 export const AgilityBuffInput = makeConsumeInput('agilityElixir', [
-	{ actionId: ActionId.fromItemId(13452), value: AgilityElixir.ElixirOfTheMongoose },
-	{ actionId: ActionId.fromItemId(9187), value: AgilityElixir.ElixirOfGreaterAgility},
+	{ actionId: ActionId.fromItemId(13452), value: AgilityElixir.ElixirOfTheMongoose, showWhen: (p) => p.getLevel() >= 46 },
+	{ actionId: ActionId.fromItemId(9187), value: AgilityElixir.ElixirOfGreaterAgility, showWhen: (p) => p.getLevel() >= 38},
 ] as Array<IconEnumValueConfig<Player<any>, AgilityElixir>>);
 
 export const StrengthBuffInput = makeConsumeInput('strengthBuff', [
@@ -382,19 +378,20 @@ export const StrengthBuffInput = makeConsumeInput('strengthBuff', [
 	{ actionId: ActionId.fromItemId(9206), value: StrengthBuff.ElixirOfGiants },
 ] as Array<IconEnumValueConfig<Player<any>, StrengthBuff>>);
 
-export const SpellDamageBuff = makeBooleanConsumeInput(ActionId.fromItemId(13454), 'spellPowerBuff');
-export const ShadowDamageBuff = makeBooleanConsumeInput(ActionId.fromItemId(9264), 'shadowPowerBuff');
-export const FireDamageBuff = makeBooleanConsumeInput(ActionId.fromItemId(21546), 'firePowerBuff');
-export const FrostDamageBuff = makeBooleanConsumeInput(ActionId.fromItemId(17708), 'frostPowerBuff');
+export const SpellDamageBuff = makeBooleanConsumeInput({id: ActionId.fromItemId(13454), fieldName: 'spellPowerBuff', minLevel: 47});
+export const ShadowDamageBuff = makeBooleanConsumeInput({id: ActionId.fromItemId(9264), fieldName: 'shadowPowerBuff', minLevel: 40});
+export const FireDamageBuff = makeBooleanConsumeInput({id: ActionId.fromItemId(21546), fieldName: 'firePowerBuff', minLevel: 40});
+export const FrostDamageBuff = makeBooleanConsumeInput({id: ActionId.fromItemId(17708), fieldName: 'frostPowerBuff', minLevel: 40});
 
 export const FillerExplosiveInput = makeConsumeInput('fillerExplosive', [
-	{ actionId: ActionId.fromItemId(18641), value: Explosive.ExplosiveDenseDynamite },
-	{ actionId: ActionId.fromItemId(15993), value: Explosive.ExplosiveThoriumGrenade },
+	{ actionId: ActionId.fromItemId(18641), value: Explosive.ExplosiveDenseDynamite, showWhen: (p) => p.getLevel() >= 40 },
+	{ actionId: ActionId.fromItemId(15993), value: Explosive.ExplosiveThoriumGrenade, showWhen: (p) => p.getLevel() >= 40 },
 ] as Array<IconEnumValueConfig<Player<any>, Explosive>>);
 
 export interface ConsumeInputFactoryArgs<T extends number> {
 	consumesFieldName: keyof Consumes,
 	allOptions: Array<IconEnumValueConfig<Player<any>, T>>,
+	// Additional callback if logic besides syncing consumes is required
 	onSet?: (eventID: EventID, player: Player<any>, newValue: T) => void
 }
 function makeConsumeInputFactory<T extends number>(args: ConsumeInputFactoryArgs<T>): (options: Array<T>, tooltip?: string) => InputHelpers.TypedIconEnumPickerConfig<Player<any>, T> {
@@ -408,7 +405,7 @@ function makeConsumeInputFactory<T extends number>(args: ConsumeInputFactoryArgs
 			].concat(options.map(option => args.allOptions.find(allOption => allOption.value == option)!)),
 			equals: (a: T, b: T) => a == b,
 			zeroValue: 0 as T,
-			changedEvent: (player: Player<any>) => player.consumesChangeEmitter,
+			changedEvent: (player: Player<any>) => TypedEvent.onAny([player.consumesChangeEmitter, player.levelChangeEmitter]),
 			getValue: (player: Player<any>) => player.getConsumes()[args.consumesFieldName] as T,
 			setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
 				const newConsumes = player.getConsumes();

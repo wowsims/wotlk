@@ -1,3 +1,4 @@
+import { Player } from "ui/core/player";
 import { IndividualSimUI } from "../../individual_sim_ui";
 import {
 	Flask,
@@ -23,7 +24,7 @@ export class ConsumesPicker extends Component {
 		this.settingsTab = settingsTab;
 		this.simUI = simUI;
 
-		this.buildElixirsPicker();
+		this.buildFlaskPicker();
 		this.buildWeaponBuffPicker();
 		this.buildFoodPicker();
 		this.buildPhysicalBuffPicker();
@@ -32,7 +33,7 @@ export class ConsumesPicker extends Component {
 		this.buildPetPicker();
 	}
 
-	private buildElixirsPicker() {
+	private buildFlaskPicker() {
 		let fragment = document.createElement('fragment');
 		fragment.innerHTML = `
       <div class="consumes-row input-root input-inline">
@@ -43,7 +44,7 @@ export class ConsumesPicker extends Component {
       </div>
     `;
 
-		this.rootElem.appendChild(fragment.children[0] as HTMLElement);
+		const ele = this.rootElem.appendChild(fragment.children[0] as HTMLElement);
 
 		const flaskOptions = this.simUI.splitRelevantOptions([
 			{ item: Flask.FlaskOfTheTitans, stats: [Stat.StatStamina] },
@@ -51,14 +52,28 @@ export class ConsumesPicker extends Component {
 			{ item: Flask.FlaskOfSupremePower, stats: [Stat.StatMP5, Stat.StatSpellPower] },
 			{ item: Flask.FlaskOfChromaticResistance, stats: [Stat.StatStamina] },
 		]);
+		let picker: IconEnumPicker<Player<Spec>, Flask>;
 		if (flaskOptions.length) {
 			const elem = this.rootElem.querySelector('.consumes-flasks') as HTMLElement;
-			new IconEnumPicker(
+			picker = new IconEnumPicker(
 				elem,
 				this.simUI.player,
 				IconInputs.makeFlasksInput(flaskOptions, 'Flask')
 			);
 		}
+
+		// All current flasks are a level 50+ requirement
+		const updateFlask = () => {
+			if (this.simUI.player.getLevel() >= 50){
+				picker?.restoreValue();
+				ele!.classList.remove('hide');
+			} else {
+				picker?.storeValue();
+				ele!.classList.add('hide');
+			}
+		};
+		this.simUI.player.levelChangeEmitter.on(updateFlask);
+		updateFlask();
 	}
 
 	private buildWeaponBuffPicker() {
@@ -117,6 +132,11 @@ export class ConsumesPicker extends Component {
 	}
 
 	private buildPhysicalBuffPicker() {
+		const includeAgi = !this.simUI.individualConfig.excludeBuffDebuffInputs.includes(IconInputs.AgilityBuffInput);
+		const includeStr = !this.simUI.individualConfig.excludeBuffDebuffInputs.includes(IconInputs.StrengthBuffInput);
+
+		if (!includeAgi && !includeStr) return;
+
 		let fragment = document.createElement('fragment');
 		fragment.innerHTML = `
       <div class="consumes-row input-root input-inline">
@@ -128,11 +148,22 @@ export class ConsumesPicker extends Component {
 		this.rootElem.appendChild(fragment.children[0] as HTMLElement);
 		const physicalConsumesElem = this.rootElem.querySelector('.consumes-physical') as HTMLElement;
 
-		buildIconInput(physicalConsumesElem, this.simUI.player, IconInputs.AgilityBuffInput);
-		buildIconInput(physicalConsumesElem, this.simUI.player, IconInputs.StrengthBuffInput);
+		if (includeAgi){
+			buildIconInput(physicalConsumesElem, this.simUI.player, IconInputs.AgilityBuffInput);
+		}
+		if (includeStr){
+			buildIconInput(physicalConsumesElem, this.simUI.player, IconInputs.StrengthBuffInput);
+		}
 	}
 
 	private buildSpellPowerBuffPicker() {
+		const includeSpellPower = !this.simUI.individualConfig.excludeBuffDebuffInputs.includes(IconInputs.SpellDamageBuff);
+		const includeShadowPower = !this.simUI.individualConfig.excludeBuffDebuffInputs.includes(IconInputs.ShadowDamageBuff);
+		const includeFirePower = !this.simUI.individualConfig.excludeBuffDebuffInputs.includes(IconInputs.FireDamageBuff);
+		const includeFrostPower = !this.simUI.individualConfig.excludeBuffDebuffInputs.includes(IconInputs.FrostDamageBuff);
+
+		if (!includeSpellPower && !includeShadowPower && !includeFirePower && !includeFrostPower) return;
+
 		let fragment = document.createElement('fragment');
 		fragment.innerHTML = `
       <div class="consumes-row input-root input-inline">
@@ -141,13 +172,31 @@ export class ConsumesPicker extends Component {
       </div>
     `;
 
-		this.rootElem.appendChild(fragment.children[0] as HTMLElement);
+		const spellsGroup = this.rootElem.appendChild(fragment.children[0] as HTMLElement);
 		const spellsCnsumesElem = this.rootElem.querySelector('.consumes-spells') as HTMLElement;
 
-		buildIconInput(spellsCnsumesElem, this.simUI.player, IconInputs.SpellDamageBuff);
-		buildIconInput(spellsCnsumesElem, this.simUI.player, IconInputs.ShadowDamageBuff);
-		buildIconInput(spellsCnsumesElem, this.simUI.player, IconInputs.FireDamageBuff);
-		buildIconInput(spellsCnsumesElem, this.simUI.player, IconInputs.FrostDamageBuff);
+		if (includeSpellPower){
+			buildIconInput(spellsCnsumesElem, this.simUI.player, IconInputs.SpellDamageBuff);
+		}
+		if (includeShadowPower){
+			buildIconInput(spellsCnsumesElem, this.simUI.player, IconInputs.ShadowDamageBuff);
+		}
+		if (includeFirePower){
+			buildIconInput(spellsCnsumesElem, this.simUI.player, IconInputs.FireDamageBuff);
+		}
+		if( includeFrostPower){
+			buildIconInput(spellsCnsumesElem, this.simUI.player, IconInputs.FrostDamageBuff);
+		}
+
+		const updateSpellGroup = () => {
+			if (this.simUI.player.getLevel() >= 40){
+				spellsGroup!.classList.remove('hide');
+			} else {
+				spellsGroup!.classList.add('hide');
+			}
+		};
+		this.simUI.player.levelChangeEmitter.on(updateSpellGroup);
+		updateSpellGroup();
 	}
 
 	private buildEngPicker() {
@@ -163,7 +212,6 @@ export class ConsumesPicker extends Component {
 
 		const tradeConsumesElem = this.rootElem.querySelector('.consumes-trade') as HTMLElement;
 
-		// TODO Classic
 		buildIconInput(tradeConsumesElem, this.simUI.player, IconInputs.Sapper);
 		buildIconInput(tradeConsumesElem, this.simUI.player, IconInputs.FillerExplosiveInput);
 

@@ -149,6 +149,19 @@ export class SettingsTab extends SimTab {
 			true
 		);
 
+		new EnumPicker(contentBlock.bodyElement, this.simUI.player, {
+			label: 'Level',
+			values: [25,40,50,60].map(level => {
+				return {
+					name: `Level ${level}`,
+					value: level,
+				};
+			}),
+			changedEvent: sim => sim.levelChangeEmitter,
+			getValue: sim => sim.getLevel(),
+			setValue: (eventID, sim, newValue) => sim.setLevel(eventID, newValue),
+		});
+
 		const races = specToEligibleRaces[this.simUI.player.spec];
 		new EnumPicker(contentBlock.bodyElement, this.simUI.player, {
 			label: 'Race',
@@ -161,7 +174,7 @@ export class SettingsTab extends SimTab {
 			changedEvent: sim => sim.raceChangeEmitter,
 			getValue: sim => sim.getRace(),
 			setValue: (eventID, sim, newValue) => sim.setRace(eventID, newValue),
-		});
+		});		
 
 		if (this.simUI.individualConfig.playerInputs?.inputs.length) {
 			this.configureInputSection(contentBlock.bodyElement, this.simUI.individualConfig.playerInputs);
@@ -354,13 +367,13 @@ export class SettingsTab extends SimTab {
 					debuffs: simUI.sim.raid.getDebuffs(),
 					consumes: player.getConsumes(),
 					race: player.getRace(),
+					level: 60,
 					professions: player.getProfessions(),
 					reactionTimeMs: player.getReactionTime(),
 					channelClipDelayMs: player.getChannelClipDelay(),
 					inFrontOfTarget: player.getInFrontOfTarget(),
 					distanceFromTarget: player.getDistanceFromTarget(),
 					healingModel: player.getHealingModel(),
-					nibelungAverageCasts: player.getNibelungAverageCasts(),
 					cooldowns: aplLaunchStatuses[simUI.player.spec] == LaunchStatus.Unlaunched ? player.getCooldowns() : undefined,
 					rotationJson: aplLaunchStatuses[simUI.player.spec] == LaunchStatus.Unlaunched ? JSON.stringify(player.specTypeFunctions.rotationToJson(player.getRotation())) : undefined,
 				});
@@ -382,7 +395,6 @@ export class SettingsTab extends SimTab {
 					simUI.player.setInFrontOfTarget(eventID, newSettings.inFrontOfTarget);
 					simUI.player.setDistanceFromTarget(eventID, newSettings.distanceFromTarget);
 					simUI.player.setHealingModel(eventID, newSettings.healingModel || HealingModel.create());
-					simUI.player.setNibelungAverageCasts(eventID, newSettings.nibelungAverageCasts)
 					if (aplLaunchStatuses[simUI.player.spec] == LaunchStatus.Unlaunched) {
 						simUI.player.setCooldowns(eventID, newSettings.cooldowns || Cooldowns.create());
 						if (newSettings.rotationJson) {

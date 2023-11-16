@@ -224,7 +224,7 @@ export interface PlayerEnumInputConfig<SpecType extends Spec, Message> {
 	changeEmitter?: (player: Player<SpecType>) => TypedEvent<any>,
 }
 // T is unused, but kept to have the same interface as the icon enum inputs.
-export function makeSpecOptionsEnumInput<SpecType extends Spec, T>(config: PlayerEnumInputConfig<SpecType, SpecOptions<SpecType>>): TypedEnumPickerConfig<Player<SpecType>> {
+export function makeSpecOptionsEnumInput<SpecType extends Spec>(config: PlayerEnumInputConfig<SpecType, SpecOptions<SpecType>>): TypedEnumPickerConfig<Player<SpecType>> {
 	return makeWrappedEnumInput<SpecType, Player<SpecType>>({
 		label: config.label,
 		labelTooltip: config.labelTooltip,
@@ -242,7 +242,7 @@ export function makeSpecOptionsEnumInput<SpecType extends Spec, T>(config: Playe
 	});
 }
 // T is unused, but kept to have the same interface as the icon enum inputs.
-export function makeRotationEnumInput<SpecType extends Spec, T>(config: PlayerEnumInputConfig<SpecType, SpecRotation<SpecType>>): TypedEnumPickerConfig<Player<SpecType>> {
+export function makeRotationEnumInput<SpecType extends Spec>(config: PlayerEnumInputConfig<SpecType, SpecRotation<SpecType>>): TypedEnumPickerConfig<Player<SpecType>> {
 	return makeWrappedEnumInput<SpecType, Player<SpecType>>({
 		label: config.label,
 		labelTooltip: config.labelTooltip,
@@ -277,6 +277,7 @@ function makeWrappedIconInput<SpecType extends Spec, ModObject, T>(config: Wrapp
 		type: 'icon',
 		id: config.id,
 		states: config.states,
+		showWhen: config.showWhen as any,
 		changedEvent: (player: Player<SpecType>) => config.changedEvent(getModObject(player)),
 		getValue: (player: Player<SpecType>) => config.getValue(getModObject(player)),
 		setValue: (eventID: EventID, player: Player<SpecType>, newValue: T) => config.setValue(eventID, getModObject(player), newValue),
@@ -290,7 +291,8 @@ interface WrappedTypedInputConfig<Message, ModObject, T> {
 	setValue: (eventID: EventID, modObj: ModObject, messageVal: Message) => void,
 	changeEmitter: (modObj: ModObject) => TypedEvent<any>,
 	extraCssClasses?: Array<string>,
-
+	
+	showWhen?: (obj: ModObject) => boolean,
 	getFieldValue?: (modObj: ModObject) => T,
 	setFieldValue?: (eventID: EventID, modObj: ModObject, newValue: T) => void,
 }
@@ -301,6 +303,7 @@ export function makeBooleanIconInput<SpecType extends Spec, Message, ModObject>(
 		id: id,
 		states: 2,
 		changedEvent: config.changeEmitter,
+		showWhen: config.showWhen,
 		getValue: config.getFieldValue || ((modObj: ModObject) => value ? (config.getValue(modObj)[fieldName] as unknown as number) == value : (config.getValue(modObj)[fieldName] as unknown as boolean)),
 		setValue: config.setFieldValue || ((eventID: EventID, modObj: ModObject, newValue: boolean) => {
 			const newMessage = config.getValue(modObj);

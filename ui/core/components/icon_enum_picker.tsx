@@ -4,6 +4,7 @@ import { TypedEvent } from '../typed_event.js';
 
 import { Input, InputConfig } from './input.js';
 
+// eslint-disable-next-line unused-imports/no-unused-imports
 import { element, fragment } from 'tsx-vanilla';
 
 export interface IconEnumValueConfig<ModObject, T> {
@@ -39,6 +40,7 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 	private readonly config: IconEnumPickerConfig<ModObject, T>;
 
 	private currentValue: T;
+	private storedValue: T | undefined;
 
 	private readonly buttonElem: HTMLAnchorElement;
 	private readonly buttonText: HTMLElement;
@@ -50,7 +52,7 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 		this.currentValue = this.config.zeroValue;
 
 		if (config.showWhen) {
-			config.changedEvent(this.modObject).on(eventID => {
+			config.changedEvent(this.modObject).on(_ => {
 				const show = config.showWhen && config.showWhen(this.modObject);
 				if (!show)
 					this.rootElem.classList.add('hide');
@@ -91,7 +93,7 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 
 		dropdownMenu.style.gridTemplateColumns = `repeat(${this.config.numColumns}, 1fr)`;
 
-		config.values.forEach((valueConfig, i) => {
+		config.values.forEach((valueConfig, _) => {
 			const optionContainer = document.createElement('li');
 			optionContainer.classList.add('icon-dropdown-option', 'dropdown-option')
 			dropdownMenu.appendChild(optionContainer);
@@ -117,18 +119,24 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 			}
 
 			if (valueConfig.showWhen) {
-				config.changedEvent(this.modObject).on(eventID => {
+				config.changedEvent(this.modObject).on(_ => {
 					const show = valueConfig.showWhen && valueConfig.showWhen(this.modObject);
-					if (show)
+					if (show){
 						optionContainer.classList.remove('hide');
-					else
+						this.restoreValue();
+					} else {
+						if (this.getInputValue() == valueConfig.value){
+							this.storeValue();
+						}
 						optionContainer.classList.add('hide');
+					}
 				});
 			}
 
 			option.addEventListener('click', event => {
 				event.preventDefault();
 				this.currentValue = valueConfig.value;
+				this.storedValue = undefined;
 				this.inputChanged(TypedEvent.nextEventID());
 			});
 		});
@@ -136,11 +144,38 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 		this.init();
 	}
 
+	/**
+	 * Stores value of current input and hides the element for later
+	 * restoration. Useful for events which trigger the element
+	 * on and off.
+	 */
+	public storeValue(){
+		this.storedValue = this.getInputValue();
+		this.setInputValue(this.config.zeroValue);
+		this.inputChanged(TypedEvent.nextEventID());
+	}
+
+	/**
+	 * Restores value of current input and shows the element.
+	 */
+	public restoreValue(){
+		if (!this.storedValue) return;
+
+		this.setInputValue(this.storedValue);
+		this.inputChanged(TypedEvent.nextEventID());
+		this.storedValue = undefined;
+	}
+
 	private setActionImage(elem: HTMLAnchorElement, actionId: ActionId) {
 		actionId.fillAndSet(elem, true, true);
 	}
 
 	private setImage(elem: HTMLAnchorElement, valueConfig: IconEnumValueConfig<ModObject, T>) {
+		if (valueConfig.showWhen && !valueConfig.showWhen(this.modObject)){
+			elem.removeAttribute('href')
+			return;
+		}
+
 		if (valueConfig.actionId) {
 			this.setActionImage(elem, valueConfig.actionId);
 		} else {

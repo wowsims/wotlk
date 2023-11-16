@@ -3,6 +3,7 @@ import { TypedEvent } from '../typed_event.js';
 import { isRightClick } from '../utils.js';
 
 import { Input, InputConfig } from './input.js';
+// eslint-disable-next-line unused-imports/no-unused-imports
 import { element, ref } from 'tsx-vanilla';
 
 // Data for creating an icon-based input component.
@@ -37,6 +38,7 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 	private readonly counterElem: HTMLElement;
 
 	private currentValue: number;
+	private storedValue: ValueType | undefined;
 
 	constructor(parent: HTMLElement, modObj: ModObject, config: IconPickerConfig<ModObject, ValueType>) {
 		super(parent, 'icon-picker-root', modObj, config);
@@ -87,6 +89,19 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 			this.config.improvedId2.fillAndSet(this.improvedAnchor2, true, true);
 		}
 
+		if (this.config.showWhen) {
+			config.changedEvent(this.modObject).on(_ => {
+				const show = this.config.showWhen && this.config.showWhen(this.modObject);
+				if (show){
+					this.rootAnchor.classList.remove('hide');
+					this.restoreValue();
+				} else {
+					this.storeValue();
+					this.rootAnchor.classList.add('hide');
+				}
+			});
+		}
+
 		this.init();
 
 		this.rootAnchor.addEventListener('click', event => {
@@ -117,7 +132,7 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 		event.preventDefault();
 	}
 
-	handleRightClick = (event: UIEvent) => {
+	handleRightClick = (_: UIEvent) => {
 		if (this.currentValue > 0) {
 			this.currentValue--;
 		} else { // roll over
@@ -196,5 +211,29 @@ export class IconPicker<ModObject, ValueType> extends Input<ModObject, ValueType
 		if (!this.config.improvedId && (this.config.states > 3 || this.config.states == 0)) {
 			this.counterElem.textContent = String(this.currentValue);
 		}
+	}
+
+	/**
+	 * Stores value of current input and hides the element for later
+	 * restoration. Useful for events which trigger the element
+	 * on and off.
+	 */
+	storeValue(){
+		if (typeof this.storedValue !== 'undefined') return;
+
+		this.storedValue = this.getInputValue();
+		this.setInputValue(0 as ValueType);
+		this.inputChanged(TypedEvent.nextEventID());
+	}
+
+	/**
+	 * Restores value of current input and shows the element.
+	 */
+	restoreValue(){
+		if (typeof this.storedValue === 'undefined') return;
+
+		this.setInputValue(this.storedValue);
+		this.inputChanged(TypedEvent.nextEventID());
+		this.storedValue = undefined;
 	}
 }
