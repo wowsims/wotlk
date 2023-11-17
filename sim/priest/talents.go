@@ -448,6 +448,7 @@ func (priest *Priest) applyImprovedSpiritTap() {
 
 	increase := 1 + 0.05*float64(priest.Talents.ImprovedSpiritTap)
 	statDep := priest.NewDynamicMultiplyStat(stats.Spirit, increase)
+	regen := []float64{0, 0.17, 0.33}[priest.Talents.ImprovedSpiritTap]
 
 	priest.ImprovedSpiritTap = priest.GetOrRegisterAura(core.Aura{
 		Label:    "Improved Spirit Tap",
@@ -455,11 +456,11 @@ func (priest *Priest) applyImprovedSpiritTap() {
 		Duration: time.Second * 8,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			priest.EnableDynamicStatDep(sim, statDep)
-			priest.PseudoStats.SpiritRegenRateCasting += 0.33
+			priest.PseudoStats.SpiritRegenRateCasting += regen
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			priest.DisableDynamicStatDep(sim, statDep)
-			priest.PseudoStats.SpiritRegenRateCasting -= 0.33
+			priest.PseudoStats.SpiritRegenRateCasting -= regen
 		},
 	})
 }
