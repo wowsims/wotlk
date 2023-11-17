@@ -97,6 +97,9 @@ func (priest *Priest) MindFlayTickDuration() time.Duration {
 }
 
 func (priest *Priest) registerMindFlay() {
+	if !priest.Talents.MindFlay {
+		return
+	}
 	maxRank := 6
 	priest.MindFlay = priest.GetOrRegisterSpell(priest.getMindFlaySpellConfig(maxRank))
 

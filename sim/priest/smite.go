@@ -6,33 +6,49 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-func (priest *Priest) RegisterSmiteSpell(memeDream bool) {
-	priest.Smite = priest.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48123},
-		SpellSchool: core.SpellSchoolHoly,
-		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagAPL,
+func (priest *Priest) getSmiteBaseConfig(rank int) core.SpellConfig {
+	spellCoeff := [9]float64{0, 0.123, 0.271, 0.554, 0.714, 0.714, 0.714, 0.714, 0.714}[rank]
+	baseDamage := [9][]float64{{0}, {15, 20}, {28, 34}, {58, 67}, {97, 112}, {158, 178}, {222, 250}, {298, 335}, {384, 429}}[rank]
+	spellId := [9]int32{0, 585, 591, 598, 984, 1004, 6060, 10933, 10934}[rank]
+	manaCost := [9]float64{0, 20, 30, 60, 95, 140, 185, 230, 280}[rank]
+	level := [9]int{0, 1, 6, 14, 22, 30, 38, 46, 54}[rank]
+	castTime := [9]int{0, 1500, 2000, 2500, 2500, 2500, 2500, 2500, 2500}[rank]
+
+	return core.SpellConfig{
+		ActionID:      core.ActionID{SpellID: spellId},
+		SpellSchool:   core.SpellSchoolHoly,
+		ProcMask:      core.ProcMaskSpellDamage,
+		Flags:         core.SpellFlagAPL,
+		RequiredLevel: level,
+		Rank:          rank,
 
 		ManaCost: core.ManaCostOptions{
-			BaseCost: 0.15,
+			FlatCost: manaCost,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:      core.GCDDefault,
-				CastTime: time.Millisecond*2500 - time.Millisecond*100*time.Duration(priest.Talents.DivineFury),
+				CastTime: time.Millisecond*time.Duration(castTime) - time.Millisecond*100*time.Duration(priest.Talents.DivineFury),
 			},
 		},
 
-		BonusCritRating: float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
-		DamageMultiplier: 1 *
-			(1 + 0.05*float64(priest.Talents.SearingLight)) *
-			core.TernaryFloat64(memeDream, 1.2, 1),
-		CritMultiplier:   priest.DefaultSpellCritMultiplier(),
-		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
+		BonusCritRating:  float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
+		DamageMultiplier: 1 + 0.05*float64(priest.Talents.SearingLight),
+		CritMultiplier:   priest.SpellCritMultiplier(1+0.01*float64(priest.Talents.HolySpecialization), 1),
+		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := sim.Roll(713, 799) + 0.7143*spell.SpellPower()
+			baseDamage := sim.Roll(baseDamage[0], baseDamage[1]) + spellCoeff*spell.SpellPower()
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 		},
-	})
+	}
+}
+
+func (priest *Priest) RegisterSmiteSpell() {
+	maxRank := 8
+	priest.Smite = priest.GetOrRegisterSpell(priest.getSmiteBaseConfig(maxRank))
+
+	for i := maxRank - 1; i > 0; i-- {
+		priest.GetOrRegisterSpell(priest.getSmiteBaseConfig(i))
+	}
 }

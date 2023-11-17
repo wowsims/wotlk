@@ -7,6 +7,10 @@ import (
 )
 
 func (priest *Priest) registerShadowWordDeathSpell() {
+	// TODO: Classic verify numbers
+	baseDamage := []float64{261, 305}
+	spellCoeff := 0.429
+
 	priest.ShadowWordDeath = priest.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 401955},
 		SpellSchool: core.SpellSchoolShadow,
@@ -14,8 +18,7 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 		Flags:       core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
-			BaseCost:   0.12,
-			Multiplier: 1,
+			BaseCost: 0.12,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -27,14 +30,14 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 			},
 		},
 
-		BonusHitRating:   float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
+		BonusHitRating:   float64(priest.Talents.ShadowFocus) * 2 * core.SpellHitRatingPerHitChance,
 		BonusCritRating:  0,
 		DamageMultiplier: 1,
 		CritMultiplier:   1,
-		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
+		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := sim.Roll(750, 870) + 0.429*spell.SpellPower()
+			baseDamage := sim.Roll(baseDamage[0], baseDamage[1]) + spellCoeff*spell.SpellPower()
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 
 			if result.Landed() {
@@ -43,7 +46,7 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 			spell.DealDamage(sim, result)
 		},
 		ExpectedInitialDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
-			baseDamage := (750.0+870.0)/2 + 0.429*spell.SpellPower()
+			baseDamage := (baseDamage[0]+baseDamage[1])/2 + spellCoeff*spell.SpellPower()
 			return spell.CalcDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicHitAndCrit)
 		},
 	})

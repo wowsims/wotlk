@@ -16,6 +16,9 @@ func (priest *Priest) RegisterPenanceSpell() {
 
 func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 	var procMask core.ProcMask
+	// TODO: Classic verify numbers
+	spellCoeff := 0.2290       // Using wrath default for now
+	baseDamage := float64(128) // https://www.wowhead.com/classic/news/patch-1-15-build-52124-ptr-datamining-season-of-discovery-runes-336044
 	flags := core.SpellFlagChanneled | core.SpellFlagAPL
 	if isHeal {
 		flags |= core.SpellFlagHelpful
@@ -25,10 +28,11 @@ func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 	}
 
 	return priest.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 402174},
-		SpellSchool: core.SpellSchoolHoly,
-		ProcMask:    procMask,
-		Flags:       flags,
+		ActionID:      core.ActionID{SpellID: 402174},
+		SpellSchool:   core.SpellSchoolHoly,
+		ProcMask:      procMask,
+		Flags:         flags,
+		RequiredLevel: 1,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.16,
@@ -45,7 +49,11 @@ func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 		},
 
 		DamageMultiplier: 1,
-		CritMultiplier:   core.TernaryFloat64(isHeal, priest.DefaultHealingCritMultiplier(), priest.DefaultSpellCritMultiplier()),
+		CritMultiplier: core.TernaryFloat64(
+			isHeal,
+			priest.DefaultHealingCritMultiplier(),
+			priest.SpellCritMultiplier(1+0.01*float64(priest.Talents.HolySpecialization), 1),
+		),
 		ThreatMultiplier: 0,
 
 		Dot: core.Ternary(!isHeal, core.DotConfig{
@@ -57,10 +65,11 @@ func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 			AffectedByCastSpeed: true,
 
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				baseDamage := 375 + 0.2290*dot.Spell.SpellPower()
-				dot.Spell.CalcAndDealPeriodicDamage(sim, target, baseDamage, dot.Spell.OutcomeMagicHitAndCrit)
+				dmg := baseDamage + (spellCoeff * dot.Spell.SpellPower())
+				dot.Spell.CalcAndDealPeriodicDamage(sim, target, dmg, dot.OutcomeTick)
 			},
 		}, core.DotConfig{}),
+		// TODO: Classic healing
 		Hot: core.Ternary(isHeal, core.DotConfig{
 			Aura: core.Aura{
 				Label: "Penance",

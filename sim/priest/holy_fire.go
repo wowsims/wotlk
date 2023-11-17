@@ -6,40 +6,46 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-func (priest *Priest) RegisterHolyFireSpell() {
-	priest.HolyFire = priest.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 15261},
-		SpellSchool: core.SpellSchoolHoly,
-		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagAPL,
+func (priest *Priest) getHolyFireConfig(rank int, cdTimer *core.Timer) core.SpellConfig {
+	directCoeff := 0.75
+	dotCoeff := 0.05
+	baseDamage := [9][]float64{{0}, {84, 104}, {106, 131}, {144, 178}, {178, 223}, {219, 273}, {271, 340}, {323, 406}, {355, 449}}[rank]
+	dotDamage := [9]float64{0, 30, 40, 55, 65, 85, 100, 125, 145}[rank]
+	spellId := [9]int32{0, 14914, 15262, 15263, 15264, 15265, 15266, 15267, 15261}[rank]
+	manaCost := [9]float64{0, 85, 95, 125, 145, 170, 200, 230, 255}[rank]
+	level := [9]int{0, 20, 24, 30, 36, 42, 48, 54, 60}[rank]
+
+	return core.SpellConfig{
+		ActionID:      core.ActionID{SpellID: spellId},
+		SpellSchool:   core.SpellSchoolHoly,
+		ProcMask:      core.ProcMaskSpellDamage,
+		Flags:         core.SpellFlagAPL,
+		RequiredLevel: level,
+		Rank:          rank,
 
 		ManaCost: core.ManaCostOptions{
-			BaseCost: 0.11,
+			FlatCost: manaCost,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:      core.GCDDefault,
-				CastTime: time.Millisecond*2000 - time.Millisecond*100*time.Duration(priest.Talents.DivineFury),
-			},
-			CD: core.Cooldown{
-				Timer:    priest.NewTimer(),
-				Duration: time.Second * 10,
+				CastTime: time.Millisecond*3500 - time.Millisecond*100*time.Duration(priest.Talents.DivineFury),
 			},
 		},
 
-		BonusCritRating:  float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
+		BonusCritRating:  0,
 		DamageMultiplier: 1 + 0.05*float64(priest.Talents.SearingLight),
-		CritMultiplier:   priest.DefaultSpellCritMultiplier(),
-		ThreatMultiplier: 1 - []float64{0, .07, .14, .20}[priest.Talents.SilentResolve],
+		CritMultiplier:   priest.SpellCritMultiplier(priest.SpellCritMultiplier(float64(priest.Talents.HolySpecialization)*1*core.CritRatingPerCritChance, 1), 1),
+		ThreatMultiplier: 1,
 
 		Dot: core.DotConfig{
 			Aura: core.Aura{
 				Label: "HolyFire",
 			},
-			NumberOfTicks: 7,
-			TickLength:    time.Second * 1,
+			NumberOfTicks: 5,
+			TickLength:    time.Second * 2,
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
-				dot.SnapshotBaseDamage = 50 + 0.024*dot.Spell.SpellPower()
+				dot.SnapshotBaseDamage = dotDamage + dotCoeff*dot.Spell.SpellPower()
 				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
@@ -48,12 +54,22 @@ func (priest *Priest) RegisterHolyFireSpell() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := sim.Roll(355, 449) + spell.SpellPower()
+			baseDamage := sim.Roll(baseDamage[0], baseDamage[1]) + directCoeff*spell.SpellPower()
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if result.Landed() {
 				spell.Dot(target).Apply(sim)
 			}
 			spell.DealDamage(sim, result)
 		},
-	})
+	}
+}
+
+func (priest *Priest) registerHolyFire() {
+	maxRank := 8
+	cdTimer := priest.NewTimer()
+	priest.HolyFire = priest.GetOrRegisterSpell(priest.getHolyFireConfig(maxRank, cdTimer))
+
+	for i := maxRank - 1; i > 0; i-- {
+		priest.GetOrRegisterSpell(priest.getHolyFireConfig(i, cdTimer))
+	}
 }

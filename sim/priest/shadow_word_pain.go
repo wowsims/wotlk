@@ -1,7 +1,6 @@
 package priest
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/wowsims/wotlk/sim/core"
@@ -39,7 +38,7 @@ func (priest *Priest) getShadowWordPainConfig(rank int) core.SpellConfig {
 
 		Dot: core.DotConfig{
 			Aura: core.Aura{
-				Label: "ShadowWordPain-" + strconv.Itoa(rank),
+				Label: "ShadowWordPain",
 			},
 
 			NumberOfTicks: 6 + (priest.Talents.ImprovedShadowWordPain),
@@ -47,7 +46,7 @@ func (priest *Priest) getShadowWordPainConfig(rank int) core.SpellConfig {
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 				dot.SnapshotBaseDamage = baseDamage/6 + (spellCoeff * dot.Spell.SpellPower())
-				dot.SnapshotAttackerMultiplier = 1
+				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)

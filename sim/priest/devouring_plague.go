@@ -7,7 +7,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-func (priest *Priest) getDevouringPlagueConfig(rank int) core.SpellConfig {
+func (priest *Priest) getDevouringPlagueConfig(rank int, cdTimer *core.Timer) core.SpellConfig {
 	spellCoeff := 0.063
 	baseDamage := [7]float64{0, 152, 272, 400, 544, 712, 904}[rank]
 	spellId := [7]int32{0, 2944, 19276, 19277, 19278, 19279, 19280}[rank]
@@ -30,7 +30,7 @@ func (priest *Priest) getDevouringPlagueConfig(rank int) core.SpellConfig {
 				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
-				Timer:    priest.NewTimer(),
+				Timer:    cdTimer,
 				Duration: time.Minute * 3,
 			},
 		},
@@ -82,9 +82,10 @@ func (priest *Priest) getDevouringPlagueConfig(rank int) core.SpellConfig {
 
 func (priest *Priest) registerDevouringPlagueSpell() {
 	maxRank := 6
-	priest.DevouringPlague = priest.GetOrRegisterSpell(priest.getDevouringPlagueConfig(maxRank))
+	cdTimer := priest.NewTimer()
+	priest.DevouringPlague = priest.GetOrRegisterSpell(priest.getDevouringPlagueConfig(maxRank, cdTimer))
 
 	for i := maxRank - 1; i > 0; i-- {
-		priest.GetOrRegisterSpell(priest.getDevouringPlagueConfig(i))
+		priest.GetOrRegisterSpell(priest.getDevouringPlagueConfig(i, cdTimer))
 	}
 }

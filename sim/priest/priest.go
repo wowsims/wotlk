@@ -71,9 +71,12 @@ func (priest *Priest) Initialize() {
 	priest.registerMindFlay()
 	priest.registerShadowWordPainSpell()
 	priest.registerDevouringPlagueSpell()
+	priest.RegisterSmiteSpell()
+	priest.registerHolyFire()
+	// TODO: Classic implement runes
 	priest.registerVoidPlagueSpell()
-	// TODO: Classic runes
-	// priest.registerShadowWordDeathSpell()
+	priest.RegisterPenanceSpell()
+	priest.registerShadowWordDeathSpell()
 
 	priest.registerPowerInfusionCD()
 }
@@ -91,7 +94,11 @@ func (priest *Priest) RegisterHealingSpells() {
 }
 
 func (priest *Priest) AddShadowWeavingStack(sim *core.Simulation) {
-	if priest.ShadowWeavingAura != nil {
+	if priest.ShadowWeavingAura == nil {
+		return
+	}
+
+	if sim.RollWithLabel(0, 1, "ShadowWeaving") < (0.2 * float64(priest.Talents.ShadowWeaving)) {
 		priest.ShadowWeavingAura.Activate(sim)
 		priest.ShadowWeavingAura.AddStack(sim)
 	}

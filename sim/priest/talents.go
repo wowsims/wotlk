@@ -41,6 +41,10 @@ func (priest *Priest) ApplyTalents() {
 	if priest.Talents.SpiritOfRedemption {
 		priest.MultiplyStat(stats.Spirit, 1.05)
 	}
+
+	if priest.Talents.SilentResolve > 0 {
+		priest.PseudoStats.ThreatMultiplier *= 1 - []float64{0, .04, .08, .12, .16, .20}[priest.Talents.SilentResolve]
+	}
 }
 
 func (priest *Priest) applyInspiration() {
@@ -87,8 +91,8 @@ func (priest *Priest) applyShadowWeaving() {
 		Duration:  time.Second * 15,
 		MaxStacks: 5,
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
-			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] /= 1.0 + 0.02*float64(oldStacks)
-			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *= 1.0 + 0.02*float64(newStacks)
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] /= 1.0 + 0.03*float64(oldStacks)
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *= 1.0 + 0.03*float64(newStacks)
 		},
 	})
 }

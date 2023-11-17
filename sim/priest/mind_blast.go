@@ -6,7 +6,7 @@ import (
 	"github.com/wowsims/wotlk/sim/core"
 )
 
-func (priest *Priest) getMindBlastBaseConfig(rank int) core.SpellConfig {
+func (priest *Priest) getMindBlastBaseConfig(rank int, cdTimer *core.Timer) core.SpellConfig {
 	spellCoeff := 0.429 // 1.5 cast over 3.5 reference
 	baseDamage := [10][]float64{{0}, {42, 46}, {76, 83}, {117, 126}, {174, 184}, {225, 239}, {288, 307}, {356, 377}, {437, 461}, {508, 537}}[rank]
 	spellId := [10]int32{0, 8092, 8102, 8103, 8104, 8105, 8106, 10945, 10946, 10947}[rank]
@@ -30,7 +30,7 @@ func (priest *Priest) getMindBlastBaseConfig(rank int) core.SpellConfig {
 				CastTime: time.Millisecond * 1500,
 			},
 			CD: core.Cooldown{
-				Timer:    priest.NewTimer(),
+				Timer:    cdTimer,
 				Duration: time.Second*8 - time.Millisecond*500*time.Duration(priest.Talents.ImprovedMindBlast),
 			},
 		},
@@ -59,9 +59,10 @@ func (priest *Priest) getMindBlastBaseConfig(rank int) core.SpellConfig {
 
 func (priest *Priest) registerMindBlast() {
 	maxRank := 9
-	priest.MindBlast = priest.GetOrRegisterSpell(priest.getMindBlastBaseConfig(maxRank))
+	cdTimer := priest.NewTimer()
+	priest.MindBlast = priest.GetOrRegisterSpell(priest.getMindBlastBaseConfig(maxRank, cdTimer))
 
 	for i := maxRank - 1; i > 0; i-- {
-		priest.GetOrRegisterSpell(priest.getMindBlastBaseConfig(i))
+		priest.GetOrRegisterSpell(priest.getMindBlastBaseConfig(i, cdTimer))
 	}
 }
