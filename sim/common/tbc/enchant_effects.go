@@ -65,7 +65,7 @@ func init() {
 		ppmm := character.AutoAttacks.NewPPMManager(1.0, procMask)
 
 		// -4 str per level over 60
-		const strBonus = 100.0 - 4.0*float64(core.CharacterLevel-60)
+		const strBonus = 100.0 - 4.0*float64(core.CharacterMaxLevel-60)
 		mhAura := character.NewTemporaryStatsAura("Crusader Enchant MH", core.ActionID{SpellID: 20007, Tag: 1}, stats.Stats{stats.Strength: strBonus}, time.Second*15)
 		ohAura := character.NewTemporaryStatsAura("Crusader Enchant OH", core.ActionID{SpellID: 20007, Tag: 2}, stats.Stats{stats.Strength: strBonus}, time.Second*15)
 

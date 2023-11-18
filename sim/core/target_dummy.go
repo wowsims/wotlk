@@ -18,7 +18,7 @@ func NewTargetDummy(dummyIndex int, party *Party, partyIndex int) *TargetDummy {
 			Unit: Unit{
 				Type:        PlayerUnit,
 				Index:       int32(party.Index*5 + partyIndex),
-				Level:       CharacterLevel,
+				Level:       CharacterMaxLevel,
 				PseudoStats: stats.NewPseudoStats(),
 				auraTracker: newAuraTracker(),
 				Metrics:     NewUnitMetrics(),

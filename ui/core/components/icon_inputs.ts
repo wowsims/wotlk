@@ -100,7 +100,7 @@ export const ResistanceBuff = InputHelpers.makeMultiIconInput([
 
 export const MP5Buff = InputHelpers.makeMultiIconInput([
 	makeTristateIndividualBuffInput(ActionId.fromSpellId(25290), ActionId.fromSpellId(20245), 'blessingOfWisdom'),
-	makeTristateRaidBuffInput({id: ActionId.fromSpellId(10497), impId: ActionId.fromSpellId(16208), fieldName: 'manaSpringTotem'}),
+	makeTristateRaidBuffInput({id: ActionId.fromSpellId(10497), impId: ActionId.fromSpellId(16208), fieldName: 'manaSpringTotem', minLevel: 40}),
 ], 'MP5');
 
 export const MeleeCritBuff = InputHelpers.makeMultiIconInput([

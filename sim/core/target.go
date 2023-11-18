@@ -131,7 +131,7 @@ func NewTarget(options *proto.Target, targetIndex int32) *Target {
 			StatDependencyManager: stats.NewStatDependencyManager(),
 		},
 	}
-	defaultRaidBossLevel := int32(CharacterLevel + 3)
+	defaultRaidBossLevel := int32(CharacterMaxLevel + 3)
 	target.GCD = target.NewTimer()
 	if target.Level == 0 {
 		target.Level = defaultRaidBossLevel

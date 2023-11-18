@@ -95,7 +95,7 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 		Unit: Unit{
 			Type:        PlayerUnit,
 			Index:       int32(party.Index*5 + partyIndex),
-			Level:       CharacterLevel,
+			Level:       player.GetLevel(),
 			auraTracker: newAuraTracker(),
 			PseudoStats: stats.NewPseudoStats(),
 			Metrics:     NewUnitMetrics(),
@@ -147,7 +147,7 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 		character.Consumes = player.Consumes
 	}
 
-	character.baseStats = BaseStats[BaseStatsKey{Race: character.Race, Class: character.Class}]
+	character.baseStats = getBaseStatsCombo(character.Race, character.Class, int(character.Level))
 
 	character.AddStats(character.baseStats)
 	character.addUniversalStatDependencies()

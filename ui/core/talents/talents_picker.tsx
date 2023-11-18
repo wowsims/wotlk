@@ -1,14 +1,13 @@
-import { Carousel, Tooltip } from 'bootstrap';
+import { Tooltip } from 'bootstrap';
 import { Component } from '../components/component.js';
 import { Input, InputConfig } from '../components/input.js';
-import { Class, Spec } from '../proto/common.js';
+import { Class } from '../proto/common.js';
 import { ActionId } from '../proto_utils/action_id.js';
 import { getSpecIcon } from '../proto_utils/utils.js';
 import { TypedEvent } from '../typed_event.js';
-import { isRightClick } from '../utils.js';
-import { sum } from '../utils.js';
-import { Player } from '../player.js';
+import { isRightClick, sum } from '../utils.js';
 
+// eslint-disable-next-line unused-imports/no-unused-imports
 import { element, fragment } from 'tsx-vanilla';
 
 const MAX_POINTS_PLAYER = 71;
@@ -219,7 +218,7 @@ class TalentTreePicker<TalentsProto> extends Component {
 		new Tooltip(resetBtn, {
 			title: 'Reset talent points',
 		});
-		resetBtn.addEventListener('click', event => {
+		resetBtn.addEventListener('click', _ => {
 			this.talents.forEach(talent => talent.setPoints(0, false));
 			this.picker.inputChanged(TypedEvent.nextEventID());
 		});
