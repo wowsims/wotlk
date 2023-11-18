@@ -31,6 +31,7 @@ func EnchantToDBKey(enchant *proto.UIEnchant) EnchantDBKey {
 type WowDatabase struct {
 	Items    map[int32]*proto.UIItem
 	Enchants map[EnchantDBKey]*proto.UIEnchant
+	Runes    map[int32]*proto.UIRune
 
 	Zones map[int32]*proto.UIZone
 	Npcs  map[int32]*proto.UINPC
@@ -45,6 +46,7 @@ func NewWowDatabase() *WowDatabase {
 	return &WowDatabase{
 		Items:    make(map[int32]*proto.UIItem),
 		Enchants: make(map[EnchantDBKey]*proto.UIEnchant),
+		Runes:    make(map[int32]*proto.UIRune),
 		Zones:    make(map[int32]*proto.UIZone),
 		Npcs:     make(map[int32]*proto.UINPC),
 
@@ -57,6 +59,7 @@ func (db *WowDatabase) Clone() *WowDatabase {
 	return &WowDatabase{
 		Items:    maps.Clone(db.Items),
 		Enchants: maps.Clone(db.Enchants),
+		Runes:    maps.Clone(db.Runes),
 		Zones:    maps.Clone(db.Zones),
 		Npcs:     maps.Clone(db.Npcs),
 
@@ -88,6 +91,7 @@ func (db *WowDatabase) MergeEnchants(arr []*proto.UIEnchant) {
 		db.MergeEnchant(enchant)
 	}
 }
+
 func (db *WowDatabase) MergeEnchant(src *proto.UIEnchant) {
 	key := EnchantToDBKey(src)
 	if dst, ok := db.Enchants[key]; ok {
@@ -99,6 +103,22 @@ func (db *WowDatabase) MergeEnchant(src *proto.UIEnchant) {
 		googleProto.Merge(dst, src)
 	} else {
 		db.Enchants[key] = src
+	}
+}
+
+func (db *WowDatabase) MergeRunes(arr []*proto.UIRune) {
+	for _, rune := range arr {
+		db.MergeRune(rune)
+	}
+}
+
+func (db *WowDatabase) MergeRune(src *proto.UIRune) {
+	key := src.Id
+	if dst, ok := db.Runes[key]; ok {
+		// googleproto.Merge concatenates lists, but we want replacement, so do them manually.
+		googleProto.Merge(dst, src)
+	} else {
+		db.Runes[key] = src
 	}
 }
 
@@ -125,6 +145,20 @@ func (db *WowDatabase) MergeNpc(src *proto.UINPC) {
 		googleProto.Merge(dst, src)
 	} else {
 		db.Npcs[src.Id] = src
+	}
+}
+
+func (db *WowDatabase) AddRune(id int32, tooltip WowheadItemResponse) {
+	if tooltip.GetName() == "" || tooltip.GetIcon() == "" {
+		return
+	}
+	db.Runes[id] = &proto.UIRune{
+		Id:            id,
+		Name:          tooltip.GetName(),
+		Icon:          tooltip.GetIcon(),
+		Class:         tooltip.GetRequiredClass(),
+		Type:          tooltip.GetRequiredItemSlot(),
+		RequiresLevel: int32(tooltip.GetRequiresLevel()),
 	}
 }
 
@@ -192,6 +226,7 @@ func (db *WowDatabase) ToUIProto() *proto.UIDatabase {
 	return &proto.UIDatabase{
 		Items:      mapToSlice(db.Items),
 		Enchants:   enchants,
+		Runes:      mapToSlice(db.Runes),
 		Encounters: db.Encounters,
 		Zones:      mapToSlice(db.Zones),
 		Npcs:       mapToSlice(db.Npcs),
@@ -257,6 +292,8 @@ func (db *WowDatabase) WriteJson(jsonFilePath string) {
 	tools.WriteProtoArrayToBuffer(uidb.Items, buffer, "items")
 	buffer.WriteString(",\n")
 	tools.WriteProtoArrayToBuffer(uidb.Enchants, buffer, "enchants")
+	buffer.WriteString(",\n")
+	tools.WriteProtoArrayToBuffer(uidb.Runes, buffer, "runes")
 	buffer.WriteString(",\n")
 	tools.WriteProtoArrayToBuffer(uidb.Zones, buffer, "zones")
 	buffer.WriteString(",\n")

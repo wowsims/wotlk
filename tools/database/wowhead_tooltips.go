@@ -56,6 +56,8 @@ type ItemResponse interface {
 	IsEquippable() bool
 	GetItemLevel() int
 	GetRequiresLevel() int
+	GetRequiredClass() proto.Class
+	GetRequiredItemSlot() proto.ItemSlot
 	GetSpellRank() int
 	GetPhase() int
 	GetUnique() bool
@@ -267,6 +269,64 @@ func (item WowheadItemResponse) GetRequiresLevel() int {
 	}
 
 	return level
+}
+
+var reqClassRegex = regexp.MustCompile(`Requires (Druid|Hunter|Mage|Paladin|Priest|Rogue|Shaman|Warlock|Warrior)`)
+
+func (item WowheadItemResponse) GetRequiredClass() proto.Class {
+	class := item.GetTooltipRegexString(reqClassRegex, 1)
+
+	if class == "" {
+		return proto.Class_ClassUnknown
+	}
+
+	className := "Class" + class
+	return proto.Class(proto.Class_value[className])
+}
+
+var reqSlotRegex = regexp.MustCompile(`Requires (Back|Belt|Bracer|Chest|Cloak|Feet|Gloves|Hands|Head|Helm|Legs|Pants|Ring|Shoulder|Trinket|Waist|Wrist)`)
+
+func (item WowheadItemResponse) GetRequiredItemSlot() proto.ItemType {
+	slot := item.GetTooltipRegexString(reqSlotRegex, 1)
+
+	switch slot {
+	case "Belt":
+		fallthrough
+	case "Waist":
+		return proto.ItemType_ItemTypeWaist
+	case "Bracer":
+		fallthrough
+	case "Wrist":
+		return proto.ItemType_ItemTypeWrist
+	case "Chest":
+		return proto.ItemType_ItemTypeChest
+	case "Back":
+		fallthrough
+	case "Cloak":
+		return proto.ItemType_ItemTypeBack
+	case "Feet":
+		return proto.ItemType_ItemTypeFeet
+	case "Gloves":
+		fallthrough
+	case "Hands":
+		return proto.ItemType_ItemTypeHands
+	case "Head":
+		fallthrough
+	case "Helm":
+		return proto.ItemType_ItemTypeHead
+	case "Legs":
+		fallthrough
+	case "Pants":
+		return proto.ItemType_ItemTypeLegs
+	case "Ring":
+		return proto.ItemType_ItemTypeFinger
+	case "Trinket":
+		return proto.ItemType_ItemTypeTrinket
+	case "Shoulder":
+		return proto.ItemType_ItemTypeShoulder
+	default:
+		return proto.ItemType_ItemTypeChest
+	}
 }
 
 var rankRegex = regexp.MustCompile(`Rank ([0-9]+)`) // Spell rank

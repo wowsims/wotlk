@@ -20,6 +20,10 @@ import (
 // go run ./tools/database/gen_db -outDir=assets -gen=wowhead-items
 // go run ./tools/database/gen_db -outDir=assets -gen=wowhead-spells -maxid=31000
 // go run ./tools/database/gen_db -outDir=assets -gen=wowhead-gearplannerdb
+// python3 tools/scrape_runes.py assets/db_inputs/wowhead_rune_tooltips.csv
+
+// Lastly run the following to generate db.json (ensure to delete cached versions and/or rebuild for copying of assets during local development)
+// Note: This does not make network requests, only regenerates core db binary and json files from existing inputs
 // go run ./tools/database/gen_db -outDir=assets -gen=db
 
 var minId = flag.Int("minid", 1, "Minimum ID to scan for")
@@ -55,6 +59,7 @@ func main() {
 
 	itemTooltips := database.NewWowheadItemTooltipManager(fmt.Sprintf("%s/wowhead_item_tooltips.csv", inputsDir)).Read()
 	spellTooltips := database.NewWowheadSpellTooltipManager(fmt.Sprintf("%s/wowhead_spell_tooltips.csv", inputsDir)).Read()
+	runeTooltips := database.NewWowheadSpellTooltipManager(fmt.Sprintf("%s/wowhead_rune_tooltips.csv", inputsDir)).Read()
 	wowheadDB := database.ParseWowheadDB(tools.ReadFile(fmt.Sprintf("%s/wowhead_gearplannerdb.txt", inputsDir)))
 	atlaslootDB := database.ReadDatabaseFromJson(tools.ReadFile(fmt.Sprintf("%s/atlasloot_db.json", inputsDir)))
 	// factionRestrictions := database.ParseItemFactionRestrictionsFromWagoDB(tools.ReadFile(fmt.Sprintf("%s/wago_db2_items.csv", inputsDir)))
@@ -84,8 +89,13 @@ func main() {
 		}
 	}
 
+	for id, rune := range runeTooltips {
+		db.AddRune(id, rune)
+	}
+
 	db.MergeItems(database.ItemOverrides)
 	db.MergeEnchants(database.EnchantOverrides)
+	db.MergeRunes(database.RuneOverrides)
 	ApplyGlobalFilters(db)
 	// AttachFactionInformation(db, factionRestrictions)
 

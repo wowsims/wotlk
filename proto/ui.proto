@@ -12,6 +12,7 @@ import "paladin.proto";
 message UIDatabase {
 	repeated UIItem items = 1;
 	repeated UIEnchant enchants = 2;
+	repeated UIRune runes = 10;
 	repeated UIGem gems = 3;
 	repeated PresetEncounter encounters = 6;
 
@@ -158,6 +159,15 @@ message UIEnchant {
 	// Classes that are allowed to use the enchant. Empty indicates no special class restrictions.
 	repeated Class class_allowlist = 11;
 	Profession required_profession = 12;
+}
+
+message UIRune {
+	int32 id = 1; 
+	string name = 2;    
+	string icon = 3;
+	Class class = 4;
+	ItemType type = 5;
+	int32 requires_level = 6;
 }
 
 message UIGem {

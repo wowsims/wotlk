@@ -29,6 +29,7 @@ export const buildIconInput = (parent: HTMLElement, player: Player<Spec>, inputC
 
 // Raid Buffs
 
+// TODO: Classic buff icon by level
 export const AllStatsBuff = InputHelpers.makeMultiIconInput([
 	makeTristateRaidBuffInput({id: ActionId.fromSpellId(9885), impId: ActionId.fromSpellId(17055), fieldName: 'giftOfTheWild'}),
 	// makeTristateRaidBuffInput({id: ActionId.fromSpellId(9884), impId: ActionId.fromSpellId(17055), fieldName: 'giftOfTheWild', minLevel: 50, maxLevel: 59}),
