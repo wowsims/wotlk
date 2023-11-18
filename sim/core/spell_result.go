@@ -110,7 +110,27 @@ func (spell *Spell) PhysicalCritCheck(sim *Simulation, attackTable *AttackTable)
 func (spell *Spell) SpellPower() float64 {
 	return spell.Unit.GetStat(stats.SpellPower) +
 		spell.BonusSpellPower +
+		spell.SpellPowerSchool() +
 		spell.Unit.PseudoStats.MobTypeSpellPower
+}
+
+func (spell *Spell) SpellPowerSchool() float64 {
+	switch spell.SpellSchool {
+	case SpellSchoolArcane:
+		return spell.Unit.GetStat(stats.ArcanePower)
+	case SpellSchoolFire:
+		return spell.Unit.GetStat(stats.FirePower)
+	case SpellSchoolFrost:
+		return spell.Unit.GetStat(stats.FrostPower)
+	case SpellSchoolHoly:
+		return spell.Unit.GetStat(stats.HolyPower)
+	case SpellSchoolNature:
+		return spell.Unit.GetStat(stats.NaturePower)
+	case SpellSchoolShadow:
+		return spell.Unit.GetStat(stats.ShadowPower)
+	default:
+		return 0
+	}
 }
 
 func (spell *Spell) SpellHitChance(target *Unit) float64 {
@@ -121,7 +141,8 @@ func (spell *Spell) SpellHitChance(target *Unit) float64 {
 	return hitRating / (SpellHitRatingPerHitChance * 100)
 }
 func (spell *Spell) SpellChanceToMiss(attackTable *AttackTable) float64 {
-	return math.Max(0, attackTable.BaseSpellMissChance-spell.SpellHitChance(attackTable.Defender))
+	// Always a 1% chance to miss in classic
+	return math.Max(0.01, attackTable.BaseSpellMissChance-spell.SpellHitChance(attackTable.Defender))
 }
 func (spell *Spell) MagicHitCheck(sim *Simulation, attackTable *AttackTable) bool {
 	return sim.Proc(1.0-spell.SpellChanceToMiss(attackTable), "Magical Hit Roll")
@@ -134,7 +155,8 @@ func (spell *Spell) spellCritRating(target *Unit) float64 {
 		target.PseudoStats.BonusSpellCritRatingTaken
 }
 func (spell *Spell) SpellCritChance(target *Unit) float64 {
-	return spell.spellCritRating(target)/(CritRatingPerCritChance*100) - spell.Unit.AttackTables[target.UnitIndex].SpellCritSuppression
+	// TODO: Classic verify crit suppression
+	return spell.spellCritRating(target) / (SpellCritRatingPerCritChance * 100) // - spell.Unit.AttackTables[target.UnitIndex].SpellCritSuppression
 }
 func (spell *Spell) MagicCritCheck(sim *Simulation, target *Unit) bool {
 	critChance := spell.SpellCritChance(target)

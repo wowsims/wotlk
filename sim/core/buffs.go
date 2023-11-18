@@ -607,6 +607,7 @@ func applyPetBuffEffects(petAgent PetAgent, raidBuffs *proto.RaidBuffs, partyBuf
 	applyBuffEffects(petAgent, raidBuffs, partyBuffs, individualBuffs)
 }
 
+// TODO: Classic
 func InspirationAura(unit *Unit, points int32) *Aura {
 	multiplier := 1 - []float64{0, .03, .07, .10}[points]
 
@@ -1216,31 +1217,6 @@ func registerRevitalizeHotCD(agent Agent, label string, hotID ActionID, ticks in
 }
 
 const ShatteringThrowCD = time.Minute * 5
-
-func registerShatteringThrowCD(agent Agent, numShatteringThrows int32) {
-	if numShatteringThrows == 0 {
-		return
-	}
-
-	stAura := ShatteringThrowAura(agent.GetCharacter().Env.Encounter.TargetUnits[0])
-
-	registerExternalConsecutiveCDApproximation(
-		agent,
-		externalConsecutiveCDApproximation{
-			ActionID:         ActionID{SpellID: 64382, Tag: -1},
-			AuraTag:          ShatteringThrowAuraTag,
-			CooldownPriority: CooldownPriorityDefault,
-			AuraDuration:     ShatteringThrowDuration,
-			AuraCD:           ShatteringThrowCD,
-			Type:             CooldownTypeDPS,
-
-			ShouldActivate: func(sim *Simulation, character *Character) bool {
-				return true
-			},
-			AddAura: func(sim *Simulation, character *Character) { stAura.Activate(sim) },
-		},
-		numShatteringThrows)
-}
 
 var InnervateAuraTag = "Innervate"
 

@@ -373,6 +373,7 @@ type PseudoStats struct {
 
 	DamageTakenMultiplier       float64            // All damage
 	SchoolDamageTakenMultiplier [SchoolLen]float64 // For specific spell schools (arcane, fire, shadow, etc.)
+	SchoolCritTakenMultiplier   [SchoolLen]float64 // For spell school crit (arcane, fire, shadow, etc.)
 
 	DiseaseDamageTakenMultiplier          float64
 	PeriodicPhysicalDamageTakenMultiplier float64
@@ -412,6 +413,7 @@ func NewPseudoStats() PseudoStats {
 		// Target effects.
 		DamageTakenMultiplier:       1,
 		SchoolDamageTakenMultiplier: NewSchoolFloatArray(),
+		SchoolCritTakenMultiplier:   NewSchoolFloatArray(),
 
 		DiseaseDamageTakenMultiplier:          1,
 		PeriodicPhysicalDamageTakenMultiplier: 1,
