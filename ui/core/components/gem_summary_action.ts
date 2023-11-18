@@ -1,6 +1,6 @@
 import { IndividualSimUI } from '../individual_sim_ui.js';
 import { BaseModal } from './base_modal.js';
-import { Player } from '../core/player.js';
+import { Player } from '../player.js';
 
 export function addGemSummaryAction(simUI: IndividualSimUI<any>) {
 	simUI.addAction('Gem Summary', 'gem-summary-action', () => {
@@ -42,7 +42,7 @@ class GemSummaryMenu extends BaseModal {
 	private updateTable() {
 		this.tableBody.innerHTML = ``;
 		const fullGemList = this.player.getGear().getAllGems(this.player.isBlacksmithing());
-		const gemCounts = {};
+		const gemCounts: Record<string, number> = {};
 
 		for (const gem of fullGemList) {
 			gemCounts[gem.name] = gemCounts[gem.name] ? gemCounts[gem.name] + 1 : 1;
