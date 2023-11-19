@@ -1772,7 +1772,7 @@ export function canEquipItem(item: Item, spec: Spec, slot: ItemSlot | undefined)
 	return classToMaxArmorType[playerClass] >= item.armorType;
 }
 
-const itemTypeToSlotsMap: Partial<Record<ItemType, Array<ItemSlot>>> = {
+export const itemTypeToSlotsMap: Partial<Record<ItemType, Array<ItemSlot>>> = {
 	[ItemType.ItemTypeUnknown]: [],
 	[ItemType.ItemTypeHead]: [ItemSlot.ItemSlotHead],
 	[ItemType.ItemTypeNeck]: [ItemSlot.ItemSlotNeck],

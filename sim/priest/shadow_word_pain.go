@@ -7,7 +7,7 @@ import (
 )
 
 func (priest *Priest) getShadowWordPainConfig(rank int) core.SpellConfig {
-	spellCoeff := [9]float64{0, 0.067, 0.104, 0.154, 0.167, 0.167, 0.167, 0.167, 0.167}[rank] // per tick
+	dotTickCoeff := [9]float64{0, 0.067, 0.104, 0.154, 0.167, 0.167, 0.167, 0.167, 0.167}[rank] // per tick
 	baseDamage := [9]float64{0, 30, 66, 132, 234, 366, 510, 672, 852}[rank]
 	spellId := [9]int32{0, 589, 594, 970, 992, 2767, 10892, 10893, 10894}[rank]
 	manaCost := [9]float64{0, 25, 50, 95, 155, 230, 305, 385, 470}[rank]
@@ -39,13 +39,23 @@ func (priest *Priest) getShadowWordPainConfig(rank int) core.SpellConfig {
 		Dot: core.DotConfig{
 			Aura: core.Aura{
 				Label: "ShadowWordPain",
+				OnGain: func(aura *core.Aura, sim *core.Simulation) {
+					if priest.HasRuneById(PriestRuneChestTwistedFaith) {
+						priest.MindBlastModifier = 1.2
+						priest.MindFlayModifier = 1.2
+					}
+				},
+				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+					priest.MindBlastModifier = 1
+					priest.MindFlayModifier = 1
+				},
 			},
 
 			NumberOfTicks: 6 + (priest.Talents.ImprovedShadowWordPain),
 			TickLength:    time.Second * 3,
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-				dot.SnapshotBaseDamage = baseDamage/6 + (spellCoeff * dot.Spell.SpellPower())
+				dot.SnapshotBaseDamage = baseDamage/6 + (dotTickCoeff * dot.Spell.SpellPower())
 				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
@@ -62,15 +72,15 @@ func (priest *Priest) getShadowWordPainConfig(rank int) core.SpellConfig {
 			}
 			spell.DealOutcome(sim, result)
 		},
-		ExpectedTickDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, useSnapshot bool) *core.SpellResult {
-			if useSnapshot {
-				dot := spell.Dot(target)
-				return dot.CalcSnapshotDamage(sim, target, dot.Spell.OutcomeExpectedMagicAlwaysHit)
-			} else {
-				baseDamage := baseDamage/6 + (spellCoeff * spell.SpellPower())
-				return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
-			}
-		},
+		// ExpectedTickDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, useSnapshot bool) *core.SpellResult {
+		// 	if useSnapshot {
+		// 		dot := spell.Dot(target)
+		// 		return dot.CalcSnapshotDamage(sim, target, dot.Spell.OutcomeExpectedMagicAlwaysHit)
+		// 	} else {
+		// 		baseDamage := baseDamage/6 + (dotTickCoeff * spell.SpellPower())
+		// 		return spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
+		// 	}
+		// },
 	}
 }
 

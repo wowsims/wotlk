@@ -79,5 +79,8 @@ func (priest *Priest) getVoidPlagueConfig() core.SpellConfig {
 }
 
 func (priest *Priest) registerVoidPlagueSpell() {
+	if !priest.HasRuneById(PriestRuneChestVoidPlague) {
+		return
+	}
 	priest.VoidPlague = priest.GetOrRegisterSpell(priest.getVoidPlagueConfig())
 }

@@ -7,6 +7,15 @@ import (
 
 var TalentTreeSizes = [3]int{15, 16, 16}
 
+const (
+	PriestRuneChestTwistedFaith    = 425210
+	PriestRuneChestVoidPlague      = 425211
+	PriestRuneHandsPenance         = 402844
+	PriestRuneHandsShadowWordDeath = 402833
+	PriestRuneLegsHomunculi        = 402836
+	PriestRuneLegsSharedPain       = 402838
+)
+
 type Priest struct {
 	core.Character
 	Talents *proto.PriestTalents

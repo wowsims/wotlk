@@ -597,6 +597,7 @@ message ItemSpec {
 	int32 id = 2;
 	int32 enchant = 3;
 	repeated int32 gems = 4;
+	int32 rune = 5;
 }
 
 message EquipmentSpec {
@@ -607,6 +608,7 @@ message SimDatabase {
 	repeated SimItem items = 1;
 	repeated SimEnchant enchants = 2;
 	repeated SimGem gems = 3;
+	repeated SimRune runes = 4;
 }
 
 // Contains only the Item info needed by the sim.
@@ -645,6 +647,10 @@ enum EnchantType {
 message SimEnchant {
 	int32 effect_id = 1;
 	repeated double stats = 2;
+}
+
+message SimRune {
+	int32 id = 1;
 }
 
 // Contains only the Gem info needed by the sim.

@@ -1,23 +1,26 @@
-import { GemColor } from '../proto/common.js';
-import { ItemSlot } from '../proto/common.js';
-import { ItemSpec } from '../proto/common.js';
-import { ItemType } from '../proto/common.js';
-import { Profession } from '../proto/common.js';
-import { Stat } from '../proto/common.js';
+import { GemColor, ItemSpec, ItemType, Profession } from '../proto/common.js';
 import {
 	UIEnchant as Enchant,
 	UIGem as Gem,
 	UIItem as Item,
+	UIRune as Rune,
 } from '../proto/ui.js';
 import { distinct } from '../utils.js';
 
 import { ActionId } from './action_id.js';
-import { enchantAppliesToItem } from './utils.js';
 import { gemEligibleForSocket, gemMatchesSocket } from './gems.js';
 import { Stats } from './stats.js';
+import { enchantAppliesToItem } from './utils.js';
 
 export function getWeaponDPS(item: Item): number {
 	return ((item.weaponDamageMin + item.weaponDamageMax) / 2) / (item.weaponSpeed || 1);
+}
+
+interface EquippedItemConfig {
+	item: Item, 
+	enchant?: Enchant | null, 
+	gems?: Array<Gem | null>,
+	rune?: Rune | null,
 }
 
 /**
@@ -28,14 +31,16 @@ export function getWeaponDPS(item: Item): number {
 export class EquippedItem {
 	readonly _item: Item;
 	readonly _enchant: Enchant | null;
+	readonly _rune: Rune | null;
 	readonly _gems: Array<Gem | null>;
 
 	readonly numPossibleSockets: number;
 
-	constructor(item: Item, enchant?: Enchant | null, gems?: Array<Gem | null>) {
-		this._item = item;
-		this._enchant = enchant || null;
-		this._gems = gems || [];
+	constructor(config: EquippedItemConfig) {
+		this._item = config.item;
+		this._enchant = config.enchant || null;
+		this._gems = config.gems || [];
+		this._rune = config.rune || null;
 
 		this.numPossibleSockets = this.numSockets(true);
 
@@ -59,6 +64,11 @@ export class EquippedItem {
 		return this._enchant ? Enchant.clone(this._enchant) : null;
 	}
 
+	get rune(): Rune | null {
+		// Make a defensive copy
+		return this._rune ? Rune.clone(this._rune) : null;
+	}
+
 	get gems(): Array<Gem | null> {
 		// Make a defensive copy
 		return this._gems.map(gem => gem == null ? null : Gem.clone(gem));
@@ -72,6 +82,12 @@ export class EquippedItem {
 			return false;
 
 		if (this._enchant && other.enchant && !Enchant.equals(this._enchant, other.enchant))
+			return false;
+
+		if ((this._rune == null) != (other.rune == null))
+			return false;
+
+		if (this._rune && other.rune && !Rune.equals(this._rune, other.rune))
 			return false;
 
 		if (this._gems.length != other.gems.length)
@@ -113,14 +129,18 @@ export class EquippedItem {
 			newGems.push(this._gems[this._gems.length - 1]);
 		}
 
-		return new EquippedItem(item, newEnchant, newGems);
+		return new EquippedItem({item, enchant: newEnchant, gems: newGems});
 	}
 
 	/**
 	 * Returns a new EquippedItem with the given enchant applied.
 	 */
 	withEnchant(enchant: Enchant | null): EquippedItem {
-		return new EquippedItem(this._item, enchant, this._gems);
+		return new EquippedItem({item: this._item, enchant, gems: this._gems, rune: this._rune});
+	}
+
+	withRune(rune: Rune): EquippedItem {
+		return new EquippedItem({item: this._item, enchant: this.enchant, gems: this._gems, rune});
 	}
 
 	/**
@@ -134,7 +154,7 @@ export class EquippedItem {
 		const newGems = this._gems.slice();
 		newGems[socketIdx] = gem;
 
-		return new EquippedItem(this._item, this._enchant, newGems);
+		return new EquippedItem({item: this._item, enchant: this._enchant, gems: newGems});
 	}
 
 	/**
@@ -181,6 +201,7 @@ export class EquippedItem {
 		return ItemSpec.create({
 			id: this._item.id,
 			enchant: this._enchant?.effectId,
+			rune: this._rune?.id,
 			gems: this._gems.map(gem => gem?.id || 0),
 		});
 	}

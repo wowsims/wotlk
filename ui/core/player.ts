@@ -36,6 +36,7 @@ import {
 	RaidFilterOption,
 	SourceFilterOption,
 	UIEnchant as Enchant,
+	UIRune as Rune,
 	UIGem as Gem,
 	UIItem as Item,
 	UIItem_FactionRestriction,
@@ -397,8 +398,8 @@ export class Player<SpecType extends Spec> {
 		return this.sim.db.getEnchants(slot).filter(enchant => canEquipEnchant(enchant, this.spec));
 	}
 
-	getRunes(slot: ItemSlot): Array<Enchant> {
-		return this.sim.db.getEnchants(slot).filter(enchant => canEquipEnchant(enchant, this.spec));
+	getRunes(slot: ItemSlot): Array<Rune> {
+		return this.sim.db.getRunes(slot, this.getClass());
 	}
 
 	// Returns all gems that this player can wear of the given color.

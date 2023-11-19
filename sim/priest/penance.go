@@ -11,6 +11,9 @@ func (priest *Priest) registerPenanceHealSpell() {
 }
 
 func (priest *Priest) RegisterPenanceSpell() {
+	if !priest.HasRuneById(PriestRuneHandsPenance) {
+		return
+	}
 	priest.Penance = priest.makePenanceSpell(false)
 }
 

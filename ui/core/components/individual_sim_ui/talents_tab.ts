@@ -5,8 +5,7 @@ import { EventID, TypedEvent } from "../../typed_event";
 import { Class, Glyphs, Spec } from "../../proto/common";
 import { SavedTalents } from "../../proto/ui";
 
-import { classGlyphsConfig, classTalentsConfig } from "../../talents/factory";
-import { GlyphsPicker } from "../../talents/glyphs_picker";
+import { classTalentsConfig } from "../../talents/factory";
 import { TalentsPicker } from "../../talents/talents_picker";
 
 import { SavedDataManager } from "../saved_data_manager";
@@ -40,7 +39,6 @@ export class TalentsTab extends SimTab {
       this.buildHunterPickers();
     } else {
       this.buildTalentsPicker(this.leftPanel);
-      this.buildGlyphsPicker(this.leftPanel);
     }
 
     this.buildSavedTalentsPicker();
@@ -58,10 +56,6 @@ export class TalentsTab extends SimTab {
       pointsPerRow: 5,
       maxPoints: Mechanics.MAX_TALENT_POINTS,
     });
-  }
-
-  private buildGlyphsPicker(parentElem: HTMLElement) {
-    new GlyphsPicker(parentElem, this.simUI.player, classGlyphsConfig[this.simUI.player.getClass()]);
   }
 
   private buildHunterPickers() {
@@ -105,7 +99,6 @@ export class TalentsTab extends SimTab {
     const playerTab = this.leftPanel.querySelector('#player-talents-tab') as HTMLElement;
 
     this.buildTalentsPicker(playerTab);
-    this.buildGlyphsPicker(playerTab);
   }
 
   private buildSavedTalentsPicker() {

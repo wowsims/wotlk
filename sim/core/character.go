@@ -68,6 +68,7 @@ type Character struct {
 	professions [2]proto.Profession
 
 	glyphs            [6]int32
+	runesMap          map[int32]bool
 	PrimaryTalentTree uint8
 
 	// Provides major cooldown management behavior.
@@ -140,6 +141,14 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 			player.Glyphs.Minor3,
 		}
 	}
+
+	character.runesMap = map[int32]bool{}
+	for _, v := range character.Equipment {
+		if v.Rune != 0 {
+			character.runesMap[v.Rune] = true
+		}
+	}
+
 	character.PrimaryTalentTree = GetPrimaryTalentTreeIndex(player.TalentsString)
 
 	character.Consumes = &proto.Consumes{}
@@ -221,6 +230,10 @@ func (character *Character) EquipStats() stats.Stats {
 	var baseEquipStats = character.Equipment.Stats()
 	var bonusEquipStats = baseEquipStats.Add(character.bonusStats)
 	return bonusEquipStats.DotProduct(character.itemStatMultipliers)
+}
+
+func (character *Character) HasRuneById(id int32) bool {
+	return character.runesMap[id]
 }
 
 func (character *Character) applyEquipment() {

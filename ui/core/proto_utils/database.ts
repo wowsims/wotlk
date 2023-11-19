@@ -1,4 +1,5 @@
 import {
+	Class,
 	EquipmentSpec,
 	GemColor,
 	ItemSlot,
@@ -11,6 +12,7 @@ import {
 	IconData,
 	UIDatabase,
 	UIEnchant as Enchant,
+	UIRune as Rune,
 	UIGem as Gem,
 	UIItem as Item,
 	UINPC as Npc,
@@ -20,6 +22,7 @@ import {
 import {
 	getEligibleEnchantSlots,
 	getEligibleItemSlots,
+	itemTypeToSlotsMap,
 } from './utils.js';
 import { gemEligibleForSocket, gemMatchesSocket } from './gems.js';
 import { EquippedItem } from './equipped_item.js';
@@ -83,6 +86,8 @@ export class Database {
 
 	private readonly items = new Map<number, Item>();
 	private readonly enchantsBySlot: Partial<Record<ItemSlot, Enchant[]>> = {};
+	private readonly runesBySlotByClass: Partial<Record<ItemSlot, Partial<Record<Class, Rune[]>>>> = {};
+	private readonly runesById: Record<number, Rune> = {};
 	private readonly gems = new Map<number, Gem>();
 	private readonly npcs = new Map<number, Npc>();
 	private readonly zones = new Map<number, Zone>();
@@ -107,6 +112,20 @@ export class Database {
 					this.enchantsBySlot[slot] = [];
 				}
 				this.enchantsBySlot[slot]!.push(enchant);
+			});
+		});
+		db.runes.forEach(rune => {
+			this.runesById[rune.id] = rune;
+
+			const slots = itemTypeToSlotsMap[rune.type];
+			slots?.forEach(slot => {
+				if (!this.runesBySlotByClass[slot]){
+					this.runesBySlotByClass[slot] = {};
+				}
+				if (!this.runesBySlotByClass[slot]![rune.class]){
+					this.runesBySlotByClass[slot]![rune.class as Class] = [];
+				}
+				this.runesBySlotByClass[slot]![rune.class as Class]!.push(rune);
 			});
 		});
 
@@ -135,6 +154,16 @@ export class Database {
 
 	getEnchants(slot: ItemSlot): Array<Enchant> {
 		return this.enchantsBySlot[slot] || [];
+	}
+
+	getRunes(slot: ItemSlot, klass: Class): Array<Rune> {
+		if (!this.runesBySlotByClass[slot]) return [];
+
+		return this.runesBySlotByClass[slot]![klass] || [];
+	}
+
+	hasRuneBySlot(slot: ItemSlot, klass: Class): boolean {
+		return !!(this.runesBySlotByClass[slot] && this.runesBySlotByClass[slot]![klass]);
 	}
 
 	getGems(socketColor?: GemColor): Array<Gem> {
@@ -185,10 +214,15 @@ export class Database {
 				}
 			}
 		}
+		
+		let rune: Rune | undefined
+		if (itemSpec.rune && !!this.runesById[itemSpec.rune]) {
+			rune = this.runesById[itemSpec.rune];
+		}
 
 		const gems = itemSpec.gems.map(gemId => this.lookupGem(gemId));
 
-		return new EquippedItem(item, enchant, gems);
+		return new EquippedItem({item, enchant, gems, rune});
 	}
 
 	lookupEquipmentSpec(equipSpec: EquipmentSpec): Gear {

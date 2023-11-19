@@ -38,6 +38,7 @@ import {
 import {
 	DatabaseFilters,
 	UIEnchant as Enchant,
+	UIRune as Rune,
 	UIGem as Gem,
 	UIItem as Item,
 } from '../proto/ui.js';
@@ -47,6 +48,7 @@ import { Tooltip } from 'bootstrap';
 import { element, fragment, ref } from 'tsx-vanilla';
 
 import { Clusterize } from './virtual_scroll/clusterize.js';
+import { itemTypeToSlotsMap } from '../proto_utils/utils.js';
 
 const EP_TOOLTIP = `
 	EP (Equivalence Points) is way of comparing items by multiplying the raw stats of an item with your current stat weights.
@@ -73,6 +75,24 @@ const createGemContainer = (socketColor: GemColor ,gem : Gem|null) => {
 		});
 	}
 	return gemContainer;
+}
+
+const createRuneContainer = (rune : Rune|null) => {
+	const runeIconElem = ref<HTMLImageElement>();
+	
+	let runeContainer = (
+		<div className="rune-container">
+			<img className="rune-empty-icon" src="https://wow.zamimg.com/images/wow/icons/medium/inventoryslot_empty.jpg"/>
+			<img ref={runeIconElem} className={`rune-filled-icon`} />
+		</div>
+	);
+
+	if (rune != null) {
+		ActionId.fromSpellId(rune.id).fill().then(filledId => {
+			runeIconElem.value!.src = filledId.iconUrl;
+		});
+	}
+	return runeContainer;
 }
 
 export class GearPicker extends Component {
@@ -123,7 +143,8 @@ export class ItemRenderer extends Component {
 	readonly iconElem: HTMLAnchorElement;
 	readonly nameElem: HTMLAnchorElement;
 	readonly enchantElem: HTMLAnchorElement;
-	readonly socketsContainerElem: HTMLElement;
+	readonly runeElem: HTMLDivElement;
+	// readonly socketsContainerElem: HTMLElement;
 
 	constructor(parent: HTMLElement, player: Player<any>) {
 		super(parent, 'item-picker-root');
@@ -132,11 +153,12 @@ export class ItemRenderer extends Component {
 		let iconElem = ref<HTMLAnchorElement>();
 		let nameElem = ref<HTMLAnchorElement>();
 		let enchantElem = ref<HTMLAnchorElement>();
-		let sce = ref<HTMLDivElement>();
+		let runeElem = ref<HTMLDivElement>();
+		// let sce = ref<HTMLDivElement>();
 		this.rootElem.appendChild(
 			<>
 				<a ref={iconElem} className="item-picker-icon" href="javascript:void(0)" attributes={{role:"button"}}>
-					<div ref={sce} className="item-picker-sockets-container"></div>
+					<div ref={runeElem} className="item-picker-rune-container"></div>
 				</a>
 				<div className="item-picker-labels-container">
 					<a ref={nameElem} className="item-picker-name" href="javascript:void(0)" attributes={{role:"button"}}></a>
@@ -149,7 +171,8 @@ export class ItemRenderer extends Component {
 		this.iconElem = iconElem.value!;
 		this.nameElem = nameElem.value!;
 		this.enchantElem = enchantElem.value!;
-		this.socketsContainerElem = sce.value!;
+		this.runeElem = runeElem.value!;
+		// this.socketsContainerElem = sce.value!;
 	}
 
 	clear() {
@@ -163,7 +186,8 @@ export class ItemRenderer extends Component {
 
 		this.iconElem.style.backgroundImage = '';
 		this.enchantElem.innerText = '';
-		this.socketsContainerElem.innerText = '';
+		this.runeElem.innerText = '';
+		// this.socketsContainerElem.innerText = '';
 		this.nameElem.textContent = '';
 	}
 
@@ -199,22 +223,28 @@ export class ItemRenderer extends Component {
 			this.enchantElem.dataset.whtticon = 'false';
 		}
 
-		newItem.allSocketColors().forEach((socketColor, gemIdx) => {
-			let gemContainer = createGemContainer(socketColor, newItem.gems[gemIdx]);
+		const isRuneSlot = itemTypeToSlotsMap[newItem._item.type]?.some(slot => this.player.sim.db.hasRuneBySlot(slot, this.player.getClass()));
+		if (isRuneSlot){
+			let runeContainer = createRuneContainer(newItem.rune);
+			this.runeElem.appendChild(runeContainer);
+		}
 
-			if (gemIdx == newItem.numPossibleSockets - 1 && [ItemType.ItemTypeWrist, ItemType.ItemTypeHands].includes(newItem.item.type)) {
-				const updateProfession = () => {
-					if (this.player.isBlacksmithing()) {
-						gemContainer.classList.remove('hide');
-					} else {
-						gemContainer.classList.add('hide');
-					}
-				};
-				this.player.professionChangeEmitter.on(updateProfession);
-				updateProfession();
-			}
-			this.socketsContainerElem.appendChild(gemContainer);
-		});
+		// newItem.allSocketColors().forEach((socketColor, gemIdx) => {
+		// 	let gemContainer = createGemContainer(socketColor, newItem.gems[gemIdx]);
+
+		// 	if (gemIdx == newItem.numPossibleSockets - 1 && [ItemType.ItemTypeWrist, ItemType.ItemTypeHands].includes(newItem.item.type)) {
+		// 		const updateProfession = () => {
+		// 			if (this.player.isBlacksmithing()) {
+		// 				gemContainer.classList.remove('hide');
+		// 			} else {
+		// 				gemContainer.classList.add('hide');
+		// 			}
+		// 		};
+		// 		this.player.professionChangeEmitter.on(updateProfession);
+		// 		updateProfession();
+		// 	}
+		// 	this.socketsContainerElem.appendChild(gemContainer);
+		// });
 	}
 }
 
@@ -229,6 +259,7 @@ export class ItemPicker extends Component {
 	// All items and enchants that are eligible for this slot
 	private _items: Array<Item> = [];
 	private _enchants: Array<Enchant> = [];
+	private _runes: Array<Rune> = [];
 	private _equippedItem: EquippedItem | null = null;
 
 	constructor(parent: HTMLElement, simUI: SimUI, player: Player<any>, slot: ItemSlot) {
@@ -242,6 +273,7 @@ export class ItemPicker extends Component {
 		player.sim.waitForInit().then(() => {
 			this._items = this.player.getItems(this.slot);
 			this._enchants = this.player.getEnchants(this.slot);
+			this._runes = this.player.getRunes(this.slot);
 
 			const gearData = {
 				equipItem: (eventID: EventID, equippedItem: EquippedItem | null) => {
@@ -297,6 +329,7 @@ export class ItemPicker extends Component {
 			equippedItem: this._equippedItem,
 			eligibleItems: this._items,
 			eligibleEnchants: this._enchants,
+			eligibleRunes: this._runes,
 			gearData: gearData
 		})
 	}
@@ -305,7 +338,7 @@ export class ItemPicker extends Component {
 export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<Player<SpecType>, ValueType> {
 	private readonly config: InputConfig<Player<SpecType>, ValueType>;
 	private readonly iconAnchor: HTMLAnchorElement;
-	private readonly socketsContainerElem: HTMLElement;
+	// private readonly socketsContainerElem: HTMLElement;
 	private readonly player: Player<SpecType>;
 	private readonly slot: ItemSlot;
 	private readonly gear: ItemSwapGear;
@@ -313,6 +346,7 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 	// All items and enchants that are eligible for this slot
 	private _items: Array<Item> = [];
 	private _enchants: Array<Enchant> = [];
+	private _runes: Array<Rune> = [];
 
 	constructor(parent: HTMLElement, simUI: SimUI, player: Player<SpecType>, slot: ItemSlot, config: InputConfig<Player<SpecType>, ValueType>) {
 		super(parent, 'icon-picker-root', player, config)
@@ -327,13 +361,14 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 		this.iconAnchor.target = '_blank';
 		this.rootElem.prepend(this.iconAnchor);
 
-		this.socketsContainerElem = document.createElement('div')
-		this.socketsContainerElem.classList.add('item-picker-sockets-container')
-		this.iconAnchor.appendChild(this.socketsContainerElem);
+		// this.socketsContainerElem = document.createElement('div')
+		// this.socketsContainerElem.classList.add('item-picker-sockets-container')
+		// this.iconAnchor.appendChild(this.socketsContainerElem);
 
 		player.sim.waitForInit().then(() => {
 			this._items = this.player.getItems(slot);
 			this._enchants = this.player.getEnchants(slot);
+			this._runes = this.player.getRunes(slot);
 			this.addItemSpecToGear();
 			const gearData = {
 				equipItem: (eventID: EventID, equippedItem: EquippedItem | null) => {
@@ -352,6 +387,7 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 					equippedItem: this.gear.getEquippedItem(slot),
 					eligibleItems: this._items,
 					eligibleEnchants: this._enchants,
+					eligibleRunes: this._runes,
 					gearData: gearData,
 				})
 			};
@@ -404,7 +440,7 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 		this.iconAnchor.style.backgroundImage = `url('${getEmptySlotIconUrl(this.slot)}')`;
 		this.iconAnchor.removeAttribute('data-wowhead');
 		this.iconAnchor.href = "#";
-		this.socketsContainerElem.innerText = '';
+		// this.socketsContainerElem.innerText = '';
 
 		const equippedItem = this.gear.getEquippedItem(this.slot);
 		if (equippedItem) {
@@ -413,9 +449,9 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 			equippedItem.asActionId().fillAndSet(this.iconAnchor, true, true);
 			this.player.setWowheadData(equippedItem, this.iconAnchor);
 
-			equippedItem.allSocketColors().forEach((socketColor, gemIdx) => {
-				this.socketsContainerElem.appendChild(createGemContainer(socketColor, equippedItem.gems[gemIdx]));
-			});
+			// equippedItem.allSocketColors().forEach((socketColor, gemIdx) => {
+			// 	this.socketsContainerElem.appendChild(createGemContainer(socketColor, equippedItem.gems[gemIdx]));
+			// });
 
 		} else {
 			this.iconAnchor.classList.remove("active")
@@ -444,6 +480,7 @@ interface SelectorModalConfig {
 	equippedItem: EquippedItem | null,
 	eligibleItems: Array<Item>,
 	eligibleEnchants: Array<Enchant>,
+	eligibleRunes: Array<Rune>,
 	gearData: GearData
 }
 
@@ -494,7 +531,7 @@ export class SelectorModal extends BaseModal {
 		this.tabsElem.innerText = '';
 		this.contentElem.innerText = '';
 
-		const { slot, equippedItem, eligibleItems, eligibleEnchants, gearData } = this.config;
+		const { slot, eligibleItems, eligibleEnchants, eligibleRunes, gearData } = this.config;
 
 		this.addTab<Item>(
 			'Items',
@@ -514,7 +551,7 @@ export class SelectorModal extends BaseModal {
 						if (equippedItem) {
 							gearData.equipItem(eventID, equippedItem.withItem(item));
 						} else {
-							gearData.equipItem(eventID, new EquippedItem(item));
+							gearData.equipItem(eventID, new EquippedItem({item}));
 						}
 					},
 				};
@@ -556,7 +593,36 @@ export class SelectorModal extends BaseModal {
 					gearData.equipItem(eventID, equippedItem.withEnchant(null));
 			});
 
-		this.addGemTabs(slot, equippedItem, gearData);
+			this.addTab<Rune>(
+				'Rune',
+				eligibleRunes.map(rune => {
+					return {
+						item: rune,
+						id: rune.id,
+						actionId: ActionId.fromSpellId(rune.id),
+						name: rune.name,
+						quality: ItemQuality.ItemQualityCommon,
+						phase: 1,
+						baseEP: 1,
+						ignoreEPFilter: true,
+						heroic: false,
+						onEquip: (eventID, rune: Rune) => {
+							const equippedItem = gearData.getEquippedItem();
+							if (equippedItem)
+								gearData.equipItem(eventID, equippedItem.withRune(rune));
+						},
+					};
+				}),
+				() => 1,
+				equippedItem => equippedItem?.rune,
+				GemColor.GemColorUnknown,
+				eventID => {
+					const equippedItem = gearData.getEquippedItem();
+					if (equippedItem)
+						gearData.equipItem(eventID, equippedItem.withEnchant(null));
+				});
+
+		// this.addGemTabs(slot, equippedItem, gearData);
 	}
 
 	protected override onShow(e: Event) {
@@ -689,11 +755,6 @@ export class SelectorModal extends BaseModal {
 			setTabContent(tabAnchor.value!);
 		} else {
 			tabAnchor.value!.textContent = label;
-		}
-
-		// TODO: do we need this check here?
-		if (itemData.length == 0) {
-			return;
 		}
 
 		let ilist = new ItemList<T>(
@@ -1002,7 +1063,7 @@ export class ItemList<T> {
 		const newEquippedItem = this.gearData.getEquippedItem();
 		const newItem = this.equippedToItemFn(newEquippedItem);
 
-		const newItemId = newItem ? (this.label == 'Enchants' ? (newItem as unknown as Enchant).effectId : (newItem as unknown as Item | Gem).id) : 0;
+		const newItemId = newItem ? (this.label == 'Enchants' ? (newItem as unknown as Enchant).effectId : (newItem as unknown as Item | Gem | Rune).id) : 0;
 		const newEP = newItem ? this.computeEP(newItem) : 0;
 
 		this.scroller.elementUpdate((item) => {

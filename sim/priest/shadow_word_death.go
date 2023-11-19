@@ -7,6 +7,9 @@ import (
 )
 
 func (priest *Priest) registerShadowWordDeathSpell() {
+	if !priest.HasRuneById(PriestRuneHandsShadowWordDeath) {
+		return
+	}
 	// TODO: Classic verify numbers
 	baseDamage := []float64{261, 305}
 	spellCoeff := 0.429

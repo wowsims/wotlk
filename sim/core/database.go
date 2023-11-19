@@ -56,6 +56,7 @@ type Item struct {
 	// Modified for each instance of the item.
 	Gems    []Gem
 	Enchant Enchant
+	Rune    int32
 
 	//Internal use
 	TempEnchant int32
@@ -85,6 +86,7 @@ func (item *Item) ToItemSpecProto() *proto.ItemSpec {
 		Id:      item.ID,
 		Enchant: item.Enchant.EffectID,
 		Gems:    MapSlice(item.Gems, func(gem Gem) int32 { return gem.ID }),
+		Rune:    item.Rune,
 	}
 }
 
@@ -97,6 +99,16 @@ func EnchantFromProto(pData *proto.SimEnchant) Enchant {
 	return Enchant{
 		EffectID: pData.EffectId,
 		Stats:    stats.FromFloatArray(pData.Stats),
+	}
+}
+
+type Rune struct {
+	ID int32
+}
+
+func RuneFromProto(pData *proto.SimRune) Rune {
+	return Rune{
+		ID: pData.Id,
 	}
 }
 
@@ -120,6 +132,7 @@ type ItemSpec struct {
 	ID      int32
 	Enchant int32
 	Gems    []int32
+	Rune    int32
 }
 
 type Equipment [proto.ItemSlot_ItemSlotRanged + 1]Item
@@ -214,6 +227,7 @@ func ProtoToEquipmentSpec(es *proto.EquipmentSpec) EquipmentSpec {
 			ID:      item.Id,
 			Enchant: item.Enchant,
 			Gems:    item.Gems,
+			Rune:    item.Rune,
 		}
 	}
 	return coreEquip
@@ -233,6 +247,13 @@ func NewItem(itemSpec ItemSpec) Item {
 		}
 		// else {
 		// 	panic(fmt.Sprintf("No enchant with id: %d", itemSpec.Enchant))
+		// }
+	}
+
+	if itemSpec.Rune != 0 {
+		item.Rune = itemSpec.Rune
+		// if rune, ok := RuneBySpellID[itemSpec.Rune]; ok {
+		// 	item.Rune = rune.ID
 		// }
 	}
 
@@ -314,6 +335,16 @@ func (equipment *Equipment) Stats() stats.Stats {
 		}
 	}
 	return equipStats
+}
+
+func (equipment *Equipment) GetRuneIds() []int32 {
+	out := make([]int32, len(equipment))
+	for _, v := range equipment {
+		if v.Rune != 0 {
+			out = append(out, v.Rune)
+		}
+	}
+	return out
 }
 
 func ItemTypeToSlot(it proto.ItemType) proto.ItemSlot {

@@ -55,6 +55,24 @@
   justify-content: center;
 }
 
+.item-picker-rune-container {
+  @include horizontal-right;
+  width: 100%;
+  display: flex;
+  justify-content: right;
+
+  .rune-container {
+    width: 1.8rem;
+    height: 1.8rem;
+
+    img {
+      @include horizontal-right;
+      width: 1.8rem;
+      height: 1.8rem;
+    }
+  }
+}
+
 .selector-modal {
   .modal-header {
     padding-bottom: 0;
