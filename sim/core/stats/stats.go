@@ -60,11 +60,6 @@ const (
 	BonusArmor
 	Healing
 	SpellDamage
-	RunicPower
-	BloodRune
-	FrostRune
-	UnholyRune
-	DeathRune
 	// DO NOT add new stats here without discussing it first; new stats come with
 	// a performance penalty.
 
@@ -175,16 +170,6 @@ func (s Stat) StatName() string {
 		return "ShadowResistance"
 	case ArcaneResistance:
 		return "ArcaneResistance"
-	case RunicPower:
-		return "Runic Power"
-	case BloodRune:
-		return "Blood Rune"
-	case FrostRune:
-		return "Frost Rune"
-	case UnholyRune:
-		return "Unholy Rune"
-	case DeathRune:
-		return "Death Rune"
 	}
 
 	return "none"
@@ -336,7 +321,7 @@ type PseudoStats struct {
 	DamageDealtMultiplier       float64            // All damage
 	SchoolDamageDealtMultiplier [SchoolLen]float64 // For specific spell schools (arcane, fire, shadow, etc).
 
-	// Treat melee haste as a pseudostat so that shamans, death knights, paladins, and druids can get the correct scaling
+	// Treat melee haste as a pseudostat so that shamans, paladins, and druids can get the correct scaling
 	MeleeHasteRatingPerHastePercent float64
 
 	// Important when unit is attacker or target

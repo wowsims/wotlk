@@ -140,38 +140,6 @@ func newStackingStatBonusCD(config StackingStatBonusCD) {
 }
 
 func init() {
-	core.NewItemEffect(38212, func(agent core.Agent) {
-		character := agent.GetCharacter()
-
-		procAura := core.MakeStackingAura(character, core.StackingStatAura{
-			Aura: core.Aura{
-				Label:     "Death Knight's Anguish Proc",
-				ActionID:  core.ActionID{SpellID: 54697},
-				Duration:  time.Second * 20,
-				MaxStacks: 10,
-				OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-					if result.Landed() && spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
-						aura.AddStack(sim)
-					}
-				},
-			},
-			BonusPerStack: stats.Stats{stats.MeleeCrit: 15, stats.SpellCrit: 15},
-		})
-
-		triggerAura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
-			Name:       "Death Knight's Anguish",
-			Callback:   core.CallbackOnSpellHitDealt,
-			ProcMask:   core.ProcMaskMeleeOrRanged,
-			Outcome:    core.OutcomeLanded,
-			ProcChance: 0.1,
-			ActionID:   core.ActionID{SpellID: 54696},
-			ICD:        time.Second * 45,
-			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
-				procAura.Activate(sim)
-			},
-		})
-		procAura.Icd = triggerAura.Icd
-	})
 
 	newStackingStatBonusEffect(StackingStatBonusEffect{
 		Name:      "Majestic Dragon Figurine",

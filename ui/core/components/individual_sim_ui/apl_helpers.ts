@@ -9,8 +9,7 @@ import { DropdownPicker, DropdownPickerConfig, DropdownValueConfig, TextDropdown
 import { UnitPicker, UnitPickerConfig, UnitValue } from '../unit_picker.js';
 import { Input, InputConfig } from '../input.js';
 import { ActionID } from '../../proto/common.js';
-import { BooleanPicker } from '../boolean_picker.js';
-import { APLValueRuneSlot, APLValueRuneType } from '../../proto/apl.js';
+// import { BooleanPicker } from '../boolean_picker.js';
 
 export type ACTION_ID_SET = 'auras' | 'stackable_auras' | 'icd_auras' | 'exclusive_effect_auras' | 'castable_spells' | 'channel_spells' | 'dot_spells' | 'shield_spells';
 
@@ -487,49 +486,6 @@ export function stringFieldConfig(field: string, options?: Partial<APLPickerBuil
 			return new AdaptiveStringPicker(parent, player, config);
 		},
 		...(options || {}),
-	};
-}
-
-export function runeTypeFieldConfig(field: string, includeDeath: boolean): APLPickerBuilderFieldConfig<any, any> {
-	let values = [
-		{ value: APLValueRuneType.RuneBlood, label: 'Blood' },
-		{ value: APLValueRuneType.RuneFrost, label: 'Frost' },
-		{ value: APLValueRuneType.RuneUnholy, label: 'Unholy' },
-	]
-
-	if (includeDeath) {
-		values.push({ value: APLValueRuneType.RuneDeath, label: 'Death' })
-	}
-
-	return {
-		field: field,
-		newValue: () => APLValueRuneType.RuneBlood,
-		factory: (parent, player, config) => new TextDropdownPicker(parent, player, {
-			...config,
-			defaultLabel: 'None',
-			equals: (a, b) => a == b,
-			values: values,
-		}),
-	};
-}
-
-export function runeSlotFieldConfig(field: string): APLPickerBuilderFieldConfig<any, any> {
-	return {
-		field: field,
-		newValue: () => APLValueRuneSlot.SlotLeftBlood,
-		factory: (parent, player, config) => new TextDropdownPicker(parent, player, {
-			...config,
-			defaultLabel: 'None',
-			equals: (a, b) => a == b,
-			values: [
-				{ value: APLValueRuneSlot.SlotLeftBlood, label: 'Blood Left' },
-				{ value: APLValueRuneSlot.SlotRightBlood, label: 'Blood Right' },
-				{ value: APLValueRuneSlot.SlotLeftFrost, label: 'Frost Left' },
-				{ value: APLValueRuneSlot.SlotRightFrost, label: 'Frost Right' },
-				{ value: APLValueRuneSlot.SlotLeftUnholy, label: 'Unholy Left' },
-				{ value: APLValueRuneSlot.SlotRightUnholy, label: 'Unholy Right' },
-			],
-		}),
 	};
 }
 

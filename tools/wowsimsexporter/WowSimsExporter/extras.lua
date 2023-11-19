@@ -18,7 +18,6 @@ WowSimsExporter.supportedSims = {
 "warrior",
 "warlock",
 "paladin",
-"deathknight"
 }
 
 WowSimsExporter.slotNames = {
@@ -95,11 +94,6 @@ WowSimsExporter.specializations = {
 	{comparator = function(A,B,C) return C > A and C > B end, spec="retribution",class="paladin", url="protection_paladin"},
 	-- priest
 	{comparator = function(A,B,C) return C > A and C > B end, spec="shadow", class="priest", url="shadow_priest"},
-	-- death knight
-	--{comparator = function(A,B,C) return A > B and A > C end, spec="blood_tank", class="deathknight", url="tank_deathknight"},
-	{comparator = function(A,B,C) return A > B and A > C end, spec="blood", class="deathknight", url="deathknight"},
-	{comparator = function(A,B,C) return B > A and B > C end, spec="frost", class="deathknight", url="deathknight"},
-	{comparator = function(A,B,C) return C > A and C > B end, spec="unholy", class="deathknight", url="deathknight"},
 }
 
 -- table extension contains

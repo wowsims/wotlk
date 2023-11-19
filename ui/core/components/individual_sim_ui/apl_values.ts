@@ -32,14 +32,6 @@ import {
 	APLValueCurrentRage,
 	APLValueCurrentEnergy,
 	APLValueCurrentComboPoints,
-	APLValueCurrentRunicPower,
-	APLValueCurrentRuneCount,
-	APLValueCurrentRuneDeath,
-	APLValueCurrentRuneActive,
-	APLValueCurrentNonDeathRuneCount,
-	APLValueRuneSlotCooldown,
-	APLValueRuneGrace,
-	APLValueRuneSlotGrace,
 	APLValueGCDIsReady,
 	APLValueGCDTimeToReady,
 	APLValueAutoTimeToNext,
@@ -67,8 +59,6 @@ import {
 	APLValueSequenceIsComplete,
 	APLValueSequenceIsReady,
 	APLValueSequenceTimeToReady,
-	APLValueRuneCooldown,
-	APLValueNextRuneCooldown,
 	APLValueNumberTargets,
 	APLValueTotemRemainingTime,
 	APLValueCatExcessEnergy,
@@ -608,106 +598,6 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		newValue: APLValueCurrentComboPoints.create,
 		fields: [],
 	}),
-	'currentRunicPower': inputBuilder({
-		label: 'Runic Power',
-		submenu: ['Resources'],
-		shortDescription: 'Amount of currently available Runic Power.',
-		newValue: APLValueCurrentRunicPower.create,
-		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassDeathknight,
-		fields: [],
-	}),
-
-	// Resources Rune
-	'currentRuneCount': inputBuilder({
-		label: 'Num Runes',
-		submenu: ['Resources', 'Runes'],
-		shortDescription: 'Amount of currently available Runes of certain type including Death.',
-		newValue: APLValueCurrentRuneCount.create,
-		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassDeathknight,
-		fields: [
-			AplHelpers.runeTypeFieldConfig('runeType', true),
-		],
-	}),
-	'currentNonDeathRuneCount': inputBuilder({
-		label: 'Num Non Death Runes',
-		submenu: ['Resources', 'Runes'],
-		shortDescription: 'Amount of currently available Runes of certain type ignoring Death',
-		newValue: APLValueCurrentNonDeathRuneCount.create,
-		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassDeathknight,
-		fields: [
-			AplHelpers.runeTypeFieldConfig('runeType', false),
-		],
-	}),
-	'currentRuneActive': inputBuilder({
-		label: 'Rune Is Ready',
-		submenu: ['Resources', 'Runes'],
-		shortDescription: 'Is the rune of a certain slot currently available.',
-		newValue: APLValueCurrentRuneActive.create,
-		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassDeathknight,
-		fields: [
-			AplHelpers.runeSlotFieldConfig('runeSlot'),
-		],
-	}),
-	'currentRuneDeath': inputBuilder({
-		label: 'Rune Is Death',
-		submenu: ['Resources', 'Runes'],
-		shortDescription: 'Is the rune of a certain slot currently converted to Death.',
-		newValue: APLValueCurrentRuneDeath.create,
-		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassDeathknight,
-		fields: [
-			AplHelpers.runeSlotFieldConfig('runeSlot'),
-		],
-	}),
-	'runeCooldown': inputBuilder({
-		label: 'Rune Cooldown',
-		submenu: ['Resources', 'Runes'],
-		shortDescription: 'Amount of time until a rune of certain type is ready to use.<br><b>NOTE:</b> Returns 0 if there is a rune available',
-		newValue: APLValueRuneCooldown.create,
-		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassDeathknight,
-		fields: [
-			AplHelpers.runeTypeFieldConfig('runeType', false),
-		],
-	}),
-	'nextRuneCooldown': inputBuilder({
-		label: 'Next Rune Cooldown',
-		submenu: ['Resources', 'Runes'],
-		shortDescription: 'Amount of time until a 2nd rune of certain type is ready to use.<br><b>NOTE:</b> Returns 0 if there are 2 runes available',
-		newValue: APLValueNextRuneCooldown.create,
-		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassDeathknight,
-		fields: [
-			AplHelpers.runeTypeFieldConfig('runeType', false),
-		],
-	}),
-	'runeSlotCooldown': inputBuilder({
-		label: 'Rune Slot Cooldown',
-		submenu: ['Resources', 'Runes'],
-		shortDescription: 'Amount of time until a rune of certain slot is ready to use.<br><b>NOTE:</b> Returns 0 if rune is ready',
-		newValue: APLValueRuneSlotCooldown.create,
-		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassDeathknight,
-		fields: [
-			AplHelpers.runeSlotFieldConfig('runeSlot'),
-		],
-	}),
-	'runeGrace': inputBuilder({
-		label: 'Rune Grace Period',
-		submenu: ['Resources', 'Runes'],
-		shortDescription: 'Amount of rune grace period available for certain rune type.',
-		newValue: APLValueRuneGrace.create,
-		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassDeathknight,
-		fields: [
-			AplHelpers.runeTypeFieldConfig('runeType', false),
-		],
-	}),
-	'runeSlotGrace': inputBuilder({
-		label: 'Rune Slot Grace Period',
-		submenu: ['Resources', 'Runes'],
-		shortDescription: 'Amount of rune grace period available for certain rune slot.',
-		newValue: APLValueRuneSlotGrace.create,
-		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassDeathknight,
-		fields: [
-			AplHelpers.runeSlotFieldConfig('runeSlot'),
-		],
-	}),
 
 	// GCD
 	'gcdIsReady': inputBuilder({
@@ -981,7 +871,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		submenu: ['Shaman'],
 		shortDescription: 'Returns the amount of time remaining until the totem will expire.',
 		newValue: APLValueTotemRemainingTime.create,
-		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassShaman,
+		includeIf: (player: Player<any>, _isPrepull: boolean) => player.getClass() == Class.ClassShaman,
 		fields: [
 			totemTypeFieldConfig('totemType'),
 		],
@@ -991,7 +881,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		submenu: ['Feral Druid'],
 		shortDescription: 'Returns the amount of excess energy available, after subtracting energy that will be needed to maintain DoTs.',
 		newValue: APLValueCatExcessEnergy.create,
-		includeIf: (player: Player<any>, isPrepull: boolean) => player.spec == Spec.SpecFeralDruid,
+		includeIf: (player: Player<any>, _isPrepull: boolean) => player.spec == Spec.SpecFeralDruid,
 		fields: [
 		],
 	}),
@@ -1000,7 +890,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		submenu: ['Feral Druid'],
 		shortDescription: 'Returns duration of savage roar based on current combo points',
 		newValue: APLValueCatNewSavageRoarDuration.create,
-		includeIf: (player: Player<any>, isPrepull: boolean) => player.spec == Spec.SpecFeralDruid,
+		includeIf: (player: Player<any>, _isPrepull: boolean) => player.spec == Spec.SpecFeralDruid,
 		fields: [
 		],
 	}),
@@ -1009,7 +899,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		submenu: ['Warlock'],
 		shortDescription: 'Returns <b>True</b> if the current Drain Soul channel should be immediately recast, to get a better snapshot.',
 		newValue: APLValueWarlockShouldRecastDrainSoul.create,
-		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassWarlock,
+		includeIf: (player: Player<any>, _isPrepull: boolean) => player.getClass() == Class.ClassWarlock,
 		fields: [
 		],
 	}),
@@ -1018,7 +908,7 @@ const valueKindFactories: {[f in NonNullable<APLValueKind>]: ValueKindConfig<APL
 		submenu: ['Warlock'],
 		shortDescription: 'Returns <b>True</b> if the current Corruption has expired, or should be refreshed to get a better snapshot.',
 		newValue: APLValueWarlockShouldRefreshCorruption.create,
-		includeIf: (player: Player<any>, isPrepull: boolean) => player.getClass() == Class.ClassWarlock,
+		includeIf: (player: Player<any>, _isPrepull: boolean) => player.getClass() == Class.ClassWarlock,
 		fields: [
 			AplHelpers.unitFieldConfig('targetUnit', 'targets'),
 		],

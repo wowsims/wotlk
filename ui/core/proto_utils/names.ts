@@ -85,7 +85,6 @@ export const classNames: Map<Class, string> = new Map([
 	[Class.ClassShaman, 'Shaman'],
 	[Class.ClassWarlock, 'Warlock'],
 	[Class.ClassWarrior, 'Warrior'],
-	[Class.ClassDeathknight, 'Death Knight'],
 ]);
 
 export function nameToClass(name: string): Class {
@@ -165,11 +164,6 @@ export const statOrder: Array<Stat> = [
 	Stat.StatFrostResistance,
 	Stat.StatNatureResistance,
 	Stat.StatShadowResistance,
-	Stat.StatRunicPower,
-	Stat.StatBloodRune,
-	Stat.StatFrostRune,
-	Stat.StatUnholyRune,
-	Stat.StatDeathRune,
 ];
 
 export const statNames: Map<Stat, string> = new Map([
@@ -214,11 +208,6 @@ export const statNames: Map<Stat, string> = new Map([
 	[Stat.StatNatureResistance, 'Nature Resistance'],
 	[Stat.StatShadowResistance, 'Shadow Resistance'],
 	[Stat.StatBonusArmor, 'Bonus Armor'],
-	[Stat.StatRunicPower, 'Runic Power'],
-	[Stat.StatBloodRune, 'Blood Rune'],
-	[Stat.StatFrostRune, 'Frost Rune'],
-	[Stat.StatUnholyRune, 'Unholy Rune'],
-	[Stat.StatDeathRune, 'Death Rune'],
 ]);
 
 export const pseudoStatOrder: Array<PseudoStat> = [
@@ -275,11 +264,6 @@ export const resourceNames: Map<ResourceType, string> = new Map([
 	[ResourceType.ResourceTypeRage, 'Rage'],
 	[ResourceType.ResourceTypeComboPoints, 'Combo Points'],
 	[ResourceType.ResourceTypeFocus, 'Focus'],
-	[ResourceType.ResourceTypeRunicPower, 'Runic Power'],
-	[ResourceType.ResourceTypeBloodRune, 'Blood Rune'],
-	[ResourceType.ResourceTypeFrostRune, 'Frost Rune'],
-	[ResourceType.ResourceTypeUnholyRune, 'Unholy Rune'],
-	[ResourceType.ResourceTypeDeathRune, 'Death Rune'],
 ]);
 
 export const resourceColors: Map<ResourceType, string> = new Map([
@@ -290,11 +274,6 @@ export const resourceColors: Map<ResourceType, string> = new Map([
 	[ResourceType.ResourceTypeRage, '#ff0000'],
 	[ResourceType.ResourceTypeComboPoints, '#ffa07a'],
 	[ResourceType.ResourceTypeFocus, '#cd853f'],
-	[ResourceType.ResourceTypeRunicPower, '#5b99ee'],
-	[ResourceType.ResourceTypeBloodRune, '#ff0000'],
-	[ResourceType.ResourceTypeFrostRune, '#0000ff'],
-	[ResourceType.ResourceTypeUnholyRune, '#00ff00'],
-	[ResourceType.ResourceTypeDeathRune, '#8b008b'],
 ]);
 
 export function stringToResourceType(str: string): ResourceType {

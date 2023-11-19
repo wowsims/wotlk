@@ -7,7 +7,6 @@ import {
 	Flask,
 	Food,
 	Glyphs,
-	Potions,
 	RaidBuffs,
 	TristateEffect,
 	UnitReference,
@@ -113,10 +112,8 @@ export const DefaultOptions = Options.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	flask: Flask.FlaskOfTheFrostWyrm,
-	food: Food.FoodFishFeast,
-	defaultPotion: Potions.RunicManaInjector,
-	prepopPotion: Potions.PotionOfWildMagic,
+	flask: Flask.FlaskUnknown,
+	food: Food.FoodUnknown,
 });
 
 export const DefaultRaidBuffs = RaidBuffs.create({
@@ -126,20 +123,13 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	arcaneBrilliance: true,
 	divineSpirit: true,
 	trueshotAura: true,
-	leaderOfThePack: TristateEffect.TristateEffectImproved,
-	icyTalons: true,
-	totemOfWrath: true,
-	moonkinAura: TristateEffect.TristateEffectImproved,
-	wrathOfAirTotem: true,
-	sanctifiedRetribution: true,
-	bloodlust: true,
-	demonicPact: 500,
+	leaderOfThePack: true,
+	moonkinAura: true,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
 	blessingOfKings: true,
 	blessingOfWisdom: TristateEffect.TristateEffectImproved,
-	vampiricTouch: true,
 });
 
 export const DefaultDebuffs = Debuffs.create({

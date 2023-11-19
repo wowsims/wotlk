@@ -159,8 +159,6 @@ func init() {
 
 			var auras [3]*core.Aura
 			switch character.Class {
-			case proto.Class_ClassDeathknight:
-				auras = [3]*core.Aura{strAura, critAura, hasteAura}
 			case proto.Class_ClassDruid:
 				auras = [3]*core.Aura{strAura, agiAura, hasteAura}
 			case proto.Class_ClassHunter:

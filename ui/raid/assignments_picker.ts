@@ -9,7 +9,6 @@ import { emptyUnitReference } from '../core/proto_utils/utils.js';
 
 import { RaidSimUI } from './raid_sim_ui.js';
 import { PriestTalents } from 'ui/core/proto/priest.js';
-import { DeathknightTalents } from 'ui/core/proto/deathknight.js';
 
 export class AssignmentsPicker extends Component {
 	readonly raidSimUI: RaidSimUI;
@@ -18,7 +17,6 @@ export class AssignmentsPicker extends Component {
 	private readonly innervatesPicker: InnervatesPicker;
 	private readonly powerInfusionsPicker: PowerInfusionsPicker;
 	private readonly tricksOfTheTradesPicker: TricksOfTheTradesPicker;
-	private readonly unholyFrenzyPicker: UnholyFrenzyPicker;
 	private readonly focusMagicsPicker: FocusMagicsPicker;
 
 	constructor(parentElem: HTMLElement, raidSimUI: RaidSimUI) {
@@ -28,7 +26,6 @@ export class AssignmentsPicker extends Component {
 		this.innervatesPicker = new InnervatesPicker(this.rootElem, raidSimUI);
 		this.powerInfusionsPicker = new PowerInfusionsPicker(this.rootElem, raidSimUI);
 		this.tricksOfTheTradesPicker = new TricksOfTheTradesPicker(this.rootElem, raidSimUI);
-		this.unholyFrenzyPicker = new UnholyFrenzyPicker(this.rootElem, raidSimUI);
 		this.focusMagicsPicker = new FocusMagicsPicker(this.rootElem, raidSimUI);
 	}
 }
@@ -174,26 +171,6 @@ class TricksOfTheTradesPicker extends AssignedBuffPicker {
 	setPlayerValue(eventID: EventID, player: Player<any>, newValue: UnitReference) {
 		const newOptions = (player as Player<Spec.SpecRogue>).getSpecOptions();
 		newOptions.tricksOfTheTradeTarget = newValue;
-		player.setSpecOptions(eventID, newOptions);
-	}
-}
-
-class UnholyFrenzyPicker extends AssignedBuffPicker {
-	getTitle(): string {
-		return 'Unholy Frenzy';
-	}
-
-	getSourcePlayers(): Array<Player<any>> {
-		return this.raidSimUI.getActivePlayers().filter(player => player.isClass(Class.ClassDeathknight) && (player.getTalents() as DeathknightTalents).hysteria);
-	}
-
-	getPlayerValue(player: Player<any>): UnitReference {
-		return (player as Player<Spec.SpecDeathknight>).getSpecOptions().unholyFrenzyTarget || emptyUnitReference();
-	}
-
-	setPlayerValue(eventID: EventID, player: Player<any>, newValue: UnitReference) {
-		const newOptions = (player as Player<Spec.SpecDeathknight>).getSpecOptions();
-		newOptions.unholyFrenzyTarget = newValue;
 		player.setSpecOptions(eventID, newOptions);
 	}
 }

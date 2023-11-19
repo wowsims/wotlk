@@ -2,8 +2,6 @@ package sim
 
 import (
 	_ "github.com/wowsims/wotlk/sim/common"
-	// dpsDeathKnight "github.com/wowsims/wotlk/sim/deathknight/dps"
-	// tankDeathKnight "github.com/wowsims/wotlk/sim/deathknight/tank"
 	// "github.com/wowsims/wotlk/sim/druid/balance"
 	// "github.com/wowsims/wotlk/sim/druid/feral"
 	// restoDruid "github.com/wowsims/wotlk/sim/druid/restoration"
@@ -51,6 +49,4 @@ func RegisterAll() {
 	// protectionPaladin.RegisterProtectionPaladin()
 	// retribution.RegisterRetributionPaladin()
 	// warlock.RegisterWarlock()
-	// dpsDeathKnight.RegisterDpsDeathknight()
-	// tankDeathKnight.RegisterTankDeathknight()
 }

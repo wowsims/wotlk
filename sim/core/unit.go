@@ -22,7 +22,6 @@ const (
 	ManaBar PowerBarType = iota
 	EnergyBar
 	RageBar
-	RunicPower
 )
 
 type DynamicDamageTakenModifier func(sim *Simulation, spell *Spell, result *SpellResult)
@@ -104,7 +103,6 @@ type Unit struct {
 	rageBar
 	energyBar
 	focusBar
-	runicPowerBar
 
 	// All spells that can be cast by this unit.
 	Spellbook                 []*Spell
@@ -474,7 +472,6 @@ func (unit *Unit) reset(sim *Simulation, _ Agent) {
 
 	unit.energyBar.reset(sim)
 	unit.rageBar.reset(sim)
-	unit.runicPowerBar.reset(sim)
 
 	unit.AutoAttacks.reset(sim)
 

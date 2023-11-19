@@ -105,18 +105,6 @@ message APLValue {
         APLValueCurrentRage current_rage = 14;
         APLValueCurrentEnergy current_energy = 15;
         APLValueCurrentComboPoints current_combo_points = 16;
-        APLValueCurrentRunicPower current_runic_power = 25;
-
-        // Rune Resource values
-        APLValueCurrentRuneCount current_rune_count = 29;
-        APLValueCurrentNonDeathRuneCount current_non_death_rune_count = 34;
-        APLValueCurrentRuneDeath current_rune_death = 30;
-        APLValueCurrentRuneActive current_rune_active = 31;
-        APLValueRuneCooldown rune_cooldown = 32;
-        APLValueNextRuneCooldown next_rune_cooldown = 33;
-        APLValueRuneSlotCooldown rune_slot_cooldown = 53;
-        APLValueRuneGrace rune_grace = 54;
-        APLValueRuneSlotGrace rune_slot_grace = 55;
 
         // GCD values
         APLValueGCDIsReady gcd_is_ready = 17;
@@ -336,52 +324,6 @@ message APLValueCurrentManaPercent {
 message APLValueCurrentRage {}
 message APLValueCurrentEnergy {}
 message APLValueCurrentComboPoints {}
-message APLValueCurrentRunicPower {}
-
-enum APLValueRuneType {
-    RuneUnknown = 0;
-    RuneBlood = 1;
-    RuneFrost = 2;
-    RuneUnholy = 3;
-    RuneDeath = 4;
-}
-enum APLValueRuneSlot {
-    SlotUnknown = 0;
-    SlotLeftBlood = 1;
-    SlotRightBlood = 2;
-    SlotLeftFrost = 3;
-    SlotRightFrost = 4;
-    SlotLeftUnholy = 5;
-    SlotRightUnholy = 6;
-}
-
-message APLValueCurrentRuneCount{
-    APLValueRuneType rune_type = 1;
-}
-message APLValueCurrentNonDeathRuneCount{
-    APLValueRuneType rune_type = 1;
-}
-message APLValueCurrentRuneDeath{
-    APLValueRuneSlot rune_slot = 1;
-}
-message APLValueCurrentRuneActive{
-    APLValueRuneSlot rune_slot = 1;
-}
-message APLValueRuneCooldown{
-    APLValueRuneType rune_type = 1;
-}
-message APLValueNextRuneCooldown{
-    APLValueRuneType rune_type = 1;
-}
-message APLValueRuneSlotCooldown{
-    APLValueRuneSlot rune_slot = 1;
-}
-message APLValueRuneGrace{
-    APLValueRuneType rune_type = 1;
-}
-message APLValueRuneSlotGrace{
-    APLValueRuneType rune_slot = 1;
-}
 
 message APLValueGCDIsReady {}
 message APLValueGCDTimeToReady {}

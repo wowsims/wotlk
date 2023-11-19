@@ -313,11 +313,6 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 							actionId: ActionId.fromSpellId(48470),
 							playerData: playerClassAndMissingTalent(Class.ClassDruid, 'improvedMarkOfTheWild'),
 						},
-						{
-							label: 'Drums of the Wild',
-							actionId: ActionId.fromItemId(49634),
-							raidData: raidBuff('drumsOfTheWild'),
-						},
 					],
 				},
 				{
@@ -326,16 +321,6 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 						{
 							label: 'Blessing of Kings',
 							actionId: ActionId.fromSpellId(25898),
-							playerData: playerClass(Class.ClassPaladin),
-						},
-						{
-							label: 'Drums of Forgotten Kings',
-							actionId: ActionId.fromItemId(49633),
-							raidData: raidBuff('drumsOfForgottenKings'),
-						},
-						{
-							label: 'Blessing of Sanctuary',
-							actionId: ActionId.fromSpellId(25899),
 							playerData: playerClass(Class.ClassPaladin),
 						},
 					],
@@ -402,11 +387,6 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 							label: 'Strength of Earth Totem',
 							actionId: ActionId.fromSpellId(58643),
 							playerData: playerClassAndMissingTalent(Class.ClassShaman, 'enhancingTotems', player => player.getSpecOptions().totems?.earth == EarthTotem.StrengthOfEarthTotem),
-						},
-						{
-							label: 'Horn of Winter',
-							actionId: ActionId.fromSpellId(57623),
-							playerData: playerClass(Class.ClassDeathknight),
 						},
 						{
 							label: 'Scroll of Strength',
@@ -479,11 +459,6 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 					label: 'Atk Pwr %',
 					effects: [
 						{
-							label: 'Abomination\'s Might',
-							actionId: ActionId.fromSpellId(53138),
-							playerData: playerClassAndTalent(Class.ClassDeathknight, 'abominationsMight'),
-						},
-						{
 							label: 'Trueshot Aura',
 							actionId: ActionId.fromSpellId(19506),
 							playerData: playerClassAndTalent(Class.ClassHunter, 'trueshotAura'),
@@ -538,11 +513,6 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 				{
 					label: 'Melee Haste',
 					effects: [
-						{
-							label: 'Improved Icy Talons',
-							actionId: ActionId.fromSpellId(55610),
-							playerData: playerClassAndTalent(Class.ClassDeathknight, 'improvedIcyTalons'),
-						},
 					],
 				},
 				{

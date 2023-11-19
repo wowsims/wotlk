@@ -264,38 +264,6 @@ var ClassBaseStats = map[proto.Class]map[int]stats.Stats{
 			stats.Stamina:   52,
 		},
 	},
-	proto.Class_ClassDeathknight: {
-		25: {
-			stats.Health:      0,
-			stats.Mana:        0,
-			stats.Agility:     0,
-			stats.Strength:    0,
-			stats.Intellect:   0,
-			stats.Spirit:      0,
-			stats.Stamina:     0,
-			stats.AttackPower: 0,
-		},
-		40: {
-			stats.Health:      0,
-			stats.Mana:        0,
-			stats.Agility:     0,
-			stats.Strength:    0,
-			stats.Intellect:   0,
-			stats.Spirit:      0,
-			stats.Stamina:     0,
-			stats.AttackPower: 0,
-		},
-		60: {
-			stats.Health:      0,
-			stats.Mana:        0,
-			stats.Agility:     0,
-			stats.Strength:    0,
-			stats.Intellect:   0,
-			stats.Spirit:      0,
-			stats.Stamina:     0,
-			stats.AttackPower: 0,
-		},
-	},
 	proto.Class_ClassShaman: {
 		25: {
 			stats.Health:      0,

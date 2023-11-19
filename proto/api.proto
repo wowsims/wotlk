@@ -5,7 +5,6 @@ option go_package = "./proto";
 
 import "common.proto";
 import "apl.proto";
-import "deathknight.proto";
 import "druid.proto";
 import "hunter.proto";
 import "mage.proto";
@@ -65,8 +64,6 @@ message Player {
 		Warlock warlock = 36;
 		Warrior warrior = 37;
 		ProtectionWarrior protection_warrior = 38;
-		Deathknight deathknight = 39;
-		TankDeathknight tank_deathknight = 40;
 	}
 	
 	Glyphs glyphs = 41;
@@ -189,11 +186,6 @@ enum ResourceType {
 	ResourceTypeComboPoints = 4;
 	ResourceTypeFocus = 5;
 	ResourceTypeHealth = 6;
-	ResourceTypeRunicPower = 7;
-	ResourceTypeBloodRune = 8;
-	ResourceTypeFrostRune = 9;
-	ResourceTypeUnholyRune = 10;
-	ResourceTypeDeathRune = 11;
 }
 
 message ResourceMetrics {

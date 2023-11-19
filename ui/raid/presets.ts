@@ -18,8 +18,6 @@ import {
 
 import { Player } from '../core/player.js';
 
-import * as TankDeathknightPresets from '../tank_deathknight/presets.js';
-import * as DeathknightPresets from '../deathknight/presets.js';
 import * as BalanceDruidPresets from '../balance_druid/presets.js';
 import * as FeralDruidPresets from '../feral_druid/presets.js';
 import * as FeralTankDruidPresets from '../feral_tank_druid/presets.js';
@@ -39,8 +37,6 @@ import * as WarriorPresets from '../warrior/presets.js';
 import * as ProtectionWarriorPresets from '../protection_warrior/presets.js';
 import * as WarlockPresets from '../warlock/presets.js';
 
-import { TankDeathknightSimUI } from '../tank_deathknight/sim.js';
-import { DeathknightSimUI } from '../deathknight/sim.js';
 import { BalanceDruidSimUI } from '../balance_druid/sim.js';
 import { FeralDruidSimUI } from '../feral_druid/sim.js';
 import { FeralTankDruidSimUI } from '../feral_tank_druid/sim.js';
@@ -61,8 +57,6 @@ import { ProtectionWarriorSimUI } from '../protection_warrior/sim.js';
 import { WarlockSimUI } from '../warlock/sim.js';
 
 export const specSimFactories: Record<Spec, (parentElem: HTMLElement, player: Player<any>) => IndividualSimUI<any>> = {
-	[Spec.SpecTankDeathknight]: (parentElem: HTMLElement, player: Player<any>) => new TankDeathknightSimUI(parentElem, player),
-	[Spec.SpecDeathknight]: (parentElem: HTMLElement, player: Player<any>) => new DeathknightSimUI(parentElem, player),
 	[Spec.SpecBalanceDruid]: (parentElem: HTMLElement, player: Player<any>) => new BalanceDruidSimUI(parentElem, player),
 	[Spec.SpecFeralDruid]: (parentElem: HTMLElement, player: Player<any>) => new FeralDruidSimUI(parentElem, player),
 	[Spec.SpecFeralTankDruid]: (parentElem: HTMLElement, player: Player<any>) => new FeralTankDruidSimUI(parentElem, player),
@@ -101,118 +95,6 @@ export interface PresetSpecSettings<SpecType extends Spec> {
 }
 
 export const playerPresets: Array<PresetSpecSettings<any>> = [
-	{
-		spec: Spec.SpecTankDeathknight,
-		rotation: TankDeathknightPresets.DefaultRotation,
-		talents: TankDeathknightPresets.BloodTalents.data,
-		specOptions: TankDeathknightPresets.DefaultOptions,
-		consumes: TankDeathknightPresets.DefaultConsumes,
-		defaultName: 'Blood Tank',
-		defaultFactionRaces: {
-			[Faction.Unknown]: Race.RaceUnknown,
-			[Faction.Alliance]: Race.RaceHuman,
-			[Faction.Horde]: Race.RaceTroll,
-		},
-		defaultGear: {
-			[Faction.Unknown]: {},
-			[Faction.Alliance]: {
-				1: TankDeathknightPresets.P1_BLOOD_PRESET.gear,
-				2: TankDeathknightPresets.P2_BLOOD_PRESET.gear,
-			},
-			[Faction.Horde]: {
-				1: TankDeathknightPresets.P1_BLOOD_PRESET.gear,
-				2: TankDeathknightPresets.P2_BLOOD_PRESET.gear,
-			},
-		},
-		tooltip: 'Blood Tank Death Knight',
-		iconUrl: getSpecIcon(Class.ClassDeathknight, 0),
-	},
-	{
-		spec: Spec.SpecDeathknight,
-		rotation: DeathknightPresets.DefaultBloodRotation,
-		talents: DeathknightPresets.BloodTalents.data,
-		specOptions: DeathknightPresets.DefaultBloodOptions,
-		consumes: DeathknightPresets.DefaultConsumes,
-		defaultName: 'Blood DPS',
-		defaultFactionRaces: {
-			[Faction.Unknown]: Race.RaceUnknown,
-			[Faction.Alliance]: Race.RaceHuman,
-			[Faction.Horde]: Race.RaceOrc,
-		},
-		defaultGear: {
-			[Faction.Unknown]: {},
-			[Faction.Alliance]: {
-				1: DeathknightPresets.P1_BLOOD_PRESET.gear,
-				2: DeathknightPresets.P2_BLOOD_PRESET.gear,
-				3: DeathknightPresets.P3_BLOOD_PRESET.gear,
-			},
-			[Faction.Horde]: {
-				1: DeathknightPresets.P1_BLOOD_PRESET.gear,
-				2: DeathknightPresets.P2_BLOOD_PRESET.gear,
-				3: DeathknightPresets.P3_BLOOD_PRESET.gear,
-			},
-		},
-		tooltip: 'Blood DPS Death Knight',
-		iconUrl: getSpecIcon(Class.ClassDeathknight, 3),
-	},
-	{
-		spec: Spec.SpecDeathknight,
-		rotation: DeathknightPresets.DefaultFrostRotation,
-		talents: DeathknightPresets.FrostTalents.data,
-		specOptions: DeathknightPresets.DefaultFrostOptions,
-		consumes: DeathknightPresets.DefaultConsumes,
-		defaultName: 'Frost',
-		defaultFactionRaces: {
-			[Faction.Unknown]: Race.RaceUnknown,
-			[Faction.Alliance]: Race.RaceHuman,
-			[Faction.Horde]: Race.RaceTroll,
-		},
-		defaultGear: {
-			[Faction.Unknown]: {},
-			[Faction.Alliance]: {
-				1: DeathknightPresets.P1_FROST_PRESET.gear,
-				2: DeathknightPresets.P2_FROST_PRESET.gear,
-				3: DeathknightPresets.P3_FROST_PRESET.gear,
-			},
-			[Faction.Horde]: {
-				1: DeathknightPresets.P1_FROST_PRESET.gear,
-				2: DeathknightPresets.P2_FROST_PRESET.gear,
-				3: DeathknightPresets.P3_FROST_PRESET.gear,
-			},
-		},
-		otherDefaults: DeathknightPresets.OtherDefaults,
-		tooltip: 'Frost Death Knight',
-		iconUrl: getSpecIcon(Class.ClassDeathknight, 1),
-	},
-	{
-		spec: Spec.SpecDeathknight,
-		rotation: DeathknightPresets.DefaultUnholyRotation,
-		talents: DeathknightPresets.UnholyDualWieldTalents.data,
-		specOptions: DeathknightPresets.DefaultUnholyOptions,
-		consumes: DeathknightPresets.DefaultConsumes,
-		defaultName: 'Unholy',
-		defaultFactionRaces: {
-			[Faction.Unknown]: Race.RaceUnknown,
-			[Faction.Alliance]: Race.RaceHuman,
-			[Faction.Horde]: Race.RaceTroll,
-		},
-		defaultGear: {
-			[Faction.Unknown]: {},
-			[Faction.Alliance]: {
-				1: DeathknightPresets.P1_UNHOLY_DW_PRESET.gear,
-				2: DeathknightPresets.P2_UNHOLY_DW_PRESET.gear,
-				3: DeathknightPresets.P3_UNHOLY_DW_PRESET.gear,
-			},
-			[Faction.Horde]: {
-				1: DeathknightPresets.P1_UNHOLY_DW_PRESET.gear,
-				2: DeathknightPresets.P2_UNHOLY_DW_PRESET.gear,
-				3: DeathknightPresets.P3_UNHOLY_DW_PRESET.gear,
-			},
-		},
-		otherDefaults: DeathknightPresets.OtherDefaults,
-		tooltip: 'Dual-Wield Unholy DK',
-		iconUrl: getSpecIcon(Class.ClassDeathknight, 2),
-	},
 	{
 		spec: Spec.SpecBalanceDruid,
 		rotation: BalanceDruidPresets.DefaultRotation,

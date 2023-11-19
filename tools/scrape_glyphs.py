@@ -19,7 +19,6 @@ if len(sys.argv) < 3:
 class_name = sys.argv[1]
 output_file_path = sys.argv[2]
 
-# Convert "death-knight" to DeathKnight
 pretty_class_name = "".join(word.title() for i, word in enumerate(class_name.split("-")))
 lower_class_name = "".join(word if i == 0 else word.title() for i, word in enumerate(class_name.split("-")))
 

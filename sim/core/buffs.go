@@ -1180,7 +1180,6 @@ func registerRevitalizeHotCD(agent Agent, label string, hotID ActionID, ticks in
 	manaMetrics := character.NewManaMetrics(revActionID)
 	energyMetrics := character.NewEnergyMetrics(revActionID)
 	rageMetrics := character.NewRageMetrics(revActionID)
-	rpMetrics := character.NewRunicPowerMetrics(revActionID)
 
 	// Calculate desired downtime based on selected uptimeCount (1 count = 10% uptime, 0%-100%)
 	totalDuration := time.Duration(ticks) * tickPeriod
@@ -1203,8 +1202,6 @@ func registerRevitalizeHotCD(agent Agent, label string, hotID ActionID, ticks in
 							aura.Unit.AddEnergy(s, 8, energyMetrics)
 						} else if cpb == RageBar {
 							aura.Unit.AddRage(s, 4, rageMetrics)
-						} else if cpb == RunicPower {
-							aura.Unit.AddRunicPower(s, 16, rpMetrics)
 						}
 					}
 				},

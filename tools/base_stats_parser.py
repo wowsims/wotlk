@@ -26,7 +26,6 @@ Offs = {
     "Hunter": 2,
     "Rogue": 3,
     "Priest": 4,
-    "Death Knight": 5,
     "Shaman": 6,
     "Mage": 7,
     "Warlock": 8,
@@ -34,7 +33,7 @@ Offs = {
     "Druid": 10,
 }
 
-#Warrior	Paladin	Hunter	Rogue	Priest	Death Knight	Shaman	Mage	Warlock	Monk	Druid
+#Warrior	Paladin	Hunter	Rogue	Priest	Shaman	Mage	Warlock	Monk	Druid
 def GenIndexedDb(file : str):
     db = {}
     with open(file) as tsv:
@@ -95,7 +94,7 @@ import (
 
     output += '''var CritPerAgiAtLevel = map[proto.Class]map[int]float64{
   proto.Class_ClassUnknown: {25: 0.0, 45: 0.0, 50: 0.0, 60: 0.0},'''
-    for c in ["Warrior", "Paladin", "Hunter", "Rogue", "Priest", "Death Knight", "Shaman", "Mage", "Warlock", "Druid"]:
+    for c in ["Warrior", "Paladin", "Hunter", "Rogue", "Priest", "Shaman", "Mage", "Warlock", "Druid"]:
         cName = c.split()
         if len(cName) > 1:
             cName[1] = cName[1].lower() 
@@ -109,7 +108,7 @@ import (
 
     output += '''var ExtraClassBaseStats = map[proto.Class]map[int]stats.Stats{
 proto.Class_ClassUnknown: {},'''
-    for c in ["Warrior", "Paladin", "Hunter", "Rogue", "Priest", "Death Knight", "Shaman", "Mage", "Warlock", "Druid"]:
+    for c in ["Warrior", "Paladin", "Hunter", "Rogue", "Priest", "Shaman", "Mage", "Warlock", "Druid"]:
         cName = c.split()
         if len(cName) > 1:
             cName[1] = cName[1].lower() 

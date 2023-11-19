@@ -109,28 +109,6 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 		return rot.newValueCurrentEnergy(config.GetCurrentEnergy())
 	case *proto.APLValue_CurrentComboPoints:
 		return rot.newValueCurrentComboPoints(config.GetCurrentComboPoints())
-	case *proto.APLValue_CurrentRunicPower:
-		return rot.newValueCurrentRunicPower(config.GetCurrentRunicPower())
-
-	// Resources Runes
-	case *proto.APLValue_CurrentRuneCount:
-		return rot.newValueCurrentRuneCount(config.GetCurrentRuneCount())
-	case *proto.APLValue_CurrentNonDeathRuneCount:
-		return rot.newValueCurrentNonDeathRuneCount(config.GetCurrentNonDeathRuneCount())
-	case *proto.APLValue_CurrentRuneActive:
-		return rot.newValueCurrentRuneActive(config.GetCurrentRuneActive())
-	case *proto.APLValue_CurrentRuneDeath:
-		return rot.newValueCurrentRuneDeath(config.GetCurrentRuneDeath())
-	case *proto.APLValue_RuneCooldown:
-		return rot.newValueRuneCooldown(config.GetRuneCooldown())
-	case *proto.APLValue_NextRuneCooldown:
-		return rot.newValueNextRuneCooldown(config.GetNextRuneCooldown())
-	case *proto.APLValue_RuneSlotCooldown:
-		return rot.newValueRuneSlotCooldown(config.GetRuneSlotCooldown())
-	case *proto.APLValue_RuneGrace:
-		return rot.newValueRuneGrace(config.GetRuneGrace())
-	case *proto.APLValue_RuneSlotGrace:
-		return rot.newValueRuneSlotGrace(config.GetRuneSlotGrace())
 
 	// GCD
 	case *proto.APLValue_GcdIsReady:

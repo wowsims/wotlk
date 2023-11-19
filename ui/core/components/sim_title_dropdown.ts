@@ -61,8 +61,6 @@ export class SimTitleDropdown extends Component {
 		[Spec.SpecWarlock]: 'Warlock',
 		[Spec.SpecWarrior]: 'DPS',
 		[Spec.SpecProtectionWarrior]: 'Protection',
-		[Spec.SpecDeathknight]: 'DPS',
-		[Spec.SpecTankDeathknight]: 'Tank',
 	}
 
 	constructor(parent: HTMLElement, currentSpecIndex: Spec | null, config: SimTitleDropdownConfig = {}) {
@@ -185,7 +183,6 @@ export class SimTitleDropdown extends Component {
 	}
 
 	private buildRaidLink(): HTMLElement {
-		let href = raidSimSiteUrl;
 		let textKlass = this.getContextualKlass({ type: 'Raid' });
 		let iconPath = this.getSimIconPath({ type: 'Raid' });
 		let label = raidSimLabel;

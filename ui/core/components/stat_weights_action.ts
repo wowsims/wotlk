@@ -9,7 +9,7 @@ import { getClassStatName } from '../proto_utils/names.js';
 import { IndividualSimUI } from '../individual_sim_ui.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { Player } from '../player.js';
-import { formatDeltaTextElem, stDevToConf90 } from '../utils.js';
+import { stDevToConf90 } from '../utils.js';
 import { BooleanPicker } from '../components/boolean_picker.js';
 import { NumberPicker } from '../components/number_picker.js';
 import { combinationsWithDups, permutations, sum } from '../utils.js';

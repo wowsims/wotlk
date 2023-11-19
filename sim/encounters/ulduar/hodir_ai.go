@@ -439,7 +439,6 @@ func (ai *HodirAI) DoAction(sim *core.Simulation) {
 			warlocks := make([]int, 0)
 			shamans := make([]int, 0)
 			spriests := make([]int, 0)
-			dks := make([]int, 0)
 
 			for _, party := range sim.Raid.Parties {
 				for _, player := range party.Players {
@@ -468,9 +467,6 @@ func (ai *HodirAI) DoAction(sim *core.Simulation) {
 						if character.PrimaryTalentTree == 2 {
 							spriests = append(spriests, raidIndex)
 						}
-					case proto.Class_ClassDeathknight:
-						dks = append(dks, raidIndex)
-					}
 				}
 			}
 
@@ -479,7 +475,6 @@ func (ai *HodirAI) DoAction(sim *core.Simulation) {
 			maxBuffs = ai.stormCloudPrioApply(sim, maxBuffs, warlocks)
 			maxBuffs = ai.stormCloudPrioApply(sim, maxBuffs, shamans)
 			maxBuffs = ai.stormCloudPrioApply(sim, maxBuffs, spriests)
-			maxBuffs = ai.stormCloudPrioApply(sim, maxBuffs, dks)
 
 			// Spread randomly whats left
 			for maxBuffs > 0 {

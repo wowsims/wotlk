@@ -26,7 +26,6 @@ type SpellConfig struct {
 	ManaCost   ManaCostOptions
 	EnergyCost EnergyCostOptions
 	RageCost   RageCostOptions
-	RuneCost   RuneCostOptions
 	FocusCost  FocusCostOptions
 
 	Cast               CastConfig
@@ -256,8 +255,6 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		spell.Cost = newEnergyCost(spell, config.EnergyCost)
 	} else if config.RageCost.Cost != 0 {
 		spell.Cost = newRageCost(spell, config.RageCost)
-	} else if config.RuneCost.BloodRuneCost != 0 || config.RuneCost.FrostRuneCost != 0 || config.RuneCost.UnholyRuneCost != 0 || config.RuneCost.RunicPowerCost != 0 || config.RuneCost.RunicPowerGain != 0 {
-		spell.Cost = newRuneCost(spell, config.RuneCost)
 	} else if config.FocusCost.Cost != 0 {
 		spell.Cost = newFocusCost(spell, config.FocusCost)
 	}

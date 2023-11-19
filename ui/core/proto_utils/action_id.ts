@@ -91,22 +91,6 @@ export class ActionId {
 				baseName = 'Incoming HPS';
 				iconUrl = 'https://wow.zamimg.com/images/wow/icons/large/spell_holy_renew.jpg';
 				break;
-			case OtherAction.OtherActionBloodRuneGain:
-				baseName = 'Blood Rune Gain';
-				iconUrl = 'https://wow.zamimg.com/images/wow/icons/medium/spell_deathknight_deathstrike.jpg';
-				break;
-			case OtherAction.OtherActionFrostRuneGain:
-				baseName = 'Frost Rune Gain';
-				iconUrl = 'https://wow.zamimg.com/images/wow/icons/medium/spell_deathknight_deathstrike2.jpg';
-				break;
-			case OtherAction.OtherActionUnholyRuneGain:
-				baseName = 'Unholy Rune Gain';
-				iconUrl = 'https://wow.zamimg.com/images/wow/icons/medium/spell_deathknight_empowerruneblade.jpg';
-				break;
-			case OtherAction.OtherActionDeathRuneGain:
-				baseName = 'Death Rune Gain';
-				iconUrl = 'https://wow.zamimg.com/images/wow/icons/medium/spell_deathknight_empowerruneblade.jpg';
-				break;
 			case OtherAction.OtherActionPotion:
 				baseName = 'Potion';
 				iconUrl = 'https://wow.zamimg.com/images/wow/icons/large/inv_alchemy_elixir_04.jpg';
@@ -373,42 +357,6 @@ export class ActionId {
 					name += ' (Spell)';
 				}
 				break;
-			case 'Frozen Blows':
-				if (this.tag == 1) {
-					name += ' (Physical)';
-				} else if (this.tag == 2) {
-					name += ' (Frost)';
-				}
-				break;
-			case 'Scourge Strike':
-				if (this.tag == 1) {
-					name += ' (Physical)';
-				} else if (this.tag == 2) {
-					name += ' (Shadow)';
-				}
-				break;
-			case 'Heart Strike':
-				/*if (this.tag == 1) {
-					name += ' (Physical)';
-				} else */if (this.tag == 2) {
-					name += ' (Off-target)';
-				}
-				break;
-			case 'Rune Strike':
-				if (this.tag == 0) {
-					name += ' (Queue)'
-				} else if (this.tag == 1) {
-					name += ' (Main Hand)';
-				} else if (this.tag == 2) {
-					name += ' (Off Hand)';
-				}
-				break;
-			case 'Frost Strike':
-			case 'Plague Strike':
-			case 'Blood Strike':
-			case 'Death Strike':
-			case 'Obliterate':
-			case 'Blood-Caked Strike':
 			case 'Lightning Speed':
 			case 'Windfury Weapon':
 			case 'Berserk':
@@ -695,9 +643,4 @@ export const resourceTypeToIcon: Record<ResourceType, string> = {
 	[ResourceType.ResourceTypeRage]: 'https://wow.zamimg.com/images/wow/icons/medium/spell_misc_emotionangry.jpg',
 	[ResourceType.ResourceTypeComboPoints]: 'https://wow.zamimg.com/images/wow/icons/medium/inv_mace_2h_pvp410_c_01.jpg',
 	[ResourceType.ResourceTypeFocus]: 'https://wow.zamimg.com/images/wow/icons/medium/ability_hunter_focusfire.jpg',
-	[ResourceType.ResourceTypeRunicPower]: 'https://wow.zamimg.com/images/wow/icons/medium/inv_sword_62.jpg',
-	[ResourceType.ResourceTypeBloodRune]: '/wotlk/assets/img/blood_rune.png',
-	[ResourceType.ResourceTypeFrostRune]: '/wotlk/assets/img/frost_rune.png',
-	[ResourceType.ResourceTypeUnholyRune]: '/wotlk/assets/img/unholy_rune.png',
-	[ResourceType.ResourceTypeDeathRune]: '/wotlk/assets/img/death_rune.png',
 };

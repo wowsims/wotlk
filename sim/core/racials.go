@@ -22,10 +22,7 @@ func applyRaceEffects(agent Agent) {
 
 		var resourceMetrics *ResourceMetrics = nil
 		if resourceMetrics == nil {
-			if character.HasRunicPowerBar() {
-				actionID = ActionID{SpellID: 50613}
-				resourceMetrics = character.NewRunicPowerMetrics(actionID)
-			} else if character.HasEnergyBar() {
+			if character.HasEnergyBar() {
 				actionID = ActionID{SpellID: 25046}
 				resourceMetrics = character.NewEnergyMetrics(actionID)
 			} else if character.HasManaBar() {
@@ -44,9 +41,7 @@ func applyRaceEffects(agent Agent) {
 				},
 			},
 			ApplyEffects: func(sim *Simulation, _ *Unit, spell *Spell) {
-				if spell.Unit.HasRunicPowerBar() {
-					spell.Unit.AddRunicPower(sim, 15.0, resourceMetrics)
-				} else if spell.Unit.HasEnergyBar() {
+				if spell.Unit.HasEnergyBar() {
 					spell.Unit.AddEnergy(sim, 15.0, resourceMetrics)
 				} else if spell.Unit.HasManaBar() {
 					spell.Unit.AddMana(sim, spell.Unit.MaxMana()*0.06, resourceMetrics)
@@ -59,9 +54,7 @@ func applyRaceEffects(agent Agent) {
 			Type:     CooldownTypeDPS,
 			Priority: CooldownPriorityLow,
 			ShouldActivate: func(sim *Simulation, character *Character) bool {
-				if spell.Unit.HasRunicPowerBar() {
-					return character.CurrentRunicPower() <= character.maxRunicPower-15
-				} else if spell.Unit.HasEnergyBar() {
+				if spell.Unit.HasEnergyBar() {
 					return character.CurrentEnergy() <= character.maxEnergy-15
 				}
 				return true

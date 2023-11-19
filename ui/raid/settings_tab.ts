@@ -79,14 +79,12 @@ export class SettingsTab extends SimTab {
 
 		contentBlock.bodyElement.appendChild(container);
 
-		this.makeBooleanRaidIconBuffInput(container, ActionId.fromItemId(37094), 'scrollOfStamina'),
-			this.makeBooleanRaidIconBuffInput(container, ActionId.fromItemId(43466), 'scrollOfStrength'),
-			this.makeBooleanRaidIconBuffInput(container, ActionId.fromItemId(43464), 'scrollOfAgility'),
-			this.makeBooleanRaidIconBuffInput(container, ActionId.fromItemId(37092), 'scrollOfIntellect'),
-			this.makeBooleanRaidIconBuffInput(container, ActionId.fromItemId(37098), 'scrollOfSpirit'),
-			this.makeBooleanRaidIconBuffInput(container, ActionId.fromItemId(43468), 'scrollOfProtection'),
-			this.makeBooleanRaidIconBuffInput(container, ActionId.fromItemId(49633), 'drumsOfForgottenKings'),
-			this.makeBooleanRaidIconBuffInput(container, ActionId.fromItemId(49634), 'drumsOfTheWild');
+		this.makeBooleanRaidIconBuffInput(container, ActionId.fromItemId(37094), 'scrollOfStamina');
+		this.makeBooleanRaidIconBuffInput(container, ActionId.fromItemId(43466), 'scrollOfStrength');
+		this.makeBooleanRaidIconBuffInput(container, ActionId.fromItemId(43464), 'scrollOfAgility');
+		this.makeBooleanRaidIconBuffInput(container, ActionId.fromItemId(37092), 'scrollOfIntellect');
+		this.makeBooleanRaidIconBuffInput(container, ActionId.fromItemId(37098), 'scrollOfSpirit');
+		this.makeBooleanRaidIconBuffInput(container, ActionId.fromItemId(43468), 'scrollOfProtection');
 	}
 
 	private buildOtherSettings() {

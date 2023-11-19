@@ -24,17 +24,16 @@ const BlockRatingPerBlockChance = 5.000000
 const ResilienceRatingPerCritReductionChance = 28.750002
 
 var CritPerAgiAtLevel = map[proto.Class]map[int]float64{
-	proto.Class_ClassUnknown:     {25: 0.0, 45: 0.0, 50: 0.0, 60: 0.0},
-	proto.Class_ClassWarrior:     {25: 0.1132, 40: 0.0755, 50: 0.0604, 60: 0.0503},
-	proto.Class_ClassPaladin:     {25: 0.1082, 40: 0.0753, 50: 0.0618, 60: 0.0509},
-	proto.Class_ClassHunter:      {25: 0.0797, 40: 0.0481, 50: 0.0373, 60: 0.0301},
-	proto.Class_ClassRogue:       {25: 0.0980, 40: 0.0572, 50: 0.0440, 60: 0.0355},
-	proto.Class_ClassPriest:      {25: 0.0701, 40: 0.0588, 50: 0.0521, 60: 0.0456},
-	proto.Class_ClassDeathknight: {25: 0.1132, 40: 0.0755, 50: 0.0604, 60: 0.0503},
-	proto.Class_ClassShaman:      {25: 0.0611, 40: 0.0452, 50: 0.0378, 60: 0.0320},
-	proto.Class_ClassMage:        {25: 0.0618, 40: 0.0533, 50: 0.0483, 60: 0.0442},
-	proto.Class_ClassWarlock:     {25: 0.0805, 40: 0.0639, 50: 0.0551, 60: 0.0476},
-	proto.Class_ClassDruid:       {25: 0.0631, 40: 0.0443, 50: 0.0366, 60: 0.0308},
+	proto.Class_ClassUnknown: {25: 0.0, 45: 0.0, 50: 0.0, 60: 0.0},
+	proto.Class_ClassWarrior: {25: 0.1132, 40: 0.0755, 50: 0.0604, 60: 0.0503},
+	proto.Class_ClassPaladin: {25: 0.1082, 40: 0.0753, 50: 0.0618, 60: 0.0509},
+	proto.Class_ClassHunter:  {25: 0.0797, 40: 0.0481, 50: 0.0373, 60: 0.0301},
+	proto.Class_ClassRogue:   {25: 0.0980, 40: 0.0572, 50: 0.0440, 60: 0.0355},
+	proto.Class_ClassPriest:  {25: 0.0701, 40: 0.0588, 50: 0.0521, 60: 0.0456},
+	proto.Class_ClassShaman:  {25: 0.0611, 40: 0.0452, 50: 0.0378, 60: 0.0320},
+	proto.Class_ClassMage:    {25: 0.0618, 40: 0.0533, 50: 0.0483, 60: 0.0442},
+	proto.Class_ClassWarlock: {25: 0.0805, 40: 0.0639, 50: 0.0551, 60: 0.0476},
+	proto.Class_ClassDruid:   {25: 0.0631, 40: 0.0443, 50: 0.0366, 60: 0.0308},
 }
 var ExtraClassBaseStats = map[proto.Class]map[int]stats.Stats{
 	proto.Class_ClassUnknown: {},
@@ -126,24 +125,6 @@ var ExtraClassBaseStats = map[proto.Class]map[int]stats.Stats{
 		60: {
 			stats.SpellCrit: 1.2375 * CritRatingPerCritChance,
 			stats.MeleeCrit: 3.1765 * CritRatingPerCritChance,
-		},
-	},
-	proto.Class_ClassDeathknight: {
-		25: {
-			stats.SpellCrit: 0.0000 * CritRatingPerCritChance,
-			stats.MeleeCrit: 3.1891 * CritRatingPerCritChance,
-		},
-		40: {
-			stats.SpellCrit: 0.0000 * CritRatingPerCritChance,
-			stats.MeleeCrit: 3.1891 * CritRatingPerCritChance,
-		},
-		50: {
-			stats.SpellCrit: 0.0000 * CritRatingPerCritChance,
-			stats.MeleeCrit: 3.1891 * CritRatingPerCritChance,
-		},
-		60: {
-			stats.SpellCrit: 0.0000 * CritRatingPerCritChance,
-			stats.MeleeCrit: 3.1891 * CritRatingPerCritChance,
 		},
 	},
 	proto.Class_ClassShaman: {

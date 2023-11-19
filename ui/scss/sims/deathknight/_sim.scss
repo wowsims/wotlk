@@ -1,8 +1,0 @@
-// Set color variables which control the site theme.
-.deathknight-sim-ui {
-	@include theme-color(
-		$death-knight,
-		.95,
-		'/wotlk/assets/img/death_knight_background.jpg'
-	);
-}

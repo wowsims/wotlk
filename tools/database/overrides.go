@@ -68,7 +68,6 @@ var ItemAllowList = map[int32]struct{}{
 	37032: {}, // Edge of the Tuskarr
 	37574: {}, // Libram of Furious Blows
 	38072: {}, // Thunder Capacitor
-	38212: {}, // Death Knight's Anguish
 	38287: {}, // Empty Mug of Direbrew
 	38289: {}, // Coren's Lucky Coin
 	39208: {}, // Sigil of the Dark Rider

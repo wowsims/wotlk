@@ -22,7 +22,6 @@ driver.get('https://wowhead.com/classic/talent-calc/' + class_name)
 trees = driver.find_elements(By.CLASS_NAME, "ctc-tree")
 
 with open(output_file_path, "w") as outfile:
-	# Convert "death-knight" to DeathKnight
 	pretty_class_name = "".join(word.title() for i, word in enumerate(class_name.split("-")))
 	outfile.write("message {}Talents {{\n".format(pretty_class_name))
 

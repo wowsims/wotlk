@@ -18,7 +18,6 @@ import { warriorGlyphsConfig, warriorTalentsConfig } from './warrior.js';
 
 export const classTalentsConfig: Record<Class, TalentsConfig<any>> = {
 	[Class.ClassUnknown]: [],
-	[Class.ClassDeathknight]: [],
 	[Class.ClassDruid]: druidTalentsConfig,
 	[Class.ClassShaman]: shamanTalentsConfig,
 	[Class.ClassHunter]: hunterTalentsConfig,
@@ -32,7 +31,6 @@ export const classTalentsConfig: Record<Class, TalentsConfig<any>> = {
 
 export const classGlyphsConfig: Record<Class, any> = {
 	[Class.ClassUnknown]: { majorGlyphs: [], minorGlyphs: [] },
-	[Class.ClassDeathknight]: { majorGlyphs: [], minorGlyphs: [] },
 	[Class.ClassDruid]: druidGlyphsConfig,
 	[Class.ClassShaman]: shamanGlyphsConfig,
 	[Class.ClassHunter]: hunterGlyphsConfig,

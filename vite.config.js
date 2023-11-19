@@ -19,7 +19,6 @@ export default defineConfig(({ command, mode }) => ({
 			},
 			external: (id) => {
 				return [
-					"ui/deathknight",
 					"ui/elemental_shaman",
 					"ui/enhancement_shaman",
 					"ui/feral_druid",
@@ -34,7 +33,6 @@ export default defineConfig(({ command, mode }) => ({
 					"ui/restoration_shaman",
 					"ui/retribution_paladin",
 					"ui/rogue",
-					"ui/tank_deathknight",
 					"ui/warlock",
 					"ui/warrior"
 				].some(path => id.includes(path));

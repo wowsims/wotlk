@@ -19,8 +19,6 @@ import {
 import { professionNames, raceNames } from '../core/proto_utils/names';
 import {
 	DruidSpecs,
-	DeathknightSpecs,
-	MageSpecs,
 	PriestSpecs,
 	RogueSpecs,
 	SpecOptions,
@@ -33,7 +31,7 @@ import {
 import { MAX_NUM_PARTIES } from '../core/raid';
 import { Player } from '../core/player';
 import { Encounter } from '../core/encounter';
-import { bucket, distinct, sortByProperty } from '../core/utils';
+import { bucket, distinct} from '../core/utils';
 
 import { playerPresets, PresetSpecSettings } from './presets';
 import { RaidSimUI } from './raid_sim_ui';
@@ -237,7 +235,7 @@ export class RaidWCLImporter extends Importer {
 		}
 
 		const urlData = await this.parseURL(importLink);
-		const rateLimit = await this.getRateLimit();
+		await this.getRateLimit();
 
 		// Schema for WCL API here: https://www.warcraftlogs.com/v2-api-docs/warcraft/
 		// WCL charges us 1 'point' for each subquery we issue within the request. So
@@ -405,7 +403,7 @@ export class RaidWCLImporter extends Importer {
 		otherPartyHealingSpells.forEach(spell => {
 			const spellEvents: Array<wclHealEvent> = healEventsBySpellId[spell.id] || [];
 			const spellEventsByTimestamp = bucket(spellEvents, event => String(event.timestamp) + String(event.sourceID));
-			for (const [timestamp, eventsAtTime] of Object.entries(spellEventsByTimestamp)) {
+			for (const [_timestamp, eventsAtTime] of Object.entries(spellEventsByTimestamp)) {
 				const spellTargets = eventsAtTime.map(event => wclPlayers.find(player => player.id == event.targetID));
 				for (let i = 0; i < spellTargets.length; i++) {
 					for (let j = 0; j < spellTargets.length; j++) {
@@ -492,8 +490,8 @@ export class RaidWCLImporter extends Importer {
 
 	private getRaidProto(wclPlayers: WCLSimPlayer[]): RaidProto {
 		const raid = RaidProto.create({
-			parties: [...new Array(MAX_NUM_PARTIES).keys()].map(p => PartyProto.create({
-				players: [...new Array(5).keys()].map(p => PlayerProto.create()),
+			parties: [...new Array(MAX_NUM_PARTIES).keys()].map(() => PartyProto.create({
+				players: [...new Array(5).keys()].map(() => PlayerProto.create()),
 			})),
 		});
 
@@ -618,12 +616,6 @@ class WCLSimPlayer {
 }
 
 const fullTypeToSpec: Record<string, Spec> = {
-	'DeathKnightBlood': Spec.SpecTankDeathknight,
-	'DeathKnightLichborne': Spec.SpecTankDeathknight,
-	'DeathKnightRuneblade': Spec.SpecDeathknight,
-	'DeathKnightBloodDPS': Spec.SpecDeathknight,
-	'DeathKnightFrost': Spec.SpecDeathknight,
-	'DeathKnightUnholy': Spec.SpecDeathknight,
 	'DruidBalance': Spec.SpecBalanceDruid,
 	'DruidFeral': Spec.SpecFeralDruid,
 	'DruidWarden': Spec.SpecFeralTankDruid,
@@ -659,16 +651,10 @@ const fullTypeToSpec: Record<string, Spec> = {
 	'WarriorProtection': Spec.SpecProtectionWarrior,
 };
 
-interface QuerySpell {
-	id: number,
-	name: string,
-}
-
 // Spells which imply a specific Race.
 const racialSpells: Array<{ id: number, name: string, race: Race }> = [
 	{ id: 25046, name: 'Arcane Torrent (Energy)', race: Race.RaceBloodElf },
 	{ id: 28730, name: 'Arcane Torrent (Mana)', race: Race.RaceBloodElf },
-	{ id: 50613, name: 'Arcane Torrent (Runic Power)', race: Race.RaceBloodElf },
 	{ id: 26297, name: 'Berserking', race: Race.RaceTroll },
 	{ id: 20572, name: 'Blood Fury (AP)', race: Race.RaceOrc },
 	{ id: 33697, name: 'Blood Fury (AP+SP)', race: Race.RaceOrc },
@@ -705,13 +691,6 @@ const externalCDSpells: Array<{ id: number, name: string, class: Class, applyFun
 		id: 57933, name: 'Tricks of the Trade', class: Class.ClassRogue, applyFunc: (player: Player<any>, raidTarget: UnitReference) => {
 			const options = player.getSpecOptions() as SpecOptions<RogueSpecs>;
 			options.tricksOfTheTradeTarget = raidTarget;
-			return options;
-		}
-	},
-	{
-		id: 49016, name: 'Unholy Frenzy', class: Class.ClassDeathknight, applyFunc: (player: Player<any>, raidTarget: UnitReference) => {
-			const options = player.getSpecOptions() as SpecOptions<DeathknightSpecs>;
-			options.unholyFrenzyTarget = raidTarget;
 			return options;
 		}
 	},

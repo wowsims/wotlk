@@ -22,8 +22,6 @@ enum Spec {
 	SpecWarlock = 5;
 	SpecWarrior = 6;
 	SpecProtectionWarrior = 11;
-	SpecDeathknight = 15;
-	SpecTankDeathknight = 16;
 }
 
 enum Race {
@@ -57,7 +55,6 @@ enum Class {
 	ClassShaman = 7;
 	ClassWarlock = 8;
 	ClassWarrior = 9;
-	ClassDeathknight = 10;
 }
 
 enum Profession {
@@ -120,11 +117,6 @@ enum Stat {
 	StatBonusArmor = 40;
 	StatHealing = 41;
 	StatSpellDamage = 42;
-	StatRunicPower = 43; // Placeholder: not used yet.
-	StatBloodRune = 44; // Placeholder: not used yet.
-	StatFrostRune = 45; // Placeholder: not used yet.
-	StatUnholyRune = 46; // Placeholder: not used yet.
-	StatDeathRune = 47; // Placeholder: not used yet.
 	// DO NOT add new stats here without discussing it first; new stats come with
 	// a performance penalty.
 }
@@ -701,10 +693,6 @@ enum OtherAction {
 	OtherActionRefund = 8; // Refund of a resource like Energy or Rage, when the ability didn't land.
 	OtherActionDamageTaken = 9; // Indicates damage taken; used for rage gen.
 	OtherActionHealingModel = 12; // Indicates healing received from healing model.
-	OtherActionBloodRuneGain = 13; // Indicates healing received from healing model.
-	OtherActionFrostRuneGain  = 14; // Indicates healing received from healing model.
-	OtherActionUnholyRuneGain  = 15; // Indicates healing received from healing model.
-	OtherActionDeathRuneGain  = 16; // Indicates healing received from healing model.
 	OtherActionPotion = 17; // Used by APL to generically refer to either the prepull or combat potion.
 }
 

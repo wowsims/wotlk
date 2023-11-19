@@ -9,7 +9,7 @@ import (
 
 func (priest *Priest) getVoidPlagueConfig() core.SpellConfig {
 	// TODO: Classic SOD live check
-	spellCoeff := 0.167           // standard 18 sec dot with no penalty
+	spellCoeff := 0.2
 	baseDamage := float64(39 * 6) // https://www.wowhead.com/classic/news/patch-1-15-build-52124-ptr-datamining-season-of-discovery-runes-336044
 
 	return core.SpellConfig{

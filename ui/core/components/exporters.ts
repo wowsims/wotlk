@@ -311,11 +311,6 @@ export class Individual80UEPExporter<SpecType extends Spec> extends Exporter {
 		[Stat.StatNatureResistance]: 'natureResistance',
 		[Stat.StatShadowResistance]: 'shadowResistance',
 		[Stat.StatBonusArmor]: 'armorBonus',
-		[Stat.StatRunicPower]: 'runicPower',
-		[Stat.StatBloodRune]: 'bloodRune',
-		[Stat.StatFrostRune]: 'frostRune',
-		[Stat.StatUnholyRune]: 'unholyRune',
-		[Stat.StatDeathRune]: 'deathRune',
 		[Stat.StatHealing]: 'Healing',
 	}
 	static pseudoStatNames: Partial<Record<PseudoStat, string>> = {
@@ -376,6 +371,13 @@ export class IndividualPawnEPExporter<SpecType extends Spec> extends Exporter {
 		[Stat.StatIntellect]: 'Intellect',
 		[Stat.StatSpirit]: 'Spirit',
 		[Stat.StatSpellPower]: 'SpellDamage',
+		[Stat.StatSpellDamage]: 'SpellDamage',
+		[Stat.StatArcanePower]: 'ArcaneDamage',
+		[Stat.StatFirePower]: 'FireDamage',
+		[Stat.StatFrostPower]: 'FrostDamage',
+		[Stat.StatHolyPower]: 'HolyDamage',
+		[Stat.StatNaturePower]: 'NatureDamage',
+		[Stat.StatShadowPower]: 'ShadowDamage',
 		[Stat.StatMP5]: 'Mp5',
 		[Stat.StatSpellHit]: 'HitRating',
 		[Stat.StatSpellCrit]: 'CritRating',
@@ -405,11 +407,6 @@ export class IndividualPawnEPExporter<SpecType extends Spec> extends Exporter {
 		[Stat.StatNatureResistance]: 'NatureResistance',
 		[Stat.StatShadowResistance]: 'ShadowResistance',
 		[Stat.StatBonusArmor]: 'Armor2',
-		[Stat.StatRunicPower]: 'RunicPower',
-		[Stat.StatBloodRune]: 'BloodRune',
-		[Stat.StatFrostRune]: 'FrostRune',
-		[Stat.StatUnholyRune]: 'UnholyRune',
-		[Stat.StatDeathRune]: 'DeathRune',
 		[Stat.StatHealing]: 'Healing',
 	}
 	static pseudoStatNames: Partial<Record<PseudoStat, string>> = {

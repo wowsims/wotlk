@@ -33,8 +33,6 @@ export const simLaunchStatuses: Record<Spec, LaunchStatus> = {
 	[Spec.SpecWarlock]: LaunchStatus.Unlaunched,
 	[Spec.SpecWarrior]: LaunchStatus.Unlaunched,
 	[Spec.SpecProtectionWarrior]: LaunchStatus.Unlaunched,
-	[Spec.SpecDeathknight]: LaunchStatus.Unlaunched,
-	[Spec.SpecTankDeathknight]: LaunchStatus.Unlaunched,
 };
 
 // Alpha and Beta show an info notice at the top of the page.
@@ -57,8 +55,6 @@ export const aplLaunchStatuses: Record<Spec, LaunchStatus> = {
 	[Spec.SpecWarlock]: LaunchStatus.Alpha,
 	[Spec.SpecWarrior]: LaunchStatus.Alpha,
 	[Spec.SpecProtectionWarrior]: LaunchStatus.Launched,
-	[Spec.SpecDeathknight]: LaunchStatus.Beta,
-	[Spec.SpecTankDeathknight]: LaunchStatus.Beta,
 };
 
 export function getLaunchedSims(): Array<Spec> {

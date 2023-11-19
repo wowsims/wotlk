@@ -192,28 +192,3 @@ func (value *APLValueCurrentComboPoints) GetInt(sim *Simulation) int32 {
 func (value *APLValueCurrentComboPoints) String() string {
 	return "Current Combo Points"
 }
-
-type APLValueCurrentRunicPower struct {
-	DefaultAPLValueImpl
-	unit *Unit
-}
-
-func (rot *APLRotation) newValueCurrentRunicPower(config *proto.APLValueCurrentRunicPower) APLValue {
-	unit := rot.unit
-	if !unit.HasRunicPowerBar() {
-		rot.ValidationWarning("%s does not use Runic Power", unit.Label)
-		return nil
-	}
-	return &APLValueCurrentRunicPower{
-		unit: unit,
-	}
-}
-func (value *APLValueCurrentRunicPower) Type() proto.APLValueType {
-	return proto.APLValueType_ValueTypeInt
-}
-func (value *APLValueCurrentRunicPower) GetInt(sim *Simulation) int32 {
-	return int32(value.unit.CurrentRunicPower())
-}
-func (value *APLValueCurrentRunicPower) String() string {
-	return "Current Runic Power"
-}
