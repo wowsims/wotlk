@@ -64,6 +64,10 @@ func (priest *Priest) registerMindBlast() {
 	priest.MindBlast = priest.GetOrRegisterSpell(priest.getMindBlastBaseConfig(maxRank, cdTimer))
 
 	for i := maxRank - 1; i > 0; i-- {
-		priest.GetOrRegisterSpell(priest.getMindBlastBaseConfig(i, cdTimer))
+		config := priest.getMindBlastBaseConfig(i, cdTimer)
+
+		if config.RequiredLevel <= int(priest.Level) {
+			priest.GetOrRegisterSpell(priest.getMindBlastBaseConfig(i, cdTimer))
+		}
 	}
 }

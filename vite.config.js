@@ -34,7 +34,6 @@ export default defineConfig(({ command, mode }) => ({
 					"ui/restoration_shaman",
 					"ui/retribution_paladin",
 					"ui/rogue",
-					"ui/smite_priest",
 					"ui/tank_deathknight",
 					"ui/warlock",
 					"ui/warrior"

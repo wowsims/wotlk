@@ -136,24 +136,6 @@ message ShadowPriest {
 	Options options = 3;
 }
 
-message SmitePriest {
-	message Rotation {
-		bool use_mind_blast = 2;
-		bool use_shadow_word_death = 3;
-		bool use_devouring_plague = 4;
-		bool meme_dream = 5;
-		double allowed_holy_fire_delay_ms = 6;
-	}
-	Rotation rotation = 1;
-	
-	message Options {
-		bool use_inner_fire = 3;
-		bool use_shadowfiend = 1;
-		UnitReference power_infusion_target = 2;
-	}
-	Options options = 3;
-}
-
 message HealingPriest {
 	message Rotation {
 		enum RotationType {

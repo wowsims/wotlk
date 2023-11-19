@@ -1,7 +1,6 @@
 import { Component } from '../core/components/component';
 import { IconEnumPicker } from '../core/components/icon_enum_picker';
 
-import { memeSpecs } from '../core/launched_sims';
 import { EventID, TypedEvent } from '../core/typed_event';
 
 import { Class, Spec } from '../core/proto/common';
@@ -37,7 +36,6 @@ export class BlessingsPicker extends Component {
 
 		const specs = naturalSpecOrder
 			.filter(spec => implementedSpecs.includes(spec))
-			.filter(spec => !memeSpecs.includes(spec));
 		const paladinIndexes = [...Array(MAX_PALADINS).keys()];
 
 		specs.map(spec => {

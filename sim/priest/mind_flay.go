@@ -8,6 +8,7 @@ import (
 )
 
 func (priest *Priest) getMindFlayTickSpell(rank int, numTicks int32, baseDamage float64) *core.Spell {
+	spellCoeff := 0.15 // classic penalty for mf having a slow effect
 	spellId := [7]int32{0, 16568, 7378, 17316, 17317, 17318, 18808}[rank]
 
 	return priest.GetOrRegisterSpell(core.SpellConfig{
@@ -21,7 +22,7 @@ func (priest *Priest) getMindFlayTickSpell(rank int, numTicks int32, baseDamage 
 		CritMultiplier:   1.0,
 		ThreatMultiplier: 1 - 0.08*float64(priest.Talents.ShadowAffinity),
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			damage := baseDamage / 3
+			damage := baseDamage/3 + (spellCoeff * spell.SpellPower())
 			damage *= priest.MindFlayModifier
 			result := spell.CalcAndDealDamage(sim, target, damage, spell.OutcomeExpectedMagicAlwaysHit)
 

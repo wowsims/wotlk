@@ -23,7 +23,6 @@ import { playerPresets, specSimFactories } from './presets.js';
 
 import { BalanceDruid_Options as BalanceDruidOptions } from '../core/proto/druid.js';
 import { Mage_Options as MageOptions } from '../core/proto/mage.js';
-import { SmitePriest_Options as SmitePriestOptions } from '../core/proto/priest.js';
 import { BaseModal } from '../core/components/base_modal.js';
 import { Tooltip } from 'bootstrap';
 
@@ -62,7 +61,7 @@ export class RaidPicker extends Component {
 
 		this.newPlayerPicker = new NewPlayerPicker(this.rootElem, this);
 
-		const activePartiesSelector = new EnumPicker<Raid>(raidControls, this.raidSimUI.sim.raid, {
+		new EnumPicker<Raid>(raidControls, this.raidSimUI.sim.raid, {
 			label: 'Raid Size',
 			labelTooltip: 'Number of players participating in the sim.',
 			values: [
@@ -78,31 +77,31 @@ export class RaidPicker extends Component {
 			},
 		});
 
-		const factionSelector = new EnumPicker<NewPlayerPicker>(raidControls, this.newPlayerPicker, {
+		new EnumPicker<NewPlayerPicker>(raidControls, this.newPlayerPicker, {
 			label: 'Default Faction',
 			labelTooltip: 'Default faction for newly-created players.',
 			values: [
 				{ name: 'Alliance', value: Faction.Alliance },
 				{ name: 'Horde', value: Faction.Horde },
 			],
-			changedEvent: (picker: NewPlayerPicker) => this.raid.sim.factionChangeEmitter,
-			getValue: (picker: NewPlayerPicker) => this.raid.sim.getFaction(),
-			setValue: (eventID: EventID, picker: NewPlayerPicker, newValue: Faction) => {
+			changedEvent: () => this.raid.sim.factionChangeEmitter,
+			getValue: () => this.raid.sim.getFaction(),
+			setValue: (eventID: EventID, _picker: NewPlayerPicker, newValue: Faction) => {
 				this.raid.sim.setFaction(eventID, newValue);
 			},
 		});
 
 		const latestPhaseWithAllPresets = Math.min(...playerPresets.map(preset => Math.max(...Object.keys(preset.defaultGear[Faction.Alliance]).map(k => parseInt(k)))));
-		const phaseSelector = new EnumPicker<NewPlayerPicker>(raidControls, this.newPlayerPicker, {
+		new EnumPicker<NewPlayerPicker>(raidControls, this.newPlayerPicker, {
 			label: 'Default Gear',
 			labelTooltip: 'Newly-created players will start with approximate BIS gear from this phase.',
 			values: [...Array(latestPhaseWithAllPresets).keys()].map(val => {
 				const phase = val + 1;
 				return { name: 'Phase ' + phase, value: phase };
 			}),
-			changedEvent: (picker: NewPlayerPicker) => this.raid.sim.phaseChangeEmitter,
-			getValue: (picker: NewPlayerPicker) => this.raid.sim.getPhase(),
-			setValue: (eventID: EventID, picker: NewPlayerPicker, newValue: number) => {
+			changedEvent: () => this.raid.sim.phaseChangeEmitter,
+			getValue: () => this.raid.sim.getPhase(),
+			setValue: (eventID: EventID, _picker: NewPlayerPicker, newValue: number) => {
 				this.raid.sim.setPhase(eventID, newValue);
 			},
 		});
@@ -125,7 +124,7 @@ export class RaidPicker extends Component {
 		this.raidSimUI.sim.raid.numActivePartiesChangeEmitter.on(updateActiveParties);
 		updateActiveParties();
 
-		this.rootElem.ondragend = event => {
+		this.rootElem.ondragend = () => {
 			// Uncomment to remove player when dropped 'off' the raid.
 			//if (this.currentDragPlayerFromIndex != NEW_PLAYER) {
 			//	const playerPicker = this.getPlayerPicker(this.currentDragPlayerFromIndex);
@@ -536,20 +535,20 @@ export class PlayerPicker extends Component {
 	}
 
 	private bindPlayerEvents() {
-		this.nameElem?.addEventListener('input', event => {
+		this.nameElem?.addEventListener('input', _event => {
 			this.player?.setName(TypedEvent.nextEventID(), this.nameElem?.value || '');
 		});
 
-		this.nameElem?.addEventListener('mousedown', event => {
+		this.nameElem?.addEventListener('mousedown', _event => {
 			this.partyPicker.rootElem.setAttribute('draggable', 'false')
 		})
 
-		this.nameElem?.addEventListener('mouseup', event => {
+		this.nameElem?.addEventListener('mouseup', _event => {
 			this.partyPicker.rootElem.setAttribute('draggable', 'true')
 		})
 
 		const emptyName = 'Unnamed';
-		this.nameElem?.addEventListener('focusout', event => {
+		this.nameElem?.addEventListener('focusout', _event => {
 			if (this.nameElem && !this.nameElem.value) {
 				this.nameElem.value = emptyName;
 				this.player?.setName(TypedEvent.nextEventID(), emptyName);
@@ -577,22 +576,22 @@ export class PlayerPicker extends Component {
 		const copyElem = this.rootElem.querySelector('.player-copy') as HTMLElement;
 		const deleteElem = this.rootElem.querySelector('.player-delete') as HTMLElement;
 
-		const editTooltip = Tooltip.getOrCreateInstance(editElem);
-		const copyTooltip = Tooltip.getOrCreateInstance(copyElem);
+		const _editTooltip = Tooltip.getOrCreateInstance(editElem);
+		const _copyTooltip = Tooltip.getOrCreateInstance(copyElem);
 		const deleteTooltip = Tooltip.getOrCreateInstance(deleteElem);
 
 		(this.iconElem as HTMLElement).ondragstart = event => {
 			event.dataTransfer!.setDragImage(this.rootElem, 20, 20);
 			dragStart(event, DragType.Swap)
 		}
-		editElem.onclick = event => {
+		editElem.onclick = _event => {
 			new PlayerEditorModal(this.player as Player<any>);
 		};
 		copyElem.ondragstart = event => {
 			event.dataTransfer!.setDragImage(this.rootElem, 20, 20);
 			dragStart(event, DragType.Copy);
 		}
-		deleteElem.onclick = event => {
+		deleteElem.onclick = _event => {
 			deleteTooltip.hide();
 			this.setPlayer(TypedEvent.nextEventID(), null, DragType.None);
 		}
@@ -612,7 +611,7 @@ class PlayerEditorModal extends BaseModal {
 		`);
 
 		const editorRoot = this.rootElem.getElementsByClassName('player-editor')[0] as HTMLElement;
-		const individualSim = specSimFactories[player.spec]!(editorRoot, player);
+		specSimFactories[player.spec]!(editorRoot, player);
 	}
 }
 
@@ -712,10 +711,6 @@ function applyNewPlayerAssignments(eventID: EventID, newPlayer: Player<any>, rai
 	if (newPlayer.spec == Spec.SpecBalanceDruid) {
 		const newOptions = newPlayer.getSpecOptions() as BalanceDruidOptions;
 		newOptions.innervateTarget = newUnitReference(newPlayer.getRaidIndex());
-		newPlayer.setSpecOptions(eventID, newOptions);
-	} else if (newPlayer.spec == Spec.SpecSmitePriest) {
-		const newOptions = newPlayer.getSpecOptions() as SmitePriestOptions;
-		newOptions.powerInfusionTarget = newUnitReference(newPlayer.getRaidIndex());
 		newPlayer.setSpecOptions(eventID, newOptions);
 	} else if (newPlayer.spec == Spec.SpecMage) {
 		const newOptions = newPlayer.getSpecOptions() as MageOptions;

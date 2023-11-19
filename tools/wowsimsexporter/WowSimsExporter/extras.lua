@@ -94,7 +94,6 @@ WowSimsExporter.specializations = {
 	{comparator = function(A,B,C) return B > A and B > C end, spec="protection", class="paladin", url="retribution_paladin"},	
 	{comparator = function(A,B,C) return C > A and C > B end, spec="retribution",class="paladin", url="protection_paladin"},
 	-- priest
-	{comparator = function(A,B,C) return B > A and B > C end, spec="holy", class="priest", url="smite_priest"},
 	{comparator = function(A,B,C) return C > A and C > B end, spec="shadow", class="priest", url="shadow_priest"},
 	-- death knight
 	--{comparator = function(A,B,C) return A > B and A > C end, spec="blood_tank", class="deathknight", url="tank_deathknight"},

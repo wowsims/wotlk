@@ -1,8 +1,0 @@
-// Set color variables which control the site theme.
-.smite-priest-sim-ui {
-	@include theme-color(
-		$priest,
-		.95,
-		'/wotlk/assets/img/smite_priest_background.jpg'
-	);
-}

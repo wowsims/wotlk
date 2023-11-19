@@ -6,7 +6,6 @@ import {
 } from '../proto_utils/utils.js';
 
 import { druidGlyphsConfig, druidTalentsConfig } from './druid.js';
-import { GlyphsConfig } from './glyphs_picker.js';
 import { hunterGlyphsConfig, hunterTalentsConfig } from './hunter.js';
 import { mageGlyphsConfig, mageTalentsConfig } from './mage.js';
 import { paladinGlyphsConfig, paladinTalentsConfig } from './paladin.js';
@@ -31,7 +30,7 @@ export const classTalentsConfig: Record<Class, TalentsConfig<any>> = {
 	[Class.ClassWarrior]: warriorTalentsConfig,
 };
 
-export const classGlyphsConfig: Record<Class, GlyphsConfig> = {
+export const classGlyphsConfig: Record<Class, any> = {
 	[Class.ClassUnknown]: { majorGlyphs: [], minorGlyphs: [] },
 	[Class.ClassDeathknight]: { majorGlyphs: [], minorGlyphs: [] },
 	[Class.ClassDruid]: druidGlyphsConfig,

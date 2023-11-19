@@ -642,7 +642,6 @@ const fullTypeToSpec: Record<string, Spec> = {
 	'PriestHoly': Spec.SpecHealingPriest,
 	'PriestDiscipline': Spec.SpecHealingPriest,
 	'PriestShadow': Spec.SpecShadowPriest,
-	'PriestSmite': Spec.SpecSmitePriest,
 	'RogueAssassination': Spec.SpecRogue,
 	'RogueCombat': Spec.SpecRogue,
 	'RogueSubtlety': Spec.SpecRogue,

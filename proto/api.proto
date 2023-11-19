@@ -58,7 +58,6 @@ message Player {
 		HolyPaladin holy_paladin = 28;
 		HealingPriest healing_priest = 29;
 		ShadowPriest shadow_priest = 30;
-		SmitePriest smite_priest = 31;
 		Rogue rogue = 32;
 		ElementalShaman elemental_shaman = 33;
 		EnhancementShaman enhancement_shaman = 34;

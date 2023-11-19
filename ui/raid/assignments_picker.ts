@@ -56,7 +56,7 @@ abstract class AssignedBuffPicker extends Component {
 		this.playersContainer.classList.add('assigned-buff-container');
 		this.rootElem.appendChild(this.playersContainer);
 
-		this.raidSimUI.changeEmitter.on(eventID => this.update());
+		this.raidSimUI.changeEmitter.on(() => this.update());
 		this.update();
 	}
 
@@ -71,7 +71,7 @@ abstract class AssignedBuffPicker extends Component {
 		else
 			this.rootElem.classList.remove('hide');
 
-		this.targetPickers = sourcePlayers.map((sourcePlayer, sourcePlayerIndex) => {
+		this.targetPickers = sourcePlayers.map((sourcePlayer) => {
 			const row = document.createElement('div');
 			row.classList.add('assigned-buff-player', 'input-inline');
 			this.playersContainer.appendChild(row);
@@ -103,7 +103,7 @@ abstract class AssignedBuffPicker extends Component {
 				targetPlayer: this.raidSimUI.sim.raid.getPlayerFromUnitReference(raidTargetPicker!.getInputValue()),
 			};
 
-			raidTargetPicker!.changeEmitter.on(eventID => {
+			raidTargetPicker!.changeEmitter.on(_eventID => {
 				targetPickerData.targetPlayer = this.raidSimUI.sim.raid.getPlayerFromUnitReference(raidTargetPicker!.getInputValue());
 			});
 
@@ -148,11 +148,11 @@ class PowerInfusionsPicker extends AssignedBuffPicker {
 	}
 
 	getPlayerValue(player: Player<any>): UnitReference {
-		return (player as Player<Spec.SpecSmitePriest>).getSpecOptions().powerInfusionTarget || emptyUnitReference();
+		return (player as Player<Spec.SpecShadowPriest>).getSpecOptions().powerInfusionTarget || emptyUnitReference();
 	}
 
 	setPlayerValue(eventID: EventID, player: Player<any>, newValue: UnitReference) {
-		const newOptions = (player as Player<Spec.SpecSmitePriest>).getSpecOptions();
+		const newOptions = (player as Player<Spec.SpecShadowPriest>).getSpecOptions();
 		newOptions.powerInfusionTarget = newValue;
 		player.setSpecOptions(eventID, newOptions);
 	}

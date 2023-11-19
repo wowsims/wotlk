@@ -35,7 +35,6 @@ import * as ProtectionPaladinPresets from '../protection_paladin/presets.js';
 import * as RetributionPaladinPresets from '../retribution_paladin/presets.js';
 import * as HealingPriestPresets from '../healing_priest/presets.js';
 import * as ShadowPriestPresets from '../shadow_priest/presets.js';
-import * as SmitePriestPresets from '../smite_priest/presets.js';
 import * as WarriorPresets from '../warrior/presets.js';
 import * as ProtectionWarriorPresets from '../protection_warrior/presets.js';
 import * as WarlockPresets from '../warlock/presets.js';
@@ -57,7 +56,6 @@ import { ProtectionPaladinSimUI } from '../protection_paladin/sim.js';
 import { RetributionPaladinSimUI } from '../retribution_paladin/sim.js';
 import { HealingPriestSimUI } from '../healing_priest/sim.js';
 import { ShadowPriestSimUI } from '../shadow_priest/sim.js';
-import { SmitePriestSimUI } from '../smite_priest/sim.js';
 import { WarriorSimUI } from '../warrior/sim.js';
 import { ProtectionWarriorSimUI } from '../protection_warrior/sim.js';
 import { WarlockSimUI } from '../warlock/sim.js';
@@ -80,7 +78,6 @@ export const specSimFactories: Record<Spec, (parentElem: HTMLElement, player: Pl
 	[Spec.SpecRetributionPaladin]: (parentElem: HTMLElement, player: Player<any>) => new RetributionPaladinSimUI(parentElem, player),
 	[Spec.SpecHealingPriest]: (parentElem: HTMLElement, player: Player<any>) => new HealingPriestSimUI(parentElem, player),
 	[Spec.SpecShadowPriest]: (parentElem: HTMLElement, player: Player<any>) => new ShadowPriestSimUI(parentElem, player),
-	[Spec.SpecSmitePriest]: (parentElem: HTMLElement, player: Player<any>) => new SmitePriestSimUI(parentElem, player),
 	[Spec.SpecWarrior]: (parentElem: HTMLElement, player: Player<any>) => new WarriorSimUI(parentElem, player),
 	[Spec.SpecProtectionWarrior]: (parentElem: HTMLElement, player: Player<any>) => new ProtectionWarriorSimUI(parentElem, player),
 	[Spec.SpecWarlock]: (parentElem: HTMLElement, player: Player<any>) => new WarlockSimUI(parentElem, player),
@@ -717,30 +714,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		},
 		tooltip: specNames[Spec.SpecShadowPriest],
 		iconUrl: getSpecIcon(Class.ClassPriest, 2),
-	},
-	{
-		spec: Spec.SpecSmitePriest,
-		rotation: SmitePriestPresets.DefaultRotation,
-		talents: SmitePriestPresets.StandardTalents.data,
-		specOptions: SmitePriestPresets.DefaultOptions,
-		consumes: SmitePriestPresets.DefaultConsumes,
-		defaultName: 'Smite',
-		defaultFactionRaces: {
-			[Faction.Unknown]: Race.RaceUnknown,
-			[Faction.Alliance]: Race.RaceDwarf,
-			[Faction.Horde]: Race.RaceUndead,
-		},
-		defaultGear: {
-			[Faction.Unknown]: {},
-			[Faction.Alliance]: {
-				1: SmitePriestPresets.P1_PRESET.gear,
-			},
-			[Faction.Horde]: {
-				1: SmitePriestPresets.P1_PRESET.gear,
-			},
-		},
-		tooltip: specNames[Spec.SpecSmitePriest],
-		iconUrl: getSpecIcon(Class.ClassPriest, 3),
 	},
 	{
 		spec: Spec.SpecWarrior,

@@ -16,7 +16,6 @@ import (
 	// "github.com/wowsims/wotlk/sim/paladin/retribution"
 	// healingPriest "github.com/wowsims/wotlk/sim/priest/healing"
 	"github.com/wowsims/wotlk/sim/priest/shadow"
-	// "github.com/wowsims/wotlk/sim/priest/smite"
 	// "github.com/wowsims/wotlk/sim/rogue"
 	// "github.com/wowsims/wotlk/sim/shaman/elemental"
 	// "github.com/wowsims/wotlk/sim/shaman/enhancement"
@@ -45,7 +44,6 @@ func RegisterAll() {
 	// mage.RegisterMage()
 	// healingPriest.RegisterHealingPriest()
 	shadow.RegisterShadowPriest()
-	// smite.RegisterSmitePriest()
 	// rogue.RegisterRogue()
 	// dpsWarrior.RegisterDpsWarrior()
 	// protectionWarrior.RegisterProtectionWarrior()

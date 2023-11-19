@@ -1,13 +1,11 @@
 import { PriestTalents, PriestMajorGlyph, PriestMinorGlyph } from '../proto/priest.js';
-
-import { GlyphsConfig } from './glyphs_picker.js';
 import { TalentsConfig, newTalentsConfig } from './talents_picker.js';
 
 import PriestTalentJson from './trees/priest.json';
 
 export const priestTalentsConfig: TalentsConfig<PriestTalents> = newTalentsConfig(PriestTalentJson);
 
-export const priestGlyphsConfig: GlyphsConfig = {
+export const priestGlyphsConfig = {
 	majorGlyphs: {
 		[PriestMajorGlyph.GlyphOfCircleOfHealing]: {
 			name: 'Glyph of Circle of Healing',
