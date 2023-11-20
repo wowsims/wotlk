@@ -10,7 +10,6 @@ import { EncounterPickerConfig } from './components/encounter_picker';
 import { addRaidSimAction, RaidSimResultsManager } from './components/raid_sim_action';
 import { SavedDataConfig } from './components/saved_data_manager';
 import { addStatWeightsAction } from './components/stat_weights_action';
-import { addGemSummaryAction } from './components/gem_summary_action';
 
 import { BulkTab } from './components/individual_sim_ui/bulk_tab';
 import { GearTab } from './components/individual_sim_ui/gear_tab';
@@ -341,7 +340,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 	private addSidebarComponents() {
 		this.raidSimResultsManager = addRaidSimAction(this);
 		addStatWeightsAction(this, this.individualConfig.epStats, this.individualConfig.epPseudoStats, this.individualConfig.epReferenceStat);
-		addGemSummaryAction(this);
 
 		const characterStats = new CharacterStats(
 			this.rootElem.getElementsByClassName('sim-sidebar-footer')[0] as HTMLElement,

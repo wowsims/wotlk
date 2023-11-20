@@ -113,6 +113,8 @@ export class GearPicker extends Component {
 		].map(slot => new ItemPicker(rightSide, simUI, player, slot));
 
 		this.itemPickers = leftItemPickers.concat(rightItemPickers).sort((a, b) => a.slot - b.slot);
+
+		const gemSummary = new GemSummary(leftSide, simUI, player);
 	}
 }
 
@@ -214,6 +216,63 @@ export class ItemRenderer extends Component {
 			}
 			this.socketsContainerElem.appendChild(gemContainer);
 		});
+	}
+}
+
+export class GemSummary extends Component {
+	private readonly simUI: SimUI;
+	private readonly player: Player<any>;
+
+	private readonly tableBody: HTMLElement;
+
+	constructor(parent: HTMLElement, simUI: SimUI, player: Player<any>) {
+		super(parent, 'gem-summary-root');
+		this.simUI = simUI;
+		this.player = player;
+
+		const container = `
+			<hr />
+			<h5 class="modal-title">Currently Socketed Gems</h5>
+			<br />
+			<div class="gem-summary-table-container modal-scroll-table">
+				<table class="gem-summary-table" style="width: 100%">
+					<thead>
+						<tr>
+							<th>Gem Type</th>
+							<th style="text-align: right">
+								<span>Quantity</span>
+							</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+		`;
+
+		this.rootElem.insertAdjacentHTML('afterbegin', container);
+		this.tableBody = this.rootElem.querySelector('.gem-summary-table tbody') as HTMLElement;
+		player.gearChangeEmitter.on(() => {
+			this.updateTable();
+		});
+	}
+
+	private updateTable() {
+		this.tableBody.innerHTML = ``;
+		const fullGemList = this.player.getGear().getAllGems(this.player.isBlacksmithing());
+		const gemCounts: Record<string, number> = {};
+
+		for (const gem of fullGemList) {
+			gemCounts[gem.name] = gemCounts[gem.name] ? gemCounts[gem.name] + 1 : 1;
+		}
+
+		for (const gemName of Object.keys(gemCounts)) {
+			const row = document.createElement('tr');
+			row.innerHTML = `
+				<td>${gemName}</td>
+				<td style="text-align: right">${gemCounts[gemName].toFixed(0)}</td>
+			`;
+			this.tableBody.appendChild(row);
+		}
 	}
 }
 
