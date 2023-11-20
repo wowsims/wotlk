@@ -6,7 +6,7 @@ import (
 	"github.com/wowsims/classic/sim/core"
 )
 
-func (priest *Priest) getHolyFireConfig(rank int, cdTimer *core.Timer) core.SpellConfig {
+func (priest *Priest) getHolyFireConfig(rank int) core.SpellConfig {
 	directCoeff := 0.75
 	dotCoeff := 0.05
 	baseDamage := [9][]float64{{0}, {84, 104}, {106, 131}, {144, 178}, {178, 223}, {219, 273}, {271, 340}, {323, 406}, {355, 449}}[rank]
@@ -66,10 +66,12 @@ func (priest *Priest) getHolyFireConfig(rank int, cdTimer *core.Timer) core.Spel
 
 func (priest *Priest) registerHolyFire() {
 	maxRank := 8
-	cdTimer := priest.NewTimer()
-	priest.HolyFire = priest.GetOrRegisterSpell(priest.getHolyFireConfig(maxRank, cdTimer))
 
-	for i := maxRank - 1; i > 0; i-- {
-		priest.GetOrRegisterSpell(priest.getHolyFireConfig(i, cdTimer))
+	for i := 1; i < maxRank; i++ {
+		config := priest.getHolyFireConfig(i)
+
+		if config.RequiredLevel <= int(priest.Level) {
+			priest.HolyFire = priest.GetOrRegisterSpell(config)
+		}
 	}
 }

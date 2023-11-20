@@ -1,6 +1,7 @@
 package priest
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
@@ -38,17 +39,17 @@ func (priest *Priest) getShadowWordPainConfig(rank int) core.SpellConfig {
 
 		Dot: core.DotConfig{
 			Aura: core.Aura{
-				Label: "ShadowWordPain",
-				OnGain: func(aura *core.Aura, sim *core.Simulation) {
-					if priest.HasRuneById(PriestRuneChestTwistedFaith) {
-						priest.MindBlastModifier = 1.2
-						priest.MindFlayModifier = 1.2
-					}
-				},
-				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-					priest.MindBlastModifier = 1
-					priest.MindFlayModifier = 1
-				},
+				Label: "ShadowWordPain-" + strconv.Itoa(rank),
+				// OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				// 	if priest.HasRuneById(PriestRuneChestTwistedFaith) {
+				// 		priest.MindBlastModifier = 1.2
+				// 		priest.MindFlayModifier = 1.2
+				// 	}
+				// },
+				// OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				// 	priest.MindBlastModifier = 1
+				// 	priest.MindFlayModifier = 1
+				// },
 			},
 
 			NumberOfTicks: 6 + (priest.Talents.ImprovedShadowWordPain),
@@ -56,7 +57,7 @@ func (priest *Priest) getShadowWordPainConfig(rank int) core.SpellConfig {
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 				dot.SnapshotBaseDamage = baseDamage/6 + (dotTickCoeff * dot.Spell.SpellPower())
-				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+				dot.SnapshotAttackerMultiplier = 1 // dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
@@ -86,9 +87,12 @@ func (priest *Priest) getShadowWordPainConfig(rank int) core.SpellConfig {
 
 func (priest *Priest) registerShadowWordPainSpell() {
 	maxRank := 8
-	priest.ShadowWordPain = priest.GetOrRegisterSpell(priest.getShadowWordPainConfig(maxRank))
 
-	for i := maxRank - 1; i > 0; i-- {
-		priest.GetOrRegisterSpell(priest.getShadowWordPainConfig(i))
+	for i := 1; i < maxRank; i++ {
+		config := priest.getShadowWordPainConfig(i)
+
+		if config.RequiredLevel <= int(priest.Level) {
+			priest.ShadowWordPain = priest.GetOrRegisterSpell(config)
+		}
 	}
 }

@@ -20,7 +20,7 @@ func (priest *Priest) RegisterPenanceSpell() {
 func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 	var procMask core.ProcMask
 	// TODO: Classic verify numbers
-	spellCoeff := 0.2290       // Using wrath default for now
+	spellCoeff := 0.285        // https://www.wowhead.com/classic/spell=402284/penance
 	baseDamage := float64(128) // https://www.wowhead.com/classic/news/patch-1-15-build-52124-ptr-datamining-season-of-discovery-runes-336044
 	flags := core.SpellFlagChanneled | core.SpellFlagAPL
 	if isHeal {
@@ -31,7 +31,7 @@ func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 	}
 
 	return priest.RegisterSpell(core.SpellConfig{
-		ActionID:      core.ActionID{SpellID: 402174},
+		ActionID:      core.ActionID{SpellID: 402284},
 		SpellSchool:   core.SpellSchoolHoly,
 		ProcMask:      procMask,
 		Flags:         flags,

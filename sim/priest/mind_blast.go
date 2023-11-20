@@ -61,13 +61,12 @@ func (priest *Priest) getMindBlastBaseConfig(rank int, cdTimer *core.Timer) core
 func (priest *Priest) registerMindBlast() {
 	maxRank := 9
 	cdTimer := priest.NewTimer()
-	priest.MindBlast = priest.GetOrRegisterSpell(priest.getMindBlastBaseConfig(maxRank, cdTimer))
 
-	for i := maxRank - 1; i > 0; i-- {
+	for i := 1; i < maxRank; i++ {
 		config := priest.getMindBlastBaseConfig(i, cdTimer)
 
 		if config.RequiredLevel <= int(priest.Level) {
-			priest.GetOrRegisterSpell(priest.getMindBlastBaseConfig(i, cdTimer))
+			priest.MindBlast = priest.GetOrRegisterSpell(config)
 		}
 	}
 }

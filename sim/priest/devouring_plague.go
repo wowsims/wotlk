@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/proto"
 )
 
 func (priest *Priest) getDevouringPlagueConfig(rank int, cdTimer *core.Timer) core.SpellConfig {
@@ -81,11 +82,17 @@ func (priest *Priest) getDevouringPlagueConfig(rank int, cdTimer *core.Timer) co
 }
 
 func (priest *Priest) registerDevouringPlagueSpell() {
+	if priest.Race != proto.Race_RaceUndead {
+		return
+	}
 	maxRank := 6
 	cdTimer := priest.NewTimer()
-	priest.DevouringPlague = priest.GetOrRegisterSpell(priest.getDevouringPlagueConfig(maxRank, cdTimer))
 
-	for i := maxRank - 1; i > 0; i-- {
-		priest.GetOrRegisterSpell(priest.getDevouringPlagueConfig(i, cdTimer))
+	for i := 1; i < maxRank; i++ {
+		config := priest.getDevouringPlagueConfig(i, cdTimer)
+
+		if config.RequiredLevel <= int(priest.Level) {
+			priest.DevouringPlague = priest.GetOrRegisterSpell(config)
+		}
 	}
 }

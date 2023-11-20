@@ -46,9 +46,12 @@ func (priest *Priest) getSmiteBaseConfig(rank int) core.SpellConfig {
 
 func (priest *Priest) RegisterSmiteSpell() {
 	maxRank := 8
-	priest.Smite = priest.GetOrRegisterSpell(priest.getSmiteBaseConfig(maxRank))
 
-	for i := maxRank - 1; i > 0; i-- {
-		priest.GetOrRegisterSpell(priest.getSmiteBaseConfig(i))
+	for i := 1; i < maxRank; i++ {
+		config := priest.getSmiteBaseConfig(i)
+
+		if config.RequiredLevel <= int(priest.Level) {
+			priest.Smite = priest.GetOrRegisterSpell(config)
+		}
 	}
 }

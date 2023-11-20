@@ -102,9 +102,12 @@ func (priest *Priest) registerMindFlay() {
 		return
 	}
 	maxRank := 6
-	priest.MindFlay = priest.GetOrRegisterSpell(priest.getMindFlaySpellConfig(maxRank))
 
-	for i := maxRank - 1; i > 0; i-- {
-		priest.GetOrRegisterSpell(priest.getMindFlaySpellConfig(i))
+	for i := 1; i < maxRank; i++ {
+		config := priest.getMindFlaySpellConfig(i)
+
+		if config.RequiredLevel <= int(priest.Level) {
+			priest.MindFlay = priest.GetOrRegisterSpell(config)
+		}
 	}
 }

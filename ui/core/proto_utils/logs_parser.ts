@@ -615,7 +615,7 @@ export class ResourceChangedLog extends SimLog {
 			const resourceType = stringToResourceType(match[4]);
 			return ActionId.fromLogString(match[11]).fill(params.source?.index).then(cause => {
 				params.actionId = cause;
-				return new ResourceChangedLog(params, resourceType, parseFloat(match[17]), parseFloat(match[18]), match[1] == 'Spent');
+				return new ResourceChangedLog(params, resourceType, parseFloat(match[12]), parseFloat(match[13]), match[1] == 'Spent');
 			});
 		} else {
 			return null;
