@@ -8,7 +8,7 @@ WowSimsExporter = LibStub("AceAddon-3.0"):NewAddon("WowSimsExporter", "AceConsol
 
 
 WowSimsExporter.Character = ""
-WowSimsExporter.Link = "https://wowsims.github.io/wotlk/"
+WowSimsExporter.Link = "https://wowsims.github.io/classic/"
 
 local AceGUI = LibStub("AceGUI-3.0")
 local LibParse = LibStub("LibParse")

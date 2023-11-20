@@ -3,8 +3,8 @@ package mage
 import (
 	"time"
 
-	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/proto"
 )
 
 func (mage *Mage) registerLivingBombSpell() {

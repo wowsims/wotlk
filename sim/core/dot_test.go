@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
+	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sim/core/stats"
 )
 
 func init() {

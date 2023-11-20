@@ -249,27 +249,27 @@ export const talentTreeIcons: Record<Class, Array<string>> = {
 };
 
 export const titleIcons: Record<Class | Spec, string> = {
-	[Spec.SpecBalanceDruid]: '/wotlk/assets/img/balance_druid_icon.png',
-	[Spec.SpecFeralDruid]: '/wotlk/assets/img/feral_druid_icon.png',
-	[Spec.SpecFeralTankDruid]: '/wotlk/assets/img/feral_druid_tank_icon.png',
-	[Spec.SpecRestorationDruid]: '/wotlk/assets/img/resto_druid_icon.png',
-	[Spec.SpecElementalShaman]: '/wotlk/assets/img/elemental_shaman_icon.png',
-	[Spec.SpecEnhancementShaman]: '/wotlk/assets/img/enhancement_shaman_icon.png',
-	[Spec.SpecRestorationShaman]: '/wotlk/assets/img/resto_shaman_icon.png',
-	[Spec.SpecHunter]: '/wotlk/assets/img/hunter_icon.png',
-	[Spec.SpecMage]: '/wotlk/assets/img/mage_icon.png',
-	[Spec.SpecRogue]: '/wotlk/assets/img/rogue_icon.png',
-	[Spec.SpecHolyPaladin]: '/wotlk/assets/img/holy_paladin_icon.png',
-	[Spec.SpecProtectionPaladin]: '/wotlk/assets/img/protection_paladin_icon.png',
-	[Spec.SpecRetributionPaladin]: '/wotlk/assets/img/retribution_icon.png',
-	[Spec.SpecHealingPriest]: '/wotlk/assets/img/priest_icon.png',
-	[Spec.SpecShadowPriest]: '/wotlk/assets/img/shadow_priest_icon.png',
-	[Spec.SpecWarlock]: '/wotlk/assets/img/warlock_icon.png',
-	[Spec.SpecWarrior]: '/wotlk/assets/img/warrior_icon.png',
-	[Spec.SpecProtectionWarrior]: '/wotlk/assets/img/protection_warrior_icon.png',
+	[Spec.SpecBalanceDruid]: '/classic/assets/img/balance_druid_icon.png',
+	[Spec.SpecFeralDruid]: '/classic/assets/img/feral_druid_icon.png',
+	[Spec.SpecFeralTankDruid]: '/classic/assets/img/feral_druid_tank_icon.png',
+	[Spec.SpecRestorationDruid]: '/classic/assets/img/resto_druid_icon.png',
+	[Spec.SpecElementalShaman]: '/classic/assets/img/elemental_shaman_icon.png',
+	[Spec.SpecEnhancementShaman]: '/classicicic/assets/img/enhancement_shaman_icon.png',
+	[Spec.SpecRestorationShaman]: '/classic/assets/img/resto_shaman_icon.png',
+	[Spec.SpecHunter]: '/classic/assets/img/hunter_icon.png',
+	[Spec.SpecMage]: '/classic/assets/img/mage_icon.png',
+	[Spec.SpecRogue]: '/classic/assets/img/rogue_icon.png',
+	[Spec.SpecHolyPaladin]: '/classic/assets/img/holy_paladin_icon.png',
+	[Spec.SpecProtectionPaladin]: '/classic/assets/img/protection_paladin_icon.png',
+	[Spec.SpecRetributionPaladin]: '/classic/assets/img/retribution_icon.png',
+	[Spec.SpecHealingPriest]: '/classic/assets/img/priest_icon.png',
+	[Spec.SpecShadowPriest]: '/classic/assets/img/shadow_priest_icon.png',
+	[Spec.SpecWarlock]: '/classic/assets/img/warlock_icon.png',
+	[Spec.SpecWarrior]: '/classic/assets/img/warrior_icon.png',
+	[Spec.SpecProtectionWarrior]: '/classic/assets/img/protection_warrior_icon.png',
 };
 
-export const raidSimIcon: string = '/wotlk/assets/img/raid_icon.png';
+export const raidSimIcon: string = '/classic/assets/img/raid_icon.png';
 export const raidSimLabel: string = 'Full Raid Sim';
 
 // Converts '1231321-12313123-0' to [40, 21, 0].

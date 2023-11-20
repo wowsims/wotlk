@@ -21,10 +21,10 @@ import (
 
 	uuid "github.com/google/uuid"
 	"github.com/pkg/browser"
-	dist "github.com/wowsims/wotlk/binary_dist"
-	"github.com/wowsims/wotlk/sim"
-	"github.com/wowsims/wotlk/sim/core"
-	proto "github.com/wowsims/wotlk/sim/core/proto"
+	dist "github.com/wowsims/classic/binary_dist"
+	"github.com/wowsims/classic/sim"
+	"github.com/wowsims/classic/sim/core"
+	proto "github.com/wowsims/classic/sim/core/proto"
 
 	googleProto "google.golang.org/protobuf/proto"
 )
@@ -54,7 +54,7 @@ func main() {
 	fmt.Printf("Version: %s\n", Version)
 	if !*skipVersionCheck && Version != "development" {
 		go func() {
-			resp, err := http.Get("https://api.github.com/repos/wowsims/wotlk/releases/latest")
+			resp, err := http.Get("https://api.github.com/repos/wowsims/classic/releases/latest")
 			if err != nil {
 				return
 			}
@@ -286,7 +286,7 @@ func (s *server) runServer(useFS bool, host string, launchBrowser bool, simName 
 	})
 	http.HandleFunc("/", func(resp http.ResponseWriter, req *http.Request) {
 		if req.URL.Path == "/" {
-			http.Redirect(resp, req, "/wotlk/", http.StatusPermanentRedirect)
+			http.Redirect(resp, req, "/classic/", http.StatusPermanentRedirect)
 			return
 		}
 		resp.Header().Add("Cache-Control", "no-cache")
@@ -308,7 +308,7 @@ func (s *server) runServer(useFS bool, host string, launchBrowser bool, simName 
 		if strings.HasPrefix(host, ":") {
 			host = "localhost" + host
 		}
-		url := fmt.Sprintf("http://%s/wotlk/%s", host, simName)
+		url := fmt.Sprintf("http://%s/classic/%s", host, simName)
 		log.Printf("Launching interface on %s", url)
 		go func() {
 			err := browser.OpenURL(url)

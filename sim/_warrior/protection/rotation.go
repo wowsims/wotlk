@@ -1,10 +1,10 @@
 package protection
 
 import (
-	"github.com/wowsims/wotlk/sim/common"
-	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/warrior"
+	"github.com/wowsims/classic/sim/common"
+	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sim/warrior"
 )
 
 func (war *ProtectionWarrior) OnGCDReady(sim *core.Simulation) {

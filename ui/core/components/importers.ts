@@ -212,7 +212,7 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 
 		this.descriptionElem.innerHTML = `
 			<p>
-				Import settings from <a href="https://www.wowhead.com/wotlk/gear-planner" target="_blank">Wowhead Gear Planner</a>.
+				Import settings from <a href="https://www.wowhead.com/classic/gear-planner" target="_blank">Wowhead Gear Planner</a>.
 			</p>
 			<p>
 				This feature imports gear, race, and (optionally) talents. It does NOT import buffs, debuffs, consumes, rotation, or custom stats.
@@ -224,9 +224,9 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 	}
 
 	onImport(url: string) {
-		const match = url.match(/www\.wowhead\.com\/wotlk\/gear-planner\/([a-z\-]+)\/([a-z\-]+)\/([a-zA-Z0-9_\-]+)/);
+		const match = url.match(/www\.wowhead\.com\/classic\/gear-planner\/([a-z\-]+)\/([a-z\-]+)\/([a-zA-Z0-9_\-]+)/);
 		if (!match) {
-			throw new Error(`Invalid WCL URL ${url}, must look like "https://www.wowhead.com/wotlk/gear-planner/CLASS/RACE/XXXX"`);
+			throw new Error(`Invalid WCL URL ${url}, must look like "https://www.wowhead.com/classic/gear-planner/CLASS/RACE/XXXX"`);
 		}
 
 		// Parse all the settings.

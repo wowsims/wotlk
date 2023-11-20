@@ -129,7 +129,7 @@ export class IndividualWowheadGearPlannerExporter<SpecType extends Spec> extends
 
 		const classStr = classNames.get(player.getClass())!.replaceAll(' ', '-').toLowerCase();
 		const raceStr = raceNames.get(player.getRace())!.replaceAll(' ', '-').toLowerCase();
-		let url = `https://www.wowhead.com/wotlk/gear-planner/${classStr}/${raceStr}/`;
+		let url = `https://www.wowhead.com/classic/gear-planner/${classStr}/${raceStr}/`;
 
 		// See comments on the importer for how the binary formatting is structured.
 		let bytes: Array<number> = [];

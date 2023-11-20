@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/classic/sim/core/proto"
 )
 
 func TestValueConst(t *testing.T) {

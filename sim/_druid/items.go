@@ -3,8 +3,8 @@ package druid
 import (
 	"time"
 
-	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
+	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/stats"
 )
 
 var ItemSetThunderheartRegalia = core.NewItemSet(core.ItemSet{

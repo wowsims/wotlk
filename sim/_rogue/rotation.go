@@ -1,7 +1,7 @@
 package rogue
 
 import (
-	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/classic/sim/core"
 )
 
 type rotation interface {

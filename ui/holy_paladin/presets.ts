@@ -29,7 +29,7 @@ export const P1_PRESET = PresetUtils.makePresetGear('P1 Preset', P1Gear);
 export const P2_PRESET = PresetUtils.makePresetGear('P2 Preset', P2Gear);
 
 // Default talents. Uses the wowhead calculator format, make the talents on
-// https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
+// https://wowhead.com/classic/talent-calc and copy the numbers in the url.
 
 export const StandardTalents = {
 	name: 'Standard',

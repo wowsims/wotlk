@@ -1,10 +1,11 @@
 package druid
 
 import (
-	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
-	"github.com/wowsims/wotlk/sim/core/stats"
 	"math"
+
+	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sim/core/stats"
 )
 
 type DruidForm uint8

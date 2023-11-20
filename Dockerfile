@@ -2,7 +2,7 @@
 
 FROM golang:1.21
 
-WORKDIR /wotlk
+WORKDIR /classic
 COPY . .
 COPY gitconfig /etc/gitconfig
 

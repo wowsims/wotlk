@@ -7,4 +7,4 @@ assignees: ''
 
 ---
 
-Links to [WOTLK Wowhead](https://wowhead.com/wotlk/items "https://wowhead.com/wotlk/items") for each item:
+Links to [WOTLK Wowhead](https://wowhead.com/classic/items "https://wowhead.com/classic/items") for each item:

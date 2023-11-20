@@ -1,7 +1,7 @@
 package database
 
 import (
-	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/classic/sim/core/proto"
 )
 
 // Overrides for runes as needed

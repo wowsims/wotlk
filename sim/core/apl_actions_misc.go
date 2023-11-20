@@ -2,7 +2,8 @@ package core
 
 import (
 	"fmt"
-	"github.com/wowsims/wotlk/sim/core/proto"
+
+	"github.com/wowsims/classic/sim/core/proto"
 )
 
 type APLActionChangeTarget struct {

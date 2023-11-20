@@ -31,7 +31,7 @@ jobs:
 
       - name: Build 🔧
         run: |
-          make dist/wotlk/.dirstamp
+          make dist/classic/.dirstamp
 
       - name: Test
         run: |

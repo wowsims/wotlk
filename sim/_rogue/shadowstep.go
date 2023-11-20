@@ -3,7 +3,7 @@ package rogue
 import (
 	"time"
 
-	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/classic/sim/core"
 )
 
 func (rogue *Rogue) registerShadowstepCD() {

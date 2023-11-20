@@ -2,8 +2,9 @@ package core
 
 import (
 	"fmt"
-	"github.com/wowsims/wotlk/sim/core/proto"
 	"log"
+
+	"github.com/wowsims/classic/sim/core/proto"
 )
 
 type TargetAI interface {

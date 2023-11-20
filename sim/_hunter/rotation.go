@@ -3,9 +3,9 @@ package hunter
 import (
 	"time"
 
-	"github.com/wowsims/wotlk/sim/common"
-	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/classic/sim/common"
+	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/proto"
 )
 
 func (hunter *Hunter) OnAutoAttack(sim *core.Simulation, spell *core.Spell) {

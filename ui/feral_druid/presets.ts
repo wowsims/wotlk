@@ -64,7 +64,7 @@ export const DefaultRotation = FeralDruidRotation.create({
 export const ROTATION_PRESET_LEGACY_DEFAULT = PresetUtils.makePresetSimpleRotation('Legacy Default', Spec.SpecFeralDruid, DefaultRotation);
 
 // Default talents. Uses the wowhead calculator format, make the talents on
-// https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
+// https://wowhead.com/classic/talent-calc and copy the numbers in the url.
 export const StandardTalents = {
 	name: 'Standard',
 	data: SavedTalents.create({

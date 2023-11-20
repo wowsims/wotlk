@@ -10,9 +10,6 @@ import {
 import { Database } from './database.js';
 import { MAX_CHARACTER_LEVEL } from '../constants/mechanics.js';
 
-// If true uses wotlkdb.com, else uses wowhead.com.
-export const USE_WOTLK_DB = false;
-
 // Uniquely identifies a specific item / spell / thing in WoW. This object is immutable.
 export class ActionId {
 	readonly itemId: number;
@@ -125,43 +122,23 @@ export class ActionId {
 
 	static makeItemUrl(id: number): string {
 		const langPrefix = getWowheadLanguagePrefix();
-		if (USE_WOTLK_DB) {
-			return 'https://classicdb.com/?item=' + id;
-		} else {
-			return `https://wowhead.com/classic/${langPrefix}item=${id}?lvl=${MAX_CHARACTER_LEVEL}`;
-		}
+		return `https://wowhead.com/classic/${langPrefix}item=${id}?lvl=${MAX_CHARACTER_LEVEL}`;
 	}
 	static makeSpellUrl(id: number): string {
 		const langPrefix = getWowheadLanguagePrefix();
-		if (USE_WOTLK_DB) {
-			return 'https://classicdb.com/?spell=' + id;
-		} else {
-			return `https://wowhead.com/classic/${langPrefix}spell=${id}`;
-		}
+		return `https://wowhead.com/classic/${langPrefix}spell=${id}`;
 	}
 	static makeQuestUrl(id: number): string {
 		const langPrefix = getWowheadLanguagePrefix();
-		if (USE_WOTLK_DB) {
-			return 'https://classicdb.com/?quest=' + id;
-		} else {
-			return `https://wowhead.com/classic/${langPrefix}quest=${id}`;
-		}
+		return `https://wowhead.com/classic/${langPrefix}quest=${id}`;
 	}
 	static makeNpcUrl(id: number): string {
 		const langPrefix = getWowheadLanguagePrefix();
-		if (USE_WOTLK_DB) {
-			return 'https://wotlkdb.com/?npc=' + id;
-		} else {
-			return `https://wowhead.com/classic/${langPrefix}npc=${id}`;
-		}
+		return `https://wowhead.com/classic/${langPrefix}npc=${id}`;
 	}
 	static makeZoneUrl(id: number): string {
 		const langPrefix = getWowheadLanguagePrefix();
-		if (USE_WOTLK_DB) {
-			return 'https://wotlkdb.com/?zone=' + id;
-		} else {
-			return `https://wowhead.com/classic/${langPrefix}zone=${id}`;
-		}
+		return `https://wowhead.com/classic/${langPrefix}zone=${id}`;
 	}
 
 	setWowheadHref(elem: HTMLAnchorElement) {
@@ -547,11 +524,7 @@ export class ActionId {
 	}
 
 	private static makeIconUrl(iconLabel: string): string {
-		if (USE_WOTLK_DB) {
-			return `https://wotlkdb.com/static/images/wow/icons/large/${iconLabel}.jpg`;
-		} else {
-			return `https://wow.zamimg.com/images/wow/icons/large/${iconLabel}.jpg`;
-		}
+		return `https://wow.zamimg.com/images/wow/icons/large/${iconLabel}.jpg`;
 	}
 
 	static async getTooltipData(actionId: ActionId): Promise<IconData> {

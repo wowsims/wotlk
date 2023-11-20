@@ -3,8 +3,8 @@ package paladin
 import (
 	"time"
 
-	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/proto"
 )
 
 // Maybe could switch "rank" parameter type to some proto thing. Would require updates to proto files.

@@ -162,7 +162,7 @@ export class SimHeader extends Component {
 
 	private addBugReportLink() {
 		this.addToolbarLink({
-			href: "https://github.com/wowsims/wotlk/issues/new/choose",
+			href: "https://github.com/wowsims/classic/issues/new/choose",
 			parent: this.simToolbar,
 			icon: "fas fa-bug fa-lg",
 			tooltip: "Report a bug or<br>Request a feature"
@@ -170,7 +170,7 @@ export class SimHeader extends Component {
 	}
 
 	private addDownloadBinaryLink() {
-		let href = "https://github.com/wowsims/wotlk/releases";
+		let href = "https://github.com/wowsims/classic/releases";
 		let icon = "fas fa-gauge-high fa-lg"
 		let parent = this.simToolbar;
 
@@ -235,7 +235,7 @@ export class SimHeader extends Component {
 
 	private addGitHubLink(container: HTMLElement) {
 		this.addToolbarLink({
-			href: "https://github.com/wowsims/wotlk",
+			href: "https://github.com/wowsims/classic",
 			parent: container,
 			icon: "fab fa-github fa-lg",
 			tooltip: "Contribute on GitHub",

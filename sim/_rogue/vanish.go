@@ -3,7 +3,7 @@ package rogue
 import (
 	"time"
 
-	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/classic/sim/core"
 )
 
 func (rogue *Rogue) registerVanishSpell() {
@@ -45,8 +45,8 @@ func (rogue *Rogue) registerVanishSpell() {
 
 				// Break the Stealth effect automatically after a dely with an auto swing
 				pa := &core.PendingAction{
-					NextActionAt: sim.CurrentTime + time.Second * time.Duration(rogue.Options.VanishBreakTime),
-					Priority: core.ActionPriorityAuto,
+					NextActionAt: sim.CurrentTime + time.Second*time.Duration(rogue.Options.VanishBreakTime),
+					Priority:     core.ActionPriorityAuto,
 				}
 				pa.OnAction = func(sim *core.Simulation) {
 					rogue.BreakStealth(sim)
@@ -57,8 +57,8 @@ func (rogue *Rogue) registerVanishSpell() {
 	})
 
 	rogue.AddMajorCooldown(core.MajorCooldown{
-		Spell: rogue.Vanish,
-		Type:  core.CooldownTypeDPS,
+		Spell:    rogue.Vanish,
+		Type:     core.CooldownTypeDPS,
 		Priority: core.CooldownPriorityDrums,
 
 		ShouldActivate: func(s *core.Simulation, c *core.Character) bool {

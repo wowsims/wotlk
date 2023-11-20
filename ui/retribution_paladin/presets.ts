@@ -85,7 +85,7 @@ export const ROTATION_PRESET_LEGACY_DEFAULT = PresetUtils.makePresetLegacyRotati
 export const ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Default', DefaultApl);
 
 // Default talents. Uses the wowhead calculator format, make the talents on
-// https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.
+// https://wowhead.com/classic/talent-calc and copy the numbers in the url.
 export const AuraMasteryTalents = {
 	name: 'Aura Mastery',
 	data: SavedTalents.create({

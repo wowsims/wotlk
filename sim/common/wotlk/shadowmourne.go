@@ -3,8 +3,8 @@ package wotlk
 import (
 	"time"
 
-	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/stats"
+	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/stats"
 )
 
 // https://www.wowhead.com/wotlk/item=49623/shadowmourne

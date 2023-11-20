@@ -19,9 +19,9 @@ google-chrome*
 # temporary files
 *.results.tmp
 .dockerignore
-/wotlk/
+/classic/
 *.code-workspace
-wowsimwotlk
+wowsimclassic
 
 # old result file
 TestAPL.results
@@ -33,6 +33,6 @@ TestAPL.results
 tmp/
 
 # lib
-wowsimwotlk*.so
-wowsimwotlk*.dll
-wowsimwotlk*.h
+wowsimclassic*.so
+wowsimclassic*.dll
+wowsimclassic*.h

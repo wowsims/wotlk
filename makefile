@@ -1,4 +1,4 @@
-OUT_DIR := dist/wotlk
+OUT_DIR := dist/classic
 TS_CORE_SRC := $(shell find ui/core -name '*.ts' -type f)
 ASSETS_INPUT := $(shell find assets/ -type f)
 ASSETS := $(patsubst assets/%,$(OUT_DIR)/assets/%,$(ASSETS_INPUT))
@@ -65,11 +65,11 @@ ui/core/index.ts: $(TS_CORE_SRC)
 clean:
 	rm -rf ui/core/proto/*.ts \
 	  sim/core/proto/*.pb.go \
-	  wowsimwotlk \
-	  wowsimwotlk-windows.exe \
-	  wowsimwotlk-amd64-darwin \
-	  wowsimwotlk-arm64-darwin \
-	  wowsimwotlk-amd64-linux \
+	  wowsimclassic \
+	  wowsimclassic-windows.exe \
+	  wowsimclassic-amd64-darwin \
+	  wowsimclassic-arm64-darwin \
+	  wowsimclassic-amd64-linux \
 	  dist \
 	  binary_dist \
 	  ui/core/index.ts \
@@ -103,7 +103,7 @@ $(OUT_DIR)/%/index.html: ui/index_template.html $(OUT_DIR)/assets
 	$(eval title := $(shell echo $(shell basename $(@D)) | sed -r 's/(^|_)([a-z])/\U \2/g' | cut -c 2-))
 	echo $(title)
 	mkdir -p $(@D)
-	cat ui/index_template.html | sed -e 's/@@TITLE@@/WOTLK $(title) Simulator/g' -e 's/@@SPEC@@/$(shell basename $(@D))/g' > $@
+	cat ui/index_template.html | sed -e 's/@@TITLE@@/CLASSIC $(title) Simulator/g' -e 's/@@SPEC@@/$(shell basename $(@D))/g' > $@
 
 .PHONY: wasm
 wasm: $(OUT_DIR)/lib.wasm
@@ -123,31 +123,31 @@ $(OUT_DIR)/assets/%: assets/%
 	cp $< $@
 
 binary_dist/dist.go: sim/web/dist.go.tmpl
-	mkdir -p binary_dist/wotlk
-	touch binary_dist/wotlk/embedded
+	mkdir -p binary_dist/classic
+	touch binary_dist/classic/embedded
 	cp sim/web/dist.go.tmpl binary_dist/dist.go
 
 binary_dist: $(OUT_DIR)/.dirstamp
 	rm -rf binary_dist
 	mkdir -p binary_dist
 	cp -r $(OUT_DIR) binary_dist/
-	rm binary_dist/wotlk/lib.wasm
-	rm -rf binary_dist/wotlk/assets/db_inputs
-	rm binary_dist/wotlk/assets/database/db.bin
-	rm binary_dist/wotlk/assets/database/leftover_db.bin
+	rm binary_dist/classic/lib.wasm
+	rm -rf binary_dist/classic/assets/db_inputs
+	rm binary_dist/classic/assets/database/db.bin
+	rm binary_dist/classic/assets/database/leftover_db.bin
 
 # Rebuild the protobuf generated code.
 .PHONY: proto
 proto: sim/core/proto/api.pb.go ui/core/proto/api.ts
 
 # Builds the web server with the compiled client.
-.PHONY: wowsimwotlk
-wowsimwotlk: binary_dist devserver
+.PHONY: wowsimwclassic
+wowsimclassic: binary_dist devserver
 
 .PHONY: devserver
 devserver: sim/core/proto/api.pb.go sim/web/main.go binary_dist/dist.go
 	@echo "Starting server compile now..."
-	@if go build -o wowsimwotlk ./sim/web/main.go; then \
+	@if go build -o wowsimclassic ./sim/web/main.go; then \
 		printf "\033[1;32mBuild Completed Successfully\033[0m\n"; \
 	else \
 		printf "\033[1;31mBUILD FAILED\033[0m\n"; \
@@ -166,30 +166,30 @@ endif
 rundevserver: air devserver
 ifeq ($(WATCH), 1)
 	npx vite build -m development --watch &
-	ulimit -n 10240 && air -tmp_dir "/tmp" -build.include_ext "go,proto" -build.args_bin "--usefs=true --launch=false" -build.bin "./wowsimwotlk" -build.cmd "make devserver" -build.exclude_dir "assets,dist,node_modules,ui,tools"
+	ulimit -n 10240 && air -tmp_dir "/tmp" -build.include_ext "go,proto" -build.args_bin "--usefs=true --launch=false" -build.bin "./wowsimclassic" -build.cmd "make devserver" -build.exclude_dir "assets,dist,node_modules,ui,tools"
 else
-	./wowsimwotlk --usefs=true --launch=false --host=":3333"
+	./wowsimclassic --usefs=true --launch=false --host=":3333"
 endif
 
-wowsimwotlk-windows.exe: wowsimwotlk
+wowsimclassic-windows.exe: wowsimclassic
 # go build only considers syso files when invoked without specifying .go files: https://github.com/golang/go/issues/16090
 	cp ./assets/favicon_io/icon-windows_amd64.syso ./sim/web/icon-windows_amd64.syso
-	cd ./sim/web/ && GOOS=windows GOARCH=amd64 GOAMD64=v2 go build -o wowsimwotlk-windows.exe -ldflags="-X 'main.Version=$(VERSION)' -s -w"
+	cd ./sim/web/ && GOOS=windows GOARCH=amd64 GOAMD64=v2 go build -o wowsimclassic-windows.exe -ldflags="-X 'main.Version=$(VERSION)' -s -w"
 	cd ./cmd/wowsimcli && GOOS=windows GOARCH=amd64 GOAMD64=v2 go build -o wowsimcli-windows.exe --tags=with_db -ldflags="-X 'main.Version=$(VERSION)' -s -w"
 	rm ./sim/web/icon-windows_amd64.syso
-	mv ./sim/web/wowsimwotlk-windows.exe ./wowsimwotlk-windows.exe
+	mv ./sim/web/wowsimclassic-windows.exe ./wowsimclassic-windows.exe
 	mv ./cmd/wowsimcli/wowsimcli-windows.exe ./wowsimcli-windows.exe
 
-release: wowsimwotlk wowsimwotlk-windows.exe
-	GOOS=darwin GOARCH=amd64 GOAMD64=v2 go build -o wowsimwotlk-amd64-darwin -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
-	GOOS=darwin GOARCH=arm64 go build -o wowsimwotlk-arm64-darwin -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
-	GOOS=linux GOARCH=amd64 GOAMD64=v2 go build -o wowsimwotlk-amd64-linux   -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
+release: wowsimclassic wowsimclassic-windows.exe
+	GOOS=darwin GOARCH=amd64 GOAMD64=v2 go build -o wowsimclassic-amd64-darwin -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
+	GOOS=darwin GOARCH=arm64 go build -o wowsimclassic-arm64-darwin -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
+	GOOS=linux GOARCH=amd64 GOAMD64=v2 go build -o wowsimclassic-amd64-linux   -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
 	GOOS=linux GOARCH=amd64 GOAMD64=v2 go build -o wowsimcli-amd64-linux --tags=with_db -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./cmd/wowsimcli/cli_main.go
 # Now compress into a zip because the files are getting large.
-	zip wowsimwotlk-windows.exe.zip wowsimwotlk-windows.exe
-	zip wowsimwotlk-amd64-darwin.zip wowsimwotlk-amd64-darwin
-	zip wowsimwotlk-arm64-darwin.zip wowsimwotlk-arm64-darwin
-	zip wowsimwotlk-amd64-linux.zip wowsimwotlk-amd64-linux
+	zip wowsimclassic-windows.exe.zip wowsimclassic-windows.exe
+	zip wowsimclassic-amd64-darwin.zip wowsimclassic-amd64-darwin
+	zip wowsimclassic-arm64-darwin.zip wowsimclassic-arm64-darwin
+	zip wowsimclassic-amd64-linux.zip wowsimclassic-amd64-linux
 	zip wowsimcli-amd64-linux.zip wowsimcli-amd64-linux
 	zip wowsimcli-windows.exe.zip wowsimcli-windows.exe
 
@@ -199,15 +199,15 @@ sim/core/proto/api.pb.go: proto/*.proto
 # Only useful for building the lib on a host platform that matches the target platform
 .PHONY: locallib
 locallib: sim/core/proto/api.pb.go
-	go build -buildmode=c-shared -o wowsimwotlk.so --tags=with_db ./sim/lib/library.go
+	go build -buildmode=c-shared -o wowsimclassic.so --tags=with_db ./sim/lib/library.go
 
 .PHONY: nixlib
 nixlib: sim/core/proto/api.pb.go
-	GOOS=linux GOARCH=amd64 GOAMD64=v2 go build -buildmode=c-shared -o wowsimwotlk-linux.so --tags=with_db ./sim/lib/library.go
+	GOOS=linux GOARCH=amd64 GOAMD64=v2 go build -buildmode=c-shared -o wowsimclassic-linux.so --tags=with_db ./sim/lib/library.go
 
 .PHONY: winlib
 winlib: sim/core/proto/api.pb.go
-	GOOS=windows GOARCH=amd64 GOAMD64=v2 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -buildmode=c-shared -o wowsimwotlk-windows.dll --tags=with_db ./sim/lib/library.go
+	GOOS=windows GOARCH=amd64 GOAMD64=v2 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -buildmode=c-shared -o wowsimclassic-windows.dll --tags=with_db ./sim/lib/library.go
 
 .PHONY: items
 items: sim/core/items/all_items.go sim/core/proto/api.pb.go

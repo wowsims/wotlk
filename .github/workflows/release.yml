@@ -62,8 +62,8 @@ jobs:
           artifacts: |
             wowsimcli-amd64-linux.zip
             wowsimcli-windows.exe.zip
-            wowsimwotlk-amd64-darwin.zip
-            wowsimwotlk-arm64-darwin.zip
-            wowsimwotlk-amd64-linux.zip
-            wowsimwotlk-windows.exe.zip
+            wowsimclassic-amd64-darwin.zip
+            wowsimclassic-arm64-darwin.zip
+            wowsimclassic-amd64-linux.zip
+            wowsimclassic-windows.exe.zip
             

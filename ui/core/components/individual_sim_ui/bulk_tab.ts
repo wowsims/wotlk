@@ -203,7 +203,7 @@ export class BulkItemPicker extends Component {
 			this.item = newItem;
 		} else {
 			this.itemElem.rootElem.style.opacity = '30%';
-			this.itemElem.iconElem.style.backgroundImage = `url('/wotlk/assets/item_slots/empty.jpg')`;
+			this.itemElem.iconElem.style.backgroundImage = `url('/classic/assets/item_slots/empty.jpg')`;
 			this.itemElem.nameElem.textContent = 'Add new item (not implemented)';
 			this.itemElem.rootElem.style.alignItems = 'center';
 		}

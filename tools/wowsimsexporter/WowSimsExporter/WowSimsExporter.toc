@@ -2,7 +2,7 @@
 ## Version: 2.5
 ## Author: generalwrex, namreeb
 ## Interface: 30402
-## Notes: This is an exporter written to quickly export your character to https://wowsims.github.io/wotlk/ for simulations.
+## Notes: This is an exporter written to quickly export your character to https://wowsims.github.io/classic/ for simulations.
 ## SavedVariables: WSEDB
 ## OptionalDeps: Ace3
 

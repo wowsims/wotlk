@@ -47,7 +47,7 @@ def get_spell_url(item_id):
 	anchors = tooltip.find_elements(By.TAG_NAME, "a")
 	for anchor in anchors:
 		href = anchor.get_attribute("href")
-		if "/wotlk/spell=" in href:
+		if "/classic/spell=" in href:
 			print("Item {} has spell url {}\n".format(item_id, href))
 			return href
 	raise Exception("No results for id " + str(item_id))

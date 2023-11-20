@@ -1,9 +1,9 @@
 package healing
 
 import (
-	"github.com/wowsims/wotlk/sim/common"
-	"github.com/wowsims/wotlk/sim/core"
-	"github.com/wowsims/wotlk/sim/core/proto"
+	"github.com/wowsims/classic/sim/common"
+	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/proto"
 )
 
 func (hpriest *HealingPriest) OnGCDReady(sim *core.Simulation) {

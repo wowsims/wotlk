@@ -3,7 +3,7 @@ package paladin
 import (
 	"time"
 
-	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/classic/sim/core"
 )
 
 func (paladin *Paladin) registerDivineProtectionSpell() {

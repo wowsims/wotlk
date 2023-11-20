@@ -1,7 +1,7 @@
 package mage
 
 import (
-	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/classic/sim/core"
 )
 
 func (mage *Mage) registerIceLanceSpell() {

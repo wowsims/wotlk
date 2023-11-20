@@ -1,8 +1,9 @@
 package mage
 
 import (
-	"github.com/wowsims/wotlk/sim/core"
 	"time"
+
+	"github.com/wowsims/classic/sim/core"
 )
 
 func (mage *Mage) registerDragonsBreathSpell() {

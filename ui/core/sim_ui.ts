@@ -291,12 +291,12 @@ export abstract class SimUI extends Component {
 			const hash = this.hashCode(errorStr);
 			const link = this.toLink();
 			const rngSeed = this.sim.getLastUsedRngSeed();
-			fetch('https://api.github.com/search/issues?q=is:issue+is:open+repo:wowsims/wotlk+' + hash).then(resp => {
+			fetch('https://api.github.com/search/issues?q=is:issue+is:open+repo:wowsims/classic+' + hash).then(resp => {
 				resp.json().then((issues) => {
 					if (issues.total_count > 0) {
 						window.open(issues.items[0].html_url, '_blank');
 					} else {
-						const base_url = 'https://github.com/wowsims/wotlk/issues/new?assignees=&labels=&title=Crash%20Report%20'
+						const base_url = 'https://github.com/wowsims/classic/issues/new?assignees=&labels=&title=Crash%20Report%20'
 						const base = `${base_url}${hash}&body=`;
 						const maxBodyLength = URLMAXLEN - base.length;
 						let issueBody = encodeURIComponent(`Link:\n${link}\n\nRNG Seed: ${rngSeed}\n\n${errorStr}`);

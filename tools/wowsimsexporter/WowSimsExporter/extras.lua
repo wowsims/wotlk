@@ -57,7 +57,7 @@ WowSimsExporter.professionNames = {
 
 
 
-WowSimsExporter.prelink = "https://wowsims.github.io/wotlk/"
+WowSimsExporter.prelink = "https://wowsims.github.io/classic/"
 WowSimsExporter.postlink = ""
 WowSimsExporter.specializations = {
 

@@ -1,7 +1,7 @@
 package enhancement
 
 import (
-	"github.com/wowsims/wotlk/sim/core"
+	"github.com/wowsims/classic/sim/core"
 )
 
 func (enh *EnhancementShaman) OnAutoAttack(sim *core.Simulation, _ *core.Spell) {
