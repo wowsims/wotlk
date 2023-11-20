@@ -3,8 +3,6 @@
 @import "../components/sim_title_dropdown";
 
 .sim-sidebar {
-  min-height: 100vh;
-  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -19,7 +17,6 @@
     padding-bottom: map.get($spacers, 3);
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
 
     &> *:not(:last-child) {
       margin-bottom: map.get($spacers, 4);
@@ -55,12 +52,6 @@
       justify-content: center;
       align-items: center;
     }
-
-    .sim-sidebar-footer {
-      flex: 1;
-      display: flex;
-      align-items: flex-end;
-    }
   }
 }
 
@@ -73,6 +64,21 @@
       .sim-sidebar-actions {
         padding: 0;
         margin: 0;
+      }
+    }
+  }
+}
+
+@include media-breakpoint-up(md) {
+  .sim-sidebar {
+    // Allow the stats to align to the bottom of the viewport if the section is small enough to avoid scrolling
+    .sim-sidebar-content {
+      min-height: calc(100vh - $sim-header-height);
+
+      .sim-sidebar-footer {
+        flex: 1;
+        display: flex;
+        align-items: flex-end;
       }
     }
   }
