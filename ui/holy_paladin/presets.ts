@@ -55,6 +55,6 @@ export const DefaultOptions = HolyPaladinOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	flask: Flask.FlaskOfTheFrostWyrm,
+	flask: Flask.FlaskUnknown,
 	food: Food.FoodUnknown,
 });

@@ -1,13 +1,13 @@
 import { HunterTalents, HunterMajorGlyph, HunterMinorGlyph, HunterPetTalents } from '../proto/hunter.js';
 
-import { GlyphsConfig } from './glyphs_picker.js';
+
 import { TalentsConfig, newTalentsConfig } from './talents_picker.js';
 
 import HunterTalentJson from './trees/hunter.json';
 
 export const hunterTalentsConfig: TalentsConfig<HunterTalents> = newTalentsConfig(HunterTalentJson);
 
-export const hunterGlyphsConfig: GlyphsConfig = {
+export const hunterGlyphsConfig = {
 	majorGlyphs: {
 		[HunterMajorGlyph.GlyphOfAimedShot]: {
 			name: 'Glyph of Aimed Shot',

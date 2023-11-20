@@ -42,7 +42,7 @@ export const Shadowfiend = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.Spe
 
 export const HealingPriestRotationConfig = {
 	inputs: [
-		InputHelpers.makeRotationEnumInput<Spec.SpecHealingPriest, RotationType>({
+		InputHelpers.makeRotationEnumInput<Spec.SpecHealingPriest>({
 			fieldName: 'type',
 			label: 'Type',
 			values: [

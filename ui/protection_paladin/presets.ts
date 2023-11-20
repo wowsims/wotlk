@@ -3,26 +3,25 @@ import {
 	CustomRotation,
 	CustomSpell,
 	Flask,
-	Food,
-	Potions,
+	Food
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
 import {
-	PaladinAura as PaladinAura,
+	PaladinAura,
+	PaladinJudgement,
 	PaladinMajorGlyph,
 	PaladinMinorGlyph,
-	PaladinJudgement as PaladinJudgement,
-	ProtectionPaladin_Rotation_SpellOption as SpellOption,
-	ProtectionPaladin_Rotation as ProtectionPaladinRotation,
 	ProtectionPaladin_Options as ProtectionPaladinOptions,
+	ProtectionPaladin_Rotation as ProtectionPaladinRotation,
+	ProtectionPaladin_Rotation_SpellOption as SpellOption,
 } from '../core/proto/paladin.js';
 
 import * as PresetUtils from '../core/preset_utils.js';
 
-import PreraidGear from './gear_sets/preraid.gear.json';
 import P1Gear from './gear_sets/p1.gear.json';
 import P2Gear from './gear_sets/p2.gear.json';
+import PreraidGear from './gear_sets/preraid.gear.json';
 
 import DefaultApl from './apls/default.apl.json';
 
@@ -79,8 +78,6 @@ export const DefaultOptions = ProtectionPaladinOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	flask: Flask.FlaskOfStoneblood,
-	food: Food.FoodDragonfinFilet,
-	defaultPotion: Potions.IndestructiblePotion,
-	prepopPotion: Potions.IndestructiblePotion,
+	flask: Flask.FlaskUnknown,
+	food: Food.FoodUnknown,
 });

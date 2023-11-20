@@ -15,7 +15,6 @@ import { IndividualSimSettings } from '../proto/ui';
 import { Database } from '../proto_utils/database';
 import { classNames, nameToClass, nameToRace, nameToProfession } from '../proto_utils/names';
 import { classGlyphsConfig, talentSpellIdsToTalentString } from '../talents/factory';
-import { GlyphConfig } from '../talents/glyphs_picker';
 import { BaseModal } from './base_modal';
 import { buf2hex } from '../utils';
 import { JsonObject } from '@protobuf-ts/runtime';
@@ -62,7 +61,7 @@ export abstract class Importer extends BaseModal {
 		}
 
 		this.importButton = this.rootElem.getElementsByClassName('import-button')[0] as HTMLButtonElement;
-		this.importButton.addEventListener('click', event => {
+		this.importButton.addEventListener('click', () => {
 			try {
 				this.onImport(this.textElem.value || '');
 			} catch (error) {
@@ -199,7 +198,7 @@ export class Individual80UImporter<SpecType extends Spec> extends Importer {
 			equipmentSpec.items.push(itemSpec);
 		});
 
-		const gear = this.simUI.sim.db.lookupEquipmentSpec(equipmentSpec);
+		this.simUI.sim.db.lookupEquipmentSpec(equipmentSpec);
 
 		this.finishIndividualImport(this.simUI, charClass, race, equipmentSpec, talentsStr, null, []);
 	}
@@ -322,7 +321,7 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 			const itemSpec = ItemSpec.create();
 			const slotId = gearBytes[cur] & 0b00111111;
 			const isEnchanted = Boolean(gearBytes[cur] & 0b10000000);
-			const randomEnchant = Boolean(gearBytes[cur] & 0b01000000);
+			// const randomEnchant = Boolean(gearBytes[cur] & 0b01000000);
 			cur++;
 
 			const numGems = (gearBytes[cur] & 0b11100000) >> 5;
@@ -365,7 +364,7 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 				equipmentSpec.items.push(itemSpec);
 			}
 		}
-		const gear = this.simUI.sim.db.lookupEquipmentSpec(equipmentSpec);
+		this.simUI.sim.db.lookupEquipmentSpec(equipmentSpec);
 
 		this.finishIndividualImport(this.simUI, charClass, race, equipmentSpec, talentsStr, hasGlyphs ? glyphs : null, []);
 	}
@@ -460,7 +459,7 @@ export class IndividualAddonImporter<SpecType extends Spec> extends Importer {
 	}
 }
 
-function glyphNameToID(glyphName: string, glyphsConfig: Record<number, GlyphConfig>): number {
+function glyphNameToID(glyphName: string, glyphsConfig: Record<number, any>): number {
 	if (!glyphName) {
 		return 0;
 	}
@@ -473,7 +472,7 @@ function glyphNameToID(glyphName: string, glyphsConfig: Record<number, GlyphConf
 	throw new Error(`Unknown glyph name '${glyphName}'`);
 }
 
-function glyphToID(glyph: string | JsonObject, db: Database, glyphsConfig: Record<number, GlyphConfig>): number {
+function glyphToID(glyph: string | JsonObject, db: Database, glyphsConfig: Record<number, any>): number {
 	if (typeof glyph === 'string') {
 		// Legacy version: AddOn exports Glyphs by name (string) only. Names must be in English.
 		return glyphNameToID(glyph, glyphsConfig);

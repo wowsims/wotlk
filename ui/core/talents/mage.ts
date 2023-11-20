@@ -1,13 +1,13 @@
 import { MageTalents, MageMajorGlyph, MageMinorGlyph } from '../proto/mage.js';
 
-import { GlyphsConfig } from './glyphs_picker.js';
+
 import { TalentsConfig, newTalentsConfig } from './talents_picker.js';
 
 import MageTalentJson from './trees/mage.json';
 
 export const mageTalentsConfig: TalentsConfig<MageTalents> = newTalentsConfig(MageTalentJson);
 
-export const mageGlyphsConfig: GlyphsConfig = {
+export const mageGlyphsConfig = {
 	majorGlyphs: {
 		[MageMajorGlyph.GlyphOfArcaneBarrage]: {
 			name: 'Glyph of Arcane Barrage',

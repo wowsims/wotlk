@@ -1,13 +1,11 @@
 import { DruidTalents, DruidMajorGlyph, DruidMinorGlyph } from '../proto/druid.js';
-
-import { GlyphsConfig, } from './glyphs_picker.js';
 import { TalentsConfig, newTalentsConfig } from './talents_picker.js';
 
 import DruidTalentsJson from './trees/druid.json';
 
 export const druidTalentsConfig: TalentsConfig<DruidTalents> = newTalentsConfig(DruidTalentsJson);
 
-export const druidGlyphsConfig: GlyphsConfig = {
+export const druidGlyphsConfig = {
 	majorGlyphs: {
 		[DruidMajorGlyph.GlyphOfBarkskin]: {
 			name: 'Glyph of Barkskin',

@@ -11,31 +11,11 @@ export default defineConfig(({ command, mode }) => ({
 		sourcemap: command === "serve" ? "inline" : "false",
 		target: ["es2020"],
 		rollupOptions: {
-			input: glob.sync(path.resolve(__dirname, "ui", "shadow_priest/index.html").replace(/\\/g, "/")),
+			input: glob.sync(path.resolve(__dirname, "ui", "**/index.html").replace(/\\/g, "/")),
 			output: {
 				assetFileNames: () => "bundle/[name]-[hash].style.css",
 				entryFileNames: () => "bundle/[name]-[hash].entry.js",
 				chunkFileNames: () => "bundle/[name]-[hash].chunk.js",
-			},
-			external: (id) => {
-				return [
-					"ui/elemental_shaman",
-					"ui/enhancement_shaman",
-					"ui/feral_druid",
-					"ui/feral_tank_druid",
-					"ui/healing_priest",
-					"ui/holy_paladin",
-					"ui/hunter",
-					"ui/mage",
-					"ui/protection_paladin",
-					"ui/protection_warrior",
-					"ui/restoration_druid",
-					"ui/restoration_shaman",
-					"ui/retribution_paladin",
-					"ui/rogue",
-					"ui/warlock",
-					"ui/warrior"
-				].some(path => id.includes(path));
 			},
 		},
 		server: {

@@ -1,35 +1,33 @@
 import {
-	Conjured,
 	Consumes,
 	CustomRotation,
 	CustomSpell,
 	Flask,
 	Food,
 	Glyphs,
-	Potions,
-	Spec,
+	Spec
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
 import {
-	PaladinAura as PaladinAura,
-	PaladinJudgement as PaladinJudgement,
-	RetributionPaladin_Rotation as RetributionPaladinRotation,
-	RetributionPaladin_Options as RetributionPaladinOptions,
-	RetributionPaladin_Rotation_RotationType as RotationType,
-	RetributionPaladin_Rotation_SpellOption as SpellOption,
+	PaladinAura,
+	PaladinJudgement,
 	PaladinMajorGlyph,
 	PaladinMinorGlyph,
+	RetributionPaladin_Options as RetributionPaladinOptions,
+	RetributionPaladin_Rotation as RetributionPaladinRotation,
+	RetributionPaladin_Rotation_RotationType as RotationType,
+	RetributionPaladin_Rotation_SpellOption as SpellOption,
 } from '../core/proto/paladin.js';
 
 import * as PresetUtils from '../core/preset_utils.js';
 
-import PreraidGear from './gear_sets/preraid.gear.json';
 import P1Gear from './gear_sets/p1.gear.json';
 import P2Gear from './gear_sets/p2.gear.json';
 import P3MaceGear from './gear_sets/p3_mace.gear.json';
 import P4Gear from './gear_sets/p4.gear.json';
 import P5Gear from './gear_sets/p5.gear.json';
+import PreraidGear from './gear_sets/preraid.gear.json';
 
 import DefaultApl from './apls/default.apl.json';
 
@@ -125,8 +123,6 @@ export const DefaultOptions = RetributionPaladinOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	defaultPotion: Potions.PotionOfSpeed,
-	defaultConjured: Conjured.ConjuredDarkRune,
-	flask: Flask.FlaskOfEndlessRage,
-	food: Food.FoodDragonfinFilet,
+	flask: Flask.FlaskUnknown,
+	food: Food.FoodUnknown,
 });

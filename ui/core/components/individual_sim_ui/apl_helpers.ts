@@ -9,7 +9,7 @@ import { DropdownPicker, DropdownPickerConfig, DropdownValueConfig, TextDropdown
 import { UnitPicker, UnitPickerConfig, UnitValue } from '../unit_picker.js';
 import { Input, InputConfig } from '../input.js';
 import { ActionID } from '../../proto/common.js';
-// import { BooleanPicker } from '../boolean_picker.js';
+import { BooleanPicker } from '../boolean_picker.js';
 
 export type ACTION_ID_SET = 'auras' | 'stackable_auras' | 'icd_auras' | 'exclusive_effect_auras' | 'castable_spells' | 'channel_spells' | 'dot_spells' | 'shield_spells';
 

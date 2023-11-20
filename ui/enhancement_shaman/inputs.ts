@@ -48,7 +48,7 @@ export const ShamanImbueOH = InputHelpers.makeSpecOptionsEnumIconInput<Spec.Spec
 	],
 });
 
-export const SyncTypeInput = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecEnhancementShaman, ShamanSyncType>({
+export const SyncTypeInput = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecEnhancementShaman>({
 	fieldName: 'syncType',
 	label: 'Sync/Stagger Setting',
 	labelTooltip:
@@ -88,7 +88,7 @@ export const EnhancementShamanRotationConfig = {
 				showWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getSpecOptions().totems?.useFireElemental || false
 			}),
 			EnhancmentItemSwapInputs,
-			InputHelpers.makeRotationEnumInput<Spec.SpecEnhancementShaman, RotationType>({
+			InputHelpers.makeRotationEnumInput<Spec.SpecEnhancementShaman>({
 				fieldName: 'rotationType',
 				label: 'Type',
 				labelTooltip:
@@ -126,7 +126,7 @@ export const EnhancementShamanRotationConfig = {
 				],
 				showWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getRotation().rotationType == RotationType.Custom,
 			}),
-			InputHelpers.makeRotationEnumInput<Spec.SpecEnhancementShaman, PrimaryShock>({
+			InputHelpers.makeRotationEnumInput<Spec.SpecEnhancementShaman>({
 				fieldName: 'primaryShock',
 				label: 'Primary Shock',
 				values: [
@@ -155,7 +155,7 @@ export const EnhancementShamanRotationConfig = {
 					return player.getRotation().weaveFlameShock
 				}
 			}),
-			InputHelpers.makeRotationEnumInput<Spec.SpecEnhancementShaman, number>({
+			InputHelpers.makeRotationEnumInput<Spec.SpecEnhancementShaman>({
 				fieldName: 'maelstromweaponMinStack',
 				label: 'Minimum Maelstrom Stacks to Weave',
 				labelTooltip: '3 stacks is the most realistic, however there are cases where lower might be possible, just much harder to do in practice',

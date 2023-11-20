@@ -6,7 +6,6 @@ import {
 	Glyphs,
 	IndividualBuffs,
 	PartyBuffs,
-	Potions,
 	RaidBuffs,
 	UnitReference,
 	TristateEffect
@@ -73,31 +72,25 @@ export const DefaultOptions = RestorationDruidOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	defaultPotion: Potions.RunicManaPotion,
-	flask: Flask.FlaskOfTheFrostWyrm,
-	food: Food.FoodFishFeast,
+	flask: Flask.FlaskUnknown,
+	food: Food.FoodUnknown,
 });
 
 export const DefaultRaidBuffs = RaidBuffs.create({
 	arcaneBrilliance: true,
-	bloodlust: true,
 	divineSpirit: true,
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
-	icyTalons: true,
-	moonkinAura: TristateEffect.TristateEffectImproved,
-	leaderOfThePack: TristateEffect.TristateEffectImproved,
+	moonkinAura: true,
+	leaderOfThePack: true,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,
-	sanctifiedRetribution: true,
 	strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
 	trueshotAura: true,
-	wrathOfAirTotem: true,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
 	blessingOfKings: true,
 	blessingOfMight: TristateEffect.TristateEffectImproved,
 	blessingOfWisdom: TristateEffect.TristateEffectImproved,
-	vampiricTouch: true,
 });
 
 export const DefaultPartyBuffs = PartyBuffs.create({
@@ -105,14 +98,8 @@ export const DefaultPartyBuffs = PartyBuffs.create({
 });
 
 export const DefaultDebuffs = Debuffs.create({
-	bloodFrenzy: true,
-	ebonPlaguebringer: true,
 	faerieFire: TristateEffect.TristateEffectImproved,
-	heartOfTheCrusader: true,
-	judgementOfWisdom: true,
-	shadowMastery: true,
 	sunderArmor: true,
-	totemOfWrath: true,
 });
 
 export const OtherDefaults = {

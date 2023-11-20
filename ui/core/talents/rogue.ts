@@ -1,13 +1,12 @@
 import { RogueTalents, RogueMajorGlyph, RogueMinorGlyph } from '../proto/rogue.js';
 
-import { GlyphsConfig } from './glyphs_picker.js';
 import { TalentsConfig, newTalentsConfig } from './talents_picker.js';
 
 import RogueTalentJson from './trees/rogue.json';
 
 export const rogueTalentsConfig: TalentsConfig<RogueTalents> = newTalentsConfig(RogueTalentJson);
 
-export const rogueGlyphsConfig: GlyphsConfig = {
+export const rogueGlyphsConfig = {
 	majorGlyphs: {
 		[RogueMajorGlyph.GlyphOfAdrenalineRush]: {
 			name: 'Glyph of Adrenaline Rush',

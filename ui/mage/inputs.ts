@@ -34,7 +34,7 @@ export const MageRotationConfig = {
 		// ********************************************************
 		//                       FIRE INPUTS
 		// ********************************************************
-		InputHelpers.makeRotationEnumInput<Spec.SpecMage, PrimaryFireSpell>({
+		InputHelpers.makeRotationEnumInput<Spec.SpecMage>({
 			fieldName: 'primaryFireSpell',
 			label: 'Primary Spell',
 			values: [

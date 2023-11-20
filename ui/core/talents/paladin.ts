@@ -1,13 +1,13 @@
 import { PaladinTalents, PaladinMajorGlyph, PaladinMinorGlyph } from '../proto/paladin.js';
 
-import { GlyphsConfig } from './glyphs_picker.js';
+
 import { TalentsConfig, newTalentsConfig } from './talents_picker.js';
 
 import PaladinTalentJson from './trees/paladin.json';
 
 export const paladinTalentsConfig: TalentsConfig<PaladinTalents> = newTalentsConfig(PaladinTalentJson);
 
-export const paladinGlyphsConfig: GlyphsConfig = {
+export const paladinGlyphsConfig = {
 	majorGlyphs: {
 		[PaladinMajorGlyph.GlyphOfAvengerSShield]: {
 			name: 'Glyph of Avenger\'s Shield',

@@ -1,24 +1,18 @@
-import { PartyBuffs } from '../core/proto/common.js';
-import { IndividualBuffs } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { Stat, PseudoStat } from '../core/proto/common.js';
-import { TristateEffect } from '../core/proto/common.js'
-import {
-	APLAction,
-	APLListItem,
-	APLRotation,
-} from '../core/proto/apl.js';
-import { ShamanImbue } from '../core/proto/shaman.js';
-import { Player } from '../core/player.js';
-import { Stats } from '../core/proto_utils/stats.js';
-import { IndividualSimUI } from '../core/individual_sim_ui.js';
-import { TotemsSection } from '../core/components/totem_inputs.js';
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
+import { TotemsSection } from '../core/components/totem_inputs.js';
+import { IndividualSimUI } from '../core/individual_sim_ui.js';
+import { Player } from '../core/player.js';
+import {
+	APLRotation
+} from '../core/proto/apl.js';
+import { IndividualBuffs, PartyBuffs, PseudoStat, Spec, Stat, TristateEffect } from '../core/proto/common.js';
+import { ShamanImbue } from '../core/proto/shaman.js';
+import { Stats } from '../core/proto_utils/stats.js';
 
+import { FireElementalSection } from '../core/components/fire_elemental_inputs.js';
 import * as ShamanInputs from './inputs.js';
 import * as Presets from './presets.js';
-import { FireElementalSection } from '../core/components/fire_elemental_inputs.js';
 
 export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancementShaman> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecEnhancementShaman>) {
@@ -108,7 +102,6 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 					blessingOfKings: true,
 					blessingOfWisdom: TristateEffect.TristateEffectImproved,
 					blessingOfMight: TristateEffect.TristateEffectImproved,
-					judgementsOfTheWise: true,
 				}),
 				debuffs: Presets.DefaultDebuffs,
 			},
@@ -123,9 +116,7 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 			rotationInputs: ShamanInputs.EnhancementShamanRotationConfig,
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
-				IconInputs.ReplenishmentBuff,
 				IconInputs.MP5Buff,
-				IconInputs.SpellHasteBuff,
 				IconInputs.SpiritBuff,
 			],
 			excludeBuffDebuffInputs: [

@@ -1,22 +1,12 @@
-import { RaidBuffs } from '../core/proto/common.js';
-import { PartyBuffs } from '../core/proto/common.js';
-import { IndividualBuffs } from '../core/proto/common.js';
-import { Debuffs } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { Stat, PseudoStat } from '../core/proto/common.js';
-import { TristateEffect } from '../core/proto/common.js'
-import {
-	APLAction,
-	APLListItem,
-	APLRotation,
-} from '../core/proto/apl.js';
-import { Stats } from '../core/proto_utils/stats.js';
-import { Player } from '../core/player.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
+import { Player } from '../core/player.js';
+import {
+	APLRotation
+} from '../core/proto/apl.js';
+import { Debuffs, IndividualBuffs, PartyBuffs, PseudoStat, RaidBuffs, Spec, Stat, TristateEffect } from '../core/proto/common.js';
+import { Stats } from '../core/proto_utils/stats.js';
 
-import { ProtectionWarrior, ProtectionWarrior_Rotation as ProtectionWarriorRotation, WarriorTalents as WarriorTalents, ProtectionWarrior_Options as ProtectionWarriorOptions } from '../core/proto/warrior.js';
 
-import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 
 import * as ProtectionWarriorInputs from './inputs.js';
@@ -120,15 +110,10 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 				raidBuffs: RaidBuffs.create({
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
 					powerWordFortitude: TristateEffect.TristateEffectImproved,
-					abominationsMight: true,
-					swiftRetribution: true,
-					bloodlust: true,
 					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
-					leaderOfThePack: TristateEffect.TristateEffectImproved,
-					sanctifiedRetribution: true,
+					leaderOfThePack: true,
 					devotionAura: TristateEffect.TristateEffectImproved,
 					stoneskinTotem: TristateEffect.TristateEffectImproved,
-					icyTalons: true,
 					retributionAura: true,
 					thorns: TristateEffect.TristateEffectImproved,
 					shadowProtection: true,
@@ -142,14 +127,9 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 				}),
 				debuffs: Debuffs.create({
 					sunderArmor: true,
-					mangle: true,
-					vindication: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					insectSwarm: true,
-					bloodFrenzy: true,
 					judgementOfLight: true,
-					heartOfTheCrusader: true,
-					frostFever: TristateEffect.TristateEffectImproved,
 				}),
 			},
 
@@ -162,7 +142,6 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 			rotationInputs: ProtectionWarriorInputs.ProtectionWarriorRotationConfig,
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
-				IconInputs.HealthBuff,
 			],
 			excludeBuffDebuffInputs: [
 			],
@@ -203,7 +182,7 @@ export class ProtectionWarriorSimUI extends IndividualSimUI<Spec.SpecProtectionW
 				],
 			},
 
-			autoRotation: (player: Player<Spec.SpecProtectionWarrior>): APLRotation => {
+			autoRotation: (): APLRotation => {
 				return Presets.ROTATION_DEFAULT.rotation.rotation!;
 			},
 		});

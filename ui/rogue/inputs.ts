@@ -42,7 +42,7 @@ export const ApplyPoisonsManually = InputHelpers.makeSpecOptionsBooleanInput<Spe
 
 export const RogueRotationConfig = {
 	inputs: [
-		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, Frequency>({
+		InputHelpers.makeRotationEnumInput<Spec.SpecRogue>({
 			fieldName: 'exposeArmorFrequency',
 			label: 'Expose Armor',
 			labelTooltip: 'Frequency of Expose Armor casts.',
@@ -58,7 +58,7 @@ export const RogueRotationConfig = {
 			labelTooltip: 'Minimum number of combo points for Expose Armor when only cast once.',
 			showWhen: (player: Player<Spec.SpecRogue>) => player.getRotation().exposeArmorFrequency == Frequency.Once,
 		}),
-		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, Frequency>({
+		InputHelpers.makeRotationEnumInput<Spec.SpecRogue>({
 			fieldName: 'tricksOfTheTradeFrequency',
 			label: 'Tricks of the Trade',
 			labelTooltip: 'Frequency of Tricks of the Trade usage.',
@@ -67,7 +67,7 @@ export const RogueRotationConfig = {
 				{ name: 'Maintain', value: Frequency.Maintain },
 			],
 		}),
-		InputHelpers.makeRotationEnumInput<Spec.SpecRogue, Frequency>({
+		InputHelpers.makeRotationEnumInput<Spec.SpecRogue>({
 			fieldName: 'multiTargetSliceFrequency',
 			label: 'Multi-Target S&D',
 			labelTooltip: 'Frequency of Slice and Dice cast in multi-target scenarios.',

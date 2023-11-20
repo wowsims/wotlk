@@ -26,7 +26,7 @@ export const MindBlastInput = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.
 
 export const ShadowPriestRotationConfig = {
 	inputs: [
-		InputHelpers.makeRotationEnumInput<Spec.SpecShadowPriest, RotationType>({
+		InputHelpers.makeRotationEnumInput<Spec.SpecShadowPriest>({
 			fieldName: 'rotationType',
 			label: 'Rotation Type',
 			labelTooltip: 'Choose how to clip your mindflay. Basic will never clip.',
@@ -34,7 +34,7 @@ export const ShadowPriestRotationConfig = {
 				{ name: 'Basic', value: RotationType.Basic },
 			],
 		}),
-		InputHelpers.makeRotationEnumInput<Spec.SpecShadowPriest, precastType>({
+		InputHelpers.makeRotationEnumInput<Spec.SpecShadowPriest>({
 			fieldName: 'precastType',
 			label: 'PreCast Spell',
 			labelTooltip: 'Choose which spell you want to Precast',

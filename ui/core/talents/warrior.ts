@@ -1,13 +1,13 @@
 import { WarriorTalents, WarriorMajorGlyph, WarriorMinorGlyph } from '../proto/warrior.js';
 
-import { GlyphsConfig } from './glyphs_picker.js';
+
 import { TalentsConfig, newTalentsConfig } from './talents_picker.js';
 
 import WarriorTalentJson from './trees/warrior.json';
 
 export const warriorTalentsConfig: TalentsConfig<WarriorTalents> = newTalentsConfig(WarriorTalentJson);
 
-export const warriorGlyphsConfig: GlyphsConfig = {
+export const warriorGlyphsConfig = {
 	majorGlyphs: {
 		[WarriorMajorGlyph.GlyphOfBarbaricInsults]: {
 			name: 'Glyph of Barbaric Insults',

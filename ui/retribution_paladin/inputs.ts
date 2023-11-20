@@ -153,7 +153,7 @@ export const RetributionPaladinCastSequenceConfig = InputHelpers.makeCustomRotat
 	showWhen: (player: Player<Spec.SpecRetributionPaladin>) => player.getRotation().type == RotationType.CastSequence,
 });
 
-export const RotationSelector = InputHelpers.makeRotationEnumInput<Spec.SpecRetributionPaladin, RotationType>({
+export const RotationSelector = InputHelpers.makeRotationEnumInput<Spec.SpecRetributionPaladin>({
 	fieldName: 'type',
 	label: 'Type',
 	labelTooltip:

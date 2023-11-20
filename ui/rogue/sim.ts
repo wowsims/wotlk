@@ -242,14 +242,9 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
-					bloodlust: true,
 					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
-					icyTalons: true,
-					leaderOfThePack: TristateEffect.TristateEffectImproved,
-					abominationsMight: true,
-					swiftRetribution: true,
-					elementalOath: true,
-					sanctifiedRetribution: true,
+					moonkinAura: true,
+					leaderOfThePack: true,
 				}),
 				partyBuffs: PartyBuffs.create({
 				}),
@@ -258,13 +253,8 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 					blessingOfMight: TristateEffect.TristateEffectImproved,
 				}),
 				debuffs: Debuffs.create({
-					heartOfTheCrusader: true,
-					mangle: true,
 					sunderArmor: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
-					shadowMastery: true,
-					earthAndMoon: true,
-					bloodFrenzy: true,
 				}),
 			},
 
@@ -283,8 +273,6 @@ export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
 				IconInputs.SpellCritBuff,
-				IconInputs.SpellCritDebuff,
-				IconInputs.SpellHitDebuff,
 				IconInputs.SpellISBDebuff
 			],
 			excludeBuffDebuffInputs: [

@@ -1,4 +1,4 @@
-import { EventID, TypedEvent } from '../typed_event.js';
+import { TypedEvent } from '../typed_event.js';
 
 import { Input, InputConfig } from './input.js';
 
@@ -25,7 +25,7 @@ export class BooleanPicker<ModObject> extends Input<ModObject, boolean> {
 
 		this.init();
 
-		this.inputElem.addEventListener('change', event => {
+		this.inputElem.addEventListener('change', () => {
 			this.inputChanged(TypedEvent.nextEventID());
 		});
 	}

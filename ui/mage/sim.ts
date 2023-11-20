@@ -86,14 +86,9 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
-					bloodlust: true,
 					manaSpringTotem: TristateEffect.TristateEffectImproved,
-					wrathOfAirTotem: true,
 					divineSpirit: true,
-					swiftRetribution: true,
-					sanctifiedRetribution: true,
-					demonicPact: 500,
-					moonkinAura: TristateEffect.TristateEffectImproved,
+					moonkinAura: true,
 					arcaneBrilliance: true,
 				}),
 				partyBuffs: PartyBuffs.create({
@@ -103,15 +98,9 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 					blessingOfKings: true,
 					blessingOfWisdom: TristateEffect.TristateEffectImproved,
 					innervates: 0,
-					vampiricTouch: true,
-					focusMagic: true,
 				}),
 				debuffs: Debuffs.create({
 					judgementOfWisdom: true,
-					misery: true,
-					ebonPlaguebringer: true,
-					shadowMastery: true,
-					heartOfTheCrusader: true,
 				}),
 			},
 
@@ -134,7 +123,6 @@ export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {
 					OtherInputs.ReactionTime,
 					OtherInputs.DistanceFromTarget,
 					OtherInputs.TankAssignment,
-					OtherInputs.nibelungAverageCasts,
 				],
 			},
 			encounterPicker: {

@@ -99,11 +99,8 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
-				IconInputs.ReplenishmentBuff,
 				IconInputs.MajorArmorDebuff,
 				IconInputs.MinorArmorDebuff,
-				IconInputs.PhysicalDamageDebuff,
-				IconInputs.MeleeHasteBuff,
 				IconInputs.MeleeCritBuff,
 				IconInputs.MP5Buff,
 				IconInputs.AttackPowerPercentBuff,
@@ -114,7 +111,6 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			excludeBuffDebuffInputs: [
 			],
 			petConsumeInputs: [
-				IconInputs.SpicedMammothTreats,
 			],
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
@@ -122,7 +118,6 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 					OtherInputs.DistanceFromTarget,
 					OtherInputs.TankAssignment,
 					OtherInputs.ChannelClipDelay,
-					OtherInputs.nibelungAverageCasts,
 				],
 			},
 			encounterPicker: {

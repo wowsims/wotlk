@@ -14,7 +14,7 @@ export const HolyPaladinRotationConfig = {
 	],
 }
 
-export const AuraSelection = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecHolyPaladin, PaladinAura>({
+export const AuraSelection = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecHolyPaladin>({
 	fieldName: 'aura',
 	label: 'Aura',
 	values: [
@@ -24,7 +24,7 @@ export const AuraSelection = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecHoly
 	],
 });
 
-export const JudgementSelection = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecHolyPaladin, PaladinJudgement>({
+export const JudgementSelection = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecHolyPaladin>({
 	fieldName: 'judgement',
 	label: 'Judgement',
 	labelTooltip: 'Judgement debuff you will use on the target during the encounter.',

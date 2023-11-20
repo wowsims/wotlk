@@ -8,7 +8,7 @@ import { TypedEvent } from "../../typed_event";
 import { EventID } from '../../typed_event.js';
 
 import { BulkComboResult, BulkSettings, ItemSpecWithSlot, ProgressMetrics } from "../../proto/api";
-import { EquipmentSpec, Faction, GemColor, ItemSlot, ItemSpec, SimDatabase, SimEnchant, SimGem, SimItem, Spec } from "../../proto/common";
+import { EquipmentSpec, GemColor, ItemSlot, ItemSpec, SimDatabase, SimEnchant, SimGem, SimItem, Spec } from "../../proto/common";
 
 import { ItemData, ItemList, ItemRenderer, SelectorModal, SelectorModalTabs } from "../gear_picker";
 import { SimTab } from "../sim_tab";
@@ -155,6 +155,7 @@ export class BulkItemPicker extends Component {
 					equippedItem: this.item,
 					eligibleItems: new Array<UIItem>(),
 					eligibleEnchants: eligibleEnchants,
+					eligibleRunes: [],
 					gearData: {
 						equipItem: (eventID: EventID, equippedItem: EquippedItem | null) => {
 							if (equippedItem) {
@@ -417,7 +418,7 @@ export class BulkTab extends SimTab {
 				for (let i = 0; i < this.items.length; ++i) {
 					const spec = this.items[i];
 					const item = this.simUI.sim.db.lookupItemSpec(spec);
-					const bulkItemPicker = new BulkItemPicker(itemList, this.simUI, this, item!, i);
+					new BulkItemPicker(itemList, this.simUI, this, item!, i);
 				}
 			}
 		});
@@ -554,7 +555,7 @@ export class BulkTab extends SimTab {
 			}
 		});
 
-		searchText.addEventListener("input", (e) => {
+		searchText.addEventListener("input", () => {
 			const searchString = searchText.value;
 			searchResults.innerHTML = "";
 			if (searchString.length == 0) {
@@ -581,7 +582,7 @@ export class BulkTab extends SimTab {
 					let itemElement = document.createElement('li');
 					itemElement.innerHTML = `<span>${item.name}</span>`;
 					itemElement.setAttribute("data-item-id", item.id.toString());
-					itemElement.addEventListener("click", (ev) => {
+					itemElement.addEventListener("click", () => {
 						this.addItems(Array<ItemSpec>(ItemSpec.create({ id: item.id })));
 					})
 					if (item.heroic) {
@@ -682,8 +683,8 @@ export class BulkTab extends SimTab {
 				selector.close();
 			};
 
-			let openGemSelector = (color: GemColor, socketIndex: number) => {
-				return (event: Event) => {
+			let openGemSelector = (_color: GemColor, _socketIndex: number) => {
+				return () => {
 					if (selector == null) {
 						selector = new GemSelectorModal(this.simUI.rootElem, this.simUI, socketColor, handleChoose);
 					}
@@ -700,22 +701,22 @@ export class BulkTab extends SimTab {
 		new BooleanPicker<BulkTab>(settingsBlock.bodyElement, this, {
 			label: "Fast Mode",
 			labelTooltip: "Fast mode reduces accuracy but will run faster.",
-			changedEvent: (obj: BulkTab) => this.itemsChangedEmitter,
-			getValue: (obj) => this.fastMode,
+			changedEvent: (_obj: BulkTab) => this.itemsChangedEmitter,
+			getValue: (_obj) => this.fastMode,
 			setValue: (id: EventID, obj: BulkTab, value: boolean) => { obj.fastMode = value }
 		});
 		new BooleanPicker<BulkTab>(settingsBlock.bodyElement, this, {
 			label: "Combinations",
 			labelTooltip: "When checked bulk simulator will create all possible combinations of the items. When disabled trinkets and rings will still run all combinations becausee they have two slots to fill each.",
-			changedEvent: (obj: BulkTab) => this.itemsChangedEmitter,
-			getValue: (obj) => this.doCombos,
+			changedEvent: (_obj: BulkTab) => this.itemsChangedEmitter,
+			getValue: (_obj) => this.doCombos,
 			setValue: (id: EventID, obj: BulkTab, value: boolean) => { obj.doCombos = value }
 		});
 		new BooleanPicker<BulkTab>(settingsBlock.bodyElement, this, {
 			label: "Auto Enchant",
 			labelTooltip: "When checked bulk simulator apply the current enchant for a slot to each replacement item it can.",
-			changedEvent: (obj: BulkTab) => this.itemsChangedEmitter,
-			getValue: (obj) => this.autoEnchant,
+			changedEvent: (_obj: BulkTab) => this.itemsChangedEmitter,
+			getValue: (_obj) => this.autoEnchant,
 			setValue: (id: EventID, obj: BulkTab, value: boolean) => {
 				obj.autoEnchant = value
 				if (value) {
@@ -728,8 +729,8 @@ export class BulkTab extends SimTab {
 		new BooleanPicker<BulkTab>(settingsBlock.bodyElement, this, {
 			label: "Auto Gem",
 			labelTooltip: "When checked bulk simulator will fill any un-filled gem sockets with default gems.",
-			changedEvent: (obj: BulkTab) => this.itemsChangedEmitter,
-			getValue: (obj) => this.autoGem,
+			changedEvent: (_obj: BulkTab) => this.itemsChangedEmitter,
+			getValue: (_obj) => this.autoGem,
 			setValue: (id: EventID, obj: BulkTab, value: boolean) => {
 				obj.autoGem = value
 				if (value) {
@@ -804,8 +805,9 @@ class GemSelectorModal extends BaseModal {
 					equippedItem: null,
 					eligibleItems: new Array<UIItem>(),
 					eligibleEnchants: new Array<UIEnchant>(),
+					eligibleRunes: [],
 					gearData: {
-						equipItem: (eventID: EventID, equippedItem: EquippedItem | null) => { },
+						equipItem: (_eventID: EventID, _equippedItem: EquippedItem | null) => { },
 						getEquippedItem: () => null,
 						changeEvent: new TypedEvent(), // FIXME
 					},
@@ -823,7 +825,7 @@ class GemSelectorModal extends BaseModal {
 						heroic: false,
 						baseEP: 0,
 						ignoreEPFilter: true,
-						onEquip: (eventID, gem: UIGem) => {
+						onEquip: (_eventID, _gem: UIGem) => {
 						},
 					};
 				}),

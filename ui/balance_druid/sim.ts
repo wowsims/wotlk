@@ -1,8 +1,6 @@
 import { Spec } from '../core/proto/common.js';
 import { Stat } from '../core/proto/common.js';
 import {
-	APLAction,
-	APLListItem,
 	APLRotation,
 } from '../core/proto/apl.js';
 import { Stats } from '../core/proto_utils/stats.js';
@@ -86,13 +84,11 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 			rotationInputs: DruidInputs.BalanceDruidRotationConfig,
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
-				IconInputs.MeleeHasteBuff,
 				IconInputs.MeleeCritBuff,
 				IconInputs.AttackPowerPercentBuff,
 				IconInputs.AttackPowerBuff,
 				IconInputs.MajorArmorDebuff,
 				IconInputs.MinorArmorDebuff,
-				IconInputs.PhysicalDamageDebuff,
 			],
 			excludeBuffDebuffInputs: [
 			],
@@ -103,7 +99,6 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 					OtherInputs.TankAssignment,
 					OtherInputs.ReactionTime,
 					OtherInputs.DistanceFromTarget,
-					OtherInputs.nibelungAverageCasts,
 				],
 			},
 			encounterPicker: {
@@ -136,7 +131,7 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 				],
 			},
 
-			autoRotation: (player: Player<Spec.SpecBalanceDruid>): APLRotation => {
+			autoRotation: (): APLRotation => {
 				return Presets.ROTATION_PRESET_P3_APL.rotation.rotation!;
 			},
 		});

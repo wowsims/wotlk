@@ -14,8 +14,6 @@ import { ItemSlot } from '../core/proto/common.js';
 import { GemColor } from '../core/proto/common.js';
 import { Profession } from '../core/proto/common.js';
 
-
-import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 
 import * as WarriorInputs from './inputs.js';
@@ -99,13 +97,8 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 				// Default raid/party buffs settings.
 				raidBuffs: RaidBuffs.create({
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
-					swiftRetribution: true,
 					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
-					icyTalons: true,
-					abominationsMight: true,
-					leaderOfThePack: TristateEffect.TristateEffectRegular,
-					sanctifiedRetribution: true,
-					bloodlust: true,
+					leaderOfThePack: true,
 					devotionAura: TristateEffect.TristateEffectImproved,
 					stoneskinTotem: TristateEffect.TristateEffectImproved,
 				}),
@@ -117,13 +110,9 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 					blessingOfMight: TristateEffect.TristateEffectImproved,
 				}),
 				debuffs: Debuffs.create({
-					bloodFrenzy: true,
-					heartOfTheCrusader: true,
-					mangle: true,
 					sunderArmor: true,
 					curseOfWeakness: TristateEffect.TristateEffectRegular,
 					faerieFire: TristateEffect.TristateEffectImproved,
-					ebonPlaguebringer: true,
 				}),
 			},
 
@@ -131,15 +120,11 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 			playerIconInputs: [
 				WarriorInputs.ShoutPicker,
 				WarriorInputs.Recklessness,
-				WarriorInputs.ShatteringThrow,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: WarriorInputs.WarriorRotationConfig,
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
-				// just for Bryntroll
-				IconInputs.SpellISBDebuff,
-				IconInputs.SpellHitDebuff,
 			],
 			excludeBuffDebuffInputs: [
 			],

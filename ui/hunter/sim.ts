@@ -125,30 +125,22 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 					arcaneBrilliance: true,
 					powerWordFortitude: TristateEffect.TristateEffectImproved,
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
-					bloodlust: true,
 					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
-					windfuryTotem: TristateEffect.TristateEffectImproved,
 					battleShout: TristateEffect.TristateEffectImproved,
-					leaderOfThePack: TristateEffect.TristateEffectImproved,
-					sanctifiedRetribution: true,
-					unleashedRage: true,
-					moonkinAura: TristateEffect.TristateEffectImproved,
+					moonkinAura: true,
 				}),
 				partyBuffs: PartyBuffs.create({
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
-					blessingOfWisdom: 2,
-					blessingOfMight: 2,
-					vampiricTouch: true,
+					blessingOfWisdom: TristateEffect.TristateEffectImproved,
+					blessingOfMight: TristateEffect.TristateEffectImproved,
 				}),
 				debuffs: Debuffs.create({
 					sunderArmor: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					judgementOfWisdom: true,
 					curseOfElements: true,
-					heartOfTheCrusader: true,
-					savageCombat: true,
 				}),
 			},
 
@@ -161,7 +153,6 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: HunterInputs.HunterRotationConfig,
 			petConsumeInputs: [
-				IconInputs.SpicedMammothTreats,
 			],
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [

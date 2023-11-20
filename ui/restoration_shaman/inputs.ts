@@ -24,7 +24,7 @@ export const ShamanShieldInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.
 });
 
 
-export const PrimaryHealInput = InputHelpers.makeRotationEnumInput<Spec.SpecRestorationShaman, ShamanHealSpell>({
+export const PrimaryHealInput = InputHelpers.makeRotationEnumInput<Spec.SpecRestorationShaman>({
 	fieldName: 'primaryHeal',
 	label: 'Primary Heal',
 	labelTooltip: 'Set to \'AutoHeal\', to automatically swap based on best heal.',

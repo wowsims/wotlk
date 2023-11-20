@@ -37,7 +37,7 @@ export const ShamanShieldInput = InputHelpers.makeSpecOptionsEnumIconInput<Spec.
 
 export const ElementalShamanRotationConfig = {
 	inputs: [
-		InputHelpers.makeRotationEnumInput<Spec.SpecElementalShaman, RotationType>({
+		InputHelpers.makeRotationEnumInput<Spec.SpecElementalShaman>({
 			fieldName: 'type',
 			label: 'Type',
 			values: [

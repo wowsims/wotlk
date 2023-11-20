@@ -86,22 +86,18 @@ export class RestorationShamanSimUI extends IndividualSimUI<Spec.SpecRestoration
 					arcaneBrilliance: true,
 					divineSpirit: true,
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
-					moonkinAura: TristateEffect.TristateEffectImproved,
-					sanctifiedRetribution: true,
+					moonkinAura: true,
 				}),
 				partyBuffs: PartyBuffs.create({
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
 					blessingOfWisdom: 2,
-					vampiricTouch: true,
 				}),
 				debuffs: Debuffs.create({
 					faerieFire: TristateEffect.TristateEffectImproved,
 					judgementOfWisdom: true,
-					misery: true,
 					curseOfElements: true,
-					shadowMastery: true,
 				}),
 			},
 			// IconInputs to include in the 'Player' section on the settings tab.

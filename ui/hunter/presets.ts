@@ -143,6 +143,6 @@ export const BMDefaultOptions = HunterOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	flask: Flask.FlaskOfEndlessRage,
+	flask: Flask.FlaskUnknown,
 	food: Food.FoodUnknown,
 });

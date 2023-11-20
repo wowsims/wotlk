@@ -1,16 +1,11 @@
 import { Spec } from '../core/proto/common.js';
-import { Player } from '../core/player.js';
-import { EventID } from '../core/typed_event.js';
-import { IndividualSimUI } from '../core/individual_sim_ui.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 
 import {
-	PaladinAura as PaladinAura,
+	PaladinAura,
+	PaladinJudgement,
 	PaladinSeal,
-	PaladinJudgement as PaladinJudgement,
-	ProtectionPaladin_Rotation_SpellOption as SpellOption,
-	ProtectionPaladin_Rotation as ProtectionPaladinRotation,
-	ProtectionPaladin_Options as ProtectionPaladinOptions,
+	ProtectionPaladin_Rotation_SpellOption as SpellOption
 } from '../core/proto/paladin.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
@@ -59,7 +54,7 @@ export const ProtectionPaladinRotationConfig = {
 	],
 }
 
-export const AuraSelection = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecProtectionPaladin, PaladinAura>({
+export const AuraSelection = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecProtectionPaladin>({
 	fieldName: 'aura',
 	label: 'Aura',
 	values: [
@@ -69,7 +64,7 @@ export const AuraSelection = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecProt
 	],
 });
 
-export const StartingSealSelection = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecProtectionPaladin, PaladinSeal>({
+export const StartingSealSelection = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecProtectionPaladin>({
 	fieldName: 'seal',
 	label: 'Seal',
 	labelTooltip: 'The seal active before encounter',
@@ -79,7 +74,7 @@ export const StartingSealSelection = InputHelpers.makeSpecOptionsEnumInput<Spec.
 	],
 });
 
-export const JudgementSelection = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecProtectionPaladin, PaladinJudgement>({
+export const JudgementSelection = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecProtectionPaladin>({
 	fieldName: 'judgement',
 	label: 'Judgement',
 	labelTooltip: 'Judgement debuff you will use on the target during the encounter.',

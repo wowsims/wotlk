@@ -1,16 +1,15 @@
 import {
-	Conjured,
 	Consumes,
 	Flask,
 	Food,
-	Glyphs,
-	Potions,
+	Glyphs
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
 import {
-	Rogue_Options as RogueOptions,
 	Rogue_Options_PoisonImbue as Poison,
+	RogueMajorGlyph,
+	Rogue_Options as RogueOptions,
 	Rogue_Rotation as RogueRotation,
 	Rogue_Rotation_AssassinationPriority,
 	Rogue_Rotation_CombatBuilder,
@@ -18,37 +17,36 @@ import {
 	Rogue_Rotation_Frequency,
 	Rogue_Rotation_SubtletyBuilder,
 	Rogue_Rotation_SubtletyPriority,
-	RogueMajorGlyph,
 } from '../core/proto/rogue.js';
 
 import * as PresetUtils from '../core/preset_utils.js';
 
-import PreraidAssassinationGear from './gear_sets/preraid_assassination.gear.json';
 import P1AssassinationGear from './gear_sets/p1_assassination.gear.json';
-import P2AssassinationGear from './gear_sets/p2_assassination.gear.json';
-import P3AssassinationGear from './gear_sets/p3_assassination.gear.json';
-import P4AssassinationGear from './gear_sets/p4_assassination.gear.json';
-import P5AssassinationGear from './gear_sets/p5_assassination.gear.json';
-import PreraidCombatGear from './gear_sets/preraid_combat.gear.json';
 import P1CombatGear from './gear_sets/p1_combat.gear.json';
-import P2CombatGear from './gear_sets/p2_combat.gear.json';
-import P3CombatGear from './gear_sets/p3_combat.gear.json';
-import P4CombatGear from './gear_sets/p4_combat.gear.json';
-import P5CombatGear from './gear_sets/p5_combat.gear.json';
 import P1HemoSubGear from './gear_sets/p1_hemosub.gear.json';
+import P2AssassinationGear from './gear_sets/p2_assassination.gear.json';
+import P2CombatGear from './gear_sets/p2_combat.gear.json';
 import P2HemoSubGear from './gear_sets/p2_hemosub.gear.json';
-import P3HemoSubGear from './gear_sets/p3_hemosub.gear.json';
+import P3AssassinationGear from './gear_sets/p3_assassination.gear.json';
+import P3CombatGear from './gear_sets/p3_combat.gear.json';
 import P3DanceSubGear from './gear_sets/p3_dancesub.gear.json';
+import P3HemoSubGear from './gear_sets/p3_hemosub.gear.json';
+import P4AssassinationGear from './gear_sets/p4_assassination.gear.json';
+import P4CombatGear from './gear_sets/p4_combat.gear.json';
+import P5AssassinationGear from './gear_sets/p5_assassination.gear.json';
+import P5CombatGear from './gear_sets/p5_combat.gear.json';
+import PreraidAssassinationGear from './gear_sets/preraid_assassination.gear.json';
+import PreraidCombatGear from './gear_sets/preraid_combat.gear.json';
 
-import MutilateApl from './apls/mutilate.apl.json'
-import MutilateExposeApl from './apls/mutilate_expose.apl.json'
-import RuptureMutilateApl from './apls/rupture_mutilate.apl.json'
-import RuptureMutilateExposeApl from './apls/rupture_mutilate_expose.apl.json'
-import CombatApl from './apls/combat.apl.json'
-import CombatExposeApl from './apls/combat_expose.apl.json'
-import CombatCleaveSndApl from './apls/combat_cleave_snd.apl.json'
-import CombatCleaveSndExposeApl from './apls/combat_cleave_snd_expose.apl.json'
-import FanAoeApl from './apls/fan_aoe.apl.json'
+import CombatApl from './apls/combat.apl.json';
+import CombatCleaveSndApl from './apls/combat_cleave_snd.apl.json';
+import CombatCleaveSndExposeApl from './apls/combat_cleave_snd_expose.apl.json';
+import CombatExposeApl from './apls/combat_expose.apl.json';
+import FanAoeApl from './apls/fan_aoe.apl.json';
+import MutilateApl from './apls/mutilate.apl.json';
+import MutilateExposeApl from './apls/mutilate_expose.apl.json';
+import RuptureMutilateApl from './apls/rupture_mutilate.apl.json';
+import RuptureMutilateExposeApl from './apls/rupture_mutilate_expose.apl.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -190,9 +188,6 @@ export const DefaultOptions = RogueOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	defaultPotion: Potions.PotionOfSpeed,
-	prepopPotion: Potions.PotionOfSpeed,
-	defaultConjured: Conjured.ConjuredRogueThistleTea,
-	flask: Flask.FlaskOfEndlessRage,
-	food: Food.FoodMegaMammothMeal,
+	flask: Flask.FlaskUnknown,
+	food: Food.FoodUnknown,
 });

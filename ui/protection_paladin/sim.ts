@@ -1,21 +1,12 @@
-import { RaidBuffs } from '../core/proto/common.js';
-import { PartyBuffs } from '../core/proto/common.js';
-import { IndividualBuffs } from '../core/proto/common.js';
-import { Debuffs } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { Stat, PseudoStat } from '../core/proto/common.js';
-import { TristateEffect } from '../core/proto/common.js'
-import {
-	APLAction,
-	APLListItem,
-	APLRotation,
-} from '../core/proto/apl.js';
-import { Stats } from '../core/proto_utils/stats.js';
-import { Player } from '../core/player.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
-import { EventID, TypedEvent } from '../core/typed_event.js';
+import { Player } from '../core/player.js';
+import {
+	APLRotation
+} from '../core/proto/apl.js';
+import { Debuffs, IndividualBuffs, PartyBuffs, PseudoStat, RaidBuffs, Spec, Stat, TristateEffect } from '../core/proto/common.js';
+import { Stats } from '../core/proto_utils/stats.js';
+import { TypedEvent } from '../core/typed_event.js';
 
-import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as Mechanics from '../core/constants/mechanics.js';
 
@@ -141,16 +132,9 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 					powerWordFortitude: TristateEffect.TristateEffectImproved,
 					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
 					arcaneBrilliance: true,
-					unleashedRage: true,
-					leaderOfThePack: TristateEffect.TristateEffectRegular,
-					icyTalons: true,
-					totemOfWrath: true,
-					demonicPact: 500,
-					swiftRetribution: true,
-					moonkinAura: TristateEffect.TristateEffectRegular,
-					sanctifiedRetribution: true,
+					leaderOfThePack: true,
+					moonkinAura: true,
 					manaSpringTotem: TristateEffect.TristateEffectRegular,
-					bloodlust: true,
 					thorns: TristateEffect.TristateEffectImproved,
 					devotionAura: TristateEffect.TristateEffectImproved,
 					shadowProtection: true,
@@ -166,16 +150,9 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 				debuffs: Debuffs.create({
 					judgementOfWisdom: true,
 					judgementOfLight: true,
-					misery: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
-					ebonPlaguebringer: true,
-					totemOfWrath: true,
-					shadowMastery: true,
-					bloodFrenzy: true,
-					mangle: true,
 					exposeArmor: true,
 					sunderArmor: true,
-					vindication: true,
 					thunderClap: TristateEffect.TristateEffectImproved,
 					insectSwarm: true,
 				}),
@@ -188,7 +165,6 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 			rotationInputs: ProtectionPaladinInputs.ProtectionPaladinRotationConfig,
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
-				IconInputs.HealthBuff,
 			],
 			excludeBuffDebuffInputs: [
 			],
@@ -231,7 +207,7 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 				],
 			},
 
-			autoRotation: (player: Player<Spec.SpecProtectionPaladin>): APLRotation => {
+			autoRotation: (): APLRotation => {
 				return Presets.ROTATION_DEFAULT.rotation.rotation!;
 			},
 		});

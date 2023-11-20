@@ -52,7 +52,7 @@ export const TimeToTrapWeaveMs = InputHelpers.makeSpecOptionsNumberInput<Spec.Sp
 
 export const HunterRotationConfig = {
 	inputs: [
-		InputHelpers.makeRotationEnumInput<Spec.SpecHunter, RotationType>({
+		InputHelpers.makeRotationEnumInput<Spec.SpecHunter>({
 			fieldName: 'type',
 			label: 'Type',
 			values: [
@@ -60,7 +60,7 @@ export const HunterRotationConfig = {
 				{ name: 'AOE', value: RotationType.Aoe },
 			],
 		}),
-		InputHelpers.makeRotationEnumInput<Spec.SpecHunter, StingType>({
+		InputHelpers.makeRotationEnumInput<Spec.SpecHunter>({
 			fieldName: 'sting',
 			label: 'Sting',
 			labelTooltip: 'Maintains the selected Sting on the primary target.',

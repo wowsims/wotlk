@@ -1,22 +1,12 @@
-import { RaidBuffs } from '../core/proto/common.js';
-import { PartyBuffs } from '../core/proto/common.js';
-import { IndividualBuffs } from '../core/proto/common.js';
-import { Debuffs } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { Stat, PseudoStat } from '../core/proto/common.js';
-import { TristateEffect } from '../core/proto/common.js'
-import { Stats } from '../core/proto_utils/stats.js';
-import { Player } from '../core/player.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
-import { EventID, TypedEvent } from '../core/typed_event.js';
+import { Player } from '../core/player.js';
+import { Debuffs, GemColor, IndividualBuffs, ItemSlot, PartyBuffs, Profession, PseudoStat, RaidBuffs, Spec, Stat, TristateEffect } from '../core/proto/common.js';
 import { Gear } from '../core/proto_utils/gear.js';
-import { ItemSlot } from '../core/proto/common.js';
-import { GemColor } from '../core/proto/common.js';
-import { Profession } from '../core/proto/common.js';
+import { Stats } from '../core/proto_utils/stats.js';
+import { TypedEvent } from '../core/typed_event.js';
 
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
-import * as Tooltips from '../core/constants/tooltips.js';
 
 import * as DruidInputs from './inputs.js';
 import * as Presets from './presets.js';
@@ -90,14 +80,9 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				raidBuffs: RaidBuffs.create({
 					arcaneBrilliance: true,
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
-					bloodlust: true,
 					manaSpringTotem: TristateEffect.TristateEffectRegular,
 					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
 					battleShout: TristateEffect.TristateEffectImproved,
-					unleashedRage: true,
-					icyTalons: true,
-					swiftRetribution: true,
-					sanctifiedRetribution: true,
 				}),
 				partyBuffs: PartyBuffs.create({
 					heroicPresence: true,
@@ -108,13 +93,11 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				}),
 				debuffs: Debuffs.create({
 					judgementOfWisdom: true,
-					bloodFrenzy: true,
 					giftOfArthas: true,
 					exposeArmor: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					sunderArmor: true,
 					curseOfWeakness: TristateEffect.TristateEffectRegular,
-					heartOfTheCrusader: true,
 				}),
 			},
 

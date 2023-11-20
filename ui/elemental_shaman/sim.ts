@@ -96,25 +96,18 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 					arcaneBrilliance: true,
 					divineSpirit: true,
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
-					moonkinAura: TristateEffect.TristateEffectImproved,
-					sanctifiedRetribution: true,
-					demonicPact: 500,
-					wrathOfAirTotem: true,
+					moonkinAura: true,
 				}),
 				partyBuffs: PartyBuffs.create({
 				}),
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
 					blessingOfWisdom: 2,
-					vampiricTouch: true,
 				}),
 				debuffs: Debuffs.create({
 					faerieFire: TristateEffect.TristateEffectImproved,
 					judgementOfWisdom: true,
-					misery: true,
 					curseOfElements: true,
-					shadowMastery: true,
-					heartOfTheCrusader: true,
 				}),
 			},
 			// IconInputs to include in the 'Player' section on the settings tab.
@@ -133,7 +126,6 @@ export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalSham
 				inputs: [
 					ShamanInputs.InThunderstormRange,
 					OtherInputs.TankAssignment,
-					OtherInputs.nibelungAverageCasts,
 				],
 			},
 			customSections: [

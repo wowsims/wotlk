@@ -1,30 +1,14 @@
-import { RaidBuffs } from '../core/proto/common.js';
-import { PartyBuffs } from '../core/proto/common.js';
-import { IndividualBuffs } from '../core/proto/common.js';
-import { Debuffs } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { Stat, PseudoStat } from '../core/proto/common.js';
-import { TristateEffect } from '../core/proto/common.js'
-import {
-	APLAction,
-	APLListItem,
-	APLRotation,
-} from '../core/proto/apl.js';
-import { Stats } from '../core/proto_utils/stats.js';
-import { Player } from '../core/player.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
-import { TypedEvent } from '../core/typed_event.js';
-
+import { Player } from '../core/player.js';
 import {
-	DruidTalents as DruidTalents,
-	FeralTankDruid,
-	FeralTankDruid_Rotation as DruidRotation,
-	FeralTankDruid_Options as DruidOptions
-} from '../core/proto/druid.js';
+	APLRotation
+} from '../core/proto/apl.js';
+import { Debuffs, IndividualBuffs, PartyBuffs, PseudoStat, RaidBuffs, Spec, Stat, TristateEffect } from '../core/proto/common.js';
+import { Stats } from '../core/proto_utils/stats.js';
+
 
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
-import * as Tooltips from '../core/constants/tooltips.js';
 
 import * as DruidInputs from './inputs.js';
 import * as Presets from './presets.js';
@@ -121,13 +105,9 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 					shadowProtection: true,
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
 					thorns: TristateEffect.TristateEffectImproved,
-					bloodlust: true,
 					strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
 					battleShout: TristateEffect.TristateEffectImproved,
-					unleashedRage: true,
-					windfuryTotem: TristateEffect.TristateEffectImproved,
-					arcaneEmpowerment: true,
-					moonkinAura: TristateEffect.TristateEffectImproved,
+					moonkinAura: true,
 				}),
 				partyBuffs: PartyBuffs.create({
 					heroicPresence: true,
@@ -135,16 +115,10 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 				individualBuffs: IndividualBuffs.create({
 					blessingOfKings: true,
 					blessingOfMight: TristateEffect.TristateEffectImproved,
-					renewedHope: true,
 				}),
 				debuffs: Debuffs.create({
-					savageCombat: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
 					exposeArmor: true,
-					frostFever: TristateEffect.TristateEffectImproved,
-					masterPoisoner: true,
-					ebonPlaguebringer: true,
-					shadowMastery: true,
 				}),
 			},
 
@@ -155,10 +129,7 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 			rotationInputs: DruidInputs.FeralTankDruidRotationConfig,
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
-				IconInputs.HealthBuff,
 				IconInputs.SpellCritBuff,
-				IconInputs.SpellCritDebuff,
-				IconInputs.SpellHitDebuff,
 				IconInputs.SpellISBDebuff,
 			],
 			excludeBuffDebuffInputs: [
@@ -197,7 +168,7 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 				],
 			},
 
-			autoRotation: (player: Player<Spec.SpecFeralTankDruid>): APLRotation => {
+			autoRotation: (): APLRotation => {
 				return Presets.ROTATION_DEFAULT.rotation.rotation!;
 			},
 		});

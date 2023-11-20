@@ -86,7 +86,6 @@ export const DefaultOptions = RestorationShamanOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
-	defaultPotion: Potions.RunicManaInjector,
-	flask: Flask.FlaskOfTheFrostWyrm,
-	food: Food.FoodFishFeast,
+	flask: Flask.FlaskUnknown,
+	food: Food.FoodUnknown,
 });

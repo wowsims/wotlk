@@ -123,35 +123,20 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 					arcaneBrilliance: true,
 					divineSpirit: true,
 					giftOfTheWild: TristateEffect.TristateEffectImproved,
-					bloodlust: true,
 					manaSpringTotem: TristateEffect.TristateEffectRegular,
-					hornOfWinter: true,
 					battleShout: TristateEffect.TristateEffectImproved,
-					sanctifiedRetribution: true,
-					swiftRetribution: true,
-					elementalOath: true,
-					rampage: true,
 					trueshotAura: true,
-					icyTalons: true,
-					totemOfWrath: true,
-					wrathOfAirTotem: true,
-					demonicPact: 500,
 				}),
 				partyBuffs: PartyBuffs.create({
 				}),
 				individualBuffs: IndividualBuffs.create({
-					judgementsOfTheWise: true,
 					blessingOfKings: true,
 					blessingOfMight: TristateEffect.TristateEffectImproved,
 				}),
 				debuffs: Debuffs.create({
-					shadowMastery: true,
-					totemOfWrath: true,
 					judgementOfWisdom: true,
 					judgementOfLight: true,
-					misery: true,
 					curseOfElements: true,
-					bloodFrenzy: true,
 					exposeArmor: true,
 					sunderArmor: true,
 					faerieFire: TristateEffect.TristateEffectImproved,
@@ -185,7 +170,6 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 			},
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
-				IconInputs.ReplenishmentBuff,
 			],
 			excludeBuffDebuffInputs: [
 			],
@@ -222,7 +206,7 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 				],
 			},
 
-			autoRotation: (player: Player<Spec.SpecRetributionPaladin>): APLRotation => {
+			autoRotation: (): APLRotation => {
 				return Presets.ROTATION_PRESET_DEFAULT.rotation.rotation!;
 			},
 		});

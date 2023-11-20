@@ -1,18 +1,14 @@
+import { Player } from '../core/player.js';
 import { Spec } from '../core/proto/common.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
-import { Player } from '../core/player.js';
-import { EventID, TypedEvent } from '../core/typed_event.js';
+import { TypedEvent } from '../core/typed_event.js';
 
 import {
-	WarriorShout,
-	WarriorTalents as WarriorTalents,
-	Warrior,
-	Warrior_Rotation as WarriorRotation,
-	Warrior_Rotation_SunderArmor as SunderArmor,
-	Warrior_Options as WarriorOptions,
-	Warrior_Rotation_StanceOption as StanceOption,
-	Warrior_Rotation_SpellOption as SpellOption,
 	Warrior_Rotation_MainGcd as MainGcd,
+	Warrior_Rotation_SpellOption as SpellOption,
+	Warrior_Rotation_StanceOption as StanceOption,
+	Warrior_Rotation_SunderArmor as SunderArmor,
+	WarriorShout
 } from '../core/proto/warrior.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
@@ -91,7 +87,7 @@ export const WarriorRotationConfig = {
 			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalentTree() == 1 && !player.getRotation().customRotationOption,
 		}),
 
-		InputHelpers.makeRotationEnumInput<Spec.SpecWarrior, MainGcd>({
+		InputHelpers.makeRotationEnumInput<Spec.SpecWarrior>({
 			fieldName: 'mainGcd',
 			label: 'Main GCD',
 			labelTooltip: 'Main GCD ability that will be prioritized above other abilities.',
@@ -190,7 +186,7 @@ export const WarriorRotationConfig = {
 			changeEmitter: (player: Player<Spec.SpecWarrior>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 			showWhen: (player: Player<Spec.SpecWarrior>) => player.getTalentTree() == 0,
 		}),
-		InputHelpers.makeRotationEnumInput<Spec.SpecWarrior, SunderArmor>({
+		InputHelpers.makeRotationEnumInput<Spec.SpecWarrior>({
 			fieldName: 'sunderArmor',
 			label: 'Sunder Armor',
 			values: [
@@ -199,7 +195,7 @@ export const WarriorRotationConfig = {
 				{ name: 'Maintain Debuff', value: SunderArmor.SunderArmorMaintain },
 			],
 		}),
-		InputHelpers.makeRotationEnumInput<Spec.SpecWarrior, StanceOption>({
+		InputHelpers.makeRotationEnumInput<Spec.SpecWarrior>({
 			fieldName: 'stanceOption',
 			label: 'Stance Option',
 			labelTooltip: 'Stance to stay on. The default for Fury (Bloodthirst) is Berserker Stance and Battle Stance for everything else.',
