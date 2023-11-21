@@ -88,7 +88,7 @@ func (priest *Priest) getShadowWordPainConfig(rank int) core.SpellConfig {
 func (priest *Priest) registerShadowWordPainSpell() {
 	maxRank := 8
 
-	for i := 1; i < maxRank; i++ {
+	for i := 1; i <= maxRank; i++ {
 		config := priest.getShadowWordPainConfig(i)
 
 		if config.RequiredLevel <= int(priest.Level) {

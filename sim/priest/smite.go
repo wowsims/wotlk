@@ -47,7 +47,7 @@ func (priest *Priest) getSmiteBaseConfig(rank int) core.SpellConfig {
 func (priest *Priest) RegisterSmiteSpell() {
 	maxRank := 8
 
-	for i := 1; i < maxRank; i++ {
+	for i := 1; i <= maxRank; i++ {
 		config := priest.getSmiteBaseConfig(i)
 
 		if config.RequiredLevel <= int(priest.Level) {

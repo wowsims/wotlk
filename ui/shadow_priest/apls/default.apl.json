@@ -1,9 +1,8 @@
 {
     "type": "TypeAPL",
-    "prepullActions": [
-        {"action":{"castSpell":{"spellId":{"spellId":8092}}},"doAtValue":{"const":{"val":"-1.5s"}}}
-    ],
     "priorityList": [
-    {"action":{"condition":{"spellIsReady":{"spellId":{"spellId":10947}}},"castSpell":{"spellId":{"spellId":10947}}}}
+      {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":10894,"rank":8}}}}},"castSpell":{"spellId":{"spellId":10894,"rank":8}}}},
+      {"action":{"condition":{"spellIsReady":{"spellId":{"spellId":10947}}},"castSpell":{"spellId":{"spellId":10947}}}},
+      {"action":{"condition":{"not":{"val":{"spellIsChanneling":{"spellId":{"spellId":17314,"rank":5}}}}},"castSpell":{"spellId":{"spellId":17314,"rank":5}}}}
     ]
 }

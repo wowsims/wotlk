@@ -116,6 +116,22 @@ func (s Stat) StatName() string {
 		return "SpellHit"
 	case SpellPower:
 		return "SpellPower"
+	case ArcanePower:
+		return "ArcanePower"
+	case FirePower:
+		return "FirePower"
+	case FrostPower:
+		return "FrostPower"
+	case HolyPower:
+		return "HolyPower"
+	case NaturePower:
+		return "NaturePower"
+	case ShadowPower:
+		return "ShadowPower"
+	case SpellDamage:
+		return "SpellDamage"
+	case Healing:
+		return "Healing"
 	case SpellHaste:
 		return "SpellHaste"
 	case MP5:

@@ -67,7 +67,7 @@ func (priest *Priest) getHolyFireConfig(rank int) core.SpellConfig {
 func (priest *Priest) registerHolyFire() {
 	maxRank := 8
 
-	for i := 1; i < maxRank; i++ {
+	for i := 1; i <= maxRank; i++ {
 		config := priest.getHolyFireConfig(i)
 
 		if config.RequiredLevel <= int(priest.Level) {

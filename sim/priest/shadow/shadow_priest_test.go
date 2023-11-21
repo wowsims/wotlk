@@ -18,15 +18,14 @@ func TestShadow(t *testing.T) {
 		Race:       proto.Race_RaceUndead,
 		OtherRaces: []proto.Race{proto.Race_RaceNightElf, proto.Race_RaceDraenei},
 
-		GearSet:  core.GetGearSet("../../../ui/shadow_priest/gear_sets", "p1"),
+		GearSet:  core.GetGearSet("../../../ui/shadow_priest/gear_sets", "blank"),
 		Talents:  DefaultTalents,
 		Glyphs:   DefaultGlyphs,
 		Consumes: FullConsumes,
 
-		SpecOptions: core.SpecOptionsCombo{Label: "Ideal", SpecOptions: PlayerOptionsIdeal},
+		SpecOptions: core.SpecOptionsCombo{Label: "APL", SpecOptions: PlayerOptionsBasic},
 		OtherSpecOptions: []core.SpecOptionsCombo{
 			{Label: "Basic", SpecOptions: PlayerOptionsBasic},
-			{Label: "Clipping", SpecOptions: PlayerOptionsClipping},
 		},
 
 		Rotation: core.GetAplRotation("../../../ui/shadow_priest/apls", "default"),
@@ -46,60 +45,26 @@ func TestShadow(t *testing.T) {
 	}))
 }
 
-var DefaultTalents = "05032031--325023051223010323151301351"
+var DefaultTalents = "5042001303--5002505103501051"
 var DefaultGlyphs = &proto.Glyphs{
-	Major1: int32(proto.PriestMajorGlyph_GlyphOfShadow),
-	Major2: int32(proto.PriestMajorGlyph_GlyphOfMindFlay),
-	Major3: int32(proto.PriestMajorGlyph_GlyphOfDispersion),
+	Major1: int32(proto.PriestMajorGlyph_PriestMajorGlyphNone),
+	Major2: int32(proto.PriestMajorGlyph_PriestMajorGlyphNone),
+	Major3: int32(proto.PriestMajorGlyph_PriestMajorGlyphNone),
 	// No dps increasing minor glyphs.
 }
 
 var FullConsumes = &proto.Consumes{
-	Flask:           proto.Flask_FlaskOfPureDeath,
-	Food:            proto.Food_FoodBlackenedBasilisk,
-	DefaultPotion:   proto.Potions_SuperManaPotion,
-	PrepopPotion:    proto.Potions_PotionOfWildMagic,
-	DefaultConjured: proto.Conjured_ConjuredDarkRune,
+	Flask: proto.Flask_FlaskUnknown,
+	Food:  proto.Food_FoodUnknown,
 }
 
 var PlayerOptionsBasic = &proto.Player_ShadowPriest{
 	ShadowPriest: &proto.ShadowPriest{
 		Options: &proto.ShadowPriest_Options{
-			Armor:              proto.ShadowPriest_Options_InnerFire,
-			UseShadowfiend:     true,
-			UseMindBlast:       true,
-			UseShadowWordDeath: true,
+			Armor: proto.ShadowPriest_Options_InnerFire,
 		},
 		Rotation: &proto.ShadowPriest_Rotation{
 			RotationType: proto.ShadowPriest_Rotation_Basic,
-		},
-	},
-}
-var PlayerOptionsClipping = &proto.Player_ShadowPriest{
-	ShadowPriest: &proto.ShadowPriest{
-		Options: &proto.ShadowPriest_Options{
-			Armor:              proto.ShadowPriest_Options_InnerFire,
-			UseShadowfiend:     true,
-			UseMindBlast:       true,
-			UseShadowWordDeath: true,
-		},
-		Rotation: &proto.ShadowPriest_Rotation{
-			RotationType: proto.ShadowPriest_Rotation_Clipping,
-			PrecastType:  1,
-		},
-	},
-}
-var PlayerOptionsIdeal = &proto.Player_ShadowPriest{
-	ShadowPriest: &proto.ShadowPriest{
-		Options: &proto.ShadowPriest_Options{
-			Armor:              proto.ShadowPriest_Options_InnerFire,
-			UseShadowfiend:     true,
-			UseMindBlast:       true,
-			UseShadowWordDeath: true,
-		},
-		Rotation: &proto.ShadowPriest_Rotation{
-			RotationType: proto.ShadowPriest_Rotation_Ideal,
-			PrecastType:  1,
 		},
 	},
 }

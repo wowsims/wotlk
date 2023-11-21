@@ -19,7 +19,7 @@ import { EventID, TypedEvent } from './typed_event.js';
 export class Encounter {
 	readonly sim: Sim;
 
-	private duration: number = 180;
+	private duration: number = 60;
 	private durationVariation: number = 5;
 	private executeProportion20: number = 0.2;
 	private executeProportion25: number = 0.25;
@@ -157,7 +157,7 @@ export class Encounter {
 
 	applyDefaults(eventID: EventID) {
 		this.fromProto(eventID, EncounterProto.create({
-			duration: 180,
+			duration: 60,
 			durationVariation: 5,
 			executeProportion20: 0.2,
 			executeProportion25: 0.25,

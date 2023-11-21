@@ -39,21 +39,11 @@ type HealingPriest struct {
 func NewHealingPriest(character *core.Character, options *proto.Player) *HealingPriest {
 	healingOptions := options.GetHealingPriest()
 
-	selfBuffs := priest.SelfBuffs{
-		UseInnerFire:   healingOptions.Options.UseInnerFire,
-		UseShadowfiend: healingOptions.Options.UseShadowfiend,
-	}
-
-	basePriest := priest.New(character, selfBuffs, options.TalentsString)
+	basePriest := priest.New(character, options.TalentsString)
 	hpriest := &HealingPriest{
 		Priest:   basePriest,
 		rotation: healingOptions.Rotation,
 		Options:  healingOptions.Options,
-	}
-
-	hpriest.SelfBuffs.PowerInfusionTarget = &proto.UnitReference{}
-	if hpriest.Talents.PowerInfusion && hpriest.Options.PowerInfusionTarget != nil {
-		hpriest.SelfBuffs.PowerInfusionTarget = hpriest.Options.PowerInfusionTarget
 	}
 
 	hpriest.EnableResumeAfterManaWait(hpriest.tryUseGCD)
@@ -78,9 +68,6 @@ func (hpriest *HealingPriest) Initialize() {
 	hpriest.CurrentTarget = hpriest.GetMainTarget()
 	hpriest.Priest.Initialize()
 	hpriest.Priest.RegisterHealingSpells()
-
-	hpriest.ApplyRapture(hpriest.Options.RapturesPerMinute)
-	hpriest.RegisterHymnOfHopeCD()
 
 	if hpriest.rotation.Type == proto.HealingPriest_Rotation_Custom {
 		hpriest.CustomRotation = hpriest.makeCustomRotation()

@@ -26,9 +26,7 @@ var castersWithElemental = &proto.Party{
 					},
 				},
 			},
-			Consumes: &proto.Consumes{
-				DefaultPotion: proto.Potions_SuperManaPotion,
-			},
+			Consumes: &proto.Consumes{},
 			Buffs: &proto.IndividualBuffs{
 				BlessingOfKings:  true,
 				BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
@@ -49,9 +47,7 @@ var castersWithElemental = &proto.Party{
 					},
 				},
 			},
-			Consumes: &proto.Consumes{
-				DefaultPotion: proto.Potions_SuperManaPotion,
-			},
+			Consumes: &proto.Consumes{},
 			Buffs: &proto.IndividualBuffs{
 				BlessingOfKings:  true,
 				BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
@@ -79,9 +75,7 @@ var castersWithElemental = &proto.Party{
 					},
 				},
 			},
-			Consumes: &proto.Consumes{
-				DefaultPotion: proto.Potions_SuperManaPotion,
-			},
+			Consumes: &proto.Consumes{},
 			Buffs: &proto.IndividualBuffs{
 				BlessingOfKings:  true,
 				BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
@@ -100,9 +94,7 @@ var castersWithElemental = &proto.Party{
 					Rotation: &proto.Mage_Rotation{},
 				},
 			},
-			Consumes: &proto.Consumes{
-				DefaultPotion: proto.Potions_SuperManaPotion,
-			},
+			Consumes: &proto.Consumes{},
 			Buffs: &proto.IndividualBuffs{
 				BlessingOfKings:  true,
 				BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
@@ -133,9 +125,7 @@ var castersWithResto = &proto.Party{
 					},
 				},
 			},
-			Consumes: &proto.Consumes{
-				DefaultPotion: proto.Potions_SuperManaPotion,
-			},
+			Consumes: &proto.Consumes{},
 			Buffs: &proto.IndividualBuffs{
 				BlessingOfKings:  true,
 				BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
@@ -156,9 +146,7 @@ var castersWithResto = &proto.Party{
 					},
 				},
 			},
-			Consumes: &proto.Consumes{
-				DefaultPotion: proto.Potions_SuperManaPotion,
-			},
+			Consumes: &proto.Consumes{},
 			Buffs: &proto.IndividualBuffs{
 				BlessingOfKings:  true,
 				BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
@@ -177,9 +165,7 @@ var castersWithResto = &proto.Party{
 					Rotation: &proto.Mage_Rotation{},
 				},
 			},
-			Consumes: &proto.Consumes{
-				DefaultPotion: proto.Potions_SuperManaPotion,
-			},
+			Consumes: &proto.Consumes{},
 			Buffs: &proto.IndividualBuffs{
 				BlessingOfKings:  true,
 				BlessingOfWisdom: proto.TristateEffect_TristateEffectImproved,
@@ -232,8 +218,6 @@ func BenchmarkSimulate(b *testing.B) {
 			Buffs: &proto.RaidBuffs{
 				GiftOfTheWild:    proto.TristateEffect_TristateEffectImproved,
 				ArcaneBrilliance: true,
-				Bloodlust:        true,
-				WrathOfAirTotem:  true,
 				ManaSpringTotem:  proto.TristateEffect_TristateEffectImproved,
 			},
 			Debuffs: &proto.Debuffs{

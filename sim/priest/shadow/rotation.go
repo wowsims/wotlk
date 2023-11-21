@@ -5,5 +5,5 @@ import (
 )
 
 func (spriest *ShadowPriest) OnGCDReady(sim *core.Simulation) {
-	return
+	spriest.DoNothing()
 }

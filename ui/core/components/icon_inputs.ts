@@ -32,12 +32,6 @@ export const buildIconInput = (parent: HTMLElement, player: Player<Spec>, inputC
 // TODO: Classic buff icon by level
 export const AllStatsBuff = InputHelpers.makeMultiIconInput([
 	makeTristateRaidBuffInput({id: ActionId.fromSpellId(9885), impId: ActionId.fromSpellId(17055), fieldName: 'giftOfTheWild'}),
-	// makeTristateRaidBuffInput({id: ActionId.fromSpellId(9884), impId: ActionId.fromSpellId(17055), fieldName: 'giftOfTheWild', minLevel: 50, maxLevel: 59}),
-	// makeTristateRaidBuffInput({id: ActionId.fromSpellId(8907), impId: ActionId.fromSpellId(17055), fieldName: 'giftOfTheWild', minLevel: 40, maxLevel: 49}),
-	// makeTristateRaidBuffInput({id: ActionId.fromSpellId(5234), impId: ActionId.fromSpellId(17055), fieldName: 'giftOfTheWild', minLevel: 30, maxLevel: 39}),
-	// makeTristateRaidBuffInput({id: ActionId.fromSpellId(6756), impId: ActionId.fromSpellId(17055), fieldName: 'giftOfTheWild', minLevel: 20, maxLevel: 29}),
-	// makeTristateRaidBuffInput({id: ActionId.fromSpellId(5232), impId: ActionId.fromSpellId(17055), fieldName: 'giftOfTheWild', minLevel: 10, maxLevel: 19}),
-	// makeTristateRaidBuffInput({id: ActionId.fromSpellId(1126), impId: ActionId.fromSpellId(17055), fieldName: 'giftOfTheWild', minLevel: 1, maxLevel: 9}),
 ], 'Stats');
 
 export const AllStatsPercentBuff = InputHelpers.makeMultiIconInput([

@@ -62,7 +62,7 @@ func (priest *Priest) registerMindBlast() {
 	maxRank := 9
 	cdTimer := priest.NewTimer()
 
-	for i := 1; i < maxRank; i++ {
+	for i := 1; i <= maxRank; i++ {
 		config := priest.getMindBlastBaseConfig(i, cdTimer)
 
 		if config.RequiredLevel <= int(priest.Level) {
