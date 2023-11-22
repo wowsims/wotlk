@@ -135,10 +135,10 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 							if (numTargets > 5) {
 								return Presets.BLOOD_PESTI_AOE_ROTATION_PRESET_DEFAULT.rotation.rotation!;
 							} else {
-								return Presets.BLOOD_PESTI_ROTATION_PRESET_DEFAULT.rotation.rotation!;
+								return Presets.BLOOD_DPS_ROTATION_PRESET_DEFAULT.rotation.rotation!;
 							}
 						} else {
-							return Presets.BLOOD_PESTI_DD_ROTATION_PRESET_DEFAULT.rotation.rotation!;
+							return Presets.BLOOD_DPS_ROTATION_PRESET_DEFAULT.rotation.rotation!;
 						}
 					case 1: 
 						const talentPoints = player.getTalentTreePoints()
@@ -216,8 +216,7 @@ export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {
 					Presets.BLOOD_ROTATION_PRESET_LEGACY_DEFAULT,
 					Presets.FROST_ROTATION_PRESET_LEGACY_DEFAULT,
 					Presets.UNHOLY_DW_ROTATION_PRESET_LEGACY_DEFAULT,
-					Presets.BLOOD_PESTI_ROTATION_PRESET_DEFAULT,
-					Presets.BLOOD_PESTI_DD_ROTATION_PRESET_DEFAULT,
+					Presets.BLOOD_DPS_ROTATION_PRESET_DEFAULT,
 					Presets.BLOOD_PESTI_AOE_ROTATION_PRESET_DEFAULT,
 					Presets.FROST_BL_PESTI_ROTATION_PRESET_DEFAULT,
 					Presets.FROST_UH_PESTI_ROTATION_PRESET_DEFAULT,
