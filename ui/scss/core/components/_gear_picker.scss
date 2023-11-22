@@ -3,9 +3,9 @@
 @import "./filters_menu";
 
 .gear-picker-root {
+  margin-bottom: var(--container-padding);
   display: flex;
   flex-wrap: wrap;
-  width: 100%;
 
   .gear-picker-left,
   .gear-picker-right {
@@ -19,6 +19,11 @@
       margin-bottom: $block-spacer;
     }
 
+    .item-renderer-root {
+      width: 100%;
+      display: flex;
+    }
+
     .item-picker-icon {
       @include wowhead-background-icon;
       width: 4rem;
@@ -29,18 +34,20 @@
 
   .gear-picker-left {
     .item-picker-root {
-      flex-direction: row;
-      text-align: left;
-  
       // Add space to separate weapon categories
       &:nth-child(6) {
-        margin-bottom: map.get($spacers, 5);
+        margin-bottom: var(--container-padding);
+      }
+
+      .item-renderer-root {
+        flex-direction: row;
+        text-align: left;
       }
     }
   }
 
   .gear-picker-right {
-    .item-picker-root {
+    .item-renderer-root {
       flex-direction: row-reverse;
       text-align: right;
     }
@@ -85,25 +92,14 @@
   }
 }
 
-@include media-breakpoint-down(xl) {
-  .gear-picker-right {
-    margin-bottom: 2 * map.get($spacers, 3);
-  }
-}
-
 @include media-breakpoint-down(md) {
   .gear-picker-root {
-    .gear-picker-left {
-      .item-picker-root:last-child {
-        margin-bottom: map.get($spacers, 5);
-      }
-    }
+    flex-direction: column;
 
+    .gear-picker-left,
     .gear-picker-right {
-      .item-picker-root {
-        flex-direction: row;
-        text-align: left;
-      }
+      width: 100%;
+      margin-right: 0;
     }
   }
 }
@@ -125,18 +121,27 @@
   }
 }
 
+@include media-breakpoint-down(xl) {
+  .gear-picker-root {
+    .gear-picker-left {
+      .item-picker-root {
+        // Increase the spacing to help separate the weapons/bonus item slots
+        &:nth-child(6) {
+          margin-bottom: calc(var(--container-padding) * 2);
+        }
+      }
+    }
+  }
+}
+
 @include media-breakpoint-down(md) {
   .gear-picker-root {
     .gear-picker-left {
-      .item-picker-root:last-child {
-        margin-bottom: map.get($spacers, 5);
-      }
-    }
-
-    .gear-picker-right {
       .item-picker-root {
-        flex-direction: row;
-        text-align: left;
+        // Increase the spacing to help separate the weapons/bonus item slots
+        &:last-child {
+          margin-bottom: calc(var(--container-padding) * 2);
+        }
       }
     }
   }

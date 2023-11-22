@@ -1,0 +1,33 @@
+.gem-summary-root {
+  width: 50%;
+
+  .gem-summary-link {
+    --gem-width: 2rem;
+
+    display: flex;
+    align-items: center;
+
+    .gem-icon {
+      position: unset;
+      margin-right: map-get($spacers, 1);
+      border-radius: 0;
+      border: $border-default;
+    }
+
+    &:not(:last-child) {
+      margin-bottom: map-get($spacers, 1);
+    }
+  }
+}
+
+@include media-breakpoint-down(xl) {
+  .gem-summary-root {
+    margin-bottom: var(--container-padding);
+  }
+}
+
+@include media-breakpoint-down(md) {
+  .gem-summary-root {
+    width: 100%;
+  }
+}

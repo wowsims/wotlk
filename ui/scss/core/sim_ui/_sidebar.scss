@@ -60,24 +60,10 @@
 @include media-breakpoint-down(xxl) {
   .sim-sidebar {
     .sim-sidebar-content {
-      padding-left: $gap-width-sm * 2;
-      padding-right: $gap-width-sm * 2;
-
       .sim-sidebar-actions {
         padding: 0;
         margin: 0;
       }
-    }
-  }
-}
-
-@include media-breakpoint-down(lg) {
-  .sim-sidebar {
-    .sim-sidebar-content {
-      padding-top: $gap-width-sm * 2;
-      padding-bottom: $gap-width-sm;
-      padding-left: $gap-width-sm;
-			padding-right: $gap-width-sm;
     }
   }
 }
