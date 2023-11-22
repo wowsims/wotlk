@@ -381,6 +381,10 @@ func init() {
 		core.MakePermanent(druid.RegisterAura(core.Aura{
 			Label: "Idol of the Lunar Eclipse",
 			OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if !druid.Moonfire.IsEqual(spell) && !druid.InsectSwarm.IsEqual(spell) {
+					return
+				}
+
 				procAura.Activate(sim)
 				procAura.AddStack(sim)
 			},

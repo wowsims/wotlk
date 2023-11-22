@@ -443,15 +443,6 @@ func (unit *Unit) finalize() {
 	for _, spell := range unit.Spellbook {
 		spell.finalize()
 	}
-
-	// For now, restrict this optimization to rogues only. Ferals will require
-	// some extra logic to handle their ExcessEnergy() calc.
-	agent := unit.Env.Raid.GetPlayerFromUnit(unit)
-	if agent != nil && agent.GetCharacter().Class == proto.Class_ClassRogue {
-		unit.Env.RegisterPostFinalizeEffect(func() {
-			unit.energyBar.setupEnergyThresholds()
-		})
-	}
 }
 
 func (unit *Unit) reset(sim *Simulation, _ Agent) {
@@ -545,6 +536,7 @@ func (unit *Unit) GetMetadata() *proto.UnitMetadata {
 			HasShield:       spell.shields != nil || spell.selfShield != nil,
 			PrepullOnly:     spell.Flags.Matches(SpellFlagPrepullOnly),
 			EncounterOnly:   spell.Flags.Matches(SpellFlagEncounterOnly),
+			HasCastTime:     spell.DefaultCast.CastTime > 0,
 		}
 	})
 
@@ -563,7 +555,7 @@ func (unit *Unit) GetMetadata() *proto.UnitMetadata {
 	return metadata
 }
 
-func (unit *Unit) StartAPLLoop(sim *Simulation) {
+func (unit *Unit) StartAPLLoop(_ *Simulation) {
 	if unit.HasManaBar() {
 		unit.ManaRequired = 0
 	}

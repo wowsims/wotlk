@@ -67,7 +67,7 @@ export abstract class SimUI extends Component {
 				<div class="sim-container">
 					<aside class="sim-sidebar">
 						<div class="sim-title"></div>
-						<div class="sim-sidebar-content">
+						<div class="sim-sidebar-content ${config.noticeText ? 'smaller' : ''}">
 							<div class="sim-sidebar-actions within-raid-sim-hide"></div>
 							<div class="sim-sidebar-results within-raid-sim-hide"></div>
 							<div class="sim-sidebar-footer"></div>

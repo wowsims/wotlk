@@ -14,6 +14,7 @@ import * as OtherInputs from '../core/components/other_inputs.js';
 
 import * as DruidInputs from './inputs.js';
 import * as Presets from './presets.js';
+import { APLRotation } from 'ui/core/proto/apl.js';
 import { optimizeGems } from '../shared/auto_gem.js';
 
 export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
@@ -147,6 +148,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 				],
 				rotations: [
 					Presets.ROTATION_PRESET_LEGACY_DEFAULT,
+					Presets.APL_ROTATION_DEFAULT,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
@@ -157,6 +159,10 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 					Presets.P4_PRESET,
 				],
 			},
+			
+			autoRotation: (): APLRotation => {
+				return Presets.ROTATION_PRESET_LEGACY_DEFAULT.rotation.rotation!;
+			}
 		});
 
 		this.addOptimizeGemsAction();

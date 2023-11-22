@@ -2,7 +2,8 @@
 
 .character-stats-root {
   width: 100%;
-
+  padding-bottom: .8rem;
+  
   .character-stats-label {
     margin-bottom: map.get($spacers, 2);
   }

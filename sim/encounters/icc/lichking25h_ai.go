@@ -61,6 +61,7 @@ func (ai *LichKing25HAI) Initialize(target *core.Target, _ *proto.Target) {
 }
 
 func (ai *LichKing25HAI) Reset(*core.Simulation) {
+	ai.SoulReaper.CD.Set(ai.SoulReaper.CD.Duration)
 }
 
 func (ai *LichKing25HAI) registerSoulReaperSpell(target *core.Target) {
@@ -80,7 +81,7 @@ func (ai *LichKing25HAI) registerSoulReaperSpell(target *core.Target) {
 		ActionID:    core.ActionID{SpellID: 69409},
 		SpellSchool: core.SpellSchoolShadow,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagNone,
+		Flags:       core.SpellFlagAPL,
 
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
@@ -135,7 +136,7 @@ func (ai *LichKing25HAI) registerSoulReaperSpell(target *core.Target) {
 func (ai *LichKing25HAI) DoAction(sim *core.Simulation) {
 	if ai.Target.GCD.IsReady(sim) {
 		if ai.Target.CurrentTarget != nil {
-			if ai.SoulReaper.IsReady(sim) && sim.CurrentTime >= ai.SoulReaper.CD.Duration {
+			if ai.SoulReaper.IsReady(sim) {
 				// Based on log analysis, Soul Reaper appears to have a ~75% chance to "proc" on every 1.62 second server tick once it is off cooldown.
 				// Note that analysis based only on the cast intervals supported a ~40% proc chance fit. However, many of the apparent delays in Soul Reaper casts are
 				// due to Defile and Infest casts that take priority when the cooldowns overlap. Once these CD conflicts are corrected for, the variance in Soul Reaper

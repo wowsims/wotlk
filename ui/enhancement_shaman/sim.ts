@@ -72,7 +72,7 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P1_PRESET.gear,
+				gear: Presets.P4_PRESET_WF.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatIntellect]: 1.48,
@@ -168,6 +168,8 @@ export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancement
 					Presets.P2_PRESET_WF,
 					Presets.P3_PRESET_ALLIANCE,
 					Presets.P3_PRESET_HORDE,
+					Presets.P4_PRESET_FT,
+					Presets.P4_PRESET_WF,
 				],
 			},
 

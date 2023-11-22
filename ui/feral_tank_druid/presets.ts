@@ -7,6 +7,7 @@ import {
 	Glyphs,
 	GuardianElixir,
 	Potions,
+	Spec,
 	UnitReference,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
@@ -32,13 +33,15 @@ import DefaultApl from './apls/default.apl.json';
 export const P1_PRESET = PresetUtils.makePresetGear('P1 Boss Tanking', P1Gear);
 export const P2_PRESET = PresetUtils.makePresetGear('P2 Boss Tanking', P2Gear);
 
-export const DefaultRotation = DruidRotation.create({
+export const DefaultSimpleRotation = DruidRotation.create({
 	maulRageThreshold: 25,
 	maintainDemoralizingRoar: true,
 	lacerateTime: 8.0,
 });
 
-export const ROTATION_DEFAULT = PresetUtils.makePresetAPLRotation('Default', DefaultApl);
+export const ROTATION_DEFAULT = PresetUtils.makePresetAPLRotation('APL Default', DefaultApl);
+
+export const ROTATION_PRESET_SIMPLE = PresetUtils.makePresetSimpleRotation('Simple Default', Spec.SpecFeralTankDruid, DefaultSimpleRotation);
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/wotlk/talent-calc and copy the numbers in the url.

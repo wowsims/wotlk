@@ -1,3 +1,4 @@
+import { Cooldowns } from '../core/proto/common.js';
 import { RaidBuffs } from '../core/proto/common.js';
 import { PartyBuffs } from '../core/proto/common.js';
 import { IndividualBuffs } from '../core/proto/common.js';
@@ -25,6 +26,7 @@ import {
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as Tooltips from '../core/constants/tooltips.js';
+import * as AplUtils from '../core/proto_utils/apl_utils.js';
 
 import * as DruidInputs from './inputs.js';
 import * as Presets from './presets.js';
@@ -110,7 +112,7 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,
 				// Default rotation settings.
-				rotation: Presets.DefaultRotation,
+				rotation: Presets.DefaultSimpleRotation,
 				// Default talents.
 				talents: Presets.StandardTalents.data,
 				// Default spec-specific settings.
@@ -189,6 +191,7 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 				],
 				// Preset rotations that the user can quickly select.
 				rotations: [
+					Presets.ROTATION_PRESET_SIMPLE,
 					Presets.ROTATION_DEFAULT,
 				],
 				// Preset gear configurations that the user can quickly select.
@@ -198,7 +201,42 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 			},
 
 			autoRotation: (player: Player<Spec.SpecFeralTankDruid>): APLRotation => {
-				return Presets.ROTATION_DEFAULT.rotation.rotation!;
+				return Presets.ROTATION_PRESET_SIMPLE.rotation.rotation!;
+			},
+
+			simpleRotation: (player: Player<Spec.SpecFeralTankDruid>, simple: DruidRotation, cooldowns: Cooldowns): APLRotation => {
+				let [prepullActions, actions] = AplUtils.standardCooldownDefaults(cooldowns);
+
+				const emergencyLacerate = APLAction.fromJsonString(`{"condition":{"and":{"vals":[{"cmp":{"op":"OpEq","lhs":{"auraNumStacks":{"sourceUnit":{"type":"CurrentTarget"},"auraId":{"spellId":48568}}},"rhs":{"const":{"val":"5"}}}},{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":48568}}},"rhs":{"const":{"val":"1.5s"}}}}]}},"castSpell":{"spellId":{"spellId":48568}}}`);
+				const demoRoar = APLAction.fromJsonString(`{"condition":{"auraShouldRefresh":{"auraId":{"spellId":48560},"maxOverlap":{"const":{"val":"1.5s"}}}},"castSpell":{"spellId":{"spellId":48560}}}`);
+				const mangle = APLAction.fromJsonString(`{"castSpell":{"spellId":{"spellId":48564}}}`);
+				const delayFaerieFireForMangle = APLAction.fromJsonString(`{"condition":{"and":{"vals":[{"gcdIsReady":{}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":48564}}}}},{"cmp":{"op":"OpLt","lhs":{"spellTimeToReady":{"spellId":{"spellId":48564}}},"rhs":{"const":{"val":"1.0s"}}}}]}},"wait":{"duration":{"spellTimeToReady":{"spellId":{"spellId":48564}}}}}`);
+				const faerieFire = APLAction.fromJsonString(`{"castSpell":{"spellId":{"spellId":16857}}}`);
+				const delayFillersForMangle = APLAction.fromJsonString(`{"condition":{"and":{"vals":[{"gcdIsReady":{}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":48564}}}}},{"cmp":{"op":"OpLt","lhs":{"spellTimeToReady":{"spellId":{"spellId":48564}}},"rhs":{"const":{"val":"1.5s"}}}}]}},"wait":{"duration":{"spellTimeToReady":{"spellId":{"spellId":48564}}}}}`);
+				const lacerate = APLAction.fromJsonString(`{"condition":{"or":{"vals":[{"cmp":{"op":"OpLt","lhs":{"auraNumStacks":{"sourceUnit":{"type":"CurrentTarget"},"auraId":{"spellId":48568}}},"rhs":{"const":{"val":"5"}}}},{"cmp":{"op":"OpLe","lhs":{"dotRemainingTime":{"spellId":{"spellId":48568}}},"rhs":{"const":{"val":"${simple.lacerateTime.toFixed(1)}s"}}}}]}},"castSpell":{"spellId":{"spellId":48568}}}`);
+				const swipe = APLAction.fromJsonString(`{"condition":{"cmp":{"op":"OpGe","lhs":{"currentRage":{}},"rhs":{"const":{"val":"${(simple.maulRageThreshold + 15).toFixed(0)}"}}}},"castSpell":{"spellId":{"spellId":48562}}}`);
+				const queueMaul = APLAction.fromJsonString(`{"condition":{"cmp":{"op":"OpGe","lhs":{"currentRage":{}},"rhs":{"const":{"val":"${simple.maulRageThreshold.toFixed(0)}"}}}},"castSpell":{"spellId":{"spellId":48480,"tag":1}}}`);
+				const waitForFaerieFire = APLAction.fromJsonString(`{"condition":{"and":{"vals":[{"gcdIsReady":{}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":16857}}}}},{"cmp":{"op":"OpLt","lhs":{"spellTimeToReady":{"spellId":{"spellId":16857}}},"rhs":{"const":{"val":"1.5s"}}}}]}},"wait":{"duration":{"spellTimeToReady":{"spellId":{"spellId":16857}}}}}`);
+
+				actions.push(...[
+					emergencyLacerate,
+					simple.maintainDemoralizingRoar ? demoRoar : null,
+					mangle,
+					delayFaerieFireForMangle,
+					faerieFire,
+					delayFillersForMangle,
+					lacerate,
+					swipe,
+					queueMaul,
+					waitForFaerieFire,
+				].filter(a => a) as Array<APLAction>)
+
+				return APLRotation.create({
+					prepullActions: prepullActions,
+					priorityList: actions.map(action => APLListItem.create({
+						action: action,
+					}))
+				});
 			},
 		});
 	}

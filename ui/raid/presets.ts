@@ -275,7 +275,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecFeralTankDruid,
-		rotation: FeralTankDruidPresets.DefaultRotation,
+		rotation: FeralTankDruidPresets.DefaultSimpleRotation,
 		talents: FeralTankDruidPresets.StandardTalents.data,
 		specOptions: FeralTankDruidPresets.DefaultOptions,
 		consumes: FeralTankDruidPresets.DefaultConsumes,

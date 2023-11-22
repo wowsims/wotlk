@@ -44,6 +44,21 @@ func TestFeral(t *testing.T) {
 	}))
 }
 
+func TestFeralApl(t *testing.T) {
+	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
+		Class: proto.Class_ClassDruid,
+		Race:  proto.Race_RaceTauren,
+
+		GearSet:     core.GetGearSet("../../../ui/feral_druid/gear_sets", "p3"),
+		Talents:     StandardTalents,
+		Glyphs:      StandardGlyphs,
+		Consumes:    FullConsumes,
+		SpecOptions: core.SpecOptionsCombo{Label: "Default", SpecOptions: PlayerOptionsMonoCat},
+		Rotation:    core.GetAplRotation("../../../ui/feral_druid/apls", "default"),
+		ItemFilter:  FeralItemFilter,
+	}))
+}
+
 func TestFeralDoubleArmorPenTrinketsNoDesync(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
 		Class:       proto.Class_ClassDruid,

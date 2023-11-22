@@ -43,4 +43,11 @@ func (dk *Deathknight) registerBloodTapSpell() {
 			dk.BloodTapAura.Activate(sim)
 		},
 	})
+
+	if !dk.Inputs.IsDps && dk.HasSetBonus(ItemSetScourgelordsPlate, 4) {
+		dk.AddMajorCooldown(core.MajorCooldown{
+			Spell: dk.BloodTap,
+			Type:  core.CooldownTypeSurvival,
+		})
+	}
 }

@@ -41,8 +41,8 @@ export const simLaunchStatuses: Record<Spec, LaunchStatus> = {
 // Alpha and Beta show an info notice at the top of the page.
 export const aplLaunchStatuses: Record<Spec, LaunchStatus> = {
 	[Spec.SpecBalanceDruid]: LaunchStatus.Beta,
-	[Spec.SpecFeralDruid]: LaunchStatus.Alpha,
-	[Spec.SpecFeralTankDruid]: LaunchStatus.Beta,
+	[Spec.SpecFeralDruid]: LaunchStatus.Beta,
+	[Spec.SpecFeralTankDruid]: LaunchStatus.Launched,
 	[Spec.SpecRestorationDruid]: LaunchStatus.Launched,
 	[Spec.SpecElementalShaman]: LaunchStatus.Beta,
 	[Spec.SpecEnhancementShaman]: LaunchStatus.Beta,

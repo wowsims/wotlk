@@ -36,10 +36,13 @@ import P2FtGear from './gear_sets/p2_ft.gear.json';
 import P2WfGear from './gear_sets/p2_wf.gear.json';
 import P3AllianceGear from './gear_sets/p3_alliance.gear.json';
 import P3HordeGear from './gear_sets/p3_horde.gear.json';
+import P4FtGear from './gear_sets/p4_ft.gear.json';
+import P4WfGear from './gear_sets/p4_wf.gear.json';
 
 import DefaultFt from './apls/default_ft.apl.json';
 import DefaultWf from './apls/default_wf.apl.json';
 import Phase3Apl from './apls/phase_3.apl.json';
+import { TotemsSection } from 'ui/core/components/totem_inputs.js';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -51,6 +54,8 @@ export const P2_PRESET_FT = PresetUtils.makePresetGear('P2 Preset FT', P2FtGear)
 export const P2_PRESET_WF = PresetUtils.makePresetGear('P2 Preset WF', P2WfGear);
 export const P3_PRESET_ALLIANCE = PresetUtils.makePresetGear('P3 Preset [A]', P3AllianceGear, { faction: Faction.Alliance });
 export const P3_PRESET_HORDE = PresetUtils.makePresetGear('P3 Preset [H]', P3HordeGear, { faction: Faction.Horde });
+export const P4_PRESET_FT = PresetUtils.makePresetGear('P4 Preset FT', P4FtGear);
+export const P4_PRESET_WF = PresetUtils.makePresetGear('P4 Preset WF', P4WfGear);
 
 export const DefaultRotation = EnhancementShamanRotation.create({
 	totems: ShamanTotems.create({
@@ -125,6 +130,12 @@ export const DefaultOptions = EnhancementShamanOptions.create({
 	imbueMh: ShamanImbue.WindfuryWeapon,
 	imbueOh: ShamanImbue.FlametongueWeapon,
 	syncType: ShamanSyncType.Auto,
+	totems: ShamanTotems.create({
+		earth: 	EarthTotem.StrengthOfEarthTotem,
+		fire: 	FireTotem.MagmaTotem,
+		water: 	WaterTotem.ManaSpringTotem,
+		air: 	AirTotem.WindfuryTotem,
+	})
 });
 
 export const DefaultConsumes = Consumes.create({
