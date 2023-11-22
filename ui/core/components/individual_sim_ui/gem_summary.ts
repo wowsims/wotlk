@@ -22,11 +22,10 @@ export class GemSummary extends Component {
 		this.simUI = simUI;
 		this.player = player;
 
-    this.container = new ContentBlock(this.rootElem, 'gem-summary-container', {
-      header: {title: 'Gem Summary'}
-    });
-
-    player.gearChangeEmitter.on(() => this.updateTable());
+		this.container = new ContentBlock(this.rootElem, 'gem-summary-container', {
+			header: {title: 'Gem Summary'}
+		});
+		player.gearChangeEmitter.on(() => this.updateTable());
 	}
 
 	private updateTable() {
