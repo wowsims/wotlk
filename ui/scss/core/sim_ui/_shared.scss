@@ -9,7 +9,7 @@ td, th {
 .sim-ui {
 	// Allow for styled scrolling
 	max-height: 100vh;
-	overflow-y: scroll;
+	overflow-y: auto;
 	scrollbar-color: var(--bs-primary) $body-bg;
 	scrollbar-width: thin;
 
