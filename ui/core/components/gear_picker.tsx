@@ -1,4 +1,4 @@
-import { classNames, difficultyNames, professionNames, slotNames } from '../proto_utils/names.js';
+import { difficultyNames, professionNames, slotNames } from '../proto_utils/names.js';
 import { BaseModal } from './base_modal';
 import { Component } from './component';
 import { FiltersMenu } from './filters_menu';
@@ -125,7 +125,7 @@ export class ItemRenderer extends Component {
 	readonly socketsContainerElem: HTMLElement;
 
 	constructor(parent: HTMLElement, player: Player<any>) {
-		super(parent, 'item-picker-root');
+		super(parent, 'item-renderer-root');
 		this.player = player;
 
 		let iconElem = ref<HTMLAnchorElement>();
