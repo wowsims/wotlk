@@ -73,8 +73,12 @@
 @include media-breakpoint-up(md) {
   .sim-sidebar {
     // Allow the stats to align to the bottom of the viewport if the section is small enough to avoid scrolling
+    // 'Smaller' is set when banner is displayed
+    .sim-sidebar-content.smaller {
+      min-height: calc(100vh - calc($sim-header-height + 3.5rem));
+    }
     .sim-sidebar-content {
-      min-height: calc(100vh - $sim-header-height);
+      min-height: calc(100vh - calc($sim-header-height + 0.2rem));
 
       .sim-sidebar-footer {
         flex: 1;
