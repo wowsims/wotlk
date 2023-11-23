@@ -7,7 +7,6 @@ import (
 )
 
 const MaxRage = 100.0
-const RageFactor = 453.3
 const ThreatPerRageGained = 5
 
 // OnRageGain is called any time rage is increased.
@@ -33,6 +32,9 @@ type RageBarOptions struct {
 
 func (unit *Unit) EnableRageBar(options RageBarOptions, onRageGain OnRageGain) {
 	rageFromDamageTakenMetrics := unit.NewRageMetrics(ActionID{OtherID: proto.OtherAction_OtherActionDamageTaken})
+	// Rage conversion is adjusted according to target stats (https://web.archive.org/web/20201118213002/https://blue.mmo-champion.com/topic/18325-the-new-rage-formula-by-kalgan/)\
+	// So this is probably only the base value formula and will be slightly wrong for most target
+	rageConversion := 0.0091107836*float64(unit.Level^2) + 3.225598133*float64(unit.Level) + 4.2652911
 
 	unit.SetCurrentPowerBar(RageBar)
 	unit.RegisterAura(Aura{
@@ -49,22 +51,6 @@ func (unit *Unit) EnableRageBar(options RageBarOptions, onRageGain OnRageGain) {
 				return
 			}
 
-			var hitFactor float64
-			var speed float64
-			if spell.ProcMask == ProcMaskMeleeMHAuto {
-				hitFactor = 3.5
-				speed = options.MHSwingSpeed
-			} else if spell.ProcMask == ProcMaskMeleeOHAuto {
-				hitFactor = 1.75
-				speed = options.OHSwingSpeed
-			} else {
-				return
-			}
-
-			if result.Outcome.Matches(OutcomeCrit) {
-				hitFactor *= 2
-			}
-
 			damage := result.Damage
 			if result.Outcome.Matches(OutcomeDodge | OutcomeParry) {
 				// Rage is still generated for dodges/parries, based on the damage it WOULD have done.
@@ -72,7 +58,7 @@ func (unit *Unit) EnableRageBar(options RageBarOptions, onRageGain OnRageGain) {
 			}
 
 			// generatedRage is capped for very low damage swings
-			generatedRage := min((damage*7.5/RageFactor+hitFactor*speed)/2, damage*15/RageFactor)
+			generatedRage := damage * 7.5 / rageConversion
 
 			generatedRage *= options.RageMultiplier
 
@@ -91,7 +77,7 @@ func (unit *Unit) EnableRageBar(options RageBarOptions, onRageGain OnRageGain) {
 			if unit.GetCurrentPowerBar() != RageBar {
 				return
 			}
-			generatedRage := result.Damage * 2.5 / RageFactor
+			generatedRage := result.Damage * 2.5 / rageConversion
 			unit.AddRage(sim, generatedRage, rageFromDamageTakenMetrics)
 		},
 	})
