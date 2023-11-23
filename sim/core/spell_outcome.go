@@ -453,7 +453,7 @@ func (result *SpellResult) applyAttackTableGlance(spell *Spell, attackTable *Att
 	if roll < *chance {
 		result.Outcome = OutcomeGlance
 		spell.SpellMetrics[result.Target.UnitIndex].Glances++
-		result.Damage *= rand.Float64() * (attackTable.GlanceMultiplierMax - attackTable.GlanceMultiplierMin)
+		result.Damage *= attackTable.GlanceMultiplierMin + rand.Float64()*(attackTable.GlanceMultiplierMax-attackTable.GlanceMultiplierMin)
 		return true
 	}
 	return false
