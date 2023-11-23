@@ -24,8 +24,7 @@ func TestBlood(t *testing.T) {
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBlood},
 		OtherRotations: []core.RotationCombo{
-			core.GetAplRotation("../../../ui/deathknight/apls", "blood_pesti"),
-			core.GetAplRotation("../../../ui/deathknight/apls", "blood_pesti_dd"),
+			core.GetAplRotation("../../../ui/deathknight/apls", "blood_dps"),
 		},
 
 		ItemFilter: ItemFilter,

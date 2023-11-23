@@ -48,8 +48,7 @@ import P3FrostGear from './gear_sets/p3_frost.gear.json';
 import P4FrostGear from './gear_sets/p4_frost.gear.json';
 import P1FrostSubUhGear from './gear_sets/p1_frost_subUh.gear.json';
 
-import BloodPestiApl from './apls/blood_pesti.apl.json';
-import BloodPestiDDApl from './apls/blood_pesti_dd.apl.json';
+import BloodDPSApl from './apls/blood_dps.apl.json';
 import BloodPestiAoeApl from './apls/blood_pesti_aoe.apl.json';
 import FrostBlPestiApl from './apls/frost_bl_pesti.apl.json';
 import FrostUhPestiApl from './apls/frost_uh_pesti.apl.json';
@@ -148,8 +147,7 @@ export const BLOOD_ROTATION_PRESET_LEGACY_DEFAULT = PresetUtils.makePresetLegacy
 export const FROST_ROTATION_PRESET_LEGACY_DEFAULT = PresetUtils.makePresetLegacyRotation('Frost Legacy', Spec.SpecDeathknight, DefaultFrostRotation, { talentTree: 1 });
 export const UNHOLY_DW_ROTATION_PRESET_LEGACY_DEFAULT = PresetUtils.makePresetLegacyRotation('Unholy DW Legacy', Spec.SpecDeathknight, DefaultUnholyRotation, { talentTree: 2 });
 
-export const BLOOD_PESTI_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Blood Pesti', BloodPestiApl, { talentTree: 0 });
-export const BLOOD_PESTI_DD_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Blood Pesti DD', BloodPestiDDApl, { talentTree: 0 });
+export const BLOOD_DPS_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Blood DPS', BloodDPSApl, { talentTree: 0 });
 export const BLOOD_PESTI_AOE_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Blood Pesti AOE', BloodPestiAoeApl, { talentTree: 0 });
 export const FROST_BL_PESTI_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Frost BL Pesti', FrostBlPestiApl, { talentTree: 1 });
 export const FROST_UH_PESTI_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Frost UH Pesti', FrostUhPestiApl, { talentTree: 1 });
