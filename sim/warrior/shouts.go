@@ -38,17 +38,11 @@ func (warrior *Warrior) makeShoutSpellHelper(actionID core.ActionID, allyAuras c
 
 func (warrior *Warrior) makeShoutSpell() *core.Spell {
 	battleShout := warrior.makeShoutSpellHelper(core.ActionID{SpellID: 47436}, warrior.NewAllyAuraArray(func(unit *core.Unit) *core.Aura {
-		return core.BattleShoutAura(unit, warrior.Talents.CommandingPresence, warrior.Talents.BoomingVoice, warrior.HasMinorGlyph(proto.WarriorMinorGlyph_GlyphOfBattle))
-	}))
-
-	commandingShout := warrior.makeShoutSpellHelper(core.ActionID{SpellID: 47440}, warrior.NewAllyAuraArray(func(unit *core.Unit) *core.Aura {
-		return core.CommandingShoutAura(unit, warrior.Talents.CommandingPresence, warrior.Talents.BoomingVoice, warrior.HasMinorGlyph(proto.WarriorMinorGlyph_GlyphOfCommand))
+		return core.BattleShoutAura(unit, warrior.Talents.ImprovedBattleShout, warrior.Talents.BoomingVoice, warrior.Level)
 	}))
 
 	if warrior.ShoutType == proto.WarriorShout_WarriorShoutBattle {
 		return battleShout
-	} else if warrior.ShoutType == proto.WarriorShout_WarriorShoutCommanding {
-		return commandingShout
 	} else {
 		return nil
 	}

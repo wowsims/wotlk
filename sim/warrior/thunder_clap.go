@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
-	"github.com/wowsims/classic/sim/core/proto"
 )
 
 func (warrior *Warrior) registerThunderClapSpell() {
@@ -12,17 +11,24 @@ func (warrior *Warrior) registerThunderClapSpell() {
 		return core.ThunderClapAura(target, warrior.Talents.ImprovedThunderClap)
 	})
 
+	baseDamage := map[int32]float64{
+		25: 23,
+		40: 55,
+		50: 82,
+		60: 103,
+	}[warrior.Level]
+
+	numHits := min(4, warrior.Env.GetNumTargets())
+	results := make([]*core.SpellResult, numHits)
+
 	warrior.ThunderClap = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47502},
-		SpellSchool: core.SpellSchoolPhysical,
-		ProcMask:    core.ProcMaskRangedSpecial,
+		SpellSchool: core.SpellSchoolNature,
+		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagAPL,
 
 		RageCost: core.RageCostOptions{
-			Cost: 20 -
-				float64(warrior.Talents.FocusedRage) -
-				[]float64{0, 1, 2, 4}[warrior.Talents.ImprovedThunderClap] -
-				core.TernaryFloat64(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfResonatingPower), 5, 0),
+			Cost: 20 - []float64{0, 1, 2, 4}[warrior.Talents.ImprovedThunderClap],
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -39,20 +45,26 @@ func (warrior *Warrior) registerThunderClapSpell() {
 		},
 
 		// Cruelty doesn't apply to Thunder Clap
-		BonusCritRating:  (float64(warrior.Talents.Incite)*5 - float64(warrior.Talents.Cruelty)*1) * core.CritRatingPerCritChance,
+		BonusCritRating:  (0 - float64(warrior.Talents.Cruelty)*1),
 		DamageMultiplier: []float64{1.0, 1.1, 1.2, 1.3}[warrior.Talents.ImprovedThunderClap],
 		CritMultiplier:   warrior.critMultiplier(none),
 		ThreatMultiplier: 1.85,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := 300 + 0.12*spell.MeleeAttackPower()
-			baseDamage *= sim.Encounter.AOECapMultiplier()
 
-			for _, aoeTarget := range sim.Encounter.TargetUnits {
-				result := spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeRangedHitAndCrit)
-				if result.Landed() {
-					warrior.ThunderClapAuras.Get(aoeTarget).Activate(sim)
+			curTarget := target
+			for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+				results[hitIndex] = spell.CalcDamage(sim, curTarget, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
+				curTarget = sim.Environment.NextTargetUnit(curTarget)
+			}
+
+			curTarget = target
+			for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+				spell.DealDamage(sim, results[hitIndex])
+				if results[hitIndex].Landed() {
+					warrior.ThunderClapAuras.Get(target).Activate(sim)
 				}
+				curTarget = sim.Environment.NextTargetUnit(curTarget)
 			}
 		},
 

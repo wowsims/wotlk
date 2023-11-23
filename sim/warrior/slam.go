@@ -14,7 +14,7 @@ func (warrior *Warrior) registerSlamSpell() {
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagAPL,
 
 		RageCost: core.RageCostOptions{
-			Cost:   15 - float64(warrior.Talents.FocusedRage),
+			Cost:   15,
 			Refund: 0.8,
 		},
 		Cast: core.CastConfig{
@@ -31,7 +31,7 @@ func (warrior *Warrior) registerSlamSpell() {
 		},
 
 		BonusCritRating:  core.TernaryFloat64(warrior.HasSetBonus(ItemSetWrynnsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance,
-		DamageMultiplier: 1 + 0.02*float64(warrior.Talents.UnendingFury) + core.TernaryFloat64(warrior.HasSetBonus(ItemSetDreadnaughtBattlegear, 2), 0.1, 0),
+		DamageMultiplier: 1,
 		CritMultiplier:   warrior.critMultiplier(mh),
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  140,
@@ -47,11 +47,6 @@ func (warrior *Warrior) registerSlamSpell() {
 			}
 		},
 	})
-}
-
-func (warrior *Warrior) ShouldInstantSlam(sim *core.Simulation) bool {
-	return warrior.CurrentRage() >= warrior.Slam.DefaultCast.Cost && warrior.Slam.IsReady(sim) && warrior.isBloodsurgeActive() &&
-		sim.CurrentTime > (warrior.lastBloodsurgeProc+warrior.reactionTime) && warrior.GCD.IsReady(sim)
 }
 
 func (warrior *Warrior) ShouldSlam(sim *core.Simulation) bool {

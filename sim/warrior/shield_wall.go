@@ -11,11 +11,9 @@ func (warrior *Warrior) RegisterShieldWallCD() {
 	if warrior.OffHand().WeaponType != proto.WeaponType_WeaponTypeShield {
 		return
 	}
-
-	duration := time.Second*12 + core.TernaryDuration(warrior.HasSetBonus(ItemSetDreadnaughtPlate, 4), time.Second*3, 0)
-	hasGlyph := warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfShieldWall)
+	duration := time.Duration(10+[]float64{3, 5}[warrior.Talents.ImprovedShieldWall]) * time.Second
 	//This is the inverse of the tooltip since it is a damage TAKEN coefficient
-	damageTaken := core.TernaryFloat64(hasGlyph, 0.6, 0.4)
+	damageTaken := 0.25
 
 	actionID := core.ActionID{SpellID: 871}
 	swAura := warrior.RegisterAura(core.Aura{
@@ -30,9 +28,7 @@ func (warrior *Warrior) RegisterShieldWallCD() {
 		},
 	})
 
-	cooldownDur := time.Minute*5 -
-		30*time.Second*time.Duration(warrior.Talents.ImprovedDisciplines) -
-		core.TernaryDuration(hasGlyph, 2*time.Minute, 0)
+	cooldownDur := time.Minute * 30
 
 	swSpell := warrior.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,

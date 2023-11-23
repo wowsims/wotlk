@@ -6,39 +6,37 @@ import (
 )
 
 func (warrior *Warrior) registerHeroicStrikeSpell() *core.Spell {
-	hasGlyph := warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfHeroicStrike)
-	var rageMetrics *core.ResourceMetrics
-	if hasGlyph {
-		rageMetrics = warrior.NewRageMetrics(core.ActionID{ItemID: 43418})
-	}
+	damage := map[int32]float64{
+		25: 44,
+		40: 80,
+		50: 111,
+		60: 138,
+	}[warrior.Level]
 
 	return warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47450},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete | SpellFlagBloodsurge,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete,
 
 		RageCost: core.RageCostOptions{
-			Cost:   15 - float64(warrior.Talents.ImprovedHeroicStrike) - float64(warrior.Talents.FocusedRage),
+			Cost:   15 - float64(warrior.Talents.ImprovedHeroicStrike),
 			Refund: 0.8,
 		},
 
-		BonusCritRating:  (5*float64(warrior.Talents.Incite) + core.TernaryFloat64(warrior.HasSetBonus(ItemSetWrynnsBattlegear, 4), 5, 0)) * core.CritRatingPerCritChance,
 		DamageMultiplier: 1,
 		CritMultiplier:   warrior.critMultiplier(mh),
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  259,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := 495 +
+			baseDamage := damage +
 				spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
 				spell.BonusWeaponDamage()
 
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 
-			if result.DidCrit() && hasGlyph {
-				warrior.AddRage(sim, 10, rageMetrics)
-			} else if !result.Landed() {
+			if !result.Landed() {
 				spell.IssueRefund(sim)
 			}
 
@@ -51,7 +49,12 @@ func (warrior *Warrior) registerHeroicStrikeSpell() *core.Spell {
 }
 
 func (warrior *Warrior) registerCleaveSpell() *core.Spell {
-	flatDamageBonus := 222 * (1 + 0.4*float64(warrior.Talents.ImprovedCleave))
+	flatDamageBonus := map[int32]float64{
+		25: 5,
+		40: 18,
+		50: 32,
+		60: 50,
+	}[warrior.Level]
 
 	targets := core.TernaryInt32(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfCleaving), 3, 2)
 	numHits := min(targets, warrior.Env.GetNumTargets())
@@ -64,10 +67,9 @@ func (warrior *Warrior) registerCleaveSpell() *core.Spell {
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,
 
 		RageCost: core.RageCostOptions{
-			Cost: 20 - float64(warrior.Talents.FocusedRage),
+			Cost: 20,
 		},
 
-		BonusCritRating:  float64(warrior.Talents.Incite) * 5 * core.CritRatingPerCritChance,
 		DamageMultiplier: 1,
 		CritMultiplier:   warrior.critMultiplier(mh),
 		ThreatMultiplier: 1,

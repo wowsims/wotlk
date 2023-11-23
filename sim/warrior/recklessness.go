@@ -11,10 +11,9 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 	var affectedSpells []*core.Spell
 
 	reckAura := warrior.RegisterAura(core.Aura{
-		Label:     "Recklessness",
-		ActionID:  actionID,
-		Duration:  time.Second * 12,
-		MaxStacks: 3,
+		Label:    "Recklessness",
+		ActionID: actionID,
+		Duration: time.Second * 15,
 		OnInit: func(aura *core.Aura, sim *core.Simulation) {
 			affectedSpells = core.FilterSlice([]*core.Spell{
 				warrior.HeroicStrike,
@@ -29,11 +28,7 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 				warrior.Slam,
 				warrior.ThunderClap,
 				warrior.Whirlwind,
-				warrior.WhirlwindOH,
-				warrior.Shockwave,
 				warrior.ConcussionBlow,
-				warrior.Bladestorm,
-				warrior.BladestormOH,
 			}, func(spell *core.Spell) bool { return spell != nil })
 		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
@@ -63,7 +58,7 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    warrior.NewTimer(),
-				Duration: warrior.intensifyRageCooldown(time.Minute * 5),
+				Duration: time.Minute * 30,
 			},
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
@@ -76,7 +71,6 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 			}
 
 			reckAura.Activate(sim)
-			reckAura.SetStacks(sim, 3)
 			warrior.WaitUntil(sim, sim.CurrentTime+core.GCDDefault)
 		},
 	})

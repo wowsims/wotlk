@@ -52,13 +52,6 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 	cooldownDur := time.Second * 5
 	gcdDur := core.GCDDefault
 
-	if warrior.Talents.UnrelentingAssault == 1 {
-		cooldownDur -= time.Second * 2
-	} else if warrior.Talents.UnrelentingAssault == 2 {
-		cooldownDur -= time.Second * 4
-		gcdDur -= time.Millisecond * 500
-	}
-
 	extraHit := warrior.Talents.ImprovedRevenge > 0 && warrior.Env.GetNumTargets() > 1
 
 	warrior.Revenge = warrior.RegisterSpell(core.SpellConfig{
@@ -68,7 +61,7 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagAPL,
 
 		RageCost: core.RageCostOptions{
-			Cost:   5 - float64(warrior.Talents.FocusedRage),
+			Cost:   5,
 			Refund: 0.8,
 		},
 		Cast: core.CastConfig{
@@ -85,7 +78,7 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 			return warrior.StanceMatches(DefensiveStance) && warrior.revengeProcAura.IsActive()
 		},
 
-		DamageMultiplier: 1.0 + 0.1*float64(warrior.Talents.UnrelentingAssault) + 0.3*float64(warrior.Talents.ImprovedRevenge),
+		DamageMultiplier: 1.0 + 0.3*float64(warrior.Talents.ImprovedRevenge),
 		CritMultiplier:   warrior.critMultiplier(mh),
 		ThreatMultiplier: 1,
 		FlatThreatBonus:  121,

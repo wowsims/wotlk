@@ -24,8 +24,16 @@ func (warrior *Warrior) applyDeepWounds() {
 			Aura: core.Aura{
 				Label: "DeepWounds",
 			},
-			NumberOfTicks: 6,
+			NumberOfTicks: 12,
 			TickLength:    time.Second * 1,
+			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+				attackTable := warrior.AttackTables[target.UnitIndex]
+				adm := warrior.AutoAttacks.MHAuto().AttackerDamageMultiplier(attackTable)
+				tdm := warrior.AutoAttacks.MHAuto().TargetDamageMultiplier(attackTable, false)
+				awd := (warrior.AutoAttacks.MH().CalculateAverageWeaponDamage(dot.Spell.MeleeAttackPower()) + dot.Spell.BonusWeaponDamage()) * adm * tdm
+				newDamage := awd * 0.2 * float64(warrior.Talents.DeepWounds)
+				dot.SnapshotBaseDamage = newDamage / 12
+			},
 
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				dot.SnapshotAttackerMultiplier = target.PseudoStats.PeriodicPhysicalDamageTakenMultiplier
@@ -50,7 +58,7 @@ func (warrior *Warrior) applyDeepWounds() {
 				return
 			}
 			if result.Outcome.Matches(core.OutcomeCrit) {
-				warrior.procDeepWounds(sim, result.Target, spell.IsOH())
+				warrior.DeepWounds.Cast(sim, result.Target)
 			}
 		},
 	})

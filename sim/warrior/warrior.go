@@ -21,11 +21,9 @@ type WarriorInputs struct {
 }
 
 const (
-	SpellFlagBloodsurge  = core.SpellFlagAgentReserved1
-	SpellFlagWhirlwindOH = core.SpellFlagAgentReserved2
-	ArmsTree             = 0
-	FuryTree             = 1
-	ProtTree             = 2
+	ArmsTree = 0
+	FuryTree = 1
+	ProtTree = 2
 )
 
 type Warrior struct {
@@ -36,11 +34,8 @@ type Warrior struct {
 	WarriorInputs
 
 	// Current state
-	Stance               Stance
-	RendValidUntil       time.Duration
-	BloodsurgeValidUntil time.Duration
-	revengeProcAura      *core.Aura
-	Ymirjar4pcProcAura   *core.Aura
+	Stance          Stance
+	revengeProcAura *core.Aura
 
 	// Reaction time values
 	reactionTime       time.Duration
@@ -69,12 +64,8 @@ type Warrior struct {
 	SunderArmorDevastate *core.Spell
 	ThunderClap          *core.Spell
 	Whirlwind            *core.Spell
-	WhirlwindOH          *core.Spell
 	DeepWounds           *core.Spell
-	Shockwave            *core.Spell
 	ConcussionBlow       *core.Spell
-	Bladestorm           *core.Spell
-	BladestormOH         *core.Spell
 
 	HeroicStrike         *core.Spell
 	Cleave               *core.Spell
@@ -91,8 +82,6 @@ type Warrior struct {
 	DefensiveStanceAura *core.Aura
 	BerserkerStanceAura *core.Aura
 
-	BloodsurgeAura  *core.Aura
-	SuddenDeathAura *core.Aura
 	ShieldBlockAura *core.Aura
 
 	DemoralizingShoutAuras core.AuraArray
@@ -105,9 +94,6 @@ func (warrior *Warrior) GetCharacter() *core.Character {
 }
 
 func (warrior *Warrior) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
-	if warrior.Talents.Rampage {
-		raidBuffs.Rampage = true
-	}
 }
 
 func (warrior *Warrior) AddPartyBuffs(_ *proto.PartyBuffs) {
@@ -137,9 +123,7 @@ func (warrior *Warrior) Initialize() {
 	warrior.registerSlamSpell()
 	warrior.registerThunderClapSpell()
 	warrior.registerWhirlwindSpell()
-	warrior.registerShockwaveSpell()
 	warrior.registerConcussionBlowSpell()
-	warrior.RegisterHeroicThrow()
 
 	warrior.SunderArmor = warrior.newSunderArmorSpell(false)
 	warrior.SunderArmorDevastate = warrior.newSunderArmorSpell(true)
@@ -154,7 +138,6 @@ func (warrior *Warrior) Initialize() {
 }
 
 func (warrior *Warrior) Reset(_ *core.Simulation) {
-	warrior.RendValidUntil = 0
 	warrior.curQueueAura = nil
 	warrior.curQueuedAutoSpell = nil
 }
@@ -169,7 +152,7 @@ func NewWarrior(character *core.Character, talents string, inputs WarriorInputs)
 
 	warrior.PseudoStats.CanParry = true
 
-	warrior.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritPerAgiMaxLevel[character.Class]*core.CritRatingPerCritChance)
+	warrior.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritPerAgiAtLevel[character.Class][int(warrior.Level)])
 	warrior.AddStatDependency(stats.Agility, stats.Dodge, core.DodgeRatingPerDodgeChance/84.746)
 	warrior.AddStatDependency(stats.Strength, stats.AttackPower, 2)
 	warrior.AddStatDependency(stats.Strength, stats.BlockValue, .5) // 50% block from str
@@ -195,11 +178,6 @@ func (warrior *Warrior) autoCritMultiplier(hand hand) float64 {
 }
 
 func primary(warrior *Warrior, hand hand) float64 {
-	if warrior.Talents.PoleaxeSpecialization > 0 {
-		if (hand == mh && isPoleaxe(warrior.MainHand())) || (hand == oh && isPoleaxe(warrior.OffHand())) {
-			return 1 + 0.01*float64(warrior.Talents.PoleaxeSpecialization)
-		}
-	}
 	return 1
 }
 
@@ -217,11 +195,6 @@ func (warrior *Warrior) HasMajorGlyph(glyph proto.WarriorMajorGlyph) bool {
 
 func (warrior *Warrior) HasMinorGlyph(glyph proto.WarriorMinorGlyph) bool {
 	return warrior.HasGlyph(int32(glyph))
-}
-
-func (warrior *Warrior) intensifyRageCooldown(baseCd time.Duration) time.Duration {
-	baseCd /= 100
-	return []time.Duration{baseCd * 100, baseCd * 89, baseCd * 78, baseCd * 67}[warrior.Talents.IntensifyRage]
 }
 
 // Agent is a generic way to access underlying warrior on any of the agents.

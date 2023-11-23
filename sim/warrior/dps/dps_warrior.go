@@ -49,18 +49,16 @@ func NewDpsWarrior(character *core.Character, options *proto.Player) *DpsWarrior
 
 	war := &DpsWarrior{
 		Warrior: warrior.NewWarrior(character, options.TalentsString, warrior.WarriorInputs{
-			ShoutType:                   warOptions.Options.Shout,
-			RendCdThreshold:             core.DurationFromSeconds(warOptions.Rotation.RendCdThreshold),
-			BloodsurgeDurationThreshold: core.DurationFromSeconds(warOptions.Rotation.BloodsurgeDurationThreshold),
-			StanceSnapshot:              warOptions.Options.StanceSnapshot,
+			ShoutType: warOptions.Options.Shout,
 		}),
 		Rotation: warOptions.Rotation,
 		Options:  warOptions.Options,
 	}
 
 	rbo := core.RageBarOptions{
-		StartingRage:   warOptions.Options.StartingRage,
-		RageMultiplier: core.TernaryFloat64(war.Talents.EndlessRage, 1.25, 1),
+		StartingRage: warOptions.Options.StartingRage,
+		// TODO: Endless Rage Rune
+		RageMultiplier: core.TernaryFloat64(false, 1.25, 1),
 	}
 	if mh := war.GetMHWeapon(); mh != nil {
 		rbo.MHSwingSpeed = mh.SwingSpeed
@@ -69,23 +67,7 @@ func NewDpsWarrior(character *core.Character, options *proto.Player) *DpsWarrior
 		rbo.OHSwingSpeed = oh.SwingSpeed
 	}
 
-	war.EnableRageBar(rbo, func(sim *core.Simulation) {
-		if war.GCD.IsReady(sim) {
-			war.TryUseCooldowns(sim)
-			if war.GCD.IsReady(sim) {
-				// Pause rotation until after AM ticks to detect procs that happened right after the ticks
-				if war.LastAMTick == sim.CurrentTime {
-					war.WaitUntil(sim, sim.CurrentTime+time.Microsecond*1)
-					core.StartDelayedAction(sim, core.DelayedActionOptions{
-						DoAt:     sim.CurrentTime + time.Microsecond*1,
-						OnAction: war.doRotation,
-					})
-				} else {
-					war.doRotation(sim)
-				}
-			}
-		}
-	})
+	war.EnableRageBar(rbo, func(sim *core.Simulation) {})
 	war.EnableAutoAttacks(war, core.AutoAttackOptions{
 		MainHand:       war.WeaponFromMainHand(war.DefaultMeleeCritMultiplier()),
 		OffHand:        war.WeaponFromOffHand(war.DefaultMeleeCritMultiplier()),
@@ -94,6 +76,10 @@ func NewDpsWarrior(character *core.Character, options *proto.Player) *DpsWarrior
 	})
 
 	return war
+}
+
+func (cat *DpsWarrior) OnGCDReady(sim *core.Simulation) {
+	return
 }
 
 func (war *DpsWarrior) GetWarrior() *warrior.Warrior {
@@ -105,14 +91,9 @@ func (war *DpsWarrior) Initialize() {
 
 	war.RegisterHSOrCleave(war.Rotation.UseCleave, war.Rotation.HsRageThreshold)
 	war.RegisterRendSpell(war.Rotation.RendRageThresholdBelow, war.Rotation.RendHealthThresholdAbove)
-	war.CustomRotation = war.makeCustomRotation()
 
 	if war.Options.UseRecklessness {
 		war.RegisterRecklessnessCD()
-	}
-
-	if war.Options.UseShatteringThrow {
-		war.RegisterShatteringThrowCD()
 	}
 
 	// This makes the behavior of these options more intuitive in the individual sim.

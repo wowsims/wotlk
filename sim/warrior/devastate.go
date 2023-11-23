@@ -6,9 +6,9 @@ import (
 )
 
 func (warrior *Warrior) registerDevastateSpell() {
-	if !warrior.Talents.Devastate {
-		return
-	}
+	// if !warrior.Talents.Devastate {
+	// 	return
+	// }
 
 	hasGlyph := warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfDevastate)
 	flatThreatBonus := core.TernaryFloat64(hasGlyph, 630, 315)
@@ -24,7 +24,7 @@ func (warrior *Warrior) registerDevastateSpell() {
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL,
 
 		RageCost: core.RageCostOptions{
-			Cost:   15 - float64(warrior.Talents.FocusedRage) - float64(warrior.Talents.Puncture),
+			Cost:   15,
 			Refund: 0.8,
 		},
 		Cast: core.CastConfig{
@@ -36,9 +36,6 @@ func (warrior *Warrior) registerDevastateSpell() {
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
 			return warrior.CanApplySunderAura(target)
 		},
-
-		BonusCritRating: 5*core.CritRatingPerCritChance*float64(warrior.Talents.SwordAndBoard) +
-			core.TernaryFloat64(warrior.HasSetBonus(ItemSetSiegebreakerPlate, 2), 10*core.CritRatingPerCritChance, 0),
 
 		DamageMultiplier: overallMulti,
 		CritMultiplier:   warrior.critMultiplier(mh),

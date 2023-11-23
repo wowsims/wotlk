@@ -4,13 +4,18 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
-	"github.com/wowsims/classic/sim/core/proto"
 )
 
 func (warrior *Warrior) registerMortalStrikeSpell(cdTimer *core.Timer) {
 	if !warrior.Talents.MortalStrike {
 		return
 	}
+
+	bonusDamage := map[int32]float64{
+		40: 85,
+		50: 110,
+		60: 160,
+	}[warrior.Level]
 
 	warrior.MortalStrike = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47486},
@@ -29,20 +34,17 @@ func (warrior *Warrior) registerMortalStrikeSpell(cdTimer *core.Timer) {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    cdTimer,
-				Duration: time.Second*6 - time.Millisecond*[]time.Duration{0, 300, 700, 1000}[warrior.Talents.ImprovedMortalStrike],
+				Duration: time.Second * 6,
 			},
 		},
 
-		BonusCritRating: core.TernaryFloat64(warrior.HasSetBonus(ItemSetSiegebreakerBattlegear, 4), 10, 0) * core.CritRatingPerCritChance,
-		DamageMultiplier: 1 +
-			[]float64{0, 0.03, 0.06, 0.1}[warrior.Talents.ImprovedMortalStrike] +
-			core.TernaryFloat64(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfMortalStrike), 0.1, 0) +
-			core.TernaryFloat64(warrior.HasSetBonus(ItemSetOnslaughtBattlegear, 4), 0.05, 0),
+		BonusCritRating:  core.TernaryFloat64(warrior.HasSetBonus(ItemSetSiegebreakerBattlegear, 4), 10, 0) * core.CritRatingPerCritChance,
+		DamageMultiplier: 1,
 		CritMultiplier:   warrior.critMultiplier(mh),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := 380 +
+			baseDamage := bonusDamage +
 				spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
 				spell.BonusWeaponDamage()
 

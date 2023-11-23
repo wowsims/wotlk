@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
-	"github.com/wowsims/classic/sim/core/proto"
 )
 
 func (warrior *Warrior) registerSweepingStrikesCD() {
@@ -68,7 +67,7 @@ func (warrior *Warrior) registerSweepingStrikesCD() {
 		SpellSchool: core.SpellSchoolPhysical,
 
 		RageCost: core.RageCostOptions{
-			Cost: core.TernaryFloat64(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfSweepingStrikes), 0, 30),
+			Cost: 30,
 		},
 		Cast: core.CastConfig{
 			CD: core.Cooldown{

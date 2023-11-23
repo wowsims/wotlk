@@ -2,16 +2,22 @@ package warrior
 
 import (
 	"github.com/wowsims/classic/sim/core"
-	"github.com/wowsims/classic/sim/core/proto"
 )
 
 func (warrior *Warrior) registerExecuteSpell() {
-	const maxRage = 30
+	flatDamage := map[int32]float64{
+		25: 125,
+		40: 325,
+		50: 450,
+		60: 600,
+	}[warrior.Level]
 
-	var extraRageBonus float64
-	if warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfExecution) {
-		extraRageBonus = 10
-	}
+	convertedRageDamage := map[int32]float64{
+		25: 3,
+		40: 9,
+		50: 12,
+		60: 15,
+	}[warrior.Level]
 
 	var rageMetrics *core.ResourceMetrics
 	warrior.Execute = warrior.RegisterSpell(core.SpellConfig{
@@ -21,10 +27,7 @@ func (warrior *Warrior) registerExecuteSpell() {
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagAPL,
 
 		RageCost: core.RageCostOptions{
-			Cost: 15 -
-				float64(warrior.Talents.FocusedRage) -
-				[]float64{0, 2, 5}[warrior.Talents.ImprovedExecute] -
-				core.TernaryFloat64(warrior.HasSetBonus(ItemSetOnslaughtBattlegear, 2), 3, 0),
+			Cost:   15 - []float64{0, 2, 5}[warrior.Talents.ImprovedExecute],
 			Refund: 0.8,
 		},
 		Cast: core.CastConfig{
@@ -34,7 +37,7 @@ func (warrior *Warrior) registerExecuteSpell() {
 			IgnoreHaste: true,
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return sim.IsExecutePhase20() || warrior.IsSuddenDeathActive()
+			return sim.IsExecutePhase20()
 		},
 
 		DamageMultiplier: 1,
@@ -43,13 +46,10 @@ func (warrior *Warrior) registerExecuteSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			extraRage := spell.Unit.CurrentRage()
-			if extraRage > maxRage-spell.CurCast.Cost {
-				extraRage = maxRage - spell.CurCast.Cost
-			}
 			warrior.SpendRage(sim, extraRage, rageMetrics)
 			rageMetrics.Events--
 
-			baseDamage := 1456 + 0.2*spell.MeleeAttackPower() + 38*(extraRage+extraRageBonus)
+			baseDamage := flatDamage + convertedRageDamage*(extraRage)
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 
 			if !result.Landed() {
