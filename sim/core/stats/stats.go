@@ -60,6 +60,7 @@ const (
 	BonusArmor
 	Healing
 	SpellDamage
+	WeaponSkill
 	// DO NOT add new stats here without discussing it first; new stats come with
 	// a performance penalty.
 
@@ -186,6 +187,8 @@ func (s Stat) StatName() string {
 		return "ShadowResistance"
 	case ArcaneResistance:
 		return "ArcaneResistance"
+	case WeaponSkill:
+		return "WeaponSkill"
 	}
 
 	return "none"

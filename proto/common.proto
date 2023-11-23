@@ -117,6 +117,7 @@ enum Stat {
 	StatBonusArmor = 40;
 	StatHealing = 41;
 	StatSpellDamage = 42;
+	StatWeaponSkill = 43;
 	// DO NOT add new stats here without discussing it first; new stats come with
 	// a performance penalty.
 }

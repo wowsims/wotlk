@@ -60,9 +60,6 @@ func applyRaceEffects(agent Agent) {
 				return true
 			},
 		})
-	case proto.Race_RaceDraenei:
-		character.PseudoStats.ReducedShadowHitTakenChance += 0.02
-		// TODO: Gift of the naaru for healers
 	case proto.Race_RaceDwarf:
 		character.PseudoStats.ReducedFrostHitTakenChance += 0.02
 
@@ -70,9 +67,6 @@ func applyRaceEffects(agent Agent) {
 		if character.Ranged().RangedWeaponType == proto.RangedWeaponType_RangedWeaponTypeGun {
 			character.AddBonusRangedCritRating(1 * CritRatingPerCritChance)
 		}
-
-		applyWeaponSpecialization(character, 5*ExpertisePerQuarterPercentReduction,
-			proto.WeaponType_WeaponTypeMace)
 
 		actionID := ActionID{SpellID: 20594}
 
@@ -109,7 +103,7 @@ func applyRaceEffects(agent Agent) {
 		character.MultiplyStat(stats.Intellect, 1.05)
 	case proto.Race_RaceHuman:
 		character.MultiplyStat(stats.Spirit, 1.03)
-		applyWeaponSpecialization(character, 3*ExpertisePerQuarterPercentReduction,
+		applyWeaponSpecialization(character, 5,
 			proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeSword)
 	case proto.Race_RaceNightElf:
 		character.PseudoStats.ReducedNatureHitTakenChance += 0.02
@@ -147,7 +141,7 @@ func applyRaceEffects(agent Agent) {
 		})
 
 		// Axe specialization
-		applyWeaponSpecialization(character, 5*ExpertisePerQuarterPercentReduction,
+		applyWeaponSpecialization(character, 5,
 			proto.WeaponType_WeaponTypeAxe, proto.WeaponType_WeaponTypeFist)
 	case proto.Race_RaceTauren:
 		character.PseudoStats.ReducedNatureHitTakenChance += 0.02
@@ -204,16 +198,10 @@ func applyRaceEffects(agent Agent) {
 	}
 }
 
-func applyWeaponSpecialization(character *Character, expertiseBonus float64, weaponTypes ...proto.WeaponType) {
+func applyWeaponSpecialization(character *Character, weaponSkillBonus float64, weaponTypes ...proto.WeaponType) {
 	mask := character.GetProcMaskForTypes(weaponTypes...)
 
 	if mask == ProcMaskMelee || (mask == ProcMaskMeleeMH && !character.HasOHWeapon()) {
-		character.AddStat(stats.Expertise, expertiseBonus)
-	} else {
-		character.OnSpellRegistered(func(spell *Spell) {
-			if spell.ProcMask.Matches(mask) {
-				spell.BonusExpertiseRating += expertiseBonus
-			}
-		})
+		character.AddStat(stats.WeaponSkill, weaponSkillBonus)
 	}
 }

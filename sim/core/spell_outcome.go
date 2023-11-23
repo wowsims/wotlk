@@ -1,6 +1,8 @@
 package core
 
 import (
+	"math/rand"
+
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
@@ -451,8 +453,7 @@ func (result *SpellResult) applyAttackTableGlance(spell *Spell, attackTable *Att
 	if roll < *chance {
 		result.Outcome = OutcomeGlance
 		spell.SpellMetrics[result.Target.UnitIndex].Glances++
-		// TODO glancing blow damage reduction is actually a range ([65%, 85%] vs. +3, [80%, 90%] vs. +2, [91%, 99%] vs. +1 and +0)
-		result.Damage *= attackTable.GlanceMultiplier
+		result.Damage *= rand.Float64() * (attackTable.GlanceMultiplierMax - attackTable.GlanceMultiplierMin)
 		return true
 	}
 	return false

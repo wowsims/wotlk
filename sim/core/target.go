@@ -192,7 +192,8 @@ type AttackTable struct {
 	BaseParryChance     float64
 	BaseGlanceChance    float64
 
-	GlanceMultiplier     float64
+	GlanceMultiplierMin  float64
+	GlanceMultiplierMax  float64
 	MeleeCritSuppression float64
 	SpellCritSuppression float64
 
@@ -204,6 +205,7 @@ type AttackTable struct {
 }
 
 func NewAttackTable(attacker *Unit, defender *Unit) *AttackTable {
+	// Source: https://github.com/magey/classic-warrior/wiki/Attack-table
 	table := &AttackTable{
 		Attacker: attacker,
 		Defender: defender,
@@ -216,19 +218,31 @@ func NewAttackTable(attacker *Unit, defender *Unit) *AttackTable {
 	}
 
 	if defender.Type == EnemyUnit {
-		// Assumes attacker (the Player) is level 80.
-		table.BaseSpellMissChance = UnitLevelFloat64(defender.Level, 0.04, 0.05, 0.06, 0.17)
-		table.BaseMissChance = UnitLevelFloat64(defender.Level, 0.05, 0.055, 0.06, 0.08)
-		table.BaseBlockChance = 0.05
-		table.BaseDodgeChance = UnitLevelFloat64(defender.Level, 0.05, 0.055, 0.06, 0.065)
-		table.BaseParryChance = UnitLevelFloat64(defender.Level, 0.05, 0.055, 0.06, 0.14)
-		table.BaseGlanceChance = UnitLevelFloat64(defender.Level, 0.06, 0.12, 0.18, 0.24)
+		weaponSkill := float64(attacker.Level*5) + attacker.stats[stats.WeaponSkill]
 
-		table.GlanceMultiplier = UnitLevelFloat64(defender.Level, 0.95, 0.95, 0.85, 0.75)
-		table.MeleeCritSuppression = UnitLevelFloat64(defender.Level, 0, 0.01, 0.02, 0.048)
+		if weaponSkill-float64(defender.Level*5) > 10 {
+			hitSuppression := (float64(defender.Level*5) - weaponSkill - 10) * 0.002
+			table.BaseMissChance = 0.05 + (float64(defender.Level*5)-weaponSkill)*0.002 + hitSuppression
+		} else {
+			table.BaseMissChance = 0.05 + (float64(defender.Level*5)-weaponSkill)*0.001
+		}
+
+		table.BaseSpellMissChance = UnitLevelFloat64(defender.Level, 0.04, 0.05, 0.06, 0.17)
+		table.BaseBlockChance = 0.05
+		table.BaseDodgeChance = 0.05 + (float64(defender.Level*5)-weaponSkill)*0.001
+		table.BaseParryChance = 0.05 + (float64(defender.Level*5)-weaponSkill)*0.001
+		table.BaseGlanceChance = 0.1 + (float64(defender.Level*5)-min(float64(attacker.Level*5), weaponSkill))*0.02
+
+		table.GlanceMultiplierMin = min(1.3-0.05*(float64(defender.Level*5)-weaponSkill), 0.91)
+		table.GlanceMultiplierMax = max(min(1.2-0.03*(float64(defender.Level*5)-weaponSkill), 0.99), 0.2)
+
+		table.MeleeCritSuppression = float64(defender.Level-attacker.Level) * 5 * 0.0004
+		if (defender.Level - attacker.Level) >= 3 {
+			table.MeleeCritSuppression += 0.018
+		}
 		table.SpellCritSuppression = UnitLevelFloat64(defender.Level, 0, 0, 0.003, 0.021)
 	} else {
-		// Assumes defender (the Player) is level 80.
+
 		table.BaseSpellMissChance = 0.05
 		table.BaseMissChance = UnitLevelFloat64(attacker.Level, 0.05, 0.048, 0.046, 0.044)
 		table.BaseBlockChance = UnitLevelFloat64(attacker.Level, 0.05, 0.048, 0.046, 0.044)
