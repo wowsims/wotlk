@@ -29,31 +29,29 @@ def _get_spell_id_from_link(link):
 
 
 def get_engraving_ids() -> List[int]:
-	driver.get(f"https://www.wowhead.com/classic/skill=2851/engraving#spells")
+	driver.get(f"https://www.wowhead.com/classic/search?q=engrave")
 	wait.until(EC.presence_of_element_located(element_locator))
 
-	spells = driver.find_elements(By.ID, "tab-spells")
+	abilities = driver.find_elements(By.ID, "tab-abilities")
 
-	if len(spells) == 0:
-		print(f"Engravings missing spell tab.")
+	if len(abilities) == 0:
+		print(f"Engravings missing ability tab.")
 		return []
 
-	spells = spells[0]
-	pages = int(spells.find_element(By.CLASS_NAME, "listview-nav").find_element(By.CSS_SELECTOR, 'b:last-child').text)/50
+	abilities = abilities[0]
+	pages = int(abilities.find_element(By.CLASS_NAME, "listview-nav").find_element(By.CSS_SELECTOR, 'b:last-child').text)/50
 	pages = math.ceil(pages)
 	all_ids = []
 
 	for page in range(pages):
 		print(f'Loading page {page} for runes...')
-		driver.get(f"https://www.wowhead.com/classic/skill=2851/engraving#spells;{page*50}")
+		driver.get(f"https://www.wowhead.com/classic/search?q=engrave#abilities{page*50}")
 		driver.refresh()
 		wait.until(EC.presence_of_element_located(element_locator))
-		spell_tab = driver.find_element(By.ID, "tab-spells")
-		rows = spell_tab.find_elements(By.CLASS_NAME, "listview-row")
+		abilities_tab = driver.find_element(By.ID, "tab-abilities")
+		rows = abilities_tab.find_elements(By.CLASS_NAME, "listview-row")
 		all_ids.extend([_get_spell_id_from_link(row.find_element(By.CLASS_NAME, "listview-cleartext").get_attribute("href"))
 			for row in rows])
-	# Runecarving id, not an actual engraving
-	all_ids.remove(398603)
 
 	driver.quit()
 	return all_ids
