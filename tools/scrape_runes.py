@@ -45,7 +45,7 @@ def get_engraving_ids() -> List[int]:
 
 	for page in range(pages):
 		print(f'Loading page {page} for runes...')
-		driver.get(f"https://www.wowhead.com/classic/search?q=engrave#abilities{page*50}")
+		driver.get(f"https://www.wowhead.com/classic/search?q=engrave#abilities:{page*50}")
 		driver.refresh()
 		wait.until(EC.presence_of_element_located(element_locator))
 		abilities_tab = driver.find_element(By.ID, "tab-abilities")
