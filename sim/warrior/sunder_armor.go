@@ -37,7 +37,8 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 		},
 
 		ThreatMultiplier: 1,
-		FlatThreatBonus:  360,
+		// TODO Warrior: set threat according to spell's level
+		FlatThreatBonus: 360,
 
 		RelatedAuras: []core.AuraArray{warrior.SunderArmorAuras},
 	}

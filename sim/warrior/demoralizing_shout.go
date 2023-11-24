@@ -5,8 +5,8 @@ import (
 )
 
 func (warrior *Warrior) registerDemoralizingShoutSpell() {
-	warrior.DemoralizingShoutAuras = warrior.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
-		return core.DemoralizingShoutAura(target, warrior.Talents.BoomingVoice, warrior.Talents.ImprovedDemoralizingShout)
+	warrior.DemoralizingShoutAuras = warrior.NewEnemyAuraArray(func(target *core.Unit, level int32) *core.Aura {
+		return core.DemoralizingShoutAura(target, warrior.Talents.BoomingVoice, warrior.Talents.ImprovedDemoralizingShout, warrior.Level)
 	})
 
 	warrior.DemoralizingShout = warrior.RegisterSpell(core.SpellConfig{
