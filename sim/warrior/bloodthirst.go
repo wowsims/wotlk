@@ -12,7 +12,7 @@ func (warrior *Warrior) registerBloodthirstSpell(cdTimer *core.Timer) {
 	}
 
 	warrior.Bloodthirst = warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 23881},
+		ActionID:    core.ActionID{SpellID: 23894},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagAPL,

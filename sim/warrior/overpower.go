@@ -15,6 +15,13 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 		60: 35,
 	}[warrior.Level]
 
+	spellID := map[int32]int32{
+		25: 7384,
+		40: 7887,
+		50: 11584,
+		60: 11585,
+	}[warrior.Level]
+
 	outcomeMask := core.OutcomeDodge
 	if warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfOverpower) {
 		outcomeMask |= core.OutcomeParry
@@ -34,7 +41,6 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 	})
 
 	warrior.OverpowerAura = warrior.RegisterAura(core.Aura{
-		ActionID: core.ActionID{SpellID: 68051},
 		Label:    "Overpower Aura",
 		Duration: time.Second * 5,
 	})
@@ -43,7 +49,7 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 	gcdDur := core.GCDDefault
 
 	warrior.Overpower = warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 7384},
+		ActionID:    core.ActionID{SpellID: spellID},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagAPL,

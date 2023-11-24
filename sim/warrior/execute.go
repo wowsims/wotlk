@@ -19,9 +19,16 @@ func (warrior *Warrior) registerExecuteSpell() {
 		60: 15,
 	}[warrior.Level]
 
+	spellID := map[int32]int32{
+		25: 5308,
+		40: 20660,
+		50: 20661,
+		60: 20662,
+	}[warrior.Level]
+
 	var rageMetrics *core.ResourceMetrics
 	warrior.Execute = warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 47471},
+		ActionID:    core.ActionID{SpellID: spellID},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagAPL,

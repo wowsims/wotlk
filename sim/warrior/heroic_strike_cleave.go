@@ -13,8 +13,15 @@ func (warrior *Warrior) registerHeroicStrikeSpell() *core.Spell {
 		60: 138,
 	}[warrior.Level]
 
+	spellID := map[int32]int32{
+		25: 1608,
+		40: 11565,
+		50: 11566,
+		60: 11567,
+	}[warrior.Level]
+
 	return warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 47450},
+		ActionID:    core.ActionID{SpellID: spellID},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagNoOnCastComplete,
@@ -56,12 +63,19 @@ func (warrior *Warrior) registerCleaveSpell() *core.Spell {
 		60: 50,
 	}[warrior.Level]
 
+	spellID := map[int32]int32{
+		25: 845,
+		40: 11608,
+		50: 11609,
+		60: 20569,
+	}[warrior.Level]
+
 	targets := core.TernaryInt32(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfCleaving), 3, 2)
 	numHits := min(targets, warrior.Env.GetNumTargets())
 	results := make([]*core.SpellResult, numHits)
 
 	return warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 47520},
+		ActionID:    core.ActionID{SpellID: spellID},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage,

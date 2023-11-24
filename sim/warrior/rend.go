@@ -15,8 +15,15 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold
 		60: 147,
 	}[warrior.Level]
 
+	spellID := map[int32]int32{
+		25: 6547,
+		40: 11572,
+		50: 11573,
+		60: 11574,
+	}[warrior.Level]
+
 	warrior.Rend = warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 47465},
+		ActionID:    core.ActionID{SpellID: spellID},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagAPL,

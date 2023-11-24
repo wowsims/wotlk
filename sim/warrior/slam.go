@@ -17,8 +17,14 @@ func (warrior *Warrior) registerSlamSpell() {
 		60: 87,
 	}[warrior.Level]
 
+	spellID := map[int32]int32{
+		40: 8820,
+		50: 11604,
+		60: 11605,
+	}[warrior.Level]
+
 	warrior.Slam = warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 47475},
+		ActionID:    core.ActionID{SpellID: spellID},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagAPL,

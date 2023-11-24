@@ -11,8 +11,14 @@ func (warrior *Warrior) applyDeepWounds() {
 		return
 	}
 
+	spellID := map[int32]int32{
+		1: 12834,
+		2: 12849,
+		3: 12867,
+	}[warrior.Talents.DeepWounds]
+
 	warrior.DeepWounds = warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 12867},
+		ActionID:    core.ActionID{SpellID: spellID},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskEmpty,
 		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers,

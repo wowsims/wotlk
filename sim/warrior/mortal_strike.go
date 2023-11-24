@@ -17,8 +17,14 @@ func (warrior *Warrior) registerMortalStrikeSpell(cdTimer *core.Timer) {
 		60: 160,
 	}[warrior.Level]
 
+	spellID := map[int32]int32{
+		40: 12294,
+		50: 21551,
+		60: 21553,
+	}[warrior.Level]
+
 	warrior.MortalStrike = warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 47486},
+		ActionID:    core.ActionID{SpellID: spellID},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagAPL,
