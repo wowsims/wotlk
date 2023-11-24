@@ -70,7 +70,7 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P3_FURY_PRESET_ALLIANCE.gear,
+				gear: Presets.EMPTY_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatStrength]: 2.72,
@@ -88,10 +88,8 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,
-				// Default rotation settings.
-				rotation: Presets.DefaultRotation,
 				// Default talents.
-				talents: Presets.FuryTalents.data,
+				talents: Presets.Talent25.data,
 				// Default spec-specific settings.
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
@@ -133,7 +131,6 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 				inputs: [
 					WarriorInputs.StartingRage,
 					WarriorInputs.StanceSnapshot,
-					WarriorInputs.DisableExpertiseGemming,
 					OtherInputs.TankAssignment,
 					OtherInputs.InFrontOfTarget,
 				],
@@ -146,91 +143,16 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 			presets: {
 				// Preset talents that the user can quickly select.
 				talents: [
-					Presets.ArmsTalents,
-					Presets.FuryTalents,
+					Presets.Talent25
 				],
 				// Preset rotations that the user can quickly select.
 				rotations: [
-					Presets.ROTATION_FURY,
-					Presets.ROTATION_FURY_SUNDER,
-					Presets.ROTATION_ARMS,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.PRERAID_FURY_PRESET,
-					Presets.P1_FURY_PRESET,
-					Presets.P2_FURY_PRESET,
-					Presets.P3_FURY_PRESET_ALLIANCE,
-					Presets.P3_FURY_PRESET_HORDE,
-					Presets.PRERAID_ARMS_PRESET,
-					Presets.P1_ARMS_PRESET,
-					Presets.P2_ARMS_PRESET,
-					Presets.P3_ARMS_2P_PRESET_ALLIANCE,
-					Presets.P3_ARMS_4P_PRESET_ALLIANCE,
-					Presets.P3_ARMS_2P_PRESET_HORDE,
-					Presets.P3_ARMS_4P_PRESET_HORDE,
 				],
 			},
 		});
-		this.addOptimizeGemsAction();
-	}
-	addOptimizeGemsAction() {
-		this.addAction('Suggest Gems', 'optimize-gems-action', async () => {
-			this.optimizeGems();
-		});
-	}
-
-	async optimizeGems() {
-		// First, clear all existing gems
-		let optimizedGear = this.player.getGear().withoutGems();
-
-		// Next, socket the meta
-		optimizedGear = optimizedGear.withMetaGem(this.sim.db.lookupGem(41398));
-
-		// Next, socket a Nightmare Tear in the best blue socket bonus
-		const epWeights = this.player.getEpWeights();
-		const tearSlot = this.findTearSlot(optimizedGear, epWeights);
-		optimizedGear = this.socketTear(optimizedGear, tearSlot);
-		await this.updateGear(optimizedGear);
-
-		// Next, identify all sockets where red gems will be placed
-		const redSockets = this.findSocketsByColor(optimizedGear, epWeights, GemColor.GemColorRed, tearSlot);
-
-		// Rank order red gems to use with their associated stat caps
-		const redGemCaps = new Array<[number, Stats]>();
-		redGemCaps.push([40117, this.calcArpCap(optimizedGear)]);
-		// Should we gem expertise?
-		const enableExpertiseGemming = !this.player.getSpecOptions().disableExpertiseGemming
-		const expCap = this.calcExpCap();
-		if(enableExpertiseGemming){
-			redGemCaps.push([40118, expCap]);
-		}
-		const critCap = this.calcCritCap(optimizedGear);
-		redGemCaps.push([40111, new Stats()]);
-
-		// If JC, then socket 34 ArP gems in first three red sockets before proceeding
-		let startIdx = 0;
-
-		if (this.player.hasProfession(Profession.Jewelcrafting)) {
-			optimizedGear = this.optimizeJcGems(optimizedGear, redSockets);
-			startIdx = 3;
-		}
-
-		// Do multiple passes to fill in red gems up their caps
-		optimizedGear = await this.fillGemsToCaps(optimizedGear, redSockets, redGemCaps, 0, startIdx);
-
-		// Now repeat the process for yellow gems
-		const yellowSockets = this.findSocketsByColor(optimizedGear, epWeights, GemColor.GemColorYellow, tearSlot);
-		const yellowGemCaps = new Array<[number, Stats]>();
-		const hitCap = new Stats().withStat(Stat.StatMeleeHit, 8. * 32.79 + 4);
-		yellowGemCaps.push([40125, hitCap]);
-		if(enableExpertiseGemming){
-			yellowGemCaps.push([40162, hitCap.add(expCap)]);
-			yellowGemCaps.push([40118, expCap]);
-		}
-		yellowGemCaps.push([40143, hitCap]);
-		yellowGemCaps.push([40142, critCap]);
-		await this.fillGemsToCaps(optimizedGear, yellowSockets, yellowGemCaps, 0, 0);
 	}
 
 	calcExpCap(): Stats {
