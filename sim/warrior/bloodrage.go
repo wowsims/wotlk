@@ -13,6 +13,12 @@ func (warrior *Warrior) registerBloodrageCD() {
 	instantRage := 10.0 + []float64{2, 5}[warrior.Talents.ImprovedBloodrage]
 	ragePerSec := 1.0
 
+	bloodrageAura := warrior.RegisterAura(core.Aura{
+		Label:    "Bloodrage",
+		ActionID: actionID,
+		Duration: time.Second * 10,
+	})
+
 	brSpell := warrior.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
 
@@ -24,6 +30,7 @@ func (warrior *Warrior) registerBloodrageCD() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+			bloodrageAura.Activate(sim)
 			warrior.AddRage(sim, instantRage, rageMetrics)
 
 			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
