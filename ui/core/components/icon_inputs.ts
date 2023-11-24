@@ -133,7 +133,7 @@ export const MinorArmorDebuff = InputHelpers.makeMultiIconInput([
 ], 'Minor ArP');
 
 export const AttackPowerDebuff = InputHelpers.makeMultiIconInput([
-	makeTristateDebuffInput(ActionId.fromSpellId(47437), ActionId.fromSpellId(12879), 'demoralizingShout'),
+	makeTristateDebuffInput(ActionId.fromSpellId(25203), ActionId.fromSpellId(12879), 'demoralizingShout'),
 	makeTristateDebuffInput(ActionId.fromSpellId(48560), ActionId.fromSpellId(16862), 'demoralizingRoar'),
 ], 'Atk Pwr');
 
@@ -143,7 +143,7 @@ export const BleedDebuff = InputHelpers.makeMultiIconInput([
 ], 'Bleed');
 
 export const MeleeAttackSpeedDebuff = InputHelpers.makeMultiIconInput([
-	makeTristateDebuffInput(ActionId.fromSpellId(47502), ActionId.fromSpellId(12666), 'thunderClap'),
+	makeTristateDebuffInput(ActionId.fromSpellId(6343), ActionId.fromSpellId(12666), 'thunderClap'),
 ], 'Atk Speed');
 
 export const MeleeHitDebuff = InputHelpers.makeMultiIconInput([

@@ -18,11 +18,18 @@ func (warrior *Warrior) registerThunderClapSpell() {
 		60: 103,
 	}[warrior.Level]
 
+	spellID := map[int32]int32{
+		25: 8198,
+		40: 8205,
+		50: 11580,
+		60: 11581,
+	}[warrior.Level]
+
 	numHits := min(4, warrior.Env.GetNumTargets())
 	results := make([]*core.SpellResult, numHits)
 
 	warrior.ThunderClap = warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 47502},
+		ActionID:    core.ActionID{SpellID: spellID},
 		SpellSchool: core.SpellSchoolNature,
 		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagAPL,

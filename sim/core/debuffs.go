@@ -487,10 +487,16 @@ func DemoralizingRoarAura(target *Unit, points int32, playerLevel int32) *Aura {
 func DemoralizingShoutAura(target *Unit, boomingVoicePts int32, impDemoShoutPts int32, playerLevel int32) *Aura {
 	aura := target.GetOrRegisterAura(Aura{
 		Label:    "DemoralizingShout-" + strconv.Itoa(int(impDemoShoutPts)),
-		ActionID: ActionID{SpellID: 47437},
+		ActionID: ActionID{SpellID: 1160},
 		Duration: time.Duration(float64(time.Second*30) * (1 + 0.1*float64(boomingVoicePts))),
 	})
-	apReductionEffect(aura, 411*(1+0.08*float64(impDemoShoutPts)))
+	apReduction := map[int32]float64{
+		25: 56,
+		40: 76,
+		50: 111,
+		60: 146,
+	}[playerLevel]
+	apReductionEffect(aura, apReduction*(1+0.08*float64(impDemoShoutPts)))
 	return aura
 }
 

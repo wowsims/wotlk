@@ -379,11 +379,6 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 					label: 'Str + Agi',
 					effects: [
 						{
-							label: 'Improved Strength of Earth Totem',
-							actionId: ActionId.fromSpellId(52456),
-							playerData: playerClassAndTalent(Class.ClassShaman, 'enhancingTotems', player => player.getSpecOptions().totems?.earth == EarthTotem.StrengthOfEarthTotem),
-						},
-						{
 							label: 'Strength of Earth Totem',
 							actionId: ActionId.fromSpellId(58643),
 							playerData: playerClassAndMissingTalent(Class.ClassShaman, 'enhancingTotems', player => player.getSpecOptions().totems?.earth == EarthTotem.StrengthOfEarthTotem),

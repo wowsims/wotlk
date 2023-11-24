@@ -17,11 +17,6 @@ export const Recklessness = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.Sp
 	id: ActionId.fromSpellId(1719),
 });
 
-export const ShatteringThrow = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.SpecWarrior>({
-	fieldName: 'useShatteringThrow',
-	id: ActionId.fromSpellId(64382),
-});
-
 export const StartingRage = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecWarrior>({
 	fieldName: 'startingRage',
 	label: 'Starting Rage',
@@ -39,8 +34,7 @@ export const ShoutPicker = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecWa
 	fieldName: 'shout',
 	values: [
 		{ color: 'c79c6e', value: WarriorShout.WarriorShoutNone },
-		{ actionId: ActionId.fromSpellId(2048), value: WarriorShout.WarriorShoutBattle },
-		{ actionId: ActionId.fromSpellId(469), value: WarriorShout.WarriorShoutCommanding },
+		{ actionId: ActionId.fromSpellId(6673), value: WarriorShout.WarriorShoutBattle },
 	],
 });
 
