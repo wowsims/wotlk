@@ -575,7 +575,7 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 					effects: [
 						{
 							label: 'Sunder Armor',
-							actionId: ActionId.fromSpellId(47467),
+							actionId: ActionId.fromSpellId(7386),
 							playerData: playerClass(Class.ClassWarrior, player => player.isSpec(Spec.SpecProtectionWarrior) || (player as Player<Spec.SpecWarrior>).getRotation().sunderArmor == SunderArmor.SunderArmorMaintain),
 						},
 						{

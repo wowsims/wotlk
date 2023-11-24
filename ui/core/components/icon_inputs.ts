@@ -122,7 +122,7 @@ export const PowerInfusion = makeMultistateIndividualBuffInput(ActionId.fromSpel
 
 // Debuffs
 export const MajorArmorDebuff = InputHelpers.makeMultiIconInput([
-	makeBooleanDebuffInput({id: ActionId.fromSpellId(47467), fieldName: 'sunderArmor'}),
+	makeBooleanDebuffInput({id: ActionId.fromSpellId(7386), fieldName: 'sunderArmor'}),
 	makeBooleanDebuffInput({id: ActionId.fromSpellId(8647), fieldName: 'exposeArmor'}),
 ], 'Major ArP');
 
