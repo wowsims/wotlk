@@ -9,6 +9,8 @@ import (
 func TestSunderArmorStacks(t *testing.T) {
 	sim := Simulation{}
 	baseArmor := 10643.0
+	playerLevel := 60
+
 	target := Unit{
 		Type:         EnemyUnit,
 		Index:        0,
@@ -24,7 +26,7 @@ func TestSunderArmorStacks(t *testing.T) {
 		t.Fatalf("Armor value for target should be %f but found %f", 10643.0, target.Armor())
 	}
 	stacks := int32(1)
-	sunderAura := SunderArmorAura(&target)
+	sunderAura := SunderArmorAura(&target, playerLevel)
 	sunderAura.Activate(&sim)
 	sunderAura.SetStacks(&sim, stacks)
 	tolerance := 0.001

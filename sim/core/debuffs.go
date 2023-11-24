@@ -39,7 +39,7 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 	}
 
 	if debuffs.ExposeArmor && targetIdx == 0 {
-		aura := ExposeArmorAura(target, false)
+		aura := ExposeArmorAura(target, false, raid.Parties[0].Players[0].Level)
 		ScheduledMajorArmorAura(aura, PeriodicActionOptions{
 			Period:   time.Second * 3,
 			NumTicks: 1,
@@ -50,7 +50,8 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 	}
 
 	if debuffs.SunderArmor && targetIdx == 0 {
-		aura := SunderArmorAura(target)
+		// Get the first player level as the debuff level
+		aura := SunderArmorAura(target, raid.Parties[0].Players[0].Level)
 		ScheduledMajorArmorAura(aura, PeriodicActionOptions{
 			Period:          time.Millisecond * 1500,
 			NumTicks:        5,
@@ -66,19 +67,19 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 	}
 
 	if debuffs.CurseOfWeakness != proto.TristateEffect_TristateEffectMissing {
-		MakePermanent(CurseOfWeaknessAura(target, GetTristateValueInt32(debuffs.CurseOfWeakness, 1, 2)))
+		MakePermanent(CurseOfWeaknessAura(target, GetTristateValueInt32(debuffs.CurseOfWeakness, 1, 2), raid.Parties[0].Players[0].Level))
 	}
 
 	if debuffs.DemoralizingRoar != proto.TristateEffect_TristateEffectMissing {
-		MakePermanent(DemoralizingRoarAura(target, GetTristateValueInt32(debuffs.DemoralizingRoar, 0, 5)))
+		MakePermanent(DemoralizingRoarAura(target, GetTristateValueInt32(debuffs.DemoralizingRoar, 0, 5), raid.Parties[0].Players[0].Level))
 	}
 	if debuffs.DemoralizingShout != proto.TristateEffect_TristateEffectMissing {
-		MakePermanent(DemoralizingShoutAura(target, 0, GetTristateValueInt32(debuffs.DemoralizingShout, 0, 5)))
+		MakePermanent(DemoralizingShoutAura(target, 0, GetTristateValueInt32(debuffs.DemoralizingShout, 0, 5), raid.Parties[0].Players[0].Level))
 	}
 
 	// Atk spd reduction
 	if debuffs.ThunderClap != proto.TristateEffect_TristateEffectMissing {
-		MakePermanent(ThunderClapAura(target, GetTristateValueInt32(debuffs.ThunderClap, 0, 3)))
+		MakePermanent(ThunderClapAura(target, GetTristateValueInt32(debuffs.ThunderClap, 0, 3), raid.Parties[0].Players[0].Level))
 	}
 
 	// Miss
@@ -111,7 +112,7 @@ func ScheduledMajorArmorAura(aura *Aura, options PeriodicActionOptions, raid *pr
 
 	if singleExposeDelay {
 		target := aura.Unit
-		exposeArmorAura := ExposeArmorAura(target, false)
+		exposeArmorAura := ExposeArmorAura(target, false, raid.Parties[0].Players[0].Level)
 		exposeArmorAura.ApplyOnExpire(func(_ *Aura, sim *Simulation) {
 			aura.Duration = NeverExpires
 			StartPeriodicAction(sim, options)
@@ -367,26 +368,33 @@ func majorSpellCritDebuffAura(target *Unit, label string, actionID ActionID, per
 
 var majorArmorReductionEffectCategory = "MajorArmorReduction"
 
-// TODO: Classic
-func SunderArmorAura(target *Unit) *Aura {
-	var effect *ExclusiveEffect
+func SunderArmorAura(target *Unit, playerLevel int32) *Aura {
+	spellID := map[int32]int32{
+		25: 7405,
+		40: 8380,
+		50: 11596,
+		60: 11597,
+	}[playerLevel]
+
+	arpen := map[int32]int32{
+		25: 180,
+		40: 270,
+		50: 360,
+		60: 450,
+	}[playerLevel]
+
 	aura := target.GetOrRegisterAura(Aura{
 		Label:     "Sunder Armor",
-		ActionID:  ActionID{SpellID: 47467},
+		ActionID:  ActionID{SpellID: spellID},
 		Duration:  time.Second * 30,
 		MaxStacks: 5,
 		OnStacksChange: func(aura *Aura, sim *Simulation, oldStacks int32, newStacks int32) {
-			effect.SetPriority(sim, 0.04*float64(newStacks))
-		},
-	})
+			aura.Unit.stats[stats.Armor] -= float64(arpen) * float64(oldStacks)
+			aura.Unit.stats[stats.Armor] += float64(arpen) * float64(newStacks)
 
-	effect = aura.NewExclusiveEffect(majorArmorReductionEffectCategory, true, ExclusiveEffect{
-		Priority: 0,
-		OnGain: func(ee *ExclusiveEffect, sim *Simulation) {
-			ee.Aura.Unit.PseudoStats.ArmorMultiplier *= 1 - ee.Priority
 		},
-		OnExpire: func(ee *ExclusiveEffect, sim *Simulation) {
-			ee.Aura.Unit.PseudoStats.ArmorMultiplier /= 1 - ee.Priority
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.stats[stats.Armor] -= float64(arpen) * float64(aura.stacks)
 		},
 	})
 
@@ -394,7 +402,7 @@ func SunderArmorAura(target *Unit) *Aura {
 }
 
 // TODO: Classic (Flat amount)
-func ExposeArmorAura(target *Unit, hasGlyph bool) *Aura {
+func ExposeArmorAura(target *Unit, hasGlyph bool, playerLevel int32) *Aura {
 	const armorReduction = 0.2
 	aura := target.GetOrRegisterAura(Aura{
 		Label:    "ExposeArmor",
@@ -416,7 +424,7 @@ func ExposeArmorAura(target *Unit, hasGlyph bool) *Aura {
 }
 
 // TODO: Classic
-func CurseOfWeaknessAura(target *Unit, points int32) *Aura {
+func CurseOfWeaknessAura(target *Unit, points int32, playerLevel int32) *Aura {
 	aura := target.GetOrRegisterAura(Aura{
 		Label:    "Curse of Weakness" + strconv.Itoa(int(points)),
 		ActionID: ActionID{SpellID: 50511},
@@ -441,7 +449,7 @@ func minorArmorReductionEffect(aura *Aura, reduction float64) *ExclusiveEffect {
 const HuntersMarkAuraTag = "HuntersMark"
 
 // TODO: Classic
-func HuntersMarkAura(target *Unit, points int32, glyphed bool) *Aura {
+func HuntersMarkAura(target *Unit, points int32, glyphed bool, playerLevel int32) *Aura {
 	bonus := 500.0 * (1 + 0.1*float64(points) + TernaryFloat64(glyphed, 0.2, 0))
 
 	aura := target.GetOrRegisterAura(Aura{
@@ -465,7 +473,7 @@ func HuntersMarkAura(target *Unit, points int32, glyphed bool) *Aura {
 }
 
 // TODO: Classic
-func DemoralizingRoarAura(target *Unit, points int32) *Aura {
+func DemoralizingRoarAura(target *Unit, points int32, playerLevel int32) *Aura {
 	aura := target.GetOrRegisterAura(Aura{
 		Label:    "DemoralizingRoar-" + strconv.Itoa(int(points)),
 		ActionID: ActionID{SpellID: 48560},
@@ -476,7 +484,7 @@ func DemoralizingRoarAura(target *Unit, points int32) *Aura {
 }
 
 // TODO: Classic
-func DemoralizingShoutAura(target *Unit, boomingVoicePts int32, impDemoShoutPts int32) *Aura {
+func DemoralizingShoutAura(target *Unit, boomingVoicePts int32, impDemoShoutPts int32, playerLevel int32) *Aura {
 	aura := target.GetOrRegisterAura(Aura{
 		Label:    "DemoralizingShout-" + strconv.Itoa(int(impDemoShoutPts)),
 		ActionID: ActionID{SpellID: 47437},
@@ -487,7 +495,7 @@ func DemoralizingShoutAura(target *Unit, boomingVoicePts int32, impDemoShoutPts 
 }
 
 // TODO: Classic
-func VindicationAura(target *Unit, points int32) *Aura {
+func VindicationAura(target *Unit, points int32, playerLevel int32) *Aura {
 	aura := target.GetOrRegisterAura(Aura{
 		Label:    "Vindication",
 		ActionID: ActionID{SpellID: 26016},
@@ -511,7 +519,7 @@ func apReductionEffect(aura *Aura, apReduction float64) *ExclusiveEffect {
 }
 
 // TODO: Classic
-func ThunderClapAura(target *Unit, points int32) *Aura {
+func ThunderClapAura(target *Unit, points int32, playerLevel int32) *Aura {
 	aura := target.GetOrRegisterAura(Aura{
 		Label:    "ThunderClap-" + strconv.Itoa(int(points)),
 		ActionID: ActionID{SpellID: 47502},
