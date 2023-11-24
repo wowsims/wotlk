@@ -1,8 +1,6 @@
 package warrior
 
 import (
-	"time"
-
 	"github.com/wowsims/classic/sim/core"
 )
 
@@ -41,17 +39,4 @@ func (warrior *Warrior) registerDemoralizingShoutSpell() {
 
 		RelatedAuras: []core.AuraArray{warrior.DemoralizingShoutAuras},
 	})
-}
-
-func (warrior *Warrior) ShouldDemoralizingShout(sim *core.Simulation, target *core.Unit, filler bool, maintainOnly bool) bool {
-	if !warrior.DemoralizingShout.CanCast(sim, target) {
-		return false
-	}
-
-	if filler {
-		return true
-	}
-
-	return maintainOnly &&
-		warrior.DemoralizingShoutAuras.Get(target).ShouldRefreshExclusiveEffects(sim, time.Second*2)
 }

@@ -47,7 +47,3 @@ func (warrior *Warrior) makeShoutSpell() *core.Spell {
 		return nil
 	}
 }
-
-func (warrior *Warrior) ShouldShout(sim *core.Simulation) bool {
-	return warrior.Shout != nil && warrior.CurrentRage() >= warrior.Shout.DefaultCast.Cost && warrior.Shout.ShouldRefreshExclusiveEffects(sim, &warrior.Unit, ShoutExpirationThreshold)
-}

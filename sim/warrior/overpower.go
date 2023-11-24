@@ -85,9 +85,3 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 		},
 	})
 }
-
-func (warrior *Warrior) ShouldOverpower(sim *core.Simulation) bool {
-	return warrior.OverpowerAura.IsActive() && warrior.Overpower.IsReady(sim) &&
-		warrior.CurrentRage() >= warrior.Overpower.DefaultCast.Cost &&
-		sim.CurrentTime > (warrior.lastOverpowerProc+warrior.reactionTime)
-}

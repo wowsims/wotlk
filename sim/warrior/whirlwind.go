@@ -62,7 +62,3 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 		},
 	})
 }
-
-func (warrior *Warrior) CanWhirlwind(sim *core.Simulation) bool {
-	return warrior.StanceMatches(BerserkerStance) && warrior.CurrentRage() >= warrior.Whirlwind.DefaultCast.Cost && warrior.Whirlwind.IsReady(sim)
-}

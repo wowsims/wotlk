@@ -71,22 +71,3 @@ func (warrior *Warrior) registerThunderClapSpell() {
 		RelatedAuras: []core.AuraArray{warrior.ThunderClapAuras},
 	})
 }
-
-func (warrior *Warrior) CanThunderClapIgnoreStance(sim *core.Simulation) bool {
-	return warrior.CurrentRage() >= warrior.ThunderClap.DefaultCast.Cost && warrior.ThunderClap.IsReady(sim)
-}
-
-func (warrior *Warrior) ShouldThunderClap(sim *core.Simulation, target *core.Unit, filler bool, maintainOnly bool, ignoreStance bool) bool {
-	if ignoreStance && !warrior.CanThunderClapIgnoreStance(sim) {
-		return false
-	} else if !ignoreStance && !warrior.ThunderClap.CanCast(sim, target) {
-		return false
-	}
-
-	if filler {
-		return true
-	}
-
-	return maintainOnly &&
-		warrior.ThunderClapAuras.Get(target).ShouldRefreshExclusiveEffects(sim, time.Second*2)
-}

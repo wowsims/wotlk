@@ -138,12 +138,6 @@ func (warrior *Warrior) makeQueueSpellsAndAura(srcSpell *core.Spell) *core.Spell
 	return queueSpell
 }
 
-func (warrior *Warrior) QueueHSOrCleave(sim *core.Simulation) {
-	if warrior.hsOrCleaveQueueSpell.CanCast(sim, warrior.CurrentTarget) {
-		warrior.hsOrCleaveQueueSpell.Cast(sim, warrior.CurrentTarget)
-	}
-}
-
 // Returns true if the regular melee swing should be used, false otherwise.
 func (warrior *Warrior) TryHSOrCleave(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
 	if !warrior.curQueueAura.IsActive() {
@@ -161,10 +155,6 @@ func (warrior *Warrior) TryHSOrCleave(sim *core.Simulation, mhSwingSpell *core.S
 	}
 
 	return warrior.curQueuedAutoSpell
-}
-
-func (warrior *Warrior) ShouldQueueHSOrCleave(sim *core.Simulation) bool {
-	return warrior.CurrentRage() >= warrior.HSRageThreshold && sim.CurrentTime >= warrior.Hardcast.Expires
 }
 
 func (warrior *Warrior) RegisterHSOrCleave(useCleave bool, rageThreshold float64) {

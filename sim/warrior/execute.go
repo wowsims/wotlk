@@ -59,11 +59,3 @@ func (warrior *Warrior) registerExecuteSpell() {
 	})
 	rageMetrics = warrior.Execute.Cost.(*core.RageCost).ResourceMetrics
 }
-
-func (warrior *Warrior) SpamExecute(spam bool) bool {
-	return warrior.CurrentRage() >= warrior.Execute.DefaultCast.Cost && spam && warrior.PrimaryTalentTree == ArmsTree
-}
-
-func (warrior *Warrior) CastExecute(sim *core.Simulation, target *core.Unit) bool {
-	return warrior.Execute.Cast(sim, target)
-}

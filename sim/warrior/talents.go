@@ -80,7 +80,7 @@ func (warrior *Warrior) applyWeaponSpecializations() {
 	}
 
 	if as := warrior.Talents.AxeSpecialization; as > 0 {
-		// the default character pane displays critical strike chance for main hand only
+		// the default character panel displays critical strike chance for main hand only
 		switch warrior.GetProcMaskForTypes(proto.WeaponType_WeaponTypeAxe) {
 		case core.ProcMaskMelee:
 			warrior.AddStat(stats.MeleeCrit, 1*core.CritRatingPerCritChance*float64(as))
