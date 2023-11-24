@@ -23,19 +23,11 @@ import * as PresetUtils from '../core/preset_utils.js';
 
 import Empty from './gear_sets/empty.json';
 
-import FuryApl from './apls/fury.apl.json';
-import FurySunderApl from './apls/fury_sunder.apl.json';
-import ArmsApl from './apls/arms.apl.json';
-
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
 
 export const EMPTY_PRESET = PresetUtils.makePresetGear('Empty', Empty, { talentTree: 0 });
-
-export const ROTATION_FURY = PresetUtils.makePresetAPLRotation('Fury', FuryApl, { talentTree: 1 });
-export const ROTATION_FURY_SUNDER = PresetUtils.makePresetAPLRotation('Fury + Sunder', FurySunderApl, { talentTree: 1 });
-export const ROTATION_ARMS = PresetUtils.makePresetAPLRotation('Arms', ArmsApl, { talentTree: 0 });
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/classic/talent-calc and copy the numbers in the url.

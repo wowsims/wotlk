@@ -46,7 +46,7 @@ func (warrior *Warrior) registerThunderClapSpell() {
 
 		// Cruelty doesn't apply to Thunder Clap
 		BonusCritRating:  (0 - float64(warrior.Talents.Cruelty)*1),
-		DamageMultiplier: []float64{1.0, 1.1, 1.2, 1.3}[warrior.Talents.ImprovedThunderClap],
+		DamageMultiplier: 1,
 		CritMultiplier:   warrior.critMultiplier(none),
 		ThreatMultiplier: 1.85,
 

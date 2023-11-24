@@ -65,7 +65,6 @@ func (warrior *Warrior) registerBattleStanceAura() {
 	const threatMult = 0.8
 
 	actionID := core.ActionID{SpellID: 2457}
-	armorPenBonus := core.ArmorPenPerPercentArmor * (10 + core.TernaryFloat64(warrior.HasSetBonus(ItemSetWrynnsBattlegear, 2), 6, 0))
 
 	warrior.BattleStanceAura = warrior.GetOrRegisterAura(core.Aura{
 		Label:    "Battle Stance",
@@ -73,11 +72,9 @@ func (warrior *Warrior) registerBattleStanceAura() {
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier *= threatMult
-			aura.Unit.AddStatDynamic(sim, stats.ArmorPenetration, armorPenBonus)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier /= threatMult
-			aura.Unit.AddStatDynamic(sim, stats.ArmorPenetration, -armorPenBonus)
 		},
 	})
 	warrior.BattleStanceAura.NewExclusiveEffect(stanceEffectCategory, true, core.ExclusiveEffect{})
@@ -96,7 +93,7 @@ func (warrior *Warrior) registerDefensiveStanceAura() {
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier *= threatMult
-			aura.Unit.PseudoStats.DamageDealtMultiplier *= 0.95
+			aura.Unit.PseudoStats.DamageDealtMultiplier *= 0.90
 			aura.Unit.PseudoStats.DamageTakenMultiplier *= 0.90
 
 			if warrior.Bloodthirst != nil {
@@ -108,7 +105,7 @@ func (warrior *Warrior) registerDefensiveStanceAura() {
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Unit.PseudoStats.ThreatMultiplier /= threatMult
-			aura.Unit.PseudoStats.DamageDealtMultiplier /= 0.95
+			aura.Unit.PseudoStats.DamageDealtMultiplier /= 0.90
 			aura.Unit.PseudoStats.DamageTakenMultiplier /= 0.9
 
 			if warrior.Bloodthirst != nil {

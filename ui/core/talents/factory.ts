@@ -14,7 +14,7 @@ import { rogueGlyphsConfig, rogueTalentsConfig } from './rogue.js';
 import { shamanGlyphsConfig, shamanTalentsConfig } from './shaman.js';
 import { TalentsConfig } from './talents_picker.js';
 import { warlockGlyphsConfig, warlockTalentsConfig } from './warlock.js';
-import { warriorGlyphsConfig, warriorTalentsConfig } from './warrior.js';
+import { warriorTalentsConfig } from './warrior.js';
 
 export const classTalentsConfig: Record<Class, TalentsConfig<any>> = {
 	[Class.ClassUnknown]: [],
@@ -39,7 +39,7 @@ export const classGlyphsConfig: Record<Class, any> = {
 	[Class.ClassPaladin]: paladinGlyphsConfig,
 	[Class.ClassPriest]: priestGlyphsConfig,
 	[Class.ClassWarlock]: warlockGlyphsConfig,
-	[Class.ClassWarrior]: warriorGlyphsConfig,
+	[Class.ClassWarrior]: [],
 };
 
 export function talentSpellIdsToTalentString(playerClass: Class, talentIds: Array<number>): string {

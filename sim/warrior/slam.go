@@ -7,6 +7,16 @@ import (
 )
 
 func (warrior *Warrior) registerSlamSpell() {
+	if warrior.Level < 30 {
+		return
+	}
+
+	flatDamageBonus := map[int32]float64{
+		40: 43,
+		50: 68,
+		60: 87,
+	}[warrior.Level]
+
 	warrior.Slam = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47475},
 		SpellSchool: core.SpellSchoolPhysical,
@@ -37,7 +47,7 @@ func (warrior *Warrior) registerSlamSpell() {
 		FlatThreatBonus:  140,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := 250 +
+			baseDamage := flatDamageBonus +
 				spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
 				spell.BonusWeaponDamage()
 

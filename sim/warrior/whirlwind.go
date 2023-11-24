@@ -8,6 +8,10 @@ import (
 )
 
 func (warrior *Warrior) registerWhirlwindSpell() {
+	if warrior.Level < 36 {
+		return
+	}
+
 	actionID := core.ActionID{SpellID: 1680}
 	numHits := min(4, warrior.Env.GetNumTargets())
 	results := make([]*core.SpellResult, numHits)
