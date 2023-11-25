@@ -13,8 +13,6 @@ import {
 	Warrior_Rotation as WarriorRotation,
 	Warrior_Rotation_SunderArmor as SunderArmor,
 	Warrior_Options as WarriorOptions,
-	WarriorMajorGlyph,
-	WarriorMinorGlyph,
 	Warrior_Rotation_StanceOption as StanceOption,
 	Warrior_Rotation_MainGcd as MainGcd,
 } from '../core/proto/warrior.js';

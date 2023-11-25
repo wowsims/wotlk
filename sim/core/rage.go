@@ -12,6 +12,9 @@ const ThreatPerRageGained = 5
 // OnRageGain is called any time rage is increased.
 type OnRageGain func(sim *Simulation)
 
+// OnRageChange is called any time rage is increased.
+type OnRageChange func(aura *Aura, sim *Simulation)
+
 type rageBar struct {
 	unit *Unit
 
@@ -124,6 +127,7 @@ func (rb *rageBar) AddRage(sim *Simulation, amount float64, metrics *ResourceMet
 			rb.onRageGain(sim)
 		}
 	}
+	rb.unit.OnRageChange(sim)
 }
 
 func (rb *rageBar) SpendRage(sim *Simulation, amount float64, metrics *ResourceMetrics) {
@@ -139,6 +143,7 @@ func (rb *rageBar) SpendRage(sim *Simulation, amount float64, metrics *ResourceM
 	}
 
 	rb.currentRage = newRage
+	rb.unit.OnRageChange(sim)
 }
 
 func (rb *rageBar) reset(_ *Simulation) {

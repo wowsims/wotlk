@@ -65,46 +65,20 @@ message WarriorTalents {
 	bool shield_slam = 52;
 }
 
-enum WarriorMajorGlyph {
-	WarriorMajorGlyphNone = 0;
-	GlyphOfBarbaricInsults = 43420;
-	GlyphOfBladestorm = 45790;
-	GlyphOfBlocking = 43425;
-	GlyphOfBloodthirst = 43412;
-	GlyphOfCleaving = 43414;
-	GlyphOfDevastate = 43415;
-	GlyphOfEnragedRegeneration = 45794;
-	GlyphOfExecution = 43416;
-	GlyphOfHamstring = 43417;
-	GlyphOfHeroicStrike = 43418;
-	GlyphOfIntervene = 43419;
-	GlyphOfLastStand = 43426;
-	GlyphOfMortalStrike = 43421;
-	GlyphOfOverpower = 43422;
-	GlyphOfRapidCharge = 43413;
-	GlyphOfRending = 43423;
-	GlyphOfResonatingPower = 43430;
-	GlyphOfRevenge = 43424;
-	GlyphOfShieldWall = 45797;
-	GlyphOfShockwave = 45792;
-	GlyphOfSpellReflection = 45795;
-	GlyphOfSunderArmor = 43427;
-	GlyphOfSweepingStrikes = 43428;
-	GlyphOfTaunt = 43429;
-	GlyphOfVictoryRush = 43431;
-	GlyphOfVigilance = 45793;
-	GlyphOfWhirlwind = 43432;
-}
-enum WarriorMinorGlyph {
-	WarriorMinorGlyphNone = 0;
-	GlyphOfBattle = 43395;
-	GlyphOfBloodrage = 43396;
-	GlyphOfCharge = 43397;
-	GlyphOfCommand = 49084;
-	GlyphOfEnduringVictory = 43400;
-	GlyphOfMockingBlow = 43398;
-	GlyphOfThunderClap = 43399;
-	GlyphOfShatteringThrow = 206953;
+enum WarriorRune {
+	WarriorRuneNone = 0;
+	RuneBloodFrenzy = 403474;
+	RuneFlagellation = 403480;
+	RuneRagingBlow = 425444;
+	RuneWarbringer = 425445;
+	RuneVictoryRush = 403470;
+	RuneDevastate = 403475;
+	RuneEndlessRage = 403489;
+	RuneSingleMindedFury = 416003;
+	RuneQuickStrike = 425443;
+	RuneFuriousThunder = 403476;
+	RuneConsumedByRage = 425446;
+	RuneFrenziedAssault = 425447;
 }
 
 enum WarriorShout {

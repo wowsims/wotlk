@@ -56,9 +56,8 @@ func NewDpsWarrior(character *core.Character, options *proto.Player) *DpsWarrior
 	}
 
 	rbo := core.RageBarOptions{
-		StartingRage: warOptions.Options.StartingRage,
-		// TODO: Endless Rage Rune
-		RageMultiplier: core.TernaryFloat64(false, 1.25, 1),
+		StartingRage:   warOptions.Options.StartingRage,
+		RageMultiplier: core.TernaryFloat64(war.HasRune(proto.WarriorRune_RuneEndlessRage), 1.25, 1),
 	}
 	if mh := war.GetMHWeapon(); mh != nil {
 		rbo.MHSwingSpeed = mh.SwingSpeed
@@ -72,7 +71,6 @@ func NewDpsWarrior(character *core.Character, options *proto.Player) *DpsWarrior
 		MainHand:       war.WeaponFromMainHand(war.DefaultMeleeCritMultiplier()),
 		OffHand:        war.WeaponFromOffHand(war.DefaultMeleeCritMultiplier()),
 		AutoSwingMelee: true,
-		ReplaceMHSwing: war.TryHSOrCleave,
 	})
 
 	return war
@@ -89,8 +87,8 @@ func (war *DpsWarrior) GetWarrior() *warrior.Warrior {
 func (war *DpsWarrior) Initialize() {
 	war.Warrior.Initialize()
 
-	war.RegisterHSOrCleave(war.Rotation.UseCleave, war.Rotation.HsRageThreshold)
-	war.RegisterRendSpell(war.Rotation.RendRageThresholdBelow, war.Rotation.RendHealthThresholdAbove)
+	war.RegisterHSOrCleave(war.Rotation.UseCleave)
+	war.RegisterRendSpell()
 
 	if war.Options.UseRecklessness {
 		war.RegisterRecklessnessCD()

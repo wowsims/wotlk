@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
-	"github.com/wowsims/classic/sim/core/proto"
 )
 
 func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
@@ -23,9 +22,6 @@ func (warrior *Warrior) registerOverpowerSpell(cdTimer *core.Timer) {
 	}[warrior.Level]
 
 	outcomeMask := core.OutcomeDodge
-	if warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfOverpower) {
-		outcomeMask |= core.OutcomeParry
-	}
 	warrior.RegisterAura(core.Aura{
 		Label:    "Overpower Trigger",
 		Duration: core.NeverExpires,

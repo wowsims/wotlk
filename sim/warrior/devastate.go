@@ -2,7 +2,6 @@ package warrior
 
 import (
 	"github.com/wowsims/classic/sim/core"
-	"github.com/wowsims/classic/sim/core/proto"
 )
 
 func (warrior *Warrior) registerDevastateSpell() {
@@ -10,9 +9,8 @@ func (warrior *Warrior) registerDevastateSpell() {
 	// 	return
 	// }
 
-	hasGlyph := warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfDevastate)
-	flatThreatBonus := core.TernaryFloat64(hasGlyph, 630, 315)
-	dynaThreatBonus := core.TernaryFloat64(hasGlyph, 0.1, 0.05)
+	flatThreatBonus := 315.0
+	dynaThreatBonus := 0.05
 
 	weaponMulti := 1.2
 	overallMulti := core.TernaryFloat64(warrior.HasSetBonus(ItemSetWrynnsPlate, 2), 1.05, 1.00)

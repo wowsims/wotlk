@@ -63,6 +63,7 @@ func (target *Target) initialize(config *proto.Target) {
 func (target *Target) AddRaidBuffs(_ *proto.RaidBuffs)   {}
 func (target *Target) AddPartyBuffs(_ *proto.PartyBuffs) {}
 func (target *Target) ApplyTalents()                     {}
+func (target *Target) ApplyRunes()                       {}
 func (target *Target) GetCharacter() *Character          { return nil }
 func (target *Target) Initialize()                       {}
 

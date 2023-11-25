@@ -44,7 +44,6 @@ func (warrior *Warrior) registerMortalStrikeSpell(cdTimer *core.Timer) {
 			},
 		},
 
-		BonusCritRating:  core.TernaryFloat64(warrior.HasSetBonus(ItemSetSiegebreakerBattlegear, 4), 10, 0) * core.CritRatingPerCritChance,
 		DamageMultiplier: 1,
 		CritMultiplier:   warrior.critMultiplier(mh),
 		ThreatMultiplier: 1,

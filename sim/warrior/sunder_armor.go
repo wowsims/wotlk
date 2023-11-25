@@ -2,7 +2,6 @@ package warrior
 
 import (
 	"github.com/wowsims/classic/sim/core"
-	"github.com/wowsims/classic/sim/core/proto"
 )
 
 // TODO: GlyphOfSunderArmor will require refactoring this a bit
@@ -43,7 +42,6 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 		RelatedAuras: []core.AuraArray{warrior.SunderArmorAuras},
 	}
 
-	extraStack := isDevastateEffect && warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfDevastate)
 	if isDevastateEffect {
 		config.RageCost = core.RageCostOptions{}
 		config.Cast.DefaultCast.GCD = 0
@@ -70,9 +68,6 @@ func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell 
 			aura.Activate(sim)
 			if aura.IsActive() {
 				aura.AddStack(sim)
-				if extraStack {
-					aura.AddStack(sim)
-				}
 			}
 		} else {
 			spell.IssueRefund(sim)

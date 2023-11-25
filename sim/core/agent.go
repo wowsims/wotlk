@@ -24,9 +24,10 @@ type Agent interface {
 	// Updates the input Buffs to include party-wide buffs provided by this Agent.
 	AddPartyBuffs(partyBuffs *proto.PartyBuffs)
 
-	// All talent stats / auras should be added within this callback. This makes sure
+	// All talent and runes stats / auras should be added within this callback. This makes sure
 	// talents are applied at the right time so we can calculate groups of stats.
 	ApplyTalents()
+	ApplyRunes()
 
 	// Returns this Agent to its initial state. Called before each Sim iteration
 	// and once after the final iteration.

@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
-	"github.com/wowsims/classic/sim/core/proto"
 )
 
 func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
@@ -17,24 +16,6 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 	})
 
 	var glyphOfRevengeProcAura *core.Aura
-	if warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfRevenge) {
-		glyphOfRevengeProcAura = warrior.RegisterAura(core.Aura{
-			Label:    "Glyph of Revenge",
-			Duration: core.NeverExpires,
-			ActionID: core.ActionID{SpellID: 58398},
-			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				warrior.HeroicStrike.CostMultiplier -= 1
-			},
-			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				warrior.HeroicStrike.CostMultiplier += 1
-			},
-			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-				if spell == warrior.HeroicStrike {
-					aura.Deactivate(sim)
-				}
-			},
-		})
-	}
 
 	warrior.RegisterAura(core.Aura{
 		Label:    "Revenge Trigger",

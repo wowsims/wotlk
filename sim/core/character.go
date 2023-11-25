@@ -273,6 +273,7 @@ func (character *Character) applyAllEffects(agent Agent, raidBuffs *proto.RaidBu
 	playerStats.GearStats = measureStats()
 
 	agent.ApplyTalents()
+	agent.ApplyRunes()
 	character.applyBuildPhaseAuras(CharacterBuildPhaseTalents)
 	playerStats.TalentsStats = measureStats()
 

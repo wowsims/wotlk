@@ -46,7 +46,7 @@ func NewProtectionWarrior(character *core.Character, options *proto.Player) *Pro
 
 	rbo := core.RageBarOptions{
 		StartingRage:   warOptions.Options.StartingRage,
-		RageMultiplier: core.TernaryFloat64(war.Talents.EndlessRage, 1.25, 1),
+		RageMultiplier: core.TernaryFloat64(war.HasRune(proto.WarriorRune_RuneEndlessRage), 1.25, 1),
 	}
 	if mh := war.GetMHWeapon(); mh != nil {
 		rbo.MHSwingSpeed = mh.SwingSpeed
@@ -87,7 +87,7 @@ func (war *ProtectionWarrior) GetWarrior() *warrior.Warrior {
 func (war *ProtectionWarrior) Initialize() {
 	war.Warrior.Initialize()
 
-	war.RegisterHSOrCleave(false, war.Rotation.HsRageThreshold)
+	war.RegisterHSOrCleave(false)
 	war.RegisterShieldWallCD()
 	war.RegisterShieldBlockCD()
 	war.DefensiveStanceAura.BuildPhase = core.CharacterBuildPhaseTalents

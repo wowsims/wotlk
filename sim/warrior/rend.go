@@ -6,7 +6,7 @@ import (
 	"github.com/wowsims/classic/sim/core"
 )
 
-func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold float64) {
+func (warrior *Warrior) RegisterRendSpell() {
 	dotTicks := int32(5)
 	baseDamage := map[int32]float64{
 		25: 45,
@@ -26,7 +26,7 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold
 		ActionID:    core.ActionID{SpellID: spellID},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagAPL,
+		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagAPL | SpellFlagBleed,
 
 		RageCost: core.RageCostOptions{
 			Cost:   10,

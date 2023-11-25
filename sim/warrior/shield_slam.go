@@ -4,26 +4,9 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
-	"github.com/wowsims/classic/sim/core/proto"
 )
 
 func (warrior *Warrior) registerShieldSlamSpell() {
-	hasGlyph := warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfBlocking)
-	var glyphOfBlockingAura *core.Aura = nil
-	if hasGlyph {
-		glyphOfBlockingAura = warrior.GetOrRegisterAura(core.Aura{
-			Label:    "Glyph of Blocking",
-			ActionID: core.ActionID{SpellID: 58397},
-			Duration: 10 * time.Second,
-			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				warrior.PseudoStats.BlockValueMultiplier += 0.1
-			},
-			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				warrior.PseudoStats.BlockValueMultiplier -= 0.1
-			},
-		})
-	}
-
 	warrior.ShieldSlam = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47488},
 		SpellSchool: core.SpellSchoolPhysical,
@@ -63,7 +46,7 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 			// TODO: Verify that this bypass behavior and DR curve are correct
 
 			sbvMod := warrior.PseudoStats.BlockValueMultiplier
-			sbvMod /= (sbvMod - core.TernaryFloat64(warrior.ShieldBlockAura.IsActive(), 1, 0) - core.TernaryFloat64(glyphOfBlockingAura.IsActive(), 0.1, 0))
+			sbvMod /= 1
 
 			sbv := warrior.BlockValue() / sbvMod
 
@@ -72,11 +55,7 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 			baseDamage := sim.Roll(990, 1040) + sbv
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 
-			if result.Landed() {
-				if glyphOfBlockingAura != nil {
-					glyphOfBlockingAura.Activate(sim)
-				}
-			} else {
+			if !result.Landed() {
 				spell.IssueRefund(sim)
 			}
 		},

@@ -8,16 +8,15 @@ import (
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
+const (
+	SpellFlagBleed = core.SpellFlagAgentReserved1
+)
+
 var TalentTreeSizes = [3]int{31, 27, 27}
 
 type WarriorInputs struct {
-	ShoutType                   proto.WarriorShout
-	PrecastShout                bool
-	PrecastShoutSapphire        bool
-	PrecastShoutT2              bool
-	RendCdThreshold             time.Duration
-	BloodsurgeDurationThreshold time.Duration
-	StanceSnapshot              bool
+	ShoutType      proto.WarriorShout
+	StanceSnapshot bool
 }
 
 const (
@@ -34,8 +33,13 @@ type Warrior struct {
 	WarriorInputs
 
 	// Current state
-	Stance          Stance
-	revengeProcAura *core.Aura
+	Stance               Stance
+	revengeProcAura      *core.Aura
+	OverpowerAura        *core.Aura
+	BerserkerRageAura    *core.Aura
+	BloodrageAura        *core.Aura
+	ConsumedByRageAura   *core.Aura
+	Above80RageCBRActive bool
 
 	// Reaction time values
 	reactionTime       time.Duration
@@ -48,6 +52,7 @@ type Warrior struct {
 	DefensiveStance *core.Spell
 	BerserkerStance *core.Spell
 
+	Bloodrage            *core.Spell
 	BerserkerRage        *core.Spell
 	Bloodthirst          *core.Spell
 	DemoralizingShout    *core.Spell
@@ -66,17 +71,14 @@ type Warrior struct {
 	Whirlwind            *core.Spell
 	DeepWounds           *core.Spell
 	ConcussionBlow       *core.Spell
+	RagingBlow           *core.Spell
 
 	HeroicStrike         *core.Spell
+	QuickStrike          *core.Spell
 	Cleave               *core.Spell
 	hsOrCleaveQueueSpell *core.Spell
 	curQueueAura         *core.Aura
 	curQueuedAutoSpell   *core.Spell
-
-	OverpowerAura            *core.Aura
-	HSRageThreshold          float64
-	RendRageThresholdBelow   float64
-	RendHealthThresholdAbove float64
 
 	BattleStanceAura    *core.Aura
 	DefensiveStanceAura *core.Aura
@@ -129,12 +131,6 @@ func (warrior *Warrior) Initialize() {
 	warrior.SunderArmorDevastate = warrior.newSunderArmorSpell(true)
 
 	warrior.registerBloodrageCD()
-
-	if !warrior.IsUsingAPL && warrior.Shout != nil && warrior.PrecastShout {
-		warrior.RegisterPrepullAction(-10*time.Second, func(sim *core.Simulation) {
-			warrior.Shout.SkipCastAndApplyEffects(sim, nil)
-		})
-	}
 }
 
 func (warrior *Warrior) Reset(_ *core.Simulation) {
@@ -189,15 +185,11 @@ func (warrior *Warrior) critMultiplier(hand hand) float64 {
 	return warrior.MeleeCritMultiplier(primary(warrior, hand), 0.1*float64(warrior.Talents.Impale))
 }
 
-func (warrior *Warrior) HasMajorGlyph(glyph proto.WarriorMajorGlyph) bool {
-	return warrior.HasGlyph(int32(glyph))
-}
-
-func (warrior *Warrior) HasMinorGlyph(glyph proto.WarriorMinorGlyph) bool {
-	return warrior.HasGlyph(int32(glyph))
-}
-
 // Agent is a generic way to access underlying warrior on any of the agents.
 type WarriorAgent interface {
 	GetWarrior() *Warrior
+}
+
+func (warrior *Warrior) HasRune(rune proto.WarriorRune) bool {
+	return warrior.HasRuneById(int32(rune))
 }

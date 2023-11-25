@@ -70,7 +70,7 @@ func (warrior *Warrior) registerCleaveSpell() *core.Spell {
 		60: 20569,
 	}[warrior.Level]
 
-	targets := core.TernaryInt32(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfCleaving), 3, 2)
+	targets := int32(2)
 	numHits := min(targets, warrior.Env.GetNumTargets())
 	results := make([]*core.SpellResult, numHits)
 
@@ -152,42 +152,17 @@ func (warrior *Warrior) makeQueueSpellsAndAura(srcSpell *core.Spell) *core.Spell
 	return queueSpell
 }
 
-// Returns true if the regular melee swing should be used, false otherwise.
-func (warrior *Warrior) TryHSOrCleave(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
-	if !warrior.curQueueAura.IsActive() {
-		return mhSwingSpell
-	}
+func (warrior *Warrior) RegisterHSOrCleave(useCleave bool) {
 
-	if warrior.CurrentRage() < warrior.HSRageThreshold {
-		warrior.curQueueAura.Deactivate(sim)
-		return mhSwingSpell
-	}
-
-	if !warrior.curQueuedAutoSpell.CanCast(sim, warrior.CurrentTarget) {
-		warrior.curQueueAura.Deactivate(sim)
-		return mhSwingSpell
-	}
-
-	return warrior.curQueuedAutoSpell
-}
-
-func (warrior *Warrior) RegisterHSOrCleave(useCleave bool, rageThreshold float64) {
-	warrior.HeroicStrike = warrior.registerCleaveSpell()
-	hsQueueSpell := warrior.makeQueueSpellsAndAura(warrior.HeroicStrike)
-	warrior.Cleave = warrior.registerHeroicStrikeSpell()
-	cleaveQueueSpell := warrior.makeQueueSpellsAndAura(warrior.Cleave)
-
-	var autoSpell *core.Spell
 	if useCleave {
-		autoSpell = warrior.HeroicStrike
+		warrior.Cleave = warrior.registerCleaveSpell()
+		cleaveQueueSpell := warrior.makeQueueSpellsAndAura(warrior.Cleave)
+		warrior.hsOrCleaveQueueSpell = cleaveQueueSpell
+	} else if !warrior.HasRune(proto.WarriorRune_RuneQuickStrike) {
+		warrior.HeroicStrike = warrior.registerHeroicStrikeSpell()
+		hsQueueSpell := warrior.makeQueueSpellsAndAura(warrior.HeroicStrike)
 		warrior.hsOrCleaveQueueSpell = hsQueueSpell
 	} else {
-		autoSpell = warrior.Cleave
-		warrior.hsOrCleaveQueueSpell = cleaveQueueSpell
-	}
-
-	warrior.HSRageThreshold = max(autoSpell.DefaultCast.Cost, rageThreshold)
-	if warrior.IsUsingAPL {
-		warrior.HSRageThreshold = 0
+		warrior.hsOrCleaveQueueSpell = nil
 	}
 }

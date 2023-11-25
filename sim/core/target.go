@@ -233,7 +233,7 @@ func NewAttackTable(attacker *Unit, defender *Unit) *AttackTable {
 		table.BaseParryChance = 0.05 + (float64(defender.Level*5)-weaponSkill)*0.001
 		table.BaseGlanceChance = 0.1 + (float64(defender.Level*5)-min(float64(attacker.Level*5), weaponSkill))*0.02
 
-		table.GlanceMultiplierMin = min(1.3-0.05*(float64(defender.Level*5)-weaponSkill), 0.91)
+		table.GlanceMultiplierMin = max(min(1.3-0.05*(float64(defender.Level*5)-weaponSkill), 0.91), 0.01)
 		table.GlanceMultiplierMax = max(min(1.2-0.03*(float64(defender.Level*5)-weaponSkill), 0.99), 0.2)
 
 		table.MeleeCritSuppression = float64(defender.Level-attacker.Level) * 5 * 0.0004

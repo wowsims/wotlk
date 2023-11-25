@@ -13,7 +13,7 @@ func (warrior *Warrior) registerBerserkerRageSpell() {
 
 	actionID := core.ActionID{SpellID: 18499}
 
-	berserkerRageAura := warrior.RegisterAura(core.Aura{
+	warrior.BerserkerRageAura = warrior.RegisterAura(core.Aura{
 		Label:    "Berserker Rage",
 		ActionID: actionID,
 		Duration: time.Second * 10,
@@ -34,7 +34,7 @@ func (warrior *Warrior) registerBerserkerRageSpell() {
 			},
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-			berserkerRageAura.Activate(sim)
+			warrior.BerserkerRageAura.Activate(sim)
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool { return warrior.StanceMatches(BerserkerStance) },
 	})

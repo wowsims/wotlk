@@ -70,6 +70,7 @@ type Aura struct {
 	onHealTakenIndex           int32 // Position of this aura's index in the onHealAuras array.
 	onPeriodicHealDealtIndex   int32 // Position of this aura's index in the onPeriodicHealAuras array.
 	onPeriodicHealTakenIndex   int32 // Position of this aura's index in the onPeriodicHealAuras array.
+	onRageChangeIndex          int32 // Position of this aura's index in the onRageChangeAuras array.
 
 	// The number of stacks, or charges, of this aura. If this aura doesn't care
 	// about charges, is just 0.
@@ -96,6 +97,7 @@ type Aura struct {
 	OnHealTaken           OnSpellHit       // Invoked when a heal hits and this unit is the target.
 	OnPeriodicHealDealt   OnPeriodicDamage // Invoked when a hot tick occurs and this unit is the caster.
 	OnPeriodicHealTaken   OnPeriodicDamage // Invoked when a hot tick occurs and this unit is the target.
+	OnRageChange          OnRageChange     // Invoked when unit's rage value changes.
 
 	// If non-default, stat bonuses fron the OnGain callback of this aura will be
 	// included in Character Stats in the UI.
@@ -301,6 +303,7 @@ type auraTracker struct {
 	onHealTakenAuras           []*Aura
 	onPeriodicHealDealtAuras   []*Aura
 	onPeriodicHealTakenAuras   []*Aura
+	onRageChangeAuras          []*Aura
 }
 
 func newAuraTracker() auraTracker {
@@ -376,6 +379,7 @@ func (at *auraTracker) registerAura(unit *Unit, aura Aura) *Aura {
 	newAura.onHealTakenIndex = Inactive
 	newAura.onPeriodicHealDealtIndex = Inactive
 	newAura.onPeriodicHealTakenIndex = Inactive
+	newAura.onRageChangeIndex = Inactive
 
 	at.auras = append(at.auras, newAura)
 	if newAura.Tag != "" {
@@ -403,6 +407,7 @@ func (unit *Unit) GetOrRegisterAura(aura Aura) *Aura {
 		curAura.OnHealTaken = aura.OnHealTaken
 		curAura.OnPeriodicHealDealt = aura.OnPeriodicHealDealt
 		curAura.OnPeriodicHealTaken = aura.OnPeriodicHealTaken
+		curAura.OnRageChange = aura.OnRageChange
 		return curAura
 	}
 }
@@ -466,6 +471,7 @@ func (at *auraTracker) reset(sim *Simulation) {
 	at.onHealTakenAuras = at.onHealTakenAuras[:0]
 	at.onPeriodicHealDealtAuras = at.onPeriodicHealDealtAuras[:0]
 	at.onPeriodicHealTakenAuras = at.onPeriodicHealTakenAuras[:0]
+	at.onRageChangeAuras = at.onRageChangeAuras[:0]
 
 	for _, resetEffect := range at.resetEffects {
 		resetEffect(sim)
@@ -611,6 +617,10 @@ func (aura *Aura) Activate(sim *Simulation) {
 		aura.onPeriodicHealTakenIndex = int32(len(aura.Unit.onPeriodicHealTakenAuras))
 		aura.Unit.onPeriodicHealTakenAuras = append(aura.Unit.onPeriodicHealTakenAuras, aura)
 	}
+	if aura.OnRageChange != nil {
+		aura.onRageChangeIndex = int32(len(aura.Unit.onRageChangeAuras))
+		aura.Unit.onRageChangeAuras = append(aura.Unit.onRageChangeAuras, aura)
+	}
 
 	if sim.Log != nil && !aura.ActionID.IsEmptyAction() {
 		aura.Unit.Log(sim, "Aura gained: %s", aura.ActionID)
@@ -732,6 +742,15 @@ func (aura *Aura) Deactivate(sim *Simulation) {
 		aura.onPeriodicHealTakenIndex = Inactive
 	}
 
+	if aura.onRageChangeIndex != Inactive {
+		removeOnRageChange := aura.onRageChangeIndex
+		aura.Unit.onRageChangeAuras = removeBySwappingToBack(aura.Unit.onRageChangeAuras, removeOnRageChange)
+		if removeOnRageChange < int32(len(aura.Unit.onRageChangeAuras)) {
+			aura.Unit.onRageChangeAuras[removeOnRageChange].onRageChangeIndex = removeOnRageChange
+		}
+		aura.onRageChangeIndex = Inactive
+	}
+
 	// don't invoke possible callbacks until the internal state is consistent
 	if aura.stacks != 0 {
 		aura.SetStacks(sim, 0)
@@ -840,6 +859,13 @@ func (at *auraTracker) GetMetricsProto() []*proto.AuraMetrics {
 	}
 
 	return metrics
+}
+
+// Invokes the OnRageChange for all tracked auras
+func (at *auraTracker) OnRageChange(sim *Simulation) {
+	for _, aura := range at.onRageChangeAuras {
+		aura.OnRageChange(aura, sim)
+	}
 }
 
 type AuraArray []*Aura
