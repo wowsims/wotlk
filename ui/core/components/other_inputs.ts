@@ -1,6 +1,6 @@
 import {BooleanPicker} from '../components/boolean_picker.js';
 import {EnumPicker} from '../components/enum_picker.js';
-import {ItemSlot, UnitReference} from '../proto/common.js';
+import {UnitReference} from '../proto/common.js';
 import {Player} from '../player.js';
 import {Sim} from '../sim.js';
 import {EventID} from '../typed_event.js';
@@ -31,21 +31,6 @@ export function makeShow2hWeaponsSelector(parent: HTMLElement, sim: Sim): Boolea
 		setValue: (eventID: EventID, sim: Sim, newValue: boolean) => {
 			const filters = sim.getFilters();
 			filters.twoHandedWeapons = newValue;
-			sim.setFilters(eventID, filters);
-		},
-	});
-}
-
-export function makeShowMatchingGemsSelector(parent: HTMLElement, sim: Sim): BooleanPicker<Sim> {
-	return new BooleanPicker<Sim>(parent, sim, {
-		extraCssClasses: ['show-matching-gems-selector', 'input-inline', 'mb-0'],
-		label: 'Match Socket',
-		inline: true,
-		changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
-		getValue: (sim: Sim) => sim.getFilters().matchingGemsOnly,
-		setValue: (eventID: EventID, sim: Sim, newValue: boolean) => {
-			const filters = sim.getFilters();
-			filters.matchingGemsOnly = newValue;
 			sim.setFilters(eventID, filters);
 		},
 	});

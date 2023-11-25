@@ -11,7 +11,6 @@ import (
 var WITH_DB = false
 
 var ItemsByID = map[int32]Item{}
-var GemsByID = map[int32]Gem{}
 var EnchantsByEffectID = map[int32]Enchant{}
 
 func addToDatabase(newDB *proto.SimDatabase) {
@@ -27,10 +26,8 @@ func addToDatabase(newDB *proto.SimDatabase) {
 		}
 	}
 
-	for _, v := range newDB.Gems {
-		if _, ok := GemsByID[v.Id]; !ok {
-			GemsByID[v.Id] = GemFromProto(v)
-		}
+	for _, v := range newDB.Runes {
+		fmt.Println(RuneFromProto(v))
 	}
 }
 
@@ -51,11 +48,7 @@ type Item struct {
 	Quality proto.ItemQuality
 	SetName string // Empty string if not part of a set.
 
-	GemSockets  []proto.GemColor
-	SocketBonus stats.Stats
-
 	// Modified for each instance of the item.
-	Gems    []Gem
 	Enchant Enchant
 	Rune    int32
 
@@ -76,8 +69,6 @@ func ItemFromProto(pData *proto.SimItem) Item {
 		WeaponDamageMax:  pData.WeaponDamageMax,
 		SwingSpeed:       pData.WeaponSpeed,
 		Stats:            stats.FromFloatArray(pData.Stats),
-		GemSockets:       pData.GemSockets,
-		SocketBonus:      stats.FromFloatArray(pData.SocketBonus),
 		SetName:          pData.SetName,
 	}
 }
@@ -86,8 +77,8 @@ func (item *Item) ToItemSpecProto() *proto.ItemSpec {
 	return &proto.ItemSpec{
 		Id:      item.ID,
 		Enchant: item.Enchant.EffectID,
-		Gems:    MapSlice(item.Gems, func(gem Gem) int32 { return gem.ID }),
-		Rune:    item.Rune,
+
+		Rune: item.Rune,
 	}
 }
 
@@ -113,26 +104,9 @@ func RuneFromProto(pData *proto.SimRune) Rune {
 	}
 }
 
-type Gem struct {
-	ID    int32
-	Name  string
-	Stats stats.Stats
-	Color proto.GemColor
-}
-
-func GemFromProto(pData *proto.SimGem) Gem {
-	return Gem{
-		ID:    pData.Id,
-		Name:  pData.Name,
-		Stats: stats.FromFloatArray(pData.Stats),
-		Color: pData.Color,
-	}
-}
-
 type ItemSpec struct {
 	ID      int32
 	Enchant int32
-	Gems    []int32
 	Rune    int32
 }
 
@@ -218,7 +192,7 @@ func (equipment *Equipment) ToEquipmentSpecProto() *proto.EquipmentSpec {
 	}
 }
 
-// Structs used for looking up items/gems/enchants
+// Structs used for looking up items/enchants
 type EquipmentSpec [proto.ItemSlot_ItemSlotRanged + 1]ItemSpec
 
 func ProtoToEquipmentSpec(es *proto.EquipmentSpec) EquipmentSpec {
@@ -227,7 +201,6 @@ func ProtoToEquipmentSpec(es *proto.EquipmentSpec) EquipmentSpec {
 		coreEquip[i] = ItemSpec{
 			ID:      item.Id,
 			Enchant: item.Enchant,
-			Gems:    item.Gems,
 			Rune:    item.Rune,
 		}
 	}
@@ -258,24 +231,6 @@ func NewItem(itemSpec ItemSpec) Item {
 		// }
 	}
 
-	if len(itemSpec.Gems) > 0 {
-		// Need to do this to account for possible extra gem sockets.
-		numGems := len(item.GemSockets)
-		if len(itemSpec.Gems) > numGems {
-			numGems = len(itemSpec.Gems)
-		}
-
-		item.Gems = make([]Gem, numGems)
-		for gemIdx, gemID := range itemSpec.Gems {
-			if gem, ok := GemsByID[gemID]; ok {
-				item.Gems[gemIdx] = gem
-			} else {
-				if gemID != 0 {
-					panic(fmt.Sprintf("When parsing item %d, socket %d had gem with id: %d\nThis gem is not in the database.", itemSpec.ID, gemIdx, gemID))
-				}
-			}
-		}
-	}
 	return item
 }
 
@@ -297,7 +252,6 @@ func ProtoToEquipment(es *proto.EquipmentSpec) Equipment {
 type ItemStringSpec struct {
 	Name    string
 	Enchant string
-	Gems    []string
 }
 
 func EquipmentSpecFromJsonString(jsonString string) *proto.EquipmentSpec {
@@ -315,25 +269,6 @@ func (equipment *Equipment) Stats() stats.Stats {
 	for _, item := range equipment {
 		equipStats = equipStats.Add(item.Stats)
 		equipStats = equipStats.Add(item.Enchant.Stats)
-
-		for _, gem := range item.Gems {
-			equipStats = equipStats.Add(gem.Stats)
-		}
-
-		// Check socket bonus
-		if len(item.GemSockets) > 0 && len(item.Gems) >= len(item.GemSockets) {
-			allMatch := true
-			for gemIndex, socketColor := range item.GemSockets {
-				if !ColorIntersects(socketColor, item.Gems[gemIndex].Color) {
-					allMatch = false
-					break
-				}
-			}
-
-			if allMatch {
-				equipStats = equipStats.Add(item.SocketBonus)
-			}
-		}
 	}
 	return equipStats
 }
@@ -418,36 +353,4 @@ func eligibleSlotsForItem(item Item) []proto.ItemSlot {
 	}
 
 	return nil
-}
-
-func ColorIntersects(g proto.GemColor, o proto.GemColor) bool {
-	if g == o {
-		return true
-	}
-	if g == proto.GemColor_GemColorPrismatic || o == proto.GemColor_GemColorPrismatic {
-		return true
-	}
-	if g == proto.GemColor_GemColorMeta {
-		return o == proto.GemColor_GemColorUnknown
-	}
-	if g == proto.GemColor_GemColorRed {
-		return o == proto.GemColor_GemColorOrange || o == proto.GemColor_GemColorPurple
-	}
-	if g == proto.GemColor_GemColorBlue {
-		return o == proto.GemColor_GemColorGreen || o == proto.GemColor_GemColorPurple
-	}
-	if g == proto.GemColor_GemColorYellow {
-		return o == proto.GemColor_GemColorGreen || o == proto.GemColor_GemColorOrange
-	}
-	if g == proto.GemColor_GemColorOrange {
-		return o == proto.GemColor_GemColorYellow || o == proto.GemColor_GemColorRed
-	}
-	if g == proto.GemColor_GemColorGreen {
-		return o == proto.GemColor_GemColorYellow || o == proto.GemColor_GemColorBlue
-	}
-	if g == proto.GemColor_GemColorPurple {
-		return o == proto.GemColor_GemColorBlue || o == proto.GemColor_GemColorRed
-	}
-
-	return false // dunno what else could be.
 }

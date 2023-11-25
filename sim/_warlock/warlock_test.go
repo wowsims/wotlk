@@ -165,7 +165,6 @@ var afflictionItemSwapRotation = &proto.Warlock_Rotation{
 		MhItem: &proto.ItemSpec{
 			Id:      45457,
 			Enchant: 3790,
-			Gems:    []int32{40013, 40013},
 		},
 	},
 }

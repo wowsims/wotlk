@@ -1,33 +1,30 @@
 import {
 	Class,
 	EquipmentSpec,
-	GemColor,
 	ItemSlot,
 	ItemSpec,
 	PresetEncounter,
 	PresetTarget,
 } from '../proto/common.js';
 import {
+	UIEnchant as Enchant,
 	GlyphID,
 	IconData,
-	UIDatabase,
-	UIEnchant as Enchant,
-	UIRune as Rune,
-	UIGem as Gem,
 	UIItem as Item,
 	UINPC as Npc,
+	UIRune as Rune,
+	UIDatabase,
 	UIZone as Zone,
 } from '../proto/ui.js';
 
+import { MAX_CHARACTER_LEVEL } from '../constants/mechanics.js';
+import { EquippedItem } from './equipped_item.js';
+import { Gear } from './gear.js';
 import {
 	getEligibleEnchantSlots,
 	getEligibleItemSlots,
 	itemTypeToSlotsMap,
 } from './utils.js';
-import { gemEligibleForSocket, gemMatchesSocket } from './gems.js';
-import { EquippedItem } from './equipped_item.js';
-import { Gear } from './gear.js';
-import { MAX_CHARACTER_LEVEL } from '../constants/mechanics.js';
 
 const dbUrlJson = '/classic/assets/database/db.json';
 const dbUrlBin = '/classic/assets/database/db.bin';
@@ -88,7 +85,6 @@ export class Database {
 	private readonly enchantsBySlot: Partial<Record<ItemSlot, Enchant[]>> = {};
 	private readonly runesBySlotByClass: Partial<Record<ItemSlot, Partial<Record<Class, Rune[]>>>> = {};
 	private readonly runesById: Record<number, Rune> = {};
-	private readonly gems = new Map<number, Gem>();
 	private readonly npcs = new Map<number, Npc>();
 	private readonly zones = new Map<number, Zone>();
 	private readonly presetEncounters = new Map<string, PresetEncounter>();
@@ -166,36 +162,11 @@ export class Database {
 		return !!(this.runesBySlotByClass[slot] && this.runesBySlotByClass[slot]![klass]);
 	}
 
-	getGems(socketColor?: GemColor): Array<Gem> {
-		if (!socketColor) 
-			return Array.from(this.gems.values());
-
-		let ret = new Array();
-		for (let g of this.gems.values()){
-			if (gemEligibleForSocket(g, socketColor))
-				ret.push(g);
-		}
-		return ret;
-	}
-
 	getNpc(npcId: number): Npc | null {
 		return this.npcs.get(npcId) || null;
 	}
 	getZone(zoneId: number): Zone | null {
 		return this.zones.get(zoneId) || null;
-	}
-
-	getMatchingGems(socketColor: GemColor): Array<Gem> {
-		let ret = new Array();
-		for (let g of this.gems.values()){
-			if (gemMatchesSocket(g, socketColor))
-				ret.push(g);
-		}
-		return ret;
-	}
-
-	lookupGem(itemID: number): Gem | null {
-		return this.gems.get(itemID) || null;
 	}
 
 	lookupItemSpec(itemSpec: ItemSpec): EquippedItem | null {
@@ -220,9 +191,7 @@ export class Database {
 			rune = this.runesById[itemSpec.rune];
 		}
 
-		const gems = itemSpec.gems.map(gemId => this.lookupGem(gemId));
-
-		return new EquippedItem({item, enchant, gems, rune});
+		return new EquippedItem({item, enchant, rune});
 	}
 
 	lookupEquipmentSpec(equipSpec: EquipmentSpec): Gear {

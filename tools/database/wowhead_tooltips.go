@@ -68,10 +68,6 @@ type ItemResponse interface {
 	GetRangedWeaponType() proto.RangedWeaponType
 	GetWeaponDamage() (float64, float64)
 	GetWeaponSpeed() float64
-	GetGemSockets() []proto.GemColor
-	GetSocketBonus() Stats
-	GetSocketColor() proto.GemColor
-	GetGemStats() Stats
 	GetItemSetName() string
 	IsHeroic() bool
 	GetRequiredProfession() proto.Profession
@@ -431,10 +427,9 @@ func (item WowheadItemResponse) GetPhase() int {
 }
 
 var uniqueRegex = regexp.MustCompile(`Unique`)
-var jcGemsRegex = regexp.MustCompile(`Jeweler's Gems`)
 
 func (item WowheadItemResponse) GetUnique() bool {
-	return uniqueRegex.MatchString(item.Tooltip) && !jcGemsRegex.MatchString(item.Tooltip)
+	return uniqueRegex.MatchString(item.Tooltip)
 }
 
 var itemTypePatterns = map[proto.ItemType]*regexp.Regexp{
@@ -606,107 +601,6 @@ func (item WowheadItemResponse) GetWeaponSpeed() float64 {
 	return 0
 }
 
-var gemColorsRegex = regexp.MustCompile("(Meta|Yellow|Blue|Red) Socket")
-
-func (item WowheadItemResponse) GetGemSockets() []proto.GemColor {
-	matches := gemColorsRegex.FindAllStringSubmatch(item.Tooltip, -1)
-	if matches == nil {
-		return []proto.GemColor{}
-	}
-
-	numSockets := len(matches)
-	gemColors := make([]proto.GemColor, numSockets)
-	for socketIdx, match := range matches {
-		gemColorName := "GemColor" + match[1]
-		gemColors[socketIdx] = proto.GemColor(proto.GemColor_value[gemColorName])
-	}
-	return gemColors
-}
-
-var socketBonusRegex = regexp.MustCompile(`<span class="q0">Socket Bonus: (.*?)</span>`)
-var strengthSocketBonusRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Strength`)}
-var agilitySocketBonusRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Agility`)}
-var staminaSocketBonusRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Stamina`)}
-var intellectSocketBonusRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Intellect`)}
-var spiritSocketBonusRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Spirit`)}
-var spellPowerSocketBonusRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Spell Power`)}
-var spellHitSocketBonusRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Hit Rating`)}
-var spellCritSocketBonusRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Critical Strike Rating`)}
-var hasteSocketBonusRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Haste Rating`)}
-var mp5SocketBonusRegexes = []*regexp.Regexp{
-	regexp.MustCompile(`([0-9]+) Mana per 5 sec`),
-	regexp.MustCompile(`([0-9]+) mana per 5 sec`),
-}
-var attackPowerSocketBonusRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Attack Power`)}
-var armorPenSocketBonusRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Armor Penetration Rating`)}
-var expertiseSocketBonusRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Expertise Rating`)}
-var defenseSocketBonusRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Defense Rating`)}
-var blockSocketBonusRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Block Rating`)}
-var dodgeSocketBonusRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Dodge Rating`)}
-var parrySocketBonusRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Parry Rating`)}
-var resilienceSocketBonusRegexes = []*regexp.Regexp{regexp.MustCompile(`\+([0-9]+) Resilience Rating`)}
-
-func (item WowheadItemResponse) GetSocketBonus() Stats {
-	match := socketBonusRegex.FindStringSubmatch(item.Tooltip)
-	if match == nil {
-		return Stats{}
-	}
-
-	bonusStr := match[1]
-	//fmt.Printf("\n%s\n", bonusStr)
-
-	stats := Stats{
-		proto.Stat_StatStrength:          float64(GetBestRegexIntValue(bonusStr, strengthSocketBonusRegexes, 1)),
-		proto.Stat_StatAgility:           float64(GetBestRegexIntValue(bonusStr, agilitySocketBonusRegexes, 1)),
-		proto.Stat_StatStamina:           float64(GetBestRegexIntValue(bonusStr, staminaSocketBonusRegexes, 1)),
-		proto.Stat_StatIntellect:         float64(GetBestRegexIntValue(bonusStr, intellectSocketBonusRegexes, 1)),
-		proto.Stat_StatSpirit:            float64(GetBestRegexIntValue(bonusStr, spiritSocketBonusRegexes, 1)),
-		proto.Stat_StatSpellHaste:        float64(GetBestRegexIntValue(bonusStr, hasteSocketBonusRegexes, 1)),
-		proto.Stat_StatSpellPower:        float64(GetBestRegexIntValue(bonusStr, spellPowerSocketBonusRegexes, 1)),
-		proto.Stat_StatSpellHit:          float64(GetBestRegexIntValue(bonusStr, spellHitSocketBonusRegexes, 1)),
-		proto.Stat_StatMeleeHit:          float64(GetBestRegexIntValue(bonusStr, spellHitSocketBonusRegexes, 1)),
-		proto.Stat_StatSpellCrit:         float64(GetBestRegexIntValue(bonusStr, spellCritSocketBonusRegexes, 1)),
-		proto.Stat_StatMeleeCrit:         float64(GetBestRegexIntValue(bonusStr, spellCritSocketBonusRegexes, 1)),
-		proto.Stat_StatMeleeHaste:        float64(GetBestRegexIntValue(bonusStr, hasteSocketBonusRegexes, 1)),
-		proto.Stat_StatMP5:               float64(GetBestRegexIntValue(bonusStr, mp5SocketBonusRegexes, 1)),
-		proto.Stat_StatAttackPower:       float64(GetBestRegexIntValue(bonusStr, attackPowerSocketBonusRegexes, 1)),
-		proto.Stat_StatRangedAttackPower: float64(GetBestRegexIntValue(bonusStr, attackPowerSocketBonusRegexes, 1)),
-		proto.Stat_StatExpertise:         float64(GetBestRegexIntValue(bonusStr, expertiseSocketBonusRegexes, 1)),
-		proto.Stat_StatArmorPenetration:  float64(GetBestRegexIntValue(bonusStr, armorPenSocketBonusRegexes, 1)),
-		proto.Stat_StatDefense:           float64(GetBestRegexIntValue(bonusStr, defenseSocketBonusRegexes, 1)),
-		proto.Stat_StatBlock:             float64(GetBestRegexIntValue(bonusStr, blockSocketBonusRegexes, 1)),
-		proto.Stat_StatDodge:             float64(GetBestRegexIntValue(bonusStr, dodgeSocketBonusRegexes, 1)),
-		proto.Stat_StatParry:             float64(GetBestRegexIntValue(bonusStr, parrySocketBonusRegexes, 1)),
-		proto.Stat_StatResilience:        float64(GetBestRegexIntValue(bonusStr, resilienceSocketBonusRegexes, 1)),
-	}
-
-	return stats
-}
-
-var gemSocketColorPatterns = map[proto.GemColor]*regexp.Regexp{
-	proto.GemColor_GemColorMeta:      regexp.MustCompile(`Only fits in a meta gem slot\.`),
-	proto.GemColor_GemColorBlue:      regexp.MustCompile(`Matches a Blue ([Ss])ocket\.`),
-	proto.GemColor_GemColorRed:       regexp.MustCompile(`Matches a Red [Ss]ocket\.`),
-	proto.GemColor_GemColorYellow:    regexp.MustCompile(`Matches a Yellow [Ss]ocket\.`),
-	proto.GemColor_GemColorOrange:    regexp.MustCompile(`Matches a ((Yellow)|(Red)) or ((Yellow)|(Red)) [Ss]ocket\.`),
-	proto.GemColor_GemColorPurple:    regexp.MustCompile(`Matches a ((Blue)|(Red)) or ((Blue)|(Red)) [Ss]ocket\.`),
-	proto.GemColor_GemColorGreen:     regexp.MustCompile(`Matches a ((Yellow)|(Blue)) or ((Yellow)|(Blue)) [Ss]ocket\.`),
-	proto.GemColor_GemColorPrismatic: regexp.MustCompile(`(Matches any [Ss]ocket)|(Matches a Red, Yellow or Blue [Ss]ocket)`),
-}
-
-func (item WowheadItemResponse) GetSocketColor() proto.GemColor {
-	for socketColor, pattern := range gemSocketColorPatterns {
-		if pattern.MatchString(item.Tooltip) {
-			return socketColor
-		}
-	}
-	// fmt.Printf("Could not find socket color for gem %s\n", item.Name)
-	return proto.GemColor_GemColorUnknown
-}
-func (item WowheadItemResponse) IsGem() bool {
-	return item.GetSocketColor() != proto.GemColor_GemColorUnknown &&
-		!strings.Contains(item.GetName(), "Design:")
-}
 func (item WowheadItemResponse) ToItemProto() *proto.UIItem {
 	weaponDamageMin, weaponDamageMax := item.GetWeaponDamage()
 	return &proto.UIItem{
@@ -720,9 +614,7 @@ func (item WowheadItemResponse) ToItemProto() *proto.UIItem {
 		HandType:         item.GetHandType(),
 		RangedWeaponType: item.GetRangedWeaponType(),
 
-		Stats:       toSlice(item.GetStats()),
-		GemSockets:  item.GetGemSockets(),
-		SocketBonus: toSlice(item.GetSocketBonus()),
+		Stats: toSlice(item.GetStats()),
 
 		WeaponDamageMin: weaponDamageMin,
 		WeaponDamageMax: weaponDamageMax,
@@ -762,9 +654,5 @@ func (item WowheadItemResponse) IsHeroic() bool {
 }
 
 func (item WowheadItemResponse) GetRequiredProfession() proto.Profession {
-	if jcGemsRegex.MatchString(item.Tooltip) {
-		return proto.Profession_Jewelcrafting
-	}
-
 	return proto.Profession_ProfessionUnknown
 }

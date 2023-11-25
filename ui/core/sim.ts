@@ -1,30 +1,26 @@
-import {
-	ArmorType,
-	Faction,
-	Profession,
-	SimDatabase,
-	Stat, PseudoStat,
-	RangedWeaponType,
-	WeaponType,
-	UnitReference,
-	UnitReference_Type as UnitType,
-} from './proto/common.js';
-import { BulkSimRequest, BulkSimResult, BulkSettings, Raid as RaidProto } from './proto/api.js';
-import { ComputeStatsRequest } from './proto/api.js';
-import { RaidSimRequest, RaidSimResult } from './proto/api.js';
-import { SimOptions } from './proto/api.js';
-import { StatWeightsRequest, StatWeightsResult } from './proto/api.js';
-import {
-	DatabaseFilters,
-	SimSettings as SimSettingsProto,
-	SourceFilterOption,
-	RaidFilterOption,
-} from './proto/ui.js';
-import { Database } from './proto_utils/database.js';
-import { SimResult } from './proto_utils/sim_result.js';
 import { getBrowserLanguageCode, setLanguageCode } from './constants/lang.js';
 import { Encounter } from './encounter.js';
 import { Player, UnitMetadata } from './player.js';
+import { BulkSettings, BulkSimRequest, BulkSimResult, ComputeStatsRequest, Raid as RaidProto, RaidSimRequest, RaidSimResult, SimOptions, StatWeightsRequest, StatWeightsResult } from './proto/api.js';
+import {
+	ArmorType,
+	Faction,
+	PseudoStat,
+	RangedWeaponType,
+	SimDatabase,
+	Stat,
+	UnitReference,
+	UnitReference_Type as UnitType,
+	WeaponType
+} from './proto/common.js';
+import {
+	DatabaseFilters,
+	RaidFilterOption,
+	SimSettings as SimSettingsProto,
+	SourceFilterOption,
+} from './proto/ui.js';
+import { Database } from './proto_utils/database.js';
+import { SimResult } from './proto_utils/sim_result.js';
 import { Raid } from './raid.js';
 import { EventID, TypedEvent } from './typed_event.js';
 import { getEnumValues } from './utils.js';
@@ -155,20 +151,6 @@ export class Sim {
 
 				let gear = this.db.lookupEquipmentSpec(player.equipment);
 				let gearChanged = false;
-
-				const isBlacksmith = [player.profession1, player.profession2].includes(Profession.Blacksmithing);
-
-				// Disable meta gem if inactive.
-				if (gear.hasInactiveMetaGem(isBlacksmith)) {
-					gear = gear.withoutMetaGem();
-					gearChanged = true;
-				}
-
-				// Remove bonus sockets if not blacksmith.
-				if (!isBlacksmith) {
-					gear = gear.withoutBlacksmithSockets();
-					gearChanged = true;
-				}
 
 				if (gearChanged) {
 					player.equipment = gear.asSpec();

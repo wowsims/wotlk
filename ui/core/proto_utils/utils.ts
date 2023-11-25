@@ -1,36 +1,16 @@
-import { REPO_NAME } from '../constants/other.js'
-import { camelToSnakeCase } from '../utils.js';
-import { getEnumValues } from '../utils.js';
-import { intersection } from '../utils.js';
-import { maxIndex } from '../utils.js';
-import { sum } from '../utils.js';
+import { REPO_NAME } from '../constants/other.js';
+import { camelToSnakeCase, getEnumValues, intersection, maxIndex, sum } from '../utils.js';
 
-import { Player } from '../proto/api.js';
-import { ResourceType } from '../proto/api.js';
-import { ArmorType, UnitReference_Type } from '../proto/common.js';
-import { Class } from '../proto/common.js';
-import { EnchantType } from '../proto/common.js';
-import { HandType } from '../proto/common.js';
-import { ItemSlot } from '../proto/common.js';
-import { ItemType } from '../proto/common.js';
-import { Race } from '../proto/common.js';
-import { Faction } from '../proto/common.js';
-import { UnitReference } from '../proto/common.js';
-import { RangedWeaponType } from '../proto/common.js';
-import { Spec } from '../proto/common.js';
-import { WeaponType } from '../proto/common.js';
+import { Player, ResourceType } from '../proto/api.js';
+import { ArmorType, Class, EnchantType, Faction, HandType, ItemSlot, ItemType, Race, RangedWeaponType, Spec, UnitReference, UnitReference_Type, WeaponType } from '../proto/common.js';
 import { Blessings } from '../proto/paladin.js';
 import {
 	BlessingsAssignment,
 	BlessingsAssignments,
 	UIEnchant as Enchant,
-	UIGem as Gem,
 	UIItem as Item,
 } from '../proto/ui.js';
 
-import { Stats } from './stats.js';
-
-import * as Gems from '../proto_utils/gems.js';
 
 import {
 	BalanceDruid,
@@ -47,21 +27,8 @@ import {
 	RestorationDruid_Options as RestorationDruidOptions,
 	RestorationDruid_Rotation as RestorationDruidRotation,
 } from '../proto/druid.js';
-import {
-	ElementalShaman,
-	ElementalShaman_Options as ElementalShamanOptions,
-	ElementalShaman_Rotation as ElementalShamanRotation,
-	EnhancementShaman,
-	EnhancementShaman_Options as EnhancementShamanOptions,
-	EnhancementShaman_Rotation as EnhancementShamanRotation,
-	RestorationShaman,
-	RestorationShaman_Options as RestorationShamanOptions,
-	RestorationShaman_Rotation as RestorationShamanRotation,
-	ShamanTalents,
-} from '../proto/shaman.js';
-import { Hunter, Hunter_Rotation as HunterRotation, HunterTalents, Hunter_Options as HunterOptions } from '../proto/hunter.js';
-import { Mage, Mage_Rotation as MageRotation, MageTalents, Mage_Options as MageOptions } from '../proto/mage.js';
-import { Rogue, Rogue_Rotation as RogueRotation, RogueTalents, Rogue_Options as RogueOptions } from '../proto/rogue.js';
+import { Hunter, Hunter_Options as HunterOptions, Hunter_Rotation as HunterRotation, HunterTalents } from '../proto/hunter.js';
+import { Mage, Mage_Options as MageOptions, Mage_Rotation as MageRotation, MageTalents } from '../proto/mage.js';
 import {
 	HolyPaladin,
 	HolyPaladin_Options as HolyPaladinOptions,
@@ -83,9 +50,21 @@ import {
 	ShadowPriest_Options as ShadowPriestOptions,
 	ShadowPriest_Rotation as ShadowPriestRotation,
 } from '../proto/priest.js';
-import { Warlock, Warlock_Rotation as WarlockRotation, WarlockTalents, Warlock_Options as WarlockOptions } from '../proto/warlock.js';
-import { Warrior, Warrior_Rotation as WarriorRotation, WarriorTalents, Warrior_Options as WarriorOptions } from '../proto/warrior.js';
-import { ProtectionWarrior, ProtectionWarrior_Rotation as ProtectionWarriorRotation, ProtectionWarrior_Options as ProtectionWarriorOptions } from '../proto/warrior.js';
+import { Rogue, Rogue_Options as RogueOptions, Rogue_Rotation as RogueRotation, RogueTalents } from '../proto/rogue.js';
+import {
+	ElementalShaman,
+	ElementalShaman_Options as ElementalShamanOptions,
+	ElementalShaman_Rotation as ElementalShamanRotation,
+	EnhancementShaman,
+	EnhancementShaman_Options as EnhancementShamanOptions,
+	EnhancementShaman_Rotation as EnhancementShamanRotation,
+	RestorationShaman,
+	RestorationShaman_Options as RestorationShamanOptions,
+	RestorationShaman_Rotation as RestorationShamanRotation,
+	ShamanTalents,
+} from '../proto/shaman.js';
+import { Warlock, Warlock_Options as WarlockOptions, Warlock_Rotation as WarlockRotation, WarlockTalents } from '../proto/warlock.js';
+import { ProtectionWarrior, ProtectionWarrior_Options as ProtectionWarriorOptions, ProtectionWarrior_Rotation as ProtectionWarriorRotation, Warrior, Warrior_Options as WarriorOptions, Warrior_Rotation as WarriorRotation, WarriorTalents } from '../proto/warrior.js';
 
 export type DruidSpecs = Spec.SpecBalanceDruid | Spec.SpecFeralDruid | Spec.SpecFeralTankDruid | Spec.SpecRestorationDruid;
 export type HunterSpecs = Spec.SpecHunter;
@@ -1486,57 +1465,6 @@ export function isBluntWeaponType(weaponType: WeaponType): boolean {
 		WeaponType.WeaponTypeMace,
 		WeaponType.WeaponTypeStaff,
 	].includes(weaponType);
-}
-
-// Custom functions for determining the EP value of meta gem effects.
-// Default meta effect EP value is 0, so just handle the ones relevant to your spec.
-const metaGemEffectEPs: Partial<Record<Spec, (gem: Gem, playerStats: Stats) => number>> = {
-	[Spec.SpecBalanceDruid]: (gem, _) => {
-		if (gem.id == Gems.CHAOTIC_SKYFIRE_DIAMOND.id) {
-			// TODO: Fix this
-			return (12 * 0.65) + (3 * 45);
-		}
-		if (gem.id == Gems.CHAOTIC_SKYFLARE_DIAMOND.id) {
-			return (21 * 0.65) + (3 * 45);
-		}
-		return 0;
-	},
-	[Spec.SpecElementalShaman]: (gem, _) => {
-		if (gem.id == Gems.CHAOTIC_SKYFLARE_DIAMOND.id) {
-			return 84;
-		}
-		if (gem.id == Gems.CHAOTIC_SKYFIRE_DIAMOND.id) {
-			return 80;
-		}
-
-		return 0;
-	},
-	[Spec.SpecWarlock]: (gem, _) => {
-		// TODO: make it gear dependant
-		if (gem.id == Gems.CHAOTIC_SKYFLARE_DIAMOND.id) {
-			return 84;
-		}
-		if (gem.id == Gems.CHAOTIC_SKYFIRE_DIAMOND.id) {
-			return 80;
-		}
-
-		return 0;
-	},
-	[Spec.SpecFeralDruid]: (gem, _) => {
-		// Unknown actual EP, but this is the only effect that matters
-		if (gem.id == Gems.RELENTLESS_EARTHSIEGE_DIAMOND.id || gem.id == Gems.CHAOTIC_SKYFLARE_DIAMOND.id || gem.id == Gems.CHAOTIC_SKYFIRE_DIAMOND.id) {
-			return 80;
-		}
-		return 0;
-	}
-};
-
-export function getMetaGemEffectEP(spec: Spec, gem: Gem, playerStats: Stats) {
-	if (metaGemEffectEPs[spec]) {
-		return metaGemEffectEPs[spec]!(gem, playerStats);
-	} else {
-		return 0;
-	}
 }
 
 // Returns true if this item may be equipped in at least 1 slot for the given Spec.

@@ -52,9 +52,7 @@ func HasEnchantEffect(id int32) bool {
 func NewItemEffect(id int32, itemEffect ApplyEffect) {
 	if WITH_DB {
 		if _, hasItem := ItemsByID[id]; !hasItem {
-			if _, hasGem := GemsByID[id]; !hasGem {
-				panic(fmt.Sprintf("No item with ID: %d", id))
-			}
+			panic(fmt.Sprintf("No item with ID: %d", id))
 		}
 	}
 

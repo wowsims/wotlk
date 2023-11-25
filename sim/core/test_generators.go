@@ -270,23 +270,6 @@ func (filter *ItemFilter) FindAllSets() []*ItemSet {
 	return filteredSets
 }
 
-func (filter *ItemFilter) FindAllMetaGems() []Gem {
-	var filteredGems []Gem
-
-	for _, gem := range GemsByID {
-		if gem.Color == proto.GemColor_GemColorMeta {
-			if !strings.Contains(gem.Name, "Skyfire") &&
-				!strings.Contains(gem.Name, "Earthstorm") &&
-				!strings.Contains(gem.Name, "Starfire") &&
-				!strings.Contains(gem.Name, "Unstable") {
-				filteredGems = append(filteredGems, gem)
-			}
-		}
-	}
-
-	return filteredGems
-}
-
 type ItemsTestGenerator struct {
 	// Fields describing the base API request.
 	Player     *proto.Player
@@ -304,10 +287,6 @@ type ItemsTestGenerator struct {
 
 	items []Item
 	sets  []*ItemSet
-
-	metagems []Gem
-
-	metaSocketIdx int
 }
 
 func (generator *ItemsTestGenerator) init() {
@@ -326,24 +305,11 @@ func (generator *ItemsTestGenerator) init() {
 
 	generator.items = generator.ItemFilter.FindAllItems()
 	generator.sets = generator.ItemFilter.FindAllSets()
-
-	baseEquipment := ProtoToEquipment(generator.Player.Equipment)
-	generator.metaSocketIdx = -1
-	for i, socketColor := range baseEquipment[proto.ItemSlot_ItemSlotHead].GemSockets {
-		if socketColor == proto.GemColor_GemColorMeta {
-			generator.metaSocketIdx = i
-			break
-		}
-	}
-	if generator.metaSocketIdx == -1 {
-		return
-	}
-	generator.metagems = generator.ItemFilter.FindAllMetaGems()
 }
 
 func (generator *ItemsTestGenerator) NumTests() int {
 	generator.init()
-	return len(generator.items) + len(generator.sets) + len(generator.metagems)
+	return len(generator.items) + len(generator.sets)
 }
 
 func (generator *ItemsTestGenerator) GetTest(testIdx int) (string, *proto.ComputeStatsRequest, *proto.StatWeightsRequest, *proto.RaidSimRequest) {
@@ -362,14 +328,6 @@ func (generator *ItemsTestGenerator) GetTest(testIdx int) (string, *proto.Comput
 			equipment.EquipItem(setItem)
 		}
 		label = strings.ReplaceAll(testSet.Name, " ", "")
-	} else {
-		testMetaGem := generator.metagems[testIdx-len(generator.items)-len(generator.sets)]
-		headItem := &equipment[proto.ItemSlot_ItemSlotHead]
-		for len(headItem.Gems) <= generator.metaSocketIdx {
-			headItem.Gems = append(headItem.Gems, Gem{})
-		}
-		headItem.Gems[generator.metaSocketIdx] = testMetaGem
-		label = strings.ReplaceAll(testMetaGem.Name, " ", "")
 	}
 	playerCopy.Equipment = equipment.ToEquipmentSpecProto()
 

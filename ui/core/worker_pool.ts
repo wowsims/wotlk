@@ -1,17 +1,7 @@
-import { REPO_NAME } from './constants/other.js'
-import { GemColor } from './proto/common.js';
-import { ItemQuality } from './proto/common.js';
-import { ItemSlot } from './proto/common.js';
-import { ItemSpec } from './proto/common.js';
-import { ItemType } from './proto/common.js';
-import { Stat } from './proto/common.js';
+import { REPO_NAME } from './constants/other.js';
 
-import { ComputeStatsRequest, ComputeStatsResult } from './proto/api.js';
-import { RaidSimRequest, RaidSimResult, ProgressMetrics } from './proto/api.js';
-import { StatWeightsRequest, StatWeightsResult } from './proto/api.js';
-import { BulkSimRequest, BulkSimResult } from './proto/api.js';
+import { BulkSimRequest, BulkSimResult, ComputeStatsRequest, ComputeStatsResult, ProgressMetrics, RaidSimRequest, RaidSimResult, StatWeightsRequest, StatWeightsResult } from './proto/api.js';
 
-import { wait } from './utils.js';
 
 const SIM_WORKER_URL = `/${REPO_NAME}/sim_worker.js`;
 
@@ -45,7 +35,7 @@ export class WorkerPool {
 		const worker = this.getLeastBusyWorker();
 		const id = worker.makeTaskId();
 		// Add handler for the progress events
-		worker.addPromiseFunc(id + "progress", this.newProgressHandler(id, worker, onProgress), (err) => { })
+		worker.addPromiseFunc(id + "progress", this.newProgressHandler(id, worker, onProgress), (_err) => { })
 
 		// Now start the async sim
 		const resultData = await worker.doApiCall('statWeightsAsync', StatWeightsRequest.toBinary(request), id);
@@ -59,7 +49,7 @@ export class WorkerPool {
 		const worker = this.getLeastBusyWorker();
 		const id = worker.makeTaskId();
 		// Add handler for the progress events
-		worker.addPromiseFunc(id + "progress", this.newProgressHandler(id, worker, onProgress), (err) => { })
+		worker.addPromiseFunc(id + "progress", this.newProgressHandler(id, worker, onProgress), (_err) => { })
 
 		// Now start the async sim
 		const resultData = await worker.doApiCall('bulkSimAsync', BulkSimRequest.toBinary(request), id);
@@ -74,7 +64,7 @@ export class WorkerPool {
 		const worker = this.getLeastBusyWorker();
 		const id = worker.makeTaskId();
 		// Add handler for the progress events
-		worker.addPromiseFunc(id + "progress", this.newProgressHandler(id, worker, onProgress), (err) => { })
+		worker.addPromiseFunc(id + "progress", this.newProgressHandler(id, worker, onProgress), (_err) => { })
 
 		// Now start the async sim
 		const resultData = await worker.doApiCall('raidSimAsync', RaidSimRequest.toBinary(request), id);
@@ -96,7 +86,7 @@ export class WorkerPool {
 				return;
 			}
 
-			worker.addPromiseFunc(id + "progress", this.newProgressHandler(id, worker, onProgress), (err) => { });
+			worker.addPromiseFunc(id + "progress", this.newProgressHandler(id, worker, onProgress), (_err) => { });
 		};
 	}
 }

@@ -572,7 +572,6 @@ class WCLSimPlayer {
 			items: data.gear.map(gear => ItemSpec.create({
 				id: gear.id,
 				enchant: gear.permanentEnchant,
-				gems: gear.gems ? gear.gems.map(gemInfo => gemInfo.id) : [],
 			})),
 		})));
 	}
@@ -794,18 +793,4 @@ interface wclPlayer {
 	targets?: unknown[];
 	talents: wclTalents[];
 	gear: wclGear[];
-}
-
-interface wclAura {
-	name: string;
-	id: number;
-	guid: number;
-	type: string;
-	icon: string;
-	totalUptime: number;
-	totalUses: number;
-	bands: {
-		startTime: number,
-		endTime: number,
-	}[];
 }

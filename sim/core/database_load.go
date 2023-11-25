@@ -16,7 +16,6 @@ func init() {
 	simDB := &proto.SimDatabase{
 		Items:    make([]*proto.SimItem, len(db.Items)),
 		Enchants: make([]*proto.SimEnchant, len(db.Enchants)),
-		Gems:     make([]*proto.SimGem, len(db.Gems)),
 	}
 
 	for i, item := range db.Items {
@@ -29,8 +28,6 @@ func init() {
 			HandType:         item.HandType,
 			RangedWeaponType: item.RangedWeaponType,
 			Stats:            item.Stats,
-			GemSockets:       item.GemSockets,
-			SocketBonus:      item.SocketBonus,
 			WeaponDamageMin:  item.WeaponDamageMin,
 			WeaponDamageMax:  item.WeaponDamageMax,
 			WeaponSpeed:      item.WeaponSpeed,
@@ -42,15 +39,6 @@ func init() {
 		simDB.Enchants[i] = &proto.SimEnchant{
 			EffectId: enchant.EffectId,
 			Stats:    enchant.Stats,
-		}
-	}
-
-	for i, gem := range db.Gems {
-		simDB.Gems[i] = &proto.SimGem{
-			Id:    gem.Id,
-			Name:  gem.Name,
-			Color: gem.Color,
-			Stats: gem.Stats,
 		}
 	}
 

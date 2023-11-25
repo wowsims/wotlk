@@ -1,18 +1,9 @@
-import { RaidBuffs } from '../core/proto/common.js';
-import { PartyBuffs } from '../core/proto/common.js';
-import { IndividualBuffs } from '../core/proto/common.js';
-import { Debuffs } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { Stat, PseudoStat } from '../core/proto/common.js';
-import { TristateEffect } from '../core/proto/common.js'
-import { Stats } from '../core/proto_utils/stats.js';
-import { Player } from '../core/player.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
-import { TypedEvent } from '../core/typed_event.js';
+import { Player } from '../core/player.js';
+import { Debuffs, IndividualBuffs, PartyBuffs, PseudoStat, RaidBuffs, Spec, Stat, TristateEffect } from '../core/proto/common.js';
 import { Gear } from '../core/proto_utils/gear.js';
-import { ItemSlot } from '../core/proto/common.js';
-import { GemColor } from '../core/proto/common.js';
-import { Profession } from '../core/proto/common.js';
+import { Stats } from '../core/proto_utils/stats.js';
+import { TypedEvent } from '../core/typed_event.js';
 
 import * as OtherInputs from '../core/components/other_inputs.js';
 
@@ -218,166 +209,9 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 		return Stats.fromProto(this.player.getCurrentStats().finalStats);
 	}
 
-	findTearSlot(gear: Gear, epWeights: Stats): ItemSlot | null {
-		let tearSlot: ItemSlot | null = null;
-		let maxBlueSocketBonusEP: number = 1e-8;
-
-		for (var slot of gear.getItemSlots()) {
-			const item = gear.getEquippedItem(slot);
-
-			if (!item) {
-				continue;
-			}
-
-			if (item!.numSocketsOfColor(GemColor.GemColorBlue) != 1) {
-				continue;
-			}
-
-			const socketBonusEP = new Stats(item.item.socketBonus).computeEP(epWeights);
-
-			if (socketBonusEP > maxBlueSocketBonusEP) {
-				tearSlot = slot;
-				maxBlueSocketBonusEP = socketBonusEP;
-			}
-		}
-
-		return tearSlot;
-	}
-
-	socketTear(gear: Gear, tearSlot: ItemSlot | null): Gear {
-		if (tearSlot != null) {
-			const tearSlotItem = gear.getEquippedItem(tearSlot);
-
-			for (const [socketIdx, socketColor] of tearSlotItem!.allSocketColors().entries()) {
-				if (socketColor == GemColor.GemColorBlue) {
-					return gear.withEquippedItem(tearSlot, tearSlotItem!.withGem(this.sim.db.lookupGem(49110), socketIdx), true);
-				}
-			}
-		}
-
-		return gear;
-	}
-
-	findSocketsByColor(gear: Gear, epWeights: Stats, color: GemColor, tearSlot: ItemSlot | null): Array<[ItemSlot, number]> {
-		const socketList = new Array<[ItemSlot, number]>();
-		const isBlacksmithing = this.player.isBlacksmithing();
-
-		for (var slot of gear.getItemSlots()) {
-			const item = gear.getEquippedItem(slot);
-
-			if (!item) {
-				continue;
-			}
-
-			const ignoreYellowSockets = ((item!.numSocketsOfColor(GemColor.GemColorBlue) > 0) && (slot != tearSlot))
-
-			for (const [socketIdx, socketColor] of item!.curSocketColors(isBlacksmithing).entries()) {
-				if (item!.hasSocketedGem(socketIdx)) {
-					continue;
-				}
-
-				let matchYellowSocket = false;
-
-				if ((socketColor == GemColor.GemColorYellow) && !ignoreYellowSockets) {
-					matchYellowSocket = new Stats(item.item.socketBonus).computeEP(epWeights) > 1e-8;
-				}
-
-				if (((color == GemColor.GemColorYellow) && matchYellowSocket) || ((color == GemColor.GemColorRed) && !matchYellowSocket)) {
-					socketList.push([slot, socketIdx]);
-				}
-			}
-		}
-
-		return socketList;
-	}
-
-	async fillGemsToCaps(gear: Gear, socketList: Array<[ItemSlot, number]>, gemCaps: Array<[number, Stats]>, numPasses: number, firstIdx: number): Promise<Gear> {
-		let updatedGear: Gear = gear;
-		const currentGem = this.sim.db.lookupGem(gemCaps[numPasses][0]);
-
-		// On the first pass, we simply fill all sockets with the highest priority gem
-		if (numPasses == 0) {
-			for (const [itemSlot, socketIdx] of socketList.slice(firstIdx)) {
-				updatedGear = updatedGear.withGem(itemSlot, socketIdx, currentGem);
-			}
-		}
-
-		// If we are below the relevant stat cap for the gem we just filled on the last pass, then we are finished.
-		let newStats = await this.updateGear(updatedGear);
-		const currentCap = gemCaps[numPasses][1];
-
-		if (newStats.belowCaps(currentCap) || (numPasses == gemCaps.length - 1)) {
-			return updatedGear;
-		}
-
-		// If we exceeded the stat cap, then work backwards through the socket list and replace each gem with the next highest priority option until we are below the cap
-		const nextGem = this.sim.db.lookupGem(gemCaps[numPasses + 1][0]);
-		const nextCap = gemCaps[numPasses + 1][1];
-		let capForReplacement = currentCap;
-
-		if ((numPasses > 0) && !currentCap.equals(nextCap)) {
-			capForReplacement = currentCap.subtract(nextCap);
-		}
-
-		for (var idx = socketList.length - 1; idx >= firstIdx; idx--) {
-			if (newStats.belowCaps(capForReplacement)) {
-				break;
-			}
-
-			const [itemSlot, socketIdx] = socketList[idx];
-			updatedGear = updatedGear.withGem(itemSlot, socketIdx, nextGem);
-			newStats = await this.updateGear(updatedGear);
-		}
-
-		// Now run a new pass to check whether we've exceeded the next stat cap
-		let nextIdx = idx + 1;
-
-		if (!newStats.belowCaps(currentCap)) {
-			nextIdx = firstIdx;
-		}
-
-		return await this.fillGemsToCaps(updatedGear, socketList, gemCaps, numPasses + 1, nextIdx);
-	}
-
 	calcDistanceToArpTarget(numJcArpGems: number, passiveArp: number, numRedSockets: number, arpCap: number, arpTarget: number): number {
 		const numNormalArpGems = Math.max(0, Math.min(numRedSockets - 3, Math.floor((arpCap - passiveArp - 34 * numJcArpGems) / 20)));
 		const projectedArp = passiveArp + 34 * numJcArpGems + 20 * numNormalArpGems;
 		return Math.abs(projectedArp - arpTarget);
-	}
-
-	optimizeJcGems(gear: Gear, redSocketList: Array<[ItemSlot, number]>): Gear {
-		const passiveStats = Stats.fromProto(this.player.getCurrentStats().finalStats);
-		const passiveArp = passiveStats.getStat(Stat.StatArmorPenetration);
-		const numRedSockets = redSocketList.length;
-		const arpCap = this.calcArpCap(gear).getStat(Stat.StatArmorPenetration);
-		const arpTarget = this.calcArpTarget(gear);
-
-		// First determine how many of the JC gems should be 34 ArP gems
-		let optimalJcArpGems = 0;
-		let minDistanceToArpTarget = this.calcDistanceToArpTarget(0, passiveArp, numRedSockets, arpCap, arpTarget);
-
-		for (let i = 1; i <= 3; i++) {
-			const distanceToArpTarget = this.calcDistanceToArpTarget(i, passiveArp, numRedSockets, arpCap, arpTarget);
-
-			if (distanceToArpTarget < minDistanceToArpTarget) {
-				optimalJcArpGems = i;
-				minDistanceToArpTarget = distanceToArpTarget;
-			}
-		}
-
-		// Now actually socket the gems
-		let updatedGear: Gear = gear;
-
-		for (let i = 0; i < 3; i++) {
-			let gemId = 42142; // Str by default
-
-			if (i < optimalJcArpGems) {
-				gemId = 42153;
-			}
-
-			updatedGear = updatedGear.withGem(redSocketList[i][0], redSocketList[i][1], this.sim.db.lookupGem(gemId));
-		}
-
-		return updatedGear;
 	}
 }

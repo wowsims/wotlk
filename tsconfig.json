@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "target": "ES2020",
+        "target": "ES2021",
         "module": "es2015",
         "moduleResolution": "node",
         "strict": true,
@@ -10,7 +10,7 @@
             "DOM.Iterable"
         ],
         "types": [],
-        "outDir": "dist/wotlk",
+        "outDir": "dist/classic",
         "pretty": false,
         "allowJs": true,
         "resolveJsonModule": true,
@@ -20,4 +20,10 @@
         "jsxFactory": "element",
         "jsxFragmentFactory": "fragment",
     },
+    "exclude": [
+        "dist/classic",
+        "assets",
+        "sim",
+        "proto"
+    ]
 }

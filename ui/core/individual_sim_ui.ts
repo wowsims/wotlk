@@ -38,7 +38,6 @@ import {
 import { IndividualSimSettings, SavedTalents } from './proto/ui';
 import { StatWeightsResult } from './proto/api';
 
-import { getMetaGemConditionDescription } from './proto_utils/gems';
 import { professionNames } from './proto_utils/names';
 import { Stats } from './proto_utils/stats';
 import {
@@ -194,17 +193,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		}
 
 		this.addWarning({
-			updateOn: this.player.gearChangeEmitter,
-			getContent: () => {
-				if (!this.player.getGear().hasInactiveMetaGem(this.player.isBlacksmithing())) {
-					return '';
-				}
-
-				const metaGem = this.player.getGear().getMetaGem()!;
-				return `Meta gem disabled (${metaGem.name}): ${getMetaGemConditionDescription(metaGem)}`;
-			},
-		});
-		this.addWarning({
 			updateOn: TypedEvent.onAny([this.player.gearChangeEmitter, this.player.professionChangeEmitter]),
 			getContent: () => {
 				const failedProfReqs = this.player.getGear().getFailedProfessionRequirements(this.player.getProfessions());
@@ -213,17 +201,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				}
 
 				return failedProfReqs.map(fpr => `${fpr.name} requires ${professionNames.get(fpr.requiredProfession)!}, but it is not selected.`);
-			},
-		});
-		this.addWarning({
-			updateOn: this.player.gearChangeEmitter,
-			getContent: () => {
-				const jcGems = this.player.getGear().getJCGems(this.player.isBlacksmithing());
-				if (jcGems.length <= 3) {
-					return '';
-				}
-
-				return `Only 3 Jewelcrafting Gems are allowed, but ${jcGems.length} are equipped.`;
 			},
 		});
 		this.addWarning({
@@ -383,17 +360,18 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 	}
 
 	private addTopbarComponents() {
+		// TODO: Classic
 		this.simHeader.addImportLink('JSON', _parent => new Importers.IndividualJsonImporter(this.rootElem, this), true);
-		this.simHeader.addImportLink('80U', _parent => new Importers.Individual80UImporter(this.rootElem, this), true);
-		this.simHeader.addImportLink('WoWHead', _parent => new Importers.IndividualWowheadGearPlannerImporter(this.rootElem, this), false);
-		this.simHeader.addImportLink('Addon', _parent => new Importers.IndividualAddonImporter(this.rootElem, this), true);
+		//this.simHeader.addImportLink('80U', _parent => new Importers.Individual80UImporter(this.rootElem, this), true);
+		//this.simHeader.addImportLink('WoWHead', _parent => new Importers.IndividualWowheadGearPlannerImporter(this.rootElem, this), false);
+		//this.simHeader.addImportLink('Addon', _parent => new Importers.IndividualAddonImporter(this.rootElem, this), true);
 
 		this.simHeader.addExportLink('Link', _parent => new Exporters.IndividualLinkExporter(this.rootElem, this), false);
 		this.simHeader.addExportLink('JSON', _parent => new Exporters.IndividualJsonExporter(this.rootElem, this), true);
-		this.simHeader.addExportLink('WoWHead', _parent => new Exporters.IndividualWowheadGearPlannerExporter(this.rootElem, this), false);
-		this.simHeader.addExportLink('80U EP', _parent => new Exporters.Individual80UEPExporter(this.rootElem, this), false);
-		this.simHeader.addExportLink('Pawn EP', _parent => new Exporters.IndividualPawnEPExporter(this.rootElem, this), false);
-		this.simHeader.addExportLink("CLI", _parent => new Exporters.IndividualCLIExporter(this.rootElem, this), true);
+		//this.simHeader.addExportLink('WoWHead', _parent => new Exporters.IndividualWowheadGearPlannerExporter(this.rootElem, this), false);
+		//this.simHeader.addExportLink('80U EP', _parent => new Exporters.Individual80UEPExporter(this.rootElem, this), false);
+		//this.simHeader.addExportLink('Pawn EP', _parent => new Exporters.IndividualPawnEPExporter(this.rootElem, this), false);
+		//this.simHeader.addExportLink("CLI", _parent => new Exporters.IndividualCLIExporter(this.rootElem, this), true);
 	}
 
 	applyDefaults(eventID: EventID) {

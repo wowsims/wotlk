@@ -232,18 +232,6 @@ enum ItemQuality {
 	ItemQualityHeirloom = 7;
 }
 
-enum GemColor {
-	GemColorUnknown = 0;
-	GemColorMeta = 1;
-	GemColorRed = 2;
-	GemColorBlue = 3;
-	GemColorYellow = 4;
-	GemColorGreen = 5;
-	GemColorOrange = 6;
-	GemColorPurple = 7;
-	GemColorPrismatic = 8;
-}
-
 enum SpellSchool {
 	SpellSchoolPhysical = 0;
 	SpellSchoolArcane = 1;
@@ -588,7 +576,6 @@ message PresetEncounter {
 message ItemSpec {
 	int32 id = 2;
 	int32 enchant = 3;
-	repeated int32 gems = 4;
 	int32 rune = 5;
 }
 
@@ -599,7 +586,6 @@ message EquipmentSpec {
 message SimDatabase {
 	repeated SimItem items = 1;
 	repeated SimEnchant enchants = 2;
-	repeated SimGem gems = 3;
 	repeated SimRune runes = 4;
 }
 
@@ -615,7 +601,6 @@ message SimItem {
 	RangedWeaponType ranged_weapon_type = 7;
 
 	repeated double stats = 8;
-	repeated GemColor gem_sockets = 9;
 	repeated double socketBonus = 10;
 
 	double weapon_damage_min = 11;
@@ -643,14 +628,6 @@ message SimEnchant {
 
 message SimRune {
 	int32 id = 1;
-}
-
-// Contains only the Gem info needed by the sim.
-message SimGem {
-	int32 id = 1;
-	string name = 2;
-	GemColor color = 3;
-	repeated double stats = 4;
 }
 
 message UnitReference {

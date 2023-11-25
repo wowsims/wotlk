@@ -232,23 +232,6 @@ func simmableItemFilter(_ int32, item *proto.UIItem) bool {
 
 	return true
 }
-func simmableGemFilter(_ int32, gem *proto.UIGem) bool {
-	if _, ok := database.GemAllowList[gem.Id]; ok {
-		return true
-	}
-
-	// Allow all meta gems
-	if gem.Color == proto.GemColor_GemColorMeta {
-		return true
-	}
-
-	// Arbitrary to filter out old gems
-	if gem.Id < 39900 {
-		return false
-	}
-
-	return gem.Quality >= proto.ItemQuality_ItemQualityUncommon
-}
 
 type TalentConfig struct {
 	FieldName string `json:"fieldName"`

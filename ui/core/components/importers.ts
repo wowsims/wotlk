@@ -98,9 +98,6 @@ export abstract class Importer extends BaseModal {
 			if (talentsStr && talentsStr != '--') {
 				simUI.player.setTalentsString(eventID, talentsStr);
 			}
-			if (glyphs) {
-				simUI.player.setGlyphs(eventID, glyphs)
-			}
 			if (professions.length > 0) {
 				simUI.player.setProfessions(eventID, professions)
 			}
@@ -191,9 +188,6 @@ export class Individual80UImporter<SpecType extends Spec> extends Importer {
 			itemSpec.id = itemJson.id;
 			if (itemJson.enchant?.id) {
 				itemSpec.enchant = itemJson.enchant.id;
-			}
-			if (itemJson.gems) {
-				itemSpec.gems = (itemJson.gems as Array<any>).filter(gemJson => gemJson?.id).map(gemJson => gemJson.id);
 			}
 			equipmentSpec.items.push(itemSpec);
 		});
@@ -312,9 +306,6 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 		// if enchant bit is set:
 		//   8-bit ??, possibly enchant position for multiple enchants?
 		//   16-bit enchant id
-		// for each gem:
-		//   8-bit upper 3 bits for gem position
-		//   16-bit gem item id
 		const equipmentSpec = EquipmentSpec.create();
 		cur = 0;
 		while (cur < gearBytes.length) {
@@ -324,7 +315,6 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 			// const randomEnchant = Boolean(gearBytes[cur] & 0b01000000);
 			cur++;
 
-			const numGems = (gearBytes[cur] & 0b11100000) >> 5;
 			const highid = (gearBytes[cur] & 0b00011111);
 			cur++;
 
@@ -338,24 +328,6 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 				itemSpec.enchant = this.simUI.sim.db.enchantSpellIdToEffectId(enchantSpellId);
 				cur += 3;
 				//console.log(`Enchant ID: ${itemSpec.enchant}. Spellid: ${enchantSpellId}`);
-			}
-
-			for (let gemIdx = 0; gemIdx < numGems; gemIdx++) {
-				const gemPosition = (gearBytes[cur] & 0b11100000) >> 5;
-				const highgemid = (gearBytes[cur] & 0b00011111);
-				cur++;
-
-				const gemId = (highgemid << 16) + (gearBytes[cur] << 8) + gearBytes[cur + 1];
-				cur += 2;
-				//console.log(`Gem position: ${gemPosition}, gemID: ${gemId}`);
-
-				if (!itemSpec.gems) {
-					itemSpec.gems = [];
-				}
-				while (itemSpec.gems.length < gemPosition) {
-					itemSpec.gems.push(0);
-				}
-				itemSpec.gems[gemPosition] = gemId;
 			}
 
 			// Ignore tabard / shirt slots
@@ -448,11 +420,6 @@ export class IndividualAddonImporter<SpecType extends Spec> extends Importer {
 
 		const gearJson = importJson['gear'];
 		gearJson.items = (gearJson.items as Array<any>).filter(item => item != null);
-		(gearJson.items as Array<any>).forEach(item => {
-			if (item.gems) {
-				item.gems = (item.gems as Array<any>).map(gem => gem || 0);
-			}
-		});
 		const equipmentSpec = EquipmentSpec.fromJson(gearJson);
 
 		this.finishIndividualImport(this.simUI, charClass, race, equipmentSpec, talentsStr, glyphs, professions);

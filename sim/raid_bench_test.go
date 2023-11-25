@@ -249,59 +249,47 @@ var ShadowEquipment = &proto.EquipmentSpec{
 		{
 			Id:      46172,
 			Enchant: 3820,
-			Gems:    []int32{41285, 45883},
 		},
 		{
-			Id:   45243,
-			Gems: []int32{39998},
+			Id: 45243,
 		},
 		{
 			Id:      46165,
 			Enchant: 3810,
-			Gems:    []int32{39998},
 		},
 		{
 			Id:      45242,
 			Enchant: 3722,
-			Gems:    []int32{40049},
 		},
 		{
 			Id:      46168,
 			Enchant: 1144,
-			Gems:    []int32{39998, 39998},
 		},
 		{
 			Id:      45446,
 			Enchant: 2332,
-			Gems:    []int32{39998},
 		},
 		{
 			Id:      45665,
 			Enchant: 3604,
-			Gems:    []int32{39998, 39998},
 		},
 		{
 			Id:      45619,
 			Enchant: 3601,
-			Gems:    []int32{39998, 39998, 39998},
 		},
 		{
 			Id:      46170,
 			Enchant: 3719,
-			Gems:    []int32{39998, 40049},
 		},
 		{
 			Id:      45135,
 			Enchant: 3606,
-			Gems:    []int32{39998, 40049},
 		},
 		{
-			Id:   45495,
-			Gems: []int32{40026},
+			Id: 45495,
 		},
 		{
-			Id:   46046,
-			Gems: []int32{39998},
+			Id: 46046,
 		},
 		{
 			Id: 45518,
@@ -312,14 +300,12 @@ var ShadowEquipment = &proto.EquipmentSpec{
 		{
 			Id:      45620,
 			Enchant: 3834,
-			Gems:    []int32{40026},
 		},
 		{
 			Id: 45617,
 		},
 		{
-			Id:   45294,
-			Gems: []int32{39998},
+			Id: 45294,
 		},
 	},
 }
@@ -330,58 +316,46 @@ var ArcaneEquipment = &proto.EquipmentSpec{
 		{
 			Id:      45497,
 			Enchant: 3820,
-			Gems:    []int32{41285, 45883},
 		},
 		{
-			Id:   45243,
-			Gems: []int32{39998},
+			Id: 45243,
 		},
 		{
 			Id:      46134,
 			Enchant: 3810,
-			Gems:    []int32{39998},
 		},
 		{
 			Id:      45618,
 			Enchant: 3722,
-			Gems:    []int32{40026},
 		},
 		{
 			Id:      46130,
 			Enchant: 3832,
-			Gems:    []int32{39998, 39998},
 		},
 		{
 			Id:      45446,
 			Enchant: 2332,
-			Gems:    []int32{39998},
 		},
 		{
 			Id:      45665,
 			Enchant: 3604,
-			Gems:    []int32{39998, 39998},
 		},
 		{
-			Id:   45619,
-			Gems: []int32{39998, 39998, 39998},
+			Id: 45619,
 		},
 		{
 			Id:      45488,
 			Enchant: 3719,
-			Gems:    []int32{39998, 40051, 40026},
 		},
 		{
 			Id:      45135,
 			Enchant: 3606,
-			Gems:    []int32{39998, 39998},
 		},
 		{
-			Id:   46046,
-			Gems: []int32{39998},
+			Id: 46046,
 		},
 		{
-			Id:   45495,
-			Gems: []int32{39998},
+			Id: 45495,
 		},
 		{
 			Id: 45466,
@@ -392,7 +366,6 @@ var ArcaneEquipment = &proto.EquipmentSpec{
 		{
 			Id:      45620,
 			Enchant: 3834,
-			Gems:    []int32{39998},
 		},
 		{
 			Id: 45617,
@@ -400,7 +373,6 @@ var ArcaneEquipment = &proto.EquipmentSpec{
 		{
 			Id:      45294,
 			Enchant: 0,
-			Gems:    []int32{39998},
 		},
 	},
 }
@@ -411,58 +383,46 @@ var MoonkinEquipment = &proto.EquipmentSpec{
 		{
 			Id:      45497,
 			Enchant: 3820,
-			Gems:    []int32{41285, 42144},
 		},
 		{
-			Id:   45133,
-			Gems: []int32{40048},
+			Id: 45133,
 		},
 		{
 			Id:      46196,
 			Enchant: 3810,
-			Gems:    []int32{39998},
 		},
 		{
 			Id:      45242,
 			Enchant: 3859,
-			Gems:    []int32{40048},
 		},
 		{
 			Id:      45519,
 			Enchant: 3832,
-			Gems:    []int32{40051, 42144, 40026},
 		},
 		{
 			Id:      45446,
 			Enchant: 2332,
-			Gems:    []int32{42144},
 		},
 		{
 			Id:      45665,
 			Enchant: 3604,
-			Gems:    []int32{39998, 39998},
 		},
 		{
-			Id:   45619,
-			Gems: []int32{39998, 39998, 39998},
+			Id: 45619,
 		},
 		{
 			Id:      46192,
 			Enchant: 3719,
-			Gems:    []int32{39998, 39998},
 		},
 		{
 			Id:      45537,
 			Enchant: 3606,
-			Gems:    []int32{39998, 40026},
 		},
 		{
-			Id:   46046,
-			Gems: []int32{39998},
+			Id: 46046,
 		},
 		{
-			Id:   45495,
-			Gems: []int32{39998},
+			Id: 45495,
 		},
 		{
 			Id: 45466,
@@ -473,7 +433,6 @@ var MoonkinEquipment = &proto.EquipmentSpec{
 		{
 			Id:      45620,
 			Enchant: 3834,
-			Gems:    []int32{39998},
 		},
 		{
 			Id: 45617,
@@ -489,59 +448,47 @@ var EnhancementEquipment = &proto.EquipmentSpec{
 		{
 			Id:      45610,
 			Enchant: 3817,
-			Gems:    []int32{41398, 42702},
 		},
 		{
-			Id:   45517,
-			Gems: []int32{39999},
+			Id: 45517,
 		},
 		{
 			Id:      46203,
 			Enchant: 3808,
-			Gems:    []int32{39999},
 		},
 		{
 			Id:      45461,
 			Enchant: 3831,
-			Gems:    []int32{40014},
 		},
 		{
 			Id:      46205,
 			Enchant: 3832,
-			Gems:    []int32{40058, 40053},
 		},
 		{
 			Id:      45460,
 			Enchant: 3845,
-			Gems:    []int32{39999},
 		},
 		{
 			Id:      46200,
 			Enchant: 3604,
-			Gems:    []int32{40014},
 		},
 		{
 			Id:      45553,
 			Enchant: 0,
-			Gems:    []int32{36766, 36766, 36766},
 		},
 		{
 			Id:      46208,
 			Enchant: 3823,
-			Gems:    []int32{39999, 39999},
 		},
 		{
 			Id:      45989,
 			Enchant: 3606,
-			Gems:    []int32{40053, 39999},
 		},
 		{
-			Id:   45456,
-			Gems: []int32{39999},
+			Id: 45456,
 		},
 		{
-			Id:   46046,
-			Gems: []int32{40053},
+			Id: 46046,
 		},
 		{
 			Id: 45609,
@@ -552,12 +499,10 @@ var EnhancementEquipment = &proto.EquipmentSpec{
 		{
 			Id:      45612,
 			Enchant: 3789,
-			Gems:    []int32{39999},
 		},
 		{
 			Id:      46097,
 			Enchant: 3789,
-			Gems:    []int32{40003},
 		},
 		{
 			Id: 40322,
@@ -571,59 +516,47 @@ var ElementalEquipment = &proto.EquipmentSpec{
 		{
 			Id:      46209,
 			Enchant: 3820,
-			Gems:    []int32{41285, 40048},
 		},
 		{
-			Id:   45933,
-			Gems: []int32{39998},
+			Id: 45933,
 		},
 		{
 			Id:      46211,
 			Enchant: 3810,
-			Gems:    []int32{39998},
 		},
 		{
 			Id:      45242,
 			Enchant: 3722,
-			Gems:    []int32{39998},
 		},
 		{
 			Id:      46206,
 			Enchant: 3832,
-			Gems:    []int32{39998, 39998},
 		},
 		{
 			Id:      45460,
 			Enchant: 2332,
-			Gems:    []int32{39998},
 		},
 		{
 			Id:      45665,
 			Enchant: 3604,
-			Gems:    []int32{39998, 39998},
 		},
 		{
 			Id:      45616,
 			Enchant: 3599,
-			Gems:    []int32{39998, 39998, 39998},
 		},
 		{
 			Id:      46210,
 			Enchant: 3721,
-			Gems:    []int32{39998, 40027},
 		},
 		{
 			Id:      45537,
 			Enchant: 3606,
-			Gems:    []int32{39998, 40027},
 		},
 		{
-			Id:   46046,
-			Gems: []int32{39998},
+			Id: 46046,
 		},
 		{
-			Id:   45495,
-			Gems: []int32{39998},
+			Id: 45495,
 		},
 		{
 			Id: 45518,
@@ -634,12 +567,10 @@ var ElementalEquipment = &proto.EquipmentSpec{
 		{
 			Id:      45612,
 			Enchant: 3834,
-			Gems:    []int32{39998},
 		},
 		{
 			Id:      45470,
 			Enchant: 1128,
-			Gems:    []int32{39998},
 		},
 		{
 			Id: 40267,

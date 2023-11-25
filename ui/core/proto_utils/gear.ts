@@ -1,27 +1,13 @@
-import { EquipmentSpec, ItemSwap } from '../proto/common.js';
-import { GemColor } from '../proto/common.js';
-import { ItemSlot } from '../proto/common.js';
-import { ItemSpec } from '../proto/common.js';
-import { Profession } from '../proto/common.js';
-import { SimDatabase } from '../proto/common.js';
-import { SimItem } from '../proto/common.js';
-import { SimEnchant } from '../proto/common.js';
-import { SimGem } from '../proto/common.js';
-import { WeaponType } from '../proto/common.js';
-import { arrayEquals, equalsOrBothNull } from '../utils.js';
-import { distinct, getEnumValues } from '../utils.js';
-import { isBluntWeaponType, isSharpWeaponType } from '../proto_utils/utils.js';
+import { EquipmentSpec, ItemSlot, ItemSpec, ItemSwap, Profession, SimDatabase, SimEnchant, SimGem, SimItem } from '../proto/common.js';
 import {
 	UIEnchant as Enchant,
-	UIGem as Gem,
 	UIItem as Item,
 } from '../proto/ui.js';
+import { isBluntWeaponType, isSharpWeaponType } from '../proto_utils/utils.js';
+import { distinct, equalsOrBothNull, getEnumValues } from '../utils.js';
 
-import { isMetaGemActive } from './gems.js';
-import { gemMatchesSocket } from './gems.js';
 import { EquippedItem } from './equipped_item.js';
 import { validWeaponCombo } from './utils.js';
-import { Stats } from './stats.js';
 
 type InternalGear = Record<ItemSlot, EquippedItem | null>;
 
@@ -42,17 +28,6 @@ abstract class BaseGear {
 
 	asArray(): Array<EquippedItem | null> {
 		return Object.values(this.gear);
-	}
-
-	removeUniqueGems(gear: InternalGear, newItem: EquippedItem) {
-		// If the new item has unique gems, remove matching.
-		newItem.gems
-			.filter(gem => gem?.unique)
-			.forEach(gem => {
-				this.getItemSlots().map(slot => Number(slot) as ItemSlot).forEach(slot => {
-					gear[slot] = gear[slot]?.removeGemsWithId(gem!.id) || null;
-				});
-			});
 	}
 
 	removeUniqueItems(gear: InternalGear, newItem: EquippedItem) {
@@ -86,10 +61,6 @@ abstract class BaseGear {
 	protected static enchantToDB(enchant: Enchant): SimEnchant {
 		return SimEnchant.fromJson(Enchant.toJson(enchant), { ignoreUnknownFields: true });
 	}
-
-	protected static gemToDB(gem: Gem): SimGem {
-		return SimGem.fromJson(Gem.toJson(gem), { ignoreUnknownFields: true });
-	}
 }
 
 /**
@@ -121,7 +92,6 @@ export class Gear extends BaseGear {
 		const newInternalGear = this.asMap();
 
 		if (newItem) {
-			this.removeUniqueGems(newInternalGear, newItem);
 			this.removeUniqueItems(newInternalGear, newItem);
 		}
 
@@ -168,139 +138,6 @@ export class Gear extends BaseGear {
 		});
 	}
 
-	getAllGems(isBlacksmithing: boolean): Array<Gem> {
-		return this.asArray()
-			.map(ei => ei == null ? [] : ei.curGems(isBlacksmithing))
-			.flat();
-	}
-
-	getNonMetaGems(isBlacksmithing: boolean): Array<Gem> {
-		return this.getAllGems(isBlacksmithing).filter(gem => gem.color != GemColor.GemColorMeta);
-	}
-
-	statsFromGems(isBlacksmithing: boolean): Stats {
-		let stats = new Stats();
-
-		// Stats from just the gems.
-		const gems = this.getAllGems(isBlacksmithing);
-		for (let i = 0; i < gems.length; i++) {
-			stats = stats.add(new Stats(gems[i].stats));
-		}
-
-		// Stats from socket bonuses.
-		const items = this.asArray().filter(ei => ei != null) as Array<EquippedItem>;
-		for (let i = 0; i < items.length; i++) {
-			stats = stats.add(items[i].socketBonusStats());
-		}
-
-		return stats;
-	}
-
-	getGemsOfColor(color: GemColor, isBlacksmithing: boolean): Array<Gem> {
-		return this.getAllGems(isBlacksmithing).filter(gem => gem.color == color);
-	}
-
-	getJCGems(isBlacksmithing: boolean): Array<Gem> {
-		return this.getAllGems(isBlacksmithing).filter(gem => gem.requiredProfession == Profession.Jewelcrafting);
-	}
-
-	getMetaGem(): Gem | null {
-		return this.getGemsOfColor(GemColor.GemColorMeta, true)[0] || null;
-	}
-
-	gemColorCounts(isBlacksmithing: boolean): ({ red: number, yellow: number, blue: number }) {
-		const gems = this.getAllGems(isBlacksmithing);
-		return {
-			red: gems.filter(gem => gemMatchesSocket(gem, GemColor.GemColorRed)).length,
-			yellow: gems.filter(gem => gemMatchesSocket(gem, GemColor.GemColorYellow)).length,
-			blue: gems.filter(gem => gemMatchesSocket(gem, GemColor.GemColorBlue)).length,
-		};
-	}
-
-	// Returns true if this gear set has a meta gem AND the other gems meet the meta's conditions.
-	hasActiveMetaGem(isBlacksmithing: boolean): boolean {
-		const metaGem = this.getMetaGem();
-		if (!metaGem) {
-			return false;
-		}
-
-		const gemColorCounts = this.gemColorCounts(isBlacksmithing);
-
-		const gems = this.getAllGems(isBlacksmithing);
-		return isMetaGemActive(
-			metaGem,
-			gemColorCounts.red, gemColorCounts.yellow, gemColorCounts.blue);
-	}
-
-	hasInactiveMetaGem(isBlacksmithing: boolean): boolean {
-		return this.getMetaGem() != null && !this.hasActiveMetaGem(isBlacksmithing);
-	}
-
-	withGem(itemSlot: ItemSlot, socketIdx: number, gem: Gem | null): Gear {
-		const item = this.getEquippedItem(itemSlot);
-
-		if (item) {
-			return this.withEquippedItem(itemSlot, item.withGem(gem, socketIdx), true);
-		}
-
-		return this;
-	}
-
-	withMetaGem(metaGem: Gem | null): Gear {
-		const headItem = this.getEquippedItem(ItemSlot.ItemSlotHead);
-
-		if (headItem) {
-			for (const [socketIdx, socketColor] of headItem.allSocketColors().entries()) {
-				if (socketColor == GemColor.GemColorMeta) {
-					return this.withEquippedItem(ItemSlot.ItemSlotHead, headItem.withGem(metaGem, socketIdx), true);
-				}
-			}
-		}
-
-		return this;
-	}
-
-	withoutMetaGem(): Gear {
-		const headItem = this.getEquippedItem(ItemSlot.ItemSlotHead);
-		const metaGem = this.getMetaGem();
-		if (headItem && metaGem) {
-			return this.withEquippedItem(ItemSlot.ItemSlotHead, headItem.removeGemsWithId(metaGem.id), true);
-		} else {
-			return this;
-		}
-	}
-
-	withoutGems(): Gear {
-		let curGear: Gear = this;
-
-		for (var slot of this.getItemSlots()) {
-			const item = this.getEquippedItem(slot);
-
-			if (item) {
-				curGear = curGear.withEquippedItem(slot, item.removeAllGems(), true);
-			}
-		}
-
-		return curGear;
-	}
-
-	// Removes bonus gems from blacksmith profession bonus.
-	withoutBlacksmithSockets(): Gear {
-		let curGear: Gear = this;
-
-		const wristItem = this.getEquippedItem(ItemSlot.ItemSlotWrist);
-		if (wristItem) {
-			curGear = curGear.withEquippedItem(ItemSlot.ItemSlotWrist, wristItem.withGem(null, wristItem.numPossibleSockets - 1), true);
-		}
-
-		const handsItem = this.getEquippedItem(ItemSlot.ItemSlotHands);
-		if (handsItem) {
-			curGear = curGear.withEquippedItem(ItemSlot.ItemSlotHands, handsItem.withGem(null, handsItem.numPossibleSockets - 1), true);
-		}
-
-		return curGear;
-	}
-
 	hasBluntMHWeapon(): boolean {
 		const weapon = this.getEquippedItem(ItemSlot.ItemSlotMainHand);
 		return weapon != null && isBluntWeaponType(weapon.item.weaponType);
@@ -323,7 +160,7 @@ export class Gear extends BaseGear {
 			.map(ei => ei.getProfessionRequirements())
 			.flat());
 	}
-	getFailedProfessionRequirements(professions: Array<Profession>): Array<Item | Gem | Enchant> {
+	getFailedProfessionRequirements(professions: Array<Profession>): Array<Item | Enchant> {
 		return (this.asArray().filter(ei => ei != null) as Array<EquippedItem>)
 			.map(ei => ei.getFailedProfessionRequirements(professions))
 			.flat();
@@ -334,7 +171,6 @@ export class Gear extends BaseGear {
 		return SimDatabase.create({
 			items: distinct(equippedItems.map(ei => Gear.itemToDB(ei.item))),
 			enchants: distinct(equippedItems.filter(ei => ei.enchant).map(ei => Gear.enchantToDB(ei.enchant!))),
-			gems: distinct(equippedItems.map(ei => (ei._gems.filter(g => g != null) as Array<Gem>).map(gem => Gear.gemToDB(gem))).flat()),
 		});
 	}
 }
@@ -356,7 +192,6 @@ export class ItemSwapGear extends BaseGear {
 
 	equipItem(slot: ItemSlot, equippedItem: EquippedItem | null, canDualWield2H: boolean) {
 		if (equippedItem) {
-			this.removeUniqueGems(this.gear, equippedItem);
 			this.removeUniqueItems(this.gear, equippedItem);
 		}
 
@@ -377,7 +212,6 @@ export class ItemSwapGear extends BaseGear {
 		return SimDatabase.create({
 			items: distinct(equippedItems.map(ei => ItemSwapGear.itemToDB(ei.item))),
 			enchants: distinct(equippedItems.filter(ei => ei.enchant).map(ei => ItemSwapGear.enchantToDB(ei.enchant!))),
-			gems: distinct(equippedItems.map(ei => ei.curGems(true).map(gem => ItemSwapGear.gemToDB(gem))).flat()),
 		});
 	}
 }

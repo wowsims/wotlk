@@ -13,7 +13,6 @@ message UIDatabase {
 	repeated UIItem items = 1;
 	repeated UIEnchant enchants = 2;
 	repeated UIRune runes = 10;
-	repeated UIGem gems = 3;
 	repeated PresetEncounter encounters = 6;
 
 	repeated UIZone zones = 8;
@@ -54,7 +53,6 @@ message UIItem {
 	int32 requires_level = 9;
 
 	repeated double stats = 10;
-	repeated GemColor gem_sockets = 11;
 	repeated double socketBonus = 12;
 
 	// Weapon stats, needed for computing proper EP for melee weapons
@@ -170,20 +168,6 @@ message UIRune {
 	int32 requires_level = 6;
 }
 
-message UIGem {
-	int32 id = 1;
-	string name = 2;
-	string icon = 3;
-	GemColor color = 4;
-
-	repeated double stats = 5;
-
-	int32 phase = 6;
-	ItemQuality quality = 7;
-	bool unique = 8;
-	Profession required_profession = 9;
-}
-
 message IconData {
 	int32 id = 1;
 	string name = 2;
@@ -244,12 +228,9 @@ message DatabaseFilters {
 
 	bool one_handed_weapons = 6;
 	bool two_handed_weapons = 7;
-	bool matching_gems_only = 8;
 
 	// Item IDs for favorited items.
 	repeated int32 favorite_items = 11;
-	// Item IDs for favorited gems.
-	repeated int32 favorite_gems = 12;
 	// Uniquely-identifying strings for favorited enchants.
 	repeated string favorite_enchants = 13;
 }

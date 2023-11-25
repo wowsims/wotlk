@@ -320,12 +320,6 @@ func (character *Character) applyItemEffects(agent Agent) {
 			applyItemEffect(agent)
 		}
 
-		for _, g := range eq.Gems {
-			if applyGemEffect, ok := itemEffects[g.ID]; ok {
-				applyGemEffect(agent)
-			}
-		}
-
 		if applyEnchantEffect, ok := enchantEffects[eq.Enchant.EffectID]; ok {
 			applyEnchantEffect(agent)
 		}
@@ -367,18 +361,9 @@ func (character *Character) GetBaseStats() stats.Stats {
 // https://github.com/TheGroxEmpire/TBC_DPS_Warrior_Sim/issues/30
 // TODO "primaryModifiers" could be modelled as a PseudoStat, since they're unit-specific. "secondaryModifiers" apply to a specific set of spells.
 func (character *Character) calculateCritMultiplier(normalCritDamage float64, primaryModifiers float64, secondaryModifiers float64) float64 {
-	if character.HasMetaGemEquipped(34220) ||
-		character.HasMetaGemEquipped(32409) ||
-		character.HasMetaGemEquipped(41285) ||
-		character.HasMetaGemEquipped(41398) {
-		primaryModifiers *= 1.03
-	}
 	return 1.0 + (normalCritDamage*primaryModifiers-1.0)*(1.0+secondaryModifiers)
 }
 func (character *Character) calculateHealingCritMultiplier(normalCritDamage float64, primaryModifiers float64, secondaryModifiers float64) float64 {
-	if character.HasMetaGemEquipped(41376) {
-		primaryModifiers *= 1.03
-	}
 	return 1.0 + (normalCritDamage*primaryModifiers-1.0)*(1.0+secondaryModifiers)
 }
 func (character *Character) SpellCritMultiplier(primaryModifiers float64, secondaryModifiers float64) float64 {
@@ -533,15 +518,6 @@ func (character *Character) HasTrinketEquipped(itemID int32) bool {
 
 func (character *Character) HasRingEquipped(itemID int32) bool {
 	return character.Finger1().ID == itemID || character.Finger2().ID == itemID
-}
-
-func (character *Character) HasMetaGemEquipped(gemID int32) bool {
-	for _, gem := range character.Head().Gems {
-		if gem.ID == gemID {
-			return true
-		}
-	}
-	return false
 }
 
 // Returns the MH weapon if one is equipped, and null otherwise.

@@ -8,7 +8,6 @@ import {
 	makeShow1hWeaponsSelector,
 	makeShow2hWeaponsSelector,
 	makeShowEPValuesSelector,
-	makeShowMatchingGemsSelector,
 } from './other_inputs';
 
 import { setItemQualityCssClass } from '../css_utils';
@@ -21,34 +20,30 @@ import { formatDeltaTextElem } from '../utils';
 import { ActionId } from '../proto_utils/action_id';
 import { getEnchantDescription, getUniqueEnchantString } from '../proto_utils/enchants';
 import { EquippedItem } from '../proto_utils/equipped_item';
-import { ItemSwapGear } from '../proto_utils/gear'
-import { getEmptyGemSocketIconUrl, gemMatchesSocket } from '../proto_utils/gems';
+import { ItemSwapGear } from '../proto_utils/gear';
 import { Stats } from '../proto_utils/stats';
 
+import { Tooltip } from 'bootstrap';
+import { IndividualSimUI } from '../individual_sim_ui.js';
 import {
 	Class,
-	Spec,
-	GemColor,
 	ItemQuality,
 	ItemSlot,
 	ItemSpec,
 	ItemSwap,
-	ItemType,
+	Spec,
 } from '../proto/common';
 import {
 	DatabaseFilters,
 	UIEnchant as Enchant,
-	UIRune as Rune,
-	UIGem as Gem,
 	UIItem as Item,
+	UIRune as Rune,
 } from '../proto/ui.js';
-import { IndividualSimUI } from '../individual_sim_ui.js';
-import { Tooltip } from 'bootstrap';
 // eslint-disable-next-line unused-imports/no-unused-imports
 import { element, fragment, ref } from 'tsx-vanilla';
 
-import { Clusterize } from './virtual_scroll/clusterize.js';
 import { itemTypeToSlotsMap } from '../proto_utils/utils.js';
+import { Clusterize } from './virtual_scroll/clusterize.js';
 
 const EP_TOOLTIP = `
 	EP (Equivalence Points) is way of comparing items by multiplying the raw stats of an item with your current stat weights.
@@ -57,24 +52,6 @@ const EP_TOOLTIP = `
 
 const createHeroicLabel = () => {
 	return (<span className='heroic-label'>[H]</span>);
-}
-
-const createGemContainer = (socketColor: GemColor ,gem : Gem|null) => {
-	const gemIconElem = ref<HTMLImageElement>();
-	
-	let gemContainer = (
-		<div className="gem-socket-container">
-			<img ref={gemIconElem} className={`gem-icon ${gem == null ? 'hide' : ''}`} />
-			<img className="socket-icon" src={getEmptyGemSocketIconUrl(socketColor)}/>
-		</div>
-	);
-
-	if (gem != null) {
-		ActionId.fromItemId(gem.id).fill().then(filledId => {
-			gemIconElem.value!.src = filledId.iconUrl;
-		});
-	}
-	return gemContainer;
 }
 
 const createRuneContainer = (rune : Rune|null) => {
@@ -558,7 +535,6 @@ export class SelectorModal extends BaseModal {
 			}),
 			item => this.player.computeItemEP(item, slot),
 			equippedItem => equippedItem?.item,
-			GemColor.GemColorUnknown,
 			eventID => {
 				gearData.equipItem(eventID, null);
 				this.removeTabs('Gem');
@@ -586,7 +562,6 @@ export class SelectorModal extends BaseModal {
 			}),
 			enchant => this.player.computeEnchantEP(enchant),
 			equippedItem => equippedItem?.enchant,
-			GemColor.GemColorUnknown,
 			eventID => {
 				const equippedItem = gearData.getEquippedItem();
 				if (equippedItem)
@@ -615,11 +590,10 @@ export class SelectorModal extends BaseModal {
 				}),
 				() => 1,
 				equippedItem => equippedItem?.rune,
-				GemColor.GemColorUnknown,
 				eventID => {
 					const equippedItem = gearData.getEquippedItem();
 					if (equippedItem)
-						gearData.equipItem(eventID, equippedItem.withEnchant(null));
+						gearData.equipItem(eventID, equippedItem.withRune(null));
 				});
 
 		// this.addGemTabs(slot, equippedItem, gearData);
@@ -637,77 +611,6 @@ export class SelectorModal extends BaseModal {
 		}
 	}
 
-	private addGemTabs(slot: ItemSlot, equippedItem: EquippedItem | null, gearData: GearData) {
-		if (equippedItem == undefined) {
-			return;
-		}
-
-		const socketBonusEP = this.player.computeStatsEP(new Stats(equippedItem.item.socketBonus)) / (equippedItem.item.gemSockets.length || 1);
-		equippedItem.curSocketColors(this.player.isBlacksmithing()).forEach((socketColor, socketIdx) => {
-			this.addTab<Gem>(
-				'Gem ' + (socketIdx + 1),
-				this.player.getGems(socketColor).map((gem: Gem) => {
-					return {
-						item: gem,
-						id: gem.id,
-						actionId: ActionId.fromItemId(gem.id),
-						name: gem.name,
-						quality: gem.quality,
-						phase: gem.phase,
-						heroic: false,
-						baseEP: this.player.computeStatsEP(new Stats(gem.stats)),
-						ignoreEPFilter: true,
-						onEquip: (eventID, gem: Gem) => {
-							const equippedItem = gearData.getEquippedItem();
-							if (equippedItem)
-								gearData.equipItem(eventID, equippedItem.withGem(gem, socketIdx));
-						},
-					};
-				}),
-				gem => {
-					let gemEP = this.player.computeGemEP(gem);
-					if (gemMatchesSocket(gem, socketColor)) {
-						gemEP += socketBonusEP;
-					}
-					return gemEP;
-				},
-				equippedItem => equippedItem?.gems[socketIdx],
-				socketColor,
-				eventID => {
-					const equippedItem = gearData.getEquippedItem();
-					if (equippedItem)
-						gearData.equipItem(eventID, equippedItem.withGem(null, socketIdx));
-				},
-				tabAnchor => {
-					let gemContainer = createGemContainer(socketColor, null);
-					tabAnchor.appendChild(gemContainer);
-					tabAnchor.classList.add('selector-modal-tab-gem');
-
-					const gemElem = tabAnchor.querySelector('.gem-icon') as HTMLElement;
-					const emptySocketUrl = getEmptyGemSocketIconUrl(socketColor)
-
-					const updateGemIcon = () => {
-						const equippedItem = gearData.getEquippedItem();
-						const gem = equippedItem?.gems[socketIdx];
-
-						if (gem) {
-							gemElem.classList.remove('hide');
-							ActionId.fromItemId(gem.id).fill().then(filledId => {
-								gemElem.setAttribute('src', filledId.iconUrl);
-							});
-						} else {
-							gemElem.classList.add('hide');
-							gemElem.setAttribute('src', emptySocketUrl);
-						}
-					};
-
-					gearData.changeEvent.on(updateGemIcon);
-					this.addOnDisposeCallback(() => gearData.changeEvent.off(updateGemIcon));
-					updateGemIcon();
-				});
-		});
-	}
-
 	/**
 	 * Adds one of the tabs for the item selector menu.
 	 *
@@ -719,14 +622,13 @@ export class SelectorModal extends BaseModal {
 		itemData: Array<ItemData<T>>,
 		computeEP: (item: T) => number,
 		equippedToItemFn: (equippedItem: EquippedItem | null) => (T | null | undefined),
-		socketColor: GemColor,
 		onRemove: (eventID: EventID) => void,
 		setTabContent?: (tabElem: HTMLAnchorElement) => void) {
 		if (itemData.length == 0) {
 			return;
 		}
 
-		const { slot, gearData } = this.config;
+		const { gearData } = this.config;
 		const tabContentId = (label + '-tab').split(' ').join('');
 		const selected = label === this.config.selectedTab;
 
@@ -766,17 +668,10 @@ export class SelectorModal extends BaseModal {
 			itemData,
 			computeEP,
 			equippedToItemFn,
-			socketColor,
 			onRemove,
 			(itemData: ItemData<T>) => {
 				const item = itemData.item;
 				itemData.onEquip(TypedEvent.nextEventID(), item);
-
-				// If the item changes, the gem slots might change, so remove and recreate the gem tabs
-				if (Item.is(item)) {
-					this.removeTabs('Gem');
-					this.addGemTabs(slot, gearData.getEquippedItem(), gearData);
-				}
 			},
 		)
 
@@ -868,7 +763,6 @@ export class ItemList<T> {
 	private itemsToDisplay: Array<number>;
 	private currentFilters: DatabaseFilters;
 	private searchInput: HTMLInputElement;
-	private socketColor: GemColor;
 	private computeEP: (item: T) => number;
 	private equippedToItemFn: (equippedItem: EquippedItem | null) => (T | null | undefined);
 	private gearData: GearData;
@@ -885,13 +779,11 @@ export class ItemList<T> {
 		itemData: Array<ItemData<T>>,
 		computeEP: (item: T) => number,
 		equippedToItemFn: (equippedItem: EquippedItem | null) => (T | null | undefined),
-		socketColor: GemColor,
 		onRemove: (eventID: EventID) => void,
 		onItemClick: (itemData: ItemData<T>) => void) {
 		this.label = label;
 		this.player = player;
 		this.itemData = itemData;
-		this.socketColor = socketColor;
 		this.computeEP = computeEP;
 		this.equippedToItemFn = equippedToItemFn;
 		this.onItemClick = onItemClick;
@@ -952,8 +844,6 @@ export class ItemList<T> {
 		}
 
 		makeShowEPValuesSelector(this.tabContent.getElementsByClassName('selector-modal-show-ep-values')[0] as HTMLElement, player.sim);
-
-		makeShowMatchingGemsSelector(this.tabContent.getElementsByClassName('selector-modal-show-matching-gems')[0] as HTMLElement, player.sim);
 		
 		if (!label.startsWith('Gem')) {
 			(this.tabContent.getElementsByClassName('selector-modal-show-matching-gems')[0] as HTMLElement).style.display = 'none';
@@ -1000,8 +890,8 @@ export class ItemList<T> {
 
 		if (label.startsWith("Enchants")) {
 			removeButton.textContent = 'Remove Enchant';
-		} else if (label.startsWith("Gem")) {
-			removeButton.textContent = 'Remove Gem';
+		} else if (label.startsWith("Rune")) {
+			removeButton.textContent = 'Remove Rune';
 		}
 
 		this.updateSelected();
@@ -1063,7 +953,7 @@ export class ItemList<T> {
 		const newEquippedItem = this.gearData.getEquippedItem();
 		const newItem = this.equippedToItemFn(newEquippedItem);
 
-		const newItemId = newItem ? (this.label == 'Enchants' ? (newItem as unknown as Enchant).effectId : (newItem as unknown as Item | Gem | Rune).id) : 0;
+		const newItemId = newItem ? (this.label == 'Enchants' ? (newItem as unknown as Enchant).effectId : (newItem as unknown as Item | Rune).id) : 0;
 		const newEP = newItem ? this.computeEP(newItem) : 0;
 
 		this.scroller.elementUpdate((item) => {
@@ -1105,12 +995,6 @@ export class ItemList<T> {
 				i => this.itemData[i].item as unknown as Enchant,
 				this.slot,
 				currentEquippedItem);
-		} else if (this.label.startsWith('Gem')) {
-			itemIdxs = this.player.filterGemData(
-				itemIdxs,
-				i => this.itemData[i].item as unknown as Gem,
-				this.slot,
-				this.socketColor);
 		}
 
 		itemIdxs = itemIdxs.filter(i => {
@@ -1188,7 +1072,7 @@ export class ItemList<T> {
 		const itemEP = this.computeEP(itemData.item);
 
 		const equipedItem = this.equippedToItemFn(this.gearData.getEquippedItem());
-		const equipdItemId = equipedItem ? (this.label == 'Enchants' ? (equipedItem as unknown as Enchant).effectId : (equipedItem as unknown as Item | Gem).id) : 0;
+		const equipdItemId = equipedItem ? (this.label == 'Enchants' ? (equipedItem as unknown as Enchant).effectId : (equipedItem as unknown as Item).id) : 0;
 
 		const nameElem = ref<HTMLLabelElement>();
 		const anchorElem = ref<HTMLAnchorElement>();
@@ -1283,16 +1167,6 @@ export class ItemList<T> {
 						filters.favoriteEnchants.splice(favIdx, 1);
 					}
 				}
-			} else if (this.label.startsWith('Gem')) {
-				const favId = itemData.id;
-				if (isFavorite) {
-					filters.favoriteGems.push(favId);
-				} else {
-					const favIdx = filters.favoriteGems.indexOf(favId);
-					if (favIdx != -1) {
-						filters.favoriteGems.splice(favIdx, 1);
-					}
-				}
 			}
 			favoriteElem.value!.children[0].classList.toggle('fas');
 			favoriteElem.value!.children[0].classList.toggle('far');
@@ -1319,8 +1193,6 @@ export class ItemList<T> {
 			return this.currentFilters.favoriteItems.includes(itemData.id);
 		} else if (this.label == 'Enchants') {
 			return this.currentFilters.favoriteEnchants.includes(getUniqueEnchantString(itemData.item as unknown as Enchant));
-		} else if (this.label.startsWith('Gem')) {
-			return this.currentFilters.favoriteGems.includes(itemData.id);
 		}
 		return false;
 	}

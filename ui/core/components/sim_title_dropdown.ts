@@ -97,12 +97,13 @@ export class SimTitleDropdown extends Component {
 	}
 
 	private buildDropdown() {
-		if (raidSimStatus >= LaunchStatus.Alpha) {
-			// Add the raid sim to the top of the dropdown
-			let raidListItem = document.createElement('li');
-			raidListItem.appendChild(this.buildRaidLink());
-			this.dropdownMenu?.appendChild(raidListItem);
-		}
+		// TODO Classic
+		// if (raidSimStatus >= LaunchStatus.Alpha) {
+		// 	// Add the raid sim to the top of the dropdown
+		// 	let raidListItem = document.createElement('li');
+		// 	raidListItem.appendChild(this.buildRaidLink());
+		// 	this.dropdownMenu?.appendChild(raidListItem);
+		// }
 
 		naturalClassOrder.forEach(classIndex => {
 			let listItem = document.createElement('li');

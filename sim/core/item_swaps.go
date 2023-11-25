@@ -181,10 +181,6 @@ func (swap *ItemSwap) getItemStats(item Item) stats.Stats {
 	itemStats := item.Stats
 	itemStats = itemStats.Add(item.Enchant.Stats)
 
-	for _, gem := range item.Gems {
-		itemStats = itemStats.Add(gem.Stats)
-	}
-
 	return itemStats
 }
 
@@ -265,8 +261,9 @@ func toItem(itemSpec *proto.ItemSpec) Item {
 	}
 
 	return NewItem(ItemSpec{
-		ID:      itemSpec.Id,
-		Gems:    itemSpec.Gems,
+		ID: itemSpec.Id,
+
 		Enchant: itemSpec.Enchant,
+		Rune:    itemSpec.Rune,
 	})
 }

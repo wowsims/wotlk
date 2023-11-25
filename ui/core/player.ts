@@ -1,25 +1,4 @@
 import {
-	Class,
-	Consumes,
-	Cooldowns,
-	Faction,
-	GemColor,
-	Glyphs,
-	HandType,
-	HealingModel,
-	IndividualBuffs,
-	ItemSlot,
-	Profession,
-	PseudoStat,
-	Race,
-	UnitReference,
-	SimDatabase,
-	Spec,
-	Stat,
-	UnitStats,
-	UnitReference_Type,
-} from './proto/common.js';
-import {
 	AuraStats as AuraStatsProto,
 	SpellStats as SpellStatsProto,
 	UnitMetadata as UnitMetadataProto,
@@ -31,39 +10,53 @@ import {
 	SimpleRotation,
 } from './proto/apl.js';
 import {
+	Class,
+	Consumes,
+	Cooldowns,
+	Faction,
+	Glyphs,
+	HandType,
+	HealingModel,
+	IndividualBuffs,
+	ItemSlot,
+	Profession,
+	PseudoStat,
+	Race,
+	SimDatabase,
+	Spec,
+	Stat,
+	UnitReference,
+	UnitReference_Type,
+	UnitStats,
+} from './proto/common.js';
+import {
 	DungeonDifficulty,
-	Expansion,
-	RaidFilterOption,
-	SourceFilterOption,
 	UIEnchant as Enchant,
-	UIRune as Rune,
-	UIGem as Gem,
+	Expansion,
 	UIItem as Item,
+	RaidFilterOption,
+	UIRune as Rune,
+	SourceFilterOption,
 	UIItem_FactionRestriction,
 } from './proto/ui.js';
 
-import { PlayerStats } from './proto/api.js';
-import { Player as PlayerProto } from './proto/api.js';
-import { StatWeightsResult } from './proto/api.js';
+import { LaunchStatus, aplLaunchStatuses } from './launched_sims';
+import { Player as PlayerProto, PlayerStats, StatWeightsResult } from './proto/api.js';
 import { ActionId } from './proto_utils/action_id.js';
 import { EquippedItem, getWeaponDPS } from './proto_utils/equipped_item.js';
-import { aplLaunchStatuses, LaunchStatus } from './launched_sims';
 
-import { playerTalentStringToProto } from './talents/factory.js';
 import { Gear, ItemSwapGear } from './proto_utils/gear.js';
-import {
-	isUnrestrictedGem,
-	gemMatchesSocket,
-} from './proto_utils/gems.js';
 import { Stats } from './proto_utils/stats.js';
+import { playerTalentStringToProto } from './talents/factory.js';
 
 import {
 	AL_CATEGORY_HARD_MODE,
 	ClassSpecs,
+	ShamanSpecs,
+	SpecOptions,
 	SpecRotation,
 	SpecTalents,
 	SpecTypeFunctions,
-	SpecOptions,
 	canEquipEnchant,
 	canEquipItem,
 	classColors,
@@ -72,7 +65,6 @@ import {
 	getTalentTree,
 	getTalentTreeIcon,
 	getTalentTreePoints,
-	getMetaGemEffectEP,
 	isTankSpec,
 	newUnitReference,
 	raceToFaction,
@@ -80,17 +72,16 @@ import {
 	specToEligibleRaces,
 	specTypeFunctions,
 	withSpecProto,
-	ShamanSpecs,
 } from './proto_utils/utils.js';
 
-import * as Mechanics from './constants/mechanics.js';
 import { getLanguageCode } from './constants/lang.js';
-import { EventID, TypedEvent } from './typed_event.js';
-import { Party, MAX_PARTY_SIZE } from './party.js';
+import * as Mechanics from './constants/mechanics.js';
+import { MAX_PARTY_SIZE, Party } from './party.js';
+import { ElementalShaman_Options, ElementalShaman_Options_ThunderstormRange, ElementalShaman_Rotation, ElementalShaman_Rotation_BloodlustUse, EnhancementShaman_Rotation, EnhancementShaman_Rotation_BloodlustUse, RestorationShaman_Rotation, RestorationShaman_Rotation_BloodlustUse } from './proto/shaman.js';
 import { Raid } from './raid.js';
 import { Sim } from './sim.js';
-import { stringComparator, sum } from './utils.js';
-import { ElementalShaman_Options, ElementalShaman_Options_ThunderstormRange, ElementalShaman_Rotation, ElementalShaman_Rotation_BloodlustUse, EnhancementShaman_Rotation, EnhancementShaman_Rotation_BloodlustUse, RestorationShaman_Rotation, RestorationShaman_Rotation_BloodlustUse } from './proto/shaman.js';
+import { EventID, TypedEvent } from './typed_event.js';
+import { stringComparator } from './utils.js';
 
 export interface AuraStats {
 	data: AuraStatsProto,
@@ -400,11 +391,6 @@ export class Player<SpecType extends Spec> {
 
 	getRunes(slot: ItemSlot): Array<Rune> {
 		return this.sim.db.getRunes(slot, this.getClass());
-	}
-
-	// Returns all gems that this player can wear of the given color.
-	getGems(socketColor?: GemColor): Array<Gem> {
-		return this.sim.db.getGems(socketColor);
 	}
 
 	getEpWeights(): Stats {
@@ -1001,24 +987,6 @@ export class Player<SpecType extends Spec> {
 		return stats.computeEP(this.epWeights);
 	}
 
-	computeGemEP(gem: Gem): number {
-		if (this.gemEPCache.has(gem.id)) {
-			return this.gemEPCache.get(gem.id)!;
-		}
-
-		const epFromStats = this.computeStatsEP(new Stats(gem.stats));
-		const epFromEffect = getMetaGemEffectEP(this.spec, gem, Stats.fromProto(this.currentStats.finalStats));
-		let bonusEP = 0;
-		// unique items are slightly worse than non-unique because you can have only one.
-		if (gem.unique) {
-			bonusEP -= 0.01;
-		}
-
-		let ep = epFromStats + epFromEffect + bonusEP;
-		this.gemEPCache.set(gem.id, ep);
-		return ep;
-	}
-
 	computeEnchantEP(enchant: Enchant): number {
 		if (this.enchantEPCache.has(enchant.effectId)) {
 			return this.enchantEPCache.get(enchant.effectId)!;
@@ -1056,27 +1024,6 @@ export class Player<SpecType extends Spec> {
 			ep -= 0.01;
 		}
 
-		// Compare whether its better to match sockets + get socket bonus, or just use best gems.
-		const bestGemEPNotMatchingSockets = sum(item.gemSockets.map(socketColor => {
-			const gems = this.sim.db.getGems(socketColor).filter(gem => isUnrestrictedGem(gem, this.sim.getPhase()));
-			if (gems.length > 0) {
-				return Math.max(...gems.map(gem => this.computeGemEP(gem)));
-			} else {
-				return 0;
-			}
-		}));
-
-		const bestGemEPMatchingSockets = sum(item.gemSockets.map(socketColor => {
-			const gems = this.sim.db.getGems(socketColor).filter(gem => isUnrestrictedGem(gem, this.sim.getPhase()) && gemMatchesSocket(gem, socketColor));
-			if (gems.length > 0) {
-				return Math.max(...gems.map(gem => this.computeGemEP(gem)));
-			} else {
-				return 0;
-			}
-		})) + this.computeStatsEP(new Stats(item.socketBonus));
-
-		ep += Math.max(bestGemEPMatchingSockets, bestGemEPNotMatchingSockets);
-
 		this.itemEPCache[slot].set(item.id, ep);
 		return ep;
 	}
@@ -1088,18 +1035,10 @@ export class Player<SpecType extends Spec> {
 		const langPrefix = lang ? lang + '.' : '';
 		parts.push(`domain=${langPrefix}classic`);
 
-		const isBlacksmithing = this.hasProfession(Profession.Blacksmithing);
-		if (equippedItem.gems.length > 0) {
-			parts.push('gems=' + equippedItem.curGems(isBlacksmithing).map(gem => gem ? gem.id : 0).join(':'));
-		}
 		if (equippedItem.enchant != null) {
 			parts.push('ench=' + equippedItem.enchant.effectId);
 		}
 		parts.push('pcs=' + this.gear.asArray().filter(ei => ei != null).map(ei => ei!.item.id).join(':'));
-
-		if (equippedItem.hasExtraSocket(isBlacksmithing)) {
-			parts.push('sock');
-		}
 
 		elem.dataset.wowhead = parts.join('&');
 		elem.dataset.whtticon = 'false';
@@ -1267,20 +1206,6 @@ export class Player<SpecType extends Spec> {
 		});
 	}
 
-	filterGemData<T>(gemData: Array<T>, getGemFunc: (val: T) => Gem, slot: ItemSlot, socketColor: GemColor): Array<T> {
-		const filters = this.sim.getFilters();
-
-		return gemData.filter(gemElem => {
-			const gem = getGemFunc(gemElem);
-
-			if (filters.matchingGemsOnly && !gemMatchesSocket(gem, socketColor)) {
-				return false;
-			}
-
-			return true;
-		});
-	}
-
 	makeUnitReference(): UnitReference {
 		if (this.party == null) {
 			return emptyUnitReference();
@@ -1301,11 +1226,6 @@ export class Player<SpecType extends Spec> {
 			enchants: dbGear.enchants.concat(dbItemSwapGear.enchants).filter(function(elem, index, self) {
 				return index === self.findIndex((t) => (
 					t.effectId === elem.effectId
-				));
-			}),
-			gems: dbGear.gems.concat(dbItemSwapGear.gems).filter(function(elem, index, self) {
-				return index === self.findIndex((t) => (
-					t.id === elem.id
 				));
 			}),
 		})
