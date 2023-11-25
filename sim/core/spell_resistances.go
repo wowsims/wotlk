@@ -61,29 +61,12 @@ func (spell *Spell) ResistanceMultiplier(sim *Simulation, isPeriodic bool, attac
 }
 
 func (at *AttackTable) GetArmorDamageModifier(spell *Spell) float64 {
-	armorConstant := float64(at.Attacker.Level)*467.5 - 22167.5
-	defenderArmor := at.Defender.Armor()
-	reducibleArmor := min((defenderArmor+armorConstant)/3, defenderArmor)
 	armorPenRating := at.Attacker.stats[stats.ArmorPenetration] + spell.BonusArmorPenRating
-	effectiveArmor := defenderArmor - reducibleArmor*at.Attacker.ArmorPenetrationPercentage(armorPenRating)
-	return 1 - effectiveArmor/(effectiveArmor+armorConstant)
+	defenderArmor := at.Defender.Armor() - armorPenRating
+	return 1 - defenderArmor/(defenderArmor+400+85*float64(at.Attacker.Level))
 }
 
-/*
- The following calculations are based on
- https://web.archive.org/web/20110207221537/http://elitistjerks.com/f15/t44675-resistance_mechanics_wotlk/
- This handles the mob vs. player case
-  - average resist is calculated as AR = R / (R + C), C is 400 for level 80 mobs, assumed 510 for level 83 mobs
-  - actual resist values come in multiples of 10%, with 3-4 values around the average resist
-  - probability for a given resist value is P(x) = 0.5 - 2.5*|x - AR| (transformed for AR < 0.1 or AR > 0.9)
-  - the resist cap is likely gone, since resists work like armor now
- https://web.archive.org/web/20110209210726/http://elitistjerks.com/f75/t38540-general_mage_discussion_information/p11/#post1171056
- This handles the player vs. mob partial resists case
-  - average resist is still 2% percent per level vs. higher level mobs
-  - otherwise it's modelled identical to the mob vs. player case
-  - the resulting numbers have been verified in game (55% for 0%, 30% for 10%, 15% for 20% resists)
-*/
-
+// TODO: Classic update
 func (unit *Unit) averageResist(school SpellSchool, attacker *Unit) float64 {
 	resistance := unit.GetStat(school.ResistanceStat()) - attacker.stats[stats.SpellPenetration]
 	if resistance <= 0 {
