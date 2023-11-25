@@ -743,10 +743,10 @@ func (aura *Aura) Deactivate(sim *Simulation) {
 	}
 
 	if aura.onRageChangeIndex != Inactive {
-		removeOnRageChange := aura.onRageChangeIndex
-		aura.Unit.onRageChangeAuras = removeBySwappingToBack(aura.Unit.onRageChangeAuras, removeOnRageChange)
-		if removeOnRageChange < int32(len(aura.Unit.onRageChangeAuras)) {
-			aura.Unit.onRageChangeAuras[removeOnRageChange].onRageChangeIndex = removeOnRageChange
+		removeOnRageChangeIndex := aura.onRageChangeIndex
+		aura.Unit.onRageChangeAuras = removeBySwappingToBack(aura.Unit.onRageChangeAuras, removeOnRageChangeIndex)
+		if removeOnRageChangeIndex < int32(len(aura.Unit.onRageChangeAuras)) {
+			aura.Unit.onRageChangeAuras[removeOnRageChangeIndex].onRageChangeIndex = removeOnRageChangeIndex
 		}
 		aura.onRageChangeIndex = Inactive
 	}
@@ -862,9 +862,9 @@ func (at *auraTracker) GetMetricsProto() []*proto.AuraMetrics {
 }
 
 // Invokes the OnRageChange for all tracked auras
-func (at *auraTracker) OnRageChange(sim *Simulation) {
+func (at *auraTracker) OnRageChange(sim *Simulation, metrics *ResourceMetrics) {
 	for _, aura := range at.onRageChangeAuras {
-		aura.OnRageChange(aura, sim)
+		aura.OnRageChange(aura, sim, metrics)
 	}
 }
 

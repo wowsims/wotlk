@@ -10,8 +10,11 @@ import (
 
 func (warrior *Warrior) ApplyRunes() {
 	warrior.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= core.TernaryFloat64(warrior.HasRune(proto.WarriorRune_RuneSingleMindedFury), 1.1, 1)
-	if warrior.GetMHWeapon().HandType == proto.HandType_HandTypeTwoHand {
-		warrior.PseudoStats.MeleeSpeedMultiplier *= core.TernaryFloat64(warrior.HasRune(proto.WarriorRune_RuneFrenziedAssault), 1.1, 1)
+
+	if warrior.GetMHWeapon() != nil { // This check is to stop memory dereference error if unarmed
+		if warrior.GetMHWeapon().HandType == proto.HandType_HandTypeTwoHand {
+			warrior.PseudoStats.MeleeSpeedMultiplier *= core.TernaryFloat64(warrior.HasRune(proto.WarriorRune_RuneFrenziedAssault), 1.1, 1)
+		}
 	}
 
 	warrior.applyBloodFrenzy()
@@ -140,8 +143,8 @@ func (warrior *Warrior) applyConsumedByRage() {
 	warrior.RegisterAura(core.Aura{
 		Label:    "Consumed By Rage Trigger",
 		Duration: core.NeverExpires,
-		OnRageChange: func(aura *core.Aura, sim *core.Simulation) {
-			if !warrior.Above80RageCBRActive && warrior.CurrentRage() >= 80 {
+		OnRageChange: func(aura *core.Aura, sim *core.Simulation, metrics *core.ResourceMetrics) {
+			if !warrior.Above80RageCBRActive && warrior.CurrentRage() >= 80 && metrics.ActionID.OtherID != proto.OtherAction_OtherActionRefund {
 				warrior.ConsumedByRageAura.Activate(sim)
 				warrior.ConsumedByRageAura.SetStacks(sim, 12)
 				warrior.Above80RageCBRActive = true
@@ -163,7 +166,7 @@ func (warrior *Warrior) applyConsumedByRage() {
 }
 
 func (warrior *Warrior) applyQuickStrike() {
-	if !warrior.HasRune(proto.WarriorRune_RuneQuickStrike) {
+	if !warrior.HasRune(proto.WarriorRune_RuneQuickStrike) || warrior.GetMHWeapon().HandType != proto.HandType_HandTypeTwoHand {
 		return
 	}
 
@@ -191,8 +194,6 @@ func (warrior *Warrior) applyQuickStrike() {
 			if !result.Landed() {
 				spell.IssueRefund(sim)
 			}
-
-			spell.DealDamage(sim, result)
 		},
 	})
 }
