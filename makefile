@@ -98,6 +98,11 @@ node_modules: package-lock.json
 host_%: $(OUT_DIR) node_modules
 	npx http-server $(OUT_DIR)/..
 
+.PHONY: copydb
+copydb: 
+	mkdir -p dist/classic/assets/database
+	cp -r assets/database/* dist/classic/assets/database/
+
 # Generic rule for building index.html for any class directory
 $(OUT_DIR)/%/index.html: ui/index_template.html $(OUT_DIR)/assets
 	$(eval title := $(shell echo $(shell basename $(@D)) | sed -r 's/(^|_)([a-z])/\U \2/g' | cut -c 2-))

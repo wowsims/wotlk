@@ -204,7 +204,6 @@ export class Sim {
 		const playerDatabase = request.baseSettings.raid.parties[0].players[0].database;
 		playerDatabase?.items.push(...bulkItemsDb.items);
 		playerDatabase?.enchants.push(...bulkItemsDb.enchants);
-		playerDatabase?.gems.push(...bulkItemsDb.gems);
 
 		this.bulkSimStartEmitter.emit(TypedEvent.nextEventID(), request);
 

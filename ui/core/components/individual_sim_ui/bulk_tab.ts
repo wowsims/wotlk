@@ -581,7 +581,7 @@ export class BulkTab extends SimTab {
 			if (searchText.style.display == "none") {
 				searchButton.innerHTML = 'Close Search Results';
 				allItems = this.simUI.sim.db.getAllItems().filter((item) => {
-					return canEquipItem(item, this.simUI.player.spec, undefined);
+					return canEquipItem(this.simUI.player, item, undefined);
 				})
 				searchText.style.display = "block";
 				searchText.focus();

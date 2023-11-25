@@ -60,6 +60,15 @@ func applyConsumeEffects(agent Agent) {
 			character.AddStats(stats.Stats{
 				stats.MeleeCrit: 2 * CritRatingPerCritChance,
 			})
+		case proto.WeaponBuff_BlackfathomManaOil:
+			character.AddStats(stats.Stats{
+				stats.MP5:      12,
+				stats.SpellHit: 2 * SpellHitRatingPerHitChance,
+			})
+		case proto.WeaponBuff_DenseSharpeningStone:
+			character.AddStats(stats.Stats{
+				stats.MeleeHit: 2 * MeleeHitRatingPerHitChance,
+			})
 		}
 	}
 

@@ -92,6 +92,8 @@ export class ConsumesPicker extends Component {
 			{ item: WeaponBuff.BrilliantManaOil, stats: [Stat.StatHealing, Stat.StatSpellPower] },
 			{ item: WeaponBuff.DenseSharpeningStone, stats: [Stat.StatAttackPower] },
 			{ item: WeaponBuff.ElementalSharpeningStone, stats: [Stat.StatAttackPower] },
+			{ item: WeaponBuff.BlackfathomManaOil, stats: [Stat.StatSpellPower, Stat.StatMP5] },
+			{ item: WeaponBuff.BlackfathomSharpeningStone, stats: [Stat.StatMeleeHit] },
 		]);
 		if (weaponOptions.length) {
 			const elem = this.rootElem.querySelector('.consumes-weapon') as HTMLElement;

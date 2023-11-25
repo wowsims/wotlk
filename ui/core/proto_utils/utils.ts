@@ -1,7 +1,7 @@
 import { REPO_NAME } from '../constants/other.js';
 import { camelToSnakeCase, getEnumValues, intersection, maxIndex, sum } from '../utils.js';
 
-import { Player, ResourceType } from '../proto/api.js';
+import { Player as PlayerProto, ResourceType } from '../proto/api.js';
 import { ArmorType, Class, EnchantType, Faction, HandType, ItemSlot, ItemType, Race, RangedWeaponType, Spec, UnitReference, UnitReference_Type, WeaponType } from '../proto/common.js';
 import { Blessings } from '../proto/paladin.js';
 import {
@@ -65,6 +65,7 @@ import {
 } from '../proto/shaman.js';
 import { Warlock, Warlock_Options as WarlockOptions, Warlock_Rotation as WarlockRotation, WarlockTalents } from '../proto/warlock.js';
 import { ProtectionWarrior, ProtectionWarrior_Options as ProtectionWarriorOptions, ProtectionWarrior_Rotation as ProtectionWarriorRotation, Warrior, Warrior_Options as WarriorOptions, Warrior_Rotation as WarriorRotation, WarriorTalents } from '../proto/warrior.js';
+import { Player } from '../player.js';
 
 export type DruidSpecs = Spec.SpecBalanceDruid | Spec.SpecFeralDruid | Spec.SpecFeralTankDruid | Spec.SpecRestorationDruid;
 export type HunterSpecs = Spec.SpecHunter;
@@ -474,7 +475,7 @@ export type SpecTypeFunctions<SpecType extends Spec> = {
 	rotationCopy: (a: SpecRotation<SpecType>) => SpecRotation<SpecType>;
 	rotationToJson: (a: SpecRotation<SpecType>) => any;
 	rotationFromJson: (obj: any) => SpecRotation<SpecType>;
-	rotationFromPlayer: (player: Player) => SpecRotation<SpecType>;
+	rotationFromPlayer: (player: PlayerProto) => SpecRotation<SpecType>;
 
 	talentsCreate: () => SpecTalents<SpecType>;
 	talentsEquals: (a: SpecTalents<SpecType>, b: SpecTalents<SpecType>) => boolean;
@@ -487,7 +488,7 @@ export type SpecTypeFunctions<SpecType extends Spec> = {
 	optionsCopy: (a: SpecOptions<SpecType>) => SpecOptions<SpecType>;
 	optionsToJson: (a: SpecOptions<SpecType>) => any;
 	optionsFromJson: (obj: any) => SpecOptions<SpecType>;
-	optionsFromPlayer: (player: Player) => SpecOptions<SpecType>;
+	optionsFromPlayer: (player: PlayerProto) => SpecOptions<SpecType>;
 };
 
 export const specTypeFunctions: Record<Spec, SpecTypeFunctions<any>> = {
@@ -1143,10 +1144,10 @@ export const specToLocalStorageKey: Record<Spec, string> = {
 // Returns a copy of playerOptions, with the class field set.
 export function withSpecProto<SpecType extends Spec>(
 	spec: Spec,
-	player: Player,
+	player: PlayerProto,
 	rotation: SpecRotation<SpecType>,
-	specOptions: SpecOptions<SpecType>): Player {
-	const copy = Player.clone(player);
+	specOptions: SpecOptions<SpecType>): PlayerProto {
+	const copy = PlayerProto.clone(player);
 
 	switch (spec) {
 		case Spec.SpecBalanceDruid:
@@ -1314,7 +1315,7 @@ export function withSpecProto<SpecType extends Spec>(
 	}
 }
 
-export function playerToSpec(player: Player): Spec {
+export function playerToSpec(player: PlayerProto): Spec {
 	const specValues = getEnumValues(Spec);
 	for (let i = 0; i < specValues.length; i++) {
 		const spec = specValues[i] as Spec;
@@ -1327,7 +1328,7 @@ export function playerToSpec(player: Player): Spec {
 		}
 	}
 
-	throw new Error('Unable to parse spec from player proto: ' + JSON.stringify(Player.toJson(player), null, 2));
+	throw new Error('Unable to parse spec from player proto: ' + JSON.stringify(PlayerProto.toJson(player), null, 2));
 }
 
 export const classToMaxArmorType: Record<Class, ArmorType> = {
@@ -1468,10 +1469,15 @@ export function isBluntWeaponType(weaponType: WeaponType): boolean {
 }
 
 // Returns true if this item may be equipped in at least 1 slot for the given Spec.
-export function canEquipItem(item: Item, spec: Spec, slot: ItemSlot | undefined): boolean {
+export function canEquipItem<SpecType extends Spec>(player: Player<SpecType>, item: Item, slot: ItemSlot | undefined): boolean {
+	const spec = player.spec;
 	const playerClass = specToClass[spec];
 	if (item.classAllowlist.length > 0 && !item.classAllowlist.includes(playerClass)) {
 		return false;
+	}
+
+	if (item.requiresLevel > player.getLevel()){
+		return false
 	}
 
 	if ([ItemType.ItemTypeFinger, ItemType.ItemTypeTrinket].includes(item.type)) {

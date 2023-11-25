@@ -148,6 +148,10 @@ export class Database {
 		return this.getAllItems().filter(item => getEligibleItemSlots(item).includes(slot));
 	}
 
+	getItemById(id: number): Item | undefined {
+		return this.items.get(id);
+	}
+
 	getEnchants(slot: ItemSlot): Array<Enchant> {
 		return this.enchantsBySlot[slot] || [];
 	}

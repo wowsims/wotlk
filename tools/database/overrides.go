@@ -7,18 +7,15 @@ import (
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
-var OtherItemIdsToFetch = []string{
-	// Hallow's End Ilvl bumped rings
-	// "211817",
-	// "211844",
-	// "211847",
-	// "211850",
-	// "211851",
-}
+var OtherItemIdsToFetch = []string{}
 
 var ItemOverrides = []*proto.UIItem{
 	// Valentine's day event rewards
 	// {Id: 51804, Phase: 2},
+
+	// SOD Items
+	{Id: 211848, Name: "Blackfathom Mana Oil", Icon: "inv_potion_99", Stats: stats.Stats{stats.MP5: 12, stats.SpellHit: 2}.ToFloatArray()},
+	{Id: 211845, Name: "Blackfathom Sharpening Stone", Icon: "inv_misc_rune_04", Stats: stats.Stats{stats.MeleeHit: 2}.ToFloatArray()},
 
 	// Heirloom Dwarven Handcannon, Wowhead partially glitchs out and shows us some other lvl calc for this
 	// {Id: 44093, Stats: stats.Stats{stats.MeleeCrit: 30, stats.SpellCrit: 30, stats.Resilience: 13, stats.AttackPower: 34}.ToFloatArray()},
@@ -76,39 +73,9 @@ var ItemAllowList = map[int32]struct{}{
 	8345:  {}, // Wolfshead Helm
 	9449:  {}, // Manual Crowd Pummeler
 
-	// Sets
-	27510: {}, // Tidefury Gauntlets
-	27802: {}, // Tidefury Shoulderguards
-	27909: {}, // Tidefury Kilt
-	28231: {}, // Tidefury Chestpiece
-	28349: {}, // Tidefury Helm
-
-	15056: {}, // Stormshroud Armor
-	15057: {}, // Stormshroud Pants
-	15058: {}, // Stormshroud Shoulders
-	21278: {}, // Stormshroud Gloves
-
-	// Undead Slaying Sets
-	// Plate
-	43068: {},
-	43069: {},
-	43070: {},
-	43071: {},
-	// Cloth
-	43072: {},
-	43073: {},
-	43074: {},
-	43075: {},
-	// Mail
-	43076: {},
-	43077: {},
-	43078: {},
-	43079: {},
-	//Leather
-	43080: {},
-	43081: {},
-	43082: {},
-	43083: {},
+	// SOD
+	211848: {},
+	211845: {},
 }
 
 // Keep these sorted by item ID.
@@ -394,14 +361,4 @@ var DenyListNameRegexes = []*regexp.Regexp{
 	regexp.MustCompile(`TEST`),
 	regexp.MustCompile(`Test`),
 	regexp.MustCompile(`zOLD`),
-}
-
-// Allows manual overriding for Gem fields in case WowHead is wrong.
-var GemOverrides = []*proto.UIGem{
-	{Id: 33131, Stats: stats.Stats{stats.AttackPower: 32, stats.RangedAttackPower: 32}.ToFloatArray()},
-}
-var GemAllowList = map[int32]struct{}{
-	22459: {}, // Void Sphere
-	36766: {}, // Bright Dragon's Eye
-	36767: {}, // Solid Dragon's Eye
 }

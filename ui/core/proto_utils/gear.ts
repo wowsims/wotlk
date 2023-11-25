@@ -1,4 +1,4 @@
-import { EquipmentSpec, ItemSlot, ItemSpec, ItemSwap, Profession, SimDatabase, SimEnchant, SimGem, SimItem } from '../proto/common.js';
+import { EquipmentSpec, ItemSlot, ItemSpec, ItemSwap, Profession, SimDatabase, SimEnchant, SimItem } from '../proto/common.js';
 import {
 	UIEnchant as Enchant,
 	UIItem as Item,

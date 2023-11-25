@@ -339,6 +339,8 @@ enum WeaponBuff {
 	BrillianWizardOil = 2;
 	DenseSharpeningStone = 3;
 	ElementalSharpeningStone = 4;
+	BlackfathomManaOil = 5;
+	BlackfathomSharpeningStone = 6;
 }
 
 enum Food {

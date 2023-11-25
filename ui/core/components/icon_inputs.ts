@@ -370,10 +370,14 @@ export const makeFlasksInput = makeConsumeInputFactory({
 export const makeWeaponBuffsInput = makeConsumeInputFactory({
 	consumesFieldName: 'weaponBuff',
 	allOptions: [
-		{ actionId: ActionId.fromItemId(20749), value: WeaponBuff.BrillianWizardOil, showWhen: (p) =>  p.getLevel() >= 45},
-		{ actionId: ActionId.fromItemId(20748), value: WeaponBuff.BrilliantManaOil, showWhen: (p) =>  p.getLevel() >= 45 },
-		{ actionId: ActionId.fromItemId(12404), value: WeaponBuff.DenseSharpeningStone, showWhen: (p) =>  p.getLevel() >= 35 },
-		{ actionId: ActionId.fromItemId(18262), value: WeaponBuff.ElementalSharpeningStone, showWhen: (p) =>  p.getLevel() >= 50 },
+		// TODO: Classic hide when required level too high e.g. `showWhen: (p) =>  p.getLevel() >= 25`
+		// Registering a `showWhen` is causing issues with event callback loops
+		{ actionId: ActionId.fromItemId(20749), value: WeaponBuff.BrillianWizardOil},
+		{ actionId: ActionId.fromItemId(20748), value: WeaponBuff.BrilliantManaOil},
+		{ actionId: ActionId.fromItemId(12404), value: WeaponBuff.DenseSharpeningStone },
+		{ actionId: ActionId.fromItemId(18262), value: WeaponBuff.ElementalSharpeningStone },
+		{ actionId: ActionId.fromItemId(211848), value: WeaponBuff.BlackfathomManaOil},
+		{ actionId: ActionId.fromItemId(211845), value: WeaponBuff.BlackfathomSharpeningStone},
 	] as Array<IconEnumValueConfig<Player<any>, WeaponBuff>>,
 });
 
@@ -434,6 +438,11 @@ function makeConsumeInputFactory<T extends number>(args: ConsumeInputFactoryArgs
 			getValue: (player: Player<any>) => player.getConsumes()[args.consumesFieldName] as T,
 			setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
 				const newConsumes = player.getConsumes();
+
+				if (newConsumes[args.consumesFieldName] === newValue){
+					return;
+				}
+
 				(newConsumes[args.consumesFieldName] as number) = newValue;
 				TypedEvent.freezeAllAndDo(() => {
 					player.setConsumes(eventID, newConsumes);
