@@ -5,15 +5,15 @@ import {
 	specTypeFunctions,
 } from '../proto_utils/utils.js';
 
-import { druidGlyphsConfig, druidTalentsConfig } from './druid.js';
-import { hunterGlyphsConfig, hunterTalentsConfig } from './hunter.js';
-import { mageGlyphsConfig, mageTalentsConfig } from './mage.js';
-import { paladinGlyphsConfig, paladinTalentsConfig } from './paladin.js';
-import { priestGlyphsConfig, priestTalentsConfig } from './priest.js';
-import { rogueGlyphsConfig, rogueTalentsConfig } from './rogue.js';
-import { shamanGlyphsConfig, shamanTalentsConfig } from './shaman.js';
+import { druidTalentsConfig } from './druid.js';
+import { hunterTalentsConfig } from './hunter.js';
+import { mageTalentsConfig } from './mage.js';
+import { paladinTalentsConfig } from './paladin.js';
+import { priestTalentsConfig } from './priest.js';
+import { rogueTalentsConfig } from './rogue.js';
+import { shamanTalentsConfig } from './shaman.js';
 import { TalentsConfig } from './talents_picker.js';
-import { warlockGlyphsConfig, warlockTalentsConfig } from './warlock.js';
+import { warlockTalentsConfig } from './warlock.js';
 import { warriorTalentsConfig } from './warrior.js';
 
 export const classTalentsConfig: Record<Class, TalentsConfig<any>> = {
@@ -29,17 +29,18 @@ export const classTalentsConfig: Record<Class, TalentsConfig<any>> = {
 	[Class.ClassWarrior]: warriorTalentsConfig,
 };
 
+// TODO: Classic remove glyph refs
 export const classGlyphsConfig: Record<Class, any> = {
 	[Class.ClassUnknown]: { majorGlyphs: [], minorGlyphs: [] },
-	[Class.ClassDruid]: druidGlyphsConfig,
-	[Class.ClassShaman]: shamanGlyphsConfig,
-	[Class.ClassHunter]: hunterGlyphsConfig,
-	[Class.ClassMage]: mageGlyphsConfig,
-	[Class.ClassRogue]: rogueGlyphsConfig,
-	[Class.ClassPaladin]: paladinGlyphsConfig,
-	[Class.ClassPriest]: priestGlyphsConfig,
-	[Class.ClassWarlock]: warlockGlyphsConfig,
-	[Class.ClassWarrior]: [],
+	[Class.ClassDruid]: { majorGlyphs: [], minorGlyphs: [] },
+	[Class.ClassShaman]: { majorGlyphs: [], minorGlyphs: [] },
+	[Class.ClassHunter]: { majorGlyphs: [], minorGlyphs: [] },
+	[Class.ClassMage]: { majorGlyphs: [], minorGlyphs: [] },
+	[Class.ClassRogue]: { majorGlyphs: [], minorGlyphs: [] },
+	[Class.ClassPaladin]: { majorGlyphs: [], minorGlyphs: [] },
+	[Class.ClassPriest]: { majorGlyphs: [], minorGlyphs: [] },
+	[Class.ClassWarlock]: { majorGlyphs: [], minorGlyphs: [] },
+	[Class.ClassWarrior]: { majorGlyphs: [], minorGlyphs: [] },
 };
 
 export function talentSpellIdsToTalentString(playerClass: Class, talentIds: Array<number>): string {

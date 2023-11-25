@@ -34,7 +34,7 @@ func (priest *Priest) getSmiteBaseConfig(rank int) core.SpellConfig {
 
 		BonusCritRating:  float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
 		DamageMultiplier: 1 + 0.05*float64(priest.Talents.SearingLight),
-		CritMultiplier:   priest.SpellCritMultiplier(1+0.01*float64(priest.Talents.HolySpecialization), 1),
+		CritMultiplier:   1,
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

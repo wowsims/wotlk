@@ -21,6 +21,7 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 			cssScheme: 'priest',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
+				"The Homunculi Rune is not currently implemented until more data is available"
 			],
 
 			// All stats for which EP should be calculated.

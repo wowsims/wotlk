@@ -73,8 +73,6 @@ func (priest *Priest) AddPartyBuffs(_ *proto.PartyBuffs) {
 }
 
 func (priest *Priest) Initialize() {
-	// Shadow Insight gained from Glyph of Shadow
-	// Finalized spirit off gear and not dynamic spirit (e.g. Spirit Tap does not increase this)
 	priest.registerSetBonuses()
 	priest.registerMindBlast()
 	priest.registerMindFlay()

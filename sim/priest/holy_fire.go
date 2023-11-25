@@ -33,9 +33,9 @@ func (priest *Priest) getHolyFireConfig(rank int) core.SpellConfig {
 			},
 		},
 
-		BonusCritRating:  0,
+		BonusCritRating:  float64(priest.Talents.HolySpecialization) * 1 * core.CritRatingPerCritChance,
 		DamageMultiplier: 1 + 0.05*float64(priest.Talents.SearingLight),
-		CritMultiplier:   priest.SpellCritMultiplier(priest.SpellCritMultiplier(float64(priest.Talents.HolySpecialization)*1*core.CritRatingPerCritChance, 1), 1),
+		CritMultiplier:   priest.DefaultSpellCritMultiplier(),
 		ThreatMultiplier: 1,
 
 		Dot: core.DotConfig{
