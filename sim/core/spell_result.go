@@ -136,6 +136,7 @@ func (spell *Spell) SpellPowerSchool() float64 {
 func (spell *Spell) SpellHitChance(target *Unit) float64 {
 	hitRating := spell.Unit.stats[stats.SpellHit] +
 		spell.BonusHitRating +
+		spell.Unit.PseudoStats.SchoolBonusHitRating[spell.SchoolIndex] +
 		target.PseudoStats.BonusSpellHitRatingTaken
 
 	return hitRating / (SpellHitRatingPerHitChance * 100)
@@ -151,6 +152,7 @@ func (spell *Spell) MagicHitCheck(sim *Simulation, attackTable *AttackTable) boo
 func (spell *Spell) spellCritRating(target *Unit) float64 {
 	return spell.Unit.stats[stats.SpellCrit] +
 		spell.BonusCritRating +
+		spell.Unit.PseudoStats.SchoolBonusCritChance[spell.SchoolIndex] +
 		target.PseudoStats.BonusCritRatingTaken +
 		target.PseudoStats.BonusSpellCritRatingTaken
 }

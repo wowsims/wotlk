@@ -78,6 +78,11 @@ clean:
 	  $(HTML_INDECIES)
 	find . -name "*.results.tmp" -type f -delete
 
+.PHONY: copydb
+copydb:
+	mkdir -p dist/classic/assets/database
+	cp -r assets/database/* dist/classic/assets/database/
+
 ui/core/proto/api.ts: proto/*.proto node_modules
 	npx protoc --ts_opt generate_dependencies --ts_out ui/core/proto --proto_path proto proto/api.proto
 	npx protoc --ts_out ui/core/proto --proto_path proto proto/test.proto
