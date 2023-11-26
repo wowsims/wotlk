@@ -19,10 +19,9 @@ func (warrior *Warrior) ApplyRunes() {
 
 	warrior.applyBloodFrenzy()
 	warrior.applyFlagellation()
-	warrior.applyFlagellation()
-	warrior.applyRagingBlow()
 	warrior.applyConsumedByRage()
-	warrior.applyQuickStrike()
+	warrior.registerQuickStrike()
+	warrior.registerRagingBlow()
 
 	// Endless Rage implemented on dps_warrior.go and protection_warrior.go
 
@@ -81,48 +80,6 @@ func (warrior *Warrior) applyFlagellation() {
 	})
 }
 
-func (warrior *Warrior) applyRagingBlow() {
-	if !warrior.HasRune(proto.WarriorRune_RuneRagingBlow) {
-		return
-	}
-
-	warrior.RagingBlow = warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 402911},
-		SpellSchool: core.SpellSchoolPhysical,
-		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagAPL,
-
-		RageCost: core.RageCostOptions{
-			Cost: 0,
-		},
-		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				GCD: core.GCDDefault,
-			},
-			IgnoreHaste: true,
-			CD: core.Cooldown{
-				Timer:    warrior.NewTimer(),
-				Duration: time.Second * 8,
-			},
-		},
-		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return warrior.ConsumedByRageAura.IsActive() || warrior.BloodrageAura.IsActive() || warrior.BerserkerRageAura.IsActive()
-		},
-
-		DamageMultiplier: 1,
-		CritMultiplier:   warrior.critMultiplier(mh),
-		ThreatMultiplier: 1,
-
-		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower()) +
-				spell.BonusWeaponDamage()
-
-			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
-
-		},
-	})
-}
-
 func (warrior *Warrior) applyConsumedByRage() {
 	if !warrior.HasRune(proto.WarriorRune_RuneConsumedByRage) {
 		return
@@ -160,39 +117,6 @@ func (warrior *Warrior) applyConsumedByRage() {
 
 			if spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
 				warrior.ConsumedByRageAura.RemoveStack(sim)
-			}
-		},
-	})
-}
-
-func (warrior *Warrior) applyQuickStrike() {
-	if !warrior.HasRune(proto.WarriorRune_RuneQuickStrike) || warrior.GetMHWeapon().HandType != proto.HandType_HandTypeTwoHand {
-		return
-	}
-
-	warrior.QuickStrike = warrior.RegisterSpell(core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 429765},
-		SpellSchool: core.SpellSchoolPhysical,
-		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagAPL,
-
-		RageCost: core.RageCostOptions{
-			Cost:   15 - float64(warrior.Talents.ImprovedHeroicStrike),
-			Refund: 0.8,
-		},
-
-		DamageMultiplier: 1,
-		CritMultiplier:   warrior.critMultiplier(mh),
-		ThreatMultiplier: 1,
-		FlatThreatBonus:  259,
-
-		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := sim.Roll(0.15*spell.MeleeAttackPower(), 0.25*spell.MeleeAttackPower())
-
-			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
-
-			if !result.Landed() {
-				spell.IssueRefund(sim)
 			}
 		},
 	})

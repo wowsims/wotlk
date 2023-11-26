@@ -67,18 +67,18 @@ message WarriorTalents {
 
 enum WarriorRune {
 	WarriorRuneNone = 0;
-	RuneBloodFrenzy = 403474;
-	RuneFlagellation = 403480;
-	RuneRagingBlow = 425444;
-	RuneWarbringer = 425445;
-	RuneVictoryRush = 403470;
-	RuneDevastate = 403475;
-	RuneEndlessRage = 403489;
-	RuneSingleMindedFury = 416003;
-	RuneQuickStrike = 425443;
-	RuneFuriousThunder = 403476;
-	RuneConsumedByRage = 425446;
-	RuneFrenziedAssault = 425447;
+	RuneBloodFrenzy = 412507;
+	RuneFlagellation = 402877;
+	RuneRagingBlow = 402911;
+	RuneWarbringer = 425421;
+	RuneVictoryRush = 402927;
+	RuneDevastate = 403195;
+	RuneEndlessRage = 403218;
+	RuneSingleMindedFury = 413404;
+	RuneQuickStrike = 429765;
+	RuneFuriousThunder = 403219;
+	RuneConsumedByRage = 425418;
+	RuneFrenziedAssault = 425412;
 }
 
 enum WarriorShout {
