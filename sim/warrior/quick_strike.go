@@ -20,6 +20,11 @@ func (warrior *Warrior) registerQuickStrike() {
 			Cost:   15 - float64(warrior.Talents.ImprovedHeroicStrike),
 			Refund: 0.8,
 		},
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				GCD: core.GCDDefault,
+			},
+		},
 
 		DamageMultiplier: 1,
 		CritMultiplier:   warrior.critMultiplier(mh),
