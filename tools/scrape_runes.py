@@ -5,6 +5,7 @@
 import sys
 import requests
 import math
+import re
 
 from typing import List
 
@@ -29,7 +30,7 @@ def _get_spell_id_from_link(link):
 
 
 def get_engraving_ids() -> List[int]:
-	driver.get(f"https://www.wowhead.com/classic/search?q=engrave")
+	driver.get(f"https://www.wowhead.com/classic/search?q=engrave#abilities")
 	wait.until(EC.presence_of_element_located(element_locator))
 
 	abilities = driver.find_elements(By.ID, "tab-abilities")
@@ -56,24 +57,48 @@ def get_engraving_ids() -> List[int]:
 	driver.quit()
 	return all_ids
 
-# id,tooltip_json
+def get_tooltips_response(id):
+	# Get the underlying rune spell ID from the engraving ID
+	url = f"https://nether.wowhead.com/classic/tooltip/spell/{id}"
+	result = requests.get(url)
+
+	if result.status_code == 200:
+		response_json = result.text
+		return response_json
+	else:
+		print(f"Request for id {id} failed with status code: {result.status_code}")
+		return None
+	
+
+# id, tooltip_json
 to_export = []
 
 engraving_ids = get_engraving_ids()
 
 print(f"Export Count ({len(engraving_ids)}) {engraving_ids}")
 
-for id in engraving_ids:
-	url = f"https://nether.wowhead.com/classic/tooltip/spell/{id}"
-	result = requests.get(url)
+to_export = []
 
-	if result.status_code == 200:
-		response_json = result.text
-		to_export.append([id, response_json])
-	else:
-		print(f"Request for id {id} failed with status code: {result.status_code}")
+for id in engraving_ids:
+    engraving_response = get_tooltips_response(id)
+    spell_ids = re.findall(r'\/spell=(\d+)', engraving_response)
+
+    if len(spell_ids) >= 2:
+        second_spell_id = spell_ids[1]
+
+        # Extract the icon from the second spell response
+        second_spell_response = get_tooltips_response(second_spell_id)
+        icon_match = re.search(r'icon":"(.*?)"', second_spell_response)
+        icon = icon_match.group(1) if icon_match else None
+
+        # Replace the icon in the engraving response
+        updated_engraving_response = re.sub(r'icon":"(.*?)"', f'icon":"{icon}"', engraving_response)
+
+        to_export.append([second_spell_id, updated_engraving_response])
+    else:
+        print(f"Less than 2 spell IDs found for engraving ID {id}")
 
 output_string = '\n'.join([str(','.join([str(inner_elem) for inner_elem in elem])) for elem in to_export])
 
 with open(output_file_path, "w") as outfile:
- 	outfile.write(output_string)
+    outfile.write(output_string)
