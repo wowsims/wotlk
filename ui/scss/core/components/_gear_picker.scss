@@ -47,29 +47,42 @@
   }
 }
 
-.item-picker-sockets-container {
+.item-picker-labels-container {
+  padding: map.get($spacers, 2);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  .item-picker-name {
+    color: white;
+    font-size: map.get($font-sizes, 6);
+    letter-spacing: normal;
+  }
+  
+  .item-picker-enchant {
+    color: $item-quality-uncommon;
+    font-size: $content-font-size;
+    letter-spacing: normal;
+  }
+
+  .item-picker-rune {
+    color: $brand;
+    font-size: $content-font-size;
+    letter-spacing: normal;
+    
+  }
+}
+
+.item-picker-rune-container {
   @include vertical-bottom;
   @include horizontal-center;
   width: 100%;
   display: flex;
   justify-content: center;
-}
 
-.item-picker-rune-container {
-  @include horizontal-right;
-  width: 100%;
-  display: flex;
-  justify-content: right;
-
-  .rune-container {
-    width: 1.8rem;
-    height: 1.8rem;
-
-    img {
-      @include horizontal-right;
-      width: 1.8rem;
-      height: 1.8rem;
-    }
+  .item-picker-rune-icon {
+    width: 1.5rem;
+    height: 1.5rem;
   }
 }
 
@@ -93,10 +106,6 @@
 
         &:hover, &.active {
           opacity: 1;
-        }
-
-        .gem-socket-container {
-          --gem-width: 2rem;
         }
       }
     }
@@ -126,23 +135,6 @@
   }
 }
 
-.item-picker-labels-container {
-  padding: map.get($spacers, 2);
-  flex: 1;
-
-  .item-picker-name {
-    color: white;
-    font-size: map.get($font-sizes, 6);
-    letter-spacing: normal;
-  }
-  
-  .item-picker-enchant {
-    color: $item-quality-uncommon;
-    font-size: $content-font-size;
-    letter-spacing: normal;
-  }
-}
-
 @include media-breakpoint-down(md) {
   .gear-picker-root {
     .gear-picker-left {
@@ -157,23 +149,6 @@
         text-align: left;
       }
     }
-  }
-}
-
-.item-picker-labels-container {
-  padding: map.get($spacers, 2);
-  flex: 1;
-
-  .item-picker-name {
-    color: white;
-    font-size: map.get($font-sizes, 6);
-    letter-spacing: normal;
-  }
-  
-  .item-picker-enchant {
-    color: $item-quality-uncommon;
-    font-size: $content-font-size;
-    letter-spacing: normal;
   }
 }
 
