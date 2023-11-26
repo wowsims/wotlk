@@ -7,6 +7,10 @@ import (
 )
 
 func (warrior *Warrior) RegisterRecklessnessCD() {
+	if warrior.Level < 50 {
+		return
+	}
+
 	actionID := core.ActionID{SpellID: 1719}
 	var affectedSpells []*core.Spell
 
@@ -42,12 +46,6 @@ func (warrior *Warrior) RegisterRecklessnessCD() {
 			for _, spell := range affectedSpells {
 				spell.BonusCritRating -= 100 * core.CritRatingPerCritChance
 			}
-		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeSpecial) || result.Damage <= 0 {
-				return
-			}
-			aura.RemoveStack(sim)
 		},
 	})
 
