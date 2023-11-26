@@ -712,9 +712,5 @@ function applyNewPlayerAssignments(eventID: EventID, newPlayer: Player<any>, rai
 		const newOptions = newPlayer.getSpecOptions() as BalanceDruidOptions;
 		newOptions.innervateTarget = newUnitReference(newPlayer.getRaidIndex());
 		newPlayer.setSpecOptions(eventID, newOptions);
-	} else if (newPlayer.spec == Spec.SpecMage) {
-		const newOptions = newPlayer.getSpecOptions() as MageOptions;
-		newOptions.focusMagicTarget = newUnitReference(newPlayer.getRaidIndex());
-		newPlayer.setSpecOptions(eventID, newOptions);
 	}
 }

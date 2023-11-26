@@ -12,6 +12,7 @@ import {
 } from '../proto/ui.js';
 
 
+import { Player } from '../player.js';
 import {
 	BalanceDruid,
 	BalanceDruid_Options as BalanceDruidOptions,
@@ -28,7 +29,7 @@ import {
 	RestorationDruid_Rotation as RestorationDruidRotation,
 } from '../proto/druid.js';
 import { Hunter, Hunter_Options as HunterOptions, Hunter_Rotation as HunterRotation, HunterTalents } from '../proto/hunter.js';
-import { Mage, Mage_Options as MageOptions, Mage_Rotation as MageRotation, MageTalents } from '../proto/mage.js';
+import { Mage, Mage_Rotation as MageRotation, Mage_Options as MageOptions, MageTalents } from '../proto/mage.js';
 import {
 	HolyPaladin,
 	HolyPaladin_Options as HolyPaladinOptions,
@@ -65,7 +66,6 @@ import {
 } from '../proto/shaman.js';
 import { Warlock, Warlock_Options as WarlockOptions, Warlock_Rotation as WarlockRotation, WarlockTalents } from '../proto/warlock.js';
 import { ProtectionWarrior, ProtectionWarrior_Options as ProtectionWarriorOptions, ProtectionWarrior_Rotation as ProtectionWarriorRotation, Warrior, Warrior_Options as WarriorOptions, Warrior_Rotation as WarriorRotation, WarriorTalents } from '../proto/warrior.js';
-import { Player } from '../player.js';
 
 export type DruidSpecs = Spec.SpecBalanceDruid | Spec.SpecFeralDruid | Spec.SpecFeralTankDruid | Spec.SpecRestorationDruid;
 export type HunterSpecs = Spec.SpecHunter;
@@ -698,9 +698,7 @@ export const specTypeFunctions: Record<Spec, SpecTypeFunctions<any>> = {
 		rotationCopy: (a) => MageRotation.clone(a as MageRotation),
 		rotationToJson: (a) => MageRotation.toJson(a as MageRotation),
 		rotationFromJson: (obj) => MageRotation.fromJson(obj),
-		rotationFromPlayer: (player) => player.spec.oneofKind == 'mage'
-			? player.spec.mage.rotation || MageRotation.create()
-			: MageRotation.create(),
+		rotationFromPlayer: (_player) => MageRotation.create(),
 
 		talentsCreate: () => MageTalents.create(),
 		talentsEquals: (a, b) => MageTalents.equals(a as MageTalents, b as MageTalents),
@@ -1226,7 +1224,6 @@ export function withSpecProto<SpecType extends Spec>(
 			copy.spec = {
 				oneofKind: 'mage',
 				mage: Mage.create({
-					rotation: rotation as MageRotation,
 					options: specOptions as MageOptions,
 				}),
 			};

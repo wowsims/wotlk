@@ -64,86 +64,28 @@ message MageTalents {
 
 enum MageMajorGlyph {
 	MageMajorGlyphNone = 0;
-	GlyphOfArcaneBarrage = 45738;
-	GlyphOfArcaneBlast = 44955;
-	GlyphOfArcaneExplosion = 42734;
-	GlyphOfArcaneMissiles = 42735;
-	GlyphOfArcanePower = 42736;
-	GlyphOfBlink = 42737;
-	GlyphOfDeepFreeze = 45736;
-	GlyphOfEternalWater = 50045;
-	GlyphOfEvocation = 42738;
-	GlyphOfFireBlast = 42740;
-	GlyphOfFireball = 42739;
-	GlyphOfFrostNova = 42741;
-	GlyphOfFrostbolt = 42742;
-	GlyphOfFrostfire = 44684;
-	GlyphOfIceArmor = 42743;
-	GlyphOfIceBarrier = 45740;
-	GlyphOfIceBlock = 42744;
-	GlyphOfIceLance = 42745;
-	GlyphOfIcyVeins = 42746;
-	GlyphOfInvisibility = 42748;
-	GlyphOfLivingBomb = 45737;
-	GlyphOfMageArmor = 42749;
-	GlyphOfManaGem = 42750;
-	GlyphOfMirrorImage = 45739;
-	GlyphOfMoltenArmor = 42751;
-	GlyphOfPolymorph = 42752;
-	GlyphOfRemoveCurse = 42753;
-	GlyphOfScorch = 42747;
-	GlyphOfWaterElemental = 42754;
 }
 enum MageMinorGlyph {
 	MageMinorGlyphNone = 0;
-	GlyphOfArcaneIntellect = 43339;
-	GlyphOfBlastWave = 44920;
-	GlyphOfFireWard = 43357;
-	GlyphOfFrostArmor = 43359;
-	GlyphOfFrostWard = 43360;
-	GlyphOfSlowFall = 43364;
-	GlyphOfThePenguin = 43361;
 }
 
 message Mage {
 	message Rotation {
-		// Arcane Options.
-		int32 extra_blasts_during_first_ap = 10 [deprecated = true];
-		int32 missile_barrage_below_arcane_blast_stacks = 14 [deprecated = true];
-		double missile_barrage_below_mana_percent = 15;
-		double blast_without_missile_barrage_above_mana_percent = 16;
-		double only_3_arcane_blast_stacks_below_mana_percent = 17;
-		bool use_arcane_barrage = 20;
-
-		// Fire Options.
-		enum PrimaryFireSpell {
-			Fireball = 0;
-			FrostfireBolt = 1;
-			Scorch = 2;
+		enum RotationType {
+			Unknown = 0;
+			Auto = 1;
 		}
-		PrimaryFireSpell primary_fire_spell = 3;
-		
-		bool maintain_improved_scorch = 4;
-
-		// Frost Options.
-		bool use_ice_lance = 18;
-		double water_elemental_disobey_chance = 6 [deprecated = true];
+		RotationType rotation_type = 1;
 	}
 	Rotation rotation = 1;
-	
+
 	message Options {
 		enum ArmorType {
 			NoArmor = 0;
-			MageArmor = 1;
-			MoltenArmor = 2;
+			IceArmor = 1;
+			MageArmor = 2;
 		}
 		ArmorType armor = 1;
-
-		int32 focus_magic_percent_uptime = 3;
-		UnitReference focus_magic_target = 4;
-
-		// Chance for water elemental to disobey, doing nothing rather than cast.
-		double water_elemental_disobey_chance = 7;
 	}
 	Options options = 3;
 }

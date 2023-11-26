@@ -26,7 +26,7 @@ func TestSunderArmorStacks(t *testing.T) {
 		t.Fatalf("Armor value for target should be %f but found %f", 10643.0, target.Armor())
 	}
 	stacks := int32(1)
-	sunderAura := SunderArmorAura(&target, playerLevel)
+	sunderAura := SunderArmorAura(&target, int32(playerLevel))
 	sunderAura.Activate(&sim)
 	sunderAura.SetStacks(&sim, stacks)
 	tolerance := 0.001
@@ -57,7 +57,7 @@ func TestExposeArmor(t *testing.T) {
 	if target.Armor() != expectedArmor {
 		t.Fatalf("Armor value for target should be %f but found %f", 10643.0, target.Armor())
 	}
-	exposeAura := ExposeArmorAura(&target, false)
+	exposeAura := ExposeArmorAura(&target, false, 63)
 	exposeAura.Activate(&sim)
 	tolerance := 0.001
 	expectedArmor = baseArmor * (1.0 - 0.2)

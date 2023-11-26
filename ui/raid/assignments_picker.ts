@@ -16,8 +16,6 @@ export class AssignmentsPicker extends Component {
 
 	private readonly innervatesPicker: InnervatesPicker;
 	private readonly powerInfusionsPicker: PowerInfusionsPicker;
-	private readonly tricksOfTheTradesPicker: TricksOfTheTradesPicker;
-	private readonly focusMagicsPicker: FocusMagicsPicker;
 
 	constructor(parentElem: HTMLElement, raidSimUI: RaidSimUI) {
 		super(parentElem, 'assignments-picker-root');
@@ -25,8 +23,6 @@ export class AssignmentsPicker extends Component {
 
 		this.innervatesPicker = new InnervatesPicker(this.rootElem, raidSimUI);
 		this.powerInfusionsPicker = new PowerInfusionsPicker(this.rootElem, raidSimUI);
-		this.tricksOfTheTradesPicker = new TricksOfTheTradesPicker(this.rootElem, raidSimUI);
-		this.focusMagicsPicker = new FocusMagicsPicker(this.rootElem, raidSimUI);
 	}
 }
 
@@ -151,46 +147,6 @@ class PowerInfusionsPicker extends AssignedBuffPicker {
 	setPlayerValue(eventID: EventID, player: Player<any>, newValue: UnitReference) {
 		const newOptions = (player as Player<Spec.SpecShadowPriest>).getSpecOptions();
 		newOptions.powerInfusionTarget = newValue;
-		player.setSpecOptions(eventID, newOptions);
-	}
-}
-
-class TricksOfTheTradesPicker extends AssignedBuffPicker {
-	getTitle(): string {
-		return 'Tricks of the Trade';
-	}
-
-	getSourcePlayers(): Array<Player<any>> {
-		return this.raidSimUI.getActivePlayers().filter(player => player.isClass(Class.ClassRogue));
-	}
-
-	getPlayerValue(player: Player<any>): UnitReference {
-		return (player as Player<Spec.SpecRogue>).getSpecOptions().tricksOfTheTradeTarget || emptyUnitReference();
-	}
-
-	setPlayerValue(eventID: EventID, player: Player<any>, newValue: UnitReference) {
-		const newOptions = (player as Player<Spec.SpecRogue>).getSpecOptions();
-		newOptions.tricksOfTheTradeTarget = newValue;
-		player.setSpecOptions(eventID, newOptions);
-	}
-}
-
-class FocusMagicsPicker extends AssignedBuffPicker {
-	getTitle(): string {
-		return 'Focus Magic';
-	}
-
-	getSourcePlayers(): Array<Player<any>> {
-		return this.raidSimUI.getActivePlayers().filter(player => player.isClass(Class.ClassMage));
-	}
-
-	getPlayerValue(player: Player<any>): UnitReference {
-		return (player as Player<Spec.SpecMage>).getSpecOptions().focusMagicTarget || emptyUnitReference();
-	}
-
-	setPlayerValue(eventID: EventID, player: Player<any>, newValue: UnitReference) {
-		const newOptions = (player as Player<Spec.SpecMage>).getSpecOptions();
-		newOptions.focusMagicTarget = newValue;
 		player.setSpecOptions(eventID, newOptions);
 	}
 }

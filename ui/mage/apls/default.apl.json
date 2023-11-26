@@ -1,0 +1,7 @@
+{
+    "type": "TypeAPL",
+    "prepullActions": [],
+    "priorityList": [
+        {"action":{"castSpell":{"spellId":{"spellId":25306,"rank":12}}}}
+    ]
+}

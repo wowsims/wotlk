@@ -334,6 +334,24 @@ var SharedSpellsIcons = []int32{
 	15235,
 
 	24977,
+
+	// Runes
+	// Mage
+	401729,
+	401731,
+	401732,
+	401734,
+	401741,
+	401743,
+	401744,
+	412325,
+	412326,
+	415467,
+	425168,
+	425169,
+	401556,
+	400574,
+	400573,
 }
 
 // If any of these match the item name, don't include it.

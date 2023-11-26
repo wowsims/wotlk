@@ -41,6 +41,7 @@ func (fa *FakeAgent) Initialize() {
 }
 
 func (fa *FakeAgent) ApplyTalents()            {}
+func (fa *FakeAgent) ApplyRunes()              {}
 func (fa *FakeAgent) Reset(_ *Simulation)      {}
 func (fa *FakeAgent) OnGCDReady(_ *Simulation) {}
 

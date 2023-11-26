@@ -8,7 +8,7 @@ import (
 	// feralTank "github.com/wowsims/classic/sim/druid/tank"
 	// _ "github.com/wowsims/classic/sim/encounters"
 	// "github.com/wowsims/classic/sim/hunter"
-	// "github.com/wowsims/classic/sim/mage"
+	"github.com/wowsims/classic/sim/mage"
 	// holyPaladin "github.com/wowsims/classic/sim/paladin/holy"
 	// protectionPaladin "github.com/wowsims/classic/sim/paladin/protection"
 	// "github.com/wowsims/classic/sim/paladin/retribution"
@@ -39,7 +39,7 @@ func RegisterAll() {
 	// enhancement.RegisterEnhancementShaman()
 	// restoShaman.RegisterRestorationShaman()
 	// hunter.RegisterHunter()
-	// mage.RegisterMage()
+	mage.RegisterMage()
 	// healingPriest.RegisterHealingPriest()
 	shadow.RegisterShadowPriest()
 	// rogue.RegisterRogue()

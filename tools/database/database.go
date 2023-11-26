@@ -42,6 +42,14 @@ type WowDatabase struct {
 	Encounters []*proto.PresetEncounter
 }
 
+var runeOverrideNames = make(map[string]*proto.UIRune, len(RuneOverrides))
+
+func init() {
+	for _, v := range RuneOverrides {
+		runeOverrideNames[v.Name] = v
+	}
+}
+
 func NewWowDatabase() *WowDatabase {
 	return &WowDatabase{
 		Items:    make(map[int32]*proto.UIItem),
@@ -150,6 +158,9 @@ func (db *WowDatabase) MergeNpc(src *proto.UINPC) {
 
 func (db *WowDatabase) AddRune(id int32, tooltip WowheadItemResponse) {
 	if tooltip.GetName() == "" || tooltip.GetIcon() == "" {
+		return
+	}
+	if runeOverrideNames[tooltip.GetName()] != nil {
 		return
 	}
 	db.Runes[id] = &proto.UIRune{
