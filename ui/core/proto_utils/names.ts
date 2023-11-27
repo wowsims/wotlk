@@ -290,13 +290,8 @@ export const sourceNames: Map<SourceFilterOption, string> = new Map([
 	[SourceFilterOption.SourceCrafting, 'Crafting'],
 	[SourceFilterOption.SourceQuest, 'Quest'],
 	[SourceFilterOption.SourceDungeon, 'Dungeon'],
-	[SourceFilterOption.SourceDungeonH, 'Dungeon (H)'],
-	[SourceFilterOption.SourceDungeonTRA, 'Dungeon (TRA)'],
-	[SourceFilterOption.SourceDungeonTRB, 'Dungeon (TRB)'],
-	[SourceFilterOption.SourceRaid10, 'Raid (10N)'],
-	[SourceFilterOption.SourceRaid10H, 'Raid (10H)'],
-	[SourceFilterOption.SourceRaid25, 'Raid (25N)'],
-	[SourceFilterOption.SourceRaid25H, 'Raid (25H)'],
+	[SourceFilterOption.SourceRaid, 'Raid'],
+	[SourceFilterOption.SourceWorldBoss, 'World Boss'],
 ]);
 export const raidNames: Map<RaidFilterOption, string> = new Map([
 	[RaidFilterOption.RaidUnknown, 'Unknown'],

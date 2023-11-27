@@ -84,26 +84,26 @@ export class FiltersMenu extends BaseModal {
 			});
 		});
 
-		section = this.newSection('Raids');
-		section.classList.add('filters-menu-section-bool-list');
-		const raids = Sim.ALL_RAIDS.filter(s => s != RaidFilterOption.RaidUnknown);
-		raids.forEach(raid => {
-			new BooleanPicker<Sim>(section, player.sim, {
-				label: raidNames.get(raid),
-				inline: true,
-				changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
-				getValue: (sim: Sim) => sim.getFilters().raids.includes(raid),
-				setValue: (eventID: EventID, sim: Sim, newValue: boolean) => {
-					const filters = sim.getFilters();
-					if (newValue) {
-						filters.raids.push(raid);
-					} else {
-						filters.raids = filters.raids.filter(v => v != raid);
-					}
-					sim.setFilters(eventID, filters);
-				},
-			});
-		});
+		// section = this.newSection('Raids');
+		// section.classList.add('filters-menu-section-bool-list');
+		// const raids = Sim.ALL_RAIDS.filter(s => s != RaidFilterOption.RaidUnknown);
+		// raids.forEach(raid => {
+		// 	new BooleanPicker<Sim>(section, player.sim, {
+		// 		label: raidNames.get(raid),
+		// 		inline: true,
+		// 		changedEvent: (sim: Sim) => sim.filtersChangeEmitter,
+		// 		getValue: (sim: Sim) => sim.getFilters().raids.includes(raid),
+		// 		setValue: (eventID: EventID, sim: Sim, newValue: boolean) => {
+		// 			const filters = sim.getFilters();
+		// 			if (newValue) {
+		// 				filters.raids.push(raid);
+		// 			} else {
+		// 				filters.raids = filters.raids.filter(v => v != raid);
+		// 			}
+		// 			sim.setFilters(eventID, filters);
+		// 		},
+		// 	});
+		// });
 
 		if (Player.ARMOR_SLOTS.includes(slot)) {
 			const maxArmorType = classToMaxArmorType[player.getClass()];
