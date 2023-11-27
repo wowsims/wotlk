@@ -43,12 +43,12 @@ export const CelestialFocusTalents = {
 	data: SavedTalents.create({
 		talentsString: '05320031103--230023312131502331050313051',
 		glyphs: Glyphs.create({
-			major1: DruidMajorGlyph.GlyphOfWildGrowth,
-			major2: DruidMajorGlyph.GlyphOfSwiftmend,
-			major3: DruidMajorGlyph.GlyphOfNourish,
-			minor2: DruidMinorGlyph.GlyphOfUnburdenedRebirth,
-			minor3: DruidMinorGlyph.GlyphOfTheWild,
-			minor1: DruidMinorGlyph.GlyphOfDash,
+			major1: DruidMajorGlyph.DruidMajorGlyphNone,
+			major2: DruidMajorGlyph.DruidMajorGlyphNone,
+			major3: DruidMajorGlyph.DruidMajorGlyphNone,
+			minor2: DruidMinorGlyph.DruidMinorGlyphNone,
+			minor3: DruidMinorGlyph.DruidMinorGlyphNone,
+			minor1: DruidMinorGlyph.DruidMinorGlyphNone,
 		}),
 	}),
 };
@@ -57,12 +57,12 @@ export const ThiccRestoTalents = {
 	data: SavedTalents.create({
 		talentsString: '05320001--230023312331502531053313051',
 		glyphs: Glyphs.create({
-			major1: DruidMajorGlyph.GlyphOfWildGrowth,
-			major2: DruidMajorGlyph.GlyphOfSwiftmend,
-			major3: DruidMajorGlyph.GlyphOfNourish,
-			minor2: DruidMinorGlyph.GlyphOfUnburdenedRebirth,
-			minor3: DruidMinorGlyph.GlyphOfTheWild,
-			minor1: DruidMinorGlyph.GlyphOfDash,
+			major1: DruidMajorGlyph.DruidMajorGlyphNone,
+			major2: DruidMajorGlyph.DruidMajorGlyphNone,
+			major3: DruidMajorGlyph.DruidMajorGlyphNone,
+			minor2: DruidMinorGlyph.DruidMinorGlyphNone,
+			minor3: DruidMinorGlyph.DruidMinorGlyphNone,
+			minor1: DruidMinorGlyph.DruidMinorGlyphNone,
 		}),
 	}),
 };

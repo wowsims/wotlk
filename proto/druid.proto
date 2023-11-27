@@ -62,48 +62,25 @@ message DruidTalents {
 
 enum DruidMajorGlyph {
 	DruidMajorGlyphNone = 0;
-	GlyphOfBarkskin = 45623;
-	GlyphOfBerserk = 45601;
-	GlyphOfClaw = 48720;
-	GlyphOfEntanglingRoots = 40924;
-	GlyphOfFocus = 44928;
-	GlyphOfFrenziedRegeneration = 40896;
-	GlyphOfGrowling = 40899;
-	GlyphOfHealingTouch = 40914;
-	GlyphOfHurricane = 40920;
-	GlyphOfInnervate = 40908;
-	GlyphOfInsectSwarm = 40919;
-	GlyphOfLifebloom = 40915;
-	GlyphOfMangle = 40900;
-	GlyphOfMaul = 40897;
-	GlyphOfMonsoon = 45622;
-	GlyphOfMoonfire = 40923;
-	GlyphOfNourish = 45603;
-	GlyphOfOmenOfClarity = 206580;
-	GlyphOfRake = 40903;
-	GlyphOfRapidRejuvenation = 50125;
-	GlyphOfRebirth = 40909;
-	GlyphOfRegrowth = 40912;
-	GlyphOfRejuvenation = 40913;
-	GlyphOfRip = 40902;
-	GlyphOfSavageRoar = 45604;
-	GlyphOfShred = 40901;
-	GlyphOfStarfall = 40921;
-	GlyphOfStarfire = 40916;
-	GlyphOfSurvivalInstincts = 46372;
-	GlyphOfSwiftmend = 40906;
-	GlyphOfWildGrowth = 45602;
-	GlyphOfWrath = 40922;
 }
 enum DruidMinorGlyph {
 	DruidMinorGlyphNone = 0;
-	GlyphOfAquaticForm = 43316;
-	GlyphOfChallengingRoar = 43334;
-	GlyphOfDash = 43674;
-	GlyphOfTheWild = 43335;
-	GlyphOfThorns = 43332;
-	GlyphOfTyphoon = 44922;
-	GlyphOfUnburdenedRebirth = 43331;
+}
+
+enum DruidRune {
+	DruidRuneNone = 0;
+	RuneChestWildStrikes          = 407977;
+	RuneChestSurvivalOfTheFittest = 411115;
+	RuneChestLivingSeed           = 414677;
+	RuneChestFuryOfStormrage      = 414799;
+	RuneHandsMangle        	      = 407995;
+	RuneHandsWildGrowth     	  = 408120;
+	RuneHandsLacerate     	      = 414644;
+	RuneHandsSunfire     	      = 414684;
+	RuneLegsStarsurge      	      = 417157;
+	RuneLegsSavageRoar      	  = 407988;
+	RuneLegsLifebloom       	  = 409824;
+	RuneLegsSkullBash       	  = 410176;
 }
 
 message BalanceDruid {

@@ -2,7 +2,7 @@ package sim
 
 import (
 	_ "github.com/wowsims/classic/sim/common"
-	// "github.com/wowsims/classic/sim/druid/balance"
+	"github.com/wowsims/classic/sim/druid/balance"
 	// "github.com/wowsims/classic/sim/druid/feral"
 	// restoDruid "github.com/wowsims/classic/sim/druid/restoration"
 	// feralTank "github.com/wowsims/classic/sim/druid/tank"
@@ -31,7 +31,7 @@ func RegisterAll() {
 	}
 	registered = true
 
-	// balance.RegisterBalanceDruid()
+	balance.RegisterBalanceDruid()
 	// feral.RegisterFeralDruid()
 	// feralTank.RegisterFeralTankDruid()
 	// restoDruid.RegisterRestorationDruid()

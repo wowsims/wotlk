@@ -98,7 +98,7 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	{
 		spec: Spec.SpecBalanceDruid,
 		rotation: BalanceDruidPresets.DefaultRotation,
-		talents: BalanceDruidPresets.Phase2Talents.data,
+		talents: BalanceDruidPresets.BalanceTalents.data,
 		specOptions: BalanceDruidPresets.DefaultOptions,
 		consumes: BalanceDruidPresets.DefaultConsumes,
 		otherDefaults: BalanceDruidPresets.OtherDefaults,
@@ -111,14 +111,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: BalanceDruidPresets.P1_PRESET.gear,
-				2: BalanceDruidPresets.P2_PRESET.gear,
-				3: BalanceDruidPresets.P3_PRESET_ALLI.gear,
+				1: BalanceDruidPresets.DEFAULT_PRESET.gear,
 			},
 			[Faction.Horde]: {
-				1: BalanceDruidPresets.P1_PRESET.gear,
-				2: BalanceDruidPresets.P2_PRESET.gear,
-				3: BalanceDruidPresets.P3_PRESET_HORDE.gear,
+				1: BalanceDruidPresets.DEFAULT_PRESET.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecBalanceDruid],
