@@ -3,10 +3,10 @@ import glob from "glob";
 import { defineConfig } from 'vite'
 
 export default defineConfig(({ command, mode }) => ({
-	base: "/classic/",
+	base: "/classic/sod/",
 	root: path.join(__dirname, "ui"),
 	build: {
-		outDir: path.join(__dirname, "dist", "classic"),
+		outDir: path.join(__dirname, "dist", "classic", "sod"),
 		minify: mode === "development" ? false : "terser",
 		sourcemap: command === "serve" ? "inline" : "false",
 		target: ["es2020"],

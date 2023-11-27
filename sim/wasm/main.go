@@ -9,9 +9,9 @@ import (
 	"runtime/debug"
 	"syscall/js"
 
-	"github.com/wowsims/classic/sim"
-	"github.com/wowsims/classic/sim/core"
-	proto "github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sod/sim"
+	"github.com/wowsims/classic/sod/sim/core"
+	proto "github.com/wowsims/classic/sod/sim/core/proto"
 	protojson "google.golang.org/protobuf/encoding/protojson"
 	googleProto "google.golang.org/protobuf/proto"
 )

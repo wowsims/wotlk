@@ -1,4 +1,4 @@
-module github.com/wowsims/classic
+module github.com/wowsims/classic/sod
 
 go 1.21
 

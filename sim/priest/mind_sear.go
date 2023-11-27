@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sod/sim/core"
 )
 
 func (priest *Priest) getMindSearBaseConfig() core.SpellConfig {

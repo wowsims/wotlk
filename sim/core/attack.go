@@ -4,8 +4,8 @@ import (
 	"slices"
 	"time"
 
-	"github.com/wowsims/classic/sim/core/proto"
-	"github.com/wowsims/classic/sim/core/stats"
+	"github.com/wowsims/classic/sod/sim/core/proto"
+	"github.com/wowsims/classic/sod/sim/core/stats"
 )
 
 // ReplaceMHSwing is called right before a main hand auto attack fires.

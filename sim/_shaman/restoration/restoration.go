@@ -3,9 +3,9 @@ package restoration
 import (
 	"time"
 
-	"github.com/wowsims/classic/sim/core"
-	"github.com/wowsims/classic/sim/core/proto"
-	"github.com/wowsims/classic/sim/shaman"
+	"github.com/wowsims/classic/sod/sim/core"
+	"github.com/wowsims/classic/sod/sim/core/proto"
+	"github.com/wowsims/classic/sod/sim/shaman"
 )
 
 func RegisterRestorationShaman() {

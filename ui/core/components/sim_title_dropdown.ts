@@ -272,7 +272,7 @@ export class SimTitleDropdown extends Component {
 			iconPath = raidSimIcon;
 		} else if (data.type == 'Class') {
 			let className = classNames[data.index];
-			iconPath = `/classic/assets/img/${className.toLowerCase().replace(/\s/g, '_')}_icon.png`
+			iconPath = `/classic/sod/assets/img/${className.toLowerCase().replace(/\s/g, '_')}_icon.png`
 		} else {
 			iconPath = titleIcons[data.index];
 		}

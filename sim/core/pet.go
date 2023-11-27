@@ -5,8 +5,8 @@ import (
 	"slices"
 	"time"
 
-	"github.com/wowsims/classic/sim/core/proto"
-	"github.com/wowsims/classic/sim/core/stats"
+	"github.com/wowsims/classic/sod/sim/core/proto"
+	"github.com/wowsims/classic/sod/sim/core/stats"
 )
 
 // Extension of Agent interface, for Pets.

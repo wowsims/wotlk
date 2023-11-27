@@ -3,7 +3,7 @@ package paladin
 import (
 	"time"
 
-	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sod/sim/core"
 )
 
 // const JudgementDuration = time.Second * 20

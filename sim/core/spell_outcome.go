@@ -3,7 +3,7 @@ package core
 import (
 	"math/rand"
 
-	"github.com/wowsims/classic/sim/core/stats"
+	"github.com/wowsims/classic/sod/sim/core/stats"
 )
 
 // This function should do 3 things:

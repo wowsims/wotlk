@@ -1,11 +1,11 @@
 package balance
 
 import (
-	"github.com/wowsims/classic/sim/common/wotlk"
-	"github.com/wowsims/classic/sim/core"
-	"github.com/wowsims/classic/sim/core/proto"
-	"github.com/wowsims/classic/sim/core/stats"
-	"github.com/wowsims/classic/sim/druid"
+	"github.com/wowsims/classic/sod/sim/common/wotlk"
+	"github.com/wowsims/classic/sod/sim/core"
+	"github.com/wowsims/classic/sod/sim/core/proto"
+	"github.com/wowsims/classic/sod/sim/core/stats"
+	"github.com/wowsims/classic/sod/sim/druid"
 )
 
 func RegisterBalanceDruid() {
