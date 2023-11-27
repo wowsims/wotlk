@@ -1,4 +1,4 @@
-OUT_DIR := dist/classic
+OUT_DIR := dist/classic/sod
 TS_CORE_SRC := $(shell find ui/core -name '*.ts' -type f)
 ASSETS_INPUT := $(shell find assets/ -type f)
 ASSETS := $(patsubst assets/%,$(OUT_DIR)/assets/%,$(ASSETS_INPUT))
@@ -80,8 +80,8 @@ clean:
 
 .PHONY: copydb
 copydb:
-	mkdir -p dist/classic/assets/database
-	cp -r assets/database/* dist/classic/assets/database/
+	mkdir -p dist/classic/sod/assets/database
+	cp -r assets/database/* dist/classic/sod/assets/database/
 
 ui/core/proto/api.ts: proto/*.proto node_modules
 	npx protoc --ts_opt generate_dependencies --ts_out ui/core/proto --proto_path proto proto/api.proto
@@ -128,18 +128,18 @@ $(OUT_DIR)/assets/%: assets/%
 	cp $< $@
 
 binary_dist/dist.go: sim/web/dist.go.tmpl
-	mkdir -p binary_dist/classic
-	touch binary_dist/classic/embedded
+	mkdir -p binary_dist/classic/sod
+	touch binary_dist/classic/sod/embedded
 	cp sim/web/dist.go.tmpl binary_dist/dist.go
 
 binary_dist: $(OUT_DIR)/.dirstamp
 	rm -rf binary_dist
 	mkdir -p binary_dist
 	cp -r $(OUT_DIR) binary_dist/
-	rm binary_dist/classic/lib.wasm
-	rm -rf binary_dist/classic/assets/db_inputs
-	rm binary_dist/classic/assets/database/db.bin
-	rm binary_dist/classic/assets/database/leftover_db.bin
+	rm binary_dist/classic/sod/lib.wasm
+	rm -rf binary_dist/classic/sod/assets/db_inputs
+	rm binary_dist/classic/sod/assets/database/db.bin
+	rm binary_dist/classic/sod/assets/database/leftover_db.bin
 
 # Rebuild the protobuf generated code.
 .PHONY: proto

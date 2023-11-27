@@ -1,13 +1,13 @@
 package mage
 
 import (
-	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sod/sim/core"
 )
 
 // TODO: Classic review ice lance numbers on live
 func (mage *Mage) registerIceLanceSpell() {
-	if !mage.HasRuneById(MageRuneHandsIceLance){
-		return;
+	if !mage.HasRuneById(MageRuneHandsIceLance) {
+		return
 	}
 
 	mage.IceLance = mage.RegisterSpell(core.SpellConfig{
@@ -26,12 +26,12 @@ func (mage *Mage) registerIceLanceSpell() {
 			},
 		},
 
-		CritMultiplier: mage.SpellCritMultiplier(1, 0.2 * float64(mage.Talents.IceShards)),
+		CritMultiplier:   mage.SpellCritMultiplier(1, 0.2*float64(mage.Talents.IceShards)),
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1 - 0.1*float64(mage.Talents.FrostChanneling),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := sim.Roll(55, 66) + 0.143 * spell.SpellPower() // https://www.wowhead.com/classic/spell=400640/ice-lance
+			baseDamage := sim.Roll(55, 66) + 0.143*spell.SpellPower() // https://www.wowhead.com/classic/spell=400640/ice-lance
 			baseDamage *= core.TernaryFloat64(mage.FingersOfFrostAura.IsActive(), 3, 1)
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 

@@ -3,7 +3,7 @@ package mage
 import (
 	"time"
 
-	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sod/sim/core"
 )
 
 // TODO: Classic verify numbers such as aoe caps and base damage

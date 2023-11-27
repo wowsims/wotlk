@@ -73,8 +73,8 @@ package core
 // **************************************
 
 import (
-	"github.com/wowsims/classic/sim/core/proto"
-	"github.com/wowsims/classic/sim/core/stats"
+	"github.com/wowsims/classic/sod/sim/core/proto"
+	"github.com/wowsims/classic/sod/sim/core/stats"
 )
 
 '''

@@ -3,7 +3,7 @@ package database
 import (
 	_ "embed"
 
-	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sod/sim/core/proto"
 	googleProto "google.golang.org/protobuf/proto"
 )
 

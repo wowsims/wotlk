@@ -3,10 +3,10 @@ package dps
 import (
 	"time"
 
-	"github.com/wowsims/classic/sim/common"
-	"github.com/wowsims/classic/sim/core"
-	"github.com/wowsims/classic/sim/core/proto"
-	"github.com/wowsims/classic/sim/warrior"
+	"github.com/wowsims/classic/sod/sim/common"
+	"github.com/wowsims/classic/sod/sim/core"
+	"github.com/wowsims/classic/sod/sim/core/proto"
+	"github.com/wowsims/classic/sod/sim/warrior"
 )
 
 func RegisterDpsWarrior() {

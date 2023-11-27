@@ -4,20 +4,20 @@ The primary goal of this project is to provide a framework that makes it easy to
 
 This project is licensed with MIT license. We request that anyone using this software in their own project to make sure there is a user visible link back to the original project.
 
-[Live sims can be found here.](https://wowsims.github.io/classic "https://wowsims.github.io/classic")
+[Live sims can be found here.](https://wowsims.github.io/classic/sod "https://wowsims.github.io/classic/sod")
 
 [Support our devs via Patreon.](https://www.patreon.com/wowsims)
 
 # Downloading Sim
 
 Links for latest Sim build:
-- [Windows Sim](https://github.com/wowsims/classic/releases/latest/download/wowsimclassic-windows.exe.zip)
-- [MacOS Sim](https://github.com/wowsims/classic/releases/latest/download/wowsimclassic-amd64-darwin.zip)
-- [Linux Sim](https://github.com/wowsims/classic/releases/latest/download/wowsimclassic-amd64-linux.zip)
+- [Windows Sim](https://github.com/wowsims/classic-sod/releases/latest/download/wowsims-classic-sod-windows.exe.zip)
+- [MacOS Sim](https://github.com/wowsims/classic-sod/releases/latest/download/wowsims-classic-sod-amd64-darwin.zip)
+- [Linux Sim](https://github.com/wowsims/classic-sod/releases/latest/download/wowsims-classic-sod-amd64-linux.zip)
 
 Then unzip the downloaded file, then open the unzipped file to open the sim in your browser!
 
-Alternatively, you can choose from a specific relase on the [Releases](https://github.com/wowsims/classic/releases) page and click the suitable link under "Assets"
+Alternatively, you can choose from a specific relase on the [Releases](https://github.com/wowsims/classic-sod/releases) page and click the suitable link under "Assets"
 # Local Dev Installation
 
 This project has dependencies on Go >=1.21, protobuf-compiler and the corresponding Go plugins, and node >= 14.0.
@@ -54,7 +54,7 @@ npm install
 ## Docker
 Alternatively, install Docker and your workflow will look something like this:
 ```sh
-git clone https://github.com/wowsims/classic.git
+git clone https://github.com/wowsims/classic-sod.git
 cd wotlk
 
 # Build the docker image and install npm dependencies (only need to run these once).
@@ -100,8 +100,8 @@ make test
 make update-tests
 
 # Host a local version of the UI at http://localhost:8080. Visit it by pointing a browser to
-# http://localhost:8080/classic/YOUR_SPEC_HERE, where YOUR_SPEC_HERE is the directory under ui/ with your custom code.
-# Recompiles the entire client before launching using `make dist/classic`
+# http://localhost:8080/classic/sod/YOUR_SPEC_HERE, where YOUR_SPEC_HERE is the directory under ui/ with your custom code.
+# Recompiles the entire client before launching using `make dist/classic/sod`
 make host
 
 # With file-watching so the server auto-restarts and recompiles on Go or TS changes:

@@ -186,28 +186,12 @@ enum SourceFilterOption {
 	SourceCrafting = 1;
 	SourceQuest = 2;
 	SourceDungeon = 3;
-	SourceDungeonH = 4;
-	SourceDungeonTRA = 9;
-	SourceDungeonTRB = 10;
-	SourceRaid10 = 5;
-	SourceRaid10H = 6;
-	SourceRaid25 = 7;
-	SourceRaid25H = 8;
+	SourceRaid = 4;
+	SourceWorldBoss = 5;
 }
 
 enum RaidFilterOption {
 	RaidUnknown = 0;
-	RaidVanilla = 1;
-	RaidTbc = 2;
-	RaidNaxxramas = 3;
-	RaidEyeOfEternity = 4;
-	RaidObsidianSanctum = 5;
-	RaidVaultOfArchavon = 6;
-	RaidUlduar = 7;
-	RaidTrialOfTheCrusader = 8;
-	RaidOnyxiasLair = 9;
-	RaidIcecrownCitadel = 10;
-	RaidRubySanctum = 11;
 }
 
 // Next tag: 20.
