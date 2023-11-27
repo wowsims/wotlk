@@ -293,20 +293,20 @@ export const sourceNames: Map<SourceFilterOption, string> = new Map([
 	[SourceFilterOption.SourceRaid, 'Raid'],
 	[SourceFilterOption.SourceWorldBoss, 'World Boss'],
 ]);
-export const raidNames: Map<RaidFilterOption, string> = new Map([
-	[RaidFilterOption.RaidUnknown, 'Unknown'],
-	[RaidFilterOption.RaidVanilla, 'Vanilla'],
-	[RaidFilterOption.RaidTbc, 'TBC'],
-	[RaidFilterOption.RaidNaxxramas, 'Naxxramas'],
-	[RaidFilterOption.RaidEyeOfEternity, 'Eye of Eternity'],
-	[RaidFilterOption.RaidObsidianSanctum, 'Obsidian Sanctum'],
-	[RaidFilterOption.RaidVaultOfArchavon, 'Vault of Archavon'],
-	[RaidFilterOption.RaidUlduar, 'Ulduar'],
-	[RaidFilterOption.RaidTrialOfTheCrusader, 'Trial of the Crusader'],
-	[RaidFilterOption.RaidOnyxiasLair, 'Onyxia\'s Lair'],
-	[RaidFilterOption.RaidIcecrownCitadel, 'Icecrown Citadel'],
-	[RaidFilterOption.RaidRubySanctum, 'Ruby Sanctum'],
-]);
+// export const raidNames: Map<RaidFilterOption, string> = new Map([
+// 	[RaidFilterOption.RaidUnknown, 'Unknown'],
+// 	[RaidFilterOption.RaidVanilla, 'Vanilla'],
+// 	[RaidFilterOption.RaidTbc, 'TBC'],
+// 	[RaidFilterOption.RaidNaxxramas, 'Naxxramas'],
+// 	[RaidFilterOption.RaidEyeOfEternity, 'Eye of Eternity'],
+// 	[RaidFilterOption.RaidObsidianSanctum, 'Obsidian Sanctum'],
+// 	[RaidFilterOption.RaidVaultOfArchavon, 'Vault of Archavon'],
+// 	[RaidFilterOption.RaidUlduar, 'Ulduar'],
+// 	[RaidFilterOption.RaidTrialOfTheCrusader, 'Trial of the Crusader'],
+// 	[RaidFilterOption.RaidOnyxiasLair, 'Onyxia\'s Lair'],
+// 	[RaidFilterOption.RaidIcecrownCitadel, 'Icecrown Citadel'],
+// 	[RaidFilterOption.RaidRubySanctum, 'Ruby Sanctum'],
+// ]);
 
 export const difficultyNames: Map<DungeonDifficulty, string> = new Map([
 	[DungeonDifficulty.DifficultyUnknown, 'Unknown'],

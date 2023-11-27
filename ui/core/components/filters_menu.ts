@@ -3,13 +3,11 @@ import {
 	ItemSlot,
 } from '../proto/common.js';
 import {
-	RaidFilterOption,
 	SourceFilterOption,
 	UIItem_FactionRestriction,
 } from '../proto/ui.js';
 import {
 	armorTypeNames,
-	raidNames,
 	rangedWeaponTypeNames,
 	sourceNames,
 	weaponTypeNames,

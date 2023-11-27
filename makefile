@@ -90,7 +90,7 @@ ui/core/proto/api.ts: proto/*.proto node_modules
 
 ui/%/index.html: ui/index_template.html
 	$(eval title := $(shell echo $(shell basename $(@D)) | sed -r 's/(^|_)([a-z])/\U \2/g' | cut -c 2-))
-	cat ui/index_template.html | sed -e 's/@@TITLE@@/classic/sod $(title) Simulator/g' -e 's/@@SPEC@@/$(shell basename $(@D))/g' > $@
+	cat ui/index_template.html | sed -e 's/@@TITLE@@/Classic $(title) Simulator/g' -e 's/@@SPEC@@/$(shell basename $(@D))/g' > $@
 
 package-lock.json:
 	npm install
@@ -108,7 +108,7 @@ $(OUT_DIR)/%/index.html: ui/index_template.html $(OUT_DIR)/assets
 	$(eval title := $(shell echo $(shell basename $(@D)) | sed -r 's/(^|_)([a-z])/\U \2/g' | cut -c 2-))
 	echo $(title)
 	mkdir -p $(@D)
-	cat ui/index_template.html | sed -e 's/@@TITLE@@/classic/sod $(title) Simulator/g' -e 's/@@SPEC@@/$(shell basename $(@D))/g' > $@
+	cat ui/index_template.html | sed -e 's/@@TITLE@@/CLASSIC $(title) Simulator/g' -e 's/@@SPEC@@/$(shell basename $(@D))/g' > $@
 
 .PHONY: wasm
 wasm: $(OUT_DIR)/lib.wasm

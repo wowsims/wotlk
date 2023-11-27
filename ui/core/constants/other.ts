@@ -1,7 +1,7 @@
 export const CURRENT_PHASE = 4;
 
 // Github pages serves our site under the /classic directory (because the repo name is wotlk)
-export const REPO_NAME = 'classic';
+export const REPO_NAME = 'classic/sod';
 
 // Get 'elemental_shaman', the pathname part after the repo name
 const pathnameParts = window.location.pathname.split('/');
