@@ -106,7 +106,7 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 
 		if !config.IgnoreHaste {
 			spell.CurCast.GCD = spell.Unit.ApplyCastSpeed(spell.CurCast.GCD)
-			spell.CurCast.CastTime = spell.Unit.ApplyCastSpeedForSpell(spell.CurCast.CastTime, spell)
+			spell.CurCast.CastTime = config.CastTime(spell)
 			spell.CurCast.ChannelTime = spell.Unit.ApplyCastSpeedForSpell(spell.CurCast.ChannelTime, spell)
 		}
 

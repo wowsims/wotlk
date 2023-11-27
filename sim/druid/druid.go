@@ -5,15 +5,13 @@ import (
 
 	"github.com/wowsims/classic/sod/sim/core"
 	"github.com/wowsims/classic/sod/sim/core/proto"
-	"github.com/wowsims/classic/sod/sim/core/stats"
 )
 
 const (
-	SpellFlagNaturesGrace = core.SpellFlagAgentReserved1
-	SpellFlagOmenTrigger  = core.SpellFlagAgentReserved2
+	SpellFlagOmenTrigger = core.SpellFlagAgentReserved1
 )
 
-var TalentTreeSizes = [3]int{28, 30, 27}
+var TalentTreeSizes = [3]int{16, 16, 15}
 
 type Druid struct {
 	core.Character
@@ -22,17 +20,14 @@ type Druid struct {
 
 	StartingForm DruidForm
 
-	RebirthUsed       bool
 	MaulRageThreshold float64
 	RebirthTiming     float64
 	BleedsActive      int
 	AssumeBleedActive bool
-	PrePopBerserk     bool
 
 	ReplaceBearMHFunc core.ReplaceMHSwing
 
 	Barkskin             *DruidSpell
-	Berserk              *DruidSpell
 	DemoralizingRoar     *DruidSpell
 	Enrage               *DruidSpell
 	FaerieFire           *DruidSpell
@@ -58,6 +53,8 @@ type Druid struct {
 	Starfire             *DruidSpell
 	Starfall             *DruidSpell
 	StarfallSplash       *DruidSpell
+	Starsurge            *DruidSpell
+	Sunfire              *DruidSpell
 	SurvivalInstincts    *DruidSpell
 	SwipeBear            *DruidSpell
 	SwipeCat             *DruidSpell
@@ -77,17 +74,14 @@ type Druid struct {
 	EnrageAura               *core.Aura
 	FaerieFireAuras          core.AuraArray
 	FrenziedRegenerationAura *core.Aura
+	FuryOfStormrageAura      *core.Aura
 	MaulQueueAura            *core.Aura
 	MoonkinT84PCAura         *core.Aura
 	NaturesGraceProcAura     *core.Aura
 	PredatoryInstinctsAura   *core.Aura
-	SavageDefenseAura        *core.Aura
 	SurvivalInstinctsAura    *core.Aura
 	TigersFuryAura           *core.Aura
 	SavageRoarAura           *core.Aura
-	SolarEclipseProcAura     *core.Aura
-	LunarEclipseProcAura     *core.Aura
-	OwlkinFrenzyAura         *core.Aura
 
 	BleedCategories core.ExclusiveCategoryArray
 
@@ -97,11 +91,6 @@ type Druid struct {
 	ProcOoc func(sim *core.Simulation)
 
 	ExtendingMoonfireStacks int
-	LunarICD                core.Cooldown
-	SolarICD                core.Cooldown
-	Treant1                 *TreantPet
-	Treant2                 *TreantPet
-	Treant3                 *TreantPet
 
 	form         DruidForm
 	disabledMCDs []*core.MajorCooldown
@@ -119,9 +108,19 @@ func (druid *Druid) BalanceCritMultiplier() float64 {
 	return druid.SpellCritMultiplier(1, 0.2*float64(druid.Talents.Vengeance))
 }
 
-func (druid *Druid) TryMaul(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
-	return druid.MaulReplaceMH(sim, mhSwingSpell)
+func (druid *Druid) NaturesGraceCastTime() func(spell *core.Spell) time.Duration {
+	return func(spell *core.Spell) time.Duration {
+		baseTime := core.TernaryDuration(druid.NaturesGraceProcAura.IsActive(),
+			spell.DefaultCast.CastTime-(time.Millisecond*500),
+			spell.DefaultCast.CastTime,
+		)
+		return spell.Unit.ApplyCastSpeedForSpell(baseTime, spell)
+	}
 }
+
+// func (druid *Druid) TryMaul(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
+// 	return druid.MaulReplaceMH(sim, mhSwingSpell)
+// }
 
 func (druid *Druid) RegisterSpell(formMask DruidForm, config core.SpellConfig) *DruidSpell {
 	prev := config.ExtraCastCondition
@@ -154,62 +153,59 @@ func (druid *Druid) RegisterSpell(formMask DruidForm, config core.SpellConfig) *
 }
 
 func (druid *Druid) Initialize() {
-	druid.registerFaerieFireSpell()
-	druid.registerInnervateCD()
-	druid.registerFakeGotw()
+	// druid.registerFaerieFireSpell()
+	// druid.registerInnervateCD()
 }
 
 func (druid *Druid) RegisterBalanceSpells() {
-	druid.registerHurricaneSpell()
-	druid.registerInsectSwarmSpell()
+	// druid.registerHurricaneSpell()
+	// druid.registerInsectSwarmSpell()
 	druid.registerMoonfireSpell()
 	druid.registerStarfireSpell()
 	druid.registerWrathSpell()
 }
 
+// TODO: Classic feral
 func (druid *Druid) RegisterFeralCatSpells() {
-	druid.registerBerserkCD()
-	druid.registerCatFormSpell()
-	druid.registerBearFormSpell()
-	druid.registerEnrageSpell()
-	druid.registerFerociousBiteSpell()
-	druid.registerMangleBearSpell()
-	druid.registerMangleCatSpell()
-	druid.registerMaulSpell(0)
-	druid.registerLacerateSpell()
-	druid.registerRakeSpell()
-	druid.registerRipSpell()
-	druid.registerSavageRoarSpell()
-	druid.registerShredSpell()
-	druid.registerSwipeBearSpell()
-	druid.registerSwipeCatSpell()
-	druid.registerTigersFurySpell()
+	// druid.registerBerserkCD()
+	// druid.registerCatFormSpell()
+	// druid.registerBearFormSpell()
+	// druid.registerEnrageSpell()
+	// druid.registerFerociousBiteSpell()
+	// druid.registerMangleBearSpell()
+	// druid.registerMangleCatSpell()
+	// druid.registerMaulSpell(0)
+	// druid.registerLacerateSpell()
+	// druid.registerRakeSpell()
+	// druid.registerRipSpell()
+	// druid.registerSavageRoarSpell()
+	// druid.registerShredSpell()
+	// druid.registerSwipeBearSpell()
+	// druid.registerSwipeCatSpell()
+	// druid.registerTigersFurySpell()
 }
 
+// TODO: Classic feral tank
 func (druid *Druid) RegisterFeralTankSpells(maulRageThreshold float64) {
-	druid.registerBarkskinCD()
-	druid.registerBerserkCD()
-	druid.registerBearFormSpell()
-	druid.registerDemoralizingRoarSpell()
-	druid.registerEnrageSpell()
-	druid.registerFrenziedRegenerationCD()
-	druid.registerMangleBearSpell()
-	druid.registerMaulSpell(maulRageThreshold)
-	druid.registerLacerateSpell()
-	druid.registerRakeSpell()
-	druid.registerRipSpell()
-	druid.registerSavageDefensePassive()
-	druid.registerSurvivalInstinctsCD()
-	druid.registerSwipeBearSpell()
+	// druid.registerBarkskinCD()
+	// druid.registerBerserkCD()
+	// druid.registerBearFormSpell()
+	// druid.registerDemoralizingRoarSpell()
+	// druid.registerEnrageSpell()
+	// druid.registerFrenziedRegenerationCD()
+	// druid.registerMangleBearSpell()
+	// druid.registerMaulSpell(maulRageThreshold)
+	// druid.registerLacerateSpell()
+	// druid.registerRakeSpell()
+	// druid.registerRipSpell()
+	// druid.registerSurvivalInstinctsCD()
+	// druid.registerSwipeBearSpell()
 }
 
 func (druid *Druid) Reset(_ *core.Simulation) {
 	druid.BleedsActive = 0
 	druid.form = druid.StartingForm
 	druid.disabledMCDs = []*core.MajorCooldown{}
-	druid.RebirthUsed = false
-	druid.LunarICD.Timer.Reset()
-	druid.SolarICD.Timer.Reset()
 }
 
 func New(char *core.Character, form DruidForm, selfBuffs SelfBuffs, talents string) *Druid {
@@ -223,23 +219,18 @@ func New(char *core.Character, form DruidForm, selfBuffs SelfBuffs, talents stri
 	core.FillTalentsProto(druid.Talents.ProtoReflect(), talents, TalentTreeSizes)
 	druid.EnableManaBar()
 
-	druid.AddStatDependency(stats.Strength, stats.AttackPower, 2)
-	druid.AddStatDependency(stats.BonusArmor, stats.Armor, 1)
-	druid.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritPerAgiMaxLevel[char.Class]*core.CritRatingPerCritChance)
+	// TODO: Class druid physical stats
+	// druid.AddStatDependency(stats.Strength, stats.AttackPower, 2)
+	// druid.AddStatDependency(stats.BonusArmor, stats.Armor, 1)
+	// druid.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritPerAgiMaxLevel[char.Class]*core.CritRatingPerCritChance)
 	// Druid get 0.0209 dodge per agi (before dr), roughly 1 per 47.846
-	druid.AddStatDependency(stats.Agility, stats.Dodge, (0.0209)*core.DodgeRatingPerDodgeChance)
+	// druid.AddStatDependency(stats.Agility, stats.Dodge, (0.0209)*core.DodgeRatingPerDodgeChance)
 
 	// Druids get extra melee haste
-	druid.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
+	// druid.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
 
 	// Base dodge is unaffected by Diminishing Returns
-	druid.PseudoStats.BaseDodge += 0.056097
-
-	if druid.Talents.ForceOfNature {
-		druid.Treant1 = druid.NewTreant()
-		druid.Treant2 = druid.NewTreant()
-		druid.Treant3 = druid.NewTreant()
-	}
+	// druid.PseudoStats.BaseDodge += 0.056097
 
 	return druid
 }
@@ -268,6 +259,10 @@ func (ds *DruidSpell) IsEqual(s *core.Spell) bool {
 		return false
 	}
 	return ds.Spell == s
+}
+
+func (druid *Druid) HasRune(rune proto.DruidRune) bool {
+	return druid.HasRuneById(int32(rune))
 }
 
 // Agent is a generic way to access underlying druid on any of the agents (for example balance druid.)

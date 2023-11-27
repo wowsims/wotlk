@@ -33,8 +33,8 @@ func (druid *Druid) registerFaerieFireSpell() {
 	}
 	flags |= core.SpellFlagAPL
 
-	druid.FaerieFireAuras = druid.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
-		return core.FaerieFireAura(target, druid.Talents.ImprovedFaerieFire)
+	druid.FaerieFireAuras = druid.NewEnemyAuraArray(func(target *core.Unit, level int32) *core.Aura {
+		return core.FaerieFireAura(target, 0)
 	})
 
 	druid.FaerieFire = druid.RegisterSpell(formMask, core.SpellConfig{
@@ -58,14 +58,7 @@ func (druid *Druid) registerFaerieFireSpell() {
 		CritMultiplier:   druid.BalanceCritMultiplier(),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := 0.0
-			outcome := spell.OutcomeMagicHit
-			if druid.InForm(Bear) {
-				baseDamage = 1 + 0.15*spell.MeleeAttackPower()
-				outcome = spell.OutcomeMagicHitAndCrit
-			}
-
-			result := spell.CalcAndDealDamage(sim, target, baseDamage, outcome)
+			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
 				druid.FaerieFireAuras.Get(target).Activate(sim)
 			}

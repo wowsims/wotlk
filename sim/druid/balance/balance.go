@@ -1,7 +1,6 @@
 package balance
 
 import (
-	"github.com/wowsims/classic/sod/sim/common/wotlk"
 	"github.com/wowsims/classic/sod/sim/core"
 	"github.com/wowsims/classic/sod/sim/core/proto"
 	"github.com/wowsims/classic/sod/sim/core/stats"
@@ -41,7 +40,6 @@ func NewBalanceDruid(character *core.Character, options *proto.Player) *BalanceD
 	}
 
 	moonkin.EnableResumeAfterManaWait(moonkin.tryUseGCD)
-	wotlk.ConstructValkyrPets(&moonkin.Character)
 	return moonkin
 }
 
@@ -53,19 +51,8 @@ type BalanceOnUseTrinket struct {
 type BalanceDruid struct {
 	*druid.Druid
 
-	Options            *proto.BalanceDruid_Options
-	Rotation           *proto.BalanceDruid_Rotation
-	CooldownsAvailable []*core.MajorCooldown
-	LastCast           *druid.DruidSpell
-
-	// CDS
-	hyperSpeedMCD      *core.MajorCooldown
-	potionSpeedMCD     *core.MajorCooldown
-	potionWildMagicMCD *core.MajorCooldown
-	powerInfusion      *core.MajorCooldown
-	onUseTrinket1      BalanceOnUseTrinket
-	onUseTrinket2      BalanceOnUseTrinket
-	potionUsed         bool
+	Options  *proto.BalanceDruid_Options
+	Rotation *proto.BalanceDruid_Rotation
 }
 
 func (moonkin *BalanceDruid) GetDruid() *druid.Druid {

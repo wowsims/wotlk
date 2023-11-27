@@ -1,15 +1,14 @@
-import { Spec } from '../core/proto/common.js';
-import { Stat } from '../core/proto/common.js';
+import { IndividualSimUI } from '../core/individual_sim_ui.js';
+import { Player } from '../core/player.js';
 import {
 	APLRotation,
 } from '../core/proto/apl.js';
+import { Spec, Stat } from '../core/proto/common.js';
 import { Stats } from '../core/proto_utils/stats.js';
-import { Player } from '../core/player.js';
-import { IndividualSimUI } from '../core/individual_sim_ui.js';
 
-import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 
+import { AgilityBuffInput, FireDamageBuff, FrostDamageBuff, ShadowDamageBuff, StrengthBuffInput } from '../core/components/icon_inputs.js';
 import * as DruidInputs from './inputs.js';
 import * as Presets from './presets.js';
 
@@ -22,7 +21,6 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 			// List any known bugs / issues here, and they'll be shown on the site.
 			knownIssues: [
 			],
-
 			// All stats for which EP should be calculated.
 			epStats: [
 				Stat.StatIntellect,
@@ -38,6 +36,7 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 			// Which stats to display in the Character Stats section, at the bottom of the left-hand sidebar.
 			displayStats: [
 				Stat.StatHealth,
+				Stat.StatMana,
 				Stat.StatStamina,
 				Stat.StatIntellect,
 				Stat.StatSpirit,
@@ -50,7 +49,7 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P3_PRESET_HORDE.gear,
+				gear: Presets.DEFAULT_PRESET.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatIntellect]: 0.43,
@@ -65,7 +64,7 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 				// Default rotation settings.
 				rotation: Presets.DefaultRotation,
 				// Default talents.
-				talents: Presets.Phase3Talents.data,
+				talents: Presets.BalanceTalents.data,
 				// Default spec-specific settings.
 				specOptions: Presets.DefaultOptions,
 				// Default raid/party buffs settings.
@@ -78,25 +77,22 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 
 			// IconInputs to include in the 'Player' section on the settings tab.
 			playerIconInputs: [
-				DruidInputs.SelfInnervate,
 			],
 			// Inputs to include in the 'Rotation' section on the settings tab.
 			rotationInputs: DruidInputs.BalanceDruidRotationConfig,
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
-				IconInputs.MeleeCritBuff,
-				IconInputs.AttackPowerPercentBuff,
-				IconInputs.AttackPowerBuff,
-				IconInputs.MajorArmorDebuff,
-				IconInputs.MinorArmorDebuff,
 			],
 			excludeBuffDebuffInputs: [
+				AgilityBuffInput,
+				StrengthBuffInput,
+				FireDamageBuff,
+				FrostDamageBuff,
+				ShadowDamageBuff,
 			],
 			// Inputs to include in the 'Other' section on the settings tab.
 			otherInputs: {
 				inputs: [
-					DruidInputs.OkfUptime,
-					OtherInputs.TankAssignment,
 					OtherInputs.ReactionTime,
 					OtherInputs.DistanceFromTarget,
 				],
@@ -109,30 +105,19 @@ export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {
 			presets: {
 				// Preset talents that the user can quickly select.
 				talents: [
-					Presets.Phase1Talents,
-					Presets.Phase2Talents,
-					Presets.Phase3Talents,
-					Presets.Phase4Talents,
+					Presets.BalanceTalents,
 				],
 				rotations: [
-					Presets.ROTATION_PRESET_P3_APL,
-					Presets.ROTATION_PRESET_P4_FOCUS_APL,
-					Presets.ROTATION_PRESET_P4_STARFIRE_APL,
+					Presets.DEFAULT_APL,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.PRERAID_PRESET,
-					Presets.P1_PRESET,
-					Presets.P2_PRESET,
-					Presets.P3_PRESET_HORDE,
-					Presets.P3_PRESET_ALLI,
-					Presets.P4_PRESET_HORDE,
-					Presets.P4_PRESET_ALLI,
+					Presets.DEFAULT_PRESET,
 				],
 			},
 
 			autoRotation: (): APLRotation => {
-				return Presets.ROTATION_PRESET_P3_APL.rotation.rotation!;
+				return Presets.DEFAULT_APL.rotation.rotation!;
 			},
 		});
 	}

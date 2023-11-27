@@ -9,7 +9,7 @@ import (
 )
 
 func (druid *Druid) getSavageRoarMultiplier() float64 {
-	return 1.3 + core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfSavageRoar), 0.03, 0)
+	return 1.3
 }
 
 func (druid *Druid) registerSavageRoarSpell() {

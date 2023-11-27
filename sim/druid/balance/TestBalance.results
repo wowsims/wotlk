@@ -1,0 +1,81 @@
+character_stats_results: {
+ key: "TestBalance-CharacterStats-Default"
+ value: {
+  final_stats: 105.435
+  final_stats: 84.645
+  final_stats: 103.95
+  final_stats: 142.56
+  final_stats: 166.32
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 5.70686
+  final_stats: 0
+  final_stats: 0
+  final_stats: 104
+  final_stats: 0
+  final_stats: 10.4755
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 2822.4
+  final_stats: 0
+  final_stats: 0
+  final_stats: 1088.04
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 2227.65
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+  final_stats: 0
+ }
+}
+dps_results: {
+ key: "TestBalance-Average-Default"
+ value: {}
+}
+dps_results: {
+ key: "TestBalance-Settings-Tauren-blank-Default-default-FullBuffs-LongMultiTarget"
+ value: {}
+}
+dps_results: {
+ key: "TestBalance-Settings-Tauren-blank-Default-default-FullBuffs-LongSingleTarget"
+ value: {}
+}
+dps_results: {
+ key: "TestBalance-Settings-Tauren-blank-Default-default-FullBuffs-ShortSingleTarget"
+ value: {}
+}
+dps_results: {
+ key: "TestBalance-Settings-Tauren-blank-Default-default-NoBuffs-LongMultiTarget"
+ value: {}
+}
+dps_results: {
+ key: "TestBalance-Settings-Tauren-blank-Default-default-NoBuffs-LongSingleTarget"
+ value: {}
+}
+dps_results: {
+ key: "TestBalance-Settings-Tauren-blank-Default-default-NoBuffs-ShortSingleTarget"
+ value: {}
+}
+dps_results: {
+ key: "TestBalance-SwitchInFrontOfTarget-Default"
+ value: {}
+}

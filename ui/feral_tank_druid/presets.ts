@@ -43,12 +43,12 @@ export const StandardTalents = {
 	data: SavedTalents.create({
 		talentsString: '-503232132322010353120300313511-20350001',
 		glyphs: Glyphs.create({
-			major1: DruidMajorGlyph.GlyphOfMaul,
-			major2: DruidMajorGlyph.GlyphOfSurvivalInstincts,
-			major3: DruidMajorGlyph.GlyphOfFrenziedRegeneration,
-			minor1: DruidMinorGlyph.GlyphOfChallengingRoar,
-			minor2: DruidMinorGlyph.GlyphOfThorns,
-			minor3: DruidMinorGlyph.GlyphOfUnburdenedRebirth,
+			major1: DruidMajorGlyph.DruidMajorGlyphNone,
+			major2: DruidMajorGlyph.DruidMajorGlyphNone,
+			major3: DruidMajorGlyph.DruidMajorGlyphNone,
+			minor1: DruidMinorGlyph.DruidMinorGlyphNone,
+			minor2: DruidMinorGlyph.DruidMinorGlyphNone,
+			minor3: DruidMinorGlyph.DruidMinorGlyphNone,
 		}),
 	}),
 };

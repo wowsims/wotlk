@@ -13,13 +13,11 @@ func (druid *Druid) registerHurricaneSpell() {
 		ProcMask:       core.ProcMaskProc,
 		Flags:          SpellFlagOmenTrigger,
 		CritMultiplier: 1,
-		DamageMultiplier: 1 +
-			0.15*float64(druid.Talents.GaleWinds) +
-			0.01*float64(druid.Talents.Genesis),
+		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			damage := 451 + 0.129*spell.SpellPower()
-			damage *= sim.Encounter.AOECapMultiplier()
+			// damage *= sim.Encounter.AOECapMultiplier()
 			for _, aoeTarget := range sim.Encounter.TargetUnits {
 				spell.CalcAndDealDamage(sim, aoeTarget, damage, spell.OutcomeMagicHitAndCrit)
 			}
