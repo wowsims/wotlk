@@ -7,6 +7,7 @@ import (
 	"github.com/wowsims/classic/sod/sim/core/proto"
 )
 
+// TODO: Classic Update
 func (warrior *Warrior) RegisterShieldWallCD() {
 	if warrior.OffHand().WeaponType != proto.WeaponType_WeaponTypeShield {
 		return

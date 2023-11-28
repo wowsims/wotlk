@@ -7,6 +7,7 @@ import (
 	"github.com/wowsims/classic/sod/sim/core/stats"
 )
 
+// TODO: Classic Update
 func (warrior *Warrior) RegisterShieldBlockCD() {
 	actionID := core.ActionID{SpellID: 2565}
 	cooldownDur := time.Second * 60

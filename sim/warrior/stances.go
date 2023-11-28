@@ -85,35 +85,18 @@ func (warrior *Warrior) registerDefensiveStanceAura() {
 
 	actionID := core.ActionID{SpellID: 71}
 
-	tacMasteryThreatMultiplier := 1 + 0.21*float64(warrior.Talents.TacticalMastery)
-
 	warrior.DefensiveStanceAura = warrior.GetOrRegisterAura(core.Aura{
 		Label:    "Defensive Stance",
 		ActionID: actionID,
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.ThreatMultiplier *= threatMult
 			aura.Unit.PseudoStats.DamageDealtMultiplier *= 0.90
 			aura.Unit.PseudoStats.DamageTakenMultiplier *= 0.90
 
-			if warrior.Bloodthirst != nil {
-				warrior.Bloodthirst.ThreatMultiplier *= tacMasteryThreatMultiplier
-			}
-			if warrior.MortalStrike != nil {
-				warrior.MortalStrike.ThreatMultiplier *= tacMasteryThreatMultiplier
-			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.ThreatMultiplier /= threatMult
 			aura.Unit.PseudoStats.DamageDealtMultiplier /= 0.90
 			aura.Unit.PseudoStats.DamageTakenMultiplier /= 0.9
-
-			if warrior.Bloodthirst != nil {
-				warrior.Bloodthirst.ThreatMultiplier /= tacMasteryThreatMultiplier
-			}
-			if warrior.MortalStrike != nil {
-				warrior.MortalStrike.ThreatMultiplier /= tacMasteryThreatMultiplier
-			}
 		},
 	})
 	warrior.DefensiveStanceAura.NewExclusiveEffect(stanceEffectCategory, true, core.ExclusiveEffect{})

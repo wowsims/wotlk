@@ -6,6 +6,7 @@ import (
 	"github.com/wowsims/classic/sod/sim/core"
 )
 
+// TODO: Classic Update
 func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 	actionID := core.ActionID{SpellID: 57823}
 

@@ -6,6 +6,7 @@ import (
 	"github.com/wowsims/classic/sod/sim/core"
 )
 
+// TODO: Classic Update
 func (warrior *Warrior) registerShieldSlamSpell() {
 	warrior.ShieldSlam = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47488},

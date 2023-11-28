@@ -78,28 +78,12 @@ export const DiscTalents = {
 	name: 'Disc',
 	data: SavedTalents.create({
 		talentsString: '0503203130300512301313231251-2351010303',
-		glyphs: Glyphs.create({
-			major1: MajorGlyph.GlyphOfPowerWordShield,
-			major2: MajorGlyph.GlyphOfFlashHeal,
-			major3: MajorGlyph.GlyphOfPenance,
-			minor1: MinorGlyph.GlyphOfFortitude,
-			minor2: MinorGlyph.GlyphOfShadowfiend,
-			minor3: MinorGlyph.GlyphOfFading,
-		}),
 	}),
 };
 export const HolyTalents = {
 	name: 'Holy',
 	data: SavedTalents.create({
 		talentsString: '05032031103-234051032002152530004311051',
-		glyphs: Glyphs.create({
-			major1: MajorGlyph.GlyphOfPrayerOfHealing,
-			major2: MajorGlyph.GlyphOfRenew,
-			major3: MajorGlyph.GlyphOfCircleOfHealing,
-			minor1: MinorGlyph.GlyphOfFortitude,
-			minor2: MinorGlyph.GlyphOfShadowfiend,
-			minor3: MinorGlyph.GlyphOfFading,
-		}),
 	}),
 };
 
