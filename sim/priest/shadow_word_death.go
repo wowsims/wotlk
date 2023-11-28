@@ -4,15 +4,19 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sod/sim/core"
+	"github.com/wowsims/classic/sod/sim/core/proto"
 )
 
 func (priest *Priest) registerShadowWordDeathSpell() {
-	if !priest.HasRuneById(PriestRuneHandsShadowWordDeath) {
+	if !priest.HasRune(proto.PriestRune_RuneHandsShadowWordDeath) {
 		return
 	}
-	// TODO: Classic verify numbers
-	baseDamage := []float64{261, 305}
 	spellCoeff := 0.429
+
+	level := float64(priest.GetCharacter().Level)
+	baseCalc := (9.456667 + 0.635108*level + 0.039063*level*level)
+	baseLowDamage := baseCalc * 2.61
+	baseHightDamage := baseCalc * 3.05
 
 	priest.ShadowWordDeath = priest.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 401955},
@@ -40,7 +44,7 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := sim.Roll(baseDamage[0], baseDamage[1]) + spellCoeff*spell.SpellPower()
+			baseDamage := sim.Roll(baseLowDamage, baseHightDamage) + spellCoeff*spell.SpellPower()
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 
 			if result.Landed() {
@@ -49,7 +53,7 @@ func (priest *Priest) registerShadowWordDeathSpell() {
 			spell.DealDamage(sim, result)
 		},
 		ExpectedInitialDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
-			baseDamage := (baseDamage[0]+baseDamage[1])/2 + spellCoeff*spell.SpellPower()
+			baseDamage := (baseLowDamage+baseHightDamage)/2 + spellCoeff*spell.SpellPower()
 			return spell.CalcDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicHitAndCrit)
 		},
 	})

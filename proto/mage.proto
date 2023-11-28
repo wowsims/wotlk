@@ -3,8 +3,6 @@ package proto;
 
 option go_package = "./proto";
 
-import "common.proto";
-
 message MageTalents {
 	// Arcane
 	int32 arcane_subtlety = 1;

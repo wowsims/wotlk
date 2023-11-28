@@ -60,44 +60,21 @@ message PriestTalents {
 	bool shadowform = 47;
 }
 
+enum PriestRune {
+	PriestRuneNone = 0;
+	RuneChestTwistedFaith    = 425198;
+	RuneChestVoidPlague      = 425204;
+	RuneHandsPenance         = 402174;
+	RuneHandsShadowWordDeath = 401955;
+	RuneLegsHomunculi        = 402799;
+	RuneLegsSharedPain       = 401969;
+}
+
 enum PriestMajorGlyph {
 	PriestMajorGlyphNone = 0;
-	GlyphOfCircleOfHealing = 42396;
-	GlyphOfDispelMagic = 42397;
-	GlyphOfDispersion = 45753;
-	GlyphOfFade = 42398;
-	GlyphOfFearWard = 42399;
-	GlyphOfFlashHeal = 42400;
-	GlyphOfGuardianSpirit = 45755;
-	GlyphOfHolyNova = 42401;
-	GlyphOfHymnOfHope = 45758;
-	GlyphOfInnerFire = 42402;
-	GlyphOfLightwell = 42403;
-	GlyphOfMassDispel = 42404;
-	GlyphOfMindControl = 42405;
-	GlyphOfMindFlay = 42415;
-	GlyphOfMindSear = 45757;
-	GlyphOfPainSuppression = 45760;
-	GlyphOfPenance = 45756;
-	GlyphOfPowerWordShield = 42408;
-	GlyphOfPrayerOfHealing = 42409;
-	GlyphOfPsychicScream = 42410;
-	GlyphOfRenew = 42411;
-	GlyphOfScourgeImprisonment = 42412;
-	GlyphOfShadow = 42407;
-	GlyphOfShadowWordDeath = 42414;
-	GlyphOfShadowWordPain = 42406;
-	GlyphOfSmite = 42416;
-	GlyphOfSpiritOfRedemption = 42417;
 }
 enum PriestMinorGlyph {
 	PriestMinorGlyphNone = 0;
-	GlyphOfFading = 43342;
-	GlyphOfFortitude = 43371;
-	GlyphOfLevitate = 43370;
-	GlyphOfShackleUndead = 43373;
-	GlyphOfShadowProtection = 43372;
-	GlyphOfShadowfiend = 43374;
 }
 
 message ShadowPriest {

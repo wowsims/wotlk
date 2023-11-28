@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sod/sim/core"
+	"github.com/wowsims/classic/sod/sim/core/proto"
 )
 
 func (priest *Priest) registerPenanceHealSpell() {
@@ -11,17 +12,18 @@ func (priest *Priest) registerPenanceHealSpell() {
 }
 
 func (priest *Priest) RegisterPenanceSpell() {
-	if !priest.HasRuneById(PriestRuneHandsPenance) {
+	if !priest.HasRune(proto.PriestRune_RuneHandsPenance) {
 		return
 	}
 	priest.Penance = priest.makePenanceSpell(false)
 }
 
+// https://www.wowhead.com/classic/spell=402284/penance
+// https://www.wowhead.com/classic/news/patch-1-15-build-52124-ptr-datamining-season-of-discovery-runes-336044
 func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 	var procMask core.ProcMask
 	// TODO: Classic verify numbers
-	spellCoeff := 0.285        // https://www.wowhead.com/classic/spell=402284/penance
-	baseDamage := float64(128) // https://www.wowhead.com/classic/news/patch-1-15-build-52124-ptr-datamining-season-of-discovery-runes-336044
+	spellCoeff := 0.285
 	flags := core.SpellFlagChanneled | core.SpellFlagAPL
 	if isHeal {
 		flags |= core.SpellFlagHelpful
@@ -29,6 +31,10 @@ func (priest *Priest) makePenanceSpell(isHeal bool) *core.Spell {
 	} else {
 		procMask = core.ProcMaskSpellDamage
 	}
+
+	level := float64(priest.GetCharacter().Level)
+	baseCalc := (9.456667 + 0.635108*level + 0.039063*level*level)
+	baseDamage := baseCalc * 1.28
 
 	return priest.RegisterSpell(core.SpellConfig{
 		ActionID:      core.ActionID{SpellID: 402284},

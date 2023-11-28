@@ -9,7 +9,7 @@ import (
 
 	"github.com/wowsims/classic/sod/sim/core"
 	"github.com/wowsims/classic/sod/sim/core/proto"
-	"github.com/wowsims/classic/tools"
+	"github.com/wowsims/classic/sod/tools"
 )
 
 func ReadAtlasLootData() *WowDatabase {

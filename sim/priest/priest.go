@@ -7,15 +7,6 @@ import (
 
 var TalentTreeSizes = [3]int{15, 16, 16}
 
-const (
-	PriestRuneChestTwistedFaith    = 425210
-	PriestRuneChestVoidPlague      = 425211
-	PriestRuneHandsPenance         = 402844
-	PriestRuneHandsShadowWordDeath = 402833
-	PriestRuneLegsHomunculi        = 402836
-	PriestRuneLegsSharedPain       = 402838
-)
-
 type Priest struct {
 	core.Character
 	Talents *proto.PriestTalents
@@ -80,10 +71,6 @@ func (priest *Priest) Initialize() {
 	priest.registerDevouringPlagueSpell()
 	priest.RegisterSmiteSpell()
 	priest.registerHolyFire()
-	// TODO: Classic implement runes
-	priest.registerVoidPlagueSpell()
-	priest.RegisterPenanceSpell()
-	priest.registerShadowWordDeathSpell()
 
 	priest.registerPowerInfusionCD()
 }
@@ -126,6 +113,10 @@ func New(char *core.Character, talents string) *Priest {
 	priest.EnableManaBar()
 
 	return priest
+}
+
+func (priest *Priest) HasRune(rune proto.PriestRune) bool {
+	return priest.HasRuneById(int32(rune))
 }
 
 // Agent is a generic way to access underlying priest on any of the agents.

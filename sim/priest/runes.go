@@ -1,5 +1,7 @@
 package priest
 
 func (priest *Priest) ApplyRunes() {
-	return
+	priest.registerVoidPlagueSpell()
+	priest.RegisterPenanceSpell()
+	priest.registerShadowWordDeathSpell()
 }

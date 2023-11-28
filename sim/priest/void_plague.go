@@ -5,12 +5,18 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sod/sim/core"
+	"github.com/wowsims/classic/sod/sim/core/proto"
 )
 
+// https://www.wowhead.com/classic/spell=425204/void-plague
+// https://www.wowhead.com/classic/news/patch-1-15-build-52124-ptr-datamining-season-of-discovery-runes-336044
 func (priest *Priest) getVoidPlagueConfig() core.SpellConfig {
 	// TODO: Classic SOD live check
-	spellCoeff := 0.2             // https://www.wowhead.com/classic/spell=425204/void-plague
-	baseDamage := float64(39 * 6) // https://www.wowhead.com/classic/news/patch-1-15-build-52124-ptr-datamining-season-of-discovery-runes-336044
+	spellCoeff := 0.2
+
+	level := float64(priest.GetCharacter().Level)
+	baseCalc := (9.456667 + 0.635108*level + 0.039063*level*level)
+	baseDamage := baseCalc * 2.34
 
 	return core.SpellConfig{
 		ActionID:      core.ActionID{SpellID: 425204},
@@ -79,7 +85,7 @@ func (priest *Priest) getVoidPlagueConfig() core.SpellConfig {
 }
 
 func (priest *Priest) registerVoidPlagueSpell() {
-	if !priest.HasRuneById(PriestRuneChestVoidPlague) {
+	if !priest.HasRune(proto.PriestRune_RuneChestVoidPlague) {
 		return
 	}
 	priest.VoidPlague = priest.GetOrRegisterSpell(priest.getVoidPlagueConfig())
