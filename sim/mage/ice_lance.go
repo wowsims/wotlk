@@ -2,11 +2,12 @@ package mage
 
 import (
 	"github.com/wowsims/classic/sod/sim/core"
+	"github.com/wowsims/classic/sod/sim/core/proto"
 )
 
 // TODO: Classic review ice lance numbers on live
 func (mage *Mage) registerIceLanceSpell() {
-	if !mage.HasRuneById(MageRuneHandsIceLance) {
+	if !mage.HasRune(proto.MageRune_RuneHandsIceLance) {
 		return
 	}
 

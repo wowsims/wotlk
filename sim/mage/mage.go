@@ -119,6 +119,10 @@ func NewMage(character *core.Character, options *proto.Player) *Mage {
 	return mage
 }
 
+func (mage *Mage) HasRune(rune proto.MageRune) bool {
+	return mage.HasRuneById(int32(rune))
+}
+
 // Agent is a generic way to access underlying mage on any of the agents.
 type MageAgent interface {
 	GetMage() *Mage

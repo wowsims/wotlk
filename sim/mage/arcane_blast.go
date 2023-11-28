@@ -4,13 +4,14 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sod/sim/core"
+	"github.com/wowsims/classic/sod/sim/core/proto"
 )
 
 // TODO: Classic verify Arcane Blast rune numbers
 // https://www.wowhead.com/classic/news/patch-1-15-build-52124-ptr-datamining-season-of-discovery-runes-336044#news-post-336044
 // https://www.wowhead.com/classic/spell=400574/arcane-blast
 func (mage *Mage) registerArcaneBlastSpell() {
-	if !mage.HasRuneById(MageRuneHandsArcaneBlast) {
+	if !mage.HasRune(proto.MageRune_RuneHandsArcaneBlast) {
 		return
 	}
 

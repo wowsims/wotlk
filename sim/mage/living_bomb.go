@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sod/sim/core"
+	"github.com/wowsims/classic/sod/sim/core/proto"
 )
 
 // TODO: Classic verify numbers such as aoe caps and base damage
@@ -11,7 +12,7 @@ import (
 // https://www.wowhead.com/classic/spell=400614/living-bomb
 // https://www.wowhead.com/classic/spell=400613/living-bomb
 func (mage *Mage) registerLivingBombSpell() {
-	if !mage.HasRuneById(MageRuneHandsLivingBomb) {
+	if !mage.HasRune(proto.MageRune_RuneHandsLivingBomb) {
 		return
 	}
 

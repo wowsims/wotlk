@@ -4,10 +4,11 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sod/sim/core"
+	"github.com/wowsims/classic/sod/sim/core/proto"
 )
 
-func (mage *Mage) registerIcyVeins() {
-	if !mage.HasRuneById(MageRuneLegsIceVeins) {
+func (mage *Mage) registerIcyVeinsCD() {
+	if !mage.HasRune(proto.MageRune_RuneLegsIceVeins) {
 		return
 	}
 
