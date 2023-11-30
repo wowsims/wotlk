@@ -23,7 +23,7 @@ import { Hunter_Rotation_StingType as HunterStingType, Hunter_Options_PetType as
 import { PaladinAura } from '../core/proto/paladin.js';
 import { Rogue_Rotation_Frequency as ExposeFrequency } from '../core/proto/rogue.js';
 import { EarthTotem, WaterTotem } from '../core/proto/shaman.js';
-import { Warlock_Rotation_Curse as WarlockCurse, Warlock_Options_Summon as WarlockSummon } from '../core/proto/warlock.js';
+import { Warlock_Options_Summon as WarlockSummon } from '../core/proto/warlock.js';
 import { WarriorShout, Warrior_Rotation_SunderArmor as SunderArmor } from '../core/proto/warrior.js';
 
 import { RaidSimUI } from './raid_sim_ui.js';
@@ -594,11 +594,11 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 							playerData: playerClass(Class.ClassDruid, player => player.spec == Spec.SpecFeralTankDruid ||
 								(player.spec != Spec.SpecRestorationDruid && (player as Player<Spec.SpecBalanceDruid | Spec.SpecFeralDruid>).getRotation().maintainFaerieFire)),
 						},
-						{
-							label: 'Curse of Weakness',
-							actionId: ActionId.fromSpellId(50511),
-							playerData: playerClass(Class.ClassWarlock, player => player.getRotation().curse == WarlockCurse.Weakness),
-						},
+						// {
+						// 	label: 'Curse of Weakness',
+						// 	actionId: ActionId.fromSpellId(50511),
+						// 	playerData: playerClass(Class.ClassWarlock, player => player.getRotation().curse == WarlockCurse.Weakness),
+						// },
 						{
 							label: 'Sting',
 							actionId: ActionId.fromSpellId(56631),
@@ -654,16 +654,16 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 							actionId: ActionId.fromSpellId(48560),
 							playerData: playerSpecAndMissingTalent(Spec.SpecFeralTankDruid, 'feralAggression', player => player.getRotation().maintainDemoralizingRoar),
 						},
-						{
-							label: 'Improved Curse of Weakness',
-							actionId: ActionId.fromSpellId(18180),
-							playerData: playerClassAndTalent(Class.ClassWarlock, 'improvedCurseOfWeakness', player => player.getRotation().curse == WarlockCurse.Weakness),
-						},
-						{
-							label: 'Curse of Weakness',
-							actionId: ActionId.fromSpellId(50511),
-							playerData: playerClassAndTalent(Class.ClassWarlock, 'improvedCurseOfWeakness', player => player.getRotation().curse == WarlockCurse.Weakness),
-						},
+						// {
+						// 	label: 'Improved Curse of Weakness',
+						// 	actionId: ActionId.fromSpellId(18180),
+						// 	playerData: playerClassAndTalent(Class.ClassWarlock, 'improvedCurseOfWeakness', player => player.getRotation().curse == WarlockCurse.Weakness),
+						// },
+						// {
+						// 	label: 'Curse of Weakness',
+						// 	actionId: ActionId.fromSpellId(50511),
+						// 	playerData: playerClassAndTalent(Class.ClassWarlock, 'improvedCurseOfWeakness', player => player.getRotation().curse == WarlockCurse.Weakness),
+						// },
 						{
 							label: 'Demoralizing Screech',
 							actionId: ActionId.fromSpellId(55487),

@@ -19,7 +19,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			cssScheme: 'warlock',
 			// List any known bugs / issues here and they'll be shown on the site.
 			knownIssues: [
-				"Drain Soul is currently disabled for APL rotations"
+				"Most abilities and pets are work in progress"
 			],
 
 			// All stats for which EP should be calculated.
@@ -37,6 +37,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			// Which stats to display in the Character Stats section, at the bottom of the left-hand sidebar.
 			displayStats: [
 				Stat.StatHealth,
+				Stat.StatMana,
 				Stat.StatIntellect,
 				Stat.StatSpirit,
 				Stat.StatSpellPower,
@@ -49,7 +50,7 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P3_AFFLICTION_HORDE_PRESET.gear,
+				gear: Presets.DEFAULT_GEAR.gear,
 
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
@@ -63,13 +64,10 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				}),
 				// Default consumes settings.
 				consumes: Presets.DefaultConsumes,
-
-				// Default rotation settings.
-				rotation: Presets.AfflictionRotation,
 				// Default talents.
-				talents: Presets.AfflictionTalents.data,
+				talents: Presets.DefaultTalents.data,
 				// Default spec-specific settings.
-				specOptions: Presets.AfflictionOptions,
+				specOptions: Presets.DefaultOptions,
 
 				// Default buffs and debuffs settings.
 				raidBuffs: Presets.DefaultRaidBuffs,
@@ -89,23 +87,11 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				WarlockInputs.ArmorInput,
 				WarlockInputs.WeaponImbueInput,
 			],
-			// Inputs to include in the 'Rotation' section on the settings tab.
-			rotationIconInputs: [
-				WarlockInputs.PrimarySpellInput,
-				WarlockInputs.CorruptionSpell,
-				WarlockInputs.SecondaryDotInput,
-			],
 			rotationInputs: WarlockInputs.WarlockRotationConfig,
 
 			// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 			includeBuffDebuffInputs: [
-				IconInputs.MajorArmorDebuff,
-				IconInputs.MinorArmorDebuff,
-				IconInputs.MeleeCritBuff,
 				IconInputs.MP5Buff,
-				IconInputs.AttackPowerPercentBuff,
-				IconInputs.AttackPowerBuff,
-				IconInputs.StrengthAndAgilityBuff,
 				IconInputs.StaminaBuff,
 			],
 			excludeBuffDebuffInputs: [
@@ -128,36 +114,16 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 			presets: {
 				// Preset talents that the user can quickly select.
 				talents: [
-					Presets.AfflictionTalents,
-					Presets.DemonologyTalents,
-					Presets.DestructionTalents,
+					Presets.DefaultTalents,
 				],
 				// Preset rotations that the user can quickly select.
 				rotations: [
-					Presets.APL_Demo_Legacy,
-					Presets.APL_Demo_Default,
-					Presets.APL_Destro_Legacy,
-					Presets.APL_Destro_Default,
+					Presets.ROTATION_PRESET_DEFAULT,
 				],
 
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.SWP_BIS,
-					Presets.PRERAID_AFFLICTION_PRESET,
-					Presets.P1_AFFLICTION_PRESET,
-					Presets.P2_AFFLICTION_PRESET,
-					Presets.P3_AFFLICTION_ALLIANCE_PRESET,
-					Presets.P3_AFFLICTION_HORDE_PRESET,
-					Presets.P4_AFFLICTION_PRESET,
-					Presets.PRERAID_DEMODESTRO_PRESET,
-					Presets.P1_DEMODESTRO_PRESET,
-					Presets.P2_DEMODESTRO_PRESET,
-					Presets.P3_DEMO_ALLIANCE_PRESET,
-					Presets.P3_DEMO_HORDE_PRESET,
-					Presets.P4_DEMO_PRESET,
-					Presets.P3_DESTRO_ALLIANCE_PRESET,
-					Presets.P3_DESTRO_HORDE_PRESET,
-					Presets.P4_DESTRO_PRESET,
+					Presets.DEFAULT_GEAR,
 				],
 			},
 		});

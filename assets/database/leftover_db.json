@@ -1495,7 +1495,7 @@
 {"id":403501,"name":"Engrave Gloves - Haunt","icon":"ability_warlock_haunt","class":8,"type":7,"requiresLevel":1},
 {"id":403511,"name":"Engrave Chest - Soul Siphon","icon":"spell_shadow_lifedrain02","class":8,"type":5,"requiresLevel":1},
 {"id":403628,"name":"Engrave Gloves - Shadow Bolt Volley","icon":"spell_shadow_shadetruesight","class":8,"type":7,"requiresLevel":1},
-{"id":403629,"name":"Engrave Gloves - Chaos Bolt","icon":"ability_warlock_chaosbolt","class":8,"type":5,"requiresLevel":1},
+{"id":403629,"name":"Engrave Gloves - Chaos Bolt","icon":"ability_warlock_chaosbolt","class":8,"type":7,"requiresLevel":1},
 {"id":403666,"name":"Engrave Chest - Lake of Fire","icon":"spell_fire_selfdestruct","class":8,"type":5,"requiresLevel":1},
 {"id":403668,"name":"Engrave Chest - Master Channeler","icon":"spell_shadow_lifedrain","class":8,"type":5,"requiresLevel":1},
 {"id":403789,"name":"Engrave Gloves - Metamorphosis","icon":"spell_shadow_demonform","class":8,"type":7,"requiresLevel":1},

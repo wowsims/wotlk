@@ -39,9 +39,6 @@ func (value *APLValueWarlockShouldRecastDrainSoul) GetBool(sim *core.Simulation)
 		return false
 	}
 
-	uaRefresh := warlock.UnstableAffliction.CurDot().RemainingDuration(sim) -
-		warlock.UnstableAffliction.CastTime()
-
 	curseRefresh := max(
 		warlock.CurseOfAgony.CurDot().RemainingDuration(sim),
 		warlock.CurseOfDoom.CurDot().RemainingDuration(sim),
@@ -57,7 +54,7 @@ func (value *APLValueWarlockShouldRecastDrainSoul) GetBool(sim *core.Simulation)
 			warlock.Haunt.TravelTime()
 	}
 
-	timeUntilRefresh := min(uaRefresh, curseRefresh)
+	timeUntilRefresh := curseRefresh
 
 	// the amount of ticks we have left, assuming we continue channeling
 	dsDot := warlock.ChanneledDot

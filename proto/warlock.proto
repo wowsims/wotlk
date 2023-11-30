@@ -62,46 +62,27 @@ message WarlockTalents {
 	bool conflagrate = 50;
 }
 
+enum WarlockRune {
+	WarlockRuneNone = 0;
+	RuneChestDemonicTactics   	  = 412727;
+	RuneChestLakeOfFire       	  = 403650;
+	RuneChestMasterChanneler  	  = 403668;
+	RuneChestSoulSiphon       	  = 403511;
+	RuneHandsChaosBolt        	  = 403629;
+	RuneHandsHaunt	          	  = 403501;
+	RuneHandsMetamorphosis    	  = 403789;
+	RuneHandsShadowBoltVolley 	  = 403628;
+	RuneLegsDemonicGrace      	  = 425463;
+	RuneLegsDemonicPact       	  = 425464;
+	RuneLegsEverlastingAffliction = 412689;
+	RuneLegsIncinerate			  = 412758;
+}
+
 enum WarlockMajorGlyph {
 	WarlockMajorGlyphNone = 0;
-	GlyphOfChaosBolt = 45781;
-	GlyphOfConflagrate = 42454;
-	GlyphOfCorruption = 42455;
-	GlyphOfCurseOfAgony = 42456;
-	GlyphOfDeathCoil = 42457;
-	GlyphOfDemonicCircle = 45782;
-	GlyphOfFear = 42458;
-	GlyphOfFelguard = 42459;
-	GlyphOfFelhunter = 42460;
-	GlyphOfHaunt = 45779;
-	GlyphOfHealthFunnel = 42461;
-	GlyphOfHealthstone = 42462;
-	GlyphOfHowlOfTerror = 42463;
-	GlyphOfImmolate = 42464;
-	GlyphOfImp = 42465;
-	GlyphOfIncinerate = 42453;
-	GlyphOfLifeTap = 45785;
-	GlyphOfMetamorphosis = 45780;
-	GlyphOfQuickDecay = 50077;
-	GlyphOfSearingPain = 42466;
-	GlyphOfShadowBolt = 42467;
-	GlyphOfShadowburn = 42468;
-	GlyphOfShadowflame = 45783;
-	GlyphOfSiphonLife = 42469;
-	GlyphOfSoulLink = 45789;
-	GlyphOfSoulstone = 42470;
-	GlyphOfSuccubus = 42471;
-	GlyphOfUnstableAffliction = 42472;
-	GlyphOfVoidwalker = 42473;
 }
 enum WarlockMinorGlyph {
 	WarlockMinorGlyphNone = 0;
-	GlyphOfCurseOfExhausion = 43392;
-	GlyphOfDrainSoul = 43390;
-	GlyphOfSubjugateDemon = 43393;
-	GlyphOfKilrogg = 43391;
-	GlyphOfSouls = 43394;
-	GlyphOfUnendingBreath = 43389;
 }
 
 message Warlock {
@@ -110,47 +91,7 @@ message Warlock {
 			Manual = 0;
 			Automatic = 1;
 		}
-		enum Type {
-			Affliction = 0;
-			Demonology = 1;
-			Destruction = 2;
-		}
-		enum PrimarySpell {
-			UnknownSpell = 0;
-			ShadowBolt = 1;
-			Incinerate = 2;
-			Seed = 3;
-		}
-		enum Curse {
-			NoCurse = 0;
-			Elements = 1;
-			Weakness = 2;
-			Doom = 3;
-			Agony = 4;
-			Tongues = 5;
-		}
-		enum SecondaryDot {
-			NoSecondaryDot = 0;
-			Immolate = 1;
-			UnstableAffliction = 2;
-		}
-		enum SpecSpell {
-			NoSpecSpell = 0;
-			ChaosBolt = 1;
-			Haunt = 2;
-		}
 		Preset preset = 1;
-		Curse curse = 2;
-		PrimarySpell primary_spell = 3;
-		SecondaryDot secondary_dot = 4;
-		bool corruption = 5;
-		bool detonate_seed = 6;
-		SpecSpell spec_spell = 7;
-		Type type = 8;
-		bool use_infernal = 9;
-
-		bool enable_weapon_swap = 10;
-		ItemSwap weapon_swap = 11;
 	}
 	Rotation rotation = 1;
 	
@@ -161,25 +102,22 @@ message Warlock {
 			Voidwalker = 2;
 			Succubus = 3;
 			Felhunter = 4;
-			Felguard = 5;
 		}
 
 		enum Armor {
 			NoArmor = 0;
-			FelArmor = 1;
-			DemonArmor = 2;
+			DemonArmor = 1;
 		}
 
 		enum WeaponImbue {
 			NoWeaponImbue = 0;
-			GrandSpellstone = 1;
-			GrandFirestone = 2;
+			Spellstone = 1;
+			Firestone = 2;
 		}
 
 		Armor armor = 1;
 		Summon summon = 2;
 		WeaponImbue weaponImbue = 3;
-		bool _oldDPBehaviourOption = 4;
 	}
 	Options options = 3;
 }
