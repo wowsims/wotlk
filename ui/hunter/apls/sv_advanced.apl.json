@@ -8,17 +8,21 @@
     ],
     "priorityList": [
         {"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"1s"}}}},"autocastOtherCooldowns":{}}},
-        {"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"40%"}}}},"castSpell":{"spellId":{"itemId":20520}}}},
-        {"action":{"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":61847}}}}},{"cmp":{"op":"OpGt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"30%"}}}}]}},"castSpell":{"spellId":{"spellId":61847}}}},
-        {"action":{"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":34074}}}}},{"cmp":{"op":"OpLt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"10%"}}}}]}},"castSpell":{"spellId":{"spellId":34074}}}},
-        {"action":{"castSpell":{"spellId":{"spellId":61006}}}},
+        {"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"20%"}}}},"castSpell":{"spellId":{"itemId":20520}}}},
+        {"action":{"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":61847}}}}},{"cmp":{"op":"OpGt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"15%"}}}}]}},"castSpell":{"spellId":{"spellId":61847}}}},
+        {"action":{"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":34074}}}}},{"cmp":{"op":"OpLt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"5%"}}}}]}},"castSpell":{"spellId":{"spellId":34074}}}},
+        {"action":{"condition":{"or":{"vals":[{"cmp":{"op":"OpLt","lhs":{"spellTimeToReady":{"spellId":{"spellId":61006}}},"rhs":{"const":{"val":"250ms"}}}}]}},"waitUntil":{"condition":{"spellIsReady":{"spellId":{"spellId":61006}}}}}},
+        {"action":{"condition":{"spellIsReady":{"spellId":{"spellId":61006}}},"castSpell":{"spellId":{"spellId":61006}}}},
+        {"action":{"condition":{"or":{"vals":[{"cmp":{"op":"OpLt","lhs":{"spellTimeToReady":{"spellId":{"spellId":60053}}},"rhs":{"const":{"val":"500ms"}}}}]}},"waitUntil":{"condition":{"spellIsReady":{"spellId":{"spellId":60053}}}}}},
         {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":60053}}}}},"castSpell":{"spellId":{"spellId":60053}}}},
         {"action":{"condition":{"dotIsActive":{"spellId":{"spellId":60053}}},"castSpell":{"spellId":{"spellId":60052}}}},
         {"action":{"condition":{"not":{"val":{"dotIsActive":{"spellId":{"spellId":49067}}}}},"castSpell":{"spellId":{"spellId":49067,"tag":1}}}},
-        {"action":{"condition":{"or":{"vals":[{"cmp":{"op":"OpLt","lhs":{"spellTimeToReady":{"spellId":{"spellId":63672}}},"rhs":{"const":{"val":"0.2s"}}}},{"spellCanCast":{"spellId":{"spellId":63672}}}]}},"castSpell":{"spellId":{"spellId":63672}}}},
+        {"action":{"condition":{"spellIsReady":{"spellId":{"spellId":63672}}},"castSpell":{"spellId":{"spellId":63672}}}},
         {"action":{"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":49001}}}}},{"cmp":{"op":"OpGt","lhs":{"remainingTime":{}},"rhs":{"const":{"val":"6s"}}}}]}},"castSpell":{"spellId":{"spellId":49001}}}},
-        {"action":{"condition":{"or":{"vals":[{"cmp":{"op":"OpLt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49048}}},"rhs":{"const":{"val":"0.2s"}}}},{"spellCanCast":{"spellId":{"spellId":49048}}}]}},"castSpell":{"spellId":{"spellId":49048}}}},
-        {"hide":true,"action":{"castSpell":{"spellId":{"spellId":49048}}}},
+        {"action":{"condition":{"or":{"vals":[{"cmp":{"op":"OpLt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49050}}},"rhs":{"const":{"val":"250ms"}}}}]}},"waitUntil":{"condition":{"spellIsReady":{"spellId":{"spellId":49050}}}}}},
+        {"action":{"condition":{"spellIsReady":{"spellId":{"spellId":49050}}},"castSpell":{"spellId":{"spellId":49050}}}},
+        {"action":{"condition":{"or":{"vals":[{"cmp":{"op":"OpLt","lhs":{"spellTimeToReady":{"spellId":{"spellId":49048}}},"rhs":{"const":{"val":"200ms"}}}}]}},"waitUntil":{"condition":{"spellIsReady":{"spellId":{"spellId":49048}}}}}},
+        {"action":{"condition":{"spellIsReady":{"spellId":{"spellId":49048}}},"castSpell":{"spellId":{"spellId":49048}}}},
         {"action":{"castSpell":{"spellId":{"spellId":49052}}}}
     ]
 }
