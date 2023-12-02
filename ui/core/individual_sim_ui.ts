@@ -140,7 +140,7 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 		rotations?: Array<PresetRotation>,
 	},
 
-	autoRotation?: AutoRotationGenerator<SpecType>,
+	autoRotation: AutoRotationGenerator<SpecType>,
 	simpleRotation?: SimpleRotationGenerator<SpecType>,
 }
 
@@ -184,12 +184,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		this.prevEpIterations = 0;
 		this.prevEpSimResult = null;
 
-		if (aplLaunchStatuses[player.spec] >= LaunchStatus.Beta) {
-			if (!config.autoRotation) {
-				throw new Error('autoRotation is required for APL beta');
-			}
-			player.setAutoRotationGenerator(config.autoRotation);
-		}
+		player.setAutoRotationGenerator(config.autoRotation);
 		if (aplLaunchStatuses[player.spec] == LaunchStatus.Launched && config.simpleRotation) {
 			player.setSimpleRotationGenerator(config.simpleRotation);
 		}
@@ -330,7 +325,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.player.setName(initEventID, 'Player');
 
 			// This needs to go last so it doesn't re-store things as they are initialized.
-			this.changeEmitter.on(eventID => {
+			this.changeEmitter.on(_eventID => {
 				const jsonStr = IndividualSimSettings.toJsonString(this.toProto());
 				window.localStorage.setItem(this.getSettingsStorageKey(), jsonStr);
 			});
@@ -341,7 +336,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		this.raidSimResultsManager = addRaidSimAction(this);
 		addStatWeightsAction(this, this.individualConfig.epStats, this.individualConfig.epPseudoStats, this.individualConfig.epReferenceStat);
 
-		const characterStats = new CharacterStats(
+		const _characterStats = new CharacterStats(
 			this.rootElem.getElementsByClassName('sim-sidebar-footer')[0] as HTMLElement,
 			this.player,
 			this.individualConfig.displayStats,
@@ -380,7 +375,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			</div>
 		`);
 
-		const detailedResults = new EmbeddedDetailedResults(this.rootElem.getElementsByClassName('detailed-results')[0] as HTMLElement, this, this.raidSimResultsManager!);
+		const _detailedResults = new EmbeddedDetailedResults(this.rootElem.getElementsByClassName('detailed-results')[0] as HTMLElement, this, this.raidSimResultsManager!);
 	}
 
 	private addTopbarComponents() {

@@ -13,7 +13,6 @@ import {
 	getSpecIcon,
 	specNames,
 	SpecOptions,
-	SpecRotation,
 } from '../core/proto_utils/utils.js';
 
 import { Player } from '../core/player.js';
@@ -89,7 +88,6 @@ export const specSimFactories: Record<Spec, (parentElem: HTMLElement, player: Pl
 // Configuration necessary for creating new players.
 export interface PresetSpecSettings<SpecType extends Spec> {
 	spec: Spec,
-	rotation: SpecRotation<SpecType>,
 	talents: SavedTalents,
 	specOptions: SpecOptions<SpecType>,
 	consumes: Consumes,
@@ -106,7 +104,6 @@ export interface PresetSpecSettings<SpecType extends Spec> {
 export const playerPresets: Array<PresetSpecSettings<any>> = [
 	{
 		spec: Spec.SpecTankDeathknight,
-		rotation: TankDeathknightPresets.DefaultRotation,
 		talents: TankDeathknightPresets.BloodTalents.data,
 		specOptions: TankDeathknightPresets.DefaultOptions,
 		consumes: TankDeathknightPresets.DefaultConsumes,
@@ -132,7 +129,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecDeathknight,
-		rotation: DeathknightPresets.DefaultBloodRotation,
 		talents: DeathknightPresets.BloodTalents.data,
 		specOptions: DeathknightPresets.DefaultBloodOptions,
 		consumes: DeathknightPresets.DefaultConsumes,
@@ -160,7 +156,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecDeathknight,
-		rotation: DeathknightPresets.DefaultFrostRotation,
 		talents: DeathknightPresets.FrostTalents.data,
 		specOptions: DeathknightPresets.DefaultFrostOptions,
 		consumes: DeathknightPresets.DefaultConsumes,
@@ -189,7 +184,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecDeathknight,
-		rotation: DeathknightPresets.DefaultUnholyRotation,
 		talents: DeathknightPresets.UnholyDualWieldTalents.data,
 		specOptions: DeathknightPresets.DefaultUnholyOptions,
 		consumes: DeathknightPresets.DefaultConsumes,
@@ -218,7 +212,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecBalanceDruid,
-		rotation: BalanceDruidPresets.DefaultRotation,
 		talents: BalanceDruidPresets.Phase2Talents.data,
 		specOptions: BalanceDruidPresets.DefaultOptions,
 		consumes: BalanceDruidPresets.DefaultConsumes,
@@ -247,7 +240,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecFeralDruid,
-		rotation: FeralDruidPresets.DefaultRotation,
 		talents: FeralDruidPresets.StandardTalents.data,
 		specOptions: FeralDruidPresets.DefaultOptions,
 		consumes: FeralDruidPresets.DefaultConsumes,
@@ -275,7 +267,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecFeralTankDruid,
-		rotation: FeralTankDruidPresets.DefaultSimpleRotation,
 		talents: FeralTankDruidPresets.StandardTalents.data,
 		specOptions: FeralTankDruidPresets.DefaultOptions,
 		consumes: FeralTankDruidPresets.DefaultConsumes,
@@ -301,7 +292,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecRestorationDruid,
-		rotation: RestorationDruidPresets.DefaultRotation,
 		talents: RestorationDruidPresets.CelestialFocusTalents.data,
 		specOptions: RestorationDruidPresets.DefaultOptions,
 		consumes: RestorationDruidPresets.DefaultConsumes,
@@ -327,7 +317,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecHunter,
-		rotation: HunterPresets.DefaultRotation,
 		talents: HunterPresets.BeastMasteryTalents.data,
 		specOptions: HunterPresets.BMDefaultOptions,
 		consumes: HunterPresets.DefaultConsumes,
@@ -357,7 +346,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecHunter,
-		rotation: HunterPresets.DefaultRotation,
 		talents: HunterPresets.MarksmanTalents.data,
 		specOptions: HunterPresets.DefaultOptions,
 		consumes: HunterPresets.DefaultConsumes,
@@ -387,7 +375,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecHunter,
-		rotation: HunterPresets.DefaultRotation,
 		talents: HunterPresets.SurvivalTalents.data,
 		specOptions: HunterPresets.DefaultOptions,
 		consumes: HunterPresets.DefaultConsumes,
@@ -417,7 +404,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecMage,
-		rotation: MagePresets.DefaultSimpleRotation,
 		talents: MagePresets.ArcaneTalents.data,
 		specOptions: MagePresets.DefaultArcaneOptions,
 		consumes: MagePresets.DefaultArcaneConsumes,
@@ -446,7 +432,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecMage,
-		rotation: MagePresets.DefaultSimpleRotation,
 		talents: MagePresets.FireTalents.data,
 		specOptions: MagePresets.DefaultFireOptions,
 		consumes: MagePresets.DefaultFireConsumes,
@@ -475,7 +460,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecMage,
-		rotation: MagePresets.DefaultSimpleRotation,
 		talents: MagePresets.FrostfireTalents.data,
 		specOptions: MagePresets.DefaultFFBOptions,
 		consumes: MagePresets.DefaultFireConsumes,
@@ -504,7 +488,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecRogue,
-		rotation: RoguePresets.DefaultRotation,
 		talents: RoguePresets.AssassinationTalents137.data,
 		specOptions: RoguePresets.DefaultOptions,
 		consumes: RoguePresets.DefaultConsumes,
@@ -532,7 +515,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecRogue,
-		rotation: RoguePresets.DefaultRotation,
 		talents: RoguePresets.CombatCQCTalents.data,
 		specOptions: RoguePresets.DefaultOptions,
 		consumes: RoguePresets.DefaultConsumes,
@@ -560,7 +542,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecElementalShaman,
-		rotation: ElementalShamanPresets.DefaultRotation,
 		talents: ElementalShamanPresets.StandardTalents.data,
 		specOptions: ElementalShamanPresets.DefaultOptions,
 		consumes: ElementalShamanPresets.DefaultConsumes,
@@ -590,7 +571,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecEnhancementShaman,
-		rotation: EnhancementShamanPresets.DefaultRotation,
 		talents: EnhancementShamanPresets.StandardTalents.data,
 		specOptions: EnhancementShamanPresets.DefaultOptions,
 		consumes: EnhancementShamanPresets.DefaultConsumes,
@@ -618,7 +598,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecRestorationShaman,
-		rotation: RestorationShamanPresets.DefaultRotation,
 		talents: RestorationShamanPresets.RaidHealingTalents.data,
 		specOptions: RestorationShamanPresets.DefaultOptions,
 		consumes: RestorationShamanPresets.DefaultConsumes,
@@ -644,7 +623,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecHealingPriest,
-		rotation: HealingPriestPresets.DiscDefaultRotation,
 		talents: HealingPriestPresets.DiscTalents.data,
 		specOptions: HealingPriestPresets.DefaultOptions,
 		consumes: HealingPriestPresets.DefaultConsumes,
@@ -670,7 +648,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecHealingPriest,
-		rotation: HealingPriestPresets.HolyDefaultRotation,
 		talents: HealingPriestPresets.HolyTalents.data,
 		specOptions: HealingPriestPresets.DefaultOptions,
 		consumes: HealingPriestPresets.DefaultConsumes,
@@ -696,7 +673,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecShadowPriest,
-		rotation: ShadowPriestPresets.DefaultRotation,
 		talents: ShadowPriestPresets.StandardTalents.data,
 		specOptions: ShadowPriestPresets.DefaultOptions,
 		consumes: ShadowPriestPresets.DefaultConsumes,
@@ -724,7 +700,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecSmitePriest,
-		rotation: SmitePriestPresets.DefaultRotation,
 		talents: SmitePriestPresets.StandardTalents.data,
 		specOptions: SmitePriestPresets.DefaultOptions,
 		consumes: SmitePriestPresets.DefaultConsumes,
@@ -750,7 +725,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecWarrior,
-		rotation: WarriorPresets.ArmsRotation,
 		talents: WarriorPresets.ArmsTalents.data,
 		specOptions: WarriorPresets.DefaultOptions,
 		consumes: WarriorPresets.DefaultConsumes,
@@ -778,7 +752,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecWarrior,
-		rotation: WarriorPresets.DefaultRotation,
 		talents: WarriorPresets.FuryTalents.data,
 		specOptions: WarriorPresets.DefaultOptions,
 		consumes: WarriorPresets.DefaultConsumes,
@@ -806,7 +779,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecProtectionWarrior,
-		rotation: ProtectionWarriorPresets.DefaultRotation,
 		talents: ProtectionWarriorPresets.StandardTalents.data,
 		specOptions: ProtectionWarriorPresets.DefaultOptions,
 		consumes: ProtectionWarriorPresets.DefaultConsumes,
@@ -832,7 +804,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecHolyPaladin,
-		rotation: HolyPaladinPresets.DefaultRotation,
 		talents: HolyPaladinPresets.StandardTalents.data,
 		specOptions: HolyPaladinPresets.DefaultOptions,
 		consumes: HolyPaladinPresets.DefaultConsumes,
@@ -858,7 +829,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecProtectionPaladin,
-		rotation: ProtectionPaladinPresets.DefaultRotation,
 		talents: ProtectionPaladinPresets.GenericAoeTalents.data,
 		specOptions: ProtectionPaladinPresets.DefaultOptions,
 		consumes: ProtectionPaladinPresets.DefaultConsumes,
@@ -884,7 +854,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecRetributionPaladin,
-		rotation: RetributionPaladinPresets.DefaultRotation,
 		talents: RetributionPaladinPresets.AuraMasteryTalents.data,
 		specOptions: RetributionPaladinPresets.DefaultOptions,
 		consumes: RetributionPaladinPresets.DefaultConsumes,
@@ -916,7 +885,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecWarlock,
-		rotation: WarlockPresets.AfflictionRotation,
 		talents: WarlockPresets.AfflictionTalents.data,
 		specOptions: WarlockPresets.AfflictionOptions,
 		consumes: WarlockPresets.DefaultConsumes,
@@ -945,7 +913,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecWarlock,
-		rotation: WarlockPresets.DemonologyRotation,
 		talents: WarlockPresets.DemonologyTalents.data,
 		specOptions: WarlockPresets.DemonologyOptions,
 		consumes: WarlockPresets.DefaultConsumes,
@@ -974,7 +941,6 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 	},
 	{
 		spec: Spec.SpecWarlock,
-		rotation: WarlockPresets.DestructionRotation,
 		talents: WarlockPresets.DestructionTalents.data,
 		specOptions: WarlockPresets.DestructionOptions,
 		consumes: WarlockPresets.DefaultConsumes,
