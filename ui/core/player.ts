@@ -209,6 +209,17 @@ export interface MeleeCritCapInfo {
 export type AutoRotationGenerator<SpecType extends Spec> = (player: Player<SpecType>) => APLRotation;
 export type SimpleRotationGenerator<SpecType extends Spec> = (player: Player<SpecType>, simpleRotation: SpecRotation<SpecType>, cooldowns: Cooldowns) => APLRotation;
 
+export interface PlayerConfig<SpecType extends Spec> {
+	autoRotation: AutoRotationGenerator<SpecType>,
+	simpleRotation?: SimpleRotationGenerator<SpecType>,
+}
+
+const SPEC_CONFIGS: Partial<Record<Spec, PlayerConfig<any>>> = {};
+
+export function registerSpecConfig(spec: Spec, config: PlayerConfig<any>) {
+	SPEC_CONFIGS[spec] = config;
+}
+
 // Manages all the gear / consumes / other settings for a single Player.
 export class Player<SpecType extends Spec> {
 	readonly sim: Sim;
@@ -241,8 +252,8 @@ export class Player<SpecType extends Spec> {
 	private healingModel: HealingModel = HealingModel.create();
 	private healingEnabled: boolean = false;
 
-	private autoRotationGenerator: AutoRotationGenerator<SpecType> | null = null;
-	private simpleRotationGenerator: SimpleRotationGenerator<SpecType> | null = null;
+	private readonly autoRotationGenerator: AutoRotationGenerator<SpecType> | null = null;
+	private readonly simpleRotationGenerator: SimpleRotationGenerator<SpecType> | null = null;
 
 	private itemEPCache = new Array<Map<number, number>>();
 	private gemEPCache = new Map<number, number>();
@@ -293,6 +304,17 @@ export class Player<SpecType extends Spec> {
 		this.specTypeFunctions = specTypeFunctions[this.spec] as SpecTypeFunctions<SpecType>;
 		this.rotation = this.specTypeFunctions.rotationCreate();
 		this.specOptions = this.specTypeFunctions.optionsCreate();
+
+		const specConfig = SPEC_CONFIGS[this.spec] as PlayerConfig<SpecType>;
+		if (!specConfig) {
+			throw new Error('Could not find spec config for spec: ' + this.spec);
+		}
+		this.autoRotationGenerator = specConfig.autoRotation;
+		if (aplLaunchStatuses[this.spec] == LaunchStatus.Launched && specConfig.simpleRotation) {
+			this.simpleRotationGenerator = specConfig.simpleRotation;
+		} else {
+			this.simpleRotationGenerator = null;
+		}
 
 		for(let i = 0; i < ItemSlot.ItemSlotRanged+1; ++i) {
 			this.itemEPCache[i] = new Map();
@@ -787,14 +809,6 @@ export class Player<SpecType extends Spec> {
 		} else {
 			return this.aplRotation.type;
 		}
-	}
-
-	setAutoRotationGenerator(generator: AutoRotationGenerator<SpecType>) {
-		this.autoRotationGenerator = generator;
-	}
-
-	setSimpleRotationGenerator(generator: SimpleRotationGenerator<SpecType>) {
-		this.simpleRotationGenerator = generator;
 	}
 
 	hasSimpleRotationGenerator(): boolean {
