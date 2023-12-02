@@ -29,6 +29,8 @@ import { Tooltip } from 'bootstrap';
 
 const NEW_PLAYER: number = -1;
 
+const LATEST_PHASE_WITH_ALL_PRESETS = Math.min(...playerPresets.map(preset => Math.max(...Object.keys(preset.defaultGear[Faction.Alliance]).map(k => parseInt(k)))));
+
 enum DragType {
 	None,
 	New,
@@ -92,11 +94,10 @@ export class RaidPicker extends Component {
 			},
 		});
 
-		const latestPhaseWithAllPresets = Math.min(...playerPresets.map(preset => Math.max(...Object.keys(preset.defaultGear[Faction.Alliance]).map(k => parseInt(k)))));
 		const _phaseSelector = new EnumPicker<NewPlayerPicker>(raidControls, this.newPlayerPicker, {
 			label: 'Default Gear',
 			labelTooltip: 'Newly-created players will start with approximate BIS gear from this phase.',
-			values: [...Array(latestPhaseWithAllPresets).keys()].map(val => {
+			values: [...Array(LATEST_PHASE_WITH_ALL_PRESETS).keys()].map(val => {
 				const phase = val + 1;
 				return { name: 'Phase ' + phase, value: phase };
 			}),
@@ -679,10 +680,9 @@ class NewPlayerPicker extends Component {
 
 						// Need to wait because the gear might not be loaded yet.
 						this.raidPicker.raid.sim.waitForInit().then(() => {
-							newPlayer.setGear(
-								eventID,
-								this.raidPicker.raid.sim.db.lookupEquipmentSpec(
-									matchingPreset.defaultGear[this.raidPicker.getCurrentFaction()][this.raidPicker.getCurrentPhase()]));
+							const phase = Math.min(this.raidPicker.getCurrentPhase(), LATEST_PHASE_WITH_ALL_PRESETS);
+							const gearSet = matchingPreset.defaultGear[this.raidPicker.getCurrentFaction()][phase];
+							newPlayer.setGear(eventID, this.raidPicker.raid.sim.db.lookupEquipmentSpec(gearSet));
 						});
 
 						this.raidPicker.setDragPlayer(newPlayer, NEW_PLAYER, DragType.New);

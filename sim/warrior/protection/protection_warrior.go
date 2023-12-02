@@ -93,9 +93,6 @@ func (war *ProtectionWarrior) Initialize() {
 	war.RegisterShieldBlockCD()
 	war.DefensiveStanceAura.BuildPhase = core.CharacterBuildPhaseTalents
 
-	if !war.IsUsingAPL {
-		war.CustomRotation = war.makeCustomRotation()
-	}
 	if war.Options.UseShatteringThrow {
 		war.RegisterShatteringThrowCD()
 	}

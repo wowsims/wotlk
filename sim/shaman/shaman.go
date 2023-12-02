@@ -264,7 +264,7 @@ func (shaman *Shaman) Initialize() {
 
 	// Healing stream totem applies a HoT (aura) and so needs to be handled as a pre-pull action
 	// instead of during init/reset.
-	if shaman.Totems.Water == proto.WaterTotem_HealingStreamTotem {
+	if !shaman.IsUsingAPL && shaman.Totems.Water == proto.WaterTotem_HealingStreamTotem {
 		shaman.RegisterPrepullAction(0, func(sim *core.Simulation) {
 			shaman.HealingStreamTotem.Cast(sim, &shaman.Unit)
 		})
