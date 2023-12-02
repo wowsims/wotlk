@@ -88,6 +88,7 @@ func (war *ProtectionWarrior) Initialize() {
 	war.Warrior.Initialize()
 
 	war.RegisterHSOrCleave(false, war.Rotation.HsRageThreshold)
+	war.RegisterRendSpell(0, 0)
 	war.RegisterShieldWallCD()
 	war.RegisterShieldBlockCD()
 	war.DefensiveStanceAura.BuildPhase = core.CharacterBuildPhaseTalents
