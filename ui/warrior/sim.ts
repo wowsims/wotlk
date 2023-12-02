@@ -1,18 +1,25 @@
-import { RaidBuffs } from '../core/proto/common.js';
-import { PartyBuffs } from '../core/proto/common.js';
-import { IndividualBuffs } from '../core/proto/common.js';
-import { Debuffs } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { Stat, PseudoStat } from '../core/proto/common.js';
-import { TristateEffect } from '../core/proto/common.js'
+import {
+	Debuffs,
+	GemColor,
+	IndividualBuffs,
+	ItemSlot,
+	PartyBuffs,
+	RaidBuffs,
+	Spec,
+	Stat, PseudoStat,
+	Profession,
+	TristateEffect,
+} from '../core/proto/common.js';
+import {
+	APLAction,
+	APLListItem,
+	APLRotation,
+} from '../core/proto/apl.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
 import { TypedEvent } from '../core/typed_event.js';
 import { Gear } from '../core/proto_utils/gear.js';
-import { ItemSlot } from '../core/proto/common.js';
-import { GemColor } from '../core/proto/common.js';
-import { Profession } from '../core/proto/common.js';
 
 
 import * as IconInputs from '../core/components/icon_inputs.js';
@@ -173,6 +180,7 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 					Presets.ROTATION_FURY,
 					Presets.ROTATION_FURY_SUNDER,
 					Presets.ROTATION_ARMS,
+					Presets.ROTATION_ARMS_SUNDER,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
@@ -189,6 +197,15 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 					Presets.P3_ARMS_2P_PRESET_HORDE,
 					Presets.P3_ARMS_4P_PRESET_HORDE,
 				],
+			},
+
+			autoRotation: (player: Player<Spec.SpecWarrior>): APLRotation => {
+				const talentTree = player.getTalentTree();
+				if (talentTree == 0) {
+					return Presets.ROTATION_ARMS_SUNDER.rotation.rotation!;
+				} else {
+					return Presets.ROTATION_FURY_SUNDER.rotation.rotation!;
+				}
 			},
 		});
 		this.addOptimizeGemsAction();

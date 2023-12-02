@@ -3,6 +3,11 @@ import {
 	Spec,
 	Stat,
 } from '../core/proto/common.js';
+import {
+	APLAction,
+	APLListItem,
+	APLRotation,
+} from '../core/proto/apl.js';
 
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
@@ -140,6 +145,8 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 				],
 				// Preset rotations that the user can quickly select.
 				rotations: [
+					Presets.APL_Affliction_Legacy,
+					Presets.APL_Affliction_Default,
 					Presets.APL_Demo_Legacy,
 					Presets.APL_Demo_Default,
 					Presets.APL_Destro_Legacy,
@@ -165,6 +172,17 @@ export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {
 					Presets.P3_DESTRO_HORDE_PRESET,
 					Presets.P4_DESTRO_PRESET,
 				],
+			},
+
+			autoRotation: (player: Player<Spec.SpecWarlock>): APLRotation => {
+				const talentTree = player.getTalentTree();
+				if (talentTree == 0) {
+					return Presets.APL_Affliction_Default.rotation.rotation!;
+				} else if (talentTree == 1) {
+					return Presets.APL_Demo_Default.rotation.rotation!;
+				} else {
+					return Presets.APL_Destro_Default.rotation.rotation!;
+				}
 			},
 		});
 	}

@@ -47,6 +47,7 @@ import P3DestroAllianceGear from './gear_sets/p3_destro_alliance.gear.json';
 import P3DestroHordeGear from './gear_sets/p3_destro_horde.gear.json';
 import P4DestroGear from './gear_sets/p4_destro.gear.json';
 
+import AfflictionApl from './apls/affliction.apl.json';
 import DemoApl from './apls/demo.apl.json';
 import DestroApl from './apls/destro.apl.json';
 
@@ -99,9 +100,11 @@ export const DestructionRotation = WarlockRotation.create({
 	detonateSeed: true,
 });
 
-export const APL_Demo_Legacy = PresetUtils.makePresetLegacyRotation('Demo Legacy', Spec.SpecWarlock, DemonologyRotation);
+export const APL_Affliction_Legacy = PresetUtils.makePresetLegacyRotation('Affliction Legacy', Spec.SpecWarlock, AfflictionRotation, { talentTree: 0 });
+export const APL_Affliction_Default = PresetUtils.makePresetAPLRotation('Affliction', AfflictionApl, { talentTree: 0 });
+export const APL_Demo_Legacy = PresetUtils.makePresetLegacyRotation('Demo Legacy', Spec.SpecWarlock, DemonologyRotation, { talentTree: 1 });
 export const APL_Demo_Default = PresetUtils.makePresetAPLRotation('Demo', DemoApl, { talentTree: 1 });
-export const APL_Destro_Legacy = PresetUtils.makePresetLegacyRotation('Destro Legacy', Spec.SpecWarlock, DestructionRotation);
+export const APL_Destro_Legacy = PresetUtils.makePresetLegacyRotation('Destro Legacy', Spec.SpecWarlock, DestructionRotation, { talentTree: 2 });
 export const APL_Destro_Default = PresetUtils.makePresetAPLRotation('Destro', DestroApl, { talentTree: 2 });
 
 // Default talents. Uses the wowhead calculator format, make the talents on
