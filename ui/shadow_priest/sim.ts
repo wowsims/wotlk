@@ -1,11 +1,17 @@
-import { PartyBuffs } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { Stat } from '../core/proto/common.js';
+import {
+	PartyBuffs,
+	Spec,
+	Stat,
+} from '../core/proto/common.js';
+import {
+	APLAction,
+	APLListItem,
+	APLRotation,
+} from '../core/proto/apl.js';
+
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
 import { IndividualSimUI } from '../core/individual_sim_ui.js';
-
-
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as Mechanics from '../core/constants/mechanics.js';
@@ -133,8 +139,8 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 				],
 				rotations: [
 					Presets.ROTATION_PRESET_DEFAULT,
-					Presets.ROTATION_PRESET_AOE4PLUS,
 					Presets.ROTATION_PRESET_AOE24,
+					Presets.ROTATION_PRESET_AOE4PLUS,
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
@@ -144,6 +150,17 @@ export class ShadowPriestSimUI extends IndividualSimUI<Spec.SpecShadowPriest> {
 					Presets.P3_PRESET,
 					Presets.P4_PRESET,
 				],
+			},
+
+			autoRotation: (player: Player<Spec.SpecShadowPriest>): APLRotation => {
+				const numTargets = player.sim.encounter.targets.length;
+				if (numTargets > 4) {
+					return Presets.ROTATION_PRESET_AOE4PLUS.rotation.rotation!;
+				} else if (numTargets > 1) {
+					return Presets.ROTATION_PRESET_AOE24.rotation.rotation!;
+				} else {
+					return Presets.ROTATION_PRESET_DEFAULT.rotation.rotation!;
+				}
 			},
 		});
 	}
