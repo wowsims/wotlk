@@ -111,9 +111,13 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHealingPriest, {
 			Presets.DISC_PRERAID_PRESET,
 			Presets.DISC_P1_PRESET,
 			Presets.DISC_P2_PRESET,
+			Presets.DISC_P3_PRESET,
+			Presets.DISC_P4_PRESET,
 			Presets.HOLY_PRERAID_PRESET,
 			Presets.HOLY_P1_PRESET,
 			Presets.HOLY_P2_PRESET,
+			Presets.HOLY_P3_PRESET,
+			Presets.HOLY_P4_PRESET,
 		],
 	},
 

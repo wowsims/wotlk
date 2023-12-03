@@ -109,6 +109,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRestorationDruid, {
 			Presets.PRERAID_PRESET,
 			Presets.P1_PRESET,
 			Presets.P2_PRESET,
+			Presets.P3_PRESET,
+			Presets.P4_PRESET,
 		],
 	},
 
