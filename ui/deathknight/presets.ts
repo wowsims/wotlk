@@ -29,54 +29,45 @@ import {
 
 import * as PresetUtils from '../core/preset_utils.js';
 
-import P1BloodGear from './gear_sets/p1_blood.gear.json';
-import P2BloodGear from './gear_sets/p2_blood.gear.json';
-import P3BloodGear from './gear_sets/p3_blood.gear.json';
-import P4BloodGear from './gear_sets/p4_blood.gear.json';
-import PreraidUh2hGear from './gear_sets/preraid_uh_2h.gear.json';
-import P1Uh2hGear from './gear_sets/p1_uh_2h.gear.json';
-import P4Uh2hGear from './gear_sets/p4_uh_2h.gear.json';
-import PreraidUhDwGear from './gear_sets/preraid_uh_dw.gear.json';
-import P1UhDwGear from './gear_sets/p1_uh_dw.gear.json';
-import P2UhDwGear from './gear_sets/p2_uh_dw.gear.json';
-import P3UhDwGear from './gear_sets/p3_uh_dw.gear.json';
-import P4UhDwGear from './gear_sets/p4_uh_dw.gear.json';
-import PreraidFrostGear from './gear_sets/preraid_frost.gear.json';
-import P1FrostGear from './gear_sets/p1_frost.gear.json';
-import P2FrostGear from './gear_sets/p2_frost.gear.json';
-import P3FrostGear from './gear_sets/p3_frost.gear.json';
-import P4FrostGear from './gear_sets/p4_frost.gear.json';
-import P1FrostSubUhGear from './gear_sets/p1_frost_subUh.gear.json';
-
-import BloodDPSApl from './apls/blood_dps.apl.json';
-import BloodPestiAoeApl from './apls/blood_pesti_aoe.apl.json';
-import FrostBlPestiApl from './apls/frost_bl_pesti.apl.json';
-import FrostUhPestiApl from './apls/frost_uh_pesti.apl.json';
-import UhDwSsApl from './apls/unholy_dw_ss.apl.json';
-import Uh2hSsApl from './apls/uh_2h_ss.apl.json';
-import UhDndAoeApl from './apls/uh_dnd_aoe.apl.json';
-
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
 
+import P1BloodGear from './gear_sets/p1_blood.gear.json';
 export const P1_BLOOD_PRESET = PresetUtils.makePresetGear('P1 Blood', P1BloodGear, { talentTree: 0 });
+import P2BloodGear from './gear_sets/p2_blood.gear.json';
 export const P2_BLOOD_PRESET = PresetUtils.makePresetGear('P2 Blood', P2BloodGear, { talentTree: 0 });
+import P3BloodGear from './gear_sets/p3_blood.gear.json';
 export const P3_BLOOD_PRESET = PresetUtils.makePresetGear('P3 Blood', P3BloodGear, { talentTree: 0 });
+import P4BloodGear from './gear_sets/p4_blood.gear.json';
 export const P4_BLOOD_PRESET = PresetUtils.makePresetGear('P4 Blood', P4BloodGear, { talentTree: 0 });
+import PreraidFrostGear from './gear_sets/preraid_frost.gear.json';
 export const PRERAID_FROST_PRESET = PresetUtils.makePresetGear('Pre-Raid Frost', PreraidFrostGear, { talentTree: 1 });
+import P1FrostGear from './gear_sets/p1_frost.gear.json';
 export const P1_FROST_PRESET = PresetUtils.makePresetGear('P1 Frost', P1FrostGear, { talentTree: 1 });
+import P2FrostGear from './gear_sets/p2_frost.gear.json';
 export const P2_FROST_PRESET = PresetUtils.makePresetGear('P2 Frost', P2FrostGear, { talentTree: 1 });
+import P3FrostGear from './gear_sets/p3_frost.gear.json';
 export const P3_FROST_PRESET = PresetUtils.makePresetGear('P3 Frost', P3FrostGear, { talentTree: 1 });
+import P4FrostGear from './gear_sets/p4_frost.gear.json';
 export const P4_FROST_PRESET = PresetUtils.makePresetGear('P4 Frost', P4FrostGear, { talentTree: 1 });
+import P1FrostSubUhGear from './gear_sets/p1_frost_subUh.gear.json';
 export const P1_FROSTSUBUNH_PRESET = PresetUtils.makePresetGear('P1 Frost Sub Unh', P1FrostSubUhGear, { talentTree: 1 });
+import PreraidUh2hGear from './gear_sets/preraid_uh_2h.gear.json';
 export const PRERAID_UNHOLY_2H_PRESET = PresetUtils.makePresetGear('Pre-Raid 2H Unholy', PreraidUh2hGear, { talentTree: 2 });
+import P1Uh2hGear from './gear_sets/p1_uh_2h.gear.json';
 export const P1_UNHOLY_2H_PRESET = PresetUtils.makePresetGear('P1 2H Unholy', P1Uh2hGear, { talentTree: 2 });
+import P4Uh2hGear from './gear_sets/p4_uh_2h.gear.json';
 export const P4_UNHOLY_2H_PRESET = PresetUtils.makePresetGear('P4 2H Unholy', P4Uh2hGear, { talentTree: 2 });
+import PreraidUhDwGear from './gear_sets/preraid_uh_dw.gear.json';
 export const PRERAID_UNHOLY_DW_PRESET = PresetUtils.makePresetGear('Pre-Raid DW Unholy', PreraidUhDwGear, { talentTree: 2 });
+import P1UhDwGear from './gear_sets/p1_uh_dw.gear.json';
 export const P1_UNHOLY_DW_PRESET = PresetUtils.makePresetGear('P1 DW Unholy', P1UhDwGear, { talentTree: 2 });
+import P2UhDwGear from './gear_sets/p2_uh_dw.gear.json';
 export const P2_UNHOLY_DW_PRESET = PresetUtils.makePresetGear('P2 DW Unholy', P2UhDwGear, { talentTree: 2 });
+import P3UhDwGear from './gear_sets/p3_uh_dw.gear.json';
 export const P3_UNHOLY_DW_PRESET = PresetUtils.makePresetGear('P3 DW Unholy', P3UhDwGear, { talentTree: 2 });
+import P4UhDwGear from './gear_sets/p4_uh_dw.gear.json';
 export const P4_UNHOLY_DW_PRESET = PresetUtils.makePresetGear('P4 DW Unholy', P4UhDwGear, { talentTree: 2 });
 
 export const DefaultUnholyRotation = DeathKnightRotation.create({
@@ -147,12 +138,19 @@ export const BLOOD_ROTATION_PRESET_LEGACY_DEFAULT = PresetUtils.makePresetLegacy
 export const FROST_ROTATION_PRESET_LEGACY_DEFAULT = PresetUtils.makePresetLegacyRotation('Frost Legacy', Spec.SpecDeathknight, DefaultFrostRotation, { talentTree: 1 });
 export const UNHOLY_DW_ROTATION_PRESET_LEGACY_DEFAULT = PresetUtils.makePresetLegacyRotation('Unholy DW Legacy', Spec.SpecDeathknight, DefaultUnholyRotation, { talentTree: 2 });
 
+import BloodDPSApl from './apls/blood_dps.apl.json';
 export const BLOOD_DPS_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Blood DPS', BloodDPSApl, { talentTree: 0 });
+import BloodPestiAoeApl from './apls/blood_pesti_aoe.apl.json';
 export const BLOOD_PESTI_AOE_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Blood Pesti AOE', BloodPestiAoeApl, { talentTree: 0 });
+import FrostBlPestiApl from './apls/frost_bl_pesti.apl.json';
 export const FROST_BL_PESTI_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Frost BL Pesti', FrostBlPestiApl, { talentTree: 1 });
+import FrostUhPestiApl from './apls/frost_uh_pesti.apl.json';
 export const FROST_UH_PESTI_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Frost UH Pesti', FrostUhPestiApl, { talentTree: 1 });
+import UhDwSsApl from './apls/unholy_dw_ss.apl.json';
 export const UNHOLY_DW_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Unholy DW SS', UhDwSsApl, { talentTree: 2 });
+import Uh2hSsApl from './apls/uh_2h_ss.apl.json';
 export const UNHOLY_2H_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Unholy 2H SS', Uh2hSsApl, { talentTree: 2 });
+import UhDndAoeApl from './apls/uh_dnd_aoe.apl.json';
 export const UNHOLY_DND_AOE_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Unholy DND AOE', UhDndAoeApl, { talentTree: 2 });
 
 // Default talents. Uses the wowhead calculator format, make the talents on

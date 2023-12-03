@@ -203,6 +203,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecTankDeathknight, {
 			Presets.P1_FROST_PRESET,
 			Presets.P2_BLOOD_PRESET,
 			Presets.P2_FROST_PRESET,
+			Presets.P3_BLOOD_PRESET,
+			Presets.P4_BLOOD_PRESET,
 		],
 	},
 

@@ -189,7 +189,10 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralTankDruid, {
 		],
 		// Preset gear configurations that the user can quickly select.
 		gear: [
-			Presets.P1_PRESET, Presets.P2_PRESET
+			Presets.P1_PRESET,
+			Presets.P2_PRESET,
+			Presets.P3_PRESET,
+			Presets.P4_PRESET,
 		],
 	},
 

@@ -185,6 +185,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarrior, {
 			Presets.P2_FURY_PRESET,
 			Presets.P3_FURY_PRESET_ALLIANCE,
 			Presets.P3_FURY_PRESET_HORDE,
+			Presets.P4_FURY_PRESET_ALLIANCE,
+			Presets.P4_FURY_PRESET_HORDE,
 			Presets.PRERAID_ARMS_PRESET,
 			Presets.P1_ARMS_PRESET,
 			Presets.P2_ARMS_PRESET,
@@ -192,6 +194,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarrior, {
 			Presets.P3_ARMS_4P_PRESET_ALLIANCE,
 			Presets.P3_ARMS_2P_PRESET_HORDE,
 			Presets.P3_ARMS_4P_PRESET_HORDE,
+			Presets.P4_ARMS_PRESET_ALLIANCE,
+			Presets.P4_ARMS_PRESET_HORDE,
 		],
 	},
 

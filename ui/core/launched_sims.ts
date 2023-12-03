@@ -11,7 +11,7 @@ export enum LaunchStatus {
 	Launched,
 }
 
-export const raidSimStatus: LaunchStatus = LaunchStatus.Beta;
+export const raidSimStatus: LaunchStatus = LaunchStatus.Launched;
 
 // This list controls which links are shown in the top-left dropdown menu.
 export const simLaunchStatuses: Record<Spec, LaunchStatus> = {
