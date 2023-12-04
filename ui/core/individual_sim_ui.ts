@@ -22,6 +22,7 @@ import {
 	Debuffs,
 	Encounter as EncounterProto,
 	EquipmentSpec,
+	Faction,
 	Glyphs,
 	HandType,
 	IndividualBuffs,
@@ -88,6 +89,21 @@ export interface OtherDefaults {
 	nibelungAverageCasts?: number,
 }
 
+export interface RaidSimPreset<SpecType extends Spec> {
+	spec: Spec,
+	talents: SavedTalents,
+	specOptions: SpecOptions<SpecType>,
+	consumes: Consumes,
+
+	defaultName: string,
+	defaultFactionRaces: Record<Faction, Race>,
+	defaultGear: Record<Faction, Record<number, EquipmentSpec>>,
+	otherDefaults?: OtherDefaults,
+
+	tooltip: string,
+	iconUrl: string,
+}
+
 export interface IndividualSimUIConfig<SpecType extends Spec> extends PlayerConfig<SpecType> {
 	// Additional css class to add to the root element.
 	cssClass: string,
@@ -139,6 +155,8 @@ export interface IndividualSimUIConfig<SpecType extends Spec> extends PlayerConf
 		talents: Array<SavedDataConfig<Player<any>, SavedTalents>>,
 		rotations: Array<PresetRotation>,
 	},
+
+	raidSimPresets: Array<RaidSimPreset<SpecType>>,
 }
 
 export function registerSpecConfig<SpecType extends Spec>(spec: SpecType, config: IndividualSimUIConfig<SpecType>): IndividualSimUIConfig<SpecType> {

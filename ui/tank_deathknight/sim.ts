@@ -1,15 +1,22 @@
-import { RaidBuffs } from '../core/proto/common.js';
-import { PartyBuffs } from '../core/proto/common.js';
-import { IndividualBuffs } from '../core/proto/common.js';
-import { Debuffs } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { Stat, PseudoStat } from '../core/proto/common.js';
-import { TristateEffect } from '../core/proto/common.js'
+import {
+	Class,
+	Debuffs,
+	Faction,
+	IndividualBuffs,
+	PartyBuffs,
+	PseudoStat,
+	Race,
+	RaidBuffs,
+	Spec,
+	Stat,
+	TristateEffect,
+} from '../core/proto/common.js';
 import {
 	APLRotation,
 } from '../core/proto/apl.js';
 import { Player } from '../core/player.js';
 import { Stats } from '../core/proto_utils/stats.js';
+import { getSpecIcon } from '../core/proto_utils/utils.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
 
 import * as IconInputs from '../core/components/icon_inputs.js';
@@ -211,6 +218,39 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecTankDeathknight, {
 	autoRotation: (_player: Player<Spec.SpecTankDeathknight>): APLRotation => {
 		return Presets.BLOOD_IT_SPAM_ROTATION_PRESET_DEFAULT.rotation.rotation!;
 	},
+
+	raidSimPresets: [
+		{
+			spec: Spec.SpecTankDeathknight,
+			tooltip: 'Blood Tank Death Knight',
+			defaultName: 'Blood Tank',
+			iconUrl: getSpecIcon(Class.ClassDeathknight, 0),
+
+			talents: Presets.BloodTalents.data,
+			specOptions: Presets.DefaultOptions,
+			consumes: Presets.DefaultConsumes,
+			defaultFactionRaces: {
+				[Faction.Unknown]: Race.RaceUnknown,
+				[Faction.Alliance]: Race.RaceHuman,
+				[Faction.Horde]: Race.RaceTroll,
+			},
+			defaultGear: {
+				[Faction.Unknown]: {},
+				[Faction.Alliance]: {
+					1: Presets.P1_BLOOD_PRESET.gear,
+					2: Presets.P2_BLOOD_PRESET.gear,
+					3: Presets.P3_BLOOD_PRESET.gear,
+					4: Presets.P4_BLOOD_PRESET.gear,
+				},
+				[Faction.Horde]: {
+					1: Presets.P1_BLOOD_PRESET.gear,
+					2: Presets.P2_BLOOD_PRESET.gear,
+					3: Presets.P3_BLOOD_PRESET.gear,
+					4: Presets.P4_BLOOD_PRESET.gear,
+				},
+			},
+		},
+	],
 });
 
 export class TankDeathknightSimUI extends IndividualSimUI<Spec.SpecTankDeathknight> {

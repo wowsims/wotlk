@@ -1,8 +1,14 @@
-import { PartyBuffs } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { Stat } from '../core/proto/common.js';
+import {
+	Class,
+	Faction,
+	PartyBuffs,
+	Race,
+	Spec,
+	Stat,
+} from '../core/proto/common.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
+import { getSpecIcon } from '../core/proto_utils/utils.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
 import {
 	APLRotation,
@@ -129,6 +135,69 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHealingPriest, {
 			return Presets.ROTATION_PRESET_HOLY.rotation.rotation!;
 		}
 	},
+
+	raidSimPresets: [
+		{
+			spec: Spec.SpecHealingPriest,
+			tooltip: 'Discipline Priest',
+			defaultName: 'Discipline',
+			iconUrl: getSpecIcon(Class.ClassPriest, 0),
+
+			talents: Presets.DiscTalents.data,
+			specOptions: Presets.DefaultOptions,
+			consumes: Presets.DefaultConsumes,
+			defaultFactionRaces: {
+				[Faction.Unknown]: Race.RaceUnknown,
+				[Faction.Alliance]: Race.RaceDwarf,
+				[Faction.Horde]: Race.RaceUndead,
+			},
+			defaultGear: {
+				[Faction.Unknown]: {},
+				[Faction.Alliance]: {
+					1: Presets.DISC_P1_PRESET.gear,
+					2: Presets.DISC_P2_PRESET.gear,
+					3: Presets.DISC_P3_PRESET.gear,
+					4: Presets.DISC_P4_PRESET.gear,
+				},
+				[Faction.Horde]: {
+					1: Presets.DISC_P1_PRESET.gear,
+					2: Presets.DISC_P2_PRESET.gear,
+					3: Presets.DISC_P3_PRESET.gear,
+					4: Presets.DISC_P4_PRESET.gear,
+				},
+			},
+		},
+		{
+			spec: Spec.SpecHealingPriest,
+			tooltip: 'Holy Priest',
+			defaultName: 'Holy',
+			iconUrl: getSpecIcon(Class.ClassPriest, 1),
+
+			talents: Presets.HolyTalents.data,
+			specOptions: Presets.DefaultOptions,
+			consumes: Presets.DefaultConsumes,
+			defaultFactionRaces: {
+				[Faction.Unknown]: Race.RaceUnknown,
+				[Faction.Alliance]: Race.RaceDwarf,
+				[Faction.Horde]: Race.RaceUndead,
+			},
+			defaultGear: {
+				[Faction.Unknown]: {},
+				[Faction.Alliance]: {
+					1: Presets.HOLY_P1_PRESET.gear,
+					2: Presets.HOLY_P2_PRESET.gear,
+					3: Presets.HOLY_P3_PRESET.gear,
+					4: Presets.HOLY_P4_PRESET.gear,
+				},
+				[Faction.Horde]: {
+					1: Presets.HOLY_P1_PRESET.gear,
+					2: Presets.HOLY_P2_PRESET.gear,
+					3: Presets.HOLY_P3_PRESET.gear,
+					4: Presets.HOLY_P4_PRESET.gear,
+				},
+			},
+		},
+	],
 });
 
 export class HealingPriestSimUI extends IndividualSimUI<Spec.SpecHealingPriest> {

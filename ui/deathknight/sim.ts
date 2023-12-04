@@ -1,14 +1,22 @@
+import {
+	Class,
+	Debuffs,
+	Faction,
+	HandType,
+	IndividualBuffs,
+	ItemSlot,
+	PartyBuffs,
+	PseudoStat,
+	Race,
+	RaidBuffs,
+	Spec,
+	Stat,
+	TristateEffect,
+} from '../core/proto/common.js';
 import { APLRotation } from '../core/proto/apl.js';
-import { HandType, RaidBuffs } from '../core/proto/common.js';
-import { PartyBuffs } from '../core/proto/common.js';
-import { IndividualBuffs } from '../core/proto/common.js';
-import { Debuffs } from '../core/proto/common.js';
-import { ItemSlot } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { Stat, PseudoStat } from '../core/proto/common.js';
-import { TristateEffect } from '../core/proto/common.js'
 import { Player } from '../core/player.js';
 import { Stats } from '../core/proto_utils/stats.js';
+import { getSpecIcon } from '../core/proto_utils/utils.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
 
 import * as IconInputs from '../core/components/icon_inputs.js';
@@ -244,6 +252,71 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecDeathknight, {
 			//Presets.P1_UNHOLY_2H_PRESET,
 		],
 	},
+
+	raidSimPresets: [
+		{
+			spec: Spec.SpecDeathknight,
+			tooltip: 'Frost Death Knight',
+			defaultName: 'Frost',
+			iconUrl: getSpecIcon(Class.ClassDeathknight, 1),
+
+			talents: Presets.FrostTalents.data,
+			specOptions: Presets.DefaultFrostOptions,
+			consumes: Presets.DefaultConsumes,
+			defaultFactionRaces: {
+				[Faction.Unknown]: Race.RaceUnknown,
+				[Faction.Alliance]: Race.RaceHuman,
+				[Faction.Horde]: Race.RaceTroll,
+			},
+			defaultGear: {
+				[Faction.Unknown]: {},
+				[Faction.Alliance]: {
+					1: Presets.P1_FROST_PRESET.gear,
+					2: Presets.P2_FROST_PRESET.gear,
+					3: Presets.P3_FROST_PRESET.gear,
+					4: Presets.P4_FROST_PRESET.gear,
+				},
+				[Faction.Horde]: {
+					1: Presets.P1_FROST_PRESET.gear,
+					2: Presets.P2_FROST_PRESET.gear,
+					3: Presets.P3_FROST_PRESET.gear,
+					4: Presets.P4_FROST_PRESET.gear,
+				},
+			},
+			otherDefaults: Presets.OtherDefaults,
+		},
+		{
+			spec: Spec.SpecDeathknight,
+			tooltip: 'Dual-Wield Unholy DK',
+			defaultName: 'Unholy',
+			iconUrl: getSpecIcon(Class.ClassDeathknight, 2),
+
+			talents: Presets.UnholyDualWieldTalents.data,
+			specOptions: Presets.DefaultUnholyOptions,
+			consumes: Presets.DefaultConsumes,
+			defaultFactionRaces: {
+				[Faction.Unknown]: Race.RaceUnknown,
+				[Faction.Alliance]: Race.RaceHuman,
+				[Faction.Horde]: Race.RaceTroll,
+			},
+			defaultGear: {
+				[Faction.Unknown]: {},
+				[Faction.Alliance]: {
+					1: Presets.P1_UNHOLY_DW_PRESET.gear,
+					2: Presets.P2_UNHOLY_DW_PRESET.gear,
+					3: Presets.P3_UNHOLY_DW_PRESET.gear,
+					4: Presets.P4_UNHOLY_DW_PRESET.gear,
+				},
+				[Faction.Horde]: {
+					1: Presets.P1_UNHOLY_DW_PRESET.gear,
+					2: Presets.P2_UNHOLY_DW_PRESET.gear,
+					3: Presets.P3_UNHOLY_DW_PRESET.gear,
+					4: Presets.P4_UNHOLY_DW_PRESET.gear,
+				},
+			},
+			otherDefaults: Presets.OtherDefaults,
+		},
+	],
 });
 
 export class DeathknightSimUI extends IndividualSimUI<Spec.SpecDeathknight> {

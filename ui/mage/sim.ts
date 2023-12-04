@@ -1,6 +1,7 @@
-import {Cooldowns, Debuffs, IndividualBuffs, PartyBuffs, RaidBuffs, Spec, Stat, TristateEffect} from '../core/proto/common.js';
+import {Class, Cooldowns, Debuffs, Faction, IndividualBuffs, PartyBuffs, Race, RaidBuffs, Spec, Stat, TristateEffect} from '../core/proto/common.js';
 import {APLAction, APLListItem, APLPrepullAction, APLRotation} from '../core/proto/apl.js';
 import {Stats} from '../core/proto_utils/stats.js';
+import { getSpecIcon } from '../core/proto_utils/utils.js';
 import {Player} from '../core/player.js';
 import {IndividualSimUI, registerSpecConfig} from '../core/individual_sim_ui.js';
 import {
@@ -292,6 +293,102 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 			}))
 		});
 	},
+
+	raidSimPresets: [
+		{
+			spec: Spec.SpecMage,
+			tooltip: 'Arcane Mage',
+			defaultName: 'Arcane',
+			iconUrl: getSpecIcon(Class.ClassMage, 0),
+
+			talents: Presets.ArcaneTalents.data,
+			specOptions: Presets.DefaultArcaneOptions,
+			consumes: Presets.DefaultArcaneConsumes,
+			otherDefaults: Presets.OtherDefaults,
+			defaultFactionRaces: {
+				[Faction.Unknown]: Race.RaceUnknown,
+				[Faction.Alliance]: Race.RaceGnome,
+				[Faction.Horde]: Race.RaceTroll,
+			},
+			defaultGear: {
+				[Faction.Unknown]: {},
+				[Faction.Alliance]: {
+					1: Presets.ARCANE_P1_PRESET.gear,
+					2: Presets.ARCANE_P2_PRESET.gear,
+					3: Presets.ARCANE_P3_PRESET_ALLIANCE.gear,
+					4: Presets.ARCANE_P4_PRESET_ALLIANCE.gear,
+				},
+				[Faction.Horde]: {
+					1: Presets.ARCANE_P1_PRESET.gear,
+					2: Presets.ARCANE_P2_PRESET.gear,
+					3: Presets.ARCANE_P3_PRESET_HORDE.gear,
+					4: Presets.ARCANE_P4_PRESET_HORDE.gear,
+				},
+			},
+		},
+		{
+			spec: Spec.SpecMage,
+			tooltip: 'TTW Fire Mage',
+			defaultName: 'TTW Fire',
+			iconUrl: getSpecIcon(Class.ClassMage, 1),
+
+			talents: Presets.FireTalents.data,
+			specOptions: Presets.DefaultFireOptions,
+			consumes: Presets.DefaultFireConsumes,
+			otherDefaults: Presets.OtherDefaults,
+			defaultFactionRaces: {
+				[Faction.Unknown]: Race.RaceUnknown,
+				[Faction.Alliance]: Race.RaceGnome,
+				[Faction.Horde]: Race.RaceTroll,
+			},
+			defaultGear: {
+				[Faction.Unknown]: {},
+				[Faction.Alliance]: {
+					1: Presets.FIRE_P1_PRESET.gear,
+					2: Presets.FIRE_P2_PRESET.gear,
+					3: Presets.FIRE_P3_PRESET_ALLIANCE.gear,
+					4: Presets.FIRE_P4_PRESET_ALLIANCE.gear,
+				},
+				[Faction.Horde]: {
+					1: Presets.FIRE_P1_PRESET.gear,
+					2: Presets.FIRE_P2_PRESET.gear,
+					3: Presets.FIRE_P3_PRESET_HORDE.gear,
+					4: Presets.FIRE_P4_PRESET_HORDE.gear,
+				},
+			},
+		},
+		{
+			spec: Spec.SpecMage,
+			tooltip: 'FFB Fire Mage',
+			defaultName: 'FFB Fire',
+			iconUrl: "https://wow.zamimg.com/images/wow/icons/medium/ability_mage_frostfirebolt.jpg",
+
+			talents: Presets.FrostfireTalents.data,
+			specOptions: Presets.DefaultFFBOptions,
+			consumes: Presets.DefaultFireConsumes,
+			otherDefaults: Presets.OtherDefaults,
+			defaultFactionRaces: {
+				[Faction.Unknown]: Race.RaceUnknown,
+				[Faction.Alliance]: Race.RaceGnome,
+				[Faction.Horde]: Race.RaceTroll,
+			},
+			defaultGear: {
+				[Faction.Unknown]: {},
+				[Faction.Alliance]: {
+					1: Presets.FIRE_P1_PRESET.gear,
+					2: Presets.FFB_P2_PRESET.gear,
+					3: Presets.FFB_P3_PRESET_ALLIANCE.gear,
+					4: Presets.FFB_P4_PRESET_ALLIANCE.gear,
+				},
+				[Faction.Horde]: {
+					1: Presets.FIRE_P1_PRESET.gear,
+					2: Presets.FFB_P2_PRESET.gear,
+					3: Presets.FFB_P3_PRESET_HORDE.gear,
+					4: Presets.FFB_P4_PRESET_HORDE.gear,
+				},
+			},
+		},
+	],
 });
 
 export class MageSimUI extends IndividualSimUI<Spec.SpecMage> {

@@ -1,9 +1,12 @@
 import {
+	Class, 
 	Debuffs,
+	Faction,
 	IndividualBuffs,
 	ItemSlot,
 	PartyBuffs,
 	PseudoStat,
+	Race,
 	RaidBuffs,
 	Spec,
 	Stat,
@@ -15,6 +18,7 @@ import {
 } from '../core/proto/apl.js';
 import { Player } from '../core/player.js';
 import { Stats } from '../core/proto_utils/stats.js';
+import { getSpecIcon } from '../core/proto_utils/utils.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
 
 import {
@@ -415,6 +419,69 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 			return Presets.ROTATION_PRESET_MUTILATE_EXPOSE.rotation.rotation!;
 		}
 	},
+
+	raidSimPresets: [
+		{
+			spec: Spec.SpecRogue,
+			tooltip: 'Assassination Rogue',
+			defaultName: 'Assassination',
+			iconUrl: getSpecIcon(Class.ClassRogue, 0),
+
+			talents: Presets.AssassinationTalents137.data,
+			specOptions: Presets.DefaultOptions,
+			consumes: Presets.DefaultConsumes,
+			defaultFactionRaces: {
+				[Faction.Unknown]: Race.RaceUnknown,
+				[Faction.Alliance]: Race.RaceHuman,
+				[Faction.Horde]: Race.RaceOrc,
+			},
+			defaultGear: {
+				[Faction.Unknown]: {},
+				[Faction.Alliance]: {
+					1: Presets.P1_PRESET_ASSASSINATION.gear,
+					2: Presets.P2_PRESET_ASSASSINATION.gear,
+					3: Presets.P3_PRESET_ASSASSINATION.gear,
+					4: Presets.P4_PRESET_ASSASSINATION.gear,
+				},
+				[Faction.Horde]: {
+					1: Presets.P1_PRESET_ASSASSINATION.gear,
+					2: Presets.P2_PRESET_ASSASSINATION.gear,
+					3: Presets.P3_PRESET_ASSASSINATION.gear,
+					4: Presets.P4_PRESET_ASSASSINATION.gear,
+				},
+			},
+		},
+		{
+			spec: Spec.SpecRogue,
+			tooltip: 'Combat Rogue',
+			defaultName: 'Combat',
+			iconUrl: getSpecIcon(Class.ClassRogue, 1),
+
+			talents: Presets.CombatCQCTalents.data,
+			specOptions: Presets.DefaultOptions,
+			consumes: Presets.DefaultConsumes,
+			defaultFactionRaces: {
+				[Faction.Unknown]: Race.RaceUnknown,
+				[Faction.Alliance]: Race.RaceHuman,
+				[Faction.Horde]: Race.RaceOrc,
+			},
+			defaultGear: {
+				[Faction.Unknown]: {},
+				[Faction.Alliance]: {
+					1: Presets.P1_PRESET_COMBAT.gear,
+					2: Presets.P2_PRESET_COMBAT.gear,
+					3: Presets.P3_PRESET_COMBAT.gear,
+					4: Presets.P4_PRESET_COMBAT.gear,
+				},
+				[Faction.Horde]: {
+					1: Presets.P1_PRESET_COMBAT.gear,
+					2: Presets.P2_PRESET_COMBAT.gear,
+					3: Presets.P3_PRESET_COMBAT.gear,
+					4: Presets.P4_PRESET_COMBAT.gear,
+				},
+			},
+		},
+	],
 });
 
 export class RogueSimUI extends IndividualSimUI<Spec.SpecRogue> {

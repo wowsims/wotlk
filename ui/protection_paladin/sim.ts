@@ -1,15 +1,21 @@
-import { RaidBuffs } from '../core/proto/common.js';
-import { PartyBuffs } from '../core/proto/common.js';
-import { IndividualBuffs } from '../core/proto/common.js';
-import { Debuffs } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { Stat, PseudoStat } from '../core/proto/common.js';
-import { TristateEffect } from '../core/proto/common.js'
+import {
+	Class,
+	Debuffs,
+	Faction,
+	IndividualBuffs,
+	PartyBuffs,
+	Race,
+	RaidBuffs,
+	Spec,
+	Stat, PseudoStat,
+	TristateEffect,
+} from '../core/proto/common.js';
 import {
 	APLRotation,
 } from '../core/proto/apl.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
+import { getSpecIcon } from '../core/proto_utils/utils.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
 import { TypedEvent } from '../core/typed_event.js';
 
@@ -233,6 +239,39 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecProtectionPaladin, {
 	autoRotation: (_player: Player<Spec.SpecProtectionPaladin>): APLRotation => {
 		return Presets.ROTATION_DEFAULT.rotation.rotation!;
 	},
+
+	raidSimPresets: [
+		{
+			spec: Spec.SpecProtectionPaladin,
+			tooltip: 'Protection Paladin',
+			defaultName: 'Protection',
+			iconUrl: getSpecIcon(Class.ClassPaladin, 1),
+
+			talents: Presets.GenericAoeTalents.data,
+			specOptions: Presets.DefaultOptions,
+			consumes: Presets.DefaultConsumes,
+			defaultFactionRaces: {
+				[Faction.Unknown]: Race.RaceUnknown,
+				[Faction.Alliance]: Race.RaceHuman,
+				[Faction.Horde]: Race.RaceBloodElf,
+			},
+			defaultGear: {
+				[Faction.Unknown]: {},
+				[Faction.Alliance]: {
+					1: Presets.P1_PRESET.gear,
+					2: Presets.P2_PRESET.gear,
+					3: Presets.P3_PRESET.gear,
+					4: Presets.P4_PRESET.gear,
+				},
+				[Faction.Horde]: {
+					1: Presets.P1_PRESET.gear,
+					2: Presets.P2_PRESET.gear,
+					3: Presets.P3_PRESET.gear,
+					4: Presets.P4_PRESET.gear,
+				},
+			},
+		},
+	],
 });
 
 export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionPaladin> {

@@ -1,15 +1,21 @@
-import { RaidBuffs } from '../core/proto/common.js';
-import { PartyBuffs } from '../core/proto/common.js';
-import { IndividualBuffs } from '../core/proto/common.js';
-import { Debuffs } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { Stat } from '../core/proto/common.js';
-import { TristateEffect } from '../core/proto/common.js'
+import {
+	Class,
+	Debuffs,
+	Faction,
+	IndividualBuffs,
+	PartyBuffs,
+	Race,
+	RaidBuffs,
+	Spec,
+	Stat,
+	TristateEffect,
+} from '../core/proto/common.js';
 import {
 	APLRotation,
 } from '../core/proto/apl.js';
 import { Player } from '../core/player.js';
 import { Stats } from '../core/proto_utils/stats.js';
+import { getSpecIcon, specNames } from '../core/proto_utils/utils.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
 import { TypedEvent } from '../core/typed_event.js';
 import { TotemsSection } from '../core/components/totem_inputs.js';
@@ -174,6 +180,39 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecElementalShaman, {
 	autoRotation: (_player: Player<Spec.SpecElementalShaman>): APLRotation => {
 		return Presets.ROTATION_PRESET_DEFAULT.rotation.rotation!;
 	},
+
+	raidSimPresets: [
+		{
+			spec: Spec.SpecElementalShaman,
+			tooltip: specNames[Spec.SpecElementalShaman],
+			defaultName: 'Elemental',
+			iconUrl: getSpecIcon(Class.ClassShaman, 0),
+
+			talents: Presets.StandardTalents.data,
+			specOptions: Presets.DefaultOptions,
+			consumes: Presets.DefaultConsumes,
+			defaultFactionRaces: {
+				[Faction.Unknown]: Race.RaceUnknown,
+				[Faction.Alliance]: Race.RaceDraenei,
+				[Faction.Horde]: Race.RaceOrc,
+			},
+			defaultGear: {
+				[Faction.Unknown]: {},
+				[Faction.Alliance]: {
+					1: Presets.P1_PRESET.gear,
+					2: Presets.P2_PRESET.gear,
+					3: Presets.P3_PRESET_ALLI.gear,
+					4: Presets.P4_PRESET.gear,
+				},
+				[Faction.Horde]: {
+					1: Presets.P1_PRESET.gear,
+					2: Presets.P2_PRESET.gear,
+					3: Presets.P3_PRESET_HORDE.gear,
+					4: Presets.P4_PRESET.gear,
+				},
+			},
+		},
+	],
 });
 
 export class ElementalShamanSimUI extends IndividualSimUI<Spec.SpecElementalShaman> {
