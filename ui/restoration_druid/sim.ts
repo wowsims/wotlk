@@ -1,9 +1,15 @@
-import { Spec } from '../core/proto/common.js';
-import { Stat } from '../core/proto/common.js';
+import {
+	Class,
+	Faction,
+	Race,
+	Spec,
+	Stat,
+} from '../core/proto/common.js';
 import {
 	APLRotation,
 } from '../core/proto/apl.js';
 import { Stats } from '../core/proto_utils/stats.js';
+import { getSpecIcon, specNames } from '../core/proto_utils/utils.js';
 import { Player } from '../core/player.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
@@ -117,6 +123,39 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRestorationDruid, {
 	autoRotation: (_player: Player<Spec.SpecRestorationDruid>): APLRotation => {
 		return APLRotation.create();
 	},
+
+	raidSimPresets: [
+		{
+			spec: Spec.SpecRestorationDruid,
+			tooltip: specNames[Spec.SpecRestorationDruid],
+			defaultName: 'Restoration',
+			iconUrl: getSpecIcon(Class.ClassDruid, 2),
+
+			talents: Presets.CelestialFocusTalents.data,
+			specOptions: Presets.DefaultOptions,
+			consumes: Presets.DefaultConsumes,
+			defaultFactionRaces: {
+				[Faction.Unknown]: Race.RaceUnknown,
+				[Faction.Alliance]: Race.RaceNightElf,
+				[Faction.Horde]: Race.RaceTauren,
+			},
+			defaultGear: {
+				[Faction.Unknown]: {},
+				[Faction.Alliance]: {
+					1: Presets.P1_PRESET.gear,
+					2: Presets.P2_PRESET.gear,
+					3: Presets.P3_PRESET.gear,
+					4: Presets.P4_PRESET.gear,
+				},
+				[Faction.Horde]: {
+					1: Presets.P1_PRESET.gear,
+					2: Presets.P2_PRESET.gear,
+					3: Presets.P3_PRESET.gear,
+					4: Presets.P4_PRESET.gear,
+				},
+			},
+		},
+	],
 });
 
 export class RestorationDruidSimUI extends IndividualSimUI<Spec.SpecRestorationDruid> {

@@ -1,9 +1,12 @@
 import {
+	Class,
 	Debuffs,
+	Faction,
 	GemColor,
 	IndividualBuffs,
 	ItemSlot,
 	PartyBuffs,
+	Race,
 	RaidBuffs,
 	Spec,
 	Stat, PseudoStat,
@@ -15,6 +18,7 @@ import {
 } from '../core/proto/apl.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
+import { getSpecIcon } from '../core/proto_utils/utils.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
 import { TypedEvent } from '../core/typed_event.js';
 import { Gear } from '../core/proto_utils/gear.js';
@@ -207,6 +211,69 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarrior, {
 			return Presets.ROTATION_FURY_SUNDER.rotation.rotation!;
 		}
 	},
+
+	raidSimPresets: [
+		{
+			spec: Spec.SpecWarrior,
+			tooltip: 'Arms Warrior',
+			defaultName: 'Arms',
+			iconUrl: getSpecIcon(Class.ClassWarrior, 0),
+
+			talents: Presets.ArmsTalents.data,
+			specOptions: Presets.DefaultOptions,
+			consumes: Presets.DefaultConsumes,
+			defaultFactionRaces: {
+				[Faction.Unknown]: Race.RaceUnknown,
+				[Faction.Alliance]: Race.RaceHuman,
+				[Faction.Horde]: Race.RaceOrc,
+			},
+			defaultGear: {
+				[Faction.Unknown]: {},
+				[Faction.Alliance]: {
+					1: Presets.P1_ARMS_PRESET.gear,
+					2: Presets.P2_ARMS_PRESET.gear,
+					3: Presets.P3_ARMS_4P_PRESET_ALLIANCE.gear,
+					4: Presets.P4_ARMS_PRESET_ALLIANCE.gear,
+				},
+				[Faction.Horde]: {
+					1: Presets.P1_ARMS_PRESET.gear,
+					2: Presets.P2_ARMS_PRESET.gear,
+					3: Presets.P3_ARMS_4P_PRESET_HORDE.gear,
+					4: Presets.P4_ARMS_PRESET_HORDE.gear,
+				},
+			},
+		},
+		{
+			spec: Spec.SpecWarrior,
+			tooltip: 'Fury Warrior',
+			defaultName: 'Fury',
+			iconUrl: getSpecIcon(Class.ClassWarrior, 1),
+
+			talents: Presets.FuryTalents.data,
+			specOptions: Presets.DefaultOptions,
+			consumes: Presets.DefaultConsumes,
+			defaultFactionRaces: {
+				[Faction.Unknown]: Race.RaceUnknown,
+				[Faction.Alliance]: Race.RaceHuman,
+				[Faction.Horde]: Race.RaceOrc,
+			},
+			defaultGear: {
+				[Faction.Unknown]: {},
+				[Faction.Alliance]: {
+					1: Presets.P1_FURY_PRESET.gear,
+					2: Presets.P2_FURY_PRESET.gear,
+					3: Presets.P3_FURY_PRESET_ALLIANCE.gear,
+					4: Presets.P4_FURY_PRESET_ALLIANCE.gear,
+				},
+				[Faction.Horde]: {
+					1: Presets.P1_FURY_PRESET.gear,
+					2: Presets.P2_FURY_PRESET.gear,
+					3: Presets.P3_FURY_PRESET_HORDE.gear,
+					4: Presets.P4_FURY_PRESET_HORDE.gear,
+				},
+			},
+		},
+	],
 });
 
 export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {

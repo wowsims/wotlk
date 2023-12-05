@@ -1,9 +1,15 @@
-import { Spec } from '../core/proto/common.js';
-import { Stat } from '../core/proto/common.js';
+import {
+	Class,
+	Faction,
+	Race,
+	Spec,
+	Stat,
+} from '../core/proto/common.js';
 import {
 	APLRotation,
 } from '../core/proto/apl.js';
 import { Stats } from '../core/proto_utils/stats.js';
+import { getSpecIcon, specNames } from '../core/proto_utils/utils.js';
 import { Player } from '../core/player.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
 
@@ -134,6 +140,40 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecBalanceDruid, {
 	autoRotation: (_player: Player<Spec.SpecBalanceDruid>): APLRotation => {
 		return Presets.ROTATION_PRESET_P3_APL.rotation.rotation!;
 	},
+
+	raidSimPresets: [
+		{
+			spec: Spec.SpecBalanceDruid,
+			tooltip: specNames[Spec.SpecBalanceDruid],
+			defaultName: 'Balance',
+			iconUrl: getSpecIcon(Class.ClassDruid, 0),
+
+			talents: Presets.Phase2Talents.data,
+			specOptions: Presets.DefaultOptions,
+			consumes: Presets.DefaultConsumes,
+			otherDefaults: Presets.OtherDefaults,
+			defaultFactionRaces: {
+				[Faction.Unknown]: Race.RaceUnknown,
+				[Faction.Alliance]: Race.RaceNightElf,
+				[Faction.Horde]: Race.RaceTauren,
+			},
+			defaultGear: {
+				[Faction.Unknown]: {},
+				[Faction.Alliance]: {
+					1: Presets.P1_PRESET.gear,
+					2: Presets.P2_PRESET.gear,
+					3: Presets.P3_PRESET_ALLI.gear,
+					4: Presets.P4_PRESET_ALLI.gear,
+				},
+				[Faction.Horde]: {
+					1: Presets.P1_PRESET.gear,
+					2: Presets.P2_PRESET.gear,
+					3: Presets.P3_PRESET_HORDE.gear,
+					4: Presets.P4_PRESET_HORDE.gear,
+				},
+			},
+		},
+	],
 });
 
 export class BalanceDruidSimUI extends IndividualSimUI<Spec.SpecBalanceDruid> {

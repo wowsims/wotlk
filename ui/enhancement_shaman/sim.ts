@@ -1,14 +1,21 @@
-import { PartyBuffs } from '../core/proto/common.js';
-import { IndividualBuffs } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { Stat, PseudoStat } from '../core/proto/common.js';
-import { TristateEffect } from '../core/proto/common.js'
+import {
+	Class,
+	Faction,
+	IndividualBuffs,
+	PartyBuffs,
+	PseudoStat,
+	Race,
+	Spec,
+	Stat,
+	TristateEffect,
+} from '../core/proto/common.js';
 import {
 	APLRotation,
 } from '../core/proto/apl.js';
 import { ShamanImbue } from '../core/proto/shaman.js';
 import { Player } from '../core/player.js';
 import { Stats } from '../core/proto_utils/stats.js';
+import { getSpecIcon, specNames } from '../core/proto_utils/utils.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
 import { TotemsSection } from '../core/components/totem_inputs.js';
 import * as IconInputs from '../core/components/icon_inputs.js';
@@ -185,6 +192,39 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 			return Presets.ROTATION_WF_DEFAULT.rotation.rotation!;
 		}
 	},
+
+	raidSimPresets: [
+		{
+			spec: Spec.SpecEnhancementShaman,
+			tooltip: specNames[Spec.SpecEnhancementShaman],
+			defaultName: 'Enhancement',
+			iconUrl: getSpecIcon(Class.ClassShaman, 1),
+
+			talents: Presets.StandardTalents.data,
+			specOptions: Presets.DefaultOptions,
+			consumes: Presets.DefaultConsumes,
+			defaultFactionRaces: {
+				[Faction.Unknown]: Race.RaceUnknown,
+				[Faction.Alliance]: Race.RaceDraenei,
+				[Faction.Horde]: Race.RaceOrc,
+			},
+			defaultGear: {
+				[Faction.Unknown]: {},
+				[Faction.Alliance]: {
+					1: Presets.P1_PRESET.gear,
+					2: Presets.P2_PRESET_FT.gear,
+					3: Presets.P3_PRESET_ALLIANCE.gear,
+					4: Presets.P4_PRESET_FT.gear,
+				},
+				[Faction.Horde]: {
+					1: Presets.P1_PRESET.gear,
+					2: Presets.P2_PRESET_FT.gear,
+					3: Presets.P3_PRESET_HORDE.gear,
+					4: Presets.P4_PRESET_FT.gear,
+				},
+			},
+		},
+	],
 });
 
 export class EnhancementShamanSimUI extends IndividualSimUI<Spec.SpecEnhancementShaman> {

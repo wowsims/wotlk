@@ -1,5 +1,8 @@
 import {
+	Class,
+	Faction,
 	PartyBuffs,
+	Race,
 	Spec,
 	Stat,
 } from '../core/proto/common.js';
@@ -9,6 +12,7 @@ import {
 
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
+import { getSpecIcon } from '../core/proto_utils/utils.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
@@ -180,6 +184,102 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 			return Presets.APL_Destro_Default.rotation.rotation!;
 		}
 	},
+
+	raidSimPresets: [
+		{
+			spec: Spec.SpecWarlock,
+			tooltip: 'Affliction Warlock',
+			defaultName: 'Affliction',
+			iconUrl: getSpecIcon(Class.ClassWarlock, 0),
+
+			talents: Presets.AfflictionTalents.data,
+			specOptions: Presets.AfflictionOptions,
+			consumes: Presets.DefaultConsumes,
+			defaultFactionRaces: {
+				[Faction.Unknown]: Race.RaceUnknown,
+				[Faction.Alliance]: Race.RaceHuman,
+				[Faction.Horde]: Race.RaceOrc,
+			},
+			defaultGear: {
+				[Faction.Unknown]: {},
+				[Faction.Alliance]: {
+					1: Presets.P1_AFFLICTION_PRESET.gear,
+					2: Presets.P2_AFFLICTION_PRESET.gear,
+					3: Presets.P3_AFFLICTION_ALLIANCE_PRESET.gear,
+					4: Presets.P4_AFFLICTION_PRESET.gear,
+				},
+				[Faction.Horde]: {
+					1: Presets.P1_AFFLICTION_PRESET.gear,
+					2: Presets.P2_AFFLICTION_PRESET.gear,
+					3: Presets.P3_AFFLICTION_HORDE_PRESET.gear,
+					4: Presets.P4_AFFLICTION_PRESET.gear,
+				},
+			},
+			otherDefaults: Presets.OtherDefaults,
+		},
+		{
+			spec: Spec.SpecWarlock,
+			tooltip: 'Demonology Warlock',
+			defaultName: 'Demonology',
+			iconUrl: getSpecIcon(Class.ClassWarlock, 1),
+
+			talents: Presets.DemonologyTalents.data,
+			specOptions: Presets.DemonologyOptions,
+			consumes: Presets.DefaultConsumes,
+			defaultFactionRaces: {
+				[Faction.Unknown]: Race.RaceUnknown,
+				[Faction.Alliance]: Race.RaceHuman,
+				[Faction.Horde]: Race.RaceOrc,
+			},
+			defaultGear: {
+				[Faction.Unknown]: {},
+				[Faction.Alliance]: {
+					1: Presets.P1_DEMODESTRO_PRESET.gear,
+					2: Presets.P2_DEMODESTRO_PRESET.gear,
+					3: Presets.P3_DEMO_ALLIANCE_PRESET.gear,
+					4: Presets.P4_DEMO_PRESET.gear,
+				},
+				[Faction.Horde]: {
+					1: Presets.P1_DEMODESTRO_PRESET.gear,
+					2: Presets.P2_DEMODESTRO_PRESET.gear,
+					3: Presets.P3_DEMO_HORDE_PRESET.gear,
+					4: Presets.P4_DEMO_PRESET.gear,
+				},
+			},
+			otherDefaults: Presets.OtherDefaults,
+		},
+		{
+			spec: Spec.SpecWarlock,
+			tooltip: 'Destruction Warlock',
+			defaultName: 'Destruction',
+			iconUrl: getSpecIcon(Class.ClassWarlock, 2),
+
+			talents: Presets.DestructionTalents.data,
+			specOptions: Presets.DestructionOptions,
+			consumes: Presets.DefaultConsumes,
+			defaultFactionRaces: {
+				[Faction.Unknown]: Race.RaceUnknown,
+				[Faction.Alliance]: Race.RaceHuman,
+				[Faction.Horde]: Race.RaceOrc,
+			},
+			defaultGear: {
+				[Faction.Unknown]: {},
+				[Faction.Alliance]: {
+					1: Presets.P1_DEMODESTRO_PRESET.gear,
+					2: Presets.P2_DEMODESTRO_PRESET.gear,
+					3: Presets.P3_DESTRO_ALLIANCE_PRESET.gear,
+					4: Presets.P4_DESTRO_PRESET.gear,
+				},
+				[Faction.Horde]: {
+					1: Presets.P1_DEMODESTRO_PRESET.gear,
+					2: Presets.P2_DEMODESTRO_PRESET.gear,
+					3: Presets.P3_DESTRO_HORDE_PRESET.gear,
+					4: Presets.P4_DESTRO_PRESET.gear,
+				},
+			},
+			otherDefaults: Presets.OtherDefaults,
+		},
+	],
 });
 
 export class WarlockSimUI extends IndividualSimUI<Spec.SpecWarlock> {

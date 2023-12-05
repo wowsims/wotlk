@@ -1,6 +1,8 @@
 import {
+	Class,
 	Cooldowns,
 	Debuffs,
+	Faction,
 	IndividualBuffs,
 	ItemSlot,
 	PartyBuffs,
@@ -18,7 +20,7 @@ import {
 } from '../core/proto/apl.js';
 import { Player } from '../core/player.js';
 import { Stats } from '../core/proto_utils/stats.js';
-import { getTalentPoints } from '../core/proto_utils/utils.js';
+import { getTalentPoints, getSpecIcon } from '../core/proto_utils/utils.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
 import { TypedEvent } from '../core/typed_event.js';
 import { getPetTalentsConfig } from '../core/talents/hunter_pet.js';
@@ -363,6 +365,99 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 			}))
 		});
 	},
+
+	raidSimPresets: [
+		{
+			spec: Spec.SpecHunter,
+			tooltip: 'Beast Mastery Hunter',
+			defaultName: 'Beast Mastery',
+			iconUrl: getSpecIcon(Class.ClassHunter, 0),
+
+			talents: Presets.BeastMasteryTalents.data,
+			specOptions: Presets.BMDefaultOptions,
+			consumes: Presets.DefaultConsumes,
+			defaultFactionRaces: {
+				[Faction.Unknown]: Race.RaceUnknown,
+				[Faction.Alliance]: Race.RaceNightElf,
+				[Faction.Horde]: Race.RaceOrc,
+			},
+			defaultGear: {
+				[Faction.Unknown]: {},
+				[Faction.Alliance]: {
+					1: Presets.MM_P1_PRESET.gear,
+					2: Presets.MM_P2_PRESET.gear,
+					3: Presets.MM_P3_PRESET.gear,
+					4: Presets.MM_P4_PRESET.gear,
+				},
+				[Faction.Horde]: {
+					1: Presets.MM_P1_PRESET.gear,
+					2: Presets.MM_P2_PRESET.gear,
+					3: Presets.MM_P3_PRESET.gear,
+					4: Presets.MM_P4_PRESET.gear,
+				},
+			},
+		},
+		{
+			spec: Spec.SpecHunter,
+			tooltip: 'Marksmanship Hunter',
+			defaultName: 'Marksmanship',
+			iconUrl: getSpecIcon(Class.ClassHunter, 1),
+
+			talents: Presets.MarksmanTalents.data,
+			specOptions: Presets.DefaultOptions,
+			consumes: Presets.DefaultConsumes,
+			defaultFactionRaces: {
+				[Faction.Unknown]: Race.RaceUnknown,
+				[Faction.Alliance]: Race.RaceNightElf,
+				[Faction.Horde]: Race.RaceOrc,
+			},
+			defaultGear: {
+				[Faction.Unknown]: {},
+				[Faction.Alliance]: {
+					1: Presets.MM_P1_PRESET.gear,
+					2: Presets.MM_P2_PRESET.gear,
+					3: Presets.MM_P3_PRESET.gear,
+					4: Presets.MM_P4_PRESET.gear,
+				},
+				[Faction.Horde]: {
+					1: Presets.MM_P1_PRESET.gear,
+					2: Presets.MM_P2_PRESET.gear,
+					3: Presets.MM_P3_PRESET.gear,
+					4: Presets.MM_P4_PRESET.gear,
+				},
+			},
+		},
+		{
+			spec: Spec.SpecHunter,
+			tooltip: 'Survival Hunter',
+			defaultName: 'Survival',
+			iconUrl: getSpecIcon(Class.ClassHunter, 2),
+
+			talents: Presets.SurvivalTalents.data,
+			specOptions: Presets.DefaultOptions,
+			consumes: Presets.DefaultConsumes,
+			defaultFactionRaces: {
+				[Faction.Unknown]: Race.RaceUnknown,
+				[Faction.Alliance]: Race.RaceNightElf,
+				[Faction.Horde]: Race.RaceOrc,
+			},
+			defaultGear: {
+				[Faction.Unknown]: {},
+				[Faction.Alliance]: {
+					1: Presets.SV_P1_PRESET.gear,
+					2: Presets.SV_P2_PRESET.gear,
+					3: Presets.SV_P3_PRESET.gear,
+					4: Presets.SV_P4_PRESET.gear,
+				},
+				[Faction.Horde]: {
+					1: Presets.SV_P1_PRESET.gear,
+					2: Presets.SV_P2_PRESET.gear,
+					3: Presets.SV_P3_PRESET.gear,
+					4: Presets.SV_P4_PRESET.gear,
+				},
+			},
+		},
+	],
 });
 
 export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {

@@ -1,18 +1,25 @@
-import { RaidBuffs } from '../core/proto/common.js';
-import { PartyBuffs } from '../core/proto/common.js';
-import { IndividualBuffs } from '../core/proto/common.js';
-import { Debuffs } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { Stat, PseudoStat } from '../core/proto/common.js';
-import { TristateEffect } from '../core/proto/common.js'
-import { Stats } from '../core/proto_utils/stats.js';
-import { Player } from '../core/player.js';
+import {
+	Class,
+	Debuffs,
+	Faction,
+	GemColor,
+	IndividualBuffs,
+	ItemSlot,
+	PartyBuffs,
+	Profession,
+	PseudoStat,
+	Race,
+	RaidBuffs,
+	Spec,
+	Stat,
+	TristateEffect,
+} from '../core/proto/common.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
-import { TypedEvent } from '../core/typed_event.js';
 import { Gear } from '../core/proto_utils/gear.js';
-import { ItemSlot } from '../core/proto/common.js';
-import { GemColor } from '../core/proto/common.js';
-import { Profession } from '../core/proto/common.js';
+import { Stats } from '../core/proto_utils/stats.js';
+import { getSpecIcon, specNames } from '../core/proto_utils/utils.js';
+import { TypedEvent } from '../core/typed_event.js';
+import { Player } from '../core/player.js';
 
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
@@ -164,7 +171,40 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 	
 	autoRotation: (_player: Player<Spec.SpecFeralDruid>): APLRotation => {
 		return Presets.ROTATION_PRESET_LEGACY_DEFAULT.rotation.rotation!;
-	}
+	},
+
+	raidSimPresets: [
+		{
+			spec: Spec.SpecFeralDruid,
+			tooltip: specNames[Spec.SpecFeralDruid],
+			defaultName: 'Cat',
+			iconUrl: getSpecIcon(Class.ClassDruid, 3),
+
+			talents: Presets.StandardTalents.data,
+			specOptions: Presets.DefaultOptions,
+			consumes: Presets.DefaultConsumes,
+			defaultFactionRaces: {
+				[Faction.Unknown]: Race.RaceUnknown,
+				[Faction.Alliance]: Race.RaceNightElf,
+				[Faction.Horde]: Race.RaceTauren,
+			},
+			defaultGear: {
+				[Faction.Unknown]: {},
+				[Faction.Alliance]: {
+					1: Presets.P1_PRESET.gear,
+					2: Presets.P2_PRESET.gear,
+					3: Presets.P3_PRESET.gear,
+					4: Presets.P4_PRESET.gear,
+				},
+				[Faction.Horde]: {
+					1: Presets.P1_PRESET.gear,
+					2: Presets.P2_PRESET.gear,
+					3: Presets.P3_PRESET.gear,
+					4: Presets.P4_PRESET.gear,
+				},
+			},
+		},
+	],
 });
 
 export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {

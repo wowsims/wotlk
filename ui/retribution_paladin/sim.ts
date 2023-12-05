@@ -1,15 +1,21 @@
-import { RaidBuffs } from '../core/proto/common.js';
-import { PartyBuffs } from '../core/proto/common.js';
-import { IndividualBuffs } from '../core/proto/common.js';
-import { Debuffs } from '../core/proto/common.js';
-import { Spec } from '../core/proto/common.js';
-import { Stat, PseudoStat } from '../core/proto/common.js';
-import { TristateEffect } from '../core/proto/common.js'
+import {
+	Class,
+	Debuffs,
+	Faction,
+	IndividualBuffs,
+	PartyBuffs,
+	Race,
+	RaidBuffs,
+	Spec,
+	Stat, PseudoStat,
+	TristateEffect,
+} from '../core/proto/common.js';
 import {
 	APLRotation,
 } from '../core/proto/apl.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
+import { getSpecIcon } from '../core/proto_utils/utils.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
 import { TypedEvent } from '../core/typed_event.js';
 
@@ -221,6 +227,41 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 	autoRotation: (_player: Player<Spec.SpecRetributionPaladin>): APLRotation => {
 		return Presets.ROTATION_PRESET_DEFAULT.rotation.rotation!;
 	},
+
+	raidSimPresets: [
+		{
+			spec: Spec.SpecRetributionPaladin,
+			tooltip: 'Retribution Paladin',
+			defaultName: 'Retribution',
+			iconUrl: getSpecIcon(Class.ClassPaladin, 2),
+
+			talents: Presets.AuraMasteryTalents.data,
+			specOptions: Presets.DefaultOptions,
+			consumes: Presets.DefaultConsumes,
+			defaultFactionRaces: {
+				[Faction.Unknown]: Race.RaceUnknown,
+				[Faction.Alliance]: Race.RaceHuman,
+				[Faction.Horde]: Race.RaceBloodElf,
+			},
+			defaultGear: {
+				[Faction.Unknown]: {},
+				[Faction.Alliance]: {
+					1: Presets.P1_PRESET.gear,
+					2: Presets.P2_PRESET.gear,
+					3: Presets.P3_PRESET.gear,
+					4: Presets.P4_PRESET.gear,
+					5: Presets.P5_PRESET.gear,
+				},
+				[Faction.Horde]: {
+					1: Presets.P1_PRESET.gear,
+					2: Presets.P2_PRESET.gear,
+					3: Presets.P3_PRESET.gear,
+					4: Presets.P4_PRESET.gear,
+					5: Presets.P5_PRESET.gear,
+				},
+			},
+		},
+	],
 });
 
 export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributionPaladin> {

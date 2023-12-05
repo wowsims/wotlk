@@ -30,11 +30,12 @@ import {
 	playerToSpec,
 } from '../core/proto_utils/utils';
 import { MAX_NUM_PARTIES } from '../core/raid';
+import { RaidSimPreset } from '../core/individual_sim_ui';
 import { Player } from '../core/player';
 import { Encounter } from '../core/encounter';
 import { bucket, distinct } from '../core/utils';
 
-import { playerPresets, PresetSpecSettings } from './presets';
+import { playerPresets } from './presets';
 import { RaidSimUI } from './raid_sim_ui';
 
 export class RaidJsonImporter extends Importer {
@@ -524,7 +525,7 @@ class WCLSimPlayer {
 	private readonly spec: Spec | null;
 
 	readonly player: Player<any>;
-	readonly preset: PresetSpecSettings<any>;
+	readonly preset: RaidSimPreset<any>;
 
 	inferredProfessions: Array<Profession> = [];
 
@@ -577,7 +578,7 @@ class WCLSimPlayer {
 		})));
 	}
 
-	private static getMatchingPreset(spec: Spec, talents: wclTalents[]): PresetSpecSettings<Spec> {
+	private static getMatchingPreset(spec: Spec, talents: wclTalents[]): RaidSimPreset<Spec> {
 		const matchingPresets = playerPresets.filter((preset) => preset.spec == spec);
 		let presetIdx = 0;
 
