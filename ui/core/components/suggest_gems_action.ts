@@ -23,10 +23,10 @@ abstract class GemOptimizer {
 	protected readonly gemPriorityByColor: Record<GemColor, Array<GemCapsData>>; 
 	abstract metaGemID: number;	
 	static allGemColors: Array<GemColor> = [GemColor.GemColorRed, GemColor.GemColorYellow, GemColor.GemColorBlue];
-	epWeights: Stats;
-	useJcGems: boolean;
-	isBlacksmithing: boolean;
-	numSocketedJcGems: number;
+	epWeights!: Stats;
+	useJcGems!: boolean;
+	isBlacksmithing!: boolean;
+	numSocketedJcGems!: number;
 	jcUpgradePriority: Array<GemCapsData>;
 
 	static jcUpgradesById: Record<number, number> = {
