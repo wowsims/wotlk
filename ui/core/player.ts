@@ -1303,8 +1303,12 @@ export class Player<SpecType extends Spec> {
 	filterGemData<T>(gemData: Array<T>, getGemFunc: (val: T) => Gem, slot: ItemSlot, socketColor: GemColor): Array<T> {
 		const filters = this.sim.getFilters();
 
+		const isJewelcrafting = this.hasProfession(Profession.Jewelcrafting);
 		return gemData.filter(gemElem => {
 			const gem = getGemFunc(gemElem);
+			if (!isJewelcrafting && gem.requiredProfession == Profession.Jewelcrafting) {
+				return false;
+			}
 
 			if (filters.matchingGemsOnly && !gemMatchesSocket(gem, socketColor)) {
 				return false;
