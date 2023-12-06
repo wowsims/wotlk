@@ -285,6 +285,8 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 }
 
 class WarriorGemOptimizer extends PhysicalDPSGemOptimizer {
+	readonly player!: Player<Spec.SpecWarrior>;
+
 	constructor(simUI: IndividualSimUI<Spec.SpecWarrior>) {
 		super(simUI, true, true, false, true);
 	}
