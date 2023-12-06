@@ -246,7 +246,7 @@ export class Gear extends BaseGear {
 		return this;
 	}
 
-	withSingleGemSubstitution(oldGem: Gem, newGem: Gem, isBlacksmithing: boolean): Gear {
+	withSingleGemSubstitution(oldGem: Gem | null, newGem: Gem | null, isBlacksmithing: boolean): Gear {
 		for (var slot of this.getItemSlots()) {
 			const item = this.getEquippedItem(slot);
 

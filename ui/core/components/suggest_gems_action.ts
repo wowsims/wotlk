@@ -42,7 +42,7 @@ abstract class GemOptimizer {
 		this.sim = simUI.sim;
 
 		// Initialize empty arrays of gem priorities for each socket color
-		this.gemPriorityByColor = {};
+		this.gemPriorityByColor = {} as Record<GemColor, Array<GemCapsData>>;
 		
 		for (var gemColor of GemOptimizer.allGemColors) {
 			this.gemPriorityByColor[gemColor] = new Array<GemCapsData>();
@@ -206,7 +206,7 @@ abstract class GemOptimizer {
 			const gemData = this.jcUpgradePriority[gemIdx];
 			const baseGem = this.sim.db.lookupGem(gemData.gemId);
 
-			if (!updatedGear.getAllGems(this.isBlacksmithing).includes(baseGem)) {
+			if (!updatedGear.getAllGems(this.isBlacksmithing).includes(baseGem!)) {
 				gemIdx += 1;
 				continue;
 			}
@@ -274,11 +274,11 @@ abstract class GemOptimizer {
 		return await this.fillGemsToCaps(updatedGear, socketList, gemCaps, numPasses + 1, nextIdx);
 	}
 
-	abstract activateMetaGem(Gear): Gear;
+	abstract activateMetaGem(gear: Gear): Gear;
 
-	abstract updateGemPriority(Gear, Stats): void;
+	abstract updateGemPriority(ungemmedGear: Gear, passiveStats: Stats): void;
 
-	abstract allowGemInSocket(GemColor, GemColor, ItemSlot, EquippedItem): boolean;
+	abstract allowGemInSocket(gemColor: GemColor, socketColor: GemColor, itemSlot: ItemSlot, item: EquippedItem): boolean;
 }
 
 export class PhysicalDPSGemOptimizer extends GemOptimizer {
@@ -290,10 +290,10 @@ export class PhysicalDPSGemOptimizer extends GemOptimizer {
 	useExpGems: boolean;
 	useAgiGems: boolean;
 	useStrGems: boolean;
-	arpTarget: number;
-	passiveArp: number;
-	arpStackDetected: boolean;
-	tearSlot: ItemSlot | null;
+	arpTarget!: number;
+	passiveArp!: number;
+	arpStackDetected!: boolean;
+	tearSlot!: ItemSlot | null;
 
 	constructor(simUI: IndividualSimUI<any>, useArpGems: boolean, useExpGems: boolean, useAgiGems: boolean, useStrGems: boolean) {
 		super(simUI);
