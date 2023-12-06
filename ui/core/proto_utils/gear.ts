@@ -246,6 +246,25 @@ export class Gear extends BaseGear {
 		return this;
 	}
 
+	withSingleGemSubstitution(oldGem: Gem, newGem: Gem, isBlacksmithing: boolean): Gear {
+		for (var slot of this.getItemSlots()) {
+			const item = this.getEquippedItem(slot);
+
+			if (!item) {
+				continue;
+			}
+
+			const currentGems = item!.curGems(isBlacksmithing);
+
+			if (currentGems.includes(oldGem)) {
+				const socketIdx = currentGems.indexOf(oldGem);
+				return this.withGem(slot, socketIdx, newGem);
+			}
+		}
+
+		return this;
+	}
+
 	withMetaGem(metaGem: Gem | null): Gear {
 		const headItem = this.getEquippedItem(ItemSlot.ItemSlotHead);
 
