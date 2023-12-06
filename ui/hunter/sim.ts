@@ -25,6 +25,8 @@ import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.j
 import { TypedEvent } from '../core/typed_event.js';
 import { getPetTalentsConfig } from '../core/talents/hunter_pet.js';
 import { protoToTalentString } from '../core/talents/factory.js';
+import { Gear } from '../core/proto_utils/gear.js';
+import { PhysicalDPSGemOptimizer } from '../core/components/suggest_gems_action.js';
 
 import {
 	Hunter_Rotation as HunterRotation,
@@ -463,5 +465,28 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecHunter>) {
 		super(parentElem, player, SPEC_CONFIG);
+		const gemOptimizer = new HunterGemOptimizer(this);
+	}
+}
+
+class HunterGemOptimizer extends PhysicalDPSGemOptimizer {
+	readonly player: Player<Spec.SpecHunter>;
+	arpSlop: number = 4;
+	hitSlop: number = 11;
+
+	constructor(simUI: IndividualSimUI<Spec.SpecHunter>) {
+		super(simUI, true, false, true, false);
+		this.player = simUI.player;
+	}
+
+	detectArpStackConfiguration(ungemmedGear: Gear): boolean {
+		/*
+		 * Allow ArP gems only for Marksmanship specialization. Additionally,
+		 * unlike the Warrior and Feral sims, Marksmanship gemming algorithm has
+		 * an additional restriction of only gemming ArP in hard cap setups where
+		 * the passive ArP on the ungemmed gear set is already very high.
+		 */
+		this.useArpGems = (this.player.getTalentTree() === 1) && (this.arpTarget > 1000) && (this.passiveArp > 648);
+		return super.detectArpStackConfiguration(ungemmedGear);
 	}
 }
