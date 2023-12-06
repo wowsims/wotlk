@@ -413,9 +413,6 @@ func (character *Character) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 
 func (character *Character) initialize(agent Agent) {
 	character.majorCooldownManager.initialize(character)
-	if !character.IsUsingAPL {
-		character.DesyncTrinketProcs()
-	}
 
 	character.gcdAction = &PendingAction{
 		Priority: ActionPriorityGCD,
