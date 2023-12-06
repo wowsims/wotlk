@@ -23,41 +23,33 @@ import {
 
 import * as PresetUtils from '../core/preset_utils.js';
 
-import PreraidMMGear from './gear_sets/preraid_mm.gear.json';
-import P1MMGear from './gear_sets/p1_mm.gear.json';
-import P2MMGear from './gear_sets/p2_mm.gear.json';
-import P3MMGear from './gear_sets/p3_mm.gear.json';
-import P4MMGear from './gear_sets/p4_mm.gear.json';
-import P5MMGear from './gear_sets/p5_mm.gear.json';
-import PreraidSVGear from './gear_sets/preraid_sv.gear.json';
-import P1SVGear from './gear_sets/p1_sv.gear.json';
-import P2SVGear from './gear_sets/p2_sv.gear.json';
-import P3SVGear from './gear_sets/p3_sv.gear.json';
-import P4SVGear from './gear_sets/p4_sv.gear.json';
-import P5SVGear from './gear_sets/p5_sv.gear.json';
-
-import BmApl from './apls/bm.apl.json';
-import MmApl from './apls/mm.apl.json';
-import MmAdvApl from './apls/mm_advanced.apl.json';
-import SvApl from './apls/sv.apl.json';
-import SvAdvApl from './apls/sv_advanced.apl.json';
-import AoeApl from './apls/aoe.apl.json';
-
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
 
+import PreraidMMGear from './gear_sets/preraid_mm.gear.json';
 export const MM_PRERAID_PRESET = PresetUtils.makePresetGear('MM PreRaid Preset', PreraidMMGear, { talentTrees: [0, 1] });
+import P1MMGear from './gear_sets/p1_mm.gear.json';
 export const MM_P1_PRESET = PresetUtils.makePresetGear('MM P1 Preset', P1MMGear, { talentTrees: [0, 1] });
+import P2MMGear from './gear_sets/p2_mm.gear.json';
 export const MM_P2_PRESET = PresetUtils.makePresetGear('MM P2 Preset', P2MMGear, { talentTrees: [0, 1] });
+import P3MMGear from './gear_sets/p3_mm.gear.json';
 export const MM_P3_PRESET = PresetUtils.makePresetGear('MM P3 Preset', P3MMGear, { talentTrees: [0, 1] });
+import P4MMGear from './gear_sets/p4_mm.gear.json';
 export const MM_P4_PRESET = PresetUtils.makePresetGear('MM P4 Preset', P4MMGear, { talentTrees: [0, 1] });
+import P5MMGear from './gear_sets/p5_mm.gear.json';
 export const MM_P5_PRESET = PresetUtils.makePresetGear('MM P5 Preset', P5MMGear, { talentTrees: [0, 1] });
+import PreraidSVGear from './gear_sets/preraid_sv.gear.json';
 export const SV_PRERAID_PRESET = PresetUtils.makePresetGear('SV PreRaid Preset', PreraidSVGear, { talentTree: 2 });
+import P1SVGear from './gear_sets/p1_sv.gear.json';
 export const SV_P1_PRESET = PresetUtils.makePresetGear('SV P1 Preset', P1SVGear, { talentTree: 2 });
+import P2SVGear from './gear_sets/p2_sv.gear.json';
 export const SV_P2_PRESET = PresetUtils.makePresetGear('SV P2 Preset', P2SVGear, { talentTree: 2 });
+import P3SVGear from './gear_sets/p3_sv.gear.json';
 export const SV_P3_PRESET = PresetUtils.makePresetGear('SV P3 Preset', P3SVGear, { talentTree: 2 });
+import P4SVGear from './gear_sets/p4_sv.gear.json';
 export const SV_P4_PRESET = PresetUtils.makePresetGear('SV P4 Preset', P4SVGear, { talentTree: 2 });
+import P5SVGear from './gear_sets/p5_sv.gear.json';
 export const SV_P5_PRESET = PresetUtils.makePresetGear('SV P5 Preset', P5SVGear, { talentTree: 2 });
 
 export const DefaultRotation = HunterRotation.create({
@@ -71,11 +63,17 @@ export const DefaultRotation = HunterRotation.create({
 });
 
 export const ROTATION_PRESET_SIMPLE_DEFAULT = PresetUtils.makePresetSimpleRotation('Simple Default', Spec.SpecHunter, DefaultRotation);
+import BmApl from './apls/bm.apl.json';
 export const ROTATION_PRESET_BM = PresetUtils.makePresetAPLRotation('BM', BmApl, { talentTree: 0 });
+import MmApl from './apls/mm.apl.json';
 export const ROTATION_PRESET_MM = PresetUtils.makePresetAPLRotation('MM', MmApl, { talentTree: 1 });
+import MmAdvApl from './apls/mm_advanced.apl.json';
 export const ROTATION_PRESET_MM_ADVANCED = PresetUtils.makePresetAPLRotation('MM (Advanced)', MmAdvApl, { talentTree: 1 });
+import SvApl from './apls/sv.apl.json';
 export const ROTATION_PRESET_SV = PresetUtils.makePresetAPLRotation('SV', SvApl, { talentTree: 2 });
+import SvAdvApl from './apls/sv_advanced.apl.json';
 export const ROTATION_PRESET_SV_ADVANCED = PresetUtils.makePresetAPLRotation('SV (Advanced)', SvAdvApl, { talentTree: 2 });
+import AoeApl from './apls/aoe.apl.json';
 export const ROTATION_PRESET_AOE = PresetUtils.makePresetAPLRotation('AOE', AoeApl);
 
 // Default talents. Uses the wowhead calculator format, make the talents on

@@ -22,16 +22,13 @@ import {
 
 import * as PresetUtils from '../core/preset_utils.js';
 
-import PreraidGear from './gear_sets/preraid.gear.json';
-import P1Gear from './gear_sets/p1.gear.json';
-
-import DefaultApl from './apls/default.apl.json'
-
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
 
+import PreraidGear from './gear_sets/preraid.gear.json';
 export const PRERAID_PRESET = PresetUtils.makePresetGear('Preraid Preset', PreraidGear);
+import P1Gear from './gear_sets/p1.gear.json';
 export const P1_PRESET = PresetUtils.makePresetGear('P1 Preset', P1Gear);
 
 export const DefaultRotation = Rotation.create({
@@ -40,6 +37,7 @@ export const DefaultRotation = Rotation.create({
 	useMindBlast: false,
 });
 export const ROTATION_PRESET_LEGACY_DEFAULT = PresetUtils.makePresetLegacyRotation('Legacy Default', Spec.SpecSmitePriest, DefaultRotation);
+import DefaultApl from './apls/default.apl.json'
 export const ROTATION_PRESET_APL = PresetUtils.makePresetAPLRotation('Default', DefaultApl);
 
 // Default talents. Uses the wowhead calculator format, make the talents on

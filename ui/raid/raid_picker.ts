@@ -29,6 +29,8 @@ import { Tooltip } from 'bootstrap';
 
 const NEW_PLAYER: number = -1;
 
+const LATEST_PHASE_WITH_ALL_PRESETS = Math.min(...playerPresets.map(preset => Math.max(...Object.keys(preset.defaultGear[Faction.Alliance]).map(k => parseInt(k)))));
+
 enum DragType {
 	None,
 	New,
@@ -62,7 +64,7 @@ export class RaidPicker extends Component {
 
 		this.newPlayerPicker = new NewPlayerPicker(this.rootElem, this);
 
-		const activePartiesSelector = new EnumPicker<Raid>(raidControls, this.raidSimUI.sim.raid, {
+		const _activePartiesSelector = new EnumPicker<Raid>(raidControls, this.raidSimUI.sim.raid, {
 			label: 'Raid Size',
 			labelTooltip: 'Number of players participating in the sim.',
 			values: [
@@ -78,30 +80,29 @@ export class RaidPicker extends Component {
 			},
 		});
 
-		const factionSelector = new EnumPicker<NewPlayerPicker>(raidControls, this.newPlayerPicker, {
+		const _factionSelector = new EnumPicker<NewPlayerPicker>(raidControls, this.newPlayerPicker, {
 			label: 'Default Faction',
 			labelTooltip: 'Default faction for newly-created players.',
 			values: [
 				{ name: 'Alliance', value: Faction.Alliance },
 				{ name: 'Horde', value: Faction.Horde },
 			],
-			changedEvent: (picker: NewPlayerPicker) => this.raid.sim.factionChangeEmitter,
-			getValue: (picker: NewPlayerPicker) => this.raid.sim.getFaction(),
+			changedEvent: (_picker: NewPlayerPicker) => this.raid.sim.factionChangeEmitter,
+			getValue: (_picker: NewPlayerPicker) => this.raid.sim.getFaction(),
 			setValue: (eventID: EventID, picker: NewPlayerPicker, newValue: Faction) => {
 				this.raid.sim.setFaction(eventID, newValue);
 			},
 		});
 
-		const latestPhaseWithAllPresets = Math.min(...playerPresets.map(preset => Math.max(...Object.keys(preset.defaultGear[Faction.Alliance]).map(k => parseInt(k)))));
-		const phaseSelector = new EnumPicker<NewPlayerPicker>(raidControls, this.newPlayerPicker, {
+		const _phaseSelector = new EnumPicker<NewPlayerPicker>(raidControls, this.newPlayerPicker, {
 			label: 'Default Gear',
 			labelTooltip: 'Newly-created players will start with approximate BIS gear from this phase.',
-			values: [...Array(latestPhaseWithAllPresets).keys()].map(val => {
+			values: [...Array(LATEST_PHASE_WITH_ALL_PRESETS).keys()].map(val => {
 				const phase = val + 1;
 				return { name: 'Phase ' + phase, value: phase };
 			}),
-			changedEvent: (picker: NewPlayerPicker) => this.raid.sim.phaseChangeEmitter,
-			getValue: (picker: NewPlayerPicker) => this.raid.sim.getPhase(),
+			changedEvent: (_picker: NewPlayerPicker) => this.raid.sim.phaseChangeEmitter,
+			getValue: (_picker: NewPlayerPicker) => this.raid.sim.getPhase(),
 			setValue: (eventID: EventID, picker: NewPlayerPicker, newValue: number) => {
 				this.raid.sim.setPhase(eventID, newValue);
 			},
@@ -125,7 +126,7 @@ export class RaidPicker extends Component {
 		this.raidSimUI.sim.raid.numActivePartiesChangeEmitter.on(updateActiveParties);
 		updateActiveParties();
 
-		this.rootElem.ondragend = event => {
+		this.rootElem.ondragend = _event => {
 			// Uncomment to remove player when dropped 'off' the raid.
 			//if (this.currentDragPlayerFromIndex != NEW_PLAYER) {
 			//	const playerPicker = this.getPlayerPicker(this.currentDragPlayerFromIndex);
@@ -536,20 +537,20 @@ export class PlayerPicker extends Component {
 	}
 
 	private bindPlayerEvents() {
-		this.nameElem?.addEventListener('input', event => {
+		this.nameElem?.addEventListener('input', _event => {
 			this.player?.setName(TypedEvent.nextEventID(), this.nameElem?.value || '');
 		});
 
-		this.nameElem?.addEventListener('mousedown', event => {
+		this.nameElem?.addEventListener('mousedown', _event => {
 			this.partyPicker.rootElem.setAttribute('draggable', 'false')
 		})
 
-		this.nameElem?.addEventListener('mouseup', event => {
+		this.nameElem?.addEventListener('mouseup', _event => {
 			this.partyPicker.rootElem.setAttribute('draggable', 'true')
 		})
 
 		const emptyName = 'Unnamed';
-		this.nameElem?.addEventListener('focusout', event => {
+		this.nameElem?.addEventListener('focusout', _event => {
 			if (this.nameElem && !this.nameElem.value) {
 				this.nameElem.value = emptyName;
 				this.player?.setName(TypedEvent.nextEventID(), emptyName);
@@ -577,22 +578,22 @@ export class PlayerPicker extends Component {
 		const copyElem = this.rootElem.querySelector('.player-copy') as HTMLElement;
 		const deleteElem = this.rootElem.querySelector('.player-delete') as HTMLElement;
 
-		const editTooltip = Tooltip.getOrCreateInstance(editElem);
-		const copyTooltip = Tooltip.getOrCreateInstance(copyElem);
+		const _editTooltip = Tooltip.getOrCreateInstance(editElem);
+		const _copyTooltip = Tooltip.getOrCreateInstance(copyElem);
 		const deleteTooltip = Tooltip.getOrCreateInstance(deleteElem);
 
 		(this.iconElem as HTMLElement).ondragstart = event => {
 			event.dataTransfer!.setDragImage(this.rootElem, 20, 20);
 			dragStart(event, DragType.Swap)
 		}
-		editElem.onclick = event => {
+		editElem.onclick = _event => {
 			new PlayerEditorModal(this.player as Player<any>);
 		};
 		copyElem.ondragstart = event => {
 			event.dataTransfer!.setDragImage(this.rootElem, 20, 20);
 			dragStart(event, DragType.Copy);
 		}
-		deleteElem.onclick = event => {
+		deleteElem.onclick = _event => {
 			deleteTooltip.hide();
 			this.setPlayer(TypedEvent.nextEventID(), null, DragType.None);
 		}
@@ -612,7 +613,7 @@ class PlayerEditorModal extends BaseModal {
 		`);
 
 		const editorRoot = this.rootElem.getElementsByClassName('player-editor')[0] as HTMLElement;
-		const individualSim = specSimFactories[player.spec]!(editorRoot, player);
+		const _individualSim = specSimFactories[player.spec]!(editorRoot, player);
 	}
 }
 
@@ -668,7 +669,6 @@ class NewPlayerPicker extends Component {
 						const newPlayer = new Player(matchingPreset.spec, this.raidPicker.raid.sim);
 						newPlayer.applySharedDefaults(eventID);
 						newPlayer.setRace(eventID, matchingPreset.defaultFactionRaces[this.raidPicker.getCurrentFaction()]);
-						newPlayer.setRotation(eventID, matchingPreset.rotation);
 						newPlayer.setTalentsString(eventID, matchingPreset.talents.talentsString);
 						newPlayer.setGlyphs(eventID, matchingPreset.talents.glyphs || Glyphs.create());
 						newPlayer.setSpecOptions(eventID, matchingPreset.specOptions);
@@ -680,10 +680,9 @@ class NewPlayerPicker extends Component {
 
 						// Need to wait because the gear might not be loaded yet.
 						this.raidPicker.raid.sim.waitForInit().then(() => {
-							newPlayer.setGear(
-								eventID,
-								this.raidPicker.raid.sim.db.lookupEquipmentSpec(
-									matchingPreset.defaultGear[this.raidPicker.getCurrentFaction()][this.raidPicker.getCurrentPhase()]));
+							const phase = Math.min(this.raidPicker.getCurrentPhase(), LATEST_PHASE_WITH_ALL_PRESETS);
+							const gearSet = matchingPreset.defaultGear[this.raidPicker.getCurrentFaction()][phase];
+							newPlayer.setGear(eventID, this.raidPicker.raid.sim.db.lookupEquipmentSpec(gearSet));
 						});
 
 						this.raidPicker.setDragPlayer(newPlayer, NEW_PLAYER, DragType.New);
