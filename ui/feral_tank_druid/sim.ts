@@ -21,6 +21,7 @@ import { Stats } from '../core/proto_utils/stats.js';
 import { getSpecIcon, specNames } from '../core/proto_utils/utils.js';
 import { Player } from '../core/player.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
+import { TankGemOptimizer } from '../core/components/suggest_gems_action.js';
 
 import {
 	FeralTankDruid_Rotation as DruidRotation,
@@ -279,5 +280,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralTankDruid, {
 export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecFeralTankDruid>) {
 		super(parentElem, player, SPEC_CONFIG);
+		const gemOptimizer = new TankGemOptimizer(this);
 	}
 }
