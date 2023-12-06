@@ -867,87 +867,45 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestBlood-Settings-Human-p3_blood-Basic-blood_pesti-FullBuffs-LongMultiTarget"
+ key: "TestBlood-Settings-Human-p3_blood-Basic-blood_dps-FullBuffs-LongMultiTarget"
  value: {
-  dps: 28951.18292
-  tps: 15720.99978
+  dps: 28139.90638
+  tps: 15108.50144
  }
 }
 dps_results: {
- key: "TestBlood-Settings-Human-p3_blood-Basic-blood_pesti-FullBuffs-LongSingleTarget"
+ key: "TestBlood-Settings-Human-p3_blood-Basic-blood_dps-FullBuffs-LongSingleTarget"
  value: {
-  dps: 10331.16727
-  tps: 5474.36126
+  dps: 10799.86524
+  tps: 5457.71051
  }
 }
 dps_results: {
- key: "TestBlood-Settings-Human-p3_blood-Basic-blood_pesti-FullBuffs-ShortSingleTarget"
+ key: "TestBlood-Settings-Human-p3_blood-Basic-blood_dps-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 14103.30036
-  tps: 6473.24717
+  dps: 14071.67977
+  tps: 6364.68779
  }
 }
 dps_results: {
- key: "TestBlood-Settings-Human-p3_blood-Basic-blood_pesti-NoBuffs-LongMultiTarget"
+ key: "TestBlood-Settings-Human-p3_blood-Basic-blood_dps-NoBuffs-LongMultiTarget"
  value: {
-  dps: 15854.16826
-  tps: 8640.46288
+  dps: 14150.92248
+  tps: 7833.97981
  }
 }
 dps_results: {
- key: "TestBlood-Settings-Human-p3_blood-Basic-blood_pesti-NoBuffs-LongSingleTarget"
+ key: "TestBlood-Settings-Human-p3_blood-Basic-blood_dps-NoBuffs-LongSingleTarget"
  value: {
-  dps: 5928.15696
-  tps: 3157.98341
+  dps: 6238.76131
+  tps: 3166.87838
  }
 }
 dps_results: {
- key: "TestBlood-Settings-Human-p3_blood-Basic-blood_pesti-NoBuffs-ShortSingleTarget"
+ key: "TestBlood-Settings-Human-p3_blood-Basic-blood_dps-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 7455.47863
-  tps: 3383.84205
- }
-}
-dps_results: {
- key: "TestBlood-Settings-Human-p3_blood-Basic-blood_pesti_dd-FullBuffs-LongMultiTarget"
- value: {
-  dps: 27355.96888
-  tps: 15582.79538
- }
-}
-dps_results: {
- key: "TestBlood-Settings-Human-p3_blood-Basic-blood_pesti_dd-FullBuffs-LongSingleTarget"
- value: {
-  dps: 10250.01878
-  tps: 5416.21838
- }
-}
-dps_results: {
- key: "TestBlood-Settings-Human-p3_blood-Basic-blood_pesti_dd-FullBuffs-ShortSingleTarget"
- value: {
-  dps: 13772.45173
-  tps: 6214.02319
- }
-}
-dps_results: {
- key: "TestBlood-Settings-Human-p3_blood-Basic-blood_pesti_dd-NoBuffs-LongMultiTarget"
- value: {
-  dps: 14565.12591
-  tps: 8249.45013
- }
-}
-dps_results: {
- key: "TestBlood-Settings-Human-p3_blood-Basic-blood_pesti_dd-NoBuffs-LongSingleTarget"
- value: {
-  dps: 5797.85968
-  tps: 3081.19385
- }
-}
-dps_results: {
- key: "TestBlood-Settings-Human-p3_blood-Basic-blood_pesti_dd-NoBuffs-ShortSingleTarget"
- value: {
-  dps: 7230.17097
-  tps: 3241.53317
+  dps: 7462.83055
+  tps: 3351.28085
  }
 }
 dps_results: {
@@ -993,87 +951,45 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestBlood-Settings-Orc-p3_blood-Basic-blood_pesti-FullBuffs-LongMultiTarget"
+ key: "TestBlood-Settings-Orc-p3_blood-Basic-blood_dps-FullBuffs-LongMultiTarget"
  value: {
-  dps: 29214.1003
-  tps: 15764.84094
+  dps: 28379.47981
+  tps: 15149.37461
  }
 }
 dps_results: {
- key: "TestBlood-Settings-Orc-p3_blood-Basic-blood_pesti-FullBuffs-LongSingleTarget"
+ key: "TestBlood-Settings-Orc-p3_blood-Basic-blood_dps-FullBuffs-LongSingleTarget"
  value: {
-  dps: 10451.38922
-  tps: 5506.62831
+  dps: 10922.48275
+  tps: 5475.95425
  }
 }
 dps_results: {
- key: "TestBlood-Settings-Orc-p3_blood-Basic-blood_pesti-FullBuffs-ShortSingleTarget"
+ key: "TestBlood-Settings-Orc-p3_blood-Basic-blood_dps-FullBuffs-ShortSingleTarget"
  value: {
-  dps: 14343.80138
-  tps: 6519.4248
+  dps: 14322.42988
+  tps: 6412.37915
  }
 }
 dps_results: {
- key: "TestBlood-Settings-Orc-p3_blood-Basic-blood_pesti-NoBuffs-LongMultiTarget"
+ key: "TestBlood-Settings-Orc-p3_blood-Basic-blood_dps-NoBuffs-LongMultiTarget"
  value: {
-  dps: 16026.11956
-  tps: 8681.04755
+  dps: 14237.94211
+  tps: 7850.23063
  }
 }
 dps_results: {
- key: "TestBlood-Settings-Orc-p3_blood-Basic-blood_pesti-NoBuffs-LongSingleTarget"
+ key: "TestBlood-Settings-Orc-p3_blood-Basic-blood_dps-NoBuffs-LongSingleTarget"
  value: {
-  dps: 5992.87941
-  tps: 3175.15581
+  dps: 6308.28269
+  tps: 3177.31227
  }
 }
 dps_results: {
- key: "TestBlood-Settings-Orc-p3_blood-Basic-blood_pesti-NoBuffs-ShortSingleTarget"
+ key: "TestBlood-Settings-Orc-p3_blood-Basic-blood_dps-NoBuffs-ShortSingleTarget"
  value: {
-  dps: 7584.50062
-  tps: 3409.42861
- }
-}
-dps_results: {
- key: "TestBlood-Settings-Orc-p3_blood-Basic-blood_pesti_dd-FullBuffs-LongMultiTarget"
- value: {
-  dps: 27435.83336
-  tps: 15583.92529
- }
-}
-dps_results: {
- key: "TestBlood-Settings-Orc-p3_blood-Basic-blood_pesti_dd-FullBuffs-LongSingleTarget"
- value: {
-  dps: 10344.8979
-  tps: 5433.10233
- }
-}
-dps_results: {
- key: "TestBlood-Settings-Orc-p3_blood-Basic-blood_pesti_dd-FullBuffs-ShortSingleTarget"
- value: {
-  dps: 14017.38132
-  tps: 6258.46268
- }
-}
-dps_results: {
- key: "TestBlood-Settings-Orc-p3_blood-Basic-blood_pesti_dd-NoBuffs-LongMultiTarget"
- value: {
-  dps: 14581.7378
-  tps: 8230.81728
- }
-}
-dps_results: {
- key: "TestBlood-Settings-Orc-p3_blood-Basic-blood_pesti_dd-NoBuffs-LongSingleTarget"
- value: {
-  dps: 5851.11811
-  tps: 3091.2155
- }
-}
-dps_results: {
- key: "TestBlood-Settings-Orc-p3_blood-Basic-blood_pesti_dd-NoBuffs-ShortSingleTarget"
- value: {
-  dps: 7363.20325
-  tps: 3268.95549
+  dps: 7597.49472
+  tps: 3378.5377
  }
 }
 dps_results: {

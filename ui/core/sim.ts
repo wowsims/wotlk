@@ -340,7 +340,7 @@ export class Sim {
 				? [UnitReference.create({ type: UnitType.Player, index: 0 })]
 				: [];
 			const request = StatWeightsRequest.create({
-				player: player.toProto(),
+				player: player.toProto(false, true),
 				raidBuffs: this.raid.getBuffs(),
 				partyBuffs: player.getParty()!.getBuffs(),
 				debuffs: this.raid.getDebuffs(),

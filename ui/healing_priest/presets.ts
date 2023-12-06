@@ -25,26 +25,30 @@ import {
 
 import * as PresetUtils from '../core/preset_utils.js';
 
-import PreraidDiscGear from './gear_sets/preraid_disc.gear.json';
-import PreraidHolyGear from './gear_sets/preraid_holy.gear.json';
-import P1DiscGear from './gear_sets/p1_disc.gear.json';
-import P1HolyGear from './gear_sets/p1_holy.gear.json';
-import P2DiscGear from './gear_sets/p2_disc.gear.json';
-import P2HolyGear from './gear_sets/p2_holy.gear.json';
-
-import DiscApl from './apls/disc.apl.json';
-import HolyApl from './apls/holy.apl.json';
-
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
 
+import PreraidDiscGear from './gear_sets/preraid_disc.gear.json';
+import PreraidHolyGear from './gear_sets/preraid_holy.gear.json';
 export const DISC_PRERAID_PRESET = PresetUtils.makePresetGear('Disc Preraid Preset', PreraidDiscGear, { talentTree: 0 });
-export const DISC_P1_PRESET = PresetUtils.makePresetGear('Disc P1 Preset', P1DiscGear, { talentTree: 0 });
-export const DISC_P2_PRESET = PresetUtils.makePresetGear('Disc P2 Preset', P2DiscGear, { talentTree: 0 });
 export const HOLY_PRERAID_PRESET = PresetUtils.makePresetGear('Holy Preraid Preset', PreraidHolyGear, { talentTree: 1 });
+import P1DiscGear from './gear_sets/p1_disc.gear.json';
+import P1HolyGear from './gear_sets/p1_holy.gear.json';
+export const DISC_P1_PRESET = PresetUtils.makePresetGear('Disc P1 Preset', P1DiscGear, { talentTree: 0 });
 export const HOLY_P1_PRESET = PresetUtils.makePresetGear('Holy P1 Preset', P1HolyGear, { talentTree: 1 });
+import P2DiscGear from './gear_sets/p2_disc.gear.json';
+import P2HolyGear from './gear_sets/p2_holy.gear.json';
+export const DISC_P2_PRESET = PresetUtils.makePresetGear('Disc P2 Preset', P2DiscGear, { talentTree: 0 });
 export const HOLY_P2_PRESET = PresetUtils.makePresetGear('Holy P2 Preset', P2HolyGear, { talentTree: 1 });
+import P3DiscGear from './gear_sets/p3_disc.gear.json';
+import P3HolyGear from './gear_sets/p3_holy.gear.json';
+export const DISC_P3_PRESET = PresetUtils.makePresetGear('Disc P3 Preset', P3DiscGear, { talentTree: 0 });
+export const HOLY_P3_PRESET = PresetUtils.makePresetGear('Holy P3 Preset', P3HolyGear, { talentTree: 1 });
+import P4DiscGear from './gear_sets/p4_disc.gear.json';
+import P4HolyGear from './gear_sets/p4_holy.gear.json';
+export const DISC_P4_PRESET = PresetUtils.makePresetGear('Disc P4 Preset', P4DiscGear, { talentTree: 0 });
+export const HOLY_P4_PRESET = PresetUtils.makePresetGear('Holy P4 Preset', P4HolyGear, { talentTree: 1 });
 
 export const DiscDefaultRotation = Rotation.create({
 	type: RotationType.Cycle,
@@ -70,7 +74,9 @@ export const HolyDefaultRotation = Rotation.create({
 	}),
 });
 
+import DiscApl from './apls/disc.apl.json';
 export const ROTATION_PRESET_DISC = PresetUtils.makePresetAPLRotation('Disc', DiscApl);
+import HolyApl from './apls/holy.apl.json';
 export const ROTATION_PRESET_HOLY = PresetUtils.makePresetAPLRotation('Holy', HolyApl);
 
 // Default talents. Uses the wowhead calculator format, make the talents on

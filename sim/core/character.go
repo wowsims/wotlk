@@ -413,9 +413,6 @@ func (character *Character) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 
 func (character *Character) initialize(agent Agent) {
 	character.majorCooldownManager.initialize(character)
-	if !character.IsUsingAPL {
-		character.DesyncTrinketProcs()
-	}
 
 	character.gcdAction = &PendingAction{
 		Priority: ActionPriorityGCD,
@@ -705,7 +702,11 @@ func FillTalentsProto(data protoreflect.Message, talentsStr string, treeSizes [3
 	for treeIdx, treeStr := range treeStrs {
 		for talentIdx, talentValStr := range treeStr {
 			talentVal, _ := strconv.Atoi(string(talentValStr))
-			fd := fieldDescriptors.ByNumber(protowire.Number(offset + talentIdx + 1))
+			talentOffset := offset + talentIdx + 1
+			fd := fieldDescriptors.ByNumber(protowire.Number(talentOffset))
+			if fd == nil {
+				panic(fmt.Sprintf("Couldn't find proto field for talent #%d, full string: %s", talentOffset, talentsStr))
+			}
 			if fd.Kind() == protoreflect.BoolKind {
 				data.Set(fd, protoreflect.ValueOfBool(talentVal == 1))
 			} else { // Int32Kind
