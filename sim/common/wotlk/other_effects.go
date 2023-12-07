@@ -988,7 +988,7 @@ func init() {
 				},
 			})
 
-			core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+			aura := core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 				Name:       name + " Trigger",
 				Callback:   core.CallbackOnSpellHitDealt,
 				ProcMask:   core.ProcMaskMelee,
@@ -998,6 +998,8 @@ func init() {
 					procAura.Activate(sim)
 				},
 			})
+
+			character.ItemSwap.RegisterOnSwapItemForItemEffect(itemID, aura)
 		})
 	})
 

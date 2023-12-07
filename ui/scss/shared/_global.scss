@@ -2,7 +2,7 @@
 
 :root {
   --bs-body-font-size: 14px;
-  --container-padding: #{$gap-width-sm};
+  --container-padding: #{$gap-width};
   font-size: var(--bs-body-font-size);
 }
 

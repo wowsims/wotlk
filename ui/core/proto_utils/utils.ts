@@ -119,7 +119,6 @@ export type ClassSpecs<T extends Class> =
 export const NUM_SPECS = getEnumValues(Spec).length;
 
 // The order in which specs should be presented, when it matters.
-// Currently this is only used for the order of the paladin blessings UI.
 export const naturalSpecOrder: Array<Spec> = [
 	Spec.SpecBalanceDruid,
 	Spec.SpecFeralDruid,

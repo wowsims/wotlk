@@ -1,5 +1,5 @@
 import { aplLaunchStatuses, LaunchStatus, simLaunchStatuses } from './launched_sims';
-import { Player, AutoRotationGenerator, SimpleRotationGenerator } from './player';
+import { Player, PlayerConfig, registerSpecConfig as registerPlayerConfig } from './player';
 import { SimUI, SimWarning } from './sim_ui';
 import { EventID, TypedEvent } from './typed_event';
 
@@ -22,6 +22,7 @@ import {
 	Debuffs,
 	Encounter as EncounterProto,
 	EquipmentSpec,
+	Faction,
 	Glyphs,
 	HandType,
 	IndividualBuffs,
@@ -88,7 +89,22 @@ export interface OtherDefaults {
 	nibelungAverageCasts?: number,
 }
 
-export interface IndividualSimUIConfig<SpecType extends Spec> {
+export interface RaidSimPreset<SpecType extends Spec> {
+	spec: Spec,
+	talents: SavedTalents,
+	specOptions: SpecOptions<SpecType>,
+	consumes: Consumes,
+
+	defaultName: string,
+	defaultFactionRaces: Record<Faction, Race>,
+	defaultGear: Record<Faction, Record<number, EquipmentSpec>>,
+	otherDefaults?: OtherDefaults,
+
+	tooltip: string,
+	iconUrl: string,
+}
+
+export interface IndividualSimUIConfig<SpecType extends Spec> extends PlayerConfig<SpecType> {
 	// Additional css class to add to the root element.
 	cssClass: string,
 	// Used to generate schemed components. E.g. 'shaman', 'druid', 'raid'
@@ -137,11 +153,15 @@ export interface IndividualSimUIConfig<SpecType extends Spec> {
 	presets: {
 		gear: Array<PresetGear>,
 		talents: Array<SavedDataConfig<Player<any>, SavedTalents>>,
-		rotations?: Array<PresetRotation>,
+		rotations: Array<PresetRotation>,
 	},
 
-	autoRotation?: AutoRotationGenerator<SpecType>,
-	simpleRotation?: SimpleRotationGenerator<SpecType>,
+	raidSimPresets: Array<RaidSimPreset<SpecType>>,
+}
+
+export function registerSpecConfig<SpecType extends Spec>(spec: SpecType, config: IndividualSimUIConfig<SpecType>): IndividualSimUIConfig<SpecType> {
+	registerPlayerConfig(spec, config);
+	return config;
 }
 
 export interface Settings {
@@ -183,16 +203,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		this.raidSimResultsManager = null;
 		this.prevEpIterations = 0;
 		this.prevEpSimResult = null;
-
-		if (aplLaunchStatuses[player.spec] >= LaunchStatus.Beta) {
-			if (!config.autoRotation) {
-				throw new Error('autoRotation is required for APL beta');
-			}
-			player.setAutoRotationGenerator(config.autoRotation);
-		}
-		if (aplLaunchStatuses[player.spec] == LaunchStatus.Launched && config.simpleRotation) {
-			player.setSimpleRotationGenerator(config.simpleRotation);
-		}
 
 		this.addWarning({
 			updateOn: this.player.gearChangeEmitter,
@@ -330,7 +340,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.player.setName(initEventID, 'Player');
 
 			// This needs to go last so it doesn't re-store things as they are initialized.
-			this.changeEmitter.on(eventID => {
+			this.changeEmitter.on(_eventID => {
 				const jsonStr = IndividualSimSettings.toJsonString(this.toProto());
 				window.localStorage.setItem(this.getSettingsStorageKey(), jsonStr);
 			});
@@ -341,7 +351,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		this.raidSimResultsManager = addRaidSimAction(this);
 		addStatWeightsAction(this, this.individualConfig.epStats, this.individualConfig.epPseudoStats, this.individualConfig.epReferenceStat);
 
-		const characterStats = new CharacterStats(
+		const _characterStats = new CharacterStats(
 			this.rootElem.getElementsByClassName('sim-sidebar-footer')[0] as HTMLElement,
 			this.player,
 			this.individualConfig.displayStats,
@@ -380,7 +390,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			</div>
 		`);
 
-		const detailedResults = new EmbeddedDetailedResults(this.rootElem.getElementsByClassName('detailed-results')[0] as HTMLElement, this, this.raidSimResultsManager!);
+		const _detailedResults = new EmbeddedDetailedResults(this.rootElem.getElementsByClassName('detailed-results')[0] as HTMLElement, this, this.raidSimResultsManager!);
 	}
 
 	private addTopbarComponents() {

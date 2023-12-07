@@ -59,9 +59,6 @@
 @include media-breakpoint-down(xxl) {
   .sim-sidebar {
     .sim-sidebar-content {
-      padding-left: $gap-width-sm * 2;
-      padding-right: $gap-width-sm * 2;
-
       .sim-sidebar-actions {
         padding: 0;
         margin: 0;

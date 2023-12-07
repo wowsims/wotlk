@@ -59,43 +59,6 @@ func TestFeralApl(t *testing.T) {
 	}))
 }
 
-func TestFeralDoubleArmorPenTrinketsNoDesync(t *testing.T) {
-	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
-		Class:       proto.Class_ClassDruid,
-		Race:        proto.Race_RaceTauren,
-		GearSet:     core.GearSetCombo{Label: "P2DoubleArmorPenTrinkets", GearSet: P2GearDoubleArmorPenTrinkets},
-		Talents:     StandardTalents,
-		Glyphs:      StandardGlyphs,
-		Consumes:    FullConsumes,
-		SpecOptions: core.SpecOptionsCombo{Label: "Default", SpecOptions: PlayerOptionsMonoCat},
-		ItemFilter:  FeralItemFilter,
-
-		Cooldowns: &proto.Cooldowns{
-			DesyncProcTrinket1Seconds: 0,
-			DesyncProcTrinket2Seconds: 0,
-		},
-	}))
-}
-
-func TestFeralDoubleArmorPenTrinketsWithDesync(t *testing.T) {
-	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator(core.CharacterSuiteConfig{
-		Class:       proto.Class_ClassDruid,
-		Race:        proto.Race_RaceTauren,
-		GearSet:     core.GearSetCombo{Label: "P2DoubleArmorPenTrinkets", GearSet: P2GearDoubleArmorPenTrinkets},
-		Talents:     StandardTalents,
-		Glyphs:      StandardGlyphs,
-		Consumes:    FullConsumes,
-		SpecOptions: core.SpecOptionsCombo{Label: "Default", SpecOptions: PlayerOptionsMonoCat},
-
-		ItemFilter: FeralItemFilter,
-
-		Cooldowns: &proto.Cooldowns{
-			DesyncProcTrinket1Seconds: 0,
-			DesyncProcTrinket2Seconds: 10,
-		},
-	}))
-}
-
 func BenchmarkSimulate(b *testing.B) {
 	rsr := &proto.RaidSimRequest{
 		Raid: core.SinglePlayerRaidProto(

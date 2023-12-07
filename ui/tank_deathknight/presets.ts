@@ -22,16 +22,16 @@ import {
 import * as PresetUtils from '../core/preset_utils.js';
 
 import P1BloodGear from './gear_sets/p1_blood.gear.json';
-import P2BloodGear from './gear_sets/p2_blood.gear.json';
-import P1FrostGear from './gear_sets/p1_frost.gear.json';
-import P2FrostGear from './gear_sets/p2_frost.gear.json';
-
-import BloodAggroApl from './apls/blood_aggro.apl.json';
-import BloodIcyTouchApl from './apls/blood_icy_touch.apl.json';
-
 export const P1_BLOOD_PRESET = PresetUtils.makePresetGear('P1 Blood', P1BloodGear);
+import P2BloodGear from './gear_sets/p2_blood.gear.json';
 export const P2_BLOOD_PRESET = PresetUtils.makePresetGear('P2 Blood', P2BloodGear);
+import P3BloodGear from './gear_sets/p3_blood.gear.json';
+export const P3_BLOOD_PRESET = PresetUtils.makePresetGear('P3 Blood', P3BloodGear);
+import P4BloodGear from './gear_sets/p4_blood.gear.json';
+export const P4_BLOOD_PRESET = PresetUtils.makePresetGear('P4 Blood', P4BloodGear);
+import P1FrostGear from './gear_sets/p1_frost.gear.json';
 export const P1_FROST_PRESET = PresetUtils.makePresetGear('P1 Frost', P1FrostGear);
+import P2FrostGear from './gear_sets/p2_frost.gear.json';
 export const P2_FROST_PRESET = PresetUtils.makePresetGear('P2 Frost', P2FrostGear);
 
 export const DefaultRotation = TankDeathKnightRotation.create({
@@ -41,8 +41,11 @@ export const DefaultRotation = TankDeathKnightRotation.create({
 	presence: Presence.Frost,
 });
 
+
 export const BLOOD_LEGACY_PRESET_LEGACY_DEFAULT = PresetUtils.makePresetLegacyRotation('Blood Legacy', Spec.SpecTankDeathknight, DefaultRotation);
+import BloodIcyTouchApl from './apls/blood_icy_touch.apl.json';
 export const BLOOD_IT_SPAM_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Blood Icy Touch', BloodIcyTouchApl);
+import BloodAggroApl from './apls/blood_aggro.apl.json';
 export const BLOOD_AGGRO_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Blood Aggro', BloodAggroApl);
 
 export const BloodTalents = {

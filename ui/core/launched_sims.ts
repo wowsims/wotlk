@@ -11,7 +11,7 @@ export enum LaunchStatus {
 	Launched,
 }
 
-export const raidSimStatus: LaunchStatus = LaunchStatus.Beta;
+export const raidSimStatus: LaunchStatus = LaunchStatus.Launched;
 
 // This list controls which links are shown in the top-left dropdown menu.
 export const simLaunchStatuses: Record<Spec, LaunchStatus> = {
@@ -54,10 +54,10 @@ export const aplLaunchStatuses: Record<Spec, LaunchStatus> = {
 	[Spec.SpecProtectionPaladin]: LaunchStatus.Launched,
 	[Spec.SpecRetributionPaladin]: LaunchStatus.Beta,
 	[Spec.SpecHealingPriest]: LaunchStatus.Launched,
-	[Spec.SpecShadowPriest]: LaunchStatus.Alpha,
+	[Spec.SpecShadowPriest]: LaunchStatus.Beta,
 	[Spec.SpecSmitePriest]: LaunchStatus.Launched,
-	[Spec.SpecWarlock]: LaunchStatus.Alpha,
-	[Spec.SpecWarrior]: LaunchStatus.Alpha,
+	[Spec.SpecWarlock]: LaunchStatus.Beta,
+	[Spec.SpecWarrior]: LaunchStatus.Launched,
 	[Spec.SpecProtectionWarrior]: LaunchStatus.Launched,
 	[Spec.SpecDeathknight]: LaunchStatus.Beta,
 	[Spec.SpecTankDeathknight]: LaunchStatus.Beta,

@@ -70,8 +70,22 @@ func (swap *ItemSwap) RegisterOnSwapItemForEffectWithPPMManager(effectID int32, 
 
 }
 
+// Helper for handling Effects that use the itemID to toggle the aura on and off
+func (swap *ItemSwap) RegisterOnSwapItemForItemEffect(itemID int32, aura *Aura) {
+	character := swap.character
+	character.RegisterOnItemSwap(func(sim *Simulation) {
+		procMask := character.GetProcMaskForItem(itemID)
+
+		if procMask == ProcMaskUnknown {
+			aura.Deactivate(sim)
+		} else {
+			aura.Activate(sim)
+		}
+	})
+}
+
 // Helper for handling Effects that use the effectID to toggle the aura on and off
-func (swap *ItemSwap) RegisterOnSwapItemForEffect(effectID int32, aura *Aura) {
+func (swap *ItemSwap) RegisterOnSwapItemForEnchantEffect(effectID int32, aura *Aura) {
 	character := swap.character
 	character.RegisterOnItemSwap(func(sim *Simulation) {
 		procMask := character.GetProcMaskForEnchant(effectID)

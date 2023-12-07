@@ -9,6 +9,7 @@ import { Stats } from "../../proto_utils/stats";
 import { GearPicker } from "../gear_picker";
 import { SavedDataManager } from "../saved_data_manager";
 import { SimTab } from "../sim_tab";
+import { GemSummary } from "./gem_summary";
 
 export class GearTab extends SimTab {
 	protected simUI: IndividualSimUI<Spec>;
@@ -34,12 +35,16 @@ export class GearTab extends SimTab {
 
 	protected buildTabContent() {
 		this.buildGearPickers();
-
+		this.buildGemSummary();
 		this.buildSavedGearsetPicker();
 	}
 
 	private buildGearPickers() {
 		new GearPicker(this.leftPanel, this.simUI, this.simUI.player);
+	}
+
+	private buildGemSummary() {
+		new GemSummary(this.leftPanel, this.simUI, this.simUI.player);
 	}
 
 	private buildSavedGearsetPicker() {

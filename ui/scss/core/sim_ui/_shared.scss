@@ -111,20 +111,6 @@ td, th {
 				width: 100%;
 				min-height: unset;
 			}
-
-			.sim-content {
-				padding-left: $gap-width-sm;
-				padding-right: $gap-width-sm;
-			}
-		}
-	}
-}
-
-@include media-breakpoint-down(sm) {
-  .sim-ui {
-		.sim-content {
-			padding-left: $gap-width-sm;
-			padding-right: $gap-width-sm;
 		}
 	}
 }
