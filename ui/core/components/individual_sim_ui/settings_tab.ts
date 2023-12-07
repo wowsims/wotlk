@@ -300,6 +300,7 @@ export class SettingsTab extends SimTab {
 		}
 
 		const miscBuffOptions = this.simUI.splitRelevantOptions([
+			{ item: IconInputs.StrengthOfWrynn, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower, Stat.StatSpellPower] },
 			{ item: IconInputs.HeroicPresence, stats: [Stat.StatMeleeHit, Stat.StatSpellHit] },
 			{ item: IconInputs.BraidedEterniumChain, stats: [Stat.StatMeleeCrit, Stat.StatSpellCrit] },
 			{ item: IconInputs.ChainOfTheTwilightOwl, stats: [Stat.StatSpellCrit, Stat.StatMeleeCrit] },

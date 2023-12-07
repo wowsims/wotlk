@@ -464,6 +464,7 @@ message RaidBuffs {
 	TristateEffect devotion_aura = 31;
 	TristateEffect stoneskin_totem = 42;
 	bool retribution_aura = 32;
+	bool strength_of_wrynn = 49;
 
 	// Drums
 	bool drums_of_forgotten_kings = 34;
