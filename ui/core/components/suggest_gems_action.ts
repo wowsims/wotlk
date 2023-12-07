@@ -5,7 +5,7 @@ import { Gear } from '../proto_utils/gear.js';
 import { EquippedItem } from '../proto_utils/equipped_item.js';
 import { TypedEvent } from '../typed_event.js';
 import { Stats } from '../proto_utils/stats.js';
-import { GemColor, Stat, Profession, ItemSlot } from '../proto/common.js';
+import { GemColor, Stat, Profession, ItemSlot, Spec } from '../proto/common.js';
 
 interface GemCapsData {
 	gemId: number
@@ -18,7 +18,7 @@ interface SocketData {
 }
 
 abstract class GemOptimizer {
-	protected readonly player: Player<any>;
+	protected readonly player: Player<Spec>;
 	protected readonly sim: Sim;
 	protected readonly gemPriorityByColor: Record<GemColor, Array<GemCapsData>>; 
 	abstract metaGemID: number;	
@@ -122,11 +122,11 @@ abstract class GemOptimizer {
 				continue;
 			}
 
-			if (item!.numSocketsOfColor(blacklistedColor) != 0) {
+			if (item.numSocketsOfColor(blacklistedColor) != 0) {
 				continue;
 			}
 
-			const numSockets = item!.numSocketsOfColor(color);
+			const numSockets = item.numSocketsOfColor(color);
 
 			if ((numSockets == 0) || (singleOnly && (numSockets != 1))) {
 				continue;
@@ -147,6 +147,10 @@ abstract class GemOptimizer {
 	socketGemInFirstMatchingSocket(gear: Gear, itemSlot: ItemSlot | null, colorToMatch: GemColor, gemId: number): Gear {
 		if (itemSlot != null) {
 			const item = gear.getEquippedItem(itemSlot);
+
+			if (!item) {
+				return gear;
+			}
 
 			for (const [socketIdx, socketColor] of item!.allSocketColors().entries()) {
 				if (socketColor == colorToMatch) {
@@ -184,7 +188,7 @@ abstract class GemOptimizer {
 				continue;
 			}
 
-			for (const [socketIdx, socketColor] of item!.curSocketColors(this.isBlacksmithing).entries()) {
+			for (const [socketIdx, socketColor] of item.curSocketColors(this.isBlacksmithing).entries()) {
 				if (item!.hasSocketedGem(socketIdx)) {
 					continue;
 				}
