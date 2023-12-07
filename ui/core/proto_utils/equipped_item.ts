@@ -217,7 +217,7 @@ export class EquippedItem {
 		return this._item.gemSockets.length + (this.hasExtraSocket(isBlacksmithing) ? 1 : 0);
 	}
 
-	numSocketsOfColor(color: GemColor): number {
+	numSocketsOfColor(color: GemColor | null): number {
 		let numSockets: number = 0;
 
 		for (var socketColor of this._item.gemSockets) {
