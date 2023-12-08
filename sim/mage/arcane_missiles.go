@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/wowsims/classic/sod/sim/core"
+	"github.com/wowsims/sod/sim/core"
 )
 
 func (mage *Mage) getArcaneMissilesTickSpell(rank int, numTicks int32, baseDotDamage float64) *core.Spell {

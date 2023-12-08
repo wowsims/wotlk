@@ -21,7 +21,7 @@ google-chrome*
 .dockerignore
 /classic/
 *.code-workspace
-wowsimclassic
+wowsimsod
 
 # old result file
 TestAPL.results
@@ -33,6 +33,6 @@ TestAPL.results
 tmp/
 
 # lib
-wowsimclassic*.so
-wowsimclassic*.dll
-wowsimclassic*.h
+wowsimsod*.so
+wowsimsod*.dll
+wowsimsod*.h

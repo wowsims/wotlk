@@ -9,11 +9,11 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/wowsims/classic/sod/sim/core"
-	"github.com/wowsims/classic/sod/sim/core/proto"
-	_ "github.com/wowsims/classic/sod/sim/encounters" // Needed for preset encounters.
-	"github.com/wowsims/classic/sod/tools"
-	"github.com/wowsims/classic/sod/tools/database"
+	"github.com/wowsims/sod/sim/core"
+	"github.com/wowsims/sod/sim/core/proto"
+	_ "github.com/wowsims/sod/sim/encounters" // Needed for preset encounters.
+	"github.com/wowsims/sod/tools"
+	"github.com/wowsims/sod/tools/database"
 )
 
 // To do a full re-scrape, delete the previous output file first.

@@ -3,8 +3,8 @@ package druid
 import (
 	"time"
 
-	"github.com/wowsims/classic/sod/sim/core"
-	"github.com/wowsims/classic/sod/sim/core/stats"
+	"github.com/wowsims/sod/sim/core"
+	"github.com/wowsims/sod/sim/core/stats"
 )
 
 func (druid *Druid) ThickHideMultiplier() float64 {

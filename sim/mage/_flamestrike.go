@@ -3,7 +3,7 @@ package mage
 import (
 	"time"
 
-	"github.com/wowsims/classic/sod/sim/core"
+	"github.com/wowsims/sod/sim/core"
 )
 
 func (mage *Mage) registerFlamestrikeSpell(rank8 bool) *core.Spell {

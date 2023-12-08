@@ -3,10 +3,10 @@ package hunter
 import (
 	"time"
 
-	"github.com/wowsims/classic/sod/sim/common"
-	"github.com/wowsims/classic/sod/sim/core"
-	"github.com/wowsims/classic/sod/sim/core/proto"
-	"github.com/wowsims/classic/sod/sim/core/stats"
+	"github.com/wowsims/sod/sim/common"
+	"github.com/wowsims/sod/sim/core"
+	"github.com/wowsims/sod/sim/core/proto"
+	"github.com/wowsims/sod/sim/core/stats"
 )
 
 var TalentTreeSizes = [3]int{26, 27, 28}

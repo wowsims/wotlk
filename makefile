@@ -1,4 +1,4 @@
-BASE_DIR := classic/sod
+BASE_DIR := sod
 OUT_DIR := dist/$(BASE_DIR)
 TS_CORE_SRC := $(shell find ui/core -name '*.ts' -type f)
 ASSETS_INPUT := $(shell find assets/ -type f)
@@ -66,11 +66,11 @@ ui/core/index.ts: $(TS_CORE_SRC)
 clean:
 	rm -rf ui/core/proto/*.ts \
 	  sim/core/proto/*.pb.go \
-	  wowsimclassic \
-	  wowsimclassic-windows.exe \
-	  wowsimclassic-amd64-darwin \
-	  wowsimclassic-arm64-darwin \
-	  wowsimclassic-amd64-linux \
+	  wowsimsod \
+	  wowsimsod-windows.exe \
+	  wowsimsod-amd64-darwin \
+	  wowsimsod-arm64-darwin \
+	  wowsimsod-amd64-linux \
 	  dist \
 	  binary_dist \
 	  ui/core/index.ts \
@@ -148,12 +148,12 @@ proto: sim/core/proto/api.pb.go ui/core/proto/api.ts
 
 # Builds the web server with the compiled client.
 .PHONY: wowsimwclassic
-wowsimclassic: binary_dist devserver
+wowsimsod: binary_dist devserver
 
 .PHONY: devserver
 devserver: sim/core/proto/api.pb.go sim/web/main.go binary_dist/dist.go
 	@echo "Starting server compile now..."
-	@if go build -o wowsimclassic ./sim/web/main.go; then \
+	@if go build -o wowsimsod ./sim/web/main.go; then \
 		printf "\033[1;32mBuild Completed Successfully\033[0m\n"; \
 	else \
 		printf "\033[1;31mBUILD FAILED\033[0m\n"; \
@@ -172,30 +172,30 @@ endif
 rundevserver: air devserver
 ifeq ($(WATCH), 1)
 	npx vite build -m development --watch &
-	ulimit -n 10240 && air -tmp_dir "/tmp" -build.include_ext "go,proto" -build.args_bin "--usefs=true --launch=false" -build.bin "./wowsimclassic" -build.cmd "make devserver" -build.exclude_dir "assets,dist,node_modules,ui,tools"
+	ulimit -n 10240 && air -tmp_dir "/tmp" -build.include_ext "go,proto" -build.args_bin "--usefs=true --launch=false" -build.bin "./wowsimsod" -build.cmd "make devserver" -build.exclude_dir "assets,dist,node_modules,ui,tools"
 else
-	./wowsimclassic --usefs=true --launch=false --host=":3333"
+	./wowsimsod --usefs=true --launch=false --host=":3333"
 endif
 
-wowsimclassic-windows.exe: wowsimclassic
+wowsimsod-windows.exe: wowsimsod
 # go build only considers syso files when invoked without specifying .go files: https://github.com/golang/go/issues/16090
 	cp ./assets/favicon_io/icon-windows_amd64.syso ./sim/web/icon-windows_amd64.syso
-	cd ./sim/web/ && GOOS=windows GOARCH=amd64 GOAMD64=v2 go build -o wowsimclassic-windows.exe -ldflags="-X 'main.Version=$(VERSION)' -s -w"
+	cd ./sim/web/ && GOOS=windows GOARCH=amd64 GOAMD64=v2 go build -o wowsimsod-windows.exe -ldflags="-X 'main.Version=$(VERSION)' -s -w"
 	cd ./cmd/wowsimcli && GOOS=windows GOARCH=amd64 GOAMD64=v2 go build -o wowsimcli-windows.exe --tags=with_db -ldflags="-X 'main.Version=$(VERSION)' -s -w"
 	rm ./sim/web/icon-windows_amd64.syso
-	mv ./sim/web/wowsimclassic-windows.exe ./wowsimclassic-windows.exe
+	mv ./sim/web/wowsimsod-windows.exe ./wowsimsod-windows.exe
 	mv ./cmd/wowsimcli/wowsimcli-windows.exe ./wowsimcli-windows.exe
 
-release: wowsimclassic wowsimclassic-windows.exe
-	GOOS=darwin GOARCH=amd64 GOAMD64=v2 go build -o wowsimclassic-amd64-darwin -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
-	GOOS=darwin GOARCH=arm64 go build -o wowsimclassic-arm64-darwin -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
-	GOOS=linux GOARCH=amd64 GOAMD64=v2 go build -o wowsimclassic-amd64-linux   -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
+release: wowsimsod wowsimsod-windows.exe
+	GOOS=darwin GOARCH=amd64 GOAMD64=v2 go build -o wowsimsod-amd64-darwin -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
+	GOOS=darwin GOARCH=arm64 go build -o wowsimsod-arm64-darwin -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
+	GOOS=linux GOARCH=amd64 GOAMD64=v2 go build -o wowsimsod-amd64-linux   -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./sim/web/main.go
 	GOOS=linux GOARCH=amd64 GOAMD64=v2 go build -o wowsimcli-amd64-linux --tags=with_db -ldflags="-X 'main.Version=$(VERSION)' -s -w" ./cmd/wowsimcli/cli_main.go
 # Now compress into a zip because the files are getting large.
-	zip wowsimclassic-windows.exe.zip wowsimclassic-windows.exe
-	zip wowsimclassic-amd64-darwin.zip wowsimclassic-amd64-darwin
-	zip wowsimclassic-arm64-darwin.zip wowsimclassic-arm64-darwin
-	zip wowsimclassic-amd64-linux.zip wowsimclassic-amd64-linux
+	zip wowsimsod-windows.exe.zip wowsimsod-windows.exe
+	zip wowsimsod-amd64-darwin.zip wowsimsod-amd64-darwin
+	zip wowsimsod-arm64-darwin.zip wowsimsod-arm64-darwin
+	zip wowsimsod-amd64-linux.zip wowsimsod-amd64-linux
 	zip wowsimcli-amd64-linux.zip wowsimcli-amd64-linux
 	zip wowsimcli-windows.exe.zip wowsimcli-windows.exe
 
@@ -205,15 +205,15 @@ sim/core/proto/api.pb.go: proto/*.proto
 # Only useful for building the lib on a host platform that matches the target platform
 .PHONY: locallib
 locallib: sim/core/proto/api.pb.go
-	go build -buildmode=c-shared -o wowsimclassic.so --tags=with_db ./sim/lib/library.go
+	go build -buildmode=c-shared -o wowsimsod.so --tags=with_db ./sim/lib/library.go
 
 .PHONY: nixlib
 nixlib: sim/core/proto/api.pb.go
-	GOOS=linux GOARCH=amd64 GOAMD64=v2 go build -buildmode=c-shared -o wowsimclassic-linux.so --tags=with_db ./sim/lib/library.go
+	GOOS=linux GOARCH=amd64 GOAMD64=v2 go build -buildmode=c-shared -o wowsimsod-linux.so --tags=with_db ./sim/lib/library.go
 
 .PHONY: winlib
 winlib: sim/core/proto/api.pb.go
-	GOOS=windows GOARCH=amd64 GOAMD64=v2 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -buildmode=c-shared -o wowsimclassic-windows.dll --tags=with_db ./sim/lib/library.go
+	GOOS=windows GOARCH=amd64 GOAMD64=v2 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -buildmode=c-shared -o wowsimsod-windows.dll --tags=with_db ./sim/lib/library.go
 
 .PHONY: items
 items: sim/core/items/all_items.go sim/core/proto/api.pb.go

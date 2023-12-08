@@ -1,7 +1,7 @@
 package shaman
 
 import (
-	"github.com/wowsims/classic/sod/sim/core"
+	"github.com/wowsims/sod/sim/core"
 )
 
 func (shaman *Shaman) BloodlustActionID() core.ActionID {

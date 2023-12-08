@@ -1,8 +1,8 @@
 package balance
 
 import (
-	"github.com/wowsims/classic/sod/sim/core"
-	"github.com/wowsims/classic/sod/sim/druid"
+	"github.com/wowsims/sod/sim/core"
+	"github.com/wowsims/sod/sim/druid"
 )
 
 func (moonkin *BalanceDruid) OnGCDReady(sim *core.Simulation) {

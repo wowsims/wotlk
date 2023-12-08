@@ -4,7 +4,7 @@ The primary goal of this project is to provide a framework that makes it easy to
 
 This project is licensed with MIT license. We request that anyone using this software in their own project to make sure there is a user visible link back to the original project.
 
-[Live sims can be found here.](https://wowsims.github.io/classic/sod "https://wowsims.github.io/classic/sod")
+[Live sims can be found here.](https://wowsims.github.io/sod "https://wowsims.github.io/sod")
 
 [Support our devs via Patreon.](https://www.patreon.com/wowsims)
 
@@ -100,8 +100,8 @@ make test
 make update-tests
 
 # Host a local version of the UI at http://localhost:8080. Visit it by pointing a browser to
-# http://localhost:8080/classic/sod/YOUR_SPEC_HERE, where YOUR_SPEC_HERE is the directory under ui/ with your custom code.
-# Recompiles the entire client before launching using `make dist/classic/sod`
+# http://localhost:8080/sod/YOUR_SPEC_HERE, where YOUR_SPEC_HERE is the directory under ui/ with your custom code.
+# Recompiles the entire client before launching using `make dist/sod`
 make host
 
 # With file-watching so the server auto-restarts and recompiles on Go or TS changes:
@@ -113,7 +113,7 @@ make clean
 # Recompiles the ts only for the given spec (e.g. make host_elemental_shaman)
 make host_$spec
 
-# Recompiles the `wowsimclassic` server binary and runs it, hosting /dist directory at http://localhost:3333/classic. 
+# Recompiles the `wowsimsod` server binary and runs it, hosting /dist directory at http://localhost:3333/classic. 
 # This is the fastest way to iterate on core go simulator code so you don't have to wait for client rebuilds.
 # To rebuild client for a spec just do 'make $spec' and refresh browser.
 make rundevserver
@@ -121,16 +121,16 @@ make rundevserver
 # With file-watching so the server auto-restarts and recompiles on Go or TS changes:
 WATCH=1 make rundevserver
 
-# Creates the 'wowsimclassic' binary that can host the UI and run simulations natively (instead of with wasm).
+# Creates the 'wowsimsod' binary that can host the UI and run simulations natively (instead of with wasm).
 # Builds the UI and the compiles it into the binary so that you can host the sim as a server instead of wasm on the client.
 # It does this by first doing make dist/classic and then copying all those files to binary_dist/classic and loading all the files in that directory into its binary on compile.
-make wowsimclassic
+make wowsimsod
 
 # Using the --usefs flag will instead of hosting the client built into the binary, it will host whatever code is found in the /dist directory. 
 # Use --wasm to host the client with the wasm simulator.
 # The server also disables all caching so that refreshes should pickup any changed files in dist/. The client will still call to the server to run simulations so you can iterate more quickly on client changes.
-# make dist/classic && ./wowsimclassic --usefs would rebuild the whole client and host it. (you would have had to run `make devserver` to build the wowsimclassic binary first.)
-./wowsimclassic --usefs
+# make dist/classic && ./wowsimsod --usefs would rebuild the whole client and host it. (you would have had to run `make devserver` to build the wowsimsod binary first.)
+./wowsimsod --usefs
 
 # Generate code for items. Only necessary if you changed the items generator.
 make items
@@ -167,7 +167,7 @@ The UI and sim can be done in either order, but it is generally recommended to b
 
 No .html is needed, it will be generated based on `ui/index_template.html` and the `$SPEC` name.
 
-When you're ready to try out the site, run `make host` and navigate to `http://localhost:8080/classic/$SPEC`.
+When you're ready to try out the site, run `make host` and navigate to `http://localhost:8080/sod/$SPEC`.
 
 ## Implement the Sim
 This step is where most of the magic happens. A few highlights to start understanding the sim code:

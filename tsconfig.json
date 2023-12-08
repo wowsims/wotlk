@@ -10,7 +10,7 @@
             "DOM.Iterable"
         ],
         "types": [],
-        "outDir": "dist/classic/sod",
+        "outDir": "dist/sod",
         "pretty": false,
         "allowJs": true,
         "resolveJsonModule": true,
@@ -21,7 +21,7 @@
         "jsxFragmentFactory": "fragment",
     },
     "exclude": [
-        "dist/classic/sod",
+        "dist/sod",
         "assets",
         "sim",
         "proto"

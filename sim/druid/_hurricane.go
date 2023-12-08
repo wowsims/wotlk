@@ -3,16 +3,16 @@ package druid
 import (
 	"time"
 
-	"github.com/wowsims/classic/sod/sim/core"
+	"github.com/wowsims/sod/sim/core"
 )
 
 func (druid *Druid) registerHurricaneSpell() {
 	druid.HurricaneTickSpell = druid.RegisterSpell(Humanoid|Moonkin, core.SpellConfig{
-		ActionID:       core.ActionID{SpellID: 48466},
-		SpellSchool:    core.SpellSchoolNature,
-		ProcMask:       core.ProcMaskProc,
-		Flags:          SpellFlagOmenTrigger,
-		CritMultiplier: 1,
+		ActionID:         core.ActionID{SpellID: 48466},
+		SpellSchool:      core.SpellSchoolNature,
+		ProcMask:         core.ProcMaskProc,
+		Flags:            SpellFlagOmenTrigger,
+		CritMultiplier:   1,
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

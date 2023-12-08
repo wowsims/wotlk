@@ -3,9 +3,9 @@ package shadow
 import (
 	"testing"
 
-	_ "github.com/wowsims/classic/sod/sim/common" // imported to get caster sets included.
-	"github.com/wowsims/classic/sod/sim/core"
-	"github.com/wowsims/classic/sod/sim/core/proto"
+	_ "github.com/wowsims/sod/sim/common" // imported to get caster sets included.
+	"github.com/wowsims/sod/sim/core"
+	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func init() {

@@ -21,10 +21,10 @@ import (
 
 	uuid "github.com/google/uuid"
 	"github.com/pkg/browser"
-	dist "github.com/wowsims/classic/sod/binary_dist"
-	"github.com/wowsims/classic/sod/sim"
-	"github.com/wowsims/classic/sod/sim/core"
-	proto "github.com/wowsims/classic/sod/sim/core/proto"
+	dist "github.com/wowsims/sod/binary_dist"
+	"github.com/wowsims/sod/sim"
+	"github.com/wowsims/sod/sim/core"
+	proto "github.com/wowsims/sod/sim/core/proto"
 
 	googleProto "google.golang.org/protobuf/proto"
 )
@@ -286,7 +286,7 @@ func (s *server) runServer(useFS bool, host string, launchBrowser bool, simName 
 	})
 	http.HandleFunc("/", func(resp http.ResponseWriter, req *http.Request) {
 		if req.URL.Path == "/" {
-			http.Redirect(resp, req, "/classic/sod/", http.StatusPermanentRedirect)
+			http.Redirect(resp, req, "/sod/", http.StatusPermanentRedirect)
 			return
 		}
 		resp.Header().Add("Cache-Control", "no-cache")
@@ -308,7 +308,7 @@ func (s *server) runServer(useFS bool, host string, launchBrowser bool, simName 
 		if strings.HasPrefix(host, ":") {
 			host = "localhost" + host
 		}
-		url := fmt.Sprintf("http://%s/classic/sod/%s", host, simName)
+		url := fmt.Sprintf("http://%s/sod/%s", host, simName)
 		log.Printf("Launching interface on %s", url)
 		go func() {
 			err := browser.OpenURL(url)

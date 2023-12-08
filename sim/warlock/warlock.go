@@ -3,9 +3,9 @@ package warlock
 import (
 	"time"
 
-	"github.com/wowsims/classic/sod/sim/core"
-	"github.com/wowsims/classic/sod/sim/core/proto"
-	"github.com/wowsims/classic/sod/sim/core/stats"
+	"github.com/wowsims/sod/sim/core"
+	"github.com/wowsims/sod/sim/core/proto"
+	"github.com/wowsims/sod/sim/core/stats"
 )
 
 var TalentTreeSizes = [3]int{17, 17, 16}

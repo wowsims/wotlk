@@ -3,9 +3,9 @@ package warlock
 import (
 	"math"
 
-	"github.com/wowsims/classic/sod/sim/core"
-	"github.com/wowsims/classic/sod/sim/core/proto"
-	"github.com/wowsims/classic/sod/sim/core/stats"
+	"github.com/wowsims/sod/sim/core"
+	"github.com/wowsims/sod/sim/core/proto"
+	"github.com/wowsims/sod/sim/core/stats"
 )
 
 type WarlockPet struct {
@@ -114,8 +114,8 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 
 		// Fix pet stats resulting from gaining the incorrect amount of stats from suppression/hit debuff
 		// see makeStatInheritance() below for a more details about these values
-		stats.MeleeHit:  -float64(warlock.Talents.Suppression) * core.MeleeHitRatingPerHitChance,
-		stats.SpellHit:  (-5.0 * float64(warlock.Talents.Suppression)) / 12.0 * core.SpellHitRatingPerHitChance,
+		stats.MeleeHit: -float64(warlock.Talents.Suppression) * core.MeleeHitRatingPerHitChance,
+		stats.SpellHit: (-5.0 * float64(warlock.Talents.Suppression)) / 12.0 * core.SpellHitRatingPerHitChance,
 	})
 
 	// TODO: Classic correct melee pet scaling with talent
@@ -133,17 +133,17 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 			OnGain: func(aura *core.Aura, _ *core.Simulation) {
 				switch warlock.Options.Summon {
 				case proto.Warlock_Options_Imp:
-					aura.Unit.PseudoStats.ThreatMultiplier *= 1 + 0.04 * float64(warlock.Talents.MasterDemonologist)
+					aura.Unit.PseudoStats.ThreatMultiplier *= 1 + 0.04*float64(warlock.Talents.MasterDemonologist)
 				case proto.Warlock_Options_Succubus:
-					aura.Unit.PseudoStats.DamageDealtMultiplier *= 1 + 0.02 * float64(warlock.Talents.MasterDemonologist)
+					aura.Unit.PseudoStats.DamageDealtMultiplier *= 1 + 0.02*float64(warlock.Talents.MasterDemonologist)
 				}
 			},
 			OnExpire: func(aura *core.Aura, _ *core.Simulation) {
 				switch warlock.Options.Summon {
 				case proto.Warlock_Options_Imp:
-					aura.Unit.PseudoStats.ThreatMultiplier /= 1 + 0.04 * float64(warlock.Talents.MasterDemonologist)
+					aura.Unit.PseudoStats.ThreatMultiplier /= 1 + 0.04*float64(warlock.Talents.MasterDemonologist)
 				case proto.Warlock_Options_Succubus:
-					aura.Unit.PseudoStats.DamageDealtMultiplier /= 1 + 0.02 * float64(warlock.Talents.MasterDemonologist)
+					aura.Unit.PseudoStats.DamageDealtMultiplier /= 1 + 0.02*float64(warlock.Talents.MasterDemonologist)
 				}
 			},
 		}
@@ -235,8 +235,8 @@ func (warlock *Warlock) makeStatInheritance() core.PetStatInheritance {
 			stats.SpellPenetration: ownerStats[stats.SpellPenetration],
 			// stats.SpellCrit:        improvedDemonicTactics * 0.1 * ownerStats[stats.SpellCrit],
 			// stats.MeleeCrit:        improvedDemonicTactics * 0.1 * ownerStats[stats.SpellCrit],
-			stats.MeleeHit:         ownerHitChance * core.MeleeHitRatingPerHitChance,
-			stats.SpellHit:         math.Floor(ownerStats[stats.SpellHit] / 12.0 * 17.0),
+			stats.MeleeHit: ownerHitChance * core.MeleeHitRatingPerHitChance,
+			stats.SpellHit: math.Floor(ownerStats[stats.SpellHit] / 12.0 * 17.0),
 		}
 	}
 }

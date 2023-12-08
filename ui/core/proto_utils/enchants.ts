@@ -5,7 +5,7 @@ import {
 let descriptionsPromise: Promise<Record<number, string>> | null = null;
 function fetchEnchantDescriptions(): Promise<Record<number, string>> {
 	if (descriptionsPromise == null) {
-		descriptionsPromise = fetch('/classic/sod/assets/enchants/descriptions.json')
+		descriptionsPromise = fetch('/sod/assets/enchants/descriptions.json')
 			.then(response => response.json())
 			.then(json => {
 				const descriptionsMap: Record<number, string> = {};

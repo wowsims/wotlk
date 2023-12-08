@@ -1,7 +1,7 @@
 package paladin
 
 import (
-	"github.com/wowsims/classic/sod/sim/core"
+	"github.com/wowsims/sod/sim/core"
 )
 
 func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {

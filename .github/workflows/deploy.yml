@@ -31,7 +31,7 @@ jobs:
 
       - name: Build 🔧
         run: |
-          make dist/classic/.dirstamp
+          make dist/sod/.dirstamp
 
       - name: Test
         run: |
@@ -41,5 +41,5 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@4.1.5
         with:
           branch: gh-pages
-          folder: dist/classic/sod
+          folder: dist/sod
           single-commit: true

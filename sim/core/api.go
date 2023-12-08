@@ -4,8 +4,8 @@ package core
 import (
 	"context"
 
-	"github.com/wowsims/classic/sod/sim/core/proto"
-	"github.com/wowsims/classic/sod/sim/core/stats"
+	"github.com/wowsims/sod/sim/core/proto"
+	"github.com/wowsims/sod/sim/core/stats"
 )
 
 /**

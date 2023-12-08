@@ -1,7 +1,7 @@
 package mage
 
 import (
-	_ "github.com/wowsims/classic/sod/sim/common"
+	_ "github.com/wowsims/sod/sim/common"
 )
 
 func init() {

@@ -1,7 +1,7 @@
 package core
 
 import (
-	"github.com/wowsims/classic/sod/sim/core/stats"
+	"github.com/wowsims/sod/sim/core/stats"
 )
 
 // Could be in constants.go, but they won't be used anywhere else

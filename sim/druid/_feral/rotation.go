@@ -4,9 +4,9 @@ import (
 	"math"
 	"time"
 
-	"github.com/wowsims/classic/sod/sim/core"
-	"github.com/wowsims/classic/sod/sim/core/proto"
-	"github.com/wowsims/classic/sod/sim/druid"
+	"github.com/wowsims/sod/sim/core"
+	"github.com/wowsims/sod/sim/core/proto"
+	"github.com/wowsims/sod/sim/druid"
 )
 
 func (cat *FeralDruid) OnEnergyGain(sim *core.Simulation) {

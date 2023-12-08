@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/wowsims/classic/sod/sim/core/proto"
+	"github.com/wowsims/sod/sim/core/proto"
 )
 
 // Agent can be thought of as the 'Player', i.e. the thing controlling the Character.

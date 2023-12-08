@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
-	_ "github.com/wowsims/classic/sod/sim/common"
-	"github.com/wowsims/classic/sod/sim/core"
-	"github.com/wowsims/classic/sod/sim/core/proto"
+	_ "github.com/wowsims/sod/sim/common"
+	"github.com/wowsims/sod/sim/core"
+	"github.com/wowsims/sod/sim/core/proto"
 	googleProto "google.golang.org/protobuf/proto"
 )
 
