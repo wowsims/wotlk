@@ -74,15 +74,14 @@
 }
 
 .item-picker-rune-container {
-  @include vertical-bottom;
-  @include horizontal-center;
-  width: 100%;
+  @include vertical-top;
+  @include horizontal-right;
   display: flex;
   justify-content: center;
 
   .item-picker-rune-icon {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 1.75rem;
+    height: 1.75rem;
   }
 }
 
