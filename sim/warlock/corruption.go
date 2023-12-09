@@ -61,7 +61,6 @@ func (warlock *Warlock) getCorruptionConfig(rank int) core.SpellConfig {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
 				spell.Dot(target).Apply(sim)
-				warlock.EverlastingAfflictionRefresh(sim, target)
 			}
 			spell.DealOutcome(sim, result)
 		},
