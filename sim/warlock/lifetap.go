@@ -10,8 +10,8 @@ func (warlock *Warlock) getLifeTapBaseConfig(rank int) core.SpellConfig {
 	level := [7]int{0, 6, 16, 26, 36, 46, 56}[rank]
 
 	actionID := core.ActionID{SpellID: spellId}
-	impLifetap := 1.0 + 0.1*float64(warlock.Talents.ImprovedLifeTap)
 	manaMetrics := warlock.NewManaMetrics(actionID)
+	impLifetap := 1.0 + 0.1*float64(warlock.Talents.ImprovedLifeTap)
 
 	return core.SpellConfig{
 		ActionID:      actionID,
@@ -33,7 +33,7 @@ func (warlock *Warlock) getLifeTapBaseConfig(rank int) core.SpellConfig {
 			restore := baseDamage * impLifetap
 			// TODO: Deal damage to warlock for tank sims
 
-			if warlock.MetamorphosisAura.IsActive() {
+			if warlock.MetamorphosisAura != nil && warlock.MetamorphosisAura.IsActive() {
 				restore *= 2
 			}
 			warlock.AddMana(sim, restore, manaMetrics)
