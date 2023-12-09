@@ -827,11 +827,15 @@ export class Player<SpecType extends Spec> {
 		const type = this.getRotationType();
 		if (type == APLRotationType.TypeAuto && this.autoRotationGenerator) {
 			// Clone to avoid modifying preset rotations, which are often returned directly.
-			return APLRotation.clone(this.autoRotationGenerator(this));
+			const rot = APLRotation.clone(this.autoRotationGenerator(this));
+			rot.type = APLRotationType.TypeAuto;
+			return rot;
 		} else if (type == APLRotationType.TypeSimple && this.simpleRotationGenerator) {
 			// Clone to avoid modifying preset rotations, which are often returned directly.
-			const rot = APLRotation.clone(this.simpleRotationGenerator(this, this.getRotation(), this.getCooldowns()));
-			rot.type = APLRotationType.TypeAPL; // Set this here for convenience, so the generator functions don't need to.
+			const simpleRot = this.getRotation();
+			const rot = APLRotation.clone(this.simpleRotationGenerator(this, simpleRot, this.getCooldowns()));
+			rot.simple = this.aplRotation.simple;
+			rot.type = APLRotationType.TypeSimple; // Set this here for convenience, so the generator functions don't need to.
 			return rot;
 		} else {
 			return this.aplRotation;
