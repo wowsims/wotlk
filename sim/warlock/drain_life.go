@@ -85,7 +85,7 @@ func (warlock *Warlock) getDrainLifeBaseConfig(rank int) core.SpellConfig {
 				dot := spell.Dot(target)
 				return dot.CalcSnapshotDamage(sim, target, spell.OutcomeExpectedMagicAlwaysHit)
 			} else {
-				baseDmg := (142 + 0.429*spell.SpellPower())
+				baseDmg := baseDamage + spellCoeff*spell.SpellPower()
 				return spell.CalcPeriodicDamage(sim, target, baseDmg, spell.OutcomeExpectedMagicAlwaysHit)
 			}
 		},
