@@ -63,7 +63,9 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	divineSpirit: true,
 	trueshotAura: true,
 	leaderOfThePack: true,
-	moonkinAura: true,
+	moonkinAura: false,
+	windfuryTotem: true,
+	battleShout: TristateEffect.TristateEffectImproved,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({

@@ -24,10 +24,10 @@ func (warlock *Warlock) registerIncinerateSpell() {
 		ActionID: core.ActionID{SpellID: 412758},
 		Duration: time.Second * 15,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFire] *= 1.15
+			warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFire] *= 1.25
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFire] /= 1.15
+			warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFire] /= 1.25
 		},
 	})
 
@@ -35,30 +35,36 @@ func (warlock *Warlock) registerIncinerateSpell() {
 		ActionID:     core.ActionID{SpellID: 412758},
 		SpellSchool:  core.SpellSchoolFire,
 		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        core.SpellFlagAPL,
+		Flags:        core.SpellFlagAPL | core.SpellFlagResetAttackSwing,
 		MissileSpeed: 24,
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.14,
-			Multiplier: 1,
+			Multiplier: 1 - float64(warlock.Talents.Cataclysm)*0.01,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:      core.GCDDefault,
-				CastTime: time.Millisecond * time.Duration(2250),
+				CastTime: time.Millisecond * 2250,
 			},
 		},
 
-		BonusCritRating:          1 * float64(warlock.Talents.Devastation) * core.SpellCritRatingPerCritChance,
+		BonusCritRating:          float64(warlock.Talents.Devastation) * core.SpellCritRatingPerCritChance,
+		DamageMultiplier:         1 + 0.02*float64(warlock.Talents.Emberstorm),
 		DamageMultiplierAdditive: 1,
 		CritMultiplier:           warlock.SpellCritMultiplier(1, core.TernaryFloat64(warlock.Talents.Ruin, 1, 0)),
-		ThreatMultiplier:         1 - 0.1*float64(warlock.Talents.DestructiveReach),
+		ThreatMultiplier:         1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			var baseDamage = sim.Roll(baseLowDamage, baseHightDamage) + spellCoeff*spell.SpellPower()
+			if warlock.LakeOfFireAuras != nil && warlock.LakeOfFireAuras.Get(target).IsActive() {
+				baseDamage *= 1.4
+			}
 
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+
 			warlock.IncinerateAura.Activate(sim)
+
 			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
 				spell.DealDamage(sim, result)
 			})

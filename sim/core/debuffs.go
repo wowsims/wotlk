@@ -14,6 +14,11 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 		MakePermanent(JudgementOfWisdomAura(target))
 	}
 
+	if debuffs.ImprovedShadowBolt {
+		//TODO: Apply periodically
+		MakePermanent(ImprovedShadowBoltAura(target, 5))
+	}
+
 	if debuffs.CurseOfElements {
 		MakePermanent(CurseOfElementsAura(target))
 	}
@@ -101,6 +106,33 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 	// 	}
 	// 	MakePermanent(HuntersMarkAura(target, points, glyphed))
 	// }
+}
+
+func ImprovedShadowBoltAura(unit *Unit, level int32) *Aura {
+	damageMulti := 1. + 0.04*float64(level)
+	return unit.RegisterAura(Aura{
+		Label:     "Improved Shadow Bolt",
+		ActionID:  ActionID{SpellID: 17800},
+		Duration:  12 * time.Second,
+		MaxStacks: 4,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexShadow] *= damageMulti
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexShadow] /= damageMulti
+		},
+		OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
+			if spell.SpellSchool != SpellSchoolShadow {
+				return
+			}
+
+			if !result.Landed() {
+				return
+			}
+
+			aura.RemoveStack(sim)
+		},
+	})
 }
 
 func ScheduledMajorArmorAura(aura *Aura, options PeriodicActionOptions, raid *proto.Raid) {

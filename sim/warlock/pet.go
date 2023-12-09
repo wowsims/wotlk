@@ -34,12 +34,12 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		cfg.Name = "Imp"
 		cfg.PowerModifier = 0.33 // GetUnitPowerModifier("pet")
 		cfg.Stats = stats.Stats{
-			stats.Strength:  297,
-			stats.Agility:   79,
-			stats.Stamina:   118,
-			stats.Intellect: 369,
-			stats.Spirit:    367,
-			stats.Mana:      1174,
+			stats.Strength:  47,
+			stats.Agility:   25,
+			stats.Stamina:   115,
+			stats.Intellect: 123,
+			stats.Spirit:    95,
+			stats.Mana:      60,
 			stats.MP5:       270, // rough guess, unclear if it's affected by other stats
 			stats.MeleeCrit: 3.454 * core.CritRatingPerCritChance,
 			stats.SpellCrit: 0.9075 * core.CritRatingPerCritChance,
@@ -48,19 +48,19 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		cfg.Name = "Succubus"
 		cfg.PowerModifier = 0.77 // GetUnitPowerModifier("pet")
 		cfg.Stats = stats.Stats{
-			stats.Strength:  314,
-			stats.Agility:   90,
-			stats.Stamina:   328,
-			stats.Intellect: 150,
-			stats.Spirit:    209,
-			stats.Mana:      1559,
+			stats.Strength:  50,
+			stats.Agility:   40,
+			stats.Stamina:   100,
+			stats.Intellect: 64,
+			stats.Spirit:    51,
+			stats.Mana:      60,
 			stats.MeleeCrit: 3.2685 * core.CritRatingPerCritChance,
 			stats.SpellCrit: 3.3355 * core.CritRatingPerCritChance,
 		}
 		cfg.AutoAttacks = core.AutoAttackOptions{
 			MainHand: core.Weapon{
-				BaseDamageMin:  98,
-				BaseDamageMax:  147,
+				BaseDamageMin:  23,
+				BaseDamageMax:  38,
 				SwingSpeed:     2,
 				CritMultiplier: 2,
 			},
@@ -114,12 +114,11 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 
 		// Fix pet stats resulting from gaining the incorrect amount of stats from suppression/hit debuff
 		// see makeStatInheritance() below for a more details about these values
-		stats.MeleeHit: -float64(warlock.Talents.Suppression) * core.MeleeHitRatingPerHitChance,
-		stats.SpellHit: (-5.0 * float64(warlock.Talents.Suppression)) / 12.0 * core.SpellHitRatingPerHitChance,
+		//stats.MeleeHit: -float64(warlock.Talents.Suppression) * core.MeleeHitRatingPerHitChance,
+		//stats.SpellHit: (-5.0 * float64(warlock.Talents.Suppression)) / 12.0 * core.SpellHitRatingPerHitChance,
 	})
 
-	// TODO: Classic correct melee pet scaling with talent
-	wp.PseudoStats.DamageDealtMultiplier *= 1.0 + 0.04*float64(warlock.Talents.UnholyPower)
+	wp.AutoAttacks.MHConfig().DamageMultiplier *= 1.0 + 0.04*float64(warlock.Talents.UnholyPower)
 
 	if warlock.Options.Summon != proto.Warlock_Options_Imp { // imps generally don't melee
 		wp.EnableAutoAttacks(wp, cfg.AutoAttacks)
@@ -177,7 +176,7 @@ func (wp *WarlockPet) GetPet() *core.Pet {
 func (wp *WarlockPet) Initialize() {
 	switch wp.owner.Options.Summon {
 	case proto.Warlock_Options_Succubus:
-		// wp.registerLashOfPainSpell()
+		wp.registerLashOfPainSpell()
 	case proto.Warlock_Options_Felhunter:
 		// wp.registerShadowBiteSpell()
 	case proto.Warlock_Options_Imp:
@@ -233,10 +232,10 @@ func (warlock *Warlock) makeStatInheritance() core.PetStatInheritance {
 			stats.AttackPower:      ownerStats[stats.SpellPower] * 0.57,
 			stats.SpellPower:       ownerStats[stats.SpellPower] * 0.15,
 			stats.SpellPenetration: ownerStats[stats.SpellPenetration],
-			// stats.SpellCrit:        improvedDemonicTactics * 0.1 * ownerStats[stats.SpellCrit],
-			// stats.MeleeCrit:        improvedDemonicTactics * 0.1 * ownerStats[stats.SpellCrit],
-			stats.MeleeHit: ownerHitChance * core.MeleeHitRatingPerHitChance,
-			stats.SpellHit: math.Floor(ownerStats[stats.SpellHit] / 12.0 * 17.0),
+			stats.MeleeHit:         ownerHitChance * core.MeleeHitRatingPerHitChance,
+			stats.SpellHit:         math.Floor(ownerStats[stats.SpellHit] / 12.0 * 17.0),
+			stats.MeleeCrit:        0,
+			stats.SpellCrit:        0,
 		}
 	}
 }

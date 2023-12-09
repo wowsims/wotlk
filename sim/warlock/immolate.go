@@ -19,13 +19,13 @@ func (warlock *Warlock) getImmolateConfig(rank int) core.SpellConfig {
 		ActionID:      core.ActionID{SpellID: spellId},
 		SpellSchool:   core.SpellSchoolFire,
 		ProcMask:      core.ProcMaskSpellDamage,
-		Flags:         core.SpellFlagAPL,
+		Flags:         core.SpellFlagAPL | core.SpellFlagResetAttackSwing,
 		Rank:          rank,
 		RequiredLevel: level,
 
 		ManaCost: core.ManaCostOptions{
 			FlatCost:   manaCost,
-			Multiplier: 1 - 0.05*float64(warlock.Talents.Cataclysm),
+			Multiplier: 1 - float64(warlock.Talents.Cataclysm)*0.01,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -34,9 +34,9 @@ func (warlock *Warlock) getImmolateConfig(rank int) core.SpellConfig {
 			},
 		},
 
-		BonusHitRating:   2 * float64(warlock.Talents.Suppression) * core.SpellHitRatingPerHitChance,
-		BonusCritRating:  1 * float64(warlock.Talents.Devastation) * core.SpellCritRatingPerCritChance,
-		DamageMultiplier: 1 + 0.05*float64(warlock.Talents.ImprovedImmolate),
+		BonusHitRating:   0,
+		BonusCritRating:  float64(warlock.Talents.Devastation) * core.SpellCritRatingPerCritChance,
+		DamageMultiplier: 1 + 0.05*float64(warlock.Talents.ImprovedImmolate) + 0.02*float64(warlock.Talents.Emberstorm),
 		CritMultiplier:   warlock.SpellCritMultiplier(1, core.TernaryFloat64(warlock.Talents.Ruin, 1, 0)),
 		ThreatMultiplier: 1,
 
@@ -50,6 +50,11 @@ func (warlock *Warlock) getImmolateConfig(rank int) core.SpellConfig {
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 				dot.SnapshotBaseDamage = dotDamage/5 + dotCoeff*dot.Spell.SpellPower()
+
+				if warlock.LakeOfFireAuras != nil && warlock.LakeOfFireAuras.Get(target).IsActive() {
+					dot.SnapshotBaseDamage *= 1.4
+				}
+
 				dot.SnapshotAttackerMultiplier = 1 // dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {

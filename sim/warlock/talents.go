@@ -17,6 +17,16 @@ func (warlock *Warlock) ApplyTalents() {
 	if warlock.Talents.Emberstorm > 0 {
 		warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFire] *= .02 * float64(warlock.Talents.Emberstorm)
 	}
+
+	if warlock.Talents.ImprovedShadowBolt > 0 {
+		warlock.applyImprovedShadowBolt()
+	}
+}
+
+func (warlock *Warlock) applyImprovedShadowBolt() {
+	warlock.ImprovedShadowBoltAuras = warlock.NewEnemyAuraArray(func(unit *core.Unit, level int32) *core.Aura {
+		return core.ImprovedShadowBoltAura(unit, warlock.Talents.ImprovedShadowBolt)
+	})
 }
 
 func (warlock *Warlock) applyWeaponImbue() {

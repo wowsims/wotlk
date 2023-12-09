@@ -14,12 +14,13 @@ func (warlock *Warlock) getCorruptionConfig(rank int) core.SpellConfig {
 	manaCost := [8]float64{0, 35, 55, 100, 160, 225, 290, 340}[rank]
 	ticks := [8]int32{0, 4, 5, 6, 6, 6, 6, 6}[rank]
 	level := [8]int{0, 4, 14, 24, 34, 44, 54, 60}[rank]
+	castTime := time.Millisecond * (2000 - (400 * time.Duration(warlock.Talents.ImprovedCorruption)))
 
 	return core.SpellConfig{
 		ActionID:      core.ActionID{SpellID: spellId},
 		SpellSchool:   core.SpellSchoolShadow,
 		ProcMask:      core.ProcMaskSpellDamage,
-		Flags:         core.SpellFlagAPL | core.SpellFlagHauntSE,
+		Flags:         core.SpellFlagAPL | core.SpellFlagHauntSE | core.SpellFlagResetAttackSwing,
 		Rank:          rank,
 		RequiredLevel: level,
 
@@ -28,11 +29,12 @@ func (warlock *Warlock) getCorruptionConfig(rank int) core.SpellConfig {
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD: core.GCDDefault,
+				CastTime: castTime,
+				GCD:      core.GCDDefault,
 			},
 		},
 
-		BonusHitRating:   0,
+		BonusHitRating:   float64(warlock.Talents.Suppression) * 2 * core.CritRatingPerCritChance,
 		BonusCritRating:  0,
 		DamageMultiplier: 1,
 		CritMultiplier:   1,
@@ -59,6 +61,7 @@ func (warlock *Warlock) getCorruptionConfig(rank int) core.SpellConfig {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
 				spell.Dot(target).Apply(sim)
+				warlock.EverlastingAfflictionRefresh(sim, target)
 			}
 			spell.DealOutcome(sim, result)
 		},
