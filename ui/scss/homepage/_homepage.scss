@@ -16,11 +16,13 @@
   flex-direction: column;
 
 
-  .homepage-header-container,
-  .homepage-content-container,
-  .homepage-footer-container {
-    padding-top: map.get($spacers, 4);
-    padding-bottom: map.get($spacers, 4);
+  .homepage-header-container {
+    padding-top: calc(var(--container-padding) / 2);
+  }
+
+  .homepage-content-container {
+    padding-top: var(--container-padding);
+    padding-bottom: var(--container-padding);
   }
 
   .homepage-header {
@@ -31,7 +33,7 @@
         display: flex;
 
         .wowsims-logo {
-          width: 75px;
+          width: 6rem;
           margin-right: map.get($spacers, 3);
         }
   
@@ -40,6 +42,7 @@
           @extend .fw-bold;
           color: $brand;
           margin: 0;
+          line-height: 1;
         }
       }
 
@@ -51,10 +54,9 @@
       }
     }
 
-    .wrath-title {
+    .expansion-title {
       color: $wrath-blue;
       margin: 0;
-      font-weight: bold;
     }
   }
 
@@ -62,7 +64,7 @@
     flex-direction: column;
 
     .info-container {
-      margin-bottom: map.get($spacers, 5);
+      margin-bottom: var(--container-padding);
       display: flex;
       flex-direction: column;
 
@@ -86,6 +88,7 @@
         }
 
         &> .sim-link, &> .sim-link-dropdown {
+          max-width: 25%;
           flex: 1 25%;
           margin-right: 25%;
         }
