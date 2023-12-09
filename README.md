@@ -54,16 +54,16 @@ npm install
 ## Docker
 Alternatively, install Docker and your workflow will look something like this:
 ```sh
-git clone https://github.com/wowsims/classic-sod.git
+git clone https://github.com/wowsims/sod.git
 cd wotlk
 
 # Build the docker image and install npm dependencies (only need to run these once).
-docker build --tag wowsims-classic .
-docker run --rm -v $(pwd):/classic wowsims-classic npm install
+docker build --tag wowsims-sod .
+docker run --rm -v $(pwd):/sod wowsims-sod npm install
 
-# Now you can run the commands as shown in the Commands sections, preceding everything with, "docker run --rm -it -p 8080:8080 -v $(pwd):/classic wowsims-classic".
+# Now you can run the commands as shown in the Commands sections, preceding everything with, "docker run --rm -it -p 8080:8080 -v $(pwd):/sod wowsims-sod".
 # For convenience, set this as an environment variable:
-WOTLK_CMD="docker run --rm -it -p 8080:8080 -v $(pwd):/classic wowsims-classic"
+WOTLK_CMD="docker run --rm -it -p 8080:8080 -v $(pwd):/sod wowsims-sod"
 
 # ... do some coding on the sim ...
 
