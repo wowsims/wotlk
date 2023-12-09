@@ -169,6 +169,7 @@ var holySpellPowerRegex = regexp.MustCompile(`Increases damage done by Holy spel
 var natureSpellPowerRegex = regexp.MustCompile(`Increases damage done by Nature spells and effects by up to ([0-9]+)\.`)
 var shadowSpellPowerRegex = regexp.MustCompile(`Increases damage done by Shadow spells and effects by up to ([0-9]+)\.`)
 
+var hitRegex = regexp.MustCompile(`Improves your chance to hit with spells and with melee and ranged attacks by ([0-9]+)%\.`)
 var physicalHitRegex = regexp.MustCompile(`Improves your chance to hit by ([0-9]+)%\.`)
 var spellHitRegex = regexp.MustCompile(`Improves your chance to hit with spells by ([0-9]+)%\.`)
 var spellCritRegex = regexp.MustCompile(`Improves your chance to get a critical strike with spells by ([0-9]+)%\.`)
@@ -227,8 +228,8 @@ func (item WowheadItemResponse) GetStats() Stats {
 		proto.Stat_StatHolyPower:         float64(item.GetIntValue(holySpellPowerRegex)),
 		proto.Stat_StatNaturePower:       float64(item.GetIntValue(natureSpellPowerRegex)),
 		proto.Stat_StatShadowPower:       float64(item.GetIntValue(shadowSpellPowerRegex)),
-		proto.Stat_StatSpellHit:          float64(item.GetIntValue(spellHitRegex)),
-		proto.Stat_StatMeleeHit:          float64(item.GetIntValue(physicalHitRegex)),
+		proto.Stat_StatSpellHit:          float64(item.GetIntValue(hitRegex) + item.GetIntValue(spellHitRegex)),
+		proto.Stat_StatMeleeHit:          float64(item.GetIntValue(hitRegex) + item.GetIntValue(physicalHitRegex)),
 		proto.Stat_StatSpellCrit:         float64(item.GetIntValue(spellCritRegex)),
 		proto.Stat_StatMeleeCrit:         float64(item.GetIntValue(meleeCritRegex)),
 		proto.Stat_StatSpellHaste:        float64(item.GetIntValue(hasteRegex)),
