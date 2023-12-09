@@ -606,7 +606,7 @@ func (character *Character) GetProcMaskForItem(itemID int32) ProcMask {
 
 func (character *Character) GetProcMaskForTypes(weaponTypes ...proto.WeaponType) ProcMask {
 	return character.getProcMaskFor(func(weapon *Item) bool {
-		return slices.Contains(weaponTypes, weapon.WeaponType)
+		return weapon == nil || slices.Contains(weaponTypes, weapon.WeaponType)
 	})
 }
 
