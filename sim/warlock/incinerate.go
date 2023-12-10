@@ -35,7 +35,7 @@ func (warlock *Warlock) registerIncinerateSpell() {
 		ActionID:     core.ActionID{SpellID: 412758},
 		SpellSchool:  core.SpellSchoolFire,
 		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        core.SpellFlagAPL | core.SpellFlagResetAttackSwing,
+		Flags:        core.SpellFlagAPL | core.SpellFlagResetAttackSwing | core.SpellFlagBinary,
 		MissileSpeed: 24,
 
 		ManaCost: core.ManaCostOptions{
