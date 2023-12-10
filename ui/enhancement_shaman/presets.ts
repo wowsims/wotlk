@@ -19,12 +19,7 @@ import {
 
 import * as PresetUtils from '../core/preset_utils.js';
 
-import P1Gear from './gear_sets/p1.gear.json';
-import P2FtGear from './gear_sets/p2_ft.gear.json';
-import P2WfGear from './gear_sets/p2_wf.gear.json';
-import P3AllianceGear from './gear_sets/p3_alliance.gear.json';
-import P3HordeGear from './gear_sets/p3_horde.gear.json';
-import PreraidGear from './gear_sets/preraid.gear.json';
+import BlankGear from './gear_sets/blank.gear.json';
 
 import DefaultFt from './apls/default_ft.apl.json';
 import DefaultWf from './apls/default_wf.apl.json';
@@ -34,12 +29,7 @@ import Phase3Apl from './apls/phase_3.apl.json';
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
 
-export const PRERAID_PRESET = PresetUtils.makePresetGear('Preraid Preset', PreraidGear);
-export const P1_PRESET = PresetUtils.makePresetGear('P1 Preset', P1Gear);
-export const P2_PRESET_FT = PresetUtils.makePresetGear('P2 Preset FT', P2FtGear);
-export const P2_PRESET_WF = PresetUtils.makePresetGear('P2 Preset WF', P2WfGear);
-export const P3_PRESET_ALLIANCE = PresetUtils.makePresetGear('P3 Preset [A]', P3AllianceGear, { faction: Faction.Alliance });
-export const P3_PRESET_HORDE = PresetUtils.makePresetGear('P3 Preset [H]', P3HordeGear, { faction: Faction.Horde });
+export const DefaultGear = PresetUtils.makePresetGear('Blank', BlankGear);
 
 export const DefaultRotation = EnhancementShamanRotation.create({
 	totems: ShamanTotems.create({

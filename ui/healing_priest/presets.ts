@@ -24,12 +24,7 @@ import {
 
 import * as PresetUtils from '../core/preset_utils.js';
 
-import PreraidDiscGear from './gear_sets/preraid_disc.gear.json';
-import PreraidHolyGear from './gear_sets/preraid_holy.gear.json';
-import P1DiscGear from './gear_sets/p1_disc.gear.json';
-import P1HolyGear from './gear_sets/p1_holy.gear.json';
-import P2DiscGear from './gear_sets/p2_disc.gear.json';
-import P2HolyGear from './gear_sets/p2_holy.gear.json';
+import BlankGear from './gear_sets/blank.gear.json';
 
 import DiscApl from './apls/disc.apl.json';
 import HolyApl from './apls/holy.apl.json';
@@ -38,12 +33,8 @@ import HolyApl from './apls/holy.apl.json';
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
 
-export const DISC_PRERAID_PRESET = PresetUtils.makePresetGear('Disc Preraid Preset', PreraidDiscGear, { talentTree: 0 });
-export const DISC_P1_PRESET = PresetUtils.makePresetGear('Disc P1 Preset', P1DiscGear, { talentTree: 0 });
-export const DISC_P2_PRESET = PresetUtils.makePresetGear('Disc P2 Preset', P2DiscGear, { talentTree: 0 });
-export const HOLY_PRERAID_PRESET = PresetUtils.makePresetGear('Holy Preraid Preset', PreraidHolyGear, { talentTree: 1 });
-export const HOLY_P1_PRESET = PresetUtils.makePresetGear('Holy P1 Preset', P1HolyGear, { talentTree: 1 });
-export const HOLY_P2_PRESET = PresetUtils.makePresetGear('Holy P2 Preset', P2HolyGear, { talentTree: 1 });
+export const DiscDefaultGear = PresetUtils.makePresetGear('Blank', BlankGear, { talentTree: 0 });
+export const HolyDefaultGear = PresetUtils.makePresetGear('Blank', BlankGear, { talentTree: 1 });
 
 export const DiscDefaultRotation = Rotation.create({
 	type: RotationType.Cycle,

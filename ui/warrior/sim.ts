@@ -208,10 +208,4 @@ export class WarriorSimUI extends IndividualSimUI<Spec.SpecWarrior> {
 		await this.sim.updateCharacterStats(TypedEvent.nextEventID());
 		return Stats.fromProto(this.player.getCurrentStats().finalStats);
 	}
-
-	calcDistanceToArpTarget(numJcArpGems: number, passiveArp: number, numRedSockets: number, arpCap: number, arpTarget: number): number {
-		const numNormalArpGems = Math.max(0, Math.min(numRedSockets - 3, Math.floor((arpCap - passiveArp - 34 * numJcArpGems) / 20)));
-		const projectedArp = passiveArp + 34 * numJcArpGems + 20 * numNormalArpGems;
-		return Math.abs(projectedArp - arpTarget);
-	}
 }

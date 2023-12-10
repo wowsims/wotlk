@@ -16,8 +16,9 @@ import {
 
 import * as PresetUtils from '../core/preset_utils.js';
 
-import DefaultAPL from './apls/default.apl.json';
 import DefaultBlankGear from './gear_sets/blank.gear.json';
+
+import DefaultAPL from './apls/default.apl.json';
 
 export const DEFAULT_GEAR = PresetUtils.makePresetGear('Default', DefaultBlankGear, { talentTree: 0 });
 export const ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Default', DefaultAPL, { talentTree: 0 });

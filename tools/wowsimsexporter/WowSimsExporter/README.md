@@ -20,7 +20,7 @@ If anyone would like to test it, you can just download it from the releases on t
     /wse open - will open the exporter window.
     /wse export will open the exporter window, generate the data, and have the data ready and highlighted for you to CTRL+C
 
-If you change your gear, and enchants or some gems, you can either rerun `/wse export` if you closed the window and the data will be updated. or just click the `Generate Data` button.
+If you change your gear, and enchants, you can either rerun `/wse export` if you closed the window and the data will be updated. or just click the `Generate Data` button.
 
 **To find the import button**
 
@@ -30,7 +30,7 @@ This will add a addon button to the import type list.
 
 
 # INFO
-The aim for this project is to have an addon to export your characters gear, enchants, and gems to any number of simulation websites that are floating around, currently the only support is for the team at wowsims.github.io.
+The aim for this project is to have an addon to export your characters gear and enchants to any number of simulation websites that are floating around, currently the only support is for the team at wowsims.github.io.
 
 
 # CONTRIBUTING

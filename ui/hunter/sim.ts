@@ -98,7 +98,7 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.SV_P1_PRESET.gear,
+				gear: Presets.SurvivalDefaultGear.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatStamina]: 0.5,
@@ -194,18 +194,9 @@ export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.MM_PRERAID_PRESET,
-					Presets.MM_P1_PRESET,
-					Presets.MM_P2_PRESET,
-					Presets.MM_P3_PRESET,
-					Presets.MM_P4_PRESET,
-					Presets.MM_P5_PRESET,
-					Presets.SV_PRERAID_PRESET,
-					Presets.SV_P1_PRESET,
-					Presets.SV_P2_PRESET,
-					Presets.SV_P3_PRESET,
-					Presets.SV_P4_PRESET,
-					Presets.SV_P5_PRESET,
+					Presets.BeastMasteryDefaultGear,
+					Presets.MarksmanDefaultGear,
+					Presets.SurvivalDefaultGear,
 				],
 			},
 

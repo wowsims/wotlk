@@ -74,7 +74,7 @@ export class EquippedItem {
 	}
 
 	/**
-	 * Replaces the item and tries to keep the existing enchants/gems if possible.
+	 * Replaces the item and tries to keep the existing enchants if possible.
 	 */
 	withItem(item: Item): EquippedItem {
 		let newEnchant = null;

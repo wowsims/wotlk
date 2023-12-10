@@ -90,7 +90,7 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P1_PRESET.gear,
+				gear: Presets.DefaultGear.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatStrength]: 2.53,
@@ -197,12 +197,7 @@ export class RetributionPaladinSimUI extends IndividualSimUI<Spec.SpecRetributio
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.PRERAID_PRESET,
-					Presets.P1_PRESET,
-					Presets.P2_PRESET,
-					Presets.P3_PRESET,
-					Presets.P4_PRESET,
-					Presets.P5_PRESET,
+					Presets.DefaultGear,
 				],
 			},
 

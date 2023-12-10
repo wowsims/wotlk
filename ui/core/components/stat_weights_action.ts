@@ -218,9 +218,6 @@ class EpWeightsMenu extends BaseModal {
 			</div>
 		`;
 		this.footer!.innerHTML = `
-			<button class="btn btn-primary optimize-gems experimental me-2">
-				Optimize Gems
-			</button>
 			<button class="btn btn-primary calc-weights">
 				<i class="fas fa-calculator"></i>
 				Calculate

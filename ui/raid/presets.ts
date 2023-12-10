@@ -135,14 +135,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: FeralDruidPresets.P1_PRESET.gear,
-				2: FeralDruidPresets.P2_PRESET.gear,
-				3: FeralDruidPresets.P3_PRESET.gear,
+				1: FeralDruidPresets.DefaultGear.gear,
 			},
 			[Faction.Horde]: {
-				1: FeralDruidPresets.P1_PRESET.gear,
-				2: FeralDruidPresets.P2_PRESET.gear,
-				3: FeralDruidPresets.P3_PRESET.gear,
+				1: FeralDruidPresets.DefaultGear.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecFeralDruid],
@@ -163,12 +159,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: FeralTankDruidPresets.P1_PRESET.gear,
-				2: FeralTankDruidPresets.P2_PRESET.gear,
+				1: FeralTankDruidPresets.DefaultGear.gear,
 			},
 			[Faction.Horde]: {
-				1: FeralTankDruidPresets.P1_PRESET.gear,
-				2: FeralTankDruidPresets.P2_PRESET.gear,
+				1: FeralTankDruidPresets.DefaultGear.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecFeralTankDruid],
@@ -189,12 +183,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: RestorationDruidPresets.P1_PRESET.gear,
-				2: RestorationDruidPresets.P2_PRESET.gear,
+				1: RestorationDruidPresets.DefaultGear.gear,
 			},
 			[Faction.Horde]: {
-				1: RestorationDruidPresets.P1_PRESET.gear,
-				2: RestorationDruidPresets.P2_PRESET.gear,
+				1: RestorationDruidPresets.DefaultGear.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecRestorationDruid],
@@ -215,16 +207,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: HunterPresets.MM_P1_PRESET.gear,
-				2: HunterPresets.MM_P2_PRESET.gear,
-				3: HunterPresets.MM_P3_PRESET.gear,
-				4: HunterPresets.MM_P4_PRESET.gear,
+				1: HunterPresets.BeastMasteryDefaultGear.gear,
 			},
 			[Faction.Horde]: {
-				1: HunterPresets.MM_P1_PRESET.gear,
-				2: HunterPresets.MM_P2_PRESET.gear,
-				3: HunterPresets.MM_P3_PRESET.gear,
-				4: HunterPresets.MM_P4_PRESET.gear,
+				1: HunterPresets.BeastMasteryDefaultGear.gear,
 			},
 		},
 		tooltip: 'Beast Mastery Hunter',
@@ -245,16 +231,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: HunterPresets.MM_P1_PRESET.gear,
-				2: HunterPresets.MM_P2_PRESET.gear,
-				3: HunterPresets.MM_P3_PRESET.gear,
-				4: HunterPresets.MM_P4_PRESET.gear,
+				1: HunterPresets.MarksmanDefaultGear.gear,
 			},
 			[Faction.Horde]: {
-				1: HunterPresets.MM_P1_PRESET.gear,
-				2: HunterPresets.MM_P2_PRESET.gear,
-				3: HunterPresets.MM_P3_PRESET.gear,
-				4: HunterPresets.MM_P4_PRESET.gear,
+				1: HunterPresets.MarksmanDefaultGear.gear,
 			},
 		},
 		tooltip: 'Marksmanship Hunter',
@@ -275,16 +255,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: HunterPresets.SV_P1_PRESET.gear,
-				2: HunterPresets.SV_P2_PRESET.gear,
-				3: HunterPresets.SV_P3_PRESET.gear,
-				4: HunterPresets.SV_P4_PRESET.gear,
+				1: HunterPresets.SurvivalDefaultGear.gear,
 			},
 			[Faction.Horde]: {
-				1: HunterPresets.SV_P1_PRESET.gear,
-				2: HunterPresets.SV_P2_PRESET.gear,
-				3: HunterPresets.SV_P3_PRESET.gear,
-				4: HunterPresets.SV_P4_PRESET.gear,
+				1: HunterPresets.SurvivalDefaultGear.gear,
 			},
 		},
 		tooltip: 'Survival Hunter',
@@ -330,14 +304,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: RoguePresets.P1_PRESET_ASSASSINATION.gear,
-				2: RoguePresets.P2_PRESET_ASSASSINATION.gear,
-				3: RoguePresets.P3_PRESET_ASSASSINATION.gear,
+				1: RoguePresets.AssassinationDefaultGear.gear,
 			},
 			[Faction.Horde]: {
-				1: RoguePresets.P1_PRESET_ASSASSINATION.gear,
-				2: RoguePresets.P2_PRESET_ASSASSINATION.gear,
-				3: RoguePresets.P3_PRESET_ASSASSINATION.gear,
+				1: RoguePresets.AssassinationDefaultGear.gear,
 			},
 		},
 		tooltip: 'Assassination Rogue',
@@ -358,14 +328,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: RoguePresets.P1_PRESET_COMBAT.gear,
-				2: RoguePresets.P2_PRESET_COMBAT.gear,
-				3: RoguePresets.P3_PRESET_COMBAT.gear,
+				1: RoguePresets.CombatDefaultGear.gear,
 			},
 			[Faction.Horde]: {
-				1: RoguePresets.P1_PRESET_COMBAT.gear,
-				2: RoguePresets.P2_PRESET_COMBAT.gear,
-				3: RoguePresets.P3_PRESET_COMBAT.gear,
+				1: RoguePresets.CombatDefaultGear.gear,
 			},
 		},
 		tooltip: 'Combat Rogue',
@@ -386,16 +352,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: ElementalShamanPresets.P1_PRESET.gear,
-				2: ElementalShamanPresets.P2_PRESET.gear,
-				3: ElementalShamanPresets.P3_PRESET_ALLI.gear,
-				4: ElementalShamanPresets.P4_PRESET.gear,
+				1: ElementalShamanPresets.DefaultGear.gear,
 			},
 			[Faction.Horde]: {
-				1: ElementalShamanPresets.P1_PRESET.gear,
-				2: ElementalShamanPresets.P2_PRESET.gear,
-				3: ElementalShamanPresets.P3_PRESET_HORDE.gear,
-				4: ElementalShamanPresets.P4_PRESET.gear,
+				1: ElementalShamanPresets.DefaultGear.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecElementalShaman],
@@ -416,14 +376,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: EnhancementShamanPresets.P1_PRESET.gear,
-				2: EnhancementShamanPresets.P2_PRESET_FT.gear,
-				3: EnhancementShamanPresets.P3_PRESET_ALLIANCE.gear,
+				1: EnhancementShamanPresets.DefaultGear.gear,
 			},
 			[Faction.Horde]: {
-				1: EnhancementShamanPresets.P1_PRESET.gear,
-				2: EnhancementShamanPresets.P2_PRESET_FT.gear,
-				3: EnhancementShamanPresets.P3_PRESET_HORDE.gear,
+				1: EnhancementShamanPresets.DefaultGear.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecEnhancementShaman],
@@ -444,12 +400,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: RestorationShamanPresets.P1_PRESET.gear,
-				2: RestorationShamanPresets.P2_PRESET.gear,
+				1: RestorationShamanPresets.DefaultGear.gear,
 			},
 			[Faction.Horde]: {
-				1: RestorationShamanPresets.P1_PRESET.gear,
-				2: RestorationShamanPresets.P2_PRESET.gear,
+				1: RestorationShamanPresets.DefaultGear.gear,
 			},
 		},
 		tooltip: specNames[Spec.SpecRestorationShaman],
@@ -470,12 +424,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: HealingPriestPresets.DISC_P1_PRESET.gear,
-				2: HealingPriestPresets.DISC_P2_PRESET.gear,
+				1: HealingPriestPresets.DiscDefaultGear.gear,
 			},
 			[Faction.Horde]: {
-				1: HealingPriestPresets.DISC_P1_PRESET.gear,
-				2: HealingPriestPresets.DISC_P2_PRESET.gear,
+				1: HealingPriestPresets.DiscDefaultGear.gear,
 			},
 		},
 		tooltip: 'Discipline Priest',
@@ -496,12 +448,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: HealingPriestPresets.HOLY_P1_PRESET.gear,
-				2: HealingPriestPresets.HOLY_P2_PRESET.gear,
+				1: HealingPriestPresets.HolyDefaultGear.gear,
 			},
 			[Faction.Horde]: {
-				1: HealingPriestPresets.HOLY_P1_PRESET.gear,
-				2: HealingPriestPresets.HOLY_P2_PRESET.gear,
+				1: HealingPriestPresets.HolyDefaultGear.gear,
 			},
 		},
 		tooltip: 'Holy Priest',
@@ -592,12 +542,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: ProtectionWarriorPresets.P1_BALANCED_PRESET.gear,
-				2: ProtectionWarriorPresets.P2_SURVIVAL_PRESET.gear,
+				1: ProtectionWarriorPresets.DefaultGear.gear,
 			},
 			[Faction.Horde]: {
-				1: ProtectionWarriorPresets.P1_BALANCED_PRESET.gear,
-				2: ProtectionWarriorPresets.P2_SURVIVAL_PRESET.gear,
+				1: ProtectionWarriorPresets.DefaultGear.gear,
 			},
 		},
 		tooltip: 'Protection Warrior',
@@ -618,12 +566,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: HolyPaladinPresets.P1_PRESET.gear,
-				2: HolyPaladinPresets.P2_PRESET.gear,
+				1: HolyPaladinPresets.DefaultGear.gear,
 			},
 			[Faction.Horde]: {
-				1: HolyPaladinPresets.P1_PRESET.gear,
-				2: HolyPaladinPresets.P2_PRESET.gear,
+				1: HolyPaladinPresets.DefaultGear.gear,
 			},
 		},
 		tooltip: 'Holy Paladin',
@@ -644,12 +590,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: ProtectionPaladinPresets.P1_PRESET.gear,
-				2: ProtectionPaladinPresets.P2_PRESET.gear,
+				1: ProtectionPaladinPresets.DefaultGear.gear,
 			},
 			[Faction.Horde]: {
-				1: ProtectionPaladinPresets.P1_PRESET.gear,
-				2: ProtectionPaladinPresets.P2_PRESET.gear,
+				1: ProtectionPaladinPresets.DefaultGear.gear,
 			},
 		},
 		tooltip: 'Protection Paladin',
@@ -670,18 +614,10 @@ export const playerPresets: Array<PresetSpecSettings<any>> = [
 		defaultGear: {
 			[Faction.Unknown]: {},
 			[Faction.Alliance]: {
-				1: RetributionPaladinPresets.P1_PRESET.gear,
-				2: RetributionPaladinPresets.P2_PRESET.gear,
-				3: RetributionPaladinPresets.P3_PRESET.gear,
-				4: RetributionPaladinPresets.P4_PRESET.gear,
-				5: RetributionPaladinPresets.P5_PRESET.gear,
+				1: RetributionPaladinPresets.DefaultGear.gear,
 			},
 			[Faction.Horde]: {
-				1: RetributionPaladinPresets.P1_PRESET.gear,
-				2: RetributionPaladinPresets.P2_PRESET.gear,
-				3: RetributionPaladinPresets.P3_PRESET.gear,
-				4: RetributionPaladinPresets.P4_PRESET.gear,
-				5: RetributionPaladinPresets.P5_PRESET.gear,
+				1: RetributionPaladinPresets.DefaultGear.gear,
 			},
 		},
 		tooltip: 'Retribution Paladin',

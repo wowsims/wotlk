@@ -19,21 +19,13 @@ import {
 
 import * as PresetUtils from '../core/preset_utils.js';
 
-import P1Gear from './gear_sets/p1.gear.json';
-import P2Gear from './gear_sets/p2.gear.json';
-import P3Gear from './gear_sets/p3.gear.json';
-import P4Gear from './gear_sets/p4.gear.json';
-import PreraidGear from './gear_sets/preraid.gear.json';
+import BlankGear from './gear_sets/blank.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
 
-export const PRERAID_PRESET = PresetUtils.makePresetGear('Preraid Preset', PreraidGear);
-export const P1_PRESET = PresetUtils.makePresetGear('P1 Preset', P1Gear);
-export const P2_PRESET = PresetUtils.makePresetGear('P2 Preset', P2Gear);
-export const P3_PRESET = PresetUtils.makePresetGear('P3 Preset', P3Gear);
-export const P4_PRESET = PresetUtils.makePresetGear('P4 Preset', P4Gear);
+export const DefaultGear = PresetUtils.makePresetGear('Blank', BlankGear);
 
 export const DefaultRotation = FeralDruidRotation.create({
 	rotationType: FeralDruid_Rotation_AplType.SingleTarget,
