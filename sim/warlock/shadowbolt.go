@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
+	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (warlock *Warlock) getShadowBoltBaseConfig(rank int) core.SpellConfig {
@@ -13,6 +14,11 @@ func (warlock *Warlock) getShadowBoltBaseConfig(rank int) core.SpellConfig {
 	manaCost := [11]float64{0, 25, 40, 70, 110, 160, 210, 265, 315, 370, 380}[rank]
 	level := [11]int{0, 1, 6, 12, 20, 28, 36, 44, 52, 60, 60}[rank]
 	castTime := [11]int32{0, 1700, 2200, 2800, 3000, 3000, 3000, 3000, 3000, 3000, 3000}[rank]
+
+	shadowboltVolley := warlock.HasRune(proto.WarlockRune_RuneHandsShadowBoltVolley)
+	damageMulti := core.TernaryFloat64(shadowboltVolley, 0.8, 1.0)
+	numHits := min(core.TernaryInt32(shadowboltVolley, 5, 1), warlock.Env.GetNumTargets())
+	results := make([]*core.SpellResult, numHits)
 
 	return core.SpellConfig{
 		ActionID:      core.ActionID{SpellID: spellId},
@@ -37,22 +43,34 @@ func (warlock *Warlock) getShadowBoltBaseConfig(rank int) core.SpellConfig {
 		},
 
 		BonusCritRating:  float64(warlock.Talents.Devastation) * core.SpellCritRatingPerCritChance,
-		DamageMultiplier: 1,
+		DamageMultiplier: damageMulti,
 		CritMultiplier:   warlock.SpellCritMultiplier(1, core.TernaryFloat64(warlock.Talents.Ruin, 1, 0)),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := sim.Roll(baseDamage[0], baseDamage[1]) + spellCoeff*spell.SpellPower()
-			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+			curTarget := target
+			for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+				baseDamage := sim.Roll(baseDamage[0], baseDamage[1]) + spellCoeff*spell.SpellPower()
+				results[hitIndex] = spell.CalcDamage(sim, curTarget, baseDamage, spell.OutcomeMagicHitAndCrit)
 
-			if result.Landed() {
-				warlock.EverlastingAfflictionRefresh(sim, target)
+				curTarget = sim.Environment.NextTargetUnit(curTarget)
+			}
 
-				if warlock.Talents.ImprovedShadowBolt > 0 && result.DidCrit() {
-					impShadowBoltAura := warlock.ImprovedShadowBoltAuras.Get(target)
-					impShadowBoltAura.Activate(sim)
-					impShadowBoltAura.SetStacks(sim, 4)
+			curTarget = target
+			for hitIndex := int32(0); hitIndex < numHits; hitIndex++ {
+				spell.DealDamage(sim, results[hitIndex])
+
+				if results[hitIndex].Landed() {
+					warlock.EverlastingAfflictionRefresh(sim, curTarget)
+
+					if warlock.Talents.ImprovedShadowBolt > 0 && results[hitIndex].DidCrit() {
+						impShadowBoltAura := warlock.ImprovedShadowBoltAuras.Get(curTarget)
+						impShadowBoltAura.Activate(sim)
+						impShadowBoltAura.SetStacks(sim, 4)
+					}
 				}
+
+				curTarget = sim.Environment.NextTargetUnit(curTarget)
 			}
 		},
 	}

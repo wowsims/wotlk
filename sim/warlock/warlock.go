@@ -46,20 +46,19 @@ type Warlock struct {
 	CurseOfDoom          *core.Spell
 	AmplifyCurse         *core.Spell
 
-	DemonicEmpowerment     *core.Spell
-	DemonicEmpowermentAura *core.Aura
-	DemonicPactAura        *core.Aura
-	DemonicSoulAura        *core.Aura
-	HauntDebuffAuras       core.AuraArray
-	ImmolationAura         *core.Spell
-	IncinerateAura         *core.Aura
-	Metamorphosis          *core.Spell
-	MetamorphosisAura      *core.Aura
-	NightfallProcAura      *core.Aura
-	PyroclasmAura          *core.Aura
-	DemonicGraceAura       *core.Aura
-	AmplifyCurseAura       *core.Aura
-
+	DemonicEmpowerment      *core.Spell
+	DemonicEmpowermentAura  *core.Aura
+	DemonicPactAura         *core.Aura
+	DemonicSoulAura         *core.Aura
+	HauntDebuffAuras        core.AuraArray
+	ImmolationAura          *core.Spell
+	IncinerateAura          *core.Aura
+	Metamorphosis           *core.Spell
+	MetamorphosisAura       *core.Aura
+	NightfallProcAura       *core.Aura
+	PyroclasmAura           *core.Aura
+	DemonicGraceAura        *core.Aura
+	AmplifyCurseAura        *core.Aura
 	ImprovedShadowBoltAuras core.AuraArray
 	LakeOfFireAuras         core.AuraArray
 
@@ -111,7 +110,7 @@ func (warlock *Warlock) Initialize() {
 	// warlock.registerUnstableAfflictionSpell()
 	// warlock.registerDrainSoulSpell()
 	// warlock.registerConflagrateSpell()
-	// warlock.registerHauntSpell()
+	warlock.registerHauntSpell()
 	// warlock.registerDemonicEmpowermentSpell()
 	warlock.registerMetamorphosisSpell()
 	// warlock.registerDarkPactSpell()

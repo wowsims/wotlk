@@ -8,7 +8,8 @@ import (
 )
 
 func (warlock *Warlock) getDrainLifeBaseConfig(rank int) core.SpellConfig {
-	hasRune := warlock.HasRune(proto.WarlockRune_RuneChestMasterChanneler)
+	masterChanneler := warlock.HasRune(proto.WarlockRune_RuneChestMasterChanneler)
+	soulSiphon := warlock.HasRune(proto.WarlockRune_RuneChestSoulSiphon)
 
 	spellId := [7]int32{0, 689, 699, 709, 7651, 11699, 11700}[rank]
 	spellCoeff := [7]float64{0, .078, .1, .1, .1, .1, .1}[rank]
@@ -16,9 +17,9 @@ func (warlock *Warlock) getDrainLifeBaseConfig(rank int) core.SpellConfig {
 	manaCost := [7]float64{0, 55, 85, 135, 185, 240, 300}[rank]
 	level := [7]int{0, 14, 22, 30, 38, 46, 54}[rank]
 
-	ticks := core.TernaryInt32(hasRune, 15, 5)
+	ticks := core.TernaryInt32(masterChanneler, 15, 5)
 
-	if hasRune {
+	if masterChanneler {
 		manaCost *= 2
 	}
 
@@ -49,7 +50,7 @@ func (warlock *Warlock) getDrainLifeBaseConfig(rank int) core.SpellConfig {
 
 		Dot: core.DotConfig{
 			Aura: core.Aura{
-				Label: "Drain Life",
+				Label: "Drain Life-" + warlock.Label,
 			},
 			NumberOfTicks:       ticks,
 			TickLength:          1 * time.Second,
@@ -57,13 +58,27 @@ func (warlock *Warlock) getDrainLifeBaseConfig(rank int) core.SpellConfig {
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 				baseDmg := baseDamage + spellCoeff*dot.Spell.SpellPower()
+				if soulSiphon {
+					modifier := 1.0
+					if target.HasActiveAura("Corruption-" + warlock.Label) {
+						modifier += .06
+					}
+					if target.HasActiveAura("CurseofAgony-" + warlock.Label) {
+						modifier += .06
+					}
+					if target.HasActiveAura("Haunt-" + warlock.Label) {
+						modifier += .06
+					}
+					baseDmg *= modifier
+				}
 				dot.SnapshotBaseDamage = baseDmg
 				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				result := dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTickCounted)
+
 				health := result.Damage
-				if hasRune {
+				if masterChanneler {
 					health *= 1.5
 				}
 				warlock.GainHealth(sim, health, healthMetrics)
@@ -74,6 +89,7 @@ func (warlock *Warlock) getDrainLifeBaseConfig(rank int) core.SpellConfig {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
 				spell.SpellMetrics[target.UnitIndex].Hits--
+
 				dot := spell.Dot(target)
 				dot.Apply(sim)
 				dot.UpdateExpires(dot.ExpiresAt())
@@ -92,7 +108,7 @@ func (warlock *Warlock) getDrainLifeBaseConfig(rank int) core.SpellConfig {
 		},
 	}
 
-	if hasRune {
+	if masterChanneler {
 		spellConfig.Cast.CD = core.Cooldown{
 			Timer:    warlock.NewTimer(),
 			Duration: 15 * time.Second,
