@@ -83,9 +83,16 @@ func (warlock *Warlock) getDrainLifeBaseConfig(rank int) core.SpellConfig {
 				}
 				dot.SnapshotBaseDamage = baseDmg
 				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+
+				// Drain Life heals so it snapshots target modifiers
+				dot.SnapshotAttackerMultiplier *= dot.Spell.TargetDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex], true)
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				// Remove target modifiers and resists for the tick only
+				dot.Spell.Flags |= core.SpellFlagIgnoreTargetModifiers | core.SpellFlagIgnoreResists
 				result := dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTickCounted)
+				// add them back
+				dot.Spell.Flags ^= core.SpellFlagIgnoreTargetModifiers | core.SpellFlagIgnoreResists
 
 				health := result.Damage
 				if masterChanneler {

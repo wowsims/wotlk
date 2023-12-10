@@ -1,6 +1,9 @@
 package warlock
 
 import (
+	"math"
+	"time"
+
 	"github.com/wowsims/sod/sim/core"
 	"github.com/wowsims/sod/sim/core/proto"
 	"github.com/wowsims/sod/sim/core/stats"
@@ -8,6 +11,7 @@ import (
 
 func (warlock *Warlock) ApplyRunes() {
 	warlock.applyDemonicTactics()
+	warlock.applyDemonicPact()
 }
 
 func (warlock *Warlock) EverlastingAfflictionRefresh(sim *core.Simulation, target *core.Unit) {
@@ -35,89 +39,52 @@ func (warlock *Warlock) applyDemonicTactics() {
 	}
 }
 
-// TODO: Classic warlock demo pact rune
-// func (warlock *Warlock) updateDPASP(sim *core.Simulation) {
-// 	if sim.CurrentTime < 0 {
-// 		return
-// 	}
+func (warlock *Warlock) applyDemonicPact() {
+	if !warlock.HasRune(proto.WarlockRune_RuneLegsDemonicPact) {
+		return
+	}
 
-// 	dpspCurrent := warlock.DemonicPactAura.ExclusiveEffects[0].Priority
-// 	currentTimeJump := sim.CurrentTime.Seconds() - warlock.PreviousTime.Seconds()
+	if warlock.Options.Summon == proto.Warlock_Options_NoSummon {
+		return
+	}
 
-// 	if currentTimeJump > 0 {
-// 		warlock.DPSPAggregate += dpspCurrent * currentTimeJump
-// 		warlock.Metrics.UpdateDpasp(dpspCurrent * currentTimeJump)
+	icd := core.Cooldown{
+		Timer:    warlock.NewTimer(),
+		Duration: 1 * time.Second,
+	}
 
-// 		if sim.Log != nil {
-// 			warlock.Log(sim, "[Info] Demonic Pact spell power bonus average [%.0f]",
-// 				warlock.DPSPAggregate/sim.CurrentTime.Seconds())
-// 		}
-// 	}
+	spellPower := warlock.GetStat(stats.SpellPower)
+	demonicPactAuras := warlock.NewAllyAuraArray(func(u *core.Unit) *core.Aura {
+		return core.DemonicPactAura(u, spellPower, warlock.Level)
+	})
+	warlock.DemonicPactAura = demonicPactAuras[warlock.Index]
 
-// 	warlock.PreviousTime = sim.CurrentTime
-// }
+	warlock.Pet.RegisterAura(core.Aura{
+		Label:    "Demonic Pact Hidden Aura",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			warlock.PreviousTime = 0
+			aura.Activate(sim)
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.DidCrit() || !icd.IsReady(sim) {
+				return
+			}
 
-// func (warlock *Warlock) setupDemonicPact() {
-// 	if warlock.Talents.DemonicPact == 0 {
-// 		return
-// 	}
+			icd.Use(sim)
 
-// 	dpMult := 0.02 * float64(warlock.Talents.DemonicPact)
-// 	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *= 1. + dpMult
-// 	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFire] *= 1. + dpMult
-// 	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexArcane] *= 1. + dpMult
-// 	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexNature] *= 1. + dpMult
-// 	warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly] *= 1. + dpMult
+			spBonus := max(math.Round(warlock.GetStat(stats.SpellPower)*0.1), math.Round(float64(warlock.Level)/2))
+			for _, dpAura := range demonicPactAuras {
+				if dpAura != nil {
+					dpAura.ExclusiveEffects[0].SetPriority(sim, spBonus)
 
-// 	if warlock.Options.Summon == proto.Warlock_Options_NoSummon {
-// 		return
-// 	}
-
-// 	icd := core.Cooldown{
-// 		Timer:    warlock.NewTimer(),
-// 		Duration: 1 * time.Second,
-// 	}
-
-// 	var demonicPactAuras [25]*core.Aura
-// 	for _, party := range warlock.Party.Raid.Parties {
-// 		for _, player := range party.Players {
-// 			demonicPactAuras[player.GetCharacter().Index] = core.DemonicPactAura(player.GetCharacter())
-// 		}
-// 	}
-// 	warlock.DemonicPactAura = demonicPactAuras[warlock.Index]
-
-// 	warlock.Pet.RegisterAura(core.Aura{
-// 		Label:    "Demonic Pact Hidden Aura",
-// 		Duration: core.NeverExpires,
-// 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-// 			warlock.PreviousTime = 0
-// 			aura.Activate(sim)
-// 		},
-// 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-// 			warlock.updateDPASP(sim)
-// 		},
-// 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-// 			if !result.DidCrit() || !icd.IsReady(sim) {
-// 				return
-// 			}
-
-// 			icd.Use(sim)
-
-// 			lastBonus := 0.0
-// 			if warlock.DemonicPactAura.IsActive() {
-// 				lastBonus = warlock.DemonicPactAura.ExclusiveEffects[0].Priority
-// 			}
-// 			newSPBonus := math.Round(dpMult * warlock.GetStat(stats.SpellPower))
-
-// 			if warlock.DemonicPactAura.RemainingDuration(sim) < 10*time.Second || newSPBonus >= lastBonus {
-// 				warlock.updateDPASP(sim)
-// 				for _, dpAura := range demonicPactAuras {
-// 					if dpAura != nil {
-// 						dpAura.ExclusiveEffects[0].SetPriority(sim, newSPBonus)
-// 						dpAura.Activate(sim)
-// 					}
-// 				}
-// 			}
-// 		},
-// 	})
-// }
+					// Force expire/gain because of new sp bonus
+					dpAura.Deactivate(sim)
+					dpAura.Activate(sim)
+				}
+			}
+		},
+	})
+}

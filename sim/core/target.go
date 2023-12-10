@@ -227,7 +227,7 @@ func NewAttackTable(attacker *Unit, defender *Unit) *AttackTable {
 			table.BaseMissChance = 0.05 + (float64(defender.Level*5)-weaponSkill)*0.001
 		}
 
-		table.BaseSpellMissChance = UnitLevelFloat64(defender.Level, 0.04, 0.05, 0.06, 0.17)
+		table.BaseSpellMissChance = UnitLevelFloat64(defender.Level-attacker.Level, 0.04, 0.05, 0.06, 0.17)
 		table.BaseBlockChance = 0.05
 		table.BaseDodgeChance = 0.05 + (float64(defender.Level*5)-weaponSkill)*0.001
 		table.BaseParryChance = 0.05 + (float64(defender.Level*5)-weaponSkill)*0.001
@@ -240,14 +240,14 @@ func NewAttackTable(attacker *Unit, defender *Unit) *AttackTable {
 		if (defender.Level - attacker.Level) >= 3 {
 			table.MeleeCritSuppression += 0.018
 		}
-		table.SpellCritSuppression = UnitLevelFloat64(defender.Level, 0, 0, 0.003, 0.021)
+		table.SpellCritSuppression = UnitLevelFloat64(defender.Level-attacker.Level, 0, 0, 0.003, 0.021)
 	} else {
 
 		table.BaseSpellMissChance = 0.05
-		table.BaseMissChance = UnitLevelFloat64(attacker.Level, 0.05, 0.048, 0.046, 0.044)
-		table.BaseBlockChance = UnitLevelFloat64(attacker.Level, 0.05, 0.048, 0.046, 0.044)
-		table.BaseDodgeChance = UnitLevelFloat64(attacker.Level, 0, -0.002, -0.004, -0.006)
-		table.BaseParryChance = UnitLevelFloat64(attacker.Level, 0, -0.002, -0.004, -0.006)
+		table.BaseMissChance = UnitLevelFloat64(attacker.Level-defender.Level, 0.05, 0.048, 0.046, 0.044)
+		table.BaseBlockChance = UnitLevelFloat64(attacker.Level-defender.Level, 0.05, 0.048, 0.046, 0.044)
+		table.BaseDodgeChance = UnitLevelFloat64(attacker.Level-defender.Level, 0, -0.002, -0.004, -0.006)
+		table.BaseParryChance = UnitLevelFloat64(attacker.Level-defender.Level, 0, -0.002, -0.004, -0.006)
 	}
 
 	return table
