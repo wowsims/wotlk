@@ -44,6 +44,7 @@ type Warlock struct {
 	CurseOfTonguesAuras  core.AuraArray
 	CurseOfAgony         *core.Spell
 	CurseOfDoom          *core.Spell
+	AmplifyCurse         *core.Spell
 
 	DemonicEmpowerment     *core.Spell
 	DemonicEmpowermentAura *core.Aura
@@ -57,6 +58,7 @@ type Warlock struct {
 	NightfallProcAura      *core.Aura
 	PyroclasmAura          *core.Aura
 	DemonicGraceAura       *core.Aura
+	AmplifyCurseAura       *core.Aura
 
 	ImprovedShadowBoltAuras core.AuraArray
 	LakeOfFireAuras         core.AuraArray
@@ -100,7 +102,8 @@ func (warlock *Warlock) Initialize() {
 	// warlock.registerCurseOfElementsSpell()
 	// warlock.registerCurseOfWeaknessSpell()
 	// warlock.registerCurseOfTonguesSpell()
-	// warlock.registerCurseOfAgonySpell()
+	warlock.registerCurseOfAgonySpell()
+	warlock.registerAmplifyCurseSpell()
 	// warlock.registerCurseOfDoomSpell()
 	warlock.registerLifeTapSpell()
 	// warlock.registerSeedSpell()

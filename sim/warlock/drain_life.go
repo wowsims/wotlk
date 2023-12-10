@@ -22,10 +22,11 @@ func (warlock *Warlock) getDrainLifeBaseConfig(rank int) core.SpellConfig {
 		manaCost *= 2
 	}
 
-	healthMetrics := warlock.NewHealthMetrics(core.ActionID{SpellID: spellId})
+	actionID := core.ActionID{SpellID: spellId}
+	healthMetrics := warlock.NewHealthMetrics(actionID)
 
 	spellConfig := core.SpellConfig{
-		ActionID:      core.ActionID{SpellID: spellId},
+		ActionID:      actionID,
 		SpellSchool:   core.SpellSchoolShadow,
 		ProcMask:      core.ProcMaskSpellDamage,
 		Flags:         core.SpellFlagHauntSE | core.SpellFlagAPL | core.SpellFlagResetAttackSwing,
