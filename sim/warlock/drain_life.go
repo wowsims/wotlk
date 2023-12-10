@@ -1,6 +1,7 @@
 package warlock
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
@@ -30,7 +31,7 @@ func (warlock *Warlock) getDrainLifeBaseConfig(rank int) core.SpellConfig {
 		ActionID:      actionID,
 		SpellSchool:   core.SpellSchoolShadow,
 		ProcMask:      core.ProcMaskSpellDamage,
-		Flags:         core.SpellFlagHauntSE | core.SpellFlagAPL | core.SpellFlagResetAttackSwing,
+		Flags:         core.SpellFlagHauntSE | core.SpellFlagAPL | core.SpellFlagResetAttackSwing | core.SpellFlagBinary,
 		RequiredLevel: level,
 		Rank:          rank,
 
@@ -50,7 +51,7 @@ func (warlock *Warlock) getDrainLifeBaseConfig(rank int) core.SpellConfig {
 
 		Dot: core.DotConfig{
 			Aura: core.Aura{
-				Label: "Drain Life-" + warlock.Label,
+				Label: "Drain Life-" + warlock.Label + strconv.Itoa(rank),
 			},
 			NumberOfTicks:       ticks,
 			TickLength:          1 * time.Second,
@@ -60,10 +61,19 @@ func (warlock *Warlock) getDrainLifeBaseConfig(rank int) core.SpellConfig {
 				baseDmg := baseDamage + spellCoeff*dot.Spell.SpellPower()
 				if soulSiphon {
 					modifier := 1.0
-					if target.HasActiveAura("Corruption-" + warlock.Label) {
+
+					hasAura := func(target *core.Unit, label string, rank int) bool {
+						for i := 1; i <= rank; i++ {
+							if target.HasActiveAura(label + strconv.Itoa(rank)) {
+								return true
+							}
+						}
+						return false
+					}
+					if hasAura(target, "Corruption-"+warlock.Label, 7) {
 						modifier += .06
 					}
-					if target.HasActiveAura("CurseofAgony-" + warlock.Label) {
+					if hasAura(target, "CurseofAgony-"+warlock.Label, 6) {
 						modifier += .06
 					}
 					if target.HasActiveAura("Haunt-" + warlock.Label) {

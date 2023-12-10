@@ -1,6 +1,7 @@
 package warlock
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
@@ -41,7 +42,7 @@ func (warlock *Warlock) getCorruptionConfig(rank int) core.SpellConfig {
 
 		Dot: core.DotConfig{
 			Aura: core.Aura{
-				Label: "Corruption-" + warlock.Label,
+				Label: "Corruption-" + warlock.Label + strconv.Itoa(rank),
 			},
 
 			NumberOfTicks: ticks,

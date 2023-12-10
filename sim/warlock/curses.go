@@ -1,6 +1,7 @@
 package warlock
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
@@ -37,7 +38,7 @@ func (warlock *Warlock) getCurseOfAgonyBaseConfig(rank int) core.SpellConfig {
 
 		Dot: core.DotConfig{
 			Aura: core.Aura{
-				Label: "CurseofAgony-" + warlock.Label,
+				Label: "CurseofAgony-" + warlock.Label + strconv.Itoa(rank),
 			},
 			NumberOfTicks: 12,
 			TickLength:    time.Second * 2,
