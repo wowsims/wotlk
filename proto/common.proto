@@ -717,8 +717,9 @@ message Cooldowns {
 
 	// % HP threshold, below which defensive cooldowns can be used.
 	double hp_percent_for_defensives = 2;
-	int32 desync_proc_trinket1_seconds = 3;
-	int32 desync_proc_trinket2_seconds = 4;
+	
+	int32 desync_proc_trinket1_seconds = 3 [deprecated = true];
+	int32 desync_proc_trinket2_seconds = 4 [deprecated = true];
 }
 
 message HealingModel {

@@ -162,10 +162,8 @@ func (mcd *MajorCooldown) tryActivateHelper(sim *Simulation, character *Characte
 }
 
 type cooldownConfigs struct {
-	Cooldowns                 []*proto.Cooldown
-	HpPercentForDefensives    float64
-	DesyncProcTrinket1Seconds int32
-	DesyncProcTrinket2Seconds int32
+	Cooldowns              []*proto.Cooldown
+	HpPercentForDefensives float64
 }
 
 type majorCooldownManager struct {
@@ -191,9 +189,7 @@ func newMajorCooldownManager(cooldowns *proto.Cooldowns) majorCooldownManager {
 	}
 
 	cooldownConfigs := cooldownConfigs{
-		HpPercentForDefensives:    cooldowns.HpPercentForDefensives,
-		DesyncProcTrinket1Seconds: cooldowns.DesyncProcTrinket1Seconds,
-		DesyncProcTrinket2Seconds: cooldowns.DesyncProcTrinket2Seconds,
+		HpPercentForDefensives: cooldowns.HpPercentForDefensives,
 	}
 	for _, cooldownConfig := range cooldowns.Cooldowns {
 		if cooldownConfig.Id != nil {
@@ -275,56 +271,6 @@ func (mcdm *majorCooldownManager) DelayDPSCooldowns(delay time.Duration) {
 	})
 }
 
-func desyncTrinketProcAura(aura *Aura, delay time.Duration) {
-	if cb := aura.OnSpellHitDealt; cb != nil {
-		aura.OnSpellHitDealt = func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
-			if sim.CurrentTime >= delay {
-				cb(aura, sim, spell, result)
-			}
-		}
-	}
-
-	if cb := aura.OnSpellHitTaken; cb != nil {
-		aura.OnSpellHitTaken = func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
-			if sim.CurrentTime >= delay {
-				cb(aura, sim, spell, result)
-			}
-		}
-	}
-
-	if cb := aura.OnPeriodicDamageDealt; cb != nil {
-		aura.OnPeriodicDamageDealt = func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
-			if sim.CurrentTime >= delay {
-				cb(aura, sim, spell, result)
-			}
-		}
-	}
-
-	if cb := aura.OnHealDealt; cb != nil {
-		aura.OnHealDealt = func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
-			if sim.CurrentTime >= delay {
-				cb(aura, sim, spell, result)
-			}
-		}
-	}
-
-	if cb := aura.OnPeriodicHealDealt; cb != nil {
-		aura.OnPeriodicHealDealt = func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
-			if sim.CurrentTime >= delay {
-				cb(aura, sim, spell, result)
-			}
-		}
-	}
-
-	if cb := aura.OnCastComplete; cb != nil {
-		aura.OnCastComplete = func(aura *Aura, sim *Simulation, spell *Spell) {
-			if sim.CurrentTime >= delay {
-				cb(aura, sim, spell)
-			}
-		}
-	}
-}
-
 func findTrinketAura(character *Character, trinketID int32) *Aura {
 	for _, aura := range character.auras {
 		if aura.ActionIDForProc.ItemID == trinketID {
@@ -332,31 +278,6 @@ func findTrinketAura(character *Character, trinketID int32) *Aura {
 		}
 	}
 	return nil
-}
-
-// Desyncs trinket procs per configured user settings.
-// Hold the first proc back until some time into the simulation (i.e. because the player
-// un-equipped and re-equipped the trinket before pull).
-func (mcdm *majorCooldownManager) DesyncTrinketProcs() {
-	if delay := time.Duration(mcdm.cooldownConfigs.DesyncProcTrinket1Seconds) * time.Second; delay > 0 {
-		if trinket1 := mcdm.character.Trinket1(); trinket1.ID > 0 && HasItemEffect(trinket1.ID) {
-			mcdm.character.Env.RegisterPostFinalizeEffect(func() {
-				if aura := findTrinketAura(mcdm.character, trinket1.ID); aura != nil {
-					desyncTrinketProcAura(aura, delay)
-				}
-			})
-		}
-	}
-
-	if delay := time.Duration(mcdm.cooldownConfigs.DesyncProcTrinket2Seconds) * time.Second; delay > 0 {
-		if trinket2 := mcdm.character.Trinket2(); trinket2.ID > 0 && HasItemEffect(trinket2.ID) {
-			mcdm.character.Env.RegisterPostFinalizeEffect(func() {
-				if aura := findTrinketAura(mcdm.character, trinket2.ID); aura != nil {
-					desyncTrinketProcAura(aura, delay)
-				}
-			})
-		}
-	}
 }
 
 func (mcdm *majorCooldownManager) reset(_ *Simulation) {
