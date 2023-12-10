@@ -11,7 +11,10 @@ import (
 func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, raid *proto.Raid) {
 
 	if debuffs.JudgementOfWisdom && targetIdx == 0 {
-		MakePermanent(JudgementOfWisdomAura(target))
+		jowAura := JudgementOfWisdomAura(target, raid.Parties[0].Players[0].Level)
+		if jowAura != nil {
+			MakePermanent(jowAura)
+		}
 	}
 
 	if debuffs.ImprovedShadowBolt {
@@ -160,8 +163,19 @@ func ScheduledMajorArmorAura(aura *Aura, options PeriodicActionOptions, raid *pr
 var JudgementOfWisdomAuraLabel = "Judgement of Wisdom"
 
 // TODO: Classic verify logic
-func JudgementOfWisdomAura(target *Unit) *Aura {
+func JudgementOfWisdomAura(target *Unit, level int32) *Aura {
 	actionID := ActionID{SpellID: 20357}
+
+	jowMana := 0.0
+	if level < 38 {
+		return nil
+	} else if level < 48 {
+		jowMana = 50.0
+	} else if level < 58 {
+		jowMana = 71.0
+	} else {
+		jowMana = 90.0
+	}
 
 	return target.GetOrRegisterAura(Aura{
 		Label:    JudgementOfWisdomAuraLabel,
@@ -203,7 +217,7 @@ func JudgementOfWisdomAura(target *Unit) *Aura {
 				unit.JowManaMetrics = unit.NewManaMetrics(actionID)
 			}
 			// JoW returns flat mana
-			unit.AddMana(sim, 59, unit.JowManaMetrics)
+			unit.AddMana(sim, jowMana, unit.JowManaMetrics)
 		},
 	})
 }

@@ -36,11 +36,11 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		cfg.Stats = stats.Stats{
 			stats.Strength:  47,
 			stats.Agility:   25,
-			stats.Stamina:   115,
-			stats.Intellect: 123,
+			stats.Stamina:   70,
+			stats.Intellect: 70,
 			stats.Spirit:    95,
-			stats.Mana:      60,
-			stats.MP5:       270, // rough guess, unclear if it's affected by other stats
+			stats.Mana:      354,
+			stats.MP5:       85,
 			stats.MeleeCrit: 3.454 * core.CritRatingPerCritChance,
 			stats.SpellCrit: 0.9075 * core.CritRatingPerCritChance,
 		}
@@ -51,7 +51,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 			stats.Strength:  50,
 			stats.Agility:   40,
 			stats.Stamina:   100,
-			stats.Intellect: 64,
+			stats.Intellect: 50,
 			stats.Spirit:    51,
 			stats.Mana:      60,
 			stats.MeleeCrit: 3.2685 * core.CritRatingPerCritChance,
@@ -104,6 +104,9 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 	if warlock.Options.Summon == proto.Warlock_Options_Imp {
 		// imp has a slightly different agi crit scaling coef for some reason
 		wp.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance*1/51.0204)
+
+		// Imp scales Int to MP5
+		wp.AddStatDependency(stats.Intellect, stats.MP5, 0.1)
 	} else {
 		wp.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance*1/52.0833)
 	}
@@ -226,16 +229,16 @@ func (warlock *Warlock) makeStatInheritance() core.PetStatInheritance {
 
 		// TODO: Classic warlock pet stat deps
 		return stats.Stats{
-			stats.Stamina:          ownerStats[stats.Stamina] * 0.75,
+			stats.Stamina:          ownerStats[stats.Stamina] * core.Ternary(warlock.Options.Summon == proto.Warlock_Options_Imp, 0.66, 0.75),
 			stats.Intellect:        ownerStats[stats.Intellect] * 0.3,
 			stats.Armor:            ownerStats[stats.Armor] * 0.35,
 			stats.AttackPower:      ownerStats[stats.SpellPower] * 0.57,
 			stats.SpellPower:       ownerStats[stats.SpellPower] * 0.15,
+			stats.FirePower:        ownerStats[stats.FirePower] * 0.15,
+			stats.ShadowPower:      ownerStats[stats.ShadowPower] * 0.15,
 			stats.SpellPenetration: ownerStats[stats.SpellPenetration],
 			stats.MeleeHit:         ownerHitChance * core.MeleeHitRatingPerHitChance,
 			stats.SpellHit:         math.Floor(ownerStats[stats.SpellHit] / 12.0 * 17.0),
-			stats.MeleeCrit:        0,
-			stats.SpellCrit:        0,
 		}
 	}
 }

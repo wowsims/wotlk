@@ -1384,14 +1384,15 @@ func replenishmentAura(unit *Unit, _ ActionID) *Aura {
 }
 
 // TODO: Classic Runes
-func DemonicPactAura(character *Character) *Aura {
+func DemonicPactAura(character *Character, spellpower float64, level float64) *Aura {
 	aura := character.GetOrRegisterAura(Aura{
 		Label:      "Demonic Pact",
 		ActionID:   ActionID{SpellID: 47240},
 		Duration:   time.Second * 45,
 		BuildPhase: CharacterBuildPhaseBuffs,
 	})
-	spellPowerBonusEffect(aura, 0)
+	spBonus := max(spellpower*0.1, level/2)
+	spellPowerBonusEffect(aura, spBonus)
 	return aura
 }
 
