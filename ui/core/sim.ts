@@ -142,7 +142,6 @@ export class Sim {
 		const raidProto = this.raid.toProto(false, true);
 		this.modifyRaidProto(raidProto);
 
-		// Remove any inactive meta gems, since the backend doesn't have its own validation.
 		raidProto.parties.forEach(party => {
 			party.players.forEach(player => {
 				if (!player.equipment) {

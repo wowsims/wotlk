@@ -21,22 +21,7 @@ import {
 
 import * as PresetUtils from '../core/preset_utils.js';
 
-import P1AssassinationGear from './gear_sets/p1_assassination.gear.json';
-import P1CombatGear from './gear_sets/p1_combat.gear.json';
-import P1HemoSubGear from './gear_sets/p1_hemosub.gear.json';
-import P2AssassinationGear from './gear_sets/p2_assassination.gear.json';
-import P2CombatGear from './gear_sets/p2_combat.gear.json';
-import P2HemoSubGear from './gear_sets/p2_hemosub.gear.json';
-import P3AssassinationGear from './gear_sets/p3_assassination.gear.json';
-import P3CombatGear from './gear_sets/p3_combat.gear.json';
-import P3DanceSubGear from './gear_sets/p3_dancesub.gear.json';
-import P3HemoSubGear from './gear_sets/p3_hemosub.gear.json';
-import P4AssassinationGear from './gear_sets/p4_assassination.gear.json';
-import P4CombatGear from './gear_sets/p4_combat.gear.json';
-import P5AssassinationGear from './gear_sets/p5_assassination.gear.json';
-import P5CombatGear from './gear_sets/p5_combat.gear.json';
-import PreraidAssassinationGear from './gear_sets/preraid_assassination.gear.json';
-import PreraidCombatGear from './gear_sets/preraid_combat.gear.json';
+import BlankGear from './gear_sets/blank.gear.json';
 
 import CombatApl from './apls/combat.apl.json';
 import CombatCleaveSndApl from './apls/combat_cleave_snd.apl.json';
@@ -52,22 +37,9 @@ import RuptureMutilateExposeApl from './apls/rupture_mutilate_expose.apl.json';
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
 
-export const PRERAID_PRESET_ASSASSINATION = PresetUtils.makePresetGear('PreRaid Assassination', PreraidAssassinationGear, { talentTree: 0 });
-export const P1_PRESET_ASSASSINATION = PresetUtils.makePresetGear('P1 Assassination', P1AssassinationGear, { talentTree: 0 });
-export const P2_PRESET_ASSASSINATION = PresetUtils.makePresetGear('P2 Assassination', P2AssassinationGear, { talentTree: 0 });
-export const P3_PRESET_ASSASSINATION = PresetUtils.makePresetGear('P3 Assassination', P3AssassinationGear, { talentTree: 0 });
-export const P4_PRESET_ASSASSINATION = PresetUtils.makePresetGear('P4 Assassination', P4AssassinationGear, { talentTree: 0 });
-export const P5_PRESET_ASSASSINATION = PresetUtils.makePresetGear('P5 Assassination', P5AssassinationGear, { talentTree: 0 });
-export const PRERAID_PRESET_COMBAT = PresetUtils.makePresetGear('PreRaid Combat', PreraidCombatGear, { talentTree: 1 });
-export const P1_PRESET_COMBAT = PresetUtils.makePresetGear('P1 Combat', P1CombatGear, { talentTree: 1 });
-export const P2_PRESET_COMBAT = PresetUtils.makePresetGear('P2 Combat', P2CombatGear, { talentTree: 1 });
-export const P3_PRESET_COMBAT = PresetUtils.makePresetGear('P3 Combat', P3CombatGear, { talentTree: 1 });
-export const P4_PRESET_COMBAT = PresetUtils.makePresetGear('P4 Combat', P4CombatGear, { talentTree: 1 });
-export const P5_PRESET_COMBAT = PresetUtils.makePresetGear('P5 Combat', P5CombatGear, { talentTree: 1 });
-export const P1_PRESET_HEMO_SUB = PresetUtils.makePresetGear('P1 Hemo Sub', P1HemoSubGear, { talentTree: 2 });
-export const P2_PRESET_HEMO_SUB = PresetUtils.makePresetGear('P2 Hemo Sub', P2HemoSubGear, { talentTree: 2 });
-export const P3_PRESET_HEMO_SUB = PresetUtils.makePresetGear('P3 Hemo Sub', P3HemoSubGear, { talentTree: 2 });
-export const P3_PRESET_DANCE_SUB = PresetUtils.makePresetGear('P3 Dance Sub', P3DanceSubGear, { talentTree: 2 });
+export const AssassinationDefaultGear = PresetUtils.makePresetGear('Blank', BlankGear, { talentTree: 0 });
+export const CombatDefaultGear = PresetUtils.makePresetGear('Blank', BlankGear, { talentTree: 0 });
+export const SubtletyDefaultGear = PresetUtils.makePresetGear('Blank', BlankGear, { talentTree: 0 });
 
 export const DefaultRotation = RogueRotation.create({
 	exposeArmorFrequency: Rogue_Rotation_Frequency.Never,

@@ -94,7 +94,7 @@ export class RaidWCLImporter extends Importer {
 				The following are imported directly from the report:
 				<ul>
 					<li>Player Name</li>
-					<li>Equipment (items, enchants, and gems)</li>
+					<li>Equipment (items and enchants)</li>
 					<li>Faction (Alliance / Horde)</li>
 					<li>Encounter: If the import link has a fight ID we try to match with a preset Encounter. Note that many Encounters are still unimplemented.</li>
 				</ul>
@@ -104,7 +104,7 @@ export class RaidWCLImporter extends Importer {
 					<li>Talents: Log data only gives us the tree summary (e.g. '51/20/0') so we match this with the closest preset talent build.</li>
 					<li>Glyphs: Glyphs are absent from log data, but we pair them with the inferred Talents.</li>
 					<li>Race: Inferred from Race-specific abilties used in any fight if possible, or defaults to Spec-specific Race.</li>
-					<li>Professions: Inferred from profession-locked items/enchants/gems.</li>
+					<li>Professions: Inferred from profession-locked items/enchants.</li>
 					<li>Buff assignments (Innervate, Unholy Frenzy, etc): Inferred from casts.</li>
 					<li>Party Composition: Inferred from party-only effects, such as Heroic Presence, Prayer of Healing, or Vampiric Touch.</li>
 				</ul>
@@ -756,13 +756,6 @@ interface wclTalents {
 	abilityIcon: string;
 }
 
-// Typed interface for WCL Gems
-interface wclGems {
-	id: number;
-	itemLevel: number;
-	icon: string;
-}
-
 // Typed interface for WCL Gear
 interface wclGear {
 	id: number;
@@ -774,7 +767,6 @@ interface wclGear {
 	permanentEnchant: number;
 	permanentEnchantName: string;
 	temporaryEnchant: number;
-	gems?: wclGems[];
 }
 
 // Typed interface for WCL Player Data

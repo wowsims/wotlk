@@ -19,13 +19,13 @@ import {
 
 import * as PresetUtils from '../core/preset_utils.js';
 
-import Empty from './gear_sets/empty.json';
+import BlankGear from './gear_sets/blank.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
 
-export const EMPTY_PRESET = PresetUtils.makePresetGear('Empty', Empty, { talentTree: 0 });
+export const EMPTY_PRESET = PresetUtils.makePresetGear('Blank', BlankGear, { talentTree: 0 });
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/classic/talent-calc and copy the numbers in the url.

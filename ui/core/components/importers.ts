@@ -320,7 +320,7 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 
 			itemSpec.id = (highid << 16) + (gearBytes[cur] << 8) + gearBytes[cur + 1];
 			cur += 2;
-			//console.log(`Slot ID: ${slotId}, isEnchanted: ${isEnchanted}, numGems: ${numGems}, itemID: ${itemSpec.id}`);
+			//console.log(`Slot ID: ${slotId}, isEnchanted: ${isEnchanted}, itemID: ${itemSpec.id}`);
 
 			if (isEnchanted) {
 				// Note: this is the enchant SPELL id, not the effect ID.

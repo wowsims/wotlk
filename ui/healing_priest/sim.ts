@@ -48,7 +48,7 @@ export class HealingPriestSimUI extends IndividualSimUI<Spec.SpecHealingPriest> 
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.DISC_P1_PRESET.gear,
+				gear: Presets.DiscDefaultGear.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatIntellect]: 2.73,
@@ -108,12 +108,8 @@ export class HealingPriestSimUI extends IndividualSimUI<Spec.SpecHealingPriest> 
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.DISC_PRERAID_PRESET,
-					Presets.DISC_P1_PRESET,
-					Presets.DISC_P2_PRESET,
-					Presets.HOLY_PRERAID_PRESET,
-					Presets.HOLY_P1_PRESET,
-					Presets.HOLY_P2_PRESET,
+					Presets.DiscDefaultGear,
+					Presets.HolyDefaultGear,
 				],
 			},
 

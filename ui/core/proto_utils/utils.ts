@@ -234,7 +234,7 @@ export const titleIcons: Record<Class | Spec, string> = {
 	[Spec.SpecFeralTankDruid]: '/sod/assets/img/feral_druid_tank_icon.png',
 	[Spec.SpecRestorationDruid]: '/sod/assets/img/resto_druid_icon.png',
 	[Spec.SpecElementalShaman]: '/sod/assets/img/elemental_shaman_icon.png',
-	[Spec.SpecEnhancementShaman]: '/classicicic/assets/img/enhancement_shaman_icon.png',
+	[Spec.SpecEnhancementShaman]: '/sod/assets/img/enhancement_shaman_icon.png',
 	[Spec.SpecRestorationShaman]: '/sod/assets/img/resto_shaman_icon.png',
 	[Spec.SpecHunter]: '/sod/assets/img/hunter_icon.png',
 	[Spec.SpecMage]: '/sod/assets/img/mage_icon.png',

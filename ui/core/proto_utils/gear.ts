@@ -64,7 +64,7 @@ abstract class BaseGear {
 }
 
 /**
- * Represents a full gear set, including items/enchants/gems for every slot.
+ * Represents a full gear set, including items/enchants for every slot.
  *
  * This is an immutable type.
  */
@@ -85,7 +85,7 @@ export class Gear extends BaseGear {
 	/**
 	 * Returns a new Gear set with the item equipped.
 	 *
-	 * Checks for validity and removes/exchanges items/gems as needed.
+	 * Checks for validity and removes/exchanges items as needed.
 	 */
 	withEquippedItem(newSlot: ItemSlot, newItem: EquippedItem | null, canDualWield2H: boolean): Gear {
 		// Create a new identical set of gear
@@ -176,7 +176,7 @@ export class Gear extends BaseGear {
 }
 
 /**
- * Represents a item swap gear set, including items/enchants/gems.
+ * Represents a item swap gear set, including items/enchants.
  *
  * This is an immutable type.
  */

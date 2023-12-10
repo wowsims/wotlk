@@ -71,7 +71,7 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 
 			defaults: {
 				// Default equipped gear.
-				gear: Presets.P1_PRESET.gear,
+				gear: Presets.DefaultGear.gear,
 				// Default EP weights for sorting gear in the gear picker.
 				epWeights: Stats.fromMap({
 					[Stat.StatArmor]: 3.5665,
@@ -164,7 +164,7 @@ export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid
 				],
 				// Preset gear configurations that the user can quickly select.
 				gear: [
-					Presets.P1_PRESET, Presets.P2_PRESET
+					Presets.DefaultGear,
 				],
 			},
 
