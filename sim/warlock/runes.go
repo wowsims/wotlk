@@ -10,7 +10,7 @@ func (warlock *Warlock) ApplyRunes() {
 	warlock.applyDemonicTactics()
 }
 
-func (warlock *Warlock) everlastingAfflictionRefresh(sim *core.Simulation, target *core.Unit) {
+func (warlock *Warlock) EverlastingAfflictionRefresh(sim *core.Simulation, target *core.Unit) {
 	if !warlock.HasRune(proto.WarlockRune_RuneLegsEverlastingAffliction) {
 		return
 	}
@@ -25,7 +25,14 @@ func (warlock *Warlock) applyDemonicTactics() {
 		return
 	}
 
+	warlock.AddStat(stats.MeleeCrit, 10*core.CritRatingPerCritChance)
 	warlock.AddStat(stats.SpellCrit, 10*core.SpellCritRatingPerCritChance)
+
+	if warlock.Pet != nil {
+		pet := warlock.Pet.GetPet()
+		pet.AddStat(stats.MeleeCrit, 10*core.CritRatingPerCritChance)
+		pet.AddStat(stats.SpellCrit, 10*core.SpellCritRatingPerCritChance)
+	}
 }
 
 // TODO: Classic warlock demo pact rune

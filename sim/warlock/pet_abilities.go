@@ -44,6 +44,11 @@ func (wp *WarlockPet) registerFireboltSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(baseDamage[0], baseDamage[1]) + spellCoeff*spell.SpellPower()
+
+			if wp.owner.LakeOfFireAuras != nil && wp.owner.LakeOfFireAuras.Get(target).IsActive() {
+				baseDamage *= 1.4
+			}
+
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 		},
 	})
@@ -93,37 +98,52 @@ func (wp *WarlockPet) registerFireboltSpell() {
 // 	wp.secondaryAbility = nil // not implemented
 // }
 
-// func (wp *WarlockPet) registerLashOfPainSpell() {
-// 	wp.primaryAbility = wp.RegisterSpell(core.SpellConfig{
-// 		ActionID:    core.ActionID{SpellID: 47992},
-// 		SpellSchool: core.SpellSchoolShadow,
-// 		ProcMask:    core.ProcMaskSpellDamage,
+func (wp *WarlockPet) registerLashOfPainSpell() {
+	warlockLevel := wp.owner.GetCharacter().Level
+	// assuming max rank available
+	rank := map[int32]int{25: 3, 40: 5, 50: 6, 60: 7}[warlockLevel]
 
-// 		ManaCost: core.ManaCostOptions{
-// 			FlatCost: 250,
-// 		},
-// 		Cast: core.CastConfig{
-// 			DefaultCast: core.Cast{
-// 				GCD: core.GCDDefault,
-// 			},
-// 			IgnoreHaste: true,
-// 			CD: core.Cooldown{
-// 				Timer:    wp.NewTimer(),
-// 				Duration: time.Second * (12 - time.Duration(3*wp.owner.Talents.DemonicPower)),
-// 			},
-// 		},
+	if rank == 0 {
+		rank = 1
+	}
 
-// 		DamageMultiplier: 1,
-// 		CritMultiplier:   1.5,
-// 		ThreatMultiplier: 1,
+	spellCoeff := [7]float64{0, .429, .429, .429, .429, .429, .429}[rank]
+	baseDamage := [7]float64{0, 33, 44, 60, 73, 87, 99}[rank]
+	spellId := [7]int32{0, 7814, 7815, 7816, 11778, 11779, 11780}[rank]
+	manaCost := [7]float64{0, 65, 80, 105, 125, 145, 160}[rank]
+	level := [7]int{0, 20, 28, 36, 44, 52, 60}[rank]
 
-// 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-// 			// TODO: the hidden 5% damage modifier succ currently gets also applies to this ...
-// 			baseDamage := 237 + 0.429*spell.SpellPower()
-// 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
-// 		},
-// 	})
-// }
+	wp.primaryAbility = wp.RegisterSpell(core.SpellConfig{
+		ActionID:      core.ActionID{SpellID: spellId},
+		SpellSchool:   core.SpellSchoolShadow,
+		ProcMask:      core.ProcMaskSpellDamage,
+		RequiredLevel: level,
+		Rank:          rank,
+
+		ManaCost: core.ManaCostOptions{
+			FlatCost: manaCost,
+		},
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				GCD: core.GCDDefault,
+			},
+			IgnoreHaste: true,
+			CD: core.Cooldown{
+				Timer:    wp.NewTimer(),
+				Duration: time.Second * 12,
+			},
+		},
+
+		DamageMultiplier: 1,
+		CritMultiplier:   1.5,
+		ThreatMultiplier: 1,
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			baseDamage := baseDamage + spellCoeff*spell.SpellPower()
+			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+		},
+	})
+}
 
 // func (wp *WarlockPet) registerShadowBiteSpell() {
 // 	actionID := core.ActionID{SpellID: 54053}

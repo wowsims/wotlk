@@ -140,6 +140,12 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 			spell.Unit.SetGCDTimer(sim, sim.CurrentTime+effectiveTime)
 		}
 
+		// Non melee casts
+		if spell.Flags.Matches(SpellFlagResetAttackSwing) && spell.Unit.AutoAttacks.enabled {
+			minCastTime := max(spell.CurCast.CastTime, spell.CurCast.ChannelTime)
+			spell.Unit.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+minCastTime, false)
+		}
+
 		// Hardcasts
 		if spell.CurCast.CastTime > 0 {
 			if sim.Log != nil && !spell.Flags.Matches(SpellFlagNoLogs) {

@@ -14,12 +14,13 @@ func (warlock *Warlock) getCorruptionConfig(rank int) core.SpellConfig {
 	manaCost := [8]float64{0, 35, 55, 100, 160, 225, 290, 340}[rank]
 	ticks := [8]int32{0, 4, 5, 6, 6, 6, 6, 6}[rank]
 	level := [8]int{0, 4, 14, 24, 34, 44, 54, 60}[rank]
+	castTime := time.Millisecond * (2000 - (400 * time.Duration(warlock.Talents.ImprovedCorruption)))
 
 	return core.SpellConfig{
 		ActionID:      core.ActionID{SpellID: spellId},
 		SpellSchool:   core.SpellSchoolShadow,
 		ProcMask:      core.ProcMaskSpellDamage,
-		Flags:         core.SpellFlagAPL | core.SpellFlagHauntSE,
+		Flags:         core.SpellFlagAPL | core.SpellFlagHauntSE | core.SpellFlagResetAttackSwing,
 		Rank:          rank,
 		RequiredLevel: level,
 
@@ -28,11 +29,12 @@ func (warlock *Warlock) getCorruptionConfig(rank int) core.SpellConfig {
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD: core.GCDDefault,
+				CastTime: castTime,
+				GCD:      core.GCDDefault,
 			},
 		},
 
-		BonusHitRating:   0,
+		BonusHitRating:   float64(warlock.Talents.Suppression) * 2 * core.CritRatingPerCritChance,
 		BonusCritRating:  0,
 		DamageMultiplier: 1,
 		CritMultiplier:   1,
@@ -40,7 +42,7 @@ func (warlock *Warlock) getCorruptionConfig(rank int) core.SpellConfig {
 
 		Dot: core.DotConfig{
 			Aura: core.Aura{
-				Label: "Corruption-" + strconv.Itoa(rank),
+				Label: "Corruption-" + warlock.Label + strconv.Itoa(rank),
 			},
 
 			NumberOfTicks: ticks,
@@ -48,16 +50,17 @@ func (warlock *Warlock) getCorruptionConfig(rank int) core.SpellConfig {
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 				dot.SnapshotBaseDamage = baseDamage/float64(ticks) + (dotTickCoeff * dot.Spell.SpellPower())
-				dot.SnapshotAttackerMultiplier = 1 // dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
+				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(dot.Spell.Unit.AttackTables[target.UnitIndex])
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTickCounted)
 			},
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
+				spell.SpellMetrics[target.UnitIndex].Hits--
 				spell.Dot(target).Apply(sim)
 			}
 			spell.DealOutcome(sim, result)

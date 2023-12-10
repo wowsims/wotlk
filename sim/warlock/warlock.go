@@ -18,19 +18,23 @@ type Warlock struct {
 
 	Pet *WarlockPet
 
-	ChaosBolt   *core.Spell
-	Conflagrate *core.Spell
-	Corruption  *core.Spell
-	DarkPact    *core.Spell
-	DrainSoul   *core.Spell
-	Haunt       *core.Spell
-	Immolate    *core.Spell
-	Incinerate  *core.Spell
-	LifeTap     *core.Spell
-	SearingPain *core.Spell
-	ShadowBolt  *core.Spell
-	Shadowburn  *core.Spell
-	SoulFire    *core.Spell
+	ChaosBolt    *core.Spell
+	Conflagrate  *core.Spell
+	Corruption   *core.Spell
+	DarkPact     *core.Spell
+	DrainSoul    *core.Spell
+	Haunt        *core.Spell
+	Immolate     *core.Spell
+	Incinerate   *core.Spell
+	LifeTap      *core.Spell
+	SearingPain  *core.Spell
+	ShadowBolt   *core.Spell
+	ShadowCleave *core.Spell
+	Shadowburn   *core.Spell
+	SoulFire     *core.Spell
+	DemonicGrace *core.Spell
+	DrainLife    *core.Spell
+	RainOfFire   *core.Spell
 
 	CurseOfElements      *core.Spell
 	CurseOfElementsAuras core.AuraArray
@@ -40,18 +44,23 @@ type Warlock struct {
 	CurseOfTonguesAuras  core.AuraArray
 	CurseOfAgony         *core.Spell
 	CurseOfDoom          *core.Spell
+	AmplifyCurse         *core.Spell
 
-	DemonicEmpowerment     *core.Spell
-	DemonicEmpowermentAura *core.Aura
-	DemonicPactAura        *core.Aura
-	DemonicSoulAura        *core.Aura
-	HauntDebuffAuras       core.AuraArray
-	ImmolationAura         *core.Spell
-	IncinerateAura         *core.Aura
-	Metamorphosis          *core.Spell
-	MetamorphosisAura      *core.Aura
-	NightfallProcAura      *core.Aura
-	PyroclasmAura          *core.Aura
+	DemonicEmpowerment      *core.Spell
+	DemonicEmpowermentAura  *core.Aura
+	DemonicPactAura         *core.Aura
+	DemonicSoulAura         *core.Aura
+	HauntDebuffAuras        core.AuraArray
+	ImmolationAura          *core.Spell
+	IncinerateAura          *core.Aura
+	Metamorphosis           *core.Spell
+	MetamorphosisAura       *core.Aura
+	NightfallProcAura       *core.Aura
+	PyroclasmAura           *core.Aura
+	DemonicGraceAura        *core.Aura
+	AmplifyCurseAura        *core.Aura
+	ImprovedShadowBoltAuras core.AuraArray
+	LakeOfFireAuras         core.AuraArray
 
 	// The sum total of demonic pact spell power * seconds.
 	DPSPAggregate float64
@@ -88,25 +97,30 @@ func (warlock *Warlock) Initialize() {
 	warlock.registerImmolateSpell()
 	warlock.registerIncinerateSpell()
 	warlock.registerShadowBoltSpell()
+	warlock.registerShadowCleaveSpell()
 	// warlock.registerCurseOfElementsSpell()
 	// warlock.registerCurseOfWeaknessSpell()
 	// warlock.registerCurseOfTonguesSpell()
-	// warlock.registerCurseOfAgonySpell()
+	warlock.registerCurseOfAgonySpell()
+	warlock.registerAmplifyCurseSpell()
 	// warlock.registerCurseOfDoomSpell()
-	// warlock.registerLifeTapSpell()
+	warlock.registerLifeTapSpell()
 	// warlock.registerSeedSpell()
 	// warlock.registerSoulFireSpell()
 	// warlock.registerUnstableAfflictionSpell()
 	// warlock.registerDrainSoulSpell()
 	// warlock.registerConflagrateSpell()
-	// warlock.registerHauntSpell()
+	warlock.registerHauntSpell()
 	// warlock.registerDemonicEmpowermentSpell()
-	// warlock.registerMetamorphosisSpell()
+	warlock.registerMetamorphosisSpell()
 	// warlock.registerDarkPactSpell()
 	// warlock.registerShadowBurnSpell()
-	// warlock.registerSearingPainSpell()
+	warlock.registerSearingPainSpell()
 	// warlock.registerInfernoSpell()
 	// warlock.registerBlackBook()
+	warlock.registerDemonicGraceSpell()
+	warlock.registerDrainLifeSpell()
+	warlock.registerRainOfFireSpell()
 }
 
 func (warlock *Warlock) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
@@ -146,6 +160,12 @@ func NewWarlock(character *core.Character, options *proto.Player) *Warlock {
 	}
 
 	warlock.applyWeaponImbue()
+
+	warlock.EnableAutoAttacks(warlock, core.AutoAttackOptions{
+		MainHand:       warlock.WeaponFromMainHand(warlock.DefaultMeleeCritMultiplier()),
+		OffHand:        warlock.WeaponFromOffHand(warlock.DefaultMeleeCritMultiplier()),
+		AutoSwingMelee: true,
+	})
 
 	return warlock
 }

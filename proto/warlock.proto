@@ -65,7 +65,7 @@ message WarlockTalents {
 enum WarlockRune {
 	WarlockRuneNone = 0;
 	RuneChestDemonicTactics   	  = 412727;
-	RuneChestLakeOfFire       	  = 403650;
+	RuneChestLakeOfFire       	  = 403666;
 	RuneChestMasterChanneler  	  = 403668;
 	RuneChestSoulSiphon       	  = 403511;
 	RuneHandsChaosBolt        	  = 403629;

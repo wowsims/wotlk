@@ -447,7 +447,7 @@ func (aa *AutoAttacks) reset(sim *Simulation) {
 	aa.mh.swingAt = NeverExpires
 	aa.oh.swingAt = NeverExpires
 
-	if aa.AutoSwingMelee {
+	if aa.AutoSwingMelee && aa.mh.unit.DistanceFromTarget <= 5 {
 		aa.mh.updateSwingDuration(aa.mh.unit.SwingSpeed())
 		aa.mh.swingAt = 0
 
@@ -488,7 +488,7 @@ func (aa *AutoAttacks) startPull(sim *Simulation) {
 
 	aa.enabled = true
 
-	if aa.AutoSwingMelee {
+	if aa.AutoSwingMelee && aa.mh.unit.DistanceFromTarget <= 5 {
 		aa.mh.addWeaponAttack(sim, aa.mh.unit.SwingSpeed())
 		if aa.IsDualWielding {
 			aa.oh.addWeaponAttack(sim, aa.mh.curSwingSpeed)
@@ -537,7 +537,7 @@ func (aa *AutoAttacks) EnableAutoSwing(sim *Simulation) {
 
 	aa.enabled = true
 
-	if aa.AutoSwingMelee {
+	if aa.AutoSwingMelee && aa.mh.unit.DistanceFromTarget <= 5 {
 		aa.mh.swingAt = max(aa.mh.swingAt, sim.CurrentTime, 0)
 		aa.mh.addWeaponAttack(sim, aa.mh.unit.SwingSpeed())
 		if aa.IsDualWielding {

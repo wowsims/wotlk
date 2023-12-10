@@ -11,7 +11,15 @@ import (
 func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, raid *proto.Raid) {
 
 	if debuffs.JudgementOfWisdom && targetIdx == 0 {
-		MakePermanent(JudgementOfWisdomAura(target))
+		jowAura := JudgementOfWisdomAura(target, raid.Parties[0].Players[0].Level)
+		if jowAura != nil {
+			MakePermanent(jowAura)
+		}
+	}
+
+	if debuffs.ImprovedShadowBolt {
+		//TODO: Apply periodically
+		MakePermanent(ImprovedShadowBoltAura(target, 5))
 	}
 
 	if debuffs.CurseOfElements {
@@ -103,6 +111,33 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 	// }
 }
 
+func ImprovedShadowBoltAura(unit *Unit, level int32) *Aura {
+	damageMulti := 1. + 0.04*float64(level)
+	return unit.RegisterAura(Aura{
+		Label:     "Improved Shadow Bolt",
+		ActionID:  ActionID{SpellID: 17800},
+		Duration:  12 * time.Second,
+		MaxStacks: 4,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexShadow] *= damageMulti
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexShadow] /= damageMulti
+		},
+		OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
+			if spell.SpellSchool != SpellSchoolShadow {
+				return
+			}
+
+			if !result.Landed() {
+				return
+			}
+
+			aura.RemoveStack(sim)
+		},
+	})
+}
+
 func ScheduledMajorArmorAura(aura *Aura, options PeriodicActionOptions, raid *proto.Raid) {
 	// Individual rogue sim rotation option messes with these debuff options,
 	// so it has to be handled separately.
@@ -128,8 +163,19 @@ func ScheduledMajorArmorAura(aura *Aura, options PeriodicActionOptions, raid *pr
 var JudgementOfWisdomAuraLabel = "Judgement of Wisdom"
 
 // TODO: Classic verify logic
-func JudgementOfWisdomAura(target *Unit) *Aura {
+func JudgementOfWisdomAura(target *Unit, level int32) *Aura {
 	actionID := ActionID{SpellID: 20357}
+
+	jowMana := 0.0
+	if level < 38 {
+		return nil
+	} else if level < 48 {
+		jowMana = 50.0
+	} else if level < 58 {
+		jowMana = 71.0
+	} else {
+		jowMana = 90.0
+	}
 
 	return target.GetOrRegisterAura(Aura{
 		Label:    JudgementOfWisdomAuraLabel,
@@ -171,7 +217,7 @@ func JudgementOfWisdomAura(target *Unit) *Aura {
 				unit.JowManaMetrics = unit.NewManaMetrics(actionID)
 			}
 			// JoW returns flat mana
-			unit.AddMana(sim, 59, unit.JowManaMetrics)
+			unit.AddMana(sim, jowMana, unit.JowManaMetrics)
 		},
 	})
 }

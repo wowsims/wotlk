@@ -7,17 +7,14 @@ import (
 	"github.com/wowsims/sod/sim/core/proto"
 )
 
-func (warlock *Warlock) getShadowBoltBaseConfig(rank int) core.SpellConfig {
-	spellCoeff := [11]float64{0, .14, .299, .56, .857, .857, .857, .857, .857, .857, .857}[rank]
-	baseDamage := [11][]float64{{0}, {13, 18}, {26, 32}, {52, 61}, {92, 104}, {150, 170}, {213, 240}, {292, 327}, {373, 415}, {455, 507}, {482, 538}}[rank]
-	spellId := [11]int32{0, 686, 695, 705, 1088, 1106, 7641, 11699, 11660, 11661, 25307}[rank]
-	manaCost := [11]float64{0, 25, 40, 70, 110, 160, 210, 265, 315, 370, 380}[rank]
+func (warlock *Warlock) getShadowCleaveBaseConfig(rank int) core.SpellConfig {
+	spellCoeff := [11]float64{0, .047, .1, .187, .286, .286, .286, .286, .286, .286, .286}[rank]
+	baseDamage := [11][]float64{{0}, {3, 7}, {7, 12}, {14, 23}, {26, 39}, {42, 64}, {60, 91}, {82, 124}, {105, 158}, {128, 193}, {136, 204}}[rank]
+	spellId := [11]int32{0, 403835, 403839, 403840, 403841, 403842, 403843, 403844, 403848, 403851, 403852}[rank]
+	manaCost := [11]float64{0, 12, 20, 35, 55, 80, 105, 132, 157, 185, 190}[rank]
 	level := [11]int{0, 1, 6, 12, 20, 28, 36, 44, 52, 60, 60}[rank]
-	castTime := [11]int32{0, 1700, 2200, 2800, 3000, 3000, 3000, 3000, 3000, 3000, 3000}[rank]
 
-	shadowboltVolley := warlock.HasRune(proto.WarlockRune_RuneHandsShadowBoltVolley)
-	damageMulti := core.TernaryFloat64(shadowboltVolley, 0.8, 1.0)
-	numHits := min(core.TernaryInt32(shadowboltVolley, 5, 1), warlock.Env.GetNumTargets())
+	numHits := min(4, warlock.Env.GetNumTargets())
 	results := make([]*core.SpellResult, numHits)
 
 	return core.SpellConfig{
@@ -29,21 +26,23 @@ func (warlock *Warlock) getShadowBoltBaseConfig(rank int) core.SpellConfig {
 		Rank:          rank,
 
 		ManaCost: core.ManaCostOptions{
-			FlatCost:   manaCost,
-			Multiplier: 1 - float64(warlock.Talents.Cataclysm)*0.01,
+			FlatCost: manaCost,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:      core.GCDDefault,
-				CastTime: time.Millisecond * time.Duration(castTime-100*warlock.Talents.Bane),
+				GCD: core.GCDDefault,
+			},
+			CD: core.Cooldown{
+				Timer:    warlock.NewTimer(),
+				Duration: time.Second * 6,
 			},
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return warlock.MetamorphosisAura == nil || !warlock.MetamorphosisAura.IsActive()
+			return warlock.MetamorphosisAura.IsActive()
 		},
 
 		BonusCritRating:  float64(warlock.Talents.Devastation) * core.SpellCritRatingPerCritChance,
-		DamageMultiplier: damageMulti,
+		DamageMultiplier: 1,
 		CritMultiplier:   warlock.SpellCritMultiplier(1, core.TernaryFloat64(warlock.Talents.Ruin, 1, 0)),
 		ThreatMultiplier: 1,
 
@@ -76,14 +75,18 @@ func (warlock *Warlock) getShadowBoltBaseConfig(rank int) core.SpellConfig {
 	}
 }
 
-func (warlock *Warlock) registerShadowBoltSpell() {
+func (warlock *Warlock) registerShadowCleaveSpell() {
+	if !warlock.HasRune(proto.WarlockRune_RuneHandsMetamorphosis) {
+		return
+	}
+
 	maxRank := 10
 
 	for i := 1; i <= maxRank; i++ {
-		config := warlock.getShadowBoltBaseConfig(i)
+		config := warlock.getShadowCleaveBaseConfig(i)
 
 		if config.RequiredLevel <= int(warlock.Level) {
-			warlock.ShadowBolt = warlock.GetOrRegisterSpell(config)
+			warlock.ShadowCleave = warlock.GetOrRegisterSpell(config)
 		}
 	}
 }
