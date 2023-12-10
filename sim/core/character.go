@@ -106,10 +106,7 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 			ChannelClipDelay:     max(0, time.Duration(player.ChannelClipDelayMs)*time.Millisecond),
 			DistanceFromTarget:   player.DistanceFromTarget,
 			NibelungAverageCasts: player.NibelungAverageCasts,
-			IsUsingAPL: player.Rotation != nil &&
-				(player.Rotation.Type == proto.APLRotation_TypeAPL ||
-					player.Rotation.Type == proto.APLRotation_TypeAuto ||
-					player.Rotation.Type == proto.APLRotation_TypeSimple),
+			IsUsingAPL:           player.Rotation != nil && player.Rotation.Type == proto.APLRotation_TypeAPL,
 		},
 
 		Name:  player.Name,

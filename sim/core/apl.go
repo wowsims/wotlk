@@ -54,7 +54,7 @@ func (rot *APLRotation) doAndRecordWarnings(warningsList *[]string, isPrepull bo
 }
 
 func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
-	if config == nil || !unit.IsUsingAPL {
+	if config == nil || config.Type != proto.APLRotation_TypeAPL {
 		return nil
 	}
 
