@@ -60,7 +60,7 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	moonkinAura: true,
 	leaderOfThePack: true,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,
-	strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
+	strengthOfEarthTotem: true,
 	trueshotAura: true,
 });
 

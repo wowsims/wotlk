@@ -124,7 +124,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 			arcaneBrilliance: true,
 			powerWordFortitude: TristateEffect.TristateEffectImproved,
 			giftOfTheWild: TristateEffect.TristateEffectImproved,
-			strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
+			strengthOfEarthTotem: true,
 			battleShout: TristateEffect.TristateEffectImproved,
 			moonkinAura: true,
 		}),

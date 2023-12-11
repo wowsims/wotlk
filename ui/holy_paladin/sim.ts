@@ -76,7 +76,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHolyPaladin, {
 		raidBuffs: RaidBuffs.create({
 			giftOfTheWild: TristateEffect.TristateEffectImproved,
 			powerWordFortitude: TristateEffect.TristateEffectImproved,
-			strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
+			strengthOfEarthTotem: true,
 			arcaneBrilliance: true,
 			moonkinAura: true,
 			manaSpringTotem: TristateEffect.TristateEffectRegular,

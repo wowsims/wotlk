@@ -127,26 +127,40 @@ func applyConsumeEffects(agent Agent) {
 			})
 		case proto.StrengthBuff_ElixirOfGiants:
 			character.AddStats(stats.Stats{
-				stats.Agility: 25,
+				stats.Strength: 25,
 			})
 		}
 	}
 
-	if consumes.SpellPowerBuff {
-		character.AddStats(stats.Stats{
-			stats.SpellPower: 35,
-		})
+	if consumes.SpellPowerBuff != proto.SpellPowerBuff_SpellPowerBuffUnknown {
+		switch consumes.SpellPowerBuff {
+		case proto.SpellPowerBuff_ArcaneElixir:
+			character.AddStats(stats.Stats{
+				stats.SpellPower: 20,
+			})
+		case proto.SpellPowerBuff_GreaterArcaneElixir:
+			character.AddStats(stats.Stats{
+				stats.SpellPower: 35,
+			})
+		}
+	}
+
+	if consumes.FirePowerBuff != proto.FirePowerBuff_FirePowerBuffUnknown {
+		switch consumes.FirePowerBuff {
+		case proto.FirePowerBuff_ElixirOfFirepower:
+			character.AddStats(stats.Stats{
+				stats.FirePower: 10,
+			})
+		case proto.FirePowerBuff_ElixirOfGreaterFirepower:
+			character.AddStats(stats.Stats{
+				stats.FirePower: 40,
+			})
+		}
 	}
 
 	if consumes.ShadowPowerBuff {
 		character.AddStats(stats.Stats{
 			stats.ShadowPower: 40,
-		})
-	}
-
-	if consumes.FirePowerBuff {
-		character.AddStats(stats.Stats{
-			stats.FirePower: 40,
 		})
 	}
 

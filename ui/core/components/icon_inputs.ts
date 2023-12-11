@@ -1,4 +1,4 @@
-import { AgilityElixir, Consumes, Debuffs, Explosive, Flask, Food, IndividualBuffs, RaidBuffs, StrengthBuff, WeaponBuff } from '../proto/common.js';
+import { AgilityElixir, Consumes, Debuffs, Explosive, FirePowerBuff, Flask, Food, IndividualBuffs, RaidBuffs, SpellPowerBuff, StrengthBuff, WeaponBuff } from '../proto/common.js';
 import { ActionId } from '../proto_utils/action_id.js';
 
 import { Player } from '../player.js';
@@ -41,7 +41,7 @@ export const AllStatsPercentBuff = InputHelpers.makeMultiIconInput([
 // TODO: Classic armor buff ranks
 export const ArmorBuff = InputHelpers.makeMultiIconInput([
 	makeTristateRaidBuffInput({id: ActionId.fromSpellId(10293), impId: ActionId.fromSpellId(20142), fieldName: 'devotionAura'}),
-	makeBooleanRaidBuffInput({id: ActionId.fromItemId(43468), fieldName: 'scrollOfProtection'}),
+	makeBooleanRaidBuffInput({id: ActionId.fromItemId(1478), fieldName: 'scrollOfProtection'}),
 ], 'Armor');
 
 export const StaminaBuff = InputHelpers.makeMultiIconInput([
@@ -57,7 +57,7 @@ export const StaminaBuff = InputHelpers.makeMultiIconInput([
 
 // TODO: Breakout Strength / Agi
 export const StrengthAndAgilityBuff = InputHelpers.makeMultiIconInput([
-	makeTristateRaidBuffInput({id: ActionId.fromSpellId(25361), impId: ActionId.fromSpellId(52456), fieldName: 'strengthOfEarthTotem'}),
+	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(25361), fieldName: 'strengthOfEarthTotem'}),
 	makeBooleanRaidBuffInput({id: ActionId.fromItemId(10309), fieldName: 'scrollOfAgility'}),
 	makeBooleanRaidBuffInput({id: ActionId.fromItemId(10310), fieldName: 'scrollOfStrength'}),
 ], 'Str/Agi');
@@ -73,8 +73,8 @@ export const SpiritBuff = InputHelpers.makeMultiIconInput([
 ], 'Spirit');
 
 export const AttackPowerBuff = InputHelpers.makeMultiIconInput([
-	makeTristateIndividualBuffInput(ActionId.fromSpellId(48934), ActionId.fromSpellId(20045), 'blessingOfMight'),
-	makeTristateRaidBuffInput({id: ActionId.fromSpellId(47436), impId: ActionId.fromSpellId(12861), fieldName: 'battleShout'}),
+	makeTristateIndividualBuffInput(ActionId.fromSpellId(25291), ActionId.fromSpellId(20048), 'blessingOfMight'),
+	makeTristateRaidBuffInput({id: ActionId.fromSpellId(25289), impId: ActionId.fromSpellId(12861), fieldName: 'battleShout'}),
 	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(19506), fieldName: 'trueshotAura'}),
 ], 'AP');
 
@@ -99,7 +99,7 @@ export const MP5Buff = InputHelpers.makeMultiIconInput([
 ], 'MP5');
 
 export const MeleeCritBuff = InputHelpers.makeMultiIconInput([
-	makeTristateRaidBuffInput({id: ActionId.fromSpellId(17007), impId: ActionId.fromSpellId(34300), fieldName: 'leaderOfThePack'}),
+	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(17007), fieldName: 'leaderOfThePack'}),
 ], 'Melee Crit');
 
 export const SpellCritBuff = InputHelpers.makeMultiIconInput([
@@ -133,8 +133,8 @@ export const MinorArmorDebuff = InputHelpers.makeMultiIconInput([
 ], 'Minor ArP');
 
 export const AttackPowerDebuff = InputHelpers.makeMultiIconInput([
-	makeTristateDebuffInput(ActionId.fromSpellId(25203), ActionId.fromSpellId(12879), 'demoralizingShout'),
-	makeTristateDebuffInput(ActionId.fromSpellId(48560), ActionId.fromSpellId(16862), 'demoralizingRoar'),
+	makeTristateDebuffInput(ActionId.fromSpellId(11556), ActionId.fromSpellId(12879), 'demoralizingShout'),
+	makeTristateDebuffInput(ActionId.fromSpellId(9898), ActionId.fromSpellId(16862), 'demoralizingRoar'),
 ], 'Atk Pwr');
 
 // TODO: Classic
@@ -400,16 +400,24 @@ export const makeFoodInput = makeConsumeInputFactory({
 export const AgilityBuffInput = makeConsumeInput('agilityElixir', [
 	{ actionId: ActionId.fromItemId(13452), value: AgilityElixir.ElixirOfTheMongoose, showWhen: (p) => p.getLevel() >= 46 },
 	{ actionId: ActionId.fromItemId(9187), value: AgilityElixir.ElixirOfGreaterAgility, showWhen: (p) => p.getLevel() >= 38},
-] as Array<IconEnumValueConfig<Player<any>, AgilityElixir>>);
+] as Array<IconEnumValueConfig<Player<any>, AgilityElixir>>, (p) => p.getLevel() >= 38);
 
 export const StrengthBuffInput = makeConsumeInput('strengthBuff', [
-	{ actionId: ActionId.fromItemId(12451), value: StrengthBuff.JujuPower },
-	{ actionId: ActionId.fromItemId(9206), value: StrengthBuff.ElixirOfGiants },
-] as Array<IconEnumValueConfig<Player<any>, StrengthBuff>>);
+	{ actionId: ActionId.fromItemId(12451), value: StrengthBuff.JujuPower, showWhen: (p) => p.getLevel() >= 46 },
+	{ actionId: ActionId.fromItemId(9206), value: StrengthBuff.ElixirOfGiants, showWhen: (p) => p.getLevel() >= 46 },
+] as Array<IconEnumValueConfig<Player<any>, StrengthBuff>>, (p) => p.getLevel() >= 46);
 
-export const SpellDamageBuff = makeBooleanConsumeInput({id: ActionId.fromItemId(13454), fieldName: 'spellPowerBuff', minLevel: 47});
+export const SpellDamageBuff = makeConsumeInput('spellPowerBuff', [
+	{ actionId: ActionId.fromItemId(9155), value: SpellPowerBuff.ArcaneElixir, showWhen: (p) => p.getLevel() >= 37 },
+	{ actionId: ActionId.fromItemId(13454), value: SpellPowerBuff.GreaterArcaneElixir, showWhen: (p) => p.getLevel() >= 46 },
+] as Array<IconEnumValueConfig<Player<any>, SpellPowerBuff>>, (p) => p.getLevel() >= 37);
+
+export const FireDamageBuff = makeConsumeInput('firePowerBuff', [
+	{ actionId: ActionId.fromItemId(6373), value: FirePowerBuff.ElixirOfFirepower, showWhen: (p) => p.getLevel() >= 18 },
+	{ actionId: ActionId.fromItemId(21546), value: FirePowerBuff.ElixirOfGreaterFirepower, showWhen: (p) => p.getLevel() >= 40 },
+] as Array<IconEnumValueConfig<Player<any>, FirePowerBuff>>, (p) => p.getLevel() >= 18);
+
 export const ShadowDamageBuff = makeBooleanConsumeInput({id: ActionId.fromItemId(9264), fieldName: 'shadowPowerBuff', minLevel: 40});
-export const FireDamageBuff = makeBooleanConsumeInput({id: ActionId.fromItemId(21546), fieldName: 'firePowerBuff', minLevel: 40});
 export const FrostDamageBuff = makeBooleanConsumeInput({id: ActionId.fromItemId(17708), fieldName: 'frostPowerBuff', minLevel: 40});
 
 export const FillerExplosiveInput = makeConsumeInput('fillerExplosive', [
@@ -422,6 +430,7 @@ export interface ConsumeInputFactoryArgs<T extends number> {
 	allOptions: Array<IconEnumValueConfig<Player<any>, T>>,
 	// Additional callback if logic besides syncing consumes is required
 	onSet?: (eventID: EventID, player: Player<any>, newValue: T) => void
+	showWhen?: (obj: Player<any>) => boolean,
 }
 function makeConsumeInputFactory<T extends number>(args: ConsumeInputFactoryArgs<T>): (options: Array<T>, tooltip?: string) => InputHelpers.TypedIconEnumPickerConfig<Player<any>, T> {
 	return (options: Array<T>, tooltip?: string) => {
@@ -434,6 +443,7 @@ function makeConsumeInputFactory<T extends number>(args: ConsumeInputFactoryArgs
 			].concat(options.map(option => args.allOptions.find(allOption => allOption.value == option)!)),
 			equals: (a: T, b: T) => a == b,
 			zeroValue: 0 as T,
+			showWhen: args.showWhen,
 			changedEvent: (player: Player<any>) => TypedEvent.onAny([player.consumesChangeEmitter, player.levelChangeEmitter]),
 			getValue: (player: Player<any>) => player.getConsumes()[args.consumesFieldName] as T,
 			setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
@@ -455,11 +465,12 @@ function makeConsumeInputFactory<T extends number>(args: ConsumeInputFactoryArgs
 	};
 }
 
-function makeConsumeInput<T extends number>(consumesFieldName: keyof Consumes, allOptions: Array<IconEnumValueConfig<Player<any>, T>>, onSet?: (eventID: EventID, player: Player<any>, newValue: T) => void): InputHelpers.TypedIconEnumPickerConfig<Player<any>, T> {
+function makeConsumeInput<T extends number>(consumesFieldName: keyof Consumes, allOptions: Array<IconEnumValueConfig<Player<any>, T>>, showWhen?: (obj: Player<any>) => boolean, onSet?: (eventID: EventID, player: Player<any>, newValue: T) => void): InputHelpers.TypedIconEnumPickerConfig<Player<any>, T> {
 	const factory = makeConsumeInputFactory({
 		consumesFieldName: consumesFieldName,
 		allOptions: allOptions,
-		onSet: onSet
+		onSet: onSet,
+		showWhen: showWhen,
 	});
 	return factory(allOptions.map(option => option.value));
 }

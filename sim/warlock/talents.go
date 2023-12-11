@@ -38,7 +38,9 @@ func (warlock *Warlock) applyWeaponImbue() {
 		}
 	}
 	if warlock.Options.WeaponImbue == proto.Warlock_Options_Spellstone {
-		warlock.AddStat(stats.SpellCrit, 1*core.SpellCritRatingPerCritChance)
+		if level >= 55 {
+			warlock.AddStat(stats.SpellCrit, 1*core.SpellCritRatingPerCritChance)
+		}
 	}
 }
 

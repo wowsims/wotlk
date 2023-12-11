@@ -641,7 +641,7 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 						},
 						{
 							label: 'Demoralizing Shout',
-							actionId: ActionId.fromSpellId(47437),
+							actionId: ActionId.fromSpellId(11556),
 							playerData: playerClassAndMissingTalent(Class.ClassWarrior, 'improvedDemoralizingShout', player => (player.spec == Spec.SpecWarrior && (player as Player<Spec.SpecWarrior>).getRotation().maintainDemoShout) || (player.spec == Spec.SpecProtectionWarrior && (player as Player<Spec.SpecProtectionWarrior>).getRotation().demoShoutChoice != 0)),
 						},
 						{
@@ -651,7 +651,7 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 						},
 						{
 							label: 'Demoralizing Roar',
-							actionId: ActionId.fromSpellId(48560),
+							actionId: ActionId.fromSpellId(9898),
 							playerData: playerSpecAndMissingTalent(Spec.SpecFeralTankDruid, 'feralAggression', player => player.getRotation().maintainDemoralizingRoar),
 						},
 						// {

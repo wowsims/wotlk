@@ -517,11 +517,8 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 	// 	MakePermanent(dpAura)
 	// }
 
-	if raidBuffs.StrengthOfEarthTotem > 0 {
+	if raidBuffs.StrengthOfEarthTotem {
 		updateStats := BuffSpellByLevel[StrengthOfEarth][level]
-		if raidBuffs.StrengthOfEarthTotem == proto.TristateEffect_TristateEffectImproved {
-			updateStats = updateStats.Multiply(1.15)
-		}
 		character.AddStats(updateStats)
 	} else if raidBuffs.ScrollOfStrength {
 		character.AddStats(BuffSpellByLevel[ScrollOfStrength][level])
