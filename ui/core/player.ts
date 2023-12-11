@@ -14,7 +14,6 @@ import {
 	Consumes,
 	Cooldowns,
 	Faction,
-	Glyphs,
 	HandType,
 	HealingModel,
 	IndividualBuffs,
@@ -30,9 +29,7 @@ import {
 	UnitStats,
 } from './proto/common.js';
 import {
-	DungeonDifficulty,
 	UIEnchant as Enchant,
-	Expansion,
 	UIItem as Item,
 	RaidFilterOption,
 	UIRune as Rune,
@@ -50,7 +47,6 @@ import { Stats } from './proto_utils/stats.js';
 import { playerTalentStringToProto } from './talents/factory.js';
 
 import {
-	AL_CATEGORY_HARD_MODE,
 	ClassSpecs,
 	ShamanSpecs,
 	SpecOptions,
@@ -241,7 +237,6 @@ export class Player<SpecType extends Spec> {
 	private rotation: SpecRotation<SpecType>;
 	aplRotation: APLRotation = APLRotation.create();
 	private talentsString: string = '';
-	private glyphs: Glyphs = Glyphs.create();
 	private specOptions: SpecOptions<SpecType>;
 	private cooldowns: Cooldowns = Cooldowns.create();
 	private reactionTime: number = 0;
@@ -278,7 +273,6 @@ export class Player<SpecType extends Spec> {
 	readonly levelChangeEmitter = new TypedEvent<void>('PlayerLevel');
 	readonly rotationChangeEmitter = new TypedEvent<void>('PlayerRotation');
 	readonly talentsChangeEmitter = new TypedEvent<void>('PlayerTalents');
-	readonly glyphsChangeEmitter = new TypedEvent<void>('PlayerGlyphs');
 	readonly specOptionsChangeEmitter = new TypedEvent<void>('PlayerSpecOptions');
 	readonly cooldownsChangeEmitter = new TypedEvent<void>('PlayerCooldowns');
 	readonly inFrontOfTargetChangeEmitter = new TypedEvent<void>('PlayerInFrontOfTarget');
@@ -332,7 +326,6 @@ export class Player<SpecType extends Spec> {
 			this.levelChangeEmitter,
 			this.rotationChangeEmitter,
 			this.talentsChangeEmitter,
-			this.glyphsChangeEmitter,
 			this.specOptionsChangeEmitter,
 			this.cooldownsChangeEmitter,
 			this.miscOptionsChangeEmitter,
@@ -864,40 +857,6 @@ export class Player<SpecType extends Spec> {
 		return getTalentTreeIcon(this.spec, this.getTalentsString());
 	}
 
-	getGlyphs(): Glyphs {
-		// Make a defensive copy
-		return Glyphs.clone(this.glyphs);
-	}
-
-	setGlyphs(eventID: EventID, newGlyphs: Glyphs) {
-		if (Glyphs.equals(this.glyphs, newGlyphs))
-			return;
-
-		// Make a defensive copy
-		this.glyphs = Glyphs.clone(newGlyphs);
-		this.glyphsChangeEmitter.emit(eventID);
-	}
-
-	getMajorGlyphs(): Array<number> {
-		return [
-			this.glyphs.major1,
-			this.glyphs.major2,
-			this.glyphs.major3,
-		].filter(glyph => glyph != 0);
-	}
-
-	getMinorGlyphs(): Array<number> {
-		return [
-			this.glyphs.minor1,
-			this.glyphs.minor2,
-			this.glyphs.minor3,
-		].filter(glyph => glyph != 0);
-	}
-
-	getAllGlyphs(): Array<number> {
-		return this.getMajorGlyphs().concat(this.getMinorGlyphs());
-	}
-
 	getSpecOptions(): SpecOptions<SpecType> {
 		return this.specTypeFunctions.optionsCopy(this.specOptions);
 	}
@@ -1235,7 +1194,6 @@ export class Player<SpecType extends Spec> {
 					? Cooldowns.create({ hpPercentForDefensives: this.getCooldowns().hpPercentForDefensives })
 					: this.getCooldowns(),
 				talentsString: this.getTalentsString(),
-				glyphs: this.getGlyphs(),
 				rotation: aplRotation,
 				profession1: this.getProfession1(),
 				profession2: this.getProfession2(),
@@ -1297,7 +1255,6 @@ export class Player<SpecType extends Spec> {
 			this.setBonusStats(eventID, Stats.fromProto(proto.bonusStats || UnitStats.create()));
 			this.setBuffs(eventID, proto.buffs || IndividualBuffs.create());
 			this.setTalentsString(eventID, proto.talentsString);
-			this.setGlyphs(eventID, proto.glyphs || Glyphs.create());
 			this.setProfession1(eventID, proto.profession1);
 			this.setProfession2(eventID, proto.profession2);
 			this.setReactionTime(eventID, proto.reactionTimeMs);

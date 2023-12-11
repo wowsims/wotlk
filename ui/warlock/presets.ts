@@ -3,7 +3,6 @@ import {
 	Debuffs,
 	Flask,
 	Food,
-	Glyphs,
 	IndividualBuffs,
 	Profession,
 	RaidBuffs,
@@ -12,8 +11,6 @@ import {
 import { SavedTalents } from '../core/proto/ui.js';
 import {
 	Warlock_Options_Armor as Armor,
-	WarlockMajorGlyph as MajorGlyph,
-	WarlockMinorGlyph as MinorGlyph,
 	Warlock_Options_Summon as Summon,
 	Warlock_Options as WarlockOptions,
 	Warlock_Options_WeaponImbue as WeaponImbue,
@@ -38,14 +35,6 @@ export const DefaultTalents = {
 	name: 'Default',
 	data: SavedTalents.create({
 		talentsString: '25002-2050300142301-52500051020001',
-		glyphs: Glyphs.create({
-			major1: MajorGlyph.WarlockMajorGlyphNone,
-			major2: MajorGlyph.WarlockMajorGlyphNone,
-			major3: MajorGlyph.WarlockMajorGlyphNone,
-			minor1: MinorGlyph.WarlockMinorGlyphNone,
-			minor2: MinorGlyph.WarlockMinorGlyphNone,
-			minor3: MinorGlyph.WarlockMinorGlyphNone,
-		}),
 	}),
 };
 

@@ -3,7 +3,6 @@ import {
 	Debuffs,
 	Flask,
 	Food,
-	Glyphs,
 	IndividualBuffs,
 	PartyBuffs,
 	Profession,
@@ -16,8 +15,6 @@ import { SavedTalents } from '../core/proto/ui.js';
 import {
 	BalanceDruid_Options as BalanceDruidOptions,
 	BalanceDruid_Rotation as BalanceDruidRotation,
-	DruidMajorGlyph,
-	DruidMinorGlyph,
 	BalanceDruid_Rotation_Type as RotationType
 } from '../core/proto/druid.js';
 
@@ -41,14 +38,6 @@ export const BalanceTalents = {
 	name: 'Balance',
 	data: SavedTalents.create({
 		talentsString: '5000500302551351--50050312',
-		glyphs: Glyphs.create({
-			major1: DruidMajorGlyph.DruidMajorGlyphNone,
-			major2: DruidMajorGlyph.DruidMajorGlyphNone,
-			major3: DruidMajorGlyph.DruidMajorGlyphNone,
-			minor1: DruidMinorGlyph.DruidMinorGlyphNone,
-			minor2: DruidMinorGlyph.DruidMinorGlyphNone,
-			minor3: DruidMinorGlyph.DruidMinorGlyphNone,
-		}),
 	}),
 };
 

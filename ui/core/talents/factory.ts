@@ -29,20 +29,6 @@ export const classTalentsConfig: Record<Class, TalentsConfig<any>> = {
 	[Class.ClassWarrior]: warriorTalentsConfig,
 };
 
-// TODO: Classic remove glyph refs
-export const classGlyphsConfig: Record<Class, any> = {
-	[Class.ClassUnknown]: { majorGlyphs: [], minorGlyphs: [] },
-	[Class.ClassDruid]: { majorGlyphs: [], minorGlyphs: [] },
-	[Class.ClassShaman]: { majorGlyphs: [], minorGlyphs: [] },
-	[Class.ClassHunter]: { majorGlyphs: [], minorGlyphs: [] },
-	[Class.ClassMage]: { majorGlyphs: [], minorGlyphs: [] },
-	[Class.ClassRogue]: { majorGlyphs: [], minorGlyphs: [] },
-	[Class.ClassPaladin]: { majorGlyphs: [], minorGlyphs: [] },
-	[Class.ClassPriest]: { majorGlyphs: [], minorGlyphs: [] },
-	[Class.ClassWarlock]: { majorGlyphs: [], minorGlyphs: [] },
-	[Class.ClassWarrior]: { majorGlyphs: [], minorGlyphs: [] },
-};
-
 export function talentSpellIdsToTalentString(playerClass: Class, talentIds: Array<number>): string {
 	const talentsConfig = classTalentsConfig[playerClass];
 

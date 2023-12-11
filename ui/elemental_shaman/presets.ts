@@ -2,7 +2,6 @@ import {
   Consumes,
   Flask,
   Food,
-  Glyphs,
   Profession,
   Spec
 } from '../core/proto/common.js';
@@ -15,8 +14,6 @@ import {
   ElementalShaman_Rotation as ElementalShamanRotation,
   FireTotem,
   ElementalShaman_Rotation_RotationType as RotationType,
-  ShamanMajorGlyph,
-  ShamanMinorGlyph,
   ShamanShield,
   ShamanTotems,
   WaterTotem,
@@ -61,14 +58,6 @@ export const StandardTalents = {
   name: 'Standard',
   data: SavedTalents.create({
     talentsString: '0532001523212351322301351-005052031',
-    glyphs: Glyphs.create({
-      major1: ShamanMajorGlyph.GlyphOfLava,
-      major2: ShamanMajorGlyph.GlyphOfTotemOfWrath,
-      major3: ShamanMajorGlyph.GlyphOfLightningBolt,
-      minor1: ShamanMinorGlyph.GlyphOfThunderstorm,
-      minor2: ShamanMinorGlyph.GlyphOfWaterShield,
-      minor3: ShamanMinorGlyph.GlyphOfGhostWolf,
-    }),
   }),
 };
 
@@ -76,14 +65,6 @@ export const Phase4Talents = {
   name: 'Phase 4',
   data: SavedTalents.create({
     talentsString: '0533001523213351322301351-005050031',
-    glyphs: Glyphs.create({
-      major1: ShamanMajorGlyph.GlyphOfFlameShock,
-      major2: ShamanMajorGlyph.GlyphOfTotemOfWrath,
-      major3: ShamanMajorGlyph.GlyphOfLightningBolt,
-      minor1: ShamanMinorGlyph.GlyphOfThunderstorm,
-      minor2: ShamanMinorGlyph.GlyphOfWaterShield,
-      minor3: ShamanMinorGlyph.GlyphOfGhostWolf,
-    }),
   }),
 };
 

@@ -2,7 +2,6 @@ import {
 	Consumes,
 	Flask,
 	Food,
-	Glyphs,
 	Spec,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
@@ -14,8 +13,6 @@ import {
 	Hunter_Options as HunterOptions,
 	Hunter_Options_Ammo as Ammo,
 	Hunter_Options_PetType as PetType,
-	HunterMajorGlyph as MajorGlyph,
-	HunterMinorGlyph as MinorGlyph,
 } from '../core/proto/hunter.js';
 
 import * as PresetUtils from '../core/preset_utils.js';
@@ -61,14 +58,6 @@ export const BeastMasteryTalents = {
 	name: 'Beast Mastery',
 	data: SavedTalents.create({
 		talentsString: '51200201505112243120531251-025305101',
-		glyphs: Glyphs.create({
-			major1: MajorGlyph.GlyphOfBestialWrath,
-			major2: MajorGlyph.GlyphOfSteadyShot,
-			major3: MajorGlyph.GlyphOfSerpentSting,
-			minor1: MinorGlyph.GlyphOfFeignDeath,
-			minor2: MinorGlyph.GlyphOfRevivePet,
-			minor3: MinorGlyph.GlyphOfMendPet,
-		}),
 	}),
 };
 
@@ -76,14 +65,6 @@ export const MarksmanTalents = {
 	name: 'Marksman',
 	data: SavedTalents.create({
 		talentsString: '502-025335101030013233135031051-5000032',
-		glyphs: Glyphs.create({
-			major1: MajorGlyph.GlyphOfSerpentSting,
-			major2: MajorGlyph.GlyphOfSteadyShot,
-			major3: MajorGlyph.GlyphOfExplosiveTrap,
-			minor1: MinorGlyph.GlyphOfFeignDeath,
-			minor2: MinorGlyph.GlyphOfRevivePet,
-			minor3: MinorGlyph.GlyphOfMendPet,
-		}),
 	}),
 };
 
@@ -91,14 +72,6 @@ export const SurvivalTalents = {
 	name: 'Survival',
 	data: SavedTalents.create({
 		talentsString: '-005305101-5000032500033330531135301331',
-		glyphs: Glyphs.create({
-			major1: MajorGlyph.GlyphOfSerpentSting,
-			major2: MajorGlyph.GlyphOfExplosiveTrap,
-			major3: MajorGlyph.GlyphOfKillShot,
-			minor1: MinorGlyph.GlyphOfFeignDeath,
-			minor2: MinorGlyph.GlyphOfRevivePet,
-			minor3: MinorGlyph.GlyphOfMendPet,
-		}),
 	}),
 };
 

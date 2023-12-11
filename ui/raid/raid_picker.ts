@@ -9,7 +9,6 @@ import { Class } from '../core/proto/common.js';
 import { Profession } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
 import { Faction } from '../core/proto/common.js';
-import { Glyphs } from '../core/proto/common.js';
 import { cssClassForClass, playerToSpec } from '../core/proto_utils/utils.js';
 import { isTankSpec } from '../core/proto_utils/utils.js';
 import { specToClass } from '../core/proto_utils/utils.js';
@@ -667,7 +666,6 @@ class NewPlayerPicker extends Component {
 						newPlayer.applySharedDefaults(eventID);
 						newPlayer.setRace(eventID, matchingPreset.defaultFactionRaces[this.raidPicker.getCurrentFaction()]);
 						newPlayer.setTalentsString(eventID, matchingPreset.talents.talentsString);
-						newPlayer.setGlyphs(eventID, matchingPreset.talents.glyphs || Glyphs.create());
 						newPlayer.setSpecOptions(eventID, matchingPreset.specOptions);
 						newPlayer.setConsumes(eventID, matchingPreset.consumes);
 						newPlayer.setName(eventID, matchingPreset.defaultName);

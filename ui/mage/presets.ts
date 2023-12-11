@@ -2,15 +2,12 @@ import {
 	Consumes,
 	Flask,
 	Food,
-	Glyphs,
 	Profession
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
 import {
 	Mage_Options_ArmorType as ArmorType,
-	MageMajorGlyph,
-	MageMinorGlyph,
 	Mage_Options as MageOptions
 } from '../core/proto/mage.js';
 
@@ -34,14 +31,6 @@ export const DefaultTalents = {
 	name: 'Fire',
 	data: SavedTalents.create({
 		talentsString: '230025030002-5052000123033151-003',
-		glyphs: Glyphs.create({
-			major1: MageMajorGlyph.MageMajorGlyphNone,
-			major2: MageMajorGlyph.MageMajorGlyphNone,
-			major3: MageMajorGlyph.MageMajorGlyphNone,
-			minor1: MageMinorGlyph.MageMinorGlyphNone,
-			minor2: MageMinorGlyph.MageMinorGlyphNone,
-			minor3: MageMinorGlyph.MageMinorGlyphNone,
-		}),
 	}),
 };
 

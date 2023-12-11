@@ -10,7 +10,6 @@ import {
 	Stat, PseudoStat,
 	TristateEffect,
 } from '../core/proto/common.js';
-import { PaladinMajorGlyph, PaladinSeal } from '../core/proto/paladin.js';
 import {
 	APLRotation,
 } from '../core/proto/apl.js';
@@ -18,10 +17,8 @@ import { Stats } from '../core/proto_utils/stats.js';
 import { Player } from '../core/player.js';
 import { getSpecIcon } from '../core/proto_utils/utils.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
-import { TypedEvent } from '../core/typed_event.js';
 
 import * as OtherInputs from '../core/components/other_inputs.js';
-import * as Mechanics from '../core/constants/mechanics.js';
 import * as ProtectionPaladinInputs from './inputs.js';
 import * as Presets from './presets.js';
 
@@ -88,19 +85,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecProtectionPaladin, {
 		Stat.StatShadowResistance,
 		Stat.StatFrostResistance,
 	],
-	modifyDisplayStats: (player: Player<Spec.SpecProtectionPaladin>) => {
-		let stats = new Stats();
 
-		TypedEvent.freezeAllAndDo(() => {
-			if (player.getMajorGlyphs().includes(PaladinMajorGlyph.GlyphOfSealOfVengeance) && (player.getSpecOptions().seal == PaladinSeal.Vengeance)) {
-				stats = stats.addStat(Stat.StatExpertise, 10 * Mechanics.EXPERTISE_PER_QUARTER_PERCENT_REDUCTION);
-			}
-		})
-
-		return {
-			talents: stats,
-		};
-	},
 	defaults: {
 		// Default equipped gear.
 		gear: Presets.DefaultGear.gear,

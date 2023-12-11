@@ -10,8 +10,6 @@ import { SavedTalents } from '../core/proto/ui.js';
 import {
 	PaladinAura,
 	PaladinJudgement,
-	PaladinMajorGlyph,
-	PaladinMinorGlyph,
 	ProtectionPaladin_Options as ProtectionPaladinOptions,
 	ProtectionPaladin_Rotation as ProtectionPaladinRotation,
 	ProtectionPaladin_Rotation_SpellOption as SpellOption,
@@ -57,14 +55,6 @@ export const GenericAoeTalents = {
 	name: 'Baseline Example',
 	data: SavedTalents.create({
 		talentsString: '-05005135200132311333312321-511302012003',
-		glyphs: {
-			major1: PaladinMajorGlyph.GlyphOfSealOfVengeance,
-			major2: PaladinMajorGlyph.GlyphOfRighteousDefense,
-			major3: PaladinMajorGlyph.GlyphOfDivinePlea,
-			minor1: PaladinMinorGlyph.GlyphOfSenseUndead,
-			minor2: PaladinMinorGlyph.GlyphOfLayOnHands,
-			minor3: PaladinMinorGlyph.GlyphOfBlessingOfKings
-		}
 	}),
 };
 

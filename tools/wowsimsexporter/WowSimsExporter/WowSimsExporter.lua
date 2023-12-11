@@ -59,30 +59,12 @@ function WowSimsExporter:CreateCharacterStructure(unit)
         class = engClass:lower(),
 		level = tonumber(level),
         talents = "",
-		glyphs = { major = { }, minor = { } }, --wotlk
         professions = { }, --{ name = "", level = "" }, --wotlk
 		spec  =  self:CheckCharacterSpec(engClass:lower()),
         gear = { items = { } } 
 	}
 
     return self.Character
-end
-
-function WowSimsExporter:CreateGlyphEntry()
-	local minor = {}
-	local major = {}
-	for t = 1, 6 do
-		local enabled, glyphType, glyphSpellID = GetGlyphSocketInfo(t)
-		if enabled and glyphSpellID then
-			local localizedName = GetSpellInfo(glyphSpellID)
-			if localizedName then
-				local t = glyphType == 1 and major or minor
-				table.insert(t, {["name"] = localizedName, ["spellID"] = glyphSpellID})
-			end
-		end
-		self.Character.glyphs.major = major
-		self.Character.glyphs.minor = minor
-	end
 end
 
 function WowSimsExporter:CreateProfessionEntry()
@@ -189,7 +171,6 @@ end
 
 function WowSimsExporter:GetGearEnchantGems(withBags)
 	self.Character.gear = {}
-	self.Character.glyphs = {}
 	self.Character.bagItems = {}
 	self.Character.items = nil
 
@@ -206,7 +187,6 @@ function WowSimsExporter:GetGearEnchantGems(withBags)
 
 		self.Character.spec = self:CheckCharacterSpec(self.Character.class)
 		self.Character.talents = self:CreateTalentEntry()
-		self:CreateGlyphEntry() -- wotlk
 		self:CreateProfessionEntry() -- wotlk
 		self.Character.gear.items = equippedGear
 		return self.Character

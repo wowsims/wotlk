@@ -2,7 +2,7 @@ import { IndividualSimUI } from "../../individual_sim_ui";
 import { Player } from "../../player";
 import { EventID, TypedEvent } from "../../typed_event";
 
-import { Class, Glyphs, Spec } from "../../proto/common";
+import { Class, Spec } from "../../proto/common";
 import { SavedTalents } from "../../proto/ui";
 
 import { classTalentsConfig } from "../../talents/factory";
@@ -108,15 +108,13 @@ export class TalentsTab extends SimTab {
 			storageKey: this.simUI.getSavedTalentsStorageKey(),
 			getData: (player: Player<any>) => SavedTalents.create({
 				talentsString: player.getTalentsString(),
-				glyphs: player.getGlyphs(),
 			}),
 			setData: (eventID: EventID, player: Player<any>, newTalents: SavedTalents) => {
 				TypedEvent.freezeAllAndDo(() => {
 					player.setTalentsString(eventID, newTalents.talentsString);
-					player.setGlyphs(eventID, newTalents.glyphs || Glyphs.create());
 				});
 			},
-			changeEmitters: [this.simUI.player.talentsChangeEmitter, this.simUI.player.glyphsChangeEmitter],
+			changeEmitters: [this.simUI.player.talentsChangeEmitter],
 			equals: (a: SavedTalents, b: SavedTalents) => SavedTalents.equals(a, b),
 			toJson: (a: SavedTalents) => SavedTalents.toJson(a),
 			fromJson: (obj: any) => SavedTalents.fromJson(obj),
