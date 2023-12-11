@@ -22,7 +22,6 @@ import { RaidSimUI } from './raid_sim_ui.js';
 import { playerPresets, specSimFactories } from './presets.js';
 
 import { BalanceDruid_Options as BalanceDruidOptions } from '../core/proto/druid.js';
-import { Mage_Options as MageOptions } from '../core/proto/mage.js';
 import { BaseModal } from '../core/components/base_modal.js';
 import { Tooltip } from 'bootstrap';
 
@@ -667,7 +666,6 @@ class NewPlayerPicker extends Component {
 						const newPlayer = new Player(matchingPreset.spec, this.raidPicker.raid.sim);
 						newPlayer.applySharedDefaults(eventID);
 						newPlayer.setRace(eventID, matchingPreset.defaultFactionRaces[this.raidPicker.getCurrentFaction()]);
-						newPlayer.setRotation(eventID, matchingPreset.rotation);
 						newPlayer.setTalentsString(eventID, matchingPreset.talents.talentsString);
 						newPlayer.setGlyphs(eventID, matchingPreset.talents.glyphs || Glyphs.create());
 						newPlayer.setSpecOptions(eventID, matchingPreset.specOptions);

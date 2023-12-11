@@ -37,9 +37,9 @@ import RuptureMutilateExposeApl from './apls/rupture_mutilate_expose.apl.json';
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
 
-export const AssassinationDefaultGear = PresetUtils.makePresetGear('Blank', BlankGear, { talentTree: 0 });
-export const CombatDefaultGear = PresetUtils.makePresetGear('Blank', BlankGear, { talentTree: 0 });
-export const SubtletyDefaultGear = PresetUtils.makePresetGear('Blank', BlankGear, { talentTree: 0 });
+export const GearAssassinationDefault = PresetUtils.makePresetGear('Blank', BlankGear, { talentTree: 0 });
+export const GearCombatDefault = PresetUtils.makePresetGear('Blank', BlankGear, { talentTree: 0 });
+export const GearSubtletyDefault = PresetUtils.makePresetGear('Blank', BlankGear, { talentTree: 0 });
 
 export const DefaultRotation = RogueRotation.create({
 	exposeArmorFrequency: Rogue_Rotation_Frequency.Never,

@@ -4,7 +4,6 @@ import {
 	CustomSpell,
 	Flask,
 	Food,
-	Glyphs,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
