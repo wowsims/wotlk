@@ -2,13 +2,11 @@ import {
 	Consumes,
 	Flask,
 	Food,
-	Glyphs
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
 import {
 	Rogue_Options_PoisonImbue as Poison,
-	RogueMajorGlyph,
 	Rogue_Options as RogueOptions,
 	Rogue_Rotation as RogueRotation,
 	Rogue_Rotation_AssassinationPriority,
@@ -70,11 +68,6 @@ export const CombatHackTalents = {
 	name: 'Combat Axes/Swords',
 	data: SavedTalents.create({
 		talentsString: '00532010414-0252051000035015223100501251',
-		glyphs: Glyphs.create({
-			major1: RogueMajorGlyph.GlyphOfKillingSpree,
-			major2: RogueMajorGlyph.GlyphOfTricksOfTheTrade,
-			major3: RogueMajorGlyph.GlyphOfRupture,
-		})
 	}),
 };
 
@@ -82,11 +75,6 @@ export const CombatCQCTalents = {
 	name: 'Combat Fists',
 	data: SavedTalents.create({
 		talentsString: '00532010414-0252051050035010223100501251',
-		glyphs: Glyphs.create({
-			major1: RogueMajorGlyph.GlyphOfKillingSpree,
-			major2: RogueMajorGlyph.GlyphOfTricksOfTheTrade,
-			major3: RogueMajorGlyph.GlyphOfRupture,
-		})
 	}),
 };
 
@@ -94,11 +82,6 @@ export const AssassinationTalents137 = {
 	name: 'Assassination 13/7',
 	data: SavedTalents.create({
 		talentsString: '005303104352100520103331051-005005003-502',
-		glyphs: Glyphs.create({
-			major1: RogueMajorGlyph.GlyphOfMutilate,
-			major2: RogueMajorGlyph.GlyphOfTricksOfTheTrade,
-			major3: RogueMajorGlyph.GlyphOfHungerForBlood,
-		})
 	}),
 };
 
@@ -106,11 +89,6 @@ export const AssassinationTalents182 = {
 	name: 'Assassination 18/2',
 	data: SavedTalents.create({
 		talentsString: '005303104352100520103331051-005005005003-2',
-		glyphs: Glyphs.create({
-			major1: RogueMajorGlyph.GlyphOfMutilate,
-			major2: RogueMajorGlyph.GlyphOfTricksOfTheTrade,
-			major3: RogueMajorGlyph.GlyphOfHungerForBlood,
-		})
 	}),
 };
 
@@ -118,11 +96,6 @@ export const AssassinationTalentsBF = {
 	name: 'Assassination Blade Flurry',
 	data: SavedTalents.create({
 		talentsString: '005303104352100520103231-005205005003001-501',
-		glyphs: Glyphs.create({
-			major1: RogueMajorGlyph.GlyphOfMutilate,
-			major2: RogueMajorGlyph.GlyphOfTricksOfTheTrade,
-			major3: RogueMajorGlyph.GlyphOfBladeFlurry,
-		})
 	}),
 };
 
@@ -130,11 +103,6 @@ export const SubtletyTalents = {
 	name: 'Subtlety',
 	data: SavedTalents.create({
 		talentsString: '30532010114--5022012030321121350115031151',
-		glyphs: Glyphs.create({
-			major1: RogueMajorGlyph.GlyphOfEviscerate,
-			major2: RogueMajorGlyph.GlyphOfRupture,
-			major3: RogueMajorGlyph.GlyphOfTricksOfTheTrade,
-		})
 	}),
 }
 
@@ -142,11 +110,6 @@ export const HemoSubtletyTalents = {
 	name: 'Hemo Sub',
 	data: SavedTalents.create({
 		talentsString: '30532010135--502201203032112135011503122',
-		glyphs: Glyphs.create({
-			major1: RogueMajorGlyph.GlyphOfEviscerate,
-			major2: RogueMajorGlyph.GlyphOfRupture,
-			major3: RogueMajorGlyph.GlyphOfTricksOfTheTrade,
-		})
 	}),
 }
 

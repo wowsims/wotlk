@@ -5,7 +5,6 @@ import {
 	Class,
 	EquipmentSpec,
 	ItemSlot,
-	Glyphs,
 	ItemSpec,
 	Profession,
 	Race,
@@ -14,10 +13,9 @@ import {
 import { IndividualSimSettings } from '../proto/ui';
 import { Database } from '../proto_utils/database';
 import { classNames, nameToClass, nameToRace, nameToProfession } from '../proto_utils/names';
-import { classGlyphsConfig, talentSpellIdsToTalentString } from '../talents/factory';
+import { talentSpellIdsToTalentString } from '../talents/factory';
 import { BaseModal } from './base_modal';
 import { buf2hex } from '../utils';
-import { JsonObject } from '@protobuf-ts/runtime';
 
 export abstract class Importer extends BaseModal {
 	protected readonly textElem: HTMLTextAreaElement;
@@ -72,7 +70,7 @@ export abstract class Importer extends BaseModal {
 
 	abstract onImport(data: string): void
 
-	protected async finishIndividualImport<SpecType extends Spec>(simUI: IndividualSimUI<SpecType>, charClass: Class, race: Race, equipmentSpec: EquipmentSpec, talentsStr: string, glyphs: Glyphs | null, professions: Array<Profession>): Promise<void> {
+	protected async finishIndividualImport<SpecType extends Spec>(simUI: IndividualSimUI<SpecType>, charClass: Class, race: Race, equipmentSpec: EquipmentSpec, talentsStr: string, professions: Array<Profession>): Promise<void> {
 		const playerClass = simUI.player.getClass();
 		if (charClass != playerClass) {
 			throw new Error(`Wrong Class! Expected ${classNames.get(playerClass)} but found ${classNames.get(charClass)}!`);
@@ -194,7 +192,7 @@ export class Individual80UImporter<SpecType extends Spec> extends Importer {
 
 		this.simUI.sim.db.lookupEquipmentSpec(equipmentSpec);
 
-		this.finishIndividualImport(this.simUI, charClass, race, equipmentSpec, talentsStr, null, []);
+		this.finishIndividualImport(this.simUI, charClass, race, equipmentSpec, talentsStr, []);
 	}
 }
 
@@ -255,50 +253,6 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 		const talentsStr = talentsHexStr.split('f').slice(0, 3).join('-');
 		//console.log('Talents: ' + talentsStr);
 
-		let cur = 4 + numTalentBytes;
-		const numGlyphBytes = data[cur];
-		cur++;
-		const glyphBytes = data.subarray(cur, cur + numGlyphBytes);
-		const gearBytes = data.subarray(cur + numGlyphBytes);
-		//console.log(`Glyphs have ${numGlyphBytes} bytes: ${buf2hex(glyphBytes)}`);
-		//console.log(`Remaining ${gearBytes.length} bytes: ${buf2hex(gearBytes)}`);
-
-		// First byte in glyphs section seems to always be 0x30
-		cur = 1;
-		let hasGlyphs = false;
-		const d = "0123456789abcdefghjkmnpqrstvwxyz";
-		const glyphStr = String.fromCharCode(...glyphBytes);
-		const glyphIds = [0, 0, 0, 0, 0, 0];
-		while (cur < glyphBytes.length) {
-
-			// First byte for each glyph is 0x3z, where z is the glyph position.
-			// 0, 1, 2 are major glyphs, 3, 4, 5 are minor glyphs.
-			const glyphPosition = d.indexOf(glyphStr[cur]);
-			cur++;
-
-			// For some reason, wowhead uses the spell IDs for the glyphs and
-			// applies a ridiculous hashing scheme.
-			const spellId = 0 +
-				(d.indexOf(glyphStr[cur + 0]) << 15) +
-				(d.indexOf(glyphStr[cur + 1]) << 10) +
-				(d.indexOf(glyphStr[cur + 2]) << 5) +
-				(d.indexOf(glyphStr[cur + 3]) << 0);
-			const itemId = this.simUI.sim.db.glyphSpellToItemId(spellId);
-			//console.log(`Glyph position: ${glyphPosition}, spellID: ${spellId}`);
-
-			hasGlyphs = true;
-			glyphIds[glyphPosition] = itemId;
-			cur += 4;
-		}
-		const glyphs = Glyphs.create({
-			major1: glyphIds[0],
-			major2: glyphIds[1],
-			major3: glyphIds[2],
-			minor1: glyphIds[3],
-			minor2: glyphIds[4],
-			minor3: glyphIds[5],
-		});
-
 		// Binary schema for each item:
 		// 8-bit slotNumber, high bit = is enchanted
 		// 8-bit upper 3 bits for gem count
@@ -306,8 +260,11 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 		// if enchant bit is set:
 		//   8-bit ??, possibly enchant position for multiple enchants?
 		//   16-bit enchant id
+		const gearBytes = data.subarray(numTalentBytes);
+		//console.log(`Remaining ${gearBytes.length} bytes: ${buf2hex(gearBytes)}`);
+		
 		const equipmentSpec = EquipmentSpec.create();
-		cur = 0;
+		let cur = 0;
 		while (cur < gearBytes.length) {
 			const itemSpec = ItemSpec.create();
 			const slotId = gearBytes[cur] & 0b00111111;
@@ -338,7 +295,7 @@ export class IndividualWowheadGearPlannerImporter<SpecType extends Spec> extends
 		}
 		this.simUI.sim.db.lookupEquipmentSpec(equipmentSpec);
 
-		this.finishIndividualImport(this.simUI, charClass, race, equipmentSpec, talentsStr, hasGlyphs ? glyphs : null, []);
+		this.finishIndividualImport(this.simUI, charClass, race, equipmentSpec, talentsStr, []);
 	}
 
 	static slotIDs: Record<ItemSlot, number> = {
@@ -373,7 +330,7 @@ export class IndividualAddonImporter<SpecType extends Spec> extends Importer {
 				Import settings from the <a href="https://www.curseforge.com/wow/addons/wowsimsexporter" target="_blank">WoWSims Importer In-Game Addon</a>.
 			</p>
 			<p>
-				This feature imports gear, race, talents, glyphs, and professions. It does NOT import buffs, debuffs, consumes, rotation, or custom stats.
+				This feature imports gear, race, talents, and professions. It does NOT import buffs, debuffs, consumes, rotation, or custom stats.
 			</p>
 			<p>
 				To import, paste the output from the addon below and click, 'Import'.
@@ -403,47 +360,11 @@ export class IndividualAddonImporter<SpecType extends Spec> extends Importer {
 		});
 
 		const talentsStr = (importJson['talents'] as string) || '';
-		const glyphsConfig = classGlyphsConfig[charClass];
-
-		const db = await Database.get();
-		const majorGlyphIDs = (importJson['glyphs']['major'] as Array<string | JsonObject>).map(g => glyphToID(g, db, glyphsConfig.majorGlyphs));
-		const minorGlyphIDs = (importJson['glyphs']['minor'] as Array<string | JsonObject>).map(g => glyphToID(g, db, glyphsConfig.minorGlyphs));
-
-		const glyphs = Glyphs.create({
-			major1: majorGlyphIDs[0] || 0,
-			major2: majorGlyphIDs[1] || 0,
-			major3: majorGlyphIDs[2] || 0,
-			minor1: minorGlyphIDs[0] || 0,
-			minor2: minorGlyphIDs[1] || 0,
-			minor3: minorGlyphIDs[2] || 0,
-		});
 
 		const gearJson = importJson['gear'];
 		gearJson.items = (gearJson.items as Array<any>).filter(item => item != null);
 		const equipmentSpec = EquipmentSpec.fromJson(gearJson);
 
-		this.finishIndividualImport(this.simUI, charClass, race, equipmentSpec, talentsStr, glyphs, professions);
+		this.finishIndividualImport(this.simUI, charClass, race, equipmentSpec, talentsStr, professions);
 	}
-}
-
-function glyphNameToID(glyphName: string, glyphsConfig: Record<number, any>): number {
-	if (!glyphName) {
-		return 0;
-	}
-
-	for (let glyphIDStr in glyphsConfig) {
-		if (glyphsConfig[glyphIDStr].name == glyphName) {
-			return parseInt(glyphIDStr);
-		}
-	}
-	throw new Error(`Unknown glyph name '${glyphName}'`);
-}
-
-function glyphToID(glyph: string | JsonObject, db: Database, glyphsConfig: Record<number, any>): number {
-	if (typeof glyph === 'string') {
-		// Legacy version: AddOn exports Glyphs by name (string) only. Names must be in English.
-		return glyphNameToID(glyph, glyphsConfig);
-	}
-	// New version exports glyph information in a table that includes the name and the glyph spell ID.
-	return db.glyphSpellToItemId(glyph['spellID'] as number);
 }

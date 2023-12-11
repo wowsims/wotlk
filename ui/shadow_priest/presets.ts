@@ -3,7 +3,6 @@ import {
 	Debuffs,
 	Flask,
 	Food,
-	Glyphs,
 	IndividualBuffs,
 	Profession,
 	RaidBuffs,
@@ -14,8 +13,6 @@ import { SavedTalents } from '../core/proto/ui.js';
 
 import {
 	ShadowPriest_Options as Options,
-	PriestMajorGlyph as MajorGlyph,
-	PriestMinorGlyph as MinorGlyph,
 	ShadowPriest_Rotation as Rotation,
 	ShadowPriest_Rotation_RotationType,
 } from '../core/proto/priest.js';
@@ -44,14 +41,6 @@ export const StandardTalents = {
 	name: 'Standard',
 	data: SavedTalents.create({
 		talentsString: '5042001303--5002505103501051',
-		glyphs: Glyphs.create({
-			major1: MajorGlyph.PriestMajorGlyphNone,
-			major2: MajorGlyph.PriestMajorGlyphNone,
-			major3: MajorGlyph.PriestMajorGlyphNone,
-			minor1: MinorGlyph.PriestMinorGlyphNone,
-			minor2: MinorGlyph.PriestMinorGlyphNone,
-			minor3: MinorGlyph.PriestMinorGlyphNone,
-		}),
 	}),
 };
 

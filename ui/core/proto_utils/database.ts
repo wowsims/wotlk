@@ -8,7 +8,6 @@ import {
 } from '../proto/common.js';
 import {
 	UIEnchant as Enchant,
-	GlyphID,
 	IconData,
 	UIItem as Item,
 	UINPC as Npc,
@@ -91,7 +90,6 @@ export class Database {
 	private readonly presetTargets = new Map<string, PresetTarget>();
 	private readonly itemIcons: Record<number, Promise<IconData>> = {};
 	private readonly spellIcons: Record<number, Promise<IconData>> = {};
-	private readonly glyphIds: Array<GlyphID> = [];
 	private loadedLeftovers: boolean = false;
 
 	private constructor(db: UIDatabase) {
@@ -223,13 +221,6 @@ export class Database {
 	enchantSpellIdToEffectId(enchantSpellId: number): number {
 		const enchant = Object.values(this.enchantsBySlot).flat().find(enchant => enchant.spellId == enchantSpellId);
 		return enchant ? enchant.effectId : 0;
-	}
-
-	glyphItemToSpellId(itemId: number): number {
-		return this.glyphIds.find(gid => gid.itemId == itemId)?.spellId || 0;
-	}
-	glyphSpellToItemId(spellId: number): number {
-		return this.glyphIds.find(gid => gid.spellId == spellId)?.itemId || 0;
 	}
 
 	getPresetEncounter(path: string): PresetEncounter | null {

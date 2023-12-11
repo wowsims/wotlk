@@ -2,14 +2,11 @@ import {
 	Consumes,
 	Flask,
 	Food,
-	Glyphs,
 	Spec
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
 import {
-	DruidMajorGlyph,
-	DruidMinorGlyph,
 	FeralDruid_Options as FeralDruidOptions,
 	FeralDruid_Rotation as FeralDruidRotation,
 	FeralDruid_Rotation_AplType,
@@ -61,14 +58,6 @@ export const StandardTalents = {
 	name: 'Standard',
 	data: SavedTalents.create({
 		talentsString: '-543202132322010053120030310511-203503012',
-		glyphs: Glyphs.create({
-			major1: DruidMajorGlyph.DruidMajorGlyphNone,
-			major2: DruidMajorGlyph.DruidMajorGlyphNone,
-			major3: DruidMajorGlyph.DruidMajorGlyphNone,
-			minor1: DruidMinorGlyph.DruidMinorGlyphNone,
-			minor2: DruidMinorGlyph.DruidMinorGlyphNone,
-			minor3: DruidMinorGlyph.DruidMinorGlyphNone,
-		}),
 	}),
 };
 

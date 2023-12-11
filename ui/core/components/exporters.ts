@@ -147,36 +147,6 @@ export class IndividualWowheadGearPlannerExporter<SpecType extends Spec> extends
 			bytes.push(parseInt(talentsStr.substring(i, i + 2), 16));
 		}
 
-		let glyphBytes: Array<number> = [];
-		let glyphStr = '';
-		const glyphs = player.getGlyphs();
-		const d = "0123456789abcdefghjkmnpqrstvwxyz";
-		const addGlyph = (glyphItemId: number, glyphPosition: number) => {
-			const spellId = this.simUI.sim.db.glyphItemToSpellId(glyphItemId);
-			if (!spellId) {
-				return;
-			}
-			glyphStr += d[glyphPosition];
-			glyphStr += d[(spellId >> 15) & 0b00011111];
-			glyphStr += d[(spellId >> 10) & 0b00011111];
-			glyphStr += d[(spellId >> 5) & 0b00011111];
-			glyphStr += d[(spellId >> 0) & 0b00011111];
-		};
-		addGlyph(glyphs.major1, 0);
-		addGlyph(glyphs.major2, 1);
-		addGlyph(glyphs.major3, 2);
-		addGlyph(glyphs.minor1, 3);
-		addGlyph(glyphs.minor2, 4);
-		addGlyph(glyphs.minor3, 5);
-		if (glyphStr) {
-			glyphBytes.push(0x30);
-			for (let i = 0; i < glyphStr.length; i++) {
-				glyphBytes.push(glyphStr.charCodeAt(i));
-			}
-		}
-		bytes.push(glyphBytes.length);
-		bytes = bytes.concat(glyphBytes)
-
 		const to2Bytes = (val: number): Array<number> => {
 			return [
 				(val & 0xff00) >> 8,

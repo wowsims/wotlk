@@ -28,7 +28,6 @@ import {
 	Rogue_Rotation_CombatPriority as CombatPriority,
 	Rogue_Rotation_Frequency as Frequency,
 	Rogue_Rotation_SubtletyPriority as SubtletyPriority,
-	RogueMajorGlyph,
 } from '../core/proto/rogue.js';
 
 import * as IconInputs from '../core/components/icon_inputs.js';
@@ -113,42 +112,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 				getContent: () => {
 					if (simUI.player.getRotation().combatBuilder == CombatBuilder.HemorrhageCombat && !simUI.player.getTalents().hemorrhage) {
 						return 'Builder "Hemorrhage" selected, but Hemorrhage is not talented.';
-					} else {
-						return '';
-					}
-				},
-			};
-		},
-		(simUI: IndividualSimUI<Spec.SpecRogue>) => {
-			return {
-				updateOn: simUI.player.changeEmitter,
-				getContent: () => {
-					if (simUI.player.getRotation().useGhostlyStrike && !simUI.player.getMajorGlyphs().includes(RogueMajorGlyph.GlyphOfGhostlyStrike)) {
-						return '"Use Ghostly Strike" selected, but missing Glyph of Ghostly Strike.';
-					} else {
-						return '';
-					}
-				},
-			};
-		},
-		(simUI: IndividualSimUI<Spec.SpecRogue>) => {
-			return {
-				updateOn: simUI.player.changeEmitter,
-				getContent: () => {
-					if (simUI.player.getRotation().useFeint && !simUI.player.getMajorGlyphs().includes(RogueMajorGlyph.GlyphOfFeint)) {
-						return '"Use Feint" selected, but missing Glyph of Feint.';
-					} else {
-						return '';
-					}
-				},
-			};
-		},
-		(simUI: IndividualSimUI<Spec.SpecRogue>) => {
-			return {
-				updateOn: simUI.player.changeEmitter,
-				getContent: () => {
-					if (simUI.player.getRotation().exposeArmorFrequency == 2 && !simUI.player.getMajorGlyphs().includes(RogueMajorGlyph.GlyphOfExposeArmor) && simUI.player.getTalentTree() == 1) {
-						return '"Maintain Expose Armor" selected, but missing Glyph of Expose Armor.';
 					} else {
 						return '';
 					}

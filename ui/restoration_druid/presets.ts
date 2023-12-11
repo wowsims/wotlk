@@ -3,7 +3,6 @@ import {
 	Debuffs,
 	Flask,
 	Food,
-	Glyphs,
 	IndividualBuffs,
 	PartyBuffs,
 	RaidBuffs,
@@ -15,8 +14,6 @@ import { SavedTalents } from '../core/proto/ui.js';
 import {
 	RestorationDruid_Options as RestorationDruidOptions,
 	RestorationDruid_Rotation as RestorationDruidRotation,
-	DruidMajorGlyph,
-	DruidMinorGlyph,
 } from '../core/proto/druid.js';
 
 import * as PresetUtils from '../core/preset_utils.js';
@@ -38,28 +35,12 @@ export const CelestialFocusTalents = {
 	name: 'Celestial Focus',
 	data: SavedTalents.create({
 		talentsString: '05320031103--230023312131502331050313051',
-		glyphs: Glyphs.create({
-			major1: DruidMajorGlyph.DruidMajorGlyphNone,
-			major2: DruidMajorGlyph.DruidMajorGlyphNone,
-			major3: DruidMajorGlyph.DruidMajorGlyphNone,
-			minor2: DruidMinorGlyph.DruidMinorGlyphNone,
-			minor3: DruidMinorGlyph.DruidMinorGlyphNone,
-			minor1: DruidMinorGlyph.DruidMinorGlyphNone,
-		}),
 	}),
 };
 export const ThiccRestoTalents = {
 	name: 'Thicc Resto',
 	data: SavedTalents.create({
 		talentsString: '05320001--230023312331502531053313051',
-		glyphs: Glyphs.create({
-			major1: DruidMajorGlyph.DruidMajorGlyphNone,
-			major2: DruidMajorGlyph.DruidMajorGlyphNone,
-			major3: DruidMajorGlyph.DruidMajorGlyphNone,
-			minor2: DruidMinorGlyph.DruidMinorGlyphNone,
-			minor3: DruidMinorGlyph.DruidMinorGlyphNone,
-			minor1: DruidMinorGlyph.DruidMinorGlyphNone,
-		}),
 	}),
 };
 

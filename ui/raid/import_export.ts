@@ -103,7 +103,6 @@ export class RaidWCLImporter extends Importer {
 				The following are not available directly from the report data, but we try to infer them:
 				<ul>
 					<li>Talents: Log data only gives us the tree summary (e.g. '51/20/0') so we match this with the closest preset talent build.</li>
-					<li>Glyphs: Glyphs are absent from log data, but we pair them with the inferred Talents.</li>
 					<li>Race: Inferred from Race-specific abilties used in any fight if possible, or defaults to Spec-specific Race.</li>
 					<li>Professions: Inferred from profession-locked items/enchants.</li>
 					<li>Buff assignments (Innervate, Unholy Frenzy, etc): Inferred from casts.</li>
@@ -561,7 +560,6 @@ class WCLSimPlayer {
 		// Apply preset defaults.
 		this.player.applySharedDefaults(eventID);
 		this.player.setTalentsString(eventID, this.preset.talents.talentsString);
-		this.player.setGlyphs(eventID, this.preset.talents.glyphs!);
 		this.player.setConsumes(eventID, this.preset.consumes);
 		this.player.setSpecOptions(eventID, this.preset.specOptions);
 		this.player.setProfessions(eventID, [Profession.Engineering, Profession.Jewelcrafting]);

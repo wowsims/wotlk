@@ -4,7 +4,6 @@ import {
 	CustomSpell,
 	Flask,
 	Food,
-	Glyphs,
 	Spec
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
@@ -12,8 +11,6 @@ import { SavedTalents } from '../core/proto/ui.js';
 import {
 	PaladinAura,
 	PaladinJudgement,
-	PaladinMajorGlyph,
-	PaladinMinorGlyph,
 	RetributionPaladin_Options as RetributionPaladinOptions,
 	RetributionPaladin_Rotation as RetributionPaladinRotation,
 	RetributionPaladin_Rotation_RotationType as RotationType,
@@ -80,14 +77,6 @@ export const AuraMasteryTalents = {
 	name: 'Aura Mastery',
 	data: SavedTalents.create({
 		talentsString: '050501-05-05232051203331302133231331',
-		glyphs: Glyphs.create({
-			major1: PaladinMajorGlyph.GlyphOfSealOfVengeance,
-			major2: PaladinMajorGlyph.GlyphOfJudgement,
-			major3: PaladinMajorGlyph.GlyphOfReckoning,
-			minor1: PaladinMinorGlyph.GlyphOfSenseUndead,
-			minor2: PaladinMinorGlyph.GlyphOfLayOnHands,
-			minor3: PaladinMinorGlyph.GlyphOfBlessingOfKings
-		})
 	}),
 };
 
@@ -96,14 +85,6 @@ export const DivineSacTalents = {
 	name: 'Divine Sacrifice & Guardian',
 	data: SavedTalents.create({
 		talentsString: '03-453201002-05222051203331302133201331',
-		glyphs: Glyphs.create({
-			major1: PaladinMajorGlyph.GlyphOfSealOfVengeance,
-			major2: PaladinMajorGlyph.GlyphOfJudgement,
-			major3: PaladinMajorGlyph.GlyphOfReckoning,
-			minor1: PaladinMinorGlyph.GlyphOfSenseUndead,
-			minor2: PaladinMinorGlyph.GlyphOfLayOnHands,
-			minor3: PaladinMinorGlyph.GlyphOfBlessingOfKings
-		})
 	}),
 };
 

@@ -7,8 +7,6 @@ import { SavedTalents } from '../core/proto/ui.js';
 
 import {
 	PaladinAura,
-	PaladinMajorGlyph,
-	PaladinMinorGlyph,
 	PaladinJudgement,
 	HolyPaladin_Rotation as HolyPaladinRotation,
 	HolyPaladin_Options as HolyPaladinOptions,
@@ -31,14 +29,6 @@ export const StandardTalents = {
 	name: 'Standard',
 	data: SavedTalents.create({
 		talentsString: '50350151020013053100515221-50023131203',
-		glyphs: {
-			major1: PaladinMajorGlyph.GlyphOfHolyLight,
-			major2: PaladinMajorGlyph.GlyphOfSealOfWisdom,
-			major3: PaladinMajorGlyph.GlyphOfBeaconOfLight,
-			minor2: PaladinMinorGlyph.GlyphOfLayOnHands,
-			minor1: PaladinMinorGlyph.GlyphOfSenseUndead,
-			minor3: PaladinMinorGlyph.GlyphOfBlessingOfKings
-		}
 	}),
 };
 

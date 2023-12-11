@@ -5,15 +5,25 @@ import {
 	Debuffs,
 	Flask,
 	Food,
-	Glyphs,
 	RaidBuffs,
 	TristateEffect
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
 import {
-	AirTotem, EnhancementShaman_Rotation_CustomRotationSpell as CustomRotationSpell, EarthTotem, EnhancementShaman_Options as EnhancementShamanOptions, EnhancementShaman_Rotation as EnhancementShamanRotation, FireTotem, EnhancementShaman_Rotation_PrimaryShock as PrimaryShock,
-	EnhancementShaman_Rotation_RotationType as RotationType, ShamanImbue, ShamanMajorGlyph, ShamanShield, ShamanSyncType, ShamanTotems, WaterTotem
+	AirTotem,
+	EnhancementShaman_Rotation_CustomRotationSpell as CustomRotationSpell,
+	EarthTotem,
+	EnhancementShaman_Options as EnhancementShamanOptions,
+	EnhancementShaman_Rotation as EnhancementShamanRotation,
+	FireTotem,
+	EnhancementShaman_Rotation_PrimaryShock as PrimaryShock,
+	EnhancementShaman_Rotation_RotationType as RotationType,
+	ShamanImbue,
+	ShamanShield,
+	ShamanSyncType,
+	ShamanTotems,
+	WaterTotem
 } from '../core/proto/shaman.js';
 
 import * as PresetUtils from '../core/preset_utils.js';
@@ -75,12 +85,6 @@ export const StandardTalents = {
 	name: 'Standard',
 	data: SavedTalents.create({
 		talentsString: '053030152-30405003105021333031131031051',
-		glyphs: Glyphs.create({
-			major1: ShamanMajorGlyph.GlyphOfFireNova,
-			major2: ShamanMajorGlyph.GlyphOfFlametongueWeapon,
-			major3: ShamanMajorGlyph.GlyphOfFeralSpirit,
-			//minor glyphs dont affect damage done, all convenience/QoL
-		})
 	}),
 };
 
@@ -88,12 +92,6 @@ export const Phase3Talents = {
 	name: 'Phase 3',
 	data: SavedTalents.create({
 		talentsString: '053030152-30505003105001333031131131051',
-		glyphs: Glyphs.create({
-			major1: ShamanMajorGlyph.GlyphOfFireNova,
-			major2: ShamanMajorGlyph.GlyphOfFlametongueWeapon,
-			major3: ShamanMajorGlyph.GlyphOfFeralSpirit,
-			//minor glyphs dont affect damage done, all convenience/QoL
-		})
 	}),
 };
 
