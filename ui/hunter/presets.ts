@@ -33,9 +33,9 @@ import AoeApl from './apls/aoe.apl.json';
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
 
-export const BeastMasteryDefaultGear = PresetUtils.makePresetGear('Blank', BlankGear, { talentTree: 0 })
-export const MarksmanDefaultGear = PresetUtils.makePresetGear('Blank', BlankGear, { talentTree: 1 })
-export const SurvivalDefaultGear = PresetUtils.makePresetGear('Blank', BlankGear, { talentTree: 2 })
+export const GearBeastMasteryDefault = PresetUtils.makePresetGear('Blank', BlankGear, { talentTree: 0 })
+export const GearMarksmanDefault = PresetUtils.makePresetGear('Blank', BlankGear, { talentTree: 1 })
+export const GearSurvivalDefault = PresetUtils.makePresetGear('Blank', BlankGear, { talentTree: 2 })
 
 export const DefaultRotation = HunterRotation.create({
 	type: RotationType.SingleTarget,

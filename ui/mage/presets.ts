@@ -20,8 +20,13 @@ import DefaultBlankGear from './gear_sets/blank.gear.json';
 
 import DefaultAPL from './apls/default.apl.json';
 
-export const DEFAULT_GEAR = PresetUtils.makePresetGear('Default', DefaultBlankGear, { talentTree: 0 });
-export const ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Default', DefaultAPL, { talentTree: 0 });
+export const GearArcaneDefault = PresetUtils.makePresetGear('Default', DefaultBlankGear, { talentTree: 0 });
+export const GearFireDefault = PresetUtils.makePresetGear('Default', DefaultBlankGear, { talentTree: 1 });
+export const GearFrostDefault = PresetUtils.makePresetGear('Default', DefaultBlankGear, { talentTree: 2 });
+
+export const ROTATION_PRESET_ARCANE = PresetUtils.makePresetAPLRotation('Default', DefaultAPL, { talentTree: 0 });
+export const ROTATION_PRESET_FIRE = PresetUtils.makePresetAPLRotation('Default', DefaultAPL, { talentTree: 1 });
+export const ROTATION_PRESET_FROST = PresetUtils.makePresetAPLRotation('Default', DefaultAPL, { talentTree: 2 });
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/classic/talent-calc and copy the numbers in the url.

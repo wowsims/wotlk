@@ -3,7 +3,6 @@ import {
 	CustomRotation,
 	CustomSpell,
 	Debuffs,
-	Faction,
 	Flask,
 	Food,
 	Glyphs,
@@ -127,3 +126,6 @@ export const DefaultDebuffs = Debuffs.create({
 	faerieFire: TristateEffect.TristateEffectImproved,
 	judgementOfWisdom: true,
 });
+
+export const OtherDefaults = {
+};

@@ -6,7 +6,6 @@ import {
 	IndividualBuffs,
 	Flask,
 	Food,
-	Glyphs,
 	RaidBuffs,
 	TristateEffect,
 	UnitReference,
@@ -18,8 +17,6 @@ import {
 	HealingPriest_Rotation_RotationType as RotationType,
 	HealingPriest_Rotation_SpellOption as SpellOption,
 	HealingPriest_Options as Options,
-	PriestMajorGlyph as MajorGlyph,
-	PriestMinorGlyph as MinorGlyph,
 } from '../core/proto/priest.js';
 
 import * as PresetUtils from '../core/preset_utils.js';

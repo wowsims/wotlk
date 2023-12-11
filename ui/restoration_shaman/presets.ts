@@ -3,7 +3,6 @@ import {
 	Flask,
 	Food,
 	Glyphs,
-	Potions,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 

@@ -31,7 +31,7 @@ import DefaultAplJson from './apls/default.apl.json';
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
 
-export const DEFAULT_PRESET = PresetUtils.makePresetGear('Blank', BlankGear);
+export const DefaultGear = PresetUtils.makePresetGear('Blank', BlankGear);
 
 export const DEFAULT_APL = PresetUtils.makePresetAPLRotation('Default', DefaultAplJson);
 

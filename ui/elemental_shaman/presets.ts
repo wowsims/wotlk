@@ -1,6 +1,5 @@
 import {
   Consumes,
-  Faction,
   Flask,
   Food,
   Glyphs,
