@@ -17,8 +17,58 @@ var ItemOverrides = []*proto.UIItem{
 	{Id: 211848, Name: "Blackfathom Mana Oil", Icon: "inv_potion_99", Stats: stats.Stats{stats.MP5: 12, stats.SpellHit: 2}.ToFloatArray()},
 	{Id: 211845, Name: "Blackfathom Sharpening Stone", Icon: "inv_misc_rune_04", Stats: stats.Stats{stats.MeleeHit: 2}.ToFloatArray()},
 
+	// SOD Fiery Wrath
+	FieryRandomEnchantItem(6611, "Belt of Fiery Wrath (11)", 29, 24, proto.ItemType_ItemTypeWaist, proto.ArmorType_ArmorTypeCloth, 11, 24, "inv_misc_bandana_01"),
+	FieryRandomEnchantItem(14191, "Gloves of Fiery Wrath (11)", 30, 25, proto.ItemType_ItemTypeHands, proto.ArmorType_ArmorTypeCloth, 11, 27, "inv_gauntlets_20"),
+	FieryRandomEnchantItem(14197, "Bracers of Fiery Wrath (9)", 30, 25, proto.ItemType_ItemTypeWrist, proto.ArmorType_ArmorTypeCloth, 9, 19, "inv_bracer_13"),
+	FieryRandomEnchantItem(9822, "Cape of Fiery Wrath (9)", 29, 24, proto.ItemType_ItemTypeBack, proto.ArmorType_ArmorTypeCloth, 9, 21, "inv_misc_cape_10"),
+	FieryRandomEnchantItem(14183, "Pants of Fiery Wrath (16)", 30, 25, proto.ItemType_ItemTypeLegs, proto.ArmorType_ArmorTypeCloth, 16, 37, "inv_pants_01"),
+
+	// SOD Shadow Wrath
+	ShadowRandomEnchantItem(14184, "Chest of Shadow Wrath (16)", 30, 25, proto.ItemType_ItemTypeChest, proto.ArmorType_ArmorTypeCloth, 16, 43, "inv_chest_cloth_22"),
+	ShadowRandomEnchantItem(14195, "Boots of Shadow Wrath (11)", 29, 24, proto.ItemType_ItemTypeFeet, proto.ArmorType_ArmorTypeCloth, 11, 29, "inv_boots_05"),
+	ShadowRandomEnchantItem(9821, "Bracers of Shadow Wrath (9)", 30, 25, proto.ItemType_ItemTypeWrist, proto.ArmorType_ArmorTypeCloth, 9, 19, "inv_bracer_13"),
+	ShadowRandomEnchantItem(15135, "Cape of Shadow Wrath (9)", 29, 24, proto.ItemType_ItemTypeBack, proto.ArmorType_ArmorTypeCloth, 9, 21, "inv_misc_cape_10"),
+	ShadowRandomEnchantItem(6617, "Mantle of Shadow Wrath (11)", 30, 25, proto.ItemType_ItemTypeShoulder, proto.ArmorType_ArmorTypeCloth, 11, 32, "inv_shoulder_02"),
+
 	// Heirloom Dwarven Handcannon, Wowhead partially glitchs out and shows us some other lvl calc for this
 	// {Id: 44093, Stats: stats.Stats{stats.MeleeCrit: 30, stats.SpellCrit: 30, stats.Resilience: 13, stats.AttackPower: 34}.ToFloatArray()},
+}
+
+func FieryRandomEnchantItem(id int32, name string, ilvl int32, level int32, slot proto.ItemType, armorType proto.ArmorType, power float64, armor float64, icon string) *proto.UIItem {
+	return &proto.UIItem{
+		Id:             id,
+		Name:           name,
+		Icon:           icon,
+		Type:           slot,
+		ArmorType:      armorType,
+		RequiresLevel:  level,
+		Stats:          stats.Stats{stats.FirePower: power, stats.Armor: armor}.ToFloatArray(),
+		SocketBonus:    []float64{},
+		Ilvl:           ilvl,
+		Phase:          0,
+		Quality:        proto.ItemQuality_ItemQualityUncommon,
+		ClassAllowlist: []proto.Class{},
+		Sources:        []*proto.UIItemSource{},
+	}
+}
+
+func ShadowRandomEnchantItem(id int32, name string, ilvl int32, level int32, slot proto.ItemType, armorType proto.ArmorType, power float64, armor float64, icon string) *proto.UIItem {
+	return &proto.UIItem{
+		Id:             id,
+		Name:           name,
+		Icon:           icon,
+		Type:           slot,
+		ArmorType:      armorType,
+		RequiresLevel:  level,
+		Stats:          stats.Stats{stats.ShadowPower: power, stats.Armor: armor}.ToFloatArray(),
+		SocketBonus:    []float64{},
+		Ilvl:           ilvl,
+		Phase:          0,
+		Quality:        proto.ItemQuality_ItemQualityUncommon,
+		ClassAllowlist: []proto.Class{},
+		Sources:        []*proto.UIItemSource{},
+	}
 }
 
 // Keep these sorted by item ID.
