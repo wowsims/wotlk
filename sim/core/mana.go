@@ -197,8 +197,8 @@ func (unit *Unit) ManaRegenPerSecondWhileNotCasting() float64 {
 }
 
 func (unit *Unit) UpdateManaRegenRates() {
-	unit.manaTickWhileCasting = unit.ManaRegenPerSecondWhileCasting() * 5
-	unit.manaTickWhileNotCasting = unit.ManaRegenPerSecondWhileNotCasting() * 5
+	unit.manaTickWhileCasting = unit.ManaRegenPerSecondWhileCasting() * 2
+	unit.manaTickWhileNotCasting = unit.ManaRegenPerSecondWhileNotCasting() * 2
 }
 
 func (unit *Unit) GetManaNotCastingMetrics() *ResourceMetrics {
@@ -267,7 +267,7 @@ func (sim *Simulation) initManaTickAction() {
 		return
 	}
 
-	interval := time.Second * 5
+	interval := time.Second * 2
 	pa := &PendingAction{
 		NextActionAt: sim.Environment.PrepullStartTime() + interval,
 		Priority:     ActionPriorityRegen,
