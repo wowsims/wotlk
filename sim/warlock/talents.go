@@ -14,10 +14,6 @@ func (warlock *Warlock) ApplyTalents() {
 		warlock.MultiplyStat(stats.Spirit, 1-.01*(float64(warlock.Talents.DemonicEmbrace)))
 	}
 
-	if warlock.Talents.Emberstorm > 0 {
-		warlock.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFire] *= .02 * float64(warlock.Talents.Emberstorm)
-	}
-
 	if warlock.Talents.ImprovedShadowBolt > 0 {
 		warlock.applyImprovedShadowBolt()
 	}
