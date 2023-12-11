@@ -556,6 +556,82 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 	// 	character.PseudoStats.MeleeSpeedMultiplier *= GetTristateValueFloat(raidBuffs.WindfuryTotem, 1.16, 1.20)
 	// }
 
+	// World Buffs
+	if individualBuffs.RallyingCryOfTheDragonslayer {
+		character.MultiplyStat(stats.SpellCrit, 1.10)
+		character.MultiplyStat(stats.MeleeCrit, 1.05)
+		// TODO: character.MultiplyStat(stats.RangedCrit, 1.05)
+		character.AddStat(stats.AttackPower, 140)
+	}
+
+	if individualBuffs.SpiritOfZandalar {
+		character.MultiplyStat(stats.Stamina, 1.15)
+		character.MultiplyStat(stats.Agility, 1.15)
+		character.MultiplyStat(stats.Strength, 1.15)
+		character.MultiplyStat(stats.Intellect, 1.15)
+		character.MultiplyStat(stats.Spirit, 1.15)
+	}
+
+	if individualBuffs.SongflowerSerenade {
+		character.MultiplyStat(stats.MeleeCrit, 1.05)
+		// TODO: character.MultiplyStat(stats.RangedCrit, 1.05)
+		character.MultiplyStat(stats.SpellCrit, 1.05)
+		character.AddStat(stats.Stamina, 15)
+		character.AddStat(stats.Agility, 15)
+		character.AddStat(stats.Strength, 15)
+		character.AddStat(stats.Intellect, 15)
+		character.AddStat(stats.Spirit, 15)
+	}
+
+	if individualBuffs.WarchiefsBlessing {
+		character.AddStat(stats.Health, 300)
+		character.PseudoStats.MeleeSpeedMultiplier *= 1.15
+		character.AddStat(stats.MP5, 10)
+	}
+
+	// Dire Maul Buffs
+	if individualBuffs.FengusFerocity {
+		character.AddStat(stats.AttackPower, 200)
+	}
+
+	if individualBuffs.MoldarsMoxie {
+		character.MultiplyStat(stats.Stamina, 1.15)
+	}
+
+	if individualBuffs.SlipkiksSavvy {
+		character.MultiplyStat(stats.SpellCrit, 1.03)
+	}
+
+	// Darkmoon Faire Buffs
+	if individualBuffs.SaygesDarkFortuneAgi {
+		character.MultiplyStat(stats.Agility, 1.10)
+	}
+
+	// TODO:
+	// if individualBuffs.SaygesDarkFortuneDmg {
+	// 	damage by 10%?
+	// }
+
+	if individualBuffs.SaygesDarkFortuneInt {
+		character.MultiplyStat(stats.Intellect, 1.10)
+	}
+
+	if individualBuffs.SaygesDarkFortuneSpirit {
+		character.MultiplyStat(stats.Spirit, 1.10)
+	}
+
+	if individualBuffs.SaygesDarkFortuneStam {
+		character.MultiplyStat(stats.Stamina, 1.10)
+	}
+
+	// SoD World Buffs
+	if individualBuffs.BoonOfBlackfathom {
+		character.MultiplyStat(stats.MeleeCrit, 1.02)
+		// TODO: character.MultiplyStat(stats.RangedCrit, 1.02)
+		character.MultiplyStat(stats.SpellCrit, 1.02)
+		character.AddStat(stats.AttackPower, 20)
+	}
+
 	// TODO: Classic provide in APL?
 	registerPowerInfusionCD(agent, individualBuffs.PowerInfusions)
 	registerManaTideTotemCD(agent, partyBuffs.ManaTideTotems)

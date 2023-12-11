@@ -96,6 +96,7 @@ export class SettingsTab extends SimTab {
 
 		if (!this.simUI.isWithinRaidSim) {
 			this.buildBuffsSettings();
+			this.buildWorldBuffsSettings();
 			this.buildDebuffsSettings();
 			this.buildSavedDataPickers();
 		}
@@ -297,6 +298,71 @@ export class SettingsTab extends SimTab {
 				label: 'Misc',
 			}, this.simUI);
 		}
+	}
+
+	private buildWorldBuffsSettings() {
+		const contentBlock = new ContentBlock(this.column3, 'world-buffs-settings', {
+			header: { title: 'World Buffs', tooltip: Tooltips.WORLD_BUFFS_SECTION }
+		});
+
+		const worldBuffOptions = this.simUI.splitRelevantOptions([
+			{
+				item: IconInputs.BoonOfBlackfathom,
+				stats: [
+					Stat.StatMeleeCrit,
+					// TODO: Stat.StatRangedCrit,
+					Stat.StatSpellCrit,
+					Stat.StatAttackPower
+				]
+			},
+			{ item: IconInputs.FengusFerocity, stats: [Stat.StatAttackPower] },
+			{ item: IconInputs.MoldarsMoxie, stats: [Stat.StatStamina] },
+			{
+				item: IconInputs.RallyingCryOfTheDragonslayer,
+				stats: [
+					Stat.StatMeleeCrit,
+					// TODO: Stat.StatRangedCrit,
+					Stat.StatSpellCrit,
+					Stat.StatAttackPower,
+				]
+			},
+			{ item: IconInputs.SaygesAgility, stats: [Stat.StatAgility] },
+			{
+				item: IconInputs.SaygesDamage,
+				stats: [
+					// TODO: Stat for damage?
+				]
+			},
+			{ item: IconInputs.SaygesInt, stats: [Stat.StatIntellect] },
+			{ item: IconInputs.SaygesSpirit, stats: [Stat.StatSpirit] },
+			{ item: IconInputs.SaygesStam, stats: [Stat.StatStamina] },
+			{ item: IconInputs.SlipKiksSavvy, stats: [Stat.StatSpellCrit] },
+			{
+				item: IconInputs.SongflowerSerenade,
+				stats: [
+					Stat.StatMeleeCrit,
+					// TODO: Stat.StatRangedCrit,
+					Stat.StatSpellCrit,
+					// TODO: How to also apply to all stats?
+				]
+			},
+			{ item: IconInputs.SpiritOfZandalar, stats: [] },
+			{
+				item: IconInputs.WarchiefsBlessing,
+				stats: [
+					Stat.StatHealth,
+					Stat.StatMeleeHaste,
+					Stat.StatMP5,
+				]
+			},
+		]);
+
+		const worldBuffPickers = worldBuffOptions.map(iconInput => IconInputs.buildIconInput(contentBlock.bodyElement, this.simUI.player, iconInput));
+
+		this.configureIconSection(
+			contentBlock.bodyElement,
+			worldBuffPickers,
+		);
 	}
 
 	private buildDebuffsSettings() {

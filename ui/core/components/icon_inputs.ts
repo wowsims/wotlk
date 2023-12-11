@@ -1,4 +1,15 @@
-import { AgilityElixir, Consumes, Debuffs, Explosive, Flask, Food, IndividualBuffs, RaidBuffs, StrengthBuff, WeaponBuff } from '../proto/common.js';
+import {
+	AgilityElixir,
+	Consumes,
+	Debuffs,
+	Explosive,
+	Flask,
+	Food,
+	IndividualBuffs,
+	RaidBuffs,
+	StrengthBuff,
+	WeaponBuff
+} from '../proto/common.js';
 import { ActionId } from '../proto_utils/action_id.js';
 
 import { Player } from '../player.js';
@@ -119,6 +130,66 @@ export const RetributionAura = makeBooleanRaidBuffInput({id: ActionId.fromSpellI
 export const Thorns = makeTristateRaidBuffInput({id: ActionId.fromSpellId(9910), impId: ActionId.fromSpellId(16840), fieldName: 'thorns'});
 export const Innervate = makeMultistateIndividualBuffInput(ActionId.fromSpellId(29166), 11, 'innervates');
 export const PowerInfusion = makeMultistateIndividualBuffInput(ActionId.fromSpellId(10060), 11, 'powerInfusions');
+
+// World Buffs
+export const RallyingCryOfTheDragonslayer = withLabel(
+	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(22888), fieldName: 'rallyingCryOfTheDragonslayer'}),
+	'Dragonslayer',
+);
+export const SpiritOfZandalar = withLabel(
+	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(24425), fieldName: 'spiritOfZandalar'}),
+	'Zandalar',
+);
+export const SongflowerSerenade = withLabel(
+	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(15366), fieldName: 'songflowerSerenade'}),
+	'Songflower',
+);
+export const WarchiefsBlessing = withLabel(
+	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(16609), fieldName: 'warchiefsBlessing'}),
+	`Warchief's`,
+);
+
+// Dire Maul Buffs
+export const FengusFerocity = withLabel(
+	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(22817), fieldName: 'fengusFerocity'}),
+	`Fengus'`,
+);
+export const MoldarsMoxie = withLabel(
+	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(22818), fieldName: 'moldarsMoxie'}),
+	`Moldar's`,
+);
+export const SlipKiksSavvy = withLabel(
+	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(22820), fieldName: 'slipkiksSavvy'}),
+	`Slip'kik's`,
+);
+
+// Darkmoon Faire Buffs
+export const SaygesAgility = withLabel(
+	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(23736), fieldName: 'saygesDarkFortuneAgi'}),
+	`Sayge's Agi`,
+);
+export const SaygesDamage = withLabel(
+	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(23768), fieldName: 'saygesDarkFortuneDmg'}),
+	`Sayge's Dmg`,
+);
+export const SaygesInt = withLabel(
+	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(23766), fieldName: 'saygesDarkFortuneInt'}),
+	`Sayge's Int`,
+);
+export const SaygesSpirit = withLabel(
+	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(23738), fieldName: 'saygesDarkFortuneSpirit'}),
+	`Sayge's Spirit`,
+);
+export const SaygesStam = withLabel(
+	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(23737), fieldName: 'saygesDarkFortuneStam'}),
+	`Sayge's Stam`,
+);
+
+// SoD World Buffs
+export const BoonOfBlackfathom = withLabel(
+	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(430947), fieldName: 'boonOfBlackfathom'}),
+	'Blackfathom',
+);
 
 // Debuffs
 export const MajorArmorDebuff = InputHelpers.makeMultiIconInput([

@@ -55,17 +55,15 @@
   }
 
   .buffs-settings,
+  .world-buffs-settings,
   .debuffs-settings {
     .content-block-body {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-gap: $block-spacer;
 
       &> .icon-picker {
-        margin-bottom: map.get($spacers, 1) !important;
-
-        &:not(:nth-child(3n)) {
-          margin-right: map.get($spacers, 2);
-        }
+        margin-bottom: 0;
 
         .form-label {
           white-space: normal;
