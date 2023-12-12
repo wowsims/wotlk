@@ -36,6 +36,7 @@ export const AllStatsBuff = InputHelpers.makeMultiIconInput([
 
 export const AllStatsPercentBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(20217), fieldName: 'blessingOfKings'}),
+	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(409580), fieldName: 'aspectOfTheLion'}),
 ], 'Stats %');
 
 // TODO: Classic armor buff ranks
@@ -55,12 +56,15 @@ export const StaminaBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanRaidBuffInput({id: ActionId.fromItemId(10307), fieldName: 'scrollOfStamina'}),
 ], 'Stamina');
 
-// TODO: Breakout Strength / Agi
-export const StrengthAndAgilityBuff = InputHelpers.makeMultiIconInput([
-	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(25361), fieldName: 'strengthOfEarthTotem'}),
-	makeBooleanRaidBuffInput({id: ActionId.fromItemId(10309), fieldName: 'scrollOfAgility'}),
+export const StrengthRaidBuff = InputHelpers.makeMultiIconInput([
+	makeTristateRaidBuffInput({id: ActionId.fromSpellId(25361), impId: ActionId.fromSpellId(16295), fieldName: 'strengthOfEarthTotem'}),
 	makeBooleanRaidBuffInput({id: ActionId.fromItemId(10310), fieldName: 'scrollOfStrength'}),
-], 'Str/Agi');
+], 'Str');
+
+export const AgilityRaidBuff = InputHelpers.makeMultiIconInput([
+	makeTristateRaidBuffInput({id: ActionId.fromSpellId(25359), impId: ActionId.fromSpellId(16295), fieldName: 'graceOfAirTotem', minLevel: 42}),
+	makeBooleanRaidBuffInput({id: ActionId.fromItemId(10309), fieldName: 'scrollOfAgility'}),
+], 'Agi');
 
 export const IntellectBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(23028), fieldName: 'arcaneBrilliance'}),
@@ -75,11 +79,11 @@ export const SpiritBuff = InputHelpers.makeMultiIconInput([
 export const AttackPowerBuff = InputHelpers.makeMultiIconInput([
 	makeTristateIndividualBuffInput(ActionId.fromSpellId(25291), ActionId.fromSpellId(20048), 'blessingOfMight'),
 	makeTristateRaidBuffInput({id: ActionId.fromSpellId(25289), impId: ActionId.fromSpellId(12861), fieldName: 'battleShout'}),
-	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(19506), fieldName: 'trueshotAura'}),
+	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(20906), fieldName: 'trueshotAura', minLevel: 40}),
 ], 'AP');
 
 export const AttackPowerPercentBuff = InputHelpers.makeMultiIconInput([
-], 'Atk Pwr %');
+], 'Atk Pwr %', 1, 40);
 
 export const DamageReductionPercentBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(25899), fieldName: 'blessingOfSanctuary'}),
@@ -100,11 +104,11 @@ export const MP5Buff = InputHelpers.makeMultiIconInput([
 
 export const MeleeCritBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(17007), fieldName: 'leaderOfThePack'}),
-], 'Melee Crit');
+], 'Melee Crit', 1, 40);
 
 export const SpellCritBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(24907), fieldName: 'moonkinAura'}),
-], 'Spell Crit');
+], 'Spell Crit', 1, 40);
 
 // TODO: Classic rune
 export const SpellIncreaseBuff = InputHelpers.makeMultiIconInput([
@@ -157,11 +161,11 @@ export const SpellISBDebuff = InputHelpers.makeMultiIconInput([
 
 export const SpellScorchDebuff = InputHelpers.makeMultiIconInput([
 	makeBooleanDebuffInput({id: ActionId.fromSpellId(12873), fieldName: 'improvedScorch'}),
-], 'Scorch');
+], 'Scorch', 1, 40);
 
 export const SpellWintersChillDebuff = InputHelpers.makeMultiIconInput([
 	makeBooleanDebuffInput({id: ActionId.fromSpellId(28595), fieldName: 'wintersChill'}),
-], 'Winters Chill');
+], 'Winters Chill', 1, 40);
 
 // TODO: Classic
 // export const SpellDamageDebuff = InputHelpers.makeMultiIconInput([
@@ -170,8 +174,8 @@ export const SpellWintersChillDebuff = InputHelpers.makeMultiIconInput([
 
 // TODO: Classic
 export const HuntersMark = withLabel(makeTristateDebuffInput(ActionId.fromSpellId(14325), ActionId.fromSpellId(19425), 'huntersMark'), 'Mark');
-export const JudgementOfWisdom = withLabel(makeBooleanDebuffInput({id: ActionId.fromSpellId(20355), fieldName: 'judgementOfWisdom'}), 'JoW');
-export const JudgementOfLight = makeBooleanDebuffInput({id: ActionId.fromSpellId(20346), fieldName: 'judgementOfLight'});
+export const JudgementOfWisdom = withLabel(makeBooleanDebuffInput({id: ActionId.fromSpellId(20355), fieldName: 'judgementOfWisdom', minLevel: 38}), 'JoW');
+export const JudgementOfLight = makeBooleanDebuffInput({id: ActionId.fromSpellId(20346), fieldName: 'judgementOfLight', minLevel: 30});
 export const GiftOfArthas = makeBooleanDebuffInput({id: ActionId.fromSpellId(11374), fieldName: 'giftOfArthas'});
 export const CrystalYield = makeBooleanDebuffInput({id: ActionId.fromSpellId(15235), fieldName: 'crystalYield'});
 

@@ -5,6 +5,7 @@ import { isRightClick } from '../utils.js';
 
 import { Component } from './component.js';
 import { IconPicker, IconPickerConfig } from './icon_picker.js';
+import { Player } from '../player.js';
 
 export interface MultiIconPickerItemConfig<ModObject> extends IconPickerConfig<ModObject, any> {
 }
@@ -14,6 +15,7 @@ export interface MultiIconPickerConfig<ModObject> {
 	numColumns: number,
 	label?: string,
 	categoryId?: ActionId,
+	showWhen?: (obj: Player<any>) => boolean,
 }
 
 // Icon-based UI for a dropdown with multiple icon pickers.
@@ -89,6 +91,14 @@ export class MultiIconPicker<ModObject> extends Component {
 		});
 		simUI.sim.waitForInit().then(() => this.updateButtonImage());
 		simUI.changeEmitter.on(() => this.updateButtonImage());
+		simUI.changeEmitter.on(() => {
+			const show = !this.config.showWhen || this.config.showWhen(simUI.sim.raid.getPlayer(0)!);
+			if (show) {
+				this.rootElem.classList.remove('hide');
+			} else {
+				this.rootElem.classList.add('hide');
+			}
+		})
 	}
 
 	private buildBlankOption() {

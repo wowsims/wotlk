@@ -13,11 +13,12 @@ import { BooleanPickerConfig } from './boolean_picker.js';
 import { NumberPickerConfig } from './number_picker.js';
 import { MultiIconPickerConfig } from './multi_icon_picker.js';
 
-export function makeMultiIconInput<ModObject>(inputs: Array<IconPickerConfig<ModObject, any>>, label: string, numColumns?: number): MultiIconPickerConfig<ModObject> {
+export function makeMultiIconInput<ModObject>(inputs: Array<IconPickerConfig<ModObject, any>>, label: string, numColumns?: number, minLevel?: number): MultiIconPickerConfig<ModObject> {
 	return {
 		inputs: inputs,
 		numColumns: numColumns || 1,
 		label: label,
+		showWhen: (p) => p.getLevel() >= (minLevel || 0)
 	};
 }
 

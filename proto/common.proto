@@ -369,8 +369,10 @@ message RaidBuffs {
 	// +Health
 	TristateEffect blood_pact = 3;
 
-	// + Agi and Str
-	bool strength_of_earth_totem = 4;
+	// +Str
+	TristateEffect strength_of_earth_totem = 4; // none, normal, 15% improved
+
+	// +Agi
 	TristateEffect grace_of_air_totem = 5; // none, normal, 15% improved
 	
 	// +Intell and/or Spi
@@ -437,6 +439,7 @@ message IndividualBuffs {
 	bool blessing_of_sanctuary = 4;
 	int32 innervates = 5;
 	int32 power_infusions = 6;
+	bool aspect_of_the_lion = 7;
 }
 
 message Consumes {

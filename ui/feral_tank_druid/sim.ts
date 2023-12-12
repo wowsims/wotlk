@@ -115,7 +115,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralTankDruid, {
 			shadowProtection: true,
 			giftOfTheWild: TristateEffect.TristateEffectImproved,
 			thorns: TristateEffect.TristateEffectImproved,
-			strengthOfEarthTotem: true,
+			strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
 			battleShout: TristateEffect.TristateEffectImproved,
 			moonkinAura: true,
 		}),

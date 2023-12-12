@@ -458,6 +458,9 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 	if individualBuffs.BlessingOfKings {
 		kingsAgiIntSpiAmount = 1.1
 		kingsStrStamAmount = 1.1
+	} else if individualBuffs.AspectOfTheLion {
+		kingsAgiIntSpiAmount = 1.1
+		kingsStrStamAmount = 1.1
 	}
 	if kingsStrStamAmount > 0 {
 		character.MultiplyStat(stats.Strength, kingsStrStamAmount)
@@ -494,10 +497,10 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 	// 	RetributionAura(character)
 	// }
 
-	if raidBuffs.BattleShout > 0 {
+	if raidBuffs.BattleShout != proto.TristateEffect_TristateEffectMissing {
 		MakePermanent(BattleShoutAura(&character.Unit, GetTristateValueInt32(raidBuffs.BattleShout, 0, 5), 0, level))
 	}
-	if individualBuffs.BlessingOfMight > 0 {
+	if individualBuffs.BlessingOfMight != proto.TristateEffect_TristateEffectMissing {
 		MakePermanent(BlessingOfMightAura(&character.Unit, GetTristateValueInt32(individualBuffs.BlessingOfMight, 0, 5), level))
 	}
 
@@ -517,8 +520,11 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 	// 	MakePermanent(dpAura)
 	// }
 
-	if raidBuffs.StrengthOfEarthTotem {
+	if raidBuffs.StrengthOfEarthTotem != proto.TristateEffect_TristateEffectMissing {
 		updateStats := BuffSpellByLevel[StrengthOfEarth][level]
+		if raidBuffs.StrengthOfEarthTotem == proto.TristateEffect_TristateEffectImproved {
+			updateStats = updateStats.Multiply(1.15)
+		}
 		character.AddStats(updateStats)
 	} else if raidBuffs.ScrollOfStrength {
 		character.AddStats(BuffSpellByLevel[ScrollOfStrength][level])
@@ -1415,8 +1421,17 @@ func BattleShoutAura(unit *Unit, impBattleShout int32, boomingVoicePts int32, le
 		ActionID:   ActionID{SpellID: 25289},
 		Duration:   time.Duration(float64(time.Minute*2) * (1 + 0.1*float64(boomingVoicePts))),
 		BuildPhase: CharacterBuildPhaseBuffs,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.AddStatsDynamic(sim, stats.Stats{
+				stats.AttackPower: math.Floor(BuffSpellByLevel[BattleShout][level][stats.AttackPower] * (1 + 0.05*float64(impBattleShout))),
+			})
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.AddStatsDynamic(sim, stats.Stats{
+				stats.AttackPower: math.Floor(BuffSpellByLevel[BattleShout][level][stats.AttackPower] * (1 + 0.05*float64(impBattleShout))),
+			})
+		},
 	})
-	attackPowerBonusEffect(aura, math.Floor(BuffSpellByLevel[BattleShout][level][stats.AttackPower]*(1+0.05*float64(impBattleShout))))
 	return aura
 }
 
@@ -1429,11 +1444,21 @@ func BlessingOfMightAura(unit *Unit, impBomPts int32, level int32) *Aura {
 		OnReset: func(aura *Aura, sim *Simulation) {
 			aura.Activate(sim)
 		},
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.AddStatsDynamic(sim, stats.Stats{
+				stats.AttackPower: math.Floor(BuffSpellByLevel[BlessingOfMight][level][stats.AttackPower] * (1 + 0.04*float64(impBomPts))),
+			})
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.AddStatsDynamic(sim, stats.Stats{
+				stats.AttackPower: math.Floor(BuffSpellByLevel[BlessingOfMight][level][stats.AttackPower] * (1 + 0.04*float64(impBomPts))),
+			})
+		},
 	})
-	attackPowerBonusEffect(aura, math.Floor(BuffSpellByLevel[BlessingOfMight][level][stats.AttackPower]*(1+0.4*float64(impBomPts))))
 	return aura
 }
 
+// TODO: Are there exclusive AP buffs in SoD?
 func attackPowerBonusEffect(aura *Aura, apBonus float64) *ExclusiveEffect {
 	return aura.NewExclusiveEffect("AttackPowerBonus", false, ExclusiveEffect{
 		Priority: apBonus,

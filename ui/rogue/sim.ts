@@ -206,7 +206,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 		// Default raid/party buffs settings.
 		raidBuffs: RaidBuffs.create({
 			giftOfTheWild: TristateEffect.TristateEffectImproved,
-			strengthOfEarthTotem: true,
+			strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
 			moonkinAura: true,
 			leaderOfThePack: true,
 		}),

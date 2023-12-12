@@ -39,6 +39,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 		Stat.StatShadowPower,
 
 		// Tank stats
+		Stat.StatStrength,
 		Stat.StatStamina,
 		Stat.StatAttackPower,
 		Stat.StatAgility,
@@ -57,6 +58,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 		Stat.StatIntellect,
 		Stat.StatSpirit,
 		Stat.StatSpellPower,
+		Stat.StatFirePower,
+		Stat.StatShadowPower,
 		Stat.StatSpellHit,
 		Stat.StatSpellCrit,
 		Stat.StatSpellHaste,
@@ -108,18 +111,13 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
 		IconInputs.MP5Buff,
-		IconInputs.StaminaBuff,
 	],
 	excludeBuffDebuffInputs: [
 		IconInputs.FrostDamageBuff,
 		IconInputs.BleedDebuff,
 		// TODO: Some of these will be needed for tank wlock
-		IconInputs.AttackPowerBuff,
-		IconInputs.AttackPowerPercentBuff,
-		IconInputs.MeleeCritBuff,
 		IconInputs.StaminaBuff,
 		IconInputs.ArmorBuff,
-		IconInputs.StrengthAndAgilityBuff,
 		IconInputs.DefensiveCooldownBuff,
 		IconInputs.AttackPowerDebuff,
 		IconInputs.MeleeAttackSpeedDebuff,

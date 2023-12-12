@@ -42,7 +42,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 			stats.Intellect: 94,
 			stats.Spirit:    95,
 			stats.Mana:      149,
-			stats.MP5:       18.6,
+			stats.MP5:       0,
 			stats.MeleeCrit: 3.454 * core.CritRatingPerCritChance,
 			stats.SpellCrit: 0.9075 * core.CritRatingPerCritChance,
 		}
@@ -56,7 +56,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 			stats.Intellect: 50,
 			stats.Spirit:    51,
 			stats.Mana:      60,
-			stats.MP5:       50,
+			stats.MP5:       0,
 			stats.MeleeCrit: 3.2685 * core.CritRatingPerCritChance,
 			stats.SpellCrit: 3.3355 * core.CritRatingPerCritChance,
 		}
@@ -109,7 +109,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		wp.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance*1/51.0204)
 
 		// Imp gets 0.1mp5 casting regen per int
-		wp.AddStatDependency(stats.Intellect, stats.MP5, 0.1)
+		//wp.AddStatDependency(stats.Intellect, stats.MP5, 0.1)
 
 		// Imp gets 1mp/5 non casting regen per spirit
 		wp.PseudoStats.SpiritRegenMultiplier = 1
@@ -262,6 +262,7 @@ func (warlock *Warlock) makeStatInheritance() core.PetStatInheritance {
 			stats.Intellect:        ownerStats[stats.Intellect] * 0.3,
 			stats.Armor:            ownerStats[stats.Armor] * 0.35,
 			stats.AttackPower:      ownerStats[stats.SpellPower] * 0.57,
+			stats.MP5:              ownerStats[stats.MP5] * 0.3,
 			stats.SpellPower:       ownerStats[stats.SpellPower] * 0.15,
 			stats.FirePower:        ownerStats[stats.FirePower] * 0.15,
 			stats.ShadowPower:      ownerStats[stats.ShadowPower] * 0.15,

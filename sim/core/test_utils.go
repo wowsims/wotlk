@@ -59,7 +59,7 @@ var FullRaidBuffs = &proto.RaidBuffs{
 	PowerWordFortitude:   proto.TristateEffect_TristateEffectImproved,
 	ShadowProtection:     true,
 	GraceOfAirTotem:      proto.TristateEffect_TristateEffectImproved,
-	StrengthOfEarthTotem: true,
+	StrengthOfEarthTotem: proto.TristateEffect_TristateEffectImproved,
 	Thorns:               proto.TristateEffect_TristateEffectImproved,
 	TrueshotAura:         true,
 	WindfuryTotem:        true,

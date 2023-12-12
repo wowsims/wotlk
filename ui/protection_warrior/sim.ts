@@ -120,7 +120,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecProtectionWarrior, {
 		raidBuffs: RaidBuffs.create({
 			giftOfTheWild: TristateEffect.TristateEffectImproved,
 			powerWordFortitude: TristateEffect.TristateEffectImproved,
-			strengthOfEarthTotem: true,
+			strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
 			leaderOfThePack: true,
 			devotionAura: TristateEffect.TristateEffectImproved,
 			stoneskinTotem: TristateEffect.TristateEffectImproved,

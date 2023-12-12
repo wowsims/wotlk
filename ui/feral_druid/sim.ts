@@ -93,7 +93,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 			arcaneBrilliance: true,
 			giftOfTheWild: TristateEffect.TristateEffectImproved,
 			manaSpringTotem: TristateEffect.TristateEffectRegular,
-			strengthOfEarthTotem: true,
+			strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
 			battleShout: TristateEffect.TristateEffectImproved,
 		}),
 		partyBuffs: PartyBuffs.create({
