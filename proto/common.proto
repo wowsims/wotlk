@@ -315,7 +315,8 @@ enum AttackPowerBuff {
 
 enum SpellPowerBuff {
 	SpellPowerBuffUnknown = 0;
-	GreaterArcaneElixir = 1;
+	ArcaneElixir = 1;
+	GreaterArcaneElixir = 2;
 }
 
 enum ShadowPowerBuff {
@@ -325,7 +326,8 @@ enum ShadowPowerBuff {
 
 enum FirePowerBuff {
 	FirePowerBuffUnknown = 0;
-	ElixirOfGreaterFirepower = 1;
+	ElixirOfFirepower = 1;
+	ElixirOfGreaterFirepower = 2;
 }
 
 enum FrostPowerBuff {
@@ -356,6 +358,15 @@ enum Food {
 	FoodTenderWolfSteak = 9;
 }
 
+enum SaygesFortune {
+	SaygesUnknown = 0;
+	SaygesDamage = 1;
+	SaygesAgility = 2;
+	SaygesIntelect = 3;
+	SaygesStamina = 4;
+	SaygesSpirit = 5;
+}
+
 // Buffs that affect the entire raid.
 message RaidBuffs {
 	// +Stats
@@ -367,8 +378,10 @@ message RaidBuffs {
 	// +Health
 	TristateEffect blood_pact = 3;
 
-	// + Agi and Str
+	// +Str
 	TristateEffect strength_of_earth_totem = 4; // none, normal, 15% improved
+
+	// +Agi
 	TristateEffect grace_of_air_totem = 5; // none, normal, 15% improved
 	
 	// +Intell and/or Spi
@@ -454,6 +467,7 @@ message IndividualBuffs {
 
 	// New SoD Buffs
 	bool boon_of_blackfathom = 19;
+	bool aspect_of_the_lion = 20;
 }
 
 message Consumes {
@@ -465,9 +479,9 @@ message Consumes {
 	ManaRegenElixir mana_regen_elixir = 6;
 	StrengthBuff strength_buff = 7;
 	AttackPowerBuff attack_power_buff = 8;
-	bool spell_power_buff = 9;
+	SpellPowerBuff spell_power_buff = 9;
 	bool shadow_power_buff = 10;
-	bool fire_power_buff = 11;
+	FirePowerBuff fire_power_buff = 11;
 	bool frost_power_buff = 12;
 	WeaponBuff weapon_buff = 13;
 	bool sapper = 14;

@@ -17,6 +17,8 @@ type WarlockPet struct {
 	secondaryAbility *core.Spell
 
 	DemonicEmpowermentAura *core.Aura
+
+	manaPooling bool
 }
 
 // TODO: Classic warlock pet stats
@@ -37,10 +39,10 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 			stats.Strength:  47,
 			stats.Agility:   25,
 			stats.Stamina:   70,
-			stats.Intellect: 70,
+			stats.Intellect: 94,
 			stats.Spirit:    95,
-			stats.Mana:      354,
-			stats.MP5:       85,
+			stats.Mana:      149,
+			stats.MP5:       0,
 			stats.MeleeCrit: 3.454 * core.CritRatingPerCritChance,
 			stats.SpellCrit: 0.9075 * core.CritRatingPerCritChance,
 		}
@@ -54,6 +56,7 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 			stats.Intellect: 50,
 			stats.Spirit:    51,
 			stats.Mana:      60,
+			stats.MP5:       0,
 			stats.MeleeCrit: 3.2685 * core.CritRatingPerCritChance,
 			stats.SpellCrit: 3.3355 * core.CritRatingPerCritChance,
 		}
@@ -105,8 +108,16 @@ func (warlock *Warlock) NewWarlockPet() *WarlockPet {
 		// imp has a slightly different agi crit scaling coef for some reason
 		wp.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance*1/51.0204)
 
-		// Imp scales Int to MP5
-		wp.AddStatDependency(stats.Intellect, stats.MP5, 0.1)
+		// Imp gets 0.1mp5 casting regen per int
+		//wp.AddStatDependency(stats.Intellect, stats.MP5, 0.1)
+
+		// Imp gets 1mp/5 non casting regen per spirit
+		wp.PseudoStats.SpiritRegenMultiplier = 1
+		wp.PseudoStats.SpiritRegenRateCasting = 0
+		wp.SpiritManaRegenPerSecond = func() float64 {
+			// 1mp5 per spirit
+			return wp.GetStat(stats.Spirit) / 5
+		}
 	} else {
 		wp.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritRatingPerCritChance*1/52.0833)
 	}
@@ -191,12 +202,30 @@ func (wp *WarlockPet) Reset(_ *core.Simulation) {
 }
 
 func (wp *WarlockPet) OnGCDReady(sim *core.Simulation) {
+	if wp.manaPooling {
+		maxPossibleCasts := sim.GetRemainingDuration().Seconds() / wp.primaryAbility.CurCast.CastTime.Seconds()
+
+		if wp.CurrentMana() > (maxPossibleCasts*wp.primaryAbility.CurCast.Cost)*0.5 {
+			wp.manaPooling = false
+		}
+
+		if wp.CurrentMana() >= wp.MaxMana()*0.9 {
+			wp.manaPooling = false
+		}
+
+		if wp.manaPooling {
+			wp.WaitForMana(sim, wp.primaryAbility.CurCast.Cost)
+			return
+		}
+	}
+
 	if !wp.primaryAbility.IsReady(sim) {
 		wp.WaitUntil(sim, wp.primaryAbility.CD.ReadyAt())
 		return
 	}
 
 	if success := wp.primaryAbility.Cast(sim, wp.CurrentTarget); !success {
+		wp.manaPooling = true
 		wp.WaitForMana(sim, wp.primaryAbility.CurCast.Cost)
 	}
 
@@ -233,6 +262,7 @@ func (warlock *Warlock) makeStatInheritance() core.PetStatInheritance {
 			stats.Intellect:        ownerStats[stats.Intellect] * 0.3,
 			stats.Armor:            ownerStats[stats.Armor] * 0.35,
 			stats.AttackPower:      ownerStats[stats.SpellPower] * 0.57,
+			stats.MP5:              ownerStats[stats.MP5] * 0.3,
 			stats.SpellPower:       ownerStats[stats.SpellPower] * 0.15,
 			stats.FirePower:        ownerStats[stats.FirePower] * 0.15,
 			stats.ShadowPower:      ownerStats[stats.ShadowPower] * 0.15,

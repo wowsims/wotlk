@@ -350,10 +350,10 @@ func ImprovedScorchAura(target *Unit) *Aura {
 	aura.NewExclusiveEffect(SpellFirePowerEffectCategory, true, ExclusiveEffect{
 		Priority: 0.15,
 		OnGain: func(ee *ExclusiveEffect, sim *Simulation) {
-			ee.Aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFire] *= 0.15
+			ee.Aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFire] *= 1.15
 		},
 		OnExpire: func(ee *ExclusiveEffect, sim *Simulation) {
-			ee.Aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFire] /= 0.15
+			ee.Aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFire] /= 1.15
 		},
 	})
 
@@ -522,7 +522,7 @@ func HuntersMarkAura(target *Unit, points int32, glyphed bool, playerLevel int32
 func DemoralizingRoarAura(target *Unit, points int32, playerLevel int32) *Aura {
 	aura := target.GetOrRegisterAura(Aura{
 		Label:    "DemoralizingRoar-" + strconv.Itoa(int(points)),
-		ActionID: ActionID{SpellID: 48560},
+		ActionID: ActionID{SpellID: 9898},
 		Duration: time.Second * 30,
 	})
 	apReductionEffect(aura, 411*(1+0.08*float64(points)))
@@ -533,7 +533,7 @@ func DemoralizingRoarAura(target *Unit, points int32, playerLevel int32) *Aura {
 func DemoralizingShoutAura(target *Unit, boomingVoicePts int32, impDemoShoutPts int32, playerLevel int32) *Aura {
 	aura := target.GetOrRegisterAura(Aura{
 		Label:    "DemoralizingShout-" + strconv.Itoa(int(impDemoShoutPts)),
-		ActionID: ActionID{SpellID: 1160},
+		ActionID: ActionID{SpellID: 11556},
 		Duration: time.Duration(float64(time.Second*30) * (1 + 0.1*float64(boomingVoicePts))),
 	})
 	apReduction := map[int32]float64{

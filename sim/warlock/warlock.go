@@ -159,13 +159,13 @@ func NewWarlock(character *core.Character, options *proto.Player) *Warlock {
 		warlock.Pet = warlock.NewWarlockPet()
 	}
 
-	warlock.applyWeaponImbue()
-
 	warlock.EnableAutoAttacks(warlock, core.AutoAttackOptions{
 		MainHand:       warlock.WeaponFromMainHand(warlock.DefaultMeleeCritMultiplier()),
 		OffHand:        warlock.WeaponFromOffHand(warlock.DefaultMeleeCritMultiplier()),
 		AutoSwingMelee: true,
 	})
+
+	warlock.applyWeaponImbue()
 
 	return warlock
 }

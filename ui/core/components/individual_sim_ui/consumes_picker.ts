@@ -180,18 +180,18 @@ export class ConsumesPicker extends Component {
 		if (includeSpellPower){
 			buildIconInput(spellsCnsumesElem, this.simUI.player, IconInputs.SpellDamageBuff);
 		}
-		if (includeShadowPower){
-			buildIconInput(spellsCnsumesElem, this.simUI.player, IconInputs.ShadowDamageBuff);
-		}
 		if (includeFirePower){
 			buildIconInput(spellsCnsumesElem, this.simUI.player, IconInputs.FireDamageBuff);
+		}
+		if (includeShadowPower){
+			buildIconInput(spellsCnsumesElem, this.simUI.player, IconInputs.ShadowDamageBuff);
 		}
 		if( includeFrostPower){
 			buildIconInput(spellsCnsumesElem, this.simUI.player, IconInputs.FrostDamageBuff);
 		}
 
 		const updateSpellGroup = () => {
-			if (this.simUI.player.getLevel() >= 40){
+			if (this.simUI.player.getLevel() >= 25){
 				spellsGroup!.classList.remove('hide');
 			} else {
 				spellsGroup!.classList.add('hide');

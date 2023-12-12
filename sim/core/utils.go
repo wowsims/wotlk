@@ -90,7 +90,7 @@ func TernaryDuration(condition bool, val1 time.Duration, val2 time.Duration) tim
 
 // TODO: Classic lower levels comparison
 func UnitLevelFloat64(unitLevel int32, maxLevelPlus0Val float64, maxLevelPlus1Val float64, maxLevelPlus2Val float64, maxLevelPlus3Val float64) float64 {
-	if unitLevel == 0 {
+	if unitLevel <= 0 {
 		return maxLevelPlus0Val
 	} else if unitLevel == 1 {
 		return maxLevelPlus1Val

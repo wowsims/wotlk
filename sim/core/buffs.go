@@ -458,6 +458,9 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 	if individualBuffs.BlessingOfKings {
 		kingsAgiIntSpiAmount = 1.1
 		kingsStrStamAmount = 1.1
+	} else if individualBuffs.AspectOfTheLion {
+		kingsAgiIntSpiAmount = 1.1
+		kingsStrStamAmount = 1.1
 	}
 	if kingsStrStamAmount > 0 {
 		character.MultiplyStat(stats.Strength, kingsStrStamAmount)
@@ -494,10 +497,10 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 	// 	RetributionAura(character)
 	// }
 
-	if raidBuffs.BattleShout > 0 {
+	if raidBuffs.BattleShout != proto.TristateEffect_TristateEffectMissing {
 		MakePermanent(BattleShoutAura(&character.Unit, GetTristateValueInt32(raidBuffs.BattleShout, 0, 5), 0, level))
 	}
-	if individualBuffs.BlessingOfMight > 0 {
+	if individualBuffs.BlessingOfMight != proto.TristateEffect_TristateEffectMissing {
 		MakePermanent(BlessingOfMightAura(&character.Unit, GetTristateValueInt32(individualBuffs.BlessingOfMight, 0, 5), level))
 	}
 
@@ -517,7 +520,7 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 	// 	MakePermanent(dpAura)
 	// }
 
-	if raidBuffs.StrengthOfEarthTotem > 0 {
+	if raidBuffs.StrengthOfEarthTotem != proto.TristateEffect_TristateEffectMissing {
 		updateStats := BuffSpellByLevel[StrengthOfEarth][level]
 		if raidBuffs.StrengthOfEarthTotem == proto.TristateEffect_TristateEffectImproved {
 			updateStats = updateStats.Multiply(1.15)
@@ -558,8 +561,8 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 
 	// World Buffs
 	if individualBuffs.RallyingCryOfTheDragonslayer {
-		character.MultiplyStat(stats.SpellCrit, 1.10)
-		character.MultiplyStat(stats.MeleeCrit, 1.05)
+		character.AddStat(stats.SpellCrit, 10*SpellCritRatingPerCritChance)
+		character.AddStat(stats.MeleeCrit, 5*CritRatingPerCritChance)
 		// TODO: character.MultiplyStat(stats.RangedCrit, 1.05)
 		character.AddStat(stats.AttackPower, 140)
 	}
@@ -573,9 +576,9 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 	}
 
 	if individualBuffs.SongflowerSerenade {
-		character.MultiplyStat(stats.MeleeCrit, 1.05)
-		// TODO: character.MultiplyStat(stats.RangedCrit, 1.05)
-		character.MultiplyStat(stats.SpellCrit, 1.05)
+		character.AddStat(stats.MeleeCrit, 5*CritRatingPerCritChance)
+		// TODO: character.AddStat(stats.RangedCrit, 1.05)
+		character.AddStat(stats.SpellCrit, 5*SpellCritRatingPerCritChance)
 		character.AddStat(stats.Stamina, 15)
 		character.AddStat(stats.Agility, 15)
 		character.AddStat(stats.Strength, 15)
@@ -599,18 +602,19 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 	}
 
 	if individualBuffs.SlipkiksSavvy {
-		character.MultiplyStat(stats.SpellCrit, 1.03)
+		character.AddStat(stats.SpellCrit, 3*SpellCritRatingPerCritChance)
 	}
 
 	// Darkmoon Faire Buffs
+	// TODO: This should be a single enum icon picker
+	// as you cant have more then 1 of them active
 	if individualBuffs.SaygesDarkFortuneAgi {
 		character.MultiplyStat(stats.Agility, 1.10)
 	}
 
-	// TODO:
-	// if individualBuffs.SaygesDarkFortuneDmg {
-	// 	damage by 10%?
-	// }
+	if individualBuffs.SaygesDarkFortuneDmg {
+		character.PseudoStats.DamageDealtMultiplier *= 1.10
+	}
 
 	if individualBuffs.SaygesDarkFortuneInt {
 		character.MultiplyStat(stats.Intellect, 1.10)
@@ -626,10 +630,11 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 
 	// SoD World Buffs
 	if individualBuffs.BoonOfBlackfathom {
-		character.MultiplyStat(stats.MeleeCrit, 1.02)
-		// TODO: character.MultiplyStat(stats.RangedCrit, 1.02)
-		character.MultiplyStat(stats.SpellCrit, 1.02)
+		character.AddStat(stats.MeleeCrit, 2*CritRatingPerCritChance)
+		// TODO: character.AddStat(stats.RangedCrit, 2 * CritRatingPerCritChance)
+		character.AddStat(stats.SpellHit, 3*SpellHitRatingPerHitChance)
 		character.AddStat(stats.AttackPower, 20)
+		character.AddStat(stats.ShadowPower, 25)
 	}
 
 	// TODO: Classic provide in APL?
@@ -1494,8 +1499,17 @@ func BattleShoutAura(unit *Unit, impBattleShout int32, boomingVoicePts int32, le
 		ActionID:   ActionID{SpellID: 25289},
 		Duration:   time.Duration(float64(time.Minute*2) * (1 + 0.1*float64(boomingVoicePts))),
 		BuildPhase: CharacterBuildPhaseBuffs,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.AddStatsDynamic(sim, stats.Stats{
+				stats.AttackPower: math.Floor(BuffSpellByLevel[BattleShout][level][stats.AttackPower] * (1 + 0.05*float64(impBattleShout))),
+			})
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.AddStatsDynamic(sim, stats.Stats{
+				stats.AttackPower: math.Floor(BuffSpellByLevel[BattleShout][level][stats.AttackPower] * (1 + 0.05*float64(impBattleShout))),
+			})
+		},
 	})
-	attackPowerBonusEffect(aura, math.Floor(BuffSpellByLevel[BattleShout][level][stats.AttackPower]*(1+0.05*float64(impBattleShout))))
 	return aura
 }
 
@@ -1508,11 +1522,21 @@ func BlessingOfMightAura(unit *Unit, impBomPts int32, level int32) *Aura {
 		OnReset: func(aura *Aura, sim *Simulation) {
 			aura.Activate(sim)
 		},
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.AddStatsDynamic(sim, stats.Stats{
+				stats.AttackPower: math.Floor(BuffSpellByLevel[BlessingOfMight][level][stats.AttackPower] * (1 + 0.04*float64(impBomPts))),
+			})
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.AddStatsDynamic(sim, stats.Stats{
+				stats.AttackPower: math.Floor(BuffSpellByLevel[BlessingOfMight][level][stats.AttackPower] * (1 + 0.04*float64(impBomPts))),
+			})
+		},
 	})
-	attackPowerBonusEffect(aura, math.Floor(BuffSpellByLevel[BlessingOfMight][level][stats.AttackPower]*(1+0.4*float64(impBomPts))))
 	return aura
 }
 
+// TODO: Are there exclusive AP buffs in SoD?
 func attackPowerBonusEffect(aura *Aura, apBonus float64) *ExclusiveEffect {
 	return aura.NewExclusiveEffect("AttackPowerBonus", false, ExclusiveEffect{
 		Priority: apBonus,

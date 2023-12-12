@@ -197,6 +197,7 @@ const (
 	SpellFlagPotion                                         // Indicates this spell is a potion spell.
 	SpellFlagPrepullPotion                                  // Indicates this spell is the prepull potion.
 	SpellFlagCombatPotion                                   // Indicates this spell is the combat potion.
+	SpellFlagResetAttackSwing                               // Indicates this spell resets the melee swing timer.
 
 	// Used to let agents categorize their spells.
 	SpellFlagAgentReserved1
@@ -205,8 +206,6 @@ const (
 	SpellFlagAgentReserved4
 
 	SpellFlagIgnoreModifiers = SpellFlagIgnoreAttackerModifiers | SpellFlagIgnoreTargetModifiers
-
-	SpellFlagResetAttackSwing
 )
 
 type SpellSchool byte

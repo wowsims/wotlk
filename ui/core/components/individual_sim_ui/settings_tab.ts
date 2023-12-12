@@ -266,7 +266,8 @@ export class SettingsTab extends SimTab {
 			{ item: IconInputs.AllStatsPercentBuff, stats: [] },
 			{ item: IconInputs.ArmorBuff, stats: [Stat.StatArmor] },
 			{ item: IconInputs.StaminaBuff, stats: [Stat.StatStamina] },
-			{ item: IconInputs.StrengthAndAgilityBuff, stats: [Stat.StatStrength, Stat.StatAgility] },
+			{ item: IconInputs.StrengthRaidBuff, stats: [Stat.StatStrength] },
+			{ item: IconInputs.AgilityRaidBuff, stats: [Stat.StatAgility] },
 			{ item: IconInputs.IntellectBuff, stats: [Stat.StatIntellect] },
 			{ item: IconInputs.SpiritBuff, stats: [Stat.StatSpirit] },
 			{ item: IconInputs.AttackPowerBuff, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
@@ -330,7 +331,7 @@ export class SettingsTab extends SimTab {
 			{
 				item: IconInputs.SaygesDamage,
 				stats: [
-					// TODO: Stat for damage?
+					Stat.StatAttackPower, Stat.StatSpellPower
 				]
 			},
 			{ item: IconInputs.SaygesInt, stats: [Stat.StatIntellect] },

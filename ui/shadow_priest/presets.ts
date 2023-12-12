@@ -6,6 +6,7 @@ import {
 	IndividualBuffs,
 	Profession,
 	RaidBuffs,
+	SpellPowerBuff,
 	TristateEffect,
 	WeaponBuff,
 } from '../core/proto/common.js';
@@ -50,7 +51,7 @@ export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfSupremePower,
 	weaponBuff: WeaponBuff.BrillianWizardOil,
 	food: Food.FoodNightfinSoup,
-	spellPowerBuff: true,
+	spellPowerBuff: SpellPowerBuff.SpellPowerBuffUnknown,
 	shadowPowerBuff: true,
 });
 

@@ -12,10 +12,12 @@ import (
 const ThreatPerManaGained = 0.5
 
 type OnManaTick func(sim *Simulation)
+type SpiritManaRegenPerSecond func() float64
 
 type manaBar struct {
-	unit       *Unit
-	OnManaTick OnManaTick
+	unit                     *Unit
+	OnManaTick               OnManaTick
+	SpiritManaRegenPerSecond SpiritManaRegenPerSecond
 
 	BaseMana float64
 
@@ -155,7 +157,7 @@ func (unit *Unit) MP5ManaRegenPerSecond() float64 {
 }
 
 // Returns the rate of mana regen per second from spirit.
-func (unit *Unit) SpiritManaRegenPerSecond() float64 {
+func (unit *Unit) SpiritManaRegenPerSecondDefault() float64 {
 	return 0.001 + unit.stats[stats.Spirit]*math.Sqrt(unit.stats[stats.Intellect])*0.003345
 }
 
@@ -164,9 +166,13 @@ func (unit *Unit) SpiritManaRegenPerSecond() float64 {
 func (unit *Unit) ManaRegenPerSecondWhileCasting() float64 {
 	regenRate := unit.MP5ManaRegenPerSecond()
 
+	spiritRegen := unit.SpiritManaRegenPerSecondDefault()
+	if unit.SpiritManaRegenPerSecond != nil {
+		spiritRegen = unit.SpiritManaRegenPerSecond()
+	}
 	spiritRegenRate := 0.0
 	if unit.PseudoStats.SpiritRegenRateCasting != 0 || unit.PseudoStats.ForceFullSpiritRegen {
-		spiritRegenRate = unit.SpiritManaRegenPerSecond() * unit.PseudoStats.SpiritRegenMultiplier
+		spiritRegenRate = spiritRegen * unit.PseudoStats.SpiritRegenMultiplier
 		if !unit.PseudoStats.ForceFullSpiritRegen {
 			spiritRegenRate *= unit.PseudoStats.SpiritRegenRateCasting
 		}
@@ -181,7 +187,11 @@ func (unit *Unit) ManaRegenPerSecondWhileCasting() float64 {
 func (unit *Unit) ManaRegenPerSecondWhileNotCasting() float64 {
 	regenRate := unit.MP5ManaRegenPerSecond()
 
-	regenRate += unit.SpiritManaRegenPerSecond() * unit.PseudoStats.SpiritRegenMultiplier
+	spiritRegen := unit.SpiritManaRegenPerSecondDefault()
+	if unit.SpiritManaRegenPerSecond != nil {
+		spiritRegen = unit.SpiritManaRegenPerSecond()
+	}
+	regenRate += spiritRegen * unit.PseudoStats.SpiritRegenMultiplier
 
 	return regenRate
 }
@@ -189,6 +199,10 @@ func (unit *Unit) ManaRegenPerSecondWhileNotCasting() float64 {
 func (unit *Unit) UpdateManaRegenRates() {
 	unit.manaTickWhileCasting = unit.ManaRegenPerSecondWhileCasting() * 2
 	unit.manaTickWhileNotCasting = unit.ManaRegenPerSecondWhileNotCasting() * 2
+}
+
+func (unit *Unit) GetManaNotCastingMetrics() *ResourceMetrics {
+	return unit.manaNotCastingMetrics
 }
 
 // Applies 1 'tick' of mana regen, which worth 2s of regeneration based on mp5/int/spirit/etc.
