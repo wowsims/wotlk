@@ -275,8 +275,7 @@ export class SettingsTab extends SimTab {
 			{ item: IconInputs.AttackPowerBuff, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
 			{ item: IconInputs.AttackPowerPercentBuff, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
 			{ item: IconInputs.MeleeCritBuff, stats: [Stat.StatMeleeCrit] },
-			// TODO: Classic Rune based Demo Pact
-			// { item: IconInputs.SpellPowerBuff, stats: [Stat.StatSpellPower] },
+			{ item: IconInputs.SpellIncreaseBuff, stats: [Stat.StatSpellPower] },
 			{ item: IconInputs.SpellCritBuff, stats: [Stat.StatSpellCrit] },
 			{ item: IconInputs.ResistanceBuff, stats: [Stat.StatNatureResistance, Stat.StatShadowResistance, Stat.StatFrostResistance] },
 			{ item: IconInputs.DefensiveCooldownBuff, stats: [Stat.StatArmor] },

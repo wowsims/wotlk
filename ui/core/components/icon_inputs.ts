@@ -124,9 +124,8 @@ export const SpellCritBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(24907), fieldName: 'moonkinAura'}),
 ], 'Spell Crit', 1, 40);
 
-// TODO: Classic rune
 export const SpellIncreaseBuff = InputHelpers.makeMultiIconInput([
-	// makeMultistateRaidBuffInput(ActionId.fromSpellId(47240), 2000, 'demonicPactSp', 20),
+	makeMultistateRaidBuffInput(ActionId.fromSpellId(425464), 200, 'demonicPact', 10),
 ], 'Spell Power');
 
 export const DefensiveCooldownBuff = InputHelpers.makeMultiIconInput([
@@ -364,14 +363,14 @@ function makeTristateDebuffInput(id: ActionId, impId: ActionId, fieldName: keyof
 // 		changeEmitter: (raid: Raid) => raid.debuffsChangeEmitter,
 // 	}, id, impId, impId2, fieldName);
 // }
-// function makeMultistateRaidBuffInput(id: ActionId, numStates: number, fieldName: keyof RaidBuffs, multiplier?: number): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
-// 	return InputHelpers.makeMultistateIconInput<any, RaidBuffs, Raid>({
-// 		getModObject: (player: Player<any>) => player.getRaid()!,
-// 		getValue: (raid: Raid) => raid.getBuffs(),
-// 		setValue: (eventID: EventID, raid: Raid, newVal: RaidBuffs) => raid.setBuffs(eventID, newVal),
-// 		changeEmitter: (raid: Raid) => raid.buffsChangeEmitter,
-// 	}, id, numStates, fieldName, multiplier);
-// }
+function makeMultistateRaidBuffInput(id: ActionId, numStates: number, fieldName: keyof RaidBuffs, multiplier?: number): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
+	return InputHelpers.makeMultistateIconInput<any, RaidBuffs, Raid>({
+		getModObject: (player: Player<any>) => player.getRaid()!,
+		getValue: (raid: Raid) => raid.getBuffs(),
+		setValue: (eventID: EventID, raid: Raid, newVal: RaidBuffs) => raid.setBuffs(eventID, newVal),
+		changeEmitter: (raid: Raid) => raid.buffsChangeEmitter,
+	}, id, numStates, fieldName, multiplier);
+}
 // function makeMultistatePartyBuffInput(id: ActionId, numStates: number, fieldName: keyof PartyBuffs): InputHelpers.TypedIconPickerConfig<Player<any>, number> {
 // 	return InputHelpers.makeMultistateIconInput<any, PartyBuffs, Party>({
 // 		getModObject: (player: Player<any>) => player.getParty()!,

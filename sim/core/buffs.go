@@ -504,21 +504,12 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 		MakePermanent(BlessingOfMightAura(&character.Unit, GetTristateValueInt32(individualBuffs.BlessingOfMight, 0, 5), level))
 	}
 
-	// TODO: Rune Demo Pact
-	// if raidBuffs.DemonicPactOld > 0 || raidBuffs.DemonicPact > 0 || raidBuffs.DemonicPactSp > 0 {
-	// 	// Use DemonicPactSp if set.
-	// 	power := raidBuffs.DemonicPactSp
-	// 	if power == 0 {
-	// 		power = raidBuffs.DemonicPact // fallback to old setting.
-	// 	}
-	// 	if power == 0 {
-	// 		power = raidBuffs.DemonicPactOld
-	// 	}
-
-	// 	dpAura := DemonicPactAura(character)
-	// 	dpAura.ExclusiveEffects[0].Priority = float64(power)
-	// 	MakePermanent(dpAura)
-	// }
+	if raidBuffs.DemonicPact > 0 {
+		power := float64(raidBuffs.DemonicPact)
+		dpAura := DemonicPactAura(&character.Unit, power)
+		dpAura.ExclusiveEffects[0].Priority = float64(power)
+		MakePermanent(dpAura)
+	}
 
 	if raidBuffs.StrengthOfEarthTotem != proto.TristateEffect_TristateEffectMissing {
 		updateStats := BuffSpellByLevel[StrengthOfEarth][level]
@@ -1465,15 +1456,14 @@ func replenishmentAura(unit *Unit, _ ActionID) *Aura {
 }
 
 // TODO: Classic Runes
-func DemonicPactAura(unit *Unit, spellpower float64, level int32) *Aura {
+func DemonicPactAura(unit *Unit, spellpower float64) *Aura {
 	aura := unit.GetOrRegisterAura(Aura{
 		Label:      "Demonic Pact",
 		ActionID:   ActionID{SpellID: 425464},
 		Duration:   time.Second * 45,
 		BuildPhase: CharacterBuildPhaseBuffs,
 	})
-	spBonus := max(math.Round(spellpower*0.1), math.Round(float64(level)/2))
-	spellPowerBonusEffect(aura, spBonus)
+	spellPowerBonusEffect(aura, spellpower)
 	return aura
 }
 
