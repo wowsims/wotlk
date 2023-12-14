@@ -21,8 +21,10 @@ const actionIdSets: Record<ACTION_ID_SET, {
 		defaultLabel: 'Aura',
 		getActionIDs: async (metadata) => {
 			return metadata.getAuras().map(actionId => {
+				const hasRanks = metadata.getAuras().filter(mainSpell => mainSpell.id.name.startsWith(actionId.id.name.replace(/ \(Rank \d+\)/g,''))).length > 1
 				return {
 					value: actionId.id,
+					submenu: hasRanks ? [actionId.id.name.replace(/ \(Rank \d+\)/g,'')] : [],
 				};
 			});
 		},
@@ -31,8 +33,10 @@ const actionIdSets: Record<ACTION_ID_SET, {
 		defaultLabel: 'Aura',
 		getActionIDs: async (metadata) => {
 			return metadata.getAuras().filter(aura => aura.data.maxStacks > 0).map(actionId => {
+				const hasRanks = metadata.getAuras().filter(aura => aura.id.name.startsWith(actionId.id.name.replace(/ \(Rank \d+\)/g,''))).length > 1
 				return {
 					value: actionId.id,
+					submenu: hasRanks ? [actionId.id.name.replace(/ \(Rank \d+\)/g,'')] : [],
 				};
 			});
 		},
@@ -41,8 +45,10 @@ const actionIdSets: Record<ACTION_ID_SET, {
 		defaultLabel: 'Aura',
 		getActionIDs: async (metadata) => {
 			return metadata.getAuras().filter(aura => aura.data.hasIcd).map(actionId => {
+				const hasRanks = metadata.getAuras().filter(aura => aura.id.name.startsWith(actionId.id.name.replace(/ \(Rank \d+\)/g,''))).length > 1
 				return {
 					value: actionId.id,
+					submenu: hasRanks ? [actionId.id.name.replace(/ \(Rank \d+\)/g,'')] : [],
 				};
 			});
 		},
@@ -51,8 +57,10 @@ const actionIdSets: Record<ACTION_ID_SET, {
 		defaultLabel: 'Aura',
 		getActionIDs: async (metadata) => {
 			return metadata.getAuras().filter(aura => aura.data.hasExclusiveEffect).map(actionId => {
+				const hasRanks = metadata.getAuras().filter(aura => aura.id.name.startsWith(actionId.id.name.replace(/ \(Rank \d+\)/g,''))).length > 1
 				return {
 					value: actionId.id,
+					submenu: hasRanks ? [actionId.id.name.replace(/ \(Rank \d+\)/g,'')] : [],
 				};
 			});
 		},
@@ -73,10 +81,13 @@ const actionIdSets: Record<ACTION_ID_SET, {
 				[{
 					value: ActionId.fromEmpty(),
 					headerText: 'Spells',
+					submenu: ['Spells'],
 				}],
 				(spells || []).map(actionId => {
+					const hasRanks = spells.filter(spell => spell.id.name.startsWith(actionId.id.name.replace(/ \(Rank \d+\)/g,''))).length > 1
 					return {
 						value: actionId.id,
+						submenu: hasRanks ? ['Spells', actionId.id.name.replace(/ \(Rank \d+\)/g, '')] : ['Spells'],
 						extraCssClasses: (actionId.data.prepullOnly
 							? ['apl-prepull-actions-only']
 							: (actionId.data.encounterOnly
@@ -87,10 +98,13 @@ const actionIdSets: Record<ACTION_ID_SET, {
 				[{
 					value: ActionId.fromEmpty(),
 					headerText: 'Cooldowns',
+					submenu: ['Cooldowns'],
 				}],
 				(cooldowns || []).map(actionId => {
+					const hasRanks = cooldowns.filter(spell => spell.id.name.startsWith(actionId.id.name.replace(/ \(Rank \d+\)/g,''))).length > 1
 					return {
 						value: actionId.id,
+						submenu: hasRanks ? ['Cooldowns', actionId.id.name.replace(/ \(Rank \d+\)/g, '')] : ['Cooldowns'],
 						extraCssClasses: (actionId.data.prepullOnly
 							? ['apl-prepull-actions-only']
 							: (actionId.data.encounterOnly
@@ -101,10 +115,12 @@ const actionIdSets: Record<ACTION_ID_SET, {
 				[{
 					value: ActionId.fromEmpty(),
 					headerText: 'Placeholders',
+					submenu: ['Placeholders'],
 				}],
 				placeholders.map(actionId => {
 					return {
 						value: actionId,
+						submenu: ['Placeholders'],
 						tooltip: 'The Prepull Potion if CurrentTime < 0, or the Combat Potion if combat has started.',
 					};
 				}),
@@ -115,8 +131,10 @@ const actionIdSets: Record<ACTION_ID_SET, {
 		defaultLabel: 'Channeled Spell',
 		getActionIDs: async (metadata) => {
 			return metadata.getSpells().filter(spell => spell.data.isCastable && spell.data.isChanneled).map(actionId => {
+				const hasRanks = metadata.getSpells().filter(spell => spell.id.name.startsWith(actionId.id.name.replace(/ \(Rank \d+\)/g,''))).length > 1
 				return {
 					value: actionId.id,
+					submenu: hasRanks ? [actionId.id.name.replace(/ \(Rank \d+\)/g,'')] : [],
 				};
 			});
 		},
@@ -125,8 +143,10 @@ const actionIdSets: Record<ACTION_ID_SET, {
 		defaultLabel: 'DoT Spell',
 		getActionIDs: async (metadata) => {
 			return metadata.getSpells().filter(spell => spell.data.hasDot).map(actionId => {
+				const hasRanks = metadata.getSpells().filter(spell => spell.id.name.startsWith(actionId.id.name.replace(/ \(Rank \d+\)/g,''))).length > 1
 				return {
 					value: actionId.id,
+					submenu: hasRanks ? [actionId.id.name.replace(/ \(Rank \d+\)/g,'')] : [],
 				};
 			});
 		},
@@ -135,8 +155,10 @@ const actionIdSets: Record<ACTION_ID_SET, {
 		defaultLabel: 'Shield Spell',
 		getActionIDs: async (metadata) => {
 			return metadata.getSpells().filter(spell => spell.data.hasShield).map(actionId => {
+				const hasRanks = metadata.getSpells().filter(spell => spell.id.name.startsWith(actionId.id.name.replace(/ \(Rank \d+\)/g,''))).length > 1
 				return {
 					value: actionId.id,
+					submenu: hasRanks ? [actionId.id.name.replace(/ \(Rank \d+\)/g,'')] : [],
 				};
 			});
 		},
