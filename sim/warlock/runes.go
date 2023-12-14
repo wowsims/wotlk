@@ -53,9 +53,9 @@ func (warlock *Warlock) applyDemonicPact() {
 		Duration: 1 * time.Second,
 	}
 
-	spellPower := warlock.GetStat(stats.SpellPower)
+	spellPower := max(warlock.GetStat(stats.SpellPower)*0.1, float64(warlock.Level)/2.0)
 	demonicPactAuras := warlock.NewAllyAuraArray(func(u *core.Unit) *core.Aura {
-		return core.DemonicPactAura(u, spellPower, warlock.Level)
+		return core.DemonicPactAura(u, spellPower)
 	})
 	warlock.DemonicPactAura = demonicPactAuras[warlock.Index]
 

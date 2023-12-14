@@ -425,6 +425,9 @@ message RaidBuffs {
 	bool scroll_of_agility = 29;
 	bool scroll_of_intellect = 30;
 	bool scroll_of_spirit = 31;
+
+	// SoD Runes
+	int32 demonic_pact = 32;
 }
 
 // Buffs that affect a single party.
