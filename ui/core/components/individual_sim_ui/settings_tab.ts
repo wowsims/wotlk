@@ -8,6 +8,7 @@ import {
 	PartyBuffs,
 	Profession,
 	RaidBuffs,
+	SaygesFortune,
 	Spec,
 	Stat
 } from "../../proto/common";
@@ -39,6 +40,7 @@ import { ConsumesPicker } from "./consumes_picker";
 import * as IconInputs from '../icon_inputs.js';
 import * as Tooltips from '../../constants/tooltips.js';
 import { ItemSwapPicker } from "../item_swap_picker";
+import { IconEnumPicker } from "../icon_enum_picker";
 
 export class SettingsTab extends SimTab {
 	protected simUI: IndividualSimUI<Spec>;
@@ -327,17 +329,6 @@ export class SettingsTab extends SimTab {
 					Stat.StatAttackPower,
 				]
 			},
-			{ item: IconInputs.SaygesAgility, stats: [Stat.StatAgility] },
-			{
-				item: IconInputs.SaygesDamage,
-				stats: [
-					Stat.StatAttackPower, Stat.StatSpellPower
-				]
-			},
-			{ item: IconInputs.SaygesInt, stats: [Stat.StatIntellect] },
-			{ item: IconInputs.SaygesSpirit, stats: [Stat.StatSpirit] },
-			{ item: IconInputs.SaygesStam, stats: [Stat.StatStamina] },
-			{ item: IconInputs.SlipKiksSavvy, stats: [Stat.StatSpellCrit] },
 			{
 				item: IconInputs.SongflowerSerenade,
 				stats: [
@@ -364,6 +355,8 @@ export class SettingsTab extends SimTab {
 			contentBlock.bodyElement,
 			worldBuffPickers,
 		);
+
+		new IconEnumPicker<Player<Spec>, SaygesFortune>(contentBlock.bodyElement, this.simUI.player, IconInputs.SaygesDarkFortune);
 	}
 
 	private buildDebuffsSettings() {

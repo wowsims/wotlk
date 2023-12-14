@@ -9,10 +9,13 @@ import { element, fragment } from 'tsx-vanilla';
 
 export interface IconEnumValueConfig<ModObject, T> {
 	value: T,
-	// One of these should be set. If actionId is set, shows the icon for that id. If
-	// color is set, shows that color.
+	// One of these should be set.
+	// If actionId is set, shows the icon for that id.
+	// If color is set, shows that color.
+	// If iconUrl is set, shows that icon as grayscale
 	actionId?: ActionId,
 	color?: string,
+	iconUrl?: string,
 	// Text to be displayed on the icon.
 	text?: string,
 	// Hover tooltip.
@@ -29,6 +32,8 @@ export interface IconEnumPickerConfig<ModObject, T> extends InputConfig<ModObjec
 	// Function for comparing two values.
 	// Tooltip that will be shown whne hovering over the icon-picker-button
 	tooltip?: string,
+	// The direction the menu will open in relative to the root element
+	direction?: 'vertical' | 'horizontal',
 	equals: (a: T, b: T) => boolean,
 	backupIconUrl?: (value: T) => ActionId,
 	showWhen?: (obj: ModObject) => boolean,
@@ -47,7 +52,7 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 
 	constructor(parent: HTMLElement, modObj: ModObject, config: IconEnumPickerConfig<ModObject, T>) {
 		super(parent, 'icon-enum-picker-root', modObj, config);
-		this.rootElem.classList.add('icon-picker', 'dropdown');
+		this.rootElem.classList.add('icon-picker', (config.direction ?? 'vertical') === 'vertical' ? 'dropdown' : 'dropend');
 		this.config = config;
 		this.currentValue = this.config.zeroValue;
 
@@ -76,19 +81,18 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 					}}
 					dataset={{
 						bsToggle: 'dropdown',
-						bsPlacement: 'bottom',
 						whtticon:"false",
 						disableWowheadTouchTooltip:'true'
 					}}
 				>
-					<span className='icon-picker-label'></span>
 				</a>
 				<ul className="dropdown-menu"></ul>
+				<label className='form-label'></label>
 			</>
 		)
 
 		this.buttonElem = this.rootElem.querySelector('.icon-picker-button') as HTMLAnchorElement;
-		this.buttonText = this.buttonElem.querySelector('.icon-picker-label') as HTMLElement;
+		this.buttonText = this.rootElem.querySelector('label') as HTMLElement;
 		const dropdownMenu = this.rootElem.querySelector('.dropdown-menu') as HTMLElement;
 
 		dropdownMenu.style.gridTemplateColumns = `repeat(${this.config.numColumns}, 1fr)`;
@@ -103,13 +107,6 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 			option.dataset.disableWowheadTouchTooltip='true';
 			optionContainer.appendChild(option);
 			this.setImage(option, valueConfig);
-
-			if (valueConfig.text != undefined) {
-				const optionText = document.createElement('div');
-				optionText.classList.add("icon-picker-label");
-				optionText.textContent = valueConfig.text;
-				option.append(optionText);
-			}
 
 			if (valueConfig.tooltip) {
 				Tooltip.getOrCreateInstance(option, {
@@ -178,8 +175,13 @@ export class IconEnumPicker<ModObject, T> extends Input<ModObject, T> {
 
 		if (valueConfig.actionId) {
 			this.setActionImage(elem, valueConfig.actionId);
+			elem.style.filter = ''
+		} else if (valueConfig.iconUrl) {
+			elem.style.backgroundImage = `url(${valueConfig.iconUrl})`
+			elem.style.filter = 'grayscale(1)'
 		} else {
 			elem.style.backgroundImage = '';
+			elem.style.filter = ''
 			elem.style.backgroundColor = valueConfig.color!;
 		}
 	}

@@ -8,6 +8,7 @@ import {
 	Food,
 	IndividualBuffs,
 	RaidBuffs,
+	SaygesFortune,
 	SpellPowerBuff,
 	StrengthBuff,
 	WeaponBuff
@@ -140,61 +141,62 @@ export const PowerInfusion = makeMultistateIndividualBuffInput(ActionId.fromSpel
 // World Buffs
 export const RallyingCryOfTheDragonslayer = withLabel(
 	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(22888), fieldName: 'rallyingCryOfTheDragonslayer'}),
-	'Dragonslayer',
+	'Rallying Cry of the Dragonslayer',
 );
+
 export const SpiritOfZandalar = withLabel(
 	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(24425), fieldName: 'spiritOfZandalar'}),
-	'Zandalar',
+	'Spirit of Zandalar',
 );
 export const SongflowerSerenade = withLabel(
 	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(15366), fieldName: 'songflowerSerenade'}),
-	'Songflower',
+	'Songflower Serenade',
 );
 export const WarchiefsBlessing = withLabel(
 	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(16609), fieldName: 'warchiefsBlessing'}),
-	`Warchief's`,
+	`Warchief's Blessing`,
 );
+
+export const SaygesDarkFortune = {
+	numColumns: 6,
+	direction: 'horizontal',
+	values: [
+		{ iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/inv_misc_orb_02.jpg', value: SaygesFortune.SaygesUnknown, text: `Sayge's Dark Fortune` },
+		{ actionId: ActionId.fromSpellId(23768), value: SaygesFortune.SaygesDamage, text: `Sayge's Damage` },
+		{ actionId: ActionId.fromSpellId(23736), value: SaygesFortune.SaygesAgility, text: `Sayge's Agility` },
+		{ actionId: ActionId.fromSpellId(23766), value: SaygesFortune.SaygesIntellect, text: `Sayge's Intellect` },
+		{ actionId: ActionId.fromSpellId(23738), value: SaygesFortune.SaygesSpirit, text: `Sayge's Spirit` },
+		{ actionId: ActionId.fromSpellId(23737), value: SaygesFortune.SaygesStamina, text: `Sayge's Stamina` },
+	],
+	zeroValue: SaygesFortune.SaygesUnknown,
+	equals: (a: SaygesFortune, b: SaygesFortune) => a === b,
+	changedEvent: (player: Player<any>) => TypedEvent.onAny([player.buffsChangeEmitter]),
+	getValue: (player: Player<any>) => player.getBuffs().saygesFortune,
+	setValue: (eventID: EventID, player: Player<any>, newVal: SaygesFortune) => {
+		const buffs = player.getBuffs()
+		buffs.saygesFortune = newVal
+		player.setBuffs(eventID, buffs)
+	},
+}
 
 // Dire Maul Buffs
 export const FengusFerocity = withLabel(
 	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(22817), fieldName: 'fengusFerocity'}),
-	`Fengus'`,
+	`Fengus' Ferocity`,
 );
 export const MoldarsMoxie = withLabel(
 	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(22818), fieldName: 'moldarsMoxie'}),
-	`Moldar's`,
+	`Moldar's Moxie`,
 );
 export const SlipKiksSavvy = withLabel(
 	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(22820), fieldName: 'slipkiksSavvy'}),
-	`Slip'kik's`,
-);
-
-// Darkmoon Faire Buffs
-export const SaygesAgility = withLabel(
-	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(23736), fieldName: 'saygesDarkFortuneAgi'}),
-	`Sayge's Agi`,
-);
-export const SaygesDamage = withLabel(
-	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(23768), fieldName: 'saygesDarkFortuneDmg'}),
-	`Sayge's Dmg`,
-);
-export const SaygesInt = withLabel(
-	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(23766), fieldName: 'saygesDarkFortuneInt'}),
-	`Sayge's Int`,
-);
-export const SaygesSpirit = withLabel(
-	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(23738), fieldName: 'saygesDarkFortuneSpirit'}),
-	`Sayge's Spirit`,
-);
-export const SaygesStam = withLabel(
-	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(23737), fieldName: 'saygesDarkFortuneStam'}),
-	`Sayge's Stam`,
+	`Slip'kik's Savvy`,
 );
 
 // SoD World Buffs
 export const BoonOfBlackfathom = withLabel(
 	makeBooleanIndividualBuffInput({id: ActionId.fromSpellId(430947), fieldName: 'boonOfBlackfathom'}),
-	'Blackfathom',
+	'Boon of Blackfathom',
 );
 
 // Debuffs

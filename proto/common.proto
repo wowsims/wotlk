@@ -362,7 +362,7 @@ enum SaygesFortune {
 	SaygesUnknown = 0;
 	SaygesDamage = 1;
 	SaygesAgility = 2;
-	SaygesIntelect = 3;
+	SaygesIntellect = 3;
 	SaygesStamina = 4;
 	SaygesSpirit = 5;
 }
@@ -449,25 +449,19 @@ message IndividualBuffs {
 
 	// World Buffs
 	bool rallying_cry_of_the_dragonslayer = 7;
-	bool spirit_of_zandalar = 8;
-	bool songflower_serenade = 9;
-	bool warchiefs_blessing = 10;
+	SaygesFortune sayges_fortune = 8;
+	bool spirit_of_zandalar = 9;
+	bool songflower_serenade = 10;
+	bool warchiefs_blessing = 11;
 
 	// Dire Maul Buffs
-	bool fengus_ferocity = 11;
-	bool moldars_moxie = 12;
-	bool slipkiks_savvy = 13;
-
-	// DMF Buffs
-	bool sayges_dark_fortune_agi = 14;
-	bool sayges_dark_fortune_dmg = 15;
-	bool sayges_dark_fortune_int = 16;
-	bool sayges_dark_fortune_spirit = 17;
-	bool sayges_dark_fortune_stam = 18;
+	bool fengus_ferocity = 12;
+	bool moldars_moxie = 13;
+	bool slipkiks_savvy = 14;
 
 	// New SoD Buffs
-	bool boon_of_blackfathom = 19;
-	bool aspect_of_the_lion = 20;
+	bool boon_of_blackfathom = 15;
+	bool aspect_of_the_lion = 16;
 }
 
 message Consumes {
