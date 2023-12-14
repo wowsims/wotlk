@@ -101,7 +101,7 @@ func (wp *WarlockPet) registerFireboltSpell() {
 func (wp *WarlockPet) registerLashOfPainSpell() {
 	warlockLevel := wp.owner.GetCharacter().Level
 	// assuming max rank available
-	rank := map[int32]int{25: 3, 40: 5, 50: 6, 60: 7}[warlockLevel]
+	rank := map[int32]int{20: 1, 28: 2, 36: 3, 44: 4, 52: 5, 60: 6}[warlockLevel]
 
 	if rank == 0 {
 		rank = 1
