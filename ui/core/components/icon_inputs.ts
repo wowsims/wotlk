@@ -90,11 +90,17 @@ export const SpiritBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanRaidBuffInput({id: ActionId.fromItemId(10306), fieldName: 'scrollOfSpirit'}),
 ], 'Spirit');
 
-export const AttackPowerBuff = InputHelpers.makeMultiIconInput([
+export const BlessingOfMightBuff = InputHelpers.makeMultiIconInput([
 	makeTristateIndividualBuffInput(ActionId.fromSpellId(25291), ActionId.fromSpellId(20048), 'blessingOfMight'),
+], 'Blessing of Might');
+
+export const BattleShoutBuff = InputHelpers.makeMultiIconInput([
 	makeTristateRaidBuffInput({id: ActionId.fromSpellId(25289), impId: ActionId.fromSpellId(12861), fieldName: 'battleShout'}),
+], 'Battle Shout');
+
+export const TrueshotAuraBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(20906), fieldName: 'trueshotAura', minLevel: 40}),
-], 'AP');
+], 'Trueshot Aura', 1, 40);
 
 export const AttackPowerPercentBuff = InputHelpers.makeMultiIconInput([
 ], 'Atk Pwr %', 1, 40);
@@ -200,14 +206,22 @@ export const BoonOfBlackfathom = withLabel(
 
 // Debuffs
 export const MajorArmorDebuff = InputHelpers.makeMultiIconInput([
-	makeBooleanDebuffInput({id: ActionId.fromSpellId(7386), fieldName: 'sunderArmor'}),
-	makeBooleanDebuffInput({id: ActionId.fromSpellId(8647), fieldName: 'exposeArmor'}),
+	makeBooleanDebuffInput({id: ActionId.fromSpellId(11597), fieldName: 'sunderArmor'}),
+	makeTristateDebuffInput(ActionId.fromSpellId(11198), ActionId.fromSpellId(14169), 'exposeArmor'),
 ], 'Major ArP');
+
+export const CurseOfRecklessness = InputHelpers.makeMultiIconInput([
+	makeBooleanDebuffInput({id: ActionId.fromSpellId(11717), fieldName: 'curseOfRecklessness'})
+], 'Curse of Recklessness');
+
+export const FaerieFire = InputHelpers.makeMultiIconInput([
+	makeBooleanDebuffInput({id: ActionId.fromSpellId(9907), fieldName: 'faerieFire'})
+], 'Faerie Fire');
 
 // TODO: Classic
 export const MinorArmorDebuff = InputHelpers.makeMultiIconInput([
-	// makeTristateDebuffInput(ActionId.fromSpellId(770), ActionId.fromSpellId(33602), 'faerieFire'),
-	// makeTristateDebuffInput(ActionId.fromSpellId(50511), ActionId.fromSpellId(18180), 'curseOfWeakness'),
+	//makeTristateDebuffInput(ActionId.fromSpellId(770), ActionId.fromSpellId(33602), 'faerieFire'),
+	//makeBooleanDebuffInput({id: ActionId.fromSpellId(50511), fieldName: 'curseOfWeakness'}),
 ], 'Minor ArP');
 
 export const AttackPowerDebuff = InputHelpers.makeMultiIconInput([

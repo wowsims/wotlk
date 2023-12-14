@@ -121,7 +121,7 @@ export const DefaultDebuffs = Debuffs.create({
 	sunderArmor: true,
 	curseOfWeakness: TristateEffect.TristateEffectRegular,
 	curseOfElements: true,
-	faerieFire: TristateEffect.TristateEffectImproved,
+	faerieFire: true,
 	judgementOfWisdom: true,
 });
 

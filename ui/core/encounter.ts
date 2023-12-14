@@ -171,7 +171,7 @@ export class Encounter {
 			level: Mechanics.BOSS_LEVEL,
 			mobType: MobType.MobTypeGiant,
 			tankIndex: 0,
-			swingSpeed: 1.5,
+			swingSpeed: 2,
 			minBaseDamage: 65000,
 			dualWield: false,
 			dualWieldPenalty: false,

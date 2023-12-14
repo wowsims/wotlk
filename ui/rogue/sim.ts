@@ -218,7 +218,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 		}),
 		debuffs: Debuffs.create({
 			sunderArmor: true,
-			faerieFire: TristateEffect.TristateEffectImproved,
+			faerieFire: true,
 		}),
 	},
 

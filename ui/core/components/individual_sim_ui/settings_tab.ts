@@ -272,7 +272,9 @@ export class SettingsTab extends SimTab {
 			{ item: IconInputs.AgilityRaidBuff, stats: [Stat.StatAgility] },
 			{ item: IconInputs.IntellectBuff, stats: [Stat.StatIntellect] },
 			{ item: IconInputs.SpiritBuff, stats: [Stat.StatSpirit] },
-			{ item: IconInputs.AttackPowerBuff, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
+			{ item: IconInputs.BattleShoutBuff, stats: [Stat.StatAttackPower] },
+			{ item: IconInputs.BlessingOfMightBuff, stats: [Stat.StatAttackPower] },
+			{ item: IconInputs.TrueshotAuraBuff, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
 			{ item: IconInputs.AttackPowerPercentBuff, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
 			{ item: IconInputs.MeleeCritBuff, stats: [Stat.StatMeleeCrit] },
 			{ item: IconInputs.SpellIncreaseBuff, stats: [Stat.StatSpellPower] },
@@ -365,7 +367,9 @@ export class SettingsTab extends SimTab {
 
 		const debuffOptions = this.simUI.splitRelevantOptions([
 			{ item: IconInputs.MajorArmorDebuff, stats: [Stat.StatArmorPenetration] },
-			{ item: IconInputs.MinorArmorDebuff, stats: [Stat.StatArmorPenetration] },
+			{ item: IconInputs.CurseOfRecklessness, stats: [Stat.StatAttackPower] },
+			{ item: IconInputs.FaerieFire, stats: [Stat.StatAttackPower] },
+			//{ item: IconInputs.MinorArmorDebuff, stats: [Stat.StatArmorPenetration] },
 			{ item: IconInputs.BleedDebuff, stats: [Stat.StatAttackPower, Stat.StatRangedAttackPower] },
 			{ item: IconInputs.SpellISBDebuff, stats: [Stat.StatShadowPower] },
 			{ item: IconInputs.SpellScorchDebuff, stats: [Stat.StatFirePower] },

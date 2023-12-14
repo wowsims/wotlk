@@ -137,7 +137,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 		}),
 		debuffs: Debuffs.create({
 			sunderArmor: true,
-			faerieFire: TristateEffect.TristateEffectImproved,
+			faerieFire: true,
 			judgementOfWisdom: true,
 			curseOfElements: true,
 		}),

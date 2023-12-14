@@ -106,8 +106,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 		debuffs: Debuffs.create({
 			judgementOfWisdom: true,
 			giftOfArthas: true,
-			exposeArmor: true,
-			faerieFire: TristateEffect.TristateEffectImproved,
+			exposeArmor: TristateEffect.TristateEffectImproved,
+			faerieFire: true,
 			sunderArmor: true,
 			curseOfWeakness: TristateEffect.TristateEffectRegular,
 		}),

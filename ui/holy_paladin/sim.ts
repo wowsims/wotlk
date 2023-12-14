@@ -95,8 +95,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHolyPaladin, {
 		debuffs: Debuffs.create({
 			judgementOfWisdom: true,
 			judgementOfLight: true,
-			faerieFire: TristateEffect.TristateEffectImproved,
-			exposeArmor: true,
+			faerieFire: true,
+			exposeArmor: TristateEffect.TristateEffectImproved,
 			sunderArmor: true,
 			thunderClap: TristateEffect.TristateEffectImproved,
 			insectSwarm: true,

@@ -7,6 +7,10 @@ import (
 func init() {
 	// TODO: Classic encounters?
 	// naxxramas.Register()
+	addLevel25("SoD")
+	addLevel40("SoD")
+	addLevel50("SoD")
+	addLevel60("SoD")
 }
 
 func AddSingleTargetBossEncounter(presetTarget *core.PresetTarget) {

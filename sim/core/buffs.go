@@ -284,16 +284,20 @@ var BuffSpellByLevel = map[BuffName]map[int32]stats.Stats{
 	},
 	TrueshotAura: {
 		25: stats.Stats{
-			stats.AttackPower: 0,
+			stats.AttackPower:       0,
+			stats.RangedAttackPower: 0,
 		},
 		40: stats.Stats{
-			stats.AttackPower: 50,
+			stats.AttackPower:       50,
+			stats.RangedAttackPower: 50,
 		},
 		50: stats.Stats{
-			stats.AttackPower: 75,
+			stats.AttackPower:       75,
+			stats.RangedAttackPower: 75,
 		},
 		60: stats.Stats{
-			stats.AttackPower: 100,
+			stats.AttackPower:       100,
+			stats.RangedAttackPower: 100,
 		},
 	},
 	StrengthOfEarth: {
@@ -672,6 +676,12 @@ func applyPetBuffEffects(petAgent PetAgent, raidBuffs *proto.RaidBuffs, partyBuf
 		individualBuffs.BlessingOfSanctuary = false
 		individualBuffs.BlessingOfMight = 0
 		individualBuffs.BlessingOfWisdom = 0
+	}
+
+	// Only hunter pets get some buffs
+	if petAgent.GetPet().Owner.Class != proto.Class_ClassHunter {
+		raidBuffs.BattleShout = proto.TristateEffect_TristateEffectMissing
+		individualBuffs.BlessingOfMight = proto.TristateEffect_TristateEffectMissing
 	}
 
 	applyBuffEffects(petAgent, raidBuffs, partyBuffs, individualBuffs)
@@ -1482,9 +1492,16 @@ func spellPowerBonusEffect(aura *Aura, spellPowerBonus float64) *ExclusiveEffect
 }
 
 func BattleShoutAura(unit *Unit, impBattleShout int32, boomingVoicePts int32, level int32) *Aura {
+	spellID := map[int32]int32{
+		25: 6192,
+		40: 11549,
+		50: 11550,
+		60: 25289,
+	}[level]
+
 	aura := unit.GetOrRegisterAura(Aura{
 		Label:      "Battle Shout",
-		ActionID:   ActionID{SpellID: 25289},
+		ActionID:   ActionID{SpellID: spellID},
 		Duration:   time.Duration(float64(time.Minute*2) * (1 + 0.1*float64(boomingVoicePts))),
 		BuildPhase: CharacterBuildPhaseBuffs,
 		OnGain: func(aura *Aura, sim *Simulation) {
@@ -1502,9 +1519,16 @@ func BattleShoutAura(unit *Unit, impBattleShout int32, boomingVoicePts int32, le
 }
 
 func BlessingOfMightAura(unit *Unit, impBomPts int32, level int32) *Aura {
+	spellID := map[int32]int32{
+		25: 19835,
+		40: 19836,
+		50: 19837,
+		60: 25291,
+	}[level]
+
 	aura := unit.GetOrRegisterAura(Aura{
 		Label:      "Blessing of Might",
-		ActionID:   ActionID{SpellID: 25291},
+		ActionID:   ActionID{SpellID: spellID},
 		Duration:   NeverExpires,
 		BuildPhase: CharacterBuildPhaseBuffs,
 		OnReset: func(aura *Aura, sim *Simulation) {

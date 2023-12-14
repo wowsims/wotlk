@@ -9,9 +9,9 @@ import (
 )
 
 func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, raid *proto.Raid) {
-
+	level := raid.Parties[0].Players[0].Level
 	if debuffs.JudgementOfWisdom && targetIdx == 0 {
-		jowAura := JudgementOfWisdomAura(target, raid.Parties[0].Players[0].Level)
+		jowAura := JudgementOfWisdomAura(target, level)
 		if jowAura != nil {
 			MakePermanent(jowAura)
 		}
@@ -46,48 +46,60 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 		MakePermanent(CrystalYieldAura(target))
 	}
 
-	if debuffs.ExposeArmor && targetIdx == 0 {
-		aura := ExposeArmorAura(target, false, raid.Parties[0].Players[0].Level)
-		ScheduledMajorArmorAura(aura, PeriodicActionOptions{
-			Period:   time.Second * 3,
-			NumTicks: 1,
-			OnAction: func(sim *Simulation) {
-				aura.Activate(sim)
-			},
-		}, raid)
+	// Major Armor Debuffs
+	if targetIdx == 0 {
+		if debuffs.ExposeArmor != proto.TristateEffect_TristateEffectMissing {
+			// Improved EA
+			aura := ExposeArmorAura(target, TernaryInt32(debuffs.ExposeArmor == proto.TristateEffect_TristateEffectRegular, 0, 2), level)
+			ScheduledMajorArmorAura(aura, PeriodicActionOptions{
+				Period:   time.Second * 3,
+				NumTicks: 1,
+				OnAction: func(sim *Simulation) {
+					aura.Activate(sim)
+				},
+			}, raid)
+		}
+
+		if debuffs.SunderArmor {
+			// Sunder Armor
+			aura := SunderArmorAura(target, level)
+			ScheduledMajorArmorAura(aura, PeriodicActionOptions{
+				Period:          time.Millisecond * 1500,
+				NumTicks:        5,
+				TickImmediately: true,
+				Priority:        ActionPriorityDOT, // High prio so it comes before actual warrior sunders.
+				OnAction: func(sim *Simulation) {
+					aura.Activate(sim)
+					if aura.IsActive() {
+						aura.AddStack(sim)
+					}
+				},
+			}, raid)
+		}
 	}
 
-	if debuffs.SunderArmor && targetIdx == 0 {
-		// Get the first player level as the debuff level
-		aura := SunderArmorAura(target, raid.Parties[0].Players[0].Level)
-		ScheduledMajorArmorAura(aura, PeriodicActionOptions{
-			Period:          time.Millisecond * 1500,
-			NumTicks:        5,
-			TickImmediately: true,
-			Priority:        ActionPriorityDOT, // High prio so it comes before actual warrior sunders.
-			OnAction: func(sim *Simulation) {
-				aura.Activate(sim)
-				if aura.IsActive() {
-					aura.AddStack(sim)
-				}
-			},
-		}, raid)
+	if debuffs.CurseOfRecklessness {
+		MakePermanent(CurseOfRecklessnessAura(target, level))
+	}
+
+	if debuffs.FaerieFire {
+		MakePermanent(FaerieFireAura(target, level))
 	}
 
 	if debuffs.CurseOfWeakness != proto.TristateEffect_TristateEffectMissing {
-		MakePermanent(CurseOfWeaknessAura(target, GetTristateValueInt32(debuffs.CurseOfWeakness, 1, 2), raid.Parties[0].Players[0].Level))
+		MakePermanent(CurseOfWeaknessAura(target, GetTristateValueInt32(debuffs.CurseOfWeakness, 1, 2), level))
 	}
 
 	if debuffs.DemoralizingRoar != proto.TristateEffect_TristateEffectMissing {
-		MakePermanent(DemoralizingRoarAura(target, GetTristateValueInt32(debuffs.DemoralizingRoar, 0, 5), raid.Parties[0].Players[0].Level))
+		MakePermanent(DemoralizingRoarAura(target, GetTristateValueInt32(debuffs.DemoralizingRoar, 0, 5), level))
 	}
 	if debuffs.DemoralizingShout != proto.TristateEffect_TristateEffectMissing {
-		MakePermanent(DemoralizingShoutAura(target, 0, GetTristateValueInt32(debuffs.DemoralizingShout, 0, 5), raid.Parties[0].Players[0].Level))
+		MakePermanent(DemoralizingShoutAura(target, 0, GetTristateValueInt32(debuffs.DemoralizingShout, 0, 5), level))
 	}
 
 	// Atk spd reduction
 	if debuffs.ThunderClap != proto.TristateEffect_TristateEffectMissing {
-		MakePermanent(ThunderClapAura(target, GetTristateValueInt32(debuffs.ThunderClap, 0, 3), raid.Parties[0].Players[0].Level))
+		MakePermanent(ThunderClapAura(target, GetTristateValueInt32(debuffs.ThunderClap, 0, 3), level))
 	}
 
 	// Miss
@@ -147,7 +159,7 @@ func ScheduledMajorArmorAura(aura *Aura, options PeriodicActionOptions, raid *pr
 
 	if singleExposeDelay {
 		target := aura.Unit
-		exposeArmorAura := ExposeArmorAura(target, false, raid.Parties[0].Players[0].Level)
+		exposeArmorAura := ExposeArmorAura(target, 2, raid.Parties[0].Players[0].Level)
 		exposeArmorAura.ApplyOnExpire(func(_ *Aura, sim *Simulation) {
 			aura.Duration = NeverExpires
 			StartPeriodicAction(sim, options)
@@ -422,25 +434,31 @@ func SunderArmorAura(target *Unit, playerLevel int32) *Aura {
 		60: 11597,
 	}[playerLevel]
 
-	arpen := map[int32]int32{
+	arpen := map[int32]float64{
 		25: 180,
 		40: 270,
 		50: 360,
 		60: 450,
 	}[playerLevel]
 
+	var effect *ExclusiveEffect
 	aura := target.GetOrRegisterAura(Aura{
 		Label:     "Sunder Armor",
 		ActionID:  ActionID{SpellID: spellID},
 		Duration:  time.Second * 30,
 		MaxStacks: 5,
 		OnStacksChange: func(aura *Aura, sim *Simulation, oldStacks int32, newStacks int32) {
-			aura.Unit.stats[stats.Armor] -= float64(arpen) * float64(oldStacks)
-			aura.Unit.stats[stats.Armor] += float64(arpen) * float64(newStacks)
-
+			effect.SetPriority(sim, arpen*float64(newStacks))
 		},
-		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.stats[stats.Armor] -= float64(arpen) * float64(aura.stacks)
+	})
+
+	effect = aura.NewExclusiveEffect(majorArmorReductionEffectCategory, true, ExclusiveEffect{
+		Priority: 0,
+		OnGain: func(ee *ExclusiveEffect, sim *Simulation) {
+			aura.Unit.AddStatDynamic(sim, stats.Armor, -ee.Priority)
+		},
+		OnExpire: func(ee *ExclusiveEffect, sim *Simulation) {
+			aura.Unit.AddStatDynamic(sim, stats.Armor, ee.Priority)
 		},
 	})
 
@@ -448,24 +466,97 @@ func SunderArmorAura(target *Unit, playerLevel int32) *Aura {
 }
 
 // TODO: Classic (Flat amount)
-func ExposeArmorAura(target *Unit, hasGlyph bool, playerLevel int32) *Aura {
-	const armorReduction = 0.2
+func ExposeArmorAura(target *Unit, improvedEA int32, playerLevel int32) *Aura {
+	spellID := map[int32]int32{
+		25: 8647,
+		40: 8650,
+		50: 11197,
+		60: 11198,
+	}[playerLevel]
+
+	arpen := map[int32]float64{
+		25: 400,
+		40: 1050,
+		50: 1375,
+		60: 1700,
+	}[playerLevel]
+
+	arpen *= 1 + 0.25*float64(improvedEA)
+
 	aura := target.GetOrRegisterAura(Aura{
 		Label:    "ExposeArmor",
-		ActionID: ActionID{SpellID: 8647},
-		Duration: time.Second * TernaryDuration(hasGlyph, 42, 30),
+		ActionID: ActionID{SpellID: spellID},
+		Duration: time.Second * 30,
 	})
 
 	aura.NewExclusiveEffect(majorArmorReductionEffectCategory, true, ExclusiveEffect{
-		Priority: armorReduction,
+		Priority: arpen,
 		OnGain: func(ee *ExclusiveEffect, sim *Simulation) {
-			ee.Aura.Unit.PseudoStats.ArmorMultiplier *= 1 - armorReduction
+			aura.Unit.AddStatDynamic(sim, stats.Armor, -ee.Priority)
 		},
 		OnExpire: func(ee *ExclusiveEffect, sim *Simulation) {
-			ee.Aura.Unit.PseudoStats.ArmorMultiplier /= 1 - armorReduction
+			aura.Unit.AddStatDynamic(sim, stats.Armor, ee.Priority)
 		},
 	})
 
+	return aura
+}
+
+func CurseOfRecklessnessAura(target *Unit, playerLevel int32) *Aura {
+	spellID := map[int32]int32{
+		25: 704,
+		40: 7658,
+		50: 7659,
+		60: 11717,
+	}[playerLevel]
+
+	arpen := map[int32]float64{
+		25: 140,
+		40: 290,
+		50: 465,
+		60: 640,
+	}[playerLevel]
+
+	aura := target.GetOrRegisterAura(Aura{
+		Label:    "Curse of Recklessness",
+		ActionID: ActionID{SpellID: spellID},
+		Duration: time.Minute * 2,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.AddStatDynamic(sim, stats.Armor, -arpen)
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.AddStatDynamic(sim, stats.Armor, arpen)
+		},
+	})
+	return aura
+}
+
+func FaerieFireAura(target *Unit, playerLevel int32) *Aura {
+	spellID := map[int32]int32{
+		25: 770,
+		40: 778,
+		50: 9749,
+		60: 9907,
+	}[playerLevel]
+
+	arpen := map[int32]float64{
+		25: 175,
+		40: 285,
+		50: 395,
+		60: 505,
+	}[playerLevel]
+
+	aura := target.GetOrRegisterAura(Aura{
+		Label:    "Faerie Fire",
+		ActionID: ActionID{SpellID: spellID},
+		Duration: time.Second * 40,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.AddStatDynamic(sim, stats.Armor, -arpen)
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.AddStatDynamic(sim, stats.Armor, arpen)
+		},
+	})
 	return aura
 }
 
@@ -477,19 +568,6 @@ func CurseOfWeaknessAura(target *Unit, points int32, playerLevel int32) *Aura {
 		Duration: time.Minute * 2,
 	})
 	return aura
-}
-
-func minorArmorReductionEffect(aura *Aura, reduction float64) *ExclusiveEffect {
-	multiplier := 1 - reduction
-	return aura.NewExclusiveEffect("MinorArmorReduction", false, ExclusiveEffect{
-		Priority: reduction,
-		OnGain: func(ee *ExclusiveEffect, sim *Simulation) {
-			ee.Aura.Unit.PseudoStats.ArmorMultiplier *= multiplier
-		},
-		OnExpire: func(ee *ExclusiveEffect, sim *Simulation) {
-			ee.Aura.Unit.PseudoStats.ArmorMultiplier /= multiplier
-		},
-	})
 }
 
 const HuntersMarkAuraTag = "HuntersMark"

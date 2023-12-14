@@ -78,8 +78,8 @@ var FullIndividualBuffs = &proto.IndividualBuffs{
 var FullDebuffs = &proto.Debuffs{
 	CurseOfElements:   true,
 	CurseOfWeakness:   proto.TristateEffect_TristateEffectImproved,
-	ExposeArmor:       true,
-	FaerieFire:        proto.TristateEffect_TristateEffectImproved,
+	ExposeArmor:       proto.TristateEffect_TristateEffectImproved,
+	FaerieFire:        true,
 	GiftOfArthas:      true,
 	InsectSwarm:       true,
 	JudgementOfLight:  true,

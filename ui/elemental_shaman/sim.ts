@@ -115,7 +115,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecElementalShaman, {
 			blessingOfWisdom: 2,
 		}),
 		debuffs: Debuffs.create({
-			faerieFire: TristateEffect.TristateEffectImproved,
+			faerieFire: true,
 			judgementOfWisdom: true,
 			curseOfElements: true,
 		}),

@@ -488,7 +488,7 @@ message Consumes {
 message Debuffs {
 	bool judgement_of_wisdom = 1;
 	bool judgement_of_light = 2;
-	TristateEffect faerie_fire = 3;
+	bool faerie_fire = 3;
 
 	// Bonus spell damage
 	bool curse_of_elements = 4;
@@ -500,7 +500,7 @@ message Debuffs {
 	bool gift_of_arthas = 9;
 
 	// Major armor
-	bool expose_armor = 10;
+	TristateEffect expose_armor = 10;
 	bool sunder_armor = 11;
 
 	TristateEffect curse_of_weakness = 12;

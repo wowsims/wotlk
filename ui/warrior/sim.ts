@@ -111,7 +111,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarrior, {
 		debuffs: Debuffs.create({
 			sunderArmor: true,
 			curseOfWeakness: TristateEffect.TristateEffectRegular,
-			faerieFire: TristateEffect.TristateEffectImproved,
+			faerieFire: true,
 		}),
 	},
 

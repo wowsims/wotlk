@@ -75,7 +75,7 @@ export const DefaultPartyBuffs = PartyBuffs.create({
 });
 
 export const DefaultDebuffs = Debuffs.create({
-	faerieFire: TristateEffect.TristateEffectImproved,
+	faerieFire: true,
 	sunderArmor: true,
 });
 

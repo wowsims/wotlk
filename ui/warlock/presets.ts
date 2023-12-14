@@ -69,7 +69,7 @@ export const DefaultIndividualBuffs = IndividualBuffs.create({
 
 export const DefaultDebuffs = Debuffs.create({
 	sunderArmor: true,
-	faerieFire: TristateEffect.TristateEffectImproved,
+	faerieFire: true,
 	judgementOfWisdom: true,
 });
 
