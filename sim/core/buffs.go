@@ -597,8 +597,6 @@ func applyBuffEffects(agent Agent, raidBuffs *proto.RaidBuffs, partyBuffs *proto
 	}
 
 	// Darkmoon Faire Buffs
-	// TODO: This should be a single enum icon picker
-	// as you cant have more then 1 of them active
 	if individualBuffs.SaygesFortune == proto.SaygesFortune_SaygesDamage {
 		character.PseudoStats.DamageDealtMultiplier *= 1.10
 	}

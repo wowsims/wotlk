@@ -33,7 +33,7 @@ export interface IconEnumPickerConfig<ModObject, T> extends InputConfig<ModObjec
 	// Tooltip that will be shown whne hovering over the icon-picker-button
 	tooltip?: string,
 	// The direction the menu will open in relative to the root element
-	direction?: 'vertical' | 'horizontal',
+	direction?: string,
 	equals: (a: T, b: T) => boolean,
 	backupIconUrl?: (value: T) => ActionId,
 	showWhen?: (obj: ModObject) => boolean,
