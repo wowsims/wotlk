@@ -34,7 +34,7 @@ func (warrior *Warrior) RegisterRendSpell(rageThreshold float64, healthThreshold
 		},
 
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return warrior.StanceMatches(BattleStance)
+			return warrior.StanceMatches(BattleStance) || warrior.StanceMatches(DefensiveStance)
 		},
 
 		DamageMultiplier: 1 + 0.1*float64(warrior.Talents.ImprovedRend),
