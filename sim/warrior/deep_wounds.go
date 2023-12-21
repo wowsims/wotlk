@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
+	"github.com/wowsims/sod/sim/core/stats"
 )
 
 func (warrior *Warrior) applyDeepWounds() {
@@ -21,28 +22,20 @@ func (warrior *Warrior) applyDeepWounds() {
 		ActionID:    core.ActionID{SpellID: spellID},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskEmpty,
-		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagIgnoreModifiers | SpellFlagBleed,
+		Flags:       core.SpellFlagNoOnCastComplete | SpellFlagBleed,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 
 		Dot: core.DotConfig{
 			Aura: core.Aura{
-				Label: "DeepWounds",
+				Label: "Deep Wounds",
 			},
-			NumberOfTicks: 12,
-			TickLength:    time.Second * 1,
-			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-				attackTable := warrior.AttackTables[target.UnitIndex]
-				adm := warrior.AutoAttacks.MHAuto().AttackerDamageMultiplier(attackTable)
-				tdm := warrior.AutoAttacks.MHAuto().TargetDamageMultiplier(attackTable, false)
-				awd := (warrior.AutoAttacks.MH().CalculateAverageWeaponDamage(dot.Spell.MeleeAttackPower()) + dot.Spell.BonusWeaponDamage()) * adm * tdm
-				newDamage := awd * 0.2 * float64(warrior.Talents.DeepWounds)
-				dot.SnapshotBaseDamage = newDamage / 12
-			},
+			NumberOfTicks: 4,
+			TickLength:    time.Second * 3,
 
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				dot.SnapshotAttackerMultiplier = target.PseudoStats.PeriodicPhysicalDamageTakenMultiplier
+				dot.SnapshotAttackerMultiplier = target.PseudoStats.PeriodicPhysicalDamageTakenMultiplier * warrior.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical]
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
 			},
 		},
@@ -64,29 +57,24 @@ func (warrior *Warrior) applyDeepWounds() {
 				return
 			}
 			if result.Outcome.Matches(core.OutcomeCrit) {
-				warrior.DeepWounds.Cast(sim, result.Target)
+				warrior.procDeepWounds(sim, result.Target)
 			}
 		},
 	})
 }
 
-func (warrior *Warrior) procDeepWounds(sim *core.Simulation, target *core.Unit, isOh bool) {
+func (warrior *Warrior) procDeepWounds(sim *core.Simulation, target *core.Unit) {
 	dot := warrior.DeepWounds.Dot(target)
 
 	outstandingDamage := core.TernaryFloat64(dot.IsActive(), dot.SnapshotBaseDamage*float64(dot.NumberOfTicks-dot.TickCount), 0)
 
 	attackTable := warrior.AttackTables[target.UnitIndex]
-	var awd float64
-	if isOh {
-		adm := warrior.AutoAttacks.OHAuto().AttackerDamageMultiplier(attackTable)
-		tdm := warrior.AutoAttacks.OHAuto().TargetDamageMultiplier(attackTable, false)
-		awd = ((warrior.AutoAttacks.OH().CalculateAverageWeaponDamage(dot.Spell.MeleeAttackPower()) * 0.5) + dot.Spell.BonusWeaponDamage()) * adm * tdm
-	} else { // MH, Ranged (e.g. Thunder Clap)
-		adm := warrior.AutoAttacks.MHAuto().AttackerDamageMultiplier(attackTable)
-		tdm := warrior.AutoAttacks.MHAuto().TargetDamageMultiplier(attackTable, false)
-		awd = (warrior.AutoAttacks.MH().CalculateAverageWeaponDamage(dot.Spell.MeleeAttackPower()) + dot.Spell.BonusWeaponDamage()) * adm * tdm
-	}
-	newDamage := awd * 0.16 * float64(warrior.Talents.DeepWounds)
+
+	adm := warrior.AutoAttacks.MHAuto().AttackerDamageMultiplier(attackTable)
+	tdm := warrior.AutoAttacks.MHAuto().TargetDamageMultiplier(attackTable, false)
+	awd := (warrior.AutoAttacks.MH().CalculateAverageWeaponDamage(dot.Spell.MeleeAttackPower()) + dot.Spell.BonusWeaponDamage()) * adm * tdm
+
+	newDamage := awd * 0.2 * float64(warrior.Talents.DeepWounds)
 
 	dot.SnapshotBaseDamage = (outstandingDamage + newDamage) / float64(dot.NumberOfTicks)
 	dot.SnapshotAttackerMultiplier = 1

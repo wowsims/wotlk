@@ -56,7 +56,7 @@ func (warrior *Warrior) applyFlagellation() {
 	}
 
 	flagellationAura := warrior.RegisterAura(core.Aura{
-		Label:    "Flagellation Trigger",
+		Label:    "Flagellation",
 		ActionID: core.ActionID{SpellID: 402877},
 		Duration: time.Second * 12,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
@@ -70,8 +70,11 @@ func (warrior *Warrior) applyFlagellation() {
 	warrior.RegisterAura(core.Aura{
 		Label:    "Flagellation Trigger",
 		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if !(spell == warrior.Bloodrage || spell == warrior.BerserkerRage) {
+			if spell != warrior.Bloodrage && spell != warrior.BerserkerRage {
 				return
 			}
 
@@ -88,6 +91,7 @@ func (warrior *Warrior) applyConsumedByRage() {
 	warrior.ConsumedByRageAura = warrior.RegisterAura(core.Aura{
 		Label:     "Consumed By Rage",
 		ActionID:  core.ActionID{SpellID: 425418},
+		Duration:  time.Second * 10,
 		MaxStacks: 12,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			warrior.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1.2
@@ -100,6 +104,9 @@ func (warrior *Warrior) applyConsumedByRage() {
 	warrior.RegisterAura(core.Aura{
 		Label:    "Consumed By Rage Trigger",
 		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
 		OnRageChange: func(aura *core.Aura, sim *core.Simulation, metrics *core.ResourceMetrics) {
 			if !warrior.Above80RageCBRActive && warrior.CurrentRage() >= 80 && metrics.ActionID.OtherID != proto.OtherAction_OtherActionRefund {
 				warrior.ConsumedByRageAura.Activate(sim)
