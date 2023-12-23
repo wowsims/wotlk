@@ -182,16 +182,19 @@ func (shaman *Shaman) ApplyFlametongueImbueToItem(item *core.Item, isDownranked 
 	item.TempEnchant = int32(enchantID)
 }
 
+func (shaman *Shaman) ApplyFlametongueImbue(procMask core.ProcMask, isDownranked bool) {
+	if procMask.Matches(core.ProcMaskMeleeMH) && shaman.HasMHWeapon() {
+		shaman.ApplyFlametongueImbueToItem(shaman.MainHand(), isDownranked)
+	}
+
+	if procMask.Matches(core.ProcMaskMeleeOH) && shaman.HasOHWeapon() {
+		shaman.ApplyFlametongueImbueToItem(shaman.OffHand(), isDownranked)
+	}
+}
+
 func (shaman *Shaman) RegisterFlametongueImbue(procMask core.ProcMask, isDownranked bool) {
 	if procMask == core.ProcMaskUnknown && !shaman.ItemSwap.IsEnabled() {
 		return
-	}
-
-	if procMask.Matches(core.ProcMaskMeleeMH) {
-		shaman.ApplyFlametongueImbueToItem(shaman.MainHand(), isDownranked)
-	}
-	if procMask.Matches(core.ProcMaskMeleeOH) {
-		shaman.ApplyFlametongueImbueToItem(shaman.OffHand(), isDownranked)
 	}
 
 	icd := core.Cooldown{

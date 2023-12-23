@@ -428,9 +428,9 @@ func (unit *Unit) OnAutoAttack(_ *Simulation, _ *Spell) {}
 func (aa *AutoAttacks) finalize() {
 	if aa.AutoSwingMelee {
 		aa.mh.spell = aa.mh.unit.GetOrRegisterSpell(aa.mh.config)
-		if aa.IsDualWielding {
-			aa.oh.spell = aa.oh.unit.GetOrRegisterSpell(aa.oh.config)
-		}
+
+		// Will keep keep the OH spell registered for Item swapping
+		aa.oh.spell = aa.oh.unit.GetOrRegisterSpell(aa.oh.config)
 	}
 	if aa.AutoSwingRanged {
 		aa.ranged.spell = aa.ranged.unit.GetOrRegisterSpell(aa.ranged.config)
