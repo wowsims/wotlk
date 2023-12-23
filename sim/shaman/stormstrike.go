@@ -132,15 +132,20 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 					totemOfDuelingAura.Activate(sim)
 				}
 
-				mhHit(sim, target, spell)
+				if shaman.HasMHWeapon() {
+					mhHit(sim, target, spell)
+				}
 
-				if shaman.AutoAttacks.IsDualWielding {
+				if shaman.AutoAttacks.IsDualWielding && shaman.HasOHWeapon() {
 					ohHit(sim, target, spell)
 				}
 
 				shaman.Stormstrike.SpellMetrics[target.UnitIndex].Hits--
 			}
 			spell.DealOutcome(sim, result)
+		},
+		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
+			return shaman.HasMHWeapon() || shaman.HasOHWeapon()
 		},
 	})
 }

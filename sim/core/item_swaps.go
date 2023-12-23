@@ -73,7 +73,6 @@ func (character *Character) enableItemSwap(itemSwap *proto.ItemSwap, mhCritMulti
 	}
 
 	character.ItemSwap = ItemSwap{
-		character:            character,
 		mhCritMultiplier:     mhCritMultiplier,
 		ohCritMultiplier:     ohCritMultiplier,
 		rangedCritMultiplier: rangedCritMultiplier,
@@ -81,6 +80,10 @@ func (character *Character) enableItemSwap(itemSwap *proto.ItemSwap, mhCritMulti
 		unEquippedItems:      swapItems,
 		swapped:              false,
 	}
+}
+
+func (swap *ItemSwap) initialize(character *Character) {
+	swap.character = character
 }
 
 func (character *Character) RegisterOnItemSwap(callback OnSwapItem) {
@@ -136,7 +139,7 @@ func (swap *ItemSwap) RegisterOnSwapItemForEnchantEffect(effectID int32, aura *A
 }
 
 func (swap *ItemSwap) IsEnabled() bool {
-	return swap.character != nil
+	return swap.character != nil && len(swap.slots) > 0
 }
 
 func (swap *ItemSwap) IsSwapped() bool {
@@ -172,6 +175,7 @@ func (swap *ItemSwap) SwapItems(sim *Simulation, slots []proto.ItemSlot, useGCD 
 	newStats := stats.Stats{}
 	has2H := swap.GetItem(proto.ItemSlot_ItemSlotMainHand).HandType == proto.HandType_HandTypeTwoHand
 	for _, slot := range slots {
+
 		//will swap both on the MainHand Slot for 2H.
 		if slot == proto.ItemSlot_ItemSlotOffHand && has2H {
 			continue
@@ -252,8 +256,10 @@ func (swap *ItemSwap) swapWeapon(slot proto.ItemSlot) {
 		}
 	case proto.ItemSlot_ItemSlotOffHand:
 		if character.AutoAttacks.AutoSwingMelee {
-			character.AutoAttacks.SetOH(character.WeaponFromOffHand(swap.ohCritMultiplier))
-			//Special case for when the OHAuto Spell was set up with a non weapon and does not have a crit multiplier.
+			weapon := character.WeaponFromOffHand(swap.ohCritMultiplier)
+			character.AutoAttacks.SetOH(weapon)
+
+			character.AutoAttacks.IsDualWielding = weapon.SwingSpeed != 0
 			character.PseudoStats.CanBlock = character.OffHand().WeaponType == proto.WeaponType_WeaponTypeShield
 		}
 	case proto.ItemSlot_ItemSlotRanged:
