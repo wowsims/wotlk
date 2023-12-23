@@ -1,7 +1,6 @@
 package core
 
 import (
-	"fmt"
 	"slices"
 	"time"
 
@@ -248,11 +247,6 @@ func (wa *WeaponAttack) getWeapon() *Weapon {
 
 func (wa *WeaponAttack) setWeapon(weapon Weapon) {
 	wa.Weapon = weapon
-
-	if wa.spell == nil {
-		fmt.Println("Wepaon is null")
-	}
-
 	wa.spell.CritMultiplier = weapon.CritMultiplier
 	wa.updateSwingDuration(wa.curSwingSpeed)
 }

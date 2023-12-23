@@ -60,6 +60,7 @@ func NewEnhancementShaman(character *core.Character, options *proto.Player) *Enh
 		AutoSwingMelee: true,
 	})
 
+	enh.ApplySyncType(enhOptions.Options.SyncType)
 	enh.ApplyFlametongueImbue(enh.getImbueProcMask(proto.ShamanImbue_FlametongueWeapon), false)
 	enh.ApplyFlametongueImbue(enh.getImbueProcMask(proto.ShamanImbue_FlametongueWeaponDownrank), true)
 
