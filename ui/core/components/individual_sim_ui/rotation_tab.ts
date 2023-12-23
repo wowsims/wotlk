@@ -6,7 +6,6 @@ import {
 import {
 	APLRotation,
 	APLRotation_Type as APLRotationType,
-	SimpleRotation,
 } from "../../proto/apl";
 import {
 	SavedRotation,
@@ -21,7 +20,6 @@ import { NumberPicker } from "../number_picker";
 import { BooleanPicker } from "../boolean_picker";
 import { EnumPicker } from "../enum_picker";
 import { Input } from "../input";
-import { ItemSwapPicker } from "../item_swap_picker";
 import { CooldownsPicker } from "./cooldowns_picker";
 import { CustomRotationPicker } from "./custom_rotation_picker";
 import { SavedDataManager } from "../saved_data_manager";
@@ -181,8 +179,6 @@ export class RotationTab extends SimTab {
 				new EnumPicker(sectionElem, this.simUI.player, inputConfig);
 			} else if (inputConfig.type == 'customRotation') {
 				new CustomRotationPicker(sectionElem, this.simUI, this.simUI.player, inputConfig);
-			} else if (inputConfig.type == 'itemSwap') {
-				new ItemSwapPicker(sectionElem, this.simUI, this.simUI.player, inputConfig)
 			}
 		});
 	}

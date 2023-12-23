@@ -62,10 +62,6 @@ func NewEnhancementShaman(character *core.Character, options *proto.Player) *Enh
 
 	enh.ApplySyncType(enhOptions.Options.SyncType)
 
-	if enh.Totems.UseFireElemental && enhOptions.Rotation.EnableItemSwap {
-		enh.EnableItemSwap(enhOptions.Rotation.ItemSwap, enh.DefaultMeleeCritMultiplier(), enh.DefaultMeleeCritMultiplier(), 0)
-	}
-
 	if enhOptions.Rotation.LightningboltWeave {
 		enh.maelstromWeaponMinStack = enhOptions.Rotation.MaelstromweaponMinStack
 	} else {
@@ -136,9 +132,12 @@ func (enh *EnhancementShaman) Initialize() {
 		})
 	}
 	enh.DelayDPSCooldowns(3 * time.Second)
-	enh.RegisterPrepullAction(-time.Second, func(sim *core.Simulation) {
-		enh.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand, proto.ItemSlot_ItemSlotOffHand}, false)
-	})
+
+	if !enh.IsUsingAPL {
+		enh.RegisterPrepullAction(-time.Second, func(sim *core.Simulation) {
+			enh.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand, proto.ItemSlot_ItemSlotOffHand}, false)
+		})
+	}
 }
 
 func (enh *EnhancementShaman) Reset(sim *core.Simulation) {

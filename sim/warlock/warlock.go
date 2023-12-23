@@ -203,8 +203,10 @@ func (warlock *Warlock) Reset(sim *core.Simulation) {
 		warlock.petStmBonusSP = 0
 	}
 
-	warlock.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand,
-		proto.ItemSlot_ItemSlotOffHand, proto.ItemSlot_ItemSlotRanged}, false)
+	if !warlock.IsUsingAPL {
+		warlock.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand,
+			proto.ItemSlot_ItemSlotOffHand, proto.ItemSlot_ItemSlotRanged}, false)
+	}
 	warlock.corrRefreshList = make([]time.Duration, len(warlock.Env.Encounter.TargetUnits))
 	warlock.setupCooldowns(sim)
 }
@@ -235,10 +237,6 @@ func NewWarlock(character *core.Character, options *proto.Player) *Warlock {
 	}
 
 	warlock.Infernal = warlock.NewInfernal()
-
-	if warlock.Rotation.Type == proto.Warlock_Rotation_Affliction && warlock.Rotation.EnableWeaponSwap {
-		warlock.EnableItemSwap(warlock.Rotation.WeaponSwap, 1, 1, 1)
-	}
 
 	warlock.applyWeaponImbue()
 	wotlk.ConstructValkyrPets(&warlock.Character)

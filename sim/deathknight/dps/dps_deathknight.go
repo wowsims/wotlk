@@ -75,10 +75,6 @@ func NewDpsDeathknight(character *core.Character, player *proto.Player) *DpsDeat
 		AutoSwingMelee: true,
 	})
 
-	if dpsDk.Talents.SummonGargoyle && dpsDk.Rotation.UseGargoyle && dpsDk.Rotation.EnableWeaponSwap {
-		dpsDk.EnableItemSwap(dpsDk.Rotation.WeaponSwap, dpsDk.DefaultMeleeCritMultiplier(), dpsDk.DefaultMeleeCritMultiplier(), 0)
-	}
-
 	dpsDk.br.dk = dpsDk
 	dpsDk.sr.dk = dpsDk
 	dpsDk.ur.dk = dpsDk

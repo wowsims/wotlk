@@ -27,6 +27,9 @@ message Player {
 	Consumes consumes = 4;
 	UnitStats bonus_stats = 36;
 
+	bool enable_item_swap = 46;
+	ItemSwap item_swap = 45;
+
 	IndividualBuffs buffs = 15;
 
 	oneof spec {

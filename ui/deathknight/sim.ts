@@ -199,6 +199,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecDeathknight, {
 			OtherInputs.InFrontOfTarget,
 		],
 	},
+	itemSwapSlots: [ItemSlot.ItemSlotMainHand, ItemSlot.ItemSlotOffHand],
 	encounterPicker: {
 		// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
 		showExecuteProportion: false,

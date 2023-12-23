@@ -5,6 +5,7 @@ import {
 	Debuffs,
 	HealingModel,
 	IndividualBuffs,
+	ItemSwap,
 	PartyBuffs,
 	Profession,
 	RaidBuffs,
@@ -233,16 +234,24 @@ export class SettingsTab extends SimTab {
 			!inputs.extraCssClasses?.includes('within-raid-sim-hide') || true
 		)
 
-		if (settings.length > 0) {
+		const swapSlots = this.simUI.individualConfig.itemSwapSlots || [];
+		if (settings.length > 0 || swapSlots.length > 0) {
 			const contentBlock = new ContentBlock(this.column2, 'other-settings', {
 				header: { title: 'Other' }
 			});
 
-			this.configureInputSection(contentBlock.bodyElement, this.simUI.individualConfig.otherInputs);
+			if (settings.length > 0) {
+				this.configureInputSection(contentBlock.bodyElement, this.simUI.individualConfig.otherInputs);
+				contentBlock.bodyElement.querySelectorAll('.input-root').forEach(elem => {
+					elem.classList.add('input-inline');
+				})
+			}
 
-			contentBlock.bodyElement.querySelectorAll('.input-root').forEach(elem => {
-				elem.classList.add('input-inline');
-			})
+			if (swapSlots.length > 0) {
+				const _itemSwapPicker = new ItemSwapPicker(contentBlock.bodyElement, this.simUI, this.simUI.player, {
+					itemSlots: swapSlots,
+				});
+			}
 		}
 	}
 
@@ -395,6 +404,8 @@ export class SettingsTab extends SimTab {
 					consumes: player.getConsumes(),
 					race: player.getRace(),
 					professions: player.getProfessions(),
+					enableItemSwap: player.getEnableItemSwap(),
+					itemSwap: player.getItemSwapGear().toProto(),
 					reactionTimeMs: player.getReactionTime(),
 					channelClipDelayMs: player.getChannelClipDelay(),
 					inFrontOfTarget: player.getInFrontOfTarget(),
@@ -417,6 +428,8 @@ export class SettingsTab extends SimTab {
 					simUI.player.setConsumes(eventID, newSettings.consumes || Consumes.create());
 					simUI.player.setRace(eventID, newSettings.race);
 					simUI.player.setProfessions(eventID, newSettings.professions);
+					simUI.player.setEnableItemSwap(eventID, newSettings.enableItemSwap);
+					simUI.player.setItemSwapGear(eventID, simUI.sim.db.lookupItemSwap(newSettings.itemSwap || ItemSwap.create()));
 					simUI.player.setReactionTime(eventID, newSettings.reactionTimeMs);
 					simUI.player.setChannelClipDelay(eventID, newSettings.channelClipDelayMs);
 					simUI.player.setInFrontOfTarget(eventID, newSettings.inFrontOfTarget);
@@ -439,6 +452,7 @@ export class SettingsTab extends SimTab {
 				this.simUI.player.consumesChangeEmitter,
 				this.simUI.player.raceChangeEmitter,
 				this.simUI.player.professionChangeEmitter,
+				this.simUI.player.itemSwapChangeEmitter,
 				this.simUI.player.miscOptionsChangeEmitter,
 				this.simUI.player.inFrontOfTargetChangeEmitter,
 				this.simUI.player.distanceFromTargetChangeEmitter,
@@ -468,8 +482,6 @@ export class SettingsTab extends SimTab {
 				new EnumPicker(sectionElem, this.simUI.player, inputConfig);
 			} else if (inputConfig.type == 'customRotation') {
 				new CustomRotationPicker(sectionElem, this.simUI, this.simUI.player, inputConfig);
-			} else if (inputConfig.type == 'itemSwap') {
-				new ItemSwapPicker(sectionElem, this.simUI, this.simUI.player, inputConfig)
 			}
 		});
 	};
