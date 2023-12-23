@@ -71,6 +71,7 @@ func NewDpsWarrior(character *core.Character, options *proto.Player) *DpsWarrior
 		MainHand:       war.WeaponFromMainHand(war.DefaultMeleeCritMultiplier()),
 		OffHand:        war.WeaponFromOffHand(war.DefaultMeleeCritMultiplier()),
 		AutoSwingMelee: true,
+		ReplaceMHSwing: war.TryHSOrCleave,
 	})
 
 	return war

@@ -2,7 +2,6 @@ package warrior
 
 import (
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (warrior *Warrior) registerHeroicStrikeSpell() *core.Spell {
@@ -152,17 +151,27 @@ func (warrior *Warrior) makeQueueSpellsAndAura(srcSpell *core.Spell) *core.Spell
 	return queueSpell
 }
 
+func (warrior *Warrior) TryHSOrCleave(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
+	if !warrior.curQueueAura.IsActive() {
+		return mhSwingSpell
+	}
+
+	if !warrior.curQueuedAutoSpell.CanCast(sim, warrior.CurrentTarget) {
+		warrior.curQueueAura.Deactivate(sim)
+		return mhSwingSpell
+	}
+
+	return warrior.curQueuedAutoSpell
+}
+
 func (warrior *Warrior) RegisterHSOrCleave(useCleave bool) {
+	warrior.HeroicStrike = warrior.registerHeroicStrikeSpell()
+	warrior.Cleave = warrior.registerCleaveSpell()
 
 	if useCleave {
 		warrior.Cleave = warrior.registerCleaveSpell()
-		cleaveQueueSpell := warrior.makeQueueSpellsAndAura(warrior.Cleave)
-		warrior.hsOrCleaveQueueSpell = cleaveQueueSpell
-	} else if !warrior.HasRune(proto.WarriorRune_RuneQuickStrike) {
-		warrior.HeroicStrike = warrior.registerHeroicStrikeSpell()
-		hsQueueSpell := warrior.makeQueueSpellsAndAura(warrior.HeroicStrike)
-		warrior.hsOrCleaveQueueSpell = hsQueueSpell
+		warrior.hsOrCleaveQueueSpell = warrior.makeQueueSpellsAndAura(warrior.Cleave)
 	} else {
-		warrior.hsOrCleaveQueueSpell = nil
+		warrior.hsOrCleaveQueueSpell = warrior.makeQueueSpellsAndAura(warrior.HeroicStrike)
 	}
 }
