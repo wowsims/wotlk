@@ -307,7 +307,6 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 	private readonly socketsContainerElem: HTMLElement;
 	private readonly player: Player<SpecType>;
 	private readonly slot: ItemSlot;
-	private readonly gear: ItemSwapGear;
 
 	// All items and enchants that are eligible for this slot
 	private _items: Array<Item> = [];
@@ -319,7 +318,6 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 		this.player = player;
 		this.config = config;
 		this.slot = slot;
-		this.gear = this.player.getItemSwapGear();
 
 		this.iconAnchor = document.createElement('a');
 		this.iconAnchor.classList.add('icon-picker-button');
@@ -333,70 +331,35 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 		player.sim.waitForInit().then(() => {
 			this._items = this.player.getItems(slot);
 			this._enchants = this.player.getEnchants(slot);
-			this.addItemSpecToGear();
 			const gearData = {
 				equipItem: (eventID: EventID, equippedItem: EquippedItem | null) => {
-					this.gear.equipItem(this.slot, equippedItem, player.canDualWield2H());
+					let isg = this.player.getItemSwapGear();
+					this.player.setItemSwapGear(eventID, isg.withEquippedItem(this.slot, equippedItem, player.canDualWield2H()));
 					this.inputChanged(eventID);
 				},
-				getEquippedItem: () => this.gear.getEquippedItem(this.slot),
+				getEquippedItem: () => this.player.getItemSwapGear().getEquippedItem(this.slot),
 				changeEvent: config.changedEvent(player),
 			}
 
-			const onClickStart = (event: Event) => {
+			this.iconAnchor.addEventListener('click', (event: Event) => {
 				event.preventDefault();
 				new SelectorModal(simUI.rootElem, simUI, this.player, {
 					selectedTab: SelectorModalTabs.Items,
 					slot: this.slot,
-					equippedItem: this.gear.getEquippedItem(slot),
+					equippedItem: this.player.getItemSwapGear().getEquippedItem(slot),
 					eligibleItems: this._items,
 					eligibleEnchants: this._enchants,
 					gearData: gearData,
-				})
-			};
-
-			this.iconAnchor.addEventListener('click', onClickStart);
+				});
+			});
 		}).finally(() => this.init());
-
-	}
-
-	private addItemSpecToGear() {
-		const itemSwap = this.config.getValue(this.player) as unknown as ItemSwap
-		const fieldName = this.getFieldNameFromItemSlot(this.slot)
-
-		if (!fieldName)
-			return;
-
-		const itemSpec = itemSwap[fieldName] as unknown as ItemSpec
-
-		if (!itemSpec)
-			return;
-
-		const equippedItem = this.player.sim.db.lookupItemSpec(itemSpec);
-
-		if (equippedItem) {
-			this.gear.equipItem(this.slot, equippedItem, this.player.canDualWield2H());
-		}
-	}
-
-	private getFieldNameFromItemSlot(slot: ItemSlot): keyof ItemSwap | undefined {
-		switch (slot) {
-			case ItemSlot.ItemSlotMainHand:
-				return 'mhItem';
-			case ItemSlot.ItemSlotOffHand:
-				return 'ohItem';
-			case ItemSlot.ItemSlotRanged:
-				return 'rangedItem';
-		}
-
-		return undefined;
 	}
 
 	getInputElem(): HTMLElement {
 		return this.iconAnchor;
 	}
 	getInputValue(): ValueType {
-		return this.gear.toProto() as unknown as ValueType
+		return this.player.getItemSwapGear().toProto() as unknown as ValueType
 	}
 
 	setInputValue(newValue: ValueType): void {
@@ -405,7 +368,7 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 		this.iconAnchor.href = "#";
 		this.socketsContainerElem.innerText = '';
 
-		const equippedItem = this.gear.getEquippedItem(this.slot);
+		const equippedItem = this.player.getItemSwapGear().getEquippedItem(this.slot);
 		if (equippedItem) {
 			this.iconAnchor.classList.add("active")
 
@@ -415,7 +378,6 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 			equippedItem.allSocketColors().forEach((socketColor, gemIdx) => {
 				this.socketsContainerElem.appendChild(createGemContainer(socketColor, equippedItem.gems[gemIdx]));
 			});
-
 		} else {
 			this.iconAnchor.classList.remove("active")
 		}

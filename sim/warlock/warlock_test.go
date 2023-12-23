@@ -22,9 +22,6 @@ func TestAffliction(t *testing.T) {
 		Glyphs:      AfflictionGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Affliction Warlock", SpecOptions: DefaultAfflictionWarlock},
-		OtherSpecOptions: []core.SpecOptionsCombo{
-			{Label: "AffItemSwap", SpecOptions: afflictionItemSwap},
-		},
 
 		ItemFilter: ItemFilter,
 	}))
@@ -126,13 +123,6 @@ var DefaultAfflictionWarlock = &proto.Player_Warlock{
 	Warlock: &proto.Warlock{
 		Options:  defaultAfflictionOptions,
 		Rotation: defaultAfflictionRotation,
-	},
-}
-
-var afflictionItemSwap = &proto.Player_Warlock{
-	Warlock: &proto.Warlock{
-		Options:  defaultAfflictionOptions,
-		Rotation: afflictionItemSwapRotation,
 	},
 }
 

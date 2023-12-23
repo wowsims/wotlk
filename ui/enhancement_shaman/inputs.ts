@@ -1,7 +1,3 @@
-import { BooleanPicker } from '../core/components/boolean_picker.js';
-import { EnumPicker } from '../core/components/enum_picker.js';
-import { IconEnumPicker, IconEnumPickerConfig } from '../core/components/icon_enum_picker.js';
-import { IconPickerConfig } from '../core/components/icon_picker.js';
 import {
 	AirTotem,
 	EarthTotem,
@@ -18,7 +14,7 @@ import {
 	EnhancementShaman_Rotation,
 	EnhancementShaman_Rotation_BloodlustUse
 } from '../core/proto/shaman.js';
-import { CustomSpell, Spec, ItemSwap, ItemSlot } from '../core/proto/common.js';
+import { Spec } from '../core/proto/common.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
 
@@ -78,27 +74,9 @@ export const SyncTypeInput = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecEnha
 	],
 });
 
-export const EnhancmentItemSwapInputs = InputHelpers.MakeItemSwapInput<Spec.SpecEnhancementShaman>({
-	fieldName: 'itemSwap',
-	values: [
-		ItemSlot.ItemSlotMainHand,
-		ItemSlot.ItemSlotOffHand,
-		//ItemSlot.ItemSlotRanged, Not support yet
-	],
-	labelTooltip: 'Start with the swapped items until Fire Elemntal has been summoned, swap back to normal gear set. Weapons come pre enchanted with FT9 and FT10. If a slot is empty it will not be used in the swap',
-	showWhen: (player: Player<Spec.SpecEnhancementShaman>) => (player.getSpecOptions().totems?.useFireElemental && player.getRotation().enableItemSwap) || false
-})
-
 export const EnhancementShamanRotationConfig = {
 	inputs:
 		[
-			InputHelpers.makeRotationBooleanInput<Spec.SpecEnhancementShaman>({
-				fieldName: 'enableItemSwap',
-				label: 'Enable Item Swapping',
-				labelTooltip: 'Toggle on/off item swapping',
-				showWhen: (player: Player<Spec.SpecEnhancementShaman>) => player.getSpecOptions().totems?.useFireElemental || false
-			}),
-			EnhancmentItemSwapInputs,
 			InputHelpers.makeRotationEnumInput<Spec.SpecEnhancementShaman, RotationType>({
 				fieldName: 'rotationType',
 				label: 'Type',

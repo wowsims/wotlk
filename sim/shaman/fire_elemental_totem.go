@@ -56,7 +56,7 @@ func (shaman *Shaman) registerFireElementalTotem() {
 			shaman.FireElemental.EnableWithTimeout(sim, shaman.FireElemental, fireTotemDuration)
 
 			//TODO handle more then one swap if the fight is greater then 5 mins, for now will just do the one.
-			if shaman.FireElementalTotem.SpellMetrics[target.Index].Casts == 1 {
+			if !shaman.IsUsingAPL && shaman.FireElementalTotem.SpellMetrics[target.Index].Casts == 1 {
 				shaman.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand, proto.ItemSlot_ItemSlotOffHand}, true)
 			}
 

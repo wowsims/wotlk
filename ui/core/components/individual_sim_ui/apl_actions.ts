@@ -19,12 +19,15 @@ import {
 	APLActionActivateAura,
 	APLActionCancelAura,
 	APLActionTriggerICD,
+	APLActionItemSwap,
+	APLActionItemSwap_SwapSet as ItemSwapSet,
 
 	APLValue,
 } from '../../proto/apl.js';
 
 import { isHealingSpec } from '../../proto_utils/utils.js';
 import { EventID } from '../../typed_event.js';
+import { itemSwapEnabledSpecs } from '../../individual_sim_ui.js';
 import { Input, InputConfig } from '../input.js';
 import { Player } from '../../player.js';
 import { TextDropdownPicker } from '../dropdown_picker.js';
@@ -238,6 +241,22 @@ type ActionKindConfig<T> = {
 	newValue: () => T,
 	factory: (parent: HTMLElement, player: Player<any>, config: InputConfig<Player<any>, T>) => Input<Player<any>, T>,
 };
+
+function itemSwapSetFieldConfig(field: string): AplHelpers.APLPickerBuilderFieldConfig<any, any> {
+	return {
+		field: field,
+		newValue: () => ItemSwapSet.Swap1,
+		factory: (parent, player, config) => new TextDropdownPicker(parent, player, {
+			...config,
+			defaultLabel: 'None',
+			equals: (a, b) => a == b,
+			values: [
+				{ value: ItemSwapSet.Main, label: 'Main' },
+				{ value: ItemSwapSet.Swap1, label: 'Swapped' },
+			],
+		}),
+	};
+}
 
 function actionFieldConfig(field: string): AplHelpers.APLPickerBuilderFieldConfig<any, any> {
 	return {
@@ -530,6 +549,16 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 		newValue: () => APLActionTriggerICD.create(),
 		fields: [
 			AplHelpers.actionIdFieldConfig('auraId', 'icd_auras'),
+		],
+	}),
+	['itemSwap']: inputBuilder({
+		label: 'Item Swap',
+		submenu: ['Misc'],
+		shortDescription: 'Swaps items, using the swap set specified in Settings.',
+		includeIf: (player: Player<any>, isPrepull: boolean) => itemSwapEnabledSpecs.includes(player.spec),
+		newValue: () => APLActionItemSwap.create(),
+		fields: [
+			itemSwapSetFieldConfig('swapSet'),
 		],
 	}),
 };

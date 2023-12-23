@@ -1,9 +1,7 @@
 import { GemColor } from '../proto/common.js';
-import { ItemSlot } from '../proto/common.js';
 import { ItemSpec } from '../proto/common.js';
 import { ItemType } from '../proto/common.js';
 import { Profession } from '../proto/common.js';
-import { Stat } from '../proto/common.js';
 import {
 	UIEnchant as Enchant,
 	UIGem as Gem,
