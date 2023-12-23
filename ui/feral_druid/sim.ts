@@ -2,11 +2,8 @@ import {
 	Class,
 	Debuffs,
 	Faction,
-	GemColor,
 	IndividualBuffs,
-	ItemSlot,
 	PartyBuffs,
-	Profession,
 	PseudoStat,
 	Race,
 	RaidBuffs,
@@ -19,7 +16,6 @@ import { Gear } from '../core/proto_utils/gear.js';
 import { PhysicalDPSGemOptimizer } from '../core/components/suggest_gems_action.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { getSpecIcon, specNames } from '../core/proto_utils/utils.js';
-import { TypedEvent } from '../core/typed_event.js';
 import { Player } from '../core/player.js';
 
 import * as IconInputs from '../core/components/icon_inputs.js';
@@ -171,7 +167,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 	},
 	
 	autoRotation: (_player: Player<Spec.SpecFeralDruid>): APLRotation => {
-		return Presets.ROTATION_PRESET_LEGACY_DEFAULT.rotation.rotation!;
+		return Presets.APL_ROTATION_DEFAULT.rotation.rotation!;
 	},
 
 	raidSimPresets: [
@@ -212,7 +208,7 @@ export class FeralDruidSimUI extends IndividualSimUI<Spec.SpecFeralDruid> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecFeralDruid>) {
 		super(parentElem, player, SPEC_CONFIG);
 
-		const gemOptimizer = new FeralGemOptimizer(this);
+		const _gemOptimizer = new FeralGemOptimizer(this);
 	}
 }
 
