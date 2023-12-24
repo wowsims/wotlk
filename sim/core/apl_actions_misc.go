@@ -118,3 +118,46 @@ func (action *APLActionTriggerICD) Execute(sim *Simulation) {
 func (action *APLActionTriggerICD) String() string {
 	return fmt.Sprintf("Trigger ICD(%s)", action.aura.ActionID)
 }
+
+type APLActionItemSwap struct {
+	defaultAPLActionImpl
+	character *Character
+	swapSet   proto.APLActionItemSwap_SwapSet
+}
+
+func (rot *APLRotation) newActionItemSwap(config *proto.APLActionItemSwap) APLActionImpl {
+	if config.SwapSet == proto.APLActionItemSwap_Unknown {
+		rot.ValidationWarning("Unknown item swap set")
+		return nil
+	}
+
+	character := rot.unit.Env.Raid.GetPlayerFromUnit(rot.unit).GetCharacter()
+	if !character.ItemSwap.IsEnabled() {
+		if config.SwapSet != proto.APLActionItemSwap_Main {
+			rot.ValidationWarning("No swap set configured in Settings.")
+		}
+		return nil
+	}
+
+	return &APLActionItemSwap{
+		character: character,
+		swapSet:   config.SwapSet,
+	}
+}
+func (action *APLActionItemSwap) IsReady(sim *Simulation) bool {
+	return (action.swapSet == proto.APLActionItemSwap_Main) == action.character.ItemSwap.IsSwapped()
+}
+func (action *APLActionItemSwap) Execute(sim *Simulation) {
+	if sim.Log != nil {
+		action.character.Log(sim, "Item Swap to set %s", action.swapSet)
+	}
+
+	if action.swapSet == proto.APLActionItemSwap_Main {
+		action.character.ItemSwap.reset(sim)
+	} else {
+		action.character.ItemSwap.SwapItems(sim, action.character.ItemSwap.slots, true)
+	}
+}
+func (action *APLActionItemSwap) String() string {
+	return fmt.Sprintf("Item Swap(%s)", action.swapSet)
+}

@@ -19,6 +19,8 @@ import {
 	APLActionActivateAura,
 	APLActionCancelAura,
 	APLActionTriggerICD,
+	APLActionItemSwap,
+	APLActionItemSwap_SwapSet as ItemSwapSet,
 
 	APLValue,
 } from '../../proto/apl.js';
@@ -32,6 +34,7 @@ import { ListItemPickerConfig, ListPicker } from '../list_picker.js';
 
 import * as AplHelpers from './apl_helpers.js';
 import * as AplValues from './apl_values.js';
+import { itemSwapEnabledSpecs } from '../../individual_sim_ui.js';
 
 export interface APLActionPickerConfig extends InputConfig<Player<any>, APLAction> {
 }
@@ -97,7 +100,7 @@ export class APLActionPicker extends Input<Player<any>, APLAction> {
 				}),
 			equals: (a, b) => a == b,
 			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
-			getValue: (player: Player<any>) => this.getSourceValue()?.action.oneofKind,
+			getValue: (_player: Player<any>) => this.getSourceValue()?.action.oneofKind,
 			setValue: (eventID: EventID, player: Player<any>, newKind: APLActionKind) => {
 				const sourceValue = this.getSourceValue();
 				const oldKind = sourceValue?.action.oneofKind;
@@ -238,6 +241,22 @@ type ActionKindConfig<T> = {
 	newValue: () => T,
 	factory: (parent: HTMLElement, player: Player<any>, config: InputConfig<Player<any>, T>) => Input<Player<any>, T>,
 };
+
+function itemSwapSetFieldConfig(field: string): AplHelpers.APLPickerBuilderFieldConfig<any, any> {
+	return {
+		field: field,
+		newValue: () => ItemSwapSet.Swap1,
+		factory: (parent, player, config) => new TextDropdownPicker(parent, player, {
+			...config,
+			defaultLabel: 'None',
+			equals: (a, b) => a == b,
+			values: [
+				{ value: ItemSwapSet.Main, label: 'Main' },
+				{ value: ItemSwapSet.Swap1, label: 'Swapped' },
+			],
+		}),
+	};
+}
 
 function actionFieldConfig(field: string): AplHelpers.APLPickerBuilderFieldConfig<any, any> {
 	return {
@@ -530,6 +549,16 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 		newValue: () => APLActionTriggerICD.create(),
 		fields: [
 			AplHelpers.actionIdFieldConfig('auraId', 'icd_auras'),
+		],
+	}),
+	['itemSwap']: inputBuilder({
+		label: 'Item Swap',
+		submenu: ['Misc'],
+		shortDescription: 'Swaps items, using the swap set specified in Settings.',
+		includeIf: (player: Player<any>, _isPrepull: boolean) => itemSwapEnabledSpecs.includes(player.spec),
+		newValue: () => APLActionItemSwap.create(),
+		fields: [
+			itemSwapSetFieldConfig('swapSet'),
 		],
 	}),
 };

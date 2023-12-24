@@ -2,6 +2,7 @@ import {
 	Class,
 	Faction,
 	IndividualBuffs,
+	ItemSlot,
 	PartyBuffs,
 	PseudoStat,
 	Race,
@@ -138,6 +139,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 			OtherInputs.InFrontOfTarget,
 		],
 	},
+	itemSwapSlots: [ItemSlot.ItemSlotMainHand, ItemSlot.ItemSlotOffHand],
 	customSections: [
 		TotemsSection,
 	],

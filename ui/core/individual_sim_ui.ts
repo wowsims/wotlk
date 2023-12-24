@@ -70,8 +70,7 @@ export type InputConfig<ModObject> = (
 	InputHelpers.TypedBooleanPickerConfig<ModObject> |
 	InputHelpers.TypedNumberPickerConfig<ModObject> |
 	InputHelpers.TypedEnumPickerConfig<ModObject> |
-	InputHelpers.TypedCustomRotationPickerConfig<any, any> |
-	InputHelpers.TypedItemSwapPickerConfig<any, any>
+	InputHelpers.TypedCustomRotationPickerConfig<any, any>
 );
 
 export interface InputSection {
@@ -141,6 +140,9 @@ export interface IndividualSimUIConfig<SpecType extends Spec> extends PlayerConf
 	includeBuffDebuffInputs: Array<any>,
 	excludeBuffDebuffInputs: Array<any>,
 	otherInputs: InputSection;
+	// Currently, many classes don't support item swapping, and only in certain slots.
+	// So enable it only where it is supported.
+	itemSwapSlots?: Array<ItemSlot>,
 
 	// For when extra sections are needed (e.g. Shaman totems)
 	customSections?: Array<(parentElem: HTMLElement, simUI: IndividualSimUI<SpecType>) => ContentBlock>,
@@ -160,6 +162,8 @@ export function registerSpecConfig<SpecType extends Spec>(spec: SpecType, config
 	registerPlayerConfig(spec, config);
 	return config;
 }
+
+export let itemSwapEnabledSpecs: Array<Spec> = [];
 
 export interface Settings {
 	raidBuffs: RaidBuffs,
@@ -200,6 +204,10 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		this.raidSimResultsManager = null;
 		this.prevEpIterations = 0;
 		this.prevEpSimResult = null;
+
+		if ((config.itemSwapSlots || []).length > 0 && !itemSwapEnabledSpecs.includes(player.spec)) {
+			itemSwapEnabledSpecs.push(player.spec);
+		}
 
 		this.addWarning({
 			updateOn: TypedEvent.onAny([this.player.gearChangeEmitter, this.player.professionChangeEmitter]),

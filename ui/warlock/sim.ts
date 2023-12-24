@@ -1,6 +1,7 @@
 import {
 	Class,
 	Faction,
+	ItemSlot,
 	PartyBuffs,
 	Race,
 	Spec,
@@ -133,6 +134,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 			OtherInputs.ChannelClipDelay,
 		],
 	},
+	itemSwapSlots: [ItemSlot.ItemSlotMainHand, ItemSlot.ItemSlotOffHand, ItemSlot.ItemSlotRanged],
 	encounterPicker: {
 		// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
 		showExecuteProportion: false,

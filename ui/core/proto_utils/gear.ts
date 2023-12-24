@@ -22,15 +22,50 @@ abstract class BaseGear {
 		this.gear = gear as InternalGear;
 	}
 
+	abstract getItemSlots(): ItemSlot[]
+
+	equals(other: BaseGear): boolean {
+		return this.asArray().every((thisItem, slot) => equalsOrBothNull(thisItem, other.getEquippedItem(slot), (a, b) => a.equals(b)));
+	}
+
 	getEquippedItem(slot: ItemSlot): EquippedItem | null {
-		return this.gear[slot];
+		return this.gear[slot] || null;
 	}
 
 	asArray(): Array<EquippedItem | null> {
 		return Object.values(this.gear);
 	}
 
-	removeUniqueItems(gear: InternalGear, newItem: EquippedItem) {
+	asMap(): Partial<InternalGear> {
+		const newInternalGear: Partial<InternalGear> = {};
+		this.getItemSlots().map(slot => Number(slot) as ItemSlot).forEach(slot => {
+			newInternalGear[slot] = this.getEquippedItem(slot);
+		});
+		return newInternalGear;
+	}
+
+	/**
+	 * Returns a new Gear set with the item equipped.
+	 *
+	 * Checks for validity and removes/exchanges items/gems as needed.
+	 */
+	protected withEquippedItemInternal(newSlot: ItemSlot, newItem: EquippedItem | null, canDualWield2H: boolean): Partial<InternalGear> {
+		// Create a new identical set of gear
+		const newInternalGear = this.asMap();
+
+		if (newItem) {
+			this.removeUniqueItems(newInternalGear, newItem);
+		}
+
+		// Actually assign the new item.
+		newInternalGear[newSlot] = newItem;
+
+		BaseGear.validateWeaponCombo(newInternalGear, newSlot, canDualWield2H);
+
+		return newInternalGear;
+	}
+
+	private removeUniqueItems(gear: Partial<InternalGear>, newItem: EquippedItem) {
 		if (newItem.item.unique) {
 			this.getItemSlots().map(slot => Number(slot) as ItemSlot).forEach(slot => {
 				if (gear[slot]?.item.id == newItem.item.id) {
@@ -40,7 +75,7 @@ abstract class BaseGear {
 		}
 	}
 
-	validateWeaponCombo(gear: InternalGear, newSlot: ItemSlot, canDualWield2H: boolean) {
+	private static validateWeaponCombo(gear: Partial<InternalGear>, newSlot: ItemSlot, canDualWield2H: boolean) {
 		// Check for valid weapon combos.
 		if (!validWeaponCombo(gear[ItemSlot.ItemSlotMainHand]?.item, gear[ItemSlot.ItemSlotOffHand]?.item, canDualWield2H)) {
 			if (newSlot == ItemSlot.ItemSlotOffHand) {
@@ -51,16 +86,23 @@ abstract class BaseGear {
 		}
 	}
 
-	abstract toDatabase(): SimDatabase
-	abstract getItemSlots(): ItemSlot[]
+	toDatabase(): SimDatabase {
+		const equippedItems = this.asArray().filter(ei => ei != null) as Array<EquippedItem>;
+		return SimDatabase.create({
+			items: distinct(equippedItems.map(ei => BaseGear.itemToDB(ei.item))),
+			enchants: distinct(equippedItems.filter(ei => ei.enchant).map(ei => BaseGear.enchantToDB(ei.enchant!))),
+		});
+	}
 
-	protected static itemToDB(item: Item): SimItem {
+	private static itemToDB(item: Item): SimItem {
 		return SimItem.fromJson(Item.toJson(item), { ignoreUnknownFields: true });
 	}
 
-	protected static enchantToDB(enchant: Enchant): SimEnchant {
+	private static enchantToDB(enchant: Enchant): SimEnchant {
 		return SimEnchant.fromJson(Enchant.toJson(enchant), { ignoreUnknownFields: true });
 	}
+
+	// TODO: Add rune
 }
 
 /**
@@ -78,29 +120,8 @@ export class Gear extends BaseGear {
 		return getEnumValues(ItemSlot);
 	}
 
-	equals(other: Gear): boolean {
-		return this.asArray().every((thisItem, slot) => equalsOrBothNull(thisItem, other.getEquippedItem(slot), (a, b) => a.equals(b)));
-	}
-
-	/**
-	 * Returns a new Gear set with the item equipped.
-	 *
-	 * Checks for validity and removes/exchanges items as needed.
-	 */
 	withEquippedItem(newSlot: ItemSlot, newItem: EquippedItem | null, canDualWield2H: boolean): Gear {
-		// Create a new identical set of gear
-		const newInternalGear = this.asMap();
-
-		if (newItem) {
-			this.removeUniqueItems(newInternalGear, newItem);
-		}
-
-		// Actually assign the new item.
-		newInternalGear[newSlot] = newItem;
-
-		this.validateWeaponCombo(newInternalGear, newSlot, canDualWield2H);
-
-		return new Gear(newInternalGear);
+		return new Gear(this.withEquippedItemInternal(newSlot, newItem, canDualWield2H));
 	}
 
 	getTrinkets(): Array<EquippedItem | null> {
@@ -122,14 +143,6 @@ export class Gear extends BaseGear {
 		}
 
 		return relicItem!.item.id == itemId;
-	}
-
-	asMap(): InternalGear {
-		const newInternalGear: Partial<InternalGear> = {};
-		getEnumValues(ItemSlot).map(slot => Number(slot) as ItemSlot).forEach(slot => {
-			newInternalGear[slot] = this.getEquippedItem(slot);
-		});
-		return newInternalGear as InternalGear;
 	}
 
 	asSpec(): EquipmentSpec {
@@ -165,14 +178,6 @@ export class Gear extends BaseGear {
 			.map(ei => ei.getFailedProfessionRequirements(professions))
 			.flat();
 	}
-
-	toDatabase(): SimDatabase {
-		const equippedItems = this.asArray().filter(ei => ei != null) as Array<EquippedItem>;
-		return SimDatabase.create({
-			items: distinct(equippedItems.map(ei => Gear.itemToDB(ei.item))),
-			enchants: distinct(equippedItems.filter(ei => ei.enchant).map(ei => Gear.enchantToDB(ei.enchant!))),
-		});
-	}
 }
 
 /**
@@ -182,21 +187,16 @@ export class Gear extends BaseGear {
  */
 export class ItemSwapGear extends BaseGear {
 
-	constructor() {
-		super({});
+	constructor(gear: Partial<InternalGear>) {
+		super(gear);
 	}
 
 	getItemSlots(): ItemSlot[] {
 		return [ItemSlot.ItemSlotMainHand, ItemSlot.ItemSlotOffHand, ItemSlot.ItemSlotRanged];
 	}
 
-	equipItem(slot: ItemSlot, equippedItem: EquippedItem | null, canDualWield2H: boolean) {
-		if (equippedItem) {
-			this.removeUniqueItems(this.gear, equippedItem);
-		}
-
-		this.gear[slot] = equippedItem;
-		this.validateWeaponCombo(this.gear, slot, canDualWield2H);
+	withEquippedItem(newSlot: ItemSlot, newItem: EquippedItem | null, canDualWield2H: boolean): ItemSwapGear {
+		return new ItemSwapGear(this.withEquippedItemInternal(newSlot, newItem, canDualWield2H));
 	}
 
 	toProto(): ItemSwap {
@@ -205,13 +205,5 @@ export class ItemSwapGear extends BaseGear {
 			ohItem: this.gear[ItemSlot.ItemSlotOffHand]?.asSpec(),
 			rangedItem: this.gear[ItemSlot.ItemSlotRanged]?.asSpec(),
 		})
-	}
-
-	toDatabase(): SimDatabase {
-		const equippedItems = this.asArray().filter(ei => ei != null) as Array<EquippedItem>;
-		return SimDatabase.create({
-			items: distinct(equippedItems.map(ei => ItemSwapGear.itemToDB(ei.item))),
-			enchants: distinct(equippedItems.filter(ei => ei.enchant).map(ei => ItemSwapGear.enchantToDB(ei.enchant!))),
-		});
 	}
 }

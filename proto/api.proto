@@ -27,6 +27,9 @@ message Player {
 	Consumes consumes = 6;
 	UnitStats bonus_stats = 7;
 
+	bool enable_item_swap = 46;
+	ItemSwap item_swap = 45;
+
 	IndividualBuffs buffs = 8;
 
 	// Talents in wowhead format, e.g. '01102123133-12312312-'

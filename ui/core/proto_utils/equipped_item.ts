@@ -5,7 +5,6 @@ import {
 	UIRune as Rune,
 } from '../proto/ui.js';
 import { distinct } from '../utils.js';
-
 import { ActionId } from './action_id.js';
 import { enchantAppliesToItem } from './utils.js';
 

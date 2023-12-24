@@ -68,6 +68,7 @@ export function intersection<T>(a: Array<T>, b: Array<T>): Array<T> {
 }
 
 // Returns a new array containing only distinct elements of arr.
+// comparator should return true if the two elements are considered equal, and false otherwise.
 export function distinct<T>(arr: Array<T>, comparator?: (a: T, b: T) => boolean): Array<T> {
 	comparator = comparator || ((a: T, b: T) => a == b);
 	const distinctArr: Array<T> = [];

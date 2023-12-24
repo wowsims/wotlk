@@ -78,6 +78,7 @@ import { Raid } from './raid.js';
 import { Sim } from './sim.js';
 import { EventID, TypedEvent } from './typed_event.js';
 import { stringComparator } from './utils.js';
+import { Database } from './proto_utils/database.js';
 
 export interface AuraStats {
 	data: AuraStatsProto,
@@ -229,7 +230,8 @@ export class Player<SpecType extends Spec> {
 	private bonusStats: Stats = new Stats();
 	private gear: Gear = new Gear({});
 	//private bulkEquipmentSpec: BulkEquipmentSpec = BulkEquipmentSpec.create();
-	private itemSwapGear: ItemSwapGear = new ItemSwapGear();
+	private enableItemSwap: boolean = false;
+	private itemSwapGear: ItemSwapGear = new ItemSwapGear({});
 	private race: Race;
 	private level: number;
 	private profession1: Profession = 0;
@@ -250,7 +252,6 @@ export class Player<SpecType extends Spec> {
 	private readonly simpleRotationGenerator: SimpleRotationGenerator<SpecType> | null = null;
 
 	private itemEPCache = new Array<Map<number, number>>();
-	private gemEPCache = new Map<number, number>();
 	private enchantEPCache = new Map<number, number>();
 	private talents: SpecTalents<SpecType> | null = null;
 
@@ -268,6 +269,7 @@ export class Player<SpecType extends Spec> {
 	readonly consumesChangeEmitter = new TypedEvent<void>('PlayerConsumes');
 	readonly bonusStatsChangeEmitter = new TypedEvent<void>('PlayerBonusStats');
 	readonly gearChangeEmitter = new TypedEvent<void>('PlayerGear');
+	readonly itemSwapChangeEmitter = new TypedEvent<void>('PlayerItemSwap');
 	readonly professionChangeEmitter = new TypedEvent<void>('PlayerProfession');
 	readonly raceChangeEmitter = new TypedEvent<void>('PlayerRace');
 	readonly levelChangeEmitter = new TypedEvent<void>('PlayerLevel');
@@ -321,6 +323,7 @@ export class Player<SpecType extends Spec> {
 			this.consumesChangeEmitter,
 			this.bonusStatsChangeEmitter,
 			this.gearChangeEmitter,
+			this.itemSwapChangeEmitter,
 			this.professionChangeEmitter,
 			this.raceChangeEmitter,
 			this.levelChangeEmitter,
@@ -424,7 +427,6 @@ export class Player<SpecType extends Spec> {
 		this.epWeights = newEpWeights;
 		this.epWeightsChangeEmitter.emit(eventID);
 
-		this.gemEPCache = new Map();
 		this.enchantEPCache = new Map();
 		for(let i = 0; i < ItemSlot.ItemSlotRanged+1; ++i) {
 			this.itemEPCache[i] = new Map();
@@ -632,45 +634,36 @@ export class Player<SpecType extends Spec> {
 		return this.gear;
 	}
 
-	getItemSwapGear(): ItemSwapGear {
-		return this.itemSwapGear;
-	}
-
 	setGear(eventID: EventID, newGear: Gear) {
 		if (newGear.equals(this.gear))
 			return;
 
-		// Commented for now because the UI for this is weird.
-		//// If trinkets have changed and there were cooldowns assigned for those trinkets,
-		//// try to match them up and switch to the new trinkets.
-		//const newCooldowns = this.getCooldowns();
-		//const oldTrinketIds = this.gear.getTrinkets().map(trinket => trinket?.asActionIdProto() || ActionIdProto.create());
-		//const newTrinketIds = newGear.getTrinkets().map(trinket => trinket?.asActionIdProto() || ActionIdProto.create());
+		this.gear = newGear;
+		this.gearChangeEmitter.emit(eventID);
+	}
 
-		//for (let i = 0; i < 2; i++) {
-		//	const oldTrinketId = oldTrinketIds[i];
-		//	const newTrinketId = newTrinketIds[i];
-		//	if (ActionIdProto.equals(oldTrinketId, ActionIdProto.create())) {
-		//		continue;
-		//	}
-		//	if (ActionIdProto.equals(newTrinketId, ActionIdProto.create())) {
-		//		continue;
-		//	}
-		//	if (ActionIdProto.equals(oldTrinketId, newTrinketId)) {
-		//		continue;
-		//	}
-		//	newCooldowns.cooldowns.forEach(cd => {
-		//		if (ActionIdProto.equals(cd.id, oldTrinketId)) {
-		//			cd.id = newTrinketId;
-		//		}
-		//	});
-		//}
+	getEnableItemSwap(): boolean {
+		return this.enableItemSwap;
+	}
 
-		TypedEvent.freezeAllAndDo(() => {
-			this.gear = newGear;
-			this.gearChangeEmitter.emit(eventID);
-			//this.setCooldowns(eventID, newCooldowns);
-		});
+	setEnableItemSwap(eventID: EventID, newEnableItemSwap: boolean) {
+		if (newEnableItemSwap == this.enableItemSwap)
+			return;
+
+		this.enableItemSwap = newEnableItemSwap;
+		this.itemSwapChangeEmitter.emit(eventID);
+	}
+
+	getItemSwapGear(): ItemSwapGear {
+		return this.itemSwapGear;
+	}
+
+	setItemSwapGear(eventID: EventID, newItemSwapGear: ItemSwapGear) {
+		if (newItemSwapGear.equals(this.itemSwapGear))
+			return;
+
+		this.itemSwapGear = newItemSwapGear;
+		this.itemSwapChangeEmitter.emit(eventID);
 	}
 
 	/*
@@ -1161,18 +1154,7 @@ export class Player<SpecType extends Spec> {
 	private toDatabase(): SimDatabase {
 		const dbGear = this.getGear().toDatabase()
 		const dbItemSwapGear = this.getItemSwapGear().toDatabase();
-		return SimDatabase.create({
-			items: dbGear.items.concat(dbItemSwapGear.items).filter(function(elem, index, self) {
-				return index === self.findIndex((t) => (
-					t.id === elem.id
-				));
-			}),
-			enchants: dbGear.enchants.concat(dbItemSwapGear.enchants).filter(function(elem, index, self) {
-				return index === self.findIndex((t) => (
-					t.effectId === elem.effectId
-				));
-			}),
-		})
+		return Database.mergeSimDatabases(dbGear, dbItemSwapGear);
 	}
 
 	toProto(forExport?: boolean, forSimming?: boolean): PlayerProto {
@@ -1189,6 +1171,8 @@ export class Player<SpecType extends Spec> {
 				equipment: gear.asSpec(),
 				consumes: this.getConsumes(),
 				bonusStats: this.getBonusStats().toProto(),
+				enableItemSwap: this.getEnableItemSwap(),
+				itemSwap: this.getItemSwapGear().toProto(),
 				buffs: this.getBuffs(),
 				cooldowns: (aplIsLaunched || (forSimming && aplRotation.type == APLRotationType.TypeAPL))
 					? Cooldowns.create({ hpPercentForDefensives: this.getCooldowns().hpPercentForDefensives })
@@ -1250,6 +1234,8 @@ export class Player<SpecType extends Spec> {
 			this.setRace(eventID, proto.race);
 			this.setLevel(eventID, proto.level);
 			this.setGear(eventID, proto.equipment ? this.sim.db.lookupEquipmentSpec(proto.equipment) : new Gear({}));
+			this.setEnableItemSwap(eventID, proto.enableItemSwap);
+			this.setItemSwapGear(eventID, proto.itemSwap ? this.sim.db.lookupItemSwap(proto.itemSwap) : new ItemSwapGear({}));
 			//this.setBulkEquipmentSpec(eventID, BulkEquipmentSpec.create()); // Do not persist the bulk equipment settings.
 			this.setConsumes(eventID, proto.consumes || Consumes.create());
 			this.setBonusStats(eventID, Stats.fromProto(proto.bonusStats || UnitStats.create()));
@@ -1354,6 +1340,20 @@ export class Player<SpecType extends Spec> {
 					}
 				}
 			}
+
+			if (this.spec == Spec.SpecEnhancementShaman) {
+				const rot = this.getRotation() as SpecRotation<Spec.SpecEnhancementShaman>;
+				if (rot.enableItemSwap) {
+					this.setEnableItemSwap(eventID, rot.enableItemSwap);
+					rot.enableItemSwap = false;
+					this.setRotation(eventID, rot as SpecRotation<SpecType>)
+				}
+				if (rot.itemSwap) {
+					this.setItemSwapGear(eventID, this.sim.db.lookupItemSwap(rot.itemSwap));
+					rot.itemSwap = undefined;
+					this.setRotation(eventID, rot as SpecRotation<SpecType>)
+				}
+			}
 		});
 	}
 
@@ -1365,6 +1365,8 @@ export class Player<SpecType extends Spec> {
 
 	applySharedDefaults(eventID: EventID) {
 		TypedEvent.freezeAllAndDo(() => {
+			this.setEnableItemSwap(eventID, false);
+			this.setItemSwapGear(eventID, new ItemSwapGear({}));
 			this.setReactionTime(eventID, 200);
 			this.setInFrontOfTarget(eventID, isTankSpec(this.spec));
 			this.setHealingModel(eventID, HealingModel.create({

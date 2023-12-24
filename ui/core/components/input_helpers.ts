@@ -1,10 +1,9 @@
 import { ActionId } from '../proto_utils/action_id.js';
-import { CustomRotation, ItemSwap, ItemSlot } from '../proto/common.js';
+import { CustomRotation } from '../proto/common.js';
 import { Spec } from '../proto/common.js';
 import { Player } from '../player.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { SpecOptions, SpecRotation } from '../proto_utils/utils.js';
-import { ItemSwapPickerConfig } from './item_swap_picker.js'
 import { CustomRotationPickerConfig } from './individual_sim_ui/custom_rotation_picker.js';
 import { IconPickerConfig } from './icon_picker.js';
 import { IconEnumPickerConfig, IconEnumValueConfig } from './icon_enum_picker.js';
@@ -481,35 +480,5 @@ export function makeCustomRotationInput<SpecType extends Spec, T>(config: Wrappe
 		numColumns: config.numColumns,
 		showCastsPerMinute: config.showCastsPerMinute || false,
 		values: config.values,
-	}
-}
-
-
-export interface TypedItemSwapPickerConfig<SpecType extends Spec, T> extends ItemSwapPickerConfig<SpecType, T> {
-	type: 'itemSwap',
-}
-
-interface WrappedItemSwapInputConfig<SpecType extends Spec> {
-	fieldName: keyof SpecRotation<SpecType>,
-	values: Array<ItemSlot>,
-	labelTooltip?: string,
-	getValue?: (player: Player<SpecType>) => ItemSwap,
-	setValue?: (eventID: EventID, player: Player<SpecType>, newValue: ItemSwap) => void,
-	showWhen?: (player: Player<SpecType>) => boolean
-}
-
-export function MakeItemSwapInput<SpecType extends Spec>(config: WrappedItemSwapInputConfig<SpecType>): TypedItemSwapPickerConfig<SpecType, ItemSwap> {
-	return {
-		type: 'itemSwap',
-		getValue: config.getValue || ((player: Player<SpecType>) => (player.getRotation()[config.fieldName] as unknown as ItemSwap) || ItemSwap.create()),
-		setValue: config.setValue || ((eventID: EventID, player: Player<SpecType>, newValue: ItemSwap) => {
-			const options = player.getRotation();
-			(options[config.fieldName] as unknown as ItemSwap) = newValue;
-			player.setRotation(eventID, options);
-		}),
-		itemSlots: config.values,
-		changedEvent: (player: Player<SpecType>) => player.rotationChangeEmitter,
-		labelTooltip: config.labelTooltip,
-		showWhen: config.showWhen,
 	}
 }

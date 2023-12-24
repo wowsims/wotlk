@@ -46,7 +46,7 @@ message APLListItem {
     APLAction action = 3; // The action to be performed.
 }
 
-// NextIndex: 17
+// NextIndex: 18
 message APLAction {
     APLValue condition = 1; // If set, action will only execute if value is true or != 0.
 
@@ -73,6 +73,7 @@ message APLAction {
         APLActionActivateAura activate_aura = 13;
         APLActionCancelAura cancel_aura = 10;
         APLActionTriggerICD trigger_icd = 11;
+        APLActionItemSwap item_swap = 17;
     }
 }
 
@@ -231,6 +232,17 @@ message APLActionActivateAura {
 
 message APLActionTriggerICD {
     ActionID aura_id = 1;
+}
+
+message APLActionItemSwap {
+    enum SwapSet {
+        Unknown = 0;
+        Main = 1;
+        Swap1 = 2;
+    }
+
+    // The set to swap to.
+    SwapSet swap_set = 1;
 }
 
 ///////////////////////////////////////////////////////////////////////////

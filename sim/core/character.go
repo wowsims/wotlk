@@ -134,17 +134,6 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 
 	character.Label = fmt.Sprintf("%s (#%d)", character.Name, character.Index+1)
 
-	if player.Glyphs != nil {
-		character.glyphs = [6]int32{
-			player.Glyphs.Major1,
-			player.Glyphs.Major2,
-			player.Glyphs.Major3,
-			player.Glyphs.Minor1,
-			player.Glyphs.Minor2,
-			player.Glyphs.Minor3,
-		}
-	}
-
 	character.runesMap = map[int32]bool{}
 	for _, v := range character.Equipment {
 		if v.Rune != 0 {
@@ -188,6 +177,10 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 		}
 	}
 	character.PseudoStats.InFrontOfTarget = player.InFrontOfTarget
+
+	if player.EnableItemSwap && player.ItemSwap != nil {
+		character.enableItemSwap(player.ItemSwap, character.DefaultMeleeCritMultiplier(), character.DefaultMeleeCritMultiplier(), 0)
+	}
 
 	return character
 }
@@ -405,6 +398,7 @@ func (character *Character) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
 
 func (character *Character) initialize(agent Agent) {
 	character.majorCooldownManager.initialize(character)
+	character.ItemSwap.initialize(character)
 
 	character.gcdAction = &PendingAction{
 		Priority: ActionPriorityGCD,

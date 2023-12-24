@@ -272,6 +272,8 @@ message SavedSettings {
 	Cooldowns cooldowns = 8;
 	string rotation_json = 9;
 	repeated Profession professions = 10;
+	bool enable_item_swap = 18;
+	ItemSwap item_swap = 17;
 
 	int32 reaction_time_ms = 11;
 	int32 channel_clip_delay_ms = 12;

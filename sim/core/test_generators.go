@@ -168,7 +168,6 @@ func (combos *SettingsCombos) GetTest(testIdx int) (string, *proto.ComputeStatsR
 				Class:              combos.Class,
 				Equipment:          gearSetCombo.GearSet,
 				TalentsString:      talentSetCombo.Talents,
-				Glyphs:             talentSetCombo.Glyphs,
 				Consumes:           buffsCombo.Consumes,
 				Buffs:              buffsCombo.Player,
 				Profession1:        proto.Profession_Engineering,
@@ -384,7 +383,6 @@ type CharacterSuiteConfig struct {
 	Race        proto.Race
 	GearSet     GearSetCombo
 	SpecOptions SpecOptionsCombo
-	Glyphs      *proto.Glyphs
 	Talents     string
 	Rotation    RotationCombo
 
@@ -413,7 +411,6 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 	allTalentSets := []TalentsCombo{{
 		Label:   "Talents",
 		Talents: config.Talents,
-		Glyphs:  config.Glyphs,
 	}}
 	allSpecOptions := append(config.OtherSpecOptions, config.SpecOptions)
 	allRotations := append(config.OtherRotations, config.Rotation)
@@ -426,7 +423,6 @@ func FullCharacterTestSuiteGenerator(config CharacterSuiteConfig) TestGenerator 
 			Consumes:      config.Consumes,
 			Buffs:         FullIndividualBuffs,
 			TalentsString: config.Talents,
-			Glyphs:        config.Glyphs,
 			Profession1:   proto.Profession_Engineering,
 			Rotation:      config.Rotation.Rotation,
 			Cooldowns:     config.Cooldowns,
