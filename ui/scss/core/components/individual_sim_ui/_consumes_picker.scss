@@ -9,8 +9,8 @@
       &> * {
         margin-bottom: 0;
 
-        &:not(:last-child) {
-          margin-right: map.get($spacers, 1);
+        &:not(:first-child) {
+          margin-left: map.get($spacers, 1);
         }
       }
     }
@@ -35,8 +35,8 @@
       // Use 49% instead of 50% because of the margin-right
       flex-basis: 49%;
 
-      &:nth-child(2n - 1) {
-        margin-right: $block-spacer !important;
+      &:not(:first-child) {
+        margin-left: $block-spacer !important;
       }
 
       &:nth-last-child(2) {

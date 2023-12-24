@@ -100,7 +100,7 @@ export class ConsumesPicker extends Component {
 			new IconEnumPicker(
 				elem,
 				this.simUI.player,
-				IconInputs.makeWeaponBuffsInput(weaponOptions, 'WeaponBuff'),
+				IconInputs.makeWeaponBuffsInput(weaponOptions, 'Weapon Buff'),
 			);
 		}
 	}
