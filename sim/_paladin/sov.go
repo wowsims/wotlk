@@ -4,8 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
-	"github.com/wowsims/sod/sim/core/stats"
 )
 
 func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
@@ -35,7 +33,6 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 	 *
 	 * TODO:
 	 *  - Add set bonus and talent related modifiers.
-	 *  - Fix expertise rating on glyph application.
 	 */
 	// TODO: Test whether T8 Prot 2pc also affects Judgement, once available
 	// TODO: Verify whether these bonuses should indeed be additive with similar
@@ -107,7 +104,7 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 			(core.TernaryFloat64(paladin.HasSetBonus(ItemSetTuralyonsBattlegear, 4), 5, 0) * core.CritRatingPerCritChance),
 		DamageMultiplier: 1 *
 			(1 + paladin.getItemSetLightswornBattlegearBonus4() +
-				paladin.getTalentSealsOfThePureBonus() + paladin.getMajorGlyphOfJudgementBonus() + paladin.getTalentTheArtOfWarBonus()) *
+				paladin.getTalentSealsOfThePureBonus() + paladin.getTalentTheArtOfWarBonus()) *
 			(1 + paladin.getTalentTwoHandedWeaponSpecializationBonus()),
 		CritMultiplier:   paladin.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
@@ -156,19 +153,6 @@ func (paladin *Paladin) registerSealOfVengeanceSpellAndAura() {
 		Tag:      "Seal",
 		ActionID: auraActionID,
 		Duration: SealDuration,
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			if paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfSealOfVengeance) {
-				expertise := core.ExpertisePerQuarterPercentReduction * 10
-				paladin.AddStatDynamic(sim, stats.Expertise, expertise)
-			}
-		},
-
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			if paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfSealOfVengeance) {
-				expertise := core.ExpertisePerQuarterPercentReduction * 10
-				paladin.AddStatDynamic(sim, stats.Expertise, -expertise)
-			}
-		},
 
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			// Don't proc on misses or our own procs.

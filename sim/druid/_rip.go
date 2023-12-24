@@ -4,12 +4,10 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (druid *Druid) registerRipSpell() {
 	ripBaseNumTicks := 6 +
-		core.TernaryInt32(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfRip), 2, 0) +
 		core.TernaryInt32(druid.HasSetBonus(ItemSetDreamwalkerBattlegear, 2), 2, 0)
 
 	comboPointCoeff := 93.0
@@ -92,9 +90,7 @@ func (druid *Druid) registerRipSpell() {
 func (druid *Druid) MaxRipTicks() int32 {
 	base := int32(6)
 	t7bonus := core.TernaryInt32(druid.HasSetBonus(ItemSetDreamwalkerBattlegear, 2), 2, 0)
-	ripGlyphBonus := core.TernaryInt32(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfRip), 2, 0)
-	shredGlyphBonus := core.TernaryInt32(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfShred), 3, 0)
-	return base + ripGlyphBonus + shredGlyphBonus + t7bonus
+	return base + t7bonus
 }
 
 func (druid *Druid) CurrentRipCost() float64 {

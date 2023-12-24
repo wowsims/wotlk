@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (hunter *Hunter) registerAimedShotSpell(timer *core.Timer) {
@@ -31,13 +30,13 @@ func (hunter *Hunter) registerAimedShotSpell(timer *core.Timer) {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    timer,
-				Duration: time.Second*10 - core.TernaryDuration(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfAimedShot), time.Second*2, 0),
+				Duration: time.Second * 10,
 			},
 		},
 
 		BonusCritRating: 0 +
 			4*core.CritRatingPerCritChance*float64(hunter.Talents.ImprovedBarrage) +
-			core.TernaryFloat64(hunter.Talents.TrueshotAura && hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfTrueshotAura), 10*core.CritRatingPerCritChance, 0),
+			core.TernaryFloat64(hunter.Talents.TrueshotAura, 10*core.CritRatingPerCritChance, 0),
 		DamageMultiplierAdditive: 1 +
 			.04*float64(hunter.Talents.Barrage),
 		DamageMultiplier: 1 *

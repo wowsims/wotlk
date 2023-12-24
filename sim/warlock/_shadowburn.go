@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (warlock *Warlock) registerShadowBurnSpell() {
@@ -13,16 +12,6 @@ func (warlock *Warlock) registerShadowBurnSpell() {
 	}
 
 	spellCoeff := 0.429 * (1 + 0.04*float64(warlock.Talents.ShadowAndFlame))
-
-	if warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfShadowburn) {
-		warlock.RegisterResetEffect(func(sim *core.Simulation) {
-			sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int32) {
-				if isExecute == 35 {
-					warlock.Shadowburn.BonusCritRating += 20 * core.CritRatingPerCritChance
-				}
-			})
-		})
-	}
 
 	warlock.Shadowburn = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47827},

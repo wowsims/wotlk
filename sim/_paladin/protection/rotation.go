@@ -73,14 +73,11 @@ func (prot *ProtectionPaladin) customRotation(sim *core.Simulation) {
 				prot.waitUntilNextEvent(sim, prot.customRotation)
 
 			} else if isExecutePhase && prot.HammerOfWrath.IsReady(sim) {
-				// TODO: Prio may depend on gear; consider Glyph behavior
+				// TODO: Prio may depend on gear;
 				prot.HammerOfWrath.Cast(sim, target)
 			} else if prot.HolyShield.IsReady(sim) {
 				// Top priority 9 is Holy Shield
 				prot.HolyShield.Cast(sim, target)
-			} else if prot.HasGlyphAS && prot.AvengersShield.IsReady(sim) {
-				// AS prio if glyphed. This will push out Cons/Judge which may not be ideal, but assumed desired based on the glyph choice
-				prot.AvengersShield.Cast(sim, target)
 			} else if prot.Consecration.IsReady(sim) {
 				prot.Consecration.Cast(sim, target)
 			} else if prot.Rotation.SqueezeHolyWrath && prot.HolyWrath.IsReady(sim) && (prot.Consecration.TimeToReady(sim) > time.Millisecond*6850) && (target.MobType == proto.MobType_MobTypeDemon || target.MobType == proto.MobType_MobTypeUndead) {
@@ -89,9 +86,8 @@ func (prot *ProtectionPaladin) customRotation(sim *core.Simulation) {
 			} else if prot.JudgementOfWisdom.IsReady(sim) {
 				prot.JudgementOfWisdom.Cast(sim, target)
 			}
-			// Do not ever cast Exorcism or unglyphed AS
+			// Do not ever cast Exorcism AS
 			// TODO: Possible to dynamically affect Judgement<>AS priority based on Libram bonus at SBV softcap?
-
 		} else {
 
 			// Custom rotation

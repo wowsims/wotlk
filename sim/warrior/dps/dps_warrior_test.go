@@ -19,7 +19,6 @@ func TestFury(t *testing.T) {
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
 		Talents:     FuryTalents,
-		Glyphs:      FuryGlyphs,
 		GearSet:     core.GetGearSet("../../../ui/warrior/gear_sets", "p1_fury"),
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsFury},
@@ -49,7 +48,6 @@ func TestArms(t *testing.T) {
 		OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
 		Talents:     ArmsTalents,
-		Glyphs:      ArmsGlyphs,
 		GearSet:     core.GetGearSet("../../../ui/warrior/gear_sets", "p1_arms"),
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsArms},
@@ -100,19 +98,7 @@ func BenchmarkSimulate(b *testing.B) {
 }
 
 var FuryTalents = "302023102331-305053000520310053120500351"
-var FuryGlyphs = &proto.Glyphs{
-	Major1: int32(proto.WarriorMajorGlyph_GlyphOfWhirlwind),
-	Major2: int32(proto.WarriorMajorGlyph_GlyphOfHeroicStrike),
-	Major3: int32(proto.WarriorMajorGlyph_GlyphOfRending),
-	Minor1: int32(proto.WarriorMinorGlyph_GlyphOfShatteringThrow),
-}
 var ArmsTalents = "3022032023335100102012213231251-305-2033"
-var ArmsGlyphs = &proto.Glyphs{
-	Major1: int32(proto.WarriorMajorGlyph_GlyphOfRending),
-	Major2: int32(proto.WarriorMajorGlyph_GlyphOfMortalStrike),
-	Major3: int32(proto.WarriorMajorGlyph_GlyphOfExecution),
-	Minor1: int32(proto.WarriorMinorGlyph_GlyphOfShatteringThrow),
-}
 
 var PlayerOptionsArms = &proto.Player_Warrior{
 	Warrior: &proto.Warrior{

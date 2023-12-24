@@ -70,13 +70,6 @@ enum PriestRune {
 	RuneLegsSharedPain       = 401969;
 }
 
-enum PriestMajorGlyph {
-	PriestMajorGlyphNone = 0;
-}
-enum PriestMinorGlyph {
-	PriestMinorGlyphNone = 0;
-}
-
 message ShadowPriest {
 	message Rotation {
 		enum RotationType {

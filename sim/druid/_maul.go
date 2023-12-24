@@ -2,7 +2,6 @@ package druid
 
 import (
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (druid *Druid) registerMaulSpell(rageThreshold float64) {
@@ -13,7 +12,7 @@ func (druid *Druid) registerMaulSpell(rageThreshold float64) {
 		flatBaseDamage += 120
 	}
 
-	numHits := core.TernaryInt32(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMaul) && druid.Env.GetNumTargets() > 1, 2, 1)
+	numHits := 1
 
 	druid.Maul = druid.RegisterSpell(Bear, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48480},

@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (warlock *Warlock) registerConflagrateSpell() {
@@ -12,7 +11,6 @@ func (warlock *Warlock) registerConflagrateSpell() {
 		return
 	}
 
-	hasGlyphOfConflag := warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfConflagrate)
 	warlock.Conflagrate = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 17962},
 		SpellSchool: core.SpellSchoolFire,
@@ -44,7 +42,6 @@ func (warlock *Warlock) registerConflagrateSpell() {
 			0.03*float64(warlock.Talents.Emberstorm) +
 			0.03*float64(warlock.Talents.Aftermath) +
 			0.1*float64(warlock.Talents.ImprovedImmolate) +
-			core.TernaryFloat64(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfImmolate), 0.1, 0) +
 			core.TernaryFloat64(warlock.HasSetBonus(ItemSetDeathbringerGarb, 2), 0.1, 0) +
 			core.TernaryFloat64(warlock.HasSetBonus(ItemSetGuldansRegalia, 4), 0.1, 0),
 		CritMultiplier:   warlock.SpellCritMultiplier(1, float64(warlock.Talents.Ruin)/5),
@@ -82,10 +79,8 @@ func (warlock *Warlock) registerConflagrateSpell() {
 
 			spell.Dot(target).Apply(sim)
 
-			if !hasGlyphOfConflag {
-				warlock.Immolate.Dot(target).Deactivate(sim)
-				//warlock.ShadowflameDot.Deactivate(sim)
-			}
+			warlock.Immolate.Dot(target).Deactivate(sim)
+			//warlock.ShadowflameDot.Deactivate(sim)
 		},
 	})
 }

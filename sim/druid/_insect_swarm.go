@@ -4,14 +4,12 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 const CryingWind int32 = 45270
 
 func (druid *Druid) registerInsectSwarmSpell() {
 	missAuras := druid.NewEnemyAuraArray(core.InsectSwarmAura)
-	hasGlyph := druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfInsectSwarm)
 	idolSpellPower := core.TernaryFloat64(druid.Ranged().ID == CryingWind, 396, 0)
 
 	impISMultiplier := 1 + 0.01*float64(druid.Talents.ImprovedInsectSwarm)
@@ -53,8 +51,7 @@ func (druid *Druid) registerInsectSwarmSpell() {
 
 		DamageMultiplier: 1 +
 			0.01*float64(druid.Talents.Genesis) +
-			core.TernaryFloat64(druid.HasSetBonus(ItemSetDreamwalkerGarb, 2), 0.1, 0) +
-			core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfInsectSwarm), 0.3, 0),
+			core.TernaryFloat64(druid.HasSetBonus(ItemSetDreamwalkerGarb, 2), 0.1, 0),
 		ThreatMultiplier: 1,
 
 		Dot: core.DotConfig{
@@ -87,15 +84,11 @@ func (druid *Druid) registerInsectSwarmSpell() {
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if result.Landed() {
 				spell.Dot(target).Apply(sim)
-				if !hasGlyph {
-					missAuras.Get(target).Activate(sim)
-				}
+				missAuras.Get(target).Activate(sim)
 			}
 			spell.DealOutcome(sim, result)
 		},
 	})
 
-	if !hasGlyph {
-		druid.InsectSwarm.RelatedAuras = append(druid.InsectSwarm.RelatedAuras, missAuras)
-	}
+	druid.InsectSwarm.RelatedAuras = append(druid.InsectSwarm.RelatedAuras, missAuras)
 }

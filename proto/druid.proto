@@ -60,13 +60,6 @@ message DruidTalents {
 	bool swiftmend = 47;
 }
 
-enum DruidMajorGlyph {
-	DruidMajorGlyphNone = 0;
-}
-enum DruidMinorGlyph {
-	DruidMinorGlyphNone = 0;
-}
-
 enum DruidRune {
 	DruidRuneNone = 0;
 	RuneChestWildStrikes          = 407977;

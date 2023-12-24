@@ -16,8 +16,6 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 		ActionID: actionID,
 	})
 
-	var glyphOfRevengeProcAura *core.Aura
-
 	warrior.RegisterAura(core.Aura{
 		Label:    "Revenge Trigger",
 		Duration: core.NeverExpires,
@@ -81,10 +79,6 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 			}
 
 			warrior.revengeProcAura.Deactivate(sim)
-
-			if glyphOfRevengeProcAura != nil {
-				glyphOfRevengeProcAura.Activate(sim)
-			}
 		},
 	})
 }

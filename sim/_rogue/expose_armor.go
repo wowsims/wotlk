@@ -4,21 +4,19 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (rogue *Rogue) registerExposeArmorSpell() {
 	rogue.ExposeArmorAuras = rogue.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
-		return core.ExposeArmorAura(target, rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfExposeArmor))
+		return core.ExposeArmorAura(target)
 	})
-	durationBonus := core.TernaryDuration(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfExposeArmor), time.Second*12, 0)
 	rogue.exposeArmorDurations = [6]time.Duration{
 		0,
-		time.Second*6 + durationBonus,
-		time.Second*12 + durationBonus,
-		time.Second*18 + durationBonus,
-		time.Second*24 + durationBonus,
-		time.Second*30 + durationBonus,
+		time.Second * 6,
+		time.Second * 12,
+		time.Second * 18,
+		time.Second * 24,
+		time.Second * 30,
 	}
 
 	rogue.ExposeArmor = rogue.RegisterSpell(core.SpellConfig{

@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (druid *Druid) registerFrenziedRegenerationCD() {
@@ -14,7 +13,7 @@ func (druid *Druid) registerFrenziedRegenerationCD() {
 
 	cdTimer := druid.NewTimer()
 	cd := time.Minute * 3
-	healingMulti := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfFrenziedRegeneration), 1.2, 1.0)
+	healingMulti := 1.0
 
 	druid.FrenziedRegenerationAura = druid.RegisterAura(core.Aura{
 		Label:    "Frenzied Regeneration",

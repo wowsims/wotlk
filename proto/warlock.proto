@@ -77,13 +77,6 @@ enum WarlockRune {
 	RuneLegsIncinerate			  = 412758;
 }
 
-enum WarlockMajorGlyph {
-	WarlockMajorGlyphNone = 0;
-}
-enum WarlockMinorGlyph {
-	WarlockMinorGlyphNone = 0;
-}
-
 message Warlock {
 	message Rotation {
 		enum Preset {

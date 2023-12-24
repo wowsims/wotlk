@@ -4,15 +4,12 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (rogue *Rogue) registerGhostlyStrikeSpell() {
 	if !rogue.Talents.GhostlyStrike {
 		return
 	}
-
-	hasGlyph := rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfGhostlyStrike)
 
 	actionID := core.ActionID{SpellID: 14278}
 
@@ -32,14 +29,14 @@ func (rogue *Rogue) registerGhostlyStrikeSpell() {
 			},
 			CD: core.Cooldown{
 				Timer:    rogue.NewTimer(),
-				Duration: time.Second*20 + core.TernaryDuration(hasGlyph, time.Second*10, 0),
+				Duration: time.Second * 20,
 			},
 			IgnoreHaste: true,
 		},
 
 		BonusCritRating: []float64{0, 2, 4, 6}[rogue.Talents.TurnTheTables] * core.CritRatingPerCritChance,
 
-		DamageMultiplier: core.TernaryFloat64(rogue.HasDagger(core.MainHand), 1.8, 1.25) * core.TernaryFloat64(hasGlyph, 1.4, 1) * (1 + 0.02*float64(rogue.Talents.FindWeakness)),
+		DamageMultiplier: core.TernaryFloat64(rogue.HasDagger(core.MainHand), 1.8, 1.25) * (1 + 0.02*float64(rogue.Talents.FindWeakness)),
 		CritMultiplier:   rogue.MeleeCritMultiplier(true),
 		ThreatMultiplier: 1,
 

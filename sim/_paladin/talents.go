@@ -71,7 +71,6 @@ func (paladin *Paladin) ApplyTalents() {
 	paladin.applyJudgementsOfTheJust()
 	paladin.applyJudgementsOfTheWise()
 	paladin.applyRighteousVengeance()
-	paladin.applyMinorGlyphOfSenseUndead()
 	paladin.applyGuardedByTheLight()
 }
 
@@ -89,40 +88,6 @@ func (paladin *Paladin) getTalentSanctityOfBattleBonus() float64 {
 
 func (paladin *Paladin) getTalentTheArtOfWarBonus() float64 {
 	return 0.05 * float64(paladin.Talents.TheArtOfWar)
-}
-
-func (paladin *Paladin) getMajorGlyphSealOfRighteousnessBonus() float64 {
-	return core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfSealOfRighteousness), .1, 0)
-}
-
-func (paladin *Paladin) getMajorGlyphOfExorcismBonus() float64 {
-	return core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfExorcism), 0.20, 0)
-}
-
-func (paladin *Paladin) getMajorGlyphOfJudgementBonus() float64 {
-	return core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfJudgement), 0.10, 0)
-}
-
-func (paladin *Paladin) applyMinorGlyphOfSenseUndead() {
-	if !paladin.HasMinorGlyph(proto.PaladinMinorGlyph_GlyphOfSenseUndead) {
-		return
-	}
-
-	var applied bool
-
-	paladin.RegisterResetEffect(
-		func(s *core.Simulation) {
-			if !applied {
-				for i := int32(0); i < paladin.Env.GetNumTargets(); i++ {
-					unit := paladin.Env.GetTargetUnit(i)
-					if unit.MobType == proto.MobType_MobTypeUndead {
-						paladin.AttackTables[unit.UnitIndex].DamageDealtMultiplier *= 1.01
-					}
-				}
-				applied = true
-			}
-		},
-	)
 }
 
 func (paladin *Paladin) applyRedoubt() {

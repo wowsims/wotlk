@@ -20,7 +20,6 @@ func TestProtectionWarrior(t *testing.T) {
 
 		GearSet:     core.GetGearSet("../../../ui/protection_warrior/gear_sets", "p1_balanced"),
 		Talents:     DefaultTalents,
-		Glyphs:      DefaultGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
 		Rotation:    core.GetAplRotation("../../../ui/protection_warrior/apls", "default"),
@@ -63,7 +62,6 @@ func BenchmarkSimulate(b *testing.B) {
 				Spec:          PlayerOptionsBasic,
 				Buffs:         core.FullIndividualBuffs,
 				TalentsString: DefaultTalents,
-				Glyphs:        DefaultGlyphs,
 
 				InFrontOfTarget: true,
 			},
@@ -83,11 +81,6 @@ func BenchmarkSimulate(b *testing.B) {
 }
 
 var DefaultTalents = "2500030023-302-053351225000012521030113321"
-var DefaultGlyphs = &proto.Glyphs{
-	Major1: int32(proto.WarriorMajorGlyph_GlyphOfBlocking),
-	Major2: int32(proto.WarriorMajorGlyph_GlyphOfDevastate),
-	Major3: int32(proto.WarriorMajorGlyph_GlyphOfVigilance),
-}
 
 var PlayerOptionsBasic = &proto.Player_ProtectionWarrior{
 	ProtectionWarrior: &proto.ProtectionWarrior{

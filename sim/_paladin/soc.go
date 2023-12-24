@@ -2,7 +2,6 @@ package paladin
 
 import (
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
@@ -38,7 +37,7 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 
 		DamageMultiplier: 1 *
 			(1 + paladin.getItemSetLightswornBattlegearBonus4() +
-				paladin.getMajorGlyphOfJudgementBonus() + paladin.getTalentTheArtOfWarBonus()) *
+				paladin.getTalentTheArtOfWarBonus()) *
 			(1 + paladin.getTalentTwoHandedWeaponSpecializationBonus()),
 		CritMultiplier:   paladin.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
@@ -111,12 +110,6 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 		},
 	})
 
-	var glyphManaMetrics *core.ResourceMetrics
-	glyphManaGain := .08 * paladin.BaseMana
-	if paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfSealOfCommand) {
-		glyphManaMetrics = paladin.NewManaMetrics(core.ActionID{ItemID: 41094})
-	}
-
 	// Seal of Command aura.
 	auraActionID := core.ActionID{SpellID: 20375}
 	paladin.SealOfCommandAura = paladin.RegisterAura(core.Aura{
@@ -126,10 +119,6 @@ func (paladin *Paladin) registerSealOfCommandSpellAndAura() {
 		Duration: SealDuration,
 
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if glyphManaMetrics != nil && spell.Flags.Matches(SpellFlagPrimaryJudgement) {
-				paladin.AddMana(sim, glyphManaGain, glyphManaMetrics)
-			}
-
 			// Don't proc on misses or our own procs.
 			if !result.Landed() || spell == onJudgementProc || spell.SameAction(onSpecialOrSwingActionID) {
 				return

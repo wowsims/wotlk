@@ -20,7 +20,6 @@ func TestBalance(t *testing.T) {
 		GearSet:       core.GetGearSet("../../../ui/balance_druid/gear_sets", "blank"),
 		OtherGearSets: []core.GearSetCombo{},
 		Talents:       StandardTalents,
-		Glyphs:        StandardGlyphs,
 		Consumes:      FullConsumes,
 		SpecOptions:   core.SpecOptionsCombo{Label: "Default", SpecOptions: PlayerOptionsAdaptive},
 		Rotation:      core.GetAplRotation("../../../ui/balance_druid/apls", "default"),
@@ -30,12 +29,6 @@ func TestBalance(t *testing.T) {
 }
 
 var StandardTalents = "5000500302551351--50050312"
-var StandardGlyphs = &proto.Glyphs{
-	Major1: int32(proto.DruidMajorGlyph_DruidMajorGlyphNone),
-	Major2: int32(proto.DruidMajorGlyph_DruidMajorGlyphNone),
-	Major3: int32(proto.DruidMajorGlyph_DruidMajorGlyphNone),
-	Minor1: int32(proto.DruidMinorGlyph_DruidMinorGlyphNone),
-}
 
 var FullConsumes = &proto.Consumes{
 	Flask: proto.Flask_FlaskUnknown,

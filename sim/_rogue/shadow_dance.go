@@ -3,8 +3,6 @@ package rogue
 import (
 	"time"
 
-	"github.com/wowsims/sod/sim/core/proto"
-
 	"github.com/wowsims/sod/sim/core"
 )
 
@@ -14,9 +12,6 @@ func (rogue *Rogue) registerShadowDanceCD() {
 	}
 
 	duration := time.Second * 6
-	if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfShadowDance) {
-		duration = time.Second * 8
-	}
 
 	actionID := core.ActionID{SpellID: 51713}
 

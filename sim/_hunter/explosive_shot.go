@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (hunter *Hunter) registerExplosiveShotSpell(timer *core.Timer) {
@@ -49,8 +48,7 @@ func (hunter *Hunter) makeExplosiveShotSpell(timer *core.Timer, downrank bool) *
 		},
 
 		BonusCritRating: 0 +
-			2*core.CritRatingPerCritChance*float64(hunter.Talents.SurvivalInstincts) +
-			core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfExplosiveShot), 4*core.CritRatingPerCritChance, 0),
+			2*core.CritRatingPerCritChance*float64(hunter.Talents.SurvivalInstincts),
 		DamageMultiplierAdditive: 1 +
 			.02*float64(hunter.Talents.TNT),
 		DamageMultiplier: 1,

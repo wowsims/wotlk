@@ -13,8 +13,6 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 
 	cd := core.Cooldown{}
 
-	var glyphHeal *core.Spell
-
 	priest.PowerWordShield = priest.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48066},
 		SpellSchool: core.SpellSchoolHoly,
@@ -55,10 +53,6 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 			weakenedSoul := priest.WeakenedSouls.Get(target)
 			weakenedSoul.Duration = wsDuration
 			weakenedSoul.Activate(sim)
-
-			if glyphHeal != nil {
-				glyphHeal.Cast(sim, target)
-			}
 		},
 	})
 

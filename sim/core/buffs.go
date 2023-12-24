@@ -1037,8 +1037,7 @@ func registerTricksOfTheTradeCD(agent Agent, numTricksOfTheTrades int32) {
 		return
 	}
 
-	// Assuming rogues have Glyph of TotT by default (which might not be the case).
-	TotTAura := TricksOfTheTradeAura(&agent.GetCharacter().Unit, -1, true)
+	TotTAura := TricksOfTheTradeAura(&agent.GetCharacter().Unit, -1)
 
 	registerExternalConsecutiveCDApproximation(
 		agent,
@@ -1058,14 +1057,14 @@ func registerTricksOfTheTradeCD(agent Agent, numTricksOfTheTrades int32) {
 		numTricksOfTheTrades)
 }
 
-func TricksOfTheTradeAura(character *Unit, actionTag int32, glyphed bool) *Aura {
+func TricksOfTheTradeAura(character *Unit, actionTag int32) *Aura {
 	actionID := ActionID{SpellID: 57933, Tag: actionTag}
 
 	aura := character.GetOrRegisterAura(Aura{
 		Label:    "TricksOfTheTrade-" + actionID.String(),
 		Tag:      TricksOfTheTradeAuraTag,
 		ActionID: actionID,
-		Duration: TernaryDuration(glyphed, time.Second*10, time.Second*6),
+		Duration: time.Second * 6,
 		OnGain: func(aura *Aura, sim *Simulation) {
 			character.PseudoStats.DamageDealtMultiplier *= 1.15
 		},
@@ -1567,11 +1566,11 @@ func attackPowerBonusEffect(aura *Aura, apBonus float64) *ExclusiveEffect {
 	})
 }
 
-func CommandingShoutAura(unit *Unit, commandingPresencePts int32, boomingVoicePts int32, minorGlyph bool) *Aura {
+func CommandingShoutAura(unit *Unit, commandingPresencePts int32, boomingVoicePts int32) *Aura {
 	aura := unit.GetOrRegisterAura(Aura{
 		Label:      "Commanding Shout",
 		ActionID:   ActionID{SpellID: 47440},
-		Duration:   time.Duration(float64(time.Minute*2)*(1+0.25*float64(boomingVoicePts))) + TernaryDuration(minorGlyph, 2*time.Minute, 0),
+		Duration:   time.Duration(float64(time.Minute*2) * (1 + 0.25*float64(boomingVoicePts))),
 		BuildPhase: CharacterBuildPhaseBuffs,
 	})
 	healthBonusEffect(aura, 2255*(1+0.05*float64(commandingPresencePts)))

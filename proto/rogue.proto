@@ -64,48 +64,6 @@ message RogueTalents {
 	bool premeditation = 51;
 }
 
-enum RogueMajorGlyph {
-	RogueMajorGlyphNone = 0;
-	GlyphOfAdrenalineRush = 42954;
-	GlyphOfAmbush = 42955;
-	GlyphOfBackstab = 42956;
-	GlyphOfBladeFlurry = 42957;
-	GlyphOfCloakOfShadows = 45769;
-	GlyphOfCripplingPoison = 42958;
-	GlyphOfDeadlyThrow = 42959;
-	GlyphOfEvasion = 42960;
-	GlyphOfEviscerate = 42961;
-	GlyphOfExposeArmor = 42962;
-	GlyphOfFanOfKnives = 45766;
-	GlyphOfFeint = 42963;
-	GlyphOfGarrote = 42964;
-	GlyphOfGhostlyStrike = 42965;
-	GlyphOfGouge = 42966;
-	GlyphOfHemorrhage = 42967;
-	GlyphOfHungerForBlood = 45761;
-	GlyphOfKillingSpree = 45762;
-	GlyphOfMutilate = 45768;
-	GlyphOfPreparation = 42968;
-	GlyphOfRupture = 42969;
-	GlyphOfSap = 42970;
-	GlyphOfShadowDance = 45764;
-	GlyphOfSinisterStrike = 42972;
-	GlyphOfSliceAndDice = 42973;
-	GlyphOfSprint = 42974;
-	GlyphOfTricksOfTheTrade = 45767;
-	GlyphOfVigor = 42971;
-}
-enum RogueMinorGlyph {
-	RogueMinorGlyphNone = 0;
-	GlyphOfBlurredSpeed = 43379;
-	GlyphOfDistract = 43376;
-	GlyphOfPickLock = 43377;
-	GlyphOfPickPocket = 43343;
-	GlyphOfSafeFall = 43378;
-	GlyphOfVanish = 43380;
-}
-
-
 message Rogue {
 	message Rotation {
 		enum Frequency {

@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (shaman *Shaman) registerThunderstormSpell() {
@@ -16,9 +15,6 @@ func (shaman *Shaman) registerThunderstormSpell() {
 	manaMetrics := shaman.NewManaMetrics(actionID)
 
 	manaRestore := 0.08
-	if shaman.HasMinorGlyph(proto.ShamanMinorGlyph_GlyphOfThunderstorm) {
-		manaRestore = 0.1
-	}
 
 	shaman.Thunderstorm = shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,

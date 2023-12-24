@@ -19,7 +19,6 @@ func TestCombat(t *testing.T) {
 		OtherRaces:  []proto.Race{proto.Race_RaceOrc},
 		GearSet:     core.GetGearSet("../../ui/rogue/gear_sets", "p1_combat"),
 		Talents:     CombatTalents,
-		Glyphs:      CombatGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "MH Deadly OH Instant", SpecOptions: PlayerOptionsCombatDI},
 		OtherSpecOptions: []core.SpecOptionsCombo{
@@ -51,7 +50,6 @@ func TestAssassination(t *testing.T) {
 		OtherRaces:  []proto.Race{proto.Race_RaceOrc},
 		GearSet:     core.GetGearSet("../../ui/rogue/gear_sets", "p1_assassination"),
 		Talents:     AssassinationTalents,
-		Glyphs:      AssassinationGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Assassination", SpecOptions: PlayerOptionsAssassinationDI},
 		OtherSpecOptions: []core.SpecOptionsCombo{
@@ -88,7 +86,6 @@ func TestSubtlety(t *testing.T) {
 		OtherRaces:  []proto.Race{proto.Race_RaceOrc},
 		GearSet:     core.GetGearSet("../../ui/rogue/gear_sets", "p2_hemosub"),
 		Talents:     SubtletyTalents,
-		Glyphs:      SubtletyGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Subtlety", SpecOptions: PlayerOptionsSubtletyID},
 		ItemFilter: core.ItemFilter{
@@ -218,21 +215,6 @@ var CombatNoPotWTalents = "00532000523-0252051050035010223100501201"
 var CombatNoLethalityNoPotWTalents = "00532000023-0252051050035010223100501201"
 var AssassinationTalents = "005303005352100520103331051-005005003-502"
 var SubtletyTalents = "30532000235--512003203032012135011503113"
-var CombatGlyphs = &proto.Glyphs{
-	Major1: int32(proto.RogueMajorGlyph_GlyphOfKillingSpree),
-	Major2: int32(proto.RogueMajorGlyph_GlyphOfTricksOfTheTrade),
-	Major3: int32(proto.RogueMajorGlyph_GlyphOfRupture),
-}
-var AssassinationGlyphs = &proto.Glyphs{
-	Major1: int32(proto.RogueMajorGlyph_GlyphOfMutilate),
-	Major2: int32(proto.RogueMajorGlyph_GlyphOfTricksOfTheTrade),
-	Major3: int32(proto.RogueMajorGlyph_GlyphOfHungerForBlood),
-}
-var SubtletyGlyphs = &proto.Glyphs{
-	Major1: int32(proto.RogueMajorGlyph_GlyphOfHemorrhage),
-	Major2: int32(proto.RogueMajorGlyph_GlyphOfEviscerate),
-	Major3: int32(proto.RogueMajorGlyph_GlyphOfRupture),
-}
 
 var PlayerOptionsCombatDI = &proto.Player_Rogue{
 	Rogue: &proto.Rogue{

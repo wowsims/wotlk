@@ -59,46 +59,6 @@ message HunterTalents {
 	bool wyvern_sting = 46;
 }
 
-enum HunterMajorGlyph {
-	HunterMajorGlyphNone = 0;
-	GlyphOfAimedShot = 42897;
-	GlyphOfArcaneShot = 42898;
-	GlyphOfAspectOfTheViper = 42901;
-	GlyphOfBestialWrath = 42902;
-	GlyphOfChimeraShot = 45625;
-	GlyphOfDeterrence = 42903;
-	GlyphOfDisengage = 42904;
-	GlyphOfExplosiveShot = 45731;
-	GlyphOfExplosiveTrap = 45733;
-	GlyphOfFreezingTrap = 42905;
-	GlyphOfFrostTrap = 42906;
-	GlyphOfHuntersMark = 42907;
-	GlyphOfImmolationTrap = 42908;
-	GlyphOfKillShot = 45732;
-	GlyphOfMending = 42900;
-	GlyphOfMultiShot = 42910;
-	GlyphOfRapidFire = 42911;
-	GlyphOfRaptorStrike = 45735;
-	GlyphOfScatterShot = 45734;
-	GlyphOfSerpentSting = 42912;
-	GlyphOfSnakeTrap = 42913;
-	GlyphOfSteadyShot = 42914;
-	GlyphOfTheBeast = 42899;
-	GlyphOfTheHawk = 42909;
-	GlyphOfTrueshotAura = 42915;
-	GlyphOfVolley = 42916;
-	GlyphOfWyvernSting = 42917;
-}
-enum HunterMinorGlyph {
-	HunterMinorGlyphNone = 0;
-	GlyphOfFeignDeath = 43351;
-	GlyphOfMendPet = 43350;
-	GlyphOfPossessedStrength = 43354;
-	GlyphOfRevivePet = 43338;
-	GlyphOfScareBeast = 43356;
-	GlyphOfThePack = 43355;
-}
-
 message HunterPetTalents {
 	// Cunning
 	int32 cobra_reflexes = 1;

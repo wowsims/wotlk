@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (druid *Druid) registerShredSpell() {
@@ -12,7 +11,6 @@ func (druid *Druid) registerShredSpell() {
 		core.TernaryFloat64(druid.Ranged().ID == 29390, 88, 0) +
 		core.TernaryFloat64(druid.Ranged().ID == 40713, 203, 0)) / 2.25
 
-	hasGlyphofShred := druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfShred)
 	maxRipTicks := druid.MaxRipTicks()
 
 	druid.Shred = druid.RegisterSpell(Cat, core.SpellConfig{
@@ -59,14 +57,6 @@ func (druid *Druid) registerShredSpell() {
 
 			if result.Landed() {
 				druid.AddComboPoints(sim, 1, spell.ComboPointMetrics())
-
-				if hasGlyphofShred && ripDot.IsActive() {
-					if ripDot.NumberOfTicks < maxRipTicks {
-						ripDot.NumberOfTicks += 1
-						ripDot.RecomputeAuraDuration()
-						ripDot.UpdateExpires(ripDot.ExpiresAt() + time.Second*2)
-					}
-				}
 			} else {
 				spell.IssueRefund(sim)
 			}

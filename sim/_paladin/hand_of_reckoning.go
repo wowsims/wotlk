@@ -4,14 +4,9 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (paladin *Paladin) registerHandOfReckoningSpell() {
-	if !paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfReckoning) {
-		return
-	}
-
 	paladin.HandOfReckoning = paladin.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 67485}, // 62124 is the "taunt" part
 		SpellSchool: core.SpellSchoolHoly,

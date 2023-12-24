@@ -20,7 +20,6 @@ func TestBM(t *testing.T) {
 
 		GearSet:     core.GetGearSet("../../ui/hunter/gear_sets", "p1_sv"),
 		Talents:     BMTalents,
-		Glyphs:      BMGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
 		Rotation:    core.GetAplRotation("../../ui/hunter/apls", "bm"),
@@ -37,7 +36,6 @@ func TestMM(t *testing.T) {
 
 		GearSet:     core.GetGearSet("../../ui/hunter/gear_sets", "p1_mm"),
 		Talents:     MMTalents,
-		Glyphs:      MMGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
 		Rotation:    core.GetAplRotation("../../ui/hunter/apls", "mm"),
@@ -57,7 +55,6 @@ func TestSV(t *testing.T) {
 
 		GearSet:     core.GetGearSet("../../ui/hunter/gear_sets", "p1_sv"),
 		Talents:     SVTalents,
-		Glyphs:      SVGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBasic},
 		Rotation:    core.GetAplRotation("../../ui/hunter/apls", "sv"),
@@ -98,7 +95,6 @@ func BenchmarkSimulate(b *testing.B) {
 				Equipment:     core.GetGearSet("../../ui/hunter/gear_sets", "p1_sv").GearSet,
 				Consumes:      FullConsumes,
 				Spec:          PlayerOptionsBasic,
-				Glyphs:        MMGlyphs,
 				TalentsString: MMTalents,
 				Buffs:         core.FullIndividualBuffs,
 			},
@@ -127,21 +123,6 @@ var FullConsumes = &proto.Consumes{
 var BMTalents = "51200201515012233110531351-005305-5"
 var MMTalents = "502-035335131030013233035031051-5000002"
 var SVTalents = "-015305101-5000032500033330532135301311"
-var BMGlyphs = &proto.Glyphs{
-	Major1: int32(proto.HunterMajorGlyph_GlyphOfBestialWrath),
-	Major2: int32(proto.HunterMajorGlyph_GlyphOfSteadyShot),
-	Major3: int32(proto.HunterMajorGlyph_GlyphOfSerpentSting),
-}
-var MMGlyphs = &proto.Glyphs{
-	Major1: int32(proto.HunterMajorGlyph_GlyphOfSerpentSting),
-	Major2: int32(proto.HunterMajorGlyph_GlyphOfSteadyShot),
-	Major3: int32(proto.HunterMajorGlyph_GlyphOfChimeraShot),
-}
-var SVGlyphs = &proto.Glyphs{
-	Major1: int32(proto.HunterMajorGlyph_GlyphOfSerpentSting),
-	Major2: int32(proto.HunterMajorGlyph_GlyphOfExplosiveShot),
-	Major3: int32(proto.HunterMajorGlyph_GlyphOfKillShot),
-}
 
 var FerocityTalents = &proto.HunterPetTalents{
 	CobraReflexes:  2,

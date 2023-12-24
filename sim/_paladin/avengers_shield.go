@@ -4,13 +4,11 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (paladin *Paladin) registerAvengersShieldSpell() {
-	glyphedSingleTargetAS := paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfAvengerSShield)
-	// Glyph to single target, OR apply to up to 3 targets
-	numHits := core.TernaryInt32(glyphedSingleTargetAS, 1, min(3, paladin.Env.GetNumTargets()))
+	// apply to up to 3 targets
+	numHits := min(3, paladin.Env.GetNumTargets())
 	results := make([]*core.SpellResult, numHits)
 
 	paladin.AvengersShield = paladin.RegisterSpell(core.SpellConfig{
@@ -34,7 +32,7 @@ func (paladin *Paladin) registerAvengersShieldSpell() {
 			},
 		},
 
-		DamageMultiplier: core.TernaryFloat64(glyphedSingleTargetAS, 2, 1),
+		DamageMultiplier: 1,
 		CritMultiplier:   paladin.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
 

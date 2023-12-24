@@ -20,7 +20,6 @@ func TestElemental(t *testing.T) {
 
 		GearSet:     core.GetGearSet("../../../ui/elemental_shaman/gear_sets", "p1"),
 		Talents:     StandardTalents,
-		Glyphs:      StandardGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Adaptive", SpecOptions: PlayerOptionsAdaptive},
 		OtherSpecOptions: []core.SpecOptionsCombo{
@@ -65,7 +64,6 @@ func BenchmarkSimulate(b *testing.B) {
 				Class:         proto.Class_ClassShaman,
 				Equipment:     core.GetGearSet("../../../ui/elemental_shaman/gear_sets", "p1").GearSet,
 				TalentsString: StandardTalents,
-				Glyphs:        StandardGlyphs,
 				Consumes:      FullConsumes,
 				Spec:          PlayerOptionsAdaptive,
 				Buffs:         core.FullIndividualBuffs,
@@ -86,11 +84,6 @@ func BenchmarkSimulate(b *testing.B) {
 }
 
 var StandardTalents = "0532001523212351322301351-005052031"
-var StandardGlyphs = &proto.Glyphs{
-	Major1: int32(proto.ShamanMajorGlyph_GlyphOfLava),
-	Major2: int32(proto.ShamanMajorGlyph_GlyphOfTotemOfWrath),
-	Major3: int32(proto.ShamanMajorGlyph_GlyphOfLightningBolt),
-}
 
 var NoTotems = &proto.ShamanTotems{}
 var BasicTotems = &proto.ShamanTotems{

@@ -19,7 +19,6 @@ func TestAffliction(t *testing.T) {
 
 		GearSet:     core.GetGearSet("../../ui/warlock/gear_sets", "p4_affliction"),
 		Talents:     AfflictionTalents,
-		Glyphs:      AfflictionGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Affliction Warlock", SpecOptions: DefaultAfflictionWarlock},
 		OtherSpecOptions: []core.SpecOptionsCombo{
@@ -37,7 +36,6 @@ func TestDemonology(t *testing.T) {
 
 		GearSet:     core.GetGearSet("../../ui/warlock/gear_sets", "p4_demo"),
 		Talents:     DemonologyTalents,
-		Glyphs:      DemonologyGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Demonology Warlock", SpecOptions: DefaultDemonologyWarlock},
 		OtherRotations: []core.RotationCombo{
@@ -55,7 +53,6 @@ func TestDestruction(t *testing.T) {
 
 		GearSet:     core.GetGearSet("../../ui/warlock/gear_sets", "p4_destro"),
 		Talents:     DestructionTalents,
-		Glyphs:      DestructionGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Destruction Warlock", SpecOptions: DefaultDestroWarlock},
 		OtherRotations: []core.RotationCombo{
@@ -82,21 +79,6 @@ var ItemFilter = core.ItemFilter{
 var AfflictionTalents = "2350002030023510253500331151--550000051"
 var DemonologyTalents = "-203203301035012530135201351-550000052"
 var DestructionTalents = "-03310030003-05203205210331051335230351"
-var AfflictionGlyphs = &proto.Glyphs{
-	Major1: int32(proto.WarlockMajorGlyph_GlyphOfQuickDecay),
-	Major2: int32(proto.WarlockMajorGlyph_GlyphOfLifeTap),
-	Major3: int32(proto.WarlockMajorGlyph_GlyphOfHaunt),
-}
-var DemonologyGlyphs = &proto.Glyphs{
-	Major1: int32(proto.WarlockMajorGlyph_GlyphOfQuickDecay),
-	Major2: int32(proto.WarlockMajorGlyph_GlyphOfLifeTap),
-	Major3: int32(proto.WarlockMajorGlyph_GlyphOfFelguard),
-}
-var DestructionGlyphs = &proto.Glyphs{
-	Major1: int32(proto.WarlockMajorGlyph_GlyphOfConflagrate),
-	Major2: int32(proto.WarlockMajorGlyph_GlyphOfLifeTap),
-	Major3: int32(proto.WarlockMajorGlyph_GlyphOfIncinerate),
-}
 
 var defaultDestroRotation = &proto.Warlock_Rotation{
 	Type:         proto.Warlock_Rotation_Destruction,

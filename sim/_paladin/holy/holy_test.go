@@ -20,7 +20,6 @@ func TestHoly(t *testing.T) {
 
 		GearSet:     core.GetGearSet("../../../ui/holy_paladin/gear_sets", "p1"),
 		Talents:     StandardTalents,
-		Glyphs:      StandardGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: BasicOptions},
 		Rotation:    core.RotationCombo{Label: "Default", Rotation: DefaultRotation},
@@ -53,7 +52,6 @@ func BenchmarkSimulate(b *testing.B) {
 				Consumes:      FullConsumes,
 				Spec:          BasicOptions,
 				TalentsString: StandardTalents,
-				Glyphs:        StandardGlyphs,
 				Buffs:         core.FullIndividualBuffs,
 			},
 			core.FullPartyBuffs,
@@ -72,13 +70,6 @@ func BenchmarkSimulate(b *testing.B) {
 }
 
 var StandardTalents = "50350151020013053100515221-50023131203"
-var StandardGlyphs = &proto.Glyphs{
-	Major1: int32(proto.PaladinMajorGlyph_GlyphOfHolyLight),
-	Major2: int32(proto.PaladinMajorGlyph_GlyphOfSealOfWisdom),
-	Major3: int32(proto.PaladinMajorGlyph_GlyphOfBeaconOfLight),
-	Minor1: int32(proto.PaladinMinorGlyph_GlyphOfLayOnHands),
-	Minor2: int32(proto.PaladinMinorGlyph_GlyphOfSenseUndead),
-}
 
 var defaultProtOptions = &proto.HolyPaladin_Options{
 	Judgement: proto.PaladinJudgement_JudgementOfWisdom,

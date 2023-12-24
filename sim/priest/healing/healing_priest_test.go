@@ -18,7 +18,6 @@ func init() {
 
 // 		GearSet:     core.GetGearSet("../../../ui/healing_priest/gear_sets", "p1_disc"),
 // 		Talents:     DiscTalents,
-// 		Glyphs:      DiscGlyphs,
 // 		Consumes:    FullConsumes,
 // 		SpecOptions: core.SpecOptionsCombo{Label: "Disc", SpecOptions: PlayerOptionsDisc},
 // 		Rotation:    core.GetAplRotation("../../../ui/healing_priest/apls", "disc"),
@@ -54,7 +53,6 @@ func init() {
 
 // 		GearSet:     core.GetGearSet("../../../ui/healing_priest/gear_sets", "p1_holy"),
 // 		Talents:     HolyTalents,
-// 		Glyphs:      HolyGlyphs,
 // 		Consumes:    FullConsumes,
 // 		SpecOptions: core.SpecOptionsCombo{Label: "Holy", SpecOptions: PlayerOptionsHoly},
 // 		Rotation:    core.GetAplRotation("../../../ui/healing_priest/apls", "holy"),
@@ -75,20 +73,7 @@ func init() {
 // }
 
 var DiscTalents = "0503203130300512301313231251-2351010303"
-var DiscGlyphs = &proto.Glyphs{
-	Major1: int32(proto.PriestMajorGlyph_GlyphOfPowerWordShield),
-	Major2: int32(proto.PriestMajorGlyph_GlyphOfFlashHeal),
-	Major3: int32(proto.PriestMajorGlyph_GlyphOfPenance),
-	// No interesting minor glyphs.
-}
-
 var HolyTalents = "05032031103-234051032002152530004311051"
-var HolyGlyphs = &proto.Glyphs{
-	Major1: int32(proto.PriestMajorGlyph_GlyphOfPrayerOfHealing),
-	Major2: int32(proto.PriestMajorGlyph_GlyphOfRenew),
-	Major3: int32(proto.PriestMajorGlyph_GlyphOfCircleOfHealing),
-	// No interesting minor glyphs.
-}
 
 var FullConsumes = &proto.Consumes{
 	Flask: proto.Flask_FlaskUnknown,

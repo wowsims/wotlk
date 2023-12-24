@@ -21,8 +21,6 @@ message UIDatabase {
 	// Entities for which we just need a name/icon.
 	repeated IconData item_icons = 4;
 	repeated IconData spell_icons = 5;
-
-	repeated GlyphID glyph_ids = 7;
 }
 
 message UIZone {
@@ -176,11 +174,6 @@ message IconData {
 	int32 requires_level = 5;
 }
 
-message GlyphID {
-	int32 item_id = 1;
-	int32 spell_id = 2;
-}
-
 enum SourceFilterOption {
 	SourceUnknown = 0;
 	SourceCrafting = 1;
@@ -284,7 +277,6 @@ message SavedSettings {
 
 message SavedTalents {
 	string talents_string = 1;
-	Glyphs glyphs = 2;
 }
 
 message SavedRotation {

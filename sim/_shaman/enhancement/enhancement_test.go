@@ -20,7 +20,6 @@ func TestEnhancement(t *testing.T) {
 
 		GearSet:     core.GetGearSet("../../../ui/enhancement_shaman/gear_sets", "p1"),
 		Talents:     StandardTalents,
-		Glyphs:      StandardGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "FT", SpecOptions: PlayerOptionsFTFT},
 		OtherSpecOptions: []core.SpecOptionsCombo{
@@ -58,7 +57,6 @@ func BenchmarkSimulate(b *testing.B) {
 				Class:         proto.Class_ClassShaman,
 				Equipment:     core.GetGearSet("../../../ui/enhancement_shaman/gear_sets", "p1").GearSet,
 				TalentsString: StandardTalents,
-				Glyphs:        StandardGlyphs,
 				Consumes:      FullConsumes,
 				Spec:          PlayerOptionsFTFT,
 				Buffs:         core.FullIndividualBuffs,
@@ -79,11 +77,6 @@ func BenchmarkSimulate(b *testing.B) {
 }
 
 var StandardTalents = "053030152-30405003105021333031131031051"
-var StandardGlyphs = &proto.Glyphs{
-	Major1: int32(proto.ShamanMajorGlyph_GlyphOfFireNova),
-	Major2: int32(proto.ShamanMajorGlyph_GlyphOfFlametongueWeapon),
-	Major3: int32(proto.ShamanMajorGlyph_GlyphOfFeralSpirit),
-}
 
 var PlayerOptionsWFWF = &proto.Player_EnhancementShaman{
 	EnhancementShaman: &proto.EnhancementShaman{

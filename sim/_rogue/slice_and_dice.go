@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (rogue *Rogue) registerSliceAndDice() {
@@ -12,9 +11,6 @@ func (rogue *Rogue) registerSliceAndDice() {
 
 	durationMultiplier := 1.0 + 0.25*float64(rogue.Talents.ImprovedSliceAndDice)
 	durationBonus := time.Duration(0)
-	if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfSliceAndDice) {
-		durationBonus += time.Second * 3
-	}
 	rogue.sliceAndDiceDurations = [6]time.Duration{
 		0,
 		time.Duration(float64(time.Second*9+durationBonus) * durationMultiplier),

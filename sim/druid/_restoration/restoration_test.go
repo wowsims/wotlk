@@ -19,7 +19,6 @@ func TestRestoration(t *testing.T) {
 
 		GearSet:     core.GetGearSet("../../../ui/restoration_druid/gear_sets", "p1"),
 		Talents:     StandardTalents,
-		Glyphs:      StandardGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Standard", SpecOptions: PlayerOptionsStandard},
 		Rotation:    core.RotationCombo{Label: "Default", Rotation: DefaultRotation},
@@ -41,11 +40,6 @@ func TestRestoration(t *testing.T) {
 }
 
 var StandardTalents = "05320031103--230023312131502331050313051"
-var StandardGlyphs = &proto.Glyphs{
-	Major1: int32(proto.DruidMajorGlyph_GlyphOfWildGrowth),
-	Major2: int32(proto.DruidMajorGlyph_GlyphOfSwiftmend),
-	Major3: int32(proto.DruidMajorGlyph_GlyphOfNourish),
-}
 
 var FullConsumes = &proto.Consumes{
 	Flask:           proto.Flask_FlaskOfBlindingLight,

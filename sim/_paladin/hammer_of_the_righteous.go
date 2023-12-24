@@ -8,7 +8,7 @@ import (
 )
 
 func (paladin *Paladin) registerHammerOfTheRighteousSpell() {
-	numHits := min(core.TernaryInt32(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfHammerOfTheRighteous), 4, 3), paladin.Env.GetNumTargets())
+	numHits := min(3, paladin.Env.GetNumTargets())
 	results := make([]*core.SpellResult, numHits)
 
 	paladin.HammerOfTheRighteous = paladin.RegisterSpell(core.SpellConfig{

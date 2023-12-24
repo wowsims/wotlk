@@ -4,13 +4,11 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (hunter *Hunter) registerSerpentStingSpell() {
 	canCrit := hunter.HasSetBonus(ItemSetWindrunnersPursuit, 2)
 	noxiousStingsMultiplier := 1 + 0.01*float64(hunter.Talents.NoxiousStings)
-	huntersWithGlyphOfSteadyShot := hunter.GetAllHuntersWithGlyphOfSteadyShot()
 
 	hunter.SerpentSting = hunter.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 49001},
@@ -46,23 +44,12 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 				Tag:   "SerpentSting",
 				OnGain: func(aura *core.Aura, sim *core.Simulation) {
 					hunter.AttackTables[aura.Unit.UnitIndex].DamageTakenMultiplier *= noxiousStingsMultiplier
-					// Check for 1 because this aura will always be active inside OnGain.
-					if aura.Unit.NumActiveAurasWithTag("SerpentSting") == 1 {
-						for _, otherHunter := range huntersWithGlyphOfSteadyShot {
-							otherHunter.SteadyShot.DamageMultiplierAdditive += .1
-						}
-					}
 				},
 				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 					hunter.AttackTables[aura.Unit.UnitIndex].DamageTakenMultiplier /= noxiousStingsMultiplier
-					if !aura.Unit.HasActiveAuraWithTag("SerpentSting") {
-						for _, otherHunter := range huntersWithGlyphOfSteadyShot {
-							otherHunter.SteadyShot.DamageMultiplierAdditive -= .1
-						}
-					}
 				},
 			},
-			NumberOfTicks: 5 + core.TernaryInt32(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfSerpentSting), 2, 0),
+			NumberOfTicks: 5,
 			TickLength:    time.Second * 3,
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
@@ -91,17 +78,4 @@ func (hunter *Hunter) registerSerpentStingSpell() {
 			spell.DealOutcome(sim, result)
 		},
 	})
-}
-
-func (hunter *Hunter) GetAllHuntersWithGlyphOfSteadyShot() []*Hunter {
-	allHunterAgents := hunter.Env.Raid.GetPlayersOfClass(proto.Class_ClassHunter)
-
-	hunters := []*Hunter{}
-	for _, agent := range allHunterAgents {
-		h := agent.(HunterAgent).GetHunter()
-		if h.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfSteadyShot) {
-			hunters = append(hunters, h)
-		}
-	}
-	return hunters
 }

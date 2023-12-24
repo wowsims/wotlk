@@ -153,8 +153,7 @@ func (warlock *Warlock) applyFirestone() {
 // 		return
 // 	}
 
-// 	nightfallProcChance := 0.02*float64(warlock.Talents.Nightfall) +
-// 		0.04*core.TernaryFloat64(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCorruption), 1, 0)
+// 	nightfallProcChance := 0.02*float64(warlock.Talents.Nightfall)
 
 // 	warlock.NightfallProcAura = warlock.RegisterAura(core.Aura{
 // 		Label:    "Nightfall Shadow Trance",

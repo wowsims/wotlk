@@ -57,47 +57,6 @@ message ShamanTalents {
 	int32 purification = 45;
 	bool mana_tide_totem = 46;
 }
-enum ShamanMajorGlyph {
-	ShamanMajorGlyphNone = 0;
-	GlyphOfChainHeal = 41517;
-	GlyphOfChainLightning = 41518;
-	GlyphOfEarthShield = 45775;
-	GlyphOfEarthlivingWeapon = 41527;
-	GlyphOfElementalMastery = 41552;
-	GlyphOfFeralSpirit = 45771;
-	GlyphOfFireElementalTotem = 41529;
-	GlyphOfFireNova = 41530;
-	GlyphOfFlameShock = 41531;
-	GlyphOfFlametongueWeapon = 41532;
-	GlyphOfFrostShock = 41547;
-	GlyphOfHealingStreamTotem = 41533;
-	GlyphOfHealingWave = 41534;
-	GlyphOfHex = 45777;
-	GlyphOfLava = 41524;
-	GlyphOfLavaLash = 41540;
-	GlyphOfLesserHealingWave = 41535;
-	GlyphOfLightningBolt = 41536;
-	GlyphOfLightningShield = 41537;
-	GlyphOfManaTide = 41538;
-	GlyphOfRiptide = 45772;
-	GlyphOfShocking = 41526;
-	GlyphOfStoneclawTotem = 45778;
-	GlyphOfStormstrike = 41539;
-	GlyphOfThunder = 45770;
-	GlyphOfTotemOfWrath = 45776;
-	GlyphOfWaterMastery = 41541;
-	GlyphOfWindfuryWeapon = 41542;
-}
-enum ShamanMinorGlyph {
-	ShamanMinorGlyphNone = 0;
-	GlyphOfAstralRecall = 43381;
-	GlyphOfGhostWolf = 43725;
-	GlyphOfRenewedLife = 43385;
-	GlyphOfThunderstorm = 44923;
-	GlyphOfWaterBreathing = 43344;
-	GlyphOfWaterShield = 43386;
-	GlyphOfWaterWalking = 43388;
-}
 
 enum EarthTotem {
 	NoEarthTotem = 0;

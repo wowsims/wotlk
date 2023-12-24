@@ -9,11 +9,6 @@ import (
 )
 
 func (shaman *Shaman) ApplyTalents() {
-	// We are going to treat this like a snapshot if you have the glyph.
-	if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfTotemOfWrath) {
-		shaman.AddStat(stats.SpellPower, 280*0.3)
-	}
-
 	shaman.AddStat(stats.MeleeCrit, core.CritRatingPerCritChance*1*float64(shaman.Talents.ThunderingStrikes))
 	shaman.AddStat(stats.SpellCrit, core.CritRatingPerCritChance*1*float64(shaman.Talents.ThunderingStrikes))
 	shaman.AddStat(stats.Dodge, core.DodgeRatingPerDodgeChance*1*float64(shaman.Talents.Anticipation))
@@ -179,10 +174,6 @@ func (shaman *Shaman) registerElementalMasteryCD() {
 
 	cdTimer := shaman.NewTimer()
 	cd := time.Minute * 3
-
-	if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfElementalMastery) {
-		cd -= time.Second * 30
-	}
 
 	// TODO: Share CD with Natures Swiftness
 

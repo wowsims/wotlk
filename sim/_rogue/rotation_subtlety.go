@@ -324,7 +324,7 @@ func (x *rotation_subtlety) setSubtletyBuilder(sim *core.Simulation, rogue *Rogu
 		x.builder = rogue.Backstab
 		return
 	}
-	// Ghostly Strike -- should only be considered when glyphed
+	// Ghostly Strike
 	if rogue.Talents.GhostlyStrike && rogue.Rotation.UseGhostlyStrike && rogue.GhostlyStrike.IsReady(sim) {
 		x.builder = rogue.GhostlyStrike
 		return

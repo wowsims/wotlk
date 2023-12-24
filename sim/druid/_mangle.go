@@ -14,7 +14,6 @@ func (druid *Druid) registerMangleBearSpell() {
 
 	mangleAuras := druid.NewEnemyAuraArray(core.MangleAura)
 	durReduction := (0.5) * float64(druid.Talents.ImprovedMangle)
-	glyphBonus := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMangle), 1.1, 1.0)
 
 	druid.MangleBear = druid.RegisterSpell(Bear, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48564},
@@ -37,7 +36,7 @@ func (druid *Druid) registerMangleBearSpell() {
 			},
 		},
 
-		DamageMultiplier: (1 + 0.1*float64(druid.Talents.SavageFury)) * 1.15 * glyphBonus,
+		DamageMultiplier: (1 + 0.1*float64(druid.Talents.SavageFury)) * 1.15
 		CritMultiplier:   druid.MeleeCritMultiplier(Bear),
 		ThreatMultiplier: core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartHarness, 2), 1.15, 1),
 
@@ -69,7 +68,6 @@ func (druid *Druid) registerMangleCatSpell() {
 	}
 
 	mangleAuras := druid.NewEnemyAuraArray(core.MangleAura)
-	glyphBonus := core.TernaryFloat64(druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfMangle), 1.1, 1.0)
 
 	druid.MangleCat = druid.RegisterSpell(Cat, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48566},
@@ -88,7 +86,7 @@ func (druid *Druid) registerMangleCatSpell() {
 			IgnoreHaste: true,
 		},
 
-		DamageMultiplier: (1 + 0.1*float64(druid.Talents.SavageFury)) * 2.0 * glyphBonus,
+		DamageMultiplier: (1 + 0.1*float64(druid.Talents.SavageFury)) * 2.0,
 		CritMultiplier:   druid.MeleeCritMultiplier(Cat),
 		ThreatMultiplier: 1,
 

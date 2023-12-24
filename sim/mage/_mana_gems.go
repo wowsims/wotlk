@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 	"github.com/wowsims/sod/sim/core/stats"
 )
 
@@ -23,10 +22,9 @@ func (mage *Mage) registerManaGemsCD() {
 		serpentCoilAura = mage.NewTemporaryStatsAura("Serpent-Coil Braid", core.ActionID{ItemID: 30720}, stats.Stats{stats.SpellPower: 225}, 15*time.Second)
 	}
 
-	manaMultiplier := core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfManaGem), 1.4, 1) *
-		(1 +
-			core.TernaryFloat64(serpentCoilAura != nil, 0.25, 0) +
-			core.TernaryFloat64(hasT7_2pc, 0.25, 0))
+	manaMultiplier := (1 +
+		core.TernaryFloat64(serpentCoilAura != nil, 0.25, 0) +
+		core.TernaryFloat64(hasT7_2pc, 0.25, 0))
 
 	minManaEmeraldGain := 2340.0 * manaMultiplier
 	maxManaEmeraldGain := 2460.0 * manaMultiplier

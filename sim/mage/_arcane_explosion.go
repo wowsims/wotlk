@@ -2,7 +2,6 @@ package mage
 
 import (
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (mage *Mage) registerArcaneExplosionSpell() {
@@ -14,7 +13,7 @@ func (mage *Mage) registerArcaneExplosionSpell() {
 
 		ManaCost: core.ManaCostOptions{
 			BaseCost:   0.22,
-			Multiplier: core.TernaryFloat64(mage.HasMajorGlyph(proto.MageMajorGlyph_GlyphOfArcaneExplosion), .9, 1),
+			Multiplier: 1,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

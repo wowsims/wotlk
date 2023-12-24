@@ -86,13 +86,6 @@ func (paladin *Paladin) GetCharacter() *core.Character {
 	return &paladin.Character
 }
 
-func (paladin *Paladin) HasMajorGlyph(glyph proto.PaladinMajorGlyph) bool {
-	return paladin.HasGlyph(int32(glyph))
-}
-func (paladin *Paladin) HasMinorGlyph(glyph proto.PaladinMinorGlyph) bool {
-	return paladin.HasGlyph(int32(glyph))
-}
-
 func (paladin *Paladin) GetPaladin() *Paladin {
 	return paladin
 }
@@ -145,7 +138,7 @@ func (paladin *Paladin) Initialize() {
 	paladin.registerExorcismSpell()
 	paladin.registerHolyShieldSpell()
 	paladin.registerHammerOfTheRighteousSpell()
-	paladin.registerHandOfReckoningSpell()
+	// paladin.registerHandOfReckoningSpell()
 	paladin.registerShieldOfRighteousnessSpell()
 	paladin.registerAvengersShieldSpell()
 	paladin.registerJudgements()

@@ -20,7 +20,6 @@ func TestShadow(t *testing.T) {
 
 		GearSet:  core.GetGearSet("../../../ui/shadow_priest/gear_sets", "blank"),
 		Talents:  DefaultTalents,
-		Glyphs:   DefaultGlyphs,
 		Consumes: FullConsumes,
 
 		SpecOptions: core.SpecOptionsCombo{Label: "APL", SpecOptions: PlayerOptionsBasic},
@@ -46,12 +45,6 @@ func TestShadow(t *testing.T) {
 }
 
 var DefaultTalents = "5042001303--5002505103501051"
-var DefaultGlyphs = &proto.Glyphs{
-	Major1: int32(proto.PriestMajorGlyph_PriestMajorGlyphNone),
-	Major2: int32(proto.PriestMajorGlyph_PriestMajorGlyphNone),
-	Major3: int32(proto.PriestMajorGlyph_PriestMajorGlyphNone),
-	// No dps increasing minor glyphs.
-}
 
 var FullConsumes = &proto.Consumes{
 	Flask: proto.Flask_FlaskUnknown,

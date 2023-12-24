@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (shaman *Shaman) registerLightningBoltSpell() {
@@ -18,10 +17,6 @@ func (shaman *Shaman) newLightningBoltSpellConfig(isLightningOverload bool) core
 		0.1*core.TernaryFloat64(shaman.HasSetBonus(ItemSetEarthShatterGarb, 2), 0.95, 1),
 		time.Millisecond*2500,
 		isLightningOverload)
-
-	if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfLightningBolt) {
-		spellConfig.DamageMultiplier += 0.04
-	}
 
 	if shaman.HasSetBonus(ItemSetSkyshatterRegalia, 4) {
 		spellConfig.DamageMultiplier += 0.05

@@ -67,7 +67,6 @@ type Character struct {
 
 	professions [2]proto.Profession
 
-	glyphs            [6]int32
 	runesMap          map[int32]bool
 	PrimaryTalentTree uint8
 
@@ -494,15 +493,6 @@ func (character *Character) reset(sim *Simulation, agent Agent) {
 
 func (character *Character) HasProfession(prof proto.Profession) bool {
 	return prof == character.professions[0] || prof == character.professions[1]
-}
-
-func (character *Character) HasGlyph(glyphID int32) bool {
-	for _, g := range character.glyphs {
-		if g == glyphID {
-			return true
-		}
-	}
-	return false
 }
 
 func (character *Character) HasTrinketEquipped(itemID int32) bool {

@@ -68,8 +68,6 @@ message Player {
 		Warrior warrior = 37;
 		ProtectionWarrior protection_warrior = 38;
 	}
-	
-	Glyphs glyphs = 41;
 }
 
 message Party {
