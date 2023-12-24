@@ -79,7 +79,7 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 		)
 
 		if (this.config.hideUi) {
-			this.rootElem.classList.add('hide-ui');
+			this.rootElem.classList.add('d-none');
 		}
 		if (this.config.horizontalLayout) {
 			this.config.inlineMenuBar = true;
