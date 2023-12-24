@@ -86,25 +86,11 @@ func (x *rotation_generic) setup(_ *core.Simulation, rogue *Rogue) {
 		return 10*rogue.EnergyTickMultiplier + eps
 	}
 
-	// Glyph of Backstab support
-	var bonusDuration float64
 	rupRemaining := func(sim *core.Simulation) time.Duration {
 		if dot := rogue.Rupture.CurDot(); dot.IsActive() {
 			return dot.RemainingDuration(sim)
 		}
 		return 0
-	}
-
-	if x.builder == rogue.Backstab && rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfBackstab) {
-		bonusDuration = 6
-		rupRemaining = func(sim *core.Simulation) time.Duration {
-			if dot := rogue.Rupture.CurDot(); dot.IsActive() {
-				dur := dot.RemainingDuration(sim)
-				dur += dot.TickLength * time.Duration(dot.MaxStacks+3-dot.NumberOfTicks)
-				return dur
-			}
-			return 0
-		}
 	}
 
 	// Garrote
@@ -238,8 +224,8 @@ func (x *rotation_generic) setup(_ *core.Simulation, rogue *Rogue) {
 
 	// seconds a 5 cp rupture can be delayed to match a 4 cp rupture's dps. for rup4to5 and rup3to4, this delay is < 2s,
 	// which also means that clipping 3 or 4 cp ruptures is usually a dps loss
-	rup4to5 := (rogue.RuptureDuration(4).Seconds() + bonusDuration) * (1 - rogue.RuptureDamage(4)/rogue.RuptureDamage(5))
-	rup3to4 := (rogue.RuptureDuration(3).Seconds() + bonusDuration) * (1 - rogue.RuptureDamage(3)/rogue.RuptureDamage(4))
+	rup4to5 := rogue.RuptureDuration(4).Seconds() * (1 - rogue.RuptureDamage(4)/rogue.RuptureDamage(5))
+	rup3to4 := rogue.RuptureDuration(3).Seconds() * (1 - rogue.RuptureDamage(3)/rogue.RuptureDamage(4))
 
 	// Rupture
 	x.prios = append(x.prios, prio{
@@ -300,11 +286,7 @@ func (x *rotation_generic) setup(_ *core.Simulation, rogue *Rogue) {
 	if x.builder == rogue.SinisterStrike {
 		attackTable := rogue.AttackTables[rogue.CurrentTarget.UnitIndex]
 		crit := rogue.SinisterStrike.PhysicalCritChance(attackTable)
-		var extraChance float64
-		if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfSinisterStrike) {
-			extraChance = 0.5
-		}
-		bldPerCp = 1 / (1 + crit*(extraChance+0.2*float64(rogue.Talents.SealFate)))
+		bldPerCp = 1 / (1 + crit*(0.2*float64(rogue.Talents.SealFate)))
 	}
 	if x.builder == rogue.Backstab {
 		attackTable := rogue.AttackTables[rogue.CurrentTarget.UnitIndex]

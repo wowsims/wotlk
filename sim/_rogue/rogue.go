@@ -142,14 +142,6 @@ func (rogue *Rogue) ApplyFinisher(sim *core.Simulation, spell *core.Spell) {
 	rogue.finishingMoveEffectApplier(sim, numPoints)
 }
 
-func (rogue *Rogue) HasMajorGlyph(glyph proto.RogueMajorGlyph) bool {
-	return rogue.HasGlyph(int32(glyph))
-}
-
-func (rogue *Rogue) HasMinorGlyph(glyph proto.RogueMinorGlyph) bool {
-	return rogue.HasGlyph(int32(glyph))
-}
-
 func (rogue *Rogue) Initialize() {
 	// Update auto crit multipliers now that we have the targets.
 	rogue.AutoAttacks.MHConfig().CritMultiplier = rogue.MeleeCritMultiplier(false)
@@ -257,9 +249,6 @@ func NewRogue(character *core.Character, options *proto.Player) *Rogue {
 	rogue.PseudoStats.CanParry = true
 	maxEnergy := 100.0
 	if rogue.Talents.Vigor {
-		maxEnergy += 10
-	}
-	if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfVigor) {
 		maxEnergy += 10
 	}
 	if rogue.HasSetBonus(Arena, 4) {

@@ -4,12 +4,9 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (rogue *Rogue) registerBackstabSpell() {
-	hasGlyph := rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfBackstab)
-
 	rogue.Backstab = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48657},
 		SpellSchool: core.SpellSchoolPhysical,
@@ -55,11 +52,6 @@ func (rogue *Rogue) registerBackstabSpell() {
 
 			if result.Landed() {
 				rogue.AddComboPoints(sim, 1, spell.ComboPointMetrics())
-				if dot := rogue.Rupture.Dot(target); hasGlyph && dot.IsActive() && dot.NumberOfTicks < dot.MaxStacks+3 {
-					dot.NumberOfTicks += 1
-					dot.RecomputeAuraDuration()
-					dot.UpdateExpires(dot.ExpiresAt() + dot.TickLength)
-				}
 			} else {
 				spell.IssueRefund(sim)
 			}

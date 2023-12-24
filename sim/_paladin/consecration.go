@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 // Maybe could switch "rank" parameter type to some proto thing. Would require updates to proto files.
@@ -31,7 +30,7 @@ func (paladin *Paladin) registerConsecrationSpell() {
 			},
 			CD: core.Cooldown{
 				Timer:    paladin.NewTimer(),
-				Duration: (time.Second * 8) + core.TernaryDuration(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfConsecration), time.Second*2, 0),
+				Duration: time.Second * 8,
 			},
 		},
 
@@ -43,7 +42,7 @@ func (paladin *Paladin) registerConsecrationSpell() {
 			Aura: core.Aura{
 				Label: "Consecration",
 			},
-			NumberOfTicks: 8 + core.TernaryInt32(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfConsecration), 2, 0),
+			NumberOfTicks: 8,
 			TickLength:    time.Second * 1,
 
 			OnSnapshot: func(sim *core.Simulation, _ *core.Unit, dot *core.Dot, _ bool) {

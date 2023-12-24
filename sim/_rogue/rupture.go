@@ -4,15 +4,12 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 const RuptureEnergyCost = 25.0
 const RuptureSpellID = 48672
 
 func (rogue *Rogue) registerRupture() {
-	glyphTicks := core.TernaryInt32(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfRupture), 2, 0)
-
 	rogue.Rupture = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: RuptureSpellID},
 		SpellSchool:  core.SpellSchoolPhysical,
@@ -70,7 +67,7 @@ func (rogue *Rogue) registerRupture() {
 			rogue.BreakStealth(sim)
 			result := spell.CalcOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
 			if result.Landed() {
-				numberOfTicks := 3 + rogue.ComboPoints() + glyphTicks
+				numberOfTicks := 3 + rogue.ComboPoints()
 				dot := spell.Dot(target)
 				dot.Spell = spell
 				dot.NumberOfTicks = numberOfTicks
@@ -92,7 +89,7 @@ func (rogue *Rogue) RuptureDamage(comboPoints int32) float64 {
 }
 
 func (rogue *Rogue) RuptureTicks(comboPoints int32) int32 {
-	return 3 + comboPoints + core.TernaryInt32(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfRupture), 2, 0)
+	return 3 + comboPoints
 }
 
 func (rogue *Rogue) RuptureDuration(comboPoints int32) time.Duration {

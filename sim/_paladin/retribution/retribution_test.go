@@ -20,7 +20,6 @@ func TestRetribution(t *testing.T) {
 
 		GearSet:     core.GetGearSet("../../../ui/retribution_paladin/gear_sets", "p1"),
 		Talents:     StandardTalents,
-		Glyphs:      StandardGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Retribution Paladin SOV", SpecOptions: DefaultOptions},
 		OtherSpecOptions: []core.SpecOptionsCombo{
@@ -95,7 +94,6 @@ func BenchmarkSimulate(b *testing.B) {
 				Race:          proto.Race_RaceBloodElf,
 				Class:         proto.Class_ClassPaladin,
 				TalentsString: StandardTalents,
-				Glyphs:        StandardGlyphs,
 				Equipment:     core.GetGearSet("../../../ui/retribution_paladin/gear_sets", "p1").GearSet,
 				Consumes:      FullConsumes,
 				Spec:          DefaultOptions,
@@ -117,14 +115,6 @@ func BenchmarkSimulate(b *testing.B) {
 }
 
 var StandardTalents = "050501-05-05232051203331302133231331"
-var StandardGlyphs = &proto.Glyphs{
-	Major1: int32(proto.PaladinMajorGlyph_GlyphOfSealOfVengeance),
-	Major2: int32(proto.PaladinMajorGlyph_GlyphOfJudgement),
-	Major3: int32(proto.PaladinMajorGlyph_GlyphOfConsecration),
-	Minor1: int32(proto.PaladinMinorGlyph_GlyphOfSenseUndead),
-	Minor2: int32(proto.PaladinMinorGlyph_GlyphOfLayOnHands),
-	Minor3: int32(proto.PaladinMinorGlyph_GlyphOfBlessingOfKings),
-}
 
 var DefaultOptions = &proto.Player_RetributionPaladin{
 	RetributionPaladin: &proto.RetributionPaladin{

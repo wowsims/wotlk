@@ -19,7 +19,6 @@ func TestFeralTank(t *testing.T) {
 
 		GearSet:     core.GetGearSet("../../../ui/feral_tank_druid/gear_sets", "p1"),
 		Talents:     StandardTalents,
-		Glyphs:      StandardGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Default", SpecOptions: PlayerOptionsDefault},
 		Rotation:    core.GetAplRotation("../../../ui/feral_tank_druid/apls", "default"),
@@ -71,11 +70,6 @@ func BenchmarkSimulate(b *testing.B) {
 }
 
 var StandardTalents = "-503232132322010353120300313511-20350001"
-var StandardGlyphs = &proto.Glyphs{
-	Major1: int32(proto.DruidMajorGlyph_GlyphOfMaul),
-	Major2: int32(proto.DruidMajorGlyph_GlyphOfSurvivalInstincts),
-	Major3: int32(proto.DruidMajorGlyph_GlyphOfFrenziedRegeneration),
-}
 
 var PlayerOptionsDefault = &proto.Player_FeralTankDruid{
 	FeralTankDruid: &proto.FeralTankDruid{

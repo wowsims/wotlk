@@ -4,12 +4,9 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (rogue *Rogue) registerSinisterStrikeSpell() {
-	hasGlyphOfSinisterStrike := rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfSinisterStrike)
-
 	rogue.SinisterStrike = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48638},
 		SpellSchool: core.SpellSchoolPhysical,
@@ -48,11 +45,6 @@ func (rogue *Rogue) registerSinisterStrikeSpell() {
 
 			if result.Landed() {
 				points := int32(1)
-				if hasGlyphOfSinisterStrike && result.DidCrit() {
-					if sim.RandomFloat("Glyph of Sinister Strike") < 0.5 {
-						points += 1
-					}
-				}
 				rogue.AddComboPoints(sim, points, spell.ComboPointMetrics())
 			} else {
 				spell.IssueRefund(sim)

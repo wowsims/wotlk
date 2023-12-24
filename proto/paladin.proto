@@ -57,48 +57,6 @@ message PaladinTalents {
 	bool repentance = 44;
 }
 
-enum PaladinMajorGlyph {
-	PaladinMajorGlyphNone = 0;
-	GlyphOfAvengerSShield = 41101;
-	GlyphOfAvengingWrath = 41107;
-	GlyphOfBeaconOfLight = 45741;
-	GlyphOfCleansing = 41104;
-	GlyphOfConsecration = 41099;
-	GlyphOfCrusaderStrike = 41098;
-	GlyphOfDivinePlea = 45745;
-	GlyphOfDivineStorm = 45743;
-	GlyphOfDivinity = 41108;
-	GlyphOfExorcism = 41103;
-	GlyphOfFlashOfLight = 41105;
-	GlyphOfHammerOfJustice = 41095;
-	GlyphOfHammerOfTheRighteous = 45742;
-	GlyphOfHammerOfWrath = 41097;
-	GlyphOfHolyLight = 41106;
-	GlyphOfHolyShock = 45746;
-	GlyphOfHolyWrath = 43867;
-	GlyphOfJudgement = 41092;
-	GlyphOfRighteousDefense = 41100;
-	GlyphOfSalvation = 45747;
-	GlyphOfSealOfCommand = 41094;
-	GlyphOfSealOfLight = 41110;
-	GlyphOfSealOfRighteousness = 43868;
-	GlyphOfSealOfVengeance = 43869;
-	GlyphOfSealOfWisdom = 41109;
-	GlyphOfShieldOfRighteousness = 45744;
-	GlyphOfSpiritualAttunement = 41096;
-	GlyphOfTurnEvil = 41102;
-	GlyphOfReckoning = 204385;
-}
-enum PaladinMinorGlyph {
-	PaladinMinorGlyphNone = 0;
-	GlyphOfBlessingOfKings = 43365;
-	GlyphOfBlessingOfMight = 43340;
-	GlyphOfBlessingOfWisdom = 43366;
-	GlyphOfLayOnHands = 43367;
-	GlyphOfSenseUndead = 43368;
-	GlyphOfTheWise = 43369;
-}
-
 enum Blessings {
 	BlessingUnknown = 0;
 	BlessingOfKings = 1;

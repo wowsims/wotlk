@@ -43,7 +43,6 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 
-			// Apply SBV cap with special bypass rules for Shield Block and Glyph of Blocking
 			// TODO: Verify that this bypass behavior and DR curve are correct
 
 			sbvMod := warrior.PseudoStats.BlockValueMultiplier

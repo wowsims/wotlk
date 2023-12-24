@@ -237,8 +237,6 @@ func (druid *Druid) setupNaturesGrace() {
 // 		}
 // 	}
 
-// 	hasOocGlyph := druid.HasMajorGlyph(proto.DruidMajorGlyph_GlyphOfOmenOfClarity)
-
 // 	druid.RegisterAura(core.Aura{
 // 		Label:    "Omen of Clarity",
 // 		Duration: core.NeverExpires,
@@ -287,11 +285,6 @@ func (druid *Druid) setupNaturesGrace() {
 // 				if sim.RandomFloat("Clearcasting") < chanceToProc {
 // 					druid.ProcOoc(sim)
 // 				}
-// 			}
-// 		},
-// 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-// 			if druid.FaerieFire.IsEqual(spell) && druid.InForm(Cat|Bear) && hasOocGlyph {
-// 				druid.ProcOoc(sim)
 // 			}
 // 		},
 // 	})

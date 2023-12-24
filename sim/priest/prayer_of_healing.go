@@ -7,8 +7,6 @@ import (
 )
 
 func (priest *Priest) registerPrayerOfHealingSpell() {
-	var glyphSpell *core.Spell
-
 	priest.PrayerOfHealing = priest.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 48072},
 		SpellSchool: core.SpellSchoolHoly,
@@ -39,9 +37,6 @@ func (priest *Priest) registerPrayerOfHealingSpell() {
 				partyTarget := &partyAgent.GetCharacter().Unit
 				baseHealing := sim.Roll(2109, 2228) + 0.526*spell.HealingPower(partyTarget)
 				spell.CalcAndDealHealing(sim, partyTarget, baseHealing, spell.OutcomeHealingCrit)
-				if glyphSpell != nil {
-					glyphSpell.Hot(partyTarget).Apply(sim)
-				}
 			}
 		},
 	})

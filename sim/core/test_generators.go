@@ -80,7 +80,6 @@ type GearSetCombo struct {
 type TalentsCombo struct {
 	Label   string
 	Talents string
-	Glyphs  *proto.Glyphs
 }
 type SpecOptionsCombo struct {
 	Label       string

@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (paladin *Paladin) registerCrusaderStrikeSpell() {
@@ -23,8 +22,7 @@ func (paladin *Paladin) registerCrusaderStrikeSpell() {
 		ManaCost: core.ManaCostOptions{
 			BaseCost: 0.05,
 			Multiplier: 1 *
-				(1 - 0.02*float64(paladin.Talents.Benediction)) *
-				core.TernaryFloat64(paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfCrusaderStrike), 0.8, 1),
+				(1 - 0.02*float64(paladin.Talents.Benediction)),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

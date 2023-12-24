@@ -109,18 +109,6 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 	if debuffs.ScorpidSting && targetIdx == 0 {
 		MakePermanent(ScorpidStingAura(target))
 	}
-
-	// if debuffs.HuntersMark > 0 && targetIdx == 0 {
-	// 	points := int32(0)
-	// 	glyphed := false
-	// 	if debuffs.HuntersMark > 1 {
-	// 		points = 3
-	// 		if debuffs.HuntersMark > 2 {
-	// 			glyphed = true
-	// 		}
-	// 	}
-	// 	MakePermanent(HuntersMarkAura(target, points, glyphed))
-	// }
 }
 
 func ImprovedShadowBoltAura(unit *Unit, level int32) *Aura {
@@ -573,8 +561,8 @@ func CurseOfWeaknessAura(target *Unit, points int32, playerLevel int32) *Aura {
 const HuntersMarkAuraTag = "HuntersMark"
 
 // TODO: Classic
-func HuntersMarkAura(target *Unit, points int32, glyphed bool, playerLevel int32) *Aura {
-	bonus := 500.0 * (1 + 0.1*float64(points) + TernaryFloat64(glyphed, 0.2, 0))
+func HuntersMarkAura(target *Unit, points int32, playerLevel int32) *Aura {
+	bonus := 500.0 * (1 + 0.1*float64(points))
 
 	aura := target.GetOrRegisterAura(Aura{
 		Label:    "HuntersMark-" + strconv.Itoa(int(bonus)),

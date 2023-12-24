@@ -76,13 +76,6 @@ enum MageRune {
 	RuneLegsMassRegeneration = 412510;
 }
 
-enum MageMajorGlyph {
-	MageMajorGlyphNone = 0;
-}
-enum MageMinorGlyph {
-	MageMinorGlyphNone = 0;
-}
-
 message Mage {
 	message Rotation {
 		enum RotationType {

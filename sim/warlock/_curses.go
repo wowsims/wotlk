@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (warlock *Warlock) registerCurseOfElementsSpell() {
@@ -118,7 +117,7 @@ func (warlock *Warlock) registerCurseOfTonguesSpell() {
 }
 
 func (warlock *Warlock) registerCurseOfAgonySpell() {
-	numberOfTicks := core.TernaryInt32(warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfCurseOfAgony), 14, 12)
+	numberOfTicks := 12
 	baseTickDmg := 145.0
 
 	warlock.CurseOfAgony = warlock.RegisterSpell(core.SpellConfig{

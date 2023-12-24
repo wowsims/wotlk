@@ -4,7 +4,6 @@ import (
 	"math"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 	"github.com/wowsims/sod/sim/core/stats"
 )
 
@@ -17,7 +16,6 @@ func (warlock *Warlock) registerDarkPactSpell() {
 	baseRestore := 1200.0
 	manaMetrics := warlock.NewManaMetrics(actionID)
 	petManaMetrics := warlock.Pet.NewManaMetrics(actionID)
-	hasGlyph := warlock.HasMajorGlyph(proto.WarlockMajorGlyph_GlyphOfLifeTap)
 
 	warlock.DarkPact = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
@@ -35,11 +33,6 @@ func (warlock *Warlock) registerDarkPactSpell() {
 		FlatThreatBonus:  80,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			// Glyph activates and applies SP before coeff calculations are done.
-			if hasGlyph {
-				warlock.GlyphOfLifeTapAura.Activate(sim)
-			}
-
 			maxDrain := baseRestore + 0.96*warlock.GetStat(stats.SpellPower)
 			actualDrain := math.Min(maxDrain, warlock.Pet.CurrentMana())
 

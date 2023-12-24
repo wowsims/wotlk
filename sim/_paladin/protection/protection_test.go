@@ -20,7 +20,6 @@ func TestProtection(t *testing.T) {
 
 		GearSet:     core.GetGearSet("../../../ui/protection_paladin/gear_sets", "p1"),
 		Talents:     StandardTalents,
-		Glyphs:      StandardGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Protection Paladin SOV", SpecOptions: DefaultOptions},
 		OtherSpecOptions: []core.SpecOptionsCombo{
@@ -98,13 +97,6 @@ func BenchmarkSimulate(b *testing.B) {
 }
 
 var StandardTalents = "-05005135200132311333312321-511302012003"
-var StandardGlyphs = &proto.Glyphs{
-	Major1: int32(proto.PaladinMajorGlyph_GlyphOfSealOfVengeance),
-	Major2: int32(proto.PaladinMajorGlyph_GlyphOfRighteousDefense),
-	Major3: int32(proto.PaladinMajorGlyph_GlyphOfDivinePlea),
-	Minor1: int32(proto.PaladinMinorGlyph_GlyphOfLayOnHands),
-	Minor2: int32(proto.PaladinMinorGlyph_GlyphOfSenseUndead),
-}
 
 var defaultProtRotation = &proto.ProtectionPaladin_Rotation{}
 

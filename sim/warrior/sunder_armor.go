@@ -4,8 +4,6 @@ import (
 	"github.com/wowsims/sod/sim/core"
 )
 
-// TODO: GlyphOfSunderArmor will require refactoring this a bit
-
 func (warrior *Warrior) newSunderArmorSpell(isDevastateEffect bool) *core.Spell {
 	warrior.SunderArmorAuras = warrior.NewEnemyAuraArray(core.SunderArmorAura)
 	spellID := map[int32]int32{

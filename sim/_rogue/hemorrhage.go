@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (rogue *Rogue) registerHemorrhageSpell() {
@@ -25,10 +24,6 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 
 	if numPlayers >= 2 {
 		bonusDamage := 75.0
-		if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfHemorrhage) {
-			bonusDamage *= 1.4
-		}
-
 		hemoAuras = rogue.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
 			return target.GetOrRegisterAura(core.Aura{
 				Label:     "Hemorrhage",

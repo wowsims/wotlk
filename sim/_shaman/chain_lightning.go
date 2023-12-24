@@ -4,11 +4,10 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (shaman *Shaman) registerChainLightningSpell() {
-	numHits := min(core.TernaryInt32(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfChainLightning), 4, 3), shaman.Env.GetNumTargets())
+	numHits := min(3, shaman.Env.GetNumTargets())
 	shaman.ChainLightning = shaman.newChainLightningSpell(false)
 	shaman.ChainLightningLOs = []*core.Spell{}
 	for i := int32(0); i < numHits; i++ {
@@ -30,7 +29,7 @@ func (shaman *Shaman) newChainLightningSpell(isLightningOverload bool) *core.Spe
 		}
 	}
 
-	numHits := min(core.TernaryInt32(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfChainLightning), 4, 3), shaman.Env.GetNumTargets())
+	numHits := min(3, shaman.Env.GetNumTargets())
 	dmgReductionPerBounce := core.TernaryFloat64(shaman.HasSetBonus(ItemSetTidefury, 2), 0.83, 0.7)
 	dmgBonus := shaman.electricSpellBonusDamage(0.5714)
 	spellCoeff := 0.5714 + 0.04*float64(shaman.Talents.Shamanism)

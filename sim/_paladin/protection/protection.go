@@ -48,8 +48,6 @@ func NewProtectionPaladin(character *core.Character, options *proto.Player) *Pro
 
 	prot.PaladinAura = protOptions.Options.Aura
 
-	prot.HasGlyphAS = prot.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfAvengerSShield)
-
 	prot.EnableAutoAttacks(prot, core.AutoAttackOptions{
 		MainHand:       prot.WeaponFromMainHand(0), // Set crit multiplier later when we have targets.
 		AutoSwingMelee: true,
@@ -74,8 +72,6 @@ type ProtectionPaladin struct {
 	Judgement proto.PaladinJudgement
 
 	Seal proto.PaladinSeal
-
-	HasGlyphAS bool
 
 	SelectedRotation func(*core.Simulation)
 	RotationInput    []int32

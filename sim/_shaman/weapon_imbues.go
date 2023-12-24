@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 	"github.com/wowsims/sod/sim/core/stats"
 )
 
@@ -90,9 +89,6 @@ func (shaman *Shaman) RegisterWindfuryImbue(procMask core.ProcMask) {
 	if procMask == core.ProcMaskMelee {
 		proc = 0.36
 	}
-	if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfWindfuryWeapon) {
-		proc += 0.02 //TODO: confirm how this actually works
-	}
 
 	icd := core.Cooldown{
 		Timer:    shaman.NewTimer(),
@@ -174,9 +170,6 @@ func (shaman *Shaman) ApplyFlametongueImbueToItem(item *core.Item, isDownranked 
 	spMod := 1.0 + 0.1*float64(shaman.Talents.ElementalWeapons)
 
 	newStats := stats.Stats{stats.SpellPower: spBonus * spMod}
-	if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfFlametongueWeapon) {
-		newStats = newStats.Add(stats.Stats{stats.SpellCrit: 2 * core.CritRatingPerCritChance})
-	}
 
 	item.Stats = item.Stats.Add(newStats)
 	item.TempEnchant = int32(enchantID)
@@ -389,9 +382,6 @@ func (shaman *Shaman) RegisterEarthlivingImbue(procMask core.ProcMask) {
 	}
 
 	procChance := 0.2
-	if shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfEarthlivingWeapon) {
-		procChance += 0.05
-	}
 
 	imbueSpell := shaman.newEarthlivingImbueSpell()
 

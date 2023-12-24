@@ -721,15 +721,6 @@ message ActionID {
 	int32 rank = 5;
 }
 
-message Glyphs {
-	int32 major1 = 1;
-	int32 major2 = 2;
-	int32 major3 = 3;
-	int32 minor1 = 4;
-	int32 minor2 = 5;
-	int32 minor3 = 6;
-}
-
 // Custom options for a particular cooldown.
 message Cooldown {
 	// Identifies the cooldown to which these settings will apply.

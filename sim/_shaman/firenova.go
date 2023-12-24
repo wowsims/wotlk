@@ -4,13 +4,11 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (shaman *Shaman) registerFireNovaSpell() {
-	fireNovaGlyphCDReduction := core.TernaryInt32(shaman.HasMajorGlyph(proto.ShamanMajorGlyph_GlyphOfFireNova), 3, 0)
 	impFireNovaCDReduction := shaman.Talents.ImprovedFireNova * 2
-	fireNovaCooldown := 10 - fireNovaGlyphCDReduction - impFireNovaCDReduction
+	fireNovaCooldown := 10 - impFireNovaCDReduction
 
 	shaman.FireNova = shaman.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 61657},

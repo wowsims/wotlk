@@ -19,7 +19,6 @@ func TestRestoration(t *testing.T) {
 
 		GearSet:     core.GetGearSet("../../../ui/restoration_shaman/gear_sets", "p1"),
 		Talents:     StandardTalents,
-		Glyphs:      StandardGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Standard", SpecOptions: PlayerOptionsStandard},
 		Rotation:    core.RotationCombo{Label: "Default", Rotation: DefaultRotation},
@@ -53,7 +52,6 @@ func BenchmarkSimulate(b *testing.B) {
 				Spec:          PlayerOptionsStandard,
 				Buffs:         core.FullIndividualBuffs,
 				TalentsString: StandardTalents,
-				Glyphs:        StandardGlyphs,
 			},
 			core.FullPartyBuffs,
 			core.FullRaidBuffs,
@@ -71,11 +69,6 @@ func BenchmarkSimulate(b *testing.B) {
 }
 
 var StandardTalents = "-3020503-50005331335310501122331251"
-var StandardGlyphs = &proto.Glyphs{
-	Major1: int32(proto.ShamanMajorGlyph_GlyphOfChainHeal),
-	Major2: int32(proto.ShamanMajorGlyph_GlyphOfEarthShield),
-	Major3: int32(proto.ShamanMajorGlyph_GlyphOfEarthlivingWeapon),
-}
 
 var BasicTotems = &proto.ShamanTotems{
 	Earth: proto.EarthTotem_TremorTotem,

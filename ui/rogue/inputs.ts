@@ -95,16 +95,5 @@ export const RogueRotationConfig = {
 			labelTooltip: 'Open the encounter by casting Premeditation.',
 			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().premeditation
 		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
-			fieldName: 'useFeint',
-			label: 'Use Feint',
-			labelTooltip: 'Cast Feint on cooldown. Mainly useful when using the associate glyph.'
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecRogue>({
-			fieldName: "useGhostlyStrike",
-			label: 'Use Ghostly Strike',
-			labelTooltip: 'Use Ghostly Strike on cooldown. Mainly useful when using the associate glyph.',
-			showWhen: (player: Player<Spec.SpecRogue>) => player.getTalents().ghostlyStrike
-		}),
 	],
 };

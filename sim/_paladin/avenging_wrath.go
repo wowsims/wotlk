@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (paladin *Paladin) RegisterAvengingWrathCD() {
@@ -15,15 +14,9 @@ func (paladin *Paladin) RegisterAvengingWrathCD() {
 		ActionID: actionID,
 		Duration: time.Second * 20,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			if paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfAvengingWrath) {
-				paladin.HammerOfWrath.CD.Duration /= 2
-			}
 			aura.Unit.PseudoStats.DamageDealtMultiplier *= 1.2
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			if paladin.HasMajorGlyph(proto.PaladinMajorGlyph_GlyphOfAvengingWrath) {
-				paladin.HammerOfWrath.CD.Duration *= 2
-			}
 			aura.Unit.PseudoStats.DamageDealtMultiplier /= 1.2
 		},
 	})

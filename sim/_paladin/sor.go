@@ -35,7 +35,7 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 
 		DamageMultiplier: 1 *
 			(1 + paladin.getItemSetLightswornBattlegearBonus4() + paladin.getTalentSealsOfThePureBonus() +
-				paladin.getMajorGlyphOfJudgementBonus() + paladin.getTalentTheArtOfWarBonus()) *
+				paladin.getTalentTheArtOfWarBonus()) *
 			(1 + paladin.getTalentTwoHandedWeaponSpecializationBonus()),
 		CritMultiplier:   paladin.MeleeCritMultiplier(),
 		ThreatMultiplier: 1,
@@ -59,7 +59,6 @@ func (paladin *Paladin) registerSealOfRighteousnessSpellAndAura() {
 
 		DamageMultiplier: 1 *
 			(1 + paladin.getItemSetLightswornBattlegearBonus4() + paladin.getItemSetAegisPlateBonus2() + paladin.getTalentSealsOfThePureBonus()) *
-			(1 + paladin.getMajorGlyphSealOfRighteousnessBonus()) *
 			(1 + paladin.getTalentTwoHandedWeaponSpecializationBonus()),
 		ThreatMultiplier: 1,
 

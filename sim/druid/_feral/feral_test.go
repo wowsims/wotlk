@@ -33,7 +33,6 @@ func TestFeral(t *testing.T) {
 
 		GearSet:     core.GetGearSet("../../../ui/feral_druid/gear_sets", "p1"),
 		Talents:     StandardTalents,
-		Glyphs:      StandardGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Default", SpecOptions: PlayerOptionsMonoCat},
 		OtherSpecOptions: []core.SpecOptionsCombo{
@@ -54,7 +53,6 @@ func BenchmarkSimulate(b *testing.B) {
 				Consumes:  FullConsumes,
 				Spec:      PlayerOptionsMonoCat,
 				Buffs:     core.FullIndividualBuffs,
-				Glyphs:    StandardGlyphs,
 
 				InFrontOfTarget: true,
 			},
@@ -74,12 +72,6 @@ func BenchmarkSimulate(b *testing.B) {
 }
 
 var StandardTalents = "-503202132322010053120230310511-205503012"
-var StandardGlyphs = &proto.Glyphs{
-	Major1: int32(proto.DruidMajorGlyph_GlyphOfOmenOfClarity),
-	Major2: int32(proto.DruidMajorGlyph_GlyphOfShred),
-	Major3: int32(proto.DruidMajorGlyph_GlyphOfBerserk),
-	Minor1: int32(proto.DruidMinorGlyph_GlyphOfTheWild),
-}
 
 var PlayerOptionsMonoCat = &proto.Player_FeralDruid{
 	FeralDruid: &proto.FeralDruid{

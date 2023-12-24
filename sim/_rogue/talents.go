@@ -128,9 +128,6 @@ func (rogue *Rogue) registerHungerForBlood() {
 	}
 	actionID := core.ActionID{SpellID: 51662}
 	multiplier := 1.05
-	if rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfHungerForBlood) {
-		multiplier += 0.03
-	}
 	rogue.HungerForBloodAura = rogue.RegisterAura(core.Aura{
 		Label:    "Hunger for Blood",
 		ActionID: actionID,
@@ -486,7 +483,7 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 		Flags:    core.SpellFlagAPL,
 
 		EnergyCost: core.EnergyCostOptions{
-			Cost: core.TernaryFloat64(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfBladeFlurry), 0, 25),
+			Cost: 25,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -539,7 +536,7 @@ func (rogue *Rogue) registerAdrenalineRushCD() {
 	rogue.AdrenalineRushAura = rogue.RegisterAura(core.Aura{
 		Label:    "Adrenaline Rush",
 		ActionID: AdrenalineRushActionID,
-		Duration: core.TernaryDuration(rogue.HasMajorGlyph(proto.RogueMajorGlyph_GlyphOfAdrenalineRush), time.Second*20, time.Second*15),
+		Duration: time.Second * 15,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			rogue.ResetEnergyTick(sim)
 			rogue.ApplyEnergyTickMultiplier(1.0)

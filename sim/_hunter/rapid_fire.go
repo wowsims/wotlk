@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (hunter *Hunter) registerRapidFireCD() {
@@ -15,7 +14,7 @@ func (hunter *Hunter) registerRapidFireCD() {
 		manaMetrics = hunter.NewManaMetrics(core.ActionID{SpellID: 53232})
 	}
 
-	hasteMultiplier := 1.4 + core.TernaryFloat64(hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfRapidFire), 0.08, 0)
+	hasteMultiplier := 1.4
 
 	hunter.RapidFireAura = hunter.RegisterAura(core.Aura{
 		Label:    "Rapid Fire",

@@ -93,13 +93,6 @@ func (hunter *Hunter) GetCharacter() *core.Character {
 	return &hunter.Character
 }
 
-func (hunter *Hunter) HasMajorGlyph(glyph proto.HunterMajorGlyph) bool {
-	return hunter.HasGlyph(int32(glyph))
-}
-func (hunter *Hunter) HasMinorGlyph(glyph proto.HunterMinorGlyph) bool {
-	return hunter.HasGlyph(int32(glyph))
-}
-
 func (hunter *Hunter) GetHunter() *Hunter {
 	return hunter
 }
@@ -158,7 +151,7 @@ func (hunter *Hunter) Initialize() {
 
 	if hunter.Options.UseHuntersMark {
 		hunter.RegisterPrepullAction(0, func(sim *core.Simulation) {
-			huntersMarkAura := core.HuntersMarkAura(hunter.CurrentTarget, hunter.Talents.ImprovedHuntersMark, hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfHuntersMark))
+			huntersMarkAura := core.HuntersMarkAura(hunter.CurrentTarget, hunter.Talents.ImprovedHuntersMark)
 			huntersMarkAura.Activate(sim)
 		})
 	}
