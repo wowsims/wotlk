@@ -227,7 +227,6 @@ export class ItemPicker extends Component {
 
 		this.item = player.getEquippedItem(slot);
 		player.sim.waitForInit().then(() => {
-			this._items = this.player.getItems(this.slot);
 			this._enchants = this.player.getEnchants(this.slot);
 			this._runes = this.player.getRunes(this.slot);
 
@@ -252,6 +251,9 @@ export class ItemPicker extends Component {
 			this.itemElem.nameElem.addEventListener('click', openGearSelector);
 			this.itemElem.enchantElem.addEventListener('click', openEnchantSelector);
 		});
+
+		const loadItems = () => this._items = this.player.getItems(this.slot);
+		player.levelChangeEmitter.on(loadItems)
 
 		player.gearChangeEmitter.on(() => {
 			this.item = player.getEquippedItem(slot);
