@@ -1,5 +1,6 @@
 import {
 	Class,
+	Cooldowns,
 	Debuffs,
 	Faction,
 	IndividualBuffs,
@@ -11,6 +12,9 @@ import {
 	TristateEffect,
 } from '../core/proto/common.js';
 import {
+	APLAction,
+	APLListItem,
+	APLPrepullAction,
 	APLRotation,
 } from '../core/proto/apl.js';
 import { Stats } from '../core/proto_utils/stats.js';
@@ -22,8 +26,9 @@ import { TypedEvent } from '../core/typed_event.js';
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
 import * as Mechanics from '../core/constants/mechanics.js';
+import * as AplUtils from '../core/proto_utils/apl_utils.js';
 
-import { PaladinMajorGlyph, PaladinSeal } from '../core/proto/paladin.js';
+import { PaladinMajorGlyph, PaladinSeal, ProtectionPaladin_Rotation as ProtectionPaladinRotation } from '../core/proto/paladin.js';
 
 import * as ProtectionPaladinInputs from './inputs.js';
 import * as Presets from './presets.js';
@@ -238,6 +243,41 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecProtectionPaladin, {
 
 	autoRotation: (_player: Player<Spec.SpecProtectionPaladin>): APLRotation => {
 		return Presets.ROTATION_DEFAULT.rotation.rotation!;
+	},
+
+	simpleRotation: (player: Player<Spec.SpecProtectionPaladin>, simple: ProtectionPaladinRotation, cooldowns: Cooldowns): APLRotation => {
+		let [prepullActions, actions] = AplUtils.standardCooldownDefaults(cooldowns);
+
+		const holyShieldPrepull = APLPrepullAction.fromJsonString(`{"action":{"castSpell":{"spellId":{"spellId":48952}}},"doAtValue":{"const":{"val":"-3s"}}}`);
+		const divinePlea = APLPrepullAction.fromJsonString(`{"action":{"castSpell":{"spellId":{"spellId":54428}}},"doAtValue":{"const":{"val":"-1500ms"}}}`);
+		prepullActions.push(holyShieldPrepull, divinePlea);
+
+		const shieldOfRighteousness = APLAction.fromJsonString(`{"condition":{"cmp":{"op":"OpLe","lhs":{"spellTimeToReady":{"spellId":{"spellId":53595}}},"rhs":{"const":{"val":"3s"}}}},"castSpell":{"spellId":{"spellId":61411}}}`);
+		const hammerOfRighteousness = APLAction.fromJsonString(`{"condition":{"cmp":{"op":"OpLe","lhs":{"spellTimeToReady":{"spellId":{"spellId":61411}}},"rhs":{"const":{"val":"3s"}}}},"castSpell":{"spellId":{"spellId":53595}}}`);
+		const hammerOfWrath = APLAction.fromJsonString(`{"castSpell":{"spellId":{"spellId":48806}}}`);
+		const waitPrimary = APLAction.fromJsonString(`{"condition":{"and":{"vals":[{"gcdIsReady":{}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":61411}}}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":53595}}}}},{"cmp":{"op":"OpLe","lhs":{"min":{"vals":[{"spellTimeToReady":{"spellId":{"spellId":61411}}},{"spellTimeToReady":{"spellId":{"spellId":53595}}}]}},"rhs":{"const":{"val":"350ms"}}}}]}},"wait":{"duration":{"min":{"vals":[{"spellTimeToReady":{"spellId":{"spellId":61411}}},{"spellTimeToReady":{"spellId":{"spellId":53595}}}]}}}}`);
+		const consecration = APLAction.fromJsonString(`{"castSpell":{"spellId":{"spellId":48819}}}`);
+		const holyShield = APLAction.fromJsonString(`{"castSpell":{"spellId":{"spellId":48952}}}`);
+		const judgementOfWisdom = APLAction.fromJsonString(`{"castSpell":{"spellId":{"spellId":53408}}}`);
+		const waitSecondary = APLAction.fromJsonString(`{"condition":{"and":{"vals":[{"gcdIsReady":{}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":61411}}}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":53595}}}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":48819}}}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":48952}}}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":53408}}}}}]}},"wait":{"duration":{"min":{"vals":[{"spellTimeToReady":{"spellId":{"spellId":61411}}},{"spellTimeToReady":{"spellId":{"spellId":53595}}},{"spellTimeToReady":{"spellId":{"spellId":48819}}},{"spellTimeToReady":{"spellId":{"spellId":48952}}},{"spellTimeToReady":{"spellId":{"spellId":53408}}}]}}}}`);
+
+		actions.push(...[
+			shieldOfRighteousness,
+			hammerOfRighteousness,
+			hammerOfWrath,
+			waitPrimary,
+			consecration,
+			holyShield,
+			judgementOfWisdom,
+			waitSecondary,
+		].filter(a => a) as Array<APLAction>)
+
+		return APLRotation.create({
+			prepullActions: prepullActions,
+			priorityList: actions.map(action => APLListItem.create({
+				action: action,
+			}))
+		});
 	},
 
 	raidSimPresets: [
