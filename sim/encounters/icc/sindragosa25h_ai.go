@@ -163,50 +163,44 @@ func (ai *Sindragosa25HAI) registerMysticBuffetAuras() {
 	}
 
 	ai.MysticBuffetAuras = make([]*core.Aura, 0)
-	pendingActions := make([]*core.PendingAction, 50)
-	i := 0
+	pendingActions := make([]*core.PendingAction, len(ai.Target.Env.AllUnits))
 
-	for _, party := range ai.Target.Env.Raid.Parties {
-		for _, player := range party.PlayersAndPets {
-			i += 1
-			character := player.GetCharacter()
-			aura := character.GetOrRegisterAura(core.Aura{
-				Label:     "Mystic Buffet",
-				ActionID:  core.ActionID{SpellID: 70127},
-				MaxStacks: math.MaxInt32,
-				Duration:  time.Second * 8,
-				OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
-					aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFrost] /= 1.0 + 0.2*float64(oldStacks)
-					aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFrost] *= 1.0 + 0.2*float64(newStacks)
-				},
-				OnGain: func(aura *core.Aura, sim *core.Simulation) {
-					period := time.Second * 6
-					numTicks := int(sim.GetRemainingDuration() / period)
+	for _, raidUnit := range ai.Target.Env.Raid.AllUnits {
+		ai.MysticBuffetAuras = append(ai.MysticBuffetAuras, raidUnit.GetOrRegisterAura(core.Aura{
+			Label:     "Mystic Buffet",
+			ActionID:  core.ActionID{SpellID: 70127},
+			MaxStacks: math.MaxInt32,
+			Duration:  time.Second * 8,
+			OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFrost] /= 1.0 + 0.2*float64(oldStacks)
+				aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexFrost] *= 1.0 + 0.2*float64(newStacks)
+			},
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				period := time.Second * 6
+				numTicks := int(sim.GetRemainingDuration() / period)
 
-					if pendingActions[i-1] != nil {
-						pendingActions[i-1].Cancel(sim)
-					}
+				if pendingActions[aura.Unit.UnitIndex] != nil {
+					pendingActions[aura.Unit.UnitIndex].Cancel(sim)
+				}
 
-					pendingActions[i-1] = core.StartPeriodicAction(sim, core.PeriodicActionOptions{
-						NumTicks: numTicks,
-						Period:   period,
-						OnAction: func(sim *core.Simulation) {
-							aura.Refresh(sim)
-							aura.AddStack(sim)
-						},
-					})
-				},
-				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-					pendingActions[i-1].Cancel(sim)
-				},
-				OnReset: func(aura *core.Aura, sim *core.Simulation) {
-					if pendingActions[i-1] != nil {
-						pendingActions[i-1].Cancel(sim)
-					}
-				},
-			})
-			ai.MysticBuffetAuras = append(ai.MysticBuffetAuras, aura)
-		}
+				pendingActions[aura.Unit.UnitIndex] = core.StartPeriodicAction(sim, core.PeriodicActionOptions{
+					NumTicks: numTicks,
+					Period:   period,
+					OnAction: func(sim *core.Simulation) {
+						aura.Refresh(sim)
+						aura.AddStack(sim)
+					},
+				})
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				pendingActions[aura.Unit.UnitIndex].Cancel(sim)
+			},
+			OnReset: func(aura *core.Aura, sim *core.Simulation) {
+				if pendingActions[aura.Unit.UnitIndex] != nil {
+					pendingActions[aura.Unit.UnitIndex].Cancel(sim)
+				}
+			},
+		}))
 	}
 }
 
