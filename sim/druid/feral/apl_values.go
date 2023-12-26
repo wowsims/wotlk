@@ -84,3 +84,63 @@ func (value *APLValueCatNewSavageRoarDuration) GetDuration(_ *core.Simulation) t
 func (value *APLValueCatNewSavageRoarDuration) String() string {
 	return "New Savage Roar Duration()"
 }
+
+func (cat *FeralDruid) NewAPLAction(rot *core.APLRotation, config *proto.APLAction) core.APLActionImpl {
+	switch config.Action.(type) {
+	case *proto.APLAction_CatOptimalRotationAction:
+		return cat.newActionCatOptimalRotationAction(rot, config.GetCatOptimalRotationAction())
+	default:
+		return nil
+	}
+}
+
+type APLActionCatOptimalRotationAction struct {
+	cat        *FeralDruid
+	lastAction time.Duration
+}
+
+func (impl *APLActionCatOptimalRotationAction) GetInnerActions() []*core.APLAction { return nil }
+func (impl *APLActionCatOptimalRotationAction) GetAPLValues() []core.APLValue      { return nil }
+func (impl *APLActionCatOptimalRotationAction) Finalize(*core.APLRotation)         {}
+func (impl *APLActionCatOptimalRotationAction) GetNextAction(*core.Simulation) *core.APLAction {
+	return nil
+}
+
+func (cat *FeralDruid) newActionCatOptimalRotationAction(_ *core.APLRotation, _ *proto.APLActionCatOptimalRotationAction) core.APLActionImpl {
+	return &APLActionCatOptimalRotationAction{
+		cat: cat,
+	}
+}
+
+func (action *APLActionCatOptimalRotationAction) IsReady(sim *core.Simulation) bool {
+	return sim.CurrentTime > action.lastAction
+}
+
+func (action *APLActionCatOptimalRotationAction) Execute(sim *core.Simulation) {
+	cat := action.cat
+
+	// If a melee swing resulted in an Omen proc, then schedule the
+	// next player decision based on latency.
+	if cat.Talents.OmenOfClarity && cat.ClearcastingAura.RemainingDuration(sim) == cat.ClearcastingAura.Duration {
+		// Kick gcd loop, also need to account for any gcd 'left'
+		// otherwise it breaks gcd logic
+		kickTime := max(cat.NextGCDAt(), sim.CurrentTime+cat.latency)
+		cat.NextRotationAction(sim, kickTime)
+	}
+
+	if cat.GCD.IsReady(sim) && (cat.rotationAction == nil || sim.CurrentTime >= cat.rotationAction.NextActionAt) {
+		cat.OnGCDReady(sim)
+	}
+
+	cat.OnEnergyGain(sim)
+	action.lastAction = sim.CurrentTime
+}
+
+func (action *APLActionCatOptimalRotationAction) Reset(*core.Simulation) {
+	action.cat.usingHardcodedAPL = true
+	action.lastAction = core.DurationFromSeconds(-100)
+}
+
+func (action *APLActionCatOptimalRotationAction) String() string {
+	return "Execute Optimal Cat Action()"
+}

@@ -10,7 +10,7 @@ import (
 )
 
 func (cat *FeralDruid) OnEnergyGain(sim *core.Simulation) {
-	if cat.IsUsingAPL {
+	if cat.IsUsingAPL && !cat.usingHardcodedAPL {
 		return
 	}
 
@@ -25,7 +25,7 @@ func (cat *FeralDruid) OnEnergyGain(sim *core.Simulation) {
 }
 
 func (cat *FeralDruid) OnGCDReady(sim *core.Simulation) {
-	if cat.IsUsingAPL {
+	if cat.IsUsingAPL && !cat.usingHardcodedAPL {
 		return
 	}
 
