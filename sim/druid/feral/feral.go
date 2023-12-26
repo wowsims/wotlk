@@ -74,6 +74,7 @@ type FeralDruid struct {
 	bleedAura         *core.Aura
 	lastShift         time.Duration
 	ripRefreshPending bool
+	usingHardcodedAPL bool
 
 	rotationAction *core.PendingAction
 }
@@ -104,4 +105,6 @@ func (cat *FeralDruid) Reset(sim *core.Simulation) {
 	cat.CatFormAura.Activate(sim)
 	cat.readyToShift = false
 	cat.waitingForTick = false
+	//cat.berserkUsed = false
+	cat.rotationAction = nil
 }

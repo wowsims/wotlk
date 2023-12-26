@@ -40,7 +40,7 @@ func (cat *FeralDruid) rotation(sim *core.Simulation) (*druid.DruidSpell, *core.
 }
 
 func (cat *FeralDruid) OnEnergyGain(sim *core.Simulation) {
-	if cat.IsUsingAPL {
+	if cat.IsUsingAPL && !cat.usingHardcodedAPL {
 		return
 	}
 
@@ -72,7 +72,7 @@ type FeralDruidRotation struct {
 /*
 
 func (cat *FeralDruid) OnGCDReady(sim *core.Simulation) {
-	if cat.IsUsingAPL {
+	if cat.IsUsingAPL && !cat.usingHardcodedAPL {
 		return
 	}
 

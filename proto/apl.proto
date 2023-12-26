@@ -46,7 +46,7 @@ message APLListItem {
     APLAction action = 3; // The action to be performed.
 }
 
-// NextIndex: 18
+// NextIndex: 19
 message APLAction {
     APLValue condition = 1; // If set, action will only execute if value is true or != 0.
 
@@ -74,6 +74,9 @@ message APLAction {
         APLActionCancelAura cancel_aura = 10;
         APLActionTriggerICD trigger_icd = 11;
         APLActionItemSwap item_swap = 17;
+
+	// Class or Spec-specific actions
+	APLActionCatOptimalRotationAction cat_optimal_rotation_action = 18;
     }
 }
 
@@ -243,6 +246,9 @@ message APLActionItemSwap {
 
     // The set to swap to.
     SwapSet swap_set = 1;
+}
+
+message APLActionCatOptimalRotationAction {
 }
 
 ///////////////////////////////////////////////////////////////////////////
