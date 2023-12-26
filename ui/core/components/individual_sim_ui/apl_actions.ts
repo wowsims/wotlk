@@ -1,4 +1,9 @@
 import {
+	Class,
+	Spec,
+} from '../../proto/common.js';
+
+import {
 	APLAction,
 
 	APLActionCastSpell,
@@ -21,6 +26,8 @@ import {
 	APLActionTriggerICD,
 	APLActionItemSwap,
 	APLActionItemSwap_SwapSet as ItemSwapSet,
+
+	APLActionCatOptimalRotationAction,
 
 	APLValue,
 } from '../../proto/apl.js';
@@ -559,6 +566,17 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 		newValue: () => APLActionItemSwap.create(),
 		fields: [
 			itemSwapSetFieldConfig('swapSet'),
+		],
+	}),
+
+	// Class/spec specific actions
+	['catOptimalRotationAction']: inputBuilder({
+		label: 'Optimal Rotation Action',
+		submenu: ['Feral Druid'],
+		shortDescription: 'Executes optimized Feral DPS rotation using hardcoded legacy algorithm.',
+		includeIf: (player: Player<any>, isPrepull: boolean) => player.spec == Spec.SpecFeralDruid,
+		newValue: () => APLActionCatOptimalRotationAction.create(),
+		fields: [
 		],
 	}),
 };
