@@ -39,6 +39,7 @@ import { Input, InputConfig } from '../input.js';
 import { Player } from '../../player.js';
 import { TextDropdownPicker } from '../dropdown_picker.js';
 import { ListItemPickerConfig, ListPicker } from '../list_picker.js';
+import { FeralDruid_Rotation_AplType } from '../../proto/druid.js';
 
 import * as AplHelpers from './apl_helpers.js';
 import * as AplValues from './apl_values.js';
@@ -345,7 +346,7 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 		}),
 		fields: [
 			AplHelpers.actionIdFieldConfig('spellId', 'dot_spells', ''),
-			AplHelpers.numberFieldConfig('maxDots', {
+			AplHelpers.numberFieldConfig('maxDots', false, {
 				label: 'Max Dots',
 				labelTooltip: 'Maximum number of DoTs to simultaneously apply.',
 			}),
@@ -373,7 +374,7 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 		}),
 		fields: [
 			AplHelpers.actionIdFieldConfig('spellId', 'shield_spells', ''),
-			AplHelpers.numberFieldConfig('maxShields', {
+			AplHelpers.numberFieldConfig('maxShields', false, {
 				label: 'Max Shields',
 				labelTooltip: 'Maximum number of Shields to simultaneously apply.',
 			}),
@@ -575,8 +576,47 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 		submenu: ['Feral Druid'],
 		shortDescription: 'Executes optimized Feral DPS rotation using hardcoded legacy algorithm.',
 		includeIf: (player: Player<any>, isPrepull: boolean) => player.spec == Spec.SpecFeralDruid,
-		newValue: () => APLActionCatOptimalRotationAction.create(),
+		newValue: () => APLActionCatOptimalRotationAction.create({
+			rotationType: FeralDruid_Rotation_AplType.SingleTarget,
+			manualParams: true,
+			maxFfDelay: 0.1,
+			minRoarOffset: 25.0,
+			ripLeeway: 4,
+			useRake: true,
+			useBite: true,
+			biteTime: 4.0,
+			flowerWeave: false,
+		}),
 		fields: [
+			AplHelpers.rotationTypeFieldConfig('rotationType'),
+			AplHelpers.booleanFieldConfig('manualParams', 'Manual Advanced Parameters', {
+				'labelTooltip': 'Manually specify advanced parameters, otherwise will use preset defaults.',
+			}),
+			AplHelpers.numberFieldConfig('maxFfDelay', true, {
+				'label': 'Max FF Delay',
+				'labelTooltip': 'Max allowed FF delay to fit in damage casts. Ignored if not using manual advanced parameters.',
+			}),
+			AplHelpers.numberFieldConfig('minRoarOffset', true, {
+				'label': 'Roar Offset',
+				'labelTooltip': 'Targeted offset in Rip/Roar timings. Ignored for AOE rotation or if not using manual advanced parameters.',
+			}),
+			AplHelpers.numberFieldConfig('ripLeeway', false, {
+				'label': 'Rip Leeway',
+				'labelTooltip': 'Rip leeway when optimizing Roar clips. Ignored for AOE rotation or if not using manual advanced parameters.',
+			}),
+			AplHelpers.booleanFieldConfig('useRake', 'Use Rake', {
+				'labelTooltip': 'Use Rake during rotation. Ignored for AOE rotation or if not using manual advanced parameters.',
+			}),
+			AplHelpers.booleanFieldConfig('useBite', 'Bite during rotation', {
+				'labelTooltip': 'Use Bite during rotation rather than exclusively at end of fight. Ignored for AOE rotation or if not using manual advanced parameters.',
+			}),
+			AplHelpers.numberFieldConfig('biteTime', true, {
+				'label': 'Bite Time',
+				'labelTooltip': 'Min seconds remaining on Rip/Roar to allow a Bite. Ignored if not Biting during rotation.',
+			}),
+			AplHelpers.booleanFieldConfig('flowerWeave', 'Flower Weave', {
+				'labelTooltip': 'Fish for Clearcasting procs during AOE rotation with GotW. Ignored for Single Target rotation or if not using manual advanced parameters.',
+			}),
 		],
 	}),
 };

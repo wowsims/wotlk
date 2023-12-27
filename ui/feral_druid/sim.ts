@@ -1,5 +1,6 @@
 import {
 	Class,
+	Cooldowns,
 	Debuffs,
 	Faction,
 	IndividualBuffs,
@@ -18,12 +19,22 @@ import { Stats } from '../core/proto_utils/stats.js';
 import { getSpecIcon, specNames } from '../core/proto_utils/utils.js';
 import { Player } from '../core/player.js';
 
+import {
+	FeralDruid_Rotation as DruidRotation,
+} from '../core/proto/druid.js';
+
 import * as IconInputs from '../core/components/icon_inputs.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
+import * as AplUtils from '../core/proto_utils/apl_utils.js';
 
 import * as DruidInputs from './inputs.js';
 import * as Presets from './presets.js';
-import { APLRotation } from 'ui/core/proto/apl.js';
+import {
+	APLAction,
+	APLPrepullAction,
+	APLListItem,
+	APLRotation,
+} from '../core/proto/apl.js';
 
 const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 	cssClass: 'feral-druid-sim-ui',
@@ -153,7 +164,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 			Presets.StandardTalents,
 		],
 		rotations: [
-			Presets.ROTATION_PRESET_LEGACY_DEFAULT,
+			Presets.SIMPLE_ROTATION_DEFAULT,
 			Presets.APL_ROTATION_DEFAULT,
 		],
 		// Preset gear configurations that the user can quickly select.
@@ -168,6 +179,32 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 	
 	autoRotation: (_player: Player<Spec.SpecFeralDruid>): APLRotation => {
 		return Presets.APL_ROTATION_DEFAULT.rotation.rotation!;
+	},
+
+	simpleRotation: (player: Player<Spec.SpecFeralDruid>, simple: DruidRotation, cooldowns: Cooldowns): APLRotation => {
+		let [prepullActions, actions] = AplUtils.standardCooldownDefaults(cooldowns);
+
+		const preOmen = APLPrepullAction.fromJsonString(`{"action":{"activateAura":{"auraId":{"spellId":16870}}},"doAtValue":{"const":{"val":"-1s"}}}`);
+		const preZerk = APLPrepullAction.fromJsonString(`{"action":{"castSpell":{"spellId":{"spellId":50334}}},"doAtValue":{"const":{"val":"-1s"}}}`);
+		const blockZerk = APLAction.fromJsonString(`{"condition":{"const":{"val":"false"}},"castSpell":{"spellId":{"spellId":50334}}}`);
+		const doRotation = APLAction.fromJsonString(`{"catOptimalRotationAction":{"rotationType":${simple.rotationType},"manualParams":${simple.manualParams},"maxFfDelay":${simple.maxFfDelay.toFixed(2)},"minRoarOffset":${simple.minRoarOffset.toFixed(2)},"ripLeeway":${simple.ripLeeway.toFixed(0)},"useRake":${simple.useRake},"useBite":${simple.useBite},"biteTime":${simple.biteTime.toFixed(2)},"flowerWeave":${simple.flowerWeave}}}`);
+
+		prepullActions.push(...[
+			simple.prePopOoc ? preOmen: null,
+			simple.prePopBerserk ? preZerk: null,
+		].filter(a => a) as Array<APLPrepullAction>)
+
+		actions.push(...[
+			blockZerk,
+			doRotation,
+		].filter(a => a) as Array<APLAction>)
+
+		return APLRotation.create({
+			prepullActions: prepullActions,
+			priorityList: actions.map(action => APLListItem.create({
+				action: action,
+			}))
+		});
 	},
 
 	raidSimPresets: [

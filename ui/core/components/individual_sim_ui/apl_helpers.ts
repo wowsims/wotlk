@@ -4,13 +4,14 @@ import { Player, UnitMetadata } from '../../player.js';
 import { EventID, TypedEvent } from '../../typed_event.js';
 import { bucket } from '../../utils.js';
 import { AdaptiveStringPicker } from '../string_picker.js';
-import { NumberPicker } from '../number_picker.js';
+import { NumberPicker, NumberPickerConfig } from '../number_picker.js';
 import { DropdownPicker, DropdownPickerConfig, DropdownValueConfig, TextDropdownPicker } from '../dropdown_picker.js';
 import { UnitPicker, UnitPickerConfig, UnitValue } from '../unit_picker.js';
 import { Input, InputConfig } from '../input.js';
 import { ActionID } from '../../proto/common.js';
 import { BooleanPicker } from '../boolean_picker.js';
 import { APLValueRuneSlot, APLValueRuneType } from '../../proto/apl.js';
+import { FeralDruid_Rotation_AplType } from '../../proto/druid.js';
 
 export type ACTION_ID_SET = 'auras' | 'stackable_auras' | 'icd_auras' | 'exclusive_effect_auras' | 'spells' | 'castable_spells' | 'channel_spells' | 'dot_spells' | 'shield_spells' | 'non_instant_spells';
 
@@ -489,13 +490,15 @@ export function booleanFieldConfig(field: string, label?:string, options?: Parti
 	};
 }
 
-export function numberFieldConfig(field: string, options?: Partial<APLPickerBuilderFieldConfig<any, any>>): APLPickerBuilderFieldConfig<any, any> {
+export function numberFieldConfig(field: string, float: boolean, options?: Partial<APLPickerBuilderFieldConfig<any, any>>): APLPickerBuilderFieldConfig<any, any> {
 	return {
 		field: field,
 		newValue: () => 0,
 		factory: (parent, player, config) => {
-			config.extraCssClasses = ['input-inline'].concat(config.extraCssClasses || []);
-			return new NumberPicker(parent, player, config);
+			const numberPickerConfig = config as NumberPickerConfig<Player<any>>;
+			numberPickerConfig.float = float;
+			numberPickerConfig.extraCssClasses = ['input-inline'].concat(config.extraCssClasses || []);
+			return new NumberPicker(parent, player, numberPickerConfig);
 		},
 		...(options || {}),
 	};
@@ -552,6 +555,25 @@ export function runeSlotFieldConfig(field: string): APLPickerBuilderFieldConfig<
 				{ value: APLValueRuneSlot.SlotLeftUnholy, label: 'Unholy Left' },
 				{ value: APLValueRuneSlot.SlotRightUnholy, label: 'Unholy Right' },
 			],
+		}),
+	};
+}
+
+export function rotationTypeFieldConfig(field: string): APLPickerBuilderFieldConfig<any, any> {
+	let values = [
+		{ value: FeralDruid_Rotation_AplType.SingleTarget, label: 'Single Target' },
+		{ value: FeralDruid_Rotation_AplType.Aoe, label: 'AOE' },
+	]
+
+	return {
+		field: field,
+		label: 'Type',
+		newValue: () => FeralDruid_Rotation_AplType.SingleTarget,
+		factory: (parent, player, config) => new TextDropdownPicker(parent, player, {
+			...config,
+			defaultLabel: 'Single Target',
+			equals: (a, b) => a == b,
+			values: values,
 		}),
 	};
 }
