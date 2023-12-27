@@ -5,6 +5,7 @@ option go_package = "./proto";
 
 import "common.proto";
 import "shaman.proto";
+import "druid.proto";
 
 // Rotation options are based heavily on APL. See https://github.com/simulationcraft/simc/wiki/ActionLists.
 
@@ -249,6 +250,15 @@ message APLActionItemSwap {
 }
 
 message APLActionCatOptimalRotationAction {
+    FeralDruid.Rotation.AplType rotation_type = 1;
+    bool manual_params = 2;
+    float max_ff_delay = 3;
+    float min_roar_offset = 4;
+    int32 rip_leeway = 5;
+    bool use_rake = 6;
+    bool use_bite = 7;
+    float bite_time = 8;
+    bool flower_weave = 9;
 }
 
 ///////////////////////////////////////////////////////////////////////////

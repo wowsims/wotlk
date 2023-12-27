@@ -114,7 +114,25 @@ func (impl *APLActionCatOptimalRotationAction) GetNextAction(*core.Simulation) *
 	return nil
 }
 
-func (cat *FeralDruid) newActionCatOptimalRotationAction(_ *core.APLRotation, _ *proto.APLActionCatOptimalRotationAction) core.APLActionImpl {
+func (cat *FeralDruid) newActionCatOptimalRotationAction(_ *core.APLRotation, config *proto.APLActionCatOptimalRotationAction) core.APLActionImpl {
+	rotationOptions := &proto.FeralDruid_Rotation{
+		RotationType:       config.RotationType,
+		MaintainFaerieFire: true,
+		UseRake:            config.UseRake,
+		UseBite:            config.UseBite,
+		BiteTime:           config.BiteTime,
+		MangleSpam:         false,
+		MaxFfDelay:         config.MaxFfDelay,
+		Powerbear:          false,
+		MinRoarOffset:      config.MinRoarOffset,
+		RipLeeway:          config.RipLeeway,
+		HotUptime:          0.0,
+		FlowerWeave:        config.FlowerWeave,
+		ManualParams:       config.ManualParams,
+	}
+
+	cat.setupRotation(rotationOptions)
+
 	return &APLActionCatOptimalRotationAction{
 		cat: cat,
 	}
@@ -140,7 +158,7 @@ func (action *APLActionCatOptimalRotationAction) Execute(sim *core.Simulation) {
 		cat.OnGCDReady(sim)
 	}
 
-	cat.OnEnergyGain(sim)
+	cat.doTigersFury(sim)
 	action.lastAction = sim.CurrentTime
 }
 

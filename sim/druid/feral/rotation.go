@@ -76,7 +76,10 @@ func (cat *FeralDruid) OnGCDReady(sim *core.Simulation) {
 		return
 	}
 
-	cat.TryUseCooldowns(sim)
+	if !cat.IsUsingAPL {
+		cat.TryUseCooldowns(sim)
+	}
+
 	if !cat.GCD.IsReady(sim) {
 		return
 	}
