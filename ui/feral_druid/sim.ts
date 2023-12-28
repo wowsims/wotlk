@@ -166,6 +166,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 		rotations: [
 			Presets.SIMPLE_ROTATION_DEFAULT,
 			Presets.APL_ROTATION_DEFAULT,
+			Presets.APL_ROTATION_CUSTOM_EXAMPLE,
 		],
 		// Preset gear configurations that the user can quickly select.
 		gear: [
