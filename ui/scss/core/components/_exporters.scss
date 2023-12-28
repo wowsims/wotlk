@@ -4,4 +4,10 @@
 		height: 40vh;
 		resize: none;
 	}
+
+	.link-exporter-pickers {
+		display: grid;
+		grid-template-columns: repeat(3,1fr);
+		column-gap: 1.25rem;
+	}
 }
