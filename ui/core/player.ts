@@ -87,7 +87,7 @@ import { getLanguageCode } from './constants/lang.js';
 import { EventID, TypedEvent } from './typed_event.js';
 import { Party, MAX_PARTY_SIZE } from './party.js';
 import { Raid } from './raid.js';
-import { Sim } from './sim.js';
+import { Sim, SimSettingCategories } from './sim.js';
 import { stringComparator, sum } from './utils.js';
 import { ElementalShaman_Options, ElementalShaman_Options_ThunderstormRange, ElementalShaman_Rotation, ElementalShaman_Rotation_BloodlustUse, EnhancementShaman_Rotation, EnhancementShaman_Rotation_BloodlustUse, RestorationShaman_Rotation, RestorationShaman_Rotation_BloodlustUse } from './proto/shaman.js';
 import { Database } from './proto_utils/database.js';
@@ -1331,28 +1331,51 @@ export class Player<SpecType extends Spec> {
 		return Database.mergeSimDatabases(dbGear, dbItemSwapGear);
 	}
 
-	toProto(forExport?: boolean, forSimming?: boolean): PlayerProto {
+	toProto(forExport?: boolean, forSimming?: boolean, exportCategories?: Array<SimSettingCategories>): PlayerProto {
+		const exportCategory = (cat: SimSettingCategories) =>
+				!exportCategories
+				|| exportCategories.length == 0
+				|| exportCategories.includes(cat);
+
 		const aplIsLaunched = aplLaunchStatuses[this.spec] == LaunchStatus.Launched;
 		const gear = this.getGear();
 		const aplRotation = forSimming ? this.getResolvedAplRotation() : this.aplRotation;
-		return withSpecProto(
-			this.spec,
-			PlayerProto.create({
-				name: this.getName(),
-				race: this.getRace(),
-				class: this.getClass(),
+
+		let player = PlayerProto.create({
+			class: this.getClass(),
+			database: forExport ? undefined : this.toDatabase(),
+		});
+		if (exportCategory(SimSettingCategories.Gear)) {
+			PlayerProto.mergePartial(player, {
 				equipment: gear.asSpec(),
-				consumes: this.getConsumes(),
 				bonusStats: this.getBonusStats().toProto(),
 				enableItemSwap: this.getEnableItemSwap(),
 				itemSwap: this.getItemSwapGear().toProto(),
-				buffs: this.getBuffs(),
+			});
+		}
+		if (exportCategory(SimSettingCategories.Talents)) {
+			PlayerProto.mergePartial(player, {
+				talentsString: this.getTalentsString(),
+				glyphs: this.getGlyphs(),
+			});
+		}
+		if (exportCategory(SimSettingCategories.Rotation)) {
+			PlayerProto.mergePartial(player, {
 				cooldowns: (aplIsLaunched || (forSimming && aplRotation.type == APLRotationType.TypeAPL))
 					? Cooldowns.create({ hpPercentForDefensives: this.getCooldowns().hpPercentForDefensives })
 					: this.getCooldowns(),
-				talentsString: this.getTalentsString(),
-				glyphs: this.getGlyphs(),
 				rotation: aplRotation,
+			});
+		}
+		if (exportCategory(SimSettingCategories.Consumes)) {
+			PlayerProto.mergePartial(player, {
+				consumes: this.getConsumes(),
+			});
+		}
+		if (exportCategory(SimSettingCategories.Miscellaneous)) {
+			PlayerProto.mergePartial(player, {
+				name: this.getName(),
+				race: this.getRace(),
 				profession1: this.getProfession1(),
 				profession2: this.getProfession2(),
 				reactionTimeMs: this.getReactionTime(),
@@ -1360,17 +1383,32 @@ export class Player<SpecType extends Spec> {
 				inFrontOfTarget: this.getInFrontOfTarget(),
 				distanceFromTarget: this.getDistanceFromTarget(),
 				healingModel: this.getHealingModel(),
-				database: forExport ? SimDatabase.create() : this.toDatabase(),
 				nibelungAverageCasts: this.getNibelungAverageCasts(),
 				nibelungAverageCastsSet: this.nibelungAverageCastsSet,
-			}),
-			(aplIsLaunched || (forSimming && aplRotation.type == APLRotationType.TypeAPL))
+			});
+		}
+		if (exportCategory(SimSettingCategories.External)) {
+			PlayerProto.mergePartial(player, {
+				buffs: this.getBuffs(),
+			});
+		}
+		return withSpecProto(
+			this.spec,
+			player,
+			(aplIsLaunched || (forSimming && aplRotation.type == APLRotationType.TypeAPL) || !exportCategory(SimSettingCategories.Rotation))
 				? this.specTypeFunctions.rotationCreate()
 				: this.getRotation(),
-			this.getSpecOptions());
+			exportCategory(SimSettingCategories.Miscellaneous)
+				? this.getSpecOptions()
+				: this.specTypeFunctions.optionsCreate());
 	}
 
-	fromProto(eventID: EventID, proto: PlayerProto) {
+	fromProto(eventID: EventID, proto: PlayerProto, includeCategories?: Array<SimSettingCategories>) {
+		const loadCategory = (cat: SimSettingCategories) =>
+				!includeCategories
+				|| includeCategories.length == 0
+				|| includeCategories.includes(cat);
+
 		if (proto.rotation) {
 			proto.rotation.prepullActions.forEach(ppa => {
 				if (ppa.doAt) {
@@ -1408,42 +1446,53 @@ export class Player<SpecType extends Spec> {
 		}
 
 		TypedEvent.freezeAllAndDo(() => {
-			this.setName(eventID, proto.name);
-			this.setRace(eventID, proto.race);
-			this.setGear(eventID, proto.equipment ? this.sim.db.lookupEquipmentSpec(proto.equipment) : new Gear({}));
-			this.setEnableItemSwap(eventID, proto.enableItemSwap);
-			this.setItemSwapGear(eventID, proto.itemSwap ? this.sim.db.lookupItemSwap(proto.itemSwap) : new ItemSwapGear({}));
-			//this.setBulkEquipmentSpec(eventID, BulkEquipmentSpec.create()); // Do not persist the bulk equipment settings.
-			this.setConsumes(eventID, proto.consumes || Consumes.create());
-			this.setBonusStats(eventID, Stats.fromProto(proto.bonusStats || UnitStats.create()));
-			this.setBuffs(eventID, proto.buffs || IndividualBuffs.create());
-			this.setTalentsString(eventID, proto.talentsString);
-			this.setGlyphs(eventID, proto.glyphs || Glyphs.create());
-			this.setProfession1(eventID, proto.profession1);
-			this.setProfession2(eventID, proto.profession2);
-			this.setReactionTime(eventID, proto.reactionTimeMs);
-			this.setChannelClipDelay(eventID, proto.channelClipDelayMs);
-			this.setInFrontOfTarget(eventID, proto.inFrontOfTarget);
-			this.setDistanceFromTarget(eventID, proto.distanceFromTarget);
-			this.setNibelungAverageCastsSet(eventID, proto.nibelungAverageCastsSet);
-			if (this.nibelungAverageCastsSet) {
-				this.setNibelungAverageCasts(eventID, proto.nibelungAverageCasts);
+			if (loadCategory(SimSettingCategories.Gear)) {
+				this.setGear(eventID, proto.equipment ? this.sim.db.lookupEquipmentSpec(proto.equipment) : new Gear({}));
+				this.setEnableItemSwap(eventID, proto.enableItemSwap);
+				this.setItemSwapGear(eventID, proto.itemSwap ? this.sim.db.lookupItemSwap(proto.itemSwap) : new ItemSwapGear({}));
+				this.setBonusStats(eventID, Stats.fromProto(proto.bonusStats || UnitStats.create()));
+				//this.setBulkEquipmentSpec(eventID, BulkEquipmentSpec.create()); // Do not persist the bulk equipment settings.
 			}
-			this.setHealingModel(eventID, proto.healingModel || HealingModel.create());
-			this.setSpecOptions(eventID, this.specTypeFunctions.optionsFromPlayer(proto));
-
-			if (aplLaunchStatuses[this.spec] == LaunchStatus.Launched) {
-				if (proto.rotation?.type == APLRotationType.TypeUnknown || proto.rotation?.type == APLRotationType.TypeLegacy) {
-					if (!proto.rotation) {
-						proto.rotation = APLRotation.create();
+			if (loadCategory(SimSettingCategories.Talents)) {
+				this.setTalentsString(eventID, proto.talentsString);
+				this.setGlyphs(eventID, proto.glyphs || Glyphs.create());
+			}
+			if (loadCategory(SimSettingCategories.Rotation)) {
+				if (aplLaunchStatuses[this.spec] == LaunchStatus.Launched) {
+					if (proto.rotation?.type == APLRotationType.TypeUnknown || proto.rotation?.type == APLRotationType.TypeLegacy) {
+						if (!proto.rotation) {
+							proto.rotation = APLRotation.create();
+						}
+						proto.rotation.type = APLRotationType.TypeAuto;
 					}
-					proto.rotation.type = APLRotationType.TypeAuto;
+				} else {
+					this.setCooldowns(eventID, proto.cooldowns || Cooldowns.create());
+					this.setRotation(eventID, this.specTypeFunctions.rotationFromPlayer(proto));
 				}
-			} else {
-				this.setCooldowns(eventID, proto.cooldowns || Cooldowns.create());
-				this.setRotation(eventID, this.specTypeFunctions.rotationFromPlayer(proto));
+				this.setAplRotation(eventID, proto.rotation || APLRotation.create())
 			}
-			this.setAplRotation(eventID, proto.rotation || APLRotation.create())
+			if (loadCategory(SimSettingCategories.Consumes)) {
+				this.setConsumes(eventID, proto.consumes || Consumes.create());
+			}
+			if (loadCategory(SimSettingCategories.Miscellaneous)) {
+				this.setSpecOptions(eventID, this.specTypeFunctions.optionsFromPlayer(proto));
+				this.setName(eventID, proto.name);
+				this.setRace(eventID, proto.race);
+				this.setProfession1(eventID, proto.profession1);
+				this.setProfession2(eventID, proto.profession2);
+				this.setReactionTime(eventID, proto.reactionTimeMs);
+				this.setChannelClipDelay(eventID, proto.channelClipDelayMs);
+				this.setInFrontOfTarget(eventID, proto.inFrontOfTarget);
+				this.setDistanceFromTarget(eventID, proto.distanceFromTarget);
+				this.setNibelungAverageCastsSet(eventID, proto.nibelungAverageCastsSet);
+				if (this.nibelungAverageCastsSet) {
+					this.setNibelungAverageCasts(eventID, proto.nibelungAverageCasts);
+				}
+				this.setHealingModel(eventID, proto.healingModel || HealingModel.create());
+			}
+			if (loadCategory(SimSettingCategories.External)) {
+				this.setBuffs(eventID, proto.buffs || IndividualBuffs.create());
+			}
 
 			const options = this.getSpecOptions();
 			for (let key in options) {

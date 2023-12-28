@@ -17,8 +17,11 @@ import { classNames, nameToClass, nameToRace, nameToProfession } from '../proto_
 import { classGlyphsConfig, talentSpellIdsToTalentString } from '../talents/factory';
 import { GlyphConfig } from '../talents/glyphs_picker';
 import { BaseModal } from './base_modal';
-import { buf2hex } from '../utils';
+import { buf2hex, getEnumValues } from '../utils';
 import { JsonObject } from '@protobuf-ts/runtime';
+import { SimSettingCategories } from '../sim';
+
+declare var pako: any;
 
 export abstract class Importer extends BaseModal {
 	protected readonly textElem: HTMLTextAreaElement;
@@ -116,6 +119,67 @@ export abstract class Importer extends BaseModal {
 				(missingItems.length == 0 ? '' : '\n\nItems: ' + missingItems.join(', ')) +
 				(missingEnchants.length == 0 ? '' : '\n\nEnchants: ' + missingEnchants.join(', ')));
 		}
+	}
+}
+
+interface UrlParseData {
+	settings: IndividualSimSettings,
+	categories: Array<SimSettingCategories>,
+}
+
+// For now this just holds static helpers to match the exporter, so it doesn't extend Importer.
+export class IndividualLinkImporter {
+
+	// Exclude UISettings by default, since most users don't intend to export those.
+	static readonly DEFAULT_CATEGORIES = getEnumValues(SimSettingCategories).filter(c => c != SimSettingCategories.UISettings) as Array<SimSettingCategories>;
+
+	static readonly CATEGORY_PARAM = 'i';
+	static readonly CATEGORY_KEYS: Map<SimSettingCategories, string> = (() => {
+		const map = new Map();
+		// Use single-letter abbreviations since these will be included in sim links.
+		map.set(SimSettingCategories.Gear, 'g');
+		map.set(SimSettingCategories.Talents, 't');
+		map.set(SimSettingCategories.Rotation, 'r');
+		map.set(SimSettingCategories.Consumes, 'c');
+		map.set(SimSettingCategories.Miscellaneous, 'm');
+		map.set(SimSettingCategories.External, 'x');
+		map.set(SimSettingCategories.Encounter, 'e');
+		map.set(SimSettingCategories.UISettings, 'u');
+		return map;
+	})();
+
+	static tryParseUrlLocation(location: Location): UrlParseData|null {
+		let hash = location.hash;
+		if (hash.length <= 1) {
+			return null;
+		}
+
+		// Remove leading '#'
+		hash = hash.substring(1);
+		const binary = atob(hash);
+		const bytes = new Uint8Array(binary.length);
+		for (let i = 0; i < bytes.length; i++) {
+			bytes[i] = binary.charCodeAt(i);
+		}
+
+		const settingsBytes = pako.inflate(bytes);
+		const settings = IndividualSimSettings.fromBinary(settingsBytes);
+
+		let exportCategories = IndividualLinkImporter.DEFAULT_CATEGORIES;
+		const urlParams = new URLSearchParams(window.location.search);
+		if (urlParams.has(IndividualLinkImporter.CATEGORY_PARAM)) {
+			const categoryChars = urlParams.get(IndividualLinkImporter.CATEGORY_PARAM)!.split('');
+			exportCategories = categoryChars
+				.map(char => [...IndividualLinkImporter.CATEGORY_KEYS.entries()]
+				.find(e => e[1] == char))
+				.filter(e => e)
+				.map(e => e![0]);
+		}
+
+		return {
+			settings: settings,
+			categories: exportCategories,
+		};
 	}
 }
 
