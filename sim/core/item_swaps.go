@@ -266,7 +266,7 @@ func (swap *ItemSwap) swapWeapon(slot proto.ItemSlot) {
 }
 
 func (swap *ItemSwap) reset(sim *Simulation) {
-	if !swap.IsEnabled() || swap.IsSwapped() {
+	if !swap.IsEnabled() || !swap.IsSwapped() {
 		return
 	}
 
