@@ -1,10 +1,8 @@
 import { ActionId } from '../proto_utils/action_id.js';
-import { CustomRotation } from '../proto/common.js';
 import { Spec } from '../proto/common.js';
 import { Player } from '../player.js';
 import { EventID, TypedEvent } from '../typed_event.js';
 import { SpecOptions, SpecRotation } from '../proto_utils/utils.js';
-import { CustomRotationPickerConfig } from './individual_sim_ui/custom_rotation_picker.js';
 import { IconPickerConfig } from './icon_picker.js';
 import { IconEnumPickerConfig, IconEnumValueConfig } from './icon_enum_picker.js';
 import { EnumPickerConfig, EnumValueConfig } from './enum_picker.js';
@@ -445,35 +443,4 @@ export function makeRotationEnumIconInput<SpecType extends Spec, T>(config: Play
 		changedEvent: config.changeEmitter || ((player: Player<SpecType>) => player.rotationChangeEmitter),
 		extraCssClasses: config.extraCssClasses,
 	});
-}
-
-export interface TypedCustomRotationPickerConfig<SpecType extends Spec, T> extends CustomRotationPickerConfig<SpecType, T> {
-	type: 'customRotation',
-}
-
-interface WrappedCustomRotationInputConfig<SpecType extends Spec, T> {
-	fieldName: keyof SpecRotation<SpecType>,
-	getValue?: (player: Player<SpecType>) => CustomRotation,
-	setValue?: (eventID: EventID, player: Player<SpecType>, newValue: CustomRotation) => void,
-
-	numColumns: number,
-	showCastsPerMinute?: boolean,
-	values: Array<IconEnumValueConfig<Player<SpecType>, T>>;
-
-	showWhen?: (player: Player<SpecType>) => boolean,
-}
-export function makeCustomRotationInput<SpecType extends Spec, T>(config: WrappedCustomRotationInputConfig<SpecType, T>): TypedCustomRotationPickerConfig<SpecType, T> {
-	return {
-		type: 'customRotation',
-		getValue: config.getValue || ((player: Player<SpecType>) => (player.getRotation()[config.fieldName] as unknown as CustomRotation) || CustomRotation.create()),
-		setValue: config.setValue || ((eventID: EventID, player: Player<SpecType>, newValue: CustomRotation) => {
-			const rotation = player.getRotation();
-			(rotation[config.fieldName] as unknown as CustomRotation) = newValue;
-			player.setRotation(eventID, rotation);
-		}),
-		showWhen: config.showWhen,
-		numColumns: config.numColumns,
-		showCastsPerMinute: config.showCastsPerMinute || false,
-		values: config.values,
-	}
 }

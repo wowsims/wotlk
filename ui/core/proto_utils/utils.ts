@@ -1318,7 +1318,6 @@ export const specToLocalStorageKey: Record<Spec, string> = {
 export function withSpecProto<SpecType extends Spec>(
 	spec: Spec,
 	player: Player,
-	rotation: SpecRotation<SpecType>,
 	specOptions: SpecOptions<SpecType>): Player {
 	const copy = Player.clone(player);
 
@@ -1327,7 +1326,6 @@ export function withSpecProto<SpecType extends Spec>(
 			copy.spec = {
 				oneofKind: 'balanceDruid',
 				balanceDruid: BalanceDruid.create({
-					rotation: rotation as BalanceDruidRotation,
 					options: specOptions as BalanceDruidOptions,
 				}),
 			};
@@ -1336,7 +1334,6 @@ export function withSpecProto<SpecType extends Spec>(
 			copy.spec = {
 				oneofKind: 'feralDruid',
 				feralDruid: FeralDruid.create({
-					rotation: rotation as FeralDruidRotation,
 					options: specOptions as FeralDruidOptions,
 				}),
 			};
@@ -1345,7 +1342,6 @@ export function withSpecProto<SpecType extends Spec>(
 			copy.spec = {
 				oneofKind: 'feralTankDruid',
 				feralTankDruid: FeralTankDruid.create({
-					rotation: rotation as FeralTankDruidRotation,
 					options: specOptions as FeralTankDruidOptions,
 				}),
 			};
@@ -1354,7 +1350,6 @@ export function withSpecProto<SpecType extends Spec>(
 			copy.spec = {
 				oneofKind: 'restorationDruid',
 				restorationDruid: RestorationDruid.create({
-					rotation: rotation as RestorationDruidRotation,
 					options: specOptions as RestorationDruidOptions,
 				}),
 			};
@@ -1363,7 +1358,6 @@ export function withSpecProto<SpecType extends Spec>(
 			copy.spec = {
 				oneofKind: 'elementalShaman',
 				elementalShaman: ElementalShaman.create({
-					rotation: rotation as ElementalShamanRotation,
 					options: specOptions as ElementalShamanOptions,
 				}),
 			};
@@ -1372,7 +1366,6 @@ export function withSpecProto<SpecType extends Spec>(
 			copy.spec = {
 				oneofKind: 'enhancementShaman',
 				enhancementShaman: EnhancementShaman.create({
-					rotation: rotation as EnhancementShamanRotation,
 					options: specOptions as ElementalShamanOptions,
 				}),
 			};
@@ -1381,7 +1374,6 @@ export function withSpecProto<SpecType extends Spec>(
 			copy.spec = {
 				oneofKind: 'restorationShaman',
 				restorationShaman: RestorationShaman.create({
-					rotation: rotation as RestorationShamanRotation,
 					options: specOptions as RestorationShamanOptions,
 				}),
 			};
@@ -1390,7 +1382,6 @@ export function withSpecProto<SpecType extends Spec>(
 			copy.spec = {
 				oneofKind: 'hunter',
 				hunter: Hunter.create({
-					rotation: rotation as HunterRotation,
 					options: specOptions as HunterOptions,
 				}),
 			};
@@ -1399,7 +1390,6 @@ export function withSpecProto<SpecType extends Spec>(
 			copy.spec = {
 				oneofKind: 'mage',
 				mage: Mage.create({
-					rotation: rotation as MageRotation,
 					options: specOptions as MageOptions,
 				}),
 			};
@@ -1408,7 +1398,6 @@ export function withSpecProto<SpecType extends Spec>(
 			copy.spec = {
 				oneofKind: 'holyPaladin',
 				holyPaladin: HolyPaladin.create({
-					rotation: rotation as HolyPaladinRotation,
 					options: specOptions as HolyPaladinOptions,
 				}),
 			};
@@ -1417,7 +1406,6 @@ export function withSpecProto<SpecType extends Spec>(
 			copy.spec = {
 				oneofKind: 'protectionPaladin',
 				protectionPaladin: ProtectionPaladin.create({
-					rotation: rotation as ProtectionPaladinRotation,
 					options: specOptions as ProtectionPaladinOptions,
 				}),
 			};
@@ -1426,7 +1414,6 @@ export function withSpecProto<SpecType extends Spec>(
 			copy.spec = {
 				oneofKind: 'retributionPaladin',
 				retributionPaladin: RetributionPaladin.create({
-					rotation: rotation as RetributionPaladinRotation,
 					options: specOptions as RetributionPaladinOptions,
 				}),
 			};
@@ -1435,7 +1422,6 @@ export function withSpecProto<SpecType extends Spec>(
 			copy.spec = {
 				oneofKind: 'rogue',
 				rogue: Rogue.create({
-					rotation: rotation as RogueRotation,
 					options: specOptions as RogueOptions,
 				}),
 			};
@@ -1444,7 +1430,6 @@ export function withSpecProto<SpecType extends Spec>(
 			copy.spec = {
 				oneofKind: 'healingPriest',
 				healingPriest: HealingPriest.create({
-					rotation: rotation as HealingPriestRotation,
 					options: specOptions as HealingPriestOptions,
 				}),
 			};
@@ -1453,7 +1438,6 @@ export function withSpecProto<SpecType extends Spec>(
 			copy.spec = {
 				oneofKind: 'shadowPriest',
 				shadowPriest: ShadowPriest.create({
-					rotation: rotation as ShadowPriestRotation,
 					options: specOptions as ShadowPriestOptions,
 				}),
 			};
@@ -1462,7 +1446,6 @@ export function withSpecProto<SpecType extends Spec>(
 			copy.spec = {
 				oneofKind: 'smitePriest',
 				smitePriest: SmitePriest.create({
-					rotation: rotation as SmitePriestRotation,
 					options: specOptions as SmitePriestOptions,
 				}),
 			};
@@ -1471,7 +1454,6 @@ export function withSpecProto<SpecType extends Spec>(
 			copy.spec = {
 				oneofKind: 'warlock',
 				warlock: Warlock.create({
-					rotation: rotation as WarlockRotation,
 					options: specOptions as WarlockOptions,
 				}),
 			};
@@ -1480,7 +1462,6 @@ export function withSpecProto<SpecType extends Spec>(
 			copy.spec = {
 				oneofKind: 'warrior',
 				warrior: Warrior.create({
-					rotation: rotation as WarriorRotation,
 					options: specOptions as WarriorOptions,
 				}),
 			};
@@ -1489,7 +1470,6 @@ export function withSpecProto<SpecType extends Spec>(
 			copy.spec = {
 				oneofKind: 'protectionWarrior',
 				protectionWarrior: ProtectionWarrior.create({
-					rotation: rotation as ProtectionWarriorRotation,
 					options: specOptions as ProtectionWarriorOptions,
 				}),
 			};
@@ -1498,7 +1478,6 @@ export function withSpecProto<SpecType extends Spec>(
 			copy.spec = {
 				oneofKind: 'deathknight',
 				deathknight: Deathknight.create({
-					rotation: rotation as DeathknightRotation,
 					options: specOptions as DeathknightOptions,
 				}),
 			};
@@ -1507,7 +1486,6 @@ export function withSpecProto<SpecType extends Spec>(
 			copy.spec = {
 				oneofKind: 'tankDeathknight',
 				tankDeathknight: TankDeathknight.create({
-					rotation: rotation as TankDeathknightRotation,
 					options: specOptions as TankDeathknightOptions,
 				}),
 			};

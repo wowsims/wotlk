@@ -114,8 +114,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 		}),
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
-		// Default rotation settings.
-		rotation: Presets.DefaultRotation,
 		// Default talents.
 		talents: Presets.AuraMasteryTalents.data,
 		// Default spec-specific settings.
@@ -167,24 +165,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 		RetributionPaladinInputs.JudgementSelection,
 		RetributionPaladinInputs.StartingSealSelection,
 	],
-	// Inputs to include in the 'Rotation' section on the settings tab.
-	rotationInputs: {
-		inputs: [
-			RetributionPaladinInputs.RotationSelector,
-			RetributionPaladinInputs.RetributionPaladinRotationDivinePleaSelection,
-			RetributionPaladinInputs.RetributionPaladinRotationAvoidClippingConsecration,
-			RetributionPaladinInputs.RetributionPaladinRotationHoldLastAvengingWrathUntilExecution,
-			RetributionPaladinInputs.RetributionPaladinRotationCancelChaosBane,
-			RetributionPaladinInputs.RetributionPaladinRotationDivinePleaSelectionAlternate,
-			RetributionPaladinInputs.RetributionPaladinRotationDivinePleaPercentageConfig,
-			RetributionPaladinInputs.RetributionPaladinRotationConsSlackConfig,
-			RetributionPaladinInputs.RetributionPaladinRotationExoSlackConfig,
-			RetributionPaladinInputs.RetributionPaladinRotationHolyWrathConfig,
-			RetributionPaladinInputs.RetributionPaladinSoVTargets,
-			RetributionPaladinInputs.RetributionPaladinRotationPriorityConfig,
-			RetributionPaladinInputs.RetributionPaladinCastSequenceConfig
-		]
-	},
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
 		IconInputs.ReplenishmentBuff,
@@ -205,7 +185,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 
 	presets: {
 		rotations: [
-			Presets.ROTATION_PRESET_LEGACY_DEFAULT,
 			Presets.ROTATION_PRESET_DEFAULT,
 		],
 		// Preset talents that the user can quickly select.

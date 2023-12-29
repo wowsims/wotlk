@@ -70,8 +70,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
 
-		// Default rotation settings.
-		rotation: Presets.AfflictionRotation,
 		// Default talents.
 		talents: Presets.AfflictionTalents.data,
 		// Default spec-specific settings.
@@ -102,7 +100,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 		WarlockInputs.SecondaryDotInput,
 		WarlockInputs.SpecSpellInput,
 	],
-	rotationInputs: WarlockInputs.WarlockRotationConfig,
 
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
@@ -147,11 +144,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 		],
 		// Preset rotations that the user can quickly select.
 		rotations: [
-			Presets.APL_Affliction_Legacy,
 			Presets.APL_Affliction_Default,
-			Presets.APL_Demo_Legacy,
 			Presets.APL_Demo_Default,
-			Presets.APL_Destro_Legacy,
 			Presets.APL_Destro_Default,
 		],
 

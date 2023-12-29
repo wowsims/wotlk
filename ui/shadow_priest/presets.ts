@@ -14,9 +14,7 @@ import { SavedTalents } from '../core/proto/ui.js';
 
 import {
 	ShadowPriest_Options_Armor as Armor,
-	ShadowPriest_Rotation as Rotation,
 	ShadowPriest_Options as Options,
-	ShadowPriest_Rotation_RotationType,
 	PriestMajorGlyph as MajorGlyph,
 	PriestMinorGlyph as MinorGlyph,
 } from '../core/proto/priest.js';
@@ -37,11 +35,6 @@ import P3Gear from './gear_sets/p3.gear.json';
 export const P3_PRESET = PresetUtils.makePresetGear('P3 Preset', P3Gear);
 import P4Gear from './gear_sets/p4.gear.json';
 export const P4_PRESET = PresetUtils.makePresetGear('P4 Preset', P4Gear);
-
-export const DefaultRotation = Rotation.create({
-	rotationType: ShadowPriest_Rotation_RotationType.Ideal,
-});
-
 
 import DefaultApl from './apls/default.apl.json'
 export const ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Default', DefaultApl);

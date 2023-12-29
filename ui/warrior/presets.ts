@@ -10,13 +10,9 @@ import { SavedTalents } from '../core/proto/ui.js';
 
 import {
 	WarriorShout,
-	Warrior_Rotation as WarriorRotation,
-	Warrior_Rotation_SunderArmor as SunderArmor,
 	Warrior_Options as WarriorOptions,
 	WarriorMajorGlyph,
 	WarriorMinorGlyph,
-	Warrior_Rotation_StanceOption as StanceOption,
-	Warrior_Rotation_MainGcd as MainGcd,
 } from '../core/proto/warrior.js';
 
 import * as PresetUtils from '../core/preset_utils.js';
@@ -57,43 +53,6 @@ import P4FuryAllianceGear from './gear_sets/p4_fury_alliance.gear.json';
 export const P4_FURY_PRESET_ALLIANCE = PresetUtils.makePresetGear('P4 Fury [A]', P4FuryAllianceGear, { talentTrees: [1,2], faction: Faction.Alliance });
 import P4FuryHordeGear from './gear_sets/p4_fury_horde.gear.json';
 export const P4_FURY_PRESET_HORDE = PresetUtils.makePresetGear('P4 Fury [H]', P4FuryHordeGear, { talentTrees: [1,2], faction: Faction.Horde });
-
-export const DefaultRotation = WarriorRotation.create({
-	useRend: true,
-	useCleave: false,
-	useOverpower: false,
-	executePhaseOverpower: false,
-
-	mainGcd: MainGcd.Bloodthirst,
-
-	sunderArmor: SunderArmor.SunderArmorMaintain,
-
-	hsRageThreshold: 12,
-	rendHealthThresholdAbove: 20,
-	rendRageThresholdBelow: 100,
-	slamRageThreshold: 25,
-	rendCdThreshold: 0,
-	useHsDuringExecute: true,
-	useBtDuringExecute: true,
-	useWwDuringExecute: true,
-	useSlamOverExecute: true,
-	stanceOption: StanceOption.DefaultStance,
-});
-
-export const ArmsRotation = WarriorRotation.create({
-	useRend: true,
-	useMs: true,
-	useCleave: false,
-	sunderArmor: SunderArmor.SunderArmorMaintain,
-	msRageThreshold: 30,
-	slamRageThreshold: 25,
-	hsRageThreshold: 50,
-	rendCdThreshold: 0,
-	rendHealthThresholdAbove: 100,
-	useHsDuringExecute: true,
-	spamExecute: true,
-	stanceOption: StanceOption.DefaultStance,
-});
 
 import FuryApl from './apls/fury.apl.json';
 export const ROTATION_FURY = PresetUtils.makePresetAPLRotation('Fury', FuryApl, { talentTree: 1 });

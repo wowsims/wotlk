@@ -2,7 +2,7 @@ import { UnitReference, UnitReference_Type as UnitType } from '../core/proto/com
 import { Spec } from '../core/proto/common.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
-import { EventID, TypedEvent } from '../core/typed_event.js';
+import { EventID } from '../core/typed_event.js';
 
 import * as InputHelpers from '../core/components/input_helpers.js';
 
@@ -35,34 +35,3 @@ export const Shadowfiend = InputHelpers.makeSpecOptionsBooleanIconInput<Spec.Spe
 	fieldName: 'useShadowfiend',
 	id: ActionId.fromSpellId(34433),
 });
-
-export const SmitePriestRotationConfig = {
-	inputs: [
-		InputHelpers.makeRotationBooleanInput<Spec.SpecSmitePriest>({
-			fieldName: 'useDevouringPlague',
-			label: 'Use Devouring Plague',
-			labelTooltip: 'Use Devouring Plague whenever its not active.',
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecSmitePriest>({
-			fieldName: 'useShadowWordDeath',
-			label: 'Use Shadow Word: Death',
-			labelTooltip: 'Use Shadow Word: Death whenever off CD.',
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecSmitePriest>({
-			fieldName: 'useMindBlast',
-			label: 'Use Mind Blast',
-			labelTooltip: 'Use Mind Blast whenever off CD.',
-		}),
-		InputHelpers.makeRotationBooleanInput<Spec.SpecSmitePriest>({
-			fieldName: 'memeDream',
-			label: 'Meme Dream',
-			labelTooltip: 'Assumes 2nd Smite Priest in raid, so just spams HF + Smite with permanent HF uptime.',
-			extraCssClasses: ['within-raid-sim-hide'],
-		}),
-		InputHelpers.makeRotationNumberInput<Spec.SpecSmitePriest>({
-			fieldName: 'allowedHolyFireDelayMs',
-			label: 'Allowed Delay for HF',
-			labelTooltip: 'Time, in milliseconds, the player is allowed to wait for Holy Fire if it is about to come off CD.',
-		}),
-	],
-};

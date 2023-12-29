@@ -52,7 +52,7 @@ export const SV_P4_PRESET = PresetUtils.makePresetGear('SV P4 Preset', P4SVGear,
 import P5SVGear from './gear_sets/p5_sv.gear.json';
 export const SV_P5_PRESET = PresetUtils.makePresetGear('SV P5 Preset', P5SVGear, { talentTree: 2 });
 
-export const DefaultRotation = HunterRotation.create({
+export const DefaultSimpleRotation = HunterRotation.create({
 	type: RotationType.SingleTarget,
 	sting: StingType.SerpentSting,
 	trapWeave: true,
@@ -62,7 +62,7 @@ export const DefaultRotation = HunterRotation.create({
 	allowExplosiveShotDownrank: true,
 });
 
-export const ROTATION_PRESET_SIMPLE_DEFAULT = PresetUtils.makePresetSimpleRotation('Simple Default', Spec.SpecHunter, DefaultRotation);
+export const ROTATION_PRESET_SIMPLE_DEFAULT = PresetUtils.makePresetSimpleRotation('Simple Default', Spec.SpecHunter, DefaultSimpleRotation);
 import BmApl from './apls/bm.apl.json';
 export const ROTATION_PRESET_BM = PresetUtils.makePresetAPLRotation('BM', BmApl, { talentTree: 0 });
 import MmApl from './apls/mm.apl.json';

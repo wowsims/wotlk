@@ -4,19 +4,13 @@ import {
 	Food,
 	Glyphs,
 	Potions,
-	Spec,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
 import {
-	TankDeathknight_Rotation as TankDeathKnightRotation,
 	TankDeathknight_Options as TankDeathKnightOptions,
 	DeathknightMajorGlyph,
 	DeathknightMinorGlyph,
-	TankDeathknight_Rotation_Opener as Opener,
-	TankDeathknight_Rotation_OptimizationSetting as OptimizationSetting,
-	TankDeathknight_Rotation_BloodSpell as BloodSpell,
-	TankDeathknight_Rotation_Presence as Presence,
 } from '../core/proto/deathknight.js';
 
 import * as PresetUtils from '../core/preset_utils.js';
@@ -34,15 +28,6 @@ export const P1_FROST_PRESET = PresetUtils.makePresetGear('P1 Frost', P1FrostGea
 import P2FrostGear from './gear_sets/p2_frost.gear.json';
 export const P2_FROST_PRESET = PresetUtils.makePresetGear('P2 Frost', P2FrostGear);
 
-export const DefaultRotation = TankDeathKnightRotation.create({
-	opener: Opener.Threat,
-	optimizationSetting: OptimizationSetting.Hps,
-	bloodSpell: BloodSpell.BloodStrike,
-	presence: Presence.Frost,
-});
-
-
-export const BLOOD_LEGACY_PRESET_LEGACY_DEFAULT = PresetUtils.makePresetLegacyRotation('Blood Legacy', Spec.SpecTankDeathknight, DefaultRotation);
 import BloodIcyTouchApl from './apls/blood_icy_touch.apl.json';
 export const BLOOD_IT_SPAM_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Blood Icy Touch', BloodIcyTouchApl);
 import BloodAggroApl from './apls/blood_aggro.apl.json';

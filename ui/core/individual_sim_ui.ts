@@ -1,4 +1,4 @@
-import { aplLaunchStatuses, LaunchStatus, simLaunchStatuses } from './launched_sims';
+import { simLaunchStatuses } from './launched_sims';
 import { Player, PlayerConfig, registerSpecConfig as registerPlayerConfig } from './player';
 import { SimUI, SimWarning } from './sim_ui';
 import { EventID, TypedEvent } from './typed_event';
@@ -47,7 +47,6 @@ import {
 	isHealingSpec,
 	isTankSpec,
 	SpecOptions,
-	SpecRotation,
 	specToEligibleRaces,
 	specToLocalStorageKey,
 } from './proto_utils/utils';
@@ -70,8 +69,7 @@ const SAVED_TALENTS_STORAGE_KEY = '__savedTalents__';
 export type InputConfig<ModObject> = (
 	InputHelpers.TypedBooleanPickerConfig<ModObject> |
 	InputHelpers.TypedNumberPickerConfig<ModObject> |
-	InputHelpers.TypedEnumPickerConfig<ModObject> |
-	InputHelpers.TypedCustomRotationPickerConfig<any, any>
+	InputHelpers.TypedEnumPickerConfig<ModObject>
 );
 
 export interface InputSection {
@@ -121,7 +119,6 @@ export interface IndividualSimUIConfig<SpecType extends Spec> extends PlayerConf
 		gear: EquipmentSpec,
 		epWeights: Stats,
 		consumes: Consumes,
-		rotation: SpecRotation<SpecType>,
 		talents: SavedTalents,
 		specOptions: SpecOptions<SpecType>,
 
@@ -137,7 +134,7 @@ export interface IndividualSimUIConfig<SpecType extends Spec> extends PlayerConf
 	playerInputs?: InputSection,
 	playerIconInputs: Array<IconInputs.IconInputConfig<Player<SpecType>, any>>,
 	petConsumeInputs?: Array<IconInputs.IconInputConfig<Player<SpecType>, any>>,
-	rotationInputs: InputSection;
+	rotationInputs?: InputSection;
 	rotationIconInputs?: Array<IconInputs.IconInputConfig<Player<any>, any>>;
 	includeBuffDebuffInputs: Array<any>,
 	excludeBuffDebuffInputs: Array<any>,
@@ -198,7 +195,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			spec: player.spec,
 			knownIssues: config.knownIssues,
 			launchStatus: simLaunchStatuses[player.spec],
-			noticeText: aplLaunchStatuses[player.spec] == LaunchStatus.Alpha ? 'Rotation settings have been moved to the \'Rotation\' tab, where experimental APL options are also available. Try them out!' : undefined,
 		});
 		this.rootElem.classList.add('individual-sim-ui');
 		this.player = player;
@@ -293,9 +289,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		this.bt = this.addBulkTab();
 		this.addSettingsTab();
 		this.addTalentsTab();
-		if (aplLaunchStatuses[this.player.spec] != LaunchStatus.Unlaunched) {
-			this.addRotationTab();
-		}
+		this.addRotationTab();
 
 		if (!this.isWithinRaidSim) {
 			this.addDetailedResultsTab();
@@ -415,11 +409,6 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.player.setRace(eventID, specToEligibleRaces[this.player.spec][0]);
 			this.player.setGear(eventID, this.sim.db.lookupEquipmentSpec(this.individualConfig.defaults.gear));
 			this.player.setConsumes(eventID, this.individualConfig.defaults.consumes);
-			if (aplLaunchStatuses[this.player.spec] < LaunchStatus.Beta) {
-				this.player.setRotation(eventID, this.individualConfig.defaults.rotation);
-			} else if (aplLaunchStatuses[this.player.spec] == LaunchStatus.Beta) {
-				this.player.setRotation(eventID, this.player.specTypeFunctions.rotationCreate());
-			}
 			this.player.setTalentsString(eventID, this.individualConfig.defaults.talents.talentsString);
 			this.player.setGlyphs(eventID, this.individualConfig.defaults.talents.glyphs || Glyphs.create());
 			this.player.setSpecOptions(eventID, this.individualConfig.defaults.specOptions);

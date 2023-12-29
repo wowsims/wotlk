@@ -10,10 +10,6 @@ import * as InputHelpers from '../core/components/input_helpers.js';
 
 // Configuration for spec-specific UI elements on the settings tab.
 // These don't need to be in a separate file but it keeps things cleaner.
-export const ProtectionPaladinRotationConfig = {
-	inputs: [
-	],
-}
 
 export const AuraSelection = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecProtectionPaladin, PaladinAura>({
 	fieldName: 'aura',

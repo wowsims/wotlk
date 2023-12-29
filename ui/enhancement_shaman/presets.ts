@@ -7,13 +7,10 @@ import {
 	RaidBuffs,
 	TristateEffect,
 	Debuffs,
-	CustomRotation,
-	CustomSpell,
 	Faction,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
-import { EnhancementShaman_Rotation as EnhancementShamanRotation, EnhancementShaman_Options as EnhancementShamanOptions, ShamanShield } from '../core/proto/shaman.js';
 import {
 	AirTotem,
 	EarthTotem,
@@ -21,11 +18,10 @@ import {
 	WaterTotem,
 	ShamanTotems,
 	ShamanImbue,
+	ShamanShield,
 	ShamanSyncType,
 	ShamanMajorGlyph,
-	EnhancementShaman_Rotation_PrimaryShock as PrimaryShock,
-	EnhancementShaman_Rotation_RotationType as RotationType,
-	EnhancementShaman_Rotation_CustomRotationSpell as CustomRotationSpell
+	EnhancementShaman_Options as EnhancementShamanOptions,
 } from '../core/proto/shaman.js';
 
 import * as PresetUtils from '../core/preset_utils.js';
@@ -50,42 +46,6 @@ import P4FtGear from './gear_sets/p4_ft.gear.json';
 export const P4_PRESET_FT = PresetUtils.makePresetGear('P4 Preset FT', P4FtGear);
 import P4WfGear from './gear_sets/p4_wf.gear.json';
 export const P4_PRESET_WF = PresetUtils.makePresetGear('P4 Preset WF', P4WfGear);
-
-export const DefaultRotation = EnhancementShamanRotation.create({
-	totems: ShamanTotems.create({
-		earth: EarthTotem.StrengthOfEarthTotem,
-		air: AirTotem.WindfuryTotem,
-		fire: FireTotem.MagmaTotem,
-		water: WaterTotem.ManaSpringTotem,
-		useFireElemental: true,
-	}),
-	maelstromweaponMinStack: 3,
-	lightningboltWeave: true,
-	autoWeaveDelay: 500,
-	delayGcdWeave: 750,
-	lavaburstWeave: false,
-	firenovaManaThreshold: 3000,
-	shamanisticRageManaThreshold: 25,
-	primaryShock: PrimaryShock.Earth,
-	weaveFlameShock: true,
-	rotationType: RotationType.Priority,
-	customRotation: CustomRotation.create({
-		spells: [
-			CustomSpell.create({ spell: CustomRotationSpell.LightningBolt }),
-			CustomSpell.create({ spell: CustomRotationSpell.StormstrikeDebuffMissing }),
-			CustomSpell.create({ spell: CustomRotationSpell.LightningBoltWeave }),
-			CustomSpell.create({ spell: CustomRotationSpell.Stormstrike }),
-			CustomSpell.create({ spell: CustomRotationSpell.FlameShock }),
-			CustomSpell.create({ spell: CustomRotationSpell.EarthShock }),
-			CustomSpell.create({ spell: CustomRotationSpell.MagmaTotem }),
-			CustomSpell.create({ spell: CustomRotationSpell.LightningShield }),
-			CustomSpell.create({ spell: CustomRotationSpell.FireNova }),
-			CustomSpell.create({ spell: CustomRotationSpell.LightningBoltDelayedWeave }),
-			CustomSpell.create({ spell: CustomRotationSpell.LavaLash }),
-		],
-	}),
-});
-
 
 import DefaultFt from './apls/default_ft.apl.json';
 export const ROTATION_FT_DEFAULT = PresetUtils.makePresetAPLRotation('Default FT', DefaultFt);

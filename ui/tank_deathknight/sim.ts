@@ -116,8 +116,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecTankDeathknight, {
 		}),
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
-		// Default rotation settings.
-		rotation: Presets.DefaultRotation,
 		// Default talents.
 		talents: Presets.BloodTalents.data,
 		// Default spec-specific settings.
@@ -192,7 +190,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecTankDeathknight, {
 	presets: {
 		// Preset rotations that the user can quickly select.
 		rotations: [
-			Presets.BLOOD_LEGACY_PRESET_LEGACY_DEFAULT,
 			Presets.BLOOD_IT_SPAM_ROTATION_PRESET_DEFAULT,
 			Presets.BLOOD_AGGRO_ROTATION_PRESET_DEFAULT,
 		],

@@ -7,13 +7,8 @@ import { EventID, TypedEvent } from '../core/typed_event.js';
 import * as InputHelpers from '../core/components/input_helpers.js';
 
 import {
-	FeralDruid,
-	FeralDruid_Rotation as DruidRotation,
 	FeralDruid_Rotation_AplType as AplType,
-	FeralDruid_Rotation_BearweaveType as BearweaveType,
 	FeralDruid_Rotation_BiteModeType as BiteModeType,
-	FeralDruid_Options as DruidOptions,
-	FeralDruid_Rotation_BiteModeType
 } from '../core/proto/druid.js';
 
 // Configuration for spec-specific UI elements on the settings tab.

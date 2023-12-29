@@ -112,8 +112,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralTankDruid, {
 		}),
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
-		// Default rotation settings.
-		rotation: Presets.DefaultSimpleRotation,
 		// Default talents.
 		talents: Presets.StandardTalents.data,
 		// Default spec-specific settings.
@@ -280,6 +278,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralTankDruid, {
 export class FeralTankDruidSimUI extends IndividualSimUI<Spec.SpecFeralTankDruid> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecFeralTankDruid>) {
 		super(parentElem, player, SPEC_CONFIG);
-		const gemOptimizer = new TankGemOptimizer(this);
+		const _gemOptimizer = new TankGemOptimizer(this);
 	}
 }

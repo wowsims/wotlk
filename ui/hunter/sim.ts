@@ -171,8 +171,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 		}),
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
-		// Default rotation settings.
-		rotation: Presets.DefaultRotation,
 		// Default talents.
 		talents: Presets.SurvivalTalents.data,
 		// Default spec-specific settings.
@@ -465,7 +463,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 export class HunterSimUI extends IndividualSimUI<Spec.SpecHunter> {
 	constructor(parentElem: HTMLElement, player: Player<Spec.SpecHunter>) {
 		super(parentElem, player, SPEC_CONFIG);
-		const gemOptimizer = new HunterGemOptimizer(this);
+		const _gemOptimizer = new HunterGemOptimizer(this);
 	}
 }
 

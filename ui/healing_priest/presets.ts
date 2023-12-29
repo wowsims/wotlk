@@ -1,7 +1,5 @@
 import {
 	Consumes,
-	CustomRotation,
-	CustomSpell,
 	Debuffs,
 	IndividualBuffs,
 	Flask,
@@ -15,9 +13,6 @@ import {
 import { SavedTalents } from '../core/proto/ui.js';
 
 import {
-	HealingPriest_Rotation as Rotation,
-	HealingPriest_Rotation_RotationType as RotationType,
-	HealingPriest_Rotation_SpellOption as SpellOption,
 	HealingPriest_Options as Options,
 	PriestMajorGlyph as MajorGlyph,
 	PriestMinorGlyph as MinorGlyph,
@@ -49,30 +44,6 @@ import P4DiscGear from './gear_sets/p4_disc.gear.json';
 import P4HolyGear from './gear_sets/p4_holy.gear.json';
 export const DISC_P4_PRESET = PresetUtils.makePresetGear('Disc P4 Preset', P4DiscGear, { talentTree: 0 });
 export const HOLY_P4_PRESET = PresetUtils.makePresetGear('Holy P4 Preset', P4HolyGear, { talentTree: 1 });
-
-export const DiscDefaultRotation = Rotation.create({
-	type: RotationType.Cycle,
-	customRotation: CustomRotation.create({
-		spells: [
-			CustomSpell.create({ spell: SpellOption.PowerWordShield, castsPerMinute: 18 }),
-			CustomSpell.create({ spell: SpellOption.Penance, castsPerMinute: 4 }),
-			CustomSpell.create({ spell: SpellOption.PrayerOfMending, castsPerMinute: 2 }),
-			CustomSpell.create({ spell: SpellOption.GreaterHeal, castsPerMinute: 1 }),
-		],
-	}),
-});
-
-export const HolyDefaultRotation = Rotation.create({
-	type: RotationType.Cycle,
-	customRotation: CustomRotation.create({
-		spells: [
-			CustomSpell.create({ spell: SpellOption.GreaterHeal, castsPerMinute: 10 }),
-			CustomSpell.create({ spell: SpellOption.CircleOfHealing, castsPerMinute: 5 }),
-			CustomSpell.create({ spell: SpellOption.Renew, castsPerMinute: 10 }),
-			CustomSpell.create({ spell: SpellOption.PrayerOfMending, castsPerMinute: 2 }),
-		],
-	}),
-});
 
 import DiscApl from './apls/disc.apl.json';
 export const ROTATION_PRESET_DISC = PresetUtils.makePresetAPLRotation('Disc', DiscApl);

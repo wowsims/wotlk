@@ -46,7 +46,6 @@ import { Player as PlayerProto } from './proto/api.js';
 import { StatWeightsResult } from './proto/api.js';
 import { ActionId } from './proto_utils/action_id.js';
 import { EquippedItem, getWeaponDPS } from './proto_utils/equipped_item.js';
-import { aplLaunchStatuses, LaunchStatus } from './launched_sims';
 
 import { playerTalentStringToProto } from './talents/factory.js';
 import { Gear, ItemSwapGear } from './proto_utils/gear.js';
@@ -321,7 +320,7 @@ export class Player<SpecType extends Spec> {
 			throw new Error('Could not find spec config for spec: ' + this.spec);
 		}
 		this.autoRotationGenerator = specConfig.autoRotation;
-		if (aplLaunchStatuses[this.spec] == LaunchStatus.Launched && specConfig.simpleRotation) {
+		if (specConfig.simpleRotation) {
 			this.simpleRotationGenerator = specConfig.simpleRotation;
 		} else {
 			this.simpleRotationGenerator = null;
@@ -600,27 +599,18 @@ export class Player<SpecType extends Spec> {
 
 	getCooldowns(): Cooldowns {
 		// Make a defensive copy
-		if (aplLaunchStatuses[this.spec] == LaunchStatus.Launched) {
-			return Cooldowns.clone(this.aplRotation.simple?.cooldowns || Cooldowns.create());
-		} else {
-			return Cooldowns.clone(this.cooldowns);
-		}
+		return Cooldowns.clone(this.aplRotation.simple?.cooldowns || Cooldowns.create());
 	}
 
 	setCooldowns(eventID: EventID, newCooldowns: Cooldowns) {
 		if (Cooldowns.equals(this.getCooldowns(), newCooldowns))
 			return;
 
-		if (aplLaunchStatuses[this.spec] == LaunchStatus.Launched) {
-			if (!this.aplRotation.simple) {
-				this.aplRotation.simple = SimpleRotation.create();
-			}
-			this.aplRotation.simple.cooldowns = newCooldowns;
-			this.rotationChangeEmitter.emit(eventID);
-		} else {
-			// Make a defensive copy
-			this.cooldowns = Cooldowns.clone(newCooldowns);
+		if (!this.aplRotation.simple) {
+			this.aplRotation.simple = SimpleRotation.create();
 		}
+		this.aplRotation.simple.cooldowns = newCooldowns;
+		this.rotationChangeEmitter.emit(eventID);
 
 		this.cooldownsChangeEmitter.emit(eventID);
 	}
@@ -762,21 +752,17 @@ export class Player<SpecType extends Spec> {
 	}
 
 	getRotation(): SpecRotation<SpecType> {
-		if (aplLaunchStatuses[this.spec] == LaunchStatus.Launched) {
-			const jsonStr = this.aplRotation.simple?.specRotationJson || '';
-			if (!jsonStr) {
-				return this.specTypeFunctions.rotationCreate();
-			}
+		const jsonStr = this.aplRotation.simple?.specRotationJson || '';
+		if (!jsonStr) {
+			return this.specTypeFunctions.rotationCreate();
+		}
 
-			try {
-				const json = JSON.parse(jsonStr);
-				return this.specTypeFunctions.rotationFromJson(json);
-			} catch (e) {
-				console.warn(`Error parsing rotation spec options: ${e}\n\nSpec options: '${jsonStr}'`);
-				return this.specTypeFunctions.rotationCreate();
-			}
-		} else {
-			return this.specTypeFunctions.rotationCopy(this.rotation);
+		try {
+			const json = JSON.parse(jsonStr);
+			return this.specTypeFunctions.rotationFromJson(json);
+		} catch (e) {
+			console.warn(`Error parsing rotation spec options: ${e}\n\nSpec options: '${jsonStr}'`);
+			return this.specTypeFunctions.rotationCreate();
 		}
 	}
 
@@ -784,14 +770,10 @@ export class Player<SpecType extends Spec> {
 		if (this.specTypeFunctions.rotationEquals(newRotation, this.getRotation()))
 			return;
 
-		if (aplLaunchStatuses[this.spec] == LaunchStatus.Launched) {
-			if (!this.aplRotation.simple) {
-				this.aplRotation.simple = SimpleRotation.create();
-			}
-			this.aplRotation.simple.specRotationJson = JSON.stringify(this.specTypeFunctions.rotationToJson(newRotation));
-		} else {
-			this.rotation = this.specTypeFunctions.rotationCopy(newRotation);
+		if (!this.aplRotation.simple) {
+			this.aplRotation.simple = SimpleRotation.create();
 		}
+		this.aplRotation.simple.specRotationJson = JSON.stringify(this.specTypeFunctions.rotationToJson(newRotation));
 
 		this.rotationChangeEmitter.emit(eventID);
 	}
@@ -1337,7 +1319,6 @@ export class Player<SpecType extends Spec> {
 				|| exportCategories.length == 0
 				|| exportCategories.includes(cat);
 
-		const aplIsLaunched = aplLaunchStatuses[this.spec] == LaunchStatus.Launched;
 		const gear = this.getGear();
 		const aplRotation = forSimming ? this.getResolvedAplRotation() : this.aplRotation;
 
@@ -1361,9 +1342,7 @@ export class Player<SpecType extends Spec> {
 		}
 		if (exportCategory(SimSettingCategories.Rotation)) {
 			PlayerProto.mergePartial(player, {
-				cooldowns: (aplIsLaunched || (forSimming && aplRotation.type == APLRotationType.TypeAPL))
-					? Cooldowns.create({ hpPercentForDefensives: this.getCooldowns().hpPercentForDefensives })
-					: this.getCooldowns(),
+				cooldowns: Cooldowns.create({ hpPercentForDefensives: this.getCooldowns().hpPercentForDefensives }),
 				rotation: aplRotation,
 			});
 		}
@@ -1386,21 +1365,14 @@ export class Player<SpecType extends Spec> {
 				nibelungAverageCasts: this.getNibelungAverageCasts(),
 				nibelungAverageCastsSet: this.nibelungAverageCastsSet,
 			});
+			player = withSpecProto(this.spec, player, this.getSpecOptions());
 		}
 		if (exportCategory(SimSettingCategories.External)) {
 			PlayerProto.mergePartial(player, {
 				buffs: this.getBuffs(),
 			});
 		}
-		return withSpecProto(
-			this.spec,
-			player,
-			(aplIsLaunched || (forSimming && aplRotation.type == APLRotationType.TypeAPL) || !exportCategory(SimSettingCategories.Rotation))
-				? this.specTypeFunctions.rotationCreate()
-				: this.getRotation(),
-			exportCategory(SimSettingCategories.Miscellaneous)
-				? this.getSpecOptions()
-				: this.specTypeFunctions.optionsCreate());
+		return player;
 	}
 
 	fromProto(eventID: EventID, proto: PlayerProto, includeCategories?: Array<SimSettingCategories>) {
@@ -1424,24 +1396,22 @@ export class Player<SpecType extends Spec> {
 			}
 		}
 
-		if (aplLaunchStatuses[this.spec] == LaunchStatus.Launched) {
-			const rot = this.specTypeFunctions.rotationFromPlayer(proto);
-			if (rot && !this.specTypeFunctions.rotationEquals(rot, this.specTypeFunctions.rotationCreate())) {
-				if (proto.rotation?.type == APLRotationType.TypeAPL) {
-					// Do nothing
-				} else if (this.simpleRotationGenerator) {
-					proto.rotation = APLRotation.create({
-						type: APLRotationType.TypeSimple,
-						simple: {
-							specRotationJson: JSON.stringify(this.specTypeFunctions.rotationToJson(rot)),
-							cooldowns: proto.cooldowns,
-						},
-					});
-				} else {
-					proto.rotation = APLRotation.create({
-						type: APLRotationType.TypeAuto,
-					});
-				}
+		const rot = this.specTypeFunctions.rotationFromPlayer(proto);
+		if (rot && !this.specTypeFunctions.rotationEquals(rot, this.specTypeFunctions.rotationCreate())) {
+			if (proto.rotation?.type == APLRotationType.TypeAPL) {
+				// Do nothing
+			} else if (this.simpleRotationGenerator) {
+				proto.rotation = APLRotation.create({
+					type: APLRotationType.TypeSimple,
+					simple: {
+						specRotationJson: JSON.stringify(this.specTypeFunctions.rotationToJson(rot)),
+						cooldowns: proto.cooldowns,
+					},
+				});
+			} else {
+				proto.rotation = APLRotation.create({
+					type: APLRotationType.TypeAuto,
+				});
 			}
 		}
 
@@ -1458,16 +1428,11 @@ export class Player<SpecType extends Spec> {
 				this.setGlyphs(eventID, proto.glyphs || Glyphs.create());
 			}
 			if (loadCategory(SimSettingCategories.Rotation)) {
-				if (aplLaunchStatuses[this.spec] == LaunchStatus.Launched) {
-					if (proto.rotation?.type == APLRotationType.TypeUnknown || proto.rotation?.type == APLRotationType.TypeLegacy) {
-						if (!proto.rotation) {
-							proto.rotation = APLRotation.create();
-						}
-						proto.rotation.type = APLRotationType.TypeAuto;
+				if (proto.rotation?.type == APLRotationType.TypeUnknown || proto.rotation?.type == APLRotationType.TypeLegacy) {
+					if (!proto.rotation) {
+						proto.rotation = APLRotation.create();
 					}
-				} else {
-					this.setCooldowns(eventID, proto.cooldowns || Cooldowns.create());
-					this.setRotation(eventID, this.specTypeFunctions.rotationFromPlayer(proto));
+					proto.rotation.type = APLRotationType.TypeAuto;
 				}
 				this.setAplRotation(eventID, proto.rotation || APLRotation.create())
 			}

@@ -1,7 +1,5 @@
 import {
 	Consumes,
-	CustomRotation,
-	CustomSpell,
 	Explosive,
 	Flask,
 	Food,
@@ -9,22 +7,13 @@ import {
 	PetFood,
 	Potions,
 	UnitReference,
-	Spec
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
 import {
 	Deathknight_Options as DeathKnightOptions,
-	Deathknight_Rotation as DeathKnightRotation,
-	Deathknight_Rotation_ArmyOfTheDead,
-	Deathknight_Rotation_BloodRuneFiller,
-	Deathknight_Rotation_CustomSpellOption as CustomSpellOption,
-	Deathknight_Rotation_FrostRotationType,
-	Deathknight_Rotation_Presence,
 	DeathknightMajorGlyph,
 	DeathknightMinorGlyph,
-	Deathknight_Rotation_DrwDiseases,
-	Deathknight_Rotation_BloodSpell,
 } from '../core/proto/deathknight.js';
 
 import * as PresetUtils from '../core/preset_utils.js';
@@ -69,74 +58,6 @@ import P3UhDwGear from './gear_sets/p3_uh_dw.gear.json';
 export const P3_UNHOLY_DW_PRESET = PresetUtils.makePresetGear('P3 DW Unholy', P3UhDwGear, { talentTree: 2 });
 import P4UhDwGear from './gear_sets/p4_uh_dw.gear.json';
 export const P4_UNHOLY_DW_PRESET = PresetUtils.makePresetGear('P4 DW Unholy', P4UhDwGear, { talentTree: 2 });
-
-export const DefaultUnholyRotation = DeathKnightRotation.create({
-	useDeathAndDecay: true,
-	btGhoulFrenzy: true,
-	refreshHornOfWinter: false,
-	useGargoyle: true,
-	useEmpowerRuneWeapon: true,
-	holdErwArmy: false,
-	preNerfedGargoyle: false,
-	armyOfTheDead: Deathknight_Rotation_ArmyOfTheDead.AsMajorCd,
-	startingPresence: Deathknight_Rotation_Presence.Unholy,
-	blPresence: Deathknight_Rotation_Presence.Blood,
-	presence: Deathknight_Rotation_Presence.Blood,
-	gargoylePresence: Deathknight_Rotation_Presence.Unholy,
-	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
-	useAms: false,
-	drwDiseases: Deathknight_Rotation_DrwDiseases.Pestilence,
-	bloodSpender: Deathknight_Rotation_BloodSpell.HS,
-	useDancingRuneWeapon: true
-});
-
-export const DefaultFrostRotation = DeathKnightRotation.create({
-	useDeathAndDecay: false,
-	btGhoulFrenzy: false,
-	refreshHornOfWinter: false,
-	useEmpowerRuneWeapon: true,
-	preNerfedGargoyle: false,
-	startingPresence: Deathknight_Rotation_Presence.Blood,
-	presence: Deathknight_Rotation_Presence.Blood,
-	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodBoil,
-	useAms: false,
-	avgAmsSuccessRate: 1.0,
-	avgAmsHit: 10000.0,
-	drwDiseases: Deathknight_Rotation_DrwDiseases.Pestilence,
-  	frostRotationType: Deathknight_Rotation_FrostRotationType.SingleTarget,
-	armyOfTheDead: Deathknight_Rotation_ArmyOfTheDead.PreCast,
-  	frostCustomRotation: CustomRotation.create({
-		spells: [
-			CustomSpell.create({ spell: CustomSpellOption.CustomDeathAndDecay }),
-			CustomSpell.create({ spell: CustomSpellOption.CustomIcyTouch }),
-			CustomSpell.create({ spell: CustomSpellOption.CustomPlagueStrike }),
-			CustomSpell.create({ spell: CustomSpellOption.CustomPestilence }),
-			CustomSpell.create({ spell: CustomSpellOption.CustomHowlingBlastRime }),
-			CustomSpell.create({ spell: CustomSpellOption.CustomHowlingBlast }),
-			CustomSpell.create({ spell: CustomSpellOption.CustomBloodBoil }),
-			CustomSpell.create({ spell: CustomSpellOption.CustomObliterate }),
-			CustomSpell.create({ spell: CustomSpellOption.CustomFrostStrike }),
-		],
-	}),
-});
-
-export const DefaultBloodRotation = DeathKnightRotation.create({
-	refreshHornOfWinter: false,
-	useEmpowerRuneWeapon: true,
-	preNerfedGargoyle: false,
-	startingPresence: Deathknight_Rotation_Presence.Blood,
-	bloodRuneFiller: Deathknight_Rotation_BloodRuneFiller.BloodStrike,
-	armyOfTheDead: Deathknight_Rotation_ArmyOfTheDead.PreCast,
-	holdErwArmy: false,
-	useAms: false,
-	drwDiseases: Deathknight_Rotation_DrwDiseases.Pestilence,
-	bloodSpender: Deathknight_Rotation_BloodSpell.HS,
-	useDancingRuneWeapon: true,
-});
-
-export const BLOOD_ROTATION_PRESET_LEGACY_DEFAULT = PresetUtils.makePresetLegacyRotation('Blood Legacy', Spec.SpecDeathknight, DefaultBloodRotation, { talentTree: 0 });
-export const FROST_ROTATION_PRESET_LEGACY_DEFAULT = PresetUtils.makePresetLegacyRotation('Frost Legacy', Spec.SpecDeathknight, DefaultFrostRotation, { talentTree: 1 });
-export const UNHOLY_DW_ROTATION_PRESET_LEGACY_DEFAULT = PresetUtils.makePresetLegacyRotation('Unholy DW Legacy', Spec.SpecDeathknight, DefaultUnholyRotation, { talentTree: 2 });
 
 import BloodDPSApl from './apls/blood_dps.apl.json';
 export const BLOOD_DPS_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetAPLRotation('Blood DPS', BloodDPSApl, { talentTree: 0 });
