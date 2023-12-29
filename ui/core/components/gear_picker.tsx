@@ -301,22 +301,21 @@ export class ItemPicker extends Component {
 	}
 }
 
-export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<Player<SpecType>, ValueType> {
-	private readonly config: InputConfig<Player<SpecType>, ValueType>;
+export class IconItemSwapPicker extends Component {
+
 	private readonly iconAnchor: HTMLAnchorElement;
 	private readonly socketsContainerElem: HTMLElement;
-	private readonly player: Player<SpecType>;
+	private readonly player: Player<any>;
 	private readonly slot: ItemSlot;
 
 	// All items and enchants that are eligible for this slot
 	private _items: Array<Item> = [];
 	private _enchants: Array<Enchant> = [];
 
-	constructor(parent: HTMLElement, simUI: SimUI, player: Player<SpecType>, slot: ItemSlot, config: InputConfig<Player<SpecType>, ValueType>) {
-		super(parent, 'icon-picker-root', player, config)
+	constructor(parent: HTMLElement, simUI: SimUI, player: Player<any>, slot: ItemSlot) {
+		super(parent, 'icon-picker-root')
 		this.rootElem.classList.add('icon-picker');
 		this.player = player;
-		this.config = config;
 		this.slot = slot;
 
 		this.iconAnchor = document.createElement('a');
@@ -333,12 +332,12 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 			this._enchants = this.player.getEnchants(slot);
 			const gearData = {
 				equipItem: (eventID: EventID, equippedItem: EquippedItem | null) => {
-					let isg = this.player.getItemSwapGear();
-					this.player.setItemSwapGear(eventID, isg.withEquippedItem(this.slot, equippedItem, player.canDualWield2H()));
-					this.inputChanged(eventID);
+					let curIsg = player.getItemSwapGear();
+					curIsg = curIsg.withEquippedItem(slot, equippedItem, player.canDualWield2H())
+					player.setItemSwapGear(eventID, curIsg);
 				},
 				getEquippedItem: () => this.player.getItemSwapGear().getEquippedItem(this.slot),
-				changeEvent: config.changedEvent(player),
+				changeEvent: player.itemSwapChangeEmitter,
 			}
 
 			this.iconAnchor.addEventListener('click', (event: Event) => {
@@ -352,31 +351,27 @@ export class IconItemSwapPicker<SpecType extends Spec, ValueType> extends Input<
 					gearData: gearData,
 				});
 			});
-		}).finally(() => this.init());
+		});
+
+		player.itemSwapChangeEmitter.on(() => {
+			this.update(player.getItemSwapGear().getEquippedItem(slot));
+		});
 	}
 
-	getInputElem(): HTMLElement {
-		return this.iconAnchor;
-	}
-	getInputValue(): ValueType {
-		return this.player.getItemSwapGear().toProto() as unknown as ValueType
-	}
-
-	setInputValue(newValue: ValueType): void {
+	update(newItem: EquippedItem | null) {
 		this.iconAnchor.style.backgroundImage = `url('${getEmptySlotIconUrl(this.slot)}')`;
 		this.iconAnchor.removeAttribute('data-wowhead');
 		this.iconAnchor.href = "#";
 		this.socketsContainerElem.innerText = '';
 
-		const equippedItem = this.player.getItemSwapGear().getEquippedItem(this.slot);
-		if (equippedItem) {
+		if (newItem) {
 			this.iconAnchor.classList.add("active")
 
-			equippedItem.asActionId().fillAndSet(this.iconAnchor, true, true);
-			this.player.setWowheadData(equippedItem, this.iconAnchor);
+			newItem.asActionId().fillAndSet(this.iconAnchor, true, true);
+			this.player.setWowheadData(newItem, this.iconAnchor);
 
-			equippedItem.allSocketColors().forEach((socketColor, gemIdx) => {
-				this.socketsContainerElem.appendChild(createGemContainer(socketColor, equippedItem.gems[gemIdx]));
+			newItem.allSocketColors().forEach((socketColor, gemIdx) => {
+				this.socketsContainerElem.appendChild(createGemContainer(socketColor, newItem.gems[gemIdx]));
 			});
 		} else {
 			this.iconAnchor.classList.remove("active")

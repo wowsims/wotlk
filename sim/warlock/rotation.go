@@ -672,7 +672,7 @@ func (warlock *Warlock) OnGCDReady(sim *core.Simulation) {
 				// after-GCD actions
 				if ac.Spell == warlock.Corruption && warlock.ItemSwap.IsEnabled() && warlock.ItemSwap.IsSwapped() {
 					warlock.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand,
-						proto.ItemSlot_ItemSlotOffHand, proto.ItemSlot_ItemSlotRanged}, true)
+						proto.ItemSlot_ItemSlotOffHand, proto.ItemSlot_ItemSlotRanged})
 				}
 
 				return

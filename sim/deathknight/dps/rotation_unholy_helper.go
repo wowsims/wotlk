@@ -169,26 +169,26 @@ func (dk *DpsDeathknight) weaponSwapCheck(sim *core.Simulation) bool {
 	if dk.ur.mhSwap == WeaponSwap_BlackMagic {
 		if !dk.ur.mhSwapped && shouldSwapBm {
 			// Swap to BM
-			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand}, true)
+			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand})
 			dk.ur.mhSwapped = true
 		} else if dk.ur.mhSwapped && shouldSwapBackFromBm {
 			// Swap to Normal set and set BM Icd tracker
 			dk.ur.bmIcd = dk.ur.blackMagicProc.ExpiresAt() + 35*time.Second
 			dk.ur.mhSwapped = false
-			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand}, true)
+			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand})
 		}
 	}
 
 	if dk.ur.ohSwap == WeaponSwap_BlackMagic {
 		if !dk.ur.ohSwapped && shouldSwapBm {
 			// Swap to BM
-			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotOffHand}, true)
+			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotOffHand})
 			dk.ur.ohSwapped = true
 		} else if dk.ur.ohSwapped && shouldSwapBackFromBm {
 			// Swap to Normal set and set BM Icd tracker
 			dk.ur.bmIcd = dk.ur.blackMagicProc.ExpiresAt() + 35*time.Second
 			dk.ur.ohSwapped = false
-			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotOffHand}, true)
+			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotOffHand})
 		}
 	}
 
@@ -200,24 +200,24 @@ func (dk *DpsDeathknight) weaponSwapCheck(sim *core.Simulation) bool {
 	if dk.ur.mhSwap == WeaponSwap_Berserking {
 		if !dk.ur.mhSwapped && !dk.ur.berserkingMh.IsActive() && shouldSwapBerserking {
 			// Swap to Berserking
-			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand}, true)
+			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand})
 			dk.ur.mhSwapped = true
 		} else if dk.ur.mhSwapped && (dk.ur.berserkingMh.IsActive() || shouldSwapBackfromBerserking) {
 			// Swap to Normal set
 			dk.ur.mhSwapped = false
-			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand}, true)
+			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand})
 		}
 	}
 
 	if dk.ur.ohSwap == WeaponSwap_Berserking {
 		if !dk.ur.ohSwapped && !dk.ur.berserkingOh.IsActive() && shouldSwapBerserking {
 			// Swap to Berserking
-			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotOffHand}, true)
+			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotOffHand})
 			dk.ur.ohSwapped = true
 		} else if dk.ur.ohSwapped && (dk.ur.berserkingOh.IsActive() || shouldSwapBackfromBerserking) {
 			// Swap to Normal set
 			dk.ur.ohSwapped = false
-			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotOffHand}, true)
+			dk.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotOffHand})
 		}
 	}
 

@@ -205,7 +205,7 @@ func (warlock *Warlock) Reset(sim *core.Simulation) {
 
 	if !warlock.IsUsingAPL {
 		warlock.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand,
-			proto.ItemSlot_ItemSlotOffHand, proto.ItemSlot_ItemSlotRanged}, false)
+			proto.ItemSlot_ItemSlotOffHand, proto.ItemSlot_ItemSlotRanged})
 	}
 	warlock.corrRefreshList = make([]time.Duration, len(warlock.Env.Encounter.TargetUnits))
 	warlock.setupCooldowns(sim)
