@@ -197,7 +197,7 @@ func (swap *ItemSwap) SwapItems(sim *Simulation, slots []proto.ItemSlot) {
 		character.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime, false)
 	}
 
-	// If GCD is ready then, then use the GCD, otherwise we assume it's being used along side a spell.
+	// If GCD is ready then use the GCD, otherwise we assume it's being used along side a spell.
 	if character.GCD.IsReady(sim) {
 		newGCD := sim.CurrentTime + 1500*time.Millisecond
 		character.SetGCDTimer(sim, newGCD)
