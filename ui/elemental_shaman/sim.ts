@@ -37,7 +37,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecElementalShaman, {
 				updateOn: TypedEvent.onAny([simUI.player.rotationChangeEmitter, simUI.player.currentStatsEmitter]),
 				getContent: () => {
 					const hasT62P = simUI.player.getCurrentStats().sets.includes('Skyshatter Regalia (2pc)');
-					const totems = simUI.player.getRotation().totems!;
+					const totems = simUI.player.getSpecOptions().totems!;
 					const hasAll4Totems = totems && totems.earth && totems.air && totems.fire && totems.water;
 					if (hasT62P && !hasAll4Totems) {
 						return 'T6 2pc bonus is equipped, but inactive because not all 4 totem types are being used.';
