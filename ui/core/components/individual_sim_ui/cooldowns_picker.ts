@@ -18,7 +18,7 @@ export class CooldownsPicker extends Component {
 		this.player = player;
 		this.cooldownPickers = [];
 
-		TypedEvent.onAny([this.player.cooldownsChangeEmitter, this.player.sim.unitMetadataEmitter]).on(eventID => {
+		TypedEvent.onAny([this.player.rotationChangeEmitter, this.player.sim.unitMetadataEmitter]).on(eventID => {
 			this.update();
 		});
 		this.update();
@@ -26,7 +26,7 @@ export class CooldownsPicker extends Component {
 
 	private update() {
 		this.rootElem.innerHTML = '';
-		const cooldowns = this.player.getCooldowns().cooldowns;
+		const cooldowns = this.player.getSimpleCooldowns().cooldowns;
 
 		this.cooldownPickers = [];
 		for (let i = 0; i < cooldowns.length + 1; i++) {
@@ -63,9 +63,9 @@ export class CooldownsPicker extends Component {
 			const deleteButton = deleteButtonFragment.children[0] as HTMLElement;
 			const deleteButtonTooltip = Tooltip.getOrCreateInstance(deleteButton, {title: 'Delete Cooldown'});
 			deleteButton.addEventListener('click', event => {
-				const newCooldowns = this.player.getCooldowns();
+				const newCooldowns = this.player.getSimpleCooldowns();
 				newCooldowns.cooldowns.splice(i, 1);
-				this.player.setCooldowns(TypedEvent.nextEventID(), newCooldowns);
+				this.player.setSimpleCooldowns(TypedEvent.nextEventID(), newCooldowns);
 				deleteButtonTooltip.hide();
 			});
 			row.appendChild(deleteButton);
@@ -90,10 +90,10 @@ export class CooldownsPicker extends Component {
 			equals: (a: ActionIdProto, b: ActionIdProto) => ActionIdProto.equals(a, b),
 			zeroValue: ActionIdProto.create(),
 			backupIconUrl: (value: ActionIdProto) => ActionId.fromProto(value),
-			changedEvent: (player: Player<any>) => player.cooldownsChangeEmitter,
-			getValue: (player: Player<any>) => player.getCooldowns().cooldowns[cooldownIndex]?.id || ActionIdProto.create(),
+			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
+			getValue: (player: Player<any>) => player.getSimpleCooldowns().cooldowns[cooldownIndex]?.id || ActionIdProto.create(),
 			setValue: (eventID: EventID, player: Player<any>, newValue: ActionIdProto) => {
-				const newCooldowns = player.getCooldowns();
+				const newCooldowns = player.getSimpleCooldowns();
 
 				while (newCooldowns.cooldowns.length < cooldownIndex) {
 					newCooldowns.cooldowns.push(Cooldown.create());
@@ -103,7 +103,7 @@ export class CooldownsPicker extends Component {
 					timings: [],
 				});
 
-				player.setCooldowns(eventID, newCooldowns);
+				player.setSimpleCooldowns(eventID, newCooldowns);
 			},
 		});
 		return actionPicker;
@@ -115,17 +115,17 @@ export class CooldownsPicker extends Component {
 				'cooldown-timings-picker',
 			],
 			placeholder: '20, 40, ...',
-			changedEvent: (player: Player<any>) => player.cooldownsChangeEmitter,
+			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
 			getValue: (player: Player<any>) => {
-				return player.getCooldowns().cooldowns[cooldownIndex]?.timings || [];
+				return player.getSimpleCooldowns().cooldowns[cooldownIndex]?.timings || [];
 			},
 			setValue: (eventID: EventID, player: Player<any>, newValue: Array<number>) => {
-				const newCooldowns = player.getCooldowns();
+				const newCooldowns = player.getSimpleCooldowns();
 				newCooldowns.cooldowns[cooldownIndex].timings = newValue;
-				player.setCooldowns(eventID, newCooldowns);
+				player.setSimpleCooldowns(eventID, newCooldowns);
 			},
 			enableWhen: (player: Player<any>) => {
-				const curCooldown = player.getCooldowns().cooldowns[cooldownIndex];
+				const curCooldown = player.getSimpleCooldowns().cooldowns[cooldownIndex];
 				return curCooldown && !ActionIdProto.equals(curCooldown.id, ActionIdProto.create());
 			},
 		});

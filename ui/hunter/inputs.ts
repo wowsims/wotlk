@@ -78,7 +78,7 @@ export const HunterRotationConfig = {
 				{ name: 'Scorpid Sting', value: StingType.ScorpidSting },
 				{ name: 'Serpent Sting', value: StingType.SerpentSting },
 			],
-			showWhen: (player: Player<Spec.SpecHunter>) => player.getRotation().type == RotationType.SingleTarget,
+			showWhen: (player: Player<Spec.SpecHunter>) => player.getSimpleRotation().type == RotationType.SingleTarget,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecHunter>({
 			fieldName: 'trapWeave',
@@ -89,7 +89,7 @@ export const HunterRotationConfig = {
 			fieldName: 'allowExplosiveShotDownrank',
 			label: 'Allow ES Downrank',
 			labelTooltip: 'Weaves Explosive Shot Rank 3 during LNL procs. This works because the rank 3 and rank 4 dots can stack.',
-			showWhen: (player: Player<Spec.SpecHunter>) => player.getRotation().type != RotationType.Custom && player.getTalents().explosiveShot && player.getTalents().lockAndLoad > 0,
+			showWhen: (player: Player<Spec.SpecHunter>) => player.getSimpleRotation().type != RotationType.Custom && player.getTalents().explosiveShot && player.getTalents().lockAndLoad > 0,
 			changeEmitter: (player: Player<Spec.SpecHunter>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecHunter>({

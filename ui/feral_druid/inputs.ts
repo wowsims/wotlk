@@ -45,12 +45,12 @@ export const AssumeBleedActive = InputHelpers.makeSpecOptionsBooleanInput<Spec.S
 })
 
 function ShouldShowAdvParamST(player: Player<Spec.SpecFeralDruid>): boolean {
-	let rot = player.getRotation();
+	let rot = player.getSimpleRotation();
 	return rot.manualParams && rot.rotationType == AplType.SingleTarget;
 }
 
 function ShouldShowAdvParamAoe(player: Player<Spec.SpecFeralDruid>): boolean {
-	let rot = player.getRotation();
+	let rot = player.getSimpleRotation();
 	return rot.manualParams && rot.rotationType == AplType.Aoe;
 }
 
@@ -89,7 +89,7 @@ export const FeralDruidRotationConfig = {
 			labelTooltip: 'Max allowed delay to wait for ff to come off CD in seconds',
 			float: true,
 			positive: true,
-			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().manualParams,
+			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getSimpleRotation().manualParams,
 		}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
 			fieldName: 'minRoarOffset',
@@ -120,7 +120,7 @@ export const FeralDruidRotationConfig = {
 			label: 'Bite Time',
 			labelTooltip: 'Min seconds on Rip/Roar to bite',
 			showWhen: (player: Player<Spec.SpecFeralDruid>) =>
-				ShouldShowAdvParamST(player) && player.getRotation().useBite == true && player.getRotation().biteModeType == BiteModeType.Emperical,
+				ShouldShowAdvParamST(player) && player.getSimpleRotation().useBite == true && player.getSimpleRotation().biteModeType == BiteModeType.Emperical,
 		}),
 		InputHelpers.makeRotationBooleanInput<Spec.SpecFeralDruid>({
 			fieldName: 'flowerWeave',
@@ -133,7 +133,7 @@ export const FeralDruidRotationConfig = {
 			fieldName: 'raidTargets',
 			label: 'GotW Raid Targets',
 			labelTooltip: 'Raid size to assume for clearcast proc chance (can include pets as well, so 25 man raid potentically can be ~30)',
-			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.aplRotation.enabled || (ShouldShowAdvParamAoe(player) && player.getRotation().flowerWeave == true),
+			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.aplRotation.enabled || (ShouldShowAdvParamAoe(player) && player.getSimpleRotation().flowerWeave == true),
 		}),
 		// Can be uncommented if/when analytical bite mode is added
 		//InputHelpers.makeRotationEnumInput<Spec.SpecFeralDruid, BiteModeType>({
@@ -143,14 +143,14 @@ export const FeralDruidRotationConfig = {
 		//	values: [
 		//		{ name: 'Emperical', value: BiteModeType.Emperical },
 		//	],
-		//	showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().useBite == true
+		//	showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getSimpleRotation().useBite == true
 		//}),
 		InputHelpers.makeRotationNumberInput<Spec.SpecFeralDruid>({
 			fieldName: 'hotUptime',
 			label: 'Revitalize Hot Uptime',
 			labelTooltip: 'Hot uptime percentage to assume when theorizing energy gains',
 			percent: true,
-			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getRotation().useBite == true && player.getRotation().biteModeType == BiteModeType.Analytical,
+			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.getSimpleRotation().useBite == true && player.getSimpleRotation().biteModeType == BiteModeType.Analytical,
 		}),
 	],
 };

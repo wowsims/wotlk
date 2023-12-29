@@ -93,13 +93,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 		WarlockInputs.ArmorInput,
 		WarlockInputs.WeaponImbueInput,
 	],
-	// Inputs to include in the 'Rotation' section on the settings tab.
-	rotationIconInputs: [
-		WarlockInputs.PrimarySpellInput,
-		WarlockInputs.CorruptionSpell,
-		WarlockInputs.SecondaryDotInput,
-		WarlockInputs.SpecSpellInput,
-	],
 
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
 	includeBuffDebuffInputs: [
