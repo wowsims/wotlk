@@ -22,10 +22,6 @@ type ItemSwap struct {
 	// Which slots to actually swap.
 	slots []proto.ItemSlot
 
-	// Used for resetting
-	initialEquippedItems   [3]Item
-	initialUnequippedItems [3]Item
-
 	// Holds items that are currently not equipped
 	unEquippedItems [3]Item
 	swapped         bool
@@ -164,7 +160,7 @@ func (swap *ItemSwap) CalcStatChanges(slots []proto.ItemSlot) stats.Stats {
 	return newStats
 }
 
-func (swap *ItemSwap) SwapItems(sim *Simulation, slots []proto.ItemSlot, useGCD bool) {
+func (swap *ItemSwap) SwapItems(sim *Simulation, slots []proto.ItemSlot) {
 	if !swap.IsEnabled() {
 		return
 	}
@@ -201,12 +197,12 @@ func (swap *ItemSwap) SwapItems(sim *Simulation, slots []proto.ItemSlot, useGCD 
 		character.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime, false)
 	}
 
-	if useGCD {
+	// If GCD is ready then use the GCD, otherwise we assume it's being used along side a spell.
+	if character.GCD.IsReady(sim) {
 		newGCD := sim.CurrentTime + 1500*time.Millisecond
-		if newGCD > character.GCD.ReadyAt() {
-			character.SetGCDTimer(sim, newGCD)
-		}
+		character.SetGCDTimer(sim, newGCD)
 	}
+
 	swap.swapped = !swap.swapped
 }
 
@@ -269,42 +265,12 @@ func (swap *ItemSwap) swapWeapon(slot proto.ItemSlot) {
 	}
 }
 
-func (swap *ItemSwap) finalize() {
-	if !swap.IsEnabled() {
-		return
-	}
-
-	swap.initialEquippedItems = getInitialEquippedItems(swap.character)
-	swap.initialUnequippedItems = swap.unEquippedItems
-}
-
 func (swap *ItemSwap) reset(sim *Simulation) {
-	if !swap.IsEnabled() {
+	if !swap.IsEnabled() || !swap.IsSwapped() {
 		return
 	}
 
-	slots := [3]proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand, proto.ItemSlot_ItemSlotOffHand, proto.ItemSlot_ItemSlotRanged}
-	for i, slot := range slots {
-		swap.character.Equipment[slot] = swap.initialEquippedItems[i]
-		swap.swapWeapon(slot)
-	}
-
-	swap.unEquippedItems = swap.initialUnequippedItems
-	swap.swapped = false
-
-	for _, onSwap := range swap.onSwapCallbacks {
-		onSwap(sim)
-	}
-}
-
-func getInitialEquippedItems(character *Character) [3]Item {
-	var items [3]Item
-
-	for i := range items {
-		items[i] = character.Equipment[i+int(offset)]
-	}
-
-	return items
+	swap.SwapItems(sim, swap.slots)
 }
 
 func toItem(itemSpec *proto.ItemSpec) Item {

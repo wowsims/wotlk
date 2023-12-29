@@ -155,7 +155,7 @@ func (action *APLActionItemSwap) Execute(sim *Simulation) {
 	if action.swapSet == proto.APLActionItemSwap_Main {
 		action.character.ItemSwap.reset(sim)
 	} else {
-		action.character.ItemSwap.SwapItems(sim, action.character.ItemSwap.slots, true)
+		action.character.ItemSwap.SwapItems(sim, action.character.ItemSwap.slots)
 	}
 }
 func (action *APLActionItemSwap) String() string {

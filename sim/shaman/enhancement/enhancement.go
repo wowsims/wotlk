@@ -136,7 +136,7 @@ func (enh *EnhancementShaman) Initialize() {
 
 	if !enh.IsUsingAPL {
 		enh.RegisterPrepullAction(-time.Second, func(sim *core.Simulation) {
-			enh.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand, proto.ItemSlot_ItemSlotOffHand}, false)
+			enh.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand, proto.ItemSlot_ItemSlotOffHand})
 		})
 	}
 }

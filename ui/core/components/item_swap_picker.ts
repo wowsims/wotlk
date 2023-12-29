@@ -1,4 +1,4 @@
-import { Spec, ItemSlot, ItemSpec } from '../proto/common.js';
+import { Spec, ItemSlot } from '../proto/common.js';
 import { Player } from '../player.js';
 import { Component } from './component.js';
 import { IconItemSwapPicker } from './gear_picker.js'
@@ -70,15 +70,7 @@ export class ItemSwapPicker<SpecType extends Spec> extends Component {
 		swapButton.addEventListener('click', _event => { this.swapWithGear(TypedEvent.nextEventID(), player) });
 
 		this.itemSlots.forEach(itemSlot => {
-			new IconItemSwapPicker(itemSwapContainer, simUI, player, itemSlot, {
-				getValue: (player: Player<any>) => player.getItemSwapGear().getEquippedItem(itemSlot)?.asSpec() || ItemSpec.create(),
-				setValue: (eventID: EventID, player: Player<any>, newValue: ItemSpec) => {
-					let curIsg = player.getItemSwapGear();
-					curIsg = curIsg.withEquippedItem(itemSlot, player.sim.db.lookupItemSpec(newValue), player.canDualWield2H())
-					player.setItemSwapGear(eventID, curIsg);
-				},
-				changedEvent: (player: Player<any>) => player.itemSwapChangeEmitter,
-			});
+			new IconItemSwapPicker(itemSwapContainer, simUI, player, itemSlot)
 		});
 	}
 
