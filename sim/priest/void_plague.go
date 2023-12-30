@@ -16,7 +16,7 @@ func (priest *Priest) getVoidPlagueConfig() core.SpellConfig {
 
 	level := float64(priest.GetCharacter().Level)
 	baseCalc := (9.456667 + 0.635108*level + 0.039063*level*level)
-	baseDamage := baseCalc * 2.34
+	baseDamage := baseCalc * 1.17
 
 	return core.SpellConfig{
 		ActionID:      core.ActionID{SpellID: 425204},
@@ -50,7 +50,7 @@ func (priest *Priest) getVoidPlagueConfig() core.SpellConfig {
 				Label: "VoidPlague-" + strconv.Itoa(1),
 			},
 
-			NumberOfTicks: 8,
+			NumberOfTicks: 6,
 			TickLength:    time.Second * 3,
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
