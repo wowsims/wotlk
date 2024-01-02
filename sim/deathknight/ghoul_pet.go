@@ -1,10 +1,11 @@
 package deathknight
 
 import (
+	"time"
+
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
-	"time"
 )
 
 type GhoulPet struct {
@@ -151,7 +152,7 @@ func (ghoulPet *GhoulPet) Reset(_ *core.Simulation) {
 	}
 }
 
-func (ghoulPet *GhoulPet) OnGCDReady(sim *core.Simulation) {
+func (ghoulPet *GhoulPet) ExecuteCustomRotation(sim *core.Simulation) {
 	if ghoulPet.uptimePercent < 1.0 { // Apply uptime for permanent pet ghoul
 		if sim.GetRemainingDurationPercent() < 1.0-ghoulPet.uptimePercent { // once fight is % completed, disable pet.
 			ghoulPet.Pet.Disable(sim)
@@ -160,7 +161,6 @@ func (ghoulPet *GhoulPet) OnGCDReady(sim *core.Simulation) {
 	}
 
 	if ghoulPet.CurrentFocus() < ghoulPet.Claw.DefaultCast.Cost {
-		ghoulPet.DoNothing()
 		return
 	}
 

@@ -47,6 +47,10 @@ type Agent interface {
 	// Should return nil when the config doesn't match any custom behaviors.
 	NewAPLValue(rot *APLRotation, config *proto.APLValue) APLValue
 	NewAPLAction(rot *APLRotation, config *proto.APLAction) APLActionImpl
+
+	// Implements custom rotation behavior. Usually for pets and targets but can be used
+	// for players too.
+	ExecuteCustomRotation(sim *Simulation)
 }
 
 type ActionID struct {

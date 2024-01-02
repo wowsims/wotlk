@@ -567,3 +567,7 @@ func (unit *Unit) DoneAPLLoop(sim *Simulation, usedGCD bool) {
 		unit.ManaRequired = 0
 	}
 }
+
+func (unit *Unit) ExecuteCustomRotation(sim *Simulation) {
+	panic("Unimplemented ExecuteCustomRotation")
+}

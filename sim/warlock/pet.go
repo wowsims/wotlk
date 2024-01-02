@@ -298,7 +298,7 @@ func (wp *WarlockPet) Initialize() {
 func (wp *WarlockPet) Reset(_ *core.Simulation) {
 }
 
-func (wp *WarlockPet) OnGCDReady(sim *core.Simulation) {
+func (wp *WarlockPet) ExecuteCustomRotation(sim *core.Simulation) {
 	if !wp.primaryAbility.IsReady(sim) {
 		wp.WaitUntil(sim, wp.primaryAbility.CD.ReadyAt())
 		return
@@ -307,7 +307,6 @@ func (wp *WarlockPet) OnGCDReady(sim *core.Simulation) {
 	if success := wp.primaryAbility.Cast(sim, wp.CurrentTarget); !success {
 		wp.WaitForMana(sim, wp.primaryAbility.CurCast.Cost)
 	}
-
 }
 
 func (warlock *Warlock) makeStatInheritance() core.PetStatInheritance {

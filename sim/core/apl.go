@@ -53,6 +53,19 @@ func (rot *APLRotation) doAndRecordWarnings(warningsList *[]string, isPrepull bo
 	rot.parsingPrepull = false
 }
 
+func (unit *Unit) newCustomRotation() *APLRotation {
+	return unit.newAPLRotation(&proto.APLRotation{
+		Type: proto.APLRotation_TypeAPL,
+		PriorityList: []*proto.APLListItem{
+			{
+				Action: &proto.APLAction{
+					Action: &proto.APLAction_CustomRotation{},
+				},
+			},
+		},
+	})
+}
+
 func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
 	if config == nil || !unit.IsUsingAPL {
 		return nil

@@ -108,8 +108,7 @@ func (treant *TreantPet) Initialize() {
 func (treant *TreantPet) Reset(_ *core.Simulation) {
 }
 
-func (treant *TreantPet) OnGCDReady(_ *core.Simulation) {
-	treant.DoNothing()
+func (treant *TreantPet) ExecuteCustomRotation(_ *core.Simulation) {
 }
 
 // TODO : fix miss/dodge
