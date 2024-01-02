@@ -133,10 +133,13 @@ func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
 
 	// Remove MCDs that are referenced by APL actions, so that the Autocast Other Cooldowns
 	// action does not include them.
-	character := unit.Env.Raid.GetPlayerFromUnit(unit).GetCharacter()
-	for _, action := range rotation.allAPLActions() {
-		if castSpellAction, ok := action.impl.(*APLActionCastSpell); ok {
-			character.removeInitialMajorCooldown(castSpellAction.spell.ActionID)
+	agent := unit.Env.GetAgentFromUnit(unit)
+	if agent != nil {
+		character := agent.GetCharacter()
+		for _, action := range rotation.allAPLActions() {
+			if castSpellAction, ok := action.impl.(*APLActionCastSpell); ok {
+				character.removeInitialMajorCooldown(castSpellAction.spell.ActionID)
+			}
 		}
 	}
 
