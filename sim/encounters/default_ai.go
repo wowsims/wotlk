@@ -52,7 +52,7 @@ func (ai *DefaultAI) Reset(sim *core.Simulation) {
 
 }
 
-func (ai *DefaultAI) DoAction(sim *core.Simulation) {
+func (ai *DefaultAI) ExecuteCustomRotation(sim *core.Simulation) {
 	for _, ability := range ai.Abilities {
 		if sim.CurrentTime < ability.InitialCD {
 			continue

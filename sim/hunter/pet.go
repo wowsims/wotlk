@@ -92,7 +92,7 @@ func (hp *HunterPet) Reset(_ *core.Simulation) {
 	hp.uptimePercent = min(1, max(0, hp.hunterOwner.Options.PetUptime))
 }
 
-func (hp *HunterPet) OnGCDReady(sim *core.Simulation) {
+func (hp *HunterPet) ExecuteCustomRotation(sim *core.Simulation) {
 	percentRemaining := sim.GetRemainingDurationPercent()
 	if percentRemaining < 1.0-hp.uptimePercent { // once fight is % completed, disable pet.
 		hp.Disable(sim)
@@ -102,7 +102,6 @@ func (hp *HunterPet) OnGCDReady(sim *core.Simulation) {
 	if hp.hasOwnerCooldown && hp.CurrentFocus() < 50 {
 		// When a major ability (Furious Howl or Savage Rend) is ready, pool enough
 		// energy to use on-demand.
-		hp.DoNothing()
 		return
 	}
 
@@ -111,13 +110,13 @@ func (hp *HunterPet) OnGCDReady(sim *core.Simulation) {
 		if sim.RandomFloat("Hunter Pet Ability") < 0.5 {
 			if !hp.specialAbility.CanCast(sim, target) || !hp.specialAbility.Cast(sim, target) {
 				if !hp.focusDump.Cast(sim, target) {
-					hp.DoNothing()
+					// Do nothing
 				}
 			}
 		} else {
 			if !hp.focusDump.Cast(sim, target) {
 				if !hp.specialAbility.CanCast(sim, target) || !hp.specialAbility.Cast(sim, target) {
-					hp.DoNothing()
+					// Do nothing
 				}
 			}
 		}
@@ -129,19 +128,19 @@ func (hp *HunterPet) OnGCDReady(sim *core.Simulation) {
 		if hp.GCD.IsReady(sim) {
 			if hp.focusDump != nil {
 				if !hp.focusDump.Cast(sim, target) {
-					hp.DoNothing()
+					// Do nothing
 				}
 			} else {
-				hp.DoNothing()
+				// Do nothing
 			}
 		}
 	} else {
 		if hp.focusDump != nil {
 			if !hp.focusDump.Cast(sim, target) {
-				hp.DoNothing()
+				// Do nothing
 			}
 		} else {
-			hp.DoNothing()
+			// Do nothing
 		}
 	}
 }

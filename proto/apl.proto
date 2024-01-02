@@ -47,7 +47,7 @@ message APLListItem {
     APLAction action = 3; // The action to be performed.
 }
 
-// NextIndex: 19
+// NextIndex: 20
 message APLAction {
     APLValue condition = 1; // If set, action will only execute if value is true or != 0.
 
@@ -76,8 +76,11 @@ message APLAction {
         APLActionTriggerICD trigger_icd = 11;
         APLActionItemSwap item_swap = 17;
 
-	// Class or Spec-specific actions
-	APLActionCatOptimalRotationAction cat_optimal_rotation_action = 18;
+        // Class or Spec-specific actions
+        APLActionCatOptimalRotationAction cat_optimal_rotation_action = 18;
+
+        // Internal use only, not exposed in UI.
+        APLActionCustomRotation custom_rotation = 19;
     }
 }
 
@@ -275,6 +278,9 @@ message APLActionCatOptimalRotationAction {
     bool use_bite = 7;
     float bite_time = 8;
     bool flower_weave = 9;
+}
+
+message APLActionCustomRotation {
 }
 
 ///////////////////////////////////////////////////////////////////////////

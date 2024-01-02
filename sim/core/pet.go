@@ -62,6 +62,7 @@ func NewPet(name string, owner *Character, baseStats stats.Stats, statInheritanc
 				PseudoStats: stats.NewPseudoStats(),
 				auraTracker: newAuraTracker(),
 				Metrics:     NewUnitMetrics(),
+				IsUsingAPL:  true,
 
 				StatDependencyManager: stats.NewStatDependencyManager(),
 			},
@@ -268,3 +269,4 @@ func (pet *Pet) GetCharacter() *Character {
 func (pet *Pet) AddRaidBuffs(_ *proto.RaidBuffs)   {}
 func (pet *Pet) AddPartyBuffs(_ *proto.PartyBuffs) {}
 func (pet *Pet) ApplyTalents()                     {}
+func (pet *Pet) OnGCDReady(_ *Simulation)          {}

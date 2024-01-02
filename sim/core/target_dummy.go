@@ -52,3 +52,4 @@ func (td *TargetDummy) OnGCDReady(sim *Simulation) {
 	td.DoNothing()
 }
 func (td *TargetDummy) OnAutoAttack(sim *Simulation, spell *Spell) {}
+func (td *TargetDummy) ExecuteCustomRotation(sim *Simulation)      {}

@@ -91,7 +91,7 @@ func (mi *MirrorImage) Initialize() {
 func (mi *MirrorImage) Reset(_ *core.Simulation) {
 }
 
-func (mi *MirrorImage) OnGCDReady(sim *core.Simulation) {
+func (mi *MirrorImage) ExecuteCustomRotation(sim *core.Simulation) {
 	spell := mi.Frostbolt
 	if mi.Fireblast.CD.IsReady(sim) && sim.RandomFloat("MirrorImage FB") < 0.5 {
 		spell = mi.Fireblast

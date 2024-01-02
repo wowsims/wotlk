@@ -171,27 +171,29 @@ func (ai *Anub25HAI) registerLeechingSwarmSpell(target *core.Target) {
 	})
 }
 
-func (ai *Anub25HAI) DoAction(sim *core.Simulation) {
-	if ai.Target.GCD.IsReady(sim) {
-		// Cast Leeching Swarm once at the start of the encounter (since this AI only models Phase 3)
-		if sim.CurrentTime < time.Millisecond*1620 {
-			ai.LeechingSwarm.Cast(sim, &ai.Target.Unit)
+func (ai *Anub25HAI) ExecuteCustomRotation(sim *core.Simulation) {
+	if !ai.Target.GCD.IsReady(sim) {
+		return
+	}
+
+	// Cast Leeching Swarm once at the start of the encounter (since this AI only models Phase 3)
+	if sim.CurrentTime < time.Millisecond*1620 {
+		ai.LeechingSwarm.Cast(sim, &ai.Target.Unit)
+		return
+	}
+
+	if ai.Target.CurrentTarget != nil &&
+		ai.FreezingSlash.IsReady(sim) &&
+		sim.CurrentTime >= ai.FreezingSlash.CD.Duration {
+		// Based on log analysis, Freezing Slash appears to have a ~30% chance to "proc" on every 1.62 second server tick once it is off cooldown.
+		procRoll := sim.RandomFloat("Freezing Slash AI")
+
+		if procRoll < 0.3 {
+			ai.FreezingSlash.Cast(sim, ai.Target.CurrentTarget)
 			return
 		}
-
-		if ai.Target.CurrentTarget != nil {
-			if ai.FreezingSlash.IsReady(sim) && sim.CurrentTime >= ai.FreezingSlash.CD.Duration {
-				// Based on log analysis, Freezing Slash appears to have a ~30% chance to "proc" on every 1.62 second server tick once it is off cooldown.
-				procRoll := sim.RandomFloat("Freezing Slash AI")
-
-				if procRoll < 0.3 {
-					ai.FreezingSlash.Cast(sim, ai.Target.CurrentTarget)
-					return
-				}
-			}
-		}
-
-		// Anub follows the standard Classic WoW boss AI behavior of evaluating actions on a 1.62 second server tick.
-		ai.Target.WaitUntil(sim, sim.CurrentTime+time.Millisecond*1620)
 	}
+
+	// Anub follows the standard Classic WoW boss AI behavior of evaluating actions on a 1.62 second server tick.
+	ai.Target.WaitUntil(sim, sim.CurrentTime+time.Millisecond*1620)
 }

@@ -11,7 +11,6 @@ type Shadowfiend struct {
 	core.Pet
 
 	Priest          *Priest
-	ManaMetric      *core.ResourceMetrics
 	Shadowcrawl     *core.Spell
 	ShadowcrawlAura *core.Aura
 }
@@ -32,9 +31,16 @@ func (priest *Priest) NewShadowfiend() *Shadowfiend {
 		Priest: priest,
 	}
 
-	shadowfiend.ManaMetric = priest.NewManaMetrics(core.ActionID{SpellID: 34433})
-	actionID := core.ActionID{SpellID: 63619}
+	manaMetric := priest.NewManaMetrics(core.ActionID{SpellID: 34433})
+	_ = core.MakePermanent(shadowfiend.GetOrRegisterAura(core.Aura{
+		Label: "Autoattack mana regen",
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			restoreMana := priest.MaxMana() * 0.05
+			priest.AddMana(sim, restoreMana, manaMetric)
+		},
+	}))
 
+	actionID := core.ActionID{SpellID: 63619}
 	shadowfiend.ShadowcrawlAura = shadowfiend.GetOrRegisterAura(core.Aura{
 		Label:    "Shadowcrawl",
 		ActionID: actionID,
@@ -107,22 +113,11 @@ func (priest *Priest) shadowfiendStatInheritance() core.PetStatInheritance {
 	}
 }
 
-func (shadowfiend *Shadowfiend) OnAutoAttack(sim *core.Simulation, _ *core.Spell) {
-	priest := shadowfiend.Priest
-	restoreMana := priest.MaxMana() * 0.05
-
-	priest.AddMana(sim, restoreMana, shadowfiend.ManaMetric)
-}
-
 func (shadowfiend *Shadowfiend) Initialize() {
 }
 
-func (shadowfiend *Shadowfiend) OnGCDReady(sim *core.Simulation) {
-	if shadowfiend.Shadowcrawl.IsReady(sim) {
-		shadowfiend.Shadowcrawl.Cast(sim, nil)
-	} else {
-		shadowfiend.DoNothing()
-	}
+func (shadowfiend *Shadowfiend) ExecuteCustomRotation(sim *core.Simulation) {
+	shadowfiend.Shadowcrawl.Cast(sim, nil)
 }
 
 func (shadowfiend *Shadowfiend) Reset(sim *core.Simulation) {

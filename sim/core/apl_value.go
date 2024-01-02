@@ -56,7 +56,7 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 		return nil
 	}
 
-	customValue := rot.unit.Env.Raid.GetPlayerFromUnit(rot.unit).NewAPLValue(rot, config)
+	customValue := rot.unit.Env.GetAgentFromUnit(rot.unit).NewAPLValue(rot, config)
 	if customValue != nil {
 		return customValue
 	}

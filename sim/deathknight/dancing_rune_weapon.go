@@ -192,9 +192,7 @@ func (runeWeapon *RuneWeaponPet) GetPet() *core.Pet {
 func (runeWeapon *RuneWeaponPet) Reset(_ *core.Simulation) {
 }
 
-func (runeWeapon *RuneWeaponPet) OnGCDReady(_ *core.Simulation) {
-	// No GCD system on Rune Weapon
-	runeWeapon.DoNothing()
+func (runeWeapon *RuneWeaponPet) ExecuteCustomRotation(_ *core.Simulation) {
 }
 
 func (runeWeapon *RuneWeaponPet) enable(sim *core.Simulation) {

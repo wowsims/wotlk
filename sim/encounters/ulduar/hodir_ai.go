@@ -380,8 +380,7 @@ func (ai *HodirAI) registerFrozenBlowSpell(target *core.Target) {
 	})
 }
 
-func (ai *HodirAI) DoAction(sim *core.Simulation) {
-
+func (ai *HodirAI) ExecuteCustomRotation(sim *core.Simulation) {
 	singedStacks := ai.Singed.GetStacks()
 
 	if sim.CurrentTime >= ai.ToastyFireTime && ai.HasCampfire {
