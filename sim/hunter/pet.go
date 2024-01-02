@@ -106,42 +106,24 @@ func (hp *HunterPet) ExecuteCustomRotation(sim *core.Simulation) {
 	}
 
 	target := hp.CurrentTarget
-	if hp.config.RandomSelection {
-		if sim.RandomFloat("Hunter Pet Ability") < 0.5 {
-			if !hp.specialAbility.CanCast(sim, target) || !hp.specialAbility.Cast(sim, target) {
-				if !hp.focusDump.Cast(sim, target) {
-					// Do nothing
-				}
-			}
-		} else {
-			if !hp.focusDump.Cast(sim, target) {
-				if !hp.specialAbility.CanCast(sim, target) || !hp.specialAbility.Cast(sim, target) {
-					// Do nothing
-				}
-			}
-		}
+
+	if hp.focusDump == nil {
+		hp.specialAbility.Cast(sim, target)
+		return
+	}
+	if hp.specialAbility == nil {
+		hp.focusDump.Cast(sim, target)
 		return
 	}
 
-	if !hp.specialAbility.CanCast(sim, target) || hp.specialAbility.Cast(sim, target) {
-		// For abilities that don't use the GCD.
-		if hp.GCD.IsReady(sim) {
-			if hp.focusDump != nil {
-				if !hp.focusDump.Cast(sim, target) {
-					// Do nothing
-				}
-			} else {
-				// Do nothing
-			}
+	if hp.config.RandomSelection {
+		if sim.RandomFloat("Hunter Pet Ability") < 0.5 {
+			_ = hp.specialAbility.Cast(sim, target) || hp.focusDump.Cast(sim, target)
+		} else {
+			_ = hp.focusDump.Cast(sim, target) || hp.specialAbility.Cast(sim, target)
 		}
 	} else {
-		if hp.focusDump != nil {
-			if !hp.focusDump.Cast(sim, target) {
-				// Do nothing
-			}
-		} else {
-			// Do nothing
-		}
+		_ = hp.specialAbility.Cast(sim, target) || hp.focusDump.Cast(sim, target)
 	}
 }
 
