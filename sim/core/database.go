@@ -396,7 +396,7 @@ func ColorIntersects(g proto.GemColor, o proto.GemColor) bool {
 		return true
 	}
 	if g == proto.GemColor_GemColorMeta {
-		return o == proto.GemColor_GemColorUnknown
+		return o == proto.GemColor_GemColorMeta
 	}
 	if g == proto.GemColor_GemColorRed {
 		return o == proto.GemColor_GemColorOrange || o == proto.GemColor_GemColorPurple
