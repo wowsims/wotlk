@@ -55,14 +55,7 @@ func NewProtectionWarrior(character *core.Character, options *proto.Player) *Pro
 		rbo.OHSwingSpeed = oh.SwingSpeed
 	}
 
-	war.EnableRageBar(rbo, func(sim *core.Simulation) {
-		if war.GCD.IsReady(sim) {
-			war.TryUseCooldowns(sim)
-			if war.GCD.IsReady(sim) {
-				war.doRotation(sim)
-			}
-		}
-	})
+	war.EnableRageBar(rbo)
 	war.EnableAutoAttacks(war, core.AutoAttackOptions{
 		MainHand:       war.WeaponFromMainHand(war.DefaultMeleeCritMultiplier()),
 		OffHand:        war.WeaponFromOffHand(war.DefaultMeleeCritMultiplier()),

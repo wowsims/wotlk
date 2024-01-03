@@ -48,8 +48,4 @@ func (td *TargetDummy) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {}
 func (td *TargetDummy) ApplyTalents()                              {}
 func (td *TargetDummy) Initialize()                                {}
 func (td *TargetDummy) Reset(sim *Simulation)                      {}
-func (td *TargetDummy) OnGCDReady(sim *Simulation) {
-	td.DoNothing()
-}
-func (td *TargetDummy) OnAutoAttack(sim *Simulation, spell *Spell) {}
 func (td *TargetDummy) ExecuteCustomRotation(sim *Simulation)      {}

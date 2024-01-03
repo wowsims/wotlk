@@ -466,11 +466,6 @@ func registerPotionCD(agent Agent, consumes *proto.Consumes) {
 	startingMCD := makePotionActivation(startingPotion, character, potionCD)
 	if startingMCD.Spell != nil {
 		startingMCD.Spell.Flags |= SpellFlagPrepullPotion
-		if !character.IsUsingAPL {
-			character.RegisterPrepullAction(-1*time.Second, func(sim *Simulation) {
-				startingMCD.Spell.Cast(sim, nil)
-			})
-		}
 	}
 
 	var defaultMCD MajorCooldown

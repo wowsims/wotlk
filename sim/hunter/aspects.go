@@ -142,8 +142,4 @@ func (hunter *Hunter) applySharedAspectConfig(isHawk bool, aura *core.Aura) {
 
 	aura.Duration = core.NeverExpires
 	aura.NewExclusiveEffect("Aspect", true, core.ExclusiveEffect{})
-
-	aura.ApplyOnGain(func(aura *core.Aura, sim *core.Simulation) {
-		hunter.currentAspect = aura
-	})
 }

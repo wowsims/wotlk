@@ -38,21 +38,11 @@ func NewFeralTankDruid(character *core.Character, options *proto.Player) *FeralT
 		bear.SelfBuffs.InnervateTarget = tankOptions.Options.InnervateTarget
 	}
 
-	rbo := core.RageBarOptions{
+	bear.EnableRageBar(core.RageBarOptions{
 		StartingRage:   bear.Options.StartingRage,
 		RageMultiplier: 1,
 		MHSwingSpeed:   2.5,
-	}
-
-	bear.EnableRageBar(rbo, func(sim *core.Simulation) {
-		if bear.GCD.IsReady(sim) {
-			bear.TryUseCooldowns(sim)
-			if bear.GCD.IsReady(sim) {
-				bear.doRotation(sim)
-			}
-		}
 	})
-
 	bear.EnableAutoAttacks(bear, core.AutoAttackOptions{
 		// Base paw weapon.
 		MainHand:       bear.GetBearWeapon(),

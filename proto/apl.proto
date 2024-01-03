@@ -142,7 +142,6 @@ message APLValue {
         APLValueSpellIsReady spell_is_ready = 20;
         APLValueSpellTimeToReady spell_time_to_ready = 21;
         APLValueSpellCastTime spell_cast_time = 35;
-        APLValueSpellChannelTime spell_channel_time = 36;
         APLValueSpellTravelTime spell_travel_time = 37;
         APLValueSpellCPM spell_cpm = 42;
         APLValueSpellIsChanneling spell_is_channeling = 56;
@@ -446,9 +445,6 @@ message APLValueSpellTimeToReady {
     ActionID spell_id = 1;
 }
 message APLValueSpellCastTime {
-    ActionID spell_id = 1;
-}
-message APLValueSpellChannelTime {
     ActionID spell_id = 1;
 }
 message APLValueChannelClipDelay {

@@ -462,8 +462,7 @@ func (hp *HunterPet) newPin() *core.Spell {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:         PetGCD,
-				ChannelTime: time.Second * 4,
+				GCD: PetGCD,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{

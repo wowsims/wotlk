@@ -123,8 +123,7 @@ type Unit struct {
 	// Must be enabled to use, with "EnableAutoAttacks()".
 	AutoAttacks AutoAttacks
 
-	IsUsingAPL bool // Used for checks before the finalize() stage, when apl rotations are created.
-	Rotation   *APLRotation
+	Rotation *APLRotation
 
 	// Statistics describing the results of the sim.
 	Metrics UnitMetrics
@@ -134,8 +133,7 @@ type Unit struct {
 	AttackTables                []*AttackTable
 	DynamicDamageTakenModifiers []DynamicDamageTakenModifier
 
-	GCD       *Timer
-	doNothing bool // flags that this character chose to do nothing.
+	GCD *Timer
 
 	// Used for applying the effect of a hardcast spell when casting finishes.
 	//  For channeled spells, only Expires is set.
@@ -172,14 +170,6 @@ type Unit struct {
 //  3. Dead units (not yet implemented)
 func (unit *Unit) IsEnabled() bool {
 	return unit.enabled
-}
-
-// DoNothing will explicitly declare that the character is intentionally doing nothing.
-//
-//	If the GCD is not used during OnGCDReady and this flag is set, OnGCDReady will not be called again
-//	until it is used in some other way (like from an auto attack or resource regeneration).
-func (unit *Unit) DoNothing() {
-	unit.doNothing = true
 }
 
 func (unit *Unit) IsActive() bool {

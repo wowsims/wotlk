@@ -69,23 +69,7 @@ func NewDpsWarrior(character *core.Character, options *proto.Player) *DpsWarrior
 		rbo.OHSwingSpeed = oh.SwingSpeed
 	}
 
-	war.EnableRageBar(rbo, func(sim *core.Simulation) {
-		if war.GCD.IsReady(sim) {
-			war.TryUseCooldowns(sim)
-			if war.GCD.IsReady(sim) {
-				// Pause rotation until after AM ticks to detect procs that happened right after the ticks
-				if war.LastAMTick == sim.CurrentTime {
-					war.WaitUntil(sim, sim.CurrentTime+time.Microsecond*1)
-					core.StartDelayedAction(sim, core.DelayedActionOptions{
-						DoAt:     sim.CurrentTime + time.Microsecond*1,
-						OnAction: war.doRotation,
-					})
-				} else {
-					war.doRotation(sim)
-				}
-			}
-		}
-	})
+	war.EnableRageBar(rbo)
 	war.EnableAutoAttacks(war, core.AutoAttackOptions{
 		MainHand:       war.WeaponFromMainHand(war.DefaultMeleeCritMultiplier()),
 		OffHand:        war.WeaponFromOffHand(war.DefaultMeleeCritMultiplier()),
@@ -137,8 +121,6 @@ func (war *DpsWarrior) Initialize() {
 	} else if war.Rotation.StanceOption == proto.Warrior_Rotation_BattleStance {
 		war.BattleStanceAura.BuildPhase = core.CharacterBuildPhaseTalents
 	}
-
-	war.DelayDPSCooldownsForArmorDebuffs(time.Second * 10)
 }
 
 func (war *DpsWarrior) Reset(sim *core.Simulation) {

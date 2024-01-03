@@ -11,12 +11,8 @@ import (
 
 const ThreatPerManaGained = 0.5
 
-type OnManaTick func(sim *Simulation)
-
 type manaBar struct {
-	unit       *Unit
-	OnManaTick OnManaTick
-
+	unit     *Unit
 	BaseMana float64
 
 	currentMana           float64
@@ -58,20 +54,6 @@ func (character *Character) EnableManaBarWithModifier(modifier float64) {
 
 	character.BaseMana = character.GetBaseStats()[stats.Mana]
 	character.Unit.manaBar.unit = &character.Unit
-}
-
-// EnableResumeAfterManaWait will setup the OnManaTick callback to resume the given callback
-//
-//	once enough mana has been gained after calling unit.WaitForMana()
-func (character *Character) EnableResumeAfterManaWait(callback func(sim *Simulation)) {
-	if callback == nil {
-		panic("attempted to setup a mana tick callback that was nil")
-	}
-	character.OnManaTick = func(sim *Simulation) {
-		if character.FinishedWaitingForManaAndGCDReady(sim) {
-			callback(sim)
-		}
-	}
 }
 
 func (unit *Unit) HasManaBar() bool {
@@ -263,26 +245,19 @@ func (sim *Simulation) initManaTickAction() {
 			char := player.GetCharacter()
 			char.ManaTick(sim)
 
-			if char.OnManaTick != nil {
-				// Only execute APL actions after mana ticks once pre-pull has completed.
-				if char.IsUsingAPL && sim.CurrentTime > 0 {
-					if char.IsWaitingForMana() && !char.DoneWaitingForMana(sim) {
-						continue
-					}
-
-					char.Rotation.DoNextAction(sim)
-				} else {
-					char.OnManaTick(sim)
+			// Only execute APL actions after mana ticks once pre-pull has completed.
+			if sim.CurrentTime > 0 {
+				if char.IsWaitingForMana() && !char.DoneWaitingForMana(sim) {
+					continue
 				}
+
+				char.Rotation.DoNextAction(sim)
 			}
 		}
 		for _, petAgent := range petsWithManaBars {
 			pet := petAgent.GetPet()
 			if pet.IsEnabled() {
 				pet.ManaTick(sim)
-				if pet.OnManaTick != nil {
-					pet.OnManaTick(sim)
-				}
 			}
 		}
 

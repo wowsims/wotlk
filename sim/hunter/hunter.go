@@ -3,7 +3,6 @@ package hunter
 import (
 	"time"
 
-	"github.com/wowsims/wotlk/sim/common"
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/core/stats"
@@ -43,12 +42,6 @@ type Hunter struct {
 	AmmoDamageBonus           float64
 	NormalizedAmmoDamageBonus float64
 
-	currentAspect *core.Aura
-
-	// Used for deciding when we can use hawk for the rest of the fight.
-	manaSpentPerSecondAtFirstAspectSwap float64
-	permaHawk                           bool
-
 	// The most recent time at which moving could have started, for trap weaving.
 	mayMoveAt time.Duration
 
@@ -83,10 +76,6 @@ type Hunter struct {
 	RapidFireAura             *core.Aura
 	ScorpidStingAuras         core.AuraArray
 	TalonOfAlarAura           *core.Aura
-
-	CustomRotation     *common.CustomRotation
-	rotationConditions map[*core.Spell]RotationCondition
-	rotationPriority   []*core.Spell
 }
 
 func (hunter *Hunter) GetCharacter() *core.Character {
@@ -146,16 +135,6 @@ func (hunter *Hunter) Initialize() {
 	hunter.registerKillCommandCD()
 	hunter.registerRapidFireCD()
 
-	if !hunter.IsUsingAPL {
-		hunter.DelayDPSCooldownsForArmorDebuffs(time.Second * 10)
-	}
-
-	hunter.initRotation()
-	hunter.CustomRotation = hunter.makeCustomRotation()
-	if hunter.CustomRotation == nil {
-		hunter.Rotation.Type = proto.Hunter_Rotation_SingleTarget
-	}
-
 	if hunter.Options.UseHuntersMark {
 		hunter.RegisterPrepullAction(0, func(sim *core.Simulation) {
 			huntersMarkAura := core.HuntersMarkAura(hunter.CurrentTarget, hunter.Talents.ImprovedHuntersMark, hunter.HasMajorGlyph(proto.HunterMajorGlyph_GlyphOfHuntersMark))
@@ -166,8 +145,6 @@ func (hunter *Hunter) Initialize() {
 
 func (hunter *Hunter) Reset(_ *core.Simulation) {
 	hunter.mayMoveAt = 0
-	hunter.manaSpentPerSecondAtFirstAspectSwap = 0
-	hunter.permaHawk = false
 }
 
 func NewHunter(character *core.Character, options *proto.Player) *Hunter {
