@@ -222,8 +222,9 @@ func New(char *core.Character, form DruidForm, selfBuffs SelfBuffs, talents stri
 
 	// TODO: Class druid physical stats
 	 druid.AddStatDependency(stats.Strength, stats.AttackPower, 2)
-	 druid.AddStatDependency(stats.BonusArmor, stats.Armor, 1)
-	 druid.AddStatDependency(stats.Agility, stats.MeleeCrit, 0.0120*core.CritRatingPerCritChance)
+	druid.AddStatDependency(stats.BonusArmor, stats.Armor, 1)
+	//core.CritPerAgiAtLevel[character.Class][int(warrior.Level)]
+	druid.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritPerAgiAtLevel[char.Class][int(druid.Level)]*core.CritRatingPerCritChance)
 	//Druid get 0.0209 dodge per agi (before dr), roughly 1 per 47.846
 	 druid.AddStatDependency(stats.Agility, stats.Dodge, (0.0209)*core.DodgeRatingPerDodgeChance)
 
