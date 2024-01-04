@@ -23,9 +23,7 @@ func TestBlood(t *testing.T) {
 		Glyphs:      BloodDefaultGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBlood},
-		OtherRotations: []core.RotationCombo{
-			core.GetAplRotation("../../../ui/deathknight/apls", "blood_dps"),
-		},
+		Rotation:    core.GetAplRotation("../../../ui/deathknight/apls", "blood_dps"),
 
 		ItemFilter: ItemFilter,
 	}))
@@ -42,9 +40,9 @@ func TestUnholy(t *testing.T) {
 		Glyphs:      UnholyDefaultGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsUnholy},
+		Rotation:    core.GetAplRotation("../../../ui/deathknight/apls", "uh_2h_ss"),
 
 		OtherRotations: []core.RotationCombo{
-			core.GetAplRotation("../../../ui/deathknight/apls", "uh_2h_ss"),
 			core.GetAplRotation("../../../ui/deathknight/apls", "uh_dnd_aoe"),
 			core.GetAplRotation("../../../ui/deathknight/apls", "unholy_dw_ss"),
 		},
@@ -67,9 +65,9 @@ func TestFrost(t *testing.T) {
 		OtherSpecOptions: []core.SpecOptionsCombo{
 			{Label: "Desync", SpecOptions: PlayerOptionsDesyncFrost},
 		},
+		Rotation: core.GetAplRotation("../../../ui/deathknight/apls", "frost_bl_pesti"),
 
 		OtherRotations: []core.RotationCombo{
-			core.GetAplRotation("../../../ui/deathknight/apls", "frost_bl_pesti"),
 			core.GetAplRotation("../../../ui/deathknight/apls", "frost_uh_pesti"),
 		},
 
@@ -88,9 +86,7 @@ func TestFrostUH(t *testing.T) {
 		Glyphs:      FrostUHDefaultGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsFrost},
-		OtherRotations: []core.RotationCombo{
-			core.GetAplRotation("../../../ui/deathknight/apls", "frost_uh_pesti"),
-		},
+		Rotation:    core.GetAplRotation("../../../ui/deathknight/apls", "frost_uh_pesti"),
 
 		ItemFilter: ItemFilter,
 	}))
