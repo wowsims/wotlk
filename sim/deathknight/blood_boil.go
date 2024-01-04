@@ -31,21 +31,14 @@ func (dk *Deathknight) registerBloodBoilSpell() {
 		ThreatMultiplier: 1.0,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			dk.AoESpellNumTargetsHit = 0
-
 			for _, aoeTarget := range sim.Encounter.TargetUnits {
 				baseDamage := (sim.Roll(180, 220) + 0.06*dk.getImpurityBonus(spell)) * dk.RoRTSBonus(aoeTarget) * core.TernaryFloat64(dk.DiseasesAreActive(aoeTarget), 1.5, 1.0)
 				baseDamage *= sim.Encounter.AOECapMultiplier()
 
 				result := spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeMagicHitAndCrit)
 
-				if result.Landed() {
-					dk.AoESpellNumTargetsHit++
-				}
-
 				if aoeTarget == target {
 					spell.SpendRefundableCost(sim, result)
-					dk.LastOutcome = result.Outcome
 				}
 			}
 		},

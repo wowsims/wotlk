@@ -60,7 +60,6 @@ func (dk *Deathknight) newBloodStrikeSpell(isMH bool) *core.Spell {
 			if isMH {
 				spell.SpendRefundableCostAndConvertBloodRune(sim, result, deathConvertChance)
 				dk.threatOfThassarianProc(sim, result, dk.BloodStrikeOhHit)
-				dk.LastOutcome = result.Outcome
 
 				if result.Landed() {
 					if dk.DesolationAura != nil {

@@ -20,11 +20,6 @@ func (dk *Deathknight) registerHornOfWinterSpell() {
 		Label:    "Horn of Winter",
 		ActionID: actionID,
 		Duration: duration,
-		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-			if !dk.IsUsingAPL && dk.Inputs.PrecastHornOfWinter && dk.Inputs.RefreshHornOfWinter {
-				aura.Activate(sim)
-			}
-		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			if !dk.OtherRelevantStrAgiActive {
 				dk.HornOfWinterAura.Unit.AddStatsDynamic(sim, bonusStats)
@@ -52,9 +47,6 @@ func (dk *Deathknight) registerHornOfWinterSpell() {
 			IgnoreHaste: true,
 		},
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			if !dk.IsUsingAPL && dk.Inputs.RefreshHornOfWinter {
-				dk.HornOfWinterAura.Activate(sim)
-			}
 			dk.AddRunicPower(sim, 10, rpMetrics)
 		},
 	})

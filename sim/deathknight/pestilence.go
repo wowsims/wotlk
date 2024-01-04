@@ -38,7 +38,6 @@ func (dk *Deathknight) registerPestilenceSpell() {
 
 				if aoeTarget == target {
 					spell.SpendRefundableCostAndConvertBloodRune(sim, result, deathConvertChance)
-					dk.LastOutcome = result.Outcome
 				}
 				if result.Landed() {
 					refreshCFEP := false

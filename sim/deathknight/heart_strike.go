@@ -65,7 +65,6 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool) *core.
 					if dk.Env.GetNumTargets() > 1 {
 						dk.HeartStrikeOffHit.Cast(sim, dk.Env.NextTargetUnit(target))
 					}
-					dk.LastOutcome = result.Outcome
 				}
 			}
 		},

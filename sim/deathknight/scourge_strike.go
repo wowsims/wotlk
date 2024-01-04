@@ -82,7 +82,6 @@ func (dk *Deathknight) registerScourgeStrikeSpell() {
 
 			spell.SpendRefundableCost(sim, result)
 
-			dk.LastOutcome = result.Outcome
 			if result.Landed() && dk.DiseasesAreActive(target) {
 				dk.LastScourgeStrikeDamage = result.Damage
 				shadowDamageSpell.Cast(sim, target)

@@ -32,9 +32,8 @@ func RegisterHunter() {
 type Hunter struct {
 	core.Character
 
-	Talents  *proto.HunterTalents
-	Options  *proto.Hunter_Options
-	Rotation *proto.Hunter_Rotation
+	Talents *proto.HunterTalents
+	Options *proto.Hunter_Options
 
 	pet *HunterPet
 
@@ -154,10 +153,6 @@ func NewHunter(character *core.Character, options *proto.Player) *Hunter {
 		Character: *character,
 		Talents:   &proto.HunterTalents{},
 		Options:   hunterOptions.Options,
-		Rotation:  hunterOptions.Rotation,
-	}
-	if hunter.Rotation == nil {
-		hunter.Rotation = &proto.Hunter_Rotation{}
 	}
 	core.FillTalentsProto(hunter.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
 	hunter.EnableManaBar()

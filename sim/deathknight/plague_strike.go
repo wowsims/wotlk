@@ -53,7 +53,6 @@ func (dk *Deathknight) newPlagueStrikeSpell(isMH bool) *core.Spell {
 			if isMH {
 				spell.SpendRefundableCost(sim, result)
 				dk.threatOfThassarianProc(sim, result, dk.PlagueStrikeOhHit)
-				dk.LastOutcome = result.Outcome
 				if result.Landed() {
 					dk.BloodPlagueExtended[target.Index] = 0
 					dk.BloodPlagueSpell.Cast(sim, target)

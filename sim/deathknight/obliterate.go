@@ -63,7 +63,6 @@ func (dk *Deathknight) newObliterateHitSpell(isMH bool) *core.Spell {
 
 			if isMH {
 				spell.SpendRefundableCostAndConvertFrostOrUnholyRune(sim, result, deathConvertChance)
-				dk.LastOutcome = result.Outcome
 				dk.threatOfThassarianProc(sim, result, dk.ObliterateOhHit)
 
 				if sim.RandomFloat("Annihilation") < diseaseConsumptionChance {

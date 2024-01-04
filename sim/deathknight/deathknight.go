@@ -75,8 +75,6 @@ type Deathknight struct {
 
 	Inputs DeathknightInputs
 
-	RotationHelper
-
 	Ghoul     *GhoulPet
 	RaiseDead *core.Spell
 
@@ -314,33 +312,6 @@ func (dk *Deathknight) Initialize() {
 	dk.registerDeathPactSpell()
 	dk.registerUnholyFrenzyCD()
 
-	dk.RegisterAura(core.Aura{
-		Label:    "Last Cast Assigner",
-		Duration: core.NeverExpires,
-		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Activate(sim)
-		},
-		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if spell.DefaultCast.GCD > 0 {
-				dk.LastCast = spell
-			}
-		},
-	})
-
-	if !dk.IsUsingAPL {
-		if dk.Inputs.PrecastHornOfWinter {
-			dk.RegisterPrepullAction(-1500*time.Millisecond, func(sim *core.Simulation) {
-				dk.HornOfWinter.Cast(sim, nil)
-			})
-		}
-
-		if dk.Inputs.ArmyOfTheDeadType == proto.Deathknight_Rotation_PreCast {
-			dk.RegisterPrepullAction(-10*time.Second, func(sim *core.Simulation) {
-				dk.ArmyOfTheDead.Cast(sim, nil)
-			})
-		}
-	}
-
 	// allows us to use these auras in the APL pre-pull actions
 	wotlk.CreateBlackMagicProcAura(&dk.Character)
 	CreateVirulenceProcAura(&dk.Character)
@@ -393,8 +364,6 @@ func (dk *Deathknight) ResetBonusCoeffs() {
 
 func (dk *Deathknight) Reset(sim *core.Simulation) {
 	dk.LastTickTime = -1
-	dk.LastCast = nil
-	dk.NextCast = nil
 	dk.DeathStrikeHeals = dk.DeathStrikeHeals[:0]
 	dk.MakeTSRoRAssumptions = sim.Raid.Size() <= 1
 }
@@ -475,7 +444,6 @@ func NewDeathknight(character *core.Character, inputs DeathknightInputs, talents
 		dk.RuneWeapon = dk.NewRuneWeapon()
 	}
 
-	dk.RotationSequence = &Sequence{}
 	// done here so enchants that modify stats are applied before stats are calculated
 	dk.registerItems()
 
@@ -498,26 +466,6 @@ func (dk *Deathknight) bonusCritMultiplier(bonusTalentPoints int32) float64 {
 	return dk.MeleeCritMultiplier(1, 0.15*float64(bonusTalentPoints))
 }
 
-func (dk *Deathknight) AverageDSHeal() float64 {
-	count := len(dk.DeathStrikeHeals)
-	if count >= 5 {
-		sum := dk.DeathStrikeHeals[count-1]
-		sum += dk.DeathStrikeHeals[count-2]
-		sum += dk.DeathStrikeHeals[count-3]
-		sum += dk.DeathStrikeHeals[count-4]
-		sum += dk.DeathStrikeHeals[count-5]
-		return sum / 5.0
-	} else if count > 0 {
-		sum := dk.DeathStrikeHeals[count-1]
-		for i := 1; i < count; i++ {
-			sum += dk.DeathStrikeHeals[count-i-1]
-		}
-		return sum / float64(count)
-	} else {
-		return 0
-	}
-}
-
 // Agent is a generic way to access underlying warrior on any of the agents.
 
 func (dk *Deathknight) GetDeathKnight() *Deathknight {
@@ -526,146 +474,4 @@ func (dk *Deathknight) GetDeathKnight() *Deathknight {
 
 type DeathKnightAgent interface {
 	GetDeathKnight() *Deathknight
-}
-
-func PointsInTalents(talents *proto.DeathknightTalents) (int, int, int) {
-	blood := 0
-	blood += int(talents.Butchery)
-	blood += int(talents.Subversion)
-	blood += int(talents.BladeBarrier)
-	blood += int(talents.BladedArmor)
-	blood += int(talents.ScentOfBlood)
-	blood += int(talents.TwoHandedWeaponSpecialization)
-	blood += int(talents.DarkConviction)
-	blood += int(talents.DeathRuneMastery)
-	blood += int(talents.ImprovedRuneTap)
-	blood += int(talents.SpellDeflection)
-	blood += int(talents.Vendetta)
-	blood += int(talents.BloodyStrikes)
-	blood += int(talents.VeteranOfTheThirdWar)
-	blood += int(talents.BloodyVengeance)
-	blood += int(talents.AbominationsMight)
-	blood += int(talents.Bloodworms)
-	blood += int(talents.ImprovedBloodPresence)
-	blood += int(talents.ImprovedDeathStrike)
-	blood += int(talents.SuddenDoom)
-	blood += int(talents.WillOfTheNecropolis)
-	blood += int(talents.MightOfMograine)
-	blood += int(talents.BloodGorged)
-	if talents.RuneTap {
-		blood++
-	}
-	if talents.Hysteria {
-		blood++
-	}
-	if talents.MarkOfBlood {
-		blood++
-	}
-	if talents.VampiricBlood {
-		blood++
-	}
-	if talents.HeartStrike {
-		blood++
-	}
-	if talents.DancingRuneWeapon {
-		blood++
-	}
-
-	frost := 0
-
-	frost += int(talents.ImprovedIcyTouch)
-	frost += int(talents.RunicPowerMastery)
-	frost += int(talents.Toughness)
-	frost += int(talents.IcyReach)
-	frost += int(talents.BlackIce)
-	frost += int(talents.NervesOfColdSteel)
-	frost += int(talents.IcyTalons)
-	frost += int(talents.Annihilation)
-	frost += int(talents.KillingMachine)
-	frost += int(talents.ChillOfTheGrave)
-	frost += int(talents.EndlessWinter)
-	frost += int(talents.FrigidDreadplate)
-	frost += int(talents.GlacierRot)
-	frost += int(talents.MercilessCombat)
-	frost += int(talents.Rime)
-	frost += int(talents.Chilblains)
-	frost += int(talents.ImprovedFrostPresence)
-	frost += int(talents.ThreatOfThassarian)
-	frost += int(talents.BloodOfTheNorth)
-	frost += int(talents.Acclimation)
-	frost += int(talents.GuileOfGorefiend)
-	frost += int(talents.TundraStalker)
-	if talents.HowlingBlast {
-		frost++
-	}
-	if talents.Lichborne {
-		frost++
-	}
-	if talents.Deathchill {
-		frost++
-	}
-	if talents.ImprovedIcyTalons {
-		frost++
-	}
-	if talents.HungeringCold {
-		frost++
-	}
-	if talents.UnbreakableArmor {
-		frost++
-	}
-	if talents.FrostStrike {
-		frost++
-	}
-
-	unholy := 0
-
-	unholy += int(talents.ViciousStrikes)
-	unholy += int(talents.Virulence)
-	unholy += int(talents.Anticipation)
-	unholy += int(talents.Epidemic)
-	unholy += int(talents.Morbidity)
-	unholy += int(talents.UnholyCommand)
-	unholy += int(talents.RavenousDead)
-	unholy += int(talents.Outbreak)
-	unholy += int(talents.Necrosis)
-	unholy += int(talents.OnAPaleHorse)
-	unholy += int(talents.BloodCakedBlade)
-	unholy += int(talents.NightOfTheDead)
-	unholy += int(talents.Impurity)
-	unholy += int(talents.Dirge)
-	unholy += int(talents.Desecration)
-	unholy += int(talents.MagicSuppression)
-	unholy += int(talents.Reaping)
-	unholy += int(talents.Desolation)
-	unholy += int(talents.ImprovedUnholyPresence)
-	unholy += int(talents.CryptFever)
-	unholy += int(talents.WanderingPlague)
-	unholy += int(talents.EbonPlaguebringer)
-	unholy += int(talents.RageOfRivendare)
-	if talents.CorpseExplosion {
-		unholy++
-	}
-	if talents.UnholyBlight {
-		unholy++
-	}
-	if talents.MasterOfGhouls {
-		unholy++
-	}
-	if talents.AntiMagicZone {
-		unholy++
-	}
-	if talents.GhoulFrenzy {
-		unholy++
-	}
-	if talents.BoneShield {
-		unholy++
-	}
-	if talents.ScourgeStrike {
-		unholy++
-	}
-	if talents.SummonGargoyle {
-		unholy++
-	}
-
-	return blood, frost, unholy
 }
