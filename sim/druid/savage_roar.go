@@ -15,14 +15,14 @@ func (druid *Druid) registerSavageRoarSpell() {
 	actionID := core.ActionID{SpellID: 52610}
 
 	srm := druid.getSavageRoarMultiplier()
-	durBonus := core.TernaryDuration(druid.HasSetBonus(ItemSetNightsongBattlegear, 4), time.Second*8, 0)
+
 	druid.SavageRoarDurationTable = [6]time.Duration{
 		0,
-		durBonus + time.Second*(9+5),
-		durBonus + time.Second*(9+10),
-		durBonus + time.Second*(9+15),
-		durBonus + time.Second*(9+20),
-		durBonus + time.Second*(9+25),
+		time.Second*(9+5),
+		time.Second*(9+10),
+		time.Second*(9+15),
+		time.Second*(9+20),
+		time.Second*(9+25),
 	}
 
 	druid.SavageRoarAura = druid.RegisterAura(core.Aura{

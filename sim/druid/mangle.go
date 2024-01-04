@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
-	"github.com/wowsims/sod/sim/core/proto"
+	//"github.com/wowsims/sod/sim/core/proto"
 )
 
 /* TODO: Bear mangle
@@ -65,10 +65,12 @@ func (druid *Druid) registerMangleBearSpell() {
 */
 
 func (druid *Druid) registerMangleCatSpell() {
+	/* skip for now
 	if !druid.HasRune(proto.DruidRune_RuneHandsMangle) {
 		return
 	}
-
+	*/
+	
 	mangleAuras := druid.NewEnemyAuraArray(core.MangleAura)
 
 	druid.MangleCat = druid.RegisterSpell(Cat, core.SpellConfig{

@@ -40,10 +40,8 @@ func NewFeralDruid(character *core.Character, options *proto.Player) *FeralDruid
 	}
 
 	cat.AssumeBleedActive = feralOptions.Options.AssumeBleedActive
-	cat.maxRipTicks = cat.MaxRipTicks()
-	cat.prepopOoc = feralOptions.Rotation.PrePopOoc
-	cat.PrePopBerserk = feralOptions.Rotation.PrePopBerserk
-	cat.setupRotation(feralOptions.Rotation)
+	cat.maxRipTicks = 6
+	//cat.setupRotation(feralOptions.Rotation)
 
 	cat.EnableEnergyBar(100.0, cat.OnEnergyGain)
 
@@ -54,9 +52,10 @@ func NewFeralDruid(character *core.Character, options *proto.Player) *FeralDruid
 		MainHand:       cat.GetCatWeapon(),
 		AutoSwingMelee: true,
 	})
+	/*
 	cat.ReplaceBearMHFunc = func(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
 		return cat.checkReplaceMaul(sim, mhSwingSpell)
-	}
+	}*/
 
 	return cat
 }
@@ -66,14 +65,12 @@ type FeralDruid struct {
 
 	Rotation FeralDruidRotation
 
-	prepopOoc         bool
 	missChance        float64
 	readyToShift      bool
 	readyToGift       bool
 	waitingForTick    bool
 	latency           time.Duration
 	maxRipTicks       int32
-	berserkUsed       bool
 	bleedAura         *core.Aura
 	lastShift         time.Duration
 	ripRefreshPending bool
@@ -99,18 +96,6 @@ func (cat *FeralDruid) Initialize() {
 	if cat.IsUsingAPL {
 		return
 	}
-
-	if cat.prepopOoc && cat.Talents.OmenOfClarity {
-		cat.RegisterPrepullAction(-time.Second, func(sim *core.Simulation) {
-			cat.ProcOoc(sim)
-		})
-	}
-
-	if cat.PrePopBerserk && cat.Talents.Berserk {
-		cat.RegisterPrepullAction(-time.Second, func(sim *core.Simulation) {
-			cat.Berserk.Cast(sim, nil)
-		})
-	}
 }
 
 func (cat *FeralDruid) Reset(sim *core.Simulation) {
@@ -119,5 +104,4 @@ func (cat *FeralDruid) Reset(sim *core.Simulation) {
 	cat.CatFormAura.Activate(sim)
 	cat.readyToShift = false
 	cat.waitingForTick = false
-	cat.berserkUsed = false
 }

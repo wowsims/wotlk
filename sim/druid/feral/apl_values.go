@@ -36,6 +36,7 @@ func (value *APLValueCatExcessEnergy) GetFloat(sim *core.Simulation) float64 {
 	pendingPool := PoolingActions{}
 	pendingPool.create(4)
 
+	/* TODO
 	curCp := cat.ComboPoints()
 	simTimeRemain := sim.GetRemainingDuration()
 	rakeDot := cat.Rake.CurDot()
@@ -60,6 +61,7 @@ func (value *APLValueCatExcessEnergy) GetFloat(sim *core.Simulation) float64 {
 		roarCost := core.Ternary(cat.berserkExpectedAt(sim, cat.SavageRoarAura.ExpiresAt()), cat.SavageRoar.DefaultCast.Cost*0.5, cat.SavageRoar.DefaultCast.Cost)
 		pendingPool.addAction(cat.SavageRoarAura.ExpiresAt(), roarCost)
 	}
+	*/
 
 	pendingPool.sort()
 

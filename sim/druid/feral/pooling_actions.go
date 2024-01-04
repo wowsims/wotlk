@@ -32,6 +32,7 @@ func (pa *PoolingActions) sort() {
 
 func (pa *PoolingActions) calcFloatingEnergy(cat *FeralDruid, sim *core.Simulation) float64 {
 	floatingEnergy := 0.0
+	/*
 	previousTime := sim.CurrentTime
 	tfPending := false
 
@@ -51,7 +52,7 @@ func (pa *PoolingActions) calcFloatingEnergy(cat *FeralDruid, sim *core.Simulati
 			previousTime += time.Duration(s.cost * float64(core.EnergyTickDuration))
 		}
 	}
-
+	*/
 	return floatingEnergy
 }
 

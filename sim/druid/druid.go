@@ -169,12 +169,12 @@ func (druid *Druid) RegisterBalanceSpells() {
 // TODO: Classic feral
 func (druid *Druid) RegisterFeralCatSpells() {
 	// druid.registerBerserkCD()
-	// druid.registerCatFormSpell()
+	druid.registerCatFormSpell()
 	// druid.registerBearFormSpell()
 	// druid.registerEnrageSpell()
 	// druid.registerFerociousBiteSpell()
 	// druid.registerMangleBearSpell()
-	// druid.registerMangleCatSpell()
+	druid.registerMangleCatSpell()
 	// druid.registerMaulSpell(0)
 	// druid.registerLacerateSpell()
 	// druid.registerRakeSpell()

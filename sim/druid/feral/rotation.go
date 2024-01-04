@@ -1,8 +1,9 @@
 package feral
 
+
 import (
-	"math"
-	"time"
+	//	"math"
+	//	"time"
 
 	"github.com/wowsims/sod/sim/core"
 	"github.com/wowsims/sod/sim/core/proto"
@@ -46,7 +47,7 @@ func (cat *FeralDruid) OnEnergyGain(sim *core.Simulation) {
 	if sim.CurrentTime < 0 {
 		return
 	}
-
+	/*
 	cat.TryUseCooldowns(sim)
 	if cat.InForm(druid.Cat) && !cat.readyToShift {
 		cat.doTigersFury(sim)
@@ -60,6 +61,15 @@ func (cat *FeralDruid) OnEnergyGain(sim *core.Simulation) {
 		cat.WaitForEnergy(sim, cat.MangleCat.CurCast.Cost)
 	}
 }
+
+type FeralDruidRotation struct {
+	RotationType proto.FeralDruid_Rotation_AplType
+
+	MinCombosForRip    int32
+	UseRake            bool
+}
+
+/*
 
 func (cat *FeralDruid) OnGCDReady(sim *core.Simulation) {
 	if cat.IsUsingAPL {
@@ -860,3 +870,4 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 		cat.Rotation.BiteTime = 10 * time.Second
 	}
 }
+*/
