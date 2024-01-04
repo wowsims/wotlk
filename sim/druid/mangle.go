@@ -7,6 +7,7 @@ import (
 	"github.com/wowsims/sod/sim/core/proto"
 )
 
+/* TODO: Bear mangle
 func (druid *Druid) registerMangleBearSpell() {
 	if !druid.Talents.Mangle {
 		return
@@ -60,23 +61,24 @@ func (druid *Druid) registerMangleBearSpell() {
 
 		RelatedAuras: []core.AuraArray{mangleAuras},
 	})
-}
+        }
+*/
 
 func (druid *Druid) registerMangleCatSpell() {
-	if !druid.Talents.Mangle {
+	if !druid.HasRune(proto.DruidRune_RuneHandsMangle) {
 		return
 	}
 
 	mangleAuras := druid.NewEnemyAuraArray(core.MangleAura)
 
 	druid.MangleCat = druid.RegisterSpell(Cat, core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48566},
+		ActionID:    core.ActionID{SpellID: 409828},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagAPL,
 
 		EnergyCost: core.EnergyCostOptions{
-			Cost:   45.0 - 2*float64(druid.Talents.ImprovedMangle) - float64(druid.Talents.Ferocity) - core.TernaryFloat64(druid.HasSetBonus(ItemSetThunderheartHarness, 2), 5, 0),
+			Cost:   40  - float64(druid.Talents.Ferocity),
 			Refund: 0.8,
 		},
 		Cast: core.CastConfig{
@@ -87,13 +89,13 @@ func (druid *Druid) registerMangleCatSpell() {
 		},
 
 		DamageMultiplier: (1 + 0.1*float64(druid.Talents.SavageFury)) * 2.0,
-		CritMultiplier:   druid.MeleeCritMultiplier(Cat),
+		CritMultiplier:   druid.MeleeCritMultiplier(1, 0),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := 566/2.0 +
-				spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
-				spell.BonusWeaponDamage()
+			baseDamage := 3 *
+				( spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
+					spell.BonusWeaponDamage() )
 
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 

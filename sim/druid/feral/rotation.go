@@ -9,6 +9,35 @@ import (
 	"github.com/wowsims/sod/sim/druid"
 )
 
+func (cat *FeralDruid) OnGCDReady(sim *core.Simulation) {
+	cat.tryUseGCD(sim)
+}
+
+func (cat *FeralDruid) tryUseGCD(sim *core.Simulation) {
+	if(!cat.InForm(druid.Cat)) {
+		cat.CatForm.Cast(sim, nil)
+	}
+
+	if cat.MangleCat.CanCast(sim, cat.CurrentTarget) {
+		cat.MangleCat.Cast(sim, cat.CurrentTarget)
+	} else {
+		cat.WaitForEnergy(sim, cat.MangleCat.CurCast.Cost)
+	}
+
+	/*
+	spell, target := cat.rotation(sim)
+	if success := spell.Cast(sim, target); !success {
+		cat.WaitForEnergy(sim, spell.CurCast.Cost)
+	}*/
+}
+
+func (cat *FeralDruid) rotation(sim *core.Simulation) (*druid.DruidSpell, *core.Unit) {
+	cat.CurrentTarget = sim.Environment.GetTargetUnit(0)
+	target := cat.CurrentTarget
+
+	return cat.MangleCat, target
+}
+
 func (cat *FeralDruid) OnEnergyGain(sim *core.Simulation) {
 	if cat.IsUsingAPL {
 		return
@@ -21,6 +50,14 @@ func (cat *FeralDruid) OnEnergyGain(sim *core.Simulation) {
 	cat.TryUseCooldowns(sim)
 	if cat.InForm(druid.Cat) && !cat.readyToShift {
 		cat.doTigersFury(sim)
+	}
+
+	*/
+
+	if cat.MangleCat.CanCast(sim, cat.CurrentTarget) {
+		cat.MangleCat.Cast(sim, cat.CurrentTarget)
+	} else {
+		cat.WaitForEnergy(sim, cat.MangleCat.CurCast.Cost)
 	}
 }
 

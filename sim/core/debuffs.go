@@ -313,7 +313,7 @@ func GiftOfArthasAura(target *Unit) *Aura {
 	})
 }
 
-func MangleAura(target *Unit) *Aura {
+func MangleAura(target *Unit, level int32) *Aura {
 	return bleedDamageAura(target, Aura{
 		Label:    "Mangle",
 		ActionID: ActionID{SpellID: 409828},
