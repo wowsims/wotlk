@@ -46,11 +46,11 @@ func (druid *Druid) ClearForm(sim *core.Simulation) {
 	druid.SetCurrentPowerBar(core.ManaBar)
 }
 
-// TODO: numbers aren't updated
+// TODO: don't hardcode numbers
  func (druid *Druid) GetCatWeapon() core.Weapon {
  	return core.Weapon{
- 		BaseDamageMin:        43,  //TODO
- 		BaseDamageMax:        66,  //TODO
+ 		BaseDamageMin:        16.3866,
+ 		BaseDamageMax:        24.5799,
  		SwingSpeed:           1.0,
  		NormalizedSwingSpeed: 1.0,
  		CritMultiplier:       druid.MeleeCritMultiplier(1, 0),
@@ -58,7 +58,7 @@ func (druid *Druid) ClearForm(sim *core.Simulation) {
  	}
  }
 
-// func (druid *Druid) GetBearWeapon() core.Weapon {
+// Func (druid *Druid) GetBearWeapon() core.Weapon {
 // 	return core.Weapon{
 // 		BaseDamageMin:        109,
 // 		BaseDamageMax:        165,
