@@ -343,7 +343,7 @@ dps_results: {
 dps_results: {
  key: "TestDisc-AllItems-Figurine-SapphireOwl-42413"
  value: {
-  tps: 18.9916
+  tps: 19.00072
   hps: 3650.23426
  }
 }

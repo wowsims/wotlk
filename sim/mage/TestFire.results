@@ -770,8 +770,8 @@ dps_results: {
 dps_results: {
  key: "TestFire-Settings-Troll-p3_fire_alliance-Fire-fire-FullBuffs-LongMultiTarget"
  value: {
-  dps: 38064.82304
-  tps: 32963.64697
+  dps: 38085.36222
+  tps: 32980.78258
  }
 }
 dps_results: {
@@ -791,8 +791,8 @@ dps_results: {
 dps_results: {
  key: "TestFire-Settings-Troll-p3_fire_alliance-Fire-fire-NoBuffs-LongMultiTarget"
  value: {
-  dps: 22173.53497
-  tps: 20541.48297
+  dps: 22222.81509
+  tps: 20575.92958
  }
 }
 dps_results: {

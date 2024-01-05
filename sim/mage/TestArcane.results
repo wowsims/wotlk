@@ -252,8 +252,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-EphemeralSnowflake-50260"
  value: {
-  dps: 10727.16841
-  tps: 6570.11619
+  dps: 10738.79708
+  tps: 6577.6561
  }
 }
 dps_results: {
