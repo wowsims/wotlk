@@ -313,7 +313,10 @@ func (cat *FeralDruid) tfExpectedBefore(sim *core.Simulation, futureTime time.Du
 	return true
 }
 
+*/
+   
 func (cat *FeralDruid) doTigersFury(sim *core.Simulation) {
+	/*
 	// Handle tigers fury
 	if !cat.TigersFury.IsReady(sim) {
 		return
@@ -340,7 +343,10 @@ func (cat *FeralDruid) doTigersFury(sim *core.Simulation) {
 		// otherwise it breaks gcd logic
 		cat.NextRotationAction(sim, sim.CurrentTime+leewayTime)
 	}
+	*/
 }
+
+/*
 
 func (cat *FeralDruid) preRotationCleanup(sim *core.Simulation) bool {
 	if cat.BerserkAura.IsActive() {
@@ -808,7 +814,10 @@ type FeralDruidRotation struct {
 	AoeMangleBuilder bool
 }
 
+*/
+   
 func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
+	/*
 	// Force reset params that aren't customizable, or removed from ui
 	rotation.BerserkFfThresh = 15
 	rotation.BerserkBiteThresh = 25
@@ -876,5 +885,6 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 		}
 		cat.Rotation.BiteTime = 10 * time.Second
 	}
-}
 */
+}
+

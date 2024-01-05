@@ -24,6 +24,9 @@ import BlankGear from './gear_sets/blank.gear.json';
 
 export const DefaultGear = PresetUtils.makePresetGear('Blank', BlankGear);
 
+import DefaultApl from './apls/default.apl.json';
+export const APL_ROTATION_DEFAULT = PresetUtils.makePresetAPLRotation('APL Default', DefaultApl);
+
 export const DefaultRotation = FeralDruidRotation.create({
 	rotationType: FeralDruid_Rotation_AplType.SingleTarget,
 

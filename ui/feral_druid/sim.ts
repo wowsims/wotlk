@@ -13,7 +13,7 @@ import {
 	Stat,
 	TristateEffect,
 } from '../core/proto/common.js';
-import { APLRotation } from 'ui/core/proto/apl.js';
+
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
 import { Gear } from '../core/proto_utils/gear.js';
 import { Stats } from '../core/proto_utils/stats.js';
@@ -169,7 +169,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 	},
 
 	autoRotation: (_player: Player<Spec.SpecFeralDruid>): APLRotation => {
-		return Presets.ROTATION_PRESET_LEGACY_DEFAULT.rotation.rotation!;
+		return Presets.APL_ROTATION_DEFAULT.rotation.rotation!;
 	},
 
 	simpleRotation: (player: Player<Spec.SpecFeralDruid>, simple: DruidRotation, cooldowns: Cooldowns): APLRotation => {

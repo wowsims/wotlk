@@ -10,7 +10,7 @@ import { UnitPicker, UnitPickerConfig, UnitValue } from '../unit_picker.js';
 import { Input, InputConfig } from '../input.js';
 import { ActionID } from '../../proto/common.js';
 import { BooleanPicker } from '../boolean_picker.js';
-import { APLValueRuneSlot, APLValueRuneType } from '../../proto/apl.js';
+//import { APLValueRuneSlot, APLValueRuneType } from '../../proto/apl.js';
 import { FeralDruid_Rotation_AplType } from '../../proto/druid.js';
 
 export type ACTION_ID_SET = 'auras' | 'stackable_auras' | 'icd_auras' | 'exclusive_effect_auras' | 'castable_spells' | 'channel_spells' | 'dot_spells' | 'shield_spells';
@@ -515,20 +515,24 @@ export function stringFieldConfig(field: string, options?: Partial<APLPickerBuil
 	};
 }
 
+/*
 export function runeTypeFieldConfig(field: string, includeDeath: boolean): APLPickerBuilderFieldConfig<any, any> {
-	let values = [
+
+       let values = [
+
 		{ value: APLValueRuneType.RuneBlood, label: 'Blood' },
 		{ value: APLValueRuneType.RuneFrost, label: 'Frost' },
 		{ value: APLValueRuneType.RuneUnholy, label: 'Unholy' },
+
 	]
 
 	if (includeDeath) {
-		values.push({ value: APLValueRuneType.RuneDeath, label: 'Death' })
+		//values.push({ value: APLValueRuneType.RuneDeath, label: 'Death' })
 	}
 
 	return {
 		field: field,
-		newValue: () => APLValueRuneType.RuneBlood,
+		//newValue: () => APLValueRuneType.RuneBlood,
 		factory: (parent, player, config) => new TextDropdownPicker(parent, player, {
 			...config,
 			defaultLabel: 'None',
@@ -536,6 +540,7 @@ export function runeTypeFieldConfig(field: string, includeDeath: boolean): APLPi
 			values: values,
 		}),
 	};
+
 }
 
 export function runeSlotFieldConfig(field: string): APLPickerBuilderFieldConfig<any, any> {
@@ -555,8 +560,10 @@ export function runeSlotFieldConfig(field: string): APLPickerBuilderFieldConfig<
 				{ value: APLValueRuneSlot.SlotRightUnholy, label: 'Unholy Right' },
 			],
 		}),
+
 	};
 }
+*/
 
 export function rotationTypeFieldConfig(field: string): APLPickerBuilderFieldConfig<any, any> {
 	let values = [
