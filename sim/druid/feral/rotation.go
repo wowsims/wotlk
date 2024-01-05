@@ -3,7 +3,7 @@ package feral
 
 import (
 	//	"math"
-	//	"time"
+	"time"
 
 	"github.com/wowsims/sod/sim/core"
 	"github.com/wowsims/sod/sim/core/proto"
@@ -127,6 +127,8 @@ func (cat *FeralDruid) OnAutoAttack(sim *core.Simulation, _ *core.Spell) {
 	}
 }
 
+*/
+   
 func (cat *FeralDruid) NextRotationAction(sim *core.Simulation, kickAt time.Duration) {
 	if cat.rotationAction != nil {
 		cat.rotationAction.Cancel(sim)
@@ -141,6 +143,8 @@ func (cat *FeralDruid) NextRotationAction(sim *core.Simulation, kickAt time.Dura
 	sim.AddPendingAction(cat.rotationAction)
 }
 
+
+/*
 // Ported from https://github.com/NerdEgghead/WOTLK_cat_sim
 
 func (cat *FeralDruid) checkReplaceMaul(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
