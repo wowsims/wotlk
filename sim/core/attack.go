@@ -275,7 +275,7 @@ func (wa *WeaponAttack) swing(sim *Simulation) time.Duration {
 	wa.swingAt = sim.CurrentTime + wa.curSwingDuration
 	attackSpell.Cast(sim, wa.unit.CurrentTarget)
 
-	if !sim.Options.Interactive {
+	if !sim.Options.Interactive && wa.unit.Rotation != nil {
 		wa.unit.Rotation.DoNextAction(sim)
 	}
 
