@@ -54,7 +54,6 @@ func (priest *Priest) newMindSearSpell(numTicksIdx int32) *core.Spell {
 		flags |= core.SpellFlagAPL
 	}
 
-	channelTime := time.Second * time.Duration(numTicks)
 	miseryCoeff := priest.getMindSearMiseryCoefficient()
 	mindSearTickSpell := priest.getMindSearTickSpell(numTicksIdx)
 
@@ -67,8 +66,7 @@ func (priest *Priest) newMindSearSpell(numTicksIdx int32) *core.Spell {
 	}
 	config.Cast = core.CastConfig{
 		DefaultCast: core.Cast{
-			GCD:         core.GCDDefault,
-			ChannelTime: channelTime,
+			GCD: core.GCDDefault,
 		},
 	}
 	config.Dot = core.DotConfig{

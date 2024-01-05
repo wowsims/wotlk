@@ -140,10 +140,8 @@ func (priest *Priest) Initialize() {
 
 	priest.registerPowerInfusionCD()
 
-	if priest.IsUsingAPL {
-		priest.MindFlayAPL = priest.newMindFlaySpell(0)
-		priest.MindSearAPL = priest.newMindSearSpell(0)
-	}
+	priest.MindFlayAPL = priest.newMindFlaySpell(0)
+	priest.MindSearAPL = priest.newMindSearSpell(0)
 
 	priest.MindFlay = []*core.Spell{
 		nil, // So we can use # of ticks as the index

@@ -172,8 +172,8 @@ dps_results: {
 dps_results: {
  key: "TestHoly-AllItems-DarkmoonCard:Greatness-44255"
  value: {
-  tps: 36.25385
-  hps: 4991.42137
+  tps: 35.9717
+  hps: 4983.05245
  }
 }
 dps_results: {

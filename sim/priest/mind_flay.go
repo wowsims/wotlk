@@ -71,7 +71,6 @@ func (priest *Priest) newMindFlaySpell(numTicksIdx int32) *core.Spell {
 		mfReducTime = time.Millisecond * 170
 	}
 	tickLength := time.Second - mfReducTime
-	channelTime := tickLength * time.Duration(numTicks)
 
 	rolloverChance := float64(priest.Talents.PainAndSuffering) / 3.0
 	shadowFocus := 0.02 * float64(priest.Talents.ShadowFocus)
@@ -92,21 +91,7 @@ func (priest *Priest) newMindFlaySpell(numTicksIdx int32) *core.Spell {
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:         core.GCDDefault,
-				ChannelTime: channelTime,
-			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				if spell.Unit.IsUsingAPL || priest.Latency == 0 {
-					return
-				}
-				// if our channel is longer than GCD it will have human latency to end it because you can't queue the next spell.
-				if float64(channelTime)*priest.CastSpeed > float64(core.GCDMin) {
-					variation := priest.Latency * (0.66 + sim.RandomFloat("spriest latency")*(1.33-0.66)) // should vary from 0.66 - 1.33 of given latency
-					cast.ChannelTime += time.Duration(variation / priest.CastSpeed * float64(time.Millisecond))
-					if sim.Log != nil {
-						priest.Log(sim, "Latency: %.3f, Applied Latency: %.3f", priest.Latency, variation)
-					}
-				}
+				GCD: core.GCDDefault,
 			},
 		},
 		BonusHitRating: float64(priest.Talents.ShadowFocus) * 1 * core.SpellHitRatingPerHitChance,
@@ -153,19 +138,4 @@ func (priest *Priest) newMindFlaySpell(numTicksIdx int32) *core.Spell {
 			}
 		},
 	})
-}
-
-func (priest *Priest) MindFlayTickDuration() time.Duration {
-	return priest.ApplyCastSpeed(time.Second - core.TernaryDuration(priest.T10FourSetBonus, time.Millisecond*170, 0))
-}
-
-func (priest *Priest) AverageMindFlayLatencyDelay(numTicks int, gcd time.Duration) time.Duration {
-	wait := priest.ApplyCastSpeed(priest.MindFlay[numTicks].DefaultCast.ChannelTime)
-	if wait <= gcd || priest.Latency == 0 {
-		return 0
-	}
-
-	base := priest.Latency * 0.25
-	variation := base + 0.5*base
-	return time.Duration(variation) * time.Millisecond
 }

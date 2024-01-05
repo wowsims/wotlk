@@ -13,7 +13,6 @@ func (priest *Priest) RegisterHymnOfHopeCD() {
 	manaMetrics := priest.NewManaMetrics(actionID)
 
 	numTicks := 4 + core.TernaryInt32(priest.HasMajorGlyph(proto.PriestMajorGlyph_GlyphOfHymnOfHope), 1, 0)
-	channelTime := time.Duration(numTicks) * time.Second * 2
 
 	hymnOfHopeSpell := priest.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
@@ -21,8 +20,7 @@ func (priest *Priest) RegisterHymnOfHopeCD() {
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:         core.GCDDefault,
-				ChannelTime: channelTime,
+				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
 				Timer:    priest.NewTimer(),
@@ -31,9 +29,8 @@ func (priest *Priest) RegisterHymnOfHopeCD() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-			period := spell.CurCast.ChannelTime / time.Duration(numTicks)
 			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
-				Period:   period,
+				Period:   time.Second * 2,
 				NumTicks: int(numTicks),
 				OnAction: func(sim *core.Simulation) {
 					// This is 3%, but it increases the target's max mana by 20% for the duration
