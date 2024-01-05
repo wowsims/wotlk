@@ -275,6 +275,7 @@ export class Individual80UEPExporter<SpecType extends Spec> extends Exporter {
 		[Stat.StatBonusArmor]: 'armorBonus',
 		[Stat.StatHealing]: 'Healing',
 		[Stat.StatWeaponSkill]: 'weaponSkill',
+		[Stat.StatFeralAttackPower]: 'feralAttackPower',
 	}
 	static pseudoStatNames: Partial<Record<PseudoStat, string>> = {
 		[PseudoStat.PseudoStatMainHandDps]: 'dps',
@@ -372,6 +373,7 @@ export class IndividualPawnEPExporter<SpecType extends Spec> extends Exporter {
 		[Stat.StatBonusArmor]: 'Armor2',
 		[Stat.StatHealing]: 'Healing',
 		[Stat.StatWeaponSkill]: 'WeaponSkill',
+		[Stat.StatFeralAttackPower]: 'FeralAttackPower',
 	}
 	static pseudoStatNames: Partial<Record<PseudoStat, string>> = {
 		[PseudoStat.PseudoStatMainHandDps]: 'MeleeDps',

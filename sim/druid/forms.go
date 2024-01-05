@@ -1,8 +1,6 @@
 package druid
 
 import (
-	"math"
-
 	"github.com/wowsims/sod/sim/core"
 	"github.com/wowsims/sod/sim/core/proto"
 	"github.com/wowsims/sod/sim/core/stats"
@@ -75,7 +73,7 @@ func (druid *Druid) GetFormShiftStats() stats.Stats {
 		stats.AttackPower: float64(druid.Talents.PredatoryStrikes) * 0.5 * float64(druid.Level),
 		stats.MeleeCrit:   float64(druid.Talents.SharpenedClaws) * 2 * core.CritRatingPerCritChance,
 	}
-
+	/*
 	if weapon := druid.GetMHWeapon(); weapon != nil {
 		dps := (weapon.WeaponDamageMax+weapon.WeaponDamageMin)/2.0/weapon.SwingSpeed + druid.PseudoStats.BonusMHDps
 		weapAp := weapon.Stats[stats.AttackPower] + weapon.Enchant.Stats[stats.AttackPower]
@@ -84,6 +82,7 @@ func (druid *Druid) GetFormShiftStats() stats.Stats {
 		s[stats.AttackPower] += fap
 		s[stats.AttackPower] += (fap + weapAp) * ((0.2 / 3) * float64(druid.Talents.PredatoryStrikes))
 	}
+	*/
 
 	return s
 }
@@ -114,6 +113,7 @@ func (druid *Druid) registerCatFormSpell() {
 	})
 
 	agiApDep := druid.NewDynamicStatDependency(stats.Agility, stats.AttackPower, 1)
+	feralApDep := druid.NewDynamicStatDependency(stats.FeralAttackPower, stats.AttackPower, 1)
 
 	var hotwDep *stats.StatDependency
 	if druid.Talents.HeartOfTheWild > 0 {
@@ -146,6 +146,7 @@ func (druid *Druid) registerCatFormSpell() {
 			druid.AddStatsDynamic(sim, predBonus)
 			druid.AddStatsDynamic(sim, statBonus)
 			druid.EnableDynamicStatDep(sim, agiApDep)
+			druid.EnableDynamicStatDep(sim, feralApDep)
 			if hotwDep != nil {
 				druid.EnableDynamicStatDep(sim, hotwDep)
 			}
@@ -178,6 +179,7 @@ func (druid *Druid) registerCatFormSpell() {
 			druid.AddStatsDynamic(sim, predBonus.Invert())
 			druid.AddStatsDynamic(sim, statBonus.Invert())
 			druid.DisableDynamicStatDep(sim, agiApDep)
+			druid.DisableDynamicStatDep(sim, feralApDep)
 			if hotwDep != nil {
 				druid.DisableDynamicStatDep(sim, hotwDep)
 			}
