@@ -26,7 +26,6 @@ type Druid struct {
 	RebirthTiming     float64
 	BleedsActive      int
 	AssumeBleedActive bool
-	PrePopBerserk     bool
 
 	ReplaceBearMHFunc core.ReplaceMHSwing
 

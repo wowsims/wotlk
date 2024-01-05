@@ -23,9 +23,6 @@ func (mage *Mage) registerArcaneBlastSpell() {
 			mage.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexArcane] *= newMultiplier / oldMultiplier
 			mage.ArcaneBlast.CostMultiplier += 1.75 * float64(newStacks-oldStacks)
 		},
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			mage.arcaneBlastStreak = 0
-		},
 	})
 
 	actionID := core.ActionID{SpellID: 42897}

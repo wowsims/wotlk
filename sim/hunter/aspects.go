@@ -134,7 +134,7 @@ func (hunter *Hunter) registerAspectOfTheViperSpell() {
 }
 
 func (hunter *Hunter) applySharedAspectConfig(isHawk bool, aura *core.Aura) {
-	if isHawk != (hunter.Rotation.ViperStartManaPercent >= 1) {
+	if isHawk {
 		aura.OnReset = func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		}
