@@ -311,16 +311,6 @@ func (unit *Unit) GetSpell(actionID ActionID) *Spell {
 	return nil
 }
 
-// Like GetSpell, but only returns spells with the APL flag set.
-func (unit *Unit) GetSpellAPL(actionID ActionID) *Spell {
-	for _, spell := range unit.Spellbook {
-		if spell.ActionID.SameAction(actionID) && spell.Flags.Matches(SpellFlagAPL) {
-			return spell
-		}
-	}
-	return nil
-}
-
 // Retrieves an existing spell with the same ID as the config uses, or registers it if there is none.
 func (unit *Unit) GetOrRegisterSpell(config SpellConfig) *Spell {
 	registered := unit.GetSpell(config.ActionID)
