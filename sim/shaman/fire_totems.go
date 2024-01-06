@@ -52,7 +52,7 @@ func (shaman *Shaman) registerSearingTotemSpell() {
 			shaman.FireElemental.Disable(sim)
 			spell.Dot(sim.GetTargetUnit(0)).Apply(sim)
 			// +1 needed because of rounding issues with totem tick time.
-			shaman.NextTotemDrops[FireTotem] = sim.CurrentTime + time.Second*60 + 1
+			shaman.TotemExpirations[FireTotem] = sim.CurrentTime + time.Second*60 + 1
 		},
 	})
 }
@@ -102,7 +102,7 @@ func (shaman *Shaman) registerMagmaTotemSpell() {
 			shaman.FireElemental.Disable(sim)
 			spell.AOEDot().Apply(sim)
 			// +1 needed because of rounding issues with totem tick time.
-			shaman.NextTotemDrops[FireTotem] = sim.CurrentTime + time.Second*20 + 1
+			shaman.TotemExpirations[FireTotem] = sim.CurrentTime + time.Second*20 + 1
 		},
 	})
 }

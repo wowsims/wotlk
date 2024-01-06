@@ -14,9 +14,8 @@ var TalentTreeSizes = [3]int{28, 27, 26}
 
 type Warlock struct {
 	core.Character
-	Talents  *proto.WarlockTalents
-	Options  *proto.Warlock_Options
-	Rotation *proto.Warlock_Rotation
+	Talents *proto.WarlockTalents
+	Options *proto.Warlock_Options
 
 	Pet *WarlockPet
 
@@ -73,23 +72,6 @@ type Warlock struct {
 	PreviousTime  time.Duration
 
 	petStmBonusSP float64
-	acl           []ActionCondition
-
-	// contains for each target the time the last shadowbolt was casted onto them
-	corrRefreshList []time.Duration
-}
-
-type ACLaction int
-
-const (
-	ACLCast ACLaction = iota
-	ACLNext
-	ACLRecast
-)
-
-type ActionCondition struct {
-	Spell     *core.Spell
-	Condition func(*core.Simulation) (ACLaction, *core.Unit)
 }
 
 func (warlock *Warlock) GetCharacter() *core.Character {
@@ -133,12 +115,6 @@ func (warlock *Warlock) Initialize() {
 	warlock.registerInfernoSpell()
 	warlock.registerBlackBook()
 
-	warlock.defineRotation()
-
-	precastSpell := warlock.ShadowBolt
-	if warlock.Rotation.Type == proto.Warlock_Rotation_Destruction {
-		precastSpell = warlock.SoulFire
-	}
 	// Do this post-finalize so cast speed is updated with new stats
 	warlock.Env.RegisterPostFinalizeEffect(func() {
 		// if itemswap is enabled, correct for any possible haste changes
@@ -164,25 +140,6 @@ func (warlock *Warlock) Initialize() {
 				}
 			})
 		}
-
-		if warlock.IsUsingAPL {
-			return
-		}
-
-		precastSpellAt := -warlock.ApplyCastSpeedForSpell(precastSpell.DefaultCast.CastTime, precastSpell)
-
-		warlock.RegisterPrepullAction(precastSpellAt, func(sim *core.Simulation) {
-			precastSpell.Cast(sim, warlock.CurrentTarget)
-		})
-		if warlock.GlyphOfLifeTapAura != nil || warlock.SpiritsoftheDamnedAura != nil {
-			warlock.RegisterPrepullAction(precastSpellAt-warlock.SpellGCD(), func(sim *core.Simulation) {
-				warlock.LifeTap.Cast(sim, nil)
-			})
-		}
-		if warlock.ItemSwap.IsEnabled() {
-			warlock.AddStats(correction.Invert())
-			warlock.MultiplyCastSpeed(1.0)
-		}
 	})
 }
 
@@ -202,13 +159,6 @@ func (warlock *Warlock) Reset(sim *core.Simulation) {
 	if sim.CurrentTime == 0 {
 		warlock.petStmBonusSP = 0
 	}
-
-	if !warlock.IsUsingAPL {
-		warlock.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand,
-			proto.ItemSlot_ItemSlotOffHand, proto.ItemSlot_ItemSlotRanged})
-	}
-	warlock.corrRefreshList = make([]time.Duration, len(warlock.Env.Encounter.TargetUnits))
-	warlock.setupCooldowns(sim)
 }
 
 func NewWarlock(character *core.Character, options *proto.Player) *Warlock {
@@ -218,7 +168,6 @@ func NewWarlock(character *core.Character, options *proto.Player) *Warlock {
 		Character: *character,
 		Talents:   &proto.WarlockTalents{},
 		Options:   warlockOptions.Options,
-		Rotation:  warlockOptions.Rotation,
 	}
 	core.FillTalentsProto(warlock.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
 	warlock.EnableManaBar()

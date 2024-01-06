@@ -176,23 +176,9 @@ message ShamanTotems {
 	FireTotem fire = 3;
 	WaterTotem water = 4;
 
-	// If set, will use mana tide when appropriate.
-	bool use_mana_tide = 5;
-
 	// If set, will use fire elemental totem at the start and revert to regular
 	// fire totems when it expires.
 	bool use_fire_elemental = 6;
-
-	// If set, will revert to regular fire totems when fire elemental goes OOM,
-	// instead of waiting the full 2 minutes.
-	bool recall_fire_elemental_on_oom = 7;
-
-	// If set, any time a 2-minute totem is about to expire, will recall and
-	// replace all totems.
-	bool recall_totems = 8;
-
-	// If set will use fire totems as an MCD instead of manually controlling when to place them.
-	bool use_fire_mcd = 9;
 
 	// Bonus spell power for fire elemental snapshotting.
 	int32 bonus_spellpower = 10;

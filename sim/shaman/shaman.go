@@ -85,10 +85,8 @@ type Shaman struct {
 
 	Totems *proto.ShamanTotems
 
-	// The type of totem which should be dropped next and time to drop it, for
-	// each totem type (earth, air, fire, water).
-	NextTotemDropType [4]int32
-	NextTotemDrops    [4]time.Duration
+	// The expiration time of each totem (earth, air, fire, water).
+	TotemExpirations [4]time.Duration
 
 	LightningBolt   *core.Spell
 	LightningBoltLO *core.Spell
@@ -282,42 +280,9 @@ func (shaman *Shaman) RegisterHealingSpells() {
 }
 
 func (shaman *Shaman) Reset(sim *core.Simulation) {
-	// Check to see if we are casting a totem to set its expire time.
-	for i := range shaman.NextTotemDrops {
-		shaman.NextTotemDrops[i] = core.NeverExpires
-		switch i {
-		case AirTotem:
-			if shaman.Totems.Air != proto.AirTotem_NoAirTotem {
-				shaman.NextTotemDrops[i] = TotemRefreshTime5M
-				shaman.NextTotemDropType[i] = int32(shaman.Totems.Air)
-			}
-		case EarthTotem:
-			if shaman.Totems.Earth != proto.EarthTotem_NoEarthTotem {
-				shaman.NextTotemDrops[i] = TotemRefreshTime5M
-				shaman.NextTotemDropType[i] = int32(shaman.Totems.Earth)
-			}
-		case FireTotem:
-			shaman.NextTotemDropType[FireTotem] = int32(shaman.Totems.Fire)
-			if shaman.NextTotemDropType[FireTotem] != int32(proto.FireTotem_NoFireTotem) {
-				if shaman.NextTotemDropType[FireTotem] != int32(proto.FireTotem_TotemOfWrath) &&
-					shaman.NextTotemDropType[FireTotem] != int32(proto.FireTotem_FlametongueTotem) {
-					if !shaman.Totems.UseFireMcd {
-						shaman.NextTotemDrops[FireTotem] = 0
-					}
-				} else {
-					shaman.NextTotemDrops[FireTotem] = TotemRefreshTime5M
-					if shaman.NextTotemDropType[FireTotem] == int32(proto.FireTotem_TotemOfWrath) {
-						shaman.applyToWDebuff(sim)
-					}
-				}
-			}
-		case WaterTotem:
-			shaman.NextTotemDropType[i] = int32(shaman.Totems.Water)
-			shaman.NextTotemDrops[i] = TotemRefreshTime5M
-		}
+	if shaman.Totems.Fire == proto.FireTotem_TotemOfWrath {
+		shaman.applyToWDebuff(sim)
 	}
-
-	shaman.FlameShock.CD.Reset()
 }
 
 func (shaman *Shaman) ElementalCritMultiplier(secondary float64) float64 {

@@ -35,7 +35,6 @@ func NewElementalShaman(character *core.Character, options *proto.Player) *Eleme
 	totems := &proto.ShamanTotems{}
 	if eleShamOptions.Options.Totems != nil {
 		totems = eleShamOptions.Options.Totems
-		totems.UseFireMcd = true // Control fire totems as MCD.
 	}
 
 	inRange := eleShamOptions.Options.ThunderstormRange == proto.ElementalShaman_Options_TSInRange

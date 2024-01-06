@@ -91,8 +91,7 @@ var restoShamOptions = &proto.RestorationShaman_Options{
 }
 var PlayerOptionsStandard = &proto.Player_RestorationShaman{
 	RestorationShaman: &proto.RestorationShaman{
-		Options:  restoShamOptions,
-		Rotation: &proto.RestorationShaman_Rotation{},
+		Options: restoShamOptions,
 	},
 }
 
