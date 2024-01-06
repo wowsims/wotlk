@@ -301,14 +301,14 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-DislodgedForeignObject-50348"
  value: {
-  dps: 6965.38963
+  dps: 6966.64527
   tps: 3900.5792
  }
 }
 dps_results: {
  key: "TestElemental-AllItems-DislodgedForeignObject-50353"
  value: {
-  dps: 6941.53415
+  dps: 6942.61816
   tps: 3893.17893
  }
 }
@@ -987,8 +987,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-AllItems-Val'anyr,HammerofAncientKings-46017"
  value: {
-  dps: 7395.35643
-  tps: 4118.76991
+  dps: 7390.12914
+  tps: 4115.93764
  }
 }
 dps_results: {
@@ -1239,8 +1239,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Settings-Troll-p1-Adaptive-default-FullBuffs-LongMultiTarget"
  value: {
-  dps: 8332.51565
-  tps: 3761.82317
+  dps: 8339.91467
+  tps: 3764.5368
  }
 }
 dps_results: {
@@ -1260,8 +1260,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Settings-Troll-p1-Adaptive-default-NoBuffs-LongMultiTarget"
  value: {
-  dps: 4640.63962
-  tps: 1619.5725
+  dps: 4642.58591
+  tps: 1623.02948
  }
 }
 dps_results: {
@@ -1323,8 +1323,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Settings-Troll-p1-EleFireElemental-default-FullBuffs-LongMultiTarget"
  value: {
-  dps: 8332.51565
-  tps: 3761.82317
+  dps: 8339.91467
+  tps: 3764.5368
  }
 }
 dps_results: {
@@ -1344,8 +1344,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Settings-Troll-p1-EleFireElemental-default-NoBuffs-LongMultiTarget"
  value: {
-  dps: 4640.63962
-  tps: 1619.5725
+  dps: 4642.58591
+  tps: 1623.02948
  }
 }
 dps_results: {
