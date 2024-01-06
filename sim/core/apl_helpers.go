@@ -148,7 +148,7 @@ func (rot *APLRotation) GetAPLSpell(spellId *proto.ActionID) *Spell {
 			}
 		}
 	} else {
-		spell = rot.unit.GetSpell(actionID)
+		spell = rot.unit.GetSpellAPL(actionID)
 	}
 
 	if spell == nil {
