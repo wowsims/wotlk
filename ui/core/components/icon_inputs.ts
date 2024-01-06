@@ -11,7 +11,7 @@ import {
 	SaygesFortune,
 	SpellPowerBuff,
 	StrengthBuff,
-	WeaponBuff
+	WeaponImbue
 } from '../proto/common.js';
 import { ActionId } from '../proto_utils/action_id.js';
 
@@ -97,6 +97,7 @@ export const BlessingOfMightBuff = InputHelpers.makeMultiIconInput([
 export const BattleShoutBuff = InputHelpers.makeMultiIconInput([
 	makeTristateRaidBuffInput({id: ActionId.fromSpellId(25289), impId: ActionId.fromSpellId(12861), fieldName: 'battleShout'}),
 ], 'Battle Shout');
+
 
 export const TrueshotAuraBuff = InputHelpers.makeMultiIconInput([
 	makeBooleanRaidBuffInput({id: ActionId.fromSpellId(20906), fieldName: 'trueshotAura', minLevel: 40}),
@@ -458,18 +459,34 @@ export const makeFlasksInput = makeConsumeInputFactory({
 	] as Array<IconEnumValueConfig<Player<any>, Flask>>,
 });
 
-export const makeWeaponBuffsInput = makeConsumeInputFactory({
-	consumesFieldName: 'weaponBuff',
+export const makeMainHandImbuesInput = makeConsumeInputFactory({
+	consumesFieldName: 'mainHandImbue',
 	allOptions: [
 		// TODO: Classic hide when required level too high e.g. `showWhen: (p) =>  p.getLevel() >= 25`
 		// Registering a `showWhen` is causing issues with event callback loops
-		{ actionId: ActionId.fromItemId(20749), value: WeaponBuff.BrillianWizardOil},
-		{ actionId: ActionId.fromItemId(20748), value: WeaponBuff.BrilliantManaOil},
-		{ actionId: ActionId.fromItemId(12404), value: WeaponBuff.DenseSharpeningStone },
-		{ actionId: ActionId.fromItemId(18262), value: WeaponBuff.ElementalSharpeningStone },
-		{ actionId: ActionId.fromItemId(211848), value: WeaponBuff.BlackfathomManaOil},
-		{ actionId: ActionId.fromItemId(211845), value: WeaponBuff.BlackfathomSharpeningStone},
-	] as Array<IconEnumValueConfig<Player<any>, WeaponBuff>>,
+		{ actionId: ActionId.fromItemId(20749), value: WeaponImbue.BrillianWizardOil},
+		{ actionId: ActionId.fromItemId(20748), value: WeaponImbue.BrilliantManaOil},
+		{ actionId: ActionId.fromItemId(12404), value: WeaponImbue.DenseSharpeningStone },
+		{ actionId: ActionId.fromItemId(18262), value: WeaponImbue.ElementalSharpeningStone },
+		{ actionId: ActionId.fromItemId(211848), value: WeaponImbue.BlackfathomManaOil},
+		{ actionId: ActionId.fromItemId(211845), value: WeaponImbue.BlackfathomSharpeningStone},
+		{ actionId: ActionId.fromSpellId(407975), value: WeaponImbue.WildStrikes},
+	] as Array<IconEnumValueConfig<Player<any>, WeaponImbue>>,
+});
+
+export const makeOffHandImbuesInput = makeConsumeInputFactory({
+	consumesFieldName: 'offHandImbue',
+	allOptions: [
+		// TODO: Classic hide when required level too high e.g. `showWhen: (p) =>  p.getLevel() >= 25`
+		// Registering a `showWhen` is causing issues with event callback loops
+		{ actionId: ActionId.fromItemId(20749), value: WeaponImbue.BrillianWizardOil},
+		{ actionId: ActionId.fromItemId(20748), value: WeaponImbue.BrilliantManaOil},
+		{ actionId: ActionId.fromItemId(12404), value: WeaponImbue.DenseSharpeningStone },
+		{ actionId: ActionId.fromItemId(18262), value: WeaponImbue.ElementalSharpeningStone },
+		{ actionId: ActionId.fromItemId(211848), value: WeaponImbue.BlackfathomManaOil},
+		{ actionId: ActionId.fromItemId(211845), value: WeaponImbue.BlackfathomSharpeningStone},
+		
+	] as Array<IconEnumValueConfig<Player<any>, WeaponImbue>>,
 });
 
 export const makeFoodInput = makeConsumeInputFactory({
