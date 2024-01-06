@@ -154,6 +154,8 @@ func (druid *Druid) RegisterSpell(formMask DruidForm, config core.SpellConfig) *
 }
 
 func (druid *Druid) Initialize() {
+	druid.BleedCategories = druid.GetEnemyExclusiveCategories(core.BleedEffectCategory)
+	
 	// druid.registerFaerieFireSpell()
 	// druid.registerInnervateCD()
 }
@@ -180,7 +182,7 @@ func (druid *Druid) RegisterFeralCatSpells() {
 	// druid.registerRakeSpell()
 	// druid.registerRipSpell()
 	druid.registerSavageRoarSpell()
-	// druid.registerShredSpell()
+	druid.registerShredSpell()
 	// druid.registerSwipeBearSpell()
 	// druid.registerSwipeCatSpell()
 	// druid.registerTigersFurySpell()
