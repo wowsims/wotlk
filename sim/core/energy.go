@@ -10,8 +10,8 @@ import (
 )
 
 // Time between energy ticks.
-const EnergyTickDuration = time.Millisecond * 100
-const EnergyPerTick = 1.0
+const EnergyTickDuration = time.Millisecond * 2020
+const EnergyPerTick = 20.2
 
 // OnEnergyGain is called any time energy is increased.
 type OnEnergyGain func(sim *Simulation)
