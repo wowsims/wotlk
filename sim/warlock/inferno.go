@@ -60,9 +60,6 @@ func (warlock *Warlock) registerInfernoSpell() {
 	warlock.AddMajorCooldown(core.MajorCooldown{
 		Spell: warlock.Inferno,
 		Type:  core.CooldownTypeUnknown,
-		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
-			return sim.GetRemainingDuration() <= 61*time.Second
-		},
 	})
 }
 

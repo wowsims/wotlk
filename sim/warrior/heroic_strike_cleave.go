@@ -181,7 +181,4 @@ func (warrior *Warrior) RegisterHSOrCleave(useCleave bool, rageThreshold float64
 	}
 
 	warrior.HSRageThreshold = max(autoSpell.DefaultCast.Cost, rageThreshold)
-	if warrior.IsUsingAPL {
-		warrior.HSRageThreshold = 0
-	}
 }
