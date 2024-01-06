@@ -798,8 +798,8 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-Zabra'sRaiment"
  value: {
-  dps: 6508.31094
-  tps: 6310.96351
+  dps: 6507.98519
+  tps: 6310.63776
  }
 }
 dps_results: {
