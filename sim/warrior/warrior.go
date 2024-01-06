@@ -11,13 +11,7 @@ import (
 var TalentTreeSizes = [3]int{31, 27, 27}
 
 type WarriorInputs struct {
-	ShoutType                   proto.WarriorShout
-	PrecastShout                bool
-	PrecastShoutSapphire        bool
-	PrecastShoutT2              bool
-	RendCdThreshold             time.Duration
-	BloodsurgeDurationThreshold time.Duration
-	StanceSnapshot              bool
+	StanceSnapshot bool
 }
 
 const (
@@ -48,7 +42,8 @@ type Warrior struct {
 	lastOverpowerProc  time.Duration
 	LastAMTick         time.Duration
 
-	Shout           *core.Spell
+	BattleShout     *core.Spell
+	CommandingShout *core.Spell
 	BattleStance    *core.Spell
 	DefensiveStance *core.Spell
 	BerserkerStance *core.Spell
@@ -76,16 +71,12 @@ type Warrior struct {
 	Bladestorm           *core.Spell
 	BladestormOH         *core.Spell
 
-	HeroicStrike         *core.Spell
-	Cleave               *core.Spell
-	hsOrCleaveQueueSpell *core.Spell
-	curQueueAura         *core.Aura
-	curQueuedAutoSpell   *core.Spell
+	HeroicStrike       *core.Spell
+	Cleave             *core.Spell
+	curQueueAura       *core.Aura
+	curQueuedAutoSpell *core.Spell
 
-	OverpowerAura            *core.Aura
-	HSRageThreshold          float64
-	RendRageThresholdBelow   float64
-	RendHealthThresholdAbove float64
+	OverpowerAura *core.Aura
 
 	BattleStanceAura    *core.Aura
 	DefensiveStanceAura *core.Aura
@@ -117,19 +108,20 @@ func (warrior *Warrior) Initialize() {
 	warrior.AutoAttacks.MHConfig().CritMultiplier = warrior.autoCritMultiplier(mh)
 	warrior.AutoAttacks.OHConfig().CritMultiplier = warrior.autoCritMultiplier(oh)
 
-	warrior.Shout = warrior.makeShoutSpell()
-
 	primaryTimer := warrior.NewTimer()
 	overpowerRevengeTimer := warrior.NewTimer()
 
 	warrior.reactionTime = time.Millisecond * 500
 
+	warrior.registerShouts()
 	warrior.registerStances()
 	warrior.registerBerserkerRageSpell()
 	warrior.registerBloodthirstSpell(primaryTimer)
+	warrior.registerCleaveSpell()
 	warrior.registerDemoralizingShoutSpell()
 	warrior.registerDevastateSpell()
 	warrior.registerExecuteSpell()
+	warrior.registerHeroicStrikeSpell()
 	warrior.registerMortalStrikeSpell(primaryTimer)
 	warrior.registerOverpowerSpell(overpowerRevengeTimer)
 	warrior.registerRevengeSpell(overpowerRevengeTimer)
@@ -140,17 +132,12 @@ func (warrior *Warrior) Initialize() {
 	warrior.registerShockwaveSpell()
 	warrior.registerConcussionBlowSpell()
 	warrior.RegisterHeroicThrow()
+	warrior.RegisterRendSpell()
 
 	warrior.SunderArmor = warrior.newSunderArmorSpell(false)
 	warrior.SunderArmorDevastate = warrior.newSunderArmorSpell(true)
 
 	warrior.registerBloodrageCD()
-
-	if !warrior.IsUsingAPL && warrior.Shout != nil && warrior.PrecastShout {
-		warrior.RegisterPrepullAction(-10*time.Second, func(sim *core.Simulation) {
-			warrior.Shout.SkipCastAndApplyEffects(sim, nil)
-		})
-	}
 }
 
 func (warrior *Warrior) Reset(_ *core.Simulation) {

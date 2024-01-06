@@ -45,852 +45,573 @@ character_stats_results: {
 }
 dps_results: {
  key: "TestRestoration-AllItems-Althor'sAbacus-50359"
- value: {
-  dps: 438.74262
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-Althor'sAbacus-50366"
- value: {
-  dps: 440.81894
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-AustereEarthsiegeDiamond"
- value: {
-  dps: 430.41777
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-Bandit'sInsignia-40371"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-BaubleofTrueBlood-50354"
  value: {
-  dps: 421.75678
-  hps: 93.56546
+  hps: 93.75404
  }
 }
 dps_results: {
  key: "TestRestoration-AllItems-BaubleofTrueBlood-50726"
  value: {
-  dps: 421.75678
-  hps: 93.56546
+  hps: 93.75404
  }
 }
 dps_results: {
  key: "TestRestoration-AllItems-BeamingEarthsiegeDiamond"
- value: {
-  dps: 430.41777
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-Beast-tamer'sShoulders-30892"
- value: {
-  dps: 417.58166
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-Bizuri'sTotemofShatteredIce-50458"
- value: {
-  dps: 431.09798
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-BlackBruise-50035"
- value: {
-  dps: 374.4883
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-BlackBruise-50692"
- value: {
-  dps: 374.4883
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-BlessedGarboftheUndeadSlayer"
- value: {
-  dps: 372.35338
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-BlessedRegaliaofUndeadCleansing"
- value: {
-  dps: 388.58783
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-BracingEarthsiegeDiamond"
- value: {
-  dps: 432.77723
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-Bryntroll,theBoneArbiter-50415"
- value: {
-  dps: 431.09798
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-Bryntroll,theBoneArbiter-50709"
- value: {
-  dps: 431.09798
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-ChaoticSkyflareDiamond"
- value: {
-  dps: 430.41777
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-CorpseTongueCoin-50349"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-CorpseTongueCoin-50352"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-CorrodedSkeletonKey-50356"
  value: {
-  dps: 421.84891
   hps: 64
  }
 }
 dps_results: {
  key: "TestRestoration-AllItems-DarkmoonCard:Berserker!-42989"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-DarkmoonCard:Death-42990"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-DarkmoonCard:Greatness-44255"
- value: {
-  dps: 425.45728
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-DeadlyGladiator'sTotemofSurvival-42602"
- value: {
-  dps: 431.09798
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-Death'sChoice-47464"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-DeathKnight'sAnguish-38212"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-Deathbringer'sWill-50362"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-Deathbringer'sWill-50363"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-Defender'sCode-40257"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-DestructiveSkyflareDiamond"
- value: {
-  dps: 430.41777
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-DislodgedForeignObject-50348"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-DislodgedForeignObject-50353"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-EarthshatterBattlegear"
- value: {
-  dps: 384.11985
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-EarthshatterGarb"
- value: {
-  dps: 433.095
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-EffulgentSkyflareDiamond"
- value: {
-  dps: 430.41777
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-EmberSkyflareDiamond"
- value: {
-  dps: 433.46002
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-EnigmaticSkyflareDiamond"
- value: {
-  dps: 430.41777
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-EnigmaticStarflareDiamond"
- value: {
-  dps: 430.41777
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-EphemeralSnowflake-50260"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-EssenceofGossamer-37220"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-EternalEarthsiegeDiamond"
- value: {
-  dps: 430.41777
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-ExtractofNecromanticPower-40373"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-EyeoftheBroodmother-45308"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-Figurine-SapphireOwl-42413"
- value: {
-  dps: 423.67646
-  tps: 0.975
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-ForethoughtTalisman-40258"
- value: {
-  dps: 432.32489
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-ForgeEmber-37660"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-ForlornSkyflareDiamond"
- value: {
-  dps: 432.77723
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-ForlornStarflareDiamond"
- value: {
-  dps: 432.30534
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-FrostWitch'sBattlegear"
- value: {
-  dps: 395.23715
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-FrostWitch'sRegalia"
- value: {
-  dps: 497.92526
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-FuriousGladiator'sTotemofSurvival-42603"
- value: {
-  dps: 431.09798
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-FuryoftheFiveFlights-40431"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-FuturesightRune-38763"
- value: {
-  dps: 427.70036
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-Gladiator'sEarthshaker"
- value: {
-  dps: 365.19514
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-Gladiator'sWartide"
- value: {
-  dps: 454.19385
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-GlowingTwilightScale-54573"
- value: {
-  dps: 439.78078
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-GlowingTwilightScale-54589"
- value: {
-  dps: 442.14023
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-GnomishLightningGenerator-41121"
  value: {
-  dps: 422.07575
-  dtps: 32.22786
+  dtps: 32.07764
  }
 }
 dps_results: {
  key: "TestRestoration-AllItems-HatefulGladiator'sTotemofSurvival-42601"
- value: {
-  dps: 431.09798
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-Heartpierce-49982"
- value: {
-  dps: 431.09798
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-Heartpierce-50641"
- value: {
-  dps: 431.09798
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-IllustrationoftheDragonSoul-40432"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-ImpassiveSkyflareDiamond"
- value: {
-  dps: 430.41777
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-ImpassiveStarflareDiamond"
- value: {
-  dps: 430.41777
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-IncisorFragment-37723"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-InsightfulEarthsiegeDiamond"
- value: {
-  dps: 431.09798
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-InvigoratingEarthsiegeDiamond"
- value: {
-  dps: 430.41777
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-LastWord-50179"
- value: {
-  dps: 431.09798
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-LastWord-50708"
- value: {
-  dps: 431.09798
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-Lavanthor'sTalisman-37872"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-MajesticDragonFigurine-40430"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-MeteoriteWhetstone-37390"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-NevermeltingIceCrystal-50259"
- value: {
-  dps: 432.32489
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-Nibelung-49992"
- value: {
-  dps: 431.09798
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-Nibelung-50648"
- value: {
-  dps: 431.09798
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-OfferingofSacrifice-37638"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-PersistentEarthshatterDiamond"
- value: {
-  dps: 430.41777
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-PersistentEarthsiegeDiamond"
- value: {
-  dps: 430.41777
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-PetrifiedScarab-21685"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-PetrifiedTwilightScale-54571"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-PetrifiedTwilightScale-54591"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-PowerfulEarthshatterDiamond"
- value: {
-  dps: 430.41777
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-PowerfulEarthsiegeDiamond"
- value: {
-  dps: 430.41777
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-PurifiedShardoftheGods"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-ReignoftheDead-47316"
- value: {
-  dps: 436.00565
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-ReignoftheDead-47477"
- value: {
-  dps: 437.70446
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-RelentlessEarthsiegeDiamond"
- value: {
-  dps: 430.41777
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-RelentlessGladiator'sTotemofSurvival-42604"
- value: {
-  dps: 431.09798
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-RevitalizingSkyflareDiamond"
- value: {
-  dps: 430.41777
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-RuneofRepulsion-40372"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-SavageGladiator'sTotemofSurvival-42594"
- value: {
-  dps: 431.09798
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-SealofthePantheon-36993"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-Shadowmourne-49623"
- value: {
-  dps: 431.09798
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-ShinyShardoftheGods"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-Sindragosa'sFlawlessFang-50361"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-SkycallTotem-33506"
- value: {
-  dps: 431.09798
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-SkyshatterHarness"
- value: {
-  dps: 338.77387
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-SkyshatterRegalia"
- value: {
-  dps: 382.87779
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-SliverofPureIce-50339"
- value: {
-  dps: 436.76067
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-SliverofPureIce-50346"
- value: {
-  dps: 438.64824
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-SouloftheDead-40382"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-SparkofLife-37657"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-SphereofRedDragon'sBlood-37166"
- value: {
-  dps: 432.60699
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-Stonebreaker'sTotem-33507"
- value: {
-  dps: 431.09798
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-StormshroudArmor"
- value: {
-  dps: 368.87888
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-SwiftSkyflareDiamond"
- value: {
-  dps: 430.41777
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-SwiftStarflareDiamond"
- value: {
-  dps: 430.41777
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-SwiftWindfireDiamond"
- value: {
-  dps: 430.41777
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-TalismanofTrollDivinity-37734"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-TearsoftheVanquished-47215"
- value: {
-  dps: 425.26267
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-TheFistsofFury"
- value: {
-  dps: 379.15057
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-TheGeneral'sHeart-45507"
- value: {
-  dps: 421.84891
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-Thrall'sBattlegear"
- value: {
-  dps: 393.85565
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-Thrall'sRegalia"
- value: {
-  dps: 461.60137
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-ThunderingSkyflareDiamond"
- value: {
-  dps: 430.41777
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-TidefuryRaiment"
- value: {
-  dps: 370.22169
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-TinyAbominationinaJar-50351"
- value: {
-  dps: 439.95675
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-TinyAbominationinaJar-50706"
- value: {
-  dps: 439.95675
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-TirelessSkyflareDiamond"
- value: {
-  dps: 432.77723
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-TirelessStarflareDiamond"
- value: {
-  dps: 432.30534
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-TomeofArcanePhenomena-36972"
- value: {
-  dps: 428.26663
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-TotemofElectrifyingWind-47666"
- value: {
-  dps: 431.09798
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-TotemofQuakingEarth-47667"
- value: {
-  dps: 431.09798
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-TotemoftheAvalanche-50463"
- value: {
-  dps: 431.09798
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-TotemoftheElementalPlane-40708"
- value: {
-  dps: 431.09798
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-TrenchantEarthshatterDiamond"
- value: {
-  dps: 432.30534
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-TrenchantEarthsiegeDiamond"
- value: {
-  dps: 432.77723
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-UndeadSlayer'sBlessedArmor"
- value: {
-  dps: 368.87888
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-Val'anyr,HammerofAncientKings-46017"
- value: {
-  dps: 442.98141
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-WingedTalisman-37844"
- value: {
-  dps: 454.50379
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-WorldbreakerBattlegear"
- value: {
-  dps: 389.7915
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-WorldbreakerGarb"
- value: {
-  dps: 456.87971
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-AllItems-WrathfulGladiator'sTotemofSurvival-51513"
- value: {
-  dps: 431.09798
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-Average-Default"
- value: {
-  dps: 433.28018
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-Settings-Troll-p1-Standard-Default-FullBuffs-LongMultiTarget"
- value: {
-  dps: 1991.73894
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-Settings-Troll-p1-Standard-Default-FullBuffs-LongSingleTarget"
- value: {
-  dps: 431.09798
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-Settings-Troll-p1-Standard-Default-FullBuffs-ShortSingleTarget"
- value: {
-  dps: 1119.20682
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-Settings-Troll-p1-Standard-Default-NoBuffs-LongMultiTarget"
- value: {
-  dps: 1513.25039
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-Settings-Troll-p1-Standard-Default-NoBuffs-LongSingleTarget"
- value: {
-  dps: 317.58927
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-Settings-Troll-p1-Standard-Default-NoBuffs-ShortSingleTarget"
- value: {
-  dps: 832.65007
- }
+ value: {}
 }
 dps_results: {
  key: "TestRestoration-SwitchInFrontOfTarget-Default"
- value: {
-  dps: 394.56405
- }
+ value: {}
 }

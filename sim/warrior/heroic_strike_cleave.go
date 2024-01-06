@@ -5,14 +5,14 @@ import (
 	"github.com/wowsims/wotlk/sim/core/proto"
 )
 
-func (warrior *Warrior) registerHeroicStrikeSpell() *core.Spell {
+func (warrior *Warrior) registerHeroicStrikeSpell() {
 	hasGlyph := warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfHeroicStrike)
 	var rageMetrics *core.ResourceMetrics
 	if hasGlyph {
 		rageMetrics = warrior.NewRageMetrics(core.ActionID{ItemID: 43418})
 	}
 
-	return warrior.RegisterSpell(core.SpellConfig{
+	warrior.HeroicStrike = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47450},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
@@ -50,14 +50,14 @@ func (warrior *Warrior) registerHeroicStrikeSpell() *core.Spell {
 	})
 }
 
-func (warrior *Warrior) registerCleaveSpell() *core.Spell {
+func (warrior *Warrior) registerCleaveSpell() {
 	flatDamageBonus := 222 * (1 + 0.4*float64(warrior.Talents.ImprovedCleave))
 
 	targets := core.TernaryInt32(warrior.HasMajorGlyph(proto.WarriorMajorGlyph_GlyphOfCleaving), 3, 2)
 	numHits := min(targets, warrior.Env.GetNumTargets())
 	results := make([]*core.SpellResult, numHits)
 
-	return warrior.RegisterSpell(core.SpellConfig{
+	warrior.Cleave = warrior.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 47520},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
@@ -136,20 +136,9 @@ func (warrior *Warrior) makeQueueSpellsAndAura(srcSpell *core.Spell) *core.Spell
 	return queueSpell
 }
 
-func (warrior *Warrior) QueueHSOrCleave(sim *core.Simulation) {
-	if warrior.hsOrCleaveQueueSpell.CanCast(sim, warrior.CurrentTarget) {
-		warrior.hsOrCleaveQueueSpell.Cast(sim, warrior.CurrentTarget)
-	}
-}
-
 // Returns true if the regular melee swing should be used, false otherwise.
 func (warrior *Warrior) TryHSOrCleave(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
 	if !warrior.curQueueAura.IsActive() {
-		return mhSwingSpell
-	}
-
-	if warrior.CurrentRage() < warrior.HSRageThreshold {
-		warrior.curQueueAura.Deactivate(sim)
 		return mhSwingSpell
 	}
 
@@ -159,26 +148,4 @@ func (warrior *Warrior) TryHSOrCleave(sim *core.Simulation, mhSwingSpell *core.S
 	}
 
 	return warrior.curQueuedAutoSpell
-}
-
-func (warrior *Warrior) ShouldQueueHSOrCleave(sim *core.Simulation) bool {
-	return warrior.CurrentRage() >= warrior.HSRageThreshold && sim.CurrentTime >= warrior.Hardcast.Expires
-}
-
-func (warrior *Warrior) RegisterHSOrCleave(useCleave bool, rageThreshold float64) {
-	warrior.HeroicStrike = warrior.registerCleaveSpell()
-	hsQueueSpell := warrior.makeQueueSpellsAndAura(warrior.HeroicStrike)
-	warrior.Cleave = warrior.registerHeroicStrikeSpell()
-	cleaveQueueSpell := warrior.makeQueueSpellsAndAura(warrior.Cleave)
-
-	var autoSpell *core.Spell
-	if useCleave {
-		autoSpell = warrior.HeroicStrike
-		warrior.hsOrCleaveQueueSpell = hsQueueSpell
-	} else {
-		autoSpell = warrior.Cleave
-		warrior.hsOrCleaveQueueSpell = cleaveQueueSpell
-	}
-
-	warrior.HSRageThreshold = max(autoSpell.DefaultCast.Cost, rageThreshold)
 }

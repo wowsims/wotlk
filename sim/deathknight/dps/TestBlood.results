@@ -287,8 +287,8 @@ dps_results: {
 dps_results: {
  key: "TestBlood-AllItems-EphemeralSnowflake-50260"
  value: {
-  dps: 6896.49505
-  tps: 3364.06484
+  dps: 7006.33997
+  tps: 3423.96806
  }
 }
 dps_results: {
@@ -666,8 +666,8 @@ dps_results: {
 dps_results: {
  key: "TestBlood-AllItems-SphereofRedDragon'sBlood-37166"
  value: {
-  dps: 6949.06461
-  tps: 3403.90157
+  dps: 6975.8539
+  tps: 3419.25098
  }
 }
 dps_results: {
@@ -778,8 +778,8 @@ dps_results: {
 dps_results: {
  key: "TestBlood-AllItems-TomeofArcanePhenomena-36972"
  value: {
-  dps: 6904.99937
-  tps: 3377.67182
+  dps: 6936.74073
+  tps: 3393.67215
  }
 }
 dps_results: {

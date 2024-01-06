@@ -41,9 +41,7 @@ func (shaman *Shaman) registerFireElementalTotem() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, _ *core.Spell) {
 			// TODO: ToW needs a unique buff/debuff aura for each raidmember/target.
 			//  Otherwise we will be possibly disabling another ele shaman's ToW debuff/buff.
-			if shaman.Totems.Fire == proto.FireTotem_TotemOfWrath {
-				shaman.TotemExpirations[FireTotem] = sim.CurrentTime + fireTotemDuration
-			} else if shaman.Totems.Fire != proto.FireTotem_NoFireTotem && !shaman.Totems.UseFireMcd {
+			if shaman.Totems.Fire != proto.FireTotem_NoFireTotem {
 				shaman.TotemExpirations[FireTotem] = sim.CurrentTime + fireTotemDuration
 			}
 
