@@ -187,47 +187,6 @@ func (shaman *Shaman) registerCallOfTheElements() {
 	})
 }
 
-func (shaman *Shaman) NextTotemAt(_ *core.Simulation) time.Duration {
-	return min(shaman.NextTotemDrops[0], shaman.NextTotemDrops[1], shaman.NextTotemDrops[2], shaman.NextTotemDrops[3])
-}
-
-// TryDropTotems will check to see if totems need to be re-cast.
-//
-//	Returns whether we tried to cast a totem, regardless of whether it succeeded.
-func (shaman *Shaman) TryDropTotems(sim *core.Simulation) bool {
-	var spell *core.Spell
-
-	casted := false
-	for totemTypeIdx, totemExpiration := range shaman.NextTotemDrops {
-		spell = nil
-		nextDrop := shaman.NextTotemDropType[totemTypeIdx]
-		if sim.CurrentTime >= totemExpiration {
-			switch totemTypeIdx {
-			case AirTotem:
-				spell = shaman.getAirTotemSpell(proto.AirTotem(nextDrop))
-			case EarthTotem:
-				spell = shaman.getEarthTotemSpell(proto.EarthTotem(nextDrop))
-			case FireTotem:
-				spell = shaman.getFireTotemSpell(proto.FireTotem(nextDrop))
-			case WaterTotem:
-				spell = shaman.getWaterTotemSpell(proto.WaterTotem(nextDrop))
-			}
-		}
-		if spell != nil {
-			if success := spell.Cast(sim, shaman.CurrentTarget); !success {
-				shaman.WaitForMana(sim, spell.CurCast.Cost)
-				return true
-			}
-			casted = true
-		}
-	}
-
-	if casted {
-		shaman.WaitUntil(sim, sim.CurrentTime+time.Second)
-	}
-	return casted
-}
-
 func (shaman *Shaman) getAirTotemSpell(totemType proto.AirTotem) *core.Spell {
 	switch totemType {
 	case proto.AirTotem_WrathOfAirTotem:

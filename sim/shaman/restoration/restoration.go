@@ -1,8 +1,6 @@
 package restoration
 
 import (
-	"time"
-
 	"github.com/wowsims/wotlk/sim/core"
 	"github.com/wowsims/wotlk/sim/core/proto"
 	"github.com/wowsims/wotlk/sim/shaman"
@@ -33,25 +31,14 @@ func NewRestorationShaman(character *core.Character, options *proto.Player) *Res
 		Shield:    restoShamOptions.Options.Shield,
 	}
 
-	if restoShamOptions.Rotation.Bloodlust != proto.RestorationShaman_Rotation_UnsetBloodlust {
-		selfBuffs.Bloodlust = restoShamOptions.Rotation.Bloodlust == proto.RestorationShaman_Rotation_UseBloodlust
-	}
-
 	totems := &proto.ShamanTotems{}
 	if restoShamOptions.Options.Totems != nil {
 		totems = restoShamOptions.Options.Totems
 	}
 
 	resto := &RestorationShaman{
-		Shaman:   shaman.NewShaman(character, options.TalentsString, totems, selfBuffs, false),
-		rotation: restoShamOptions.Rotation,
+		Shaman: shaman.NewShaman(character, options.TalentsString, totems, selfBuffs, false),
 	}
-
-	// can only use earth shield if specc'd
-	resto.rotation.UseEarthShield = resto.rotation.UseEarthShield && resto.Talents.EarthShield
-	resto.earthShieldPPM = restoShamOptions.Options.EarthShieldPPM
-
-	resto.EnableResumeAfterManaWait(resto.tryUseGCD)
 
 	if resto.HasMHWeapon() {
 		resto.ApplyEarthlivingImbueToItem(resto.GetMHWeapon())
@@ -65,10 +52,6 @@ func NewRestorationShaman(character *core.Character, options *proto.Player) *Res
 
 type RestorationShaman struct {
 	*shaman.Shaman
-
-	rotation            *proto.RestorationShaman_Rotation
-	earthShieldPPM      int32
-	lastEarthShieldProc time.Duration
 }
 
 func (resto *RestorationShaman) GetShaman() *shaman.Shaman {
@@ -77,7 +60,6 @@ func (resto *RestorationShaman) GetShaman() *shaman.Shaman {
 
 func (resto *RestorationShaman) Reset(sim *core.Simulation) {
 	resto.Shaman.Reset(sim)
-	resto.lastEarthShieldProc = -core.NeverExpires
 }
 func (resto *RestorationShaman) GetMainTarget() *core.Unit {
 	// TODO: make this just grab first player that isn't self.

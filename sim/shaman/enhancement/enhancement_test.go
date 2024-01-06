@@ -87,15 +87,13 @@ var StandardGlyphs = &proto.Glyphs{
 
 var PlayerOptionsWFWF = &proto.Player_EnhancementShaman{
 	EnhancementShaman: &proto.EnhancementShaman{
-		Options:  enhShamWFWF,
-		Rotation: &proto.EnhancementShaman_Rotation{},
+		Options: enhShamWFWF,
 	},
 }
 
 var PlayerOptionsFTFT = &proto.Player_EnhancementShaman{
 	EnhancementShaman: &proto.EnhancementShaman{
-		Options:  enhShamFTFT,
-		Rotation: &proto.EnhancementShaman_Rotation{},
+		Options: enhShamFTFT,
 	},
 }
 

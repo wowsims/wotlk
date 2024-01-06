@@ -32,37 +32,16 @@ func NewElementalShaman(character *core.Character, options *proto.Player) *Eleme
 		Shield:    eleShamOptions.Options.Shield,
 	}
 
-	if eleShamOptions.Rotation.Bloodlust != proto.ElementalShaman_Rotation_UnsetBloodlust {
-		selfBuffs.Bloodlust = eleShamOptions.Rotation.Bloodlust == proto.ElementalShaman_Rotation_UseBloodlust
-	}
-
 	totems := &proto.ShamanTotems{}
 	if eleShamOptions.Options.Totems != nil {
 		totems = eleShamOptions.Options.Totems
 		totems.UseFireMcd = true // Control fire totems as MCD.
 	}
 
-	var rotation Rotation
-
-	switch eleShamOptions.Rotation.Type {
-	case proto.ElementalShaman_Rotation_Adaptive:
-		rotation = NewAdaptiveRotation(eleShamOptions.Rotation)
-	case proto.ElementalShaman_Rotation_Manual:
-		rotation = NewManualRotation(eleShamOptions.Rotation)
-	default:
-		rotation = NewAdaptiveRotation(eleShamOptions.Rotation)
-	}
-
-	inRange := eleShamOptions.Rotation.InThunderstormRange
-	if eleShamOptions.Options.ThunderstormRange != proto.ElementalShaman_Options_UnsetTSRange {
-		inRange = eleShamOptions.Options.ThunderstormRange == proto.ElementalShaman_Options_TSInRange
-	}
+	inRange := eleShamOptions.Options.ThunderstormRange == proto.ElementalShaman_Options_TSInRange
 	ele := &ElementalShaman{
-		Shaman:   shaman.NewShaman(character, options.TalentsString, totems, selfBuffs, inRange),
-		rotation: rotation,
-		has4pT6:  character.HasSetBonus(shaman.ItemSetSkyshatterRegalia, 4),
+		Shaman: shaman.NewShaman(character, options.TalentsString, totems, selfBuffs, inRange),
 	}
-	ele.EnableResumeAfterManaWait(ele.tryUseGCD)
 
 	if mh := ele.GetMHWeapon(); mh != nil {
 		ele.ApplyFlametongueImbueToItem(mh, false)
@@ -90,10 +69,6 @@ func NewElementalShaman(character *core.Character, options *proto.Player) *Eleme
 
 type ElementalShaman struct {
 	*shaman.Shaman
-
-	rotation Rotation
-
-	has4pT6 bool
 }
 
 func (eleShaman *ElementalShaman) GetShaman() *shaman.Shaman {
@@ -102,5 +77,4 @@ func (eleShaman *ElementalShaman) GetShaman() *shaman.Shaman {
 
 func (eleShaman *ElementalShaman) Reset(sim *core.Simulation) {
 	eleShaman.Shaman.Reset(sim)
-	eleShaman.rotation.Reset(eleShaman, sim)
 }
