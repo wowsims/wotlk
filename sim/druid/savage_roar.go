@@ -12,7 +12,7 @@ func (druid *Druid) getSavageRoarMultiplier() float64 {
 }
 
 func (druid *Druid) registerSavageRoarSpell() {
-	actionID := core.ActionID{SpellID: 52610}
+	actionID := core.ActionID{SpellID: 407988}
 
 	srm := druid.getSavageRoarMultiplier()
 

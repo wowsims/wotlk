@@ -179,7 +179,7 @@ func (druid *Druid) RegisterFeralCatSpells() {
 	// druid.registerLacerateSpell()
 	// druid.registerRakeSpell()
 	// druid.registerRipSpell()
-	// druid.registerSavageRoarSpell()
+	druid.registerSavageRoarSpell()
 	// druid.registerShredSpell()
 	// druid.registerSwipeBearSpell()
 	// druid.registerSwipeCatSpell()
