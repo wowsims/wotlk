@@ -23,10 +23,7 @@ func TestFury(t *testing.T) {
 		GearSet:     core.GetGearSet("../../../ui/warrior/gear_sets", "p1_fury"),
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsFury},
-
-		OtherRotations: []core.RotationCombo{
-			core.GetAplRotation("../../../ui/warrior/apls", "fury"),
-		},
+		Rotation:    core.GetAplRotation("../../../ui/warrior/apls", "fury"),
 
 		ItemFilter: core.ItemFilter{
 			ArmorType: proto.ArmorType_ArmorTypePlate,
@@ -53,10 +50,7 @@ func TestArms(t *testing.T) {
 		GearSet:     core.GetGearSet("../../../ui/warrior/gear_sets", "p1_arms"),
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsArms},
-
-		OtherRotations: []core.RotationCombo{
-			core.GetAplRotation("../../../ui/warrior/apls", "arms"),
-		},
+		Rotation:    core.GetAplRotation("../../../ui/warrior/apls", "arms"),
 
 		ItemFilter: core.ItemFilter{
 			ArmorType: proto.ArmorType_ArmorTypePlate,
