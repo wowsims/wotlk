@@ -511,7 +511,7 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 		Priority: core.CooldownPriorityDefault,
 		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
 
-			if rogue.Rotation.MultiTargetSliceFrequency == proto.Rogue_Rotation_Never {
+			if !rogue.IsUsingAPL && rogue.Rotation.MultiTargetSliceFrequency == proto.Rogue_Rotation_Never {
 				// Well let's just cast BF now, no need to optimize around slices that will never be cast
 				return true
 			}
