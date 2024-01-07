@@ -2,7 +2,6 @@ syntax = "proto3";
 package proto;
 
 option go_package = "./proto";
-import "common.proto";
 
 // WotLK talents
 message WarlockTalents {
@@ -138,53 +137,7 @@ enum WarlockMinorGlyph {
 
 message Warlock {
 	message Rotation {
-		enum Preset {
-			Manual = 0;
-			Automatic = 1;
-		}
-		enum Type {
-			Affliction = 0;
-			Demonology = 1;
-			Destruction = 2;
-		}
-		enum PrimarySpell {
-			UnknownSpell = 0;
-			ShadowBolt = 1;
-			Incinerate = 2;
-			Seed = 3;
-		}
-		enum Curse {
-			NoCurse = 0;
-			Elements = 1;
-			Weakness = 2;
-			Doom = 3;
-			Agony = 4;
-			Tongues = 5;
-		}
-		enum SecondaryDot {
-			NoSecondaryDot = 0;
-			Immolate = 1;
-			UnstableAffliction = 2;
-		}
-		enum SpecSpell {
-			NoSpecSpell = 0;
-			ChaosBolt = 1;
-			Haunt = 2;
-		}
-		Preset preset = 1;
-		Curse curse = 2;
-		PrimarySpell primary_spell = 3;
-		SecondaryDot secondary_dot = 4;
-		bool corruption = 5;
-		bool detonate_seed = 6;
-		SpecSpell spec_spell = 7;
-		Type type = 8;
-		bool use_infernal = 9;
-
-		bool enable_weapon_swap = 10;
-		ItemSwap weapon_swap = 11;
 	}
-	Rotation rotation = 1;
 	
 	message Options {
 		enum Summon {

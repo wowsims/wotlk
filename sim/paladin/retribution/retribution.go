@@ -33,10 +33,6 @@ func NewRetributionPaladin(character *core.Character, options *proto.Player) *Re
 		Seal:    retOptions.Options.Seal,
 	}
 
-	pal.AvoidClippingConsecration = retOptions.Rotation.AvoidClippingConsecration
-	pal.HoldLastAvengingWrathUntilExecution = retOptions.Rotation.HoldLastAvengingWrathUntilExecution
-	pal.CancelChaosBane = retOptions.Rotation.CancelChaosBane
-
 	ret.PaladinAura = retOptions.Options.Aura
 
 	ret.EnableAutoAttacks(ret, core.AutoAttackOptions{

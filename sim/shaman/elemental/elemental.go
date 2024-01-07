@@ -28,8 +28,7 @@ func NewElementalShaman(character *core.Character, options *proto.Player) *Eleme
 	eleShamOptions := options.GetElementalShaman()
 
 	selfBuffs := shaman.SelfBuffs{
-		Bloodlust: eleShamOptions.Options.Bloodlust,
-		Shield:    eleShamOptions.Options.Shield,
+		Shield: eleShamOptions.Options.Shield,
 	}
 
 	totems := &proto.ShamanTotems{}

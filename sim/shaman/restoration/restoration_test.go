@@ -85,9 +85,8 @@ var BasicTotems = &proto.ShamanTotems{
 }
 
 var restoShamOptions = &proto.RestorationShaman_Options{
-	Shield:    proto.ShamanShield_WaterShield,
-	Bloodlust: true,
-	Totems:    BasicTotems,
+	Shield: proto.ShamanShield_WaterShield,
+	Totems: BasicTotems,
 }
 var PlayerOptionsStandard = &proto.Player_RestorationShaman{
 	RestorationShaman: &proto.RestorationShaman{

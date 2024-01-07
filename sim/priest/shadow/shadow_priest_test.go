@@ -70,9 +70,6 @@ var PlayerOptionsBasic = &proto.Player_ShadowPriest{
 			UseMindBlast:       true,
 			UseShadowWordDeath: true,
 		},
-		Rotation: &proto.ShadowPriest_Rotation{
-			RotationType: proto.ShadowPriest_Rotation_Basic,
-		},
 	},
 }
 var PlayerOptionsClipping = &proto.Player_ShadowPriest{
@@ -83,10 +80,6 @@ var PlayerOptionsClipping = &proto.Player_ShadowPriest{
 			UseMindBlast:       true,
 			UseShadowWordDeath: true,
 		},
-		Rotation: &proto.ShadowPriest_Rotation{
-			RotationType: proto.ShadowPriest_Rotation_Clipping,
-			PrecastType:  1,
-		},
 	},
 }
 var PlayerOptionsIdeal = &proto.Player_ShadowPriest{
@@ -96,10 +89,6 @@ var PlayerOptionsIdeal = &proto.Player_ShadowPriest{
 			UseShadowfiend:     true,
 			UseMindBlast:       true,
 			UseShadowWordDeath: true,
-		},
-		Rotation: &proto.ShadowPriest_Rotation{
-			RotationType: proto.ShadowPriest_Rotation_Ideal,
-			PrecastType:  1,
 		},
 	},
 }

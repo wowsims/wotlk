@@ -92,16 +92,6 @@ var DestructionGlyphs = &proto.Glyphs{
 	Major3: int32(proto.WarlockMajorGlyph_GlyphOfIncinerate),
 }
 
-var defaultDestroRotation = &proto.Warlock_Rotation{
-	Type:         proto.Warlock_Rotation_Destruction,
-	PrimarySpell: proto.Warlock_Rotation_Incinerate,
-	SecondaryDot: proto.Warlock_Rotation_Immolate,
-	SpecSpell:    proto.Warlock_Rotation_ChaosBolt,
-	Curse:        proto.Warlock_Rotation_Doom,
-	Corruption:   false,
-	DetonateSeed: true,
-}
-
 var defaultDestroOptions = &proto.Warlock_Options{
 	Armor:       proto.Warlock_Options_FelArmor,
 	Summon:      proto.Warlock_Options_Imp,

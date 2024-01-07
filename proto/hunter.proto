@@ -3,8 +3,6 @@ package proto;
 
 option go_package = "./proto";
 
-import "common.proto";
-
 message HunterTalents {
 	// Beast Mastery
 	int32 improved_aspect_of_the_hawk = 1;
@@ -198,27 +196,6 @@ message Hunter {
 
 		bool trap_weave = 1;
 
-		// TODO: Safe to delete after 1 month (after 8/26/2023).
-		double time_to_trap_weave_ms = 2 [deprecated = true];
-
-		enum SpellOption {
-			NoSpell = 0;
-			SteadyShot = 1;
-			ArcaneShot = 2;
-			AimedShot = 3;
-			MultiShot = 4;
-			SerpentStingSpell = 5;
-			ScorpidStingSpell = 6;
-			KillShot = 7;
-			BlackArrow = 8;
-			ChimeraShot = 9;
-			ExplosiveShot = 10;
-			ExplosiveShotDownrank = 13;
-			ExplosiveTrap = 11;
-			Volley = 12;
-		}
-		CustomRotation custom_rotation = 8 [deprecated = true];
-
 		// Switch to Aspect of the Viper when mana goes below this percent.
 		double viper_start_mana_percent = 6;
 		// Switch back to Aspect of the Hawk when mana goes above this percent.
@@ -228,9 +205,7 @@ message Hunter {
 		bool allow_explosive_shot_downrank = 10;
 
 		bool multi_dot_serpent_sting = 11;
-		double steady_shot_max_delay = 12 [deprecated = true];
 	}
-	Rotation rotation = 1;
 	
 	message Options {
 		enum Ammo {

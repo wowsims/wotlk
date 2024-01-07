@@ -33,7 +33,6 @@ func TestRetribution(t *testing.T) {
 							Seal:      proto.PaladinSeal_Command,
 							Aura:      proto.PaladinAura_RetributionAura,
 						},
-						Rotation: &proto.RetributionPaladin_Rotation{},
 					},
 				},
 			},
@@ -46,7 +45,6 @@ func TestRetribution(t *testing.T) {
 							Seal:      proto.PaladinSeal_Righteousness,
 							Aura:      proto.PaladinAura_RetributionAura,
 						},
-						Rotation: &proto.RetributionPaladin_Rotation{},
 					},
 				},
 			},
@@ -58,14 +56,6 @@ func TestRetribution(t *testing.T) {
 							Judgement: proto.PaladinJudgement_JudgementOfWisdom,
 							Seal:      proto.PaladinSeal_Vengeance,
 							Aura:      proto.PaladinAura_RetributionAura,
-						},
-						Rotation: &proto.RetributionPaladin_Rotation{
-							ConsSlack:            500,
-							ExoSlack:             500,
-							UseDivinePlea:        true,
-							DivinePleaPercentage: 0.75,
-							HolyWrathThreshold:   4,
-							SovTargets:           2,
 						},
 					},
 				},
@@ -133,7 +123,6 @@ var DefaultOptions = &proto.Player_RetributionPaladin{
 			Seal:      proto.PaladinSeal_Vengeance,
 			Aura:      proto.PaladinAura_RetributionAura,
 		},
-		Rotation: &proto.RetributionPaladin_Rotation{},
 	},
 }
 

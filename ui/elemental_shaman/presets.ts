@@ -64,7 +64,6 @@ export const StandardTalents = {
 
 export const DefaultOptions = ElementalShamanOptions.create({
   shield: ShamanShield.WaterShield,
-  bloodlust: true,
   totems: ShamanTotems.create({
     earth: EarthTotem.StrengthOfEarthTotem,
     air: AirTotem.WrathOfAirTotem,

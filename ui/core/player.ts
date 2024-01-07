@@ -17,7 +17,6 @@ import {
 	Spec,
 	Stat,
 	UnitStats,
-	UnitReference_Type,
 } from './proto/common.js';
 import {
 	AuraStats as AuraStatsProto,
@@ -27,7 +26,6 @@ import {
 import {
 	APLRotation,
 	APLRotation_Type as APLRotationType,
-	APLValue,
 	SimpleRotation,
 } from './proto/apl.js';
 import {
@@ -78,7 +76,6 @@ import {
 	specToEligibleRaces,
 	specTypeFunctions,
 	withSpecProto,
-	ShamanSpecs,
 } from './proto_utils/utils.js';
 
 import * as Mechanics from './constants/mechanics.js';
@@ -88,7 +85,6 @@ import { Party, MAX_PARTY_SIZE } from './party.js';
 import { Raid } from './raid.js';
 import { Sim, SimSettingCategories } from './sim.js';
 import { stringComparator, sum } from './utils.js';
-import { ElementalShaman_Options, ElementalShaman_Options_ThunderstormRange, ElementalShaman_Rotation, ElementalShaman_Rotation_BloodlustUse, EnhancementShaman_Rotation, EnhancementShaman_Rotation_BloodlustUse, RestorationShaman_Rotation, RestorationShaman_Rotation_BloodlustUse } from './proto/shaman.js';
 import { Database } from './proto_utils/database.js';
 
 export interface AuraStats {
@@ -1414,83 +1410,6 @@ export class Player<SpecType extends Spec> {
 			}
 			if (loadCategory(SimSettingCategories.External)) {
 				this.setBuffs(eventID, proto.buffs || IndividualBuffs.create());
-			}
-
-			if (this.spec == Spec.SpecShadowPriest) {
-				const options = this.getSpecOptions() as SpecOptions<Spec.SpecShadowPriest>;
-				if (options.latency) {
-					this.setChannelClipDelay(eventID, options.latency);
-					options.latency = 0;
-					this.setSpecOptions(eventID, options as SpecOptions<SpecType>)
-				}
-			}
-
-			if ([Spec.SpecEnhancementShaman, Spec.SpecRestorationShaman, Spec.SpecElementalShaman].includes(this.spec)) {
-				const rot = this.getSimpleRotation() as SpecRotation<ShamanSpecs>;
-				if (rot.totems) {
-					const options = this.getSpecOptions() as SpecOptions<ShamanSpecs>;
-					options.totems = rot.totems;
-					this.setSpecOptions(eventID, options as SpecOptions<SpecType>);
-					rot.totems = undefined;
-					this.setSimpleRotation(eventID, rot as SpecRotation<SpecType>);
-				}
-				const opt = this.getSpecOptions() as SpecOptions<ShamanSpecs>;
-
-				// Update Bloodlust to be part of rotation instead of options to support APL casting bloodlust.
-				if (opt.bloodlust) {
-					opt.bloodlust = false;
-
-					var tRot = this.getSimpleRotation();
-					if (this.spec == Spec.SpecElementalShaman) {
-						(tRot as ElementalShaman_Rotation).bloodlust = ElementalShaman_Rotation_BloodlustUse.UseBloodlust;
-					} else if (this.spec == Spec.SpecEnhancementShaman) {
-						(tRot as EnhancementShaman_Rotation).bloodlust = EnhancementShaman_Rotation_BloodlustUse.UseBloodlust;
-					} else if (this.spec == Spec.SpecRestorationShaman) {
-						(tRot as RestorationShaman_Rotation).bloodlust = RestorationShaman_Rotation_BloodlustUse.UseBloodlust;
-					}
-
-					this.setSimpleRotation(eventID, tRot as SpecRotation<SpecType>);
-					this.setSpecOptions(eventID, opt as SpecOptions<SpecType>);
-				}
-
-				// Update Ele TS range option.
-				if (this.spec == Spec.SpecElementalShaman) {
-					var eleOpt = this.getSpecOptions() as ElementalShaman_Options;
-					var eleRot = this.getSimpleRotation() as ElementalShaman_Rotation;
-					if (eleRot.inThunderstormRange) {
-						eleOpt.thunderstormRange = ElementalShaman_Options_ThunderstormRange.TSInRange;
-						eleRot.inThunderstormRange = false;
-						this.setSimpleRotation(eventID, eleRot as SpecRotation<SpecType>);
-						this.setSpecOptions(eventID, eleOpt as SpecOptions<SpecType>);
-					}
-				}
-			}
-
-			if (this.spec == Spec.SpecWarlock) {
-				const rot = this.getSimpleRotation() as SpecRotation<Spec.SpecWarlock>;
-				if (rot.enableWeaponSwap) {
-					this.setEnableItemSwap(eventID, rot.enableWeaponSwap);
-					rot.enableWeaponSwap = false;
-					this.setSimpleRotation(eventID, rot as SpecRotation<SpecType>)
-				}
-				if (rot.weaponSwap) {
-					this.setItemSwapGear(eventID, this.sim.db.lookupItemSwap(rot.weaponSwap));
-					rot.weaponSwap = undefined;
-					this.setSimpleRotation(eventID, rot as SpecRotation<SpecType>)
-				}
-			}
-			if (this.spec == Spec.SpecEnhancementShaman) {
-				const rot = this.getSimpleRotation() as SpecRotation<Spec.SpecEnhancementShaman>;
-				if (rot.enableItemSwap) {
-					this.setEnableItemSwap(eventID, rot.enableItemSwap);
-					rot.enableItemSwap = false;
-					this.setSimpleRotation(eventID, rot as SpecRotation<SpecType>)
-				}
-				if (rot.itemSwap) {
-					this.setItemSwapGear(eventID, this.sim.db.lookupItemSwap(rot.itemSwap));
-					rot.itemSwap = undefined;
-					this.setSimpleRotation(eventID, rot as SpecRotation<SpecType>)
-				}
 			}
 		});
 	}

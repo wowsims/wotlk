@@ -84,7 +84,6 @@ export const Phase3Talents = {
 
 export const DefaultOptions = EnhancementShamanOptions.create({
 	shield: ShamanShield.LightningShield,
-	bloodlust: true,
 	imbueMh: ShamanImbue.WindfuryWeapon,
 	imbueOh: ShamanImbue.FlametongueWeapon,
 	syncType: ShamanSyncType.Auto,

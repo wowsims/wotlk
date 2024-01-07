@@ -295,7 +295,7 @@ const RAID_STATS_OPTIONS: RaidStatsOptions = {
 						{
 							label: 'Bloodlust',
 							actionId: ActionId.fromSpellId(2825),
-							playerData: playerClass(Class.ClassShaman, player => player.getSpecOptions().bloodlust),
+							playerData: playerClass(Class.ClassShaman),
 						},
 					],
 				},
