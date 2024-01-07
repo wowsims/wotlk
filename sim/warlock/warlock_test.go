@@ -93,9 +93,10 @@ var DestructionGlyphs = &proto.Glyphs{
 }
 
 var defaultDestroOptions = &proto.Warlock_Options{
-	Armor:       proto.Warlock_Options_FelArmor,
-	Summon:      proto.Warlock_Options_Imp,
-	WeaponImbue: proto.Warlock_Options_GrandFirestone,
+	Armor:        proto.Warlock_Options_FelArmor,
+	Summon:       proto.Warlock_Options_Imp,
+	WeaponImbue:  proto.Warlock_Options_GrandFirestone,
+	DetonateSeed: true,
 }
 
 var DefaultDestroWarlock = &proto.Player_Warlock{
@@ -112,9 +113,10 @@ var DefaultAfflictionWarlock = &proto.Player_Warlock{
 }
 
 var defaultAfflictionOptions = &proto.Warlock_Options{
-	Armor:       proto.Warlock_Options_FelArmor,
-	Summon:      proto.Warlock_Options_Felhunter,
-	WeaponImbue: proto.Warlock_Options_GrandSpellstone,
+	Armor:        proto.Warlock_Options_FelArmor,
+	Summon:       proto.Warlock_Options_Felhunter,
+	WeaponImbue:  proto.Warlock_Options_GrandSpellstone,
+	DetonateSeed: true,
 }
 
 // ---------------------------------------
@@ -125,9 +127,10 @@ var DefaultDemonologyWarlock = &proto.Player_Warlock{
 }
 
 var defaultDemonologyOptions = &proto.Warlock_Options{
-	Armor:       proto.Warlock_Options_FelArmor,
-	Summon:      proto.Warlock_Options_Felguard,
-	WeaponImbue: proto.Warlock_Options_GrandSpellstone,
+	Armor:        proto.Warlock_Options_FelArmor,
+	Summon:       proto.Warlock_Options_Felguard,
+	WeaponImbue:  proto.Warlock_Options_GrandSpellstone,
+	DetonateSeed: true,
 }
 
 // ---------------------------------------------------------

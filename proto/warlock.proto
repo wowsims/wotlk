@@ -165,6 +165,7 @@ message Warlock {
 		Summon summon = 2;
 		WeaponImbue weaponImbue = 3;
 		bool _oldDPBehaviourOption = 4;
+		bool detonate_seed = 5;
 	}
 	Options options = 3;
 }

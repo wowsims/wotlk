@@ -116,6 +116,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 	// Inputs to include in the 'Other' section on the settings tab.
 	otherInputs: {
 		inputs: [
+			WarlockInputs.DetonateSeed,
 			OtherInputs.DistanceFromTarget,
 			OtherInputs.TankAssignment,
 			OtherInputs.ChannelClipDelay,
