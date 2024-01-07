@@ -83,9 +83,6 @@ func (enh *EnhancementShaman) getImbueProcMask(imbue proto.ShamanImbue) core.Pro
 
 type EnhancementShaman struct {
 	*shaman.Shaman
-
-	// for weaving Lava Burst or Lightning Bolt
-	previousSwingAt time.Duration
 }
 
 func (enh *EnhancementShaman) GetShaman() *shaman.Shaman {
@@ -112,7 +109,6 @@ func (enh *EnhancementShaman) Initialize() {
 }
 
 func (enh *EnhancementShaman) Reset(sim *core.Simulation) {
-	enh.previousSwingAt = 0
 	enh.Shaman.Reset(sim)
 }
 
