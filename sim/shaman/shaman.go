@@ -257,7 +257,7 @@ func (shaman *Shaman) Initialize() {
 
 	shaman.registerBloodlustCD()
 
-	if shaman.Totems.UseFireElemental && enableSnapshot {
+	if !shaman.IsUsingAPL && shaman.Totems.UseFireElemental && enableSnapshot {
 		shaman.fireElementalSnapShot = core.NewSnapshotManager(shaman.GetCharacter())
 		shaman.setupProcTrackers()
 	}
@@ -301,7 +301,7 @@ func (shaman *Shaman) RegisterHealingSpells() {
 }
 
 func (shaman *Shaman) Reset(sim *core.Simulation) {
-	if shaman.Totems.UseFireElemental {
+	if shaman.Totems.UseFireElemental && !shaman.IsUsingAPL {
 		shaman.setupFireElementalCooldowns()
 		shaman.castFireElemental = false
 	}
