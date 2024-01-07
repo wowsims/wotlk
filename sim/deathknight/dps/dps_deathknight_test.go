@@ -127,63 +127,29 @@ var UnholyDefaultGlyphs = &proto.Glyphs{
 var PlayerOptionsBlood = &proto.Player_Deathknight{
 	Deathknight: &proto.Deathknight{
 		Options:  deathKnightOptions,
-		Rotation: bloodRotation,
+		Rotation: &proto.Deathknight_Rotation{},
 	},
 }
 
 var PlayerOptionsUnholy = &proto.Player_Deathknight{
 	Deathknight: &proto.Deathknight{
 		Options:  deathKnightOptions,
-		Rotation: unholyRotation,
+		Rotation: &proto.Deathknight_Rotation{},
 	},
 }
 
 var PlayerOptionsFrost = &proto.Player_Deathknight{
 	Deathknight: &proto.Deathknight{
 		Options:  deathKnightOptions,
-		Rotation: frostRotation,
+		Rotation: &proto.Deathknight_Rotation{},
 	},
 }
 
 var PlayerOptionsDesyncFrost = &proto.Player_Deathknight{
 	Deathknight: &proto.Deathknight{
 		Options:  deathKnightOptions,
-		Rotation: frostDesyncRotation,
+		Rotation: &proto.Deathknight_Rotation{},
 	},
-}
-
-var bloodRotation = &proto.Deathknight_Rotation{
-	ArmyOfTheDead:        proto.Deathknight_Rotation_PreCast,
-	DrwDiseases:          proto.Deathknight_Rotation_Pestilence,
-	UseEmpowerRuneWeapon: true,
-	PreNerfedGargoyle:    false,
-	UseDancingRuneWeapon: true,
-	BloodSpender:         proto.Deathknight_Rotation_HS,
-}
-
-var unholyRotation = &proto.Deathknight_Rotation{
-	UseDeathAndDecay:     true,
-	StartingPresence:     proto.Deathknight_Rotation_Unholy,
-	BlPresence:           proto.Deathknight_Rotation_Blood,
-	Presence:             proto.Deathknight_Rotation_Blood,
-	GargoylePresence:     proto.Deathknight_Rotation_Unholy,
-	UseEmpowerRuneWeapon: true,
-	UseGargoyle:          true,
-	BtGhoulFrenzy:        false,
-	HoldErwArmy:          false,
-	PreNerfedGargoyle:    false,
-	BloodRuneFiller:      proto.Deathknight_Rotation_BloodBoil,
-	ArmyOfTheDead:        proto.Deathknight_Rotation_AsMajorCd,
-	BloodTap:             proto.Deathknight_Rotation_GhoulFrenzy,
-}
-
-var frostRotation = &proto.Deathknight_Rotation{
-	UseEmpowerRuneWeapon: true,
-}
-
-var frostDesyncRotation = &proto.Deathknight_Rotation{
-	UseEmpowerRuneWeapon: true,
-	DesyncRotation:       true,
 }
 
 var deathKnightOptions = &proto.Deathknight_Options{
