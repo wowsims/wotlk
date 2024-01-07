@@ -112,7 +112,7 @@ var PlayerOptionsAdaptive = &proto.Player_ElementalShaman{
 	ElementalShaman: &proto.ElementalShaman{
 		Options: &proto.ElementalShaman_Options{
 			Shield: proto.ShamanShield_WaterShield,
-			Totems: FireElementalBasicTotems,
+			Totems: BasicTotems,
 		},
 	},
 }
