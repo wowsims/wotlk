@@ -133,7 +133,9 @@ func (warlock *Warlock) Initialize() {
 	warlock.registerInfernoSpell()
 	warlock.registerBlackBook()
 
-	warlock.defineRotation()
+	if !warlock.IsUsingAPL {
+		warlock.defineRotation()
+	}
 
 	precastSpell := warlock.ShadowBolt
 	if warlock.Rotation.Type == proto.Warlock_Rotation_Destruction {
@@ -206,9 +208,9 @@ func (warlock *Warlock) Reset(sim *core.Simulation) {
 	if !warlock.IsUsingAPL {
 		warlock.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand,
 			proto.ItemSlot_ItemSlotOffHand, proto.ItemSlot_ItemSlotRanged})
+		warlock.corrRefreshList = make([]time.Duration, len(warlock.Env.Encounter.TargetUnits))
+		warlock.setupCooldowns(sim)
 	}
-	warlock.corrRefreshList = make([]time.Duration, len(warlock.Env.Encounter.TargetUnits))
-	warlock.setupCooldowns(sim)
 }
 
 func NewWarlock(character *core.Character, options *proto.Player) *Warlock {
