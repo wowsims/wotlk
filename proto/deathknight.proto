@@ -240,9 +240,9 @@ message Deathknight {
 		Presence starting_presence = 10;
 		BloodTap blood_tap = 11;
 
-		bool use_ams = 13;
-		double avg_ams_success_rate = 14;
-		double avg_ams_hit = 15;
+		bool use_ams = 13 [deprecated = true];
+		double avg_ams_success_rate = 14 [deprecated = true];
+		double avg_ams_hit = 15 [deprecated = true];
 
 		bool auto_rotation = 16;
 
@@ -288,6 +288,10 @@ message Deathknight {
 		bool new_drw = 7;
 
 		double disease_downtime = 8;
+
+		bool use_ams = 9;
+		double avg_ams_success_rate = 10;
+		double avg_ams_hit = 11;
 	}
 	Options options = 3;
 }

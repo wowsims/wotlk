@@ -60,9 +60,9 @@ func NewDpsDeathknight(character *core.Character, player *proto.Player) *DpsDeat
 			RefreshHornOfWinter: dk.Rotation.RefreshHornOfWinter,
 			ArmyOfTheDeadType:   dk.Rotation.ArmyOfTheDead,
 			StartingPresence:    dk.Rotation.StartingPresence,
-			UseAMS:              dk.Rotation.UseAms,
-			AvgAMSSuccessRate:   dk.Rotation.AvgAmsSuccessRate,
-			AvgAMSHit:           dk.Rotation.AvgAmsHit,
+			UseAMS:              dk.Options.UseAms,
+			AvgAMSSuccessRate:   dk.Options.AvgAmsSuccessRate,
+			AvgAMSHit:           dk.Options.AvgAmsHit,
 		}, player.TalentsString, dk.Rotation.PreNerfedGargoyle),
 		Rotation: dk.Rotation,
 	}

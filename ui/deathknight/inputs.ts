@@ -83,6 +83,30 @@ export const DrwPestiApply = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecD
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.specOptionsChangeEmitter, player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
 
+export const UseAMSInput = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecDeathknight>({
+	fieldName: 'useAms',
+	label: 'Use AMS',
+	labelTooltip: 'Use AMS around predicted damage for a RP gain.',
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+});
+
+export const AvgAMSSuccessRateInput = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecDeathknight>({
+	fieldName: 'avgAmsSuccessRate',
+	label: 'Avg AMS Success %',
+	labelTooltip: 'Chance for damage to be taken during the 5 second window of AMS.',
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getSpecOptions().useAms == true && player.getTalents().howlingBlast,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+});
+
+export const AvgAMSHitInput = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecDeathknight>({
+	fieldName: 'avgAmsHit',
+	label: 'Avg AMS Hit',
+	labelTooltip: 'How much on average (+-10%) the character is hit for when AMS is successful.',
+	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getSpecOptions().useAms == true && player.getTalents().howlingBlast,
+	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
+});
+
 export const DiseaseRefreshDuration = InputHelpers.makeRotationNumberInput<Spec.SpecDeathknight>({
 	fieldName: 'diseaseRefreshDuration',
 	label: 'Disease Refresh Duration',
@@ -248,30 +272,6 @@ export const BloodTapInput = InputHelpers.makeRotationEnumInput<Spec.SpecDeathkn
 	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && !player.getRotation().autoRotation,
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 })
-
-export const UseAMSInput = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
-	fieldName: 'useAms',
-	label: 'Use AMS',
-	labelTooltip: 'Use AMS around predicted damage for a RP gain.',
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().howlingBlast && !player.getRotation().autoRotation && player.getRotation().frostRotationType != FrostRotationType.Custom,
-	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-});
-
-export const AvgAMSSuccessRateInput = InputHelpers.makeRotationNumberInput<Spec.SpecDeathknight>({
-	fieldName: 'avgAmsSuccessRate',
-	label: 'Avg AMS Success %',
-	labelTooltip: 'Chance for damage to be taken during the 5 second window of AMS.',
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getRotation().useAms == true && !player.getRotation().autoRotation && player.getTalents().howlingBlast && player.getRotation().frostRotationType != FrostRotationType.Custom,
-	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-});
-
-export const AvgAMSHitInput = InputHelpers.makeRotationNumberInput<Spec.SpecDeathknight>({
-	fieldName: 'avgAmsHit',
-	label: 'Avg AMS Hit',
-	labelTooltip: 'How much on average (+-10%) the character is hit for when AMS is successful.',
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getRotation().useAms == true && !player.getRotation().autoRotation && player.getTalents().howlingBlast && player.getRotation().frostRotationType != FrostRotationType.Custom,
-	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-});
 
 export const UseAutoRotation = InputHelpers.makeRotationBooleanInput<Spec.SpecDeathknight>({
 	fieldName: 'autoRotation',
