@@ -5,6 +5,7 @@ import (
 
 	"github.com/wowsims/sod/sim/core"
 	"github.com/wowsims/sod/sim/core/stats"
+	"github.com/wowsims/sod/sim/core/proto"
 )
 
 func (druid *Druid) getSavageRoarMultiplier() float64 {
@@ -12,6 +13,10 @@ func (druid *Druid) getSavageRoarMultiplier() float64 {
 }
 
 func (druid *Druid) registerSavageRoarSpell() {
+	if !druid.HasRune(proto.DruidRune_RuneLegsSavageRoar) {
+		return
+	}
+
 	actionID := core.ActionID{SpellID: 407988}
 
 	srm := druid.getSavageRoarMultiplier()
