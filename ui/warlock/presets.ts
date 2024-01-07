@@ -119,18 +119,21 @@ export const AfflictionOptions = WarlockOptions.create({
 	armor: Armor.FelArmor,
 	summon: Summon.Felhunter,
 	weaponImbue: WeaponImbue.GrandSpellstone,
+	detonateSeed: true,
 });
 
 export const DemonologyOptions = WarlockOptions.create({
 	armor: Armor.FelArmor,
 	summon: Summon.Felguard,
 	weaponImbue: WeaponImbue.GrandSpellstone,
+	detonateSeed: true,
 });
 
 export const DestructionOptions = WarlockOptions.create({
 	armor: Armor.FelArmor,
 	summon: Summon.Imp,
 	weaponImbue: WeaponImbue.GrandFirestone,
+	detonateSeed: true,
 });
 
 export const DefaultConsumes = Consumes.create({

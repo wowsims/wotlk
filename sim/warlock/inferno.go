@@ -56,11 +56,6 @@ func (warlock *Warlock) registerInfernoSpell() {
 			summonInfernalAura.Activate(sim)
 		},
 	})
-
-	warlock.AddMajorCooldown(core.MajorCooldown{
-		Spell: warlock.Inferno,
-		Type:  core.CooldownTypeUnknown,
-	})
 }
 
 type InfernalPet struct {
