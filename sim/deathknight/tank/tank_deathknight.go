@@ -38,7 +38,7 @@ func NewTankDeathknight(character *core.Character, options *proto.Player) *TankD
 		Deathknight: deathknight.NewDeathknight(character, deathknight.DeathknightInputs{
 			IsDps:              false,
 			StartingRunicPower: dkOptions.Options.StartingRunicPower,
-		}, options.TalentsString, false),
+		}, options.TalentsString),
 	}
 
 	tankDk.Inputs.UnholyFrenzyTarget = dkOptions.Options.UnholyFrenzyTarget

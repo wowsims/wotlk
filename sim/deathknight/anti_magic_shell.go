@@ -10,8 +10,6 @@ import (
 
 func (dk *Deathknight) registerAntiMagicShellSpell() {
 	actionID := core.ActionID{SpellID: 48707}
-	cdTimer := dk.NewTimer()
-	cd := time.Second * 45
 
 	dk.AntiMagicShell = dk.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
@@ -22,8 +20,8 @@ func (dk *Deathknight) registerAntiMagicShellSpell() {
 		},
 		Cast: core.CastConfig{
 			CD: core.Cooldown{
-				Timer:    cdTimer,
-				Duration: cd,
+				Timer:    dk.NewTimer(),
+				Duration: time.Second * 45,
 			},
 			IgnoreHaste: true,
 		},

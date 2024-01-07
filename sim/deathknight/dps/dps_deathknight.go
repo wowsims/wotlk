@@ -32,24 +32,16 @@ func NewDpsDeathknight(character *core.Character, player *proto.Player) *DpsDeat
 
 	dpsDk := &DpsDeathknight{
 		Deathknight: deathknight.NewDeathknight(character, deathknight.DeathknightInputs{
-			StartingRunicPower:  dk.Options.StartingRunicPower,
-			PrecastGhoulFrenzy:  dk.Options.PrecastGhoulFrenzy,
-			PrecastHornOfWinter: dk.Options.PrecastHornOfWinter,
-			PetUptime:           dk.Options.PetUptime,
-			DrwPestiApply:       dk.Options.DrwPestiApply,
-			BloodOpener:         dk.Rotation.BloodOpener,
-			IsDps:               true,
-			NewDrw:              true,
-			DiseaseDowntime:     dk.Options.DiseaseDowntime,
-			VirulenceRefresh:    dk.Rotation.VirulenceRefresh,
+			StartingRunicPower: dk.Options.StartingRunicPower,
+			PetUptime:          dk.Options.PetUptime,
+			DrwPestiApply:      dk.Options.DrwPestiApply,
+			IsDps:              true,
+			NewDrw:             true,
 
-			RefreshHornOfWinter: dk.Rotation.RefreshHornOfWinter,
-			ArmyOfTheDeadType:   dk.Rotation.ArmyOfTheDead,
-			StartingPresence:    dk.Rotation.StartingPresence,
-			UseAMS:              dk.Options.UseAms,
-			AvgAMSSuccessRate:   dk.Options.AvgAmsSuccessRate,
-			AvgAMSHit:           dk.Options.AvgAmsHit,
-		}, player.TalentsString, dk.Rotation.PreNerfedGargoyle),
+			UseAMS:            dk.Options.UseAms,
+			AvgAMSSuccessRate: dk.Options.AvgAmsSuccessRate,
+			AvgAMSHit:         dk.Options.AvgAmsHit,
+		}, player.TalentsString),
 	}
 
 	dpsDk.Inputs.UnholyFrenzyTarget = dk.Options.UnholyFrenzyTarget

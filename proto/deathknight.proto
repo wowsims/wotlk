@@ -143,151 +143,18 @@ enum DeathknightMinorGlyph {
 
 message Deathknight {
 	message Rotation {
-		enum DrwDiseases {
-			DoNotApply = 0;
-			Normal = 1;
-			Pestilence = 2;
-		}
-
-		enum ArmyOfTheDead {
-			DoNotUse = 0;
-			PreCast = 1;
-			AsMajorCd = 2;
-		}
-
-		enum BloodTap {
-			GhoulFrenzy = 0;
-			IcyTouch = 1;
-			BloodStrikeBT = 2;
-			BloodBoilBT = 3;
-		}
-
-		enum DeathAndDecayPrio {
-			MaxRuneDowntime = 0;
-			MaxDndUptime = 1;
-		}
-
-		enum FirstDisease {
-			FrostFever = 0;
-			BloodPlague = 1;
-		}
-
-		enum BloodRuneFiller {
-			BloodStrike = 0;
-			BloodBoil = 1;
-		}
-
-		enum Presence {
-			Blood = 0;
-			Unholy = 1;
-			Frost = 2;
-		}
-
-		enum FrostRotationType {
-			UnknownType = 0;
-			SingleTarget = 1;
-			Custom = 2;
-		}
-		FrostRotationType frost_rotation_type = 19;
-
-		enum BloodOpener {
-			Standard = 0;
-			Experimental_1 = 1;
-			Experimental_2 = 2;
-		}
-
-		enum BloodSpell {
-			HS = 0;
-			BB = 1;
-			BS = 2;
-		}
-		
-		enum CustomSpellOption {
-			CustomNoSpell = 0;
-			CustomIcyTouch = 1;
-			CustomPlagueStrike = 2;
-			CustomPestilence = 3;
-			CustomObliterate = 4;
-			CustomHowlingBlast = 5;
-			CustomHowlingBlastRime = 6;
-			CustomBloodBoil = 7;
-			CustomBloodStrike = 8;
-			CustomDeathAndDecay = 9;
-			CustomHornOfWinter = 10;
-			CustomUnbreakableArmor = 11;
-			CustomBloodTap = 12;
-			CustomEmpoweredRuneWeapon = 13;
-			CustomFrostStrike = 14;
-		}
-		CustomRotation frost_custom_rotation = 20;
-
-		ArmyOfTheDead army_of_the_dead = 1;
-		bool use_death_and_decay = 2;
-		
-		bool bt_ghoul_frenzy = 3;
-		
-		double disease_refresh_duration = 4;
-		bool refresh_horn_of_winter = 5;
-		
-		FirstDisease first_disease = 6;
-		
-		DeathAndDecayPrio death_and_decay_prio = 7;
-
-		bool use_empower_rune_weapon = 8;
-
-		BloodRuneFiller blood_rune_filler = 9;
-
-		Presence starting_presence = 10;
-		BloodTap blood_tap = 11;
-
-		bool use_ams = 13 [deprecated = true];
-		double avg_ams_success_rate = 14 [deprecated = true];
-		double avg_ams_hit = 15 [deprecated = true];
-
-		bool auto_rotation = 16;
-
-		bool desync_rotation = 17;
-
-		Presence bl_presence = 18;
-
-		Presence presence = 21;
-
-		bool hold_erw_army = 22;
-		
-		bool use_gargoyle = 23;
-
-		bool pre_nerfed_gargoyle = 24;
-
-		Presence gargoyle_presence = 25;
-
-		DrwDiseases drw_diseases = 26;
-		BloodOpener blood_opener = 27;
-
-		bool enable_weapon_swap = 28;
-		ItemSwap weapon_swap = 29;
-
-		bool use_dancing_rune_weapon = 30;
-
-		BloodSpell blood_spender = 31;
-
-		double virulence_refresh = 32;
 	}
 	Rotation rotation = 1;
 	
 	message Options {
 		double starting_runic_power = 1;
 		double pet_uptime = 2;
-		
-		bool precast_ghoul_frenzy = 3;
-		bool precast_horn_of_winter = 4;
 
 		UnitReference unholy_frenzy_target = 5;
 
 		bool drw_pesti_apply = 6;
 
 		bool new_drw = 7;
-
-		double disease_downtime = 8;
 
 		bool use_ams = 9;
 		double avg_ams_success_rate = 10;

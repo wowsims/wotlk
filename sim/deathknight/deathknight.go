@@ -10,14 +10,6 @@ import (
 	"github.com/wowsims/wotlk/sim/core/stats"
 )
 
-type Rotation_FuStrike int32
-
-const (
-	FuStrike_DeathStrike   Rotation_FuStrike = 0
-	FuStrike_ScourgeStrike Rotation_FuStrike = 1
-	FuStrike_Obliterate    Rotation_FuStrike = 2
-)
-
 const (
 	PetSpellHitScale   = 17.0 / 8.0 * core.SpellHitRatingPerHitChance / core.MeleeHitRatingPerHitChance    // 1.7
 	PetExpertiseScale  = 3.25 * core.ExpertisePerQuarterPercentReduction / core.MeleeHitRatingPerHitChance // 0.8125
@@ -33,23 +25,14 @@ type DeathknightInputs struct {
 
 	UnholyFrenzyTarget *proto.UnitReference
 
-	StartingRunicPower  float64
-	PrecastGhoulFrenzy  bool
-	PrecastHornOfWinter bool
-	PetUptime           float64
-	DrwPestiApply       bool
-	BloodOpener         proto.Deathknight_Rotation_BloodOpener
+	StartingRunicPower float64
+	PetUptime          float64
+	DrwPestiApply      bool
 
 	// Rotation Vars
-	RefreshHornOfWinter bool
-	ArmyOfTheDeadType   proto.Deathknight_Rotation_ArmyOfTheDead
-	StartingPresence    proto.Deathknight_Rotation_Presence
-	UseAMS              bool
-	AvgAMSSuccessRate   float64
-	AvgAMSHit           float64
-	FuStrike            Rotation_FuStrike
-	DiseaseDowntime     float64
-	VirulenceRefresh    float64
+	UseAMS            bool
+	AvgAMSSuccessRate float64
+	AvgAMSHit         float64
 }
 
 type DeathknightCoeffs struct {
@@ -143,10 +126,8 @@ type Deathknight struct {
 
 	HowlingBlast *core.Spell
 
-	HasDraeneiHitAura         bool
-	OtherRelevantStrAgiActive bool
-	HornOfWinter              *core.Spell
-	HornOfWinterAura          *core.Aura
+	HasDraeneiHitAura bool
+	HornOfWinter      *core.Spell
 
 	// "CDs"
 	RuneTap     *core.Spell
@@ -257,14 +238,7 @@ func (dk *Deathknight) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 		raidBuffs.IcyTalons = true
 	}
 
-	raidBuffs.HornOfWinter = !dk.Inputs.RefreshHornOfWinter
-
-	if raidBuffs.StrengthOfEarthTotem == proto.TristateEffect_TristateEffectImproved ||
-		raidBuffs.StrengthOfEarthTotem == proto.TristateEffect_TristateEffectRegular {
-		dk.OtherRelevantStrAgiActive = true
-	} else {
-		dk.OtherRelevantStrAgiActive = false
-	}
+	raidBuffs.HornOfWinter = true
 }
 
 func (dk *Deathknight) ApplyTalents() {
@@ -379,7 +353,7 @@ func (dk *Deathknight) HasMinorGlyph(glyph proto.DeathknightMinorGlyph) bool {
 	return dk.HasGlyph(int32(glyph))
 }
 
-func NewDeathknight(character *core.Character, inputs DeathknightInputs, talents string, preNerfedGargoyle bool) *Deathknight {
+func NewDeathknight(character *core.Character, inputs DeathknightInputs, talents string) *Deathknight {
 	dk := &Deathknight{
 		Character:  *character,
 		Talents:    &proto.DeathknightTalents{},
@@ -421,7 +395,7 @@ func NewDeathknight(character *core.Character, inputs DeathknightInputs, talents
 	dk.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3
 
 	if dk.Talents.SummonGargoyle {
-		dk.Gargoyle = dk.NewGargoyle(!preNerfedGargoyle)
+		dk.Gargoyle = dk.NewGargoyle()
 	}
 
 	dk.Ghoul = dk.NewGhoulPet(dk.Talents.MasterOfGhouls)

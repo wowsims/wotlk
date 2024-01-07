@@ -55,7 +55,6 @@ var PlayerOptionsBloodTank = &proto.Player_TankDeathknight{
 		Options: &proto.TankDeathknight_Options{
 			StartingRunicPower: 0,
 		},
-		Rotation: &proto.TankDeathknight_Rotation{},
 	},
 }
 
