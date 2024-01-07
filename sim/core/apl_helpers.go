@@ -148,7 +148,12 @@ func (rot *APLRotation) GetAPLSpell(spellId *proto.ActionID) *Spell {
 			}
 		}
 	} else {
-		spell = rot.unit.GetSpell(actionID)
+		for _, s := range rot.unit.Spellbook {
+			if s.ActionID.SameAction(actionID) && s.Flags.Matches(SpellFlagAPL) {
+				spell = s
+				break
+			}
+		}
 	}
 
 	if spell == nil {
