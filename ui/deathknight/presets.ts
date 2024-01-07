@@ -182,31 +182,24 @@ export const BloodTalents = {
 };
 
 export const DefaultUnholyOptions = DeathKnightOptions.create({
-	drwPestiApply: true,
 	startingRunicPower: 0,
 	petUptime: 1,
-	precastGhoulFrenzy: false,
-	precastHornOfWinter: true,
 	unholyFrenzyTarget: UnitReference.create(),
-	diseaseDowntime: 2,
+	drwPestiApply: true,
 });
 
 export const DefaultFrostOptions = DeathKnightOptions.create({
-	drwPestiApply: true,
 	startingRunicPower: 0,
 	petUptime: 1,
-	precastHornOfWinter: true,
 	unholyFrenzyTarget: UnitReference.create(),
-	diseaseDowntime: 0,
+	drwPestiApply: true,
 });
 
 export const DefaultBloodOptions = DeathKnightOptions.create({
-	drwPestiApply: true,
 	startingRunicPower: 0,
 	petUptime: 1,
-	precastHornOfWinter: true,
 	unholyFrenzyTarget: UnitReference.create(),
-	diseaseDowntime: 0,
+	drwPestiApply: true,
 });
 
 export const OtherDefaults = {

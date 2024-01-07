@@ -100,9 +100,4 @@ func (dk *Deathknight) registerDrwPlagueStrikeSpell() {
 			}
 		},
 	})
-
-	if !dk.Inputs.NewDrw {
-		dk.RuneWeapon.PlagueStrike.DamageMultiplier *= 0.5
-		dk.RuneWeapon.PlagueStrike.Flags |= core.SpellFlagIgnoreAttackerModifiers
-	}
 }

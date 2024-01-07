@@ -1,5 +1,6 @@
 import { UnitReference, UnitReference_Type as UnitType } from '../core/proto/common.js';
 import { Spec } from '../core/proto/common.js';
+import { APLRotation_Type } from '../core/proto/apl.js';
 import { ActionId } from '../core/proto_utils/action_id.js';
 import { Player } from '../core/player.js';
 import { EventID, TypedEvent } from '../core/typed_event.js';
@@ -133,7 +134,7 @@ export const FeralDruidRotationConfig = {
 			fieldName: 'raidTargets',
 			label: 'GotW Raid Targets',
 			labelTooltip: 'Raid size to assume for clearcast proc chance (can include pets as well, so 25 man raid potentically can be ~30)',
-			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.aplRotation.enabled || (ShouldShowAdvParamAoe(player) && player.getSimpleRotation().flowerWeave == true),
+			showWhen: (player: Player<Spec.SpecFeralDruid>) => player.aplRotation.type != APLRotation_Type.TypeSimple || (ShouldShowAdvParamAoe(player) && player.getSimpleRotation().flowerWeave == true),
 		}),
 		// Can be uncommented if/when analytical bite mode is added
 		//InputHelpers.makeRotationEnumInput<Spec.SpecFeralDruid, BiteModeType>({

@@ -144,7 +144,6 @@ enum DeathknightMinorGlyph {
 message Deathknight {
 	message Rotation {
 	}
-	Rotation rotation = 1;
 	
 	message Options {
 		double starting_runic_power = 1;
@@ -153,8 +152,6 @@ message Deathknight {
 		UnitReference unholy_frenzy_target = 5;
 
 		bool drw_pesti_apply = 6;
-
-		bool new_drw = 7;
 
 		bool use_ams = 9;
 		double avg_ams_success_rate = 10;

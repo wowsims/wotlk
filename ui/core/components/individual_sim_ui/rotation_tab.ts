@@ -100,7 +100,6 @@ export class RotationTab extends SimTab {
 			changedEvent: (player: Player<any>) => player.rotationChangeEmitter,
 			getValue: (player: Player<any>) => player.getRotationType(),
 			setValue: (eventID: EventID, player: Player<any>, newValue: number) => {
-				player.aplRotation.enabled = false;
 				player.aplRotation.type = newValue;
 				player.rotationChangeEmitter.emit(eventID);
 			},

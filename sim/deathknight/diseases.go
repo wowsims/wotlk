@@ -224,11 +224,6 @@ func (dk *Deathknight) registerDrwFrostFever() {
 			spell.Dot(target).Apply(sim)
 		},
 	})
-
-	if !dk.Inputs.NewDrw {
-		dk.RuneWeapon.FrostFeverSpell.DamageMultiplier *= 0.5
-		dk.RuneWeapon.FrostFeverSpell.Flags |= core.SpellFlagIgnoreAttackerModifiers
-	}
 }
 
 func (dk *Deathknight) registerDrwBloodPlague() {
@@ -276,11 +271,6 @@ func (dk *Deathknight) registerDrwBloodPlague() {
 			spell.Dot(target).Apply(sim)
 		},
 	})
-
-	if !dk.Inputs.NewDrw {
-		dk.RuneWeapon.BloodPlagueSpell.DamageMultiplier *= 0.5
-		dk.RuneWeapon.BloodPlagueSpell.Flags |= core.SpellFlagIgnoreAttackerModifiers
-	}
 }
 
 func (dk *Deathknight) doWanderingPlague(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {

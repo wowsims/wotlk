@@ -46,41 +46,12 @@ export const PetUptime = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecDeathk
 	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().masterOfGhouls,
 });
 
-export const PrecastGhoulFrenzy = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecDeathknight>({
-	fieldName: 'precastGhoulFrenzy',
-	label: 'Pre-Cast Ghoul Frenzy',
-	labelTooltip: 'Cast Ghoul Frenzy 10 seconds before combat starts.',
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().summonGargoyle && player.getTalents().ghoulFrenzy,
-	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.specOptionsChangeEmitter, player.rotationChangeEmitter, player.talentsChangeEmitter]),
-});
-
-export const PrecastHornOfWinter = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecDeathknight>({
-	fieldName: 'precastHornOfWinter',
-	label: 'Pre-Cast Horn of Winter',
-	labelTooltip: 'Precast Horn of Winter for 10 extra runic power before fight.',
-});
-
 export const DrwPestiApply = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecDeathknight>({
 	fieldName: 'drwPestiApply',
 	label: 'DRW Pestilence Add',
 	labelTooltip: 'There is currently an interaction with DRW and pestilence where you can use pestilence to force DRW to apply diseases if they are already applied by the DK. It only works with Glyph of Disease and if there is an off target. This toggle forces the sim to assume there is an off target.',
 	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 0 && (player.getGlyphs().major1 == DeathknightMajorGlyph.GlyphOfDisease || player.getGlyphs().major2 == DeathknightMajorGlyph.GlyphOfDisease || player.getGlyphs().major3 == DeathknightMajorGlyph.GlyphOfDisease),
 	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.specOptionsChangeEmitter, player.rotationChangeEmitter, player.talentsChangeEmitter]),
-});
-
-export const NewDrwInput = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecDeathknight>({
-	fieldName: 'newDrw',
-	label: 'PTR DRW Scaling',
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalents().dancingRuneWeapon,
-	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
-})
-
-export const DiseaseDowntime = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecDeathknight>({
-	fieldName: 'diseaseDowntime',
-	label: 'Disease Downtime',
-	labelTooltip: 'Maximum allowed downtime between disease applications.',
-	showWhen: (player: Player<Spec.SpecDeathknight>) => player.getTalentTree() == 2,
-	changeEmitter: (player: Player<Spec.SpecDeathknight>) => TypedEvent.onAny([player.rotationChangeEmitter, player.talentsChangeEmitter]),
 });
 
 export const UseAMSInput = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecDeathknight>({

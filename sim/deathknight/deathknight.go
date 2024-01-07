@@ -20,8 +20,7 @@ var TalentTreeSizes = [3]int{28, 29, 31}
 
 type DeathknightInputs struct {
 	// Option Vars
-	IsDps  bool
-	NewDrw bool
+	IsDps bool
 
 	UnholyFrenzyTarget *proto.UnitReference
 

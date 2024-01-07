@@ -73,9 +73,4 @@ func (dk *Deathknight) registerDrwIcyTouchSpell() {
 			spell.DealDamage(sim, result)
 		},
 	})
-
-	if !dk.Inputs.NewDrw {
-		dk.RuneWeapon.IcyTouch.DamageMultiplier *= 0.5
-		dk.RuneWeapon.IcyTouch.Flags |= core.SpellFlagIgnoreAttackerModifiers
-	}
 }

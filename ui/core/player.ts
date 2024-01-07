@@ -780,10 +780,8 @@ export class Player<SpecType extends Spec> {
 	}
 
 	getRotationType(): APLRotationType {
-		if (this.aplRotation.enabled) {
+		if (this.aplRotation.type == APLRotationType.TypeUnknown) {
 			return APLRotationType.TypeAPL;
-		} else if (this.aplRotation.type == APLRotationType.TypeUnknown) {
-			return APLRotationType.TypeLegacy;
 		} else {
 			return this.aplRotation.type;
 		}
@@ -1374,40 +1372,6 @@ export class Player<SpecType extends Spec> {
 				|| includeCategories.length == 0
 				|| includeCategories.includes(cat);
 
-		if (proto.rotation) {
-			proto.rotation.prepullActions.forEach(ppa => {
-				if (ppa.doAt) {
-					ppa.doAtValue = APLValue.create({
-						value: {oneofKind: 'const', const: { val: ppa.doAt }}
-					});
-					ppa.doAt = '';
-				}
-			});
-			if (proto.rotation.enabled) {
-				proto.rotation.enabled = false;
-				proto.rotation.type = APLRotationType.TypeAPL;
-			}
-		}
-
-		const rot = this.specTypeFunctions.rotationFromPlayer(proto);
-		if (rot && !this.specTypeFunctions.rotationEquals(rot, this.specTypeFunctions.rotationCreate())) {
-			if (proto.rotation?.type == APLRotationType.TypeAPL) {
-				// Do nothing
-			} else if (this.simpleRotationGenerator) {
-				proto.rotation = APLRotation.create({
-					type: APLRotationType.TypeSimple,
-					simple: {
-						specRotationJson: JSON.stringify(this.specTypeFunctions.rotationToJson(rot)),
-						cooldowns: proto.cooldowns,
-					},
-				});
-			} else {
-				proto.rotation = APLRotation.create({
-					type: APLRotationType.TypeAuto,
-				});
-			}
-		}
-
 		TypedEvent.freezeAllAndDo(() => {
 			if (loadCategory(SimSettingCategories.Gear)) {
 				this.setGear(eventID, proto.equipment ? this.sim.db.lookupEquipmentSpec(proto.equipment) : new Gear({}));
@@ -1450,50 +1414,6 @@ export class Player<SpecType extends Spec> {
 			}
 			if (loadCategory(SimSettingCategories.External)) {
 				this.setBuffs(eventID, proto.buffs || IndividualBuffs.create());
-			}
-
-			const options = this.getSpecOptions();
-			for (let key in options) {
-				if ((options[key] as any)?.['targetIndex']) {
-					const targetIndex = (options[key] as any)['targetIndex'] as number;
-					if (targetIndex == -1) {
-						(options[key] as any) = UnitReference.create();
-					} else {
-						(options[key] as any) = UnitReference.create({type: UnitReference_Type.Player, index: targetIndex});
-					}
-					this.setSpecOptions(eventID, options);
-					break;
-				}
-			}
-
-			if (this.spec == Spec.SpecBalanceDruid) {
-				const rot = this.getSimpleRotation() as SpecRotation<Spec.SpecBalanceDruid>;
-				if (rot.okfPpm) {
-					rot.okfPpm = 0;
-					this.setSimpleRotation(eventID, rot as SpecRotation<SpecType>);
-				}
-			}
-
-			if (this.spec == Spec.SpecHunter) {
-				const rot = this.getSimpleRotation() as SpecRotation<Spec.SpecHunter>;
-				if (rot.timeToTrapWeaveMs) {
-					const options = this.getSpecOptions() as SpecOptions<Spec.SpecHunter>;
-					options.timeToTrapWeaveMs = rot.timeToTrapWeaveMs;
-					this.setSpecOptions(eventID, options as SpecOptions<SpecType>);
-					rot.timeToTrapWeaveMs = 0;
-					this.setSimpleRotation(eventID, rot as SpecRotation<SpecType>);
-				}
-			}
-
-			if (this.spec == Spec.SpecMage) {
-				const rot = this.getSimpleRotation() as SpecRotation<Spec.SpecMage>;
-				if (rot.waterElementalDisobeyChance) {
-					const options = this.getSpecOptions() as SpecOptions<Spec.SpecMage>;
-					options.waterElementalDisobeyChance = rot.waterElementalDisobeyChance;
-					rot.waterElementalDisobeyChance = 0;
-					this.setSpecOptions(eventID, options as SpecOptions<SpecType>);
-					this.setSimpleRotation(eventID, rot as SpecRotation<SpecType>);
-				}
 			}
 
 			if (this.spec == Spec.SpecShadowPriest) {
@@ -1546,8 +1466,8 @@ export class Player<SpecType extends Spec> {
 				}
 			}
 
-			if (this.spec == Spec.SpecWarlock || this.spec == Spec.SpecDeathknight) {
-				const rot = this.getSimpleRotation() as SpecRotation<Spec.SpecWarlock | Spec.SpecDeathknight>;
+			if (this.spec == Spec.SpecWarlock) {
+				const rot = this.getSimpleRotation() as SpecRotation<Spec.SpecWarlock>;
 				if (rot.enableWeaponSwap) {
 					this.setEnableItemSwap(eventID, rot.enableWeaponSwap);
 					rot.enableWeaponSwap = false;

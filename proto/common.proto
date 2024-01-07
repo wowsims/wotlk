@@ -785,10 +785,6 @@ message UnitReference {
 
 	// Reference to the owner, only used iff this is a pet.
 	UnitReference owner = 4;
-
-	// Raid index of the player to target. A value of -1 indicates no target.
-	// TODO: Delete this after 2 months (on or after 9/19/2023)
-	int32 target_index = 1 [deprecated = true];
 }
 
 // ID for actions that aren't spells or items.

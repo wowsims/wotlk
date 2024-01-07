@@ -115,9 +115,4 @@ func (dk *Deathknight) registerDrwBloodStrikeSpell() {
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 		},
 	})
-
-	if !dk.Inputs.NewDrw {
-		dk.RuneWeapon.BloodStrike.DamageMultiplier *= 0.5
-		dk.RuneWeapon.BloodStrike.Flags |= core.SpellFlagIgnoreAttackerModifiers
-	}
 }

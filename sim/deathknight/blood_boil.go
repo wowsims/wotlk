@@ -64,9 +64,4 @@ func (dk *Deathknight) registerDrwBloodBoilSpell() {
 			}
 		},
 	})
-
-	if !dk.Inputs.NewDrw {
-		dk.RuneWeapon.BloodBoil.DamageMultiplier *= 0.5
-		dk.RuneWeapon.BloodBoil.Flags |= core.SpellFlagIgnoreAttackerModifiers
-	}
 }

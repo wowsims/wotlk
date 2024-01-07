@@ -79,10 +79,6 @@ func (dk *Deathknight) newHeartStrikeSpell(isMainTarget bool, isDrw bool) *core.
 	}
 
 	if isDrw {
-		if !dk.Inputs.NewDrw {
-			conf.DamageMultiplier *= 0.5
-			conf.Flags |= core.SpellFlagIgnoreAttackerModifiers
-		}
 		return dk.RuneWeapon.RegisterSpell(conf)
 	} else {
 		return dk.RegisterSpell(conf)

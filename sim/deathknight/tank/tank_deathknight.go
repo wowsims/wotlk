@@ -25,10 +25,6 @@ func RegisterTankDeathknight() {
 
 type TankDeathknight struct {
 	*deathknight.Deathknight
-
-	switchIT   bool
-	BloodSpell *core.Spell
-	FuSpell    *core.Spell
 }
 
 func NewTankDeathknight(character *core.Character, options *proto.Player) *TankDeathknight {
@@ -37,7 +33,6 @@ func NewTankDeathknight(character *core.Character, options *proto.Player) *TankD
 	tankDk := &TankDeathknight{
 		Deathknight: deathknight.NewDeathknight(character, deathknight.DeathknightInputs{
 			IsDps:              false,
-			NewDrw:             true,
 			StartingRunicPower: dkOptions.Options.StartingRunicPower,
 		}, options.TalentsString),
 	}
@@ -77,8 +72,6 @@ func (dk *TankDeathknight) Initialize() {
 
 func (dk *TankDeathknight) Reset(sim *core.Simulation) {
 	dk.Deathknight.Reset(sim)
-
-	dk.switchIT = false
 
 	dk.Presence = deathknight.UnsetPresence
 	dk.Deathknight.PseudoStats.Stunned = false

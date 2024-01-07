@@ -36,7 +36,6 @@ func NewDpsDeathknight(character *core.Character, player *proto.Player) *DpsDeat
 			PetUptime:          dk.Options.PetUptime,
 			DrwPestiApply:      dk.Options.DrwPestiApply,
 			IsDps:              true,
-			NewDrw:             true,
 
 			UseAMS:            dk.Options.UseAms,
 			AvgAMSSuccessRate: dk.Options.AvgAmsSuccessRate,
