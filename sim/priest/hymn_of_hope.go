@@ -30,7 +30,7 @@ func (priest *Priest) RegisterHymnOfHopeCD() {
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
 			core.StartPeriodicAction(sim, core.PeriodicActionOptions{
-				Period:   time.Second * 2,
+				Period:   spell.Unit.ApplyCastSpeedForSpell(time.Second*2, spell),
 				NumTicks: int(numTicks),
 				OnAction: func(sim *core.Simulation) {
 					// This is 3%, but it increases the target's max mana by 20% for the duration
