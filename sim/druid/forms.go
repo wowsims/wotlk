@@ -211,7 +211,7 @@ func (druid *Druid) registerCatFormSpell() {
 		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
-			BaseCost:   0.35,
+			BaseCost:   0.55,
 			Multiplier: 1,
 		},
 		Cast: core.CastConfig{
@@ -351,7 +351,7 @@ func (druid *Druid) registerCatFormSpell() {
 // 		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagAPL,
 
 // 		ManaCost: core.ManaCostOptions{
-// 			BaseCost:   0.35,
+// 			BaseCost:   0.55,
 // 			Multiplier: (1 - 0.2*float64(druid.Talents.KingOfTheJungle)) * (1 - 0.1*float64(druid.Talents.NaturalShapeshifter)),
 // 		},
 // 		Cast: core.CastConfig{
