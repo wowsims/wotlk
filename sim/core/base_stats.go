@@ -433,7 +433,7 @@ var ClassBaseStats = map[proto.Class]map[int]stats.Stats{
 	proto.Class_ClassDruid: {
 		25: {
 			stats.Health:      138,
-			stats.Mana:        199,
+			stats.Mana:        479,
 			stats.Agility:     34,
 			stats.Strength:    36,
 			stats.Intellect:   47,
