@@ -23,9 +23,7 @@ func TestBlood(t *testing.T) {
 		Glyphs:      BloodDefaultGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsBlood},
-		OtherRotations: []core.RotationCombo{
-			core.GetAplRotation("../../../ui/deathknight/apls", "blood_dps"),
-		},
+		Rotation:    core.GetAplRotation("../../../ui/deathknight/apls", "blood_dps"),
 
 		ItemFilter: ItemFilter,
 	}))
@@ -42,9 +40,9 @@ func TestUnholy(t *testing.T) {
 		Glyphs:      UnholyDefaultGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsUnholy},
+		Rotation:    core.GetAplRotation("../../../ui/deathknight/apls", "uh_2h_ss"),
 
 		OtherRotations: []core.RotationCombo{
-			core.GetAplRotation("../../../ui/deathknight/apls", "uh_2h_ss"),
 			core.GetAplRotation("../../../ui/deathknight/apls", "uh_dnd_aoe"),
 			core.GetAplRotation("../../../ui/deathknight/apls", "unholy_dw_ss"),
 		},
@@ -67,9 +65,9 @@ func TestFrost(t *testing.T) {
 		OtherSpecOptions: []core.SpecOptionsCombo{
 			{Label: "Desync", SpecOptions: PlayerOptionsDesyncFrost},
 		},
+		Rotation: core.GetAplRotation("../../../ui/deathknight/apls", "frost_bl_pesti"),
 
 		OtherRotations: []core.RotationCombo{
-			core.GetAplRotation("../../../ui/deathknight/apls", "frost_bl_pesti"),
 			core.GetAplRotation("../../../ui/deathknight/apls", "frost_uh_pesti"),
 		},
 
@@ -88,9 +86,7 @@ func TestFrostUH(t *testing.T) {
 		Glyphs:      FrostUHDefaultGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsFrost},
-		OtherRotations: []core.RotationCombo{
-			core.GetAplRotation("../../../ui/deathknight/apls", "frost_uh_pesti"),
-		},
+		Rotation:    core.GetAplRotation("../../../ui/deathknight/apls", "frost_uh_pesti"),
 
 		ItemFilter: ItemFilter,
 	}))
@@ -131,63 +127,29 @@ var UnholyDefaultGlyphs = &proto.Glyphs{
 var PlayerOptionsBlood = &proto.Player_Deathknight{
 	Deathknight: &proto.Deathknight{
 		Options:  deathKnightOptions,
-		Rotation: bloodRotation,
+		Rotation: &proto.Deathknight_Rotation{},
 	},
 }
 
 var PlayerOptionsUnholy = &proto.Player_Deathknight{
 	Deathknight: &proto.Deathknight{
 		Options:  deathKnightOptions,
-		Rotation: unholyRotation,
+		Rotation: &proto.Deathknight_Rotation{},
 	},
 }
 
 var PlayerOptionsFrost = &proto.Player_Deathknight{
 	Deathknight: &proto.Deathknight{
 		Options:  deathKnightOptions,
-		Rotation: frostRotation,
+		Rotation: &proto.Deathknight_Rotation{},
 	},
 }
 
 var PlayerOptionsDesyncFrost = &proto.Player_Deathknight{
 	Deathknight: &proto.Deathknight{
 		Options:  deathKnightOptions,
-		Rotation: frostDesyncRotation,
+		Rotation: &proto.Deathknight_Rotation{},
 	},
-}
-
-var bloodRotation = &proto.Deathknight_Rotation{
-	ArmyOfTheDead:        proto.Deathknight_Rotation_PreCast,
-	DrwDiseases:          proto.Deathknight_Rotation_Pestilence,
-	UseEmpowerRuneWeapon: true,
-	PreNerfedGargoyle:    false,
-	UseDancingRuneWeapon: true,
-	BloodSpender:         proto.Deathknight_Rotation_HS,
-}
-
-var unholyRotation = &proto.Deathknight_Rotation{
-	UseDeathAndDecay:     true,
-	StartingPresence:     proto.Deathknight_Rotation_Unholy,
-	BlPresence:           proto.Deathknight_Rotation_Blood,
-	Presence:             proto.Deathknight_Rotation_Blood,
-	GargoylePresence:     proto.Deathknight_Rotation_Unholy,
-	UseEmpowerRuneWeapon: true,
-	UseGargoyle:          true,
-	BtGhoulFrenzy:        false,
-	HoldErwArmy:          false,
-	PreNerfedGargoyle:    false,
-	BloodRuneFiller:      proto.Deathknight_Rotation_BloodBoil,
-	ArmyOfTheDead:        proto.Deathknight_Rotation_AsMajorCd,
-	BloodTap:             proto.Deathknight_Rotation_GhoulFrenzy,
-}
-
-var frostRotation = &proto.Deathknight_Rotation{
-	UseEmpowerRuneWeapon: true,
-}
-
-var frostDesyncRotation = &proto.Deathknight_Rotation{
-	UseEmpowerRuneWeapon: true,
-	DesyncRotation:       true,
 }
 
 var deathKnightOptions = &proto.Deathknight_Options{

@@ -89,7 +89,7 @@ func (fireElemental *FireElemental) Reset(_ *core.Simulation) {
 
 }
 
-func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
+func (fireElemental *FireElemental) ExecuteCustomRotation(sim *core.Simulation) {
 	/*
 		TODO this is a little dirty, can probably clean this up, the rotation might go through some more overhauls,
 		the random AI is hard to emulate.
@@ -130,10 +130,6 @@ func (fireElemental *FireElemental) OnGCDReady(sim *core.Simulation) {
 
 func (fireElemental *FireElemental) TryCast(sim *core.Simulation, target *core.Unit, spell *core.Spell, maxCastCount int32) bool {
 	if maxCastCount == spell.SpellMetrics[0].Casts {
-		return false
-	}
-
-	if !spell.IsReady(sim) {
 		return false
 	}
 

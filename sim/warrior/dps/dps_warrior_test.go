@@ -23,10 +23,7 @@ func TestFury(t *testing.T) {
 		GearSet:     core.GetGearSet("../../../ui/warrior/gear_sets", "p1_fury"),
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsFury},
-
-		OtherRotations: []core.RotationCombo{
-			core.GetAplRotation("../../../ui/warrior/apls", "fury"),
-		},
+		Rotation:    core.GetAplRotation("../../../ui/warrior/apls", "fury"),
 
 		ItemFilter: core.ItemFilter{
 			ArmorType: proto.ArmorType_ArmorTypePlate,
@@ -53,10 +50,7 @@ func TestArms(t *testing.T) {
 		GearSet:     core.GetGearSet("../../../ui/warrior/gear_sets", "p1_arms"),
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: PlayerOptionsArms},
-
-		OtherRotations: []core.RotationCombo{
-			core.GetAplRotation("../../../ui/warrior/apls", "arms"),
-		},
+		Rotation:    core.GetAplRotation("../../../ui/warrior/apls", "arms"),
 
 		ItemFilter: core.ItemFilter{
 			ArmorType: proto.ArmorType_ArmorTypePlate,
@@ -117,59 +111,15 @@ var ArmsGlyphs = &proto.Glyphs{
 var PlayerOptionsArms = &proto.Player_Warrior{
 	Warrior: &proto.Warrior{
 		Options:  warriorOptions,
-		Rotation: armsRotation,
+		Rotation: &proto.Warrior_Rotation{},
 	},
 }
 
 var PlayerOptionsFury = &proto.Player_Warrior{
 	Warrior: &proto.Warrior{
 		Options:  warriorOptions,
-		Rotation: furyRotation,
+		Rotation: &proto.Warrior_Rotation{},
 	},
-}
-
-var armsRotation = &proto.Warrior_Rotation{
-	UseRend:   true,
-	UseMs:     true,
-	UseCleave: false,
-
-	HsRageThreshold:          50,
-	MsRageThreshold:          35,
-	SlamRageThreshold:        25,
-	RendCdThreshold:          0,
-	RendHealthThresholdAbove: 0,
-
-	SpamExecute: false,
-
-	UseHsDuringExecute: true,
-
-	MaintainDemoShout:   false,
-	MaintainThunderClap: false,
-
-	StanceOption: proto.Warrior_Rotation_DefaultStance,
-}
-
-var furyRotation = &proto.Warrior_Rotation{
-	UseRend:               true,
-	UseCleave:             false,
-	UseOverpower:          true,
-	ExecutePhaseOverpower: false,
-
-	HsRageThreshold:          30,
-	RendRageThresholdBelow:   100,
-	SlamRageThreshold:        25,
-	RendCdThreshold:          0,
-	RendHealthThresholdAbove: 20,
-
-	UseHsDuringExecute: true,
-	UseWwDuringExecute: true,
-	UseBtDuringExecute: true,
-	UseSlamOverExecute: true,
-
-	MaintainDemoShout:   false,
-	MaintainThunderClap: false,
-
-	StanceOption: proto.Warrior_Rotation_DefaultStance,
 }
 
 var warriorOptions = &proto.Warrior_Options{

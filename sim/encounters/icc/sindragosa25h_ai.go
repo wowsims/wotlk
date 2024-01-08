@@ -205,10 +205,8 @@ func (ai *Sindragosa25HAI) registerMysticBuffetAuras() {
 }
 
 func (ai *Sindragosa25HAI) registerFrostAuraSpell(target *core.Target) {
-	actionID := core.ActionID{SpellID: 70084}
-
 	ai.FrostAura = target.RegisterSpell(core.SpellConfig{
-		ActionID:    actionID,
+		ActionID:    core.ActionID{SpellID: 70084},
 		SpellSchool: core.SpellSchoolFrost,
 		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       core.SpellFlagNone,
@@ -310,23 +308,23 @@ func (ai *Sindragosa25HAI) registerFrostBreathSpell(target *core.Target) {
 	})
 }
 
-func (ai *Sindragosa25HAI) DoAction(sim *core.Simulation) {
-	if ai.Target.GCD.IsReady(sim) {
-		// Cast Frost Aura once at the start of the encounter.
-		if sim.CurrentTime < time.Millisecond*1620 {
-			ai.FrostAura.Cast(sim, &ai.Target.Unit)
-			return
-		}
-
-		if ai.Target.CurrentTarget != nil {
-			if ai.FrostBreath.IsReady(sim) {
-				ai.Target.Unit.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+time.Millisecond*1500, false)
-				ai.FrostBreath.Cast(sim, ai.Target.CurrentTarget)
-				return
-			}
-		}
-
-		// Sindragosa follows the standard Classic WoW boss AI behavior of evaluating actions on a 1.62 second server tick.
-		ai.Target.WaitUntil(sim, sim.CurrentTime+time.Millisecond*1620)
+func (ai *Sindragosa25HAI) ExecuteCustomRotation(sim *core.Simulation) {
+	if !ai.Target.GCD.IsReady(sim) {
+		return
 	}
+
+	// Cast Frost Aura once at the start of the encounter.
+	if sim.CurrentTime < time.Millisecond*1620 {
+		ai.FrostAura.Cast(sim, &ai.Target.Unit)
+		return
+	}
+
+	if ai.Target.CurrentTarget != nil && ai.FrostBreath.IsReady(sim) {
+		ai.Target.Unit.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+time.Millisecond*1500, false)
+		ai.FrostBreath.Cast(sim, ai.Target.CurrentTarget)
+		return
+	}
+
+	// Sindragosa follows the standard Classic WoW boss AI behavior of evaluating actions on a 1.62 second server tick.
+	ai.Target.WaitUntil(sim, sim.CurrentTime+time.Millisecond*1620)
 }

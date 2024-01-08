@@ -67,6 +67,9 @@ func (character *Character) EnableResumeAfterManaWait(callback func(sim *Simulat
 	if callback == nil {
 		panic("attempted to setup a mana tick callback that was nil")
 	}
+	if character.IsUsingAPL {
+		return
+	}
 	character.OnManaTick = func(sim *Simulation) {
 		if character.FinishedWaitingForManaAndGCDReady(sim) {
 			callback(sim)

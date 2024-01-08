@@ -27,6 +27,7 @@ import {
 	APLActionItemSwap,
 	APLActionItemSwap_SwapSet as ItemSwapSet,
 
+	APLActionCustomRotation,
 	APLActionCatOptimalRotationAction,
 
 	APLValue,
@@ -567,6 +568,16 @@ const actionKindFactories: {[f in NonNullable<APLActionKind>]: ActionKindConfig<
 		newValue: () => APLActionItemSwap.create(),
 		fields: [
 			itemSwapSetFieldConfig('swapSet'),
+		],
+	}),
+
+	['customRotation']: inputBuilder({
+		label: 'Custom Rotation',
+		//submenu: ['Misc'],
+		shortDescription: 'INTERNAL ONLY',
+		includeIf: (player: Player<any>, isPrepull: boolean) => false, // Never show this, because its internal only.
+		newValue: () => APLActionCustomRotation.create(),
+		fields: [
 		],
 	}),
 

@@ -65,15 +65,13 @@ func (cast *Cast) EffectiveTime() time.Duration {
 type CastFunc func(*Simulation, *Unit)
 type CastSuccessFunc func(*Simulation, *Unit) bool
 
-func (spell *Spell) castFailureHelper(sim *Simulation, gracefulFailure bool, message string, vals ...any) bool {
+func (spell *Spell) castFailureHelper(sim *Simulation, message string, vals ...any) bool {
 	if sim.CurrentTime < 0 && spell.Unit.IsUsingAPL {
 		spell.Unit.Rotation.ValidationWarning(fmt.Sprintf(spell.ActionID.String()+" failed to cast: "+message, vals...))
-	} else if gracefulFailure {
+	} else {
 		if sim.Log != nil && !spell.Flags.Matches(SpellFlagNoLogs) {
 			spell.Unit.Log(sim, fmt.Sprintf(spell.ActionID.String()+" failed to cast: "+message, vals...))
 		}
-	} else {
-		panic(fmt.Sprintf(spell.ActionID.String()+" failed to cast: "+message, vals...))
 	}
 	return false
 }
@@ -94,13 +92,13 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 
 		if spell.ExtraCastCondition != nil {
 			if !spell.ExtraCastCondition(sim, target) {
-				return spell.castFailureHelper(sim, true, "extra spell condition")
+				return spell.castFailureHelper(sim, "extra spell condition")
 			}
 		}
 
 		if spell.Cost != nil {
 			if !spell.Cost.MeetsRequirement(spell) {
-				return spell.castFailureHelper(sim, true, spell.Cost.CostFailureReason(sim, spell))
+				return spell.castFailureHelper(sim, spell.Cost.CostFailureReason(sim, spell))
 			}
 		}
 
@@ -113,7 +111,7 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 		if config.CD.Timer != nil {
 			// By panicking if spell is on CD, we force each sim to properly check for their own CDs.
 			if !spell.CD.IsReady(sim) {
-				return spell.castFailureHelper(sim, false, "still on cooldown for %s, curTime = %s", spell.CD.TimeToReady(sim), sim.CurrentTime)
+				return spell.castFailureHelper(sim, "still on cooldown for %s, curTime = %s", spell.CD.TimeToReady(sim), sim.CurrentTime)
 			}
 			spell.CD.Set(sim.CurrentTime + spell.CurCast.CastTime + spell.CD.Duration)
 		}
@@ -121,18 +119,18 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 		if config.SharedCD.Timer != nil {
 			// By panicking if spell is on CD, we force each sim to properly check for their own CDs.
 			if !spell.SharedCD.IsReady(sim) {
-				return spell.castFailureHelper(sim, false, "still on shared cooldown for %s, curTime = %s", spell.SharedCD.TimeToReady(sim), sim.CurrentTime)
+				return spell.castFailureHelper(sim, "still on shared cooldown for %s, curTime = %s", spell.SharedCD.TimeToReady(sim), sim.CurrentTime)
 			}
 			spell.SharedCD.Set(sim.CurrentTime + spell.CurCast.CastTime + spell.SharedCD.Duration)
 		}
 
 		// By panicking if spell is on CD, we force each sim to properly check for their own CDs.
 		if spell.CurCast.GCD != 0 && !spell.Unit.GCD.IsReady(sim) {
-			return spell.castFailureHelper(sim, false, "GCD on cooldown for %s, curTime = %s", spell.Unit.GCD.TimeToReady(sim), sim.CurrentTime)
+			return spell.castFailureHelper(sim, "GCD on cooldown for %s, curTime = %s", spell.Unit.GCD.TimeToReady(sim), sim.CurrentTime)
 		}
 
 		if hc := spell.Unit.Hardcast; hc.Expires > sim.CurrentTime {
-			return spell.castFailureHelper(sim, false, "casting/channeling %v for %s, curTime = %s", hc.ActionID, hc.Expires-sim.CurrentTime, sim.CurrentTime)
+			return spell.castFailureHelper(sim, "casting/channeling %v for %s, curTime = %s", hc.ActionID, hc.Expires-sim.CurrentTime, sim.CurrentTime)
 		}
 
 		if effectiveTime := spell.CurCast.EffectiveTime(); effectiveTime != 0 {
@@ -204,14 +202,14 @@ func (spell *Spell) makeCastFuncSimple() CastSuccessFunc {
 	return func(sim *Simulation, target *Unit) bool {
 		if spell.ExtraCastCondition != nil {
 			if !spell.ExtraCastCondition(sim, target) {
-				return spell.castFailureHelper(sim, true, "extra spell condition")
+				return spell.castFailureHelper(sim, "extra spell condition")
 			}
 		}
 
 		if spell.CD.Timer != nil {
 			// By panicking if spell is on CD, we force each sim to properly check for their own CDs.
 			if !spell.CD.IsReady(sim) {
-				return spell.castFailureHelper(sim, false, "still on cooldown for %s, curTime = %s", spell.CD.TimeToReady(sim), sim.CurrentTime)
+				return spell.castFailureHelper(sim, "still on cooldown for %s, curTime = %s", spell.CD.TimeToReady(sim), sim.CurrentTime)
 			}
 
 			spell.CD.Set(sim.CurrentTime + spell.CD.Duration)
@@ -220,7 +218,7 @@ func (spell *Spell) makeCastFuncSimple() CastSuccessFunc {
 		if spell.SharedCD.Timer != nil {
 			// By panicking if spell is on CD, we force each sim to properly check for their own CDs.
 			if !spell.SharedCD.IsReady(sim) {
-				return spell.castFailureHelper(sim, false, "still on shared cooldown for %s, curTime = %s", spell.SharedCD.TimeToReady(sim), sim.CurrentTime)
+				return spell.castFailureHelper(sim, "still on shared cooldown for %s, curTime = %s", spell.SharedCD.TimeToReady(sim), sim.CurrentTime)
 			}
 
 			spell.SharedCD.Set(sim.CurrentTime + spell.SharedCD.Duration)

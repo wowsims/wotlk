@@ -191,6 +191,9 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecDeathknight, {
 			DeathKnightInputs.SelfUnholyFrenzy,
 			DeathKnightInputs.StartingRunicPower,
 			DeathKnightInputs.PetUptime,
+			DeathKnightInputs.UseAMSInput,
+			DeathKnightInputs.AvgAMSSuccessRateInput,
+			DeathKnightInputs.AvgAMSHitInput,
 
 			DeathKnightInputs.PrecastGhoulFrenzy,
 			DeathKnightInputs.PrecastHornOfWinter,

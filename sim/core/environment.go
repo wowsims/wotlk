@@ -148,6 +148,9 @@ func (env *Environment) finalize(raidProto *proto.Raid, _ *proto.Encounter, raid
 
 	for _, target := range env.Encounter.Targets {
 		target.finalize()
+		if target.AI != nil {
+			target.Rotation = target.newCustomRotation()
+		}
 	}
 
 	for _, party := range env.Raid.Parties {
@@ -156,6 +159,7 @@ func (env *Environment) finalize(raidProto *proto.Raid, _ *proto.Encounter, raid
 			character.Finalize()
 			for _, pet := range character.Pets {
 				pet.Finalize()
+				pet.Rotation = pet.newCustomRotation()
 			}
 		}
 	}
@@ -256,6 +260,20 @@ func (env *Environment) NextTarget(target *Unit) *Target {
 }
 func (env *Environment) NextTargetUnit(target *Unit) *Unit {
 	return &env.NextTarget(target).Unit
+}
+func (env *Environment) GetAgentFromUnit(unit *Unit) Agent {
+	raidAgent := env.Raid.GetPlayerFromUnit(unit)
+	if raidAgent != nil {
+		return raidAgent
+	}
+
+	for _, target := range env.Encounter.Targets {
+		if unit == &target.Unit {
+			return target
+		}
+	}
+
+	return nil
 }
 
 func (env *Environment) GetUnit(ref *proto.UnitReference, contextUnit *Unit) *Unit {

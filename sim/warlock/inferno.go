@@ -190,7 +190,6 @@ func (infernal *InfernalPet) Initialize() {
 func (infernal *InfernalPet) Reset(_ *core.Simulation) {
 }
 
-func (infernal *InfernalPet) OnGCDReady(sim *core.Simulation) {
+func (infernal *InfernalPet) ExecuteCustomRotation(sim *core.Simulation) {
 	infernal.immolationAura.Cast(sim, nil)
-	infernal.DoNothing()
 }

@@ -138,7 +138,7 @@ func (garg *GargoylePet) Initialize() {
 func (garg *GargoylePet) Reset(_ *core.Simulation) {
 }
 
-func (garg *GargoylePet) OnGCDReady(_ *core.Simulation) {
+func (garg *GargoylePet) ExecuteCustomRotation(_ *core.Simulation) {
 }
 
 func (garg *GargoylePet) registerGargoyleStrikeSpell() {

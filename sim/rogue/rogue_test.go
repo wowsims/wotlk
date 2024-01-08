@@ -91,6 +91,7 @@ func TestSubtlety(t *testing.T) {
 		Glyphs:      SubtletyGlyphs,
 		Consumes:    FullConsumes,
 		SpecOptions: core.SpecOptionsCombo{Label: "Subtlety", SpecOptions: PlayerOptionsSubtletyID},
+		Rotation:    core.GetAplRotation("../../ui/rogue/apls", "combat_expose"),
 		ItemFilter: core.ItemFilter{
 			ArmorType: proto.ArmorType_ArmorTypeLeather,
 			RangedWeaponTypes: []proto.RangedWeaponType{
@@ -129,6 +130,7 @@ func GenerateCriticalDamageMultiplierTestCase(
 		Race:          proto.Race_RaceOrc,
 		Equipment:     equipment,
 		TalentsString: talents,
+		Rotation:      core.GetAplRotation("../../ui/rogue/apls", "combat_expose").Rotation,
 	}, spec), nil, nil, nil)
 	encounter := core.MakeSingleTargetEncounter(0.0)
 	env, _, _ := core.NewEnvironment(raid, encounter, false)
