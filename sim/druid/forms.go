@@ -18,9 +18,6 @@ const (
 	Any = Humanoid | Bear | Cat | Moonkin | Tree
 )
 
-// Converts from 0.009327 to 0.0085
-const AnimalSpiritRegenSuppression = 0.911337
-
 func (form DruidForm) Matches(other DruidForm) bool {
 	return (form & other) != 0
 }
@@ -144,7 +141,6 @@ func (druid *Druid) registerCatFormSpell() {
 			druid.AutoAttacks.SetMH(clawWeapon)
 
 			druid.PseudoStats.ThreatMultiplier *= 0.71
-			druid.PseudoStats.SpiritRegenMultiplier *= AnimalSpiritRegenSuppression
 			druid.PseudoStats.BaseDodge += 0.02 * float64(druid.Talents.FelineSwiftness)
 
 			predBonus = druid.GetDynamicPredStrikeStats()
@@ -178,7 +174,6 @@ func (druid *Druid) registerCatFormSpell() {
 			druid.AutoAttacks.SetMH(druid.WeaponFromMainHand(druid.MeleeCritMultiplier(1,0)))
 
 			druid.PseudoStats.ThreatMultiplier /= 0.71
-			druid.PseudoStats.SpiritRegenMultiplier /= AnimalSpiritRegenSuppression
 			druid.PseudoStats.BaseDodge -= 0.02 * float64(druid.Talents.FelineSwiftness)
 
 			druid.AddStatsDynamic(sim, predBonus.Invert())
@@ -286,7 +281,6 @@ func (druid *Druid) registerCatFormSpell() {
 // 			druid.PseudoStats.ThreatMultiplier *= 2.1021
 // 			druid.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1.0 + 0.02*float64(druid.Talents.MasterShapeshifter)
 // 			druid.PseudoStats.DamageTakenMultiplier *= potpdtm
-// 			druid.PseudoStats.SpiritRegenMultiplier *= AnimalSpiritRegenSuppression
 // 			druid.PseudoStats.BaseDodge += 0.02 * float64(druid.Talents.FeralSwiftness+druid.Talents.NaturalReaction)
 
 // 			predBonus = druid.GetDynamicPredStrikeStats()
@@ -320,7 +314,6 @@ func (druid *Druid) registerCatFormSpell() {
 // 			druid.PseudoStats.ThreatMultiplier /= 2.1021
 // 			druid.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] /= 1.0 + 0.02*float64(druid.Talents.MasterShapeshifter)
 // 			druid.PseudoStats.DamageTakenMultiplier /= potpdtm
-// 			druid.PseudoStats.SpiritRegenMultiplier /= AnimalSpiritRegenSuppression
 // 			druid.PseudoStats.BaseDodge -= 0.02 * float64(druid.Talents.FeralSwiftness+druid.Talents.NaturalReaction)
 
 // 			druid.AddStatsDynamic(sim, predBonus.Invert())
