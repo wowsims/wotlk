@@ -1114,15 +1114,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Orc-p1-WF-default_ft-FullBuffs-LongMultiTarget"
  value: {
-  dps: 20896.00536
-  tps: 13246.61095
+  dps: 22232.41084
+  tps: 14032.63156
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Orc-p1-WF-default_ft-FullBuffs-LongSingleTarget"
  value: {
-  dps: 6220.3023
-  tps: 3836.60045
+  dps: 6310.29822
+  tps: 3894.21075
  }
 }
 dps_results: {
@@ -1135,15 +1135,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Orc-p1-WF-default_ft-NoBuffs-LongMultiTarget"
  value: {
-  dps: 9923.06421
-  tps: 7168.38818
+  dps: 10601.75571
+  tps: 7528.77421
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Orc-p1-WF-default_ft-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2752.12303
-  tps: 1744.71878
+  dps: 2818.31739
+  tps: 1776.97179
  }
 }
 dps_results: {
@@ -1156,15 +1156,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Orc-p1-WF-default_wf-FullBuffs-LongMultiTarget"
  value: {
-  dps: 20534.41562
-  tps: 12998.91404
+  dps: 21690.21929
+  tps: 13696.7373
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Orc-p1-WF-default_wf-FullBuffs-LongSingleTarget"
  value: {
-  dps: 6324.40046
-  tps: 3911.34595
+  dps: 6407.59639
+  tps: 3963.37725
  }
 }
 dps_results: {
@@ -1177,15 +1177,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Orc-p1-WF-default_wf-NoBuffs-LongMultiTarget"
  value: {
-  dps: 9232.17302
-  tps: 6678.76335
+  dps: 9884.6133
+  tps: 7003.63947
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Orc-p1-WF-default_wf-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2797.38088
-  tps: 1780.42454
+  dps: 2854.92489
+  tps: 1807.16084
  }
 }
 dps_results: {
@@ -1198,15 +1198,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Orc-p1-WF-phase_3-FullBuffs-LongMultiTarget"
  value: {
-  dps: 21005.52744
-  tps: 13316.30892
+  dps: 22332.92499
+  tps: 14053.10037
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Orc-p1-WF-phase_3-FullBuffs-LongSingleTarget"
  value: {
-  dps: 6237.73682
-  tps: 3851.80892
+  dps: 6333.04736
+  tps: 3909.91624
  }
 }
 dps_results: {
@@ -1219,15 +1219,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Orc-p1-WF-phase_3-NoBuffs-LongMultiTarget"
  value: {
-  dps: 9826.12343
-  tps: 7016.37826
+  dps: 10577.713
+  tps: 7462.8381
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Orc-p1-WF-phase_3-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2761.61604
-  tps: 1747.83375
+  dps: 2829.31347
+  tps: 1783.88363
  }
 }
 dps_results: {
@@ -1366,15 +1366,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Troll-p1-WF-default_ft-FullBuffs-LongMultiTarget"
  value: {
-  dps: 20933.7653
-  tps: 13331.20602
+  dps: 22214.34484
+  tps: 14071.30753
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Troll-p1-WF-default_ft-FullBuffs-LongSingleTarget"
  value: {
-  dps: 6229.05352
-  tps: 3859.92667
+  dps: 6317.56193
+  tps: 3916.88417
  }
 }
 dps_results: {
@@ -1387,15 +1387,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Troll-p1-WF-default_ft-NoBuffs-LongMultiTarget"
  value: {
-  dps: 9795.50091
-  tps: 7073.07008
+  dps: 10508.5794
+  tps: 7459.33318
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Troll-p1-WF-default_ft-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2765.11148
-  tps: 1761.18868
+  dps: 2822.54419
+  tps: 1786.97077
  }
 }
 dps_results: {
@@ -1408,15 +1408,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Troll-p1-WF-default_wf-FullBuffs-LongMultiTarget"
  value: {
-  dps: 20283.26276
-  tps: 12865.93953
+  dps: 21464.69877
+  tps: 13553.35701
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Troll-p1-WF-default_wf-FullBuffs-LongSingleTarget"
  value: {
-  dps: 6298.91615
-  tps: 3900.10841
+  dps: 6374.41933
+  tps: 3951.79147
  }
 }
 dps_results: {
@@ -1429,15 +1429,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Troll-p1-WF-default_wf-NoBuffs-LongMultiTarget"
  value: {
-  dps: 9183.51887
-  tps: 6654.92095
+  dps: 9866.63739
+  tps: 7014.52359
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Troll-p1-WF-default_wf-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2801.48303
-  tps: 1789.70911
+  dps: 2853.62154
+  tps: 1813.24619
  }
 }
 dps_results: {
@@ -1450,15 +1450,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Troll-p1-WF-phase_3-FullBuffs-LongMultiTarget"
  value: {
-  dps: 20848.60731
-  tps: 13269.32471
+  dps: 22209.29686
+  tps: 14032.30074
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Troll-p1-WF-phase_3-FullBuffs-LongSingleTarget"
  value: {
-  dps: 6214.87221
-  tps: 3847.23116
+  dps: 6316.60001
+  tps: 3912.07724
  }
 }
 dps_results: {
@@ -1471,15 +1471,15 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Settings-Troll-p1-WF-phase_3-NoBuffs-LongMultiTarget"
  value: {
-  dps: 9837.29618
-  tps: 7025.01497
+  dps: 10640.8485
+  tps: 7505.58378
  }
 }
 dps_results: {
  key: "TestEnhancement-Settings-Troll-p1-WF-phase_3-NoBuffs-LongSingleTarget"
  value: {
-  dps: 2749.74491
-  tps: 1745.51777
+  dps: 2817.18144
+  tps: 1783.40572
  }
 }
 dps_results: {
