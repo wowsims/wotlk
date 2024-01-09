@@ -1,7 +1,6 @@
 package druid
 
 import (
-	"math/rand"
 	"github.com/wowsims/sod/sim/core"
 	"github.com/wowsims/sod/sim/core/proto"
 	"github.com/wowsims/sod/sim/core/stats"
@@ -98,10 +97,6 @@ func (druid *Druid) GetDynamicPredStrikeStats() stats.Stats {
 		s[stats.AttackPower] += bonusAp * ((0.2 / 3) * float64(druid.Talents.PredatoryStrikes))
 	}
 	return s
-}
-
-func randInt(min, max int) int32 {
-	return int32(min + rand.Intn(max-min))
 }
 
 //TODO: Classic feral and bear
@@ -222,18 +217,15 @@ func (druid *Druid) registerCatFormSpell() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-			if(druid.Talents.Furor == 5 || (randInt(0,5) < druid.Talents.Furor)) {
-				druid.AddEnergy(sim, 40, energyMetrics)
-			}
-
-			/*
-			maxShiftEnergy := float64(8 * druid.Talents.Furor)
+			maxShiftEnergy := core.TernaryFloat64(sim.RandomFloat("Furor") < 0.2 * float64(druid.Talents.Furor), 40, 0)
 			energyDelta := maxShiftEnergy - druid.CurrentEnergy()
 
-			if energyDelta < 0 {
+			if energyDelta > 0 {
+				druid.AddEnergy(sim, energyDelta, energyMetrics)
+			} else {
 				druid.SpendEnergy(sim, -energyDelta, energyMetrics)
 			}
-			*/
+
 			druid.CatFormAura.Activate(sim)
 		},
 	})

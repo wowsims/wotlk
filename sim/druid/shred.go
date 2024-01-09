@@ -7,13 +7,15 @@ import (
 )
 
 func (druid *Druid) registerShredSpell() {
+	shredDamageMultiplier := 2.25
 
+	
 	flatDamageBonus := map[int32]float64{
 		25: 54.0,
 		40: 99.0,
 		50: 144.0,
 		60: 180.0,
-	}[druid.Level]
+	}[druid.Level]/shredDamageMultiplier
 
 	druid.Shred = druid.RegisterSpell(Cat, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: map[int32]int32{
@@ -27,7 +29,7 @@ func (druid *Druid) registerShredSpell() {
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagAPL,
 
 		EnergyCost: core.EnergyCostOptions{
-			Cost:   60 /*- 9*float64(druid.Talents.ShreddingAttacks)*/,
+			Cost:   60 - 6*float64(druid.Talents.ImprovedShred),
 			Refund: 0.8,
 		},
 		Cast: core.CastConfig{
@@ -40,7 +42,7 @@ func (druid *Druid) registerShredSpell() {
 			return !druid.PseudoStats.InFrontOfTarget
 		},
 
-		DamageMultiplier: 2.25,
+		DamageMultiplier: shredDamageMultiplier,
 		CritMultiplier:   druid.MeleeCritMultiplier(1,0),
 		ThreatMultiplier: 1,
 

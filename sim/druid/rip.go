@@ -36,7 +36,7 @@ func (druid *Druid) registerRipSpell() {
 
 		EnergyCost: core.EnergyCostOptions{
 			Cost:          30,
-			Refund:        0.4,
+			Refund:        0,
 			//RefundMetrics: druid.PrimalPrecisionRecoveryMetrics,
 		},
 		Cast: core.CastConfig{
