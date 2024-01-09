@@ -1,5 +1,6 @@
 package feral
 
+/*
 import (
 	"math"
 	"time"
@@ -142,3 +143,4 @@ func (cat *FeralDruid) doAoeRotation(sim *core.Simulation) (bool, time.Duration)
 
 	return true, nextAction
 }
+*/

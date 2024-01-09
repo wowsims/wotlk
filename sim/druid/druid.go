@@ -5,6 +5,7 @@ import (
 
 	"github.com/wowsims/sod/sim/core"
 	"github.com/wowsims/sod/sim/core/proto"
+	"github.com/wowsims/sod/sim/core/stats"
 )
 
 const (
@@ -153,6 +154,8 @@ func (druid *Druid) RegisterSpell(formMask DruidForm, config core.SpellConfig) *
 }
 
 func (druid *Druid) Initialize() {
+	druid.BleedCategories = druid.GetEnemyExclusiveCategories(core.BleedEffectCategory)
+	
 	// druid.registerFaerieFireSpell()
 	// druid.registerInnervateCD()
 }
@@ -168,18 +171,16 @@ func (druid *Druid) RegisterBalanceSpells() {
 // TODO: Classic feral
 func (druid *Druid) RegisterFeralCatSpells() {
 	// druid.registerBerserkCD()
-	// druid.registerCatFormSpell()
+	druid.registerCatFormSpell()
 	// druid.registerBearFormSpell()
 	// druid.registerEnrageSpell()
 	// druid.registerFerociousBiteSpell()
 	// druid.registerMangleBearSpell()
-	// druid.registerMangleCatSpell()
 	// druid.registerMaulSpell(0)
 	// druid.registerLacerateSpell()
 	// druid.registerRakeSpell()
-	// druid.registerRipSpell()
-	// druid.registerSavageRoarSpell()
-	// druid.registerShredSpell()
+	druid.registerRipSpell()
+	druid.registerShredSpell()
 	// druid.registerSwipeBearSpell()
 	// druid.registerSwipeCatSpell()
 	// druid.registerTigersFurySpell()
@@ -220,11 +221,11 @@ func New(char *core.Character, form DruidForm, selfBuffs SelfBuffs, talents stri
 	druid.EnableManaBar()
 
 	// TODO: Class druid physical stats
-	// druid.AddStatDependency(stats.Strength, stats.AttackPower, 2)
-	// druid.AddStatDependency(stats.BonusArmor, stats.Armor, 1)
-	// druid.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritPerAgiMaxLevel[char.Class]*core.CritRatingPerCritChance)
-	// Druid get 0.0209 dodge per agi (before dr), roughly 1 per 47.846
-	// druid.AddStatDependency(stats.Agility, stats.Dodge, (0.0209)*core.DodgeRatingPerDodgeChance)
+	druid.AddStatDependency(stats.Strength, stats.AttackPower, 2)
+	druid.AddStatDependency(stats.BonusArmor, stats.Armor, 1)
+	druid.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritPerAgiAtLevel[char.Class][int(druid.Level)]*core.CritRatingPerCritChance)
+	//Druid get 0.0209 dodge per agi (before dr), roughly 1 per 47.846
+	druid.AddStatDependency(stats.Agility, stats.Dodge, (0.0209)*core.DodgeRatingPerDodgeChance)
 
 	// Druids get extra melee haste
 	// druid.PseudoStats.MeleeHasteRatingPerHastePercent /= 1.3

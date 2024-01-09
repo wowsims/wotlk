@@ -657,6 +657,11 @@ func (aa *AutoAttacks) NextAttackAt() time.Duration {
 type PPMManager struct {
 	procMasks   []ProcMask
 	procChances []float64
+
+	// For feral druids, certain PPM effects use their equipped weapon speed
+	// instead of their paw attack speed.
+	mhSpecialProcChance float64
+	ohSpecialProcChance float64
 }
 
 // Returns whether the effect procced.
@@ -668,6 +673,20 @@ func (ppmm *PPMManager) Proc(sim *Simulation, procMask ProcMask, label string) b
 	}
 	return false
 }
+
+// Returns whether the effect procced.
+// This is different from Proc() in that yellow melee hits use a proc chance based on the equipped
+// weapon speed rather than the base attack speed. This distinction matters for feral druids.
+func (ppmm *PPMManager) ProcWithWeaponSpecials(sim *Simulation, procMask ProcMask, label string) bool {
+	if procMask.Matches(ProcMaskMeleeMHSpecial) {
+		return sim.RandomFloat(label) < ppmm.mhSpecialProcChance
+	} else if procMask.Matches(ProcMaskMeleeOHSpecial) {
+		return sim.RandomFloat(label) < ppmm.ohSpecialProcChance
+	} else {
+		return ppmm.Proc(sim, procMask, label)
+	}
+}
+
 
 func (ppmm *PPMManager) Chance(procMask ProcMask) float64 {
 	for i, m := range ppmm.procMasks {
@@ -707,6 +726,21 @@ func (aa *AutoAttacks) NewPPMManager(ppm float64, procMask ProcMask) PPMManager 
 		ppmm.procChances[i] *= ppm / 60
 	}
 
+	character := aa.mh.agent.GetCharacter()
+	if procMask.Matches(ProcMaskMeleeMH) {
+		if character != nil {
+			if mhWeapon := character.GetMHWeapon(); mhWeapon != nil {
+				ppmm.mhSpecialProcChance = mhWeapon.SwingSpeed * ppm / 60
+			}
+		}
+	}
+	if procMask.Matches(ProcMaskMeleeOH) {
+		if character != nil {
+			if ohWeapon := character.GetOHWeapon(); ohWeapon != nil {
+				ppmm.ohSpecialProcChance = ohWeapon.SwingSpeed * ppm / 60
+			}
+		}
+	}
 	return ppmm
 }
 

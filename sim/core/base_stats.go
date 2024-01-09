@@ -433,13 +433,13 @@ var ClassBaseStats = map[proto.Class]map[int]stats.Stats{
 	proto.Class_ClassDruid: {
 		25: {
 			stats.Health:      138,
-			stats.Mana:        199,
+			stats.Mana:        479,
 			stats.Agility:     34,
 			stats.Strength:    36,
 			stats.Intellect:   47,
 			stats.Spirit:      0,
 			stats.Stamina:     35,
-			stats.AttackPower: 44,
+			stats.AttackPower: -20,
 		},
 		40: {
 			stats.Health:      503,
@@ -449,7 +449,7 @@ var ClassBaseStats = map[proto.Class]map[int]stats.Stats{
 			stats.Intellect:   67,
 			stats.Spirit:      72,
 			stats.Stamina:     48,
-			stats.AttackPower: 66,
+			stats.AttackPower: -20,
 		},
 		50: {
 			stats.Health:      858,
@@ -459,7 +459,7 @@ var ClassBaseStats = map[proto.Class]map[int]stats.Stats{
 			stats.Intellect:   82,
 			stats.Spirit:      90,
 			stats.Stamina:     58,
-			stats.AttackPower: 84,
+			stats.AttackPower: -20,
 		},
 		60: {
 			stats.Health:      1303,
@@ -469,7 +469,7 @@ var ClassBaseStats = map[proto.Class]map[int]stats.Stats{
 			stats.Intellect:   100,
 			stats.Spirit:      110,
 			stats.Stamina:     69,
-			stats.AttackPower: 104,
+			stats.AttackPower: -20,
 		},
 	},
 }

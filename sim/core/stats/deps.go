@@ -17,6 +17,7 @@ var safeDepsOrder = []Stat{
 	Spirit,
 	BonusArmor,
 	Armor,
+	FeralAttackPower,
 	AttackPower,
 	RangedAttackPower,
 	SpellPower,

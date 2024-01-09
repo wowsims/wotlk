@@ -2,7 +2,6 @@ package core
 
 import (
 	"fmt"
-	"math"
 	"time"
 
 	"github.com/wowsims/sod/sim/core/proto"
@@ -158,7 +157,7 @@ func (unit *Unit) MP5ManaRegenPerSecond() float64 {
 
 // Returns the rate of mana regen per second from spirit.
 func (unit *Unit) SpiritManaRegenPerSecondDefault() float64 {
-	return 0.001 + unit.stats[stats.Spirit]*math.Sqrt(unit.stats[stats.Intellect])*0.003345
+	return 15.001 + unit.stats[stats.Spirit]/15
 }
 
 // Returns the rate of mana regen per second, assuming this unit is

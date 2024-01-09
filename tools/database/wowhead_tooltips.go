@@ -184,6 +184,8 @@ var attackPowerRegex2 = regexp.MustCompile(`\+<!--rtg38-->([0-9]+) Attack Power\
 var rangedAttackPowerRegex = regexp.MustCompile(`Increases ranged attack power by ([0-9]+)\.`)
 var rangedAttackPowerRegex2 = regexp.MustCompile(`Increases ranged attack power by <!--rtg39-->([0-9]+)\.`)
 
+var feralAttackPowerRegex = regexp.MustCompile(`\+([0-9]+) Attack Power in Cat, Bear, and Dire Bear forms only\.`)
+
 var armorPenetrationRegex = regexp.MustCompile(`Increases armor penetration rating by ([0-9]+)`)
 var armorPenetrationRegex2 = regexp.MustCompile(`Increases your armor penetration by <!--rtg44-->([0-9]+)\.`)
 
@@ -252,6 +254,7 @@ func (item WowheadItemResponse) GetStats() Stats {
 		proto.Stat_StatNatureResistance:  float64(item.GetIntValue(natureResistanceRegex)),
 		proto.Stat_StatShadowResistance:  float64(item.GetIntValue(shadowResistanceRegex)),
 		proto.Stat_StatHealing:           float64(item.GetIntValue(spellHealingRegex)),
+		proto.Stat_StatFeralAttackPower: float64(item.GetIntValue(feralAttackPowerRegex)),
 	}
 }
 

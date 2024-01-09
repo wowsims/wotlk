@@ -7,20 +7,29 @@ import (
 )
 
 func (druid *Druid) registerShredSpell() {
-	flatDamageBonus := (666 +
-		core.TernaryFloat64(druid.Ranged().ID == 29390, 88, 0) +
-		core.TernaryFloat64(druid.Ranged().ID == 40713, 203, 0)) / 2.25
+	shredDamageMultiplier := 2.25
 
-	maxRipTicks := druid.MaxRipTicks()
+	
+	flatDamageBonus := map[int32]float64{
+		25: 54.0,
+		40: 99.0,
+		50: 144.0,
+		60: 180.0,
+	}[druid.Level]/shredDamageMultiplier
 
 	druid.Shred = druid.RegisterSpell(Cat, core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 48572},
+		ActionID:    core.ActionID{SpellID: map[int32]int32{
+			25: 5221,
+			40: 8992,
+			50: 9829,
+			60: 9830,
+		}[druid.Level]},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagAPL,
 
 		EnergyCost: core.EnergyCostOptions{
-			Cost:   60 - 9*float64(druid.Talents.ShreddingAttacks),
+			Cost:   60 - 6*float64(druid.Talents.ImprovedShred),
 			Refund: 0.8,
 		},
 		Cast: core.CastConfig{
@@ -33,8 +42,8 @@ func (druid *Druid) registerShredSpell() {
 			return !druid.PseudoStats.InFrontOfTarget
 		},
 
-		DamageMultiplier: 2.25,
-		CritMultiplier:   druid.MeleeCritMultiplier(Cat),
+		DamageMultiplier: shredDamageMultiplier,
+		CritMultiplier:   druid.MeleeCritMultiplier(1,0),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -42,15 +51,19 @@ func (druid *Druid) registerShredSpell() {
 				spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
 				spell.BonusWeaponDamage()
 
+
 			modifier := 1.0
 			if druid.BleedCategories.Get(target).AnyActive() {
 				modifier += .3
 			}
 
+			/*
 			ripDot := druid.Rip.Dot(target)
 			if druid.AssumeBleedActive || ripDot.IsActive() || druid.Rake.Dot(target).IsActive() || druid.Lacerate.Dot(target).IsActive() {
 				modifier *= 1.0 + (0.04 * float64(druid.Talents.RendAndTear))
 			}
+			*/
+
 			baseDamage *= modifier
 
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
@@ -68,10 +81,14 @@ func (druid *Druid) registerShredSpell() {
 			if druid.BleedCategories.Get(target).AnyActive() {
 				modifier += .3
 			}
+
+			/*
 			if druid.AssumeBleedActive || druid.Rip.Dot(target).IsActive() || druid.Rake.Dot(target).IsActive() || druid.Lacerate.Dot(target).IsActive() {
 				modifier *= 1.0 + (0.04 * float64(druid.Talents.RendAndTear))
 			}
+			*/
 			baseDamage *= modifier
+
 			baseres := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
 
 			attackTable := spell.Unit.AttackTables[target.UnitIndex]

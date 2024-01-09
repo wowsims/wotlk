@@ -41,6 +41,7 @@ func (druid *Druid) ApplyTalents() {
 
 	druid.setupNaturesGrace()
 	druid.applyMoonkinForm()
+	druid.applyOmenOfClarity()
 }
 
 func (druid *Druid) setupNaturesGrace() {
@@ -175,117 +176,86 @@ func (druid *Druid) setupNaturesGrace() {
 // }
 
 // TODO: Class druid omen
-// func (druid *Druid) applyOmenOfClarity() {
-// 	if !druid.Talents.OmenOfClarity {
-// 		return
-// 	}
+func (druid *Druid) applyOmenOfClarity() {
+	
+	if !druid.Talents.OmenOfClarity {
+		return
+	}
 
-// 	var affectedSpells []*DruidSpell
-// 	druid.ClearcastingAura = druid.RegisterAura(core.Aura{
-// 		Label:    "Clearcasting",
-// 		ActionID: core.ActionID{SpellID: 16870},
-// 		Duration: time.Second * 15,
-// 		OnInit: func(aura *core.Aura, sim *core.Simulation) {
-// 			affectedSpells = core.FilterSlice([]*DruidSpell{
-// 				druid.DemoralizingRoar,
-// 				druid.FerociousBite,
-// 				druid.Lacerate,
-// 				druid.MangleBear,
-// 				druid.MangleCat,
-// 				druid.Maul,
-// 				druid.Rake,
-// 				druid.Rip,
-// 				druid.Shred,
-// 				druid.SwipeBear,
-// 				druid.SwipeCat,
-// 			}, func(spell *DruidSpell) bool { return spell != nil })
-// 		},
-// 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-// 			for _, spell := range affectedSpells {
-// 				spell.CostMultiplier -= 1
-// 			}
-// 		},
-// 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-// 			for _, spell := range affectedSpells {
-// 				spell.CostMultiplier += 1
-// 			}
-// 		},
-// 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-// 			if aura.RemainingDuration(sim) == aura.Duration {
-// 				// OnCastComplete is called after OnSpellHitDealt / etc, so don't deactivate
-// 				// if it was just activated.
-// 				return
-// 			}
+	var affectedSpells []*DruidSpell
+	druid.ClearcastingAura = druid.RegisterAura(core.Aura{
+		Label:    "Clearcasting",
+		ActionID: core.ActionID{SpellID: 16870},
+		Duration: time.Second * 15,
+		OnInit: func(aura *core.Aura, sim *core.Simulation) {
+			affectedSpells = core.FilterSlice([]*DruidSpell{
+				druid.DemoralizingRoar,
+				druid.FerociousBite,
+				druid.Lacerate,
+				druid.MangleBear,
+				druid.MangleCat,
+				druid.Maul,
+				druid.Rake,
+				druid.Rip,
+				druid.Shred,
+				druid.SwipeBear,
+				druid.SwipeCat,
+			}, func(spell *DruidSpell) bool { return spell != nil })
+		},
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			for _, spell := range affectedSpells {
+				spell.CostMultiplier -= 1
+			}
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			for _, spell := range affectedSpells {
+				spell.CostMultiplier += 1
+			}
+		},
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if aura.RemainingDuration(sim) == aura.Duration {
+				// OnCastComplete is called after OnSpellHitDealt / etc, so don't deactivate
+				// if it was just activated.
+				return
+			}
 
-// 			for _, as := range affectedSpells {
-// 				if as.IsEqual(spell) {
-// 					aura.Deactivate(sim)
-// 					break
-// 				}
-// 			}
-// 		},
-// 	})
+			for _, as := range affectedSpells {
+				if as.IsEqual(spell) {
+					aura.Deactivate(sim)
+					break
+				}
+			}
+		},
+	})
 
-// 	if !druid.Talents.OmenOfClarity {
-// 		return
-// 	}
+	druid.ProcOoc = func(sim *core.Simulation) {
+		druid.ClearcastingAura.Activate(sim)
+	}
 
-// 	druid.ProcOoc = func(sim *core.Simulation) {
-// 		druid.ClearcastingAura.Activate(sim)
-// 		if lasherweave2P != nil {
-// 			lasherweave2P.Activate(sim)
-// 		}
-// 	}
+	ppmm := druid.AutoAttacks.NewPPMManager(2.0, core.ProcMaskMelee)
+	icd := core.Cooldown{
+		Timer:    druid.NewTimer(),
+		Duration: time.Second * 10,
+	}
 
-// 	druid.RegisterAura(core.Aura{
-// 		Label:    "Omen of Clarity",
-// 		Duration: core.NeverExpires,
-// 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-// 			aura.Activate(sim)
-// 		},
-// 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-// 			if !result.Landed() {
-// 				return
-// 			}
-
-// 			// https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1182017571
-// 			if druid.HurricaneTickSpell.IsEqual(spell) {
-// 				curCastTickSpeed := spell.CurCast.ChannelTime.Seconds() / 10
-// 				hurricaneCoeff := 1.0 - (7.0 / 9.0)
-// 				spellCoeff := hurricaneCoeff * curCastTickSpeed
-// 				chanceToProc := ((1.5 / 60) * 3.5) * spellCoeff
-// 				if sim.RandomFloat("Clearcasting") < chanceToProc {
-// 					druid.ProcOoc(sim)
-// 				}
-// 			} else if druid.AutoAttacks.PPMProc(sim, 3.5, core.ProcMaskMeleeWhiteHit, "Omen of Clarity", spell) { // Melee
-// 				druid.ProcOoc(sim)
-// 			} else if spell.Flags.Matches(SpellFlagOmenTrigger) { // Spells
-// 				// Heavily based on comment here
-// 				// https://github.com/JamminL/wotlk-classic-bugs/issues/66#issuecomment-1182017571
-// 				// Instants are treated as 1.5
-// 				// Uses current cast time rather than default cast time (PPM is constant with haste)
-// 				castTime := spell.CurCast.CastTime.Seconds()
-// 				if castTime == 0 {
-// 					castTime = 1.5
-// 				}
-
-// 				chanceToProc := (castTime / 60) * 3.5
-// 				if druid.Typhoon.IsEqual(spell) { // Add Typhoon
-// 					chanceToProc *= 0.25
-// 				} else if druid.Moonfire.IsEqual(spell) { // Add Moonfire
-// 					chanceToProc *= 0.076
-// 				} else if druid.GiftOfTheWild.IsEqual(spell) { // Add Gift of the Wild
-// 					// the above comment says it's 0.0875 * (1-0.924) which apparently is out-dated,
-// 					// there is no longer an instant suppression factor
-// 					// we assume 30 targets (25man + pets)
-// 					chanceToProc = 1 - math.Pow(1-chanceToProc, 30)
-// 				} else {
-// 					chanceToProc *= 0.666
-// 				}
-// 				if sim.RandomFloat("Clearcasting") < chanceToProc {
-// 					druid.ProcOoc(sim)
-// 				}
-// 			}
-// 		},
-// 	})
-// }
+	druid.RegisterAura(core.Aura{
+		Label:    "Omen of Clarity",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
+				return
+			}
+			if !icd.IsReady(sim) {
+				return
+			}
+			if !ppmm.ProcWithWeaponSpecials(sim, spell.ProcMask, "Omen of Clarity") {
+				return
+			}
+			icd.Use(sim)
+			druid.ClearcastingAura.Activate(sim)
+		},
+	})
+}

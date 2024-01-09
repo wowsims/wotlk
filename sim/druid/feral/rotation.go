@@ -1,7 +1,8 @@
 package feral
 
+
 import (
-	"math"
+	//	"math"
 	"time"
 
 	"github.com/wowsims/sod/sim/core"
@@ -9,27 +10,76 @@ import (
 	"github.com/wowsims/sod/sim/druid"
 )
 
+func (cat *FeralDruid) OnGCDReady(sim *core.Simulation) {
+	cat.tryUseGCD(sim)
+}
+
+func (cat *FeralDruid) tryUseGCD(sim *core.Simulation) {
+	if(!cat.InForm(druid.Cat)) {
+		cat.CatForm.Cast(sim, nil)
+	}
+
+	if cat.MangleCat.CanCast(sim, cat.CurrentTarget) {
+		cat.MangleCat.Cast(sim, cat.CurrentTarget)
+	} else {
+		cat.WaitForEnergy(sim, cat.MangleCat.CurCast.Cost)
+	}
+
+	/*
+	spell, target := cat.rotation(sim)
+	if success := spell.Cast(sim, target); !success {
+		cat.WaitForEnergy(sim, spell.CurCast.Cost)
+	}*/
+}
+
+func (cat *FeralDruid) rotation(sim *core.Simulation) (*druid.DruidSpell, *core.Unit) {
+	cat.CurrentTarget = sim.Environment.GetTargetUnit(0)
+	target := cat.CurrentTarget
+
+	return cat.MangleCat, target
+}
+
 func (cat *FeralDruid) OnEnergyGain(sim *core.Simulation) {
-	if cat.IsUsingAPL {
+	if cat.IsUsingAPL && !cat.usingHardcodedAPL {
 		return
 	}
 
 	if sim.CurrentTime < 0 {
 		return
 	}
-
+	/*
 	cat.TryUseCooldowns(sim)
 	if cat.InForm(druid.Cat) && !cat.readyToShift {
 		cat.doTigersFury(sim)
 	}
+
+	*/
+
+	if cat.MangleCat.CanCast(sim, cat.CurrentTarget) {
+		cat.MangleCat.Cast(sim, cat.CurrentTarget)
+	} else {
+		cat.WaitForEnergy(sim, cat.MangleCat.CurCast.Cost)
+	}
 }
 
+type FeralDruidRotation struct {
+	RotationType proto.FeralDruid_Rotation_AplType
+
+	MinCombosForRip    int32
+	UseRake            bool
+}
+
+/*
+
 func (cat *FeralDruid) OnGCDReady(sim *core.Simulation) {
-	if cat.IsUsingAPL {
+	if cat.IsUsingAPL && !cat.usingHardcodedAPL {
 		return
 	}
 
-	cat.TryUseCooldowns(sim)
+	if !cat.IsUsingAPL {
+		cat.TryUseCooldowns(sim)
+	}
+
 	if !cat.GCD.IsReady(sim) {
 		return
 	}
@@ -80,6 +130,8 @@ func (cat *FeralDruid) OnAutoAttack(sim *core.Simulation, _ *core.Spell) {
 	}
 }
 
+*/
+   
 func (cat *FeralDruid) NextRotationAction(sim *core.Simulation, kickAt time.Duration) {
 	if cat.rotationAction != nil {
 		cat.rotationAction.Cancel(sim)
@@ -94,6 +146,8 @@ func (cat *FeralDruid) NextRotationAction(sim *core.Simulation, kickAt time.Dura
 	sim.AddPendingAction(cat.rotationAction)
 }
 
+
+/*
 // Ported from https://github.com/NerdEgghead/WOTLK_cat_sim
 
 func (cat *FeralDruid) checkReplaceMaul(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
@@ -259,7 +313,10 @@ func (cat *FeralDruid) tfExpectedBefore(sim *core.Simulation, futureTime time.Du
 	return true
 }
 
+*/
+   
 func (cat *FeralDruid) doTigersFury(sim *core.Simulation) {
+	/*
 	// Handle tigers fury
 	if !cat.TigersFury.IsReady(sim) {
 		return
@@ -286,7 +343,10 @@ func (cat *FeralDruid) doTigersFury(sim *core.Simulation) {
 		// otherwise it breaks gcd logic
 		cat.NextRotationAction(sim, sim.CurrentTime+leewayTime)
 	}
+	*/
 }
+
+/*
 
 func (cat *FeralDruid) preRotationCleanup(sim *core.Simulation) bool {
 	if cat.BerserkAura.IsActive() {
@@ -754,7 +814,10 @@ type FeralDruidRotation struct {
 	AoeMangleBuilder bool
 }
 
+*/
+   
 func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
+	/*
 	// Force reset params that aren't customizable, or removed from ui
 	rotation.BerserkFfThresh = 15
 	rotation.BerserkBiteThresh = 25
@@ -822,4 +885,6 @@ func (cat *FeralDruid) setupRotation(rotation *proto.FeralDruid_Rotation) {
 		}
 		cat.Rotation.BiteTime = 10 * time.Second
 	}
+*/
 }
+

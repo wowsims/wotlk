@@ -1510,7 +1510,7 @@ func BattleShoutAura(unit *Unit, impBattleShout int32, boomingVoicePts int32, le
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.AddStatsDynamic(sim, stats.Stats{
-				stats.AttackPower: math.Floor(BuffSpellByLevel[BattleShout][level][stats.AttackPower] * (1 + 0.05*float64(impBattleShout))),
+				stats.AttackPower: -1* math.Floor(BuffSpellByLevel[BattleShout][level][stats.AttackPower] * (1 + 0.05*float64(impBattleShout))),
 			})
 		},
 	})
@@ -1540,7 +1540,7 @@ func BlessingOfMightAura(unit *Unit, impBomPts int32, level int32) *Aura {
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.AddStatsDynamic(sim, stats.Stats{
-				stats.AttackPower: math.Floor(BuffSpellByLevel[BlessingOfMight][level][stats.AttackPower] * (1 + 0.04*float64(impBomPts))),
+				stats.AttackPower: -1 * math.Floor(BuffSpellByLevel[BlessingOfMight][level][stats.AttackPower] * (1 + 0.04*float64(impBomPts))),
 			})
 		},
 	})

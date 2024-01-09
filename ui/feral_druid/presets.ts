@@ -24,6 +24,9 @@ import BlankGear from './gear_sets/blank.gear.json';
 
 export const DefaultGear = PresetUtils.makePresetGear('Blank', BlankGear);
 
+import DefaultApl from './apls/default.apl.json';
+export const APL_ROTATION_DEFAULT = PresetUtils.makePresetAPLRotation('APL Default', DefaultApl);
+
 export const DefaultRotation = FeralDruidRotation.create({
 	rotationType: FeralDruid_Rotation_AplType.SingleTarget,
 
@@ -50,7 +53,7 @@ export const DefaultRotation = FeralDruidRotation.create({
 	prePopOoc: true,
 });
 
-export const ROTATION_PRESET_LEGACY_DEFAULT = PresetUtils.makePresetSimpleRotation('Legacy Default', Spec.SpecFeralDruid, DefaultRotation);
+export const SIMPLE_ROTATION_DEFAULT = PresetUtils.makePresetSimpleRotation('Simple Default', Spec.SpecFeralDruid, DefaultRotation);
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/classic/talent-calc and copy the numbers in the url.

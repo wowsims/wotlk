@@ -11,6 +11,8 @@ func (druid *Druid) ApplyRunes() {
 	druid.applyFuryOfStormRage()
 	druid.applySunfire()
 	druid.applyStarsurge()
+	druid.applyMangle()
+	druid.applySavageRoar()
 }
 
 func (druid *Druid) applyFuryOfStormRage() {
@@ -131,4 +133,9 @@ func (druid *Druid) applyStarsurge() {
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 		},
 	})
+}
+
+func (druid *Druid) applyMangle() {
+	druid.applyMangleCat()
+	//druid.applyMangleBear()
 }
