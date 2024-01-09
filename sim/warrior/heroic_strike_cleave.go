@@ -48,6 +48,7 @@ func (warrior *Warrior) registerHeroicStrikeSpell() {
 			}
 		},
 	})
+	warrior.makeQueueSpellsAndAura(warrior.HeroicStrike)
 }
 
 func (warrior *Warrior) registerCleaveSpell() {
@@ -94,6 +95,7 @@ func (warrior *Warrior) registerCleaveSpell() {
 			}
 		},
 	})
+	warrior.makeQueueSpellsAndAura(warrior.Cleave)
 }
 
 func (warrior *Warrior) makeQueueSpellsAndAura(srcSpell *core.Spell) *core.Spell {
