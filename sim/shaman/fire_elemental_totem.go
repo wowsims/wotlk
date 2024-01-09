@@ -102,7 +102,7 @@ func (shaman *Shaman) registerFireElementalTotem() {
 
 	shaman.AddMajorCooldown(core.MajorCooldown{
 		Spell:          shaman.FireElementalTotem,
-		Type:           core.CooldownTypeUnknown,
+		Type:           core.CooldownTypeDPS,
 		ShouldActivate: shouldActivate,
 	})
 }

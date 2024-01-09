@@ -301,6 +301,9 @@ func (shaman *Shaman) RegisterHealingSpells() {
 }
 
 func (shaman *Shaman) Reset(sim *core.Simulation) {
+	if !shaman.IsUsingAPL {
+		return
+	}
 	if shaman.Totems.UseFireElemental && !shaman.IsUsingAPL {
 		shaman.setupFireElementalCooldowns()
 		shaman.castFireElemental = false
