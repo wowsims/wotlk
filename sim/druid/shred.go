@@ -7,15 +7,21 @@ import (
 )
 
 func (druid *Druid) registerShredSpell() {
-	/*flatDamageBonus := (666 +
-		core.TernaryFloat64(druid.Ranged().ID == 29390, 88, 0) +
-		core.TernaryFloat64(druid.Ranged().ID == 40713, 203, 0)) / 2.25*/
-	flatDamageBonus := 54.0
 
-	//maxRipTicks := druid.MaxRipTicks()
+	flatDamageBonus := map[int32]float64{
+		25: 54.0,
+		40: 99.0,
+		50: 144.0,
+		60: 180.0,
+	}[druid.Level]
 
 	druid.Shred = druid.RegisterSpell(Cat, core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: 5221},  //TODO: Make level dependent
+		ActionID:    core.ActionID{SpellID: map[int32]int32{
+			25: 5221,
+			40: 8992,
+			50: 9829,
+			60: 9830,
+		}[druid.Level]},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagAPL,
