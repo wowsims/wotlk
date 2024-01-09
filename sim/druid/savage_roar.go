@@ -12,7 +12,7 @@ func (druid *Druid) getSavageRoarMultiplier() float64 {
 	return 1.3
 }
 
-func (druid *Druid) registerSavageRoarSpell() {
+func (druid *Druid) applySavageRoar() {
 	if !druid.HasRune(proto.DruidRune_RuneLegsSavageRoar) {
 		return
 	}
@@ -73,3 +73,4 @@ func (druid *Druid) registerSavageRoarSpell() {
 func (druid *Druid) CurrentSavageRoarCost() float64 {
 	return druid.SavageRoar.ApplyCostModifiers(druid.SavageRoar.DefaultCast.Cost)
 }
+
