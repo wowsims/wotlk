@@ -76,9 +76,6 @@ export const EnlightenmentTalents = {
 };
 
 export const DefaultOptions = Options.create({
-	useShadowfiend: true,
-	useMindBlast: true,
-	useShadowWordDeath: true,
 	armor: Armor.InnerFire,
 });
 
@@ -103,7 +100,7 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	wrathOfAirTotem: true,
 	sanctifiedRetribution: true,
 	bloodlust: true,
-	demonicPact: 500,
+	demonicPactSp: 500,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({

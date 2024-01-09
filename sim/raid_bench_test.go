@@ -38,9 +38,7 @@ var castersWithElemental = &proto.Party{
 			Equipment: ShadowEquipment,
 			Spec: &proto.Player_ShadowPriest{
 				ShadowPriest: &proto.ShadowPriest{
-					Options: &proto.ShadowPriest_Options{
-						UseShadowfiend: true,
-					},
+					Options: &proto.ShadowPriest_Options{},
 				},
 			},
 			Consumes: &proto.Consumes{
@@ -134,9 +132,7 @@ var castersWithResto = &proto.Party{
 			Equipment: ShadowEquipment,
 			Spec: &proto.Player_ShadowPriest{
 				ShadowPriest: &proto.ShadowPriest{
-					Options: &proto.ShadowPriest_Options{
-						UseShadowfiend: true,
-					},
+					Options: &proto.ShadowPriest_Options{},
 				},
 			},
 			Consumes: &proto.Consumes{

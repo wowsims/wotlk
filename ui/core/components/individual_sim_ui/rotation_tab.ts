@@ -1,6 +1,5 @@
 import { IndividualSimUI, InputSection } from "../../individual_sim_ui";
 import {
-	Cooldowns,
 	Spec,
 } from "../../proto/common";
 import {
@@ -188,8 +187,6 @@ export class RotationTab extends SimTab {
 			storageKey: this.simUI.getSavedRotationStorageKey(),
 			getData: (player: Player<any>) => SavedRotation.create({
 				rotation: APLRotation.clone(player.aplRotation),
-				specRotationOptionsJson: '{}',
-				cooldowns: Cooldowns.create(),
 			}),
 			setData: (eventID: EventID, player: Player<any>, newRotation: SavedRotation) => {
 				TypedEvent.freezeAllAndDo(() => {
@@ -211,8 +208,6 @@ export class RotationTab extends SimTab {
 			(this.simUI.individualConfig.presets.rotations || []).forEach(presetRotation => {
 				const rotData = presetRotation.rotation;
 				// Fill default values so the equality checks always work.
-				if (!rotData.cooldowns) rotData.cooldowns = Cooldowns.create();
-				if (!rotData.specRotationOptionsJson) rotData.specRotationOptionsJson = '{}';
 				if (!rotData.rotation) rotData.rotation = APLRotation.create();
 
 				savedRotationsManager.addSavedData({

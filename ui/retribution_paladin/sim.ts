@@ -135,7 +135,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 			icyTalons: true,
 			totemOfWrath: true,
 			wrathOfAirTotem: true,
-			demonicPact: 500,
+			demonicPactSp: 500,
 		}),
 		partyBuffs: PartyBuffs.create({
 		}),

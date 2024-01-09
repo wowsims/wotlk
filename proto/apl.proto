@@ -34,9 +34,6 @@ message APLPrepullAction {
     APLAction action = 1;
     APLValue do_at_value = 4; // When to perform this prepull action. Should be a negative value.
     bool hide = 3;            // Causes this item to be ignored.
-
-    // TODO: Remove after 1 month (on or after 8/30/2023).
-    string do_at = 2 [deprecated = true];
 }
 
 message APLListItem {

@@ -150,7 +150,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecProtectionPaladin, {
 			leaderOfThePack: TristateEffect.TristateEffectRegular,
 			icyTalons: true,
 			totemOfWrath: true,
-			demonicPact: 500,
+			demonicPactSp: 500,
 			swiftRetribution: true,
 			moonkinAura: TristateEffect.TristateEffectRegular,
 			sanctifiedRetribution: true,

@@ -61,11 +61,7 @@ export class GearTab extends SimTab {
 			setData: (eventID: EventID, player: Player<any>, newSavedGear: SavedGearSet) => {
 				TypedEvent.freezeAllAndDo(() => {
 					player.setGear(eventID, this.simUI.sim.db.lookupEquipmentSpec(newSavedGear.gear || EquipmentSpec.create()));
-					if (newSavedGear.bonusStats && newSavedGear.bonusStats.some(s => s != 0)) {
-						player.setBonusStats(eventID, new Stats(newSavedGear.bonusStats));
-					} else {
-						player.setBonusStats(eventID, Stats.fromProto(newSavedGear.bonusStatsStats || UnitStats.create()));
-					}
+					player.setBonusStats(eventID, Stats.fromProto(newSavedGear.bonusStatsStats || UnitStats.create()));
 				});
 			},
 			changeEmitters: [this.simUI.player.changeEmitter],

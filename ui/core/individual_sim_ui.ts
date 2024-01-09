@@ -542,9 +542,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				this.sim.encounter.fromProto(eventID, settings.encounter || EncounterProto.create());
 			}
 			if (loadCategory(SimSettingCategories.UISettings)) {
-				if (settings.epWeights?.length > 0) {
-					this.player.setEpWeights(eventID, new Stats(settings.epWeights));
-				} else if (settings.epWeightsStats) {
+				if (settings.epWeightsStats) {
 					this.player.setEpWeights(eventID, Stats.fromProto(settings.epWeightsStats));
 				} else {
 					this.player.setEpWeights(eventID, this.individualConfig.defaults.epWeights);

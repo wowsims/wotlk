@@ -146,12 +146,8 @@ message ShadowPriest {
 			InnerFire = 1;
 		}
 
-		bool use_shadowfiend = 1 [deprecated = true];
 		Armor armor = 2;
-		bool use_mind_blast = 4 [deprecated = true];
-		bool use_shadow_word_death = 5 [deprecated = true];
 		UnitReference power_infusion_target = 6;
-		double latency = 7 [deprecated = true]; // Latency between actions
 	}
 	Options options = 3;
 }

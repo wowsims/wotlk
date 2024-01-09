@@ -89,7 +89,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 			divineSpirit: true,
 			swiftRetribution: true,
 			sanctifiedRetribution: true,
-			demonicPact: 500,
+			demonicPactSp: 500,
 			moonkinAura: TristateEffect.TristateEffectImproved,
 			arcaneBrilliance: true,
 		}),

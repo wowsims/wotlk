@@ -28,7 +28,7 @@ func NewShadowPriest(character *core.Character, options *proto.Player) *ShadowPr
 	shadowOptions := options.GetShadowPriest()
 
 	selfBuffs := priest.SelfBuffs{
-		UseShadowfiend: shadowOptions.Options.UseShadowfiend,
+		UseShadowfiend: true,
 		UseInnerFire:   shadowOptions.Options.Armor == proto.ShadowPriest_Options_InnerFire,
 	}
 

@@ -107,7 +107,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecElementalShaman, {
 			giftOfTheWild: TristateEffect.TristateEffectImproved,
 			moonkinAura: TristateEffect.TristateEffectImproved,
 			sanctifiedRetribution: true,
-			demonicPact: 500,
+			demonicPactSp: 500,
 			wrathOfAirTotem: true,
 		}),
 		partyBuffs: PartyBuffs.create({
