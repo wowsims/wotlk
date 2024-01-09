@@ -135,17 +135,22 @@ func (shaman *Shaman) registerCallOfTheElements() {
 	waterTotem := shaman.getWaterTotemSpell(shaman.Totems.Water)
 
 	totalManaCost := 0.0
+	anyTotems := false
 	if airTotem != nil {
 		totalManaCost += airTotem.DefaultCast.Cost
+		anyTotems = true
 	}
 	if earthTotem != nil {
 		totalManaCost += earthTotem.DefaultCast.Cost
+		anyTotems = true
 	}
 	if fireTotem != nil {
 		totalManaCost += fireTotem.DefaultCast.Cost
+		anyTotems = true
 	}
 	if waterTotem != nil {
 		totalManaCost += waterTotem.DefaultCast.Cost
+		anyTotems = true
 	}
 
 	shaman.RegisterSpell(core.SpellConfig{
@@ -158,7 +163,7 @@ func (shaman *Shaman) registerCallOfTheElements() {
 			},
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			return shaman.CurrentMana() >= totalManaCost
+			return anyTotems && shaman.CurrentMana() >= totalManaCost
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
