@@ -69,11 +69,9 @@ func (shaman *Shaman) registerFireElementalTotem() {
 	var castWindow = 1550 * time.Millisecond
 
 	enhTier10Aura := shaman.GetAura("Maelstrom Power")
-
-	shaman.AddMajorCooldown(core.MajorCooldown{
-		Spell: shaman.FireElementalTotem,
-		Type:  core.CooldownTypeUnknown,
-		ShouldActivate: func(sim *core.Simulation, character *core.Character) bool {
+	var shouldActivate core.CooldownActivationCondition
+	if !shaman.IsUsingAPL {
+		shouldActivate = func(sim *core.Simulation, character *core.Character) bool {
 			success := false
 			if enhTier10Aura != nil && shaman.Totems.EnhTierTenBonus && shaman.fireElementalSnapShot != nil {
 				if enhTier10Aura.IsActive() {
@@ -99,6 +97,12 @@ func (shaman *Shaman) registerFireElementalTotem() {
 			}
 
 			return success
-		},
+		}
+	}
+
+	shaman.AddMajorCooldown(core.MajorCooldown{
+		Spell:          shaman.FireElementalTotem,
+		Type:           core.CooldownTypeUnknown,
+		ShouldActivate: shouldActivate,
 	})
 }
