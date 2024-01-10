@@ -109,13 +109,16 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 			strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
 			battleShout: TristateEffect.TristateEffectImproved,
 		}),
+
 		partyBuffs: PartyBuffs.create({
 			heroicPresence: true,
 		}),
+
 		individualBuffs: IndividualBuffs.create({
 			blessingOfKings: true,
 			blessingOfMight: TristateEffect.TristateEffectImproved,
 		}),
+
 		debuffs: Debuffs.create({
 			judgementOfWisdom: true,
 			giftOfArthas: true,
@@ -124,6 +127,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 			sunderArmor: true,
 			curseOfWeakness: TristateEffect.TristateEffectRegular,
 		}),
+
+		other: Presets.OtherDefaults,
 	},
 
 	// IconInputs to include in the 'Player' section on the settings tab.
@@ -164,6 +169,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 		],
 		// Preset gear configurations that the user can quickly select.
 		gear: [
+			Presets.BlankPreset,
 			Presets.DefaultGear,
 		],
 	},
