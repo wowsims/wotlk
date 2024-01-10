@@ -13,6 +13,7 @@ func (druid *Druid) ApplyRunes() {
 	druid.applyStarsurge()
 	druid.applyMangle()
 	druid.applySavageRoar()
+	druid.applyWildStrikes()
 }
 
 func (druid *Druid) applyFuryOfStormRage() {
@@ -139,3 +140,12 @@ func (druid *Druid) applyMangle() {
 	druid.applyMangleCat()
 	//druid.applyMangleBear()
 }
+
+func (druid *Druid) applyWildStrikes() {
+	if !druid.HasRune(proto.DruidRune_RuneChestWildStrikes) {
+		return
+	}
+
+	core.ApplyWildStrikes(druid.GetCharacter())
+}
+	

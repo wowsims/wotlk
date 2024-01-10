@@ -1615,3 +1615,78 @@ func healthBonusEffect(aura *Aura, healthBonus float64) *ExclusiveEffect {
 		},
 	})
 }
+
+
+func ApplyWildStrikes(character *Character) {
+	buffActionID := ActionID{SpellID: 407975}
+	statDep := character.NewDynamicMultiplyStat(stats.AttackPower, 1.2)
+
+	wsBuffAura := character.GetOrRegisterAura(Aura{
+		Label:     "Wild Strikes Buff",
+		ActionID:  buffActionID,
+		Duration:  time.Millisecond * 1500,
+		MaxStacks: 2,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			aura.Unit.EnableDynamicStatDep(sim, statDep)
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			aura.Unit.DisableDynamicStatDep(sim, statDep)
+		},
+	})
+
+	var wsSpell *Spell
+	icd := Cooldown{
+		Timer:    character.NewTimer(),
+		Duration: time.Millisecond * 1500,
+	}
+
+	MakePermanent(character.GetOrRegisterAura(Aura{
+		Label: "Wild Strikes",
+		OnInit: func(aura *Aura, sim *Simulation) {
+			mhConfig := aura.Unit.AutoAttacks.MHConfig()
+			wsSpell = character.GetOrRegisterSpell(SpellConfig{
+				ActionID:         buffActionID, // temporary buff ("Windfury Attack") spell id
+				SpellSchool:      mhConfig.SpellSchool,
+				ProcMask:         mhConfig.ProcMask,
+				Flags:            mhConfig.Flags,
+				DamageMultiplier: mhConfig.DamageMultiplier,
+				CritMultiplier:   mhConfig.CritMultiplier,
+				ThreatMultiplier: mhConfig.ThreatMultiplier,
+				ApplyEffects:     mhConfig.ApplyEffects,
+			})
+		},
+		OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
+			if spell.ProcMask.Matches(ProcMaskSuppressedExtraAttackAura) {
+				return
+			}
+			if !result.Landed() || !spell.ProcMask.Matches(ProcMaskMelee) {
+				return
+			}
+
+			if wsBuffAura.IsActive() && spell.ProcMask.Matches(ProcMaskMeleeWhiteHit) {
+				wsBuffAura.RemoveStack(sim)
+			}
+
+			if !icd.IsReady(sim) {
+				return
+			}
+
+			if sim.RandomFloat("Wild Strikes") > 0.2 {
+				return
+			}
+
+			wsBuffAura.Activate(sim)
+			wsBuffAura.SetStacks(sim, 2)
+			icd.Use(sim)
+
+			StartDelayedAction(sim, DelayedActionOptions{
+				DoAt:     sim.CurrentTime + time.Millisecond*10,
+				Priority: ActionPriorityAuto,
+				OnAction: func(sim *Simulation) {
+					wsSpell.Cast(sim, result.Target)
+				},
+			})
+		},
+	}))
+
+}
