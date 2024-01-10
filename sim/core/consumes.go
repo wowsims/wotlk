@@ -177,7 +177,7 @@ func addImbueStats(character *Character, imbue proto.WeaponImbue) {
 				stats.MP5:      12,
 				stats.SpellHit: 2 * SpellHitRatingPerHitChance,
 			})
-		case proto.WeaponImbue_DenseSharpeningStone:
+		case proto.WeaponImbue_BlackfathomSharpeningStone:
 			character.AddStats(stats.Stats{
 				stats.MeleeHit: 2 * MeleeHitRatingPerHitChance,
 			})
