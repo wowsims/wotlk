@@ -297,7 +297,7 @@ export class Player<SpecType extends Spec> {
 
 		this.spec = spec;
 		this.race = specToEligibleRaces[this.spec][0];
-		this.level = Mechanics.MAX_CHARACTER_LEVEL;
+		this.level = Mechanics.CURRENT_LEVEL_CAP;
 		this.specTypeFunctions = specTypeFunctions[this.spec] as SpecTypeFunctions<SpecType>;
 		this.rotation = this.specTypeFunctions.rotationCreate();
 		this.specOptions = this.specTypeFunctions.optionsCreate();
