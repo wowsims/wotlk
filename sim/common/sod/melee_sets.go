@@ -77,4 +77,35 @@ var ItemSetStormshroud = core.NewItemSet(core.ItemSet{
 			a.GetCharacter().AddStat(stats.AttackPower, 14)
 		},
 	},
+
+})
+
+var ItemSetBlackfathomAvengerMail = core.NewItemSet(core.ItemSet{
+	Name: "Blackfathom Avenger's Mail",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			c := agent.GetCharacter()
+			c.AddStat(stats.AttackPower, 12)
+		},
+		3: func(agent core.Agent) {
+			c := agent.GetCharacter()
+			c.AddStat(stats.MeleeHit, 1)
+			c.AddStat(stats.SpellHit, 1)
+		},
+	},
+})
+
+var ItemSetBlackfathomSlayerLeather = core.NewItemSet(core.ItemSet{
+	Name: "Blackfathom Slayer's Leather",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			c := agent.GetCharacter()
+			c.AddStat(stats.AttackPower, 12)
+		},
+		3: func(agent core.Agent) {
+			c := agent.GetCharacter()
+			c.AddStat(stats.MeleeHit, 1)
+			c.AddStat(stats.SpellHit, 1)
+		},
+	},
 })
