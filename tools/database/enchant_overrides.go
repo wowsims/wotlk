@@ -32,6 +32,7 @@ var EnchantOverrides = []*proto.UIEnchant{
 
 	// Back TODO: Classic add non-dps enchants
 	// {EffectId: 1262, ItemId: 37330, SpellId: 44596, Name: "Superior Arcane Resistance", Quality: proto.ItemQuality_ItemQualityUncommon, Stats: stats.Stats{stats.ArcaneResistance: 20}.ToFloatArray(), Type: proto.ItemType_ItemTypeBack},
+	{EffectId: 247, SpellId: 13419, Name: "Minor Agility", Quality: proto.ItemQuality_ItemQualityCommon, Stats: stats.Stats{stats.Agility: 1}.ToFloatArray(), Type: proto.ItemType_ItemTypeBack},
 
 	// Chest TODO: Classic add non-dps enchants
 	{EffectId: 1891, SpellId: 20025, Name: "Greater Stats", Quality: proto.ItemQuality_ItemQualityCommon, Stats: stats.Stats{stats.Stamina: 4, stats.Agility: 4, stats.Strength: 4, stats.Intellect: 4, stats.Spirit: 4}.ToFloatArray(), Type: proto.ItemType_ItemTypeChest},

@@ -6067,6 +6067,7 @@
 "enchants":[
 {"effectId":24,"spellId":7443,"name":"Minor Mana","type":5,"stats":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"quality":1},
 {"effectId":243,"spellId":7766,"name":"Minor Spirit","type":6,"stats":[0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"quality":1},
+{"effectId":247,"spellId":13419,"name":"Minor Agility","type":4,"stats":[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"quality":1},
 {"effectId":247,"spellId":7867,"name":"Minor Agility","type":10,"stats":[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"quality":1},
 {"effectId":248,"spellId":7782,"name":"Minor Strength","type":6,"stats":[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"quality":1},
 {"effectId":255,"spellId":7859,"name":"Lesser Spirit","type":6,"stats":[0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"quality":1},
@@ -7240,6 +7241,7 @@
 {"id":13046,"name":"Enrage","icon":"spell_shadow_unholyfrenzy","rank":3},
 {"id":13047,"name":"Enrage","icon":"spell_shadow_unholyfrenzy","rank":4},
 {"id":13048,"name":"Enrage","icon":"spell_shadow_unholyfrenzy","rank":5},
+{"id":13419,"name":"Enchant Cloak - Minor Agility","icon":"spell_holy_greaterheal"},
 {"id":13536,"name":"Enchant Bracer - Lesser Strength","icon":"spell_holy_greaterheal"},
 {"id":13607,"name":"Enchant Chest - Mana","icon":"spell_holy_greaterheal"},
 {"id":13622,"name":"Enchant Bracer - Lesser Intellect","icon":"spell_holy_greaterheal"},
