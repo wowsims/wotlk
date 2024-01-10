@@ -25,9 +25,9 @@ export class Encounter {
 	private executeProportion25: number = 0.25;
 	private executeProportion35: number = 0.35;
 	private useHealth: boolean = false;
-	targets: Array<TargetProto>;
+	targets!: Array<TargetProto>;
 	targetsMetadata: UnitMetadataList;
-	presetTargets: Array<PresetTarget>;
+	presetTargets!: Array<PresetTarget>;
 
 	readonly targetsChangeEmitter = new TypedEvent<void>();
 	readonly durationChangeEmitter = new TypedEvent<void>();
@@ -41,7 +41,7 @@ export class Encounter {
 
 		sim.waitForInit().then(() => {
 			this.presetTargets = sim.db.getAllPresetTargets();
-			this.targets = [this.presetTargets[0].target];
+			this.targets = [this.presetTargets[0].target!];
 		});
 
 		this.targetsMetadata = new UnitMetadataList();
@@ -168,7 +168,7 @@ export class Encounter {
 			executeProportion20: 0.2,
 			executeProportion25: 0.25,
 			executeProportion35: 0.35,
-			targets: [this.presetTargets[0].target],
+			targets: [this.presetTargets[0].target!],
 		}));
 	}
 
