@@ -41,8 +41,7 @@ func applyConsumeEffects(agent Agent) {
 		}
 	}
 
-	allowMHImbue := character.HasMHWeapon() && (character.HasMHWeaponImbue)
-	if allowMHImbue {
+	if character.HasMHWeapon() {
 		addImbueStats(character, consumes.MainHandImbue)
 	}
 	if character.HasOHWeapon() {
@@ -184,6 +183,7 @@ func addImbueStats(character *Character, imbue proto.WeaponImbue) {
 			})
 		case proto.WeaponImbue_WildStrikes:
 			buffActionID := ActionID{SpellID: 407975}
+			statDep := character.NewDynamicMultiplyStat(stats.AttackPower, 1.2)
 
 			wsBuffAura := character.GetOrRegisterAura(Aura{
 				Label:     "Wild Strikes Buff",
@@ -191,10 +191,10 @@ func addImbueStats(character *Character, imbue proto.WeaponImbue) {
 				Duration:  time.Millisecond * 1500,
 				MaxStacks: 2,
 				OnGain: func(aura *Aura, sim *Simulation) {
-					character.MultiplyStat(stats.AttackPower, 1.2)
+					aura.Unit.EnableDynamicStatDep(sim, statDep)
 				},
 				OnExpire: func(aura *Aura, sim *Simulation) {
-					character.MultiplyStat(stats.AttackPower, 1/1.2)
+					aura.Unit.DisableDynamicStatDep(sim, statDep)
 				},
 			})
 
@@ -207,17 +207,23 @@ func addImbueStats(character *Character, imbue proto.WeaponImbue) {
 			MakePermanent(character.GetOrRegisterAura(Aura{
 				Label: "Wild Strikes",
 				OnInit: func(aura *Aura, sim *Simulation) {
+					mhConfig := aura.Unit.AutoAttacks.MHConfig()
 					wsSpell = character.GetOrRegisterSpell(SpellConfig{
-						ActionID:    buffActionID, // temporary buff ("Windfury Attack") spell id
-						SpellSchool: SpellSchoolPhysical,
-						Flags:       SpellFlagMeleeMetrics | SpellFlagNoOnCastComplete,
+						ActionID:         buffActionID, // temporary buff ("Windfury Attack") spell id
+						SpellSchool:      mhConfig.SpellSchool,
+						ProcMask:         mhConfig.ProcMask,
+						Flags:            mhConfig.Flags,
+						DamageMultiplier: mhConfig.DamageMultiplier,
+						CritMultiplier:   mhConfig.CritMultiplier,
+						ThreatMultiplier: mhConfig.ThreatMultiplier,
+						ApplyEffects:     mhConfig.ApplyEffects,
 					})
 				},
 				OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
 					if spell.ProcMask.Matches(ProcMaskSuppressedExtraAttackAura) {
 						return
 					}
-					if !result.Landed() || !spell.ProcMask.Matches(ProcMaskMeleeMHAuto) {
+					if !result.Landed() || !spell.ProcMask.Matches(ProcMaskMelee) {
 						return
 					}
 
@@ -233,12 +239,17 @@ func addImbueStats(character *Character, imbue proto.WeaponImbue) {
 						return
 					}
 
-					// TODO: (Verify if this is still an issue) the current proc system adds auras after cast and damage, in game they're added after cast
 					wsBuffAura.Activate(sim)
 					wsBuffAura.SetStacks(sim, 2)
 					icd.Use(sim)
 
-					aura.Unit.AutoAttacks.MaybeReplaceMHSwing(sim, wsSpell).Cast(sim, result.Target)
+					StartDelayedAction(sim, DelayedActionOptions{
+						DoAt:     sim.CurrentTime + time.Millisecond*10,
+						Priority: ActionPriorityAuto,
+						OnAction: func(sim *Simulation) {
+							wsSpell.Cast(sim, result.Target)
+						},
+					})
 				},
 			}))
 		}
