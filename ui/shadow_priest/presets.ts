@@ -8,7 +8,7 @@ import {
 	RaidBuffs,
 	SpellPowerBuff,
 	TristateEffect,
-	WeaponBuff,
+	WeaponImbue,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 
@@ -49,7 +49,7 @@ export const DefaultOptions = Options.create({});
 
 export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfSupremePower,
-	weaponBuff: WeaponBuff.BrillianWizardOil,
+	mainHandImbue: WeaponImbue.BrillianWizardOil,
 	food: Food.FoodNightfinSoup,
 	spellPowerBuff: SpellPowerBuff.SpellPowerBuffUnknown,
 	shadowPowerBuff: true,

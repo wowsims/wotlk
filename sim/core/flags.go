@@ -64,6 +64,8 @@ const (
 	ProcMaskNotInSpellbook
 	// Can proc Talisman of Volatile power, but nothing else?
 	ProcMaskSuppressedProc
+	// Can't proc Windfury / Wild Strikes
+	ProcMaskSuppressedExtraAttackAura
 )
 
 const (

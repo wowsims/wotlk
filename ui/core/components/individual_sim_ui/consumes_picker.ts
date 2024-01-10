@@ -6,7 +6,7 @@ import {
 	Profession,
 	Spec,
 	Stat,
-	WeaponBuff,
+	WeaponImbue,
 } from "../../proto/common";
 import { Component } from "../component";
 import { IconEnumPicker } from "../icon_enum_picker";
@@ -25,7 +25,7 @@ export class ConsumesPicker extends Component {
 		this.simUI = simUI;
 
 		this.buildFlaskPicker();
-		this.buildWeaponBuffPicker();
+		this.buildWeaponImbuePicker();
 		this.buildFoodPicker();
 		this.buildPhysicalBuffPicker();
 		this.buildSpellPowerBuffPicker();
@@ -76,31 +76,32 @@ export class ConsumesPicker extends Component {
 		updateFlask();
 	}
 
-	private buildWeaponBuffPicker() {
+	private buildWeaponImbuePicker() {
 		let fragment = document.createElement('fragment');
 		fragment.innerHTML = `
-      <div class="consumes-row input-root input-inline">
-        <label class="form-label">Weapon</label>
-        <div class="consumes-row-inputs consumes-weapon"></div>
-      </div>
+    <div class="consumes-row input-root input-inline">
+        <label class="form-label">Weapon Imbues</label>
+        <div class="consumes-row-inputs consumes-mainhand"></div>
+    </div>
     `;
 
 		this.rootElem.appendChild(fragment.children[0] as HTMLElement);
 
 		const weaponOptions = this.simUI.splitRelevantOptions([
-			{ item: WeaponBuff.BrillianWizardOil, stats: [Stat.StatSpellPower] },
-			{ item: WeaponBuff.BrilliantManaOil, stats: [Stat.StatHealing, Stat.StatSpellPower] },
-			{ item: WeaponBuff.DenseSharpeningStone, stats: [Stat.StatAttackPower] },
-			{ item: WeaponBuff.ElementalSharpeningStone, stats: [Stat.StatAttackPower] },
-			{ item: WeaponBuff.BlackfathomManaOil, stats: [Stat.StatSpellPower, Stat.StatMP5] },
-			{ item: WeaponBuff.BlackfathomSharpeningStone, stats: [Stat.StatMeleeHit] },
+			{ item: WeaponImbue.BrillianWizardOil, stats: [Stat.StatSpellPower] },
+			{ item: WeaponImbue.BrilliantManaOil, stats: [Stat.StatHealing, Stat.StatSpellPower] },
+			{ item: WeaponImbue.DenseSharpeningStone, stats: [Stat.StatAttackPower] },
+			{ item: WeaponImbue.ElementalSharpeningStone, stats: [Stat.StatAttackPower] },
+			{ item: WeaponImbue.BlackfathomManaOil, stats: [Stat.StatSpellPower, Stat.StatMP5] },
+			{ item: WeaponImbue.BlackfathomSharpeningStone, stats: [Stat.StatMeleeHit] },
+			{ item: WeaponImbue.WildStrikes, stats: [Stat.StatMeleeHit] },
 		]);
 		if (weaponOptions.length) {
-			const elem = this.rootElem.querySelector('.consumes-weapon') as HTMLElement;
+			const elem = this.rootElem.querySelector('.consumes-mainhand') as HTMLElement;
 			new IconEnumPicker(
 				elem,
-				this.simUI.player,
-				IconInputs.makeWeaponBuffsInput(weaponOptions, 'Weapon Buff'),
+				this.simUI.player,	
+				IconInputs.makeMainHandImbuesInput(weaponOptions, 'Weapon Imbues'),
 			);
 		}
 	}

@@ -336,14 +336,15 @@ enum FrostPowerBuff {
 	ElixirOfFrostPower = 1;
 }
 
-enum WeaponBuff {
-	WeaponBuffUnknown = 0;
+enum WeaponImbue {
+	WeaponImbueUnknown = 0;
 	BrilliantManaOil = 1;
 	BrillianWizardOil = 2;
 	DenseSharpeningStone = 3;
 	ElementalSharpeningStone = 4;
 	BlackfathomManaOil = 5;
 	BlackfathomSharpeningStone = 6;
+	WildStrikes = 7;
 }
 
 enum Food {
@@ -481,9 +482,10 @@ message Consumes {
 	bool shadow_power_buff = 10;
 	FirePowerBuff fire_power_buff = 11;
 	bool frost_power_buff = 12;
-	WeaponBuff weapon_buff = 13;
-	bool sapper = 14;
-	Explosive filler_explosive = 15;
+	bool sapper = 13;
+	Explosive filler_explosive = 14;
+	WeaponImbue main_hand_imbue = 15;
+	WeaponImbue off_hand_imbue = 16;
 }
 
 message Debuffs {
