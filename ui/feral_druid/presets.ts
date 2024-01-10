@@ -2,6 +2,7 @@ import {
 	Consumes,
 	Flask,
 	Food,
+	Profession,
 	Spec
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
@@ -17,12 +18,14 @@ import {
 import * as PresetUtils from '../core/preset_utils.js';
 
 import BlankGear from './gear_sets/blank.gear.json';
+import Phase1Gear from './gear_sets/p1.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
 
-export const DefaultGear = PresetUtils.makePresetGear('Blank', BlankGear);
+export const BlankPreset = PresetUtils.makePresetGear('Blank', BlankGear);
+export const DefaultGear = PresetUtils.makePresetGear('Phase 1', Phase1Gear);
 
 import DefaultApl from './apls/default.apl.json';
 export const APL_ROTATION_DEFAULT = PresetUtils.makePresetAPLRotation('APL Default', DefaultApl);
@@ -60,7 +63,7 @@ export const SIMPLE_ROTATION_DEFAULT = PresetUtils.makePresetSimpleRotation('Sim
 export const StandardTalents = {
 	name: 'Standard',
 	data: SavedTalents.create({
-		talentsString: '-543202132322010053120030310511-203503012',
+		talentsString: '500005001--05',
 	}),
 };
 
@@ -73,3 +76,7 @@ export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskUnknown,
 	food: Food.FoodUnknown,
 });
+
+export const OtherDefaults = {
+	profession2: Profession.Leatherworking,
+};

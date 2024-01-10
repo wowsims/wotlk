@@ -399,7 +399,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			//Special case for Totem of Wrath keeps buff and debuff sync'd
 			this.player.applySharedDefaults(eventID);
 			this.player.setRace(eventID, specToEligibleRaces[this.player.spec][0]);
-			this.player.setLevel(eventID, Mechanics.MAX_CHARACTER_LEVEL);
+			this.player.setLevel(eventID, Mechanics.CURRENT_LEVEL_CAP);
 			this.player.setGear(eventID, this.sim.db.lookupEquipmentSpec(this.individualConfig.defaults.gear));
 			this.player.setConsumes(eventID, this.individualConfig.defaults.consumes);
 			this.player.setRotation(eventID, this.player.specTypeFunctions.rotationCreate());
@@ -412,7 +412,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			const defaultRatios = this.player.getDefaultEpRatios(tankSpec, healingSpec)
 			this.player.setEpRatios(eventID, defaultRatios);
 			this.player.setProfession1(eventID, this.individualConfig.defaults.other?.profession1 || Profession.Engineering);
-			this.player.setProfession2(eventID, this.individualConfig.defaults.other?.profession2 || Profession.Jewelcrafting);
+			this.player.setProfession2(eventID, this.individualConfig.defaults.other?.profession2 || Profession.ProfessionUnknown);
 			this.player.setDistanceFromTarget(eventID, this.individualConfig.defaults.other?.distanceFromTarget || 0);
 			this.player.setChannelClipDelay(eventID, this.individualConfig.defaults.other?.channelClipDelay || 0);
 
