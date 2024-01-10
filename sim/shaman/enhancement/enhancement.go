@@ -134,9 +134,9 @@ func (enh *EnhancementShaman) Initialize() {
 			enh.ApplySyncType(proto.ShamanSyncType_Auto)
 		})
 	}
-	enh.DelayDPSCooldowns(3 * time.Second)
 
 	if !enh.IsUsingAPL {
+		enh.DelayDPSCooldowns(3 * time.Second)
 		enh.RegisterPrepullAction(-time.Second, func(sim *core.Simulation) {
 			enh.ItemSwap.SwapItems(sim, []proto.ItemSlot{proto.ItemSlot_ItemSlotMainHand, proto.ItemSlot_ItemSlotOffHand})
 		})
