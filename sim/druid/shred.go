@@ -9,23 +9,22 @@ import (
 func (druid *Druid) registerShredSpell() {
 	shredDamageMultiplier := 2.25
 
-	
 	flatDamageBonus := map[int32]float64{
 		25: 54.0,
 		40: 99.0,
 		50: 144.0,
 		60: 180.0,
-	}[druid.Level]/shredDamageMultiplier
+	}[druid.Level] / shredDamageMultiplier
 
 	druid.Shred = druid.RegisterSpell(Cat, core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: map[int32]int32{
+		ActionID: core.ActionID{SpellID: map[int32]int32{
 			25: 5221,
 			40: 8992,
 			50: 9829,
 			60: 9830,
 		}[druid.Level]},
 		SpellSchool: core.SpellSchoolPhysical,
-		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		ProcMask:    core.ProcMaskMeleeMHSpecial | core.ProcMaskSuppressedExtraAttackAura,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagAPL,
 
 		EnergyCost: core.EnergyCostOptions{
@@ -43,7 +42,7 @@ func (druid *Druid) registerShredSpell() {
 		},
 
 		DamageMultiplier: shredDamageMultiplier,
-		CritMultiplier:   druid.MeleeCritMultiplier(1,0),
+		CritMultiplier:   druid.MeleeCritMultiplier(1, 0),
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -51,17 +50,16 @@ func (druid *Druid) registerShredSpell() {
 				spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
 				spell.BonusWeaponDamage()
 
-
 			modifier := 1.0
 			if druid.BleedCategories.Get(target).AnyActive() {
 				modifier += .3
 			}
 
 			/*
-			ripDot := druid.Rip.Dot(target)
-			if druid.AssumeBleedActive || ripDot.IsActive() || druid.Rake.Dot(target).IsActive() || druid.Lacerate.Dot(target).IsActive() {
-				modifier *= 1.0 + (0.04 * float64(druid.Talents.RendAndTear))
-			}
+				ripDot := druid.Rip.Dot(target)
+				if druid.AssumeBleedActive || ripDot.IsActive() || druid.Rake.Dot(target).IsActive() || druid.Lacerate.Dot(target).IsActive() {
+					modifier *= 1.0 + (0.04 * float64(druid.Talents.RendAndTear))
+				}
 			*/
 
 			baseDamage *= modifier
@@ -83,9 +81,9 @@ func (druid *Druid) registerShredSpell() {
 			}
 
 			/*
-			if druid.AssumeBleedActive || druid.Rip.Dot(target).IsActive() || druid.Rake.Dot(target).IsActive() || druid.Lacerate.Dot(target).IsActive() {
-				modifier *= 1.0 + (0.04 * float64(druid.Talents.RendAndTear))
-			}
+				if druid.AssumeBleedActive || druid.Rip.Dot(target).IsActive() || druid.Rake.Dot(target).IsActive() || druid.Lacerate.Dot(target).IsActive() {
+					modifier *= 1.0 + (0.04 * float64(druid.Talents.RendAndTear))
+				}
 			*/
 			baseDamage *= modifier
 

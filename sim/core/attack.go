@@ -605,6 +605,12 @@ func (aa *AutoAttacks) UpdateSwingTimers(sim *Simulation) {
 	}
 }
 
+// ExtraMHAttack should be used for all "extra attack" procs in Classic Era versions, including Wild Strikes and Hand of Justice. In vanilla, these procs don't actually grant a full extra attack, but instead just advance the MH swing timer.
+func (aa *AutoAttacks) ExtraMHAttack(sim *Simulation) {
+	aa.mh.swingAt = sim.CurrentTime + SpellBatchWindow
+	sim.rescheduleWeaponAttack(aa.mh.swingAt)
+}
+
 // StopMeleeUntil should be used whenever a non-melee spell is cast. It stops melee, then restarts it
 // at end of cast, but with a reset swing timer (as if swings had just landed).
 func (aa *AutoAttacks) StopMeleeUntil(sim *Simulation, readyAt time.Duration, desyncOH bool) {
@@ -686,7 +692,6 @@ func (ppmm *PPMManager) ProcWithWeaponSpecials(sim *Simulation, procMask ProcMas
 		return ppmm.Proc(sim, procMask, label)
 	}
 }
-
 
 func (ppmm *PPMManager) Chance(procMask ProcMask) float64 {
 	for i, m := range ppmm.procMasks {

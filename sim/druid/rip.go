@@ -24,19 +24,19 @@ func (druid *Druid) registerRipSpell() {
 	}[druid.Level]
 
 	druid.Rip = druid.RegisterSpell(Cat, core.SpellConfig{
-		ActionID:    core.ActionID{SpellID:  map[int32]int32{
+		ActionID: core.ActionID{SpellID: map[int32]int32{
 			25: 1079,
 			40: 9493,
 			50: 9752,
 			60: 9896,
 		}[druid.Level]},
 		SpellSchool: core.SpellSchoolPhysical,
-		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		ProcMask:    core.ProcMaskMeleeMHSpecial | core.ProcMaskSuppressedExtraAttackAura,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL,
 
 		EnergyCost: core.EnergyCostOptions{
-			Cost:          30,
-			Refund:        0,
+			Cost:   30,
+			Refund: 0,
 			//RefundMetrics: druid.PrimalPrecisionRecoveryMetrics,
 		},
 		Cast: core.CastConfig{
@@ -61,8 +61,8 @@ func (druid *Druid) registerRipSpell() {
 				ap := dot.Spell.MeleeAttackPower()
 
 				cpScaling := core.TernaryFloat64(cp == 5, 4, cp)
-				
-				dot.SnapshotBaseDamage = (ripBase + comboPointCoeff*cp + 0.06*ap*cpScaling)/float64(dot.NumberOfTicks)
+
+				dot.SnapshotBaseDamage = (ripBase + comboPointCoeff*cp + 0.06*ap*cpScaling) / float64(dot.NumberOfTicks)
 
 				if !isRollover {
 					attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex]

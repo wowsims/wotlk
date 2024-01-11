@@ -1510,7 +1510,7 @@ func BattleShoutAura(unit *Unit, impBattleShout int32, boomingVoicePts int32, le
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.AddStatsDynamic(sim, stats.Stats{
-				stats.AttackPower: -1* math.Floor(BuffSpellByLevel[BattleShout][level][stats.AttackPower] * (1 + 0.05*float64(impBattleShout))),
+				stats.AttackPower: -1 * math.Floor(BuffSpellByLevel[BattleShout][level][stats.AttackPower]*(1+0.05*float64(impBattleShout))),
 			})
 		},
 	})
@@ -1540,7 +1540,7 @@ func BlessingOfMightAura(unit *Unit, impBomPts int32, level int32) *Aura {
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			aura.Unit.AddStatsDynamic(sim, stats.Stats{
-				stats.AttackPower: -1 * math.Floor(BuffSpellByLevel[BlessingOfMight][level][stats.AttackPower] * (1 + 0.04*float64(impBomPts))),
+				stats.AttackPower: -1 * math.Floor(BuffSpellByLevel[BlessingOfMight][level][stats.AttackPower]*(1+0.04*float64(impBomPts))),
 			})
 		},
 	})
@@ -1616,7 +1616,6 @@ func healthBonusEffect(aura *Aura, healthBonus float64) *ExclusiveEffect {
 	})
 }
 
-
 func ApplyWildStrikes(character *Character) {
 	buffActionID := ActionID{SpellID: 407975}
 	statDep := character.NewDynamicMultiplyStat(stats.AttackPower, 1.2)
@@ -1634,7 +1633,6 @@ func ApplyWildStrikes(character *Character) {
 		},
 	})
 
-	var wsSpell *Spell
 	icd := Cooldown{
 		Timer:    character.NewTimer(),
 		Duration: time.Millisecond * 1500,
@@ -1642,19 +1640,6 @@ func ApplyWildStrikes(character *Character) {
 
 	MakePermanent(character.GetOrRegisterAura(Aura{
 		Label: "Wild Strikes",
-		OnInit: func(aura *Aura, sim *Simulation) {
-			mhConfig := aura.Unit.AutoAttacks.MHConfig()
-			wsSpell = character.GetOrRegisterSpell(SpellConfig{
-				ActionID:         buffActionID, // temporary buff ("Windfury Attack") spell id
-				SpellSchool:      mhConfig.SpellSchool,
-				ProcMask:         mhConfig.ProcMask,
-				Flags:            mhConfig.Flags,
-				DamageMultiplier: mhConfig.DamageMultiplier,
-				CritMultiplier:   mhConfig.CritMultiplier,
-				ThreatMultiplier: mhConfig.ThreatMultiplier,
-				ApplyEffects:     mhConfig.ApplyEffects,
-			})
-		},
 		OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
 			if spell.ProcMask.Matches(ProcMaskSuppressedExtraAttackAura) {
 				return
@@ -1678,14 +1663,7 @@ func ApplyWildStrikes(character *Character) {
 			wsBuffAura.Activate(sim)
 			wsBuffAura.SetStacks(sim, 2)
 			icd.Use(sim)
-
-			StartDelayedAction(sim, DelayedActionOptions{
-				DoAt:     sim.CurrentTime + time.Millisecond*10,
-				Priority: ActionPriorityAuto,
-				OnAction: func(sim *Simulation) {
-					wsSpell.Cast(sim, result.Target)
-				},
-			})
+			aura.Unit.AutoAttacks.ExtraMHAttack(sim)
 		},
 	}))
 

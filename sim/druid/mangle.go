@@ -74,11 +74,11 @@ func (druid *Druid) applyMangleCat() {
 	druid.MangleCat = druid.RegisterSpell(Cat, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 409828},
 		SpellSchool: core.SpellSchoolPhysical,
-		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		ProcMask:    core.ProcMaskMeleeMHSpecial | core.ProcMaskSuppressedExtraAttackAura,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagIncludeTargetBonusDamage | core.SpellFlagAPL,
 
 		EnergyCost: core.EnergyCostOptions{
-			Cost:   40  - float64(druid.Talents.Ferocity),
+			Cost:   40 - float64(druid.Talents.Ferocity),
 			Refund: 0.8,
 		},
 		Cast: core.CastConfig{
@@ -94,7 +94,7 @@ func (druid *Druid) applyMangleCat() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower()) +
-					spell.BonusWeaponDamage()
+				spell.BonusWeaponDamage()
 
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 
@@ -122,4 +122,3 @@ func (druid *Druid) IsMangle(spell *core.Spell) bool {
 	}
 	return false
 }
-
