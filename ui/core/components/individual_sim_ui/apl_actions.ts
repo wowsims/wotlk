@@ -38,7 +38,6 @@ import { Input, InputConfig } from '../input.js';
 import { Player } from '../../player.js';
 import { TextDropdownPicker } from '../dropdown_picker.js';
 import { ListItemPickerConfig, ListPicker } from '../list_picker.js';
-import { FeralDruid_Rotation_AplType } from '../../proto/druid.js';
 
 import * as AplHelpers from './apl_helpers.js';
 import * as AplValues from './apl_values.js';

@@ -10,9 +10,6 @@ import { SavedTalents } from '../core/proto/ui.js';
 import {
 	FeralDruid_Options as FeralDruidOptions,
 	FeralDruid_Rotation as FeralDruidRotation,
-	FeralDruid_Rotation_AplType,
-	FeralDruid_Rotation_BearweaveType,
-	FeralDruid_Rotation_BiteModeType,
 } from '../core/proto/druid.js';
 
 import * as PresetUtils from '../core/preset_utils.js';
@@ -31,29 +28,9 @@ import DefaultApl from './apls/default.apl.json';
 export const APL_ROTATION_DEFAULT = PresetUtils.makePresetAPLRotation('APL Default', DefaultApl);
 
 export const DefaultRotation = FeralDruidRotation.create({
-	rotationType: FeralDruid_Rotation_AplType.SingleTarget,
-
-	bearWeaveType: FeralDruid_Rotation_BearweaveType.None,
-	minCombosForRip: 5,
-	minCombosForBite: 5,
-
-	useRake: true,
-	useBite: true,
-	mangleSpam: false,
-	biteModeType: FeralDruid_Rotation_BiteModeType.Emperical,
-	biteTime: 4.0,
-	berserkBiteThresh: 25.0,
-	berserkFfThresh: 15.0,
-	powerbear: false,
-	minRoarOffset: 12.0,
-	ripLeeway: 3.0,
-	maintainFaerieFire: true,
-	hotUptime: 0.0,
-	snekWeave: false,
-	flowerWeave: false,
-	raidTargets: 30,
-	maxFfDelay: 0.1,
-	prePopOoc: true,
+	maintainFaerieFire: false,
+	minCombosForRip: 2,
+	maxWaitTime: 1.5,
 });
 
 export const SIMPLE_ROTATION_DEFAULT = PresetUtils.makePresetSimpleRotation('Simple Default', Spec.SpecFeralDruid, DefaultRotation);
